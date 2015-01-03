@@ -47,13 +47,13 @@ void cSavedReportSurveyorAiSenseless::pushInto (tinyxml2::XMLElement& element) c
 }
 
 //------------------------------------------------------------------------------
-eSavedReportType cSavedReportSurveyorAiSenseless::getType () const
+eSavedReportType cSavedReportSurveyorAiSenseless::getType() const
 {
 	return eSavedReportType::SurveyorAiSenseless;
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportSurveyorAiSenseless::getText () const
+std::string cSavedReportSurveyorAiSenseless::getText() const
 {
 	return "Surveyor AI: My life is so senseless. I've nothing to do...";
 }

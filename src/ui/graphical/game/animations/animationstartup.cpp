@@ -36,17 +36,17 @@ cAnimationStartUp::cAnimationStartUp (cAnimationTimer& animationTimer_, const cU
 	// make sure the animation does not run on a destroyed unit
 	signalConnectionManager.connect (unit->destroyed, [this]()
 	{
-		animationTimerConnectionManager.disconnectAll ();
+		animationTimerConnectionManager.disconnectAll();
 		unit = nullptr;
 		finished = true;
 	});
 }
 
 //------------------------------------------------------------------------------
-cAnimationStartUp::~cAnimationStartUp ()
+cAnimationStartUp::~cAnimationStartUp()
 {
 	// make sure the unit is fully visible when the animation gets deleted
-	if (isRunning () && unit)
+	if (isRunning() && unit)
 	{
 		unit->alphaEffectValue = 0;
 	}
@@ -55,11 +55,11 @@ cAnimationStartUp::~cAnimationStartUp ()
 //------------------------------------------------------------------------------
 bool cAnimationStartUp::isLocatedIn (const cBox<cPosition>& box) const
 {
-	return unit && box.intersects (unit->getArea ());
+	return unit && box.intersects (unit->getArea());
 }
 
 //------------------------------------------------------------------------------
-void cAnimationStartUp::run ()
+void cAnimationStartUp::run()
 {
 	if (!unit) return;
 
@@ -69,7 +69,7 @@ void cAnimationStartUp::run ()
 	if (unit->alphaEffectValue >= 255)
 	{
 		unit->alphaEffectValue = 0;
-		animationTimerConnectionManager.disconnectAll ();
+		animationTimerConnectionManager.disconnectAll();
 		finished = true;
 		running = false;
 	}

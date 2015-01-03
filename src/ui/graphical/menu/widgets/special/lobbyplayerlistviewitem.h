@@ -36,7 +36,7 @@ class cLobbyPlayerListViewItem : public cAbstractListViewItem
 public:
 	explicit cLobbyPlayerListViewItem (std::shared_ptr<cPlayerBasicData> player);
 
-	const std::shared_ptr<cPlayerBasicData>& getPlayer () const;
+	const std::shared_ptr<cPlayerBasicData>& getPlayer() const;
 
 	cSignal<void ()> readyClicked;
 
@@ -50,9 +50,9 @@ private:
 
 	std::shared_ptr<cPlayerBasicData> player;
 
-	void updatePlayerName ();
-	void updatePlayerColor ();
-	void updatePlayerReady ();
+	void updatePlayerName();
+	void updatePlayerColor();
+	void updatePlayerReady();
 };
 
 #endif // ui_graphical_menu_widgets_special_lobbyplayerlistviewitemH

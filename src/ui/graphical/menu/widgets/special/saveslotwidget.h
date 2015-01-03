@@ -33,7 +33,7 @@ class cSaveSlotWidget : public cClickableWidget
 public:
 	explicit cSaveSlotWidget (const cPosition& position);
 
-	const std::string& getName () const;
+	const std::string& getName() const;
 
 	void setSelected (bool selected);
 
@@ -42,9 +42,9 @@ public:
 	void setSaveData (const cSaveGameData& saveFile);
 	void reset (int number);
 
-	bool isEmpty () const;
+	bool isEmpty() const;
 
-	void forceKeyFocus ();
+	void forceKeyFocus();
 
 	cSignal<void ()> clicked;
 	cSignal<void ()> doubleClicked;

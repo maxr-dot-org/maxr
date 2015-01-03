@@ -30,9 +30,9 @@ public:
 
 	virtual bool executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const MAXR_OVERRIDE_FUNCTION;
 
-	virtual bool doesChangeState () const MAXR_OVERRIDE_FUNCTION;
+	virtual bool doesChangeState() const MAXR_OVERRIDE_FUNCTION;
 
-	virtual bool isSingleAction () const MAXR_OVERRIDE_FUNCTION;
+	virtual bool isSingleAction() const MAXR_OVERRIDE_FUNCTION;
 
 private:
 	int vehicleToActivateIndex;

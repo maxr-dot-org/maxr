@@ -34,22 +34,22 @@ public:
 
 	void play (const cSoundChunk& chunk, bool loop = false);
 
-	void pause ();
-	void resume ();
+	void pause();
+	void resume();
 
-	void stop ();
+	void stop();
 
-	void mute ();
-	void unmute ();
+	void mute();
+	void unmute();
 
-	bool isPlaying () const;
+	bool isPlaying() const;
 	bool isPlaying (const cSoundChunk& chunk) const;
 
-	bool isLooping () const;
+	bool isLooping() const;
 
-	bool isPaused () const;
+	bool isPaused() const;
 
-	bool isMuted () const;
+	bool isMuted() const;
 
 	void setVolume (int volume);
 
@@ -57,7 +57,7 @@ public:
 	void setDistance (unsigned char distance);
 	void setPosition (short angle, unsigned char distance);
 
-	int getSdlChannelId () const;
+	int getSdlChannelId() const;
 
 	cSignal<void ()> started;
 	cSignal<void (), cRecursiveMutex> stopped;

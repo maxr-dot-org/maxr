@@ -56,7 +56,7 @@ cVideo::cVideo() :
 {
 	using namespace std::placeholders;
 
-	signalConnectionManager.connect(cKeyboard::getInstance().keyPressed, std::bind(&cVideo::keyPressed, this, _1, _2));
+	signalConnectionManager.connect (cKeyboard::getInstance().keyPressed, std::bind (&cVideo::keyPressed, this, _1, _2));
 }
 
 cVideo::~cVideo()
@@ -79,19 +79,19 @@ void cVideo::clearMemory()
 	sdlWindow = nullptr;
 }
 
-void cVideo::init ()
+void cVideo::init()
 {
 	const auto title = PACKAGE_NAME " " PACKAGE_VERSION " " PACKAGE_REV " ";
 
 	sdlWindow = SDL_CreateWindow (title,
-								  SDL_WINDOWPOS_CENTERED_DISPLAY (getDisplayIndex ()), SDL_WINDOWPOS_CENTERED_DISPLAY (getDisplayIndex ()),
+								  SDL_WINDOWPOS_CENTERED_DISPLAY (getDisplayIndex()), SDL_WINDOWPOS_CENTERED_DISPLAY (getDisplayIndex()),
 								  MINWIDTH, MINHEIGHT,
 								  SDL_WINDOW_BORDERLESS | SDL_WINDOW_OPENGL);
 
 	{
-		auto icon = AutoSurface(SDL_LoadBMP(MAXR_ICON));
-		SDL_SetColorKey(icon.get(), 1, 0xFF00FF);
-		SDL_SetWindowIcon(sdlWindow, icon.get());
+		auto icon = AutoSurface (SDL_LoadBMP (MAXR_ICON));
+		SDL_SetColorKey (icon.get(), 1, 0xFF00FF);
+		SDL_SetWindowIcon (sdlWindow, icon.get());
 	}
 
 	sdlRenderer = SDL_CreateRenderer (sdlWindow, -1, 0);
@@ -99,10 +99,10 @@ void cVideo::init ()
 	// make the scaled rendering look smoother.
 	SDL_SetHint (SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
-	detectResolutions ();
+	detectResolutions();
 }
 
-void cVideo::showSplashScreen ()
+void cVideo::showSplashScreen()
 {
 	AutoSurface splash (LoadPCX (SPLASH_BACKGROUND));
 
@@ -113,27 +113,27 @@ void cVideo::showSplashScreen ()
 
 	initializeBuffer (splash->w, splash->h);
 
-	SDL_BlitSurface (splash.get (), nullptr, buffer, nullptr);
+	SDL_BlitSurface (splash.get(), nullptr, buffer, nullptr);
 
-	draw ();
+	draw();
 }
 
-void cVideo::prepareGameScreen ()
+void cVideo::prepareGameScreen()
 {
 	SDL_SetWindowBordered (sdlWindow, SDL_TRUE);
-	SDL_SetWindowSize (sdlWindow, getResolutionX (), getResolutionY ());
+	SDL_SetWindowSize (sdlWindow, getResolutionX(), getResolutionY());
 	SDL_SetWindowPosition (sdlWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-	SDL_SetWindowFullscreen (sdlWindow, getWindowMode () ? 0 : SDL_WINDOW_FULLSCREEN);
+	SDL_SetWindowFullscreen (sdlWindow, getWindowMode() ? 0 : SDL_WINDOW_FULLSCREEN);
 
-	initializeBuffer (getResolutionX (), getResolutionY ());
+	initializeBuffer (getResolutionX(), getResolutionY());
 
-	draw ();
+	draw();
 }
 
 void cVideo::initializeBuffer (int width, int height)
 {
 	if (buffer) SDL_FreeSurface (buffer);
-	buffer = SDL_CreateRGBSurface (0, width, height, getColDepth (), 0, 0, 0, 0);
+	buffer = SDL_CreateRGBSurface (0, width, height, getColDepth(), 0, 0, 0, 0);
 
 	if (font != nullptr) font->setTargetSurface (buffer);
 
@@ -165,7 +165,7 @@ void cVideo::setResolution (int iWidth, int iHeight, bool bApply)
 		else
 		{
 			Log.write ("cVideo:  => Couldn't find requested video mode " + iToStr (iWidth) + "x" + iToStr (iHeight) + " :(", cLog::eLOG_TYPE_WARNING);
-			if (haveMinMode ())
+			if (haveMinMode())
 			{
 				Log.write ("cVideo:  => Edit your config and try default video mode " + iToStr (Video.getMinW()) + "x" + iToStr (Video.getMinH()) + " if I crash now!", cLog::eLOG_TYPE_WARNING);
 			}
@@ -176,9 +176,9 @@ void cVideo::setResolution (int iWidth, int iHeight, bool bApply)
 		}
 		// END SANITY CHECK SCREEN RES
 
-		applyResolution ();
+		applyResolution();
 
-		resolutionChanged ();
+		resolutionChanged();
 	}
 	else
 	{
@@ -214,7 +214,7 @@ void cVideo::setDisplayIndex (int index)
 	// TODO: apply the display index (reassign window to new display)
 }
 
-int cVideo::getDisplayIndex () const
+int cVideo::getDisplayIndex() const
 {
 	return displayIndex;
 }
@@ -222,11 +222,11 @@ int cVideo::getDisplayIndex () const
 void cVideo::setWindowMode (bool bWindowMode, bool bApply)
 {
 	windowMode = bWindowMode;
-	Log.write ("cVideo: Window mode settings changed to " + std::string (getWindowMode () ? "windowmode" : "fullscreen"), cLog::eLOG_TYPE_DEBUG);
+	Log.write ("cVideo: Window mode settings changed to " + std::string (getWindowMode() ? "windowmode" : "fullscreen"), cLog::eLOG_TYPE_DEBUG);
 
 	if (bApply)
 	{
-		applyWindowMode ();
+		applyWindowMode();
 	}
 }
 
@@ -245,28 +245,28 @@ void cVideo::draw()
 	SDL_RenderPresent (sdlRenderer);
 }
 
-void cVideo::applyResolution ()
+void cVideo::applyResolution()
 {
 	const auto windowFlags = SDL_GetWindowFlags (sdlWindow);
 	const auto isFullscreen = (windowFlags & SDL_WINDOW_FULLSCREEN) != 0;
 
 	if (isFullscreen) SDL_SetWindowFullscreen (sdlWindow, 0);
 
-	SDL_SetWindowSize (sdlWindow, getResolutionX (), getResolutionY ());
+	SDL_SetWindowSize (sdlWindow, getResolutionX(), getResolutionY());
 
-	applyWindowMode ();
+	applyWindowMode();
 
-	initializeBuffer (getResolutionX (), getResolutionY ());
+	initializeBuffer (getResolutionX(), getResolutionY());
 
-	draw ();
+	draw();
 }
 
-void cVideo::applyWindowMode ()
+void cVideo::applyWindowMode()
 {
-	const auto result = SDL_SetWindowFullscreen (sdlWindow, getWindowMode () ? 0 : SDL_WINDOW_FULLSCREEN);
+	const auto result = SDL_SetWindowFullscreen (sdlWindow, getWindowMode() ? 0 : SDL_WINDOW_FULLSCREEN);
 	if (result == -1)
 	{
-		throw std::runtime_error (std::string ("Could not apply window mode: ") + SDL_GetError () + "'");
+		throw std::runtime_error (std::string ("Could not apply window mode: ") + SDL_GetError() + "'");
 	}
 }
 
@@ -290,9 +290,9 @@ int cVideo::getResolutionY() const
 	return resolutionY;
 }
 
-void cVideo::detectResolutions ()
+void cVideo::detectResolutions()
 {
-	const auto numVideoDislplays = SDL_GetNumVideoDisplays ();
+	const auto numVideoDislplays = SDL_GetNumVideoDisplays();
 	detectedResolutions.resize (numVideoDislplays);
 	for (int displayIndex = 0; displayIndex < numVideoDislplays; ++displayIndex)
 	{
@@ -300,7 +300,7 @@ void cVideo::detectResolutions ()
 
 		auto& resolutions = detectedResolutions[displayIndex];
 
-		resolutions.clear ();
+		resolutions.clear();
 
 		for (int displayModeIndex = 0; displayModeIndex < numDisplayModes; ++displayModeIndex)
 		{
@@ -312,10 +312,10 @@ void cVideo::detectResolutions ()
 
 			resolutions.push_back (std::make_pair (mode.w, mode.h));
 		}
-		std::sort (resolutions.begin (), resolutions.end ()); // lexicographic order
-		resolutions.erase (std::unique (resolutions.begin (), resolutions.end ()), resolutions.end ()); // make sure there are no double entries
+		std::sort (resolutions.begin(), resolutions.end());   // lexicographic order
+		resolutions.erase (std::unique (resolutions.begin(), resolutions.end()), resolutions.end());    // make sure there are no double entries
 
-		for (size_t i = 0; i < resolutions.size (); ++i)
+		for (size_t i = 0; i < resolutions.size(); ++i)
 		{
 			const auto& resolution = resolutions[i];
 			Log.write ("cVideo: Display" + iToStr (displayIndex) + " is offering detected video mode " + iToStr (i) + " (" + iToStr (resolution.first) + "x" + iToStr (resolution.second) + ")", cLog::eLOG_TYPE_INFO);
@@ -323,16 +323,16 @@ void cVideo::detectResolutions ()
 	}
 }
 
-const std::vector<std::pair<int, int>>& cVideo::getDetectedResolutions () const
+const std::vector<std::pair<int, int>>& cVideo::getDetectedResolutions() const
 {
 	const int displayIndex = sdlWindow ? SDL_GetWindowDisplayIndex (sdlWindow) : 0;
 
 	return detectedResolutions[displayIndex];
 }
 
-bool cVideo::haveMinMode () const
+bool cVideo::haveMinMode() const
 {
-	const auto& resolutions = getDetectedResolutions ();
+	const auto& resolutions = getDetectedResolutions();
 	for (const auto& resolution : resolutions)
 	{
 		if (resolution.first == MINWIDTH && resolution.second == MINHEIGHT)
@@ -347,12 +347,12 @@ bool cVideo::haveMinMode () const
 
 int cVideo::validateResolution (int width, int height) const
 {
-	const auto& resolutions = getDetectedResolutions ();
-	for (size_t i = 0; i < resolutions.size (); i++)
+	const auto& resolutions = getDetectedResolutions();
+	for (size_t i = 0; i < resolutions.size(); i++)
 	{
 		if (resolutions[i].first == width && resolutions[i].second == height)
 		{
-			return static_cast<int>(i);
+			return static_cast<int> (i);
 		}
 	}
 	Log.write ("cVideo: Configured video mode (" + iToStr (width) + "x" + iToStr (height) + ") not detected. Resume on own risk!", cLog::eLOG_TYPE_WARNING);
@@ -374,36 +374,36 @@ void cVideo::takeScreenShot (const std::string& filename) const
 	SDL_SaveBMP (buffer, filename.c_str());
 }
 
-void cVideo::keyPressed(cKeyboard& keyboard, SDL_Keycode key)
+void cVideo::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 {
-	if(keyboard.isAnyModifierActive(toEnumFlag(eKeyModifierType::AltLeft) | toEnumFlag(eKeyModifierType::AltRight)))
+	if (keyboard.isAnyModifierActive (toEnumFlag (eKeyModifierType::AltLeft) | toEnumFlag (eKeyModifierType::AltRight)))
 	{
-		if(key == SDLK_RETURN)
+		if (key == SDLK_RETURN)
 		{
-			setWindowMode(!getWindowMode(), true);
+			setWindowMode (!getWindowMode(), true);
 		}
-		else if(key == SDLK_c)
+		else if (key == SDLK_c)
 		{
 			// TODO: may use std::chrono here.
 			//       Problem is that std::put_time is not supported in gcc < 4.8 iirc
 			time_t tTime;
 			tm* tmTime;
 			char timestr[18];
-			tTime = time(nullptr);
-			tmTime = localtime(&tTime);
-			strftime(timestr, sizeof (timestr), "%Y-%m-%d_%H%M%S", tmTime);
+			tTime = time (nullptr);
+			tmTime = localtime (&tTime);
+			strftime (timestr, sizeof (timestr), "%Y-%m-%d_%H%M%S", tmTime);
 			std::string screenshotfile;
 			int counter = 0;
 			do
 			{
 				counter += 1;
-				screenshotfile = getUserScreenshotsDir() + "screenie_" + timestr + "_" + iToStr(counter) + ".bmp";
+				screenshotfile = getUserScreenshotsDir() + "screenie_" + timestr + "_" + iToStr (counter) + ".bmp";
 			}
-			while(FileExists(screenshotfile.c_str()));
-			Log.write("Screenshot saved to " + screenshotfile, cLog::eLOG_TYPE_INFO);
-			takeScreenShot(screenshotfile);
+			while (FileExists (screenshotfile.c_str()));
+			Log.write ("Screenshot saved to " + screenshotfile, cLog::eLOG_TYPE_INFO);
+			takeScreenShot (screenshotfile);
 
-			screenShotTaken(screenshotfile);
+			screenShotTaken (screenshotfile);
 		}
 	}
 }
@@ -731,10 +731,10 @@ static void line (int x1, int y1, int x2, int y2, unsigned int color, SDL_Surfac
 // Erzeigt ein Pfeil-Surface:
 AutoSurface CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, unsigned int color, int size)
 {
-    AutoSurface sf (SDL_CreateRGBSurface (0, size, size, Video.getColDepth(), 0, 0, 0, 0));
+	AutoSurface sf (SDL_CreateRGBSurface (0, size, size, Video.getColDepth(), 0, 0, 0, 0));
 	SDL_SetColorKey (sf.get(), SDL_TRUE, 0x00FF00FF);
-    SDL_FillRect (sf.get (), nullptr, 0x00FF00FF);
-    SDL_LockSurface (sf.get ());
+	SDL_FillRect (sf.get(), nullptr, 0x00FF00FF);
+	SDL_LockSurface (sf.get());
 
 	const float fak = size / 64.0f;
 	p1x = Round (p1x * fak);
@@ -747,8 +747,8 @@ AutoSurface CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, u
 	line (p2x, p2y, p3x, p3y, color, *sf);
 	line (p3x, p3y, p1x, p1y, color, *sf);
 
-    SDL_UnlockSurface (sf.get ());
-	return std::move(sf);
+	SDL_UnlockSurface (sf.get());
+	return std::move (sf);
 }
 
 static void setPixel (SDL_Surface& surface, int x, int y, int iColor)

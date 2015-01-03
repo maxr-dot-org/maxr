@@ -24,19 +24,19 @@
 #include "loaddata.h"
 
 //------------------------------------------------------------------------------
-cLocalSingleplayerGame::~cLocalSingleplayerGame ()
+cLocalSingleplayerGame::~cLocalSingleplayerGame()
 {
 	if (server)
 	{
-		server->stop ();
-		reloadUnitValues ();
+		server->stop();
+		reloadUnitValues();
 	}
 }
 
 //------------------------------------------------------------------------------
-void cLocalSingleplayerGame::run ()
+void cLocalSingleplayerGame::run()
 {
-	if (client) client->getGameTimer ()->run ();
+	if (client) client->getGameTimer()->run();
 }
 
 //------------------------------------------------------------------------------

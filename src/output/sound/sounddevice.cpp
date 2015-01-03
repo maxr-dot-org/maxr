@@ -32,28 +32,28 @@ const int cSoundDevice::voiceGroupSize = 5;
 
 
 //--------------------------------------------------------------------------
-cSoundDevice::cSoundDevice () :
-soundEffectChannelGroup (soundEffectGroupTag),
-voiceChannelGroup (voiceGroupTag)
+cSoundDevice::cSoundDevice() :
+	soundEffectChannelGroup (soundEffectGroupTag),
+	voiceChannelGroup (voiceGroupTag)
 {}
 
 //--------------------------------------------------------------------------
-void cSoundDevice::SdlMixMusikDeleter::operator ()(Mix_Music* music) const
+void cSoundDevice::SdlMixMusikDeleter::operator() (Mix_Music* music) const
 {
 	Mix_FreeMusic (music);
 }
 
 //--------------------------------------------------------------------------
-cSoundDevice& cSoundDevice::getInstance ()
+cSoundDevice& cSoundDevice::getInstance()
 {
 	static cSoundDevice instance;
 	return instance;
 }
 
 //--------------------------------------------------------------------------
-void musicFinishedHookCallback ()
+void musicFinishedHookCallback()
 {
-	cSoundDevice::getInstance ().startRandomMusic ();
+	cSoundDevice::getInstance().startRandomMusic();
 }
 
 //--------------------------------------------------------------------------
@@ -61,47 +61,47 @@ void cSoundDevice::initialize (int frequency, int chunkSize)
 {
 	if (Mix_OpenAudio (frequency, AUDIO_S16, 2, chunkSize) != 0)
 	{
-		throw std::runtime_error (Mix_GetError ());
+		throw std::runtime_error (Mix_GetError());
 	}
 
 	Mix_AllocateChannels (soundEffectGroupSize + voiceGroupSize);
 
-	soundEffectChannelGroup.addChannelRange (0, soundEffectGroupSize-1);
-	voiceChannelGroup.addChannelRange (soundEffectGroupSize, soundEffectGroupSize+voiceGroupSize-1);
+	soundEffectChannelGroup.addChannelRange (0, soundEffectGroupSize - 1);
+	voiceChannelGroup.addChannelRange (soundEffectGroupSize, soundEffectGroupSize + voiceGroupSize - 1);
 
 	Mix_HookMusicFinished (musicFinishedHookCallback);
 
-	setSoundEffectVolume (cSettings::getInstance ().getSoundVol ());
-	setVoiceVolume (cSettings::getInstance ().getVoiceVol ());
-	setMusicVolume (cSettings::getInstance ().getMusicVol ());
+	setSoundEffectVolume (cSettings::getInstance().getSoundVol());
+	setVoiceVolume (cSettings::getInstance().getVoiceVol());
+	setMusicVolume (cSettings::getInstance().getMusicVol());
 }
 
 //--------------------------------------------------------------------------
-void cSoundDevice::close ()
+void cSoundDevice::close()
 {
-	Mix_CloseAudio ();
+	Mix_CloseAudio();
 }
 
 //--------------------------------------------------------------------------
-cSoundChannel* cSoundDevice::getFreeSoundEffectChannel ()
+cSoundChannel* cSoundDevice::getFreeSoundEffectChannel()
 {
-	if (!cSettings::getInstance ().isSoundEnabled () || cSettings::getInstance ().isSoundMute ()) return nullptr;
+	if (!cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isSoundMute()) return nullptr;
 
-	return &soundEffectChannelGroup.getFreeChannel ();
+	return &soundEffectChannelGroup.getFreeChannel();
 }
 
 //--------------------------------------------------------------------------
-cSoundChannel* cSoundDevice::getFreeVoiceChannel ()
+cSoundChannel* cSoundDevice::getFreeVoiceChannel()
 {
-	if (!cSettings::getInstance ().isSoundEnabled () || cSettings::getInstance ().isVoiceMute ()) return nullptr;
+	if (!cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isVoiceMute()) return nullptr;
 
-	return &voiceChannelGroup.getFreeChannel ();
+	return &voiceChannelGroup.getFreeChannel();
 }
 
 //--------------------------------------------------------------------------
 bool cSoundDevice::playSoundEffect (const cSoundChunk& chunk)
 {
-	auto channel = getFreeSoundEffectChannel ();
+	auto channel = getFreeSoundEffectChannel();
 
 	if (channel == nullptr) return false;
 
@@ -113,7 +113,7 @@ bool cSoundDevice::playSoundEffect (const cSoundChunk& chunk)
 //--------------------------------------------------------------------------
 bool cSoundDevice::playVoice (const cSoundChunk& chunk)
 {
-	auto channel = getFreeVoiceChannel ();
+	auto channel = getFreeVoiceChannel();
 
 	if (channel == nullptr) return false;
 
@@ -125,27 +125,27 @@ bool cSoundDevice::playVoice (const cSoundChunk& chunk)
 //--------------------------------------------------------------------------
 void cSoundDevice::startMusic (const std::string& fileName)
 {
-	if (!cSettings::getInstance ().isSoundEnabled () || cSettings::getInstance ().isMusicMute ()) return;
+	if (!cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isMusicMute()) return;
 
-	musicStream = SaveSdlMixMusicPointer (Mix_LoadMUS (fileName.c_str ()));
+	musicStream = SaveSdlMixMusicPointer (Mix_LoadMUS (fileName.c_str()));
 	if (!musicStream)
 	{
 		Log.write ("Failed opening music stream:", cLog::eLOG_TYPE_WARNING);
-		Log.write (Mix_GetError (), cLog::eLOG_TYPE_WARNING);
+		Log.write (Mix_GetError(), cLog::eLOG_TYPE_WARNING);
 		return;
 	}
-	Mix_PlayMusic (musicStream.get (), 0);
+	Mix_PlayMusic (musicStream.get(), 0);
 }
 
 //--------------------------------------------------------------------------
-void cSoundDevice::startRandomMusic ()
+void cSoundDevice::startRandomMusic()
 {
-	if (MusicFiles.empty ()) return;
-	startMusic (MusicFiles[random (MusicFiles.size ())]);
+	if (MusicFiles.empty()) return;
+	startMusic (MusicFiles[random (MusicFiles.size())]);
 }
 
 //--------------------------------------------------------------------------
-void cSoundDevice::stopMusic ()
+void cSoundDevice::stopMusic()
 {
 	musicStream = nullptr;
 }

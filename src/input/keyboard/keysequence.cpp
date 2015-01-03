@@ -20,7 +20,7 @@
 #include "input/keyboard/keysequence.h"
 
 //------------------------------------------------------------------------------
-cKeySequence::cKeySequence ()
+cKeySequence::cKeySequence()
 {}
 
 //------------------------------------------------------------------------------
@@ -65,11 +65,11 @@ cKeySequence::cKeySequence (cKeyCombination keyCombination1, cKeyCombination key
 }
 
 //------------------------------------------------------------------------------
-bool cKeySequence::operator==(const cKeySequence& other) const
+bool cKeySequence::operator== (const cKeySequence& other) const
 {
-	if (keySequence.size () != other.keySequence.size ()) return false;
+	if (keySequence.size() != other.keySequence.size()) return false;
 
-	for (size_t i = 0; i < keySequence.size (); ++i)
+	for (size_t i = 0; i < keySequence.size(); ++i)
 	{
 		if (keySequence[i] != other.keySequence[i]) return false;
 	}
@@ -77,49 +77,49 @@ bool cKeySequence::operator==(const cKeySequence& other) const
 }
 
 //------------------------------------------------------------------------------
-bool cKeySequence::operator!=(const cKeySequence& other) const
+bool cKeySequence::operator!= (const cKeySequence& other) const
 {
-	return !(*this == other);
+	return ! (*this == other);
 }
 
 //------------------------------------------------------------------------------
 void cKeySequence::addKeyCombination (cKeyCombination keyCombination)
 {
-	keySequence.push_back (std::move(keyCombination));
+	keySequence.push_back (std::move (keyCombination));
 }
 
 //------------------------------------------------------------------------------
-void cKeySequence::removeFirst ()
+void cKeySequence::removeFirst()
 {
-	keySequence.erase (keySequence.begin ());
+	keySequence.erase (keySequence.begin());
 }
 
 //------------------------------------------------------------------------------
-size_t cKeySequence::length () const
+size_t cKeySequence::length() const
 {
-	return keySequence.size ();
+	return keySequence.size();
 }
 
 //------------------------------------------------------------------------------
-const cKeyCombination& cKeySequence::operator[](size_t index) const
+const cKeyCombination& cKeySequence::operator[] (size_t index) const
 {
 	return keySequence[index];
 }
 
 //------------------------------------------------------------------------------
-void cKeySequence::reset ()
+void cKeySequence::reset()
 {
-	keySequence.clear ();
+	keySequence.clear();
 }
 
 //------------------------------------------------------------------------------
-std::string cKeySequence::toString () const
+std::string cKeySequence::toString() const
 {
 	std::string result;
-	for (size_t i = 0; i < keySequence.size (); ++i)
+	for (size_t i = 0; i < keySequence.size(); ++i)
 	{
 		if (i > 0) result += ",";
-		result += keySequence[i].toString ();
+		result += keySequence[i].toString();
 	}
 	return result;
 }

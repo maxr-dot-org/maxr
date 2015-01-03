@@ -28,18 +28,18 @@
 #include "video.h"
 
 //------------------------------------------------------------------------------
-cEventManager::cEventManager ()
+cEventManager::cEventManager()
 {}
 
 //------------------------------------------------------------------------------
-cEventManager& cEventManager::getInstance ()
+cEventManager& cEventManager::getInstance()
 {
 	static cEventManager instance;
 	return instance;
 }
 
 //------------------------------------------------------------------------------
-void cEventManager::run ()
+void cEventManager::run()
 {
 	SDL_Event event;
 	while (SDL_PollEvent (&event))
@@ -53,31 +53,31 @@ void cEventManager::handleSdlEvent (const SDL_Event& event)
 {
 	switch (event.type)
 	{
-	case SDL_KEYDOWN:
-	case SDL_KEYUP:
-		keyboardEvent (cKeyboardEvent (event.key));
-		break;
-	case SDL_TEXTINPUT:
-		textInputEvent (cTextInputEvent (event.text));
-		break;
-	case SDL_MOUSEBUTTONDOWN:
-	case SDL_MOUSEBUTTONUP:
-		// NOTE: we do not handle all mouse buttons yet.
-		if (event.button.button != SDL_BUTTON_LEFT && event.button.button != SDL_BUTTON_RIGHT && event.button.button != SDL_BUTTON_MIDDLE) break;
-		mouseButtonEvent (cEventMouseButton (event.button));
-		break;
-	case SDL_MOUSEWHEEL:
-		mouseWheelEvent (cEventMouseWheel (event.wheel));
-		break;
-	case SDL_QUIT:
-		Quit ();
-		break;
-	case SDL_MOUSEMOTION:
-		mouseMotionEvent (cEventMouseMotion (event.motion));
-		break;
-	case SDL_WINDOWEVENT:
-		Video.draw ();
-		break;
-	default: break;
+		case SDL_KEYDOWN:
+		case SDL_KEYUP:
+			keyboardEvent (cKeyboardEvent (event.key));
+			break;
+		case SDL_TEXTINPUT:
+			textInputEvent (cTextInputEvent (event.text));
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+		case SDL_MOUSEBUTTONUP:
+			// NOTE: we do not handle all mouse buttons yet.
+			if (event.button.button != SDL_BUTTON_LEFT && event.button.button != SDL_BUTTON_RIGHT && event.button.button != SDL_BUTTON_MIDDLE) break;
+			mouseButtonEvent (cEventMouseButton (event.button));
+			break;
+		case SDL_MOUSEWHEEL:
+			mouseWheelEvent (cEventMouseWheel (event.wheel));
+			break;
+		case SDL_QUIT:
+			Quit();
+			break;
+		case SDL_MOUSEMOTION:
+			mouseMotionEvent (cEventMouseMotion (event.motion));
+			break;
+		case SDL_WINDOWEVENT:
+			Video.draw();
+			break;
+		default: break;
 	}
 }

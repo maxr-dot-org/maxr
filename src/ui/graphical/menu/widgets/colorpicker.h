@@ -34,7 +34,7 @@ public:
 
 	void setSelectedColor (const cRgbColor& color);
 	void setSelectedColor (const cHsvColor& color);
-	cRgbColor getSelectedColor () const;
+	cRgbColor getSelectedColor() const;
 
 	cSignal<void ()> selectedColorChanged;
 
@@ -56,13 +56,13 @@ private:
 	cImage* selectedColorMarker;
 	cImage* selectedColorHueMarker;
 
-	AutoSurface createColorsSurface ();
-	AutoSurface createColorBarSurface ();
+	AutoSurface createColorsSurface();
+	AutoSurface createColorBarSurface();
 
-	AutoSurface createColorMarkerSurface ();
-	AutoSurface createColorHueMarkerSurface ();
+	AutoSurface createColorMarkerSurface();
+	AutoSurface createColorHueMarkerSurface();
 
-	void updateMarkers ();
+	void updateMarkers();
 
 	void updateColorByMousePosition (const cPosition& mousePosition);
 	void updateColorHueByMousePosition (const cPosition& mousePosition);

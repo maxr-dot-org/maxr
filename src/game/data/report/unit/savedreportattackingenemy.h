@@ -36,12 +36,12 @@ public:
 	virtual void pushInto (cNetMessage& message) const MAXR_OVERRIDE_FUNCTION;
 	virtual void pushInto (tinyxml2::XMLElement& element) const MAXR_OVERRIDE_FUNCTION;
 
-	virtual eSavedReportType getType () const MAXR_OVERRIDE_FUNCTION;
+	virtual eSavedReportType getType() const MAXR_OVERRIDE_FUNCTION;
 
 	virtual void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 
 protected:
-	virtual std::string getText () const MAXR_OVERRIDE_FUNCTION;
+	virtual std::string getText() const MAXR_OVERRIDE_FUNCTION;
 
 private:
 	std::string unitName;

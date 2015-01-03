@@ -149,7 +149,7 @@ void sendUnitData (cServer& server, const cUnit& unit, const cPlayer& receiver);
  * all players that can see the unit.
  *
  * @param unit The unit from which the data should be taken
- */ 
+ */
 void sendUnitData (cServer& server, const cUnit& unit);
 
 void sendSpecificUnitData (cServer& server, const cVehicle& Vehicle);

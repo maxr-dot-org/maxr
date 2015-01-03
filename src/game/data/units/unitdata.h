@@ -30,10 +30,10 @@
 // struct for vehicle properties
 struct sUnitData
 {
-	sUnitData ();
+	sUnitData();
 	sUnitData (const sUnitData& other);
 
-	sUnitData& operator=(const sUnitData& other);
+	sUnitData& operator= (const sUnitData& other);
 
 	// Main
 	sID ID;
@@ -170,49 +170,49 @@ struct sUnitData
 	bool isConnectorGraphic;
 	int hasFrames;
 
-	int getVersion () const;
+	int getVersion() const;
 	void setVersion (int value);
 
-	int getSpeed () const;
+	int getSpeed() const;
 	void setSpeed (int value);
 
-	int getSpeedMax () const;
+	int getSpeedMax() const;
 	void setSpeedMax (int value);
 
-	int getHitpoints () const;
+	int getHitpoints() const;
 	void setHitpoints (int value);
 
-	int getHitpointsMax () const;
+	int getHitpointsMax() const;
 	void setHitpointsMax (int value);
 
-	int getScan () const;
+	int getScan() const;
 	void setScan (int value);
 
-	int getRange () const;
+	int getRange() const;
 	void setRange (int value);
 
-	int getShots () const;
+	int getShots() const;
 	void setShots (int value);
 
-	int getShotsMax () const;
+	int getShotsMax() const;
 	void setShotsMax (int value);
 
-	int getAmmo () const;
+	int getAmmo() const;
 	void setAmmo (int value);
 
-	int getAmmoMax () const;
+	int getAmmoMax() const;
 	void setAmmoMax (int value);
 
-	int getDamage () const;
+	int getDamage() const;
 	void setDamage (int value);
 
-	int getArmor () const;
+	int getArmor() const;
 	void setArmor (int value);
 
-	int getStoredResources () const;
+	int getStoredResources() const;
 	void setStoredResources (int value);
 
-	int getStoredUnits () const;
+	int getStoredUnits() const;
 	void setStoredUnits (int value);
 
 	mutable cSignal<void ()> versionChanged;

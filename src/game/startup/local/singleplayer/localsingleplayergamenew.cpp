@@ -32,7 +32,7 @@
 //------------------------------------------------------------------------------
 void applyUnitUpgrades (cPlayer& player, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades)
 {
-	for (size_t i = 0; i < unitUpgrades.size (); ++i)
+	for (size_t i = 0; i < unitUpgrades.size(); ++i)
 	{
 		const auto& unitId = unitUpgrades[i].first;
 
@@ -47,7 +47,7 @@ void applyUnitUpgrades (cPlayer& player, const std::vector<std::pair<sID, cUnitU
 }
 
 //------------------------------------------------------------------------------
-cLocalSingleplayerGameNew::cLocalSingleplayerGameNew () :
+cLocalSingleplayerGameNew::cLocalSingleplayerGameNew() :
 	playerClan (-1)
 {}
 
@@ -65,7 +65,7 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 	server->setGameSettings (*gameSettings);
 	client->setGameSettings (*gameSettings);
 
-	auto player = createPlayer ();
+	auto player = createPlayer();
 
 	server->addPlayer (std::make_unique<cPlayer> (player));
 	//server->changeStateToInitGame ();
@@ -74,15 +74,15 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 	players.push_back (player);
 	client->setPlayers (players, 0);
 
-	if (gameSettings->getGameType () == eGameSettingsGameType::Turns)
+	if (gameSettings->getGameType() == eGameSettingsGameType::Turns)
 	{
 		server->setActiveTurnPlayer (*server->playerList[0]);
 	}
 
-	auto& clientPlayer = client->getActivePlayer ();
+	auto& clientPlayer = client->getActivePlayer();
 	if (playerClan != -1) clientPlayer.setClan (playerClan);
 
-	server->start ();
+	server->start();
 
 	applyUnitUpgrades (clientPlayer, unitUpgrades);
 
@@ -94,7 +94,7 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 
 	sendReadyToStart (*client);
 
-	server->startTurnTimers ();
+	server->startTurnTimers();
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
@@ -104,14 +104,14 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 	playerGameGuiState.setMapPosition (landingPosition);
 	gameGuiController->addPlayerGameGuiState (clientPlayer, std::move (playerGameGuiState));
 
-	gameGuiController->start ();
+	gameGuiController->start();
 
 	using namespace std::placeholders;
 	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cLocalSingleplayerGameNew::save, this, _1, _2));
 
 	terminate = false;
 
-	application.addRunnable (shared_from_this ());
+	application.addRunnable (shared_from_this());
 
 	signalConnectionManager.connect (gameGuiController->terminated, [&]() { terminate = true; });
 }
@@ -153,11 +153,11 @@ void cLocalSingleplayerGameNew::setLandingPosition (const cPosition& landingPosi
 }
 
 //------------------------------------------------------------------------------
-cPlayerBasicData cLocalSingleplayerGameNew::createPlayer ()
+cPlayerBasicData cLocalSingleplayerGameNew::createPlayer()
 {
-	cPlayerBasicData player(cSettings::getInstance ().getPlayerName (), cPlayerColor(), 0);
+	cPlayerBasicData player (cSettings::getInstance().getPlayerName(), cPlayerColor(), 0);
 
-	player.setLocal ();
+	player.setLocal();
 
 	return player;
 }

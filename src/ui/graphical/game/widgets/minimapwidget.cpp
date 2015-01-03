@@ -36,26 +36,26 @@ cMiniMapWidget::cMiniMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	dynamicMap (nullptr),
 	player (nullptr),
 	zoomFactor (1),
-	offset (0,0),
+	offset (0, 0),
 	attackUnitsOnly (false),
-	mapViewWindow (cPosition (0,0), cPosition (0,0))
+	mapViewWindow (cPosition (0, 0), cPosition (0, 0))
 {
-    surface = AutoSurface (SDL_CreateRGBSurface (0, getSize ().x (), getSize ().y (), 32, 0, 0, 0, 0));
-    viewWindowSurface = AutoSurface (SDL_CreateRGBSurface (0, getSize ().x (), getSize ().y (), 32, 0, 0, 0, 0));
+	surface = AutoSurface (SDL_CreateRGBSurface (0, getSize().x(), getSize().y(), 32, 0, 0, 0, 0));
+	viewWindowSurface = AutoSurface (SDL_CreateRGBSurface (0, getSize().x(), getSize().y(), 32, 0, 0, 0, 0));
 }
 
 //------------------------------------------------------------------------------
 void cMiniMapWidget::setDynamicMap (std::shared_ptr<const cMap> dynamicMap_)
 {
-	dynamicMap = std::move(dynamicMap_);
+	dynamicMap = std::move (dynamicMap_);
 
-	dynamicMapSignalConnectionManager.disconnectAll ();
+	dynamicMapSignalConnectionManager.disconnectAll();
 
 	if (dynamicMap != nullptr)
 	{
-		dynamicMapSignalConnectionManager.connect (dynamicMap->addedUnit, [&](const cUnit&){ surfaceOutdated = true; });
-		dynamicMapSignalConnectionManager.connect (dynamicMap->removedUnit, [&](const cUnit&){ surfaceOutdated = true; });
-		dynamicMapSignalConnectionManager.connect (dynamicMap->movedVehicle, [&](const cVehicle&, const cPosition&){ surfaceOutdated = true; });
+		dynamicMapSignalConnectionManager.connect (dynamicMap->addedUnit, [&] (const cUnit&) { surfaceOutdated = true; });
+		dynamicMapSignalConnectionManager.connect (dynamicMap->removedUnit, [&] (const cUnit&) { surfaceOutdated = true; });
+		dynamicMapSignalConnectionManager.connect (dynamicMap->movedVehicle, [&] (const cVehicle&, const cPosition&) { surfaceOutdated = true; });
 	}
 
 	surfaceOutdated = true;
@@ -76,7 +76,7 @@ void cMiniMapWidget::setViewWindow (const cBox<cPosition>& mapViewWindow_)
 
 	viewWindowSurfaeOutdated = true;
 
-	updateOffset ();
+	updateOffset();
 }
 
 //------------------------------------------------------------------------------
@@ -92,7 +92,7 @@ void cMiniMapWidget::setZoomFactor (int zoomFactor_)
 {
 	zoomFactor = zoomFactor_;
 
-	if (!updateOffset ())
+	if (!updateOffset())
 	{
 		surfaceOutdated = true;
 	}
@@ -100,24 +100,24 @@ void cMiniMapWidget::setZoomFactor (int zoomFactor_)
 }
 
 //------------------------------------------------------------------------------
-bool cMiniMapWidget::updateOffset ()
+bool cMiniMapWidget::updateOffset()
 {
 	auto oldOffset = offset;
 
-	offset.x () = std::min (mapViewWindow.getMinCorner ().x (), offset.x ());
-	offset.y () = std::min (mapViewWindow.getMinCorner ().y (), offset.y ());
+	offset.x() = std::min (mapViewWindow.getMinCorner().x(), offset.x());
+	offset.y() = std::min (mapViewWindow.getMinCorner().y(), offset.y());
 
-	const cPosition displaySize = staticMap->getSize () / zoomFactor;
+	const cPosition displaySize = staticMap->getSize() / zoomFactor;
 	const cPosition endDisplay = offset + displaySize;
 
-	offset.x () = std::max (std::max (mapViewWindow.getMaxCorner ().x (), endDisplay.x ()) - displaySize.x (), offset.x ());
-	offset.y () = std::max (std::max (mapViewWindow.getMaxCorner ().y (), endDisplay.y ()) - displaySize.y (), offset.y ());
+	offset.x() = std::max (std::max (mapViewWindow.getMaxCorner().x(), endDisplay.x()) - displaySize.x(), offset.x());
+	offset.y() = std::max (std::max (mapViewWindow.getMaxCorner().y(), endDisplay.y()) - displaySize.y(), offset.y());
 
-	offset.x () = std::min (staticMap->getSize ().x () - displaySize.x (), offset.x ());
-	offset.y () = std::min (staticMap->getSize ().y () - displaySize.y (), offset.y ());
+	offset.x() = std::min (staticMap->getSize().x() - displaySize.x(), offset.x());
+	offset.y() = std::min (staticMap->getSize().y() - displaySize.y(), offset.y());
 
-	offset.x () = std::max (0, offset.x ());
-	offset.y () = std::max (0, offset.y ());
+	offset.x() = std::max (0, offset.x());
+	offset.y() = std::max (0, offset.y());
 
 	if (oldOffset != offset)
 	{
@@ -132,33 +132,33 @@ cPosition cMiniMapWidget::computeMapPosition (const cPosition& screenPosition)
 {
 	if (!isAt (screenPosition)) return cPosition (0, 0);
 
-	const cPosition screenOffset = screenPosition - getPosition ();
+	const cPosition screenOffset = screenPosition - getPosition();
 
-	const cPosition displaySize = staticMap->getSize () / zoomFactor;
+	const cPosition displaySize = staticMap->getSize() / zoomFactor;
 
 	cPosition mapPosition;
 
-	mapPosition.x () = offset.x () + (int)((double)screenOffset.x () / getSize ().x () * displaySize.x ());
-	mapPosition.y () = offset.y () + (int)((double)screenOffset.y () / getSize ().y () * displaySize.y ());
-	
+	mapPosition.x() = offset.x() + (int) ((double)screenOffset.x() / getSize().x() * displaySize.x());
+	mapPosition.y() = offset.y() + (int) ((double)screenOffset.y() / getSize().y() * displaySize.y());
+
 	return mapPosition;
 }
 
 //------------------------------------------------------------------------------
 void cMiniMapWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
-	if(surfaceOutdated) renewSurface ();
-	if(viewWindowSurfaeOutdated) renewViewWindowSurface ();
+	if (surfaceOutdated) renewSurface();
+	if (viewWindowSurfaeOutdated) renewViewWindowSurface();
 
 	if (surface != nullptr)
 	{
-		auto position = getArea ().toSdlRect ();
-		SDL_BlitSurface (surface.get (), nullptr, &destination, &position);
+		auto position = getArea().toSdlRect();
+		SDL_BlitSurface (surface.get(), nullptr, &destination, &position);
 	}
 	if (viewWindowSurface != nullptr)
 	{
-		auto position = getArea ().toSdlRect ();
-		SDL_BlitSurface (viewWindowSurface.get (), nullptr, &destination, &position);
+		auto position = getArea().toSdlRect();
+		SDL_BlitSurface (viewWindowSurface.get(), nullptr, &destination, &position);
 	}
 	cWidget::draw (destination, clipRect);
 }
@@ -166,9 +166,9 @@ void cMiniMapWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clip
 //------------------------------------------------------------------------------
 bool cMiniMapWidget::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset)
 {
-	if (application.hasMouseFocus (*this) && startedMoving && isAt (mouse.getPosition ()))
+	if (application.hasMouseFocus (*this) && startedMoving && isAt (mouse.getPosition()))
 	{
-		focus (computeMapPosition (mouse.getPosition ()));
+		focus (computeMapPosition (mouse.getPosition()));
 		return true;
 	}
 	return cClickableWidget::handleMouseMoved (application, mouse, offset);
@@ -180,7 +180,7 @@ bool cMiniMapWidget::handleMousePressed (cApplication& application, cMouse& mous
 	if (button == eMouseButtonType::Left)
 	{
 		application.grapMouseFocus (*this);
-		focus (computeMapPosition (mouse.getPosition ()));
+		focus (computeMapPosition (mouse.getPosition()));
 		startedMoving = true;
 		return true;
 	}
@@ -210,7 +210,7 @@ bool cMiniMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 {
 	if (button == eMouseButtonType::Right)
 	{
-		triggeredMove (computeMapPosition (mouse.getPosition ()));
+		triggeredMove (computeMapPosition (mouse.getPosition()));
 		return true;
 	}
 	return false;
@@ -223,63 +223,63 @@ bool cMiniMapWidget::acceptButton (eMouseButtonType button) const
 }
 
 //------------------------------------------------------------------------------
-void cMiniMapWidget::renewSurface ()
+void cMiniMapWidget::renewSurface()
 {
-	drawLandscape ();
-	drawFog ();
-	drawUnits ();
+	drawLandscape();
+	drawFog();
+	drawUnits();
 
 	surfaceOutdated = false;
 }
 
 //------------------------------------------------------------------------------
-void cMiniMapWidget::drawLandscape ()
+void cMiniMapWidget::drawLandscape()
 {
 	auto minimap = static_cast<Uint32*> (surface->pixels);
-	for (int miniMapX = 0; miniMapX < getSize ().x (); ++miniMapX)
+	for (int miniMapX = 0; miniMapX < getSize().x(); ++miniMapX)
 	{
 		// calculate the field on the map
-		int terrainx = (miniMapX * staticMap->getSize(). x ()) / (getSize ().x () * zoomFactor) + offset.x ();
-		terrainx = std::min (terrainx, staticMap->getSize(). x () - 1);
+		int terrainx = (miniMapX * staticMap->getSize(). x()) / (getSize().x() * zoomFactor) + offset.x();
+		terrainx = std::min (terrainx, staticMap->getSize(). x() - 1);
 
 		// calculate the position within the terrain graphic
 		// (for better rendering of maps < getSize())
-		const int offsetx = ((miniMapX * staticMap->getSize(). x ()) % (getSize ().x () * zoomFactor)) * 64 / (getSize ().x () * zoomFactor);
+		const int offsetx = ((miniMapX * staticMap->getSize(). x()) % (getSize().x() * zoomFactor)) * 64 / (getSize().x() * zoomFactor);
 
-		for (int miniMapY = 0; miniMapY < getSize ().y (); ++miniMapY)
+		for (int miniMapY = 0; miniMapY < getSize().y(); ++miniMapY)
 		{
-			int terrainy = (miniMapY * staticMap->getSize(). y ()) / (getSize ().y () * zoomFactor) + offset.y ();
-			terrainy = std::min (terrainy, staticMap->getSize(). y () - 1);
-			const int offsety = ((miniMapY * staticMap->getSize(). y ()) % (getSize ().y () * zoomFactor)) * 64 / (getSize ().y () * zoomFactor);
+			int terrainy = (miniMapY * staticMap->getSize(). y()) / (getSize().y() * zoomFactor) + offset.y();
+			terrainy = std::min (terrainy, staticMap->getSize(). y() - 1);
+			const int offsety = ((miniMapY * staticMap->getSize(). y()) % (getSize().y() * zoomFactor)) * 64 / (getSize().y() * zoomFactor);
 
-			const auto& terrain = staticMap->getTerrain (cPosition(terrainx, terrainy));
+			const auto& terrain = staticMap->getTerrain (cPosition (terrainx, terrainy));
 			const auto* terrainPixels = reinterpret_cast<const Uint8*> (terrain.sf_org->pixels);
 			const auto index = terrainPixels[offsetx + offsety * 64];
 			const auto sdlcolor = terrain.sf_org->format->palette->colors[index];
 			const auto color = (sdlcolor.r << 16) + (sdlcolor.g << 8) + sdlcolor.b;
 
-			minimap[miniMapX + miniMapY * getSize ().x ()] = color;
+			minimap[miniMapX + miniMapY * getSize().x()] = color;
 		}
 	}
 }
 
 //------------------------------------------------------------------------------
-void cMiniMapWidget::drawFog ()
+void cMiniMapWidget::drawFog()
 {
 	if (!player) return;
 
 	auto minimap = static_cast<Uint32*> (surface->pixels);
 
-	for (int miniMapX = 0; miniMapX < getSize ().x (); ++miniMapX)
+	for (int miniMapX = 0; miniMapX < getSize().x(); ++miniMapX)
 	{
-		const auto terrainX = (miniMapX * staticMap->getSize(). x()) / (getSize ().x () * zoomFactor) + offset.x ();
-		for (int miniMapY = 0; miniMapY < getSize ().y (); ++miniMapY)
+		const auto terrainX = (miniMapX * staticMap->getSize(). x()) / (getSize().x() * zoomFactor) + offset.x();
+		for (int miniMapY = 0; miniMapY < getSize().y(); ++miniMapY)
 		{
-			const auto terrainY = (miniMapY * staticMap->getSize(). y ()) / (getSize ().y () * zoomFactor) +  offset.y ();
+			const auto terrainY = (miniMapY * staticMap->getSize(). y()) / (getSize().y() * zoomFactor) +  offset.y();
 
 			if (player->canSeeAt (cPosition (terrainX, terrainY))) continue;
 
-			Uint8* color = reinterpret_cast<Uint8*> (&minimap[miniMapX + miniMapY * getSize ().x ()]);
+			Uint8* color = reinterpret_cast<Uint8*> (&minimap[miniMapX + miniMapY * getSize().x()]);
 			color[0] = static_cast<Uint8> (color[0] * 0.6f);
 			color[1] = static_cast<Uint8> (color[1] * 0.6f);
 			color[2] = static_cast<Uint8> (color[2] * 0.6f);
@@ -288,7 +288,7 @@ void cMiniMapWidget::drawFog ()
 }
 
 //------------------------------------------------------------------------------
-void cMiniMapWidget::drawUnits ()
+void cMiniMapWidget::drawUnits()
 {
 	if (!dynamicMap) return;
 
@@ -299,53 +299,53 @@ void cMiniMapWidget::drawUnits ()
 
 	// the size of the rect, that is drawn for each unit
 	SDL_Rect rect;
-	rect.w = std::max (2, getSize ().x () * zoomFactor / staticMap->getSize(). x ());
-	rect.h = std::max (2, getSize ().y () * zoomFactor / staticMap->getSize(). y ());
+	rect.w = std::max (2, getSize().x() * zoomFactor / staticMap->getSize(). x());
+	rect.h = std::max (2, getSize().y() * zoomFactor / staticMap->getSize(). y());
 
-	for (int mapx = 0; mapx < staticMap->getSize(). x (); ++mapx)
+	for (int mapx = 0; mapx < staticMap->getSize(). x(); ++mapx)
 	{
-		rect.x = ((mapx - offset.x ()) * getSize().x () * zoomFactor) / staticMap->getSize(). x ();
+		rect.x = ((mapx - offset.x()) * getSize().x() * zoomFactor) / staticMap->getSize(). x();
 
-		if (rect.x < 0 || rect.x >= getSize ().x ()) continue;
+		if (rect.x < 0 || rect.x >= getSize().x()) continue;
 
-		for (int mapy = 0; mapy < staticMap->getSize(). y (); ++mapy)
+		for (int mapy = 0; mapy < staticMap->getSize(). y(); ++mapy)
 		{
 			const cPosition mapPosition (mapx, mapy);
 
-			rect.y = ((mapy - offset.y ()) * getSize ().y () * zoomFactor) / staticMap->getSize(). y ();
-			if (rect.y < 0 || rect.y >= getSize ().y ()) continue;
+			rect.y = ((mapy - offset.y()) * getSize().y() * zoomFactor) / staticMap->getSize(). y();
+			if (rect.y < 0 || rect.y >= getSize().y()) continue;
 
 			if (player && !player->canSeeAt (mapPosition)) continue;
 
 			const cMapField& field = dynamicMap->getField (mapPosition);
 
 			// draw building
-			const cBuilding* building = field.getBuilding ();
-			if (building && building->getOwner ())
+			const cBuilding* building = field.getBuilding();
+			if (building && building->getOwner())
 			{
 				if (!attackUnitsOnly || building->data.canAttack)
 				{
-					SDL_FillRect (surface.get (), &rect, building->getOwner ()->getColor ().getColor ().toMappedSdlRGBAColor (surface->format));
+					SDL_FillRect (surface.get(), &rect, building->getOwner()->getColor().getColor().toMappedSdlRGBAColor (surface->format));
 				}
 			}
 
 			// draw vehicle
-			const cVehicle* vehicle = field.getVehicle ();
+			const cVehicle* vehicle = field.getVehicle();
 			if (vehicle)
 			{
 				if (!attackUnitsOnly || vehicle->data.canAttack)
 				{
-					SDL_FillRect (surface.get (), &rect, vehicle->getOwner ()->getColor ().getColor ().toMappedSdlRGBAColor (surface->format));
+					SDL_FillRect (surface.get(), &rect, vehicle->getOwner()->getColor().getColor().toMappedSdlRGBAColor (surface->format));
 				}
 			}
 
 			// draw plane
-			vehicle = field.getPlane ();
+			vehicle = field.getPlane();
 			if (vehicle)
 			{
 				if (!attackUnitsOnly || vehicle->data.canAttack)
 				{
-					SDL_FillRect (surface.get (), &rect, vehicle->getOwner ()->getColor ().getColor ().toMappedSdlRGBAColor (surface->format));
+					SDL_FillRect (surface.get(), &rect, vehicle->getOwner()->getColor().getColor().toMappedSdlRGBAColor (surface->format));
 				}
 			}
 		}
@@ -353,37 +353,37 @@ void cMiniMapWidget::drawUnits ()
 }
 
 //------------------------------------------------------------------------------
-void cMiniMapWidget::renewViewWindowSurface ()
+void cMiniMapWidget::renewViewWindowSurface()
 {
-	SDL_FillRect (viewWindowSurface.get (), nullptr, 0xFF00FF);
-	SDL_SetColorKey (viewWindowSurface.get (), SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (viewWindowSurface.get(), nullptr, 0xFF00FF);
+	SDL_SetColorKey (viewWindowSurface.get(), SDL_TRUE, 0xFF00FF);
 
-	const cPosition start = (mapViewWindow.getMinCorner () - offset) * getSize () * zoomFactor / staticMap->getSize ();
-	const cPosition end = (mapViewWindow.getMaxCorner () - offset) * getSize () * zoomFactor / staticMap->getSize ();
+	const cPosition start = (mapViewWindow.getMinCorner() - offset) * getSize() * zoomFactor / staticMap->getSize();
+	const cPosition end = (mapViewWindow.getMaxCorner() - offset) * getSize() * zoomFactor / staticMap->getSize();
 
 	Uint32* minimap = static_cast<Uint32*> (viewWindowSurface->pixels);
-	for (int y = start.y (); y <= end.y (); ++y)
+	for (int y = start.y(); y <= end.y(); ++y)
 	{
-		if (y < 0 || y >= getSize ().y ()) continue;
-		if (start.x () >= 0 && start.x () < getSize ().x ())
+		if (y < 0 || y >= getSize().y()) continue;
+		if (start.x() >= 0 && start.x() < getSize().x())
 		{
-			minimap[y * getSize ().x () + start.x ()] = MINIMAP_COLOR;
+			minimap[y * getSize().x() + start.x()] = MINIMAP_COLOR;
 		}
-		if (end.x () >= 0 && end.x () < getSize ().x ())
+		if (end.x() >= 0 && end.x() < getSize().x())
 		{
-			minimap[y * getSize ().x () + end.x ()] = MINIMAP_COLOR;
+			minimap[y * getSize().x() + end.x()] = MINIMAP_COLOR;
 		}
 	}
-	for (int x = start.x (); x <= end.x (); ++x)
+	for (int x = start.x(); x <= end.x(); ++x)
 	{
-		if (x < 0 || x >= getSize ().x ()) continue;
-		if (start.y () >= 0 && start.y () < getSize ().y ())
+		if (x < 0 || x >= getSize().x()) continue;
+		if (start.y() >= 0 && start.y() < getSize().y())
 		{
-			minimap[start.y () * getSize ().x () + x] = MINIMAP_COLOR;
+			minimap[start.y() * getSize().x() + x] = MINIMAP_COLOR;
 		}
-		if (end.y () >= 0 && end.y () < getSize ().y ())
+		if (end.y() >= 0 && end.y() < getSize().y())
 		{
-			minimap[end.y () * getSize ().x () + x] = MINIMAP_COLOR;
+			minimap[end.y() * getSize().x() + x] = MINIMAP_COLOR;
 		}
 	}
 	viewWindowSurfaeOutdated = false;

@@ -37,7 +37,7 @@ class cPlayerBasicData;
 class cNetworkClientGameReconnection : public cNetworkClientGame
 {
 public:
-	cNetworkClientGameReconnection ();
+	cNetworkClientGameReconnection();
 
 	void start (cApplication& application);
 
@@ -45,9 +45,9 @@ public:
 
 	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
 
-	const std::shared_ptr<cStaticMap>& getStaticMap ();
-	const std::vector<cPlayerBasicData>& getPlayers ();
-	const cPlayerBasicData& getLocalPlayer ();
+	const std::shared_ptr<cStaticMap>& getStaticMap();
+	const std::vector<cPlayerBasicData>& getPlayers();
+	const cPlayerBasicData& getLocalPlayer();
 private:
 	cSignalConnectionManager signalConnectionManager;
 

@@ -62,10 +62,10 @@ public:
 	cSoundChunk SNDHitLarge;
 
 	// Explosions
-    std::array<cSoundChunk, 4> EXPBig;
-    std::array<cSoundChunk, 2> EXPBigWet;
-    std::array<cSoundChunk, 3> EXPSmall;
-    std::array<cSoundChunk, 3> EXPSmallWet;
+	std::array<cSoundChunk, 4> EXPBig;
+	std::array<cSoundChunk, 2> EXPBigWet;
+	std::array<cSoundChunk, 3> EXPSmall;
+	std::array<cSoundChunk, 3> EXPSmallWet;
 
 	// Dummy
 	cSoundChunk DummySound;
@@ -77,41 +77,41 @@ class cVoiceData
 public:
 	void load (const char* path);
 public:
-    std::array<cSoundChunk, 2> VOIAmmoLow;
-    std::array<cSoundChunk, 2> VOIAmmoEmpty;
-    std::array<cSoundChunk, 2> VOIAttacking;
-    std::array<cSoundChunk, 2> VOIAttackingEnemy;
-    std::array<cSoundChunk, 3> VOIAttackingUs;
-    std::array<cSoundChunk, 4> VOIBuildDone;
+	std::array<cSoundChunk, 2> VOIAmmoLow;
+	std::array<cSoundChunk, 2> VOIAmmoEmpty;
+	std::array<cSoundChunk, 2> VOIAttacking;
+	std::array<cSoundChunk, 2> VOIAttackingEnemy;
+	std::array<cSoundChunk, 3> VOIAttackingUs;
+	std::array<cSoundChunk, 4> VOIBuildDone;
 	cSoundChunk VOIClearing;
-    std::array<cSoundChunk, 2> VOIClearingMines;
-    std::array<cSoundChunk, 3> VOICommandoFailed;
-    std::array<cSoundChunk, 2> VOIDestroyedUs;
-    std::array<cSoundChunk, 2> VOIDetected;
-    std::array<cSoundChunk, 3> VOILanding;
+	std::array<cSoundChunk, 2> VOIClearingMines;
+	std::array<cSoundChunk, 3> VOICommandoFailed;
+	std::array<cSoundChunk, 2> VOIDestroyedUs;
+	std::array<cSoundChunk, 2> VOIDetected;
+	std::array<cSoundChunk, 3> VOILanding;
 	cSoundChunk VOILayingMines;
-    std::array<cSoundChunk, 2> VOINoPath;
+	std::array<cSoundChunk, 2> VOINoPath;
 	cSoundChunk VOINoSpeed;
-    std::array<cSoundChunk, 4> VOIOK;
+	std::array<cSoundChunk, 4> VOIOK;
 	cSoundChunk VOIReammo;
 	cSoundChunk VOIReammoAll;
-    std::array<cSoundChunk, 2> VOIRepaired;
-    std::array<cSoundChunk, 2> VOIRepairedAll;
+	std::array<cSoundChunk, 2> VOIRepaired;
+	std::array<cSoundChunk, 2> VOIRepairedAll;
 	cSoundChunk VOIResearchComplete;
 	cSoundChunk VOISaved;
 	cSoundChunk VOISentry;
 	cSoundChunk VOIStartMore;
 	cSoundChunk VOIStartNone;
 	cSoundChunk VOIStartOne;
-    std::array<cSoundChunk, 2> VOIStatusRed;
-    std::array<cSoundChunk, 2> VOIStatusYellow;
+	std::array<cSoundChunk, 2> VOIStatusRed;
+	std::array<cSoundChunk, 2> VOIStatusYellow;
 	cSoundChunk VOISubDetected;
-    std::array<cSoundChunk, 2> VOISurveying;
+	std::array<cSoundChunk, 2> VOISurveying;
 	cSoundChunk VOITransferDone;
-    std::array<cSoundChunk, 3> VOITurnEnd20Sec;
+	std::array<cSoundChunk, 3> VOITurnEnd20Sec;
 	cSoundChunk VOIUnitDisabled;
-    std::array<cSoundChunk, 2> VOIUnitDisabledByEnemy;
-    std::array<cSoundChunk, 2> VOIUnitStolen;
+	std::array<cSoundChunk, 2> VOIUnitDisabledByEnemy;
+	std::array<cSoundChunk, 2> VOIUnitStolen;
 	cSoundChunk VOIUnitStolenByEnemy;
 } EX VoiceData;
 

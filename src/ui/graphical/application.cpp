@@ -35,8 +35,8 @@
 #include "ui/graphical/framecounter.h"
 
 //------------------------------------------------------------------------------
-cApplication::cApplication () :
-	frameCounter(std::make_shared<cFrameCounter>()),
+cApplication::cApplication() :
+	frameCounter (std::make_shared<cFrameCounter>()),
 	activeMouse (nullptr),
 	activeKeyboard (nullptr),
 	keyFocusWidget (nullptr),
@@ -45,10 +45,10 @@ cApplication::cApplication () :
 {
 	signalConnectionManager.connect (Video.resolutionChanged, [this]()
 	{
-		for (auto i = modalWindows.rbegin (); i != modalWindows.rend (); ++i)
+		for (auto i = modalWindows.rbegin(); i != modalWindows.rend(); ++i)
 		{
 			const auto& modalWindow = *i;
-			if (modalWindow->wantsCentered ())
+			if (modalWindow->wantsCentered())
 			{
 				center (*modalWindow);
 			}
@@ -65,38 +65,38 @@ cApplication::cApplication () :
 	const auto widgetFramesShortcut = addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight, SDLK_w))));
 	signalConnectionManager.connect (widgetFramesShortcut->triggered, [this]()
 	{
-		cWidget::toggleDrawDebugFrames ();
+		cWidget::toggleDrawDebugFrames();
 	});
 }
 
 //------------------------------------------------------------------------------
-cApplication::~cApplication ()
+cApplication::~cApplication()
 {}
 
 //------------------------------------------------------------------------------
-void cApplication::execute ()
+void cApplication::execute()
 {
 	cWindow* lastActiveWindow = nullptr;
 	bool lastClosed = false;
 	while (!modalWindows.empty())
 	{
-		cEventManager::getInstance ().run ();
+		cEventManager::getInstance().run();
 
-		for (auto i = runnables.begin(); i != runnables.end (); /*erase in loop*/)
+		for (auto i = runnables.begin(); i != runnables.end(); /*erase in loop*/)
 		{
 			const auto& runnable = *i;
-			if (runnable->wantsToTerminate ())
+			if (runnable->wantsToTerminate())
 			{
 				i = runnables.erase (i);
 			}
 			else
 			{
-				runnable->run ();
+				runnable->run();
 				++i;
 			}
 		}
 
-		const auto activeWindow = getActiveWindow ();
+		const auto activeWindow = getActiveWindow();
 
 		if (activeWindow)
 		{
@@ -107,10 +107,10 @@ void cApplication::execute ()
 				lastClosed = false;
 			}
 
-			if (activeWindow->isClosing ())
+			if (activeWindow->isClosing())
 			{
-				auto activeWindowOwned = modalWindows.back ();
-				modalWindows.pop_back ();
+				auto activeWindowOwned = modalWindows.back();
+				modalWindows.pop_back();
 				activeWindowOwned->handleDeactivated (*this, true);
 				lastActiveWindow = nullptr;
 				lastClosed = true;
@@ -123,15 +123,15 @@ void cApplication::execute ()
 				//       Instead: - redraw only if necessary
 				//                - do actions only if necessary.
 				//                - use non-busy waiting if there is nothing to be done
-				if (!cSettings::getInstance ().shouldUseFastMode ()) SDL_Delay (1);
+				if (!cSettings::getInstance().shouldUseFastMode()) SDL_Delay (1);
 
 				activeWindow->draw (*cVideo::buffer, activeWindow->getArea());
 				lastActiveWindow = activeWindow;
 
 				if (shouldDrawFramesPerSecond) drawFramesPerSecond (frameCounter->getFramesPerSecond());
 
-				Video.draw ();
-				frameCounter->frameDrawn ();
+				Video.draw();
+				frameCounter->frameDrawn();
 			}
 		}
 	}
@@ -140,11 +140,11 @@ void cApplication::execute ()
 //------------------------------------------------------------------------------
 void cApplication::closeTill (const cWindow& window)
 {
-	for (auto i = modalWindows.rbegin (); i != modalWindows.rend (); ++i)
+	for (auto i = modalWindows.rbegin(); i != modalWindows.rend(); ++i)
 	{
-		if (i->get () == &window) break;
+		if (i->get() == &window) break;
 
-		(*i)->close ();
+		(*i)->close();
 	}
 }
 
@@ -152,8 +152,8 @@ void cApplication::closeTill (const cWindow& window)
 void cApplication::center (cWindow& window)
 {
 	cPosition position;
-	position.x () = (Video.getResolutionX () / 2 - window.getSize ().x () / 2);
-	position.y () = (Video.getResolutionY () / 2 - window.getSize ().y () / 2);
+	position.x() = (Video.getResolutionX() / 2 - window.getSize().x() / 2);
+	position.y() = (Video.getResolutionY() / 2 - window.getSize().y() / 2);
 	window.moveTo (position);
 }
 
@@ -185,7 +185,7 @@ bool cApplication::hasMouseFocus (const cWidget& widget) const
 }
 
 //------------------------------------------------------------------------------
-bool cApplication::hasMouseFocus () const
+bool cApplication::hasMouseFocus() const
 {
 	return mouseFocusWidget != nullptr;
 }
@@ -212,19 +212,19 @@ bool cApplication::hasKeyFocus (const cWidget& widget) const
 }
 
 //------------------------------------------------------------------------------
-bool cApplication::hasKeyFocus () const
+bool cApplication::hasKeyFocus() const
 {
 	return keyFocusWidget != nullptr;
 }
 
 //------------------------------------------------------------------------------
-cMouse* cApplication::getActiveMouse ()
+cMouse* cApplication::getActiveMouse()
 {
 	return activeMouse;
 }
 
 //------------------------------------------------------------------------------
-cKeyboard* cApplication::getActiveKeyboard ()
+cKeyboard* cApplication::getActiveKeyboard()
 {
 	return activeKeyboard;
 }
@@ -238,12 +238,12 @@ void cApplication::addRunnable (std::shared_ptr<cRunnable> runnable)
 //------------------------------------------------------------------------------
 std::shared_ptr<cRunnable> cApplication::removeRunnable (const cRunnable& runnable)
 {
-    std::shared_ptr<cRunnable> result;
-	for (auto i = runnables.begin (); i != runnables.end ();)
+	std::shared_ptr<cRunnable> result;
+	for (auto i = runnables.begin(); i != runnables.end();)
 	{
-		if (i->get () == &runnable)
+		if (i->get() == &runnable)
 		{
-            result = std::move (*i);
+			result = std::move (*i);
 			i = runnables.erase (i);
 		}
 		else
@@ -251,20 +251,20 @@ std::shared_ptr<cRunnable> cApplication::removeRunnable (const cRunnable& runnab
 			++i;
 		}
 	}
-    return result;
+	return result;
 }
 
 //------------------------------------------------------------------------------
-cWindow* cApplication::getActiveWindow ()
+cWindow* cApplication::getActiveWindow()
 {
 	// remove null widgets on the top if there are any
-	while (!modalWindows.empty () && modalWindows.back () == nullptr) modalWindows.pop_back ();
+	while (!modalWindows.empty() && modalWindows.back() == nullptr) modalWindows.pop_back();
 
-	return modalWindows.empty () ? nullptr : modalWindows.back ().get ();
+	return modalWindows.empty() ? nullptr : modalWindows.back().get();
 }
 
 //------------------------------------------------------------------------------
-cWidget* cApplication::getKeyFocusWidget () const
+cWidget* cApplication::getKeyFocusWidget() const
 {
 	return keyFocusWidget;
 }
@@ -272,7 +272,7 @@ cWidget* cApplication::getKeyFocusWidget () const
 //------------------------------------------------------------------------------
 cWidget* cApplication::getMouseEventFirstTarget (const cPosition& position)
 {
-	auto window = getActiveWindow ();
+	auto window = getActiveWindow();
 	if (!window) return nullptr;
 
 	auto child = window->getChildAt (position);
@@ -312,28 +312,28 @@ void cApplication::registerKeyboard (cKeyboard& keyboard)
 //------------------------------------------------------------------------------
 void cApplication::mousePressed (cMouse& mouse, eMouseButtonType button)
 {
-	auto target = getMouseEventFirstTarget (mouse.getPosition ());
+	auto target = getMouseEventFirstTarget (mouse.getPosition());
 	assignKeyFocus (target);
 
 	if (mouseFocusWidget && mouseFocusWidget->handleMousePressed (*this, mouse, button)) return;
 
 	while (target && !target->handleMousePressed (*this, mouse, button))
 	{
-		target = target->getParent ();
+		target = target->getParent();
 	}
 }
 
 //------------------------------------------------------------------------------
 void cApplication::mouseReleased (cMouse& mouse, eMouseButtonType button)
 {
-	auto target = getMouseEventFirstTarget (mouse.getPosition ());
+	auto target = getMouseEventFirstTarget (mouse.getPosition());
 	assignKeyFocus (target);
 
 	if (mouseFocusWidget && mouseFocusWidget->handleMouseReleased (*this, mouse, button)) return;
 
 	while (target && !target->handleMouseReleased (*this, mouse, button))
 	{
-		target = target->getParent ();
+		target = target->getParent();
 	}
 }
 
@@ -342,17 +342,17 @@ void cApplication::mouseWheelMoved (cMouse& mouse, const cPosition& amount)
 {
 	if (mouseFocusWidget && mouseFocusWidget->handleMouseWheelMoved (*this, mouse, amount)) return;
 
-	auto target = getMouseEventFirstTarget (mouse.getPosition ());
+	auto target = getMouseEventFirstTarget (mouse.getPosition());
 	while (target && !target->handleMouseWheelMoved (*this, mouse, amount))
 	{
-		target = target->getParent ();
+		target = target->getParent();
 	}
 }
 
 //------------------------------------------------------------------------------
 void cApplication::mouseMoved (cMouse& mouse, const cPosition& offset)
 {
-	auto target = getMouseEventFirstTarget (mouse.getPosition ());
+	auto target = getMouseEventFirstTarget (mouse.getPosition());
 
 	if (mouseFocusWidget && mouseFocusWidget->handleMouseMoved (*this, mouse, offset)) return;
 
@@ -365,20 +365,20 @@ void cApplication::mouseMoved (cMouse& mouse, const cPosition& offset)
 
 	while (target && !target->handleMouseMoved (*this, mouse, offset))
 	{
-		target = target->getParent ();
+		target = target->getParent();
 	}
 }
 
 //------------------------------------------------------------------------------
 void cApplication::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 {
-	const auto widget = getKeyFocusWidget ();
+	const auto widget = getKeyFocusWidget();
 
 	// TODO: catch TAB event and may switch key focus widget
 
 	const bool isShortcutKey = cKeyCombination::isRepresentableKey (key);
 
-	if (isShortcutKey) currentKeySequence.addKeyCombination (cKeyCombination (keyboard.getCurrentModifiers (), key));
+	if (isShortcutKey) currentKeySequence.addKeyCombination (cKeyCombination (keyboard.getCurrentModifiers(), key));
 
 	bool eventHandled = false;
 	if (widget)
@@ -386,7 +386,7 @@ void cApplication::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 		eventHandled = widget->handleKeyPressed (*this, keyboard, key);
 	}
 
-	const auto window = getActiveWindow ();
+	const auto window = getActiveWindow();
 	if (window)
 	{
 		if (!eventHandled)
@@ -407,9 +407,9 @@ void cApplication::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 			hitShortcuts (currentKeySequence);
 		}
 
-		while (currentKeySequence.length () >= maximalShortcutSequenceLength)
+		while (currentKeySequence.length() >= maximalShortcutSequenceLength)
 		{
-			currentKeySequence.removeFirst ();
+			currentKeySequence.removeFirst();
 		}
 	}
 }
@@ -417,10 +417,10 @@ void cApplication::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 //------------------------------------------------------------------------------
 void cApplication::keyReleased (cKeyboard& keyboard, SDL_Keycode key)
 {
-	auto widget = getKeyFocusWidget ();
+	auto widget = getKeyFocusWidget();
 	if (!widget || !widget->handleKeyReleased (*this, keyboard, key))
 	{
-		auto window = getActiveWindow ();
+		auto window = getActiveWindow();
 		if (window)
 		{
 			window->handleKeyReleased (*this, keyboard, key);
@@ -431,7 +431,7 @@ void cApplication::keyReleased (cKeyboard& keyboard, SDL_Keycode key)
 //------------------------------------------------------------------------------
 void cApplication::textEntered (cKeyboard& keyboard, const char* text)
 {
-	auto widget = getKeyFocusWidget ();
+	auto widget = getKeyFocusWidget();
 	if (widget) widget->handleTextEntered (*this, keyboard, text);
 }
 
@@ -440,11 +440,11 @@ void cApplication::assignKeyFocus (cWidget* widget)
 {
 	while (widget)
 	{
-		if (widget->isEnabled () && widget->handleGetKeyFocus (*this))
+		if (widget->isEnabled() && widget->handleGetKeyFocus (*this))
 		{
 			break;
 		}
-		widget = widget->getParent ();
+		widget = widget->getParent();
 	}
 	if (keyFocusWidget && keyFocusWidget != widget) keyFocusWidget->handleLooseKeyFocus (*this);
 	keyFocusWidget = widget;
@@ -454,7 +454,7 @@ void cApplication::assignKeyFocus (cWidget* widget)
 cShortcut* cApplication::addShortcut (std::unique_ptr<cShortcut> shortcut)
 {
 	shortcuts.push_back (std::move (shortcut));
-	return shortcuts.back ().get ();
+	return shortcuts.back().get();
 }
 
 //------------------------------------------------------------------------------
@@ -465,16 +465,16 @@ bool cApplication::hitShortcuts (const cKeySequence& keySequence)
 	bool anyMatch = false;
 	for (const auto& shortcut : shortcuts)
 	{
-		if (!shortcut->isActive ()) continue;
+		if (!shortcut->isActive()) continue;
 
-		const auto& shortcutSequence = shortcut->getKeySequence ();
+		const auto& shortcutSequence = shortcut->getKeySequence();
 
-		if (shortcutSequence.length () > keySequence.length ()) continue;
+		if (shortcutSequence.length() > keySequence.length()) continue;
 
 		bool match = true;
-		for (size_t j = 1; j <= shortcutSequence.length (); ++j)
+		for (size_t j = 1; j <= shortcutSequence.length(); ++j)
 		{
-			if (keySequence[keySequence.length () - j] != shortcutSequence[shortcutSequence.length () - j])
+			if (keySequence[keySequence.length() - j] != shortcutSequence[shortcutSequence.length() - j])
 			{
 				match = false;
 				break;
@@ -483,7 +483,7 @@ bool cApplication::hitShortcuts (const cKeySequence& keySequence)
 
 		if (match)
 		{
-			shortcut->triggered ();
+			shortcut->triggered();
 			anyMatch = true;
 		}
 	}

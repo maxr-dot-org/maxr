@@ -45,11 +45,11 @@ public:
 	/**
 	 * Initializes the base class animation to be not running and not finished.
 	 */
-	cAnimation () :
+	cAnimation() :
 		finished (false),
 		running (false)
 	{}
-	virtual ~cAnimation () {}
+	virtual ~cAnimation() {}
 
 	/**
 	 * Should return true when the animation needs to be executed if the
@@ -64,11 +64,11 @@ public:
 	/**
 	 * Returns true if the animation is finished and can be removed now.
 	 */
-	bool isFinished () const { return finished; }
+	bool isFinished() const { return finished; }
 	/**
 	 * Returns true when the animation is currently running.
 	 */
-	bool isRunning () const { return running; }
+	bool isRunning() const { return running; }
 
 protected:
 	bool finished;

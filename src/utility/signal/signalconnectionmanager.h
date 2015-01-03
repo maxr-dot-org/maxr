@@ -36,24 +36,24 @@
 class cSignalConnectionManager
 {
 public:
-	cSignalConnectionManager ();
+	cSignalConnectionManager();
 	cSignalConnectionManager (cSignalConnectionManager&& other);
 
-    ~cSignalConnectionManager ();
+	~cSignalConnectionManager();
 
-	cSignalConnectionManager& operator=(cSignalConnectionManager&& other);
+	cSignalConnectionManager& operator= (cSignalConnectionManager && other);
 
-    /**
-     * Connects the passed function object to the passed signal and
-     * stores the connection within this connection manager so that
-     * it will be disconnected when the connection manager gets destroyed.
-     *
-     * @tparam SignalType The type of the signal.
-     * @tparam FunctionType The type of the function.
-     * @param signal The signal to connect the function to.
-     * @param function The callable object to connect to the signal.
-     */
-    template<typename SignalType, typename FunctionType>
+	/**
+	 * Connects the passed function object to the passed signal and
+	 * stores the connection within this connection manager so that
+	 * it will be disconnected when the connection manager gets destroyed.
+	 *
+	 * @tparam SignalType The type of the signal.
+	 * @tparam FunctionType The type of the function.
+	 * @param signal The signal to connect the function to.
+	 * @param function The callable object to connect to the signal.
+	 */
+	template<typename SignalType, typename FunctionType>
 	cSignalConnection connect (SignalType& signal, FunctionType&& function);
 
 	/**
@@ -68,20 +68,20 @@ public:
 	 */
 	bool disconnect (cSignalConnection& connection);
 
-    /**
-     * Disconnects all the stored connections.
-     */
-    void disconnectAll ();
+	/**
+	 * Disconnects all the stored connections.
+	 */
+	void disconnectAll();
 
-    /**
-     * Clears all the stored connections without disconnecting them.
-     */
-    void clear ();
+	/**
+	 * Clears all the stored connections without disconnecting them.
+	 */
+	void clear();
 private:
 	cSignalConnectionManager (const cSignalConnectionManager& other) MAXR_DELETE_FUNCTION;
-	cSignalConnectionManager& operator=(const cSignalConnectionManager& other) MAXR_DELETE_FUNCTION;
+	cSignalConnectionManager& operator= (const cSignalConnectionManager& other) MAXR_DELETE_FUNCTION;
 
-    std::vector<cSignalConnection> connections;
+	std::vector<cSignalConnection> connections;
 };
 
 //------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ template<typename SignalType, typename FunctionType>
 cSignalConnection cSignalConnectionManager::connect (SignalType& signal, FunctionType&& function)
 {
 	connections.push_back (signal.connect (std::forward<FunctionType> (function)));
-	return connections.back ();
+	return connections.back();
 }
 
 #endif // utility_signal_signalconnectionmanagerH

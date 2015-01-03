@@ -38,7 +38,7 @@ class cMenuControllerMultiplayerHotSeat
 public:
 	cMenuControllerMultiplayerHotSeat (cApplication& application);
 
-	void start ();
+	void start();
 private:
 	cSignalConnectionManager signalConnectionManager;
 
@@ -57,17 +57,17 @@ private:
 	std::vector<std::shared_ptr<cWindowLandingPositionSelection>> playerLandingSelectionWindows;
 	cSignalConnectionManager landingSelectionWindowConnections;
 
-	void reset ();
+	void reset();
 
-	void selectGameSettings ();
-	void selectMap ();
-	void selectPlayers ();
+	void selectGameSettings();
+	void selectMap();
+	void selectPlayers();
 	void startNextPlayerGamePreperation (size_t playerIndex);
 	void selectClan (size_t playerIndex, bool firstForPlayer);
 	void selectLandingUnits (size_t playerIndex, bool firstForPlayer);
 	void selectLandingPosition (size_t playerIndex);
 	void reselectLandingPosition (size_t playerIndex);
-	void checkAllLandingPositions ();
+	void checkAllLandingPositions();
 };
 
 #endif // ui_graphical_menu_control_menucontrollermultiplayerhotseatH

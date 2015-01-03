@@ -52,6 +52,6 @@ struct sSignalResultCombinerOperation
 };
 
 template<typename OperationType>
-struct sSignalResultCombinerOperation<void, OperationType> : public sSignalResultCombinerVoid{};
+struct sSignalResultCombinerOperation<void, OperationType> : public sSignalResultCombinerVoid {};
 
 #endif // utility_signal_signalresultcombinderoperationH

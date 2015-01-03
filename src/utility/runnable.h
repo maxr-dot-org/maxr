@@ -23,9 +23,9 @@
 class cRunnable
 {
 public:
-	virtual ~cRunnable () {};
-	virtual void run () = 0;
-	virtual bool wantsToTerminate () const { return false; }
+	virtual ~cRunnable() {};
+	virtual void run() = 0;
+	virtual bool wantsToTerminate() const { return false; }
 };
 
 #endif // utility_runnableH

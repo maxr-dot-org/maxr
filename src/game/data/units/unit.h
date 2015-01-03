@@ -45,7 +45,7 @@ public:
 	virtual bool isAVehicle() const = 0;
 	virtual bool isABuilding() const = 0;
 
-	cPlayer* getOwner () const;
+	cPlayer* getOwner() const;
 	void setOwner (cPlayer* owner);
 
 	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const = 0;
@@ -54,23 +54,23 @@ public:
 
 	virtual void makeReport (cSoundManager& soundManager) const = 0;
 
-	virtual const cPosition& getMovementOffset() const { static const cPosition dummy(0, 0); return dummy; }
+	virtual const cPosition& getMovementOffset() const { static const cPosition dummy (0, 0); return dummy; }
 
 	virtual void setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList = true) = 0;
 
-	const cPosition& getPosition () const;
+	const cPosition& getPosition() const;
 	void setPosition (cPosition position);
 
-	cBox<cPosition> getArea () const;
+	cBox<cPosition> getArea() const;
 
-	std::vector<cPosition> getAdjacentPositions () const;
+	std::vector<cPosition> getAdjacentPositions() const;
 
 	int calcHealth (int damage) const;
 	bool isInRange (const cPosition& position) const;
 	/// checks whether the coordinates are next to the unit
 	bool isNextTo (const cPosition& position) const;
 	bool isDisabled() const { return turnsDisabled > 0; }
-	bool isAbove(const cPosition& position) const;
+	bool isAbove (const cPosition& position) const;
 
 
 	const std::string& getName() const { return name; }
@@ -102,13 +102,13 @@ public:
 	void setMarkedAsDone (bool value);
 	void setHasBeenAttacked (bool value);
 
-	int getDisabledTurns () const;
-	bool isSentryActive () const;
-	bool isManualFireActive () const;
-	bool isAttacking () const;
-	bool isBeeingAttacked () const;
-	bool isMarkedAsDone () const;
-	bool hasBeenAttacked () const;
+	int getDisabledTurns() const;
+	bool isSentryActive() const;
+	bool isManualFireActive() const;
+	bool isAttacking() const;
+	bool isBeeingAttacked() const;
+	bool isMarkedAsDone() const;
+	bool hasBeenAttacked() const;
 
 	//protected:
 	virtual bool isUnitMoving() const { return false; }
@@ -175,7 +175,7 @@ public: // TODO: make protected/private and make getters/setters
 	//-----------------------------------------------------------------------------
 private:
 	cPlayer* owner;
-    cPosition position;
+	cPosition position;
 
 	bool isOriginalName; // indicates whether the name has been changed by the player or not
 	std::string name;    // name of the building
@@ -194,35 +194,35 @@ struct sUnitLess
 {
 	//static_assert(std::is_base_of<cUnit, T>::value, "Invalid template parameter. Has to be of a derived class of cUnit!");
 
-	bool operator()(const std::shared_ptr<T>& left, const std::shared_ptr<T>& right) const
+	bool operator() (const std::shared_ptr<T>& left, const std::shared_ptr<T>& right) const
 	{
 		return left->iID < right->iID;
 	}
-	bool operator()(const std::shared_ptr<T>& left, const T& right) const
+	bool operator() (const std::shared_ptr<T>& left, const T& right) const
 	{
 		return left->iID < right.iID;
 	}
-	bool operator()(const T& left, const std::shared_ptr<T>& right) const
+	bool operator() (const T& left, const std::shared_ptr<T>& right) const
 	{
 		return left.iID < right->iID;
 	}
-	bool operator()(const T& left, const T& right) const
+	bool operator() (const T& left, const T& right) const
 	{
 		return left.iID < right.iID;
 	}
-	bool operator()(unsigned int left, const T& right) const
+	bool operator() (unsigned int left, const T& right) const
 	{
 		return left < right.iID;
 	}
-	bool operator()(const T& left, unsigned int right) const
+	bool operator() (const T& left, unsigned int right) const
 	{
 		return left.iID < right;
 	}
-	bool operator()(unsigned int left, const std::shared_ptr<T>& right) const
+	bool operator() (unsigned int left, const std::shared_ptr<T>& right) const
 	{
 		return left < right->iID;
 	}
-	bool operator()(const std::shared_ptr<T>& left, unsigned int right) const
+	bool operator() (const std::shared_ptr<T>& left, unsigned int right) const
 	{
 		return left->iID < right;
 	}

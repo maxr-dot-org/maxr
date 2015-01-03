@@ -28,21 +28,21 @@
 
 //------------------------------------------------------------------------------
 cMouse::cMouse() :
-	sdlCursor(nullptr, SDL_FreeCursor),
-	doubleClickTime(500)
+	sdlCursor (nullptr, SDL_FreeCursor),
+	doubleClickTime (500)
 {
-	setCursor(std::make_unique<cMouseCursorSimple>(eMouseCursorSimpleType::Hand), true);
+	setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand), true);
 
 	using namespace std::placeholders;
 
-	signalConnectionManager.connect(cEventManager::getInstance().mouseMotionEvent, std::bind(&cMouse::handleMouseMotionEvent, this, _1));
-	signalConnectionManager.connect(cEventManager::getInstance().mouseButtonEvent, std::bind(&cMouse::handleMouseButtonEvent, this, _1));
-	signalConnectionManager.connect(cEventManager::getInstance().mouseWheelEvent, std::bind(&cMouse::handleMouseWheelEvent, this, _1));
+	signalConnectionManager.connect (cEventManager::getInstance().mouseMotionEvent, std::bind (&cMouse::handleMouseMotionEvent, this, _1));
+	signalConnectionManager.connect (cEventManager::getInstance().mouseButtonEvent, std::bind (&cMouse::handleMouseButtonEvent, this, _1));
+	signalConnectionManager.connect (cEventManager::getInstance().mouseWheelEvent, std::bind (&cMouse::handleMouseWheelEvent, this, _1));
 }
 
 //------------------------------------------------------------------------------
-cMouse::~cMouse ()
-{}	
+cMouse::~cMouse()
+{}
 
 //------------------------------------------------------------------------------
 cMouse& cMouse::getInstance()
@@ -52,41 +52,41 @@ cMouse& cMouse::getInstance()
 }
 
 //------------------------------------------------------------------------------
-void cMouse::handleMouseMotionEvent(const cEventMouseMotion& event)
+void cMouse::handleMouseMotionEvent (const cEventMouseMotion& event)
 {
 	position = event.getNewPosition();
-	moved(*this, event.getOffset());
+	moved (*this, event.getOffset());
 }
 
 //------------------------------------------------------------------------------
-void cMouse::handleMouseButtonEvent(const cEventMouseButton& event)
+void cMouse::handleMouseButtonEvent (const cEventMouseButton& event)
 {
-	assert(event.getType() == cEventMouseButton::Down || event.getType() == cEventMouseButton::Up);
+	assert (event.getType() == cEventMouseButton::Down || event.getType() == cEventMouseButton::Up);
 
 	auto button = event.getButton();
 
-	if(event.getType() == cEventMouseButton::Down)
+	if (event.getType() == cEventMouseButton::Down)
 	{
 		buttonPressedState[button] = true;
 
 		const auto currentClickTime = std::chrono::steady_clock::now();
-		auto& lastClickTime = getLastClickTime(button);
-		buttonClickCount[button] = (currentClickTime - lastClickTime) <= doubleClickTime ? getButtonClickCount(button) + 1 : 1;
+		auto& lastClickTime = getLastClickTime (button);
+		buttonClickCount[button] = (currentClickTime - lastClickTime) <= doubleClickTime ? getButtonClickCount (button) + 1 : 1;
 		lastClickTime = currentClickTime;
 
-		pressed(*this, button);
+		pressed (*this, button);
 	}
-	else if(event.getType() == cEventMouseButton::Up)
+	else if (event.getType() == cEventMouseButton::Up)
 	{
 		buttonPressedState[button] = false;
-		released(*this, button);
+		released (*this, button);
 	}
 }
 
 //------------------------------------------------------------------------------
-void cMouse::handleMouseWheelEvent(const cEventMouseWheel& event)
+void cMouse::handleMouseWheelEvent (const cEventMouseWheel& event)
 {
-	wheelMoved(*this, event.getAmount());
+	wheelMoved (*this, event.getAmount());
 }
 
 //------------------------------------------------------------------------------
@@ -102,12 +102,12 @@ bool cMouse::setCursor (std::unique_ptr<cMouseCursor> cursor_, bool force)
 
 	if (!force && cursor != nullptr && *cursor_ == *cursor) return false;
 
-	auto cursorSurface = cursor_->getSurface ();
-	auto hotPoint = cursor_->getHotPoint ();
+	auto cursorSurface = cursor_->getSurface();
+	auto hotPoint = cursor_->getHotPoint();
 
-	auto newSdlCursor = SdlCursorPtrType(SDL_CreateColorCursor(cursorSurface, hotPoint.x(), hotPoint.y()), SDL_FreeCursor);
+	auto newSdlCursor = SdlCursorPtrType (SDL_CreateColorCursor (cursorSurface, hotPoint.x(), hotPoint.y()), SDL_FreeCursor);
 
-	SDL_SetCursor(newSdlCursor.get());
+	SDL_SetCursor (newSdlCursor.get());
 
 	sdlCursor = std::move (newSdlCursor);
 
@@ -119,13 +119,13 @@ bool cMouse::setCursor (std::unique_ptr<cMouseCursor> cursor_, bool force)
 //------------------------------------------------------------------------------
 void cMouse::show()
 {
-	SDL_ShowCursor(true);
+	SDL_ShowCursor (true);
 }
 
 //------------------------------------------------------------------------------
 void cMouse::hide()
 {
-	SDL_ShowCursor(false);
+	SDL_ShowCursor (false);
 }
 
 //------------------------------------------------------------------------------
@@ -135,10 +135,10 @@ const cMouseCursor* cMouse::getCursor() const
 }
 
 //------------------------------------------------------------------------------
-bool cMouse::isButtonPressed(eMouseButtonType button) const
+bool cMouse::isButtonPressed (eMouseButtonType button) const
 {
-	auto iter = buttonPressedState.find(button);
-	if(iter == buttonPressedState.end())
+	auto iter = buttonPressedState.find (button);
+	if (iter == buttonPressedState.end())
 	{
 		return buttonPressedState[button] = false; // initialize as unpressed
 	}
@@ -146,10 +146,10 @@ bool cMouse::isButtonPressed(eMouseButtonType button) const
 }
 
 //------------------------------------------------------------------------------
-unsigned int cMouse::getButtonClickCount(eMouseButtonType button) const
+unsigned int cMouse::getButtonClickCount (eMouseButtonType button) const
 {
-	auto iter = buttonClickCount.find(button);
-	if(iter == buttonClickCount.end())
+	auto iter = buttonClickCount.find (button);
+	if (iter == buttonClickCount.end())
 	{
 		return buttonClickCount[button] = 0; // initialize with zero
 	}
@@ -157,10 +157,10 @@ unsigned int cMouse::getButtonClickCount(eMouseButtonType button) const
 }
 
 //------------------------------------------------------------------------------
-std::chrono::steady_clock::time_point& cMouse::getLastClickTime(eMouseButtonType button)
+std::chrono::steady_clock::time_point& cMouse::getLastClickTime (eMouseButtonType button)
 {
-	auto iter = lastClickTime.find(button);
-	if(iter == lastClickTime.end())
+	auto iter = lastClickTime.find (button);
+	if (iter == lastClickTime.end())
 	{
 		return lastClickTime[button]; // use default initialization. Is this really correct?!
 	}

@@ -93,35 +93,35 @@ enum eSymbolsBig
 struct sVehicleUIData
 {
 	std::array<AutoSurface, 8> img, img_org; // 8 Surfaces of the vehicle
-    std::array<AutoSurface, 8> shw, shw_org; // 8 Surfaces of shadows
-    AutoSurface build, build_org;        // Surfaces when building
-    AutoSurface build_shw, build_shw_org; // Surfaces of shadows when building
-    AutoSurface clear_small, clear_small_org;        // Surfaces when clearing
-    AutoSurface clear_small_shw, clear_small_shw_org; // Surfaces when clearing
-    AutoSurface overlay, overlay_org;    // Overlays
-    AutoSurface storage; // image of the vehicle in storage
+	std::array<AutoSurface, 8> shw, shw_org; // 8 Surfaces of shadows
+	AutoSurface build, build_org;        // Surfaces when building
+	AutoSurface build_shw, build_shw_org; // Surfaces of shadows when building
+	AutoSurface clear_small, clear_small_org;        // Surfaces when clearing
+	AutoSurface clear_small_shw, clear_small_shw_org; // Surfaces when clearing
+	AutoSurface overlay, overlay_org;    // Overlays
+	AutoSurface storage; // image of the vehicle in storage
 	std::string FLCFile;       // FLC-Video
-    AutoSurface info;   // info image
+	AutoSurface info;   // info image
 
 	// Sounds:
 	cSoundChunk Wait;
-    cSoundChunk WaitWater;
-    cSoundChunk Start;
-    cSoundChunk StartWater;
-    cSoundChunk Stop;
-    cSoundChunk StopWater;
-    cSoundChunk Drive;
-    cSoundChunk DriveWater;
-    cSoundChunk Attack;
+	cSoundChunk WaitWater;
+	cSoundChunk Start;
+	cSoundChunk StartWater;
+	cSoundChunk Stop;
+	cSoundChunk StopWater;
+	cSoundChunk Drive;
+	cSoundChunk DriveWater;
+	cSoundChunk Attack;
 
-    sVehicleUIData ();
-    sVehicleUIData (sVehicleUIData&& other);
-    sVehicleUIData& operator=(sVehicleUIData&& other);
-    void scaleSurfaces (float faktor);
+	sVehicleUIData();
+	sVehicleUIData (sVehicleUIData&& other);
+	sVehicleUIData& operator= (sVehicleUIData && other);
+	void scaleSurfaces (float faktor);
 
 private:
-    sVehicleUIData (const sVehicleUIData& other) MAXR_DELETE_FUNCTION;
-    sVehicleUIData& operator=(const sVehicleUIData& other) MAXR_DELETE_FUNCTION;
+	sVehicleUIData (const sVehicleUIData& other) MAXR_DELETE_FUNCTION;
+	sVehicleUIData& operator= (const sVehicleUIData& other) MAXR_DELETE_FUNCTION;
 };
 
 //-----------------------------------------------------------------------------
@@ -138,7 +138,7 @@ public:
 	virtual bool isABuilding() const { return false; }
 
 	virtual const cPosition& getMovementOffset() const MAXR_OVERRIDE_FUNCTION { return tileMovementOffset; }
-	void setMovementOffset(const cPosition& newOffset) { tileMovementOffset = newOffset; }
+	void setMovementOffset (const cPosition& newOffset) { tileMovementOffset = newOffset; }
 
 	const sVehicleUIData* uiData;
 	mutable int ditherX, ditherY;
@@ -264,15 +264,15 @@ public:
 	void drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha = 254) const;
 	static void drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sUnitData& data, const sVehicleUIData& uiData, int frameNr = 0, int alpha = 254);
 
-	bool isUnitLoaded () const { return loaded; }
+	bool isUnitLoaded() const { return loaded; }
 
-	virtual bool isUnitMoving () const { return moving; }
-	virtual bool isAutoMoveJobActive () const { return autoMoveJob != nullptr; }
-	virtual bool isUnitClearing () const { return isClearing; }
-	virtual bool isUnitLayingMines () const { return layMines; }
-	virtual bool isUnitClearingMines () const { return clearMines; }
-	virtual bool isUnitBuildingABuilding () const { return isBuilding; }
-	virtual bool canBeStoppedViaUnitMenu () const;
+	virtual bool isUnitMoving() const { return moving; }
+	virtual bool isAutoMoveJobActive() const { return autoMoveJob != nullptr; }
+	virtual bool isUnitClearing() const { return isClearing; }
+	virtual bool isUnitLayingMines() const { return layMines; }
+	virtual bool isUnitClearingMines() const { return clearMines; }
+	virtual bool isUnitBuildingABuilding() const { return isBuilding; }
+	virtual bool canBeStoppedViaUnitMenu() const;
 
 	void setMoving (bool value);
 	void setLoaded (bool value);
@@ -281,34 +281,34 @@ public:
 	void setLayMines (bool value);
 	void setClearMines (bool value);
 
-	int getClearingTurns () const;
+	int getClearingTurns() const;
 	void setClearingTurns (int value);
 
-	float getCommandoRank () const;
+	float getCommandoRank() const;
 	void setCommandoRank (float value);
 
-	const sID& getBuildingType () const;
+	const sID& getBuildingType() const;
 	void setBuildingType (const sID& id);
-	int getBuildCosts () const;
+	int getBuildCosts() const;
 	void setBuildCosts (int value);
-	int getBuildTurns () const;
+	int getBuildTurns() const;
 	void setBuildTurns (int value);
-	int getBuildCostsStart () const;
+	int getBuildCostsStart() const;
 	void setBuildCostsStart (int value);
-	int getBuildTurnsStart () const;
+	int getBuildTurnsStart() const;
 	void setBuildTurnsStart (int value);
 
-	int getFlightHeight () const;
+	int getFlightHeight() const;
 	void setFlightHeight (int value);
 
-	cClientMoveJob* getClientMoveJob ();
-	const cClientMoveJob* getClientMoveJob () const;
+	cClientMoveJob* getClientMoveJob();
+	const cClientMoveJob* getClientMoveJob() const;
 	void setClientMoveJob (cClientMoveJob* clientMoveJob);
 
-	cAutoMJob* getAutoMoveJob ();
-	const cAutoMJob* getAutoMoveJob () const;
+	cAutoMJob* getAutoMoveJob();
+	const cAutoMJob* getAutoMoveJob() const;
 	void startAutoMoveJob (cClient& client);
-	void stopAutoMoveJob ();
+	void stopAutoMoveJob();
 
 	/**
 	* return the unit which contains this vehicle

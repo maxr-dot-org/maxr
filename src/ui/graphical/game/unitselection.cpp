@@ -29,24 +29,24 @@
 //------------------------------------------------------------------------------
 bool cUnitSelection::selectUnitAt (const cMapField& field, bool base)
 {
-	cVehicle* plane = field.getPlane ();
-	if (plane && !plane->isUnitMoving ())
+	cVehicle* plane = field.getPlane();
+	if (plane && !plane->isUnitMoving())
 	{
 		return selectUnit (*plane);
 	}
-	cVehicle* vehicle = field.getVehicle ();
-	if (vehicle && !vehicle->isUnitMoving () && !(plane /*&& (unitMenuActive || vehicle->owner != player)*/))
+	cVehicle* vehicle = field.getVehicle();
+	if (vehicle && !vehicle->isUnitMoving() && ! (plane /*&& (unitMenuActive || vehicle->owner != player)*/))
 	{
 		return selectUnit (*vehicle);
 	}
-	cBuilding* topBuilding = field.getTopBuilding ();
-	const cVehicle* selectedVehicle = getSelectedVehicle ();
-	if (topBuilding && (base || ((topBuilding->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE || !selectedVehicle) && (!field.getTopBuilding ()->data.canBeLandedOn || (!selectedVehicle || selectedVehicle->data.factorAir == 0)))))
+	cBuilding* topBuilding = field.getTopBuilding();
+	const cVehicle* selectedVehicle = getSelectedVehicle();
+	if (topBuilding && (base || ((topBuilding->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE || !selectedVehicle) && (!field.getTopBuilding()->data.canBeLandedOn || (!selectedVehicle || selectedVehicle->data.factorAir == 0)))))
 	{
 		return selectUnit (*topBuilding);
 	}
-	cBuilding* baseBuilding = field.getBaseBuilding ();
-	if ((base || !selectedVehicle) && baseBuilding && baseBuilding->getOwner () != nullptr)
+	cBuilding* baseBuilding = field.getBaseBuilding();
+	if ((base || !selectedVehicle) && baseBuilding && baseBuilding->getOwner() != nullptr)
 	{
 		return selectUnit (*baseBuilding);
 	}
@@ -78,37 +78,37 @@ void cUnitSelection::addSelectedUnitFront (cUnit& unit)
 //------------------------------------------------------------------------------
 void cUnitSelection::removeSelectedUnit (const cUnit& unit)
 {
-	auto iter = std::find_if (selectedUnits.begin (), selectedUnits.end (), [&unit](const std::pair<cUnit*, cSignalConnection>& entry) { return entry.first == &unit; });
-	if (iter == selectedUnits.end ()) return;
+	auto iter = std::find_if (selectedUnits.begin(), selectedUnits.end(), [&unit] (const std::pair<cUnit*, cSignalConnection>& entry) { return entry.first == &unit; });
+	if (iter == selectedUnits.end()) return;
 
 	selectedUnitsSignalConnectionManager.disconnect (iter->second);
 	selectedUnits.erase (iter);
 }
 
 //------------------------------------------------------------------------------
-void cUnitSelection::removeAllSelectedUnits ()
+void cUnitSelection::removeAllSelectedUnits()
 {
-	selectedUnitsSignalConnectionManager.disconnectAll ();
-	selectedUnits.clear ();
+	selectedUnitsSignalConnectionManager.disconnectAll();
+	selectedUnits.clear();
 }
 
 //------------------------------------------------------------------------------
 bool cUnitSelection::selectVehiclesAt (const cBox<cPosition>& box, const cMap& map, const cPlayer& player)
 {
-	auto oldSelectedUnit = getSelectedUnit ();
+	auto oldSelectedUnit = getSelectedUnit();
 
-	removeAllSelectedUnits ();
+	removeAllSelectedUnits();
 
-	for (int x = box.getMinCorner ().x (); x <= box.getMaxCorner ().x (); ++x)
+	for (int x = box.getMinCorner().x(); x <= box.getMaxCorner().x(); ++x)
 	{
-		for (int y = box.getMinCorner ().y (); y <= box.getMaxCorner ().y (); ++y)
+		for (int y = box.getMinCorner().y(); y <= box.getMaxCorner().y(); ++y)
 		{
 			const cPosition position (x, y);
 
-			cVehicle* vehicle = map.getField (position).getVehicle ();
-			if (!vehicle ||vehicle->getOwner () != &player) vehicle = map.getField (position).getPlane ();
+			cVehicle* vehicle = map.getField (position).getVehicle();
+			if (!vehicle || vehicle->getOwner() != &player) vehicle = map.getField (position).getPlane();
 
-			if (vehicle && vehicle->getOwner () == &player && !vehicle->isUnitBuildingABuilding () && !vehicle->isUnitClearing () && !vehicle->isUnitMoving ())
+			if (vehicle && vehicle->getOwner() == &player && !vehicle->isUnitBuildingABuilding() && !vehicle->isUnitClearing() && !vehicle->isUnitMoving())
 			{
 				if (vehicle == oldSelectedUnit)
 				{
@@ -122,18 +122,18 @@ bool cUnitSelection::selectVehiclesAt (const cBox<cPosition>& box, const cMap& m
 		}
 	}
 
-	if (oldSelectedUnit != getSelectedUnit ()) mainSelectionChanged ();
-	groupSelectionChanged (); // FIXME: call only when the group has really changed!
-	selectionChanged ();
+	if (oldSelectedUnit != getSelectedUnit()) mainSelectionChanged();
+	groupSelectionChanged();  // FIXME: call only when the group has really changed!
+	selectionChanged();
 	return false;
 }
 
 //------------------------------------------------------------------------------
 bool cUnitSelection::selectUnit (cUnit& unit, bool add)
 {
-	if (selectedUnits.size () == 1 && selectedUnits[0].first == &unit) return false;
+	if (selectedUnits.size() == 1 && selectedUnits[0].first == &unit) return false;
 
-	if (!canSelect(&unit)) return false;
+	if (!canSelect (&unit)) return false;
 
 	if (!add) removeAllSelectedUnits();
 
@@ -141,9 +141,9 @@ bool cUnitSelection::selectUnit (cUnit& unit, bool add)
 	{
 		addSelectedUnitFront (unit);
 
-		if (selectedUnits.size () == 1) mainSelectionChanged ();
-		else groupSelectionChanged ();
-		selectionChanged ();
+		if (selectedUnits.size() == 1) mainSelectionChanged();
+		else groupSelectionChanged();
+		selectionChanged();
 
 		return true;
 	}
@@ -153,116 +153,116 @@ bool cUnitSelection::selectUnit (cUnit& unit, bool add)
 //------------------------------------------------------------------------------
 void cUnitSelection::deselectUnit (const cUnit& unit)
 {
-	const auto oldSelectedUnitsCount = selectedUnits.size ();
-	const auto isMainUnit = !selectedUnits.empty () && selectedUnits[0].first == &unit;
+	const auto oldSelectedUnitsCount = selectedUnits.size();
+	const auto isMainUnit = !selectedUnits.empty() && selectedUnits[0].first == &unit;
 
 	removeSelectedUnit (unit);
 
-	if (selectedUnits.size () != oldSelectedUnitsCount)
+	if (selectedUnits.size() != oldSelectedUnitsCount)
 	{
-		if (isMainUnit) mainSelectionChanged ();
-		if (selectedUnits.size () > 0) groupSelectionChanged ();
-		selectionChanged ();
+		if (isMainUnit) mainSelectionChanged();
+		if (selectedUnits.size() > 0) groupSelectionChanged();
+		selectionChanged();
 	}
 }
 
 //------------------------------------------------------------------------------
-void cUnitSelection::deselectUnits ()
+void cUnitSelection::deselectUnits()
 {
-	if (selectedUnits.empty ()) return;
+	if (selectedUnits.empty()) return;
 
-	const auto oldSelectedUnitsCount = selectedUnits.size ();
+	const auto oldSelectedUnitsCount = selectedUnits.size();
 
-	removeAllSelectedUnits ();
+	removeAllSelectedUnits();
 
-	if (oldSelectedUnitsCount > 0) mainSelectionChanged ();
-	if (oldSelectedUnitsCount > 1) groupSelectionChanged ();
-	selectionChanged ();
+	if (oldSelectedUnitsCount > 0) mainSelectionChanged();
+	if (oldSelectedUnitsCount > 1) groupSelectionChanged();
+	selectionChanged();
 }
 
 //------------------------------------------------------------------------------
-cUnit* cUnitSelection::getSelectedUnit () const
+cUnit* cUnitSelection::getSelectedUnit() const
 {
-	return selectedUnits.empty () ? nullptr : selectedUnits[0].first;
+	return selectedUnits.empty() ? nullptr : selectedUnits[0].first;
 }
 
 //------------------------------------------------------------------------------
-cVehicle* cUnitSelection::getSelectedVehicle () const
+cVehicle* cUnitSelection::getSelectedVehicle() const
 {
-	auto selectedUnit = getSelectedUnit ();
-	return static_cast<cVehicle*>(selectedUnit && selectedUnit->isAVehicle () ? selectedUnit : nullptr);
+	auto selectedUnit = getSelectedUnit();
+	return static_cast<cVehicle*> (selectedUnit && selectedUnit->isAVehicle() ? selectedUnit : nullptr);
 }
 
 //------------------------------------------------------------------------------
-cBuilding* cUnitSelection::getSelectedBuilding () const
+cBuilding* cUnitSelection::getSelectedBuilding() const
 {
-	auto selectedUnit = getSelectedUnit ();
-	return static_cast<cBuilding*>(selectedUnit && selectedUnit->isABuilding () ? selectedUnit : nullptr);
+	auto selectedUnit = getSelectedUnit();
+	return static_cast<cBuilding*> (selectedUnit && selectedUnit->isABuilding() ? selectedUnit : nullptr);
 }
 
 //------------------------------------------------------------------------------
-std::vector<cUnit*> cUnitSelection::getSelectedUnits () const
+std::vector<cUnit*> cUnitSelection::getSelectedUnits() const
 {
 	std::vector<cUnit*> result;
-	for (auto i = selectedUnits.begin (); i != selectedUnits.end (); ++i)
+	for (auto i = selectedUnits.begin(); i != selectedUnits.end(); ++i)
 	{
-		result.push_back (static_cast<cVehicle*>(i->first));
+		result.push_back (static_cast<cVehicle*> (i->first));
 	}
 	return result;
 }
 
 //------------------------------------------------------------------------------
-std::vector<cVehicle*> cUnitSelection::getSelectedVehicles () const
+std::vector<cVehicle*> cUnitSelection::getSelectedVehicles() const
 {
 	std::vector<cVehicle*> result;
-	for (auto i = selectedUnits.begin (); i != selectedUnits.end (); ++i)
+	for (auto i = selectedUnits.begin(); i != selectedUnits.end(); ++i)
 	{
-		if (i->first->data.ID.isAVehicle ())
+		if (i->first->data.ID.isAVehicle())
 		{
-			result.push_back (static_cast<cVehicle*>(i->first));
+			result.push_back (static_cast<cVehicle*> (i->first));
 		}
 	}
 	return result;
 }
 
 //------------------------------------------------------------------------------
-std::vector<cBuilding*> cUnitSelection::getSelectedBuildings () const
+std::vector<cBuilding*> cUnitSelection::getSelectedBuildings() const
 {
 	std::vector<cBuilding*> result;
-	for (auto i = selectedUnits.begin (); i != selectedUnits.end (); ++i)
+	for (auto i = selectedUnits.begin(); i != selectedUnits.end(); ++i)
 	{
-		if (i->first->data.ID.isABuilding ())
+		if (i->first->data.ID.isABuilding())
 		{
-			result.push_back (static_cast<cBuilding*>(i->first));
+			result.push_back (static_cast<cBuilding*> (i->first));
 		}
 	}
 	return result;
 }
 
 //------------------------------------------------------------------------------
-size_t cUnitSelection::getSelectedUnitsCount () const
+size_t cUnitSelection::getSelectedUnitsCount() const
 {
-	return selectedUnits.size ();
+	return selectedUnits.size();
 }
 
 //------------------------------------------------------------------------------
-size_t cUnitSelection::getSelectedVehiclesCount () const
+size_t cUnitSelection::getSelectedVehiclesCount() const
 {
 	size_t result = 0;
-	for (auto i = selectedUnits.begin (); i != selectedUnits.end (); ++i)
+	for (auto i = selectedUnits.begin(); i != selectedUnits.end(); ++i)
 	{
-		if (i->first->data.ID.isAVehicle ()) ++result;
+		if (i->first->data.ID.isAVehicle()) ++result;
 	}
 	return result;
 }
 
 //------------------------------------------------------------------------------
-size_t cUnitSelection::getSelectedBuildingsCount () const
+size_t cUnitSelection::getSelectedBuildingsCount() const
 {
 	size_t result = 0;
-	for (auto i = selectedUnits.begin (); i != selectedUnits.end (); ++i)
+	for (auto i = selectedUnits.begin(); i != selectedUnits.end(); ++i)
 	{
-		if (i->first->data.ID.isABuilding ()) ++result;
+		if (i->first->data.ID.isABuilding()) ++result;
 	}
 	return result;
 }
@@ -270,12 +270,12 @@ size_t cUnitSelection::getSelectedBuildingsCount () const
 //------------------------------------------------------------------------------
 bool cUnitSelection::isSelected (const cUnit& unit) const
 {
-	auto iter = std::find_if (selectedUnits.begin (), selectedUnits.end (), [&unit](const std::pair<cUnit*, cSignalConnection>& entry) { return entry.first == &unit; });
-	return iter != selectedUnits.end ();
+	auto iter = std::find_if (selectedUnits.begin(), selectedUnits.end(), [&unit] (const std::pair<cUnit*, cSignalConnection>& entry) { return entry.first == &unit; });
+	return iter != selectedUnits.end();
 }
 
 //------------------------------------------------------------------------------
 bool cUnitSelection::canSelect (const cUnit* unit) const
 {
-	return unit && unit->getOwner ();
+	return unit && unit->getOwner();
 }

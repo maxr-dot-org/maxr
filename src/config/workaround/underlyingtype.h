@@ -27,17 +27,18 @@
 
 #include <type_traits>
 
-namespace std {
+namespace std
+{
 
 template<typename E>
 struct underlying_type
 {
-    typedef typename conditional
-    <
-        E(-1) < E(0),
-        typename make_signed<E>::type,
-        typename make_unsigned<E>::type
-    >::type type;
+	typedef typename conditional
+	<
+	E (-1) < E (0),
+	typename make_signed<E>::type,
+	typename make_unsigned<E>::type
+	>::type type;
 };
 
 }

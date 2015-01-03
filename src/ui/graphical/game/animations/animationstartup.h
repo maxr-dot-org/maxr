@@ -35,7 +35,7 @@ class cAnimationStartUp : public cAnimation
 {
 public:
 	cAnimationStartUp (cAnimationTimer& animationTimer, const cUnit& unit);
-	~cAnimationStartUp ();
+	~cAnimationStartUp();
 
 	virtual bool isLocatedIn (const cBox<cPosition>& box) const MAXR_OVERRIDE_FUNCTION;
 private:
@@ -44,7 +44,7 @@ private:
 	cAnimationTimer& animationTimer;
 	const cUnit* unit;
 
-	void run ();
+	void run();
 };
 
 #endif // ui_graphical_game_animations_animationstartupH

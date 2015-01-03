@@ -27,7 +27,7 @@
 class cValidator
 {
 public:
-	virtual ~cValidator () {}
+	virtual ~cValidator() {}
 
 	virtual eValidatorState validate (const std::string& text) const = 0;
 

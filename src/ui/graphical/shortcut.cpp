@@ -26,25 +26,25 @@ cShortcut::cShortcut (cKeySequence keySequence_) :
 {}
 
 //------------------------------------------------------------------------------
-const cKeySequence& cShortcut::getKeySequence () const
+const cKeySequence& cShortcut::getKeySequence() const
 {
 	return keySequence;
 }
 
 //------------------------------------------------------------------------------
-void cShortcut::activate ()
+void cShortcut::activate()
 {
 	active = true;
 }
 
 //------------------------------------------------------------------------------
-void cShortcut::deactivate ()
+void cShortcut::deactivate()
 {
 	active = false;
 }
 
 //------------------------------------------------------------------------------
-bool cShortcut::isActive () const
+bool cShortcut::isActive() const
 {
 	return active;
 }

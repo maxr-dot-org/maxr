@@ -61,9 +61,9 @@ class cGameGuiController
 {
 public:
 	cGameGuiController (cApplication& application, std::shared_ptr<const cStaticMap> staticMap);
-	~cGameGuiController ();
+	~cGameGuiController();
 
-	void start ();
+	void start();
 
 	void addPlayerGameGuiState (const cPlayer& player, cGameGuiState playerGameGuiState);
 
@@ -94,19 +94,19 @@ private:
 
 	std::array<std::pair<bool, cPosition>, 4> savedPositions;
 
-	void initShortcuts ();
+	void initShortcuts();
 
-	void connectGuiStaticCommands ();
+	void connectGuiStaticCommands();
 
 	void setActiveClient (std::shared_ptr<cClient> client);
 
 	void connectClient (cClient& client);
 
-	void showNextPlayerDialog ();
+	void showNextPlayerDialog();
 
-	void showFilesWindow ();
-	void showPreferencesDialog ();
-	void showReportsWindow ();
+	void showFilesWindow();
+	void showPreferencesDialog();
+	void showReportsWindow();
 
 	void showUnitHelpWindow (const cUnit& unit);
 	void showUnitTransferDialog (const cUnit& sourceUnit, const cUnit& destinationUnit);
@@ -122,22 +122,22 @@ private:
 
 	void handleReport (const cSavedReport& report);
 
-	void selectNextUnit ();
-	void selectPreviousUnit ();
-	void markSelectedUnitAsDone ();
+	void selectNextUnit();
+	void selectPreviousUnit();
+	void markSelectedUnitAsDone();
 
-	void centerSelectedUnit ();
+	void centerSelectedUnit();
 
 	void savePosition (size_t index);
 	void jumpToSavedPosition (size_t index);
 
-	std::vector<std::shared_ptr<const cPlayer>> getPlayers () const;
-	std::shared_ptr<const cPlayer> getActivePlayer () const;
-	std::shared_ptr<const cTurnClock> getTurnClock () const;
-	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock () const;
-	std::shared_ptr<const cGameSettings> getGameSettings () const;
-	std::shared_ptr<const cCasualtiesTracker> getCasualtiesTracker () const;
-	std::shared_ptr<const cMap> getDynamicMap () const;
+	std::vector<std::shared_ptr<const cPlayer>> getPlayers() const;
+	std::shared_ptr<const cPlayer> getActivePlayer() const;
+	std::shared_ptr<const cTurnClock> getTurnClock() const;
+	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock() const;
+	std::shared_ptr<const cGameSettings> getGameSettings() const;
+	std::shared_ptr<const cCasualtiesTracker> getCasualtiesTracker() const;
+	std::shared_ptr<const cMap> getDynamicMap() const;
 
 	mutable cSignal<void (const cUnit&, const cUnit&, int, int)> transferTriggered;
 	mutable cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingTriggered;

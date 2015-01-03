@@ -28,20 +28,20 @@
 //------------------------------------------------------------------------------
 bool cMouseActionSteal::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
 {
-	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
+	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 
 	if (!selectedVehicle) return false;
 
 	const auto& field = map.getField (mapPosition);
 
-	const auto overVehicle = field.getVehicle ();
-	const auto overPlane = field.getPlane ();
+	const auto overVehicle = field.getVehicle();
+	const auto overPlane = field.getPlane();
 
 	if (overVehicle)
 	{
 		gameMapWidget.triggeredSteal (*selectedVehicle, *overVehicle);
 	}
-	else if (overPlane && overPlane->getFlightHeight () == 0)
+	else if (overPlane && overPlane->getFlightHeight() == 0)
 	{
 		gameMapWidget.triggeredSteal (*selectedVehicle, *overPlane);
 	}
@@ -54,13 +54,13 @@ bool cMouseActionSteal::executeLeftClick (cGameMapWidget& gameMapWidget, const c
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionSteal::doesChangeState () const
+bool cMouseActionSteal::doesChangeState() const
 {
 	return true;
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionSteal::isSingleAction () const
+bool cMouseActionSteal::isSingleAction() const
 {
 	return false;
 }

@@ -26,14 +26,14 @@
 
 static inline std::string& to_lower (std::string& s)
 {
-	std::transform (s.begin (), s.end (), s.begin (), static_cast<int (&)(int)> (std::tolower));
+	std::transform (s.begin(), s.end(), s.begin(), static_cast<int (&) (int)> (std::tolower));
 	return s;
 }
 
 static inline std::string to_lower_copy (const std::string& s)
 {
 	auto s2 = s;
-	return to_lower(s2);
+	return to_lower (s2);
 }
 
 #endif // utility_string_tolowerH

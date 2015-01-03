@@ -43,10 +43,10 @@ class cFrameCounter;
 class cApplication
 {
 public:
-	cApplication ();
-	~cApplication ();
+	cApplication();
+	~cApplication();
 
-	void execute ();
+	void execute();
 
 	template<typename WindowType>
 	WindowType* show (std::shared_ptr<WindowType> window);
@@ -69,20 +69,20 @@ public:
 	void grapMouseFocus (cWidget& widget);
 	void releaseMouseFocus (const cWidget& widget);
 	bool hasMouseFocus (const cWidget& widget) const;
-	bool hasMouseFocus () const;
+	bool hasMouseFocus() const;
 
 	void grapKeyFocus (cWidget& widget);
 	void releaseKeyFocus (const cWidget& widget);
 	bool hasKeyFocus (const cWidget& widget) const;
-	bool hasKeyFocus () const;
+	bool hasKeyFocus() const;
 
 	void addRunnable (std::shared_ptr<cRunnable> runnable);
-    std::shared_ptr<cRunnable> removeRunnable (const cRunnable& runnable);
+	std::shared_ptr<cRunnable> removeRunnable (const cRunnable& runnable);
 
 	cShortcut* addShortcut (std::unique_ptr<cShortcut> shortcut);
 
-	cMouse* getActiveMouse ();
-	cKeyboard* getActiveKeyboard ();
+	cMouse* getActiveMouse();
+	cKeyboard* getActiveKeyboard();
 
 	std::shared_ptr<cFrameCounter> frameCounter;
 private:
@@ -109,11 +109,11 @@ private:
 
 	void center (cWindow& window);
 
-	cWindow* getActiveWindow ();
+	cWindow* getActiveWindow();
 
 	cWidget* getMouseEventFirstTarget (const cPosition& position);
 
-	cWidget* getKeyFocusWidget () const;
+	cWidget* getKeyFocusWidget() const;
 
 	void mousePressed (cMouse& mouse, eMouseButtonType button);
 	void mouseReleased (cMouse& mouse, eMouseButtonType button);
@@ -144,7 +144,7 @@ WindowType* cApplication::show (std::shared_ptr<WindowType> window)
 
 	modalWindows.push_back (std::move (window));
 
-	return static_cast<WindowType*>(modalWindows.back ().get ());
+	return static_cast<WindowType*> (modalWindows.back().get());
 }
 
 #endif // ui_graphical_applicationH

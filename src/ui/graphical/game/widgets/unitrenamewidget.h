@@ -44,11 +44,11 @@ public:
 	cUnitRenameWidget (const cPosition& position, int width);
 
 	void setUnit (const cUnit* unit);
-	const cUnit* getUnit () const;
+	const cUnit* getUnit() const;
 
 	void setPlayer (const cPlayer* player);
 
-	const std::string& getUnitName () const;
+	const std::string& getUnitName() const;
 
 	cSignal<void ()> unitRenameTriggered;
 private:

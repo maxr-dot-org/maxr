@@ -26,15 +26,15 @@
 class cWindowSinglePlayer : public cWindowMain
 {
 public:
-	cWindowSinglePlayer ();
-	~cWindowSinglePlayer ();
+	cWindowSinglePlayer();
+	~cWindowSinglePlayer();
 
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	void newGameClicked ();
-	void loadGameClicked ();
-	void backClicked ();
+	void newGameClicked();
+	void loadGameClicked();
+	void backClicked();
 };
 
 #endif // ui_graphical_menu_windows_windowsingleplayerH

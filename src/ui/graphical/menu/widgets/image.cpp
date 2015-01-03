@@ -38,12 +38,12 @@ void cImage::setImage (SDL_Surface* image_)
 {
 	if (image_ != nullptr)
 	{
-        image = AutoSurface (SDL_CreateRGBSurface (0, image_->w, image_->h, Video.getColDepth (), 0, 0, 0, 0));
+		image = AutoSurface (SDL_CreateRGBSurface (0, image_->w, image_->h, Video.getColDepth(), 0, 0, 0, 0));
 
-		SDL_FillRect (image.get (), nullptr, 0xFF00FF);
-		SDL_SetColorKey (image.get (), SDL_TRUE, 0xFF00FF);
+		SDL_FillRect (image.get(), nullptr, 0xFF00FF);
+		SDL_SetColorKey (image.get(), SDL_TRUE, 0xFF00FF);
 
-		SDL_BlitSurface (image_, nullptr, image.get (), nullptr);
+		SDL_BlitSurface (image_, nullptr, image.get(), nullptr);
 
 		resize (cPosition (image->w, image->h));
 	}
@@ -59,20 +59,20 @@ void cImage::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (image != nullptr)
 	{
-		blitClipped (*image, getArea (), destination, clipRect);
+		blitClipped (*image, getArea(), destination, clipRect);
 	}
 
 	cClickableWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------
-void cImage::disableAtTransparent ()
+void cImage::disableAtTransparent()
 {
 	disabledAtTransparent = true;
 }
 
 //------------------------------------------------------------------------------
-void cImage::enableAtTransparent ()
+void cImage::enableAtTransparent()
 {
 	disabledAtTransparent = false;
 }
@@ -84,7 +84,7 @@ bool cImage::isAt (const cPosition& position) const
 
 	if (!disabledAtTransparent) return true;
 
-	auto color = getPixel (*image, position - getPosition ());
+	auto color = getPixel (*image, position - getPosition());
 
 	if (color == 0xFF00FF) return false;
 
@@ -96,8 +96,8 @@ bool cImage::handleClicked (cApplication& application, cMouse& mouse, eMouseButt
 {
 	if (button == eMouseButtonType::Left)
 	{
-        if (clickSound) cSoundDevice::getInstance ().playSoundEffect (*clickSound);
-		clicked ();
+		if (clickSound) cSoundDevice::getInstance().playSoundEffect (*clickSound);
+		clicked();
 		return true;
 	}
 	return false;

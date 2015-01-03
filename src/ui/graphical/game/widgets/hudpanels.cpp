@@ -31,8 +31,8 @@
 cHudPanels::cHudPanels (const cPosition& position, int height, std::shared_ptr<cAnimationTimer> animationTimer_, double percentClosed_) :
 	cWidget (position),
 	animationTimer (std::move (animationTimer_)),
-    openStep (100. * 10 / (SoundData.SNDPanelOpen.empty () ? 800 : SoundData.SNDPanelOpen.getLength ().count () * 0.95)),
-    closeStep (100. * 10 / (SoundData.SNDPanelClose.empty () ? 800 : SoundData.SNDPanelClose.getLength ().count () * 0.95)),
+	openStep (100. * 10 / (SoundData.SNDPanelOpen.empty() ? 800 : SoundData.SNDPanelOpen.getLength().count() * 0.95)),
+	closeStep (100. * 10 / (SoundData.SNDPanelClose.empty() ? 800 : SoundData.SNDPanelClose.getLength().count() * 0.95)),
 	percentClosed (percentClosed_)
 {
 	percentClosed = std::max (0., percentClosed);
@@ -40,21 +40,21 @@ cHudPanels::cHudPanels (const cPosition& position, int height, std::shared_ptr<c
 
 	assert (animationTimer != nullptr);
 
-	resize (cPosition(GraphicsData.gfx_panel_top->w, height));
+	resize (cPosition (GraphicsData.gfx_panel_top->w, height));
 }
 
 //------------------------------------------------------------------------------
-void cHudPanels::open ()
+void cHudPanels::open()
 {
-    cSoundDevice::getInstance ().playSoundEffect (SoundData.SNDPanelOpen);
+	cSoundDevice::getInstance().playSoundEffect (SoundData.SNDPanelOpen);
 
 	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, std::bind (&cHudPanels::doOpenStep, this));
 }
 
 //------------------------------------------------------------------------------
-void cHudPanels::close ()
+void cHudPanels::close()
 {
-    cSoundDevice::getInstance ().playSoundEffect (SoundData.SNDPanelClose);
+	cSoundDevice::getInstance().playSoundEffect (SoundData.SNDPanelClose);
 
 	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, std::bind (&cHudPanels::doCloseStep, this));
 }
@@ -62,40 +62,40 @@ void cHudPanels::close ()
 //------------------------------------------------------------------------------
 void cHudPanels::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
-	SDL_Rect top = {getPosition ().x (), getPosition ().y () + (getSize ().y () / 2) - GraphicsData.gfx_panel_top->h, GraphicsData.gfx_panel_top->w, GraphicsData.gfx_panel_top->h};
-	SDL_Rect bottom = {getPosition ().x (), getPosition ().y () + (getSize ().y () / 2), GraphicsData.gfx_panel_bottom->w, GraphicsData.gfx_panel_top->h};
+	SDL_Rect top = {getPosition().x(), getPosition().y() + (getSize().y() / 2) - GraphicsData.gfx_panel_top->h, GraphicsData.gfx_panel_top->w, GraphicsData.gfx_panel_top->h};
+	SDL_Rect bottom = {getPosition().x(), getPosition().y() + (getSize().y() / 2), GraphicsData.gfx_panel_bottom->w, GraphicsData.gfx_panel_top->h};
 
-	const auto offset = (int)((getSize ().y () / 2) * (100. - percentClosed) / 100);
+	const auto offset = (int) ((getSize().y() / 2) * (100. - percentClosed) / 100);
 
 	top.y -= offset;
 	bottom.y += offset;
 
-	SDL_BlitSurface (GraphicsData.gfx_panel_top.get (), nullptr, &destination, &top);
-	SDL_BlitSurface (GraphicsData.gfx_panel_bottom.get (), nullptr, &destination, &bottom);
+	SDL_BlitSurface (GraphicsData.gfx_panel_top.get(), nullptr, &destination, &top);
+	SDL_BlitSurface (GraphicsData.gfx_panel_bottom.get(), nullptr, &destination, &bottom);
 }
 
 //------------------------------------------------------------------------------
-void cHudPanels::doOpenStep ()
+void cHudPanels::doOpenStep()
 {
 	percentClosed -= openStep;
 
 	if (percentClosed <= 0.)
 	{
 		percentClosed = std::max (0., percentClosed);
-		signalConnectionManager.disconnectAll ();
-		opened ();
+		signalConnectionManager.disconnectAll();
+		opened();
 	}
 }
 
 //------------------------------------------------------------------------------
-void cHudPanels::doCloseStep ()
+void cHudPanels::doCloseStep()
 {
-    if (percentClosed >= 100.)
-    {
-        signalConnectionManager.disconnectAll ();
-        closed ();
-        return;
-    }
+	if (percentClosed >= 100.)
+	{
+		signalConnectionManager.disconnectAll();
+		closed();
+		return;
+	}
 
 	percentClosed += closeStep;
 

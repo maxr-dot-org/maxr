@@ -24,22 +24,22 @@
 class cSaveGameData
 {
 public:
-	cSaveGameData ();
+	cSaveGameData();
 	cSaveGameData (std::string fileName, std::string gameName, std::string type, std::string date, int number);
 
-	const std::string& getFileName () const;
+	const std::string& getFileName() const;
 	void setFileName (std::string name);
 
-	const std::string& getGameName () const;
+	const std::string& getGameName() const;
 	void setGameName (std::string name);
 
-	const std::string& getType () const;
+	const std::string& getType() const;
 	void setType (std::string type);
 
-	const std::string& getDate () const;
+	const std::string& getDate() const;
 	void setDate (std::string date);
 
-	int getNumber () const;
+	int getNumber() const;
 	void setNumber (int number);
 
 private:

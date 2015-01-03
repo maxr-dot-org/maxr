@@ -31,29 +31,29 @@
 #include "ui/graphical/application.h"
 
 //------------------------------------------------------------------------------
-cWindowStart::cWindowStart () :
+cWindowStart::cWindowStart() :
 	cWindowMain (lngPack.i18n ("Text~Title~MainMenu"))
 {
 	using namespace std::placeholders;
 
-	auto singlePlayerButton = addChild(std::make_unique<cPushButton> (getPosition () + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Single_Player")));
+	auto singlePlayerButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Single_Player")));
 	signalConnectionManager.connect (singlePlayerButton->clicked, std::bind (&cWindowStart::singlePlayerClicked, this));
 
-	auto multiPlayerButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Multi_Player")));
+	auto multiPlayerButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Multi_Player")));
 	signalConnectionManager.connect (multiPlayerButton->clicked, std::bind (&cWindowStart::multiPlayerClicked, this));
 
-	auto preferencesButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (390, 190 + buttonSpace * 2), ePushButtonType::StandardBig, lngPack.i18n ("Text~Settings~Preferences")));
+	auto preferencesButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 2), ePushButtonType::StandardBig, lngPack.i18n ("Text~Settings~Preferences")));
 	signalConnectionManager.connect (preferencesButton->clicked, std::bind (&cWindowStart::preferencesClicked, this));
 
-	auto licenseButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (390, 190 + buttonSpace * 3), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Mani")));
+	auto licenseButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 3), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Mani")));
 	signalConnectionManager.connect (licenseButton->clicked, std::bind (&cWindowStart::licenceClicked, this));
 
-	auto exitButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, &SoundData.SNDMenuButton, lngPack.i18n ("Text~Others~Exit")));
+	auto exitButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, &SoundData.SNDMenuButton, lngPack.i18n ("Text~Others~Exit")));
 	signalConnectionManager.connect (exitButton->clicked, std::bind (&cWindowStart::exitClicked, this));
 }
 
 //------------------------------------------------------------------------------
-cWindowStart::~cWindowStart ()
+cWindowStart::~cWindowStart()
 {}
 
 //------------------------------------------------------------------------------
@@ -61,47 +61,47 @@ void cWindowStart::handleActivated (cApplication& application, bool firstTime)
 {
 	cWindow::handleActivated (application, firstTime);
 
-    if (firstTime) cSoundDevice::getInstance ().startMusic (cSettings::getInstance ().getMusicPath () + PATH_DELIMITER + "main.ogg");
+	if (firstTime) cSoundDevice::getInstance().startMusic (cSettings::getInstance().getMusicPath() + PATH_DELIMITER + "main.ogg");
 }
 
 //------------------------------------------------------------------------------
-void cWindowStart::singlePlayerClicked ()
+void cWindowStart::singlePlayerClicked()
 {
 	if (!getActiveApplication()) return;
 
 	auto window = std::make_shared<cWindowSinglePlayer> ();
-	getActiveApplication ()->show (window);
+	getActiveApplication()->show (window);
 }
 
 //------------------------------------------------------------------------------
-void cWindowStart::multiPlayerClicked ()
+void cWindowStart::multiPlayerClicked()
 {
-	if (!getActiveApplication ()) return;
+	if (!getActiveApplication()) return;
 
 	auto window = std::make_shared<cWindowMultiPlayer> ();
-	getActiveApplication ()->show (window);
+	getActiveApplication()->show (window);
 }
 
 //------------------------------------------------------------------------------
-void cWindowStart::preferencesClicked ()
+void cWindowStart::preferencesClicked()
 {
-	if (!getActiveApplication ()) return;
+	if (!getActiveApplication()) return;
 
 	auto dialog = std::make_shared<cDialogPreferences> ();
-	getActiveApplication ()->show (dialog);
+	getActiveApplication()->show (dialog);
 }
 
 //------------------------------------------------------------------------------
-void cWindowStart::licenceClicked ()
+void cWindowStart::licenceClicked()
 {
-	if (!getActiveApplication ()) return;
+	if (!getActiveApplication()) return;
 
 	auto dialog = std::make_shared<cDialogLicense> ();
-	getActiveApplication ()->show (dialog);
+	getActiveApplication()->show (dialog);
 }
 
 //------------------------------------------------------------------------------
-void cWindowStart::exitClicked ()
+void cWindowStart::exitClicked()
 {
-	close ();
+	close();
 }

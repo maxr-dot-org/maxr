@@ -87,9 +87,9 @@ sSubBase::sSubBase (const sSubBase& other) :
 	gold (other.gold)
 {}
 
-sSubBase::~sSubBase ()
+sSubBase::~sSubBase()
 {
-	destroyed ();
+	destroyed();
 }
 
 int sSubBase::getMaxMetalProd() const
@@ -167,7 +167,7 @@ void sSubBase::setOilProd (int value)
 	OilProd = value;
 }
 
-int sSubBase::getMetal () const
+int sSubBase::getMetal() const
 {
 	return metal;
 }
@@ -175,10 +175,10 @@ int sSubBase::getMetal () const
 void sSubBase::setMetal (int value)
 {
 	std::swap (metal, value);
-	if (metal != value) metalChanged ();
+	if (metal != value) metalChanged();
 }
 
-int sSubBase::getOil () const
+int sSubBase::getOil() const
 {
 	return oil;
 }
@@ -186,10 +186,10 @@ int sSubBase::getOil () const
 void sSubBase::setOil (int value)
 {
 	std::swap (oil, value);
-	if (oil != value) oilChanged ();
+	if (oil != value) oilChanged();
 }
 
-int sSubBase::getGold () const
+int sSubBase::getGold() const
 {
 	return gold;
 }
@@ -197,7 +197,7 @@ int sSubBase::getGold () const
 void sSubBase::setGold (int value)
 {
 	std::swap (gold, value);
-	if (gold != value) goldChanged ();
+	if (gold != value) goldChanged();
 }
 
 void sSubBase::changeMetalProd (int value)
@@ -222,7 +222,7 @@ int sSubBase::calcMaxProd (int ressourceType) const
 	{
 		const cBuilding& building = *buildings[i];
 
-		if (building.data.canMineMaxRes <= 0 || !building.isUnitWorking ()) continue;
+		if (building.data.canMineMaxRes <= 0 || !building.isUnitWorking()) continue;
 
 		switch (ressourceType)
 		{
@@ -289,7 +289,7 @@ int sSubBase::calcMaxAllowedProd (int ressourceType) const
 	{
 		const cBuilding& building = *buildings[i];
 
-		if (building.data.canMineMaxRes <= 0 || !building.isUnitWorking ()) continue;
+		if (building.data.canMineMaxRes <= 0 || !building.isUnitWorking()) continue;
 
 		// how much of B can be produced in this mine,
 		// without decreasing the possible production of A and C?
@@ -311,7 +311,7 @@ int sSubBase::calcMaxAllowedProd (int ressourceType) const
 	{
 		const cBuilding& building = *buildings[i];
 
-		if (building.data.canMineMaxRes <= 0 || !building.isUnitWorking ()) continue;
+		if (building.data.canMineMaxRes <= 0 || !building.isUnitWorking()) continue;
 
 		int freeB = min (building.data.canMineMaxRes - building.*ressourceProdA, building.*ressourceProdB);
 		int freeC = min (building.data.canMineMaxRes - building.*ressourceProdA, building.*ressourceProdC);
@@ -345,22 +345,22 @@ int sSubBase::calcMaxAllowedProd (int ressourceType) const
 
 static bool isAOnlineStation (const cBuilding& building)
 {
-	return building.data.produceEnergy > 1 && building.isUnitWorking ();
+	return building.data.produceEnergy > 1 && building.isUnitWorking();
 }
 
 static bool isAOfflineStation (const cBuilding& building)
 {
-	return building.data.produceEnergy > 1 && !building.isUnitWorking ();
+	return building.data.produceEnergy > 1 && !building.isUnitWorking();
 }
 
 static bool isAOnlineGenerator (const cBuilding& building)
 {
-	return building.data.produceEnergy == 1 && building.isUnitWorking ();
+	return building.data.produceEnergy == 1 && building.isUnitWorking();
 }
 
 static bool isAOfflineGenerator (const cBuilding& building)
 {
-	return building.data.produceEnergy == 1 && !building.isUnitWorking ();
+	return building.data.produceEnergy == 1 && !building.isUnitWorking();
 }
 
 template <typename T>
@@ -458,14 +458,14 @@ int sSubBase::getResource (sUnitData::eStorageResType storeResType) const
 {
 	switch (storeResType)
 	{
-	case sUnitData::STORE_RES_METAL:
-		return getMetal ();
-	case sUnitData::STORE_RES_OIL:
-		return getOil ();
-	case sUnitData::STORE_RES_GOLD:
-		return getGold();
-	default:
-		assert (0);
+		case sUnitData::STORE_RES_METAL:
+			return getMetal();
+		case sUnitData::STORE_RES_OIL:
+			return getOil();
+		case sUnitData::STORE_RES_GOLD:
+			return getGold();
+		default:
+			assert (0);
 	}
 	return 0;
 }
@@ -474,17 +474,17 @@ void sSubBase::setResource (sUnitData::eStorageResType storeResType, int value)
 {
 	switch (storeResType)
 	{
-	case sUnitData::STORE_RES_METAL:
-		setMetal (value);
-		break;
-	case sUnitData::STORE_RES_OIL:
-		setOil (value);
-		break;
-	case sUnitData::STORE_RES_GOLD:
-		setGold (value);
-		break;
-	default:
-		assert (0);
+		case sUnitData::STORE_RES_METAL:
+			setMetal (value);
+			break;
+		case sUnitData::STORE_RES_OIL:
+			setOil (value);
+			break;
+		case sUnitData::STORE_RES_GOLD:
+			setGold (value);
+			break;
+		default:
+			assert (0);
 	}
 }
 
@@ -504,25 +504,25 @@ void sSubBase::addRessouce (cServer& server, sUnitData::eStorageResType storeRes
 		{
 			if (b.data.getStoredResources() > -value)
 			{
-				b.data.setStoredResources (b.data.getStoredResources () + value);
+				b.data.setStoredResources (b.data.getStoredResources() + value);
 				value = 0;
 			}
 			else
 			{
-				value += b.data.getStoredResources ();
+				value += b.data.getStoredResources();
 				b.data.setStoredResources (0);
 			}
 		}
 		else
 		{
-			if (b.data.storageResMax - b.data.getStoredResources () > value)
+			if (b.data.storageResMax - b.data.getStoredResources() > value)
 			{
-				b.data.setStoredResources (b.data.getStoredResources () + value);
+				b.data.setStoredResources (b.data.getStoredResources() + value);
 				value = 0;
 			}
 			else
 			{
-				value -= b.data.storageResMax - b.data.getStoredResources ();
+				value -= b.data.storageResMax - b.data.getStoredResources();
 				b.data.setStoredResources (b.data.storageResMax);
 			}
 		}
@@ -540,7 +540,7 @@ void sSubBase::refresh()
 	// reset subbase
 	buildings.clear();
 	MaxMetal = 0;
-	setMetal(0);
+	setMetal (0);
 	MaxOil = 0;
 	setOil (0);
 	MaxGold = 0;
@@ -576,7 +576,7 @@ bool sSubBase::checkHumanConsumer (cServer& server)
 	for (size_t i = 0; i != buildings.size(); ++i)
 	{
 		cBuilding& building = *buildings[i];
-		if (!building.data.needsHumans || !building.isUnitWorking ()) continue;
+		if (!building.data.needsHumans || !building.isUnitWorking()) continue;
 
 		building.ServerStopWork (server, false);
 
@@ -592,7 +592,7 @@ bool sSubBase::checkGoldConsumer (cServer& server)
 	for (size_t i = 0; i != buildings.size(); ++i)
 	{
 		cBuilding& building = *buildings[i];
-		if (!building.data.convertsGold || !building.isUnitWorking ()) continue;
+		if (!building.data.convertsGold || !building.isUnitWorking()) continue;
 
 		building.ServerStopWork (server, false);
 
@@ -603,16 +603,16 @@ bool sSubBase::checkGoldConsumer (cServer& server)
 
 bool sSubBase::checkMetalConsumer (cServer& server)
 {
-	if (MetalNeed <= MetalProd + getMetal ()) return false;
+	if (MetalNeed <= MetalProd + getMetal()) return false;
 
 	for (size_t i = 0; i != buildings.size(); ++i)
 	{
 		cBuilding& building = *buildings[i];
-		if (!building.data.needsMetal || !building.isUnitWorking ()) continue;
+		if (!building.data.needsMetal || !building.isUnitWorking()) continue;
 
 		building.ServerStopWork (server, false);
 
-		if (MetalNeed <= MetalProd + getMetal ()) break;
+		if (MetalNeed <= MetalProd + getMetal()) break;
 	}
 	return true;
 }
@@ -647,7 +647,7 @@ bool sSubBase::checkOil (cServer& server)
 
 	// check needed oil
 	int neededOil = stations * 6 + generators * 2;
-	const int availableOil = getMaxOilProd () + getOil ();
+	const int availableOil = getMaxOilProd() + getOil();
 	bool oilMissing = false;
 	if (neededOil > availableOil)
 	{
@@ -660,10 +660,10 @@ bool sSubBase::checkOil (cServer& server)
 
 	// increase oil production, if necessary
 	neededOil = stations * 6 + generators * 2;
-	if (neededOil > OilProd + getOil ())
+	if (neededOil > OilProd + getOil())
 	{
 		// temporary decrease gold and metal production
-		const int missingOil = neededOil - OilProd - getOil ();
+		const int missingOil = neededOil - OilProd - getOil();
 		const int gold = GoldProd;
 		const int metal = MetalProd;
 		setMetalProd (0);
@@ -675,7 +675,7 @@ bool sSubBase::checkOil (cServer& server)
 		setMetalProd (metal);
 
 		sendSavedReport (server, cSavedReportResourceChanged (RES_OIL, missingOil, true), owner);
-		if (getMetalProd () < metal)
+		if (getMetalProd() < metal)
 			sendSavedReport (server, cSavedReportResourceChanged (RES_METAL, metal - MetalProd, false), owner);
 		if (getGoldProd() < gold)
 			sendSavedReport (server, cSavedReportResourceChanged (RES_GOLD, gold - GoldProd, false), owner);
@@ -721,7 +721,7 @@ bool sSubBase::checkEnergy (cServer& server)
 	for (size_t i = 0; i != buildings.size(); ++i)
 	{
 		cBuilding& building = *buildings[i];
-		if (!building.data.needsEnergy || !building.isUnitWorking ()) continue;
+		if (!building.data.needsEnergy || !building.isUnitWorking()) continue;
 
 		// do not shut down ressource producers in the first run
 		if (building.MaxOilProd > 0 ||
@@ -736,7 +736,7 @@ bool sSubBase::checkEnergy (cServer& server)
 	for (size_t i = 0; i != buildings.size(); ++i)
 	{
 		cBuilding& building = *buildings[i];
-		if (!building.data.needsEnergy || !building.isUnitWorking ()) continue;
+		if (!building.data.needsEnergy || !building.isUnitWorking()) continue;
 
 		// do not shut down oil producers in the second run
 		if (building.MaxOilProd > 0) continue;
@@ -750,7 +750,7 @@ bool sSubBase::checkEnergy (cServer& server)
 	for (size_t i = 0; i < buildings.size(); i++)
 	{
 		cBuilding& building = *buildings[i];
-		if (!building.data.needsEnergy || !building.isUnitWorking ()) continue;
+		if (!building.data.needsEnergy || !building.isUnitWorking()) continue;
 
 		building.ServerStopWork (server, false);
 
@@ -837,14 +837,14 @@ bool sSubBase::checkTurnEnd (cServer& server)
 void sSubBase::makeTurnStartRepairs (cServer& server, cBuilding& building)
 {
 	// repair (do not repair buildings that have been attacked in this turn):
-	if (building.data.getHitpoints () >= building.data.getHitpointsMax ()
-		|| getMetal () <= 0 || building.hasBeenAttacked ())
+	if (building.data.getHitpoints() >= building.data.getHitpointsMax()
+		|| getMetal() <= 0 || building.hasBeenAttacked())
 	{
 		return;
 	}
 	// calc new hitpoints
-	const auto newHitPoints = building.data.getHitpoints () + Round (((float)building.data.getHitpointsMax () / building.data.buildCosts) * 4);
-	building.data.setHitpoints (std::min (building.data.getHitpointsMax (), newHitPoints));
+	const auto newHitPoints = building.data.getHitpoints() + Round (((float)building.data.getHitpointsMax() / building.data.buildCosts) * 4);
+	building.data.setHitpoints (std::min (building.data.getHitpointsMax(), newHitPoints));
 	addMetal (server, -1);
 	sendUnitData (server, building);
 }
@@ -852,9 +852,9 @@ void sSubBase::makeTurnStartRepairs (cServer& server, cBuilding& building)
 void sSubBase::makeTurnStartReload (cServer& server, cBuilding& building)
 {
 	// reload:
-	if (building.data.canAttack && building.data.getAmmo () == 0 && getMetal () > 0)
+	if (building.data.canAttack && building.data.getAmmo() == 0 && getMetal() > 0)
 	{
-		building.data.setAmmo(building.data.getAmmoMax());
+		building.data.setAmmo (building.data.getAmmoMax());
 		addMetal (server, -1);
 		// ammo is not visible to enemies. So only send to the owner
 		sendUnitData (server, building, *owner);
@@ -864,31 +864,31 @@ void sSubBase::makeTurnStartReload (cServer& server, cBuilding& building)
 void sSubBase::makeTurnStartBuild (cServer& server, cBuilding& building)
 {
 	// build:
-	if (!building.isUnitWorking () || building.data.canBuild.empty () || building.isBuildListEmpty())
+	if (!building.isUnitWorking() || building.data.canBuild.empty() || building.isBuildListEmpty())
 	{
 		return;
 	}
 
-	cBuildListItem& buildListItem = building.getBuildListItem(0);
+	cBuildListItem& buildListItem = building.getBuildListItem (0);
 	if (buildListItem.getRemainingMetal() > 0)
 	{
 		// in this block the metal consumption of the factory
 		// in the next round can change
 		// so we first subtract the old value from MetalNeed and
 		// then add the new one, to hold the base up to date
-		MetalNeed -= min (building.MetalPerRound, buildListItem.getRemainingMetal ());
+		MetalNeed -= min (building.MetalPerRound, buildListItem.getRemainingMetal());
 
-		auto value = buildListItem.getRemainingMetal () - std::min (building.MetalPerRound, buildListItem.getRemainingMetal ());
+		auto value = buildListItem.getRemainingMetal() - std::min (building.MetalPerRound, buildListItem.getRemainingMetal());
 		value = std::max (value, 0);
 		buildListItem.setRemainingMetal (value);
 
-		MetalNeed += min (building.MetalPerRound, buildListItem.getRemainingMetal ());
+		MetalNeed += min (building.MetalPerRound, buildListItem.getRemainingMetal());
 		sendBuildList (server, building);
 		sendSubbaseValues (server, *this, *owner);
 	}
-	if (buildListItem.getRemainingMetal () <= 0)
+	if (buildListItem.getRemainingMetal() <= 0)
 	{
-		owner->addTurnReportUnit (buildListItem.getType ());
+		owner->addTurnReportUnit (buildListItem.getType());
 		building.ServerStopWork (server, false);
 	}
 }
@@ -903,8 +903,8 @@ void sSubBase::makeTurnStart (cServer& server)
 	// produce credits
 	if (GoldNeed)
 	{
-		owner->setCredits(owner->getCredits() + GoldNeed);
-		sendCredits (server, owner->getCredits (), *owner);
+		owner->setCredits (owner->getCredits() + GoldNeed);
+		sendCredits (server, owner->getCredits(), *owner);
 	}
 
 	// make repairs/build/reload
@@ -983,15 +983,15 @@ void sSubBase::addBuilding (cBuilding* b)
 	{
 		case sUnitData::STORE_RES_METAL:
 			MaxMetal += b->data.storageResMax;
-			setMetal (getMetal () + b->data.getStoredResources ());
+			setMetal (getMetal() + b->data.getStoredResources());
 			break;
 		case sUnitData::STORE_RES_OIL:
 			MaxOil += b->data.storageResMax;
-			setOil (getOil () + b->data.getStoredResources ());
+			setOil (getOil() + b->data.getStoredResources());
 			break;
 		case sUnitData::STORE_RES_GOLD:
 			MaxGold += b->data.storageResMax;
-			setGold (getGold () + b->data.getStoredResources ());
+			setGold (getGold() + b->data.getStoredResources());
 			break;
 		case sUnitData::STORE_RES_NONE:
 			break;
@@ -1001,7 +1001,7 @@ void sSubBase::addBuilding (cBuilding* b)
 	{
 		MaxEnergyProd += b->data.produceEnergy;
 		MaxOilNeed += b->data.needsOil;
-		if (b->isUnitWorking ())
+		if (b->isUnitWorking())
 		{
 			EnergyProd += b->data.produceEnergy;
 			OilNeed += b->data.needsOil;
@@ -1010,7 +1010,7 @@ void sSubBase::addBuilding (cBuilding* b)
 	else if (b->data.needsEnergy)
 	{
 		MaxEnergyNeed += b->data.needsEnergy;
-		if (b->isUnitWorking ())
+		if (b->isUnitWorking())
 		{
 			EnergyNeed += b->data.needsEnergy;
 		}
@@ -1019,22 +1019,22 @@ void sSubBase::addBuilding (cBuilding* b)
 	if (b->data.needsMetal)
 	{
 		MaxMetalNeed += b->data.needsMetal * 12;
-		if (b->isUnitWorking ())
+		if (b->isUnitWorking())
 		{
-			MetalNeed += min (b->MetalPerRound, b->getBuildListItem(0).getRemainingMetal ());
+			MetalNeed += min (b->MetalPerRound, b->getBuildListItem (0).getRemainingMetal());
 		}
 	}
 	// calculate gold
 	if (b->data.convertsGold)
 	{
 		MaxGoldNeed += b->data.convertsGold;
-		if (b->isUnitWorking ())
+		if (b->isUnitWorking())
 		{
 			GoldNeed += b->data.convertsGold;
 		}
 	}
 	// calculate ressource production
-	if (b->data.canMineMaxRes > 0 && b->isUnitWorking ())
+	if (b->data.canMineMaxRes > 0 && b->isUnitWorking())
 	{
 		int mineFree = b->data.canMineMaxRes;
 		changeMetalProd (b->MaxMetalProd);
@@ -1053,7 +1053,7 @@ void sSubBase::addBuilding (cBuilding* b)
 	if (b->data.needsHumans)
 	{
 		MaxHumanNeed += b->data.needsHumans;
-		if (b->isUnitWorking ())
+		if (b->isUnitWorking())
 		{
 			HumanNeed += b->data.needsHumans;
 		}
@@ -1079,7 +1079,7 @@ void sSubBase::pushInto (cNetMessage& message) const
 	message.pushInt16 (EnergyNeed);
 	message.pushInt16 (MaxEnergyProd);
 	message.pushInt16 (MaxEnergyNeed);
-	message.pushInt16 (getMetal ());
+	message.pushInt16 (getMetal());
 	message.pushInt16 (MaxMetal);
 	message.pushInt16 (MetalNeed);
 	message.pushInt16 (MaxMetalNeed);
@@ -1089,7 +1089,7 @@ void sSubBase::pushInto (cNetMessage& message) const
 	message.pushInt16 (GoldNeed);
 	message.pushInt16 (MaxGoldNeed);
 	message.pushInt16 (getGoldProd());
-	message.pushInt16 (getOil ());
+	message.pushInt16 (getOil());
 	message.pushInt16 (MaxOil);
 	message.pushInt16 (OilNeed);
 	message.pushInt16 (MaxOilNeed);
@@ -1108,17 +1108,17 @@ void sSubBase::popFrom (cNetMessage& message)
 	MaxOilNeed = message.popInt16();
 	OilNeed = message.popInt16();
 	MaxOil = message.popInt16();
-	setOil(message.popInt16());
+	setOil (message.popInt16());
 	GoldProd = message.popInt16();
 	MaxGoldNeed = message.popInt16();
 	GoldNeed = message.popInt16();
 	MaxGold = message.popInt16();
-	setGold(message.popInt16());
+	setGold (message.popInt16());
 	MetalProd = message.popInt16();
 	MaxMetalNeed = message.popInt16();
 	MetalNeed = message.popInt16();
 	MaxMetal = message.popInt16();
-	setMetal(message.popInt16());
+	setMetal (message.popInt16());
 	MaxEnergyNeed = message.popInt16();
 	MaxEnergyProd = message.popInt16();
 	EnergyNeed = message.popInt16();
@@ -1139,9 +1139,9 @@ cBase::~cBase()
 sSubBase* cBase::checkNeighbour (const cPosition& position, const cBuilding& building)
 {
 	if (map->isValidPosition (position) == false) return nullptr;
-	cBuilding* b = map->getField (position).getBuilding ();
+	cBuilding* b = map->getField (position).getBuilding();
 
-	if (b && b->getOwner () == building.getOwner () && b->SubBase)
+	if (b && b->getOwner() == building.getOwner() && b->SubBase)
 	{
 		b->CheckNeighbours (*map);
 		return b->SubBase;
@@ -1158,22 +1158,22 @@ void cBase::addBuilding (cBuilding* building, cServer* server)
 	if (building->data.isBig)
 	{
 		// big building
-		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (0, -1), *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (1, -1), *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (2, 0), *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (2, 1), *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (0, 2), *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (1, 2), *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (-1, 0), *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (-1, 1), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (0, -1), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (1, -1), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (2, 0), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (2, 1), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (0, 2), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (1, 2), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (-1, 0), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (-1, 1), *building)) NeighbourList.push_back (SubBase);
 	}
 	else
 	{
 		// small building
-		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (0, -1), *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (1, 0), *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (0, 1), *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (-1, 0), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (0, -1), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (1, 0), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (0, 1), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (-1, 0), *building)) NeighbourList.push_back (SubBase);
 	}
 	building->CheckNeighbours (*map);
 
@@ -1182,7 +1182,7 @@ void cBase::addBuilding (cBuilding* building, cServer* server)
 	if (NeighbourList.empty())
 	{
 		// no neighbours found, just generate new subbase and add the building
-		sSubBase* NewSubBase = new sSubBase (building->getOwner ());
+		sSubBase* NewSubBase = new sSubBase (building->getOwner());
 		building->SubBase = NewSubBase;
 		NewSubBase->addBuilding (building);
 		SubBases.push_back (NewSubBase);
@@ -1207,7 +1207,7 @@ void cBase::addBuilding (cBuilding* building, cServer* server)
 		delete SubBase;
 	}
 	NeighbourList.clear();
-	if (server) sendSubbaseValues (*server, *firstNeighbour, *building->getOwner ());
+	if (server) sendSubbaseValues (*server, *firstNeighbour, *building->getOwner());
 }
 
 void cBase::deleteBuilding (cBuilding* building, cServer* server)
@@ -1263,15 +1263,15 @@ void cBase::deleteBuilding (cBuilding* building, cServer* server)
 		subBase.setOilProd (subBase.getMaxAllowedOilProd());
 	}
 
-	if (building->isUnitWorking () && building->data.canResearch)
-		building->getOwner ()->stopAResearch (building->getResearchArea ());
+	if (building->isUnitWorking() && building->data.canResearch)
+		building->getOwner()->stopAResearch (building->getResearchArea());
 
 	if (server)
 	{
 		// send subbase values to client
 		for (size_t i = 0; i != newSubBases.size(); ++i)
 		{
-			sendSubbaseValues (*server, *newSubBases[i], *building->getOwner ());
+			sendSubbaseValues (*server, *newSubBases[i], *building->getOwner());
 		}
 	}
 
@@ -1281,7 +1281,7 @@ void cBase::deleteBuilding (cBuilding* building, cServer* server)
 bool cBase::checkTurnEnd (cServer& server)
 {
 	bool changed = false;
-	for (size_t i = 0; i != SubBases.size (); ++i)
+	for (size_t i = 0; i != SubBases.size(); ++i)
 	{
 		if (SubBases[i]->checkTurnEnd (server))
 		{
@@ -1293,7 +1293,7 @@ bool cBase::checkTurnEnd (cServer& server)
 
 void cBase::makeTurnStart (cServer& server)
 {
-	for (size_t i = 0; i != SubBases.size (); ++i)
+	for (size_t i = 0; i != SubBases.size(); ++i)
 	{
 		SubBases[i]->makeTurnStart (server);
 	}

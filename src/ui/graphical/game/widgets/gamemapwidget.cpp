@@ -88,24 +88,24 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	using namespace std::placeholders;
 
-	signalConnectionManager.connect (cSettings::getInstance ().animationsChanged, [this]()
+	signalConnectionManager.connect (cSettings::getInstance().animationsChanged, [this]()
 	{
-		if (cSettings::getInstance ().isAnimations ())
+		if (cSettings::getInstance().isAnimations())
 		{
-			updateActiveAnimations ();
+			updateActiveAnimations();
 		}
 		else
 		{
-			animations.clear ();
+			animations.clear();
 		}
 	});
 
-	setMouseInputMode (std::make_unique<cMouseModeDefault> (dynamicMap.get (), unitSelection, player.get ()));
+	setMouseInputMode (std::make_unique<cMouseModeDefault> (dynamicMap.get(), unitSelection, player.get()));
 
 	// TODO: should this really be done here?
 	signalConnectionManager.connect (animationTimer->triggered400ms, [&]()
 	{
-		const_cast<cStaticMap&>(*staticMap).generateNextAnimationFrame ();
+		const_cast<cStaticMap&> (*staticMap).generateNextAnimationFrame();
 	});
 
 	setWindDirection (random (360));
@@ -115,23 +115,23 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	signalConnectionManager.connect (animationTimer->triggered100ms, std::bind (&cGameMapWidget::renewDamageEffects, this));
 
 	unitMenu = addChild (std::make_unique<cUnitContextMenuWidget> ());
-	unitMenu->disable ();
-	unitMenu->hide ();
+	unitMenu->disable();
+	unitMenu->hide();
 
 	rightMouseButtonScrollerWidget = addChild (std::make_unique<cRightMouseButtonScrollerWidget> (animationTimer));
 	signalConnectionManager.connect (rightMouseButtonScrollerWidget->scroll, std::bind (&cGameMapWidget::scroll, this, _1));
-	signalConnectionManager.connect (rightMouseButtonScrollerWidget->mouseFocusReleased, [this](){ mouseFocusReleased (); });
-	signalConnectionManager.connect (rightMouseButtonScrollerWidget->stoppedScrolling, [this](){ updateMouseCursor (); });
-	rightMouseButtonScrollerWidget->disable (); // mouse events will be forwarded explicitly
+	signalConnectionManager.connect (rightMouseButtonScrollerWidget->mouseFocusReleased, [this]() { mouseFocusReleased(); });
+	signalConnectionManager.connect (rightMouseButtonScrollerWidget->stoppedScrolling, [this]() { updateMouseCursor(); });
+	rightMouseButtonScrollerWidget->disable();  // mouse events will be forwarded explicitly
 
-	mouseInputModeChanged.connect (std::bind (static_cast<void (cGameMapWidget::*)()>(&cGameMapWidget::updateMouseCursor), this));
+	mouseInputModeChanged.connect (std::bind (static_cast<void (cGameMapWidget::*)()> (&cGameMapWidget::updateMouseCursor), this));
 
 	scrolled.connect (std::bind (&cGameMapWidget::updateUnitMenuPosition, this));
 	scrolled.connect ([this]()
 	{
-		soundManager->setListenerPosition (getMapCenterOffset ());
+		soundManager->setListenerPosition (getMapCenterOffset());
 	});
-	tileUnderMouseChanged.connect ([this](const cPosition& tilePosition)
+	tileUnderMouseChanged.connect ([this] (const cPosition & tilePosition)
 	{
 		if (mouseMode)
 		{
@@ -141,22 +141,22 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	zoomFactorChanged.connect ([this]()
 	{
-		const auto tileDrawingRange = computeTileDrawingRange ();
+		const auto tileDrawingRange = computeTileDrawingRange();
 		const cPosition difference = tileDrawingRange.first - tileDrawingRange.second;
-		const auto diameter = difference.l2Norm ();
-		soundManager->setMaxListeningDistance ((int)(diameter * 2));
+		const auto diameter = difference.l2Norm();
+		soundManager->setMaxListeningDistance ((int) (diameter * 2));
 	});
 
 	unitSelection.mainSelectionChanged.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
 	unitSelection.mainSelectionChanged.connect (std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
 	unitSelection.mainSelectionChanged.connect ([&]()
 	{
-		setMouseInputMode (std::make_unique<cMouseModeDefault> (dynamicMap.get (), unitSelection, player.get ()));
+		setMouseInputMode (std::make_unique<cMouseModeDefault> (dynamicMap.get(), unitSelection, player.get()));
 	});
 	unitSelection.mainSelectionChanged.connect ([&]()
 	{
-		selectedUnitSignalConnectionManager.disconnectAll ();
-		const auto selectedUnit = unitSelection.getSelectedUnit ();
+		selectedUnitSignalConnectionManager.disconnectAll();
+		const auto selectedUnit = unitSelection.getSelectedUnit();
 		if (!selectedUnit) return;
 
 		selectedUnitSignalConnectionManager.connect (selectedUnit->data.shotsChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
@@ -167,9 +167,9 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 		selectedUnitSignalConnectionManager.connect (selectedUnit->workingChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
 		selectedUnitSignalConnectionManager.connect (selectedUnit->clearingChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
 		selectedUnitSignalConnectionManager.connect (selectedUnit->buildingChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
-		if (selectedUnit->isAVehicle ())
+		if (selectedUnit->isAVehicle())
 		{
-			const auto selectedVehicle = static_cast<const cVehicle*>(selectedUnit);
+			const auto selectedVehicle = static_cast<const cVehicle*> (selectedUnit);
 			selectedUnitSignalConnectionManager.connect (selectedVehicle->clientMoveJobChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
 			selectedUnitSignalConnectionManager.connect (selectedVehicle->clearingTurnsChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
 			selectedUnitSignalConnectionManager.connect (selectedVehicle->buildingTurnsChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
@@ -184,24 +184,24 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	unitMenu->sabotageToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eMouseModeType::Disable));
 	unitMenu->stealToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eMouseModeType::Steal));
 
-	unitMenu->buildClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredBuild (*unitMenu->getUnit ()); });
-	unitMenu->distributeClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredResourceDistribution (*unitMenu->getUnit ()); });
-	unitMenu->startClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredStartWork (*unitMenu->getUnit ()); });
-	unitMenu->stopClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredStopWork (*unitMenu->getUnit ()); });
-	unitMenu->autoToggled.connect ([&](){ if (unitMenu->getUnit ()) triggeredAutoMoveJob (*unitMenu->getUnit ()); });
-	unitMenu->removeClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredStartClear (*unitMenu->getUnit ()); });
-	unitMenu->manualFireToggled.connect ([&](){ if (unitMenu->getUnit ()) triggeredManualFire (*unitMenu->getUnit ()); });
-	unitMenu->sentryToggled.connect ([&](){ if (unitMenu->getUnit ()) triggeredSentry (*unitMenu->getUnit ()); });
-	unitMenu->activateClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredActivate (*unitMenu->getUnit ()); });
-	unitMenu->researchClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredResearchMenu (*unitMenu->getUnit ()); });
-	unitMenu->buyUpgradesClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredUpgradesMenu (*unitMenu->getUnit ()); });
-	unitMenu->upgradeThisClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredUpgradeThis (*unitMenu->getUnit ()); });
-	unitMenu->upgradeAllClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredUpgradeAll (*unitMenu->getUnit ()); });
-	unitMenu->selfDestroyClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredSelfDestruction (*unitMenu->getUnit ()); });
-	unitMenu->layMinesToggled.connect ([&](){ if (unitMenu->getUnit ()) triggeredLayMines (*unitMenu->getUnit ()); });
-	unitMenu->collectMinesToggled.connect ([&](){ if (unitMenu->getUnit ()) triggeredCollectMines (*unitMenu->getUnit ()); });
-	unitMenu->infoClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredUnitHelp (*unitMenu->getUnit ()); });
-	unitMenu->doneClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredUnitDone (*unitMenu->getUnit ()); });
+	unitMenu->buildClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredBuild (*unitMenu->getUnit()); });
+	unitMenu->distributeClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredResourceDistribution (*unitMenu->getUnit()); });
+	unitMenu->startClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredStartWork (*unitMenu->getUnit()); });
+	unitMenu->stopClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredStopWork (*unitMenu->getUnit()); });
+	unitMenu->autoToggled.connect ([&]() { if (unitMenu->getUnit()) triggeredAutoMoveJob (*unitMenu->getUnit()); });
+	unitMenu->removeClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredStartClear (*unitMenu->getUnit()); });
+	unitMenu->manualFireToggled.connect ([&]() { if (unitMenu->getUnit()) triggeredManualFire (*unitMenu->getUnit()); });
+	unitMenu->sentryToggled.connect ([&]() { if (unitMenu->getUnit()) triggeredSentry (*unitMenu->getUnit()); });
+	unitMenu->activateClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredActivate (*unitMenu->getUnit()); });
+	unitMenu->researchClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredResearchMenu (*unitMenu->getUnit()); });
+	unitMenu->buyUpgradesClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredUpgradesMenu (*unitMenu->getUnit()); });
+	unitMenu->upgradeThisClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredUpgradeThis (*unitMenu->getUnit()); });
+	unitMenu->upgradeAllClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredUpgradeAll (*unitMenu->getUnit()); });
+	unitMenu->selfDestroyClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredSelfDestruction (*unitMenu->getUnit()); });
+	unitMenu->layMinesToggled.connect ([&]() { if (unitMenu->getUnit()) triggeredLayMines (*unitMenu->getUnit()); });
+	unitMenu->collectMinesToggled.connect ([&]() { if (unitMenu->getUnit()) triggeredCollectMines (*unitMenu->getUnit()); });
+	unitMenu->infoClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredUnitHelp (*unitMenu->getUnit()); });
+	unitMenu->doneClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredUnitDone (*unitMenu->getUnit()); });
 
 	unitMenu->attackToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
 	unitMenu->buildClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
@@ -232,7 +232,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	attackShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuAttack));
 	attackShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasAttackEntry (unitSelection.getSelectedUnit (), player.get(), dynamicMap.get()))
+		if (cUnitContextMenuWidget::unitHasAttackEntry (unitSelection.getSelectedUnit(), player.get(), dynamicMap.get()))
 		{
 			toggleMouseInputMode (eMouseModeType::Attack);
 		}
@@ -241,16 +241,16 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	buildShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuBuild));
 	buildShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasBuildEntry (unitSelection.getSelectedUnit (), player.get (), dynamicMap.get ()))
+		if (cUnitContextMenuWidget::unitHasBuildEntry (unitSelection.getSelectedUnit(), player.get(), dynamicMap.get()))
 		{
-			triggeredBuild (*unitSelection.getSelectedUnit ());
+			triggeredBuild (*unitSelection.getSelectedUnit());
 		}
 	});
 
 	transferShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuTransfer));
 	transferShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasTransferEntry (unitSelection.getSelectedUnit (), player.get (), dynamicMap.get ()))
+		if (cUnitContextMenuWidget::unitHasTransferEntry (unitSelection.getSelectedUnit(), player.get(), dynamicMap.get()))
 		{
 			toggleMouseInputMode (eMouseModeType::Transfer);
 		}
@@ -259,70 +259,70 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	automoveShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuAutomove));
 	automoveShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasAutoEntry (unitSelection.getSelectedUnit (), player.get (), dynamicMap.get ()))
+		if (cUnitContextMenuWidget::unitHasAutoEntry (unitSelection.getSelectedUnit(), player.get(), dynamicMap.get()))
 		{
-			triggeredAutoMoveJob (*unitSelection.getSelectedUnit ());
+			triggeredAutoMoveJob (*unitSelection.getSelectedUnit());
 		}
 	});
 
 	startShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuStart));
 	startShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasStartEntry (unitSelection.getSelectedUnit (), player.get (), dynamicMap.get ()))
+		if (cUnitContextMenuWidget::unitHasStartEntry (unitSelection.getSelectedUnit(), player.get(), dynamicMap.get()))
 		{
-			triggeredStartWork (*unitSelection.getSelectedUnit ());
+			triggeredStartWork (*unitSelection.getSelectedUnit());
 		}
 	});
 
 	stopShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuStop));
 	stopShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasStopEntry (unitSelection.getSelectedUnit (), player.get (), dynamicMap.get ()))
+		if (cUnitContextMenuWidget::unitHasStopEntry (unitSelection.getSelectedUnit(), player.get(), dynamicMap.get()))
 		{
-			triggeredStopWork (*unitSelection.getSelectedUnit ());
+			triggeredStopWork (*unitSelection.getSelectedUnit());
 		}
 	});
 
 	clearShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuClear));
 	clearShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasRemoveEntry (unitSelection.getSelectedUnit (), player.get (), dynamicMap.get ()))
+		if (cUnitContextMenuWidget::unitHasRemoveEntry (unitSelection.getSelectedUnit(), player.get(), dynamicMap.get()))
 		{
-			triggeredStartClear (*unitSelection.getSelectedUnit ());
+			triggeredStartClear (*unitSelection.getSelectedUnit());
 		}
 	});
 
 	sentryShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuSentry));
 	sentryShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasSentryEntry (unitSelection.getSelectedUnit (), player.get (), dynamicMap.get ()))
+		if (cUnitContextMenuWidget::unitHasSentryEntry (unitSelection.getSelectedUnit(), player.get(), dynamicMap.get()))
 		{
-			triggeredSentry (*unitSelection.getSelectedUnit ());
+			triggeredSentry (*unitSelection.getSelectedUnit());
 		}
 	});
 
 	manualFireShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuManualFire));
 	manualFireShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasManualFireEntry (unitSelection.getSelectedUnit (), player.get (), dynamicMap.get ()))
+		if (cUnitContextMenuWidget::unitHasManualFireEntry (unitSelection.getSelectedUnit(), player.get(), dynamicMap.get()))
 		{
-			triggeredManualFire (*unitSelection.getSelectedUnit ());
+			triggeredManualFire (*unitSelection.getSelectedUnit());
 		}
 	});
 
 	activateShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuActivate));
 	activateShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasActivateEntry (unitSelection.getSelectedUnit (), player.get (), dynamicMap.get ()))
+		if (cUnitContextMenuWidget::unitHasActivateEntry (unitSelection.getSelectedUnit(), player.get(), dynamicMap.get()))
 		{
-			triggeredActivate (*unitSelection.getSelectedUnit ());
+			triggeredActivate (*unitSelection.getSelectedUnit());
 		}
 	});
 
 	loadShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuLoad));
 	loadShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasLoadEntry (unitSelection.getSelectedUnit (), player.get (), dynamicMap.get ()))
+		if (cUnitContextMenuWidget::unitHasLoadEntry (unitSelection.getSelectedUnit(), player.get(), dynamicMap.get()))
 		{
 			toggleMouseInputMode (eMouseModeType::Load);
 		}
@@ -331,7 +331,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	relaodShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuReload));
 	relaodShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasSupplyEntry (unitSelection.getSelectedUnit (), player.get (), dynamicMap.get ()))
+		if (cUnitContextMenuWidget::unitHasSupplyEntry (unitSelection.getSelectedUnit(), player.get(), dynamicMap.get()))
 		{
 			toggleMouseInputMode (eMouseModeType::SupplyAmmo);
 		}
@@ -340,7 +340,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	repairShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuRepair));
 	repairShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasRepairEntry (unitSelection.getSelectedUnit (), player.get (), dynamicMap.get ()))
+		if (cUnitContextMenuWidget::unitHasRepairEntry (unitSelection.getSelectedUnit(), player.get(), dynamicMap.get()))
 		{
 			toggleMouseInputMode (eMouseModeType::Repair);
 		}
@@ -349,25 +349,25 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	layMineShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuLayMine));
 	layMineShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasLayMinesEntry (unitSelection.getSelectedUnit (), player.get (), dynamicMap.get ()))
+		if (cUnitContextMenuWidget::unitHasLayMinesEntry (unitSelection.getSelectedUnit(), player.get(), dynamicMap.get()))
 		{
-			triggeredLayMines (*unitSelection.getSelectedUnit ());
+			triggeredLayMines (*unitSelection.getSelectedUnit());
 		}
 	});
 
 	clearMineShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuClearMine));
 	clearMineShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasCollectMinesEntry (unitSelection.getSelectedUnit (), player.get (), dynamicMap.get ()))
+		if (cUnitContextMenuWidget::unitHasCollectMinesEntry (unitSelection.getSelectedUnit(), player.get(), dynamicMap.get()))
 		{
-			triggeredCollectMines (*unitSelection.getSelectedUnit ());
+			triggeredCollectMines (*unitSelection.getSelectedUnit());
 		}
 	});
 
 	disableShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuDisable));
 	disableShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasSabotageEntry (unitSelection.getSelectedUnit (), player.get (), dynamicMap.get ()))
+		if (cUnitContextMenuWidget::unitHasSabotageEntry (unitSelection.getSelectedUnit(), player.get(), dynamicMap.get()))
 		{
 			toggleMouseInputMode (eMouseModeType::Disable);
 		}
@@ -376,7 +376,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	stealShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuSteal));
 	stealShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasStealEntry (unitSelection.getSelectedUnit (), player.get (), dynamicMap.get ()))
+		if (cUnitContextMenuWidget::unitHasStealEntry (unitSelection.getSelectedUnit(), player.get(), dynamicMap.get()))
 		{
 			toggleMouseInputMode (eMouseModeType::Steal);
 		}
@@ -385,49 +385,49 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	infoShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuInfo));
 	infoShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasInfoEntry (unitSelection.getSelectedUnit (), player.get (), dynamicMap.get ()))
+		if (cUnitContextMenuWidget::unitHasInfoEntry (unitSelection.getSelectedUnit(), player.get(), dynamicMap.get()))
 		{
-			triggeredUnitHelp (*unitSelection.getSelectedUnit ());
+			triggeredUnitHelp (*unitSelection.getSelectedUnit());
 		}
 	});
 
 	distributeShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuDistribute));
 	distributeShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasDistributeEntry (unitSelection.getSelectedUnit (), player.get (), dynamicMap.get ()))
+		if (cUnitContextMenuWidget::unitHasDistributeEntry (unitSelection.getSelectedUnit(), player.get(), dynamicMap.get()))
 		{
-			triggeredResourceDistribution (*unitSelection.getSelectedUnit ());
+			triggeredResourceDistribution (*unitSelection.getSelectedUnit());
 		}
 	});
 
 	researchShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuResearch));
 	researchShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasResearchEntry (unitSelection.getSelectedUnit (), player.get (), dynamicMap.get ()))
+		if (cUnitContextMenuWidget::unitHasResearchEntry (unitSelection.getSelectedUnit(), player.get(), dynamicMap.get()))
 		{
-			triggeredResearchMenu (*unitSelection.getSelectedUnit ());
+			triggeredResearchMenu (*unitSelection.getSelectedUnit());
 		}
 	});
 
 	upgradeShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuUpgrade));
 	upgradeShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasBuyEntry (unitSelection.getSelectedUnit (), player.get (), dynamicMap.get ()))
+		if (cUnitContextMenuWidget::unitHasBuyEntry (unitSelection.getSelectedUnit(), player.get(), dynamicMap.get()))
 		{
-			triggeredUpgradesMenu (*unitSelection.getSelectedUnit ());
+			triggeredUpgradesMenu (*unitSelection.getSelectedUnit());
 		}
 	});
 
 	destroyShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuDestroy));
 	destroyShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasSelfDestroyEntry (unitSelection.getSelectedUnit (), player.get (), dynamicMap.get ()))
+		if (cUnitContextMenuWidget::unitHasSelfDestroyEntry (unitSelection.getSelectedUnit(), player.get(), dynamicMap.get()))
 		{
-			triggeredSelfDestruction (*unitSelection.getSelectedUnit ());
+			triggeredSelfDestruction (*unitSelection.getSelectedUnit());
 		}
 	});
 
-	buildCollidingShortcutsMap ();
+	buildCollidingShortcutsMap();
 }
 
 //------------------------------------------------------------------------------
@@ -438,40 +438,40 @@ cGameMapWidget::~cGameMapWidget()
 //------------------------------------------------------------------------------
 void cGameMapWidget::setDynamicMap (std::shared_ptr<const cMap> dynamicMap_)
 {
-	std::swap(dynamicMap, dynamicMap_);
+	std::swap (dynamicMap, dynamicMap_);
 
-	dynamicMapSignalConnectionManager.disconnectAll ();
+	dynamicMapSignalConnectionManager.disconnectAll();
 
 	if (dynamicMap != nullptr)
 	{
-		dynamicMapSignalConnectionManager.connect (dynamicMap->removedUnit, [&](const cUnit& unit)
+		dynamicMapSignalConnectionManager.connect (dynamicMap->removedUnit, [&] (const cUnit & unit)
 		{
 			if (unitSelection.isSelected (unit))
 			{
 				unitSelection.deselectUnit (unit);
 			}
 		});
-		dynamicMapSignalConnectionManager.connect (dynamicMap->addedUnit, [&](const cUnit& unit)
+		dynamicMapSignalConnectionManager.connect (dynamicMap->addedUnit, [&] (const cUnit & unit)
 		{
-			if (!cSettings::getInstance ().isAnimations ()) return;
+			if (!cSettings::getInstance().isAnimations()) return;
 
-			const auto tileDrawingRange = computeTileDrawingRange ();
+			const auto tileDrawingRange = computeTileDrawingRange();
 			const auto tileDrawingArea = cBox<cPosition> (tileDrawingRange.first, tileDrawingRange.second - cPosition (1, 1));
 
-			if (tileDrawingArea.intersects (unit.getArea ()))
+			if (tileDrawingArea.intersects (unit.getArea()))
 			{
 				addAnimationsForUnit (unit);
 				animations.push_back (std::make_unique<cAnimationStartUp> (*animationTimer, unit));
 			}
 		});
-		dynamicMapSignalConnectionManager.connect (dynamicMap->movedVehicle, [&](const cUnit& unit, const cPosition& oldPosition)
+		dynamicMapSignalConnectionManager.connect (dynamicMap->movedVehicle, [&] (const cUnit & unit, const cPosition & oldPosition)
 		{
-			if (!cSettings::getInstance ().isAnimations ()) return;
+			if (!cSettings::getInstance().isAnimations()) return;
 
-			const auto tileDrawingRange = computeTileDrawingRange ();
+			const auto tileDrawingRange = computeTileDrawingRange();
 			const auto tileDrawingArea = cBox<cPosition> (tileDrawingRange.first, tileDrawingRange.second - cPosition (1, 1));
 
-			if (tileDrawingArea.intersects (unit.getArea ()) && !tileDrawingArea.intersects (cBox<cPosition>(oldPosition, oldPosition + unit.getArea().getSize() - cPosition(1,1))))
+			if (tileDrawingArea.intersects (unit.getArea()) && !tileDrawingArea.intersects (cBox<cPosition> (oldPosition, oldPosition + unit.getArea().getSize() - cPosition (1, 1))))
 			{
 				addAnimationsForUnit (unit);
 			}
@@ -480,15 +480,15 @@ void cGameMapWidget::setDynamicMap (std::shared_ptr<const cMap> dynamicMap_)
 
 	if (mouseMode != nullptr)
 	{
-		mouseMode->setMap (dynamicMap.get ());
+		mouseMode->setMap (dynamicMap.get());
 	}
 
 	if (dynamicMap != dynamicMap_)
 	{
-		unitSelection.deselectUnits ();
+		unitSelection.deselectUnits();
 	}
 
-	updateActiveAnimations ();
+	updateActiveAnimations();
 }
 
 //------------------------------------------------------------------------------
@@ -496,11 +496,11 @@ void cGameMapWidget::setPlayer (std::shared_ptr<const cPlayer> player_)
 {
 	player = std::move (player_);
 
-	unitLockList.setPlayer (player.get ());
+	unitLockList.setPlayer (player.get());
 
 	if (mouseMode != nullptr)
 	{
-		mouseMode->setPlayer (player.get ());
+		mouseMode->setPlayer (player.get());
 	}
 }
 
@@ -509,40 +509,40 @@ void cGameMapWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clip
 {
 	drawTerrain();
 
-	if (shouldDrawGrid) drawGrid ();
+	if (shouldDrawGrid) drawGrid();
 
 	drawEffects (true);
 
 	unitDrawingEngine.drawingCache.resetStatistics();
 
-	drawBaseUnits ();
-	drawTopBuildings ();
-	drawShips ();
-	drawAboveSeaBaseUnits ();
-	drawVehicles ();
-	drawConnectors ();
-	drawPlanes ();
+	drawBaseUnits();
+	drawTopBuildings();
+	drawShips();
+	drawAboveSeaBaseUnits();
+	drawVehicles();
+	drawConnectors();
+	drawPlanes();
 
-	auto selectedVehicle = unitSelection.getSelectedVehicle ();
-	if (shouldDrawSurvey || (selectedVehicle && selectedVehicle->getOwner () == player.get () && selectedVehicle->data.canSurvey))
+	auto selectedVehicle = unitSelection.getSelectedVehicle();
+	if (shouldDrawSurvey || (selectedVehicle && selectedVehicle->getOwner() == player.get() && selectedVehicle->data.canSurvey))
 	{
-		drawResources ();
+		drawResources();
 	}
 
-	if (selectedVehicle && ((selectedVehicle->getClientMoveJob () && selectedVehicle->getClientMoveJob ()->bSuspended) || selectedVehicle->BuildPath))
+	if (selectedVehicle && ((selectedVehicle->getClientMoveJob() && selectedVehicle->getClientMoveJob()->bSuspended) || selectedVehicle->BuildPath))
 	{
 		drawPath (*selectedVehicle);
 	}
 
 	//debugOutput.draw ();
 
-	drawSelectionBox ();
+	drawSelectionBox();
 
 	SDL_SetClipRect (cVideo::buffer, nullptr);
 
-	drawUnitCircles ();
-	drawExitPoints ();
-	drawBuildBand ();
+	drawUnitCircles();
+	drawExitPoints();
+	drawBuildBand();
 
 	if (lockActive && player) drawLockList (*player);
 
@@ -556,32 +556,32 @@ void cGameMapWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clip
 //------------------------------------------------------------------------------
 void cGameMapWidget::setZoomFactor (float zoomFactor_, bool center)
 {
-	const auto oldZoom = getZoomFactor ();
-	const auto oldTileDrawingRange = computeTileDrawingRange ();
+	const auto oldZoom = getZoomFactor();
+	const auto oldTileDrawingRange = computeTileDrawingRange();
 
 	internalZoomFactor = zoomFactor_;
 
-	internalZoomFactor = std::max (internalZoomFactor, computeMinimalZoomFactor ());
+	internalZoomFactor = std::max (internalZoomFactor, computeMinimalZoomFactor());
 	internalZoomFactor = std::min (1.f, internalZoomFactor);
 
-	const auto newZoom = getZoomFactor ();
+	const auto newZoom = getZoomFactor();
 
 	if (oldZoom != newZoom)
 	{
 		updateActiveAnimations (oldTileDrawingRange);
 
-		zoomFactorChanged ();
+		zoomFactorChanged();
 
 		cPosition scrollOffset (0, 0);
 		if (center)
 		{
-			const auto oldScreenPixelX = getSize ().x () / oldZoom;
-			const auto newScreenPixelX = getSize ().x () / newZoom;
-			scrollOffset.x () = (int)((oldScreenPixelX - newScreenPixelX) / 2);
+			const auto oldScreenPixelX = getSize().x() / oldZoom;
+			const auto newScreenPixelX = getSize().x() / newZoom;
+			scrollOffset.x() = (int) ((oldScreenPixelX - newScreenPixelX) / 2);
 
-			const auto oldScreenPixelY = getSize ().y () / oldZoom;
-			const auto newScreenPixelY = getSize ().y () / newZoom;
-			scrollOffset.y () = (int)((oldScreenPixelY - newScreenPixelY) / 2);
+			const auto oldScreenPixelY = getSize().y() / oldZoom;
+			const auto newScreenPixelY = getSize().y() / newZoom;
+			scrollOffset.y() = (int) ((oldScreenPixelY - newScreenPixelY) / 2);
 		}
 
 		// calling scroll here - even if scrollOffset = (0,0) - is important
@@ -651,45 +651,45 @@ void cGameMapWidget::setLockActive (bool lockActive_)
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::toggleHelpMode ()
+void cGameMapWidget::toggleHelpMode()
 {
 	toggleMouseInputMode (eMouseModeType::Help);
 }
 
 //------------------------------------------------------------------------------
-cBox<cPosition> cGameMapWidget::getDisplayedMapArea () const
+cBox<cPosition> cGameMapWidget::getDisplayedMapArea() const
 {
-	auto tileDrawingRange = computeTileDrawingRange ();
+	auto tileDrawingRange = computeTileDrawingRange();
 
-	return cBox<cPosition> (tileDrawingRange.first, tileDrawingRange.second-1);
+	return cBox<cPosition> (tileDrawingRange.first, tileDrawingRange.second - 1);
 }
 
 //------------------------------------------------------------------------------
-float cGameMapWidget::getZoomFactor () const
+float cGameMapWidget::getZoomFactor() const
 {
-	return (float)getZoomedTileSize ().x () / cStaticMap::tilePixelWidth; // should make no difference if we use y instead
+	return (float)getZoomedTileSize().x() / cStaticMap::tilePixelWidth;   // should make no difference if we use y instead
 }
 
 //------------------------------------------------------------------------------
-cUnitSelection& cGameMapWidget::getUnitSelection ()
-{
-	return unitSelection;
-}
-
-//------------------------------------------------------------------------------
-const cUnitSelection& cGameMapWidget::getUnitSelection () const
+cUnitSelection& cGameMapWidget::getUnitSelection()
 {
 	return unitSelection;
 }
 
 //------------------------------------------------------------------------------
-cUnitLockList& cGameMapWidget::getUnitLockList ()
+const cUnitSelection& cGameMapWidget::getUnitSelection() const
+{
+	return unitSelection;
+}
+
+//------------------------------------------------------------------------------
+cUnitLockList& cGameMapWidget::getUnitLockList()
 {
 	return unitLockList;
 }
 
 //------------------------------------------------------------------------------
-const cUnitLockList& cGameMapWidget::getUnitLockList () const
+const cUnitLockList& cGameMapWidget::getUnitLockList() const
 {
 	return unitLockList;
 }
@@ -697,21 +697,21 @@ const cUnitLockList& cGameMapWidget::getUnitLockList () const
 //------------------------------------------------------------------------------
 void cGameMapWidget::toggleUnitContextMenu (const cUnit* unit)
 {
-	unitContextMenuSignalConnectionManager.disconnectAll ();
-	if (unitMenu->isEnabled () || unit == nullptr)
+	unitContextMenuSignalConnectionManager.disconnectAll();
+	if (unitMenu->isEnabled() || unit == nullptr)
 	{
-		unitMenu->disable ();
-		unitMenu->hide ();
-		updateMouseCursor ();
+		unitMenu->disable();
+		unitMenu->hide();
+		updateMouseCursor();
 	}
 	else
 	{
-		unitMenu->setUnit (unit, mouseMode->getType (), player.get (), dynamicMap.get ());
-		unitMenu->enable ();
-		unitMenu->show ();
-		updateUnitMenuPosition ();
+		unitMenu->setUnit (unit, mouseMode->getType(), player.get(), dynamicMap.get());
+		unitMenu->enable();
+		unitMenu->show();
+		updateUnitMenuPosition();
 
-		unitContextMenuSignalConnectionManager.connect (unit->positionChanged, [this,unit]()
+		unitContextMenuSignalConnectionManager.connect (unit->positionChanged, [this, unit]()
 		{
 			toggleUnitContextMenu (unit);
 		});
@@ -725,68 +725,68 @@ void cGameMapWidget::setMouseInputMode (std::unique_ptr<cMouseMode> newMouseMode
 
 	std::swap (newMouseMode, mouseMode);
 
-	mouseModeSignalConnectionManager.disconnectAll ();
-	mouseModeSignalConnectionManager.connect (mouseMode->needRefresh, std::bind (static_cast<void(cGameMapWidget::*)()>(&cGameMapWidget::updateMouseCursor), this));
+	mouseModeSignalConnectionManager.disconnectAll();
+	mouseModeSignalConnectionManager.connect (mouseMode->needRefresh, std::bind (static_cast<void (cGameMapWidget::*)()> (&cGameMapWidget::updateMouseCursor), this));
 
-	auto activeMouse = getActiveMouse ();
-	if (activeMouse && getArea().withinOrTouches(activeMouse->getPosition()))
+	auto activeMouse = getActiveMouse();
+	if (activeMouse && getArea().withinOrTouches (activeMouse->getPosition()))
 	{
-		mouseMode->handleMapTilePositionChanged (getMapTilePosition (activeMouse->getPosition ()));
+		mouseMode->handleMapTilePositionChanged (getMapTilePosition (activeMouse->getPosition()));
 	}
 	else
 	{
 		mouseMode->handleMapTilePositionChanged (cPosition (-1, -1));
 	}
 
-	if (!newMouseMode || newMouseMode->getType () != mouseMode->getType ()) mouseInputModeChanged ();
+	if (!newMouseMode || newMouseMode->getType() != mouseMode->getType()) mouseInputModeChanged();
 }
 
 //------------------------------------------------------------------------------
 void cGameMapWidget::toggleMouseInputMode (eMouseModeType mouseModeType)
 {
-	if (mouseMode->getType () == mouseModeType)
+	if (mouseMode->getType() == mouseModeType)
 	{
-		setMouseInputMode (std::make_unique<cMouseModeDefault> (dynamicMap.get (), unitSelection, player.get ()));
+		setMouseInputMode (std::make_unique<cMouseModeDefault> (dynamicMap.get(), unitSelection, player.get()));
 	}
 	else
 	{
 		switch (mouseModeType)
 		{
-		case eMouseModeType::SelectBuildPosition:
-		case eMouseModeType::Activate:
-			assert (false);
+			case eMouseModeType::SelectBuildPosition:
+			case eMouseModeType::Activate:
+				assert (false);
 			// fall through
-		default:
-		case eMouseModeType::Default:
-			setMouseInputMode (std::make_unique<cMouseModeDefault> (dynamicMap.get (), unitSelection, player.get ()));
-			break;
-		case eMouseModeType::Attack:
-			setMouseInputMode (std::make_unique<cMouseModeAttack> (dynamicMap.get (), unitSelection, player.get ()));
-			break;
-		case eMouseModeType::SelectBuildPathDestintaion:
-			setMouseInputMode (std::make_unique<cMouseModeSelectBuildPathDestination> (dynamicMap.get (), unitSelection, player.get ()));
-			break;
-		case eMouseModeType::Transfer:
-			setMouseInputMode (std::make_unique<cMouseModeTransfer> (dynamicMap.get (), unitSelection, player.get ()));
-			break;
-		case eMouseModeType::Load:
-			setMouseInputMode (std::make_unique<cMouseModeLoad> (dynamicMap.get (), unitSelection, player.get ()));
-			break;
-		case eMouseModeType::SupplyAmmo:
-			setMouseInputMode (std::make_unique<cMouseModeSupplyAmmo> (dynamicMap.get (), unitSelection, player.get ()));
-			break;
-		case eMouseModeType::Repair:
-			setMouseInputMode (std::make_unique<cMouseModeRepair> (dynamicMap.get (), unitSelection, player.get ()));
-			break;
-		case eMouseModeType::Disable:
-			setMouseInputMode (std::make_unique<cMouseModeDisable> (dynamicMap.get (), unitSelection, player.get ()));
-			break;
-		case eMouseModeType::Steal:
-			setMouseInputMode (std::make_unique<cMouseModeSteal> (dynamicMap.get (), unitSelection, player.get ()));
-			break;
-		case eMouseModeType::Help:
-			setMouseInputMode (std::make_unique<cMouseModeHelp> (dynamicMap.get (), unitSelection, player.get ()));
-			break;
+			default:
+			case eMouseModeType::Default:
+				setMouseInputMode (std::make_unique<cMouseModeDefault> (dynamicMap.get(), unitSelection, player.get()));
+				break;
+			case eMouseModeType::Attack:
+				setMouseInputMode (std::make_unique<cMouseModeAttack> (dynamicMap.get(), unitSelection, player.get()));
+				break;
+			case eMouseModeType::SelectBuildPathDestintaion:
+				setMouseInputMode (std::make_unique<cMouseModeSelectBuildPathDestination> (dynamicMap.get(), unitSelection, player.get()));
+				break;
+			case eMouseModeType::Transfer:
+				setMouseInputMode (std::make_unique<cMouseModeTransfer> (dynamicMap.get(), unitSelection, player.get()));
+				break;
+			case eMouseModeType::Load:
+				setMouseInputMode (std::make_unique<cMouseModeLoad> (dynamicMap.get(), unitSelection, player.get()));
+				break;
+			case eMouseModeType::SupplyAmmo:
+				setMouseInputMode (std::make_unique<cMouseModeSupplyAmmo> (dynamicMap.get(), unitSelection, player.get()));
+				break;
+			case eMouseModeType::Repair:
+				setMouseInputMode (std::make_unique<cMouseModeRepair> (dynamicMap.get(), unitSelection, player.get()));
+				break;
+			case eMouseModeType::Disable:
+				setMouseInputMode (std::make_unique<cMouseModeDisable> (dynamicMap.get(), unitSelection, player.get()));
+				break;
+			case eMouseModeType::Steal:
+				setMouseInputMode (std::make_unique<cMouseModeSteal> (dynamicMap.get(), unitSelection, player.get()));
+				break;
+			case eMouseModeType::Help:
+				setMouseInputMode (std::make_unique<cMouseModeHelp> (dynamicMap.get(), unitSelection, player.get()));
+				break;
 		}
 	}
 }
@@ -794,45 +794,45 @@ void cGameMapWidget::toggleMouseInputMode (eMouseModeType mouseModeType)
 //------------------------------------------------------------------------------
 void cGameMapWidget::scroll (const cPosition& offset)
 {
-	const auto activeMouse = getActiveMouse ();
+	const auto activeMouse = getActiveMouse();
 
-	cPosition oldTileUnderMouse(-1, -1);
-	if (activeMouse && getArea().withinOrTouches(activeMouse->getPosition()))
+	cPosition oldTileUnderMouse (-1, -1);
+	if (activeMouse && getArea().withinOrTouches (activeMouse->getPosition()))
 	{
-		oldTileUnderMouse = getMapTilePosition (activeMouse->getPosition ());
+		oldTileUnderMouse = getMapTilePosition (activeMouse->getPosition());
 	}
 
 	const auto oldPixelOffset = pixelOffset;
-	const auto oldTileDrawingRange = computeTileDrawingRange ();
+	const auto oldTileDrawingRange = computeTileDrawingRange();
 
 	pixelOffset += offset;
 
-	pixelOffset.x () = std::max (0, pixelOffset.x ());
-	pixelOffset.y () = std::max (0, pixelOffset.y ());
+	pixelOffset.x() = std::max (0, pixelOffset.x());
+	pixelOffset.y() = std::max (0, pixelOffset.y());
 
-	const auto maximalPixelOffset = computeMaximalPixelOffset ();
+	const auto maximalPixelOffset = computeMaximalPixelOffset();
 
-	pixelOffset.x () = std::min (maximalPixelOffset.x (), pixelOffset.x ());
-	pixelOffset.y () = std::min (maximalPixelOffset.y (), pixelOffset.y ());
+	pixelOffset.x() = std::min (maximalPixelOffset.x(), pixelOffset.x());
+	pixelOffset.y() = std::min (maximalPixelOffset.y(), pixelOffset.y());
 
 	if (oldPixelOffset != pixelOffset)
 	{
 		cPosition newTileUnderMouse (-1, -1);
-		if (activeMouse && getArea ().withinOrTouches (activeMouse->getPosition ()))
+		if (activeMouse && getArea().withinOrTouches (activeMouse->getPosition()))
 		{
-			newTileUnderMouse = getMapTilePosition (activeMouse->getPosition ());
+			newTileUnderMouse = getMapTilePosition (activeMouse->getPosition());
 		}
 
 		if (newTileUnderMouse != oldTileUnderMouse) tileUnderMouseChanged (newTileUnderMouse);
 
 		updateActiveAnimations (oldTileDrawingRange);
 
-		scrolled ();
+		scrolled();
 	}
 }
 
 //------------------------------------------------------------------------------
-const cPosition& cGameMapWidget::getPixelOffset () const
+const cPosition& cGameMapWidget::getPixelOffset() const
 {
 	return pixelOffset;
 }
@@ -840,43 +840,43 @@ const cPosition& cGameMapWidget::getPixelOffset () const
 //------------------------------------------------------------------------------
 void cGameMapWidget::centerAt (const cPosition& position)
 {
-	const auto zoomedTileSize = getZoomedTileSize ();
+	const auto zoomedTileSize = getZoomedTileSize();
 
 	cPosition newPixelOffset;
-	newPixelOffset.x () = position.x () * cStaticMap::tilePixelWidth - ((int)(((float)getSize ().x () / (2 * zoomedTileSize.x ())) * cStaticMap::tilePixelWidth)) + cStaticMap::tilePixelWidth / 2;
-	newPixelOffset.y () = position.y () * cStaticMap::tilePixelHeight - ((int)(((float)getSize ().y () / (2 * zoomedTileSize.y ())) * cStaticMap::tilePixelHeight)) + cStaticMap::tilePixelHeight / 2;
+	newPixelOffset.x() = position.x() * cStaticMap::tilePixelWidth - ((int) (((float)getSize().x() / (2 * zoomedTileSize.x())) * cStaticMap::tilePixelWidth)) + cStaticMap::tilePixelWidth / 2;
+	newPixelOffset.y() = position.y() * cStaticMap::tilePixelHeight - ((int) (((float)getSize().y() / (2 * zoomedTileSize.y())) * cStaticMap::tilePixelHeight)) + cStaticMap::tilePixelHeight / 2;
 
 	scroll (newPixelOffset - pixelOffset);
 }
 
 //------------------------------------------------------------------------------
-cPosition cGameMapWidget::getMapCenterOffset ()
+cPosition cGameMapWidget::getMapCenterOffset()
 {
-    const auto zoomedTileSize = getZoomedTileSize ();
-    
-    cPosition center;
-    center.x () = pixelOffset.x () / cStaticMap::tilePixelWidth + (getSize ().x () / (2 * zoomedTileSize.x ()));
-    center.y () = pixelOffset.y () / cStaticMap::tilePixelHeight + (getSize ().y () / (2 * zoomedTileSize.y ()));
+	const auto zoomedTileSize = getZoomedTileSize();
 
-    return center;
+	cPosition center;
+	center.x() = pixelOffset.x() / cStaticMap::tilePixelWidth + (getSize().x() / (2 * zoomedTileSize.x()));
+	center.y() = pixelOffset.y() / cStaticMap::tilePixelHeight + (getSize().y() / (2 * zoomedTileSize.y()));
+
+	return center;
 }
 
 //------------------------------------------------------------------------------
 void cGameMapWidget::startFindBuildPosition (const sID& buildId)
 {
-	setMouseInputMode (std::make_unique<cMouseModeSelectBuildPosition> (dynamicMap.get (), unitSelection, player.get (), buildId));
+	setMouseInputMode (std::make_unique<cMouseModeSelectBuildPosition> (dynamicMap.get(), unitSelection, player.get(), buildId));
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::startFindPathBuildPosition ()
+void cGameMapWidget::startFindPathBuildPosition()
 {
-	setMouseInputMode (std::make_unique<cMouseModeSelectBuildPathDestination> (dynamicMap.get (), unitSelection, player.get ()));
+	setMouseInputMode (std::make_unique<cMouseModeSelectBuildPathDestination> (dynamicMap.get(), unitSelection, player.get()));
 }
 
 //------------------------------------------------------------------------------
 void cGameMapWidget::startActivateVehicle (const cUnit& unit, size_t index)
 {
-	setMouseInputMode (std::make_unique<cMouseModeActivateLoaded> (dynamicMap.get (), unitSelection, player.get (), index));
+	setMouseInputMode (std::make_unique<cMouseModeActivateLoaded> (dynamicMap.get(), unitSelection, player.get(), index));
 }
 
 //------------------------------------------------------------------------------
@@ -890,7 +890,7 @@ void cGameMapWidget::addEffect (std::shared_ptr<cFx> effect, bool playSound)
 }
 
 //------------------------------------------------------------------------------
-float cGameMapWidget::computeMinimalZoomFactor () const
+float cGameMapWidget::computeMinimalZoomFactor() const
 {
 	// inequality to be fulfilled:
 	//
@@ -900,22 +900,22 @@ float cGameMapWidget::computeMinimalZoomFactor () const
 	//
 	//   zoom = size_x / (map_x * tile_x)
 
-	auto xZoom = (float)getSize ().x () / (staticMap->getSize ().x () * cStaticMap::tilePixelWidth);
-	auto yZoom = (float)getSize ().y () / (staticMap->getSize ().y () * cStaticMap::tilePixelHeight);
+	auto xZoom = (float)getSize().x() / (staticMap->getSize().x() * cStaticMap::tilePixelWidth);
+	auto yZoom = (float)getSize().y() / (staticMap->getSize().y() * cStaticMap::tilePixelHeight);
 
 	// then we try to fix if round would have rounded up:
 
-	xZoom = std::max (xZoom, (float)((int)(cStaticMap::tilePixelWidth * xZoom) + (xZoom >= 1.0f ? 0 : 1)) / cStaticMap::tilePixelWidth);
-	yZoom = std::max (yZoom, (float)((int)(cStaticMap::tilePixelHeight * yZoom) + (yZoom >= 1.0f ? 0 : 1)) / cStaticMap::tilePixelHeight);
+	xZoom = std::max (xZoom, (float) ((int) (cStaticMap::tilePixelWidth * xZoom) + (xZoom >= 1.0f ? 0 : 1)) / cStaticMap::tilePixelWidth);
+	yZoom = std::max (yZoom, (float) ((int) (cStaticMap::tilePixelHeight * yZoom) + (yZoom >= 1.0f ? 0 : 1)) / cStaticMap::tilePixelHeight);
 
-	return std::max(xZoom, yZoom);
+	return std::max (xZoom, yZoom);
 }
 
 //------------------------------------------------------------------------------
-cPosition cGameMapWidget::computeMaximalPixelOffset () const
+cPosition cGameMapWidget::computeMaximalPixelOffset() const
 {
-	const auto x = staticMap->getSize(). x () * cStaticMap::tilePixelWidth - (int)(getSize ().x () / getZoomFactor ());
-	const auto y = staticMap->getSize(). y () * cStaticMap::tilePixelHeight - (int)(getSize ().y () / getZoomFactor ());
+	const auto x = staticMap->getSize(). x() * cStaticMap::tilePixelWidth - (int) (getSize().x() / getZoomFactor());
+	const auto y = staticMap->getSize(). y() * cStaticMap::tilePixelHeight - (int) (getSize().y() / getZoomFactor());
 
 	return cPosition (x, y);
 }
@@ -923,88 +923,88 @@ cPosition cGameMapWidget::computeMaximalPixelOffset () const
 //------------------------------------------------------------------------------
 cPosition cGameMapWidget::zoomSize (const cPosition& size, float zoomFactor) const
 {
-	return cPosition (Round (size.x () * zoomFactor), Round (size.y () * zoomFactor));
+	return cPosition (Round (size.x() * zoomFactor), Round (size.y() * zoomFactor));
 }
 
 //------------------------------------------------------------------------------
-cPosition cGameMapWidget::getZoomedTileSize () const
+cPosition cGameMapWidget::getZoomedTileSize() const
 {
 	// this should be the only place where the internalZoomFactor is used directly
 	return zoomSize (cPosition (cStaticMap::tilePixelHeight, cStaticMap::tilePixelWidth), internalZoomFactor);
 }
 
 //------------------------------------------------------------------------------
-cPosition cGameMapWidget::getZoomedStartTilePixelOffset () const
+cPosition cGameMapWidget::getZoomedStartTilePixelOffset() const
 {
-	return zoomSize(cPosition (pixelOffset.x () % cStaticMap::tilePixelWidth, pixelOffset.y () % cStaticMap::tilePixelHeight), getZoomFactor());
+	return zoomSize (cPosition (pixelOffset.x() % cStaticMap::tilePixelWidth, pixelOffset.y() % cStaticMap::tilePixelHeight), getZoomFactor());
 }
 
 //------------------------------------------------------------------------------
-std::pair<cPosition, cPosition> cGameMapWidget::computeTileDrawingRange () const
+std::pair<cPosition, cPosition> cGameMapWidget::computeTileDrawingRange() const
 {
-	const auto zoomedTileSize = getZoomedTileSize ();
+	const auto zoomedTileSize = getZoomedTileSize();
 
-	const cPosition drawingPixelRange = getSize () + getZoomedStartTilePixelOffset ();
+	const cPosition drawingPixelRange = getSize() + getZoomedStartTilePixelOffset();
 
-	const cPosition tilesSize ((int)std::ceil (drawingPixelRange.x () / zoomedTileSize.x ()), (int)std::ceil (drawingPixelRange.y () / zoomedTileSize.y ()));
+	const cPosition tilesSize ((int)std::ceil (drawingPixelRange.x() / zoomedTileSize.x()), (int)std::ceil (drawingPixelRange.y() / zoomedTileSize.y()));
 
-	cPosition startTile ((int)std::floor (pixelOffset.x () / cStaticMap::tilePixelWidth), (int)std::floor (pixelOffset.y () / cStaticMap::tilePixelHeight));
+	cPosition startTile ((int)std::floor (pixelOffset.x() / cStaticMap::tilePixelWidth), (int)std::floor (pixelOffset.y() / cStaticMap::tilePixelHeight));
 	cPosition endTile (startTile + tilesSize + 1);
 
-	startTile.x () = std::max (0, startTile.x ());
-	startTile.y () = std::max (0, startTile.y ());
+	startTile.x() = std::max (0, startTile.x());
+	startTile.y() = std::max (0, startTile.y());
 
-	endTile.x () = std::min (staticMap->getSize ().x (), endTile.x ());
-	endTile.y () = std::min (staticMap->getSize ().y (), endTile.y ());
+	endTile.x() = std::min (staticMap->getSize().x(), endTile.x());
+	endTile.y() = std::min (staticMap->getSize().y(), endTile.y());
 
-	return std::make_pair(startTile, endTile);
+	return std::make_pair (startTile, endTile);
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::drawTerrain ()
+void cGameMapWidget::drawTerrain()
 {
-	const auto zoomedTileSize = getZoomedTileSize ();
-	const auto tileDrawingRange = computeTileDrawingRange ();
-	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset ();
+	const auto zoomedTileSize = getZoomedTileSize();
+	const auto tileDrawingRange = computeTileDrawingRange();
+	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset();
 
-	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore (); i.next ())
+	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore(); i.next())
 	{
 		const auto& terrain = staticMap->getTerrain (*i);
 
 		auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
 		if (shouldDrawFog && (!player || !player->canSeeAt (*i)))
 		{
-			if (!cSettings::getInstance ().shouldDoPrescale () && (terrain.shw->w != zoomedTileSize.x () || terrain.shw->h != zoomedTileSize.y ()))
+			if (!cSettings::getInstance().shouldDoPrescale() && (terrain.shw->w != zoomedTileSize.x() || terrain.shw->h != zoomedTileSize.y()))
 			{
-				scaleSurface (terrain.shw_org.get (), terrain.shw.get (), zoomedTileSize.x (), zoomedTileSize.y ());
+				scaleSurface (terrain.shw_org.get(), terrain.shw.get(), zoomedTileSize.x(), zoomedTileSize.y());
 			}
-			SDL_BlitSurface (terrain.shw.get (), nullptr, cVideo::buffer, &drawDestination);
+			SDL_BlitSurface (terrain.shw.get(), nullptr, cVideo::buffer, &drawDestination);
 		}
 		else
 		{
-			if (!cSettings::getInstance ().shouldDoPrescale () && (terrain.sf->w != zoomedTileSize.x () || terrain.sf->h != zoomedTileSize.y ()))
+			if (!cSettings::getInstance().shouldDoPrescale() && (terrain.sf->w != zoomedTileSize.x() || terrain.sf->h != zoomedTileSize.y()))
 			{
-				scaleSurface (terrain.sf_org.get (), terrain.sf.get (), zoomedTileSize.x (), zoomedTileSize.y ());
+				scaleSurface (terrain.sf_org.get(), terrain.sf.get(), zoomedTileSize.x(), zoomedTileSize.y());
 			}
-			SDL_BlitSurface (terrain.sf.get (), nullptr, cVideo::buffer, &drawDestination);
+			SDL_BlitSurface (terrain.sf.get(), nullptr, cVideo::buffer, &drawDestination);
 		}
 	}
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::drawGrid ()
+void cGameMapWidget::drawGrid()
 {
-	const auto zoomedTileSize = getZoomedTileSize ();
-	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset ();
+	const auto zoomedTileSize = getZoomedTileSize();
+	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset();
 
-	SDL_Rect destY = {getPosition ().x (), getPosition ().y () + zoomedTileSize.y () - zoomedStartTilePixelOffset.y (), getSize ().x (), 1};
-	for (; destY.y < getEndPosition ().y (); destY.y += zoomedTileSize.y ())
+	SDL_Rect destY = {getPosition().x(), getPosition().y() + zoomedTileSize.y() - zoomedStartTilePixelOffset.y(), getSize().x(), 1};
+	for (; destY.y < getEndPosition().y(); destY.y += zoomedTileSize.y())
 	{
 		SDL_FillRect (cVideo::buffer, &destY, GRID_COLOR);
 	}
 
-	SDL_Rect destX = {getPosition ().x ()+ zoomedTileSize.x () - zoomedStartTilePixelOffset.x (), getPosition ().y (), 1, getSize ().y ()};
-	for (; destX.x < getEndPosition ().x (); destX.x += zoomedTileSize.x ())
+	SDL_Rect destX = {getPosition().x() + zoomedTileSize.x() - zoomedStartTilePixelOffset.x(), getPosition().y(), 1, getSize().y()};
+	for (; destX.x < getEndPosition().x(); destX.x += zoomedTileSize.x())
 	{
 		SDL_FillRect (cVideo::buffer, &destX, GRID_COLOR);
 	}
@@ -1013,12 +1013,12 @@ void cGameMapWidget::drawGrid ()
 //------------------------------------------------------------------------------
 void cGameMapWidget::drawEffects (bool bottom)
 {
-	SDL_Rect clipRect = getArea ().toSdlRect ();
+	SDL_Rect clipRect = getArea().toSdlRect();
 	SDL_SetClipRect (cVideo::buffer, &clipRect);
 
 	const cPosition originalTileSize (cStaticMap::tilePixelWidth, cStaticMap::tilePixelHeight);
 
-	for (auto it = effects.begin (); it != effects.end ();) // ATTENTION: erase in loop. do not use continue;
+	for (auto it = effects.begin(); it != effects.end();)   // ATTENTION: erase in loop. do not use continue;
 	{
 		auto& effect = *it;
 
@@ -1029,12 +1029,12 @@ void cGameMapWidget::drawEffects (bool bottom)
 		else
 		{
 			if (effect->bottom == bottom &&
-				(!player || player->canSeeAt (effect->getPosition () / originalTileSize)))
+				(!player || player->canSeeAt (effect->getPosition() / originalTileSize)))
 			{
 				cPosition screenDestination;
-				screenDestination.x () = getPosition ().x () + static_cast<int>((effect->getPosition ().x () - pixelOffset.x ()) * getZoomFactor ());
-				screenDestination.y () = getPosition ().y () + static_cast<int>((effect->getPosition ().y () - pixelOffset.y ()) * getZoomFactor ());
-				effect->draw (getZoomFactor (), screenDestination);
+				screenDestination.x() = getPosition().x() + static_cast<int> ((effect->getPosition().x() - pixelOffset.x()) * getZoomFactor());
+				screenDestination.y() = getPosition().y() + static_cast<int> ((effect->getPosition().y() - pixelOffset.y()) * getZoomFactor());
+				effect->draw (getZoomFactor(), screenDestination);
 			}
 
 			++it;
@@ -1044,34 +1044,34 @@ void cGameMapWidget::drawEffects (bool bottom)
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::drawBaseUnits ()
+void cGameMapWidget::drawBaseUnits()
 {
 	if (!dynamicMap) return;
 
-	const auto zoomedTileSize = getZoomedTileSize ();
-	const auto tileDrawingRange = computeTileDrawingRange ();
-	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset ();
+	const auto zoomedTileSize = getZoomedTileSize();
+	const auto tileDrawingRange = computeTileDrawingRange();
+	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset();
 
-	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore (); i.next ())
+	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore(); i.next())
 	{
 		auto& mapField = dynamicMap->getField (*i);
-		const auto& buildings = mapField.getBuildings ();
-		for (auto it = buildings.rbegin (); it != buildings.rend (); ++it)
+		const auto& buildings = mapField.getBuildings();
+		for (auto it = buildings.rbegin(); it != buildings.rend(); ++it)
 		{
 			if (*it == nullptr) continue; // should never happen
 
-			const auto& building = *(*it);
+			const auto& building = * (*it);
 
 			if (building.data.surfacePosition != sUnitData::SURFACE_POS_BENEATH_SEA &&
 				building.data.surfacePosition != sUnitData::SURFACE_POS_BASE &&
-				building.getOwner ()) break;
+				building.getOwner()) break;
 
 			if (!player || player->canSeeAnyAreaUnder (building))
 			{
 				if (shouldDrawUnit (building, *i, tileDrawingRange))
 				{
 					const auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building.getPosition());
-					unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor (), &unitSelection, player.get ());
+					unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), &unitSelection, player.get());
 				}
 			}
 		}
@@ -1079,25 +1079,25 @@ void cGameMapWidget::drawBaseUnits ()
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::drawTopBuildings ()
+void cGameMapWidget::drawTopBuildings()
 {
 	if (!dynamicMap) return;
 
-	const auto zoomedTileSize = getZoomedTileSize ();
-	const auto tileDrawingRange = computeTileDrawingRange ();
-	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset ();
+	const auto zoomedTileSize = getZoomedTileSize();
+	const auto tileDrawingRange = computeTileDrawingRange();
+	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset();
 
-	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore (); i.next ())
+	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore(); i.next())
 	{
 		auto& mapField = dynamicMap->getField (*i);
-		auto building = mapField.getTopBuilding ();
+		auto building = mapField.getTopBuilding();
 		if (building == nullptr) continue;
 		if (building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND) continue;
 		if (!player || !player->canSeeAnyAreaUnder (*building)) continue;
-		if (!shouldDrawUnit(*building, *i, tileDrawingRange)) continue;
+		if (!shouldDrawUnit (*building, *i, tileDrawingRange)) continue;
 
 		auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building->getPosition());
-		unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor (), &unitSelection, player.get ());
+		unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor(), &unitSelection, player.get());
 
 		//if (debugOutput.debugBaseClient && building->SubBase)
 		//	drawTopBuildings_DebugBaseClient (*building, drawDestination);
@@ -1107,67 +1107,67 @@ void cGameMapWidget::drawTopBuildings ()
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::drawShips ()
+void cGameMapWidget::drawShips()
 {
 	if (!dynamicMap) return;
 
-	const auto zoomedTileSize = getZoomedTileSize ();
-	const auto tileDrawingRange = computeTileDrawingRange ();
-	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset ();
+	const auto zoomedTileSize = getZoomedTileSize();
+	const auto tileDrawingRange = computeTileDrawingRange();
+	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset();
 
-	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore (); i.next ())
+	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore(); i.next())
 	{
 		auto& mapField = dynamicMap->getField (*i);
-		auto vehicle = mapField.getVehicle ();
+		auto vehicle = mapField.getVehicle();
 		if (vehicle == nullptr) continue;
 		if (vehicle->data.factorSea > 0 && vehicle->data.factorGround == 0)
 		{
 			auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-			unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, &unitSelection, player.get ());
+			unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor(), *dynamicMap, &unitSelection, player.get());
 		}
 	}
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::drawAboveSeaBaseUnits ()
+void cGameMapWidget::drawAboveSeaBaseUnits()
 {
 	if (!dynamicMap) return;
 
-	const auto zoomedTileSize = getZoomedTileSize ();
-	const auto tileDrawingRange = computeTileDrawingRange ();
-	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset ();
+	const auto zoomedTileSize = getZoomedTileSize();
+	const auto tileDrawingRange = computeTileDrawingRange();
+	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset();
 
-	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore (); i.next ())
+	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore(); i.next())
 	{
 		auto& mapField = dynamicMap->getField (*i);
 
-		const auto& buildings = mapField.getBuildings ();
-		for (auto it = buildings.begin (); it != buildings.end (); ++it)
+		const auto& buildings = mapField.getBuildings();
+		for (auto it = buildings.begin(); it != buildings.end(); ++it)
 		{
-			const auto& building = *(*it);
+			const auto& building = * (*it);
 			if (building.data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
 			{
-				const auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building.getPosition ());
-				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor (), &unitSelection, player.get ());
+				const auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building.getPosition());
+				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), &unitSelection, player.get());
 			}
 		}
-		for (auto it = buildings.begin (); it != buildings.end (); ++it)
+		for (auto it = buildings.begin(); it != buildings.end(); ++it)
 		{
-			const auto& building = *(*it);
+			const auto& building = * (*it);
 			if ((*it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)
 			{
-				const auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building.getPosition ());
-				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor (), &unitSelection, player.get ());
+				const auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building.getPosition());
+				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), &unitSelection, player.get());
 			}
 		}
 
 		auto vehicle = mapField.getVehicle();
-		if (vehicle && (vehicle->isUnitClearing () || vehicle->isUnitBuildingABuilding ()) && (player && player->canSeeAnyAreaUnder (*vehicle)))
+		if (vehicle && (vehicle->isUnitClearing() || vehicle->isUnitBuildingABuilding()) && (player && player->canSeeAnyAreaUnder (*vehicle)))
 		{
-			if (shouldDrawUnit(*vehicle, *i, tileDrawingRange))
+			if (shouldDrawUnit (*vehicle, *i, tileDrawingRange))
 			{
-				const auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, vehicle->getPosition ());
-				unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, &unitSelection, player.get ());
+				const auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, vehicle->getPosition());
+				unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor(), *dynamicMap, &unitSelection, player.get());
 			}
 		}
 	}
@@ -1184,95 +1184,95 @@ bool cGameMapWidget::shouldDrawUnit (const cUnit& unit, const cPosition& visitin
 	}
 	else
 	{
-		if (unit.getPosition ().x () < tileDrawingRange.first.x () || unit.getPosition ().y () < tileDrawingRange.first.y ())
+		if (unit.getPosition().x() < tileDrawingRange.first.x() || unit.getPosition().y() < tileDrawingRange.first.y())
 		{
 			cBox<cPosition> tileDrawingBox (tileDrawingRange.first, tileDrawingRange.second - cPosition (1, 1));
-			auto intersectedArea = tileDrawingBox.intersection (unit.getArea ());
+			auto intersectedArea = tileDrawingBox.intersection (unit.getArea());
 
-			return visitingPosition == intersectedArea.getMinCorner ();
+			return visitingPosition == intersectedArea.getMinCorner();
 		}
-		else return visitingPosition == unit.getPosition ();
+		else return visitingPosition == unit.getPosition();
 	}
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::drawVehicles ()
+void cGameMapWidget::drawVehicles()
 {
 	if (!dynamicMap) return;
 
-	const auto zoomedTileSize = getZoomedTileSize ();
-	const auto tileDrawingRange = computeTileDrawingRange ();
-	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset ();
+	const auto zoomedTileSize = getZoomedTileSize();
+	const auto tileDrawingRange = computeTileDrawingRange();
+	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset();
 
-	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore (); i.next ())
+	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore(); i.next())
 	{
 		auto& mapField = dynamicMap->getField (*i);
-		auto vehicle = mapField.getVehicle ();
+		auto vehicle = mapField.getVehicle();
 		if (vehicle == nullptr) continue;
-		if (vehicle->data.factorGround != 0 && !vehicle->isUnitBuildingABuilding () && !vehicle->isUnitClearing ())
+		if (vehicle->data.factorGround != 0 && !vehicle->isUnitBuildingABuilding() && !vehicle->isUnitClearing())
 		{
 			auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-			unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, &unitSelection, player.get ());
+			unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor(), *dynamicMap, &unitSelection, player.get());
 		}
 	}
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::drawConnectors ()
+void cGameMapWidget::drawConnectors()
 {
 	if (!dynamicMap) return;
 
-	const auto zoomedTileSize = getZoomedTileSize ();
-	const auto tileDrawingRange = computeTileDrawingRange ();
-	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset ();
+	const auto zoomedTileSize = getZoomedTileSize();
+	const auto tileDrawingRange = computeTileDrawingRange();
+	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset();
 
-	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore (); i.next ())
+	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore(); i.next())
 	{
 		auto& mapField = dynamicMap->getField (*i);
-		auto building = mapField.getTopBuilding ();
+		auto building = mapField.getTopBuilding();
 		if (building == nullptr) continue;
 		if (building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE)
 		{
 			auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-			unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor (), &unitSelection, player.get ());
+			unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor(), &unitSelection, player.get());
 		}
 	}
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::drawPlanes ()
+void cGameMapWidget::drawPlanes()
 {
 	if (!dynamicMap) return;
 
-	const auto zoomedTileSize = getZoomedTileSize ();
-	const auto tileDrawingRange = computeTileDrawingRange ();
-	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset ();
+	const auto zoomedTileSize = getZoomedTileSize();
+	const auto tileDrawingRange = computeTileDrawingRange();
+	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset();
 
-	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore (); i.next ())
+	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore(); i.next())
 	{
 		auto& mapField = dynamicMap->getField (*i);
-		const auto& planes = mapField.getPlanes ();
+		const auto& planes = mapField.getPlanes();
 
 		auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-		for (auto it = planes.rbegin (); it != planes.rend (); ++it)
+		for (auto it = planes.rbegin(); it != planes.rend(); ++it)
 		{
 			auto& plane = **it;
-			unitDrawingEngine.drawUnit (plane, drawDestination, getZoomFactor (), *dynamicMap, &unitSelection, player.get ());
+			unitDrawingEngine.drawUnit (plane, drawDestination, getZoomFactor(), *dynamicMap, &unitSelection, player.get());
 		}
 	}
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::drawResources ()
+void cGameMapWidget::drawResources()
 {
 	if (!dynamicMap) return;
 
-	const auto zoomedTileSize = getZoomedTileSize ();
-	const auto tileDrawingRange = computeTileDrawingRange ();
-	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset ();
+	const auto zoomedTileSize = getZoomedTileSize();
+	const auto tileDrawingRange = computeTileDrawingRange();
+	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset();
 
-	SDL_Rect tmp, src = {0, 0, Uint16 (zoomedTileSize.x ()), Uint16 (zoomedTileSize.y ())};
-	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore (); i.next ())
+	SDL_Rect tmp, src = {0, 0, Uint16 (zoomedTileSize.x()), Uint16 (zoomedTileSize.y())};
+	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore(); i.next())
 	{
 		if (player && !player->hasResourceExplored (*i)) continue;
 		if (dynamicMap->isBlocked (*i)) continue;
@@ -1284,135 +1284,135 @@ void cGameMapWidget::drawResources ()
 		{
 			src.x = 0;
 			tmp = drawDestination;
-			if (!cSettings::getInstance ().shouldDoPrescale () && (ResourceData.res_metal->w != ResourceData.res_metal_org->w / 64 * zoomedTileSize.x () || ResourceData.res_metal->h != zoomedTileSize.y ())) scaleSurface (ResourceData.res_metal_org.get (), ResourceData.res_metal.get (), ResourceData.res_metal_org->w / 64 * zoomedTileSize.x (), zoomedTileSize.y ());
-			SDL_BlitSurface (ResourceData.res_metal.get (), &src, cVideo::buffer, &tmp);
+			if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_metal->w != ResourceData.res_metal_org->w / 64 * zoomedTileSize.x() || ResourceData.res_metal->h != zoomedTileSize.y())) scaleSurface (ResourceData.res_metal_org.get(), ResourceData.res_metal.get(), ResourceData.res_metal_org->w / 64 * zoomedTileSize.x(), zoomedTileSize.y());
+			SDL_BlitSurface (ResourceData.res_metal.get(), &src, cVideo::buffer, &tmp);
 		}
 		else
 		{
-			src.x = resource.value * zoomedTileSize.x ();
+			src.x = resource.value * zoomedTileSize.x();
 			tmp = drawDestination;
 			if (resource.typ == RES_METAL)
 			{
-				if (!cSettings::getInstance ().shouldDoPrescale () && (ResourceData.res_metal->w != ResourceData.res_metal_org->w / 64 * zoomedTileSize.x () || ResourceData.res_metal->h != zoomedTileSize.y ())) scaleSurface (ResourceData.res_metal_org.get (), ResourceData.res_metal.get (), ResourceData.res_metal_org->w / 64 * zoomedTileSize.x (), zoomedTileSize.y ());
-				SDL_BlitSurface (ResourceData.res_metal.get (), &src, cVideo::buffer, &tmp);
+				if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_metal->w != ResourceData.res_metal_org->w / 64 * zoomedTileSize.x() || ResourceData.res_metal->h != zoomedTileSize.y())) scaleSurface (ResourceData.res_metal_org.get(), ResourceData.res_metal.get(), ResourceData.res_metal_org->w / 64 * zoomedTileSize.x(), zoomedTileSize.y());
+				SDL_BlitSurface (ResourceData.res_metal.get(), &src, cVideo::buffer, &tmp);
 			}
 			else if (resource.typ == RES_OIL)
 			{
-				if (!cSettings::getInstance ().shouldDoPrescale () && (ResourceData.res_oil->w != ResourceData.res_oil_org->w / 64 * zoomedTileSize.x () || ResourceData.res_oil->h != zoomedTileSize.y ())) scaleSurface (ResourceData.res_oil_org.get (), ResourceData.res_oil.get (), ResourceData.res_oil_org->w / 64 * zoomedTileSize.x (), zoomedTileSize.y ());
-				SDL_BlitSurface (ResourceData.res_oil.get (), &src, cVideo::buffer, &tmp);
+				if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_oil->w != ResourceData.res_oil_org->w / 64 * zoomedTileSize.x() || ResourceData.res_oil->h != zoomedTileSize.y())) scaleSurface (ResourceData.res_oil_org.get(), ResourceData.res_oil.get(), ResourceData.res_oil_org->w / 64 * zoomedTileSize.x(), zoomedTileSize.y());
+				SDL_BlitSurface (ResourceData.res_oil.get(), &src, cVideo::buffer, &tmp);
 			}
 			else // Gold
 			{
-				if (!cSettings::getInstance ().shouldDoPrescale () && (ResourceData.res_gold->w != ResourceData.res_gold_org->w / 64 * zoomedTileSize.x () || ResourceData.res_gold->h != zoomedTileSize.y ())) scaleSurface (ResourceData.res_gold_org.get (), ResourceData.res_gold.get (), ResourceData.res_gold_org->w / 64 * zoomedTileSize.x (), zoomedTileSize.y ());
-				SDL_BlitSurface (ResourceData.res_gold.get (), &src, cVideo::buffer, &tmp);
+				if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_gold->w != ResourceData.res_gold_org->w / 64 * zoomedTileSize.x() || ResourceData.res_gold->h != zoomedTileSize.y())) scaleSurface (ResourceData.res_gold_org.get(), ResourceData.res_gold.get(), ResourceData.res_gold_org->w / 64 * zoomedTileSize.x(), zoomedTileSize.y());
+				SDL_BlitSurface (ResourceData.res_gold.get(), &src, cVideo::buffer, &tmp);
 			}
 		}
 	}
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::drawSelectionBox ()
+void cGameMapWidget::drawSelectionBox()
 {
-	if (!unitSelectionBox.isValid ()) return;
+	if (!unitSelectionBox.isValid()) return;
 
-	const auto zoomedTileSize = getZoomedTileSize ();
+	const auto zoomedTileSize = getZoomedTileSize();
 
-	const auto zoomOffX = (int)(pixelOffset.x () * getZoomFactor ());
-	const auto zoomOffY = (int)(pixelOffset.y () * getZoomFactor ());
+	const auto zoomOffX = (int) (pixelOffset.x() * getZoomFactor());
+	const auto zoomOffY = (int) (pixelOffset.y() * getZoomFactor());
 
-	const int mouseTopX = static_cast<int> (std::min (unitSelectionBox.getBox ().getMinCorner ()[0], unitSelectionBox.getBox ().getMaxCorner ()[0]) * zoomedTileSize. x());
-	const int mouseTopY = static_cast<int> (std::min (unitSelectionBox.getBox ().getMinCorner ()[1], unitSelectionBox.getBox ().getMaxCorner ()[1]) * zoomedTileSize. y());
-	const int mouseBottomX = static_cast<int> (std::max (unitSelectionBox.getBox ().getMinCorner ()[0], unitSelectionBox.getBox ().getMaxCorner ()[0]) * zoomedTileSize. x());
-	const int mouseBottomY = static_cast<int> (std::max (unitSelectionBox.getBox ().getMinCorner ()[1], unitSelectionBox.getBox ().getMaxCorner ()[1]) * zoomedTileSize. y());
+	const int mouseTopX = static_cast<int> (std::min (unitSelectionBox.getBox().getMinCorner()[0], unitSelectionBox.getBox().getMaxCorner()[0]) * zoomedTileSize. x());
+	const int mouseTopY = static_cast<int> (std::min (unitSelectionBox.getBox().getMinCorner()[1], unitSelectionBox.getBox().getMaxCorner()[1]) * zoomedTileSize. y());
+	const int mouseBottomX = static_cast<int> (std::max (unitSelectionBox.getBox().getMinCorner()[0], unitSelectionBox.getBox().getMaxCorner()[0]) * zoomedTileSize. x());
+	const int mouseBottomY = static_cast<int> (std::max (unitSelectionBox.getBox().getMinCorner()[1], unitSelectionBox.getBox().getMaxCorner()[1]) * zoomedTileSize. y());
 	const Uint32 color = 0xFFFFFF00;
 	SDL_Rect d;
 
 	d.x = mouseTopX - zoomOffX + getPosition(). x();
-	d.y = mouseBottomY - zoomOffY + getPosition ().y ();
+	d.y = mouseBottomY - zoomOffY + getPosition().y();
 	d.w = mouseBottomX - mouseTopX;
 	d.h = 1;
 	SDL_FillRect (cVideo::buffer, &d, color);
 
-	d.x = mouseTopX - zoomOffX + getPosition ().x ();
-	d.y = mouseTopY - zoomOffY + getPosition ().y ();
+	d.x = mouseTopX - zoomOffX + getPosition().x();
+	d.y = mouseTopY - zoomOffY + getPosition().y();
 	d.w = mouseBottomX - mouseTopX;
 	d.h = 1;
 	SDL_FillRect (cVideo::buffer, &d, color);
 
-	d.x = mouseTopX - zoomOffX + getPosition ().x ();
-	d.y = mouseTopY - zoomOffY + getPosition ().y ();
+	d.x = mouseTopX - zoomOffX + getPosition().x();
+	d.y = mouseTopY - zoomOffY + getPosition().y();
 	d.w = 1;
 	d.h = mouseBottomY - mouseTopY;
 	SDL_FillRect (cVideo::buffer, &d, color);
 
-	d.x = mouseBottomX - zoomOffX + getPosition ().x ();
-	d.y = mouseTopY - zoomOffY + getPosition ().y ();
+	d.x = mouseBottomX - zoomOffX + getPosition().x();
+	d.y = mouseTopY - zoomOffY + getPosition().y();
 	d.w = 1;
 	d.h = mouseBottomY - mouseTopY;
 	SDL_FillRect (cVideo::buffer, &d, color);
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::drawUnitCircles ()
+void cGameMapWidget::drawUnitCircles()
 {
-	auto clipRect = getArea ().toSdlRect ();
+	auto clipRect = getArea().toSdlRect();
 	SDL_SetClipRect (cVideo::buffer, &clipRect);
 
 	auto selectedVehicle = unitSelection.getSelectedVehicle();
-	auto selectedBuilding = unitSelection.getSelectedBuilding ();
+	auto selectedBuilding = unitSelection.getSelectedBuilding();
 
-	const auto zoomedTileSize = getZoomedTileSize ();
+	const auto zoomedTileSize = getZoomedTileSize();
 
-	if (selectedVehicle && selectedVehicle->isDisabled () == false)
+	if (selectedVehicle && selectedVehicle->isDisabled() == false)
 	{
-		const bool movementOffset = !selectedVehicle->isUnitBuildingABuilding () && !selectedVehicle->isUnitClearing ();
+		const bool movementOffset = !selectedVehicle->isUnitBuildingABuilding() && !selectedVehicle->isUnitClearing();
 		const auto screenPosition = getScreenPosition (*selectedVehicle, movementOffset);
 		if (shouldDrawScan)
 		{
 			if (selectedVehicle->data.isBig)
 			{
-				drawCircle (screenPosition.x () + zoomedTileSize.x (), screenPosition.y () + zoomedTileSize.y (), selectedVehicle->data.getScan () * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
+				drawCircle (screenPosition.x() + zoomedTileSize.x(), screenPosition.y() + zoomedTileSize.y(), selectedVehicle->data.getScan() * zoomedTileSize.x(), SCAN_COLOR, *cVideo::buffer);
 			}
 			else
 			{
-				drawCircle (screenPosition.x () + zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2, selectedVehicle->data.getScan () * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
+				drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2, selectedVehicle->data.getScan() * zoomedTileSize.x(), SCAN_COLOR, *cVideo::buffer);
 			}
 		}
 		if (shouldDrawRange)
 		{
-			if (selectedVehicle->data.canAttack & TERRAIN_AIR) drawCircle (screenPosition.x () +zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2, selectedVehicle->data.getRange () * zoomedTileSize.x () + 2, RANGE_AIR_COLOR, *cVideo::buffer);
-			else drawCircle (screenPosition.x () + zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2, selectedVehicle->data.getRange () * zoomedTileSize.x () + 1, RANGE_GROUND_COLOR, *cVideo::buffer);
+			if (selectedVehicle->data.canAttack & TERRAIN_AIR) drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2, selectedVehicle->data.getRange() * zoomedTileSize.x() + 2, RANGE_AIR_COLOR, *cVideo::buffer);
+			else drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2, selectedVehicle->data.getRange() * zoomedTileSize.x() + 1, RANGE_GROUND_COLOR, *cVideo::buffer);
 		}
 	}
-	else if (selectedBuilding && selectedBuilding->isDisabled () == false)
+	else if (selectedBuilding && selectedBuilding->isDisabled() == false)
 	{
 		const auto screenPosition = getScreenPosition (*selectedBuilding);
 		if (shouldDrawScan)
 		{
 			if (selectedBuilding->data.isBig)
 			{
-				drawCircle (screenPosition. x() + zoomedTileSize.x (),
-							screenPosition. y() + zoomedTileSize.y (),
-							selectedBuilding->data.getScan () * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
+				drawCircle (screenPosition. x() + zoomedTileSize.x(),
+							screenPosition. y() + zoomedTileSize.y(),
+							selectedBuilding->data.getScan() * zoomedTileSize.x(), SCAN_COLOR, *cVideo::buffer);
 			}
 			else
 			{
-				drawCircle (screenPosition. x() + zoomedTileSize.x () / 2,
-							screenPosition. y() + zoomedTileSize.y () / 2,
-							selectedBuilding->data.getScan () * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
+				drawCircle (screenPosition. x() + zoomedTileSize.x() / 2,
+							screenPosition. y() + zoomedTileSize.y() / 2,
+							selectedBuilding->data.getScan() * zoomedTileSize.x(), SCAN_COLOR, *cVideo::buffer);
 			}
 		}
 		if (shouldDrawRange && (selectedBuilding->data.canAttack & TERRAIN_GROUND) && !selectedBuilding->data.explodesOnContact)
 		{
-			drawCircle (screenPosition. x() + zoomedTileSize.x () / 2,
-						screenPosition. y() + zoomedTileSize.y () / 2,
-						selectedBuilding->data.getRange () * zoomedTileSize.x () + 2, RANGE_GROUND_COLOR, *cVideo::buffer);
+			drawCircle (screenPosition. x() + zoomedTileSize.x() / 2,
+						screenPosition. y() + zoomedTileSize.y() / 2,
+						selectedBuilding->data.getRange() * zoomedTileSize.x() + 2, RANGE_GROUND_COLOR, *cVideo::buffer);
 		}
 		if (shouldDrawRange && (selectedBuilding->data.canAttack & TERRAIN_AIR))
 		{
-			drawCircle (screenPosition. x() + zoomedTileSize.x () / 2,
-						screenPosition. y() + zoomedTileSize.y () / 2,
-						selectedBuilding->data.getRange () * zoomedTileSize.x () + 2, RANGE_AIR_COLOR, *cVideo::buffer);
+			drawCircle (screenPosition. x() + zoomedTileSize.x() / 2,
+						screenPosition. y() + zoomedTileSize.y() / 2,
+						selectedBuilding->data.getRange() * zoomedTileSize.x() + 2, RANGE_AIR_COLOR, *cVideo::buffer);
 		}
 	}
 
@@ -1420,43 +1420,43 @@ void cGameMapWidget::drawUnitCircles ()
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::drawExitPoints ()
+void cGameMapWidget::drawExitPoints()
 {
-	auto selectedVehicle = unitSelection.getSelectedVehicle ();
-	auto selectedBuilding = unitSelection.getSelectedBuilding ();
+	auto selectedVehicle = unitSelection.getSelectedVehicle();
+	auto selectedBuilding = unitSelection.getSelectedBuilding();
 
-	if (selectedVehicle && selectedVehicle->isDisabled () == false)
+	if (selectedVehicle && selectedVehicle->isDisabled() == false)
 	{
-		if (dynamicMap && selectedVehicle->getOwner () == player.get () &&
+		if (dynamicMap && selectedVehicle->getOwner() == player.get() &&
 			(
 				(selectedVehicle->isUnitBuildingABuilding() && selectedVehicle->getBuildTurns() == 0) ||
-				(selectedVehicle->isUnitClearing () && selectedVehicle->getClearingTurns() == 0)
+				(selectedVehicle->isUnitClearing() && selectedVehicle->getClearingTurns() == 0)
 			) && !selectedVehicle->BuildPath)
 		{
-			drawExitPointsIf (*selectedVehicle, [&](const cPosition& position){ return dynamicMap->possiblePlace (*selectedVehicle, position); });
+			drawExitPointsIf (*selectedVehicle, [&] (const cPosition & position) { return dynamicMap->possiblePlace (*selectedVehicle, position); });
 		}
-		if (mouseMode->getType () == eMouseModeType::Activate && selectedVehicle->getOwner () == player.get ())
+		if (mouseMode->getType() == eMouseModeType::Activate && selectedVehicle->getOwner() == player.get())
 		{
-			auto activateMouseMode = static_cast<cMouseModeActivateLoaded*>(mouseMode.get());
+			auto activateMouseMode = static_cast<cMouseModeActivateLoaded*> (mouseMode.get());
 			auto unitToExit = selectedVehicle->storedUnits[activateMouseMode->getVehicleToActivateIndex()]->data;
-			drawExitPointsIf (*selectedVehicle, [&](const cPosition& position){ return selectedVehicle->canExitTo (position, *dynamicMap, unitToExit); });
+			drawExitPointsIf (*selectedVehicle, [&] (const cPosition & position) { return selectedVehicle->canExitTo (position, *dynamicMap, unitToExit); });
 		}
 	}
-	else if (selectedBuilding && selectedBuilding->isDisabled () == false)
+	else if (selectedBuilding && selectedBuilding->isDisabled() == false)
 	{
 		if (!selectedBuilding->isBuildListEmpty() &&
-			!selectedBuilding->isUnitWorking () &&
-			selectedBuilding->getBuildListItem(0).getRemainingMetal () <= 0 &&
-			selectedBuilding->getOwner () == player.get ())
+			!selectedBuilding->isUnitWorking() &&
+			selectedBuilding->getBuildListItem (0).getRemainingMetal() <= 0 &&
+			selectedBuilding->getOwner() == player.get())
 		{
-			auto unitToExit = selectedBuilding->getBuildListItem (0).getType ().getUnitDataOriginalVersion ();
-			drawExitPointsIf (*selectedBuilding, [&](const cPosition& position){ return selectedBuilding->canExitTo (position, *dynamicMap, *unitToExit); });
+			auto unitToExit = selectedBuilding->getBuildListItem (0).getType().getUnitDataOriginalVersion();
+			drawExitPointsIf (*selectedBuilding, [&] (const cPosition & position) { return selectedBuilding->canExitTo (position, *dynamicMap, *unitToExit); });
 		}
-		if (mouseMode->getType () == eMouseModeType::Activate && selectedBuilding->getOwner () == player.get ())
+		if (mouseMode->getType() == eMouseModeType::Activate && selectedBuilding->getOwner() == player.get())
 		{
-			auto activateMouseMode = static_cast<cMouseModeActivateLoaded*>(mouseMode.get ());
-			auto unitToExit = selectedBuilding->storedUnits[activateMouseMode->getVehicleToActivateIndex ()]->data;
-			drawExitPointsIf (*selectedBuilding, [&](const cPosition& position){ return selectedBuilding->canExitTo (position, *dynamicMap, unitToExit); });
+			auto activateMouseMode = static_cast<cMouseModeActivateLoaded*> (mouseMode.get());
+			auto unitToExit = selectedBuilding->storedUnits[activateMouseMode->getVehicleToActivateIndex()]->data;
+			drawExitPointsIf (*selectedBuilding, [&] (const cPosition & position) { return selectedBuilding->canExitTo (position, *dynamicMap, unitToExit); });
 		}
 	}
 }
@@ -1466,11 +1466,11 @@ void cGameMapWidget::drawExitPointsIf (const cUnit& unit, const std::function<bo
 {
 	if (!dynamicMap) return;
 
-	auto adjacentPositions = unit.getAdjacentPositions ();
+	auto adjacentPositions = unit.getAdjacentPositions();
 
 	for (size_t i = 0; i != adjacentPositions.size(); ++i)
 	{
-		if (predicate(adjacentPositions[i]))
+		if (predicate (adjacentPositions[i]))
 		{
 			drawExitPoint (adjacentPositions[i]);
 		}
@@ -1480,62 +1480,62 @@ void cGameMapWidget::drawExitPointsIf (const cUnit& unit, const std::function<bo
 //------------------------------------------------------------------------------
 void cGameMapWidget::drawExitPoint (const cPosition& position)
 {
-	const auto zoomedTileSize = getZoomedTileSize ();
-	const auto tileDrawingRange = computeTileDrawingRange ();
-	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset ();
+	const auto zoomedTileSize = getZoomedTileSize();
+	const auto tileDrawingRange = computeTileDrawingRange();
+	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset();
 
 	auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, position);
 
-	const int nr = animationTimer->getAnimationTime () % 5;
+	const int nr = animationTimer->getAnimationTime() % 5;
 	SDL_Rect src;
-	src.x = zoomedTileSize.x () * nr;
+	src.x = zoomedTileSize.x() * nr;
 	src.y = 0;
-	src.w = zoomedTileSize.x ();
-	src.h = zoomedTileSize.y ();
+	src.w = zoomedTileSize.x();
+	src.h = zoomedTileSize.y();
 
 	CHECK_SCALING (*GraphicsData.gfx_exitpoints, *GraphicsData.gfx_exitpoints_org, getZoomFactor());
-	SDL_BlitSurface (GraphicsData.gfx_exitpoints.get (), &src, cVideo::buffer, &drawDestination);
+	SDL_BlitSurface (GraphicsData.gfx_exitpoints.get(), &src, cVideo::buffer, &drawDestination);
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::drawBuildBand ()
+void cGameMapWidget::drawBuildBand()
 {
-	auto selectedVehicle = unitSelection.getSelectedVehicle ();
+	auto selectedVehicle = unitSelection.getSelectedVehicle();
 
-	const auto zoomedTileSize = getZoomedTileSize ();
+	const auto zoomedTileSize = getZoomedTileSize();
 
-	if (selectedVehicle && !selectedVehicle->isDisabled ())
+	if (selectedVehicle && !selectedVehicle->isDisabled())
 	{
-		auto mouse = getActiveMouse ();
+		auto mouse = getActiveMouse();
 
-		if (!mouse || !getArea().withinOrTouches(mouse->getPosition())) return;
+		if (!mouse || !getArea().withinOrTouches (mouse->getPosition())) return;
 
-		if (mouseMode->getType () == eMouseModeType::SelectBuildPosition)
+		if (mouseMode->getType() == eMouseModeType::SelectBuildPosition)
 		{
 			if (!dynamicMap) return;
 
-			auto selectBuildPositionMode = static_cast<const cMouseModeSelectBuildPosition*>(mouseMode.get ());
+			auto selectBuildPositionMode = static_cast<const cMouseModeSelectBuildPosition*> (mouseMode.get());
 			bool validPosition;
 			cPosition destination;
-			std::tie (validPosition, destination) = selectBuildPositionMode->findNextBuildPosition (selectedVehicle->getPosition(), getMapTilePosition (mouse->getPosition ()));
+			std::tie (validPosition, destination) = selectBuildPositionMode->findNextBuildPosition (selectedVehicle->getPosition(), getMapTilePosition (mouse->getPosition()));
 			if (!validPosition) return;
 
 			SDL_Rect dest;
-			dest.x = getPosition ().x () - (int)(pixelOffset.x () * getZoomFactor ()) + zoomedTileSize.x () * destination.x ();
-			dest.y = getPosition ().y () - (int)(pixelOffset.y () * getZoomFactor ()) + zoomedTileSize.y () * destination.y ();
-			CHECK_SCALING (*GraphicsData.gfx_band_big, *GraphicsData.gfx_band_big_org, getZoomFactor ());
-			SDL_BlitSurface (GraphicsData.gfx_band_big.get (), nullptr, cVideo::buffer, &dest);
+			dest.x = getPosition().x() - (int) (pixelOffset.x() * getZoomFactor()) + zoomedTileSize.x() * destination.x();
+			dest.y = getPosition().y() - (int) (pixelOffset.y() * getZoomFactor()) + zoomedTileSize.y() * destination.y();
+			CHECK_SCALING (*GraphicsData.gfx_band_big, *GraphicsData.gfx_band_big_org, getZoomFactor());
+			SDL_BlitSurface (GraphicsData.gfx_band_big.get(), nullptr, cVideo::buffer, &dest);
 		}
-		else if (mouseMode->getType () == eMouseModeType::SelectBuildPathDestintaion)
+		else if (mouseMode->getType() == eMouseModeType::SelectBuildPathDestintaion)
 		{
-			const auto mouseTilePosition = getMapTilePosition (mouse->getPosition ());
-			if (mouseTilePosition.x () == selectedVehicle->getPosition().x() || mouseTilePosition.y () == selectedVehicle->getPosition().y())
+			const auto mouseTilePosition = getMapTilePosition (mouse->getPosition());
+			if (mouseTilePosition.x() == selectedVehicle->getPosition().x() || mouseTilePosition.y() == selectedVehicle->getPosition().y())
 			{
 				SDL_Rect dest;
-				dest.x = getPosition ().x () - (int)(pixelOffset.x () * getZoomFactor ()) + zoomedTileSize.x () * mouseTilePosition.x ();
-				dest.y = getPosition ().y () - (int)(pixelOffset.y () * getZoomFactor ()) + zoomedTileSize.y () * mouseTilePosition.y ();
-				CHECK_SCALING (*GraphicsData.gfx_band_small, *GraphicsData.gfx_band_small_org, getZoomFactor ());
-				SDL_BlitSurface (GraphicsData.gfx_band_small.get (), nullptr, cVideo::buffer, &dest);
+				dest.x = getPosition().x() - (int) (pixelOffset.x() * getZoomFactor()) + zoomedTileSize.x() * mouseTilePosition.x();
+				dest.y = getPosition().y() - (int) (pixelOffset.y() * getZoomFactor()) + zoomedTileSize.y() * mouseTilePosition.y();
+				CHECK_SCALING (*GraphicsData.gfx_band_small, *GraphicsData.gfx_band_small_org, getZoomFactor());
+				SDL_BlitSurface (GraphicsData.gfx_band_small.get(), nullptr, cVideo::buffer, &dest);
 			}
 		}
 	}
@@ -1544,11 +1544,11 @@ void cGameMapWidget::drawBuildBand ()
 //------------------------------------------------------------------------------
 void cGameMapWidget::drawLockList (const cPlayer& player)
 {
-	const auto zoomedTileSize = getZoomedTileSize ();
+	const auto zoomedTileSize = getZoomedTileSize();
 
 	for (size_t i = 0; i < unitLockList.getLockedUnitsCount(); ++i)
 	{
-		const cUnit* unit = unitLockList.getLockedUnit(i);
+		const cUnit* unit = unitLockList.getLockedUnit (i);
 
 		if (!player.canSeeAnyAreaUnder (*unit))
 		{
@@ -1560,16 +1560,16 @@ void cGameMapWidget::drawLockList (const cPlayer& player)
 		if (shouldDrawScan)
 		{
 			if (unit->data.isBig)
-				drawCircle (screenPosition.x () + zoomedTileSize.x (), screenPosition.y () + zoomedTileSize.y (), unit->data.getScan () * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
+				drawCircle (screenPosition.x() + zoomedTileSize.x(), screenPosition.y() + zoomedTileSize.y(), unit->data.getScan() * zoomedTileSize.x(), SCAN_COLOR, *cVideo::buffer);
 			else
-				drawCircle (screenPosition.x () + zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2, unit->data.getScan () * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
+				drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2, unit->data.getScan() * zoomedTileSize.x(), SCAN_COLOR, *cVideo::buffer);
 		}
 		if (shouldDrawRange && (unit->data.canAttack & TERRAIN_GROUND))
-			drawCircle (screenPosition.x () + zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2,
-						unit->data.getRange () * zoomedTileSize.x () + 1, RANGE_GROUND_COLOR, *cVideo::buffer);
+			drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2,
+						unit->data.getRange() * zoomedTileSize.x() + 1, RANGE_GROUND_COLOR, *cVideo::buffer);
 		if (shouldDrawRange && (unit->data.canAttack & TERRAIN_AIR))
-			drawCircle (screenPosition.x () + zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2,
-						unit->data.getRange () * zoomedTileSize.x () + 2, RANGE_AIR_COLOR, *cVideo::buffer);
+			drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2,
+						unit->data.getRange() * zoomedTileSize.x() + 2, RANGE_AIR_COLOR, *cVideo::buffer);
 		//if (ammoChecked () && unit->data.canAttack)
 		//	drawMunBar (*unit, screenPos);
 		//if (hitsChecked ())
@@ -1580,9 +1580,9 @@ void cGameMapWidget::drawLockList (const cPlayer& player)
 //------------------------------------------------------------------------------
 void cGameMapWidget::drawBuildPath (const cVehicle& vehicle)
 {
-	if (!vehicle.BuildPath || (vehicle.bandPosition == vehicle.getPosition()) || mouseMode->getType () == eMouseModeType::SelectBuildPathDestintaion) return;
+	if (!vehicle.BuildPath || (vehicle.bandPosition == vehicle.getPosition()) || mouseMode->getType() == eMouseModeType::SelectBuildPathDestintaion) return;
 
-	const auto zoomedTileSize = getZoomedTileSize ();
+	const auto zoomedTileSize = getZoomedTileSize();
 
 	int mx = vehicle.getPosition().x();
 	int my = vehicle.getPosition().y();
@@ -1599,10 +1599,10 @@ void cGameMapWidget::drawBuildPath (const cVehicle& vehicle)
 	while (mx != vehicle.bandPosition.x() || my != vehicle.bandPosition.y())
 	{
 		SDL_Rect dest;
-		dest.x = getPosition ().x () - (int)(pixelOffset.x () * getZoomFactor ()) + zoomedTileSize.x () * mx;
-		dest.y = getPosition ().y () - (int)(pixelOffset.y () * getZoomFactor ()) + zoomedTileSize.y () * my;
+		dest.x = getPosition().x() - (int) (pixelOffset.x() * getZoomFactor()) + zoomedTileSize.x() * mx;
+		dest.y = getPosition().y() - (int) (pixelOffset.y() * getZoomFactor()) + zoomedTileSize.y() * my;
 
-		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - zoomedTileSize.x ()].get (), nullptr, cVideo::buffer, &dest);
+		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - zoomedTileSize.x()].get(), nullptr, cVideo::buffer, &dest);
 
 		if (mx < vehicle.bandPosition.x())
 			mx++;
@@ -1615,24 +1615,24 @@ void cGameMapWidget::drawBuildPath (const cVehicle& vehicle)
 			my--;
 	}
 	SDL_Rect dest;
-	dest.x = getPosition ().x () - (int)(pixelOffset.x () * getZoomFactor ()) + zoomedTileSize.x () * mx;
-	dest.y = getPosition ().y () - (int)(pixelOffset.y () * getZoomFactor ()) + zoomedTileSize.y () * my;
+	dest.x = getPosition().x() - (int) (pixelOffset.x() * getZoomFactor()) + zoomedTileSize.x() * mx;
+	dest.y = getPosition().y() - (int) (pixelOffset.y() * getZoomFactor()) + zoomedTileSize.y() * my;
 
-	SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - zoomedTileSize.x ()].get (), nullptr, cVideo::buffer, &dest);
+	SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - zoomedTileSize.x()].get(), nullptr, cVideo::buffer, &dest);
 }
 
 //------------------------------------------------------------------------------
 void cGameMapWidget::drawPath (const cVehicle& vehicle)
 {
-	auto moveJob = vehicle.getClientMoveJob ();
+	auto moveJob = vehicle.getClientMoveJob();
 
-	if (!moveJob || !moveJob->Waypoints || vehicle.getOwner () != player.get ())
+	if (!moveJob || !moveJob->Waypoints || vehicle.getOwner() != player.get())
 	{
 		drawBuildPath (vehicle);
 		return;
 	}
 
-	const auto zoomedTileSize = getZoomedTileSize ();
+	const auto zoomedTileSize = getZoomedTileSize();
 
 	int sp = vehicle.data.getSpeed();
 	int save;
@@ -1645,10 +1645,10 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 	else save = moveJob->iSavedSpeed;
 
 	SDL_Rect dest;
-	dest.x = getPosition ().x () - (int)(pixelOffset.x () * getZoomFactor ()) + zoomedTileSize.x () * vehicle.getPosition().x();
-	dest.y = getPosition ().y () - (int)(pixelOffset.y () * getZoomFactor ()) + zoomedTileSize.y () * vehicle.getPosition().y();
-	dest.w = zoomedTileSize.x ();
-	dest.h = zoomedTileSize.y ();
+	dest.x = getPosition().x() - (int) (pixelOffset.x() * getZoomFactor()) + zoomedTileSize.x() * vehicle.getPosition().x();
+	dest.y = getPosition().y() - (int) (pixelOffset.y() * getZoomFactor()) + zoomedTileSize.y() * vehicle.getPosition().y();
+	dest.w = zoomedTileSize.x();
+	dest.h = zoomedTileSize.y();
 	SDL_Rect ndest = dest;
 
 	int mx = 0;
@@ -1658,8 +1658,8 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 	{
 		if (wp->next)
 		{
-			ndest.x += mx = wp->next->position.x() * zoomedTileSize.x () - wp->position.x() * zoomedTileSize.x ();
-			ndest.y += my = wp->next->position.y() * zoomedTileSize.y () - wp->position.y() * zoomedTileSize.y ();
+			ndest.x += mx = wp->next->position.x() * zoomedTileSize.x() - wp->position.x() * zoomedTileSize.x();
+			ndest.y += my = wp->next->position.y() * zoomedTileSize.y() - wp->position.y() * zoomedTileSize.y();
 		}
 		else
 		{
@@ -1697,9 +1697,9 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 //------------------------------------------------------------------------------
 SDL_Rect cGameMapWidget::computeTileDrawingArea (const cPosition& zoomedTileSize, const cPosition& zoomedStartTilePixelOffset, const cPosition& tileStartIndex, const cPosition& tileIndex)
 {
-	const cPosition startDrawPosition = getPosition () + (tileIndex - tileStartIndex) * zoomedTileSize - zoomedStartTilePixelOffset;
+	const cPosition startDrawPosition = getPosition() + (tileIndex - tileStartIndex) * zoomedTileSize - zoomedStartTilePixelOffset;
 
-	SDL_Rect dest = {startDrawPosition.x (), startDrawPosition.y (), zoomedTileSize.x (), zoomedTileSize.y ()};
+	SDL_Rect dest = {startDrawPosition.x(), startDrawPosition.y(), zoomedTileSize.x(), zoomedTileSize.y()};
 
 	return dest;
 }
@@ -1707,14 +1707,14 @@ SDL_Rect cGameMapWidget::computeTileDrawingArea (const cPosition& zoomedTileSize
 //------------------------------------------------------------------------------
 cPosition cGameMapWidget::getMapTilePosition (const cPosition& pixelPosition) const
 {
-	assert (getArea ().withinOrTouches (pixelPosition));
+	assert (getArea().withinOrTouches (pixelPosition));
 
-	const auto zoomedTileSize = getZoomedTileSize ();
+	const auto zoomedTileSize = getZoomedTileSize();
 
-	const auto x = (int)((pixelPosition.x () - getPosition ().x () + pixelOffset.x () * getZoomFactor ()) / zoomedTileSize.x ());
-	const auto y = (int)((pixelPosition.y () - getPosition ().y () + pixelOffset.y () * getZoomFactor ()) / zoomedTileSize.y ());
+	const auto x = (int) ((pixelPosition.x() - getPosition().x() + pixelOffset.x() * getZoomFactor()) / zoomedTileSize.x());
+	const auto y = (int) ((pixelPosition.y() - getPosition().y() + pixelOffset.y() * getZoomFactor()) / zoomedTileSize.y());
 
-	const cPosition tilePosition (std::max(std::min (x, staticMap->getSize ().x ()-1), 0), std::max(std::min(y, staticMap->getSize ().y ()-1), 0));
+	const cPosition tilePosition (std::max (std::min (x, staticMap->getSize().x() - 1), 0), std::max (std::min (y, staticMap->getSize().y() - 1), 0));
 
 	return tilePosition;
 }
@@ -1725,8 +1725,8 @@ bool cGameMapWidget::handleMouseMoved (cApplication& application, cMouse& mouse,
 	auto consumed = cClickableWidget::handleMouseMoved (application, mouse, offset);
 
 	cPosition lastMouseOverTilePosition;
-	const auto lastMousePosition = mouse.getPosition () - offset;
-	if (getArea ().withinOrTouches (lastMousePosition))
+	const auto lastMousePosition = mouse.getPosition() - offset;
+	if (getArea().withinOrTouches (lastMousePosition))
 	{
 		lastMouseOverTilePosition = getMapTilePosition (lastMousePosition);
 	}
@@ -1735,27 +1735,27 @@ bool cGameMapWidget::handleMouseMoved (cApplication& application, cMouse& mouse,
 		lastMouseOverTilePosition = cPosition (-1, -1);
 	}
 
-	if (getArea ().withinOrTouches (mouse.getPosition ()))
+	if (getArea().withinOrTouches (mouse.getPosition()))
 	{
-		const auto tilePosition = getMapTilePosition (mouse.getPosition ());
+		const auto tilePosition = getMapTilePosition (mouse.getPosition());
 		if (tilePosition != lastMouseOverTilePosition)
 		{
 			tileUnderMouseChanged (tilePosition);
 		}
-		updateMouseCursor ();
+		updateMouseCursor();
 	}
 	else
 	{
-		tileUnderMouseChanged (cPosition(-1,-1));
+		tileUnderMouseChanged (cPosition (-1, -1));
 	}
 
-	if (unitSelectionBox.isValidStart () && isAt (mouse.getPosition ()) &&
+	if (unitSelectionBox.isValidStart() && isAt (mouse.getPosition()) &&
 		mouse.isButtonPressed (eMouseButtonType::Left) && !mouse.isButtonPressed (eMouseButtonType::Right))
 	{
-		const auto zoomedTileSize = getZoomedTileSize ();
+		const auto zoomedTileSize = getZoomedTileSize();
 
-		unitSelectionBox.getBox ().getMaxCorner ()[0] = (mouse.getPosition ().x () - getPosition ().x () + (pixelOffset.x () * getZoomFactor ())) / zoomedTileSize.x ();
-		unitSelectionBox.getBox ().getMaxCorner ()[1] = (mouse.getPosition ().y () - getPosition ().y () + (pixelOffset.y () * getZoomFactor ())) / zoomedTileSize.y ();
+		unitSelectionBox.getBox().getMaxCorner()[0] = (mouse.getPosition().x() - getPosition().x() + (pixelOffset.x() * getZoomFactor())) / zoomedTileSize.x();
+		unitSelectionBox.getBox().getMaxCorner()[1] = (mouse.getPosition().y() - getPosition().y() + (pixelOffset.y() * getZoomFactor())) / zoomedTileSize.y();
 	}
 
 	return consumed;
@@ -1767,12 +1767,12 @@ bool cGameMapWidget::handleMousePressed (cApplication& application, cMouse& mous
 	if (rightMouseButtonScrollerWidget->handleMousePressed (application, mouse, button)) return true;
 
 	if (button == eMouseButtonType::Left && !mouse.isButtonPressed (eMouseButtonType::Right) &&
-		!unitSelectionBox.isValidStart () && isAt (mouse.getPosition ()))
+		!unitSelectionBox.isValidStart() && isAt (mouse.getPosition()))
 	{
-		const auto zoomedTileSize = getZoomedTileSize ();
+		const auto zoomedTileSize = getZoomedTileSize();
 
-		unitSelectionBox.getBox ().getMinCorner ()[0] = (mouse.getPosition ().x () - getPosition ().x () + (pixelOffset.x () * getZoomFactor ())) / zoomedTileSize.x ();
-		unitSelectionBox.getBox ().getMinCorner ()[1] = (mouse.getPosition ().y () - getPosition ().y () + (pixelOffset.y () * getZoomFactor ())) / zoomedTileSize.y ();
+		unitSelectionBox.getBox().getMinCorner()[0] = (mouse.getPosition().x() - getPosition().x() + (pixelOffset.x() * getZoomFactor())) / zoomedTileSize.x();
+		unitSelectionBox.getBox().getMinCorner()[1] = (mouse.getPosition().y() - getPosition().y() + (pixelOffset.y() * getZoomFactor())) / zoomedTileSize.y();
 	}
 
 	return cClickableWidget::handleMousePressed (application, mouse, button);
@@ -1784,16 +1784,16 @@ bool cGameMapWidget::handleMouseReleased (cApplication& application, cMouse& mou
 	if (rightMouseButtonScrollerWidget->handleMouseReleased (application, mouse, button)) return true;
 
 	if (button == eMouseButtonType::Left && !mouse.isButtonPressed (eMouseButtonType::Right) &&
-		!unitSelectionBox.isTooSmall () && dynamicMap && player)
+		!unitSelectionBox.isTooSmall() && dynamicMap && player)
 	{
-		unitSelection.selectVehiclesAt (unitSelectionBox.getCorrectedMapBox (), *dynamicMap, *player);
-		unitSelectionBox.invalidate ();
+		unitSelection.selectVehiclesAt (unitSelectionBox.getCorrectedMapBox(), *dynamicMap, *player);
+		unitSelectionBox.invalidate();
 		cClickableWidget::finishMousePressed (application, mouse, button);
 		return true;
 	}
 	else
 	{
-		unitSelectionBox.invalidate ();
+		unitSelectionBox.invalidate();
 		return cClickableWidget::handleMouseReleased (application, mouse, button);
 	}
 }
@@ -1801,7 +1801,7 @@ bool cGameMapWidget::handleMouseReleased (cApplication& application, cMouse& mou
 //------------------------------------------------------------------------------
 void cGameMapWidget::handleLooseMouseFocus (cApplication& application)
 {
-	mouseFocusReleased ();
+	mouseFocusReleased();
 }
 
 //------------------------------------------------------------------------------
@@ -1821,23 +1821,23 @@ bool cGameMapWidget::acceptButton (eMouseButtonType button) const
 //------------------------------------------------------------------------------
 bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
-	if (!getArea ().withinOrTouches (mouse.getPosition ())) return false;
+	if (!getArea().withinOrTouches (mouse.getPosition())) return false;
 
 	if (!dynamicMap) return false;
 
-	const auto tilePosition = getMapTilePosition (mouse.getPosition ());
+	const auto tilePosition = getMapTilePosition (mouse.getPosition());
 
 	const auto& field = dynamicMap->getField (tilePosition);
 
 	// Some useful aliases
-	const auto selectedUnit = unitSelection.getSelectedUnit ();
-	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
-	const auto selectedBuilding = unitSelection.getSelectedBuilding ();
+	const auto selectedUnit = unitSelection.getSelectedUnit();
+	const auto selectedVehicle = unitSelection.getSelectedVehicle();
+	const auto selectedBuilding = unitSelection.getSelectedBuilding();
 
-	const auto overVehicle = field.getVehicle ();
-	const auto overPlane = field.getPlane ();
-	const auto overBuilding = field.getBuilding ();
-	const auto overBaseBuilding = field.getBaseBuilding ();
+	const auto overVehicle = field.getVehicle();
+	const auto overPlane = field.getPlane();
+	const auto overBuilding = field.getBuilding();
+	const auto overBaseBuilding = field.getBaseBuilding();
 
 	if (button == eMouseButtonType::Right)
 	{
@@ -1856,7 +1856,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 			}
 		}
 		else if ((!mouse.isButtonPressed (eMouseButtonType::Left) /*&& rightMouseBox.isTooSmall ()*/) ||
-				 (KeysList.getMouseStyle () == eMouseStyle::OldSchool && mouse.isButtonPressed (eMouseButtonType::Left)))
+				 (KeysList.getMouseStyle() == eMouseStyle::OldSchool && mouse.isButtonPressed (eMouseButtonType::Left)))
 		{
 			if (mouseMode->getType() == eMouseModeType::Help)
 			{
@@ -1866,16 +1866,16 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 			{
 				if (selectedUnit && selectedUnit->isAbove (tilePosition))
 				{
-					const auto& planes = field.getPlanes ();
+					const auto& planes = field.getPlanes();
 					cUnit* next = nullptr;
 
 					if (selectedVehicle)
 					{
-						auto it = std::find (planes.begin (), planes.end (), selectedVehicle);
+						auto it = std::find (planes.begin(), planes.end(), selectedVehicle);
 
-						if (it == planes.end ())
+						if (it == planes.end())
 						{
-							if (unitSelection.canSelect(overBuilding)) next = overBuilding;
+							if (unitSelection.canSelect (overBuilding)) next = overBuilding;
 							else if (unitSelection.canSelect (overBaseBuilding)) next = overBaseBuilding;
 							else if (unitSelection.canSelect (overPlane)) next = overPlane;
 						}
@@ -1883,11 +1883,11 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 						{
 							++it;
 
-							if (it != planes.end ()) next = *it;
+							if (it != planes.end()) next = *it;
 							else if (unitSelection.canSelect (overVehicle)) next = overVehicle;
 							else if (unitSelection.canSelect (overBuilding)) next = overBuilding;
 							else if (unitSelection.canSelect (overBaseBuilding)) next = overBaseBuilding;
-							else if (planes.size () > 1)
+							else if (planes.size() > 1)
 							{
 								next = planes[0];
 							}
@@ -1915,12 +1915,12 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 					}
 					else
 					{
-						unitSelection.deselectUnits ();
+						unitSelection.deselectUnits();
 					}
 				}
 				else
 				{
-					unitSelection.deselectUnits ();
+					unitSelection.deselectUnits();
 				}
 			}
 		}
@@ -1934,18 +1934,18 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 		{
 			consumed = action->executeLeftClick (*this, *dynamicMap, tilePosition, unitSelection, changeAllowed);
 
-			if (action->isSingleAction () && mouseMode->getType() != eMouseModeType::Default)
+			if (action->isSingleAction() && mouseMode->getType() != eMouseModeType::Default)
 			{
-				setMouseInputMode (std::make_unique<cMouseModeDefault> (dynamicMap.get (), unitSelection, player.get ()));
+				setMouseInputMode (std::make_unique<cMouseModeDefault> (dynamicMap.get(), unitSelection, player.get()));
 			}
 		}
 
 		// toggle unit context menu if no other click action has been performed
 		if (!consumed)
 		{
-			if (changeAllowed && selectedVehicle && (Contains (field.getPlanes (), selectedVehicle) || selectedVehicle == overVehicle))
+			if (changeAllowed && selectedVehicle && (Contains (field.getPlanes(), selectedVehicle) || selectedVehicle == overVehicle))
 			{
-				if (!selectedVehicle->isUnitMoving ())
+				if (!selectedVehicle->isUnitMoving())
 				{
 					toggleUnitContextMenu (selectedVehicle);
 					cSoundDevice::getInstance().playSoundEffect (SoundData.SNDHudButton);
@@ -1954,7 +1954,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 			else if (changeAllowed && selectedBuilding && (overBaseBuilding == selectedBuilding || overBuilding == selectedBuilding))
 			{
 				toggleUnitContextMenu (selectedBuilding);
-				cSoundDevice::getInstance ().playSoundEffect (SoundData.SNDHudButton);
+				cSoundDevice::getInstance().playSoundEffect (SoundData.SNDHudButton);
 			}
 		}
 
@@ -1962,8 +1962,8 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 		// if the selection has changed
 		if (player && lockActive)
 		{
-			const auto newSelectedUnit = unitSelection.getSelectedUnit ();
-			if (newSelectedUnit && newSelectedUnit != selectedUnit && newSelectedUnit->getOwner () != player.get ())
+			const auto newSelectedUnit = unitSelection.getSelectedUnit();
+			if (newSelectedUnit && newSelectedUnit != selectedUnit && newSelectedUnit->getOwner() != player.get())
 			{
 				unitLockList.toggleLockAt (field);
 			}
@@ -1978,34 +1978,34 @@ cPosition cGameMapWidget::getScreenPosition (const cUnit& unit, bool movementOff
 {
 	cPosition position;
 
-	const int offsetX = movementOffset ? unit.getMovementOffset ().x() : 0;
-	position.x() = getPosition ().x () - ((int)((pixelOffset.x () - offsetX) * getZoomFactor ())) + getZoomedTileSize ().x () * unit.getPosition().x();
+	const int offsetX = movementOffset ? unit.getMovementOffset().x() : 0;
+	position.x() = getPosition().x() - ((int) ((pixelOffset.x() - offsetX) * getZoomFactor())) + getZoomedTileSize().x() * unit.getPosition().x();
 
-	const int offsetY = movementOffset ? unit.getMovementOffset ().y() : 0;
-	position.y() = getPosition ().y () - ((int)((pixelOffset.y () - offsetY) * getZoomFactor ())) + getZoomedTileSize ().y () * unit.getPosition().y();
+	const int offsetY = movementOffset ? unit.getMovementOffset().y() : 0;
+	position.y() = getPosition().y() - ((int) ((pixelOffset.y() - offsetY) * getZoomFactor())) + getZoomedTileSize().y() * unit.getPosition().y();
 
 	return position;
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::updateActiveAnimations ()
+void cGameMapWidget::updateActiveAnimations()
 {
-	animations.clear ();
+	animations.clear();
 	updateActiveAnimations (std::make_pair (cPosition (-1, -1), cPosition (-1, -1)));
 }
 
 //------------------------------------------------------------------------------
 void cGameMapWidget::updateActiveAnimations (const std::pair<cPosition, cPosition>& oldTileDrawingRange)
 {
-	if (!cSettings::getInstance ().isAnimations ()) return;
+	if (!cSettings::getInstance().isAnimations()) return;
 
-	const auto tileDrawingRange = computeTileDrawingRange ();
+	const auto tileDrawingRange = computeTileDrawingRange();
 
-	const auto tileDrawingArea = cBox<cPosition> (tileDrawingRange.first, tileDrawingRange.second - cPosition(1,1));
+	const auto tileDrawingArea = cBox<cPosition> (tileDrawingRange.first, tileDrawingRange.second - cPosition (1, 1));
 	const auto oldTileDrawingArea = cBox<cPosition> (oldTileDrawingRange.first, oldTileDrawingRange.second - cPosition (1, 1));
 
 	// delete finished animations or animations that are no longer in the visible area.
-	for (auto i = animations.begin (); i != animations.end (); /*erase in loop*/)
+	for (auto i = animations.begin(); i != animations.end(); /*erase in loop*/)
 	{
 		auto& animation = **i;
 		if (animation.isFinished() || !animation.isLocatedIn (tileDrawingArea))
@@ -2022,17 +2022,17 @@ void cGameMapWidget::updateActiveAnimations (const std::pair<cPosition, cPositio
 	if (dynamicMap)
 	{
 		std::vector<cUnit*> units;
-		for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore (); i.next ())
+		for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore(); i.next())
 		{
 			const auto position = *i;
 			const auto& field = dynamicMap->getField (position);
 
 			field.getUnits (units);
 
-			for (size_t j = 0; j < units.size (); ++j)
+			for (size_t j = 0; j < units.size(); ++j)
 			{
 				const auto& unit = *units[j];
-				if (shouldDrawUnit (unit, position, tileDrawingRange) && !oldTileDrawingArea.intersects (unit.getArea ()))
+				if (shouldDrawUnit (unit, position, tileDrawingRange) && !oldTileDrawingArea.intersects (unit.getArea()))
 				{
 					addAnimationsForUnit (unit);
 				}
@@ -2044,79 +2044,79 @@ void cGameMapWidget::updateActiveAnimations (const std::pair<cPosition, cPositio
 //------------------------------------------------------------------------------
 void cGameMapWidget::addAnimationsForUnit (const cUnit& unit)
 {
-	if (!cSettings::getInstance ().isAnimations ()) return;
+	if (!cSettings::getInstance().isAnimations()) return;
 
 	if (unit.data.powerOnGraphic || unit.data.canWork)
 	{
 		assert (unit.data.ID.isABuilding());
-		auto& building = static_cast<const cBuilding&>(unit);
+		auto& building = static_cast<const cBuilding&> (unit);
 
 		animations.push_back (std::make_unique<cAnimationWork> (*animationTimer, building));
 	}
 	if (unit.data.factorAir > 0)
 	{
-		assert (unit.data.ID.isAVehicle ());
-		auto& vehicle = static_cast<const cVehicle&>(unit);
+		assert (unit.data.ID.isAVehicle());
+		auto& vehicle = static_cast<const cVehicle&> (unit);
 
 		animations.push_back (std::make_unique<cAnimationDither> (*animationTimer, vehicle));
 	}
 	if (unit.data.canBuild.compare ("BigBuilding") == 0)
 	{
-		assert (unit.data.ID.isAVehicle ());
-		auto& vehicle = static_cast<const cVehicle&>(unit);
+		assert (unit.data.ID.isAVehicle());
+		auto& vehicle = static_cast<const cVehicle&> (unit);
 
 		animations.push_back (std::make_unique<cAnimationStartUpBuildingSite> (*animationTimer, vehicle));
 	}
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::updateUnitMenuPosition ()
+void cGameMapWidget::updateUnitMenuPosition()
 {
-	if (!unitMenu->getUnit ()) return;
-	if (unitMenu->isHidden ()) return;
+	if (!unitMenu->getUnit()) return;
+	if (unitMenu->isHidden()) return;
 
-	const auto& unit = *unitMenu->getUnit ();
+	const auto& unit = *unitMenu->getUnit();
 
-	const auto menuSize = unitMenu->getSize ();
+	const auto menuSize = unitMenu->getSize();
 
 	auto position = getScreenPosition (unit);
 
-	auto unitSize = getZoomedTileSize ();
+	auto unitSize = getZoomedTileSize();
 	if (unit.data.isBig) unitSize *= 2;
 
-	if (position.x () + unitSize.x () + menuSize.x () >= getEndPosition ().x ())
+	if (position.x() + unitSize.x() + menuSize.x() >= getEndPosition().x())
 	{
-		position.x () -= menuSize.x ();
+		position.x() -= menuSize.x();
 	}
 	else
 	{
-		position.x () += unitSize.x ();
+		position.x() += unitSize.x();
 	}
 
-	if (position.y () - (menuSize.y() - unitSize.y ()) / 2 <= getPosition().y())
+	if (position.y() - (menuSize.y() - unitSize.y()) / 2 <= getPosition().y())
 	{
-		position.y () -= (menuSize.y () - unitSize.y ()) / 2;
-		position.y () += -(position.y () - getPosition ().y ());
+		position.y() -= (menuSize.y() - unitSize.y()) / 2;
+		position.y() += - (position.y() - getPosition().y());
 	}
-	else if (position.y () - (menuSize.y () - unitSize.y ()) / 2 + menuSize.y () >= getEndPosition ().y ())
+	else if (position.y() - (menuSize.y() - unitSize.y()) / 2 + menuSize.y() >= getEndPosition().y())
 	{
-		position.y () -= (menuSize.y () - unitSize.y ()) / 2;
-		position.y () -= (position.y () + menuSize.y ()) - getEndPosition ().y ();
+		position.y() -= (menuSize.y() - unitSize.y()) / 2;
+		position.y() -= (position.y() + menuSize.y()) - getEndPosition().y();
 	}
 	else
 	{
-		position.y () -= (menuSize.y () - unitSize.y ()) / 2;
+		position.y() -= (menuSize.y() - unitSize.y()) / 2;
 	}
 
 	unitMenu->moveTo (position);
 
-	updateMouseCursor ();
+	updateMouseCursor();
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::updateMouseCursor ()
+void cGameMapWidget::updateMouseCursor()
 {
-	auto activeMouse = getActiveMouse ();
+	auto activeMouse = getActiveMouse();
 	if (activeMouse)
 	{
 		updateMouseCursor (*activeMouse);
@@ -2126,17 +2126,17 @@ void cGameMapWidget::updateMouseCursor ()
 //------------------------------------------------------------------------------
 void cGameMapWidget::updateMouseCursor (cMouse& mouse)
 {
-	if (!isAt (mouse.getPosition ())) return;
+	if (!isAt (mouse.getPosition())) return;
 
-	if (rightMouseButtonScrollerWidget->isScrolling ()) return;
+	if (rightMouseButtonScrollerWidget->isScrolling()) return;
 
-	if (!staticMap || (unitMenu->isEnabled () && !unitMenu->isHidden () && unitMenu->isAt (mouse.getPosition ())))
+	if (!staticMap || (unitMenu->isEnabled() && !unitMenu->isHidden() && unitMenu->isAt (mouse.getPosition())))
 	{
 		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
 	}
 	else
 	{
-		mouseMode->setCursor (mouse, getMapTilePosition (mouse.getPosition ()));
+		mouseMode->setCursor (mouse, getMapTilePosition (mouse.getPosition()));
 	}
 }
 
@@ -2147,21 +2147,21 @@ void cGameMapWidget::setChangeAllowed (bool value)
 }
 
 //------------------------------------------------------------------------------
-cDrawingCache& cGameMapWidget::getDrawingCache ()
+cDrawingCache& cGameMapWidget::getDrawingCache()
 {
 	return unitDrawingEngine.drawingCache;
 }
 
 //------------------------------------------------------------------------------
-const cDrawingCache& cGameMapWidget::getDrawingCache () const
+const cDrawingCache& cGameMapWidget::getDrawingCache() const
 {
 	return unitDrawingEngine.drawingCache;
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::buildCollidingShortcutsMap ()
+void cGameMapWidget::buildCollidingShortcutsMap()
 {
-	collidingUnitCommandShortcuts.clear ();
+	collidingUnitCommandShortcuts.clear();
 
 	collidingUnitCommandShortcuts.emplace (attackShortcut, std::set<const cShortcut*> ());
 	collidingUnitCommandShortcuts.emplace (buildShortcut, std::set<const cShortcut*> ());
@@ -2186,13 +2186,13 @@ void cGameMapWidget::buildCollidingShortcutsMap ()
 	collidingUnitCommandShortcuts.emplace (upgradeShortcut, std::set<const cShortcut*> ());
 	collidingUnitCommandShortcuts.emplace (destroyShortcut, std::set<const cShortcut*> ());
 
-	for (auto i = collidingUnitCommandShortcuts.begin (); i != collidingUnitCommandShortcuts.end (); ++i)
+	for (auto i = collidingUnitCommandShortcuts.begin(); i != collidingUnitCommandShortcuts.end(); ++i)
 	{
 		auto j = i;
 		++j;
-		for (; j != collidingUnitCommandShortcuts.end (); ++j)
+		for (; j != collidingUnitCommandShortcuts.end(); ++j)
 		{
-			if (i->first->getKeySequence () == j->first->getKeySequence ())
+			if (i->first->getKeySequence() == j->first->getKeySequence())
 			{
 				i->second.insert (j->first);
 				j->second.insert (i->first);
@@ -2204,119 +2204,119 @@ void cGameMapWidget::buildCollidingShortcutsMap ()
 //------------------------------------------------------------------------------
 void cGameMapWidget::activateShortcutConditional (cShortcut& shortcut, std::set<const cShortcut*>& blockedShortcuts, const std::set<const cShortcut*>& collidingShortcuts)
 {
-	if (blockedShortcuts.find (&shortcut) == blockedShortcuts.end ())
+	if (blockedShortcuts.find (&shortcut) == blockedShortcuts.end())
 	{
-		shortcut.activate ();
-		blockedShortcuts.insert (collidingShortcuts.begin (), collidingShortcuts.end ());
+		shortcut.activate();
+		blockedShortcuts.insert (collidingShortcuts.begin(), collidingShortcuts.end());
 	}
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::updateActiveUnitCommandShortcuts ()
+void cGameMapWidget::updateActiveUnitCommandShortcuts()
 {
-	deactivateUnitCommandShortcuts ();
+	deactivateUnitCommandShortcuts();
 
-	const auto selectedUnit = unitSelection.getSelectedUnit ();
+	const auto selectedUnit = unitSelection.getSelectedUnit();
 	if (selectedUnit == nullptr) return;
 
 	std::set<const cShortcut*> blockedShortcuts;
 
 	// NOTE: the order in which we activate the shortcuts here marks the priority in which
 	//       colliding shortcuts will be executed.
-	if (cUnitContextMenuWidget::unitHasBuildEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*buildShortcut, blockedShortcuts, collidingUnitCommandShortcuts[buildShortcut]);
-	if (cUnitContextMenuWidget::unitHasTransferEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*transferShortcut, blockedShortcuts, collidingUnitCommandShortcuts[transferShortcut]);
-	if (cUnitContextMenuWidget::unitHasStartEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*startShortcut, blockedShortcuts, collidingUnitCommandShortcuts[startShortcut]);
-	if (cUnitContextMenuWidget::unitHasStopEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*stopShortcut, blockedShortcuts, collidingUnitCommandShortcuts[stopShortcut]);
-	if (cUnitContextMenuWidget::unitHasSentryEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*sentryShortcut, blockedShortcuts, collidingUnitCommandShortcuts[sentryShortcut]);
-	if (cUnitContextMenuWidget::unitHasManualFireEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*manualFireShortcut, blockedShortcuts, collidingUnitCommandShortcuts[manualFireShortcut]);
-	if (cUnitContextMenuWidget::unitHasAttackEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*attackShortcut, blockedShortcuts, collidingUnitCommandShortcuts[attackShortcut]);
-	if (cUnitContextMenuWidget::unitHasLayMinesEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*layMineShortcut, blockedShortcuts, collidingUnitCommandShortcuts[layMineShortcut]);
-	if (cUnitContextMenuWidget::unitHasCollectMinesEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*clearMineShortcut, blockedShortcuts, collidingUnitCommandShortcuts[clearMineShortcut]);
-	if (cUnitContextMenuWidget::unitHasLoadEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*loadShortcut, blockedShortcuts, collidingUnitCommandShortcuts[loadShortcut]);
-	if (cUnitContextMenuWidget::unitHasActivateEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*activateShortcut, blockedShortcuts, collidingUnitCommandShortcuts[activateShortcut]);
-	if (cUnitContextMenuWidget::unitHasBuyEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*upgradeShortcut, blockedShortcuts, collidingUnitCommandShortcuts[upgradeShortcut]);
-	if (cUnitContextMenuWidget::unitHasResearchEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*researchShortcut, blockedShortcuts, collidingUnitCommandShortcuts[researchShortcut]);
-	if (cUnitContextMenuWidget::unitHasSabotageEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*disableShortcut, blockedShortcuts, collidingUnitCommandShortcuts[disableShortcut]);
-	if (cUnitContextMenuWidget::unitHasStealEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*stealShortcut, blockedShortcuts, collidingUnitCommandShortcuts[stealShortcut]);
-	if (cUnitContextMenuWidget::unitHasAutoEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*automoveShortcut, blockedShortcuts, collidingUnitCommandShortcuts[automoveShortcut]);
-	if (cUnitContextMenuWidget::unitHasRemoveEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*clearShortcut, blockedShortcuts, collidingUnitCommandShortcuts[clearShortcut]);
-	if (cUnitContextMenuWidget::unitHasSupplyEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*relaodShortcut, blockedShortcuts, collidingUnitCommandShortcuts[relaodShortcut]);
-	if (cUnitContextMenuWidget::unitHasRepairEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*repairShortcut, blockedShortcuts, collidingUnitCommandShortcuts[repairShortcut]);
-	if (cUnitContextMenuWidget::unitHasDistributeEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*distributeShortcut, blockedShortcuts, collidingUnitCommandShortcuts[distributeShortcut]);
+	if (cUnitContextMenuWidget::unitHasBuildEntry (selectedUnit, player.get(), dynamicMap.get())) activateShortcutConditional (*buildShortcut, blockedShortcuts, collidingUnitCommandShortcuts[buildShortcut]);
+	if (cUnitContextMenuWidget::unitHasTransferEntry (selectedUnit, player.get(), dynamicMap.get())) activateShortcutConditional (*transferShortcut, blockedShortcuts, collidingUnitCommandShortcuts[transferShortcut]);
+	if (cUnitContextMenuWidget::unitHasStartEntry (selectedUnit, player.get(), dynamicMap.get())) activateShortcutConditional (*startShortcut, blockedShortcuts, collidingUnitCommandShortcuts[startShortcut]);
+	if (cUnitContextMenuWidget::unitHasStopEntry (selectedUnit, player.get(), dynamicMap.get())) activateShortcutConditional (*stopShortcut, blockedShortcuts, collidingUnitCommandShortcuts[stopShortcut]);
+	if (cUnitContextMenuWidget::unitHasSentryEntry (selectedUnit, player.get(), dynamicMap.get())) activateShortcutConditional (*sentryShortcut, blockedShortcuts, collidingUnitCommandShortcuts[sentryShortcut]);
+	if (cUnitContextMenuWidget::unitHasManualFireEntry (selectedUnit, player.get(), dynamicMap.get())) activateShortcutConditional (*manualFireShortcut, blockedShortcuts, collidingUnitCommandShortcuts[manualFireShortcut]);
+	if (cUnitContextMenuWidget::unitHasAttackEntry (selectedUnit, player.get(), dynamicMap.get())) activateShortcutConditional (*attackShortcut, blockedShortcuts, collidingUnitCommandShortcuts[attackShortcut]);
+	if (cUnitContextMenuWidget::unitHasLayMinesEntry (selectedUnit, player.get(), dynamicMap.get())) activateShortcutConditional (*layMineShortcut, blockedShortcuts, collidingUnitCommandShortcuts[layMineShortcut]);
+	if (cUnitContextMenuWidget::unitHasCollectMinesEntry (selectedUnit, player.get(), dynamicMap.get())) activateShortcutConditional (*clearMineShortcut, blockedShortcuts, collidingUnitCommandShortcuts[clearMineShortcut]);
+	if (cUnitContextMenuWidget::unitHasLoadEntry (selectedUnit, player.get(), dynamicMap.get())) activateShortcutConditional (*loadShortcut, blockedShortcuts, collidingUnitCommandShortcuts[loadShortcut]);
+	if (cUnitContextMenuWidget::unitHasActivateEntry (selectedUnit, player.get(), dynamicMap.get())) activateShortcutConditional (*activateShortcut, blockedShortcuts, collidingUnitCommandShortcuts[activateShortcut]);
+	if (cUnitContextMenuWidget::unitHasBuyEntry (selectedUnit, player.get(), dynamicMap.get())) activateShortcutConditional (*upgradeShortcut, blockedShortcuts, collidingUnitCommandShortcuts[upgradeShortcut]);
+	if (cUnitContextMenuWidget::unitHasResearchEntry (selectedUnit, player.get(), dynamicMap.get())) activateShortcutConditional (*researchShortcut, blockedShortcuts, collidingUnitCommandShortcuts[researchShortcut]);
+	if (cUnitContextMenuWidget::unitHasSabotageEntry (selectedUnit, player.get(), dynamicMap.get())) activateShortcutConditional (*disableShortcut, blockedShortcuts, collidingUnitCommandShortcuts[disableShortcut]);
+	if (cUnitContextMenuWidget::unitHasStealEntry (selectedUnit, player.get(), dynamicMap.get())) activateShortcutConditional (*stealShortcut, blockedShortcuts, collidingUnitCommandShortcuts[stealShortcut]);
+	if (cUnitContextMenuWidget::unitHasAutoEntry (selectedUnit, player.get(), dynamicMap.get())) activateShortcutConditional (*automoveShortcut, blockedShortcuts, collidingUnitCommandShortcuts[automoveShortcut]);
+	if (cUnitContextMenuWidget::unitHasRemoveEntry (selectedUnit, player.get(), dynamicMap.get())) activateShortcutConditional (*clearShortcut, blockedShortcuts, collidingUnitCommandShortcuts[clearShortcut]);
+	if (cUnitContextMenuWidget::unitHasSupplyEntry (selectedUnit, player.get(), dynamicMap.get())) activateShortcutConditional (*relaodShortcut, blockedShortcuts, collidingUnitCommandShortcuts[relaodShortcut]);
+	if (cUnitContextMenuWidget::unitHasRepairEntry (selectedUnit, player.get(), dynamicMap.get())) activateShortcutConditional (*repairShortcut, blockedShortcuts, collidingUnitCommandShortcuts[repairShortcut]);
+	if (cUnitContextMenuWidget::unitHasDistributeEntry (selectedUnit, player.get(), dynamicMap.get())) activateShortcutConditional (*distributeShortcut, blockedShortcuts, collidingUnitCommandShortcuts[distributeShortcut]);
 	//if (cUnitContextMenuWidget::unitHasUpgradeThisEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*shortcut, blockedShortcuts, collidingUnitCommandShortcuts[shortcut]);
 	//if (cUnitContextMenuWidget::unitHasUpgradeAllEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*shortcut, blockedShortcuts, collidingUnitCommandShortcuts[shortcut]);
-	if (cUnitContextMenuWidget::unitHasSelfDestroyEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*destroyShortcut, blockedShortcuts, collidingUnitCommandShortcuts[destroyShortcut]);
-	if (cUnitContextMenuWidget::unitHasInfoEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*infoShortcut, blockedShortcuts, collidingUnitCommandShortcuts[infoShortcut]);
+	if (cUnitContextMenuWidget::unitHasSelfDestroyEntry (selectedUnit, player.get(), dynamicMap.get())) activateShortcutConditional (*destroyShortcut, blockedShortcuts, collidingUnitCommandShortcuts[destroyShortcut]);
+	if (cUnitContextMenuWidget::unitHasInfoEntry (selectedUnit, player.get(), dynamicMap.get())) activateShortcutConditional (*infoShortcut, blockedShortcuts, collidingUnitCommandShortcuts[infoShortcut]);
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::deactivateUnitCommandShortcuts ()
+void cGameMapWidget::deactivateUnitCommandShortcuts()
 {
-	attackShortcut->deactivate ();
-	buildShortcut->deactivate ();
-	transferShortcut->deactivate ();
-	automoveShortcut->deactivate ();
-	startShortcut->deactivate ();
-	stopShortcut->deactivate ();
-	clearShortcut->deactivate ();
-	sentryShortcut->deactivate ();
-	manualFireShortcut->deactivate ();
-	activateShortcut->deactivate ();
-	loadShortcut->deactivate ();
-	relaodShortcut->deactivate ();
-	repairShortcut->deactivate ();
-	layMineShortcut->deactivate ();
-	clearMineShortcut->deactivate ();
-	disableShortcut->deactivate ();
-	stealShortcut->deactivate ();
-	infoShortcut->deactivate ();
-	distributeShortcut->deactivate ();
-	researchShortcut->deactivate ();
-	upgradeShortcut->deactivate ();
-	destroyShortcut->deactivate ();
+	attackShortcut->deactivate();
+	buildShortcut->deactivate();
+	transferShortcut->deactivate();
+	automoveShortcut->deactivate();
+	startShortcut->deactivate();
+	stopShortcut->deactivate();
+	clearShortcut->deactivate();
+	sentryShortcut->deactivate();
+	manualFireShortcut->deactivate();
+	activateShortcut->deactivate();
+	loadShortcut->deactivate();
+	relaodShortcut->deactivate();
+	repairShortcut->deactivate();
+	layMineShortcut->deactivate();
+	clearMineShortcut->deactivate();
+	disableShortcut->deactivate();
+	stealShortcut->deactivate();
+	infoShortcut->deactivate();
+	distributeShortcut->deactivate();
+	researchShortcut->deactivate();
+	upgradeShortcut->deactivate();
+	destroyShortcut->deactivate();
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::runOwnedEffects ()
+void cGameMapWidget::runOwnedEffects()
 {
-	for (size_t i = 0; i < effects.size (); ++i)
+	for (size_t i = 0; i < effects.size(); ++i)
 	{
 		auto& effect = effects[i];
 
-		if (effect.use_count () == 1)
+		if (effect.use_count() == 1)
 		{
-			effect->run ();
+			effect->run();
 		}
 	}
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::renewDamageEffects ()
+void cGameMapWidget::renewDamageEffects()
 {
-	if (!cSettings::getInstance ().isDamageEffects ()) return;
+	if (!cSettings::getInstance().isDamageEffects()) return;
 	if (!dynamicMap) return;
 
-	const auto tileDrawingRange = computeTileDrawingRange ();
+	const auto tileDrawingRange = computeTileDrawingRange();
 
-	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore (); i.next ())
+	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore(); i.next())
 	{
 		auto& mapField = dynamicMap->getField (*i);
 
-		const auto& buildings = mapField.getBuildings ();
-		for (size_t i = 0; i < buildings.size (); ++i)
+		const auto& buildings = mapField.getBuildings();
+		for (size_t i = 0; i < buildings.size(); ++i)
 		{
 			renewDamageEffect (*buildings[i]);
 		}
 
-		const auto& planes = mapField.getPlanes ();
-		for (size_t i = 0; i < planes.size (); ++i)
+		const auto& planes = mapField.getPlanes();
+		for (size_t i = 0; i < planes.size(); ++i)
 		{
 			renewDamageEffect (*planes[i]);
 		}
 
-		if (mapField.getVehicle ())
+		if (mapField.getVehicle())
 		{
-			renewDamageEffect (*mapField.getVehicle ());
+			renewDamageEffect (*mapField.getVehicle());
 		}
 	}
 }
@@ -2325,11 +2325,11 @@ void cGameMapWidget::renewDamageEffects ()
 void cGameMapWidget::renewDamageEffect (const cBuilding& building)
 {
 	if (building.data.hasDamageEffect &&
-		building.data.getHitpoints () < building.data.getHitpointsMax() &&
-		(building.getOwner () == player.get () || (!player || player->canSeeAnyAreaUnder (building))))
+		building.data.getHitpoints() < building.data.getHitpointsMax() &&
+		(building.getOwner() == player.get() || (!player || player->canSeeAnyAreaUnder (building))))
 	{
-		int intense = (int)(200 - 200 * ((float)building.data.getHitpoints () / building.data.getHitpointsMax()));
-		addEffect (std::make_shared<cFxDarkSmoke> (cPosition(building.getPosition().x() * 64 + building.DamageFXPointX, building.getPosition().y() * 64 + building.DamageFXPointY), intense, windDirection));
+		int intense = (int) (200 - 200 * ((float)building.data.getHitpoints() / building.data.getHitpointsMax()));
+		addEffect (std::make_shared<cFxDarkSmoke> (cPosition (building.getPosition().x() * 64 + building.DamageFXPointX, building.getPosition().y() * 64 + building.DamageFXPointY), intense, windDirection));
 
 		if (building.data.isBig && intense > 50)
 		{
@@ -2342,10 +2342,10 @@ void cGameMapWidget::renewDamageEffect (const cBuilding& building)
 //------------------------------------------------------------------------------
 void cGameMapWidget::renewDamageEffect (const cVehicle& vehicle)
 {
-	if (vehicle.data.getHitpoints () < vehicle.data.getHitpointsMax() &&
-		(vehicle.getOwner () == player.get () || (!player || player->canSeeAnyAreaUnder (vehicle))))
+	if (vehicle.data.getHitpoints() < vehicle.data.getHitpointsMax() &&
+		(vehicle.getOwner() == player.get() || (!player || player->canSeeAnyAreaUnder (vehicle))))
 	{
-		int intense = (int)(100 - 100 * ((float)vehicle.data.getHitpoints () / vehicle.data.getHitpointsMax()));
+		int intense = (int) (100 - 100 * ((float)vehicle.data.getHitpoints() / vehicle.data.getHitpointsMax()));
 		addEffect (std::make_shared<cFxDarkSmoke> (cPosition (vehicle.getPosition().x() * 64 + vehicle.DamageFXPointX + vehicle.getMovementOffset().x(), vehicle.getPosition().y() * 64 + vehicle.DamageFXPointY + vehicle.getMovementOffset().y()), intense, windDirection));
 	}
 }
@@ -2358,9 +2358,9 @@ void cGameMapWidget::setWindDirection (int direction)
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::changeWindDirection ()
+void cGameMapWidget::changeWindDirection()
 {
-	if (!cSettings::getInstance ().isDamageEffects ()) return;
+	if (!cSettings::getInstance().isDamageEffects()) return;
 
 	static int nextChange = 25;
 	static int nextDirChange = 25;

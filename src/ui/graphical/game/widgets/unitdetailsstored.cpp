@@ -32,19 +32,19 @@ cUnitDetailsStored::cUnitDetailsStored (const cBox<cPosition>& area) :
 	cWidget (area),
 	unit (nullptr)
 {
-	const auto size = getSize ();
-	if (std::size_t(size.y ()) < maxRows*rowHeight) resize (cPosition (getSize ().x (), maxRows*rowHeight));
+	const auto size = getSize();
+	if (std::size_t (size.y()) < maxRows * rowHeight) resize (cPosition (getSize().x(), maxRows * rowHeight));
 
 	for (size_t i = 0; i < maxRows; ++i)
 	{
-		amountLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (3, 2 + rowHeight * i), getPosition () + cPosition (3 + 30, 2 + rowHeight * i + rowHeight)), "", FONT_LATIN_SMALL_WHITE, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Bottom));
-		nameLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (35, 2 + rowHeight * i), getPosition () + cPosition (35 + 30, 2 + rowHeight * i + rowHeight)), "", FONT_LATIN_SMALL_WHITE, toEnumFlag (eAlignmentType::Left) | eAlignmentType::Bottom));
+		amountLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (3, 2 + rowHeight * i), getPosition() + cPosition (3 + 30, 2 + rowHeight * i + rowHeight)), "", FONT_LATIN_SMALL_WHITE, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Bottom));
+		nameLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 2 + rowHeight * i), getPosition() + cPosition (35 + 30, 2 + rowHeight * i + rowHeight)), "", FONT_LATIN_SMALL_WHITE, toEnumFlag (eAlignmentType::Left) | eAlignmentType::Bottom));
 	}
 
-	surface = AutoSurface (SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0));
+	surface = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
 
-	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
-	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
+	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
 }
 
 //------------------------------------------------------------------------------
@@ -52,9 +52,9 @@ void cUnitDetailsStored::setUnit (const cUnit* unit_)
 {
 	unit = unit_;
 
-	reset ();
+	reset();
 
-	unitSignalConnectionManager.disconnectAll ();
+	unitSignalConnectionManager.disconnectAll();
 
 	if (unit)
 	{
@@ -70,32 +70,32 @@ void cUnitDetailsStored::draw (SDL_Surface& destination, const cBox<cPosition>& 
 {
 	if (surface != nullptr)
 	{
-		SDL_Rect position = getArea ().toSdlRect ();
-		SDL_BlitSurface (surface.get (), nullptr, &destination, &position);
+		SDL_Rect position = getArea().toSdlRect();
+		SDL_BlitSurface (surface.get(), nullptr, &destination, &position);
 	}
 
 	cWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------
-void cUnitDetailsStored::reset ()
+void cUnitDetailsStored::reset()
 {
-	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
-	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
+	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
 
 	for (std::size_t i = 0; i < maxRows; ++i)
 	{
-		amountLabels[i]->hide ();
-		nameLabels[i]->hide ();
+		amountLabels[i]->hide();
+		nameLabels[i]->hide();
 	}
 
 	if (unit == nullptr) return;
 
 	const auto& data = unit->data;
 
-	drawRow (0, eUnitDataSymbolType::Hits, data.getHitpoints (), data.getHitpointsMax(), lngPack.i18n ("Text~Others~Hitpoints_7"));
+	drawRow (0, eUnitDataSymbolType::Hits, data.getHitpoints(), data.getHitpointsMax(), lngPack.i18n ("Text~Others~Hitpoints_7"));
 
-	if (data.canAttack) drawRow (1, eUnitDataSymbolType::Ammo, data.getAmmo (), data.getAmmoMax (), lngPack.i18n ("Text~Others~Ammo_7"));
+	if (data.canAttack) drawRow (1, eUnitDataSymbolType::Ammo, data.getAmmo(), data.getAmmoMax(), lngPack.i18n ("Text~Others~Ammo_7"));
 }
 
 //------------------------------------------------------------------------------
@@ -103,8 +103,8 @@ void cUnitDetailsStored::drawRow (size_t index, eUnitDataSymbolType symbolType, 
 {
 	if (index >= maxRows) return;
 
-	amountLabels[index]->show ();
-	nameLabels[index]->show ();
+	amountLabels[index]->show();
+	nameLabels[index]->show();
 
 	eUnicodeFontType fontType;
 	if (amount > maximalAmount / 2) fontType = FONT_LATIN_SMALL_GREEN;
@@ -115,5 +115,5 @@ void cUnitDetailsStored::drawRow (size_t index, eUnitDataSymbolType symbolType, 
 	amountLabels[index]->setText (iToStr (amount) + "/" + iToStr (maximalAmount));
 
 	nameLabels[index]->setText (name);
-	cUnitDetailsHud::drawSmallSymbols (surface.get (), rowHeight, symbolType, cPosition (65, 4 + rowHeight * index), amount, maximalAmount);
+	cUnitDetailsHud::drawSmallSymbols (surface.get(), rowHeight, symbolType, cPosition (65, 4 + rowHeight * index), amount, maximalAmount);
 }

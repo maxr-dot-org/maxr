@@ -32,12 +32,12 @@ class cWindowAdvancedHangar : public cWindowHangar
 public:
 	cWindowAdvancedHangar (AutoSurface surface, cPlayerColor playerColor, int playerClan);
 	cWindowAdvancedHangar (AutoSurface surface, const cPlayer& player);
-	~cWindowAdvancedHangar ();
+	~cWindowAdvancedHangar();
 
 protected:
 	SelectedUnitItemType& addSelectedUnit (const sID& unitId);
 
-	size_t getSelectedUnitsCount () const;
+	size_t getSelectedUnitsCount() const;
 	SelectedUnitItemType& getSelectedUnit (size_t index);
 	const SelectedUnitItemType& getSelectedUnit (size_t index) const;
 
@@ -54,9 +54,9 @@ protected:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	void initialize ();
+	void initialize();
 
-	void handleSelectionChanged ();
+	void handleSelectionChanged();
 
 	void handleSelectionUnitClickedSecondTime (const cUnitListViewItemBuy& item);
 
@@ -66,34 +66,34 @@ private:
 //------------------------------------------------------------------------------
 template<typename SelectedUnitItemType>
 cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (AutoSurface surface, cPlayerColor playerColor, int playerClan) :
-	cWindowHangar (std::move(surface), playerColor, playerClan)
+	cWindowHangar (std::move (surface), playerColor, playerClan)
 {
-	initialize ();
+	initialize();
 }
 
 //------------------------------------------------------------------------------
 template<typename SelectedUnitItemType>
 cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (AutoSurface surface, const cPlayer& player) :
-	cWindowHangar (std::move(surface), player)
+	cWindowHangar (std::move (surface), player)
 {
-	initialize ();
+	initialize();
 }
 
 //------------------------------------------------------------------------------
 template<typename SelectedUnitItemType>
-void cWindowAdvancedHangar<SelectedUnitItemType>::initialize ()
+void cWindowAdvancedHangar<SelectedUnitItemType>::initialize()
 {
 	using namespace std::placeholders;
 
-	selectedUnitList = addChild (std::make_unique<cListView<SelectedUnitItemType>> (cBox<cPosition> (getPosition () + cPosition (330, 14), getPosition () + cPosition (330 + 130, 12 + 220))));
-	selectedUnitList->setEndMargin (cPosition(2,9));
+	selectedUnitList = addChild (std::make_unique<cListView<SelectedUnitItemType>> (cBox<cPosition> (getPosition() + cPosition (330, 14), getPosition() + cPosition (330 + 130, 12 + 220))));
+	selectedUnitList->setEndMargin (cPosition (2, 9));
 	signalConnectionManager.connect (selectedUnitList->itemClicked, std::bind (&cWindowAdvancedHangar<SelectedUnitItemType>::selectedUnitClicked, this, _1));
 	signalConnectionManager.connect (selectedUnitList->selectionChanged, std::bind (&cWindowAdvancedHangar<SelectedUnitItemType>::handleSelectionChanged, this));
 
-	selectedListUpButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (327, 240), ePushButtonType::ArrowUpSmall, &SoundData.SNDObjectMenu));
+	selectedListUpButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (327, 240), ePushButtonType::ArrowUpSmall, &SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (selectedListUpButton->clicked, std::bind (&cListView<SelectedUnitItemType>::pageUp, selectedUnitList));
 
-	selectedListDownButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (348, 240), ePushButtonType::ArrowDownSmall, &SoundData.SNDObjectMenu));
+	selectedListDownButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (348, 240), ePushButtonType::ArrowDownSmall, &SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (selectedListDownButton->clicked, std::bind (&cListView<SelectedUnitItemType>::pageDown, selectedUnitList));
 
 	using namespace std::placeholders;
@@ -103,7 +103,7 @@ void cWindowAdvancedHangar<SelectedUnitItemType>::initialize ()
 
 //------------------------------------------------------------------------------
 template<typename SelectedUnitItemType>
-cWindowAdvancedHangar<SelectedUnitItemType>::~cWindowAdvancedHangar ()
+cWindowAdvancedHangar<SelectedUnitItemType>::~cWindowAdvancedHangar()
 {}
 
 //------------------------------------------------------------------------------
@@ -124,15 +124,15 @@ bool cWindowAdvancedHangar<SelectedUnitItemType>::tryRemoveSelectedUnit (const S
 template<typename SelectedUnitItemType>
 SelectedUnitItemType& cWindowAdvancedHangar<SelectedUnitItemType>::addSelectedUnit (const sID& unitId)
 {
-	auto addedItem = selectedUnitList->addItem (std::make_unique<SelectedUnitItemType> (selectedUnitList->getSize ().x () - 9, unitId, getPlayer ()));
+	auto addedItem = selectedUnitList->addItem (std::make_unique<SelectedUnitItemType> (selectedUnitList->getSize().x() - 9, unitId, getPlayer()));
 	return *addedItem;
 }
 
 //------------------------------------------------------------------------------
 template<typename SelectedUnitItemType>
-size_t cWindowAdvancedHangar<SelectedUnitItemType>::getSelectedUnitsCount () const
+size_t cWindowAdvancedHangar<SelectedUnitItemType>::getSelectedUnitsCount() const
 {
-	return selectedUnitList->getItemsCount ();
+	return selectedUnitList->getItemsCount();
 }
 
 //------------------------------------------------------------------------------
@@ -151,12 +151,12 @@ const SelectedUnitItemType& cWindowAdvancedHangar<SelectedUnitItemType>::getSele
 
 //------------------------------------------------------------------------------
 template<typename SelectedUnitItemType>
-void cWindowAdvancedHangar<SelectedUnitItemType>::handleSelectionChanged ()
+void cWindowAdvancedHangar<SelectedUnitItemType>::handleSelectionChanged()
 {
-	auto selectedItem = selectedUnitList->getSelectedItem ();
+	auto selectedItem = selectedUnitList->getSelectedItem();
 	if (selectedItem != nullptr)
 	{
-		setActiveUnit (selectedItem->getUnitId ());
+		setActiveUnit (selectedItem->getUnitId());
 	}
 	selectedUnitSelectionChanged (selectedItem);
 }
@@ -167,7 +167,7 @@ void cWindowAdvancedHangar<SelectedUnitItemType>::handleSelectionUnitClickedSeco
 {
 	if (tryAddSelectedUnit (unitItem))
 	{
-		auto& addedItem = addSelectedUnit (unitItem.getUnitId ());
+		auto& addedItem = addSelectedUnit (unitItem.getUnitId());
 		selectedUnitList->setSelectedItem (&addedItem);
 		selectedUnitList->scrollToItem (&addedItem);
 	}
@@ -177,7 +177,7 @@ void cWindowAdvancedHangar<SelectedUnitItemType>::handleSelectionUnitClickedSeco
 template<typename SelectedUnitItemType>
 void cWindowAdvancedHangar<SelectedUnitItemType>::selectedUnitClicked (SelectedUnitItemType& unitItem)
 {
-	if (&unitItem == selectedUnitList->getSelectedItem () && tryRemoveSelectedUnit (unitItem))
+	if (&unitItem == selectedUnitList->getSelectedItem() && tryRemoveSelectedUnit (unitItem))
 	{
 		selectedUnitList->removeItem (unitItem);
 	}

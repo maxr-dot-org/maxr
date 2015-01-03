@@ -31,10 +31,10 @@ class cMap;
 class cUnitContextMenuWidget : public cWidget
 {
 public:
-	cUnitContextMenuWidget ();
+	cUnitContextMenuWidget();
 
 	void setUnit (const cUnit* unit, eMouseModeType mouseInputMode, const cPlayer* player, const cMap* dynamicMap);
-	const cUnit* getUnit ();
+	const cUnit* getUnit();
 
 	static bool unitHasAttackEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
 	static bool unitHasBuildEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);

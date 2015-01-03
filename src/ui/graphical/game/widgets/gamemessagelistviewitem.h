@@ -39,14 +39,14 @@ class cGameMessageListViewItem : public cAbstractListViewItem
 public:
 	cGameMessageListViewItem (const std::string& message, eGameMessageListViewItemBackgroundColor backgroundColor);
 
-	std::chrono::steady_clock::time_point getCreationTime () const;
+	std::chrono::steady_clock::time_point getCreationTime() const;
 
 	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 
 	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
 private:
 	cLabel* messageLabel;
-	
+
 	eGameMessageListViewItemBackgroundColor backgroundColor;
 	AutoSurface background;
 
@@ -55,7 +55,7 @@ private:
 
 	std::chrono::steady_clock::time_point creationTime;
 
-	void createBackground ();
+	void createBackground();
 };
 
 #endif // ui_graphical_game_widgets_gamemessagelistviewitemH

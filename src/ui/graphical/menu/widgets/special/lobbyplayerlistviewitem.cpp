@@ -29,17 +29,17 @@ cLobbyPlayerListViewItem::cLobbyPlayerListViewItem (std::shared_ptr<cPlayerBasic
 {
 	assert (player != nullptr);
 
-	readyImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (getSize ().x () - 10, 0)));
-	signalConnectionManager.connect (readyImage->clicked, [&](){ readyClicked(); });
+	readyImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (getSize().x() - 10, 0)));
+	signalConnectionManager.connect (readyImage->clicked, [&]() { readyClicked(); });
 
-	colorImage = addChild (std::make_unique<cImage> (getPosition ()));
+	colorImage = addChild (std::make_unique<cImage> (getPosition()));
 
-	updatePlayerColor ();
-	updatePlayerReady ();
+	updatePlayerColor();
+	updatePlayerReady();
 
-	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (colorImage->getEndPosition ().x () + 4, 0), cPosition (readyImage->getPosition().x(), readyImage->getEndPosition().y())), player->getName ()));
+	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (colorImage->getEndPosition().x() + 4, 0), cPosition (readyImage->getPosition().x(), readyImage->getEndPosition().y())), player->getName()));
 
-	fitToChildren ();
+	fitToChildren();
 
 	signalConnectionManager.connect (player->nameChanged, std::bind (&cLobbyPlayerListViewItem::updatePlayerName, this));
 	signalConnectionManager.connect (player->colorChanged, std::bind (&cLobbyPlayerListViewItem::updatePlayerColor, this));
@@ -47,39 +47,39 @@ cLobbyPlayerListViewItem::cLobbyPlayerListViewItem (std::shared_ptr<cPlayerBasic
 }
 
 //------------------------------------------------------------------------------
-const std::shared_ptr<cPlayerBasicData>& cLobbyPlayerListViewItem::getPlayer () const
+const std::shared_ptr<cPlayerBasicData>& cLobbyPlayerListViewItem::getPlayer() const
 {
 	return player;
 }
 
 //------------------------------------------------------------------------------
-void cLobbyPlayerListViewItem::updatePlayerName ()
+void cLobbyPlayerListViewItem::updatePlayerName()
 {
-	nameLabel->setText (player->getName ());
+	nameLabel->setText (player->getName());
 }
 
 //------------------------------------------------------------------------------
-void cLobbyPlayerListViewItem::updatePlayerColor ()
+void cLobbyPlayerListViewItem::updatePlayerColor()
 {
 	SDL_Rect src = {0, 0, 10, 10};
 
-	AutoSurface colorSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0));
-	SDL_BlitSurface (player->getColor ().getTexture(), &src, colorSurface.get (), nullptr);
+	AutoSurface colorSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
+	SDL_BlitSurface (player->getColor().getTexture(), &src, colorSurface.get(), nullptr);
 
-	colorImage->setImage (colorSurface.get ());
+	colorImage->setImage (colorSurface.get());
 }
 
 //------------------------------------------------------------------------------
-void cLobbyPlayerListViewItem::updatePlayerReady ()
+void cLobbyPlayerListViewItem::updatePlayerReady()
 {
-	SDL_Rect src = {player->isReady () ? 10 : 0, 0, 10, 10};
+	SDL_Rect src = {player->isReady() ? 10 : 0, 0, 10, 10};
 
-	AutoSurface readySurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0));
-	SDL_SetColorKey (readySurface.get (), SDL_TRUE, 0xFF00FF);
-	SDL_FillRect (readySurface.get (), nullptr, 0xFF00FF);
-	SDL_BlitSurface (GraphicsData.gfx_player_ready.get (), &src, readySurface.get (), nullptr);
+	AutoSurface readySurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
+	SDL_SetColorKey (readySurface.get(), SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (readySurface.get(), nullptr, 0xFF00FF);
+	SDL_BlitSurface (GraphicsData.gfx_player_ready.get(), &src, readySurface.get(), nullptr);
 
-	readyImage->setImage (readySurface.get ());
+	readyImage->setImage (readySurface.get());
 }
 
 //------------------------------------------------------------------------------
@@ -87,11 +87,11 @@ void cLobbyPlayerListViewItem::handleResized (const cPosition& oldSize)
 {
 	cAbstractListViewItem::handleResized (oldSize);
 
-	if (oldSize.x () == getSize ().x ()) return;
+	if (oldSize.x() == getSize().x()) return;
 
-	readyImage->moveTo (getPosition () + cPosition (getSize ().x () - 10, 0));
+	readyImage->moveTo (getPosition() + cPosition (getSize().x() - 10, 0));
 
-	nameLabel->resize (cPosition (getSize ().x () - readyImage->getSize ().x () - colorImage->getSize().x() - 4, readyImage->getSize ().y ()));
+	nameLabel->resize (cPosition (getSize().x() - readyImage->getSize().x() - colorImage->getSize().x() - 4, readyImage->getSize().y()));
 
-	fitToChildren ();
+	fitToChildren();
 }

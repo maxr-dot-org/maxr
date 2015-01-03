@@ -28,14 +28,14 @@
 //------------------------------------------------------------------------------
 cSavedReportAttackingEnemy::cSavedReportAttackingEnemy (const cUnit& unit) :
 	cSavedReportUnit (unit),
-	unitName (unit.getDisplayName ())
+	unitName (unit.getDisplayName())
 {}
 
 //------------------------------------------------------------------------------
 cSavedReportAttackingEnemy::cSavedReportAttackingEnemy (cNetMessage& message) :
 	cSavedReportUnit (message)
 {
-	unitName = message.popString ();
+	unitName = message.popString();
 }
 
 //------------------------------------------------------------------------------
@@ -56,19 +56,19 @@ void cSavedReportAttackingEnemy::pushInto (cNetMessage& message) const
 //------------------------------------------------------------------------------
 void cSavedReportAttackingEnemy::pushInto (tinyxml2::XMLElement& element) const
 {
-	element.SetAttribute ("unitName", unitName.c_str ());
+	element.SetAttribute ("unitName", unitName.c_str());
 
 	cSavedReportUnit::pushInto (element);
 }
 
 //------------------------------------------------------------------------------
-eSavedReportType cSavedReportAttackingEnemy::getType () const
+eSavedReportType cSavedReportAttackingEnemy::getType() const
 {
 	return eSavedReportType::AttackingEnemy;
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportAttackingEnemy::getText () const
+std::string cSavedReportAttackingEnemy::getText() const
 {
 	return lngPack.i18n ("Text~Comp~AttackingEnemy", unitName);
 }
@@ -76,5 +76,5 @@ std::string cSavedReportAttackingEnemy::getText () const
 //------------------------------------------------------------------------------
 void cSavedReportAttackingEnemy::playSound (cSoundManager& soundManager) const
 {
-	soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceAttacking, getRandom(VoiceData.VOIAttackingEnemy)));
+	soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceAttacking, getRandom (VoiceData.VOIAttackingEnemy)));
 }

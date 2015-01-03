@@ -40,14 +40,14 @@ public:
 
 	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 
-	const sID* getCurrentUnitId ();
+	const sID* getCurrentUnitId();
 
 	void setUnit (const sID& unitId, const cPlayer& owner, const sUnitData* unitObjectCurrentData = nullptr, const cUnitUpgrade* upgrades = nullptr);
 	void setUpgrades (const cUnitUpgrade* upgrades);
 private:
 	AutoSurface surface;
 
-	void reset ();
+	void reset();
 
 	void drawRow (size_t index, eUnitDataSymbolType symbolType, int amount, const std::string& name, int value1, int value2);
 

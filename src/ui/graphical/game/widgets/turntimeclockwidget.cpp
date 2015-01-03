@@ -36,18 +36,18 @@ void cTurnTimeClockWidget::setTurnTimeClock (std::shared_ptr<const cTurnTimeCloc
 {
 	turnTimeClock = std::move (turnTimeClock_);
 
-	signalConnectionManager.disconnectAll ();
+	signalConnectionManager.disconnectAll();
 
 	if (turnTimeClock != nullptr)
 	{
 		signalConnectionManager.connect (turnTimeClock->secondChanged, std::bind (&cTurnTimeClockWidget::update, this));
 		signalConnectionManager.connect (turnTimeClock->deadlinesChanged, std::bind (&cTurnTimeClockWidget::update, this));
 	}
-	update ();
+	update();
 }
 
 //------------------------------------------------------------------------------
-void cTurnTimeClockWidget::update ()
+void cTurnTimeClockWidget::update()
 {
 	if (turnTimeClock == nullptr)
 	{
@@ -56,20 +56,20 @@ void cTurnTimeClockWidget::update ()
 		return;
 	}
 
-	const auto time = turnTimeClock->hasDeadline () ? turnTimeClock->getTimeTillFirstDeadline () : turnTimeClock->getTimeSinceStart ();
+	const auto time = turnTimeClock->hasDeadline() ? turnTimeClock->getTimeTillFirstDeadline() : turnTimeClock->getTimeSinceStart();
 
-	const auto minutes = std::chrono::duration_cast<std::chrono::minutes>(time);
-	const auto seconds = std::chrono::duration_cast<std::chrono::seconds>(time)-std::chrono::duration_cast<std::chrono::seconds>(minutes);
+	const auto minutes = std::chrono::duration_cast<std::chrono::minutes> (time);
+	const auto seconds = std::chrono::duration_cast<std::chrono::seconds> (time) - std::chrono::duration_cast<std::chrono::seconds> (minutes);
 
 	std::stringstream text;
 
-	text << std::setw (2) << std::setfill ('0') << minutes.count ()
-		<< ":"
-		<< std::setw (2) << std::setfill ('0') << seconds.count ();
+	text << std::setw (2) << std::setfill ('0') << minutes.count()
+		 << ":"
+		 << std::setw (2) << std::setfill ('0') << seconds.count();
 
-	textLabel->setText (text.str ());
+	textLabel->setText (text.str());
 
-	if (turnTimeClock->hasDeadline () && std::chrono::duration_cast<std::chrono::seconds>(time) <= cTurnTimeClock::alertRemainingTime)
+	if (turnTimeClock->hasDeadline() && std::chrono::duration_cast<std::chrono::seconds> (time) <= cTurnTimeClock::alertRemainingTime)
 	{
 		textLabel->setFont (FONT_LATIN_NORMAL_RED);
 	}

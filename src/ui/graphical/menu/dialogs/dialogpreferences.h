@@ -32,8 +32,8 @@ class cComboBox;
 class cDialogPreferences : public cWindow
 {
 public:
-	cDialogPreferences ();
-	~cDialogPreferences ();
+	cDialogPreferences();
+	~cDialogPreferences();
 
 private:
 	cSignalConnectionManager signalConnectionManager;
@@ -74,22 +74,22 @@ private:
 	bool storedEffectsMute;
 	bool storedVoicesMute;
 
-	void loadValues ();
-	void saveValues ();
+	void loadValues();
+	void saveValues();
 
-	void storePreviewValues ();
-	void restorePreviewValues ();
+	void storePreviewValues();
+	void restorePreviewValues();
 
-	void doneClicked ();
-	void cancelClicked ();
+	void doneClicked();
+	void cancelClicked();
 
-	void musicVolumeChanged ();
-	void effectsVolumeChanged ();
-	void voicesVolumeChanged ();
+	void musicVolumeChanged();
+	void effectsVolumeChanged();
+	void voicesVolumeChanged();
 
-	void musicMuteChanged ();
-	void effectsMuteChanged ();
-	void voicesMuteChanged ();
+	void musicMuteChanged();
+	void effectsMuteChanged();
+	void voicesMuteChanged();
 };
 
 #endif // ui_graphical_menu_dialogs_dialogpreferencesH

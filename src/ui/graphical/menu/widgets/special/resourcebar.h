@@ -46,22 +46,22 @@ public:
 	void setType (eResourceBarType type);
 	void setStepSize (int stepSize);
 
-	int getMinValue () const;
+	int getMinValue() const;
 	void setMinValue (int minValue);
 
-	int getMaxValue () const;
+	int getMaxValue() const;
 	void setMaxValue (int maxValue);
 
-	int getFixedMinValue () const;
+	int getFixedMinValue() const;
 	void setFixedMinValue (int minValue);
 
-	int getFixedMaxValue () const;
+	int getFixedMaxValue() const;
 	void setFixedMaxValue (int maxValue);
 
-	bool isInverted () const;
+	bool isInverted() const;
 	void setInverted (bool inverted);
 
-	int getValue () const;
+	int getValue() const;
 	void setValue (int value);
 
 	void increase (int offset);

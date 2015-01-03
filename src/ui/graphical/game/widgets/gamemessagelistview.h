@@ -33,9 +33,9 @@ public:
 
 	void addMessage (const std::string& message, eGameMessageListViewItemBackgroundColor backgroundColor = eGameMessageListViewItemBackgroundColor::DarkGray);
 
-	void removeOldMessages ();
+	void removeOldMessages();
 
-	void clear ();
+	void clear();
 
 	virtual bool isAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
 

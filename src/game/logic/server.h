@@ -111,16 +111,16 @@ public:
 	void setGameSettings (const cGameSettings& gameSettings);
 	void setMap (std::shared_ptr<cStaticMap> staticMap);
 	void addPlayer (std::unique_ptr<cPlayer> player);
-	void start ();
+	void start();
 	void stop();
 
 	/** the type of the current game */
 	eGameTypes getGameType() const;
 
-	void addLocalClient (cClient& client) { localClients.push_back(&client); }
+	void addLocalClient (cClient& client) { localClients.push_back (&client); }
 
 	std::shared_ptr<const cCasualtiesTracker> getCasualtiesTracker() const { return casualtiesTracker;}
-	const std::shared_ptr<cCasualtiesTracker>& getCasualtiesTracker () { return casualtiesTracker; }
+	const std::shared_ptr<cCasualtiesTracker>& getCasualtiesTracker() { return casualtiesTracker; }
 
 	/**
 	* Handles all incoming netMessages from the clients
@@ -170,7 +170,7 @@ public:
 	cPlayer* getPlayerFromString (const std::string& playerID);
 
 	void setActiveTurnPlayer (const cPlayer& player);
-	cPlayer* getActiveTurnPlayer ();
+	cPlayer* getActiveTurnPlayer();
 
 	/**
 	 * returns if the player is on the disconnected players list
@@ -250,14 +250,14 @@ public:
 	/**
 	* generates a new movejob
 	*/
-	bool addMoveJob(const cPosition& source, const cPosition& destination, cVehicle* vehicle);
+	bool addMoveJob (const cPosition& source, const cPosition& destination, cVehicle* vehicle);
 	/**
 	* adds a new rubble object to the game
 	* @param position The position where the rubble is added
 	* @param value the amount of material in the rubble field
 	* @param big size of the rubble field
 	*/
-	void addRubble(const cPosition& position, int value, bool big);
+	void addRubble (const cPosition& position, int value, bool big);
 	/**
 	* deletes a rubble object from the game
 	* @param rubble pointer to the rubble object which will be deleted
@@ -274,22 +274,22 @@ public:
 
 	void kickPlayer (cPlayer& player);
 
-	void sideStepStealthUnit (const cPosition& position, const cVehicle& vehicle, const cPosition& bigOffset = cPosition(-1,-1));
-	void sideStepStealthUnit (const cPosition& position, const sUnitData& vehicleData, cPlayer* vehicleOwner, const cPosition& bigOffset = cPosition(-1,-1));
+	void sideStepStealthUnit (const cPosition& position, const cVehicle& vehicle, const cPosition& bigOffset = cPosition (-1, -1));
+	void sideStepStealthUnit (const cPosition& position, const sUnitData& vehicleData, cPlayer* vehicleOwner, const cPosition& bigOffset = cPosition (-1, -1));
 
 	void makeAdditionalSaveRequest (int saveNum);
 
-	std::shared_ptr<const cTurnClock> getTurnClock () const { return turnClock; }
+	std::shared_ptr<const cTurnClock> getTurnClock() const { return turnClock; }
 
-	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock () const { return turnTimeClock; }
+	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock() const { return turnTimeClock; }
 
-	std::shared_ptr<const cGameSettings> getGameSettings () const { return gameSettings; }
+	std::shared_ptr<const cGameSettings> getGameSettings() const { return gameSettings; }
 	bool isTurnBasedGame() const;
 
 	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);
 	void disableFreezeMode (eFreezeMode mode);
 
-	void startTurnTimers ();
+	void startTurnTimers();
 
 	void setTurnEndDeadline (const std::chrono::seconds& deadline);
 	void setTurnEndDeadlineActive (bool value);
@@ -299,9 +299,9 @@ public:
 
 	const cGameGuiState& getPlayerGameGuiState (const cPlayer& player);
 private:
-	void startNewGame ();
+	void startNewGame();
 
-	void placeInitialResources ();
+	void placeInitialResources();
 
 	/**
 	* lands all units at the given position

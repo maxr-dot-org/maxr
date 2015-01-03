@@ -57,67 +57,67 @@ public:
 	void setTurnTimeClock (std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 	void setGameSettings (std::shared_ptr<const cGameSettings> gameSettings);
 
-	static AutoSurface generateSurface ();
+	static AutoSurface generateSurface();
 
 	void setMinimalZoomFactor (float zoomFactor);
 	void setZoomFactor (float zoomFactor);
-	float getZoomFactor () const;
+	float getZoomFactor() const;
 	void increaseZoomFactor (double percent);
 	void decreaseZoomFactor (double percent);
 
-	void lockEndButton ();
-	void unlockEndButton ();
+	void lockEndButton();
+	void unlockEndButton();
 
 	void setSurveyActive (bool value);
-	bool getSurveyActive () const;
+	bool getSurveyActive() const;
 
 	void setHitsActive (bool value);
-	bool getHitsActive () const;
+	bool getHitsActive() const;
 
 	void setScanActive (bool value);
-	bool getScanActive () const;
+	bool getScanActive() const;
 
 	void setStatusActive (bool value);
-	bool getStatusActive () const;
+	bool getStatusActive() const;
 
 	void setAmmoActive (bool value);
-	bool getAmmoActive () const;
+	bool getAmmoActive() const;
 
 	void setGridActive (bool value);
-	bool getGridActive () const;
+	bool getGridActive() const;
 
 	void setColorActive (bool value);
-	bool getColorActive () const;
+	bool getColorActive() const;
 
 	void setRangeActive (bool value);
-	bool getRangeActive () const;
+	bool getRangeActive() const;
 
 	void setFogActive (bool value);
-	bool getFogActive () const;
+	bool getFogActive() const;
 
 	void setLockActive (bool value);
-	bool getLockActive () const;
+	bool getLockActive() const;
 
 	void setChatActive (bool value);
-	bool getChatActive () const;
+	bool getChatActive() const;
 
 	void setMiniMapZoomFactorActive (bool value);
-	bool getMiniMapZoomFactorActive () const;
+	bool getMiniMapZoomFactorActive() const;
 
 	void setMiniMapAttackUnitsOnly (bool value);
-	bool getMiniMapAttackUnitsOnly () const;
+	bool getMiniMapAttackUnitsOnly() const;
 
 	void setCoordinatesText (const std::string& text);
 	void setUnitNameText (const std::string& text);
 
-	void startUnitVideo ();
-	void stopUnitVideo ();
-	bool isUnitVideoPlaying ();
+	void startUnitVideo();
+	void stopUnitVideo();
+	bool isUnitVideoPlaying();
 
-	void resizeToResolution ();
+	void resizeToResolution();
 
-	void activateShortcuts ();
-	void deactivateShortcuts ();
+	void activateShortcuts();
+	void deactivateShortcuts();
 
 	mutable cSignal<void ()> zoomChanged;
 
@@ -208,10 +208,10 @@ private:
 
 	cUnitDetailsHud* unitDetails;
 
-	void handleZoomPlusClicked ();
-	void handleZoomMinusClicked ();
+	void handleZoomPlusClicked();
+	void handleZoomMinusClicked();
 
-	void handlePreferencesClicked ();
+	void handlePreferencesClicked();
 };
 
 

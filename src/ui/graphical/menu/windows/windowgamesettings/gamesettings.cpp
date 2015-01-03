@@ -48,28 +48,28 @@ std::string gameSettingsResourceAmountToString (eGameSettingsResourceAmount amou
 	{
 		switch (amount)
 		{
-		case eGameSettingsResourceAmount::Limited:
-			return lngPack.i18n ("Text~Option~Limited");
-		case eGameSettingsResourceAmount::Normal:
-			return lngPack.i18n ("Text~Option~Normal");
-		case eGameSettingsResourceAmount::High:
-			return lngPack.i18n ("Text~Option~High");
-		case eGameSettingsResourceAmount::TooMuch:
-			return lngPack.i18n ("Text~Option~TooMuch");
+			case eGameSettingsResourceAmount::Limited:
+				return lngPack.i18n ("Text~Option~Limited");
+			case eGameSettingsResourceAmount::Normal:
+				return lngPack.i18n ("Text~Option~Normal");
+			case eGameSettingsResourceAmount::High:
+				return lngPack.i18n ("Text~Option~High");
+			case eGameSettingsResourceAmount::TooMuch:
+				return lngPack.i18n ("Text~Option~TooMuch");
 		}
 	}
 	else
 	{
 		switch (amount)
 		{
-		case eGameSettingsResourceAmount::Limited:
-			return "limited";
-		case eGameSettingsResourceAmount::Normal:
-			return "normal";
-		case eGameSettingsResourceAmount::High:
-			return "high";
-		case eGameSettingsResourceAmount::TooMuch:
-			return "toomuch";
+			case eGameSettingsResourceAmount::Limited:
+				return "limited";
+			case eGameSettingsResourceAmount::Normal:
+				return "normal";
+			case eGameSettingsResourceAmount::High:
+				return "high";
+			case eGameSettingsResourceAmount::TooMuch:
+				return "toomuch";
 		}
 	}
 	assert (false);
@@ -79,7 +79,7 @@ std::string gameSettingsResourceAmountToString (eGameSettingsResourceAmount amou
 //------------------------------------------------------------------------------
 eGameSettingsResourceAmount gameSettingsResourceAmountFromString (const std::string& string)
 {
-	if (iequals(string, "limited")) return eGameSettingsResourceAmount::Limited;
+	if (iequals (string, "limited")) return eGameSettingsResourceAmount::Limited;
 	else if (iequals (string, "normal")) return eGameSettingsResourceAmount::Normal;
 	else if (iequals (string, "high")) return eGameSettingsResourceAmount::High;
 	else if (iequals (string, "toomuch")) return eGameSettingsResourceAmount::TooMuch;
@@ -93,28 +93,28 @@ std::string gameSettingsResourceDensityToString (eGameSettingsResourceDensity de
 	{
 		switch (density)
 		{
-		case eGameSettingsResourceDensity::Sparse:
-			return lngPack.i18n ("Text~Option~Sparse");
-		case eGameSettingsResourceDensity::Normal:
-			return lngPack.i18n ("Text~Option~Normal");
-		case eGameSettingsResourceDensity::Dense:
-			return lngPack.i18n ("Text~Option~Dense");
-		case eGameSettingsResourceDensity::TooMuch:
-			return lngPack.i18n ("Text~Option~TooMuch");
+			case eGameSettingsResourceDensity::Sparse:
+				return lngPack.i18n ("Text~Option~Sparse");
+			case eGameSettingsResourceDensity::Normal:
+				return lngPack.i18n ("Text~Option~Normal");
+			case eGameSettingsResourceDensity::Dense:
+				return lngPack.i18n ("Text~Option~Dense");
+			case eGameSettingsResourceDensity::TooMuch:
+				return lngPack.i18n ("Text~Option~TooMuch");
 		}
 	}
 	else
 	{
 		switch (density)
 		{
-		case eGameSettingsResourceDensity::Sparse:
-			return "sparse";
-		case eGameSettingsResourceDensity::Normal:
-			return "normal";
-		case eGameSettingsResourceDensity::Dense:
-			return "dense";
-		case eGameSettingsResourceDensity::TooMuch:
-			return "toomuch";
+			case eGameSettingsResourceDensity::Sparse:
+				return "sparse";
+			case eGameSettingsResourceDensity::Normal:
+				return "normal";
+			case eGameSettingsResourceDensity::Dense:
+				return "dense";
+			case eGameSettingsResourceDensity::TooMuch:
+				return "toomuch";
 		}
 	}
 	assert (false);
@@ -138,20 +138,20 @@ std::string gameSettingsBridgeheadTypeToString (eGameSettingsBridgeheadType type
 	{
 		switch (type)
 		{
-		case eGameSettingsBridgeheadType::Definite:
-			return lngPack.i18n ("Text~Option~Definite");
-		case eGameSettingsBridgeheadType::Mobile:
-			return lngPack.i18n ("Text~Option~Mobile");
+			case eGameSettingsBridgeheadType::Definite:
+				return lngPack.i18n ("Text~Option~Definite");
+			case eGameSettingsBridgeheadType::Mobile:
+				return lngPack.i18n ("Text~Option~Mobile");
 		}
 	}
 	else
 	{
 		switch (type)
 		{
-		case eGameSettingsBridgeheadType::Definite:
-			return "definite";
-		case eGameSettingsBridgeheadType::Mobile:
-			return "mobile";
+			case eGameSettingsBridgeheadType::Definite:
+				return "definite";
+			case eGameSettingsBridgeheadType::Mobile:
+				return "mobile";
 		}
 	}
 	assert (false);
@@ -173,24 +173,24 @@ std::string gameSettingsGameTypeToString (eGameSettingsGameType type, bool trans
 	{
 		switch (type)
 		{
-		case eGameSettingsGameType::Simultaneous:
-			return lngPack.i18n ("Text~Option~Type_Simu");
-		case eGameSettingsGameType::Turns:
-			return lngPack.i18n ("Text~Option~Type_Turns");
-		case eGameSettingsGameType::HotSeat:
-			return "Hot Seat"; // TODO: translation?!
+			case eGameSettingsGameType::Simultaneous:
+				return lngPack.i18n ("Text~Option~Type_Simu");
+			case eGameSettingsGameType::Turns:
+				return lngPack.i18n ("Text~Option~Type_Turns");
+			case eGameSettingsGameType::HotSeat:
+				return "Hot Seat"; // TODO: translation?!
 		}
 	}
 	else
 	{
 		switch (type)
 		{
-		case eGameSettingsGameType::Simultaneous:
-			return "simultaneous";
-		case eGameSettingsGameType::Turns:
-			return "turns";
-		case eGameSettingsGameType::HotSeat:
-			return "hotseat";
+			case eGameSettingsGameType::Simultaneous:
+				return "simultaneous";
+			case eGameSettingsGameType::Turns:
+				return "turns";
+			case eGameSettingsGameType::HotSeat:
+				return "hotseat";
 		}
 	}
 	assert (false);
@@ -213,24 +213,24 @@ std::string gameSettingsVictoryConditionToString (eGameSettingsVictoryCondition 
 	{
 		switch (condition)
 		{
-		case eGameSettingsVictoryCondition::Turns:
-			return lngPack.i18n ("Text~Comp~Turns");
-		case eGameSettingsVictoryCondition::Points:
-			return lngPack.i18n ("Text~Comp~Points");
-		case eGameSettingsVictoryCondition::Death:
-			return lngPack.i18n ("Text~Comp~NoLimit");
+			case eGameSettingsVictoryCondition::Turns:
+				return lngPack.i18n ("Text~Comp~Turns");
+			case eGameSettingsVictoryCondition::Points:
+				return lngPack.i18n ("Text~Comp~Points");
+			case eGameSettingsVictoryCondition::Death:
+				return lngPack.i18n ("Text~Comp~NoLimit");
 		}
 	}
 	else
 	{
 		switch (condition)
 		{
-		case eGameSettingsVictoryCondition::Turns:
-			return "turns";
-		case eGameSettingsVictoryCondition::Points:
-			return "points";
-		case eGameSettingsVictoryCondition::Death:
-			return "death";
+			case eGameSettingsVictoryCondition::Turns:
+				return "turns";
+			case eGameSettingsVictoryCondition::Points:
+				return "points";
+			case eGameSettingsVictoryCondition::Death:
+				return "death";
 		}
 	}
 	assert (false);
@@ -247,7 +247,7 @@ eGameSettingsVictoryCondition gameSettingsVictoryConditionFromString (const std:
 }
 
 //------------------------------------------------------------------------------
-cGameSettings::cGameSettings () :
+cGameSettings::cGameSettings() :
 	metalAmount (eGameSettingsResourceAmount::Normal),
 	oilAmount (eGameSettingsResourceAmount::Normal),
 	goldAmount (eGameSettingsResourceAmount::Normal),
@@ -285,7 +285,7 @@ cGameSettings::cGameSettings (const cGameSettings& other) :
 {}
 
 //------------------------------------------------------------------------------
-cGameSettings& cGameSettings::operator=(const cGameSettings& other)
+cGameSettings& cGameSettings::operator= (const cGameSettings& other)
 {
 	metalAmount = other.metalAmount;
 	oilAmount = other.oilAmount;
@@ -307,7 +307,7 @@ cGameSettings& cGameSettings::operator=(const cGameSettings& other)
 }
 
 //------------------------------------------------------------------------------
-eGameSettingsResourceAmount cGameSettings::getMetalAmount () const
+eGameSettingsResourceAmount cGameSettings::getMetalAmount() const
 {
 	return metalAmount;
 }
@@ -315,12 +315,12 @@ eGameSettingsResourceAmount cGameSettings::getMetalAmount () const
 //------------------------------------------------------------------------------
 void cGameSettings::setMetalAmount (eGameSettingsResourceAmount value)
 {
-	std::swap(metalAmount, value);
-	if (metalAmount != value) metalAmountChanged ();
+	std::swap (metalAmount, value);
+	if (metalAmount != value) metalAmountChanged();
 }
 
 //------------------------------------------------------------------------------
-eGameSettingsResourceAmount cGameSettings::getOilAmount () const
+eGameSettingsResourceAmount cGameSettings::getOilAmount() const
 {
 	return oilAmount;
 }
@@ -329,11 +329,11 @@ eGameSettingsResourceAmount cGameSettings::getOilAmount () const
 void cGameSettings::setOilAmount (eGameSettingsResourceAmount value)
 {
 	std::swap (oilAmount, value);
-	if (oilAmount != value) oilAmountChanged ();
+	if (oilAmount != value) oilAmountChanged();
 }
 
 //------------------------------------------------------------------------------
-eGameSettingsResourceAmount cGameSettings::getGoldAmount () const
+eGameSettingsResourceAmount cGameSettings::getGoldAmount() const
 {
 	return goldAmount;
 }
@@ -342,11 +342,11 @@ eGameSettingsResourceAmount cGameSettings::getGoldAmount () const
 void cGameSettings::setGoldAmount (eGameSettingsResourceAmount value)
 {
 	std::swap (goldAmount, value);
-	if (goldAmount != value) goldAmountChanged ();
+	if (goldAmount != value) goldAmountChanged();
 }
 
 //------------------------------------------------------------------------------
-eGameSettingsResourceDensity cGameSettings::getResourceDensity () const
+eGameSettingsResourceDensity cGameSettings::getResourceDensity() const
 {
 	return resourceDensity;
 }
@@ -355,11 +355,11 @@ eGameSettingsResourceDensity cGameSettings::getResourceDensity () const
 void cGameSettings::setResourceDensity (eGameSettingsResourceDensity value)
 {
 	std::swap (resourceDensity, value);
-	if (resourceDensity != value) resourceDensityChanged ();
+	if (resourceDensity != value) resourceDensityChanged();
 }
 
 //------------------------------------------------------------------------------
-eGameSettingsBridgeheadType cGameSettings::getBridgeheadType () const
+eGameSettingsBridgeheadType cGameSettings::getBridgeheadType() const
 {
 	return bridgeheadType;
 }
@@ -368,11 +368,11 @@ eGameSettingsBridgeheadType cGameSettings::getBridgeheadType () const
 void cGameSettings::setBridgeheadType (eGameSettingsBridgeheadType value)
 {
 	std::swap (bridgeheadType, value);
-	if (bridgeheadType != value) bridgeheadTypeChanged ();
+	if (bridgeheadType != value) bridgeheadTypeChanged();
 }
 
 //------------------------------------------------------------------------------
-eGameSettingsGameType cGameSettings::getGameType () const
+eGameSettingsGameType cGameSettings::getGameType() const
 {
 	return gameType;
 }
@@ -381,11 +381,11 @@ eGameSettingsGameType cGameSettings::getGameType () const
 void cGameSettings::setGameType (eGameSettingsGameType value)
 {
 	std::swap (gameType, value);
-	if (gameType != value) gameTypeChanged ();
+	if (gameType != value) gameTypeChanged();
 }
 
 //------------------------------------------------------------------------------
-bool cGameSettings::getClansEnabled () const
+bool cGameSettings::getClansEnabled() const
 {
 	return clansEnabled;
 }
@@ -394,11 +394,11 @@ bool cGameSettings::getClansEnabled () const
 void cGameSettings::setClansEnabled (bool value)
 {
 	std::swap (clansEnabled, value);
-	if (clansEnabled != value) clansEnabledChanged ();
+	if (clansEnabled != value) clansEnabledChanged();
 }
 
 //------------------------------------------------------------------------------
-unsigned int cGameSettings::getStartCredits () const
+unsigned int cGameSettings::getStartCredits() const
 {
 	return startCredits;
 }
@@ -407,11 +407,11 @@ unsigned int cGameSettings::getStartCredits () const
 void cGameSettings::setStartCredits (unsigned int value)
 {
 	std::swap (startCredits, value);
-	if (startCredits != value) startCreditsChanged ();
+	if (startCredits != value) startCreditsChanged();
 }
 
 //------------------------------------------------------------------------------
-eGameSettingsVictoryCondition cGameSettings::getVictoryCondition () const
+eGameSettingsVictoryCondition cGameSettings::getVictoryCondition() const
 {
 	return victoryConditionType;
 }
@@ -420,11 +420,11 @@ eGameSettingsVictoryCondition cGameSettings::getVictoryCondition () const
 void cGameSettings::setVictoryCondition (eGameSettingsVictoryCondition value)
 {
 	std::swap (victoryConditionType, value);
-	if (victoryConditionType != value) victoryConditionTypeChanged ();
+	if (victoryConditionType != value) victoryConditionTypeChanged();
 }
 
 //------------------------------------------------------------------------------
-unsigned int cGameSettings::getVictoryTurns () const
+unsigned int cGameSettings::getVictoryTurns() const
 {
 	return victoryTurns;
 }
@@ -433,11 +433,11 @@ unsigned int cGameSettings::getVictoryTurns () const
 void cGameSettings::setVictoryTurns (unsigned int value)
 {
 	std::swap (victoryTurns, value);
-	if (victoryTurns != value) victoryTurnsChanged ();
+	if (victoryTurns != value) victoryTurnsChanged();
 }
 
 //------------------------------------------------------------------------------
-unsigned int cGameSettings::getVictoryPoints () const
+unsigned int cGameSettings::getVictoryPoints() const
 {
 	return victoryPoints;
 }
@@ -446,11 +446,11 @@ unsigned int cGameSettings::getVictoryPoints () const
 void cGameSettings::setVictoryPoints (unsigned int value)
 {
 	std::swap (victoryPoints, value);
-	if (victoryPoints != value) victoryPointsChanged ();
+	if (victoryPoints != value) victoryPointsChanged();
 }
 
 //------------------------------------------------------------------------------
-const std::chrono::seconds& cGameSettings::getTurnEndDeadline () const
+const std::chrono::seconds& cGameSettings::getTurnEndDeadline() const
 {
 	return turnEndDeadline;
 }
@@ -460,11 +460,11 @@ void cGameSettings::setTurnEndDeadline (const std::chrono::seconds& value)
 {
 	const auto oldValue = turnEndDeadline;
 	turnEndDeadline = value;
-	if (oldValue != turnEndDeadline) turnEndDeadlineChanged ();
+	if (oldValue != turnEndDeadline) turnEndDeadlineChanged();
 }
 
 //------------------------------------------------------------------------------
-bool cGameSettings::isTurnEndDeadlineActive () const
+bool cGameSettings::isTurnEndDeadlineActive() const
 {
 	return turnEndDeadlineActive;
 }
@@ -473,11 +473,11 @@ bool cGameSettings::isTurnEndDeadlineActive () const
 void cGameSettings::setTurnEndDeadlineActive (bool value)
 {
 	std::swap (turnEndDeadlineActive, value);
-	if (turnEndDeadlineActive != value) turnEndDeadlineActiveChanged ();
+	if (turnEndDeadlineActive != value) turnEndDeadlineActiveChanged();
 }
 
 //------------------------------------------------------------------------------
-const std::chrono::seconds& cGameSettings::getTurnLimit () const
+const std::chrono::seconds& cGameSettings::getTurnLimit() const
 {
 	return turnLimit;
 }
@@ -487,11 +487,11 @@ void cGameSettings::setTurnLimit (const std::chrono::seconds& value)
 {
 	const auto oldValue = turnLimit;
 	turnLimit = value;
-	if (oldValue != turnLimit) turnLimitChanged ();
+	if (oldValue != turnLimit) turnLimitChanged();
 }
 
 //------------------------------------------------------------------------------
-bool cGameSettings::isTurnLimitActive () const
+bool cGameSettings::isTurnLimitActive() const
 {
 	return turnLimitActive;
 }
@@ -500,7 +500,7 @@ bool cGameSettings::isTurnLimitActive () const
 void cGameSettings::setTurnLimitActive (bool value)
 {
 	std::swap (turnLimitActive, value);
-	if (turnLimitActive != value) turnLimitActiveChanged ();
+	if (turnLimitActive != value) turnLimitActiveChanged();
 }
 
 //------------------------------------------------------------------------------
@@ -534,27 +534,27 @@ void cGameSettings::pushInto (cNetMessage& message) const
 //------------------------------------------------------------------------------
 void cGameSettings::popFrom (cNetMessage& message)
 {
-	setTurnLimitActive(message.popBool ());
-	setTurnLimit(std::chrono::seconds (message.popInt32 ()));
+	setTurnLimitActive (message.popBool());
+	setTurnLimit (std::chrono::seconds (message.popInt32()));
 
-	setTurnEndDeadlineActive (message.popBool ());
-	setTurnEndDeadline (std::chrono::seconds (message.popInt32 ()));
+	setTurnEndDeadlineActive (message.popBool());
+	setTurnEndDeadline (std::chrono::seconds (message.popInt32()));
 
-	setVictoryPoints (message.popInt32 ());
-	setVictoryTurns (message.popInt32 ());
-	setVictoryCondition (static_cast<eGameSettingsVictoryCondition>(message.popInt32 ()));
+	setVictoryPoints (message.popInt32());
+	setVictoryTurns (message.popInt32());
+	setVictoryCondition (static_cast<eGameSettingsVictoryCondition> (message.popInt32()));
 
-	setStartCredits (message.popInt32 ());
+	setStartCredits (message.popInt32());
 
-	setClansEnabled (message.popBool ());
+	setClansEnabled (message.popBool());
 
-	setGameType (static_cast<eGameSettingsGameType>(message.popInt32 ()));
+	setGameType (static_cast<eGameSettingsGameType> (message.popInt32()));
 
-	setBridgeheadType (static_cast<eGameSettingsBridgeheadType>(message.popInt32 ()));
+	setBridgeheadType (static_cast<eGameSettingsBridgeheadType> (message.popInt32()));
 
-	setResourceDensity (static_cast<eGameSettingsResourceDensity>(message.popInt32 ()));
+	setResourceDensity (static_cast<eGameSettingsResourceDensity> (message.popInt32()));
 
-	setGoldAmount (static_cast<eGameSettingsResourceAmount>(message.popInt32 ()));
-	setOilAmount (static_cast<eGameSettingsResourceAmount>(message.popInt32 ()));
-	setMetalAmount (static_cast<eGameSettingsResourceAmount>(message.popInt32 ()));
+	setGoldAmount (static_cast<eGameSettingsResourceAmount> (message.popInt32()));
+	setOilAmount (static_cast<eGameSettingsResourceAmount> (message.popInt32()));
+	setMetalAmount (static_cast<eGameSettingsResourceAmount> (message.popInt32()));
 }

@@ -27,14 +27,14 @@
 //------------------------------------------------------------------------------
 cSavedReportDisabled::cSavedReportDisabled (const cUnit& unit) :
 	cSavedReportUnit (unit),
-	unitName (unit.getDisplayName ())
+	unitName (unit.getDisplayName())
 {}
 
 //------------------------------------------------------------------------------
 cSavedReportDisabled::cSavedReportDisabled (cNetMessage& message) :
 	cSavedReportUnit (message)
 {
-	unitName = message.popString ();
+	unitName = message.popString();
 }
 
 //------------------------------------------------------------------------------
@@ -55,19 +55,19 @@ void cSavedReportDisabled::pushInto (cNetMessage& message) const
 //------------------------------------------------------------------------------
 void cSavedReportDisabled::pushInto (tinyxml2::XMLElement& element) const
 {
-	element.SetAttribute ("unitName", unitName.c_str ());
+	element.SetAttribute ("unitName", unitName.c_str());
 
 	cSavedReportUnit::pushInto (element);
 }
 
 //------------------------------------------------------------------------------
-eSavedReportType cSavedReportDisabled::getType () const
+eSavedReportType cSavedReportDisabled::getType() const
 {
 	return eSavedReportType::Disabled;
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportDisabled::getText () const
+std::string cSavedReportDisabled::getText() const
 {
 	return unitName + " " + lngPack.i18n ("Text~Comp~Disabled");
 }

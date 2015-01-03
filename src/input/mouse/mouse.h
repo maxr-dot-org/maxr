@@ -57,7 +57,7 @@ public:
 	 * we should ever create another mouse instance.
 	 */
 	cMouse();
-	~cMouse ();
+	~cMouse();
 
 	/**
 	 * Returns the global instance of the mouse.
@@ -72,22 +72,22 @@ public:
 	/**
 	 * Signal that will be triggered when a mouse button gets pressed.
 	 */
-	cSignal<void(cMouse&, eMouseButtonType)> pressed;
+	cSignal<void (cMouse&, eMouseButtonType)> pressed;
 
 	/**
 	 * Signal that will be triggered when a mouse button gets released.
 	 */
-	cSignal<void(cMouse&, eMouseButtonType)> released;
+	cSignal<void (cMouse&, eMouseButtonType)> released;
 
 	/**
 	 * Signal that will be triggered when the mouse wheel is moved.
 	 */
-	cSignal<void(cMouse&, const cPosition& amount)> wheelMoved;
+	cSignal<void (cMouse&, const cPosition& amount)> wheelMoved;
 
 	/**
 	 * Signal that will be triggered when the mouse is moved.
 	 */
-	cSignal<void(cMouse&, const cPosition& offset)> moved;
+	cSignal<void (cMouse&, const cPosition& offset)> moved;
 
 	/**
 	 * The current position of the mouse.
@@ -110,7 +110,7 @@ public:
 	 * Returns the current cursor.
 	 * @return The cursor.
 	 */
-	const cMouseCursor* getCursor () const;
+	const cMouseCursor* getCursor() const;
 
 	/**
 	 * Returns whether a mouse button is currently pressed.
@@ -118,7 +118,7 @@ public:
 	 * @param button The button to check.
 	 * @return True if the passed button is pressed. Else false.
 	 */
-	bool isButtonPressed(eMouseButtonType button) const;
+	bool isButtonPressed (eMouseButtonType button) const;
 
 	/**
 	 * Returns how often a button has been clicked consecutively in a short defined time
@@ -130,7 +130,7 @@ public:
 	 * @param button The button to check the click count for.
 	 * @return The number of times the button has been clicked consecutively.
 	 */
-	unsigned int getButtonClickCount(eMouseButtonType button) const;
+	unsigned int getButtonClickCount (eMouseButtonType button) const;
 
 	/**
 	 * Enables showing the mouse cursor on the display.
@@ -142,10 +142,10 @@ public:
 	 */
 	void hide();
 private:
-	cMouse(const cMouse& other) MAXR_DELETE_FUNCTION;
-	cMouse& operator=(const cMouse& other) MAXR_DELETE_FUNCTION;
+	cMouse (const cMouse& other) MAXR_DELETE_FUNCTION;
+	cMouse& operator= (const cMouse& other) MAXR_DELETE_FUNCTION;
 
-	typedef std::unique_ptr<SDL_Cursor, void(*)(SDL_Cursor*)> SdlCursorPtrType;
+	typedef std::unique_ptr<SDL_Cursor, void (*) (SDL_Cursor*)> SdlCursorPtrType;
 
 	cSignalConnectionManager signalConnectionManager;
 
@@ -160,11 +160,11 @@ private:
 
 	std::chrono::milliseconds doubleClickTime;
 
-	void handleMouseMotionEvent(const cEventMouseMotion& mouseEvent);
-	void handleMouseButtonEvent(const cEventMouseButton& mouseEvent);
-	void handleMouseWheelEvent(const cEventMouseWheel& mouseEvent);
+	void handleMouseMotionEvent (const cEventMouseMotion& mouseEvent);
+	void handleMouseButtonEvent (const cEventMouseButton& mouseEvent);
+	void handleMouseWheelEvent (const cEventMouseWheel& mouseEvent);
 
-	std::chrono::steady_clock::time_point& getLastClickTime(eMouseButtonType button);
+	std::chrono::steady_clock::time_point& getLastClickTime (eMouseButtonType button);
 };
 
 #endif // input_mouse_mouseH

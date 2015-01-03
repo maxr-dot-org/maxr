@@ -27,7 +27,7 @@
 //------------------------------------------------------------------------------
 cProtectionGlass::cProtectionGlass (const cPosition& position, std::shared_ptr<cAnimationTimer> animationTimer_, double percentClosed_) :
 	cWidget (position),
-	animationTimer (std::move(animationTimer_)),
+	animationTimer (std::move (animationTimer_)),
 	openStep (100. * 10 / (400)), // open in 400 ms
 	percentClosed (percentClosed_)
 {
@@ -40,7 +40,7 @@ cProtectionGlass::cProtectionGlass (const cPosition& position, std::shared_ptr<c
 }
 
 //------------------------------------------------------------------------------
-void cProtectionGlass::open ()
+void cProtectionGlass::open()
 {
 	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, std::bind (&cProtectionGlass::doOpenStep, this));
 }
@@ -48,26 +48,26 @@ void cProtectionGlass::open ()
 //------------------------------------------------------------------------------
 void cProtectionGlass::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
-	const auto offset = (int)(getSize ().y () * (100. - percentClosed) / 100);
+	const auto offset = (int) (getSize().y() * (100. - percentClosed) / 100);
 
 	SDL_Rect sourceRect = {0, offset, GraphicsData.gfx_destruction_glas->w, GraphicsData.gfx_destruction_glas->h - offset};
 
-	SDL_Rect destinationRect = {getPosition ().x (), getPosition ().y (), sourceRect.w, sourceRect.h};
-	
-	SDL_BlitSurface (GraphicsData.gfx_destruction_glas.get (), &sourceRect, &destination, &destinationRect);
+	SDL_Rect destinationRect = {getPosition().x(), getPosition().y(), sourceRect.w, sourceRect.h};
+
+	SDL_BlitSurface (GraphicsData.gfx_destruction_glas.get(), &sourceRect, &destination, &destinationRect);
 }
 
 //------------------------------------------------------------------------------
-void cProtectionGlass::doOpenStep ()
+void cProtectionGlass::doOpenStep()
 {
 	percentClosed -= openStep;
 
 	if (percentClosed <= 0.)
 	{
 		percentClosed = std::max (0., percentClosed);
-		signalConnectionManager.disconnectAll ();
-		disable ();
-		hide ();
-		opened ();
+		signalConnectionManager.disconnectAll();
+		disable();
+		hide();
+		opened();
 	}
 }

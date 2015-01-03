@@ -32,24 +32,24 @@ public:
 
 	static size_t findClosestPredefinedColor (const cRgbColor& color);
 
-	cPlayerColor ();
+	cPlayerColor();
 	explicit cPlayerColor (const cRgbColor& color);
 	cPlayerColor (const cPlayerColor& other);
 	cPlayerColor (cPlayerColor&& other);
 
-	cPlayerColor& operator=(const cPlayerColor& other);
-	cPlayerColor& operator=(cPlayerColor&& other);
+	cPlayerColor& operator= (const cPlayerColor& other);
+	cPlayerColor& operator= (cPlayerColor && other);
 
-	const cRgbColor& getColor () const;
-	SDL_Surface* getTexture () const;
+	const cRgbColor& getColor() const;
+	SDL_Surface* getTexture() const;
 
-	bool operator==(const cPlayerColor& other) const;
-	bool operator!=(const cPlayerColor& other) const;
+	bool operator== (const cPlayerColor& other) const;
+	bool operator!= (const cPlayerColor& other) const;
 private:
 	cRgbColor color;
 	AutoSurface texture;
 
-	void createTexture ();
+	void createTexture();
 };
 
 #endif // game_data_player_playercolorH

@@ -43,7 +43,7 @@ struct sID;
 class cLocalSingleplayerGameNew : public cLocalSingleplayerGame
 {
 public:
-	cLocalSingleplayerGameNew ();
+	cLocalSingleplayerGameNew();
 
 	void start (cApplication& application);
 
@@ -59,7 +59,7 @@ public:
 
 	void setLandingPosition (const cPosition& landingPosition);
 
-	cPlayerBasicData createPlayer ();
+	cPlayerBasicData createPlayer();
 private:
 	cSignalConnectionManager signalConnectionManager;
 

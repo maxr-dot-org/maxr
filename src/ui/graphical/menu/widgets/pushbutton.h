@@ -86,8 +86,8 @@ public:
 	virtual bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 	virtual bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 
-	void lock ();
-	void unlock ();
+	void lock();
+	void unlock();
 
 	cSignal<void ()> clicked;
 protected:
@@ -106,10 +106,10 @@ private:
 
 	bool isLocked;
 
-	void renewSurface ();
+	void renewSurface();
 
-	int getBordersSize () const;
-	int getTextYOffset () const;
+	int getBordersSize() const;
+	int getTextYOffset() const;
 };
 
 #endif // ui_graphical_menu_widgets_pushbuttonH

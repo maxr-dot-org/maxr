@@ -41,7 +41,7 @@ public:
 	 * If one of the signals of the signal connections involved in the comparison
 	 * does not live anymore this function will always return false.
 	 */
-	bool operator==(const cSignalConnection& other) const;
+	bool operator== (const cSignalConnection& other) const;
 
 	/**
 	 * Disconnects the connection in the signal that created this connection.
@@ -49,7 +49,7 @@ public:
 	 * If the signal that created this connection is not alive anymore this function just
 	 * does nothing.
 	 */
-	void disconnect ();
+	void disconnect();
 private:
 	cSignalConnection (unsigned long long identifier_, std::weak_ptr<cSignalReference>& signalReference);
 

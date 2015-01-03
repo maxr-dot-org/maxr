@@ -30,28 +30,28 @@
 //------------------------------------------------------------------------------
 bool cMouseActionSelect::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
 {
-	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
-	const auto selectedBuilding = unitSelection.getSelectedBuilding ();
+	const auto selectedVehicle = unitSelection.getSelectedVehicle();
+	const auto selectedBuilding = unitSelection.getSelectedBuilding();
 
 	const auto& field = map.getField (mapPosition);
 
-	const auto overVehicle = field.getVehicle ();
-	const auto overBuilding = field.getBuilding ();
-	const auto overBaseBuilding = field.getBaseBuilding ();
+	const auto overVehicle = field.getVehicle();
+	const auto overBuilding = field.getBuilding();
+	const auto overBaseBuilding = field.getBaseBuilding();
 
-	if (KeysList.getMouseStyle () == eMouseStyle::OldSchool && unitSelection.selectUnitAt (field, false))
+	if (KeysList.getMouseStyle() == eMouseStyle::OldSchool && unitSelection.selectUnitAt (field, false))
 	{
 		/*do nothing here*/
 	}
-	else if (KeysList.getMouseStyle () == eMouseStyle::Modern &&
-		(
-			!changeAllowed ||
-			(
-				(!selectedVehicle || (!Contains (field.getPlanes (), selectedVehicle) && selectedVehicle != overVehicle)) &&
-				(!selectedBuilding || (overBaseBuilding != selectedBuilding && overBuilding != selectedBuilding))
-			)
-		) &&
-		unitSelection.selectUnitAt (field, true))
+	else if (KeysList.getMouseStyle() == eMouseStyle::Modern &&
+			 (
+				 !changeAllowed ||
+				 (
+					 (!selectedVehicle || (!Contains (field.getPlanes(), selectedVehicle) && selectedVehicle != overVehicle)) &&
+					 (!selectedBuilding || (overBaseBuilding != selectedBuilding && overBuilding != selectedBuilding))
+				 )
+			 ) &&
+			 unitSelection.selectUnitAt (field, true))
 	{
 		/*do nothing here*/
 	}
@@ -63,13 +63,13 @@ bool cMouseActionSelect::executeLeftClick (cGameMapWidget& gameMapWidget, const 
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionSelect::doesChangeState () const
+bool cMouseActionSelect::doesChangeState() const
 {
 	return false;
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionSelect::isSingleAction () const
+bool cMouseActionSelect::isSingleAction() const
 {
 	return false;
 }

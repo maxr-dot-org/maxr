@@ -27,7 +27,7 @@ class cUnitListViewItemBuild : public cUnitListViewItem
 public:
 	cUnitListViewItemBuild (unsigned int width, const sID& unitId, const cPlayer& owner);
 
-	int getRemainingMetal () const;
+	int getRemainingMetal() const;
 	void setRemainingMetal (int remainingMetal);
 private:
 	int remainingMetal;

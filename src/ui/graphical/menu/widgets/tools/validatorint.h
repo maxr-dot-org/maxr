@@ -26,7 +26,7 @@
 class cValidatorInt : public cValidator
 {
 public:
-	cValidatorInt ();
+	cValidatorInt();
 	cValidatorInt (int minValue, int maxValue);
 
 	virtual eValidatorState validate (const std::string& text) const MAXR_OVERRIDE_FUNCTION;

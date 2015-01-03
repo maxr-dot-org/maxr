@@ -35,22 +35,22 @@ class cSoundChannel;
 class cSoundDevice
 {
 public:
-	cSoundDevice ();
+	cSoundDevice();
 
-	static cSoundDevice& getInstance ();
+	static cSoundDevice& getInstance();
 
 	void initialize (int frequency, int chunkSize);
-	void close ();
+	void close();
 
-	cSoundChannel* getFreeSoundEffectChannel ();
-	cSoundChannel* getFreeVoiceChannel ();
+	cSoundChannel* getFreeSoundEffectChannel();
+	cSoundChannel* getFreeVoiceChannel();
 
 	bool playSoundEffect (const cSoundChunk& chunk);
 	bool playVoice (const cSoundChunk& chunk);
 
 	void startMusic (const std::string& fileName);
-	void startRandomMusic ();
-	void stopMusic ();
+	void startRandomMusic();
+	void stopMusic();
 
 	void setSoundEffectVolume (int volume);
 	void setVoiceVolume (int volume);
@@ -64,7 +64,7 @@ private:
 
 	struct SdlMixMusikDeleter
 	{
-		void operator()(Mix_Music*) const;
+		void operator() (Mix_Music*) const;
 	};
 
 	typedef std::unique_ptr<Mix_Music, SdlMixMusikDeleter> SaveSdlMixMusicPointer;

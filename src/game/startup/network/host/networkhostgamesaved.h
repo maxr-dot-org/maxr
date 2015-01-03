@@ -37,15 +37,15 @@ public:
 
 	void setSaveGameNumber (int saveGameNumber);
 
-    void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
+	void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
 
-    const std::vector<cPlayerBasicData>& getPlayers ();
-    const cPlayerBasicData& getLocalPlayer ();
+	const std::vector<cPlayerBasicData>& getPlayers();
+	const cPlayerBasicData& getLocalPlayer();
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-    size_t localPlayerIndex;
-    std::vector<cPlayerBasicData> players;
+	size_t localPlayerIndex;
+	std::vector<cPlayerBasicData> players;
 
 	int saveGameNumber;
 };

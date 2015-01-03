@@ -66,20 +66,20 @@ public:
 	typedef typename DataType::reverse_iterator reverse_iterator;
 	typedef typename DataType::const_reverse_iterator const_reverse_iterator;
 
-	cFlatSet () :
-		compare (),
-		data ()
+	cFlatSet() :
+		compare(),
+		data()
 	{}
-	explicit cFlatSet (const Compare& comp, const allocator_type& alloc = allocator_type ()) :
+	explicit cFlatSet (const Compare& comp, const allocator_type& alloc = allocator_type()) :
 		compare (comp),
 		data (alloc)
 	{}
 	template<typename InputIterator>
-	cFlatSet (InputIterator first, InputIterator last, const Compare& comp = Compare (), const allocator_type& alloc = allocator_type ()) :
+	cFlatSet (InputIterator first, InputIterator last, const Compare& comp = Compare(), const allocator_type& alloc = allocator_type()) :
 		compare (comp),
 		data (first, last, alloc)
 	{
-		std::sort (begin (), end (), compare);
+		std::sort (begin(), end(), compare);
 	}
 	cFlatSet (const cFlatSet& other) :
 		compare (other.compare),
@@ -93,42 +93,42 @@ public:
 	//cFlatSet (cFlatSet&& other, const allocator_type& alloc);
 	//cFlatSet (std::initializer_list<value_type> init, const Compare& comp = Compare (), const allocator_type& alloc = allocator_type ());
 
-	cFlatSet& operator=(const cFlatSet& other)
+	cFlatSet& operator= (const cFlatSet& other)
 	{
 		cFlatSet (other).swap (*this);
 		return *this;
 	}
-	cFlatSet& operator=(cFlatSet&& other)
+	cFlatSet& operator= (cFlatSet && other)
 	{
 		data = std::move (other.data);
 		compare = std::move (other.compare);
 		return *this;
 	}
 
-	allocator_type get_allocator () const { return data.get_allocator (); }
+	allocator_type get_allocator() const { return data.get_allocator(); }
 
 	// iterators
-	iterator begin () { return data.begin (); }
-	const_iterator begin () const { return data.begin (); }
-	iterator end () { return data.end (); }
-	const_iterator end () const { return data.end (); }
-	const_iterator cbegin () const { return data.cbegin (); }
-	const_iterator cend () const { return data.cend (); }
+	iterator begin() { return data.begin(); }
+	const_iterator begin() const { return data.begin(); }
+	iterator end() { return data.end(); }
+	const_iterator end() const { return data.end(); }
+	const_iterator cbegin() const { return data.cbegin(); }
+	const_iterator cend() const { return data.cend(); }
 
-	reverse_iterator rbegin () { return data.rbegin (); }
-	const_reverse_iterator rbegin () const { return data.rbegin (); }
-	reverse_iterator rend () { return data.rend (); }
-	const_reverse_iterator rend () const { return data.rend (); }
-	const_reverse_iterator crbegin () const { return data.crbegin (); }
-	const_reverse_iterator crend () const { return data.crend (); }
+	reverse_iterator rbegin() { return data.rbegin(); }
+	const_reverse_iterator rbegin() const { return data.rbegin(); }
+	reverse_iterator rend() { return data.rend(); }
+	const_reverse_iterator rend() const { return data.rend(); }
+	const_reverse_iterator crbegin() const { return data.crbegin(); }
+	const_reverse_iterator crend() const { return data.crend(); }
 
 	// capacity
-	bool empty () const { return data.empty (); }
-	size_type size () const { return data.size (); }
-	size_type max_size () const { return data.max_size (); }
-	size_type capacity () const { return data.capacity (); }
+	bool empty() const { return data.empty(); }
+	size_type size() const { return data.size(); }
+	size_type max_size() const { return data.max_size(); }
+	size_type capacity() const { return data.capacity(); }
 	void reserve (size_type cap) { data.reserve (cap); }
-	void shrink_to_fit () { data.shrink_to_fit (); }
+	void shrink_to_fit() { data.shrink_to_fit(); }
 
 	// modifiers
 	std::pair<iterator, bool> insert (const value_type& value)
@@ -136,7 +136,7 @@ public:
 		bool found = true;
 		auto i = lower_bound (value);
 
-		if (i == end () || compare (value, *i))
+		if (i == end() || compare (value, *i))
 		{
 			i = data.insert (i, value);
 			found = false;
@@ -148,16 +148,16 @@ public:
 		bool found = true;
 		auto i = lower_bound (value);
 
-		if (i == end () || compare (value, *i))
+		if (i == end() || compare (value, *i))
 		{
-			i = data.insert (i, std::move(value));
+			i = data.insert (i, std::move (value));
 			found = false;
 		}
 		return std::make_pair (i, !found);
 	}
 	iterator insert (const_iterator hint, const value_type& value)
 	{
-		if ((hint == begin () || compare (*(hint-1), value)) && (hint == end () || compare (value, hint)))
+		if ((hint == begin() || compare (* (hint - 1), value)) && (hint == end() || compare (value, hint)))
 		{
 			return data.insert (hint, value);
 		}
@@ -165,11 +165,11 @@ public:
 	}
 	iterator insert (const_iterator hint, value_type&& value)
 	{
-		if ((hint == begin () || compare (*(hint-1), value)) && (hint == end () || compare (value, hint)))
+		if ((hint == begin() || compare (* (hint - 1), value)) && (hint == end() || compare (value, hint)))
 		{
-			return data.insert (hint, std::move(value));
+			return data.insert (hint, std::move (value));
 		}
-		return insert (std::move(value)).first;
+		return insert (std::move (value)).first;
 	}
 	template<typename InputIterator>
 	void insert (InputIterator first, InputIterator last)
@@ -184,7 +184,7 @@ public:
 	size_type erase (const key_type& x)
 	{
 		auto i = find (x);
-		if (i == end ()) return 0;
+		if (i == end()) return 0;
 		erase (i);
 		return 1;
 	}
@@ -196,29 +196,29 @@ public:
 		std::swap (compare, other.compare);
 	}
 
-	void clear () { data.clear (); }
+	void clear() { data.clear(); }
 
 	// observers
-	key_compare key_comp () const { return compare; }
+	key_compare key_comp() const { return compare; }
 
-	value_compare value_comp () const { return compare; }
+	value_compare value_comp() const { return compare; }
 
 	// lookup
 	iterator find (const key_type& k)
 	{
 		auto i  = lower_bound (k);
-		if (i != end () && compare (k, *i))
+		if (i != end() && compare (k, *i))
 		{
-			i = end ();
+			i = end();
 		}
 		return i;
 	}
 	const_iterator find (const key_type& k) const
 	{
 		auto i = lower_bound (k);
-		if (i != end () && compare (k, *i))
+		if (i != end() && compare (k, *i))
 		{
-			i = end ();
+			i = end();
 		}
 		return i;
 	}
@@ -226,9 +226,9 @@ public:
 	iterator find (const K& k)
 	{
 		auto i = lower_bound (k);
-		if (i != end () && compare (k, *i))
+		if (i != end() && compare (k, *i))
 		{
-			i = end ();
+			i = end();
 		}
 		return i;
 	}
@@ -236,68 +236,68 @@ public:
 	const_iterator find (const K& k) const
 	{
 		auto i = lower_bound (k);
-		if (i != end () && compare (k, *i))
+		if (i != end() && compare (k, *i))
 		{
-			i = end ();
+			i = end();
 		}
 		return i;
 	}
-	
+
 	size_type count (const key_type& k) const
 	{
-		return find (k) != end () ? 1 : 0;
+		return find (k) != end() ? 1 : 0;
 	}
 	template<typename K>
 	size_type count (const K& k) const
 	{
-		return find (k) != end () ? 1 : 0;
+		return find (k) != end() ? 1 : 0;
 	}
 
 	iterator lower_bound (const key_type& k)
 	{
-		return std::lower_bound (begin (), end (), k, compare);
+		return std::lower_bound (begin(), end(), k, compare);
 	}
 	const_iterator lower_bound (const key_type& k) const
 	{
-		return std::lower_bound (begin (), end (), k, compare);
+		return std::lower_bound (begin(), end(), k, compare);
 	}
 	template<typename K>
 	iterator lower_bound (const K& k)
 	{
-		return std::lower_bound (begin (), end (), k, compare);
+		return std::lower_bound (begin(), end(), k, compare);
 	}
 	template<typename K>
 	const_iterator lower_bound (const K& k) const
 	{
-		return std::lower_bound (begin (), end (), k, compare);
+		return std::lower_bound (begin(), end(), k, compare);
 	}
 
 	iterator upper_bound (const key_type& k)
 	{
-		return std::upper_bound (begin (), end (), k, compare);
+		return std::upper_bound (begin(), end(), k, compare);
 	}
 	const_iterator upper_bound (const key_type& k) const
 	{
-		return std::upper_bound (begin (), end (), k, compare);
+		return std::upper_bound (begin(), end(), k, compare);
 	}
 	template<typename K>
 	iterator upper_bound (const K& k)
 	{
-		return std::upper_bound (begin (), end (), k, compare);
+		return std::upper_bound (begin(), end(), k, compare);
 	}
 	template<typename K>
 	const_iterator upper_bound (const K& k) const
 	{
-		return std::upper_bound (begin (), end (), k, compare);
+		return std::upper_bound (begin(), end(), k, compare);
 	}
 
 	std::pair<iterator, iterator> equal_range (const key_type& k)
 	{
-		return std::equal_range (begin (), end (), k, compare);
+		return std::equal_range (begin(), end(), k, compare);
 	}
 	std::pair<const_iterator, const_iterator> equal_range (const key_type& k) const
 	{
-		return std::equal_range (begin (), end (), k, compare);
+		return std::equal_range (begin(), end(), k, compare);
 	}
 
 private:

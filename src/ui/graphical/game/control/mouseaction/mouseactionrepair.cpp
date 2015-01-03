@@ -29,21 +29,21 @@
 //------------------------------------------------------------------------------
 bool cMouseActionRepair::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
 {
-	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
+	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 
 	if (!selectedVehicle) return false;
 
 	const auto& field = map.getField (mapPosition);
 
-	const auto overVehicle = field.getVehicle ();
-	const auto overPlane = field.getPlane ();
-	const auto overBuilding = field.getBuilding ();
+	const auto overVehicle = field.getVehicle();
+	const auto overPlane = field.getPlane();
+	const auto overBuilding = field.getBuilding();
 
 	if (overVehicle)
 	{
 		gameMapWidget.triggeredRepair (*selectedVehicle, *overVehicle);
 	}
-	else if (overPlane && overPlane->getFlightHeight () == 0)
+	else if (overPlane && overPlane->getFlightHeight() == 0)
 	{
 		gameMapWidget.triggeredRepair (*selectedVehicle, *overPlane);
 	}
@@ -56,13 +56,13 @@ bool cMouseActionRepair::executeLeftClick (cGameMapWidget& gameMapWidget, const 
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionRepair::doesChangeState () const
+bool cMouseActionRepair::doesChangeState() const
 {
 	return true;
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionRepair::isSingleAction () const
+bool cMouseActionRepair::isSingleAction() const
 {
 	return false;
 }

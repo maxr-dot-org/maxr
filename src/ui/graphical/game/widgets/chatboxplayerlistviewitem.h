@@ -36,9 +36,9 @@ class cChatBoxPlayerListViewItem : public cAbstractListViewItem
 public:
 	explicit cChatBoxPlayerListViewItem (const cPlayer& player);
 
-	const cPlayer& getPlayer () const;
+	const cPlayer& getPlayer() const;
 
-	int getPlayerNumber () const;
+	int getPlayerNumber() const;
 
 	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
 private:
@@ -50,9 +50,9 @@ private:
 
 	const cPlayer* player;
 
-	void updatePlayerName ();
-	void updatePlayerColor ();
-	void updatePlayerFinishedTurn ();
+	void updatePlayerName();
+	void updatePlayerColor();
+	void updatePlayerFinishedTurn();
 };
 
 #endif // ui_graphical_menu_widgets_special_lobbyplayerlistviewitemH

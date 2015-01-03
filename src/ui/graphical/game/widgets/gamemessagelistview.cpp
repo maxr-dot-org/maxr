@@ -39,18 +39,18 @@ void cGameMessageListView::addMessage (const std::string& message, eGameMessageL
 }
 
 //------------------------------------------------------------------------------
-void cGameMessageListView::removeOldMessages ()
+void cGameMessageListView::removeOldMessages()
 {
-	while (listView->getItemsCount () > 0 && (std::chrono::steady_clock::now () - listView->getItem (0).getCreationTime ()) >= maximalDisplayTime)
+	while (listView->getItemsCount() > 0 && (std::chrono::steady_clock::now() - listView->getItem (0).getCreationTime()) >= maximalDisplayTime)
 	{
 		listView->removeItem (listView->getItem (0));
 	}
 }
 
 //------------------------------------------------------------------------------
-void cGameMessageListView::clear ()
+void cGameMessageListView::clear()
 {
-	listView->clearItems ();
+	listView->clearItems();
 }
 
 //------------------------------------------------------------------------------
@@ -64,5 +64,5 @@ void cGameMessageListView::handleResized (const cPosition& oldSize)
 {
 	cWidget::handleResized (oldSize);
 
-	listView->setArea (getArea ());
+	listView->setArea (getArea());
 }

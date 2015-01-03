@@ -32,10 +32,10 @@ public:
 	explicit cKeyCombination (const std::string& sequence);
 	cKeyCombination (KeyModifierFlags modifiers, SDL_Keycode key);
 
-	std::string toString () const;
+	std::string toString() const;
 
-	bool operator==(const cKeyCombination& other) const;
-	bool operator!=(const cKeyCombination& other) const;
+	bool operator== (const cKeyCombination& other) const;
+	bool operator!= (const cKeyCombination& other) const;
 
 	static bool isRepresentableKey (SDL_Keycode key);
 private:

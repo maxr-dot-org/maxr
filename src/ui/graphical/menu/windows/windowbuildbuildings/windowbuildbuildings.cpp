@@ -35,45 +35,45 @@ cWindowBuildBuildings::cWindowBuildBuildings (const cVehicle& vehicle_, std::sha
 	cWindowHangar (LoadPCX (GFXOD_BUILD_SCREEN), *vehicle_.getOwner()),
 	vehicle (vehicle_)
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (328, 12), getPosition () + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Vehicle"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Vehicle"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 	auto turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (523, 16), cPosition (523 + 65, 16 + 10))));
 	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
 
-	speedHandler = addChild (std::make_unique<cBuildSpeedHandlerWidget> (getPosition () + cPosition (292, 345)));
+	speedHandler = addChild (std::make_unique<cBuildSpeedHandlerWidget> (getPosition() + cPosition (292, 345)));
 
-	selectionUnitList->resize (cPosition(154,380));
+	selectionUnitList->resize (cPosition (154, 380));
 	selectionUnitList->setItemDistance (2);
 
-	selectionListUpButton->moveTo (getPosition () + cPosition (471, 440));
-	selectionListDownButton->moveTo (getPosition () + cPosition (491, 440));
+	selectionListUpButton->moveTo (getPosition() + cPosition (471, 440));
+	selectionListDownButton->moveTo (getPosition() + cPosition (491, 440));
 
-	backButton->moveTo (getPosition () + cPosition (300, 452));
-	okButton->moveTo (getPosition () + cPosition (387, 452));
+	backButton->moveTo (getPosition() + cPosition (300, 452));
+	okButton->moveTo (getPosition() + cPosition (387, 452));
 
 	if (vehicle.data.canBuildPath)
 	{
-		auto pathButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (338, 428), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Path"), FONT_LATIN_NORMAL));
-		signalConnectionManager.connect (pathButton->clicked, [&](){ donePath (); });
+		auto pathButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (338, 428), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Path"), FONT_LATIN_NORMAL));
+		signalConnectionManager.connect (pathButton->clicked, [&]() { donePath(); });
 	}
 
 	generateSelectionList (vehicle);
 
-	signalConnectionManager.connect (selectionUnitClickedSecondTime, [&](const cUnitListViewItemBuy&){ done (); });
+	signalConnectionManager.connect (selectionUnitClickedSecondTime, [&] (const cUnitListViewItemBuy&) { done(); });
 
 	signalConnectionManager.connect (vehicle.destroyed, std::bind (&cWindowBuildBuildings::closeOnUnitDestruction, this));
 }
 
 //------------------------------------------------------------------------------
-const sID* cWindowBuildBuildings::getSelectedUnitId () const
+const sID* cWindowBuildBuildings::getSelectedUnitId() const
 {
-	return getActiveUnit ();
+	return getActiveUnit();
 }
 
 //------------------------------------------------------------------------------
-int cWindowBuildBuildings::getSelectedBuildSpeed () const
+int cWindowBuildBuildings::getSelectedBuildSpeed() const
 {
-	return static_cast<int>(speedHandler->getBuildSpeedIndex ());
+	return static_cast<int> (speedHandler->getBuildSpeedIndex());
 }
 
 //------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ void cWindowBuildBuildings::setActiveUnit (const sID& unitId)
 {
 	cWindowHangar::setActiveUnit (unitId);
 
-	const auto& buildingData = *vehicle.getOwner ()->getUnitDataCurrentVersion (unitId);
+	const auto& buildingData = *vehicle.getOwner()->getUnitDataCurrentVersion (unitId);
 	std::array<int, 3> turns;
 	std::array<int, 3> costs;
 	vehicle.calcTurboBuild (turns, costs, buildingData.buildCosts);
@@ -93,7 +93,7 @@ void cWindowBuildBuildings::setActiveUnit (const sID& unitId)
 void cWindowBuildBuildings::generateSelectionList (const cVehicle& vehicle)
 {
 	bool select = true;
-	for (unsigned int i = 0; i < UnitsData.getNrBuildings (); ++i)
+	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); ++i)
 	{
 		if (UnitsData.sbuildings[i].explodesOnContact) continue;
 
@@ -107,15 +107,15 @@ void cWindowBuildBuildings::generateSelectionList (const cVehicle& vehicle)
 			select = false;
 		}
 
-		if (vehicle.data.getStoredResources () < vehicle.getOwner ()->BuildingData[i].buildCosts) item.markAsInsufficient ();
+		if (vehicle.data.getStoredResources() < vehicle.getOwner()->BuildingData[i].buildCosts) item.markAsInsufficient();
 	}
 }
 
 //------------------------------------------------------------------------------
-void cWindowBuildBuildings::closeOnUnitDestruction ()
+void cWindowBuildBuildings::closeOnUnitDestruction()
 {
-	close ();
-	auto application = getActiveApplication ();
+	close();
+	auto application = getActiveApplication();
 	if (application)
 	{
 		application->show (std::make_shared<cDialogOk> ("Unit destroyed!")); // TODO: translate

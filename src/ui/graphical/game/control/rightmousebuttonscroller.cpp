@@ -28,44 +28,44 @@
 #include "utility/drawing.h"
 
 const double cRightMouseButtonScrollerWidget::factor = 0.05;
-const double cRightMouseButtonScrollerWidget::minDistanceSquared = 15*15;
+const double cRightMouseButtonScrollerWidget::minDistanceSquared = 15 * 15;
 
 //------------------------------------------------------------------------------
 cRightMouseButtonScrollerWidget::cRightMouseButtonScrollerWidget (std::shared_ptr<cAnimationTimer> animationTimer_) :
-	cWidget (cBox<cPosition>(cPosition(0,0), cPosition(Video.getResolutionX(), Video.getResolutionY()))),
+	cWidget (cBox<cPosition> (cPosition (0, 0), cPosition (Video.getResolutionX(), Video.getResolutionY()))),
 	animationTimer (animationTimer_),
 	hasStartedScrolling (false)
 {
 	signalConnectionManager.connect (Video.resolutionChanged, [this]()
 	{
-		resize (cPosition (Video.getResolutionX (), Video.getResolutionY ()));
+		resize (cPosition (Video.getResolutionX(), Video.getResolutionY()));
 	});
 
-    // TODO: read nice image from file
-	AutoSurface image (SDL_CreateRGBSurface (0, 18, 18, Video.getColDepth (), 0, 0, 0, 0));
-    SDL_FillRect (image.get (), nullptr, 0xFF00FF);
-    SDL_SetColorKey (image.get (), SDL_TRUE, 0xFF00FF);
-    const cPosition middle (image->w / 2, image->h / 2);
-    for (int x = 0; x < image->w; ++x)
-    {
-        for (int y = 0; y < image->h; ++y)
-        {
-            const cPosition p (x, y);
-            const auto distance = (p - middle).l2NormSquared ();
-            if (distance < (9*9) && distance > (3*3))
-            {
-                const auto colorValue = 30 + std::abs(distance-(6*6));
-                drawPoint (image.get (), p, cRgbColor (colorValue, colorValue, colorValue));
-            }
-        }
-    }
+	// TODO: read nice image from file
+	AutoSurface image (SDL_CreateRGBSurface (0, 18, 18, Video.getColDepth(), 0, 0, 0, 0));
+	SDL_FillRect (image.get(), nullptr, 0xFF00FF);
+	SDL_SetColorKey (image.get(), SDL_TRUE, 0xFF00FF);
+	const cPosition middle (image->w / 2, image->h / 2);
+	for (int x = 0; x < image->w; ++x)
+	{
+		for (int y = 0; y < image->h; ++y)
+		{
+			const cPosition p (x, y);
+			const auto distance = (p - middle).l2NormSquared();
+			if (distance < (9 * 9) && distance > (3 * 3))
+			{
+				const auto colorValue = 30 + std::abs (distance - (6 * 6));
+				drawPoint (image.get(), p, cRgbColor (colorValue, colorValue, colorValue));
+			}
+		}
+	}
 
-	startIndicator = addChild (std::make_unique<cImage> (cPosition(0,0), image.get()));
-	startIndicator->disable ();
+	startIndicator = addChild (std::make_unique<cImage> (cPosition (0, 0), image.get()));
+	startIndicator->disable();
 }
 
 //------------------------------------------------------------------------------
-bool cRightMouseButtonScrollerWidget::isScrolling () const
+bool cRightMouseButtonScrollerWidget::isScrolling() const
 {
 	return hasStartedScrolling;
 }
@@ -77,10 +77,10 @@ bool cRightMouseButtonScrollerWidget::handleMouseMoved (cApplication& applicatio
 	{
 		const cPosition offset = getCursorCenter (mouse) - startPosition;
 
-		const cPosition scaledOffset (static_cast<int>(offset.x () * factor), static_cast<int>(offset.y () * factor));
+		const cPosition scaledOffset (static_cast<int> (offset.x() * factor), static_cast<int> (offset.y() * factor));
 
 		auto degrees = std::atan2 (offset.y(), offset.x());
-		if (degrees < 0) degrees += M_PI*2.0;
+		if (degrees < 0) degrees += M_PI * 2.0;
 		degrees = (degrees * 180) / M_PI;
 
 		if ((degrees >= 0 && degrees <= 20) || degrees > 350) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowRight));
@@ -102,30 +102,30 @@ bool cRightMouseButtonScrollerWidget::handleMousePressed (cApplication& applicat
 {
 	if (button == eMouseButtonType::Right && !mouse.isButtonPressed (eMouseButtonType::Left) && !hasStartedScrolling)
 	{
-		startPosition = getCursorCenter(mouse);
+		startPosition = getCursorCenter (mouse);
 		animationTimerSignalConnectionManager.connect (animationTimer->triggered10msCatchUp, [this, &mouse, &application]()
 		{
 			if (!mouse.isButtonPressed (eMouseButtonType::Right) || mouse.isButtonPressed (eMouseButtonType::Left))
 			{
-				animationTimerSignalConnectionManager.disconnectAll ();
+				animationTimerSignalConnectionManager.disconnectAll();
 			}
 
 			const cPosition offset = getCursorCenter (mouse) - startPosition;
 
-			if (offset.l2NormSquared () > minDistanceSquared)
+			if (offset.l2NormSquared() > minDistanceSquared)
 			{
 				if (!hasStartedScrolling)
 				{
 					hasStartedScrolling = true;
 					application.grapMouseFocus (*this);
-					startIndicator->moveTo (startPosition - startIndicator->getSize () / 2);
-					startIndicator->show ();
-					startedScrolling ();
+					startIndicator->moveTo (startPosition - startIndicator->getSize() / 2);
+					startIndicator->show();
+					startedScrolling();
 				}
 
 				if (hasStartedScrolling)
 				{
-					const cPosition scaledOffset (static_cast<int>(offset.x () * factor), static_cast<int>(offset.y () * factor));
+					const cPosition scaledOffset (static_cast<int> (offset.x() * factor), static_cast<int> (offset.y() * factor));
 
 					scroll (scaledOffset);
 				}
@@ -138,13 +138,13 @@ bool cRightMouseButtonScrollerWidget::handleMousePressed (cApplication& applicat
 //------------------------------------------------------------------------------
 bool cRightMouseButtonScrollerWidget::handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
-	animationTimerSignalConnectionManager.disconnectAll ();
+	animationTimerSignalConnectionManager.disconnectAll();
 	if (hasStartedScrolling && button == eMouseButtonType::Right && !mouse.isButtonPressed (eMouseButtonType::Left))
 	{
 		application.releaseMouseFocus (*this);
 		hasStartedScrolling = false;
-		startIndicator->hide ();
-		stoppedScrolling ();
+		startIndicator->hide();
+		stoppedScrolling();
 		return true;
 	}
 	return false;
@@ -153,18 +153,18 @@ bool cRightMouseButtonScrollerWidget::handleMouseReleased (cApplication& applica
 //------------------------------------------------------------------------------
 void cRightMouseButtonScrollerWidget::handleLooseMouseFocus (cApplication& application)
 {
-	mouseFocusReleased ();
+	mouseFocusReleased();
 }
 
 //------------------------------------------------------------------------------
 cPosition cRightMouseButtonScrollerWidget::getCursorCenter (cMouse& mouse) const
 {
-	auto position = mouse.getPosition ();
-	const auto cursor = mouse.getCursor ();
+	auto position = mouse.getPosition();
+	const auto cursor = mouse.getCursor();
 	if (cursor)
 	{
-		position -= cursor->getHotPoint ();
-		const auto cursorSurface = cursor->getSurface ();
+		position -= cursor->getHotPoint();
+		const auto cursorSurface = cursor->getSurface();
 		if (cursorSurface)
 		{
 			position += cPosition (cursorSurface->w / 2, cursorSurface->h / 2);

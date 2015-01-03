@@ -42,8 +42,8 @@ class cWindowHangar : public cWindow
 {
 public:
 	cWindowHangar (AutoSurface surface, cPlayerColor playerColor, int playerClan);
-    cWindowHangar (AutoSurface surface, const cPlayer& player);
-	~cWindowHangar ();
+	cWindowHangar (AutoSurface surface, const cPlayer& player);
+	~cWindowHangar();
 
 	cSignal<void ()> done;
 	cSignal<void ()> canceled;
@@ -51,15 +51,15 @@ protected:
 	cUnitListViewItemBuy& addSelectionUnit (const sID& unitId);
 	void setSelectedSelectionItem (const cUnitListViewItemBuy& item);
 
-	void clearSelectionUnits ();
+	void clearSelectionUnits();
 
-	const cPlayer& getPlayer () const;
+	const cPlayer& getPlayer() const;
 
 	void setActiveUpgrades (const cUnitUpgrade& unitUpgrades);
 
 	virtual void setActiveUnit (const sID& unitId);
 
-	const sID* getActiveUnit () const;
+	const sID* getActiveUnit() const;
 
 	// TODO: the following widgets should be private instead.
 	// They are protect at the moment because some inheriting windows need to move/resize the widgets.
@@ -86,16 +86,16 @@ private:
 
 	cCheckBox* infoTextCheckBox;
 
-	void initialize ();
+	void initialize();
 
-	void infoCheckBoxToggled ();
+	void infoCheckBoxToggled();
 
 	void selectionUnitClicked (cUnitListViewItemBuy& unitItem);
 
-	void okClicked ();
-	void backClicked ();
+	void okClicked();
+	void backClicked();
 
-	void handleSelectionChanged ();
+	void handleSelectionChanged();
 };
 
 #endif // ui_graphical_menu_windows_windowhangar_windowhangarH

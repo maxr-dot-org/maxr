@@ -87,19 +87,19 @@ enum class eSavedReportType
 class cSavedReport
 {
 public:
-	virtual ~cSavedReport () {}
+	virtual ~cSavedReport() {}
 
-	virtual eSavedReportType getType () const = 0;
+	virtual eSavedReportType getType() const = 0;
 
-	virtual std::string getMessage () const = 0;
+	virtual std::string getMessage() const = 0;
 
-	virtual bool isAlert () const = 0;
+	virtual bool isAlert() const = 0;
 
-	virtual bool hasUnitId () const;
-	virtual const sID& getUnitId () const;
+	virtual bool hasUnitId() const;
+	virtual const sID& getUnitId() const;
 
-	virtual bool hasPosition () const;
-	virtual const cPosition& getPosition () const;
+	virtual bool hasPosition() const;
+	virtual const cPosition& getPosition() const;
 
 	virtual void playSound (cSoundManager& soundManager) const;
 

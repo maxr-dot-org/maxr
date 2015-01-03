@@ -25,7 +25,7 @@
 class cFrame : public cWidget
 {
 public:
-	cFrame ();
+	cFrame();
 	explicit cFrame (const cBox<cPosition>& area);
 
 	template<typename WidgetType>

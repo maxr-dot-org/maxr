@@ -28,13 +28,13 @@ class cDialogOk : public cWindow
 {
 public:
 	explicit cDialogOk (const std::string& text, eWindowBackgrounds backgroundType = eWindowBackgrounds::Alpha);
-	~cDialogOk ();
+	~cDialogOk();
 
 	cSignal<void ()> done;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	void okClicked ();
+	void okClicked();
 };
 
 #endif // ui_graphical_menu_dialogs_dialogokH

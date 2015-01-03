@@ -43,7 +43,7 @@
 //------------------------------------------------------------------------------
 cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> staticMap_, bool withChatBox) :
 	cWindow (nullptr),
-	staticMap (std::move(staticMap_)),
+	staticMap (std::move (staticMap_)),
 	animationTimer (std::make_shared<cAnimationTimer> ()),
 	selectionAllowed (true),
 	reselectionState (eLandingPositionState::Unknown),
@@ -51,42 +51,42 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_pt
 {
 	using namespace std::placeholders;
 
-    auto hudImageOwned = std::make_unique<cImage> (cPosition (0, 0), createHudSurface ().get ());
-	hudImageOwned->disableAtTransparent ();
+	auto hudImageOwned = std::make_unique<cImage> (cPosition (0, 0), createHudSurface().get());
+	hudImageOwned->disableAtTransparent();
 
-	mapWidget = addChild (std::make_unique<cLandingPositionSelectionMap> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), hudImageOwned->getEndPosition () - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), staticMap));
+	mapWidget = addChild (std::make_unique<cLandingPositionSelectionMap> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), hudImageOwned->getEndPosition() - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), staticMap));
 	signalConnectionManager.connect (mapWidget->clickedTile, std::bind (&cWindowLandingPositionSelection::mapClicked, this, _1));
 
 	circlesImage = addChild (std::make_unique<cImage> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight)));
-	circlesImage->disable ();
+	circlesImage->disable();
 
 	auto hudImage = addChild (std::move (hudImageOwned));
 
-	backButton = addChild (std::make_unique<cPushButton> (cPosition (35, hudImage->getEndPosition ().y () - 40), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Back"), FONT_LATIN_NORMAL));
+	backButton = addChild (std::make_unique<cPushButton> (cPosition (35, hudImage->getEndPosition().y() - 40), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Back"), FONT_LATIN_NORMAL));
 	signalConnectionManager.connect (backButton->clicked, std::bind (&cWindowLandingPositionSelection::backClicked, this));
 
-	infoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), hudImage->getEndPosition () - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), "", FONT_LATIN_BIG, toEnumFlag (eAlignmentType::Center)));
+	infoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), hudImage->getEndPosition() - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), "", FONT_LATIN_BIG, toEnumFlag (eAlignmentType::Center)));
 	infoLabel->setWordWrap (true);
-	infoLabel->disable ();
+	infoLabel->disable();
 
 	if (withChatBox)
 	{
-		chatBox = addChild (std::make_unique<cChatBox<cLobbyChatBoxListViewItem, cChatBoxLandingPlayerListViewItem>> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, hudImage->getEndPosition ().y () - cHud::panelBottomHeight - 12 - 100), hudImage->getEndPosition () - cPosition (cHud::panelRightWidth + 4, cHud::panelBottomHeight + 12))));
+		chatBox = addChild (std::make_unique<cChatBox<cLobbyChatBoxListViewItem, cChatBoxLandingPlayerListViewItem>> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, hudImage->getEndPosition().y() - cHud::panelBottomHeight - 12 - 100), hudImage->getEndPosition() - cPosition (cHud::panelRightWidth + 4, cHud::panelBottomHeight + 12))));
 
 		// TODO: translate
-		auto toggleChatBoxButton = addChild (std::make_unique<cCheckBox> (cPosition (35, hudImage->getEndPosition ().y () - 65), "Chat", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
+		auto toggleChatBoxButton = addChild (std::make_unique<cCheckBox> (cPosition (35, hudImage->getEndPosition().y() - 65), "Chat", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
 		toggleChatBoxButton->setChecked (true);
 		signalConnectionManager.connect (toggleChatBoxButton->toggled, [this, toggleChatBoxButton]()
 		{
-			if (toggleChatBoxButton->isChecked ())
+			if (toggleChatBoxButton->isChecked())
 			{
-				chatBox->enable ();
-				chatBox->show ();
+				chatBox->enable();
+				chatBox->show();
 			}
 			else
 			{
-				chatBox->disable ();
-				chatBox->hide ();
+				chatBox->disable();
+				chatBox->hide();
 			}
 		});
 	}
@@ -95,17 +95,17 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_pt
 		chatBox = nullptr;
 	}
 
-	signalConnectionManager.connect (selectedPosition, [&](const cPosition& position){ lastSelectedPosition = position; });
+	signalConnectionManager.connect (selectedPosition, [&] (const cPosition & position) { lastSelectedPosition = position; });
 
-	resize (hudImage->getSize ());
+	resize (hudImage->getSize());
 }
 
 //------------------------------------------------------------------------------
-cWindowLandingPositionSelection::~cWindowLandingPositionSelection ()
+cWindowLandingPositionSelection::~cWindowLandingPositionSelection()
 {}
 
 //------------------------------------------------------------------------------
-const cPosition& cWindowLandingPositionSelection::getSelectedPosition () const
+const cPosition& cWindowLandingPositionSelection::getSelectedPosition() const
 {
 	return lastSelectedPosition;
 }
@@ -115,11 +115,11 @@ void cWindowLandingPositionSelection::applyReselectionState (eLandingPositionSta
 {
 	reselectionState = state;
 
-	if (state == eLandingPositionState::Clear || state == eLandingPositionState::Confirmed) lockBack ();
-	else unlockBack ();
+	if (state == eLandingPositionState::Clear || state == eLandingPositionState::Confirmed) lockBack();
+	else unlockBack();
 
-	if (state == eLandingPositionState::Warning || state == eLandingPositionState::TooClose) allowSelection ();
-	else disallowSelection ();
+	if (state == eLandingPositionState::Warning || state == eLandingPositionState::TooClose) allowSelection();
+	else disallowSelection();
 
 	if (state == eLandingPositionState::Warning) setInfoMessage (lngPack.i18n ("Text~Comp~Landing_Warning"));
 	else if (state == eLandingPositionState::TooClose) setInfoMessage (lngPack.i18n ("Text~Comp~Landing_Too_Close"));
@@ -133,54 +133,54 @@ void cWindowLandingPositionSelection::setInfoMessage (const std::string& message
 }
 
 //------------------------------------------------------------------------------
-cChatBox<cLobbyChatBoxListViewItem, cChatBoxLandingPlayerListViewItem>* cWindowLandingPositionSelection::getChatBox ()
+cChatBox<cLobbyChatBoxListViewItem, cChatBoxLandingPlayerListViewItem>* cWindowLandingPositionSelection::getChatBox()
 {
 	return chatBox;
 }
 
 //------------------------------------------------------------------------------
-void cWindowLandingPositionSelection::allowSelection ()
+void cWindowLandingPositionSelection::allowSelection()
 {
 	selectionAllowed = true;
-	auto application = getActiveApplication ();
-	auto mouse = getActiveMouse ();
+	auto application = getActiveApplication();
+	auto mouse = getActiveMouse();
 	if (application && mouse)
 	{
-		handleMouseMoved (*application, *mouse, mouse->getPosition ());
+		handleMouseMoved (*application, *mouse, mouse->getPosition());
 	}
 }
 
 //------------------------------------------------------------------------------
-void cWindowLandingPositionSelection::disallowSelection ()
+void cWindowLandingPositionSelection::disallowSelection()
 {
 	selectionAllowed = false;
-	auto application = getActiveApplication ();
-	auto mouse = getActiveMouse ();
+	auto application = getActiveApplication();
+	auto mouse = getActiveMouse();
 	if (application && mouse)
 	{
-		handleMouseMoved (*application, *mouse, mouse->getPosition ());
+		handleMouseMoved (*application, *mouse, mouse->getPosition());
 	}
 }
 
 //------------------------------------------------------------------------------
-void cWindowLandingPositionSelection::lockBack ()
+void cWindowLandingPositionSelection::lockBack()
 {
-	backButton->lock ();
+	backButton->lock();
 }
 
 //------------------------------------------------------------------------------
-void cWindowLandingPositionSelection::unlockBack ()
+void cWindowLandingPositionSelection::unlockBack()
 {
-	backButton->unlock ();
+	backButton->unlock();
 }
 
 //------------------------------------------------------------------------------
 void cWindowLandingPositionSelection::handleActivated (cApplication& application, bool firstTime)
 {
-	if (firstTime) cSoundDevice::getInstance ().playVoice (getRandom (VoiceData.VOILanding));
+	if (firstTime) cSoundDevice::getInstance().playVoice (getRandom (VoiceData.VOILanding));
 	application.addRunnable (animationTimer);
 	cWindow::handleActivated (application, firstTime);
-	if (firstTime) opened ();
+	if (firstTime) opened();
 }
 
 //------------------------------------------------------------------------------
@@ -188,13 +188,13 @@ void cWindowLandingPositionSelection::handleDeactivated (cApplication& applicati
 {
 	application.removeRunnable (*animationTimer);
 	cWindow::handleDeactivated (application, removed);
-	if (removed) closed ();
+	if (removed) closed();
 }
 
 //------------------------------------------------------------------------------
 bool cWindowLandingPositionSelection::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset)
 {
-	if (chatBox && !chatBox->isHidden () && chatBox->isAt (mouse.getPosition ()))
+	if (chatBox && !chatBox->isHidden() && chatBox->isAt (mouse.getPosition()))
 	{
 		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
 	}
@@ -202,7 +202,7 @@ bool cWindowLandingPositionSelection::handleMouseMoved (cApplication& applicatio
 	{
 		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::No));
 	}
-	else if (mapWidget->isAt (mouse.getPosition ()))
+	else if (mapWidget->isAt (mouse.getPosition()))
 	{
 		return mapWidget->handleMouseMoved (application, mouse, offset);
 	}
@@ -214,27 +214,27 @@ bool cWindowLandingPositionSelection::handleMouseMoved (cApplication& applicatio
 }
 
 //------------------------------------------------------------------------------
-AutoSurface cWindowLandingPositionSelection::createHudSurface ()
+AutoSurface cWindowLandingPositionSelection::createHudSurface()
 {
-	AutoSurface hudSurface (cHud::generateSurface ());
+	AutoSurface hudSurface (cHud::generateSurface());
 
 	SDL_Rect top, bottom;
 	top.x = 0;
-	top.y = (Video.getResolutionY () / 2) - 479;
+	top.y = (Video.getResolutionY() / 2) - 479;
 
 	bottom.x = 0;
-	bottom.y = (Video.getResolutionY () / 2);
+	bottom.y = (Video.getResolutionY() / 2);
 
-	SDL_BlitSurface (GraphicsData.gfx_panel_top.get (), nullptr, hudSurface.get (), &top);
-	SDL_BlitSurface (GraphicsData.gfx_panel_bottom.get (), nullptr, hudSurface.get (), &bottom);
+	SDL_BlitSurface (GraphicsData.gfx_panel_top.get(), nullptr, hudSurface.get(), &top);
+	SDL_BlitSurface (GraphicsData.gfx_panel_bottom.get(), nullptr, hudSurface.get(), &bottom);
 
-	return std::move(hudSurface);
+	return std::move (hudSurface);
 }
 
 //------------------------------------------------------------------------------
-void cWindowLandingPositionSelection::backClicked ()
+void cWindowLandingPositionSelection::backClicked()
 {
-	canceled ();
+	canceled();
 }
 
 //------------------------------------------------------------------------------
@@ -242,9 +242,9 @@ void cWindowLandingPositionSelection::mapClicked (const cPosition& tilePosition)
 {
 	if (!selectionAllowed) return;
 
-	cSoundDevice::getInstance ().playSoundEffect (SoundData.SNDMenuButton);
+	cSoundDevice::getInstance().playSoundEffect (SoundData.SNDMenuButton);
 
-	if (reselectionState == eLandingPositionState::Warning && (tilePosition - lastSelectedPosition).l2Norm () < cLandingPositionManager::tooCloseDistance)
+	if (reselectionState == eLandingPositionState::Warning && (tilePosition - lastSelectedPosition).l2Norm() < cLandingPositionManager::tooCloseDistance)
 	{
 		selectedPosition (lastSelectedPosition);
 	}
@@ -257,7 +257,7 @@ void cWindowLandingPositionSelection::mapClicked (const cPosition& tilePosition)
 //------------------------------------------------------------------------------
 void cWindowLandingPositionSelection::startCircleAnimation (const cPosition& tilePosition)
 {
-	circleAnimationConnectionManager.disconnectAll ();
+	circleAnimationConnectionManager.disconnectAll();
 	circleAnimationState = 0.;
 
 	circleAnimationConnectionManager.connect (animationTimer->triggered10msCatchUp, std::bind (&cWindowLandingPositionSelection::runCircleAnimation, this, tilePosition));
@@ -274,7 +274,7 @@ void cWindowLandingPositionSelection::runCircleAnimation (const cPosition& tileP
 
 	if (circleAnimationState >= 1.0)
 	{
-		circleAnimationConnectionManager.disconnectAll ();
+		circleAnimationConnectionManager.disconnectAll();
 
 		selectedPosition (tilePosition);
 	}
@@ -283,20 +283,20 @@ void cWindowLandingPositionSelection::runCircleAnimation (const cPosition& tileP
 //------------------------------------------------------------------------------
 void cWindowLandingPositionSelection::updateLandingPositionCircles (const cPosition& tilePosition, float radiusFactor)
 {
-	AutoSurface circleSurface (SDL_CreateRGBSurface (0, mapWidget->getSize ().x (), mapWidget->getSize ().y(), Video.getColDepth (), 0, 0, 0, 0));
-	SDL_FillRect (circleSurface.get (), nullptr, 0xFF00FF);
-	SDL_SetColorKey (circleSurface.get (), SDL_TRUE, 0xFF00FF);
+	AutoSurface circleSurface (SDL_CreateRGBSurface (0, mapWidget->getSize().x(), mapWidget->getSize().y(), Video.getColDepth(), 0, 0, 0, 0));
+	SDL_FillRect (circleSurface.get(), nullptr, 0xFF00FF);
+	SDL_SetColorKey (circleSurface.get(), SDL_TRUE, 0xFF00FF);
 
-	const cPosition pixelPosition = tilePosition * mapWidget->getSize () / staticMap->getSize ();
+	const cPosition pixelPosition = tilePosition * mapWidget->getSize() / staticMap->getSize();
 
 	// for non 4:3 screen resolutions, the size of the circles is
 	// only correct in x dimension, because I don't draw an ellipse
-	const int fullWarningRadius = static_cast<int>(cLandingPositionManager::warningDistance * mapWidget->getSize ().x () / staticMap->getSize ().x ());
-	const int fullTooCloseRadius = static_cast<int>(cLandingPositionManager::tooCloseDistance * mapWidget->getSize ().x () / staticMap->getSize ().x ());
-	const int warningRadius = (int)(fullWarningRadius * radiusFactor);
-	const int tooCloseRadius = std::min (warningRadius-1, fullTooCloseRadius);
-	drawCircle (pixelPosition.x (), pixelPosition.y (), warningRadius, SCAN_COLOR, *circleSurface);
-	drawCircle (pixelPosition.x (), pixelPosition.y (), tooCloseRadius, RANGE_GROUND_COLOR, *circleSurface);
+	const int fullWarningRadius = static_cast<int> (cLandingPositionManager::warningDistance * mapWidget->getSize().x() / staticMap->getSize().x());
+	const int fullTooCloseRadius = static_cast<int> (cLandingPositionManager::tooCloseDistance * mapWidget->getSize().x() / staticMap->getSize().x());
+	const int warningRadius = (int) (fullWarningRadius * radiusFactor);
+	const int tooCloseRadius = std::min (warningRadius - 1, fullTooCloseRadius);
+	drawCircle (pixelPosition.x(), pixelPosition.y(), warningRadius, SCAN_COLOR, *circleSurface);
+	drawCircle (pixelPosition.x(), pixelPosition.y(), tooCloseRadius, RANGE_GROUND_COLOR, *circleSurface);
 
 	circlesImage->setImage (circleSurface.get());
 }

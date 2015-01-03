@@ -36,9 +36,9 @@ class cNewDialogTransfer : public cWindow
 public:
 	cNewDialogTransfer (const cUnit& sourceUnit, const cUnit& destinationUnit);
 
-	int getTransferValue () const;
+	int getTransferValue() const;
 
-	sUnitData::eStorageResType getResourceType () const;
+	sUnitData::eStorageResType getResourceType() const;
 
 	cSignal<void ()> done;
 private:
@@ -67,9 +67,9 @@ private:
 	int destinationCargo;
 	int destinationMaxCargo;
 
-	void transferValueChanged ();
+	void transferValueChanged();
 
-	void closeOnUnitDestruction ();
+	void closeOnUnitDestruction();
 };
 
 #endif // ui_graphical_menu_dialogs_dialogtransferH

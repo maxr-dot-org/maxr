@@ -30,29 +30,29 @@ cRgbColorPicker::cRgbColorPicker (const cBox<cPosition>& area, const cRgbColor& 
 	startedPressInColor (false),
 	startedPressInBar (false)
 {
-	colorsImage = addChild (std::make_unique<cImage> (getPosition ()));
-	colorsImage->setImage (createColorsSurface ().get ());
+	colorsImage = addChild (std::make_unique<cImage> (getPosition()));
+	colorsImage->setImage (createColorsSurface().get());
 	colorsImage->setConsumeClick (false);
 
-	colorBarImage = addChild (std::make_unique<cImage> (cPosition (colorsImage->getEndPosition ().x () + 10, getPosition ().y ())));
-	colorBarImage->setImage (createColorBarSurface ().get ());
+	colorBarImage = addChild (std::make_unique<cImage> (cPosition (colorsImage->getEndPosition().x() + 10, getPosition().y())));
+	colorBarImage->setImage (createColorBarSurface().get());
 	colorBarImage->setConsumeClick (false);
 
-	selectedColorMarker = addChild (std::make_unique<cImage> (getPosition ()));
-	selectedColorMarker->setImage (createColorMarkerSurface ().get ());
+	selectedColorMarker = addChild (std::make_unique<cImage> (getPosition()));
+	selectedColorMarker->setImage (createColorMarkerSurface().get());
 	selectedColorMarker->setConsumeClick (false);
 
-	selectedColorHueMarker = addChild (std::make_unique<cImage> (getPosition ()));
-	selectedColorHueMarker->setImage (createColorHueMarkerSurface ().get ());
+	selectedColorHueMarker = addChild (std::make_unique<cImage> (getPosition()));
+	selectedColorHueMarker->setImage (createColorHueMarkerSurface().get());
 	selectedColorHueMarker->setConsumeClick (false);
 
-	updateMarkers ();
+	updateMarkers();
 }
 
 //------------------------------------------------------------------------------
 void cRgbColorPicker::setSelectedColor (const cRgbColor& color)
 {
-	setSelectedColor (color.toHsv ());
+	setSelectedColor (color.toHsv());
 }
 
 //------------------------------------------------------------------------------
@@ -64,36 +64,36 @@ void cRgbColorPicker::setSelectedColor (const cHsvColor& color)
 
 	if (currentColor.h != oldColor.h)
 	{
-		colorsImage->setImage (createColorsSurface ().get ());
+		colorsImage->setImage (createColorsSurface().get());
 	}
 
 	if (currentColor != oldColor)
 	{
-		updateMarkers ();
-		selectedColorChanged ();
+		updateMarkers();
+		selectedColorChanged();
 	}
 }
 
 //------------------------------------------------------------------------------
-cRgbColor cRgbColorPicker::getSelectedColor () const
+cRgbColor cRgbColorPicker::getSelectedColor() const
 {
 	return currentColor.toRgb();
 }
 
 //------------------------------------------------------------------------------
-AutoSurface cRgbColorPicker::createColorsSurface ()
+AutoSurface cRgbColorPicker::createColorsSurface()
 {
-	const cPosition size (getSize ().x () - 15 - 10, getSize ().y ());
+	const cPosition size (getSize().x() - 15 - 10, getSize().y());
 
-	AutoSurface surface (SDL_CreateRGBSurface (0, size.x (), size.y(), 32, 0, 0, 0, 0));
+	AutoSurface surface (SDL_CreateRGBSurface (0, size.x(), size.y(), 32, 0, 0, 0, 0));
 
 	auto color = currentColor;
 	for (int y = 0; y < size.y(); ++y)
 	{
-		for (int x = 0; x < size.x (); ++x)
+		for (int x = 0; x < size.x(); ++x)
 		{
-			color.s = x * 100 / (size.x () - 1);
-			color.v = 100 - (y * 100 / (size.y () - 1));
+			color.s = x * 100 / (size.x() - 1);
+			color.v = 100 - (y * 100 / (size.y() - 1));
 
 			putPixel (*surface, cPosition (x, y), color.toRgb().toMappedSdlRGBAColor (surface->format));
 		}
@@ -103,16 +103,16 @@ AutoSurface cRgbColorPicker::createColorsSurface ()
 }
 
 //------------------------------------------------------------------------------
-AutoSurface cRgbColorPicker::createColorBarSurface ()
+AutoSurface cRgbColorPicker::createColorBarSurface()
 {
-	const cPosition size (15, getSize ().y ());
+	const cPosition size (15, getSize().y());
 
-	AutoSurface surface (SDL_CreateRGBSurface (0, size.x (), size.y (), 32, 0, 0, 0, 0));
+	AutoSurface surface (SDL_CreateRGBSurface (0, size.x(), size.y(), 32, 0, 0, 0, 0));
 
-	for (int y = 0; y < size.y (); ++y)
+	for (int y = 0; y < size.y(); ++y)
 	{
 		const auto color = cHsvColor (y * 360 / size.y(), 100, 100);
-		for (int x = 0; x < size.x (); ++x)
+		for (int x = 0; x < size.x(); ++x)
 		{
 			const cPosition position (x, y);
 
@@ -124,38 +124,38 @@ AutoSurface cRgbColorPicker::createColorBarSurface ()
 }
 
 //------------------------------------------------------------------------------
-AutoSurface cRgbColorPicker::createColorMarkerSurface ()
+AutoSurface cRgbColorPicker::createColorMarkerSurface()
 {
 	AutoSurface surface (SDL_CreateRGBSurface (0, 3, 3, 32, 0, 0, 0, 0));
 
-	SDL_FillRect (surface.get (), nullptr, cRgbColor::white ().toMappedSdlRGBColor (surface->format));
-	drawPoint (surface.get (), cPosition (1, 1), cRgbColor (0xFF, 0, 0xFF));
+	SDL_FillRect (surface.get(), nullptr, cRgbColor::white().toMappedSdlRGBColor (surface->format));
+	drawPoint (surface.get(), cPosition (1, 1), cRgbColor (0xFF, 0, 0xFF));
 
 	return surface;
 }
 
 //------------------------------------------------------------------------------
-AutoSurface cRgbColorPicker::createColorHueMarkerSurface ()
+AutoSurface cRgbColorPicker::createColorHueMarkerSurface()
 {
 	AutoSurface surface (SDL_CreateRGBSurface (0, 15 + 2, 3, 32, 0, 0, 0, 0));
 
-	SDL_FillRect (surface.get (), nullptr, cRgbColor::white ().toMappedSdlRGBColor (surface->format));
+	SDL_FillRect (surface.get(), nullptr, cRgbColor::white().toMappedSdlRGBColor (surface->format));
 
-	drawLine (surface.get (), cPosition (1, 1), cPosition (16, 1), cRgbColor (0xFF, 0, 0xFF));
+	drawLine (surface.get(), cPosition (1, 1), cPosition (16, 1), cRgbColor (0xFF, 0, 0xFF));
 
 	return surface;
 }
 
 //------------------------------------------------------------------------------
-void cRgbColorPicker::updateMarkers ()
+void cRgbColorPicker::updateMarkers()
 {
-	const auto relativeHueMarkerPosition = currentColor.h * colorBarImage->getSize ().y () / 360;
-	selectedColorHueMarker->moveTo (cPosition (colorBarImage->getPosition ().x () - 1, colorBarImage->getPosition ().y () + relativeHueMarkerPosition - 1));
+	const auto relativeHueMarkerPosition = currentColor.h * colorBarImage->getSize().y() / 360;
+	selectedColorHueMarker->moveTo (cPosition (colorBarImage->getPosition().x() - 1, colorBarImage->getPosition().y() + relativeHueMarkerPosition - 1));
 
-	const auto relativeMarkerPositionX = currentColor.s * (colorsImage->getSize ().x () - 1) / 100;
-	const auto relativeMarkerPositionY = (100 - currentColor.v) * (colorsImage->getSize ().y () - 1) / 100;
+	const auto relativeMarkerPositionX = currentColor.s * (colorsImage->getSize().x() - 1) / 100;
+	const auto relativeMarkerPositionY = (100 - currentColor.v) * (colorsImage->getSize().y() - 1) / 100;
 
-	selectedColorMarker->moveTo (cPosition (colorsImage->getPosition ().x () + relativeMarkerPositionX - 1, colorsImage->getPosition ().y () + relativeMarkerPositionY - 1));
+	selectedColorMarker->moveTo (cPosition (colorsImage->getPosition().x() + relativeMarkerPositionX - 1, colorsImage->getPosition().y() + relativeMarkerPositionY - 1));
 }
 
 //------------------------------------------------------------------------------
@@ -165,11 +165,11 @@ bool cRgbColorPicker::handleMouseMoved (cApplication& application, cMouse& mouse
 
 	if (startedPressInColor)
 	{
-		updateColorByMousePosition (mouse.getPosition ());
+		updateColorByMousePosition (mouse.getPosition());
 	}
 	else if (startedPressInBar)
 	{
-		updateColorHueByMousePosition (mouse.getPosition ());
+		updateColorHueByMousePosition (mouse.getPosition());
 	}
 
 	return true;
@@ -180,17 +180,17 @@ bool cRgbColorPicker::handleMousePressed (cApplication& application, cMouse& mou
 {
 	if (button != eMouseButtonType::Left) return false;
 
-	if (colorsImage->isAt (mouse.getPosition ()))
+	if (colorsImage->isAt (mouse.getPosition()))
 	{
 		startedPressInColor = true;
 		application.grapMouseFocus (*this);
-		updateColorByMousePosition (mouse.getPosition ());
+		updateColorByMousePosition (mouse.getPosition());
 	}
-	else if (colorBarImage->isAt (mouse.getPosition ()))
+	else if (colorBarImage->isAt (mouse.getPosition()))
 	{
 		startedPressInBar = true;
 		application.grapMouseFocus (*this);
-		updateColorHueByMousePosition (mouse.getPosition ());
+		updateColorHueByMousePosition (mouse.getPosition());
 	}
 	return false;
 }
@@ -212,15 +212,15 @@ void cRgbColorPicker::handleLooseMouseFocus (cApplication& application)
 //------------------------------------------------------------------------------
 void cRgbColorPicker::updateColorByMousePosition (const cPosition& mousePosition)
 {
-	const cPosition relativePosition = mousePosition - colorsImage->getPosition ();
+	const cPosition relativePosition = mousePosition - colorsImage->getPosition();
 
-	const auto relativeX = std::max (std::min (relativePosition.x (), colorsImage->getSize ().x () - 1), 0);
-	const auto relativeY = std::max (std::min (relativePosition.y (), colorsImage->getSize ().y () - 1), 0);
+	const auto relativeX = std::max (std::min (relativePosition.x(), colorsImage->getSize().x() - 1), 0);
+	const auto relativeY = std::max (std::min (relativePosition.y(), colorsImage->getSize().y() - 1), 0);
 
 	auto newColor = currentColor;
 
-	newColor.s = relativeX * 100 / (colorsImage->getSize ().x () - 1);
-	newColor.v = 100 - (relativeY * 100 / (colorsImage->getSize ().y () - 1));
+	newColor.s = relativeX * 100 / (colorsImage->getSize().x() - 1);
+	newColor.v = 100 - (relativeY * 100 / (colorsImage->getSize().y() - 1));
 
 	setSelectedColor (newColor);
 }
@@ -228,13 +228,13 @@ void cRgbColorPicker::updateColorByMousePosition (const cPosition& mousePosition
 //------------------------------------------------------------------------------
 void cRgbColorPicker::updateColorHueByMousePosition (const cPosition& mousePosition)
 {
-	const cPosition relativePosition = mousePosition - colorBarImage->getPosition ();
+	const cPosition relativePosition = mousePosition - colorBarImage->getPosition();
 
-	const auto relativeY = std::max (std::min (relativePosition.y (), colorBarImage->getSize ().y () - 1), 0);
+	const auto relativeY = std::max (std::min (relativePosition.y(), colorBarImage->getSize().y() - 1), 0);
 
 	auto newColor = currentColor;
 
-	newColor.h = relativeY * 360 / colorBarImage->getSize ().y ();
+	newColor.h = relativeY * 360 / colorBarImage->getSize().y();
 
 	setSelectedColor (newColor);
 }

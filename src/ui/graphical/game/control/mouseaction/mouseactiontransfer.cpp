@@ -30,14 +30,14 @@
 //------------------------------------------------------------------------------
 bool cMouseActionTransfer::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
 {
-	const auto selectedUnit = unitSelection.getSelectedUnit ();
+	const auto selectedUnit = unitSelection.getSelectedUnit();
 
 	if (!selectedUnit) return false;
 
 	const auto& field = map.getField (mapPosition);
 
-	const auto overVehicle = field.getVehicle ();
-	const auto overBuilding = field.getBuilding ();
+	const auto overVehicle = field.getVehicle();
+	const auto overBuilding = field.getBuilding();
 
 	if (overVehicle)
 	{
@@ -56,13 +56,13 @@ bool cMouseActionTransfer::executeLeftClick (cGameMapWidget& gameMapWidget, cons
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionTransfer::doesChangeState () const
+bool cMouseActionTransfer::doesChangeState() const
 {
 	return true;
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionTransfer::isSingleAction () const
+bool cMouseActionTransfer::isSingleAction() const
 {
 	return true;
 }

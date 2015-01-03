@@ -31,7 +31,7 @@ cSliderHandle::cSliderHandle (const cPosition& position, eSliderHandleType slide
 	surface (nullptr),
 	orientation (orientation_)
 {
-	minPosition = maxPosition = (orientation == eOrientationType::Horizontal ? getPosition ().x () : getPosition ().y ());
+	minPosition = maxPosition = (orientation == eOrientationType::Horizontal ? getPosition().x() : getPosition().y());
 
 	createSurface (sliderHandleType);
 }
@@ -41,8 +41,8 @@ void cSliderHandle::draw (SDL_Surface& destination, const cBox<cPosition>& clipR
 {
 	if (surface != nullptr)
 	{
-		auto positionRect = getArea ().toSdlRect ();
-		SDL_BlitSurface (surface.get (), nullptr, &destination, &positionRect);
+		auto positionRect = getArea().toSdlRect();
+		SDL_BlitSurface (surface.get(), nullptr, &destination, &positionRect);
 	}
 
 	cWidget::draw (destination, clipRect);
@@ -62,36 +62,36 @@ void cSliderHandle::createSurface (eSliderHandleType sliderHandleType)
 	cPosition srcPoint;
 	switch (sliderHandleType)
 	{
-	case eSliderHandleType::Horizontal:
-		srcPoint = cPosition (218, 35);
-		size = cPosition (14, 17);
-		break;
-	case eSliderHandleType::Vertical:
-		srcPoint = cPosition (201, 35);
-		size = cPosition (17, 14);
-		break;
-	case eSliderHandleType::HudZoom:
-		srcPoint = cPosition (132, 0);
-		size = cPosition (25, 15);
-		break;
-	case eSliderHandleType::ModernHorizontal:
-		srcPoint = cPosition (241, 59);
-		size = cPosition (8, 16);
-		break;
-	case eSliderHandleType::ModernVertical:
-		srcPoint = cPosition (224, 91);
-		size = cPosition (16, 8);
-		break;
+		case eSliderHandleType::Horizontal:
+			srcPoint = cPosition (218, 35);
+			size = cPosition (14, 17);
+			break;
+		case eSliderHandleType::Vertical:
+			srcPoint = cPosition (201, 35);
+			size = cPosition (17, 14);
+			break;
+		case eSliderHandleType::HudZoom:
+			srcPoint = cPosition (132, 0);
+			size = cPosition (25, 15);
+			break;
+		case eSliderHandleType::ModernHorizontal:
+			srcPoint = cPosition (241, 59);
+			size = cPosition (8, 16);
+			break;
+		case eSliderHandleType::ModernVertical:
+			srcPoint = cPosition (224, 91);
+			size = cPosition (16, 8);
+			break;
 	}
 	const cBox<cPosition> src (srcPoint, srcPoint + size);
-	auto srcRect = src.toSdlRect ();
+	auto srcRect = src.toSdlRect();
 
-    surface = AutoSurface (SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0));
-	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
+	surface = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
+	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
 
-	if (sliderHandleType == eSliderHandleType::HudZoom) SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &srcRect, surface.get (), nullptr);
-	else SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get (), &srcRect, surface.get (), nullptr);
-	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
+	if (sliderHandleType == eSliderHandleType::HudZoom) SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &srcRect, surface.get(), nullptr);
+	else SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get(), &srcRect, surface.get(), nullptr);
+	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
 
 	resize (size);
 }
@@ -101,15 +101,15 @@ bool cSliderHandle::handleMouseMoved (cApplication& application, cMouse& mouse, 
 {
 	if (!application.hasMouseFocus (*this)) return false;
 
-	cPosition offset(0,0);
+	cPosition offset (0, 0);
 	switch (orientation)
 	{
-	case eOrientationType::Horizontal:
-		offset.x () = std::min (std::max (mouse.getPosition ().x () - grapOffset, minPosition), maxPosition) - getPosition ().x ();
-		break;
-	case eOrientationType::Vertical:
-		offset.y () = std::min (std::max (mouse.getPosition ().y () - grapOffset, minPosition), maxPosition) - getPosition ().y ();
-		break;
+		case eOrientationType::Horizontal:
+			offset.x() = std::min (std::max (mouse.getPosition().x() - grapOffset, minPosition), maxPosition) - getPosition().x();
+			break;
+		case eOrientationType::Vertical:
+			offset.y() = std::min (std::max (mouse.getPosition().y() - grapOffset, minPosition), maxPosition) - getPosition().y();
+			break;
 	}
 	if (offset != 0)
 	{
@@ -125,12 +125,12 @@ bool cSliderHandle::handleMousePressed (cApplication& application, cMouse& mouse
 	{
 		switch (orientation)
 		{
-		case eOrientationType::Horizontal:
-			grapOffset = mouse.getPosition ().x () - getPosition ().x ();
-			break;
-		case eOrientationType::Vertical:
-			grapOffset = mouse.getPosition ().y () - getPosition ().y ();
-			break;
+			case eOrientationType::Horizontal:
+				grapOffset = mouse.getPosition().x() - getPosition().x();
+				break;
+			case eOrientationType::Vertical:
+				grapOffset = mouse.getPosition().y() - getPosition().y();
+				break;
 		}
 		application.grapMouseFocus (*this);
 		return true;
@@ -151,6 +151,6 @@ bool cSliderHandle::handleMouseReleased (cApplication& application, cMouse& mous
 //------------------------------------------------------------------------------
 void cSliderHandle::handleMoved (const cPosition& offset)
 {
-	moved ();
+	moved();
 	cWidget::handleMoved (offset);
 }

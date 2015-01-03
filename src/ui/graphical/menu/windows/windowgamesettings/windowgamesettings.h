@@ -34,10 +34,10 @@ class cWindowGameSettings : public cWindow
 {
 public:
 	explicit cWindowGameSettings (bool forHotSeatGame = false);
-	~cWindowGameSettings ();
+	~cWindowGameSettings();
 
 	void applySettings (const cGameSettings& gameSettings);
-	cGameSettings getGameSettings () const;
+	cGameSettings getGameSettings() const;
 
 	cSignal<void ()> done;
 private:
@@ -113,11 +113,11 @@ private:
 	cLabel* turnEndDeadlineLabel;
 	cLabel* turnEndDeadlineSecondsLabel;
 
-	void okClicked ();
-	void backClicked ();
+	void okClicked();
+	void backClicked();
 
-	void disableTurnEndDeadlineOptions ();
-	void enableTurnEndDeadlineOptions ();
+	void disableTurnEndDeadlineOptions();
+	void enableTurnEndDeadlineOptions();
 };
 
 #endif // ui_graphical_menu_windows_windowgamesettings_windowgamesettingsH

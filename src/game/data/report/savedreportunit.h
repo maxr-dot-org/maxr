@@ -35,21 +35,21 @@ public:
 	explicit cSavedReportUnit (cNetMessage& message);
 	explicit cSavedReportUnit (const tinyxml2::XMLElement& element);
 
-	virtual std::string getMessage () const MAXR_OVERRIDE_FUNCTION;
+	virtual std::string getMessage() const MAXR_OVERRIDE_FUNCTION;
 
-	virtual bool isAlert () const MAXR_OVERRIDE_FUNCTION;
+	virtual bool isAlert() const MAXR_OVERRIDE_FUNCTION;
 
 	virtual void pushInto (cNetMessage& message) const MAXR_OVERRIDE_FUNCTION;
 	virtual void pushInto (tinyxml2::XMLElement& element) const MAXR_OVERRIDE_FUNCTION;
 
-	virtual bool hasUnitId () const MAXR_OVERRIDE_FUNCTION;
-	virtual const sID& getUnitId () const MAXR_OVERRIDE_FUNCTION;
+	virtual bool hasUnitId() const MAXR_OVERRIDE_FUNCTION;
+	virtual const sID& getUnitId() const MAXR_OVERRIDE_FUNCTION;
 
-	virtual bool hasPosition () const MAXR_OVERRIDE_FUNCTION;
-	virtual const cPosition& getPosition () const MAXR_OVERRIDE_FUNCTION;
+	virtual bool hasPosition() const MAXR_OVERRIDE_FUNCTION;
+	virtual const cPosition& getPosition() const MAXR_OVERRIDE_FUNCTION;
 
 protected:
-	virtual std::string getText () const = 0;
+	virtual std::string getText() const = 0;
 
 private:
 	sID unitId;

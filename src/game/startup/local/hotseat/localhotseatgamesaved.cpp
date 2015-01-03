@@ -38,70 +38,70 @@ void cLocalHotSeatGameSaved::start (cApplication& application)
 	auto staticMap = server->Map->staticMap;
 
 	const auto& serverPlayerList = server->playerList;
-	if (serverPlayerList.empty ()) return;
+	if (serverPlayerList.empty()) return;
 
 	// Following may be simplified according to serverGame::loadGame
 	std::vector<cPlayerBasicData> clientPlayerList;
 
 	// copy players for client
-	for (size_t i = 0; i != serverPlayerList.size (); ++i)
+	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
 		const auto& p = *serverPlayerList[i];
-		clientPlayerList.push_back (cPlayerBasicData (p.getName (), p.getColor (), p.getNr (), p.getSocketNum ()));
+		clientPlayerList.push_back (cPlayerBasicData (p.getName(), p.getColor(), p.getNr(), p.getSocketNum()));
 
-		serverPlayerList[i]->setLocal ();
+		serverPlayerList[i]->setLocal();
 	}
 
-	clients.resize (clientPlayerList.size ());
-	for (size_t i = 0; i < clientPlayerList.size (); ++i)
+	clients.resize (clientPlayerList.size());
+	for (size_t i = 0; i < clientPlayerList.size(); ++i)
 	{
-		clients[i] = std::make_shared<cClient> (server.get (), nullptr);
+		clients[i] = std::make_shared<cClient> (server.get(), nullptr);
 		clients[i]->setMap (staticMap);
 		clients[i]->setGameSettings (*server->getGameSettings());
 		clients[i]->setPlayers (clientPlayerList, i);
 	}
 
-	server->start ();
+	server->start();
 
-	for (size_t i = 0; i < clients.size (); ++i)
+	for (size_t i = 0; i < clients.size(); ++i)
 	{
 		sendRequestResync (*clients[i], clients[i]->getActivePlayer().getNr(), true);
 	}
 
 	// TODO: move that in server
-	for (size_t i = 0; i != serverPlayerList.size (); ++i)
+	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
 		sendGameSettings (*server, *serverPlayerList[i]);
 		sendGameGuiState (*server, server->getPlayerGameGuiState (*serverPlayerList[i]), *serverPlayerList[i]);
 		auto& reportList = serverPlayerList[i]->savedReportsList;
-		for (size_t j = 0; j != reportList.size (); ++j)
+		for (size_t j = 0; j != reportList.size(); ++j)
 		{
 			sendSavedReport (*server, *reportList[j], serverPlayerList[i].get());
 		}
-		reportList.clear ();
+		reportList.clear();
 	}
 
 	// start game
 	server->serverState = SERVER_STATE_INGAME;
 
 	// TODO: save/load game time
-	server->startTurnTimers ();
+	server->startTurnTimers();
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
-	auto activePlayer = server->getActiveTurnPlayer ();
-	if (activePlayer == nullptr) activePlayer = server->playerList[0].get ();
+	auto activePlayer = server->getActiveTurnPlayer();
+	if (activePlayer == nullptr) activePlayer = server->playerList[0].get();
 
-	gameGuiController->setClients (clients, activePlayer->getNr ());
+	gameGuiController->setClients (clients, activePlayer->getNr());
 
-	gameGuiController->start ();
+	gameGuiController->start();
 
 	using namespace std::placeholders;
 	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cLocalHotSeatGameSaved::save, this, _1, _2));
 
 	terminate = false;
 
-	application.addRunnable (shared_from_this ());
+	application.addRunnable (shared_from_this());
 
 	signalConnectionManager.connect (gameGuiController->terminated, [&]() { terminate = true; });
 }

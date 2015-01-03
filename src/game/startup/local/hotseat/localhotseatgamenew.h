@@ -52,7 +52,7 @@ class cLocalHotSeatGameNew : public cLocalHotSeatGame
 		cPosition landingPosition;
 	};
 public:
-	cLocalHotSeatGameNew ();
+	cLocalHotSeatGameNew();
 
 	void start (cApplication& application);
 
@@ -70,10 +70,10 @@ public:
 
 	void setLandingPosition (size_t playerIndex, const cPosition& landingPosition);
 
-	const std::shared_ptr<cStaticMap>& getStaticMap ();
-	const std::shared_ptr<cGameSettings>& getGameSettings ();
+	const std::shared_ptr<cStaticMap>& getStaticMap();
+	const std::shared_ptr<cGameSettings>& getGameSettings();
 
-	size_t getPlayerCount () const;
+	size_t getPlayerCount() const;
 	const cPlayerBasicData& getPlayer (size_t playerIndex) const;
 	int getPlayerClan (size_t playerIndex) const;
 private:

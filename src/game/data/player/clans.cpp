@@ -75,10 +75,10 @@ string cClanUnitStat::getClanStatsDescription() const
 	} t[] =
 	{
 		// ToDo / Fixme if #756 fixed, use the non "_7" version of the text files
-		{"Damage", "Text~Others~Attack_7", data->getDamage ()},
+		{"Damage", "Text~Others~Attack_7", data->getDamage()},
 		{"Range", "Text~Others~Range", data->getRange()},
 		{"Armor", "Text~Others~Armor_7", data->getArmor()},
-		{"Hitpoints", "Text~Others~Hitpoints_7", data->getHitpointsMax ()},
+		{"Hitpoints", "Text~Others~Hitpoints_7", data->getHitpointsMax()},
 		{"Scan", "Text~Others~Scan_7", data->getScan()},
 		{"Speed", "Text~Others~Speed_7", data->getSpeedMax() / 4},
 	};

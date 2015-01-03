@@ -50,13 +50,13 @@ public:
 	/**
 	 * Should return true if the action does change the game state and therefore should not be executed while e.g. the client is frozen.
 	 */
-	virtual bool doesChangeState () const = 0;
+	virtual bool doesChangeState() const = 0;
 
 	/**
 	 * Should return true if the action is a single action, which means the mouse mode should return to the default mouse mode
 	 * after the action has been executed.
 	 */
-	virtual bool isSingleAction () const = 0;
+	virtual bool isSingleAction() const = 0;
 };
 
 #endif // ui_graphical_game_control_mouseaction_mouseactionH

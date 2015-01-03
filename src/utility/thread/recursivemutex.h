@@ -26,18 +26,18 @@
 class cRecursiveMutex
 {
 public:
-	cRecursiveMutex () :
-		sdlMutex (SDL_CreateMutex ())
+	cRecursiveMutex() :
+		sdlMutex (SDL_CreateMutex())
 	{
 		if (!sdlMutex) throw std::runtime_error ("Failed to create mutex");
 	}
 
-	~cRecursiveMutex ()
+	~cRecursiveMutex()
 	{
 		SDL_DestroyMutex (sdlMutex);
 	}
 
-	void lock ()
+	void lock()
 	{
 		const auto result = SDL_LockMutex (sdlMutex);
 		if (result != 0)
@@ -46,7 +46,7 @@ public:
 		}
 	}
 
-	bool tryLock ()
+	bool tryLock()
 	{
 		const auto result = SDL_TryLockMutex (sdlMutex);
 		if (result == -1)
@@ -56,7 +56,7 @@ public:
 		return result == 0;
 	}
 
-	void unlock ()
+	void unlock()
 	{
 		SDL_UnlockMutex (sdlMutex);
 	}

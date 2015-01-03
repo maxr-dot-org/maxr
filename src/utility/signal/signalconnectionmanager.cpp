@@ -21,7 +21,7 @@
 #include "utility/signal/signalconnection.h"
 
 //------------------------------------------------------------------------------
-cSignalConnectionManager::cSignalConnectionManager ()
+cSignalConnectionManager::cSignalConnectionManager()
 {}
 
 //------------------------------------------------------------------------------
@@ -30,13 +30,13 @@ cSignalConnectionManager::cSignalConnectionManager (cSignalConnectionManager&& o
 {}
 
 //------------------------------------------------------------------------------
-cSignalConnectionManager::~cSignalConnectionManager ()
+cSignalConnectionManager::~cSignalConnectionManager()
 {
-	disconnectAll ();
+	disconnectAll();
 }
 
 //------------------------------------------------------------------------------
-cSignalConnectionManager& cSignalConnectionManager::operator=(cSignalConnectionManager&& other)
+cSignalConnectionManager& cSignalConnectionManager::operator= (cSignalConnectionManager && other)
 {
 	connections = std::move (other.connections);
 	return *this;
@@ -46,7 +46,7 @@ cSignalConnectionManager& cSignalConnectionManager::operator=(cSignalConnectionM
 bool cSignalConnectionManager::disconnect (cSignalConnection& connection)
 {
 	bool found = false;
-	for (auto i = connections.begin (); i != connections.end ();)
+	for (auto i = connections.begin(); i != connections.end();)
 	{
 		if (*i == connection)
 		{
@@ -60,24 +60,24 @@ bool cSignalConnectionManager::disconnect (cSignalConnection& connection)
 	}
 	if (found)
 	{
-		connection.disconnect ();
+		connection.disconnect();
 		return true;
 	}
 	return false;
 }
 
 //------------------------------------------------------------------------------
-void cSignalConnectionManager::disconnectAll ()
+void cSignalConnectionManager::disconnectAll()
 {
 	for (auto& connection : connections)
 	{
-		connection.disconnect ();
+		connection.disconnect();
 	}
-	clear ();
+	clear();
 }
 
 //------------------------------------------------------------------------------
-void cSignalConnectionManager::clear ()
+void cSignalConnectionManager::clear()
 {
-	connections.clear ();
+	connections.clear();
 }

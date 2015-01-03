@@ -46,7 +46,7 @@ using namespace std;
 
 
 //--------------------------------------------------------------------------
-cBuildListItem::cBuildListItem ()
+cBuildListItem::cBuildListItem()
 {}
 
 //--------------------------------------------------------------------------
@@ -68,7 +68,7 @@ cBuildListItem::cBuildListItem (cBuildListItem&& other) :
 {}
 
 //--------------------------------------------------------------------------
-cBuildListItem& cBuildListItem::operator=(const cBuildListItem& other)
+cBuildListItem& cBuildListItem::operator= (const cBuildListItem& other)
 {
 	type = other.type;
 	remainingMetal = other.remainingMetal;
@@ -76,7 +76,7 @@ cBuildListItem& cBuildListItem::operator=(const cBuildListItem& other)
 }
 
 //--------------------------------------------------------------------------
-cBuildListItem& cBuildListItem::operator=(cBuildListItem&& other)
+cBuildListItem& cBuildListItem::operator= (cBuildListItem && other)
 {
 	type = std::move (other.type);
 	remainingMetal = std::move (other.remainingMetal);
@@ -84,7 +84,7 @@ cBuildListItem& cBuildListItem::operator=(cBuildListItem&& other)
 }
 
 //--------------------------------------------------------------------------
-const sID& cBuildListItem::getType () const
+const sID& cBuildListItem::getType() const
 {
 	return type;
 }
@@ -94,11 +94,11 @@ void cBuildListItem::setType (const sID& type_)
 {
 	auto oldType = type;
 	type = type_;
-	if (type != oldType) typeChanged ();
+	if (type != oldType) typeChanged();
 }
 
 //--------------------------------------------------------------------------
-int cBuildListItem::getRemainingMetal () const
+int cBuildListItem::getRemainingMetal() const
 {
 	return remainingMetal;
 }
@@ -107,7 +107,7 @@ int cBuildListItem::getRemainingMetal () const
 void cBuildListItem::setRemainingMetal (int value)
 {
 	std::swap (remainingMetal, value);
-	if (value != remainingMetal) remainingMetalChanged ();
+	if (value != remainingMetal) remainingMetalChanged();
 }
 
 //--------------------------------------------------------------------------
@@ -121,7 +121,7 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 		   ID),
 	isWorking (false)
 {
-	setSentryActive(data.canAttack != TERRAIN_NONE);
+	setSentryActive (data.canAttack != TERRAIN_NONE);
 
 	RubbleTyp = 0;
 	RubbleValue = 0;
@@ -147,8 +147,8 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 	MaxMetalProd = 0;
 	MaxGoldProd = 0;
 	MaxOilProd = 0;
-	data.setHitpoints(data.getHitpointsMax());
-	data.setAmmo(data.getAmmoMax());
+	data.setHitpoints (data.getHitpointsMax());
+	data.setAmmo (data.getAmmoMax());
 	SubBase = nullptr;
 	BuildSpeed = 0;
 
@@ -167,12 +167,12 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 
 	refreshData();
 
-	buildListChanged.connect ([&](){ statusChanged (); });
-	buildListFirstItemDataChanged.connect ([&](){ statusChanged (); });
-	researchAreaChanged.connect ([&](){ statusChanged (); });
-	ownerChanged.connect ([&](){ registerOwnerEvents (); });
+	buildListChanged.connect ([&]() { statusChanged(); });
+	buildListFirstItemDataChanged.connect ([&]() { statusChanged(); });
+	researchAreaChanged.connect ([&]() { statusChanged(); });
+	ownerChanged.connect ([&]() { registerOwnerEvents(); });
 
-	registerOwnerEvents ();
+	registerOwnerEvents();
 }
 
 //--------------------------------------------------------------------------
@@ -192,20 +192,20 @@ string cBuilding::getStatusStr (const cPlayer* player) const
 		sText += iToStr (getDisabledTurns()) + ")";
 		return sText;
 	}
-	if (isUnitWorking () || (factoryHasJustFinishedBuilding () && isDisabled () == false))
+	if (isUnitWorking() || (factoryHasJustFinishedBuilding() && isDisabled() == false))
 	{
 		// Factory:
-		if (!data.canBuild.empty () && !buildList.empty () && getOwner () == player)
+		if (!data.canBuild.empty() && !buildList.empty() && getOwner() == player)
 		{
 			const cBuildListItem& buildListItem = buildList[0];
-			const string& unitName = buildListItem.getType ().getUnitDataOriginalVersion ()->name;
+			const string& unitName = buildListItem.getType().getUnitDataOriginalVersion()->name;
 			string sText;
 
-			if (buildListItem.getRemainingMetal () > 0)
+			if (buildListItem.getRemainingMetal() > 0)
 			{
 				int iRound;
 
-				iRound = (int) ceilf (buildListItem.getRemainingMetal () / (float) MetalPerRound);
+				iRound = (int) ceilf (buildListItem.getRemainingMetal() / (float) MetalPerRound);
 				sText = lngPack.i18n ("Text~Comp~Producing") + ": ";
 				sText += unitName + " (";
 				sText += iToStr (iRound) + ")";
@@ -236,12 +236,12 @@ string cBuilding::getStatusStr (const cPlayer* player) const
 		}
 
 		// Research Center
-		if (data.canResearch && getOwner () == player)
+		if (data.canResearch && getOwner() == player)
 		{
 			string sText = lngPack.i18n ("Text~Comp~Working") + "\n";
 			for (int area = 0; area < cResearch::kNrResearchAreas; area++)
 			{
-				if (getOwner ()->getResearchCentersWorkingOnArea ((cResearch::ResearchArea)area) > 0)
+				if (getOwner()->getResearchCentersWorkingOnArea ((cResearch::ResearchArea)area) > 0)
 				{
 					switch (area)
 					{
@@ -254,19 +254,19 @@ string cBuilding::getStatusStr (const cPlayer* player) const
 						case cResearch::kScanResearch: sText += lngPack.i18n ("Text~Others~Scan"); break;
 						case cResearch::kCostResearch: sText += lngPack.i18n ("Text~Others~Costs"); break;
 					}
-					sText += ": " + iToStr (getOwner ()->getResearchState ().getRemainingTurns (area, getOwner ()->getResearchCentersWorkingOnArea ((cResearch::ResearchArea)area))) + "\n";
+					sText += ": " + iToStr (getOwner()->getResearchState().getRemainingTurns (area, getOwner()->getResearchCentersWorkingOnArea ((cResearch::ResearchArea)area))) + "\n";
 				}
 			}
 			return sText;
 		}
 
 		// Goldraffinerie:
-		if (data.convertsGold && getOwner () == player)
+		if (data.convertsGold && getOwner() == player)
 		{
 			string sText;
 			sText = lngPack.i18n ("Text~Comp~Working") + "\n";
 			sText += lngPack.i18n ("Text~Title~Credits") + ": ";
-			sText += iToStr (getOwner ()->getCredits ());
+			sText += iToStr (getOwner()->getCredits());
 			return sText;
 		}
 
@@ -289,7 +289,7 @@ string cBuilding::getStatusStr (const cPlayer* player) const
 //--------------------------------------------------------------------------
 void cBuilding::makeReport (cSoundManager& soundManager) const
 {
-	if (data.canResearch && isUnitWorking () && getOwner () && getOwner ()->isCurrentTurnResearchAreaFinished (getResearchArea ()))
+	if (data.canResearch && isUnitWorking() && getOwner() && getOwner()->isCurrentTurnResearchAreaFinished (getResearchArea()))
 	{
 		soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, VoiceData.VOIResearchComplete));
 	}
@@ -302,9 +302,9 @@ bool cBuilding::refreshData()
 {
 	// NOTE: according to MAX 1.04 units get their shots/movepoints back even if they are disabled
 
-	if (data.getShots () < data.getShotsMax())
+	if (data.getShots() < data.getShotsMax())
 	{
-		data.setShots(std::min (this->data.getShotsMax(), this->data.getAmmo()));
+		data.setShots (std::min (this->data.getShotsMax(), this->data.getAmmo()));
 		return true;
 	}
 	return false;
@@ -312,7 +312,7 @@ bool cBuilding::refreshData()
 
 void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
 {
-	assert (!getOwner ());
+	assert (!getOwner());
 
 	SDL_Rect src;
 
@@ -337,12 +337,12 @@ void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float
 		if (data.isBig)
 		{
 			CHECK_SCALING (*UnitsData.dirt_big_shw, *UnitsData.dirt_big_shw_org, zoomFactor);
-			SDL_BlitSurface (UnitsData.dirt_big_shw.get (), &src, surface, &tmp);
+			SDL_BlitSurface (UnitsData.dirt_big_shw.get(), &src, surface, &tmp);
 		}
 		else
 		{
 			CHECK_SCALING (*UnitsData.dirt_small_shw, *UnitsData.dirt_small_shw_org, zoomFactor);
-			SDL_BlitSurface (UnitsData.dirt_small_shw.get (), &src, surface, &tmp);
+			SDL_BlitSurface (UnitsData.dirt_small_shw.get(), &src, surface, &tmp);
 		}
 	}
 
@@ -352,12 +352,12 @@ void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float
 	if (data.isBig)
 	{
 		CHECK_SCALING (*UnitsData.dirt_big, *UnitsData.dirt_big_org, zoomFactor);
-		SDL_BlitSurface (UnitsData.dirt_big.get (), &src, surface, &tmp);
+		SDL_BlitSurface (UnitsData.dirt_big.get(), &src, surface, &tmp);
 	}
 	else
 	{
 		CHECK_SCALING (*UnitsData.dirt_small, *UnitsData.dirt_small_org, zoomFactor);
-		SDL_BlitSurface (UnitsData.dirt_small.get (), &src, surface, &tmp);
+		SDL_BlitSurface (UnitsData.dirt_small.get(), &src, surface, &tmp);
 	}
 }
 
@@ -368,17 +368,17 @@ void cBuilding::render_beton (SDL_Surface* surface, const SDL_Rect& dest, float 
 	{
 		CHECK_SCALING (*GraphicsData.gfx_big_beton, *GraphicsData.gfx_big_beton_org, zoomFactor);
 
-		if (alphaEffectValue && cSettings::getInstance ().isAlphaEffects ())
-			SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton.get (), alphaEffectValue);
+		if (alphaEffectValue && cSettings::getInstance().isAlphaEffects())
+			SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton.get(), alphaEffectValue);
 		else
-			SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton.get (), 254);
+			SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton.get(), 254);
 
-		SDL_BlitSurface (GraphicsData.gfx_big_beton.get (), nullptr, surface, &tmp);
+		SDL_BlitSurface (GraphicsData.gfx_big_beton.get(), nullptr, surface, &tmp);
 	}
 	else
 	{
 		CHECK_SCALING (*UnitsData.ptr_small_beton, *UnitsData.ptr_small_beton_org, zoomFactor);
-		if (alphaEffectValue && cSettings::getInstance ().isAlphaEffects ())
+		if (alphaEffectValue && cSettings::getInstance().isAlphaEffects())
 			SDL_SetSurfaceAlphaMod (UnitsData.ptr_small_beton, alphaEffectValue);
 		else
 			SDL_SetSurfaceAlphaMod (UnitsData.ptr_small_beton, 254);
@@ -391,13 +391,13 @@ void cBuilding::render_beton (SDL_Surface* surface, const SDL_Rect& dest, float 
 void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int animationTime, int alpha) const
 {
 	int frameNr = dir;
-	if (data.hasFrames && data.isAnimated && cSettings::getInstance ().isAnimations () &&
-		isDisabled () == false)
+	if (data.hasFrames && data.isAnimated && cSettings::getInstance().isAnimations() &&
+		isDisabled() == false)
 	{
 		frameNr = (animationTime % data.hasFrames);
 	}
 
-	render_simple (surface, dest, zoomFactor, data, *uiData, getOwner (), frameNr, alpha);
+	render_simple (surface, dest, zoomFactor, data, *uiData, getOwner(), frameNr, alpha);
 }
 
 /*static*/ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sUnitData& data, const sBuildingUIData& uiData, const cPlayer* owner, int frameNr, int alpha)
@@ -418,15 +418,15 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 	}
 
 	// blit the players color and building graphic
-	if (data.hasPlayerColor && owner) SDL_BlitSurface (owner->getColor ().getTexture (), nullptr, GraphicsData.gfx_tmp.get (), nullptr);
-	else SDL_FillRect (GraphicsData.gfx_tmp.get (), nullptr, 0x00FF00FF);
+	if (data.hasPlayerColor && owner) SDL_BlitSurface (owner->getColor().getTexture(), nullptr, GraphicsData.gfx_tmp.get(), nullptr);
+	else SDL_FillRect (GraphicsData.gfx_tmp.get(), nullptr, 0x00FF00FF);
 
 	if (data.hasFrames)
 	{
 		src.x = frameNr * Round (64.0f * zoomFactor);
 
 		CHECK_SCALING (*uiData.img, *uiData.img_org, zoomFactor);
-		SDL_BlitSurface (uiData.img.get (), &src, GraphicsData.gfx_tmp.get (), nullptr);
+		SDL_BlitSurface (uiData.img.get(), &src, GraphicsData.gfx_tmp.get(), nullptr);
 
 		src.x = 0;
 	}
@@ -438,14 +438,14 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 		src.w = (int) (128 * zoomFactor);
 		src.h = (int) (128 * zoomFactor);
 		// select clan image
-		if (owner && owner->getClan () != -1)
-			src.x = (int)((owner->getClan () + 1) * 128 * zoomFactor);
-		SDL_BlitSurface (uiData.img.get (), &src, GraphicsData.gfx_tmp.get (), nullptr);
+		if (owner && owner->getClan() != -1)
+			src.x = (int) ((owner->getClan() + 1) * 128 * zoomFactor);
+		SDL_BlitSurface (uiData.img.get(), &src, GraphicsData.gfx_tmp.get(), nullptr);
 	}
 	else
 	{
 		CHECK_SCALING (*uiData.img, *uiData.img_org, zoomFactor);
-		SDL_BlitSurface (uiData.img.get (), nullptr, GraphicsData.gfx_tmp.get (), nullptr);
+		SDL_BlitSurface (uiData.img.get(), nullptr, GraphicsData.gfx_tmp.get(), nullptr);
 	}
 
 	// draw the building
@@ -454,8 +454,8 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 	src.x = 0;
 	src.y = 0;
 
-	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_tmp.get (), alpha);
-	SDL_BlitSurface (GraphicsData.gfx_tmp.get (), &src, surface, &tmp);
+	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_tmp.get(), alpha);
+	SDL_BlitSurface (GraphicsData.gfx_tmp.get(), &src, surface, &tmp);
 }
 
 
@@ -465,7 +465,7 @@ void cBuilding::render (unsigned long long animationTime, SDL_Surface* surface, 
 	// make sure to update the caching rules!
 
 	// check, if it is dirt:
-	if (!getOwner ())
+	if (!getOwner())
 	{
 		render_rubble (surface, dest, zoomFactor, drawShadow);
 		return;
@@ -487,16 +487,16 @@ void cBuilding::render (unsigned long long animationTime, SDL_Surface* surface, 
 	if (drawShadow)
 	{
 		SDL_Rect tmp = dest;
-		if (alphaEffectValue && cSettings::getInstance ().isAlphaEffects ())
-			SDL_SetSurfaceAlphaMod (uiData->shw.get (), alphaEffectValue / 5);
+		if (alphaEffectValue && cSettings::getInstance().isAlphaEffects())
+			SDL_SetSurfaceAlphaMod (uiData->shw.get(), alphaEffectValue / 5);
 		else
-			SDL_SetSurfaceAlphaMod (uiData->shw.get (), 50);
+			SDL_SetSurfaceAlphaMod (uiData->shw.get(), 50);
 
 		CHECK_SCALING (*uiData->shw, *uiData->shw_org, zoomFactor);
-		blittAlphaSurface (uiData->shw.get (), nullptr, surface, &tmp);
+		blittAlphaSurface (uiData->shw.get(), nullptr, surface, &tmp);
 	}
 
-	render_simple (surface, dest, zoomFactor, animationTime, alphaEffectValue && cSettings::getInstance ().isAlphaEffects () ? alphaEffectValue : 254);
+	render_simple (surface, dest, zoomFactor, animationTime, alphaEffectValue && cSettings::getInstance().isAlphaEffects() ? alphaEffectValue : 254);
 }
 
 //--------------------------------------------------------------------------
@@ -504,21 +504,21 @@ void cBuilding::updateNeighbours (const cMap& map)
 {
 	if (!data.isBig)
 	{
-		getOwner ()->base.checkNeighbour (getPosition () + cPosition (0, -1), *this);
-		getOwner ()->base.checkNeighbour (getPosition () + cPosition (1, 0), *this);
-		getOwner ()->base.checkNeighbour (getPosition () + cPosition (0, 1), *this);
-		getOwner ()->base.checkNeighbour (getPosition () + cPosition (-1, 0), *this);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (0, -1), *this);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (1, 0), *this);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (0, 1), *this);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (-1, 0), *this);
 	}
 	else
 	{
-		getOwner ()->base.checkNeighbour (getPosition () + cPosition (0, -1), *this);
-		getOwner ()->base.checkNeighbour (getPosition () + cPosition (1, -1), *this);
-		getOwner ()->base.checkNeighbour (getPosition () + cPosition (2, 0), *this);
-		getOwner ()->base.checkNeighbour (getPosition () + cPosition (2, 1), *this);
-		getOwner ()->base.checkNeighbour (getPosition () + cPosition (0, 2), *this);
-		getOwner ()->base.checkNeighbour (getPosition () + cPosition (1, 2), *this);
-		getOwner ()->base.checkNeighbour (getPosition () + cPosition (-1, 0), *this);
-		getOwner ()->base.checkNeighbour (getPosition () + cPosition (-1, 1), *this);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (0, -1), *this);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (1, -1), *this);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (2, 0), *this);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (2, 1), *this);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (0, 2), *this);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (1, 2), *this);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (-1, 0), *this);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (-1, 1), *this);
 	}
 	CheckNeighbours (map);
 }
@@ -676,7 +676,7 @@ void cBuilding::drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomF
 //--------------------------------------------------------------------------
 void cBuilding::ServerStartWork (cServer& server)
 {
-	if (isUnitWorking ())
+	if (isUnitWorking())
 	{
 		sendDoStartWork (server, *this);
 		return;
@@ -686,7 +686,7 @@ void cBuilding::ServerStartWork (cServer& server)
 
 	if (isDisabled())
 	{
-		sendSavedReport (server, cSavedReportSimple (eSavedReportType::BuildingDisabled), getOwner ());
+		sendSavedReport (server, cSavedReportSimple (eSavedReportType::BuildingDisabled), getOwner());
 		return;
 	}
 
@@ -695,7 +695,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	{
 		if (SubBase->HumanNeed + data.needsHumans > SubBase->HumanProd)
 		{
-			sendSavedReport (server, cSavedReportSimple (eSavedReportType::TeamInsufficient), getOwner ());
+			sendSavedReport (server, cSavedReportSimple (eSavedReportType::TeamInsufficient), getOwner());
 			return;
 		}
 	}
@@ -705,7 +705,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	{
 		if (data.convertsGold + SubBase->GoldNeed > SubBase->getGoldProd() + SubBase->getGold())
 		{
-			sendSavedReport (server, cSavedReportSimple (eSavedReportType::GoldInsufficient), getOwner ());
+			sendSavedReport (server, cSavedReportSimple (eSavedReportType::GoldInsufficient), getOwner());
 			return;
 		}
 	}
@@ -713,9 +713,9 @@ void cBuilding::ServerStartWork (cServer& server)
 	// needs raw material:
 	if (data.needsMetal)
 	{
-		if (SubBase->MetalNeed + std::min (MetalPerRound, buildList[0].getRemainingMetal ()) > SubBase->getMetalProd () + SubBase->getMetal ())
+		if (SubBase->MetalNeed + std::min (MetalPerRound, buildList[0].getRemainingMetal()) > SubBase->getMetalProd() + SubBase->getMetal())
 		{
-			sendSavedReport (server, cSavedReportSimple (eSavedReportType::MetalInsufficient), getOwner ());
+			sendSavedReport (server, cSavedReportSimple (eSavedReportType::MetalInsufficient), getOwner());
 			return;
 		}
 	}
@@ -725,15 +725,15 @@ void cBuilding::ServerStartWork (cServer& server)
 	{
 		// check if there is enough Oil for the generators
 		// (current production + reserves)
-		if (data.needsOil + SubBase->OilNeed > SubBase->getOil () + SubBase->getMaxOilProd())
+		if (data.needsOil + SubBase->OilNeed > SubBase->getOil() + SubBase->getMaxOilProd())
 		{
-			sendSavedReport (server, cSavedReportSimple (eSavedReportType::FuelInsufficient), getOwner ());
+			sendSavedReport (server, cSavedReportSimple (eSavedReportType::FuelInsufficient), getOwner());
 			return;
 		}
-		else if (data.needsOil + SubBase->OilNeed > SubBase->getOil () + SubBase->getOilProd ())
+		else if (data.needsOil + SubBase->OilNeed > SubBase->getOil() + SubBase->getOilProd())
 		{
 			// increase oil production
-			int missingOil = data.needsOil + SubBase->OilNeed - (SubBase->getOil () + SubBase->getOilProd ());
+			int missingOil = data.needsOil + SubBase->OilNeed - (SubBase->getOil() + SubBase->getOilProd());
 
 			int metal = SubBase->getMetalProd();
 			int gold = SubBase->getGoldProd();
@@ -747,11 +747,11 @@ void cBuilding::ServerStartWork (cServer& server)
 			SubBase->setGoldProd (gold);
 			SubBase->setMetalProd (metal);
 
-			sendSavedReport (server, cSavedReportResourceChanged (RES_OIL, missingOil, true), getOwner ());
-			if (SubBase->getMetalProd () < metal)
-				sendSavedReport (server, cSavedReportResourceChanged (RES_METAL, metal - SubBase->getMetalProd (), false), getOwner ());
-			if (SubBase->getGoldProd () < gold)
-				sendSavedReport (server, cSavedReportResourceChanged (RES_GOLD, gold - SubBase->getGoldProd (), false), getOwner ());
+			sendSavedReport (server, cSavedReportResourceChanged (RES_OIL, missingOil, true), getOwner());
+			if (SubBase->getMetalProd() < metal)
+				sendSavedReport (server, cSavedReportResourceChanged (RES_METAL, metal - SubBase->getMetalProd(), false), getOwner());
+			if (SubBase->getGoldProd() < gold)
+				sendSavedReport (server, cSavedReportResourceChanged (RES_GOLD, gold - SubBase->getGoldProd(), false), getOwner());
 		}
 	}
 
@@ -759,7 +759,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	// So if an energy generator has to be started,
 	// it can use the fuel production of this building
 	// (when this building is a mine).
-	setWorking(true);
+	setWorking (true);
 
 	// set mine values. This has to be undone, if the energy is insufficient
 	if (data.canMineMaxRes > 0)
@@ -783,7 +783,7 @@ void cBuilding::ServerStartWork (cServer& server)
 			// try to increase energy production
 			if (!SubBase->increaseEnergyProd (server, data.needsEnergy + SubBase->EnergyNeed - SubBase->EnergyProd))
 			{
-				setWorking(false);
+				setWorking (false);
 
 				// reset mine values
 				if (data.canMineMaxRes > 0)
@@ -801,10 +801,10 @@ void cBuilding::ServerStartWork (cServer& server)
 					SubBase->setOilProd (min (oil, SubBase->getMaxAllowedOilProd()));
 				}
 
-				sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyInsufficient), getOwner ());
+				sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyInsufficient), getOwner());
 				return;
 			}
-			sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyToLow), getOwner ());
+			sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyToLow), getOwner());
 		}
 	}
 
@@ -820,7 +820,7 @@ void cBuilding::ServerStartWork (cServer& server)
 
 	// raw material consumer:
 	if (data.needsMetal)
-		SubBase->MetalNeed += std::min (MetalPerRound, buildList[0].getRemainingMetal ());
+		SubBase->MetalNeed += std::min (MetalPerRound, buildList[0].getRemainingMetal());
 
 	// gold consumer:
 	SubBase->GoldNeed += data.convertsGold;
@@ -828,28 +828,28 @@ void cBuilding::ServerStartWork (cServer& server)
 	// research building
 	if (data.canResearch)
 	{
-		getOwner ()->startAResearch (researchArea);
+		getOwner()->startAResearch (researchArea);
 	}
 
 	if (data.canScore)
 	{
-		sendNumEcos (server, *getOwner ());
+		sendNumEcos (server, *getOwner());
 	}
 
-	sendSubbaseValues (server, *SubBase, *getOwner ());
+	sendSubbaseValues (server, *SubBase, *getOwner());
 	sendDoStartWork (server, *this);
 }
 
 //------------------------------------------------------------
 /** starts the building in the client thread */
 //------------------------------------------------------------
-void cBuilding::clientStartWork ()
+void cBuilding::clientStartWork()
 {
-	if (isUnitWorking ())
+	if (isUnitWorking())
 		return;
-	setWorking(true);
+	setWorking (true);
 	if (data.canResearch)
-		getOwner ()->startAResearch (researchArea);
+		getOwner()->startAResearch (researchArea);
 }
 
 //--------------------------------------------------------------------------
@@ -857,7 +857,7 @@ void cBuilding::clientStartWork ()
 //--------------------------------------------------------------------------
 void cBuilding::ServerStopWork (cServer& server, bool override)
 {
-	if (!isUnitWorking ())
+	if (!isUnitWorking())
 	{
 		sendDoStopWork (server, *this);
 		return;
@@ -868,7 +868,7 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 	{
 		if (SubBase->EnergyNeed > SubBase->EnergyProd - data.produceEnergy && !override)
 		{
-			sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyIsNeeded), getOwner ());
+			sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyIsNeeded), getOwner());
 			return;
 		}
 
@@ -876,7 +876,7 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 		SubBase->OilNeed -= data.needsOil;
 	}
 
-	setWorking(false);
+	setWorking (false);
 
 	// Energy consumers:
 	if (data.needsEnergy)
@@ -884,7 +884,7 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 
 	// raw material consumer:
 	if (data.needsMetal)
-		SubBase->MetalNeed -= std::min (MetalPerRound, buildList[0].getRemainingMetal ());
+		SubBase->MetalNeed -= std::min (MetalPerRound, buildList[0].getRemainingMetal());
 
 	// gold consumer
 	if (data.convertsGold)
@@ -912,44 +912,44 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 
 	if (data.canResearch)
 	{
-		getOwner ()->stopAResearch (researchArea);
+		getOwner()->stopAResearch (researchArea);
 	}
 
 	if (data.canScore)
 	{
-		sendNumEcos (server, *getOwner ());
+		sendNumEcos (server, *getOwner());
 	}
 
-	sendSubbaseValues (server, *SubBase, *getOwner ());
+	sendSubbaseValues (server, *SubBase, *getOwner());
 	sendDoStopWork (server, *this);
 }
 
 //------------------------------------------------------------
 /** stops the building in the client thread */
 //------------------------------------------------------------
-void cBuilding::clientStopWork ()
+void cBuilding::clientStopWork()
 {
-	if (!isUnitWorking ())
+	if (!isUnitWorking())
 		return;
-	setWorking(false);
+	setWorking (false);
 	if (data.canResearch)
-		getOwner ()->stopAResearch (researchArea);
+		getOwner()->stopAResearch (researchArea);
 }
 
 //------------------------------------------------------------
 bool cBuilding::canTransferTo (const cPosition& position, const cMapField& overUnitField) const
 {
-	if (overUnitField.getVehicle ())
+	if (overUnitField.getVehicle())
 	{
-		const cVehicle* v = overUnitField.getVehicle ();
+		const cVehicle* v = overUnitField.getVehicle();
 
-		if (v->getOwner () != this->getOwner ())
+		if (v->getOwner() != this->getOwner())
 			return false;
 
 		if (v->data.storeResType != data.storeResType)
 			return false;
 
-		if (v->isUnitBuildingABuilding () || v->isUnitClearing ())
+		if (v->isUnitBuildingABuilding() || v->isUnitClearing())
 			return false;
 
 		for (size_t i = 0; i != SubBase->buildings.size(); ++i)
@@ -961,9 +961,9 @@ bool cBuilding::canTransferTo (const cPosition& position, const cMapField& overU
 
 		return false;
 	}
-	else if (overUnitField.getTopBuilding ())
+	else if (overUnitField.getTopBuilding())
 	{
-		const cBuilding* b = overUnitField.getTopBuilding ();
+		const cBuilding* b = overUnitField.getTopBuilding();
 
 		if (b == this)
 			return false;
@@ -971,7 +971,7 @@ bool cBuilding::canTransferTo (const cPosition& position, const cMapField& overU
 		if (b->SubBase != SubBase)
 			return false;
 
-		if (b->getOwner () != this->getOwner ())
+		if (b->getOwner() != this->getOwner())
 			return false;
 
 		if (data.storeResType != b->data.storeResType)
@@ -985,7 +985,7 @@ bool cBuilding::canTransferTo (const cPosition& position, const cMapField& overU
 //--------------------------------------------------------------------------
 bool cBuilding::canExitTo (const cPosition& position, const cMap& map, const sUnitData& vehicleData) const
 {
-	if (!map.possiblePlaceVehicle (vehicleData, position, getOwner ())) return false;
+	if (!map.possiblePlaceVehicle (vehicleData, position, getOwner())) return false;
 	if (!isNextTo (position)) return false;
 
 	return true;
@@ -996,8 +996,8 @@ bool cBuilding::canLoad (const cPosition& position, const cMap& map, bool checkP
 {
 	if (map.isValidPosition (position) == false) return false;
 
-	if (canLoad (map.getField(position).getPlane(), checkPosition)) return true;
-	else return canLoad (map.getField(position).getVehicle(), checkPosition);
+	if (canLoad (map.getField (position).getPlane(), checkPosition)) return true;
+	else return canLoad (map.getField (position).getVehicle(), checkPosition);
 }
 
 //--------------------------------------------------------------------------
@@ -1007,7 +1007,7 @@ bool cBuilding::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 {
 	if (!Vehicle) return false;
 
-	if (Vehicle->isUnitLoaded ()) return false;
+	if (Vehicle->isUnitLoaded()) return false;
 
 	if (data.getStoredUnits() == data.storageUnitsMax) return false;
 
@@ -1015,11 +1015,11 @@ bool cBuilding::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 
 	if (!Contains (data.storeUnitsTypes, Vehicle->data.isStorageType)) return false;
 
-	if (Vehicle->getClientMoveJob () && (Vehicle->isUnitMoving () || Vehicle->isAttacking () || Vehicle->MoveJobActive)) return false;
+	if (Vehicle->getClientMoveJob() && (Vehicle->isUnitMoving() || Vehicle->isAttacking() || Vehicle->MoveJobActive)) return false;
 
-	if (Vehicle->getOwner () != getOwner () || Vehicle->isUnitBuildingABuilding () || Vehicle->isUnitClearing ()) return false;
+	if (Vehicle->getOwner() != getOwner() || Vehicle->isUnitBuildingABuilding() || Vehicle->isUnitClearing()) return false;
 
-	if (Vehicle->isBeeingAttacked ()) return false;
+	if (Vehicle->isBeeingAttacked()) return false;
 
 	return true;
 }
@@ -1032,33 +1032,33 @@ void cBuilding::storeVehicle (cVehicle& vehicle, cMap& map)
 	map.deleteVehicle (vehicle);
 	if (vehicle.isSentryActive())
 	{
-		vehicle.getOwner ()->deleteSentry (vehicle);
+		vehicle.getOwner()->deleteSentry (vehicle);
 	}
 
-	vehicle.setLoaded(true);
-	vehicle.setIsBeeinAttacked(false);
+	vehicle.setLoaded (true);
+	vehicle.setIsBeeinAttacked (false);
 
 	storedUnits.push_back (&vehicle);
-	data.setStoredUnits(data.getStoredUnits ()+1);
+	data.setStoredUnits (data.getStoredUnits() + 1);
 
-	getOwner ()->doScan ();
+	getOwner()->doScan();
 }
 
 //-----------------------------------------------------------------------
 // Unloads a vehicle
-void cBuilding::exitVehicleTo(cVehicle& vehicle, const cPosition& position, cMap& map)
+void cBuilding::exitVehicleTo (cVehicle& vehicle, const cPosition& position, cMap& map)
 {
 	Remove (storedUnits, &vehicle);
 
-	data.setStoredUnits (data.getStoredUnits ()-1);
+	data.setStoredUnits (data.getStoredUnits() - 1);
 
-	map.addVehicle(vehicle, position);
+	map.addVehicle (vehicle, position);
 
-	vehicle.setPosition(position);
+	vehicle.setPosition (position);
 
 	vehicle.setLoaded (false);
 
-	getOwner ()->doScan ();
+	getOwner()->doScan();
 }
 
 //-------------------------------------------------------------------------------
@@ -1201,7 +1201,7 @@ void cBuilding::DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int valu
 			SDL_FillRect (sf, &mark, color);
 		}
 
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &src, sf, &dest);
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &src, sf, &dest);
 
 		dest.x += offx;
 	}
@@ -1213,7 +1213,7 @@ void cBuilding::DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int valu
 
 void cBuilding::CheckRessourceProd (const cServer& server)
 {
-	auto position = getPosition ();
+	auto position = getPosition();
 
 	MaxMetalProd = 0;
 	MaxGoldProd = 0;
@@ -1309,14 +1309,14 @@ void cBuilding::calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array
 				break;
 
 			case 1:
-				WorkedRounds = (turboBuildCosts[1] - remainingMetal) / (float)(4 * data.needsMetal);
+				WorkedRounds = (turboBuildCosts[1] - remainingMetal) / (float) (4 * data.needsMetal);
 				turboBuildCosts[0] -= (int) (2    *  1 * data.needsMetal * WorkedRounds);
 				turboBuildCosts[1] -= (int) (1    *  4 * data.needsMetal * WorkedRounds);
 				turboBuildCosts[2] -= (int) (0.5f * 12 * data.needsMetal * WorkedRounds);
 				break;
 
 			case 2:
-				WorkedRounds = (turboBuildCosts[2] - remainingMetal) / (float)(12 * data.needsMetal);
+				WorkedRounds = (turboBuildCosts[2] - remainingMetal) / (float) (12 * data.needsMetal);
 				turboBuildCosts[0] -= (int) (4 *  1 * data.needsMetal * WorkedRounds);
 				turboBuildCosts[1] -= (int) (2 *  4 * data.needsMetal * WorkedRounds);
 				turboBuildCosts[2] -= (int) (1 * 12 * data.needsMetal * WorkedRounds);
@@ -1370,8 +1370,8 @@ void cBuilding::makeDetection (cServer& server)
 		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
 			auto& player = *playerList[i];
-			if (&player == getOwner ()) continue;
-			if (player.hasMineDetection (getPosition ()))
+			if (&player == getOwner()) continue;
+			if (player.hasMineDetection (getPosition()))
 			{
 				setDetectedByPlayer (server, &player);
 			}
@@ -1398,7 +1398,7 @@ sBuildingUIData::sBuildingUIData (sBuildingUIData&& other) :
 {}
 
 //--------------------------------------------------------------------------
-sBuildingUIData& sBuildingUIData::operator=(sBuildingUIData&& other)
+sBuildingUIData& sBuildingUIData::operator= (sBuildingUIData && other)
 {
 	img = std::move (other.img);
 	img_org = std::move (other.img_org);
@@ -1420,9 +1420,9 @@ sBuildingUIData& sBuildingUIData::operator=(sBuildingUIData&& other)
 //--------------------------------------------------------------------------
 void sBuildingUIData::scaleSurfaces (float factor)
 {
-	scaleSurface (img_org.get (), img.get (), (int)(img_org->w * factor), (int)(img_org->h * factor));
-	scaleSurface (shw_org.get (), shw.get (), (int)(shw_org->w * factor), (int)(shw_org->h * factor));
-	if (eff_org) scaleSurface (eff_org.get (), eff.get (), (int)(eff_org->w * factor), (int)(eff_org->h * factor));
+	scaleSurface (img_org.get(), img.get(), (int) (img_org->w * factor), (int) (img_org->h * factor));
+	scaleSurface (shw_org.get(), shw.get(), (int) (shw_org->w * factor), (int) (shw_org->h * factor));
+	if (eff_org) scaleSurface (eff_org.get(), eff.get(), (int) (eff_org->w * factor), (int) (eff_org->h * factor));
 }
 
 //-----------------------------------------------------------------------------
@@ -1434,7 +1434,7 @@ void sBuildingUIData::scaleSurfaces (float factor)
 //-----------------------------------------------------------------------------
 bool cBuilding::factoryHasJustFinishedBuilding() const
 {
-	return (!buildList.empty () && isUnitWorking () == false && buildList[0].getRemainingMetal () <= 0);
+	return (!buildList.empty() && isUnitWorking() == false && buildList[0].getRemainingMetal() <= 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -1453,26 +1453,26 @@ void cBuilding::executeUpdateBuildingCommmand (const cClient& client, bool updat
 bool cBuilding::buildingCanBeStarted() const
 {
 	return (data.canWork && isUnitWorking() == false
-			&& (!buildList.empty () || data.canBuild.empty ()));
+			&& (!buildList.empty() || data.canBuild.empty()));
 }
 
 //-----------------------------------------------------------------------------
 bool cBuilding::buildingCanBeUpgraded() const
 {
-	const sUnitData& upgraded = *getOwner ()->getUnitDataCurrentVersion (data.ID);
-	return (data.getVersion () != upgraded.getVersion () && SubBase && SubBase->getMetal () >= 2);
+	const sUnitData& upgraded = *getOwner()->getUnitDataCurrentVersion (data.ID);
+	return (data.getVersion() != upgraded.getVersion() && SubBase && SubBase->getMetal() >= 2);
 }
 
 //-----------------------------------------------------------------------------
-bool cBuilding::isBuildListEmpty () const
+bool cBuilding::isBuildListEmpty() const
 {
-	return buildList.empty ();
+	return buildList.empty();
 }
 
 //-----------------------------------------------------------------------------
-size_t cBuilding::getBuildListSize () const
+size_t cBuilding::getBuildListSize() const
 {
-	return buildList.size ();
+	return buildList.size();
 }
 
 //-----------------------------------------------------------------------------
@@ -1492,14 +1492,14 @@ void cBuilding::setBuildList (std::vector<cBuildListItem> buildList_)
 {
 	buildList = std::move (buildList_);
 
-	buildListFirstItemSignalConnectionManager.disconnectAll ();
-	if (!buildList.empty ())
+	buildListFirstItemSignalConnectionManager.disconnectAll();
+	if (!buildList.empty())
 	{
-		buildListFirstItemSignalConnectionManager.connect (buildList[0].remainingMetalChanged, [this]() { buildListFirstItemDataChanged (); });
-		buildListFirstItemSignalConnectionManager.connect (buildList[0].typeChanged, [this]() { buildListFirstItemDataChanged (); });
+		buildListFirstItemSignalConnectionManager.connect (buildList[0].remainingMetalChanged, [this]() { buildListFirstItemDataChanged(); });
+		buildListFirstItemSignalConnectionManager.connect (buildList[0].typeChanged, [this]() { buildListFirstItemDataChanged(); });
 	}
 
-	buildListChanged ();
+	buildListChanged();
 }
 
 //-----------------------------------------------------------------------------
@@ -1507,67 +1507,67 @@ void cBuilding::addBuildListItem (cBuildListItem item)
 {
 	buildList.push_back (std::move (item));
 
-	buildListFirstItemSignalConnectionManager.disconnectAll ();
-	if (!buildList.empty ())
+	buildListFirstItemSignalConnectionManager.disconnectAll();
+	if (!buildList.empty())
 	{
-		buildListFirstItemSignalConnectionManager.connect (buildList[0].remainingMetalChanged, [this]() { buildListFirstItemDataChanged (); });
-		buildListFirstItemSignalConnectionManager.connect (buildList[0].typeChanged, [this]() { buildListFirstItemDataChanged (); });
+		buildListFirstItemSignalConnectionManager.connect (buildList[0].remainingMetalChanged, [this]() { buildListFirstItemDataChanged(); });
+		buildListFirstItemSignalConnectionManager.connect (buildList[0].typeChanged, [this]() { buildListFirstItemDataChanged(); });
 	}
 
-	buildListChanged ();
+	buildListChanged();
 }
 
 //-----------------------------------------------------------------------------
 void cBuilding::removeBuildListItem (size_t index)
 {
-	buildList.erase (buildList.begin () + index);
+	buildList.erase (buildList.begin() + index);
 
-	buildListFirstItemSignalConnectionManager.disconnectAll ();
-	if (!buildList.empty ())
+	buildListFirstItemSignalConnectionManager.disconnectAll();
+	if (!buildList.empty())
 	{
-		buildListFirstItemSignalConnectionManager.connect (buildList[0].remainingMetalChanged, [this]() { buildListFirstItemDataChanged (); });
-		buildListFirstItemSignalConnectionManager.connect (buildList[0].typeChanged, [this]() { buildListFirstItemDataChanged (); });
+		buildListFirstItemSignalConnectionManager.connect (buildList[0].remainingMetalChanged, [this]() { buildListFirstItemDataChanged(); });
+		buildListFirstItemSignalConnectionManager.connect (buildList[0].typeChanged, [this]() { buildListFirstItemDataChanged(); });
 	}
 
-	buildListChanged ();
+	buildListChanged();
 }
 
 //-----------------------------------------------------------------------------
 void cBuilding::setWorking (bool value)
 {
 	std::swap (isWorking, value);
-	if (value != isWorking) workingChanged ();
+	if (value != isWorking) workingChanged();
 }
 
 //-----------------------------------------------------------------------------
 void cBuilding::setResearchArea (cResearch::ResearchArea area)
 {
 	std::swap (researchArea, area);
-	if (researchArea != area) researchAreaChanged ();
+	if (researchArea != area) researchAreaChanged();
 }
 
 //-----------------------------------------------------------------------------
-cResearch::ResearchArea cBuilding::getResearchArea () const
+cResearch::ResearchArea cBuilding::getResearchArea() const
 {
 	return researchArea;
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::registerOwnerEvents ()
+void cBuilding::registerOwnerEvents()
 {
-	ownerSignalConnectionManager.disconnectAll ();
+	ownerSignalConnectionManager.disconnectAll();
 
-	if (getOwner () == nullptr) return;
+	if (getOwner() == nullptr) return;
 
 	if (data.convertsGold)
 	{
-		ownerSignalConnectionManager.connect (getOwner ()->creditsChanged, [&]() { statusChanged (); });
+		ownerSignalConnectionManager.connect (getOwner()->creditsChanged, [&]() { statusChanged(); });
 	}
 
 	if (data.canResearch)
 	{
-		ownerSignalConnectionManager.connect (getOwner ()->researchCentersWorkingOnAreaChanged, [&](cResearch::ResearchArea) { statusChanged (); });
-		ownerSignalConnectionManager.connect (getOwner ()->getResearchState ().neededResearchPointsChanged, [&](cResearch::ResearchArea) { statusChanged (); });
-		ownerSignalConnectionManager.connect (getOwner ()->getResearchState ().currentResearchPointsChanged, [&](cResearch::ResearchArea) { statusChanged (); });
+		ownerSignalConnectionManager.connect (getOwner()->researchCentersWorkingOnAreaChanged, [&] (cResearch::ResearchArea) { statusChanged(); });
+		ownerSignalConnectionManager.connect (getOwner()->getResearchState().neededResearchPointsChanged, [&] (cResearch::ResearchArea) { statusChanged(); });
+		ownerSignalConnectionManager.connect (getOwner()->getResearchState().currentResearchPointsChanged, [&] (cResearch::ResearchArea) { statusChanged(); });
 	}
 }

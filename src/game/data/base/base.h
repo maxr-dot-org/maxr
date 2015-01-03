@@ -35,7 +35,7 @@ struct sSubBase
 public:
 	explicit sSubBase (cPlayer* owner_);
 	sSubBase (const sSubBase& other);
-	~sSubBase ();
+	~sSubBase();
 
 	/**
 	* integrates all building of the given subbase in the own one
@@ -109,13 +109,13 @@ public:
 	void setGoldProd (int value);
 	void setOilProd (int value);
 
-	int getMetal () const;
+	int getMetal() const;
 	void setMetal (int value);
 
-	int getOil () const;
+	int getOil() const;
 	void setOil (int value);
 
-	int getGold () const;
+	int getGold() const;
 	void setGold (int value);
 
 	/** changes the production of a resource by value. */
@@ -257,7 +257,7 @@ public:
 	* recalculates the values of all subbases
 	*@author eiko
 	*/
-	void refreshSubbases ();
+	void refreshSubbases();
 
 	sSubBase* checkNeighbour (const cPosition& position, const cBuilding& Building);
 

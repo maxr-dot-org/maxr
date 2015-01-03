@@ -31,7 +31,7 @@ class cSoundChannelGroup
 {
 public:
 	explicit cSoundChannelGroup (int sdlGroupTag);
-	~cSoundChannelGroup ();
+	~cSoundChannelGroup();
 
 	void addChannel (int channelIndex);
 	void addChannelRange (int first, int last);
@@ -42,9 +42,9 @@ public:
 private:
 	struct sChannelLess
 	{
-		bool operator()(const std::unique_ptr<cSoundChannel>& left, const std::unique_ptr<cSoundChannel>& right) const;
-		bool operator()(const std::unique_ptr<cSoundChannel>& left, int right) const;
-		bool operator()(int left, const std::unique_ptr<cSoundChannel>& right) const;
+		bool operator() (const std::unique_ptr<cSoundChannel>& left, const std::unique_ptr<cSoundChannel>& right) const;
+		bool operator() (const std::unique_ptr<cSoundChannel>& left, int right) const;
+		bool operator() (int left, const std::unique_ptr<cSoundChannel>& right) const;
 	};
 	cFlatSet<std::unique_ptr<cSoundChannel>, sChannelLess> soundChannels;
 

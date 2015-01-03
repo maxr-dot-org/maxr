@@ -32,19 +32,19 @@ class cLabel;
 class cWindowClanSelection : public cWindow
 {
 public:
-	cWindowClanSelection ();
-	~cWindowClanSelection ();
+	cWindowClanSelection();
+	~cWindowClanSelection();
 
 	cSignal<void ()> done;
 	cSignal<void ()> canceled;
 
-	unsigned int getSelectedClan () const;
+	unsigned int getSelectedClan() const;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
 	static const size_t clanRows = 2;
 	static const size_t clanColumns = 4;
-	static const size_t clanCount = clanRows * clanColumns;
+	static const size_t clanCount = clanRows* clanColumns;
 
 	std::array<cImage*, clanCount> clanImages;
 	std::array<cLabel*, clanCount> clanTitles;
@@ -57,10 +57,10 @@ private:
 
 	void clanClicked (const cImage* clanImage);
 
-	void okClicked ();
-	void backClicked ();
+	void okClicked();
+	void backClicked();
 
-	void updateClanDescription ();
+	void updateClanDescription();
 };
 
 #endif // ui_graphical_menu_windows_windowclanselection_windowclanselectionH

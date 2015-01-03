@@ -32,7 +32,7 @@ cSoundChannelGroup::cSoundChannelGroup (int sdlGroupTag_) :
 {}
 
 //--------------------------------------------------------------------------
-cSoundChannelGroup::~cSoundChannelGroup ()
+cSoundChannelGroup::~cSoundChannelGroup()
 {}
 
 //--------------------------------------------------------------------------
@@ -64,8 +64,8 @@ cSoundChannel& cSoundChannelGroup::getFreeChannel (bool haltIfNotAvailable)
 		if (channel != -1)
 		{
 			auto iter = soundChannels.find (channel);
-			assert (iter != soundChannels.end ());
-			(*iter)->stop ();
+			assert (iter != soundChannels.end());
+			(*iter)->stop();
 		}
 	}
 
@@ -77,14 +77,14 @@ cSoundChannel& cSoundChannelGroup::getFreeChannel (bool haltIfNotAvailable)
 	}
 
 	auto iter = soundChannels.find (channel);
-	assert (iter != soundChannels.end ());
+	assert (iter != soundChannels.end());
 	return **iter;
 }
 
 //--------------------------------------------------------------------------
 void cSoundChannelGroup::setVolume (int volume)
 {
-	for (auto i = soundChannels.begin (); i != soundChannels.end (); ++i)
+	for (auto i = soundChannels.begin(); i != soundChannels.end(); ++i)
 	{
 		const auto& soundChannel = *i;
 		soundChannel->setVolume (volume);
@@ -92,19 +92,19 @@ void cSoundChannelGroup::setVolume (int volume)
 }
 
 //--------------------------------------------------------------------------
-bool cSoundChannelGroup::sChannelLess::operator ()(const std::unique_ptr<cSoundChannel>& left, const std::unique_ptr<cSoundChannel>& right) const
+bool cSoundChannelGroup::sChannelLess::operator() (const std::unique_ptr<cSoundChannel>& left, const std::unique_ptr<cSoundChannel>& right) const
 {
-	return left->getSdlChannelId () < right->getSdlChannelId ();
+	return left->getSdlChannelId() < right->getSdlChannelId();
 }
 
 //--------------------------------------------------------------------------
-bool cSoundChannelGroup::sChannelLess::operator()(const std::unique_ptr<cSoundChannel>& left, int right) const
+bool cSoundChannelGroup::sChannelLess::operator() (const std::unique_ptr<cSoundChannel>& left, int right) const
 {
-	return left->getSdlChannelId () < right;
+	return left->getSdlChannelId() < right;
 }
 
 //--------------------------------------------------------------------------
-bool cSoundChannelGroup::sChannelLess::operator()(int left, const std::unique_ptr<cSoundChannel>& right) const
+bool cSoundChannelGroup::sChannelLess::operator() (int left, const std::unique_ptr<cSoundChannel>& right) const
 {
-	return left < right->getSdlChannelId ();
+	return left < right->getSdlChannelId();
 }

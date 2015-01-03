@@ -70,13 +70,13 @@ void sendUnitUpgrades (const cClient& client)
 	{
 		const sUnitData& playerData = player.VehicleData[i];
 		const sUnitData& originalData = UnitsData.getVehicle (i, player.getClan());
-		if (playerData.getDamage () == originalData.getDamage () &&
+		if (playerData.getDamage() == originalData.getDamage() &&
 			playerData.getShotsMax() == originalData.getShotsMax() &&
-			playerData.getRange () == originalData.getRange () &&
+			playerData.getRange() == originalData.getRange() &&
 			playerData.getAmmoMax() == originalData.getAmmoMax() &&
-			playerData.getArmor () == originalData.getArmor () &&
+			playerData.getArmor() == originalData.getArmor() &&
 			playerData.getHitpointsMax() == originalData.getHitpointsMax() &&
-			playerData.getScan () == originalData.getScan () &&
+			playerData.getScan() == originalData.getScan() &&
 			playerData.getSpeedMax() == originalData.getSpeedMax())
 		{
 			continue;
@@ -86,13 +86,13 @@ void sendUnitUpgrades (const cClient& client)
 			message = new cNetMessage (MU_MSG_UPGRADES);
 		}
 		message->pushInt16 (playerData.getSpeedMax());
-		message->pushInt16 (playerData.getScan ());
+		message->pushInt16 (playerData.getScan());
 		message->pushInt16 (playerData.getHitpointsMax());
-		message->pushInt16 (playerData.getArmor ());
+		message->pushInt16 (playerData.getArmor());
 		message->pushInt16 (playerData.getAmmoMax());
-		message->pushInt16 (playerData.getRange ());
+		message->pushInt16 (playerData.getRange());
 		message->pushInt16 (playerData.getShotsMax());
-		message->pushInt16 (playerData.getDamage ());
+		message->pushInt16 (playerData.getDamage());
 		message->pushID (playerData.ID);
 
 		count++;
@@ -120,13 +120,13 @@ void sendUnitUpgrades (const cClient& client)
 	{
 		const sUnitData& playerData = player.BuildingData[i];
 		const sUnitData& originalData = UnitsData.getBuilding (i, player.getClan());
-		if (playerData.getDamage () == originalData.getDamage () &&
+		if (playerData.getDamage() == originalData.getDamage() &&
 			playerData.getShotsMax() == originalData.getShotsMax() &&
-			playerData.getRange () == originalData.getRange () &&
+			playerData.getRange() == originalData.getRange() &&
 			playerData.getAmmoMax() == originalData.getAmmoMax() &&
-			playerData.getArmor () == originalData.getArmor () &&
+			playerData.getArmor() == originalData.getArmor() &&
 			playerData.getHitpointsMax() == originalData.getHitpointsMax() &&
-			playerData.getScan () == originalData.getScan ())
+			playerData.getScan() == originalData.getScan())
 		{
 			continue;
 		}
@@ -134,13 +134,13 @@ void sendUnitUpgrades (const cClient& client)
 		{
 			message = new cNetMessage (MU_MSG_UPGRADES);
 		}
-		message->pushInt16 (playerData.getScan ());
+		message->pushInt16 (playerData.getScan());
 		message->pushInt16 (playerData.getHitpointsMax());
-		message->pushInt16 (playerData.getArmor ());
+		message->pushInt16 (playerData.getArmor());
 		message->pushInt16 (playerData.getAmmoMax());
-		message->pushInt16 (playerData.getRange ());
+		message->pushInt16 (playerData.getRange());
 		message->pushInt16 (playerData.getShotsMax());
-		message->pushInt16 (playerData.getDamage ());
+		message->pushInt16 (playerData.getDamage());
 		message->pushID (playerData.ID);
 
 		count++;
@@ -194,11 +194,11 @@ void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, 
 		if (unitId.isAVehicle()) msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_SPEED, currentVersion->getSpeedMax()));
 		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_SCAN, currentVersion->getScan()));
 		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_HITS, currentVersion->getHitpointsMax()));
-		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_ARMOR, currentVersion->getArmor ()));
+		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_ARMOR, currentVersion->getArmor()));
 		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_AMMO, currentVersion->getAmmoMax()));
 		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_RANGE, currentVersion->getRange()));
 		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_SHOTS, currentVersion->getShotsMax()));
-		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_DAMAGE, currentVersion->getDamage ()));
+		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_DAMAGE, currentVersion->getDamage()));
 		msg->pushID (currentVersion->ID);
 
 		iCount++; // msg contains one more upgrade struct
@@ -236,7 +236,7 @@ void sendLandingCoords (const cClient& client, const cPosition& coords)
 void sendReadyToStart (const cClient& client)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_READY_TO_START);
-	message->pushChar (client.getActivePlayer ().getNr ());
+	message->pushChar (client.getActivePlayer().getNr());
 
 	client.sendNetMessage (message);
 }
@@ -244,8 +244,8 @@ void sendReadyToStart (const cClient& client)
 void sendChatMessageToServer (const cClient& client, const cPlayer& player, const string& msg)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_CHAT_CLIENT);
-    message->pushString (msg);
-    message->pushChar (player.getNr());
+	message->pushString (msg);
+	message->pushChar (player.getNr());
 	client.sendNetMessage (message);
 }
 
@@ -330,8 +330,8 @@ void sendWantAttack (const cClient& client, int aggressorID, const cPosition& ta
 void sendMineLayerStatus (const cClient& client, const cVehicle& vehicle)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_MINELAYERSTATUS);
-	message->pushBool (vehicle.isUnitLayingMines ());
-	message->pushBool (vehicle.isUnitClearingMines ());
+	message->pushBool (vehicle.isUnitLayingMines());
+	message->pushBool (vehicle.isUnitClearingMines());
 	message->pushInt16 (vehicle.iID);
 	client.sendNetMessage (message);
 }
@@ -502,12 +502,12 @@ void sendWantComAction (const cClient& client, int srcUnitID, int destUnitID, bo
 //------------------------------------------------------------------------
 void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool upgradeAll)
 {
-	if (building.getOwner () == 0)
+	if (building.getOwner() == 0)
 		return;
 
 	const sUnitData& currentVersion = building.data;
-	const sUnitData& upgradedVersion = *building.getOwner ()->getUnitDataCurrentVersion (building.data.ID);
-	if (currentVersion.getVersion () >= upgradedVersion.getVersion ())
+	const sUnitData& upgradedVersion = *building.getOwner()->getUnitDataCurrentVersion (building.data.ID);
+	if (currentVersion.getVersion() >= upgradedVersion.getVersion())
 		return; // already uptodate
 
 	cNetMessage* msg = new cNetMessage (GAME_EV_WANT_BUILDING_UPGRADE);
@@ -529,7 +529,7 @@ void sendWantUpgrade (const cClient& client, int buildingID, int storageSlot, bo
 void sendWantResearchChange (const cClient& client, const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_RESEARCH_CHANGE);
-	const cPlayer& player = client.getActivePlayer ();
+	const cPlayer& player = client.getActivePlayer();
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
 	{
 		message->pushInt16 (newResearchSettings[i]);

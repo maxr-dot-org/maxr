@@ -48,29 +48,29 @@ public:
 	 * because the channel may stop by itself while the destructor is being
 	 * executed.
 	 */
-	virtual ~cSoundEffect ();
+	virtual ~cSoundEffect();
 
-	virtual eSoundChannelType getChannelType () const;
+	virtual eSoundChannelType getChannelType() const;
 
 	void play (cSoundChannel& channel, bool loop = false);
-	void stop ();
+	void stop();
 
-	void pause ();
-	void resume ();
+	void pause();
+	void resume();
 
-	cSoundChannel* getChannel () const;
+	cSoundChannel* getChannel() const;
 
 	bool isInConflict (const cSoundEffect& other) const;
 
-	bool hasConflictAtSameGameTimeOnly ();
+	bool hasConflictAtSameGameTimeOnly();
 
-	unsigned int getMaxConcurrentConflictedCount () const;
+	unsigned int getMaxConcurrentConflictedCount() const;
 
-	eSoundConflictHandlingType getSoundConflictHandlingType () const;
+	eSoundConflictHandlingType getSoundConflictHandlingType() const;
 
-	virtual bool hasPosition () const;
+	virtual bool hasPosition() const;
 
-	virtual const cPosition& getPosition () const;
+	virtual const cPosition& getPosition() const;
 
 	cSignal<void ()> started;
 	cSignal<void (), cRecursiveMutex> stopped;

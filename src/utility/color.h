@@ -35,18 +35,18 @@ class cLabColor;
 class cRgbColor
 {
 public:
-	cRgbColor ();
+	cRgbColor();
 	cRgbColor (unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 0xFF);
 
-	bool operator==(const cRgbColor& other) const;
-	bool operator!=(const cRgbColor& other) const;
+	bool operator== (const cRgbColor& other) const;
+	bool operator!= (const cRgbColor& other) const;
 
-	SDL_Color toSdlColor () const;
+	SDL_Color toSdlColor() const;
 	Uint32 toMappedSdlRGBColor (const SDL_PixelFormat* format) const;
 	Uint32 toMappedSdlRGBAColor (const SDL_PixelFormat* format) const;
 
-	cHsvColor toHsv () const;
-	cLabColor toLab () const;
+	cHsvColor toHsv() const;
+	cLabColor toLab() const;
 
 	cRgbColor exchangeRed (unsigned char red) const;
 	cRgbColor exchangeGreen (unsigned char green) const;
@@ -63,14 +63,14 @@ public:
 	inline static cRgbColor yellow (unsigned char alpha_ = 0xFF) { return cRgbColor (0xFF, 0xFF, 0, alpha_); }
 	inline static cRgbColor black (unsigned char alpha_ = 0xFF) { return cRgbColor (0, 0, 0, alpha_); }
 	inline static cRgbColor white (unsigned char alpha_ = 0xFF) { return cRgbColor (0xFF, 0xFF, 0xFF, alpha_); }
-	inline static cRgbColor transparent () { return cRgbColor (0, 0, 0, 0); }
+	inline static cRgbColor transparent() { return cRgbColor (0, 0, 0, 0); }
 
 	inline static cRgbColor random (unsigned char alpha_ = 0xFF)
 	{
 		static std::random_device rd;
 		static std::mt19937 engine (rd());
 		// Workaround for C++11 bug: uniform_int_distribution does not allow char types
-		std::uniform_int_distribution<unsigned int> distribution (0, (unsigned int)std::numeric_limits<unsigned char>::max ());
+		std::uniform_int_distribution<unsigned int> distribution (0, (unsigned int)std::numeric_limits<unsigned char>::max());
 		return cRgbColor ((unsigned char)distribution (engine), (unsigned char)distribution (engine), (unsigned char)distribution (engine), alpha_);
 	}
 };
@@ -78,13 +78,13 @@ public:
 class cHsvColor
 {
 public:
-	cHsvColor ();
+	cHsvColor();
 	cHsvColor (unsigned short hue, unsigned char saturation, unsigned char value, unsigned char alpha = 0xFF);
 
-	bool operator==(const cHsvColor& other) const;
-	bool operator!=(const cHsvColor& other) const;
+	bool operator== (const cHsvColor& other) const;
+	bool operator!= (const cHsvColor& other) const;
 
-	cRgbColor toRgb () const;
+	cRgbColor toRgb() const;
 
 	unsigned short h;
 	unsigned char s, v;
@@ -94,11 +94,11 @@ public:
 class cLabColor
 {
 public:
-	cLabColor ();
+	cLabColor();
 	cLabColor (double L, double a, double b);
 
-	bool operator==(const cLabColor& other) const;
-	bool operator!=(const cLabColor& other) const;
+	bool operator== (const cLabColor& other) const;
+	bool operator!= (const cLabColor& other) const;
 
 	double deltaE (const cLabColor& other) const;
 

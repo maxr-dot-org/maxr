@@ -74,26 +74,26 @@ struct sUpgradeNew
 struct sBuildingUIData
 {
 	AutoSurface img, img_org; // Surface of the building
-    AutoSurface shw, shw_org; // Surfaces of the shadow
-    AutoSurface eff, eff_org; // Surfaces of the effects
-    AutoSurface video;  // video
-    AutoSurface info;   // info image
+	AutoSurface shw, shw_org; // Surfaces of the shadow
+	AutoSurface eff, eff_org; // Surfaces of the effects
+	AutoSurface video;  // video
+	AutoSurface info;   // info image
 
 	// Die Sounds:
 	cSoundChunk Start;
-    cSoundChunk Running;
-    cSoundChunk Stop;
-    cSoundChunk Attack;
-    cSoundChunk Wait;
+	cSoundChunk Running;
+	cSoundChunk Stop;
+	cSoundChunk Attack;
+	cSoundChunk Wait;
 
-    sBuildingUIData ();
-    sBuildingUIData (sBuildingUIData&& other);
-    sBuildingUIData& operator=(sBuildingUIData&& other);
+	sBuildingUIData();
+	sBuildingUIData (sBuildingUIData&& other);
+	sBuildingUIData& operator= (sBuildingUIData && other);
 	void scaleSurfaces (float faktor);
 
 private:
-    sBuildingUIData (const sBuildingUIData& other) MAXR_DELETE_FUNCTION;
-    sBuildingUIData& operator=(const sBuildingUIData& other) MAXR_DELETE_FUNCTION;
+	sBuildingUIData (const sBuildingUIData& other) MAXR_DELETE_FUNCTION;
+	sBuildingUIData& operator= (const sBuildingUIData& other) MAXR_DELETE_FUNCTION;
 };
 
 // enum for the upgrade symbols
@@ -109,18 +109,18 @@ enum eSymbolsBig {SBSpeed, SBHits, SBAmmo, SBAttack, SBShots, SBRange, SBArmor, 
 class cBuildListItem
 {
 public:
-	cBuildListItem ();
+	cBuildListItem();
 	cBuildListItem (sID type, int remainingMetal);
 	cBuildListItem (const cBuildListItem& other);
 	cBuildListItem (cBuildListItem&& other);
 
-	cBuildListItem& operator=(const cBuildListItem& other);
-	cBuildListItem& operator=(cBuildListItem&& other);
+	cBuildListItem& operator= (const cBuildListItem& other);
+	cBuildListItem& operator= (cBuildListItem && other);
 
-	const sID& getType () const;
+	const sID& getType() const;
 	void setType (const sID& type);
 
-	int getRemainingMetal () const;
+	int getRemainingMetal() const;
 	void setRemainingMetal (int value);
 
 	cSignal<void ()> typeChanged;
@@ -182,9 +182,9 @@ public:
 	void updateNeighbours (const cMap& map);
 	void CheckNeighbours (const cMap& Map);
 	void ServerStartWork (cServer& server);
-	void clientStartWork ();
+	void clientStartWork();
 	void ServerStopWork (cServer& server, bool override);
-	void clientStopWork ();
+	void clientStopWork();
 	/** check whether a transfer to a unit on the field is possible */
 	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const MAXR_OVERRIDE_FUNCTION;
 	void CheckRessourceProd (const cServer& server);
@@ -227,14 +227,14 @@ public:
 
 	void executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType) const;
 
-	virtual bool isUnitWorking () const { return isWorking; }
-	virtual bool factoryHasJustFinishedBuilding () const;
-	virtual bool buildingCanBeStarted () const;
-	virtual bool buildingCanBeUpgraded () const;
-	virtual bool canBeStoppedViaUnitMenu () const { return isUnitWorking (); }
+	virtual bool isUnitWorking() const { return isWorking; }
+	virtual bool factoryHasJustFinishedBuilding() const;
+	virtual bool buildingCanBeStarted() const;
+	virtual bool buildingCanBeUpgraded() const;
+	virtual bool canBeStoppedViaUnitMenu() const { return isUnitWorking(); }
 
-	bool isBuildListEmpty () const;
-	size_t getBuildListSize () const;
+	bool isBuildListEmpty() const;
+	size_t getBuildListSize() const;
 	const cBuildListItem& getBuildListItem (size_t index) const;
 	cBuildListItem& getBuildListItem (size_t index);
 	void setBuildList (std::vector<cBuildListItem> buildList);
@@ -244,7 +244,7 @@ public:
 	void setWorking (bool value);
 
 	void setResearchArea (cResearch::ResearchArea area);
-	cResearch::ResearchArea getResearchArea () const;
+	cResearch::ResearchArea getResearchArea() const;
 
 	cSignal<void ()> buildListChanged;
 	cSignal<void ()> buildListFirstItemDataChanged;
@@ -267,7 +267,7 @@ private:
 
 	std::vector<cBuildListItem> buildList; // list with the units to be build by this factory
 
-	void registerOwnerEvents ();
+	void registerOwnerEvents();
 
 	//-----------------------------------------------------------------------------
 protected:

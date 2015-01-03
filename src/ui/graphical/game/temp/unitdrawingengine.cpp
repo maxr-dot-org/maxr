@@ -72,7 +72,7 @@ void cUnitDrawingEngine::setDrawColor (bool drawColor)
 void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destination, float zoomFactor, const cUnitSelection* unitSelection, const cPlayer* player)
 {
 	unsigned long long animationTime = animationTimer->getAnimationTime(); //call getAnimationTime only once in this method and save the result,
-	                                                                       //to avoid a changing time within this method
+	//to avoid a changing time within this method
 
 	SDL_Rect dest = {0, 0, 0, 0};
 	bool bDraw = false;
@@ -93,7 +93,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 
 	if (bDraw)
 	{
-		building.render(animationTime, drawingSurface, dest, zoomFactor, cSettings::getInstance().isShadows(), true);
+		building.render (animationTime, drawingSurface, dest, zoomFactor, cSettings::getInstance().isShadows(), true);
 	}
 
 	// now check, whether the image has to be blitted to screen buffer
@@ -106,21 +106,21 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 		dest = destination;
 	}
 
-	if (!building.getOwner ()) return;
+	if (!building.getOwner()) return;
 
 	// draw the effect if necessary
-	if (building.data.powerOnGraphic && cSettings::getInstance ().isAnimations () && (building.isUnitWorking () || !building.data.canWork))
+	if (building.data.powerOnGraphic && cSettings::getInstance().isAnimations() && (building.isUnitWorking() || !building.data.canWork))
 	{
 		SDL_Rect tmp = dest;
 		SDL_SetSurfaceAlphaMod (building.uiData->eff.get(), building.effectAlpha);
 
 		CHECK_SCALING (*building.uiData->eff, *building.uiData->eff_org, zoomFactor);
-        SDL_BlitSurface (building.uiData->eff.get (), nullptr, cVideo::buffer, &tmp);
+		SDL_BlitSurface (building.uiData->eff.get(), nullptr, cVideo::buffer, &tmp);
 	}
 
 	// draw the mark, when a build order is finished
-	if (building.getOwner () == player && ((!building.isBuildListEmpty () && !building.isUnitWorking () && building.getBuildListItem (0).getRemainingMetal () <= 0) ||
-		(building.data.canResearch && building.getOwner ()->isCurrentTurnResearchAreaFinished (building.getResearchArea()))))
+	if (building.getOwner() == player && ((!building.isBuildListEmpty() && !building.isUnitWorking() && building.getBuildListItem (0).getRemainingMetal() <= 0) ||
+										  (building.data.canResearch && building.getOwner()->isCurrentTurnResearchAreaFinished (building.getResearchArea()))))
 	{
 		const cRgbColor finishedMarkColor = cRgbColor::green();
 		const cBox<cPosition> d (cPosition (dest.x + 2, dest.y + 2), cPosition (dest.x + 2 + (building.data.isBig ? 2 * destination.w - 3 : destination.w - 3), dest.y + 2 + (building.data.isBig ? 2 * destination.h - 3 : destination.h - 3)));
@@ -137,7 +137,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	// draw a colored frame if necessary
 	if (shouldDrawColor)
 	{
-		const Uint32 color = 0xFF000000 | *static_cast<Uint32*> (building.owner->getColorSurface ()->pixels);
+		const Uint32 color = 0xFF000000 | *static_cast<Uint32*> (building.owner->getColorSurface()->pixels);
 		SDL_Rect d = {Sint16 (dest.x + 1), Sint16 (dest.y + 1), building.data.isBig ? 2 * destination.w - 1 : destination.w - 1, building.data.isBig ? 2 * destination.h - 1 : destination.h - 1};
 
 		DrawRectangle (cVideo::buffer, d, color, 1);
@@ -163,7 +163,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	}
 
 	// draw ammo bar
-	if (shouldDrawAmmo && (!player || building.getOwner () == player) && building.data.canAttack && building.data.getAmmoMax() > 0)
+	if (shouldDrawAmmo && (!player || building.getOwner() == player) && building.data.canAttack && building.data.getAmmoMax() > 0)
 	{
 		drawMunBar (building, destination);
 	}
@@ -179,16 +179,16 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination, float zoomFactor, const cMap& map, const cUnitSelection* unitSelection, const cPlayer* player)
 {
 	unsigned long long animationTime = animationTimer->getAnimationTime(); //call getAnimationTime only once in this method and save the result,
-	                                                                       //to avoid a changing time within this method
+	//to avoid a changing time within this method
 
 	// calculate screen position
-	int ox = (int)(vehicle.getMovementOffset().x() * zoomFactor);
-	int oy = (int)(vehicle.getMovementOffset().y() * zoomFactor);
+	int ox = (int) (vehicle.getMovementOffset().x() * zoomFactor);
+	int oy = (int) (vehicle.getMovementOffset().y() * zoomFactor);
 
 	destination.x += ox;
 	destination.y += oy;
 
-	if (vehicle.getFlightHeight () > 0)
+	if (vehicle.getFlightHeight() > 0)
 	{
 		destination.x += vehicle.ditherX;
 		destination.y += vehicle.ditherY;
@@ -197,12 +197,12 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	SDL_Rect dest;
 	dest.x = dest.y = 0;
 	bool bDraw = false;
-	SDL_Surface* drawingSurface = drawingCache.getCachedImage(vehicle, zoomFactor, map, animationTime);
+	SDL_Surface* drawingSurface = drawingCache.getCachedImage (vehicle, zoomFactor, map, animationTime);
 	if (drawingSurface == nullptr)
 	{
 		// no cached image found. building needs to be redrawn.
 		bDraw = true;
-		drawingSurface = drawingCache.createNewEntry(vehicle, zoomFactor, map, animationTime);
+		drawingSurface = drawingCache.createNewEntry (vehicle, zoomFactor, map, animationTime);
 	}
 
 	if (drawingSurface == nullptr)
@@ -214,7 +214,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 
 	if (bDraw)
 	{
-		vehicle.render(&map, animationTime, player, drawingSurface, dest, zoomFactor, cSettings::getInstance().isShadows());
+		vehicle.render (&map, animationTime, player, drawingSurface, dest, zoomFactor, cSettings::getInstance().isShadows());
 	}
 
 	// now check, whether the image has to be blitted to screen buffer
@@ -225,29 +225,29 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	}
 
 	// draw overlay if necessary:
-	vehicle.drawOverlayAnimation(animationTime, cVideo::buffer, destination, zoomFactor);
+	vehicle.drawOverlayAnimation (animationTime, cVideo::buffer, destination, zoomFactor);
 
 	// remove the dithering for the following operations
-	if (vehicle.getFlightHeight () > 0)
+	if (vehicle.getFlightHeight() > 0)
 	{
 		destination.x -= vehicle.ditherX;
 		destination.y -= vehicle.ditherY;
 	}
 
 	// remove movement offset for working units
-	if (vehicle.isUnitBuildingABuilding () || vehicle.isUnitClearing ())
+	if (vehicle.isUnitBuildingABuilding() || vehicle.isUnitClearing())
 	{
 		destination.x -= ox;
 		destination.y -= oy;
 	}
 
 	// draw indication, when building is complete
-	if (vehicle.isUnitBuildingABuilding () && vehicle.getBuildTurns () == 0 && vehicle.getOwner () == player && !vehicle.BuildPath)
+	if (vehicle.isUnitBuildingABuilding() && vehicle.getBuildTurns() == 0 && vehicle.getOwner() == player && !vehicle.BuildPath)
 	{
-		const cRgbColor finishedMarkColor = cRgbColor::green ();
+		const cRgbColor finishedMarkColor = cRgbColor::green();
 		const cBox<cPosition> d (cPosition (destination.x + 2, destination.y + 2), cPosition (destination.x + 2 + (vehicle.data.isBig ? 2 * destination.w - 3 : destination.w - 3), destination.y + 2 + (vehicle.data.isBig ? 2 * destination.h - 3 : destination.h - 3)));
 
-		drawRectangle(*cVideo::buffer, d, finishedMarkColor.exchangeGreen(255 - 16 * (animationTime % 0x8)), 3);
+		drawRectangle (*cVideo::buffer, d, finishedMarkColor.exchangeGreen (255 - 16 * (animationTime % 0x8)), 3);
 	}
 
 	// Draw the colored frame if necessary
@@ -255,13 +255,13 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	{
 		const cBox<cPosition> d (cPosition (destination.x + 1, destination.y + 1), cPosition (destination.x + 1 + (vehicle.data.isBig ? 2 * destination.w - 1 : destination.w - 1), destination.y + 1 + (vehicle.data.isBig ? 2 * destination.h - 1 : destination.h - 1)));
 
-		drawRectangle (*cVideo::buffer, d, vehicle.getOwner ()->getColor ().getColor ());
+		drawRectangle (*cVideo::buffer, d, vehicle.getOwner()->getColor().getColor());
 	}
 
 	// draw the group selected frame if necessary
 	if (unitSelection && unitSelection->getSelectedUnitsCount() > 1 && unitSelection->isSelected (vehicle))
 	{
-		const cRgbColor groupSelectionColor = cRgbColor::yellow ();
+		const cRgbColor groupSelectionColor = cRgbColor::yellow();
 		const cBox<cPosition> d (cPosition (destination.x + 2, destination.y + 2), cPosition (destination.x + 2 + (vehicle.data.isBig ? 2 * destination.w - 3 : destination.w - 3), destination.y + 2 + (vehicle.data.isBig ? 2 * destination.h - 3 : destination.h - 3)));
 
 		drawRectangle (*cVideo::buffer, d, groupSelectionColor, 1);
@@ -286,7 +286,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	}
 
 	// draw ammo bar
-	if (shouldDrawAmmo && (!player || vehicle.getOwner () == player) && vehicle.data.canAttack)
+	if (shouldDrawAmmo && (!player || vehicle.getOwner() == player) && vehicle.data.canAttack)
 	{
 		drawMunBar (vehicle, destination);
 	}
@@ -320,15 +320,15 @@ void cUnitDrawingEngine::drawHealthBar (const cUnit& unit, SDL_Rect destination)
 	SDL_Rect r2;
 	r2.x = r1.x + 1;
 	r2.y = r1.y + 1;
-	r2.w = (int)(((float)(r1.w - 2) / unit.data.getHitpointsMax()) * unit.data.getHitpoints ());
+	r2.w = (int) (((float) (r1.w - 2) / unit.data.getHitpointsMax()) * unit.data.getHitpoints());
 	r2.h = r1.h - 2;
 
 	SDL_FillRect (cVideo::buffer, &r1, 0xFF000000);
 
 	Uint32 color;
-	if (unit.data.getHitpoints () > unit.data.getHitpointsMax() / 2)
+	if (unit.data.getHitpoints() > unit.data.getHitpointsMax() / 2)
 		color = 0xFF04AE04; // green
-	else if (unit.data.getHitpoints () > unit.data.getHitpointsMax() / 4)
+	else if (unit.data.getHitpoints() > unit.data.getHitpointsMax() / 4)
 		color = 0xFFDBDE00; // orange
 	else
 		color = 0xFFE60000; // red
@@ -353,14 +353,14 @@ void cUnitDrawingEngine::drawMunBar (const cUnit& unit, SDL_Rect destination)
 	SDL_Rect r2;
 	r2.x = r1.x + 1;
 	r2.y = r1.y + 1;
-	r2.w = (int)(((float)(r1.w - 2) / unit.data.getAmmoMax ()) * unit.data.getAmmo ());
+	r2.w = (int) (((float) (r1.w - 2) / unit.data.getAmmoMax()) * unit.data.getAmmo());
 	r2.h = r1.h - 2;
 
 	SDL_FillRect (cVideo::buffer, &r1, 0xFF000000);
 
-	if (unit.data.getAmmo () > unit.data.getAmmoMax () / 2)
+	if (unit.data.getAmmo() > unit.data.getAmmoMax() / 2)
 		SDL_FillRect (cVideo::buffer, &r2, 0xFF04AE04);
-	else if (unit.data.getAmmo () > unit.data.getAmmoMax () / 4)
+	else if (unit.data.getAmmo() > unit.data.getAmmoMax() / 4)
 		SDL_FillRect (cVideo::buffer, &r2, 0xFFDBDE00);
 	else
 		SDL_FillRect (cVideo::buffer, &r2, 0xFFE60000);
@@ -374,7 +374,7 @@ void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 	SDL_Rect disabledSymbol = {150, 109, 25, 25};
 	SDL_Rect dest;
 
-	if (unit.isDisabled ())
+	if (unit.isDisabled())
 	{
 		if (destination.w < 25)
 			return;
@@ -385,7 +385,7 @@ void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 			dest.y += (destination.h / 2);
 			dest.x += (destination.w / 2);
 		}
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &disabledSymbol, cVideo::buffer, &dest);
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &disabledSymbol, cVideo::buffer, &dest);
 	}
 	else
 	{
@@ -398,25 +398,25 @@ void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 		}
 		if (unit.data.getSpeed() >= 4)
 		{
-			if (unit.data.getShots ())
+			if (unit.data.getShots())
 				dest.x -= destination.w / 4;
 
 			SDL_Rect destCopy = dest;
-			SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &speedSymbol, cVideo::buffer, &destCopy);
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &speedSymbol, cVideo::buffer, &destCopy);
 		}
 
 		dest.x = destination.x + destination.w / 2 - 4;
-		if (unit.data.getShots ())
+		if (unit.data.getShots())
 		{
 			if (unit.data.getSpeed())
 				dest.x += destination.w / 4;
-			SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &shotsSymbol, cVideo::buffer, &dest);
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &shotsSymbol, cVideo::buffer, &dest);
 		}
 	}
 }
 
 //--------------------------------------------------------------------------
-void cUnitDrawingEngine::rotateBlinkColor ()
+void cUnitDrawingEngine::rotateBlinkColor()
 {
 	static bool dec = true;
 	if (dec)

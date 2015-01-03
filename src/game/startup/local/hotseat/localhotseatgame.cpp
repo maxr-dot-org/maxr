@@ -24,21 +24,21 @@
 #include "loaddata.h"
 
 //------------------------------------------------------------------------------
-cLocalHotSeatGame::~cLocalHotSeatGame ()
+cLocalHotSeatGame::~cLocalHotSeatGame()
 {
 	if (server)
 	{
-		server->stop ();
-		reloadUnitValues ();
+		server->stop();
+		reloadUnitValues();
 	}
 }
 
 //------------------------------------------------------------------------------
-void cLocalHotSeatGame::run ()
+void cLocalHotSeatGame::run()
 {
-	for (size_t i = 0; i < clients.size (); ++i)
+	for (size_t i = 0; i < clients.size(); ++i)
 	{
-		clients[i]->getGameTimer ()->run ();
+		clients[i]->getGameTimer()->run();
 	}
 }
 

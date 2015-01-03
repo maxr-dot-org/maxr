@@ -56,10 +56,10 @@ public:
 	 */
 	static cKeyboard& getInstance();
 
-	cSignal<void(cKeyboard&, SDL_Keycode)> keyPressed;
-	cSignal<void(cKeyboard&, SDL_Keycode)> keyReleased;
+	cSignal<void (cKeyboard&, SDL_Keycode)> keyPressed;
+	cSignal<void (cKeyboard&, SDL_Keycode)> keyReleased;
 
-	cSignal<void(cKeyboard&, const char*)> textEntered;
+	cSignal<void (cKeyboard&, const char*)> textEntered;
 
 	/**
 	 * Returns the flags of all the modifiers that are currently active
@@ -75,23 +75,23 @@ public:
 	 * @param flags Flags to check against.
 	 * @return True if any of the passed modifier flags is active.
 	 */
-	bool isAnyModifierActive(KeyModifierFlags flags) const;
-	
+	bool isAnyModifierActive (KeyModifierFlags flags) const;
+
 	/**
 	 * Checks whether all of the set modifier flags are currently active.
 	 *
 	 * @param flags Flags to check against.
 	 * @return True if all of the passed modifier flags are active.
 	 */
-	bool isAllModifiersActive(KeyModifierFlags flags) const;
+	bool isAllModifiersActive (KeyModifierFlags flags) const;
 private:
-	cKeyboard(const cKeyboard& other) MAXR_DELETE_FUNCTION;
-	cKeyboard& operator=(const cKeyboard& other) MAXR_DELETE_FUNCTION;
+	cKeyboard (const cKeyboard& other) MAXR_DELETE_FUNCTION;
+	cKeyboard& operator= (const cKeyboard& other) MAXR_DELETE_FUNCTION;
 
 	cSignalConnectionManager signalConnectionManager;
 
-	void handleKeyboardEvent(const cKeyboardEvent& keyboardEvent);
-	void handleTextInputEvent(const cTextInputEvent& textInputEvent);
+	void handleKeyboardEvent (const cKeyboardEvent& keyboardEvent);
+	void handleTextInputEvent (const cTextInputEvent& textInputEvent);
 
 	KeyModifierFlags currentModifiers;
 };

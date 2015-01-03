@@ -34,8 +34,8 @@ class cHudPanels : public cWidget
 public:
 	cHudPanels (const cPosition& position, int height, std::shared_ptr<cAnimationTimer> animationTimer, double percentClosed = 100);
 
-	void open ();
-	void close ();
+	void open();
+	void close();
 
 	cSignal<void ()> opened;
 	cSignal<void ()> closed;
@@ -51,8 +51,8 @@ private:
 
 	double percentClosed;
 
-	void doOpenStep ();
-	void doCloseStep ();
+	void doOpenStep();
+	void doCloseStep();
 };
 
 #endif // ui_graphical_game_widgets_hudpanelsH

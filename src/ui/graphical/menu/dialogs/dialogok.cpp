@@ -28,21 +28,21 @@
 cDialogOk::cDialogOk (const std::string& text, eWindowBackgrounds backgroundType) :
 	cWindow (LoadPCX (GFXOD_DIALOG2), backgroundType)
 {
-	auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (35, 35), getPosition () + cPosition (267, 173)), text, FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Top));
+	auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 35), getPosition() + cPosition (267, 173)), text, FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Top));
 	textLabel->setWordWrap (true);
 
-	auto okButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (111, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~OK"), FONT_LATIN_NORMAL));
+	auto okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (111, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~OK"), FONT_LATIN_NORMAL));
 	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (okButton->clicked, std::bind (&cDialogOk::okClicked, this));
 }
 
 //------------------------------------------------------------------------------
-cDialogOk::~cDialogOk ()
+cDialogOk::~cDialogOk()
 {}
 
 //------------------------------------------------------------------------------
-void cDialogOk::okClicked ()
+void cDialogOk::okClicked()
 {
-	done ();
-	close ();
+	done();
+	close();
 }

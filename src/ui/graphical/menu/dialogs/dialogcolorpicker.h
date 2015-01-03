@@ -34,9 +34,9 @@ class cDialogColorPicker : public cWindow
 {
 public:
 	explicit cDialogColorPicker (const cRgbColor& color, eWindowBackgrounds backgroundType = eWindowBackgrounds::Alpha);
-	~cDialogColorPicker ();
+	~cDialogColorPicker();
 
-	cRgbColor getSelectedColor () const;
+	cRgbColor getSelectedColor() const;
 
 	cSignal<void ()> done;
 	cSignal<void ()> canceled;
@@ -50,7 +50,7 @@ private:
 	cLineEdit* greenValueLineEdit;
 	cLineEdit* blueValueLineEdit;
 
-	AutoSurface createSelectedColorSurface ();
+	AutoSurface createSelectedColorSurface();
 };
 
 #endif // ui_graphical_menu_dialogs_dialogcolorpickerH

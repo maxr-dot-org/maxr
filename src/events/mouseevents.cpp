@@ -20,35 +20,35 @@
 #include "events/mouseevents.h"
 
 //------------------------------------------------------------------------------
-cEventMouseMotion::cEventMouseMotion(const SDL_MouseMotionEvent& sdlEvent_) :
-	sdlEvent(sdlEvent_)
+cEventMouseMotion::cEventMouseMotion (const SDL_MouseMotionEvent& sdlEvent_) :
+	sdlEvent (sdlEvent_)
 {}
 
 //------------------------------------------------------------------------------
 cPosition cEventMouseMotion::getNewPosition() const
 {
-	return cPosition(sdlEvent.x, sdlEvent.y);
+	return cPosition (sdlEvent.x, sdlEvent.y);
 }
 
 //------------------------------------------------------------------------------
-cPosition cEventMouseMotion::getOffset () const
+cPosition cEventMouseMotion::getOffset() const
 {
 	return cPosition (sdlEvent.xrel, sdlEvent.yrel);
 }
 
 //------------------------------------------------------------------------------
-cEventMouseButton::cEventMouseButton(const SDL_MouseButtonEvent& sdlEvent_) :
-	sdlEvent(sdlEvent_)
+cEventMouseButton::cEventMouseButton (const SDL_MouseButtonEvent& sdlEvent_) :
+	sdlEvent (sdlEvent_)
 {}
 
 //------------------------------------------------------------------------------
 eMouseButtonType cEventMouseButton::getButton() const
 {
-	if(sdlEvent.button == SDL_BUTTON_RIGHT)
+	if (sdlEvent.button == SDL_BUTTON_RIGHT)
 	{
 		return eMouseButtonType::Right;
 	}
-	else if(sdlEvent.button == SDL_BUTTON_MIDDLE)
+	else if (sdlEvent.button == SDL_BUTTON_MIDDLE)
 	{
 		return eMouseButtonType::Middle;
 	}
@@ -65,12 +65,12 @@ cEventMouseButton::eType cEventMouseButton::getType() const
 }
 
 //------------------------------------------------------------------------------
-cEventMouseWheel::cEventMouseWheel(const SDL_MouseWheelEvent& sdlEvent_) :
-	sdlEvent(sdlEvent_)
+cEventMouseWheel::cEventMouseWheel (const SDL_MouseWheelEvent& sdlEvent_) :
+	sdlEvent (sdlEvent_)
 {}
 
 //------------------------------------------------------------------------------
 cPosition cEventMouseWheel::getAmount() const
 {
-	return cPosition(sdlEvent.x, sdlEvent.y);
+	return cPosition (sdlEvent.x, sdlEvent.y);
 }

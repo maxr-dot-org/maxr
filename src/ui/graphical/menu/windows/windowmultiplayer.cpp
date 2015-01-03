@@ -31,86 +31,86 @@
 #include "netmessage.h"
 
 //------------------------------------------------------------------------------
-cWindowMultiPlayer::cWindowMultiPlayer () :
+cWindowMultiPlayer::cWindowMultiPlayer() :
 	cWindowMain (lngPack.i18n ("Text~Others~Multi_Player"))
 {
 	using namespace std::placeholders;
 
-	auto hastButton = addChild (std::make_unique<cPushButton> (getPosition () +cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~TCPIP_Host")));
+	auto hastButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~TCPIP_Host")));
 	signalConnectionManager.connect (hastButton->clicked, std::bind (&cWindowMultiPlayer::tcpHostClicked, this));
 
-	auto clientButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~TCPIP_Client")));
+	auto clientButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~TCPIP_Client")));
 	signalConnectionManager.connect (clientButton->clicked, std::bind (&cWindowMultiPlayer::tcpClientClicked, this));
 
 #ifndef RELEASE
-	auto newHotSeatButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (390, 190 + buttonSpace * 2), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~HotSeat_New")));
+	auto newHotSeatButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 2), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~HotSeat_New")));
 	signalConnectionManager.connect (newHotSeatButton->clicked, std::bind (&cWindowMultiPlayer::newHotSeatClicked, this));
 
-	auto loadHotSeatButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (390, 190 + buttonSpace * 3), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~HotSeat_Load")));
+	auto loadHotSeatButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 3), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~HotSeat_Load")));
 	signalConnectionManager.connect (loadHotSeatButton->clicked, std::bind (&cWindowMultiPlayer::loadHotSeatClicked, this));
 #endif
 
-	auto backButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Back")));
+	auto backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Back")));
 	signalConnectionManager.connect (backButton->clicked, std::bind (&cWindowMultiPlayer::backClicked, this));
 }
 
 //------------------------------------------------------------------------------
-cWindowMultiPlayer::~cWindowMultiPlayer ()
+cWindowMultiPlayer::~cWindowMultiPlayer()
 {}
 
 //------------------------------------------------------------------------------
-void cWindowMultiPlayer::tcpHostClicked ()
+void cWindowMultiPlayer::tcpHostClicked()
 {
-	auto application = getActiveApplication ();
+	auto application = getActiveApplication();
 
 	if (!application) return;
 
 	multiplayerHostController = std::make_shared<cMenuControllerMultiplayerHost> (*application);
-	multiplayerHostController->start ();
+	multiplayerHostController->start();
 }
 
 //------------------------------------------------------------------------------
-void cWindowMultiPlayer::tcpClientClicked ()
+void cWindowMultiPlayer::tcpClientClicked()
 {
-	auto application = getActiveApplication ();
+	auto application = getActiveApplication();
 
 	if (!application) return;
 
 	multiplayerClientController = std::make_shared<cMenuControllerMultiplayerClient> (*application);
-	multiplayerClientController->start ();
+	multiplayerClientController->start();
 }
 
 //------------------------------------------------------------------------------
-void cWindowMultiPlayer::newHotSeatClicked ()
+void cWindowMultiPlayer::newHotSeatClicked()
 {
-	auto application = getActiveApplication ();
+	auto application = getActiveApplication();
 
 	if (!application) return;
 
 	multiplayerHotSeatController = std::make_shared<cMenuControllerMultiplayerHotSeat> (*application);
-	multiplayerHotSeatController->start ();
+	multiplayerHotSeatController->start();
 }
 
 //------------------------------------------------------------------------------
-void cWindowMultiPlayer::loadHotSeatClicked ()
+void cWindowMultiPlayer::loadHotSeatClicked()
 {
-	if (!getActiveApplication ()) return;
+	if (!getActiveApplication()) return;
 
-	auto application = getActiveApplication ();
+	auto application = getActiveApplication();
 
-	auto windowLoad = getActiveApplication ()->show (std::make_shared<cWindowLoad> ());
-	windowLoad->load.connect ([=](int saveGameNumber)
+	auto windowLoad = getActiveApplication()->show (std::make_shared<cWindowLoad> ());
+	windowLoad->load.connect ([ = ] (int saveGameNumber)
 	{
 		auto game = std::make_shared<cLocalHotSeatGameSaved> ();
 		game->setSaveGameNumber (saveGameNumber);
 		game->start (*application);
 
-		windowLoad->close ();
+		windowLoad->close();
 	});
 }
 
 //------------------------------------------------------------------------------
-void cWindowMultiPlayer::backClicked ()
+void cWindowMultiPlayer::backClicked()
 {
-	close ();
+	close();
 }

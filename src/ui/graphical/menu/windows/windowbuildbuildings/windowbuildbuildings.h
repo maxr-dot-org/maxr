@@ -31,8 +31,8 @@ class cWindowBuildBuildings : public cWindowHangar
 public:
 	cWindowBuildBuildings (const cVehicle& vehicle, std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 
-	const sID* getSelectedUnitId () const;
-	int getSelectedBuildSpeed () const;
+	const sID* getSelectedUnitId() const;
+	int getSelectedBuildSpeed() const;
 
 	cSignal<void ()> donePath;
 protected:
@@ -47,7 +47,7 @@ private:
 
 	void generateSelectionList (const cVehicle& vehicle);
 
-	void closeOnUnitDestruction ();
+	void closeOnUnitDestruction();
 };
 
 #endif // ui_graphical_menu_windows_windowbuildbuildings_windowbuildbuildingsH

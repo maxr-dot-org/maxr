@@ -84,7 +84,7 @@ private:
 	bool debugCache;
 	bool debugSync;
 
-	void trace ();
+	void trace();
 	void traceVehicle (const cVehicle& vehicle, cPosition& drawPosition);
 	void traceBuilding (const cBuilding& Building, cPosition& drawPosition);
 };

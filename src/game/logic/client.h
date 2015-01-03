@@ -108,7 +108,7 @@ public:
 	* @param iDestOffset the Destination
 	*/
 	bool addMoveJob (cVehicle& vehicle, const cPosition& destination, const std::vector<cVehicle*>* group = nullptr);
-	void startGroupMove(const std::vector<cVehicle*>& group_, const cPosition& mainDestination);
+	void startGroupMove (const std::vector<cVehicle*>& group_, const cPosition& mainDestination);
 	/**
 	* adds a new movejob
 	*@author alzi alias DoctorDeath
@@ -157,9 +157,9 @@ public:
 	* handles move and attack jobs
 	* this function should be called in all menu loops
 	*/
-	void doGameActions ();
+	void doGameActions();
 
-	void handleNetMessages ();
+	void handleNetMessages();
 
 	/**
 	* processes everything that is need for this netMessage
@@ -178,18 +178,18 @@ public:
 	void addDestroyFx (cVehicle& vehicle);
 	void addDestroyFx (cBuilding& building);
 
-    void deletePlayer (cPlayer& player);
+	void deletePlayer (cPlayer& player);
 
-    void handleChatMessage (const std::string& message);
+	void handleChatMessage (const std::string& message);
 
-	const std::shared_ptr<cCasualtiesTracker>& getCasualtiesTracker () { return casualtiesTracker; }
-	std::shared_ptr<const cCasualtiesTracker> getCasualtiesTracker () const { return casualtiesTracker; }
+	const std::shared_ptr<cCasualtiesTracker>& getCasualtiesTracker() { return casualtiesTracker; }
+	std::shared_ptr<const cCasualtiesTracker> getCasualtiesTracker() const { return casualtiesTracker; }
 
 	std::shared_ptr<const cMap> getMap() const { return Map; }
 	const std::shared_ptr<cMap>& getMap() { return Map; }
 
-	std::shared_ptr<const cTurnClock> getTurnClock () const { return turnClock; }
-	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock () const { return turnTimeClock; }
+	std::shared_ptr<const cTurnClock> getTurnClock() const { return turnClock; }
+	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock() const { return turnTimeClock; }
 
 	const std::vector<std::shared_ptr<cPlayer>>& getPlayerList() const { return playerList; }
 
@@ -197,9 +197,9 @@ public:
 	cPlayer& getActivePlayer() { return *ActivePlayer; }
 
 	void setGameSettings (const cGameSettings& gameSettings_);
-	std::shared_ptr<const cGameSettings> getGameSettings () const { return gameSettings; }
+	std::shared_ptr<const cGameSettings> getGameSettings() const { return gameSettings; }
 
-	const std::shared_ptr<cGameTimerClient>& getGameTimer () const { return gameTimer; }
+	const std::shared_ptr<cGameTimerClient>& getGameTimer() const { return gameTimer; }
 
 	mutable cSignal<void (int, int)> playerFinishedTurn;
 
@@ -244,9 +244,9 @@ private:
 	* handles all active movejobs
 	*@author alzi alias DoctorDeath
 	*/
-	void handleMoveJobs ();
+	void handleMoveJobs();
 
-	void handleAutoMoveJobs ();
+	void handleAutoMoveJobs();
 
 	/**
 	* gets the subbase with the id

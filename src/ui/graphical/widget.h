@@ -43,20 +43,20 @@ class cShortcut;
 class cWidget
 {
 public:
-	static void toggleDrawDebugFrames ();
+	static void toggleDrawDebugFrames();
 
-	cWidget ();
+	cWidget();
 	explicit cWidget (const cPosition& position);
 	explicit cWidget (const cBox<cPosition>& area);
 
-	virtual ~cWidget ();
+	virtual ~cWidget();
 
 	/**
 	 * Returns the parent widget of the current one.
 	 *
 	 * @return The parent widget or null if there is no parent.
 	 */
-	cWidget* getParent () const;
+	cWidget* getParent() const;
 
 	/**
 	 * If a widget is disabled it will not receive any input events
@@ -64,49 +64,49 @@ public:
 	 *
 	 * @return True if the widget is enabled. False if it is disabled.
 	 */
-	bool isEnabled () const;
+	bool isEnabled() const;
 	/**
 	 * Disables the widget. See @ref isEnabled() for the effects.
 	 */
-	void disable ();
+	void disable();
 	/**
 	 * Enables the widget. See @ref isEnabled() for the effects.
 	 */
-	void enable ();
+	void enable();
 
 	/**
 	 * A hidden widget will not be drawn to the screen anymore.
 	 *
 	 * @return True if the widget is hidden. False if not.
 	 */
-	bool isHidden () const;
+	bool isHidden() const;
 	/**
 	 * Hides the widget. See @ref isHidden for the effects.
 	 * You may want to @ref disable the widget as well when
 	 * it is hidden.
 	 */
-	void hide ();
+	void hide();
 	/**
 	 * Sets the widget as not hidden. See @ref isHidden for the effects.
 	 */
-	void show ();
+	void show();
 
-	const cPosition& getPosition () const;
-	const cPosition& getEndPosition () const;
+	const cPosition& getPosition() const;
+	const cPosition& getEndPosition() const;
 	void moveTo (const cPosition& newPosition);
 	void move (const cPosition& offset);
 
-	cPosition getSize () const;
+	cPosition getSize() const;
 	void resize (const cPosition& newSize);
 
-	void fitToChildren ();
+	void fitToChildren();
 
-	const cBox<cPosition>& getArea () const;
+	const cBox<cPosition>& getArea() const;
 	void setArea (const cBox<cPosition>& area);
 
 	cShortcut* addShortcut (std::unique_ptr<cShortcut> shortcut);
 
-	const std::vector<std::unique_ptr<cShortcut>>& getShortcuts () const;
+	const std::vector<std::unique_ptr<cShortcut>>& getShortcuts() const;
 
 	virtual cWidget* getChildAt (const cPosition& position) const;
 
@@ -163,20 +163,20 @@ protected:
 	 *
 	 * See @ref addChild for restrictions on when this method is allowed to be used!
 	 */
-	void removeChildren ();
+	void removeChildren();
 
-	bool hasChildren () const;
+	bool hasChildren() const;
 
-	virtual cMouse* getActiveMouse () const;
-	virtual cKeyboard* getActiveKeyboard () const;
+	virtual cMouse* getActiveMouse() const;
+	virtual cKeyboard* getActiveKeyboard() const;
 
-	virtual cApplication* getActiveApplication () const;
+	virtual cApplication* getActiveApplication() const;
 private:
 	static bool drawDebugFrames;
 	static cSignal<void ()> drawDebugFramesChanged;
 
 	cWidget (const cWidget& other) MAXR_DELETE_FUNCTION;
-	cWidget& operator=(const cWidget& other) MAXR_DELETE_FUNCTION;
+	cWidget& operator= (const cWidget& other) MAXR_DELETE_FUNCTION;
 
 	cSignalConnectionManager signalConnectionManager;
 
@@ -193,7 +193,7 @@ private:
 
 	std::vector<std::unique_ptr<cShortcut>> shortcuts;
 
-	void createFrameSurface ();
+	void createFrameSurface();
 
 	void releaseFocusRecursive (cApplication& application);
 };
@@ -202,14 +202,14 @@ private:
 template<typename WidgetType>
 WidgetType* cWidget::addChild (std::unique_ptr<WidgetType> child)
 {
-	static_assert(std::is_base_of<cWidget, WidgetType>::value, "Only widgets can be added as children of widgets");
+	static_assert (std::is_base_of<cWidget, WidgetType>::value, "Only widgets can be added as children of widgets");
 
 	if (child == nullptr) return nullptr;
 
-	child->setParent(this);
+	child->setParent (this);
 	children.push_back (std::move (child));
 
-	return static_cast<WidgetType*>(children.back ().get ());
+	return static_cast<WidgetType*> (children.back().get());
 }
 
 #endif // ui_graphical_widgetH

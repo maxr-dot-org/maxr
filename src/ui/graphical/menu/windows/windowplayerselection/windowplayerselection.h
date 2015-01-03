@@ -41,7 +41,7 @@ class cWindowPlayerSelection : public cWindow
 {
 	const static size_t maxPlayers = 4;
 public:
-	cWindowPlayerSelection ();
+	cWindowPlayerSelection();
 
 	const std::array<ePlayerType, maxPlayers>& getPlayerTypes() const;
 

@@ -27,11 +27,11 @@ class cTurnClock
 public:
 	explicit cTurnClock (int turn);
 
-	int getTurn () const;
+	int getTurn() const;
 
 	void setTurn (int turn);
 
-	void increaseTurn ();
+	void increaseTurn();
 
 	mutable cSignal<void ()> turnChanged;
 private:

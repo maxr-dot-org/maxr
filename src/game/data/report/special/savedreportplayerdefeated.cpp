@@ -29,7 +29,7 @@ cSavedReportPlayerDefeated::cSavedReportPlayerDefeated (const cPlayer& player) :
 //------------------------------------------------------------------------------
 cSavedReportPlayerDefeated::cSavedReportPlayerDefeated (cNetMessage& message)
 {
-	playerName = message.popString ();
+	playerName = message.popString();
 }
 
 //------------------------------------------------------------------------------
@@ -49,25 +49,25 @@ void cSavedReportPlayerDefeated::pushInto (cNetMessage& message) const
 //------------------------------------------------------------------------------
 void cSavedReportPlayerDefeated::pushInto (tinyxml2::XMLElement& element) const
 {
-	element.SetAttribute ("playerName", playerName.c_str ());
+	element.SetAttribute ("playerName", playerName.c_str());
 
 	cSavedReport::pushInto (element);
 }
 
 //------------------------------------------------------------------------------
-eSavedReportType cSavedReportPlayerDefeated::getType () const
+eSavedReportType cSavedReportPlayerDefeated::getType() const
 {
 	return eSavedReportType::PlayerDefeated;
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportPlayerDefeated::getMessage () const
+std::string cSavedReportPlayerDefeated::getMessage() const
 {
 	return lngPack.i18n ("Text~Multiplayer~Player") + " " + playerName + " " + lngPack.i18n ("Text~Comp~Defeated");
 }
 
 //------------------------------------------------------------------------------
-bool cSavedReportPlayerDefeated::isAlert () const
+bool cSavedReportPlayerDefeated::isAlert() const
 {
 	return false;
 }

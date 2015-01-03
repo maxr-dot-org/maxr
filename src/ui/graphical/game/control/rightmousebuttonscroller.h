@@ -36,7 +36,7 @@ class cRightMouseButtonScrollerWidget : public cWidget
 public:
 	cRightMouseButtonScrollerWidget (std::shared_ptr<cAnimationTimer> animationTimer);
 
-	bool isScrolling () const;
+	bool isScrolling() const;
 
 	mutable cSignal<void (const cPosition&)> scroll;
 

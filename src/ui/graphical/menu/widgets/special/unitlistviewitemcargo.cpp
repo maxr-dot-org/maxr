@@ -32,12 +32,12 @@ cUnitListViewItemCargo::cUnitListViewItemCargo (unsigned int width, const sID& u
 
 	if (unitData->storeResType == sUnitData::STORE_RES_METAL || unitData->storeResType == sUnitData::STORE_RES_OIL)
 	{
-		cargoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (nameLabel->getPosition ().x () + 15, nameLabel->getEndPosition ().y () - 13), nameLabel->getEndPosition () - cPosition (0, 3)), iToStr (owner.getUnitDataCurrentVersion (unitId)->buildCosts), FONT_LATIN_SMALL_YELLOW, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
+		cargoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (nameLabel->getPosition().x() + 15, nameLabel->getEndPosition().y() - 13), nameLabel->getEndPosition() - cPosition (0, 3)), iToStr (owner.getUnitDataCurrentVersion (unitId)->buildCosts), FONT_LATIN_SMALL_YELLOW, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
 
-		nameLabel->resize (nameLabel->getSize () - cPosition (0, 13));
+		nameLabel->resize (nameLabel->getSize() - cPosition (0, 13));
 		nameLabel->setAlignment (toEnumFlag (eAlignmentType::Left) | eAlignmentType::Bottom);
 
-		updateCargoLabel ();
+		updateCargoLabel();
 	}
 	else
 	{
@@ -46,7 +46,7 @@ cUnitListViewItemCargo::cUnitListViewItemCargo (unsigned int width, const sID& u
 }
 
 //------------------------------------------------------------------------------
-int cUnitListViewItemCargo::getCargo () const
+int cUnitListViewItemCargo::getCargo() const
 {
 	return cargo;
 }
@@ -55,16 +55,16 @@ int cUnitListViewItemCargo::getCargo () const
 void cUnitListViewItemCargo::setCargo (int cargo_)
 {
 	cargo = cargo_;
-	updateCargoLabel ();
+	updateCargoLabel();
 }
 
 //------------------------------------------------------------------------------
-void cUnitListViewItemCargo::updateCargoLabel ()
+void cUnitListViewItemCargo::updateCargoLabel()
 {
 	if (cargoLabel)
 	{
 		if (cargo == 0) cargoLabel->setText ("(empty)");
-		else cargoLabel->setText("(" + iToStr (cargo) + "/" + iToStr (unitData->storageResMax) + ")");
+		else cargoLabel->setText ("(" + iToStr (cargo) + "/" + iToStr (unitData->storageResMax) + ")");
 
 		if (cargo <= unitData->storageResMax / 4) cargoLabel->setFont (FONT_LATIN_SMALL_RED);
 		else if (cargo <= unitData->storageResMax / 2) cargoLabel->setFont (FONT_LATIN_SMALL_YELLOW);

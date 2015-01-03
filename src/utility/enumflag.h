@@ -34,32 +34,32 @@
 template<typename E>
 class cEnumFlag
 {
-	static_assert(std::is_enum<E>::value, "Template parameter has to be an enumerator type!");
+	static_assert (std::is_enum<E>::value, "Template parameter has to be an enumerator type!");
 public:
 	cEnumFlag();
-	cEnumFlag(E value);
-	explicit cEnumFlag(typename std::underlying_type<E>::type value);
-	cEnumFlag(const cEnumFlag<E>& other);
+	cEnumFlag (E value);
+	explicit cEnumFlag (typename std::underlying_type<E>::type value);
+	cEnumFlag (const cEnumFlag<E>& other);
 
-	cEnumFlag<E>& operator=(E other);
-	cEnumFlag<E>& operator=(cEnumFlag<E> other);
+	cEnumFlag<E>& operator= (E other);
+	cEnumFlag<E>& operator= (cEnumFlag<E> other);
 
 	operator bool() const;
 
-	bool operator==(cEnumFlag<E> other);
-	bool operator!=(cEnumFlag<E> other);
+	bool operator== (cEnumFlag<E> other);
+	bool operator!= (cEnumFlag<E> other);
 
-	cEnumFlag<E> operator|(E other) const;
-	cEnumFlag<E> operator|(cEnumFlag<E> other) const;
+	cEnumFlag<E> operator| (E other) const;
+	cEnumFlag<E> operator| (cEnumFlag<E> other) const;
 
-	cEnumFlag<E>& operator|=(E other);
-	cEnumFlag<E>& operator|=(cEnumFlag<E> other);
+	cEnumFlag<E>& operator|= (E other);
+	cEnumFlag<E>& operator|= (cEnumFlag<E> other);
 
-	cEnumFlag<E> operator&(E other) const;
-	cEnumFlag<E> operator&(cEnumFlag<E> other) const;
+	cEnumFlag<E> operator& (E other) const;
+	cEnumFlag<E> operator& (cEnumFlag<E> other) const;
 
-	cEnumFlag<E>& operator&=(E other);
-	cEnumFlag<E>& operator&=(cEnumFlag<E> other);
+	cEnumFlag<E>& operator&= (E other);
+	cEnumFlag<E>& operator&= (cEnumFlag<E> other);
 
 	typename std::underlying_type<E>::type data() const;
 
@@ -69,40 +69,40 @@ private:
 
 //------------------------------------------------------------------------------
 template<typename E>
-cEnumFlag<E> toEnumFlag(E value)
+cEnumFlag<E> toEnumFlag (E value)
 {
-	return cEnumFlag<E>(value);
+	return cEnumFlag<E> (value);
 }
 
 //------------------------------------------------------------------------------
 template<typename E>
 cEnumFlag<E>::cEnumFlag() :
-	data_(0)
+	data_ (0)
 {}
 
 //------------------------------------------------------------------------------
 template<typename E>
-cEnumFlag<E>::cEnumFlag(E value) :
-	data_(toUnderlyingType(value))
+cEnumFlag<E>::cEnumFlag (E value) :
+	data_ (toUnderlyingType (value))
 {}
 
 //------------------------------------------------------------------------------
 template<typename E>
-cEnumFlag<E>::cEnumFlag(typename std::underlying_type<E>::type value) :
-	data_(value)
+cEnumFlag<E>::cEnumFlag (typename std::underlying_type<E>::type value) :
+	data_ (value)
 {}
 
 //------------------------------------------------------------------------------
 template<typename E>
-cEnumFlag<E>& cEnumFlag<E>::operator=(E other)
+cEnumFlag<E>& cEnumFlag<E>::operator= (E other)
 {
-	data_ = toUnderlyingType(other);
+	data_ = toUnderlyingType (other);
 	return *this;
 }
 
 //------------------------------------------------------------------------------
 template<typename E>
-cEnumFlag<E>& cEnumFlag<E>::operator=(cEnumFlag<E> other)
+cEnumFlag<E>& cEnumFlag<E>::operator= (cEnumFlag<E> other)
 {
 	data_ = other.data_;
 	return *this;
@@ -110,56 +110,56 @@ cEnumFlag<E>& cEnumFlag<E>::operator=(cEnumFlag<E> other)
 
 //------------------------------------------------------------------------------
 template<typename E>
-cEnumFlag<E>::cEnumFlag(const cEnumFlag<E>& other) :
-	data_(other.data_)
+cEnumFlag<E>::cEnumFlag (const cEnumFlag<E>& other) :
+	data_ (other.data_)
 {}
 
 //------------------------------------------------------------------------------
 template<typename E>
 cEnumFlag<E>::operator bool() const
 {
-	return data_ != (typename std::underlying_type<E>::type)(0);
+	return data_ != (typename std::underlying_type<E>::type) (0);
 }
 
 //------------------------------------------------------------------------------
 template<typename E>
-bool cEnumFlag<E>::operator==(cEnumFlag<E> other)
+bool cEnumFlag<E>::operator== (cEnumFlag<E> other)
 {
 	return data_ == other.data_;
 }
 
 //------------------------------------------------------------------------------
 template<typename E>
-bool cEnumFlag<E>::operator!=(cEnumFlag<E> other)
+bool cEnumFlag<E>::operator!= (cEnumFlag<E> other)
 {
 	return data_ != other.data_;
 }
 
 //------------------------------------------------------------------------------
 template<typename E>
-cEnumFlag<E> cEnumFlag<E>::operator|(E other) const
+cEnumFlag<E> cEnumFlag<E>::operator| (E other) const
 {
-	return cEnumFlag<E>(data_ | toUnderlyingType(other));
+	return cEnumFlag<E> (data_ | toUnderlyingType (other));
 }
 
 //------------------------------------------------------------------------------
 template<typename E>
-cEnumFlag<E> cEnumFlag<E>::operator|(cEnumFlag<E> other) const
+cEnumFlag<E> cEnumFlag<E>::operator| (cEnumFlag<E> other) const
 {
-	return cEnumFlag<E>(data_ | other.data_);
+	return cEnumFlag<E> (data_ | other.data_);
 }
 
 //------------------------------------------------------------------------------
 template<typename E>
-cEnumFlag<E>& cEnumFlag<E>::operator|=(E other)
+cEnumFlag<E>& cEnumFlag<E>::operator|= (E other)
 {
-	data_ |= toUnderlyingType(other);
+	data_ |= toUnderlyingType (other);
 	return *this;
 }
 
 //------------------------------------------------------------------------------
 template<typename E>
-cEnumFlag<E>& cEnumFlag<E>::operator|=(cEnumFlag<E> other)
+cEnumFlag<E>& cEnumFlag<E>::operator|= (cEnumFlag<E> other)
 {
 	data_ |= other.data_;
 	return *this;
@@ -167,29 +167,29 @@ cEnumFlag<E>& cEnumFlag<E>::operator|=(cEnumFlag<E> other)
 
 //------------------------------------------------------------------------------
 template<typename E>
-cEnumFlag<E> cEnumFlag<E>::operator&(E other) const
+cEnumFlag<E> cEnumFlag<E>::operator& (E other) const
 {
-	return cEnumFlag<E>(data_ & toUnderlyingType(other));
+	return cEnumFlag<E> (data_ & toUnderlyingType (other));
 }
 
 //------------------------------------------------------------------------------
 template<typename E>
-cEnumFlag<E> cEnumFlag<E>::operator&(cEnumFlag<E> other) const
+cEnumFlag<E> cEnumFlag<E>::operator& (cEnumFlag<E> other) const
 {
-	return cEnumFlag<E>(data_ & other.data_);
+	return cEnumFlag<E> (data_ & other.data_);
 }
 
 //------------------------------------------------------------------------------
 template<typename E>
-cEnumFlag<E>& cEnumFlag<E>::operator&=(E other)
+cEnumFlag<E>& cEnumFlag<E>::operator&= (E other)
 {
-	data_ &= toUnderlyingType(other);
+	data_ &= toUnderlyingType (other);
 	return *this;
 }
 
 //------------------------------------------------------------------------------
 template<typename E>
-cEnumFlag<E>& cEnumFlag<E>::operator&=(cEnumFlag<E> other)
+cEnumFlag<E>& cEnumFlag<E>::operator&= (cEnumFlag<E> other)
 {
 	data_ &= other.data_;
 	return *this;

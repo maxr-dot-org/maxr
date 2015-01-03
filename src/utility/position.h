@@ -29,13 +29,13 @@ class cPosition : public cFixedVector<int, 2>
 {
 public:
 	cPosition() {}
-	cPosition(const cPosition& other) :
-		cFixedVector<int, 2>(other)
+	cPosition (const cPosition& other) :
+		cFixedVector<int, 2> (other)
 	{}
-	cPosition(const cFixedVector<int, 2>& other) : 
-		cFixedVector<int, 2>(other)
+	cPosition (const cFixedVector<int, 2>& other) :
+		cFixedVector<int, 2> (other)
 	{}
-	cPosition(int x_, int y_)
+	cPosition (int x_, int y_)
 	{
 		x() = x_;
 		y() = y_;
@@ -59,9 +59,9 @@ public:
 		return (*this)[1];
 	}
 
-	cPosition& operator=(const value_type& value)
+	cPosition& operator= (const value_type& value)
 	{
-		cFixedVector<int, 2>::operator=(value);
+		cFixedVector<int, 2>::operator= (value);
 		return *this;
 	}
 };

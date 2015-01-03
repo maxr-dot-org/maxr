@@ -23,11 +23,11 @@
 class cDummyMutex
 {
 public:
-	void lock () {}
+	void lock() {}
 
-	bool tryLock () { return true; }
+	bool tryLock() { return true; }
 
-	void unlock () {}
+	void unlock() {}
 };
 
 #endif // utility_thread_dummymutexH

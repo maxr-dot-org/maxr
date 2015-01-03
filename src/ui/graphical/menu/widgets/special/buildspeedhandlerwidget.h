@@ -37,7 +37,7 @@ public:
 	void setValues (const std::array<int, elementsCount>& turns, const std::array<int, elementsCount>& costs);
 
 	void setBuildSpeedIndex (size_t speedIndex);
-	size_t getBuildSpeedIndex ();
+	size_t getBuildSpeedIndex();
 private:
 	std::array<cLabel*, elementsCount> turnLabels;
 	std::array<cLabel*, elementsCount> costLabels;

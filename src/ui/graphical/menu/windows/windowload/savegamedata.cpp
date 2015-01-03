@@ -20,7 +20,7 @@
 #include "ui/graphical/menu/windows/windowload/savegamedata.h"
 
 //------------------------------------------------------------------------------
-cSaveGameData::cSaveGameData () :
+cSaveGameData::cSaveGameData() :
 	number (-1)
 {}
 
@@ -34,7 +34,7 @@ cSaveGameData::cSaveGameData (std::string fileName_, std::string gameName_, std:
 {}
 
 //------------------------------------------------------------------------------
-const std::string& cSaveGameData::getFileName () const
+const std::string& cSaveGameData::getFileName() const
 {
 	return fileName;
 }
@@ -46,7 +46,7 @@ void cSaveGameData::setFileName (std::string name)
 }
 
 //------------------------------------------------------------------------------
-const std::string& cSaveGameData::getGameName () const
+const std::string& cSaveGameData::getGameName() const
 {
 	return gameName;
 }
@@ -58,7 +58,7 @@ void cSaveGameData::setGameName (std::string name)
 }
 
 //------------------------------------------------------------------------------
-const std::string& cSaveGameData::getType () const
+const std::string& cSaveGameData::getType() const
 {
 	return type;
 }
@@ -70,7 +70,7 @@ void cSaveGameData::setType (std::string type_)
 }
 
 //------------------------------------------------------------------------------
-const std::string& cSaveGameData::getDate () const
+const std::string& cSaveGameData::getDate() const
 {
 	return date;
 }
@@ -82,7 +82,7 @@ void cSaveGameData::setDate (std::string date_)
 }
 
 //------------------------------------------------------------------------------
-int cSaveGameData::getNumber () const
+int cSaveGameData::getNumber() const
 {
 	return number;
 }

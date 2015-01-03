@@ -36,11 +36,11 @@ public:
 	virtual void pushInto (cNetMessage& message) const MAXR_OVERRIDE_FUNCTION;
 	virtual void pushInto (tinyxml2::XMLElement& element) const MAXR_OVERRIDE_FUNCTION;
 
-	virtual eSavedReportType getType () const MAXR_OVERRIDE_FUNCTION;
+	virtual eSavedReportType getType() const MAXR_OVERRIDE_FUNCTION;
 
-	virtual std::string getMessage () const MAXR_OVERRIDE_FUNCTION;
+	virtual std::string getMessage() const MAXR_OVERRIDE_FUNCTION;
 
-	virtual bool isAlert () const MAXR_OVERRIDE_FUNCTION;
+	virtual bool isAlert() const MAXR_OVERRIDE_FUNCTION;
 private:
 	int resourceType;
 	int amount;

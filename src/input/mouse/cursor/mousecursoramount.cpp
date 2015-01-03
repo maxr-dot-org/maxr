@@ -36,14 +36,14 @@ cMouseCursorAmount::cMouseCursorAmount (eMouseCursorAmountType type_, int percen
 {}
 
 //------------------------------------------------------------------------------
-SDL_Surface* cMouseCursorAmount::getSurface () const
+SDL_Surface* cMouseCursorAmount::getSurface() const
 {
-	if (surface == nullptr) generateSurface ();
-	return surface.get ();
+	if (surface == nullptr) generateSurface();
+	return surface.get();
 }
 
 //------------------------------------------------------------------------------
-cPosition cMouseCursorAmount::getHotPoint () const
+cPosition cMouseCursorAmount::getHotPoint() const
 {
 	return cPosition (19, 19);
 }
@@ -51,20 +51,20 @@ cPosition cMouseCursorAmount::getHotPoint () const
 //------------------------------------------------------------------------------
 bool cMouseCursorAmount::equal (const cMouseCursor& other) const
 {
-	auto other2 = dynamic_cast<const cMouseCursorAmount*>(&other);
+	auto other2 = dynamic_cast<const cMouseCursorAmount*> (&other);
 	return other2 && other2->type == type && other2->percent == percent;
 }
 
 //------------------------------------------------------------------------------
-void cMouseCursorAmount::generateSurface () const
+void cMouseCursorAmount::generateSurface() const
 {
-	auto sourceSurface = getSourceSurface ();
-    surface = AutoSurface (SDL_CreateRGBSurface (0, sourceSurface->w, sourceSurface->h, Video.getColDepth (), 0, 0, 0, 0));
+	auto sourceSurface = getSourceSurface();
+	surface = AutoSurface (SDL_CreateRGBSurface (0, sourceSurface->w, sourceSurface->h, Video.getColDepth(), 0, 0, 0, 0));
 
-	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
-	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
+	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
 
-	SDL_BlitSurface (sourceSurface, nullptr, surface.get (), nullptr);
+	SDL_BlitSurface (sourceSurface, nullptr, surface.get(), nullptr);
 
 	const int barWidth = 35;
 
@@ -76,21 +76,21 @@ void cMouseCursorAmount::generateSurface () const
 	}
 	else
 	{
-		SDL_FillRect (surface.get (), &rect, 0x00FF0000);
-		rect.w = static_cast<int>(percent / 100. * barWidth);
-		SDL_FillRect (surface.get (), &rect, 0x0000FF00);
+		SDL_FillRect (surface.get(), &rect, 0x00FF0000);
+		rect.w = static_cast<int> (percent / 100. * barWidth);
+		SDL_FillRect (surface.get(), &rect, 0x0000FF00);
 	}
 }
 
 //------------------------------------------------------------------------------
-SDL_Surface* cMouseCursorAmount::getSourceSurface () const
+SDL_Surface* cMouseCursorAmount::getSourceSurface() const
 {
 	switch (type)
 	{
-	default:
-	case eMouseCursorAmountType::Steal:
-		return GraphicsData.gfx_Csteal.get ();
-	case eMouseCursorAmountType::Disable:
-		return GraphicsData.gfx_Cdisable.get ();
+		default:
+		case eMouseCursorAmountType::Steal:
+			return GraphicsData.gfx_Csteal.get();
+		case eMouseCursorAmountType::Disable:
+			return GraphicsData.gfx_Cdisable.get();
 	}
 }

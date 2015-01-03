@@ -27,7 +27,7 @@
 class cWindowNetworkLobbyHost : public cWindowNetworkLobby
 {
 public:
-	cWindowNetworkLobbyHost ();
+	cWindowNetworkLobbyHost();
 
 	cSignal<void ()> triggeredSelectMap;
 	cSignal<void ()> triggeredSelectSettings;
@@ -36,18 +36,18 @@ public:
 	cSignal<void ()> triggeredStartGame;
 	cSignal<void ()> triggeredStartHost;
 
-	void setSaveGame(int saveGameNumber_);
+	void setSaveGame (int saveGameNumber_);
 	int getSaveGameNumber() const;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
 	int saveGameNumber;
 
-	void handleMapClicked ();
-	void handleSettingsClicked ();
-	void handleLoadClicked ();
-	void handleStartClicked ();
-	void handleOkClicked ();
+	void handleMapClicked();
+	void handleSettingsClicked();
+	void handleLoadClicked();
+	void handleStartClicked();
+	void handleOkClicked();
 };
 
 #endif // ui_graphical_menu_windows_windownetworklobbyhost_windownetworklobbyhostH

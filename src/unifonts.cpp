@@ -444,33 +444,33 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 				else if (charset == CHARSET_ISO8559_1) unicodeplace = currentChar + 128 + 2 * 16;
 			}
 			else unicodeplace = iso8859_to_uni[currentChar];
-            chars[unicodeplace] = AutoSurface (SDL_CreateRGBSurface (0, Rect.w, Rect.h, 32, 0, 0, 0, 0));
+			chars[unicodeplace] = AutoSurface (SDL_CreateRGBSurface (0, Rect.w, Rect.h, 32, 0, 0, 0, 0));
 
-			SDL_FillRect (chars[unicodeplace].get (), nullptr, 0xFF00FF);
-			SDL_BlitSurface (surface.get (), &Rect, chars[unicodeplace].get (), nullptr);
-			SDL_SetColorKey (chars[unicodeplace].get (), SDL_TRUE, 0xFF00FF);
+			SDL_FillRect (chars[unicodeplace].get(), nullptr, 0xFF00FF);
+			SDL_BlitSurface (surface.get(), &Rect, chars[unicodeplace].get(), nullptr);
+			SDL_SetColorKey (chars[unicodeplace].get(), SDL_TRUE, 0xFF00FF);
 
 			// change color for some fonts
 			switch (fonttype)
 			{
-			case FONT_LATIN_NORMAL_RED:
-				replaceColor (*chars[unicodeplace], cRgbColor (214, 189, 148), cRgbColor (250, 0, 0));
-				replaceColor (*chars[unicodeplace], cRgbColor (140, 132, 132), cRgbColor (163, 0, 0));
-				break;
-			case FONT_LATIN_SMALL_RED:
-				replaceColor (*chars[unicodeplace], cRgbColor (240, 216, 184), cRgbColor (230, 0, 0));
-				break;
-			case FONT_LATIN_SMALL_GREEN:
-				replaceColor (*chars[unicodeplace], cRgbColor (240, 216, 184), cRgbColor (4, 174, 4));
-				break;
-			case FONT_LATIN_SMALL_YELLOW:
-				replaceColor (*chars[unicodeplace], cRgbColor (240, 216, 184), cRgbColor (219, 222, 0));
-				break;
-			case FONT_LATIN_NORMAL:
-			case FONT_LATIN_BIG:
-			case FONT_LATIN_BIG_GOLD:
-			case FONT_LATIN_SMALL_WHITE:
-				break;
+				case FONT_LATIN_NORMAL_RED:
+					replaceColor (*chars[unicodeplace], cRgbColor (214, 189, 148), cRgbColor (250, 0, 0));
+					replaceColor (*chars[unicodeplace], cRgbColor (140, 132, 132), cRgbColor (163, 0, 0));
+					break;
+				case FONT_LATIN_SMALL_RED:
+					replaceColor (*chars[unicodeplace], cRgbColor (240, 216, 184), cRgbColor (230, 0, 0));
+					break;
+				case FONT_LATIN_SMALL_GREEN:
+					replaceColor (*chars[unicodeplace], cRgbColor (240, 216, 184), cRgbColor (4, 174, 4));
+					break;
+				case FONT_LATIN_SMALL_YELLOW:
+					replaceColor (*chars[unicodeplace], cRgbColor (240, 216, 184), cRgbColor (219, 222, 0));
+					break;
+				case FONT_LATIN_NORMAL:
+				case FONT_LATIN_BIG:
+				case FONT_LATIN_BIG_GOLD:
+				case FONT_LATIN_SMALL_WHITE:
+					break;
 			}
 
 			// goto next character
@@ -497,7 +497,7 @@ cUnicodeFont::getFontTypeSurfaces (eUnicodeFontType const fonttype)
 }
 
 AutoSurface cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
-											   eUnicodeFontType fonttype)
+											  eUnicodeFontType fonttype)
 {
 	// build the filename from the information
 	string filename = cSettings::getInstance().getFontPath() + PATH_DELIMITER + "latin_";
@@ -602,7 +602,7 @@ void cUnicodeFont::showText (int x, int y, const string& text,
 		// is space?
 		if (*p == ' ')
 		{
-			if (chars['a'].get ()) offX += chars['a']->w;
+			if (chars['a'].get()) offX += chars['a']->w;
 			p++;
 		} //is new line?
 		else if (*p == '\n')
@@ -624,7 +624,7 @@ void cUnicodeFont::showText (int x, int y, const string& text,
 			if (chars[uni] != nullptr)
 			{
 				SDL_Rect rTmp = {Sint16 (offX), Sint16 (offY), 16, 16};
-				SDL_BlitSurface (chars[uni].get (), nullptr, surface, &rTmp);
+				SDL_BlitSurface (chars[uni].get(), nullptr, surface, &rTmp);
 
 				// move one px forward for space between signs
 				offX += chars[uni]->w + iSpace;
@@ -636,7 +636,7 @@ void cUnicodeFont::showText (int x, int y, const string& text,
 void cUnicodeFont::showText (const cPosition& position, const string& text,
 							 eUnicodeFontType fonttype)
 {
-	showText (position.x (), position.y (), text, fonttype);
+	showText (position.x(), position.y(), text, fonttype);
 }
 
 int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const string& text,
@@ -774,7 +774,7 @@ void cUnicodeFont::showTextCentered (int x, int y, const string& sText,
 void cUnicodeFont::showTextCentered (const cPosition& position, const string& sText,
 									 eUnicodeFontType fonttype)
 {
-	showTextCentered (position.x (), position.y (), sText, fonttype);
+	showTextCentered (position.x(), position.y(), sText, fonttype);
 }
 
 int cUnicodeFont::getTextWide (const string& sText, eUnicodeFontType fonttype)
@@ -817,7 +817,7 @@ SDL_Rect cUnicodeFont::getTextSize (const string& text, eUnicodeFontType fonttyp
 		if (*p == ' ')
 		{
 			// we will use the wight of the 'a' for spaces
-			if (chars['a'].get ()) rTmp.w += chars['a']->w;
+			if (chars['a'].get()) rTmp.w += chars['a']->w;
 			p++;
 		} // is new line?
 		else if (*p == '\n')
@@ -895,7 +895,7 @@ Uint16 cUnicodeFont::encodeUTF8Char (const char* pch, int& increase) const
 {
 	// encode the UTF-8 character to its unicode position
 	Uint16 uni = 0;
-	unsigned char ch = *reinterpret_cast<const unsigned char* const>(pch);
+	unsigned char ch = *reinterpret_cast<const unsigned char* const> (pch);
 	// we do not need encoding 4 byte long characters
 	// because SDL only returns the BMP of the unicode table
 	if ((ch & 0xE0) == 0xE0)
@@ -935,20 +935,20 @@ int cUnicodeFont::getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFon
 	int space;
 	switch (fonttype)
 	{
-	case FONT_LATIN_SMALL_GREEN:
-	case FONT_LATIN_SMALL_RED:
-	case FONT_LATIN_SMALL_WHITE:
-	case FONT_LATIN_SMALL_YELLOW:
-		unicodeCharacter = toupper (unicodeCharacter);
-		space = 1;
-		break;
-	default:
-	case FONT_LATIN_NORMAL:
-	case FONT_LATIN_NORMAL_RED:
-	case FONT_LATIN_BIG:
-	case FONT_LATIN_BIG_GOLD:
-		space = 0;
-		break;
+		case FONT_LATIN_SMALL_GREEN:
+		case FONT_LATIN_SMALL_RED:
+		case FONT_LATIN_SMALL_WHITE:
+		case FONT_LATIN_SMALL_YELLOW:
+			unicodeCharacter = toupper (unicodeCharacter);
+			space = 1;
+			break;
+		default:
+		case FONT_LATIN_NORMAL:
+		case FONT_LATIN_NORMAL_RED:
+		case FONT_LATIN_BIG:
+		case FONT_LATIN_BIG_GOLD:
+			space = 0;
+			break;
 	}
 
 	if (unicodeCharacter == ' ') unicodeCharacter = 'a'; // we use the length of 'a' for the length of a space

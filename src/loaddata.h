@@ -54,7 +54,7 @@ int LoadData (void* loadingState);
 
 void reloadUnitValues();
 
-void createShadowGfx ();
+void createShadowGfx();
 
 /**
 * Splits a string s by "word" according to one of separators seps.

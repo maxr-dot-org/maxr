@@ -44,12 +44,12 @@ public:
 
 	void removeItem (size_t index);
 
-	size_t getItemsCount () const;
+	size_t getItemsCount() const;
 	const std::string& getItem (size_t index) const;
 
-	void clearItems ();
+	void clearItems();
 
-	const std::string& getSelectedText () const;
+	const std::string& getSelectedText() const;
 	void setSelectedIndex (size_t index);
 
 	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
@@ -65,10 +65,10 @@ private:
 
 	size_t maxVisibleItems;
 
-	void updateListViewSize ();
+	void updateListViewSize();
 
-	void updateLineEditBackground ();
-	void updateListViewBackground ();
+	void updateLineEditBackground();
+	void updateListViewBackground();
 };
 
 #endif // ui_graphical_menu_widgets_comboboxH

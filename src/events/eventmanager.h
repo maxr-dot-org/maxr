@@ -36,7 +36,7 @@ class cTextInputEvent;
  *
  * This event manager is the bridge between SDL and the game itself.
  *
- * In all game loops of the main thread the @ref run method of 
+ * In all game loops of the main thread the @ref run method of
  * the singleton instance of this class has to be called to make sure
  * all the external events (as for the devices like mouse and keyboard)
  * can be handles correctly.
@@ -55,19 +55,19 @@ public:
 	 */
 	void run();
 
-	cSignal<void(const cEventMouseMotion&)> mouseMotionEvent;
-	cSignal<void(const cEventMouseButton&)> mouseButtonEvent;
-	cSignal<void(const cEventMouseWheel&)> mouseWheelEvent;
+	cSignal<void (const cEventMouseMotion&)> mouseMotionEvent;
+	cSignal<void (const cEventMouseButton&)> mouseButtonEvent;
+	cSignal<void (const cEventMouseWheel&)> mouseWheelEvent;
 
-	cSignal<void(const cKeyboardEvent&)> keyboardEvent;
-	cSignal<void(const cTextInputEvent&)> textInputEvent;
+	cSignal<void (const cKeyboardEvent&)> keyboardEvent;
+	cSignal<void (const cTextInputEvent&)> textInputEvent;
 
 private:
 	cEventManager();
-	cEventManager(const cEventManager& other) MAXR_DELETE_FUNCTION;
-	cEventManager& operator=(const cEventManager& other) MAXR_DELETE_FUNCTION;
+	cEventManager (const cEventManager& other) MAXR_DELETE_FUNCTION;
+	cEventManager& operator= (const cEventManager& other) MAXR_DELETE_FUNCTION;
 
-	void handleSdlEvent(const SDL_Event& event);
+	void handleSdlEvent (const SDL_Event& event);
 };
 
 #endif // events_eventmanagerH

@@ -29,8 +29,8 @@ cKeyboard::cKeyboard()
 {
 	using namespace std::placeholders;
 
-	signalConnectionManager.connect(cEventManager::getInstance().keyboardEvent, std::bind(&cKeyboard::handleKeyboardEvent, this, _1));
-	signalConnectionManager.connect(cEventManager::getInstance().textInputEvent, std::bind(&cKeyboard::handleTextInputEvent, this, _1));
+	signalConnectionManager.connect (cEventManager::getInstance().keyboardEvent, std::bind (&cKeyboard::handleKeyboardEvent, this, _1));
+	signalConnectionManager.connect (cEventManager::getInstance().textInputEvent, std::bind (&cKeyboard::handleTextInputEvent, this, _1));
 }
 
 //------------------------------------------------------------------------------
@@ -47,36 +47,36 @@ KeyModifierFlags cKeyboard::getCurrentModifiers() const
 }
 
 //------------------------------------------------------------------------------
-bool cKeyboard::isAnyModifierActive(KeyModifierFlags flags) const
+bool cKeyboard::isAnyModifierActive (KeyModifierFlags flags) const
 {
 	return currentModifiers & flags;
 }
 
 //------------------------------------------------------------------------------
-bool cKeyboard::isAllModifiersActive(KeyModifierFlags flags) const
+bool cKeyboard::isAllModifiersActive (KeyModifierFlags flags) const
 {
 	return (currentModifiers & flags) == flags;
 }
 
 //------------------------------------------------------------------------------
-void cKeyboard::handleKeyboardEvent(const cKeyboardEvent& event)
+void cKeyboard::handleKeyboardEvent (const cKeyboardEvent& event)
 {
-	assert(event.getType() == cKeyboardEvent::Down || event.getType() == cKeyboardEvent::Up);
+	assert (event.getType() == cKeyboardEvent::Down || event.getType() == cKeyboardEvent::Up);
 
 	currentModifiers = event.getModifiers();
 
-	if(event.getType() == cKeyboardEvent::Down)
+	if (event.getType() == cKeyboardEvent::Down)
 	{
-		keyPressed(*this, event.getKey());
+		keyPressed (*this, event.getKey());
 	}
-	else if(event.getType() == cKeyboardEvent::Up)
+	else if (event.getType() == cKeyboardEvent::Up)
 	{
-		keyReleased(*this, event.getKey());
+		keyReleased (*this, event.getKey());
 	}
 }
 
 //------------------------------------------------------------------------------
-void cKeyboard::handleTextInputEvent(const cTextInputEvent& event)
+void cKeyboard::handleTextInputEvent (const cTextInputEvent& event)
 {
-	textEntered(*this, event.getText());
+	textEntered (*this, event.getText());
 }

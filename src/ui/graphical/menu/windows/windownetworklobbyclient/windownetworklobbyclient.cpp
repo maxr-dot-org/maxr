@@ -28,21 +28,21 @@
 #include "menuevents.h"
 
 //------------------------------------------------------------------------------
-cWindowNetworkLobbyClient::cWindowNetworkLobbyClient () :
+cWindowNetworkLobbyClient::cWindowNetworkLobbyClient() :
 	cWindowNetworkLobby (lngPack.i18n ("Text~Others~TCPIP_Client"), false)
 {
-	auto connectButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (470, 200), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Connect")));
+	auto connectButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 200), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Connect")));
 	signalConnectionManager.connect (connectButton->clicked, std::bind (&cWindowNetworkLobbyClient::handleConnectClicked, this));
 }
 
 //------------------------------------------------------------------------------
-void cWindowNetworkLobbyClient::handleConnectClicked ()
+void cWindowNetworkLobbyClient::handleConnectClicked()
 {
-	triggeredConnect ();
+	triggeredConnect();
 }
 
 //------------------------------------------------------------------------------
-void cWindowNetworkLobbyClient::setSaveGame(const std::vector<cPlayerBasicData>& players, std::string saveGameName_)
+void cWindowNetworkLobbyClient::setSaveGame (const std::vector<cPlayerBasicData>& players, std::string saveGameName_)
 {
 	saveGamePlayers = players;
 	saveGameName = saveGameName_;

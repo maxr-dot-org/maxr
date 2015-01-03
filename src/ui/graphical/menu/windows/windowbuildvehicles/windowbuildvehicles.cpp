@@ -38,29 +38,29 @@ cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cM
 	cWindowAdvancedHangar (LoadPCX (GFXOD_FAC_BUILD_SCREEN), *building_.getOwner()),
 	building (building_)
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (328, 12), getPosition () + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Factory"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Factory"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 	auto turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (523, 16), cPosition (523 + 65, 16 + 10))));
 	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
 
-	speedHandler = addChild (std::make_unique<cBuildSpeedHandlerWidget> (getPosition () + cPosition (292, 345)));
+	speedHandler = addChild (std::make_unique<cBuildSpeedHandlerWidget> (getPosition() + cPosition (292, 345)));
 
-	selectionUnitList->resize (cPosition(154,380));
+	selectionUnitList->resize (cPosition (154, 380));
 	selectionUnitList->setItemDistance (2);
 
-	selectionListUpButton->moveTo (getPosition () + cPosition (471, 440));
-	selectionListDownButton->moveTo (getPosition () + cPosition (491, 440));
+	selectionListUpButton->moveTo (getPosition() + cPosition (471, 440));
+	selectionListDownButton->moveTo (getPosition() + cPosition (491, 440));
 
-	selectedUnitList->moveTo (getPosition () + cPosition (330, 50));
+	selectedUnitList->moveTo (getPosition() + cPosition (330, 50));
 	selectedUnitList->resize (cPosition (130, 232));
 
-	selectedListUpButton->moveTo (getPosition () + cPosition (327, 293));
-	selectedListDownButton->moveTo (getPosition () + cPosition (348, 293));
+	selectedListUpButton->moveTo (getPosition() + cPosition (327, 293));
+	selectedListDownButton->moveTo (getPosition() + cPosition (348, 293));
 
-	backButton->moveTo (getPosition () + cPosition (300, 452));
-	okButton->moveTo (getPosition () + cPosition (387, 452));
+	backButton->moveTo (getPosition() + cPosition (300, 452));
+	okButton->moveTo (getPosition() + cPosition (387, 452));
 
-	repeatCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (447, 322), lngPack.i18n ("Text~Comp~Repeat"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Standard));
+	repeatCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (447, 322), lngPack.i18n ("Text~Comp~Repeat"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Standard));
 
 	generateSelectionList (building, map);
 	generateBuildList (building);
@@ -69,29 +69,29 @@ cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cM
 }
 
 //------------------------------------------------------------------------------
-std::vector<cBuildListItem> cWindowBuildVehicles::getBuildList () const
+std::vector<cBuildListItem> cWindowBuildVehicles::getBuildList() const
 {
 	std::vector<cBuildListItem> result;
-	for (size_t i = 0; i < getSelectedUnitsCount (); ++i)
+	for (size_t i = 0; i < getSelectedUnitsCount(); ++i)
 	{
 		const auto& selectedUnitItem = getSelectedUnit (i);
 
-		result.push_back (cBuildListItem (selectedUnitItem.getUnitId (), selectedUnitItem.getRemainingMetal ()));
+		result.push_back (cBuildListItem (selectedUnitItem.getUnitId(), selectedUnitItem.getRemainingMetal()));
 	}
 	return result;
 }
 
 //------------------------------------------------------------------------------
-int cWindowBuildVehicles::getSelectedBuildSpeed () const
+int cWindowBuildVehicles::getSelectedBuildSpeed() const
 {
-	return static_cast<int>(speedHandler->getBuildSpeedIndex ());
+	return static_cast<int> (speedHandler->getBuildSpeedIndex());
 }
 
 
 //------------------------------------------------------------------------------
-bool cWindowBuildVehicles::isRepeatActive () const
+bool cWindowBuildVehicles::isRepeatActive() const
 {
-	return repeatCheckBox->isChecked ();
+	return repeatCheckBox->isChecked();
 }
 
 //------------------------------------------------------------------------------
@@ -99,8 +99,8 @@ void cWindowBuildVehicles::setActiveUnit (const sID& unitId)
 {
 	cWindowAdvancedHangar::setActiveUnit (unitId);
 
-	const auto& vehicleData = *building.getOwner ()->getUnitDataCurrentVersion (unitId);
-	auto selectedUnit = selectedUnitList->getSelectedItem ();
+	const auto& vehicleData = *building.getOwner()->getUnitDataCurrentVersion (unitId);
+	auto selectedUnit = selectedUnitList->getSelectedItem();
 	const auto remainingMetal = selectedUnit ? selectedUnit->getRemainingMetal() : -1;
 	std::array<int, 3> turns;
 	std::array<int, 3> costs;
@@ -108,16 +108,16 @@ void cWindowBuildVehicles::setActiveUnit (const sID& unitId)
 
 	speedHandler->setValues (turns, costs);
 
-//	setActiveUpgrades (building.owner->getUnitDataCurrentVersion (unitId));
+	//	setActiveUpgrades (building.owner->getUnitDataCurrentVersion (unitId));
 }
 
 //------------------------------------------------------------------------------
 void cWindowBuildVehicles::generateSelectionList (const cBuilding& building, const cMap& map)
 {
 	bool select = true;
-	for (unsigned int i = 0; i < UnitsData.getNrVehicles (); i++)
+	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
 	{
-		sUnitData& unitData = building.getOwner ()->VehicleData[i];
+		sUnitData& unitData = building.getOwner()->VehicleData[i];
 		bool land = false;
 		bool water = false;
 		int x = building.getPosition().x() - 2;
@@ -137,20 +137,20 @@ void cWindowBuildVehicles::generateSelectionList (const cBuilding& building, con
 
 			if (map.isValidPosition (position) == false) continue;
 
-			const auto& buildings = map.getField (position).getBuildings ();
-			auto b_it = buildings.begin ();
-			auto b_end = buildings.end ();
+			const auto& buildings = map.getField (position).getBuildings();
+			auto b_it = buildings.begin();
+			auto b_end = buildings.end();
 
 			while (b_it != b_end && ((*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE || (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) ++b_it;
 
-			if (!map.isWaterOrCoast (cPosition(x, y)) || (b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_BASE)) land = true;
-			else if (map.isWaterOrCoast (cPosition(x, y)) && b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
+			if (!map.isWaterOrCoast (cPosition (x, y)) || (b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_BASE)) land = true;
+			else if (map.isWaterOrCoast (cPosition (x, y)) && b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
 			{
 				land = true;
 				water = true;
 				break;
 			}
-			else if (map.isWaterOrCoast (cPosition(x, y))) water = true;
+			else if (map.isWaterOrCoast (cPosition (x, y))) water = true;
 		}
 
 		if (unitData.factorSea > 0 && unitData.factorGround == 0 && !water) continue;
@@ -173,17 +173,17 @@ void cWindowBuildVehicles::generateBuildList (const cBuilding& building)
 {
 	for (size_t i = 0; i != building.getBuildListSize(); ++i)
 	{
-		auto& item = addSelectedUnit (building.getBuildListItem (i).getType ());
+		auto& item = addSelectedUnit (building.getBuildListItem (i).getType());
 
-		item.setRemainingMetal (building.getBuildListItem (i).getRemainingMetal ());
+		item.setRemainingMetal (building.getBuildListItem (i).getRemainingMetal());
 	}
 }
 
 //------------------------------------------------------------------------------
-void cWindowBuildVehicles::closeOnUnitDestruction ()
+void cWindowBuildVehicles::closeOnUnitDestruction()
 {
-	close ();
-	auto application = getActiveApplication ();
+	close();
+	auto application = getActiveApplication();
 	if (application)
 	{
 		application->show (std::make_shared<cDialogOk> ("Unit destroyed!")); // TODO: translate

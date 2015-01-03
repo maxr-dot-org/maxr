@@ -28,7 +28,7 @@ class cDialogYesNo : public cWindow
 {
 public:
 	cDialogYesNo (const std::string& text);
-	~cDialogYesNo ();
+	~cDialogYesNo();
 
 	cSignal<void ()> yesClicked;
 	cSignal<void ()> noClicked;

@@ -61,8 +61,8 @@ public:
 	const std::string& getName() const { return splayer.getName(); }
 	void setName (const std::string& name) { splayer.setName (name); }
 
-	const cPlayerColor& getColor () const { return splayer.getColor (); }
-	void setColor (cPlayerColor color) { return splayer.setColor (std::move(color)); }
+	const cPlayerColor& getColor() const { return splayer.getColor(); }
+	void setColor (cPlayerColor color) { return splayer.setColor (std::move (color)); }
 
 	int getNr() const { return splayer.getNr(); }
 
@@ -74,24 +74,24 @@ public:
 	void setLocal() { splayer.setLocal(); }
 	bool isLocal() const { return splayer.isLocal(); }
 
-	int getCredits () const;
+	int getCredits() const;
 	void setCredits (int credits);
 
 	/** Get the most modern version of a unit (including all his upgrades). */
 	sUnitData* getUnitDataCurrentVersion (const sID& id);
 	const sUnitData* getUnitDataCurrentVersion (const sID& id) const;
 
-	void setLandingPos(int x, int y) { landingPosX = x; landingPosY = y; }
+	void setLandingPos (int x, int y) { landingPosX = x; landingPosY = y; }
 	int getLandingPosX() const { return landingPosX; }
 	int getLandingPosY() const { return landingPosY; }
 
 	void initMaps (cMap& map);
-	const cPosition& getMapSize () const;
+	const cPosition& getMapSize() const;
 	void doScan();
 	void revealMap();
 	void revealPosition (const cPosition& position);
 	void revealResource();
-	unsigned int getOffset (const cPosition& pos) const { return pos.x () + pos.y () * mapSize.x (); }
+	unsigned int getOffset (const cPosition& pos) const { return pos.x() + pos.y() * mapSize.x(); }
 	bool canSeeAnyAreaUnder (const cUnit& unit) const;
 	bool canSeeAt (const cPosition& position) const;
 
@@ -104,38 +104,38 @@ public:
 	std::shared_ptr<cBuilding> removeUnit (const cBuilding& building);
 	std::shared_ptr<cVehicle> removeUnit (const cVehicle& vehicle);
 
-	void removeAllUnits ();
+	void removeAllUnits();
 
 	cVehicle* getVehicleFromId (unsigned int id) const;
 	cBuilding* getBuildingFromId (unsigned int id) const;
 
-	const cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>>& getVehicles () const;
-	const cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>>& getBuildings () const;
+	const cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>>& getVehicles() const;
+	const cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>>& getBuildings() const;
 
 	cUnit* getNextUnit (cUnit* start) const;
 	cUnit* getPrevUnit (cUnit* start) const;
 
-	bool hasUnits () const;
+	bool hasUnits() const;
 
 	void addSentry (cUnit& u);
 	void deleteSentry (cUnit& u);
 	void upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, std::vector<sUnitData*>& resultUpgradedUnitDatas);
 	void countEcoSpheres();
 	int getScore (int turn) const;
-	int getScore () const;
+	int getScore() const;
 	void setScore (int score, int turn);
 	void clearDone();
 
 	void addSavedReport (std::unique_ptr<cSavedReport> savedReport);
-	const std::vector<std::unique_ptr<cSavedReport>>& getSavedReports () const;
+	const std::vector<std::unique_ptr<cSavedReport>>& getSavedReports() const;
 
 	void setClan (int newClan);
 	int getClan() const { return clan; }
 
-	bool getHasFinishedTurn () const;
+	bool getHasFinishedTurn() const;
 	void setHasFinishedTurn (bool value);
 
-	bool getIsRemovedFromGame () const;
+	bool getIsRemovedFromGame() const;
 	void setIsRemovedFromGame (bool value);
 
 	void exploreResource (const cPosition& pos) { ResourceMap[getOffset (pos)] = 1; }
@@ -155,24 +155,24 @@ public:
 	bool mayHaveOffensiveUnit() const;
 
 	void addTurnReportUnit (const sID& unitId);
-	void resetTurnReportData ();
-	const std::vector<sTurnstartReport>& getCurrentTurnUnitReports () const;
+	void resetTurnReportData();
+	const std::vector<sTurnstartReport>& getCurrentTurnUnitReports() const;
 
-	const std::vector<int>& getCurrentTurnResearchAreasFinished () const;
+	const std::vector<int>& getCurrentTurnResearchAreasFinished() const;
 	void setCurrentTurnResearchAreasFinished (std::vector<int> areas);
 
 	bool isCurrentTurnResearchAreaFinished (cResearch::ResearchArea area) const;
-	
-	const cResearch& getResearchState () const;
-	cResearch& getResearchState ();
 
-	int getResearchCentersWorkingTotal () const;
+	const cResearch& getResearchState() const;
+	cResearch& getResearchState();
+
+	int getResearchCentersWorkingTotal() const;
 	int getResearchCentersWorkingOnArea (cResearch::ResearchArea area) const;
 
 	void startAResearch (cResearch::ResearchArea researchArea);
 	void stopAResearch (cResearch::ResearchArea researchArea);
 
-	void refreshResearchCentersWorkingOnArea ();
+	void refreshResearchCentersWorkingOnArea();
 
 	mutable cSignal<void ()> nameChanged;
 	mutable cSignal<void ()> colorChanged;

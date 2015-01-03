@@ -79,14 +79,14 @@ private:
 	bool attackUnitsOnly;
 	cBox<cPosition> mapViewWindow;
 
-	bool updateOffset ();
+	bool updateOffset();
 
-	void renewSurface ();
-	void drawLandscape ();
-	void drawFog ();
-	void drawUnits ();
+	void renewSurface();
+	void drawLandscape();
+	void drawFog();
+	void drawUnits();
 
-	void renewViewWindowSurface ();
+	void renewViewWindowSurface();
 
 	cPosition computeMapPosition (const cPosition& screenPosition);
 };

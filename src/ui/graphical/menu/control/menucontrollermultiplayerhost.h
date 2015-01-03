@@ -43,13 +43,13 @@ class cMenuControllerMultiplayerHost : public INetMessageReceiver, public cRunna
 {
 public:
 	cMenuControllerMultiplayerHost (cApplication& application);
-	~cMenuControllerMultiplayerHost ();
+	~cMenuControllerMultiplayerHost();
 
-	void start ();
+	void start();
 
 	virtual void pushEvent (std::unique_ptr<cNetMessage> message) MAXR_OVERRIDE_FUNCTION;
 
-	virtual void run () MAXR_OVERRIDE_FUNCTION;
+	virtual void run() MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
@@ -75,31 +75,31 @@ private:
 
 	std::vector<std::unique_ptr<cPlayerLandingStatus>> playersLandingStatus;
 
-	void reset ();
+	void reset();
 
 	void handleSelectMap (cApplication& application);
 	void handleSelectSettings (cApplication& application);
 	void handleSelectSaveGame (cApplication& application);
 
-	void handleWantLocalPlayerReadyChange ();
-	void handleChatMessageTriggered ();
+	void handleWantLocalPlayerReadyChange();
+	void handleChatMessageTriggered();
 
-	void handleLocalPlayerAttributesChanged ();
+	void handleLocalPlayerAttributesChanged();
 
-	void startHost ();
+	void startHost();
 
 	void checkTakenPlayerAttributes (cPlayerBasicData& player);
 
-	void checkGameStart ();
+	void checkGameStart();
 
-	void startSavedGame ();
+	void startSavedGame();
 
-	void startGamePreparation ();
+	void startGamePreparation();
 
-	void startClanSelection ();
-	void startLandingUnitSelection ();
-	void startLandingPositionSelection ();
-	void startNewGame ();
+	void startClanSelection();
+	void startLandingUnitSelection();
+	void startLandingPositionSelection();
+	void startNewGame();
 
 	void handleNetMessage (cNetMessage& message);
 
@@ -112,7 +112,7 @@ private:
 	void handleNetMessage_MU_MSG_LANDING_POSITION (cNetMessage& message);
 	void handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS (cNetMessage& message);
 
-	void saveOptions ();
+	void saveOptions();
 };
 
 #endif // ui_graphical_menu_control_menucontrollermultiplayerhostH

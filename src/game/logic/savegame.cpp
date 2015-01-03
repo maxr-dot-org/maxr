@@ -52,7 +52,7 @@ cSavegame::cSavegame (int number) :
 //--------------------------------------------------------------------------
 int cSavegame::save (const cServer& server, const string& saveName)
 {
-	SaveFile.LinkEndChild (SaveFile.NewDeclaration ());
+	SaveFile.LinkEndChild (SaveFile.NewDeclaration());
 	XMLElement* rootnode = SaveFile.NewElement ("MAXR_SAVE_FILE");
 	rootnode->SetAttribute ("version", (SAVE_FORMAT_VERSION).c_str());
 	SaveFile.LinkEndChild (rootnode);
@@ -69,19 +69,19 @@ int cSavegame::save (const cServer& server, const string& saveName)
 		const cPlayer& Player = *playerList[i];
 		writePlayer (Player, i);
 
-		const auto& vehicles = Player.getVehicles ();
-		for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
+		const auto& vehicles = Player.getVehicles();
+		for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
 		{
 			const auto& vehicle = *i;
-			if (!vehicle->isUnitLoaded ())
+			if (!vehicle->isUnitLoaded())
 			{
 				writeUnit (server, *vehicle, &unitnum);
 				unitnum++;
 			}
 		}
 
-		const auto& buildings = Player.getBuildings ();
-		for (auto i = buildings.begin (); i != buildings.end (); ++i)
+		const auto& buildings = Player.getBuildings();
+		for (auto i = buildings.begin(); i != buildings.end(); ++i)
 		{
 			const auto& building = *i;
 			writeUnit (server, *building, &unitnum);
@@ -90,10 +90,10 @@ int cSavegame::save (const cServer& server, const string& saveName)
 	}
 	int rubblenum = 0;
 
-	for (auto i = server.neutralBuildings.begin (); i != server.neutralBuildings.end (); ++i)
+	for (auto i = server.neutralBuildings.begin(); i != server.neutralBuildings.end(); ++i)
 	{
 		const auto& building = *i;
-        writeRubble (server, *building, rubblenum);
+		writeRubble (server, *building, rubblenum);
 		rubblenum++;
 	}
 
@@ -116,16 +116,16 @@ int cSavegame::save (const cServer& server, const string& saveName)
 }
 
 //--------------------------------------------------------------------------
-bool cSavegame::loadFile ()
+bool cSavegame::loadFile()
 {
-	if (!SaveFile.RootElement ())
+	if (!SaveFile.RootElement())
 	{
-		string fileName = cSettings::getInstance ().getSavesPath () + PATH_DELIMITER + "Save" + numberstr + ".xml";
-		if (SaveFile.LoadFile (fileName.c_str ()) != 0)
+		string fileName = cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml";
+		if (SaveFile.LoadFile (fileName.c_str()) != 0)
 		{
 			return false;
 		}
-		if (!SaveFile.RootElement ()) return false;
+		if (!SaveFile.RootElement()) return false;
 
 		loadedXMLFileName = fileName;
 	}
@@ -135,17 +135,17 @@ bool cSavegame::loadFile ()
 //--------------------------------------------------------------------------
 bool cSavegame::load (cServer& server)
 {
-	if (!loadFile ()) return false;
+	if (!loadFile()) return false;
 
 	if (!loadVersion()) return false;
 
-	if (version != cVersion(SAVE_FORMAT_VERSION))
+	if (version != cVersion (SAVE_FORMAT_VERSION))
 	{
 		Log.write ("Save file version differs from the one supported by the game!", cLog::eLOG_TYPE_WARNING);
 	}
 
 	// load standard unit values
-	if (version <= cVersion(0, 2))
+	if (version <= cVersion (0, 2))
 	{
 		Log.write ("Skipping loading standard unit values because save game has version 0.2 or older.", LOG_TYPE_DEBUG);
 	}
@@ -185,7 +185,7 @@ bool cSavegame::load (cServer& server)
 	for (size_t i = 0; i < server.playerList.size(); ++i)
 	{
 		auto& player = server.playerList[i];
-		player->refreshResearchCentersWorkingOnArea ();
+		player->refreshResearchCentersWorkingOnArea();
 	}
 	return true;
 }
@@ -219,7 +219,7 @@ void cSavegame::recalcSubbases (cServer& server)
 //--------------------------------------------------------------------------
 void cSavegame::loadHeader (string* name, string* type, string* time)
 {
-	if (!loadFile ()) return;
+	if (!loadFile()) return;
 
 	const XMLElement* headerNode = SaveFile.RootElement()->FirstChildElement ("Header");
 
@@ -231,7 +231,7 @@ void cSavegame::loadHeader (string* name, string* type, string* time)
 //--------------------------------------------------------------------------
 string cSavegame::loadMapName()
 {
-	if (!loadFile ()) return "";
+	if (!loadFile()) return "";
 
 	const XMLElement* mapNode = SaveFile.RootElement()->FirstChildElement ("Map");
 	if (mapNode != nullptr) return mapNode->FirstChildElement ("Name")->Attribute ("string");
@@ -240,16 +240,16 @@ string cSavegame::loadMapName()
 
 bool cSavegame::loadVersion()
 {
-	auto versionString = SaveFile.RootElement()->Attribute("version");
+	auto versionString = SaveFile.RootElement()->Attribute ("version");
 
 	// TODO: reorganize the whole save game loading/saving to support exception and do not catch this one internally.
 	try
 	{
-		version.parseFromString(versionString);
+		version.parseFromString (versionString);
 	}
 	catch (std::runtime_error& e)
 	{
-		Log.write(e.what(), cLog::eLOG_TYPE_ERROR);
+		Log.write (e.what(), cLog::eLOG_TYPE_ERROR);
 		return false;
 	}
 	return true;
@@ -257,13 +257,13 @@ bool cSavegame::loadVersion()
 
 
 //--------------------------------------------------------------------------
-std::vector<cPlayerBasicData> cSavegame::loadPlayers ()
+std::vector<cPlayerBasicData> cSavegame::loadPlayers()
 {
 	std::vector<cPlayerBasicData> playerNames;
 
-	if (!loadFile ()) return playerNames;
+	if (!loadFile()) return playerNames;
 
-	if (!loadVersion ()) return playerNames;
+	if (!loadVersion()) return playerNames;
 
 	const XMLElement* playersNode = SaveFile.RootElement()->FirstChildElement ("Players");
 
@@ -290,19 +290,19 @@ std::vector<cPlayerBasicData> cSavegame::loadPlayers ()
 
 			playerNames.push_back (cPlayerBasicData (name, cPlayerColor (playerColor), number));
 			playernum++;
-			playerNode = playersNode->FirstChildElement (("Player_" + iToStr (playernum)).c_str ());
+			playerNode = playersNode->FirstChildElement (("Player_" + iToStr (playernum)).c_str());
 		}
 	}
 	return playerNames;
 }
 
 //--------------------------------------------------------------------------
-cGameSettings cSavegame::loadGameSettings ()
+cGameSettings cSavegame::loadGameSettings()
 {
-	if (!loadFile ()) return cGameSettings();
+	if (!loadFile()) return cGameSettings();
 
-	XMLElement* gameInfoNode = SaveFile.RootElement ()->FirstChildElement ("Game");
-	if (!gameInfoNode) return cGameSettings ();
+	XMLElement* gameInfoNode = SaveFile.RootElement()->FirstChildElement ("Game");
+	if (!gameInfoNode) return cGameSettings();
 
 	cGameSettings gameSetting;
 
@@ -339,23 +339,23 @@ cGameSettings cSavegame::loadGameSettings ()
 		}
 #endif
 
-		auto intToResourceAmount = [ ](int value) -> eGameSettingsResourceAmount
+		auto intToResourceAmount = [ ] (int value) -> eGameSettingsResourceAmount
 		{
 			switch (value)
 			{
-			case 0:
-				return eGameSettingsResourceAmount::Limited;
-				break;
-			default:
-			case 1:
-				return eGameSettingsResourceAmount::Normal;
-				break;
-			case 2:
-				return eGameSettingsResourceAmount::High;
-				break;
-			case 3:
-				return eGameSettingsResourceAmount::TooMuch;
-				break;
+				case 0:
+					return eGameSettingsResourceAmount::Limited;
+					break;
+				default:
+				case 1:
+					return eGameSettingsResourceAmount::Normal;
+					break;
+				case 2:
+					return eGameSettingsResourceAmount::High;
+					break;
+				case 3:
+					return eGameSettingsResourceAmount::TooMuch;
+					break;
 			}
 		};
 
@@ -369,18 +369,18 @@ cGameSettings cSavegame::loadGameSettings ()
 			int value = e->IntAttribute ("num");
 			switch (value)
 			{
-			case 0:
-				gameSetting.setResourceDensity (eGameSettingsResourceDensity::Sparse);
-				break;
-			case 1:
-				gameSetting.setResourceDensity (eGameSettingsResourceDensity::Normal);
-				break;
-			case 2:
-				gameSetting.setResourceDensity (eGameSettingsResourceDensity::Dense);
-				break;
-			case 3:
-				gameSetting.setResourceDensity (eGameSettingsResourceDensity::TooMuch);
-				break;
+				case 0:
+					gameSetting.setResourceDensity (eGameSettingsResourceDensity::Sparse);
+					break;
+				case 1:
+					gameSetting.setResourceDensity (eGameSettingsResourceDensity::Normal);
+					break;
+				case 2:
+					gameSetting.setResourceDensity (eGameSettingsResourceDensity::Dense);
+					break;
+				case 3:
+					gameSetting.setResourceDensity (eGameSettingsResourceDensity::TooMuch);
+					break;
 			}
 		}
 		if (XMLElement* e = gameInfoNode->FirstChildElement ("Credits")) gameSetting.setStartCredits (e->IntAttribute ("num"));
@@ -392,17 +392,17 @@ cGameSettings cSavegame::loadGameSettings ()
 			int value = e->IntAttribute ("num");
 			switch (value)
 			{
-			case 0:
-				gameSetting.setVictoryCondition (eGameSettingsVictoryCondition::Turns);
-				if (XMLElement* e = gameInfoNode->FirstChildElement ("Duration")) gameSetting.setVictoryTurns (e->IntAttribute ("num"));
-				break;
-			case 1:
-				gameSetting.setVictoryCondition (eGameSettingsVictoryCondition::Points);
-				if (XMLElement* e = gameInfoNode->FirstChildElement ("Duration")) gameSetting.setVictoryPoints (e->IntAttribute ("num"));
-				break;
-			case 2:
-				gameSetting.setVictoryCondition (eGameSettingsVictoryCondition::Death);
-				break;
+				case 0:
+					gameSetting.setVictoryCondition (eGameSettingsVictoryCondition::Turns);
+					if (XMLElement* e = gameInfoNode->FirstChildElement ("Duration")) gameSetting.setVictoryTurns (e->IntAttribute ("num"));
+					break;
+				case 1:
+					gameSetting.setVictoryCondition (eGameSettingsVictoryCondition::Points);
+					if (XMLElement* e = gameInfoNode->FirstChildElement ("Duration")) gameSetting.setVictoryPoints (e->IntAttribute ("num"));
+					break;
+				case 2:
+					gameSetting.setVictoryCondition (eGameSettingsVictoryCondition::Death);
+					break;
 			}
 		}
 
@@ -437,11 +437,11 @@ cGameSettings cSavegame::loadGameSettings ()
 			if (XMLElement* e = gameInfoNode->FirstChildElement ("ClansEnabled")) gameSetting.setClansEnabled (e->BoolAttribute ("bool"));
 
 			if (XMLElement* e = gameInfoNode->FirstChildElement ("VictoryCondition")) gameSetting.setVictoryCondition (gameSettingsVictoryConditionFromString (e->Attribute ("string")));
-			if (gameSetting.getVictoryCondition () == eGameSettingsVictoryCondition::Turns)
+			if (gameSetting.getVictoryCondition() == eGameSettingsVictoryCondition::Turns)
 			{
 				if (XMLElement* e = gameInfoNode->FirstChildElement ("VictoryTurns")) gameSetting.setVictoryTurns (e->IntAttribute ("num"));
 			}
-			else if (gameSetting.getVictoryCondition () == eGameSettingsVictoryCondition::Points)
+			else if (gameSetting.getVictoryCondition() == eGameSettingsVictoryCondition::Points)
 			{
 				if (XMLElement* e = gameInfoNode->FirstChildElement ("VictoryPoints")) gameSetting.setVictoryPoints (e->IntAttribute ("num"));
 			}
@@ -467,16 +467,16 @@ void cSavegame::loadGameInfo (cServer& server)
 	XMLElement* gameInfoNode = SaveFile.RootElement()->FirstChildElement ("Game");
 	if (!gameInfoNode) return;
 
-	server.turnClock->setTurn(gameInfoNode->FirstChildElement ("Turn")->IntAttribute ("num"));
+	server.turnClock->setTurn (gameInfoNode->FirstChildElement ("Turn")->IntAttribute ("num"));
 
 	*server.gameSettings = loadGameSettings();
 
-	if (server.gameSettings->getGameType () == eGameSettingsGameType::Turns)
+	if (server.gameSettings->getGameType() == eGameSettingsGameType::Turns)
 	{
 		XMLElement* const element = gameInfoNode->FirstChildElement ("PlayTurns");
 		server.activeTurnPlayer = &server.getPlayerFromNumber (element->IntAttribute ("activeplayer"));
 	}
-	if (server.gameSettings->getGameType () == eGameSettingsGameType::HotSeat)
+	if (server.gameSettings->getGameType() == eGameSettingsGameType::HotSeat)
 	{
 		XMLElement* const element = gameInfoNode->FirstChildElement ("HotSeat");
 
@@ -486,7 +486,7 @@ void cSavegame::loadGameInfo (cServer& server)
 		}
 		else
 		{
-			server.activeTurnPlayer = server.playerList[0].get ();
+			server.activeTurnPlayer = server.playerList[0].get();
 		}
 	}
 }
@@ -524,7 +524,7 @@ void cSavegame::loadPlayers (cServer& server)
 	{
 		cGameGuiState gameGuiState;
 		auto player = loadPlayer (playerNode, map, gameGuiState);
-		server.playerGameGuiStates[player->getNr ()] = gameGuiState;
+		server.playerGameGuiStates[player->getNr()] = gameGuiState;
 		players.push_back (std::move (player));
 		playernum++;
 		playerNode = playersNode->FirstChildElement (("Player_" + iToStr (playernum)).c_str());
@@ -599,10 +599,10 @@ std::unique_ptr<cPlayer> cSavegame::loadPlayer (XMLElement* playerNode, cMap& ma
 			const XMLElement* reportElement = reportsNode->FirstChildElement ("Report");
 			while (reportElement)
 			{
-				if (reportElement->Parent () != reportsNode) break;
+				if (reportElement->Parent() != reportsNode) break;
 				auto report = cSavedReport::createFrom (*reportElement);
 				if (report) Player->savedReportsList.push_back (std::move (report));
-				reportElement = reportElement->NextSiblingElement ();
+				reportElement = reportElement->NextSiblingElement();
 			}
 		}
 	}
@@ -645,7 +645,7 @@ std::unique_ptr<cPlayer> cSavegame::loadPlayer (XMLElement* playerNode, cMap& ma
 			const XMLElement* areaNode = finishedResearchAreasNode->FirstChildElement ("Area");
 			while (areaNode)
 			{
-				areas.push_back(areaNode->IntAttribute ("num"));
+				areas.push_back (areaNode->IntAttribute ("num"));
 				areaNode = areaNode->NextSiblingElement ("Area");
 			}
 			Player->setCurrentTurnResearchAreasFinished (std::move (areas));
@@ -673,21 +673,21 @@ std::unique_ptr<cPlayer> cSavegame::loadPlayer (XMLElement* playerNode, cMap& ma
 			subbaseNode = subbasesNode->FirstChildElement (("Subbase_" + iToStr (subbasenum)).c_str());
 		}
 	}
-	return std::move(Player);
+	return std::move (Player);
 }
 
 //--------------------------------------------------------------------------
 void cSavegame::loadUpgrade (XMLElement* upgradeNode, sUnitData* data)
 {
-	data->setVersion(upgradeNode->FirstChildElement ("Version")->IntAttribute ("num"));
-	if (XMLElement* const element = upgradeNode->FirstChildElement ("HitPoints")) data->setHitpointsMax(element->IntAttribute ("num"));
-	if (XMLElement* const element = upgradeNode->FirstChildElement ("Shots"))     data->setShotsMax(element->IntAttribute ("num"));
-	if (XMLElement* const element = upgradeNode->FirstChildElement ("Speed"))     data->setSpeedMax(element->IntAttribute ("num"));
-	if (XMLElement* const element = upgradeNode->FirstChildElement ("Armor"))     data->setArmor(element->IntAttribute ("num"));
+	data->setVersion (upgradeNode->FirstChildElement ("Version")->IntAttribute ("num"));
+	if (XMLElement* const element = upgradeNode->FirstChildElement ("HitPoints")) data->setHitpointsMax (element->IntAttribute ("num"));
+	if (XMLElement* const element = upgradeNode->FirstChildElement ("Shots"))     data->setShotsMax (element->IntAttribute ("num"));
+	if (XMLElement* const element = upgradeNode->FirstChildElement ("Speed"))     data->setSpeedMax (element->IntAttribute ("num"));
+	if (XMLElement* const element = upgradeNode->FirstChildElement ("Armor"))     data->setArmor (element->IntAttribute ("num"));
 	if (XMLElement* const element = upgradeNode->FirstChildElement ("Costs"))     data->buildCosts = element->IntAttribute ("num");
-	if (XMLElement* const element = upgradeNode->FirstChildElement ("Damage"))    data->setDamage(element->IntAttribute ("num"));
-	if (XMLElement* const element = upgradeNode->FirstChildElement ("Range"))     data->setRange(element->IntAttribute ("num"));
-	if (XMLElement* const element = upgradeNode->FirstChildElement ("Scan"))      data->setScan(element->IntAttribute ("num"));
+	if (XMLElement* const element = upgradeNode->FirstChildElement ("Damage"))    data->setDamage (element->IntAttribute ("num"));
+	if (XMLElement* const element = upgradeNode->FirstChildElement ("Range"))     data->setRange (element->IntAttribute ("num"));
+	if (XMLElement* const element = upgradeNode->FirstChildElement ("Scan"))      data->setScan (element->IntAttribute ("num"));
 }
 
 //--------------------------------------------------------------------------
@@ -775,13 +775,13 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 {
 	int tmpinteger;
 	unitNode->FirstChildElement ("Owner")->QueryIntAttribute ("num", &tmpinteger);
-	auto& owner = server.getPlayerFromNumber(tmpinteger);
+	auto& owner = server.getPlayerFromNumber (tmpinteger);
 
 	int x, y;
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("x", &x);
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("y", &y);
 	unitNode->FirstChildElement ("ID")->QueryIntAttribute ("num", &tmpinteger);
-	auto& vehicle = server.addVehicle (cPosition(x, y), ID, &owner, true, unitNode->FirstChildElement ("Stored_In") == nullptr, tmpinteger);
+	auto& vehicle = server.addVehicle (cPosition (x, y), ID, &owner, true, unitNode->FirstChildElement ("Stored_In") == nullptr, tmpinteger);
 
 	if (unitNode->FirstChildElement ("Name")->Attribute ("notDefault") && strcmp (unitNode->FirstChildElement ("Name")->Attribute ("notDefault"), "1") == 0)
 		vehicle.changeName (unitNode->FirstChildElement ("Name")->Attribute ("string"));
@@ -791,17 +791,17 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 	unitNode->FirstChildElement ("Direction")->QueryIntAttribute ("num", &vehicle.dir);
 	if (XMLElement* const element = unitNode->FirstChildElement ("CommandoRank"))
 	{
-		vehicle.setCommandoRank(element->FloatAttribute ("num"));
+		vehicle.setCommandoRank (element->FloatAttribute ("num"));
 	}
-	if (unitNode->FirstChildElement ("IsBig")) server.Map->moveVehicleBig (vehicle, cPosition(x, y));
+	if (unitNode->FirstChildElement ("IsBig")) server.Map->moveVehicleBig (vehicle, cPosition (x, y));
 	if (unitNode->FirstChildElement ("Disabled")) vehicle.setDisabledTurns (unitNode->FirstChildElement ("Disabled")->IntAttribute ("turns"));
-	if (unitNode->FirstChildElement ("LayMines")) vehicle.setLayMines(true);
+	if (unitNode->FirstChildElement ("LayMines")) vehicle.setLayMines (true);
 	if (unitNode->FirstChildElement ("AutoMoving")) vehicle.hasAutoMoveJob = true;
 	if (unitNode->FirstChildElement ("OnSentry"))
 	{
 		owner.addSentry (vehicle);
 	}
-	if (unitNode->FirstChildElement ("ManualFire")) vehicle.setManualFireActive(true);
+	if (unitNode->FirstChildElement ("ManualFire")) vehicle.setManualFireActive (true);
 
 	if (XMLElement* const element = unitNode->FirstChildElement ("Building"))
 	{
@@ -830,8 +830,8 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 		// use offset because of backward compatibility
 		int buildBigSavedPosOffset;
 		element->QueryIntAttribute ("savedpos", &buildBigSavedPosOffset);
-		vehicle.buildBigSavedPosition.x () = buildBigSavedPosOffset % server.Map->getSize ().x ();
-		vehicle.buildBigSavedPosition.y () = buildBigSavedPosOffset / server.Map->getSize ().x ();
+		vehicle.buildBigSavedPosition.x() = buildBigSavedPosOffset % server.Map->getSize().x();
+		vehicle.buildBigSavedPosition.y() = buildBigSavedPosOffset / server.Map->getSize().x();
 
 		if (element->Attribute ("path"))
 		{
@@ -843,10 +843,10 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 
 			if (!vehicle.isUnitBuildingABuilding())
 			{
-				server.addJob (new cStartBuildJob (vehicle, vehicle.getPosition (), vehicle.data.isBig));
+				server.addJob (new cStartBuildJob (vehicle, vehicle.getPosition(), vehicle.data.isBig));
 				vehicle.setBuildingABuilding (true);
-				vehicle.setBuildCosts (vehicle.getBuildCostsStart ());
-				vehicle.setBuildTurns (vehicle.getBuildTurnsStart ());
+				vehicle.setBuildCosts (vehicle.getBuildCostsStart());
+				vehicle.setBuildTurns (vehicle.getBuildTurnsStart());
 			}
 		}
 	}
@@ -857,8 +857,8 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 		// use offset because of backward compatibility
 		int buildBigSavedPosOffset;
 		element->QueryIntAttribute ("savedpos", &buildBigSavedPosOffset);
-		vehicle.buildBigSavedPosition.x () = buildBigSavedPosOffset % server.Map->getSize ().x ();
-		vehicle.buildBigSavedPosition.y () = buildBigSavedPosOffset / server.Map->getSize ().x ();
+		vehicle.buildBigSavedPosition.x() = buildBigSavedPosOffset % server.Map->getSize().x();
+		vehicle.buildBigSavedPosition.y() = buildBigSavedPosOffset / server.Map->getSize().x();
 	}
 
 	if (XMLElement* const element = unitNode->FirstChildElement ("Movejob"))
@@ -901,18 +901,18 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 		if (isVehicle)
 		{
 			cVehicle* storingVehicle = server.getVehicleFromID (storedInID);
-            if (!storingVehicle) return;
+			if (!storingVehicle) return;
 
-			storingVehicle->data.setStoredUnits (storingVehicle->data.getStoredUnits ()-1);
-            storingVehicle->storeVehicle (vehicle, *server.Map);
+			storingVehicle->data.setStoredUnits (storingVehicle->data.getStoredUnits() - 1);
+			storingVehicle->storeVehicle (vehicle, *server.Map);
 		}
 		else
 		{
 			cBuilding* storingBuilding = server.getBuildingFromID (storedInID);
-            if (!storingBuilding) return;
+			if (!storingBuilding) return;
 
-			storingBuilding->data.setStoredUnits (storingBuilding->data.getStoredUnits ()-1);
-            storingBuilding->storeVehicle (vehicle, *server.Map);
+			storingBuilding->data.setStoredUnits (storingBuilding->data.getStoredUnits() - 1);
+			storingBuilding->storeVehicle (vehicle, *server.Map);
 		}
 	}
 }
@@ -922,23 +922,23 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, const sID& 
 {
 	int tmpinteger;
 	unitNode->FirstChildElement ("Owner")->QueryIntAttribute ("num", &tmpinteger);
-	auto& owner = server.getPlayerFromNumber(tmpinteger);
+	auto& owner = server.getPlayerFromNumber (tmpinteger);
 
 	int x, y;
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("x", &x);
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("y", &y);
 	unitNode->FirstChildElement ("ID")->QueryIntAttribute ("num", &tmpinteger);
-	auto& building = server.addBuilding (cPosition(x, y), ID, &owner, true, tmpinteger);
+	auto& building = server.addBuilding (cPosition (x, y), ID, &owner, true, tmpinteger);
 
 	if (unitNode->FirstChildElement ("Name")->Attribute ("notDefault") && strcmp (unitNode->FirstChildElement ("Name")->Attribute ("notDefault"), "1") == 0)
 		building.changeName (unitNode->FirstChildElement ("Name")->Attribute ("string"));
 
 	loadUnitValues (unitNode, &building.data);
 
-	if (unitNode->FirstChildElement ("IsWorking")) building.setWorking(true);
+	if (unitNode->FirstChildElement ("IsWorking")) building.setWorking (true);
 	if (unitNode->FirstChildElement ("wasWorking")) building.wasWorking = true;
 	if (unitNode->FirstChildElement ("Disabled")) building.setDisabledTurns (unitNode->FirstChildElement ("Disabled")->IntAttribute ("turns"));
-	if (unitNode->FirstChildElement ("ResearchArea")) building.setResearchArea((cResearch::ResearchArea)unitNode->FirstChildElement ("ResearchArea")->IntAttribute ("area"));
+	if (unitNode->FirstChildElement ("ResearchArea")) building.setResearchArea ((cResearch::ResearchArea)unitNode->FirstChildElement ("ResearchArea")->IntAttribute ("area"));
 	if (unitNode->FirstChildElement ("Score")) unitNode->FirstChildElement ("Score")->QueryIntAttribute ("num", & (building.points));
 	if (unitNode->FirstChildElement ("OnSentry"))
 	{
@@ -947,12 +947,12 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, const sID& 
 			owner.addSentry (building);
 		}
 	}
-	else if (building.isSentryActive ())
+	else if (building.isSentryActive())
 	{
 		owner.deleteSentry (building);
 	}
-	if (unitNode->FirstChildElement ("ManualFire")) building.setManualFireActive(true);
-	if (unitNode->FirstChildElement ("HasBeenAttacked")) building.setHasBeenAttacked(true);
+	if (unitNode->FirstChildElement ("ManualFire")) building.setManualFireActive (true);
+	if (unitNode->FirstChildElement ("HasBeenAttacked")) building.setHasBeenAttacked (true);
 
 	if (XMLElement* const element = unitNode->FirstChildElement ("Building"))
 	{
@@ -979,8 +979,8 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, const sID& 
 				itemElement->QueryIntAttribute ("type", &typenr);
 				listitem.setType (UnitsData.svehicles[typenr].ID);
 			}
-			listitem.setRemainingMetal(itemElement->IntAttribute ("metall_remaining"));
-			building.addBuildListItem (std::move(listitem));
+			listitem.setRemainingMetal (itemElement->IntAttribute ("metall_remaining"));
+			building.addBuildListItem (std::move (listitem));
 
 			itemnum++;
 			itemElement = buildNode->FirstChildElement ("BuildList")->FirstChildElement (("Item_" + iToStr (itemnum)).c_str());
@@ -1014,13 +1014,13 @@ void cSavegame::loadRubble (cServer& server, XMLElement* rubbleNode)
 
 	if (rubbleNode->FirstChildElement ("Big")) big = true;
 
-	server.addRubble (cPosition(x, y), rubblevalue, big);
+	server.addRubble (cPosition (x, y), rubblevalue, big);
 }
 
 //--------------------------------------------------------------------------
 void cSavegame::loadUnitValues (XMLElement* unitNode, sUnitData* Data)
 {
-	if (XMLElement* const Element = unitNode->FirstChildElement ("Version")) Data->setVersion(Element->IntAttribute ("num"));
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Version")) Data->setVersion (Element->IntAttribute ("num"));
 
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Max_Hitpoints")) Data->setHitpointsMax (Element->IntAttribute ("num"));
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Max_Ammo"))      Data->setAmmoMax (Element->IntAttribute ("num"));
@@ -1031,24 +1031,24 @@ void cSavegame::loadUnitValues (XMLElement* unitNode, sUnitData* Data)
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Range"))         Data->setRange (Element->IntAttribute ("num"));
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Scan"))          Data->setScan (Element->IntAttribute ("num"));
 
-	if (XMLElement* const Element = unitNode->FirstChildElement ("Hitpoints")) Data->setHitpoints(Element->IntAttribute ("num"));
-	else Data->setHitpoints(Data->getHitpointsMax());
-	if (XMLElement* const Element = unitNode->FirstChildElement ("Ammo")) Data->setAmmo(Element->IntAttribute ("num"));
-	else Data->setAmmo(Data->getAmmoMax());
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Hitpoints")) Data->setHitpoints (Element->IntAttribute ("num"));
+	else Data->setHitpoints (Data->getHitpointsMax());
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Ammo")) Data->setAmmo (Element->IntAttribute ("num"));
+	else Data->setAmmo (Data->getAmmoMax());
 
-	if (XMLElement* const Element = unitNode->FirstChildElement ("ResCargo"))  Data->setStoredResources(Element->IntAttribute ("num"));
-	if (XMLElement* const Element = unitNode->FirstChildElement ("UnitCargo")) Data->setStoredUnits(Element->IntAttribute ("num"));
+	if (XMLElement* const Element = unitNode->FirstChildElement ("ResCargo"))  Data->setStoredResources (Element->IntAttribute ("num"));
+	if (XMLElement* const Element = unitNode->FirstChildElement ("UnitCargo")) Data->setStoredUnits (Element->IntAttribute ("num"));
 	// look for "Cargo" to be savegamecompatible
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Cargo"))
 	{
 		Data->setStoredResources (Element->IntAttribute ("num"));
-		Data->setStoredUnits (Data->getStoredResources ());
+		Data->setStoredUnits (Data->getStoredResources());
 	}
 
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Speed")) Data->setSpeed (Element->IntAttribute ("num"));
-	else Data->setSpeed(Data->getSpeedMax());
-	if (XMLElement* const Element = unitNode->FirstChildElement ("Shots")) Data->setShots(Element->IntAttribute ("num"));
-	else Data->setShots(Data->getShotsMax());
+	else Data->setSpeed (Data->getSpeedMax());
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Shots")) Data->setShots (Element->IntAttribute ("num"));
+	else Data->setShots (Data->getShotsMax());
 }
 
 void Split (const std::string& s, const char* seps, std::vector<std::string>& words)
@@ -1090,11 +1090,11 @@ void cSavegame::loadStandardUnitValues (XMLElement* unitNode)
 	Data->name = unitNode->FirstChildElement ("Name")->Attribute ("string");
 
 	Data->setHitpointsMax (unitNode->FirstChildElement ("Hitpoints")->IntAttribute ("num"));
-	Data->setArmor(unitNode->FirstChildElement ("Armor")->IntAttribute ("num"));
+	Data->setArmor (unitNode->FirstChildElement ("Armor")->IntAttribute ("num"));
 	unitNode->FirstChildElement ("Built_Costs")->QueryIntAttribute ("num", &Data->buildCosts);
 
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Scan"))     Data->setScan (Element->IntAttribute ("num"));      else Data->setScan (0);
-	if (XMLElement* const Element = unitNode->FirstChildElement ("Movement")) Data->setSpeedMax(Element->IntAttribute ("num")*4); else Data->setSpeedMax(0);
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Movement")) Data->setSpeedMax (Element->IntAttribute ("num") * 4); else Data->setSpeedMax (0);
 
 
 	int tmpInt;
@@ -1111,7 +1111,7 @@ void cSavegame::loadStandardUnitValues (XMLElement* unitNode)
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Shots"))  Data->setShotsMax (Element->IntAttribute ("num"));     else Data->setShotsMax (0);
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Ammo"))   Data->setAmmoMax (Element->IntAttribute ("num"));     else Data->setAmmoMax (0);
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Range"))  Data->setRange (Element->IntAttribute ("num"));     else Data->setRange (0);
-	if (XMLElement* const Element = unitNode->FirstChildElement ("Damage")) Data->setDamage (Element->IntAttribute ("num"));     else Data->setDamage(0);
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Damage")) Data->setDamage (Element->IntAttribute ("num"));     else Data->setDamage (0);
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Can_Attack"))
 	{
 		Element->QueryIntAttribute ("num", &tmpInt);
@@ -1150,9 +1150,9 @@ void cSavegame::loadStandardUnitValues (XMLElement* unitNode)
 	if (XMLElement* const Element = unitNode->FirstChildElement ("StoreUnitsTypes"))
 	{
 		string storeUnitsString = Element->Attribute ("string");
-		Data->storeUnitsTypes.clear ();
+		Data->storeUnitsTypes.clear();
 		Split (storeUnitsString, "+", Data->storeUnitsTypes);
-		Data->storeUnitsTypes.erase (std::unique (Data->storeUnitsTypes.begin (), Data->storeUnitsTypes.end ()), Data->storeUnitsTypes.end ());
+		Data->storeUnitsTypes.erase (std::unique (Data->storeUnitsTypes.begin(), Data->storeUnitsTypes.end()), Data->storeUnitsTypes.end());
 	}
 
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Needs_Energy"))     Element->QueryIntAttribute ("num", &Data->needsEnergy);   else Data->needsEnergy   = 0;
@@ -1284,7 +1284,7 @@ void cSavegame::generateMoveJobs (cServer& server)
 {
 	for (unsigned int i = 0; i < MoveJobsLoad.size(); ++i)
 	{
-		cServerMoveJob* MoveJob = new cServerMoveJob (server, MoveJobsLoad[i]->vehicle->getPosition(), cPosition(MoveJobsLoad[i]->destX, MoveJobsLoad[i]->destY), MoveJobsLoad[i]->vehicle);
+		cServerMoveJob* MoveJob = new cServerMoveJob (server, MoveJobsLoad[i]->vehicle->getPosition(), cPosition (MoveJobsLoad[i]->destX, MoveJobsLoad[i]->destY), MoveJobsLoad[i]->vehicle);
 		if (!MoveJob->calcPath())
 		{
 			delete MoveJob;
@@ -1309,13 +1309,13 @@ cPlayer* cSavegame::getPlayerFromNumber (const std::vector<cPlayer*>& PlayerList
 string cSavegame::convertScanMapToString (const cPlayer& player) const
 {
 	string str = "";
-	const size_t size = player.getMapSize ().x () * player.getMapSize ().y();
+	const size_t size = player.getMapSize().x() * player.getMapSize().y();
 	str.reserve (size);
-	for (int x = 0; x != player.getMapSize ().x(); ++x)
+	for (int x = 0; x != player.getMapSize().x(); ++x)
 	{
-		for (int y = 0; y != player.getMapSize ().y (); ++y)
+		for (int y = 0; y != player.getMapSize().y(); ++y)
 		{
-			if (player.hasResourceExplored (cPosition(x, y))) str += "1";
+			if (player.hasResourceExplored (cPosition (x, y))) str += "1";
 			else str += "0";
 		}
 	}
@@ -1325,11 +1325,11 @@ string cSavegame::convertScanMapToString (const cPlayer& player) const
 //--------------------------------------------------------------------------
 void cSavegame::convertStringToScanMap (const string& str, cPlayer& player)
 {
-	for (int x = 0; x != player.getMapSize ().x (); ++x)
+	for (int x = 0; x != player.getMapSize().x(); ++x)
 	{
-		for (int y = 0; y != player.getMapSize ().y (); ++y)
+		for (int y = 0; y != player.getMapSize().y(); ++y)
 		{
-			if (!str.compare (x * player.getMapSize ().y () + y, 1, "1")) player.exploreResource (cPosition (x, y));
+			if (!str.compare (x * player.getMapSize().y() + y, 1, "1")) player.exploreResource (cPosition (x, y));
 		}
 	}
 }
@@ -1361,33 +1361,33 @@ void cSavegame::writeGameInfo (const cServer& server)
 {
 	XMLElement* gameinfoNode = addMainElement (SaveFile.RootElement(), "Game");
 
-	addAttributeElement (gameinfoNode, "Turn", "num", iToStr (server.getTurnClock ()->getTurn ()));
-	if (server.isTurnBasedGame ()) addAttributeElement (gameinfoNode, "PlayTurns", "activeplayer", iToStr (server.activeTurnPlayer->getNr ()));
-	if (server.getGameSettings()->getGameType() == eGameSettingsGameType::HotSeat) addAttributeElement (gameinfoNode, "HotSeat", "activeplayer", iToStr (server.activeTurnPlayer->getNr ()));
+	addAttributeElement (gameinfoNode, "Turn", "num", iToStr (server.getTurnClock()->getTurn()));
+	if (server.isTurnBasedGame()) addAttributeElement (gameinfoNode, "PlayTurns", "activeplayer", iToStr (server.activeTurnPlayer->getNr()));
+	if (server.getGameSettings()->getGameType() == eGameSettingsGameType::HotSeat) addAttributeElement (gameinfoNode, "HotSeat", "activeplayer", iToStr (server.activeTurnPlayer->getNr()));
 
 	const auto& gameSetting = *server.getGameSettings();
 
-	addAttributeElement (gameinfoNode, "Metal", "string", gameSettingsResourceAmountToString (gameSetting.getMetalAmount ()));
-	addAttributeElement (gameinfoNode, "Oil", "string", gameSettingsResourceAmountToString (gameSetting.getOilAmount ()));
-	addAttributeElement (gameinfoNode, "Gold", "string", gameSettingsResourceAmountToString (gameSetting.getGoldAmount ()));
+	addAttributeElement (gameinfoNode, "Metal", "string", gameSettingsResourceAmountToString (gameSetting.getMetalAmount()));
+	addAttributeElement (gameinfoNode, "Oil", "string", gameSettingsResourceAmountToString (gameSetting.getOilAmount()));
+	addAttributeElement (gameinfoNode, "Gold", "string", gameSettingsResourceAmountToString (gameSetting.getGoldAmount()));
 
-	addAttributeElement (gameinfoNode, "ResourceDensity", "string", gameSettingsResourceDensityToString (gameSetting.getResourceDensity ()));
+	addAttributeElement (gameinfoNode, "ResourceDensity", "string", gameSettingsResourceDensityToString (gameSetting.getResourceDensity()));
 
-	addAttributeElement (gameinfoNode, "BridgeHead", "string", gameSettingsBridgeheadTypeToString (gameSetting.getBridgeheadType ()));
+	addAttributeElement (gameinfoNode, "BridgeHead", "string", gameSettingsBridgeheadTypeToString (gameSetting.getBridgeheadType()));
 
-	addAttributeElement (gameinfoNode, "ClansEnabled", "bool", bToStr (gameSetting.getClansEnabled ()));
+	addAttributeElement (gameinfoNode, "ClansEnabled", "bool", bToStr (gameSetting.getClansEnabled()));
 
-	addAttributeElement (gameinfoNode, "Credits", "num", iToStr (gameSetting.getStartCredits ()));
+	addAttributeElement (gameinfoNode, "Credits", "num", iToStr (gameSetting.getStartCredits()));
 
-	addAttributeElement (gameinfoNode, "VictoryCondition", "string", gameSettingsVictoryConditionToString (gameSetting.getVictoryCondition ()));
-	if (gameSetting.getVictoryCondition () == eGameSettingsVictoryCondition::Turns)	addAttributeElement (gameinfoNode, "VictoryTurns", "num", iToStr (gameSetting.getVictoryTurns ()));
-	else if (gameSetting.getVictoryCondition () == eGameSettingsVictoryCondition::Points) addAttributeElement (gameinfoNode, "VictoryPoints", "num", iToStr (gameSetting.getVictoryPoints ()));
+	addAttributeElement (gameinfoNode, "VictoryCondition", "string", gameSettingsVictoryConditionToString (gameSetting.getVictoryCondition()));
+	if (gameSetting.getVictoryCondition() == eGameSettingsVictoryCondition::Turns)	addAttributeElement (gameinfoNode, "VictoryTurns", "num", iToStr (gameSetting.getVictoryTurns()));
+	else if (gameSetting.getVictoryCondition() == eGameSettingsVictoryCondition::Points) addAttributeElement (gameinfoNode, "VictoryPoints", "num", iToStr (gameSetting.getVictoryPoints()));
 
-	addAttributeElement (gameinfoNode, "TurnEndDeadline", "num", iToStr (gameSetting.getTurnEndDeadline ().count ()));
+	addAttributeElement (gameinfoNode, "TurnEndDeadline", "num", iToStr (gameSetting.getTurnEndDeadline().count()));
 	addAttributeElement (gameinfoNode, "TurnEndDeadlineActive", "bool", bToStr (gameSetting.isTurnEndDeadlineActive()));
 
-	addAttributeElement (gameinfoNode, "TurnLimit", "num", iToStr (gameSetting.getTurnLimit ().count ()));
-	addAttributeElement (gameinfoNode, "TurnLimitActive", "bool", bToStr (gameSetting.isTurnLimitActive ()));
+	addAttributeElement (gameinfoNode, "TurnLimit", "num", iToStr (gameSetting.getTurnLimit().count()));
+	addAttributeElement (gameinfoNode, "TurnLimitActive", "bool", bToStr (gameSetting.isTurnLimitActive()));
 }
 
 //--------------------------------------------------------------------------
@@ -1413,13 +1413,13 @@ void cSavegame::writePlayer (const cPlayer& Player, int number)
 
 	// write the main information
 	addAttributeElement (playerNode, "Name", "string", Player.getName());
-	addAttributeElement (playerNode, "Credits", "num", iToStr (Player.getCredits ()));
+	addAttributeElement (playerNode, "Credits", "num", iToStr (Player.getCredits()));
 	addAttributeElement (playerNode, "Clan", "num", iToStr (Player.getClan()));
 
 	XMLElement* colorElement = addMainElement (playerNode, "Color");
-	colorElement->SetAttribute ("red", iToStr(Player.getColor().getColor().r).c_str());
-	colorElement->SetAttribute ("green", iToStr (Player.getColor ().getColor ().g).c_str ());
-	colorElement->SetAttribute ("blue", iToStr (Player.getColor ().getColor ().b).c_str ());
+	colorElement->SetAttribute ("red", iToStr (Player.getColor().getColor().r).c_str());
+	colorElement->SetAttribute ("green", iToStr (Player.getColor().getColor().g).c_str());
+	colorElement->SetAttribute ("blue", iToStr (Player.getColor().getColor().b).c_str());
 
 	addAttributeElement (playerNode, "Number", "num", iToStr (Player.getNr()));
 	addAttributeElement (playerNode, "ResourceMap", "data", convertScanMapToString (Player));
@@ -1441,7 +1441,7 @@ void cSavegame::writePlayer (const cPlayer& Player, int number)
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); ++i)
 	{
 		// if only costs were researched, the version is not incremented
-		if (Player.VehicleData[i].getVersion () > 0
+		if (Player.VehicleData[i].getVersion() > 0
 			|| Player.VehicleData[i].buildCosts != UnitsData.getVehicle (i, Player.getClan()).buildCosts)
 		{
 			writeUpgrade (upgradesNode, upgrades, Player.VehicleData[i], UnitsData.getVehicle (i, Player.getClan()));
@@ -1451,7 +1451,7 @@ void cSavegame::writePlayer (const cPlayer& Player, int number)
 	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); ++i)
 	{
 		// if only costs were researched, the version is not incremented
-		if (Player.BuildingData[i].getVersion () > 0
+		if (Player.BuildingData[i].getVersion() > 0
 			|| Player.BuildingData[i].buildCosts != UnitsData.getBuilding (i, Player.getClan()).buildCosts)
 		{
 			writeUpgrade (upgradesNode, upgrades, Player.BuildingData[i], UnitsData.getBuilding (i, Player.getClan()));
@@ -1461,16 +1461,16 @@ void cSavegame::writePlayer (const cPlayer& Player, int number)
 
 	XMLElement* researchNode = addMainElement (playerNode, "Research");
 	XMLElement* researchLevelNode = addMainElement (researchNode, "ResearchLevel");
-	writeResearchLevel (researchLevelNode, Player.getResearchState ());
+	writeResearchLevel (researchLevelNode, Player.getResearchState());
 
-	const auto& finishedResearchAreas = Player.getCurrentTurnResearchAreasFinished ();
+	const auto& finishedResearchAreas = Player.getCurrentTurnResearchAreasFinished();
 
-	if (!finishedResearchAreas.empty ())
+	if (!finishedResearchAreas.empty())
 	{
 		XMLElement* finishedResearchAreasNode = addMainElement (researchNode, "FinishedResearchAreas");
-		for (size_t i = 0; i < finishedResearchAreas.size (); ++i)
+		for (size_t i = 0; i < finishedResearchAreas.size(); ++i)
 		{
-			addAttributeElement (finishedResearchAreasNode, "Area", "num", iToStr(finishedResearchAreas[i]));
+			addAttributeElement (finishedResearchAreasNode, "Area", "num", iToStr (finishedResearchAreas[i]));
 		}
 	}
 
@@ -1495,16 +1495,16 @@ void cSavegame::writeUpgrade (XMLElement* upgradesNode, int upgradenumber, const
 {
 	XMLElement* upgradeNode = addMainElement (upgradesNode, "Unit_" + iToStr (upgradenumber));
 	addAttributeElement (upgradeNode, "Type", "string", data.ID.getText());
-	addAttributeElement (upgradeNode, "Version", "num", iToStr (data.getVersion ()));
+	addAttributeElement (upgradeNode, "Version", "num", iToStr (data.getVersion()));
 	if (data.getAmmoMax() != originaldata.getAmmoMax()) addAttributeElement (upgradeNode, "Ammo", "num", iToStr (data.getAmmoMax()));
 	if (data.getHitpointsMax() != originaldata.getHitpointsMax()) addAttributeElement (upgradeNode, "HitPoints", "num", iToStr (data.getHitpointsMax()));
 	if (data.getShotsMax() != originaldata.getShotsMax()) addAttributeElement (upgradeNode, "Shots", "num", iToStr (data.getShotsMax()));
 	if (data.getSpeedMax() != originaldata.getSpeedMax()) addAttributeElement (upgradeNode, "Speed", "num", iToStr (data.getSpeedMax()));
-	if (data.getArmor () != originaldata.getArmor ()) addAttributeElement (upgradeNode, "Armor", "num", iToStr (data.getArmor ()));
+	if (data.getArmor() != originaldata.getArmor()) addAttributeElement (upgradeNode, "Armor", "num", iToStr (data.getArmor()));
 	if (data.buildCosts != originaldata.buildCosts) addAttributeElement (upgradeNode, "Costs", "num", iToStr (data.buildCosts));
-	if (data.getDamage () != originaldata.getDamage ()) addAttributeElement (upgradeNode, "Damage", "num", iToStr (data.getDamage ()));
-	if (data.getRange () != originaldata.getRange ()) addAttributeElement (upgradeNode, "Range", "num", iToStr (data.getRange ()));
-	if (data.getScan () != originaldata.getScan ()) addAttributeElement (upgradeNode, "Scan", "num", iToStr (data.getScan ()));
+	if (data.getDamage() != originaldata.getDamage()) addAttributeElement (upgradeNode, "Damage", "num", iToStr (data.getDamage()));
+	if (data.getRange() != originaldata.getRange()) addAttributeElement (upgradeNode, "Range", "num", iToStr (data.getRange()));
+	if (data.getScan() != originaldata.getScan()) addAttributeElement (upgradeNode, "Scan", "num", iToStr (data.getScan()));
 }
 
 //--------------------------------------------------------------------------
@@ -1558,7 +1558,7 @@ XMLElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehicle
 	// write main information
 	addAttributeElement (unitNode, "Type", "string", vehicle.data.ID.getText());
 	addAttributeElement (unitNode, "ID", "num", iToStr (vehicle.iID));
-	addAttributeElement (unitNode, "Owner", "num", iToStr (vehicle.getOwner ()->getNr ()));
+	addAttributeElement (unitNode, "Owner", "num", iToStr (vehicle.getOwner()->getNr()));
 	addAttributeElement (unitNode, "Position", "x", iToStr (vehicle.getPosition().x()), "y", iToStr (vehicle.getPosition().y()));
 	// add information whether the unitname isn't serverdefault,
 	// so that it would be readed when loading
@@ -1567,26 +1567,26 @@ XMLElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehicle
 
 	// write the standard unit values
 	// which are the same for vehicles and buildings
-	writeUnitValues (unitNode, vehicle.data, *vehicle.getOwner ()->getUnitDataCurrentVersion (vehicle.data.ID));
+	writeUnitValues (unitNode, vehicle.data, *vehicle.getOwner()->getUnitDataCurrentVersion (vehicle.data.ID));
 
 	// add additional status information
 	addAttributeElement (unitNode, "Direction", "num", iToStr (vehicle.dir));
 	if (vehicle.data.canCapture || vehicle.data.canDisable) addAttributeElement (unitNode, "CommandoRank", "num", fToStr (vehicle.getCommandoRank()));
 	if (vehicle.data.isBig) addMainElement (unitNode, "IsBig");
 	if (vehicle.isDisabled()) addAttributeElement (unitNode, "Disabled", "turns", iToStr (vehicle.getDisabledTurns()));
-	if (vehicle.isUnitLayingMines ()) addMainElement (unitNode, "LayMines");
+	if (vehicle.isUnitLayingMines()) addMainElement (unitNode, "LayMines");
 	if (vehicle.isSentryActive()) addMainElement (unitNode, "OnSentry");
 	if (vehicle.isManualFireActive()) addMainElement (unitNode, "ManualFire");
 	if (vehicle.hasAutoMoveJob) addMainElement (unitNode, "AutoMoving");
 
-	if (vehicle.isUnitBuildingABuilding () || vehicle.BuildPath)
+	if (vehicle.isUnitBuildingABuilding() || vehicle.BuildPath)
 	{
 		XMLElement* element = addMainElement (unitNode, "Building");
-		element->SetAttribute ("building", bToStr (vehicle.isUnitBuildingABuilding ()).c_str());
-		element->SetAttribute ("type_id", vehicle.getBuildingType ().getText ().c_str ());
+		element->SetAttribute ("building", bToStr (vehicle.isUnitBuildingABuilding()).c_str());
+		element->SetAttribute ("type_id", vehicle.getBuildingType().getText().c_str());
 		element->SetAttribute ("turns", iToStr (vehicle.getBuildTurns()).c_str());
 		element->SetAttribute ("costs", iToStr (vehicle.getBuildCosts()).c_str());
-		if (vehicle.data.isBig) element->SetAttribute ("savedpos", iToStr (vehicle.buildBigSavedPosition.x () + vehicle.buildBigSavedPosition.y () * server.Map->getSize().x()).c_str ());
+		if (vehicle.data.isBig) element->SetAttribute ("savedpos", iToStr (vehicle.buildBigSavedPosition.x() + vehicle.buildBigSavedPosition.y() * server.Map->getSize().x()).c_str());
 
 		if (vehicle.BuildPath)
 		{
@@ -1597,7 +1597,7 @@ XMLElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehicle
 			element->SetAttribute ("endy", iToStr (vehicle.bandPosition.y()).c_str());
 		}
 	}
-	if (vehicle.isUnitClearing ()) addAttributeElement (unitNode, "Clearing", "turns", iToStr (vehicle.getClearingTurns ()), "savedpos", iToStr (vehicle.buildBigSavedPosition.x () + vehicle.buildBigSavedPosition.y () * server.Map->getSize ().x ()));
+	if (vehicle.isUnitClearing()) addAttributeElement (unitNode, "Clearing", "turns", iToStr (vehicle.getClearingTurns()), "savedpos", iToStr (vehicle.buildBigSavedPosition.x() + vehicle.buildBigSavedPosition.y() * server.Map->getSize().x()));
 	if (vehicle.ServerMoveJob) addAttributeElement (unitNode, "Movejob", "destx", iToStr (vehicle.ServerMoveJob->destination.x()), "desty", iToStr (vehicle.ServerMoveJob->destination.y()));
 
 	// write from which players this unit has been detected
@@ -1639,17 +1639,17 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int
 	// write main information
 	addAttributeElement (unitNode, "Type", "string", building.data.ID.getText());
 	addAttributeElement (unitNode, "ID", "num", iToStr (building.iID));
-	addAttributeElement (unitNode, "Owner", "num", iToStr (building.getOwner ()->getNr ()));
+	addAttributeElement (unitNode, "Owner", "num", iToStr (building.getOwner()->getNr()));
 	addAttributeElement (unitNode, "Position", "x", iToStr (building.getPosition().x()), "y", iToStr (building.getPosition().y()));
 
 	// add information whether the unitname isn't serverdefault, so that it would be readed when loading but is in the save to make him more readable
 	addAttributeElement (unitNode, "Name", "string", building.isNameOriginal() ? building.data.name : building.getName(), "notDefault", building.isNameOriginal() ? "0" : "1");
 
 	// write the standard values
-	writeUnitValues (unitNode, building.data, *building.getOwner ()->getUnitDataCurrentVersion (building.data.ID));
+	writeUnitValues (unitNode, building.data, *building.getOwner()->getUnitDataCurrentVersion (building.data.ID));
 
 	// write additional stauts information
-	if (building.isUnitWorking ()) addMainElement (unitNode, "IsWorking");
+	if (building.isUnitWorking()) addMainElement (unitNode, "IsWorking");
 	if (building.wasWorking) addMainElement (unitNode, "wasWorking");
 	if (building.isDisabled()) addAttributeElement (unitNode, "Disabled", "turns", iToStr (building.getDisabledTurns()));
 
@@ -1677,7 +1677,7 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int
 		XMLElement* buildlistNode = addMainElement (buildNode, "BuildList");
 		for (size_t i = 0; i != building.getBuildListSize(); ++i)
 		{
-			addAttributeElement (buildlistNode, "Item_" + iToStr (i), "type_id", building.getBuildListItem (i).getType().getText (), "metall_remaining", iToStr (building.getBuildListItem (i).getRemainingMetal ()));
+			addAttributeElement (buildlistNode, "Item_" + iToStr (i), "type_id", building.getBuildListItem (i).getType().getText(), "metall_remaining", iToStr (building.getBuildListItem (i).getRemainingMetal()));
 		}
 	}
 
@@ -1723,28 +1723,28 @@ void cSavegame::writeRubble (const cServer& server, const cBuilding& building, i
 void cSavegame::writeUnitValues (XMLElement* unitNode, const sUnitData& Data, const sUnitData& OwnerData)
 {
 	// write the standard status values
-	if (Data.getHitpoints () != Data.getHitpointsMax()) addAttributeElement (unitNode, "Hitpoints", "num", iToStr (Data.getHitpoints ()));
-	if (Data.getAmmo () != Data.getAmmoMax()) addAttributeElement (unitNode, "Ammo", "num", iToStr (Data.getAmmo ()));
+	if (Data.getHitpoints() != Data.getHitpointsMax()) addAttributeElement (unitNode, "Hitpoints", "num", iToStr (Data.getHitpoints()));
+	if (Data.getAmmo() != Data.getAmmoMax()) addAttributeElement (unitNode, "Ammo", "num", iToStr (Data.getAmmo()));
 
-	if (Data.getStoredResources () > 0) addAttributeElement (unitNode, "ResCargo", "num", iToStr (Data.getStoredResources ()));
-	if (Data.getStoredUnits () > 0) addAttributeElement (unitNode, "UnitCargo", "num", iToStr (Data.getStoredUnits ()));
+	if (Data.getStoredResources() > 0) addAttributeElement (unitNode, "ResCargo", "num", iToStr (Data.getStoredResources()));
+	if (Data.getStoredUnits() > 0) addAttributeElement (unitNode, "UnitCargo", "num", iToStr (Data.getStoredUnits()));
 
 	if (Data.getSpeed() != Data.getSpeedMax()) addAttributeElement (unitNode, "Speed", "num", iToStr (Data.getSpeed()));
-	if (Data.getShots () != Data.getShotsMax()) addAttributeElement (unitNode, "Shots", "num", iToStr (Data.getShots ()));
+	if (Data.getShots() != Data.getShotsMax()) addAttributeElement (unitNode, "Shots", "num", iToStr (Data.getShots()));
 
 	// write upgrade values that differ from the acctual unit values of the owner
-	if (OwnerData.getVersion () <= 0) return;
+	if (OwnerData.getVersion() <= 0) return;
 
-	addAttributeElement (unitNode, "Version", "num", iToStr (Data.getVersion ()));
+	addAttributeElement (unitNode, "Version", "num", iToStr (Data.getVersion()));
 	if (Data.getHitpointsMax() != OwnerData.getHitpointsMax()) addAttributeElement (unitNode, "Max_Hitpoints", "num", iToStr (Data.getHitpointsMax()));
 	if (Data.getAmmoMax() != OwnerData.getAmmoMax()) addAttributeElement (unitNode, "Max_Ammo", "num", iToStr (Data.getAmmoMax()));
 	if (Data.getSpeedMax() != OwnerData.getSpeedMax()) addAttributeElement (unitNode, "Max_Speed", "num", iToStr (Data.getSpeedMax()));
 	if (Data.getShotsMax() != OwnerData.getShotsMax()) addAttributeElement (unitNode, "Max_Shots", "num", iToStr (Data.getShotsMax()));
 
-	if (Data.getArmor () != OwnerData.getArmor ()) addAttributeElement (unitNode, "Armor", "num", iToStr (Data.getArmor ()));
-	if (Data.getDamage () != OwnerData.getDamage ()) addAttributeElement (unitNode, "Damage", "num", iToStr (Data.getDamage ()));
-	if (Data.getRange () != OwnerData.getRange ()) addAttributeElement (unitNode, "Range", "num", iToStr (Data.getRange ()));
-	if (Data.getScan () != OwnerData.getScan ()) addAttributeElement (unitNode, "Scan", "num", iToStr (Data.getScan ()));
+	if (Data.getArmor() != OwnerData.getArmor()) addAttributeElement (unitNode, "Armor", "num", iToStr (Data.getArmor()));
+	if (Data.getDamage() != OwnerData.getDamage()) addAttributeElement (unitNode, "Damage", "num", iToStr (Data.getDamage()));
+	if (Data.getRange() != OwnerData.getRange()) addAttributeElement (unitNode, "Range", "num", iToStr (Data.getRange()));
+	if (Data.getScan() != OwnerData.getScan()) addAttributeElement (unitNode, "Scan", "num", iToStr (Data.getScan()));
 }
 
 //--------------------------------------------------------------------------
@@ -1762,18 +1762,18 @@ void cSavegame::writeStandardUnitValues (const sUnitData& Data, int unitnum)
 	addAttributeElement (unitNode, "Name", "string", Data.name);
 
 	addAttributeElement (unitNode, "Hitpoints", "num", iToStr (Data.getHitpointsMax()));
-	addAttributeElement (unitNode, "Armor", "num", iToStr (Data.getArmor ()));
+	addAttributeElement (unitNode, "Armor", "num", iToStr (Data.getArmor()));
 	addAttributeElement (unitNode, "Built_Costs", "num", iToStr (Data.buildCosts));
 
-	if (Data.getScan () > 0) addAttributeElement (unitNode, "Scan", "num", iToStr (Data.getScan ()));
+	if (Data.getScan() > 0) addAttributeElement (unitNode, "Scan", "num", iToStr (Data.getScan()));
 
 	if (Data.getSpeedMax() > 0) addAttributeElement (unitNode, "Movement", "num", iToStr (Data.getSpeedMax() / 4));
 
 	if (Data.muzzleType > 0) addAttributeElement (unitNode, "MuzzleType", "num", iToStr (Data.muzzleType));
 	if (Data.getShotsMax() > 0) addAttributeElement (unitNode, "Shots", "num", iToStr (Data.getShotsMax()));
 	if (Data.getAmmoMax() > 0) addAttributeElement (unitNode, "Ammo", "num", iToStr (Data.getAmmoMax()));
-	if (Data.getRange () > 0) addAttributeElement (unitNode, "Range", "num", iToStr (Data.getRange ()));
-	if (Data.getDamage () > 0) addAttributeElement (unitNode, "Damage", "num", iToStr (Data.getDamage ()));
+	if (Data.getRange() > 0) addAttributeElement (unitNode, "Range", "num", iToStr (Data.getRange()));
+	if (Data.getDamage() > 0) addAttributeElement (unitNode, "Damage", "num", iToStr (Data.getDamage()));
 	if (Data.canAttack != TERRAIN_NONE) addAttributeElement (unitNode, "Can_Attack", "num", iToStr (Data.canAttack));
 
 	if (!Data.canBuild.empty()) addAttributeElement (unitNode, "Can_Build", "string", Data.canBuild);

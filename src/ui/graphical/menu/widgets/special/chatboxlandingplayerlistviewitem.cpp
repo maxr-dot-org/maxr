@@ -31,13 +31,13 @@ cPlayerLandingStatus::cPlayerLandingStatus (const cPlayerBasicData& player_) :
 {}
 
 //------------------------------------------------------------------------------
-const cPlayerBasicData& cPlayerLandingStatus::getPlayer () const
+const cPlayerBasicData& cPlayerLandingStatus::getPlayer() const
 {
 	return *player;
 }
 
 //------------------------------------------------------------------------------
-bool cPlayerLandingStatus::hasSelectedPosition () const
+bool cPlayerLandingStatus::hasSelectedPosition() const
 {
 	return selectedPosition;
 }
@@ -46,7 +46,7 @@ bool cPlayerLandingStatus::hasSelectedPosition () const
 void cPlayerLandingStatus::setHasSelectedPosition (bool value)
 {
 	std::swap (selectedPosition, value);
-	if (value != selectedPosition) hasSelectedPositionChanged ();
+	if (value != selectedPosition) hasSelectedPositionChanged();
 }
 
 //------------------------------------------------------------------------------
@@ -55,18 +55,18 @@ cChatBoxLandingPlayerListViewItem::cChatBoxLandingPlayerListViewItem (const cPla
 	playerLandingStatus (playerLandingStatus_),
 	landingPositionManager (nullptr)
 {
-	const auto& player = playerLandingStatus.getPlayer ();
+	const auto& player = playerLandingStatus.getPlayer();
 
-	readyImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (getSize ().x () - 10, 0)));
+	readyImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (getSize().x() - 10, 0)));
 
-	colorImage = addChild (std::make_unique<cImage> (getPosition ()));
+	colorImage = addChild (std::make_unique<cImage> (getPosition()));
 
-	updatePlayerColor ();
-	updatePlayerHasSelectedPosition ();
+	updatePlayerColor();
+	updatePlayerHasSelectedPosition();
 
-	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (colorImage->getEndPosition ().x () + 4, 0), getPosition () + cPosition (getSize ().x () - readyImage->getSize ().x (), readyImage->getSize ().y ())), player.getName ()));
+	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (colorImage->getEndPosition().x() + 4, 0), getPosition() + cPosition (getSize().x() - readyImage->getSize().x(), readyImage->getSize().y())), player.getName()));
 
-	fitToChildren ();
+	fitToChildren();
 
 	signalConnectionManager.connect (player.nameChanged, std::bind (&cChatBoxLandingPlayerListViewItem::updatePlayerName, this));
 	signalConnectionManager.connect (player.colorChanged, std::bind (&cChatBoxLandingPlayerListViewItem::updatePlayerColor, this));
@@ -74,9 +74,9 @@ cChatBoxLandingPlayerListViewItem::cChatBoxLandingPlayerListViewItem (const cPla
 }
 
 //------------------------------------------------------------------------------
-int cChatBoxLandingPlayerListViewItem::getPlayerNumber () const
+int cChatBoxLandingPlayerListViewItem::getPlayerNumber() const
 {
-	return playerLandingStatus.getPlayer ().getNr ();
+	return playerLandingStatus.getPlayer().getNr();
 }
 
 //------------------------------------------------------------------------------
@@ -84,73 +84,73 @@ void cChatBoxLandingPlayerListViewItem::setLandingPositionManager (const cLandin
 {
 	landingPositionManager = landingPositionManager_;
 
-	managerSignalConnectionManager.disconnectAll ();
+	managerSignalConnectionManager.disconnectAll();
 
-	updatePlayerName ();
+	updatePlayerName();
 
-	managerSignalConnectionManager.connect (landingPositionManager->landingPositionStateChanged, [this](const cPlayerBasicData& player, eLandingPositionState state)
+	managerSignalConnectionManager.connect (landingPositionManager->landingPositionStateChanged, [this] (const cPlayerBasicData & player, eLandingPositionState state)
 	{
-		if (player.getNr () == playerLandingStatus.getPlayer ().getNr ())
+		if (player.getNr() == playerLandingStatus.getPlayer().getNr())
 		{
-			updatePlayerName ();
+			updatePlayerName();
 		}
 	});
 }
 
 //------------------------------------------------------------------------------
-void cChatBoxLandingPlayerListViewItem::updatePlayerName ()
+void cChatBoxLandingPlayerListViewItem::updatePlayerName()
 {
 	if (landingPositionManager == nullptr)
 	{
-		nameLabel->setText (playerLandingStatus.getPlayer ().getName ());
+		nameLabel->setText (playerLandingStatus.getPlayer().getName());
 	}
 	else
 	{
-		const auto state = landingPositionManager->getPlayerState (playerLandingStatus.getPlayer ());
+		const auto state = landingPositionManager->getPlayerState (playerLandingStatus.getPlayer());
 		std::string stateName;
 		switch (state)
 		{
-		case eLandingPositionState::Unknown:
-			stateName = "unknown";
-			break;
-		case eLandingPositionState::Clear:
-			stateName = "clear";
-			break;
-		case eLandingPositionState::Warning:
-			stateName = "warning";
-			break;
-		case eLandingPositionState::TooClose:
-			stateName = "too close";
-			break;
-		case eLandingPositionState::Confirmed:
-			stateName = "confirmed";
-			break;
+			case eLandingPositionState::Unknown:
+				stateName = "unknown";
+				break;
+			case eLandingPositionState::Clear:
+				stateName = "clear";
+				break;
+			case eLandingPositionState::Warning:
+				stateName = "warning";
+				break;
+			case eLandingPositionState::TooClose:
+				stateName = "too close";
+				break;
+			case eLandingPositionState::Confirmed:
+				stateName = "confirmed";
+				break;
 		}
-		nameLabel->setText (playerLandingStatus.getPlayer ().getName () + " (" + stateName + ")");
+		nameLabel->setText (playerLandingStatus.getPlayer().getName() + " (" + stateName + ")");
 	}
 }
 
 //------------------------------------------------------------------------------
-void cChatBoxLandingPlayerListViewItem::updatePlayerColor ()
+void cChatBoxLandingPlayerListViewItem::updatePlayerColor()
 {
 	SDL_Rect src = {0, 0, 10, 10};
 
-	AutoSurface colorSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0));
-	SDL_BlitSurface (playerLandingStatus.getPlayer().getColor ().getTexture (), &src, colorSurface.get (), nullptr);
+	AutoSurface colorSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
+	SDL_BlitSurface (playerLandingStatus.getPlayer().getColor().getTexture(), &src, colorSurface.get(), nullptr);
 
-	colorImage->setImage (colorSurface.get ());
+	colorImage->setImage (colorSurface.get());
 }
 
 //------------------------------------------------------------------------------
-void cChatBoxLandingPlayerListViewItem::updatePlayerHasSelectedPosition ()
+void cChatBoxLandingPlayerListViewItem::updatePlayerHasSelectedPosition()
 {
 	SDL_Rect src = {playerLandingStatus.hasSelectedPosition() ? 10 : 0, 0, 10, 10};
 
-	AutoSurface readySurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0));
-	SDL_SetColorKey (readySurface.get (), SDL_TRUE, cRgbColor (0, 1, 0).toMappedSdlRGBAColor (readySurface->format));
-	SDL_BlitSurface (GraphicsData.gfx_player_ready.get (), &src, readySurface.get (), nullptr);
+	AutoSurface readySurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
+	SDL_SetColorKey (readySurface.get(), SDL_TRUE, cRgbColor (0, 1, 0).toMappedSdlRGBAColor (readySurface->format));
+	SDL_BlitSurface (GraphicsData.gfx_player_ready.get(), &src, readySurface.get(), nullptr);
 
-	readyImage->setImage (readySurface.get ());
+	readyImage->setImage (readySurface.get());
 }
 
 //------------------------------------------------------------------------------
@@ -158,11 +158,11 @@ void cChatBoxLandingPlayerListViewItem::handleResized (const cPosition& oldSize)
 {
 	cAbstractListViewItem::handleResized (oldSize);
 
-	if (oldSize.x () == getSize ().x ()) return;
+	if (oldSize.x() == getSize().x()) return;
 
-	readyImage->moveTo (getPosition () + cPosition (getSize ().x () - 10, 0));
+	readyImage->moveTo (getPosition() + cPosition (getSize().x() - 10, 0));
 
-	nameLabel->resize (cPosition (getSize ().x () - readyImage->getSize ().x () - colorImage->getSize ().x () - 4, readyImage->getSize ().y ()));
+	nameLabel->resize (cPosition (getSize().x() - readyImage->getSize().x() - colorImage->getSize().x() - 4, readyImage->getSize().y()));
 
-	fitToChildren ();
+	fitToChildren();
 }

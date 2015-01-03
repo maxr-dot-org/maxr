@@ -32,11 +32,11 @@
 cMouseModeTransfer::cMouseModeTransfer (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
 	cMouseMode (map_, unitSelection_, player_)
 {
-	establishUnitSelectionConnections ();
+	establishUnitSelectionConnections();
 }
 
 //------------------------------------------------------------------------------
-eMouseModeType cMouseModeTransfer::getType () const
+eMouseModeType cMouseModeTransfer::getType() const
 {
 	return eMouseModeType::Transfer;
 }
@@ -71,21 +71,21 @@ bool cMouseModeTransfer::canExecuteAction (const cPosition& mapPosition) const
 
 	const auto& field = map->getField (mapPosition);
 
-	const auto selectedUnit = unitSelection.getSelectedUnit ();
+	const auto selectedUnit = unitSelection.getSelectedUnit();
 
 	return selectedUnit && selectedUnit->canTransferTo (mapPosition, field);
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeTransfer::establishUnitSelectionConnections ()
+void cMouseModeTransfer::establishUnitSelectionConnections()
 {
-	const auto selectedUnit = unitSelection.getSelectedUnit ();
+	const auto selectedUnit = unitSelection.getSelectedUnit();
 	if (selectedUnit)
 	{
-		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, [this](){ needRefresh (); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, [this]() { needRefresh(); });
 	}
 
-	const auto selectedBuilding = unitSelection.getSelectedBuilding ();
+	const auto selectedBuilding = unitSelection.getSelectedBuilding();
 	if (selectedBuilding)
 	{
 		// TODO: react on:
@@ -98,7 +98,7 @@ void cMouseModeTransfer::establishUnitSelectionConnections ()
 //------------------------------------------------------------------------------
 void cMouseModeTransfer::establishMapFieldConnections (const cMapField& field)
 {
-	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this, &field](){ updateFieldUnitConnections (field); needRefresh (); });
+	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this, &field]() { updateFieldUnitConnections (field); needRefresh(); });
 
 	updateFieldUnitConnections (field);
 }
@@ -106,15 +106,15 @@ void cMouseModeTransfer::establishMapFieldConnections (const cMapField& field)
 //------------------------------------------------------------------------------
 void cMouseModeTransfer::updateFieldUnitConnections (const cMapField& field)
 {
-	mapFieldUnitsSignalConnectionManager.disconnectAll ();
+	mapFieldUnitsSignalConnectionManager.disconnectAll();
 
-	auto vehicle = field.getVehicle ();
+	auto vehicle = field.getVehicle();
 	if (vehicle)
 	{
-		mapFieldUnitsSignalConnectionManager.connect (vehicle->buildingChanged, [this](){ needRefresh (); });
-		mapFieldUnitsSignalConnectionManager.connect (vehicle->clearingChanged, [this](){ needRefresh (); });
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->buildingChanged, [this]() { needRefresh(); });
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->clearingChanged, [this]() { needRefresh(); });
 	}
-	auto building = field.getBuilding ();
+	auto building = field.getBuilding();
 	if (building)
 	{
 		// TODO: react on:

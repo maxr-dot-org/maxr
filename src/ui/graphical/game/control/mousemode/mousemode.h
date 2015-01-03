@@ -51,7 +51,7 @@ public:
 	 * @param player The player that is currently active in the GUI. May be null.
 	 */
 	cMouseMode (const cMap* map, const cUnitSelection& unitSelection, const cPlayer* player);
-	virtual ~cMouseMode ();
+	virtual ~cMouseMode();
 
 	/**
 	 * Set an other map to the mouse mode.
@@ -59,8 +59,8 @@ public:
 	 */
 	void setMap (const cMap* map);
 	/**
-	 * 
-	 * @param player 
+	 *
+	 * @param player
 	 */
 	void setPlayer (const cPlayer* player);
 
@@ -78,7 +78,7 @@ public:
 	 * for quick comparison of mouse modes (maybe even without the need to construct
 	 * a mouse mode object).
 	 */
-	virtual eMouseModeType getType () const = 0;
+	virtual eMouseModeType getType() const = 0;
 
 	/**
 	 * Should set the cursor on the passed mouse object according to the current
@@ -131,7 +131,7 @@ protected:
 	 * Allows the mouse mode implementations to react on selection changes and
 	 * establish new connections to signals triggered by the selected units.
 	 */
-	virtual void establishUnitSelectionConnections ();
+	virtual void establishUnitSelectionConnections();
 	/**
 	 * Gets called whenever the map field below the mouse has changed.
 	 * Allows the mouse mode implementations to react on mouse movements and
@@ -145,7 +145,7 @@ protected:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	void updateSelectedUnitConnections ();
+	void updateSelectedUnitConnections();
 };
 
 #endif // ui_graphical_game_control_mousemode_mousemodeH

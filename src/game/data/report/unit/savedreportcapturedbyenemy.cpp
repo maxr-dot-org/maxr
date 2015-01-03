@@ -27,14 +27,14 @@
 //------------------------------------------------------------------------------
 cSavedReportCapturedByEnemy::cSavedReportCapturedByEnemy (const cUnit& unit) :
 	cSavedReportUnit (unit),
-	unitName (unit.getDisplayName ())
+	unitName (unit.getDisplayName())
 {}
 
 //------------------------------------------------------------------------------
 cSavedReportCapturedByEnemy::cSavedReportCapturedByEnemy (cNetMessage& message) :
 	cSavedReportUnit (message)
 {
-	unitName = message.popString ();
+	unitName = message.popString();
 }
 
 //------------------------------------------------------------------------------
@@ -55,19 +55,19 @@ void cSavedReportCapturedByEnemy::pushInto (cNetMessage& message) const
 //------------------------------------------------------------------------------
 void cSavedReportCapturedByEnemy::pushInto (tinyxml2::XMLElement& element) const
 {
-	element.SetAttribute ("unitName", unitName.c_str ());
+	element.SetAttribute ("unitName", unitName.c_str());
 
 	cSavedReportUnit::pushInto (element);
 }
 
 //------------------------------------------------------------------------------
-eSavedReportType cSavedReportCapturedByEnemy::getType () const
+eSavedReportType cSavedReportCapturedByEnemy::getType() const
 {
 	return eSavedReportType::CapturedByEnemy;
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportCapturedByEnemy::getText () const
+std::string cSavedReportCapturedByEnemy::getText() const
 {
 	return lngPack.i18n ("Text~Comp~CapturedByEnemy", unitName);
 }

@@ -352,11 +352,11 @@ void cNetMessage::pushPosition (const cPosition& position)
 	pushInt32 (position.y());
 }
 
-cPosition cNetMessage::popPosition ()
+cPosition cNetMessage::popPosition()
 {
 	cPosition position;
-	position.y () = popInt32 ();
-	position.x () = popInt32 ();
+	position.y() = popInt32();
+	position.x() = popInt32();
 	return position;
 }
 
@@ -367,12 +367,12 @@ void cNetMessage::pushColor (const cRgbColor& color)
 	pushInt16 (color.b);
 }
 
-cRgbColor cNetMessage::popColor ()
+cRgbColor cNetMessage::popColor()
 {
 	cRgbColor color;
-	color.b = popInt16 ();
-	color.g = popInt16 ();
-	color.r = popInt16 ();
+	color.b = popInt16();
+	color.g = popInt16();
+	color.r = popInt16();
 	return color;
 }
 

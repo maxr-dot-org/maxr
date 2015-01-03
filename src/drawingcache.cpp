@@ -32,13 +32,13 @@
 #include "ui/graphical/framecounter.h"
 
 
-void sDrawingCacheEntry::init(const cVehicle& vehicle, const cMap& map, const cPlayer* player, unsigned long long animationTime, double zoom_, unsigned long long frameNr)
+void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMap& map, const cPlayer* player, unsigned long long animationTime, double zoom_, unsigned long long frameNr)
 {
 	dir = vehicle.dir;
-	owner = vehicle.getOwner ();
-	isBuilding = vehicle.isUnitBuildingABuilding ();
-	isClearing = vehicle.isUnitClearing ();
-	flightHigh = vehicle.getFlightHeight ();
+	owner = vehicle.getOwner();
+	isBuilding = vehicle.isUnitBuildingABuilding();
+	isClearing = vehicle.isUnitClearing();
+	flightHigh = vehicle.getFlightHeight();
 	big = vehicle.data.isBig;
 	id = vehicle.data.ID;
 	if (vehicle.data.animationMovement)
@@ -46,12 +46,12 @@ void sDrawingCacheEntry::init(const cVehicle& vehicle, const cMap& map, const cP
 	else
 		frame = animationTime % 4;
 
-	water = map.isWaterOrCoast (vehicle.getPosition()) && !map.getField(vehicle.getPosition()).getBaseBuilding();
+	water = map.isWaterOrCoast (vehicle.getPosition()) && !map.getField (vehicle.getPosition()).getBaseBuilding();
 
 	bool isOnWaterAndNotCoast = map.isWater (vehicle.getPosition());
 	//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 	//because the vehicle will drive on the bridge
-	cBuilding* building = map.getField(vehicle.getPosition()).getBaseBuilding();
+	cBuilding* building = map.getField (vehicle.getPosition()).getBaseBuilding();
 	if (vehicle.data.factorGround > 0 && building
 		&& (building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA
 			|| building->data.surfacePosition == sUnitData::SURFACE_POS_BASE
@@ -59,7 +59,7 @@ void sDrawingCacheEntry::init(const cVehicle& vehicle, const cMap& map, const cP
 	{
 		isOnWaterAndNotCoast = false;
 	}
-	if ((vehicle.data.isStealthOn & TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle.detectedByPlayerList.empty () && vehicle.getOwner () == player)
+	if ((vehicle.data.isStealthOn & TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle.detectedByPlayerList.empty() && vehicle.getOwner() == player)
 		stealth = true;
 	else
 		stealth = false;
@@ -70,20 +70,20 @@ void sDrawingCacheEntry::init(const cVehicle& vehicle, const cMap& map, const cP
 	//determine needed size of the surface
 	int height = (int) std::max (vehicle.uiData->img_org[vehicle.dir]->h * zoom, vehicle.uiData->shw_org[vehicle.dir]->h * zoom);
 	int width  = (int) std::max (vehicle.uiData->img_org[vehicle.dir]->w * zoom, vehicle.uiData->shw_org[vehicle.dir]->w * zoom);
-	if (vehicle.getFlightHeight () > 0)
+	if (vehicle.getFlightHeight() > 0)
 	{
-		int shwOff = ((int)(Round (vehicle.uiData->img_org[vehicle.dir]->w * zoom) * (vehicle.getFlightHeight () / 64.0f)));
+		int shwOff = ((int) (Round (vehicle.uiData->img_org[vehicle.dir]->w * zoom) * (vehicle.getFlightHeight() / 64.0f)));
 		height += shwOff;
 		width  += shwOff;
 	}
-	if (vehicle.isUnitClearing () || vehicle.isUnitBuildingABuilding ())
+	if (vehicle.isUnitClearing() || vehicle.isUnitBuildingABuilding())
 	{
 		width  = 130;
 		height = 130;
 	}
-	surface = AutoSurface(SDL_CreateRGBSurface (0, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
+	surface = AutoSurface (SDL_CreateRGBSurface (0, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
 
-	SDL_FillRect (surface.get (), nullptr, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
+	SDL_FillRect (surface.get(), nullptr, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
 }
 
 void sDrawingCacheEntry::init (const cBuilding& building, double zoom_, unsigned long long frameNr)
@@ -97,9 +97,9 @@ void sDrawingCacheEntry::init (const cBuilding& building, double zoom_, unsigned
 	BaseW  = building.BaseW;
 	BaseBW = building.BaseBW;
 	dir = building.dir;
-	owner = building.getOwner ();
+	owner = building.getOwner();
 	id = building.data.ID;
-	clan = building.getOwner ()->getClan ();
+	clan = building.getOwner()->getClan();
 
 	zoom = zoom_;
 	lastUsed = frameNr;
@@ -111,11 +111,11 @@ void sDrawingCacheEntry::init (const cBuilding& building, double zoom_, unsigned
 
 	surface = AutoSurface (SDL_CreateRGBSurface (0, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
 
-	SDL_FillRect (surface.get (), nullptr, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
+	SDL_FillRect (surface.get(), nullptr, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
 }
 
 cDrawingCache::cDrawingCache (std::shared_ptr<const cFrameCounter> frameCounter_) :
-	frameCounter(frameCounter_),
+	frameCounter (frameCounter_),
 	player (nullptr)
 {
 	//assert (animationTimer != nullptr);
@@ -138,7 +138,7 @@ void cDrawingCache::setPlayer (const cPlayer* player_)
 	player = player_;
 }
 
-SDL_Surface* cDrawingCache::getCachedImage(const cBuilding& building, double zoom, unsigned long long animationTime)
+SDL_Surface* cDrawingCache::getCachedImage (const cBuilding& building, double zoom, unsigned long long animationTime)
 {
 	if (!canCache (building)) return nullptr;
 
@@ -148,7 +148,7 @@ SDL_Surface* cDrawingCache::getCachedImage(const cBuilding& building, double zoo
 
 		// check whether the entry's properties are equal to the building
 		if (entry.id != building.data.ID) continue;
-		if (entry.owner != building.getOwner ()) continue;
+		if (entry.owner != building.getOwner()) continue;
 		if (building.SubBase)
 		{
 			if (building.BaseN != entry.BaseN ||
@@ -171,12 +171,12 @@ SDL_Surface* cDrawingCache::getCachedImage(const cBuilding& building, double zoo
 		}
 		if (entry.zoom != zoom) continue;
 
-		if (building.data.hasClanLogos && building.getOwner ()->getClan () != entry.clan) continue;
+		if (building.data.hasClanLogos && building.getOwner()->getClan() != entry.clan) continue;
 
 		//cache hit!
 		cacheHits++;
 		entry.lastUsed = frameCounter->getFrame();
-		return entry.surface.get ();
+		return entry.surface.get();
 	}
 
 	//cache miss!
@@ -194,12 +194,12 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 
 		// check whether the entry's properties are equal to the building
 		if (entry.id != vehicle.data.ID) continue;
-		if (entry.owner != vehicle.getOwner ()) continue;
+		if (entry.owner != vehicle.getOwner()) continue;
 		if (entry.big != vehicle.data.isBig) continue;
-		if (entry.isBuilding != vehicle.isUnitBuildingABuilding ()) continue;
-		if (entry.isClearing != vehicle.isUnitClearing ()) continue;
+		if (entry.isBuilding != vehicle.isUnitBuildingABuilding()) continue;
+		if (entry.isClearing != vehicle.isUnitClearing()) continue;
 
-		if (entry.flightHigh != vehicle.getFlightHeight ()) continue;
+		if (entry.flightHigh != vehicle.getFlightHeight()) continue;
 		if (entry.dir != vehicle.dir) continue;
 
 		if (vehicle.data.animationMovement)
@@ -207,15 +207,15 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 			if (entry.frame != vehicle.WalkFrame) continue;
 		}
 
-		if (vehicle.isUnitBuildingABuilding () || vehicle.isUnitClearing ())
+		if (vehicle.isUnitBuildingABuilding() || vehicle.isUnitClearing())
 		{
 			if (entry.frame != animationTime % 4) continue;
 		}
 
 		if (entry.zoom != zoom) continue;
 
-		bool water = map.isWaterOrCoast (vehicle.getPosition()) && !map.getField(vehicle.getPosition()).getBaseBuilding();
-		if (vehicle.isUnitBuildingABuilding ())
+		bool water = map.isWaterOrCoast (vehicle.getPosition()) && !map.getField (vehicle.getPosition()).getBaseBuilding();
+		if (vehicle.isUnitBuildingABuilding())
 		{
 			if (water != entry.water) continue;
 		}
@@ -224,7 +224,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 		bool stealth = false;
 
 		bool isOnWaterAndNotCoast = map.isWater (vehicle.getPosition());
-		const cBuilding* building = map.getField(vehicle.getPosition()).getBaseBuilding();
+		const cBuilding* building = map.getField (vehicle.getPosition()).getBaseBuilding();
 		if (vehicle.data.factorGround > 0 && building
 			&& (building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA
 				|| building->data.surfacePosition == sUnitData::SURFACE_POS_BASE
@@ -233,7 +233,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 			isOnWaterAndNotCoast = false;
 		}
 
-		if ((vehicle.data.isStealthOn & TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle.detectedByPlayerList.empty () && vehicle.getOwner () == player)
+		if ((vehicle.data.isStealthOn & TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle.detectedByPlayerList.empty() && vehicle.getOwner() == player)
 			stealth = true;
 
 		if (entry.stealth != stealth) continue;
@@ -241,7 +241,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 		//cache hit!
 		cacheHits++;
 		entry.lastUsed = frameCounter->getFrame();
-		return entry.surface.get ();
+		return entry.surface.get();
 	}
 
 	//cache miss!
@@ -250,7 +250,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 	return nullptr;
 }
 
-SDL_Surface* cDrawingCache::createNewEntry(const cBuilding& building, double zoom, unsigned long long animationTime)
+SDL_Surface* cDrawingCache::createNewEntry (const cBuilding& building, double zoom, unsigned long long animationTime)
 {
 	if (!canCache (building)) return nullptr;
 
@@ -262,7 +262,7 @@ SDL_Surface* cDrawingCache::createNewEntry(const cBuilding& building, double zoo
 		//set properties of the cached image
 		entry.init (building, zoom, frameCounter->getFrame());
 
-		return entry.surface.get ();
+		return entry.surface.get();
 	}
 
 	//try to find an old entry to reuse
@@ -280,16 +280,16 @@ SDL_Surface* cDrawingCache::createNewEntry(const cBuilding& building, double zoo
 		sDrawingCacheEntry& entry = cachedImages[oldest];
 
 		//set properties of the cached image
-		entry.init(building, zoom, frameCounter->getFrame());
+		entry.init (building, zoom, frameCounter->getFrame());
 
-		return entry.surface.get ();
+		return entry.surface.get();
 	}
 
 	//there are no old entries in the cache.
 	return nullptr;
 }
 
-SDL_Surface* cDrawingCache::createNewEntry(const cVehicle& vehicle, double zoom, const cMap& map, unsigned long long animationTime)
+SDL_Surface* cDrawingCache::createNewEntry (const cVehicle& vehicle, double zoom, const cMap& map, unsigned long long animationTime)
 {
 	if (!canCache (vehicle))
 		return nullptr;
@@ -302,7 +302,7 @@ SDL_Surface* cDrawingCache::createNewEntry(const cVehicle& vehicle, double zoom,
 		entry.init (vehicle, map, player, animationTime, zoom, frameCounter->getFrame());
 
 		cacheSize++;
-		return entry.surface.get ();
+		return entry.surface.get();
 	}
 
 	//try to find an old entry to reuse
@@ -312,7 +312,7 @@ SDL_Surface* cDrawingCache::createNewEntry(const cVehicle& vehicle, double zoom,
 		if (cachedImages[i].lastUsed < cachedImages[oldest].lastUsed)
 			oldest = i;
 	}
-		
+
 	if (frameCounter->getFrame() - cachedImages[oldest].lastUsed > 5)
 	{
 
@@ -321,7 +321,7 @@ SDL_Surface* cDrawingCache::createNewEntry(const cVehicle& vehicle, double zoom,
 
 		//set properties of the cached image
 		entry.init (vehicle, map, player, animationTime, zoom, frameCounter->getFrame());
-		return entry.surface.get ();
+		return entry.surface.get();
 	}
 
 	//there are no old entries in the cache.
@@ -335,7 +335,7 @@ void cDrawingCache::flush()
 
 bool cDrawingCache::canCache (const cBuilding& building)
 {
-	if (!building.getOwner () ||
+	if (!building.getOwner() ||
 		building.alphaEffectValue ||
 		building.data.isAnimated)
 	{
@@ -347,7 +347,7 @@ bool cDrawingCache::canCache (const cBuilding& building)
 
 bool cDrawingCache::canCache (const cVehicle& vehicle)
 {
-	if ((vehicle.isUnitBuildingABuilding () || vehicle.isUnitClearing ()) && vehicle.job)
+	if ((vehicle.isUnitBuildingABuilding() || vehicle.isUnitClearing()) && vehicle.job)
 	{
 		notCached++;
 		return false;
@@ -359,13 +359,13 @@ bool cDrawingCache::canCache (const cVehicle& vehicle)
 		return false;
 	}
 
-	if (vehicle.getFlightHeight () > 0 && vehicle.getFlightHeight () < 64)
+	if (vehicle.getFlightHeight() > 0 && vehicle.getFlightHeight() < 64)
 	{
 		notCached++;
 		return false;
 	}
 
-	if (vehicle.isUnitBuildingABuilding () && vehicle.data.isBig && vehicle.bigBetonAlpha < 254)
+	if (vehicle.isUnitBuildingABuilding() && vehicle.data.isBig && vehicle.bigBetonAlpha < 254)
 	{
 		notCached++;
 		return false;

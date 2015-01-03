@@ -33,7 +33,7 @@ public:
 
 	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 
-	const cSavedReport& getReport () const;
+	const cSavedReport& getReport() const;
 protected:
 	const cSavedReport& report;
 };

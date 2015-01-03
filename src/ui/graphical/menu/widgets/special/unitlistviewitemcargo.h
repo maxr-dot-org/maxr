@@ -29,7 +29,7 @@ class cUnitListViewItemCargo : public cUnitListViewItem
 public:
 	cUnitListViewItemCargo (unsigned int width, const sID& unitId, const cPlayer& owner);
 
-	int getCargo () const;
+	int getCargo() const;
 	void setCargo (int cargo);
 private:
 	const sUnitData* unitData;
@@ -37,7 +37,7 @@ private:
 
 	cLabel* cargoLabel;
 
-	void updateCargoLabel ();
+	void updateCargoLabel();
 };
 
 #endif // ui_graphical_menu_widgets_special_unitlistviewitemcargoH

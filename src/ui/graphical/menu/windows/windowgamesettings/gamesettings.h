@@ -110,54 +110,54 @@ public:
 	static const std::chrono::seconds defaultEndTurnDeadlineOption4;
 	static const std::chrono::seconds defaultEndTurnDeadlineOption5;
 
-	cGameSettings ();
+	cGameSettings();
 	cGameSettings (const cGameSettings& other);
 
-	cGameSettings& operator=(const cGameSettings& other);
+	cGameSettings& operator= (const cGameSettings& other);
 
-	eGameSettingsResourceAmount getMetalAmount () const;
+	eGameSettingsResourceAmount getMetalAmount() const;
 	void setMetalAmount (eGameSettingsResourceAmount value);
 
-	eGameSettingsResourceAmount getOilAmount () const;
+	eGameSettingsResourceAmount getOilAmount() const;
 	void setOilAmount (eGameSettingsResourceAmount value);
 
-	eGameSettingsResourceAmount getGoldAmount () const;
+	eGameSettingsResourceAmount getGoldAmount() const;
 	void setGoldAmount (eGameSettingsResourceAmount value);
 
-	eGameSettingsResourceDensity getResourceDensity () const;
+	eGameSettingsResourceDensity getResourceDensity() const;
 	void setResourceDensity (eGameSettingsResourceDensity value);
 
-	eGameSettingsBridgeheadType getBridgeheadType () const;
+	eGameSettingsBridgeheadType getBridgeheadType() const;
 	void setBridgeheadType (eGameSettingsBridgeheadType value);
 
-	eGameSettingsGameType getGameType () const;
+	eGameSettingsGameType getGameType() const;
 	void setGameType (eGameSettingsGameType value);
 
-	bool getClansEnabled () const;
+	bool getClansEnabled() const;
 	void setClansEnabled (bool value);
 
-	unsigned int getStartCredits () const;
+	unsigned int getStartCredits() const;
 	void setStartCredits (unsigned int value);
 
-	eGameSettingsVictoryCondition getVictoryCondition () const;
+	eGameSettingsVictoryCondition getVictoryCondition() const;
 	void setVictoryCondition (eGameSettingsVictoryCondition value);
 
-	unsigned int getVictoryTurns () const;
+	unsigned int getVictoryTurns() const;
 	void setVictoryTurns (unsigned int value);
 
-	unsigned int getVictoryPoints () const;
+	unsigned int getVictoryPoints() const;
 	void setVictoryPoints (unsigned int value);
 
-	const std::chrono::seconds& getTurnEndDeadline () const;
+	const std::chrono::seconds& getTurnEndDeadline() const;
 	void setTurnEndDeadline (const std::chrono::seconds& value);
 
-	bool isTurnEndDeadlineActive () const;
+	bool isTurnEndDeadlineActive() const;
 	void setTurnEndDeadlineActive (bool value);
 
-	const std::chrono::seconds& getTurnLimit () const;
+	const std::chrono::seconds& getTurnLimit() const;
 	void setTurnLimit (const std::chrono::seconds& value);
 
-	bool isTurnLimitActive () const;
+	bool isTurnLimitActive() const;
 	void setTurnLimitActive (bool value);
 
 	void pushInto (cNetMessage& message) const;

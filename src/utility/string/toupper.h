@@ -26,14 +26,14 @@
 
 static inline std::string& to_upper (std::string& s)
 {
-	std::transform (s.begin (), s.end (), s.begin (), static_cast<int (&)(int)> (std::toupper));
+	std::transform (s.begin(), s.end(), s.begin(), static_cast<int (&) (int)> (std::toupper));
 	return s;
 }
 
 static inline std::string to_upper_copy (const std::string& s)
 {
 	auto s2 = s;
-	return to_upper(s2);
+	return to_upper (s2);
 }
 
 #endif // utility_string_toupperH

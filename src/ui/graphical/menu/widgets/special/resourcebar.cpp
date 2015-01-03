@@ -66,8 +66,8 @@ void cResourceBar::draw (SDL_Surface& destination, const cBox<cPosition>& clipRe
 
 		SDL_Rect dest;
 		dest.h = dest.w = 0;
-		dest.x = getPosition ().x () + additionalArea.x();
-		dest.y = getPosition ().y () + (horizontal ? 0 : surface->h - src.h) + additionalArea.y();
+		dest.x = getPosition().x() + additionalArea.x();
+		dest.y = getPosition().y() + (horizontal ? 0 : surface->h - src.h) + additionalArea.y();
 
 		if (inverted && horizontal)
 		{
@@ -75,7 +75,7 @@ void cResourceBar::draw (SDL_Surface& destination, const cBox<cPosition>& clipRe
 			src.x = 0;
 		}
 
-		SDL_BlitSurface (surface.get (), &src, &destination, &dest);
+		SDL_BlitSurface (surface.get(), &src, &destination, &dest);
 	}
 
 	cClickableWidget::draw (destination, clipRect);
@@ -91,11 +91,11 @@ void cResourceBar::setType (eResourceBarType type)
 void cResourceBar::setStepSize (int stepSize_)
 {
 	stepSize = stepSize_;
-	setValue (getValue ());
+	setValue (getValue());
 }
 
 //------------------------------------------------------------------------------
-int cResourceBar::getMinValue () const
+int cResourceBar::getMinValue() const
 {
 	return minValue;
 }
@@ -104,11 +104,11 @@ int cResourceBar::getMinValue () const
 void cResourceBar::setMinValue (int minValue_)
 {
 	minValue = minValue_;
-	setValue (getValue ());
+	setValue (getValue());
 }
 
 //------------------------------------------------------------------------------
-int cResourceBar::getMaxValue () const
+int cResourceBar::getMaxValue() const
 {
 	return maxValue;
 }
@@ -117,11 +117,11 @@ int cResourceBar::getMaxValue () const
 void cResourceBar::setMaxValue (int maxValue_)
 {
 	maxValue = maxValue_;
-	setValue (getValue ());
+	setValue (getValue());
 }
 
 //------------------------------------------------------------------------------
-int cResourceBar::getFixedMinValue () const
+int cResourceBar::getFixedMinValue() const
 {
 	return fixedMinEnabled ? fixedMinValue : minValue;
 }
@@ -131,11 +131,11 @@ void cResourceBar::setFixedMinValue (int fixedMinValue_)
 {
 	fixedMinValue = std::max (fixedMinValue_, minValue);
 	fixedMinEnabled = true;
-	setValue (getValue ());
+	setValue (getValue());
 }
 
 //------------------------------------------------------------------------------
-int cResourceBar::getFixedMaxValue () const
+int cResourceBar::getFixedMaxValue() const
 {
 	return fixedMaxEnabled ? fixedMaxValue : maxValue;
 }
@@ -145,11 +145,11 @@ void cResourceBar::setFixedMaxValue (int fixedMaxValue_)
 {
 	fixedMaxValue = std::min (fixedMaxValue_, maxValue);
 	fixedMaxEnabled = true;
-	setValue (getValue ());
+	setValue (getValue());
 }
 
 //------------------------------------------------------------------------------
-bool cResourceBar::isInverted () const
+bool cResourceBar::isInverted() const
 {
 	return inverted;
 }
@@ -161,7 +161,7 @@ void cResourceBar::setInverted (bool inverted_)
 }
 
 //------------------------------------------------------------------------------
-int cResourceBar::getValue () const
+int cResourceBar::getValue() const
 {
 	return currentValue;
 }
@@ -177,20 +177,20 @@ void cResourceBar::setValue (int value)
 		value = Round ((float)value / stepSize) * stepSize;
 	}
 
-	value = std::max (getFixedMinValue (), value);
-	value = std::min (getFixedMaxValue (), value);
+	value = std::max (getFixedMinValue(), value);
+	value = std::min (getFixedMaxValue(), value);
 
 	if (value != currentValue)
 	{
 		currentValue = value;
-		valueChanged ();
+		valueChanged();
 	}
 }
 
 //------------------------------------------------------------------------------
 void cResourceBar::increase (int offset)
 {
-	setValue (getValue () + offset);
+	setValue (getValue() + offset);
 }
 
 //------------------------------------------------------------------------------
@@ -204,18 +204,18 @@ bool cResourceBar::handleClicked (cApplication& application, cMouse& mouse, eMou
 {
 	if (button == eMouseButtonType::Left)
 	{
-        if (clickSound) cSoundDevice::getInstance ().playSoundEffect (*clickSound);
+		if (clickSound) cSoundDevice::getInstance().playSoundEffect (*clickSound);
 
 		const auto valueRange = maxValue - minValue;
 		switch (orientation)
 		{
-		default:
-		case eOrientationType::Horizontal:
-			setValue (minValue + (mouse.getPosition ().x () - (getPosition ().x () + additionalArea.x ())) * valueRange / (getSize ().x () - additionalArea.x () * 2));
-			break;
-		case eOrientationType::Vertical:
-			setValue (minValue + valueRange - (mouse.getPosition ().y () - (getPosition ().y () + additionalArea.y ())) * valueRange / (getSize ().y () - additionalArea.y () * 2));
-			break;
+			default:
+			case eOrientationType::Horizontal:
+				setValue (minValue + (mouse.getPosition().x() - (getPosition().x() + additionalArea.x())) * valueRange / (getSize().x() - additionalArea.x() * 2));
+				break;
+			case eOrientationType::Vertical:
+				setValue (minValue + valueRange - (mouse.getPosition().y() - (getPosition().y() + additionalArea.y())) * valueRange / (getSize().y() - additionalArea.y() * 2));
+				break;
 		}
 
 		return true;
@@ -229,95 +229,95 @@ void cResourceBar::createSurface (eResourceBarType type)
 	cPosition srcPosition;
 	switch (orientation)
 	{
-	default:
-	case eOrientationType::Horizontal:
-		switch (type)
-		{
 		default:
-		case eResourceBarType::Metal:
-			srcPosition.x () = 156;
-			srcPosition.y () = 339;
+		case eOrientationType::Horizontal:
+			switch (type)
+			{
+				default:
+				case eResourceBarType::Metal:
+					srcPosition.x() = 156;
+					srcPosition.y() = 339;
+					break;
+				case eResourceBarType::Oil:
+					srcPosition.x() = 156;
+					srcPosition.y() = 369;
+					break;
+				case eResourceBarType::Gold:
+					srcPosition.x() = 156;
+					srcPosition.y() = 400;
+					break;
+				case eResourceBarType::Blocked:
+					srcPosition.x() = 156;
+					srcPosition.y() = 307;
+					break;
+				case eResourceBarType::MetalSlim:
+					srcPosition.x() = 156;
+					srcPosition.y() = 256;
+					break;
+				case eResourceBarType::OilSlim:
+					srcPosition.x() = 156;
+					srcPosition.y() = 273;
+					break;
+				case eResourceBarType::GoldSlim:
+					srcPosition.x() = 156;
+					srcPosition.y() = 290;
+					break;
+			}
 			break;
-		case eResourceBarType::Oil:
-			srcPosition.x () = 156;
-			srcPosition.y () = 369;
+		case eOrientationType::Vertical:
+			switch (type)
+			{
+				default:
+				case eResourceBarType::Metal:
+					srcPosition.x() = 135;
+					srcPosition.y() = 336;
+					break;
+				case eResourceBarType::Oil:
+					srcPosition.x() = 400;
+					srcPosition.y() = 348;
+					break;
+				case eResourceBarType::Gold:
+					srcPosition.x() = 114;
+					srcPosition.y() = 336;
+					break;
+			}
 			break;
-		case eResourceBarType::Gold:
-			srcPosition.x () = 156;
-			srcPosition.y () = 400;
-			break;
-		case eResourceBarType::Blocked:
-			srcPosition.x () = 156;
-			srcPosition.y () = 307;
-			break;
-		case eResourceBarType::MetalSlim:
-			srcPosition.x () = 156;
-			srcPosition.y () = 256;
-			break;
-		case eResourceBarType::OilSlim:
-			srcPosition.x () = 156;
-			srcPosition.y () = 273;
-			break;
-		case eResourceBarType::GoldSlim:
-			srcPosition.x () = 156;
-			srcPosition.y () = 290;
-			break;
-		}
-		break;
-	case eOrientationType::Vertical:
-		switch (type)
-		{
-		default:
-		case eResourceBarType::Metal:
-			srcPosition.x () = 135;
-			srcPosition.y () = 336;
-			break;
-		case eResourceBarType::Oil:
-			srcPosition.x () = 400;
-			srcPosition.y () = 348;
-			break;
-		case eResourceBarType::Gold:
-			srcPosition.x () = 114;
-			srcPosition.y () = 336;
-			break;
-		}
-		break;
 	}
 
 	cPosition size;
 	switch (orientation)
 	{
-	default:
-	case eOrientationType::Horizontal:
-		switch (type)
-		{
 		default:
-		case eResourceBarType::Metal:
-		case eResourceBarType::Oil:
-		case eResourceBarType::Gold:
-		case eResourceBarType::Blocked:
-			size.x () = 240;
-			size.y () = 30;
+		case eOrientationType::Horizontal:
+			switch (type)
+			{
+				default:
+				case eResourceBarType::Metal:
+				case eResourceBarType::Oil:
+				case eResourceBarType::Gold:
+				case eResourceBarType::Blocked:
+					size.x() = 240;
+					size.y() = 30;
+					break;
+				case eResourceBarType::MetalSlim:
+				case eResourceBarType::OilSlim:
+				case eResourceBarType::GoldSlim:
+					size.x() = 223;
+					size.y() = 16;
+					break;
+			}
 			break;
-		case eResourceBarType::MetalSlim:
-		case eResourceBarType::OilSlim:
-		case eResourceBarType::GoldSlim:
-			size.x () = 223;
-			size.y () = 16;
+		case eOrientationType::Vertical:
+			size.x() = 20;
+			size.y() = 115;
 			break;
-		}
-		break;
-	case eOrientationType::Vertical:
-		size.x () = 20;
-		size.y () = 115;
-		break;
 	}
 
-    surface = AutoSurface (SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0));
+	surface = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
 
-	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
-	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
+	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
 
-	SDL_Rect src = {srcPosition.x (), srcPosition.y (), size.x (), size.y ()};
-	SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &src, surface.get (), nullptr);
+	SDL_Rect src = {srcPosition.x(), srcPosition.y(), size.x(), size.y()};
+	SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &src, surface.get(), nullptr);
 }

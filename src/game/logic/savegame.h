@@ -91,7 +91,7 @@ public:
 
 	std::string loadMapName();
 	std::vector<cPlayerBasicData> loadPlayers();
-	cGameSettings loadGameSettings ();
+	cGameSettings loadGameSettings();
 
 	void writeAdditionalInfo (const cGameGuiState& gameGuiState, std::vector<std::unique_ptr<cSavedReport>>& list, const cPlayer* player);
 
@@ -130,7 +130,7 @@ private:
 	/* list with loaded subbases */
 	std::vector<sSubBaseLoad*> SubBasesLoad;
 
-	bool loadFile ();
+	bool loadFile();
 	/**
 	* writes the saveheader
 	*@author alzi alias DoctorDeath

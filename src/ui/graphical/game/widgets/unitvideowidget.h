@@ -38,14 +38,14 @@ class cAnimationTimer;
 
 class cUnitVideoWidget : public cWidget
 {
-	typedef std::unique_ptr<FLI_Animation, void (*)(FLI_Animation*)> FliAnimationPointerType;
+	typedef std::unique_ptr<FLI_Animation, void (*) (FLI_Animation*)> FliAnimationPointerType;
 public:
 	cUnitVideoWidget (const cBox<cPosition>& area, std::shared_ptr<cAnimationTimer> animationTimer);
 
-	void start ();
-	void stop ();
+	void start();
+	void stop();
 
-	bool isPlaying () const;
+	bool isPlaying() const;
 
 	void setUnit (const cUnit* unit);
 private:
@@ -56,7 +56,7 @@ private:
 
 	bool playing;
 
-	void nextFrame ();
+	void nextFrame();
 };
 
 #endif // ui_graphical_game_widgets_unitvideowidgetH

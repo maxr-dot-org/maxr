@@ -114,7 +114,8 @@ int main (int argc, char* argv[])
 			}
 		}
 		SDL_Delay (100);
-		if (!DEDICATED_SERVER) {
+		if (!DEDICATED_SERVER)
+		{
 			// The draw may be conditionned when screen has changed.
 			Video.draw();
 		}
@@ -141,7 +142,7 @@ int main (int argc, char* argv[])
 	}
 	else
 	{
-		Video.prepareGameScreen ();
+		Video.prepareGameScreen();
 		Video.clearBuffer();
 
 		cMouse mouse;
@@ -155,9 +156,9 @@ int main (int argc, char* argv[])
 		auto startWindow = std::make_shared<cWindowStart>();
 		application.show (startWindow);
 
-		mouse.show ();
+		mouse.show();
 
-		application.execute ();
+		application.execute();
 	}
 
 	Quit();
@@ -198,7 +199,7 @@ static int initSDL()
  */
 static int initSound()
 {
-    if (!cSettings::getInstance ().isSoundEnabled ())
+	if (!cSettings::getInstance().isSoundEnabled())
 	{
 		Log.write ("Sound disabled due configuration", cLog::eLOG_TYPE_INFO);
 		return 1;
@@ -213,13 +214,13 @@ static int initSound()
 		return -1;
 	}
 
-    try
-    {
-        cSoundDevice::getInstance ().initialize (cSettings::getInstance ().getFrequency (), cSettings::getInstance ().getChunkSize ());
-    }
-    catch (std::runtime_error& e)
-    {
-        Log.write ("Could not init SDL_mixer:", cLog::eLOG_TYPE_WARNING);
+	try
+	{
+		cSoundDevice::getInstance().initialize (cSettings::getInstance().getFrequency(), cSettings::getInstance().getChunkSize());
+	}
+	catch (std::runtime_error& e)
+	{
+		Log.write ("Could not init SDL_mixer:", cLog::eLOG_TYPE_WARNING);
 		Log.write (e.what(), cLog::eLOG_TYPE_WARNING);
 		Log.write ("Sound won't be available!", cLog::eLOG_TYPE_WARNING);
 		cSettings::getInstance().setSoundEnabled (false, false);
@@ -270,7 +271,7 @@ static void showIntro()
 		Log.write ("Couldn't find movie " + filename, cLog::eLOG_TYPE_WARNING);
 	}
 	// Close maxr sound for intro movie
-    cSoundDevice::getInstance ().close ();
+	cSoundDevice::getInstance().close();
 
 	Log.write ("Starting movie " + filename, cLog::eLOG_TYPE_DEBUG);
 	const int mvereturn = MVEPlayer (filename.c_str(),
@@ -283,15 +284,15 @@ static void showIntro()
 	// reinit maxr sound
 	if (cSettings::getInstance().isSoundEnabled())
 	{
-        try
-        {
-            cSoundDevice::getInstance ().initialize (cSettings::getInstance ().getFrequency (), cSettings::getInstance ().getChunkSize ());
-        }
-        catch (std::runtime_error& e)
-        {
-            Log.write ("Can't reinit sound after playing intro" + iToStr (mvereturn), cLog::eLOG_TYPE_DEBUG);
-            Log.write (e.what(), cLog::eLOG_TYPE_DEBUG);
-        }
+		try
+		{
+			cSoundDevice::getInstance().initialize (cSettings::getInstance().getFrequency(), cSettings::getInstance().getChunkSize());
+		}
+		catch (std::runtime_error& e)
+		{
+			Log.write ("Can't reinit sound after playing intro" + iToStr (mvereturn), cLog::eLOG_TYPE_DEBUG);
+			Log.write (e.what(), cLog::eLOG_TYPE_DEBUG);
+		}
 	}
 }
 
@@ -317,7 +318,7 @@ void Quit()
 	UnitsData.sbuildings.clear();
 
 	//unload files here
-    cSoundDevice::getInstance ().close ();
+	cSoundDevice::getInstance().close();
 	SDLNet_Quit();
 	Video.clearMemory();
 	SDL_Quit();
@@ -460,13 +461,13 @@ const sUnitData& cUnitsData::getBuilding (int nr, int clan)
 //------------------------------------------------------------------------------
 const sUnitData& cUnitsData::getUnit (const sID& id, int clan)
 {
-	if (id.isAVehicle ())
+	if (id.isAVehicle())
 	{
 		return getVehicle (getVehicleIndexBy (id), clan);
 	}
 	else
 	{
-		assert (id.isABuilding ());
+		assert (id.isABuilding());
 		return getBuilding (getBuildingIndexBy (id), clan);
 	}
 }
@@ -623,17 +624,17 @@ void cUnitsData::initializeClanUnitData()
 
 			sUnitData& clanVehicle = clanListVehicles[j];
 			if (changedStat->hasModification ("Damage"))
-				clanVehicle.setDamage(changedStat->getModificationValue ("Damage"));
+				clanVehicle.setDamage (changedStat->getModificationValue ("Damage"));
 			if (changedStat->hasModification ("Range"))
-				clanVehicle.setRange(changedStat->getModificationValue ("Range"));
+				clanVehicle.setRange (changedStat->getModificationValue ("Range"));
 			if (changedStat->hasModification ("Armor"))
-				clanVehicle.setArmor(changedStat->getModificationValue ("Armor"));
+				clanVehicle.setArmor (changedStat->getModificationValue ("Armor"));
 			if (changedStat->hasModification ("Hitpoints"))
-				clanVehicle.setHitpointsMax(changedStat->getModificationValue ("Hitpoints"));
+				clanVehicle.setHitpointsMax (changedStat->getModificationValue ("Hitpoints"));
 			if (changedStat->hasModification ("Scan"))
-				clanVehicle.setScan(changedStat->getModificationValue ("Scan"));
+				clanVehicle.setScan (changedStat->getModificationValue ("Scan"));
 			if (changedStat->hasModification ("Speed"))
-				clanVehicle.setSpeedMax(changedStat->getModificationValue ("Speed") * 4);
+				clanVehicle.setSpeedMax (changedStat->getModificationValue ("Speed") * 4);
 			if (changedStat->hasModification ("Built_Costs"))
 				clanVehicle.buildCosts = changedStat->getModificationValue ("Built_Costs");
 		}
@@ -648,17 +649,17 @@ void cUnitsData::initializeClanUnitData()
 			if (changedStat == nullptr) continue;
 			sUnitData& clanBuilding = clanListBuildings[j];
 			if (changedStat->hasModification ("Damage"))
-				clanBuilding.setDamage(changedStat->getModificationValue ("Damage"));
+				clanBuilding.setDamage (changedStat->getModificationValue ("Damage"));
 			if (changedStat->hasModification ("Range"))
-				clanBuilding.setRange(changedStat->getModificationValue ("Range"));
+				clanBuilding.setRange (changedStat->getModificationValue ("Range"));
 			if (changedStat->hasModification ("Armor"))
-				clanBuilding.setArmor(changedStat->getModificationValue ("Armor"));
+				clanBuilding.setArmor (changedStat->getModificationValue ("Armor"));
 			if (changedStat->hasModification ("Hitpoints"))
-				clanBuilding.setHitpointsMax(changedStat->getModificationValue ("Hitpoints"));
+				clanBuilding.setHitpointsMax (changedStat->getModificationValue ("Hitpoints"));
 			if (changedStat->hasModification ("Scan"))
-				clanBuilding.setScan(changedStat->getModificationValue ("Scan"));
+				clanBuilding.setScan (changedStat->getModificationValue ("Scan"));
 			if (changedStat->hasModification ("Speed"))
-				clanBuilding.setSpeedMax(changedStat->getModificationValue ("Speed") * 4);
+				clanBuilding.setSpeedMax (changedStat->getModificationValue ("Speed") * 4);
 			if (changedStat->hasModification ("Built_Costs"))
 				clanBuilding.buildCosts = changedStat->getModificationValue ("Built_Costs");
 		}
@@ -681,10 +682,10 @@ void cUnitsData::scaleSurfaces (float zoom)
 		buildingUIs[i].scaleSurfaces (zoom);
 	}
 
-	if (dirt_small_org != nullptr && dirt_small != nullptr) scaleSurface (dirt_small_org.get (), dirt_small.get (), (int)(dirt_small_org->w * zoom), (int)(dirt_small_org->h * zoom));
-	if (dirt_small_shw_org != nullptr && dirt_small_shw != nullptr) scaleSurface (dirt_small_shw_org.get (), dirt_small_shw.get (), (int)(dirt_small_shw_org->w * zoom), (int)(dirt_small_shw_org->h * zoom));
-	if (dirt_big_org != nullptr && dirt_big != nullptr) scaleSurface (dirt_big_org.get (), dirt_big.get (), (int)(dirt_big_org->w * zoom), (int)(dirt_big_org->h * zoom));
-	if (dirt_big_shw_org != nullptr && dirt_big_shw != nullptr) scaleSurface (dirt_big_shw_org.get (), dirt_big_shw.get (), (int)(dirt_big_shw_org->w * zoom), (int)(dirt_big_shw_org->h * zoom));
+	if (dirt_small_org != nullptr && dirt_small != nullptr) scaleSurface (dirt_small_org.get(), dirt_small.get(), (int) (dirt_small_org->w * zoom), (int) (dirt_small_org->h * zoom));
+	if (dirt_small_shw_org != nullptr && dirt_small_shw != nullptr) scaleSurface (dirt_small_shw_org.get(), dirt_small_shw.get(), (int) (dirt_small_shw_org->w * zoom), (int) (dirt_small_shw_org->h * zoom));
+	if (dirt_big_org != nullptr && dirt_big != nullptr) scaleSurface (dirt_big_org.get(), dirt_big.get(), (int) (dirt_big_org->w * zoom), (int) (dirt_big_org->h * zoom));
+	if (dirt_big_shw_org != nullptr && dirt_big_shw != nullptr) scaleSurface (dirt_big_shw_org.get(), dirt_big_shw.get(), (int) (dirt_big_shw_org->w * zoom), (int) (dirt_big_shw_org->h * zoom));
 }
 
 //------------------------------------------------------------------------------

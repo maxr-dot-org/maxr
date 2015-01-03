@@ -58,8 +58,8 @@ cPlayer::cPlayer (const cPlayerBasicData& splayer_) :
 
 	isDefeated = false;
 
-	splayer.nameChanged.connect ([this](){ nameChanged (); });
-	splayer.colorChanged.connect ([this](){ colorChanged (); });
+	splayer.nameChanged.connect ([this]() { nameChanged(); });
+	splayer.colorChanged.connect ([this]() { colorChanged(); });
 }
 
 //------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ void cPlayer::setClan (int newClan)
 }
 
 //------------------------------------------------------------------------------
-int cPlayer::getCredits () const
+int cPlayer::getCredits() const
 {
 	return credits;
 }
@@ -88,29 +88,29 @@ int cPlayer::getCredits () const
 void cPlayer::setCredits (int credits_)
 {
 	std::swap (credits, credits_);
-	if (credits != credits_) creditsChanged ();
+	if (credits != credits_) creditsChanged();
 }
 
 //------------------------------------------------------------------------------
 sUnitData* cPlayer::getUnitDataCurrentVersion (const sID& id)
 {
 	const cPlayer* constMe = this;
-	return const_cast<sUnitData*>(constMe->getUnitDataCurrentVersion (id));
+	return const_cast<sUnitData*> (constMe->getUnitDataCurrentVersion (id));
 }
 
 //------------------------------------------------------------------------------
 const sUnitData* cPlayer::getUnitDataCurrentVersion (const sID& id) const
 {
-	if (id.isAVehicle ())
+	if (id.isAVehicle())
 	{
-		for (size_t i = 0; i != VehicleData.size (); ++i)
+		for (size_t i = 0; i != VehicleData.size(); ++i)
 		{
 			if (VehicleData[i].ID == id) return &VehicleData[i];
 		}
 	}
-	else if (id.isABuilding ())
+	else if (id.isABuilding())
 	{
-		for (unsigned int i = 0; i < BuildingData.size (); ++i)
+		for (unsigned int i = 0; i < BuildingData.size(); ++i)
 		{
 			if (BuildingData[i].ID == id) return &BuildingData[i];
 		}
@@ -123,8 +123,8 @@ const sUnitData* cPlayer::getUnitDataCurrentVersion (const sID& id) const
 //------------------------------------------------------------------------------
 void cPlayer::initMaps (cMap& map)
 {
-	mapSize = map.getSize ();
-	const int size = mapSize.x () * mapSize.y ();
+	mapSize = map.getSize();
+	const int size = mapSize.x() * mapSize.y();
 	// Scanner-Map:
 	ScanMap.clear();
 	ScanMap.resize (size, 0);
@@ -148,7 +148,7 @@ void cPlayer::initMaps (cMap& map)
 	DetectMinesMap.resize (size, 0);
 }
 
-const cPosition& cPlayer::getMapSize () const
+const cPosition& cPlayer::getMapSize() const
 {
 	return mapSize;
 }
@@ -156,28 +156,28 @@ const cPosition& cPlayer::getMapSize () const
 //------------------------------------------------------------------------------
 cVehicle& cPlayer::addNewVehicle (const cPosition& position, const sID& id, unsigned int uid)
 {
-    const sUnitData& unitData = *id.getUnitDataOriginalVersion (this);
-    auto vehicle = std::make_shared<cVehicle> (unitData, this, uid);
-    vehicle->setPosition (position);
+	const sUnitData& unitData = *id.getUnitDataOriginalVersion (this);
+	auto vehicle = std::make_shared<cVehicle> (unitData, this, uid);
+	vehicle->setPosition (position);
 
-	drawSpecialCircle (vehicle->getPosition (), vehicle->data.getScan (), ScanMap, mapSize);
-	if (vehicle->data.canDetectStealthOn & TERRAIN_GROUND) drawSpecialCircle (vehicle->getPosition (), vehicle->data.getScan (), DetectLandMap, mapSize);
-	if (vehicle->data.canDetectStealthOn & TERRAIN_SEA) drawSpecialCircle (vehicle->getPosition (), vehicle->data.getScan (), DetectSeaMap, mapSize);
-    if (vehicle->data.canDetectStealthOn & AREA_EXP_MINE)
-    {
-        const int minx = std::max (vehicle->getPosition ().x () - 1, 0);
-        const int maxx = std::min (vehicle->getPosition ().x () + 1, mapSize.x () - 1);
-        const int miny = std::max (vehicle->getPosition ().y () - 1, 0);
-        const int maxy = std::min (vehicle->getPosition ().y () + 1, mapSize.y () - 1);
-        for (int x = minx; x <= maxx; ++x)
-            for (int y = miny; y <= maxy; ++y)
-                DetectMinesMap[x + mapSize.x () * y] = 1;
-    }
+	drawSpecialCircle (vehicle->getPosition(), vehicle->data.getScan(), ScanMap, mapSize);
+	if (vehicle->data.canDetectStealthOn & TERRAIN_GROUND) drawSpecialCircle (vehicle->getPosition(), vehicle->data.getScan(), DetectLandMap, mapSize);
+	if (vehicle->data.canDetectStealthOn & TERRAIN_SEA) drawSpecialCircle (vehicle->getPosition(), vehicle->data.getScan(), DetectSeaMap, mapSize);
+	if (vehicle->data.canDetectStealthOn & AREA_EXP_MINE)
+	{
+		const int minx = std::max (vehicle->getPosition().x() - 1, 0);
+		const int maxx = std::min (vehicle->getPosition().x() + 1, mapSize.x() - 1);
+		const int miny = std::max (vehicle->getPosition().y() - 1, 0);
+		const int maxy = std::min (vehicle->getPosition().y() + 1, mapSize.y() - 1);
+		for (int x = minx; x <= maxx; ++x)
+			for (int y = miny; y <= maxy; ++y)
+				DetectMinesMap[x + mapSize.x() * y] = 1;
+	}
 
-    auto result = vehicles.insert (std::move (vehicle));
-    assert (result.second);
+	auto result = vehicles.insert (std::move (vehicle));
+	assert (result.second);
 
-    return *(*result.first);
+	return * (*result.first);
 }
 
 //------------------------------------------------------------------------------
@@ -188,82 +188,82 @@ cBuilding& cPlayer::addNewBuilding (const cPosition& position, const sID& id, un
 
 	building->setPosition (position);
 
-	if (building->data.getScan ())
+	if (building->data.getScan())
 	{
-		if (building->data.isBig) drawSpecialCircleBig (building->getPosition (), building->data.getScan (), ScanMap, mapSize);
-		else drawSpecialCircle (building->getPosition (), building->data.getScan (), ScanMap, mapSize);
+		if (building->data.isBig) drawSpecialCircleBig (building->getPosition(), building->data.getScan(), ScanMap, mapSize);
+		else drawSpecialCircle (building->getPosition(), building->data.getScan(), ScanMap, mapSize);
 	}
 
 	auto result = buildings.insert (std::move (building));
 	assert (result.second);
-	return *(*result.first);
+	return * (*result.first);
 }
 
 //------------------------------------------------------------------------------
 void cPlayer::addUnit (std::shared_ptr<cVehicle> vehicle)
 {
-    vehicles.insert (std::move (vehicle));
+	vehicles.insert (std::move (vehicle));
 }
 
 //------------------------------------------------------------------------------
 void cPlayer::addUnit (std::shared_ptr<cBuilding> building)
 {
-    buildings.insert (std::move (building));
+	buildings.insert (std::move (building));
 }
 
 //------------------------------------------------------------------------------
 std::shared_ptr<cBuilding> cPlayer::removeUnit (const cBuilding& building)
 {
-    auto iter = buildings.find (building);
-    if (iter == buildings.end ()) return nullptr;
+	auto iter = buildings.find (building);
+	if (iter == buildings.end()) return nullptr;
 
-    auto removed = *iter;
-    buildings.erase (iter);
-    return removed;
+	auto removed = *iter;
+	buildings.erase (iter);
+	return removed;
 }
 
 //------------------------------------------------------------------------------
 std::shared_ptr<cVehicle> cPlayer::removeUnit (const cVehicle& vehicle)
 {
-    auto iter = vehicles.find (vehicle);
-    if (iter == vehicles.end ()) return nullptr;
+	auto iter = vehicles.find (vehicle);
+	if (iter == vehicles.end()) return nullptr;
 
-    auto removed = *iter;
-    vehicles.erase (iter);
-    return removed;
+	auto removed = *iter;
+	vehicles.erase (iter);
+	return removed;
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::removeAllUnits ()
+void cPlayer::removeAllUnits()
 {
-	vehicles.clear ();
-	buildings.clear ();
+	vehicles.clear();
+	buildings.clear();
 }
 
 //------------------------------------------------------------------------------
 cVehicle* cPlayer::getVehicleFromId (unsigned int id) const
 {
-    auto iter =  vehicles.find (id);
-    return iter == vehicles.end () ? nullptr : (*iter).get();
+	auto iter =  vehicles.find (id);
+	return iter == vehicles.end() ? nullptr : (*iter).get();
 }
 
 //------------------------------------------------------------------------------
 cBuilding* cPlayer::getBuildingFromId (unsigned int id) const
 {
-    auto iter = buildings.find (id);
-    return iter == buildings.end () ? nullptr : (*iter).get ();
+	auto iter = buildings.find (id);
+	return iter == buildings.end() ? nullptr : (*iter).get();
 }
 
 //------------------------------------------------------------------------------
-const cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>>& cPlayer::getVehicles () const
+const cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>>& cPlayer::getVehicles() const
 {
-    return vehicles;
+	return vehicles;
 }
 
 //------------------------------------------------------------------------------
-const cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>>& cPlayer::getBuildings () const
+const cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>>& cPlayer::getBuildings() const
 {
-    return buildings;
+	return buildings;
 }
 
 //------------------------------------------------------------------------------
@@ -272,11 +272,11 @@ void cPlayer::addSentry (cUnit& u)
 	u.setSentryActive (true);
 	if (u.data.canAttack & TERRAIN_AIR)
 	{
-		drawSpecialCircle (u.getPosition (), u.data.getRange (), SentriesMapAir, mapSize);
+		drawSpecialCircle (u.getPosition(), u.data.getRange(), SentriesMapAir, mapSize);
 	}
 	if ((u.data.canAttack & TERRAIN_GROUND) || (u.data.canAttack & TERRAIN_SEA))
 	{
-		drawSpecialCircle (u.getPosition (), u.data.getRange (), SentriesMapGround, mapSize);
+		drawSpecialCircle (u.getPosition(), u.data.getRange(), SentriesMapGround, mapSize);
 	}
 }
 
@@ -299,21 +299,21 @@ void cPlayer::refreshSentryAir()
 {
 	std::fill (SentriesMapAir.begin(), SentriesMapAir.end(), 0);
 
-	for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
+	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
 	{
 		const auto& unit = *i;
 		if (unit->isSentryActive() && unit->data.canAttack & TERRAIN_AIR)
 		{
-			drawSpecialCircle (unit->getPosition (), unit->data.getRange (), SentriesMapAir, mapSize);
+			drawSpecialCircle (unit->getPosition(), unit->data.getRange(), SentriesMapAir, mapSize);
 		}
 	}
 
-	for (auto i = buildings.begin (); i != buildings.end (); ++i)
+	for (auto i = buildings.begin(); i != buildings.end(); ++i)
 	{
 		const auto& unit = *i;
 		if (unit->isSentryActive() && unit->data.canAttack & TERRAIN_AIR)
 		{
-			drawSpecialCircle (unit->getPosition (), unit->data.getRange (), SentriesMapAir, mapSize);
+			drawSpecialCircle (unit->getPosition(), unit->data.getRange(), SentriesMapAir, mapSize);
 		}
 	}
 }
@@ -323,20 +323,20 @@ void cPlayer::refreshSentryGround()
 {
 	std::fill (SentriesMapGround.begin(), SentriesMapGround.end(), 0);
 
-	for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
+	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
 	{
 		const auto& unit = *i;
 		if (unit->isSentryActive() && ((unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)))
 		{
-			drawSpecialCircle (unit->getPosition (), unit->data.getRange (), SentriesMapGround, mapSize);
+			drawSpecialCircle (unit->getPosition(), unit->data.getRange(), SentriesMapGround, mapSize);
 		}
 	}
-	for (auto i = buildings.begin (); i != buildings.end (); ++i)
+	for (auto i = buildings.begin(); i != buildings.end(); ++i)
 	{
 		const auto& unit = *i;
 		if (unit->isSentryActive() && ((unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)))
 		{
-			drawSpecialCircle (unit->getPosition (), unit->data.getRange (), SentriesMapGround, mapSize);
+			drawSpecialCircle (unit->getPosition(), unit->data.getRange(), SentriesMapGround, mapSize);
 		}
 	}
 }
@@ -353,23 +353,23 @@ void cPlayer::doScan()
 	std::fill (DetectMinesMap.begin(), DetectMinesMap.end(), 0);
 
 	// iterate the vehicle list
-	for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
+	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
 	{
 		const auto& vp = *i;
-		if (vp->isUnitLoaded ()) continue;
+		if (vp->isUnitLoaded()) continue;
 
 		if (vp->isDisabled())
 			ScanMap[getOffset (vp->getPosition())] = 1;
 		else
 		{
 			if (vp->data.isBig)
-				drawSpecialCircleBig (vp->getPosition (), vp->data.getScan (), ScanMap, mapSize);
+				drawSpecialCircleBig (vp->getPosition(), vp->data.getScan(), ScanMap, mapSize);
 			else
-				drawSpecialCircle (vp->getPosition (), vp->data.getScan (), ScanMap, mapSize);
+				drawSpecialCircle (vp->getPosition(), vp->data.getScan(), ScanMap, mapSize);
 
 			//detection maps
-			if (vp->data.canDetectStealthOn & TERRAIN_GROUND) drawSpecialCircle (vp->getPosition (), vp->data.getScan (), DetectLandMap, mapSize);
-			else if (vp->data.canDetectStealthOn & TERRAIN_SEA) drawSpecialCircle (vp->getPosition (), vp->data.getScan (), DetectSeaMap, mapSize);
+			if (vp->data.canDetectStealthOn & TERRAIN_GROUND) drawSpecialCircle (vp->getPosition(), vp->data.getScan(), DetectLandMap, mapSize);
+			else if (vp->data.canDetectStealthOn & TERRAIN_SEA) drawSpecialCircle (vp->getPosition(), vp->data.getScan(), DetectSeaMap, mapSize);
 			if (vp->data.canDetectStealthOn & AREA_EXP_MINE)
 			{
 				const int minx = std::max (vp->getPosition().x() - 1, 0);
@@ -388,17 +388,17 @@ void cPlayer::doScan()
 	}
 
 	// iterate the building list
-	for (auto i = buildings.begin (); i != buildings.end (); ++i)
+	for (auto i = buildings.begin(); i != buildings.end(); ++i)
 	{
 		const auto& bp = *i;
 		if (bp->isDisabled())
 			ScanMap[getOffset (bp->getPosition())] = 1;
-		else if (bp->data.getScan ())
+		else if (bp->data.getScan())
 		{
 			if (bp->data.isBig)
-				drawSpecialCircleBig (bp->getPosition (), bp->data.getScan (), ScanMap, mapSize);
+				drawSpecialCircleBig (bp->getPosition(), bp->data.getScan(), ScanMap, mapSize);
 			else
-				drawSpecialCircle (bp->getPosition (), bp->data.getScan (), ScanMap, mapSize);
+				drawSpecialCircle (bp->getPosition(), bp->data.getScan(), ScanMap, mapSize);
 		}
 	}
 }
@@ -410,7 +410,7 @@ void cPlayer::revealMap()
 
 void cPlayer::revealPosition (const cPosition& position)
 {
-	if (position.x () < 0 || position.x () >= mapSize.x () || position.y () < 0 || position.y () >= mapSize.y ()) return;
+	if (position.x() < 0 || position.x() >= mapSize.x() || position.y() < 0 || position.y() >= mapSize.y()) return;
 
 	ScanMap[getOffset (position)] = 1;
 }
@@ -422,27 +422,27 @@ void cPlayer::revealResource()
 
 bool cPlayer::canSeeAnyAreaUnder (const cUnit& unit) const
 {
-	if (canSeeAt (unit.getPosition ())) return true;
+	if (canSeeAt (unit.getPosition())) return true;
 	if (!unit.data.isBig) return false;
 
-	return canSeeAt (unit.getPosition () + cPosition (0, 1)) ||
-		canSeeAt (unit.getPosition () + cPosition (1, 1)) ||
-		canSeeAt (unit.getPosition () + cPosition (1, 0));
+	return canSeeAt (unit.getPosition() + cPosition (0, 1)) ||
+		   canSeeAt (unit.getPosition() + cPosition (1, 1)) ||
+		   canSeeAt (unit.getPosition() + cPosition (1, 0));
 }
 
 cVehicle* cPlayer::getNextVehicle (cVehicle* start) const
 {
-	if (vehicles.empty ()) return nullptr;
+	if (vehicles.empty()) return nullptr;
 
-	auto it = (start == nullptr) ? vehicles.begin () : vehicles.find (*start);
-	if (start != nullptr && it != vehicles.end ()) ++it;
-	for (; it != vehicles.end (); ++it)
+	auto it = (start == nullptr) ? vehicles.begin() : vehicles.find (*start);
+	if (start != nullptr && it != vehicles.end()) ++it;
+	for (; it != vehicles.end(); ++it)
 	{
-		if (!(*it)->isMarkedAsDone () && (!(*it)->isUnitBuildingABuilding () || (*it)->getBuildTurns () == 0)
-			&& !(*it)->isUnitClearing () && !(*it)->isSentryActive () && !(*it)->isUnitLoaded ()
-			&& ((*it)->data.getSpeed() || (*it)->data.getShots ()))
+		if (! (*it)->isMarkedAsDone() && (! (*it)->isUnitBuildingABuilding() || (*it)->getBuildTurns() == 0)
+			&& ! (*it)->isUnitClearing() && ! (*it)->isSentryActive() && ! (*it)->isUnitLoaded()
+			&& ((*it)->data.getSpeed() || (*it)->data.getShots()))
 		{
-			return it->get ();
+			return it->get();
 		}
 	}
 	return nullptr;
@@ -450,18 +450,18 @@ cVehicle* cPlayer::getNextVehicle (cVehicle* start) const
 
 cBuilding* cPlayer::getNextBuilding (cBuilding* start) const
 {
-	if (buildings.empty ()) return nullptr;
+	if (buildings.empty()) return nullptr;
 
-	auto it = (start == nullptr) ? buildings.begin () : buildings.find (*start);
-	if (start != nullptr && it != buildings.end ()) ++it;
-	for (; it != buildings.end (); ++it)
+	auto it = (start == nullptr) ? buildings.begin() : buildings.find (*start);
+	if (start != nullptr && it != buildings.end()) ++it;
+	for (; it != buildings.end(); ++it)
 	{
-		if (!(*it)->isMarkedAsDone () && !(*it)->isUnitWorking () && !(*it)->isSentryActive ()
-			&& (!(*it)->data.canBuild.empty () || (*it)->data.getShots ()
-			|| (*it)->data.canMineMaxRes > 0 || (*it)->data.convertsGold > 0
-			|| (*it)->data.canResearch))
+		if (! (*it)->isMarkedAsDone() && ! (*it)->isUnitWorking() && ! (*it)->isSentryActive()
+			&& (! (*it)->data.canBuild.empty() || (*it)->data.getShots()
+				|| (*it)->data.canMineMaxRes > 0 || (*it)->data.convertsGold > 0
+				|| (*it)->data.canResearch))
 		{
-			return it->get ();
+			return it->get();
 		}
 	}
 	return nullptr;
@@ -469,18 +469,18 @@ cBuilding* cPlayer::getNextBuilding (cBuilding* start) const
 
 cBuilding* cPlayer::getNextMiningStation (cBuilding* start) const
 {
-	if (buildings.empty ()) return nullptr;
+	if (buildings.empty()) return nullptr;
 
-	auto it = (start == nullptr) ? buildings.begin () : buildings.find (*start);
-	if (start != nullptr && it != buildings.end ()) ++it;
-	for (; it != buildings.end (); ++it)
+	auto it = (start == nullptr) ? buildings.begin() : buildings.find (*start);
+	if (start != nullptr && it != buildings.end()) ++it;
+	for (; it != buildings.end(); ++it)
 	{
 		if ((*it)->data.canMineMaxRes > 0)
 		{
-			return it->get ();
+			return it->get();
 		}
 	}
-    return nullptr;
+	return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -488,7 +488,7 @@ cBuilding* cPlayer::getNextMiningStation (cBuilding* start) const
 //------------------------------------------------------------------------------
 cUnit* cPlayer::getNextUnit (cUnit* start) const
 {
-	if (start == nullptr || start->getOwner () != this)
+	if (start == nullptr || start->getOwner() != this)
 	{
 		cVehicle* nextVehicle = getNextVehicle (nullptr);
 		if (nextVehicle) return nextVehicle;
@@ -522,55 +522,55 @@ cUnit* cPlayer::getNextUnit (cUnit* start) const
 
 cVehicle* cPlayer::getPrevVehicle (cVehicle* start) const
 {
-	if (vehicles.empty ()) return nullptr;
+	if (vehicles.empty()) return nullptr;
 
-	auto it = (start == nullptr) ? vehicles.end ()-1 : vehicles.find (*start);
-	if (start != nullptr && it != vehicles.begin () && it != vehicles.end ()) --it;
-	for (; it != vehicles.end (); --it)
+	auto it = (start == nullptr) ? vehicles.end() - 1 : vehicles.find (*start);
+	if (start != nullptr && it != vehicles.begin() && it != vehicles.end()) --it;
+	for (; it != vehicles.end(); --it)
 	{
-		if (!(*it)->isMarkedAsDone () && (!(*it)->isUnitBuildingABuilding () || (*it)->getBuildTurns () == 0)
-			&& !(*it)->isUnitClearing () && !(*it)->isSentryActive () && !(*it)->isUnitLoaded ()
-			&& ((*it)->data.getSpeed() || (*it)->data.getShots ()))
+		if (! (*it)->isMarkedAsDone() && (! (*it)->isUnitBuildingABuilding() || (*it)->getBuildTurns() == 0)
+			&& ! (*it)->isUnitClearing() && ! (*it)->isSentryActive() && ! (*it)->isUnitLoaded()
+			&& ((*it)->data.getSpeed() || (*it)->data.getShots()))
 		{
-			return it->get ();
+			return it->get();
 		}
-		if (it == vehicles.begin ()) break;
+		if (it == vehicles.begin()) break;
 	}
 	return nullptr;
 }
 
 cBuilding* cPlayer::getPrevBuilding (cBuilding* start) const
 {
-	if (buildings.empty ()) return nullptr;
+	if (buildings.empty()) return nullptr;
 
-	auto it = (start == nullptr) ? buildings.end ()-1 : buildings.find (*start);
-	if (start != nullptr && it != buildings.begin () && it != buildings.end ()) --it;
-	for (; it != buildings.end (); --it)
+	auto it = (start == nullptr) ? buildings.end() - 1 : buildings.find (*start);
+	if (start != nullptr && it != buildings.begin() && it != buildings.end()) --it;
+	for (; it != buildings.end(); --it)
 	{
-		if (!(*it)->isMarkedAsDone () && !(*it)->isUnitWorking () && !(*it)->isSentryActive ()
-			&& (!(*it)->data.canBuild.empty () || (*it)->data.getShots ()
-			|| (*it)->data.canMineMaxRes > 0 || (*it)->data.convertsGold > 0
-			|| (*it)->data.canResearch))
+		if (! (*it)->isMarkedAsDone() && ! (*it)->isUnitWorking() && ! (*it)->isSentryActive()
+			&& (! (*it)->data.canBuild.empty() || (*it)->data.getShots()
+				|| (*it)->data.canMineMaxRes > 0 || (*it)->data.convertsGold > 0
+				|| (*it)->data.canResearch))
 		{
-			return it->get ();
+			return it->get();
 		}
-		if (it == buildings.begin ()) break;
+		if (it == buildings.begin()) break;
 	}
 	return nullptr;
 }
 
 cBuilding* cPlayer::getPrevMiningStation (cBuilding* start) const
 {
-	if (buildings.empty ()) return nullptr;
+	if (buildings.empty()) return nullptr;
 
-	auto it = (start == nullptr) ? buildings.end ()-1 : buildings.find (*start);
-	for (; it != buildings.end (); --it)
+	auto it = (start == nullptr) ? buildings.end() - 1 : buildings.find (*start);
+	for (; it != buildings.end(); --it)
 	{
 		if ((*it)->data.canMineMaxRes > 0)
 		{
-			return it->get ();
+			return it->get();
 		}
-		if (it == buildings.begin ()) break;
+		if (it == buildings.begin()) break;
 	}
 	return nullptr;
 }
@@ -580,7 +580,7 @@ cBuilding* cPlayer::getPrevMiningStation (cBuilding* start) const
 //------------------------------------------------------------------------------
 cUnit* cPlayer::getPrevUnit (cUnit* start) const
 {
-	if (start == nullptr || start->getOwner () != this)
+	if (start == nullptr || start->getOwner() != this)
 	{
 		cVehicle* prevVehicle = getPrevVehicle (nullptr);
 		if (prevVehicle) return prevVehicle;
@@ -613,9 +613,9 @@ cUnit* cPlayer::getPrevUnit (cUnit* start) const
 }
 
 //------------------------------------------------------------------------------
-bool cPlayer::hasUnits () const
+bool cPlayer::hasUnits() const
 {
-    return !vehicles.empty () || !buildings.empty ();
+	return !vehicles.empty() || !buildings.empty();
 }
 
 //------------------------------------------------------------------------------
@@ -629,7 +629,7 @@ void cPlayer::startAResearch (cResearch::ResearchArea researchArea)
 		++researchCentersWorkingOnArea[researchArea];
 
 		researchCentersWorkingOnAreaChanged (researchArea);
-		researchCentersWorkingTotalChanged ();
+		researchCentersWorkingTotalChanged();
 	}
 }
 
@@ -646,7 +646,7 @@ void cPlayer::stopAResearch (cResearch::ResearchArea researchArea)
 			--researchCentersWorkingOnArea[researchArea];
 			researchCentersWorkingOnAreaChanged (researchArea);
 		}
-		researchCentersWorkingTotalChanged ();
+		researchCentersWorkingTotalChanged();
 	}
 }
 
@@ -658,7 +658,7 @@ void cPlayer::doResearch (cServer& server)
 	bool researchFinished = false;
 	std::vector<sUnitData*> upgradedUnitDatas;
 	std::vector<int> areasReachingNextLevel;
-	currentTurnResearchAreasFinished.clear ();
+	currentTurnResearchAreasFinished.clear();
 	for (int area = 0; area < cResearch::kNrResearchAreas; ++area)
 	{
 		if (researchCentersWorkingOnArea[area] > 0 &&
@@ -686,10 +686,10 @@ void cPlayer::accumulateScore (cServer& server)
 	const int now = server.getTurnClock()->getTurn();
 	int deltaScore = 0;
 
-	for (auto i = buildings.begin (); i != buildings.end (); ++i)
+	for (auto i = buildings.begin(); i != buildings.end(); ++i)
 	{
 		const auto& bp = *i;
-		if (bp->data.canScore && bp->isUnitWorking ())
+		if (bp->data.canScore && bp->isUnitWorking())
 		{
 			bp->points++;
 			deltaScore++;
@@ -705,10 +705,10 @@ void cPlayer::countEcoSpheres()
 {
 	numEcos = 0;
 
-	for (auto i = buildings.begin (); i != buildings.end (); ++i)
+	for (auto i = buildings.begin(); i != buildings.end(); ++i)
 	{
 		const auto& bp = *i;
-		if (bp->data.canScore && bp->isUnitWorking ())
+		if (bp->data.canScore && bp->isUnitWorking())
 			++numEcos;
 	}
 }
@@ -725,16 +725,16 @@ void cPlayer::setScore (int s, int turn)
 
 void cPlayer::clearDone()
 {
-	for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
+	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
 	{
 		const auto& unit = *i;
-		unit->setMarkedAsDone(false);
+		unit->setMarkedAsDone (false);
 	}
 
-	for (auto i = buildings.begin (); i != buildings.end (); ++i)
+	for (auto i = buildings.begin(); i != buildings.end(); ++i)
 	{
 		const auto& unit = *i;
-		unit->setMarkedAsDone(false);
+		unit->setMarkedAsDone (false);
 	}
 }
 
@@ -751,9 +751,9 @@ int cPlayer::getScore (int turn) const
 	return pointsHistory[t - 1];
 }
 
-int cPlayer::getScore () const
+int cPlayer::getScore() const
 {
-	return pointsHistory.back ();
+	return pointsHistory.back();
 }
 
 //------------------------------------------------------------------------------
@@ -773,8 +773,8 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 				case cResearch::kAttackResearch: startValue = originalData.getDamage(); break;
 				case cResearch::kShotsResearch: startValue = originalData.getShotsMax(); break;
 				case cResearch::kRangeResearch: startValue = originalData.getRange(); break;
-				case cResearch::kArmorResearch: startValue = originalData.getArmor (); break;
-				case cResearch::kHitpointsResearch: startValue = originalData.getHitpointsMax (); break;
+				case cResearch::kArmorResearch: startValue = originalData.getArmor(); break;
+				case cResearch::kHitpointsResearch: startValue = originalData.getHitpointsMax(); break;
 				case cResearch::kScanResearch: startValue = originalData.getScan(); break;
 				case cResearch::kSpeedResearch: startValue = originalData.getSpeedMax(); break;
 				case cResearch::kCostResearch: startValue = originalData.buildCosts; break;
@@ -789,12 +789,12 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 			{
 				switch (researchArea)
 				{
-					case cResearch::kAttackResearch: VehicleData[i].setDamage( VehicleData[i].getDamage() + newResearchBonus - oldResearchBonus); break;
+					case cResearch::kAttackResearch: VehicleData[i].setDamage (VehicleData[i].getDamage() + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kShotsResearch: VehicleData[i].setShotsMax (VehicleData[i].getShotsMax() + newResearchBonus - oldResearchBonus); break;
-					case cResearch::kRangeResearch: VehicleData[i].setRange (VehicleData[i].getRange () + newResearchBonus - oldResearchBonus); break;
-					case cResearch::kArmorResearch: VehicleData[i].setArmor (VehicleData[i].getArmor () + newResearchBonus - oldResearchBonus); break;
+					case cResearch::kRangeResearch: VehicleData[i].setRange (VehicleData[i].getRange() + newResearchBonus - oldResearchBonus); break;
+					case cResearch::kArmorResearch: VehicleData[i].setArmor (VehicleData[i].getArmor() + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kHitpointsResearch: VehicleData[i].setHitpointsMax (VehicleData[i] .getHitpointsMax() + newResearchBonus - oldResearchBonus); break;
-					case cResearch::kScanResearch: VehicleData[i].setScan (VehicleData[i].getScan () + newResearchBonus - oldResearchBonus); break;
+					case cResearch::kScanResearch: VehicleData[i].setScan (VehicleData[i].getScan() + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kSpeedResearch: VehicleData[i].setSpeedMax (VehicleData[i].getSpeed() + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kCostResearch: VehicleData[i].buildCosts += newResearchBonus - oldResearchBonus; break;
 				}
@@ -805,7 +805,7 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 			}
 		}
 		if (incrementVersion)
-			VehicleData[i].setVersion(VehicleData[i].getVersion() + 1);
+			VehicleData[i].setVersion (VehicleData[i].getVersion() + 1);
 	}
 
 	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
@@ -823,7 +823,7 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 				case cResearch::kAttackResearch: startValue = originalData.getDamage(); break;
 				case cResearch::kShotsResearch: startValue = originalData.getShotsMax(); break;
 				case cResearch::kRangeResearch: startValue = originalData.getRange(); break;
-				case cResearch::kArmorResearch: startValue = originalData.getArmor (); break;
+				case cResearch::kArmorResearch: startValue = originalData.getArmor(); break;
 				case cResearch::kHitpointsResearch: startValue = originalData.getHitpointsMax(); break;
 				case cResearch::kScanResearch: startValue = originalData.getScan(); break;
 				case cResearch::kCostResearch: startValue = originalData.buildCosts; break;
@@ -838,12 +838,12 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 			{
 				switch (researchArea)
 				{
-					case cResearch::kAttackResearch: BuildingData[i].setDamage( BuildingData[i].getDamage() + newResearchBonus - oldResearchBonus); break;
+					case cResearch::kAttackResearch: BuildingData[i].setDamage (BuildingData[i].getDamage() + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kShotsResearch: BuildingData[i].setShotsMax (BuildingData[i] .getShotsMax() + newResearchBonus - oldResearchBonus); break;
-					case cResearch::kRangeResearch: BuildingData[i].setRange (BuildingData[i].getRange () + newResearchBonus - oldResearchBonus); break;
-					case cResearch::kArmorResearch: BuildingData[i].setArmor (BuildingData[i].getArmor () + newResearchBonus - oldResearchBonus); break;
+					case cResearch::kRangeResearch: BuildingData[i].setRange (BuildingData[i].getRange() + newResearchBonus - oldResearchBonus); break;
+					case cResearch::kArmorResearch: BuildingData[i].setArmor (BuildingData[i].getArmor() + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kHitpointsResearch: BuildingData[i].setHitpointsMax (BuildingData[i].getHitpointsMax() + newResearchBonus - oldResearchBonus); break;
-					case cResearch::kScanResearch: BuildingData[i].setScan (BuildingData[i].getScan () + newResearchBonus - oldResearchBonus); break;
+					case cResearch::kScanResearch: BuildingData[i].setScan (BuildingData[i].getScan() + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kCostResearch: BuildingData[i].buildCosts += newResearchBonus - oldResearchBonus; break;
 				}
 				if (researchArea != cResearch::kCostResearch)   // don't increment the version, if the only change are the costs
@@ -853,7 +853,7 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 			}
 		}
 		if (incrementVersion)
-			BuildingData[i].setVersion(BuildingData[i].getVersion() + 1);
+			BuildingData[i].setVersion (BuildingData[i].getVersion() + 1);
 	}
 }
 
@@ -869,16 +869,16 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 		researchCentersWorkingOnArea[i] = 0;
 	}
 
-	for (auto i = buildings.begin (); i != buildings.end (); ++i)
+	for (auto i = buildings.begin(); i != buildings.end(); ++i)
 	{
 		const auto& building = *i;
-		if (building->data.canResearch && building->isUnitWorking ())
+		if (building->data.canResearch && building->isUnitWorking())
 		{
 			researchCentersWorkingOnArea[building->getResearchArea()] += 1;
 			newResearchCount++;
 		}
 	}
-	std::swap(researchCentersWorkingTotal, newResearchCount);
+	std::swap (researchCentersWorkingTotal, newResearchCount);
 
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
 	{
@@ -887,18 +887,18 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 			researchCentersWorkingOnAreaChanged ((cResearch::ResearchArea)i);
 		}
 	}
-	if (researchCentersWorkingTotal != newResearchCount) researchCentersWorkingTotalChanged ();
+	if (researchCentersWorkingTotal != newResearchCount) researchCentersWorkingTotalChanged();
 }
 
 //------------------------------------------------------------------------------
 bool cPlayer::mayHaveOffensiveUnit() const
 {
-	for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
+	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
 	{
 		const auto& vehicle = *i;
 		if (vehicle->data.canAttack || !vehicle->data.canBuild.empty()) return true;
 	}
-	for (auto i = buildings.begin (); i != buildings.end (); ++i)
+	for (auto i = buildings.begin(); i != buildings.end(); ++i)
 	{
 		const auto& building = *i;
 		if (building->data.canAttack || !building->data.canBuild.empty()) return true;
@@ -909,8 +909,8 @@ bool cPlayer::mayHaveOffensiveUnit() const
 //------------------------------------------------------------------------------
 void cPlayer::addTurnReportUnit (const sID& unitTypeId)
 {
-	auto iter = std::find_if (currentTurnUnitReports.begin (), currentTurnUnitReports.end (), [unitTypeId](const sTurnstartReport& entry){ return entry.type == unitTypeId; });
-	if (iter != currentTurnUnitReports.end ())
+	auto iter = std::find_if (currentTurnUnitReports.begin(), currentTurnUnitReports.end(), [unitTypeId] (const sTurnstartReport & entry) { return entry.type == unitTypeId; });
+	if (iter != currentTurnUnitReports.end())
 	{
 		++iter->count;
 	}
@@ -924,19 +924,19 @@ void cPlayer::addTurnReportUnit (const sID& unitTypeId)
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::resetTurnReportData ()
+void cPlayer::resetTurnReportData()
 {
-	currentTurnUnitReports.clear ();
+	currentTurnUnitReports.clear();
 }
 
 //------------------------------------------------------------------------------
-const std::vector<sTurnstartReport>& cPlayer::getCurrentTurnUnitReports () const
+const std::vector<sTurnstartReport>& cPlayer::getCurrentTurnUnitReports() const
 {
 	return currentTurnUnitReports;
 }
 
 //------------------------------------------------------------------------------
-const std::vector<int>& cPlayer::getCurrentTurnResearchAreasFinished () const
+const std::vector<int>& cPlayer::getCurrentTurnResearchAreasFinished() const
 {
 	return currentTurnResearchAreasFinished;
 }
@@ -950,23 +950,23 @@ void cPlayer::setCurrentTurnResearchAreasFinished (std::vector<int> areas)
 //------------------------------------------------------------------------------
 bool cPlayer::isCurrentTurnResearchAreaFinished (cResearch::ResearchArea area) const
 {
-	return std::find (currentTurnResearchAreasFinished.begin (), currentTurnResearchAreasFinished.end (), area) != currentTurnResearchAreasFinished.end ();
+	return std::find (currentTurnResearchAreasFinished.begin(), currentTurnResearchAreasFinished.end(), area) != currentTurnResearchAreasFinished.end();
 }
 
 //------------------------------------------------------------------------------
-const cResearch& cPlayer::getResearchState () const
+const cResearch& cPlayer::getResearchState() const
 {
 	return researchState;
 }
 
 //------------------------------------------------------------------------------
-cResearch& cPlayer::getResearchState ()
+cResearch& cPlayer::getResearchState()
 {
 	return researchState;
 }
 
 //------------------------------------------------------------------------------
-int cPlayer::getResearchCentersWorkingTotal () const
+int cPlayer::getResearchCentersWorkingTotal() const
 {
 	return researchCentersWorkingTotal;
 }
@@ -980,7 +980,7 @@ int cPlayer::getResearchCentersWorkingOnArea (cResearch::ResearchArea area) cons
 //------------------------------------------------------------------------------
 bool cPlayer::canSeeAt (const cPosition& position) const
 {
-	if (position.x () < 0 || position.x () >= mapSize.x () || position.y () < 0 || position.y () >= mapSize.y ()) return false;
+	if (position.x() < 0 || position.x() >= mapSize.x() || position.y() < 0 || position.y() >= mapSize.y()) return false;
 
 	return ScanMap[getOffset (position)] != 0;
 }
@@ -1008,10 +1008,10 @@ void cPlayer::drawSpecialCircle (const cPosition& position, int iRadius, std::ve
 		{
 			if (k < 0) continue;
 			if (k >= mapsize.x()) break;
-			if (position.y () + ry >= 0 && position.y () + ry < mapsize.y ())
-				map[k + (position.y () + ry) * mapsize.x ()] |= 1;
-			if (position.y () - ry >= 0 && position.y () - ry < mapsize.y ())
-				map[k + (position.y () - ry) * mapsize.x ()] |= 1;
+			if (position.y() + ry >= 0 && position.y() + ry < mapsize.y())
+				map[k + (position.y() + ry) * mapsize.x()] |= 1;
+			if (position.y() - ry >= 0 && position.y() - ry < mapsize.y())
+				map[k + (position.y() - ry) * mapsize.x()] |= 1;
 		}
 
 		x1 = ry + position.x();
@@ -1020,10 +1020,10 @@ void cPlayer::drawSpecialCircle (const cPosition& position, int iRadius, std::ve
 		{
 			if (k < 0) continue;
 			if (k >= mapsize.x()) break;
-			if (position.y () + rx >= 0 && position.y () + rx < mapsize.y ())
-				map[k + (position.y () + rx) *mapsize.x ()] |= 1;
-			if (position.y () - rx >= 0 && position.y () - rx < mapsize.y ())
-				map[k + (position.y () - rx) *mapsize.x ()] |= 1;
+			if (position.y() + rx >= 0 && position.y() + rx < mapsize.y())
+				map[k + (position.y() + rx) *mapsize.x()] |= 1;
+			if (position.y() - rx >= 0 && position.y() - rx < mapsize.y())
+				map[k + (position.y() - rx) *mapsize.x()] |= 1;
 		}
 	}
 }
@@ -1050,16 +1050,16 @@ void cPlayer::drawSpecialCircleBig (const cPosition& position, int iRadius, std:
 		for (int k = x2; k <= x1 + 1; k++)
 		{
 			if (k < 0) continue;
-			if (k >= mapsize.x ()) break;
-			if (position.y () + ry >= 0 && position.y () + ry < mapsize.y ())
-				map[k + (position.y () + ry) *mapsize.x ()] |= 1;
-			if (position.y () - ry >= 0 && position.y () - ry < mapsize.y ())
-				map[k + (position.y () - ry) *mapsize.x ()] |= 1;
+			if (k >= mapsize.x()) break;
+			if (position.y() + ry >= 0 && position.y() + ry < mapsize.y())
+				map[k + (position.y() + ry) *mapsize.x()] |= 1;
+			if (position.y() - ry >= 0 && position.y() - ry < mapsize.y())
+				map[k + (position.y() - ry) *mapsize.x()] |= 1;
 
-			if (position.y () + ry + 1 >= 0 && position.y () + ry + 1 < mapsize.y ())
-				map[k + (position.y () + ry + 1) *mapsize.x ()] |= 1;
-			if (position.y () - ry + 1 >= 0 && position.y () - ry + 1 < mapsize.y ())
-				map[k + (position.y () - ry + 1) *mapsize.x ()] |= 1;
+			if (position.y() + ry + 1 >= 0 && position.y() + ry + 1 < mapsize.y())
+				map[k + (position.y() + ry + 1) *mapsize.x()] |= 1;
+			if (position.y() - ry + 1 >= 0 && position.y() - ry + 1 < mapsize.y())
+				map[k + (position.y() - ry + 1) *mapsize.x()] |= 1;
 		}
 
 		x1 = ry + position.x();
@@ -1067,16 +1067,16 @@ void cPlayer::drawSpecialCircleBig (const cPosition& position, int iRadius, std:
 		for (int k = x2; k <= x1 + 1; k++)
 		{
 			if (k < 0) continue;
-			if (k >= mapsize.x ()) break;
-			if (position.y () + rx >= 0 && position.y () + rx < mapsize.y ())
-				map[k + (position.y () + rx) *mapsize.x ()] |= 1;
-			if (position.y () - rx >= 0 && position.y () - rx < mapsize.y ())
-				map[k + (position.y () - rx) *mapsize.x ()] |= 1;
+			if (k >= mapsize.x()) break;
+			if (position.y() + rx >= 0 && position.y() + rx < mapsize.y())
+				map[k + (position.y() + rx) *mapsize.x()] |= 1;
+			if (position.y() - rx >= 0 && position.y() - rx < mapsize.y())
+				map[k + (position.y() - rx) *mapsize.x()] |= 1;
 
-			if (position.y () + rx + 1 >= 0 && position.y () + rx + 1 < mapsize.y ())
-				map[k + (position.y () + rx + 1) *mapsize.x ()] |= 1;
-			if (position.y () - rx + 1 >= 0 && position.y () - rx + 1 < mapsize.y ())
-				map[k + (position.y () - rx + 1) *mapsize.x ()] |= 1;
+			if (position.y() + rx + 1 >= 0 && position.y() + rx + 1 < mapsize.y())
+				map[k + (position.y() + rx + 1) *mapsize.x()] |= 1;
+			if (position.y() - rx + 1 >= 0 && position.y() - rx + 1 < mapsize.y())
+				map[k + (position.y() - rx + 1) *mapsize.x()] |= 1;
 		}
 	}
 }
@@ -1088,17 +1088,17 @@ void cPlayer::addSavedReport (std::unique_ptr<cSavedReport> savedReport)
 
 	savedReportsList.push_back (std::move (savedReport));
 
-	reportAdded (*savedReportsList.back ());
+	reportAdded (*savedReportsList.back());
 }
 
 //------------------------------------------------------------------------------
-const std::vector<std::unique_ptr<cSavedReport>>& cPlayer::getSavedReports () const
+const std::vector<std::unique_ptr<cSavedReport>>& cPlayer::getSavedReports() const
 {
 	return savedReportsList;
 }
 
 //------------------------------------------------------------------------------
-bool cPlayer::getHasFinishedTurn () const
+bool cPlayer::getHasFinishedTurn() const
 {
 	return hasFinishedTurn;
 }
@@ -1107,11 +1107,11 @@ bool cPlayer::getHasFinishedTurn () const
 void cPlayer::setHasFinishedTurn (bool value)
 {
 	std::swap (hasFinishedTurn, value);
-	if (hasFinishedTurn != value) hasFinishedTurnChanged ();
+	if (hasFinishedTurn != value) hasFinishedTurnChanged();
 }
 
 //------------------------------------------------------------------------------
-bool cPlayer::getIsRemovedFromGame () const
+bool cPlayer::getIsRemovedFromGame() const
 {
 	return isRemovedFromGame;
 }
@@ -1120,5 +1120,5 @@ bool cPlayer::getIsRemovedFromGame () const
 void cPlayer::setIsRemovedFromGame (bool value)
 {
 	std::swap (isRemovedFromGame, value);
-	if (isRemovedFromGame != value) isRemovedFromGameChanged ();
+	if (isRemovedFromGame != value) isRemovedFromGameChanged();
 }

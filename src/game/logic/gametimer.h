@@ -114,7 +114,7 @@ public:
 	cGameTimerClient();
 	void setClient (cClient* client);
 
-	void run ();
+	void run();
 	void handleSyncMessage (cNetMessage& message);
 };
 

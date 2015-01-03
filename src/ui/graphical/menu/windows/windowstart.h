@@ -26,18 +26,18 @@
 class cWindowStart : public cWindowMain
 {
 public:
-	cWindowStart ();
-	~cWindowStart ();
+	cWindowStart();
+	~cWindowStart();
 
 	virtual void handleActivated (cApplication& application, bool firstTime) MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	void singlePlayerClicked ();
-	void multiPlayerClicked ();
-	void preferencesClicked ();
-	void licenceClicked ();
-	void exitClicked ();
+	void singlePlayerClicked();
+	void multiPlayerClicked();
+	void preferencesClicked();
+	void licenceClicked();
+	void exitClicked();
 };
 
 #endif // ui_graphical_menu_windows_windowstartH

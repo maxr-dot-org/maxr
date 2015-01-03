@@ -19,19 +19,20 @@
 
 #include "ui/graphical/game/animations/animationtimer.h"
 
-namespace {
+namespace
+{
 
 //--------------------------------------------------------------------------
 Uint32 timerCallback (Uint32 interval, void* arg)
 {
-	static_cast<cAnimationTimer*>(arg)->increaseTimer ();
+	static_cast<cAnimationTimer*> (arg)->increaseTimer();
 	return interval;
 }
 
 }
 
 //--------------------------------------------------------------------------
-cAnimationTimer::cAnimationTimer () :
+cAnimationTimer::cAnimationTimer() :
 	sdlTimerInterval (10),
 	timerTime (0)
 {
@@ -44,35 +45,35 @@ cAnimationTimer::cAnimationTimer () :
 }
 
 //--------------------------------------------------------------------------
-cAnimationTimer::~cAnimationTimer ()
+cAnimationTimer::~cAnimationTimer()
 {
 	SDL_RemoveTimer (timerId);
 }
 
 //--------------------------------------------------------------------------
-void cAnimationTimer::increaseTimer ()
+void cAnimationTimer::increaseTimer()
 {
 	++timerTime;
 }
 
 //--------------------------------------------------------------------------
-unsigned long long cAnimationTimer::getAnimationTime () const
+unsigned long long cAnimationTimer::getAnimationTime() const
 {
 	return timerTime / (100 / sdlTimerInterval); // in 100ms steps
 }
 
 //--------------------------------------------------------------------------
-void cAnimationTimer::run ()
+void cAnimationTimer::run()
 {
 	static const size_t maxCatchUp = 10;
 
 	if (timerTime >= nextTrigger10msTime)
 	{
-		triggered10ms ();
+		triggered10ms();
 		size_t count = 0;
 		do
 		{
-			triggered10msCatchUp ();
+			triggered10msCatchUp();
 			if (count++ >= maxCatchUp)
 			{
 				nextTrigger10msTime = timerTime + 10 / sdlTimerInterval;
@@ -83,11 +84,11 @@ void cAnimationTimer::run ()
 	}
 	if (timerTime >= nextTrigger50msTime)
 	{
-		triggered50ms ();
+		triggered50ms();
 		size_t count = 0;
 		do
 		{
-			triggered50msCatchUp ();
+			triggered50msCatchUp();
 			if (count++ >= maxCatchUp)
 			{
 				nextTrigger10msTime = timerTime + 50 / sdlTimerInterval;
@@ -98,11 +99,11 @@ void cAnimationTimer::run ()
 	}
 	if (timerTime >= nextTrigger100msTime)
 	{
-		triggered100ms ();
+		triggered100ms();
 		size_t count = 0;
 		do
 		{
-			triggered100msCatchUp ();
+			triggered100msCatchUp();
 			if (count++ >= maxCatchUp)
 			{
 				nextTrigger10msTime = timerTime + 100 / sdlTimerInterval;
@@ -113,11 +114,11 @@ void cAnimationTimer::run ()
 	}
 	if (timerTime >= nextTrigger400msTime)
 	{
-		triggered400ms ();
+		triggered400ms();
 		size_t count = 0;
 		do
 		{
-			triggered400msCatchUp ();
+			triggered400msCatchUp();
 			if (count++ >= maxCatchUp)
 			{
 				nextTrigger10msTime = timerTime + 400 / sdlTimerInterval;

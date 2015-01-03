@@ -44,7 +44,7 @@ private:
 
 	AutoSurface surface;
 
-	void reset ();
+	void reset();
 
 	void drawRow (size_t index, eUnitDataSymbolType symbolType, int amount, int maximalAmount, const std::string& name);
 

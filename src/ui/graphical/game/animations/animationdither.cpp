@@ -32,41 +32,41 @@ cAnimationDither::cAnimationDither (cAnimationTimer& animationTimer_, const cVeh
 	// immediately start for planes that are in the air already
 	if (vehicle->getFlightHeight() > 0)
 	{
-		activate ();
+		activate();
 	}
 
 	// register the animation for flight height changes
 	signalConnectionManager.connect (vehicle->flightHeightChanged, [this]()
 	{
 		// the plane has landed: stop the animation
-		if (vehicle->getFlightHeight () == 0 && isRunning())
+		if (vehicle->getFlightHeight() == 0 && isRunning())
 		{
 			vehicle->ditherX = 0;
 			vehicle->ditherY = 0;
 
-			animationTimerConnectionManager.disconnectAll ();
+			animationTimerConnectionManager.disconnectAll();
 			running = false;
 		}
 		// the plane took of: restart the animation
-		else if (vehicle->getFlightHeight () > 0 && !isRunning())
+		else if (vehicle->getFlightHeight() > 0 && !isRunning())
 		{
-			activate ();
+			activate();
 		}
 	});
 	// make sure we stop the animation when the unit gets destroyed
 	signalConnectionManager.connect (vehicle->destroyed, [this]()
 	{
-		signalConnectionManager.disconnectAll ();
+		signalConnectionManager.disconnectAll();
 		vehicle = nullptr;
 		finished = true;
 	});
 }
 
 //------------------------------------------------------------------------------
-cAnimationDither::~cAnimationDither ()
+cAnimationDither::~cAnimationDither()
 {
 	// make sure the vehicle is in the correct place when the animation gets deleted
-	if (isRunning () && vehicle)
+	if (isRunning() && vehicle)
 	{
 		vehicle->ditherX = 0;
 		vehicle->ditherY = 0;
@@ -76,11 +76,11 @@ cAnimationDither::~cAnimationDither ()
 //------------------------------------------------------------------------------
 bool cAnimationDither::isLocatedIn (const cBox<cPosition>& box) const
 {
-	return vehicle && box.intersects (vehicle->getArea ());
+	return vehicle && box.intersects (vehicle->getArea());
 }
 
 //------------------------------------------------------------------------------
-void cAnimationDither::activate ()
+void cAnimationDither::activate()
 {
 	if (!vehicle) return;
 	animationTimerConnectionManager.connect (animationTimer.triggered100ms, std::bind (&cAnimationDither::run, this));
@@ -88,13 +88,13 @@ void cAnimationDither::activate ()
 }
 
 //------------------------------------------------------------------------------
-void cAnimationDither::run ()
+void cAnimationDither::run()
 {
 	if (!vehicle) return;
 
 	// do not dither while the plane is moving.
 	// reset the position every now and then to make sure the plane stays around the center position
-	if (vehicle->isUnitMoving () || animationTimer.getAnimationTime () % 10 == 0)
+	if (vehicle->isUnitMoving() || animationTimer.getAnimationTime() % 10 == 0)
 	{
 		vehicle->ditherX = 0;
 		vehicle->ditherY = 0;

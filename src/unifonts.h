@@ -176,8 +176,8 @@ public:
 									 eUnicodeFontType fonttype);
 
 	void setTargetSurface (SDL_Surface* surface) { this->surface = surface; }
-	SDL_Surface* getTargetSurface () { return surface; }
-	
+	SDL_Surface* getTargetSurface() { return surface; }
+
 	/**
 	 * encodes a UTF-8 character to its unicode position
 	 * @author alzi alias DoctorDeath

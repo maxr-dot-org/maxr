@@ -36,14 +36,14 @@
 #include "game/data/units/vehicle.h"
 #include "video.h"
 
-cPathDestHandler::cPathDestHandler(ePathDestinationTypes type_, const cPosition& destination_, const cVehicle* srcVehicle_, const cUnit* destUnit_) :
+cPathDestHandler::cPathDestHandler (ePathDestinationTypes type_, const cPosition& destination_, const cVehicle* srcVehicle_, const cUnit* destUnit_) :
 	type (type_),
 	srcVehicle (srcVehicle_),
 	destUnit (destUnit_),
 	destination (destination_)
 {}
 
-bool cPathDestHandler::hasReachedDestination(const cPosition& position) const
+bool cPathDestHandler::hasReachedDestination (const cPosition& position) const
 {
 	switch (type)
 	{
@@ -52,14 +52,14 @@ bool cPathDestHandler::hasReachedDestination(const cPosition& position) const
 		case PATH_DEST_TYPE_LOAD:
 			return (destUnit && destUnit->isNextTo (position));
 		case PATH_DEST_TYPE_ATTACK:
-			return (position - destination).l2NormSquared () <= Square (srcVehicle->data.getRange ());
+			return (position - destination).l2NormSquared() <= Square (srcVehicle->data.getRange());
 		default:
 			return true;
 	}
 	return false;
 }
 
-int cPathDestHandler::heuristicCost(const cPosition& source) const
+int cPathDestHandler::heuristicCost (const cPosition& source) const
 {
 	switch (type)
 	{
@@ -74,26 +74,26 @@ int cPathDestHandler::heuristicCost(const cPosition& source) const
 	}
 }
 
-cPathCalculator::cPathCalculator(const cPosition& source, const cPosition& destination, const cMap& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group)
+cPathCalculator::cPathCalculator (const cPosition& source, const cPosition& destination, const cMap& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group)
 {
 	destHandler = new cPathDestHandler (PATH_DEST_TYPE_POS, destination, nullptr, nullptr);
 	init (source, Map, Vehicle, group);
 }
 
 
-cPathCalculator::cPathCalculator(const cPosition& source, const cUnit& destUnit, const cMap& Map, const cVehicle& Vehicle, bool load)
+cPathCalculator::cPathCalculator (const cPosition& source, const cUnit& destUnit, const cMap& Map, const cVehicle& Vehicle, bool load)
 {
-	destHandler = new cPathDestHandler (load ? PATH_DEST_TYPE_LOAD : PATH_DEST_TYPE_ATTACK, cPosition(0, 0), &Vehicle, &destUnit);
+	destHandler = new cPathDestHandler (load ? PATH_DEST_TYPE_LOAD : PATH_DEST_TYPE_ATTACK, cPosition (0, 0), &Vehicle, &destUnit);
 	init (source, Map, Vehicle, nullptr);
 }
 
-cPathCalculator::cPathCalculator(const cPosition& source, const cMap& Map, const cVehicle& Vehicle, const cPosition& attack)
+cPathCalculator::cPathCalculator (const cPosition& source, const cMap& Map, const cVehicle& Vehicle, const cPosition& attack)
 {
 	destHandler = new cPathDestHandler (PATH_DEST_TYPE_ATTACK, attack, &Vehicle, nullptr);
 	init (source, Map, Vehicle, nullptr);
 }
 
-void cPathCalculator::init(const cPosition& source, const cMap& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group)
+void cPathCalculator::init (const cPosition& source, const cMap& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group)
 {
 	this->source = source;
 	this->Map = &Map;
@@ -126,9 +126,9 @@ cPathCalculator::~cPathCalculator()
 sWaypoint* cPathCalculator::calcPath()
 {
 	// generate open and closed list
-	nodesHeap.resize (Map->getSize ().x() * Map->getSize ().y() + 1, nullptr);
-	openList.resize (Map->getSize ().x() * Map->getSize ().y() + 1, nullptr);
-	closedList.resize (Map->getSize ().x() * Map->getSize ().y() + 1, nullptr);
+	nodesHeap.resize (Map->getSize().x() * Map->getSize().y() + 1, nullptr);
+	openList.resize (Map->getSize().x() * Map->getSize().y() + 1, nullptr);
+	closedList.resize (Map->getSize().x() * Map->getSize().y() + 1, nullptr);
 
 	// generate startnode
 	sPathNode* StartNode = allocNode();
@@ -148,11 +148,11 @@ sWaypoint* cPathCalculator::calcPath()
 
 		// move it from the open to the closed list
 		openList[Map->getOffset (CurrentNode->position)] = nullptr;
-		closedList[Map->getOffset(CurrentNode->position)] = CurrentNode;
+		closedList[Map->getOffset (CurrentNode->position)] = CurrentNode;
 		deleteFirstFromHeap();
 
 		// generate waypoints when destination has been reached
-		if(destHandler->hasReachedDestination(CurrentNode->position))
+		if (destHandler->hasReachedDestination (CurrentNode->position))
 		{
 			sWaypoint* NextWaypoint;
 			Waypoints = new sWaypoint;
@@ -198,16 +198,16 @@ sWaypoint* cPathCalculator::calcPath()
 void cPathCalculator::expandNodes (sPathNode* ParentNode)
 {
 	// add all nearby nodes
-	const int minx = std::max(ParentNode->position.x() - 1, 0);
-	const int maxx = std::min(ParentNode->position.x() + 1, Map->getSize().y() - 1);
-	const int miny = std::max(ParentNode->position.y() - 1, 0);
-	const int maxy = std::min(ParentNode->position.y() + 1, Map->getSize().y() - 1);
+	const int minx = std::max (ParentNode->position.x() - 1, 0);
+	const int maxx = std::min (ParentNode->position.x() + 1, Map->getSize().y() - 1);
+	const int miny = std::max (ParentNode->position.y() - 1, 0);
+	const int maxy = std::min (ParentNode->position.y() + 1, Map->getSize().y() - 1);
 
 	for (int y = miny; y <= maxy; ++y)
 	{
 		for (int x = minx; x <= maxx; ++x)
 		{
-			const cPosition currentPosition(x, y);
+			const cPosition currentPosition (x, y);
 			if (currentPosition == ParentNode->position) continue;
 
 			if (!Map->possiblePlace (*Vehicle, currentPosition, true))
@@ -217,42 +217,42 @@ void cPathCalculator::expandNodes (sPathNode* ParentNode)
 				{
 					// get the blocking unit
 					cVehicle* blockingUnit;
-					if(Vehicle->data.factorAir > 0) blockingUnit = Map->getField(currentPosition).getPlane();
-					else blockingUnit = Map->getField(currentPosition).getVehicle();
+					if (Vehicle->data.factorAir > 0) blockingUnit = Map->getField (currentPosition).getPlane();
+					else blockingUnit = Map->getField (currentPosition).getVehicle();
 					// check whether the blocking unit is the group
 					bool isInGroup = Contains (*group, blockingUnit);
 					if (!isInGroup) continue;
 				}
 				else continue;
 			}
-			if(closedList[Map->getOffset(currentPosition)] != nullptr) continue;
+			if (closedList[Map->getOffset (currentPosition)] != nullptr) continue;
 
-			if(openList[Map->getOffset(currentPosition)] == nullptr)
+			if (openList[Map->getOffset (currentPosition)] == nullptr)
 			{
 				// generate new node
 				sPathNode* NewNode = allocNode();
 				NewNode->position = currentPosition;
 				NewNode->costG = calcNextCost (ParentNode->position, currentPosition) + ParentNode->costG;
-				NewNode->costH = destHandler->heuristicCost(currentPosition);
+				NewNode->costH = destHandler->heuristicCost (currentPosition);
 				NewNode->costF = NewNode->costG + NewNode->costH;
 				NewNode->prev = ParentNode;
-				openList[Map->getOffset(currentPosition)] = NewNode;
+				openList[Map->getOffset (currentPosition)] = NewNode;
 				insertToHeap (NewNode, false);
 			}
 			else
 			{
 				// modify existing node
 				int costG, costH, costF;
-				costG = calcNextCost(ParentNode->position, currentPosition) + ParentNode->costG;
-				costH = destHandler->heuristicCost(currentPosition);
+				costG = calcNextCost (ParentNode->position, currentPosition) + ParentNode->costG;
+				costH = destHandler->heuristicCost (currentPosition);
 				costF = costG + costH;
-				if(costF < openList[Map->getOffset(currentPosition)]->costF)
+				if (costF < openList[Map->getOffset (currentPosition)]->costF)
 				{
-					openList[Map->getOffset(currentPosition)]->costG = costG;
-					openList[Map->getOffset(currentPosition)]->costH = costH;
-					openList[Map->getOffset(currentPosition)]->costF = costF;
-					openList[Map->getOffset(currentPosition)]->prev = ParentNode;
-					insertToHeap(openList[Map->getOffset(currentPosition)], true);
+					openList[Map->getOffset (currentPosition)]->costG = costG;
+					openList[Map->getOffset (currentPosition)]->costH = costH;
+					openList[Map->getOffset (currentPosition)]->costF = costF;
+					openList[Map->getOffset (currentPosition)]->prev = ParentNode;
+					insertToHeap (openList[Map->getOffset (currentPosition)], true);
 				}
 			}
 		}
@@ -345,7 +345,7 @@ int cPathCalculator::calcNextCost (const cPosition& source, const cPosition& des
 		if (source.x() != destination.x() && source.y() != destination.y()) return (int) (4 * 1.5f * Vehicle->data.factorAir);
 		else return (int) (4 * Vehicle->data.factorAir);
 	}
-	const cBuilding* building = Map->getField(destination).getBaseBuilding();
+	const cBuilding* building = Map->getField (destination).getBaseBuilding();
 	// moving on water will cost more
 	if (Map->isWater (destination) && (!building || (building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE)) && Vehicle->data.factorSea > 0) costs = (int) (4 * Vehicle->data.factorSea);
 	else if (Map->isCoast (destination) && !building && Vehicle->data.factorCoast > 0) costs = (int) (4 * Vehicle->data.factorCoast);
@@ -359,7 +359,7 @@ int cPathCalculator::calcNextCost (const cPosition& source, const cPosition& des
 	if (building && building->data.modifiesSpeed != 0) costs = (int) (costs * building->data.modifiesSpeed);
 
 	// multiplicate with the factor 1.5 for diagonal movements
-	if (source.x() != destination.x() && source.y() != destination.y()) costs = (int)(costs * 1.5f);
+	if (source.x() != destination.x() && source.y() != destination.y()) costs = (int) (costs * 1.5f);
 	return costs;
 }
 
@@ -374,10 +374,10 @@ static void setOffset (cVehicle* Vehicle, int nextDir, int offset)
 	newOffset.x() += offsetX[nextDir] * offset;
 	newOffset.y() += offsetY[nextDir] * offset;
 
-	Vehicle->setMovementOffset(newOffset);
+	Vehicle->setMovementOffset (newOffset);
 }
 
-static int getDir(const cPosition& position, const cPosition& next)
+static int getDir (const cPosition& position, const cPosition& next)
 {
 	const cPosition diff = next - position;
 
@@ -410,7 +410,7 @@ cServerMoveJob::cServerMoveJob (cServer& server_, const cPosition& source_, cons
 	// unset sentry status when moving vehicle
 	if (Vehicle->isSentryActive())
 	{
-		Vehicle->getOwner ()->deleteSentry (*Vehicle);
+		Vehicle->getOwner()->deleteSentry (*Vehicle);
 	}
 	sendUnitData (*server, *Vehicle);
 
@@ -458,7 +458,7 @@ void cServerMoveJob::stop()
 	}
 
 	// if the vehicle is not moving, it has to stop immediately
-	if (!Vehicle->isUnitMoving ())
+	if (!Vehicle->isUnitMoving())
 	{
 		release();
 	}
@@ -466,7 +466,7 @@ void cServerMoveJob::stop()
 
 void cServerMoveJob::resume()
 {
-	if (Vehicle && Vehicle->data.getSpeed() > 0 && !Vehicle->isUnitMoving ())
+	if (Vehicle && Vehicle->data.getSpeed() > 0 && !Vehicle->isUnitMoving())
 	{
 		// restart movejob
 		calcNextDir();
@@ -498,7 +498,7 @@ cServerMoveJob* cServerMoveJob::generateFromMessage (cServer& server, cNetMessag
 	}
 
 	// TODO: is this check really needed?
-	if (vehicle->isBeeingAttacked ())
+	if (vehicle->isBeeingAttacked())
 	{
 		Log.write (" Server: cannot move a vehicle currently under attack", cLog::eLOG_TYPE_NET_DEBUG);
 		return nullptr;
@@ -508,12 +508,12 @@ cServerMoveJob* cServerMoveJob::generateFromMessage (cServer& server, cNetMessag
 		Log.write (" Server: cannot move a vehicle currently attacking", cLog::eLOG_TYPE_NET_DEBUG);
 		return nullptr;
 	}
-	if (vehicle->isUnitBuildingABuilding () || (vehicle->BuildPath && vehicle->ServerMoveJob))
+	if (vehicle->isUnitBuildingABuilding() || (vehicle->BuildPath && vehicle->ServerMoveJob))
 	{
 		Log.write (" Server: cannot move a vehicle currently building", cLog::eLOG_TYPE_NET_DEBUG);
 		return nullptr;
 	}
-	if (vehicle->isUnitClearing ())
+	if (vehicle->isUnitClearing())
 	{
 		Log.write (" Server: cannot move a vehicle currently building", cLog::eLOG_TYPE_NET_DEBUG);
 		return nullptr;
@@ -609,7 +609,7 @@ bool cServerMoveJob::checkMove()
 	{
 		Log.write (" Server: Vehicle has not enough waypoints for the next move -> EndForNow: ID: " + iToStr (Vehicle->iID) + ", X: " + iToStr (Waypoints->next->position.x()) + ", Y: " + iToStr (Waypoints->next->position.y()), LOG_TYPE_NET_DEBUG);
 		iSavedSpeed += Vehicle->data.getSpeed();
-		Vehicle->data.setSpeed(0);
+		Vehicle->data.setSpeed (0);
 		bEndForNow = true;
 		return true;
 	}
@@ -644,7 +644,7 @@ bool cServerMoveJob::checkMove()
 	Vehicle->MoveJobActive = true;
 	Vehicle->setMoving (true);
 
-	Vehicle->data.setSpeed(Vehicle->data.getSpeed() + iSavedSpeed);
+	Vehicle->data.setSpeed (Vehicle->data.getSpeed() + iSavedSpeed);
 	iSavedSpeed = 0;
 	Vehicle->DecSpeed (Waypoints->next->Costs);
 
@@ -667,8 +667,8 @@ bool cServerMoveJob::checkMove()
 	sendNextMove (*server, *Vehicle, MJOB_OK);
 
 	Map->moveVehicle (*Vehicle, Waypoints->next->position);
-	Vehicle->getOwner ()->doScan ();
-	Vehicle->setMovementOffset(cPosition(0, 0));
+	Vehicle->getOwner()->doScan();
+	Vehicle->setMovementOffset (cPosition (0, 0));
 	setOffset (Vehicle, iNextDir, -64);
 
 	return true;
@@ -684,7 +684,7 @@ void cServerMoveJob::moveVehicle()
 	else if (! (Vehicle->data.factorAir > 0) && ! (Vehicle->data.factorSea > 0 && Vehicle->data.factorGround == 0))
 	{
 		iSpeed = MOVE_SPEED;
-		cBuilding* building = Map->getField(Waypoints->next->position).getBaseBuilding();
+		cBuilding* building = Map->getField (Waypoints->next->position).getBaseBuilding();
 		if (building && building->data.modifiesSpeed)
 			iSpeed = (int) (iSpeed / building->data.modifiesSpeed);
 	}
@@ -709,7 +709,7 @@ void cServerMoveJob::doEndMoveVehicle()
 	delete Waypoints;
 	Waypoints = Waypoint;
 
-	Vehicle->setMovementOffset(cPosition(0, 0));
+	Vehicle->setMovementOffset (cPosition (0, 0));
 
 	if (Waypoints->next == nullptr)
 	{
@@ -719,8 +719,8 @@ void cServerMoveJob::doEndMoveVehicle()
 	// check for results of the move
 
 	// make mines explode if necessary
-	cBuilding* mine = Map->getField(Vehicle->getPosition()).getMine();
-	if (Vehicle->data.factorAir == 0 && mine && mine->getOwner () != Vehicle->getOwner ())
+	cBuilding* mine = Map->getField (Vehicle->getPosition()).getMine();
+	if (Vehicle->data.factorAir == 0 && mine && mine->getOwner() != Vehicle->getOwner())
 	{
 		server->addAttackJob (mine, Vehicle->getPosition());
 		bEndForNow = true;
@@ -743,8 +743,8 @@ void cServerMoveJob::doEndMoveVehicle()
 	if (Vehicle->data.canPlaceMines)
 	{
 		bool bResult = false;
-		if (Vehicle->isUnitLayingMines ()) bResult = Vehicle->layMine (*server);
-		else if (Vehicle->isUnitClearingMines ()) bResult = Vehicle->clearMine (*server);
+		if (Vehicle->isUnitLayingMines()) bResult = Vehicle->layMine (*server);
+		else if (Vehicle->isUnitClearingMines()) bResult = Vehicle->clearMine (*server);
 		if (bResult)
 		{
 			// send new unit values
@@ -757,11 +757,11 @@ void cServerMoveJob::doEndMoveVehicle()
 
 	if (Vehicle->canLand (*server->Map))
 	{
-		Vehicle->setFlightHeight(0);
+		Vehicle->setFlightHeight (0);
 	}
 	else
 	{
-		Vehicle->setFlightHeight(64);
+		Vehicle->setFlightHeight (64);
 	}
 }
 
@@ -799,7 +799,7 @@ void cEndMoveAction::executeLoadAction (cServer& server)
 	if (destVehicle->ServerMoveJob) destVehicle->ServerMoveJob->release();
 
 	// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
-	sendStoreVehicle (server, vehicle_->iID, true, destVehicle->iID, *vehicle_->getOwner ());
+	sendStoreVehicle (server, vehicle_->iID, true, destVehicle->iID, *vehicle_->getOwner());
 }
 
 void cEndMoveAction::executeGetInAction (cServer& server)
@@ -813,14 +813,14 @@ void cEndMoveAction::executeGetInAction (cServer& server)
 		destVehicle->storeVehicle (*vehicle_, *server.Map);
 		if (vehicle_->ServerMoveJob) vehicle_->ServerMoveJob->release();
 		//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
-		sendStoreVehicle (server, destVehicle->iID, true, vehicle_->iID, *destVehicle->getOwner ());
+		sendStoreVehicle (server, destVehicle->iID, true, vehicle_->iID, *destVehicle->getOwner());
 	}
 	else if (destBuilding && destBuilding->canLoad (vehicle_))
 	{
 		destBuilding->storeVehicle (*vehicle_, *server.Map);
 		if (vehicle_->ServerMoveJob) vehicle_->ServerMoveJob->release();
 		// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
-		sendStoreVehicle (server, destBuilding->iID, false, vehicle_->iID, *destBuilding->getOwner ());
+		sendStoreVehicle (server, destBuilding->iID, false, vehicle_->iID, *destBuilding->getOwner());
 	}
 }
 
@@ -836,7 +836,7 @@ void cEndMoveAction::executeAttackAction (cServer& server)
 	if (!vehicle_->canAttackObjectAt (position, map, true, true)) return;
 
 	// is the target in sight?
-	if (!vehicle_->getOwner ()->canSeeAnyAreaUnder (*destUnit)) return;
+	if (!vehicle_->getOwner()->canSeeAnyAreaUnder (*destUnit)) return;
 
 	server.addAttackJob (vehicle_, position);
 }
@@ -844,13 +844,13 @@ void cEndMoveAction::executeAttackAction (cServer& server)
 cClientMoveJob::cClientMoveJob (cClient& client_, const cPosition& source_, const cPosition& destination_, cVehicle* Vehicle) :
 	client (&client_),
 	endMoveAction (nullptr),
-	destination(destination_),
+	destination (destination_),
 	Waypoints (nullptr)
 {
 	init (source_, Vehicle);
 }
 
-void cClientMoveJob::init(const cPosition& source_, cVehicle* Vehicle)
+void cClientMoveJob::init (const cPosition& source_, cVehicle* Vehicle)
 {
 	Map = client->getMap().get();
 	this->Vehicle = Vehicle;
@@ -861,13 +861,13 @@ void cClientMoveJob::init(const cPosition& source_, cVehicle* Vehicle)
 	iSavedSpeed = 0;
 	bSuspended = false;
 
-	if (Vehicle->getClientMoveJob ())
+	if (Vehicle->getClientMoveJob())
 	{
-		Vehicle->getClientMoveJob ()->release ();
+		Vehicle->getClientMoveJob()->release();
 		Vehicle->setMoving (false);
 		Vehicle->MoveJobActive = false;
 	}
-	Vehicle->setClientMoveJob(this);
+	Vehicle->setClientMoveJob (this);
 	endMoveAction = nullptr;
 }
 
@@ -909,7 +909,7 @@ bool cClientMoveJob::generateFromMessage (cNetMessage& message)
 	return true;
 }
 
-sWaypoint* cClientMoveJob::calcPath(const cMap& map, const cPosition& source, const cPosition& destination, const cVehicle& vehicle, const std::vector<cVehicle*>* group)
+sWaypoint* cClientMoveJob::calcPath (const cMap& map, const cPosition& source, const cPosition& destination, const cVehicle& vehicle, const std::vector<cVehicle*>* group)
 {
 	if (source == destination) return 0;
 
@@ -937,7 +937,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 	{
 		Log.write (" Client: Client has already reached the last field", cLog::eLOG_TYPE_NET_DEBUG);
 		bEndForNow = true;
-		Vehicle->setMovementOffset(cPosition(0, 0));
+		Vehicle->setMovementOffset (cPosition (0, 0));
 		return;
 	}
 
@@ -953,24 +953,24 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			if (bEndForNow)
 			{
 				bEndForNow = false;
-				client->addActiveMoveJob (*Vehicle->getClientMoveJob ());
+				client->addActiveMoveJob (*Vehicle->getClientMoveJob());
 				Log.write (" Client: reactivated movejob; Vehicle-ID: " + iToStr (Vehicle->iID), cLog::eLOG_TYPE_NET_DEBUG);
 			}
 			Vehicle->MoveJobActive = true;
-			if (Vehicle->isUnitMoving ()) doEndMoveVehicle ();
+			if (Vehicle->isUnitMoving()) doEndMoveVehicle();
 
 			Vehicle->setMoving (true);
 			Map->moveVehicle (*Vehicle, Waypoints->next->position);
 
-			Vehicle->data.setSpeed(Vehicle->data.getSpeed() + this->iSavedSpeed);
+			Vehicle->data.setSpeed (Vehicle->data.getSpeed() + this->iSavedSpeed);
 			this->iSavedSpeed = 0;
 			Vehicle->DecSpeed (Waypoints->next->Costs);
 
 			//Vehicle->owner->doScan();
-			Vehicle->setMovementOffset(cPosition(0, 0));
+			Vehicle->setMovementOffset (cPosition (0, 0));
 			setOffset (Vehicle, iNextDir, -64);
 
-			if (Vehicle->data.factorAir > 0 && Vehicle->getFlightHeight () < 64)
+			if (Vehicle->data.factorAir > 0 && Vehicle->getFlightHeight() < 64)
 			{
 				client->addJob (new cPlaneTakeoffJob (*Vehicle, true));
 			}
@@ -981,10 +981,10 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 		case MJOB_STOP:
 		{
 			Log.write (" Client: The movejob will end for now", cLog::eLOG_TYPE_NET_DEBUG);
-			if (Vehicle->isUnitMoving ()) doEndMoveVehicle ();
+			if (Vehicle->isUnitMoving()) doEndMoveVehicle();
 			if (bEndForNow) client->addActiveMoveJob (*this);
 			this->iSavedSpeed = iSavedSpeed;
-			Vehicle->data.setSpeed(0);
+			Vehicle->data.setSpeed (0);
 			bSuspended = true;
 			bEndForNow = true;
 		}
@@ -992,16 +992,16 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 		case MJOB_FINISHED:
 		{
 			Log.write (" Client: The movejob is finished", cLog::eLOG_TYPE_NET_DEBUG);
-			if (Vehicle->isUnitMoving ()) doEndMoveVehicle ();
+			if (Vehicle->isUnitMoving()) doEndMoveVehicle();
 			release();
 		}
 		break;
 		case MJOB_BLOCKED:
 		{
-			if (Vehicle->isUnitMoving ()) doEndMoveVehicle ();
+			if (Vehicle->isUnitMoving()) doEndMoveVehicle();
 			Log.write (" Client: next field is blocked: DestX: " + iToStr (Waypoints->next->position.x()) + ", DestY: " + iToStr (Waypoints->next->position.y()), cLog::eLOG_TYPE_NET_DEBUG);
 
-			if (Vehicle->getOwner () != &client->getActivePlayer ())
+			if (Vehicle->getOwner() != &client->getActivePlayer())
 			{
 				bFinished = true;
 				break;
@@ -1027,7 +1027,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 
 void cClientMoveJob::moveVehicle()
 {
-	if (Vehicle == nullptr || Vehicle->getClientMoveJob () != this) return;
+	if (Vehicle == nullptr || Vehicle->getClientMoveJob() != this) return;
 
 	// do not move the vehicle, if the movejob hasn't got any more waypoints
 	if (Waypoints == nullptr || Waypoints->next == nullptr)
@@ -1036,7 +1036,7 @@ void cClientMoveJob::moveVehicle()
 		return;
 	}
 
-	if (!Vehicle->isUnitMoving ())
+	if (!Vehicle->isUnitMoving())
 	{
 		//check remaining speed
 		if (Vehicle->data.getSpeed() < Waypoints->next->Costs)
@@ -1047,17 +1047,17 @@ void cClientMoveJob::moveVehicle()
 			return;
 		}
 
-		Vehicle->data.setSpeed(Vehicle->data.getSpeed() + iSavedSpeed);
+		Vehicle->data.setSpeed (Vehicle->data.getSpeed() + iSavedSpeed);
 		iSavedSpeed = 0;
 		Vehicle->DecSpeed (Waypoints->next->Costs);
 
 		Map->moveVehicle (*Vehicle, Waypoints->next->position);
-		Vehicle->getOwner ()->doScan ();
-		Vehicle->setMovementOffset(cPosition(0, 0));
+		Vehicle->getOwner()->doScan();
+		Vehicle->setMovementOffset (cPosition (0, 0));
 		setOffset (Vehicle, iNextDir, -64);
 		Vehicle->setMoving (true);
 
-		if (Vehicle->data.factorAir > 0 && Vehicle->getFlightHeight () < 64)
+		if (Vehicle->data.factorAir > 0 && Vehicle->getFlightHeight() < 64)
 		{
 			client->addJob (new cPlaneTakeoffJob (*Vehicle, true));
 		}
@@ -1068,7 +1068,7 @@ void cClientMoveJob::moveVehicle()
 	int iSpeed;
 	if (Vehicle->data.animationMovement)
 	{
-		if (client->getGameTimer ()->timer50ms)
+		if (client->getGameTimer()->timer50ms)
 			Vehicle->WalkFrame++;
 		if (Vehicle->WalkFrame >= 13) Vehicle->WalkFrame = 1;
 		iSpeed = MOVE_SPEED / 2;
@@ -1076,7 +1076,7 @@ void cClientMoveJob::moveVehicle()
 	else if (! (Vehicle->data.factorAir > 0) && ! (Vehicle->data.factorSea > 0 && Vehicle->data.factorGround == 0))
 	{
 		iSpeed = MOVE_SPEED;
-		cBuilding* building = Map->getField(Waypoints->next->position).getBaseBuilding();
+		cBuilding* building = Map->getField (Waypoints->next->position).getBaseBuilding();
 		if (Waypoints && Waypoints->next && building && building->data.modifiesSpeed) iSpeed = (int) (iSpeed / building->data.modifiesSpeed);
 	}
 	else if (Vehicle->data.factorAir > 0) iSpeed = MOVE_SPEED * 2;
@@ -1085,23 +1085,23 @@ void cClientMoveJob::moveVehicle()
 	// Ggf Tracks malen:
 	if (cSettings::getInstance().isMakeTracks() && Vehicle->data.makeTracks && !Map->isWaterOrCoast (Vehicle->getPosition()) && !
 		(Waypoints && Waypoints->next && Map->isWater (Waypoints->next->position)) &&
-		(Vehicle->getOwner () == &client->getActivePlayer () || client->getActivePlayer ().canSeeAnyAreaUnder (*Vehicle)))
+		(Vehicle->getOwner() == &client->getActivePlayer() || client->getActivePlayer().canSeeAnyAreaUnder (*Vehicle)))
 	{
 		if (abs (Vehicle->getMovementOffset().x()) == 64 || abs (Vehicle->getMovementOffset().y()) == 64)
 		{
 			switch (Vehicle->dir)
 			{
 				case 0:
-					client->addFx (std::make_shared<cFxTracks> (Vehicle->getPosition() * 64 + Vehicle->getMovementOffset() - cPosition(0, 10), 0));
+					client->addFx (std::make_shared<cFxTracks> (Vehicle->getPosition() * 64 + Vehicle->getMovementOffset() - cPosition (0, 10), 0));
 					break;
 				case 4:
-					client->addFx (std::make_shared<cFxTracks> (Vehicle->getPosition() * 64 + Vehicle->getMovementOffset() + cPosition(0, 10), 0));
+					client->addFx (std::make_shared<cFxTracks> (Vehicle->getPosition() * 64 + Vehicle->getMovementOffset() + cPosition (0, 10), 0));
 					break;
 				case 2:
-					client->addFx (std::make_shared<cFxTracks> (Vehicle->getPosition() * 64 + Vehicle->getMovementOffset() + cPosition(10, 0), 2));
+					client->addFx (std::make_shared<cFxTracks> (Vehicle->getPosition() * 64 + Vehicle->getMovementOffset() + cPosition (10, 0), 2));
 					break;
 				case 6:
-					client->addFx (std::make_shared<cFxTracks> (Vehicle->getPosition() * 64 + Vehicle->getMovementOffset() - cPosition(10, 0), 2));
+					client->addFx (std::make_shared<cFxTracks> (Vehicle->getPosition() * 64 + Vehicle->getMovementOffset() - cPosition (10, 0), 2));
 					break;
 				case 1:
 				case 5:
@@ -1118,16 +1118,16 @@ void cClientMoveJob::moveVehicle()
 			switch (Vehicle->dir)
 			{
 				case 1:
-					client->addFx (std::make_shared<cFxTracks> (Vehicle->getPosition() * 64 + Vehicle->getMovementOffset() + cPosition(26, -26), 1));
+					client->addFx (std::make_shared<cFxTracks> (Vehicle->getPosition() * 64 + Vehicle->getMovementOffset() + cPosition (26, -26), 1));
 					break;
 				case 5:
-					client->addFx (std::make_shared<cFxTracks> (Vehicle->getPosition() * 64 + Vehicle->getMovementOffset() + cPosition(-26, 26), 1));
+					client->addFx (std::make_shared<cFxTracks> (Vehicle->getPosition() * 64 + Vehicle->getMovementOffset() + cPosition (-26, 26), 1));
 					break;
 				case 3:
-					client->addFx (std::make_shared<cFxTracks> (Vehicle->getPosition() * 64 + Vehicle->getMovementOffset() + cPosition(26, 26), 3));
+					client->addFx (std::make_shared<cFxTracks> (Vehicle->getPosition() * 64 + Vehicle->getMovementOffset() + cPosition (26, 26), 3));
 					break;
 				case 7:
-					client->addFx (std::make_shared<cFxTracks> (Vehicle->getPosition() * 64 + Vehicle->getMovementOffset() + cPosition(-26, -26), 3));
+					client->addFx (std::make_shared<cFxTracks> (Vehicle->getPosition() * 64 + Vehicle->getMovementOffset() + cPosition (-26, -26), 3));
 					break;
 			}
 		}
@@ -1143,7 +1143,7 @@ void cClientMoveJob::moveVehicle()
 
 void cClientMoveJob::doEndMoveVehicle()
 {
-	if (Vehicle == nullptr || Vehicle->getClientMoveJob () != this) return;
+	if (Vehicle == nullptr || Vehicle->getClientMoveJob() != this) return;
 
 	if (Waypoints->next == nullptr)
 	{
@@ -1160,13 +1160,13 @@ void cClientMoveJob::doEndMoveVehicle()
 
 	Vehicle->setMoving (false);
 
-	Vehicle->setMovementOffset(cPosition(0, 0));
+	Vehicle->setMovementOffset (cPosition (0, 0));
 
-	Vehicle->getOwner ()->doScan ();
+	Vehicle->getOwner()->doScan();
 
 	calcNextDir();
 
-	if (Vehicle->canLand (*client->getMap ()) && Vehicle->getFlightHeight() > 0)
+	if (Vehicle->canLand (*client->getMap()) && Vehicle->getFlightHeight() > 0)
 	{
 		client->addJob (new cPlaneTakeoffJob (*Vehicle, false));
 	}
@@ -1195,10 +1195,10 @@ void cClientMoveJob::drawArrow (SDL_Rect Dest, SDL_Rect* LastDest, bool bSpezial
 
 	if (bSpezial)
 	{
-		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[iIndex][64 - Dest.w].get (), nullptr, cVideo::buffer, &Dest);
+		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[iIndex][64 - Dest.w].get(), nullptr, cVideo::buffer, &Dest);
 	}
 	else
 	{
-		SDL_BlitSurface (OtherData.WayPointPfeile[iIndex][64 - Dest.w].get (), nullptr, cVideo::buffer, &Dest);
+		SDL_BlitSurface (OtherData.WayPointPfeile[iIndex][64 - Dest.w].get(), nullptr, cVideo::buffer, &Dest);
 	}
 }

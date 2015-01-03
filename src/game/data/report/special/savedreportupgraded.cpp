@@ -31,9 +31,9 @@ cSavedReportUpgraded::cSavedReportUpgraded (const sID& unitId_, int unitsCount_,
 //------------------------------------------------------------------------------
 cSavedReportUpgraded::cSavedReportUpgraded (cNetMessage& message)
 {
-	costs = message.popInt32 ();
-	unitsCount = message.popInt32 ();
-	unitId = message.popID ();
+	costs = message.popInt32();
+	unitsCount = message.popInt32();
+	unitId = message.popID();
 }
 
 //------------------------------------------------------------------------------
@@ -57,28 +57,28 @@ void cSavedReportUpgraded::pushInto (cNetMessage& message) const
 //------------------------------------------------------------------------------
 void cSavedReportUpgraded::pushInto (tinyxml2::XMLElement& element) const
 {
-	element.SetAttribute ("id", unitId.getText ().c_str ());
-	element.SetAttribute ("unitsCount", iToStr (unitsCount).c_str ());
-	element.SetAttribute ("costs", iToStr (costs).c_str ());
+	element.SetAttribute ("id", unitId.getText().c_str());
+	element.SetAttribute ("unitsCount", iToStr (unitsCount).c_str());
+	element.SetAttribute ("costs", iToStr (costs).c_str());
 
 	cSavedReport::pushInto (element);
 }
 
 //------------------------------------------------------------------------------
-eSavedReportType cSavedReportUpgraded::getType () const
+eSavedReportType cSavedReportUpgraded::getType() const
 {
 	return eSavedReportType::Upgraded;
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportUpgraded::getMessage () const
+std::string cSavedReportUpgraded::getMessage() const
 {
-	const auto& unitName = unitId.getUnitDataOriginalVersion ()->name;
+	const auto& unitName = unitId.getUnitDataOriginalVersion()->name;
 	return lngPack.i18n ("Text~Comp~Upgrades_Done") + " " + iToStr (unitsCount) + " " + lngPack.i18n ("Text~Comp~Upgrades_Done2", unitName) + " (" + lngPack.i18n ("Text~Others~Costs") + ": " + iToStr (costs) + ")";
 }
 
 //------------------------------------------------------------------------------
-bool cSavedReportUpgraded::isAlert () const
+bool cSavedReportUpgraded::isAlert() const
 {
 	return false;
 }

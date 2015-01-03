@@ -32,7 +32,7 @@
 void applyUnitUpgrades (cPlayer& player, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades);
 
 //------------------------------------------------------------------------------
-cLocalHotSeatGameNew::cLocalHotSeatGameNew ()
+cLocalHotSeatGameNew::cLocalHotSeatGameNew()
 {}
 
 //------------------------------------------------------------------------------
@@ -46,12 +46,12 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 
 	server->setGameSettings (*gameSettings);
 
-	clients.resize (playersData.size ());
+	clients.resize (playersData.size());
 
 	std::vector<cPlayerBasicData> players;
-	for (size_t i = 0; i < playersData.size (); ++i)
+	for (size_t i = 0; i < playersData.size(); ++i)
 	{
-		clients[i] = std::make_shared<cClient> (server.get (), nullptr);
+		clients[i] = std::make_shared<cClient> (server.get(), nullptr);
 		clients[i]->setMap (staticMap);
 		clients[i]->setGameSettings (*gameSettings);
 
@@ -60,7 +60,7 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 		auto serverPlayer = std::make_unique<cPlayer> (playersData[i].basicData);
 		auto& playerRef = *serverPlayer;
 
-		serverPlayer->setLocal ();
+		serverPlayer->setLocal();
 		server->addPlayer (std::move (serverPlayer));
 
 		if (i == 0)
@@ -69,16 +69,16 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 		}
 	}
 
-	server->start ();
+	server->start();
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
-	for (size_t i = 0; i < playersData.size (); ++i)
+	for (size_t i = 0; i < playersData.size(); ++i)
 	{
 		clients[i]->setPlayers (players, i);
 
-		auto& clientPlayer = clients[i]->getActivePlayer ();
-		if (gameSettings->getClansEnabled ()) clientPlayer.setClan (playersData[i].clan);
+		auto& clientPlayer = clients[i]->getActivePlayer();
+		if (gameSettings->getClansEnabled()) clientPlayer.setClan (playersData[i].clan);
 
 		applyUnitUpgrades (clientPlayer, playersData[i].unitUpgrades);
 
@@ -95,21 +95,21 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 		gameGuiController->addPlayerGameGuiState (clientPlayer, gameGuiState);
 	}
 
-	server->startTurnTimers ();
+	server->startTurnTimers();
 
-	auto activePlayer = server->getActiveTurnPlayer ();
+	auto activePlayer = server->getActiveTurnPlayer();
 	assert (activePlayer != nullptr);
 
-	gameGuiController->setClients (clients, activePlayer->getNr ());
+	gameGuiController->setClients (clients, activePlayer->getNr());
 
-	gameGuiController->start ();
+	gameGuiController->start();
 
 	using namespace std::placeholders;
 	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cLocalHotSeatGameNew::save, this, _1, _2));
 
 	terminate = false;
 
-	application.addRunnable (shared_from_this ());
+	application.addRunnable (shared_from_this());
 
 	signalConnectionManager.connect (gameGuiController->terminated, [&]() { terminate = true; });
 }
@@ -129,9 +129,9 @@ void cLocalHotSeatGameNew::setStaticMap (std::shared_ptr<cStaticMap> staticMap_)
 //------------------------------------------------------------------------------
 void cLocalHotSeatGameNew::setPlayers (const std::vector<cPlayerBasicData>& players)
 {
-	playersData.clear ();
-	playersData.resize (players.size ());
-	for (size_t i = 0; i < players.size (); ++i)
+	playersData.clear();
+	playersData.resize (players.size());
+	for (size_t i = 0; i < players.size(); ++i)
 	{
 		playersData[i].basicData = players[i];
 	}
@@ -162,21 +162,21 @@ void cLocalHotSeatGameNew::setLandingPosition (size_t playerIndex, const cPositi
 }
 
 //------------------------------------------------------------------------------
-const std::shared_ptr<cStaticMap>& cLocalHotSeatGameNew::getStaticMap ()
+const std::shared_ptr<cStaticMap>& cLocalHotSeatGameNew::getStaticMap()
 {
 	return staticMap;
 }
 
 //------------------------------------------------------------------------------
-const std::shared_ptr<cGameSettings>& cLocalHotSeatGameNew::getGameSettings ()
+const std::shared_ptr<cGameSettings>& cLocalHotSeatGameNew::getGameSettings()
 {
 	return gameSettings;
 }
 
 //------------------------------------------------------------------------------
-size_t cLocalHotSeatGameNew::getPlayerCount () const
+size_t cLocalHotSeatGameNew::getPlayerCount() const
 {
-	return playersData.size ();
+	return playersData.size();
 }
 
 //------------------------------------------------------------------------------

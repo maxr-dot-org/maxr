@@ -28,75 +28,75 @@ cMouseCursorSimple::cMouseCursorSimple (eMouseCursorSimpleType type_) :
 {}
 
 //------------------------------------------------------------------------------
-SDL_Surface* cMouseCursorSimple::getSurface () const
+SDL_Surface* cMouseCursorSimple::getSurface() const
 {
 	switch (type)
 	{
-	case eMouseCursorSimpleType::Hand:
-		return GraphicsData.gfx_Chand.get ();
-	case eMouseCursorSimpleType::No:
-		return GraphicsData.gfx_Cno.get ();
-	case eMouseCursorSimpleType::Select:
-		return GraphicsData.gfx_Cselect.get ();
-	case eMouseCursorSimpleType::Move:
-		return GraphicsData.gfx_Cmove.get ();
-	case eMouseCursorSimpleType::ArrowLeftDown:
-		return GraphicsData.gfx_Cpfeil1.get ();
-	case eMouseCursorSimpleType::ArrowDown:
-		return GraphicsData.gfx_Cpfeil2.get ();
-	case eMouseCursorSimpleType::ArrowRightDown:
-		return GraphicsData.gfx_Cpfeil3.get ();
-	case eMouseCursorSimpleType::ArrowLeft:
-		return GraphicsData.gfx_Cpfeil4.get ();
-	case eMouseCursorSimpleType::ArrowRight:
-		return GraphicsData.gfx_Cpfeil6.get ();
-	case eMouseCursorSimpleType::ArrowLeftUp:
-		return GraphicsData.gfx_Cpfeil7.get ();
-	case eMouseCursorSimpleType::ArrowUp:
-		return GraphicsData.gfx_Cpfeil8.get ();
-	case eMouseCursorSimpleType::ArrowRightUp:
-		return GraphicsData.gfx_Cpfeil9.get ();
-	case eMouseCursorSimpleType::Help:
-		return GraphicsData.gfx_Chelp.get ();
-	case eMouseCursorSimpleType::Band:
-		return GraphicsData.gfx_Cband.get ();
-	case eMouseCursorSimpleType::Transfer:
-		return GraphicsData.gfx_Ctransf.get ();
-	case eMouseCursorSimpleType::Load:
-		return GraphicsData.gfx_Cload.get ();
-	case eMouseCursorSimpleType::Muni:
-		return GraphicsData.gfx_Cmuni.get ();
-	case eMouseCursorSimpleType::Repair:
-		return GraphicsData.gfx_Crepair.get ();
-	case eMouseCursorSimpleType::Activate:
-		return GraphicsData.gfx_Cactivate.get ();
-	case eMouseCursorSimpleType::MoveDraft:
-		return GraphicsData.gfx_Cmove_draft.get ();
-	default:
-		assert (false);
+		case eMouseCursorSimpleType::Hand:
+			return GraphicsData.gfx_Chand.get();
+		case eMouseCursorSimpleType::No:
+			return GraphicsData.gfx_Cno.get();
+		case eMouseCursorSimpleType::Select:
+			return GraphicsData.gfx_Cselect.get();
+		case eMouseCursorSimpleType::Move:
+			return GraphicsData.gfx_Cmove.get();
+		case eMouseCursorSimpleType::ArrowLeftDown:
+			return GraphicsData.gfx_Cpfeil1.get();
+		case eMouseCursorSimpleType::ArrowDown:
+			return GraphicsData.gfx_Cpfeil2.get();
+		case eMouseCursorSimpleType::ArrowRightDown:
+			return GraphicsData.gfx_Cpfeil3.get();
+		case eMouseCursorSimpleType::ArrowLeft:
+			return GraphicsData.gfx_Cpfeil4.get();
+		case eMouseCursorSimpleType::ArrowRight:
+			return GraphicsData.gfx_Cpfeil6.get();
+		case eMouseCursorSimpleType::ArrowLeftUp:
+			return GraphicsData.gfx_Cpfeil7.get();
+		case eMouseCursorSimpleType::ArrowUp:
+			return GraphicsData.gfx_Cpfeil8.get();
+		case eMouseCursorSimpleType::ArrowRightUp:
+			return GraphicsData.gfx_Cpfeil9.get();
+		case eMouseCursorSimpleType::Help:
+			return GraphicsData.gfx_Chelp.get();
+		case eMouseCursorSimpleType::Band:
+			return GraphicsData.gfx_Cband.get();
+		case eMouseCursorSimpleType::Transfer:
+			return GraphicsData.gfx_Ctransf.get();
+		case eMouseCursorSimpleType::Load:
+			return GraphicsData.gfx_Cload.get();
+		case eMouseCursorSimpleType::Muni:
+			return GraphicsData.gfx_Cmuni.get();
+		case eMouseCursorSimpleType::Repair:
+			return GraphicsData.gfx_Crepair.get();
+		case eMouseCursorSimpleType::Activate:
+			return GraphicsData.gfx_Cactivate.get();
+		case eMouseCursorSimpleType::MoveDraft:
+			return GraphicsData.gfx_Cmove_draft.get();
+		default:
+			assert (false);
 	}
-	return GraphicsData.gfx_Chand.get ();
+	return GraphicsData.gfx_Chand.get();
 }
 
 //------------------------------------------------------------------------------
-cPosition cMouseCursorSimple::getHotPoint () const
+cPosition cMouseCursorSimple::getHotPoint() const
 {
 	switch (type)
 	{
-	case eMouseCursorSimpleType::Select:
-	case eMouseCursorSimpleType::Help:
-	case eMouseCursorSimpleType::Move:
-	case eMouseCursorSimpleType::MoveDraft:
-	case eMouseCursorSimpleType::No:
-	case eMouseCursorSimpleType::Transfer:
-	case eMouseCursorSimpleType::Band:
-	case eMouseCursorSimpleType::Load:
-	case eMouseCursorSimpleType::Muni:
-	case eMouseCursorSimpleType::Repair:
-	case eMouseCursorSimpleType::Activate:
-		return cPosition (12, 12);
-	default:
-		return cPosition (0, 0);
+		case eMouseCursorSimpleType::Select:
+		case eMouseCursorSimpleType::Help:
+		case eMouseCursorSimpleType::Move:
+		case eMouseCursorSimpleType::MoveDraft:
+		case eMouseCursorSimpleType::No:
+		case eMouseCursorSimpleType::Transfer:
+		case eMouseCursorSimpleType::Band:
+		case eMouseCursorSimpleType::Load:
+		case eMouseCursorSimpleType::Muni:
+		case eMouseCursorSimpleType::Repair:
+		case eMouseCursorSimpleType::Activate:
+			return cPosition (12, 12);
+		default:
+			return cPosition (0, 0);
 	}
 	return cPosition (0, 0);
 }
@@ -104,6 +104,6 @@ cPosition cMouseCursorSimple::getHotPoint () const
 //------------------------------------------------------------------------------
 bool cMouseCursorSimple::equal (const cMouseCursor& other) const
 {
-	auto other2 = dynamic_cast<const cMouseCursorSimple*>(&other);
+	auto other2 = dynamic_cast<const cMouseCursorSimple*> (&other);
 	return other2 && other2->type == type;
 }

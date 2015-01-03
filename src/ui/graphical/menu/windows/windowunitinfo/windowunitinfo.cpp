@@ -30,33 +30,33 @@
 cWindowUnitInfo::cWindowUnitInfo (const sUnitData& unitData, const cPlayer& owner) :
 	cWindow (LoadPCX (GFXOD_HELP), eWindowBackgrounds::Black)
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (328, 12), getPosition () + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Unitinfo"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Unitinfo"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 	auto infoImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (11, 13)));
 
-	auto infoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (344, 67), getPosition () + cPosition (344 + 279, 67 + 176)), "", FONT_LATIN_NORMAL, eAlignmentType::Left));
+	auto infoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (344, 67), getPosition() + cPosition (344 + 279, 67 + 176)), "", FONT_LATIN_NORMAL, eAlignmentType::Left));
 	infoLabel->setWordWrap (true);
 
-	auto unitDetails = addChild (std::make_unique<cUnitDetails> (getPosition () + cPosition (16, 297)));
+	auto unitDetails = addChild (std::make_unique<cUnitDetails> (getPosition() + cPosition (16, 297)));
 
-	auto okButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (447, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
+	auto okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (447, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
 	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
-	signalConnectionManager.connect (okButton->clicked, [&](){ close (); });
+	signalConnectionManager.connect (okButton->clicked, [&]() { close(); });
 
-	if (unitData.ID.isAVehicle ())
+	if (unitData.ID.isAVehicle())
 	{
 		const auto& uiData = *UnitsData.getVehicleUI (unitData.ID);
 
-		infoImage->setImage (uiData.info.get ());
+		infoImage->setImage (uiData.info.get());
 	}
-	else if (unitData.ID.isABuilding ())
+	else if (unitData.ID.isABuilding())
 	{
 		const auto& uiData = *UnitsData.getBuildingUI (unitData.ID);
 
-        infoImage->setImage (uiData.info.get ());
+		infoImage->setImage (uiData.info.get());
 	}
 
-	infoLabel->setText (unitData.ID.getUnitDataOriginalVersion ()->description);
+	infoLabel->setText (unitData.ID.getUnitDataOriginalVersion()->description);
 
 	unitDetails->setUnit (unitData.ID, owner, &unitData);
 }

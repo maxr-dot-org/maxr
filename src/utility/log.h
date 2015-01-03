@@ -112,7 +112,7 @@ public:
 	* Writes a marker into logfile - please use only veeeery few times!
 	*/
 	void mark();
-	
+
 	bool isInitialized() const;
 } EX Log;
 

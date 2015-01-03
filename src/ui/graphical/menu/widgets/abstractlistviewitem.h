@@ -33,7 +33,7 @@ class cAbstractListViewItem : public cWidget
 	template<typename T>
 	friend class cListView;
 public:
-	cAbstractListViewItem ();
+	cAbstractListViewItem();
 
 	explicit cAbstractListViewItem (const cPosition& size);
 
@@ -41,10 +41,10 @@ public:
 
 	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
 protected:
-	void select ();
-	void deselect ();
+	void select();
+	void deselect();
 
-	bool isSelected ();
+	bool isSelected();
 
 private:
 	bool selected;

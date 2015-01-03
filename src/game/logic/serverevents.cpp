@@ -84,8 +84,8 @@ void sendDeleteUnit (cServer& server, const cUnit& unit, const cPlayer* receiver
 			sendDeleteUnitMessage (server, unit, *unit.seenByPlayerList[i]);
 
 		//send message to owner, since he is not in the seenByPlayerList
-		if (unit.getOwner () != 0)
-			sendDeleteUnitMessage (server, unit, *unit.getOwner ());
+		if (unit.getOwner() != 0)
+			sendDeleteUnitMessage (server, unit, *unit.getOwner());
 	}
 	else
 		sendDeleteUnitMessage (server, unit, *receiver);
@@ -96,13 +96,13 @@ void sendAddEnemyUnit (cServer& server, const cUnit& unit, const cPlayer& receiv
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (unit.isABuilding() ? GAME_EV_ADD_ENEM_BUILDING : GAME_EV_ADD_ENEM_VEHICLE));
 
-	message->pushInt16 (unit.data.getVersion ());
+	message->pushInt16 (unit.data.getVersion());
 	message->pushInt16 (unit.iID);
 	if (unit.isAVehicle())
 		message->pushInt16 (unit.dir);
 	message->pushPosition (unit.getPosition());
 	message->pushID (unit.data.ID);
-	message->pushInt16 (unit.getOwner ()->getNr ());
+	message->pushInt16 (unit.getOwner()->getNr());
 
 	server.sendNetMessage (message, &receiver);
 }
@@ -122,7 +122,7 @@ void sendTurnFinished (cServer& server, const cPlayer& playerWhoEndedTurn, const
 
 	if (nextPlayer)
 	{
-		message->pushInt16 (nextPlayer->getNr ());
+		message->pushInt16 (nextPlayer->getNr());
 		message->pushBool (true);
 	}
 	else
@@ -162,25 +162,25 @@ void sendUnitData (cServer& server, const cUnit& unit, const cPlayer& receiver)
 	// The unit data values
 	if (unit.isAVehicle())
 	{
-		message->pushInt16 (static_cast<const cVehicle*> (&unit)->getFlightHeight ());
+		message->pushInt16 (static_cast<const cVehicle*> (&unit)->getFlightHeight());
 		message->pushInt16 (unit.data.getSpeedMax());
 		message->pushInt16 (unit.data.getSpeed());
 	}
-	message->pushInt16 (unit.data.getVersion ());
+	message->pushInt16 (unit.data.getVersion());
 	message->pushInt16 (unit.data.getHitpointsMax());
-	message->pushInt16 (unit.data.getHitpoints ());
-	message->pushInt16 (unit.data.getArmor ());
-	message->pushInt16 (unit.data.getScan ());
-	message->pushInt16 (unit.data.getRange ());
+	message->pushInt16 (unit.data.getHitpoints());
+	message->pushInt16 (unit.data.getArmor());
+	message->pushInt16 (unit.data.getScan());
+	message->pushInt16 (unit.data.getRange());
 	message->pushInt16 (unit.data.getShotsMax());
-	message->pushInt16 (unit.data.getShots ());
-	message->pushInt16 (unit.data.getDamage ());
+	message->pushInt16 (unit.data.getShots());
+	message->pushInt16 (unit.data.getDamage());
 	message->pushInt16 (unit.data.storageUnitsMax);
-	message->pushInt16 (unit.data.getStoredUnits ());
+	message->pushInt16 (unit.data.getStoredUnits());
 	message->pushInt16 (unit.data.storageResMax);
-	message->pushInt16 (unit.data.getStoredResources ());
+	message->pushInt16 (unit.data.getStoredResources());
 	message->pushInt16 (unit.data.getAmmoMax());
-	message->pushInt16 (unit.data.getAmmo ());
+	message->pushInt16 (unit.data.getAmmo());
 	message->pushInt16 (unit.data.buildCosts);
 
 	// Current state of the unit
@@ -196,23 +196,23 @@ void sendUnitData (cServer& server, const cUnit& unit, const cPlayer& receiver)
 	if (unit.isAVehicle())
 	{
 		const cVehicle& vehicle = *static_cast<const cVehicle*> (&unit);
-		message->pushInt16 (vehicle.getClearingTurns ());
-		message->pushInt16 (vehicle.getBuildTurns ());
-		message->pushBool (vehicle.isUnitBuildingABuilding ());
-		message->pushBool (vehicle.isUnitClearing ());
+		message->pushInt16 (vehicle.getClearingTurns());
+		message->pushInt16 (vehicle.getBuildTurns());
+		message->pushBool (vehicle.isUnitBuildingABuilding());
+		message->pushBool (vehicle.isUnitClearing());
 		message->pushInt16 ((int) vehicle.getCommandoRank());
 	}
 	else
 	{
 		const cBuilding& building = *static_cast<const cBuilding*> (&unit);
-		message->pushBool (building.isUnitWorking ());
+		message->pushBool (building.isUnitWorking());
 		message->pushInt16 (building.getResearchArea());
 	}
 
 	message->pushInt16 (unit.getDisabledTurns());
 
-	message->pushBool (unit.isBeeingAttacked ());
-	message->pushBool (unit.isAttacking ());
+	message->pushBool (unit.isBeeingAttacked());
+	message->pushBool (unit.isAttacking());
 
 	if (unit.isNameOriginal() == false)
 	{
@@ -229,7 +229,7 @@ void sendUnitData (cServer& server, const cUnit& unit, const cPlayer& receiver)
 	message->pushPosition (unit.getPosition());
 	message->pushBool (unit.isAVehicle());
 	message->pushInt16 (unit.iID);
-	message->pushInt16 (unit.getOwner ()->getNr ());
+	message->pushInt16 (unit.getOwner()->getNr());
 
 	server.sendNetMessage (message, &receiver);
 }
@@ -237,14 +237,14 @@ void sendUnitData (cServer& server, const cUnit& unit, const cPlayer& receiver)
 //------------------------------------------------------------------------------
 void sendUnitData (cServer& server, const cUnit& unit)
 {
-    if (unit.getOwner ())
-    {
-        sendUnitData (server, unit, *unit.getOwner ());
-    }
-    for (size_t i = 0; i < unit.seenByPlayerList.size (); ++i)
-    {
-        sendUnitData (server, unit, *unit.seenByPlayerList[i]);
-    }
+	if (unit.getOwner())
+	{
+		sendUnitData (server, unit, *unit.getOwner());
+	}
+	for (size_t i = 0; i < unit.seenByPlayerList.size(); ++i)
+	{
+		sendUnitData (server, unit, *unit.seenByPlayerList[i]);
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -253,10 +253,10 @@ void sendSpecificUnitData (cServer& server, const cVehicle& vehicle)
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_SPECIFIC_UNIT_DATA));
 	message->pushPosition (vehicle.bandPosition);
 	message->pushBool (vehicle.BuildPath);
-	message->pushID (vehicle.getBuildingType ());
+	message->pushID (vehicle.getBuildingType());
 	message->pushInt16 (vehicle.dir);
 	message->pushInt16 (vehicle.iID);
-	server.sendNetMessage (message, vehicle.getOwner ());
+	server.sendNetMessage (message, vehicle.getOwner());
 }
 
 //------------------------------------------------------------------------------
@@ -269,7 +269,7 @@ void sendDoStartWork (cServer& server, const cBuilding& building)
 		const auto& player = *playerList[i];
 
 		//do not send to players who can't see the building
-		if (!player.canSeeAnyAreaUnder (building) && &player != building.getOwner ()) continue;
+		if (!player.canSeeAnyAreaUnder (building) && &player != building.getOwner()) continue;
 
 		AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_DO_START_WORK));
 		message->pushInt32 (building.iID);
@@ -287,7 +287,7 @@ void sendDoStopWork (cServer& server, const cBuilding& building)
 		const auto& player = *playerList[i];
 
 		//do not send to players who can't see the building
-		if (!player.canSeeAnyAreaUnder (building) && &player != building.getOwner ()) continue;
+		if (!player.canSeeAnyAreaUnder (building) && &player != building.getOwner()) continue;
 
 		AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_DO_STOP_WORK));
 		message->pushInt32 (building.iID);
@@ -311,7 +311,7 @@ void sendNextMove (cServer& server, const cVehicle& vehicle, int iType, int iSav
 	if (iSavedSpeed >= 0) message->pushChar (iSavedSpeed);
 	message->pushChar (iType);
 	message->pushInt16 (vehicle.iID);
-	server.sendNetMessage (message, vehicle.getOwner ());
+	server.sendNetMessage (message, vehicle.getOwner());
 }
 
 //------------------------------------------------------------------------------
@@ -362,7 +362,7 @@ void sendVehicleResources (cServer& server, const cVehicle& vehicle)
 		for (int x = minx; x <= maxx; ++x)
 		{
 			const cPosition position (x, y);
-			if (vehicle.getOwner ()->hasResourceExplored (position)) continue;
+			if (vehicle.getOwner()->hasResourceExplored (position)) continue;
 
 			const sResources& resource = map.getResource (position);
 			message->pushInt16 (resource.value);
@@ -373,7 +373,7 @@ void sendVehicleResources (cServer& server, const cVehicle& vehicle)
 	}
 	message->pushInt16 (iCount);
 
-	server.sendNetMessage (message, vehicle.getOwner ());
+	server.sendNetMessage (message, vehicle.getOwner());
 }
 
 //------------------------------------------------------------------------------
@@ -381,9 +381,9 @@ void sendResources (cServer& server, const cPlayer& player)
 {
 	int iCount = 0;
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_RESOURCES));
-	for (int x = 0; x != server.Map->getSize ().x (); ++x)
+	for (int x = 0; x != server.Map->getSize().x(); ++x)
 	{
-		for (int y = 0; y != server.Map->getSize ().y (); ++y)
+		for (int y = 0; y != server.Map->getSize().y(); ++y)
 		{
 			const cPosition position (x, y);
 
@@ -436,7 +436,7 @@ void sendUnitScore (cServer& server, const cBuilding& building)
 	AutoPtr<cNetMessage> msg (new cNetMessage (GAME_EV_UNIT_SCORE));
 	msg->pushInt16 (building.points);
 	msg->pushInt16 (building.iID);
-	server.sendNetMessage (msg, building.getOwner ());
+	server.sendNetMessage (msg, building.getOwner());
 }
 
 void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver)
@@ -463,7 +463,7 @@ void sendGameSettings (cServer& server, const cPlayer& receiver)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_GAME_SETTINGS));
 
-	const auto& gameSettings = server.getGameSettings ();
+	const auto& gameSettings = server.getGameSettings();
 
 	if (!gameSettings) return;
 
@@ -481,15 +481,15 @@ void sendBuildAnswer (cServer& server, bool bOK, const cVehicle& vehicle)
 	{
 		message->pushPosition (vehicle.bandPosition);
 		message->pushBool (vehicle.BuildPath);
-		message->pushInt16 (vehicle.getBuildTurns ());
-		message->pushID (vehicle.getBuildingType ());
-		message->pushBool (vehicle.getBuildingType ().getUnitDataOriginalVersion ()->isBig);
+		message->pushInt16 (vehicle.getBuildTurns());
+		message->pushID (vehicle.getBuildingType());
+		message->pushBool (vehicle.getBuildingType().getUnitDataOriginalVersion()->isBig);
 		message->pushPosition (vehicle.getPosition());
 	}
 
 	message->pushInt16 (vehicle.iID);
 	message->pushBool (bOK);
-	server.sendNetMessage (message, vehicle.getOwner ());
+	server.sendNetMessage (message, vehicle.getOwner());
 
 	//message for the enemys
 	for (unsigned int i = 0; i < vehicle.seenByPlayerList.size(); i++)
@@ -497,8 +497,8 @@ void sendBuildAnswer (cServer& server, bool bOK, const cVehicle& vehicle)
 		AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_BUILD_ANSWER));
 		if (bOK)
 		{
-			message->pushBool (vehicle.getBuildingType ().getUnitDataOriginalVersion ()->isBig);
-			message->pushPosition (vehicle.getPosition ());
+			message->pushBool (vehicle.getBuildingType().getUnitDataOriginalVersion()->isBig);
+			message->pushPosition (vehicle.getPosition());
 		}
 		message->pushInt16 (vehicle.iID);
 		message->pushBool (bOK);
@@ -540,12 +540,12 @@ void sendBuildList (cServer& server, const cBuilding& building)
 	message->pushInt16 (building.MetalPerRound);
 	for (int i = (int) building.getBuildListSize() - 1; i >= 0; i--)
 	{
-		message->pushInt16 (building.getBuildListItem (i).getRemainingMetal ());
-		message->pushID (building.getBuildListItem (i).getType ());
+		message->pushInt16 (building.getBuildListItem (i).getRemainingMetal());
+		message->pushID (building.getBuildListItem (i).getType());
 	}
-	message->pushInt16 ((int)building.getBuildListSize ());
+	message->pushInt16 ((int)building.getBuildListSize());
 	message->pushInt16 (building.iID);
-	server.sendNetMessage (message, building.getOwner ());
+	server.sendNetMessage (message, building.getOwner());
 }
 
 //------------------------------------------------------------------------------
@@ -556,7 +556,7 @@ void sendProduceValues (cServer& server, const cBuilding& building)
 	message->pushInt16 (building.MaxOilProd);
 	message->pushInt16 (building.MaxMetalProd);
 	message->pushInt16 (building.iID);
-	server.sendNetMessage (message, building.getOwner ());
+	server.sendNetMessage (message, building.getOwner());
 }
 
 //------------------------------------------------------------------------------
@@ -576,7 +576,7 @@ void sendDetectionState (cServer& server, const cVehicle& vehicle)
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_DETECTION_STATE));
 	message->pushBool (!vehicle.detectedByPlayerList.empty());
 	message->pushInt32 (vehicle.iID);
-	server.sendNetMessage (message, vehicle.getOwner ());
+	server.sendNetMessage (message, vehicle.getOwner());
 }
 
 //------------------------------------------------------------------------------
@@ -676,13 +676,13 @@ void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& play
 	{
 		const auto& secondPlayer = *playerList[i];
 		if (&player == &secondPlayer) continue;
-		message.pushInt16 (secondPlayer.getNr ());
-		message.pushColor (secondPlayer.getColor ().getColor ());
-		message.pushString (secondPlayer.getName ());
+		message.pushInt16 (secondPlayer.getNr());
+		message.pushColor (secondPlayer.getColor().getColor());
+		message.pushString (secondPlayer.getName());
 	}
 	message.pushInt16 ((int) playerList.size());
-	message.pushString (server.Map->getName ());
-	message.pushColor (player.getColor ().getColor ());
+	message.pushString (server.Map->getName());
+	message.pushColor (player.getColor().getColor());
 	message.pushInt16 (player.getNr());
 
 	message.pushBool (true);
@@ -753,11 +753,11 @@ void sendResearchLevel (cServer& server, const cResearch& researchLevel, const c
 void sendFinishedResearchAreas (cServer& server, const std::vector<int>& areas, const cPlayer& receiver)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_FINISHED_RESEARCH_AREAS));
-	for (size_t i = 0; i < areas.size (); ++i)
+	for (size_t i = 0; i < areas.size(); ++i)
 	{
 		message->pushInt32 (areas[i]);
 	}
-	message->pushInt32 (areas.size ());
+	message->pushInt32 (areas.size());
 	server.sendNetMessage (message, &receiver);
 }
 
@@ -776,12 +776,12 @@ void sendUnitUpgrades (cServer& server, const sUnitData& unitData, const cPlayer
 	message->pushInt16 (unitData.getAmmoMax());
 	message->pushInt16 (unitData.getShotsMax());
 	message->pushInt16 (unitData.getSpeedMax());
-	message->pushInt16 (unitData.getArmor ());
+	message->pushInt16 (unitData.getArmor());
 	message->pushInt16 (unitData.buildCosts);
-	message->pushInt16 (unitData.getDamage ());
-	message->pushInt16 (unitData.getRange ());
-	message->pushInt16 (unitData.getScan ());
-	message->pushInt16 (unitData.getVersion ());
+	message->pushInt16 (unitData.getDamage());
+	message->pushInt16 (unitData.getRange());
+	message->pushInt16 (unitData.getScan());
+	message->pushInt16 (unitData.getVersion());
 	message->pushID (unitData.ID);
 	server.sendNetMessage (message, &receiver);
 }
@@ -929,7 +929,7 @@ void sendSetAutomoving (cServer& server, const cVehicle& vehicle)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_SET_AUTOMOVE));
 	message->pushInt16 (vehicle.iID);
-	server.sendNetMessage (message, vehicle.getOwner ());
+	server.sendNetMessage (message, vehicle.getOwner());
 }
 
 //------------------------------------------------------------------------------
@@ -980,7 +980,7 @@ void sendSelfDestroy (cServer& server, const cBuilding& building)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_SELFDESTROY));
 	message->pushInt16 (building.iID);
-	server.sendNetMessage (message, building.getOwner ());
+	server.sendNetMessage (message, building.getOwner());
 
 	for (unsigned int i = 0; i < building.seenByPlayerList.size(); i++)
 	{
@@ -998,7 +998,7 @@ void sendEndMoveActionToClient (cServer& server, const cVehicle& vehicle, int de
 	message->pushInt32 (destID);
 	message->pushInt32 (vehicle.iID);
 
-	server.sendNetMessage (message, vehicle.getOwner ());
+	server.sendNetMessage (message, vehicle.getOwner());
 }
 
 //------------------------------------------------------------------------------

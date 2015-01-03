@@ -59,15 +59,15 @@ public:
 	void setUnitSelection (const cUnitSelection* unitSelection);
 
 	void setZoomFactor (float zoomFactor, bool center);
-	float getZoomFactor () const;
+	float getZoomFactor() const;
 
-	float computeMinimalZoomFactor () const;
+	float computeMinimalZoomFactor() const;
 
-	cUnitSelection& getUnitSelection ();
-	const cUnitSelection& getUnitSelection () const;
+	cUnitSelection& getUnitSelection();
+	const cUnitSelection& getUnitSelection() const;
 
-	cUnitLockList& getUnitLockList ();
-	const cUnitLockList& getUnitLockList () const;
+	cUnitLockList& getUnitLockList();
+	const cUnitLockList& getUnitLockList() const;
 
 	/**
 	 * Scrolls the map by a given offset.
@@ -79,13 +79,13 @@ public:
 	 * @param offset The offset in pixels to scroll. Can be negative.
 	 */
 	void scroll (const cPosition& offset);
-	const cPosition& getPixelOffset () const;
+	const cPosition& getPixelOffset() const;
 
 	void centerAt (const cPosition& position);
-    cPosition getMapCenterOffset ();
+	cPosition getMapCenterOffset();
 
 	void startFindBuildPosition (const sID& buildId);
-	void startFindPathBuildPosition ();
+	void startFindPathBuildPosition();
 	void startActivateVehicle (const cUnit& unit, size_t index);
 
 	void addEffect (std::shared_ptr<cFx> effect, bool playSound = true);
@@ -101,20 +101,20 @@ public:
 	void setDrawFog (bool drawFog);
 	void setLockActive (bool lockActive);
 
-	void toggleHelpMode ();
+	void toggleHelpMode();
 
-	cBox<cPosition> getDisplayedMapArea () const;
+	cBox<cPosition> getDisplayedMapArea() const;
 
-	void updateMouseCursor ();
+	void updateMouseCursor();
 	void updateMouseCursor (cMouse& mouse);
 
 	void setChangeAllowed (bool value);
 
-	cDrawingCache& getDrawingCache ();
-	const cDrawingCache& getDrawingCache () const;
+	cDrawingCache& getDrawingCache();
+	const cDrawingCache& getDrawingCache() const;
 
-	void updateActiveUnitCommandShortcuts ();
-	void deactivateUnitCommandShortcuts ();
+	void updateActiveUnitCommandShortcuts();
+	void deactivateUnitCommandShortcuts();
 
 	cSignal<void ()> scrolled;
 	cSignal<void ()> zoomFactorChanged;
@@ -260,75 +260,75 @@ private:
 	//
 	// draw methods
 	//
-	void drawTerrain ();
-	void drawGrid ();
+	void drawTerrain();
+	void drawGrid();
 	void drawEffects (bool bottom);
 
-	void drawBaseUnits ();
-	void drawTopBuildings ();
-	void drawShips ();
-	void drawAboveSeaBaseUnits ();
-	void drawVehicles ();
-	void drawConnectors ();
-	void drawPlanes ();
+	void drawBaseUnits();
+	void drawTopBuildings();
+	void drawShips();
+	void drawAboveSeaBaseUnits();
+	void drawVehicles();
+	void drawConnectors();
+	void drawPlanes();
 
-	void drawResources ();
+	void drawResources();
 
 	void drawPath (const cVehicle& vehicle);
 	void drawBuildPath (const cVehicle& vehicle);
 
-	void drawSelectionBox ();
+	void drawSelectionBox();
 
-	void drawUnitCircles ();
+	void drawUnitCircles();
 	void drawLockList (const cPlayer& player);
 
-	void drawExitPoints ();
+	void drawExitPoints();
 	void drawExitPoint (const cPosition& position);
 	void drawExitPointsIf (const cUnit& unit, const std::function<bool (const cPosition&)>& predicate);
-	void drawBuildBand ();
+	void drawBuildBand();
 
 	bool shouldDrawUnit (const cUnit& unit, const cPosition& visitingPosition, const std::pair<cPosition, cPosition>& tileDrawingRange);
 
-	void addEffect ();
+	void addEffect();
 	//
 	// position handling methods
 	//
-	cPosition computeMaximalPixelOffset () const;
+	cPosition computeMaximalPixelOffset() const;
 
 	//
 	// drawing helper methods
 	//
 	cPosition zoomSize (const cPosition& size, float zoomFactor) const;
-	cPosition getZoomedTileSize () const;
-	cPosition getZoomedStartTilePixelOffset () const;
-	std::pair<cPosition, cPosition> computeTileDrawingRange () const;
+	cPosition getZoomedTileSize() const;
+	cPosition getZoomedStartTilePixelOffset() const;
+	std::pair<cPosition, cPosition> computeTileDrawingRange() const;
 
 	SDL_Rect computeTileDrawingArea (const cPosition& zoomedTileSize, const cPosition& zoomedStartTilePixelOffset, const cPosition& tileStartIndex, const cPosition& tileIndex);
 
 	cPosition getMapTilePosition (const cPosition& pixelPosition) const;
 	cPosition getScreenPosition (const cUnit& unit, bool movementOffset = true) const;
 
-	void updateActiveAnimations ();
+	void updateActiveAnimations();
 	void updateActiveAnimations (const std::pair<cPosition, cPosition>& oldTileDrawingRange);
 	void addAnimationsForUnit (const cUnit& unit);
 
-	void updateUnitMenuPosition ();
+	void updateUnitMenuPosition();
 
 	void toggleUnitContextMenu (const cUnit* unit);
 
 	void setMouseInputMode (std::unique_ptr<cMouseMode> newMouseMode);
 	void toggleMouseInputMode (eMouseModeType mouseInputMode);
 
-	void runOwnedEffects ();
+	void runOwnedEffects();
 
-	void renewDamageEffects ();
+	void renewDamageEffects();
 	void renewDamageEffect (const cBuilding& building);
 	void renewDamageEffect (const cVehicle& vehicle);
 
 	void setWindDirection (int direction);
-	void changeWindDirection ();
+	void changeWindDirection();
 
-	void buildCollidingShortcutsMap ();
+	void buildCollidingShortcutsMap();
 	void activateShortcutConditional (cShortcut& shortcut, std::set<const cShortcut*>& blockedShortcuts, const std::set<const cShortcut*>& collidingShortcuts);
 };
 

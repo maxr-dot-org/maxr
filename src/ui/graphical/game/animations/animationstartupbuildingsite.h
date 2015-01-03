@@ -33,7 +33,7 @@ class cAnimationStartUpBuildingSite : public cAnimation
 {
 public:
 	cAnimationStartUpBuildingSite (cAnimationTimer& animationTimer, const cVehicle& vehicle);
-	~cAnimationStartUpBuildingSite ();
+	~cAnimationStartUpBuildingSite();
 
 	virtual bool isLocatedIn (const cBox<cPosition>& box) const MAXR_OVERRIDE_FUNCTION;
 private:
@@ -42,8 +42,8 @@ private:
 	cAnimationTimer& animationTimer;
 	const cVehicle* vehicle;
 
-	void activate ();
-	void run ();
+	void activate();
+	void run();
 };
 
 #endif // ui_graphical_game_animations_animationstartupbuildingsiteH

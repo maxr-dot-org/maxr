@@ -34,9 +34,9 @@ class cTCP;
 class cNetworkHostGame : public cGame
 {
 public:
-	~cNetworkHostGame ();
+	~cNetworkHostGame();
 
-	virtual void run () MAXR_OVERRIDE_FUNCTION;
+	virtual void run() MAXR_OVERRIDE_FUNCTION;
 
 	virtual void save (int saveNumber, const std::string& saveName) MAXR_OVERRIDE_FUNCTION;
 

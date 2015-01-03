@@ -29,7 +29,8 @@
 
 using namespace std;
 
-namespace {
+namespace
+{
 
 //------------------------------------------------------------------------------
 void sendMessage (cTCP& network, cNetMessage* message, const cPlayerBasicData* player = nullptr, int fromPlayerNr = -1)
@@ -39,10 +40,10 @@ void sendMessage (cTCP& network, cNetMessage* message, const cPlayerBasicData* p
 	// Otherwise it is only -1!
 	message->iPlayerNr = fromPlayerNr;
 
-	if (player == nullptr) network.send (message->iLength, message->serialize ());
-	else network.sendTo (player->getSocketIndex (), message->iLength, message->serialize ());
+	if (player == nullptr) network.send (message->iLength, message->serialize());
+	else network.sendTo (player->getSocketIndex(), message->iLength, message->serialize());
 
-	Log.write ("Menu: --> " + message->getTypeAsString () + ", Hexdump: " + message->getHexDump (), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("Menu: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 	delete message;
 }
 
@@ -67,7 +68,7 @@ void sendRequestIdentification (cTCP& network, const cPlayerBasicData& player)
 void sendPlayerNumber (cTCP& network, const cPlayerBasicData& player)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_PLAYER_NUMBER);
-	message->pushInt16 (player.getNr ());
+	message->pushInt16 (player.getNr());
 	sendMessage (network, message, &player);
 }
 
@@ -87,15 +88,15 @@ void sendPlayerList (cTCP& network, const std::vector<std::shared_ptr<cPlayerBas
 	sendMessage (network, message);
 }
 
-void sendGameData(cTCP& network, const cStaticMap* map, const cGameSettings* settings, const std::vector<cPlayerBasicData>& savePlayers, const std::string& saveGameName, const cPlayerBasicData* player)
+void sendGameData (cTCP& network, const cStaticMap* map, const cGameSettings* settings, const std::vector<cPlayerBasicData>& savePlayers, const std::string& saveGameName, const cPlayerBasicData* player)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_OPTINS);
 
-	message->pushString(saveGameName);
+	message->pushString (saveGameName);
 	for (auto player : savePlayers)
 	{
-		message->pushInt32(player.getNr());
-		message->pushString(player.getName());
+		message->pushInt32 (player.getNr());
+		message->pushString (player.getName());
 	}
 	message->pushInt32 (savePlayers.size());
 
@@ -171,7 +172,7 @@ void sendLandingPosition (cTCP& network, const cPosition& position, const cPlaye
 {
 	cNetMessage* msg = new cNetMessage (MU_MSG_LANDING_POSITION);
 	msg->pushPosition (position);
-	msg->pushInt32 (player.getNr ());
+	msg->pushInt32 (player.getNr());
 
 	sendMessage (network, msg);
 }
@@ -180,7 +181,7 @@ void sendLandingPosition (cTCP& network, const cPosition& position, const cPlaye
 void sendInLandingPositionSelectionStatus (cTCP& network, const cPlayerBasicData& player, bool isIn, const cPlayerBasicData* receiver)
 {
 	cNetMessage* msg = new cNetMessage (MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS);
-	msg->pushInt32 (player.getNr ());
+	msg->pushInt32 (player.getNr());
 	msg->pushBool (isIn);
 
 	sendMessage (network, msg, receiver);
@@ -190,7 +191,7 @@ void sendInLandingPositionSelectionStatus (cTCP& network, const cPlayerBasicData
 void sendPlayerHasSelectedLandingPosition (cTCP& network, const cPlayerBasicData& player, const cPlayerBasicData* receiver)
 {
 	cNetMessage* msg = new cNetMessage (MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION);
-	msg->pushInt32 (player.getNr ());
+	msg->pushInt32 (player.getNr());
 
 	sendMessage (network, msg, receiver);
 }

@@ -42,7 +42,7 @@ private:
 
 	std::shared_ptr<const cTurnTimeClock> turnTimeClock;
 
-	void update ();
+	void update();
 };
 
 #endif // ui_graphical_game_widgets_turntimeclockwidgetH

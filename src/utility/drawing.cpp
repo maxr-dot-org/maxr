@@ -26,17 +26,17 @@
 //------------------------------------------------------------------------------
 void drawPoint (SDL_Surface* surface, const cPosition& position, const cRgbColor& color)
 {
-	SDL_Rect rect = {Sint16 (position.x ()), Sint16 (position.y ()), 1, 1};
+	SDL_Rect rect = {Sint16 (position.x()), Sint16 (position.y()), 1, 1};
 	SDL_FillRect (surface, &rect, color.toMappedSdlRGBAColor (surface->format));
 }
 
 //------------------------------------------------------------------------------
 void drawLine (SDL_Surface* s, const cPosition& start, const cPosition& end, const cRgbColor& color)
 {
-	auto x0 = start.x ();
-	auto x1 = end.x ();
-	auto y0 = start.y ();
-	auto y1 = end.y ();
+	auto x0 = start.x();
+	auto x1 = end.x();
+	auto y0 = start.y();
+	auto y1 = end.y();
 
 	bool steep = abs (y1 - y0) > abs (x1 - x0);
 	if (steep)
@@ -72,47 +72,47 @@ void drawLine (SDL_Surface* s, const cPosition& start, const cPosition& end, con
 //------------------------------------------------------------------------------
 void drawRectangle (SDL_Surface& surface, const cBox<cPosition>& rectangle, const cRgbColor& color, int thickness)
 {
-	const cPosition size = rectangle.getMaxCorner () - rectangle.getMinCorner ();
+	const cPosition size = rectangle.getMaxCorner() - rectangle.getMinCorner();
 
-	SDL_Rect line_h = {rectangle.getMinCorner ().x (), rectangle.getMinCorner ().y (), size.x (), thickness};
+	SDL_Rect line_h = {rectangle.getMinCorner().x(), rectangle.getMinCorner().y(), size.x(), thickness};
 
 	const auto sdlColor = color.toMappedSdlRGBAColor (surface.format);
 
 	SDL_FillRect (&surface, &line_h, sdlColor);
-	line_h.y += size.y () - thickness;
+	line_h.y += size.y() - thickness;
 	SDL_FillRect (&surface, &line_h, sdlColor);
-	SDL_Rect line_v = {rectangle.getMinCorner ().x (), rectangle.getMinCorner ().y (), thickness, size.y ()};
+	SDL_Rect line_v = {rectangle.getMinCorner().x(), rectangle.getMinCorner().y(), thickness, size.y()};
 	SDL_FillRect (&surface, &line_v, sdlColor);
-	line_v.x += size.x () - thickness;
+	line_v.x += size.x() - thickness;
 	SDL_FillRect (&surface, &line_v, sdlColor);
 }
 
 //------------------------------------------------------------------------------
 void drawSelectionCorner (SDL_Surface& surface, const cBox<cPosition>& rectangle, const cRgbColor& color, int cornerSize)
 {
-	const cPosition size = rectangle.getMaxCorner () - rectangle.getMinCorner ();
+	const cPosition size = rectangle.getMaxCorner() - rectangle.getMinCorner();
 
-	SDL_Rect line_h = {rectangle.getMinCorner ().x (), rectangle.getMinCorner ().y (), cornerSize, 1};
+	SDL_Rect line_h = {rectangle.getMinCorner().x(), rectangle.getMinCorner().y(), cornerSize, 1};
 
 	const auto sdlColor = color.toMappedSdlRGBAColor (surface.format);
 
 	SDL_FillRect (&surface, &line_h, sdlColor);
 	line_h.x += size.x() - 1 - cornerSize;
 	SDL_FillRect (&surface, &line_h, sdlColor);
-	line_h.x = rectangle.getMinCorner ().x ();
-	line_h.y += size.y () - 1;
+	line_h.x = rectangle.getMinCorner().x();
+	line_h.y += size.y() - 1;
 	SDL_FillRect (&surface, &line_h, sdlColor);
-	line_h.x += size.x () - 1 - cornerSize;
+	line_h.x += size.x() - 1 - cornerSize;
 	SDL_FillRect (&surface, &line_h, sdlColor);
 
-	SDL_Rect line_v = {rectangle.getMinCorner ().x (), rectangle.getMinCorner ().y (), 1, cornerSize};
+	SDL_Rect line_v = {rectangle.getMinCorner().x(), rectangle.getMinCorner().y(), 1, cornerSize};
 	SDL_FillRect (&surface, &line_v, sdlColor);
-	line_v.y += size.y () - 1 - cornerSize;
+	line_v.y += size.y() - 1 - cornerSize;
 	SDL_FillRect (&surface, &line_v, sdlColor);
-	line_v.x += size.x () - 1;
-	line_v.y = rectangle.getMinCorner ().y ();
+	line_v.x += size.x() - 1;
+	line_v.y = rectangle.getMinCorner().y();
 	SDL_FillRect (&surface, &line_v, sdlColor);
-	line_v.y += size.y () - 1 - cornerSize;
+	line_v.y += size.y() - 1 - cornerSize;
 	SDL_FillRect (&surface, &line_v, sdlColor);
 }
 
@@ -121,12 +121,12 @@ void drawSelectionCorner (SDL_Surface& surface, const cBox<cPosition>& rectangle
 {
 	if (!rectangle.intersects (clipRect)) return;
 
-	const cPosition size = rectangle.getSize ();
-	AutoSurface tempSurface (SDL_CreateRGBSurface (0, size.x (), size.y (), 32, 0, 0, 0, 0));
-	SDL_FillRect (tempSurface.get (), nullptr, 0xFF00FF);
-	SDL_SetColorKey (tempSurface.get (), SDL_TRUE, 0xFF00FF);
+	const cPosition size = rectangle.getSize();
+	AutoSurface tempSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), 32, 0, 0, 0, 0));
+	SDL_FillRect (tempSurface.get(), nullptr, 0xFF00FF);
+	SDL_SetColorKey (tempSurface.get(), SDL_TRUE, 0xFF00FF);
 
-	auto rectangle2 = cBox<cPosition> (cPosition (0, 0), rectangle.getMaxCorner () - rectangle.getMinCorner ());
+	auto rectangle2 = cBox<cPosition> (cPosition (0, 0), rectangle.getMaxCorner() - rectangle.getMinCorner());
 	drawSelectionCorner (*tempSurface, rectangle2, color, cornerSize);
 
 	blitClipped (*tempSurface, rectangle, surface, clipRect);
@@ -137,31 +137,31 @@ Uint32 getPixel (const SDL_Surface& surface, const cPosition& position)
 {
 	int bpp = surface.format->BytesPerPixel;
 
-	Uint8* p = (Uint8*)surface.pixels + position.y () * surface.pitch + position.x () * bpp;
+	Uint8* p = (Uint8*)surface.pixels + position.y() * surface.pitch + position.x() * bpp;
 
 	switch (bpp)
 	{
-	case 1:
-		return *p;
-		break;
+		case 1:
+			return *p;
+			break;
 
-	case 2:
-		return *(Uint16*)p;
-		break;
+		case 2:
+			return * (Uint16*)p;
+			break;
 
-	case 3:
-		if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-			return p[0] << 16 | p[1] << 8 | p[2];
-		else
-			return p[0] | p[1] << 8 | p[2] << 16;
-		break;
+		case 3:
+			if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+				return p[0] << 16 | p[1] << 8 | p[2];
+			else
+				return p[0] | p[1] << 8 | p[2] << 16;
+			break;
 
-	case 4:
-		return *(Uint32*)p;
-		break;
+		case 4:
+			return * (Uint32*)p;
+			break;
 
-	default:
-		return 0;
+		default:
+			return 0;
 	}
 }
 
@@ -169,36 +169,36 @@ Uint32 getPixel (const SDL_Surface& surface, const cPosition& position)
 void putPixel (SDL_Surface& surface, const cPosition& position, Uint32 pixel)
 {
 	int bpp = surface.format->BytesPerPixel;
-	Uint8* p = (Uint8*)surface.pixels + position.y () * surface.pitch + position.x () * bpp;
+	Uint8* p = (Uint8*)surface.pixels + position.y() * surface.pitch + position.x() * bpp;
 
 	switch (bpp)
 	{
-	case 1:
-		*p = pixel;
-		break;
+		case 1:
+			*p = pixel;
+			break;
 
-	case 2:
-		*(Uint16*)p = pixel;
-		break;
+		case 2:
+			* (Uint16*)p = pixel;
+			break;
 
-	case 3:
-		if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-		{
-			p[0] = (pixel >> 16) & 0xff;
-			p[1] = (pixel >> 8) & 0xff;
-			p[2] = pixel & 0xff;
-		}
-		else
-		{
-			p[0] = pixel & 0xff;
-			p[1] = (pixel >> 8) & 0xff;
-			p[2] = (pixel >> 16) & 0xff;
-		}
-		break;
+		case 3:
+			if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+			{
+				p[0] = (pixel >> 16) & 0xff;
+				p[1] = (pixel >> 8) & 0xff;
+				p[2] = pixel & 0xff;
+			}
+			else
+			{
+				p[0] = pixel & 0xff;
+				p[1] = (pixel >> 8) & 0xff;
+				p[2] = (pixel >> 16) & 0xff;
+			}
+			break;
 
-	case 4:
-		*(Uint32*)p = pixel;
-		break;
+		case 4:
+			* (Uint32*)p = pixel;
+			break;
 	}
 }
 
@@ -215,7 +215,7 @@ void replaceColor (SDL_Surface& surface, const cRgbColor& sourceColor, const cRg
 
 	SDL_SetColorKey (temp.get(), SDL_TRUE, srcMapped);
 	SDL_FillRect (&surface, nullptr, destMapped);
-	SDL_BlitSurface (temp.get (), nullptr, &surface, nullptr);
+	SDL_BlitSurface (temp.get(), nullptr, &surface, nullptr);
 
 	if (hadKey) SDL_SetColorKey (&surface, SDL_TRUE, key);
 	else SDL_SetColorKey (&surface, SDL_FALSE, 0);
@@ -241,12 +241,12 @@ void blitClipped (SDL_Surface& source, const cBox<cPosition>& area, SDL_Surface&
 {
 	auto clipedArea = area.intersection (clipRect);
 
-	SDL_Rect position = clipedArea.toSdlRect ();
+	SDL_Rect position = clipedArea.toSdlRect();
 
-	clipedArea.getMinCorner () -= area.getMinCorner ();
-	clipedArea.getMaxCorner () -= area.getMinCorner ();
+	clipedArea.getMinCorner() -= area.getMinCorner();
+	clipedArea.getMaxCorner() -= area.getMinCorner();
 
-	SDL_Rect sourceRect = clipedArea.toSdlRect ();
+	SDL_Rect sourceRect = clipedArea.toSdlRect();
 
 	SDL_BlitSurface (&source, &sourceRect, &destination, &position);
 }

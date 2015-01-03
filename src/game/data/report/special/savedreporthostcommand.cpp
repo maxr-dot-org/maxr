@@ -22,13 +22,13 @@
 
 //------------------------------------------------------------------------------
 cSavedReportHostCommand::cSavedReportHostCommand (std::string command_) :
-	command (std::move(command_))
+	command (std::move (command_))
 {}
 
 //------------------------------------------------------------------------------
 cSavedReportHostCommand::cSavedReportHostCommand (cNetMessage& message)
 {
-	command = message.popString ();
+	command = message.popString();
 }
 
 //------------------------------------------------------------------------------
@@ -48,25 +48,25 @@ void cSavedReportHostCommand::pushInto (cNetMessage& message) const
 //------------------------------------------------------------------------------
 void cSavedReportHostCommand::pushInto (tinyxml2::XMLElement& element) const
 {
-	element.SetAttribute ("command", command.c_str ());
+	element.SetAttribute ("command", command.c_str());
 
 	cSavedReport::pushInto (element);
 }
 
 //------------------------------------------------------------------------------
-eSavedReportType cSavedReportHostCommand::getType () const
+eSavedReportType cSavedReportHostCommand::getType() const
 {
 	return eSavedReportType::HostCommand;
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportHostCommand::getMessage () const
+std::string cSavedReportHostCommand::getMessage() const
 {
 	return "Host entered command: '" + command + "'"; // TODO: translate
 }
 
 //------------------------------------------------------------------------------
-bool cSavedReportHostCommand::isAlert () const
+bool cSavedReportHostCommand::isAlert() const
 {
 	return false;
 }

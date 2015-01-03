@@ -53,7 +53,7 @@
 template<typename FunctionSignatureType, typename MutexType = cDummyMutex, typename ResultCombinerType = sSignalResultCombinerLast<typename sFunctionTraits<FunctionSignatureType>::result_type>>
 class cSignal
 {
-	static_assert(sDependentFalse<FunctionSignatureType>::value, "cSignal not allowed with this template arguments!");
+	static_assert (sDependentFalse<FunctionSignatureType>::value, "cSignal not allowed with this template arguments!");
 };
 
 /**
@@ -63,7 +63,7 @@ class cSignal
 class cSignalBase
 {
 public:
-	virtual ~cSignalBase () {}
+	virtual ~cSignalBase() {}
 	virtual void disconnect (const cSignalConnection& connection) = 0;
 };
 
@@ -74,12 +74,12 @@ public:
 		signal (signal_)
 	{}
 
-	cSignalBase& getSignal ()
+	cSignalBase& getSignal()
 	{
 		return signal;
 	}
 
-	bool operator==(const cSignalReference& other) const
+	bool operator== (const cSignalReference& other) const
 	{
 		return &signal == &other.signal;
 	}
@@ -129,7 +129,7 @@ class cSignal<R (Args...), MutexType, ResultCombinerType> : public cSignalBase
 public:
 	typedef typename ResultCombinerType::result_type result_type;
 
-	cSignal ();
+	cSignal();
 
 	/**
 	 * Connects a new function to the signal.
@@ -176,10 +176,10 @@ public:
 	 * @param ...args The arguments to call the functions with.
 	 */
 	template<typename... Args2>
-	result_type operator()(Args2&&... args);
+	result_type operator() (Args2&& ... args);
 private:
 	cSignal (const cSignal& other) MAXR_DELETE_FUNCTION;
-	cSignal& operator=(const cSignal& other) MAXR_DELETE_FUNCTION;
+	cSignal& operator= (const cSignal& other) MAXR_DELETE_FUNCTION;
 
 	SlotsContainerType slots;
 
@@ -195,12 +195,12 @@ private:
 	// NOTE: is important that this one is a recursive mutex (as e.g the SDL_Mutex or std::recursive_mutex).
 	MutexType mutex;
 
-	void cleanUpConnections ();
+	void cleanUpConnections();
 };
 
 //------------------------------------------------------------------------------
 template<typename R, typename... Args, typename MutexType, typename ResultCombinerType>
-cSignal<R (Args...), MutexType, ResultCombinerType>::cSignal () :
+cSignal<R (Args...), MutexType, ResultCombinerType>::cSignal() :
 	nextIdentifer (0),
 	isInvoking (false)
 {
@@ -216,14 +216,14 @@ cSignalConnection cSignal<R (Args...), MutexType, ResultCombinerType>::connect (
 
 	std::weak_ptr<cSignalReference> weakSignalRef (thisReference);
 	cSignalConnection connection (nextIdentifer++, weakSignalRef);
-	assert (nextIdentifer < std::numeric_limits<unsigned int>::max ());
+	assert (nextIdentifer < std::numeric_limits<unsigned int>::max());
 
 	assert (!isInvoking); // FIXME: can lead to endless loop! fix this and remove the assert
 
 	auto slotFunction = typename SlotType::function_type (std::forward<F> (f));
 	slots.emplace_back (connection, std::move (slotFunction));
 
-    return connection;
+	return connection;
 }
 
 //------------------------------------------------------------------------------
@@ -235,15 +235,15 @@ void cSignal<R (Args...), MutexType, ResultCombinerType>::disconnect (const F& f
 
 	typedef typename std::conditional
 	<
-		std::is_pointer<test_type>::value,
+	std::is_pointer<test_type>::value,
 		typename std::conditional
 		<
-			std::is_function<typename std::remove_pointer<test_type>::type>::value,
-			std::true_type,
-			std::false_type
+		std::is_function<typename std::remove_pointer<test_type>::type>::value,
+		std::true_type,
+		std::false_type
 		>::type,
 		std::false_type
-	>::type should_deref;
+		>::type should_deref;
 
 	cLockGuard<MutexType> lock (mutex);
 
@@ -258,8 +258,8 @@ void cSignal<R (Args...), MutexType, ResultCombinerType>::disconnect (const F& f
 		test_type* target = slot.function.template target<test_type> ();
 		if (target != nullptr)
 		{
-			auto& t1 = conditionalDeref (target, should_deref ());
-			auto& t2 = conditionalDeref (&f, should_deref ());
+			auto& t1 = conditionalDeref (target, should_deref());
+			auto& t2 = conditionalDeref (&f, should_deref());
 			if (*t1 == *t2)
 			{
 				slot.disconnected = true;
@@ -282,13 +282,13 @@ void cSignal<R (Args...), MutexType, ResultCombinerType>::disconnect (const cSig
 		}
 	}
 
-	cleanUpConnections ();
+	cleanUpConnections();
 }
 
 //------------------------------------------------------------------------------
 template<typename R, typename... Args, typename MutexType, typename ResultCombinerType>
 template<typename... Args2>
-typename cSignal<R (Args...), MutexType, ResultCombinerType>::result_type cSignal<R (Args...), MutexType, ResultCombinerType>::operator()(Args2&&... args)
+typename cSignal<R (Args...), MutexType, ResultCombinerType>::result_type cSignal<R (Args...), MutexType, ResultCombinerType>::operator() (Args2&& ... args)
 {
 	cLockGuard<MutexType> lock (mutex);
 
@@ -296,21 +296,21 @@ typename cSignal<R (Args...), MutexType, ResultCombinerType>::result_type cSigna
 
 	auto wasInvoking = isInvoking;
 	isInvoking = true;
-	auto resetter = makeScopedOperation ([&](){ isInvoking = wasInvoking; cleanUpConnections (); });
+	auto resetter = makeScopedOperation ([&]() { isInvoking = wasInvoking; cleanUpConnections(); });
 
-	CallIteratorType begin (arguments, slots.begin (), slots.end ());
-	CallIteratorType end (arguments, slots.end (), slots.end ());
+	CallIteratorType begin (arguments, slots.begin(), slots.end());
+	CallIteratorType end (arguments, slots.end(), slots.end());
 
-	return ResultCombinerType () (begin, end);
+	return ResultCombinerType() (begin, end);
 }
 
 //------------------------------------------------------------------------------
 template<typename R, typename... Args, typename MutexType, typename ResultCombinerType>
-void cSignal<R (Args...), MutexType, ResultCombinerType>::cleanUpConnections ()
+void cSignal<R (Args...), MutexType, ResultCombinerType>::cleanUpConnections()
 {
 	if (isInvoking) return; // it is not safe to clean up yet
 
-	for (auto i = slots.begin (); i != slots.end ();)
+	for (auto i = slots.begin(); i != slots.end();)
 	{
 		if (i->disconnected)
 		{

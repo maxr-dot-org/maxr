@@ -198,5 +198,5 @@ void cLog::close()
 
 bool cLog::isInitialized() const
 {
-  return !bFirstRun;
+	return !bFirstRun;
 }

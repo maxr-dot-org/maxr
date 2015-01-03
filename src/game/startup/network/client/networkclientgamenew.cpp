@@ -30,7 +30,7 @@
 void applyUnitUpgrades (cPlayer& player, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades);
 
 //------------------------------------------------------------------------------
-cNetworkClientGameNew::cNetworkClientGameNew () :
+cNetworkClientGameNew::cNetworkClientGameNew() :
 	localPlayerClan (-1)
 {}
 
@@ -45,7 +45,7 @@ void cNetworkClientGameNew::start (cApplication& application)
 	localClient->setMap (staticMap);
 	localClient->setGameSettings (*gameSettings);
 
-	auto& clientPlayer = localClient->getActivePlayer ();
+	auto& clientPlayer = localClient->getActivePlayer();
 	if (localPlayerClan != -1) clientPlayer.setClan (localPlayerClan);
 	applyUnitUpgrades (clientPlayer, localPlayerUnitUpgrades);
 
@@ -65,14 +65,14 @@ void cNetworkClientGameNew::start (cApplication& application)
 	playerGameGuiState.setMapPosition (localPlayerLandingPosition);
 	gameGuiController->addPlayerGameGuiState (clientPlayer, std::move (playerGameGuiState));
 
-	gameGuiController->start ();
+	gameGuiController->start();
 
 	using namespace std::placeholders;
 	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cNetworkClientGameNew::save, this, _1, _2));
 
 	terminate = false;
 
-	application.addRunnable (shared_from_this ());
+	application.addRunnable (shared_from_this());
 
 	signalConnectionManager.connect (gameGuiController->terminated, [&]() { terminate = true; });
 }
@@ -81,9 +81,9 @@ void cNetworkClientGameNew::start (cApplication& application)
 void cNetworkClientGameNew::setPlayers (std::vector<cPlayerBasicData> players_, const cPlayerBasicData& localPlayer)
 {
 	players = players_;
-	auto localPlayerIter = std::find_if (players.begin (), players.end (), [&](const cPlayerBasicData& player){ return player.getNr () == localPlayer.getNr (); });
+	auto localPlayerIter = std::find_if (players.begin(), players.end(), [&] (const cPlayerBasicData & player) { return player.getNr() == localPlayer.getNr(); });
 	assert (localPlayerIter != players.end());
-	localPlayerIndex = localPlayerIter - players.begin ();
+	localPlayerIndex = localPlayerIter - players.begin();
 }
 
 //------------------------------------------------------------------------------
@@ -123,31 +123,31 @@ void cNetworkClientGameNew::setLocalPlayerLandingPosition (const cPosition& land
 }
 
 //------------------------------------------------------------------------------
-const std::shared_ptr<cGameSettings>& cNetworkClientGameNew::getGameSettings ()
+const std::shared_ptr<cGameSettings>& cNetworkClientGameNew::getGameSettings()
 {
 	return gameSettings;
 }
 
 //------------------------------------------------------------------------------
-const std::shared_ptr<cStaticMap>& cNetworkClientGameNew::getStaticMap ()
+const std::shared_ptr<cStaticMap>& cNetworkClientGameNew::getStaticMap()
 {
 	return staticMap;
 }
 
 //------------------------------------------------------------------------------
-const std::vector<cPlayerBasicData>& cNetworkClientGameNew::getPlayers ()
+const std::vector<cPlayerBasicData>& cNetworkClientGameNew::getPlayers()
 {
 	return players;
 }
 
 //------------------------------------------------------------------------------
-const cPlayerBasicData& cNetworkClientGameNew::getLocalPlayer ()
+const cPlayerBasicData& cNetworkClientGameNew::getLocalPlayer()
 {
 	return players[localPlayerIndex];
 }
 
 //------------------------------------------------------------------------------
-int cNetworkClientGameNew::getLocalPlayerClan () const
+int cNetworkClientGameNew::getLocalPlayerClan() const
 {
 	return localPlayerClan;
 }

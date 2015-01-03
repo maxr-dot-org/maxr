@@ -30,17 +30,17 @@ class cMenuControllerMultiplayerHotSeat;
 class cWindowMultiPlayer : public cWindowMain
 {
 public:
-	cWindowMultiPlayer ();
-	~cWindowMultiPlayer ();
+	cWindowMultiPlayer();
+	~cWindowMultiPlayer();
 
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	void tcpHostClicked ();
-	void tcpClientClicked ();
-	void newHotSeatClicked ();
-	void loadHotSeatClicked ();
-	void backClicked ();
+	void tcpHostClicked();
+	void tcpClientClicked();
+	void newHotSeatClicked();
+	void loadHotSeatClicked();
+	void backClicked();
 
 	std::shared_ptr<cMenuControllerMultiplayerHost> multiplayerHostController;
 	std::shared_ptr<cMenuControllerMultiplayerClient> multiplayerClientController;

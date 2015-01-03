@@ -44,23 +44,23 @@
 #include "game/logic/clientevents.h"
 
 //------------------------------------------------------------------------------
-cWindowSinglePlayer::cWindowSinglePlayer () :
+cWindowSinglePlayer::cWindowSinglePlayer() :
 	cWindowMain (lngPack.i18n ("Text~Others~Single_Player"))
 {
 	using namespace std::placeholders;
 
-	auto newGameButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Game_New")));
+	auto newGameButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Game_New")));
 	signalConnectionManager.connect (newGameButton->clicked, std::bind (&cWindowSinglePlayer::newGameClicked, this));
 
-	auto loadGameButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Game_Load")));
+	auto loadGameButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Game_Load")));
 	signalConnectionManager.connect (loadGameButton->clicked, std::bind (&cWindowSinglePlayer::loadGameClicked, this));
 
-	auto backButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Back")));
+	auto backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Back")));
 	signalConnectionManager.connect (backButton->clicked, std::bind (&cWindowSinglePlayer::backClicked, this));
 }
 
 //------------------------------------------------------------------------------
-cWindowSinglePlayer::~cWindowSinglePlayer ()
+cWindowSinglePlayer::~cWindowSinglePlayer()
 {}
 
 // TODO: find nice place
@@ -69,11 +69,11 @@ std::vector<std::pair<sID, int>> createInitialLandingUnitsList (int clan, const 
 {
 	std::vector<std::pair<sID, int>> initialLandingUnits;
 
-	if (gameSettings.getBridgeheadType () == eGameSettingsBridgeheadType::Mobile) return initialLandingUnits;
+	if (gameSettings.getBridgeheadType() == eGameSettingsBridgeheadType::Mobile) return initialLandingUnits;
 
-	const auto& constructorID = UnitsData.getConstructorID ();
-	const auto& engineerID = UnitsData.getEngineerID ();
-	const auto& surveyorID = UnitsData.getSurveyorID ();
+	const auto& constructorID = UnitsData.getConstructorID();
+	const auto& engineerID = UnitsData.getEngineerID();
+	const auto& surveyorID = UnitsData.getSurveyorID();
 
 	initialLandingUnits.push_back (std::make_pair (constructorID, 40));
 	initialLandingUnits.push_back (std::make_pair (engineerID, 20));
@@ -81,7 +81,7 @@ std::vector<std::pair<sID, int>> createInitialLandingUnitsList (int clan, const 
 
 	if (clan == 7)
 	{
-		const int startCredits = gameSettings.getStartCredits ();
+		const int startCredits = gameSettings.getStartCredits();
 
 		size_t numAddConstructors = 0;
 		size_t numAddEngineers = 0;
@@ -125,25 +125,25 @@ std::vector<std::pair<sID, int>> createInitialLandingUnitsList (int clan, const 
 }
 
 //------------------------------------------------------------------------------
-void cWindowSinglePlayer::newGameClicked ()
+void cWindowSinglePlayer::newGameClicked()
 {
-	if (!getActiveApplication ()) return;
+	if (!getActiveApplication()) return;
 
-	auto application = getActiveApplication ();
+	auto application = getActiveApplication();
 
 	auto game = std::make_shared<cLocalSingleplayerGameNew> ();
 
-	auto windowGameSettings = getActiveApplication ()->show (std::make_shared<cWindowGameSettings> ());
-	windowGameSettings->applySettings (cGameSettings ());
+	auto windowGameSettings = getActiveApplication()->show (std::make_shared<cWindowGameSettings> ());
+	windowGameSettings->applySettings (cGameSettings());
 
-	windowGameSettings->done.connect ([=]()
+	windowGameSettings->done.connect ([ = ]()
 	{
-		auto gameSettings = std::make_shared<cGameSettings> (windowGameSettings->getGameSettings ());
+		auto gameSettings = std::make_shared<cGameSettings> (windowGameSettings->getGameSettings());
 		game->setGameSettings (gameSettings);
 
 		auto windowMapSelection = application->show (std::make_shared<cWindowMapSelection> ());
 
-		windowMapSelection->done.connect ([=]()
+		windowMapSelection->done.connect ([ = ]()
 		{
 			auto staticMap = std::make_shared<cStaticMap>();
 			if (!windowMapSelection->loadSelectedMap (*staticMap))
@@ -153,39 +153,39 @@ void cWindowSinglePlayer::newGameClicked ()
 			}
 			game->setStaticMap (staticMap);
 
-			if (gameSettings->getClansEnabled ())
+			if (gameSettings->getClansEnabled())
 			{
 				auto windowClanSelection = application->show (std::make_shared<cWindowClanSelection> ());
 
-				signalConnectionManager.connect (windowClanSelection->canceled, [windowClanSelection]() { windowClanSelection->close (); });
-				windowClanSelection->done.connect ([=]()
+				signalConnectionManager.connect (windowClanSelection->canceled, [windowClanSelection]() { windowClanSelection->close(); });
+				windowClanSelection->done.connect ([ = ]()
 				{
-					game->setPlayerClan (windowClanSelection->getSelectedClan ());
+					game->setPlayerClan (windowClanSelection->getSelectedClan());
 
-					auto initialLandingUnits = createInitialLandingUnitsList (windowClanSelection->getSelectedClan (), *gameSettings);
+					auto initialLandingUnits = createInitialLandingUnitsList (windowClanSelection->getSelectedClan(), *gameSettings);
 
-					auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), windowClanSelection->getSelectedClan (), initialLandingUnits, gameSettings->getStartCredits ()));
+					auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), windowClanSelection->getSelectedClan(), initialLandingUnits, gameSettings->getStartCredits()));
 
-					signalConnectionManager.connect (windowLandingUnitSelection->canceled, [windowLandingUnitSelection]() { windowLandingUnitSelection->close (); });
-					windowLandingUnitSelection->done.connect ([=]()
+					signalConnectionManager.connect (windowLandingUnitSelection->canceled, [windowLandingUnitSelection]() { windowLandingUnitSelection->close(); });
+					windowLandingUnitSelection->done.connect ([ = ]()
 					{
-						game->setLandingUnits (windowLandingUnitSelection->getLandingUnits ());
-						game->setUnitUpgrades (windowLandingUnitSelection->getUnitUpgrades ());
+						game->setLandingUnits (windowLandingUnitSelection->getLandingUnits());
+						game->setUnitUpgrades (windowLandingUnitSelection->getUnitUpgrades());
 
 						auto windowLandingPositionSelection = application->show (std::make_shared<cWindowLandingPositionSelection> (staticMap, false));
 
-						signalConnectionManager.connect (windowLandingPositionSelection->canceled, [windowLandingPositionSelection]() { windowLandingPositionSelection->close (); });
-						windowLandingPositionSelection->selectedPosition.connect ([=](cPosition landingPosition)
+						signalConnectionManager.connect (windowLandingPositionSelection->canceled, [windowLandingPositionSelection]() { windowLandingPositionSelection->close(); });
+						windowLandingPositionSelection->selectedPosition.connect ([ = ] (cPosition landingPosition)
 						{
 							game->setLandingPosition (landingPosition);
 
 							game->start (*application);
 
-							windowLandingPositionSelection->close ();
-							windowLandingUnitSelection->close ();
-							windowClanSelection->close ();
-							windowMapSelection->close ();
-							windowGameSettings->close ();
+							windowLandingPositionSelection->close();
+							windowLandingUnitSelection->close();
+							windowClanSelection->close();
+							windowMapSelection->close();
+							windowGameSettings->close();
 						});
 					});
 				});
@@ -194,27 +194,27 @@ void cWindowSinglePlayer::newGameClicked ()
 			{
 				auto initialLandingUnits = createInitialLandingUnitsList (-1, *gameSettings);
 
-				auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), -1, initialLandingUnits, gameSettings->getStartCredits ()));
+				auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), -1, initialLandingUnits, gameSettings->getStartCredits()));
 
-				signalConnectionManager.connect (windowLandingUnitSelection->canceled, [windowLandingUnitSelection]() { windowLandingUnitSelection->close (); });
-				windowLandingUnitSelection->done.connect ([=]()
+				signalConnectionManager.connect (windowLandingUnitSelection->canceled, [windowLandingUnitSelection]() { windowLandingUnitSelection->close(); });
+				windowLandingUnitSelection->done.connect ([ = ]()
 				{
-					game->setLandingUnits (windowLandingUnitSelection->getLandingUnits ());
-					game->setUnitUpgrades (windowLandingUnitSelection->getUnitUpgrades ());
+					game->setLandingUnits (windowLandingUnitSelection->getLandingUnits());
+					game->setUnitUpgrades (windowLandingUnitSelection->getUnitUpgrades());
 
 					auto windowLandingPositionSelection = application->show (std::make_shared<cWindowLandingPositionSelection> (staticMap, false));
 
-					signalConnectionManager.connect (windowLandingPositionSelection->canceled, [windowLandingPositionSelection]() { windowLandingPositionSelection->close (); });
-					windowLandingPositionSelection->selectedPosition.connect ([=](cPosition landingPosition)
+					signalConnectionManager.connect (windowLandingPositionSelection->canceled, [windowLandingPositionSelection]() { windowLandingPositionSelection->close(); });
+					windowLandingPositionSelection->selectedPosition.connect ([ = ] (cPosition landingPosition)
 					{
 						game->setLandingPosition (landingPosition);
 
 						game->start (*application);
 
-						windowLandingPositionSelection->close ();
-						windowLandingUnitSelection->close ();
-						windowMapSelection->close ();
-						windowGameSettings->close ();
+						windowLandingPositionSelection->close();
+						windowLandingUnitSelection->close();
+						windowMapSelection->close();
+						windowGameSettings->close();
 					});
 				});
 			}
@@ -223,25 +223,25 @@ void cWindowSinglePlayer::newGameClicked ()
 }
 
 //------------------------------------------------------------------------------
-void cWindowSinglePlayer::loadGameClicked ()
+void cWindowSinglePlayer::loadGameClicked()
 {
-	if (!getActiveApplication ()) return;
+	if (!getActiveApplication()) return;
 
-	auto application = getActiveApplication ();
+	auto application = getActiveApplication();
 
-	auto windowLoad = getActiveApplication ()->show (std::make_shared<cWindowLoad> ());
-	windowLoad->load.connect ([=](int saveGameNumber)
+	auto windowLoad = getActiveApplication()->show (std::make_shared<cWindowLoad> ());
+	windowLoad->load.connect ([ = ] (int saveGameNumber)
 	{
 		auto game = std::make_shared<cLocalSingleplayerGameSaved> ();
 		game->setSaveGameNumber (saveGameNumber);
 		game->start (*application);
 
-		windowLoad->close ();
+		windowLoad->close();
 	});
 }
 
 //------------------------------------------------------------------------------
-void cWindowSinglePlayer::backClicked ()
+void cWindowSinglePlayer::backClicked()
 {
-	close ();
+	close();
 }

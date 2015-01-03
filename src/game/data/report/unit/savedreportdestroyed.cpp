@@ -28,14 +28,14 @@
 //------------------------------------------------------------------------------
 cSavedReportDestroyed::cSavedReportDestroyed (const cUnit& unit) :
 	cSavedReportUnit (unit),
-	unitName (unit.getDisplayName ())
+	unitName (unit.getDisplayName())
 {}
 
 //------------------------------------------------------------------------------
 cSavedReportDestroyed::cSavedReportDestroyed (cNetMessage& message) :
 	cSavedReportUnit (message)
 {
-	unitName = message.popString ();
+	unitName = message.popString();
 }
 
 //------------------------------------------------------------------------------
@@ -56,19 +56,19 @@ void cSavedReportDestroyed::pushInto (cNetMessage& message) const
 //------------------------------------------------------------------------------
 void cSavedReportDestroyed::pushInto (tinyxml2::XMLElement& element) const
 {
-	element.SetAttribute ("unitName", unitName.c_str ());
+	element.SetAttribute ("unitName", unitName.c_str());
 
 	cSavedReportUnit::pushInto (element);
 }
 
 //------------------------------------------------------------------------------
-eSavedReportType cSavedReportDestroyed::getType () const
+eSavedReportType cSavedReportDestroyed::getType() const
 {
 	return eSavedReportType::Destroyed;
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportDestroyed::getText () const
+std::string cSavedReportDestroyed::getText() const
 {
 	return unitName + " " + lngPack.i18n ("Text~Comp~Destroyed");
 }

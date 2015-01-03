@@ -132,46 +132,46 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 
 	if (!client) return;
 
-	const cPlayer& player = client->getActivePlayer ();
+	const cPlayer& player = client->getActivePlayer();
 
 	auto drawPositionX = getEndPosition().x() - 200;
-	auto drawPositionY = getPosition ().y ();
+	auto drawPositionY = getPosition().y();
 
 	if (debugPlayers)
 	{
-		font->showText (drawPositionX, drawPositionY, "Players: " + iToStr ((int)client->getPlayerList ().size ()), FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPositionX, drawPositionY, "Players: " + iToStr ((int)client->getPlayerList().size()), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		SDL_Rect rDest = {Sint16 (drawPositionX), Sint16 (drawPositionY), 20, 10};
 		SDL_Rect rSrc = {0, 0, 20, 10};
 		SDL_Rect rDotDest = {Sint16 (drawPositionX - 10), Sint16 (drawPositionY), 10, 10};
 		SDL_Rect rBlackOut = {Sint16 (drawPositionX + 20), Sint16 (drawPositionY), 0, 10};
-		const auto& playerList = client->getPlayerList ();
-		for (size_t i = 0; i != playerList.size (); ++i)
+		const auto& playerList = client->getPlayerList();
+		for (size_t i = 0; i != playerList.size(); ++i)
 		{
 			// HACK SHOWFINISHEDPLAYERS
 			SDL_Rect rDot = {10, 0, 10, 10}; // for green dot
 
 			if (playerList[i]->getHasFinishedTurn() /* && playerList[i] != &player*/)
 			{
-				SDL_BlitSurface (GraphicsData.gfx_player_ready.get (), &rDot, &destination, &rDotDest);
+				SDL_BlitSurface (GraphicsData.gfx_player_ready.get(), &rDot, &destination, &rDotDest);
 			}
 #if 0
 			else if (playerList[i] == &player && client->bWantToEnd)
 			{
-				SDL_BlitSurface (GraphicsData.gfx_player_ready.get (), &rDot, &destination, &rDotDest);
+				SDL_BlitSurface (GraphicsData.gfx_player_ready.get(), &rDot, &destination, &rDotDest);
 			}
 #endif
 			else
 			{
 				rDot.x = 0; // for red dot
-				SDL_BlitSurface (GraphicsData.gfx_player_ready.get (), &rDot, &destination, &rDotDest);
+				SDL_BlitSurface (GraphicsData.gfx_player_ready.get(), &rDot, &destination, &rDotDest);
 			}
 
-			SDL_BlitSurface (playerList[i]->getColor ().getTexture (), &rSrc, &destination, &rDest);
+			SDL_BlitSurface (playerList[i]->getColor().getTexture(), &rSrc, &destination, &rDest);
 			if (playerList[i].get() == &player)
 			{
-				std::string sTmpLine = " " + playerList[i]->getName () + ", nr: " + iToStr (playerList[i]->getNr ()) + " << you! ";
+				std::string sTmpLine = " " + playerList[i]->getName() + ", nr: " + iToStr (playerList[i]->getNr()) + " << you! ";
 				// black out background for better recognizing
 				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);
 				SDL_FillRect (&destination, &rBlackOut, 0xFF000000);
@@ -179,7 +179,7 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 			}
 			else
 			{
-				std::string sTmpLine = " " + playerList[i]->getName () + ", nr: " + iToStr (playerList[i]->getNr ()) + " ";
+				std::string sTmpLine = " " + playerList[i]->getName() + ", nr: " + iToStr (playerList[i]->getNr()) + " ";
 				// black out background for better recognizing
 				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);
 				SDL_FillRect (&destination, &rBlackOut, 0xFF000000);
@@ -193,37 +193,37 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 
 	if (debugAjobs)
 	{
-		font->showText (drawPositionX, drawPositionY, "ClientAttackJobs: " + iToStr ((int)client->attackJobs.size ()), FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPositionX, drawPositionY, "ClientAttackJobs: " + iToStr ((int)client->attackJobs.size()), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 		if (server)
 		{
-			font->showText (drawPositionX, drawPositionY, "ServerAttackJobs: " + iToStr ((int)server->AJobs.size ()), FONT_LATIN_SMALL_WHITE);
+			font->showText (drawPositionX, drawPositionY, "ServerAttackJobs: " + iToStr ((int)server->AJobs.size()), FONT_LATIN_SMALL_WHITE);
 			drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 		}
 	}
 
 	if (debugBaseClient)
 	{
-		font->showText (drawPositionX, drawPositionY, "subbases: " + iToStr ((int)player.base.SubBases.size ()), FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPositionX, drawPositionY, "subbases: " + iToStr ((int)player.base.SubBases.size()), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 	}
 
 	if (debugBaseServer && server)
 	{
-		const auto& serverPlayer = server->getPlayerFromNumber (player.getNr ());
-		font->showText (drawPositionX, drawPositionY, "subbases: " + iToStr ((int)serverPlayer.base.SubBases.size ()), FONT_LATIN_SMALL_WHITE);
+		const auto& serverPlayer = server->getPlayerFromNumber (player.getNr());
+		font->showText (drawPositionX, drawPositionY, "subbases: " + iToStr ((int)serverPlayer.base.SubBases.size()), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 	}
 
 	if (debugFX)
 	{
-		if(gameMap)
+		if (gameMap)
 		{
 			font->showText (drawPositionX, drawPositionY, "total-animations-count: " + iToStr (gameMap->animations.size()), FONT_LATIN_SMALL_WHITE);
 			drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-			const auto runningAnimations = std::count_if (gameMap->animations.cbegin (), gameMap->animations.cend (), [ ](const std::unique_ptr<cAnimation>& animation){ return animation->isRunning (); });
+			const auto runningAnimations = std::count_if (gameMap->animations.cbegin(), gameMap->animations.cend(), [ ] (const std::unique_ptr<cAnimation>& animation) { return animation->isRunning(); });
 			font->showText (drawPositionX, drawPositionY, "running-animations-count: " + iToStr (runningAnimations), FONT_LATIN_SMALL_WHITE);
-			const auto finishedAnimations = std::count_if(gameMap->animations.cbegin(), gameMap->animations.cend(), [](const std::unique_ptr<cAnimation>& animation){ return animation->isFinished(); });
+			const auto finishedAnimations = std::count_if (gameMap->animations.cbegin(), gameMap->animations.cend(), [] (const std::unique_ptr<cAnimation>& animation) { return animation->isFinished(); });
 			font->showText (drawPositionX, drawPositionY, "finished-animations-count: " + iToStr (finishedAnimations), FONT_LATIN_SMALL_WHITE);
 			drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 			font->showText (drawPositionX, drawPositionY, "gui-fx-count: " + iToStr (gameMap->effects.size()), FONT_LATIN_SMALL_WHITE);
@@ -234,21 +234,21 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 	}
 	if (debugTraceServer || debugTraceClient)
 	{
-		trace ();
+		trace();
 	}
 	if (debugCache && gameMap)
 	{
 		const auto& drawingCache = gameMap->getDrawingCache();
 
-		font->showText (drawPositionX, drawPositionY, "Max cache size: " + iToStr (drawingCache.getMaxCacheSize ()), FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPositionX, drawPositionY, "Max cache size: " + iToStr (drawingCache.getMaxCacheSize()), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (drawPositionX, drawPositionY, "cache size: " + iToStr (drawingCache.getCacheSize ()), FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPositionX, drawPositionY, "cache size: " + iToStr (drawingCache.getCacheSize()), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (drawPositionX, drawPositionY, "cache hits: " + iToStr (drawingCache.getCacheHits ()), FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPositionX, drawPositionY, "cache hits: " + iToStr (drawingCache.getCacheHits()), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (drawPositionX, drawPositionY, "cache misses: " + iToStr (drawingCache.getCacheMisses ()), FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPositionX, drawPositionY, "cache misses: " + iToStr (drawingCache.getCacheMisses()), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (drawPositionX, drawPositionY, "not cached: " + iToStr (drawingCache.getNotCached ()), FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPositionX, drawPositionY, "not cached: " + iToStr (drawingCache.getNotCached()), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 	}
 
@@ -265,7 +265,7 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 			drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 			font->showText (drawPositionX, drawPositionY, "Net MSG Queue: ", FONT_LATIN_SMALL_WHITE);
-			font->showText (drawPositionX + 110, drawPositionY, iToStr (server->eventQueue.safe_size ()), FONT_LATIN_SMALL_WHITE);
+			font->showText (drawPositionX + 110, drawPositionY, iToStr (server->eventQueue.safe_size()), FONT_LATIN_SMALL_WHITE);
 			drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 			font->showText (drawPositionX, drawPositionY, "EventCounter: ", FONT_LATIN_SMALL_WHITE);
@@ -275,7 +275,7 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 			font->showText (drawPositionX, drawPositionY, "-Client Lag: ", FONT_LATIN_SMALL_WHITE);
 			drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
-			for (size_t i = 0; i != server->playerList.size (); ++i)
+			for (size_t i = 0; i != server->playerList.size(); ++i)
 			{
 				eUnicodeFontType fontType = FONT_LATIN_SMALL_WHITE;
 				if (server->gameTimer->getReceivedTime (i) + PAUSE_GAME_TIMEOUT < server->gameTimer->gameTime)
@@ -304,7 +304,7 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		font->showText (drawPositionX, drawPositionY, "Net MGS Queue: ", FONT_LATIN_SMALL_WHITE);
-		font->showText (drawPositionX + 110, drawPositionY, iToStr (client->eventQueue.safe_size ()), FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPositionX + 110, drawPositionY, iToStr (client->eventQueue.safe_size()), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		font->showText (drawPositionX, drawPositionY, "EventCounter: ", FONT_LATIN_SMALL_WHITE);
@@ -312,7 +312,7 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		font->showText (drawPositionX, drawPositionY, "Time Buffer: ", FONT_LATIN_SMALL_WHITE);
-		font->showText (drawPositionX + 110, drawPositionY, iToStr (client->gameTimer->getReceivedTime () - client->gameTimer->gameTime), FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPositionX + 110, drawPositionY, iToStr (client->gameTimer->getReceivedTime() - client->gameTimer->gameTime), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		font->showText (drawPositionX, drawPositionY, "Ticks per Frame ", FONT_LATIN_SMALL_WHITE);
@@ -335,16 +335,16 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 }
 
 //------------------------------------------------------------------------------
-void cDebugOutputWidget::trace ()
+void cDebugOutputWidget::trace()
 {
 	if (!gameMap) return;
 
-	auto mouse = gameMap->getActiveMouse ();
+	auto mouse = gameMap->getActiveMouse();
 	if (!mouse) return;
 
-	if (!gameMap->getArea ().withinOrTouches (mouse->getPosition ())) return;
+	if (!gameMap->getArea().withinOrTouches (mouse->getPosition())) return;
 
-	const auto mapPosition = gameMap->getMapTilePosition (mouse->getPosition ());
+	const auto mapPosition = gameMap->getMapTilePosition (mouse->getPosition());
 
 	cMapField* field;
 
@@ -355,18 +355,18 @@ void cDebugOutputWidget::trace ()
 	}
 	else
 	{
-		if (!client->getMap ()->isValidPosition (mapPosition)) return;
+		if (!client->getMap()->isValidPosition (mapPosition)) return;
 		field = &client->Map->getField (mapPosition);
 	}
 
-	cPosition drawingPosition = getPosition () + cPosition(0,0);
+	cPosition drawingPosition = getPosition() + cPosition (0, 0);
 
-	if (field->getVehicle ()) { traceVehicle (*field->getVehicle (), drawingPosition); drawingPosition.y() += 20; }
-	if (field->getPlane ()) { traceVehicle (*field->getPlane (), drawingPosition); drawingPosition.y () += 20; }
-	const auto& buildings = field->getBuildings ();
-	for (auto it = buildings.begin (); it != buildings.end (); ++it)
+	if (field->getVehicle()) { traceVehicle (*field->getVehicle(), drawingPosition); drawingPosition.y() += 20; }
+	if (field->getPlane()) { traceVehicle (*field->getPlane(), drawingPosition); drawingPosition.y() += 20; }
+	const auto& buildings = field->getBuildings();
+	for (auto it = buildings.begin(); it != buildings.end(); ++it)
 	{
-		traceBuilding (**it, drawingPosition); drawingPosition.y () += 20;
+		traceBuilding (**it, drawingPosition); drawingPosition.y() += 20;
 	}
 }
 
@@ -375,7 +375,7 @@ void cDebugOutputWidget::traceVehicle (const cVehicle& vehicle, cPosition& drawP
 {
 	std::string tmpString;
 
-	tmpString = "name: \"" + vehicle.getDisplayName () + "\" id: \"" + iToStr (vehicle.iID) + "\" owner: \"" + vehicle.getOwner ()->getName () + "\" posX: +" + iToStr (vehicle.getPosition ().x ()) + " posY: " + iToStr (vehicle.getPosition ().y ()) + " offX: " + iToStr (vehicle.getMovementOffset ().x ()) + " offY: " + iToStr (vehicle.getMovementOffset ().y ());
+	tmpString = "name: \"" + vehicle.getDisplayName() + "\" id: \"" + iToStr (vehicle.iID) + "\" owner: \"" + vehicle.getOwner()->getName() + "\" posX: +" + iToStr (vehicle.getPosition().x()) + " posY: " + iToStr (vehicle.getPosition().y()) + " offX: " + iToStr (vehicle.getMovementOffset().x()) + " offY: " + iToStr (vehicle.getMovementOffset().y());
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
@@ -387,11 +387,11 @@ void cDebugOutputWidget::traceVehicle (const cVehicle& vehicle, cPosition& drawP
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
-	tmpString = "is_building: " + iToStr (vehicle.isUnitBuildingABuilding()) + " building_typ: " + vehicle.getBuildingType().getText () + " build_costs: +" + iToStr (vehicle.getBuildCosts()) + " build_rounds: " + iToStr (vehicle.getBuildTurns()) + " build_round_start: " + iToStr (vehicle.getBuildTurnsStart());
+	tmpString = "is_building: " + iToStr (vehicle.isUnitBuildingABuilding()) + " building_typ: " + vehicle.getBuildingType().getText() + " build_costs: +" + iToStr (vehicle.getBuildCosts()) + " build_rounds: " + iToStr (vehicle.getBuildTurns()) + " build_round_start: " + iToStr (vehicle.getBuildTurnsStart());
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
-	tmpString = " bandx: " + iToStr (vehicle.bandPosition.x()) + " bandy: +" + iToStr (vehicle.bandPosition.y ()) + " build_big_saved_pos: " + iToStr (vehicle.buildBigSavedPosition.x ()) + "x" + iToStr (vehicle.buildBigSavedPosition.y ()) + " build_path: " + iToStr (vehicle.BuildPath);
+	tmpString = " bandx: " + iToStr (vehicle.bandPosition.x()) + " bandy: +" + iToStr (vehicle.bandPosition.y()) + " build_big_saved_pos: " + iToStr (vehicle.buildBigSavedPosition.x()) + "x" + iToStr (vehicle.buildBigSavedPosition.y()) + " build_path: " + iToStr (vehicle.BuildPath);
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
@@ -407,23 +407,23 @@ void cDebugOutputWidget::traceVehicle (const cVehicle& vehicle, cPosition& drawP
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
-	tmpString = " stored_vehicles_count: " + iToStr ((int)vehicle.storedUnits.size ());
+	tmpString = " stored_vehicles_count: " + iToStr ((int)vehicle.storedUnits.size());
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
-	for (size_t i = 0; i != vehicle.storedUnits.size (); ++i)
+	for (size_t i = 0; i != vehicle.storedUnits.size(); ++i)
 	{
 		const cVehicle* storedVehicle = vehicle.storedUnits[i];
-		font->showText (drawPosition, " store " + iToStr (i) + ": \"" + storedVehicle->getDisplayName () + "\"", FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPosition, " store " + iToStr (i) + ": \"" + storedVehicle->getDisplayName() + "\"", FONT_LATIN_SMALL_WHITE);
 		drawPosition.y() += 8;
 	}
 
 	if (debugTraceServer)
 	{
 		tmpString = "seen by players: owner";
-		for (size_t i = 0; i != vehicle.seenByPlayerList.size (); ++i)
+		for (size_t i = 0; i != vehicle.seenByPlayerList.size(); ++i)
 		{
-			tmpString += ", \"" + vehicle.seenByPlayerList[i]->getName () + "\"";
+			tmpString += ", \"" + vehicle.seenByPlayerList[i]->getName() + "\"";
 		}
 		font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 		drawPosition.y() += 8;
@@ -439,7 +439,7 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 {
 	std::string tmpString;
 
-	tmpString = "name: \"" + building.getDisplayName () + "\" id: \"" + iToStr (building.iID) + "\" owner: \"" + (building.getOwner () ? building.getOwner ()->getName () : "<null>") + "\" posX: +" + iToStr (building.getPosition ().x ()) + " posY: " + iToStr (building.getPosition ().y ());
+	tmpString = "name: \"" + building.getDisplayName() + "\" id: \"" + iToStr (building.iID) + "\" owner: \"" + (building.getOwner() ? building.getOwner()->getName() : "<null>") + "\" posX: +" + iToStr (building.getPosition().x()) + " posY: " + iToStr (building.getPosition().y());
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
@@ -452,8 +452,8 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 	drawPosition.y() += 8;
 
 	tmpString = " max_metal_p: " + iToStr (building.MaxMetalProd) +
-		" max_oil_p: " + iToStr (building.MaxOilProd) +
-		" max_gold_p: " + iToStr (building.MaxGoldProd);
+				" max_oil_p: " + iToStr (building.MaxOilProd) +
+				" max_gold_p: " + iToStr (building.MaxGoldProd);
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
@@ -461,18 +461,18 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
-	tmpString = " stored_vehicles_count: " + iToStr ((int)building.storedUnits.size ());
+	tmpString = " stored_vehicles_count: " + iToStr ((int)building.storedUnits.size());
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
-	for (size_t i = 0; i != building.storedUnits.size (); ++i)
+	for (size_t i = 0; i != building.storedUnits.size(); ++i)
 	{
 		const cVehicle* storedVehicle = building.storedUnits[i];
-		font->showText (drawPosition, " store " + iToStr (i) + ": \"" + storedVehicle->getDisplayName () + "\"", FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPosition, " store " + iToStr (i) + ": \"" + storedVehicle->getDisplayName() + "\"", FONT_LATIN_SMALL_WHITE);
 		drawPosition.y() += 8;
 	}
 
-	const size_t buildingBuildListSize = building.getBuildListSize ();
+	const size_t buildingBuildListSize = building.getBuildListSize();
 	tmpString =
 		"build_speed: "        + iToStr (building.BuildSpeed) +
 		" repeat_build: "      + iToStr (building.RepeatBuild) +
@@ -482,17 +482,17 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 
 	for (size_t i = 0; i != buildingBuildListSize; ++i)
 	{
-		const auto& item = building.getBuildListItem(i);
-		font->showText (drawPosition, "  build " + iToStr (i) + ": " + item.getType ().getText () + " \"" + item.getType().getUnitDataOriginalVersion ()->name + "\"", FONT_LATIN_SMALL_WHITE);
+		const auto& item = building.getBuildListItem (i);
+		font->showText (drawPosition, "  build " + iToStr (i) + ": " + item.getType().getText() + " \"" + item.getType().getUnitDataOriginalVersion()->name + "\"", FONT_LATIN_SMALL_WHITE);
 		drawPosition.y() += 8;
 	}
 
 	if (debugTraceServer)
 	{
 		tmpString = "seen by players: owner";
-		for (size_t i = 0; i != building.seenByPlayerList.size (); ++i)
+		for (size_t i = 0; i != building.seenByPlayerList.size(); ++i)
 		{
-			tmpString += ", \"" + building.seenByPlayerList[i]->getName () + "\"";
+			tmpString += ", \"" + building.seenByPlayerList[i]->getName() + "\"";
 		}
 		font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 		drawPosition.y() += 8;

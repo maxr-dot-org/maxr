@@ -33,61 +33,61 @@ class cVersion;
 class cGameGuiState
 {
 public:
-	cGameGuiState ();
+	cGameGuiState();
 
 	void setMapPosition (const cPosition& position);
-	const cPosition& getMapPosition () const;
+	const cPosition& getMapPosition() const;
 
 	void setMapZoomFactor (float zoomFactor);
-	float getMapZoomFactor () const;
+	float getMapZoomFactor() const;
 
 	void setSurveyActive (bool value);
-	bool getSurveyActive () const;
+	bool getSurveyActive() const;
 
 	void setHitsActive (bool value);
-	bool getHitsActive () const;
+	bool getHitsActive() const;
 
 	void setScanActive (bool value);
-	bool getScanActive () const;
+	bool getScanActive() const;
 
 	void setStatusActive (bool value);
-	bool getStatusActive () const;
+	bool getStatusActive() const;
 
 	void setAmmoActive (bool value);
-	bool getAmmoActive () const;
+	bool getAmmoActive() const;
 
 	void setGridActive (bool value);
-	bool getGridActive () const;
+	bool getGridActive() const;
 
 	void setColorActive (bool value);
-	bool getColorActive () const;
+	bool getColorActive() const;
 
 	void setRangeActive (bool value);
-	bool getRangeActive () const;
+	bool getRangeActive() const;
 
 	void setFogActive (bool value);
-	bool getFogActive () const;
+	bool getFogActive() const;
 
 	void setLockActive (bool value);
-	bool getLockActive () const;
+	bool getLockActive() const;
 
 	void setMiniMapZoomFactorActive (bool value);
-	bool getMiniMapZoomFactorActive () const;
+	bool getMiniMapZoomFactorActive() const;
 
 	void setMiniMapAttackUnitsOnly (bool value);
-	bool getMiniMapAttackUnitsOnly () const;
+	bool getMiniMapAttackUnitsOnly() const;
 
 	void setUnitVideoPlaying (bool value);
-	bool getUnitVideoPlaying () const;
+	bool getUnitVideoPlaying() const;
 
 	void setChatActive (bool value);
-	bool getChatActive () const;
+	bool getChatActive() const;
 
 	void setSelectedUnits (const cUnitSelection& unitSelection);
-	const std::vector<unsigned int>& getSelectedUnitIds () const;
+	const std::vector<unsigned int>& getSelectedUnitIds() const;
 
 	void setLockedUnits (const cUnitLockList& unitLockList);
-	const std::vector<unsigned int>& getLockedUnitIds () const;
+	const std::vector<unsigned int>& getLockedUnitIds() const;
 
 	void pushInto (cNetMessage& message) const;
 	void popFrom (cNetMessage& message);

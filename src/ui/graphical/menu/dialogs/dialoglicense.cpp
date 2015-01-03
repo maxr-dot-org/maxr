@@ -27,86 +27,86 @@
 #include "main.h"
 
 //------------------------------------------------------------------------------
-cDialogLicense::cDialogLicense () :
+cDialogLicense::cDialogLicense() :
 	cWindow (LoadPCX (GFXOD_DIALOG4), eWindowBackgrounds::Alpha),
 	currentPage (0),
 	maxPage (3)
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (35, 30), getPosition () + cPosition (35+232, 30+font->getFontHeight ())), "\"M.A.X.R.\"", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 30), getPosition() + cPosition (35 + 232, 30 + font->getFontHeight())), "\"M.A.X.R.\"", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
-	headerLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (35, 30+font->getFontHeight ()), getPosition () + cPosition (35+232, 30+font->getFontHeight ()*2)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	headerLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 30 + font->getFontHeight()), getPosition() + cPosition (35 + 232, 30 + font->getFontHeight() * 2)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
-	textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (35, 35+font->getFontHeight ()*3), getPosition () + cPosition (35+232, 30+font->getFontHeight ()*3+142)), "", FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Top));
+	textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 35 + font->getFontHeight() * 3), getPosition() + cPosition (35 + 232, 30 + font->getFontHeight() * 3 + 142)), "", FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Top));
 	textLabel->setWordWrap (true);
 
-	auto okButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (111, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~OK"), FONT_LATIN_NORMAL));
+	auto okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (111, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~OK"), FONT_LATIN_NORMAL));
 	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
 	signalConnectionManager.connect (okButton->clicked, std::bind (&cDialogLicense::close, this));
 
-	upButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (241, 187), ePushButtonType::ArrowUpSmall));
+	upButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (241, 187), ePushButtonType::ArrowUpSmall));
 	signalConnectionManager.connect (upButton->clicked, std::bind (&cDialogLicense::pageUp, this));
 
-	downButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (261, 187), ePushButtonType::ArrowDownSmall));
+	downButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (261, 187), ePushButtonType::ArrowDownSmall));
 	signalConnectionManager.connect (downButton->clicked, std::bind (&cDialogLicense::pageDown, this));
 
-	readAuthors ();
-	updatePageButtons ();
-	resetTexts ();
+	readAuthors();
+	updatePageButtons();
+	resetTexts();
 }
 
 //------------------------------------------------------------------------------
-cDialogLicense::~cDialogLicense ()
+cDialogLicense::~cDialogLicense()
 {}
 
 //------------------------------------------------------------------------------
-void cDialogLicense::pageDown ()
+void cDialogLicense::pageDown()
 {
-	currentPage = std::min (currentPage+1, maxPage);
-	updatePageButtons ();
-	resetTexts ();
+	currentPage = std::min (currentPage + 1, maxPage);
+	updatePageButtons();
+	resetTexts();
 }
 
 //------------------------------------------------------------------------------
-void cDialogLicense::pageUp ()
+void cDialogLicense::pageUp()
 {
-	currentPage = std::max (currentPage-1, 0);
-	updatePageButtons ();
-	resetTexts ();
+	currentPage = std::max (currentPage - 1, 0);
+	updatePageButtons();
+	resetTexts();
 }
 
 //------------------------------------------------------------------------------
-void cDialogLicense::updatePageButtons ()
+void cDialogLicense::updatePageButtons()
 {
-	if (currentPage <= 0) upButton->lock ();
-	else upButton->unlock ();
+	if (currentPage <= 0) upButton->lock();
+	else upButton->unlock();
 
-	if (currentPage >= maxPage) downButton->lock ();
-	else downButton->unlock ();
+	if (currentPage >= maxPage) downButton->lock();
+	else downButton->unlock();
 }
 
 //------------------------------------------------------------------------------
-void cDialogLicense::readAuthors ()
+void cDialogLicense::readAuthors()
 {
 	std::string fileName;
 #ifdef WIN32
 	fileName = "AUTHORS.txt";
 #elif __amigaos4
-	fileName = cSettings::getInstance ().getDataDir () + PATH_DELIMITER + "AUTHORS.txt";
+	fileName = cSettings::getInstance().getDataDir() + PATH_DELIMITER + "AUTHORS.txt";
 #elif MAC
 	fileName = "AUTHORS";
 #else
-	fileName = cSettings::getInstance ().getDataDir () + PATH_DELIMITER + "AUTHORS";
+	fileName = cSettings::getInstance().getDataDir() + PATH_DELIMITER + "AUTHORS";
 #endif
 
 	std::ifstream authorsFile (fileName);
 
-	if (authorsFile.is_open ())
+	if (authorsFile.is_open())
 	{
 		std::string line;
 		while (std::getline (authorsFile, line))
 		{
-			if (!authors.empty ()) authors += "\n";
+			if (!authors.empty()) authors += "\n";
 			authors += line;
 		}
 	}
@@ -114,7 +114,7 @@ void cDialogLicense::readAuthors ()
 }
 
 //------------------------------------------------------------------------------
-void cDialogLicense::resetTexts ()
+void cDialogLicense::resetTexts()
 {
 	static const char* page0Text =
 		"  This program is free software; you can redistribute it and/or modify "
@@ -138,26 +138,26 @@ void cDialogLicense::resetTexts ()
 
 	switch (currentPage)
 	{
-	default:
-	case 0:
-		textLabel->setText (page0Text);
-		textLabel->setFont (FONT_LATIN_NORMAL);
-		headerLabel->setText (generalHeader);
-		break;
-	case 1:
-		textLabel->setText (page1Text);
-		textLabel->setFont (FONT_LATIN_NORMAL);
-		headerLabel->setText (generalHeader);
-		break;
-	case 2:
-		textLabel->setText (page2Text);
-		textLabel->setFont (FONT_LATIN_NORMAL);
-		headerLabel->setText (generalHeader);
-		break;
-	case 3:
-		textLabel->setText (authors);
-		textLabel->setFont (FONT_LATIN_SMALL_WHITE);
-		headerLabel->setText (authorsHeader);
-		break;
+		default:
+		case 0:
+			textLabel->setText (page0Text);
+			textLabel->setFont (FONT_LATIN_NORMAL);
+			headerLabel->setText (generalHeader);
+			break;
+		case 1:
+			textLabel->setText (page1Text);
+			textLabel->setFont (FONT_LATIN_NORMAL);
+			headerLabel->setText (generalHeader);
+			break;
+		case 2:
+			textLabel->setText (page2Text);
+			textLabel->setFont (FONT_LATIN_NORMAL);
+			headerLabel->setText (generalHeader);
+			break;
+		case 3:
+			textLabel->setText (authors);
+			textLabel->setFont (FONT_LATIN_SMALL_WHITE);
+			headerLabel->setText (authorsHeader);
+			break;
 	}
 }

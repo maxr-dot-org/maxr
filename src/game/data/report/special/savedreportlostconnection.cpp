@@ -30,7 +30,7 @@ cSavedReportLostConnection::cSavedReportLostConnection (const cPlayer& player) :
 //------------------------------------------------------------------------------
 cSavedReportLostConnection::cSavedReportLostConnection (cNetMessage& message)
 {
-	playerName = message.popString ();
+	playerName = message.popString();
 }
 
 //------------------------------------------------------------------------------
@@ -50,25 +50,25 @@ void cSavedReportLostConnection::pushInto (cNetMessage& message) const
 //------------------------------------------------------------------------------
 void cSavedReportLostConnection::pushInto (tinyxml2::XMLElement& element) const
 {
-	element.SetAttribute ("playerName", playerName.c_str ());
+	element.SetAttribute ("playerName", playerName.c_str());
 
 	cSavedReport::pushInto (element);
 }
 
 //------------------------------------------------------------------------------
-eSavedReportType cSavedReportLostConnection::getType () const
+eSavedReportType cSavedReportLostConnection::getType() const
 {
 	return eSavedReportType::LostConnection;
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportLostConnection::getMessage () const
+std::string cSavedReportLostConnection::getMessage() const
 {
 	return lngPack.i18n ("Text~Multiplayer~Lost_Connection", playerName);
 }
 
 //------------------------------------------------------------------------------
-bool cSavedReportLostConnection::isAlert () const
+bool cSavedReportLostConnection::isAlert() const
 {
 	return false;
 }

@@ -45,15 +45,15 @@ cLineEdit::cLineEdit (const cBox<cPosition>& area, eLineEditFrameType frameType_
 	hasKeyFocus (false),
 	showCursor (false)
 {
-	createBackground ();
+	createBackground();
 }
 
 //------------------------------------------------------------------------------
-cLineEdit::~cLineEdit ()
+cLineEdit::~cLineEdit()
 {}
 
 //------------------------------------------------------------------------------
-const std::string& cLineEdit::getText ()
+const std::string& cLineEdit::getText()
 {
 	return text;
 }
@@ -61,7 +61,7 @@ const std::string& cLineEdit::getText ()
 //------------------------------------------------------------------------------
 void cLineEdit::setText (std::string text_)
 {
-	std::swap(text, text_);
+	std::swap (text, text_);
 	if (validator)
 	{
 		const auto state = validator->validate (text);
@@ -70,8 +70,8 @@ void cLineEdit::setText (std::string text_)
 			validator->fixup (text);
 		}
 	}
-	resetTextPosition ();
-	textSet ();
+	resetTextPosition();
+	textSet();
 }
 
 //------------------------------------------------------------------------------
@@ -88,23 +88,23 @@ void cLineEdit::setValidator (std::unique_ptr<cValidator> validator_)
 }
 
 //------------------------------------------------------------------------------
-void cLineEdit::finishEditing ()
+void cLineEdit::finishEditing()
 {
-	auto application = getActiveApplication ();
+	auto application = getActiveApplication();
 	if (application)
 	{
 		application->releaseKeyFocus (*this);
 	}
 	else
 	{
-		finishEditingInternal ();
+		finishEditingInternal();
 	}
 }
 
 //------------------------------------------------------------------------------
-void cLineEdit::finishEditingInternal ()
+void cLineEdit::finishEditingInternal()
 {
-	SDL_StopTextInput ();
+	SDL_StopTextInput();
 
 	if (validator)
 	{
@@ -112,7 +112,7 @@ void cLineEdit::finishEditingInternal ()
 		if (state != eValidatorState::Valid)
 		{
 			validator->fixup (text);
-			resetTextPosition ();
+			resetTextPosition();
 		}
 		editingFinished (state);
 	}
@@ -126,19 +126,19 @@ void cLineEdit::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (surface != nullptr)
 	{
-		SDL_Rect position = getArea ().toSdlRect ();
-		SDL_BlitSurface (surface.get (), nullptr, &destination, &position);
+		SDL_Rect position = getArea().toSdlRect();
+		SDL_BlitSurface (surface.get(), nullptr, &destination, &position);
 	}
 
-	const auto offsetRect = getTextDrawOffset ();
+	const auto offsetRect = getTextDrawOffset();
 	const auto cursorXOffset = font->getFontSize (fontType) == FONT_SIZE_SMALL ? -1 : 0;
 
-	const cPosition textPosition = getPosition () + offsetRect;
+	const cPosition textPosition = getPosition() + offsetRect;
 
-	font->showText (textPosition.x (), textPosition.y (), text.substr (startOffset, endOffset - startOffset), fontType);
+	font->showText (textPosition.x(), textPosition.y(), text.substr (startOffset, endOffset - startOffset), fontType);
 	if (hasKeyFocus && !readOnly)
 	{
-		const auto now = std::chrono::steady_clock::now ();
+		const auto now = std::chrono::steady_clock::now();
 
 		if (now - lastCursorBlinkTime > cursorVisibleTime)
 		{
@@ -146,7 +146,7 @@ void cLineEdit::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 			lastCursorBlinkTime = now;
 		}
 
-		if (showCursor) font->showText (textPosition.x () + cursorXOffset + font->getTextWide (text.substr (startOffset, cursorPos - startOffset), fontType), textPosition.y (), "|", fontType);
+		if (showCursor) font->showText (textPosition.x() + cursorXOffset + font->getTextWide (text.substr (startOffset, cursorPos - startOffset), fontType), textPosition.y(), "|", fontType);
 	}
 
 	cClickableWidget::draw (destination, clipRect);
@@ -162,16 +162,16 @@ bool cLineEdit::handleGetKeyFocus (cApplication& application)
 	hasKeyFocus = true;
 
 	showCursor = true;
-	lastCursorBlinkTime = std::chrono::steady_clock::now ();
+	lastCursorBlinkTime = std::chrono::steady_clock::now();
 
 	if (!hadKeyFocus)
 	{
-		cursorPos = (int)text.length ();
+		cursorPos = (int)text.length();
 		while (cursorPos > endOffset) doPosIncrease (endOffset, endOffset);
-		while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize ().x () - getBorderSize ()) doPosIncrease (startOffset, startOffset);
+		while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosIncrease (startOffset, startOffset);
 	}
 
-	SDL_StartTextInput ();
+	SDL_StartTextInput();
 
 	return true;
 }
@@ -182,7 +182,7 @@ void cLineEdit::handleLooseKeyFocus (cApplication& application)
 	if (hasKeyFocus)
 	{
 		hasKeyFocus = false;
-		finishEditingInternal ();
+		finishEditingInternal();
 	}
 }
 
@@ -191,7 +191,7 @@ bool cLineEdit::handleClicked (cApplication& application, cMouse& mouse, eMouseB
 {
 	if (readOnly) return false;
 
-	int x = mouse.getPosition ().x () - (getPosition ().x () + getTextDrawOffset ().x());
+	int x = mouse.getPosition().x() - (getPosition().x() + getTextDrawOffset().x());
 	int cursor = startOffset;
 	while (font->getTextWide (text.substr (startOffset, cursor - startOffset), fontType) < x)
 	{
@@ -208,7 +208,7 @@ bool cLineEdit::handleClicked (cApplication& application, cMouse& mouse, eMouseB
 }
 
 //------------------------------------------------------------------------------
-void cLineEdit::createBackground ()
+void cLineEdit::createBackground()
 {
 	if (frameType == eLineEditFrameType::Box)
 	{
@@ -224,44 +224,44 @@ void cLineEdit::createBackground ()
 }
 
 //------------------------------------------------------------------------------
-cPosition cLineEdit::getTextDrawOffset () const
+cPosition cLineEdit::getTextDrawOffset() const
 {
 	switch (frameType)
 	{
-	default:
-	case eLineEditFrameType::None:
-		return cPosition (0, 0);
-	case eLineEditFrameType::Box:
-		return cPosition (6, 3);
+		default:
+		case eLineEditFrameType::None:
+			return cPosition (0, 0);
+		case eLineEditFrameType::Box:
+			return cPosition (6, 3);
 	}
 }
 
 //------------------------------------------------------------------------------
-int cLineEdit::getBorderSize () const
+int cLineEdit::getBorderSize() const
 {
 	switch (frameType)
 	{
-	default:
-	case eLineEditFrameType::None:
-		return 0;
-	case eLineEditFrameType::Box:
-		return 12;
+		default:
+		case eLineEditFrameType::None:
+			return 0;
+		case eLineEditFrameType::Box:
+			return 12;
 	}
 }
 
 //------------------------------------------------------------------------------
-void cLineEdit::resetTextPosition ()
+void cLineEdit::resetTextPosition()
 {
 	startOffset = 0;
-	endOffset = (int)text.length ();
+	endOffset = (int)text.length();
 	cursorPos = endOffset;
-	while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize ().x () - getBorderSize ()) doPosDecrease (endOffset);
+	while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosDecrease (endOffset);
 }
 
 //------------------------------------------------------------------------------
 void cLineEdit::doPosIncrease (int& value, int pos)
 {
-	if (pos < (int)text.length ())
+	if (pos < (int)text.length())
 	{
 		unsigned char c = text[pos];
 		if ((c & 0xE0) == 0xE0) value += 3;
@@ -269,9 +269,9 @@ void cLineEdit::doPosIncrease (int& value, int pos)
 		else value += 1;
 	}
 
-	if (value > (int)text.length ())
+	if (value > (int)text.length())
 	{
-		value = (int)text.length ();
+		value = (int)text.length();
 		Log.write ("Invalid UTF-8 string in line edit: '" + text + "'", LOG_TYPE_WARNING);
 	}
 }
@@ -306,25 +306,25 @@ void cLineEdit::scrollLeft (bool changeCursor)
 	if (cursorPos > 0) while (cursorPos - 1 < startOffset) doPosDecrease (startOffset);
 	else while (cursorPos < startOffset) doPosDecrease (startOffset);
 
-	if (font->getTextWide (text.substr (startOffset, text.length () - startOffset), fontType) > getSize ().x () - getBorderSize ())
+	if (font->getTextWide (text.substr (startOffset, text.length() - startOffset), fontType) > getSize().x() - getBorderSize())
 	{
-		endOffset = (int)text.length ();
-		while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize ().x () - getBorderSize ()) doPosDecrease (endOffset);
+		endOffset = (int)text.length();
+		while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosDecrease (endOffset);
 	}
 }
 
 //------------------------------------------------------------------------------
-void cLineEdit::scrollRight ()
+void cLineEdit::scrollRight()
 {
 	// makes the cursor go right
-	if (cursorPos < (int)text.length ()) doPosIncrease (cursorPos, cursorPos);
-	assert (cursorPos <= (int)text.length ());
+	if (cursorPos < (int)text.length()) doPosIncrease (cursorPos, cursorPos);
+	assert (cursorPos <= (int)text.length());
 	while (cursorPos > endOffset) doPosIncrease (endOffset, endOffset);
-	while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize ().x () - getBorderSize ()) doPosIncrease (startOffset, startOffset);
+	while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosIncrease (startOffset, startOffset);
 }
 
 //------------------------------------------------------------------------------
-void cLineEdit::deleteLeft ()
+void cLineEdit::deleteLeft()
 {
 	// deletes the first character left from the cursor
 	if (cursorPos > 0)
@@ -344,22 +344,22 @@ void cLineEdit::deleteLeft ()
 		}
 		text.erase (cursorPos - 1, 1);
 		cursorPos--;
-		endOffset = std::min<int> (text.length (), endOffset);
+		endOffset = std::min<int> (text.length(), endOffset);
 		scrollLeft (false);
 	}
 }
 
 //------------------------------------------------------------------------------
-void cLineEdit::deleteRight ()
+void cLineEdit::deleteRight()
 {
 	// deletes the first character right from the cursor
-	if (cursorPos < (int)text.length ())
+	if (cursorPos < (int)text.length())
 	{
 		unsigned char c = text[cursorPos];
 		if ((c & 0xE0) == 0xE0) text.erase (cursorPos, 3);
 		else if ((c & 0xC0) == 0xC0) text.erase (cursorPos, 2);
 		else text.erase (cursorPos, 1);
-		endOffset = std::min<int> (text.length (), endOffset);
+		endOffset = std::min<int> (text.length(), endOffset);
 	}
 }
 
@@ -370,81 +370,81 @@ bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard
 
 	switch (key)
 	{
-	case SDLK_ESCAPE:
-		escapePressed ();
-		application.releaseKeyFocus (*this);
-		break;
-	case SDLK_KP_ENTER: // fall through
-	case SDLK_RETURN:
-		returnPressed ();
-		break;
-	case SDLK_LEFT:
-		scrollLeft ();
-		break;
-	case SDLK_RIGHT:
-		scrollRight ();
-		break;
-	case SDLK_HOME:
-		cursorPos = 0;
-		startOffset = 0;
-		endOffset = (int)text.length ();
-		while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize ().x () - getBorderSize ()) doPosDecrease (endOffset);
-		break;
-	case SDLK_END:
-		cursorPos = (int)text.length ();
-		startOffset = 0;
-		endOffset = (int)text.length ();
-		while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize ().x () - getBorderSize ()) doPosIncrease (startOffset, startOffset);
-		break;
-	case SDLK_BACKSPACE:
-		deleteLeft ();
-		break;
-	case SDLK_DELETE:
-		deleteRight ();
-		break;
-	case SDLK_c:
-		if (keyboard.getCurrentModifiers () & (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight))
-		{
-			SDL_SetClipboardText (text.c_str ());
-		}
-		break;
-	case SDLK_x:
-		if (keyboard.getCurrentModifiers () & (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight))
-		{
-			SDL_SetClipboardText (text.c_str ());
-			text.clear ();
-			resetTextPosition ();
-		}
-		break;
-	case SDLK_v:
-		if (keyboard.getCurrentModifiers () & (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight) &&
-			SDL_HasClipboardText ())
-		{
-			const auto clipboardText = SDL_GetClipboardText ();
-
-			if (clipboardText == nullptr) break;
-
-			const auto clipboardFree = makeScopedOperation ([clipboardText](){ SDL_free (clipboardText); });
-
-			std::string insertText (clipboardText);
-
-			if (validator)
+		case SDLK_ESCAPE:
+			escapePressed();
+			application.releaseKeyFocus (*this);
+			break;
+		case SDLK_KP_ENTER: // fall through
+		case SDLK_RETURN:
+			returnPressed();
+			break;
+		case SDLK_LEFT:
+			scrollLeft();
+			break;
+		case SDLK_RIGHT:
+			scrollRight();
+			break;
+		case SDLK_HOME:
+			cursorPos = 0;
+			startOffset = 0;
+			endOffset = (int)text.length();
+			while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosDecrease (endOffset);
+			break;
+		case SDLK_END:
+			cursorPos = (int)text.length();
+			startOffset = 0;
+			endOffset = (int)text.length();
+			while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosIncrease (startOffset, startOffset);
+			break;
+		case SDLK_BACKSPACE:
+			deleteLeft();
+			break;
+		case SDLK_DELETE:
+			deleteRight();
+			break;
+		case SDLK_c:
+			if (keyboard.getCurrentModifiers() & (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight))
 			{
-				const auto state = validator->validate (insertText);
-				if (state == eValidatorState::Invalid) break;
+				SDL_SetClipboardText (text.c_str());
 			}
+			break;
+		case SDLK_x:
+			if (keyboard.getCurrentModifiers() & (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight))
+			{
+				SDL_SetClipboardText (text.c_str());
+				text.clear();
+				resetTextPosition();
+			}
+			break;
+		case SDLK_v:
+			if (keyboard.getCurrentModifiers() & (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight) &&
+				SDL_HasClipboardText())
+			{
+				const auto clipboardText = SDL_GetClipboardText();
 
-			text.insert (cursorPos, insertText);
+				if (clipboardText == nullptr) break;
 
-			cursorPos += insertText.size ();
+				const auto clipboardFree = makeScopedOperation ([clipboardText]() { SDL_free (clipboardText); });
 
-			endOffset = cursorPos;
+				std::string insertText (clipboardText);
 
-			while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize ().x () - getBorderSize ()) doPosIncrease (startOffset, startOffset);
-		}
-		break;
-	default: // normal characters are handled as textInput:
-		break;
+				if (validator)
+				{
+					const auto state = validator->validate (insertText);
+					if (state == eValidatorState::Invalid) break;
+				}
+
+				text.insert (cursorPos, insertText);
+
+				cursorPos += insertText.size();
+
+				endOffset = cursorPos;
+
+				while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosIncrease (startOffset, startOffset);
+			}
+			break;
+		default: // normal characters are handled as textInput:
+			break;
 	}
 	return true;
 }
@@ -462,18 +462,18 @@ bool cLineEdit::handleTextEntered (cApplication& application, cKeyboard& keyboar
 		if (state == eValidatorState::Invalid)
 		{
 			validator->fixup (text);
-			resetTextPosition ();
+			resetTextPosition();
 		}
 	}
-	if (cursorPos < (int)text.length ()) doPosIncrease (cursorPos, cursorPos);
+	if (cursorPos < (int)text.length()) doPosIncrease (cursorPos, cursorPos);
 	if (cursorPos >= endOffset)
 	{
 		doPosIncrease (endOffset, endOffset);
-		while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize ().x () - getBorderSize ()) doPosIncrease (startOffset, startOffset);
+		while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosIncrease (startOffset, startOffset);
 	}
 	else
 	{
-		if (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize ().x () - getBorderSize ()) doPosDecrease (endOffset);
+		if (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosDecrease (endOffset);
 		else doPosIncrease (endOffset, cursorPos);
 	}
 

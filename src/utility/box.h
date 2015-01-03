@@ -35,7 +35,7 @@ class cBox
 {
 public:
 	cBox();
-	cBox(const PointType& minCorner, const PointType& maxCorner);
+	cBox (const PointType& minCorner, const PointType& maxCorner);
 
 	PointType& getMinCorner();
 	PointType& getMaxCorner();
@@ -43,7 +43,7 @@ public:
 	const PointType& getMinCorner() const;
 	const PointType& getMaxCorner() const;
 
-	PointType getSize () const;
+	PointType getSize() const;
 	void resize (const PointType& newSize);
 
 	void add (const PointType& point);
@@ -56,7 +56,7 @@ public:
 	 * @return True if the point is in the box.
 	 *         False if it is outside or on the boundary of the box.
 	 */
-	bool within(const PointType& point) const;
+	bool within (const PointType& point) const;
 
 	/**
 	 * Checks whether the point lies within the box or on its boundary.
@@ -65,7 +65,7 @@ public:
 	 * @return True if the point is on the box or on the boundary of the box.
 	 *         False if it is outside of the box.
 	 */
-	bool withinOrTouches(const PointType& point) const;
+	bool withinOrTouches (const PointType& point) const;
 
 	/**
 	 * Checks whether the box intersects the other one.
@@ -75,11 +75,11 @@ public:
 	 *         False if the other box lies completely outside the current box
 	 *         or if the two boxes only touch at their boundaries.
 	 */
-	bool intersects(const cBox<PointType>& other) const;
+	bool intersects (const cBox<PointType>& other) const;
 
 	cBox<PointType> intersection (const cBox<PointType>& other) const;
 
-	SDL_Rect toSdlRect () const;
+	SDL_Rect toSdlRect() const;
 
 	void fromSdlRect (const SDL_Rect& rect);
 private:
@@ -94,9 +94,9 @@ cBox<PointType>::cBox()
 
 //------------------------------------------------------------------------------
 template<typename PointType>
-cBox<PointType>::cBox(const PointType& minCorner_, const PointType& maxCorner_) :
-	minCorner(minCorner_),
-	maxCorner(maxCorner_)
+cBox<PointType>::cBox (const PointType& minCorner_, const PointType& maxCorner_) :
+	minCorner (minCorner_),
+	maxCorner (maxCorner_)
 {}
 
 //------------------------------------------------------------------------------
@@ -129,7 +129,7 @@ const PointType& cBox<PointType>::getMaxCorner() const
 
 //------------------------------------------------------------------------------
 template<typename PointType>
-PointType cBox<PointType>::getSize () const
+PointType cBox<PointType>::getSize() const
 {
 	auto diff = maxCorner - minCorner;
 	if (std::is_integral<typename PointType::value_type>::value)
@@ -155,7 +155,7 @@ void cBox<PointType>::resize (const PointType& newSize)
 template<typename PointType>
 void cBox<PointType>::add (const PointType& point)
 {
-	for (size_t d = 0; d < point.size (); ++d)
+	for (size_t d = 0; d < point.size(); ++d)
 	{
 		minCorner[d] = std::min (minCorner[d], point[d]);
 		maxCorner[d] = std::max (maxCorner[d], point[d]);
@@ -175,22 +175,22 @@ void cBox<PointType>::add (const cBox<PointType>& box)
 
 //------------------------------------------------------------------------------
 template<typename PointType>
-bool cBox<PointType>::within(const PointType& point) const
+bool cBox<PointType>::within (const PointType& point) const
 {
-	for(size_t d = 0; d < point.size(); ++d)
+	for (size_t d = 0; d < point.size(); ++d)
 	{
-		if(point[d] <= minCorner[d] || point[d] >= maxCorner[d]) return false;
+		if (point[d] <= minCorner[d] || point[d] >= maxCorner[d]) return false;
 	}
 	return true;
 }
 
 //------------------------------------------------------------------------------
 template<typename PointType>
-bool cBox<PointType>::withinOrTouches(const PointType& point) const
+bool cBox<PointType>::withinOrTouches (const PointType& point) const
 {
-	for(size_t d = 0; d < point.size(); ++d)
+	for (size_t d = 0; d < point.size(); ++d)
 	{
-		if(point[d] < minCorner[d] || point[d] > maxCorner[d]) return false;
+		if (point[d] < minCorner[d] || point[d] > maxCorner[d]) return false;
 	}
 	return true;
 }
@@ -201,7 +201,7 @@ bool cBox<PointType>::intersects (const cBox<PointType>& other) const
 {
 	for (size_t d = 0; d < PointType::const_size::value; ++d)
 	{
-		if (std::min (maxCorner[d], other.getMaxCorner ()[d]) < std::max (minCorner[d], other.getMinCorner ()[d])) return false;
+		if (std::min (maxCorner[d], other.getMaxCorner()[d]) < std::max (minCorner[d], other.getMinCorner()[d])) return false;
 	}
 	return true;
 }
@@ -215,23 +215,23 @@ cBox<PointType> cBox<PointType>::intersection (const cBox<PointType>& other) con
 	cBox<PointType> result;
 	for (size_t d = 0; d < PointType::const_size::value; ++d)
 	{
-		result.getMinCorner ()[d] = std::max (minCorner[d], other.getMinCorner ()[d]);
-		result.getMaxCorner ()[d] = std::min (maxCorner[d], other.getMaxCorner ()[d]);
+		result.getMinCorner()[d] = std::max (minCorner[d], other.getMinCorner()[d]);
+		result.getMaxCorner()[d] = std::min (maxCorner[d], other.getMaxCorner()[d]);
 	}
 	return result;
 }
 
 //------------------------------------------------------------------------------
 template<typename PointType>
-SDL_Rect cBox<PointType>::toSdlRect () const
+SDL_Rect cBox<PointType>::toSdlRect() const
 {
-	static_assert(PointType::const_size::value == 2, "Converting to SDL_Rect not support in dimension other than 2.");
-	static_assert(std::is_same<typename PointType::value_type, int>::value, "Converting to SDL_Rect not support if point scalar value is other than int."); // NOTE: we may could allow all non-narrowing casts here (e.g. short to int).
+	static_assert (PointType::const_size::value == 2, "Converting to SDL_Rect not support in dimension other than 2.");
+	static_assert (std::is_same<typename PointType::value_type, int>::value, "Converting to SDL_Rect not support if point scalar value is other than int."); // NOTE: we may could allow all non-narrowing casts here (e.g. short to int).
 
 	const auto diff = getSize();
 
-    SDL_Rect result = {minCorner[0], minCorner[1], diff[0], diff[1]};
-    return result;
+	SDL_Rect result = {minCorner[0], minCorner[1], diff[0], diff[1]};
+	return result;
 }
 
 //------------------------------------------------------------------------------

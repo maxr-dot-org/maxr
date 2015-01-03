@@ -47,13 +47,13 @@ void cSavedReportSurveyorAiConfused::pushInto (tinyxml2::XMLElement& element) co
 }
 
 //------------------------------------------------------------------------------
-eSavedReportType cSavedReportSurveyorAiConfused::getType () const
+eSavedReportType cSavedReportSurveyorAiConfused::getType() const
 {
 	return eSavedReportType::SurveyorAiConfused;
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportSurveyorAiConfused::getText () const
+std::string cSavedReportSurveyorAiConfused::getText() const
 {
 	return "Surveyor AI: I'm totally confused. Don't know what to do...";
 }

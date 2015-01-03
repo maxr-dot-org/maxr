@@ -80,7 +80,7 @@ struct sID
 	const sUnitData* getUnitDataOriginalVersion (const cPlayer* Owner = nullptr) const;
 
 	bool operator== (const sID& ID) const;
-	bool operator!= (const sID& rhs) const { return !(*this == rhs); }
+	bool operator!= (const sID& rhs) const { return ! (*this == rhs); }
 	bool operator< (const sID& rhs) const { return less_vehicleFirst (rhs); }
 	bool less_vehicleFirst (const sID& ID) const;
 	bool less_buildingFirst (const sID& ID) const;

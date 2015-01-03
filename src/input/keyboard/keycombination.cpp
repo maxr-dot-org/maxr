@@ -25,7 +25,8 @@ static const struct
 {
 	SDL_Keycode key;
 	const char* name;
-} keyNames[] = {
+} keyNames[] =
+{
 
 	{SDLK_RETURN, "Return"},
 	{SDLK_ESCAPE, "Esc"},
@@ -148,7 +149,7 @@ static const struct
 //------------------------------------------------------------------------------
 bool cKeyCombination::isRepresentableKey (SDL_Keycode key)
 {
-	for (size_t i = 0; i < sizeof(keyNames) / sizeof(keyNames[0]); ++i)
+	for (size_t i = 0; i < sizeof (keyNames) / sizeof (keyNames[0]); ++i)
 	{
 		if (keyNames[i].key == key) return true;
 	}
@@ -163,7 +164,7 @@ cKeyCombination::cKeyCombination (const std::string& sequence)
 	{
 		auto end = sequence.find ('+', start);
 
-		addKey(sequence.substr (start, end - start));
+		addKey (sequence.substr (start, end - start));
 
 		if (end == std::string::npos) break;
 
@@ -207,7 +208,7 @@ void cKeyCombination::addKey (const std::string& sequence)
 	}
 	else
 	{
-		for (size_t i = 0; i < sizeof(keyNames) / sizeof(keyNames[0]); ++i)
+		for (size_t i = 0; i < sizeof (keyNames) / sizeof (keyNames[0]); ++i)
 		{
 			if (iequals (trimmed, keyNames[i].name))
 			{
@@ -221,7 +222,7 @@ void cKeyCombination::addKey (const std::string& sequence)
 }
 
 //------------------------------------------------------------------------------
-std::string cKeyCombination::toString () const
+std::string cKeyCombination::toString() const
 {
 	std::string result;
 	if (modifiers & eKeyModifierType::CtrlLeft ||
@@ -233,28 +234,28 @@ std::string cKeyCombination::toString () const
 	if (modifiers & eKeyModifierType::AltLeft ||
 		modifiers & eKeyModifierType::AltRight)
 	{
-		if (!result.empty ()) result += "+";
+		if (!result.empty()) result += "+";
 		result += "Alt";
 	}
 
 	if (modifiers & eKeyModifierType::ShiftLeft ||
 		modifiers & eKeyModifierType::ShiftRight)
 	{
-		if (!result.empty ()) result += "+";
+		if (!result.empty()) result += "+";
 		result += "Shift";
 	}
 
 	if (modifiers & eKeyModifierType::Num)
 	{
-		if (!result.empty ()) result += "+";
+		if (!result.empty()) result += "+";
 		result += "Num";
 	}
 
-	for (size_t i = 0; i < sizeof(keyNames) / sizeof(keyNames[0]); ++i)
+	for (size_t i = 0; i < sizeof (keyNames) / sizeof (keyNames[0]); ++i)
 	{
 		if (key == keyNames[i].key)
 		{
-			if (!result.empty ()) result += "+";
+			if (!result.empty()) result += "+";
 			result += keyNames[i].name;
 			break;
 		}
@@ -264,13 +265,13 @@ std::string cKeyCombination::toString () const
 }
 
 //------------------------------------------------------------------------------
-bool cKeyCombination::operator==(const cKeyCombination& other) const
+bool cKeyCombination::operator== (const cKeyCombination& other) const
 {
 	return modifiers == other.modifiers && key == other.key;
 }
 
 //------------------------------------------------------------------------------
-bool cKeyCombination::operator!=(const cKeyCombination& other) const
+bool cKeyCombination::operator!= (const cKeyCombination& other) const
 {
-	return !(*this == other);
+	return ! (*this == other);
 }

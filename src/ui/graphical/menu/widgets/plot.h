@@ -30,8 +30,8 @@
 #include "main.h" // iToStr
 
 /**
- * 
- * @tparam T 
+ *
+ * @tparam T
  */
 template<typename T>
 class cMarker
@@ -40,13 +40,13 @@ public:
 	explicit cMarker (T value);
 
 	void setLabel (std::string label);
-	const std::string& getLabel () const;
+	const std::string& getLabel() const;
 
 	void setValue (T value);
-	T getValue () const;
+	T getValue() const;
 
 	void setColor (cRgbColor color);
-	const cRgbColor& getColor () const;
+	const cRgbColor& getColor() const;
 private:
 	T value;
 
@@ -70,7 +70,7 @@ void cMarker<T>::setLabel (std::string label_)
 
 //------------------------------------------------------------------------------
 template<typename T>
-const std::string& cMarker<T>::getLabel () const
+const std::string& cMarker<T>::getLabel() const
 {
 	return label;
 }
@@ -84,7 +84,7 @@ void cMarker<T>::setValue (T value_)
 
 //------------------------------------------------------------------------------
 template<typename T>
-T cMarker<T>::getValue () const
+T cMarker<T>::getValue() const
 {
 	return value;
 }
@@ -98,34 +98,34 @@ void cMarker<T>::setColor (cRgbColor color_)
 
 //------------------------------------------------------------------------------
 template<typename T>
-const cRgbColor& cMarker<T>::getColor () const
+const cRgbColor& cMarker<T>::getColor() const
 {
 	return color;
 }
 
 /**
- * 
- * @tparam T 
+ *
+ * @tparam T
  */
 template<typename T>
 class cAxis
 {
 public:
-	cAxis ();
+	cAxis();
 
 	void setLabel (std::string label);
-	const std::string& getLabel () const;
+	const std::string& getLabel() const;
 
 	void setColor (cRgbColor color);
-	const cRgbColor& getColor () const;
+	const cRgbColor& getColor() const;
 
 	void setInterval (T min, T max);
 
 	void setMinValue (T value);
-	T getMinValue () const;
+	T getMinValue() const;
 
 	void setMaxValue (T value);
-	T getMaxValue () const;
+	T getMaxValue() const;
 private:
 	T minValue;
 	T maxValue;
@@ -137,7 +137,7 @@ private:
 
 //------------------------------------------------------------------------------
 template<typename T>
-cAxis<T>::cAxis () :
+cAxis<T>::cAxis() :
 	minValue (0),
 	maxValue (0)
 {}
@@ -151,7 +151,7 @@ void cAxis<T>::setLabel (std::string label_)
 
 //------------------------------------------------------------------------------
 template<typename T>
-const std::string& cAxis<T>::getLabel () const
+const std::string& cAxis<T>::getLabel() const
 {
 	return label;
 }
@@ -165,7 +165,7 @@ void cAxis<T>::setColor (cRgbColor color_)
 
 //------------------------------------------------------------------------------
 template<typename T>
-const cRgbColor& cAxis<T>::getColor () const
+const cRgbColor& cAxis<T>::getColor() const
 {
 	return color;
 }
@@ -188,7 +188,7 @@ void cAxis<T>::setMinValue (T value)
 
 //------------------------------------------------------------------------------
 template<typename T>
-T cAxis<T>::getMinValue () const
+T cAxis<T>::getMinValue() const
 {
 	return minValue;
 }
@@ -202,15 +202,15 @@ void cAxis<T>::setMaxValue (T value)
 
 //------------------------------------------------------------------------------
 template<typename T>
-T cAxis<T>::getMaxValue () const
+T cAxis<T>::getMaxValue() const
 {
 	return maxValue;
 }
 
 /**
- * 
- * @tparam T 
- * @tparam U 
+ *
+ * @tparam T
+ * @tparam U
  */
 template<typename T, typename U>
 class cGraph
@@ -219,10 +219,10 @@ public:
 	explicit cGraph (std::function<U (T)> function);
 
 	void setLabel (std::string label);
-	const std::string& getLabel () const;
+	const std::string& getLabel() const;
 
 	void setColor (cRgbColor color);
-	const cRgbColor& getColor () const;
+	const cRgbColor& getColor() const;
 
 	U evaluate (T x) const;
 private:
@@ -235,7 +235,7 @@ private:
 
 //------------------------------------------------------------------------------
 template<typename T, typename U>
-cGraph<T,U>::cGraph (std::function<U (T)> function_) :
+cGraph<T, U>::cGraph (std::function<U (T)> function_) :
 	function (function_)
 {}
 
@@ -248,7 +248,7 @@ void cGraph<T, U>::setLabel (std::string label_)
 
 //------------------------------------------------------------------------------
 template<typename T, typename U>
-const std::string& cGraph<T, U>::getLabel () const
+const std::string& cGraph<T, U>::getLabel() const
 {
 	return label;
 }
@@ -262,7 +262,7 @@ void cGraph<T, U>::setColor (cRgbColor color_)
 
 //------------------------------------------------------------------------------
 template<typename T, typename U>
-const cRgbColor& cGraph<T, U>::getColor () const
+const cRgbColor& cGraph<T, U>::getColor() const
 {
 	return color;
 }
@@ -275,9 +275,9 @@ U cGraph<T, U>::evaluate (T x) const
 }
 
 /**
- * 
- * @tparam T 
- * @tparam U 
+ *
+ * @tparam T
+ * @tparam U
  */
 template<typename T, typename U>
 class cPlot : public cWidget
@@ -291,11 +291,11 @@ public:
 
 	explicit cPlot (const cBox<cPosition>& area);
 
-	XAxisType& getXAxis ();
-	const XAxisType& getXAxis () const;
+	XAxisType& getXAxis();
+	const XAxisType& getXAxis() const;
 
-	YAxisType& getYAxis ();
-	const YAxisType& getYAxis () const;
+	YAxisType& getYAxis();
+	const YAxisType& getYAxis() const;
 
 	template<typename F>
 	GraphType& addGraph (F function);
@@ -337,28 +337,28 @@ cPlot<T, U>::cPlot (const cBox<cPosition>& area) :
 
 //------------------------------------------------------------------------------
 template<typename T, typename U>
-typename cPlot<T, U>::XAxisType& cPlot<T, U>::getXAxis ()
+typename cPlot<T, U>::XAxisType& cPlot<T, U>::getXAxis()
 {
 	return xAxis;
 }
 
 //------------------------------------------------------------------------------
 template<typename T, typename U>
-const typename cPlot<T, U>::XAxisType& cPlot<T, U>::getXAxis () const
+const typename cPlot<T, U>::XAxisType& cPlot<T, U>::getXAxis() const
 {
 	return xAxis;
 }
 
 //------------------------------------------------------------------------------
 template<typename T, typename U>
-typename cPlot<T, U>::YAxisType& cPlot<T, U>::getYAxis ()
+typename cPlot<T, U>::YAxisType& cPlot<T, U>::getYAxis()
 {
 	return yAxis;
 }
 
 //------------------------------------------------------------------------------
 template<typename T, typename U>
-const typename cPlot<T, U>::YAxisType& cPlot<T, U>::getYAxis () const
+const typename cPlot<T, U>::YAxisType& cPlot<T, U>::getYAxis() const
 {
 	return yAxis;
 }
@@ -369,7 +369,7 @@ template<typename F>
 typename cPlot<T, U>::GraphType& cPlot<T, U>::addGraph (F function)
 {
 	graphs.push_back (GraphType (function));
-	auto& graph = graphs.back ();
+	auto& graph = graphs.back();
 	return graph;
 }
 
@@ -379,7 +379,7 @@ template<typename F>
 typename cPlot<T, U>::GraphType& cPlot<T, U>::addGraph (std::string label, F function)
 {
 	graphs.push_back (GraphType (function));
-	auto& graph = graphs.back ();
+	auto& graph = graphs.back();
 	graph.setLabel (std::move (label));
 	return graph;
 }
@@ -389,7 +389,7 @@ template<typename T, typename U>
 typename cPlot<T, U>::XMarkerType&  cPlot<T, U>::addXMarker (T value)
 {
 	xMarkers.push_back (XMarkerType (value));
-	return xMarkers.back ();
+	return xMarkers.back();
 }
 
 //------------------------------------------------------------------------------
@@ -397,43 +397,43 @@ template<typename T, typename U>
 typename cPlot<T, U>::YMarkerType&  cPlot<T, U>::addYMarker (U value)
 {
 	yMarkers.push_back (YMarkerType (value));
-	return yMarkers.back ();
+	return yMarkers.back();
 }
 
 //------------------------------------------------------------------------------
 template<typename T, typename U>
 T cPlot<T, U>::fromPixelX (int pixelX)
 {
-	const auto xPixelWidth = getSize ().x () - graphBeginMargin.x () - graphEndMargin.x ();
+	const auto xPixelWidth = getSize().x() - graphBeginMargin.x() - graphEndMargin.x();
 
-	return xAxis.getMinValue () + (xAxis.getMaxValue () - xAxis.getMinValue ()) * pixelX / xPixelWidth;
+	return xAxis.getMinValue() + (xAxis.getMaxValue() - xAxis.getMinValue()) * pixelX / xPixelWidth;
 }
 
 //------------------------------------------------------------------------------
 template<typename T, typename U>
 U cPlot<T, U>::fromPixelY (int pixelY)
 {
-	const auto yPixelWidth = getSize ().y () - graphBeginMargin.y () - graphEndMargin.y ();
+	const auto yPixelWidth = getSize().y() - graphBeginMargin.y() - graphEndMargin.y();
 
-	return yAxis.getMinValue () + (yAxis.getMaxValue () - yAxis.getMinValue ()) * pixelY / yPixelWidth;
+	return yAxis.getMinValue() + (yAxis.getMaxValue() - yAxis.getMinValue()) * pixelY / yPixelWidth;
 }
 
 //------------------------------------------------------------------------------
 template<typename T, typename U>
 int cPlot<T, U>::toPixelX (T x)
 {
-	const auto xPixelWidth = getSize ().x () - graphBeginMargin.x () - graphEndMargin.x ();
+	const auto xPixelWidth = getSize().x() - graphBeginMargin.x() - graphEndMargin.x();
 
-	return xPixelWidth * (x-xAxis.getMinValue ()) / (xAxis.getMaxValue () - xAxis.getMinValue ());
+	return xPixelWidth * (x - xAxis.getMinValue()) / (xAxis.getMaxValue() - xAxis.getMinValue());
 }
 
 //------------------------------------------------------------------------------
 template<typename T, typename U>
 int cPlot<T, U>::toPixelY (U y)
 {
-	const auto yPixelWidth = getSize ().y () - graphBeginMargin.y () - graphEndMargin.y ();
+	const auto yPixelWidth = getSize().y() - graphBeginMargin.y() - graphEndMargin.y();
 
-	return yPixelWidth * (y-yAxis.getMinValue ()) / (yAxis.getMaxValue () - yAxis.getMinValue ());
+	return yPixelWidth * (y - yAxis.getMinValue()) / (yAxis.getMaxValue() - yAxis.getMinValue());
 }
 
 //------------------------------------------------------------------------------
@@ -441,13 +441,13 @@ template<typename T, typename U>
 void cPlot<T, U>::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 
-	const cPosition origin (graphBeginMargin.x (), getSize ().y () - graphBeginMargin.y ());
+	const cPosition origin (graphBeginMargin.x(), getSize().y() - graphBeginMargin.y());
 
-	const auto xPixelWidth = getSize ().x () - graphBeginMargin.x () - graphEndMargin.x ();
-	const auto yPixelWidth = getSize ().y () - graphBeginMargin.y () - graphEndMargin.y ();
+	const auto xPixelWidth = getSize().x() - graphBeginMargin.x() - graphEndMargin.x();
+	const auto yPixelWidth = getSize().y() - graphBeginMargin.y() - graphEndMargin.y();
 
 	// draw graphs
-	for (auto graph = graphs.cbegin (); graph != graphs.cend (); ++graph)
+	for (auto graph = graphs.cbegin(); graph != graphs.cend(); ++graph)
 	{
 		auto lastEvaluationPoint = fromPixelX (0);
 		cPosition lastPoint (0, -toPixelY (graph->evaluate (lastEvaluationPoint)));
@@ -456,13 +456,13 @@ void cPlot<T, U>::draw (SDL_Surface& destination, const cBox<cPosition>& clipRec
 		{
 			const auto x = fromPixelX (pixelX);
 			const auto y = graph->evaluate (x);
-			const auto pixelY = toPixelY(y);
+			const auto pixelY = toPixelY (y);
 
 			const cPosition newPoint (pixelX, -pixelY);
 
 			if (x != lastEvaluationPoint /*|| pixelX == xPixelWidth-1*/)
 			{
-				drawLine (&destination, getPosition () + origin + lastPoint, getPosition () + origin + newPoint, graph->getColor ());
+				drawLine (&destination, getPosition() + origin + lastPoint, getPosition() + origin + newPoint, graph->getColor());
 
 				lastPoint = newPoint;
 			}
@@ -472,35 +472,35 @@ void cPlot<T, U>::draw (SDL_Surface& destination, const cBox<cPosition>& clipRec
 	}
 
 	// draw axes
-	drawLine (&destination, getPosition () + origin, getPosition () + origin + cPosition (xPixelWidth, 0), xAxis.getColor ());
+	drawLine (&destination, getPosition() + origin, getPosition() + origin + cPosition (xPixelWidth, 0), xAxis.getColor());
 
-	font->showTextCentered (getPosition () + origin + cPosition (0, 2), iToStr (xAxis.getMinValue ()), FONT_LATIN_SMALL_WHITE);
-	font->showTextCentered (getPosition () + origin + cPosition (xPixelWidth, 2), iToStr (xAxis.getMaxValue ()), FONT_LATIN_SMALL_WHITE);
+	font->showTextCentered (getPosition() + origin + cPosition (0, 2), iToStr (xAxis.getMinValue()), FONT_LATIN_SMALL_WHITE);
+	font->showTextCentered (getPosition() + origin + cPosition (xPixelWidth, 2), iToStr (xAxis.getMaxValue()), FONT_LATIN_SMALL_WHITE);
 
-	drawLine (&destination, getPosition () + origin, getPosition () + origin + cPosition (0, -yPixelWidth), yAxis.getColor ());
+	drawLine (&destination, getPosition() + origin, getPosition() + origin + cPosition (0, -yPixelWidth), yAxis.getColor());
 
-	font->showText (getPosition () + origin + cPosition (-16, -font->getFontHeight (FONT_LATIN_SMALL_WHITE)/2), iToStr (yAxis.getMinValue ()), FONT_LATIN_SMALL_WHITE);
-	font->showText (getPosition () + origin + cPosition (-16, -yPixelWidth - font->getFontHeight (FONT_LATIN_SMALL_WHITE)/2), iToStr (yAxis.getMaxValue ()), FONT_LATIN_SMALL_WHITE);
+	font->showText (getPosition() + origin + cPosition (-16, -font->getFontHeight (FONT_LATIN_SMALL_WHITE) / 2), iToStr (yAxis.getMinValue()), FONT_LATIN_SMALL_WHITE);
+	font->showText (getPosition() + origin + cPosition (-16, -yPixelWidth - font->getFontHeight (FONT_LATIN_SMALL_WHITE) / 2), iToStr (yAxis.getMaxValue()), FONT_LATIN_SMALL_WHITE);
 
 	// draw markers
-	for (auto marker = xMarkers.begin (); marker != xMarkers.end (); ++marker)
+	for (auto marker = xMarkers.begin(); marker != xMarkers.end(); ++marker)
 	{
-		if (marker->getValue () < xAxis.getMinValue () || marker->getValue () > xAxis.getMaxValue ()) continue;
+		if (marker->getValue() < xAxis.getMinValue() || marker->getValue() > xAxis.getMaxValue()) continue;
 
-		const auto pixelX = toPixelX (marker->getValue ());
-		drawLine (&destination, getPosition () + origin + cPosition (pixelX, 0), getPosition () + origin + cPosition (pixelX, -yPixelWidth), marker->getColor ());
-		
-		font->showTextCentered (getPosition () + origin + cPosition (pixelX, 2), iToStr (marker->getValue ()), FONT_LATIN_SMALL_WHITE);
+		const auto pixelX = toPixelX (marker->getValue());
+		drawLine (&destination, getPosition() + origin + cPosition (pixelX, 0), getPosition() + origin + cPosition (pixelX, -yPixelWidth), marker->getColor());
+
+		font->showTextCentered (getPosition() + origin + cPosition (pixelX, 2), iToStr (marker->getValue()), FONT_LATIN_SMALL_WHITE);
 	}
 
-	for (auto marker = yMarkers.begin (); marker != yMarkers.end (); ++marker)
+	for (auto marker = yMarkers.begin(); marker != yMarkers.end(); ++marker)
 	{
-		if (marker->getValue () < yAxis.getMinValue () || marker->getValue () > yAxis.getMaxValue ()) continue;
+		if (marker->getValue() < yAxis.getMinValue() || marker->getValue() > yAxis.getMaxValue()) continue;
 
-		const auto pixelY = toPixelY (marker->getValue ());
-		drawLine (&destination, getPosition () + origin + cPosition (0, -pixelY), getPosition () + origin + cPosition (xPixelWidth, -pixelY), marker->getColor ());
+		const auto pixelY = toPixelY (marker->getValue());
+		drawLine (&destination, getPosition() + origin + cPosition (0, -pixelY), getPosition() + origin + cPosition (xPixelWidth, -pixelY), marker->getColor());
 
-		font->showText (getPosition () + origin + cPosition (-16, -pixelY - font->getFontHeight (FONT_LATIN_SMALL_WHITE)/2), iToStr (marker->getValue ()), FONT_LATIN_SMALL_WHITE);
+		font->showText (getPosition() + origin + cPosition (-16, -pixelY - font->getFontHeight (FONT_LATIN_SMALL_WHITE) / 2), iToStr (marker->getValue()), FONT_LATIN_SMALL_WHITE);
 	}
 	cWidget::draw (destination, clipRect);
 }

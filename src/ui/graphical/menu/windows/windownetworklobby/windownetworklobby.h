@@ -47,31 +47,31 @@ public:
 
 	void addPlayer (const std::shared_ptr<cPlayerBasicData>& player);
 	void removePlayer (const cPlayerBasicData& player);
-	void removeNonLocalPlayers ();
+	void removeNonLocalPlayers();
 
 	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
 	void setGameSettings (std::unique_ptr<cGameSettings> gameSettings);
 	void setSaveGame (int saveGameNumber);
 
 	void setMapDownloadPercent (int percent);
-	void setMapDownloadCanceled ();
+	void setMapDownloadCanceled();
 
-	const std::shared_ptr<cStaticMap>& getStaticMap () const;
-	const std::shared_ptr<cGameSettings>& getGameSettings () const;
+	const std::shared_ptr<cStaticMap>& getStaticMap() const;
+	const std::shared_ptr<cGameSettings>& getGameSettings() const;
 	const std::vector<cPlayerBasicData>& getSaveGamePlayers() const;
 	std::string getSaveGameName() const;
 
-	const std::shared_ptr<cPlayerBasicData>& getLocalPlayer () const;
-	std::vector<std::shared_ptr<cPlayerBasicData>> getPlayers () const;
-	std::vector<cPlayerBasicData> getPlayersNotShared () const;
+	const std::shared_ptr<cPlayerBasicData>& getLocalPlayer() const;
+	std::vector<std::shared_ptr<cPlayerBasicData>> getPlayers() const;
+	std::vector<cPlayerBasicData> getPlayersNotShared() const;
 
-	unsigned short getPort () const;
-	const std::string& getIp () const;
+	unsigned short getPort() const;
+	const std::string& getIp() const;
 
-	const std::string& getChatMessage () const;
+	const std::string& getChatMessage() const;
 
-	void disablePortEdit ();
-	void disableIpEdit ();
+	void disablePortEdit();
+	void disableIpEdit();
 
 	cSignal<void ()> backClicked;
 	cSignal<void ()> wantLocalPlayerReadyChange;
@@ -104,9 +104,9 @@ protected:
 	std::string saveGameName;
 	std::vector<cPlayerBasicData> saveGamePlayers;
 
-	void updateSettingsText ();
-	void updateMap ();
-	void updatePlayerColor ();
+	void updateSettingsText();
+	void updateMap();
+	void updatePlayerColor();
 
 	void triggerChatMessage (bool keepFocus);
 };

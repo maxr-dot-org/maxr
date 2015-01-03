@@ -30,7 +30,7 @@ class cRadioGroup : public cWidget
 {
 public:
 	explicit cRadioGroup (bool allowUncheckAll = false);
-	~cRadioGroup ();
+	~cRadioGroup();
 
 	cCheckBox* addButton (std::unique_ptr<cCheckBox> button);
 

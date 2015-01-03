@@ -29,7 +29,7 @@ cSavedReportPlayerEndedTurn::cSavedReportPlayerEndedTurn (const cPlayer& player)
 //------------------------------------------------------------------------------
 cSavedReportPlayerEndedTurn::cSavedReportPlayerEndedTurn (cNetMessage& message)
 {
-	playerName = message.popString ();
+	playerName = message.popString();
 }
 
 //------------------------------------------------------------------------------
@@ -49,25 +49,25 @@ void cSavedReportPlayerEndedTurn::pushInto (cNetMessage& message) const
 //------------------------------------------------------------------------------
 void cSavedReportPlayerEndedTurn::pushInto (tinyxml2::XMLElement& element) const
 {
-	element.SetAttribute ("playerName", playerName.c_str ());
+	element.SetAttribute ("playerName", playerName.c_str());
 
 	cSavedReport::pushInto (element);
 }
 
 //------------------------------------------------------------------------------
-eSavedReportType cSavedReportPlayerEndedTurn::getType () const
+eSavedReportType cSavedReportPlayerEndedTurn::getType() const
 {
 	return eSavedReportType::PlayerEndedTurn;
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportPlayerEndedTurn::getMessage () const
+std::string cSavedReportPlayerEndedTurn::getMessage() const
 {
 	return lngPack.i18n ("Text~Multiplayer~Player_Turn_End", playerName);
 }
 
 //------------------------------------------------------------------------------
-bool cSavedReportPlayerEndedTurn::isAlert () const
+bool cSavedReportPlayerEndedTurn::isAlert() const
 {
 	return false;
 }

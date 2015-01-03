@@ -32,16 +32,16 @@ struct sSignalCallIterator
 		iter (iter_),
 		end (end_)
 	{
-		if (iter != end && iter->disconnected) ++(*this); // skip disconnected slots in the beginning
+		if (iter != end && iter->disconnected) ++ (*this); // skip disconnected slots in the beginning
 	}
 
-	bool operator==(const sSignalCallIterator& other)
+	bool operator== (const sSignalCallIterator& other)
 	{
 		return iter == other.iter;
 	}
-	bool operator!=(const sSignalCallIterator& other)
+	bool operator!= (const sSignalCallIterator& other)
 	{
-		return !(*this == other);
+		return ! (*this == other);
 	}
 
 	value_type operator*() const
@@ -57,7 +57,7 @@ struct sSignalCallIterator
 		return *this;
 	}
 
-	sSignalCallIterator operator++(int)
+	sSignalCallIterator operator++ (int)
 	{
 		sSignalCallIterator tmp (*this);
 		++*this;

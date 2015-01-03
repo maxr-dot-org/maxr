@@ -28,7 +28,7 @@ cMouseModeSelectBuildPathDestination::cMouseModeSelectBuildPathDestination (cons
 {}
 
 //------------------------------------------------------------------------------
-eMouseModeType cMouseModeSelectBuildPathDestination::getType () const
+eMouseModeType cMouseModeSelectBuildPathDestination::getType() const
 {
 	return eMouseModeType::SelectBuildPathDestintaion;
 }

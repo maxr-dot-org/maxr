@@ -79,10 +79,10 @@ public:
 	/**
 	 * Marks the window as to be closed.
 	 */
-	void close ();
+	void close();
 
 	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
-	
+
 	/**
 	 * Gets called when the window is activated.
 	 *
@@ -117,16 +117,16 @@ public:
 	 */
 	virtual void handleDeactivated (cApplication& application, bool removed);
 
-	virtual bool wantsCentered () const;
+	virtual bool wantsCentered() const;
 
 	/**
 	 * Triggered when @ref handleRemoved is called.
 	 */
 	cSignal<void ()> terminated;
 protected:
-	virtual cMouse* getActiveMouse () const MAXR_OVERRIDE_FUNCTION;
-	virtual cKeyboard* getActiveKeyboard () const MAXR_OVERRIDE_FUNCTION;
-	
+	virtual cMouse* getActiveMouse() const MAXR_OVERRIDE_FUNCTION;
+	virtual cKeyboard* getActiveKeyboard() const MAXR_OVERRIDE_FUNCTION;
+
 	/**
 	 * Gets the application where the current window is the
 	 * active one (on top of the window stack).
@@ -134,9 +134,9 @@ protected:
 	 * @return The application or null if the current window is
 	 *         not the active one in any application.
 	 */
-	virtual cApplication* getActiveApplication () const MAXR_OVERRIDE_FUNCTION;
+	virtual cApplication* getActiveApplication() const MAXR_OVERRIDE_FUNCTION;
 
-	virtual std::unique_ptr<cMouseCursor> getDefaultCursor () const;
+	virtual std::unique_ptr<cMouseCursor> getDefaultCursor() const;
 
 	/**
 	 * Sets a new background surface image.
@@ -151,7 +151,7 @@ protected:
 	 *
 	 * @return The background image or null if there is non.
 	 */
-	SDL_Surface* getSurface ();
+	SDL_Surface* getSurface();
 
 private:
 	/**

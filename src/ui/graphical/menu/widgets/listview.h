@@ -39,13 +39,13 @@ class cAbstractListViewItem;
 template<typename ItemType>
 class cListView : public cClickableWidget
 {
-	static_assert(std::is_base_of<cAbstractListViewItem, ItemType>::value, "Items in list view have to inherit from cAbstractListViewItem");
+	static_assert (std::is_base_of<cAbstractListViewItem, ItemType>::value, "Items in list view have to inherit from cAbstractListViewItem");
 public:
 	explicit cListView (const cBox<cPosition>& area, bool allowMultiSelection = false, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
 	explicit cListView (const cBox<cPosition>& area, eScrollBarStyle scrollBarStyle, bool allowMultiSelection = false, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
 
-	void disableSelectable ();
-	void enableSelectable ();
+	void disableSelectable();
+	void enableSelectable();
 
 	void setBeginMargin (const cPosition& margin);
 	void setEndMargin (const cPosition& margin);
@@ -53,34 +53,34 @@ public:
 
 	void setScrollOffset (int offset);
 
-	const cPosition& getBeginMargin ();
-	const cPosition& getEndMargin ();
-	int getItemDistance ();
+	const cPosition& getBeginMargin();
+	const cPosition& getEndMargin();
+	int getItemDistance();
 
 	ItemType* addItem (std::unique_ptr<ItemType> item);
 
 	std::unique_ptr<ItemType> removeItem (ItemType& item);
 
 	// TODO: provide iterator support instead of index access.
-	size_t getItemsCount () const;
+	size_t getItemsCount() const;
 	ItemType& getItem (size_t index);
 	const ItemType& getItem (size_t index) const;
 
-	void clearItems ();
+	void clearItems();
 
-	ItemType* getSelectedItem ();
-	const std::vector<ItemType*>& getSelectedItems ();
+	ItemType* getSelectedItem();
+	const std::vector<ItemType*>& getSelectedItems();
 
 	void setSelectedItem (const ItemType* item);
-	void deselectAll ();
+	void deselectAll();
 
 	void scrollToItem (const ItemType* item);
 
-	void scrollDown ();
-	void scrollUp ();
+	void scrollDown();
+	void scrollUp();
 
-	void pageDown ();
-	void pageUp ();
+	void pageDown();
+	void pageUp();
 
 	cSignal<void ()> itemRemoved;
 	cSignal<void ()> itemAdded;
@@ -134,7 +134,7 @@ private:
 
 	bool hasKeyFocus;
 
-	void updateDisplayItems ();
+	void updateDisplayItems();
 };
 
 //------------------------------------------------------------------------------
@@ -162,33 +162,33 @@ template<typename ItemType>
 cListView<ItemType>::cListView (const cBox<cPosition>& area, eScrollBarStyle scrollBarStyle, bool allowMultiSelection, cSoundChunk* clickSound_) :
 	cListView<ItemType> (area, allowMultiSelection, clickSound_)
 {
-	scrollBar = addChild (std::make_unique<cScrollBar> (getPosition (), getSize ().y (), scrollBarStyle, eOrientationType::Vertical));
-	scrollBar->move (cPosition (getSize().x() - scrollBar->getSize ().x () + 1, 0));
+	scrollBar = addChild (std::make_unique<cScrollBar> (getPosition(), getSize().y(), scrollBarStyle, eOrientationType::Vertical));
+	scrollBar->move (cPosition (getSize().x() - scrollBar->getSize().x() + 1, 0));
 
 	signalConnectionManager.connect (scrollBar->forwardClicked, std::bind (&cListView<ItemType>::scrollDown, this));
 	signalConnectionManager.connect (scrollBar->backClicked, std::bind (&cListView<ItemType>::scrollUp, this));
 	signalConnectionManager.connect (scrollBar->offsetChanged, [this]()
 	{
-		if (scrollBar->getOffset () == pixelOffset) return;
+		if (scrollBar->getOffset() == pixelOffset) return;
 
-		pixelOffset = std::max(scrollBar->getOffset (), 0);
+		pixelOffset = std::max (scrollBar->getOffset(), 0);
 
-		updateDisplayItems ();
+		updateDisplayItems();
 	});
 }
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
-void cListView<ItemType>::disableSelectable ()
+void cListView<ItemType>::disableSelectable()
 {
 	selectable = false;
-	deselectAll ();
+	deselectAll();
 	setConsumeClick (false);
 }
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
-void cListView<ItemType>::enableSelectable ()
+void cListView<ItemType>::enableSelectable()
 {
 	selectable = true;
 	setConsumeClick (true);
@@ -225,21 +225,21 @@ void cListView<ItemType>::setScrollOffset (int offset)
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
-const cPosition& cListView<ItemType>::getBeginMargin ()
+const cPosition& cListView<ItemType>::getBeginMargin()
 {
 	return beginMargin;
 }
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
-const cPosition& cListView<ItemType>::getEndMargin ()
+const cPosition& cListView<ItemType>::getEndMargin()
 {
 	return endMargin;
 }
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
-int cListView<ItemType>::getItemDistance ()
+int cListView<ItemType>::getItemDistance()
 {
 	return itemDistance;
 }
@@ -251,30 +251,30 @@ ItemType* cListView<ItemType>::addItem (std::unique_ptr<ItemType> item)
 {
 	if (item == nullptr) return nullptr;
 
-	auto newItemPos = items.empty() ? 0 : items.back ().first + items.back ().second->getSize ().y () + getItemDistance ();
+	auto newItemPos = items.empty() ? 0 : items.back().first + items.back().second->getSize().y() + getItemDistance();
 	items.emplace_back (newItemPos, std::move (item));
 
-	auto& addedItem = *items.back ().second;
+	auto& addedItem = *items.back().second;
 
 	if (!pixelScrollOffsetInitialized)
 	{
-		pixelScrollOffset = addedItem.getSize ().y () + getItemDistance ();
+		pixelScrollOffset = addedItem.getSize().y() + getItemDistance();
 		pixelScrollOffsetInitialized = true;
 	}
 
-	addedItem.resize (cPosition (getSize ().x () - getBeginMargin ().x () - getEndMargin ().x () - (scrollBar ? scrollBar->getSize ().x () : 0), addedItem.getSize ().y ()));
+	addedItem.resize (cPosition (getSize().x() - getBeginMargin().x() - getEndMargin().x() - (scrollBar ? scrollBar->getSize().x() : 0), addedItem.getSize().y()));
 
 	addedItem.setParent (this);
 
 	const auto itemPtr = &addedItem;
-	signalConnectionManager.connect (addedItem.resized, [this, itemPtr](const cPosition& oldSize)
+	signalConnectionManager.connect (addedItem.resized, [this, itemPtr] (const cPosition & oldSize)
 	{
-		const auto offset = itemPtr->getSize ().y () - oldSize.y ();
+		const auto offset = itemPtr->getSize().y() - oldSize.y();
 		if (offset == 0) return;
 
-		auto iter = std::find_if (items.begin (), items.end (), [=](const std::pair<int, std::unique_ptr<ItemType>>& entry){ return entry.second.get () == itemPtr; });
-		if (iter != items.end ()) ++iter;
-		for (; iter != items.end (); ++iter)
+		auto iter = std::find_if (items.begin(), items.end(), [ = ] (const std::pair<int, std::unique_ptr<ItemType>>& entry) { return entry.second.get() == itemPtr; });
+		if (iter != items.end()) ++iter;
+		for (; iter != items.end(); ++iter)
 		{
 			iter->first += offset;
 		}
@@ -282,13 +282,13 @@ ItemType* cListView<ItemType>::addItem (std::unique_ptr<ItemType> item)
 
 	if (scrollBar)
 	{
-		const auto pixelSize = getSize ().y () - getBeginMargin ().y () - getEndMargin ().y ();
-		scrollBar->setRange (std::max (items.back ().first + items.back ().second->getSize ().y () - pixelSize, 0));
+		const auto pixelSize = getSize().y() - getBeginMargin().y() - getEndMargin().y();
+		scrollBar->setRange (std::max (items.back().first + items.back().second->getSize().y() - pixelSize, 0));
 	}
 
-	updateDisplayItems ();
+	updateDisplayItems();
 
-	itemAdded ();
+	itemAdded();
 
 	return &addedItem;
 }
@@ -297,9 +297,9 @@ ItemType* cListView<ItemType>::addItem (std::unique_ptr<ItemType> item)
 template<typename ItemType>
 std::unique_ptr<ItemType> cListView<ItemType>::removeItem (ItemType& item)
 {
-	auto iter = std::find_if (items.begin (), items.end (), [&](const std::pair<int, std::unique_ptr<ItemType>>& entry){ return entry.second.get () == &item; });
+	auto iter = std::find_if (items.begin(), items.end(), [&] (const std::pair<int, std::unique_ptr<ItemType>>& entry) { return entry.second.get() == &item; });
 
-	if (iter != items.end ())
+	if (iter != items.end())
 	{
 		auto removedItem = std::move (iter->second);
 
@@ -307,18 +307,18 @@ std::unique_ptr<ItemType> cListView<ItemType>::removeItem (ItemType& item)
 
 		iter = items.erase (iter);
 
-		const auto offset = removedItem->getSize ().y () + getItemDistance ();
-		for (; iter != items.end (); ++iter)
+		const auto offset = removedItem->getSize().y() + getItemDistance();
+		for (; iter != items.end(); ++iter)
 		{
 			iter->first -= offset;
 		}
 
 		if (scrollBar)
 		{
-			if (!items.empty ())
+			if (!items.empty())
 			{
-				const auto pixelSize = getSize ().y () - getBeginMargin ().y () - getEndMargin ().y ();
-				scrollBar->setRange (std::max (items.back ().first + items.back ().second->getSize ().y () - pixelSize, 0));
+				const auto pixelSize = getSize().y() - getBeginMargin().y() - getEndMargin().y();
+				scrollBar->setRange (std::max (items.back().first + items.back().second->getSize().y() - pixelSize, 0));
 			}
 			else
 			{
@@ -328,27 +328,27 @@ std::unique_ptr<ItemType> cListView<ItemType>::removeItem (ItemType& item)
 
 		removeTookPlace = true;
 
-		auto iter2 = std::find (selectedItems.begin (), selectedItems.end (), removedItem.get ());
-		if (iter2 != selectedItems.end ())
+		auto iter2 = std::find (selectedItems.begin(), selectedItems.end(), removedItem.get());
+		if (iter2 != selectedItems.end())
 		{
-			removedItem->deselect ();
+			removedItem->deselect();
 			selectedItems.erase (iter2);
 
-			if (selectedItems.empty () && !items.empty())
+			if (selectedItems.empty() && !items.empty())
 			{
 				// TODO: make this functionality optional
-				auto itemToSelect = index >= items.size () ? items.back ().second.get () : items[index].second.get ();
+				auto itemToSelect = index >= items.size() ? items.back().second.get() : items[index].second.get();
 
 				selectedItems.push_back (itemToSelect);
-				itemToSelect->select ();
+				itemToSelect->select();
 			}
 
-			selectionChanged ();
+			selectionChanged();
 		}
 
-		updateDisplayItems ();
+		updateDisplayItems();
 
-		itemRemoved ();
+		itemRemoved();
 
 		return std::move (removedItem);
 	}
@@ -357,9 +357,9 @@ std::unique_ptr<ItemType> cListView<ItemType>::removeItem (ItemType& item)
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
-size_t cListView<ItemType>::getItemsCount () const
+size_t cListView<ItemType>::getItemsCount() const
 {
-	return items.size ();
+	return items.size();
 }
 
 //------------------------------------------------------------------------------
@@ -378,25 +378,25 @@ const ItemType& cListView<ItemType>::getItem (size_t index) const
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
-void cListView<ItemType>::clearItems ()
+void cListView<ItemType>::clearItems()
 {
-	const auto hadSelection = !selectedItems.empty ();
-	for (size_t j = 0; j != selectedItems.size (); ++j)
+	const auto hadSelection = !selectedItems.empty();
+	for (size_t j = 0; j != selectedItems.size(); ++j)
 	{
-		selectedItems[j]->deselect ();
+		selectedItems[j]->deselect();
 	}
-	selectedItems.clear ();
+	selectedItems.clear();
 
 	beginDisplayItem = endDisplayItem = 0;
 	pixelOffset = 0;
 
-	items.clear ();
+	items.clear();
 
-	if (hadSelection) selectionChanged ();
+	if (hadSelection) selectionChanged();
 
 	if (scrollBar) scrollBar->setRange (0);
 
-	itemRemoved ();
+	itemRemoved();
 }
 
 //------------------------------------------------------------------------------
@@ -412,21 +412,21 @@ cWidget* cListView<ItemType>::getChildAt (const cPosition& position) const
 			return itemChild ? itemChild : &item;
 		}
 	}
-	return cClickableWidget::getChildAt(position);
+	return cClickableWidget::getChildAt (position);
 }
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
 bool cListView<ItemType>::handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount)
 {
-	if (amount.y () > 0)
+	if (amount.y() > 0)
 	{
-		scrollUp ();
+		scrollUp();
 		return true;
 	}
-	else if (amount.y () < 0)
+	else if (amount.y() < 0)
 	{
-		scrollDown ();
+		scrollDown();
 		return true;
 	}
 	return false;
@@ -458,44 +458,44 @@ bool cListView<ItemType>::handleKeyPressed (cApplication& application, cKeyboard
 
 	switch (key)
 	{
-	case SDLK_UP:
-		if (selectable)
-		{
-			if (selectedItems.size () == 1)
+		case SDLK_UP:
+			if (selectable)
 			{
-				for (size_t i = 0; i < items.size (); ++i)
+				if (selectedItems.size() == 1)
 				{
-					if (selectedItems[0] == items[i].second.get() && i != 0)
+					for (size_t i = 0; i < items.size(); ++i)
 					{
-						setSelectedItem (items[i-1].second.get ());
-						scrollToItem (items[i-1].second.get ());
-						break;
+						if (selectedItems[0] == items[i].second.get() && i != 0)
+						{
+							setSelectedItem (items[i - 1].second.get());
+							scrollToItem (items[i - 1].second.get());
+							break;
+						}
 					}
 				}
+				return true;
 			}
-			return true;
-		}
-		return false;
-	case SDLK_DOWN:
-		if (selectable)
-		{
-			if (selectedItems.size () == 1)
+			return false;
+		case SDLK_DOWN:
+			if (selectable)
 			{
-				for (size_t i = 0; i < items.size (); ++i)
+				if (selectedItems.size() == 1)
 				{
-					if (selectedItems[0] == items[i].second.get () && i != items.size ()-1)
+					for (size_t i = 0; i < items.size(); ++i)
 					{
-						setSelectedItem (items[i+1].second.get ());
-						scrollToItem (items[i+1].second.get ());
-						break;
+						if (selectedItems[0] == items[i].second.get() && i != items.size() - 1)
+						{
+							setSelectedItem (items[i + 1].second.get());
+							scrollToItem (items[i + 1].second.get());
+							break;
+						}
 					}
 				}
+				return true;
 			}
-			return true;
-		}
-		return false;
-	default:
-		return false;
+			return false;
+		default:
+			return false;
 	}
 	return false;
 }
@@ -504,7 +504,7 @@ bool cListView<ItemType>::handleKeyPressed (cApplication& application, cKeyboard
 template<typename ItemType>
 void cListView<ItemType>::handleMoved (const cPosition& offset)
 {
-	for (auto i = items.begin (); i != items.end (); ++i)
+	for (auto i = items.begin(); i != items.end(); ++i)
 	{
 		(*i).second->move (offset);
 	}
@@ -517,18 +517,18 @@ template<typename ItemType>
 void cListView<ItemType>::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	cBox<cPosition> itemBox;
-	for (auto i = beginDisplayItem; i < endDisplayItem && i < items.size (); ++i)
+	for (auto i = beginDisplayItem; i < endDisplayItem && i < items.size(); ++i)
 	{
 		auto& item = *items[i].second;
 
-		itemBox = item.getArea ();
+		itemBox = item.getArea();
 		if (i == beginDisplayItem)
 		{
-			itemBox.getMinCorner ().y () = std::max (itemBox.getMinCorner ().y (), getPosition ().y () + getBeginMargin ().y ());
+			itemBox.getMinCorner().y() = std::max (itemBox.getMinCorner().y(), getPosition().y() + getBeginMargin().y());
 		}
-		if (i == endDisplayItem-1)
+		if (i == endDisplayItem - 1)
 		{
-			itemBox.getMaxCorner ().y () = std::min (itemBox.getMaxCorner ().y (), getEndPosition ().y () - getEndMargin ().y ());
+			itemBox.getMaxCorner().y() = std::min (itemBox.getMaxCorner().y(), getEndPosition().y() - getEndMargin().y());
 		}
 
 		item.draw (destination, itemBox);
@@ -543,22 +543,22 @@ void cListView<ItemType>::handleResized (const cPosition& oldSize)
 {
 	if (scrollBar)
 	{
-		scrollBar->resize (cPosition (scrollBar->getSize ().x (), getSize ().y ()));
-		scrollBar->moveTo (getPosition() + cPosition (getSize ().x () - scrollBar->getSize ().x () + 1, 0));
+		scrollBar->resize (cPosition (scrollBar->getSize().x(), getSize().y()));
+		scrollBar->moveTo (getPosition() + cPosition (getSize().x() - scrollBar->getSize().x() + 1, 0));
 	}
 
-	for (size_t i = 0; i < items.size (); ++i)
+	for (size_t i = 0; i < items.size(); ++i)
 	{
-		items[i].second->resize (cPosition (getSize ().x () - getBeginMargin ().x () - getEndMargin ().x () - (scrollBar ? scrollBar->getSize ().x () : 0), items[i].second->getSize ().y ()));
+		items[i].second->resize (cPosition (getSize().x() - getBeginMargin().x() - getEndMargin().x() - (scrollBar ? scrollBar->getSize().x() : 0), items[i].second->getSize().y()));
 	}
 
 	if (scrollBar && !items.empty())
 	{
-		const auto pixelSize = getSize ().y () - getBeginMargin ().y () - getEndMargin ().y ();
-		scrollBar->setRange (std::max (items.back ().first + items.back ().second->getSize ().y () - pixelSize, 0));
+		const auto pixelSize = getSize().y() - getBeginMargin().y() - getEndMargin().y();
+		scrollBar->setRange (std::max (items.back().first + items.back().second->getSize().y() - pixelSize, 0));
 	}
 
-	updateDisplayItems ();
+	updateDisplayItems();
 
 	cClickableWidget::handleResized (oldSize);
 }
@@ -575,21 +575,21 @@ bool cListView<ItemType>::handleClicked (cApplication& application, cMouse& mous
 		{
 			auto& item = *items[i].second;
 
-			if (item.isAt (mouse.getPosition ()))
+			if (item.isAt (mouse.getPosition()))
 			{
 				removeTookPlace = false;
 				itemClicked (item);
-                if (clickSound) cSoundDevice::getInstance ().playSoundEffect (*clickSound);
+				if (clickSound) cSoundDevice::getInstance().playSoundEffect (*clickSound);
 				if (removeTookPlace) break;
 
-				if (selectedItems.size () != 1 || selectedItems[0] != &item)
+				if (selectedItems.size() != 1 || selectedItems[0] != &item)
 				{
-					deselectAll ();
+					deselectAll();
 
 					selectedItems.push_back (&item);
-					item.select ();
+					item.select();
 
-					selectionChanged ();
+					selectionChanged();
 				}
 				break;
 			}
@@ -602,9 +602,9 @@ bool cListView<ItemType>::handleClicked (cApplication& application, cMouse& mous
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
-ItemType* cListView<ItemType>::getSelectedItem ()
+ItemType* cListView<ItemType>::getSelectedItem()
 {
-	return selectedItems.empty () ? nullptr : selectedItems[0];
+	return selectedItems.empty() ? nullptr : selectedItems[0];
 }
 
 //------------------------------------------------------------------------------
@@ -613,169 +613,169 @@ void cListView<ItemType>::setSelectedItem (const ItemType* item)
 {
 	if (!selectable) return;
 
-	if (selectedItems.size () == 1 && selectedItems[0] == item) return;
+	if (selectedItems.size() == 1 && selectedItems[0] == item) return;
 
 	if (item == nullptr)
 	{
-		deselectAll ();
+		deselectAll();
 	}
 	else
 	{
-		auto iter = std::find_if (items.begin (), items.end (), [=](const std::pair<int, std::unique_ptr<ItemType>>& entry){ return entry.second.get () == item; });
+		auto iter = std::find_if (items.begin(), items.end(), [ = ] (const std::pair<int, std::unique_ptr<ItemType>>& entry) { return entry.second.get() == item; });
 
-		if (iter != items.end ())
+		if (iter != items.end())
 		{
-			deselectAll ();
+			deselectAll();
 
 			selectedItems.push_back (iter->second.get());
-			iter->second->select ();
+			iter->second->select();
 
-			selectionChanged ();
+			selectionChanged();
 		}
 	}
 }
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
-void cListView<ItemType>::deselectAll ()
+void cListView<ItemType>::deselectAll()
 {
-	for (size_t j = 0; j != selectedItems.size (); ++j)
+	for (size_t j = 0; j != selectedItems.size(); ++j)
 	{
-		selectedItems[j]->deselect ();
+		selectedItems[j]->deselect();
 	}
-	selectedItems.clear ();
+	selectedItems.clear();
 }
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
 void cListView<ItemType>::scrollToItem (const ItemType* item)
 {
-	auto iter = std::find_if (items.begin (), items.end (), [=](const std::pair<int, std::unique_ptr<ItemType>>& entry){ return entry.second.get () == item; });
+	auto iter = std::find_if (items.begin(), items.end(), [ = ] (const std::pair<int, std::unique_ptr<ItemType>>& entry) { return entry.second.get() == item; });
 
-	if (iter != items.end ())
+	if (iter != items.end())
 	{
 		if (iter->first < pixelOffset)
 		{
 			pixelOffset = iter->first;
 
-			updateDisplayItems ();
+			updateDisplayItems();
 		}
-		else if (iter->first + iter->second->getSize ().y () > pixelOffset + getSize ().y () - getBeginMargin ().y () - getEndMargin ().y ())
+		else if (iter->first + iter->second->getSize().y() > pixelOffset + getSize().y() - getBeginMargin().y() - getEndMargin().y())
 		{
-			const auto pixelSize = getSize ().y () - getBeginMargin ().y () - getEndMargin ().y ();
-			pixelOffset = std::max (iter->first + iter->second->getSize ().y () - pixelSize, 0);
+			const auto pixelSize = getSize().y() - getBeginMargin().y() - getEndMargin().y();
+			pixelOffset = std::max (iter->first + iter->second->getSize().y() - pixelSize, 0);
 
-			updateDisplayItems ();
+			updateDisplayItems();
 		}
 	}
 }
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
-const std::vector<ItemType*>& cListView<ItemType>::getSelectedItems ()
+const std::vector<ItemType*>& cListView<ItemType>::getSelectedItems()
 {
 	return selectedItems;
 }
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
-void cListView<ItemType>::scrollDown ()
+void cListView<ItemType>::scrollDown()
 {
 	//if (endDisplayItem >= items.size ()) return;
 
 	pixelOffset += pixelScrollOffset;
 
-	updateDisplayItems ();
+	updateDisplayItems();
 }
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
-void cListView<ItemType>::scrollUp ()
+void cListView<ItemType>::scrollUp()
 {
 	if (pixelOffset <= 0) return;
 
 	pixelOffset = std::max (pixelOffset - pixelScrollOffset, 0);
 
-	updateDisplayItems ();
+	updateDisplayItems();
 }
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
-void cListView<ItemType>::pageDown ()
+void cListView<ItemType>::pageDown()
 {
 	//if (endDisplayItem >= items.size ()) return;
 
-	const auto pixelSize = getSize ().y () - getBeginMargin ().y () - getEndMargin ().y ();
+	const auto pixelSize = getSize().y() - getBeginMargin().y() - getEndMargin().y();
 
 	pixelOffset += pixelSize;
 
-	updateDisplayItems ();
+	updateDisplayItems();
 }
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
-void cListView<ItemType>::pageUp ()
+void cListView<ItemType>::pageUp()
 {
 	if (pixelOffset <= 0) return;
 
-	const auto pixelSize = getSize ().y () - getBeginMargin ().y () - getEndMargin ().y ();
+	const auto pixelSize = getSize().y() - getBeginMargin().y() - getEndMargin().y();
 
-	pixelOffset = std::max(pixelOffset - pixelSize, 0);
+	pixelOffset = std::max (pixelOffset - pixelSize, 0);
 
-	updateDisplayItems ();
+	updateDisplayItems();
 }
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
-void cListView<ItemType>::updateDisplayItems ()
+void cListView<ItemType>::updateDisplayItems()
 {
-	if (items.empty ())
+	if (items.empty())
 	{
 		beginDisplayItem = endDisplayItem = 0;
 		pixelOffset = 0;
 		return;
 	}
 
-	const auto pixelSize = getSize ().y () - getBeginMargin ().y () - getEndMargin ().y ();
+	const auto pixelSize = getSize().y() - getBeginMargin().y() - getEndMargin().y();
 
 	const auto endPixelOffset = pixelOffset + pixelSize;
 
-	auto iter = std::lower_bound (items.begin (), items.end (), endPixelOffset, [ ](const std::pair<int, std::unique_ptr<ItemType>>& entry, int offset){ return entry.first + entry.second->getSize().y() < offset; });
-	if (iter == items.end ())
+	auto iter = std::lower_bound (items.begin(), items.end(), endPixelOffset, [ ] (const std::pair<int, std::unique_ptr<ItemType>>& entry, int offset) { return entry.first + entry.second->getSize().y() < offset; });
+	if (iter == items.end())
 	{
-		endDisplayItem = items.size ();
-		pixelOffset = std::max (items[items.size ()-1].first + items[items.size ()-1].second->getSize ().y () - pixelSize, 0);
+		endDisplayItem = items.size();
+		pixelOffset = std::max (items[items.size() - 1].first + items[items.size() - 1].second->getSize().y() - pixelSize, 0);
 	}
 	else
 	{
-		endDisplayItem = iter - items.begin () + 1;
+		endDisplayItem = iter - items.begin() + 1;
 	}
 
-	iter = std::upper_bound (items.begin (), items.end (), pixelOffset, [ ](int offset, const std::pair<int, std::unique_ptr<ItemType>>& entry){ return offset < entry.first; });
-	if (iter == items.end ())
+	iter = std::upper_bound (items.begin(), items.end(), pixelOffset, [ ] (int offset, const std::pair<int, std::unique_ptr<ItemType>>& entry) { return offset < entry.first; });
+	if (iter == items.end())
 	{
-		beginDisplayItem = items.size () - 1;
+		beginDisplayItem = items.size() - 1;
 	}
 	else
 	{
-		assert (iter != items.begin ());
+		assert (iter != items.begin());
 		--iter;
-		beginDisplayItem = iter - items.begin ();
+		beginDisplayItem = iter - items.begin();
 	}
 
-	for (size_t i = 0; i < items.size (); ++i)
+	for (size_t i = 0; i < items.size(); ++i)
 	{
 		if (i < beginDisplayItem || i >= endDisplayItem)
 		{
-			items[i].second->hide ();
-			items[i].second->disable ();
+			items[i].second->hide();
+			items[i].second->disable();
 		}
 		else
 		{
-			items[i].second->show ();
-			items[i].second->enable ();
+			items[i].second->show();
+			items[i].second->enable();
 
-			items[i].second->moveTo (getPosition() + getBeginMargin() + cPosition(0, items[i].first - pixelOffset));
+			items[i].second->moveTo (getPosition() + getBeginMargin() + cPosition (0, items[i].first - pixelOffset));
 		}
 	}
 

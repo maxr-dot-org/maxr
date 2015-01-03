@@ -36,9 +36,9 @@ public:
 	cMouseCursorAmount (eMouseCursorAmountType type_);
 	cMouseCursorAmount (eMouseCursorAmountType type_, int percent_);
 
-	virtual SDL_Surface* getSurface () const MAXR_OVERRIDE_FUNCTION;
+	virtual SDL_Surface* getSurface() const MAXR_OVERRIDE_FUNCTION;
 
-	virtual cPosition getHotPoint () const MAXR_OVERRIDE_FUNCTION;
+	virtual cPosition getHotPoint() const MAXR_OVERRIDE_FUNCTION;
 
 protected:
 	virtual bool equal (const cMouseCursor& other) const MAXR_OVERRIDE_FUNCTION;
@@ -49,9 +49,9 @@ private:
 
 	mutable AutoSurface surface;
 
-	void generateSurface () const;
+	void generateSurface() const;
 
-	SDL_Surface* getSourceSurface () const;
+	SDL_Surface* getSourceSurface() const;
 };
 
 #endif // input_mouse_cursor_mousecursoramountH

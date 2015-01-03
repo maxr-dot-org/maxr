@@ -48,7 +48,7 @@ int serverGameThreadFunction (void* data)
 
 //------------------------------------------------------------------------------
 cServerGame::cServerGame (std::shared_ptr<cTCP> network_) :
-	network (std::move(network_)),
+	network (std::move (network_)),
 	thread (nullptr),
 	canceled (false),
 	shouldSave (false),
@@ -101,16 +101,16 @@ void cServerGame::saveGame (int saveGameNumber)
 //------------------------------------------------------------------------------
 void cServerGame::prepareGameData()
 {
-	settings.setMetalAmount(eGameSettingsResourceAmount::Normal);
+	settings.setMetalAmount (eGameSettingsResourceAmount::Normal);
 	settings.setOilAmount (eGameSettingsResourceAmount::Normal);
 	settings.setGoldAmount (eGameSettingsResourceAmount::Normal);
-	settings.setResourceDensity(eGameSettingsResourceDensity::Normal);
+	settings.setResourceDensity (eGameSettingsResourceDensity::Normal);
 	settings.setStartCredits (cGameSettings::defaultCreditsNormal);
-	settings.setBridgeheadType(eGameSettingsBridgeheadType::Definite);
+	settings.setBridgeheadType (eGameSettingsBridgeheadType::Definite);
 	//settings.alienTech = SETTING_ALIENTECH_OFF;
-	settings.setClansEnabled(true);
-	settings.setGameType(eGameSettingsGameType::Simultaneous);
-	settings.setVictoryCondition(eGameSettingsVictoryCondition::Death);
+	settings.setClansEnabled (true);
+	settings.setGameType (eGameSettingsGameType::Simultaneous);
+	settings.setVictoryCondition (eGameSettingsVictoryCondition::Death);
 	map = std::make_shared<cStaticMap> ();
 	const std::string mapName = "Mushroom.wrl";
 	map->loadMap (mapName);
@@ -122,7 +122,7 @@ void cServerGame::run()
 	while (canceled == false)
 	{
 		std::unique_ptr<cNetMessage> message;
-		if(eventQueue.try_pop (message))
+		if (eventQueue.try_pop (message))
 		{
 			if (server != nullptr)
 			{
@@ -207,13 +207,13 @@ void cServerGame::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage& message)
 
 	int playerNr = message.popInt16();
 
-	auto iter = std::find_if (menuPlayers.begin (), menuPlayers.end (), [playerNr](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == playerNr; });
-	if (iter == menuPlayers.end ()) return;
+	auto iter = std::find_if (menuPlayers.begin(), menuPlayers.end(), [playerNr] (const std::shared_ptr<cPlayerBasicData>& player) { return player->getNr() == playerNr; });
+	if (iter == menuPlayers.end()) return;
 
 	auto& player = **iter;
 
 	//bool freshJoined = (player->name.compare ("unidentified") == 0);
-	player.setColor (cPlayerColor(message.popColor()));
+	player.setColor (cPlayerColor (message.popColor()));
 	player.setName (message.popString());
 	player.setReady (message.popBool());
 
@@ -228,7 +228,7 @@ void cServerGame::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage& message)
 	sendPlayerList (*network, menuPlayers);
 
 	//sendGameData (*network, map.get(), settings, saveGameString, player);
-	sendGameData (*network, map.get(), &settings, std::vector<cPlayerBasicData>(),"", &player);
+	sendGameData (*network, map.get(), &settings, std::vector<cPlayerBasicData>(), "", &player);
 }
 
 //------------------------------------------------------------------------------
@@ -241,8 +241,8 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 
 	int senderPlayerNr = message.iPlayerNr;
 
-	auto iter = std::find_if (menuPlayers.begin (), menuPlayers.end (), [senderPlayerNr](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == senderPlayerNr; });
-	if (iter == menuPlayers.end ()) return;
+	auto iter = std::find_if (menuPlayers.begin(), menuPlayers.end(), [senderPlayerNr] (const std::shared_ptr<cPlayerBasicData>& player) { return player->getNr() == senderPlayerNr; });
+	if (iter == menuPlayers.end()) return;
 
 	auto& senderPlayer = **iter;
 
@@ -270,11 +270,11 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 				if (allReady)
 				{
 					std::vector<cPlayerBasicData> players;
-					std::transform (menuPlayers.begin (), menuPlayers.end (), std::back_inserter(players), [](const std::shared_ptr<cPlayerBasicData>& player){ return *player; });
+					std::transform (menuPlayers.begin(), menuPlayers.end(), std::back_inserter (players), [] (const std::shared_ptr<cPlayerBasicData>& player) { return *player; });
 
 					landingPositionManager = std::make_shared<cLandingPositionManager> (players);
 
-					signalConnectionManager.connect (landingPositionManager->landingPositionStateChanged, [this](const cPlayerBasicData& player, eLandingPositionState state)
+					signalConnectionManager.connect (landingPositionManager->landingPositionStateChanged, [this] (const cPlayerBasicData & player, eLandingPositionState state)
 					{
 						sendLandingState (*network, state, player);
 					});
@@ -285,12 +285,12 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 
 						server = std::make_unique<cServer> (network);
 						// copy playerlist for server
-						for (size_t i = 0; i != menuPlayers.size (); ++i)
+						for (size_t i = 0; i != menuPlayers.size(); ++i)
 						{
 							server->addPlayer (std::make_unique<cPlayer> (*menuPlayers[i]));
 						}
 
-						if (settings.getGameType () == eGameSettingsGameType::Turns)
+						if (settings.getGameType() == eGameSettingsGameType::Turns)
 						{
 							server->setActiveTurnPlayer (*server->playerList[0]);
 						}
@@ -298,8 +298,8 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 						server->setMap (map);
 						server->setGameSettings (settings);
 
-						server->start ();
-						server->startTurnTimers ();
+						server->start();
+						server->startTurnTimers();
 					});
 					sendGo (*network);
 				}
@@ -338,7 +338,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 				if (tokens[0].compare ("credits") == 0)
 				{
 					int credits = atoi (tokens[1].c_str());
-					settings.setStartCredits(credits);
+					settings.setStartCredits (credits);
 					sendGameData (*network, map.get(), &settings, std::vector<cPlayerBasicData>(), "");
 					string reply = senderPlayer.getName();
 					reply += " changed the starting credits.";
@@ -366,13 +366,13 @@ void cServerGame::handleNetMessage_MU_MSG_LANDING_POSITION (cNetMessage& message
 {
 	if (!landingPositionManager) return;
 
-	int playerNr = message.popInt32 ();
-	const auto position = message.popPosition ();
+	int playerNr = message.popInt32();
+	const auto position = message.popPosition();
 
 	Log.write ("Server: received landing coords from Player " + iToStr (playerNr), cLog::eLOG_TYPE_NET_DEBUG);
 
-	auto iter = std::find_if (menuPlayers.begin (), menuPlayers.end (), [playerNr](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == playerNr; });
-	if (iter == menuPlayers.end ()) return;
+	auto iter = std::find_if (menuPlayers.begin(), menuPlayers.end(), [playerNr] (const std::shared_ptr<cPlayerBasicData>& player) { return player->getNr() == playerNr; });
+	if (iter == menuPlayers.end()) return;
 
 	auto& player = **iter;
 
@@ -410,8 +410,8 @@ void cServerGame::configRessources (vector<string>& tokens, cPlayerBasicData* se
 
 		if (valid)
 		{
-			settings.setResourceDensity(density);
-			sendGameData(*network, map.get(), &settings, std::vector<cPlayerBasicData>(), "");
+			settings.setResourceDensity (density);
+			sendGameData (*network, map.get(), &settings, std::vector<cPlayerBasicData>(), "");
 			string reply = senderPlayer->getName();
 			reply += " changed the resource frequency to ";
 			reply += tokens[1];
@@ -433,9 +433,9 @@ void cServerGame::configRessources (vector<string>& tokens, cPlayerBasicData* se
 
 		if (valid)
 		{
-			if (tokens[0].compare ("oil") == 0) settings.setOilAmount(amount);
-			else if (tokens[0].compare ("metal") == 0) settings.setMetalAmount(amount);
-			else if (tokens[0].compare ("gold") == 0) settings.setGoldAmount(amount);
+			if (tokens[0].compare ("oil") == 0) settings.setOilAmount (amount);
+			else if (tokens[0].compare ("metal") == 0) settings.setMetalAmount (amount);
+			else if (tokens[0].compare ("gold") == 0) settings.setGoldAmount (amount);
 			sendGameData (*network, map.get(), &settings, std::vector<cPlayerBasicData>(), "");
 			string reply = senderPlayer->getName();
 			reply += " changed the resource density of ";
@@ -459,7 +459,7 @@ void cServerGame::terminateServer()
 //------------------------------------------------------------------------------
 void cServerGame::pushEvent (std::unique_ptr<cNetMessage> message)
 {
-	eventQueue.push (std::move(message));
+	eventQueue.push (std::move (message));
 }
 
 //------------------------------------------------------------------------------
@@ -477,7 +477,7 @@ std::string cServerGame::getGameState() const
 
 	result << "Map: " << (map != nullptr ? map->getName() : "none") << endl;
 	if (server != nullptr)
-		result << "Turn: " << server->getTurnClock ()->getTurn () << endl;
+		result << "Turn: " << server->getTurnClock()->getTurn() << endl;
 
 	result << "Players:" << endl;
 	if (server != nullptr && server->playerList.empty() == false)

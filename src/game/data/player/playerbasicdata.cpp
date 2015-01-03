@@ -21,13 +21,13 @@
 #include "network.h"
 
 //------------------------------------------------------------------------------
-cPlayerBasicData::cPlayerBasicData ()
+cPlayerBasicData::cPlayerBasicData()
 {}
 
 //------------------------------------------------------------------------------
 cPlayerBasicData::cPlayerBasicData (const std::string& name_, cPlayerColor color_, int nr_, int socketIndex_) :
 	name (name_),
-	color (std::move(color_)),
+	color (std::move (color_)),
 	Nr (nr_),
 	socketIndex (socketIndex_),
 	ready (false)
@@ -43,7 +43,7 @@ cPlayerBasicData::cPlayerBasicData (const cPlayerBasicData& other) :
 {}
 
 //------------------------------------------------------------------------------
-cPlayerBasicData& cPlayerBasicData::operator=(const cPlayerBasicData& other)
+cPlayerBasicData& cPlayerBasicData::operator= (const cPlayerBasicData& other)
 {
 	name = other.name;
 	color = other.color;
@@ -54,7 +54,7 @@ cPlayerBasicData& cPlayerBasicData::operator=(const cPlayerBasicData& other)
 }
 
 //------------------------------------------------------------------------------
-const std::string& cPlayerBasicData::getName () const
+const std::string& cPlayerBasicData::getName() const
 {
 	return name;
 }
@@ -63,11 +63,11 @@ const std::string& cPlayerBasicData::getName () const
 void cPlayerBasicData::setName (std::string name_)
 {
 	std::swap (name, name_);
-	if (name != name_) nameChanged ();
+	if (name != name_) nameChanged();
 }
 
 //------------------------------------------------------------------------------
-int cPlayerBasicData::getNr () const
+int cPlayerBasicData::getNr() const
 {
 	return Nr;
 }
@@ -76,11 +76,11 @@ int cPlayerBasicData::getNr () const
 void cPlayerBasicData::setNr (int nr)
 {
 	std::swap (Nr, nr);
-	if (Nr != nr) numberChanged ();
+	if (Nr != nr) numberChanged();
 }
 
 //------------------------------------------------------------------------------
-int cPlayerBasicData::getSocketIndex () const
+int cPlayerBasicData::getSocketIndex() const
 {
 	return socketIndex;
 }
@@ -89,7 +89,7 @@ int cPlayerBasicData::getSocketIndex () const
 void cPlayerBasicData::setSocketIndex (int index)
 {
 	std::swap (socketIndex, index);
-	if (socketIndex != index) socketIndexChanged ();
+	if (socketIndex != index) socketIndexChanged();
 }
 
 //------------------------------------------------------------------------------
@@ -120,19 +120,19 @@ void cPlayerBasicData::onSocketIndexDisconnected (int socketIndex_)
 //------------------------------------------------------------------------------
 void cPlayerBasicData::setColor (cPlayerColor color_)
 {
-	std::swap(color, color_);
-	if (color != color_) colorChanged ();
+	std::swap (color, color_);
+	if (color != color_) colorChanged();
 }
 
 //------------------------------------------------------------------------------
 void cPlayerBasicData::setReady (bool ready_)
 {
 	std::swap (ready, ready_);
-	if (ready != ready_) readyChanged ();
+	if (ready != ready_) readyChanged();
 }
 
 //------------------------------------------------------------------------------
-bool cPlayerBasicData::isReady () const
+bool cPlayerBasicData::isReady() const
 {
 	return ready;
 }

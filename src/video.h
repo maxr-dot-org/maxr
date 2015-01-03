@@ -46,17 +46,17 @@ public:
 
 	void clearMemory();
 
-	void init ();
+	void init();
 
 	/**
 	 * Shows the splash screen
 	 */
-	void showSplashScreen ();
+	void showSplashScreen();
 
 	/**
 	 * Prepares the window, buffer and renderer to display the game screen.
 	 */
-	void prepareGameScreen ();
+	void prepareGameScreen();
 
 	/**
 	* Sets whether app should appear windowed or in fullscreen mode
@@ -118,7 +118,7 @@ public:
 	 * Returns the index of the display that is currently used.
 	 * @return The display index.
 	 */
-	int getDisplayIndex () const;
+	int getDisplayIndex() const;
 
 	/**
 	* @return Detected videomodes
@@ -130,7 +130,7 @@ public:
 	 *
 	 * @return A list with pairs of the supported X and Y resolution components.
 	 */
-	const std::vector<std::pair<int, int>>& getDetectedResolutions () const;
+	const std::vector<std::pair<int, int>>& getDetectedResolutions() const;
 
 	/**
 	* Check whether the provided mode is known to our video mode list
@@ -165,7 +165,7 @@ public:
 
 	void applyShadow (const SDL_Rect* rect, SDL_Surface& destination);
 
-	mutable cSignal<void(const std::string&)> screenShotTaken;
+	mutable cSignal<void (const std::string&)> screenShotTaken;
 
 	mutable cSignal<void ()> resolutionChanged;
 
@@ -182,12 +182,12 @@ private:
 
 	void keyPressed (cKeyboard& keyboard, SDL_Keycode key);
 
-	void applyResolution ();
-	void applyWindowMode ();
+	void applyResolution();
+	void applyWindowMode();
 
 	void initializeBuffer (int width, int height);
 
-	void detectResolutions ();
+	void detectResolutions();
 private:
 	SDL_Window* sdlWindow;
 	SDL_Renderer* sdlRenderer;

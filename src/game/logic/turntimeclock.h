@@ -33,9 +33,9 @@ class cTurnTimeDeadline
 public:
 	cTurnTimeDeadline (unsigned int startGameTime, const std::chrono::milliseconds& deadline);
 
-	unsigned int getStartGameTime () const;
+	unsigned int getStartGameTime() const;
 
-	const std::chrono::milliseconds& getDeadline () const;
+	const std::chrono::milliseconds& getDeadline() const;
 
 	void changeDeadline (const std::chrono::milliseconds& deadline);
 
@@ -51,30 +51,30 @@ public:
 
 	explicit cTurnTimeClock (std::shared_ptr<cGameTimer> gameTimer);
 
-	void restartFromNow ();
+	void restartFromNow();
 	void restartFrom (unsigned int gameTime);
 
-	void stop ();
+	void stop();
 	void stopAt (unsigned int gameTime);
 
-	void resume ();
+	void resume();
 	void resumeAt (unsigned int gameTime);
 
-	unsigned int getStartGameTime () const;
+	unsigned int getStartGameTime() const;
 
-	void clearAllDeadlines ();
+	void clearAllDeadlines();
 
 	std::shared_ptr<cTurnTimeDeadline> startNewDeadlineFromNow (const std::chrono::milliseconds& deadline);
 	std::shared_ptr<cTurnTimeDeadline> startNewDeadlineFrom (unsigned int gameTime, const std::chrono::milliseconds& deadline);
 
 	void removeDeadline (const std::shared_ptr<cTurnTimeDeadline>& deadline);
 
-	std::chrono::milliseconds getTimeSinceStart () const;
-	std::chrono::milliseconds getTimeTillFirstDeadline () const;
+	std::chrono::milliseconds getTimeSinceStart() const;
+	std::chrono::milliseconds getTimeTillFirstDeadline() const;
 
-	bool hasDeadline () const;
+	bool hasDeadline() const;
 
-	bool hasReachedAnyDeadline () const;
+	bool hasReachedAnyDeadline() const;
 
 	mutable cSignal<void ()> secondChanged;
 	mutable cSignal<void ()> deadlinesChanged;

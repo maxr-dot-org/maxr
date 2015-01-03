@@ -22,7 +22,7 @@
 #include "input/mouse/mouse.h"
 
 //------------------------------------------------------------------------------
-cClickableWidget::cClickableWidget () :
+cClickableWidget::cClickableWidget() :
 	isPressed (false),
 	mouseWasOver (false),
 	consumeClick (true)
@@ -47,11 +47,11 @@ cClickableWidget::cClickableWidget (const cBox<cPosition>& area) :
 //------------------------------------------------------------------------------
 cShortcut& cClickableWidget::addClickShortcut (cKeySequence keySequence, eMouseButtonType button)
 {
-	auto shortcut = addShortcut (std::make_unique<cShortcut>(keySequence));
-	signalConnectionManager.connect (shortcut->triggered, [button,this]()
+	auto shortcut = addShortcut (std::make_unique<cShortcut> (keySequence));
+	signalConnectionManager.connect (shortcut->triggered, [button, this]()
 	{
-		auto application = getActiveApplication ();
-		auto mouse = getActiveMouse ();
+		auto application = getActiveApplication();
+		auto mouse = getActiveMouse();
 
 		if (!application || !mouse) return;
 
@@ -65,8 +65,8 @@ bool cClickableWidget::handleMouseMoved (cApplication& application, cMouse& mous
 {
 	if (!application.hasMouseFocus (*this)) return false;
 
-	const bool mouseIsOver = isAt (mouse.getPosition ());
-	
+	const bool mouseIsOver = isAt (mouse.getPosition());
+
 	if (mouseWasOver && !mouseIsOver)
 	{
 		if (isPressed)
@@ -90,7 +90,7 @@ bool cClickableWidget::handleMouseMoved (cApplication& application, cMouse& mous
 //------------------------------------------------------------------------------
 bool cClickableWidget::handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
-	if (isAt (mouse.getPosition ()) && acceptButton(button))
+	if (isAt (mouse.getPosition()) && acceptButton (button))
 	{
 		getStartedClickWithin (button) = true;
 		setPressed (true);
@@ -118,7 +118,7 @@ bool cClickableWidget::handleMouseReleased (cApplication& application, cMouse& m
 	{
 		finishMousePressed (application, mouse, button);
 
-		if (isAt (mouse.getPosition ()))
+		if (isAt (mouse.getPosition()))
 		{
 			if (handleClicked (application, mouse, button)) return consumeClick;
 		}
@@ -135,7 +135,7 @@ void cClickableWidget::handleLooseMouseFocus (cApplication& application)
 	}
 	mouseWasOver = false;
 
-	for (auto i = startedClickWithin.begin (); i != startedClickWithin.end (); ++i)
+	for (auto i = startedClickWithin.begin(); i != startedClickWithin.end(); ++i)
 	{
 		i->second = false;
 	}
@@ -163,7 +163,7 @@ bool cClickableWidget::acceptButton (eMouseButtonType button) const
 bool& cClickableWidget::getStartedClickWithin (eMouseButtonType button)
 {
 	auto iter = startedClickWithin.find (button);
-	if (iter == startedClickWithin.end ())
+	if (iter == startedClickWithin.end())
 	{
 		return startedClickWithin[button] = false;
 	}

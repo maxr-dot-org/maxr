@@ -30,36 +30,36 @@ cAnimationStartUpBuildingSite::cAnimationStartUpBuildingSite (cAnimationTimer& a
 	// register the animation to build status changes
 	signalConnectionManager.connect (vehicle->buildingChanged, [this]()
 	{
-		if (vehicle->isUnitBuildingABuilding ())
+		if (vehicle->isUnitBuildingABuilding())
 		{
-			activate ();
+			activate();
 		}
-		else if (isRunning ())
+		else if (isRunning())
 		{
-			animationTimerConnectionManager.disconnectAll ();
+			animationTimerConnectionManager.disconnectAll();
 			running = false;
 		}
 	});
 
 	signalConnectionManager.connect (vehicle->destroyed, [this]()
 	{
-		animationTimerConnectionManager.disconnectAll ();
+		animationTimerConnectionManager.disconnectAll();
 		vehicle = nullptr;
 		finished = true;
 	});
 }
 
 //------------------------------------------------------------------------------
-cAnimationStartUpBuildingSite::~cAnimationStartUpBuildingSite ()
+cAnimationStartUpBuildingSite::~cAnimationStartUpBuildingSite()
 {
-	if (isRunning () && vehicle)
+	if (isRunning() && vehicle)
 	{
 		vehicle->bigBetonAlpha = 254;
 	}
 }
 
 //------------------------------------------------------------------------------
-void cAnimationStartUpBuildingSite::activate ()
+void cAnimationStartUpBuildingSite::activate()
 {
 	if (!vehicle) return;
 
@@ -72,11 +72,11 @@ void cAnimationStartUpBuildingSite::activate ()
 //------------------------------------------------------------------------------
 bool cAnimationStartUpBuildingSite::isLocatedIn (const cBox<cPosition>& box) const
 {
-	return vehicle && box.intersects (vehicle->getArea ());
+	return vehicle && box.intersects (vehicle->getArea());
 }
 
 //------------------------------------------------------------------------------
-void cAnimationStartUpBuildingSite::run ()
+void cAnimationStartUpBuildingSite::run()
 {
 	if (!vehicle) return;
 
@@ -85,7 +85,7 @@ void cAnimationStartUpBuildingSite::run ()
 	if (vehicle->bigBetonAlpha >= 254)
 	{
 		vehicle->bigBetonAlpha = 254;
-		animationTimerConnectionManager.disconnectAll ();
+		animationTimerConnectionManager.disconnectAll();
 		running = false;
 	}
 }

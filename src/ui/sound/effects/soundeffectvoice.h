@@ -28,7 +28,7 @@ class cSoundEffectVoice : public cSoundEffect
 public:
 	cSoundEffectVoice (eSoundEffectType type, const cSoundChunk& sound);
 
-	virtual eSoundChannelType getChannelType () const MAXR_OVERRIDE_FUNCTION;
+	virtual eSoundChannelType getChannelType() const MAXR_OVERRIDE_FUNCTION;
 
 };
 

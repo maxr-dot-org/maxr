@@ -35,10 +35,10 @@ bool cMouseActionHelp::executeLeftClick (cGameMapWidget& gameMapWidget, const cM
 
 	cUnit* unit = nullptr;
 
-	const auto overVehicle = field.getVehicle ();
-	const auto overPlane = field.getPlane ();
-	const auto overBuilding = field.getBuilding ();
-	const auto overBaseBuilding = field.getBaseBuilding ();
+	const auto overVehicle = field.getVehicle();
+	const auto overPlane = field.getPlane();
+	const auto overBuilding = field.getBuilding();
+	const auto overBaseBuilding = field.getBaseBuilding();
 
 	if (overPlane) unit = overPlane;
 	else if (overVehicle) unit = overVehicle;
@@ -55,13 +55,13 @@ bool cMouseActionHelp::executeLeftClick (cGameMapWidget& gameMapWidget, const cM
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionHelp::doesChangeState () const
+bool cMouseActionHelp::doesChangeState() const
 {
 	return false;
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionHelp::isSingleAction () const
+bool cMouseActionHelp::isSingleAction() const
 {
 	return true;
 }

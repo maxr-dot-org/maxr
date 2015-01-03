@@ -31,27 +31,27 @@ cUnitRenameWidget::cUnitRenameWidget (const cPosition& position, int width) :
 	activeUnit (nullptr),
 	player (nullptr)
 {
-	selectedUnitStatusLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (0, 10), getPosition () + cPosition (width, 10 + 110)), "", FONT_LATIN_SMALL_WHITE, eAlignmentType::Left));
-	selectedUnitNamePrefixLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition (), getPosition () + cPosition (width, 10)), "", FONT_LATIN_SMALL_GREEN, eAlignmentType::Left));
-	selectedUnitNameEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition (), getPosition () + cPosition (width, 10)), eLineEditFrameType::None, FONT_LATIN_SMALL_GREEN));
+	selectedUnitStatusLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 10), getPosition() + cPosition (width, 10 + 110)), "", FONT_LATIN_SMALL_WHITE, eAlignmentType::Left));
+	selectedUnitNamePrefixLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition(), getPosition() + cPosition (width, 10)), "", FONT_LATIN_SMALL_GREEN, eAlignmentType::Left));
+	selectedUnitNameEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition(), getPosition() + cPosition (width, 10)), eLineEditFrameType::None, FONT_LATIN_SMALL_GREEN));
 
 	signalConnectionManager.connect (selectedUnitNameEdit->returnPressed, [&]()
 	{
 		if (activeUnit)
 		{
-			unitRenameTriggered ();
+			unitRenameTriggered();
 		}
 	});
-	signalConnectionManager.connect (selectedUnitNameEdit->editingFinished, [&](eValidatorState )
+	signalConnectionManager.connect (selectedUnitNameEdit->editingFinished, [&] (eValidatorState)
 	{
 		if (activeUnit)
 		{
-			selectedUnitNameEdit->setText (activeUnit->isNameOriginal () ? activeUnit->data.name : activeUnit->getName ());
+			selectedUnitNameEdit->setText (activeUnit->isNameOriginal() ? activeUnit->data.name : activeUnit->getName());
 		}
 	});
 	signalConnectionManager.connect (selectedUnitNameEdit->textSet, [&]()
 	{
-		auto application = getActiveApplication ();
+		auto application = getActiveApplication();
 		if (application)
 		{
 			application->releaseKeyFocus (*selectedUnitNameEdit);
@@ -60,27 +60,27 @@ cUnitRenameWidget::cUnitRenameWidget (const cPosition& position, int width) :
 
 	cBox<cPosition> area (getPosition(), getPosition());
 	area.add (selectedUnitStatusLabel->getArea());
-	area.add (selectedUnitNamePrefixLabel->getArea ());
-	area.add (selectedUnitNameEdit->getArea ());
+	area.add (selectedUnitNamePrefixLabel->getArea());
+	area.add (selectedUnitNameEdit->getArea());
 	resize (area.getSize());
 }
 
 void cUnitRenameWidget::setUnit (const cUnit* unit)
 {
 	activeUnit = unit;
-	unitSignalConnectionManager.disconnectAll ();
+	unitSignalConnectionManager.disconnectAll();
 
 	if (unit)
 	{
-		selectedUnitNamePrefixLabel->setText (unit->getNamePrefix ());
-		selectedUnitNameEdit->setText (unit->isNameOriginal () ? unit->data.name : unit->getName ());
+		selectedUnitNamePrefixLabel->setText (unit->getNamePrefix());
+		selectedUnitNameEdit->setText (unit->isNameOriginal() ? unit->data.name : unit->getName());
 		selectedUnitStatusLabel->setText (unit->getStatusStr (player));
 
 		unitSignalConnectionManager.connect (unit->renamed, [&]()
 		{
 			if (activeUnit)
 			{
-				selectedUnitNameEdit->setText (activeUnit->isNameOriginal () ? activeUnit->data.name : activeUnit->getName ());
+				selectedUnitNameEdit->setText (activeUnit->isNameOriginal() ? activeUnit->data.name : activeUnit->getName());
 			}
 		});
 		unitSignalConnectionManager.connect (unit->statusChanged, [&]()
@@ -95,21 +95,21 @@ void cUnitRenameWidget::setUnit (const cUnit* unit)
 	{
 		selectedUnitNamePrefixLabel->setText ("");
 		selectedUnitNameEdit->setText ("");
-		selectedUnitNameEdit->disable ();
+		selectedUnitNameEdit->disable();
 		selectedUnitStatusLabel->setText ("");
 		return;
 	}
 
-	selectedUnitNameEdit->enable ();
+	selectedUnitNameEdit->enable();
 
-	const auto xPosition = selectedUnitNamePrefixLabel->getPosition ().x () + font->getTextWide (selectedUnitNamePrefixLabel->getText () + " ", FONT_LATIN_SMALL_GREEN);
-	const cPosition moveOffset (xPosition - selectedUnitNameEdit->getPosition ().x (), 0);
+	const auto xPosition = selectedUnitNamePrefixLabel->getPosition().x() + font->getTextWide (selectedUnitNamePrefixLabel->getText() + " ", FONT_LATIN_SMALL_GREEN);
+	const cPosition moveOffset (xPosition - selectedUnitNameEdit->getPosition().x(), 0);
 	selectedUnitNameEdit->move (moveOffset);
-	selectedUnitNameEdit->resize (selectedUnitNameEdit->getSize () - moveOffset);
+	selectedUnitNameEdit->resize (selectedUnitNameEdit->getSize() - moveOffset);
 }
 
 //------------------------------------------------------------------------------
-const cUnit* cUnitRenameWidget::getUnit () const
+const cUnit* cUnitRenameWidget::getUnit() const
 {
 	return activeUnit;
 }
@@ -125,7 +125,7 @@ void cUnitRenameWidget::setPlayer (const cPlayer* player_)
 }
 
 //------------------------------------------------------------------------------
-const std::string& cUnitRenameWidget::getUnitName () const
+const std::string& cUnitRenameWidget::getUnitName() const
 {
-	return selectedUnitNameEdit->getText ();
+	return selectedUnitNameEdit->getText();
 }

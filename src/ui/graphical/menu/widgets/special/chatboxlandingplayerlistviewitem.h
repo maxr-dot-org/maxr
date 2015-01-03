@@ -37,9 +37,9 @@ class cPlayerLandingStatus
 public:
 	explicit cPlayerLandingStatus (const cPlayerBasicData& player);
 
-	const cPlayerBasicData& getPlayer () const;
+	const cPlayerBasicData& getPlayer() const;
 
-	bool hasSelectedPosition () const;
+	bool hasSelectedPosition() const;
 	void setHasSelectedPosition (bool value);
 
 	mutable cSignal<void ()> hasSelectedPositionChanged;
@@ -53,7 +53,7 @@ class cChatBoxLandingPlayerListViewItem : public cAbstractListViewItem
 public:
 	explicit cChatBoxLandingPlayerListViewItem (const cPlayerLandingStatus& playerLandingStatus);
 
-	int getPlayerNumber () const;
+	int getPlayerNumber() const;
 
 	void setLandingPositionManager (const cLandingPositionManager* landingPositionManager);
 
@@ -70,9 +70,9 @@ private:
 
 	const cLandingPositionManager* landingPositionManager;
 
-	void updatePlayerName ();
-	void updatePlayerColor ();
-	void updatePlayerHasSelectedPosition ();
+	void updatePlayerName();
+	void updatePlayerColor();
+	void updatePlayerHasSelectedPosition();
 };
 
 #endif // ui_graphical_menu_widgets_special_chatboxlandingplayerlistviewitemH

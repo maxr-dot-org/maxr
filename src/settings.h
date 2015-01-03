@@ -123,7 +123,7 @@ public:
 	const std::string& getPlayerName() const;
 	void setPlayerName (const char* playerName, bool save = true);
 
-	const cRgbColor& getPlayerColor () const;
+	const cRgbColor& getPlayerColor() const;
 	void setPlayerColor (const cRgbColor& color, bool save = true);
 
 	bool isSoundEnabled() const;
@@ -155,7 +155,7 @@ public:
 	bool isVoiceMute() const;
 	void setVoiceMute (bool voiceMute, bool save = true);
 
-	bool is3DSound () const;
+	bool is3DSound() const;
 	void set3DSound (bool sound3d, bool save = true);
 
 	// Startup

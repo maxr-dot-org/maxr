@@ -27,15 +27,15 @@
 class cWindowNetworkLobbyClient : public cWindowNetworkLobby
 {
 public:
-	cWindowNetworkLobbyClient ();
+	cWindowNetworkLobbyClient();
 
 	cSignal<void ()> triggeredConnect;
 
-	void setSaveGame(const std::vector<cPlayerBasicData>& players, std::string saveGameName_);
+	void setSaveGame (const std::vector<cPlayerBasicData>& players, std::string saveGameName_);
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	void handleConnectClicked ();
+	void handleConnectClicked();
 };
 
 #endif // ui_graphical_menu_windows_windownetworklobbyclient_windownetworklobbyclientH

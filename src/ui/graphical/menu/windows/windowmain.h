@@ -31,7 +31,7 @@ class cWindowMain : public cWindow
 {
 public:
 	cWindowMain (const std::string& title);
-	~cWindowMain ();
+	~cWindowMain();
 
 protected:
 	static const int buttonSpace = 35;
@@ -41,8 +41,8 @@ private:
 
 	cSignalConnectionManager signalConnectionManager;
 
-	void infoImageClicked ();
-	SDL_Surface* getRandomInfoImage ();
+	void infoImageClicked();
+	SDL_Surface* getRandomInfoImage();
 };
 
 #endif // ui_graphical_menu_windows_windowmainH

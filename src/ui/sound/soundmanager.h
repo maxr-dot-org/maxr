@@ -34,28 +34,28 @@ class cGameTimer;
 class cSoundManager
 {
 public:
-	cSoundManager ();
-	~cSoundManager ();
+	cSoundManager();
+	~cSoundManager();
 
 	void setGameTimer (std::shared_ptr<const cGameTimer> gameTimer);
 
-	void mute ();
-	void unmute ();
+	void mute();
+	void unmute();
 
 	void setListenerPosition (const cPosition& listenerPosition);
 	void setMaxListeningDistance (int distance);
 
 	void playSound (std::shared_ptr<cSoundEffect> sound, bool loop = false);
 
-	void stopAllSounds ();
+	void stopAllSounds();
 private:
 	struct sStoredSound
 	{
 		sStoredSound (std::shared_ptr<cSoundEffect> sound_, unsigned int startGameTime_, bool active_);
 		sStoredSound (sStoredSound&& other);
-		sStoredSound& operator=(sStoredSound&& other);
+		sStoredSound& operator= (sStoredSound && other);
 
-		bool operator<(const sStoredSound& other) const;
+		bool operator< (const sStoredSound& other) const;
 
 		std::shared_ptr<cSoundEffect> sound;
 		unsigned int startGameTime;
@@ -64,7 +64,7 @@ private:
 
 	private:
 		sStoredSound (const sStoredSound& other) MAXR_DELETE_FUNCTION;
-		sStoredSound& operator=(const sStoredSound& other) MAXR_DELETE_FUNCTION;
+		sStoredSound& operator= (const sStoredSound& other) MAXR_DELETE_FUNCTION;
 	};
 	cSignalConnectionManager signalConnectionManager;
 
@@ -83,7 +83,7 @@ private:
 	void finishedSound (cSoundEffect& sound);
 
 	void updateSoundPosition (cSoundEffect& sound);
-	void updateAllSoundPositions ();
+	void updateAllSoundPositions();
 };
 
 #endif // ui_sound_soundmanagerH

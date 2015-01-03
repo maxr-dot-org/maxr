@@ -38,11 +38,11 @@ class cWindowLandingUnitSelection : public cWindowAdvancedHangar<cUnitListViewIt
 {
 public:
 	cWindowLandingUnitSelection (cPlayerColor playerColor, int playerClan, const std::vector<std::pair<sID, int>>& initialUnits, unsigned int initialGold);
-	~cWindowLandingUnitSelection ();
+	~cWindowLandingUnitSelection();
 
-	std::vector<sLandingUnit> getLandingUnits () const;
+	std::vector<sLandingUnit> getLandingUnits() const;
 
-	std::vector<std::pair<sID, cUnitUpgrade>> getUnitUpgrades () const;
+	std::vector<std::pair<sID, cUnitUpgrade>> getUnitUpgrades() const;
 
 protected:
 	virtual bool tryAddSelectedUnit (const cUnitListViewItemBuy& unitItem) const MAXR_OVERRIDE_FUNCTION;
@@ -88,20 +88,20 @@ private:
 
 	void generateSelectionList (bool select);
 
-	void metalChanged ();
-	void goldChanged ();
+	void metalChanged();
+	void goldChanged();
 
-	void metalUpButtonClicked ();
-	void metalDownButtonClicked ();
+	void metalUpButtonClicked();
+	void metalDownButtonClicked();
 
 	void handleSelectedUnitSelectionChanged (cUnitListViewItemCargo* unitItem);
 
-	std::pair<int,int> testBuyCargo (int cargo);
+	std::pair<int, int> testBuyCargo (int cargo);
 
 	void upgradeIncreaseClicked (size_t index);
 	void upgradeDecreaseClicked (size_t index);
 
-	void updateUpgradeButtons ();
+	void updateUpgradeButtons();
 };
 
 #endif // ui_graphical_menu_windows_windowlandingunitselection_windowlandingunitselectionH

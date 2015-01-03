@@ -31,35 +31,35 @@ cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, co
 	unitId (unitId_)
 {
 	const int unitImageSize = 32;
-	AutoSurface surface (SDL_CreateRGBSurface (0, unitImageSize, unitImageSize, Video.getColDepth (), 0, 0, 0, 0));
-	SDL_SetColorKey (surface.get (), SDL_TRUE, 0x00FF00FF);
-	SDL_FillRect (surface.get (), nullptr, 0x00FF00FF);
+	AutoSurface surface (SDL_CreateRGBSurface (0, unitImageSize, unitImageSize, Video.getColDepth(), 0, 0, 0, 0));
+	SDL_SetColorKey (surface.get(), SDL_TRUE, 0x00FF00FF);
+	SDL_FillRect (surface.get(), nullptr, 0x00FF00FF);
 	SDL_Rect dest = {0, 0, 0, 0};
 
-	const auto& data = *unitId.getUnitDataOriginalVersion ();
-	if (unitId.isAVehicle ())
+	const auto& data = *unitId.getUnitDataOriginalVersion();
+	if (unitId.isAVehicle())
 	{
 		const float zoomFactor = unitImageSize / 64.0f;
 		const auto& uiData = *UnitsData.getVehicleUI (unitId);
-		cVehicle::render_simple (surface.get (), dest, zoomFactor, data, uiData, &owner);
-		cVehicle::drawOverlayAnimation (surface.get (), dest, zoomFactor, data, uiData);
+		cVehicle::render_simple (surface.get(), dest, zoomFactor, data, uiData, &owner);
+		cVehicle::drawOverlayAnimation (surface.get(), dest, zoomFactor, data, uiData);
 	}
-	else if (unitId.isABuilding ())
+	else if (unitId.isABuilding())
 	{
 		const float zoomFactor = unitImageSize / (data.isBig ? 128.0f : 64.0f);
 		const auto& uiData = *UnitsData.getBuildingUI (unitId);
-		cBuilding::render_simple (surface.get (), dest, zoomFactor, data, uiData, &owner);
+		cBuilding::render_simple (surface.get(), dest, zoomFactor, data, uiData, &owner);
 	}
 	else surface = nullptr;
 
-	unitImage = addChild (std::make_unique<cImage> (cPosition (0, 0), surface.get ()));
+	unitImage = addChild (std::make_unique<cImage> (cPosition (0, 0), surface.get()));
 	unitImage->setConsumeClick (false);
 
-	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImage->getEndPosition ().x ()+3, 0), cPosition (width, unitImage->getEndPosition ().y ())), owner.getUnitDataCurrentVersion (unitId)->name, FONT_LATIN_SMALL_WHITE, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
+	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImage->getEndPosition().x() + 3, 0), cPosition (width, unitImage->getEndPosition().y())), owner.getUnitDataCurrentVersion (unitId)->name, FONT_LATIN_SMALL_WHITE, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
 	nameLabel->setWordWrap (true);
 
-	auto size = unitImage->getArea ();
-	size.add (nameLabel->getArea ());
+	auto size = unitImage->getArea();
+	size.add (nameLabel->getArea());
 
 	resize (size.getSize());
 }
@@ -69,17 +69,17 @@ void cUnitListViewItem::draw (SDL_Surface& destination, const cBox<cPosition>& c
 {
 	cAbstractListViewItem::draw (destination, clipRect);
 
-	if (isSelected ())
+	if (isSelected())
 	{
-		auto dest = unitImage->getArea ();
-		dest.getMinCorner () -= cPosition (1, 1);
-		dest.getMaxCorner () += cPosition (1, 1);
-		drawSelectionCorner (destination, dest, cRgbColor (224, 224, 224), 8, cBox<cPosition> (clipRect.getMinCorner () - 1, clipRect.getMaxCorner () + 1));
+		auto dest = unitImage->getArea();
+		dest.getMinCorner() -= cPosition (1, 1);
+		dest.getMaxCorner() += cPosition (1, 1);
+		drawSelectionCorner (destination, dest, cRgbColor (224, 224, 224), 8, cBox<cPosition> (clipRect.getMinCorner() - 1, clipRect.getMaxCorner() + 1));
 	}
 }
 
 //------------------------------------------------------------------------------
-const sID& cUnitListViewItem::getUnitId () const
+const sID& cUnitListViewItem::getUnitId() const
 {
 	return unitId;
 }

@@ -29,17 +29,17 @@ cRadioGroup::cRadioGroup (bool allowUncheckAll_) :
 {}
 
 //------------------------------------------------------------------------------
-cRadioGroup::~cRadioGroup ()
+cRadioGroup::~cRadioGroup()
 {}
 
 //------------------------------------------------------------------------------
 cCheckBox* cRadioGroup::addButton (std::unique_ptr<cCheckBox> button)
 {
 	const bool hadButtons = hasChildren();
-	
+
 	auto addedbutton = addChild (std::move (button));
 
-	if (currentlyCheckedButton == nullptr && !allowUncheckAll && !addedbutton->isChecked ()) addedbutton->setChecked (true);
+	if (currentlyCheckedButton == nullptr && !allowUncheckAll && !addedbutton->isChecked()) addedbutton->setChecked (true);
 
 	signalConnectionManager.connect (addedbutton->toggled, std::bind (&cRadioGroup::buttonToggled, this, addedbutton));
 	buttonToggled (addedbutton);
@@ -48,13 +48,13 @@ cCheckBox* cRadioGroup::addButton (std::unique_ptr<cCheckBox> button)
 	internalMoving = true;
 	if (hadButtons)
 	{
-		auto area = getArea ();
-		area.add (addedbutton->getArea ());
+		auto area = getArea();
+		area.add (addedbutton->getArea());
 		setArea (area);
 	}
 	else
 	{
-		setArea (addedbutton->getArea ());
+		setArea (addedbutton->getArea());
 	}
 	internalMoving = false;
 
@@ -74,7 +74,7 @@ void cRadioGroup::buttonToggled (cCheckBox* button)
 {
 	if (button == currentlyCheckedButton)
 	{
-		if (!button->isChecked ())
+		if (!button->isChecked())
 		{
 			if (!allowUncheckAll) button->setChecked (true);
 			else currentlyCheckedButton = nullptr;
@@ -82,7 +82,7 @@ void cRadioGroup::buttonToggled (cCheckBox* button)
 	}
 	else
 	{
-		if (button->isChecked ())
+		if (button->isChecked())
 		{
 			auto oldCheckedButton = currentlyCheckedButton;
 			currentlyCheckedButton = button;

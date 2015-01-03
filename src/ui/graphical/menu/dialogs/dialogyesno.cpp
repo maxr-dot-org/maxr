@@ -28,26 +28,26 @@
 cDialogYesNo::cDialogYesNo (const std::string& text) :
 	cWindow (LoadPCX (GFXOD_DIALOG2), eWindowBackgrounds::Alpha)
 {
-	auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (35, 35), getPosition () + cPosition (267, 173)), text, FONT_LATIN_NORMAL, toEnumFlag(eAlignmentType::CenterHorizontal) | eAlignmentType::Top));
+	auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 35), getPosition() + cPosition (267, 173)), text, FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Top));
 	textLabel->setWordWrap (true);
 
-	auto yesButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (155, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Yes"), FONT_LATIN_NORMAL));
+	auto yesButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (155, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Yes"), FONT_LATIN_NORMAL));
 	yesButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (yesButton->clicked, [&]()
 	{
-		yesClicked ();
-		close ();
+		yesClicked();
+		close();
 	});
 
-	auto noButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (67, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~No"), FONT_LATIN_NORMAL));
+	auto noButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (67, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~No"), FONT_LATIN_NORMAL));
 	noButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
 	signalConnectionManager.connect (noButton->clicked, [&]()
 	{
-		noClicked ();
-		close ();
+		noClicked();
+		close();
 	});
 }
 
 //------------------------------------------------------------------------------
-cDialogYesNo::~cDialogYesNo ()
+cDialogYesNo::~cDialogYesNo()
 {}

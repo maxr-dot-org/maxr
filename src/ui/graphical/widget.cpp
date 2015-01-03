@@ -29,22 +29,22 @@
 /*static*/ cSignal<void ()> cWidget::drawDebugFramesChanged;
 
 //------------------------------------------------------------------------------
-/*static*/ void cWidget::toggleDrawDebugFrames ()
+/*static*/ void cWidget::toggleDrawDebugFrames()
 {
 	drawDebugFrames = !drawDebugFrames;
-	drawDebugFramesChanged ();
+	drawDebugFramesChanged();
 }
 
 //------------------------------------------------------------------------------
-cWidget::cWidget () :
+cWidget::cWidget() :
 	parent (nullptr),
 	enabled (true),
 	hidden (false),
 	area (cPosition (0, 0), cPosition (0, 0))
 {
-	createFrameSurface ();
+	createFrameSurface();
 
-	signalConnectionManager.connect (drawDebugFramesChanged, [this]() { createFrameSurface (); });
+	signalConnectionManager.connect (drawDebugFramesChanged, [this]() { createFrameSurface(); });
 }
 
 //------------------------------------------------------------------------------
@@ -54,9 +54,9 @@ cWidget::cWidget (const cPosition& position) :
 	hidden (false),
 	area (position, position)
 {
-	createFrameSurface ();
+	createFrameSurface();
 
-	signalConnectionManager.connect (drawDebugFramesChanged, [this]() { createFrameSurface (); });
+	signalConnectionManager.connect (drawDebugFramesChanged, [this]() { createFrameSurface(); });
 }
 
 //------------------------------------------------------------------------------
@@ -66,15 +66,15 @@ cWidget::cWidget (const cBox<cPosition>& area_) :
 	hidden (false),
 	area (area_)
 {
-	createFrameSurface ();
+	createFrameSurface();
 
-	signalConnectionManager.connect (drawDebugFramesChanged, [this]() { createFrameSurface (); });
+	signalConnectionManager.connect (drawDebugFramesChanged, [this]() { createFrameSurface(); });
 }
 
 //------------------------------------------------------------------------------
-cWidget::~cWidget ()
+cWidget::~cWidget()
 {
-	auto application = getActiveApplication ();
+	auto application = getActiveApplication();
 
 	if (application)
 	{
@@ -92,84 +92,84 @@ cWidget::~cWidget ()
 }
 
 //------------------------------------------------------------------------------
-cWidget* cWidget::getParent () const
+cWidget* cWidget::getParent() const
 {
 	return parent;
 }
 
 //------------------------------------------------------------------------------
-bool cWidget::isEnabled () const
+bool cWidget::isEnabled() const
 {
 	return enabled;
 }
 
 //------------------------------------------------------------------------------
-void cWidget::disable ()
+void cWidget::disable()
 {
 	enabled = false;
 }
 
 //------------------------------------------------------------------------------
-void cWidget::enable ()
+void cWidget::enable()
 {
 	enabled = true;
 }
 
 //------------------------------------------------------------------------------
-bool cWidget::isHidden () const
+bool cWidget::isHidden() const
 {
 	return hidden;
 }
 
 //------------------------------------------------------------------------------
-void cWidget::hide ()
+void cWidget::hide()
 {
 	hidden = true;
 }
 
 //------------------------------------------------------------------------------
-void cWidget::show ()
+void cWidget::show()
 {
 	hidden = false;
 }
 
 //------------------------------------------------------------------------------
-const cPosition& cWidget::getPosition () const
+const cPosition& cWidget::getPosition() const
 {
-	return area.getMinCorner ();
+	return area.getMinCorner();
 }
 
 //------------------------------------------------------------------------------
-const cPosition& cWidget::getEndPosition () const
+const cPosition& cWidget::getEndPosition() const
 {
-	return area.getMaxCorner ();
+	return area.getMaxCorner();
 }
 
 //------------------------------------------------------------------------------
 void cWidget::moveTo (const cPosition& newPosition)
 {
-	auto offset = newPosition - area.getMinCorner ();
+	auto offset = newPosition - area.getMinCorner();
 	move (offset);
 }
 
 //------------------------------------------------------------------------------
 void cWidget::move (const cPosition& offset)
 {
-	area.getMinCorner () += offset;
-	area.getMaxCorner () += offset;
+	area.getMinCorner() += offset;
+	area.getMaxCorner() += offset;
 	handleMoved (offset);
 }
 
 //------------------------------------------------------------------------------
-cPosition cWidget::getSize () const
+cPosition cWidget::getSize() const
 {
-	return area.getSize ();
+	return area.getSize();
 }
 
 //------------------------------------------------------------------------------
 void cWidget::resize (const cPosition& newSize)
 {
-	const auto oldSize = getSize ();
+	const auto oldSize = getSize();
 
 	if (oldSize != newSize)
 	{
@@ -179,19 +179,19 @@ void cWidget::resize (const cPosition& newSize)
 }
 
 //------------------------------------------------------------------------------
-void cWidget::fitToChildren ()
+void cWidget::fitToChildren()
 {
-	if (children.empty ())
+	if (children.empty())
 	{
 		resize (cPosition (0, 0));
 	}
 	else
 	{
-		cBox<cPosition> newArea(children[0]->getPosition (), children[0]->getPosition ());
+		cBox<cPosition> newArea (children[0]->getPosition(), children[0]->getPosition());
 
-		for (size_t i = 0; i < children.size (); ++i)
+		for (size_t i = 0; i < children.size(); ++i)
 		{
-			newArea.add (children[i]->getArea ());
+			newArea.add (children[i]->getArea());
 		}
 
 		setArea (newArea);
@@ -199,7 +199,7 @@ void cWidget::fitToChildren ()
 }
 
 //------------------------------------------------------------------------------
-const cBox<cPosition>& cWidget::getArea () const
+const cBox<cPosition>& cWidget::getArea() const
 {
 	return area;
 }
@@ -207,8 +207,8 @@ const cBox<cPosition>& cWidget::getArea () const
 //------------------------------------------------------------------------------
 void cWidget::setArea (const cBox<cPosition>& area_)
 {
-	const cPosition newSize = area_.getSize ();
-	const cPosition offset = area_.getMinCorner () - getArea ().getMinCorner ();
+	const cPosition newSize = area_.getSize();
+	const cPosition offset = area_.getMinCorner() - getArea().getMinCorner();
 
 	move (offset);
 	resize (newSize);
@@ -218,11 +218,11 @@ void cWidget::setArea (const cBox<cPosition>& area_)
 cShortcut* cWidget::addShortcut (std::unique_ptr<cShortcut> shortcut)
 {
 	shortcuts.push_back (std::move (shortcut));
-	return shortcuts.back ().get ();
+	return shortcuts.back().get();
 }
 
 //------------------------------------------------------------------------------
-const std::vector<std::unique_ptr<cShortcut>>& cWidget::getShortcuts () const
+const std::vector<std::unique_ptr<cShortcut>>& cWidget::getShortcuts() const
 {
 	return shortcuts;
 }
@@ -234,11 +234,11 @@ cWidget* cWidget::getChildAt (const cPosition& position) const
 	// is visually the one above all the others.
 	// We want to find this one first, because we will abort on the first child that
 	// intersects the point, regardless of whether there are other overlapping children.
-	for (auto i = children.rbegin (); i != children.rend (); ++i)
+	for (auto i = children.rbegin(); i != children.rend(); ++i)
 	{
 		auto child = i->get();
 
-		if (!child->isEnabled ()) continue;
+		if (!child->isEnabled()) continue;
 
 		if (child->isAt (position))
 		{
@@ -258,31 +258,31 @@ bool cWidget::isAt (const cPosition& position) const
 //------------------------------------------------------------------------------
 void cWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
-	if (isHidden ()) return;
+	if (isHidden()) return;
 
-	if (frameSurface && getArea().intersects(clipRect))
+	if (frameSurface && getArea().intersects (clipRect))
 	{
-		auto clipedArea = getArea ().intersection (clipRect);
+		auto clipedArea = getArea().intersection (clipRect);
 
-		SDL_Rect position = clipedArea.toSdlRect ();
+		SDL_Rect position = clipedArea.toSdlRect();
 
-		clipedArea.getMinCorner () -= getPosition ();
-		clipedArea.getMaxCorner () -= getPosition ();
+		clipedArea.getMinCorner() -= getPosition();
+		clipedArea.getMaxCorner() -= getPosition();
 
-		SDL_Rect source = clipedArea.toSdlRect ();
+		SDL_Rect source = clipedArea.toSdlRect();
 
-		SDL_BlitSurface (frameSurface.get (), &source, &destination, &position);
+		SDL_BlitSurface (frameSurface.get(), &source, &destination, &position);
 	}
 
-	for (auto i = children.begin (); i != children.end (); ++i)
+	for (auto i = children.begin(); i != children.end(); ++i)
 	{
-		auto& child = *i->get ();
+		auto& child = *i->get();
 
-		if (child.isHidden ()) continue;
+		if (child.isHidden()) continue;
 
-		if (child.getArea ().intersects (clipRect))
+		if (child.getArea().intersects (clipRect))
 		{
-			child.draw (destination, child.getArea ().intersection (clipRect));
+			child.draw (destination, child.getArea().intersection (clipRect));
 		}
 	}
 }
@@ -314,9 +314,9 @@ bool cWidget::handleMouseWheelMoved (cApplication& application, cMouse& mouse, c
 //------------------------------------------------------------------------------
 bool cWidget::handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key)
 {
-	for (auto i = children.begin (); i != children.end (); ++i)
+	for (auto i = children.begin(); i != children.end(); ++i)
 	{
-		auto& child = *i->get ();
+		auto& child = *i->get();
 		if (child.handleKeyPressed (application, keyboard, key))
 		{
 			return true;
@@ -328,9 +328,9 @@ bool cWidget::handleKeyPressed (cApplication& application, cKeyboard& keyboard, 
 //------------------------------------------------------------------------------
 bool cWidget::handleKeyReleased (cApplication& application, cKeyboard& keyboard, SDL_Keycode key)
 {
-	for (auto i = children.begin (); i != children.end (); ++i)
+	for (auto i = children.begin(); i != children.end(); ++i)
 	{
-		auto& child = *i->get ();
+		auto& child = *i->get();
 		if (child.handleKeyReleased (application, keyboard, key))
 		{
 			return true;
@@ -374,7 +374,7 @@ void cWidget::handleLooseMouseFocus (cApplication& application)
 //------------------------------------------------------------------------------
 void cWidget::handleMoved (const cPosition& offset)
 {
-	for (auto i = children.begin (); i != children.end (); ++i)
+	for (auto i = children.begin(); i != children.end(); ++i)
 	{
 		(*i)->move (offset);
 	}
@@ -383,7 +383,7 @@ void cWidget::handleMoved (const cPosition& offset)
 //------------------------------------------------------------------------------
 void cWidget::handleResized (const cPosition&)
 {
-	createFrameSurface ();
+	createFrameSurface();
 }
 
 //------------------------------------------------------------------------------
@@ -393,48 +393,48 @@ void cWidget::setParent (cWidget* parent_)
 }
 
 //------------------------------------------------------------------------------
-void cWidget::removeChildren ()
+void cWidget::removeChildren()
 {
-	children.clear ();
+	children.clear();
 }
 
 //------------------------------------------------------------------------------
-bool cWidget::hasChildren () const
+bool cWidget::hasChildren() const
 {
 	return !children.empty();
 }
 
 //------------------------------------------------------------------------------
-cMouse* cWidget::getActiveMouse () const
+cMouse* cWidget::getActiveMouse() const
 {
-	return parent ? parent->getActiveMouse () : nullptr;
+	return parent ? parent->getActiveMouse() : nullptr;
 }
 
 //------------------------------------------------------------------------------
-cKeyboard* cWidget::getActiveKeyboard () const
+cKeyboard* cWidget::getActiveKeyboard() const
 {
-	return parent ? parent->getActiveKeyboard () : nullptr;
+	return parent ? parent->getActiveKeyboard() : nullptr;
 }
 
 //------------------------------------------------------------------------------
-cApplication* cWidget::getActiveApplication () const
+cApplication* cWidget::getActiveApplication() const
 {
-	return parent ? parent->getActiveApplication () : nullptr;
+	return parent ? parent->getActiveApplication() : nullptr;
 }
 
 //------------------------------------------------------------------------------
-void cWidget::createFrameSurface ()
+void cWidget::createFrameSurface()
 {
 	if (drawDebugFrames)
 	{
 		const auto size = getSize();
 
-		if (size.x () == 0 || size.y () == 0) return;
+		if (size.x() == 0 || size.y() == 0) return;
 
-        frameSurface = AutoSurface (SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0));
+		frameSurface = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
 		if (!frameSurface) return; // can happen when for some reason the size is invalid (e.g. negative)
-		SDL_SetColorKey (frameSurface.get (), SDL_TRUE, 0xFF00FF);
-		SDL_FillRect (frameSurface.get (), nullptr, 0xFF00FF);
+		SDL_SetColorKey (frameSurface.get(), SDL_TRUE, 0xFF00FF);
+		SDL_FillRect (frameSurface.get(), nullptr, 0xFF00FF);
 
 		drawRectangle (*frameSurface, cBox<cPosition> (cPosition (0, 0), size), cRgbColor::red());
 	}
@@ -452,16 +452,16 @@ bool cWidget::hitShortcuts (const cKeySequence& keySequence)
 	bool anyMatch = false;
 	for (const auto& shortcut : shortcuts)
 	{
-		if (!shortcut->isActive ()) continue;
+		if (!shortcut->isActive()) continue;
 
-		const auto& shortcutSequence = shortcut->getKeySequence ();
+		const auto& shortcutSequence = shortcut->getKeySequence();
 
-		if (shortcutSequence.length () > keySequence.length ()) continue;
+		if (shortcutSequence.length() > keySequence.length()) continue;
 
 		bool match = true;
-		for (size_t j = 1; j <= shortcutSequence.length (); ++j)
+		for (size_t j = 1; j <= shortcutSequence.length(); ++j)
 		{
-			if (keySequence[keySequence.length () - j] != shortcutSequence[shortcutSequence.length () - j])
+			if (keySequence[keySequence.length() - j] != shortcutSequence[shortcutSequence.length() - j])
 			{
 				match = false;
 				break;
@@ -470,7 +470,7 @@ bool cWidget::hitShortcuts (const cKeySequence& keySequence)
 
 		if (match)
 		{
-			shortcut->triggered ();
+			shortcut->triggered();
 			anyMatch = true;
 		}
 	}
@@ -488,7 +488,7 @@ void cWidget::releaseFocusRecursive (cApplication& application)
 	if (application.hasKeyFocus (*this)) application.releaseKeyFocus (*this);
 	if (application.hasMouseFocus (*this)) application.releaseMouseFocus (*this);
 
-	if (application.hasKeyFocus () || application.hasMouseFocus ())
+	if (application.hasKeyFocus() || application.hasMouseFocus())
 	{
 		for (auto& child : children)
 		{

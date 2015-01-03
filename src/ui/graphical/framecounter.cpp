@@ -22,9 +22,9 @@
 #include "main.h"
 
 cFrameCounter::cFrameCounter() :
-	frames(0),
-	lastFrames(0),
-	framesPerSecond(0),
+	frames (0),
+	lastFrames (0),
+	framesPerSecond (0),
 	lastCheckTime()
 {}
 
@@ -44,13 +44,13 @@ unsigned int cFrameCounter::getFramesPerSecond()
 
 	const auto timeSinceLastCheck = now - lastCheckTime;
 
-	if (timeSinceLastCheck > std::chrono::seconds(1))
+	if (timeSinceLastCheck > std::chrono::seconds (1))
 	{
-		const auto passedSeconds = std::chrono::duration_cast<std::chrono::duration<float>>(timeSinceLastCheck).count();
+		const auto passedSeconds = std::chrono::duration_cast<std::chrono::duration<float>> (timeSinceLastCheck).count();
 
 		const auto framesSinceLastCheck = frames - lastFrames;
 
-		framesPerSecond = static_cast<unsigned int>(Round((float)framesSinceLastCheck / passedSeconds));
+		framesPerSecond = static_cast<unsigned int> (Round ((float)framesSinceLastCheck / passedSeconds));
 
 		lastFrames = frames;
 		lastCheckTime = now;

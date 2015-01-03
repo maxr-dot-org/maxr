@@ -126,7 +126,7 @@ sUnitData::sUnitData (const sUnitData& other)
 }
 
 //------------------------------------------------------------------------------
-sUnitData& sUnitData::operator=(const sUnitData& other)
+sUnitData& sUnitData::operator= (const sUnitData& other)
 {
 	ID = other.ID;
 	name = other.name;
@@ -215,7 +215,7 @@ sUnitData& sUnitData::operator=(const sUnitData& other)
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getVersion () const
+int sUnitData::getVersion() const
 {
 	return version;
 }
@@ -224,11 +224,11 @@ int sUnitData::getVersion () const
 void sUnitData::setVersion (int value)
 {
 	std::swap (version, value);
-	if (version != value) versionChanged ();
+	if (version != value) versionChanged();
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getSpeed () const
+int sUnitData::getSpeed() const
 {
 	return speedCur;
 }
@@ -237,11 +237,11 @@ int sUnitData::getSpeed () const
 void sUnitData::setSpeed (int value)
 {
 	std::swap (speedCur, value);
-	if (speedCur != value) speedChanged ();
+	if (speedCur != value) speedChanged();
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getSpeedMax () const
+int sUnitData::getSpeedMax() const
 {
 	return speedMax;
 }
@@ -250,11 +250,11 @@ int sUnitData::getSpeedMax () const
 void sUnitData::setSpeedMax (int value)
 {
 	std::swap (speedMax, value);
-	if (speedMax != value) speedMaxChanged ();
+	if (speedMax != value) speedMaxChanged();
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getHitpoints () const
+int sUnitData::getHitpoints() const
 {
 	return hitpointsCur;
 }
@@ -263,11 +263,11 @@ int sUnitData::getHitpoints () const
 void sUnitData::setHitpoints (int value)
 {
 	std::swap (hitpointsCur, value);
-	if (hitpointsCur != value) hitpointsChanged ();
+	if (hitpointsCur != value) hitpointsChanged();
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getHitpointsMax () const
+int sUnitData::getHitpointsMax() const
 {
 	return hitpointsMax;
 }
@@ -276,11 +276,11 @@ int sUnitData::getHitpointsMax () const
 void sUnitData::setHitpointsMax (int value)
 {
 	std::swap (hitpointsMax, value);
-	if (hitpointsMax != value) hitpointsMaxChanged ();
+	if (hitpointsMax != value) hitpointsMaxChanged();
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getScan () const
+int sUnitData::getScan() const
 {
 	return scan;
 }
@@ -289,11 +289,11 @@ int sUnitData::getScan () const
 void sUnitData::setScan (int value)
 {
 	std::swap (scan, value);
-	if (scan != value) scanChanged ();
+	if (scan != value) scanChanged();
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getRange () const
+int sUnitData::getRange() const
 {
 	return range;
 }
@@ -302,11 +302,11 @@ int sUnitData::getRange () const
 void sUnitData::setRange (int value)
 {
 	std::swap (range, value);
-	if (range != value) rangeChanged ();
+	if (range != value) rangeChanged();
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getShots () const
+int sUnitData::getShots() const
 {
 	return shotsCur;
 }
@@ -315,11 +315,11 @@ int sUnitData::getShots () const
 void sUnitData::setShots (int value)
 {
 	std::swap (shotsCur, value);
-	if (shotsCur != value) shotsChanged ();
+	if (shotsCur != value) shotsChanged();
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getShotsMax () const
+int sUnitData::getShotsMax() const
 {
 	return shotsMax;
 }
@@ -328,11 +328,11 @@ int sUnitData::getShotsMax () const
 void sUnitData::setShotsMax (int value)
 {
 	std::swap (shotsMax, value);
-	if (shotsMax != value) shotsMaxChanged ();
+	if (shotsMax != value) shotsMaxChanged();
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getAmmo () const
+int sUnitData::getAmmo() const
 {
 	return ammoCur;
 }
@@ -341,11 +341,11 @@ int sUnitData::getAmmo () const
 void sUnitData::setAmmo (int value)
 {
 	std::swap (ammoCur, value);
-	if (ammoCur != value) ammoChanged ();
+	if (ammoCur != value) ammoChanged();
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getAmmoMax () const
+int sUnitData::getAmmoMax() const
 {
 	return ammoMax;
 }
@@ -354,11 +354,11 @@ int sUnitData::getAmmoMax () const
 void sUnitData::setAmmoMax (int value)
 {
 	std::swap (ammoMax, value);
-	if (ammoMax != value) ammoMaxChanged ();
+	if (ammoMax != value) ammoMaxChanged();
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getDamage () const
+int sUnitData::getDamage() const
 {
 	return damage;
 }
@@ -367,11 +367,11 @@ int sUnitData::getDamage () const
 void sUnitData::setDamage (int value)
 {
 	std::swap (damage, value);
-	if (damage != value) damageChanged ();
+	if (damage != value) damageChanged();
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getArmor () const
+int sUnitData::getArmor() const
 {
 	return armor;
 }
@@ -380,11 +380,11 @@ int sUnitData::getArmor () const
 void sUnitData::setArmor (int value)
 {
 	std::swap (armor, value);
-	if (armor != value) armorChanged ();
+	if (armor != value) armorChanged();
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getStoredResources () const
+int sUnitData::getStoredResources() const
 {
 	return storageResCur;
 }
@@ -394,11 +394,11 @@ void sUnitData::setStoredResources (int value)
 {
 	value = std::max (std::min (value, storageResMax), 0);
 	std::swap (storageResCur, value);
-	if (storageResCur != value) storedResourcesChanged ();
+	if (storageResCur != value) storedResourcesChanged();
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getStoredUnits () const
+int sUnitData::getStoredUnits() const
 {
 	return storageUnitsCur;
 }
@@ -408,5 +408,5 @@ void sUnitData::setStoredUnits (int value)
 {
 	value = std::max (std::min (value, storageUnitsMax), 0);
 	std::swap (storageUnitsCur, value);
-	if (storageUnitsCur != value) storedUnitsChanged ();
+	if (storageUnitsCur != value) storedUnitsChanged();
 }

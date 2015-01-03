@@ -27,12 +27,12 @@
 cWindowLoadSave::cWindowLoadSave (std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
 	cWindowLoad (std::move (turnTimeClock))
 {
-	auto exitButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (246, 438), ePushButtonType::Huge, &SoundData.SNDMenuButton, lngPack.i18n ("Text~Others~Exit")));
-	signalConnectionManager.connect (exitButton->clicked, [&](){ exit (); });
+	auto exitButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (246, 438), ePushButtonType::Huge, &SoundData.SNDMenuButton, lngPack.i18n ("Text~Others~Exit")));
+	signalConnectionManager.connect (exitButton->clicked, [&]() { exit(); });
 
-	saveButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (132, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Save")));
+	saveButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (132, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Save")));
 	signalConnectionManager.connect (saveButton->clicked, std::bind (&cWindowLoadSave::handleSaveClicked, this));
-	saveButton->lock ();
+	saveButton->lock();
 }
 
 //------------------------------------------------------------------------------
@@ -42,9 +42,9 @@ void cWindowLoadSave::handleSlotClicked (size_t index)
 
 	auto& slot = getSaveSlot (index);
 
-	slot.forceKeyFocus ();
+	slot.forceKeyFocus();
 
-	saveButton->unlock ();
+	saveButton->unlock();
 }
 
 //------------------------------------------------------------------------------
@@ -52,9 +52,9 @@ void cWindowLoadSave::handleSlotDoubleClicked (size_t index)
 {}
 
 //------------------------------------------------------------------------------
-void cWindowLoadSave::handleSaveClicked ()
+void cWindowLoadSave::handleSaveClicked()
 {
-	auto saveNumber = getSelectedSaveNumber ();
+	auto saveNumber = getSelectedSaveNumber();
 	if (saveNumber == -1) return;
 
 	auto slot = getSaveSlotFromSaveNumber (saveNumber);

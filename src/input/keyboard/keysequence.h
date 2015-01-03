@@ -28,24 +28,24 @@
 class cKeySequence
 {
 public:
-	cKeySequence ();
+	cKeySequence();
 	explicit cKeySequence (const std::string& sequence);
 	explicit cKeySequence (cKeyCombination keyCombination);
 	cKeySequence (cKeyCombination keyCombination1, cKeyCombination keyCombination2);
 	cKeySequence (cKeyCombination keyCombination1, cKeyCombination keyCombination2, cKeyCombination keyCombination3);
 
-	bool operator==(const cKeySequence& other) const;
-	bool operator!=(const cKeySequence& other) const;
+	bool operator== (const cKeySequence& other) const;
+	bool operator!= (const cKeySequence& other) const;
 
 	void addKeyCombination (cKeyCombination keyCombination);
-	void removeFirst ();
+	void removeFirst();
 
-	size_t length () const;
-	const cKeyCombination& operator[](size_t index) const;
+	size_t length() const;
+	const cKeyCombination& operator[] (size_t index) const;
 
-	void reset ();
+	void reset();
 
-	std::string toString () const;
+	std::string toString() const;
 private:
 	std::vector<cKeyCombination> keySequence;
 };

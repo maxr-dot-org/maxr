@@ -34,18 +34,18 @@ public:
 	explicit cSavedReportChat (cNetMessage& message);
 	explicit cSavedReportChat (const tinyxml2::XMLElement& element);
 
-	virtual eSavedReportType getType () const MAXR_OVERRIDE_FUNCTION;
+	virtual eSavedReportType getType() const MAXR_OVERRIDE_FUNCTION;
 
-	virtual std::string getMessage () const MAXR_OVERRIDE_FUNCTION;
+	virtual std::string getMessage() const MAXR_OVERRIDE_FUNCTION;
 
-	virtual bool isAlert () const MAXR_OVERRIDE_FUNCTION;
+	virtual bool isAlert() const MAXR_OVERRIDE_FUNCTION;
 
 	virtual void pushInto (cNetMessage& message) const MAXR_OVERRIDE_FUNCTION;
 	virtual void pushInto (tinyxml2::XMLElement& element) const MAXR_OVERRIDE_FUNCTION;
 
-	int getPlayerNumber () const;
-	const std::string& getText () const;
-	const std::string& getPlayerName () const;
+	int getPlayerNumber() const;
+	const std::string& getText() const;
+	const std::string& getPlayerName() const;
 
 private:
 	std::string playerName;

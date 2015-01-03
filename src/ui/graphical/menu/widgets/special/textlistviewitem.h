@@ -30,7 +30,7 @@ class cTextListViewItem : public cAbstractListViewItem
 public:
 	explicit cTextListViewItem (const std::string& text);
 
-	const std::string& getText () const;
+	const std::string& getText() const;
 
 	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
 protected:

@@ -48,13 +48,13 @@ void cSavedReportPathInterrupted::pushInto (tinyxml2::XMLElement& element) const
 }
 
 //------------------------------------------------------------------------------
-eSavedReportType cSavedReportPathInterrupted::getType () const
+eSavedReportType cSavedReportPathInterrupted::getType() const
 {
 	return eSavedReportType::PathInterrupted;
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportPathInterrupted::getText () const
+std::string cSavedReportPathInterrupted::getText() const
 {
 	return lngPack.i18n ("Text~Comp~Path_interrupted");
 }

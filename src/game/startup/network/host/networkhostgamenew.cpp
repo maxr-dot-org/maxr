@@ -30,7 +30,7 @@
 void applyUnitUpgrades (cPlayer& player, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades);
 
 //------------------------------------------------------------------------------
-cNetworkHostGameNew::cNetworkHostGameNew () :
+cNetworkHostGameNew::cNetworkHostGameNew() :
 	localPlayerClan (-1)
 {}
 
@@ -40,15 +40,15 @@ void cNetworkHostGameNew::start (cApplication& application)
 	assert (gameSettings != nullptr);
 
 	server = std::make_unique<cServer> (network);
-	localClient = std::make_shared<cClient> (server.get (), nullptr);
+	localClient = std::make_shared<cClient> (server.get(), nullptr);
 
-	for (size_t i = 0; i < players.size (); ++i)
+	for (size_t i = 0; i < players.size(); ++i)
 	{
-		server->addPlayer (std::make_unique<cPlayer>(players[i]));
+		server->addPlayer (std::make_unique<cPlayer> (players[i]));
 	}
 	localClient->setPlayers (players, localPlayerIndex);
 
-	if (gameSettings->getGameType () == eGameSettingsGameType::Turns)
+	if (gameSettings->getGameType() == eGameSettingsGameType::Turns)
 	{
 		server->setActiveTurnPlayer (*server->playerList[0]);
 	}
@@ -59,10 +59,10 @@ void cNetworkHostGameNew::start (cApplication& application)
 	server->setGameSettings (*gameSettings);
 	localClient->setGameSettings (*gameSettings);
 
-	auto& clientPlayer = localClient->getActivePlayer ();
+	auto& clientPlayer = localClient->getActivePlayer();
 	if (localPlayerClan != -1) clientPlayer.setClan (localPlayerClan);
 
-	server->start ();
+	server->start();
 
 	applyUnitUpgrades (clientPlayer, localPlayerUnitUpgrades);
 
@@ -74,12 +74,12 @@ void cNetworkHostGameNew::start (cApplication& application)
 
 	sendReadyToStart (*localClient);
 
-	if (gameSettings->getGameType () == eGameSettingsGameType::Turns)
+	if (gameSettings->getGameType() == eGameSettingsGameType::Turns)
 	{
-		sendWaitFor (*server, *server->getActiveTurnPlayer (), nullptr);
+		sendWaitFor (*server, *server->getActiveTurnPlayer(), nullptr);
 	}
 
-	server->startTurnTimers ();
+	server->startTurnTimers();
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
@@ -89,14 +89,14 @@ void cNetworkHostGameNew::start (cApplication& application)
 	playerGameGuiState.setMapPosition (localPlayerLandingPosition);
 	gameGuiController->addPlayerGameGuiState (clientPlayer, std::move (playerGameGuiState));
 
-	gameGuiController->start ();
+	gameGuiController->start();
 
 	using namespace std::placeholders;
 	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cNetworkHostGameNew::save, this, _1, _2));
 
 	terminate = false;
 
-	application.addRunnable (shared_from_this ());
+	application.addRunnable (shared_from_this());
 
 	signalConnectionManager.connect (gameGuiController->terminated, [&]() { terminate = true; });
 }
@@ -105,9 +105,9 @@ void cNetworkHostGameNew::start (cApplication& application)
 void cNetworkHostGameNew::setPlayers (std::vector<cPlayerBasicData> players_, const cPlayerBasicData& localPlayer)
 {
 	players = players_;
-	auto localPlayerIter = std::find_if (players.begin (), players.end (), [&](const cPlayerBasicData& player){ return player.getNr () == localPlayer.getNr (); });
+	auto localPlayerIter = std::find_if (players.begin(), players.end(), [&] (const cPlayerBasicData & player) { return player.getNr() == localPlayer.getNr(); });
 	assert (localPlayerIter != players.end());
-	localPlayerIndex = localPlayerIter - players.begin ();
+	localPlayerIndex = localPlayerIter - players.begin();
 }
 
 //------------------------------------------------------------------------------
@@ -147,31 +147,31 @@ void cNetworkHostGameNew::setLocalPlayerLandingPosition (const cPosition& landin
 }
 
 //------------------------------------------------------------------------------
-const std::shared_ptr<cGameSettings>& cNetworkHostGameNew::getGameSettings ()
+const std::shared_ptr<cGameSettings>& cNetworkHostGameNew::getGameSettings()
 {
 	return gameSettings;
 }
 
 //------------------------------------------------------------------------------
-const std::shared_ptr<cStaticMap>& cNetworkHostGameNew::getStaticMap ()
+const std::shared_ptr<cStaticMap>& cNetworkHostGameNew::getStaticMap()
 {
 	return staticMap;
 }
 
 //------------------------------------------------------------------------------
-const std::vector<cPlayerBasicData>& cNetworkHostGameNew::getPlayers ()
+const std::vector<cPlayerBasicData>& cNetworkHostGameNew::getPlayers()
 {
 	return players;
 }
 
 //------------------------------------------------------------------------------
-const cPlayerBasicData& cNetworkHostGameNew::getLocalPlayer ()
+const cPlayerBasicData& cNetworkHostGameNew::getLocalPlayer()
 {
 	return players[localPlayerIndex];
 }
 
 //------------------------------------------------------------------------------
-int cNetworkHostGameNew::getLocalPlayerClan () const
+int cNetworkHostGameNew::getLocalPlayerClan() const
 {
 	return localPlayerClan;
 }

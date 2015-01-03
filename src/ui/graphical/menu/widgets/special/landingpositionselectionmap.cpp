@@ -30,7 +30,7 @@ cLandingPositionSelectionMap::cLandingPositionSelectionMap (const cBox<cPosition
 	cClickableWidget (area),
 	map (std::move (map_))
 {
-	mapSurface = map->createBigSurface (getSize ().x (), getSize ().y ());
+	mapSurface = map->createBigSurface (getSize().x(), getSize().y());
 }
 
 //------------------------------------------------------------------------------
@@ -38,8 +38,8 @@ void cLandingPositionSelectionMap::draw (SDL_Surface& destination, const cBox<cP
 {
 	if (mapSurface != nullptr)
 	{
-		SDL_Rect position = getArea ().toSdlRect ();
-		SDL_BlitSurface (mapSurface.get (), nullptr, &destination, &position);
+		SDL_Rect position = getArea().toSdlRect();
+		SDL_BlitSurface (mapSurface.get(), nullptr, &destination, &position);
 	}
 
 	cClickableWidget::draw (destination, clipRect);
@@ -49,7 +49,7 @@ void cLandingPositionSelectionMap::draw (SDL_Surface& destination, const cBox<cP
 bool cLandingPositionSelectionMap::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
 	cPosition tilePosition;
-	auto mapTile = getMapTile (mouse.getPosition (), tilePosition);
+	auto mapTile = getMapTile (mouse.getPosition(), tilePosition);
 
 	if (mapTile && isAllowedTerrain (*mapTile))
 	{
@@ -65,11 +65,11 @@ bool cLandingPositionSelectionMap::handleMouseMoved (cApplication& application, 
 	cClickableWidget::handleMouseMoved (application, mouse, offset);
 
 	cPosition tilePosition;
-	auto mapTile = getMapTile (mouse.getPosition (), tilePosition);
+	auto mapTile = getMapTile (mouse.getPosition(), tilePosition);
 
 	if (mapTile)
 	{
-		if (isAllowedTerrain (*mapTile)) mouse.setCursor (std::make_unique<cMouseCursorSimple>(eMouseCursorSimpleType::Move));
+		if (isAllowedTerrain (*mapTile)) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Move));
 		else mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::No));
 	}
 	else
@@ -82,7 +82,7 @@ bool cLandingPositionSelectionMap::handleMouseMoved (cApplication& application, 
 //------------------------------------------------------------------------------
 const sTerrain* cLandingPositionSelectionMap::getMapTile (const cPosition& position, cPosition& tilePosition)
 {
-	tilePosition = (position - getPosition ()) * map->getSize () / getSize ();
+	tilePosition = (position - getPosition()) * map->getSize() / getSize();
 
 	return &map->getTerrain (tilePosition);
 }

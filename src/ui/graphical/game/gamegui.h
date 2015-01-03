@@ -71,28 +71,28 @@ public:
 	void setTurnTimeClock (std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 	void setGameSettings (std::shared_ptr<const cGameSettings> gameSettings);
 
-	cHud& getHud ();
-	const cHud& getHud () const;
+	cHud& getHud();
+	const cHud& getHud() const;
 
-	cGameMapWidget& getGameMap ();
-	const cGameMapWidget& getGameMap () const;
+	cGameMapWidget& getGameMap();
+	const cGameMapWidget& getGameMap() const;
 
-	cMiniMapWidget& getMiniMap ();
-	const cMiniMapWidget& getMiniMap () const;
+	cMiniMapWidget& getMiniMap();
+	const cMiniMapWidget& getMiniMap() const;
 
-	cChatBox<cLobbyChatBoxListViewItem, cChatBoxPlayerListViewItem>& getChatBox ();
-	const cChatBox<cLobbyChatBoxListViewItem, cChatBoxPlayerListViewItem>& getChatBox () const;
+	cChatBox<cLobbyChatBoxListViewItem, cChatBoxPlayerListViewItem>& getChatBox();
+	const cChatBox<cLobbyChatBoxListViewItem, cChatBoxPlayerListViewItem>& getChatBox() const;
 
-	cGameMessageListView& getGameMessageList ();
-	const cGameMessageListView& getGameMessageList () const;
+	cGameMessageListView& getGameMessageList();
+	const cGameMessageListView& getGameMessageList() const;
 
-	cDebugOutputWidget& getDebugOutput ();
+	cDebugOutputWidget& getDebugOutput();
 
 	void setInfoTexts (const std::string& primiaryText, const std::string& additionalText);
 
-	void exit ();
+	void exit();
 
-	cGameGuiState getCurrentState () const;
+	cGameGuiState getCurrentState() const;
 	void restoreState (const cGameGuiState& state);
 
 	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
@@ -101,10 +101,10 @@ public:
 	virtual void handleActivated (cApplication& application, bool firstTime) MAXR_OVERRIDE_FUNCTION;
 	virtual void handleDeactivated (cApplication& application, bool removed) MAXR_OVERRIDE_FUNCTION;
 
-	virtual bool wantsCentered () const MAXR_OVERRIDE_FUNCTION;
+	virtual bool wantsCentered() const MAXR_OVERRIDE_FUNCTION;
 protected:
 
-	virtual std::unique_ptr<cMouseCursor> getDefaultCursor () const MAXR_OVERRIDE_FUNCTION;
+	virtual std::unique_ptr<cMouseCursor> getDefaultCursor() const MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager dynamicMapSignalConnectionManager;
@@ -136,26 +136,26 @@ private:
 
 	bool openPanelOnActivation;
 
-	void startOpenPanel ();
-	void startClosePanel ();
+	void startOpenPanel();
+	void startClosePanel();
 
-	void resetMiniMapViewWindow ();
+	void resetMiniMapViewWindow();
 
 	void updateHudCoordinates (const cPosition& tilePosition);
 	void updateHudUnitName (const cPosition& tilePosition);
 
-	void connectSelectedUnit ();
+	void connectSelectedUnit();
 	void connectMoveJob (const cVehicle& vehicle);
 
-	void initShortcuts ();
+	void initShortcuts();
 
-	void handleResolutionChange ();
+	void handleResolutionChange();
 
-	void updateSelectedUnitIdleSound ();
+	void updateSelectedUnitIdleSound();
 	void updateSelectedUnitMoveSound (bool startedNew);
 
 	void startSelectedUnitSound (const cUnit& unit, const cSoundChunk& sound);
-	void stopSelectedUnitSound ();
+	void stopSelectedUnitSound();
 };
 
 #endif // ui_graphical_game_gameguiH

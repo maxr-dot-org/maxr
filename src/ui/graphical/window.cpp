@@ -33,17 +33,17 @@ cWindow::cWindow (AutoSurface surface_, eWindowBackgrounds backgroundType_) :
 	closing (false),
 	hasBeenDrawnOnce (false)
 {
-	setSurface (std::move(surface_));
+	setSurface (std::move (surface_));
 }
 
 //------------------------------------------------------------------------------
-bool cWindow::isClosing () const
+bool cWindow::isClosing() const
 {
 	return closing;
 }
 
 //------------------------------------------------------------------------------
-void cWindow::close ()
+void cWindow::close()
 {
 	closing = true;
 }
@@ -55,27 +55,27 @@ void cWindow::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 	{
 		switch (backgroundType)
 		{
-		case eWindowBackgrounds::Black:
-			SDL_FillRect (cVideo::buffer, nullptr, 0xFF000000);
-			break;
-		case eWindowBackgrounds::Alpha:
-			// NOTE: this is not fully robust yet! It will not work if an
-			// alpha-background-window will call another alpha-background-window.
-			// Returning to an alpha-background-window from any other window
-			// will not work as expected as well.
-			if (cSettings::getInstance ().isAlphaEffects ())
-			{
-				Video.applyShadow (nullptr, destination);
-			}
-			break;
-		case eWindowBackgrounds::Transparent:
-			// do nothing here
-			break;
+			case eWindowBackgrounds::Black:
+				SDL_FillRect (cVideo::buffer, nullptr, 0xFF000000);
+				break;
+			case eWindowBackgrounds::Alpha:
+				// NOTE: this is not fully robust yet! It will not work if an
+				// alpha-background-window will call another alpha-background-window.
+				// Returning to an alpha-background-window from any other window
+				// will not work as expected as well.
+				if (cSettings::getInstance().isAlphaEffects())
+				{
+					Video.applyShadow (nullptr, destination);
+				}
+				break;
+			case eWindowBackgrounds::Transparent:
+				// do nothing here
+				break;
 		}
 	}
 
-	SDL_Rect position = getArea().toSdlRect ();
-	if (surface != nullptr) SDL_BlitSurface (surface.get (), nullptr, &destination, &position);
+	SDL_Rect position = getArea().toSdlRect();
+	if (surface != nullptr) SDL_BlitSurface (surface.get(), nullptr, &destination, &position);
 
 	hasBeenDrawnOnce = true;
 
@@ -92,10 +92,10 @@ void cWindow::handleActivated (cApplication& application, bool firstTime)
 	hasBeenDrawnOnce = false;
 	activeApplication = &application;
 
-	auto mouse = activeApplication->getActiveMouse ();
+	auto mouse = activeApplication->getActiveMouse();
 	if (mouse)
 	{
-		auto defaultCursor = getDefaultCursor ();
+		auto defaultCursor = getDefaultCursor();
 		if (defaultCursor)
 		{
 			mouse->setCursor (std::move (defaultCursor));
@@ -113,52 +113,52 @@ void cWindow::handleDeactivated (cApplication& application, bool removed)
 
 	if (removed)
 	{
-		assert (isClosing ());
+		assert (isClosing());
 
-		terminated ();
+		terminated();
 	}
 }
 
 //------------------------------------------------------------------------------
-bool cWindow::wantsCentered () const
+bool cWindow::wantsCentered() const
 {
 	return true;
 }
 
 //------------------------------------------------------------------------------
-cApplication* cWindow::getActiveApplication () const
+cApplication* cWindow::getActiveApplication() const
 {
 	return activeApplication;
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseCursor> cWindow::getDefaultCursor () const
+std::unique_ptr<cMouseCursor> cWindow::getDefaultCursor() const
 {
 	return std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand);
 }
 
 //------------------------------------------------------------------------------
-cMouse* cWindow::getActiveMouse () const
+cMouse* cWindow::getActiveMouse() const
 {
-	return activeApplication ? activeApplication->getActiveMouse () : nullptr;
+	return activeApplication ? activeApplication->getActiveMouse() : nullptr;
 }
 
 //------------------------------------------------------------------------------
-cKeyboard* cWindow::getActiveKeyboard () const
+cKeyboard* cWindow::getActiveKeyboard() const
 {
-	return activeApplication ? activeApplication->getActiveKeyboard () : nullptr;
+	return activeApplication ? activeApplication->getActiveKeyboard() : nullptr;
 }
 
 //------------------------------------------------------------------------------
-SDL_Surface* cWindow::getSurface ()
+SDL_Surface* cWindow::getSurface()
 {
-	return surface.get ();
+	return surface.get();
 }
 
 //------------------------------------------------------------------------------
 void cWindow::setSurface (AutoSurface surface_)
 {
-	surface = std::move(surface_);
+	surface = std::move (surface_);
 	if (surface != nullptr)
 	{
 		resize (cPosition (surface->w, surface->h));

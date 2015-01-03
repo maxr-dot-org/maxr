@@ -101,17 +101,17 @@ private:
 
 	bool checkFilter (const sUnitData& data) const;
 
-	void handleFilterChanged ();
+	void handleFilterChanged();
 
-	void rebuildUnitList ();
-	void rebuildDisadvantagesList ();
-	void rebuildReportsList ();
-	void initializeScorePlot ();
+	void rebuildUnitList();
+	void rebuildDisadvantagesList();
+	void rebuildReportsList();
+	void initializeScorePlot();
 
-	void updateActiveFrame ();
+	void updateActiveFrame();
 
-	void upPressed ();
-	void downPressed ();
+	void upPressed();
+	void downPressed();
 
 	void handleUnitClicked (cReportUnitListViewItem& item);
 	void handleReportClicked (cReportMessageListViewItem& item);

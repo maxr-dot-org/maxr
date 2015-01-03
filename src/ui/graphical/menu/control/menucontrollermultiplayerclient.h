@@ -44,11 +44,11 @@ public:
 	cMenuControllerMultiplayerClient (cApplication& application);
 	~cMenuControllerMultiplayerClient();
 
-	void start ();
+	void start();
 
 	virtual void pushEvent (std::unique_ptr<cNetMessage> message) MAXR_OVERRIDE_FUNCTION;
 
-	virtual void run () MAXR_OVERRIDE_FUNCTION;
+	virtual void run() MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
@@ -71,22 +71,22 @@ private:
 	std::string triedLoadMapName;
 	std::string lastRequestedMapName;
 
-	void reset ();
+	void reset();
 
-	void handleWantLocalPlayerReadyChange ();
-	void handleChatMessageTriggered ();
-	void handleLocalPlayerAttributesChanged ();
+	void handleWantLocalPlayerReadyChange();
+	void handleChatMessageTriggered();
+	void handleLocalPlayerAttributesChanged();
 
-	void connect ();
+	void connect();
 
-	void startSavedGame ();
+	void startSavedGame();
 
-	void startGamePreparation ();
+	void startGamePreparation();
 
-	void startClanSelection ();
-	void startLandingUnitSelection ();
-	void startLandingPositionSelection ();
-	void startNewGame ();
+	void startClanSelection();
+	void startLandingUnitSelection();
+	void startLandingPositionSelection();
+	void startNewGame();
 
 	void handleNetMessage (cNetMessage& message);
 
@@ -109,7 +109,7 @@ private:
 	void canceledMapDownload (cNetMessage& message);
 	void finishedMapDownload (cNetMessage& message);
 
-	void saveOptions ();
+	void saveOptions();
 };
 
 #endif // ui_graphical_menu_control_menucontrollermultiplayerclientH

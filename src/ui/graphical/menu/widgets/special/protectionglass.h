@@ -31,7 +31,7 @@ class cProtectionGlass : public cWidget
 public:
 	explicit cProtectionGlass (const cPosition& position, std::shared_ptr<cAnimationTimer> animationTimer, double percentClosed = 100);
 
-	void open ();
+	void open();
 
 	cSignal<void ()> opened;
 
@@ -46,7 +46,7 @@ private:
 
 	double percentClosed;
 
-	void doOpenStep ();
+	void doOpenStep();
 };
 
 #endif // ui_graphical_menu_widgets_special_protectionglassH

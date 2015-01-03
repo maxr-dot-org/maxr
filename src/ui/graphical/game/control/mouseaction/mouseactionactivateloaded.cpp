@@ -33,7 +33,7 @@ cMouseActionActivateLoaded::cMouseActionActivateLoaded (int vehicleToActivateInd
 //------------------------------------------------------------------------------
 bool cMouseActionActivateLoaded::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
 {
-	const auto selectedUnit = unitSelection.getSelectedUnit ();
+	const auto selectedUnit = unitSelection.getSelectedUnit();
 
 	if (!selectedUnit) return false;
 
@@ -43,13 +43,13 @@ bool cMouseActionActivateLoaded::executeLeftClick (cGameMapWidget& gameMapWidget
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionActivateLoaded::doesChangeState () const
+bool cMouseActionActivateLoaded::doesChangeState() const
 {
 	return true;
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionActivateLoaded::isSingleAction () const
+bool cMouseActionActivateLoaded::isSingleAction() const
 {
 	return true;
 }

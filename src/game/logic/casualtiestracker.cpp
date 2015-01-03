@@ -57,7 +57,7 @@ void cCasualtiesTracker::initFromXML (XMLElement* casualtiesNode)
 		playerNode = playerNode->NextSiblingElement ("PlayerCasualties");
 	}
 
-	casualtiesChanged ();
+	casualtiesChanged();
 }
 
 //--------------------------------------------------------------------------
@@ -91,13 +91,13 @@ void cCasualtiesTracker::logCasualty (sID unitType, int playerNr)
 {
 	setCasualty (unitType, getCasualtiesOfUnitType (unitType, playerNr) + 1, playerNr);
 
-	casualtiesChanged ();
+	casualtiesChanged();
 }
 
 //--------------------------------------------------------------------------
 void cCasualtiesTracker::setCasualty (sID unitType, int numberOfLosses, int playerNr)
 {
-	auto signalCaller = makeScopedOperation ([=](){ casualtyChanged (unitType, playerNr); });
+	auto signalCaller = makeScopedOperation ([ = ]() { casualtyChanged (unitType, playerNr); });
 
 	vector<Casualty>& casualties = getCasualtiesOfPlayer (playerNr);
 
@@ -215,7 +215,7 @@ void cCasualtiesTracker::updateCasualtiesFromNetMessage (cNetMessage* message)
 		}
 	}
 
-	casualtiesChanged ();
+	casualtiesChanged();
 }
 
 //--------------------------------------------------------------------------

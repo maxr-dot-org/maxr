@@ -37,9 +37,9 @@ class cWindowBuildVehicles : public cWindowAdvancedHangar<cUnitListViewItemBuild
 public:
 	cWindowBuildVehicles (const cBuilding& building, const cMap& map, std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 
-	std::vector<cBuildListItem> getBuildList () const;
-	int getSelectedBuildSpeed () const;
-	bool isRepeatActive () const;
+	std::vector<cBuildListItem> getBuildList() const;
+	int getSelectedBuildSpeed() const;
+	bool isRepeatActive() const;
 protected:
 	virtual void setActiveUnit (const sID& unitId) MAXR_OVERRIDE_FUNCTION;
 
@@ -55,7 +55,7 @@ private:
 	void generateSelectionList (const cBuilding& building, const cMap& map);
 	void generateBuildList (const cBuilding& building);
 
-	void closeOnUnitDestruction ();
+	void closeOnUnitDestruction();
 };
 
 #endif // ui_graphical_menu_windows_windowbuildvehicles_windowbuildvehiclesH

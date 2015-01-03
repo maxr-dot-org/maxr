@@ -38,26 +38,26 @@
 class cAnimationTimer : public cRunnable
 {
 public:
-	cAnimationTimer ();
-	~cAnimationTimer ();
+	cAnimationTimer();
+	~cAnimationTimer();
 
 	/**
 	 * Increases the internal timer.
 	 *
 	 * For internal use only!
 	 */
-	void increaseTimer ();
+	void increaseTimer();
 
 	/**
 	 * Returns the animation time since the animation timer has been started in 100ms steps.
 	 */
-	unsigned long long getAnimationTime () const;
+	unsigned long long getAnimationTime() const;
 
 	/**
 	 * Checks the time since the last call and emits the
 	 * signals according to this interval.
 	 */
-	virtual void run () MAXR_OVERRIDE_FUNCTION;
+	virtual void run() MAXR_OVERRIDE_FUNCTION;
 
 	/*
 	 * The following signals get called during the run method.
@@ -73,7 +73,7 @@ public:
 	cSignal<void ()> triggered50ms;
 	cSignal<void ()> triggered100ms;
 	cSignal<void ()> triggered400ms;
-	
+
 	/*
 	 * The following signals get called during the run method.
 	 *

@@ -30,12 +30,12 @@ public:
 	cLockGuard (MutexType& m) :
 		mutex (m)
 	{
-		mutex.lock ();
+		mutex.lock();
 	}
 
-	~cLockGuard ()
+	~cLockGuard()
 	{
-		mutex.unlock ();
+		mutex.unlock();
 	}
 
 private:

@@ -26,7 +26,7 @@
 #include "game/logic/clientevents.h"
 
 //------------------------------------------------------------------------------
-cNetworkClientGameSaved::cNetworkClientGameSaved ()
+cNetworkClientGameSaved::cNetworkClientGameSaved()
 {}
 
 //------------------------------------------------------------------------------
@@ -38,20 +38,20 @@ void cNetworkClientGameSaved::start (cApplication& application)
 	localClient->setMap (staticMap);
 	localClient->setGameSettings (*gameSettings);
 
-	sendRequestResync (*localClient, localClient->getActivePlayer ().getNr (), true);
+	sendRequestResync (*localClient, localClient->getActivePlayer().getNr(), true);
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
 	gameGuiController->setSingleClient (localClient);
 
-	gameGuiController->start ();
+	gameGuiController->start();
 
 	using namespace std::placeholders;
 	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cNetworkClientGameSaved::save, this, _1, _2));
 
 	terminate = false;
 
-	application.addRunnable (shared_from_this ());
+	application.addRunnable (shared_from_this());
 
 	signalConnectionManager.connect (gameGuiController->terminated, [&]() { terminate = true; });
 }
@@ -60,9 +60,9 @@ void cNetworkClientGameSaved::start (cApplication& application)
 void cNetworkClientGameSaved::setPlayers (std::vector<cPlayerBasicData> players_, const cPlayerBasicData& localPlayer)
 {
 	players = players_;
-	auto localPlayerIter = std::find_if (players.begin (), players.end (), [&](const cPlayerBasicData& player){ return player.getNr () == localPlayer.getNr (); });
+	auto localPlayerIter = std::find_if (players.begin(), players.end(), [&] (const cPlayerBasicData & player) { return player.getNr() == localPlayer.getNr(); });
 	assert (localPlayerIter != players.end());
-	localPlayerIndex = localPlayerIter - players.begin ();
+	localPlayerIndex = localPlayerIter - players.begin();
 }
 
 //------------------------------------------------------------------------------
@@ -79,25 +79,25 @@ void cNetworkClientGameSaved::setStaticMap (std::shared_ptr<cStaticMap> staticMa
 }
 
 //------------------------------------------------------------------------------
-const std::shared_ptr<cGameSettings>& cNetworkClientGameSaved::getGameSettings ()
+const std::shared_ptr<cGameSettings>& cNetworkClientGameSaved::getGameSettings()
 {
 	return gameSettings;
 }
 
 //------------------------------------------------------------------------------
-const std::shared_ptr<cStaticMap>& cNetworkClientGameSaved::getStaticMap ()
+const std::shared_ptr<cStaticMap>& cNetworkClientGameSaved::getStaticMap()
 {
 	return staticMap;
 }
 
 //------------------------------------------------------------------------------
-const std::vector<cPlayerBasicData>& cNetworkClientGameSaved::getPlayers ()
+const std::vector<cPlayerBasicData>& cNetworkClientGameSaved::getPlayers()
 {
 	return players;
 }
 
 //------------------------------------------------------------------------------
-const cPlayerBasicData& cNetworkClientGameSaved::getLocalPlayer ()
+const cPlayerBasicData& cNetworkClientGameSaved::getLocalPlayer()
 {
 	return players[localPlayerIndex];
 }

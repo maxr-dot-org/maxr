@@ -29,14 +29,14 @@
 //------------------------------------------------------------------------------
 bool cMouseActionAttack::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
 {
-	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
-	const auto selectedBuilding = unitSelection.getSelectedBuilding ();
+	const auto selectedVehicle = unitSelection.getSelectedVehicle();
+	const auto selectedBuilding = unitSelection.getSelectedBuilding();
 
-	if (selectedVehicle && !selectedVehicle->isAttacking () && !selectedVehicle->MoveJobActive)
+	if (selectedVehicle && !selectedVehicle->isAttacking() && !selectedVehicle->MoveJobActive)
 	{
 		gameMapWidget.triggeredAttack (*selectedVehicle, mapPosition);
 	}
-	else if (selectedBuilding && !selectedBuilding->isAttacking ())
+	else if (selectedBuilding && !selectedBuilding->isAttacking())
 	{
 		gameMapWidget.triggeredAttack (*selectedBuilding, mapPosition);
 	}
@@ -48,13 +48,13 @@ bool cMouseActionAttack::executeLeftClick (cGameMapWidget& gameMapWidget, const 
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionAttack::doesChangeState () const
+bool cMouseActionAttack::doesChangeState() const
 {
 	return true;
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionAttack::isSingleAction () const
+bool cMouseActionAttack::isSingleAction() const
 {
 	return false;
 }

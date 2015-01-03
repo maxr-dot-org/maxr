@@ -27,20 +27,20 @@
 class cUnitSelectionBox
 {
 public:
-	cUnitSelectionBox ();
-	bool isTooSmall () const;
+	cUnitSelectionBox();
+	bool isTooSmall() const;
 
-	bool isValid () const;
+	bool isValid() const;
 
-	bool isValidStart () const;
-	bool isValidEnd () const;
+	bool isValidStart() const;
+	bool isValidEnd() const;
 
-	void invalidate ();
+	void invalidate();
 
-	cBox<cFixedVector<double, 2>>& getBox ();
-	const cBox<cFixedVector<double, 2>>& getBox () const;
+	cBox<cFixedVector<double, 2>>& getBox();
+	const cBox<cFixedVector<double, 2>>& getBox() const;
 
-	cBox<cPosition> getCorrectedMapBox () const;
+	cBox<cPosition> getCorrectedMapBox() const;
 private:
 	cBox<cFixedVector<double, 2>> box;
 };

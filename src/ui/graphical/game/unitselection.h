@@ -44,19 +44,19 @@ public:
 	bool selectUnit (cUnit& unit, bool add = false);
 
 	void deselectUnit (const cUnit& unit);
-	void deselectUnits ();
+	void deselectUnits();
 
-	cUnit* getSelectedUnit () const;
-	cVehicle* getSelectedVehicle () const;
-	cBuilding* getSelectedBuilding () const;
+	cUnit* getSelectedUnit() const;
+	cVehicle* getSelectedVehicle() const;
+	cBuilding* getSelectedBuilding() const;
 
-	std::vector<cUnit*> getSelectedUnits () const;
-	std::vector<cVehicle*> getSelectedVehicles () const;
-	std::vector<cBuilding*> getSelectedBuildings () const;
+	std::vector<cUnit*> getSelectedUnits() const;
+	std::vector<cVehicle*> getSelectedVehicles() const;
+	std::vector<cBuilding*> getSelectedBuildings() const;
 
-	size_t getSelectedUnitsCount () const;
-	size_t getSelectedVehiclesCount () const;
-	size_t getSelectedBuildingsCount () const;
+	size_t getSelectedUnitsCount() const;
+	size_t getSelectedVehiclesCount() const;
+	size_t getSelectedBuildingsCount() const;
 
 	bool isSelected (const cUnit& unit) const;
 
@@ -75,7 +75,7 @@ private:
 
 	void removeSelectedUnit (const cUnit& unit);
 
-	void removeAllSelectedUnits ();
+	void removeAllSelectedUnits();
 };
 
 #endif // ui_graphical_game_unitselectionH

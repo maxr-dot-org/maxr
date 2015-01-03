@@ -25,7 +25,7 @@ cSoundEffectVoice::cSoundEffectVoice (eSoundEffectType type, const cSoundChunk& 
 {}
 
 //--------------------------------------------------------------------------
-eSoundChannelType cSoundEffectVoice::getChannelType () const
+eSoundChannelType cSoundEffectVoice::getChannelType() const
 {
 	return eSoundChannelType::Voice;
 }

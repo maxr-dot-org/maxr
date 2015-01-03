@@ -33,7 +33,7 @@ class cAnimationDither : public cAnimation
 {
 public:
 	cAnimationDither (cAnimationTimer& animationTimer, const cVehicle& building);
-	~cAnimationDither ();
+	~cAnimationDither();
 
 	virtual bool isLocatedIn (const cBox<cPosition>& box) const MAXR_OVERRIDE_FUNCTION;
 private:
@@ -44,8 +44,8 @@ private:
 
 	bool incrementEffect;
 
-	void activate ();
-	void run ();
+	void activate();
+	void run();
 };
 
 #endif // ui_graphical_game_animations_animationditherH

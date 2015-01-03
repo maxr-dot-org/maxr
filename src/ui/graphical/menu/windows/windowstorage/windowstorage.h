@@ -77,37 +77,37 @@ private:
 	static const int maxColumns = 3;
 	static const int maxRows = 2;
 
-	std::array<cPushButton*, maxColumns*maxRows> activateButtons;
-	std::array<cPushButton*, maxColumns*maxRows> reloadButtons;
-	std::array<cPushButton*, maxColumns*maxRows> repairButtons;
-	std::array<cPushButton*, maxColumns*maxRows> upgradeButtons;
+	std::array<cPushButton*, maxColumns* maxRows> activateButtons;
+	std::array<cPushButton*, maxColumns* maxRows> reloadButtons;
+	std::array<cPushButton*, maxColumns* maxRows> repairButtons;
+	std::array<cPushButton*, maxColumns* maxRows> upgradeButtons;
 
-	std::array<cImage*, maxColumns*maxRows> unitImages;
-	std::array<cLabel*, maxColumns*maxRows> unitNames;
-	std::array<cUnitDetailsStored*, maxColumns*maxRows> unitDetails;
+	std::array<cImage*, maxColumns* maxRows> unitImages;
+	std::array<cLabel*, maxColumns* maxRows> unitNames;
+	std::array<cUnitDetailsStored*, maxColumns* maxRows> unitDetails;
 
-	void updateUnitsWidgets ();
+	void updateUnitsWidgets();
 	void updateUnitButtons (const cVehicle& unit, size_t positionIndex);
 	void updateUnitName (const cVehicle& unit, size_t positionIndex);
-	void updateGlobalButtons ();
-	void updateUpDownButtons ();
+	void updateGlobalButtons();
+	void updateUpDownButtons();
 
-	void upClicked ();
-	void downClicked ();
+	void upClicked();
+	void downClicked();
 
 	void activateClicked (size_t index);
 	void reloadClicked (size_t index);
 	void repairClicked (size_t index);
 	void upgradeClicked (size_t index);
 
-	void activateAllClicked ();
-	void reloadAllClicked ();
-	void repairAllClicked ();
-	void upgradeAllClicked ();
+	void activateAllClicked();
+	void reloadAllClicked();
+	void repairAllClicked();
+	void upgradeAllClicked();
 
-	void doneClicked ();
+	void doneClicked();
 
-	void closeOnUnitDestruction ();
+	void closeOnUnitDestruction();
 };
 
 #endif // ui_graphical_menu_windows_windowstorage_windowstorageH

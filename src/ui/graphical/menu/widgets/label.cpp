@@ -27,15 +27,15 @@ cLabel::cLabel (const cBox<cPosition>& area, const std::string& text_, eUnicodeF
 	alignment (alignment_),
 	wordWrap (false)
 {
-	if (getSize ().x () < 0 || getSize ().y () < 0)
+	if (getSize().x() < 0 || getSize().y() < 0)
 	{
 		surface = nullptr;
 	}
 	else
 	{
-		surface = AutoSurface (SDL_CreateRGBSurface (0, getSize ().x (), getSize ().y (), 32, 0, 0, 0, 0));
-		SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
-		SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
+		surface = AutoSurface (SDL_CreateRGBSurface (0, getSize().x(), getSize().y(), 32, 0, 0, 0, 0));
+		SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
+		SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
 	}
 
 	setText (text_);
@@ -60,11 +60,11 @@ void cLabel::setText (const std::string& text_)
 		pos += 1;
 	}
 
-	updateDisplayInformation ();
+	updateDisplayInformation();
 }
 
 //------------------------------------------------------------------------------
-const std::string& cLabel::getText () const
+const std::string& cLabel::getText() const
 {
 	return text;
 }
@@ -72,29 +72,29 @@ const std::string& cLabel::getText () const
 //------------------------------------------------------------------------------
 void cLabel::setFont (eUnicodeFontType fontType_)
 {
-	std::swap(fontType, fontType_);
-	if(fontType != fontType_) updateDisplayInformation ();
+	std::swap (fontType, fontType_);
+	if (fontType != fontType_) updateDisplayInformation();
 }
 
 //------------------------------------------------------------------------------
 void cLabel::setAlignment (AlignmentFlags alignment_)
 {
 	std::swap (alignment, alignment_);
-	if (alignment != alignment_) updateDisplayInformation ();
+	if (alignment != alignment_) updateDisplayInformation();
 }
 
 //------------------------------------------------------------------------------
 void cLabel::setWordWrap (bool wordWrap_)
 {
 	std::swap (wordWrap, wordWrap_);
-	if (wordWrap != wordWrap_) updateDisplayInformation ();
+	if (wordWrap != wordWrap_) updateDisplayInformation();
 }
 
 //------------------------------------------------------------------------------
-void cLabel::resizeToTextHeight ()
+void cLabel::resizeToTextHeight()
 {
-	const auto textHeight = drawLines.size () * font->getFontHeight (fontType);
-	resize (cPosition (getSize ().x (), textHeight));
+	const auto textHeight = drawLines.size() * font->getFontHeight (fontType);
+	resize (cPosition (getSize().x(), textHeight));
 }
 
 //------------------------------------------------------------------------------
@@ -110,23 +110,23 @@ void cLabel::breakText (const std::string& text, std::vector<std::string>& lines
 
 	lines.push_back ("");
 
-	auto it = text.begin ();
+	auto it = text.begin();
 	auto nextWordBegin = it;
 	while (true)
 	{
-		auto& currentLine = lines.back ();
+		auto& currentLine = lines.back();
 
-		if (it == text.end() || font->isUtf8Space (&(*it)))
+		if (it == text.end() || font->isUtf8Space (& (*it)))
 		{
-			if (currentLineLength + currentWordLength >= maximalWidth || (it != text.end () && *it == '\n'))
+			if (currentLineLength + currentWordLength >= maximalWidth || (it != text.end() && *it == '\n'))
 			{
 				if (currentLineLength + currentWordLength >= maximalWidth)
 				{
 					// Remove all leading white spaces
-					while (nextWordBegin != it && font->isUtf8Space (&(*nextWordBegin)))
+					while (nextWordBegin != it && font->isUtf8Space (& (*nextWordBegin)))
 					{
 						int increase;
-						auto unicodeCharacter = font->encodeUTF8Char (&(*nextWordBegin), increase);
+						auto unicodeCharacter = font->encodeUTF8Char (& (*nextWordBegin), increase);
 						currentWordLength -= font->getUnicodeCharacterWidth (unicodeCharacter, fontType);
 						nextWordBegin += increase;
 					}
@@ -145,13 +145,13 @@ void cLabel::breakText (const std::string& text, std::vector<std::string>& lines
 			}
 			else
 			{
-				if (currentLine.empty ())
+				if (currentLine.empty())
 				{
 					// Remove all leading white spaces if we are at the beginning of a new line
-					while (nextWordBegin != it && font->isUtf8Space (&(*nextWordBegin)))
+					while (nextWordBegin != it && font->isUtf8Space (& (*nextWordBegin)))
 					{
 						int increase;
-						auto unicodeCharacter = font->encodeUTF8Char (&(*nextWordBegin), increase);
+						auto unicodeCharacter = font->encodeUTF8Char (& (*nextWordBegin), increase);
 						currentWordLength -= font->getUnicodeCharacterWidth (unicodeCharacter, fontType);
 						nextWordBegin += increase;
 					}
@@ -160,14 +160,14 @@ void cLabel::breakText (const std::string& text, std::vector<std::string>& lines
 				currentLineLength += currentWordLength;
 			}
 
-			if (it == text.end ()) break;
+			if (it == text.end()) break;
 
 			nextWordBegin = it;
 			currentWordLength = 0;
 		}
 
 		int increase;
-		auto unicodeCharacter = font->encodeUTF8Char (&(*it), increase);
+		auto unicodeCharacter = font->encodeUTF8Char (& (*it), increase);
 		currentWordLength += font->getUnicodeCharacterWidth (unicodeCharacter, fontType);
 
 		it += increase;
@@ -175,43 +175,43 @@ void cLabel::breakText (const std::string& text, std::vector<std::string>& lines
 }
 
 //------------------------------------------------------------------------------
-void cLabel::updateDisplayInformation ()
+void cLabel::updateDisplayInformation()
 {
 	if (surface == nullptr) return;
 
-	drawLines.clear ();
+	drawLines.clear();
 
 	if (wordWrap)
 	{
-		breakText (text, drawLines, getSize ().x (), fontType);
+		breakText (text, drawLines, getSize().x(), fontType);
 	}
 	else
 	{
 		drawLines.push_back (text);
 	}
 
-	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
+	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
 
-	const auto height = font->getFontHeight (fontType) * drawLines.size ();
+	const auto height = font->getFontHeight (fontType) * drawLines.size();
 
 	int drawPositionY;
 	if (alignment & eAlignmentType::Bottom)
 	{
-		drawPositionY = getSize ().y () - height;
+		drawPositionY = getSize().y() - height;
 	}
 	else if (alignment & eAlignmentType::CenterVerical)
 	{
-		drawPositionY = getSize ().y () / 2 - height / 2;
+		drawPositionY = getSize().y() / 2 - height / 2;
 	}
 	else
 	{
 		drawPositionY = 0;
 	}
 
-	auto originalTargetSurface = font->getTargetSurface ();
-	auto fontTargetSurfaceResetter = makeScopedOperation ([originalTargetSurface](){ font->setTargetSurface (originalTargetSurface); });
-	font->setTargetSurface (surface.get ());
-	for (size_t i = 0; i < drawLines.size (); ++i)
+	auto originalTargetSurface = font->getTargetSurface();
+	auto fontTargetSurfaceResetter = makeScopedOperation ([originalTargetSurface]() { font->setTargetSurface (originalTargetSurface); });
+	font->setTargetSurface (surface.get());
+	for (size_t i = 0; i < drawLines.size(); ++i)
 	{
 		const auto& line = drawLines[i];
 
@@ -220,11 +220,11 @@ void cLabel::updateDisplayInformation ()
 		int drawPositionX;
 		if (alignment & eAlignmentType::Right)
 		{
-			drawPositionX = getSize ().x () - width;
+			drawPositionX = getSize().x() - width;
 		}
 		else if (alignment & eAlignmentType::CenterHorizontal)
 		{
-			drawPositionX = getSize ().x () / 2 - width / 2;
+			drawPositionX = getSize().x() / 2 - width / 2;
 		}
 		else
 		{
@@ -240,7 +240,7 @@ void cLabel::updateDisplayInformation ()
 //------------------------------------------------------------------------------
 void cLabel::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
-	if (surface && getArea ().intersects (clipRect))
+	if (surface && getArea().intersects (clipRect))
 	{
 		blitClipped (*surface, getArea(), destination, clipRect);
 	}
@@ -253,15 +253,15 @@ void cLabel::handleResized (const cPosition& oldSize)
 {
 	cWidget::handleResized (oldSize);
 
-	if (getSize ().x () < 0 || getSize ().y () < 0)
+	if (getSize().x() < 0 || getSize().y() < 0)
 	{
 		surface = nullptr;
 		return;
 	}
 
-	surface = AutoSurface (SDL_CreateRGBSurface (0, getSize ().x (), getSize ().y (), 32, 0, 0, 0, 0));
-	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
-	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
+	surface = AutoSurface (SDL_CreateRGBSurface (0, getSize().x(), getSize().y(), 32, 0, 0, 0, 0));
+	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
+	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
 
-	updateDisplayInformation ();
+	updateDisplayInformation();
 }

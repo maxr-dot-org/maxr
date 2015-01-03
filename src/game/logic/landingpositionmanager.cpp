@@ -37,9 +37,9 @@ cLandingPositionManager::sLandingPositionData::sLandingPositionData (cPlayerBasi
 //------------------------------------------------------------------------------
 cLandingPositionManager::cLandingPositionManager (const std::vector<cPlayerBasicData>& players)
 {
-	for (size_t i = 0; i < players.size (); ++i)
+	for (size_t i = 0; i < players.size(); ++i)
 	{
-		landingPositions.push_back (sLandingPositionData(players[i]));
+		landingPositions.push_back (sLandingPositionData (players[i]));
 	}
 }
 
@@ -53,7 +53,7 @@ bool cLandingPositionManager::setLandingPosition (const cPlayerBasicData& player
 
 	playerData.needNewPosition = false;
 
-    landingPositionSet (player, landingPosition);
+	landingPositionSet (player, landingPosition);
 
 	//// wait for all players to choose at least once
 	//for (size_t i = 0; i != landingPositions.size (); ++i)
@@ -65,9 +65,9 @@ bool cLandingPositionManager::setLandingPosition (const cPlayerBasicData& player
 	checkPlayerState (playerData, false);
 
 	// update all other states
-	for (size_t i = 0; i != landingPositions.size (); ++i)
+	for (size_t i = 0; i != landingPositions.size(); ++i)
 	{
-		if (landingPositions[i].player.getNr () == player.getNr ()) continue;
+		if (landingPositions[i].player.getNr() == player.getNr()) continue;
 
 		auto& otherData = getLandingPositionData (landingPositions[i].player);
 
@@ -80,7 +80,7 @@ bool cLandingPositionManager::setLandingPosition (const cPlayerBasicData& player
 	// test if all states are valid now
 	// mark players with invalid states that they need to select a new position.
 	bool allValid = true;
-	for (size_t i = 0; i != landingPositions.size (); ++i)
+	for (size_t i = 0; i != landingPositions.size(); ++i)
 	{
 		const auto state = landingPositions[i].state;
 		if (state == eLandingPositionState::Unknown || state == eLandingPositionState::Warning || state == eLandingPositionState::TooClose)
@@ -95,7 +95,7 @@ bool cLandingPositionManager::setLandingPosition (const cPlayerBasicData& player
 
 	if (allValid)
 	{
-		allPositionsValid ();
+		allPositionsValid();
 		return true;
 	}
 	return false;
@@ -128,13 +128,13 @@ void cLandingPositionManager::checkPlayerState (sLandingPositionData& playerData
 	bool positionTooClose = false;
 	bool positionWarning = false;
 	// check distances to all other players
-	for (size_t i = 0; i != landingPositions.size (); ++i)
+	for (size_t i = 0; i != landingPositions.size(); ++i)
 	{
 		const auto& data = landingPositions[i];
 		if (data.state == eLandingPositionState::Unknown) continue;
-		if (data.player.getNr () == playerData.player.getNr ()) continue;
+		if (data.player.getNr() == playerData.player.getNr()) continue;
 
-		const auto distance = (playerData.landingPosition - data.landingPosition).l2Norm ();
+		const auto distance = (playerData.landingPosition - data.landingPosition).l2Norm();
 
 		if (distance < tooCloseDistance)
 		{
@@ -164,7 +164,7 @@ void cLandingPositionManager::checkPlayerState (sLandingPositionData& playerData
 		}
 		else if (playerData.state == eLandingPositionState::Warning)
 		{
-			const auto distance = (playerData.landingPosition - playerData.lastLandingPosition).l2Norm ();
+			const auto distance = (playerData.landingPosition - playerData.lastLandingPosition).l2Norm();
 
 			if (distance <= tooCloseDistance)
 			{
@@ -218,13 +218,13 @@ void cLandingPositionManager::checkPlayerState (sLandingPositionData& playerData
 cLandingPositionManager::sLandingPositionData& cLandingPositionManager::getLandingPositionData (const cPlayerBasicData& player)
 {
 	const cLandingPositionManager& constMe = *this;
-	return const_cast<sLandingPositionData&>(constMe.getLandingPositionData (player));
+	return const_cast<sLandingPositionData&> (constMe.getLandingPositionData (player));
 }
 
 //------------------------------------------------------------------------------
 const cLandingPositionManager::sLandingPositionData& cLandingPositionManager::getLandingPositionData (const cPlayerBasicData& player) const
 {
-	auto iter = std::find_if (landingPositions.begin (), landingPositions.end (), [&](const sLandingPositionData& data){ return data.player.getNr () == player.getNr (); });
-	assert (iter != landingPositions.end ());
+	auto iter = std::find_if (landingPositions.begin(), landingPositions.end(), [&] (const sLandingPositionData & data) { return data.player.getNr() == player.getNr(); });
+	assert (iter != landingPositions.end());
 	return *iter;
 }

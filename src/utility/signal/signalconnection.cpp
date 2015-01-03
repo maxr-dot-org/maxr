@@ -21,16 +21,16 @@
 #include "utility/signal/signal.h"
 
 //------------------------------------------------------------------------------
-bool cSignalConnection::operator==(const cSignalConnection& other) const
+bool cSignalConnection::operator== (const cSignalConnection& other) const
 {
-	if (signalReference.expired () || other.signalReference.expired ()) return false;
+	if (signalReference.expired() || other.signalReference.expired()) return false;
 	return *signalReference.lock() == *other.signalReference.lock() && identifier == other.identifier;
 }
 
 //------------------------------------------------------------------------------
-void cSignalConnection::disconnect ()
+void cSignalConnection::disconnect()
 {
-	auto signalReferenceOwned = signalReference.lock ();
+	auto signalReferenceOwned = signalReference.lock();
 	if (signalReferenceOwned)
 	{
 		signalReferenceOwned->getSignal().disconnect (*this);

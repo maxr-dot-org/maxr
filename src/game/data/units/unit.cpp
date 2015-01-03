@@ -42,7 +42,7 @@ cUnit::cUnit (const sUnitData* unitData, cPlayer* owner, unsigned int ID)
 	, job (nullptr)
 	, alphaEffectValue (0)
 	, owner (owner)
-	, position (0,0)
+	, position (0, 0)
 	, isOriginalName (true)
 	, turnsDisabled (0)
 	, sentryActive (false)
@@ -55,28 +55,28 @@ cUnit::cUnit (const sUnitData* unitData, cPlayer* owner, unsigned int ID)
 	if (unitData != 0)
 		data = *unitData;
 
-	disabledChanged.connect ([&](){ statusChanged (); });
-	sentryChanged.connect ([&](){ statusChanged (); });
-	manualFireChanged.connect ([&](){ statusChanged (); });
-	attackingChanged.connect ([&](){ statusChanged (); });
-	beeingAttackedChanged.connect ([&](){ statusChanged (); });
+	disabledChanged.connect ([&]() { statusChanged(); });
+	sentryChanged.connect ([&]() { statusChanged(); });
+	manualFireChanged.connect ([&]() { statusChanged(); });
+	attackingChanged.connect ([&]() { statusChanged(); });
+	beeingAttackedChanged.connect ([&]() { statusChanged(); });
 
-	layingMinesChanged.connect ([&](){ statusChanged (); });
-	clearingMinesChanged.connect ([&](){ statusChanged (); });
-	buildingChanged.connect ([&](){ statusChanged (); });
-	clearingChanged.connect ([&](){ statusChanged (); });
-	workingChanged.connect ([&](){ statusChanged (); });
-	movingChanged.connect ([&](){ statusChanged (); });
+	layingMinesChanged.connect ([&]() { statusChanged(); });
+	clearingMinesChanged.connect ([&]() { statusChanged(); });
+	buildingChanged.connect ([&]() { statusChanged(); });
+	clearingChanged.connect ([&]() { statusChanged(); });
+	workingChanged.connect ([&]() { statusChanged(); });
+	movingChanged.connect ([&]() { statusChanged(); });
 }
 
 //------------------------------------------------------------------------------
 cUnit::~cUnit()
 {
-	destroyed ();
+	destroyed();
 }
 
 //------------------------------------------------------------------------------
-cPlayer* cUnit::getOwner () const
+cPlayer* cUnit::getOwner() const
 {
 	return owner;
 }
@@ -84,8 +84,8 @@ cPlayer* cUnit::getOwner () const
 //------------------------------------------------------------------------------
 void cUnit::setOwner (cPlayer* owner_)
 {
-	std::swap(owner, owner_);
-	if (owner != owner_) ownerChanged ();
+	std::swap (owner, owner_);
+	if (owner != owner_) ownerChanged();
 }
 
 //------------------------------------------------------------------------------
@@ -95,42 +95,42 @@ const cPosition& cUnit::getPosition() const
 }
 
 //------------------------------------------------------------------------------
-void cUnit::setPosition(cPosition position_)
+void cUnit::setPosition (cPosition position_)
 {
-	std::swap(position, position_);
-	if(position != position_) positionChanged();
+	std::swap (position, position_);
+	if (position != position_) positionChanged();
 }
 
 //------------------------------------------------------------------------------
-std::vector<cPosition> cUnit::getAdjacentPositions () const
+std::vector<cPosition> cUnit::getAdjacentPositions() const
 {
 	std::vector<cPosition> adjacentPositions;
 
 	if (data.isBig)
 	{
 		adjacentPositions.push_back (position + cPosition (-1, -1));
-		adjacentPositions.push_back (position + cPosition ( 0, -1));
-		adjacentPositions.push_back (position + cPosition ( 1, -1));
-		adjacentPositions.push_back (position + cPosition ( 2, -1));
+		adjacentPositions.push_back (position + cPosition (0, -1));
+		adjacentPositions.push_back (position + cPosition (1, -1));
+		adjacentPositions.push_back (position + cPosition (2, -1));
 		adjacentPositions.push_back (position + cPosition (-1, 0));
-		adjacentPositions.push_back (position + cPosition ( 2, 0));
+		adjacentPositions.push_back (position + cPosition (2, 0));
 		adjacentPositions.push_back (position + cPosition (-1, 1));
-		adjacentPositions.push_back (position + cPosition ( 2, 1));
+		adjacentPositions.push_back (position + cPosition (2, 1));
 		adjacentPositions.push_back (position + cPosition (-1, 2));
-		adjacentPositions.push_back (position + cPosition ( 0, 2));
-		adjacentPositions.push_back (position + cPosition ( 1, 2));
-		adjacentPositions.push_back (position + cPosition ( 2, 2));
+		adjacentPositions.push_back (position + cPosition (0, 2));
+		adjacentPositions.push_back (position + cPosition (1, 2));
+		adjacentPositions.push_back (position + cPosition (2, 2));
 	}
 	else
 	{
 		adjacentPositions.push_back (position + cPosition (-1, -1));
-		adjacentPositions.push_back (position + cPosition ( 0, -1));
-		adjacentPositions.push_back (position + cPosition ( 1, -1));
+		adjacentPositions.push_back (position + cPosition (0, -1));
+		adjacentPositions.push_back (position + cPosition (1, -1));
 		adjacentPositions.push_back (position + cPosition (-1, 0));
-		adjacentPositions.push_back (position + cPosition ( 1, 0));
+		adjacentPositions.push_back (position + cPosition (1, 0));
 		adjacentPositions.push_back (position + cPosition (-1, 1));
-		adjacentPositions.push_back (position + cPosition ( 0, 1));
-		adjacentPositions.push_back (position + cPosition ( 1, 1));
+		adjacentPositions.push_back (position + cPosition (0, 1));
+		adjacentPositions.push_back (position + cPosition (1, 1));
 	}
 	return adjacentPositions;
 }
@@ -140,12 +140,12 @@ std::vector<cPosition> cUnit::getAdjacentPositions () const
 //------------------------------------------------------------------------------
 int cUnit::calcHealth (int damage) const
 {
-	damage -= data.getArmor ();
+	damage -= data.getArmor();
 
 	// minimum damage is 1
 	damage = std::max (1, damage);
 
-	const int hp = data.getHitpoints () - damage;
+	const int hp = data.getHitpoints() - damage;
 	return std::max (0, hp);
 }
 
@@ -156,32 +156,32 @@ bool cUnit::isInRange (const cPosition& position) const
 {
 	const auto distanceSquared = (position - this->position).l2NormSquared();
 
-	return distanceSquared <= Square (data.getRange ());
+	return distanceSquared <= Square (data.getRange());
 }
 
 //------------------------------------------------------------------------------
 bool cUnit::isNextTo (const cPosition& position) const
 {
-	if (position.x () + 1 < this->position.x () || position.y () + 1 < this->position.y ())
+	if (position.x() + 1 < this->position.x() || position.y() + 1 < this->position.y())
 		return false;
 
 	const int size = data.isBig ? 2 : 1;
 
-	if (position.x () - size > this->position.x () || position.y () - size > this->position.y ())
+	if (position.x() - size > this->position.x() || position.y() - size > this->position.y())
 		return false;
 	return true;
 }
 
 //------------------------------------------------------------------------------
-bool cUnit::isAbove(const cPosition& position) const
+bool cUnit::isAbove (const cPosition& position) const
 {
-	return getArea().withinOrTouches(position);
+	return getArea().withinOrTouches (position);
 }
 
 //------------------------------------------------------------------------------
 cBox<cPosition> cUnit::getArea() const
 {
-	return cBox<cPosition>(position, position + (data.isBig ? cPosition(1, 1) : cPosition(0, 0)));
+	return cBox<cPosition> (position, position + (data.isBig ? cPosition (1, 1) : cPosition (0, 0)));
 }
 
 // http://rosettacode.org/wiki/Roman_numerals/Encode#C.2B.2B
@@ -219,7 +219,7 @@ string cUnit::getNamePrefix() const
 {
 	string rome = "MK ";
 	// +1, because the numbers in the name start at 1, not at 0
-	unsigned int nr = data.getVersion () + 1;
+	unsigned int nr = data.getVersion() + 1;
 
 	return "MK " + to_roman (nr);
 }
@@ -239,7 +239,7 @@ void cUnit::changeName (const string& newName)
 {
 	name = newName;
 	isOriginalName = false;
-	renamed ();
+	renamed();
 }
 
 //------------------------------------------------------------------------------
@@ -286,10 +286,10 @@ void cUnit::rotateTo (int newDir)
 bool cUnit::canAttackObjectAt (const cPosition& position, const cMap& map, bool forceAttack, bool checkRange) const
 {
 	if (data.canAttack == false) return false;
-	if (data.getShots () <= 0) return false;
-	if (data.getAmmo () <= 0) return false;
+	if (data.getShots() <= 0) return false;
+	if (data.getAmmo() <= 0) return false;
 	if (attacking) return false;
-	if (isBeeingAttacked ()) return false;
+	if (isBeeingAttacked()) return false;
 	if (isAVehicle() && static_cast<const cVehicle*> (this)->isUnitLoaded()) return false;
 	if (map.isValidPosition (position) == false) return false;
 	if (checkRange && isInRange (position) == false) return false;
@@ -302,7 +302,7 @@ bool cUnit::canAttackObjectAt (const cPosition& position, const cMap& map, bool 
 	if (target && target->iID == iID)  // a unit cannot fire on itself
 		return false;
 
-	if (!owner->canSeeAt(position) && !forceAttack)
+	if (!owner->canSeeAt (position) && !forceAttack)
 		return false;
 
 	if (forceAttack)
@@ -329,24 +329,24 @@ void cUnit::upgradeToCurrentVersion()
 	const sUnitData* upgradeVersion = owner->getUnitDataCurrentVersion (data.ID);
 	if (upgradeVersion == nullptr) return;
 
-	data.setVersion(upgradeVersion->getVersion ());
+	data.setVersion (upgradeVersion->getVersion());
 
 	// TODO: check behaviour in original
-	if (data.getHitpoints () == data.getHitpointsMax())
-		data.setHitpoints (upgradeVersion->getHitpointsMax ());
-	data.setHitpointsMax(upgradeVersion->getHitpointsMax ());
+	if (data.getHitpoints() == data.getHitpointsMax())
+		data.setHitpoints (upgradeVersion->getHitpointsMax());
+	data.setHitpointsMax (upgradeVersion->getHitpointsMax());
 
 	// don't change the current ammo-amount!
-	data.setAmmoMax(upgradeVersion->getAmmoMax());
+	data.setAmmoMax (upgradeVersion->getAmmoMax());
 
-	data.setSpeedMax(upgradeVersion->getSpeedMax());
+	data.setSpeedMax (upgradeVersion->getSpeedMax());
 
-	data.setArmor (upgradeVersion->getArmor ());
-	data.setScan (upgradeVersion->getScan ());
-	data.setRange (upgradeVersion->getRange ());
+	data.setArmor (upgradeVersion->getArmor());
+	data.setScan (upgradeVersion->getScan());
+	data.setRange (upgradeVersion->getRange());
 	// TODO: check behaviour in original
-	data.setShotsMax(upgradeVersion->getShotsMax());
-	data.setDamage (upgradeVersion->getDamage ());
+	data.setShotsMax (upgradeVersion->getShotsMax());
+	data.setDamage (upgradeVersion->getDamage());
 	data.buildCosts = upgradeVersion->buildCosts;
 }
 
@@ -354,89 +354,89 @@ void cUnit::upgradeToCurrentVersion()
 void cUnit::setDisabledTurns (int turns)
 {
 	std::swap (turnsDisabled, turns);
-	if (turns != turnsDisabled) disabledChanged ();
+	if (turns != turnsDisabled) disabledChanged();
 }
 
 //------------------------------------------------------------------------------
 void cUnit::setSentryActive (bool value)
 {
 	std::swap (sentryActive, value);
-	if (value != sentryActive) sentryChanged ();
+	if (value != sentryActive) sentryChanged();
 }
 
 //------------------------------------------------------------------------------
 void cUnit::setManualFireActive (bool value)
 {
 	std::swap (manualFireActive, value);
-	if (value != manualFireActive) manualFireChanged ();
+	if (value != manualFireActive) manualFireChanged();
 }
 
 //------------------------------------------------------------------------------
 void cUnit::setAttacking (bool value)
 {
 	std::swap (attacking, value);
-	if (value != attacking) attackingChanged ();
+	if (value != attacking) attackingChanged();
 }
 
 //------------------------------------------------------------------------------
 void cUnit::setIsBeeinAttacked (bool value)
 {
 	std::swap (beeingAttacked, value);
-	if (value != beeingAttacked) beeingAttackedChanged ();
+	if (value != beeingAttacked) beeingAttackedChanged();
 }
 
 //------------------------------------------------------------------------------
 void cUnit::setMarkedAsDone (bool value)
 {
 	std::swap (markedAsDone, value);
-	if (value != markedAsDone) markedAsDoneChanged ();
+	if (value != markedAsDone) markedAsDoneChanged();
 }
 
 //------------------------------------------------------------------------------
 void cUnit::setHasBeenAttacked (bool value)
 {
 	std::swap (beenAttacked, value);
-	if (value != beenAttacked) beenAttackedChanged ();
+	if (value != beenAttacked) beenAttackedChanged();
 }
 
 //------------------------------------------------------------------------------
-int cUnit::getDisabledTurns () const
+int cUnit::getDisabledTurns() const
 {
 	return turnsDisabled;
 }
 
 //------------------------------------------------------------------------------
-bool cUnit::isSentryActive () const
+bool cUnit::isSentryActive() const
 {
 	return sentryActive;
 }
 
 //------------------------------------------------------------------------------
-bool cUnit::isManualFireActive () const
+bool cUnit::isManualFireActive() const
 {
 	return manualFireActive;
 }
 
 //------------------------------------------------------------------------------
-bool cUnit::isAttacking () const
+bool cUnit::isAttacking() const
 {
 	return attacking;
 }
 
 //------------------------------------------------------------------------------
-bool cUnit::isBeeingAttacked () const
+bool cUnit::isBeeingAttacked() const
 {
 	return beeingAttacked;
 }
 
 //------------------------------------------------------------------------------
-bool cUnit::isMarkedAsDone () const
+bool cUnit::isMarkedAsDone() const
 {
 	return markedAsDone;
 }
 
 //------------------------------------------------------------------------------
-bool cUnit::hasBeenAttacked () const
+bool cUnit::hasBeenAttacked() const
 {
 	return beenAttacked;
 }

@@ -84,18 +84,18 @@ class cPathDestHandler
 public:
 	cPathDestHandler (ePathDestinationTypes type_, const cPosition& destination, const cVehicle* srcVehicle_, const cUnit* destUnit_);
 
-	bool hasReachedDestination(const cPosition& position) const;
-	int heuristicCost(const cPosition& source) const;
+	bool hasReachedDestination (const cPosition& position) const;
+	int heuristicCost (const cPosition& source) const;
 };
 
 class cPathCalculator
 {
-	void init(const cPosition& source, const cMap& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group);
+	void init (const cPosition& source, const cMap& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group);
 
 public:
-	cPathCalculator(const cPosition& source, const cPosition& destination, const cMap& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group = nullptr);
-	cPathCalculator(const cPosition& source, const cUnit& destUnit, const cMap& Map, const cVehicle& Vehicle, bool load);
-	cPathCalculator(const cPosition& source, const cMap& Map, const cVehicle& Vehicle, const cPosition& attack);
+	cPathCalculator (const cPosition& source, const cPosition& destination, const cMap& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group = nullptr);
+	cPathCalculator (const cPosition& source, const cUnit& destUnit, const cMap& Map, const cVehicle& Vehicle, bool load);
+	cPathCalculator (const cPosition& source, const cMap& Map, const cVehicle& Vehicle, const cPosition& attack);
 	~cPathCalculator();
 
 	/**
@@ -107,7 +107,7 @@ public:
 	* calculates the costs for moving from the source- to the destinationfield
 	*@author alzi alias DoctorDeath
 	*/
-	int calcNextCost(const cPosition& source, const cPosition& destination) const;
+	int calcNextCost (const cPosition& source, const cPosition& destination) const;
 
 	/* the map on which the path will be calculated */
 	const cMap* Map;
@@ -192,7 +192,7 @@ class cServerMoveJob
 {
 	cServer* server;
 public:
-	cServerMoveJob(cServer& server, const cPosition& source, const cPosition& destination, cVehicle* Vehicle);
+	cServerMoveJob (cServer& server, const cPosition& source, const cPosition& destination, cVehicle* Vehicle);
 	~cServerMoveJob();
 
 	cMap* Map;
@@ -228,7 +228,7 @@ class cClientMoveJob
 
 	void init (const cPosition& source, cVehicle* Vehicle);
 public:
-	static sWaypoint* calcPath(const cMap& map, const cPosition& source, const cPosition& destination, const cVehicle& vehicle, const std::vector<cVehicle*>* group = nullptr);
+	static sWaypoint* calcPath (const cMap& map, const cPosition& source, const cPosition& destination, const cVehicle& vehicle, const std::vector<cVehicle*>* group = nullptr);
 
 	cClientMoveJob (cClient& client_, const cPosition& source, const cPosition& destination, cVehicle* Vehicle);
 	~cClientMoveJob();

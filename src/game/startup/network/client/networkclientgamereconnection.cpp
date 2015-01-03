@@ -26,7 +26,7 @@
 #include "game/logic/clientevents.h"
 
 //------------------------------------------------------------------------------
-cNetworkClientGameReconnection::cNetworkClientGameReconnection ()
+cNetworkClientGameReconnection::cNetworkClientGameReconnection()
 {}
 
 //------------------------------------------------------------------------------
@@ -43,14 +43,14 @@ void cNetworkClientGameReconnection::start (cApplication& application)
 
 	gameGuiController->setSingleClient (localClient);
 
-	gameGuiController->start ();
+	gameGuiController->start();
 
 	using namespace std::placeholders;
 	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cNetworkClientGameReconnection::save, this, _1, _2));
 
 	terminate = false;
 
-	application.addRunnable (shared_from_this ());
+	application.addRunnable (shared_from_this());
 
 	signalConnectionManager.connect (gameGuiController->terminated, [&]() { terminate = true; });
 }
@@ -59,9 +59,9 @@ void cNetworkClientGameReconnection::start (cApplication& application)
 void cNetworkClientGameReconnection::setPlayers (std::vector<cPlayerBasicData> players_, const cPlayerBasicData& localPlayer)
 {
 	players = players_;
-	auto localPlayerIter = std::find_if (players.begin (), players.end (), [&](const cPlayerBasicData& player){ return player.getNr () == localPlayer.getNr (); });
+	auto localPlayerIter = std::find_if (players.begin(), players.end(), [&] (const cPlayerBasicData & player) { return player.getNr() == localPlayer.getNr(); });
 	assert (localPlayerIter != players.end());
-	localPlayerIndex = localPlayerIter - players.begin ();
+	localPlayerIndex = localPlayerIter - players.begin();
 }
 
 //------------------------------------------------------------------------------
@@ -71,19 +71,19 @@ void cNetworkClientGameReconnection::setStaticMap (std::shared_ptr<cStaticMap> s
 }
 
 //------------------------------------------------------------------------------
-const std::shared_ptr<cStaticMap>& cNetworkClientGameReconnection::getStaticMap ()
+const std::shared_ptr<cStaticMap>& cNetworkClientGameReconnection::getStaticMap()
 {
 	return staticMap;
 }
 
 //------------------------------------------------------------------------------
-const std::vector<cPlayerBasicData>& cNetworkClientGameReconnection::getPlayers ()
+const std::vector<cPlayerBasicData>& cNetworkClientGameReconnection::getPlayers()
 {
 	return players;
 }
 
 //------------------------------------------------------------------------------
-const cPlayerBasicData& cNetworkClientGameReconnection::getLocalPlayer ()
+const cPlayerBasicData& cNetworkClientGameReconnection::getLocalPlayer()
 {
 	return players[localPlayerIndex];
 }

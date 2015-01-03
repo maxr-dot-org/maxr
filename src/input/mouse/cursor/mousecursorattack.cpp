@@ -27,7 +27,7 @@
 #include "utility/position.h"
 
 //------------------------------------------------------------------------------
-cMouseCursorAttack::cMouseCursorAttack () :
+cMouseCursorAttack::cMouseCursorAttack() :
 	currentHealthPercent (-1),
 	newHealthPercent (-1),
 	inRange (true)
@@ -44,8 +44,8 @@ cMouseCursorAttack::cMouseCursorAttack (const cUnit& sourceUnit, const cPosition
 
 	if (target && (target != &sourceUnit))
 	{
-		currentHealthPercent = 100 * target->data.getHitpoints () / target->data.getHitpointsMax();
-		newHealthPercent = 100 * target->calcHealth (data.getDamage ()) / target->data.getHitpointsMax();
+		currentHealthPercent = 100 * target->data.getHitpoints() / target->data.getHitpointsMax();
+		newHealthPercent = 100 * target->calcHealth (data.getDamage()) / target->data.getHitpointsMax();
 	}
 	assert (currentHealthPercent >= newHealthPercent);
 }
@@ -60,14 +60,14 @@ cMouseCursorAttack::cMouseCursorAttack (int currentHealthPercent_, int newHealth
 }
 
 //------------------------------------------------------------------------------
-SDL_Surface* cMouseCursorAttack::getSurface () const
+SDL_Surface* cMouseCursorAttack::getSurface() const
 {
-	if (surface == nullptr) generateSurface ();
-	return surface.get ();
+	if (surface == nullptr) generateSurface();
+	return surface.get();
 }
 
 //------------------------------------------------------------------------------
-cPosition cMouseCursorAttack::getHotPoint () const
+cPosition cMouseCursorAttack::getHotPoint() const
 {
 	return cPosition (19, 19);
 }
@@ -75,44 +75,44 @@ cPosition cMouseCursorAttack::getHotPoint () const
 //------------------------------------------------------------------------------
 bool cMouseCursorAttack::equal (const cMouseCursor& other) const
 {
-	auto other2 = dynamic_cast<const cMouseCursorAttack*>(&other);
+	auto other2 = dynamic_cast<const cMouseCursorAttack*> (&other);
 	return other2 && other2->currentHealthPercent == currentHealthPercent && other2->newHealthPercent == newHealthPercent && other2->inRange == inRange;
 }
 
 //------------------------------------------------------------------------------
-void cMouseCursorAttack::generateSurface () const
+void cMouseCursorAttack::generateSurface() const
 {
-	SDL_Surface* sourceSurface = inRange ? GraphicsData.gfx_Cattack.get () : GraphicsData.gfx_Cattackoor.get();
-    surface = AutoSurface (SDL_CreateRGBSurface (0, sourceSurface->w, sourceSurface->h, Video.getColDepth (), 0, 0, 0, 0));
+	SDL_Surface* sourceSurface = inRange ? GraphicsData.gfx_Cattack.get() : GraphicsData.gfx_Cattackoor.get();
+	surface = AutoSurface (SDL_CreateRGBSurface (0, sourceSurface->w, sourceSurface->h, Video.getColDepth(), 0, 0, 0, 0));
 
-	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
-	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
+	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
 
-	SDL_BlitSurface (sourceSurface, nullptr, surface.get (), nullptr);
+	SDL_BlitSurface (sourceSurface, nullptr, surface.get(), nullptr);
 
 	const int barWidth = 35;
 
 	if (currentHealthPercent < 0 || currentHealthPercent > 100 || newHealthPercent < 0 || newHealthPercent > 100)
 	{
 		SDL_Rect rect = {1, 29, barWidth, 3};
-		SDL_FillRect (surface.get (), &rect, 0);
+		SDL_FillRect (surface.get(), &rect, 0);
 	}
 	else
 	{
-		const auto currentHealthWidth = static_cast<int>(currentHealthPercent / 100. * barWidth);
-		const auto newHealthWidth = static_cast<int>(newHealthPercent / 100. * barWidth);
+		const auto currentHealthWidth = static_cast<int> (currentHealthPercent / 100. * barWidth);
+		const auto newHealthWidth = static_cast<int> (newHealthPercent / 100. * barWidth);
 
 		SDL_Rect rect = {1, 29, newHealthWidth, 3};
-		SDL_FillRect (surface.get (), &rect, 0x00FF00);
+		SDL_FillRect (surface.get(), &rect, 0x00FF00);
 
 		rect.x += rect.w;
 		rect.w = currentHealthWidth - newHealthWidth;
 
-		SDL_FillRect (surface.get (), &rect, 0xFF0000);
+		SDL_FillRect (surface.get(), &rect, 0xFF0000);
 
 		rect.x += rect.w;
 		rect.w = barWidth - currentHealthWidth;
 
-		SDL_FillRect (surface.get (), &rect, 0);
+		SDL_FillRect (surface.get(), &rect, 0);
 	}
 }

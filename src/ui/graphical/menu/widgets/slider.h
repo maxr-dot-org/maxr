@@ -47,13 +47,13 @@ public:
 
 	virtual void handleMoved (const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
 
-	int getMinValue () const;
+	int getMinValue() const;
 	void setMinValue (int minValue);
 
-	int getMaxValue () const;
+	int getMaxValue() const;
 	void setMaxValue (int maxValue);
 
-	int getValue () const;
+	int getValue() const;
 	void setValue (int value);
 
 	void increase (int offset);
@@ -84,13 +84,13 @@ private:
 	void createSurface (eSliderType sliderType);
 	void createHandle (eSliderHandleType handleType);
 
-	void setHandleMinMaxPosition ();
+	void setHandleMinMaxPosition();
 
 	void computeHandleMinMaxPosition (int& minPosition, int& maxPosition) const;
 
-	void movedHandle ();
+	void movedHandle();
 
-	int getValueFromHandlePosition () const;
+	int getValueFromHandlePosition() const;
 };
 
 #endif // ui_graphical_menu_widgets_sliderH

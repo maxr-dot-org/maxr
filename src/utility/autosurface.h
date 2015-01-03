@@ -25,11 +25,12 @@
 
 #include "maxrconfig.h"
 
-namespace detail {
+namespace detail
+{
 
 struct SdlSurfaceDeleter
 {
-	void operator()(SDL_Surface* surface)
+	void operator() (SDL_Surface* surface)
 	{
 		SDL_FreeSurface (surface);
 	}

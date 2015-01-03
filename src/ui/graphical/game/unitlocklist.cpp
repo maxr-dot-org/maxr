@@ -23,7 +23,7 @@
 #include "game/data/units/vehicle.h"
 
 //------------------------------------------------------------------------------
-cUnitLockList::cUnitLockList () :
+cUnitLockList::cUnitLockList() :
 	player (nullptr)
 {}
 
@@ -37,32 +37,32 @@ void cUnitLockList::setPlayer (const cPlayer* player_)
 void cUnitLockList::toggleLockAt (const cMapField& field)
 {
 	const cUnit* unit = nullptr;
-	if (field.getBaseBuilding () && (!player || field.getBaseBuilding ()->getOwner () != player))
+	if (field.getBaseBuilding() && (!player || field.getBaseBuilding()->getOwner() != player))
 	{
-		unit = field.getBaseBuilding ();
+		unit = field.getBaseBuilding();
 	}
-	else if (field.getTopBuilding () && (!player || field.getTopBuilding ()->getOwner () != player))
+	else if (field.getTopBuilding() && (!player || field.getTopBuilding()->getOwner() != player))
 	{
-		unit = field.getTopBuilding ();
+		unit = field.getTopBuilding();
 	}
-	if (field.getVehicle () && (!player || field.getVehicle ()->getOwner () != player))
+	if (field.getVehicle() && (!player || field.getVehicle()->getOwner() != player))
 	{
-		unit = field.getVehicle ();
+		unit = field.getVehicle();
 	}
-	if (field.getPlane () && (!player || field.getPlane ()->getOwner () != player))
+	if (field.getPlane() && (!player || field.getPlane()->getOwner() != player))
 	{
-		unit = field.getPlane ();
+		unit = field.getPlane();
 	}
 	if (unit == nullptr) return;
 
-	auto iter = std::find_if (lockedUnits.begin (), lockedUnits.end (), [unit](const std::pair<const cUnit*, cSignalConnectionManager>& entry){ return entry.first == unit; });
-	if (iter == lockedUnits.end ())
+	auto iter = std::find_if (lockedUnits.begin(), lockedUnits.end(), [unit] (const std::pair<const cUnit*, cSignalConnectionManager>& entry) { return entry.first == unit; });
+	if (iter == lockedUnits.end())
 	{
-		lockedUnits.push_back (std::make_pair(unit, cSignalConnectionManager()));
-		lockedUnits.back ().second.connect (unit->destroyed, [this,unit]()
+		lockedUnits.push_back (std::make_pair (unit, cSignalConnectionManager()));
+		lockedUnits.back().second.connect (unit->destroyed, [this, unit]()
 		{
-			auto iter = std::find_if (lockedUnits.begin (), lockedUnits.end (), [unit](const std::pair<const cUnit*, cSignalConnectionManager>& entry){ return entry.first == unit; });
-			if (iter != lockedUnits.end ())
+			auto iter = std::find_if (lockedUnits.begin(), lockedUnits.end(), [unit] (const std::pair<const cUnit*, cSignalConnectionManager>& entry) { return entry.first == unit; });
+			if (iter != lockedUnits.end())
 			{
 				lockedUnits.erase (iter);
 			}
@@ -75,9 +75,9 @@ void cUnitLockList::toggleLockAt (const cMapField& field)
 }
 
 //------------------------------------------------------------------------------
-size_t cUnitLockList::getLockedUnitsCount () const
+size_t cUnitLockList::getLockedUnitsCount() const
 {
-	return lockedUnits.size ();
+	return lockedUnits.size();
 }
 
 //------------------------------------------------------------------------------
@@ -87,22 +87,22 @@ const cUnit* cUnitLockList::getLockedUnit (size_t index) const
 }
 
 //------------------------------------------------------------------------------
-void cUnitLockList::unlockAll ()
+void cUnitLockList::unlockAll()
 {
-	lockedUnits.clear ();
+	lockedUnits.clear();
 }
 
 //------------------------------------------------------------------------------
 void cUnitLockList::lockUnit (const cUnit& unit)
 {
-	auto iter = std::find_if (lockedUnits.begin (), lockedUnits.end (), [&unit](const std::pair<const cUnit*, cSignalConnectionManager>& entry){ return entry.first == &unit; });
-	if (iter == lockedUnits.end ())
+	auto iter = std::find_if (lockedUnits.begin(), lockedUnits.end(), [&unit] (const std::pair<const cUnit*, cSignalConnectionManager>& entry) { return entry.first == &unit; });
+	if (iter == lockedUnits.end())
 	{
-		lockedUnits.push_back (std::make_pair (&unit, cSignalConnectionManager ()));
-		lockedUnits.back ().second.connect (unit.destroyed, [this, &unit]()
+		lockedUnits.push_back (std::make_pair (&unit, cSignalConnectionManager()));
+		lockedUnits.back().second.connect (unit.destroyed, [this, &unit]()
 		{
-			auto iter = std::find_if (lockedUnits.begin (), lockedUnits.end (), [&unit](const std::pair<const cUnit*, cSignalConnectionManager>& entry){ return entry.first == &unit; });
-			if (iter != lockedUnits.end ())
+			auto iter = std::find_if (lockedUnits.begin(), lockedUnits.end(), [&unit] (const std::pair<const cUnit*, cSignalConnectionManager>& entry) { return entry.first == &unit; });
+			if (iter != lockedUnits.end())
 			{
 				lockedUnits.erase (iter);
 			}

@@ -51,7 +51,7 @@ bool FileExists (const char* path)
 
 	if (file == nullptr)
 	{
-		if(Log.isInitialized())
+		if (Log.isInitialized())
 		{
 			Log.write (SDL_GetError(), cLog::eLOG_TYPE_WARNING);
 		}

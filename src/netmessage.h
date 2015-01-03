@@ -164,10 +164,10 @@ public:
 	sID popID();
 
 	void pushPosition (const cPosition& position);
-	cPosition popPosition ();
+	cPosition popPosition();
 
 	void pushColor (const cRgbColor& color);
-	cRgbColor popColor ();
+	cRgbColor popColor();
 
 	/** returns the string representation of iType
 	* this is only for better readability of the netlog

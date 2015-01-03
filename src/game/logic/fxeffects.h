@@ -44,7 +44,7 @@ public:
 
 	const bool bottom;
 
-	const cPosition& getPosition ();
+	const cPosition& getPosition();
 
 	virtual bool isFinished() const;
 	int getLength() const;
@@ -59,7 +59,7 @@ class cFxContainer
 public:
 	void push_back (std::shared_ptr<cFx> fx);
 	void push_front (std::shared_ptr<cFx> fx);
-	size_t size () const;
+	size_t size() const;
 	void run();
 private:
 	std::vector<std::shared_ptr<cFx>> fxs;
@@ -69,9 +69,9 @@ class cFxMuzzle : public cFx
 {
 
 protected:
-	cFxMuzzle(const cPosition& position, int dir_, sID id);
+	cFxMuzzle (const cPosition& position, int dir_, sID id);
 	virtual void draw (float zoom, const cPosition& destination) const MAXR_OVERRIDE_FUNCTION;
-	virtual void playSound(cSoundManager& soundManager) const;
+	virtual void playSound (cSoundManager& soundManager) const;
 
 	AutoSurface (*pImages) [2];
 	int dir;
@@ -81,25 +81,25 @@ protected:
 class cFxMuzzleBig : public cFxMuzzle
 {
 public:
-	cFxMuzzleBig(const cPosition& position, int dir, sID id);
+	cFxMuzzleBig (const cPosition& position, int dir, sID id);
 };
 
 class cFxMuzzleMed : public cFxMuzzle
 {
 public:
-	cFxMuzzleMed(const cPosition& position, int dir, sID id);
+	cFxMuzzleMed (const cPosition& position, int dir, sID id);
 };
 
 class cFxMuzzleMedLong : public cFxMuzzle
 {
 public:
-	cFxMuzzleMedLong(const cPosition& position, int dir, sID id);
+	cFxMuzzleMedLong (const cPosition& position, int dir, sID id);
 };
 
 class cFxMuzzleSmall : public cFxMuzzle
 {
 public:
-	cFxMuzzleSmall(const cPosition& position, int dir, sID id);
+	cFxMuzzleSmall (const cPosition& position, int dir, sID id);
 };
 
 class cFxExplo : public cFx
@@ -120,14 +120,14 @@ class cFxExploSmall : public cFxExplo
 {
 public:
 	cFxExploSmall (const cPosition& position); // x, y is the center of the explosion
-    virtual void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
+	virtual void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 };
 
 class cFxExploBig : public cFxExplo
 {
 public:
 	cFxExploBig (const cPosition& position, bool onWater);
-    virtual void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
+	virtual void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 
 private:
 	bool onWater;
@@ -137,14 +137,14 @@ class cFxExploAir : public cFxExplo
 {
 public:
 	cFxExploAir (const cPosition& position);
-    virtual void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
+	virtual void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 };
 
 class cFxExploWater : public cFxExplo
 {
 public:
 	cFxExploWater (const cPosition& position);
-    virtual void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
+	virtual void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 };
 
 class cFxHit : public cFxExplo
@@ -154,14 +154,14 @@ private:
 	bool big;
 public:
 	cFxHit (const cPosition& position, bool targetHit, bool big);
-    virtual void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
+	virtual void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 };
 
 class cFxAbsorb : public cFxExplo
 {
 public:
 	cFxAbsorb (const cPosition& position);
-    virtual void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
+	virtual void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 };
 
 class cFxFade : public cFx
@@ -215,12 +215,12 @@ public:
 	cFxRocket (const cPosition& startPosition, const cPosition& endPosition, int dir_, bool bottom, sID id);
 	~cFxRocket();
 	virtual void draw (float zoom, const cPosition& destination) const MAXR_OVERRIDE_FUNCTION;
-	virtual void playSound(cSoundManager& soundManager) const;
+	virtual void playSound (cSoundManager& soundManager) const;
 	void run();
 	// return true, when the last smoke effect is finished.
 	// getLength() returns only the time until
 	// the rocket has reached the destination
-	virtual bool isFinished () const MAXR_OVERRIDE_FUNCTION;
+	virtual bool isFinished() const MAXR_OVERRIDE_FUNCTION;
 };
 
 class cFxDarkSmoke : public cFx

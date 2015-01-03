@@ -34,26 +34,26 @@ template<typename FunctionType = std::function<void()>>
 class cScopedOperation
 {
 public:
-	explicit cScopedOperation(const FunctionType& function_) :
-		function(function_),
-		dismissed(false)
+	explicit cScopedOperation (const FunctionType& function_) :
+		function (function_),
+		dismissed (false)
 	{}
-	cScopedOperation(cScopedOperation<FunctionType>&& other) :
-		function(std::move(other.function)),
-		dismissed(false)
+	cScopedOperation (cScopedOperation<FunctionType>&& other) :
+		function (std::move (other.function)),
+		dismissed (false)
 	{
 		other.dismissed = true;
 	}
-	cScopedOperation<FunctionType>& operator=(cScopedOperation<FunctionType>&& other)
+	cScopedOperation<FunctionType>& operator= (cScopedOperation<FunctionType> && other)
 	{
-		function = std::move(other.function);
+		function = std::move (other.function);
 		dismissed = false;
 		other.dismissed = true;
 	}
 
 	~cScopedOperation()
 	{
-		if(!dismissed) function();
+		if (!dismissed) function();
 	}
 
 	/**
@@ -65,8 +65,8 @@ public:
 		dismissed = true;
 	}
 private:
-	cScopedOperation(const cScopedOperation<FunctionType>&) MAXR_DELETE_FUNCTION;
-	cScopedOperation& operator=(const cScopedOperation<FunctionType>&) MAXR_DELETE_FUNCTION;
+	cScopedOperation (const cScopedOperation<FunctionType>&) MAXR_DELETE_FUNCTION;
+	cScopedOperation& operator= (const cScopedOperation<FunctionType>&) MAXR_DELETE_FUNCTION;
 
 	FunctionType function;
 	bool dismissed;
@@ -80,9 +80,9 @@ private:
  * @return The scoped operation that will call the passed function object on its destruction.
  */
 template<typename FunctionType>
-cScopedOperation<FunctionType> makeScopedOperation(const FunctionType& function)
+cScopedOperation<FunctionType> makeScopedOperation (const FunctionType& function)
 {
-	return cScopedOperation<FunctionType>(function);
+	return cScopedOperation<FunctionType> (function);
 }
 
 #endif // utility_scopedoperationH

@@ -21,7 +21,7 @@
 #include "utility/comparison.h"
 
 //------------------------------------------------------------------------------
-cRgbColor::cRgbColor () :
+cRgbColor::cRgbColor() :
 	r (0),
 	g (0),
 	b (0),
@@ -37,21 +37,21 @@ cRgbColor::cRgbColor (unsigned char red_, unsigned char green_, unsigned char bl
 {}
 
 //------------------------------------------------------------------------------
-bool cRgbColor::operator==(const cRgbColor& other) const
+bool cRgbColor::operator== (const cRgbColor& other) const
 {
 	return r == other.r && g == other.g && b == other.b && a == other.a;
 }
 
 //------------------------------------------------------------------------------
-bool cRgbColor::operator!=(const cRgbColor& other) const
+bool cRgbColor::operator!= (const cRgbColor& other) const
 {
-	return !(*this == other);
+	return ! (*this == other);
 }
 
 //------------------------------------------------------------------------------
-SDL_Color cRgbColor::toSdlColor () const
+SDL_Color cRgbColor::toSdlColor() const
 {
-	return SDL_Color{r, g, b, a};
+	return SDL_Color {r, g, b, a};
 }
 
 //------------------------------------------------------------------------------
@@ -88,7 +88,7 @@ cRgbColor cRgbColor::exchangeAlpha (unsigned char alpha_) const
 }
 
 //------------------------------------------------------------------------------
-cHsvColor cRgbColor::toHsv () const
+cHsvColor cRgbColor::toHsv() const
 {
 	const auto maxValue = std::max ({r, g, b});
 	const auto minValue = std::min ({r, g, b});
@@ -97,9 +97,9 @@ cHsvColor cRgbColor::toHsv () const
 
 	short hTemp = 0;
 	if (maxValue == minValue) hTemp = 0;
-	else if (maxValue == r) hTemp = (60 * ((int)g-b) / delta);
-	else if (maxValue == g) hTemp = (120 + 60 * ((int)b-r) / delta);
-	else if (maxValue == b) hTemp = (240 + 60 * ((int)r-g) / delta);
+	else if (maxValue == r) hTemp = (60 * ((int)g - b) / delta);
+	else if (maxValue == g) hTemp = (120 + 60 * ((int)b - r) / delta);
+	else if (maxValue == b) hTemp = (240 + 60 * ((int)r - g) / delta);
 
 	if (hTemp < 0) hTemp += 360;
 
@@ -120,14 +120,14 @@ cHsvColor cRgbColor::toHsv () const
 }
 
 //------------------------------------------------------------------------------
-cLabColor cRgbColor::toLab () const
+cLabColor cRgbColor::toLab() const
 {
 	// Convert from RGB to XYZ color space
 	auto r2 = (r / 255.0);
 	auto g2 = (g / 255.0);
 	auto b2 = (b / 255.0);
 
-	if (r2 > 0.04045) r2 = std::pow(((r2 + 0.055) / 1.055), 2.4);
+	if (r2 > 0.04045) r2 = std::pow (((r2 + 0.055) / 1.055), 2.4);
 	else r2 = r2 / 12.92;
 	if (g2 > 0.04045) g2 = std::pow (((g2 + 0.055) / 1.055), 2.4);
 	else g2 = g2 / 12.92;
@@ -154,7 +154,7 @@ cLabColor cRgbColor::toLab () const
 }
 
 //------------------------------------------------------------------------------
-cHsvColor::cHsvColor () :
+cHsvColor::cHsvColor() :
 	h (0),
 	s (0),
 	v (0),
@@ -170,19 +170,19 @@ cHsvColor::cHsvColor (unsigned short hue, unsigned char saturation, unsigned cha
 {}
 
 //------------------------------------------------------------------------------
-bool cHsvColor::operator==(const cHsvColor& other) const
+bool cHsvColor::operator== (const cHsvColor& other) const
 {
 	return h == other.h && s == other.s && v == other.v && a == other.a;
 }
 
 //------------------------------------------------------------------------------
-bool cHsvColor::operator!=(const cHsvColor& other) const
+bool cHsvColor::operator!= (const cHsvColor& other) const
 {
-	return !(*this == other);
+	return ! (*this == other);
 }
 
 //------------------------------------------------------------------------------
-cRgbColor cHsvColor::toRgb () const
+cRgbColor cHsvColor::toRgb() const
 {
 	assert (h < 360);
 	assert (s <= 100);
@@ -206,44 +206,44 @@ cRgbColor cHsvColor::toRgb () const
 
 		switch (i)
 		{
-		default:
-		case 0:
-			result.r = (unsigned char)v * 255 / 100;
-			result.g = (unsigned char)t;
-			result.b = (unsigned char)p;
-			break;
-		case 1:
-			result.r = (unsigned char)q;
-			result.g = (unsigned char)v * 255 / 100;
-			result.b = (unsigned char)p;
-			break;
-		case 2:
-			result.r = (unsigned char)p;
-			result.g = (unsigned char)v * 255 / 100;
-			result.b = (unsigned char)t;
-			break;
-		case 3:
-			result.r = (unsigned char)p;
-			result.g = (unsigned char)q;
-			result.b = (unsigned char)v * 255 / 100;
-			break;
-		case 4:
-			result.r = (unsigned char)t;
-			result.g = (unsigned char)p;
-			result.b = (unsigned char)v * 255 / 100;
-			break;
-		case 5:
-			result.r = (unsigned char)v * 255 / 100;
-			result.g = (unsigned char)p;
-			result.b = (unsigned char)q;
-			break;
+			default:
+			case 0:
+				result.r = (unsigned char)v * 255 / 100;
+				result.g = (unsigned char)t;
+				result.b = (unsigned char)p;
+				break;
+			case 1:
+				result.r = (unsigned char)q;
+				result.g = (unsigned char)v * 255 / 100;
+				result.b = (unsigned char)p;
+				break;
+			case 2:
+				result.r = (unsigned char)p;
+				result.g = (unsigned char)v * 255 / 100;
+				result.b = (unsigned char)t;
+				break;
+			case 3:
+				result.r = (unsigned char)p;
+				result.g = (unsigned char)q;
+				result.b = (unsigned char)v * 255 / 100;
+				break;
+			case 4:
+				result.r = (unsigned char)t;
+				result.g = (unsigned char)p;
+				result.b = (unsigned char)v * 255 / 100;
+				break;
+			case 5:
+				result.r = (unsigned char)v * 255 / 100;
+				result.g = (unsigned char)p;
+				result.b = (unsigned char)q;
+				break;
 		}
 	}
 	return result;
 }
 
 //------------------------------------------------------------------------------
-cLabColor::cLabColor () :
+cLabColor::cLabColor() :
 	L (0),
 	a (0),
 	b (0)
@@ -257,15 +257,15 @@ cLabColor::cLabColor (double L_, double a_, double b_) :
 {}
 
 //------------------------------------------------------------------------------
-bool cLabColor::operator==(const cLabColor& other) const
+bool cLabColor::operator== (const cLabColor& other) const
 {
 	return equals (L, other.L) && equals (a, other.a) && equals (b, other.b);
 }
 
 //------------------------------------------------------------------------------
-bool cLabColor::operator!=(const cLabColor& other) const
+bool cLabColor::operator!= (const cLabColor& other) const
 {
-	return !(*this == other);
+	return ! (*this == other);
 }
 
 //------------------------------------------------------------------------------
@@ -274,5 +274,5 @@ double cLabColor::deltaE (const cLabColor& other) const
 	const auto dL = L - other.L;
 	const auto da = a - other.a;
 	const auto db = b - other.b;
-	return std::sqrt (dL*dL + da*da + db*db);
+	return std::sqrt (dL * dL + da * da + db * db);
 }

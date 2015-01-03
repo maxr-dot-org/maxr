@@ -32,9 +32,9 @@ cSavedReportResourceChanged::cSavedReportResourceChanged (int resourceType_, int
 //------------------------------------------------------------------------------
 cSavedReportResourceChanged::cSavedReportResourceChanged (cNetMessage& message)
 {
-	amount = message.popInt32 ();
-	resourceType = message.popInt32 ();
-	increase = message.popBool ();
+	amount = message.popInt32();
+	resourceType = message.popInt32();
+	increase = message.popBool();
 }
 
 //------------------------------------------------------------------------------
@@ -58,21 +58,21 @@ void cSavedReportResourceChanged::pushInto (cNetMessage& message) const
 //------------------------------------------------------------------------------
 void cSavedReportResourceChanged::pushInto (tinyxml2::XMLElement& element) const
 {
-	element.SetAttribute ("amount", iToStr (amount).c_str ());
-	element.SetAttribute ("resourceType", iToStr (resourceType).c_str ());
+	element.SetAttribute ("amount", iToStr (amount).c_str());
+	element.SetAttribute ("resourceType", iToStr (resourceType).c_str());
 	element.SetAttribute ("increase", bToStr (increase).c_str());
 
 	cSavedReport::pushInto (element);
 }
 
 //------------------------------------------------------------------------------
-eSavedReportType cSavedReportResourceChanged::getType () const
+eSavedReportType cSavedReportResourceChanged::getType() const
 {
 	return eSavedReportType::ResourceChanged;
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportResourceChanged::getMessage () const
+std::string cSavedReportResourceChanged::getMessage() const
 {
 	std::string text;
 	if (increase)
@@ -91,7 +91,7 @@ std::string cSavedReportResourceChanged::getMessage () const
 }
 
 //------------------------------------------------------------------------------
-bool cSavedReportResourceChanged::isAlert () const
+bool cSavedReportResourceChanged::isAlert() const
 {
 	return false;
 }

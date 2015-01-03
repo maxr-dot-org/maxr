@@ -36,9 +36,9 @@ class cWindowResourceDistribution : public cWindow
 public:
 	cWindowResourceDistribution (const sSubBase& subBase, std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 
-	int getMetalProduction ();
-	int getOilProduction ();
-	int getGoldProduction ();
+	int getMetalProduction();
+	int getOilProduction();
+	int getGoldProduction();
 
 	cSignal<void ()> done;
 private:
@@ -58,14 +58,14 @@ private:
 
 	std::string secondBarText (int prod, int need);
 
-	void setBarLabels ();
-	void setBarValues ();
+	void setBarLabels();
+	void setBarValues();
 
-	void handleMetalChanged ();
-	void handleOilChanged ();
-	void handleGoldChanged ();
+	void handleMetalChanged();
+	void handleOilChanged();
+	void handleGoldChanged();
 
-	void closeOnSubBaseDestruction ();
+	void closeOnSubBaseDestruction();
 };
 
 #endif // ui_graphical_menu_windows_windowresourcedistribution_windowresourcedistributionH

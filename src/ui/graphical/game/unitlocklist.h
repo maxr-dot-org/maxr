@@ -31,16 +31,16 @@ class cPlayer;
 class cUnitLockList
 {
 public:
-	cUnitLockList ();
+	cUnitLockList();
 
 	void setPlayer (const cPlayer* player);
 
 	void toggleLockAt (const cMapField& field);
 
-	size_t getLockedUnitsCount () const;
+	size_t getLockedUnitsCount() const;
 	const cUnit* getLockedUnit (size_t index) const;
 
-	void unlockAll ();
+	void unlockAll();
 
 	void lockUnit (const cUnit& unit);
 private:

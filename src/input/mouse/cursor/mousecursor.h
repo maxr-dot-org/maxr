@@ -26,12 +26,12 @@ class cPosition;
 class cMouseCursor
 {
 public:
-	virtual ~cMouseCursor () {}
+	virtual ~cMouseCursor() {}
 
-	virtual SDL_Surface* getSurface () const = 0;
-	virtual cPosition getHotPoint () const = 0;
+	virtual SDL_Surface* getSurface() const = 0;
+	virtual cPosition getHotPoint() const = 0;
 
-	bool operator==(const cMouseCursor& other) const
+	bool operator== (const cMouseCursor& other) const
 	{
 		return equal (other);
 	}

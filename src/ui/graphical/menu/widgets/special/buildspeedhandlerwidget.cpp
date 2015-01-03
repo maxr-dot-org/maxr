@@ -27,18 +27,18 @@
 cBuildSpeedHandlerWidget::cBuildSpeedHandlerWidget (const cPosition& position) :
 	cWidget (position)
 {
-	cBox<cPosition> area(position, position);
+	cBox<cPosition> area (position, position);
 	auto speedGroup = addChild (std::make_unique<cRadioGroup> ());
 	for (size_t i = 0; i < elementsCount; ++i)
 	{
 		int factor = i + 1;
 		if (i == 2) factor = 4;
-		turnLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (80, 5 + 25 * i), getPosition () + cPosition (80 + 35, 5 + 25 * i + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
-		costLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (120, 5 + 25 * i), getPosition () + cPosition (120 + 35, 5 + 25 * i + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
-		buttons[i] = speedGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (0, 25 * i), lngPack.i18n ("Text~Others~Build_7") + " x" + iToStr (factor), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
+		turnLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (80, 5 + 25 * i), getPosition() + cPosition (80 + 35, 5 + 25 * i + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+		costLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (120, 5 + 25 * i), getPosition() + cPosition (120 + 35, 5 + 25 * i + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+		buttons[i] = speedGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (0, 25 * i), lngPack.i18n ("Text~Others~Build_7") + " x" + iToStr (factor), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
 
-		area.add (turnLabels[i]->getArea ());
-		area.add (costLabels[i]->getArea ());
+		area.add (turnLabels[i]->getArea());
+		area.add (costLabels[i]->getArea());
 	}
 
 	area.add (speedGroup->getArea());
@@ -54,14 +54,14 @@ void cBuildSpeedHandlerWidget::setValues (const std::array<int, elementsCount>& 
 		{
 			turnLabels[i]->setText (iToStr (turns[i]));
 			costLabels[i]->setText (iToStr (costs[i]));
-			buttons[i]->unlock ();
+			buttons[i]->unlock();
 		}
 		else
 		{
 			turnLabels[i]->setText ("");
 			costLabels[i]->setText ("");
-			buttons[i]->lock ();
-			if (buttons[i]->isChecked () && i > 0) buttons[i-1]->setChecked (true);
+			buttons[i]->lock();
+			if (buttons[i]->isChecked() && i > 0) buttons[i - 1]->setChecked (true);
 		}
 	}
 }
@@ -73,11 +73,11 @@ void cBuildSpeedHandlerWidget::setBuildSpeedIndex (size_t speedIndex)
 }
 
 //------------------------------------------------------------------------------
-size_t cBuildSpeedHandlerWidget::getBuildSpeedIndex ()
+size_t cBuildSpeedHandlerWidget::getBuildSpeedIndex()
 {
 	for (size_t i = 0; i < elementsCount; ++i)
 	{
-		if (buttons[i]->isChecked ()) return i;
+		if (buttons[i]->isChecked()) return i;
 	}
 	assert (false);
 	return 0;

@@ -36,12 +36,12 @@ class cStaticMap;
 class cWindowMapSelection : public cWindow
 {
 public:
-	cWindowMapSelection ();
-	~cWindowMapSelection ();
+	cWindowMapSelection();
+	~cWindowMapSelection();
 
 	cSignal<void ()> done;
 
-	std::string getSelectedMapName () const;
+	std::string getSelectedMapName() const;
 
 	bool loadSelectedMap (cStaticMap& staticMap);
 private:
@@ -49,7 +49,7 @@ private:
 
 	static const size_t mapRows = 2;
 	static const size_t mapColumns = 4;
-	static const size_t mapCount = mapRows * mapColumns;
+	static const size_t mapCount = mapRows* mapColumns;
 
 	std::array<cLabel*, mapCount> mapTitles;
 	std::array<cImage*, mapCount> mapImages;
@@ -65,16 +65,16 @@ private:
 
 	void mapClicked (const cImage* mapImage);
 
-	void upClicked ();
-	void downClicked ();
+	void upClicked();
+	void downClicked();
 
-	void okClicked ();
-	void backClicked ();
+	void okClicked();
+	void backClicked();
 
-	void updateUpDownLocked ();
+	void updateUpDownLocked();
 
-	void updateMaps ();
-	void loadMaps ();
+	void updateMaps();
+	void loadMaps();
 };
 
 #endif // ui_graphical_menu_windows_windowmapselection_windowmapselectionH

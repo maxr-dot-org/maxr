@@ -40,11 +40,11 @@ const cRgbColor cPlayerColor::predefinedColors[predefinedColorsCount] =
 /*static*/ size_t cPlayerColor::findClosestPredefinedColor (const cRgbColor& color)
 {
 	size_t closestColorIndex = 0;
-	double closestColorDistance = std::numeric_limits<double>::max ();
-	const auto labColor = color.toLab ();
+	double closestColorDistance = std::numeric_limits<double>::max();
+	const auto labColor = color.toLab();
 	for (size_t i = 0; i < cPlayerColor::predefinedColorsCount; ++i)
 	{
-		const auto distance = labColor.deltaE (cPlayerColor::predefinedColors[i].toLab ());
+		const auto distance = labColor.deltaE (cPlayerColor::predefinedColors[i].toLab());
 		if (less_than (distance, closestColorDistance))
 		{
 			closestColorIndex = i;
@@ -55,23 +55,23 @@ const cRgbColor cPlayerColor::predefinedColors[predefinedColorsCount] =
 }
 
 //------------------------------------------------------------------------------
-cPlayerColor::cPlayerColor ()
+cPlayerColor::cPlayerColor()
 {
-	color = cRgbColor::red ();
-	createTexture ();
+	color = cRgbColor::red();
+	createTexture();
 }
 
 //------------------------------------------------------------------------------
 cPlayerColor::cPlayerColor (const cRgbColor& color_) :
 	color (color_)
 {
-	createTexture ();
+	createTexture();
 }
 
 //------------------------------------------------------------------------------
 cPlayerColor::cPlayerColor (const cPlayerColor& other) :
 	color (other.color),
-	texture (AutoSurface (other.texture.get ()))
+	texture (AutoSurface (other.texture.get()))
 {
 	++texture->refcount;
 }
@@ -83,18 +83,18 @@ cPlayerColor::cPlayerColor (cPlayerColor&& other) :
 {}
 
 //------------------------------------------------------------------------------
-cPlayerColor& cPlayerColor::operator=(const cPlayerColor& other)
+cPlayerColor& cPlayerColor::operator= (const cPlayerColor& other)
 {
 	color = other.color;
 
-	texture = AutoSurface (other.texture.get ());
+	texture = AutoSurface (other.texture.get());
 	++texture->refcount;
 
 	return *this;
 }
 
 //------------------------------------------------------------------------------
-cPlayerColor& cPlayerColor::operator=(cPlayerColor&& other)
+cPlayerColor& cPlayerColor::operator= (cPlayerColor && other)
 {
 	color = std::move (other.color);
 	texture = std::move (other.texture);
@@ -103,25 +103,25 @@ cPlayerColor& cPlayerColor::operator=(cPlayerColor&& other)
 }
 
 //------------------------------------------------------------------------------
-const cRgbColor& cPlayerColor::getColor () const
+const cRgbColor& cPlayerColor::getColor() const
 {
 	return color;
 }
 
 //------------------------------------------------------------------------------
-SDL_Surface* cPlayerColor::getTexture () const
+SDL_Surface* cPlayerColor::getTexture() const
 {
 	return texture.get();
 }
 
 //------------------------------------------------------------------------------
-void cPlayerColor::createTexture ()
+void cPlayerColor::createTexture()
 {
-	texture = AutoSurface(SDL_CreateRGBSurface (0, 128, 128, 32, 0, 0, 0, 0));
+	texture = AutoSurface (SDL_CreateRGBSurface (0, 128, 128, 32, 0, 0, 0, 0));
 
-	SDL_FillRect (texture.get (), nullptr, color.toMappedSdlRGBAColor (texture->format));
+	SDL_FillRect (texture.get(), nullptr, color.toMappedSdlRGBAColor (texture->format));
 
-	auto hsvColor = color.toHsv ();
+	auto hsvColor = color.toHsv();
 
 	const size_t boxes = 400;
 
@@ -129,7 +129,7 @@ void cPlayerColor::createTexture ()
 
 	randomColors[0] = color;
 
-	for (size_t i = 1; i < randomColors.size (); ++i)
+	for (size_t i = 1; i < randomColors.size(); ++i)
 	{
 		do
 		{
@@ -140,13 +140,13 @@ void cPlayerColor::createTexture ()
 			unsigned short changedH;
 			unsigned char changedS, changedV;
 
-			if ((int)(hsvColor.h)+hChange >= 360 || ((int)(hsvColor.h)-hChange >= 0 && randomBernoulli ())) changedH = hsvColor.h - (unsigned short)hChange;
+			if ((int) (hsvColor.h) + hChange >= 360 || ((int) (hsvColor.h) - hChange >= 0 && randomBernoulli())) changedH = hsvColor.h - (unsigned short)hChange;
 			else changedH = hsvColor.h + (unsigned short)hChange;
 
-			if ((int)(hsvColor.s)+sChange > 100 || ((int)(hsvColor.s)-sChange >= 0 && randomBernoulli ())) changedS = hsvColor.s - (unsigned char)sChange;
+			if ((int) (hsvColor.s) + sChange > 100 || ((int) (hsvColor.s) - sChange >= 0 && randomBernoulli())) changedS = hsvColor.s - (unsigned char)sChange;
 			else changedS = hsvColor.s + (unsigned char)sChange;
 
-			if ((int)(hsvColor.v)+vChange > 100 || ((int)(hsvColor.v)-vChange >= 0 && randomBernoulli ())) changedV = hsvColor.v - (unsigned char)vChange;
+			if ((int) (hsvColor.v) + vChange > 100 || ((int) (hsvColor.v) - vChange >= 0 && randomBernoulli())) changedV = hsvColor.v - (unsigned char)vChange;
 			else changedV = hsvColor.v + (unsigned char)vChange;
 
 			randomColors[i] = cHsvColor (changedH, changedS, changedV).toRgb();
@@ -173,18 +173,18 @@ void cPlayerColor::createTexture ()
 		}
 		SDL_Rect dest = {xPos, yPos, width, height};
 
-		SDL_FillRect (texture.get (), &dest, getRandom(randomColors).toMappedSdlRGBAColor (texture->format));
+		SDL_FillRect (texture.get(), &dest, getRandom (randomColors).toMappedSdlRGBAColor (texture->format));
 	}
 }
 
 //------------------------------------------------------------------------------
-bool cPlayerColor::operator==(const cPlayerColor& other) const
+bool cPlayerColor::operator== (const cPlayerColor& other) const
 {
 	return color == other.color;
 }
 
 //------------------------------------------------------------------------------
-bool cPlayerColor::operator!=(const cPlayerColor& other) const
+bool cPlayerColor::operator!= (const cPlayerColor& other) const
 {
-	return !(*this == other);
+	return ! (*this == other);
 }

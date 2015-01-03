@@ -45,21 +45,21 @@ class cWindowLandingPositionSelection : public cWindow
 {
 public:
 	cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> staticMap, bool withChatBox);
-	~cWindowLandingPositionSelection ();
+	~cWindowLandingPositionSelection();
 
-	const cPosition& getSelectedPosition () const;
+	const cPosition& getSelectedPosition() const;
 
 	void applyReselectionState (eLandingPositionState state);
 
 	void setInfoMessage (const std::string& message);
 
-	cChatBox<cLobbyChatBoxListViewItem, cChatBoxLandingPlayerListViewItem>* getChatBox ();
+	cChatBox<cLobbyChatBoxListViewItem, cChatBoxLandingPlayerListViewItem>* getChatBox();
 
-	void allowSelection ();
-	void disallowSelection ();
+	void allowSelection();
+	void disallowSelection();
 
-	void lockBack ();
-	void unlockBack ();
+	void lockBack();
+	void unlockBack();
 
 	cSignal<void (const cPosition&)> selectedPosition;
 	cSignal<void ()> canceled;
@@ -94,9 +94,9 @@ private:
 
 	cPosition lastSelectedPosition;
 
-	AutoSurface createHudSurface ();
+	AutoSurface createHudSurface();
 
-	void backClicked ();
+	void backClicked();
 	void mapClicked (const cPosition& tilePosition);
 	void updateLandingPositionCircles (const cPosition& tilePosition, float radiusFactor);
 

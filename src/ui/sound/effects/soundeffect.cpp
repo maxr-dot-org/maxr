@@ -29,9 +29,9 @@ cSoundEffect::cSoundEffect (eSoundEffectType type_, const cSoundChunk& sound_) :
 {}
 
 //--------------------------------------------------------------------------
-cSoundEffect::~cSoundEffect ()
+cSoundEffect::~cSoundEffect()
 {
-	signalConnectionManager.disconnectAll ();
+	signalConnectionManager.disconnectAll();
 
 	// do not let an exception escape the destructor
 	try
@@ -39,7 +39,7 @@ cSoundEffect::~cSoundEffect ()
 		cLockGuard<cRecursiveMutex> lock (channelMutex);
 		if (channel)
 		{
-			channel->stop ();
+			channel->stop();
 		}
 	}
 	catch (...)
@@ -47,11 +47,11 @@ cSoundEffect::~cSoundEffect ()
 		// How should we recover here?
 		// If the mutex could not be locked we simple do not stop
 		// the channel seams to be the best option here.
-	} 
+	}
 }
 
 //--------------------------------------------------------------------------
-eSoundChannelType cSoundEffect::getChannelType () const
+eSoundChannelType cSoundEffect::getChannelType() const
 {
 	return eSoundChannelType::General;
 }
@@ -59,7 +59,7 @@ eSoundChannelType cSoundEffect::getChannelType () const
 //--------------------------------------------------------------------------
 void cSoundEffect::play (cSoundChannel& channel_, bool loop)
 {
-	stop ();
+	stop();
 
 	{
 		cLockGuard<cRecursiveMutex> lock (channelMutex);
@@ -75,61 +75,61 @@ void cSoundEffect::play (cSoundChannel& channel_, bool loop)
 				cLockGuard<cRecursiveMutex> lock (channelMutex);
 				if (channel)
 				{
-					signalConnectionManager.disconnectAll ();
+					signalConnectionManager.disconnectAll();
 					channel = nullptr;
 				}
 			}
-			if (hadChannel) stopped ();
+			if (hadChannel) stopped();
 		});
-		signalConnectionManager.connect (channel->paused, [this](){ paused (); });
-		signalConnectionManager.connect (channel->resumed, [this](){ resumed (); });
+		signalConnectionManager.connect (channel->paused, [this]() { paused(); });
+		signalConnectionManager.connect (channel->resumed, [this]() { resumed(); });
 	}
 
-	started ();
+	started();
 }
 
 //--------------------------------------------------------------------------
-void cSoundEffect::stop ()
+void cSoundEffect::stop()
 {
 	bool hadChannel = false;
 	{
 		cLockGuard<cRecursiveMutex> lock (channelMutex);
 		if (channel)
 		{
-			signalConnectionManager.disconnectAll ();
+			signalConnectionManager.disconnectAll();
 
-			channel->stop ();
+			channel->stop();
 			channel = nullptr;
 
 			hadChannel = true;
 		}
 	}
 
-	if (hadChannel) stopped ();
+	if (hadChannel) stopped();
 }
 
 //--------------------------------------------------------------------------
-void cSoundEffect::pause ()
+void cSoundEffect::pause()
 {
 	cLockGuard<cRecursiveMutex> lock (channelMutex);
 	if (channel)
 	{
-		channel->pause ();
+		channel->pause();
 	}
 }
 
 //--------------------------------------------------------------------------
-void cSoundEffect::resume ()
+void cSoundEffect::resume()
 {
 	cLockGuard<cRecursiveMutex> lock (channelMutex);
 	if (channel)
 	{
-		channel->resume ();
+		channel->resume();
 	}
 }
 
 //--------------------------------------------------------------------------
-cSoundChannel* cSoundEffect::getChannel () const
+cSoundChannel* cSoundEffect::getChannel() const
 {
 	cLockGuard<cRecursiveMutex> lock (channelMutex);
 	return channel;
@@ -142,94 +142,94 @@ bool cSoundEffect::isInConflict (const cSoundEffect& other) const
 }
 
 //--------------------------------------------------------------------------
-bool  cSoundEffect::hasConflictAtSameGameTimeOnly ()
+bool  cSoundEffect::hasConflictAtSameGameTimeOnly()
 {
 	switch (type)
 	{
-	default:
-		return true;
-	case eSoundEffectType::EffectUnitSound:
-	case eSoundEffectType::VoiceUnitStatus:
-		return false;
+		default:
+			return true;
+		case eSoundEffectType::EffectUnitSound:
+		case eSoundEffectType::VoiceUnitStatus:
+			return false;
 	}
 }
 
 //--------------------------------------------------------------------------
-unsigned int cSoundEffect::getMaxConcurrentConflictedCount () const
+unsigned int cSoundEffect::getMaxConcurrentConflictedCount() const
 {
 	switch (type)
 	{
-	default:
-	case eSoundEffectType::EffectReload:
-	case eSoundEffectType::EffectRepair:
-	case eSoundEffectType::EffectPlaceMine:
-	case eSoundEffectType::EffectClearMine:
-	case eSoundEffectType::EffectStartWork:
-	case eSoundEffectType::EffectStopWork:
-	case eSoundEffectType::EffectLoad:
-	case eSoundEffectType::EffectActivate:
-	case eSoundEffectType::EffectStartMove:
-	case eSoundEffectType::EffectStopMove:
-	case eSoundEffectType::EffectAlert:
-	case eSoundEffectType::EffectUnitSound:
-	case eSoundEffectType::VoiceNoPath:
-	case eSoundEffectType::VoiceCommandoAction:
-	case eSoundEffectType::VoiceReload:
-	case eSoundEffectType::VoiceRepair:
-	case eSoundEffectType::VoiceDisabled:
-	case eSoundEffectType::VoiceStolenByEnemy:
-	case eSoundEffectType::VoiceDetected:
-		return 0;
-	case eSoundEffectType::VoiceUnitStatus:
-		return 1;
-	case eSoundEffectType::EffectExplosion:
-	case eSoundEffectType::EffectAbsorb:
-		return std::numeric_limits<unsigned int>::max();
+		default:
+		case eSoundEffectType::EffectReload:
+		case eSoundEffectType::EffectRepair:
+		case eSoundEffectType::EffectPlaceMine:
+		case eSoundEffectType::EffectClearMine:
+		case eSoundEffectType::EffectStartWork:
+		case eSoundEffectType::EffectStopWork:
+		case eSoundEffectType::EffectLoad:
+		case eSoundEffectType::EffectActivate:
+		case eSoundEffectType::EffectStartMove:
+		case eSoundEffectType::EffectStopMove:
+		case eSoundEffectType::EffectAlert:
+		case eSoundEffectType::EffectUnitSound:
+		case eSoundEffectType::VoiceNoPath:
+		case eSoundEffectType::VoiceCommandoAction:
+		case eSoundEffectType::VoiceReload:
+		case eSoundEffectType::VoiceRepair:
+		case eSoundEffectType::VoiceDisabled:
+		case eSoundEffectType::VoiceStolenByEnemy:
+		case eSoundEffectType::VoiceDetected:
+			return 0;
+		case eSoundEffectType::VoiceUnitStatus:
+			return 1;
+		case eSoundEffectType::EffectExplosion:
+		case eSoundEffectType::EffectAbsorb:
+			return std::numeric_limits<unsigned int>::max();
 	}
 }
 
 //--------------------------------------------------------------------------
-eSoundConflictHandlingType cSoundEffect::getSoundConflictHandlingType () const
+eSoundConflictHandlingType cSoundEffect::getSoundConflictHandlingType() const
 {
 	switch (type)
 	{
-	default:
-	case eSoundEffectType::EffectReload:
-	case eSoundEffectType::EffectRepair:
-	case eSoundEffectType::EffectPlaceMine:
-	case eSoundEffectType::EffectClearMine:
-	case eSoundEffectType::EffectStartWork:
-	case eSoundEffectType::EffectStopWork:
-	case eSoundEffectType::EffectLoad:
-	case eSoundEffectType::EffectActivate:
-	case eSoundEffectType::EffectStartMove:
-	case eSoundEffectType::EffectStopMove:
-	case eSoundEffectType::EffectAlert:
-	case eSoundEffectType::VoiceNoPath:
-	case eSoundEffectType::VoiceCommandoAction:
-	case eSoundEffectType::VoiceReload:
-	case eSoundEffectType::VoiceRepair:
-	case eSoundEffectType::VoiceDisabled:
-	case eSoundEffectType::VoiceStolenByEnemy:
-	case eSoundEffectType::VoiceDetected:
-		return eSoundConflictHandlingType::DiscardNew;
-	case eSoundEffectType::VoiceUnitStatus:
-	case eSoundEffectType::EffectUnitSound:
-		return eSoundConflictHandlingType::StopOld;
-	case eSoundEffectType::EffectExplosion:
-	case eSoundEffectType::EffectAbsorb:
-		return eSoundConflictHandlingType::PlayAnyway;
+		default:
+		case eSoundEffectType::EffectReload:
+		case eSoundEffectType::EffectRepair:
+		case eSoundEffectType::EffectPlaceMine:
+		case eSoundEffectType::EffectClearMine:
+		case eSoundEffectType::EffectStartWork:
+		case eSoundEffectType::EffectStopWork:
+		case eSoundEffectType::EffectLoad:
+		case eSoundEffectType::EffectActivate:
+		case eSoundEffectType::EffectStartMove:
+		case eSoundEffectType::EffectStopMove:
+		case eSoundEffectType::EffectAlert:
+		case eSoundEffectType::VoiceNoPath:
+		case eSoundEffectType::VoiceCommandoAction:
+		case eSoundEffectType::VoiceReload:
+		case eSoundEffectType::VoiceRepair:
+		case eSoundEffectType::VoiceDisabled:
+		case eSoundEffectType::VoiceStolenByEnemy:
+		case eSoundEffectType::VoiceDetected:
+			return eSoundConflictHandlingType::DiscardNew;
+		case eSoundEffectType::VoiceUnitStatus:
+		case eSoundEffectType::EffectUnitSound:
+			return eSoundConflictHandlingType::StopOld;
+		case eSoundEffectType::EffectExplosion:
+		case eSoundEffectType::EffectAbsorb:
+			return eSoundConflictHandlingType::PlayAnyway;
 	}
 }
 
 //--------------------------------------------------------------------------
-bool cSoundEffect::hasPosition () const
+bool cSoundEffect::hasPosition() const
 {
 	return false;
 }
 
 //--------------------------------------------------------------------------
-const cPosition& cSoundEffect::getPosition () const
+const cPosition& cSoundEffect::getPosition() const
 {
 	static cPosition dummyPosition (0, 0);
 	return dummyPosition;

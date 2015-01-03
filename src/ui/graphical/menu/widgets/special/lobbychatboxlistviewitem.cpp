@@ -26,11 +26,11 @@ cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& text) :
 {
 	playerNameLabel = nullptr;
 
-	messageLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition (), getPosition () + cPosition (getSize ().x ()-1, 0)), text));
+	messageLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition(), getPosition() + cPosition (getSize().x() - 1, 0)), text));
 	messageLabel->setWordWrap (true);
-	messageLabel->resizeToTextHeight ();
+	messageLabel->resizeToTextHeight();
 
-	fitToChildren ();
+	fitToChildren();
 }
 
 //------------------------------------------------------------------------------
@@ -38,11 +38,11 @@ cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& playerN
 	cAbstractListViewItem (cPosition (50, 0))
 {
 	int playerNameTextWidth;
-	if (!playerName.empty ())
+	if (!playerName.empty())
 	{
 		const auto playerNameText = playerName + ": ";
 		playerNameTextWidth = font->getTextWide (playerNameText);
-		playerNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition (), getPosition () + cPosition (playerNameTextWidth, 10)), playerNameText));
+		playerNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition(), getPosition() + cPosition (playerNameTextWidth, 10)), playerNameText));
 	}
 	else
 	{
@@ -50,14 +50,14 @@ cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& playerN
 		playerNameLabel = nullptr;
 	}
 
-	const cPosition messageLabelBeginPos = getPosition () + cPosition (playerNameTextWidth, 0);
-	const cPosition messageLabelEndPos (std::max (getPosition ().x () + getSize ().x ()-1, messageLabelBeginPos.x()+1), getPosition ().y () + 5);
+	const cPosition messageLabelBeginPos = getPosition() + cPosition (playerNameTextWidth, 0);
+	const cPosition messageLabelEndPos (std::max (getPosition().x() + getSize().x() - 1, messageLabelBeginPos.x() + 1), getPosition().y() + 5);
 
 	messageLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (messageLabelBeginPos, messageLabelEndPos), text));
 	messageLabel->setWordWrap (true);
-	messageLabel->resizeToTextHeight ();
+	messageLabel->resizeToTextHeight();
 
-	fitToChildren ();
+	fitToChildren();
 }
 
 //------------------------------------------------------------------------------
@@ -65,11 +65,11 @@ void cLobbyChatBoxListViewItem::handleResized (const cPosition& oldSize)
 {
 	cAbstractListViewItem::handleResized (oldSize);
 
-	if (oldSize.x () == getSize ().x ()) return;
+	if (oldSize.x() == getSize().x()) return;
 
-	auto playerNameTextWidth = playerNameLabel ? playerNameLabel->getSize ().x ()-1 : 0;
-	messageLabel->resize (cPosition (getSize ().x () - playerNameTextWidth, messageLabel->getSize ().y ()));
-	messageLabel->resizeToTextHeight ();
+	auto playerNameTextWidth = playerNameLabel ? playerNameLabel->getSize().x() - 1 : 0;
+	messageLabel->resize (cPosition (getSize().x() - playerNameTextWidth, messageLabel->getSize().y()));
+	messageLabel->resizeToTextHeight();
 
-	fitToChildren ();
+	fitToChildren();
 }

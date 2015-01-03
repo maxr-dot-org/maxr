@@ -31,11 +31,11 @@ cMouseModeActivateLoaded::cMouseModeActivateLoaded (const cMap* map_, const cUni
 	cMouseMode (map_, unitSelection_, player_),
 	vehicleToActivateIndex (vehicleToActivateIndex_)
 {
-	establishUnitSelectionConnections ();
+	establishUnitSelectionConnections();
 }
 
 //------------------------------------------------------------------------------
-eMouseModeType cMouseModeActivateLoaded::getType () const
+eMouseModeType cMouseModeActivateLoaded::getType() const
 {
 	return eMouseModeType::Activate;
 }
@@ -68,33 +68,33 @@ bool cMouseModeActivateLoaded::canExecuteAction (const cPosition& mapPosition) c
 {
 	if (!map) return false;
 
-	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
-	const auto selectedBuilding = unitSelection.getSelectedBuilding ();
+	const auto selectedVehicle = unitSelection.getSelectedVehicle();
+	const auto selectedBuilding = unitSelection.getSelectedBuilding();
 
-	return (selectedVehicle && !selectedVehicle->isDisabled () && selectedVehicle->canExitTo (mapPosition, *map, selectedVehicle->storedUnits[vehicleToActivateIndex]->data)) ||
-		(selectedBuilding && !selectedBuilding->isDisabled () && selectedBuilding->canExitTo (mapPosition, *map, selectedBuilding->storedUnits[vehicleToActivateIndex]->data));
+	return (selectedVehicle && !selectedVehicle->isDisabled() && selectedVehicle->canExitTo (mapPosition, *map, selectedVehicle->storedUnits[vehicleToActivateIndex]->data)) ||
+		   (selectedBuilding && !selectedBuilding->isDisabled() && selectedBuilding->canExitTo (mapPosition, *map, selectedBuilding->storedUnits[vehicleToActivateIndex]->data));
 }
 
 //------------------------------------------------------------------------------
-size_t cMouseModeActivateLoaded::getVehicleToActivateIndex () const
+size_t cMouseModeActivateLoaded::getVehicleToActivateIndex() const
 {
 	return vehicleToActivateIndex;
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeActivateLoaded::establishUnitSelectionConnections ()
+void cMouseModeActivateLoaded::establishUnitSelectionConnections()
 {
-	const auto selectedUnit = unitSelection.getSelectedUnit ();
+	const auto selectedUnit = unitSelection.getSelectedUnit();
 
 	if (selectedUnit)
 	{
-		selectedUnitSignalConnectionManager.connect (selectedUnit->disabledChanged, [this](){ needRefresh (); });
-		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, [this](){ needRefresh (); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->disabledChanged, [this]() { needRefresh(); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, [this]() { needRefresh(); });
 	}
 }
 
 //------------------------------------------------------------------------------
 void cMouseModeActivateLoaded::establishMapFieldConnections (const cMapField& field)
 {
-	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this](){ needRefresh (); });
+	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this]() { needRefresh(); });
 }

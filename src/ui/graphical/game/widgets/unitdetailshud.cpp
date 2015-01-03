@@ -34,19 +34,19 @@ cUnitDetailsHud::cUnitDetailsHud (const cBox<cPosition>& area, bool drawLines_) 
 	drawLines (drawLines_),
 	unit (nullptr)
 {
-	const auto size = getSize ();
-	if (std::size_t(size.y ()) < maxRows*rowHeight) resize (cPosition (getSize ().x (), maxRows*rowHeight));
+	const auto size = getSize();
+	if (std::size_t (size.y()) < maxRows * rowHeight) resize (cPosition (getSize().x(), maxRows * rowHeight));
 
 	for (size_t i = 0; i < maxRows; ++i)
 	{
-		amountLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (3, 2 + rowHeight * i), getPosition () + cPosition (3 + 35, 2 + rowHeight * i + rowHeight)), "", FONT_LATIN_SMALL_WHITE, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Bottom));
-		nameLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (40, 2 + rowHeight * i), getPosition () + cPosition (40 + 40, 2 + rowHeight * i + rowHeight)), "", FONT_LATIN_SMALL_WHITE, toEnumFlag (eAlignmentType::Left) | eAlignmentType::Bottom));
+		amountLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (3, 2 + rowHeight * i), getPosition() + cPosition (3 + 35, 2 + rowHeight * i + rowHeight)), "", FONT_LATIN_SMALL_WHITE, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Bottom));
+		nameLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 2 + rowHeight * i), getPosition() + cPosition (40 + 40, 2 + rowHeight * i + rowHeight)), "", FONT_LATIN_SMALL_WHITE, toEnumFlag (eAlignmentType::Left) | eAlignmentType::Bottom));
 	}
 
-    surface = AutoSurface (SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0));
+	surface = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
 
-	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
-	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
+	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
 }
 
 //------------------------------------------------------------------------------
@@ -72,86 +72,86 @@ void cUnitDetailsHud::draw (SDL_Surface& destination, const cBox<cPosition>& cli
 {
 	if (surface != nullptr)
 	{
-		reset ();
+		reset();
 
-		blitClipped (*surface, getArea (), destination, clipRect);
+		blitClipped (*surface, getArea(), destination, clipRect);
 	}
 
 	cWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------
-void cUnitDetailsHud::reset ()
+void cUnitDetailsHud::reset()
 {
-	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
-	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
+	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
 
 	for (std::size_t i = 0; i < maxRows; ++i)
 	{
 		if (drawLines)
 		{
-			SDL_Rect lineRect = {2, int(14 + 12*i), getSize ().x (), 1};
-			SDL_FillRect (surface.get (), &lineRect, 0xFF743904);
+			SDL_Rect lineRect = {2, int (14 + 12 * i), getSize().x(), 1};
+			SDL_FillRect (surface.get(), &lineRect, 0xFF743904);
 		}
 
-		amountLabels[i]->hide ();
-		nameLabels[i]->hide ();
+		amountLabels[i]->hide();
+		nameLabels[i]->hide();
 	}
 
 	if (unit == nullptr) return;
 
 	const auto& data = unit->data;
 
-	drawRow (0, eUnitDataSymbolType::Hits, data.getHitpoints (), data.getHitpointsMax(), lngPack.i18n ("Text~Others~Hitpoints_7"));
+	drawRow (0, eUnitDataSymbolType::Hits, data.getHitpoints(), data.getHitpointsMax(), lngPack.i18n ("Text~Others~Hitpoints_7"));
 
 	if (data.getSpeedMax() > 0) drawRow (2, eUnitDataSymbolType::Speed, data.getSpeed() / 4, data.getSpeedMax() / 4, lngPack.i18n ("Text~Others~Speed_7"));
 
 	if (data.canScore)
 	{
-		assert (unit->data.ID.isABuilding ()); // currently only buildings can score
-		const auto unitScore = static_cast<const cBuilding*>(unit)->points;
-		const auto totalScore = unit->getOwner ()->getScore ();
-		const auto goalScore = (gameSettings && gameSettings->getVictoryCondition () == eGameSettingsVictoryCondition::Points) ? gameSettings->getVictoryPoints () : totalScore;
+		assert (unit->data.ID.isABuilding());  // currently only buildings can score
+		const auto unitScore = static_cast<const cBuilding*> (unit)->points;
+		const auto totalScore = unit->getOwner()->getScore();
+		const auto goalScore = (gameSettings && gameSettings->getVictoryCondition() == eGameSettingsVictoryCondition::Points) ? gameSettings->getVictoryPoints() : totalScore;
 
 		drawRow (1, eUnitDataSymbolType::Human, unitScore, unitScore, lngPack.i18n ("Text~Others~Score"));
 		drawRow (2, eUnitDataSymbolType::Human, totalScore, goalScore, lngPack.i18n ("Text~Others~Total"));
 	}
-	else if ((data.storeResType != sUnitData::STORE_RES_NONE || data.storageUnitsMax > 0) && unit->getOwner () == player)
+	else if ((data.storeResType != sUnitData::STORE_RES_NONE || data.storageUnitsMax > 0) && unit->getOwner() == player)
 	{
 		if (data.storeResType > 0)
 		{
 			eUnitDataSymbolType symbolType;
 			switch (data.storeResType)
 			{
-			case sUnitData::STORE_RES_METAL:
-				symbolType = eUnitDataSymbolType::Metal;
-				break;
-			case sUnitData::STORE_RES_OIL:
-				symbolType = eUnitDataSymbolType::Oil;
-				break;
-			case sUnitData::STORE_RES_GOLD:
-				symbolType = eUnitDataSymbolType::Gold;
-				break;
-			case sUnitData::STORE_RES_NONE: break;
-			}
-
-			drawRow (1, symbolType, data.getStoredResources (), data.storageResMax, lngPack.i18n ("Text~Others~Cargo_7"));
-
-			if (unit->data.ID.isABuilding ())
-			{
-				const auto& building = static_cast<const cBuilding&>(*unit);
-				switch (data.storeResType)
-				{
 				case sUnitData::STORE_RES_METAL:
-					drawRow (2, symbolType, building.SubBase->getMetal (), building.SubBase->MaxMetal, lngPack.i18n ("Text~Others~Total"));
+					symbolType = eUnitDataSymbolType::Metal;
 					break;
 				case sUnitData::STORE_RES_OIL:
-					drawRow (2, symbolType, building.SubBase->getOil (), building.SubBase->MaxOil, lngPack.i18n ("Text~Others~Total"));
+					symbolType = eUnitDataSymbolType::Oil;
 					break;
 				case sUnitData::STORE_RES_GOLD:
-					drawRow (2, symbolType, building.SubBase->getGold (), building.SubBase->MaxGold, lngPack.i18n ("Text~Others~Total"));
+					symbolType = eUnitDataSymbolType::Gold;
 					break;
 				case sUnitData::STORE_RES_NONE: break;
+			}
+
+			drawRow (1, symbolType, data.getStoredResources(), data.storageResMax, lngPack.i18n ("Text~Others~Cargo_7"));
+
+			if (unit->data.ID.isABuilding())
+			{
+				const auto& building = static_cast<const cBuilding&> (*unit);
+				switch (data.storeResType)
+				{
+					case sUnitData::STORE_RES_METAL:
+						drawRow (2, symbolType, building.SubBase->getMetal(), building.SubBase->MaxMetal, lngPack.i18n ("Text~Others~Total"));
+						break;
+					case sUnitData::STORE_RES_OIL:
+						drawRow (2, symbolType, building.SubBase->getOil(), building.SubBase->MaxOil, lngPack.i18n ("Text~Others~Total"));
+						break;
+					case sUnitData::STORE_RES_GOLD:
+						drawRow (2, symbolType, building.SubBase->getGold(), building.SubBase->MaxGold, lngPack.i18n ("Text~Others~Total"));
+						break;
+					case sUnitData::STORE_RES_NONE: break;
 				}
 			}
 		}
@@ -160,57 +160,57 @@ void cUnitDetailsHud::reset ()
 			eUnitDataSymbolType symbolType;
 			switch (data.storeUnitsImageType)
 			{
-			case sUnitData::STORE_UNIT_IMG_TANK:
-			case sUnitData::STORE_UNIT_IMG_SHIP:
-				symbolType = eUnitDataSymbolType::TransportTank;
-				break;
-			case sUnitData::STORE_UNIT_IMG_PLANE:
-				symbolType = eUnitDataSymbolType::TransportAir;
-				break;
-			case sUnitData::STORE_UNIT_IMG_HUMAN:
-				symbolType = eUnitDataSymbolType::Human;
-				break;
-			case sUnitData::STORE_UNIT_IMG_NONE: break;
+				case sUnitData::STORE_UNIT_IMG_TANK:
+				case sUnitData::STORE_UNIT_IMG_SHIP:
+					symbolType = eUnitDataSymbolType::TransportTank;
+					break;
+				case sUnitData::STORE_UNIT_IMG_PLANE:
+					symbolType = eUnitDataSymbolType::TransportAir;
+					break;
+				case sUnitData::STORE_UNIT_IMG_HUMAN:
+					symbolType = eUnitDataSymbolType::Human;
+					break;
+				case sUnitData::STORE_UNIT_IMG_NONE: break;
 			}
 
-			drawRow (1, symbolType, data.getStoredUnits (), data.storageUnitsMax, lngPack.i18n ("Text~Others~Cargo_7"));
+			drawRow (1, symbolType, data.getStoredUnits(), data.storageUnitsMax, lngPack.i18n ("Text~Others~Cargo_7"));
 		}
 	}
 	else if (data.canAttack && !data.explodesOnContact)
 	{
-		if (unit->getOwner () == player) drawRow (1, eUnitDataSymbolType::Ammo, data.getAmmo (), data.getAmmoMax (), lngPack.i18n ("Text~Others~Ammo_7"));
+		if (unit->getOwner() == player) drawRow (1, eUnitDataSymbolType::Ammo, data.getAmmo(), data.getAmmoMax(), lngPack.i18n ("Text~Others~Ammo_7"));
 
-		drawRow (3, eUnitDataSymbolType::Shots, data.getShots (), data.getShotsMax(), lngPack.i18n ("Text~Others~Shots_7"));
+		drawRow (3, eUnitDataSymbolType::Shots, data.getShots(), data.getShotsMax(), lngPack.i18n ("Text~Others~Shots_7"));
 	}
-	else if (data.produceEnergy && unit->data.ID.isABuilding ())
+	else if (data.produceEnergy && unit->data.ID.isABuilding())
 	{
-		const auto& building = static_cast<const cBuilding&>(*unit);
-		drawRow (1, eUnitDataSymbolType::Energy, (building.isUnitWorking () ? data.produceEnergy : 0), data.produceEnergy, lngPack.i18n ("Text~Others~Power"));
+		const auto& building = static_cast<const cBuilding&> (*unit);
+		drawRow (1, eUnitDataSymbolType::Energy, (building.isUnitWorking() ? data.produceEnergy : 0), data.produceEnergy, lngPack.i18n ("Text~Others~Power"));
 
-		if (unit->getOwner () == player)
+		if (unit->getOwner() == player)
 		{
 			drawRow (2, eUnitDataSymbolType::Energy, building.SubBase->EnergyProd, building.SubBase->MaxEnergyProd, lngPack.i18n ("Text~Others~Total"));
 			drawRow (3, eUnitDataSymbolType::Energy, building.SubBase->EnergyNeed, building.SubBase->MaxEnergyNeed, lngPack.i18n ("Text~Others~Usage_7"));
 		}
 	}
-	else if (data.produceHumans && unit->data.ID.isABuilding ())
+	else if (data.produceHumans && unit->data.ID.isABuilding())
 	{
-		const auto& building = static_cast<const cBuilding&>(*unit);
+		const auto& building = static_cast<const cBuilding&> (*unit);
 		drawRow (1, eUnitDataSymbolType::Human, data.produceHumans, data.produceHumans, lngPack.i18n ("Text~Others~Teams_7"));
 
-		if (unit->getOwner () == player)
+		if (unit->getOwner() == player)
 		{
 			drawRow (2, eUnitDataSymbolType::Human, building.SubBase->HumanProd, building.SubBase->HumanProd, lngPack.i18n ("Text~Others~Total"));
 			drawRow (3, eUnitDataSymbolType::Human, building.SubBase->HumanNeed, building.SubBase->MaxHumanNeed, lngPack.i18n ("Text~Others~Usage_7"));
 		}
 	}
-	else if (data.needsHumans && unit->data.ID.isABuilding ())
+	else if (data.needsHumans && unit->data.ID.isABuilding())
 	{
-		const auto& building = static_cast<const cBuilding&>(*unit);
-		if (building.isUnitWorking ()) drawRow (1, eUnitDataSymbolType::Human, data.needsHumans, data.needsHumans, lngPack.i18n ("Text~Others~Usage_7"));
+		const auto& building = static_cast<const cBuilding&> (*unit);
+		if (building.isUnitWorking()) drawRow (1, eUnitDataSymbolType::Human, data.needsHumans, data.needsHumans, lngPack.i18n ("Text~Others~Usage_7"));
 		else drawRow (1, eUnitDataSymbolType::Human, 0, data.needsHumans, lngPack.i18n ("Text~Others~Usage_7"));
 
-		if (unit->getOwner () == player) drawRow (2, eUnitDataSymbolType::Human, building.SubBase->HumanNeed, building.SubBase->MaxHumanNeed, lngPack.i18n ("Text~Others~Total"));
+		if (unit->getOwner() == player) drawRow (2, eUnitDataSymbolType::Human, building.SubBase->HumanNeed, building.SubBase->MaxHumanNeed, lngPack.i18n ("Text~Others~Total"));
 	}
 }
 
@@ -219,8 +219,8 @@ void cUnitDetailsHud::drawRow (size_t index, eUnitDataSymbolType symbolType, int
 {
 	if (index >= maxRows) return;
 
-	amountLabels[index]->show ();
-	nameLabels[index]->show ();
+	amountLabels[index]->show();
+	nameLabels[index]->show();
 
 	eUnicodeFontType fontType;
 	if (amount > maximalAmount / 2) fontType = FONT_LATIN_SMALL_GREEN;
@@ -231,13 +231,13 @@ void cUnitDetailsHud::drawRow (size_t index, eUnitDataSymbolType symbolType, int
 	amountLabels[index]->setText (iToStr (amount) + "/" + iToStr (maximalAmount));
 
 	nameLabels[index]->setText (name);
-	drawSmallSymbols (surface.get (), rowHeight, symbolType, cPosition (80, rowHeight * index), amount, maximalAmount);
+	drawSmallSymbols (surface.get(), rowHeight, symbolType, cPosition (80, rowHeight * index), amount, maximalAmount);
 }
 
 //------------------------------------------------------------------------------
 void cUnitDetailsHud::drawSmallSymbols (SDL_Surface* destination, int rowHeight, eUnitDataSymbolType symbolType, const cPosition& position, int value1, int value2)
 {
-	const int maxX = destination->w - position.x () - 5;
+	const int maxX = destination->w - position.x() - 5;
 	auto src = getSmallSymbolPosition (symbolType);
 	const cPosition srcSize = src.getSize();
 	int toValue = value2;
@@ -246,13 +246,13 @@ void cUnitDetailsHud::drawSmallSymbols (SDL_Surface* destination, int rowHeight,
 	{
 		if (value1 <= value2 / 4) // red
 		{
-			src.getMinCorner ().x () += srcSize.x () * 4;
-			src.getMaxCorner ().x () += srcSize.x () * 4;
+			src.getMinCorner().x() += srcSize.x() * 4;
+			src.getMaxCorner().x() += srcSize.x() * 4;
 		}
 		else if (value1 <= value2 / 2) // orange
 		{
-			src.getMinCorner ().x () += srcSize.x () * 2;
-			src.getMaxCorner ().x () += srcSize.x () * 2;
+			src.getMinCorner().x() += srcSize.x() * 2;
+			src.getMaxCorner().x() += srcSize.x() * 2;
 		}
 	}
 	int offX = srcSize.x();
@@ -266,24 +266,24 @@ void cUnitDetailsHud::drawSmallSymbols (SDL_Surface* destination, int rowHeight,
 		{
 			toValue /= 2;
 			step *= 2;
-			offX = srcSize.x ();
+			offX = srcSize.x();
 		}
 	}
 
-	SDL_Rect dest = {position.x (), position.y ()+2 + (rowHeight - srcSize.y ()) / 2, 0, 0};
+	SDL_Rect dest = {position.x(), position.y() + 2 + (rowHeight - srcSize.y()) / 2, 0, 0};
 
-	const auto oriSrcMinX = src.getMinCorner ().x ();
-	const auto oriSrcMaxX = src.getMaxCorner ().x ();
+	const auto oriSrcMinX = src.getMinCorner().x();
+	const auto oriSrcMaxX = src.getMaxCorner().x();
 	for (int i = 0; i < toValue; i++)
 	{
 		if (value1 <= 0)
 		{
-			src.getMinCorner ().x () = oriSrcMinX + srcSize.x ();
-			src.getMaxCorner ().x () = oriSrcMaxX + srcSize.x ();
+			src.getMinCorner().x() = oriSrcMinX + srcSize.x();
+			src.getMaxCorner().x() = oriSrcMaxX + srcSize.x();
 		}
 
-		auto srcRect = src.toSdlRect ();
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &srcRect, destination, &dest);
+		auto srcRect = src.toSdlRect();
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &srcRect, destination, &dest);
 
 		dest.x += offX;
 		value1 -= step;
@@ -298,67 +298,67 @@ cBox<cPosition> cUnitDetailsHud::getSmallSymbolPosition (eUnitDataSymbolType sym
 
 	switch (symbolType)
 	{
-	case eUnitDataSymbolType::Speed:
-		position.x () = 0;
-		size.x () = 7;
-		size.y () = 7;
-		break;
-	case eUnitDataSymbolType::Hits:
-		position.x () = 14;
-		size.x () = 6;
-		size.y () = 9;
-		break;
-	case eUnitDataSymbolType::Ammo:
-		position.x () = 50;
-		size.x () = 5;
-		size.y () = 7;
-		break;
-	case eUnitDataSymbolType::Shots:
-		position.x () = 88;
-		size.x () = 8;
-		size.y () = 4;
-		break;
-	case eUnitDataSymbolType::Metal:
-		position.x () = 60;
-		size.x () = 7;
-		size.y () = 10;
-		break;
-	case eUnitDataSymbolType::Oil:
-		position.x () = 104;
-		size.x () = 8;
-		size.y () = 9;
-		break;
-	case eUnitDataSymbolType::Gold:
-		position.x () = 120;
-		size.x () = 9;
-		size.y () = 8;
-		break;
-	case eUnitDataSymbolType::Energy:
-		position.x () = 74;
-		size.x () = 7;
-		size.y () = 7;
-		break;
-	case eUnitDataSymbolType::Human:
-		position.x () = 170;
-		size.x () = 8;
-		size.y () = 9;
-		break;
-	case eUnitDataSymbolType::TransportTank:
-		position.x () = 138;
-		size.x () = 16;
-		size.y () = 8;
-		break;
-	case eUnitDataSymbolType::TransportAir:
-		position.x () = 186;
-		size.x () = 21;
-		size.y () = 8;
-		break;
-	case eUnitDataSymbolType::Attack:
-	case eUnitDataSymbolType::Range:
-	case eUnitDataSymbolType::Armor:
-	case eUnitDataSymbolType::Scan:
-	case eUnitDataSymbolType::MetalEmpty:
-		break;
+		case eUnitDataSymbolType::Speed:
+			position.x() = 0;
+			size.x() = 7;
+			size.y() = 7;
+			break;
+		case eUnitDataSymbolType::Hits:
+			position.x() = 14;
+			size.x() = 6;
+			size.y() = 9;
+			break;
+		case eUnitDataSymbolType::Ammo:
+			position.x() = 50;
+			size.x() = 5;
+			size.y() = 7;
+			break;
+		case eUnitDataSymbolType::Shots:
+			position.x() = 88;
+			size.x() = 8;
+			size.y() = 4;
+			break;
+		case eUnitDataSymbolType::Metal:
+			position.x() = 60;
+			size.x() = 7;
+			size.y() = 10;
+			break;
+		case eUnitDataSymbolType::Oil:
+			position.x() = 104;
+			size.x() = 8;
+			size.y() = 9;
+			break;
+		case eUnitDataSymbolType::Gold:
+			position.x() = 120;
+			size.x() = 9;
+			size.y() = 8;
+			break;
+		case eUnitDataSymbolType::Energy:
+			position.x() = 74;
+			size.x() = 7;
+			size.y() = 7;
+			break;
+		case eUnitDataSymbolType::Human:
+			position.x() = 170;
+			size.x() = 8;
+			size.y() = 9;
+			break;
+		case eUnitDataSymbolType::TransportTank:
+			position.x() = 138;
+			size.x() = 16;
+			size.y() = 8;
+			break;
+		case eUnitDataSymbolType::TransportAir:
+			position.x() = 186;
+			size.x() = 21;
+			size.y() = 8;
+			break;
+		case eUnitDataSymbolType::Attack:
+		case eUnitDataSymbolType::Range:
+		case eUnitDataSymbolType::Armor:
+		case eUnitDataSymbolType::Scan:
+		case eUnitDataSymbolType::MetalEmpty:
+			break;
 	}
 
 	return cBox<cPosition> (position, position + size - 1);

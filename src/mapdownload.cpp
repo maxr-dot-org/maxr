@@ -39,7 +39,7 @@ using namespace std;
 //------------------------------------------------------------------------------
 bool MapDownload::isMapOriginal (const std::string& mapName, int32_t checksum)
 {
-	std::string lowerMapName (to_lower_copy(mapName));
+	std::string lowerMapName (to_lower_copy (mapName));
 
 	const struct
 	{

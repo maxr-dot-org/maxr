@@ -25,13 +25,13 @@
 //------------------------------------------------------------------------------
 cSavedReportChat::cSavedReportChat (const cPlayer& player, std::string text_) :
 	playerName (player.getName()),
-	playerNumber (player.getNr ()),
+	playerNumber (player.getNr()),
 	text (std::move (text_))
 {}
 
 //------------------------------------------------------------------------------
 cSavedReportChat::cSavedReportChat (std::string playerName_, std::string text_) :
-	playerName (std::move(playerName)),
+	playerName (std::move (playerName)),
 	playerNumber (-1),
 	text (std::move (text_))
 {}
@@ -39,9 +39,9 @@ cSavedReportChat::cSavedReportChat (std::string playerName_, std::string text_) 
 //------------------------------------------------------------------------------
 cSavedReportChat::cSavedReportChat (cNetMessage& message)
 {
-	playerName = message.popString ();
-	playerNumber = message.popInt32 ();
-	text = message.popString ();
+	playerName = message.popString();
+	playerNumber = message.popInt32();
+	text = message.popString();
 }
 
 //------------------------------------------------------------------------------
@@ -66,45 +66,45 @@ void cSavedReportChat::pushInto (cNetMessage& message) const
 //------------------------------------------------------------------------------
 void cSavedReportChat::pushInto (tinyxml2::XMLElement& element) const
 {
-	element.SetAttribute ("msg", text.c_str ());
-	element.SetAttribute ("playername", playerName.c_str ());
-	element.SetAttribute ("playernumber", iToStr(playerNumber).c_str());
+	element.SetAttribute ("msg", text.c_str());
+	element.SetAttribute ("playername", playerName.c_str());
+	element.SetAttribute ("playernumber", iToStr (playerNumber).c_str());
 
 	cSavedReport::pushInto (element);
 }
 
 //------------------------------------------------------------------------------
-eSavedReportType cSavedReportChat::getType () const
+eSavedReportType cSavedReportChat::getType() const
 {
 	return eSavedReportType::Chat;
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportChat::getMessage () const
+std::string cSavedReportChat::getMessage() const
 {
 	return playerName + ": " + text;
 }
 
 //------------------------------------------------------------------------------
-bool cSavedReportChat::isAlert () const
+bool cSavedReportChat::isAlert() const
 {
 	return false;
 }
 
 //------------------------------------------------------------------------------
-int cSavedReportChat::getPlayerNumber () const
+int cSavedReportChat::getPlayerNumber() const
 {
 	return playerNumber;
 }
 
 //------------------------------------------------------------------------------
-const std::string& cSavedReportChat::getText () const
+const std::string& cSavedReportChat::getText() const
 {
 	return text;
 }
 
 //------------------------------------------------------------------------------
-const std::string& cSavedReportChat::getPlayerName () const
+const std::string& cSavedReportChat::getPlayerName() const
 {
 	return playerName;
 }

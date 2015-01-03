@@ -82,19 +82,19 @@ cClient::cClient (cServer* server_, std::shared_ptr<cTCP> network_) :
 	bDefeated = false;
 	bWantToEnd = false;
 
-	gameTimer->start ();
+	gameTimer->start();
 
 	signalConnectionManager.connect (gameSettings->turnEndDeadlineChanged, [this]()
 	{
 		if (turnEndDeadline)
 		{
-			turnEndDeadline->changeDeadline (gameSettings->getTurnEndDeadline ());
+			turnEndDeadline->changeDeadline (gameSettings->getTurnEndDeadline());
 		}
 	});
 
 	signalConnectionManager.connect (gameSettings->turnEndDeadlineActiveChanged, [this]()
 	{
-		if (!gameSettings->isTurnEndDeadlineActive () && turnEndDeadline)
+		if (!gameSettings->isTurnEndDeadlineActive() && turnEndDeadline)
 		{
 			turnTimeClock->removeDeadline (turnEndDeadline);
 			turnEndDeadline = nullptr;
@@ -105,20 +105,20 @@ cClient::cClient (cServer* server_, std::shared_ptr<cTCP> network_) :
 	{
 		if (turnLimitDeadline)
 		{
-			turnLimitDeadline->changeDeadline (gameSettings->getTurnLimit ());
+			turnLimitDeadline->changeDeadline (gameSettings->getTurnLimit());
 		}
 	});
 
 	signalConnectionManager.connect (gameSettings->turnLimitActiveChanged, [this]()
 	{
-		if (!gameSettings->isTurnLimitActive () && turnLimitDeadline)
+		if (!gameSettings->isTurnLimitActive() && turnLimitDeadline)
 		{
 			turnTimeClock->removeDeadline (turnLimitDeadline);
 			turnLimitDeadline = nullptr;
 		}
-		else if (gameSettings->isTurnLimitActive () && !turnLimitDeadline)
+		else if (gameSettings->isTurnLimitActive() && !turnLimitDeadline)
 		{
-			turnLimitDeadline = turnTimeClock->startNewDeadlineFrom (turnTimeClock->getStartGameTime (), gameSettings->getTurnLimit ());
+			turnLimitDeadline = turnTimeClock->startNewDeadlineFrom (turnTimeClock->getStartGameTime(), gameSettings->getTurnLimit());
 		}
 	});
 }
@@ -133,20 +133,20 @@ cClient::~cClient()
 	{
 		delete attackJobs[i];
 	}
-	neutralBuildings.clear ();
+	neutralBuildings.clear();
 
 	// since currently the vehicles do own movejobs and other stuff that
 	// have non owning references to the client, we delete all units in the players
 	// and hopefully eliminate all those references by doing so...
-	for (size_t i = 0; i < playerList.size (); ++i)
+	for (size_t i = 0; i < playerList.size(); ++i)
 	{
-		playerList[i]->removeAllUnits ();
+		playerList[i]->removeAllUnits();
 	}
 }
 
 void cClient::setMap (std::shared_ptr<cStaticMap> staticMap)
 {
-	Map = std::make_shared<cMap>(staticMap);
+	Map = std::make_shared<cMap> (staticMap);
 	initPlayersWithMap();
 }
 
@@ -166,11 +166,11 @@ public:
 
 void cClient::setPlayers (const std::vector<cPlayerBasicData>& splayers, size_t activePlayerIndex)
 {
-	assert (activePlayerIndex < splayers.size ());
+	assert (activePlayerIndex < splayers.size());
 
 	for (size_t i = 0, size = splayers.size(); i != size; ++i)
 	{
-		playerList.push_back(std::make_shared<cPlayer>(splayers[i]));
+		playerList.push_back (std::make_shared<cPlayer> (splayers[i]));
 	}
 
 	ActivePlayer = playerList[activePlayerIndex].get();
@@ -184,13 +184,13 @@ void cClient::initPlayersWithMap()
 {
 	if (playerList.empty() || Map == nullptr) return;
 
-	for (size_t i = 0; i != playerList.size (); ++i)
+	for (size_t i = 0; i != playerList.size(); ++i)
 	{
 		playerList[i]->initMaps (*Map);
 	}
 
 	// generate subbase for enemy players
-	for (size_t i = 0; i != playerList.size (); ++i)
+	for (size_t i = 0; i != playerList.size(); ++i)
 	{
 		if (playerList[i].get() == ActivePlayer) continue;
 		playerList[i]->base.SubBases.push_back (new sSubBase (playerList[i].get()));
@@ -210,7 +210,7 @@ void cClient::initPlayersWithMap()
 
 		gameTimer->setReceivedTime (receivedTime);
 	}
-	eventQueue.push (std::move(message));
+	eventQueue.push (std::move (message));
 }
 
 void cClient::sendNetMessage (cNetMessage* message_) const
@@ -222,17 +222,17 @@ void cClient::sendNetMessage (cNetMessage* message_) const
 
 	if (message->iType != NET_GAME_TIME_CLIENT)
 	{
-		Log.write ("Client: " + getActivePlayer ().getName () + " --> "
-				   + message->getTypeAsString ()
+		Log.write ("Client: " + getActivePlayer().getName() + " --> "
+				   + message->getTypeAsString()
 				   + ", gameTime:" + iToStr (this->gameTimer->gameTime)
-				   + ", Hexdump: " + message->getHexDump (), cLog::eLOG_TYPE_NET_DEBUG);
+				   + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
 	if (server)
 	{
 		// push an event to the local server in singleplayer, HotSeat or
 		// if this machine is the host
-		server->pushEvent (std::move(message));
+		server->pushEvent (std::move (message));
 	}
 	else // else send it over the net
 	{
@@ -258,7 +258,7 @@ bool cClient::addMoveJob (cVehicle& vehicle, const cPosition& destination, const
 	}
 }
 
-void cClient::startGroupMove(const std::vector<cVehicle*>& group_, const cPosition& mainDestination)
+void cClient::startGroupMove (const std::vector<cVehicle*>& group_, const cPosition& mainDestination)
 {
 	const auto& mainPosition = group_[0]->getPosition();
 
@@ -292,7 +292,7 @@ void cClient::startGroupMove(const std::vector<cVehicle*>& group_, const cPositi
 		// add the movejob to the destination of the unit.
 		// the formation of the vehicle group will stay as destination formation.
 		auto destination = mainDestination + vehicle.getPosition() - mainPosition;
-		addMoveJob(vehicle, destination, &group_);
+		addMoveJob (vehicle, destination, &group_);
 		// delete the unit from the copyed list
 		group.erase (group.begin() + shortestWayVehNum);
 	}
@@ -300,7 +300,7 @@ void cClient::startGroupMove(const std::vector<cVehicle*>& group_, const cPositi
 
 void cClient::runFx()
 {
-	effectsList->run ();
+	effectsList->run();
 }
 
 void cClient::addFx (std::shared_ptr<cFx> fx, bool playSound)
@@ -346,7 +346,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_BUILDING (cNetMessage& message)
 	const sID UnitID = message.popID();
 	const auto position = message.popPosition();
 	unsigned int ID = message.popInt16();
-	auto& addedBuilding = Player->addNewBuilding(position, UnitID, ID);
+	auto& addedBuilding = Player->addNewBuilding (position, UnitID, ID);
 
 	addUnit (position, addedBuilding);
 
@@ -364,12 +364,12 @@ void cClient::HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message)
 		Log.write ("Player not found", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
-	const sID UnitID = message.popID ();
-	const auto position = message.popPosition ();
+	const sID UnitID = message.popID();
+	const auto position = message.popPosition();
 	const unsigned int ID = message.popInt16();
 	const bool addToMap = message.popBool();
 
-	auto& addedVehicle = Player->addNewVehicle(position, UnitID, ID);
+	auto& addedVehicle = Player->addNewVehicle (position, UnitID, ID);
 	addUnit (position, addedVehicle, addToMap);
 }
 
@@ -404,8 +404,8 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE (cNetMessage& message)
 		Log.write ("Player not found", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
-	const sID UnitID = message.popID ();
-	const auto position = message.popPosition ();
+	const sID UnitID = message.popID();
+	const auto position = message.popPosition();
 	const int dir = message.popInt16();
 	const int ID = message.popInt16();
 	const int version = message.popInt16();
@@ -426,8 +426,8 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (cNetMessage& message)
 		Log.write ("Player not found", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
-	const sID UnitID = message.popID ();
-	const auto position = message.popPosition ();
+	const sID UnitID = message.popID();
+	const auto position = message.popPosition();
 	const int ID = message.popInt16();
 	const int version = message.popInt16();
 	auto& addedBuilding = Player->addNewBuilding (position, UnitID, ID);
@@ -440,7 +440,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (cNetMessage& message)
 		Player->base.SubBases[0]->buildings.push_back (&addedBuilding);
 		addedBuilding.SubBase = Player->base.SubBases[0];
 
-		addedBuilding.updateNeighbours (*getMap ());
+		addedBuilding.updateNeighbours (*getMap());
 	}
 }
 
@@ -450,7 +450,7 @@ void cClient::HandleNetMessage_GAME_EV_WAIT_FOR (cNetMessage& message)
 
 	const int nextPlayerNum = message.popInt32();
 
-	if (nextPlayerNum == ActivePlayer->getNr ())
+	if (nextPlayerNum == ActivePlayer->getNr())
 	{
 		disableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
 	}
@@ -464,13 +464,13 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_MAKE_TURNEND);
 
-	turnClock->increaseTurn ();
+	turnClock->increaseTurn();
 	bWantToEnd = false;
 	ActivePlayer->clearDone();
 	Log.write ("######### Round " + iToStr (turnClock->getTurn()) + " ###########", cLog::eLOG_TYPE_NET_DEBUG);
 	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{
-		getPlayerList() [i]->setHasFinishedTurn(false);
+		getPlayerList() [i]->setHasFinishedTurn (false);
 	}
 }
 
@@ -478,14 +478,14 @@ void cClient::HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_FINISHED_TURN);
 
-	const int playerNumber = message.popInt16 ();
+	const int playerNumber = message.popInt16();
 	cPlayer* player = getPlayerFromNumber (playerNumber);
 
-	const bool hasNextPlayerInfo = message.popBool ();
+	const bool hasNextPlayerInfo = message.popBool();
 	int nextPlayerNumber = -1;
 	if (hasNextPlayerInfo)
 	{
-		nextPlayerNumber = message.popInt16 ();
+		nextPlayerNumber = message.popInt16();
 	}
 
 	if (player == nullptr)
@@ -508,14 +508,14 @@ void cClient::HandleNetMessage_GAME_EV_TURN_START_TIME (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_TURN_START_TIME);
 
-	const auto time = message.popInt32 ();
+	const auto time = message.popInt32();
 
 	turnTimeClock->restartFrom (time);
-	turnTimeClock->clearAllDeadlines ();
+	turnTimeClock->clearAllDeadlines();
 
-	if (gameSettings->isTurnLimitActive ())
+	if (gameSettings->isTurnLimitActive())
 	{
-		turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnLimit ());
+		turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnLimit());
 	}
 }
 
@@ -523,9 +523,9 @@ void cClient::HandleNetMessage_GAME_EV_TURN_END_DEADLINE_START_TIME (cNetMessage
 {
 	assert (message.iType == GAME_EV_TURN_END_DEADLINE_START_TIME);
 
-	const auto time = message.popInt32 ();
+	const auto time = message.popInt32();
 
-	turnEndDeadline = turnTimeClock->startNewDeadlineFrom (time, gameSettings->getTurnEndDeadline ());
+	turnEndDeadline = turnTimeClock->startNewDeadlineFrom (time, gameSettings->getTurnEndDeadline());
 }
 
 void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
@@ -535,8 +535,8 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 	cPlayer* Player = getPlayerFromNumber (message.popInt16());
 	(void) Player;  // TODO use me
 	const int iID = message.popInt16();
-	const bool bVehicle = message.popBool ();
-	const auto position = message.popPosition ();
+	const bool bVehicle = message.popBool();
+	const auto position = message.popPosition();
 
 	Log.write (" Client: Received Unit Data: Vehicle: " + iToStr ((int) bVehicle) + ", ID: " + iToStr (iID) + ", XPos: " + iToStr (position.x()) + ", YPos: " + iToStr (position.y()), cLog::eLOG_TYPE_NET_DEBUG);
 	cVehicle* Vehicle = nullptr;
@@ -557,7 +557,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		{
 			// should never happen
 			int iLogType = cLog::eLOG_TYPE_NET_WARNING;
-			if (Vehicle->isUnitBuildingABuilding () || Vehicle->isUnitClearing () || Vehicle->isUnitMoving ()) iLogType = cLog::eLOG_TYPE_NET_DEBUG;
+			if (Vehicle->isUnitBuildingABuilding() || Vehicle->isUnitClearing() || Vehicle->isUnitMoving()) iLogType = cLog::eLOG_TYPE_NET_DEBUG;
 			Log.write (" Client: Vehicle identificated by ID (" + iToStr (iID) + ") but has wrong position [IS: X" + iToStr (Vehicle->getPosition().x()) + " Y" + iToStr (Vehicle->getPosition().y()) + "; SHOULD: X" + iToStr (position.x()) + " Y" + iToStr (position.y()) + "]", iLogType);
 
 			// set to server position if vehicle is not moving
@@ -565,33 +565,33 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 			{
 				getMap()->moveVehicle (*Vehicle, position);
 				if (bBig) getMap()->moveVehicleBig (*Vehicle, position);
-				Vehicle->getOwner ()->doScan ();
+				Vehicle->getOwner()->doScan();
 			}
 		}
 
 		if (message.popBool()) Vehicle->changeName (message.popString());
 
-		Vehicle->setAttacking (message.popBool ());
-		Vehicle->setIsBeeinAttacked(message.popBool());
+		Vehicle->setAttacking (message.popBool());
+		Vehicle->setIsBeeinAttacked (message.popBool());
 
 		const bool bWasDisabled = Vehicle->isDisabled();
-		Vehicle->setDisabledTurns(message.popInt16 ());
-		Vehicle->setCommandoRank(message.popInt16());
-		Vehicle->setClearing(message.popBool());
-		Vehicle->setBuildingABuilding(message.popBool());
-		Vehicle->setBuildTurns(message.popInt16());
-		Vehicle->setClearingTurns(message.popInt16());
-		Vehicle->setSentryActive(message.popBool());
-		Vehicle->setManualFireActive(message.popBool());
+		Vehicle->setDisabledTurns (message.popInt16());
+		Vehicle->setCommandoRank (message.popInt16());
+		Vehicle->setClearing (message.popBool());
+		Vehicle->setBuildingABuilding (message.popBool());
+		Vehicle->setBuildTurns (message.popInt16());
+		Vehicle->setClearingTurns (message.popInt16());
+		Vehicle->setSentryActive (message.popBool());
+		Vehicle->setManualFireActive (message.popBool());
 
-		if (Vehicle->isDisabled () != bWasDisabled && Vehicle->getOwner () == ActivePlayer)
+		if (Vehicle->isDisabled() != bWasDisabled && Vehicle->getOwner() == ActivePlayer)
 		{
 			if (Vehicle->isDisabled())
 			{
-				ActivePlayer->addSavedReport (std::make_unique<cSavedReportDisabled>(*Vehicle));
+				ActivePlayer->addSavedReport (std::make_unique<cSavedReportDisabled> (*Vehicle));
 				unitDisabled (*Vehicle);
 			}
-			Vehicle->getOwner ()->doScan ();
+			Vehicle->getOwner()->doScan();
 		}
 		Data = &Vehicle->data;
 	}
@@ -607,57 +607,57 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 
 		if (message.popBool()) Building->changeName (message.popString());
 
-		Building->setAttacking (message.popBool ());
-		Building->setIsBeeinAttacked (message.popBool ());
+		Building->setAttacking (message.popBool());
+		Building->setIsBeeinAttacked (message.popBool());
 
 		const bool bWasDisabled = Building->isDisabled();
-		Building->setDisabledTurns (message.popInt16 ());
+		Building->setDisabledTurns (message.popInt16());
 		Building->setResearchArea ((cResearch::ResearchArea)message.popInt16());
-		Building->setWorking(message.popBool());
-		Building->setSentryActive( message.popBool ());
-		Building->setManualFireActive( message.popBool ());
+		Building->setWorking (message.popBool());
+		Building->setSentryActive (message.popBool());
+		Building->setManualFireActive (message.popBool());
 		Building->points = message.popInt16();
 
-		if (Building->isDisabled () != bWasDisabled && Building->getOwner () == ActivePlayer)
+		if (Building->isDisabled() != bWasDisabled && Building->getOwner() == ActivePlayer)
 		{
 			if (Building->isDisabled())
 			{
 				ActivePlayer->addSavedReport (std::make_unique<cSavedReportDisabled> (*Building));
 				unitDisabled (*Building);
 			}
-			Building->getOwner ()->doScan ();
+			Building->getOwner()->doScan();
 		}
 		Data = &Building->data;
 	}
 
 	Data->buildCosts = message.popInt16();
-	Data->setAmmo(message.popInt16());
-	Data->setAmmoMax(message.popInt16());
-	Data->setStoredResources(message.popInt16());
+	Data->setAmmo (message.popInt16());
+	Data->setAmmoMax (message.popInt16());
+	Data->setStoredResources (message.popInt16());
 	Data->storageResMax = message.popInt16();
-	Data->setStoredUnits(message.popInt16());
+	Data->setStoredUnits (message.popInt16());
 	Data->storageUnitsMax = message.popInt16();
-	Data->setDamage(message.popInt16());
-	Data->setShots(message.popInt16());
-	Data->setShotsMax(message.popInt16());
-	Data->setRange(message.popInt16());
-	Data->setScan(message.popInt16());
-	Data->setArmor(message.popInt16());
-	Data->setHitpoints(message.popInt16());
-	Data->setHitpointsMax(message.popInt16());
-	Data->setVersion(message.popInt16());
+	Data->setDamage (message.popInt16());
+	Data->setShots (message.popInt16());
+	Data->setShotsMax (message.popInt16());
+	Data->setRange (message.popInt16());
+	Data->setScan (message.popInt16());
+	Data->setArmor (message.popInt16());
+	Data->setHitpoints (message.popInt16());
+	Data->setHitpointsMax (message.popInt16());
+	Data->setVersion (message.popInt16());
 
 	if (bVehicle)
 	{
 		if (Data->canPlaceMines)
 		{
-			if (Data->getStoredResources () <= 0) Vehicle->setLayMines (false);
-			if (Data->getStoredResources () >= Data->storageResMax) Vehicle->setClearMines (false);
+			if (Data->getStoredResources() <= 0) Vehicle->setLayMines (false);
+			if (Data->getStoredResources() >= Data->storageResMax) Vehicle->setClearMines (false);
 		}
-		Data->setSpeed(message.popInt16());
-		Data->setSpeedMax(message.popInt16());
+		Data->setSpeed (message.popInt16());
+		Data->setSpeedMax (message.popInt16());
 
-		Vehicle->setFlightHeight(message.popInt16 ());
+		Vehicle->setFlightHeight (message.popInt16());
 	}
 }
 
@@ -668,7 +668,7 @@ void cClient::HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (cNetMessage& message)
 	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
 	if (!Vehicle) return;
 	Vehicle->dir = message.popInt16();
-	Vehicle->setBuildingType (message.popID ());
+	Vehicle->setBuildingType (message.popID());
 	Vehicle->BuildPath = message.popBool();
 	Vehicle->bandPosition = message.popPosition();
 }
@@ -686,7 +686,7 @@ void cClient::HandleNetMessage_GAME_EV_DO_START_WORK (cNetMessage& message)
 		// TODO: Request sync of building
 		return;
 	}
-	building->clientStartWork ();
+	building->clientStartWork();
 }
 
 void cClient::HandleNetMessage_GAME_EV_DO_STOP_WORK (cNetMessage& message)
@@ -701,7 +701,7 @@ void cClient::HandleNetMessage_GAME_EV_DO_STOP_WORK (cNetMessage& message)
 		// TODO: Request sync of building
 		return;
 	}
-	building->clientStopWork ();
+	building->clientStopWork();
 }
 
 void cClient::HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message)
@@ -709,8 +709,8 @@ void cClient::HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message)
 	assert (message.iType == GAME_EV_MOVE_JOB_SERVER);
 
 	const int iVehicleID = message.popInt32();
-	const auto srcPosition = message.popPosition ();
-	const auto destPosition = message.popPosition ();
+	const auto srcPosition = message.popPosition();
+	const auto destPosition = message.popPosition();
 	const int iSavedSpeed = message.popInt16();
 	cVehicle* Vehicle = getVehicleFromID (iVehicleID);
 
@@ -721,7 +721,7 @@ void cClient::HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message)
 		return;
 	}
 
-	cClientMoveJob* MoveJob = new cClientMoveJob(*this, srcPosition, destPosition, Vehicle);
+	cClientMoveJob* MoveJob = new cClientMoveJob (*this, srcPosition, destPosition, Vehicle);
 	MoveJob->iSavedSpeed = iSavedSpeed;
 	if (!MoveJob->generateFromMessage (message)) return;
 	Log.write (" Client: Added received movejob at time " + iToStr (gameTimer->gameTime), cLog::eLOG_TYPE_NET_DEBUG);
@@ -739,9 +739,9 @@ void cClient::HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message)
 	Log.write (" Client: Received information for next move: ID: " + iToStr (iID) + ", Type: " + iToStr (iType) + ", Time: " + iToStr (gameTimer->gameTime), cLog::eLOG_TYPE_NET_DEBUG);
 
 	cVehicle* Vehicle = getVehicleFromID (iID);
-	if (Vehicle && Vehicle->getClientMoveJob ())
+	if (Vehicle && Vehicle->getClientMoveJob())
 	{
-		Vehicle->getClientMoveJob ()->handleNextMove (iType, iSavedSpeed);
+		Vehicle->getClientMoveJob()->handleNextMove (iType, iSavedSpeed);
 	}
 	else
 	{
@@ -762,7 +762,7 @@ void cClient::HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message)
 
 		ActivePlayer->exploreResource (position);
 
-		sResources& res = getMap ()->getResource (position);
+		sResources& res = getMap()->getResource (position);
 		res.typ = (unsigned char) message.popInt16();
 		res.value = (unsigned char) message.popInt16();
 	}
@@ -784,7 +784,7 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 
 	if (!bOK)
 	{
-		if (Vehicle->getOwner () == ActivePlayer)
+		if (Vehicle->getOwner() == ActivePlayer)
 		{
 			if (!Vehicle->BuildPath)
 			{
@@ -795,41 +795,41 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 				ActivePlayer->addSavedReport (std::make_unique<cSavedReportPathInterrupted> (*Vehicle));
 			}
 		}
-		Vehicle->setBuildTurns(0);
+		Vehicle->setBuildTurns (0);
 		Vehicle->BuildPath = false;
-		Vehicle->bandPosition = cPosition(0,0);
+		Vehicle->bandPosition = cPosition (0, 0);
 		return;
 	}
 
-	if (Vehicle->isUnitBuildingABuilding ()) Log.write (" Client: Vehicle is already building", cLog::eLOG_TYPE_NET_ERROR);
+	if (Vehicle->isUnitBuildingABuilding()) Log.write (" Client: Vehicle is already building", cLog::eLOG_TYPE_NET_ERROR);
 
-	const auto buildPosition = message.popPosition ();
+	const auto buildPosition = message.popPosition();
 	const bool buildBig = message.popBool();
 	const auto oldPosition = Vehicle->getPosition();
 
 	if (buildBig)
 	{
-		getMap()->moveVehicleBig(*Vehicle, buildPosition);
-		Vehicle->getOwner ()->doScan ();
+		getMap()->moveVehicleBig (*Vehicle, buildPosition);
+		Vehicle->getOwner()->doScan();
 	}
 	else
 	{
-		getMap()->moveVehicle(*Vehicle, buildPosition);
-		Vehicle->getOwner ()->doScan ();
+		getMap()->moveVehicle (*Vehicle, buildPosition);
+		Vehicle->getOwner()->doScan();
 	}
 
-	if (Vehicle->getOwner () == ActivePlayer)
+	if (Vehicle->getOwner() == ActivePlayer)
 	{
 		Vehicle->setBuildingType (message.popID());
-		Vehicle->setBuildTurns (message.popInt16 ());
+		Vehicle->setBuildTurns (message.popInt16());
 		Vehicle->BuildPath = message.popBool();
 		Vehicle->bandPosition = message.popPosition();
 	}
 
-	Vehicle->setBuildingABuilding(true);
+	Vehicle->setBuildingABuilding (true);
 	addJob (new cStartBuildJob (*Vehicle, oldPosition, buildBig));
 
-	if (Vehicle->getClientMoveJob ()) Vehicle->getClientMoveJob ()->release ();
+	if (Vehicle->getClientMoveJob()) Vehicle->getClientMoveJob()->release();
 }
 
 
@@ -851,10 +851,10 @@ void cClient::HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message)
 	if (Vehicle->data.isBig)
 	{
 		getMap()->moveVehicle (*Vehicle, newPosition);
-		Vehicle->getOwner ()->doScan ();
+		Vehicle->getOwner()->doScan();
 	}
 
-	Vehicle->setBuildingABuilding(false);
+	Vehicle->setBuildingABuilding (false);
 	Vehicle->BuildPath = false;
 }
 
@@ -898,8 +898,8 @@ void cClient::HandleNetMessage_GAME_EV_BUILDLIST (cNetMessage& message)
 	for (int i = 0; i < iCount; i++)
 	{
 		cBuildListItem buildListItem;
-		buildListItem.setType (message.popID ());
-		buildListItem.setRemainingMetal (message.popInt16 ());
+		buildListItem.setType (message.popID());
+		buildListItem.setRemainingMetal (message.popInt16());
 		newBuildList.push_back (std::move (buildListItem));
 	}
 	Building->setBuildList (std::move (newBuildList));
@@ -953,8 +953,8 @@ void cClient::HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message)
 			// TODO: Request sync of vehicle
 			return;
 		}
-		if (iType == SUPPLY_TYPE_REARM) DestVehicle->data.setAmmo(message.popInt16());
-		else DestVehicle->data.setHitpoints(message.popInt16());
+		if (iType == SUPPLY_TYPE_REARM) DestVehicle->data.setAmmo (message.popInt16());
+		else DestVehicle->data.setHitpoints (message.popInt16());
 
 		//if (DestVehicle->isUnitLoaded ())
 		//{
@@ -977,8 +977,8 @@ void cClient::HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message)
 			// TODO: Request sync of building
 			return;
 		}
-		if (iType == SUPPLY_TYPE_REARM) DestBuilding->data.setAmmo(message.popInt16());
-		else DestBuilding->data.setHitpoints(message.popInt16());
+		if (iType == SUPPLY_TYPE_REARM) DestBuilding->data.setAmmo (message.popInt16());
+		else DestBuilding->data.setHitpoints (message.popInt16());
 	}
 	assert (DestUnit != nullptr);
 	if (iType == SUPPLY_TYPE_REARM)
@@ -1004,7 +1004,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message)
 	rubble->data.isBig = big;
 	rubble->RubbleTyp = typ;
 	rubble->RubbleValue = value;
-	const auto position = message.popPosition ();
+	const auto position = message.popPosition();
 
 	rubble->setPosition (position);
 
@@ -1054,15 +1054,15 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 			}
 			const auto orgiginalPosition = Vehicle->getPosition();
 
-			Vehicle->setClearingTurns(message.popInt16());
-			const auto bigPosition = message.popPosition ();
-			if (bigPosition.x () >= 0 && bigPosition.y() >= 0)
+			Vehicle->setClearingTurns (message.popInt16());
+			const auto bigPosition = message.popPosition();
+			if (bigPosition.x() >= 0 && bigPosition.y() >= 0)
 			{
 				getMap()->moveVehicleBig (*Vehicle, bigPosition);
-				Vehicle->getOwner ()->doScan ();
+				Vehicle->getOwner()->doScan();
 			}
-			Vehicle->setClearing(true);
-			addJob (new cStartBuildJob (*Vehicle, orgiginalPosition, (bigPosition.x () >= 0 && bigPosition.y () >= 0)));
+			Vehicle->setClearing (true);
+			addJob (new cStartBuildJob (*Vehicle, orgiginalPosition, (bigPosition.x() >= 0 && bigPosition.y() >= 0)));
 		}
 		break;
 		case 1:
@@ -1089,14 +1089,14 @@ void cClient::HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message)
 		return;
 	}
 
-	const auto bigPosition = message.popPosition ();
-	if (bigPosition.x () >= 0 && bigPosition.y () >= 0)
+	const auto bigPosition = message.popPosition();
+	if (bigPosition.x() >= 0 && bigPosition.y() >= 0)
 	{
-		getMap()->moveVehicle(*Vehicle, bigPosition);
-		Vehicle->getOwner ()->doScan ();
+		getMap()->moveVehicle (*Vehicle, bigPosition);
+		Vehicle->getOwner()->doScan();
 	}
-	Vehicle->setClearing(false);
-	Vehicle->setClearingTurns(0);
+	Vehicle->setClearing (false);
+	Vehicle->setClearingTurns (0);
 }
 
 void cClient::HandleNetMessage_GAME_EV_NOFOG (cNetMessage& message)
@@ -1171,7 +1171,7 @@ void cClient::HandleNetMessage_GAME_EV_TURN (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_TURN);
 
-	turnClock->setTurn (message.popInt16 ());
+	turnClock->setTurn (message.popInt16());
 }
 
 void cClient::HandleNetMessage_GAME_EV_HUD_SETTINGS (cNetMessage& message)
@@ -1200,7 +1200,7 @@ void cClient::HandleNetMessage_GAME_EV_STORE_UNIT (cNetMessage& message)
 	{
 		cBuilding* storingBuilding = getBuildingFromID (message.popInt16());
 		if (!storingBuilding) return;
-		storingBuilding->storeVehicle (*storedVehicle, *getMap ());
+		storingBuilding->storeVehicle (*storedVehicle, *getMap());
 		unitStored (*storingBuilding, *storedVehicle);
 	}
 }
@@ -1217,8 +1217,8 @@ void cClient::HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message)
 		cVehicle* StoringVehicle = getVehicleFromID (message.popInt16());
 		if (!StoringVehicle) return;
 
-		const auto position = message.popPosition ();
-		StoringVehicle->exitVehicleTo (*StoredVehicle, position, *getMap ());
+		const auto position = message.popPosition();
+		StoringVehicle->exitVehicleTo (*StoredVehicle, position, *getMap());
 		unitActivated (*StoringVehicle, *StoredVehicle);
 	}
 	else
@@ -1226,8 +1226,8 @@ void cClient::HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message)
 		cBuilding* StoringBuilding = getBuildingFromID (message.popInt16());
 		if (!StoringBuilding) return;
 
-		const auto position = message.popPosition ();
-		StoringBuilding->exitVehicleTo (*StoredVehicle, position, *getMap ());
+		const auto position = message.popPosition();
+		StoringBuilding->exitVehicleTo (*StoredVehicle, position, *getMap());
 		unitActivated (*StoringBuilding, *StoredVehicle);
 	}
 }
@@ -1240,18 +1240,18 @@ void cClient::HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message)
 	{
 		cPlayer& player = *getPlayerList() [i];
 
-		player.removeAllUnits ();
+		player.removeAllUnits();
 	}
 
 	//delete subbases
 	// TODO: check that each subbase is deleted
 	ActivePlayer->base.SubBases.clear();
 
-	for (auto i = neutralBuildings.begin (); i != neutralBuildings.end (); ++i)
+	for (auto i = neutralBuildings.begin(); i != neutralBuildings.end(); ++i)
 	{
 		getMap()->deleteBuilding (**i);
 	}
-	neutralBuildings.clear ();
+	neutralBuildings.clear();
 
 	//delete attack jobs
 	for (size_t i = 0; i != attackJobs.size(); ++i)
@@ -1276,23 +1276,23 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_UPGRADE_VALUES (cNetMessage& message
 	sUnitData* Data = ActivePlayer->getUnitDataCurrentVersion (ID);
 	if (Data == nullptr) return;
 
-	Data->setVersion(message.popInt16());
-	Data->setScan(message.popInt16());
-	Data->setRange(message.popInt16());
-	Data->setDamage(message.popInt16());
+	Data->setVersion (message.popInt16());
+	Data->setScan (message.popInt16());
+	Data->setRange (message.popInt16());
+	Data->setDamage (message.popInt16());
 	Data->buildCosts = message.popInt16();
-	Data->setArmor(message.popInt16());
-	Data->setSpeedMax(message.popInt16());
-	Data->setShotsMax(message.popInt16());
-	Data->setAmmoMax(message.popInt16());
-	Data->setHitpointsMax(message.popInt16());
+	Data->setArmor (message.popInt16());
+	Data->setSpeedMax (message.popInt16());
+	Data->setShotsMax (message.popInt16());
+	Data->setAmmoMax (message.popInt16());
+	Data->setHitpointsMax (message.popInt16());
 }
 
 void cClient::HandleNetMessage_GAME_EV_CREDITS_CHANGED (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_CREDITS_CHANGED);
 
-	ActivePlayer->setCredits(message.popInt32());
+	ActivePlayer->setCredits (message.popInt32());
 }
 
 void cClient::HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message)
@@ -1315,7 +1315,7 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message)
 			break;
 		}
 		const sUnitData& upgraded = *ActivePlayer->getUnitDataCurrentVersion (building->data.ID);
-		if (building->data.getScan () < upgraded.getScan ())
+		if (building->data.getScan() < upgraded.getScan())
 			scanNecessary = true; // Scan range was upgraded. So trigger a scan.
 		building->upgradeToCurrentVersion();
 		if (i == 0)
@@ -1366,10 +1366,10 @@ void cClient::HandleNetMessage_GAME_EV_RESEARCH_SETTINGS (cNetMessage& message)
 	for (int i = 0; i < buildingsInMsg; ++i)
 	{
 		const int buildingID = message.popInt32();
-		const cResearch::ResearchArea newArea = (cResearch::ResearchArea)message.popChar ();
+		const cResearch::ResearchArea newArea = (cResearch::ResearchArea)message.popChar();
 		cBuilding* building = getBuildingFromID (buildingID);
 		if (building && building->data.canResearch && 0 <= newArea && newArea <= cResearch::kNrResearchAreas)
-			building->setResearchArea(newArea);
+			building->setResearchArea (newArea);
 	}
 	// now update the research center count for the areas
 	ActivePlayer->refreshResearchCentersWorkingOnArea();
@@ -1381,10 +1381,10 @@ void cClient::HandleNetMessage_GAME_EV_RESEARCH_LEVEL (cNetMessage& message)
 
 	for (int area = cResearch::kNrResearchAreas - 1; area >= 0; area--)
 	{
-		const int newCurPoints = message.popInt16 ();
-		const int newLevel = message.popInt16 ();
-		ActivePlayer->getResearchState ().setCurResearchLevel (newLevel, area);
-		ActivePlayer->getResearchState ().setCurResearchPoints (newCurPoints, area);
+		const int newCurPoints = message.popInt16();
+		const int newLevel = message.popInt16();
+		ActivePlayer->getResearchState().setCurResearchLevel (newLevel, area);
+		ActivePlayer->getResearchState().setCurResearchPoints (newCurPoints, area);
 	}
 }
 
@@ -1393,9 +1393,9 @@ void cClient::HandleNetMessage_GAME_EV_FINISHED_RESEARCH_AREAS (cNetMessage& mes
 	assert (message.iType == GAME_EV_FINISHED_RESEARCH_AREAS);
 
 	std::vector<int> areas (message.popInt32());
-	for (size_t i = 0; i < areas.size (); ++i)
+	for (size_t i = 0; i < areas.size(); ++i)
 	{
-		areas[i] = message.popInt32 ();
+		areas[i] = message.popInt32();
 	}
 	ActivePlayer->setCurrentTurnResearchAreasFinished (std::move (areas));
 }
@@ -1422,10 +1422,10 @@ void cClient::HandleNetMessage_GAME_EV_COMMANDO_ANSWER (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_COMMANDO_ANSWER);
 
-	bool success = message.popBool ();
+	bool success = message.popBool();
 	bool steal = false;
-	if (success) steal = message.popBool ();
-	cVehicle* vehicle = getVehicleFromID (message.popInt16 ());
+	if (success) steal = message.popBool();
+	cVehicle* vehicle = getVehicleFromID (message.popInt16());
 
 	if (vehicle)
 	{
@@ -1461,7 +1461,7 @@ void cClient::HandleNetMessage_GAME_EV_SAVED_REPORT (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_SAVED_REPORT);
 
-	ActivePlayer->addSavedReport (cSavedReport::createFrom(message));
+	ActivePlayer->addSavedReport (cSavedReport::createFrom (message));
 }
 
 void cClient::HandleNetMessage_GAME_EV_CASUALTIES_REPORT (cNetMessage& message)
@@ -1522,11 +1522,11 @@ void cClient::HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& mess
 	assert (message.iType == GAME_EV_END_MOVE_ACTION_SERVER);
 
 	cVehicle* vehicle = getVehicleFromID (message.popInt32());
-	if (!vehicle || !vehicle->getClientMoveJob ()) return;
+	if (!vehicle || !vehicle->getClientMoveJob()) return;
 
 	const int destID = message.popInt32();
 	eEndMoveActionType type = (eEndMoveActionType) message.popChar();
-	vehicle->getClientMoveJob ()->endMoveAction = new cEndMoveAction (vehicle, destID, type);
+	vehicle->getClientMoveJob()->endMoveAction = new cEndMoveAction (vehicle, destID, type);
 }
 
 void cClient::HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message)
@@ -1546,15 +1546,15 @@ void cClient::HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_REVEAL_MAP);
 
-	ActivePlayer->revealMap ();
+	ActivePlayer->revealMap();
 }
 
-void cClient::handleNetMessages ()
+void cClient::handleNetMessages()
 {
 	if (gameTimer->nextMsgIsNextGameTime) return;
 
 	std::unique_ptr<cNetMessage> message;
-	while (eventQueue.try_pop(message))
+	while (eventQueue.try_pop (message))
 	{
 		handleNetMessage (*message);
 		if (gameTimer->nextMsgIsNextGameTime) break;
@@ -1565,10 +1565,10 @@ int cClient::handleNetMessage (cNetMessage& message)
 {
 	if (message.iType != NET_GAME_TIME_SERVER)
 	{
-		Log.write ("Client: " + getActivePlayer ().getName () + " <-- "
-				   + message.getTypeAsString ()
+		Log.write ("Client: " + getActivePlayer().getName() + " <-- "
+				   + message.getTypeAsString()
 				   + ", gameTime:" + iToStr (this->gameTimer->gameTime)
-				   + ", Hexdump: " + message.getHexDump (), cLog::eLOG_TYPE_NET_DEBUG);
+				   + ", Hexdump: " + message.getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
 	switch (message.iType)
@@ -1653,21 +1653,21 @@ int cClient::handleNetMessage (cNetMessage& message)
 void cClient::addUnit (const cPosition& position, cVehicle& addedVehicle, bool addToMap)
 {
 	// place the vehicle
-	if (addToMap) getMap ()->addVehicle (addedVehicle, position);
+	if (addToMap) getMap()->addVehicle (addedVehicle, position);
 
-	if (addedVehicle.getOwner () != ActivePlayer && addedVehicle.iID == ActivePlayer->lastDeletedUnit)
+	if (addedVehicle.getOwner() != ActivePlayer && addedVehicle.iID == ActivePlayer->lastDeletedUnit)
 	{
 		ActivePlayer->addSavedReport (std::make_unique<cSavedReportCapturedByEnemy> (addedVehicle));
 		unitStolen (addedVehicle);
 	}
-	else if (addedVehicle.getOwner () != ActivePlayer)
+	else if (addedVehicle.getOwner() != ActivePlayer)
 	{
 		ActivePlayer->addSavedReport (std::make_unique<cSavedReportDetected> (addedVehicle));
 		unitDetected (addedVehicle);
 	}
 }
 
-void cClient::addUnit(const cPosition& position, cBuilding& addedBuilding)
+void cClient::addUnit (const cPosition& position, cBuilding& addedBuilding)
 {
 	// place the building
 	getMap()->addBuilding (addedBuilding, position);
@@ -1693,9 +1693,9 @@ cPlayer* cClient::getPlayerFromString (const string& playerID)
 	}
 
 	// try to find plyer by name
-	for (unsigned int i = 0; i < playerList.size (); i++)
+	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
-		if (playerList[i]->getName () == playerID) return playerList[i].get();
+		if (playerList[i]->getName() == playerID) return playerList[i].get();
 	}
 	return nullptr;
 }
@@ -1704,21 +1704,21 @@ void cClient::deleteUnit (cUnit* unit)
 {
 	if (!unit) return;
 
-	const auto owner = unit->getOwner ();
+	const auto owner = unit->getOwner();
 
 	helperJobs.onRemoveUnit (unit);
 
-	getMap ()->deleteUnit (*unit);
+	getMap()->deleteUnit (*unit);
 
-	if (unit->isABuilding ())
+	if (unit->isABuilding())
 	{
-		cBuilding* building = static_cast<cBuilding*>(unit);
+		cBuilding* building = static_cast<cBuilding*> (unit);
 
 		if (!owner)
 		{
 			auto iter = neutralBuildings.find (*building);
-			assert (iter != neutralBuildings.end ());
-			if (iter != neutralBuildings.end ()) neutralBuildings.erase (iter);
+			assert (iter != neutralBuildings.end());
+			if (iter != neutralBuildings.end()) neutralBuildings.erase (iter);
 			return;
 		}
 
@@ -1732,12 +1732,12 @@ void cClient::deleteUnit (cUnit* unit)
 	else
 	{
 		assert (owner != nullptr);
-		owner->removeUnit (*static_cast<cVehicle*>(unit));
+		owner->removeUnit (*static_cast<cVehicle*> (unit));
 	}
 
 	if (owner)
 	{
-		owner->doScan ();
+		owner->doScan();
 	}
 }
 
@@ -1770,16 +1770,16 @@ void cClient::handleMoveJobs()
 		cVehicle* Vehicle = MoveJob->Vehicle;
 
 		// suspend movejobs of attacked vehicles
-		if (Vehicle && Vehicle->isBeeingAttacked ()) continue;
+		if (Vehicle && Vehicle->isBeeingAttacked()) continue;
 
 		if (MoveJob->bFinished || MoveJob->bEndForNow)
 		{
-			if(Vehicle) MoveJob->stopped(*Vehicle);
+			if (Vehicle) MoveJob->stopped (*Vehicle);
 		}
 
 		if (MoveJob->bFinished)
 		{
-			if (Vehicle && Vehicle->getClientMoveJob () == MoveJob)
+			if (Vehicle && Vehicle->getClientMoveJob() == MoveJob)
 			{
 				Log.write (" Client: Movejob is finished and will be deleted now", cLog::eLOG_TYPE_NET_DEBUG);
 				Vehicle->setClientMoveJob (nullptr);
@@ -1799,7 +1799,7 @@ void cClient::handleMoveJobs()
 				Vehicle->MoveJobActive = false;
 				Vehicle->setMoving (false);
 			}
-			ActiveMJobs.erase (ActiveMJobs.begin () + i);
+			ActiveMJobs.erase (ActiveMJobs.begin() + i);
 			continue;
 		}
 
@@ -1825,23 +1825,23 @@ void cClient::handleMoveJobs()
 	}
 }
 
-void cClient::handleAutoMoveJobs ()
+void cClient::handleAutoMoveJobs()
 {
 	std::vector<cAutoMJob*> activeAutoMoveJobs;
 
 	// clean up deleted and finished move jobs
-	for (auto i = autoMoveJobs.begin (); i != autoMoveJobs.end (); /*erase in loop*/)
+	for (auto i = autoMoveJobs.begin(); i != autoMoveJobs.end(); /*erase in loop*/)
 	{
-		if (i->expired ())
+		if (i->expired())
 		{
 			i = autoMoveJobs.erase (i);
 		}
 		else
 		{
-			auto job = i->lock ();
-			if (job->isFinished ())
+			auto job = i->lock();
+			if (job->isFinished())
 			{
-				job->getVehicle ().stopAutoMoveJob ();
+				job->getVehicle().stopAutoMoveJob();
 				if (job.use_count() == 1)
 				{
 					i = autoMoveJobs.erase (i);
@@ -1849,7 +1849,7 @@ void cClient::handleAutoMoveJobs ()
 			}
 			else
 			{
-				activeAutoMoveJobs.push_back (job.get ());
+				activeAutoMoveJobs.push_back (job.get());
 				++i;
 			}
 		}
@@ -1863,14 +1863,14 @@ void cClient::handleAutoMoveJobs ()
 	// when all the other jobs have been executed once as well.
 	const size_t maxConcurrentJobs = 2;
 
-	auto jobsToExecute = std::min (activeAutoMoveJobs.size (), maxConcurrentJobs);
+	auto jobsToExecute = std::min (activeAutoMoveJobs.size(), maxConcurrentJobs);
 
 	while (jobsToExecute > 0)
 	{
-		auto job = autoMoveJobs.front ().lock ();
+		auto job = autoMoveJobs.front().lock();
 		job->doAutoMove (activeAutoMoveJobs);
 
-		autoMoveJobs.pop_front ();
+		autoMoveJobs.pop_front();
 		autoMoveJobs.push_back (job);
 
 		--jobsToExecute;
@@ -1879,9 +1879,9 @@ void cClient::handleAutoMoveJobs ()
 
 cVehicle* cClient::getVehicleFromID (unsigned int id) const
 {
-	for (unsigned int i = 0; i < getPlayerList ().size (); i++)
+	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{
-		cPlayer& player = *getPlayerList ()[i];
+		cPlayer& player = *getPlayerList()[i];
 		auto unit = player.getVehicleFromId (id);
 		if (unit) return unit;
 	}
@@ -1897,7 +1897,7 @@ cBuilding* cClient::getBuildingFromID (unsigned int id) const
 		if (unit) return unit;
 	}
 	auto iter = neutralBuildings.find (id);
-	return iter == neutralBuildings.end () ? nullptr : iter->get ();
+	return iter == neutralBuildings.end() ? nullptr : iter->get();
 }
 
 cUnit* cClient::getUnitFromID (unsigned int id) const
@@ -1909,7 +1909,7 @@ cUnit* cClient::getUnitFromID (unsigned int id) const
 	return result;
 }
 
-void cClient::doGameActions ()
+void cClient::doGameActions()
 {
 	runFx();
 
@@ -1922,7 +1922,7 @@ void cClient::doGameActions ()
 	// run surveyor ai
 	if (gameTimer->timer50ms)
 	{
-		handleAutoMoveJobs ();
+		handleAutoMoveJobs();
 	}
 
 	runJobs();
@@ -1941,11 +1941,11 @@ void cClient::addDestroyFx (cVehicle& vehicle)
 	// play explosion
 	if (vehicle.data.isBig)
 	{
-		addFx (std::make_shared<cFxExploBig> (vehicle.getPosition() * 64 + 64, getMap ()->isWaterOrCoast (vehicle.getPosition())));
+		addFx (std::make_shared<cFxExploBig> (vehicle.getPosition() * 64 + 64, getMap()->isWaterOrCoast (vehicle.getPosition())));
 	}
-	else if (vehicle.data.factorAir > 0 && vehicle.getFlightHeight () != 0)
+	else if (vehicle.data.factorAir > 0 && vehicle.getFlightHeight() != 0)
 	{
-		addFx(std::make_shared<cFxExploAir>(vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
+		addFx (std::make_shared<cFxExploAir> (vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
 	}
 	else if (getMap()->isWaterOrCoast (vehicle.getPosition()))
 	{
@@ -1966,10 +1966,10 @@ void cClient::addDestroyFx (cVehicle& vehicle)
 void cClient::addDestroyFx (cBuilding& building)
 {
 	// play explosion animation
-	cBuilding* topBuilding = getMap()->getField(building.getPosition()).getBuilding();
+	cBuilding* topBuilding = getMap()->getField (building.getPosition()).getBuilding();
 	if (topBuilding && topBuilding->data.isBig)
 	{
-		addFx (std::make_shared<cFxExploBig> (topBuilding->getPosition() * 64 + 64, getMap ()->isWaterOrCoast (topBuilding->getPosition())));
+		addFx (std::make_shared<cFxExploBig> (topBuilding->getPosition() * 64 + 64, getMap()->isWaterOrCoast (topBuilding->getPosition())));
 	}
 	else
 	{
@@ -1981,7 +1981,7 @@ void cClient::addDestroyFx (cBuilding& building)
 void cClient::deletePlayer (cPlayer& player)
 {
 	player.setIsRemovedFromGame (true);
-	playerList.erase (std::remove_if (playerList.begin (), playerList.end (), [&player](const std::shared_ptr<cPlayer>& entry){ return entry.get () == &player; }), playerList.end ());
+	playerList.erase (std::remove_if (playerList.begin(), playerList.end(), [&player] (const std::shared_ptr<cPlayer>& entry) { return entry.get() == &player; }), playerList.end());
 }
 
 //------------------------------------------------------------------------------
@@ -2000,7 +2000,7 @@ void cClient::runJobs()
 void cClient::enableFreezeMode (eFreezeMode mode, int playerNumber)
 {
 	const auto wasEnabled = freezeModes.isEnable (mode);
-	const auto oldPlayerNumber = freezeModes.getPlayerNumber ();
+	const auto oldPlayerNumber = freezeModes.getPlayerNumber();
 
 	freezeModes.enable (mode, playerNumber);
 
@@ -2032,7 +2032,7 @@ bool cClient::getFreezeMode (eFreezeMode mode) const
 //------------------------------------------------------------------------------
 void cClient::handleChatMessage (const std::string& message)
 {
-    if (message.empty ()) return;
+	if (message.empty()) return;
 
-    sendChatMessageToServer (*this, getActivePlayer (), message);
+	sendChatMessageToServer (*this, getActivePlayer(), message);
 }

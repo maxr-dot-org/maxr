@@ -76,12 +76,12 @@ public:
 	cCheckBox (const cPosition& position, const std::string& text, eUnicodeFontType fontType = FONT_LATIN_NORMAL, eCheckBoxTextAnchor textAnchor = eCheckBoxTextAnchor::Right, eCheckBoxType type = eCheckBoxType::Standard, bool centered = false, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
 
 	void setChecked (bool checked);
-	bool isChecked () const;
+	bool isChecked() const;
 
-	void toggle ();
+	void toggle();
 
-	void lock ();
-	void unlock ();
+	void lock();
+	void unlock();
 
 	cSignal<void ()> toggled;
 
@@ -110,7 +110,7 @@ private:
 	bool isLocked;
 
 
-	void renewSurface ();
+	void renewSurface();
 };
 
 #endif // ui_graphical_menu_widgets_checkboxH

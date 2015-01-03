@@ -43,8 +43,8 @@ private:
 
 	bool incrementEffect;
 
-	void activate ();
-	void run ();
+	void activate();
+	void run();
 };
 
 #endif // ui_graphical_game_animations_animationworkH

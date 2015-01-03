@@ -20,8 +20,8 @@
 #include "events/keyboardevents.h"
 
 //------------------------------------------------------------------------------
-cKeyboardEvent::cKeyboardEvent(const SDL_KeyboardEvent& sdlEvent_) :
-	sdlEvent(sdlEvent_)
+cKeyboardEvent::cKeyboardEvent (const SDL_KeyboardEvent& sdlEvent_) :
+	sdlEvent (sdlEvent_)
 {}
 
 //------------------------------------------------------------------------------
@@ -41,24 +41,24 @@ KeyModifierFlags cKeyboardEvent::getModifiers() const
 {
 	KeyModifierFlags result;
 
-	if(sdlEvent.keysym.mod & KMOD_LSHIFT) result |= eKeyModifierType::ShiftLeft;
-	if(sdlEvent.keysym.mod & KMOD_RSHIFT) result |= eKeyModifierType::ShiftRight;
-	if(sdlEvent.keysym.mod & KMOD_LCTRL) result |= eKeyModifierType::CtrlLeft;
-	if(sdlEvent.keysym.mod & KMOD_RCTRL) result |= eKeyModifierType::CtrlRight;
-	if(sdlEvent.keysym.mod & KMOD_LALT) result |= eKeyModifierType::AltLeft;
-	if(sdlEvent.keysym.mod & KMOD_RALT) result |= eKeyModifierType::AltRight;
-	if(sdlEvent.keysym.mod & KMOD_LGUI) result |= eKeyModifierType::GuiLeft;
-	if(sdlEvent.keysym.mod & KMOD_RGUI) result |= eKeyModifierType::GuiRight;
-	if(sdlEvent.keysym.mod & KMOD_NUM) result |= eKeyModifierType::Num;
-	if(sdlEvent.keysym.mod & KMOD_CAPS) result |= eKeyModifierType::Caps;
-	if(sdlEvent.keysym.mod & KMOD_MODE) result |= eKeyModifierType::Mode;
+	if (sdlEvent.keysym.mod & KMOD_LSHIFT) result |= eKeyModifierType::ShiftLeft;
+	if (sdlEvent.keysym.mod & KMOD_RSHIFT) result |= eKeyModifierType::ShiftRight;
+	if (sdlEvent.keysym.mod & KMOD_LCTRL) result |= eKeyModifierType::CtrlLeft;
+	if (sdlEvent.keysym.mod & KMOD_RCTRL) result |= eKeyModifierType::CtrlRight;
+	if (sdlEvent.keysym.mod & KMOD_LALT) result |= eKeyModifierType::AltLeft;
+	if (sdlEvent.keysym.mod & KMOD_RALT) result |= eKeyModifierType::AltRight;
+	if (sdlEvent.keysym.mod & KMOD_LGUI) result |= eKeyModifierType::GuiLeft;
+	if (sdlEvent.keysym.mod & KMOD_RGUI) result |= eKeyModifierType::GuiRight;
+	if (sdlEvent.keysym.mod & KMOD_NUM) result |= eKeyModifierType::Num;
+	if (sdlEvent.keysym.mod & KMOD_CAPS) result |= eKeyModifierType::Caps;
+	if (sdlEvent.keysym.mod & KMOD_MODE) result |= eKeyModifierType::Mode;
 
 	return result;
 }
 
 //------------------------------------------------------------------------------
-cTextInputEvent::cTextInputEvent(const SDL_TextInputEvent& sdlEvent_) :
-	sdlEvent(sdlEvent_)
+cTextInputEvent::cTextInputEvent (const SDL_TextInputEvent& sdlEvent_) :
+	sdlEvent (sdlEvent_)
 {}
 
 //------------------------------------------------------------------------------

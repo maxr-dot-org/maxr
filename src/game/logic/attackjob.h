@@ -51,8 +51,8 @@ private:
 	int attackPoints;
 	cPosition targetPosition;
 
-	cServer *const server;
-	cClient *const client;
+	cServer* const server;
+	cClient* const client;
 	std::vector<int> destroyedTargets; //not synced. only needed on server
 	std::vector<int> lockedTargets;    //not synced. TODO: maybe necessary
 
@@ -68,7 +68,7 @@ private:
 
 	void lockTarget();
 	void fire();
-	std::unique_ptr<cFx> createMuzzleFx(cUnit* unit);
+	std::unique_ptr<cFx> createMuzzleFx (cUnit* unit);
 	bool impact();
 	bool impactCluster();
 	bool impactSingle (const cPosition& position, std::vector<cUnit*>* avoidTargets = nullptr);
@@ -78,11 +78,11 @@ public:
 	/**
 	* selects a target unit from a map field, depending on the attack mode.
 	*/
-	static cUnit* selectTarget(const cPosition& position, char attackMode, const cMap& map, cPlayer* owner);
-	static void runAttackJobs(std::vector<cAttackJob*>& attackJobs);
+	static cUnit* selectTarget (const cPosition& position, char attackMode, const cMap& map, cPlayer* owner);
+	static void runAttackJobs (std::vector<cAttackJob*>& attackJobs);
 
-	cAttackJob(cServer* server, cUnit* aggressor, const cPosition& targetPosition);
-	cAttackJob(cClient* client, cNetMessage& message);
+	cAttackJob (cServer* server, cUnit* aggressor, const cPosition& targetPosition);
+	cAttackJob (cClient* client, cNetMessage& message);
 	~cAttackJob();
 
 	std::unique_ptr<cNetMessage> serialize() const;

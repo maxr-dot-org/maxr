@@ -42,7 +42,7 @@ private:
 
 	cPushButton* saveButton;
 
-	void handleSaveClicked ();
+	void handleSaveClicked();
 };
 
 #endif // ui_graphical_menu_windows_windowloadsave_windowloadsaveH

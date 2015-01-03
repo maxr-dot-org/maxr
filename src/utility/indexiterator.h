@@ -26,8 +26,8 @@ class cIndexIterator
 public:
 	cIndexIterator (const PointType& begin, const PointType& end);
 
-	bool hasMore ();
-	bool next ();
+	bool hasMore();
+	bool next();
 
 	const PointType& operator*();
 	const PointType* operator->();
@@ -54,9 +54,9 @@ cIndexIterator<PointType>::cIndexIterator (const PointType& begin_, const PointT
 
 //------------------------------------------------------------------------------
 template<typename PointType>
-bool cIndexIterator<PointType>::hasMore ()
+bool cIndexIterator<PointType>::hasMore()
 {
-	for (size_t d = 0; d < current.size (); ++d)
+	for (size_t d = 0; d < current.size(); ++d)
 	{
 		if (current[d] >= end[d]) return false;
 	}
@@ -65,7 +65,7 @@ bool cIndexIterator<PointType>::hasMore ()
 
 //------------------------------------------------------------------------------
 template<typename PointType>
-bool cIndexIterator<PointType>::next ()
+bool cIndexIterator<PointType>::next()
 {
 	size_t k = 0;
 
@@ -78,7 +78,7 @@ bool cIndexIterator<PointType>::next ()
 		}
 		else
 		{
-			if (k == current.size()-1)
+			if (k == current.size() - 1)
 			{
 				return false;
 			}

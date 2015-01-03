@@ -27,16 +27,16 @@ cChatBoxPlayerListViewItem::cChatBoxPlayerListViewItem (const cPlayer& player_) 
 	cAbstractListViewItem (cPosition (50, 0)),
 	player (&player_)
 {
-	readyImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (getSize ().x () - 10, 0)));
+	readyImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (getSize().x() - 10, 0)));
 
-	colorImage = addChild (std::make_unique<cImage> (getPosition ()));
+	colorImage = addChild (std::make_unique<cImage> (getPosition()));
 
-	updatePlayerColor ();
-	updatePlayerFinishedTurn ();
+	updatePlayerColor();
+	updatePlayerFinishedTurn();
 
-	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (colorImage->getEndPosition ().x () + 4, 0), getPosition () + cPosition (getSize ().x () - readyImage->getSize ().x (), readyImage->getSize ().y ())), player->getName ()));
+	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (colorImage->getEndPosition().x() + 4, 0), getPosition() + cPosition (getSize().x() - readyImage->getSize().x(), readyImage->getSize().y())), player->getName()));
 
-	fitToChildren ();
+	fitToChildren();
 
 	signalConnectionManager.connect (player->nameChanged, std::bind (&cChatBoxPlayerListViewItem::updatePlayerName, this));
 	signalConnectionManager.connect (player->colorChanged, std::bind (&cChatBoxPlayerListViewItem::updatePlayerColor, this));
@@ -45,46 +45,46 @@ cChatBoxPlayerListViewItem::cChatBoxPlayerListViewItem (const cPlayer& player_) 
 }
 
 //------------------------------------------------------------------------------
-const cPlayer& cChatBoxPlayerListViewItem::getPlayer () const
+const cPlayer& cChatBoxPlayerListViewItem::getPlayer() const
 {
 	return *player;
 }
 
 //------------------------------------------------------------------------------
-int cChatBoxPlayerListViewItem::getPlayerNumber () const
+int cChatBoxPlayerListViewItem::getPlayerNumber() const
 {
-	return player->getNr ();
+	return player->getNr();
 }
 
 //------------------------------------------------------------------------------
-void cChatBoxPlayerListViewItem::updatePlayerName ()
+void cChatBoxPlayerListViewItem::updatePlayerName()
 {
 	// TODO: find better way to show removed/lost/may be waiting/... players
 	// TODO: else at least: translate
-	nameLabel->setText (player->getIsRemovedFromGame() ? player->getName () + " (out)" : player->getName());
+	nameLabel->setText (player->getIsRemovedFromGame() ? player->getName() + " (out)" : player->getName());
 }
 
 //------------------------------------------------------------------------------
-void cChatBoxPlayerListViewItem::updatePlayerColor ()
+void cChatBoxPlayerListViewItem::updatePlayerColor()
 {
 	SDL_Rect src = {0, 0, 10, 10};
 
-	AutoSurface colorSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0));
-	SDL_BlitSurface (player->getColor ().getTexture(), &src, colorSurface.get (), nullptr);
+	AutoSurface colorSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
+	SDL_BlitSurface (player->getColor().getTexture(), &src, colorSurface.get(), nullptr);
 
-	colorImage->setImage (colorSurface.get ());
+	colorImage->setImage (colorSurface.get());
 }
 
 //------------------------------------------------------------------------------
-void cChatBoxPlayerListViewItem::updatePlayerFinishedTurn ()
+void cChatBoxPlayerListViewItem::updatePlayerFinishedTurn()
 {
-	SDL_Rect src = {player->getHasFinishedTurn () ? 10 : 0, 0, 10, 10};
+	SDL_Rect src = {player->getHasFinishedTurn() ? 10 : 0, 0, 10, 10};
 
-	AutoSurface readySurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0));
-	SDL_SetColorKey (readySurface.get (), SDL_TRUE, cRgbColor (0, 1, 0).toMappedSdlRGBAColor (readySurface->format));
-	SDL_BlitSurface (GraphicsData.gfx_player_ready.get (), &src, readySurface.get (), nullptr);
+	AutoSurface readySurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
+	SDL_SetColorKey (readySurface.get(), SDL_TRUE, cRgbColor (0, 1, 0).toMappedSdlRGBAColor (readySurface->format));
+	SDL_BlitSurface (GraphicsData.gfx_player_ready.get(), &src, readySurface.get(), nullptr);
 
-	readyImage->setImage (readySurface.get ());
+	readyImage->setImage (readySurface.get());
 }
 
 //------------------------------------------------------------------------------
@@ -92,11 +92,11 @@ void cChatBoxPlayerListViewItem::handleResized (const cPosition& oldSize)
 {
 	cAbstractListViewItem::handleResized (oldSize);
 
-	if (oldSize.x () == getSize ().x ()) return;
+	if (oldSize.x() == getSize().x()) return;
 
-	readyImage->moveTo (getPosition () + cPosition (getSize ().x () - 10, 0));
+	readyImage->moveTo (getPosition() + cPosition (getSize().x() - 10, 0));
 
-	nameLabel->resize (cPosition (getSize ().x () - readyImage->getSize ().x () - colorImage->getSize ().x () - 4, readyImage->getSize ().y ()));
+	nameLabel->resize (cPosition (getSize().x() - readyImage->getSize().x() - colorImage->getSize().x() - 4, readyImage->getSize().y()));
 
-	fitToChildren ();
+	fitToChildren();
 }

@@ -43,15 +43,15 @@ class cLineEdit : public cClickableWidget
 {
 public:
 	cLineEdit (const cBox<cPosition>& area, eLineEditFrameType frameType = eLineEditFrameType::None, eUnicodeFontType fontType = FONT_LATIN_NORMAL);
-	~cLineEdit ();
+	~cLineEdit();
 
-	const std::string& getText ();
+	const std::string& getText();
 	void setText (std::string text);
 
 	void setReadOnly (bool readOnly);
 	void setValidator (std::unique_ptr<cValidator> validator);
 
-	void finishEditing ();
+	void finishEditing();
 
 	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 
@@ -90,20 +90,20 @@ private:
 	bool showCursor;
 	std::chrono::steady_clock::time_point lastCursorBlinkTime;
 
-	void createBackground ();
+	void createBackground();
 
-	cPosition getTextDrawOffset () const;
-	int getBorderSize () const;
+	cPosition getTextDrawOffset() const;
+	int getBorderSize() const;
 
-	void resetTextPosition ();
+	void resetTextPosition();
 	void doPosIncrease (int& value, int pos);
 	void doPosDecrease (int& pos);
 	void scrollLeft (bool changeCursor = true);
-	void scrollRight ();
-	void deleteLeft ();
-	void deleteRight ();
+	void scrollRight();
+	void deleteLeft();
+	void deleteRight();
 
-	void finishEditingInternal ();
+	void finishEditingInternal();
 };
 
 #endif // ui_graphical_menu_widgets_lineeditH

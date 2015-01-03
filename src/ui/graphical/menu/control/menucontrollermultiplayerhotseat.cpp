@@ -43,28 +43,28 @@ cMenuControllerMultiplayerHotSeat::cMenuControllerMultiplayerHotSeat (cApplicati
 {}
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHotSeat::start ()
+void cMenuControllerMultiplayerHotSeat::start()
 {
 	game = std::make_shared<cLocalHotSeatGameNew> ();
 
-	selectGameSettings ();
+	selectGameSettings();
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHotSeat::reset ()
+void cMenuControllerMultiplayerHotSeat::reset()
 {
 	game = nullptr;
 	windowPlayerSelection = nullptr;
 	firstWindow = nullptr;
 	landingPositionManager = nullptr;
-	nextInvalidLandingPositionPlayers.clear ();
-	invalidLandingPositionPlayers.clear ();
-	playerLandingSelectionWindows.clear ();
-	landingSelectionWindowConnections.disconnectAll ();
+	nextInvalidLandingPositionPlayers.clear();
+	invalidLandingPositionPlayers.clear();
+	playerLandingSelectionWindows.clear();
+	landingSelectionWindowConnections.disconnectAll();
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHotSeat::selectGameSettings ()
+void cMenuControllerMultiplayerHotSeat::selectGameSettings()
 {
 	if (!game) return;
 
@@ -75,23 +75,23 @@ void cMenuControllerMultiplayerHotSeat::selectGameSettings ()
 
 	firstWindow = windowGameSettings;
 
-	windowGameSettings->done.connect ([=]()
+	windowGameSettings->done.connect ([ = ]()
 	{
-		auto gameSettings = std::make_shared<cGameSettings> (windowGameSettings->getGameSettings ());
+		auto gameSettings = std::make_shared<cGameSettings> (windowGameSettings->getGameSettings());
 		game->setGameSettings (gameSettings);
 
-		selectMap ();
+		selectMap();
 	});
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHotSeat::selectMap ()
+void cMenuControllerMultiplayerHotSeat::selectMap()
 {
 	if (!game) return;
 
 	auto windowMapSelection = application.show (std::make_shared<cWindowMapSelection> ());
 
-	windowMapSelection->done.connect ([=]()
+	windowMapSelection->done.connect ([ = ]()
 	{
 		auto staticMap = std::make_shared<cStaticMap> ();
 		if (!windowMapSelection->loadSelectedMap (*staticMap))
@@ -101,20 +101,20 @@ void cMenuControllerMultiplayerHotSeat::selectMap ()
 		}
 		game->setStaticMap (staticMap);
 
-		selectPlayers ();
+		selectPlayers();
 	});
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHotSeat::selectPlayers ()
+void cMenuControllerMultiplayerHotSeat::selectPlayers()
 {
 	if (!game) return;
 
 	windowPlayerSelection = application.show (std::make_shared<cWindowPlayerSelection> ());
 
-	windowPlayerSelection->done.connect ([=]()
+	windowPlayerSelection->done.connect ([ = ]()
 	{
-		const auto& playerTypes = windowPlayerSelection->getPlayerTypes ();
+		const auto& playerTypes = windowPlayerSelection->getPlayerTypes();
 
 		const char* const playerNames[] =
 		{
@@ -130,7 +130,7 @@ void cMenuControllerMultiplayerHotSeat::selectPlayers ()
 
 		std::vector<cPlayerBasicData> players;
 		int playerNum = 0;
-		for (size_t i = 0; i < playerTypes.size (); ++i)
+		for (size_t i = 0; i < playerTypes.size(); ++i)
 		{
 			if (playerTypes[i] == ePlayerType::Human)
 			{
@@ -138,21 +138,21 @@ void cMenuControllerMultiplayerHotSeat::selectPlayers ()
 				players.push_back (player);
 			}
 		}
-		assert (players.size () > 0);
+		assert (players.size() > 0);
 
 		game->setPlayers (players);
 
-		playerLandingSelectionWindows.resize (players.size ());
+		playerLandingSelectionWindows.resize (players.size());
 		landingPositionManager = std::make_unique<cLandingPositionManager> (players);
-		landingPositionManager->landingPositionStateChanged.connect ([this](const cPlayerBasicData& player, eLandingPositionState state)
+		landingPositionManager->landingPositionStateChanged.connect ([this] (const cPlayerBasicData & player, eLandingPositionState state)
 		{
 			if (state == eLandingPositionState::TooClose || state == eLandingPositionState::Warning)
 			{
-				for (size_t i = 0; i < game->getPlayerCount (); ++i)
+				for (size_t i = 0; i < game->getPlayerCount(); ++i)
 				{
-					if (game->getPlayer (i).getNr () == player.getNr ())
+					if (game->getPlayer (i).getNr() == player.getNr())
 					{
-						nextInvalidLandingPositionPlayers.push_back (std::make_pair(i, state));
+						nextInvalidLandingPositionPlayers.push_back (std::make_pair (i, state));
 						break;
 					}
 				}
@@ -166,10 +166,10 @@ void cMenuControllerMultiplayerHotSeat::selectPlayers ()
 //------------------------------------------------------------------------------
 void cMenuControllerMultiplayerHotSeat::startNextPlayerGamePreperation (size_t playerIndex)
 {
-	auto dialog = application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Multiplayer~Player_Turn", game->getPlayer (playerIndex).getName ()), eWindowBackgrounds::Black));
+	auto dialog = application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Multiplayer~Player_Turn", game->getPlayer (playerIndex).getName()), eWindowBackgrounds::Black));
 	dialog->done.connect ([this, playerIndex]()
 	{
-		if (game->getGameSettings ()->getClansEnabled ())
+		if (game->getGameSettings()->getClansEnabled())
 		{
 			selectClan (playerIndex, true);
 		}
@@ -187,23 +187,23 @@ void cMenuControllerMultiplayerHotSeat::selectClan (size_t playerIndex, bool fir
 
 	auto windowClanSelection = application.show (std::make_shared<cWindowClanSelection> ());
 
-	windowClanSelection->done.connect ([=]()
+	windowClanSelection->done.connect ([ = ]()
 	{
-		game->setPlayerClan (playerIndex, windowClanSelection->getSelectedClan ());
+		game->setPlayerClan (playerIndex, windowClanSelection->getSelectedClan());
 
 		selectLandingUnits (playerIndex, false);
 	});
 
 	if (firstForPlayer)
 	{
-		windowClanSelection->canceled.connect ([=]()
+		windowClanSelection->canceled.connect ([ = ]()
 		{
 			application.closeTill (*windowPlayerSelection);
 		});
 	}
 	else
 	{
-		windowClanSelection->canceled.connect ([=](){ windowClanSelection->close (); });
+		windowClanSelection->canceled.connect ([ = ]() { windowClanSelection->close(); });
 	}
 }
 
@@ -212,28 +212,28 @@ void cMenuControllerMultiplayerHotSeat::selectLandingUnits (size_t playerIndex, 
 {
 	if (!game) return;
 
-	auto initialLandingUnits = createInitialLandingUnitsList (game->getPlayerClan(playerIndex), *game->getGameSettings());
+	auto initialLandingUnits = createInitialLandingUnitsList (game->getPlayerClan (playerIndex), *game->getGameSettings());
 
-	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (game->getPlayer (playerIndex).getColor (), game->getPlayerClan (playerIndex), initialLandingUnits, game->getGameSettings ()->getStartCredits ()));
+	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (game->getPlayer (playerIndex).getColor(), game->getPlayerClan (playerIndex), initialLandingUnits, game->getGameSettings()->getStartCredits()));
 
-	windowLandingUnitSelection->done.connect ([=]()
+	windowLandingUnitSelection->done.connect ([ = ]()
 	{
-		game->setLandingUnits (playerIndex, windowLandingUnitSelection->getLandingUnits ());
-		game->setUnitUpgrades (playerIndex, windowLandingUnitSelection->getUnitUpgrades ());
+		game->setLandingUnits (playerIndex, windowLandingUnitSelection->getLandingUnits());
+		game->setUnitUpgrades (playerIndex, windowLandingUnitSelection->getUnitUpgrades());
 
 		selectLandingPosition (playerIndex);
 	});
 
 	if (firstForPlayer)
 	{
-		windowLandingUnitSelection->canceled.connect ([=]()
+		windowLandingUnitSelection->canceled.connect ([ = ]()
 		{
 			application.closeTill (*windowPlayerSelection);
 		});
 	}
 	else
 	{
-		windowLandingUnitSelection->canceled.connect ([=](){ windowLandingUnitSelection->close (); });
+		windowLandingUnitSelection->canceled.connect ([ = ]() { windowLandingUnitSelection->close(); });
 	}
 }
 
@@ -242,19 +242,19 @@ void cMenuControllerMultiplayerHotSeat::selectLandingPosition (size_t playerInde
 {
 	if (!game) return;
 
-	playerLandingSelectionWindows[playerIndex] = std::make_shared<cWindowLandingPositionSelection> (game->getStaticMap (), false);
+	playerLandingSelectionWindows[playerIndex] = std::make_shared<cWindowLandingPositionSelection> (game->getStaticMap(), false);
 
 	auto windowLandingPositionSelection = application.show (playerLandingSelectionWindows[playerIndex]);
 
-	windowLandingPositionSelection->canceled.connect ([=]() {windowLandingPositionSelection->close (); });
-	landingSelectionWindowConnections.connect(windowLandingPositionSelection->selectedPosition, [=](cPosition landingPosition)
+	windowLandingPositionSelection->canceled.connect ([ = ]() {windowLandingPositionSelection->close(); });
+	landingSelectionWindowConnections.connect (windowLandingPositionSelection->selectedPosition, [ = ] (cPosition landingPosition)
 	{
 		landingPositionManager->setLandingPosition (game->getPlayer (playerIndex), landingPosition);
 		game->setLandingPosition (playerIndex, landingPosition);
 
-		if (playerIndex == game->getPlayerCount () - 1)
+		if (playerIndex == game->getPlayerCount() - 1)
 		{
-			checkAllLandingPositions ();
+			checkAllLandingPositions();
 		}
 		else
 		{
@@ -264,21 +264,21 @@ void cMenuControllerMultiplayerHotSeat::selectLandingPosition (size_t playerInde
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHotSeat::checkAllLandingPositions ()
+void cMenuControllerMultiplayerHotSeat::checkAllLandingPositions()
 {
 	std::swap (invalidLandingPositionPlayers, nextInvalidLandingPositionPlayers);
-	nextInvalidLandingPositionPlayers.clear ();
+	nextInvalidLandingPositionPlayers.clear();
 
-	landingSelectionWindowConnections.disconnectAll ();
+	landingSelectionWindowConnections.disconnectAll();
 
-	if (!invalidLandingPositionPlayers.empty ())
+	if (!invalidLandingPositionPlayers.empty())
 	{
 		reselectLandingPosition (0);
 	}
 	else
 	{
 		application.closeTill (*firstWindow);
-		firstWindow->close ();
+		firstWindow->close();
 		signalConnectionManager.connect (firstWindow->terminated, [&]() { firstWindow = nullptr; });
 
 		game->start (application);
@@ -291,21 +291,21 @@ void cMenuControllerMultiplayerHotSeat::reselectLandingPosition (size_t reselect
 	auto playerIndex = invalidLandingPositionPlayers[reselectIndex].first;
 	auto landingState = invalidLandingPositionPlayers[reselectIndex].second;
 
-	auto dialog = application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Multiplayer~Player_Turn", game->getPlayer(playerIndex).getName()), eWindowBackgrounds::Black));
-	dialog->done.connect ([=]()
+	auto dialog = application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Multiplayer~Player_Turn", game->getPlayer (playerIndex).getName()), eWindowBackgrounds::Black));
+	dialog->done.connect ([ = ]()
 	{
 		auto windowLandingPositionSelection = application.show (playerLandingSelectionWindows[playerIndex]);
 
 		windowLandingPositionSelection->applyReselectionState (landingState);
 
-		landingSelectionWindowConnections.connect(windowLandingPositionSelection->selectedPosition, [=](cPosition landingPosition)
+		landingSelectionWindowConnections.connect (windowLandingPositionSelection->selectedPosition, [ = ] (cPosition landingPosition)
 		{
 			landingPositionManager->setLandingPosition (game->getPlayer (playerIndex), landingPosition);
 			game->setLandingPosition (playerIndex, landingPosition);
 
-			if (reselectIndex == invalidLandingPositionPlayers.size () - 1)
+			if (reselectIndex == invalidLandingPositionPlayers.size() - 1)
 			{
-				checkAllLandingPositions ();
+				checkAllLandingPositions();
 			}
 			else
 			{

@@ -31,24 +31,24 @@
 class cPlayerBasicData
 {
 public:
-	cPlayerBasicData ();
+	cPlayerBasicData();
 	cPlayerBasicData (const std::string& name_, cPlayerColor color, int Nr_, int socketIndex_ = -1);
 	cPlayerBasicData (const cPlayerBasicData& other);
-	cPlayerBasicData& operator=(const cPlayerBasicData& other);
+	cPlayerBasicData& operator= (const cPlayerBasicData& other);
 
-	const std::string& getName () const;
+	const std::string& getName() const;
 	void setName (std::string name);
-	const cPlayerColor& getColor () const { return color; }
+	const cPlayerColor& getColor() const { return color; }
 	void setColor (cPlayerColor color);
-	int getNr () const;
+	int getNr() const;
 	void setNr (int index);
-	int getSocketIndex () const;
+	int getSocketIndex() const;
 	void setSocketIndex (int index);
 	void setLocal();
 	bool isLocal() const;
 	void onSocketIndexDisconnected (int socketIndex);
 	void setReady (bool ready);
-	bool isReady () const;
+	bool isReady() const;
 
 	mutable cSignal<void ()> nameChanged;
 	mutable cSignal<void ()> numberChanged;

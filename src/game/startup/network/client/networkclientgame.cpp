@@ -23,13 +23,13 @@
 #include "loaddata.h"
 
 //------------------------------------------------------------------------------
-cNetworkClientGame::~cNetworkClientGame ()
+cNetworkClientGame::~cNetworkClientGame()
 {}
 
 //------------------------------------------------------------------------------
-void cNetworkClientGame::run ()
+void cNetworkClientGame::run()
 {
-	if (localClient) localClient->getGameTimer()->run ();
+	if (localClient) localClient->getGameTimer()->run();
 }
 
 //------------------------------------------------------------------------------

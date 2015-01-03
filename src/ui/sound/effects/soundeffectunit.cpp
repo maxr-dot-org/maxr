@@ -27,13 +27,13 @@ cSoundEffectUnit::cSoundEffectUnit (eSoundEffectType type, const cSoundChunk& so
 {}
 
 //--------------------------------------------------------------------------
-bool cSoundEffectUnit::hasPosition () const
+bool cSoundEffectUnit::hasPosition() const
 {
 	return true;
 }
 
 //--------------------------------------------------------------------------
-const cPosition& cSoundEffectUnit::getPosition () const
+const cPosition& cSoundEffectUnit::getPosition() const
 {
-	return unit.getPosition ();
+	return unit.getPosition();
 }

@@ -37,8 +37,8 @@ public:
 
 	cSignal<void ()> clicked;
 
-	void disableAtTransparent ();
-	void enableAtTransparent ();
+	void disableAtTransparent();
+	void enableAtTransparent();
 
 	virtual bool isAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
 protected:

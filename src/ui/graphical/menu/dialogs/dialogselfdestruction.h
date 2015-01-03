@@ -33,7 +33,7 @@ class cDialogSelfDestruction : public cWindow
 {
 public:
 	cDialogSelfDestruction (const cUnit& unit, std::shared_ptr<cAnimationTimer> animationTimer);
-	~cDialogSelfDestruction ();
+	~cDialogSelfDestruction();
 
 	cSignal<void ()> triggeredDestruction;
 private:
@@ -43,9 +43,9 @@ private:
 	cPushButton* destroyButton;
 	cProtectionGlass* protectionGlass;
 
-	void armcClicked ();
+	void armcClicked();
 
-	void closeOnUnitDestruction ();
+	void closeOnUnitDestruction();
 };
 
 #endif // ui_graphical_menu_dialogs_dialogselfdestructionH

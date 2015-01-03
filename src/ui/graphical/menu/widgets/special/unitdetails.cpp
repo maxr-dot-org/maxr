@@ -38,10 +38,10 @@ cUnitDetails::cUnitDetails (const cPosition& position) :
 	}
 
 	const cPosition size (250, 170);
-    surface = AutoSurface (SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0));
+	surface = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
 
-	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
-	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
+	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
 
 	resize (size);
 }
@@ -51,17 +51,17 @@ void cUnitDetails::draw (SDL_Surface& destination, const cBox<cPosition>& clipRe
 {
 	if (surface != nullptr)
 	{
-		reset ();
+		reset();
 
-		SDL_Rect position = getArea ().toSdlRect ();
-		SDL_BlitSurface (surface.get (), nullptr, &destination, &position);
+		SDL_Rect position = getArea().toSdlRect();
+		SDL_BlitSurface (surface.get(), nullptr, &destination, &position);
 	}
 
 	cWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------
-const sID* cUnitDetails::getCurrentUnitId ()
+const sID* cUnitDetails::getCurrentUnitId()
 {
 	if (playerOriginalData != nullptr)
 	{
@@ -103,20 +103,20 @@ void cUnitDetails::drawRow (size_t index, eUnitDataSymbolType symbolType, int am
 
 	if (index != 0)
 	{
-		SDL_Rect dest = {0, int(rowHeight * index - 3), surface->w, 1};
-		SDL_FillRect (surface.get (), &dest, 0xFFFC0000);
+		SDL_Rect dest = {0, int (rowHeight * index - 3), surface->w, 1};
+		SDL_FillRect (surface.get(), &dest, 0xFFFC0000);
 	}
 
-	amountLabels[index]->show ();
-	nameLabels[index]->show ();
+	amountLabels[index]->show();
+	nameLabels[index]->show();
 
-	amountLabels[index]->setText (iToStr(amount));
+	amountLabels[index]->setText (iToStr (amount));
 	nameLabels[index]->setText (name);
 	drawBigSymbols (symbolType, cPosition (95, rowHeight * index), value1, value2);
 }
 
 //------------------------------------------------------------------------------
-void cUnitDetails::reset ()
+void cUnitDetails::reset()
 {
 	if (unitObjectCurrentData == nullptr || playerCurrentData == nullptr || playerOriginalData == nullptr) return;
 
@@ -124,33 +124,33 @@ void cUnitDetails::reset ()
 
 	size_t rowIndex = 0;
 
-	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
-	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
+	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
 
 	if (unitObjectCurrentData->canAttack)
 	{
 		// Damage:
 		upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_DAMAGE) : nullptr;
-		drawRow (rowIndex++, eUnitDataSymbolType::Attack, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getDamage (), lngPack.i18n ("Text~Others~Attack_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getDamage (), playerOriginalData->getDamage ());
+		drawRow (rowIndex++, eUnitDataSymbolType::Attack, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getDamage(), lngPack.i18n ("Text~Others~Attack_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getDamage(), playerOriginalData->getDamage());
 
 		if (!unitObjectCurrentData->explodesOnContact)
 		{
 			// Shots:
 			upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SHOTS) : nullptr;
-			drawRow (rowIndex++, eUnitDataSymbolType::Shots, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getShotsMax(), lngPack.i18n ("Text~Others~Shots_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getShotsMax(), playerOriginalData->getShotsMax());
+			drawRow (rowIndex++, eUnitDataSymbolType::Shots, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getShotsMax(), lngPack.i18n ("Text~Others~Shots_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getShotsMax(), playerOriginalData->getShotsMax());
 
 			// Range:
 			upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_RANGE) : nullptr;
-			drawRow (rowIndex++, eUnitDataSymbolType::Range, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getRange (), lngPack.i18n ("Text~Others~Range_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getRange (), playerOriginalData->getRange ());
+			drawRow (rowIndex++, eUnitDataSymbolType::Range, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getRange(), lngPack.i18n ("Text~Others~Range_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getRange(), playerOriginalData->getRange());
 
 			// Ammo:
 			upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_AMMO) : nullptr;
-			drawRow (rowIndex++, eUnitDataSymbolType::Ammo, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getAmmoMax(), lngPack.i18n ("Text~Others~Ammo_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getAmmoMax(), playerOriginalData->getAmmoMax());
+			drawRow (rowIndex++, eUnitDataSymbolType::Ammo, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getAmmoMax(), lngPack.i18n ("Text~Others~Ammo_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getAmmoMax(), playerOriginalData->getAmmoMax());
 		}
 	}
 
 	sUnitData::eStorageResType transport;
-	if (unitId.isAVehicle ()) transport = unitObjectCurrentData->storeResType;
+	if (unitId.isAVehicle()) transport = unitObjectCurrentData->storeResType;
 	else transport = unitObjectCurrentData->storeResType;
 
 	if (transport != sUnitData::STORE_RES_NONE)
@@ -158,16 +158,16 @@ void cUnitDetails::reset ()
 		eUnitDataSymbolType symbolType;
 		switch (transport)
 		{
-		case sUnitData::STORE_RES_METAL:
-			symbolType = eUnitDataSymbolType::Metal;
-			break;
-		case sUnitData::STORE_RES_OIL:
-			symbolType = eUnitDataSymbolType::Oil;
-			break;
-		case sUnitData::STORE_RES_GOLD:
-			symbolType = eUnitDataSymbolType::Gold;
-			break;
-		case sUnitData::STORE_RES_NONE: break;
+			case sUnitData::STORE_RES_METAL:
+				symbolType = eUnitDataSymbolType::Metal;
+				break;
+			case sUnitData::STORE_RES_OIL:
+				symbolType = eUnitDataSymbolType::Oil;
+				break;
+			case sUnitData::STORE_RES_GOLD:
+				symbolType = eUnitDataSymbolType::Gold;
+				break;
+			case sUnitData::STORE_RES_NONE: break;
 		}
 		drawRow (rowIndex++, symbolType, unitObjectCurrentData->storageResMax, lngPack.i18n ("Text~Others~Cargo_7"), unitObjectCurrentData->storageResMax, playerOriginalData->storageResMax);
 	}
@@ -189,24 +189,24 @@ void cUnitDetails::reset ()
 
 	// Armor:
 	upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_ARMOR) : nullptr;
-	drawRow (rowIndex++, eUnitDataSymbolType::Armor, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getArmor (), lngPack.i18n ("Text~Others~Armor_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getArmor (), playerOriginalData->getArmor ());
+	drawRow (rowIndex++, eUnitDataSymbolType::Armor, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getArmor(), lngPack.i18n ("Text~Others~Armor_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getArmor(), playerOriginalData->getArmor());
 
 	// Hit points:
 	upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_HITS) : nullptr;
-	drawRow (rowIndex++, eUnitDataSymbolType::Hits, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getHitpointsMax(), lngPack.i18n ("Text~Others~Hitpoints_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getHitpointsMax(), playerOriginalData->getHitpointsMax());
+	drawRow (rowIndex++, eUnitDataSymbolType::Hits, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getHitpointsMax(), lngPack.i18n ("Text~Others~Hitpoints_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getHitpointsMax(), playerOriginalData->getHitpointsMax());
 
 	// Scan:
-	if (unitObjectCurrentData->getScan ())
+	if (unitObjectCurrentData->getScan())
 	{
 		upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SCAN) : nullptr;
-		drawRow (rowIndex++, eUnitDataSymbolType::Scan, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getScan (), lngPack.i18n ("Text~Others~Scan_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getScan (), playerOriginalData->getScan ());
+		drawRow (rowIndex++, eUnitDataSymbolType::Scan, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getScan(), lngPack.i18n ("Text~Others~Scan_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getScan(), playerOriginalData->getScan());
 	}
 
 	// Speed:
 	if (unitObjectCurrentData->getSpeedMax())
 	{
 		upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SPEED) : nullptr;
-		drawRow (rowIndex++, eUnitDataSymbolType::Speed, (upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getSpeedMax()) / 4, lngPack.i18n ("Text~Others~Speed_7"), (upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getSpeedMax()) / 4, playerOriginalData->getSpeedMax() / 4);
+		drawRow (rowIndex++, eUnitDataSymbolType::Speed, (upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getSpeedMax()) / 4, lngPack.i18n ("Text~Others~Speed_7"), (upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getSpeedMax()) / 4, playerOriginalData->getSpeedMax() / 4);
 	}
 
 	// energy consumption:
@@ -240,8 +240,8 @@ void cUnitDetails::reset ()
 
 	while (rowIndex < maxRows)
 	{
-		amountLabels[rowIndex]->hide ();
-		nameLabels[rowIndex]->hide ();
+		amountLabels[rowIndex]->hide();
+		nameLabels[rowIndex]->hide();
 		++rowIndex;
 	}
 }
@@ -252,11 +252,11 @@ void cUnitDetails::drawBigSymbols (eUnitDataSymbolType symbolType, const cPositi
 	int maxX = 160;
 	auto src = getBigSymbolPosition (symbolType);
 	const auto srcSize = src.getSize();
-	maxX -= srcSize.x ();
+	maxX -= srcSize.x();
 
 	if (value2 != value1) maxX -= srcSize.x() + 3;
 	if (value2 < value1) std::swap (value1, value2);
-	int offX = srcSize.x ();
+	int offX = srcSize.x();
 	while (offX * value2 > maxX)
 	{
 		--offX;
@@ -264,24 +264,24 @@ void cUnitDetails::drawBigSymbols (eUnitDataSymbolType symbolType, const cPositi
 		{
 			value1 /= 2;
 			value2 /= 2;
-			offX = srcSize.x ();
+			offX = srcSize.x();
 		}
 	}
-	SDL_Rect dest = {position.x (), position.y () + (rowHeight-4 - srcSize.y ()) / 2, 0, 0};
+	SDL_Rect dest = {position.x(), position.y() + (rowHeight - 4 - srcSize.y()) / 2, 0, 0};
 
 	for (int i = 0; i != value1; ++i)
 	{
-		auto srcRect = src.toSdlRect ();
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &srcRect, surface.get (), &dest);
+		auto srcRect = src.toSdlRect();
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &srcRect, surface.get(), &dest);
 
 		dest.x += offX;
 	}
 	if (value1 == value2) return;
 
-	dest.x += srcSize.x () + 3;
-	SDL_Rect mark = {Sint16 (dest.x - srcSize.x () / 2), dest.y, 1, srcSize.y()};
+	dest.x += srcSize.x() + 3;
+	SDL_Rect mark = {Sint16 (dest.x - srcSize.x() / 2), dest.y, 1, srcSize.y()};
 
-	SDL_FillRect (surface.get (), &mark, 0xFFFC0000);
+	SDL_FillRect (surface.get(), &mark, 0xFFFC0000);
 
 	if (symbolType == eUnitDataSymbolType::Metal)
 	{
@@ -289,8 +289,8 @@ void cUnitDetails::drawBigSymbols (eUnitDataSymbolType symbolType, const cPositi
 	}
 	for (int i = value1; i != value2; ++i)
 	{
-		auto srcRect = src.toSdlRect ();
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &srcRect, surface.get (), &dest);
+		auto srcRect = src.toSdlRect();
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &srcRect, surface.get(), &dest);
 
 		dest.x += offX;
 	}
@@ -304,79 +304,79 @@ cBox<cPosition> cUnitDetails::getBigSymbolPosition (eUnitDataSymbolType symbolTy
 
 	switch (symbolType)
 	{
-	case eUnitDataSymbolType::Speed:
-		position.x () = 0;
-		size.x () = 11;
-		size.y () = 12;
-		break;
-	case eUnitDataSymbolType::Hits:
-		position.x () = 11;
-		size.x () = 7;
-		size.y () = 11;
-		break;
-	case eUnitDataSymbolType::Ammo:
-		position.x () = 18;
-		size.x () = 9;
-		size.y () = 14;
-		break;
-	case eUnitDataSymbolType::Attack:
-		position.x () = 27;
-		size.x () = 10;
-		size.y () = 14;
-		break;
-	case eUnitDataSymbolType::Shots:
-		position.x () = 37;
-		size.x () = 15;
-		size.y () = 7;
-		break;
-	case eUnitDataSymbolType::Range:
-		position.x () = 52;
-		size.x () = 13;
-		size.y () = 13;
-		break;
-	case eUnitDataSymbolType::Armor:
-		position.x () = 65;
-		size.x () = 11;
-		size.y () = 14;
-		break;
-	case eUnitDataSymbolType::Scan:
-		position.x () = 76;
-		size.x () = 13;
-		size.y () = 13;
-		break;
-	case eUnitDataSymbolType::Metal:
-		position.x () = 89;
-		size.x () = 12;
-		size.y () = 15;
-		break;
-	case eUnitDataSymbolType::MetalEmpty:
-		position.x () = 175;
-		size.x () = 12;
-		size.y () = 15;
-		break;
-	case eUnitDataSymbolType::Oil:
-		position.x () = 101;
-		size.x () = 11;
-		size.y () = 12;
-		break;
-	case eUnitDataSymbolType::Gold:
-		position.x () = 112;
-		size.x () = 13;
-		size.y () = 10;
-		break;
-	case eUnitDataSymbolType::Energy:
-		position.x () = 125;
-		size.x () = 13;
-		size.y () = 17;
-		break;
-	case eUnitDataSymbolType::Human:
-		position.x () = 138;
-		size.x () = 12;
-		size.y () = 16;
-		break;
-	case eUnitDataSymbolType::TransportTank:
-	case eUnitDataSymbolType::TransportAir:
-		break;
+		case eUnitDataSymbolType::Speed:
+			position.x() = 0;
+			size.x() = 11;
+			size.y() = 12;
+			break;
+		case eUnitDataSymbolType::Hits:
+			position.x() = 11;
+			size.x() = 7;
+			size.y() = 11;
+			break;
+		case eUnitDataSymbolType::Ammo:
+			position.x() = 18;
+			size.x() = 9;
+			size.y() = 14;
+			break;
+		case eUnitDataSymbolType::Attack:
+			position.x() = 27;
+			size.x() = 10;
+			size.y() = 14;
+			break;
+		case eUnitDataSymbolType::Shots:
+			position.x() = 37;
+			size.x() = 15;
+			size.y() = 7;
+			break;
+		case eUnitDataSymbolType::Range:
+			position.x() = 52;
+			size.x() = 13;
+			size.y() = 13;
+			break;
+		case eUnitDataSymbolType::Armor:
+			position.x() = 65;
+			size.x() = 11;
+			size.y() = 14;
+			break;
+		case eUnitDataSymbolType::Scan:
+			position.x() = 76;
+			size.x() = 13;
+			size.y() = 13;
+			break;
+		case eUnitDataSymbolType::Metal:
+			position.x() = 89;
+			size.x() = 12;
+			size.y() = 15;
+			break;
+		case eUnitDataSymbolType::MetalEmpty:
+			position.x() = 175;
+			size.x() = 12;
+			size.y() = 15;
+			break;
+		case eUnitDataSymbolType::Oil:
+			position.x() = 101;
+			size.x() = 11;
+			size.y() = 12;
+			break;
+		case eUnitDataSymbolType::Gold:
+			position.x() = 112;
+			size.x() = 13;
+			size.y() = 10;
+			break;
+		case eUnitDataSymbolType::Energy:
+			position.x() = 125;
+			size.x() = 13;
+			size.y() = 17;
+			break;
+		case eUnitDataSymbolType::Human:
+			position.x() = 138;
+			size.x() = 12;
+			size.y() = 16;
+			break;
+		case eUnitDataSymbolType::TransportTank:
+		case eUnitDataSymbolType::TransportAir:
+			break;
 	}
 
 	return cBox<cPosition> (position, position + size - 1);

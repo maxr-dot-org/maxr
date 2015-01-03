@@ -26,8 +26,8 @@
 #include "game/logic/clientevents.h"
 
 //------------------------------------------------------------------------------
-cGameGuiState::cGameGuiState () :
-	mapPosition (0,0),
+cGameGuiState::cGameGuiState() :
+	mapPosition (0, 0),
 	mapZoomFactor (1.),
 	surveyActive (false),
 	hitsActive (false),
@@ -52,7 +52,7 @@ void cGameGuiState::setMapPosition (const cPosition& position)
 }
 
 //------------------------------------------------------------------------------
-const cPosition& cGameGuiState::getMapPosition () const
+const cPosition& cGameGuiState::getMapPosition() const
 {
 	return mapPosition;
 }
@@ -64,7 +64,7 @@ void cGameGuiState::setMapZoomFactor (float zoom)
 }
 
 //------------------------------------------------------------------------------
-float cGameGuiState::getMapZoomFactor () const
+float cGameGuiState::getMapZoomFactor() const
 {
 	return mapZoomFactor;
 }
@@ -76,7 +76,7 @@ void cGameGuiState::setSurveyActive (bool value)
 }
 
 //------------------------------------------------------------------------------
-bool cGameGuiState::getSurveyActive () const
+bool cGameGuiState::getSurveyActive() const
 {
 	return surveyActive;
 }
@@ -88,7 +88,7 @@ void cGameGuiState::setHitsActive (bool value)
 }
 
 //------------------------------------------------------------------------------
-bool cGameGuiState::getHitsActive () const
+bool cGameGuiState::getHitsActive() const
 {
 	return hitsActive;
 }
@@ -100,7 +100,7 @@ void cGameGuiState::setScanActive (bool value)
 }
 
 //------------------------------------------------------------------------------
-bool cGameGuiState::getScanActive () const
+bool cGameGuiState::getScanActive() const
 {
 	return scanActive;
 }
@@ -112,7 +112,7 @@ void cGameGuiState::setStatusActive (bool value)
 }
 
 //------------------------------------------------------------------------------
-bool cGameGuiState::getStatusActive () const
+bool cGameGuiState::getStatusActive() const
 {
 	return statusActive;
 }
@@ -124,7 +124,7 @@ void cGameGuiState::setAmmoActive (bool value)
 }
 
 //------------------------------------------------------------------------------
-bool cGameGuiState::getAmmoActive () const
+bool cGameGuiState::getAmmoActive() const
 {
 	return ammoActive;
 }
@@ -136,7 +136,7 @@ void cGameGuiState::setGridActive (bool value)
 }
 
 //------------------------------------------------------------------------------
-bool cGameGuiState::getGridActive () const
+bool cGameGuiState::getGridActive() const
 {
 	return gridActive;
 }
@@ -148,7 +148,7 @@ void cGameGuiState::setColorActive (bool value)
 }
 
 //------------------------------------------------------------------------------
-bool cGameGuiState::getColorActive () const
+bool cGameGuiState::getColorActive() const
 {
 	return colorActive;
 }
@@ -160,7 +160,7 @@ void cGameGuiState::setRangeActive (bool value)
 }
 
 //------------------------------------------------------------------------------
-bool cGameGuiState::getRangeActive () const
+bool cGameGuiState::getRangeActive() const
 {
 	return rangeActive;
 }
@@ -172,7 +172,7 @@ void cGameGuiState::setFogActive (bool value)
 }
 
 //------------------------------------------------------------------------------
-bool cGameGuiState::getFogActive () const
+bool cGameGuiState::getFogActive() const
 {
 	return fogActive;
 }
@@ -184,7 +184,7 @@ void cGameGuiState::setLockActive (bool value)
 }
 
 //------------------------------------------------------------------------------
-bool cGameGuiState::getLockActive () const
+bool cGameGuiState::getLockActive() const
 {
 	return lockActive;
 }
@@ -196,7 +196,7 @@ void cGameGuiState::setMiniMapZoomFactorActive (bool value)
 }
 
 //------------------------------------------------------------------------------
-bool cGameGuiState::getMiniMapZoomFactorActive () const
+bool cGameGuiState::getMiniMapZoomFactorActive() const
 {
 	return miniMapZoomFactorActive;
 }
@@ -208,7 +208,7 @@ void cGameGuiState::setMiniMapAttackUnitsOnly (bool value)
 }
 
 //------------------------------------------------------------------------------
-bool cGameGuiState::getMiniMapAttackUnitsOnly () const
+bool cGameGuiState::getMiniMapAttackUnitsOnly() const
 {
 	return miniMapAttackUnitsOnly;
 }
@@ -220,7 +220,7 @@ void cGameGuiState::setUnitVideoPlaying (bool value)
 }
 
 //------------------------------------------------------------------------------
-bool cGameGuiState::getUnitVideoPlaying () const
+bool cGameGuiState::getUnitVideoPlaying() const
 {
 	return unitVideoPlaying;
 }
@@ -232,7 +232,7 @@ void cGameGuiState::setChatActive (bool value)
 }
 
 //------------------------------------------------------------------------------
-bool cGameGuiState::getChatActive () const
+bool cGameGuiState::getChatActive() const
 {
 	return chatActive;
 }
@@ -240,16 +240,16 @@ bool cGameGuiState::getChatActive () const
 //------------------------------------------------------------------------------
 void cGameGuiState::setSelectedUnits (const cUnitSelection& unitSelection)
 {
-	selectedUnitIds.clear ();
-	const auto selectedUnits = unitSelection.getSelectedUnits ();
-	for (size_t i = 0; i < selectedUnits.size (); ++i)
+	selectedUnitIds.clear();
+	const auto selectedUnits = unitSelection.getSelectedUnits();
+	for (size_t i = 0; i < selectedUnits.size(); ++i)
 	{
 		selectedUnitIds.push_back (selectedUnits[i]->iID);
 	}
 }
 
 //------------------------------------------------------------------------------
-const std::vector<unsigned int>& cGameGuiState::getSelectedUnitIds () const
+const std::vector<unsigned int>& cGameGuiState::getSelectedUnitIds() const
 {
 	return selectedUnitIds;
 }
@@ -257,15 +257,15 @@ const std::vector<unsigned int>& cGameGuiState::getSelectedUnitIds () const
 //------------------------------------------------------------------------------
 void cGameGuiState::setLockedUnits (const cUnitLockList& unitLockList)
 {
-	lockedUnitIds.clear ();
-	for (size_t i = 0; i < unitLockList.getLockedUnitsCount (); ++i)
+	lockedUnitIds.clear();
+	for (size_t i = 0; i < unitLockList.getLockedUnitsCount(); ++i)
 	{
-		lockedUnitIds.push_back (unitLockList.getLockedUnit(i)->iID);
+		lockedUnitIds.push_back (unitLockList.getLockedUnit (i)->iID);
 	}
 }
 
 //------------------------------------------------------------------------------
-const std::vector<unsigned int>& cGameGuiState::getLockedUnitIds () const
+const std::vector<unsigned int>& cGameGuiState::getLockedUnitIds() const
 {
 	return lockedUnitIds;
 }
@@ -291,57 +291,57 @@ void cGameGuiState::pushInto (cNetMessage& message) const
 	message.pushBool (unitVideoPlaying);
 	message.pushBool (chatActive);
 
-	for (size_t i = 0; i < selectedUnitIds.size (); ++i)
+	for (size_t i = 0; i < selectedUnitIds.size(); ++i)
 	{
 		message.pushInt32 (selectedUnitIds[i]);
 	}
-	message.pushInt32 (selectedUnitIds.size ());
+	message.pushInt32 (selectedUnitIds.size());
 
-	for (size_t i = 0; i < lockedUnitIds.size (); ++i)
+	for (size_t i = 0; i < lockedUnitIds.size(); ++i)
 	{
 		message.pushInt32 (lockedUnitIds[i]);
 	}
-	message.pushInt32 (lockedUnitIds.size ());
+	message.pushInt32 (lockedUnitIds.size());
 }
 
 //------------------------------------------------------------------------------
 void cGameGuiState::popFrom (cNetMessage& message)
 {
-	lockedUnitIds.resize (message.popInt32 ());
-	for (size_t i = 0; i < lockedUnitIds.size (); ++i)
+	lockedUnitIds.resize (message.popInt32());
+	for (size_t i = 0; i < lockedUnitIds.size(); ++i)
 	{
-		lockedUnitIds[i] = message.popInt32 ();
+		lockedUnitIds[i] = message.popInt32();
 	}
 
-	selectedUnitIds.resize (message.popInt32 ());
-	for (size_t i = 0; i < selectedUnitIds.size (); ++i)
+	selectedUnitIds.resize (message.popInt32());
+	for (size_t i = 0; i < selectedUnitIds.size(); ++i)
 	{
-		selectedUnitIds[i] = message.popInt32 ();
+		selectedUnitIds[i] = message.popInt32();
 	}
 
-	chatActive = message.popBool ();
-	unitVideoPlaying = message.popBool ();
-	miniMapAttackUnitsOnly = message.popBool ();
-	miniMapZoomFactorActive = message.popBool ();
-	lockActive = message.popBool ();
-	fogActive = message.popBool ();
-	rangeActive = message.popBool ();
-	colorActive = message.popBool ();
-	gridActive = message.popBool ();
-	ammoActive = message.popBool ();
-	statusActive = message.popBool ();
-	scanActive = message.popBool ();
-	hitsActive = message.popBool ();
-	surveyActive = message.popBool ();
+	chatActive = message.popBool();
+	unitVideoPlaying = message.popBool();
+	miniMapAttackUnitsOnly = message.popBool();
+	miniMapZoomFactorActive = message.popBool();
+	lockActive = message.popBool();
+	fogActive = message.popBool();
+	rangeActive = message.popBool();
+	colorActive = message.popBool();
+	gridActive = message.popBool();
+	ammoActive = message.popBool();
+	statusActive = message.popBool();
+	scanActive = message.popBool();
+	hitsActive = message.popBool();
+	surveyActive = message.popBool();
 
-	mapZoomFactor = message.popFloat ();
-	mapPosition = message.popPosition ();
+	mapZoomFactor = message.popFloat();
+	mapPosition = message.popPosition();
 }
 
 //------------------------------------------------------------------------------
 void cGameGuiState::pushInto (tinyxml2::XMLElement& element) const
 {
-	cSavegame::addAttributeElement (&element, "Offset", "x", iToStr (mapPosition.x ()), "y", iToStr (mapPosition.y()));
+	cSavegame::addAttributeElement (&element, "Offset", "x", iToStr (mapPosition.x()), "y", iToStr (mapPosition.y()));
 	cSavegame::addAttributeElement (&element, "Zoom", "num", fToStr (mapZoomFactor));
 	if (colorActive) cSavegame::addMainElement (&element, "Colors");
 	if (gridActive) cSavegame::addMainElement (&element, "Grid");
@@ -358,18 +358,18 @@ void cGameGuiState::pushInto (tinyxml2::XMLElement& element) const
 	if (unitVideoPlaying) cSavegame::addMainElement (&element, "UnitVideoPlaying");
 	if (chatActive) cSavegame::addMainElement (&element, "ChatActive");
 
-	if (!selectedUnitIds.empty ())
+	if (!selectedUnitIds.empty())
 	{
 		const auto selectedUnitsElement = cSavegame::addMainElement (&element, "SelectedUnits");
-		for (size_t i = 0; i < selectedUnitIds.size (); ++i)
+		for (size_t i = 0; i < selectedUnitIds.size(); ++i)
 		{
 			cSavegame::addAttributeElement (selectedUnitsElement, "SelectedUnit", "num", iToStr (selectedUnitIds[i]));
 		}
 	}
-	if (!lockedUnitIds.empty ())
+	if (!lockedUnitIds.empty())
 	{
 		const auto lockedUnitsElement = cSavegame::addMainElement (&element, "LockedUnits");
-		for (size_t i = 0; i < lockedUnitIds.size (); ++i)
+		for (size_t i = 0; i < lockedUnitIds.size(); ++i)
 		{
 			cSavegame::addAttributeElement (lockedUnitsElement, "LockedUnit", "num", iToStr (lockedUnitIds[i]));
 		}
@@ -379,8 +379,8 @@ void cGameGuiState::pushInto (tinyxml2::XMLElement& element) const
 //------------------------------------------------------------------------------
 void cGameGuiState::popFrom (const tinyxml2::XMLElement& element, const cVersion& saveVersion)
 {
-	mapPosition.x () = element.FirstChildElement ("Offset")->IntAttribute ("x");
-	mapPosition.y () = element.FirstChildElement ("Offset")->IntAttribute ("y");
+	mapPosition.x() = element.FirstChildElement ("Offset")->IntAttribute ("x");
+	mapPosition.y() = element.FirstChildElement ("Offset")->IntAttribute ("y");
 	mapZoomFactor = element.FirstChildElement ("Zoom")->FloatAttribute ("num");
 	colorActive = element.FirstChildElement ("Colors") != nullptr;
 	gridActive = element.FirstChildElement ("Grid") != nullptr;
@@ -396,8 +396,8 @@ void cGameGuiState::popFrom (const tinyxml2::XMLElement& element, const cVersion
 	miniMapAttackUnitsOnly = element.FirstChildElement ("TNT") != nullptr;
 	chatActive = element.FirstChildElement ("ChatActive") != nullptr;
 
-	selectedUnitIds.clear ();
-	lockedUnitIds.clear ();
+	selectedUnitIds.clear();
+	lockedUnitIds.clear();
 	if (saveVersion >= cVersion (0, 6))
 	{
 		unitVideoPlaying = element.FirstChildElement ("UnitVideoPlaying") != nullptr;

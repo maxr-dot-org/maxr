@@ -43,7 +43,7 @@ public:
 
 	void setOffset (int offset);
 
-	int getOffset ();
+	int getOffset();
 
 	cSignal<void ()> offsetChanged;
 

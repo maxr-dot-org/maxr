@@ -33,26 +33,26 @@
 cWindowMain::cWindowMain (const std::string& title) :
 	cWindow (LoadPCX (GFXOD_MAIN))
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (0, 147), getPosition () + cPosition (getArea ().getMaxCorner ().x (), 157)), title, FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 147), getPosition() + cPosition (getArea().getMaxCorner().x(), 157)), title, FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (0, 465), getPosition () + cPosition (getArea ().getMaxCorner ().x (), 475)), lngPack.i18n ("Text~Main~Credits_Reloaded") + " " + PACKAGE_VERSION, FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 465), getPosition() + cPosition (getArea().getMaxCorner().x(), 475)), lngPack.i18n ("Text~Main~Credits_Reloaded") + " " + PACKAGE_VERSION, FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
-	infoImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (16, 182), getRandomInfoImage (), &SoundData.SNDHudButton));
+	infoImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (16, 182), getRandomInfoImage(), &SoundData.SNDHudButton));
 	signalConnectionManager.connect (infoImage->clicked, std::bind (&cWindowMain::infoImageClicked, this));
 }
 
 //------------------------------------------------------------------------------
-cWindowMain::~cWindowMain ()
+cWindowMain::~cWindowMain()
 {}
 
 //------------------------------------------------------------------------------
-void cWindowMain::infoImageClicked ()
+void cWindowMain::infoImageClicked()
 {
 	infoImage->setImage (getRandomInfoImage());
 }
 
 //------------------------------------------------------------------------------
-SDL_Surface* cWindowMain::getRandomInfoImage ()
+SDL_Surface* cWindowMain::getRandomInfoImage()
 {
 	int const showBuilding = random (3);
 	// I want 3 possible random numbers since a chance of 50:50 is boring
@@ -61,27 +61,27 @@ SDL_Surface* cWindowMain::getRandomInfoImage ()
 	int unitShow = -1;
 	SDL_Surface* surface = nullptr;
 
-	if (showBuilding == 1 && UnitsData.getNrBuildings () > 0)
+	if (showBuilding == 1 && UnitsData.getNrBuildings() > 0)
 	{
 		// that's a 33% chance that we show a building on 1
 		do
 		{
-			unitShow = random (UnitsData.getNrBuildings () - 1);
+			unitShow = random (UnitsData.getNrBuildings() - 1);
 			// make sure we don't show same unit twice
 		}
-		while (unitShow == lastUnitShow && UnitsData.getNrBuildings () > 1);
+		while (unitShow == lastUnitShow && UnitsData.getNrBuildings() > 1);
 		surface = UnitsData.buildingUIs[unitShow].info.get();
 	}
-	else if (UnitsData.getNrVehicles () > 0)
+	else if (UnitsData.getNrVehicles() > 0)
 	{
 		// and a 66% chance to show a vehicle on 0 or 2
 		do
 		{
-			unitShow = random (UnitsData.getNrVehicles () - 1);
+			unitShow = random (UnitsData.getNrVehicles() - 1);
 			// make sure we don't show same unit twice
 		}
-		while (unitShow == lastUnitShow && UnitsData.getNrVehicles () > 1);
-        surface = UnitsData.vehicleUIs[unitShow].info.get ();
+		while (unitShow == lastUnitShow && UnitsData.getNrVehicles() > 1);
+		surface = UnitsData.vehicleUIs[unitShow].info.get();
 	}
 	else surface = nullptr;
 	lastUnitShow = unitShow; //store shown unit

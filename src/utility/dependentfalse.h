@@ -23,7 +23,7 @@
 template<typename T>
 struct sDependentFalse
 {
-	static const bool value = (sizeof(T)==0); // sizeof(AnyType) can never be 0!
+	static const bool value = (sizeof (T) == 0); // sizeof(AnyType) can never be 0!
 };
 
 #endif // utility_dependentfalseH

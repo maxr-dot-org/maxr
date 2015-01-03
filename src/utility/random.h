@@ -41,18 +41,18 @@ T random (const T min, const T max)
 {
 	assert (max > min);
 
-	static_assert(std::is_arithmetic<T>::value, "Can not generate random number for non-arithmetic types");
+	static_assert (std::is_arithmetic<T>::value, "Can not generate random number for non-arithmetic types");
 	typedef typename std::conditional
 	<
-		std::is_integral<T>::value,
+	std::is_integral<T>::value,
 		std::uniform_int_distribution<T>,
 		std::uniform_real_distribution<T>
-	>::type DistributionType;
+		>::type DistributionType;
 
 	static std::random_device rd;
-	static std::mt19937 gen (rd ());
+	static std::mt19937 gen (rd());
 
-	DistributionType distribution (min, std::is_integral<T>::value ? max-1 : max);
+	DistributionType distribution (min, std::is_integral<T>::value ? max - 1 : max);
 
 	return distribution (gen);
 }
@@ -70,10 +70,10 @@ T random (const T min, const T max)
 template<typename T>
 T random (const T max)
 {
-	return random(T(0), max);
+	return random (T (0), max);
 }
 
-inline bool randomBernoulli ()
+inline bool randomBernoulli()
 {
 	return random (2) == 1;
 }
@@ -84,7 +84,7 @@ inline bool randomBernoulli ()
 template<typename T, size_t N>
 typename std::array<T, N>::reference getRandom (std::array<T, N>& data)
 {
-	static_assert(N > 0, "Getting random element from empty array is not allowed");
+	static_assert (N > 0, "Getting random element from empty array is not allowed");
 	return data[random (N)];
 }
 
@@ -94,7 +94,7 @@ typename std::array<T, N>::reference getRandom (std::array<T, N>& data)
 template<typename T, size_t N>
 typename std::array<T, N>::const_reference getRandom (const std::array<T, N>& data)
 {
-	static_assert(N > 0, "Getting random element from empty array is not allowed");
+	static_assert (N > 0, "Getting random element from empty array is not allowed");
 	return data[random (N)];
 }
 

@@ -30,7 +30,7 @@ public:
 	void frameDrawn();
 	unsigned int getFramesPerSecond();
 	unsigned long long getFrame() const;
-	
+
 private:
 	unsigned long long frames;
 	unsigned long long lastFrames;

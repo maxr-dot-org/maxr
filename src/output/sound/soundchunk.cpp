@@ -21,63 +21,63 @@
 #include "utility/log.h"
 
 //--------------------------------------------------------------------------
-cSoundChunk::cSoundChunk ()
+cSoundChunk::cSoundChunk()
 {}
 
 //--------------------------------------------------------------------------
 cSoundChunk::cSoundChunk (cSoundChunk&& other) :
-sdlSound (std::move (other.sdlSound))
+	sdlSound (std::move (other.sdlSound))
 {}
 
 //--------------------------------------------------------------------------
-cSoundChunk& cSoundChunk::operator= (cSoundChunk&& other)
+cSoundChunk& cSoundChunk::operator= (cSoundChunk && other)
 {
-    sdlSound = std::move (other.sdlSound);
-    return *this;
+	sdlSound = std::move (other.sdlSound);
+	return *this;
 }
 
 //--------------------------------------------------------------------------
 void cSoundChunk::load (const std::string& fileName)
 {
-    sdlSound = SaveSdlMixChunkPointer (Mix_LoadWAV (fileName.c_str ()));
-    if (sdlSound == nullptr)
-    {
-		Log.write("Mix_LoadWAV returned nullptr on loading file '" + fileName + "'. Reason: " + Mix_GetError(), cLog::eLOG_TYPE_ERROR);
-    }
+	sdlSound = SaveSdlMixChunkPointer (Mix_LoadWAV (fileName.c_str()));
+	if (sdlSound == nullptr)
+	{
+		Log.write ("Mix_LoadWAV returned nullptr on loading file '" + fileName + "'. Reason: " + Mix_GetError(), cLog::eLOG_TYPE_ERROR);
+	}
 }
 
 //--------------------------------------------------------------------------
-bool cSoundChunk::empty () const
+bool cSoundChunk::empty() const
 {
-    return sdlSound == nullptr;
+	return sdlSound == nullptr;
 }
 
 //--------------------------------------------------------------------------
-std::chrono::milliseconds cSoundChunk::getLength () const
+std::chrono::milliseconds cSoundChunk::getLength() const
 {
-    if (!sdlSound) return std::chrono::milliseconds (0);
+	if (!sdlSound) return std::chrono::milliseconds (0);
 
-    int freq = 0;
-    Uint16 fmt = 0;
-    int chans = 0;
+	int freq = 0;
+	Uint16 fmt = 0;
+	int chans = 0;
 
-    if (!Mix_QuerySpec (&freq, &fmt, &chans)) return std::chrono::milliseconds (0);
+	if (!Mix_QuerySpec (&freq, &fmt, &chans)) return std::chrono::milliseconds (0);
 
-    auto points = (sdlSound->alen / ((fmt & 0xFF) / 8));
+	auto points = (sdlSound->alen / ((fmt & 0xFF) / 8));
 
-    auto frames = (points / chans);
+	auto frames = (points / chans);
 
-    return std::chrono::milliseconds ((frames * 1000) / freq);
+	return std::chrono::milliseconds ((frames * 1000) / freq);
 }
 
 //--------------------------------------------------------------------------
-Mix_Chunk* cSoundChunk::getSdlSound () const
+Mix_Chunk* cSoundChunk::getSdlSound() const
 {
-    return sdlSound.get ();
+	return sdlSound.get();
 }
 
 //--------------------------------------------------------------------------
-void cSoundChunk::SdlMixChunkDeleter::operator ()(Mix_Chunk* chunk) const
+void cSoundChunk::SdlMixChunkDeleter::operator() (Mix_Chunk* chunk) const
 {
-    Mix_FreeChunk (chunk);
+	Mix_FreeChunk (chunk);
 }

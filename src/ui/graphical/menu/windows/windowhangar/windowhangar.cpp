@@ -32,118 +32,118 @@
 
 //------------------------------------------------------------------------------
 cWindowHangar::cWindowHangar (AutoSurface surface, cPlayerColor playerColor, int playerClan) :
-	cWindow (std::move(surface)),
-	temporaryPlayer (new cPlayer (cPlayerBasicData ("unnamed", std::move(playerColor), 0))),
+	cWindow (std::move (surface)),
+	temporaryPlayer (new cPlayer (cPlayerBasicData ("unnamed", std::move (playerColor), 0))),
 	player (*temporaryPlayer)
 {
 	if (playerClan != -1) temporaryPlayer->setClan (playerClan);
 
-	initialize ();
+	initialize();
 }
 
 //------------------------------------------------------------------------------
 cWindowHangar::cWindowHangar (AutoSurface surface, const cPlayer& player_) :
-	cWindow (std::move(surface)),
+	cWindow (std::move (surface)),
 	player (player_)
 {
-	initialize ();
+	initialize();
 }
 
 //------------------------------------------------------------------------------
-void cWindowHangar::initialize ()
+void cWindowHangar::initialize()
 {
-	infoImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (11, 13)));
+	infoImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (11, 13)));
 
-	infoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (21, 23), getPosition () + cPosition (21 + 280, 23 + 220)), "", FONT_LATIN_NORMAL, eAlignmentType::Left));
+	infoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (21, 23), getPosition() + cPosition (21 + 280, 23 + 220)), "", FONT_LATIN_NORMAL, eAlignmentType::Left));
 	infoLabel->setWordWrap (true);
 
-	infoTextCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (291, 264), lngPack.i18n ("Text~Comp~Description"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left));
+	infoTextCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (291, 264), lngPack.i18n ("Text~Comp~Description"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left));
 	infoTextCheckBox->setChecked (true);
 	signalConnectionManager.connect (infoTextCheckBox->toggled, std::bind (&cWindowHangar::infoCheckBoxToggled, this));
 
-	unitDetails = addChild (std::make_unique<cUnitDetails> (getPosition () + cPosition (16, 297)));
+	unitDetails = addChild (std::make_unique<cUnitDetails> (getPosition() + cPosition (16, 297)));
 
 
 	using namespace std::placeholders;
 
-	selectionUnitList = addChild (std::make_unique<cListView<cUnitListViewItemBuy>> (cBox<cPosition> (getPosition () + cPosition (477, 50), getPosition () + cPosition (477 + 154, 50 + 326))));
+	selectionUnitList = addChild (std::make_unique<cListView<cUnitListViewItemBuy>> (cBox<cPosition> (getPosition() + cPosition (477, 50), getPosition() + cPosition (477 + 154, 50 + 326))));
 	selectionUnitList->setEndMargin (cPosition (2, 10));
 	signalConnectionManager.connect (selectionUnitList->itemClicked, std::bind (&cWindowHangar::selectionUnitClicked, this, _1));
 	signalConnectionManager.connect (selectionUnitList->selectionChanged, std::bind (&cWindowHangar::handleSelectionChanged, this));
 
-	selectionListUpButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (471, 387), ePushButtonType::ArrowUpSmall, &SoundData.SNDObjectMenu));
+	selectionListUpButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (471, 387), ePushButtonType::ArrowUpSmall, &SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (selectionListUpButton->clicked, std::bind (&cListView<cUnitListViewItemBuy>::pageUp, selectionUnitList));
 
-	selectionListDownButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (491, 387), ePushButtonType::ArrowDownSmall, &SoundData.SNDObjectMenu));
+	selectionListDownButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (491, 387), ePushButtonType::ArrowDownSmall, &SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (selectionListDownButton->clicked, std::bind (&cListView<cUnitListViewItemBuy>::pageDown, selectionUnitList));
 
 
-	okButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (447, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
+	okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (447, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
 	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (okButton->clicked, std::bind (&cWindowHangar::okClicked, this));
 
-	backButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (349, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Back"), FONT_LATIN_NORMAL));
+	backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (349, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Back"), FONT_LATIN_NORMAL));
 	backButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
 	signalConnectionManager.connect (backButton->clicked, std::bind (&cWindowHangar::backClicked, this));
 }
 
 //------------------------------------------------------------------------------
-cWindowHangar::~cWindowHangar ()
+cWindowHangar::~cWindowHangar()
 {}
 
 //------------------------------------------------------------------------------
-void cWindowHangar::okClicked ()
+void cWindowHangar::okClicked()
 {
-	done ();
+	done();
 }
 
 //------------------------------------------------------------------------------
-void cWindowHangar::backClicked ()
+void cWindowHangar::backClicked()
 {
-	canceled ();
+	canceled();
 }
 
 //------------------------------------------------------------------------------
-void cWindowHangar::infoCheckBoxToggled ()
+void cWindowHangar::infoCheckBoxToggled()
 {
-	if (infoTextCheckBox->isChecked ()) infoLabel->show ();
-	else infoLabel->hide ();
+	if (infoTextCheckBox->isChecked()) infoLabel->show();
+	else infoLabel->hide();
 }
 
 //------------------------------------------------------------------------------
 void cWindowHangar::setActiveUnit (const sID& unitId)
 {
-	if (unitId.isAVehicle ())
+	if (unitId.isAVehicle())
 	{
 		const auto& uiData = *UnitsData.getVehicleUI (unitId);
 
-        infoImage->setImage (uiData.info.get ());
+		infoImage->setImage (uiData.info.get());
 	}
-	else if (unitId.isABuilding ())
+	else if (unitId.isABuilding())
 	{
 		const auto& uiData = *UnitsData.getBuildingUI (unitId);
 
-        infoImage->setImage (uiData.info.get ());
+		infoImage->setImage (uiData.info.get());
 	}
 
-	infoLabel->setText (unitId.getUnitDataOriginalVersion ()->description);
+	infoLabel->setText (unitId.getUnitDataOriginalVersion()->description);
 
 	unitDetails->setUnit (unitId, getPlayer());
 }
 
 //------------------------------------------------------------------------------
-const sID* cWindowHangar::getActiveUnit () const
+const sID* cWindowHangar::getActiveUnit() const
 {
-	return unitDetails->getCurrentUnitId ();
+	return unitDetails->getCurrentUnitId();
 }
 
 //------------------------------------------------------------------------------
-void cWindowHangar::handleSelectionChanged ()
+void cWindowHangar::handleSelectionChanged()
 {
-	auto selectedItem = selectionUnitList->getSelectedItem ();
+	auto selectedItem = selectionUnitList->getSelectedItem();
 	if (selectedItem != nullptr)
 	{
-		setActiveUnit (selectedItem->getUnitId ());
+		setActiveUnit (selectedItem->getUnitId());
 	}
 	selectionUnitSelectionChanged (selectedItem);
 }
@@ -151,7 +151,7 @@ void cWindowHangar::handleSelectionChanged ()
 //------------------------------------------------------------------------------
 cUnitListViewItemBuy& cWindowHangar::addSelectionUnit (const sID& unitId)
 {
-	auto selectedItem = selectionUnitList->addItem (std::make_unique<cUnitListViewItemBuy> (selectionUnitList->getSize ().x () - 9, unitId, getPlayer()));
+	auto selectedItem = selectionUnitList->addItem (std::make_unique<cUnitListViewItemBuy> (selectionUnitList->getSize().x() - 9, unitId, getPlayer()));
 	return *selectedItem;
 }
 
@@ -162,13 +162,13 @@ void cWindowHangar::setSelectedSelectionItem (const cUnitListViewItemBuy& item)
 }
 
 //------------------------------------------------------------------------------
-void cWindowHangar::clearSelectionUnits ()
+void cWindowHangar::clearSelectionUnits()
 {
-	selectionUnitList->clearItems ();
+	selectionUnitList->clearItems();
 }
 
 //------------------------------------------------------------------------------
-const cPlayer& cWindowHangar::getPlayer () const
+const cPlayer& cWindowHangar::getPlayer() const
 {
 	return player;
 }

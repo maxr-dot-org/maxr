@@ -29,7 +29,7 @@
 #endif
 
 //------------------------------------------------------------------------------
-cVersion::cVersion () :
+cVersion::cVersion() :
 	major (0),
 	minor (0),
 	revision (0)
@@ -52,7 +52,7 @@ cVersion::cVersion (int major_, int minor_, int revision_) :
 {}
 
 //------------------------------------------------------------------------------
-int cVersion::getMajor () const
+int cVersion::getMajor() const
 {
 	return major;
 }
@@ -64,7 +64,7 @@ void cVersion::setMajor (int value)
 }
 
 //------------------------------------------------------------------------------
-int cVersion::getMinor () const
+int cVersion::getMinor() const
 {
 	return minor;
 }
@@ -76,7 +76,7 @@ void cVersion::setMinor (int value)
 }
 
 //------------------------------------------------------------------------------
-int cVersion::getRevision () const
+int cVersion::getRevision() const
 {
 	return revision;
 }
@@ -93,7 +93,7 @@ void cVersion::parseFromString (const std::string& string)
 	// NOTE: do we need this to be more robust?
 
 	auto firstDotPos = string.find_first_of (".");
-	major = atoi (string.substr (0, firstDotPos).c_str ());
+	major = atoi (string.substr (0, firstDotPos).c_str());
 
 	if (firstDotPos == std::string::npos)
 	{
@@ -102,8 +102,8 @@ void cVersion::parseFromString (const std::string& string)
 	}
 	else
 	{
-		auto secondDotPos = string.find_first_of (".", firstDotPos+1);
-		minor = atoi (string.substr (firstDotPos+1, secondDotPos).c_str ());
+		auto secondDotPos = string.find_first_of (".", firstDotPos + 1);
+		minor = atoi (string.substr (firstDotPos + 1, secondDotPos).c_str());
 
 		if (secondDotPos == std::string::npos)
 		{
@@ -111,37 +111,37 @@ void cVersion::parseFromString (const std::string& string)
 		}
 		else
 		{
-			revision = atoi (string.substr (secondDotPos+1).c_str ());
+			revision = atoi (string.substr (secondDotPos + 1).c_str());
 		}
 	}
 }
 
 //------------------------------------------------------------------------------
-std::string cVersion::toString () const
+std::string cVersion::toString() const
 {
 	return iToStr (major) + "."  + iToStr (minor) + "." + iToStr (revision);
 }
 
 //------------------------------------------------------------------------------
-bool cVersion::operator==(const cVersion& other) const
+bool cVersion::operator== (const cVersion& other) const
 {
 	return major == other.major && minor == other.minor && revision == other.revision;
 }
 
 //------------------------------------------------------------------------------
-bool cVersion::operator!=(const cVersion& other) const
+bool cVersion::operator!= (const cVersion& other) const
 {
-	return !(*this == other);
+	return ! (*this == other);
 }
 
 //------------------------------------------------------------------------------
-bool cVersion::operator<(const cVersion& other) const
+bool cVersion::operator< (const cVersion& other) const
 {
 	return major < other.major || (major == other.major && (minor < other.minor || (minor == other.minor && revision < other.revision)));
 }
 
 //------------------------------------------------------------------------------
-bool cVersion::operator<=(const cVersion& other) const
+bool cVersion::operator<= (const cVersion& other) const
 {
 	return major < other.major || (major == other.major && (minor < other.minor || (minor == other.minor && revision <= other.revision)));
 }
@@ -153,7 +153,7 @@ bool cVersion::operator> (const cVersion& other) const
 }
 
 //------------------------------------------------------------------------------
-bool cVersion::operator>=(const cVersion& other) const
+bool cVersion::operator>= (const cVersion& other) const
 {
 	return major > other.major || (major == other.major && (minor > other.minor || (minor == other.minor && revision >= other.revision)));
 }

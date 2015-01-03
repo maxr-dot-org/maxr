@@ -33,25 +33,25 @@ cUnitVideoWidget::cUnitVideoWidget (const cBox<cPosition>& area, std::shared_ptr
 	fliAnimation (nullptr, FLI_Close),
 	playing (true)
 {
-	currentFrameImage = addChild (std::make_unique<cImage> (getPosition ()));
+	currentFrameImage = addChild (std::make_unique<cImage> (getPosition()));
 
 	signalConnectionManager.connect (animationTimer->triggered100ms, std::bind (&cUnitVideoWidget::nextFrame, this));
 }
 
 //------------------------------------------------------------------------------
-void cUnitVideoWidget::start ()
+void cUnitVideoWidget::start()
 {
 	playing = true;
 }
 
 //------------------------------------------------------------------------------
-void cUnitVideoWidget::stop ()
+void cUnitVideoWidget::stop()
 {
 	playing = false;
 }
 
 //------------------------------------------------------------------------------
-bool cUnitVideoWidget::isPlaying () const
+bool cUnitVideoWidget::isPlaying() const
 {
 	return playing;
 }
@@ -66,34 +66,34 @@ void cUnitVideoWidget::setUnit (const cUnit* unit)
 	}
 	else
 	{
-		if (unit->data.ID.isAVehicle ())
+		if (unit->data.ID.isAVehicle())
 		{
-			const auto& vehicle = *static_cast<const cVehicle*>(unit);
+			const auto& vehicle = *static_cast<const cVehicle*> (unit);
 			if (FileExists (vehicle.uiData->FLCFile.c_str()))
 			{
 				fliAnimation = FliAnimationPointerType (FLI_Open (SDL_RWFromFile (vehicle.uiData->FLCFile.c_str(), "rb"), nullptr), FLI_Close);
 				FLI_Rewind (fliAnimation.get());
-				FLI_NextFrame (fliAnimation.get ());
+				FLI_NextFrame (fliAnimation.get());
 				currentFrameImage->setImage (fliAnimation->surface);
 			}
 			else
 			{
 				fliAnimation = nullptr;
-                currentFrameImage->setImage (vehicle.uiData->storage.get ());
+				currentFrameImage->setImage (vehicle.uiData->storage.get());
 			}
 		}
-		else if (unit->data.ID.isABuilding ())
+		else if (unit->data.ID.isABuilding())
 		{
-			const auto& building = *static_cast<const cBuilding*>(unit);
+			const auto& building = *static_cast<const cBuilding*> (unit);
 
 			fliAnimation = nullptr;
-            currentFrameImage->setImage (building.uiData->video.get ());
+			currentFrameImage->setImage (building.uiData->video.get());
 		}
 	}
 }
 
 //------------------------------------------------------------------------------
-void cUnitVideoWidget::nextFrame ()
+void cUnitVideoWidget::nextFrame()
 {
 	if (!playing) return;
 	if (!fliAnimation) return;

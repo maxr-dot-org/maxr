@@ -25,11 +25,11 @@
 cTextListViewItem::cTextListViewItem (const std::string& text) :
 	cAbstractListViewItem (cPosition (50, font->getFontHeight (FONT_LATIN_NORMAL)))
 {
-	label = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (0, 0), cPosition (getSize ().x ()-1, font->getFontHeight (FONT_LATIN_NORMAL))), text));
+	label = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (0, 0), cPosition (getSize().x() - 1, font->getFontHeight (FONT_LATIN_NORMAL))), text));
 }
 
 //------------------------------------------------------------------------------
-const std::string& cTextListViewItem::getText () const
+const std::string& cTextListViewItem::getText() const
 {
 	return label->getText();
 }
@@ -39,5 +39,5 @@ void cTextListViewItem::handleResized (const cPosition& oldSize)
 {
 	cAbstractListViewItem::handleResized (oldSize);
 
-	label->resize (getSize ());
+	label->resize (getSize());
 }

@@ -44,7 +44,7 @@ struct sID;
 class cNetworkHostGameNew : public cNetworkHostGame
 {
 public:
-	cNetworkHostGameNew ();
+	cNetworkHostGameNew();
 
 	void start (cApplication& application);
 
@@ -62,12 +62,12 @@ public:
 
 	void setLocalPlayerLandingPosition (const cPosition& landingPosition);
 
-	const std::shared_ptr<cGameSettings>& getGameSettings ();
-	const std::shared_ptr<cStaticMap>& getStaticMap ();
-	const std::vector<cPlayerBasicData>& getPlayers ();
-	const cPlayerBasicData& getLocalPlayer ();
+	const std::shared_ptr<cGameSettings>& getGameSettings();
+	const std::shared_ptr<cStaticMap>& getStaticMap();
+	const std::vector<cPlayerBasicData>& getPlayers();
+	const cPlayerBasicData& getLocalPlayer();
 
-	int getLocalPlayerClan () const;
+	int getLocalPlayerClan() const;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

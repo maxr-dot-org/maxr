@@ -407,10 +407,10 @@ bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage& message)
 		case GAME_EV_CHAT_CLIENT:
 		case MU_MSG_CHAT:
 		{
-			if (message.getType () == MU_MSG_CHAT)
-				message.popBool ();
+			if (message.getType() == MU_MSG_CHAT)
+				message.popBool();
 			else
-				message.popChar ();
+				message.popChar();
 
 			string chatText = message.popString();
 			message.rewind();
@@ -432,7 +432,7 @@ bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage& message)
 					if (tokens[0].compare ("games") == 0)
 					{
 						sendChatMessage (getGamesString(),
-										 message.getType () == MU_MSG_CHAT ? (int)MU_MSG_CHAT : (int)GAME_EV_SAVED_REPORT,
+										 message.getType() == MU_MSG_CHAT ? (int)MU_MSG_CHAT : (int)GAME_EV_SAVED_REPORT,
 										 senderSocket);
 						return true;
 					}
@@ -444,7 +444,7 @@ bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage& message)
 					else if (tokens[0].compare ("help") == 0)
 					{
 						sendChatMessage (getServerHelpString(),
-										 message.getType () == MU_MSG_CHAT ? (int)MU_MSG_CHAT : (int)GAME_EV_SAVED_REPORT,
+										 message.getType() == MU_MSG_CHAT ? (int)MU_MSG_CHAT : (int)GAME_EV_SAVED_REPORT,
 										 senderSocket);
 						return true;
 					}
@@ -464,8 +464,8 @@ void cDedicatedServer::sendChatMessage (const string& text, int type, int socket
 	string line;
 	while (getline (ss, line))
 	{
-		cNetMessage msg(type);
-		if (msg.getType () == GAME_EV_SAVED_REPORT)
+		cNetMessage msg (type);
+		if (msg.getType() == GAME_EV_SAVED_REPORT)
 		{
 			cSavedReportChat report ("dedicated_server", line);
 			report.pushInto (msg);

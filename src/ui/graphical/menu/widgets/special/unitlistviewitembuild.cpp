@@ -26,7 +26,7 @@ cUnitListViewItemBuild::cUnitListViewItemBuild (unsigned int width, const sID& u
 {}
 
 //------------------------------------------------------------------------------
-int cUnitListViewItemBuild::getRemainingMetal () const
+int cUnitListViewItemBuild::getRemainingMetal() const
 {
 	return remainingMetal;
 }

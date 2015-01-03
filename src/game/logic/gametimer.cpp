@@ -186,7 +186,7 @@ bool cGameTimerClient::nextTickAllowed()
 	return false;
 }
 
-void cGameTimerClient::run ()
+void cGameTimerClient::run()
 {
 	// maximum time before GUI update
 	const unsigned int maxWorkingTime = 500; // 500 milliseconds
@@ -194,14 +194,14 @@ void cGameTimerClient::run ()
 
 	while (popEvent())
 	{
-		client->handleNetMessages ();
+		client->handleNetMessages();
 
 		if (nextTickAllowed() == false) continue;
 
 		gameTime++;
-		gameTimeChanged ();
+		gameTimeChanged();
 		handleTimer();
-		client->doGameActions ();
+		client->doGameActions();
 
 		//check crc
 		localChecksum = calcClientChecksum (*client);
@@ -289,7 +289,7 @@ void cGameTimerServer::run (cServer& server)
 	if (nextTickAllowed (server) == false) return;
 
 	gameTime++;
-	gameTimeChanged ();
+	gameTimeChanged();
 	handleTimer();
 	server.doGameActions();
 	const auto& playerList = server.playerList;
@@ -311,7 +311,7 @@ uint32_t calcClientChecksum (const cClient& client)
 	const auto& players = client.getPlayerList();
 	for (unsigned int i = 0; i < players.size(); i++)
 	{
-		for (const auto& vehicle : players[i]->getVehicles ())
+		for (const auto& vehicle : players[i]->getVehicles())
 		{
 			crc = calcCheckSum (vehicle->data.getShots(), crc);
 			crc = calcCheckSum (vehicle->data.getAmmo(), crc);
@@ -326,7 +326,7 @@ uint32_t calcClientChecksum (const cClient& client)
 			crc = calcCheckSum (vehicle->dir,  crc);
 		}
 
-		for (const auto& building : players[i]->getBuildings ())
+		for (const auto& building : players[i]->getBuildings())
 		{
 			crc = calcCheckSum (building->iID, crc);
 			crc = calcCheckSum (building->data.getShots(), crc);
@@ -344,32 +344,32 @@ uint32_t calcServerChecksum (const cServer& server, const cPlayer* player)
 	const auto& playerList = server.playerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
-		for (const auto& vehicle : playerList[i]->getVehicles ())
+		for (const auto& vehicle : playerList[i]->getVehicles())
 		{
-			if (Contains (vehicle->seenByPlayerList, player) || vehicle->getOwner () == player)
+			if (Contains (vehicle->seenByPlayerList, player) || vehicle->getOwner() == player)
 			{
-				crc = calcCheckSum (vehicle->data.getShots (), crc);
-				crc = calcCheckSum (vehicle->data.getAmmo (), crc);
-				crc = calcCheckSum (vehicle->data.getHitpoints (), crc);
+				crc = calcCheckSum (vehicle->data.getShots(), crc);
+				crc = calcCheckSum (vehicle->data.getAmmo(), crc);
+				crc = calcCheckSum (vehicle->data.getHitpoints(), crc);
 				crc = calcCheckSum (vehicle->data.getSpeed(), crc);
-				crc = calcCheckSum (vehicle->getFlightHeight (), crc);
+				crc = calcCheckSum (vehicle->getFlightHeight(), crc);
 				crc = calcCheckSum (vehicle->iID, crc);
-				crc = calcCheckSum (vehicle->getPosition ().x (), crc);
-				crc = calcCheckSum (vehicle->getPosition ().y (), crc);
-				crc = calcCheckSum (vehicle->getMovementOffset ().x (), crc);
-				crc = calcCheckSum (vehicle->getMovementOffset ().y (), crc);
+				crc = calcCheckSum (vehicle->getPosition().x(), crc);
+				crc = calcCheckSum (vehicle->getPosition().y(), crc);
+				crc = calcCheckSum (vehicle->getMovementOffset().x(), crc);
+				crc = calcCheckSum (vehicle->getMovementOffset().y(), crc);
 				crc = calcCheckSum (vehicle->dir, crc);
 			}
 		}
 
-		for (const auto& building : playerList[i]->getBuildings ())
+		for (const auto& building : playerList[i]->getBuildings())
 		{
-			if (Contains (building->seenByPlayerList, player) || building->getOwner () == player)
+			if (Contains (building->seenByPlayerList, player) || building->getOwner() == player)
 			{
 				crc = calcCheckSum (building->iID, crc);
-				crc = calcCheckSum (building->data.getShots (), crc);
-				crc = calcCheckSum (building->data.getAmmo (), crc);
-				crc = calcCheckSum (building->data.getHitpoints (), crc);
+				crc = calcCheckSum (building->data.getShots(), crc);
+				crc = calcCheckSum (building->data.getAmmo(), crc);
+				crc = calcCheckSum (building->data.getHitpoints(), crc);
 				crc = calcCheckSum (building->dir, crc);
 			}
 		}
@@ -385,8 +385,8 @@ void compareGameData (const cClient& client, const cServer& server)
 	{
 		const auto& clientPlayer = players[i];
 
-		const auto& vehicles = clientPlayer->getVehicles ();
-		for (auto j = vehicles.begin (); j != vehicles.end (); ++j)
+		const auto& vehicles = clientPlayer->getVehicles();
+		for (auto j = vehicles.begin(); j != vehicles.end(); ++j)
 		{
 			const auto& clientVehicle = *j;
 			const cVehicle* serverVehicle = server.getVehicleFromID (clientVehicle->iID);

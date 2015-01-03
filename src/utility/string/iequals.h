@@ -29,9 +29,9 @@
  */
 static inline bool iequals (const std::string& a, const std::string& b)
 {
-	if (a.size () != b.size ()) return false;
+	if (a.size() != b.size()) return false;
 
-	for (size_t i = 0; i < a.size (); ++i)
+	for (size_t i = 0; i < a.size(); ++i)
 	{
 		if (std::tolower (a[i]) != std::tolower (b[i])) return false;
 	}

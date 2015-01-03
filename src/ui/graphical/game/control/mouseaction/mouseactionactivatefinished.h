@@ -28,9 +28,9 @@ class cMouseActionActivateFinished : public cMouseAction
 public:
 	virtual bool executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const MAXR_OVERRIDE_FUNCTION;
 
-	virtual bool doesChangeState () const MAXR_OVERRIDE_FUNCTION;
+	virtual bool doesChangeState() const MAXR_OVERRIDE_FUNCTION;
 
-	virtual bool isSingleAction () const MAXR_OVERRIDE_FUNCTION;
+	virtual bool isSingleAction() const MAXR_OVERRIDE_FUNCTION;
 };
 
 #endif // ui_graphical_game_control_mouseaction_mouseactionactivatefinishedH

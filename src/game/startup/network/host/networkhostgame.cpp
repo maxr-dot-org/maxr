@@ -24,19 +24,19 @@
 #include "loaddata.h"
 
 //------------------------------------------------------------------------------
-cNetworkHostGame::~cNetworkHostGame ()
+cNetworkHostGame::~cNetworkHostGame()
 {
 	if (server)
 	{
-		server->stop ();
-		reloadUnitValues ();
+		server->stop();
+		reloadUnitValues();
 	}
 }
 
 //------------------------------------------------------------------------------
-void cNetworkHostGame::run ()
+void cNetworkHostGame::run()
 {
-	if (localClient) localClient->getGameTimer ()->run ();
+	if (localClient) localClient->getGameTimer()->run();
 }
 
 //------------------------------------------------------------------------------

@@ -29,11 +29,11 @@
 cMouseModeSupplyAmmo::cMouseModeSupplyAmmo (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
 	cMouseMode (map_, unitSelection_, player_)
 {
-	establishUnitSelectionConnections ();
+	establishUnitSelectionConnections();
 }
 
 //------------------------------------------------------------------------------
-eMouseModeType cMouseModeSupplyAmmo::getType () const
+eMouseModeType cMouseModeSupplyAmmo::getType() const
 {
 	return eMouseModeType::SupplyAmmo;
 }
@@ -66,27 +66,27 @@ bool cMouseModeSupplyAmmo::canExecuteAction (const cPosition& mapPosition) const
 {
 	if (!map) return false;
 
-	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
+	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 
 	return selectedVehicle && selectedVehicle->canSupply (*map, mapPosition, SUPPLY_TYPE_REARM);
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeSupplyAmmo::establishUnitSelectionConnections ()
+void cMouseModeSupplyAmmo::establishUnitSelectionConnections()
 {
-	const auto selectedUnit = unitSelection.getSelectedUnit ();
+	const auto selectedUnit = unitSelection.getSelectedUnit();
 
 	if (selectedUnit)
 	{
-		selectedUnitSignalConnectionManager.connect (selectedUnit->data.storedResourcesChanged, [this](){ needRefresh (); });
-		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, [this](){ needRefresh (); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->data.storedResourcesChanged, [this]() { needRefresh(); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, [this]() { needRefresh(); });
 	}
 }
 
 //------------------------------------------------------------------------------
 void cMouseModeSupplyAmmo::establishMapFieldConnections (const cMapField& field)
 {
-	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this, &field](){ updateFieldUnitConnections (field); needRefresh (); });
+	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this, &field]() { updateFieldUnitConnections (field); needRefresh(); });
 
 	updateFieldUnitConnections (field);
 }
@@ -94,21 +94,21 @@ void cMouseModeSupplyAmmo::establishMapFieldConnections (const cMapField& field)
 //------------------------------------------------------------------------------
 void cMouseModeSupplyAmmo::updateFieldUnitConnections (const cMapField& field)
 {
-	mapFieldUnitsSignalConnectionManager.disconnectAll ();
+	mapFieldUnitsSignalConnectionManager.disconnectAll();
 
-	auto plane = field.getPlane ();
+	auto plane = field.getPlane();
 	if (plane)
 	{
-		mapFieldUnitsSignalConnectionManager.connect (plane->flightHeightChanged, [this](){ needRefresh (); });
-		mapFieldUnitsSignalConnectionManager.connect (plane->data.ammoChanged, [this](){ needRefresh (); });
-		mapFieldUnitsSignalConnectionManager.connect (plane->attackingChanged, [this](){ needRefresh (); });
-		mapFieldUnitsSignalConnectionManager.connect (plane->movingChanged, [this](){ needRefresh (); });
+		mapFieldUnitsSignalConnectionManager.connect (plane->flightHeightChanged, [this]() { needRefresh(); });
+		mapFieldUnitsSignalConnectionManager.connect (plane->data.ammoChanged, [this]() { needRefresh(); });
+		mapFieldUnitsSignalConnectionManager.connect (plane->attackingChanged, [this]() { needRefresh(); });
+		mapFieldUnitsSignalConnectionManager.connect (plane->movingChanged, [this]() { needRefresh(); });
 	}
-	auto vehicle = field.getVehicle ();
+	auto vehicle = field.getVehicle();
 	if (vehicle)
 	{
-		mapFieldUnitsSignalConnectionManager.connect (vehicle->data.ammoChanged, [this](){ needRefresh (); });
-		mapFieldUnitsSignalConnectionManager.connect (vehicle->attackingChanged, [this](){ needRefresh (); });
-		mapFieldUnitsSignalConnectionManager.connect (vehicle->movingChanged, [this](){ needRefresh (); });
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->data.ammoChanged, [this]() { needRefresh(); });
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->attackingChanged, [this]() { needRefresh(); });
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->movingChanged, [this]() { needRefresh(); });
 	}
 }

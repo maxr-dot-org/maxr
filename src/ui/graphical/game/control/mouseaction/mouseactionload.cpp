@@ -28,7 +28,7 @@
 //------------------------------------------------------------------------------
 bool cMouseActionLoad::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
 {
-	const auto selectedUnit = unitSelection.getSelectedUnit ();
+	const auto selectedUnit = unitSelection.getSelectedUnit();
 
 	if (!selectedUnit) return false;
 
@@ -38,13 +38,13 @@ bool cMouseActionLoad::executeLeftClick (cGameMapWidget& gameMapWidget, const cM
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionLoad::doesChangeState () const
+bool cMouseActionLoad::doesChangeState() const
 {
 	return true;
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionLoad::isSingleAction () const
+bool cMouseActionLoad::isSingleAction() const
 {
 	return false;
 }

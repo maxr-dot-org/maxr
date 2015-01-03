@@ -68,7 +68,7 @@ public:
 	void drawMunBar (const cUnit& unit, SDL_Rect destination);
 	void drawStatus (const cUnit& unit, SDL_Rect destination);
 
-	void rotateBlinkColor ();
+	void rotateBlinkColor();
 };
 
 #endif // ui_graphical_game_temp_unitdrawingengineH

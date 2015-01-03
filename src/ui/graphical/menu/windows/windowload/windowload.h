@@ -38,7 +38,7 @@ public:
 	explicit cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock = nullptr);
 	~cWindowLoad();
 
-	void update ();
+	void update();
 
 	cSignal<void (int)> load;
 
@@ -48,7 +48,7 @@ protected:
 
 	void selectSlot (size_t slotIndex, bool makeRenameable);
 
-	int getSelectedSaveNumber () const;
+	int getSelectedSaveNumber() const;
 
 	cSaveGameData* getSaveFile (int saveNumber);
 
@@ -63,7 +63,7 @@ private:
 	static const size_t rows = 5;
 	static const size_t columns = 2;
 
-	std::array<cSaveSlotWidget*, rows * columns> saveSlots;
+	std::array<cSaveSlotWidget*, rows* columns> saveSlots;
 
 	static const size_t maximalDisplayedSaves = 100;
 	int page;
@@ -74,13 +74,13 @@ private:
 
 	std::vector<cSaveGameData> saveGames;
 
-	void loadSaves ();
-	void updateSlots ();
+	void loadSaves();
+	void updateSlots();
 
-	void handleDownClicked ();
-	void handleUpClicked ();
+	void handleDownClicked();
+	void handleUpClicked();
 
-	void handleLoadClicked ();
+	void handleLoadClicked();
 };
 
 #endif // ui_graphical_menu_windows_windowload_windowloadH

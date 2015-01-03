@@ -35,8 +35,8 @@ void cMouseMode::handleMapTilePositionChanged (const cPosition& mapPosition)
 {
 	if (!map) return;
 
-	mapFieldSignalConnectionManager.disconnectAll ();
-	mapFieldUnitsSignalConnectionManager.disconnectAll ();
+	mapFieldSignalConnectionManager.disconnectAll();
+	mapFieldUnitsSignalConnectionManager.disconnectAll();
 
 	if (map->isValidPosition (mapPosition))
 	{
@@ -47,35 +47,35 @@ void cMouseMode::handleMapTilePositionChanged (const cPosition& mapPosition)
 }
 
 //------------------------------------------------------------------------------
-void cMouseMode::updateSelectedUnitConnections ()
+void cMouseMode::updateSelectedUnitConnections()
 {
-	selectedUnitSignalConnectionManager.disconnectAll ();
+	selectedUnitSignalConnectionManager.disconnectAll();
 
-	establishUnitSelectionConnections ();
+	establishUnitSelectionConnections();
 }
 
 //------------------------------------------------------------------------------
-cMouseMode::~cMouseMode ()
+cMouseMode::~cMouseMode()
 {}
 
 //------------------------------------------------------------------------------
 void cMouseMode::setMap (const cMap* map_)
 {
 	map = map_;
-	
-	needRefresh ();
+
+	needRefresh();
 }
 
 //------------------------------------------------------------------------------
 void cMouseMode::setPlayer (const cPlayer* player_)
 {
 	player = player_;
-	
-	needRefresh ();
+
+	needRefresh();
 }
 
 //------------------------------------------------------------------------------
-void cMouseMode::establishUnitSelectionConnections ()
+void cMouseMode::establishUnitSelectionConnections()
 {}
 
 //------------------------------------------------------------------------------

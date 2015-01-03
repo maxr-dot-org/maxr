@@ -36,7 +36,7 @@ void cJobContainer::addJob (cJob& job)
 	//only one job per unit
 	if (job.vehicle->job)
 	{
-		std::vector<cJob*>::iterator it = std::find (jobs.begin (), jobs.end (), job.vehicle->job);
+		std::vector<cJob*>::iterator it = std::find (jobs.begin(), jobs.end(), job.vehicle->job);
 		releaseJob (it);
 	}
 
@@ -78,21 +78,21 @@ void cJobContainer::onRemoveUnit (cUnit* unit)
 	}
 }
 
-cStartBuildJob::cStartBuildJob(cVehicle& vehicle_, const cPosition& org_, bool big_) :
+cStartBuildJob::cStartBuildJob (cVehicle& vehicle_, const cPosition& org_, bool big_) :
 	cJob (vehicle_),
 	org (org_),
 	big (big_)
 {
-	vehicle_.setMovementOffset(cPosition(vehicle_.getPosition().x() < org.x() ? 64 : 0, vehicle_.getPosition().y() < org.y() ? 64 : 0));
+	vehicle_.setMovementOffset (cPosition (vehicle_.getPosition().x() < org.x() ? 64 : 0, vehicle_.getPosition().y() < org.y() ? 64 : 0));
 }
 
 void cStartBuildJob::run (const cGameTimer& gameTimer)
 {
-	if (!vehicle->isUnitBuildingABuilding () && !vehicle->isUnitClearing ())
+	if (!vehicle->isUnitBuildingABuilding() && !vehicle->isUnitClearing())
 	{
 		//cancel the job, if the vehicle is not building or clearing!
 		finished = true;
-		vehicle->setMovementOffset(cPosition(0, 0));
+		vehicle->setMovementOffset (cPosition (0, 0));
 	}
 
 	if (big)
@@ -112,19 +112,19 @@ void cStartBuildJob::run (const cGameTimer& gameTimer)
 			if (vehicle->dir == 0)
 			{
 				finished = true;
-				vehicle->setMovementOffset(cPosition(0, 0));
+				vehicle->setMovementOffset (cPosition (0, 0));
 			}
 		}
 		else if (vehicle->dir == dir)
 		{
-			cPosition newOffset(vehicle->getMovementOffset());
+			cPosition newOffset (vehicle->getMovementOffset());
 			newOffset.x() += deltaX;
 			newOffset.y() += deltaY;
-			vehicle->setMovementOffset(newOffset);
+			vehicle->setMovementOffset (newOffset);
 
 			if ((vehicle->getMovementOffset().x() > 32 && deltaX > 0) || (vehicle->getMovementOffset().y() < 32 && deltaX < 0))
 			{
-				vehicle->setMovementOffset(cPosition(32, 32));
+				vehicle->setMovementOffset (cPosition (32, 32));
 			}
 		}
 		else
@@ -151,20 +151,20 @@ cPlaneTakeoffJob::cPlaneTakeoffJob (cVehicle& vehicle_, bool takeoff_) :
 
 void cPlaneTakeoffJob::run (const cGameTimer& gameTimer)
 {
-// TODO add sound #708
+	// TODO add sound #708
 	cVehicle* plane = vehicle;
 	if (takeoff)
 	{
-		plane->setFlightHeight(plane->getFlightHeight() + 2);
-		if (plane->getFlightHeight () == 64)
+		plane->setFlightHeight (plane->getFlightHeight() + 2);
+		if (plane->getFlightHeight() == 64)
 		{
 			finished = true;
 		}
 	}
 	else
 	{
-		plane->setFlightHeight (plane->getFlightHeight () - 2);
-		if (plane->getFlightHeight () == 0)
+		plane->setFlightHeight (plane->getFlightHeight() - 2);
+		if (plane->getFlightHeight() == 0)
 		{
 			finished = true;
 		}

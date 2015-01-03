@@ -31,8 +31,8 @@ class cLabel;
 class cDialogLicense : public cWindow
 {
 public:
-	cDialogLicense ();
-	~cDialogLicense ();
+	cDialogLicense();
+	~cDialogLicense();
 
 private:
 	cSignalConnectionManager signalConnectionManager;
@@ -48,15 +48,15 @@ private:
 
 	std::string authors;
 
-	void pageDown ();
+	void pageDown();
 
-	void pageUp ();
+	void pageUp();
 
-	void readAuthors ();
+	void readAuthors();
 
-	void resetTexts ();
+	void resetTexts();
 
-	void updatePageButtons ();
+	void updatePageButtons();
 };
 
 #endif // ui_graphical_menu_dialogs_dialoglicenseH

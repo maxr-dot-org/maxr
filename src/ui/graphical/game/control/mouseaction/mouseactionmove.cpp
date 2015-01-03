@@ -27,18 +27,18 @@
 //------------------------------------------------------------------------------
 bool cMouseActionMove::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
 {
-	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
+	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 
-	if (selectedVehicle && !selectedVehicle->isUnitMoving () && !selectedVehicle->isAttacking ())
+	if (selectedVehicle && !selectedVehicle->isUnitMoving() && !selectedVehicle->isAttacking())
 	{
-		if (selectedVehicle->isUnitBuildingABuilding ())
+		if (selectedVehicle->isUnitBuildingABuilding())
 		{
-			gameMapWidget.triggeredEndBuilding (*unitSelection.getSelectedVehicle (), mapPosition);
+			gameMapWidget.triggeredEndBuilding (*unitSelection.getSelectedVehicle(), mapPosition);
 		}
 		else
 		{
-			if (unitSelection.getSelectedVehiclesCount () > 1) gameMapWidget.triggeredMoveGroup (unitSelection.getSelectedVehicles (), mapPosition);
-			else gameMapWidget.triggeredMoveSingle (*unitSelection.getSelectedVehicle (), mapPosition);
+			if (unitSelection.getSelectedVehiclesCount() > 1) gameMapWidget.triggeredMoveGroup (unitSelection.getSelectedVehicles(), mapPosition);
+			else gameMapWidget.triggeredMoveSingle (*unitSelection.getSelectedVehicle(), mapPosition);
 		}
 		return true;
 	}
@@ -47,13 +47,13 @@ bool cMouseActionMove::executeLeftClick (cGameMapWidget& gameMapWidget, const cM
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionMove::doesChangeState () const
+bool cMouseActionMove::doesChangeState() const
 {
 	return true;
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionMove::isSingleAction () const
+bool cMouseActionMove::isSingleAction() const
 {
 	return false;
 }

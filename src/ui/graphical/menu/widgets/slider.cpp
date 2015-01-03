@@ -72,8 +72,8 @@ void cSlider::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (surface != nullptr)
 	{
-		auto positionRect = getArea ().toSdlRect ();
-		SDL_BlitSurface (surface.get (), nullptr, &destination, &positionRect);
+		auto positionRect = getArea().toSdlRect();
+		SDL_BlitSurface (surface.get(), nullptr, &destination, &positionRect);
 	}
 	cClickableWidget::draw (destination, clipRect);
 }
@@ -81,13 +81,13 @@ void cSlider::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 //------------------------------------------------------------------------------
 void cSlider::handleMoved (const cPosition& offset)
 {
-	setHandleMinMaxPosition ();
+	setHandleMinMaxPosition();
 
 	cWidget::handleMoved (offset);
 }
 
 //------------------------------------------------------------------------------
-int cSlider::getMinValue () const
+int cSlider::getMinValue() const
 {
 	return minValue;
 }
@@ -95,7 +95,7 @@ int cSlider::getMinValue () const
 //------------------------------------------------------------------------------
 void cSlider::setMinValue (int minValue_)
 {
-	auto oldValue = getValue ();
+	auto oldValue = getValue();
 
 	minValue = minValue_;
 
@@ -103,7 +103,7 @@ void cSlider::setMinValue (int minValue_)
 }
 
 //------------------------------------------------------------------------------
-int cSlider::getMaxValue () const
+int cSlider::getMaxValue() const
 {
 	return maxValue;
 }
@@ -111,7 +111,7 @@ int cSlider::getMaxValue () const
 //------------------------------------------------------------------------------
 void cSlider::setMaxValue (int maxValue_)
 {
-	auto oldValue = getValue ();
+	auto oldValue = getValue();
 
 	maxValue = maxValue_;
 
@@ -119,13 +119,13 @@ void cSlider::setMaxValue (int maxValue_)
 }
 
 //------------------------------------------------------------------------------
-int cSlider::getValue () const
+int cSlider::getValue() const
 {
 	return currentValue;
 }
 
 //------------------------------------------------------------------------------
-int cSlider::getValueFromHandlePosition () const
+int cSlider::getValueFromHandlePosition() const
 {
 	int minPosition, maxPosition;
 	computeHandleMinMaxPosition (minPosition, maxPosition);
@@ -133,9 +133,9 @@ int cSlider::getValueFromHandlePosition () const
 	const auto valueDiff = maxValue - minValue;
 	const auto positionDiff = maxPosition - minPosition;
 
-	const auto handlePosition = (orientation == eOrientationType::Horizontal ? handle->getPosition ().x () : handle->getPosition ().y ());
+	const auto handlePosition = (orientation == eOrientationType::Horizontal ? handle->getPosition().x() : handle->getPosition().y());
 
-	return positionDiff != 0 ? minValue + Round((float)(handlePosition - minPosition) * valueDiff / positionDiff) : minValue;
+	return positionDiff != 0 ? minValue + Round ((float) (handlePosition - minPosition) * valueDiff / positionDiff) : minValue;
 }
 
 //------------------------------------------------------------------------------
@@ -146,7 +146,7 @@ void cSlider::setValue (int value)
 	// block for scoped operation
 	{
 		settingValue = true;
-		auto reseter = makeScopedOperation ([&](){ settingValue = false; });
+		auto reseter = makeScopedOperation ([&]() { settingValue = false; });
 
 		value = std::max (value, minValue);
 		value = std::min (value, maxValue);
@@ -161,24 +161,24 @@ void cSlider::setValue (int value)
 
 		const auto newPosition = valueDiff != 0 ? minPosition + (currentValue - minValue) * positionDiff / valueDiff : minPosition;
 
-		cPosition position = handle->getPosition ();
-		(orientation == eOrientationType::Horizontal ? position.x () : position.y ()) = newPosition;
+		cPosition position = handle->getPosition();
+		(orientation == eOrientationType::Horizontal ? position.x() : position.y()) = newPosition;
 		handle->moveTo (position);
 	}
 
-	if (value != currentValue) valueChanged ();
+	if (value != currentValue) valueChanged();
 }
 
 //------------------------------------------------------------------------------
 void cSlider::increase (int offset)
 {
-	setValue (getValue () + offset);
+	setValue (getValue() + offset);
 }
 
 //------------------------------------------------------------------------------
 void cSlider::decrease (int offset)
 {
-	setValue (getValue () - offset);
+	setValue (getValue() - offset);
 }
 
 //------------------------------------------------------------------------------
@@ -190,48 +190,48 @@ void cSlider::createSurface (eSliderType sliderType)
 
 		assert (orientation == eOrientationType::Horizontal); // We do not have graphics for vertical scroll bar yet!
 
-		const auto offset = handle->getSize ().x () / 2;
+		const auto offset = handle->getSize().x() / 2;
 
-		auto size = getSize ();
+		auto size = getSize();
 
 		//if (size.x () < 6)
 		//{
 		//	size.x () = 6;
 		//}
 
-		surface = AutoSurface (SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0));
-		SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
-		SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
+		surface = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
+		SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
+		SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
 
-		size.x () -= offset * 2;
+		size.x() -= offset * 2;
 
 		SDL_Rect sourceBegin = {201, 53, 3, 3};
 		SDL_Rect sourceEnd = {259 - 3, 53, 3, 3};
 		SDL_Rect sourcePart = {201 + sourceBegin.w, 53, /*259 - 201 - sourceBegin.w - sourceEnd.w*/ 10, 3};
 
-		SDL_Rect destination = {offset, size.y () / 2 - (sourceBegin.h / 2), sourceBegin.w, sourceBegin.h};
-		SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get (), &sourceBegin, surface.get (), &destination);
+		SDL_Rect destination = {offset, size.y() / 2 - (sourceBegin.h / 2), sourceBegin.w, sourceBegin.h};
+		SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get(), &sourceBegin, surface.get(), &destination);
 
-		SDL_Rect destinationEnd = {offset + size.x () - sourceEnd.w, size.y () / 2 - (sourceEnd.h / 2), sourceEnd.w, sourceEnd.h};
-		SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get (), &sourceEnd, surface.get (), &destinationEnd);
+		SDL_Rect destinationEnd = {offset + size.x() - sourceEnd.w, size.y() / 2 - (sourceEnd.h / 2), sourceEnd.w, sourceEnd.h};
+		SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get(), &sourceEnd, surface.get(), &destinationEnd);
 
-		SDL_Rect destinationPart = {offset + sourceBegin.w, size.y () / 2 - (sourcePart.h / 2), sourcePart.w, sourcePart.h};
+		SDL_Rect destinationPart = {offset + sourceBegin.w, size.y() / 2 - (sourcePart.h / 2), sourcePart.w, sourcePart.h};
 		while (destinationPart.x < destinationEnd.x)
 		{
 			if (destinationPart.x + sourcePart.w > destinationEnd.x) sourcePart.w = destinationEnd.x - destinationPart.x;
-			SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get (), &sourcePart, surface.get (), &destinationPart);
+			SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get(), &sourcePart, surface.get(), &destinationPart);
 			destinationPart.x += sourcePart.w;
 		}
 	}
 	else if (sliderType == eSliderType::DrawnBackground)
 	{
-		auto size = getSize ();
+		auto size = getSize();
 
-		surface = AutoSurface (SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0));
-		SDL_FillRect (surface.get (), nullptr, cRgbColor::black ().toMappedSdlRGBAColor (surface->format));
+		surface = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
+		SDL_FillRect (surface.get(), nullptr, cRgbColor::black().toMappedSdlRGBAColor (surface->format));
 
-		drawLine (surface.get (), cPosition (0, 0), cPosition (0, size.y ()), cRgbColor (140, 102, 61));
-		drawLine (surface.get (), cPosition (size.x ()-1, 0), cPosition (size.x ()-1, size.y ()), cRgbColor (140, 102, 61));
+		drawLine (surface.get(), cPosition (0, 0), cPosition (0, size.y()), cRgbColor (140, 102, 61));
+		drawLine (surface.get(), cPosition (size.x() - 1, 0), cPosition (size.x() - 1, size.y()), cRgbColor (140, 102, 61));
 	}
 }
 
@@ -240,15 +240,15 @@ void cSlider::createHandle (eSliderHandleType handleType)
 {
 	if (handle) return;
 
-	handle = addChild (std::make_unique<cSliderHandle> (getPosition (), handleType, orientation));
+	handle = addChild (std::make_unique<cSliderHandle> (getPosition(), handleType, orientation));
 
-	setHandleMinMaxPosition ();
+	setHandleMinMaxPosition();
 
 	signalConnectionManager.connect (handle->moved, std::bind (&cSlider::movedHandle, this));
 }
 
 //------------------------------------------------------------------------------
-void cSlider::setHandleMinMaxPosition ()
+void cSlider::setHandleMinMaxPosition()
 {
 	if (!handle) return;
 
@@ -263,9 +263,9 @@ bool cSlider::handleClicked (cApplication& application, cMouse& mouse, eMouseBut
 {
 	if (!handle) return false;
 
-	const auto mousePosition = (orientation == eOrientationType::Horizontal ? mouse.getPosition ().x () : mouse.getPosition ().y ());
+	const auto mousePosition = (orientation == eOrientationType::Horizontal ? mouse.getPosition().x() : mouse.getPosition().y());
 
-	auto newHandlePosition = mousePosition - (orientation == eOrientationType::Horizontal ? handle->getSize ().x () / 2 : handle->getSize ().y () / 2);
+	auto newHandlePosition = mousePosition - (orientation == eOrientationType::Horizontal ? handle->getSize().x() / 2 : handle->getSize().y() / 2);
 
 	int minPosition, maxPosition;
 	computeHandleMinMaxPosition (minPosition, maxPosition);
@@ -273,7 +273,7 @@ bool cSlider::handleClicked (cApplication& application, cMouse& mouse, eMouseBut
 	newHandlePosition = std::max (std::min (newHandlePosition, maxPosition), minPosition);
 
 	cPosition position = handle->getPosition();
-	(orientation == eOrientationType::Horizontal ? position.x () : position.y ()) = newHandlePosition;
+	(orientation == eOrientationType::Horizontal ? position.x() : position.y()) = newHandlePosition;
 	handle->moveTo (position);
 
 	return true;
@@ -282,8 +282,8 @@ bool cSlider::handleClicked (cApplication& application, cMouse& mouse, eMouseBut
 //------------------------------------------------------------------------------
 void cSlider::computeHandleMinMaxPosition (int& minPosition, int& maxPosition) const
 {
-	minPosition = (orientation == eOrientationType::Horizontal ? getPosition ().x () : getPosition ().y ());
-	maxPosition = (orientation == eOrientationType::Horizontal ? getEndPosition ().x () - handle->getSize ().x () : getEndPosition ().y () - handle->getSize ().y ());
+	minPosition = (orientation == eOrientationType::Horizontal ? getPosition().x() : getPosition().y());
+	maxPosition = (orientation == eOrientationType::Horizontal ? getEndPosition().x() - handle->getSize().x() : getEndPosition().y() - handle->getSize().y());
 	if (type != eSliderType::Default)
 	{
 		maxPosition += 2;
@@ -291,7 +291,7 @@ void cSlider::computeHandleMinMaxPosition (int& minPosition, int& maxPosition) c
 }
 
 //------------------------------------------------------------------------------
-void cSlider::movedHandle ()
+void cSlider::movedHandle()
 {
-	setValue (getValueFromHandlePosition ());
+	setValue (getValueFromHandlePosition());
 }

@@ -31,44 +31,44 @@
 cDialogSelfDestruction::cDialogSelfDestruction (const cUnit& unit, std::shared_ptr<cAnimationTimer> animationTimer) :
 	cWindow (LoadPCX (GFXOD_DESTRUCTION), eWindowBackgrounds::Alpha)
 {
-	armButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (88, 14), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Hot"), FONT_LATIN_NORMAL));
+	armButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (88, 14), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Hot"), FONT_LATIN_NORMAL));
 	signalConnectionManager.connect (armButton->clicked, std::bind (&cDialogSelfDestruction::armcClicked, this));
 
-	destroyButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (15, 13), ePushButtonType::Destroy));
-	destroyButton->lock ();
-	signalConnectionManager.connect (destroyButton->clicked, [this](){ triggeredDestruction (); });
+	destroyButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (15, 13), ePushButtonType::Destroy));
+	destroyButton->lock();
+	signalConnectionManager.connect (destroyButton->clicked, [this]() { triggeredDestruction(); });
 
-	auto cancelButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (88, 46), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), FONT_LATIN_NORMAL));
+	auto cancelButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (88, 46), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), FONT_LATIN_NORMAL));
 	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
-	signalConnectionManager.connect (cancelButton->clicked, [this](){ close (); });
+	signalConnectionManager.connect (cancelButton->clicked, [this]() { close(); });
 
-	protectionGlass = addChild (std::make_unique<cProtectionGlass> (getPosition () + cPosition (15, 13), std::move (animationTimer)));
+	protectionGlass = addChild (std::make_unique<cProtectionGlass> (getPosition() + cPosition (15, 13), std::move (animationTimer)));
 	signalConnectionManager.connect (protectionGlass->opened, [this]()
 	{
-		destroyButton->unlock ();
+		destroyButton->unlock();
 	});
 
 	signalConnectionManager.connect (unit.destroyed, std::bind (&cDialogSelfDestruction::closeOnUnitDestruction, this));
 }
 
 //------------------------------------------------------------------------------
-cDialogSelfDestruction::~cDialogSelfDestruction ()
+cDialogSelfDestruction::~cDialogSelfDestruction()
 {}
 
 //------------------------------------------------------------------------------
-void cDialogSelfDestruction::armcClicked ()
+void cDialogSelfDestruction::armcClicked()
 {
-	protectionGlass->open ();
-	armButton->lock ();
+	protectionGlass->open();
+	armButton->lock();
 }
 
 //------------------------------------------------------------------------------
-void cDialogSelfDestruction::closeOnUnitDestruction ()
+void cDialogSelfDestruction::closeOnUnitDestruction()
 {
-	if (isClosing ()) return;
+	if (isClosing()) return;
 
-	close ();
-	auto application = getActiveApplication ();
+	close();
+	auto application = getActiveApplication();
 	if (application)
 	{
 		application->show (std::make_shared<cDialogOk> ("Unit destroyed!")); // TODO: translate

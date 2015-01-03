@@ -25,7 +25,7 @@ cTurnClock::cTurnClock (int turn_) :
 {}
 
 //------------------------------------------------------------------------------
-int cTurnClock::getTurn () const
+int cTurnClock::getTurn() const
 {
 	return turn;
 }
@@ -34,12 +34,12 @@ int cTurnClock::getTurn () const
 void cTurnClock::setTurn (int turn_)
 {
 	std::swap (turn, turn_);
-	if (turn != turn_) turnChanged ();
+	if (turn != turn_) turnChanged();
 }
 
 //------------------------------------------------------------------------------
-void cTurnClock::increaseTurn ()
+void cTurnClock::increaseTurn()
 {
 	++turn;
-	turnChanged ();
+	turnChanged();
 }

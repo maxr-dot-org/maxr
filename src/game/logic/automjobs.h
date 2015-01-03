@@ -43,7 +43,7 @@ private:
 private:
 	float calcScoreDistToOtherSurveyor (const std::vector<cAutoMJob*>& jobs, const cPosition& position, float e) const;
 
-	float calcFactor(const cPosition& position, const std::vector<cAutoMJob*>& jobs);
+	float calcFactor (const cPosition& position, const std::vector<cAutoMJob*>& jobs);
 	void planNextMove (const std::vector<cAutoMJob*>& jobs);
 	void planLongMove (const std::vector<cAutoMJob*>& jobs);
 	void changeOP();
@@ -52,9 +52,9 @@ public:
 	cAutoMJob (cClient& client, cVehicle& vehicle);
 
 	void doAutoMove (const std::vector<cAutoMJob*>& jobs);
-	void stop ();
-	bool isFinished () const { return finished; }
-	cVehicle& getVehicle () { return vehicle; }
+	void stop();
+	bool isFinished() const { return finished; }
+	cVehicle& getVehicle() { return vehicle; }
 };
 
 #endif  // game_logic_automjobsH

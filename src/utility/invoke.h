@@ -32,65 +32,66 @@
 template<typename F>
 typename sFunctionTraits<F>::result_type invoke (const std::function<F>& func, const std::tuple<>& args)
 {
-	static_assert(sFunctionTraits<F>::arity == 0, "Tuple size does not match functions argument count");
+	static_assert (sFunctionTraits<F>::arity == 0, "Tuple size does not match functions argument count");
 	return func();
 }
 
 template<typename F, typename Arg1>
 typename sFunctionTraits<F>::result_type invoke (const std::function<F>& func, const std::tuple<Arg1>& args)
 {
-	static_assert(sFunctionTraits<F>::arity == 1, "Tuple size does not match functions argument count");
-	return func(std::get<0>(args));
+	static_assert (sFunctionTraits<F>::arity == 1, "Tuple size does not match functions argument count");
+	return func (std::get<0> (args));
 }
 
 template<typename F, typename Arg1, typename Arg2>
 typename sFunctionTraits<F>::result_type invoke (const std::function<F>& func, const std::tuple<Arg1, Arg2>& args)
 {
-	static_assert(sFunctionTraits<F>::arity == 2, "Tuple size does not match functions argument count");
+	static_assert (sFunctionTraits<F>::arity == 2, "Tuple size does not match functions argument count");
 	return func (std::get<0> (args), std::get<1> (args));
 }
 
 template<typename F, typename Arg1, typename Arg2, typename Arg3>
 typename sFunctionTraits<F>::result_type invoke (const std::function<F>& func, const std::tuple<Arg1, Arg2, Arg3>& args)
 {
-	static_assert(sFunctionTraits<F>::arity == 3, "Tuple size does not match functions argument count");
+	static_assert (sFunctionTraits<F>::arity == 3, "Tuple size does not match functions argument count");
 	return func (std::get<0> (args), std::get<1> (args), std::get<2> (args));
 }
 
 template<typename F, typename Arg1, typename Arg2, typename Arg3, typename Arg4>
 typename sFunctionTraits<F>::result_type invoke (const std::function<F>& func, const std::tuple<Arg1, Arg2, Arg3, Arg4>& args)
 {
-	static_assert(sFunctionTraits<F>::arity == 4, "Tuple size does not match functions argument count");
+	static_assert (sFunctionTraits<F>::arity == 4, "Tuple size does not match functions argument count");
 	return func (std::get<0> (args), std::get<1> (args), std::get<2> (args), std::get<3> (args));
 }
 
 template<typename F, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5>
 typename sFunctionTraits<F>::result_type invoke (const std::function<F>& func, const std::tuple<Arg1, Arg2, Arg3, Arg4, Arg5>& args)
 {
-	static_assert(sFunctionTraits<F>::arity == 5, "Tuple size does not match functions argument count");
+	static_assert (sFunctionTraits<F>::arity == 5, "Tuple size does not match functions argument count");
 	return func (std::get<0> (args), std::get<1> (args), std::get<2> (args), std::get<3> (args), std::get<4> (args));
 }
 
 #else
 
-namespace detail {
+namespace detail
+{
 
 template<int ...>
 struct sequence {};
 
 template<int N, int ...S>
-struct generate_sequence : generate_sequence<N-1, N-1, S...> {};
+struct generate_sequence : generate_sequence < N - 1, N - 1, S... > {};
 
 template<int ...S>
 struct generate_sequence<0, S...>
 {
-    typedef sequence<S...> type;
+	typedef sequence<S...> type;
 };
 
 template<typename F, typename ArgsTuple, int ...S>
 typename sFunctionTraits<F>::result_type invoke_impl (const std::function<F>& func, const ArgsTuple& args, sequence<S...>)
 {
-    return func (std::get<S> (args)...);
+	return func (std::get<S> (args)...);
 }
 
 } // namespace detail
@@ -98,8 +99,8 @@ typename sFunctionTraits<F>::result_type invoke_impl (const std::function<F>& fu
 template<typename F, typename... Args>
 typename sFunctionTraits<F>::result_type invoke (const std::function<F>& func, const std::tuple<Args...>& args)
 {
-	static_assert(sFunctionTraits<F>::arity == sizeof...(Args), "Tuple size does not match functions argument count");
-    return detail::invoke_impl (func, args, typename detail::generate_sequence<sizeof...(Args)>::type ());
+	static_assert (sFunctionTraits<F>::arity == sizeof... (Args), "Tuple size does not match functions argument count");
+	return detail::invoke_impl (func, args, typename detail::generate_sequence<sizeof... (Args)>::type());
 }
 
 #endif // MAXR_NO_VARIADIC_TEMPLATES

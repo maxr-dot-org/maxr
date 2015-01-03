@@ -29,21 +29,21 @@
 //------------------------------------------------------------------------------
 bool cMouseActionSupplyAmmo::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
 {
-	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
+	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 
 	if (!selectedVehicle) return false;
 
 	const auto& field = map.getField (mapPosition);
 
-	const auto overVehicle = field.getVehicle ();
-	const auto overPlane = field.getPlane ();
-	const auto overBuilding = field.getBuilding ();
+	const auto overVehicle = field.getVehicle();
+	const auto overPlane = field.getPlane();
+	const auto overBuilding = field.getBuilding();
 
 	if (overVehicle)
 	{
 		gameMapWidget.triggeredSupplyAmmo (*selectedVehicle, *overVehicle);
 	}
-	else if (overPlane && overPlane->getFlightHeight () == 0)
+	else if (overPlane && overPlane->getFlightHeight() == 0)
 	{
 		gameMapWidget.triggeredSupplyAmmo (*selectedVehicle, *overPlane);
 	}
@@ -60,13 +60,13 @@ bool cMouseActionSupplyAmmo::executeLeftClick (cGameMapWidget& gameMapWidget, co
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionSupplyAmmo::doesChangeState () const
+bool cMouseActionSupplyAmmo::doesChangeState() const
 {
 	return true;
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionSupplyAmmo::isSingleAction () const
+bool cMouseActionSupplyAmmo::isSingleAction() const
 {
 	return false;
 }

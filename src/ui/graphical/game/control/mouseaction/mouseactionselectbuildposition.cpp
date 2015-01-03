@@ -34,7 +34,7 @@ cMouseActionSelectBuildPosition::cMouseActionSelectBuildPosition (sID buildId_, 
 //------------------------------------------------------------------------------
 bool cMouseActionSelectBuildPosition::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
 {
-	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
+	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 
 	if (!selectedVehicle) return false;
 
@@ -44,13 +44,13 @@ bool cMouseActionSelectBuildPosition::executeLeftClick (cGameMapWidget& gameMapW
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionSelectBuildPosition::doesChangeState () const
+bool cMouseActionSelectBuildPosition::doesChangeState() const
 {
 	return true;
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionSelectBuildPosition::isSingleAction () const
+bool cMouseActionSelectBuildPosition::isSingleAction() const
 {
 	return true;
 }

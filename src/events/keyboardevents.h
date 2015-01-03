@@ -33,8 +33,8 @@ public:
 		Up
 	};
 
-	cKeyboardEvent(const SDL_KeyboardEvent& sdlEvent);
-	
+	cKeyboardEvent (const SDL_KeyboardEvent& sdlEvent);
+
 	SDL_Keycode getKey() const;
 	KeyModifierFlags getModifiers() const;
 	eType getType() const;
@@ -45,7 +45,7 @@ public:
 class cTextInputEvent
 {
 public:
-	cTextInputEvent(const SDL_TextInputEvent& sdlEvent);
+	cTextInputEvent (const SDL_TextInputEvent& sdlEvent);
 
 	const char* getText() const;
 private:

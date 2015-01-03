@@ -86,8 +86,8 @@ const std::string cKeysList::keyUnitMenuUpgradeName = "KeyUnitMenuUpgrade";
 const std::string cKeysList::keyUnitMenuDestroyName = "KeyUnitMenuDestroy";
 
 //------------------------------------------------------------------------------
-cKeysList::cKeysList () :
-	keyExit(cKeyCombination(eKeyModifierType::None, SDLK_ESCAPE)),
+cKeysList::cKeysList() :
+	keyExit (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)),
 	keyJumpToAction (cKeyCombination (eKeyModifierType::None, SDLK_F11)),
 	keyEndTurn (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)),
 	keyChat (cKeyCombination (eKeyModifierType::None, SDLK_TAB)),
@@ -119,7 +119,7 @@ cKeysList::cKeysList () :
 	keyCenterUnit (cKeyCombination (eKeyModifierType::None, SDLK_f)),
 	keyUnitDone (cKeyCombination (eKeyModifierType::None, SDLK_e)),
 	keyUnitDoneAndNext (cKeyCombination (eKeyModifierType::None, SDLK_SPACE)),
-	keyAllDoneAndNext (cKeyCombination (toEnumFlag(eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight, SDLK_SPACE)),
+	keyAllDoneAndNext (cKeyCombination (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight, SDLK_SPACE)),
 	keyUnitNext (cKeyCombination (eKeyModifierType::None, SDLK_w)),
 	keyUnitPrev (cKeyCombination (eKeyModifierType::None, SDLK_q)),
 	keyUnitMenuAttack (cKeyCombination (eKeyModifierType::None, SDLK_a)),
@@ -148,13 +148,13 @@ cKeysList::cKeysList () :
 {}
 
 //------------------------------------------------------------------------------
-void cKeysList::loadFromFile ()
+void cKeysList::loadFromFile()
 {
 	Log.write ("Loading Keys", LOG_TYPE_INFO);
 	if (!FileExists (KEYS_XMLUsers) && !FileExists (KEYS_XMLGame))
 	{
 		Log.write ("generating new keys-file", LOG_TYPE_WARNING);
-		saveToFile ();
+		saveToFile();
 		return;
 	}
 	else if (!FileExists (KEYS_XMLUsers))
@@ -171,7 +171,7 @@ void cKeysList::loadFromFile ()
 	if (keysXml.LoadFile (KEYS_XMLUsers) != XML_NO_ERROR)
 	{
 		Log.write ("cannot load keys.xml\ngenerating new file", LOG_TYPE_WARNING);
-		saveToFile ();
+		saveToFile();
 		return;
 	}
 
@@ -180,7 +180,7 @@ void cKeysList::loadFromFile ()
 	if (!keysElement)
 	{
 		Log.write ("invalid keys.xml: missing 'Keys' element\ngenerating new file", LOG_TYPE_WARNING);
-		saveToFile ();
+		saveToFile();
 		return;
 	}
 
@@ -189,7 +189,7 @@ void cKeysList::loadFromFile ()
 	if (!mouseElement)
 	{
 		Log.write ("invalid keys.xml: missing 'Mouse' element\ngenerating new file", LOG_TYPE_WARNING);
-		saveToFile ();
+		saveToFile();
 		return;
 	}
 
@@ -260,18 +260,18 @@ void cKeysList::loadFromFile ()
 		const auto attribute = mouseStyleElement->FindAttribute ("Text");
 		if (attribute)
 		{
-			if (strcmp (attribute->Value (), "OLD_SCHOOL") == 0)
+			if (strcmp (attribute->Value(), "OLD_SCHOOL") == 0)
 			{
 				mouseStyle = eMouseStyle::OldSchool;
 			}
-			else if (strcmp (attribute->Value (), "MODERN") == 0)
+			else if (strcmp (attribute->Value(), "MODERN") == 0)
 			{
 				mouseStyle = eMouseStyle::Modern;
 			}
 			else
 			{
 				mouseStyle = eMouseStyle::Modern;
-				Log.write (std::string("Unknown mouse style '") + attribute->Value () + "'. Fall back to modern style.", LOG_TYPE_WARNING);
+				Log.write (std::string ("Unknown mouse style '") + attribute->Value() + "'. Fall back to modern style.", LOG_TYPE_WARNING);
 			}
 		}
 		else
@@ -289,14 +289,14 @@ void cKeysList::loadFromFile ()
 	// write file completely new if some settings have been missing
 	if (!loadedAll)
 	{
-		saveToFile ();
+		saveToFile();
 	}
 
 	Log.write ("Done", LOG_TYPE_DEBUG);
 }
 
 //------------------------------------------------------------------------------
-void cKeysList::saveToFile ()
+void cKeysList::saveToFile()
 {
 	XMLDocument keysXml;
 	auto rootElement = keysXml.NewElement ("Controles");
@@ -366,7 +366,7 @@ void cKeysList::saveToFile ()
 	auto mouseElement = keysXml.NewElement ("Mouse");
 	rootElement->LinkEndChild (mouseElement);
 
-	auto mouseStyleElement = mouseElement->GetDocument ()->NewElement ("MOUSE_STYLE");
+	auto mouseStyleElement = mouseElement->GetDocument()->NewElement ("MOUSE_STYLE");
 	mouseStyleElement->SetAttribute ("Text", mouseStyle == eMouseStyle::OldSchool ? "OLD_SCHOOL" : "MODERN");
 	mouseElement->LinkEndChild (mouseStyleElement);
 
@@ -398,7 +398,7 @@ bool cKeysList::tryLoadSingleKey (const tinyxml2::XMLElement& parentElement, con
 
 	try
 	{
-		destination = cKeySequence (attribute->Value ());
+		destination = cKeySequence (attribute->Value());
 	}
 	catch (std::runtime_error& e)
 	{
@@ -412,7 +412,7 @@ bool cKeysList::tryLoadSingleKey (const tinyxml2::XMLElement& parentElement, con
 //------------------------------------------------------------------------------
 void cKeysList::saveSingleKey (tinyxml2::XMLElement& parentElement, const std::string& elementName, const cKeySequence& source)
 {
-	auto keyElement = parentElement.GetDocument ()->NewElement (elementName.c_str());
+	auto keyElement = parentElement.GetDocument()->NewElement (elementName.c_str());
 
 	keyElement->SetAttribute ("Text", source.toString().c_str());
 
@@ -420,7 +420,7 @@ void cKeysList::saveSingleKey (tinyxml2::XMLElement& parentElement, const std::s
 }
 
 //------------------------------------------------------------------------------
-eMouseStyle cKeysList::getMouseStyle () const
+eMouseStyle cKeysList::getMouseStyle() const
 {
 	return mouseStyle;
 }

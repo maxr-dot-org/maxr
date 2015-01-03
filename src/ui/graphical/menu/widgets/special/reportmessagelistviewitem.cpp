@@ -33,39 +33,39 @@ cReportMessageListViewItem::cReportMessageListViewItem (const cSavedReport& repo
 {
 	const int unitImageSize = 32;
 
-	auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImageSize, 0), cPosition (450, 0)), report.getMessage (), FONT_LATIN_NORMAL, toEnumFlag(eAlignmentType::Left) | eAlignmentType::CenterVerical));
+	auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImageSize, 0), cPosition (450, 0)), report.getMessage(), FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
 	textLabel->setWordWrap (true);
-	textLabel->resizeToTextHeight ();
+	textLabel->resizeToTextHeight();
 
-	if (report.hasUnitId ())
+	if (report.hasUnitId())
 	{
-		const auto& unitId = report.getUnitId ();
+		const auto& unitId = report.getUnitId();
 
-		const auto totalHeight = std::max (unitImageSize, textLabel->getSize ().y ());
+		const auto totalHeight = std::max (unitImageSize, textLabel->getSize().y());
 
-		AutoSurface unitSurface (SDL_CreateRGBSurface (0, unitImageSize, unitImageSize, Video.getColDepth (), 0, 0, 0, 0));
-		SDL_SetColorKey (unitSurface.get (), SDL_TRUE, 0x00FF00FF);
-		SDL_FillRect (unitSurface.get (), nullptr, 0x00FF00FF);
+		AutoSurface unitSurface (SDL_CreateRGBSurface (0, unitImageSize, unitImageSize, Video.getColDepth(), 0, 0, 0, 0));
+		SDL_SetColorKey (unitSurface.get(), SDL_TRUE, 0x00FF00FF);
+		SDL_FillRect (unitSurface.get(), nullptr, 0x00FF00FF);
 		SDL_Rect dest = {0, 0, 0, 0};
 
-		const auto& data = *unitId.getUnitDataOriginalVersion ();
-		if (unitId.isAVehicle ())
+		const auto& data = *unitId.getUnitDataOriginalVersion();
+		if (unitId.isAVehicle())
 		{
 			const float zoomFactor = unitImageSize / 64.0f;
 			const auto& uiData = *UnitsData.getVehicleUI (unitId);
-			cVehicle::render_simple (unitSurface.get (), dest, zoomFactor, data, uiData, nullptr);
-			cVehicle::drawOverlayAnimation (unitSurface.get (), dest, zoomFactor, data, uiData);
+			cVehicle::render_simple (unitSurface.get(), dest, zoomFactor, data, uiData, nullptr);
+			cVehicle::drawOverlayAnimation (unitSurface.get(), dest, zoomFactor, data, uiData);
 		}
-		else if (unitId.isABuilding ())
+		else if (unitId.isABuilding())
 		{
 			const float zoomFactor = unitImageSize / (data.isBig ? 128.0f : 64.0f);
 			const auto& uiData = *UnitsData.getBuildingUI (unitId);
-			cBuilding::render_simple (unitSurface.get (), dest, zoomFactor, data, uiData, nullptr);
+			cBuilding::render_simple (unitSurface.get(), dest, zoomFactor, data, uiData, nullptr);
 		}
-		addChild (std::make_unique<cImage> (cPosition (0, (totalHeight - unitImageSize) / 2), unitSurface.get ()));
+		addChild (std::make_unique<cImage> (cPosition (0, (totalHeight - unitImageSize) / 2), unitSurface.get()));
 	}
 
-	fitToChildren ();
+	fitToChildren();
 }
 
 //------------------------------------------------------------------------------
@@ -73,17 +73,17 @@ void cReportMessageListViewItem::draw (SDL_Surface& destination, const cBox<cPos
 {
 	cAbstractListViewItem::draw (destination, clipRect);
 
-	if (isSelected ())
+	if (isSelected())
 	{
-		auto dest = getArea ();
-		dest.getMinCorner () -= cPosition (1, 1);
-		dest.getMaxCorner () += cPosition (1, 1);
+		auto dest = getArea();
+		dest.getMinCorner() -= cPosition (1, 1);
+		dest.getMaxCorner() += cPosition (1, 1);
 		drawRectangle (destination, dest, cRgbColor (0xE0, 0xE0, 0xE0));
 	}
 }
 
 //------------------------------------------------------------------------------
-const cSavedReport& cReportMessageListViewItem::getReport () const
+const cSavedReport& cReportMessageListViewItem::getReport() const
 {
 	return report;
 }

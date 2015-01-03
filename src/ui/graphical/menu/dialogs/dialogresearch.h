@@ -37,14 +37,14 @@ class cDialogResearch : public cWindow
 public:
 	cDialogResearch (const cPlayer& player);
 
-	const std::array<int, cResearch::kNrResearchAreas>& getResearchSettings () const;
+	const std::array<int, cResearch::kNrResearchAreas>& getResearchSettings() const;
 
 	cSignal<void ()> done;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
 	static const size_t rows = 8;
-	static_assert(cResearch::kNrResearchAreas == rows, "number of items displayed in the research dialog does not match the number of research areas!");
+	static_assert (cResearch::kNrResearchAreas == rows, "number of items displayed in the research dialog does not match the number of research areas!");
 
 	const cPlayer& player;
 
@@ -58,7 +58,7 @@ private:
 	std::array<cPushButton*, rows> decreaseButtons;
 	std::array<cPushButton*, rows> increaseButtons;
 
-	void updateWidgets ();
+	void updateWidgets();
 	void handleSliderValueChanged (size_t index);
 };
 

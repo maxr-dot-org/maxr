@@ -29,29 +29,29 @@ cAnimationWork::cAnimationWork (cAnimationTimer& animationTimer_, const cBuildin
 	building (&building_),
 	incrementEffect (false)
 {
-	if (building->isUnitWorking () || building->data.powerOnGraphic)
+	if (building->isUnitWorking() || building->data.powerOnGraphic)
 	{
-		activate ();
+		activate();
 	}
 
 	if (!building->data.powerOnGraphic)
 	{
 		signalConnectionManager.connect (building->workingChanged, [this]()
 		{
-			if (!building->isUnitWorking ())
+			if (!building->isUnitWorking())
 			{
 				running = false;
-				animationTimerConnectionManager.disconnectAll ();
+				animationTimerConnectionManager.disconnectAll();
 			}
 			else
 			{
-				activate ();
+				activate();
 			}
 		});
 	}
 	signalConnectionManager.connect (building->destroyed, [this]()
 	{
-		signalConnectionManager.disconnectAll ();
+		signalConnectionManager.disconnectAll();
 		building = nullptr;
 		finished = true;
 	});
@@ -60,20 +60,20 @@ cAnimationWork::cAnimationWork (cAnimationTimer& animationTimer_, const cBuildin
 //------------------------------------------------------------------------------
 bool cAnimationWork::isLocatedIn (const cBox<cPosition>& box) const
 {
-	return building && box.intersects (building->getArea ());
+	return building && box.intersects (building->getArea());
 }
 
 //------------------------------------------------------------------------------
-void cAnimationWork::activate ()
+void cAnimationWork::activate()
 {
 	if (!building) return;
-	building->effectAlpha = random(220);
+	building->effectAlpha = random (220);
 	running = true;
 	animationTimerConnectionManager.connect (animationTimer.triggered100ms, std::bind (&cAnimationWork::run, this));
 }
 
 //------------------------------------------------------------------------------
-void cAnimationWork::run ()
+void cAnimationWork::run()
 {
 	if (!building) return;
 

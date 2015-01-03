@@ -25,9 +25,9 @@
 #include "ui/graphical/menu/widgets/tools/validatorint.h"
 #include "main.h"
 
-cValidatorInt::cValidatorInt () :
-	minValue (std::numeric_limits<int>::min	()),
-	maxValue (std::numeric_limits<int>::max ())
+cValidatorInt::cValidatorInt() :
+	minValue (std::numeric_limits<int>::min()),
+	maxValue (std::numeric_limits<int>::max())
 {}
 
 cValidatorInt::cValidatorInt (int minValue_, int maxValue_) :
@@ -37,14 +37,14 @@ cValidatorInt::cValidatorInt (int minValue_, int maxValue_) :
 
 eValidatorState cValidatorInt::validate (const std::string& text) const
 {
-	if (text.empty ()) return eValidatorState::Intermediate;
+	if (text.empty()) return eValidatorState::Intermediate;
 
-	for (size_t i = 0; i < text.size (); ++i)
+	for (size_t i = 0; i < text.size(); ++i)
 	{
 		if (!std::isdigit (text[i])) return eValidatorState::Invalid;
 	}
 
-	int value = std::atoi (text.c_str ());
+	int value = std::atoi (text.c_str());
 
 	if (value < minValue || value > maxValue) return eValidatorState::Intermediate;
 
@@ -54,16 +54,16 @@ eValidatorState cValidatorInt::validate (const std::string& text) const
 void cValidatorInt::fixup (std::string& text) const
 {
 	// remove all non digits
-	auto newEnd = std::remove_if (text.begin (), text.end (), [](char c) { return !std::isdigit (c); });
-	text.erase (newEnd, text.end ());
+	auto newEnd = std::remove_if (text.begin(), text.end(), [] (char c) { return !std::isdigit (c); });
+	text.erase (newEnd, text.end());
 
-	if (text.empty ())
+	if (text.empty())
 	{
 		text = iToStr (std::max (std::min (0, maxValue), minValue));
 	}
 	else
 	{
-		int value = std::atoi (text.c_str ());
+		int value = std::atoi (text.c_str());
 
 		if (value < minValue)
 		{

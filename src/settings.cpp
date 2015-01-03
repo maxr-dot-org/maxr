@@ -372,7 +372,7 @@ bool cSettings::createConfigFile()
 {
 	configFile.Clear();
 
-	configFile.LinkEndChild (configFile.NewDeclaration ());
+	configFile.LinkEndChild (configFile.NewDeclaration());
 
 	configFile.LinkEndChild (configFile.NewElement ("Options"));
 
@@ -472,7 +472,7 @@ void cSettings::initialize()
 		{
 			Log.write ("Can't load display index from config file: using default value", LOG_TYPE_WARNING);
 			Video.setDisplayIndex (0);
-			saveDisplayIndex ();
+			saveDisplayIndex();
 		}
 		else
 		{
@@ -1043,7 +1043,7 @@ void cSettings::initialize()
 		else
 		{
 			Log.write ("Can't load player color from config file: using default value", LOG_TYPE_WARNING);
-			setPlayerColor (cRgbColor::red ());
+			setPlayerColor (cRgbColor::red());
 		}
 	}
 	else
@@ -1115,9 +1115,9 @@ void cSettings::saveColorDepth()
 	saveSetting ("Options~Start~ColorDepth", Video.getColDepth());
 }
 //------------------------------------------------------------------------------
-void cSettings::saveDisplayIndex ()
+void cSettings::saveDisplayIndex()
 {
-    saveSetting ("Options~Start~Display", Video.getDisplayIndex());
+	saveSetting ("Options~Start~Display", Video.getDisplayIndex());
 }
 
 
@@ -1157,9 +1157,9 @@ bool cSettings::isAnimations() const
 //------------------------------------------------------------------------------
 void cSettings::setAnimations (bool animations, bool save)
 {
-	std::swap(this->animations, animations);
+	std::swap (this->animations, animations);
 	if (save) saveSetting ("Options~Game~EnableAnimations", this->animations);
-	if (this->animations != animations) animationsChanged ();
+	if (this->animations != animations) animationsChanged();
 }
 
 //------------------------------------------------------------------------------
@@ -1372,7 +1372,7 @@ void cSettings::setHomeDir (const char* homeDir)
 }
 
 //------------------------------------------------------------------------------
-bool cSettings::isSoundEnabled () const
+bool cSettings::isSoundEnabled() const
 {
 	return soundEnabled;
 }
@@ -1489,7 +1489,7 @@ void cSettings::setVoiceMute (bool voiceMute, bool save)
 }
 
 //------------------------------------------------------------------------------
-bool cSettings::is3DSound () const
+bool cSettings::is3DSound() const
 {
 	return sound3d;
 }

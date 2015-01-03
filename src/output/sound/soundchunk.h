@@ -31,29 +31,29 @@
 class cSoundChunk
 {
 public:
-    cSoundChunk ();
-    cSoundChunk (cSoundChunk&& other);
-    cSoundChunk& operator= (cSoundChunk&& other);
+	cSoundChunk();
+	cSoundChunk (cSoundChunk&& other);
+	cSoundChunk& operator= (cSoundChunk && other);
 
-    void load (const std::string& fileName);
+	void load (const std::string& fileName);
 
-    bool empty () const;
+	bool empty() const;
 
-    std::chrono::milliseconds getLength () const;
+	std::chrono::milliseconds getLength() const;
 
-    Mix_Chunk* getSdlSound () const;
+	Mix_Chunk* getSdlSound() const;
 private:
-    cSoundChunk (const cSoundChunk& other) MAXR_DELETE_FUNCTION;
-    cSoundChunk& operator= (const cSoundChunk& other) MAXR_DELETE_FUNCTION;
+	cSoundChunk (const cSoundChunk& other) MAXR_DELETE_FUNCTION;
+	cSoundChunk& operator= (const cSoundChunk& other) MAXR_DELETE_FUNCTION;
 
-    struct SdlMixChunkDeleter
-    {
-        void operator()(Mix_Chunk*) const;
-    };
+	struct SdlMixChunkDeleter
+	{
+		void operator() (Mix_Chunk*) const;
+	};
 
-    typedef std::unique_ptr<Mix_Chunk, SdlMixChunkDeleter> SaveSdlMixChunkPointer;
+	typedef std::unique_ptr<Mix_Chunk, SdlMixChunkDeleter> SaveSdlMixChunkPointer;
 
-    SaveSdlMixChunkPointer sdlSound;
+	SaveSdlMixChunkPointer sdlSound;
 };
 
 #endif // output_sound_soundchunkH

@@ -58,7 +58,7 @@ const int RES_COUNT = 4;
 class cMapField
 {
 public:
-	cMapField ();
+	cMapField();
 
 	/** returns the top vehicle on this field */
 	cVehicle* getVehicle() const;
@@ -67,11 +67,11 @@ public:
 	cVehicle* getPlane() const;
 
 	/** returns the buildings on this field */
-	const std::vector<cBuilding*>& getBuildings () const;
+	const std::vector<cBuilding*>& getBuildings() const;
 	/** returns the vehicles on this field */
-	const std::vector<cVehicle*>& getVehicles () const;
+	const std::vector<cVehicle*>& getVehicles() const;
 	/** returns the planes on this field */
-	const std::vector<cVehicle*>& getPlanes () const;
+	const std::vector<cVehicle*>& getPlanes() const;
 
 	/** returns all units on this field */
 	void getUnits (std::vector<cUnit*>& units) const;
@@ -102,7 +102,7 @@ public:
 	void removePlane (const cVehicle& plane);
 
 	/** Removed all units from the field */
-	void removeAll ();
+	void removeAll();
 
 	/** Triggered when a building has been added or removed to/from the field */
 	mutable cSignal<void ()> buildingsChanged;
@@ -115,7 +115,7 @@ public:
 
 private:
 	cMapField (const cMapField& other) MAXR_DELETE_FUNCTION;
-	cMapField& operator=(const cMapField& other) MAXR_DELETE_FUNCTION;
+	cMapField& operator= (const cMapField& other) MAXR_DELETE_FUNCTION;
 
 	/**the list with all buildings on this field
 	* the top building is always stored at first position */
@@ -156,8 +156,8 @@ public:
 	bool isValid() const;
 
 	const std::string& getName() const { return filename; }
-	cPosition getSize () const { return cPosition (size, size); }
-	int getOffset (const cPosition& pos) const { assert (isValidPosition(pos));  return pos.y () * size + pos.x (); }
+	cPosition getSize() const { return cPosition (size, size); }
+	int getOffset (const cPosition& pos) const { assert (isValidPosition (pos));  return pos.y() * size + pos.x(); }
 
 	bool isValidPosition (const cPosition& position) const;
 
@@ -172,7 +172,7 @@ public:
 	void scaleSurfaces (int pixelSize);
 	static AutoSurface loadMapPreview (const std::string& mapPath, int* mapSize = nullptr);
 private:
-    static AutoSurface loadTerrGraph (SDL_RWops* fpMapFile, int iGraphicsPos, const SDL_Color (&colors)[256], int iNum);
+	static AutoSurface loadTerrGraph (SDL_RWops* fpMapFile, int iGraphicsPos, const SDL_Color (&colors)[256], int iNum);
 	void copySrfToTerData (SDL_Surface& surface, int iNum);
 
 	std::string filename;   // Name of the current map
@@ -196,14 +196,14 @@ public:
 	int getOffset (const cPosition& pos) const { return staticMap->getOffset (pos); }
 	bool isValidPosition (const cPosition& pos) const { return staticMap->isValidPosition (pos); }
 
-	bool isBlocked(const cPosition& position) const { return staticMap->isBlocked(position); }
-	bool isCoast(const cPosition& position) const { return staticMap->isCoast(position); }
-	bool isWater(const cPosition& position) const { return staticMap->isWater(position); }
+	bool isBlocked (const cPosition& position) const { return staticMap->isBlocked (position); }
+	bool isCoast (const cPosition& position) const { return staticMap->isCoast (position); }
+	bool isWater (const cPosition& position) const { return staticMap->isWater (position); }
 
 	bool isWaterOrCoast (const cPosition& position) const;
 
-    const sResources& getResource (const cPosition& position) const { return Resources[getOffset (position)]; }
-    sResources& getResource (const cPosition& position) { return Resources[getOffset (position)]; }
+	const sResources& getResource (const cPosition& position) const { return Resources[getOffset (position)]; }
+	sResources& getResource (const cPosition& position) { return Resources[getOffset (position)]; }
 	void assignRessources (const cMap& rhs);
 
 	/**

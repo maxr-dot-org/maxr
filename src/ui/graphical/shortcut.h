@@ -28,12 +28,12 @@ class cShortcut
 public:
 	cShortcut (cKeySequence keySequence);
 
-	const cKeySequence& getKeySequence () const;
+	const cKeySequence& getKeySequence() const;
 
-	void activate ();
-	void deactivate ();
+	void activate();
+	void deactivate();
 
-	bool isActive () const;
+	bool isActive() const;
 
 	mutable cSignal<void ()> triggered;
 private:

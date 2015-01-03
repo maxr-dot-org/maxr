@@ -40,7 +40,7 @@ class cWindowUpgrades : public cWindowHangar
 public:
 	explicit cWindowUpgrades (const cPlayer& player, std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 
-	std::vector<std::pair<sID, cUnitUpgrade>> getUnitUpgrades () const;
+	std::vector<std::pair<sID, cUnitUpgrade>> getUnitUpgrades() const;
 
 protected:
 	virtual void setActiveUnit (const sID& unitId) MAXR_OVERRIDE_FUNCTION;
@@ -67,12 +67,12 @@ private:
 
 	void generateSelectionList (bool select);
 
-	void goldChanged ();
+	void goldChanged();
 
 	void upgradeIncreaseClicked (size_t index);
 	void upgradeDecreaseClicked (size_t index);
 
-	void updateUpgradeButtons ();
+	void updateUpgradeButtons();
 };
 
 #endif // ui_graphical_menu_windows_windowupgrades_windowupgradesH

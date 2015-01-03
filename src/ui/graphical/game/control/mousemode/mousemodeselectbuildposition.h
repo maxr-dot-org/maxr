@@ -29,7 +29,7 @@ class cMouseModeSelectBuildPosition : public cMouseMode
 public:
 	cMouseModeSelectBuildPosition (const cMap* map, const cUnitSelection& unitSelection, const cPlayer* player, sID buildId);
 
-	virtual eMouseModeType getType () const MAXR_OVERRIDE_FUNCTION;
+	virtual eMouseModeType getType() const MAXR_OVERRIDE_FUNCTION;
 
 	virtual void setCursor (cMouse& mouse, const cPosition& mapPosition) const MAXR_OVERRIDE_FUNCTION;
 

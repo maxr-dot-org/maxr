@@ -28,12 +28,12 @@
 //------------------------------------------------------------------------------
 bool cMouseActionSelectBuildPathDestination::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
 {
-	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
+	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 
 	if (!selectedVehicle) return false;
 
 	cPosition destination;
-	if (mapPosition.x () == selectedVehicle->getPosition().x() || mapPosition.y () == selectedVehicle->getPosition().y()) destination = mapPosition;
+	if (mapPosition.x() == selectedVehicle->getPosition().x() || mapPosition.y() == selectedVehicle->getPosition().y()) destination = mapPosition;
 	else destination = cPosition (selectedVehicle->getPosition());
 
 	gameMapWidget.selectedBuildPathDestination (*selectedVehicle, destination);
@@ -42,13 +42,13 @@ bool cMouseActionSelectBuildPathDestination::executeLeftClick (cGameMapWidget& g
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionSelectBuildPathDestination::doesChangeState () const
+bool cMouseActionSelectBuildPathDestination::doesChangeState() const
 {
 	return true;
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionSelectBuildPathDestination::isSingleAction () const
+bool cMouseActionSelectBuildPathDestination::isSingleAction() const
 {
 	return true;
 }

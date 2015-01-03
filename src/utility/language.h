@@ -72,7 +72,7 @@ public:
 	std::string i18n (const std::string& szMainText, const std::string& szInsertText);
 	int         ReadLanguagePack();
 	int         CheckCurrentLanguagePack (bool bInsertMissingEntries);
-	std::vector<std::string> getAvailableLanguages () const;
+	std::vector<std::string> getAvailableLanguages() const;
 
 private:
 	typedef std::map<std::string, std::string> StrStrMap;

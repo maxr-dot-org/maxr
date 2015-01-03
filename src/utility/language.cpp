@@ -234,7 +234,7 @@ int cLanguage::CheckCurrentLanguagePack (bool bInsertMissingEntries)
 	return 0;
 }
 
-std::vector<std::string> cLanguage::getAvailableLanguages () const
+std::vector<std::string> cLanguage::getAvailableLanguages() const
 {
 	std::vector<std::string> languageCodes;
 
@@ -243,23 +243,23 @@ std::vector<std::string> cLanguage::getAvailableLanguages () const
 	const auto languageFileNameSize = strlen (LANGUAGE_FILE_NAME);
 	const auto languageFileExtensionSize = strlen (LANGUAGE_FILE_EXT);
 
-	for (size_t i = 0; i < fileNames.size (); ++i)
+	for (size_t i = 0; i < fileNames.size(); ++i)
 	{
 		const auto& fileName = fileNames[i];
 
-		if (fileName.size () <= languageFileNameSize + languageFileExtensionSize) continue;
+		if (fileName.size() <= languageFileNameSize + languageFileExtensionSize) continue;
 
 		const auto prefix = fileName.substr (0, languageFileNameSize);
 
 		if (prefix.compare (LANGUAGE_FILE_NAME) != 0) continue;
 
-		const auto suffix = fileName.substr (fileName.size () - languageFileExtensionSize);
+		const auto suffix = fileName.substr (fileName.size() - languageFileExtensionSize);
 
 		if (suffix.compare (LANGUAGE_FILE_EXT) != 0) continue;
 
-		const auto languageCode = fileName.substr (languageFileNameSize, fileName.size () - languageFileExtensionSize - languageFileNameSize);
+		const auto languageCode = fileName.substr (languageFileNameSize, fileName.size() - languageFileExtensionSize - languageFileNameSize);
 
-		languageCodes.push_back (to_upper_copy(languageCode));
+		languageCodes.push_back (to_upper_copy (languageCode));
 	}
 
 	return languageCodes;

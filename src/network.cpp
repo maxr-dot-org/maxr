@@ -245,7 +245,7 @@ void cTCP::HandleNetworkThread_SERVER (unsigned int socketIndex)
 		Sockets[iNum].buffer.clear();
 		auto message = std::make_unique<cNetMessage> (TCP_ACCEPT);
 		message->pushInt16 (iNum);
-		pushEvent (std::move(message));
+		pushEvent (std::move (message));
 	}
 	else SDLNet_TCP_Close (socket);
 }
@@ -365,7 +365,7 @@ void cTCP::pushEvent (std::unique_ptr<cNetMessage> message)
 		Log.write ("Discarded message: no receiver!", LOG_TYPE_NET_ERROR);
 		return;
 	}
-	messageReceiver->pushEvent (std::move(message));
+	messageReceiver->pushEvent (std::move (message));
 }
 
 //------------------------------------------------------------------------
@@ -373,7 +373,7 @@ void cTCP::pushEventTCP_Close (unsigned int socketIndex)
 {
 	auto message = std::make_unique<cNetMessage> (TCP_CLOSE);
 	message->pushInt16 (socketIndex);
-	pushEvent (std::move(message));
+	pushEvent (std::move (message));
 }
 
 //------------------------------------------------------------------------

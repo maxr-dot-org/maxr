@@ -31,17 +31,17 @@
 class cVersion
 {
 public:
-	cVersion ();
+	cVersion();
 	explicit cVersion (const std::string& string);
 	explicit cVersion (int major, int minor = 0, int revision = 0);
-	
-	int getMajor () const;
+
+	int getMajor() const;
 	void setMajor (int value);
 
-	int getMinor () const;
+	int getMinor() const;
 	void setMinor (int value);
 
-	int getRevision () const;
+	int getRevision() const;
 	void setRevision (int value);
 
 	/**
@@ -53,15 +53,15 @@ public:
 	 * @param string The string to parse the version from.
 	 */
 	void parseFromString (const std::string& string);
-	std::string toString () const;
+	std::string toString() const;
 
-	bool operator==(const cVersion& other) const;
-	bool operator!=(const cVersion& other) const;
+	bool operator== (const cVersion& other) const;
+	bool operator!= (const cVersion& other) const;
 
-	bool operator<(const cVersion& other) const;
-	bool operator<=(const cVersion& other) const;
-	bool operator>(const cVersion& other) const;
-	bool operator>=(const cVersion& other) const;
+	bool operator< (const cVersion& other) const;
+	bool operator<= (const cVersion& other) const;
+	bool operator> (const cVersion& other) const;
+	bool operator>= (const cVersion& other) const;
 
 private:
 	int major;

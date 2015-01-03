@@ -34,9 +34,9 @@ class cGameGuiController;
 class cLocalSingleplayerGame : public cGame
 {
 public:
-	~cLocalSingleplayerGame ();
+	~cLocalSingleplayerGame();
 
-	virtual void run () MAXR_OVERRIDE_FUNCTION;
+	virtual void run() MAXR_OVERRIDE_FUNCTION;
 
 	virtual void save (int saveNumber, const std::string& saveName) MAXR_OVERRIDE_FUNCTION;
 

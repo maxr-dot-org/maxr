@@ -27,14 +27,14 @@
 class cGame : public cRunnable, public std::enable_shared_from_this<cGame>
 {
 public:
-	cGame () :
+	cGame() :
 		terminate (false)
 	{}
-	virtual ~cGame () {}
+	virtual ~cGame() {}
 
 	virtual void save (int saveNumber, const std::string& saveName) = 0;
 
-	virtual bool wantsToTerminate () const MAXR_OVERRIDE_FUNCTION
+	virtual bool wantsToTerminate() const MAXR_OVERRIDE_FUNCTION
 	{
 		return terminate;
 	}

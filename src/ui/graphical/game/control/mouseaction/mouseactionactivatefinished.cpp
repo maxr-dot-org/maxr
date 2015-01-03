@@ -28,7 +28,7 @@
 //------------------------------------------------------------------------------
 bool cMouseActionActivateFinished::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
 {
-	const auto selectedBuilding = unitSelection.getSelectedBuilding ();
+	const auto selectedBuilding = unitSelection.getSelectedBuilding();
 
 	if (!selectedBuilding) return false;
 
@@ -38,13 +38,13 @@ bool cMouseActionActivateFinished::executeLeftClick (cGameMapWidget& gameMapWidg
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionActivateFinished::doesChangeState () const
+bool cMouseActionActivateFinished::doesChangeState() const
 {
 	return true;
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionActivateFinished::isSingleAction () const
+bool cMouseActionActivateFinished::isSingleAction() const
 {
 	return true;
 }

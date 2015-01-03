@@ -32,7 +32,7 @@ class cShortcut;
 class cClickableWidget : public cWidget
 {
 public:
-	cClickableWidget ();
+	cClickableWidget();
 	explicit cClickableWidget (const cPosition& position);
 	explicit cClickableWidget (const cBox<cPosition>& area);
 

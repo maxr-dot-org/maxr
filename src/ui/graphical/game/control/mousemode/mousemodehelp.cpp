@@ -31,7 +31,7 @@ cMouseModeHelp::cMouseModeHelp (const cMap* map_, const cUnitSelection& unitSele
 {}
 
 //------------------------------------------------------------------------------
-eMouseModeType cMouseModeHelp::getType () const
+eMouseModeType cMouseModeHelp::getType() const
 {
 	return eMouseModeType::Help;
 }

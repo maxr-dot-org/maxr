@@ -31,7 +31,7 @@ class cReportUnitListViewItem : public cAbstractListViewItem
 public:
 	explicit cReportUnitListViewItem (cUnit& unit);
 
-	cUnit& getUnit () const;
+	cUnit& getUnit() const;
 
 	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 

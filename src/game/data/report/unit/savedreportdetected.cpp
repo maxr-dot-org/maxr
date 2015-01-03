@@ -29,16 +29,16 @@
 //------------------------------------------------------------------------------
 cSavedReportDetected::cSavedReportDetected (const cUnit& unit) :
 	cSavedReportUnit (unit),
-	unitName (unit.getDisplayName ()),
-	playerName (unit.getOwner ()->getName ())
+	unitName (unit.getDisplayName()),
+	playerName (unit.getOwner()->getName())
 {}
 
 //------------------------------------------------------------------------------
 cSavedReportDetected::cSavedReportDetected (cNetMessage& message) :
 	cSavedReportUnit (message)
 {
-	unitName = message.popString ();
-	playerName = message.popString ();
+	unitName = message.popString();
+	playerName = message.popString();
 }
 
 //------------------------------------------------------------------------------
@@ -61,20 +61,20 @@ void cSavedReportDetected::pushInto (cNetMessage& message) const
 //------------------------------------------------------------------------------
 void cSavedReportDetected::pushInto (tinyxml2::XMLElement& element) const
 {
-	element.SetAttribute ("unitName", unitName.c_str ());
-	element.SetAttribute ("playerName", playerName.c_str ());
+	element.SetAttribute ("unitName", unitName.c_str());
+	element.SetAttribute ("playerName", playerName.c_str());
 
 	cSavedReportUnit::pushInto (element);
 }
 
 //------------------------------------------------------------------------------
-eSavedReportType cSavedReportDetected::getType () const
+eSavedReportType cSavedReportDetected::getType() const
 {
 	return eSavedReportType::Detected;
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportDetected::getText () const
+std::string cSavedReportDetected::getText() const
 {
 	return unitName + " (" + playerName + ") " + lngPack.i18n ("Text~Comp~Detected");
 }
@@ -82,7 +82,7 @@ std::string cSavedReportDetected::getText () const
 //------------------------------------------------------------------------------
 void cSavedReportDetected::playSound (cSoundManager& soundManager) const
 {
-	const auto& unitData = *getUnitId ().getUnitDataOriginalVersion ();
+	const auto& unitData = *getUnitId().getUnitDataOriginalVersion();
 
 	if (unitData.isStealthOn & TERRAIN_SEA && unitData.canAttack)
 	{

@@ -32,24 +32,24 @@
 cWindowLoad::cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
 	cWindow (LoadPCX (GFXOD_SAVELOAD)),
 	page (0),
-	lastPage ((int)std::ceil ((double)maximalDisplayedSaves / (rows * columns)) - 1),
+	lastPage ((int)std::ceil ((double)maximalDisplayedSaves / (rows* columns)) - 1),
 	selectedSaveNumber (-1)
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (0, 12), getPosition () + cPosition (getArea ().getMaxCorner ().x (), 12 + 10)), lngPack.i18n ("Text~Title~Load"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 12), getPosition() + cPosition (getArea().getMaxCorner().x(), 12 + 10)), lngPack.i18n ("Text~Title~Load"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 	auto turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (525, 16), cPosition (525 + 60, 16 + 10))));
 	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
 
-	auto backButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (353, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Back")));
-	signalConnectionManager.connect (backButton->clicked, [&](){ close (); });
+	auto backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (353, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Back")));
+	signalConnectionManager.connect (backButton->clicked, [&]() { close(); });
 
-	loadButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (514, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Load")));
+	loadButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (514, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Load")));
 	signalConnectionManager.connect (loadButton->clicked, std::bind (&cWindowLoad::handleLoadClicked, this));
-	loadButton->lock ();
+	loadButton->lock();
 
-	auto upButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (33, 438), ePushButtonType::ArrowUpBig));
+	auto upButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (33, 438), ePushButtonType::ArrowUpBig));
 	signalConnectionManager.connect (upButton->clicked, std::bind (&cWindowLoad::handleUpClicked, this));
-	auto downButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (63, 438), ePushButtonType::ArrowDownBig));
+	auto downButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (63, 438), ePushButtonType::ArrowDownBig));
 	signalConnectionManager.connect (downButton->clicked, std::bind (&cWindowLoad::handleDownClicked, this));
 
 	for (size_t x = 0; x < columns; x++)
@@ -57,14 +57,14 @@ cWindowLoad::cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
 		for (size_t y = 0; y < rows; y++)
 		{
 			const auto index = rows * x + y;
-			saveSlots[index] = addChild (std::make_unique<cSaveSlotWidget> (getPosition () + cPosition (17 + 402 * x, 45 + 76 * y)));
+			saveSlots[index] = addChild (std::make_unique<cSaveSlotWidget> (getPosition() + cPosition (17 + 402 * x, 45 + 76 * y)));
 			signalConnectionManager.connect (saveSlots[index]->clicked, std::bind (&cWindowLoad::handleSlotClicked, this, index));
 			signalConnectionManager.connect (saveSlots[index]->doubleClicked, std::bind (&cWindowLoad::handleSlotDoubleClicked, this, index));
 		}
 	}
 
-	loadSaves ();
-	updateSlots ();
+	loadSaves();
+	updateSlots();
 }
 
 //------------------------------------------------------------------------------
@@ -73,34 +73,34 @@ cWindowLoad::~cWindowLoad()
 }
 
 //------------------------------------------------------------------------------
-void cWindowLoad::update ()
+void cWindowLoad::update()
 {
-	saveGames.clear ();
+	saveGames.clear();
 
-	loadSaves ();
-	updateSlots ();
+	loadSaves();
+	updateSlots();
 }
 
 //------------------------------------------------------------------------------
-void cWindowLoad::loadSaves ()
+void cWindowLoad::loadSaves()
 {
-	auto saveFileNames = getFilesOfDirectory (cSettings::getInstance ().getSavesPath ());
+	auto saveFileNames = getFilesOfDirectory (cSettings::getInstance().getSavesPath());
 
-	for (size_t i = 0; i != saveFileNames.size (); ++i)
+	for (size_t i = 0; i != saveFileNames.size(); ++i)
 	{
 		// only check for xml files and numbers for this offset
 		const auto& file = saveFileNames[i];
-		if (file.length () < 4 || file.compare (file.length () - 3, 3, "xml") != 0)
+		if (file.length() < 4 || file.compare (file.length() - 3, 3, "xml") != 0)
 		{
-			saveFileNames.erase (saveFileNames.begin () + i);
+			saveFileNames.erase (saveFileNames.begin() + i);
 			i--;
 			continue;
 		}
 		int number;
-		if (file.length () < 8 || (number = atoi (file.substr (file.length () - 7, 3).c_str ())) < page * (int)(columns * rows) || number > page * (int)(columns * rows) + (int)(rows * columns)) continue;
+		if (file.length() < 8 || (number = atoi (file.substr (file.length() - 7, 3).c_str())) < page * (int) (columns * rows) || number > page * (int) (columns * rows) + (int) (rows * columns)) continue;
 		// don't add files twice
 		bool found = false;
-		for (unsigned int j = 0; j < saveGames.size (); j++)
+		for (unsigned int j = 0; j < saveGames.size(); j++)
 		{
 			if (saveGames[j].getNumber() == number)
 			{
@@ -118,18 +118,18 @@ void cWindowLoad::loadSaves ()
 }
 
 //------------------------------------------------------------------------------
-void cWindowLoad::updateSlots ()
+void cWindowLoad::updateSlots()
 {
 	for (size_t x = 0; x < columns; x++)
 	{
 		for (size_t y = 0; y < rows; y++)
 		{
 			const auto slotNumber = x * rows + y;
-			const auto saveNumber = page * (rows*columns) + slotNumber + 1;
+			const auto saveNumber = page * (rows * columns) + slotNumber + 1;
 
 			auto slot = saveSlots[slotNumber];
 
-			auto saveFile = getSaveFile(saveNumber);
+			auto saveFile = getSaveFile (saveNumber);
 
 			if (saveFile)
 			{
@@ -139,7 +139,7 @@ void cWindowLoad::updateSlots ()
 			{
 				slot->reset (saveNumber);
 			}
-			if (selectedSaveNumber == static_cast<int>(saveNumber)) slot->setSelected (true);
+			if (selectedSaveNumber == static_cast<int> (saveNumber)) slot->setSelected (true);
 			else slot->setSelected (false);
 		}
 	}
@@ -148,7 +148,7 @@ void cWindowLoad::updateSlots ()
 //------------------------------------------------------------------------------
 void cWindowLoad::handleSlotClicked (size_t index)
 {
-	if (saveSlots[index]->isEmpty ()) return;
+	if (saveSlots[index]->isEmpty()) return;
 
 	selectSlot (index, false);
 }
@@ -156,7 +156,7 @@ void cWindowLoad::handleSlotClicked (size_t index)
 //------------------------------------------------------------------------------
 void cWindowLoad::handleSlotDoubleClicked (size_t index)
 {
-	if (saveSlots[index]->isEmpty ()) return;
+	if (saveSlots[index]->isEmpty()) return;
 
 	const auto saveNumber = page * (columns * rows) + index + 1;
 
@@ -188,7 +188,7 @@ void cWindowLoad::selectSlot (size_t slotIndex, bool makeRenameable)
 			{
 				saveSlots[index]->setSelected (true);
 				saveSlots[index]->setRenameable (makeRenameable);
-				isEmptySlot = saveSlots[index]->isEmpty ();
+				isEmptySlot = saveSlots[index]->isEmpty();
 			}
 			else
 			{
@@ -198,12 +198,12 @@ void cWindowLoad::selectSlot (size_t slotIndex, bool makeRenameable)
 		}
 	}
 
-	if (isEmptySlot) loadButton->lock ();
-	else loadButton->unlock ();
+	if (isEmptySlot) loadButton->lock();
+	else loadButton->unlock();
 }
 
 //------------------------------------------------------------------------------
-int cWindowLoad::getSelectedSaveNumber () const
+int cWindowLoad::getSelectedSaveNumber() const
 {
 	return selectedSaveNumber;
 }
@@ -211,8 +211,8 @@ int cWindowLoad::getSelectedSaveNumber () const
 //------------------------------------------------------------------------------
 cSaveGameData* cWindowLoad::getSaveFile (int saveNumber)
 {
-	auto iter = std::find_if (saveGames.begin (), saveGames.end (), [=](const cSaveGameData& save) { return save.getNumber() == saveNumber; });
-	return iter == saveGames.end () ? nullptr : &(*iter);
+	auto iter = std::find_if (saveGames.begin(), saveGames.end(), [ = ] (const cSaveGameData & save) { return save.getNumber() == saveNumber; });
+	return iter == saveGames.end() ? nullptr : & (*iter);
 }
 
 //------------------------------------------------------------------------------
@@ -224,37 +224,37 @@ cSaveSlotWidget& cWindowLoad::getSaveSlot (size_t slotIndex)
 //------------------------------------------------------------------------------
 cSaveSlotWidget* cWindowLoad::getSaveSlotFromSaveNumber (size_t saveNumber)
 {
-	if (selectedSaveNumber - 1 >= page * (int)(rows * columns) && selectedSaveNumber - 1 < (page+1) * (int)(rows * columns))
+	if (selectedSaveNumber - 1 >= page * (int) (rows * columns) && selectedSaveNumber - 1 < (page + 1) * (int) (rows * columns))
 	{
-		return &getSaveSlot (selectedSaveNumber - 1 - page * (int)(rows * columns));
+		return &getSaveSlot (selectedSaveNumber - 1 - page * (int) (rows * columns));
 	}
 	else return nullptr;
 }
 
 //------------------------------------------------------------------------------
-void cWindowLoad::handleDownClicked ()
+void cWindowLoad::handleDownClicked()
 {
 	if (page < lastPage)
 	{
 		++page;
-		loadSaves ();
-		updateSlots ();
+		loadSaves();
+		updateSlots();
 	}
 }
 
 //------------------------------------------------------------------------------
-void cWindowLoad::handleUpClicked ()
+void cWindowLoad::handleUpClicked()
 {
 	if (page > 0)
 	{
 		--page;
-		loadSaves ();
-		updateSlots ();
+		loadSaves();
+		updateSlots();
 	}
 }
 
 //------------------------------------------------------------------------------
-void cWindowLoad::handleLoadClicked ()
+void cWindowLoad::handleLoadClicked()
 {
 	if (selectedSaveNumber == -1) return;
 

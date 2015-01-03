@@ -23,7 +23,7 @@
 #include "output/sound/soundchunk.h"
 #include "utility/log.h"
 
-cSignal<void (int),cRecursiveMutex> cSoundChannel::channelFinished;
+cSignal<void (int), cRecursiveMutex> cSoundChannel::channelFinished;
 
 //--------------------------------------------------------------------------
 void cSoundChannel::channelFinishedCallback (int channel)
@@ -43,7 +43,7 @@ cSoundChannel::cSoundChannel (int sdlChannelId_) :
 		Mix_ChannelFinished (&cSoundChannel::channelFinishedCallback);
 		initialized = true;
 	}
-	signalConnectionManager.connect (channelFinished, [this](int channel){ if(channel == sdlChannelId) stopped (); });
+	signalConnectionManager.connect (channelFinished, [this] (int channel) { if (channel == sdlChannelId) stopped(); });
 
 	volume = Mix_Volume (sdlChannelId, -1);
 }
@@ -51,60 +51,60 @@ cSoundChannel::cSoundChannel (int sdlChannelId_) :
 //--------------------------------------------------------------------------
 void cSoundChannel::play (const cSoundChunk& chunk, bool loop)
 {
-	if (chunk.getSdlSound () == nullptr) return;
+	if (chunk.getSdlSound() == nullptr) return;
 
-	if (muted) unmute ();
+	if (muted) unmute();
 
-	if (Mix_PlayChannel (sdlChannelId, chunk.getSdlSound (), loop ? -1 : 0) < 0)
+	if (Mix_PlayChannel (sdlChannelId, chunk.getSdlSound(), loop ? -1 : 0) < 0)
 	{
 		Log.write ("Could not play sound:", cLog::eLOG_TYPE_WARNING);
-		Log.write (Mix_GetError (), cLog::eLOG_TYPE_WARNING);
+		Log.write (Mix_GetError(), cLog::eLOG_TYPE_WARNING);
 	}
 	else
 	{
 		looping = loop;
-		started ();
+		started();
 	}
 }
 
 //--------------------------------------------------------------------------
-void cSoundChannel::pause ()
+void cSoundChannel::pause()
 {
 	Mix_Pause (sdlChannelId);
 
-	paused ();
+	paused();
 }
 
 //--------------------------------------------------------------------------
-void cSoundChannel::resume ()
+void cSoundChannel::resume()
 {
 	Mix_Resume (sdlChannelId);
 
-	resumed ();
+	resumed();
 }
 
 //--------------------------------------------------------------------------
-void cSoundChannel::stop ()
+void cSoundChannel::stop()
 {
 	Mix_HaltChannel (sdlChannelId);
 }
 
 //--------------------------------------------------------------------------
-void cSoundChannel::mute ()
+void cSoundChannel::mute()
 {
 	Mix_Volume (sdlChannelId, 0);
 	muted = true;
 }
 
 //--------------------------------------------------------------------------
-void cSoundChannel::unmute ()
+void cSoundChannel::unmute()
 {
 	Mix_Volume (sdlChannelId, volume);
 	muted = false;
 }
 
 //--------------------------------------------------------------------------
-bool cSoundChannel::isPlaying () const
+bool cSoundChannel::isPlaying() const
 {
 	return Mix_Playing (sdlChannelId) != 0;
 }
@@ -112,23 +112,23 @@ bool cSoundChannel::isPlaying () const
 //--------------------------------------------------------------------------
 bool cSoundChannel::isPlaying (const cSoundChunk& chunk) const
 {
-	return isPlaying () && Mix_GetChunk (sdlChannelId) == chunk.getSdlSound ();
+	return isPlaying() && Mix_GetChunk (sdlChannelId) == chunk.getSdlSound();
 }
 
 //--------------------------------------------------------------------------
-bool cSoundChannel::isLooping () const
+bool cSoundChannel::isLooping() const
 {
 	return looping;
 }
 
 //--------------------------------------------------------------------------
-bool cSoundChannel::isPaused () const
+bool cSoundChannel::isPaused() const
 {
 	return Mix_Paused (sdlChannelId) != 0;
 }
 
 //--------------------------------------------------------------------------
-bool cSoundChannel::isMuted () const
+bool cSoundChannel::isMuted() const
 {
 	return muted;
 }
@@ -162,7 +162,7 @@ void cSoundChannel::setPosition (short angle, unsigned char distance)
 }
 
 //--------------------------------------------------------------------------
-int cSoundChannel::getSdlChannelId () const
+int cSoundChannel::getSdlChannelId() const
 {
 	return sdlChannelId;
 }

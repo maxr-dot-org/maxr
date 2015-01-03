@@ -33,12 +33,12 @@ enum class eMouseStyle
 class cKeysList
 {
 public:
-	cKeysList ();
+	cKeysList();
 
-	void loadFromFile ();
-	void saveToFile ();
+	void loadFromFile();
+	void saveToFile();
 
-	eMouseStyle getMouseStyle () const;
+	eMouseStyle getMouseStyle() const;
 
 	cKeySequence keyExit;
 	cKeySequence keyJumpToAction;
