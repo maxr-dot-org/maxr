@@ -85,9 +85,9 @@ protected:
 	bool handleDedicatedServerEvents (cNetMessage& message);
 	void sendChatMessage (const std::string& text, int type, int socket = -1);
 
-	cDedicatedServerConfig* configuration;
+	std::unique_ptr<cDedicatedServerConfig> configuration;
 
-	std::vector<cServerGame*> games;
+	std::vector<std::unique_ptr<cServerGame>> games;
 
 	//------------------------------------------------------------------------
 private:

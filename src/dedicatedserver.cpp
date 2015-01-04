@@ -70,19 +70,15 @@ cDedicatedServer& cDedicatedServer::instance()
 }
 
 //------------------------------------------------------------------------
-cDedicatedServer::cDedicatedServer()
+cDedicatedServer::cDedicatedServer() :
+	configuration (std::make_unique<cDedicatedServerConfig>()),
+	network (nullptr)
 {
-	network = 0;
-	configuration = new cDedicatedServerConfig();
 }
 
 //------------------------------------------------------------------------
 cDedicatedServer::~cDedicatedServer()
 {
-	for (size_t i = 0; i < games.size(); i++)
-		delete games[i];
-
-	delete configuration;
 }
 
 //------------------------------------------------------------------------
@@ -202,25 +198,24 @@ bool cDedicatedServer::startServer (int saveGameNumber)
 void cDedicatedServer::startNewGame()
 {
 	cout << "Setting up new game..." << endl;
-	cServerGame* game = new cServerGame (network);
+	auto game = make_unique<cServerGame> (network);
 	game->prepareGameData();
-	games.push_back (game);
-	game->runInThread();
+	games.push_back (std::move (game));
+	games.back()->runInThread();
 }
 
 //------------------------------------------------------------------------
 void cDedicatedServer::loadSaveGame (int saveGameNumber)
 {
 	cout << "Setting up game from saved game number " << saveGameNumber << " ..." << endl;
-	cServerGame* game = new cServerGame (network);
+	auto game = std::make_unique<cServerGame> (network);
 	if (game->loadGame (saveGameNumber) == false)
 	{
-		delete game;
 		cout << "Loading game failed. Game is not setup." << endl;
 		return;
 	}
-	games.push_back (game);
-	game->runInThread();
+	games.push_back (std::move (game));
+	games.back()->runInThread();
 }
 
 //------------------------------------------------------------------------
@@ -276,7 +271,7 @@ string cDedicatedServer::getGamesString() const
 	for (size_t i = 0; i < games.size(); i++)
 	{
 		oss << "--------- Game " << i << ": -----------" << endl;
-		cServerGame* game = games[i];
+		const auto& game = games[i];
 		oss << game->getGameState();
 	}
 	return oss.str();
