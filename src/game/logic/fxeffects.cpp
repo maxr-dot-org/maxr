@@ -378,8 +378,6 @@ void cFxRocket::playSound (cSoundManager& soundManager) const
 
 cFxRocket::~cFxRocket()
 {
-	for (size_t i = 0; i != subEffects.size(); ++i)
-		delete subEffects[i];
 }
 
 void cFxRocket::draw (float zoom, const cPosition& destination) const
@@ -415,7 +413,6 @@ void cFxRocket::run()
 		subEffects[i]->run();
 		if (subEffects[i]->isFinished())
 		{
-			delete subEffects[i];
 			subEffects.erase (subEffects.begin() + i);
 			i--;
 		}
@@ -425,7 +422,7 @@ void cFxRocket::run()
 	if (tick >= length) return;
 	if (cSettings::getInstance().isAlphaEffects())
 	{
-		subEffects.push_back (new cFxSmoke (position, bottom));
+		subEffects.push_back (std::make_unique<cFxSmoke> (position, bottom));
 	}
 
 	//update rocket position

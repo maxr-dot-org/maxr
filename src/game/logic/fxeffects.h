@@ -204,7 +204,7 @@ class cFxRocket : public cFx
 {
 private:
 	const int speed;
-	std::vector<cFx*> subEffects;
+	std::vector<std::unique_ptr<cFx>> subEffects;
 	AutoSurface (*pImages) [2];
 	int dir;
 	int distance;
