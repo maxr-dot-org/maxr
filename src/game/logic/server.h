@@ -26,7 +26,6 @@
 
 #include <SDL.h>
 
-#include "utility/autoptr.h"
 #include "defines.h"
 #include "game/logic/gametimer.h"
 #include "game/logic/jobs.h"
@@ -536,7 +535,7 @@ private:
 public:
 	void addAttackJob (cUnit* aggressor, const cPosition& targetPosition); //TODO: so oder anders?
 	/** the map */
-	AutoPtr<cMap> Map;
+	std::unique_ptr<cMap> Map;
 	/** List with all active movejobs */
 	std::vector<cServerMoveJob*> ActiveMJobs;
 	/** state of the server */

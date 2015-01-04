@@ -185,7 +185,7 @@ cServer::~cServer()
 //------------------------------------------------------------------------------
 void cServer::setMap (std::shared_ptr<cStaticMap> staticMap)
 {
-	Map = new cMap (staticMap);
+	Map = std::make_unique<cMap> (staticMap);
 
 	for (size_t i = 0; i < playerList.size(); ++i)
 	{

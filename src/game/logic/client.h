@@ -24,7 +24,6 @@
 
 #include "SDL_flic.h"
 #include "defines.h"
-#include "utility/autoptr.h"
 #include "game/logic/jobs.h"
 #include "game/logic/gametimer.h"
 #include "main.h"
@@ -357,7 +356,7 @@ private:
 	sFreezeModes freezeModes;
 
 	/** lists with all FX-Animation */
-	AutoPtr<cFxContainer> effectsList;
+	std::unique_ptr<cFxContainer> effectsList;
 
 	std::list<std::weak_ptr<cAutoMJob>> autoMoveJobs;
 public:

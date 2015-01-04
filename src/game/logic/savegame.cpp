@@ -504,7 +504,7 @@ bool cSavegame::loadMap (cServer& server)
 	{
 		return false;
 	}
-	server.Map = new cMap (staticMap);
+	server.Map = std::make_unique<cMap> (staticMap);
 	server.Map->setResourcesFromString (resourcestr);
 	return true;
 }

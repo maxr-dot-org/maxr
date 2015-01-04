@@ -28,7 +28,6 @@
 #include "mveplayer.h"
 
 #include "main.h"
-#include "utility/autoptr.h"
 #include "utility/autosurface.h"
 #include "video.h"
 
@@ -144,7 +143,7 @@ int MVEPlayer (const char* filename, int dwidth, int dheight, int fullscreen, in
 	float start_time = 0;
 
 	/* audio variables */
-	AutoPtr<SDL_AudioSpec> desired;
+	std::unique_ptr<SDL_AudioSpec> desired;
 	Uint16 file_audio_flags = 0;
 	mvebuffer audio_mvebuffer;
 	mvebuffer audio_data_read;
@@ -274,7 +273,7 @@ int MVEPlayer (const char* filename, int dwidth, int dheight, int fullscreen, in
 				}
 
 				/* init sdl audio settings */
-				desired = new SDL_AudioSpec;
+				desired = std::make_unique<SDL_AudioSpec>();
 
 				/* strip the unknown word out */
 				SDL_ReadLE16 (mve);
