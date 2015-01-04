@@ -961,11 +961,9 @@ void sendCasualtiesReport (cServer& server, const cPlayer* receiver)
 	const auto casualtiesTracker = server.getCasualtiesTracker().get();
 	if (casualtiesTracker)
 	{
-		std::vector<cNetMessage*> messages;
-		casualtiesTracker->prepareNetMessagesForClient (messages, GAME_EV_CASUALTIES_REPORT);
-		for (size_t i = 0; i < messages.size(); i++)
+		auto messages = casualtiesTracker->prepareNetMessagesForClient (GAME_EV_CASUALTIES_REPORT);
+		for (auto&& message : messages)
 		{
-			std::unique_ptr<cNetMessage> message (messages[i]);
 			server.sendNetMessage (std::move (message), receiver);
 		}
 	}

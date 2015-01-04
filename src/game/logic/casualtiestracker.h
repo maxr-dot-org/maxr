@@ -43,7 +43,7 @@ public:
 	int getCasualtiesOfUnitType (sID unitType, int playerNr) const;
 
 	void updateCasualtiesFromNetMessage (cNetMessage* message);
-	void prepareNetMessagesForClient (std::vector<cNetMessage*>& messages, int msgType);
+	std::vector<std::unique_ptr<cNetMessage>> prepareNetMessagesForClient (int msgType);
 
 	std::vector<sID> getUnitTypesWithLosses() const;
 

@@ -219,9 +219,11 @@ void cCasualtiesTracker::updateCasualtiesFromNetMessage (cNetMessage* message)
 }
 
 //--------------------------------------------------------------------------
-void cCasualtiesTracker::prepareNetMessagesForClient (std::vector<cNetMessage*>& messages, int msgType)
+std::vector<std::unique_ptr<cNetMessage>>
+cCasualtiesTracker::prepareNetMessagesForClient (int msgType)
 {
-	cNetMessage* message = 0;
+	std::vector<std::unique_ptr<cNetMessage>> messages;
+	std::unique_ptr<cNetMessage> message = nullptr;
 	int entriesInMessageForPlayer = 0;
 	int dataSetsInMessage = 0;
 	for (unsigned int i = 0; i < casualtiesPerPlayer.size(); i++)
@@ -233,9 +235,9 @@ void cCasualtiesTracker::prepareNetMessagesForClient (std::vector<cNetMessage*>&
 		vector<Casualty>& casualties = casualtiesPerPlayer[i].casualties;
 		for (unsigned int entryIdx = 0; entryIdx < casualties.size(); entryIdx++)
 		{
-			if (message == 0)
+			if (message == nullptr)
 			{
-				message = new cNetMessage (msgType);
+				message = std::make_unique<cNetMessage> (msgType);
 				entriesInMessageForPlayer = 0;
 				dataSetsInMessage = 1;
 			}
@@ -250,21 +252,21 @@ void cCasualtiesTracker::prepareNetMessagesForClient (std::vector<cNetMessage*>&
 				message->pushInt16 (currentPlayer);
 				message->pushInt16 (dataSetsInMessage);
 				entriesInMessageForPlayer = 0;
-				messages.push_back (message);
-				message = 0;
+				messages.push_back (std::move (message));
 			}
 		}
-		if (message != 0 && entriesInMessageForPlayer > 0)
+		if (message != nullptr && entriesInMessageForPlayer > 0)
 		{
 			message->pushInt16 (entriesInMessageForPlayer);
 			message->pushInt16 (currentPlayer);
 		}
 	}
-	if (message != 0)
+	if (message != nullptr)
 	{
 		message->pushInt16 (dataSetsInMessage);
-		messages.push_back (message);
+		messages.push_back (std::move (message));
 	}
+	return messages;
 }
 
 //--------------------------------------------------------------------------
