@@ -200,8 +200,7 @@ public:
 	*@param message The message to be send.
 	*@param player The player who should receive this event. Null will send the message to all players.
 	*/
-	// TODO: change AutoPtr to std::unique_ptr
-	void sendNetMessage (AutoPtr<cNetMessage>& message, const cPlayer* player = nullptr);
+	void sendNetMessage (std::unique_ptr<cNetMessage> message, const cPlayer* player = nullptr);
 
 	/**
 	* runs the server. Should only be called by the ServerThread!

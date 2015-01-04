@@ -38,10 +38,10 @@
 //------------------------------------------------------------------------------
 void sendAddUnit (cServer& server, const cPosition& position, int id, bool isVehicle, sID unitID, const cPlayer& player, bool isInit, bool shouldAddToMap)
 {
-	AutoPtr<cNetMessage> message;
+	std::unique_ptr<cNetMessage> message;
 
-	if (isVehicle) message = new cNetMessage (GAME_EV_ADD_VEHICLE);
-	else message = new cNetMessage (GAME_EV_ADD_BUILDING);
+	if (isVehicle) message = std::make_unique<cNetMessage> (GAME_EV_ADD_VEHICLE);
+	else message = std::make_unique<cNetMessage> (GAME_EV_ADD_BUILDING);
 
 	message->pushBool (shouldAddToMap);
 	message->pushInt16 (id);
@@ -50,13 +50,13 @@ void sendAddUnit (cServer& server, const cPosition& position, int id, bool isVeh
 	message->pushInt16 (player.getNr());
 	message->pushBool (isInit);
 
-	server.sendNetMessage (message, &player);
+	server.sendNetMessage (std::move (message), &player);
 }
 
 //------------------------------------------------------------------------------
 void sendAddRubble (cServer& server, const cBuilding& building, const cPlayer& receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_ADD_RUBBLE));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_ADD_RUBBLE);
 
 	message->pushPosition (building.getPosition());
 	message->pushInt16 (building.iID);
@@ -64,15 +64,15 @@ void sendAddRubble (cServer& server, const cBuilding& building, const cPlayer& r
 	message->pushInt16 (building.RubbleTyp);
 	message->pushBool (building.data.isBig);
 
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendDeleteUnitMessage (cServer& server, const cUnit& unit, const cPlayer& receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (unit.isABuilding() ? GAME_EV_DEL_BUILDING : GAME_EV_DEL_VEHICLE));
+	auto message = std::make_unique<cNetMessage> (unit.isABuilding() ? GAME_EV_DEL_BUILDING : GAME_EV_DEL_VEHICLE);
 	message->pushInt16 (unit.iID);
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ void sendDeleteUnit (cServer& server, const cUnit& unit, const cPlayer* receiver
 //------------------------------------------------------------------------------
 void sendAddEnemyUnit (cServer& server, const cUnit& unit, const cPlayer& receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (unit.isABuilding() ? GAME_EV_ADD_ENEM_BUILDING : GAME_EV_ADD_ENEM_VEHICLE));
+	auto message = std::make_unique<cNetMessage> (unit.isABuilding() ? GAME_EV_ADD_ENEM_BUILDING : GAME_EV_ADD_ENEM_VEHICLE);
 
 	message->pushInt16 (unit.data.getVersion());
 	message->pushInt16 (unit.iID);
@@ -104,21 +104,21 @@ void sendAddEnemyUnit (cServer& server, const cUnit& unit, const cPlayer& receiv
 	message->pushID (unit.data.ID);
 	message->pushInt16 (unit.getOwner()->getNr());
 
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendMakeTurnEnd (cServer& server, const cPlayer* receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_MAKE_TURNEND));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_MAKE_TURNEND);
 
-	server.sendNetMessage (message, receiver);
+	server.sendNetMessage (std::move (message), receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendTurnFinished (cServer& server, const cPlayer& playerWhoEndedTurn, const cPlayer* nextPlayer, const cPlayer* receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_FINISHED_TURN));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_FINISHED_TURN);
 
 	if (nextPlayer)
 	{
@@ -131,33 +131,33 @@ void sendTurnFinished (cServer& server, const cPlayer& playerWhoEndedTurn, const
 	}
 	message->pushInt16 (playerWhoEndedTurn.getNr());
 
-	server.sendNetMessage (message, receiver);
+	server.sendNetMessage (std::move (message), receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendTurnStartTime (cServer& server, unsigned int gameTime)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_TURN_START_TIME));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_TURN_START_TIME);
 
 	message->pushInt32 (gameTime);
 
-	server.sendNetMessage (message);
+	server.sendNetMessage (std::move (message));
 }
 
 //------------------------------------------------------------------------------
 void sendTurnEndDeadlineStartTime (cServer& server, unsigned int gameTime)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_TURN_END_DEADLINE_START_TIME));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_TURN_END_DEADLINE_START_TIME);
 
 	message->pushInt32 (gameTime);
 
-	server.sendNetMessage (message);
+	server.sendNetMessage (std::move (message));
 }
 
 //------------------------------------------------------------------------------
 void sendUnitData (cServer& server, const cUnit& unit, const cPlayer& receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_UNIT_DATA));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_UNIT_DATA);
 
 	// The unit data values
 	if (unit.isAVehicle())
@@ -231,7 +231,7 @@ void sendUnitData (cServer& server, const cUnit& unit, const cPlayer& receiver)
 	message->pushInt16 (unit.iID);
 	message->pushInt16 (unit.getOwner()->getNr());
 
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
@@ -250,13 +250,13 @@ void sendUnitData (cServer& server, const cUnit& unit)
 //------------------------------------------------------------------------------
 void sendSpecificUnitData (cServer& server, const cVehicle& vehicle)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_SPECIFIC_UNIT_DATA));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_SPECIFIC_UNIT_DATA);
 	message->pushPosition (vehicle.bandPosition);
 	message->pushBool (vehicle.BuildPath);
 	message->pushID (vehicle.getBuildingType());
 	message->pushInt16 (vehicle.dir);
 	message->pushInt16 (vehicle.iID);
-	server.sendNetMessage (message, vehicle.getOwner());
+	server.sendNetMessage (std::move (message), vehicle.getOwner());
 }
 
 //------------------------------------------------------------------------------
@@ -271,9 +271,9 @@ void sendDoStartWork (cServer& server, const cBuilding& building)
 		//do not send to players who can't see the building
 		if (!player.canSeeAnyAreaUnder (building) && &player != building.getOwner()) continue;
 
-		AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_DO_START_WORK));
+		auto message = std::make_unique<cNetMessage> (GAME_EV_DO_START_WORK);
 		message->pushInt32 (building.iID);
-		server.sendNetMessage (message, &player);
+		server.sendNetMessage (std::move (message), &player);
 	}
 }
 
@@ -289,9 +289,9 @@ void sendDoStopWork (cServer& server, const cBuilding& building)
 		//do not send to players who can't see the building
 		if (!player.canSeeAnyAreaUnder (building) && &player != building.getOwner()) continue;
 
-		AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_DO_STOP_WORK));
+		auto message = std::make_unique<cNetMessage> (GAME_EV_DO_STOP_WORK);
 		message->pushInt32 (building.iID);
-		server.sendNetMessage (message, &player);
+		server.sendNetMessage (std::move (message), &player);
 	}
 }
 
@@ -300,24 +300,24 @@ void sendNextMove (cServer& server, const cVehicle& vehicle, int iType, int iSav
 {
 	for (unsigned int i = 0; i < vehicle.seenByPlayerList.size(); i++)
 	{
-		AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_NEXT_MOVE));
+		auto message = std::make_unique<cNetMessage> (GAME_EV_NEXT_MOVE);
 		if (iSavedSpeed >= 0) message->pushChar (iSavedSpeed);
 		message->pushChar (iType);
 		message->pushInt16 (vehicle.iID);
-		server.sendNetMessage (message, vehicle.seenByPlayerList[i]);
+		server.sendNetMessage (std::move (message), vehicle.seenByPlayerList[i]);
 	}
 
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_NEXT_MOVE));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_NEXT_MOVE);
 	if (iSavedSpeed >= 0) message->pushChar (iSavedSpeed);
 	message->pushChar (iType);
 	message->pushInt16 (vehicle.iID);
-	server.sendNetMessage (message, vehicle.getOwner());
+	server.sendNetMessage (std::move (message), vehicle.getOwner());
 }
 
 //------------------------------------------------------------------------------
 void sendMoveJobServer (cServer& server, const cServerMoveJob& moveJob, const cPlayer& receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_MOVE_JOB_SERVER));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_MOVE_JOB_SERVER);
 
 	const sWaypoint* waypoint = moveJob.Waypoints;
 	int iCount = 0;
@@ -342,14 +342,14 @@ void sendMoveJobServer (cServer& server, const cServerMoveJob& moveJob, const cP
 	message->pushPosition (moveJob.source);
 	message->pushInt32 (moveJob.Vehicle->iID);
 
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendVehicleResources (cServer& server, const cVehicle& vehicle)
 {
 	int iCount = 0;
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_RESOURCES));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_RESOURCES);
 	const cMap& map = *server.Map;
 	// TODO: only send new scaned resources
 
@@ -373,14 +373,14 @@ void sendVehicleResources (cServer& server, const cVehicle& vehicle)
 	}
 	message->pushInt16 (iCount);
 
-	server.sendNetMessage (message, vehicle.getOwner());
+	server.sendNetMessage (std::move (message), vehicle.getOwner());
 }
 
 //------------------------------------------------------------------------------
 void sendResources (cServer& server, const cPlayer& player)
 {
 	int iCount = 0;
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_RESOURCES));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_RESOURCES);
 	for (int x = 0; x != server.Map->getSize().x(); ++x)
 	{
 		for (int y = 0; y != server.Map->getSize().y(); ++y)
@@ -398,8 +398,8 @@ void sendResources (cServer& server, const cPlayer& player)
 			if (message->iLength >= PACKAGE_LENGTH - 10)
 			{
 				message->pushInt16 (iCount);
-				server.sendNetMessage (message, &player);
-				message = new cNetMessage (GAME_EV_RESOURCES);
+				server.sendNetMessage (std::move (message), &player);
+				message = std::make_unique<cNetMessage> (GAME_EV_RESOURCES);
 				iCount = 0;
 			}
 		}
@@ -407,7 +407,7 @@ void sendResources (cServer& server, const cPlayer& player)
 	if (iCount > 0)
 	{
 		message->pushInt16 (iCount);
-		server.sendNetMessage (message, &player);
+		server.sendNetMessage (std::move (message), &player);
 	}
 }
 
@@ -422,21 +422,21 @@ void sendScore (cServer& server, const cPlayer& subject, int turn, const cPlayer
 	}
 	else
 	{
-		AutoPtr<cNetMessage> msg (new cNetMessage (GAME_EV_SCORE));
-		msg->pushInt16 (subject.getScore (turn));
-		msg->pushInt16 (turn);
-		msg->pushInt16 (subject.getNr());
+		auto message = std::make_unique<cNetMessage> (GAME_EV_SCORE);
+		message->pushInt16 (subject.getScore (turn));
+		message->pushInt16 (turn);
+		message->pushInt16 (subject.getNr());
 
-		server.sendNetMessage (msg, receiver);
+		server.sendNetMessage (std::move (message), receiver);
 	}
 }
 
 void sendUnitScore (cServer& server, const cBuilding& building)
 {
-	AutoPtr<cNetMessage> msg (new cNetMessage (GAME_EV_UNIT_SCORE));
-	msg->pushInt16 (building.points);
-	msg->pushInt16 (building.iID);
-	server.sendNetMessage (msg, building.getOwner());
+	auto message = std::make_unique<cNetMessage> (GAME_EV_UNIT_SCORE);
+	message->pushInt16 (building.points);
+	message->pushInt16 (building.iID);
+	server.sendNetMessage (std::move (message), building.getOwner());
 }
 
 void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver)
@@ -451,17 +451,17 @@ void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver)
 	}
 	else
 	{
-		AutoPtr<cNetMessage> msg (new cNetMessage (GAME_EV_NUM_ECOS));
-		msg->pushInt16 (subject.numEcos);
-		msg->pushInt16 (subject.getNr());
+		auto message = std::make_unique<cNetMessage> (GAME_EV_NUM_ECOS);
+		message->pushInt16 (subject.numEcos);
+		message->pushInt16 (subject.getNr());
 
-		server.sendNetMessage (msg, receiver);
+		server.sendNetMessage (std::move (message), receiver);
 	}
 }
 
 void sendGameSettings (cServer& server, const cPlayer& receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_GAME_SETTINGS));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_GAME_SETTINGS);
 
 	const auto& gameSettings = server.getGameSettings();
 
@@ -469,14 +469,14 @@ void sendGameSettings (cServer& server, const cPlayer& receiver)
 
 	gameSettings->pushInto (*message);
 
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendBuildAnswer (cServer& server, bool bOK, const cVehicle& vehicle)
 {
 	//message for the owner
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_BUILD_ANSWER));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_BUILD_ANSWER);
 	if (bOK)
 	{
 		message->pushPosition (vehicle.bandPosition);
@@ -489,12 +489,12 @@ void sendBuildAnswer (cServer& server, bool bOK, const cVehicle& vehicle)
 
 	message->pushInt16 (vehicle.iID);
 	message->pushBool (bOK);
-	server.sendNetMessage (message, vehicle.getOwner());
+	server.sendNetMessage (std::move (message), vehicle.getOwner());
 
 	//message for the enemys
 	for (unsigned int i = 0; i < vehicle.seenByPlayerList.size(); i++)
 	{
-		AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_BUILD_ANSWER));
+		auto message = std::make_unique<cNetMessage> (GAME_EV_BUILD_ANSWER);
 		if (bOK)
 		{
 			message->pushBool (vehicle.getBuildingType().getUnitDataOriginalVersion()->isBig);
@@ -502,17 +502,17 @@ void sendBuildAnswer (cServer& server, bool bOK, const cVehicle& vehicle)
 		}
 		message->pushInt16 (vehicle.iID);
 		message->pushBool (bOK);
-		server.sendNetMessage (message, vehicle.seenByPlayerList[i]);
+		server.sendNetMessage (std::move (message), vehicle.seenByPlayerList[i]);
 	}
 }
 
 //------------------------------------------------------------------------------
 void sendStopBuild (cServer& server, int iVehicleID, const cPosition& newPosition, const cPlayer& receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_STOP_BUILD));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_STOP_BUILD);
 	message->pushPosition (newPosition);
 	message->pushInt16 (iVehicleID);
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
@@ -524,17 +524,17 @@ void sendSubbaseValues (cServer& server, const sSubBase& subBase, const cPlayer&
 		Log.write (" Server: Mine distribution values are not a maximum", cLog::eLOG_TYPE_NET_WARNING);
 	}
 
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_SUBBASE_VALUES));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_SUBBASE_VALUES);
 
 	subBase.pushInto (*message);
 	message->pushInt16 (subBase.getID());
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendBuildList (cServer& server, const cBuilding& building)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_BUILDLIST));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_BUILDLIST);
 	message->pushBool (building.RepeatBuild);
 	message->pushInt16 (building.BuildSpeed);
 	message->pushInt16 (building.MetalPerRound);
@@ -545,106 +545,106 @@ void sendBuildList (cServer& server, const cBuilding& building)
 	}
 	message->pushInt16 ((int)building.getBuildListSize());
 	message->pushInt16 (building.iID);
-	server.sendNetMessage (message, building.getOwner());
+	server.sendNetMessage (std::move (message), building.getOwner());
 }
 
 //------------------------------------------------------------------------------
 void sendProduceValues (cServer& server, const cBuilding& building)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_MINE_PRODUCE_VALUES));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_MINE_PRODUCE_VALUES);
 	message->pushInt16 (building.MaxGoldProd);
 	message->pushInt16 (building.MaxOilProd);
 	message->pushInt16 (building.MaxMetalProd);
 	message->pushInt16 (building.iID);
-	server.sendNetMessage (message, building.getOwner());
+	server.sendNetMessage (std::move (message), building.getOwner());
 }
 
 //------------------------------------------------------------------------------
 void sendSupply (cServer& server, int iDestID, bool bDestVehicle, int iValue, int iType, const cPlayer& receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_SUPPLY));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_SUPPLY);
 	message->pushInt16 (iValue);
 	message->pushInt16 (iDestID);
 	message->pushBool (bDestVehicle);
 	message->pushChar (iType);
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendDetectionState (cServer& server, const cVehicle& vehicle)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_DETECTION_STATE));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_DETECTION_STATE);
 	message->pushBool (!vehicle.detectedByPlayerList.empty());
 	message->pushInt32 (vehicle.iID);
-	server.sendNetMessage (message, vehicle.getOwner());
+	server.sendNetMessage (std::move (message), vehicle.getOwner());
 }
 
 //------------------------------------------------------------------------------
 void sendClearAnswer (cServer& server, int answertype, const cVehicle& vehicle, int turns, const cPosition& bigPosition, const cPlayer* receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_CLEAR_ANSWER));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_CLEAR_ANSWER);
 	message->pushPosition (bigPosition);
 	message->pushInt16 (turns);
 	message->pushInt16 (vehicle.iID);
 	message->pushInt16 (answertype);
-	server.sendNetMessage (message, receiver);
+	server.sendNetMessage (std::move (message), receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendStopClear (cServer& server, const cVehicle& vehicle, const cPosition& bigPosition, const cPlayer& receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_STOP_CLEARING));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_STOP_CLEARING);
 	message->pushPosition (bigPosition);
 	message->pushInt16 (vehicle.iID);
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendNoFog (cServer& server, const cPlayer& receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_NOFOG));
-	server.sendNetMessage (message, &receiver);
+	auto message = std::make_unique<cNetMessage> (GAME_EV_NOFOG);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendDefeated (cServer& server, const cPlayer& player, const cPlayer* receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_DEFEATED));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_DEFEATED);
 	message->pushInt16 (player.getNr());
-	server.sendNetMessage (message, receiver);
+	server.sendNetMessage (std::move (message), receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendFreeze (cServer& server, eFreezeMode mode, int waitForPlayer)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_FREEZE));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_FREEZE);
 	message->pushInt16 (waitForPlayer);
 	message->pushInt16 (mode);
-	server.sendNetMessage (message, nullptr);
+	server.sendNetMessage (std::move (message), nullptr);
 }
 
 //------------------------------------------------------------------------------
 void sendUnfreeze (cServer& server, eFreezeMode mode)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_UNFREEZE));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_UNFREEZE);
 	message->pushInt16 (mode);
-	server.sendNetMessage (message, nullptr);
+	server.sendNetMessage (std::move (message), nullptr);
 }
 
 //------------------------------------------------------------------------------
 void sendWaitFor (cServer& server, const cPlayer& player, const cPlayer* receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_WAIT_FOR));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_WAIT_FOR);
 	message->pushInt32 (player.getNr());
-	server.sendNetMessage (message, receiver);
+	server.sendNetMessage (std::move (message), receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendDeletePlayer (cServer& server, const cPlayer& player, const cPlayer* receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_DEL_PLAYER));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_DEL_PLAYER);
 	message->pushInt16 (player.getNr());
-	server.sendNetMessage (message, receiver);
+	server.sendNetMessage (std::move (message), receiver);
 }
 
 //------------------------------------------------------------------------------
@@ -694,84 +694,84 @@ void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& play
 //------------------------------------------------------------------------------
 void sendTurn (cServer& server, int turn, const cPlayer& receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_TURN));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_TURN);
 	message->pushInt16 (turn);
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendGameGuiState (cServer& server, const cGameGuiState& gameGuiState, const cPlayer& player)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_HUD_SETTINGS));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_HUD_SETTINGS);
 
 	gameGuiState.pushInto (*message);
 
-	server.sendNetMessage (message, &player);
+	server.sendNetMessage (std::move (message), &player);
 }
 
 //------------------------------------------------------------------------------
 void sendStoreVehicle (cServer& server, int unitid, bool vehicle, int storedunitid, const cPlayer& receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_STORE_UNIT));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_STORE_UNIT);
 	message->pushInt16 (unitid);
 	message->pushBool (vehicle);
 	message->pushInt16 (storedunitid);
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendActivateVehicle (cServer& server, int unitid, bool vehicle, int activatunitid, const cPosition& position, const cPlayer& receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_EXIT_UNIT));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_EXIT_UNIT);
 	message->pushPosition (position);
 	message->pushInt16 (unitid);
 	message->pushBool (vehicle);
 	message->pushInt16 (activatunitid);
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendDeleteEverything (cServer& server, const cPlayer& receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_DELETE_EVERYTHING));
-	server.sendNetMessage (message, &receiver);
+	auto message = std::make_unique<cNetMessage> (GAME_EV_DELETE_EVERYTHING);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendResearchLevel (cServer& server, const cResearch& researchLevel, const cPlayer& receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_RESEARCH_LEVEL));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_RESEARCH_LEVEL);
 	for (int area = 0; area < cResearch::kNrResearchAreas; area++)
 	{
 		message->pushInt16 (researchLevel.getCurResearchLevel (area));
 		message->pushInt16 (researchLevel.getCurResearchPoints (area));
 	}
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendFinishedResearchAreas (cServer& server, const std::vector<int>& areas, const cPlayer& receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_FINISHED_RESEARCH_AREAS));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_FINISHED_RESEARCH_AREAS);
 	for (size_t i = 0; i < areas.size(); ++i)
 	{
 		message->pushInt32 (areas[i]);
 	}
 	message->pushInt32 (areas.size());
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendRefreshResearchCount (cServer& server, const cPlayer& receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_REFRESH_RESEARCH_COUNT));
-	server.sendNetMessage (message, &receiver);
+	auto message = std::make_unique<cNetMessage> (GAME_EV_REFRESH_RESEARCH_COUNT);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendUnitUpgrades (cServer& server, const sUnitData& unitData, const cPlayer& receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_UNIT_UPGRADE_VALUES));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_UNIT_UPGRADE_VALUES);
 	message->pushInt16 (unitData.getHitpointsMax());
 	message->pushInt16 (unitData.getAmmoMax());
 	message->pushInt16 (unitData.getShotsMax());
@@ -783,28 +783,28 @@ void sendUnitUpgrades (cServer& server, const sUnitData& unitData, const cPlayer
 	message->pushInt16 (unitData.getScan());
 	message->pushInt16 (unitData.getVersion());
 	message->pushID (unitData.ID);
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendCredits (cServer& server, int newCredits, const cPlayer& receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_CREDITS_CHANGED));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_CREDITS_CHANGED);
 	message->pushInt32 (newCredits);
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendUpgradeBuildings (cServer& server, const std::vector<cBuilding*>& upgradedBuildings, int totalCosts, const cPlayer& receiver)
 {
 	// send to owner
-	AutoPtr<cNetMessage> message;
+	std::unique_ptr<cNetMessage> message;
 	int buildingsInMsg = 0;
 	for (unsigned int i = 0; i < upgradedBuildings.size(); i++)
 	{
 		if (message == nullptr)
 		{
-			message = new cNetMessage (GAME_EV_UPGRADED_BUILDINGS);
+			message = std::make_unique<cNetMessage> (GAME_EV_UPGRADED_BUILDINGS);
 			buildingsInMsg = 0;
 		}
 
@@ -814,16 +814,14 @@ void sendUpgradeBuildings (cServer& server, const std::vector<cBuilding*>& upgra
 		{
 			message->pushInt16 ((totalCosts * buildingsInMsg) / (int) upgradedBuildings.size());
 			message->pushInt16 (buildingsInMsg);
-			server.sendNetMessage (message, &receiver);
-			message = nullptr;
+			server.sendNetMessage (std::move (message), &receiver);
 		}
 	}
 	if (message != nullptr)
 	{
 		message->pushInt16 ((int) (totalCosts * buildingsInMsg) / (int) upgradedBuildings.size());
 		message->pushInt16 (buildingsInMsg);
-		server.sendNetMessage (message, &receiver);
-		message = nullptr;
+		server.sendNetMessage (std::move (message), &receiver);
 	}
 
 	// send to other players
@@ -851,14 +849,14 @@ void sendUpgradeVehicles (cServer& server, const std::vector<cVehicle*>& upgrade
 		return;
 	}
 	// send to owner
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_UPGRADED_VEHICLES));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_UPGRADED_VEHICLES);
 	for (unsigned int i = 0; i < upgradedVehicles.size(); i++)
 		message->pushInt32 (upgradedVehicles[i]->iID);
 
 	message->pushInt32 (storingBuildingID);
 	message->pushInt16 (totalCosts);
 	message->pushInt16 ((int) upgradedVehicles.size());
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (std::move (message), &receiver);
 
 	//TODO: send to other players as well?
 }
@@ -869,13 +867,13 @@ void sendResearchSettings (cServer& server, const std::vector<cBuilding*>& resea
 	if (researchCentersToChangeArea.size() != newAreasForResearchCenters.size())
 		return;
 
-	AutoPtr<cNetMessage> message;
+	std::unique_ptr<cNetMessage> message;
 	int buildingsInMsg = 0;
 	for (unsigned int i = 0; i < researchCentersToChangeArea.size(); i++)
 	{
 		if (message == nullptr)
 		{
-			message = new cNetMessage (GAME_EV_RESEARCH_SETTINGS);
+			message = std::make_unique<cNetMessage> (GAME_EV_RESEARCH_SETTINGS);
 			buildingsInMsg = 0;
 		}
 
@@ -885,36 +883,34 @@ void sendResearchSettings (cServer& server, const std::vector<cBuilding*>& resea
 		if (message->iLength + 7 > PACKAGE_LENGTH)
 		{
 			message->pushInt16 (buildingsInMsg);
-			server.sendNetMessage (message, &receiver);
-			message = nullptr;
+			server.sendNetMessage (std::move (message), &receiver);
 		}
 	}
 	if (message != nullptr)
 	{
 		message->pushInt16 (buildingsInMsg);
-		server.sendNetMessage (message, &receiver);
-		message = nullptr;
+		server.sendNetMessage (std::move (message), &receiver);
 	}
 }
 
 //------------------------------------------------------------------------------
 void sendClans (cServer& server, const std::vector<std::unique_ptr<cPlayer>>& playerList, const cPlayer& receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_PLAYER_CLANS));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_PLAYER_CLANS);
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		message->pushChar (playerList[i]->getClan());
 		message->pushChar (playerList[i]->getNr());
 	}
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendGameTime (cServer& server, const cPlayer& receiver, int gameTime)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_SET_GAME_TIME));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_SET_GAME_TIME);
 	message->pushInt32 (gameTime);
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
@@ -927,36 +923,36 @@ void sendClansToClients (cServer& server, const std::vector<std::unique_ptr<cPla
 //------------------------------------------------------------------------------
 void sendSetAutomoving (cServer& server, const cVehicle& vehicle)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_SET_AUTOMOVE));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_SET_AUTOMOVE);
 	message->pushInt16 (vehicle.iID);
-	server.sendNetMessage (message, vehicle.getOwner());
+	server.sendNetMessage (std::move (message), vehicle.getOwner());
 }
 
 //------------------------------------------------------------------------------
 void sendCommandoAnswer (cServer& server, bool success, bool steal, const cVehicle& srcUnit, const cPlayer& receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_COMMANDO_ANSWER));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_COMMANDO_ANSWER);
 	message->pushInt16 (srcUnit.iID);
 	message->pushBool (steal);
 	message->pushBool (success);
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
 void sendRequestSaveInfo (cServer& server, int saveingID)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_REQ_SAVE_INFO));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_REQ_SAVE_INFO);
 	message->pushInt16 (saveingID);
-	server.sendNetMessage (message);
+	server.sendNetMessage (std::move (message));
 }
 
 //------------------------------------------------------------------------------
 void sendSavedReport (cServer& server, const cSavedReport& savedReport, const cPlayer* receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_SAVED_REPORT));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_SAVED_REPORT);
 
 	savedReport.pushInto (*message);
-	server.sendNetMessage (message, receiver);
+	server.sendNetMessage (std::move (message), receiver);
 }
 
 //------------------------------------------------------------------------------
@@ -969,8 +965,8 @@ void sendCasualtiesReport (cServer& server, const cPlayer* receiver)
 		casualtiesTracker->prepareNetMessagesForClient (messages, GAME_EV_CASUALTIES_REPORT);
 		for (size_t i = 0; i < messages.size(); i++)
 		{
-			AutoPtr<cNetMessage> message (messages[i]);
-			server.sendNetMessage (message, receiver);
+			std::unique_ptr<cNetMessage> message (messages[i]);
+			server.sendNetMessage (std::move (message), receiver);
 		}
 	}
 }
@@ -978,33 +974,33 @@ void sendCasualtiesReport (cServer& server, const cPlayer* receiver)
 //------------------------------------------------------------------------------
 void sendSelfDestroy (cServer& server, const cBuilding& building)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_SELFDESTROY));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_SELFDESTROY);
 	message->pushInt16 (building.iID);
-	server.sendNetMessage (message, building.getOwner());
+	server.sendNetMessage (std::move (message), building.getOwner());
 
 	for (unsigned int i = 0; i < building.seenByPlayerList.size(); i++)
 	{
-		message = new cNetMessage (GAME_EV_SELFDESTROY);
+		message = std::make_unique<cNetMessage> (GAME_EV_SELFDESTROY);
 		message->pushInt16 (building.iID);
-		server.sendNetMessage (message, building.seenByPlayerList[i]);
+		server.sendNetMessage (std::move (message), building.seenByPlayerList[i]);
 	}
 }
 
 //------------------------------------------------------------------------------
 void sendEndMoveActionToClient (cServer& server, const cVehicle& vehicle, int destID, eEndMoveActionType type)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_END_MOVE_ACTION_SERVER));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_END_MOVE_ACTION_SERVER);
 	message->pushChar (type);
 	message->pushInt32 (destID);
 	message->pushInt32 (vehicle.iID);
 
-	server.sendNetMessage (message, vehicle.getOwner());
+	server.sendNetMessage (std::move (message), vehicle.getOwner());
 }
 
 //------------------------------------------------------------------------------
 void sendRevealMap (cServer& server, const cPlayer& receiver)
 {
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_REVEAL_MAP));
+	auto message = std::make_unique<cNetMessage> (GAME_EV_REVEAL_MAP);
 
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (std::move (message), &receiver);
 }

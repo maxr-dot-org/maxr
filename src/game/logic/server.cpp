@@ -278,7 +278,7 @@ void cServer::pushEvent (std::unique_ptr<cNetMessage> message)
 }
 
 //------------------------------------------------------------------------------
-void cServer::sendNetMessage (AutoPtr<cNetMessage>& message, const cPlayer* player)
+void cServer::sendNetMessage (std::unique_ptr<cNetMessage> message, const cPlayer* player)
 {
 	const auto playerNumber = player != nullptr ? player->getNr() : -1;
 	const auto playerName = player != nullptr ? player->getName() : "all players";
@@ -308,7 +308,7 @@ void cServer::sendNetMessage (AutoPtr<cNetMessage>& message, const cPlayer* play
 		{
 			if (localClients[i]->getActivePlayer().getNr() == player->getNr())
 			{
-				localClients[i]->pushEvent (std::unique_ptr<cNetMessage> (message.Release()));
+				localClients[i]->pushEvent (std::move (message));
 				break;
 			}
 		}
@@ -1223,9 +1223,9 @@ void cServer::handleNetMessage_GAME_EV_WANT_MARK_LOG (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_MARK_LOG);
 
-	AutoPtr<cNetMessage> message2 (new cNetMessage (GAME_EV_MARK_LOG));
+	auto message2 = std::make_unique<cNetMessage> (GAME_EV_MARK_LOG);
 	message2->pushString (message.popString());
-	sendNetMessage (message2);
+	sendNetMessage (std::move (message2));
 }
 
 //------------------------------------------------------------------------------
@@ -2555,10 +2555,10 @@ void cServer::checkPlayerUnits (cVehicle& vehicle, cPlayer& MapPlayer)
 				if (Contains (ActiveMJobs, vehicle.ServerMoveJob) && !vehicle.ServerMoveJob->bFinished && !vehicle.ServerMoveJob->bEndForNow && vehicle.isUnitMoving())
 				{
 					Log.write (" Server: sending extra MJOB_OK for unit ID " + iToStr (vehicle.iID) + " to client " + iToStr (MapPlayer.getNr()), cLog::eLOG_TYPE_NET_DEBUG);
-					AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_NEXT_MOVE));
+					auto message = std::make_unique<cNetMessage> (GAME_EV_NEXT_MOVE);
 					message->pushChar (MJOB_OK);
 					message->pushInt16 (vehicle.iID);
-					sendNetMessage (message, &MapPlayer);
+					sendNetMessage (std::move (message), &MapPlayer);
 				}
 			}
 		}
@@ -3719,8 +3719,7 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete, bool withGuiState
 	// send attackJobs
 	for (const auto& attackJob : AJobs)
 	{
-		AutoPtr<cNetMessage> message (attackJob->serialize().release());
-		sendNetMessage (message);
+		sendNetMessage (attackJob->serialize());
 	}
 
 	sendCasualtiesReport (*this, &player);

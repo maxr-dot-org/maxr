@@ -106,8 +106,7 @@ cAttackJob::cAttackJob (cServer* server_, cUnit* aggressor_, const cPosition& ta
 
 	lockTarget();
 
-	AutoPtr<cNetMessage> message (serialize().release());
-	server->sendNetMessage (message);
+	server->sendNetMessage (serialize());
 
 	//lock agressor
 	aggressor_->setAttacking (true);

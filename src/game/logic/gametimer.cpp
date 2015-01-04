@@ -296,12 +296,12 @@ void cGameTimerServer::run (cServer& server)
 	for (size_t i = 0; i < playerList.size(); i++)
 	{
 		const auto& player = *playerList[i];
-		AutoPtr<cNetMessage> message (new cNetMessage (NET_GAME_TIME_SERVER));
+		auto message = std::make_unique<cNetMessage> (NET_GAME_TIME_SERVER);
 
 		message->pushInt32 (gameTime);
 		const uint32_t checkSum = calcServerChecksum (server, &player);
 		message->pushInt32 (checkSum);
-		server.sendNetMessage (message, &player);
+		server.sendNetMessage (std::move (message), &player);
 	}
 }
 
