@@ -105,35 +105,30 @@ string cClanUnitStat::getClanStatsDescription() const
 //--------------------------------------------------
 cClan::~cClan()
 {
-	for (size_t i = 0; i != stats.size(); ++i)
-	{
-		delete stats[i];
-	}
 }
 
 //--------------------------------------------------
 cClanUnitStat* cClan::getUnitStat (sID id) const
 {
-	for (size_t statIdx = 0; statIdx != stats.size(); ++statIdx)
-		if (stats[statIdx]->getUnitId() == id)
-			return stats[statIdx];
-	return 0;
+	for (const auto& stat : stats)
+		if (stat->getUnitId() == id)
+			return stat.get();
+	return nullptr;
 }
 
 //--------------------------------------------------
 cClanUnitStat* cClan::getUnitStat (unsigned int index) const
 {
 	if (index < stats.size())
-		return stats[index];
-	return 0;
+		return stats[index].get();
+	return nullptr;
 }
 
 //--------------------------------------------------
 cClanUnitStat* cClan::addUnitStat (sID id)
 {
-	cClanUnitStat* newStat = new cClanUnitStat (id);
-	stats.push_back (newStat);
-	return newStat;
+	stats.push_back (std::make_unique<cClanUnitStat> (id));
+	return stats.back().get();
 }
 
 //--------------------------------------------------
@@ -169,24 +164,19 @@ vector<string> cClan::getClanStatsDescription() const
 //--------------------------------------------------
 cClanData::~cClanData()
 {
-	for (size_t i = 0; i != clans.size(); ++i)
-	{
-		delete clans[i];
-	}
 }
 
 //--------------------------------------------------
 cClan* cClanData::addClan()
 {
-	cClan* clan = new cClan ((int) clans.size());
-	clans.push_back (clan);
-	return clan;
+	clans.push_back (std::make_unique<cClan> ((int) clans.size()));
+	return clans.back().get();
 }
 
 //--------------------------------------------------
 cClan* cClanData::getClan (unsigned int num)
 {
 	if (num < clans.size())
-		return clans[num];
+		return clans[num].get();
 	return nullptr;
 }

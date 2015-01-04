@@ -74,7 +74,7 @@ private:
 	int num;
 	std::string description;
 	std::string name;
-	std::vector<cClanUnitStat*> stats;
+	std::vector<std::unique_ptr<cClanUnitStat>> stats;
 };
 
 //-------------------------------------------------------------------------
@@ -91,7 +91,7 @@ public:
 	//-------------------------------------------------------------------------
 private:
 	cClanData() {}
-	std::vector<cClan*> clans;
+	std::vector<std::unique_ptr<cClan>> clans;
 };
 
 #endif // game_data_player_clansH
