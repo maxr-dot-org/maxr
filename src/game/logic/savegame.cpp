@@ -673,7 +673,7 @@ std::unique_ptr<cPlayer> cSavegame::loadPlayer (XMLElement* playerNode, cMap& ma
 			subbaseNode = subbasesNode->FirstChildElement (("Subbase_" + iToStr (subbasenum)).c_str());
 		}
 	}
-	return std::move (Player);
+	return Player;
 }
 
 //--------------------------------------------------------------------------

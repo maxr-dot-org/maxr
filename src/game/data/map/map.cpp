@@ -407,7 +407,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 
 	// Read pixel data and write to surface
 	if (SDL_RWread (fpMapFile, surface->pixels, 1, 64 * 64) != 64 * 64) return 0;
-	return std::move (surface);
+	return surface;
 }
 
 /*static*/AutoSurface cStaticMap::loadMapPreview (const std::string& mapName, int* mapSize)
@@ -459,7 +459,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	}
 
 	if (mapSize != nullptr) *mapSize = size;
-	return std::move (mapSurface);
+	return mapSurface;
 }
 
 void cStaticMap::copySrfToTerData (SDL_Surface& surface, int iNum)
@@ -554,7 +554,7 @@ AutoSurface cStaticMap::createBigSurface (int sizex, int sizey) const
 		}
 	}
 	if (SDL_MUSTLOCK (mapSurface.get())) SDL_UnlockSurface (mapSurface.get());
-	return std::move (mapSurface);
+	return mapSurface;
 }
 
 // Funktionen der Map-Klasse /////////////////////////////////////////////////

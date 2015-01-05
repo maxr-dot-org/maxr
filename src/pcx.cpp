@@ -183,5 +183,5 @@ AutoSurface LoadPCX (const std::string& name)
 	{
 		buf[i] = colors[buf[i]];
 	}
-	return std::move (s);
+	return s;
 }

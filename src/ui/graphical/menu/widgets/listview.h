@@ -350,7 +350,7 @@ std::unique_ptr<ItemType> cListView<ItemType>::removeItem (ItemType& item)
 
 		itemRemoved();
 
-		return std::move (removedItem);
+		return removedItem;
 	}
 	else return nullptr;
 }

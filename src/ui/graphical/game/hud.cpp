@@ -289,7 +289,7 @@ AutoSurface cHud::generateSurface()
 			SDL_BlitSurface (tmpSurface.get(), nullptr, surface.get(), &dest);
 		}
 	}
-	return std::move (surface);
+	return surface;
 }
 
 //------------------------------------------------------------------------------

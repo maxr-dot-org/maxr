@@ -228,7 +228,7 @@ AutoSurface cWindowLandingPositionSelection::createHudSurface()
 	SDL_BlitSurface (GraphicsData.gfx_panel_top.get(), nullptr, hudSurface.get(), &top);
 	SDL_BlitSurface (GraphicsData.gfx_panel_bottom.get(), nullptr, hudSurface.get(), &bottom);
 
-	return std::move (hudSurface);
+	return hudSurface;
 }
 
 //------------------------------------------------------------------------------

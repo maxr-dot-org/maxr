@@ -748,7 +748,7 @@ AutoSurface CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, u
 	line (p3x, p3y, p1x, p1y, color, *sf);
 
 	SDL_UnlockSurface (sf.get());
-	return std::move (sf);
+	return sf;
 }
 
 static void setPixel (SDL_Surface& surface, int x, int y, int iColor)
