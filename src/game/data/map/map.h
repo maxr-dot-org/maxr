@@ -177,8 +177,7 @@ private:
 
 	std::string filename;   // Name of the current map
 	int size;
-	unsigned int terrainCount;
-	sTerrain* terrains;       // The different terrain type.
+	std::vector<sTerrain> terrains; // The different terrain type.
 	std::vector<int> Kacheln; // Terrain numbers of the map fields
 	SDL_Color palette[256];   // Palette with all Colors for the terrain graphics
 	SDL_Color palette_shw[256];
@@ -217,11 +216,8 @@ public:
 	*/
 	void setResourcesFromString (const std::string& str);
 
-	void placeRessourcesAddPlayer (const cPosition& position, eGameSettingsResourceDensity desity);
-	void placeRessources (eGameSettingsResourceAmount metal, eGameSettingsResourceAmount oil, eGameSettingsResourceAmount gold);
+	void placeRessources (const std::vector<cPosition>& landingPositions, const cGameSettings& gameSetting);
 
-	int getResourceDensityFactor (eGameSettingsResourceDensity desity) const;
-	int getResourceAmountFactor (eGameSettingsResourceAmount amount) const;
 	/**
 	* Access to a map field
 	* @param the offset of the map field
@@ -251,9 +247,6 @@ public:
 	void deleteVehicle (const cVehicle& vehicle);
 	void deleteUnit (const cUnit& unit);
 
-	static int getMapLevel (const cBuilding& building);
-	static int getMapLevel (const cVehicle& vehicle);
-
 	/**
 	* checks, whether the given field is an allowed place for the vehicle
 	* if checkPlayer is passed, the function uses the players point of view, so it does not check for units that are not in sight
@@ -264,7 +257,7 @@ public:
 	/**
 	* checks, whether the given field is an allowed place for the building
 	* if a vehicle is passed, it will be ignored in the check, so a constructing vehicle does not block its own position
-	* note, that the function can only check for map border overflows (with margin), if you pass xy coordinates instead of an offset
+	* Note: that the function can check for map border overflows (with margin).
 	*/
 	bool possiblePlaceBuilding (const sUnitData& buildingData, const cPosition& position, const cVehicle* vehicle = nullptr) const;
 	bool possiblePlaceBuildingWithMargin (const sUnitData& buildingData, const cPosition& position, int margin, const cVehicle* vehicle = nullptr) const;
@@ -274,21 +267,24 @@ public:
 	*/
 	void reset();
 
+private:
+	static int getMapLevel (const cBuilding& building);
+	static int getMapLevel (const cVehicle& vehicle);
+	static int getResourceDensityFactor (eGameSettingsResourceDensity density);
+	static int getResourceAmountFactor (eGameSettingsResourceAmount amount);
+
+public:
 	mutable cSignal<void (const cUnit&)> addedUnit;
 	mutable cSignal<void (const cUnit&)> removedUnit;
 	mutable cSignal<void (const cVehicle&, const cPosition&)> movedVehicle;
-public:
+
 	std::shared_ptr<cStaticMap> staticMap;
+private:
 	/**
 	* the information about the fields
 	*/
 	cMapField* fields;
-private:
 	std::vector<sResources> Resources; // field with the ressource data
-	T_2<int>* resSpots;
-	int* resSpotTypes;
-	int resSpotCount;
-	int resCurrentSpotCount;
 };
 
 #endif // game_data_map_mapH

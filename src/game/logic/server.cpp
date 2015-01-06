@@ -2200,13 +2200,14 @@ int cServer::getUpgradeCosts (const sID& ID, cPlayer& player,
 //------------------------------------------------------------------------------
 void cServer::placeInitialResources()
 {
-	for (auto i = playerLandingPositions.begin(); i != playerLandingPositions.end(); ++i)
+	std::vector<cPosition> landingPositions;
+	for (auto& p : playerLandingPositions)
 	{
-		auto& landingPosition = i->second;
+		auto& landingPosition = p.second;
 		correctLandingPos (landingPosition);
-		Map->placeRessourcesAddPlayer (landingPosition, gameSettings->getResourceDensity());
+		landingPositions.push_back (landingPosition);
 	}
-	Map->placeRessources (gameSettings->getMetalAmount(), gameSettings->getOilAmount(), gameSettings->getGoldAmount());
+	Map->placeRessources (landingPositions, *gameSettings);
 }
 
 //------------------------------------------------------------------------------

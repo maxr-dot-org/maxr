@@ -78,9 +78,9 @@ void cMapField::getUnits (std::vector<cUnit*>& units) const
 {
 	units.clear();
 	units.reserve (vehicles.size() + buildings.size() + planes.size());
-	std::copy (vehicles.begin(), vehicles.end(), std::back_inserter (units));
-	std::copy (buildings.begin(), buildings.end(), std::back_inserter (units));
-	std::copy (planes.begin(), planes.end(), std::back_inserter (units));
+	units.insert (units.end(), vehicles.begin(), vehicles.end());
+	units.insert (units.end(), buildings.begin(), buildings.end());
+	units.insert (units.end(), planes.begin(), planes.end());
 }
 
 cBuilding* cMapField::getBuilding() const
@@ -92,7 +92,7 @@ cBuilding* cMapField::getBuilding() const
 cBuilding* cMapField::getTopBuilding() const
 {
 	if (buildings.empty()) return nullptr;
-	cBuilding* building = *buildings.begin();
+	cBuilding* building = buildings[0];
 
 	if ((building->data.surfacePosition == sUnitData::SURFACE_POS_GROUND ||
 		 building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) &&
@@ -103,9 +103,8 @@ cBuilding* cMapField::getTopBuilding() const
 
 cBuilding* cMapField::getBaseBuilding() const
 {
-	for (size_t i = 0; i != buildings.size(); ++i)
+	for (cBuilding* building : buildings)
 	{
-		cBuilding* building = buildings[i];
 		if (building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND &&
 			building->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE &&
 			building->getOwner())
@@ -118,17 +117,17 @@ cBuilding* cMapField::getBaseBuilding() const
 
 cBuilding* cMapField::getRubble() const
 {
-	for (size_t i = 0; i != buildings.size(); ++i)
-		if (!buildings[i]->getOwner())
-			return buildings[i];
+	for (cBuilding* building : buildings)
+		if (!building->getOwner())
+			return building;
 	return nullptr;
 }
 
 cBuilding* cMapField::getMine() const
 {
-	for (size_t i = 0; i != buildings.size(); ++i)
-		if (buildings[i]->data.explodesOnContact)
-			return buildings[i];
+	for (cBuilding* building : buildings)
+		if (building->data.explodesOnContact)
+			return building;
 	return nullptr;
 }
 
@@ -148,6 +147,7 @@ void cMapField::addVehicle (cVehicle& vehicle, size_t index)
 	vehiclesChanged();
 	unitsChanged();
 }
+
 void cMapField::addPlane (cVehicle& plane, size_t index)
 {
 	assert (index <= planes.size());
@@ -195,13 +195,12 @@ void cMapField::removeAll()
 
 // cStaticMap //////////////////////////////////////////////////
 
-cStaticMap::cStaticMap() : size (0), terrainCount (0), terrains (nullptr)
+cStaticMap::cStaticMap() : size (0), terrains()
 {
 }
 
 cStaticMap::~cStaticMap()
 {
-	delete [] terrains;
 }
 
 const sTerrain& cStaticMap::getTerrain (const cPosition& position) const
@@ -233,9 +232,7 @@ void cStaticMap::clear()
 {
 	filename.clear();
 	size = 0;
-	delete [] terrains;
-	terrains = nullptr;
-	terrainCount = 0;
+	terrains.clear();
 	Kacheln.clear();
 }
 
@@ -313,8 +310,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	// Generate new Map
 	this->size = std::max<int> (16, sWidth);
 	Kacheln.resize (size * size, 0);
-	terrains = new sTerrain[iNumberOfTerrains];
-	terrainCount = iNumberOfTerrains;
+	terrains.resize(iNumberOfTerrains);
 
 	// Load Color Palette
 	SDL_RWseek (fpMapFile, iPalettePos, SEEK_SET);
@@ -492,9 +488,8 @@ void cStaticMap::copySrfToTerData (SDL_Surface& surface, int iNum)
 
 void cStaticMap::scaleSurfaces (int pixelSize)
 {
-	for (size_t i = 0; i != terrainCount; ++i)
+	for (sTerrain& t : terrains)
 	{
-		sTerrain& t = terrains[i];
 		scaleSurface (t.sf_org.get(), t.sf.get(), pixelSize, pixelSize);
 		scaleSurface (t.shw_org.get(), t.shw.get(), pixelSize, pixelSize);
 	}
@@ -520,11 +515,11 @@ void cStaticMap::generateNextAnimationFrame()
 	palette_shw[123] = temp;
 
 	//set the new palette for all terrain surfaces
-	for (size_t i = 0; i != terrainCount; ++i)
+	for (sTerrain& terrain : terrains)
 	{
-		SDL_SetColors (terrains[i].sf.get(), palette + 96, 96, 127);
+		SDL_SetColors (terrain.sf.get(), palette + 96, 96, 127);
 		//SDL_SetColors (TerrainInUse[i]->sf_org, palette + 96, 96, 127);
-		SDL_SetColors (terrains[i].shw.get(), palette_shw + 96, 96, 127);
+		SDL_SetColors (terrain.shw.get(), palette_shw + 96, 96, 127);
 		//SDL_SetColors (TerrainInUse[i]->shw_org, palette_shw + 96, 96, 127);
 	}
 }
@@ -564,11 +559,6 @@ cMap::cMap (std::shared_ptr<cStaticMap> staticMap_) :
 	const int size = staticMap->getSize().x() * staticMap->getSize().y();
 	fields = new cMapField[size];
 	Resources.resize (size);
-
-	resSpots = nullptr;
-	resSpotTypes = nullptr;
-	resSpotCount = 0;
-	resCurrentSpotCount = 0;
 }
 
 cMap::~cMap()
@@ -595,21 +585,6 @@ bool cMap::isWaterOrCoast (const cPosition& position) const
 {
 	const sTerrain& terrainType = staticMap->getTerrain (position);
 	return terrainType.water | terrainType.coast;
-}
-
-// Platziert die Ressourcen für einen Spieler.
-void cMap::placeRessourcesAddPlayer (const cPosition& position, eGameSettingsResourceDensity desity)
-{
-	if (resSpots == nullptr)
-	{
-		resSpotCount = (int) (getSize().x() * getSize().y() * 0.003f * (1.5f + getResourceDensityFactor (desity)));
-		resCurrentSpotCount = 0;
-		resSpots = new T_2<int>[resSpotCount];
-		resSpotTypes = new int[resSpotCount];
-	}
-	resSpotTypes[resCurrentSpotCount] = RES_METAL;
-	resSpots[resCurrentSpotCount] = T_2<int> ((position.x() & ~1) + (RES_METAL % 2), (position.y() & ~1) + ((RES_METAL / 2) % 2));
-	resCurrentSpotCount++;
 }
 
 void cMap::assignRessources (const cMap& rhs)
@@ -664,35 +639,43 @@ void cMap::setResourcesFromString (const std::string& str)
 	}
 }
 
-// Platziert die Ressourcen (0-wenig,3-viel):
-void cMap::placeRessources (eGameSettingsResourceAmount metal, eGameSettingsResourceAmount oil, eGameSettingsResourceAmount gold)
+void cMap::placeRessources (const std::vector<cPosition>& landingPositions, const cGameSettings& gameSetting)
 {
 	std::fill (Resources.begin(), Resources.end(), sResources());
 
+	std::vector<int> resSpotTypes(landingPositions.size(), RES_METAL);
+	std::vector<T_2<int>> resSpots;
+	for (const auto& position : landingPositions)
+	{
+		resSpots.push_back(T_2<int> ((position.x() & ~1) + (RES_METAL % 2), (position.y() & ~1) + ((RES_METAL / 2) % 2)));
+	}
+
+	const eGameSettingsResourceDensity density = gameSetting.getResourceDensity();
 	eGameSettingsResourceAmount frequencies[RES_COUNT];
 
-	frequencies[RES_METAL] = metal;
-	frequencies[RES_OIL] = oil;
-	frequencies[RES_GOLD] = gold;
+	frequencies[RES_METAL] = gameSetting.getMetalAmount();
+	frequencies[RES_OIL] = gameSetting.getOilAmount();
+	frequencies[RES_GOLD] = gameSetting.getGoldAmount();
 
-	int playerCount = resCurrentSpotCount;
+	const std::size_t resSpotCount = (std::size_t) (getSize().x() * getSize().y() * 0.003f * (1.5f + getResourceDensityFactor (density)));
+	const std::size_t playerCount = landingPositions.size();
 	// create remaining resource positions
-	while (resCurrentSpotCount < resSpotCount)
+	while (resSpots.size() < resSpotCount)
 	{
 		T_2<int> pos;
 
 		pos.x = 2 + random (getSize().x() - 4);
 		pos.y = 2 + random (getSize().y() - 4);
-		resSpots[resCurrentSpotCount] = pos;
-		resCurrentSpotCount++;
+		resSpots.push_back(pos);
 	}
+	resSpotTypes.resize (resSpotCount);
 	// Resourcen gleichmässiger verteilen
-	for (int j = 0; j < 3; j++)
+	for (std::size_t j = 0; j < 3; j++)
 	{
-		for (int i = playerCount; i < resSpotCount; i++)
+		for (std::size_t i = playerCount; i < resSpotCount; i++)
 		{
 			T_2<float> d;
-			for (int j = 0; j < resSpotCount; j++)
+			for (std::size_t j = 0; j < resSpotCount; j++)
 			{
 				if (i == j) continue;
 
@@ -724,10 +707,10 @@ void cMap::placeRessources (eGameSettingsResourceAmount metal, eGameSettingsReso
 		}
 	}
 	// Resourcen Typ bestimmen
-	for (int i = playerCount; i < resSpotCount; i++)
+	for (std::size_t i = playerCount; i < resSpotCount; i++)
 	{
 		float amount[RES_COUNT] = {0.f, 0.f, 0.f, 0.f};
-		for (int j = 0; j < i; j++)
+		for (std::size_t j = 0; j < i; j++)
 		{
 			const float maxDist = 40.f;
 			float dist = sqrtf (resSpots[i].distSqr (resSpots[j]));
@@ -750,7 +733,7 @@ void cMap::placeRessources (eGameSettingsResourceAmount metal, eGameSettingsReso
 		resSpotTypes[i] = ((resSpots[i].y % 2) * 2) + (resSpots[i].x % 2);
 	}
 	// Resourcen platzieren
-	for (int i = 0; i < resSpotCount; i++)
+	for (std::size_t i = 0; i < resSpotCount; i++)
 	{
 		T_2<int> pos = resSpots[i];
 		T_2<int> p;
@@ -788,9 +771,6 @@ void cMap::placeRessources (eGameSettingsResourceAmount metal, eGameSettingsReso
 			}
 		}
 	}
-	delete[] resSpots;
-	delete[] resSpotTypes;
-	resSpots = nullptr;
 }
 
 /* static */ int cMap::getMapLevel (const cBuilding& building)
@@ -1079,9 +1059,9 @@ bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, const cPosition
 	// will prevent roads, connectors and water platforms from building on top
 	// of themselves.
 	const std::vector<cBuilding*>& buildings = field.getBuildings();
-	for (std::vector<cBuilding*>::const_iterator it = buildings.begin(); it != buildings.end(); ++it)
+	for (const cBuilding* building : buildings)
 	{
-		if ((*it)->data.ID == buildingData.ID)
+		if (building->data.ID == buildingData.ID)
 		{
 			return false;
 		}
@@ -1092,18 +1072,18 @@ bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, const cPosition
 	bool coast = isCoast (position);
 	bool ground = !water && !coast;
 
-	for (std::vector<cBuilding*>::const_iterator it = buildings.begin(); it != buildings.end(); ++it)
+	for (const cBuilding* building : buildings)
 	{
-		if (buildingData.surfacePosition == (*it)->data.surfacePosition &&
-			(*it)->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO) return false;
-		switch ((*it)->data.surfacePosition)
+		if (buildingData.surfacePosition == building->data.surfacePosition &&
+			building->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO) return false;
+		switch (building->data.surfacePosition)
 		{
 			case sUnitData::SURFACE_POS_GROUND:
 			case sUnitData::SURFACE_POS_ABOVE_SEA: // bridge
 				if (buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE &&
 					buildingData.surfacePosition != sUnitData::SURFACE_POS_BASE && // mine can be placed on bridge
 					buildingData.surfacePosition != sUnitData::SURFACE_POS_BENEATH_SEA && // seamine can be placed under bridge
-					(*it)->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO) return false;
+					building->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO) return false;
 				break;
 			case sUnitData::SURFACE_POS_BENEATH_SEA: // seamine
 			case sUnitData::SURFACE_POS_ABOVE_BASE:  // landmine
@@ -1142,9 +1122,9 @@ void cMap::reset()
 	}
 }
 
-int cMap::getResourceDensityFactor (eGameSettingsResourceDensity desity) const
+/*static*/ int cMap::getResourceDensityFactor (eGameSettingsResourceDensity density)
 {
-	switch (desity)
+	switch (density)
 	{
 		case eGameSettingsResourceDensity::Sparse:
 			return 0;
@@ -1159,9 +1139,9 @@ int cMap::getResourceDensityFactor (eGameSettingsResourceDensity desity) const
 	return 0;
 }
 
-int cMap::getResourceAmountFactor (eGameSettingsResourceAmount desity) const
+/*static*/int cMap::getResourceAmountFactor (eGameSettingsResourceAmount amount)
 {
-	switch (desity)
+	switch (amount)
 	{
 		case eGameSettingsResourceAmount::Limited:
 			return 0;
