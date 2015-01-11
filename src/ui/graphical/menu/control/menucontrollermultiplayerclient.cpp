@@ -731,11 +731,9 @@ void cMenuControllerMultiplayerClient::receiveMapData (cNetMessage& message)
 
 	if (windowNetworkLobby != nullptr)
 	{
-		int size = mapReceiver->getMapSize();
-		int received = mapReceiver->getBytesReceived();
-		int finished = (received * 100) / size;
+		const int percent = mapReceiver->getBytesReceivedPercent();
 
-		windowNetworkLobby->setMapDownloadPercent (finished);
+		windowNetworkLobby->setMapDownloadPercent (percent);
 	}
 }
 

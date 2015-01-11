@@ -21,6 +21,7 @@
 #define mapdownloadH
 
 #include <string>
+#include <vector>
 
 #include <SDL.h>
 
@@ -50,20 +51,17 @@ class cMapReceiver
 {
 public:
 	cMapReceiver (const std::string& mapName, int mapSize);
-	~cMapReceiver();
 
 	bool receiveData (cNetMessage& message);
 	bool finished();
 
 	const std::string& getMapName() const { return mapName; }
-	int getMapSize() const { return mapSize; }
-	int getBytesReceived() const { return bytesReceived; }
+	std::size_t getBytesReceivedPercent() const { return (100 * bytesReceived) / readBuffer.size(); }
 
 private:
 	std::string mapName;
-	int mapSize;
-	int bytesReceived;
-	char* readBuffer;
+	std::size_t bytesReceived;
+	std::vector<char> readBuffer;
 };
 
 //--------------------------------------------------------------------
@@ -93,9 +91,8 @@ private:
 	int toSocket;
 	std::string receivingPlayerName;
 	std::string mapName;
-	int mapSize;
-	int bytesSent;
-	char* sendBuffer;
+	std::size_t bytesSent;
+	std::vector<char> sendBuffer;
 
 	SDL_Thread* thread;
 	bool canceled;

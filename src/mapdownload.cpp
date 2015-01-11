@@ -112,21 +112,20 @@ int32_t MapDownload::calculateCheckSum (const std::string& mapName)
 {
 	int32_t result = 0;
 	string filename = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + mapName;
-	ifstream* file = new ifstream (filename.c_str(), ios::in | ios::binary | ios::ate);
-	if (!file->is_open() && !getUserMapsDir().empty())
+	ifstream file (filename.c_str(), ios::in | ios::binary | ios::ate);
+	if (!file.is_open() && !getUserMapsDir().empty())
 	{
 		// try to open the map from the user's maps dir
 		filename = getUserMapsDir() + mapName.c_str();
-		delete file;
-		file = new ifstream (filename.c_str(), ios::in | ios::binary | ios::ate);
+		file.open (filename.c_str(), ios::in | ios::binary | ios::ate);
 	}
-	if (file->is_open())
+	if (file.is_open())
 	{
-		const int mapSize = (int) file->tellg();
-		char* data = new char [mapSize];
-		file->seekg (0, ios::beg);
+		const int mapSize = (int) file.tellg();
+		std::vector<char> data (mapSize);
+		file.seekg (0, ios::beg);
 
-		file->read (data, 9);  // read only header
+		file.read (data.data(), 9);  // read only header
 		const int width = data[5] + data[6] * 256;
 		const int height = data[7] + data[8] * 256;
 		// the information after this is only for graphic stuff
@@ -135,14 +134,11 @@ int32_t MapDownload::calculateCheckSum (const std::string& mapName)
 
 		if (relevantMapDataSize + 9 <= mapSize)
 		{
-			file->read (data + 9, relevantMapDataSize);
-			if (!file->bad() && !file->eof())
-				result = calcCheckSum (data, relevantMapDataSize + 9);
+			file.read (data.data() + 9, relevantMapDataSize);
+			if (!file.bad() && !file.eof())
+				result = calcCheckSum (data.data(), relevantMapDataSize + 9);
 		}
-		file->close();
-		delete[] data;
 	}
-	delete file;
 	return result;
 }
 
@@ -153,18 +149,9 @@ int32_t MapDownload::calculateCheckSum (const std::string& mapName)
 //------------------------------------------------------------------------------
 cMapReceiver::cMapReceiver (const std::string& mapName, int mapSize) :
 	mapName (mapName),
-	mapSize (mapSize),
 	bytesReceived (0),
-	readBuffer (nullptr)
+	readBuffer (mapSize)
 {
-	if (mapSize > 0)
-		readBuffer = new char [mapSize];
-}
-
-//------------------------------------------------------------------------------
-cMapReceiver::~cMapReceiver()
-{
-	delete[] readBuffer;
 }
 
 //------------------------------------------------------------------------------
@@ -173,7 +160,7 @@ bool cMapReceiver::receiveData (cNetMessage& message)
 	assert (message.iType == MU_MSG_MAP_DOWNLOAD_DATA);
 
 	const int bytesInMsg = message.popInt32();
-	if (readBuffer == nullptr || bytesInMsg <= 0 || bytesReceived + bytesInMsg > mapSize)
+	if (bytesInMsg <= 0 || bytesReceived + bytesInMsg > readBuffer.size())
 		return false;
 
 	for (int i = bytesInMsg - 1; i >= 0; i--)
@@ -182,7 +169,7 @@ bool cMapReceiver::receiveData (cNetMessage& message)
 	bytesReceived += bytesInMsg;
 	std::ostringstream os;
 	os << "MapReceiver: Received Data for map " << mapName << ": "
-	   << bytesReceived << "/" << mapSize;
+	   << bytesReceived << "/" << readBuffer.size();
 	Log.write (os.str(), cLog::eLOG_TYPE_DEBUG);
 	return true;
 }
@@ -192,17 +179,16 @@ bool cMapReceiver::finished()
 {
 	Log.write ("MapReceiver: Received complete map", cLog::eLOG_TYPE_DEBUG);
 
-	if (bytesReceived != mapSize)
+	if (bytesReceived != readBuffer.size())
 		return false;
 	std::string mapsFolder = getUserMapsDir();
 	if (mapsFolder.empty())
 		mapsFolder = cSettings::getInstance().getMapsPath() + PATH_DELIMITER;
 	const std::string filename = mapsFolder + mapName;
-	std::ofstream newMapFile;
-	newMapFile.open (filename.c_str(), ios::out | ios::binary);
+	std::ofstream newMapFile (filename.c_str(), ios::out | ios::binary);
 	if (newMapFile.bad())
 		return false;
-	newMapFile.write (readBuffer, mapSize);
+	newMapFile.write (readBuffer.data(), readBuffer.size());
 	if (newMapFile.bad())
 		return false;
 	newMapFile.close();
@@ -232,9 +218,8 @@ cMapSender::cMapSender (cTCP& network_, int toSocket,
 	toSocket (toSocket),
 	receivingPlayerName (receivingPlayerName),
 	mapName (mapName),
-	mapSize (0),
 	bytesSent (0),
-	sendBuffer (nullptr),
+	sendBuffer(),
 	thread (nullptr),
 	canceled (false)
 {
@@ -249,9 +234,8 @@ cMapSender::~cMapSender()
 		SDL_WaitThread (thread, nullptr);
 		thread = nullptr;
 	}
-	if (sendBuffer != nullptr)
+	if (!sendBuffer.empty())
 	{
-		delete[] sendBuffer;
 		// the thread was not finished yet
 		// (else it would have deleted sendBuffer already)
 		// send a canceled msg to the client
@@ -285,10 +269,10 @@ bool cMapSender::getMapFileContent()
 		Log.write (string ("MapSender: could not read the map \"") + filename + "\" into memory.", cLog::eLOG_TYPE_WARNING);
 		return false;
 	}
-	mapSize = (int) file.tellg();
-	sendBuffer = new char [mapSize];
+	const std::size_t mapSize = file.tellg();
+	sendBuffer.resize (mapSize);
 	file.seekg (0, ios::beg);
-	file.read (sendBuffer, mapSize);
+	file.read (sendBuffer.data(), mapSize);
 	file.close();
 	Log.write (string ("MapSender: read the map \"") + filename + "\" into memory.", cLog::eLOG_TYPE_DEBUG);
 	return true;
@@ -304,16 +288,16 @@ void cMapSender::run()
 	{
 		cNetMessage msg (MU_MSG_START_MAP_DOWNLOAD);
 		msg.pushString (mapName);
-		msg.pushInt32 (mapSize);
+		msg.pushInt32 (sendBuffer.size());
 		sendMsg (msg);
 	}
 	int msgCount = 0;
-	while (bytesSent < mapSize)
+	while (bytesSent < sendBuffer.size())
 	{
 		if (canceled) return;
 
 		cNetMessage msg (MU_MSG_MAP_DOWNLOAD_DATA);
-		int bytesToSend = mapSize - bytesSent;
+		int bytesToSend = sendBuffer.size() - bytesSent;
 		if (bytesToSend + msg.iLength + 4 > PACKAGE_LENGTH)
 			bytesToSend = PACKAGE_LENGTH - msg.iLength - 4;
 		for (int i = 0; i < bytesToSend; i++)
@@ -328,8 +312,7 @@ void cMapSender::run()
 	}
 
 	// finished
-	delete[] sendBuffer;
-	sendBuffer = nullptr;
+	sendBuffer.clear();
 
 	cNetMessage msg (MU_MSG_FINISHED_MAP_DOWNLOAD);
 	msg.pushString (receivingPlayerName);
