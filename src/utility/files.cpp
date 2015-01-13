@@ -229,19 +229,14 @@ void copyFile (const std::string& source, const std::string& dest)
 
 	SDL_RWseek (sourceFile, 0, SEEK_END);
 	const long int size = SDL_RWtell (sourceFile);
-	unsigned char* buffer = new unsigned char [size];
-	if (buffer == nullptr)
-	{
-		std::cout << "Out of memory\n";
-		exit (-1);
-	}
+	std::vector<unsigned char> buffer (size);
 
 	SDL_RWseek (sourceFile, 0, SEEK_SET);
-	SDL_RWread (sourceFile, buffer, 1, size);
+	SDL_RWread (sourceFile, buffer.data(), 1, size);
 
-	SDL_RWwrite (destFile, buffer, 1, size);
+	SDL_RWwrite (destFile, buffer.data(), 1, size);
 
-	delete [] buffer;
+	buffer.clear();
 
 	if (sourceFile) SDL_RWclose (sourceFile);
 	if (destFile)   SDL_RWclose (destFile);
