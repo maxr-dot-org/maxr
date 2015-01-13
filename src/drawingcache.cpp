@@ -124,13 +124,8 @@ cDrawingCache::cDrawingCache (std::shared_ptr<const cFrameCounter> frameCounter_
 	cacheMisses = 0;
 	notCached = 0;
 	cacheSize = 0;
-	maxCacheSize = cSettings::getInstance().getCacheSize(); //set cache size from config
-	cachedImages = new sDrawingCacheEntry[maxCacheSize];
-}
-
-cDrawingCache::~cDrawingCache()
-{
-	delete[] cachedImages;
+	const std::size_t maxCacheSize = cSettings::getInstance().getCacheSize(); //set cache size from config
+	cachedImages.resize (maxCacheSize);
 }
 
 void cDrawingCache::setPlayer (const cPlayer* player_)
@@ -254,7 +249,7 @@ SDL_Surface* cDrawingCache::createNewEntry (const cBuilding& building, double zo
 {
 	if (!canCache (building)) return nullptr;
 
-	if (cacheSize < maxCacheSize)   //cache hasn't reached the max size, so allocate a new entry
+	if (cacheSize < cachedImages.size())   //cache hasn't reached the max size, so allocate a new entry
 	{
 		sDrawingCacheEntry& entry = cachedImages[cacheSize];
 		cacheSize++;
@@ -294,7 +289,7 @@ SDL_Surface* cDrawingCache::createNewEntry (const cVehicle& vehicle, double zoom
 	if (!canCache (vehicle))
 		return nullptr;
 
-	if (cacheSize < maxCacheSize)   //cache hasn't reached the max size, so allocate a new entry
+	if (cacheSize < cachedImages.size())   //cache hasn't reached the max size, so allocate a new entry
 	{
 		sDrawingCacheEntry& entry = cachedImages[cacheSize];
 
@@ -382,14 +377,13 @@ void cDrawingCache::resetStatistics()
 
 int cDrawingCache::getMaxCacheSize() const
 {
-	return maxCacheSize;
+	return cachedImages.size();
 }
 
 void cDrawingCache::setMaxCacheSize (unsigned int newSize)
 {
-	delete[] cachedImages;
-	cachedImages = new sDrawingCacheEntry[newSize];
-	maxCacheSize = newSize;
+	cachedImages.clear();
+	cachedImages.resize (newSize);
 	cacheSize = 0;
 
 	cSettings::getInstance().setCacheSize (newSize);

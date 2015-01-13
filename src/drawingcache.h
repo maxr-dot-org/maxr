@@ -78,7 +78,6 @@ class cDrawingCache
 {
 public:
 	cDrawingCache (std::shared_ptr<const cFrameCounter> frameCounter);
-	~cDrawingCache();
 
 	void setPlayer (const cPlayer* player);
 
@@ -113,9 +112,8 @@ private:
 	std::shared_ptr<const cFrameCounter> frameCounter;
 	const cPlayer* player;
 
-	unsigned int maxCacheSize;
 	unsigned int cacheSize;
-	sDrawingCacheEntry* cachedImages;
+	std::vector<sDrawingCacheEntry> cachedImages;
 	bool canCache (const cBuilding& building);
 	bool canCache (const cVehicle& vehicle);
 
