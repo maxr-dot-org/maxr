@@ -38,6 +38,10 @@ class cFrameCounter;
 */
 struct sDrawingCacheEntry
 {
+	sDrawingCacheEntry();
+	sDrawingCacheEntry(sDrawingCacheEntry&& other);
+	sDrawingCacheEntry& operator=(sDrawingCacheEntry&& other);
+
 	//building proberties
 	bool BaseN;
 	bool BaseBN;
@@ -72,6 +76,10 @@ struct sDrawingCacheEntry
 	*/
 	void init (const cVehicle& vehicle, const cMap& map, const cPlayer* player, unsigned long long animationTime, double zoom, unsigned long long frameNr);
 	void init (const cBuilding& building, double zoom, unsigned long long frameNr);
+
+private:
+	sDrawingCacheEntry(const sDrawingCacheEntry& other) MAXR_DELETE_FUNCTION;
+	sDrawingCacheEntry& operator=(const sDrawingCacheEntry& other) MAXR_DELETE_FUNCTION;
 };
 
 class cDrawingCache

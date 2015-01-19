@@ -44,6 +44,29 @@ sTerrain::sTerrain() :
 	blocked (false)
 {}
 
+sTerrain::sTerrain(sTerrain&& other) :
+	sf(std::move(other.sf)),
+	sf_org(std::move(other.sf_org)),
+	shw(std::move(other.shw)),
+	shw_org(std::move(other.shw_org)),
+	water(other.water),
+	coast(other.coast),
+	blocked(other.blocked)
+{}
+
+sTerrain& sTerrain::operator=(sTerrain&& other)
+{
+	sf = std::move(other.sf);
+	sf_org = std::move(other.sf_org);
+	shw = std::move(other.shw);
+	shw_org = std::move(other.shw_org);
+	water = other.water;
+	coast = other.coast;
+	blocked = other.blocked;
+
+	return *this;
+}
+
 cMapField::cMapField()
 {}
 

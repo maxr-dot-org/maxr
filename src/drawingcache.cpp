@@ -31,6 +31,64 @@
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/graphical/framecounter.h"
 
+sDrawingCacheEntry::sDrawingCacheEntry()
+{}
+
+sDrawingCacheEntry::sDrawingCacheEntry(sDrawingCacheEntry&& other) :
+	BaseN(other.BaseN),
+	BaseBN(other.BaseBN),
+	BaseE(other.BaseE),
+	BaseBE(other.BaseBE),
+	BaseS(other.BaseS),
+	BaseBS(other.BaseBS),
+	BaseW(other.BaseW),
+	BaseBW(other.BaseBW),
+	clan(other.clan),
+	frame(other.frame),
+	flightHigh(other.flightHigh),
+	big(other.big),
+	isBuilding(other.isBuilding),
+	isClearing(other.isClearing),
+	stealth(other.stealth),
+	water(other.water),
+	id(other.id),
+	owner(other.owner),
+	dir(other.dir),
+	zoom(other.zoom),
+	lastUsed(other.lastUsed),
+	surface(std::move(other.surface))
+{}
+
+sDrawingCacheEntry& sDrawingCacheEntry::operator=(sDrawingCacheEntry&& other)
+{
+	BaseN = other.BaseN;
+	BaseBN = other.BaseBN;
+	BaseE = other.BaseE;
+	BaseBE = other.BaseBE;
+	BaseS = other.BaseS;
+	BaseBS = other.BaseBS;
+	BaseW = other.BaseW;
+	BaseBW = other.BaseBW;
+	clan = other.clan;
+
+	frame = other.frame;
+	flightHigh = other.flightHigh;
+	big = other.big;
+	isBuilding = other.isBuilding;
+	isClearing = other.isClearing;
+	stealth = other.stealth;
+	water = other.water;
+
+	id = other.id;
+	owner = other.owner;
+	dir = other.dir;
+	zoom = other.zoom;
+	lastUsed = other.lastUsed;
+
+	surface = std::move(other.surface);
+
+	return *this;
+}
 
 void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMap& map, const cPlayer* player, unsigned long long animationTime, double zoom_, unsigned long long frameNr)
 {

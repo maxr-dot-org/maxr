@@ -132,6 +132,8 @@ private:
 struct sTerrain
 {
 	sTerrain();
+	sTerrain(sTerrain&& other);
+	sTerrain& operator=(sTerrain&& other);
 
 	AutoSurface sf;      /** the scaled surface of the terrain */
 	AutoSurface sf_org;  /** the original surface of the terrain */
@@ -140,6 +142,10 @@ struct sTerrain
 	bool water;          /** is this terrain water? */
 	bool coast;          /** is this terrain a coast? */
 	bool blocked;        /** is this terrain blocked? */
+
+private:
+	sTerrain(const sTerrain& other) MAXR_DELETE_FUNCTION;
+	sTerrain& operator=(const sTerrain& other) MAXR_DELETE_FUNCTION;
 };
 
 class cStaticMap
