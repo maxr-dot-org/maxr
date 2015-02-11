@@ -793,9 +793,9 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 					case cResearch::kShotsResearch: VehicleData[i].setShotsMax (VehicleData[i].getShotsMax() + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kRangeResearch: VehicleData[i].setRange (VehicleData[i].getRange() + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kArmorResearch: VehicleData[i].setArmor (VehicleData[i].getArmor() + newResearchBonus - oldResearchBonus); break;
-					case cResearch::kHitpointsResearch: VehicleData[i].setHitpointsMax (VehicleData[i] .getHitpointsMax() + newResearchBonus - oldResearchBonus); break;
+					case cResearch::kHitpointsResearch: VehicleData[i].setHitpointsMax (VehicleData[i].getHitpointsMax() + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kScanResearch: VehicleData[i].setScan (VehicleData[i].getScan() + newResearchBonus - oldResearchBonus); break;
-					case cResearch::kSpeedResearch: VehicleData[i].setSpeedMax (VehicleData[i].getSpeed() + newResearchBonus - oldResearchBonus); break;
+					case cResearch::kSpeedResearch: VehicleData[i].setSpeedMax (VehicleData[i].getSpeedMax() + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kCostResearch: VehicleData[i].buildCosts += newResearchBonus - oldResearchBonus; break;
 				}
 				if (researchArea != cResearch::kCostResearch)   // don't increment the version, if the only change are the costs
