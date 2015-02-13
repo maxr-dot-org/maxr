@@ -30,6 +30,7 @@
 #include <string>
 
 #include "settings.h"
+#include "maxrversion.h"
 
 #include "extendedtinyxml.h"
 #include "utility/files.h"

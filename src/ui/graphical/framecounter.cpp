@@ -17,8 +17,7 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-
-#include "ui\graphical\framecounter.h"
+#include "ui/graphical/framecounter.h"
 #include "main.h"
 
 cFrameCounter::cFrameCounter() :

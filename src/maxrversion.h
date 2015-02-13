@@ -1,6 +1,7 @@
 
 #if HAVE_AUTOVERSION_H
 # include "autoversion.h" //include autoversion created by buildinfo.sh or cmake
+# define BUILD_DATADIR "/usr/share/maxr" // TODO: reimplement setting this path in autoversion.h
 #else // We have no autoversion => take care of these manually!
 //default path to data dir only used on linux/other
 # define BUILD_DATADIR "/usr/share/maxr"
