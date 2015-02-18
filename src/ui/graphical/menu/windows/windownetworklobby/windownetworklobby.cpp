@@ -168,11 +168,10 @@ void cWindowNetworkLobby::updateSettingsText()
 			text += lngPack.i18n ("Text~Title~Resource_Density") + ": " + gameSettingsResourceDensityToString (gameSettings->getResourceDensity(), true) + "\n";
 			text += lngPack.i18n ("Text~Title~Credits")  + ": " + iToStr (gameSettings->getStartCredits()) + "\n";
 			text += lngPack.i18n ("Text~Title~BridgeHead") + ": " + gameSettingsBridgeheadTypeToString (gameSettings->getBridgeheadType(), true) + "\n";
-			text += std::string ("Clans") + ": " + (gameSettings->getClansEnabled() ? lngPack.i18n ("Text~Option~On") : lngPack.i18n ("Text~Option~Off")) + "\n";
+			text += lngPack.i18n ("Text~Title~Clans") + ": " + (gameSettings->getClansEnabled() ? lngPack.i18n ("Text~Option~On") : lngPack.i18n ("Text~Option~Off")) + "\n";
 			text += lngPack.i18n ("Text~Title~Game_Type") + ": " + gameSettingsGameTypeToString (gameSettings->getGameType(), true) + "\n";
-			// TODO: translate
-			text += "Turn limit: " + (gameSettings->isTurnLimitActive() ? iToStr (gameSettings->getTurnLimit().count()) + "s" : "No Limit") + "\n";
-			text += "Turn end: " + (gameSettings->isTurnEndDeadlineActive() ? iToStr (gameSettings->getTurnEndDeadline().count()) + "s" : "No Limit") + "\n";
+			text += lngPack.i18n ("Text~Title~Turn_limit") + ": " + (gameSettings->isTurnLimitActive() ? iToStr (gameSettings->getTurnLimit().count()) + "s" : lngPack.i18n ("Text~Settings~Unlimited_11")) + "\n";
+			text += lngPack.i18n ("Text~Title~Turn_end") + ": " + (gameSettings->isTurnEndDeadlineActive() ? iToStr (gameSettings->getTurnEndDeadline().count()) + "s" : lngPack.i18n ("Text~Settings~Unlimited_11")) + "\n";
 		}
 		else text += lngPack.i18n ("Text~Multiplayer~Option_NoSet") + "\n";
 	}

@@ -72,6 +72,8 @@
 			<Savegame ENG="Savegame" localized="Сохранение"/>
 			<Send ENG="Send" localized="Отправить"/>
 			<Team ENG="Team" localized="Команда"/>
+
+
 			<Unitinfo ENG="Unit status screen" localized="Статус подразделения"/>
 			
 		</Title>
@@ -211,6 +213,7 @@
 			<ShowDamage ENG="Buildingdamage" localized="Повреждения зданий"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Повреждения транспорта"/>
 			<Tracks ENG="Vehicletracks" localized="Следы транспорта"/>
+
 			<Voices ENG="Voices" localized="Голоса"/>
 			<Volume ENG="Volume" localized="Громкость"/>
 			<Window ENG="Windowed" localized="Оконный режим"/>

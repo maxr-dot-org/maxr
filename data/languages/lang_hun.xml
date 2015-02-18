@@ -72,6 +72,8 @@
 			<Savegame ENG="Savegame" localized="Mentés"/>
 			<Send ENG="Send" localized="Küldés"/>
 			<Team ENG="Team" localized="Csapat"/>
+
+
 			<Unitinfo ENG="Unit status screen" localized="Egységstátusz képernyő"/>
 			<Updates ENG="Update menu" localized="Frissítés Menü"/>
 		</Title>
@@ -211,6 +213,7 @@
 			<ShowDamage ENG="Buildingdamage" localized="Épületsebződés"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Járműsebződés"/>
 			<Tracks ENG="Vehicletracks" localized="Járműnyomok"/>
+
 			<Voices ENG="Voices" localized="Hangok"/>
 			<Volume ENG="Volume" localized="Hangerő"/>
 			<Window ENG="Windowed" localized="Futtatás ablakban"/>

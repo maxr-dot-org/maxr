@@ -72,6 +72,8 @@
 			<Savegame ENG="Saved Games" localized="Shranjene igre"/><!--unused?! -->
 			<Send ENG="Send" localized="Pošlji"/>
 			<Team ENG="Team" localized="Moštvo"/> <!-- e.g. Player 1 is called as one team -->
+
+
 			<Unitinfo ENG="Unit status screen" localized="Informacije o enoti"/>
 			<Upgrades_Menu ENG="Upgrades menu" localized="Meni Nadgradnje"/>
 		</Title>
@@ -211,6 +213,7 @@
 			<ShowDamage ENG="Buildingdamage" localized="Poškodbe stavb"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Poškodbe vozil"/>
 			<Tracks ENG="Vehicletracks" localized="Sledi vozil"/>
+
 			<Voices ENG="Voices" localized="Glasovi"/>
 			<Volume ENG="Volume" localized="Glasnost"/>
 			<Window ENG="Windowed" localized="V oknu"/>

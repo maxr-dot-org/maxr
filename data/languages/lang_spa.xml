@@ -36,17 +36,18 @@
 			<Alien_Tech ENG="Alien technology" localized="Tecnologia alien"/>
 			<BridgeHead ENG="Starting base" localized="Base inicial"/>
 			<Build_Factory ENG="Factory Menu" localized="Menú de Fabrica"/>
-			<Build_Vehicle ENG="Construction Menu" localized="Menú de Construcción/>
+			<Build_Vehicle ENG="Construction Menu" localized="Menú de Construcción"/>
 			<Cargo ENG="Cargo" localized="Recursos"/>
 			<Choose_Clan ENG="Choose Clan" localized="Elige Clan"/>
 			<Choose_Planet ENG="Choose Planet" localized="Elige planeta"/>
 			<Choose_Units ENG="Choose Units" localized="Elige Unidades"/>
+
 			<Clans ENG="Clans" localized="Clanes"/>
 			<Color ENG="Color:" localized="Color:"/>
 			<Computer ENG="Computer" localized="Ordenador (IA)"/>
 			<Connect ENG="Connect" localized="Conectar"/>
 			<Credits ENG="Credits" localized="Créditos"/>
-			<Credits_start ENG="Credit at gamestart" localized="Créditos al comienzo/>
+			<Credits_start ENG="Credit at gamestart" localized="Créditos al comienzo"/>
 			<Game_Type ENG="Game Type" localized="Tipo de partida"/>
 			<Gold ENG="Gold" localized="Oro"/>
 			<HotSeat ENG="Hot Seat" =localized="Hot Seat"/>
@@ -71,6 +72,8 @@
 			<Savegame ENG="Savegame" localized="Guardar Partida"/>
 			<Send ENG="Send" localized="Enviar"/>
 			<Team ENG="Team" localized="Equipo"/>
+
+
 			<Unitinfo ENG="Unit status screen" localized="Pantalla de estado de unidad"/>
 			<Updates ENG="UpdateMenu" localized="Menú Guardar"/>
 		</Title>
@@ -140,7 +143,7 @@
 			<ReloadAll_9 ENG="Reload All" localized="Rec. Todos"/>
 			<Repair ENG="Repair" localized="Reparar"/>
 			<Repair_7 ENG="Repair" localized="Reparar"/>
-			<RepairAll_9 ENG="Rep. All" localized="Rep. Todos/>
+			<RepairAll_9 ENG="Rep. All" localized="Rep. Todos"/>
 			<Reports ENG="Reports" localized="Reportes"/>
 			<Research ENG="Research" localized="Investigar"/>
 			<Save ENG="Save" localized="Guardar"/>
@@ -210,6 +213,7 @@
 			<ShowDamage ENG="Buildingdamage" localized="Daño en los edificios"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Daño en los vehículos"/>
 			<Tracks ENG="Vehicletracks" localized="Marca de neumaticos"/>
+
 			<Voices ENG="Voices" localized="Voces"/>
 			<Volume ENG="Volume" localized="Volumen"/>
 			<Window ENG="Windowed" localized="En ventana"/>

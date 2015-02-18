@@ -36,11 +36,12 @@
 			<Alien_Tech ENG="Alien technology" localized="Tecnologia aliena"/>
 			<BridgeHead ENG="Starting base" localized="Base inicial"/>
 			<Build_Factory ENG="Factory Menu" localized="Menú de Fàbrica"/>
-			<Build_Vehicle ENG="Construction Menu" localized="Menú de Construcció/>
+			<Build_Vehicle ENG="Construction Menu" localized="Menú de Construcció"/>
 			<Cargo ENG="Cargo" localized="Recursos"/>
 			<Choose_Clan ENG="Choose Clan" localized="Escull Clan"/>
 			<Choose_Planet ENG="Choose Planet" localized="Escull planeta"/>
 			<Choose_Units ENG="Choose Units" localized="Escull Unitats"/>
+
 			<Clans ENG="Clans" localized="Clans"/>
 			<Color ENG="Color:" localized="Color:"/>
 			<Computer ENG="Computer" localized="Ordinador (IA)"/>
@@ -71,6 +72,8 @@
 			<Savegame ENG="Savegame" localized="Guardar Partida"/>
 			<Send ENG="Send" localized="Enviar"/>
 			<Team ENG="Team" localized="Equip"/>
+
+
 			<Unitinfo ENG="Unit status screen" localized="Pantalla de estat d'unitat"/>
 			<Updates ENG="UpdateMenu" localized="Menú Guardar"/>
 		</Title>
@@ -140,7 +143,7 @@
 			<ReloadAll_9 ENG="Reload All" localized="Rec. Tots"/>
 			<Repair ENG="Repair" localized="Arreglar"/>
 			<Repair_7 ENG="Repair" localized="Arreglar"/>
-			<RepairAll_9 ENG="Rep. All" localized="Arr. Tots/>
+			<RepairAll_9 ENG="Rep. All" localized="Arr. Tots"/>
 			<Reports ENG="Reports" localized="Reportes"/>
 			<Research ENG="Research" localized="Investigar"/>
 			<Save ENG="Save" localized="Guardar"/>
@@ -210,6 +213,7 @@
 			<ShowDamage ENG="Buildingdamage" localized="Dany als edificis"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Dany en los vehícles"/>
 			<Tracks ENG="Vehicletracks" localized="Marca de neumatics"/>
+
 			<Voices ENG="Voices" localized="Veus"/>
 			<Volume ENG="Volume" localized="Volum"/>
 			<Window ENG="Windowed" localized="En finestra"/>

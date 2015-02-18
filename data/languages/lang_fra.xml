@@ -72,6 +72,8 @@
 			<Savegame ENG="Savegame" localized="Sauvegarde"/>
 			<Send ENG="Send" localized="Envoi"/>
 			<Team ENG="Team" localized="Équipe"/>
+
+
 			<Unitinfo ENG="Unit status screen" localized="Informations unité"/>
 			<Updates ENG="Update menu" localized="Menu mise à jour"/>
 		</Title>
@@ -211,6 +213,7 @@
 			<ShowDamage ENG="Buildingdamage" localized="Dégâts bâtiments"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Dégâts véhicules"/>
 			<Tracks ENG="Vehicletracks" localized="Traces véhicules"/>
+
 			<Voices ENG="Voices" localized="Voix"/>
 			<Volume ENG="Volume" localized="Volume"/>
 			<Window ENG="Windowed" localized="Fenêtré"/>

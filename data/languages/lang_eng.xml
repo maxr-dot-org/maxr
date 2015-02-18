@@ -72,6 +72,8 @@
 			<Savegame ENG="Saved Games"/><!--unused?! -- nonsinn -->
 			<Send ENG="Send"/>
 			<Team ENG="Team"/> <!-- e.g. Player 1 is called as one team -->
+			<Turn_end ENG="Turn end"/>
+			<Turn_limit ENG="Turn limit"/>
 			<Unitinfo ENG="Unit status screen"/>
 			<Upgrades_Menu ENG="Upgrades menu"/>
 		</Title>
@@ -211,6 +213,7 @@
 			<ShowDamage ENG="Buildingdamage"/>
 			<ShowDamageVehicle ENG="Vehicledamage"/>
 			<Tracks ENG="Vehicletracks"/>
+			<Unlimited_11 ENG="No limit"/>
 			<Voices ENG="Voices"/>
 			<Volume ENG="Volume"/>
 			<Window ENG="Windowed"/>
@@ -470,6 +473,7 @@
 			<Editor name="nonsinn" time="2013-06-11 13:30:00"/>
 			<Editor name="nonsinn" time="2013-06-13 02:50:00"/>
 			<Editor name="nonsinn" time="2014-02-21 15:00:00"/>
+			<Editor name="nonsinn" time="2015-02-18 19:05:00"/>
 		</Author>
 		<Game_Version time="2008-04-14 19:17:00"/>
 	</Footer>

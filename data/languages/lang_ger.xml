@@ -72,6 +72,8 @@
 			<Savegame ENG="Saved Games" localized="Gespeicherte Spiele"/>
 			<Send ENG="Send" localized="Senden"/>
 			<Team ENG="Team" localized="Team"/>
+			<Turn_end ENG="Turn end" localized="Zeitbegenzung Rund"/>
+			<Turn_limit ENG="Turn limit" localized="Zeitbegrenzung Rundenende"/>
 			<Unitinfo ENG="Unit status screen" localized="Einheitendetails"/>
 			<Upgrades_Menu ENG="Upgrades menu" localized="Verbesserungsmenü" />
 		</Title>
@@ -211,6 +213,7 @@
 			<ShowDamage ENG="Buildingdamage" localized="Gebäudeschäden"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Fahrzeugschäden"/>
 			<Tracks ENG="Vehicletracks" localized="Fahrzeugspuren"/>
+			<Unlimited_11 ENG="No limit" localized="Unbegrenzt"/>
 			<Voices ENG="Voices" localized="Stimmen"/>
 			<Volume ENG="Volume" localized="Lautstärke"/>
 			<Window ENG="Windowed" localized="Fenstermodus"/>
@@ -465,6 +468,7 @@
 			<Editor name="nonsinn" time="2013-06-11 13:30:00"/>
 			<Editor name="nonsinn" time="2013-06-13 02:50:00"/>
 			<Editor name="nonsinn" time="2014-02-21 15:00:00"/>
+			<Editor name="nonsinn" time="2015-02-18 19:05:00"/>
 		</Author>
 		<Game_Version time="2008-04-14 19:17:00"/>
 	</Footer>

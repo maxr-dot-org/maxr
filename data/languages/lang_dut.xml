@@ -72,6 +72,8 @@
 			
 			<Send ENG="Send" localized="Zenden"/>
 			<Team ENG="Team" localized="Team"/>
+
+
 			<Unitinfo ENG="Unitinformations" localized="Eenhedeninformatie"/>
 			<Updates ENG="Updatemenu" localized="Updatemenu"/>
 		</Title>
@@ -211,6 +213,7 @@
 			<ShowDamage ENG="Buildingdamage" localized="Gebouwschade"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Voertuigschade"/>
 			<Tracks ENG="Vehicletracks" localized="Voertuigsporen"/>
+
 			<Voices ENG="Voices" localized="Stemmen"/>
 			<Volume ENG="Volume" localized="Volume"/>
 			<Window ENG="Windowed" localized="Venstermodus"/>
