@@ -48,6 +48,7 @@
 			<Connect ENG="Connect" localized="Verbinden"/>
 			<Credits ENG="Credit" localized="Kredit"/>
 			<Credits_start ENG="Credit at gamestart" localized="Startkredit"/>
+			<Custom_11 ENG="Custom" localized="Eigner Wert"/>
 			<Game_Type ENG="Game Type" localized="Spielart"/>
 			<Gold ENG="Gold" localized="Gold"/>
 			<Human ENG="Human" localized="Mensch"/>
@@ -172,6 +173,7 @@
 			<Teams_7 ENG="Teams" localized="Teams"/>
 			<Total ENG="Total" localized="Total"/>
 			<Transfer_7 ENG="X-fer" localized="Trsfer."/>
+			<Unit_destroyed ENG="Unit destroyed!" localized="Einheit zerstört!"/>
 			<Units ENG="Units" localized="Einheiten"/>
 			<Upgrade ENG="Upgrade" localized="Verbessern"/>
 			<UpgradeAll_7 ENG="Up.all" localized="Verb.All."/>
@@ -205,6 +207,7 @@
 			<Disable ENG="Disable" localized="Deaktivieren"/>
 			<Effects ENG="Effects" localized="Effekte"/>
 			<Intro ENG="Show intro" localized="Zeige Intro"/>
+			<Language ENG="Language" localized="Sprache"/>
 			<Music ENG="Music" localized="Musik"/>
 			<Preferences ENG="Preferences" localized="Einstellungen"/>
 			<Resolution ENG="Resolution" localized="Auflösung"/>
@@ -230,6 +233,7 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="Host will starten: Nicht fertig"/>
 			<Go_Ready ENG="Ready to go" localized="Fertig zum Starten"/>
 			<Go_Ready_No ENG="not ready to go" localized="Nicht fertig zum Starten"/>
+			<Host_command ENG="Host entered following command" localized="Host gab folgendes Kommando ein"/>
 			<Lost_Connection ENG="Lost connection to %s." localized="Verbindung zu %s verloren."/>
 			<Map_NoSet ENG="--no map selected--" localized="--keine Karte ausgewählt--"/>
 			<MapDL_Cancel ENG="Aborted" localized="Abgebrochen"/>
@@ -346,8 +350,8 @@
 			<ReactionFireOff ENG="Reaction Fire Off" localized="Manuell schießen"/>
 			<Repeat ENG="Again" localized="Wieder"/>
 			<Reserve ENG="Reserve" localized="Reserve"/>
-			<ResolutionChange localized="Bitte starten Sie 'Mechanized Assault and eXploration Reloaded' neu um die Änderung der Bildschirmauflösung wirksam zu machen."/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Achtung: Nichtunterstützte Bildschirmauflösung in der Konfiguration gefunden"/>
+			<RestartRequired ENG="Please restart 'Mechanized Assault and eXploration Reloaded' to take effect the change." localized="Bitte starte 'Mechanized Assault and eXploration Reloaded' neu, damit die Änderung inkraft tritt."/>
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Bildschirmfoto gespeichet unter %s "/>
 			<Sentry ENG="on sentry" localized="auf wachposten"/>
 			<Stolen ENG="stolen" localized="gestohlen"/>

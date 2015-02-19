@@ -48,6 +48,7 @@
 			<Connect ENG="Connect" localized="Conectar"/>
 			<Credits ENG="Credits" localized="Crèdits"/>
 			<Credits_start ENG="Credit at gamestart" localized="Crèdits al començar"/>
+
 			<Game_Type ENG="Game Type" localized="Tipus de partida"/>
 			<Gold ENG="Gold" localized="Or"/>
 			<HotSeat ENG="Hot Seat" =localized="Hot Seat"/>
@@ -172,6 +173,7 @@
 			<Teams_7 ENG="Teams" localized="Equips"/>
 			<Total ENG="Total" localized="Total"/>
 			<Transfer_7 ENG="X-fer" localized="Transferir"/>
+
 			<Units ENG="Units" localized="Unitats"/>
 			<Upgrade ENG="Upgrade" localized="Actualizar"/>
 			<UpgradeAll_7 ENG="Up.all" localized="Mill.Tot"/>
@@ -205,6 +207,7 @@
 			<Disable ENG="Disable" localized="Desactivar"/>
 			<Effects ENG="Effects" localized="Efectes"/>
 			<Intro ENG="Show intro" localized="Mostrar intro"/>
+
 			<Music ENG="Music" localized="Música"/>
 			<Preferences ENG="Preferences" localized="Preferències"/>
 			<Resolution ENG="Resolution" localized="Resolució"/>
@@ -230,6 +233,7 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="El servidor quiere empezar: no empezamos"/>
 			<Go_Ready ENG="Ready to go" localized="Listos para empezar"/>
 			<Go_Ready_No ENG="not ready to go" localized="No estamos listos para empezar"/>
+
 			<Lost_Connection ENG="Lost connection to %s." localized="Conexión a %s perdida"/>
 			<Map_NoSet ENG="--no map set--" localized="--mapa no seleccionado--"/>
 			<MapDL_Cancel ENG="Aborted" localized="Anulado"/>
@@ -346,8 +350,8 @@
 			<ReactionFireOff ENG="Reaction Fire Off" localized="Dispar de auto-defensa apagat"/>
 			<Repeat ENG="Again" localized="De nou"/>
 			<Reserve ENG="Reserve" localized="Reserva"/>
-			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Per favor reinicia 'Mechanized Assault and eXploration Reloaded' per a que els canvis en el mode de vídeo surtin efecte"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Amb compte: Mode de video no suportat en la configuració"/>
+
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Captura de pantalla guardada a %s"/>
 			<Sentry ENG="on sentry" localized="en alerta"/>
 			<Stolen ENG="stolen" localized="robat"/>

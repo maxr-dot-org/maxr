@@ -48,6 +48,7 @@
 			<Connect ENG="Connect"/>
 			<Credits ENG="Credit"/>
 			<Credits_start ENG="Credit at gamestart"/>
+			<Custom_11 ENG="Custom"/>
 			<Game_Type ENG="Game Type"/>
 			<Gold ENG="Gold"/>
 			<HotSeat ENG="Hot Seat"/>
@@ -122,7 +123,7 @@
 			<HotSeat_New ENG="New Hot Seat"/>
 			<Included ENG="Included"/>
 			<Info_7 ENG="Info"/>
-			<Limited_To ENG="Limited to"/>
+			<Limited_To ENG="Limited to"/> <!-- filter seting-->
 			<Load ENG="Load"/>
 			<Load_7 ENG="Load"/>
 			<Log ENG="Log"/>
@@ -172,6 +173,7 @@
 			<Teams_7 ENG="Teams"/> <!-- the workes for the habit -->
 			<Total ENG="Total"/>
 			<Transfer_7 ENG="X-fer"/>
+			<Unit_destroyed ENG="Unit destroyed!"/>
 			<Units ENG="Units"/>
 			<Upgrade ENG="Upgrade"/> <!-- used where you select your start units -->
 			<UpgradeAll_7 ENG="Up.all"/>
@@ -185,7 +187,7 @@
 			<Definite ENG="Built (original)"/>
 			<Dense ENG="Dense"/>
 			<High ENG="High"/>
-			<Limited ENG="Limited"/>
+			<Limited ENG="Limited"/> <!-- res. setting -->
 			<Low ENG="Low"/>
 			<Mobile ENG="Must build"/>
 			<More ENG="More"/>
@@ -205,6 +207,7 @@
 			<Disable ENG="Disable"/>
 			<Effects ENG="Effects"/>
 			<Intro ENG="Show intro"/>
+			<Language ENG="Language"/>
 			<Music ENG="Music"/>
 			<Preferences ENG="Preferences"/>
 			<Resolution ENG="Resolution"/>
@@ -230,6 +233,7 @@
 			<Go_Host_No ENG="Host wants to go: No go"/>
 			<Go_Ready ENG="Ready to go"/>
 			<Go_Ready_No ENG="not ready to go"/>
+			<Host_command ENG="Host entered following command"/>
 			<Lost_Connection ENG="Lost connection to %s."/>
 			<Map_NoSet ENG="--no map selected--"/>
 			<MapDL_Cancel ENG="Aborted"/>
@@ -346,8 +350,8 @@
 			<ReactionFireOff ENG="Reaction Fire Off"/>
 			<Repeat ENG="Again"/>
 			<Reserve ENG="Reserve"/>
-			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config"/>
+			<RestartRequired ENG="Please restart 'Mechanized Assault and eXploration Reloaded' to take effect the change."/>
 			<Screenshot_Done ENG="Screenshot saved to %s"/>
 			<Sentry ENG="on sentry"/>
 			<Stolen ENG="stolen"/>
@@ -368,7 +372,7 @@
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s"/>
-			<ERROR_Map_Loading ENG="Error loading map"/>
+			<ERROR_Map_Loading ENG="Error while loading map"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s"/>
 			<INFO_Language_initialised ENG="Language is now initialized"/>
 			<INFO_Not_Implemented ENG="Not yet implemented"/>

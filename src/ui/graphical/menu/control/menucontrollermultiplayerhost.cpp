@@ -146,7 +146,7 @@ void cMenuControllerMultiplayerHost::handleSelectMap (cApplication& application)
 		}
 		else
 		{
-			application.show (std::make_shared<cDialogOk> ("Error while loading map!")); // TODO: translate
+			application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Others~ERROR_Map_Loading")));
 		}
 		triedLoadMapName = windowMapSelection->getSelectedMapName();
 	});

@@ -48,6 +48,7 @@
 			<Connect ENG="Connect" localized="Connecter"/>
 			<Credits ENG="Credits" localized="Crédits "/>
 			
+			
 			<Game_Type ENG="Game Type" localized="Type de jeu "/>
 			<Gold ENG="Gold" localized="Or "/>
 			
@@ -172,6 +173,7 @@
 			<Teams_7 ENG="Teams" localized="Équipes"/>
 			<Total ENG="Total" localized="Total"/>
 			<Transfer_7 ENG="X-fer" localized="Échange"/>
+
 			<Units ENG="Units" localized="Unités"/>
 			<Upgrade ENG="Upgrade" localized="MàJ"/>
 			<UpgradeAll_7 ENG="Up.all" localized="MàJ tout"/>
@@ -205,6 +207,7 @@
 			<Disable ENG="Disable" localized="Désactiver"/>
 			<Effects ENG="Effects" localized="Effets"/>
 			<Intro ENG="Show intro" localized="Montrer intro"/>
+
 			<Music ENG="Music" localized="Musique"/>
 			<Preferences ENG="Preferences" localized="Préférences"/>
 			<Resolution ENG="Resolution" localized="Résolution"/>
@@ -230,6 +233,7 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="Hôte : pas encore prêt"/>
 			<Go_Ready ENG="Ready to go" localized="Prêt"/>
 			<Go_Ready_No ENG="not ready to go" localized="Pas prêt"/>
+
 			<Lost_Connection ENG="Lost connection to %s." localized=" %s perd la connexion."/>
 			<Map_NoSet ENG="--no map set--" localized="--pas de carte sélectionnée--"/>
 			<MapDL_Cancel ENG="Aborted"/>
@@ -346,8 +350,8 @@
 			<ReactionFireOff ENG="Tir de réaction désactivé"/>
 			<Repeat ENG="Again" localized="Répéter"/>
 			<Reserve ENG="Reserve" localized="Réserve"/>
-			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Veuillez redémarrer 'Mechanized Assault and eXploration Reloaded' pour appliquer le changement de mode vidéo."/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Attention : la config définit un mode vidéo non supporté"/>
+
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Capture d'écran sauvegardée: %s"/>
 			<Sentry ENG="on sentry" localized="en faction"/>
 			<Stolen ENG="stolen" localized="volé"/>

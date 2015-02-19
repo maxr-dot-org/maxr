@@ -48,6 +48,7 @@
 			<Connect ENG="Connect" localized="Verbinden"/>
 			<Credits ENG="Credits" localized="Goud"/>
 			
+
 			<Game_Type ENG="Game Type" localized="Speltype"/>
 			<Gold ENG="Gold" localized="Goud"/>
 			
@@ -172,6 +173,7 @@
 			<Teams_7 ENG="Teams" localized="Teams"/>
 			<Total ENG="Total" localized="Totaal"/>
 			
+
 			<Units ENG="Units"/>
 			<Upgrade ENG="Upgrade" localized="Verbeter"/>
 			<UpgradeAll_7 ENG="Up.all" localized="Ver.all"/>
@@ -205,6 +207,7 @@
 			<Disable ENG="Disable" localized="Uitgeschakeld"/>
 			<Effects ENG="Effects" localized="Effecten"/>
 			<Intro ENG="Show intro" localized="Intro afspelen"/>
+
 			<Music ENG="Music" localized="Muziek"/>
 			<Preferences ENG="Preferences" localized="Voorkeuren"/>
 			<Resolution ENG="Resolution" localized="Resolutie"/>
@@ -230,6 +233,7 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="Host wil starten: Niet klaar"/>
 			<Go_Ready ENG="Ready to go" localized="Klaar om te starten"/>
 			<Go_Ready_No ENG="not ready to go" localized="niet klaar om te starten"/>
+
 			<Lost_Connection ENG="Lost connection to %s." localized="Verbinding verbroken tot %s"/>
 			<Map_NoSet ENG="--no map set--" localized="--geen kaart gezet--"/>
 			<MapDL_Cancel ENG="Aborted" localized="Afgebroken"/>
@@ -346,8 +350,8 @@
 			
 			<Repeat ENG="Again" localized="Opnieuw"/>
 			<Reserve ENG="Reserve" localized="Reserve"/>
-			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Herstart aub 'Mechanized Assault and eXploration Reloaded' voor veranderingen in de video instellingen"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Warschuwing: Niet ondersteunde videomodus in de instellingen"/>
+
 			
 			<Sentry ENG="on sentry" localized="op wachposten"/>
 			<Stolen ENG="stolen" localized="gestolen"/>

@@ -48,6 +48,7 @@
 			<Connect ENG="Connect" localized="Соединение"/>
 			<Credits ENG="Credits" localized="Деньги"/>
 			
+
 			<Game_Type ENG="Game Type" localized="Тип игры"/>
 			<Gold ENG="Gold" localized="Золото"/>
 			
@@ -172,7 +173,8 @@
 			<Teams_7 ENG="Teams" localized="Команды"/>
 			<Total ENG="Total" localized="Всего"/>
 			<Transfer_7 ENG="X-fer" localized="Трансф."/>
-			<Units ENG="Units" localized=""/>
+
+
 			<Upgrade ENG="Upgrade" localized="Улучшить"/>
 			<UpgradeAll_7 ENG="Up.all" localized="Ул. все"/>
 			
@@ -205,6 +207,7 @@
 			<Disable ENG="Disable" localized="Отключить"/>
 			<Effects ENG="Effects" localized="Эффекты"/>
 			<Intro ENG="Show intro" localized="Вступление"/>
+
 			<Music ENG="Music" localized="Музыка"/>
 			<Preferences ENG="Preferences" localized="Настройки"/>
 			<Resolution ENG="Resolution" localized="Разрешение экрана"/>
@@ -230,6 +233,7 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="Сервер хочет начать: Не готов"/>
 			<Go_Ready ENG="Ready to go" localized="Готов"/>
 			<Go_Ready_No ENG="not ready to go" localized="не готов"/>
+
 			<Lost_Connection ENG="Lost connection to %s." localized="Потеряна связь с %s."/>
 			<Map_NoSet ENG="--no map set--" localized="--не выбана карта--"/>
 			<MapDL_Cancel ENG="Aborted" localized="Отменено"/>
@@ -346,8 +350,8 @@
 			<ReactionFireOff ENG="Reaction Fire Off" localized="Ответный огонь отключен"/>
 			<Repeat ENG="Again" localized="Ещё раз"/>
 			<Reserve ENG="Reserve" localized="Резерв"/>
-			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Пожалуйста, перезапустите 'Mechanized Assault and eXploration Reloaded' для вступления в силу нового видеорежима"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Внимание: неподдерживаемый видеорежим в конфигурации"/>
+
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Снимок экрана записан в %s"/>
 			<Sentry ENG="on sentry" localized="на карауле"/>
 			<Stolen ENG="stolen" localized="захвачено"/>

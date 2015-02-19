@@ -62,7 +62,7 @@ eSavedReportType cSavedReportHostCommand::getType() const
 //------------------------------------------------------------------------------
 std::string cSavedReportHostCommand::getMessage() const
 {
-	return "Host entered command: '" + command + "'"; // TODO: translate
+	return lngPack.i18n ("Text~Multiplayer~Host_command") + " '" + command + "'";
 }
 
 //------------------------------------------------------------------------------

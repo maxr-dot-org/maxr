@@ -48,6 +48,7 @@
 			<Connect ENG="Connect" localized="Conectar"/>
 			<Credits ENG="Credits" localized="Créditos"/>
 			<Credits_start ENG="Credit at gamestart" localized="Créditos al comienzo"/>
+
 			<Game_Type ENG="Game Type" localized="Tipo de partida"/>
 			<Gold ENG="Gold" localized="Oro"/>
 			<HotSeat ENG="Hot Seat" =localized="Hot Seat"/>
@@ -172,6 +173,7 @@
 			<Teams_7 ENG="Teams" localized="Equipos"/>
 			<Total ENG="Total" localized="Total"/>
 			<Transfer_7 ENG="X-fer" localized="Transferir"/>
+
 			<Units ENG="Units" localized="Unidades"/>
 			<Upgrade ENG="Upgrade" localized="Actualizar"/>
 			<UpgradeAll_7 ENG="Up.all" localized="Mej.Todo"/>
@@ -205,6 +207,7 @@
 			<Disable ENG="Disable" localized="Desactivar"/>
 			<Effects ENG="Effects" localized="Efectos"/>
 			<Intro ENG="Show intro" localized="Mostrar intro"/>
+
 			<Music ENG="Music" localized="Música"/>
 			<Preferences ENG="Preferences" localized="Preferéncias"/>
 			<Resolution ENG="Resolution" localized="Resolución"/>
@@ -230,6 +233,7 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="El servidor quiere empezar: no empezamos"/>
 			<Go_Ready ENG="Ready to go" localized="Listos para empezar"/>
 			<Go_Ready_No ENG="not ready to go" localized="No estamos listos para empezar"/>
+
 			<Lost_Connection ENG="Lost connection to %s." localized="Conexión a %s perdida"/>
 			<Map_NoSet ENG="--no map set--" localized="--mapa no seleccionado--"/>
 			<MapDL_Cancel ENG="Aborted" localized="Anulado"/>
@@ -346,8 +350,8 @@
 			<ReactionFireOff ENG="Reaction Fire Off" localized="Disparo de auto-defensa apagado"/>
 			<Repeat ENG="Again" localized="De nuevo"/>
 			<Reserve ENG="Reserve" localized="Reserva"/>
-			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Por favor reinicia 'Mechanized Assault and eXploration Reloaded' para que los cambios en el modo de vídeo surtan efecto"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Cuidado: Modo de video no soportado en la configuración"/>
+
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Pantallazo guardado a %s"/>
 			<Sentry ENG="on sentry" localized="en alerta"/>
 			<Stolen ENG="stolen" localized="robado"/>

@@ -48,6 +48,7 @@
 			<Connect ENG="Connect" localized="Povezava"/>
 			<Credits ENG="Credit" localized="Sredstva"/>
 			<Credits_start ENG="Credit at gamestart" localized="Začetna sredstva"/>
+
 			<Game_Type ENG="Game Type" localized="Tip igre"/>
 			<Gold ENG="Gold" localized="Zlato"/>
 			<HotSeat ENG="Hot Seat" localized="Vroči stol"/>
@@ -172,6 +173,7 @@
 			<Teams_7 ENG="Teams" localized="Moštva"/> <!-- the workes for the habit -->
 			<Total ENG="Total" localized="Skupaj"/>
 			<Transfer_7 ENG="X-fer" localized="Prenos"/>
+
 			<Units ENG="Units" localized="Enote"/>
 			<Upgrade ENG="Upgrade" localized="Nadgradi"/> <!-- used where you select your start units -->
 			<UpgradeAll_7 ENG="Up.all" localized="Nad.vse"/>
@@ -205,6 +207,7 @@
 			<Disable ENG="Disable" localized="Onemogoči"/>
 			<Effects ENG="Effects" localized="Efekti"/>
 			<Intro ENG="Show intro" localized="Prikaži uvod"/>
+
 			<Music ENG="Music" localized="Glasba"/>
 			<Preferences ENG="Preferences" localized="Lastnosti"/>
 			<Resolution ENG="Resolution" localized="Resolucija"/>
@@ -230,6 +233,7 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="Strežnik želi da: Ne potrdiš pripravljenosti"/>
 			<Go_Ready ENG="Ready to go" localized="Pripravljen"/>
 			<Go_Ready_No ENG="not ready to go" localized="nisem pripravljen"/>
+
 			<Lost_Connection ENG="Lost connection to %s." localized="Povezava z %s je bila prekinjena."/>
 			<Map_NoSet ENG="--no map selected--" localized="--brez nastavitev pokrajine--"/>
 			<MapDL_Cancel ENG="Aborted" localized="Prekinjeno"/>
@@ -346,8 +350,8 @@
 			<ReactionFireOff ENG="Reaction Fire Off" localized="Izklop samodejnega ognja"/>
 			<Repeat ENG="Again" localized="Ponovno"/>
 			<Reserve ENG="Reserve" localized="Rezerva"/>
-			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Ponovno zaženi igro M.A.X. Reloaded za uveljavitev sprememb video načina"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Opozorilo: nepodprt video način v konfiguraciji"/>
+
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Posnetek zaslona je shranjen v %s"/>
 			<Sentry ENG="on sentry" localized="na preži"/>
 			<Stolen ENG="stolen" localized="ukraden"/>
