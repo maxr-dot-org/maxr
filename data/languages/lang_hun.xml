@@ -200,6 +200,9 @@
 			<Type_Simu ENG="Simultaneous" localized="Egyidejű"/>
 			<Type_Turns ENG="Turn based" localized="Körökre osztott"/>
 		</Option>
+		<Punctuation>
+			<Colon ENG=": " localized=": "/>
+		</Punctuation>
 		<Settings>
 			<Alphaeffects ENG="Alphaeffects" localized="Alfaeffektusok"/>
 			<Animation ENG="Animations" localized="Animációk"/>

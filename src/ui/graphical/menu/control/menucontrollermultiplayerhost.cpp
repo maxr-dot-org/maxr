@@ -573,7 +573,7 @@ void cMenuControllerMultiplayerHost::startHost()
 	}
 	else
 	{
-		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Open") + " (" + lngPack.i18n ("Text~Title~Port") + ": "  + iToStr (windowNetworkLobby->getPort()) + ")");
+		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Open") + " (" + lngPack.i18n ("Text~Title~Port") + lngPack.i18n ("Text~Punctuation~Colon")  + iToStr (windowNetworkLobby->getPort()) + ")");
 		Log.write ("Game open (Port: " + iToStr (windowNetworkLobby->getPort()) + ")", cLog::eLOG_TYPE_INFO);
 		windowNetworkLobby->disablePortEdit();
 	}

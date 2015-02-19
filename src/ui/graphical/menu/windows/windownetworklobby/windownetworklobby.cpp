@@ -149,7 +149,7 @@ void cWindowNetworkLobby::updateSettingsText()
 	}
 	if (staticMap != nullptr)
 	{
-		text += lngPack.i18n ("Text~Title~Map") + ": " + staticMap->getName();
+		text += lngPack.i18n ("Text~Title~Map") + lngPack.i18n ("Text~Punctuation~Colon") + staticMap->getName();
 		text += " (" + iToStr (staticMap->getSize().x()) + "x" + iToStr (staticMap->getSize().y()) + ")\n";
 	}
 	else if (saveGamePlayers.size() == 0) text += lngPack.i18n ("Text~Multiplayer~Map_NoSet") + "\n";
@@ -162,16 +162,16 @@ void cWindowNetworkLobby::updateSettingsText()
 		{
 			auto additionalGameEndString = gameSettings->getVictoryCondition() == eGameSettingsVictoryCondition::Turns ? (" " + iToStr (gameSettings->getVictoryTurns()) + " ") : (gameSettings->getVictoryCondition() == eGameSettingsVictoryCondition::Points ? (" " + iToStr (gameSettings->getVictoryPoints()) + " ") : " ");
 			text += lngPack.i18n ("Text~Comp~GameEndsAt") + additionalGameEndString + gameSettingsVictoryConditionToString (gameSettings->getVictoryCondition(), true) + "\n";
-			text += lngPack.i18n ("Text~Title~Metal") + ": " + gameSettingsResourceAmountToString (gameSettings->getMetalAmount(), true) + "\n";
-			text += lngPack.i18n ("Text~Title~Oil") + ": " + gameSettingsResourceAmountToString (gameSettings->getOilAmount(), true) + "\n";
-			text += lngPack.i18n ("Text~Title~Gold") + ": " + gameSettingsResourceAmountToString (gameSettings->getGoldAmount(), true) + "\n";
-			text += lngPack.i18n ("Text~Title~Resource_Density") + ": " + gameSettingsResourceDensityToString (gameSettings->getResourceDensity(), true) + "\n";
-			text += lngPack.i18n ("Text~Title~Credits")  + ": " + iToStr (gameSettings->getStartCredits()) + "\n";
-			text += lngPack.i18n ("Text~Title~BridgeHead") + ": " + gameSettingsBridgeheadTypeToString (gameSettings->getBridgeheadType(), true) + "\n";
-			text += lngPack.i18n ("Text~Title~Clans") + ": " + (gameSettings->getClansEnabled() ? lngPack.i18n ("Text~Option~On") : lngPack.i18n ("Text~Option~Off")) + "\n";
-			text += lngPack.i18n ("Text~Title~Game_Type") + ": " + gameSettingsGameTypeToString (gameSettings->getGameType(), true) + "\n";
-			text += lngPack.i18n ("Text~Title~Turn_limit") + ": " + (gameSettings->isTurnLimitActive() ? iToStr (gameSettings->getTurnLimit().count()) + "s" : lngPack.i18n ("Text~Settings~Unlimited_11")) + "\n";
-			text += lngPack.i18n ("Text~Title~Turn_end") + ": " + (gameSettings->isTurnEndDeadlineActive() ? iToStr (gameSettings->getTurnEndDeadline().count()) + "s" : lngPack.i18n ("Text~Settings~Unlimited_11")) + "\n";
+			text += lngPack.i18n ("Text~Title~Metal") + lngPack.i18n ("Text~Punctuation~Colon") + gameSettingsResourceAmountToString (gameSettings->getMetalAmount(), true) + "\n";
+			text += lngPack.i18n ("Text~Title~Oil") + lngPack.i18n ("Text~Punctuation~Colon") + gameSettingsResourceAmountToString (gameSettings->getOilAmount(), true) + "\n";
+			text += lngPack.i18n ("Text~Title~Gold") + lngPack.i18n ("Text~Punctuation~Colon") + gameSettingsResourceAmountToString (gameSettings->getGoldAmount(), true) + "\n";
+			text += lngPack.i18n ("Text~Title~Resource_Density") + lngPack.i18n ("Text~Punctuation~Colon") + gameSettingsResourceDensityToString (gameSettings->getResourceDensity(), true) + "\n";
+			text += lngPack.i18n ("Text~Title~Credits")  + lngPack.i18n ("Text~Punctuation~Colon") + iToStr (gameSettings->getStartCredits()) + "\n";
+			text += lngPack.i18n ("Text~Title~BridgeHead") + lngPack.i18n ("Text~Punctuation~Colon") + gameSettingsBridgeheadTypeToString (gameSettings->getBridgeheadType(), true) + "\n";
+			text += lngPack.i18n ("Text~Title~Clans") + lngPack.i18n ("Text~Punctuation~Colon") + (gameSettings->getClansEnabled() ? lngPack.i18n ("Text~Option~On") : lngPack.i18n ("Text~Option~Off")) + "\n";
+			text += lngPack.i18n ("Text~Title~Game_Type") + lngPack.i18n ("Text~Punctuation~Colon") + gameSettingsGameTypeToString (gameSettings->getGameType(), true) + "\n";
+			text += lngPack.i18n ("Text~Title~Turn_limit") + lngPack.i18n ("Text~Punctuation~Colon") + (gameSettings->isTurnLimitActive() ? iToStr (gameSettings->getTurnLimit().count()) + "s" : lngPack.i18n ("Text~Settings~Unlimited_11")) + "\n";
+			text += lngPack.i18n ("Text~Title~Turn_end") + lngPack.i18n ("Text~Punctuation~Colon") + (gameSettings->isTurnEndDeadlineActive() ? iToStr (gameSettings->getTurnEndDeadline().count()) + "s" : lngPack.i18n ("Text~Settings~Unlimited_11")) + "\n";
 		}
 		else text += lngPack.i18n ("Text~Multiplayer~Option_NoSet") + "\n";
 	}

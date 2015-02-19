@@ -40,7 +40,7 @@ cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& playerN
 	int playerNameTextWidth;
 	if (!playerName.empty())
 	{
-		const auto playerNameText = playerName + ": ";
+		const auto playerNameText = playerName + lngPack.i18n ("Text~Punctuation~Colon");
 		playerNameTextWidth = font->getTextWide (playerNameText);
 		playerNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition(), getPosition() + cPosition (playerNameTextWidth, 10)), playerNameText));
 	}

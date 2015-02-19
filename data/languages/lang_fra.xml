@@ -200,6 +200,9 @@
 			<Type_Simu ENG="simultaneous" localized="tours simultanés"/>
 			<Type_Turns ENG="turns" localized="tours alternés"/>
 		</Option>
+		<Punctuation>
+			<Colon ENG=": " localized=" : "/>
+		</Punctuation>
 		<Settings>
 			<Alphaeffects ENG="Alphaeffects" localized="Transparence"/>
 			<Animation ENG="Animations" localized="Animations"/>
@@ -236,15 +239,15 @@
 
 			<Lost_Connection ENG="Lost connection to %s." localized=" %s perd la connexion."/>
 			<Map_NoSet ENG="--no map set--" localized="--pas de carte sélectionnée--"/>
-			<MapDL_Cancel ENG="Aborted"/>
-			<MapDL_Download ENG="map %s from server."/>
-			<MapDL_DownloadInvalid ENG="original M.A.X. map  %s from server (licensed)!"/>
-			<MapDL_DownloadRequest ENG="Map not installed: Requesting to download custom"/>
-			<MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download"/>
-			<MapDL_Finished ENG="Map download finished."/>
-			<MapDL_Percent ENG="Map download: %s%"/>
-			<MapDL_Upload ENG="Uploading map to %s..."/>
-			<MapDL_UploadFinished ENG="Map upload to %s finished."/>
+
+
+
+
+
+
+
+
+
 			<Missing_Settings ENG="Options, map or savegame are not set" localized="Sauvegarde jeu, options ou map non paramétrés"/>
 			<Network_Closed ENG="Connection closed" localized="Connexion fermée"/>
 			<Network_Connected ENG="Connected" localized="Connecté"/>
@@ -256,10 +259,10 @@
 			<Network_Open ENG="Game open" localized="Ouvrir jeu"/>
 			<Network_Syncing ENG="Synchronizing..." localized="Synchronisation..."/>
 			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Impossible de charger la carte %s. Lancement jeu impossible."/>
+
 			<Not_Ready ENG="is not ready" localized="n'est pas prêt"/>
 			
 			<Option_NoSet ENG="--no options set--" localized="--pas d'options choisies--"/>
-			
 			<Player ENG="Player" localized="Joueur"/>
 			
 			
@@ -272,7 +275,7 @@
 			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum." localized="Veuillez choisir le nombre de joueurs. Il doit y avoir deux joueurs humains au minimum pour commencer une partie locale. Le maximum est de 8 joueurs."/>
 			<Player_Color_Taken ENG="All player colors should be unique" localized="Les couleurs des joueurs doivent être uniques"/>
 			<Player_Few ENG="Not enough players!" localized="Pas assez de joueurs !"/>
-			<Player_Joined ENG="%s has joined" localized="%s a rejoint la partie"/>" <!-- " nach einem ausdruck? -->
+			<Player_Joined ENG="%s has joined" localized="%s a rejoint la partie"/> <!-- " nach einem ausdruck? -->
 			<Player_Left ENG="%s has left the game" localized="%s a quitté la partie"/>
 			<Player_Many ENG="Too many players!" localized="Trop de joueurs !"/>
 			<Player_MustHost ENG="must be host in turnbased game!" localized="Hôte nécessaire pour jeu par tour !"/>

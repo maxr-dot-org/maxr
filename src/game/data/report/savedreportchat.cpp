@@ -82,7 +82,7 @@ eSavedReportType cSavedReportChat::getType() const
 //------------------------------------------------------------------------------
 std::string cSavedReportChat::getMessage() const
 {
-	return playerName + ": " + text;
+	return playerName + lngPack.i18n ("Text~Punctuation~Colon") + text;
 }
 
 //------------------------------------------------------------------------------

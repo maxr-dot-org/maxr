@@ -200,6 +200,9 @@
 			<Type_Simu ENG="Simultaneous"/>
 			<Type_Turns ENG="Turn based"/>
 		</Option>
+		<Punctuation>
+			<Colon ENG=": "/>
+		</Punctuation>
 		<Settings>
 			<Alphaeffects ENG="Alphaeffects"/>
 			<Animation ENG="Animations"/>

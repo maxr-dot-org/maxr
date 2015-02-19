@@ -200,6 +200,9 @@
 			<Type_Simu ENG="Simultaneous" localized="Sočasne poteze"/>
 			<Type_Turns ENG="Turn based" localized="Izmenljive poteze"/>
 		</Option>
+		<Punctuation>
+			<Colon ENG=": " localized=": "/>
+		</Punctuation>
 		<Settings>
 			<Alphaeffects ENG="Alphaeffects" localized="Alfa efekti"/>
 			<Animation ENG="Animations" localized="Animacije"/>

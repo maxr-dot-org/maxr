@@ -149,7 +149,7 @@ std::string cSavedReportTurnStart::getMessage() const
 	if (!researchAreas.empty())
 	{
 		message += "\n";
-		message += lngPack.i18n ("Text~Others~Research") + " " + lngPack.i18n ("Text~Comp~Finished") + ": ";
+		message += lngPack.i18n ("Text~Others~Research") + " " + lngPack.i18n ("Text~Comp~Finished") + lngPack.i18n ("Text~Punctuation~Colon");
 
 		const std::string themeNames[8] =
 		{

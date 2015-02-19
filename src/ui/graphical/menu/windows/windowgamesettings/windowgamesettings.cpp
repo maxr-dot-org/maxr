@@ -182,7 +182,7 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	turnLimit4CheckBox = turnLimitRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (240 + 85 + 40 * 4, currentLine), iToStr (cGameSettings::defaultTurnLimitOption4.count()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	turnLimit5CheckBox = turnLimitRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (240 + 85 + 40 * 5, currentLine), iToStr (cGameSettings::defaultTurnLimitOption5.count()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	currentLine += lineHeight;
-	turnLimitCustomCheckBox = turnLimitRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (240, currentLine), lngPack.i18n ("Text~Title~Custom_11") + ": ", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	turnLimitCustomCheckBox = turnLimitRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (240, currentLine), lngPack.i18n ("Text~Title~Custom_11") + lngPack.i18n ("Text~Punctuation~Colon"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	signalConnectionManager.connect (turnLimitCustomCheckBox->toggled, [this]() { if (turnLimitCustomCheckBox->isChecked()) turnLimitCustomLineEdit->enable(); else turnLimitCustomLineEdit->disable(); });
 	turnLimitCustomLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (240 + 85, currentLine), getPosition() + cPosition (240 + 85 + 30, currentLine + lineHeight))));
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (240 + 85 + 30, currentLine), getPosition() + cPosition (240 + 85 + 30 + 10, currentLine + 10)), "s", FONT_LATIN_NORMAL, eAlignmentType::Left));
@@ -192,7 +192,7 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	currentLine += lineHeight;
 
 	// Turn End Deadline
-	turnEndDeadlineLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)),  lngPack.i18n ("Text~Title~Turn_end") + ": ", FONT_LATIN_NORMAL, eAlignmentType::Left));
+	turnEndDeadlineLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)),  lngPack.i18n ("Text~Title~Turn_end") + lngPack.i18n ("Text~Punctuation~Colon"), FONT_LATIN_NORMAL, eAlignmentType::Left));
 	auto turnEndTurnDeadlineRadioGroup = addChild (std::make_unique<cRadioGroup> ());
 	turnEndTurnDeadlineNoLimitCheckBox = turnEndTurnDeadlineRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (240, currentLine), lngPack.i18n ("Text~Settings~Unlimited_11"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	turnEndTurnDeadline0CheckBox = turnEndTurnDeadlineRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (240 + 85, currentLine), iToStr (cGameSettings::defaultEndTurnDeadlineOption0.count()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
@@ -202,7 +202,7 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	turnEndTurnDeadline4CheckBox = turnEndTurnDeadlineRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (240 + 85 + 40 * 4, currentLine), iToStr (cGameSettings::defaultEndTurnDeadlineOption4.count()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	turnEndTurnDeadline5CheckBox = turnEndTurnDeadlineRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (240 + 85 + 40 * 5, currentLine), iToStr (cGameSettings::defaultEndTurnDeadlineOption5.count()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	currentLine += lineHeight;
-	turnEndTurnDeadlineCustomCheckBox = turnEndTurnDeadlineRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (240, currentLine), lngPack.i18n ("Text~Title~Custom_11") + ": ", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	turnEndTurnDeadlineCustomCheckBox = turnEndTurnDeadlineRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (240, currentLine), lngPack.i18n ("Text~Title~Custom_11") + lngPack.i18n ("Text~Punctuation~Colon"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	signalConnectionManager.connect (turnEndTurnDeadlineCustomCheckBox->toggled, [this]() { if (turnEndTurnDeadlineCustomCheckBox->isChecked()) turnEndTurnDeadlineLineEdit->enable(); else turnEndTurnDeadlineLineEdit->disable(); });
 	turnEndTurnDeadlineLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (240 + 85, currentLine), getPosition() + cPosition (240 + 85 + 30, currentLine + lineHeight))));
 	turnEndDeadlineSecondsLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (240 + 85 + 30, currentLine), getPosition() + cPosition (240 + 85 + 30 + 10, currentLine + 10)), "s", FONT_LATIN_NORMAL, eAlignmentType::Left));

@@ -200,6 +200,9 @@
 			<Type_Simu ENG="Simultaneous" localized="gelijktijdig"/>
 			<Type_Turns ENG="Turn based" localized="om de beurt"/>
 		</Option>
+		<Punctuation>
+			<Colon ENG=": " localized=": "/>
+		</Punctuation>
 		<Settings>
 			<Alphaeffects ENG="Alphaeffects" localized="Alpha effecten"/>
 			<Animation ENG="Animations" localized="Animaties"/>

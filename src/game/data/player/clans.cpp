@@ -63,7 +63,7 @@ string cClanUnitStat::getClanStatsDescription() const
 
 	if (data == nullptr) return "Unknown";
 
-	string result = string (data->name) + ": ";
+	string result = string (data->name) + lngPack.i18n ("Text~Punctuation~Colon");
 	const char* const commaSep = ", ";
 	const char* sep = "";
 

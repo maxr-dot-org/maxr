@@ -168,7 +168,7 @@ bool cMapReceiver::receiveData (cNetMessage& message)
 
 	bytesReceived += bytesInMsg;
 	std::ostringstream os;
-	os << "MapReceiver: Received Data for map " << mapName << ": "
+	os << "MapReceiver: Received Data for map " << mapName << lngPack.i18n ("Text~Punctuation~Colon")
 	   << bytesReceived << "/" << readBuffer.size();
 	Log.write (os.str(), cLog::eLOG_TYPE_DEBUG);
 	return true;

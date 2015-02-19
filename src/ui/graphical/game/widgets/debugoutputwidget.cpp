@@ -280,7 +280,7 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 				eUnicodeFontType fontType = FONT_LATIN_SMALL_WHITE;
 				if (server->gameTimer->getReceivedTime (i) + PAUSE_GAME_TIMEOUT < server->gameTimer->gameTime)
 					fontType = FONT_LATIN_SMALL_RED;
-				font->showText (drawPositionX + 10, drawPositionY, "Client " + iToStr (i) + ": ", fontType);
+				font->showText (drawPositionX + 10, drawPositionY, "Client " + iToStr (i) + lngPack.i18n ("Text~Punctuation~Colon"), fontType);
 				font->showText (drawPositionX + 110, drawPositionY, iToStr (server->gameTimer->gameTime - server->gameTimer->getReceivedTime (i)), fontType);
 				drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 			}
@@ -483,7 +483,7 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 	for (size_t i = 0; i != buildingBuildListSize; ++i)
 	{
 		const auto& item = building.getBuildListItem (i);
-		font->showText (drawPosition, "  build " + iToStr (i) + ": " + item.getType().getText() + " \"" + item.getType().getUnitDataOriginalVersion()->name + "\"", FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPosition, "  build " + iToStr (i) + lngPack.i18n ("Text~Punctuation~Colon") + item.getType().getText() + " \"" + item.getType().getUnitDataOriginalVersion()->name + "\"", FONT_LATIN_SMALL_WHITE);
 		drawPosition.y() += 8;
 	}
 
