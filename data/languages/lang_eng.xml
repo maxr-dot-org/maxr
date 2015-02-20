@@ -1,10 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- README:                                                                 -->
 <!-- * The English attributes are not needed. They are not interpreted.      -->
 <!-- * The "%s" is a placeholder for another part of the text.               -->
-<!-- * "\n" indicates a new line. The game will add additional line feeds, if -->
-<!--   they are needed.                                                      -->
+<!-- * "\n" indicates a new line. The game will add additional line feeds,   -->
+<!--    if they are needed.                                                  -->
 <!-- * All other line feeds within a text block will be replaced by a single -->
-<!--   blank.                                                                -->
+<!--    blank.                                                               -->
+<!-- * Numbers after a keyword like "Active_7" indicate that the word        -->
+<!--    shouldn't be much longer to fit best in the used place               -->
 <MAX_Language_File lang="eng" encoding="utf8" direction="left-to-right">
 	<Text>
 		<Main>

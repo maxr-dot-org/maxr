@@ -1,17 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- README:                                                                 -->
 <!-- * The English attributes are not needed. They are not interpreted.      -->
 <!-- * The "%s" is a placeholder for another part of the text.               -->
-<!-- * "\n" indicates a new line. The game will add additinal line feeds, if -->
-<!--   they are needed.                                                      -->
+<!-- * "\n" indicates a new line. The game will add additional line feeds,   -->
+<!--    if they are needed.                                                  -->
 <!-- * All other line feeds within a text block will be replaced by a single -->
-<!--   blank.                                                                -->
+<!--    blank.                                                               -->
+<!-- * Numbers after a keyword like "Active_7" indicate that the word        -->
+<!--    shouldn't be much longer to fit best in the used place               -->
 <MAX_Language_File lang="ger" encoding="utf8" direction="left-to-right">
 	<Text>
 		<Main>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Remake von DoctorDeath)"/>
 			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Original von Interplay)"/>
-			<Credits_Reloaded localized="M.A.X.R. basierend auf Interplays Mechanized Assault and eXploration"/>
-			<Game_Subtitle localized="Mechanized Assault and eXploration Reloaded"/>
+			<Credits_Reloaded ENG="M.A.X.R. based on Interplay's Mechanized Assault and eXploration" localized="M.A.X.R. basierend auf Interplays Mechanized Assault and eXploration"/>
+			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded" localized="Mechanized Assault and eXploration Reloaded"/>
 			<Game_Title ENG="M.A.X.R." localized="M.A.X.R."/>
 			<Version ENG="version v%s" localized="Version V%s"/>
 			<Remarks>
@@ -25,7 +28,7 @@
 			<Fonts ENG="Loading fonts..." localized="Lade Schriften..."/>
 			<GFX ENG="Loading gfx..." localized="Lade GFX..."/>
 			<Keys ENG="Loading keys..." localized="Lade Tasten..."/>
-			<Lang ENG="Loading languagepack..." localized="Lade Sprachpaket..."/>
+			<Lang ENG="Loading language pack..." localized="Lade Sprachpaket..."/>
 			<Music ENG="Loading music..." localized="Lade Musik..."/>
 			<Sounds ENG="Loading sounds..." localized="Lade Geräusche..."/>
 			<Terrain ENG="Loading terrain..." localized="Lade Terrain..."/>
@@ -133,7 +136,7 @@
 			<No ENG="No" localized="Nein"/>
 			<OK ENG="OK" localized="OK"/>
 			<Path ENG="Path" localized="Pfad"/>
-			<Power ENG="Energy" localized="Energie"/>
+			<Power ENG="Power" localized="Energie"/>
 			<Proceed_4 ENG="Do" localized="Erl."/>
 			<Produce_7 ENG="Produces" localized="Produz."/>
 			<Produce_Units ENG="Producing units" localized="Produktionseinheiten"/>

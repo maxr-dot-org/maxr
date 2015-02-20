@@ -1,18 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- README:                                                                 -->
 <!-- * The English attributes are not needed. They are not interpreted.      -->
 <!-- * The "%s" is a placeholder for another part of the text.               -->
-<!-- * "\n" indicates a new line. The game will add additinal line feeds, if -->
-<!--   they are needed.                                                      -->
+<!-- * "\n" indicates a new line. The game will add additional line feeds,   -->
+<!--    if they are needed.                                                  -->
 <!-- * All other line feeds within a text block will be replaced by a single -->
-<!--   blank.                                                                -->
+<!--    blank.                                                               -->
+<!-- * Numbers after a keyword like "Active_7" indicate that the word        -->
+<!--    shouldn't be much longer to fit best in the used place               -->
 <MAX_Language_File lang="dut" encoding="utf8" direction="left-to-right">
 	<Text>
 		<Main>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Herbouw door DoctorDeath)"/>
 			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Origineel van Interplay)"/>
-			<Credits_Reloaded ENG="M.A.X. Reloaded based on Interplay's Mechanized Assault and Exploration" localized="M.A.X. Reloaded gebaseerd op Interplays Mechanized Assault and Exploration"/>
-			<Game_Subtitle ENG="Mechanized Assault and Exploration (TM)" localized="Mechanized Assault and Exploration (TM)"/>
-			<Game_Title ENG="M.A.X." localized="M.A.X."/>
+			<Credits_Reloaded ENG="M.A.X.R. based on Interplay's Mechanized Assault and eXploration" localized="M.A.X.R gebaseerd op Interplays Mechanized Assault and eXploration"/>
+			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded" localized="Mechanized Assault and Exploration Reloaded"/>
+			<Game_Title ENG="M.A.X.R." localized="M.A.X.R."/>
 			<Version ENG="version v%s" localized="versie v%s"/>
 			<Remarks>
 				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*) nog niet geïmplementeerd"/>
@@ -76,7 +79,7 @@
 
 
 			<Unitinfo ENG="Unitinformations" localized="Eenhedeninformatie"/>
-			<Updates ENG="Updatemenu" localized="Updatemenu"/>
+
 		</Title>
 		<Others>
 			<Active ENG="Active" localized="Actief"/>
