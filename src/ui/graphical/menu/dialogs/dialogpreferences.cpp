@@ -229,7 +229,7 @@ void cDialogPreferences::saveValues()
 		auto application = getActiveApplication();
 		if (application)
 		{
-			const auto text = (lngPack.i18n ("Text~Comp~RestartRequired");
+			const auto text = (lngPack.i18n ("Text~Comp~RestartRequired"));
 			application->show (std::make_shared<cDialogOk> (text));
 		}
 	}
