@@ -30,8 +30,7 @@
 #endif
 
 #ifndef MAXR_NO_MAKE_UNIQUE
-// TODO: has std::make_unique really been added with gcc 4.8.2?! check this!
-#   if __GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 8) || (__GNUC__ == 4 && __GNUC_MINOR__ == 8 && __GNUC_PATCHLEVEL__ <= 2)
+#   if __GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 9)
 #       define MAXR_NO_MAKE_UNIQUE         1
 #   endif
 #endif
