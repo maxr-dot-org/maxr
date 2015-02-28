@@ -296,7 +296,7 @@ typename cSignal<R (Args...), MutexType, ResultCombinerType>::result_type cSigna
 
 	auto wasInvoking = isInvoking;
 	isInvoking = true;
-	auto resetter = makeScopedOperation ([&]() { isInvoking = wasInvoking; cleanUpConnections(); });
+	auto resetter = makeScopedOperation ([&]() { isInvoking = wasInvoking; this->cleanUpConnections(); });
 
 	CallIteratorType begin (arguments, slots.begin(), slots.end());
 	CallIteratorType end (arguments, slots.end(), slots.end());

@@ -169,11 +169,11 @@ cListView<ItemType>::cListView (const cBox<cPosition>& area, eScrollBarStyle scr
 	signalConnectionManager.connect (scrollBar->backClicked, std::bind (&cListView<ItemType>::scrollUp, this));
 	signalConnectionManager.connect (scrollBar->offsetChanged, [this]()
 	{
-		if (scrollBar->getOffset() == pixelOffset) return;
+		if (this->scrollBar->getOffset() == this->pixelOffset) return;
 
-		pixelOffset = std::max (scrollBar->getOffset(), 0);
+		this->pixelOffset = std::max (this->scrollBar->getOffset(), 0);
 
-		updateDisplayItems();
+		this->updateDisplayItems();
 	});
 }
 

@@ -17,6 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <stdexcept>
+
 #include "input/keyboard/keycombination.h"
 #include "utility/string/trim.h"
 #include "utility/string/iequals.h"

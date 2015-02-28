@@ -2163,28 +2163,28 @@ void cGameMapWidget::buildCollidingShortcutsMap()
 {
 	collidingUnitCommandShortcuts.clear();
 
-	collidingUnitCommandShortcuts.emplace (attackShortcut, std::set<const cShortcut*> ());
-	collidingUnitCommandShortcuts.emplace (buildShortcut, std::set<const cShortcut*> ());
-	collidingUnitCommandShortcuts.emplace (transferShortcut, std::set<const cShortcut*> ());
-	collidingUnitCommandShortcuts.emplace (automoveShortcut, std::set<const cShortcut*> ());
-	collidingUnitCommandShortcuts.emplace (startShortcut, std::set<const cShortcut*> ());
-	collidingUnitCommandShortcuts.emplace (stopShortcut, std::set<const cShortcut*> ());
-	collidingUnitCommandShortcuts.emplace (clearShortcut, std::set<const cShortcut*> ());
-	collidingUnitCommandShortcuts.emplace (sentryShortcut, std::set<const cShortcut*> ());
-	collidingUnitCommandShortcuts.emplace (manualFireShortcut, std::set<const cShortcut*> ());
-	collidingUnitCommandShortcuts.emplace (activateShortcut, std::set<const cShortcut*> ());
-	collidingUnitCommandShortcuts.emplace (loadShortcut, std::set<const cShortcut*> ());
-	collidingUnitCommandShortcuts.emplace (relaodShortcut, std::set<const cShortcut*> ());
-	collidingUnitCommandShortcuts.emplace (repairShortcut, std::set<const cShortcut*> ());
-	collidingUnitCommandShortcuts.emplace (layMineShortcut, std::set<const cShortcut*> ());
-	collidingUnitCommandShortcuts.emplace (clearMineShortcut, std::set<const cShortcut*> ());
-	collidingUnitCommandShortcuts.emplace (disableShortcut, std::set<const cShortcut*> ());
-	collidingUnitCommandShortcuts.emplace (stealShortcut, std::set<const cShortcut*> ());
-	collidingUnitCommandShortcuts.emplace (infoShortcut, std::set<const cShortcut*> ());
-	collidingUnitCommandShortcuts.emplace (distributeShortcut, std::set<const cShortcut*> ());
-	collidingUnitCommandShortcuts.emplace (researchShortcut, std::set<const cShortcut*> ());
-	collidingUnitCommandShortcuts.emplace (upgradeShortcut, std::set<const cShortcut*> ());
-	collidingUnitCommandShortcuts.emplace (destroyShortcut, std::set<const cShortcut*> ());
+	collidingUnitCommandShortcuts.insert (std::make_pair (attackShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (buildShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (transferShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (automoveShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (startShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (stopShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (clearShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (sentryShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (manualFireShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (activateShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (loadShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (relaodShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (repairShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (layMineShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (clearMineShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (disableShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (stealShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (infoShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (distributeShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (researchShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (upgradeShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (destroyShortcut, std::set<const cShortcut*> ()));
 
 	for (auto i = collidingUnitCommandShortcuts.begin(); i != collidingUnitCommandShortcuts.end(); ++i)
 	{
