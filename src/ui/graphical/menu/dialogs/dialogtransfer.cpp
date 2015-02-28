@@ -259,6 +259,6 @@ void cNewDialogTransfer::closeOnUnitDestruction()
 	auto application = getActiveApplication();
 	if (application)
 	{
-		application->show (std::make_shared<cDialogOk> ("Unit destroyed!")); // TODO: translate
+		application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Others~Unit_destroyed")));
 	}
 }

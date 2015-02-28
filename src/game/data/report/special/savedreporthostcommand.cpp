@@ -17,6 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "main.h"
 #include "game/data/report/special/savedreporthostcommand.h"
 #include "netmessage.h"
 
@@ -62,7 +63,7 @@ eSavedReportType cSavedReportHostCommand::getType() const
 //------------------------------------------------------------------------------
 std::string cSavedReportHostCommand::getMessage() const
 {
-	return "Host entered command: '" + command + "'"; // TODO: translate
+	return lngPack.i18n ("Text~Multiplayer~Host_command") + " '" + command + "'";
 }
 
 //------------------------------------------------------------------------------

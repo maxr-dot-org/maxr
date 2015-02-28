@@ -206,7 +206,7 @@ string cBuilding::getStatusStr (const cPlayer* player) const
 				int iRound;
 
 				iRound = (int) ceilf (buildListItem.getRemainingMetal() / (float) MetalPerRound);
-				sText = lngPack.i18n ("Text~Comp~Producing") + ": ";
+				sText = lngPack.i18n ("Text~Comp~Producing") + lngPack.i18n ("Text~Punctuation~Colon");
 				sText += unitName + " (";
 				sText += iToStr (iRound) + ")";
 
@@ -222,7 +222,7 @@ string cBuilding::getStatusStr (const cPlayer* player) const
 			else //new unit is rdy + which kind of unit
 			{
 				sText = lngPack.i18n ("Text~Comp~Producing_Fin");
-				sText += ": ";
+				sText += lngPack.i18n ("Text~Punctuation~Colon");
 				sText += unitName;
 
 				if (font->getTextWide (sText) > 126)
@@ -254,7 +254,7 @@ string cBuilding::getStatusStr (const cPlayer* player) const
 						case cResearch::kScanResearch: sText += lngPack.i18n ("Text~Others~Scan"); break;
 						case cResearch::kCostResearch: sText += lngPack.i18n ("Text~Others~Costs"); break;
 					}
-					sText += ": " + iToStr (getOwner()->getResearchState().getRemainingTurns (area, getOwner()->getResearchCentersWorkingOnArea ((cResearch::ResearchArea)area))) + "\n";
+					sText += lngPack.i18n ("Text~Punctuation~Colon") + iToStr (getOwner()->getResearchState().getRemainingTurns (area, getOwner()->getResearchCentersWorkingOnArea ((cResearch::ResearchArea)area))) + "\n";
 				}
 			}
 			return sText;
@@ -265,7 +265,7 @@ string cBuilding::getStatusStr (const cPlayer* player) const
 		{
 			string sText;
 			sText = lngPack.i18n ("Text~Comp~Working") + "\n";
-			sText += lngPack.i18n ("Text~Title~Credits") + ": ";
+			sText += lngPack.i18n ("Text~Title~Credits") + lngPack.i18n ("Text~Punctuation~Colon");
 			sText += iToStr (getOwner()->getCredits());
 			return sText;
 		}

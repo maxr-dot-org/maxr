@@ -1,16 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- README:                                                                 -->
 <!-- * The English attributes are not needed. They are not interpreted.      -->
 <!-- * The "%s" is a placeholder for another part of the text.               -->
-<!-- * "\n" indicates a new line. The game will add additinal line feeds, if -->
-<!--   they are needed.                                                      -->
+<!-- * "\n" indicates a new line. The game will add additional line feeds,   -->
+<!--    if they are needed.                                                  -->
 <!-- * All other line feeds within a text block will be replaced by a single -->
-<!--   blank.                                                                -->
+<!--    blank.                                                               -->
+<!-- * Numbers after a keyword like "Active_7" indicate that the word        -->
+<!--    shouldn't be much longer to fit best in the used place               -->
 <MAX_Language_File lang="spa" encoding="utf8" direction="left-to-right">
 	<Text>
 		<Main>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Reedición por DoctorDeath)"/>
 			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Original por Interplay)"/>
-			<Credits_Reloaded ENG="M.A.X.R. based on Interplay's Mechanized Assault and Exploration" localized="M.A.X.R. basado en Mechanized Assault and Exploration de Interplay"/>
+			<Credits_Reloaded ENG="M.A.X.R. based on Interplay's Mechanized Assault and eXploration" localized="M.A.X.R. basado en Mechanized Assault and eXploration de Interplay"/>
 			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded" localized="Mechanized Assault and eXploration Reloaded"/>
 			<Game_Title ENG="M.A.X.R." localized="M.A.X.R."/>
 			<Version ENG="version v%s" localized="versión v%s"/>
@@ -36,17 +39,19 @@
 			<Alien_Tech ENG="Alien technology" localized="Tecnologia alien"/>
 			<BridgeHead ENG="Starting base" localized="Base inicial"/>
 			<Build_Factory ENG="Factory Menu" localized="Menú de Fabrica"/>
-			<Build_Vehicle ENG="Construction Menu" localized="Menú de Construcción/>
+			<Build_Vehicle ENG="Construction Menu" localized="Menú de Construcción"/>
 			<Cargo ENG="Cargo" localized="Recursos"/>
 			<Choose_Clan ENG="Choose Clan" localized="Elige Clan"/>
 			<Choose_Planet ENG="Choose Planet" localized="Elige planeta"/>
 			<Choose_Units ENG="Choose Units" localized="Elige Unidades"/>
+
 			<Clans ENG="Clans" localized="Clanes"/>
 			<Color ENG="Color:" localized="Color:"/>
 			<Computer ENG="Computer" localized="Ordenador (IA)"/>
 			<Connect ENG="Connect" localized="Conectar"/>
 			<Credits ENG="Credits" localized="Créditos"/>
-			<Credits_start ENG="Credit at gamestart" localized="Créditos al comienzo/>
+			<Credits_start ENG="Credit at gamestart" localized="Créditos al comienzo"/>
+
 			<Game_Type ENG="Game Type" localized="Tipo de partida"/>
 			<Gold ENG="Gold" localized="Oro"/>
 			<HotSeat ENG="Hot Seat" =localized="Hot Seat"/>
@@ -71,6 +76,8 @@
 			<Savegame ENG="Savegame" localized="Guardar Partida"/>
 			<Send ENG="Send" localized="Enviar"/>
 			<Team ENG="Team" localized="Equipo"/>
+
+
 			<Unitinfo ENG="Unit status screen" localized="Pantalla de estado de unidad"/>
 			<Updates ENG="UpdateMenu" localized="Menú Guardar"/>
 		</Title>
@@ -140,7 +147,7 @@
 			<ReloadAll_9 ENG="Reload All" localized="Rec. Todos"/>
 			<Repair ENG="Repair" localized="Reparar"/>
 			<Repair_7 ENG="Repair" localized="Reparar"/>
-			<RepairAll_9 ENG="Rep. All" localized="Rep. Todos/>
+			<RepairAll_9 ENG="Rep. All" localized="Rep. Todos"/>
 			<Reports ENG="Reports" localized="Reportes"/>
 			<Research ENG="Research" localized="Investigar"/>
 			<Save ENG="Save" localized="Guardar"/>
@@ -169,6 +176,7 @@
 			<Teams_7 ENG="Teams" localized="Equipos"/>
 			<Total ENG="Total" localized="Total"/>
 			<Transfer_7 ENG="X-fer" localized="Transferir"/>
+
 			<Units ENG="Units" localized="Unidades"/>
 			<Upgrade ENG="Upgrade" localized="Actualizar"/>
 			<UpgradeAll_7 ENG="Up.all" localized="Mej.Todo"/>
@@ -195,6 +203,9 @@
 			<Type_Simu ENG="Simultaneous" localized="Simultáneo"/>
 			<Type_Turns ENG="Turn based" localized="Turnos"/>
 		</Option>
+		<Punctuation>
+			<Colon ENG=": " localized=": "/>
+		</Punctuation>
 		<Settings>
 			<Alphaeffects ENG="Alphaeffects" localized="Efectos alpha"/>
 			<Animation ENG="Animations" localized="Animaciones"/>
@@ -202,6 +213,7 @@
 			<Disable ENG="Disable" localized="Desactivar"/>
 			<Effects ENG="Effects" localized="Efectos"/>
 			<Intro ENG="Show intro" localized="Mostrar intro"/>
+
 			<Music ENG="Music" localized="Música"/>
 			<Preferences ENG="Preferences" localized="Preferéncias"/>
 			<Resolution ENG="Resolution" localized="Resolución"/>
@@ -210,6 +222,7 @@
 			<ShowDamage ENG="Buildingdamage" localized="Daño en los edificios"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Daño en los vehículos"/>
 			<Tracks ENG="Vehicletracks" localized="Marca de neumaticos"/>
+
 			<Voices ENG="Voices" localized="Voces"/>
 			<Volume ENG="Volume" localized="Volumen"/>
 			<Window ENG="Windowed" localized="En ventana"/>
@@ -226,6 +239,7 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="El servidor quiere empezar: no empezamos"/>
 			<Go_Ready ENG="Ready to go" localized="Listos para empezar"/>
 			<Go_Ready_No ENG="not ready to go" localized="No estamos listos para empezar"/>
+
 			<Lost_Connection ENG="Lost connection to %s." localized="Conexión a %s perdida"/>
 			<Map_NoSet ENG="--no map set--" localized="--mapa no seleccionado--"/>
 			<MapDL_Cancel ENG="Aborted" localized="Anulado"/>
@@ -342,8 +356,8 @@
 			<ReactionFireOff ENG="Reaction Fire Off" localized="Disparo de auto-defensa apagado"/>
 			<Repeat ENG="Again" localized="De nuevo"/>
 			<Reserve ENG="Reserve" localized="Reserva"/>
-			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Por favor reinicia 'Mechanized Assault and eXploration Reloaded' para que los cambios en el modo de vídeo surtan efecto"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Cuidado: Modo de video no soportado en la configuración"/>
+
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Pantallazo guardado a %s"/>
 			<Sentry ENG="on sentry" localized="en alerta"/>
 			<Stolen ENG="stolen" localized="robado"/>

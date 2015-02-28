@@ -1,10 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- README:                                                                 -->
 <!-- * The English attributes are not needed. They are not interpreted.      -->
 <!-- * The "%s" is a placeholder for another part of the text.               -->
-<!-- * "\n" indicates a new line. The game will add additinal line feeds, if -->
-<!--   they are needed.                                                      -->
+<!-- * "\n" indicates a new line. The game will add additional line feeds,   -->
+<!--    if they are needed.                                                  -->
 <!-- * All other line feeds within a text block will be replaced by a single -->
-<!--   blank.                                                                -->
+<!--    blank.                                                               -->
+<!-- * Numbers after a keyword like "Active_7" indicate that the word        -->
+<!--    shouldn't be much longer to fit best in the used place               -->
 <MAX_Language_File lang="fra" encoding="utf8" direction="left-to-right">
 	<Text>
 		<Main>
@@ -48,6 +51,7 @@
 			<Connect ENG="Connect" localized="Connecter"/>
 			<Credits ENG="Credits" localized="Crédits "/>
 			
+			
 			<Game_Type ENG="Game Type" localized="Type de jeu "/>
 			<Gold ENG="Gold" localized="Or "/>
 			
@@ -72,8 +76,10 @@
 			<Savegame ENG="Savegame" localized="Sauvegarde"/>
 			<Send ENG="Send" localized="Envoi"/>
 			<Team ENG="Team" localized="Équipe"/>
+
+
 			<Unitinfo ENG="Unit status screen" localized="Informations unité"/>
-			<Updates ENG="Update menu" localized="Menu mise à jour"/>
+
 		</Title>
 		<Others>
 			<Active ENG="Active" localized="Activer"/>
@@ -170,6 +176,7 @@
 			<Teams_7 ENG="Teams" localized="Équipes"/>
 			<Total ENG="Total" localized="Total"/>
 			<Transfer_7 ENG="X-fer" localized="Échange"/>
+
 			<Units ENG="Units" localized="Unités"/>
 			<Upgrade ENG="Upgrade" localized="MàJ"/>
 			<UpgradeAll_7 ENG="Up.all" localized="MàJ tout"/>
@@ -196,6 +203,9 @@
 			<Type_Simu ENG="simultaneous" localized="tours simultanés"/>
 			<Type_Turns ENG="turns" localized="tours alternés"/>
 		</Option>
+		<Punctuation>
+			<Colon ENG=": " localized=" : "/>
+		</Punctuation>
 		<Settings>
 			<Alphaeffects ENG="Alphaeffects" localized="Transparence"/>
 			<Animation ENG="Animations" localized="Animations"/>
@@ -203,6 +213,7 @@
 			<Disable ENG="Disable" localized="Désactiver"/>
 			<Effects ENG="Effects" localized="Effets"/>
 			<Intro ENG="Show intro" localized="Montrer intro"/>
+
 			<Music ENG="Music" localized="Musique"/>
 			<Preferences ENG="Preferences" localized="Préférences"/>
 			<Resolution ENG="Resolution" localized="Résolution"/>
@@ -211,6 +222,7 @@
 			<ShowDamage ENG="Buildingdamage" localized="Dégâts bâtiments"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Dégâts véhicules"/>
 			<Tracks ENG="Vehicletracks" localized="Traces véhicules"/>
+
 			<Voices ENG="Voices" localized="Voix"/>
 			<Volume ENG="Volume" localized="Volume"/>
 			<Window ENG="Windowed" localized="Fenêtré"/>
@@ -227,17 +239,18 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="Hôte : pas encore prêt"/>
 			<Go_Ready ENG="Ready to go" localized="Prêt"/>
 			<Go_Ready_No ENG="not ready to go" localized="Pas prêt"/>
+
 			<Lost_Connection ENG="Lost connection to %s." localized=" %s perd la connexion."/>
 			<Map_NoSet ENG="--no map set--" localized="--pas de carte sélectionnée--"/>
-			<MapDL_Cancel ENG="Aborted"/>
-			<MapDL_Download ENG="map %s from server."/>
-			<MapDL_DownloadInvalid ENG="original M.A.X. map  %s from server (licensed)!"/>
-			<MapDL_DownloadRequest ENG="Map not installed: Requesting to download custom"/>
-			<MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download"/>
-			<MapDL_Finished ENG="Map download finished."/>
-			<MapDL_Percent ENG="Map download: %s%"/>
-			<MapDL_Upload ENG="Uploading map to %s..."/>
-			<MapDL_UploadFinished ENG="Map upload to %s finished."/>
+
+
+
+
+
+
+
+
+
 			<Missing_Settings ENG="Options, map or savegame are not set" localized="Sauvegarde jeu, options ou map non paramétrés"/>
 			<Network_Closed ENG="Connection closed" localized="Connexion fermée"/>
 			<Network_Connected ENG="Connected" localized="Connecté"/>
@@ -249,10 +262,10 @@
 			<Network_Open ENG="Game open" localized="Ouvrir jeu"/>
 			<Network_Syncing ENG="Synchronizing..." localized="Synchronisation..."/>
 			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Impossible de charger la carte %s. Lancement jeu impossible."/>
+
 			<Not_Ready ENG="is not ready" localized="n'est pas prêt"/>
 			
 			<Option_NoSet ENG="--no options set--" localized="--pas d'options choisies--"/>
-			
 			<Player ENG="Player" localized="Joueur"/>
 			
 			
@@ -265,7 +278,7 @@
 			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum." localized="Veuillez choisir le nombre de joueurs. Il doit y avoir deux joueurs humains au minimum pour commencer une partie locale. Le maximum est de 8 joueurs."/>
 			<Player_Color_Taken ENG="All player colors should be unique" localized="Les couleurs des joueurs doivent être uniques"/>
 			<Player_Few ENG="Not enough players!" localized="Pas assez de joueurs !"/>
-			<Player_Joined ENG="%s has joined" localized="%s a rejoint la partie"/>" <!-- " nach einem ausdruck? -->
+			<Player_Joined ENG="%s has joined" localized="%s a rejoint la partie"/> <!-- " nach einem ausdruck? -->
 			<Player_Left ENG="%s has left the game" localized="%s a quitté la partie"/>
 			<Player_Many ENG="Too many players!" localized="Trop de joueurs !"/>
 			<Player_MustHost ENG="must be host in turnbased game!" localized="Hôte nécessaire pour jeu par tour !"/>
@@ -343,8 +356,8 @@
 			<ReactionFireOff ENG="Tir de réaction désactivé"/>
 			<Repeat ENG="Again" localized="Répéter"/>
 			<Reserve ENG="Reserve" localized="Réserve"/>
-			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Veuillez redémarrer 'Mechanized Assault and eXploration Reloaded' pour appliquer le changement de mode vidéo."/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Attention : la config définit un mode vidéo non supporté"/>
+
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Capture d'écran sauvegardée: %s"/>
 			<Sentry ENG="on sentry" localized="en faction"/>
 			<Stolen ENG="stolen" localized="volé"/>

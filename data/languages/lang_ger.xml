@@ -1,17 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- README:                                                                 -->
 <!-- * The English attributes are not needed. They are not interpreted.      -->
 <!-- * The "%s" is a placeholder for another part of the text.               -->
-<!-- * "\n" indicates a new line. The game will add additinal line feeds, if -->
-<!--   they are needed.                                                      -->
+<!-- * "\n" indicates a new line. The game will add additional line feeds,   -->
+<!--    if they are needed.                                                  -->
 <!-- * All other line feeds within a text block will be replaced by a single -->
-<!--   blank.                                                                -->
+<!--    blank.                                                               -->
+<!-- * Numbers after a keyword like "Active_7" indicate that the word        -->
+<!--    shouldn't be much longer to fit best in the used place               -->
 <MAX_Language_File lang="ger" encoding="utf8" direction="left-to-right">
 	<Text>
 		<Main>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Remake von DoctorDeath)"/>
 			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Original von Interplay)"/>
-			<Credits_Reloaded localized="M.A.X.R. basierend auf Interplays Mechanized Assault and eXploration"/>
-			<Game_Subtitle localized="Mechanized Assault and eXploration Reloaded"/>
+			<Credits_Reloaded ENG="M.A.X.R. based on Interplay's Mechanized Assault and eXploration" localized="M.A.X.R. basierend auf Interplays Mechanized Assault and eXploration"/>
+			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded" localized="Mechanized Assault and eXploration Reloaded"/>
 			<Game_Title ENG="M.A.X.R." localized="M.A.X.R."/>
 			<Version ENG="version v%s" localized="Version V%s"/>
 			<Remarks>
@@ -25,7 +28,7 @@
 			<Fonts ENG="Loading fonts..." localized="Lade Schriften..."/>
 			<GFX ENG="Loading gfx..." localized="Lade GFX..."/>
 			<Keys ENG="Loading keys..." localized="Lade Tasten..."/>
-			<Lang ENG="Loading languagepack..." localized="Lade Sprachpaket..."/>
+			<Lang ENG="Loading language pack..." localized="Lade Sprachpaket..."/>
 			<Music ENG="Loading music..." localized="Lade Musik..."/>
 			<Sounds ENG="Loading sounds..." localized="Lade Geräusche..."/>
 			<Terrain ENG="Loading terrain..." localized="Lade Terrain..."/>
@@ -48,6 +51,7 @@
 			<Connect ENG="Connect" localized="Verbinden"/>
 			<Credits ENG="Credit" localized="Kredit"/>
 			<Credits_start ENG="Credit at gamestart" localized="Startkredit"/>
+			<Custom_11 ENG="Custom" localized="Eigner Wert"/>
 			<Game_Type ENG="Game Type" localized="Spielart"/>
 			<Gold ENG="Gold" localized="Gold"/>
 			<Human ENG="Human" localized="Mensch"/>
@@ -72,6 +76,8 @@
 			<Savegame ENG="Saved Games" localized="Gespeicherte Spiele"/>
 			<Send ENG="Send" localized="Senden"/>
 			<Team ENG="Team" localized="Team"/>
+			<Turn_end ENG="Turn end" localized="Zeitbegenzung Rund"/>
+			<Turn_limit ENG="Turn limit" localized="Zeitbegrenzung Rundenende"/>
 			<Unitinfo ENG="Unit status screen" localized="Einheitendetails"/>
 			<Upgrades_Menu ENG="Upgrades menu" localized="Verbesserungsmenü" />
 		</Title>
@@ -130,7 +136,7 @@
 			<No ENG="No" localized="Nein"/>
 			<OK ENG="OK" localized="OK"/>
 			<Path ENG="Path" localized="Pfad"/>
-			<Power ENG="Energy" localized="Energie"/>
+			<Power ENG="Power" localized="Energie"/>
 			<Proceed_4 ENG="Do" localized="Erl."/>
 			<Produce_7 ENG="Produces" localized="Produz."/>
 			<Produce_Units ENG="Producing units" localized="Produktionseinheiten"/>
@@ -170,6 +176,7 @@
 			<Teams_7 ENG="Teams" localized="Teams"/>
 			<Total ENG="Total" localized="Total"/>
 			<Transfer_7 ENG="X-fer" localized="Trsfer."/>
+			<Unit_destroyed ENG="Unit destroyed!" localized="Einheit zerstört!"/>
 			<Units ENG="Units" localized="Einheiten"/>
 			<Upgrade ENG="Upgrade" localized="Verbessern"/>
 			<UpgradeAll_7 ENG="Up.all" localized="Verb.All."/>
@@ -196,6 +203,9 @@
 			<Type_Simu ENG="simultaneous" localized="Simultane Bewegung"/>
 			<Type_Turns ENG="turns" localized="Rundenbasierend"/>
 		</Option>
+		<Punctuation>
+			<Colon ENG=": " localized=": "/>
+		</Punctuation>
 		<Settings>
 			<Alphaeffects ENG="Alphaeffects" localized="Alphaeffekte"/>
 			<Animation ENG="Animations" localized="Animationen"/>
@@ -203,6 +213,7 @@
 			<Disable ENG="Disable" localized="Deaktivieren"/>
 			<Effects ENG="Effects" localized="Effekte"/>
 			<Intro ENG="Show intro" localized="Zeige Intro"/>
+			<Language ENG="Language" localized="Sprache"/>
 			<Music ENG="Music" localized="Musik"/>
 			<Preferences ENG="Preferences" localized="Einstellungen"/>
 			<Resolution ENG="Resolution" localized="Auflösung"/>
@@ -211,6 +222,7 @@
 			<ShowDamage ENG="Buildingdamage" localized="Gebäudeschäden"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Fahrzeugschäden"/>
 			<Tracks ENG="Vehicletracks" localized="Fahrzeugspuren"/>
+			<Unlimited_11 ENG="No limit" localized="Unbegrenzt"/>
 			<Voices ENG="Voices" localized="Stimmen"/>
 			<Volume ENG="Volume" localized="Lautstärke"/>
 			<Window ENG="Windowed" localized="Fenstermodus"/>
@@ -227,6 +239,7 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="Host will starten: Nicht fertig"/>
 			<Go_Ready ENG="Ready to go" localized="Fertig zum Starten"/>
 			<Go_Ready_No ENG="not ready to go" localized="Nicht fertig zum Starten"/>
+			<Host_command ENG="Host entered following command" localized="Host gab folgendes Kommando ein"/>
 			<Lost_Connection ENG="Lost connection to %s." localized="Verbindung zu %s verloren."/>
 			<Map_NoSet ENG="--no map selected--" localized="--keine Karte ausgewählt--"/>
 			<MapDL_Cancel ENG="Aborted" localized="Abgebrochen"/>
@@ -343,8 +356,8 @@
 			<ReactionFireOff ENG="Reaction Fire Off" localized="Manuell schießen"/>
 			<Repeat ENG="Again" localized="Wieder"/>
 			<Reserve ENG="Reserve" localized="Reserve"/>
-			<ResolutionChange localized="Bitte starten Sie 'Mechanized Assault and eXploration Reloaded' neu um die Änderung der Bildschirmauflösung wirksam zu machen."/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Achtung: Nichtunterstützte Bildschirmauflösung in der Konfiguration gefunden"/>
+			<RestartRequired ENG="Please restart 'Mechanized Assault and eXploration Reloaded' to take effect the change." localized="Bitte starte 'Mechanized Assault and eXploration Reloaded' neu, damit die Änderung inkraft tritt."/>
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Bildschirmfoto gespeichet unter %s "/>
 			<Sentry ENG="on sentry" localized="auf wachposten"/>
 			<Stolen ENG="stolen" localized="gestohlen"/>
@@ -465,6 +478,7 @@
 			<Editor name="nonsinn" time="2013-06-11 13:30:00"/>
 			<Editor name="nonsinn" time="2013-06-13 02:50:00"/>
 			<Editor name="nonsinn" time="2014-02-21 15:00:00"/>
+			<Editor name="nonsinn" time="2015-02-18 19:05:00"/>
 		</Author>
 		<Game_Version time="2008-04-14 19:17:00"/>
 	</Footer>

@@ -190,7 +190,7 @@ void cCasualtiesTracker::debugPrint()
 		{
 			const sUnitData* unitData = casualties[entryIdx].unitID.getUnitDataOriginalVersion();
 			if (unitData != nullptr)
-				Log.write ("  " + unitData->name + ": " + iToStr (casualties[entryIdx].numberOfLosses), cLog::eLOG_TYPE_DEBUG);
+				Log.write ("  " + unitData->name + lngPack.i18n ("Text~Punctuation~Colon") + iToStr (casualties[entryIdx].numberOfLosses), cLog::eLOG_TYPE_DEBUG);
 			else
 				Log.write ("Invalid Casualty: Can't get unitData from sID", cLog::eLOG_TYPE_DEBUG);
 		}

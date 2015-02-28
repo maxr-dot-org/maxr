@@ -1,17 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- * The English attributes are not needed. They are not interpreted.       -->
-<!-- * The "%s" is a placeholder for another part of the text.                -->
-<!-- * "\n" indicates a new line. The game will add additional line feeds, if -->
-<!--   they are needed.                                                       -->
-<!-- * All other line feeds within a text block will be replaced by a single  -->
-<!--   blank.                                                                 -->
+<!-- README:                                                                 -->
+<!-- * The English attributes are not needed. They are not interpreted.      -->
+<!-- * The "%s" is a placeholder for another part of the text.               -->
+<!-- * "\n" indicates a new line. The game will add additional line feeds,   -->
+<!--    if they are needed.                                                  -->
+<!-- * All other line feeds within a text block will be replaced by a single -->
+<!--    blank.                                                               -->
+<!-- * Numbers after a keyword like "Active_7" indicate that the word        -->
+<!--    shouldn't be much longer to fit best in the used place               -->
 <MAX_Language_File lang="slv" encoding="utf8" direction="left-to-right">
 	<Text>
 		<Main>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Priredbo izdelal DoctorDeath)"/>
 			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Lastnik originala je Interplay)"/>
-			<Credits_Reloaded ENG="M.A.X.R. based on Interplay's Mechanized Assault and eXploration" localized="M.A.X. Reloaded temelji na Interplayevi igri Mechanized Assault and Exploration"/>
-			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded)" localized="Mechanized Assault and Exploration (TM)"/>
+			<Credits_Reloaded ENG="M.A.X.R. based on Interplay's Mechanized Assault and eXploration" localized="M.A.X.R. temelji na Interplayevi igri Mechanized Assault and Exploration"/>
+			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded" localized="Mechanized Assault and Exploration Reloaded"/>
 			<Game_Title ENG="M.A.X.R." localized="M.A.X.R."/>
 			<Version ENG="version v%s" localized="verzija v%s"/>
 			<Remarks>
@@ -48,6 +51,7 @@
 			<Connect ENG="Connect" localized="Povezava"/>
 			<Credits ENG="Credit" localized="Sredstva"/>
 			<Credits_start ENG="Credit at gamestart" localized="Začetna sredstva"/>
+
 			<Game_Type ENG="Game Type" localized="Tip igre"/>
 			<Gold ENG="Gold" localized="Zlato"/>
 			<HotSeat ENG="Hot Seat" localized="Vroči stol"/>
@@ -72,6 +76,8 @@
 			<Savegame ENG="Saved Games" localized="Shranjene igre"/><!--unused?! -->
 			<Send ENG="Send" localized="Pošlji"/>
 			<Team ENG="Team" localized="Moštvo"/> <!-- e.g. Player 1 is called as one team -->
+
+
 			<Unitinfo ENG="Unit status screen" localized="Informacije o enoti"/>
 			<Upgrades_Menu ENG="Upgrades menu" localized="Meni Nadgradnje"/>
 		</Title>
@@ -170,6 +176,7 @@
 			<Teams_7 ENG="Teams" localized="Moštva"/> <!-- the workes for the habit -->
 			<Total ENG="Total" localized="Skupaj"/>
 			<Transfer_7 ENG="X-fer" localized="Prenos"/>
+
 			<Units ENG="Units" localized="Enote"/>
 			<Upgrade ENG="Upgrade" localized="Nadgradi"/> <!-- used where you select your start units -->
 			<UpgradeAll_7 ENG="Up.all" localized="Nad.vse"/>
@@ -196,6 +203,9 @@
 			<Type_Simu ENG="Simultaneous" localized="Sočasne poteze"/>
 			<Type_Turns ENG="Turn based" localized="Izmenljive poteze"/>
 		</Option>
+		<Punctuation>
+			<Colon ENG=": " localized=": "/>
+		</Punctuation>
 		<Settings>
 			<Alphaeffects ENG="Alphaeffects" localized="Alfa efekti"/>
 			<Animation ENG="Animations" localized="Animacije"/>
@@ -203,6 +213,7 @@
 			<Disable ENG="Disable" localized="Onemogoči"/>
 			<Effects ENG="Effects" localized="Efekti"/>
 			<Intro ENG="Show intro" localized="Prikaži uvod"/>
+
 			<Music ENG="Music" localized="Glasba"/>
 			<Preferences ENG="Preferences" localized="Lastnosti"/>
 			<Resolution ENG="Resolution" localized="Resolucija"/>
@@ -211,6 +222,7 @@
 			<ShowDamage ENG="Buildingdamage" localized="Poškodbe stavb"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Poškodbe vozil"/>
 			<Tracks ENG="Vehicletracks" localized="Sledi vozil"/>
+
 			<Voices ENG="Voices" localized="Glasovi"/>
 			<Volume ENG="Volume" localized="Glasnost"/>
 			<Window ENG="Windowed" localized="V oknu"/>
@@ -227,6 +239,7 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="Strežnik želi da: Ne potrdiš pripravljenosti"/>
 			<Go_Ready ENG="Ready to go" localized="Pripravljen"/>
 			<Go_Ready_No ENG="not ready to go" localized="nisem pripravljen"/>
+
 			<Lost_Connection ENG="Lost connection to %s." localized="Povezava z %s je bila prekinjena."/>
 			<Map_NoSet ENG="--no map selected--" localized="--brez nastavitev pokrajine--"/>
 			<MapDL_Cancel ENG="Aborted" localized="Prekinjeno"/>
@@ -343,8 +356,8 @@
 			<ReactionFireOff ENG="Reaction Fire Off" localized="Izklop samodejnega ognja"/>
 			<Repeat ENG="Again" localized="Ponovno"/>
 			<Reserve ENG="Reserve" localized="Rezerva"/>
-			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Ponovno zaženi igro M.A.X. Reloaded za uveljavitev sprememb video načina"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Opozorilo: nepodprt video način v konfiguraciji"/>
+
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Posnetek zaslona je shranjen v %s"/>
 			<Sentry ENG="on sentry" localized="na preži"/>
 			<Stolen ENG="stolen" localized="ukraden"/>

@@ -97,10 +97,10 @@ cDialogPreferences::cDialogPreferences() :
 	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
 	signalConnectionManager.connect (cancelButton->clicked, std::bind (&cDialogPreferences::cancelClicked, this));
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (140, 298 + 20), getPosition() + cPosition (140 + 95, 298 + 20 + 10)), "Language:", FONT_LATIN_NORMAL, eAlignmentType::Right)); // TODO: translate
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (140, 298 + 20), getPosition() + cPosition (140 + 95, 298 + 20 + 10)), lngPack.i18n ("Text~Settings~Language") + lngPack.i18n ("Text~Punctuation~Colon"), FONT_LATIN_NORMAL, eAlignmentType::Right));
 	languagesComboBox = addChild (std::make_unique<cComboBox> (cBox<cPosition> (getPosition() + cPosition (240, 294 + 20), getPosition() + cPosition (240 + 100, 294 + 20 + 17))));
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (140, 298), getPosition() + cPosition (140 + 95, 298 + 10)), "Resolution:", FONT_LATIN_NORMAL, eAlignmentType::Right)); // TODO: translate
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (140, 298), getPosition() + cPosition (140 + 95, 298 + 10)), lngPack.i18n ("Text~Settings~Resolution") + lngPack.i18n ("Text~Punctuation~Colon"), FONT_LATIN_NORMAL, eAlignmentType::Right));
 	resolutionsComboBox = addChild (std::make_unique<cComboBox> (cBox<cPosition> (getPosition() + cPosition (240, 294), getPosition() + cPosition (240 + 100, 294 + 17))));
 
 	loadValues();
@@ -208,7 +208,7 @@ void cDialogPreferences::saveValues()
 				auto application = getActiveApplication();
 				if (application)
 				{
-					application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Comp~ResolutionChange")));
+					application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Comp~RestartRequired")));
 				}
 			}
 		}
@@ -216,6 +216,9 @@ void cDialogPreferences::saveValues()
 	else
 	{
 		// TODO: handle invalid resolution?!
+		
+		// lngPack.i18n ("Text~Comp~ResolutionWarning")
+		// added info to old langpack if needed, else it can be removed from lang-files - nonsinn
 	}
 
 	const auto& selectedLanguage = languagesComboBox->getSelectedText();
@@ -226,7 +229,7 @@ void cDialogPreferences::saveValues()
 		auto application = getActiveApplication();
 		if (application)
 		{
-			const auto text = "Please restart the game to make the language change take effect";// TODO: translate;
+			const auto text = (lngPack.i18n ("Text~Comp~RestartRequired"));
 			application->show (std::make_shared<cDialogOk> (text));
 		}
 	}

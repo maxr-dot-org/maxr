@@ -1,10 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- README:                                                                 -->
 <!-- * The English attributes are not needed. They are not interpreted.      -->
 <!-- * The "%s" is a placeholder for another part of the text.               -->
-<!-- * "\n" indicates a new line. The game will add additinal line feeds, if -->
-<!--   they are needed.                                                      -->
+<!-- * "\n" indicates a new line. The game will add additional line feeds,   -->
+<!--    if they are needed.                                                  -->
 <!-- * All other line feeds within a text block will be replaced by a single -->
-<!--   blank.                                                                -->
+<!--    blank.                                                               -->
+<!-- * Numbers after a keyword like "Active_7" indicate that the word        -->
+<!--    shouldn't be much longer to fit best in the used place               -->
 <MAX_Language_File lang="hun" encoding="utf8" direction="left-to-right">
 	<Text>
 		<Main>
@@ -48,6 +51,7 @@
 			<Connect ENG="Connect" localized="Csatlakozás"/>
 			<Credits ENG="Credits" localized="Pénz"/>
 			
+
 			<Game_Type ENG="Game Type" localized="Játéktípus"/>
 			<Gold ENG="Gold" localized="Arany"/>
 			
@@ -72,6 +76,8 @@
 			<Savegame ENG="Savegame" localized="Mentés"/>
 			<Send ENG="Send" localized="Küldés"/>
 			<Team ENG="Team" localized="Csapat"/>
+
+
 			<Unitinfo ENG="Unit status screen" localized="Egységstátusz képernyő"/>
 			<Updates ENG="Update menu" localized="Frissítés Menü"/>
 		</Title>
@@ -170,6 +176,7 @@
 			<Teams_7 ENG="Teams" localized="Munkások"/>
 			<Total ENG="Total" localized="Összes"/>
 			<Transfer_7 ENG="X-fer" localized="Átvitel"/>
+
 			<Units ENG="Units" localized="Egység"/>
 			<Upgrade ENG="Upgrade" localized="Fejlesztés"/>
 			<UpgradeAll_7 ENG="Up.all" localized="Összes fejl."/>
@@ -196,6 +203,9 @@
 			<Type_Simu ENG="Simultaneous" localized="Egyidejű"/>
 			<Type_Turns ENG="Turn based" localized="Körökre osztott"/>
 		</Option>
+		<Punctuation>
+			<Colon ENG=": " localized=": "/>
+		</Punctuation>
 		<Settings>
 			<Alphaeffects ENG="Alphaeffects" localized="Alfaeffektusok"/>
 			<Animation ENG="Animations" localized="Animációk"/>
@@ -203,6 +213,7 @@
 			<Disable ENG="Disable" localized="Kikapcsol"/>
 			<Effects ENG="Effects" localized="Effektusok"/>
 			<Intro ENG="Show intro" localized="Bevezető lejátszása"/>
+
 			<Music ENG="Music" localized="Zene"/>
 			<Preferences ENG="Preferences" localized="Beállítások"/>
 			<Resolution ENG="Resolution" localized="Felbontás"/>
@@ -211,6 +222,7 @@
 			<ShowDamage ENG="Buildingdamage" localized="Épületsebződés"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Járműsebződés"/>
 			<Tracks ENG="Vehicletracks" localized="Járműnyomok"/>
+
 			<Voices ENG="Voices" localized="Hangok"/>
 			<Volume ENG="Volume" localized="Hangerő"/>
 			<Window ENG="Windowed" localized="Futtatás ablakban"/>
@@ -227,6 +239,7 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="A Host állapota: Nem áll készen"/>
 			<Go_Ready ENG="Ready to go" localized="Indulhat a játék"/>
 			<Go_Ready_No ENG="not ready to go" localized="nem indulhat a játék"/>
+
 			<Lost_Connection ENG="Lost connection to %s." localized="A kapcsolat megszakadt %s gépével."/>
 			<Map_NoSet ENG="--no map set--" localized="--nincs Térkép kiválasztva--"/>
 			<MapDL_Cancel ENG="Aborted" localized="Visszavonva"/>
@@ -343,8 +356,8 @@
 			
 			<Repeat ENG="Again" localized="Újra"/>
 			<Reserve ENG="Reserve" localized="Tartalék"/>
-			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Kérlek indítsd újra a 'Mechanized Assault and eXploration Reloaded'-et, hogy a videó mód változásait érvényesítsd"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Figyelem: Nem támogatott videó mód a beállításban"/>
+
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Pillanatkép elmentve: "/>
 			<Sentry ENG="on sentry" localized="őrtáll"/>
 			<Stolen ENG="stolen" localized="ellopva"/>

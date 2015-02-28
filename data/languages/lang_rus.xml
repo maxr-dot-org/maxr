@@ -1,10 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- README:                                                                 -->
 <!-- * The English attributes are not needed. They are not interpreted.      -->
 <!-- * The "%s" is a placeholder for another part of the text.               -->
-<!-- * "\n" indicates a new line. The game will add additinal line feeds, if -->
-<!--   they are needed.                                                      -->
+<!-- * "\n" indicates a new line. The game will add additional line feeds,   -->
+<!--    if they are needed.                                                  -->
 <!-- * All other line feeds within a text block will be replaced by a single -->
-<!--   blank.                                                                -->
+<!--    blank.                                                               -->
+<!-- * Numbers after a keyword like "Active_7" indicate that the word        -->
+<!--    shouldn't be much longer to fit best in the used place               -->
 <MAX_Language_File lang="rus" encoding="utf8" direction="left-to-right">
 	<Text>
 		<Main>
@@ -48,6 +51,7 @@
 			<Connect ENG="Connect" localized="Соединение"/>
 			<Credits ENG="Credits" localized="Деньги"/>
 			
+
 			<Game_Type ENG="Game Type" localized="Тип игры"/>
 			<Gold ENG="Gold" localized="Золото"/>
 			
@@ -72,6 +76,8 @@
 			<Savegame ENG="Savegame" localized="Сохранение"/>
 			<Send ENG="Send" localized="Отправить"/>
 			<Team ENG="Team" localized="Команда"/>
+
+
 			<Unitinfo ENG="Unit status screen" localized="Статус подразделения"/>
 			
 		</Title>
@@ -170,7 +176,8 @@
 			<Teams_7 ENG="Teams" localized="Команды"/>
 			<Total ENG="Total" localized="Всего"/>
 			<Transfer_7 ENG="X-fer" localized="Трансф."/>
-			<Units ENG="Units" localized=""/>
+
+
 			<Upgrade ENG="Upgrade" localized="Улучшить"/>
 			<UpgradeAll_7 ENG="Up.all" localized="Ул. все"/>
 			
@@ -196,6 +203,9 @@
 			<Type_Simu ENG="Simultaneous" localized="Одновременно"/>
 			<Type_Turns ENG="Turn based" localized="По очереди"/>
 		</Option>
+		<Punctuation>
+			<Colon ENG=": " localized=": "/>
+		</Punctuation>
 		<Settings>
 			<Alphaeffects ENG="Alphaeffects" localized="Эффекты прозрачности"/>
 			<Animation ENG="Animations" localized="Анимации"/>
@@ -203,6 +213,7 @@
 			<Disable ENG="Disable" localized="Отключить"/>
 			<Effects ENG="Effects" localized="Эффекты"/>
 			<Intro ENG="Show intro" localized="Вступление"/>
+
 			<Music ENG="Music" localized="Музыка"/>
 			<Preferences ENG="Preferences" localized="Настройки"/>
 			<Resolution ENG="Resolution" localized="Разрешение экрана"/>
@@ -211,6 +222,7 @@
 			<ShowDamage ENG="Buildingdamage" localized="Повреждения зданий"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Повреждения транспорта"/>
 			<Tracks ENG="Vehicletracks" localized="Следы транспорта"/>
+
 			<Voices ENG="Voices" localized="Голоса"/>
 			<Volume ENG="Volume" localized="Громкость"/>
 			<Window ENG="Windowed" localized="Оконный режим"/>
@@ -227,6 +239,7 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="Сервер хочет начать: Не готов"/>
 			<Go_Ready ENG="Ready to go" localized="Готов"/>
 			<Go_Ready_No ENG="not ready to go" localized="не готов"/>
+
 			<Lost_Connection ENG="Lost connection to %s." localized="Потеряна связь с %s."/>
 			<Map_NoSet ENG="--no map set--" localized="--не выбана карта--"/>
 			<MapDL_Cancel ENG="Aborted" localized="Отменено"/>
@@ -343,8 +356,8 @@
 			<ReactionFireOff ENG="Reaction Fire Off" localized="Ответный огонь отключен"/>
 			<Repeat ENG="Again" localized="Ещё раз"/>
 			<Reserve ENG="Reserve" localized="Резерв"/>
-			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Пожалуйста, перезапустите 'Mechanized Assault and eXploration Reloaded' для вступления в силу нового видеорежима"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Внимание: неподдерживаемый видеорежим в конфигурации"/>
+
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Снимок экрана записан в %s"/>
 			<Sentry ENG="on sentry" localized="на карауле"/>
 			<Stolen ENG="stolen" localized="захвачено"/>

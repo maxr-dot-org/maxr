@@ -475,7 +475,7 @@ string cVehicle::getStatusStr (const cPlayer* player) const
 			if (getBuildTurns())
 			{
 				sText = lngPack.i18n ("Text~Comp~Producing");
-				sText += ": ";
+				sText += lngPack.i18n ("Text~Punctuation~Colon");
 				sText += (string)getOwner()->getUnitDataCurrentVersion (getBuildingType())->name + " (";
 				sText += iToStr (getBuildTurns());
 				sText += ")";
@@ -493,7 +493,7 @@ string cVehicle::getStatusStr (const cPlayer* player) const
 			else //small building is rdy + activate after engineere moves away
 			{
 				sText = lngPack.i18n ("Text~Comp~Producing_Fin");
-				sText += ": ";
+				sText += lngPack.i18n ("Text~Punctuation~Colon");
 				sText += (string)getOwner()->getUnitDataCurrentVersion (getBuildingType())->name;
 
 				if (font->getTextWide (sText) > 126)
