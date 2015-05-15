@@ -52,6 +52,7 @@ class cTurnTimeClock;
 class cTurnClock;
 class cSavedReport;
 class cBuildListItem;
+class cWindowUpgradesFilterState;
 
 class cPosition;
 
@@ -91,7 +92,7 @@ private:
 	std::map<int, cGameGuiState> playerGameGuiStates;
 
 	std::pair<bool, cPosition> savedReportPosition;
-
+	std::shared_ptr<cWindowUpgradesFilterState> upgradesFilterState;
 	std::array<std::pair<bool, cPosition>, 4> savedPositions;
 
 	void initShortcuts();

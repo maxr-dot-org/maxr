@@ -86,7 +86,8 @@ cGameGuiController::cGameGuiController (cApplication& application_, std::shared_
 	soundManager (std::make_shared<cSoundManager> ()),
 	animationTimer (std::make_shared<cAnimationTimer> ()),
 	gameGui (std::make_shared<cGameGui> (std::move (staticMap), soundManager, animationTimer, application_.frameCounter)),
-	savedReportPosition (false, cPosition())
+	savedReportPosition (false, cPosition()),
+	upgradesFilterState(std::make_shared<cWindowUpgradesFilterState>())
 {
 	connectGuiStaticCommands();
 	initShortcuts();
@@ -991,7 +992,8 @@ void cGameGuiController::showUpgradesWindow (const cUnit& unit)
 	if (unit.getOwner() != player.get()) return;
 	if (!player) return;
 
-	auto upgradesWindow = application.show (std::make_shared<cWindowUpgrades> (*player, getTurnTimeClock()));
+	auto upgradesWindow = application.show (std::make_shared<cWindowUpgrades> (*player, getTurnTimeClock(), upgradesFilterState));
+
 
 	upgradesWindow->canceled.connect ([upgradesWindow]() { upgradesWindow->close(); });
 	upgradesWindow->done.connect ([&, upgradesWindow]()

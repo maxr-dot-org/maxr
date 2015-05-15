@@ -32,13 +32,28 @@ class cCheckBox;
 class cPlayer;
 class cTurnTimeClock;
 
+class cWindowUpgradesFilterState
+{
+public:
+	cWindowUpgradesFilterState():
+		TankChecked(true),
+		PlaneChecked(true),
+		ShipChecked(true),
+		BuildingChecked(true),
+		TNTChecked(false)
+	{};
+	bool TankChecked;
+	bool PlaneChecked;
+	bool ShipChecked;
+	bool BuildingChecked;
+	bool TNTChecked;
+};
+
 class cWindowUpgrades : public cWindowHangar
 {
-	// TODO: implement restoring last filter state (without static variables!)
-
 	// TODO: remove code duplication with @ref cWindowLandingUnitSelection
 public:
-	explicit cWindowUpgrades (const cPlayer& player, std::shared_ptr<const cTurnTimeClock> turnTimeClock);
+	explicit cWindowUpgrades (const cPlayer& player, std::shared_ptr<const cTurnTimeClock> turnTimeClock, std::shared_ptr<cWindowUpgradesFilterState> filterState);
 
 	std::vector<std::pair<sID, cUnitUpgrade>> getUnitUpgrades() const;
 
@@ -53,6 +68,7 @@ private:
 	cCheckBox* shipCheckBox;
 	cCheckBox* buildingCheckBox;
 	cCheckBox* tntCheckBox;
+	std::shared_ptr<cWindowUpgradesFilterState> filterState;
 
 	cResourceBar* goldBar;
 	cLabel* goldBarAmountLabel;

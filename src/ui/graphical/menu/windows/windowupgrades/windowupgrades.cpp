@@ -28,8 +28,9 @@
 #include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------
-cWindowUpgrades::cWindowUpgrades (const cPlayer& player, std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
-	cWindowHangar (LoadPCX (GFXOD_UPGRADE), player)
+cWindowUpgrades::cWindowUpgrades (const cPlayer& player, std::shared_ptr<const cTurnTimeClock> turnTimeClock, std::shared_ptr<cWindowUpgradesFilterState> filterState_) :
+	cWindowHangar (LoadPCX (GFXOD_UPGRADE), player),
+	filterState(filterState_)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Upgrades_Menu"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
@@ -40,23 +41,23 @@ cWindowUpgrades::cWindowUpgrades (const cPlayer& player, std::shared_ptr<const c
 	// Unit Filters
 	//
 	tankCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (467, 411), eCheckBoxType::Tank));
-	tankCheckBox->setChecked (true);
+	tankCheckBox->setChecked (filterState->TankChecked);
 	signalConnectionManager.connect (tankCheckBox->toggled, std::bind (&cWindowUpgrades::generateSelectionList, this, false));
 
 	planeCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (467 + 33, 411), eCheckBoxType::Plane));
-	planeCheckBox->setChecked (true);
+	planeCheckBox->setChecked (filterState->PlaneChecked);
 	signalConnectionManager.connect (planeCheckBox->toggled, std::bind (&cWindowUpgrades::generateSelectionList, this, false));
 
 	shipCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (467 + 33 * 2, 411), eCheckBoxType::Ship));
-	shipCheckBox->setChecked (true);
+	shipCheckBox->setChecked (filterState->ShipChecked);
 	signalConnectionManager.connect (shipCheckBox->toggled, std::bind (&cWindowUpgrades::generateSelectionList, this, false));
 
 	buildingCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (467 + 33 * 3, 411), eCheckBoxType::Building));
-	buildingCheckBox->setChecked (true);
+	buildingCheckBox->setChecked (filterState->BuildingChecked);
 	signalConnectionManager.connect (buildingCheckBox->toggled, std::bind (&cWindowUpgrades::generateSelectionList, this, false));
 
 	tntCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (467 + 33 * 4, 411), eCheckBoxType::Tnt));
-	tntCheckBox->setChecked (false);
+	tntCheckBox->setChecked (filterState->TNTChecked);
 	signalConnectionManager.connect (tntCheckBox->toggled, std::bind (&cWindowUpgrades::generateSelectionList, this, false));
 
 	//
@@ -196,11 +197,18 @@ void cWindowUpgrades::updateUpgradeButtons()
 //------------------------------------------------------------------------------
 void cWindowUpgrades::generateSelectionList (bool select)
 {
-	const bool tank = tankCheckBox->isChecked();
+	//save state of the filter button
+	filterState->TankChecked     = tankCheckBox->isChecked();
+	filterState->PlaneChecked    = planeCheckBox->isChecked();
+	filterState->ShipChecked     = shipCheckBox->isChecked();
+	filterState->BuildingChecked = buildingCheckBox->isChecked();
+	filterState->TNTChecked      = tntCheckBox->isChecked();
+
+	const bool tank  = tankCheckBox->isChecked();
 	const bool plane = planeCheckBox->isChecked();
-	const bool ship = shipCheckBox->isChecked();
+	const bool ship  = shipCheckBox->isChecked();
 	const bool build = buildingCheckBox->isChecked();
-	const bool tnt = tntCheckBox->isChecked();
+	const bool tnt   = tntCheckBox->isChecked();
 
 	clearSelectionUnits();
 
