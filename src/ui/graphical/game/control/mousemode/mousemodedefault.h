@@ -50,6 +50,8 @@ protected:
 	virtual void establishMapFieldConnections (const cMapField& field) MAXR_OVERRIDE_FUNCTION;
 
 private:
+	cSignalConnectionManager keyboardConnectionManager;
+
 	eActionType selectAction (const cPosition& mapPosition) const;
 
 	void updateFieldUnitConnections (const cMapField& field);

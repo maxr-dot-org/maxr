@@ -33,12 +33,15 @@
 #include "input/mouse/cursor/mousecursorsimple.h"
 #include "input/mouse/cursor/mousecursoramount.h"
 #include "input/mouse/cursor/mousecursorattack.h"
+#include "input/keyboard/keyboard.h"
 
 //------------------------------------------------------------------------------
 cMouseModeDefault::cMouseModeDefault (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
 	cMouseMode (map_, unitSelection_, player_)
 {
 	establishUnitSelectionConnections();
+	cKeyboard& keyboard = cKeyboard::getInstance();
+	keyboardConnectionManager.connect(keyboard.modifierChanged, [this]() {needRefresh(); });
 }
 
 //------------------------------------------------------------------------------
@@ -153,6 +156,8 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 	const auto selectedBuilding = unitSelection.getSelectedBuilding();
 
+	const bool modifierForceMoveActive = cKeyboard::getInstance().isAnyModifierActive(toEnumFlag(eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight);
+
 	// Infiltrators: auto selected disable vs. vehicle/building
 	if (selectedVehicle && selectedVehicle->getOwner() == player && selectedVehicle->canDoCommandoAction (mapPosition, *map, false))
 	{
@@ -163,7 +168,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 	{
 		return eActionType::Steal;
 	}
-	else if (selectedVehicle && selectedVehicle->getOwner() == player && selectedVehicle->canAttackObjectAt (mapPosition, *map, false, false))
+	else if (selectedVehicle && selectedVehicle->getOwner() == player && selectedVehicle->canAttackObjectAt (mapPosition, *map, false, false) && !modifierForceMoveActive)
 	{
 		return eActionType::Attack;
 	}
@@ -191,15 +196,15 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 							 field.getTopBuilding()->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE
 						 ) ||
 						 (
-							 KeysList.getMouseStyle() == eMouseStyle::OldSchool &&
+							 (KeysList.getMouseStyle() == eMouseStyle::OldSchool || !modifierForceMoveActive) &&
 							 field.getPlane()
 						 )
 					 ) &&
 					 (
 						 selectedVehicle->data.factorAir == 0 ||
-						 field.getPlane() ||
+						 (field.getPlane() && !modifierForceMoveActive) ||
 						 (
-							 KeysList.getMouseStyle() == eMouseStyle::OldSchool &&
+							 (KeysList.getMouseStyle() == eMouseStyle::OldSchool || !modifierForceMoveActive) &&
 							 (
 								 field.getVehicle() ||
 								 (
@@ -248,10 +253,12 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 				 (selectedVehicle->isUnitClearing() && selectedVehicle->getClearingTurns() == 0)) &&
 				map->possiblePlace (*selectedVehicle, mapPosition) && selectedVehicle->isNextTo (mapPosition))
 			{
+				//exit from construction site
 				return eActionType::Move;
 			}
 			else
 			{
+				//exit from construction site not possible (still working)
 				return eActionType::None;
 			}
 		}
@@ -284,7 +291,6 @@ void cMouseModeDefault::establishUnitSelectionConnections()
 		selectedUnitSignalConnectionManager.connect (selectedUnit->data.damageChanged, [this]() { needRefresh(); });
 		selectedUnitSignalConnectionManager.connect (selectedUnit->data.shotsChanged, [this]() { needRefresh(); });
 		selectedUnitSignalConnectionManager.connect (selectedUnit->data.ammoChanged, [this]() { needRefresh(); });
-		selectedUnitSignalConnectionManager.connect (selectedUnit->data.rangeChanged, [this]() { needRefresh(); });
 		selectedUnitSignalConnectionManager.connect (selectedUnit->attackingChanged, [this]() { needRefresh(); });
 		selectedUnitSignalConnectionManager.connect (selectedUnit->beenAttackedChanged, [this]() { needRefresh(); });
 		selectedUnitSignalConnectionManager.connect (selectedUnit->clearingChanged, [this]() { needRefresh(); });

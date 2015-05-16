@@ -41,6 +41,38 @@ cKeyboard& cKeyboard::getInstance()
 }
 
 //------------------------------------------------------------------------------
+void cKeyboard::updateModifiersFromKeyPress(const cKeyboardEvent& event)
+{
+	if (event.getType() != cKeyboardEvent::Down) return;
+
+	SDL_Keycode key = event.getKey();
+
+	if (key == SDLK_LSHIFT)
+		currentModifiers |= eKeyModifierType::ShiftLeft;
+	else if (key == SDLK_RSHIFT)
+		currentModifiers |= eKeyModifierType::ShiftRight;
+	else if (key == SDLK_LCTRL)
+		currentModifiers |= eKeyModifierType::CtrlLeft;
+	else if (key == SDLK_RCTRL)
+		currentModifiers |= eKeyModifierType::CtrlRight;
+	else if (key == SDLK_LALT)
+		currentModifiers |= eKeyModifierType::AltLeft;
+	else if (key == SDLK_RALT)
+		currentModifiers |= eKeyModifierType::AltRight;
+	else if (key == SDLK_LGUI)
+		currentModifiers |= eKeyModifierType::GuiLeft;
+	else if (key == SDLK_RGUI)
+		currentModifiers |= eKeyModifierType::GuiRight;
+	else if (key == SDLK_NUMLOCKCLEAR)
+		currentModifiers |= eKeyModifierType::Num;
+	else if (key == SDLK_CAPSLOCK)
+		currentModifiers |= eKeyModifierType::Caps;
+	else if (key == SDLK_MODE)
+		currentModifiers |= eKeyModifierType::Mode;
+	
+}
+
+//------------------------------------------------------------------------------
 KeyModifierFlags cKeyboard::getCurrentModifiers() const
 {
 	return currentModifiers;
@@ -62,8 +94,9 @@ bool cKeyboard::isAllModifiersActive (KeyModifierFlags flags) const
 void cKeyboard::handleKeyboardEvent (const cKeyboardEvent& event)
 {
 	assert (event.getType() == cKeyboardEvent::Down || event.getType() == cKeyboardEvent::Up);
+	KeyModifierFlags oldModifiers = currentModifiers;
 
-	currentModifiers = event.getModifiers();
+	currentModifiers = event.getModifiers(); //set modifier of current key event
 
 	if (event.getType() == cKeyboardEvent::Down)
 	{
@@ -73,6 +106,14 @@ void cKeyboard::handleKeyboardEvent (const cKeyboardEvent& event)
 	{
 		keyReleased (*this, event.getKey());
 	}
+
+	//set modifier in case the key event was a modifier key itself
+	//this is needed when a mouse object will querry the current modifier state later
+	updateModifiersFromKeyPress(event);
+
+	if (currentModifiers != oldModifiers)
+		modifierChanged();
+
 }
 
 //------------------------------------------------------------------------------

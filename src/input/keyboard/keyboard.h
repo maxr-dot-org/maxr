@@ -58,7 +58,7 @@ public:
 
 	cSignal<void (cKeyboard&, SDL_Keycode)> keyPressed;
 	cSignal<void (cKeyboard&, SDL_Keycode)> keyReleased;
-
+	cSignal<void()> modifierChanged;
 	cSignal<void (cKeyboard&, const char*)> textEntered;
 
 	/**
@@ -90,6 +90,7 @@ private:
 
 	cSignalConnectionManager signalConnectionManager;
 
+	void updateModifiersFromKeyPress(const cKeyboardEvent& event);
 	void handleKeyboardEvent (const cKeyboardEvent& keyboardEvent);
 	void handleTextInputEvent (const cTextInputEvent& textInputEvent);
 

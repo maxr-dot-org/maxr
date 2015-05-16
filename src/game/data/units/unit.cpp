@@ -312,7 +312,7 @@ bool cUnit::canAttackObjectAt (const cPosition& position, const cMap& map, bool 
 		return false;
 
 	// do not fire on e.g. platforms, connectors etc.
-	// see ticket #436 on bug tracker
+	// see ticket #253 on bug tracker
 	if (target->isABuilding() && isAVehicle() && data.factorAir == 0 && map.possiblePlace (*static_cast<const cVehicle*> (this), position))
 		return false;
 
