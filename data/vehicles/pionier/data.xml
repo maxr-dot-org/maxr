@@ -7,7 +7,7 @@
     <Game_Version text="0.2.5"/>
   </Header>
   <Description lang="ENG">
-    Small construktion vehical for creating small buildings and stationary weapons.
+    Pioneer\n\nSmall construction vehicle for creating small buildings and stationary turrets.
   </Description>
   <Production>
     <Built_Costs Num="18"/>
