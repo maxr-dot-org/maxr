@@ -1652,6 +1652,15 @@ void cClient::addUnit (const cPosition& position, cVehicle& addedVehicle, bool a
 	// place the vehicle
 	if (addToMap) getMap()->addVehicle (addedVehicle, position);
 
+	if (addedVehicle.canLand(*Map))
+	{
+		addedVehicle.setFlightHeight(0);
+	}
+	else
+	{
+		addedVehicle.setFlightHeight(64);
+	}
+
 	if (addedVehicle.getOwner() != ActivePlayer && addedVehicle.iID == ActivePlayer->lastDeletedUnit)
 	{
 		ActivePlayer->addSavedReport (std::make_unique<cSavedReportCapturedByEnemy> (addedVehicle));
