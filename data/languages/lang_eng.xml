@@ -68,12 +68,12 @@
 			<Oil ENG="Fuel"/>
 			<Options ENG="Options"/>
 			<Player_Name ENG="Player Name:"/>
-			<Player_Select ENG="Player options"/><!--unused?! -- nonsinn-->
+			<Player_Select ENG="Player options"/><!--unused?! ~~ nonsinn-->
 			<Players ENG="Players:"/>
 			<Port ENG="Port"/>
-			<Resource ENG="Resource density"/><!--unused?! -- nonsinn -->
+			<Resource ENG="Resource density"/><!--unused?! ~~ nonsinn -->
 			<Resource_Density ENG="Resource frequency"/>
-			<Savegame ENG="Saved Games"/><!--unused?! -- nonsinn -->
+			<Savegame ENG="Saved Games"/><!--unused?! ~~ nonsinn -->
 			<Send ENG="Send"/>
 			<Team ENG="Team"/> <!-- e.g. Player 1 is called as one team -->
 			<Turn_end ENG="Turn end"/>
@@ -285,7 +285,7 @@
 			<Player_Name_Taken ENG="Playername already in use, please select an other name to be unique"/>
 			<Player_Turn ENG="%s:\nBegin turn."/>
 			<Player_Turn_End ENG="%s ended turn"/>
-			<Player_Twice ENG="Playername exists twice: "/><!-- not used?! --nonsinn -->
+			<Player_Twice ENG="Playername exists twice: "/><!-- not used?! ~~ nonsinn -->
 			<Player_Wrong ENG="Missing a correct player's name"/>
 			<Reconnect ENG="This game is running already.\nIf you have lost connection to the game, you can reconnect.\n\nDo you want to reconnect?"/>
 			<Reconnect_Forbidden ENG="Reconnecting forbidden by server."/>
