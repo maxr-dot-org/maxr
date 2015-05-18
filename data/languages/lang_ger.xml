@@ -291,7 +291,7 @@
 			<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="Wiederbindung vom Server unterbunden."/>
 			<Save_Only_Host ENG="Only the host can save the current games." localized="Nur der Server kann das aktuelle Spiel speichern"/>
 			<Server_Not_Running ENG="The server is not running." localized="Der Server ist nicht gestartet."/>
-			<Wait_For_Server ENG="Waiting for network response from server"localized="Warte auf Netzwerkantwort vom Server" />
+			<Wait_For_Server ENG="Waiting for network response from server" localized="Warte auf Netzwerkantwort vom Server" />
 			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Warte auf Wiederverbindung eines Spielers"/>
 			<Wait_TurnEnd ENG="Please wait while turn end is executed." localized="Bitte warten Sie, während das Rundenende ausgeführt wird." />
 			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Bitte warten Sie bis %s seine Runde beendet hat."/>
