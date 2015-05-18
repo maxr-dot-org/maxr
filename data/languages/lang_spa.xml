@@ -54,7 +54,7 @@
 
 			<Game_Type ENG="Game Type" localized="Tipo de partida"/>
 			<Gold ENG="Gold" localized="Oro"/>
-			<HotSeat ENG="Hot Seat" =localized="Hot Seat"/>
+			<HotSeat ENG="Hot Seat" localized="Hot Seat"/>
 			<Human ENG="Human" localized="Humano"/>
 			<IP ENG="IP" localized="IP"/>
 			<Labs ENG="ResearchMenu" localized="Menú Investigar"/>
