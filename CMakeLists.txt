@@ -47,11 +47,13 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
 elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 
   execute_process(COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE CLANG_FULL_VERSION_STRING)
-  string(REGEX REPLACE ".*clang version ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION_STRING ${CLANG_FULL_VERSION_STRING})
+
+  if("${CLANG_FULL_VERSION_STRING}" MATCHES "Apple")
   
-  if(${CLANG_FULL_VERSION_STRING} MATCHES "Apple")
+    string(REGEX REPLACE ".*Apple LLVM version ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION_STRING ${CLANG_FULL_VERSION_STRING})
+    
     if (NOT (CLANG_VERSION_STRING VERSION_GREATER 3.1 OR CLANG_VERSION_STRING VERSION_EQUAL 3.1))
-      message(FATAL_ERROR "${PROJECT_NAME} requires clang 3.1 or greater (is ${CLANG_VERSION_STRING}).")
+      message(FATAL_ERROR "${PROJECT_NAME} requires AppleClang 3.1 or greater (is ${CLANG_VERSION_STRING}).")
     endif ()
   
     if (CLANG_VERSION_STRING VERSION_GREATER 5.1 OR CLANG_VERSION_STRING VERSION_EQUAL 5.1)
@@ -60,6 +62,8 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -stdlib=libc++")
     endif()
   else()
+    string(REGEX REPLACE ".*clang version ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION_STRING ${CLANG_FULL_VERSION_STRING})
+    
     if (NOT (CLANG_VERSION_STRING VERSION_GREATER 3.1 OR CLANG_VERSION_STRING VERSION_EQUAL 3.1))
       message(FATAL_ERROR "${PROJECT_NAME} requires clang 3.1 or greater (is ${CLANG_VERSION_STRING}).")
     endif ()
