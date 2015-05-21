@@ -217,7 +217,7 @@ void cWidget::setArea (const cBox<cPosition>& area_)
 //------------------------------------------------------------------------------
 cShortcut* cWidget::addShortcut (std::unique_ptr<cShortcut> shortcut)
 {
-    if(shortcut == nullptr) return nullptr;
+	if(shortcut == nullptr) return nullptr;
 
 	shortcuts.push_back (std::move (shortcut));
 	return shortcuts.back().get();
