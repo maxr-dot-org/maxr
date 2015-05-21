@@ -450,9 +450,9 @@ bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard
 }
 
 //------------------------------------------------------------------------------
-bool cLineEdit::handleTextEntered (cApplication& application, cKeyboard& keyboard, const char* inputText)
+void cLineEdit::handleTextEntered (cApplication& application, cKeyboard& keyboard, const char* inputText)
 {
-	if (readOnly || !hasKeyFocus) return false;
+	if (readOnly || !hasKeyFocus) return;
 
 	text.insert (cursorPos, inputText);
 
@@ -476,6 +476,4 @@ bool cLineEdit::handleTextEntered (cApplication& application, cKeyboard& keyboar
 		if (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosDecrease (endOffset);
 		else doPosIncrease (endOffset, cursorPos);
 	}
-
-	return true;
 }

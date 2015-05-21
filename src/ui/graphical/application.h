@@ -55,7 +55,7 @@ public:
 	 * Marks all windows to be closed that are above the passed one
 	 * on the window stack.
 	 *
-	 * If the passed window is not an the applications window stack
+	 * If the passed window is not on the applications window stack
 	 * all windows will be marked to be closed.
 	 *
 	 * @param window The reference window to search for.

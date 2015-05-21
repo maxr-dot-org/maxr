@@ -81,6 +81,11 @@ public:
 	 */
 	void close();
 
+    /**
+     * Draws the window, its background and all children.
+     *
+     * @see cWidget::draw
+     */
 	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 
 	/**
@@ -117,6 +122,9 @@ public:
 	 */
 	virtual void handleDeactivated (cApplication& application, bool removed);
 
+    /**
+     * Return true if the window wants to be centered.
+     */
 	virtual bool wantsCentered() const;
 
 	/**
@@ -124,7 +132,24 @@ public:
 	 */
 	cSignal<void ()> terminated;
 protected:
+	/**
+	 * Gets the mouse of the of the application the current window is the
+	 * active one (on top of the window stack).
+	 *
+	 * @return The mouse or null if the current window is
+	 *         not the active one in any application or the application
+     *         does not have a mouse registered to it.
+	 */
 	virtual cMouse* getActiveMouse() const MAXR_OVERRIDE_FUNCTION;
+
+	/**
+	 * Gets the keyboard of the of the application the current window is the
+	 * active one (on top of the window stack).
+	 *
+	 * @return The keyboard or null if the current window is
+	 *         not the active one in any application or the application
+     *         does not have a keyboard registered to it.
+	 */
 	virtual cKeyboard* getActiveKeyboard() const MAXR_OVERRIDE_FUNCTION;
 
 	/**
@@ -136,6 +161,13 @@ protected:
 	 */
 	virtual cApplication* getActiveApplication() const MAXR_OVERRIDE_FUNCTION;
 
+    /**
+     * Returns the default cursor for this window.
+     * This cursor will be set to the mouse when the window is activated.
+     *
+     * @return The default or cursor for the window or null if there is no default cursor
+     *         for the window and the current cursor should stay visible on the activation of the window.
+     */
 	virtual std::unique_ptr<cMouseCursor> getDefaultCursor() const;
 
 	/**
