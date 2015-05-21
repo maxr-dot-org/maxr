@@ -99,7 +99,7 @@ public:
 	 *
 	 * @param application The application that activated this window.
 	 * @param firstTime Will be true when the window is activated the first time.
-	 *                  This means it is new on the window stack and has just been but on the very top of it.
+	 *                  This means it is new on the window stack and has just been put on the very top of it.
 	 *                  When the window gets activated because all other windows that have been on above
 	 *                  this one have been closed, the flag will be false.
 	 */
@@ -110,7 +110,7 @@ public:
 	 * This means it is no longer on top of the window stack of the
 	 * application. This can be either because the window will be
 	 * closed (as requested from the window through @ref isClosing())
-	 * or because an other window has been but above the current one
+	 * or because an other window has been put above the current one
 	 * on the window stack.
 	 *
 	 * Inheriting classes that are overwriting this function should
