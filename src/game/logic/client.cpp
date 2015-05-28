@@ -134,6 +134,8 @@ cClient::~cClient()
 		delete attackJobs[i];
 	}
 	neutralBuildings.clear();
+	helperJobs.clear();
+	Map.reset();
 
 	// since currently the vehicles do own movejobs and other stuff that
 	// have non owning references to the client, we delete all units in the players
