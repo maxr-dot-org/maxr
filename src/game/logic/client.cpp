@@ -134,6 +134,8 @@ cClient::~cClient()
 		delete attackJobs[i];
 	}
 	neutralBuildings.clear();
+	helperJobs.clear();
+	Map.reset();
 
 	// since currently the vehicles do own movejobs and other stuff that
 	// have non owning references to the client, we delete all units in the players
@@ -1235,9 +1237,14 @@ void cClient::HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message)
 
 	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{
-		cPlayer& player = *getPlayerList() [i];
+		auto vehicles = getPlayerList()[i]->getVehicles();
+		for (auto vehicle : vehicles)
+			deleteUnit(vehicle.get());
 
-		player.removeAllUnits();
+		auto buildings = getPlayerList()[i]->getBuildings();
+		for (auto building : buildings)
+			deleteUnit(building.get());
+
 	}
 
 	//delete subbases
