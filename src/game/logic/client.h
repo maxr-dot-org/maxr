@@ -33,6 +33,8 @@
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/flatset.h"
+#include "netmessage2.h"
+#include "game/data/model.h"
 
 class cBuilding;
 class cCasualtiesTracker;
@@ -45,7 +47,7 @@ class cJob;
 class cMap;
 class cNetMessage;
 class cPlayer;
-class cServer;
+class cServer2;
 class cStaticMap;
 class cTCP;
 class cPlayerBasicData;
@@ -68,16 +70,23 @@ class cClient : public INetMessageReceiver
 	friend class cDebugOutputWidget;
 	friend class cPlayer;
 public:
-	cClient (cServer* server, std::shared_ptr<cTCP> network);
+	cClient (cServer2* server2, cServer* server, std::shared_ptr<cTCP> network);
 	~cClient();
 
-	void setMap (std::shared_ptr<cStaticMap> staticMap);
-	void setPlayers (const std::vector<cPlayerBasicData>& splayers, size_t activePlayerIndex);
+	const cModel& getModel() const { return model; };
 
+	const cPlayer& getActivePlayer() const { return *activePlayer; }
+
+	void setGameSettings(const cGameSettings& gameSettings);
+	void setMap(std::shared_ptr<cStaticMap> staticMap);
+	void setPlayers(const std::vector<cPlayerBasicData>& splayers, size_t activePlayerIndex);
+
+	
 	// Return local server if any.
 	// TODO: should be const cServer*
 	cServer* getServer() const { return server; }
 	virtual void pushEvent (std::unique_ptr<cNetMessage> message) MAXR_OVERRIDE_FUNCTION;
+	void pushMessage(std::unique_ptr<cNetMessage2> message);
 
 	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);
 	void disableFreezeMode (eFreezeMode mode);
@@ -116,32 +125,15 @@ public:
 	void addActiveMoveJob (cClientMoveJob& MJob);
 
 	void addAutoMoveJob (std::weak_ptr<cAutoMJob> autoMoveJob);
-	/**
-	* returns the player with the given number
-	*@author alzi alias DoctorDeath
-	*@param iNum The number of the player.
-	*@return The wanted player.
-	*/
-	cPlayer* getPlayerFromNumber (int iNum);
-	/**
-	* returns the player identified by playerID
-	*@author eiko
-	*@param playerID Can be a representation of the player number or player name
-	*/
-	cPlayer* getPlayerFromString (const std::string& playerID);
-	/**
-	* deletes the unit
-	*@author alzi alias DoctorDeath
-	*@param Building Building which should be deleted.
-	*@param Vehicle Vehicle which should be deleted.
-	*/
-	void deleteUnit (cUnit* unit);
+
 	/**
 	* sends the netMessage to the server.
 	*@author Eiko
 	*@param message The netMessage to be send.
 	*/
 	void sendNetMessage (std::unique_ptr<cNetMessage> message) const;
+	void sendNetMessage(std::unique_ptr<cNetMessage2> message) const;
+
 	/**
 	* gets the vehicle with the ID
 	*@author alzi alias DoctorDeath
@@ -183,22 +175,14 @@ public:
 	const std::shared_ptr<cCasualtiesTracker>& getCasualtiesTracker() { return casualtiesTracker; }
 	std::shared_ptr<const cCasualtiesTracker> getCasualtiesTracker() const { return casualtiesTracker; }
 
-	std::shared_ptr<const cMap> getMap() const { return Map; }
-	const std::shared_ptr<cMap>& getMap() { return Map; }
-
 	std::shared_ptr<const cTurnClock> getTurnClock() const { return turnClock; }
 	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock() const { return turnTimeClock; }
 
-	const std::vector<std::shared_ptr<cPlayer>>& getPlayerList() const { return playerList; }
-
-	const cPlayer& getActivePlayer() const { return *ActivePlayer; }
-	cPlayer& getActivePlayer() { return *ActivePlayer; }
-
-	void setGameSettings (const cGameSettings& gameSettings_);
-	std::shared_ptr<const cGameSettings> getGameSettings() const { return gameSettings; }
 
 	const std::shared_ptr<cGameTimerClient>& getGameTimer() const { return gameTimer; }
 
+
+	//TODO: move signals to model
 	mutable cSignal<void (int, int)> playerFinishedTurn;
 
 	mutable cSignal<void (eFreezeMode)> freezeModeChanged;
@@ -214,9 +198,9 @@ public:
 	mutable cSignal<void (const cUnit&)> unitRepaired;
 
 	mutable cSignal<void (const cUnit&)> unitDisabled;
-	mutable cSignal<void (const cUnit&)> unitStolen;
+	mutable cSignal<void (const cUnit&)> unitStolen; //TODO: was in addUnit()
 
-	mutable cSignal<void (const cUnit&)> unitDetected;
+	mutable cSignal<void (const cUnit&)> unitDetected; //TODO: was in addUnit()
 
 	mutable cSignal<void (const cVehicle&)> moveJobBlocked;
 
@@ -225,7 +209,6 @@ public:
 	mutable cSignal<void (int)> additionalSaveInfoRequested;
 	mutable cSignal<void (const cGameGuiState&)> gameGuiStateReceived;
 private:
-	void initPlayersWithMap();
 
 	/**
 	* adds the unit to the map and player.
@@ -312,44 +295,40 @@ private:
 	void HandleNetMessage_GAME_EV_SCORE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_NUM_ECOS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UNIT_SCORE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_GAME_SETTINGS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SELFDESTROY (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message);
 
 private:
+	cModel model;
+
 	cSignalConnectionManager signalConnectionManager;
 
 	cServer* server;
+	cServer2* server2;
 
 	std::shared_ptr<cTCP> network;
 
 	cConcurrentQueue<std::unique_ptr<cNetMessage>> eventQueue;
+	cConcurrentQueue<std::unique_ptr<cNetMessage2>> eventQueue2;
 
 	std::shared_ptr<cGameTimerClient> gameTimer;
 
-	/** the map */
-	std::shared_ptr<cMap> Map;
-	/** List with all players */
-	std::vector<std::shared_ptr<cPlayer>> playerList;
 	/** the active Player */
-	cPlayer* ActivePlayer;
+	cPlayer* activePlayer;
 
 	cJobContainer helperJobs;
 
 	/** list with buildings without owner, e. g. rubble fields */
 	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> neutralBuildings;
 	/** true if the player has been defeated */
-	bool bDefeated;
+	bool bDefeated; //TODO: player
 
 	std::shared_ptr<cTurnClock> turnClock;
 	std::shared_ptr<cTurnTimeClock> turnTimeClock;
 	std::shared_ptr<cTurnTimeDeadline> turnLimitDeadline;
 	std::shared_ptr<cTurnTimeDeadline> turnEndDeadline;
-
-	/** this client's copy of the gameSettings **/
-	std::shared_ptr<cGameSettings> gameSettings;
 
 	std::shared_ptr<cCasualtiesTracker> casualtiesTracker;
 
@@ -364,9 +343,6 @@ public:
 	std::vector<cAttackJob*> attackJobs;
 	/** List with all active movejobs */
 	std::vector<cClientMoveJob*> ActiveMJobs;
-
-	/** true if the turn should be end after all movejobs have been finished */
-	bool bWantToEnd;
 };
 
 #endif // game_logic_clientH

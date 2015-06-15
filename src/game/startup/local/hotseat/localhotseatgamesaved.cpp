@@ -18,10 +18,11 @@
  ***************************************************************************/
 
 #include "game/startup/local/hotseat/localhotseatgamesaved.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 #include "ui/graphical/application.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
+#include "game/logic/server2.h"
 #include "game/data/player/player.h"
 #include "game/logic/clientevents.h"
 #include "game/logic/savegame.h"
@@ -30,6 +31,7 @@
 //------------------------------------------------------------------------------
 void cLocalHotSeatGameSaved::start (cApplication& application)
 {
+	//TODO: new server
 	server = std::make_unique<cServer> (nullptr);
 
 	cSavegame savegame (saveGameNumber);
@@ -55,8 +57,8 @@ void cLocalHotSeatGameSaved::start (cApplication& application)
 	clients.resize (clientPlayerList.size());
 	for (size_t i = 0; i < clientPlayerList.size(); ++i)
 	{
-		clients[i] = std::make_shared<cClient> (server.get(), nullptr);
-		clients[i]->setMap (staticMap);
+		//clients[i] = std::make_shared<cClient> (server.get(), nullptr); //TODO
+//		clients[i]->setMap (staticMap);
 		clients[i]->setGameSettings (*server->getGameSettings());
 		clients[i]->setPlayers (clientPlayerList, i);
 	}
@@ -71,7 +73,7 @@ void cLocalHotSeatGameSaved::start (cApplication& application)
 	// TODO: move that in server
 	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
-		sendGameSettings (*server, *serverPlayerList[i]);
+//		sendGameSettings (*server, *serverPlayerList[i]);
 		sendGameGuiState (*server, server->getPlayerGameGuiState (*serverPlayerList[i]), *serverPlayerList[i]);
 		auto& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size(); ++j)

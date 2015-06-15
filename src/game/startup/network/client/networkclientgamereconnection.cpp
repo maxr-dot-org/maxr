@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include "game/startup/network/client/networkclientgamereconnection.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 #include "ui/graphical/application.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
@@ -32,10 +32,10 @@ cNetworkClientGameReconnection::cNetworkClientGameReconnection()
 //------------------------------------------------------------------------------
 void cNetworkClientGameReconnection::start (cApplication& application)
 {
-	localClient = std::make_unique<cClient> (nullptr, network);
+	//localClient = std::make_unique<cClient> (nullptr, network); //TODO
 
 	localClient->setPlayers (players, localPlayerIndex);
-	localClient->setMap (staticMap);
+	//localClient->setMap (staticMap);
 
 	sendReconnectionSuccess (*localClient);
 

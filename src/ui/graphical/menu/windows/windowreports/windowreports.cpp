@@ -39,7 +39,7 @@
 #include "game/logic/casualtiestracker.h"
 #include "game/data/report/savedreport.h"
 #include "game/logic/turnclock.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
 
 namespace

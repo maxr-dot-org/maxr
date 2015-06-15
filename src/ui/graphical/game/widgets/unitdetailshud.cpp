@@ -25,7 +25,7 @@
 #include "game/data/units/unit.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 #include "utility/drawing.h"
 
 //------------------------------------------------------------------------------

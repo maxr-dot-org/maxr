@@ -25,7 +25,7 @@
 
 
 //--------------------------------------------------------------------------
-cUnit* cAttackJob::selectTarget (const cPosition& position, char attackMode, const cMap& map, cPlayer* owner)
+cUnit* cAttackJob::selectTarget (const cPosition& position, char attackMode, const cMap& map, const cPlayer* owner)
 {
 	cVehicle* targetVehicle = nullptr;
 	cBuilding* targetBuilding = nullptr;
@@ -298,8 +298,8 @@ cUnit* cAttackJob::getAggressor()
 
 void cAttackJob::lockTarget()
 {
-	cPlayer* player = client ? client->getPlayerFromNumber (aggressorPlayerNr) : &server->getPlayerFromNumber (aggressorPlayerNr);
-	cMap&    map = client ? *client->getMap() : *server->Map;
+	const cPlayer& player = client ? *client->getModel().getPlayer (aggressorPlayerNr) : server->getPlayerFromNumber (aggressorPlayerNr);
+	const cMap&    map = client ? *client->getModel().getMap() : *server->Map;
 
 	int range = 0;
 	if (muzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER)
@@ -311,7 +311,7 @@ void cAttackJob::lockTarget()
 		{
 			if (abs (x) + abs (y) <= range && map.isValidPosition (targetPosition + cPosition (x, y)))
 			{
-				cUnit* target = selectTarget (targetPosition + cPosition (x, y), attackMode, map, player);
+				cUnit* target = selectTarget (targetPosition + cPosition (x, y), attackMode, map, &player);
 				if (target)
 				{
 					target->setIsBeeinAttacked (true);
@@ -351,7 +351,7 @@ void cAttackJob::fire()
 	//make explosive mines explode
 	if (aggressor && aggressor->data.explodesOnContact && aggressorPosition == targetPosition)
 	{
-		if (client)
+/*		if (client)
 		{
 			cMap&    map = client ? *client->getMap() : *server->Map;
 			if (map.isWaterOrCoast (aggressor->getPosition()))
@@ -367,7 +367,7 @@ void cAttackJob::fire()
 		else
 		{
 			server->deleteUnit (aggressor, false);
-		}
+		} */
 	}
 
 
@@ -522,13 +522,13 @@ bool cAttackJob::impactCluster()
 bool cAttackJob::impactSingle (const cPosition& position, std::vector<cUnit*>* avoidTargets)
 {
 	//select target
-	cPlayer* player = client ? client->getPlayerFromNumber (aggressorPlayerNr) : &server->getPlayerFromNumber (aggressorPlayerNr);
-	cMap&    map    = client ? *client->getMap() : *server->Map;
+	const cPlayer& player = client ? *client->getModel().getPlayer (aggressorPlayerNr) : server->getPlayerFromNumber (aggressorPlayerNr);
+	const cMap&    map = *client->getModel().getMap();
 
 	if (!map.isValidPosition (position))
 		return false;
 
-	cUnit* target = selectTarget (position, attackMode, map, player);
+	cUnit* target = selectTarget (position, attackMode, map, &player);
 
 	//check list of units that will be ignored as target.
 	//Used to prevent, that cluster attacks hit the same unit multible times

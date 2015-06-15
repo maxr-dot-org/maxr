@@ -21,11 +21,19 @@
 #define game_data_units_landingunitH
 
 #include "main.h" // sID
+#include "utility/serializationarchive.h"
 
 struct sLandingUnit
 {
 	sID unitID;
 	int cargo;
+
+	template<typename T>
+	void serialize(T& archive)
+	{
+		archive & unitID;
+		archive & cargo;
+	}
 };
 
 #endif // game_data_units_landingunitH

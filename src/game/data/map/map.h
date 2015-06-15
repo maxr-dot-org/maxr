@@ -29,7 +29,7 @@
 #include "t_2.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 
 class cUnit;
 class cVehicle;
@@ -178,7 +178,7 @@ public:
 	void scaleSurfaces (int pixelSize);
 	static AutoSurface loadMapPreview (const std::string& mapPath, int* mapSize = nullptr);
 private:
-	static AutoSurface loadTerrGraph (SDL_RWops* fpMapFile, int iGraphicsPos, const SDL_Color (&colors)[256], int iNum);
+	static AutoSurface loadTerrGraph (SDL_RWops* fpMapFile, Sint64 iGraphicsPos, const SDL_Color (&colors)[256], int iNum);
 	void copySrfToTerData (SDL_Surface& surface, int iNum);
 
 	std::string filename;   // Name of the current map

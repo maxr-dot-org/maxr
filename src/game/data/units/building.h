@@ -187,7 +187,7 @@ public:
 	void clientStopWork();
 	/** check whether a transfer to a unit on the field is possible */
 	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const MAXR_OVERRIDE_FUNCTION;
-	void CheckRessourceProd (const cServer& server);
+	void checkRessourceProd (const cMap& map);
 	void calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array<int, 3>& turboBuildCosts, int vehicleCosts, int remainingMetal = -1) const;
 	virtual bool canExitTo (const cPosition& position, const cMap& map, const sUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
 	bool canLoad (const cPosition& position, const cMap& map, bool checkPosition = true) const;
@@ -222,7 +222,7 @@ public:
 	* draws the main image of the building onto the given surface
 	*/
 	void render (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow, bool drawConcrete) const;
-	void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int animationTime = 0, int alpha = 254) const;
+	void render_simple(SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, unsigned long long animationTime = 0, int alpha = 254) const;
 	static void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sUnitData& data, const sBuildingUIData& uiData, const cPlayer* owner, int frameNr = 0, int alpha = 254);
 
 	void executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType) const;

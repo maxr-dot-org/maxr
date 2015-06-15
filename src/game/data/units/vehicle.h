@@ -163,7 +163,7 @@ public:
 
 	virtual std::string getStatusStr (const cPlayer* player) const MAXR_OVERRIDE_FUNCTION;
 	void DecSpeed (int value);
-	void doSurvey (const cServer& server);
+	void doSurvey (const cMap& map);
 	virtual void makeReport (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const MAXR_OVERRIDE_FUNCTION;
 	bool InSentryRange (cServer& server);

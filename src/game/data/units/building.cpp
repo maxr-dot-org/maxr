@@ -388,7 +388,7 @@ void cBuilding::render_beton (SDL_Surface* surface, const SDL_Rect& dest, float 
 	}
 }
 
-void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int animationTime, int alpha) const
+void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, unsigned long long animationTime, int alpha) const
 {
 	int frameNr = dir;
 	if (data.hasFrames && data.isAnimated && cSettings::getInstance().isAnimations() &&
@@ -1211,14 +1211,14 @@ void cBuilding::DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int valu
 /** checks the resources that are available under the mining station */
 //--------------------------------------------------------------------------
 
-void cBuilding::CheckRessourceProd (const cServer& server)
+void cBuilding::checkRessourceProd (const cMap& map)
 {
 	auto position = getPosition();
 
 	MaxMetalProd = 0;
 	MaxGoldProd = 0;
 	MaxOilProd = 0;
-	const sResources* res = &server.Map->getResource (position);
+	const sResources* res = &map.getResource (position);
 
 	switch (res->typ)
 	{
@@ -1228,7 +1228,7 @@ void cBuilding::CheckRessourceProd (const cServer& server)
 	}
 
 	position.x()++;
-	res = &server.Map->getResource (position);
+	res = &map.getResource(position);
 	switch (res->typ)
 	{
 		case RES_METAL: MaxMetalProd += res->value; break;
@@ -1237,7 +1237,7 @@ void cBuilding::CheckRessourceProd (const cServer& server)
 	}
 
 	position.y()++;
-	res = &server.Map->getResource (position);
+	res = &map.getResource(position);
 	switch (res->typ)
 	{
 		case RES_METAL: MaxMetalProd += res->value; break;
@@ -1246,7 +1246,7 @@ void cBuilding::CheckRessourceProd (const cServer& server)
 	}
 
 	position.x()--;
-	res = &server.Map->getResource (position);
+	res = &map.getResource(position);
 	switch (res->typ)
 	{
 		case RES_METAL: MaxMetalProd += res->value; break;

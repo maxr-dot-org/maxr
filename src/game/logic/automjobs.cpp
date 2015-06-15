@@ -144,7 +144,8 @@ void cAutoMJob::planNextMove (const std::vector<cAutoMJob*>& jobs)
 	}
 	else
 	{
-		client.addMoveJob (vehicle, bestPosition);
+		//TODO: send action
+		//client.addMoveJob (vehicle, bestPosition);
 		lastDestination = bestPosition;
 	}
 }
@@ -167,7 +168,7 @@ float cAutoMJob::calcScoreDistToOtherSurveyor (const std::vector<cAutoMJob*>& jo
 // calculates an "importance-factor" for a given field
 float cAutoMJob::calcFactor (const cPosition& position, const std::vector<cAutoMJob*>& jobs)
 {
-	const cMap& map = *client.getMap();
+	const cMap& map = *client.getModel().getMap();
 
 	if (!map.possiblePlace (vehicle, position, true)) return FIELD_BLOCKED;
 
@@ -228,7 +229,7 @@ void cAutoMJob::planLongMove (const std::vector<cAutoMJob*>& jobs)
 {
 	cPosition bestPosition (-1, -1);
 	float minValue = 0;
-	const cMap& map = *client.getMap();
+	const cMap& map = *client.getModel().getMap();
 
 	for (int x = 0; x < map.getSize().x(); ++x)
 	{

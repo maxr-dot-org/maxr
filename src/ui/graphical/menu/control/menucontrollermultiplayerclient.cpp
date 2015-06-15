@@ -23,7 +23,7 @@
 #include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
 #include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
 #include "ui/graphical/menu/windows/windowlandingpositionselection/windowlandingpositionselection.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/dialogs/dialogyesno.h"
 #include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"

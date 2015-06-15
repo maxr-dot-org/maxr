@@ -29,6 +29,7 @@
 
 class cClient;
 class cServer;
+class cServer2;
 class cGameGuiController;
 
 class cLocalSingleplayerGame : public cGame
@@ -42,7 +43,7 @@ public:
 
 protected:
 	std::shared_ptr<cClient> client;
-	std::unique_ptr<cServer> server;
+	std::unique_ptr<cServer2> server;
 
 	std::unique_ptr<cGameGuiController> gameGuiController;
 };

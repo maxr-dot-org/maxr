@@ -125,7 +125,7 @@ public:
 	void setScore (int score, int turn);
 	void clearDone();
 
-	void addSavedReport (std::unique_ptr<cSavedReport> savedReport);
+	void addSavedReport (std::unique_ptr<cSavedReport> savedReport) const;
 	const std::vector<std::unique_ptr<cSavedReport>>& getSavedReports() const;
 
 	void setClan (int newClan);
@@ -219,7 +219,7 @@ private:
 	cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>> vehicles;
 	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> buildings;
 
-	int landingPosX;
+	int landingPosX; //TODO: where is this used?
 	int landingPosY;
 	cPosition mapSize; // Width and Height of the map.
 
@@ -231,11 +231,11 @@ private:
 	std::vector<char> DetectSeaMap;       // Map mit den Gebieten, die im Wasser gesehen werden kˆnnen.
 	std::vector<char> DetectMinesMap;     /** the area where the player can detect mines */
 public:
-	mutable PointsHistory pointsHistory; // history of player's total score (from eco-spheres) for graph
-	std::vector<std::unique_ptr<cSavedReport>> savedReportsList;
+	mutable PointsHistory pointsHistory; // history of player's total score (from eco-spheres) for graph //TODO: not mutable, since this information is public
+	mutable std::vector<std::unique_ptr<cSavedReport>> savedReportsList; //mutable, because adding a report doesn't change the game model
 	bool isDefeated;        // true if the player has been defeated
 	int numEcos;            // number of ecospheres. call countEcoSpheres on server to update.
-	unsigned int lastDeletedUnit;  /*!< used for detecting ownerchanges of a unit, e.g. a unit is readded with different player*/
+	unsigned int lastDeletedUnit;  /*!< used for detecting ownerchanges of a unit, e.g. a unit is readded with different player*/ //TODO: remove
 private:
 	int clan;
 

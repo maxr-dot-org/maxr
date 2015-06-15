@@ -730,7 +730,7 @@ void cServerMoveJob::doEndMoveVehicle()
 	if (Vehicle->data.canSurvey)
 	{
 		sendVehicleResources (*server, *Vehicle);
-		Vehicle->doSurvey (*server);
+		Vehicle->doSurvey (*server->Map);
 	}
 
 	//handle detection
@@ -852,7 +852,7 @@ cClientMoveJob::cClientMoveJob (cClient& client_, const cPosition& source_, cons
 
 void cClientMoveJob::init (const cPosition& source_, cVehicle* Vehicle)
 {
-	Map = client->getMap().get();
+	//Map = client->getMap().get();
 	this->Vehicle = Vehicle;
 	source = source_;
 	this->bPlane = (Vehicle->data.factorAir > 0);
@@ -1008,7 +1008,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			}
 
 			bEndForNow = true;
-			sWaypoint* path = calcPath (*client->getMap(), Vehicle->getPosition(), destination, *Vehicle);
+			sWaypoint* path;// = calcPath(*client->getMap(), Vehicle->getPosition(), destination, *Vehicle);
 			if (path)
 			{
 				sendMoveJob (*client, path, Vehicle->iID);
@@ -1166,10 +1166,10 @@ void cClientMoveJob::doEndMoveVehicle()
 
 	calcNextDir();
 
-	if (Vehicle->canLand (*client->getMap()) && Vehicle->getFlightHeight() > 0)
+/*	if (Vehicle->canLand (*client->getMap()) && Vehicle->getFlightHeight() > 0)
 	{
 		client->addJob (new cPlaneTakeoffJob (*Vehicle, false));
-	}
+	}*/
 }
 
 void cClientMoveJob::calcNextDir()

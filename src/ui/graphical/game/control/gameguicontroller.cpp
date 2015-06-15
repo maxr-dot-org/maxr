@@ -118,7 +118,7 @@ void cGameGuiController::start()
 			gameGui->restoreState (iter->second);
 		}
 
-		if (activeClient->getGameSettings()->getGameType() == eGameSettingsGameType::HotSeat)
+		if (activeClient->getModel().getGameSettings()->getGameType() == eGameSettingsGameType::HotSeat)
 		{
 			showNextPlayerDialog();
 		}
@@ -192,7 +192,6 @@ void cGameGuiController::setActiveClient (std::shared_ptr<cClient> client_)
 	gameGui->setTurnClock (getTurnClock());
 	gameGui->setTurnTimeClock (getTurnTimeClock());
 	gameGui->setGameSettings (getGameSettings());
-
 	gameGui->getDebugOutput().setClient (activeClient.get());
 	gameGui->getDebugOutput().setServer (activeClient->getServer());
 
@@ -504,7 +503,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredLoadAt, [&] (const cUnit & unit, const cPosition & position)
 	{
-		const auto& field = client.getMap()->getField (position);
+		const auto& field = client.getModel().getMap()->getField (position);
 		auto overVehicle = field.getVehicle();
 		auto overPlane = field.getPlane();
 		if (unit.isAVehicle())
@@ -515,7 +514,7 @@ void cGameGuiController::connectClient (cClient& client)
 				if (overVehicle->getPosition() == vehicle.getPosition()) sendWantLoad (client, vehicle.iID, true, overVehicle->iID);
 				else
 				{
-					cPathCalculator pc (vehicle.getPosition(), overVehicle->getPosition(), *client.getMap(), vehicle);
+					cPathCalculator pc (vehicle.getPosition(), overVehicle->getPosition(), *client.getModel().getMap(), vehicle);
 					sWaypoint* path = pc.calcPath();
 					if (path)
 					{
@@ -533,7 +532,7 @@ void cGameGuiController::connectClient (cClient& client)
 				if (vehicle.isNextTo (overVehicle->getPosition())) sendWantLoad (client, vehicle.iID, true, overVehicle->iID);
 				else
 				{
-					cPathCalculator pc (overVehicle->getPosition(), vehicle, *client.getMap(), *overVehicle, true);
+					cPathCalculator pc (overVehicle->getPosition(), vehicle, *client.getModel().getMap(), *overVehicle, true);
 					sWaypoint* path = pc.calcPath();
 					if (path)
 					{
@@ -555,7 +554,7 @@ void cGameGuiController::connectClient (cClient& client)
 				if (building.isNextTo (overVehicle->getPosition())) sendWantLoad (client, building.iID, false, overVehicle->iID);
 				else
 				{
-					cPathCalculator pc (overVehicle->getPosition(), building, *client.getMap(), *overVehicle, true);
+					cPathCalculator pc (overVehicle->getPosition(), building, *client.getModel().getMap(), *overVehicle, true);
 					sWaypoint* path = pc.calcPath();
 					if (path)
 					{
@@ -573,7 +572,7 @@ void cGameGuiController::connectClient (cClient& client)
 				if (building.isNextTo (overPlane->getPosition())) sendWantLoad (client, building.iID, false, overPlane->iID);
 				else
 				{
-					cPathCalculator pc (overPlane->getPosition(), building, *client.getMap(), *overPlane, true);
+					cPathCalculator pc (overPlane->getPosition(), building, *client.getModel().getMap(), *overPlane, true);
 					sWaypoint* path = pc.calcPath();
 					if (path)
 					{
@@ -602,7 +601,7 @@ void cGameGuiController::connectClient (cClient& client)
 		{
 			const auto& vehicle = static_cast<const cVehicle&> (unit);
 
-			cUnit* target = cAttackJob::selectTarget (position, vehicle.data.canAttack, *client.getMap(), vehicle.getOwner());
+			cUnit* target = cAttackJob::selectTarget (position, vehicle.data.canAttack, *client.getModel().getMap(), vehicle.getOwner());
 
 			if (vehicle.isInRange (position))
 			{
@@ -615,7 +614,7 @@ void cGameGuiController::connectClient (cClient& client)
 			}
 			else if (target)
 			{
-				cPathCalculator pc (vehicle.getPosition(), *client.getMap(), vehicle, position);
+				cPathCalculator pc (vehicle.getPosition(), *client.getModel().getMap(), vehicle, position);
 				sWaypoint* path = pc.calcPath();
 				if (path)
 				{
@@ -631,7 +630,7 @@ void cGameGuiController::connectClient (cClient& client)
 		else if (unit.isABuilding())
 		{
 			const auto& building = static_cast<const cBuilding&> (unit);
-			const cMap& map = *client.getMap();
+			const cMap& map = *client.getModel().getMap();
 
 			int targetId = 0;
 			cUnit* target = cAttackJob::selectTarget (position, building.data.canAttack, map, building.getOwner());
@@ -675,7 +674,7 @@ void cGameGuiController::connectClient (cClient& client)
 	{
 		if (currentPlayerNumber != client.getActivePlayer().getNr()) return;
 
-		if (client.getGameSettings()->getGameType() == eGameSettingsGameType::HotSeat)
+		if (client.getModel().getGameSettings()->getGameType() == eGameSettingsGameType::HotSeat)
 		{
 			gameGui->getHud().unlockEndButton();
 
@@ -695,7 +694,7 @@ void cGameGuiController::connectClient (cClient& client)
 	clientSignalConnectionManager.connect (client.freezeModeChanged, [&] (eFreezeMode mode)
 	{
 		const int playerNumber = client.getFreezeInfoPlayerNumber();
-		const cPlayer* player = client.getPlayerFromNumber (playerNumber);
+		const cPlayer* player = client.getModel().getPlayer(playerNumber);
 
 		if (mode == FREEZE_WAIT_FOR_OTHERS || mode == FREEZE_WAIT_FOR_TURNEND)
 		{
@@ -1234,7 +1233,7 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 					gameGui->getGameMessageList().addMessage ("Wrong parameter");
 					return;
 				}
-				const cPlayer* player = activeClient->getPlayerFromString (command.substr (6, command.length()));
+				const cPlayer* player = activeClient->getModel().getPlayer (command.substr (6, command.length()));
 
 				// server can not be kicked
 				if (!player)
@@ -1373,7 +1372,7 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 						gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
 						return;
 					}
-					cPlayer* player = activeClient->getPlayerFromString (command.substr (7, 8));
+					const cPlayer* player = activeClient->getModel().getPlayer(command.substr (7, 8));
 					if (!player)
 					{
 						gameGui->getGameMessageList().addMessage ("Wrong parameter");
@@ -1410,7 +1409,7 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 				int cl = 0;
 				sscanf (command.c_str(), "/color %d", &cl);
 				cl %= cPlayerColor::predefinedColorsCount;
-				activeClient->getActivePlayer().setColor (cPlayerColor (cPlayerColor::predefinedColors[cl]));
+				//activeClient->getActivePlayer().setColor (cPlayerColor (cPlayerColor::predefinedColors[cl]));
 			}
 			else if (command.compare (0, 8, "/fog off") == 0)
 			{
@@ -1437,13 +1436,13 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 			}
 			else if (command.compare ("/survey") == 0)
 			{
-				if (!server)
+				/*if (!server)
 				{
 					gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
 					return;
 				}
 				activeClient->getMap()->assignRessources (*server->Map);
-				activeClient->getActivePlayer().revealResource();
+				activeClient->getActivePlayer().revealResource();*/
 			}
 			else if (command.compare (0, 6, "/pause") == 0)
 			{
@@ -1591,7 +1590,7 @@ std::vector<std::shared_ptr<const cPlayer>> cGameGuiController::getPlayers() con
 
 	if (!activeClient) return result;
 
-	const auto& clientPlayerList = activeClient->getPlayerList();
+	const auto& clientPlayerList = activeClient->getModel().getPlayerList();
 
 	result.resize (clientPlayerList.size());
 	std::copy (clientPlayerList.begin(), clientPlayerList.end(), result.begin());
@@ -1604,7 +1603,7 @@ std::shared_ptr<const cPlayer> cGameGuiController::getActivePlayer() const
 {
 	if (!activeClient) return nullptr;
 
-	const auto& clientPlayerList = activeClient->getPlayerList();
+	const auto& clientPlayerList = activeClient->getModel().getPlayerList();
 
 	auto iter = std::find_if (clientPlayerList.begin(), clientPlayerList.end(), [this] (const std::shared_ptr<cPlayer>& player) { return player->getNr() == activeClient->getActivePlayer().getNr(); });
 
@@ -1628,7 +1627,7 @@ std::shared_ptr<const cTurnTimeClock> cGameGuiController::getTurnTimeClock() con
 //------------------------------------------------------------------------------
 std::shared_ptr<const cGameSettings> cGameGuiController::getGameSettings() const
 {
-	return activeClient ? activeClient->getGameSettings() : nullptr;
+	return activeClient ? activeClient->getModel().getGameSettings() : nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -1640,5 +1639,5 @@ std::shared_ptr<const cCasualtiesTracker> cGameGuiController::getCasualtiesTrack
 //------------------------------------------------------------------------------
 std::shared_ptr<const cMap> cGameGuiController::getDynamicMap() const
 {
-	return activeClient ? activeClient->getMap() : nullptr;
+	return activeClient ? activeClient->getModel().getMap() : nullptr;
 }

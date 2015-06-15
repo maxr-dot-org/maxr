@@ -237,11 +237,9 @@ void sendReadyToStart (const cClient& client)
 	client.sendNetMessage (std::move (message));
 }
 
-void sendChatMessageToServer (const cClient& client, const cPlayer& player, const string& msg)
+void sendChatMessageToServer (const cClient& client, const string& msg)
 {
-	auto message = std::make_unique<cNetMessage> (GAME_EV_CHAT_CLIENT);
-	message->pushString (msg);
-	message->pushChar (player.getNr());
+	auto message = std::make_unique<cNetMessageChat> (msg);
 	client.sendNetMessage (std::move (message));
 }
 

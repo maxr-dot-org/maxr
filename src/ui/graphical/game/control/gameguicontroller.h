@@ -86,8 +86,8 @@ private:
 	std::shared_ptr<cAnimationTimer> animationTimer;
 
 	std::shared_ptr<cGameGui> gameGui;
-	std::shared_ptr<cClient> activeClient;
-	std::vector<std::shared_ptr<cClient>> clients;
+	std::shared_ptr<cClient> activeClient; //TODO: rename -> client
+	std::vector<std::shared_ptr<cClient>> clients; //TODO: remove
 
 	std::map<int, cGameGuiState> playerGameGuiStates;
 
@@ -99,7 +99,7 @@ private:
 
 	void connectGuiStaticCommands();
 
-	void setActiveClient (std::shared_ptr<cClient> client);
+	void setActiveClient (std::shared_ptr<cClient> client); //Todo: set active player. Oder signal active player changed
 
 	void connectClient (cClient& client);
 

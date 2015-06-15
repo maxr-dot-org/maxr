@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/windows/windowgamesettings/windowgamesettings.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 #include "main.h"
 #include "pcx.h"
 #include "ui/graphical/menu/widgets/label.h"

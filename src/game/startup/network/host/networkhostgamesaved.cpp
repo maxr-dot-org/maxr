@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include "game/startup/network/host/networkhostgamesaved.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 #include "ui/graphical/application.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
@@ -31,13 +31,13 @@
 void cNetworkHostGameSaved::start (cApplication& application)
 {
 	server = std::make_unique<cServer> (network);
-	localClient = std::make_shared<cClient> (server.get(), nullptr);
+	//localClient = std::make_shared<cClient> (server.get(), nullptr); //TODO: use new server
 
 	cSavegame savegame (saveGameNumber);
 	if (savegame.load (*server) == false) return; // TODO: error message
 
 	auto staticMap = server->Map->staticMap;
-	localClient->setMap (staticMap);
+//	localClient->setMap (staticMap);
 
 	const auto& serverPlayerList = server->playerList;
 	if (serverPlayerList.empty()) return;
@@ -66,10 +66,10 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	}
 	localClient->setPlayers (players, serverListLocalPlayerIndex);
 
-	if (server->getGameSettings()->getGameType() == eGameSettingsGameType::Turns)
+	/*if (server->getGameSettings()->getGameType() == eGameSettingsGameType::Turns)
 	{
 		sendWaitFor (*server, *server->getActiveTurnPlayer(), nullptr);
-	}
+	}*/
 
 	server->start();
 
@@ -78,7 +78,7 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	// TODO: move that in server
 	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
-		sendGameSettings (*server, *serverPlayerList[i]);
+//		sendGameSettings (*server, *serverPlayerList[i]);
 		sendGameGuiState (*server, server->getPlayerGameGuiState (*serverPlayerList[i]), *serverPlayerList[i]);
 		auto& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size(); ++j)

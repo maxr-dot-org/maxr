@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include "game/startup/local/hotseat/localhotseatgamenew.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 #include "ui/graphical/application.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
@@ -51,8 +51,8 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 	std::vector<cPlayerBasicData> players;
 	for (size_t i = 0; i < playersData.size(); ++i)
 	{
-		clients[i] = std::make_shared<cClient> (server.get(), nullptr);
-		clients[i]->setMap (staticMap);
+		//clients[i] = std::make_shared<cClient> (server.get(), nullptr); //TODO: use new server
+//		clients[i]->setMap (staticMap);
 		clients[i]->setGameSettings (*gameSettings);
 
 		players.push_back (playersData[i].basicData);
@@ -78,9 +78,9 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 		clients[i]->setPlayers (players, i);
 
 		auto& clientPlayer = clients[i]->getActivePlayer();
-		if (gameSettings->getClansEnabled()) clientPlayer.setClan (playersData[i].clan);
+//		if (gameSettings->getClansEnabled()) clientPlayer.setClan (playersData[i].clan);
 
-		applyUnitUpgrades (clientPlayer, playersData[i].unitUpgrades);
+//		applyUnitUpgrades (clientPlayer, playersData[i].unitUpgrades);
 
 		sendClan (*clients[i]);
 		sendLandingUnits (*clients[i], playersData[i].landingUnits);

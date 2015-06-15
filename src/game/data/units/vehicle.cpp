@@ -636,9 +636,8 @@ void cVehicle::calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<i
 //-----------------------------------------------------------------------------
 /** Scans for resources */
 //-----------------------------------------------------------------------------
-void cVehicle::doSurvey (const cServer& server)
+void cVehicle::doSurvey (const cMap& map)
 {
-	const cMap& map = *server.Map;
 	const int minx = std::max (getPosition().x() - 1, 0);
 	const int maxx = std::min (getPosition().x() + 1, map.getSize().x() - 1);
 	const int miny = std::max (getPosition().y() - 1, 0);

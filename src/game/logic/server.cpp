@@ -42,7 +42,7 @@
 #include "settings.h"
 #include "game/logic/upgradecalculator.h"
 #include "game/data/units/vehicle.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 #include "ui/graphical/game/gameguistate.h"
 #include "game/data/report/savedreport.h"
 #include "game/data/report/savedreportsimple.h"
@@ -66,17 +66,17 @@ int CallbackRunServerThread (void* arg)
 }
 
 //------------------------------------------------------------------------------
-cServer::cServer (std::shared_ptr<cTCP> network_) :
-	network (std::move (network_)),
-	gameTimer (std::make_shared<cGameTimerServer>()),
-	serverThread (nullptr),
-	turnClock (std::make_unique<cTurnClock> (1)),
-	turnTimeClock (std::make_unique<cTurnTimeClock> (gameTimer)),
-	lastTurnEnd (0),
-	executingRemainingMovements (false),
-	gameSettings (std::make_unique<cGameSettings> ()),
-	casualtiesTracker (new cCasualtiesTracker()),
-	serverState (SERVER_STATE_INITGAME)
+cServer::cServer(std::shared_ptr<cTCP> network_) :
+network(std::move(network_)),
+gameTimer(std::make_shared<cGameTimerServer>()),
+serverThread(nullptr),
+turnClock(std::make_unique<cTurnClock>(1)),
+turnTimeClock(std::make_unique<cTurnTimeClock>(gameTimer)),
+lastTurnEnd(0),
+executingRemainingMovements(false),
+gameSettings(std::make_unique<cGameSettings>()),
+casualtiesTracker(new cCasualtiesTracker()),
+serverState(SERVER_STATE_INITGAME)
 {
 	bExit = false;
 	openMapDefeat = true;
@@ -88,79 +88,22 @@ cServer::cServer (std::shared_ptr<cTCP> network_) :
 
 	if (!DEDICATED_SERVER)
 	{
-		if (network) network->setMessageReceiver (this);
+		if (network) network->setMessageReceiver(this);
 	}
 
 	gameTimer->maxEventQueueSize = MAX_SERVER_EVENT_COUNTER;
 	gameTimer->start();
 
 	// connect to casualties tracker to send updates about casualties changes
-	signalConnectionManager.connect (casualtiesTracker->casualtyChanged, [this] (const sID unitId, int playerNr)
+	signalConnectionManager.connect(casualtiesTracker->casualtyChanged, [this](const sID unitId, int playerNr)
 	{
 		// TODO: send updated entry only!
-		sendCasualtiesReport (*this, nullptr);
+		sendCasualtiesReport(*this, nullptr);
 	});
 
-	signalConnectionManager.connect (gameSettings->turnEndDeadlineChanged, [this]()
-	{
-		for (size_t i = 0; i < playerList.size(); ++i)
-		{
-			sendGameSettings (*this, *playerList[i]);
-		}
-		if (turnEndDeadline)
-		{
-			turnEndDeadline->changeDeadline (gameSettings->getTurnEndDeadline());
-		}
-	});
-
-	signalConnectionManager.connect (gameSettings->turnEndDeadlineActiveChanged, [this]()
-	{
-		for (size_t i = 0; i < playerList.size(); ++i)
-		{
-			sendGameSettings (*this, *playerList[i]);
-		}
-		if (!gameSettings->isTurnEndDeadlineActive() && turnEndDeadline)
-		{
-			turnTimeClock->removeDeadline (turnEndDeadline);
-			turnEndDeadline = nullptr;
-		}
-		else if (gameSettings->getGameType() != eGameSettingsGameType::Turns && gameSettings->getGameType() != eGameSettingsGameType::HotSeat &&
-				 gameSettings->isTurnEndDeadlineActive() && !turnEndDeadline && !playerEndList.empty())
-		{
-			turnEndDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnEndDeadline());
-			sendTurnEndDeadlineStartTime (*this, turnEndDeadline->getStartGameTime());
-		}
-	});
-
-	signalConnectionManager.connect (gameSettings->turnLimitChanged, [this]()
-	{
-		for (size_t i = 0; i < playerList.size(); ++i)
-		{
-			sendGameSettings (*this, *playerList[i]);
-		}
-		if (turnLimitDeadline)
-		{
-			turnLimitDeadline->changeDeadline (gameSettings->getTurnLimit());
-		}
-	});
-
-	signalConnectionManager.connect (gameSettings->turnLimitActiveChanged, [this]()
-	{
-		for (size_t i = 0; i < playerList.size(); ++i)
-		{
-			sendGameSettings (*this, *playerList[i]);
-		}
-		if (!gameSettings->isTurnLimitActive() && turnLimitDeadline)
-		{
-			turnTimeClock->removeDeadline (turnLimitDeadline);
-			turnLimitDeadline = nullptr;
-		}
-		else if (gameSettings->isTurnLimitActive() && !turnLimitDeadline)
-		{
-			turnLimitDeadline = turnTimeClock->startNewDeadlineFrom (turnTimeClock->getStartGameTime(), gameSettings->getTurnLimit());
-		}
-	});
 }
+	
+
 //------------------------------------------------------------------------------
 cServer::~cServer()
 {
@@ -276,6 +219,7 @@ void cServer::pushEvent (std::unique_ptr<cNetMessage> message)
 {
 	eventQueue.push (std::move (message));
 }
+
 
 //------------------------------------------------------------------------------
 void cServer::sendNetMessage (std::unique_ptr<cNetMessage> message, const cPlayer* player)
@@ -1600,7 +1544,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 			if (StoredVehicle->data.canSurvey)
 			{
 				sendVehicleResources (*this, *StoredVehicle);
-				StoredVehicle->doSurvey (*this);
+				StoredVehicle->doSurvey (*Map);
 			}
 
 			if (StoredVehicle->canLand (*Map))
@@ -1634,7 +1578,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 			if (StoredVehicle->data.canSurvey)
 			{
 				sendVehicleResources (*this, *StoredVehicle);
-				StoredVehicle->doSurvey (*this);
+				StoredVehicle->doSurvey (*Map);
 			}
 			StoredVehicle->InSentryRange (*this);
 		}
@@ -2328,8 +2272,7 @@ void cServer::startNewGame()
 {
 	assert (serverState == SERVER_STATE_INITGAME);
 	// send victory conditions to clients
-	for (size_t i = 0; i != playerList.size(); ++i)
-		sendGameSettings (*this, *playerList[i]);
+
 	// send clan info to clients
 	if (gameSettings->getClansEnabled())
 		sendClansToClients (*this, playerList);
@@ -2355,7 +2298,7 @@ cVehicle& cServer::addVehicle (const cPosition& position, const sID& id, cPlayer
 	if (addedVehicle.data.canSurvey)
 	{
 		sendVehicleResources (*this, addedVehicle);
-		addedVehicle.doSurvey (*this);
+		addedVehicle.doSurvey (*Map);
 	}
 	if (!bInit) addedVehicle.InSentryRange (*this);
 
@@ -2380,7 +2323,7 @@ cBuilding& cServer::addBuilding (const cPosition& position, const sID& id, cPlay
 {
 	// generate the building:
 	cBuilding& addedBuilding = Player->addNewBuilding (position, id, uid ? uid : iNextUnitID);
-	if (addedBuilding.data.canMineMaxRes > 0) addedBuilding.CheckRessourceProd (*this);
+	if (addedBuilding.data.canMineMaxRes > 0) addedBuilding.checkRessourceProd (*Map);
 	if (addedBuilding.isSentryActive()) Player->addSentry (addedBuilding);
 
 	iNextUnitID++;
@@ -2391,7 +2334,7 @@ cBuilding& cServer::addBuilding (const cPosition& position, const sID& id, cPlay
 	sendAddUnit (*this, position, addedBuilding.iID, false, id, *Player, bInit);
 
 	// integrate the building to the base:
-	Player->base.addBuilding (&addedBuilding, this);
+	Player->base.addBuilding (&addedBuilding);
 
 	// if this is a top building, delete connectors, mines and roads
 	if (addedBuilding.data.surfacePosition == sUnitData::SURFACE_POS_GROUND)
@@ -2526,7 +2469,7 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 		sendDeleteUnit (*this, *unit, nullptr);
 
 	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->SubBase != 0)
-		unit->getOwner()->base.deleteBuilding (static_cast<cBuilding*> (unit), this);
+		unit->getOwner()->base.deleteBuilding (static_cast<cBuilding*> (unit));
 
 	if (owner != 0)
 	{
@@ -3715,7 +3658,7 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete, bool withGuiState
 		sendNumEcos (*this, subj, &player);
 	}
 
-	sendGameSettings (*this, player);
+	//sendGameSettings (*this, player);
 
 	// send attackJobs
 	for (const auto& attackJob : AJobs)
@@ -3808,7 +3751,7 @@ void cServer::changeUnitOwner (cVehicle& vehicle, cPlayer& newOwner)
 	if (vehicle.data.canSurvey)
 	{
 		sendVehicleResources (*this, vehicle);
-		vehicle.doSurvey (*this);
+		vehicle.doSurvey (*Map);
 	}
 	vehicle.makeDetection (*this);
 }

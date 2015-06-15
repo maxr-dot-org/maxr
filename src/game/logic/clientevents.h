@@ -94,7 +94,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_SCORE,                  // sends a player's score to a client
 	GAME_EV_NUM_ECOS,               // sends a player's ecosphere count to a client
 	GAME_EV_UNIT_SCORE,             // sends a unit's score to its owner
-	GAME_EV_GAME_SETTINGS,          // the game settings
 	GAME_EV_SELFDESTROY,
 	GAME_EV_END_MOVE_ACTION_SERVER,	// the server has added an end move action to a movejob
 	GAME_EV_CASUALTIES_REPORT,		// sends the casualties stats to a client
@@ -123,7 +122,7 @@ void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, 
 * Generates a event with a chat message and pushes it to the event queue or sends it over TCP/IP if necessary
 *@param sMsg the chat message.
 */
-void sendChatMessageToServer (const cClient& client, const cPlayer& player, const std::string& message);
+void sendChatMessageToServer (const cClient& client, const std::string& message);
 /**
 * Sends an event that the player wants to end this turn
 *@author alzi alias DoctorDeath

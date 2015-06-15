@@ -1082,7 +1082,7 @@ void cPlayer::drawSpecialCircleBig (const cPosition& position, int iRadius, std:
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::addSavedReport (std::unique_ptr<cSavedReport> savedReport)
+void cPlayer::addSavedReport (std::unique_ptr<cSavedReport> savedReport) const
 {
 	if (savedReport == nullptr) return;
 

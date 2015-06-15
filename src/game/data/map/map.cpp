@@ -314,13 +314,13 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	const short sHeight = SDL_ReadLE16 (fpMapFile);
 	Log.write ("SizeY: " + iToStr (sHeight), cLog::eLOG_TYPE_DEBUG);
 	SDL_RWseek (fpMapFile, sWidth * sHeight, SEEK_CUR); // Ignore Mini-Map
-	const int iDataPos = SDL_RWtell (fpMapFile); // Map-Data
+	const Sint64 iDataPos = SDL_RWtell (fpMapFile); // Map-Data
 	SDL_RWseek (fpMapFile, sWidth * sHeight * 2, SEEK_CUR);
 	const int iNumberOfTerrains = SDL_ReadLE16 (fpMapFile); // Read PicCount
 	Log.write ("Number of terrains: " + iToStr (iNumberOfTerrains), cLog::eLOG_TYPE_DEBUG);
-	const int iGraphicsPos = SDL_RWtell (fpMapFile); // Terrain Graphics
-	const int iPalettePos = iGraphicsPos + iNumberOfTerrains * 64 * 64; // Palette
-	const int iInfoPos = iPalettePos + 256 * 3; // Special informations
+	const Sint64 iGraphicsPos = SDL_RWtell (fpMapFile); // Terrain Graphics
+	const Sint64 iPalettePos = iGraphicsPos + iNumberOfTerrains * 64 * 64; // Palette
+	const Sint64 iInfoPos = iPalettePos + 256 * 3; // Special informations
 
 	if (sWidth != sHeight)
 	{
@@ -413,7 +413,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	return true;
 }
 
-/*static*/AutoSurface cStaticMap::loadTerrGraph (SDL_RWops* fpMapFile, int iGraphicsPos, const SDL_Color (&colors)[256], int iNum)
+/*static*/AutoSurface cStaticMap::loadTerrGraph (SDL_RWops* fpMapFile, Sint64 iGraphicsPos, const SDL_Color (&colors)[256], int iNum)
 {
 	// Create new surface and copy palette
 	AutoSurface surface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));

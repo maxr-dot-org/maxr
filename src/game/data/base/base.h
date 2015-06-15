@@ -232,17 +232,16 @@ public:
 	/**
 	* adds a building to the base and updates the subbase structures
 	* @param building the building, that is added to the base
-	* @param server when not null, the resulting subbase values are sent to the client
 	* @author eiko
 	*/
-	void addBuilding (cBuilding* building, cServer* server);
+	void addBuilding (cBuilding* building);
 	/**
 	* deletes a building from the base and updates the subbase structures
 	* @param building the building, that is deleted to the base
 	* @param server when not null, the resulting subbase values are sent to the client
 	* @author eiko
 	*/
-	void deleteBuilding (cBuilding* building, cServer* server);
+	void deleteBuilding (cBuilding* building);
 
 	bool checkTurnEnd (cServer& server);
 

@@ -169,7 +169,7 @@ void cGameTimerClient::handleSyncMessage (cNetMessage& message)
 
 bool cGameTimerClient::nextTickAllowed()
 {
-	if (nextMsgIsNextGameTime)
+	//if (nextMsgIsNextGameTime)
 	{
 		client->disableFreezeMode (FREEZE_WAIT_FOR_SERVER);
 		waitingForServer = 0;
@@ -261,7 +261,7 @@ bool cGameTimerServer::nextTickAllowed (cServer& server)
 
 	int newWaitingForPlayer = -1;
 
-	const auto& playerList = server.playerList;
+	/*const auto& playerList = server.playerList;
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
 		cPlayer& player = *playerList[i];
@@ -276,7 +276,7 @@ bool cGameTimerServer::nextTickAllowed (cServer& server)
 	else if (newWaitingForPlayer == -1 && waitingForPlayer != -1)
 	{
 		server.disableFreezeMode (FREEZE_WAIT_FOR_PLAYER);
-	}
+	}*/
 
 	waitingForPlayer = newWaitingForPlayer;
 
@@ -308,7 +308,7 @@ void cGameTimerServer::run (cServer& server)
 uint32_t calcClientChecksum (const cClient& client)
 {
 	uint32_t crc = 0;
-	const auto& players = client.getPlayerList();
+/*	const auto& players = client.getPlayerList();
 	for (unsigned int i = 0; i < players.size(); i++)
 	{
 		for (const auto& vehicle : players[i]->getVehicles())
@@ -334,7 +334,7 @@ uint32_t calcClientChecksum (const cClient& client)
 			crc = calcCheckSum (building->data.getHitpoints(), crc);
 			crc = calcCheckSum (building->dir, crc);
 		}
-	}
+	}*/
 	return crc;
 }
 
@@ -380,7 +380,7 @@ uint32_t calcServerChecksum (const cServer& server, const cPlayer* player)
 void compareGameData (const cClient& client, const cServer& server)
 {
 #if !defined (NDEBUG)
-	const auto& players = client.getPlayerList();
+	/*const auto& players = client.getPlayerList();
 	for (unsigned int i = 0; i < players.size(); i++)
 	{
 		const auto& clientPlayer = players[i];
@@ -396,7 +396,7 @@ void compareGameData (const cClient& client, const cServer& server)
 			assert (clientVehicle->dir == serverVehicle->dir);
 			assert (clientVehicle->data.getSpeed() == serverVehicle->data.getSpeed());
 		}
-	}
+	} */
 #endif
 }
 

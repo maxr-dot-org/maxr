@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/windows/windownetworklobbyclient/windownetworklobbyclient.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "main.h"
 #include "network.h"

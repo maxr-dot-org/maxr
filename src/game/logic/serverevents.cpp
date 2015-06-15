@@ -31,7 +31,7 @@
 #include "game/logic/server.h"
 #include "game/logic/upgradecalculator.h"
 #include "game/data/units/vehicle.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 #include "ui/graphical/game/gameguistate.h"
 #include "game/data/report/savedreport.h"
 
@@ -457,19 +457,6 @@ void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver)
 
 		server.sendNetMessage (std::move (message), receiver);
 	}
-}
-
-void sendGameSettings (cServer& server, const cPlayer& receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_GAME_SETTINGS);
-
-	const auto& gameSettings = server.getGameSettings();
-
-	if (!gameSettings) return;
-
-	gameSettings->pushInto (*message);
-
-	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------

@@ -20,7 +20,7 @@
 #include <functional>
 
 #include "ui/graphical/menu/windows/windowsingleplayer.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 #include "ui/graphical/menu/windows/windowgamesettings/windowgamesettings.h"
 #include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
 #include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
@@ -40,6 +40,7 @@
 #include "settings.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
+#include "game/logic/server2.h"
 
 #include "game/logic/clientevents.h"
 

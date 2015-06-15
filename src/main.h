@@ -85,6 +85,13 @@ struct sID
 	bool less_vehicleFirst (const sID& ID) const;
 	bool less_buildingFirst (const sID& ID) const;
 
+	template<typename T>
+	void serialize(T& archive)
+	{
+		archive & iFirstPart;
+		archive & iSecondPart;
+	}
+
 public:
 	int iFirstPart;
 	int iSecondPart;

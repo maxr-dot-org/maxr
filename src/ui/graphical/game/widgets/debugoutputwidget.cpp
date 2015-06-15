@@ -139,14 +139,14 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 
 	if (debugPlayers)
 	{
-		font->showText (drawPositionX, drawPositionY, "Players: " + iToStr ((int)client->getPlayerList().size()), FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPositionX, drawPositionY, "Players: " + iToStr ((int)client->model.getPlayerList().size()), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		SDL_Rect rDest = {Sint16 (drawPositionX), Sint16 (drawPositionY), 20, 10};
 		SDL_Rect rSrc = {0, 0, 20, 10};
 		SDL_Rect rDotDest = {Sint16 (drawPositionX - 10), Sint16 (drawPositionY), 10, 10};
 		SDL_Rect rBlackOut = {Sint16 (drawPositionX + 20), Sint16 (drawPositionY), 0, 10};
-		const auto& playerList = client->getPlayerList();
+		const auto& playerList = client->model.getPlayerList();
 		for (size_t i = 0; i != playerList.size(); ++i)
 		{
 			// HACK SHOWFINISHEDPLAYERS
@@ -346,7 +346,7 @@ void cDebugOutputWidget::trace()
 
 	const auto mapPosition = gameMap->getMapTilePosition (mouse->getPosition());
 
-	cMapField* field;
+	const cMapField* field;
 
 	if (debugTraceServer && server)
 	{
@@ -355,8 +355,8 @@ void cDebugOutputWidget::trace()
 	}
 	else
 	{
-		if (!client->getMap()->isValidPosition (mapPosition)) return;
-		field = &client->Map->getField (mapPosition);
+		if (!client->getModel().getMap()->isValidPosition (mapPosition)) return;
+		field = &client->getModel().getMap()->getField (mapPosition);
 	}
 
 	cPosition drawingPosition = getPosition() + cPosition (0, 0);

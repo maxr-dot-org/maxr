@@ -18,15 +18,17 @@
  ***************************************************************************/
 
 #include "game/startup/local/singleplayer/localsingleplayergamenew.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 #include "ui/graphical/application.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
+#include "game/logic/server2.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/units/landingunit.h"
-#include "game/logic/clientevents.h"
+#include "game/logic/clientevents.h" //TODO: remove
+#include "game/logic/action.h"
 
 // TODO: find nice place
 //------------------------------------------------------------------------------
@@ -56,45 +58,29 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 {
 	assert (gameSettings != nullptr);
 
-	server = std::make_unique<cServer> (nullptr);
-	client = std::make_shared<cClient> (server.get(), nullptr);
+	server = std::make_unique<cServer2>();
+	client = std::make_shared<cClient>(server.get(), nullptr, nullptr);
 
-	server->setMap (staticMap);
 	client->setMap (staticMap);
+	server->setMap(staticMap);
 
-	server->setGameSettings (*gameSettings);
 	client->setGameSettings (*gameSettings);
+	server->setGameSettings (*gameSettings);
 
 	auto player = createPlayer();
-
-	server->addPlayer (std::make_unique<cPlayer> (player));
-	//server->changeStateToInitGame ();
-
 	std::vector<cPlayerBasicData> players;
 	players.push_back (player);
 	client->setPlayers (players, 0);
-
-	if (gameSettings->getGameType() == eGameSettingsGameType::Turns)
-	{
-		server->setActiveTurnPlayer (*server->playerList[0]);
-	}
-
-	auto& clientPlayer = client->getActivePlayer();
-	if (playerClan != -1) clientPlayer.setClan (playerClan);
+	server->setPlayers(players);
 
 	server->start();
 
-	applyUnitUpgrades (clientPlayer, unitUpgrades);
-
-	sendClan (*client);
-	sendLandingUnits (*client, landingUnits);
-	sendUnitUpgrades (*client);
-
-	sendLandingCoords (*client, landingPosition);
-
-	sendReadyToStart (*client);
-
-	server->startTurnTimers();
+	auto action = std::make_unique<cActionInitNewGame>();
+	action->clan = playerClan;
+	action->landingUnits = landingUnits;
+	action->landingPosition = landingPosition;
+	action->unitUpgrades = unitUpgrades;
+	client->sendNetMessage(std::move(action));
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
@@ -102,7 +88,7 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 
 	cGameGuiState playerGameGuiState;
 	playerGameGuiState.setMapPosition (landingPosition);
-	gameGuiController->addPlayerGameGuiState (clientPlayer, std::move (playerGameGuiState));
+	gameGuiController->addPlayerGameGuiState (client->getActivePlayer(), std::move (playerGameGuiState));
 
 	gameGuiController->start();
 

@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include "game/startup/local/singleplayer/localsingleplayergamesaved.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 #include "ui/graphical/application.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
@@ -30,8 +30,8 @@
 //------------------------------------------------------------------------------
 void cLocalSingleplayerGameSaved::start (cApplication& application)
 {
-	server = std::make_unique<cServer> (nullptr);
-	client = std::make_shared<cClient> (server.get(), nullptr);
+	/*server = std::make_unique<cServer> (nullptr);
+	//client = std::make_shared<cClient> (server.get(), nullptr); //TODO: use new server
 
 	cSavegame savegame (saveGameNumber);
 	if (savegame.load (*server) == false) return;
@@ -64,7 +64,7 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 	// TODO: move that in server
 	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
-		sendGameSettings (*server, *serverPlayerList[i]);
+		//sendGameSettings (*server, *serverPlayerList[i]);
 		sendGameGuiState (*server, server->getPlayerGameGuiState (*serverPlayerList[i]), *serverPlayerList[i]);
 		auto& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size(); ++j)
@@ -94,6 +94,7 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 	application.addRunnable (shared_from_this());
 
 	signalConnectionManager.connect (gameGuiController->terminated, [&]() { terminate = true; });
+	*/
 }
 
 void cLocalSingleplayerGameSaved::setSaveGameNumber (int saveGameNumber_)

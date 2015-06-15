@@ -30,7 +30,7 @@
 #include "settings.h"
 #include "game/logic/upgradecalculator.h"
 #include "game/data/units/vehicle.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 #include "ui/graphical/game/gameguistate.h"
 #include "utility/tounderlyingtype.h"
 #include "game/data/report/savedreport.h"
@@ -469,9 +469,9 @@ void cSavegame::loadGameInfo (cServer& server)
 
 	server.turnClock->setTurn (gameInfoNode->FirstChildElement ("Turn")->IntAttribute ("num"));
 
-	*server.gameSettings = loadGameSettings();
+	//server.getModel().gameSettings = loadGameSettings();
 
-	if (server.gameSettings->getGameType() == eGameSettingsGameType::Turns)
+	/*if (server.gameSettings->getGameType() == eGameSettingsGameType::Turns)
 	{
 		XMLElement* const element = gameInfoNode->FirstChildElement ("PlayTurns");
 		server.activeTurnPlayer = &server.getPlayerFromNumber (element->IntAttribute ("activeplayer"));
@@ -488,7 +488,7 @@ void cSavegame::loadGameInfo (cServer& server)
 		{
 			server.activeTurnPlayer = server.playerList[0].get();
 		}
-	}
+	}*/
 }
 
 //--------------------------------------------------------------------------

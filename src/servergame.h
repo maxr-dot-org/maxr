@@ -26,7 +26,7 @@
 #include <memory>
 #include "utility/thread/concurrentqueue.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 
 class cNetMessage;
 class cPlayer;

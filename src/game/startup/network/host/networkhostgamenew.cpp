@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include "game/startup/network/host/networkhostgamenew.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 #include "ui/graphical/application.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
@@ -40,7 +40,7 @@ void cNetworkHostGameNew::start (cApplication& application)
 	assert (gameSettings != nullptr);
 
 	server = std::make_unique<cServer> (network);
-	localClient = std::make_shared<cClient> (server.get(), nullptr);
+	//localClient = std::make_shared<cClient> (server.get(), nullptr); //TODO: new server
 
 	for (size_t i = 0; i < players.size(); ++i)
 	{
@@ -54,17 +54,17 @@ void cNetworkHostGameNew::start (cApplication& application)
 	}
 
 	server->setMap (staticMap);
-	localClient->setMap (staticMap);
+//	localClient->setMap (staticMap);
 
 	server->setGameSettings (*gameSettings);
 	localClient->setGameSettings (*gameSettings);
 
 	auto& clientPlayer = localClient->getActivePlayer();
-	if (localPlayerClan != -1) clientPlayer.setClan (localPlayerClan);
+//	if (localPlayerClan != -1) clientPlayer.setClan (localPlayerClan);
 
 	server->start();
 
-	applyUnitUpgrades (clientPlayer, localPlayerUnitUpgrades);
+//	applyUnitUpgrades (clientPlayer, localPlayerUnitUpgrades);
 
 	sendClan (*localClient);
 	sendLandingUnits (*localClient, localPlayerLandingUnits);

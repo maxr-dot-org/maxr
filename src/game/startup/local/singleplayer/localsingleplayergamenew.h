@@ -67,7 +67,6 @@ private:
 	std::shared_ptr<cGameSettings> gameSettings;
 
 	int playerClan;
-
 	std::vector<sLandingUnit> landingUnits;
 	std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades;
 	cPosition landingPosition;

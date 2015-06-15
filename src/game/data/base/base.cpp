@@ -1149,7 +1149,7 @@ sSubBase* cBase::checkNeighbour (const cPosition& position, const cBuilding& bui
 	return nullptr;
 }
 
-void cBase::addBuilding (cBuilding* building, cServer* server)
+void cBase::addBuilding (cBuilding* building)
 {
 	if (!building->data.connectsToBase) return;
 	std::vector<sSubBase*> NeighbourList;
@@ -1187,8 +1187,6 @@ void cBase::addBuilding (cBuilding* building, cServer* server)
 		NewSubBase->addBuilding (building);
 		SubBases.push_back (NewSubBase);
 
-		if (server) sendSubbaseValues (*server, *NewSubBase, *NewSubBase->owner);
-
 		return;
 	}
 
@@ -1207,10 +1205,9 @@ void cBase::addBuilding (cBuilding* building, cServer* server)
 		delete SubBase;
 	}
 	NeighbourList.clear();
-	if (server) sendSubbaseValues (*server, *firstNeighbour, *building->getOwner());
 }
 
-void cBase::deleteBuilding (cBuilding* building, cServer* server)
+void cBase::deleteBuilding (cBuilding* building)
 {
 	if (!building->data.connectsToBase) return;
 	sSubBase* sb = building->SubBase;
@@ -1232,7 +1229,7 @@ void cBase::deleteBuilding (cBuilding* building, cServer* server)
 	{
 		cBuilding* n = sb->buildings[i];
 		if (n == building) continue;
-		addBuilding (n, nullptr);
+		addBuilding (n);
 	}
 
 	//generate list, with the new subbases
@@ -1265,15 +1262,6 @@ void cBase::deleteBuilding (cBuilding* building, cServer* server)
 
 	if (building->isUnitWorking() && building->data.canResearch)
 		building->getOwner()->stopAResearch (building->getResearchArea());
-
-	if (server)
-	{
-		// send subbase values to client
-		for (size_t i = 0; i != newSubBases.size(); ++i)
-		{
-			sendSubbaseValues (*server, *newSubBases[i], *building->getOwner());
-		}
-	}
 
 	delete sb;
 }

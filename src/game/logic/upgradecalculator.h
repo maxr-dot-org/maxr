@@ -347,6 +347,18 @@ struct sUnitUpgrade
 	eUpgradeTypes getType() const { return type; }
 	int getNextPrice() const { return nextPrice; }
 	int getPurchased() const { return purchased; }
+
+
+	template<typename T>
+	void serialize(T& archive)
+	{
+		archive & nextPrice;
+		archive & purchased;
+		archive & curValue;
+		archive & startValue;
+		archive & type;
+	}
+
 private:
 	friend class cUnitUpgrade;
 	/** what will the next upgrade cost */
@@ -372,6 +384,13 @@ public:
 	bool hasBeenPurchased() const;
 	int getValueOrDefault (sUnitUpgrade::eUpgradeTypes upgradeType, int defaultValue) const;
 	void updateUnitData (sUnitData& data) const;
+
+	template<typename T>
+	void serialize(T& archive)
+	{
+		for (int i = 0; i < 8; i++)
+			archive & upgrades[i];
+	}
 public:
 	sUnitUpgrade upgrades[8];
 };
