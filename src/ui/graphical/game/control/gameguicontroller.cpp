@@ -690,6 +690,10 @@ void cGameGuiController::connectClient (cClient& client)
 			}
 			else setActiveClient (nullptr);
 		}
+		else
+		{
+			gameGui->getHud().lockEndButton();
+		}
 	});
 
 	clientSignalConnectionManager.connect (client.freezeModeChanged, [&] (eFreezeMode mode)

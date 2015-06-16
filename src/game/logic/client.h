@@ -365,8 +365,6 @@ public:
 	/** List with all active movejobs */
 	std::vector<cClientMoveJob*> ActiveMJobs;
 
-	/** true if the turn should be end after all movejobs have been finished */
-	bool bWantToEnd;
 };
 
 #endif // game_logic_clientH

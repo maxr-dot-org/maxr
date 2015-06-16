@@ -80,7 +80,6 @@ cClient::cClient (cServer* server_, std::shared_ptr<cTCP> network_) :
 	if (server) server->addLocalClient (*this);
 	else network->setMessageReceiver (this);
 	bDefeated = false;
-	bWantToEnd = false;
 
 	gameTimer->start();
 
@@ -464,9 +463,8 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 	assert (message.iType == GAME_EV_MAKE_TURNEND);
 
 	turnClock->increaseTurn();
-	bWantToEnd = false;
 	ActivePlayer->clearDone();
-	Log.write ("######### Round " + iToStr (turnClock->getTurn()) + " ###########", cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("######### Turn " + iToStr (turnClock->getTurn()) + " ###########", cLog::eLOG_TYPE_NET_DEBUG);
 	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{
 		getPlayerList() [i]->setHasFinishedTurn (false);
@@ -1757,7 +1755,6 @@ void cClient::deleteUnit (cUnit* unit)
 void cClient::handleEnd()
 {
 	if (isFreezed()) return;
-	bWantToEnd = true;
 	sendWantToEndTurn (*this);
 }
 
