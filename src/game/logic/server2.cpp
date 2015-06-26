@@ -21,6 +21,7 @@
 
 #include "server2.h"
 #include "client.h"
+#include "action.h"
 
 //------------------------------------------------------------------------------
 cServer2::cServer2() :
@@ -128,22 +129,16 @@ void cServer2::run()
 		{
 			switch (message2->getType())
 			{
-			case cNetMessage2::CHAT:
-			{
-				//teste serialisierung
-				cArchiveIn serializer;
-				message2->serialize(serializer);
-
-				//teste deserialisierung
-				cArchiveOut deserializer(serializer.data(), serializer.length());
-				std::unique_ptr<cNetMessage2> message3 = cNetMessage2::createFromBuffer(deserializer);
-				sendMessageToClients(std::move(message3));
-			}
+			case cNetMessage2::ACTION:
+				{
+					cAction* action = static_cast<cAction*>(message2.get());
+					action->execute(model);
+				}
 				break;
 			default:
-				sendMessageToClients(std::move(message2));
 				break;
 			}
+			sendMessageToClients(std::move(message2));
 		}
 	}
 }
