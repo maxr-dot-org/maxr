@@ -23,6 +23,7 @@
 #include "units/vehicle.h"
 #include "units/building.h"
 #include "game/logic/movejobs.h"
+#include "utility/files.h"
 
 //------------------------------------------------------------------------------
 cModel::cModel() :
@@ -67,6 +68,20 @@ cModel::cModel() :
 		}
 	}); */
 };
+//------------------------------------------------------------------------------
+void cModel::runJobs(const cGameTimer& timer)
+{
+	//TODO
+}
+//------------------------------------------------------------------------------
+uint32_t cModel::calcChecksum() const
+{
+	uint32_t crc = 0;
+	//for (auto : map->ress)
+	//crc = calcChecksum(map->resourcesToString)
+
+	return crc;
+}
 //------------------------------------------------------------------------------
 void cModel::setGameSettings(const cGameSettings& gameSettings_)
 {

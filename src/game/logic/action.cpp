@@ -27,17 +27,18 @@
 #include "game/data/units/building.h"
 
 
-void cActionInitNewGame::execute(cModel& model)
+void cActionInitNewGame::execute(cModel& model) const
 {
 	//TODO: clan
 	//TODO: upgrades
 	//TODO: place ressources
 	//TODO: copy credits
+	//TODO: delete all units
 	makeLanding(landingPosition, *model.getPlayer(playerNr), landingUnits, model);
 }
 
 //------------------------------------------------------------------------------
-void cActionInitNewGame::makeLanding(const cPosition& landingPosition, cPlayer& player, const std::vector<sLandingUnit>& landingUnits, cModel& model)
+void cActionInitNewGame::makeLanding(const cPosition& landingPosition, cPlayer& player, const std::vector<sLandingUnit>& landingUnits, cModel& model) const
 {
 	cMap& map = *model.getMap();
 
@@ -79,7 +80,7 @@ void cActionInitNewGame::makeLanding(const cPosition& landingPosition, cPlayer& 
 	}
 }
 //------------------------------------------------------------------------------
-cVehicle* cActionInitNewGame::landVehicle(const cPosition& landingPosition, int iWidth, int iHeight, const sUnitData& unitData, cPlayer& player, cModel& model)
+cVehicle* cActionInitNewGame::landVehicle(const cPosition& landingPosition, int iWidth, int iHeight, const sUnitData& unitData, cPlayer& player, cModel& model) const
 {
 	for (int offY = -iHeight / 2; offY < iHeight / 2; ++offY)
 	{

@@ -74,6 +74,7 @@ public:
 	~cClient();
 
 	const cModel& getModel() const { return model; };
+	void runModel() { model.runJobs(*gameTimer); };
 
 	const cPlayer& getActivePlayer() const { return *activePlayer; }
 
@@ -81,10 +82,8 @@ public:
 	void setMap(std::shared_ptr<cStaticMap> staticMap);
 	void setPlayers(const std::vector<cPlayerBasicData>& splayers, size_t activePlayerIndex);
 
-	
-	// Return local server if any.
-	// TODO: should be const cServer*
-	cServer* getServer() const { return server; }
+	unsigned int getNetMessageQueueSize() const { return eventQueue.safe_size(); };
+	const cServer2* getServer() const { return server2; }
 	virtual void pushEvent (std::unique_ptr<cNetMessage> message) MAXR_OVERRIDE_FUNCTION;
 	void pushMessage(std::unique_ptr<cNetMessage2> message);
 

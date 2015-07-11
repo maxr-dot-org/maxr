@@ -44,7 +44,7 @@ public:
 	virtual void serialize(cArchiveIn& archive) { serializeThis(archive); }
 	virtual void serialize(cArchiveOut& archive) { serializeThis(archive); }
 
-	virtual void execute(cModel& model) = NULL;
+	virtual void execute(cModel& model) const = NULL;
 protected:
 	cAction(eActiontype type) : cNetMessage2(ACTION), type(type){};
 private:
@@ -73,7 +73,7 @@ public:
 	virtual void serialize(cArchiveIn& archive) { serializeThis(archive); }
 	virtual void serialize(cArchiveOut& archive) { serializeThis(archive); }
 
-	virtual void execute(cModel& model) override;
+	virtual void execute(cModel& model) const override;
 
 
 	std::vector<sLandingUnit> landingUnits;
@@ -81,8 +81,8 @@ public:
 	std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades;
 	cPosition landingPosition;
 private:
-	void makeLanding(const cPosition& landingPosition, cPlayer& player, const std::vector<sLandingUnit>& landingUnits, cModel& model);
-	cVehicle* landVehicle(const cPosition& landingPosition, int iWidth, int iHeight, const sUnitData& unitData, cPlayer& player, cModel& model);
+	void makeLanding(const cPosition& landingPosition, cPlayer& player, const std::vector<sLandingUnit>& landingUnits, cModel& model) const;
+	cVehicle* landVehicle(const cPosition& landingPosition, int iWidth, int iHeight, const sUnitData& unitData, cPlayer& player, cModel& model) const;
 };
 
 

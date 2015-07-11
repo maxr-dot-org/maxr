@@ -24,6 +24,7 @@
 
 #include "maxrconfig.h"
 #include "utility/serializationarchive.h"
+#include "game/logic/gametimer.h"
 
 class cModel;
 
@@ -32,7 +33,8 @@ class cNetMessage2
 public:
 	enum eNetMessageType {
 		ACTION, /** the set of actions a client (AI or player) can trigger to influence the game */
-		SYNC,
+		GAMETIME_SYNC_SERVER,
+		GAMETIME_SYNC_CLIENT,
 		PLAYERSTATE,
 		CHAT //TODO: action?
 	};
@@ -58,11 +60,10 @@ protected:
 	cNetMessage2(eNetMessageType type) : type(type), playerNr(-1) {};
 private:
 	cNetMessage2(const cNetMessage2&) MAXR_DELETE_FUNCTION;
-	cNetMessage2& operator=(const cNetMessage2&)MAXR_DELETE_FUNCTION;
+	cNetMessage2& operator=(const cNetMessage2&) MAXR_DELETE_FUNCTION;
 	eNetMessageType type;
 };
 
-//TODO: alles an die richtige stelle verschieben
 class cNetMessageChat : public cNetMessage2 
 {
 public:
@@ -81,6 +82,56 @@ public:
 	std::string message;
 };
 
+class cNetMessageSyncServer : public cNetMessage2
+{
+public:
+	cNetMessageSyncServer() : cNetMessage2(GAMETIME_SYNC_SERVER) {};
+
+	template<typename T>
+	void serializeThis(T& archive)
+	{
+		cNetMessage2::serialize(archive);
+		archive & gameTime;
+		archive & checksum;
+		archive & ping;
+	}
+	virtual void serialize(cArchiveIn& archive) { serializeThis(archive); }
+	virtual void serialize(cArchiveOut& archive) { serializeThis(archive); }
+
+	unsigned int gameTime;
+	unsigned int checksum;
+	unsigned int ping;
+};
+
+class cNetMessageSyncClient : public cNetMessage2
+{
+public:
+	cNetMessageSyncClient() : cNetMessage2(GAMETIME_SYNC_CLIENT) {};
+
+	template<typename T>
+	void serializeThis(T& archive)
+	{
+		cNetMessage2::serialize(archive);
+		archive & gameTime;
+		archive & crcOK;
+		archive & timeBuffer;
+		archive & ticksPerFrame;
+		archive & queueSize;
+		archive & eventCounter;
+	}
+	virtual void serialize(cArchiveIn& archive) { serializeThis(archive); }
+	virtual void serialize(cArchiveOut& archive) { serializeThis(archive); }
+
+
+	unsigned int gameTime;
+
+	//send debug data to server
+	bool crcOK;
+	unsigned int timeBuffer;
+	unsigned int ticksPerFrame;
+	unsigned int queueSize;
+	unsigned int eventCounter;
+};
 
 
 #endif //netmessage2H

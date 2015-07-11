@@ -1181,7 +1181,6 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 		else if (command.compare ("/ajobs off") == 0) { gameGui->getDebugOutput().setDebugAjobs (false); }
 		else if (command.compare ("/players on") == 0) { gameGui->getDebugOutput().setDebugPlayers (true); }
 		else if (command.compare ("/players off") == 0) { gameGui->getDebugOutput().setDebugPlayers (false); }
-		else if (command.compare ("/singlestep") == 0) { cGameTimer::syncDebugSingleStep = !cGameTimer::syncDebugSingleStep; }
 		else if (command.compare (0, 12, "/cache size ") == 0)
 		{
 			int size = atoi (command.substr (12, command.length()).c_str());
@@ -1246,7 +1245,7 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 			}
 			else if (command.compare (0, 9, "/credits ") == 0)
 			{
-				if (!server)
+				/*if (!server)
 				{
 					gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
 					return;
@@ -1272,10 +1271,11 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 				player->setCredits (credits);
 
 				sendCredits (*server, credits, *player);
+				*/
 			}
 			else if (command.compare (0, 12, "/disconnect ") == 0)
 			{
-				if (!server)
+/*				if (!server)
 				{
 					gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
 					return;
@@ -1298,10 +1298,11 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 				auto message = std::make_unique<cNetMessage> (TCP_CLOSE);
 				message->pushInt16 (player->getSocketNum());
 				server->pushEvent (std::move (message));
+*/
 			}
 			else if (command.compare (0, 8, "/turnend") == 0)
 			{
-				if (!server)
+/*				if (!server)
 				{
 					gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
 					return;
@@ -1330,10 +1331,11 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 					server->setTurnEndDeadlineActive (false);
 				}
 				Log.write ("Deadline changed to " + iToStr (i), cLog::eLOG_TYPE_INFO);
+*/
 			}
 			else if (command.compare (0, 10, "/turnlimit") == 0)
 			{
-				if (!server)
+				/*if (!server)
 				{
 					gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
 					return;
@@ -1362,9 +1364,11 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 					server->setTurnLimitActive (false);
 				}
 				Log.write ("Limit changed to " + iToStr (i), cLog::eLOG_TYPE_INFO);
+				*/
 			}
 			else if (command.compare (0, 7, "/resync") == 0)
 			{
+				/*
 				if (command.length() > 7)
 				{
 					if (!server)
@@ -1395,6 +1399,7 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 						sendRequestResync (*activeClient, activeClient->getActivePlayer().getNr(), false);
 					}
 				}
+				*/
 			}
 			else if (command.compare (0, 5, "/mark") == 0)
 			{
@@ -1413,6 +1418,7 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 			}
 			else if (command.compare (0, 8, "/fog off") == 0)
 			{
+				/*
 				if (!server)
 				{
 					gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
@@ -1433,6 +1439,7 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 					serverPlayer->revealMap();
 					sendRevealMap (*server, *serverPlayer);
 				}
+				*/
 			}
 			else if (command.compare ("/survey") == 0)
 			{
@@ -1446,16 +1453,18 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 			}
 			else if (command.compare (0, 6, "/pause") == 0)
 			{
-				if (!server)
+				/*if (!server)
 				{
 					gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
 					return;
 				}
 				// FIXME: do not do changes on server data that are not synchronized with the server thread!
 				server->enableFreezeMode (FREEZE_PAUSE);
+				*/
 			}
 			else if (command.compare (0, 7, "/resume") == 0)
 			{
+				/*
 				if (!server)
 				{
 					gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
@@ -1463,10 +1472,11 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 				}
 				// FIXME: do not do changes on server data that are not synchronized with the server thread!
 				server->disableFreezeMode (FREEZE_PAUSE);
+				*/
 			}
 			if (server)
 			{
-				sendSavedReport (*server, cSavedReportHostCommand (command), nullptr);
+				//sendSavedReport (*server, cSavedReportHostCommand (command), nullptr);
 			}
 		}
 	}

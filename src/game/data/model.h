@@ -36,11 +36,16 @@ class cVehicle;
 struct sID;
 class cPosition;
 class cUnit;
+class cGameTimer;
 
 class cModel
 {
+	friend class cDebugOutputWidget;
 public:
 	cModel();
+
+	void runJobs(const cGameTimer& timer);
+	uint32_t calcChecksum() const;
 
 	std::shared_ptr<const cGameSettings> getGameSettings() const { return gameSettings; };
 	std::shared_ptr<cGameSettings> getGameSettings() { return gameSettings; };

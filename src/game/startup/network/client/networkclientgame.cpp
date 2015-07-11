@@ -29,7 +29,7 @@ cNetworkClientGame::~cNetworkClientGame()
 //------------------------------------------------------------------------------
 void cNetworkClientGame::run()
 {
-	if (localClient) localClient->getGameTimer()->run();
+	if (localClient) localClient->getGameTimer()->run(*localClient);
 }
 
 //------------------------------------------------------------------------------

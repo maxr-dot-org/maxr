@@ -35,6 +35,7 @@ class cPlayerBasicData;
 //TODO: network einbinden
 class cServer2
 {
+	friend class cDebugOutputWidget;
 public:
 
 	explicit cServer2();
@@ -42,7 +43,7 @@ public:
 
 	void pushMessage(std::unique_ptr<cNetMessage2> message);
 
-	void sendMessageToClients(std::unique_ptr<cNetMessage2> message) const;
+	void sendMessageToClients(std::unique_ptr<cNetMessage2> message, int playerNr = -1) const;
 
 	void start();
 	void stop();
@@ -51,6 +52,7 @@ public:
 	void setGameSettings(const cGameSettings& gameSettings);
 	void setMap(std::shared_ptr<cStaticMap> staticMap);
 	void setPlayers(const std::vector<cPlayerBasicData>& splayers);
+
 private:
 	cModel model;
 	//std::vector<cPlayerConnectionState> playerConnectionStates;

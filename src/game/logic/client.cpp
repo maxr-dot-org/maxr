@@ -78,7 +78,6 @@ cClient::cClient (cServer2* server2, cServer* server, std::shared_ptr<cTCP> netw
 {
 	assert (server2 != nullptr || network != nullptr);
 
-	gameTimer->setClient (this);
 	if (server2) server2->setLocalClient(this);
 	else network->setMessageReceiver (this);
 	bDefeated = false;
@@ -127,8 +126,6 @@ void cClient::setPlayers (const std::vector<cPlayerBasicData>& splayers, size_t 
 	activePlayer = model.getPlayer(activePlayerIndex);
 }
 
-
-
 /*virtual*/ void cClient::pushEvent (std::unique_ptr<cNetMessage> message)
 {
 	if (message->iType == NET_GAME_TIME_SERVER)
@@ -147,17 +144,14 @@ void cClient::setPlayers (const std::vector<cPlayerBasicData>& splayers, size_t 
 
 void cClient::pushMessage(std::unique_ptr<cNetMessage2> message)
 {
-	//if (message->iType == NET_GAME_TIME_SERVER)
-	//{
-	//	// this is a preview for the client to know
-	//	// how many sync messages are in queue
-	//	// used to detect a growing lag behind the server time
-	//	message->popInt32();
-	//	unsigned int receivedTime = message->popInt32();
-	//	message->rewind();
-
-	//	gameTimer->setReceivedTime(receivedTime);
-	//}
+	if (message->getType() == cNetMessage2::GAMETIME_SYNC_SERVER)
+	{
+		// This is a preview for the client to know
+		// how many sync messages are in queue.
+		// Used to detect a growing lag behind the server time
+		const cNetMessageSyncServer* syncMessage = static_cast<const cNetMessageSyncServer*>(message.get());
+		gameTimer->setReceivedTime(syncMessage->gameTime);
+	}
 	eventQueue2.push(std::move(message));
 }
 
@@ -1516,37 +1510,34 @@ void cClient::HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message)
 
 void cClient::handleNetMessages()
 {
-	if (gameTimer->nextMsgIsNextGameTime) return;
-
-	std::unique_ptr<cNetMessage> message;
-	while (eventQueue.try_pop (message))
+	std::unique_ptr<cNetMessage2> message;
+	while (eventQueue2.try_pop(message))
 	{
-		handleNetMessage (*message);
-		if (gameTimer->nextMsgIsNextGameTime) break;
-	}
-
-	std::unique_ptr<cNetMessage2> message2;
-	while (eventQueue2.try_pop(message2))
-	{
-		switch (message2->getType())
+		switch (message->getType())
 		{
 		case cNetMessage2::CHAT:
 			{
 				//TODO: was passiert mit chat auf dem Server?
-				cNetMessageChat* chatMessage = static_cast<cNetMessageChat*>(message2.get());
+				cNetMessageChat* chatMessage = static_cast<cNetMessageChat*>(message.get());
 				activePlayer->addSavedReport(std::make_unique<cSavedReportChat>(model.getPlayer(chatMessage->playerNr)->getName(), chatMessage->message));
 			}
 			break;
 		case cNetMessage2::ACTION:
 			{
-				cAction* action = static_cast<cAction*>(message2.get());
+				cAction* action = static_cast<cAction*>(message.get());
 				action->execute(model);
+			}
+			break;
+		case cNetMessage2::GAMETIME_SYNC_SERVER:
+			{
+				cNetMessageSyncServer* syncMessage = static_cast<cNetMessageSyncServer*>(message.get());
+				gameTimer->handleSyncMessage(*syncMessage);
+				return; //stop processing messages after receiving a sync message. Gametime needs to be increased before handling the next message.
 			}
 			break;
 		default:
 			break;
 		}
-		if (gameTimer->nextMsgIsNextGameTime) break;
 	}
 
 }
@@ -1629,7 +1620,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_END_MOVE_ACTION_SERVER: HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (message); break;
 		case GAME_EV_SET_GAME_TIME: HandleNetMessage_GAME_EV_SET_GAME_TIME (message); break;
 		case GAME_EV_REVEAL_MAP: HandleNetMessage_GAME_EV_REVEAL_MAP (message); break;
-		case NET_GAME_TIME_SERVER: gameTimer->handleSyncMessage (message); break;
 
 		default:
 			Log.write ("Client: Can not handle message type " + message.getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
@@ -1746,7 +1736,7 @@ void cClient::handleMoveJobs()
 		else if (Vehicle->MoveJobActive)
 		{
 			// move vehicle
-			if (gameTimer->timer10ms)
+//			if (gameTimer->timer10ms)
 			{
 				MoveJob->moveVehicle();
 			}

@@ -142,7 +142,7 @@ void cServerGame::run()
 		// don't do anything if games hasn't been started yet!
 		if (server && server->serverState == SERVER_STATE_INGAME)
 		{
-			server->gameTimer->run (*server);
+//			server->gameTimer->run (*server);
 
 			if (shouldSave)
 			{

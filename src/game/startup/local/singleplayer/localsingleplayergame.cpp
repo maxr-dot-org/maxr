@@ -37,7 +37,7 @@ cLocalSingleplayerGame::~cLocalSingleplayerGame()
 //------------------------------------------------------------------------------
 void cLocalSingleplayerGame::run()
 {
-	if (client) client->getGameTimer()->run();
+	if (client) client->getGameTimer()->run(*client);
 }
 
 //------------------------------------------------------------------------------

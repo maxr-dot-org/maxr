@@ -19,19 +19,16 @@
 
 #include <SDL.h>
 #include "game/logic/gametimer.h"
-
 #include "game/logic/client.h"
-#include "game/logic/clientevents.h"
 #include "utility/listhelpers.h"
 #include "utility/files.h"
 #include "utility/log.h"
-#include "netmessage.h"
+#include "netmessage2.h"
 #include "game/data/player/player.h"
-#include "game/logic/server.h"
+#include "game/logic/server2.h"
+#include "game/data/model.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
-
-bool cGameTimer::syncDebugSingleStep = false;
 
 Uint32 cGameTimer::gameTimerCallback (Uint32 interval, void* arg)
 {
@@ -43,12 +40,10 @@ cGameTimer::cGameTimer() :
 	mutex()
 {
 	gameTime = 0;
-	lastTimerCall = 0;
 	eventCounter = 0;
 
 	maxEventQueueSize = -1;
 
-	timer10ms = false;
 	timer50ms = false;
 	timer100ms = false;
 
@@ -103,129 +98,166 @@ bool cGameTimer::popEvent()
 
 void cGameTimer::handleTimer()
 {
-	timer10ms  = false;
-	timer50ms  = false;
-	timer100ms = false;
-	if (gameTime != lastTimerCall)
+	timer50ms  = (gameTime %  5) != 0;
+	timer100ms = (gameTime % 10) != 0;
+}
+
+void cGameTimerServer::setNumberOfPlayers(unsigned int players)
+{
+	receivedTime.resize(players);
+	clientDebugData.resize(players);
+}
+
+void cGameTimerServer::handleSyncMessage(const cNetMessageSyncClient& message)
+{
+	int playerNr = message.playerNr;
+	receivedTime[playerNr] = message.gameTime;
+
+	//save debug data from clients
+	clientDebugData[playerNr].crcOK = message.crcOK;
+	const float filter = 0.1F;
+	clientDebugData[playerNr].eventCounter  = (1-filter)*clientDebugData[playerNr].eventCounter  + filter*message.eventCounter;
+	clientDebugData[playerNr].queueSize     = (1-filter)*clientDebugData[playerNr].queueSize     + filter*message.queueSize;
+	clientDebugData[playerNr].ticksPerFrame = (1-filter)*clientDebugData[playerNr].ticksPerFrame + filter*message.ticksPerFrame;
+	clientDebugData[playerNr].timeBuffer    = (1-filter)*clientDebugData[playerNr].timeBuffer    + filter*message.timeBuffer;
+	clientDebugData[playerNr].ping          = (1-filter)*clientDebugData[playerNr].ping          + filter*10*(gameTime - message.gameTime);
+}
+
+void cGameTimerServer::checkPlayersResponding(const std::vector<std::shared_ptr<cPlayer>>& playerList, cServer2& server)
+{
+	for (auto player : playerList)
 	{
-		lastTimerCall = gameTime;
-		timer10ms  = true;
-		if (gameTime %  5 == 0) timer50ms  = true;
-		if (gameTime % 10 == 0) timer100ms = true;
+		//TODO: playerconnection manager
 	}
 }
 
-
-void cGameTimer::setReceivedTime (unsigned int time, unsigned int nr)
+void cGameTimerServer::run(cModel& model, cServer2& server)
 {
-	cLockGuard<cMutex> lock (mutex);
-
-	while (receivedTime.size() <= nr)
-		receivedTime.push_back (0);
-
-	receivedTime[nr] = time;
-}
-
-unsigned int cGameTimer::getReceivedTime (unsigned int nr)
-{
-	cLockGuard<cMutex> lock (mutex);
-
-	if (receivedTime.size() <= nr)
-		return 0;
-
-	return receivedTime[nr];
-}
-
-cGameTimerClient::cGameTimerClient() :
-	cGameTimer(),
-	client (0),
-	remoteChecksum (0),
-	localChecksum (0),
-	waitingForServer (0),
-	debugRemoteChecksum (0),
-	gameTimeAdjustment (0),
-	nextMsgIsNextGameTime (false)
-{
-}
-
-void cGameTimerClient::setClient (cClient* client_)
-{
-	client = client_;
-}
-
-void cGameTimerClient::handleSyncMessage (cNetMessage& message)
-{
-	assert (message.iType == NET_GAME_TIME_SERVER);
-
-	remoteChecksum = message.popInt32();
-
-	const unsigned int newSyncTime = message.popInt32();
-	if (newSyncTime != gameTime + 1)
-		Log.write ("Game Synchonisation Error: Received out of order sync message", cLog::eLOG_TYPE_NET_ERROR);
-
-	nextMsgIsNextGameTime = true;
-}
-
-
-bool cGameTimerClient::nextTickAllowed()
-{
-	//if (nextMsgIsNextGameTime)
-	{
-		client->disableFreezeMode (FREEZE_WAIT_FOR_SERVER);
-		waitingForServer = 0;
-		return true;
-	}
-
-	gameTimeAdjustment--;
-
-	waitingForServer++;
-	if (waitingForServer > MAX_WAITING_FOR_SERVER)
-	{
-		client->enableFreezeMode (FREEZE_WAIT_FOR_SERVER);
-	}
-	return false;
-}
-
-void cGameTimerClient::run()
-{
-	// maximum time before GUI update
-	const unsigned int maxWorkingTime = 500; // 500 milliseconds
-	unsigned int startGameTime = SDL_GetTicks();
+	checkPlayersResponding(model.getPlayerList(), server);
 
 	while (popEvent())
 	{
-		client->handleNetMessages();
-
-		if (nextTickAllowed() == false) continue;
-
 		gameTime++;
 		gameTimeChanged();
 		handleTimer();
-		client->doGameActions();
+		model.runJobs(*this);
 
-		//check crc
-		localChecksum = calcClientChecksum (*client);
-		debugRemoteChecksum = remoteChecksum;
-		if (localChecksum != remoteChecksum)
+		uint32_t checksum = model.calcChecksum();
+		for (auto player : model.getPlayerList())
 		{
-			//gameGUI.debugOutput.debugSync = true;
-			Log.write ("OUT OF SYNC", cLog::eLOG_TYPE_NET_ERROR);
+			auto message = std::make_unique<cNetMessageSyncServer>();
+			message->checksum = checksum;
+			message->ping = static_cast<int>(clientDebugData[player->getNr()].ping);
+			message->gameTime = gameTime;
+			server.sendMessageToClients(std::move(message), player->getNr());
 		}
+	}
+}
 
-		if (syncDebugSingleStep)
-			compareGameData (*client, *client->getServer());
 
-		nextMsgIsNextGameTime = false;
+cGameTimerClient::cGameTimerClient() :
+	cGameTimer(),
+	remoteChecksum (0),
+	localChecksum (0),
+	receivedTime(0),
+	timeSinceLastSyncMessage (0),
+	debugRemoteChecksum (0),
+	syncMessageReceived (false)
+{
+}
 
-		//send "still alive" message to server
-		//if (gameTime % (PAUSE_GAME_TIMEOUT / 10) == 0)
+void cGameTimerClient::setReceivedTime(unsigned int time)
+{
+	cLockGuard<cMutex> lock(mutex);
+	receivedTime = time;
+}
+
+unsigned int cGameTimerClient::getReceivedTime()
+{
+	cLockGuard<cMutex> lock(mutex);
+
+	return receivedTime;
+}
+
+void cGameTimerClient::handleSyncMessage (cNetMessageSyncServer& message)
+{
+
+	remoteChecksum = message.checksum;
+	ping = message.ping;
+
+	if (message.gameTime != gameTime + 1)
+		Log.write ("Game Synchonisation Error: Received out of order sync message", cLog::eLOG_TYPE_NET_ERROR);
+
+	syncMessageReceived = true;
+}
+
+void cGameTimerClient::checkServerResponding(cClient& client)
+{
+	if (syncMessageReceived)
+	{
+		client.disableFreezeMode(FREEZE_WAIT_FOR_SERVER);
+		timeSinceLastSyncMessage = 0;
+	}
+	else
+	{
+		timeSinceLastSyncMessage++;
+		if (timeSinceLastSyncMessage > MAX_WAITING_FOR_SERVER)
 		{
-			auto message = std::make_unique<cNetMessage> (NET_GAME_TIME_CLIENT);
-			message->pushInt32 (gameTime);
-			client->sendNetMessage (std::move (message));
+			client.enableFreezeMode(FREEZE_WAIT_FOR_SERVER);
 		}
-		if (SDL_GetTicks() - startGameTime >= maxWorkingTime)
-			break;
+	}
+}
+
+void cGameTimerClient::run(cClient& client)
+{
+	// maximum time before GUI update
+	const unsigned int maxWorkingTime = 500; // milliseconds
+	unsigned int startGameTime = SDL_GetTicks();
+
+	//collect some debug data
+	const unsigned int timeBuffer = getReceivedTime() - gameTime;
+	const unsigned int tickPerFrame = std::min(timeBuffer, eventCounter);	//assumes, that this function is called once per frame
+
+	while (popEvent())
+	{
+		if (!syncMessageReceived)
+		{
+			client.handleNetMessages();
+		}
+		checkServerResponding(client);
+
+		if (syncMessageReceived)
+		{
+			gameTime++;
+			gameTimeChanged();
+			handleTimer();
+			client.runModel();
+
+			//check crc
+			localChecksum = client.getModel().calcChecksum();
+			debugRemoteChecksum = remoteChecksum;
+			if (localChecksum != remoteChecksum)
+			{
+				Log.write("OUT OF SYNC", cLog::eLOG_TYPE_NET_ERROR);
+			}
+
+			syncMessageReceived = false;
+
+			//send syncMessage
+			auto message = std::make_unique<cNetMessageSyncClient>();
+			message->gameTime = gameTime;
+			//send debug data
+			message->crcOK = (localChecksum == remoteChecksum);
+			message->eventCounter = eventCounter;
+			message->queueSize = client.getNetMessageQueueSize();
+			message->ticksPerFrame = tickPerFrame;
+			message->timeBuffer = timeBuffer;
+				
+			client.sendNetMessage(std::move(message));
+			
+			if (SDL_GetTicks() - startGameTime >= maxWorkingTime)
+				break;
+		}
 	}
 
 	//check whether the client time lags too much behind the server time and add an extra increment of the client time
@@ -233,170 +265,5 @@ void cGameTimerClient::run()
 	{
 		//inject an extra timer event
 		timerCallback();
-		gameTimeAdjustment++;
 	}
 }
-
-cGameTimerServer::cGameTimerServer() :
-	waitingForPlayer (-1)
-{
-}
-
-void cGameTimerServer::handleSyncMessage (cNetMessage& message)
-{
-	assert (message.iType == NET_GAME_TIME_CLIENT);
-	setReceivedTime (message.popInt32(), message.iPlayerNr);
-
-}
-
-bool cGameTimerServer::nextTickAllowed (cServer& server)
-{
-	if (syncDebugSingleStep)
-	{
-		if (getReceivedTime (0) < gameTime)
-			return false;
-
-		return true;
-	}
-
-	int newWaitingForPlayer = -1;
-
-	/*const auto& playerList = server.playerList;
-	for (size_t i = 0; i != playerList.size(); ++i)
-	{
-		cPlayer& player = *playerList[i];
-		if (!server.isPlayerDisconnected (player) && getReceivedTime (i) + PAUSE_GAME_TIMEOUT < gameTime)
-			newWaitingForPlayer = player.getNr();
-	}
-
-	if (newWaitingForPlayer != -1 && newWaitingForPlayer != waitingForPlayer)
-	{
-		server.enableFreezeMode (FREEZE_WAIT_FOR_PLAYER, newWaitingForPlayer);	//TODO: betreffenden player nicht mit freezenachrichten zuballern. Das ist kontraproduktiv.
-	}
-	else if (newWaitingForPlayer == -1 && waitingForPlayer != -1)
-	{
-		server.disableFreezeMode (FREEZE_WAIT_FOR_PLAYER);
-	}*/
-
-	waitingForPlayer = newWaitingForPlayer;
-
-	return waitingForPlayer == -1;
-}
-
-void cGameTimerServer::run (cServer& server)
-{
-	if (popEvent() == false) return;
-	if (nextTickAllowed (server) == false) return;
-
-	gameTime++;
-	gameTimeChanged();
-	handleTimer();
-	server.doGameActions();
-	const auto& playerList = server.playerList;
-	for (size_t i = 0; i < playerList.size(); i++)
-	{
-		const auto& player = *playerList[i];
-		auto message = std::make_unique<cNetMessage> (NET_GAME_TIME_SERVER);
-
-		message->pushInt32 (gameTime);
-		const uint32_t checkSum = calcServerChecksum (server, &player);
-		message->pushInt32 (checkSum);
-		server.sendNetMessage (std::move (message), &player);
-	}
-}
-
-uint32_t calcClientChecksum (const cClient& client)
-{
-	uint32_t crc = 0;
-/*	const auto& players = client.getPlayerList();
-	for (unsigned int i = 0; i < players.size(); i++)
-	{
-		for (const auto& vehicle : players[i]->getVehicles())
-		{
-			crc = calcCheckSum (vehicle->data.getShots(), crc);
-			crc = calcCheckSum (vehicle->data.getAmmo(), crc);
-			crc = calcCheckSum (vehicle->data.getHitpoints(), crc);
-			crc = calcCheckSum (vehicle->data.getSpeed(), crc);
-			crc = calcCheckSum (vehicle->getFlightHeight(), crc);
-			crc = calcCheckSum (vehicle->iID,  crc);
-			crc = calcCheckSum (vehicle->getPosition().x(), crc);
-			crc = calcCheckSum (vehicle->getPosition().y(), crc);
-			crc = calcCheckSum (vehicle->getMovementOffset().x(), crc);
-			crc = calcCheckSum (vehicle->getMovementOffset().y(), crc);
-			crc = calcCheckSum (vehicle->dir,  crc);
-		}
-
-		for (const auto& building : players[i]->getBuildings())
-		{
-			crc = calcCheckSum (building->iID, crc);
-			crc = calcCheckSum (building->data.getShots(), crc);
-			crc = calcCheckSum (building->data.getAmmo(), crc);
-			crc = calcCheckSum (building->data.getHitpoints(), crc);
-			crc = calcCheckSum (building->dir, crc);
-		}
-	}*/
-	return crc;
-}
-
-uint32_t calcServerChecksum (const cServer& server, const cPlayer* player)
-{
-	uint32_t crc = 0;
-	const auto& playerList = server.playerList;
-	for (unsigned int i = 0; i < playerList.size(); i++)
-	{
-		for (const auto& vehicle : playerList[i]->getVehicles())
-		{
-			if (Contains (vehicle->seenByPlayerList, player) || vehicle->getOwner() == player)
-			{
-				crc = calcCheckSum (vehicle->data.getShots(), crc);
-				crc = calcCheckSum (vehicle->data.getAmmo(), crc);
-				crc = calcCheckSum (vehicle->data.getHitpoints(), crc);
-				crc = calcCheckSum (vehicle->data.getSpeed(), crc);
-				crc = calcCheckSum (vehicle->getFlightHeight(), crc);
-				crc = calcCheckSum (vehicle->iID, crc);
-				crc = calcCheckSum (vehicle->getPosition().x(), crc);
-				crc = calcCheckSum (vehicle->getPosition().y(), crc);
-				crc = calcCheckSum (vehicle->getMovementOffset().x(), crc);
-				crc = calcCheckSum (vehicle->getMovementOffset().y(), crc);
-				crc = calcCheckSum (vehicle->dir, crc);
-			}
-		}
-
-		for (const auto& building : playerList[i]->getBuildings())
-		{
-			if (Contains (building->seenByPlayerList, player) || building->getOwner() == player)
-			{
-				crc = calcCheckSum (building->iID, crc);
-				crc = calcCheckSum (building->data.getShots(), crc);
-				crc = calcCheckSum (building->data.getAmmo(), crc);
-				crc = calcCheckSum (building->data.getHitpoints(), crc);
-				crc = calcCheckSum (building->dir, crc);
-			}
-		}
-	}
-	return crc;
-}
-
-void compareGameData (const cClient& client, const cServer& server)
-{
-#if !defined (NDEBUG)
-	/*const auto& players = client.getPlayerList();
-	for (unsigned int i = 0; i < players.size(); i++)
-	{
-		const auto& clientPlayer = players[i];
-
-		const auto& vehicles = clientPlayer->getVehicles();
-		for (auto j = vehicles.begin(); j != vehicles.end(); ++j)
-		{
-			const auto& clientVehicle = *j;
-			const cVehicle* serverVehicle = server.getVehicleFromID (clientVehicle->iID);
-
-			assert (clientVehicle->getPosition() == serverVehicle->getPosition());
-			assert (clientVehicle->getMovementOffset() == serverVehicle->getMovementOffset());
-			assert (clientVehicle->dir == serverVehicle->dir);
-			assert (clientVehicle->data.getSpeed() == serverVehicle->data.getSpeed());
-		}
-	} */
-#endif
-}
-

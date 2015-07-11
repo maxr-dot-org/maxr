@@ -215,7 +215,7 @@ public:
 	* converts the resource data to a string in HEX format
 	*@author alzi alias DoctorDeath
 	*/
-	std::string resourcesToString() const;
+	std::string resourcesToString() const; //TODO: remove
 	/**
 	* converts from HEX-string to the resources
 	*@author alzi alias DoctorDeath

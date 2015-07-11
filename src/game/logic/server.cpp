@@ -67,16 +67,16 @@ int CallbackRunServerThread (void* arg)
 
 //------------------------------------------------------------------------------
 cServer::cServer(std::shared_ptr<cTCP> network_) :
-network(std::move(network_)),
-gameTimer(std::make_shared<cGameTimerServer>()),
-serverThread(nullptr),
-turnClock(std::make_unique<cTurnClock>(1)),
-turnTimeClock(std::make_unique<cTurnTimeClock>(gameTimer)),
-lastTurnEnd(0),
-executingRemainingMovements(false),
-gameSettings(std::make_unique<cGameSettings>()),
-casualtiesTracker(new cCasualtiesTracker()),
-serverState(SERVER_STATE_INITGAME)
+	network(std::move(network_)),
+	gameTimer(std::make_shared<cGameTimerServer>()),
+	serverThread(nullptr),
+	turnClock(std::make_unique<cTurnClock>(1)),
+	turnTimeClock(std::make_unique<cTurnTimeClock>(gameTimer)),
+	lastTurnEnd(0),
+	executingRemainingMovements(false),
+	gameSettings(std::make_unique<cGameSettings>()),
+	casualtiesTracker(new cCasualtiesTracker()),
+	serverState(SERVER_STATE_INITGAME)
 {
 	bExit = false;
 	openMapDefeat = true;
@@ -281,7 +281,7 @@ void cServer::run()
 		unsigned int lastTime = gameTimer->gameTime;
 		if (serverState == SERVER_STATE_INGAME)
 		{
-			gameTimer->run (*this);
+			//gameTimer->run (*this);
 		}
 
 		// nothing done
@@ -2049,7 +2049,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 		case GAME_EV_WANT_CHANGE_UNIT_NAME: handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (message); break;
 		case GAME_EV_END_MOVE_ACTION: handleNetMessage_GAME_EV_END_MOVE_ACTION (message); break;
 		case GAME_EV_WANT_KICK_PLAYER: handleNetMessage_GAME_EV_WANT_KICK_PLAYER (message); break;
-		case NET_GAME_TIME_CLIENT: gameTimer->handleSyncMessage (message); break;
 		default:
 			Log.write ("Server: Can not handle message, type " + message.getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 			break;
@@ -2839,8 +2838,8 @@ void cServer::handleWantEnd()
 		for (size_t i = 0; i != playerList.size(); ++i)
 		{
 			cPlayer& player = *playerList[i];
-			if (!isPlayerDisconnected (player) && gameTimer->getReceivedTime (i) <= lastTurnEnd)
-				return;
+//			if (!isPlayerDisconnected (player) && gameTimer->getReceivedTime (i) <= lastTurnEnd)
+//				return;
 		}
 
 		if (getGameType() == GAME_TYPE_HOTSEAT || isTurnBasedGame())
@@ -3309,7 +3308,7 @@ void cServer::handleMoveJobs()
 		else
 		{
 			// move the vehicle
-			if (gameTimer->timer10ms)
+//			if (gameTimer->timer10ms)
 			{
 				MoveJob->moveVehicle();
 			}

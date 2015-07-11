@@ -22,6 +22,8 @@
 #include "server2.h"
 #include "client.h"
 #include "action.h"
+#include "utility/log.h"
+#include "game/data/player/playerbasicdata.h"
 
 //------------------------------------------------------------------------------
 cServer2::cServer2() :
@@ -70,6 +72,7 @@ void cServer2::setGameSettings(const cGameSettings& gameSettings)
 void cServer2::setPlayers(const std::vector<cPlayerBasicData>& splayers)
 {
 	model.setPlayerList(splayers);
+	gameTimer.setNumberOfPlayers(splayers.size());
 }
 //------------------------------------------------------------------------------
 void cServer2::pushMessage(std::unique_ptr<cNetMessage2> message)
@@ -80,7 +83,7 @@ void cServer2::pushMessage(std::unique_ptr<cNetMessage2> message)
 
 //------------------------------------------------------------------------------
 //TODO: send to specific player
-void cServer2::sendMessageToClients(std::unique_ptr<cNetMessage2> message) const
+void cServer2::sendMessageToClients(std::unique_ptr<cNetMessage2> message, int playerNr) const
 {
 	//TODO: logging
 
@@ -104,13 +107,15 @@ void cServer2::start()
 	if (serverThread) return;
 
 	serverThread = SDL_CreateThread(serverThreadCallback, "server", this);
+	gameTimer.maxEventQueueSize = MAX_SERVER_EVENT_COUNTER;
+	gameTimer.start();
 }
 
 //------------------------------------------------------------------------------
 void cServer2::stop()
 {
 	bExit = true;
-	//gameTimer.stop();
+	gameTimer.stop();
 
 	if (serverThread)
 	{
@@ -124,22 +129,37 @@ void cServer2::run()
 {
 	while (!bExit)
 	{
-		std::unique_ptr<cNetMessage2> message2;
-		while (eventQueue.try_pop(message2))
+		std::unique_ptr<cNetMessage2> message;
+		while (eventQueue.try_pop(message))
 		{
-			switch (message2->getType())
+			switch (message->getType())
 			{
 			case cNetMessage2::ACTION:
 				{
-					cAction* action = static_cast<cAction*>(message2.get());
+					const cAction* action = static_cast<cAction*>(message.get());
 					action->execute(model);
+
+					sendMessageToClients(std::move(message));
+				}
+				break;
+			case cNetMessage2::GAMETIME_SYNC_CLIENT:
+				{
+					const cNetMessageSyncClient& syncMessage = *static_cast<cNetMessageSyncClient*>(message.get());
+					gameTimer.handleSyncMessage(syncMessage);
 				}
 				break;
 			default:
+				Log.write("Can not handle net message!", cLog::eLOG_TYPE_NET_ERROR);
+				sendMessageToClients(std::move(message));
 				break;
 			}
-			sendMessageToClients(std::move(message2));
+			
 		}
+
+		//TODO: gameinit: start timer, when all clients are ready
+		gameTimer.run(model, *this);
+
+		SDL_Delay(10);
 	}
 }
 
