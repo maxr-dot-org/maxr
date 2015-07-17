@@ -553,8 +553,8 @@ std::unique_ptr<cPlayer> cSavegame::loadPlayer (XMLElement* playerNode, cMap& ma
 	Player->initMaps (map);
 
 	const XMLElement* landingPosNode = playerNode->FirstChildElement ("LandingPos");
-	if (landingPosNode)
-		Player->setLandingPos (landingPosNode->IntAttribute ("x"), landingPosNode->IntAttribute ("y"));
+//	if (landingPosNode)
+//		Player->setLandingPos (landingPosNode->IntAttribute ("x"), landingPosNode->IntAttribute ("y"));
 
 	Player->setCredits (playerNode->FirstChildElement ("Credits")->IntAttribute ("num"));
 
@@ -1424,8 +1424,8 @@ void cSavegame::writePlayer (const cPlayer& Player, int number)
 	addAttributeElement (playerNode, "Number", "num", iToStr (Player.getNr()));
 	addAttributeElement (playerNode, "ResourceMap", "data", convertScanMapToString (Player));
 
-	addAttributeElement (playerNode, "LandingPos", "x", iToStr (Player.getLandingPosX()));
-	addAttributeElement (playerNode, "LandingPos", "y", iToStr (Player.getLandingPosY()));
+//	addAttributeElement (playerNode, "LandingPos", "x", iToStr (Player.getLandingPosX()));
+//	addAttributeElement (playerNode, "LandingPos", "y", iToStr (Player.getLandingPosY()));
 
 	// player score
 	XMLElement* scoreNode = addMainElement (playerNode, "ScoreHistory");

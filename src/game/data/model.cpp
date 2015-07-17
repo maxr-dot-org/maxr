@@ -77,9 +77,16 @@ void cModel::runJobs(const cGameTimer& timer)
 uint32_t cModel::calcChecksum() const
 {
 	uint32_t crc = 0;
-	//for (auto : map->ress)
-	//crc = calcChecksum(map->resourcesToString)
-
+	crc = calcCheckSum(nextUnitId, crc);
+	for (int x = 0; x < map->getSize().x(); x++)
+	{
+		for (int y = 0; y < map->getSize().y(); y++)
+		{
+			const auto res = map->getResource(cPosition(x, y));
+			crc = calcCheckSum(res.typ, crc);
+			crc = calcCheckSum(res.value, crc);
+		}
+	}
 	return crc;
 }
 //------------------------------------------------------------------------------

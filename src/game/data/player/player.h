@@ -80,9 +80,8 @@ public:
 	sUnitData* getUnitDataCurrentVersion (const sID& id);
 	const sUnitData* getUnitDataCurrentVersion (const sID& id) const;
 
-	void setLandingPos (int x, int y) { landingPosX = x; landingPosY = y; }
-	int getLandingPosX() const { return landingPosX; }
-	int getLandingPosY() const { return landingPosY; }
+	void setLandingPos (const cPosition& position) { landingPos = position; }
+	const cPosition& getLandingPos() const { return landingPos; };
 
 	void initMaps (cMap& map);
 	const cPosition& getMapSize() const;
@@ -219,8 +218,7 @@ private:
 	cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>> vehicles;
 	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> buildings;
 
-	int landingPosX; //TODO: where is this used?
-	int landingPosY;
+	cPosition landingPos;
 	cPosition mapSize; // Width and Height of the map.
 
 	std::vector<char> ScanMap;            // seen Map tile.

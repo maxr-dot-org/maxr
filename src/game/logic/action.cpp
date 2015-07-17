@@ -31,10 +31,12 @@ void cActionInitNewGame::execute(cModel& model) const
 {
 	//TODO: clan
 	//TODO: upgrades
-	//TODO: place ressources
 	//TODO: copy credits
 	//TODO: delete all units
-	makeLanding(landingPosition, *model.getPlayer(playerNr), landingUnits, model);
+	cPlayer& player = *model.getPlayer(playerNr);
+	player.setLandingPos(landingPosition);
+	makeLanding(landingPosition, player, landingUnits, model);
+	model.getMap()->placeRessources(model);
 }
 
 //------------------------------------------------------------------------------

@@ -108,15 +108,17 @@ private:
 	unsigned int remoteChecksum;		//received checksum from server. After running the jobs for the next gematime, the clientmodel should have the same checksum!
 	unsigned int timeSinceLastSyncMessage; //when no sync message is received for a certain time, user gets message "waiting for server" 
 
+	bool syncMessageReceived; // The gametime can only be increased, after the sync message for the next gametime from the server has been received.
+							  // After the sync message has been received, all following netmessages belong to the next gametime step. So handling of
+							  // messages is stoped, until client reached the next gametime.
+
+
 	unsigned int localChecksum;			// saved local checksum for debug view
 	unsigned int debugRemoteChecksum;	// saved data for debug view only
 	unsigned int ping;                  // saved data for debug view only
 
 	void checkServerResponding(cClient& client);
 public:
-	bool syncMessageReceived; // The gametime can only be increased, after the sync message for the next gametime from the server has been received.
-							  // After the sync message has been received, all following netmessages belong to the next gametime step. So handling of
-	                          // messages is stoped, until client reached the next gametime.
 	cGameTimerClient();
 
 	void setReceivedTime(unsigned int time);

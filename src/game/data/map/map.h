@@ -37,6 +37,7 @@ class cBuilding;
 class cPlayer;
 class cPosition;
 struct sUnitData;
+class cModel;
 
 // Resources Struktur ////////////////////////////////////////////////////////
 struct sResources
@@ -222,8 +223,7 @@ public:
 	*/
 	void setResourcesFromString (const std::string& str);
 
-	void placeRessources (const std::vector<cPosition>& landingPositions, const cGameSettings& gameSetting);
-
+	void placeRessources(cModel& model);
 	/**
 	* Access to a map field
 	* @param the offset of the map field

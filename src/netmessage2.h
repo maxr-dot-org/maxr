@@ -35,6 +35,7 @@ public:
 		ACTION, /** the set of actions a client (AI or player) can trigger to influence the game */
 		GAMETIME_SYNC_SERVER,
 		GAMETIME_SYNC_CLIENT,
+		RANDOM_SEED,
 		PLAYERSTATE,
 		CHAT //TODO: action?
 	};
@@ -133,5 +134,24 @@ public:
 	unsigned int eventCounter;
 };
 
+class cNetMessageRandomSeed : public cNetMessage2
+{
+public:
+	cNetMessageRandomSeed(uint64_t seed) : 
+		cNetMessage2(RANDOM_SEED),
+		seed(seed) 
+	{};
+
+	template<typename T>
+	void serializeThis(T& archive)
+	{
+		cNetMessage2::serialize(archive);
+		archive & seed;
+	}
+	virtual void serialize(cArchiveIn& archive) { serializeThis(archive); }
+	virtual void serialize(cArchiveOut& archive) { serializeThis(archive); }
+
+	uint64_t seed;
+};
 
 #endif //netmessage2H

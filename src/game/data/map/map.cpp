@@ -28,7 +28,7 @@
 #include "game/data/units/vehicle.h"
 #include "video.h"
 #include "utility/position.h"
-#include "utility/random.h"
+#include "game/data/model.h"
 
 #if 1 // TODO: [SDL2]: SDL_SetColors
 inline void SDL_SetColors (SDL_Surface* surface, SDL_Color* colors, int index, int size)
@@ -662,33 +662,37 @@ void cMap::setResourcesFromString (const std::string& str)
 	}
 }
 
-void cMap::placeRessources (const std::vector<cPosition>& landingPositions, const cGameSettings& gameSetting)
+void cMap::placeRessources(cModel& model)
 {
+	const auto& playerList = model.getPlayerList();
+	const auto& gameSettings = *model.getGameSettings();
+
 	std::fill (Resources.begin(), Resources.end(), sResources());
 
-	std::vector<int> resSpotTypes(landingPositions.size(), RES_METAL);
+	std::vector<int> resSpotTypes(playerList.size(), RES_METAL);
 	std::vector<T_2<int>> resSpots;
-	for (const auto& position : landingPositions)
+	for (const auto& player : playerList)
 	{
+		const auto& position = player->getLandingPos();
 		resSpots.push_back(T_2<int> ((position.x() & ~1) + (RES_METAL % 2), (position.y() & ~1) + ((RES_METAL / 2) % 2)));
 	}
 
-	const eGameSettingsResourceDensity density = gameSetting.getResourceDensity();
+	const eGameSettingsResourceDensity density = gameSettings.getResourceDensity();
 	eGameSettingsResourceAmount frequencies[RES_COUNT];
 
-	frequencies[RES_METAL] = gameSetting.getMetalAmount();
-	frequencies[RES_OIL] = gameSetting.getOilAmount();
-	frequencies[RES_GOLD] = gameSetting.getGoldAmount();
+	frequencies[RES_METAL] = gameSettings.getMetalAmount();
+	frequencies[RES_OIL] = gameSettings.getOilAmount();
+	frequencies[RES_GOLD] = gameSettings.getGoldAmount();
 
 	const std::size_t resSpotCount = (std::size_t) (getSize().x() * getSize().y() * 0.003f * (1.5f + getResourceDensityFactor (density)));
-	const std::size_t playerCount = landingPositions.size();
+	const std::size_t playerCount = playerList.size();
 	// create remaining resource positions
 	while (resSpots.size() < resSpotCount)
 	{
 		T_2<int> pos;
 
-		pos.x = 2 + random (getSize().x() - 4);
-		pos.y = 2 + random (getSize().y() - 4);
+		pos.x = 2 + model.randomGenerator.get (getSize().x() - 4);
+		pos.y = 2 + model.randomGenerator.get (getSize().y() - 4);
 		resSpots.push_back(pos);
 	}
 	resSpotTypes.resize (resSpotCount);
@@ -760,7 +764,7 @@ void cMap::placeRessources (const std::vector<cPosition>& landingPositions, cons
 	{
 		T_2<int> pos = resSpots[i];
 		T_2<int> p;
-		bool hasGold = random (100) < 40;
+		bool hasGold = model.randomGenerator.get (100) < 40;
 		const int minx = std::max (pos.x - 1, 0);
 		const int maxx = std::min (pos.x + 1, getSize().x() - 1);
 		const int miny = std::max (pos.y - 1, 0);
@@ -780,8 +784,8 @@ void cMap::placeRessources (const std::vector<cPosition>& landingPositions, cons
 					Resources[index].typ = type;
 					if (i >= playerCount)
 					{
-						Resources[index].value = 1 + random (2 + getResourceAmountFactor (frequencies[type]) * 2);
-						if (p == pos) Resources[index].value += 3 + random (4 + getResourceAmountFactor (frequencies[type]) * 2);
+						Resources[index].value = 1 + model.randomGenerator.get (2 + getResourceAmountFactor (frequencies[type]) * 2);
+						if (p == pos) Resources[index].value += 3 + model.randomGenerator.get(4 + getResourceAmountFactor(frequencies[type]) * 2);
 					}
 					else
 					{

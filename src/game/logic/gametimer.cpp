@@ -246,7 +246,7 @@ void cGameTimerClient::run(cClient& client)
 			//send syncMessage
 			auto message = std::make_unique<cNetMessageSyncClient>();
 			message->gameTime = gameTime;
-			//send debug data
+			//add debug data
 			message->crcOK = (localChecksum == remoteChecksum);
 			message->eventCounter = eventCounter;
 			message->queueSize = client.getNetMessageQueueSize();

@@ -1535,6 +1535,11 @@ void cClient::handleNetMessages()
 				return; //stop processing messages after receiving a sync message. Gametime needs to be increased before handling the next message.
 			}
 			break;
+		case cNetMessage2::RANDOM_SEED:
+			{
+				cNetMessageRandomSeed* msg = static_cast<cNetMessageRandomSeed*>(message.get());
+				model.randomGenerator.seed(msg->seed);
+			}
 		default:
 			break;
 		}

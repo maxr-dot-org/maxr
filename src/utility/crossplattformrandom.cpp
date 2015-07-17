@@ -17,59 +17,45 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef game_logic_server2H
-#define game_logic_server2H
+#include "crossplattformrandom.h"
 
-#include <memory>
+cCrossplattformrandom::cCrossplattformrandom() : 
+	stateW(0),
+	stateZ(0)
+{}
 
-#include "SDL_thread.h"
-
-#include "game/data/model.h"
-#include "netmessage2.h"
-#include "utility/thread/concurrentqueue.h"
-#include "gametimer.h"
-
-class cClient;
-class cPlayerBasicData;
-
-//TODO: network einbinden
-class cServer2
+void cCrossplattformrandom::seed(uint64_t seed)
 {
-	friend class cDebugOutputWidget;
-public:
 
-	explicit cServer2();
-	~cServer2();
+	stateW = static_cast<uint32_t>(seed); /* must not be zero, nor 0x464fffff */
+	if (stateW == 0 || stateW == 0x464fffff)
+		stateW++;
 
-	void pushMessage(std::unique_ptr<cNetMessage2> message);
+	stateZ = static_cast<uint32_t>(seed >> 32); /* must not be zero, nor 0x9068ffff */
+	if (stateZ == 0 || stateZ == 0x9068ffff)
+		stateZ++;
 
-	void sendMessageToClients(std::unique_ptr<cNetMessage2> message, int playerNr = -1) const;
+}
 
-	void start();
-	void stop();
+uint32_t cCrossplattformrandom::get()
+{
+	stateZ = 36969 * (stateZ & 65535) + (stateZ >> 16);
+	stateW = 18000 * (stateW & 65535) + (stateW >> 16);
+	return (stateZ << 16) + stateW;
+}
 
-	void setLocalClient(cClient* client);
-	void setGameSettings(const cGameSettings& gameSettings);
-	void setMap(std::shared_ptr<cStaticMap> staticMap);
-	void setPlayers(const std::vector<cPlayerBasicData>& splayers);
+uint32_t cCrossplattformrandom::get(uint32_t interval)
+{
+	uint32_t r;
+	const unsigned int buckets = UINT32_MAX / interval;
+	const unsigned int limit = buckets * interval;
 
-private:
-	cModel model;
-	//std::vector<cPlayerConnectionState> playerConnectionStates;
-	//cPlayerConnectionManager playerConnectionManager;
-	cGameTimerServer gameTimer;
+	//create random numbers, with a uniform distribution in the specified interval
+	do
+	{
+		r = get();
+	} 
+	while (r >= limit);
 
-	cClient* localClient;
-	cConcurrentQueue<std::unique_ptr<cNetMessage2>> eventQueue;
-
-	void initRandomGenerator();
-
-	// manage the server thread
-	static int serverThreadCallback(void* arg);
-	void run();
-	SDL_Thread* serverThread;
-	bool bExit;
-	
-};
-
-#endif
+	return r / buckets;
+}

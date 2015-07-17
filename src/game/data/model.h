@@ -25,6 +25,7 @@
 
 #include "utility/flatset.h"
 #include "units/unit.h"
+#include "crossplattformrandom.h"
 
 class cPlayerBasicData;
 class cGameSettings;
@@ -44,8 +45,11 @@ class cModel
 public:
 	cModel();
 
+	cCrossplattformrandom randomGenerator;
+
 	void runJobs(const cGameTimer& timer);
 	uint32_t calcChecksum() const;
+
 
 	std::shared_ptr<const cGameSettings> getGameSettings() const { return gameSettings; };
 	std::shared_ptr<cGameSettings> getGameSettings() { return gameSettings; };

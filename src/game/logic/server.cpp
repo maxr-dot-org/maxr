@@ -2150,7 +2150,7 @@ void cServer::placeInitialResources()
 		correctLandingPos (landingPosition);
 		landingPositions.push_back (landingPosition);
 	}
-	Map->placeRessources (landingPositions, *gameSettings);
+//	Map->placeRessources (landingPositions, *gameSettings);
 }
 
 //------------------------------------------------------------------------------

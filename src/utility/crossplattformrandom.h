@@ -17,59 +17,22 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef game_logic_server2H
-#define game_logic_server2H
+#ifndef utility_crossplatformrandomH
+#define utility_crossplatformrandomH
 
-#include <memory>
+#include <stdint.h>
 
-#include "SDL_thread.h"
-
-#include "game/data/model.h"
-#include "netmessage2.h"
-#include "utility/thread/concurrentqueue.h"
-#include "gametimer.h"
-
-class cClient;
-class cPlayerBasicData;
-
-//TODO: network einbinden
-class cServer2
+class cCrossplattformrandom
 {
-	friend class cDebugOutputWidget;
-public:
-
-	explicit cServer2();
-	~cServer2();
-
-	void pushMessage(std::unique_ptr<cNetMessage2> message);
-
-	void sendMessageToClients(std::unique_ptr<cNetMessage2> message, int playerNr = -1) const;
-
-	void start();
-	void stop();
-
-	void setLocalClient(cClient* client);
-	void setGameSettings(const cGameSettings& gameSettings);
-	void setMap(std::shared_ptr<cStaticMap> staticMap);
-	void setPlayers(const std::vector<cPlayerBasicData>& splayers);
-
 private:
-	cModel model;
-	//std::vector<cPlayerConnectionState> playerConnectionStates;
-	//cPlayerConnectionManager playerConnectionManager;
-	cGameTimerServer gameTimer;
+	uint32_t stateW;
+	uint32_t stateZ;
+public:
+	cCrossplattformrandom();
 
-	cClient* localClient;
-	cConcurrentQueue<std::unique_ptr<cNetMessage2>> eventQueue;
-
-	void initRandomGenerator();
-
-	// manage the server thread
-	static int serverThreadCallback(void* arg);
-	void run();
-	SDL_Thread* serverThread;
-	bool bExit;
-	
+	void seed(uint64_t seed);
+	uint32_t get();
+	uint32_t get(uint32_t interval);
 };
 
 #endif

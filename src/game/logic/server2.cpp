@@ -24,6 +24,7 @@
 #include "action.h"
 #include "utility/log.h"
 #include "game/data/player/playerbasicdata.h"
+#include <time.h>
 
 //------------------------------------------------------------------------------
 cServer2::cServer2() :
@@ -106,6 +107,8 @@ void cServer2::start()
 {
 	if (serverThread) return;
 
+	initRandomGenerator();
+
 	serverThread = SDL_CreateThread(serverThreadCallback, "server", this);
 	gameTimer.maxEventQueueSize = MAX_SERVER_EVENT_COUNTER;
 	gameTimer.start();
@@ -161,6 +164,14 @@ void cServer2::run()
 
 		SDL_Delay(10);
 	}
+}
+
+void cServer2::initRandomGenerator()
+{
+	time_t t = time(nullptr);
+	model.randomGenerator.seed(t);
+	auto msg = std::make_unique<cNetMessageRandomSeed>(t);
+	sendMessageToClients(std::move(msg));
 }
 
 //------------------------------------------------------------------------------
