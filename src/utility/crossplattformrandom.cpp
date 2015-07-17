@@ -19,12 +19,12 @@
 
 #include "crossplattformrandom.h"
 
-cCrossplattformrandom::cCrossplattformrandom() : 
+cCrossPlattformRandom::cCrossPlattformRandom() : 
 	stateW(0),
 	stateZ(0)
 {}
 
-void cCrossplattformrandom::seed(uint64_t seed)
+void cCrossPlattformRandom::seed(uint64_t seed)
 {
 
 	stateW = static_cast<uint32_t>(seed); /* must not be zero, nor 0x464fffff */
@@ -37,14 +37,14 @@ void cCrossplattformrandom::seed(uint64_t seed)
 
 }
 
-uint32_t cCrossplattformrandom::get()
+uint32_t cCrossPlattformRandom::get()
 {
 	stateZ = 36969 * (stateZ & 65535) + (stateZ >> 16);
 	stateW = 18000 * (stateW & 65535) + (stateW >> 16);
 	return (stateZ << 16) + stateW;
 }
 
-uint32_t cCrossplattformrandom::get(uint32_t interval)
+uint32_t cCrossPlattformRandom::get(uint32_t interval)
 {
 	uint32_t r;
 	const unsigned int buckets = UINT32_MAX / interval;

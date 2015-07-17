@@ -25,6 +25,7 @@
 #include "utility/log.h"
 #include "game/data/player/playerbasicdata.h"
 #include <time.h>
+#include "utility/random.h"
 
 //------------------------------------------------------------------------------
 cServer2::cServer2() :
@@ -168,7 +169,7 @@ void cServer2::run()
 
 void cServer2::initRandomGenerator()
 {
-	time_t t = time(nullptr);
+	uint64_t t = random(UINT64_MAX);
 	model.randomGenerator.seed(t);
 	auto msg = std::make_unique<cNetMessageRandomSeed>(t);
 	sendMessageToClients(std::move(msg));

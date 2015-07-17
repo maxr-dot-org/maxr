@@ -25,7 +25,7 @@
 
 #include "utility/flatset.h"
 #include "units/unit.h"
-#include "crossplattformrandom.h"
+#include "utility/crossplattformrandom.h"
 
 class cPlayerBasicData;
 class cGameSettings;
@@ -45,7 +45,7 @@ class cModel
 public:
 	cModel();
 
-	cCrossplattformrandom randomGenerator;
+	cCrossPlattformRandom randomGenerator;
 
 	void runJobs(const cGameTimer& timer);
 	uint32_t calcChecksum() const;

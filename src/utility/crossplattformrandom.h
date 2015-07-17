@@ -22,16 +22,20 @@
 
 #include <stdint.h>
 
-class cCrossplattformrandom
+class cCrossPlattformRandom
 {
 private:
 	uint32_t stateW;
 	uint32_t stateZ;
 public:
-	cCrossplattformrandom();
+	cCrossPlattformRandom();
 
 	void seed(uint64_t seed);
+
+	/** returns a random number in the interval [0..UINT32_MAX] */
 	uint32_t get();
+
+	/** returns a random number in the interval [0..interval) */
 	uint32_t get(uint32_t interval);
 };
 
