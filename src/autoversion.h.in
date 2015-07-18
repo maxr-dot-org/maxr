@@ -1,7 +1,10 @@
 
 # define MAX_BUILD_DATE ((std::string)__DATE__ + " " + __TIME__)
-# ifdef NDEBUG
+
+# ifdef NIGHTLY_BUILD
+#  define PACKAGE_REV "GIT Hash ${GIT_DESC}"
+# elif  NDEBUG
 #  define PACKAGE_REV "Releaseversion"
 # else
-#    define PACKAGE_REV "GIT Hash ${GIT_DESC}"
+#  define PACKAGE_REV "GIT Hash ${GIT_DESC}"
 # endif

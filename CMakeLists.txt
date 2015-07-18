@@ -19,9 +19,20 @@ include_directories(src)
 # === Global defines
 # ============================================
 
+if(PACKAGE_VERSION)
+  add_definitions( "-DPACKAGE_VERSION=\"${PACKAGE_VERSION}\"")
+endif()
 
 if(MAXR_BUILD_DEDICATED_SERVER)
   add_definitions( -DDEDICATED_SERVER_APPLICATION )
+endif()
+
+if(CRASH_RPT_INCLUDE_DIR)
+  add_definitions( -DUSE_CRASH_RPT )
+endif()
+
+if(NIGHTLY_BUILD)
+  add_definitions( -DNIGHTLY_BUILD )
 endif()
 
 # ============================================
@@ -102,6 +113,9 @@ endif()
 # === Add GIT Revision
 # ============================================
 
+if(PACKAGE_VERSION)
+  add_definitions( "-DPACKAGE_VERSION=\"${PACKAGE_VERSION}\"")
+endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/mk/cmake)
 include(GetGitRevisionDescription)
@@ -172,3 +186,13 @@ find_package(SDL2_net REQUIRED)
 
 include_directories(${SDL2_NET_INCLUDE_DIR})
 target_link_libraries(maxr ${SDL2_NET_LIBRARY})
+
+
+# ---------------------------------------
+# add crash reporting library
+if(CRASH_RPT_INCLUDE_DIR)
+  include_directories(${CRASH_RPT_INCLUDE_DIR})
+  target_link_libraries(maxr ${CRASH_RPT_LIB})
+endif()
+
+
