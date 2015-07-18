@@ -51,6 +51,7 @@
 #include "unifonts.h"
 #include "game/data/units/vehicle.h"
 #include "video.h"
+#include "debug.h"
 
 #ifdef WIN32
 # include <shlobj.h>
@@ -132,6 +133,8 @@ static void LoadUnitGraphicData (sUnitData* Data, char const* directory);
 // Loads all relevant files and data:
 int LoadData (void* data)
 {
+	CR_ENABLE_CRASH_RPT_CURRENT_THREAD();
+
 	volatile int& loadingState = *static_cast<volatile int*> (data);
 	loadingState = LOAD_GOING;
 

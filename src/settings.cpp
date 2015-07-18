@@ -106,11 +106,26 @@ void cSettings::setPaths()
 #elif WIN32
 	// this is where windowsuser should set their %HOME%
 	// this is also a good place to find out where the executable is located
+
+
+	//set exe path
+	TCHAR szPath[MAX_PATH];
+	HMODULE hModule = GetModuleHandle(nullptr);
+
+	GetModuleFileName(hModule, szPath, MAX_PATH);
+#ifdef UNICODE
+	std::wstring exe = szPath;
+#else
+	std::string exe = szPath;
+#endif
+	exe.erase(exe.rfind("\\"), std::string::npos);
+	exePath = std::string(exe.begin(), exe.end());
+
+	//set config path
 	configPath = MAX_XML; // assume config in current working directory
 
-	TCHAR szPath[MAX_PATH];
+	//set home dir
 	SHGetFolderPath (nullptr, CSIDL_PERSONAL, nullptr, 0, szPath);
-
 #ifdef UNICODE
 	std::wstring home = szPath;
 #else
@@ -283,8 +298,8 @@ std::string cSettings::searchDataDir (const std::string& sDataDirFromConf)
 	// assuming data is in same folder as binary (or current working directory)
 	sPathToGameData = exePath;
 #elif WIN32
-	// assuming data is in same folder as binary (or current working directory)
-	sPathToGameData = exePath;
+	// assuming data is in current working directory
+	//sPathToGameData = "";
 #elif __amigaos4__
 	// assuming data is in same folder as binary (or current working directory)
 	sPathToGameData = exePath;
@@ -1340,12 +1355,6 @@ void cSettings::setDataDir (const char* dataDir, bool save)
 const std::string& cSettings::getExePath() const
 {
 	return exePath;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setExePath (const char* exePath)
-{
-	this->exePath = exePath;
 }
 
 //------------------------------------------------------------------------------

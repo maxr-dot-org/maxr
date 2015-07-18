@@ -52,6 +52,7 @@
 #include "game/logic/turnclock.h"
 #include "game/logic/turntimeclock.h"
 #include "utility/random.h"
+#include "debug.h"
 
 #if DEDICATED_SERVER_APPLICATION
 # include "dedicatedserver.h"
@@ -60,6 +61,8 @@
 //------------------------------------------------------------------------------
 int CallbackRunServerThread (void* arg)
 {
+	CR_ENABLE_CRASH_RPT_CURRENT_THREAD();
+
 	cServer* server = reinterpret_cast<cServer*> (arg);
 	server->run();
 	return 0;

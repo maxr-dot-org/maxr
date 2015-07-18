@@ -80,6 +80,8 @@
 #include "game/data/report/savedreportunit.h"
 #include "game/data/report/special/savedreporthostcommand.h"
 
+#include "debug.h"
+
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
 	application (application_),
@@ -1468,6 +1470,10 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 				}
 				// FIXME: do not do changes on server data that are not synchronized with the server thread!
 				server->disableFreezeMode (FREEZE_PAUSE);
+			}
+			else if (command.compare(0, 6, "/crash") == 0)
+			{
+				CR_EMULATE_CRASH();
 			}
 			if (server)
 			{
