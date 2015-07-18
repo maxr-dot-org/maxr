@@ -77,7 +77,7 @@ int main (int argc, char* argv[])
 		return -1;
 	}
 
-	initCrashreporting();
+	CR_INIT_CRASHREPORTING();
 
 
 	// stop on error during init of SDL basics. WARNINGS will be ignored!
