@@ -2866,7 +2866,7 @@ void cServer::handleEnd (cPlayer& player)
 		{
 			if (checkRemainingMoveJobs (nullptr))
 			{
-				pendingEndTurnPlayerNumber = -2;
+				pendingEndTurnPlayerNumber = player.getNr();
 				return;
 			}
 
