@@ -113,10 +113,6 @@ endif()
 # === Add GIT Revision
 # ============================================
 
-if(PACKAGE_VERSION)
-  add_definitions( "-DPACKAGE_VERSION=\"${PACKAGE_VERSION}\"")
-endif()
-
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/mk/cmake)
 include(GetGitRevisionDescription)
 git_describe(GIT_DESC --always)
