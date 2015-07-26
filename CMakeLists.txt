@@ -156,7 +156,17 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   set_target_properties(maxr PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
 endif()
 
+# ============================================
+# === Install
+# ============================================
 
+if (UNIX)
+  install(TARGETS maxr DESTINATION bin)
+  install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/data/"
+    DESTINATION share/maxr
+    PATTERN ".gitignore" EXCLUDE
+  )
+endif()
 
 # ============================================
 # === Additional Packages
