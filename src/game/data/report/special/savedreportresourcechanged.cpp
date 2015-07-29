@@ -21,6 +21,7 @@
 #include "netmessage.h"
 #include "game/data/player/player.h"
 #include "game/data/map/map.h" // RES_XYZ
+#include "extendedtinyxml.h"
 
 //------------------------------------------------------------------------------
 cSavedReportResourceChanged::cSavedReportResourceChanged (int resourceType_, int amount_, bool increase_) :
@@ -42,7 +43,7 @@ cSavedReportResourceChanged::cSavedReportResourceChanged (const tinyxml2::XMLEle
 {
 	amount = element.IntAttribute ("amount");
 	resourceType = element.IntAttribute ("resourceType");
-	increase = element.BoolAttribute ("increase");
+	increase = getXMLAttributeBoolFromElement(&element, "increase");
 }
 
 //------------------------------------------------------------------------------

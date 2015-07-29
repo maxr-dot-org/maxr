@@ -451,7 +451,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			showIntro = xmlElement->BoolAttribute ("YN");
+			showIntro = getXMLAttributeBoolFromElement(xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -464,7 +464,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			Video.setWindowMode (xmlElement->BoolAttribute ("YN"));
+			Video.setWindowMode(getXMLAttributeBoolFromElement(xmlElement, "YN"));
 		}
 
 		// =====================================================================
@@ -489,7 +489,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			fastMode = xmlElement->BoolAttribute ("YN");
+			fastMode = getXMLAttributeBoolFromElement(xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -501,7 +501,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			preScale = xmlElement->BoolAttribute ("YN");
+			preScale = getXMLAttributeBoolFromElement(xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -554,7 +554,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		autosave = xmlElement->BoolAttribute ("YN");
+		autosave = getXMLAttributeBoolFromElement(xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -566,7 +566,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		debug = xmlElement->BoolAttribute ("YN");
+		debug = getXMLAttributeBoolFromElement(xmlElement, "YN");
 		if (!debug) Log.write ("Debugmode disabled - for verbose output please enable Debug in max.xml", cLog::eLOG_TYPE_WARNING);
 		else Log.write ("Debugmode enabled", cLog::eLOG_TYPE_INFO);
 	}
@@ -580,7 +580,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		animations = xmlElement->BoolAttribute ("YN");
+		animations = getXMLAttributeBoolFromElement(xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -592,7 +592,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		shadows = xmlElement->BoolAttribute ("YN");
+		shadows = getXMLAttributeBoolFromElement(xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -604,7 +604,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		alphaEffects = xmlElement->BoolAttribute ("YN");
+		alphaEffects = getXMLAttributeBoolFromElement(xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -616,7 +616,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		showDescription = xmlElement->BoolAttribute ("YN");
+		showDescription = getXMLAttributeBoolFromElement(xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -628,7 +628,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		damageEffects = xmlElement->BoolAttribute ("YN");
+		damageEffects = getXMLAttributeBoolFromElement(xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -640,7 +640,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		damageEffectsVehicles = xmlElement->BoolAttribute ("YN");
+		damageEffectsVehicles = getXMLAttributeBoolFromElement(xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -652,7 +652,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		makeTracks = xmlElement->BoolAttribute ("YN");
+		makeTracks = getXMLAttributeBoolFromElement(xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -679,7 +679,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			soundEnabled = xmlElement->BoolAttribute ("YN");
+			soundEnabled = getXMLAttributeBoolFromElement(xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -691,7 +691,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			musicMute = xmlElement->BoolAttribute ("YN");
+			musicMute = getXMLAttributeBoolFromElement(xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -703,7 +703,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			soundMute = xmlElement->BoolAttribute ("YN");
+			soundMute = getXMLAttributeBoolFromElement(xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -715,7 +715,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			voiceMute = xmlElement->BoolAttribute ("YN");
+			voiceMute = getXMLAttributeBoolFromElement(xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -727,7 +727,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			sound3d = xmlElement->BoolAttribute ("YN");
+			sound3d = getXMLAttributeBoolFromElement(xmlElement, "YN");
 		}
 
 		// =====================================================================

@@ -36,6 +36,7 @@
 #include "game/data/report/savedreport.h"
 #include "game/logic/turnclock.h"
 #include <ctime>
+#include "extendedtinyxml.h"
 
 using namespace std;
 using namespace tinyxml2;
@@ -434,7 +435,7 @@ cGameSettings cSavegame::loadGameSettings()
 
 			if (XMLElement* e = gameInfoNode->FirstChildElement ("Credits")) gameSetting.setStartCredits (e->IntAttribute ("num"));
 
-			if (XMLElement* e = gameInfoNode->FirstChildElement ("ClansEnabled")) gameSetting.setClansEnabled (e->BoolAttribute ("bool"));
+			if (XMLElement* e = gameInfoNode->FirstChildElement("ClansEnabled")) gameSetting.setClansEnabled(getXMLAttributeBoolFromElement(e,"bool"));
 
 			if (XMLElement* e = gameInfoNode->FirstChildElement ("VictoryCondition")) gameSetting.setVictoryCondition (gameSettingsVictoryConditionFromString (e->Attribute ("string")));
 			if (gameSetting.getVictoryCondition() == eGameSettingsVictoryCondition::Turns)
@@ -447,10 +448,10 @@ cGameSettings cSavegame::loadGameSettings()
 			}
 
 			if (XMLElement* e = gameInfoNode->FirstChildElement ("TurnEndDeadline")) gameSetting.setTurnEndDeadline (std::chrono::seconds (e->IntAttribute ("num")));
-			if (XMLElement* e = gameInfoNode->FirstChildElement ("TurnEndDeadlineActive")) gameSetting.setTurnEndDeadlineActive (e->BoolAttribute ("bool"));
+			if (XMLElement* e = gameInfoNode->FirstChildElement("TurnEndDeadlineActive")) gameSetting.setTurnEndDeadlineActive(getXMLAttributeBoolFromElement(e, "bool"));
 
 			if (XMLElement* e = gameInfoNode->FirstChildElement ("TurnLimit")) gameSetting.setTurnLimit (std::chrono::seconds (e->IntAttribute ("num")));
-			if (XMLElement* e = gameInfoNode->FirstChildElement ("TurnLimitActive")) gameSetting.setTurnLimitActive (e->BoolAttribute ("bool"));
+			if (XMLElement* e = gameInfoNode->FirstChildElement("TurnLimitActive")) gameSetting.setTurnLimitActive(getXMLAttributeBoolFromElement(e, "bool"));
 		}
 		catch (std::runtime_error&)
 		{
@@ -811,7 +812,7 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 		}
 		else
 		{
-			vehicle.setBuildingABuilding (element->BoolAttribute ("building"));
+			vehicle.setBuildingABuilding(getXMLAttributeBoolFromElement(element, "building"));
 		}
 		if (element->Attribute ("type_id") != nullptr)
 		{

@@ -179,6 +179,26 @@ string getXMLAttributeString (tinyxml2::XMLDocument& document, const char* attri
 }
 
 //------------------------------------------------------------------------------
+bool getXMLAttributeBoolFromElement(const tinyxml2::XMLElement* element, const char* name)
+{
+	string value = element->Attribute(name);
+	std::transform(value.begin(), value.end(), value.begin(), tolower);
+	if (value == "true" ||
+		value == "y" ||
+		value == "yes")
+	{
+		return true;
+	}
+	else if (value == "false" ||
+		value == "n" ||
+		value == "no")
+	{
+		return false;
+	}
+	Log.write((string)"Error reading boolen attribute of element \"" + element->Name() + "\": Illegal value \"" + value + "\"", cLog::eLOG_TYPE_WARNING);
+	return false;
+}
+//------------------------------------------------------------------------------
 bool getXMLAttributeBool (tinyxml2::XMLDocument& document, const char* first, ...)
 {
 	va_list list;
@@ -188,10 +208,9 @@ bool getXMLAttributeBool (tinyxml2::XMLDocument& document, const char* first, ..
 
 	if (element == NULL) return false;
 
-
-	if (element->Attribute ("YN"))
+	if (element->Attribute("YN"))
 	{
-		return element->BoolAttribute ("YN");
+		return getXMLAttributeBoolFromElement(element,"YN");
 	}
 	else
 	{
