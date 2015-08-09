@@ -225,3 +225,14 @@ bool getXMLAttributeBool (tinyxml2::XMLDocument& document, const char* first, ..
 		return false;
 	}
 }
+
+string printXMLPath(const tinyxml2::XMLElement* element)
+{
+	string path = element->Name();
+	while (element = element->Parent()->ToElement())
+	{
+		path = string(element->Name()) + "~" + path;
+	}
+
+	return path;
+}

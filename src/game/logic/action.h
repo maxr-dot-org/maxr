@@ -31,7 +31,7 @@ public:
 	enum eActiontype {
 		ACTION_INIT_NEW_GAME
 	};
-	static std::unique_ptr<cAction> createFromBuffer(cArchiveOut& archive);
+	static std::unique_ptr<cAction> createFromBuffer(cBinaryArchiveOut& archive);
 
 	eActiontype getType() const;
 
@@ -41,8 +41,9 @@ public:
 		cNetMessage2::serialize(archive);
 		archive & type;
 	}
-	virtual void serialize(cArchiveIn& archive) { serializeThis(archive); }
-	virtual void serialize(cArchiveOut& archive) { serializeThis(archive); }
+	virtual void serialize(cBinaryArchiveIn& archive) { serializeThis(archive); }
+	virtual void serialize(cBinaryArchiveOut& archive) { serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive) { serializeThis(archive); }
 
 	virtual void execute(cModel& model) const = NULL;
 protected:
@@ -53,6 +54,7 @@ private:
 	eActiontype type;
 };
 
+//TODOO: new file
 class cVehicle;
 class cBuilding;
 
@@ -70,8 +72,9 @@ public:
 		archive & unitUpgrades;
 		archive & landingPosition;
 	}
-	virtual void serialize(cArchiveIn& archive) { serializeThis(archive); }
-	virtual void serialize(cArchiveOut& archive) { serializeThis(archive); }
+	virtual void serialize(cBinaryArchiveIn& archive) { serializeThis(archive); }
+	virtual void serialize(cBinaryArchiveOut& archive) { serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive) { serializeThis(archive); }
 
 	virtual void execute(cModel& model) const override;
 

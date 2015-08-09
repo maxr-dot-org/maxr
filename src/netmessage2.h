@@ -23,7 +23,9 @@
 #include <memory>
 
 #include "maxrconfig.h"
-#include "utility/serializationarchive.h"
+#include "utility/serialization/serialization.h"
+#include "utility/serialization/textarchive.h"
+#include "utility/serialization/binaryarchive.h"
 #include "game/logic/gametimer.h"
 
 class cModel;
@@ -33,13 +35,13 @@ class cNetMessage2
 public:
 	enum eNetMessageType {
 		ACTION, /** the set of actions a client (AI or player) can trigger to influence the game */
-		GAMETIME_SYNC_SERVER,
-		GAMETIME_SYNC_CLIENT,
+		GAMETIME_SYNC_SERVER, /** sync message from server to clients */
+		GAMETIME_SYNC_CLIENT, /** sync message from client to server */
 		RANDOM_SEED,
 		PLAYERSTATE,
 		CHAT //TODO: action?
 	};
-	static std::unique_ptr<cNetMessage2> createFromBuffer(cArchiveOut& archive);
+	static std::unique_ptr<cNetMessage2> createFromBuffer(cBinaryArchiveOut& archive);
 	
 	virtual ~cNetMessage2() {}
 
@@ -51,9 +53,9 @@ public:
 		archive & type; 
 		archive & playerNr;
 	}
-
-	virtual void serialize(cArchiveIn& archive) { serializeThis(archive); }
-	virtual void serialize(cArchiveOut& archive) { serializeThis(archive); }
+	virtual void serialize(cBinaryArchiveIn& archive) { serializeThis(archive); } 
+	virtual void serialize(cBinaryArchiveOut& archive) { serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive) { serializeThis(archive); }
 
 	int playerNr;
 
@@ -77,8 +79,9 @@ public:
 		cNetMessage2::serialize(archive);
 		archive & message;
 	}
-	virtual void serialize(cArchiveIn& archive) { serializeThis(archive); }
-	virtual void serialize(cArchiveOut& archive) { serializeThis(archive); }
+	virtual void serialize(cBinaryArchiveIn& archive) { serializeThis(archive); }
+	virtual void serialize(cBinaryArchiveOut& archive) { serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive) { serializeThis(archive); }
 
 	std::string message;
 };
@@ -96,8 +99,9 @@ public:
 		archive & checksum;
 		archive & ping;
 	}
-	virtual void serialize(cArchiveIn& archive) { serializeThis(archive); }
-	virtual void serialize(cArchiveOut& archive) { serializeThis(archive); }
+	virtual void serialize(cBinaryArchiveIn& archive) { serializeThis(archive); }
+	virtual void serialize(cBinaryArchiveOut& archive) { serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive) { serializeThis(archive); }
 
 	unsigned int gameTime;
 	unsigned int checksum;
@@ -120,8 +124,9 @@ public:
 		archive & queueSize;
 		archive & eventCounter;
 	}
-	virtual void serialize(cArchiveIn& archive) { serializeThis(archive); }
-	virtual void serialize(cArchiveOut& archive) { serializeThis(archive); }
+	virtual void serialize(cBinaryArchiveIn& archive) { serializeThis(archive); }
+	virtual void serialize(cBinaryArchiveOut& archive) { serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive) { serializeThis(archive); }
 
 
 	unsigned int gameTime;
@@ -148,8 +153,9 @@ public:
 		cNetMessage2::serialize(archive);
 		archive & seed;
 	}
-	virtual void serialize(cArchiveIn& archive) { serializeThis(archive); }
-	virtual void serialize(cArchiveOut& archive) { serializeThis(archive); }
+	virtual void serialize(cBinaryArchiveIn& archive) { serializeThis(archive); }
+	virtual void serialize(cBinaryArchiveOut& archive) { serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive) { serializeThis(archive); }
 
 	uint64_t seed;
 };

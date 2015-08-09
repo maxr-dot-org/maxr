@@ -21,7 +21,6 @@
 #define game_data_units_landingunitH
 
 #include "main.h" // sID
-#include "utility/serializationarchive.h"
 
 struct sLandingUnit
 {

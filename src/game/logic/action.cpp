@@ -33,6 +33,7 @@ void cActionInitNewGame::execute(cModel& model) const
 	//TODO: upgrades
 	//TODO: copy credits
 	//TODO: delete all units
+	//TODO: Fehlerprüfung der empfangenen Nachricht
 	cPlayer& player = *model.getPlayer(playerNr);
 	player.setLandingPos(landingPosition);
 	makeLanding(landingPosition, player, landingUnits, model);

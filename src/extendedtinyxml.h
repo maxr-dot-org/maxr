@@ -46,5 +46,7 @@ std::string getXMLAttributeString (tinyxml2::XMLDocument& document, const char* 
 bool        getXMLAttributeBoolFromElement(const tinyxml2::XMLElement* element, const char* name);
 bool        getXMLAttributeBool(tinyxml2::XMLDocument& document, const char* first, ...);
 
+std::string printXMLPath(const tinyxml2::XMLElement* element);
+
 
 #endif

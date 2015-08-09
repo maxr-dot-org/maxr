@@ -22,7 +22,7 @@
 #include "main.h"
 #include "netmessage2.h"
 
-std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(cArchiveOut& archive)
+std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(cBinaryArchiveOut& archive)
 {
 	eNetMessageType type;
 	archive >> type;
@@ -44,7 +44,7 @@ std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(cArchiveOut& archiv
 	}
 
 	archive.rewind();
-	message->serialize(archive);
+	archive >> *message;
 
 	return std::move(message);
 }

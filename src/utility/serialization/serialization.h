@@ -1,0 +1,281 @@
+/***************************************************************************
+*      Mechanized Assault and Exploration Reloaded Projectfile            *
+*                                                                         *
+*   This program is free software; you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 2 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+*   This program is distributed in the hope that it will be useful,       *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU General Public License for more details.                          *
+*                                                                         *
+*   You should have received a copy of the GNU General Public License     *
+*   along with this program; if not, write to the                         *
+*   Free Software Foundation, Inc.,                                       *
+*   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+***************************************************************************/
+
+#ifndef serialization_serializationH
+#define serialization_serializationH
+
+#include <string>
+#include <vector>
+
+namespace serialization
+{
+	//--------------------------------------------------------------------------
+	// name value pair
+	//--------------------------------------------------------------------------
+	template <typename T>
+	struct sNameValuePair
+	{
+		sNameValuePair(const std::string& name, T& value) :
+			name(name),
+			value(value)
+		{}
+
+		const std::string& name;
+		T& value;
+	};
+
+	template<typename T>
+	sNameValuePair<T> makeNvp(const std::string& name, T& value)
+	{
+		return sNameValuePair<T>(name, value);
+	}
+	template<typename T>
+	const sNameValuePair<T> makeNvp(const std::string& name, const T& value)
+	{
+		T& value_nonconst = const_cast<T&>(value);
+		return sNameValuePair<T>(name, value_nonconst);
+	}
+	#define NVP_QUOTE(x) #x
+	#define NVP(value) serialization::makeNvp(NVP_QUOTE(value), value)
+
+	//-------------------------------------------------------------------------
+	namespace detail
+	{
+		struct sSplitMemberWriter
+		{
+			template<typename Archive, typename T>
+			static void apply(Archive& archive, T& value)
+			{
+				value.save(archive);
+			}
+		};
+
+		struct sSplitMemberReader
+		{
+			template<typename Archive, typename T>
+			static void apply(Archive& archive, T& value)
+			{
+				value.load(archive);
+			}
+		};
+
+		template<typename Archive, typename T>
+		void splitMember(Archive& archive, T& value)
+		{
+			typedef std::conditional
+				<
+				Archive::isWriter,
+				sSplitMemberWriter,
+				sSplitMemberReader
+				>::type operation;
+
+			operation::apply(archive, value);
+		}
+
+		struct sSplitFreeWriter
+		{
+			template<typename Archive, typename T>
+			static void apply(Archive& archive, T& value)
+			{
+				::serialization::save(archive, value);
+			}
+		};
+
+		struct sSplitFreeReader
+		{
+			template<typename Archive, typename T>
+			static void apply(Archive& archive, T& value)
+			{
+				::serialization::load(archive, value);
+			}
+		};
+
+		template<typename Archive, typename T>
+		void splitFree(Archive& archive, T& value)
+		{
+			typedef typename std::conditional
+				<
+				Archive::isWriter,
+				sSplitFreeWriter,
+				sSplitFreeReader
+				>::type operation;
+
+			operation::apply(archive, value);
+		}
+
+		struct sSerializeMember
+		{
+			template<typename T, typename A>
+			static void serialize(A& archive, T& object)
+			{
+				object.serialize(archive);
+			}
+			template<typename T, typename A>
+			static void serialize(A& archive, sNameValuePair<T>& nvp)
+			{
+				serialization::serialize(archive, nvp.value);
+			}
+		};
+
+		struct sSerializeEnum
+		{
+			template<typename T, typename A>
+			static void serialize(A& archive, T& enumValue)
+			{
+				if (archive.isWriter)
+				{
+					int tmp = enumValue;
+					archive & tmp;
+					//TODO: operator<< does not work
+				}
+				else
+				{
+					int tmp;
+					archive & tmp;
+					//TODO: operator>> does not work
+					enumValue = (T)tmp;
+				}
+			}
+			template<typename T, typename A>
+			static void serialize(A& archive, sNameValuePair<T>& nvp)
+			{
+				if (archive.isWriter)
+				{
+					int tmp = nvp.value;
+					archive & makeNvp(nvp.name, tmp);
+					//TODO: operator<< does not work
+				}
+				else
+				{
+					int tmp;
+					archive & makeNvp(nvp.name, tmp);
+					nvp.value = (T)tmp;
+					//TODO: operator>> does not work
+				}
+			}
+		};
+	} //namespace detail
+
+	#define SERIALIZATION_SPLIT_MEMBER()                        \
+	template<typename A>                                  \
+	void serialize(A& archive)                            \
+	{                                                           \
+		serialization::detail::splitMember(archive, *this);     \
+	}
+
+	#define SERIALIZATION_SPLIT_FREE(T)                         \
+	namespace serialization {                                   \
+	template<typename A>                                  \
+	void serialize(A& archive, T & value)                 \
+	{                                                           \
+		serialization::detail::splitFree(archive, value);       \
+	}                                                           \
+	}
+
+	
+
+	//
+	// default serialize implementations
+	//
+	template<typename A, typename T>
+	void serialize(A& archive, T& value)
+	{
+		typedef std::conditional<std::is_enum<T>::value, detail::sSerializeEnum, detail::sSerializeMember>::type serializeWrapper;
+		serializeWrapper::serialize(archive, value);
+	}
+
+	template<typename A, typename T>
+	void serialize(A& archive, sNameValuePair<T>& value)
+	{
+		typedef std::conditional<std::is_enum<T>::value, detail::sSerializeEnum, detail::sSerializeMember>::type serializeWrapper;
+		serializeWrapper::serialize(archive, value);
+	}
+
+	//
+	// free serialization functions (for e. g. STL types)
+	//
+	//-------------------------------------------------------------------------
+	template<typename A, typename T1, typename T2>
+	void serialize(A& archive, std::pair<T1, T2>& value)
+	{
+		archive & makeNvp("first", value.first);
+		archive & makeNvp("second", value.second);
+	}
+	//-------------------------------------------------------------------------
+	template<typename A, typename T>
+	void save(A& archive, const std::vector<T>& value)
+	{
+		uint32_t length = value.size();
+		archive << NVP(length);
+		for (auto item : value)
+		{
+			archive << NVP(item);
+		}
+	}
+	template<typename A, typename T>
+	void load(A& archive, std::vector<T>& value)
+	{
+		uint32_t length;
+		archive >> NVP(length);
+		value.resize(length);
+		for (size_t i = 0; i < length; i++)
+		{
+			T c;
+			archive >> makeNvp("item", c);
+			value[i] = c;
+		}
+	}
+	template<typename A, typename T>
+	void serialize(A& archive, std::vector<T>& value)
+	{
+		serialization::detail::splitFree(archive, value);
+	}
+	//-------------------------------------------------------------------------
+	template<typename A>
+	void save(A& archive, const std::string& value)
+	{
+		uint32_t length = value.length();
+		archive << NVP(length);
+		for (char c : value)
+		{
+			archive << c;
+		}
+	}
+	template<typename A>
+	void load(A& archive, std::string& value)
+	{
+		uint32_t length;
+		archive >> length;
+		value.reserve(length);
+		for (size_t i = 0; i < length; i++)
+		{
+			char c;
+			archive >> c;
+			value.push_back(c);
+		}
+	}
+	template<typename A>
+	void serialize(A& archive, std::string& value)
+	{
+		serialization::detail::splitFree(archive, value);
+	}
+
+} //namespace sersialization
+
+#endif //serialization_serializationH
