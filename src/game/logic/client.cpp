@@ -57,6 +57,7 @@
 #include "game/logic/turnclock.h"
 #include "game/logic/turntimeclock.h"
 #include "game/logic/action.h"
+#include "utility/serialization/textarchive.h"
 
 using namespace std;
 
@@ -183,16 +184,14 @@ void cClient::sendNetMessage (std::unique_ptr<cNetMessage> message) const
 
 void cClient::sendNetMessage(std::unique_ptr<cNetMessage2> message) const
 {
-	//TODO: logging
-	/*if (message->iType != NET_GAME_TIME_CLIENT)
-	{
-		Log.write("Client: " + getactivePlayer().getName() + " --> "
-			+ message->getTypeAsString()
-			+ ", gameTime:" + iToStr(this->gameTimer->gameTime)
-			+ ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
-	}*/
-
 	message->playerNr = activePlayer->getNr();
+
+	if (message->getType() != cNetMessage2::GAMETIME_SYNC_CLIENT)
+	{
+		cTextArchiveIn archive;
+		archive << *message;
+		Log.write(getActivePlayer().getName() + ": --> Data: " + archive.data() + " @" + iToStr(gameTimer->gameTime), cLog::eLOG_TYPE_NET_DEBUG);
+	}
 
 	if (server2)
 	{
@@ -1513,6 +1512,14 @@ void cClient::handleNetMessages()
 	std::unique_ptr<cNetMessage2> message;
 	while (eventQueue2.try_pop(message))
 	{
+
+		if (message->getType() != cNetMessage2::GAMETIME_SYNC_SERVER)
+		{
+			cTextArchiveIn archive;
+			archive << *message;
+			Log.write(getActivePlayer().getName() + ": <-- Data: " + archive.data() + " @" + iToStr(gameTimer->gameTime), cLog::eLOG_TYPE_NET_DEBUG);
+		}
+
 		switch (message->getType())
 		{
 		case cNetMessage2::CHAT:
@@ -1549,13 +1556,7 @@ void cClient::handleNetMessages()
 
 int cClient::handleNetMessage (cNetMessage& message)
 {
-/*	if (message.iType != NET_GAME_TIME_SERVER)
-	{
-		Log.write ("Client: " + getactivePlayer().getName() + " <-- "
-				   + message.getTypeAsString()
-				   + ", gameTime:" + iToStr (this->gameTimer->gameTime)
-				   + ", Hexdump: " + message.getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
-	} */
+
 
 	switch (message.iType)
 	{

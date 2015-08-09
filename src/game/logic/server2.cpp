@@ -87,12 +87,13 @@ void cServer2::pushMessage(std::unique_ptr<cNetMessage2> message)
 //TODO: send to specific player
 void cServer2::sendMessageToClients(std::unique_ptr<cNetMessage2> message, int playerNr) const
 {
-	//TODO: logging
+	if (message->getType() != cNetMessage2::GAMETIME_SYNC_SERVER)
+	{
+		cTextArchiveIn archive;
+		archive << *message;
+		Log.write("Server: --> Data: " + archive.data() + " @" + iToStr(gameTimer.gameTime), cLog::eLOG_TYPE_NET_DEBUG);
 
-	/*	Log.write("Server: --> " + playerName + " (" + iToStr(playerNumber) + ") "
-	+ message->getTypeAsString()
-	+ ", gameTime:" + iToStr(this->gameTimer->gameTime)
-	+ ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);*/
+	}
 
 
 	//TODO: network
@@ -136,6 +137,13 @@ void cServer2::run()
 		std::unique_ptr<cNetMessage2> message;
 		while (eventQueue.try_pop(message))
 		{
+			if (message->getType() != cNetMessage2::GAMETIME_SYNC_CLIENT)
+			{
+				cTextArchiveIn archive;
+				archive << *message;
+				Log.write("Server: <-- Data: " + archive.data() + " @" + iToStr(gameTimer.gameTime), cLog::eLOG_TYPE_NET_DEBUG);
+			}
+
 			switch (message->getType())
 			{
 			case cNetMessage2::ACTION:
@@ -153,7 +161,7 @@ void cServer2::run()
 				}
 				break;
 			default:
-				Log.write("Can not handle net message!", cLog::eLOG_TYPE_NET_ERROR);
+				Log.write(" Server: Can not handle net message!", cLog::eLOG_TYPE_NET_ERROR);
 				sendMessageToClients(std::move(message));
 				break;
 			}
