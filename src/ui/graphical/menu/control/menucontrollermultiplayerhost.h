@@ -48,6 +48,7 @@ public:
 	void start();
 
 	virtual void pushEvent (std::unique_ptr<cNetMessage> message) MAXR_OVERRIDE_FUNCTION;
+	virtual std::unique_ptr<cNetMessage> popEvent() MAXR_OVERRIDE_FUNCTION;
 
 	virtual void run() MAXR_OVERRIDE_FUNCTION;
 private:

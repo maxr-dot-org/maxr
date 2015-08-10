@@ -121,6 +121,14 @@ void cMenuControllerMultiplayerHost::pushEvent (std::unique_ptr<cNetMessage> mes
 }
 
 //------------------------------------------------------------------------------
+std::unique_ptr<cNetMessage> cMenuControllerMultiplayerHost::popEvent()
+{
+	std::unique_ptr<cNetMessage> message;
+	messageQueue.try_pop(message);
+	return message;
+}
+
+//------------------------------------------------------------------------------
 void cMenuControllerMultiplayerHost::run()
 {
 	std::unique_ptr<cNetMessage> message;

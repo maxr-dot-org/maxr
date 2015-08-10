@@ -104,6 +104,10 @@ class INetMessageReceiver
 public:
 	virtual ~INetMessageReceiver() {}
 	virtual void pushEvent (std::unique_ptr<cNetMessage> message) = 0;
+
+	// when switching the NetMessageReceiver in cTcp, the new receiver will get
+	// all remaining messages from the old receiver
+	virtual std::unique_ptr<cNetMessage> popEvent() { throw std::runtime_error("Method not implemented"); };
 };
 
 //------------------------------------------------------------------------

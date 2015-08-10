@@ -279,6 +279,13 @@ void cServer::pushEvent (std::unique_ptr<cNetMessage> message)
 {
 	eventQueue.push (std::move (message));
 }
+//------------------------------------------------------------------------------
+std::unique_ptr<cNetMessage> cServer::popEvent()
+{
+	std::unique_ptr<cNetMessage> message;
+	eventQueue.try_pop(message);
+	return message;
+}
 
 //------------------------------------------------------------------------------
 void cServer::sendNetMessage (std::unique_ptr<cNetMessage> message, const cPlayer* player)

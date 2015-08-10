@@ -78,6 +78,7 @@ public:
 	// TODO: should be const cServer*
 	cServer* getServer() const { return server; }
 	virtual void pushEvent (std::unique_ptr<cNetMessage> message) MAXR_OVERRIDE_FUNCTION;
+	virtual std::unique_ptr<cNetMessage> popEvent() MAXR_OVERRIDE_FUNCTION;
 
 	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);
 	void disableFreezeMode (eFreezeMode mode);
@@ -317,7 +318,7 @@ private:
 	void HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message);
-
+	
 private:
 	cSignalConnectionManager signalConnectionManager;
 

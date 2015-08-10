@@ -214,6 +214,13 @@ void cClient::initPlayersWithMap()
 	eventQueue.push (std::move (message));
 }
 
+std::unique_ptr<cNetMessage> cClient::popEvent()
+{
+	std::unique_ptr<cNetMessage> message;
+	eventQueue.try_pop(message);
+	return message;
+}
+
 void cClient::sendNetMessage (std::unique_ptr<cNetMessage> message) const
 {
 	message->iPlayerNr = ActivePlayer->getNr();

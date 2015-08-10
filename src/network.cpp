@@ -403,11 +403,23 @@ void cTCP::deleteSocket (int iNum)
 }
 
 //------------------------------------------------------------------------
-void cTCP::setMessageReceiver (INetMessageReceiver* messageReceiver_)
+void cTCP::setMessageReceiver (INetMessageReceiver* newNessageReceiver)
 {
 	cLockGuard<cMutex> lock (TCPMutex);
 
-	this->messageReceiver = messageReceiver_;
+	// workaroud for lost messages at game init:
+	// when switching to the client netmessage receiver,
+	// all remaining messages from the multiplayer menu controller
+	// are moved to the clients queue
+	if (messageReceiver)
+	{
+		std::unique_ptr<cNetMessage> message;
+		while (message = messageReceiver->popEvent())
+			newNessageReceiver->pushEvent(std::move(message));
+	}
+
+	messageReceiver = newNessageReceiver;
+
 }
 
 //------------------------------------------------------------------------
