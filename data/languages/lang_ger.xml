@@ -26,7 +26,7 @@
 			<Clans ENG="Loading clans..." localized="Lade Clans..."/>
 			<Effects ENG="Loading effects..." localized="Lade Effekte..."/>
 			<Fonts ENG="Loading fonts..." localized="Lade Schriften..."/>
-			<GFX ENG="Loading gfx..." localized="Lade GFX..."/>
+			<GFX ENG="Loading graphics..." localized="Lade Grafiken..."/>
 			<Keys ENG="Loading keys..." localized="Lade Tasten..."/>
 			<Lang ENG="Loading language pack..." localized="Lade Sprachpaket..."/>
 			<Music ENG="Loading music..." localized="Lade Musik..."/>
@@ -38,11 +38,11 @@
 		<Title>
 			<Alien_Tech ENG="Alien remains" localized="Alien-Überreste"/>
 			<BridgeHead ENG="Starting Base" localized="Startbasis"/>
-			<Build_Factory ENG="Factory Menu" localized="Fabrikmenü" />
-			<Build_Vehicle ENG="Construction Menu" localized="Konstruktionsmenü" />
+			<Build_Factory ENG="Factory Menu" localized="Fabrikmenü"/>
+			<Build_Vehicle ENG="Construction Menu" localized="Konstruktionsmenü"/>
 			<Cargo ENG="Cargo" localized="Ladung"/>
 			<Choose_Clan ENG="Choose Clan" localized="Clan-Auswahl"/>
-			<Choose_Planet ENG="Choose Planet" localized="Planetenauswahl"/>
+			<Choose_Planet ENG="Choose planet" localized="Planetenauswahl"/>
 			<Choose_Units ENG="Choose Units" localized="Einheitenauswahl"/>
 			<Clan ENG="Clan" localized="Clan"/>
 			<Clans ENG="Clans" localized="Clans"/>
@@ -68,18 +68,18 @@
 			<Oil ENG="Fuel" localized="Treibstoff"/>
 			<Options ENG="Options" localized="Optionen"/>
 			<Player_Name ENG="Player Name:" localized="Spielername:"/>
-			<Player_Select ENG="Playeroptions" localized="Spielerauswahl"/>
+			<Player_Select ENG="Player options" localized="Spielerauswahl"/>
 			<Players ENG="Players:" localized="Spieler:"/>
 			<Port ENG="Port" localized="Port"/>
-			<Resource ENG="Resources" localized="Ressourcen"/>
-			<Resource_Density ENG="Resources Density" localized="Ressourcendichte"/>
+			<Resource ENG="Resource density" localized="Ressourcen"/>
+			<Resource_Density ENG="Resource frequency" localized="Ressourcendichte"/>
 			<Savegame ENG="Saved Games" localized="Gespeicherte Spiele"/>
 			<Send ENG="Send" localized="Senden"/>
 			<Team ENG="Team" localized="Team"/>
 			<Turn_end ENG="Turn end" localized="Zeitbegenzung Rund"/>
 			<Turn_limit ENG="Turn limit" localized="Zeitbegrenzung Rundenende"/>
 			<Unitinfo ENG="Unit status screen" localized="Einheitendetails"/>
-			<Upgrades_Menu ENG="Upgrades menu" localized="Verbesserungsmenü" />
+			<Upgrades_Menu ENG="Upgrades menu" localized="Verbesserungsmenü"/>
 		</Title>
 		<Others>
 			<Active ENG="Active" localized="Aktiv"/>
@@ -199,9 +199,9 @@
 			<Off ENG="off" localized="Aus"/>
 			<On ENG="on" localized="Ein"/>
 			<Sparse ENG="Sparse" localized="Dünn"/>
-			<TooMuch ENG="Too Much!" localized="Zuviel!"/>
-			<Type_Simu ENG="simultaneous" localized="Simultane Bewegung"/>
-			<Type_Turns ENG="turns" localized="Rundenbasierend"/>
+			<TooMuch ENG="Too Much" localized="Zuviel"/>
+			<Type_Simu ENG="Simultaneous" localized="Simultane Bewegung"/>
+			<Type_Turns ENG="Turn based" localized="Rundenbasierend"/>
 		</Option>
 		<Punctuation>
 			<Colon ENG=": " localized=": "/>
@@ -250,7 +250,7 @@
 			<MapDL_Finished ENG="Map download finished." localized="Karte wurde vollständig heruntergeladen."/>
 			<MapDL_Percent ENG="Map download: %s%" localized="Lade Karte: %s%"/>
 			<MapDL_Upload ENG="Uploading map to %s..." localized="Übertrage Karte zu %s..."/>
-			<MapDL_UploadFinished localized="Karte wurde vollständig zu %s übertragen."/>
+			<MapDL_UploadFinished ENG="Map upload to %s finished." localized="Karte wurde zu %s übertragen."/>
 			<Missing_Settings ENG="Options, map or savegame are not set" localized="Karte oder Optionen noch einstellen oder Speicherstand laden."/>
 			<Network_Closed ENG="Connection closed" localized="Verbindung geschlossen"/>
 			<Network_Connected ENG="Connected" localized="Verbunden"/>
@@ -278,12 +278,12 @@
 			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum." localized="Bitte wählen Sie die Anzahl der Spieler. Für ein HotSeat Spiel werden mindestens 2 Spieler benötigt. Maximal sind 8 Spieler möglich. "/>
 			<Player_Color_Taken ENG="Playercolor already in use, please select an other color to be unique" localized="Spielerfarbe bereits in Verwendung, bitte wählen Sie eine andere Farbe um unverwechselbar zu sein."/>
 			<Player_Few ENG="Not enough players!" localized="Nicht genug Spieler!"/>
-			<Player_Joined ENG="%s has joined" localized="%s ist beigetreten"/>"
+			<Player_Joined ENG="%s has joined" localized="%s ist beigetreten"/>
 			<Player_Left ENG="%s has left the game" localized="%s hat das Spiel verlassen"/>
 			<Player_Many ENG="Too many players!" localized="Zu viele Spieler!"/>
-			<Player_MustHost ENG="must be host in turnbased game!" localized="muss der Host im Rundenspiel sein"/>
+			<Player_MustHost ENG="must be host in turn based game!" localized="muss der Host im Rundenspiel sein"/>
 			<Player_Name_Taken ENG="Playername already in use, please select an other name to be unique" localized="Spielername bereits in Verwendung, bitte wählen Sie einen anderen Namen um unverwechselbar zu sein."/>
-			<Player_Turn ENG="%s:\nBegin turn" localized="%s:\nStarte Runde."/>
+			<Player_Turn ENG="%s:\nBegin turn." localized="%s:\nStarte Runde."/>
 			<Player_Turn_End ENG="%s ended turn" localized="%s hat den Zug beendet"/>
 			<Player_Twice ENG="Playername exists twice: " localized="Spielername existiert doppelt: "/>
 			<Player_Wrong ENG="Missing a correct player's name" localized="Ein Spieler hat nicht den richtigen Namen!"/>
@@ -291,9 +291,9 @@
 			<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="Wiederbindung vom Server unterbunden."/>
 			<Save_Only_Host ENG="Only the host can save the current games." localized="Nur der Server kann das aktuelle Spiel speichern"/>
 			<Server_Not_Running ENG="The server is not running." localized="Der Server ist nicht gestartet."/>
-			<Wait_For_Server ENG="Waiting for network response from server" localized="Warte auf Netzwerkantwort vom Server" />
+			<Wait_For_Server ENG="Waiting for network response from server" localized="Warte auf Netzwerkantwort vom Server"/>
 			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Warte auf Wiederverbindung eines Spielers"/>
-			<Wait_TurnEnd ENG="Please wait while turn end is executed." localized="Bitte warten Sie, während das Rundenende ausgeführt wird." />
+			<Wait_TurnEnd ENG="Please wait while turn end is executed." localized="Bitte warten Sie, während das Rundenende ausgeführt wird."/>
 			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Bitte warten Sie bis %s seine Runde beendet hat."/>
 			<Waiting ENG="Waiting for other players..." localized="Warte auf andere Spieler..."/>
 		</Multiplayer>
@@ -322,8 +322,8 @@
 			<Destroyed ENG="destroyed" localized="zerstört"/>
 			<Detected ENG="detected" localized="entdeckt"/>
 			<Disabled ENG="disabled" localized="außer Gefecht gesetzt"/>
-			<EcoSphere ENG="eco-sphere" localized="Ökosphäre"/>
-			<EcoSpheres ENG="eco-spheres" localized="Ökosphären"/>
+			<EcoSphere ENG="Eco-sphere" localized="Ökosphäre"/>
+			<EcoSpheres ENG="Eco-spheres" localized="Ökosphären"/>
 			<End_Game ENG="Confirm Exit\n\nUnsaved game data will be lost." localized="Beenden bestätigen\n\nNicht gespeicherter Spielfortschritt geht dabei verloren!"/>
 			<Energy_Insufficient ENG="Cannot turn on, power needed" localized="Nicht genug Energie zum Einschalten vorhanden!"/>
 			<Energy_IsNeeded ENG="Cannot turn off generator, power needed." localized="Kann Generator nicht abschalten, Energie wird benötigt!"/>
@@ -338,9 +338,9 @@
 			<Gold_Low ENG="More gold needed, refinery turned off." localized="Mehr Gold benötigt, Raffinerie abgeschaltet!"/>
 			<IsBeeingAttacked ENG="Is beeing attacked" localized="Wird angegriffen"/>
 			<Labs ENG="Labs" localized="Labore"/>
-			<Landing_Select ENG="Please select starting location." localized="Bitte Landeplatz wählen." />
-			<Landing_Too_Close ENG="Landingposition is too close to an other player. Please reselect your position." localized="Landeposition zu nah an einem anderen Spieler. Bitte neu wählen."/>
-			<Landing_Warning ENG="Landingposition is near an other player. Please confirm the position by clicking in the red circle, or select an other position." localized="Landeposition liegt nah bei einem anderen Spieler. Bitte durch klicken in den roten Kreis bestätigen oder neue Position wählen"/>
+			<Landing_Select ENG="Please select starting location." localized="Bitte Landeplatz wählen."/>
+			<Landing_Too_Close ENG="Landing position is too close to an other player. Please reselect your position." localized="Landeposition zu nah an einem anderen Spieler. Bitte neu wählen."/>
+			<Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle or select another position." localized="Landeposition liegt nah bei einem anderen Spieler. Bitte durch klicken in den roten Kreis bestätigen oder neue Position wählen"/>
 			<Laying ENG="minelaying" localized="lege Minen"/>
 			<Metal_Insufficient ENG="Cannot start, raw materials needed." localized="Nicht genügend Rohstoff zum Einschalten vorhanden!"/>
 			<Metal_Low ENG="More raw materials needed, factory turned off." localized="Mehr Rohstoff benötigt, Verbraucher wurde abgeschaltet!"/>
@@ -352,7 +352,7 @@
 			<Points ENG="points" localized="Punkte"/>
 			<Producing ENG="Building" localized="beim Bau"/>
 			<Producing_Err ENG="Buildposition blocked or insufficient raw materials to build" localized="Position blockiert oder ungenügend Rohstoff zum Bauen"/>
-			<Producing_Fin ENG="finished producing" localized="Bau abgeschlossen"/>
+			<Producing_Fin ENG="finished building" localized="Bau abgeschlossen"/>
 			<ReactionFireOff ENG="Reaction Fire Off" localized="Manuell schießen"/>
 			<Repeat ENG="Again" localized="Wieder"/>
 			<Reserve ENG="Reserve" localized="Reserve"/>
@@ -378,9 +378,9 @@
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>
-			<ERROR_Map_Loading ENG="Error loading map" localized="Fehler beim Laden der Karte"/>
+			<ERROR_Map_Loading ENG="Error while loading map" localized="Fehler beim Laden der Karte"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="fehlende Übersetzung: %s"/>
-			<INFO_Language_initialised ENG="Language is now initialised" localized="Sprach ist nun initialisiert"/>
+			<INFO_Language_initialised ENG="Language is now initialized" localized="Sprach ist nun initialisiert"/>
 			<INFO_Not_Implemented ENG="Not yet implemented" localized="Noch nicht umgesetzt"/>
 		</Error_Messages>
 	</Text>

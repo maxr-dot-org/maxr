@@ -14,8 +14,8 @@
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized=""/>
 			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized=""/>
 			<Credits_Reloaded ENG="M.A.X.R. based on Interplay's Mechanized Assault and eXploration" localized="M.A.X.R. основывается на M.A.X. от Interplay"/>
-			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded"/>
-			<Game_Title ENG="M.A.X.R."/>
+			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded" localized=""/><!--TODO: translation needed-->
+			<Game_Title ENG="M.A.X.R." localized=""/><!--TODO: translation needed-->
 			<Version ENG="version v%s" localized="версия %s"/>
 			<Remarks>
 				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*) ещё не реализовано"/>
@@ -36,25 +36,17 @@
 			<Voices ENG="Loading voices..." localized="Загрузка голосов..."/>
 		</Init>
 		<Title>
-			<Alien_Tech ENG="Alien technology" localized="Техника пришельцев"/>
+			<Alien_Tech ENG="Alien remains" localized="Техника пришельцев"/><!--TODO: review needed (english string has been changed)-->
 			<BridgeHead ENG="Starting Base" localized="Начальная база"/>
-			
-			
 			<Cargo ENG="Cargo" localized="Груз"/>
-			
 			<Choose_Planet ENG="Choose planet" localized="Выбор карты"/>
-			
-			
 			<Clans ENG="Clans" localized="Кланы"/>
 			<Color ENG="Color:" localized="Цвет"/>
 			<Computer ENG="Computer" localized="Компьютер"/>
 			<Connect ENG="Connect" localized="Соединение"/>
-			<Credits ENG="Credits" localized="Деньги"/>
-			
-
+			<Credits ENG="Credit" localized="Деньги"/><!--TODO: review needed (english string has been changed)-->
 			<Game_Type ENG="Game Type" localized="Тип игры"/>
 			<Gold ENG="Gold" localized="Золото"/>
-			
 			<Human ENG="Human" localized="Человек"/>
 			<IP ENG="IP" localized="IP"/>
 			<Labs ENG="Research menu" localized="Исследование"/>
@@ -62,29 +54,36 @@
 			<LoadSave ENG="Load/Save Menu" localized="Загрузка/Сохранение"/>
 			<MainMenu ENG="Main Menu" localized="Главное меню"/>
 			<Map ENG="Map" localized="Карта"/>
-			<Metal ENG="Materials" localized="Сырьё"/>
+			<Metal ENG="Raw Materials" localized="Сырьё"/><!--TODO: review needed (english string has been changed)-->
 			<Mine ENG="Allocation menu" localized="Распределение ресурсов"/>
 			<Nobody ENG="Nobody" localized="Никто"/>
 			<Oil ENG="Fuel" localized="Топливо"/>
 			<Options ENG="Options" localized="Опции"/>
-			<Player_Name ENG="Player name:" localized="Имя игрока"/>
+			<Player_Name ENG="Player Name:" localized="Имя игрока"/><!--TODO: review needed (english string has been changed)-->
 			<Player_Select ENG="Player options" localized="Выбор игроков"/>
 			<Players ENG="Players:" localized="Игроки:"/>
 			<Port ENG="Port" localized="Порт"/>
 			<Resource ENG="Resource density" localized="Ресурсы"/>
 			<Resource_Density ENG="Resource frequency" localized="Плотность ресурсов"/>
-			<Savegame ENG="Savegame" localized="Сохранение"/>
+			<Savegame ENG="Saved Games" localized="Сохранение"/><!--TODO: review needed (english string has been changed)-->
 			<Send ENG="Send" localized="Отправить"/>
 			<Team ENG="Team" localized="Команда"/>
-
-
 			<Unitinfo ENG="Unit status screen" localized="Статус подразделения"/>
-			
+			<Build_Factory ENG="Factory Menu" localized=""/><!--TODO: translation needed-->
+			<Build_Vehicle ENG="Construction Menu" localized=""/><!--TODO: translation needed-->
+			<Choose_Clan ENG="Choose Clan" localized=""/><!--TODO: translation needed-->
+			<Choose_Units ENG="Choose Units" localized=""/><!--TODO: translation needed-->
+			<Clan ENG="Clan" localized=""/><!--TODO: translation needed-->
+			<Credits_start ENG="Credit at gamestart" localized=""/><!--TODO: translation needed-->
+			<Custom_11 ENG="Custom" localized=""/><!--TODO: translation needed-->
+			<HotSeat ENG="Hot Seat" localized=""/><!--TODO: translation needed-->
+			<Turn_end ENG="Turn end" localized=""/><!--TODO: translation needed-->
+			<Turn_limit ENG="Turn limit" localized=""/><!--TODO: translation needed-->
+			<Upgrades_Menu ENG="Upgrades menu" localized=""/><!--TODO: translation needed-->
 		</Title>
 		<Others>
 			<Active ENG="Active" localized="Активац."/>
 			<Active_7 ENG="Activ." localized="Актив."/>
-			
 			<Air_Units ENG="Airunits" localized="Воздушные"/>
 			<Ammo ENG="Ammunition" localized="Боезапас"/>
 			<Ammo_7 ENG="Ammo" localized="Боезап."/>
@@ -137,17 +136,15 @@
 			<OK ENG="OK" localized="OK"/>
 			<Path ENG="Path" localized="Путь"/>
 			<Power ENG="Power" localized="Энерг."/>
-			<Proceed_4 ENG="Do" localized="Вып."/> <!-- it's for the " « [DO] » "above the log-button -->
+			<Proceed_4 ENG="Do" localized="Вып."/><!-- it's for the " « [DO] » "above the log-button -->
 			<Produce_7 ENG="Produces" localized="Произв."/>
 			<Produce_Units ENG="Producing units" localized="Производственные"/>
 			<Range ENG="Range" localized="Дальность"/>
 			<Range_7 ENG="Range" localized="Дальн."/>
 			<Reload ENG="Reload" localized="Заряд."/>
 			<Reload_7 ENG="Reload" localized="Заряд."/>
-
 			<Repair ENG="Repair" localized="Ремонт"/>
 			<Repair_7 ENG="Repair" localized="Ремонт"/>
-			
 			<Reports ENG="Reports" localized="Отчёты"/>
 			<Research ENG="Research" localized="Иссл."/>
 			<Save ENG="Save" localized="Сохранить"/>
@@ -159,7 +156,7 @@
 			<Seed_7 ENG="Seed" localized="Мины"/>
 			<Sentry ENG="Sentry" localized="Часовой"/>
 			<Settings ENG="Settings" localized="Настройки"/>
-			<Shots ENG="Shoots" localized="Выстрел"/>
+			<Shots ENG="Shots" localized="Выстрел"/><!--TODO: review needed (english string has been changed)-->
 			<Shots_7 ENG="Shots" localized="Выстр."/>
 			<Single_Player ENG="Singleplayer (No AI)" localized="Одиночная игра (Без ИИ)"/>
 			<Speed ENG="Speed" localized="Скор."/>
@@ -176,15 +173,18 @@
 			<Teams_7 ENG="Teams" localized="Команды"/>
 			<Total ENG="Total" localized="Всего"/>
 			<Transfer_7 ENG="X-fer" localized="Трансф."/>
-
-
 			<Upgrade ENG="Upgrade" localized="Улучшить"/>
 			<UpgradeAll_7 ENG="Up.all" localized="Ул. все"/>
-			
 			<Upgrademenu_7 ENG="Up.Menu" localized="Улучш."/>
 			<Upgradethis_7 ENG="Upgrade" localized="Улучшить"/>
 			<Usage_7 ENG="Usage" localized="Исполь."/>
 			<Yes ENG="Yes" localized="Да"/>
+			<ActiveAll_9 ENG="Activ All" localized=""/><!--TODO: translation needed-->
+			<ReloadAll_9 ENG="Reload All" localized=""/><!--TODO: translation needed-->
+			<RepairAll_9 ENG="Rep. All" localized=""/><!--TODO: translation needed-->
+			<Unit_destroyed ENG="Unit destroyed!" localized=""/><!--TODO: translation needed-->
+			<Units ENG="Units" localized=""/><!--TODO: translation needed-->
+			<UpgradeAll_9 ENG="Upgrd.All" localized=""/><!--TODO: translation needed-->
 		</Others>
 		<Option>
 			<Definite ENG="Built (original)" localized="Уже построена"/>
@@ -199,7 +199,7 @@
 			<Off ENG="off" localized="выкл."/>
 			<On ENG="on" localized="вкл."/>
 			<Sparse ENG="Sparse" localized="низкая"/>
-			<TooMuch ENG="Too Much!" localized="макс"/>
+			<TooMuch ENG="Too Much" localized="макс"/><!--TODO: review needed (english string has been changed)-->
 			<Type_Simu ENG="Simultaneous" localized="Одновременно"/>
 			<Type_Turns ENG="Turn based" localized="По очереди"/>
 		</Option>
@@ -213,7 +213,6 @@
 			<Disable ENG="Disable" localized="Отключить"/>
 			<Effects ENG="Effects" localized="Эффекты"/>
 			<Intro ENG="Show intro" localized="Вступление"/>
-
 			<Music ENG="Music" localized="Музыка"/>
 			<Preferences ENG="Preferences" localized="Настройки"/>
 			<Resolution ENG="Resolution" localized="Разрешение экрана"/>
@@ -222,16 +221,17 @@
 			<ShowDamage ENG="Buildingdamage" localized="Повреждения зданий"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Повреждения транспорта"/>
 			<Tracks ENG="Vehicletracks" localized="Следы транспорта"/>
-
 			<Voices ENG="Voices" localized="Голоса"/>
 			<Volume ENG="Volume" localized="Громкость"/>
 			<Window ENG="Windowed" localized="Оконный режим"/>
+			<Language ENG="Language" localized=""/><!--TODO: translation needed-->
+			<Unlimited_11 ENG="No limit" localized=""/><!--TODO: translation needed-->
 		</Settings>
 		<Multiplayer>
 			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Сервер, нажмите F2 чтобы прекратить ожидание."/>
 			<Connection_Terminated ENG="Connection terminated." localized="Связь разорвана."/>
 			<Deadline ENG="This turn will end in %s seconds." localized="Ход закончится через %s секунд"/>
-			<Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame." localized="Вас нет в списке сохранённой игры, Вы будете отключены."/>
+			<Disconnect_Not_In_Save ENG="You will be disconnected because you are not listed in the savegame." localized="Вас нет в списке сохранённой игры, Вы будете отключены."/><!--TODO: review needed (english string has been changed)-->
 			<Go ENG="Let's go" localized="Поехали"/>
 			<Go_Abort ENG="Go aborted" localized="Отменено"/>
 			<Go_Check ENG="Check for go" localized="Приготовьтесь к началу"/>
@@ -239,12 +239,11 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="Сервер хочет начать: Не готов"/>
 			<Go_Ready ENG="Ready to go" localized="Готов"/>
 			<Go_Ready_No ENG="not ready to go" localized="не готов"/>
-
 			<Lost_Connection ENG="Lost connection to %s." localized="Потеряна связь с %s."/>
-			<Map_NoSet ENG="--no map set--" localized="--не выбана карта--"/>
+			<Map_NoSet ENG="--no map selected--" localized="--не выбана карта--"/><!--TODO: review needed (english string has been changed)-->
 			<MapDL_Cancel ENG="Aborted" localized="Отменено"/>
 			<MapDL_Download ENG="map %s from server." localized="карты %s с сервера"/>
-			<MapDL_DownloadInvalid ENG="original M.A.X. map  %s from server (licensed)!" localized="оригинальной карты M.A.X. %s с сервера (лицензированной)!"/>
+			<MapDL_DownloadInvalid ENG="original M.A.X. map %s from server (licensed)!" localized="оригинальной карты M.A.X. %s с сервера (лицензированной)!"/><!--TODO: review needed (english string has been changed)-->
 			<MapDL_DownloadRequest ENG="Map not installed: Requesting to download custom" localized="Карта не установлена: Запрашиваю загрузку"/>
 			<MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download" localized="Карта не установлена: Нет права на загрузку"/>
 			<MapDL_Finished ENG="Map download finished." localized="Загрузка карты завершена."/>
@@ -262,58 +261,57 @@
 			<Network_Open ENG="Game open" localized="Игра началась"/>
 			<Network_Syncing ENG="Synchronizing..." localized="Идёт синхронизация..."/>
 			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Не могу загрузить карту %s. Вы не готовы."/>
-			
 			<Not_Ready ENG="is not ready" localized="не готов"/>
 			<Option_NoSet ENG="--no options set--" localized="--не выбраны опции--"/>
-			
 			<Player ENG="Player" localized="Игрок"/>
-			
-			
-			
-			
-			
-			
-			
-			
-			<Player_Amount ENG="Choose the amount of players please.  There must be at least two human players to begin a hot seat game. 8 players is the maximum." localized="Выберете количество игроков. Необходимо минимум два игрока-человека. Максимально возможное количество игроков - 8."/>
-			
+			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum." localized="Выберете количество игроков. Необходимо минимум два игрока-человека. Максимально возможное количество игроков - 8."/><!--TODO: review needed (english string has been changed)-->
 			<Player_Few ENG="Not enough players!" localized="Недостаточно игроков!"/>
 			<Player_Joined ENG="%s has joined" localized="%s вступает в игру"/>
 			<Player_Left ENG="%s has left the game" localized="%s покидает игру"/>
 			<Player_Many ENG="Too many players!" localized="Слишком много игроков!"/>
-			<Player_MustHost ENG="must be host in turnbased game!" localized="должен быть сервером в игре по очереди"/>
-			
-			<Player_Turn ENG="%s's turn" localized="%s делает ход"/>
+			<Player_MustHost ENG="must be host in turn based game!" localized="должен быть сервером в игре по очереди"/><!--TODO: review needed (english string has been changed)-->
+			<Player_Turn ENG="%s:\nBegin turn." localized="%s делает ход"/><!--TODO: review needed (english string has been changed)-->
 			<Player_Turn_End ENG="%s ended turn" localized="%s завершил ход"/>
 			<Player_Twice ENG="Playername exists twice: " localized="Имя игрока уже занято: "/>
 			<Player_Wrong ENG="Missing a correct player's name" localized="У игрока неправильное имя"/>
-			<Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Игра уже идёт. Если Вы потеряли связь с сервером, Вы можете подключиться заново. Хотите подключиться?"/>
+			<Reconnect ENG="This game is running already.\nIf you have lost connection to the game, you can reconnect.\n\nDo you want to reconnect?" localized="Игра уже идёт. Если Вы потеряли связь с сервером, Вы можете подключиться заново. Хотите подключиться?"/><!--TODO: review needed (english string has been changed)-->
 			<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="Переподключение запрещено сервером."/>
-			<Save_Only_Host ENG="Only the host can save games." localized="Только сервер может сохранять игру."/>
+			<Save_Only_Host ENG="Only the host can save the current games." localized="Только сервер может сохранять игру."/><!--TODO: review needed (english string has been changed)-->
 			<Server_Not_Running ENG="The server is not running." localized="Сервер не запущен"/>
-			
 			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Ожидаем переподключения игрока."/>
-			
 			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Дождитесь завершения хода игроком %s"/>
 			<Waiting ENG="Waiting for other players..." localized="Ждём остальных игроков..."/>
+			<Host_command ENG="Host entered following command" localized=""/><!--TODO: translation needed-->
+			<No_Response ENG="Waiting for network response from player %s" localized=""/><!--TODO: translation needed-->
+			<Pause ENG="Game has been paused." localized=""/><!--TODO: translation needed-->
+			<Player1 ENG="Player 1" localized=""/><!--TODO: translation needed-->
+			<Player2 ENG="Player 2" localized=""/><!--TODO: translation needed-->
+			<Player3 ENG="Player 3" localized=""/><!--TODO: translation needed-->
+			<Player4 ENG="Player 4" localized=""/><!--TODO: translation needed-->
+			<Player5 ENG="Player 5" localized=""/><!--TODO: translation needed-->
+			<Player6 ENG="Player 6" localized=""/><!--TODO: translation needed-->
+			<Player7 ENG="Player 7" localized=""/><!--TODO: translation needed-->
+			<Player8 ENG="Player 8" localized=""/><!--TODO: translation needed-->
+			<Player_Color_Taken ENG="Playercolor already in use, please select an other color to be unique" localized=""/><!--TODO: translation needed-->
+			<Player_Name_Taken ENG="Playername already in use, please select an other name to be unique" localized=""/><!--TODO: translation needed-->
+			<Wait_For_Server ENG="Waiting for network response from server" localized=""/><!--TODO: translation needed-->
+			<Wait_TurnEnd ENG="Please wait while turn end is executed." localized=""/><!--TODO: translation needed-->
 		</Multiplayer>
 		<Comp>
 			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Добыча топлива увеличена на "/>
-			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Добыча золота уменьшена на "/>		
-			<Adjustments_Metal_Decreased ENG="Adjustments made: metal mining decreased by " localized="Добыча сырья уменьшена на "/>
+			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Добыча золота уменьшена на "/>
+			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by " localized="Добыча сырья уменьшена на "/><!--TODO: review needed (english string has been changed)-->
 			<Attacked ENG="is under attack" localized=" - под огнём противника!"/>
 			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s атакует врага"/>
-			
-			<Building_Disabled ENG="Building disabled" localized="Производство остановлено."/>
+			<Building_Disabled ENG="Building turned off" localized="Производство остановлено."/><!--TODO: review needed (english string has been changed)-->
 			<CapturedByEnemy ENG="%s has been captured by the enemy" localized="Враг захватил %s"/>
 			<Cheat ENG="used cheat" localized="использован чит"/>
-			<Clearing ENG="Clearing" localized="убирает"/>
+			<Clearing ENG="clearing" localized="убирает"/><!--TODO: review needed (english string has been changed)-->
 			<Clearing_Fin ENG="clearing done" localized="уборка закончена"/>
 			<Clearing_Mine ENG="clearing mines" localized="убирает мины"/>
 			<CommandoRank_Average ENG="Average" localized="Среднячок"/>
 			<CommandoRank_Elite ENG="Elite" localized="Элита"/>
 			<CommandoRank_Expert ENG="Expert" localized="Эксперт"/>
-			
 			<CommandoRank_Greenhorn ENG="Greenhorn" localized="Молокосос"/>
 			<CommandoRank_Veteran ENG="Veteran" localized="Ветеран"/>
 			<Dated ENG="dated" localized="устаревший"/>
@@ -322,12 +320,12 @@
 			<Destroyed ENG="destroyed" localized="- здание разрушено"/>
 			<Detected ENG="detected" localized="повреждено"/>
 			<Disabled ENG="disabled" localized="сломано"/>
-			<EcoSphere ENG="eco-sphere" localized="эко-сфера"/>
-			<EcoSpheres ENG="eco-spheres" localized="эко-сферы"/>
+			<EcoSphere ENG="Eco-sphere" localized="эко-сфера"/><!--TODO: review needed (english string has been changed)-->
+			<EcoSpheres ENG="Eco-spheres" localized="эко-сферы"/><!--TODO: review needed (english string has been changed)-->
 			<End_Game ENG="Confirm Exit\n\nUnsaved game data will be lost." localized="Действительно выйти? \n\nНесохранённые данные будут утеряны."/>
 			<Energy_Insufficient ENG="Cannot turn on, power needed" localized="Невозможно запустить, недостаточно энергии."/>
 			<Energy_IsNeeded ENG="Cannot turn off generator, power needed." localized="Невозможно отключить генератор, требуется энергия."/>
-			<Energy_Low ENG="Power needed, building turned off." localized="Недостаточно энергии, производство остановлено."/>
+			<Energy_Low ENG="Lack of power, energy consumer turned off." localized="Недостаточно энергии, производство остановлено."/><!--TODO: review needed (english string has been changed)-->
 			<Energy_ToLow ENG="More power needed, generator turned on." localized="Необходима дополнительная энергия, генератор включен."/>
 			<Finished ENG="is finished" localized="- готово"/>
 			<Finished2 ENG="are finished" localized="- готовы"/>
@@ -336,28 +334,24 @@
 			<GameEndsAt ENG="Game ends at" localized="Играть заканчивается при"/>
 			<Gold_Insufficient ENG="Cannot start, gold needed." localized="Невозможно запустить, недостаточно золота."/>
 			<Gold_Low ENG="More gold needed, refinery turned off." localized="Недостаточно залота, рафинария отключена."/>
-			
 			<Labs ENG="Labs" localized="лаборатории"/>
-			
-			<Landing_Too_Close ENG="Landingposition is too close to an other player. Please reselect your position." localized="Точка высадки слишком близко к другому игроку. Выберите новую точку высадки."/>
-			<Landing_Warning ENG="Landingposition is near an other player. Please confirm the position by clicking in the red circle, or select an other position." localized="Точка высадки находится недалеко от другого игрока. Подтвердите точку выскадки, щёлкнув по красному кругу или выберите новую точку высадки."/>
-			<Laying ENG="placing mines" localized="устанавливает мины"/>
-			<Metal_Insufficient ENG="Cannot start, metal needed." localized="Невозможно запустить, недостаточно сырья."/>
-			<Metal_Low ENG="More raw material needed, building turned off." localized="Недостаточно сырья, производство остановлено."/>
+			<Landing_Too_Close ENG="Landing position is too close to an other player. Please reselect your position." localized="Точка высадки слишком близко к другому игроку. Выберите новую точку высадки."/><!--TODO: review needed (english string has been changed)-->
+			<Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle or select another position." localized="Точка высадки находится недалеко от другого игрока. Подтвердите точку выскадки, щёлкнув по красному кругу или выберите новую точку высадки."/><!--TODO: review needed (english string has been changed)-->
+			<Laying ENG="minelaying" localized="устанавливает мины"/><!--TODO: review needed (english string has been changed)-->
+			<Metal_Insufficient ENG="Cannot start, raw materials needed." localized="Невозможно запустить, недостаточно сырья."/><!--TODO: review needed (english string has been changed)-->
+			<Metal_Low ENG="More raw materials needed, factory turned off." localized="Недостаточно сырья, производство остановлено."/><!--TODO: review needed (english string has been changed)-->
 			<Moving ENG="moving" localized="перемещается"/>
-			
 			<NoLimit ENG="Fight to the death!" localized="Биться насмерть!"/>
 			<Path_interrupted ENG="Pathbuilding order could not be resumed." localized="Возведение построек по заданному маршруту не может быть продолжено."/>
 			<Point ENG="point" localized="очко"/>
 			<Points ENG="points" localized="очки"/>
 			<Producing ENG="Building" localized="производит"/>
-			<Producing_Err ENG="Buildposition blocked or insufficient resources" localized="Точка возведения заблокирована или недостаточно ресурсов"/>
+			<Producing_Err ENG="Buildposition blocked or insufficient raw materials to build" localized="Точка возведения заблокирована или недостаточно ресурсов"/><!--TODO: review needed (english string has been changed)-->
 			<Producing_Fin ENG="finished building" localized="закончил производство"/>
 			<ReactionFireOff ENG="Reaction Fire Off" localized="Ответный огонь отключен"/>
 			<Repeat ENG="Again" localized="Ещё раз"/>
 			<Reserve ENG="Reserve" localized="Резерв"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Внимание: неподдерживаемый видеорежим в конфигурации"/>
-
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Снимок экрана записан в %s"/>
 			<Sentry ENG="on sentry" localized="на карауле"/>
 			<Stolen ENG="stolen" localized="захвачено"/>
@@ -375,12 +369,18 @@
 			<Upgrades_Done2 ENG="unit(s) of type %s" localized="(единиц типа %s)"/>
 			<Waits ENG="waiting" localized="бездействует"/>
 			<Working ENG="working" localized="работает"/>
+			<AttackingStatusStr ENG="attacking" localized=""/><!--TODO: translation needed-->
+			<CommandoRank_GrandMaster ENG="Grand Master" localized=""/><!--TODO: translation needed-->
+			<IsBeeingAttacked ENG="Is beeing attacked" localized=""/><!--TODO: translation needed-->
+			<Landing_Select ENG="Please select starting location." localized=""/><!--TODO: translation needed-->
+			<MovingToAttack ENG="moving to attack" localized=""/><!--TODO: translation needed-->
+			<RestartRequired ENG="Please restart 'Mechanized Assault and eXploration Reloaded' to take effect the change." localized=""/><!--TODO: translation needed-->
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Файл не найден: %s"/>
-			<ERROR_Map_Loading ENG="Error loading map" localized="Ошибка при загрузке карты"/>
+			<ERROR_Map_Loading ENG="Error while loading map" localized="Ошибка при загрузке карты"/><!--TODO: review needed (english string has been changed)-->
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="нехватает перевода: %s"/>
-			<INFO_Language_initialised ENG="Language is now initialised" localized="Язык не опознан"/>
+			<INFO_Language_initialised ENG="Language is now initialized" localized="Язык не опознан"/><!--TODO: review needed (english string has been changed)-->
 			<INFO_Not_Implemented ENG="Not yet implemented" localized="Ещё не реализовано"/>
 		</Error_Messages>
 	</Text>

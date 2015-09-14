@@ -36,25 +36,19 @@
 			<Voices ENG="Loading voices..." localized="Chargement voix..."/>
 		</Init>
 		<Title>
-			<Alien_Tech ENG="Alien technology" localized="Technologie Alien"/>
-			<BridgeHead ENG="Bridgehead" localized="Tête de pont "/>
-			
-			<Build_Vehicle ENG="Build menu" localized="Menu construction"/>
+			<Alien_Tech ENG="Alien remains" localized="Technologie Alien"/><!--TODO: review needed (english string has been changed)-->
+			<BridgeHead ENG="Starting Base" localized="Tête de pont "/><!--TODO: review needed (english string has been changed)-->
+			<Build_Vehicle ENG="Construction Menu" localized="Menu construction"/><!--TODO: review needed (english string has been changed)-->
 			<Cargo ENG="Cargo" localized="Charge"/>
-			
 			<Choose_Planet ENG="Choose planet" localized="Choix planète"/>
-			
 			<Clan ENG="Clan" localized="Clan "/>
 			<Clans ENG="Clans" localized="Clans "/>
 			<Color ENG="Color:" localized="Couleur :"/>
 			<Computer ENG="Computer" localized="Ordinateur"/>
 			<Connect ENG="Connect" localized="Connecter"/>
-			<Credits ENG="Credits" localized="Crédits "/>
-			
-			
+			<Credits ENG="Credit" localized="Crédits "/><!--TODO: review needed (english string has been changed)-->
 			<Game_Type ENG="Game Type" localized="Type de jeu "/>
 			<Gold ENG="Gold" localized="Or "/>
-			
 			<Human ENG="Human" localized="Humain"/>
 			<IP ENG="IP" localized="IP"/>
 			<Labs ENG="Research menu" localized="Menu recherche"/>
@@ -62,29 +56,34 @@
 			<LoadSave ENG="Load/Save Menu" localized="Menu Charger/Sauver"/>
 			<MainMenu ENG="Main Menu" localized="Menu principal"/>
 			<Map ENG="Map" localized="Carte"/>
-			<Metal ENG="Materials" localized="Minerai "/>
+			<Metal ENG="Raw Materials" localized="Minerai "/><!--TODO: review needed (english string has been changed)-->
 			<Mine ENG="Allocation menu" localized="Menu d'allocation"/>
 			<Nobody ENG="Nobody" localized="Personne"/>
 			<Oil ENG="Fuel" localized="Carburant "/>
 			<Options ENG="Options" localized="Options"/>
-			<Player_Name ENG="Playername:" localized="Nom joueur :"/>
-			<Player_Select ENG="Playeroptions" localized="Options joueur"/>
+			<Player_Name ENG="Player Name:" localized="Nom joueur :"/><!--TODO: review needed (english string has been changed)-->
+			<Player_Select ENG="Player options" localized="Options joueur"/><!--TODO: review needed (english string has been changed)-->
 			<Players ENG="Players:" localized="Joueurs :"/>
 			<Port ENG="Port" localized="Port"/>
-			<Resource ENG="Resources" localized="Ressources"/>
-			<Resource_Density ENG="Resources Density" localized="Densité ressources "/>
-			<Savegame ENG="Savegame" localized="Sauvegarde"/>
+			<Resource ENG="Resource density" localized="Ressources"/><!--TODO: review needed (english string has been changed)-->
+			<Resource_Density ENG="Resource frequency" localized="Densité ressources "/><!--TODO: review needed (english string has been changed)-->
+			<Savegame ENG="Saved Games" localized="Sauvegarde"/><!--TODO: review needed (english string has been changed)-->
 			<Send ENG="Send" localized="Envoi"/>
 			<Team ENG="Team" localized="Équipe"/>
-
-
 			<Unitinfo ENG="Unit status screen" localized="Informations unité"/>
-
+			<Build_Factory ENG="Factory Menu" localized=""/><!--TODO: translation needed-->
+			<Choose_Clan ENG="Choose Clan" localized=""/><!--TODO: translation needed-->
+			<Choose_Units ENG="Choose Units" localized=""/><!--TODO: translation needed-->
+			<Credits_start ENG="Credit at gamestart" localized=""/><!--TODO: translation needed-->
+			<Custom_11 ENG="Custom" localized=""/><!--TODO: translation needed-->
+			<HotSeat ENG="Hot Seat" localized=""/><!--TODO: translation needed-->
+			<Turn_end ENG="Turn end" localized=""/><!--TODO: translation needed-->
+			<Turn_limit ENG="Turn limit" localized=""/><!--TODO: translation needed-->
+			<Upgrades_Menu ENG="Upgrades menu" localized=""/><!--TODO: translation needed-->
 		</Title>
 		<Others>
 			<Active ENG="Active" localized="Activer"/>
 			<Active_7 ENG="Activ." localized="Activer"/>
-			
 			<Air_Units ENG="Airunits" localized="Unités aériennes"/>
 			<Ammo ENG="Ammunition" localized="Munitions"/>
 			<Ammo_7 ENG="Ammo" localized="Munit."/>
@@ -93,7 +92,6 @@
 			<Attack_7 ENG="Attack" localized="Attaque"/>
 			<Auto_7 ENG="Auto" localized="Auto"/>
 			<Back ENG="Back" localized="Retour"/>
-			
 			<Buy ENG="Buy" localized="Achat"/>
 			<Cancel ENG="Cancel" localized="Annuler"/>
 			<Cargo_7 ENG="Cargo" localized="Charge"/>
@@ -106,8 +104,6 @@
 			<Disable_7 ENG="Disable" localized="Désact."/>
 			<Disadvantages_8cut ENG="Disadvantages" localized="Handicap"/>
 			<Distribution_7 ENG="Distr." localized="Allouer"/>
-			
-			
 			<End ENG="End" localized="Fin"/>
 			<Exit ENG="Exit" localized="Quitter"/>
 			<Fight_Units ENG="Fighting units" localized="Unités d'attaque"/>
@@ -136,18 +132,15 @@
 			<No ENG="No" localized="Non"/>
 			<OK ENG="OK" localized="Ok"/>
 			<Path ENG="Path" localized="Chemin"/>
-			<Power ENG="Energy" localized="Energie"/>
-			<Proceed_4 ENG="Do" localized="OK"/> <!-- it's for the " « [DO] » "above the log-button -->
+			<Power ENG="Power" localized="Energie"/><!--TODO: review needed (english string has been changed)-->
+			<Proceed_4 ENG="Do" localized="OK"/><!-- it's for the " « [DO] » "above the log-button -->
 			<Produce_7 ENG="Produces" localized="Produit"/>
 			<Produce_Units ENG="Producing units" localized="Unités production"/>
 			<Range ENG="Range" localized="Portée"/>
 			<Range_7 ENG="Range" localized="Portée"/>
-			
 			<Reload_7 ENG="Reload" localized="Recharger"/>
-			
 			<Repair ENG="Repair" localized="Réparer"/>
 			<Repair_7 ENG="Repair" localized="Réparer"/>
-			
 			<Reports ENG="Reports" localized="Rapports"/>
 			<Research ENG="Research" localized="Recherche"/>
 			<Save ENG="Save" localized="Sauver"/>
@@ -159,9 +152,9 @@
 			<Seed_7 ENG="Seed" localized="Miner"/>
 			<Sentry ENG="Sentry" localized="Faction"/>
 			<Settings ENG="Settings" localized="Paramètres"/>
-			<Shots ENG="Shoots" localized="Tirs"/>
+			<Shots ENG="Shots" localized="Tirs"/><!--TODO: review needed (english string has been changed)-->
 			<Shots_7 ENG="Shots" localized="Tirs"/>
-			<Single_Player ENG="Singleplayer" localized="Jeu solo (sans IA)"/>
+			<Single_Player ENG="Singleplayer (No AI)" localized="Jeu solo (sans IA)"/><!--TODO: review needed (english string has been changed)-->
 			<Speed ENG="Speed" localized="Vitesse"/>
 			<Speed_7 ENG="Speed" localized="Vitesse"/>
 			<Start_7 ENG="Start" localized="Démarrer"/>
@@ -176,7 +169,6 @@
 			<Teams_7 ENG="Teams" localized="Équipes"/>
 			<Total ENG="Total" localized="Total"/>
 			<Transfer_7 ENG="X-fer" localized="Échange"/>
-
 			<Units ENG="Units" localized="Unités"/>
 			<Upgrade ENG="Upgrade" localized="MàJ"/>
 			<UpgradeAll_7 ENG="Up.all" localized="MàJ tout"/>
@@ -185,9 +177,17 @@
 			<Upgradethis_7 ENG="Upgrade" localized="MàJ"/>
 			<Usage_7 ENG="Usage" localized="Usage"/>
 			<Yes ENG="Yes" localized="Oui"/>
+			<ActiveAll_9 ENG="Activ All" localized=""/><!--TODO: translation needed-->
+			<Build_7 ENG="Build" localized=""/><!--TODO: translation needed-->
+			<Done ENG="Done" localized=""/><!--TODO: translation needed-->
+			<Done_7 ENG="Done" localized=""/><!--TODO: translation needed-->
+			<Reload ENG="Reload" localized=""/><!--TODO: translation needed-->
+			<ReloadAll_9 ENG="Reload All" localized=""/><!--TODO: translation needed-->
+			<RepairAll_9 ENG="Rep. All" localized=""/><!--TODO: translation needed-->
+			<Unit_destroyed ENG="Unit destroyed!" localized=""/><!--TODO: translation needed-->
 		</Others>
 		<Option>
-			<Definite ENG="definite" localized="fixe"/>
+			<Definite ENG="Built (original)" localized="fixe"/><!--TODO: review needed (english string has been changed)-->
 			<Dense ENG="Dense" localized="commun"/>
 			<High ENG="High" localized="haut"/>
 			<Limited ENG="Limited" localized="faible"/>
@@ -195,13 +195,13 @@
 			<Mobile ENG="Must build" localized="mobile"/>
 			<More ENG="More" localized="très haut"/>
 			<None ENG="None" localized="aucun"/>
-			<Normal ENG="normal" localized="normal"/>
+			<Normal ENG="Normal" localized="normal"/><!--TODO: review needed (english string has been changed)-->
 			<Off ENG="off" localized="désactivé"/>
 			<On ENG="on" localized="activé"/>
 			<Sparse ENG="Sparse" localized="rare"/>
-			<TooMuch ENG="Too Much!" localized="maximum"/>
-			<Type_Simu ENG="simultaneous" localized="tours simultanés"/>
-			<Type_Turns ENG="turns" localized="tours alternés"/>
+			<TooMuch ENG="Too Much" localized="maximum"/><!--TODO: review needed (english string has been changed)-->
+			<Type_Simu ENG="Simultaneous" localized="tours simultanés"/><!--TODO: review needed (english string has been changed)-->
+			<Type_Turns ENG="Turn based" localized="tours alternés"/><!--TODO: review needed (english string has been changed)-->
 		</Option>
 		<Punctuation>
 			<Colon ENG=": " localized=" : "/>
@@ -213,7 +213,6 @@
 			<Disable ENG="Disable" localized="Désactiver"/>
 			<Effects ENG="Effects" localized="Effets"/>
 			<Intro ENG="Show intro" localized="Montrer intro"/>
-
 			<Music ENG="Music" localized="Musique"/>
 			<Preferences ENG="Preferences" localized="Préférences"/>
 			<Resolution ENG="Resolution" localized="Résolution"/>
@@ -222,16 +221,17 @@
 			<ShowDamage ENG="Buildingdamage" localized="Dégâts bâtiments"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Dégâts véhicules"/>
 			<Tracks ENG="Vehicletracks" localized="Traces véhicules"/>
-
 			<Voices ENG="Voices" localized="Voix"/>
 			<Volume ENG="Volume" localized="Volume"/>
 			<Window ENG="Windowed" localized="Fenêtré"/>
+			<Language ENG="Language" localized=""/><!--TODO: translation needed-->
+			<Unlimited_11 ENG="No limit" localized=""/><!--TODO: translation needed-->
 		</Settings>
 		<Multiplayer>
 			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Serveur, appuyer sur F2 pour annuler l'attente."/>
 			<Connection_Terminated ENG="Connection terminated." localized="Connection terminée."/>
 			<Deadline ENG="This turn will end in %s seconds." localized="Fin de tour dans %s secondes."/>
-			<Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame." localized="Vous ne faites pas parti du jeu sauvegardé : vous allez être déconnecté"/>
+			<Disconnect_Not_In_Save ENG="You will be disconnected because you are not listed in the savegame." localized="Vous ne faites pas parti du jeu sauvegardé : vous allez être déconnecté"/><!--TODO: review needed (english string has been changed)-->
 			<Go ENG="Let's go" localized="Allons-y !"/>
 			<Go_Abort ENG="Go aborted" localized="Lancement annulé"/>
 			<Go_Check ENG="Check for go" localized="Vérification"/>
@@ -239,18 +239,8 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="Hôte : pas encore prêt"/>
 			<Go_Ready ENG="Ready to go" localized="Prêt"/>
 			<Go_Ready_No ENG="not ready to go" localized="Pas prêt"/>
-
 			<Lost_Connection ENG="Lost connection to %s." localized=" %s perd la connexion."/>
-			<Map_NoSet ENG="--no map set--" localized="--pas de carte sélectionnée--"/>
-
-
-
-
-
-
-
-
-
+			<Map_NoSet ENG="--no map selected--" localized="--pas de carte sélectionnée--"/><!--TODO: review needed (english string has been changed)-->
 			<Missing_Settings ENG="Options, map or savegame are not set" localized="Sauvegarde jeu, options ou map non paramétrés"/>
 			<Network_Closed ENG="Connection closed" localized="Connexion fermée"/>
 			<Network_Connected ENG="Connected" localized="Connecté"/>
@@ -262,58 +252,66 @@
 			<Network_Open ENG="Game open" localized="Ouvrir jeu"/>
 			<Network_Syncing ENG="Synchronizing..." localized="Synchronisation..."/>
 			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Impossible de charger la carte %s. Lancement jeu impossible."/>
-
 			<Not_Ready ENG="is not ready" localized="n'est pas prêt"/>
-			
 			<Option_NoSet ENG="--no options set--" localized="--pas d'options choisies--"/>
 			<Player ENG="Player" localized="Joueur"/>
-			
-			
-			
-			
-			
-			
-			
-			
 			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum." localized="Veuillez choisir le nombre de joueurs. Il doit y avoir deux joueurs humains au minimum pour commencer une partie locale. Le maximum est de 8 joueurs."/>
-			<Player_Color_Taken ENG="All player colors should be unique" localized="Les couleurs des joueurs doivent être uniques"/>
+			<Player_Color_Taken ENG="Playercolor already in use, please select an other color to be unique" localized="Les couleurs des joueurs doivent être uniques"/><!--TODO: review needed (english string has been changed)-->
 			<Player_Few ENG="Not enough players!" localized="Pas assez de joueurs !"/>
-			<Player_Joined ENG="%s has joined" localized="%s a rejoint la partie"/> <!-- " nach einem ausdruck? -->
+			<Player_Joined ENG="%s has joined" localized="%s a rejoint la partie"/><!-- " nach einem ausdruck? -->
 			<Player_Left ENG="%s has left the game" localized="%s a quitté la partie"/>
 			<Player_Many ENG="Too many players!" localized="Trop de joueurs !"/>
-			<Player_MustHost ENG="must be host in turnbased game!" localized="Hôte nécessaire pour jeu par tour !"/>
-			<Player_Name_Taken ENG="All player names should be unique" localized="Les noms des joueurs doivent être uniques"/>
-			<Player_Turn ENG="%s's turn" localized="Tour de %s"/>
+			<Player_MustHost ENG="must be host in turn based game!" localized="Hôte nécessaire pour jeu par tour !"/><!--TODO: review needed (english string has been changed)-->
+			<Player_Name_Taken ENG="Playername already in use, please select an other name to be unique" localized="Les noms des joueurs doivent être uniques"/><!--TODO: review needed (english string has been changed)-->
+			<Player_Turn ENG="%s:\nBegin turn." localized="Tour de %s"/><!--TODO: review needed (english string has been changed)-->
 			<Player_Turn_End ENG="%s ended turn" localized="%s a terminé son tour"/>
 			<Player_Twice ENG="Playername exists twice: " localized="Nom de joueur déjà utilisé : "/>
 			<Player_Wrong ENG="Missing a correct player's name" localized="Nom de joueur incorrect !"/>
-			<Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Jeu déjà en cours. Si vous avez perdu la connexion au jeu, vous pouvez vous reconnecter. Voulez-vous vous reconnecter ?"/>
+			<Reconnect ENG="This game is running already.\nIf you have lost connection to the game, you can reconnect.\n\nDo you want to reconnect?" localized="Jeu déjà en cours. Si vous avez perdu la connexion au jeu, vous pouvez vous reconnecter. Voulez-vous vous reconnecter ?"/><!--TODO: review needed (english string has been changed)-->
 			<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="Reconnection interdite par le serveur."/>
-			<Save_Only_Host ENG="Only the host can save games." localized="Sauvegarde jeu uniquement par l'hôte."/>
+			<Save_Only_Host ENG="Only the host can save the current games." localized="Sauvegarde jeu uniquement par l'hôte."/><!--TODO: review needed (english string has been changed)-->
 			<Server_Not_Running ENG="The server is not running." localized="Le serveur n'est pas démarré."/>
-			
 			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Attente de reconnexion du joueur"/>
-			
 			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Veuillez attendre que %s soit prêt."/>
 			<Waiting ENG="Waiting for other players..." localized="En attente de joueurs..."/>
+			<Host_command ENG="Host entered following command" localized=""/><!--TODO: translation needed-->
+			<MapDL_Cancel ENG="Aborted" localized=""/><!--TODO: translation needed-->
+			<MapDL_Download ENG="map %s from server." localized=""/><!--TODO: translation needed-->
+			<MapDL_DownloadInvalid ENG="original M.A.X. map %s from server (licensed)!" localized=""/><!--TODO: translation needed-->
+			<MapDL_DownloadRequest ENG="Map not installed: Requesting to download custom" localized=""/><!--TODO: translation needed-->
+			<MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download" localized=""/><!--TODO: translation needed-->
+			<MapDL_Finished ENG="Map download finished." localized=""/><!--TODO: translation needed-->
+			<MapDL_Percent ENG="Map download: %s%" localized=""/><!--TODO: translation needed-->
+			<MapDL_Upload ENG="Uploading map to %s..." localized=""/><!--TODO: translation needed-->
+			<MapDL_UploadFinished ENG="Map upload to %s finished." localized=""/><!--TODO: translation needed-->
+			<No_Response ENG="Waiting for network response from player %s" localized=""/><!--TODO: translation needed-->
+			<Pause ENG="Game has been paused." localized=""/><!--TODO: translation needed-->
+			<Player1 ENG="Player 1" localized=""/><!--TODO: translation needed-->
+			<Player2 ENG="Player 2" localized=""/><!--TODO: translation needed-->
+			<Player3 ENG="Player 3" localized=""/><!--TODO: translation needed-->
+			<Player4 ENG="Player 4" localized=""/><!--TODO: translation needed-->
+			<Player5 ENG="Player 5" localized=""/><!--TODO: translation needed-->
+			<Player6 ENG="Player 6" localized=""/><!--TODO: translation needed-->
+			<Player7 ENG="Player 7" localized=""/><!--TODO: translation needed-->
+			<Player8 ENG="Player 8" localized=""/><!--TODO: translation needed-->
+			<Wait_For_Server ENG="Waiting for network response from server" localized=""/><!--TODO: translation needed-->
+			<Wait_TurnEnd ENG="Please wait while turn end is executed." localized=""/><!--TODO: translation needed-->
 		</Multiplayer>
 		<Comp>
 			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Ajustement effectué : production carburant augmentée de "/>
 			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Ajustement effectué : production or augmentée de "/>
-			<Adjustments_Metal_Decreased ENG="Adjustments made: metal mining increased by " localized="Ajustement effectué : production minerai augmentée de "/>
+			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by " localized="Ajustement effectué : production minerai augmentée de "/><!--TODO: review needed (english string has been changed)-->
 			<Attacked ENG="is under attack" localized="est attaqué !"/>
 			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s attaque l'enemi"/>
-			
-			<Building_Disabled ENG="Building disabled" localized="Bâtiment désactivé"/>
+			<Building_Disabled ENG="Building turned off" localized="Bâtiment désactivé"/><!--TODO: review needed (english string has been changed)-->
 			<CapturedByEnemy ENG="%s has been captured by the enemy" localized="%s a été capturé par l'enemi"/>
 			<Cheat ENG="used cheat" localized="a triché :"/>
-			<Clearing ENG="Clearing" localized="Nettoyage"/>
+			<Clearing ENG="clearing" localized="Nettoyage"/><!--TODO: review needed (english string has been changed)-->
 			<Clearing_Fin ENG="clearing done" localized="nettoyage terminé"/>
 			<Clearing_Mine ENG="clearing mines" localized="en déminage"/>
 			<CommandoRank_Average ENG="Average" localized="Moyen"/>
 			<CommandoRank_Elite ENG="Elite" localized="Crack"/>
 			<CommandoRank_Expert ENG="Expert" localized="Expert"/>
-			
 			<CommandoRank_Greenhorn ENG="Greenhorn" localized="Débutant"/>
 			<CommandoRank_Veteran ENG="Veteran" localized="Habile"/>
 			<Dated ENG="dated" localized="datés"/>
@@ -322,49 +320,45 @@
 			<Destroyed ENG="destroyed" localized="détruit"/>
 			<Detected ENG="detected" localized="détecté"/>
 			<Disabled ENG="disabled" localized="désactivé"/>
-			<EcoSphere ENG="eco-sphere" localized="éco-sphère"/>
-			<EcoSpheres ENG="eco-spheres" localized="éco-sphères"/>
-			<End_Game ENG="Exit really?\n\nNot saved gamedata will be lost." localized="Quitter ? \n\nLe jeu non sauvegardé sera perdu."/>
-			<Energy_Insufficient ENG="Cannot start, energy needed." localized="Energie insuffisante. Impossible de démarrer."/>
+			<EcoSphere ENG="Eco-sphere" localized="éco-sphère"/><!--TODO: review needed (english string has been changed)-->
+			<EcoSpheres ENG="Eco-spheres" localized="éco-sphères"/><!--TODO: review needed (english string has been changed)-->
+			<End_Game ENG="Confirm Exit\n\nUnsaved game data will be lost." localized="Quitter ? \n\nLe jeu non sauvegardé sera perdu."/><!--TODO: review needed (english string has been changed)-->
+			<Energy_Insufficient ENG="Cannot turn on, power needed" localized="Energie insuffisante. Impossible de démarrer."/><!--TODO: review needed (english string has been changed)-->
 			<Energy_IsNeeded ENG="Cannot turn off generator, power needed." localized="Energie nécessaire, désactivation générateur impossible."/>
-			<Energy_Low ENG="To low energy, disabled consumer!" localized="Energie insuffisante, usine désactivé !"/>
+			<Energy_Low ENG="Lack of power, energy consumer turned off." localized="Energie insuffisante, usine désactivé !"/><!--TODO: review needed (english string has been changed)-->
 			<Energy_ToLow ENG="More power needed, generator turned on." localized="Besoin de plus d'énergie. Activation de générateur d'énergie."/>
 			<Finished ENG="is finished" localized="est terminé"/>
 			<Finished2 ENG="are finished" localized="sont terminés"/>
 			<Fuel_Insufficient ENG="Cannot start, fuel needed." localized="Carburant insuffisant. Impossible de démarrer."/>
-			<Fuel_Low ENG="To low fuel, generator disabled!" localized="Carburant insuffisant, générateur désactivé !"/>
+			<Fuel_Low ENG="Fuel needed, generator turned off." localized="Carburant insuffisant, générateur désactivé !"/><!--TODO: review needed (english string has been changed)-->
 			<GameEndsAt ENG="Game ends at" localized="Le jeu se termine à"/>
 			<Gold_Insufficient ENG="Cannot start, gold needed." localized="Or insuffisant. Impossible de démarrer."/>
-			<Gold_Low ENG="To low gold, disabled consumer!" localized="Or insuffisant, raffinerie désactivée !"/>
-			
+			<Gold_Low ENG="More gold needed, refinery turned off." localized="Or insuffisant, raffinerie désactivée !"/><!--TODO: review needed (english string has been changed)-->
 			<Labs ENG="Labs" localized="Labos"/>
-			
-			<Landing_Too_Close ENG="Landingposition is too close to an other player. Please reselect your position." localized="Point d'atterrissage trop proche d'un autre joueur. Veuillez choisir un autre emplacement."/>
-			<Landing_Warning ENG="Landingposition is near an other player. Please confirm the position by clicking in the red circle, or select an other position." localized="Point d'atterrissage proche d'un autre joueur. Veuillez confirmer en cliquant dans le cercle rouge, ou choisissez un autre emplacment."/>
-			<Laying ENG="laying mines" localized="pose de mine"/>
-			<Metal_Insufficient ENG="Cannot start, metal needed." localized="Minerai insuffisant. Impossible de démarrer."/>
-			<Metal_Low ENG="To low metal, disabled consumer!" localized="Minerai insuffisant, usine désactivé !"/>
+			<Landing_Too_Close ENG="Landing position is too close to an other player. Please reselect your position." localized="Point d'atterrissage trop proche d'un autre joueur. Veuillez choisir un autre emplacement."/><!--TODO: review needed (english string has been changed)-->
+			<Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle or select another position." localized="Point d'atterrissage proche d'un autre joueur. Veuillez confirmer en cliquant dans le cercle rouge, ou choisissez un autre emplacment."/><!--TODO: review needed (english string has been changed)-->
+			<Laying ENG="minelaying" localized="pose de mine"/><!--TODO: review needed (english string has been changed)-->
+			<Metal_Insufficient ENG="Cannot start, raw materials needed." localized="Minerai insuffisant. Impossible de démarrer."/><!--TODO: review needed (english string has been changed)-->
+			<Metal_Low ENG="More raw materials needed, factory turned off." localized="Minerai insuffisant, usine désactivé !"/><!--TODO: review needed (english string has been changed)-->
 			<Moving ENG="moving" localized="en mouvement"/>
-			
 			<NoLimit ENG="Fight to the death!" localized="Combat à mort!"/>
 			<Path_interrupted ENG="Pathbuilding order could not be resumed." localized="Ordre de construction interrompu."/>
 			<Point ENG="point" localized="point"/>
 			<Points ENG="points" localized="points"/>
-			<Producing ENG="Producing" localized="Produit"/>
-			<Producing_Err ENG="Buildposition blocked or insufficient resources" localized="Chantier bloqué ou ressources insuffisantes."/>
-			<Producing_Fin ENG="finished producing" localized="Production terminée"/>
-			<ReactionFireOff ENG="Tir de réaction désactivé"/>
+			<Producing ENG="Building" localized="Produit"/><!--TODO: review needed (english string has been changed)-->
+			<Producing_Err ENG="Buildposition blocked or insufficient raw materials to build" localized="Chantier bloqué ou ressources insuffisantes."/><!--TODO: review needed (english string has been changed)-->
+			<Producing_Fin ENG="finished building" localized="Production terminée"/><!--TODO: review needed (english string has been changed)-->
+			<ReactionFireOff ENG="Reaction Fire Off" localized=""/><!--TODO: translation needed-->
 			<Repeat ENG="Again" localized="Répéter"/>
 			<Reserve ENG="Reserve" localized="Réserve"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Attention : la config définit un mode vidéo non supporté"/>
-
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Capture d'écran sauvegardée: %s"/>
 			<Sentry ENG="on sentry" localized="en faction"/>
 			<Stolen ENG="stolen" localized="volé"/>
 			<SuddenDeath ENG="Sudden death! The first player to increase their score wins!" localized="Mort subite! Le premier joueur qui augmente son score gagne!"/>
 			<Surveying ENG="surveying" localized="prospection"/>
 			<Team_Insufficient ENG="Cannot start, workers needed." localized="Ouvriers insuffisants. Impossible de démarrer."/>
-			<Team_Low ENG="To low teams, disabled consumer!" localized="Equipement insuffisant, bâtiment désactivé !"/>
+			<Team_Low ENG="Workers needed, building turned off." localized="Equipement insuffisant, bâtiment désactivé !"/><!--TODO: review needed (english string has been changed)-->
 			<Themes ENG="Themes" localized="Thèmes"/>
 			<Turn_5 ENG="Turn" localized="Tour"/>
 			<Turn_Automove ENG="Executing remaining movements" localized="Exécution mouvements restants"/>
@@ -373,14 +367,20 @@
 			<Turns ENG="Turns" localized="Tours"/>
 			<Upgrades_Done ENG="Upgraded" localized="Mis à jour"/>
 			<Upgrades_Done2 ENG="unit(s) of type %s" localized="unité(s) de type %s"/>
-			<Waits ENG="waits" localized="en attente"/>
+			<Waits ENG="waiting" localized="en attente"/><!--TODO: review needed (english string has been changed)-->
 			<Working ENG="working" localized="en fonctionnement"/>
+			<AttackingStatusStr ENG="attacking" localized=""/><!--TODO: translation needed-->
+			<CommandoRank_GrandMaster ENG="Grand Master" localized=""/><!--TODO: translation needed-->
+			<IsBeeingAttacked ENG="Is beeing attacked" localized=""/><!--TODO: translation needed-->
+			<Landing_Select ENG="Please select starting location." localized=""/><!--TODO: translation needed-->
+			<MovingToAttack ENG="moving to attack" localized=""/><!--TODO: translation needed-->
+			<RestartRequired ENG="Please restart 'Mechanized Assault and eXploration Reloaded' to take effect the change." localized=""/><!--TODO: translation needed-->
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Fichier introuvable : %s"/>
-			<ERROR_Map_Loading ENG="Error loading map" localized="Erreur chargement carte"/>
+			<ERROR_Map_Loading ENG="Error while loading map" localized="Erreur chargement carte"/><!--TODO: review needed (english string has been changed)-->
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="Traduction manquante : %s"/>
-			<INFO_Language_initialised ENG="Language is now initialised" localized="La langue est maintenant initialisée"/>
+			<INFO_Language_initialised ENG="Language is now initialized" localized="La langue est maintenant initialisée"/><!--TODO: review needed (english string has been changed)-->
 			<INFO_Not_Implemented ENG="Not yet implemented" localized="Pas encore implémenté"/>
 		</Error_Messages>
 	</Text>
