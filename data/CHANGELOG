@@ -1,9 +1,9 @@
-Mechanized Assault & eXploration Reloaded NEXT
+Mechanized Assault & eXploration Reloaded 0.2.9
 =======================================================================
 -migrated from sdl to sdl2
--new, synchronized attack jobs code
--new code behind the menus and the in-game GUI
+-changed movement control: press CTRL to fly over other units. Otherwise the other unit is selected.
 -new chat box, including chat log and player list
+-implemented chat box in landing selection screen
 -implemented RETURN and ESC shortcuts in menues and dialogs where appropriate
 -implemented mouse wheel scroll support in all lists
 -implemented colorpicker for player colors (removes 8 player limit)
@@ -13,10 +13,13 @@ Mechanized Assault & eXploration Reloaded NEXT
 -improved right mouse button scroll
 -improved possible key combinations for hot keys
 -improved turn time clock
--fixed round based mode
+-fixed missing units after loading a game
+-fixed turn based mode
 -fixed resolution detection (multiple display support)
 -fixed various missing status updates in GUI
 -fixed various situations where a wrong cursor has been displayed
+-rewrite internal attack implementation (fixes frozen units, and reduce delays before impact)
+-new code behind the menus and the in-game GUI
 -tons of bugs and crashes fixed
 
 Mechanized Assault & eXploration Reloaded 0.2.8 (May 5, 2012)
