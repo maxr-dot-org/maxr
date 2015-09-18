@@ -24,6 +24,9 @@
 
 #include "serialization.h"
 
+class serialization::cPointerLoader;
+
+
 class cXmlArchiveIn
 {
 public:
@@ -36,7 +39,6 @@ public:
 	template<typename T>
 	cXmlArchiveIn& operator&(const serialization::sNameValuePair<T>& nvp);
 
-	const tinyxml2::XMLElement* data() const; //TODO: braucht man das?
 private:
 	tinyxml2::XMLElement& buffer;
 
@@ -78,7 +80,7 @@ private:
 class cXmlArchiveOut
 {
 public:
-	cXmlArchiveOut(const tinyxml2::XMLElement& rootElement);
+	cXmlArchiveOut(const tinyxml2::XMLElement& rootElement, serialization::cPointerLoader* pointerLoader = NULL);
 
 	static const bool isWriter = false;
 
@@ -87,11 +89,14 @@ public:
 	template<typename T>
 	cXmlArchiveOut& operator&(serialization::sNameValuePair<T>& nvp);
 
+	serialization::cPointerLoader* getPointerLoader() const;
 private:
 	const tinyxml2::XMLElement& buffer;
 
 	const tinyxml2::XMLElement* currentElement;
-	const tinyxml2::XMLElement* lastChildElement;
+	std::vector<const tinyxml2::XMLElement*> visitedElements;
+
+	serialization::cPointerLoader* pointerLoader;
 
 	// xml handling methods
 	template <typename T>
@@ -144,6 +149,9 @@ cXmlArchiveIn& cXmlArchiveIn::operator&(const serialization::sNameValuePair<T>& 
 template<typename T>
 void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<T>& nvp)
 {
+	//check invalid characters in element and attribute names
+	assert(nvp.name.find_first_of("<>\"= []?!&") == std::string::npos);
+
 	if (std::is_class<T>::value)
 		openNewChild(nvp.name);
 

@@ -106,7 +106,7 @@ cPlayer* cModel::getPlayer(int playerNr)
 {
 	for (auto player : playerList)
 	{
-		if (player->getNr() == playerNr)
+		if (player->getId() == playerNr)
 			return player.get();
 	}
 	return nullptr;
@@ -117,7 +117,7 @@ const cPlayer* cModel::getPlayer(int playerNr) const
 	//TODO: remove code duplication
 	for (auto player : playerList)
 	{
-		if (player->getNr() == playerNr)
+		if (player->getId() == playerNr)
 			return player.get();
 	}
 	return nullptr;
@@ -343,5 +343,52 @@ void cModel::deleteRubble(cBuilding* rubble)
 	if (iter != neutralBuildings.end())
 	{
 		neutralBuildings.erase(iter);
+	}
+}
+//------------------------------------------------------------------------------
+cUnit* cModel::getUnitFromID(unsigned int id) const
+{
+	cUnit* result = getVehicleFromID(id);
+	if (result == nullptr)
+		result = getBuildingFromID(id);
+	return result;
+}
+
+//------------------------------------------------------------------------------
+cVehicle* cModel::getVehicleFromID(unsigned int id) const
+{
+	for (size_t i = 0; i != playerList.size(); ++i)
+	{
+		auto unit = playerList[i]->getVehicleFromId(id);
+		if (unit) return unit;
+	}
+	return 0;
+}
+
+//------------------------------------------------------------------------------
+cBuilding* cModel::getBuildingFromID(unsigned int id) const
+{
+	for (size_t i = 0; i != playerList.size(); ++i)
+	{
+		auto unit = playerList[i]->getBuildingFromId(id);
+		if (unit) return unit;
+	}
+	return 0;
+}
+
+//------------------------------------------------------------------------------
+void cModel::refreshMapPointer()
+{
+	for (auto player : playerList)
+	{
+		for (auto vehicle : player->getVehicles())
+		{
+			if (!vehicle->isUnitLoaded())
+				map->addVehicle(*vehicle, vehicle->getPosition());
+		}
+		for (auto building : player->getBuildings())
+		{
+			map->addBuilding(*building, building->getPosition());
+		}
 	}
 }

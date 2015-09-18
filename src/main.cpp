@@ -45,7 +45,6 @@
 #include "network.h"
 #include "pcx.h"
 #include "game/data/player/player.h"
-#include "game/logic/savegame.h"
 #include "settings.h"
 #include "sound.h"
 #include "unifonts.h"
@@ -747,4 +746,27 @@ bool sFreezeModes::isEnable (eFreezeMode mode) const
 	}
 	assert (0); // Incorrect parameter
 	return false;
+}
+
+//--------------------------------------------------------------------------
+std::string getHexValue(unsigned char byte)
+{
+	std::string str = "";
+	const char hexChars[] = "0123456789ABCDEF";
+	const unsigned char high = (byte >> 4) & 0x0F;
+	const unsigned char low = byte & 0x0F;
+
+	str += hexChars[high];
+	str += hexChars[low];
+	return str;
+}
+//--------------------------------------------------------------------------
+unsigned char getByteValue(const std::string& str, int index)
+{
+	unsigned char first = str[index + 0] - '0';
+	unsigned char second = str[index + 1] - '0';
+
+	if (first >= 'A' - '0') first -= 'A' - '0' - 10;
+	if (second >= 'A' - '0') second -= 'A' - '0' - 10;
+	return (first * 16 + second);
 }

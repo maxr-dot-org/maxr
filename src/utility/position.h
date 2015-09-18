@@ -44,8 +44,8 @@ public:
 	template<typename T>
 	void serialize(T& archive)
 	{
-		archive & ((*this)[0]);
-		archive & ((*this)[1]);
+		archive & serialization::makeNvp("X", (*this)[0]);
+		archive & serialization::makeNvp("Y", (*this)[1]);
 	}
 	int x() const
 	{

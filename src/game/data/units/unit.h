@@ -42,6 +42,8 @@ public:
 	cUnit (const sUnitData* unitData, cPlayer* owner, unsigned int ID);
 	virtual ~cUnit();
 
+	unsigned int getId() const { return iID; };
+
 	virtual bool isAVehicle() const = 0;
 	virtual bool isABuilding() const = 0;
 
@@ -156,6 +158,41 @@ public:
 	mutable cSignal<void ()> clearingChanged;
 	mutable cSignal<void ()> workingChanged;
 
+	template<typename T>
+	void serializeBase(T& archive)
+	{
+		archive & NVP(data);
+		//archive & NVP(iID);  //const member. needs to be deserialized before calling constructor
+		archive & NVP(dir);
+		archive & NVP(storedUnits);
+		archive & NVP(detectedByPlayerList);
+		archive & NVP(job);
+		archive & NVP(owner);
+		archive & NVP(position);
+		archive & NVP(isOriginalName);
+		archive & NVP(name);
+		archive & NVP(turnsDisabled);
+		archive & NVP(sentryActive);
+		archive & NVP(manualFireActive);
+		archive & NVP(attacking);
+		archive & NVP(beeingAttacked);
+		archive & NVP(markedAsDone);
+		archive & NVP(beenAttacked);
+
+		//TODO: detection?
+	}
+	template<typename T>
+	void serialize(T& archive)
+	{
+		if (isAVehicle())
+		{
+			static_cast<cVehicle*>(this)->serialize(archive);
+		}
+		else
+		{
+			static_cast<cBuilding*>(this)->serialize(archive);
+		}
+	}
 public: // TODO: make protected/private and make getters/setters
 	sUnitData data; ///< basic data of the unit
 	const unsigned int iID; ///< the identification number of this unit
@@ -163,7 +200,7 @@ public: // TODO: make protected/private and make getters/setters
 
 	std::vector<cVehicle*> storedUnits; ///< list with the vehicles, that are stored in this unit
 
-	std::vector<cPlayer*> seenByPlayerList; ///< a list of all players who can see this unit
+	std::vector<cPlayer*> seenByPlayerList; ///< a list of all players who can see this unit //TODO: remove
 	std::vector<cPlayer*> detectedByPlayerList; ///< a list of all players who have detected this unit
 
 	// little jobs, running on the vehicle.

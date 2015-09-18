@@ -26,7 +26,6 @@
 #include "menuevents.h"
 #include "netmessage.h"
 #include "network.h"
-#include "game/logic/savegame.h"
 #include "game/logic/serverevents.h"
 #include "game/data/report/savedreportchat.h"
 #include "servergame.h"
@@ -481,6 +480,7 @@ void cDedicatedServer::sendChatMessage (const string& text, int type, int socket
 //------------------------------------------------------------------------
 void cDedicatedServer::doAutoSave (cServer& server)
 {
-	cSavegame Savegame (kAutoSaveSlot);	// dedicated server autosaves are always in slot kAutoSaveSlot
-	Savegame.save (server, "Dedicated Server Autosave");
+	//TODO: reimplement
+	//cSavegame Savegame (kAutoSaveSlot);	// dedicated server autosaves are always in slot kAutoSaveSlot
+	//Savegame.save (server, "Dedicated Server Autosave");
 }

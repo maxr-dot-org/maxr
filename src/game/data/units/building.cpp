@@ -119,7 +119,8 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 	cUnit ((Owner != 0 && b != 0) ? Owner->getUnitDataCurrentVersion (b->ID) : 0,
 		   Owner,
 		   ID),
-	isWorking (false)
+	isWorking (false),
+	wasWorking(false)
 {
 	setSentryActive (data.canAttack != TERRAIN_NONE);
 
@@ -131,7 +132,7 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 
 	if (Owner == nullptr || b == nullptr)
 	{
-		return;
+		return; //WTF? jump out of the contructor and leave remaining members uninitialized?!?
 	}
 
 	BaseN = false;

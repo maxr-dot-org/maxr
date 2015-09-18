@@ -25,7 +25,7 @@
 //------------------------------------------------------------------------------
 cSavedReportChat::cSavedReportChat (const cPlayer& player, std::string text_) :
 	playerName (player.getName()),
-	playerNumber (player.getNr()),
+	playerNumber (player.getId()),
 	text (std::move (text_))
 {}
 

@@ -171,7 +171,7 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 			SDL_BlitSurface (playerList[i]->getColor().getTexture(), &rSrc, &destination, &rDest);
 			if (playerList[i].get() == &player)
 			{
-				std::string sTmpLine = " " + playerList[i]->getName() + ", nr: " + iToStr (playerList[i]->getNr()) + " << you! ";
+				std::string sTmpLine = " " + playerList[i]->getName() + ", nr: " + iToStr (playerList[i]->getId()) + " << you! ";
 				// black out background for better recognizing
 				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);
 				SDL_FillRect (&destination, &rBlackOut, 0xFF000000);
@@ -179,7 +179,7 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 			}
 			else
 			{
-				std::string sTmpLine = " " + playerList[i]->getName() + ", nr: " + iToStr (playerList[i]->getNr()) + " ";
+				std::string sTmpLine = " " + playerList[i]->getName() + ", nr: " + iToStr (playerList[i]->getId()) + " ";
 				// black out background for better recognizing
 				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);
 				SDL_FillRect (&destination, &rBlackOut, 0xFF000000);
@@ -211,7 +211,7 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 
 	if (debugBaseServer && server)
 	{
-		const auto serverPlayer = server->model.getPlayer (player.getNr());
+		const auto serverPlayer = server->model.getPlayer (player.getId());
 		font->showText (drawPositionX, drawPositionY, "subbases: " + iToStr ((int)serverPlayer->base.SubBases.size()), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 	}

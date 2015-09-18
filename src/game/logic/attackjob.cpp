@@ -87,7 +87,7 @@ void cAttackJob::runAttackJobs (std::vector<cAttackJob*>& attackJobs)
 //--------------------------------------------------------------------------
 cAttackJob::cAttackJob (cServer* server_, cUnit* aggressor_, const cPosition& targetPosition_) :
 	aggressorID (aggressor_->iID),
-	aggressorPlayerNr (aggressor_->getOwner()->getNr()),
+	aggressorPlayerNr (aggressor_->getOwner()->getId()),
 	aggressorPosition (aggressor_->getPosition()),
 	attackMode (aggressor_->data.canAttack),
 	muzzleType (aggressor_->data.muzzleType),

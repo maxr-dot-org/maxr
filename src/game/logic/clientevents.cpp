@@ -39,7 +39,7 @@ void sendClan (const cClient& client)
 	const cPlayer& player = client.getActivePlayer();
 
 	message->pushInt16 (player.getClan());
-	message->pushInt16 (player.getNr());
+	message->pushInt16 (player.getId());
 
 	client.sendNetMessage (std::move (message));
 }
@@ -54,7 +54,7 @@ void sendLandingUnits (const cClient& client, const std::vector<sLandingUnit>& l
 		message->pushInt16 (landingList[i].cargo);
 	}
 	message->pushInt16 ((int) landingList.size());
-	message->pushInt16 (client.getActivePlayer().getNr());
+	message->pushInt16 (client.getActivePlayer().getId());
 
 	client.sendNetMessage (std::move (message));
 }
@@ -100,7 +100,7 @@ void sendUnitUpgrades (const cClient& client)
 		if (message->iLength + 38 > PACKAGE_LENGTH)
 		{
 			message->pushInt16 (count);
-			message->pushInt16 (player.getNr());
+			message->pushInt16 (player.getId());
 			client.sendNetMessage (std::move (message));
 			count = 0;
 		}
@@ -108,7 +108,7 @@ void sendUnitUpgrades (const cClient& client)
 	if (message != nullptr)
 	{
 		message->pushInt16 (count);
-		message->pushInt16 (player.getNr());
+		message->pushInt16 (player.getId());
 		client.sendNetMessage (std::move (message));
 		count = 0;
 	}
@@ -146,7 +146,7 @@ void sendUnitUpgrades (const cClient& client)
 		if (message->iLength + 34 > PACKAGE_LENGTH)
 		{
 			message->pushInt16 (count);
-			message->pushInt16 (player.getNr());
+			message->pushInt16 (player.getId());
 			client.sendNetMessage (std::move (message));
 			count = 0;
 		}
@@ -154,7 +154,7 @@ void sendUnitUpgrades (const cClient& client)
 	if (message != nullptr)
 	{
 		message->pushInt16 (count);
-		message->pushInt16 (player.getNr());
+		message->pushInt16 (player.getId());
 		client.sendNetMessage (std::move (message));
 	}
 }
@@ -163,7 +163,7 @@ void sendReconnectionSuccess (const cClient& client)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_RECON_SUCCESS);
 
-	message->pushInt16 (client.getActivePlayer().getNr());
+	message->pushInt16 (client.getActivePlayer().getId());
 	client.sendNetMessage (std::move (message));
 }
 
@@ -206,7 +206,7 @@ void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, 
 		if (msg->iLength + 38 > PACKAGE_LENGTH)
 		{
 			msg->pushInt16 (iCount);
-			msg->pushInt16 (player.getNr());
+			msg->pushInt16 (player.getId());
 			client.sendNetMessage (std::move (msg));
 		}
 	}
@@ -214,7 +214,7 @@ void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, 
 	if (msg != nullptr)
 	{
 		msg->pushInt16 (iCount);
-		msg->pushInt16 (player.getNr());
+		msg->pushInt16 (player.getId());
 		client.sendNetMessage (std::move (msg));
 	}
 }
@@ -224,7 +224,7 @@ void sendLandingCoords (const cClient& client, const cPosition& coords)
 	Log.write ("Client: sending landing coords", cLog::eLOG_TYPE_NET_DEBUG);
 	auto message = std::make_unique<cNetMessage> (MU_MSG_LANDING_COORDS);
 	message->pushPosition (coords);
-	message->pushChar (client.getActivePlayer().getNr());
+	message->pushChar (client.getActivePlayer().getId());
 
 	client.sendNetMessage (std::move (message));
 }
@@ -232,7 +232,7 @@ void sendLandingCoords (const cClient& client, const cPosition& coords)
 void sendReadyToStart (const cClient& client)
 {
 	auto message = std::make_unique<cNetMessage> (MU_MSG_READY_TO_START);
-	message->pushChar (client.getActivePlayer().getNr());
+	message->pushChar (client.getActivePlayer().getId());
 
 	client.sendNetMessage (std::move (message));
 }
@@ -527,7 +527,7 @@ void sendWantResearchChange (const cClient& client, const std::array<int, cResea
 	{
 		message->pushInt16 (newResearchSettings[i]);
 	}
-	message->pushInt16 (player.getNr());
+	message->pushInt16 (player.getId());
 	client.sendNetMessage (std::move (message));
 }
 
@@ -536,7 +536,7 @@ void sendGameGuiState (const cClient& client, const cGameGuiState& gameGuiState,
 	auto message = std::make_unique<cNetMessage> (GAME_EV_SAVE_HUD_INFO);
 
 	gameGuiState.pushInto (*message);
-	message->pushInt16 (owner.getNr());
+	message->pushInt16 (owner.getId());
 	message->pushInt16 (savingID);
 
 	client.sendNetMessage (std::move (message));
@@ -592,6 +592,6 @@ void sendEndMoveAction (const cClient& client, int vehicleID, int destID, eEndMo
 void sentWantKickPlayer (const cClient& client, const cPlayer& player)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_KICK_PLAYER);
-	message->pushInt32 (player.getNr());
+	message->pushInt32 (player.getId());
 	client.sendNetMessage (std::move (message));
 }

@@ -26,6 +26,7 @@
 #include "game/logic/serverevents.h"
 #include "game/data/map/map.h"
 #include "utility/tounderlyingtype.h"
+#include "utility/files.h"
 
 using namespace std;
 
@@ -102,14 +103,15 @@ void sendGameData (cTCP& network, const cStaticMap* map, const cGameSettings* se
 	if (map)
 	{
 		const std::string mapName = map->getName();
-		message.pushInt32 (MapDownload::calculateCheckSum (mapName));
+		message.pushInt32(MapDownload::calculateCheckSum(mapName));
 		message.pushString (mapName);
 	}
 	message.pushBool (map != nullptr);
 
 	if (settings)
 	{
-		settings->pushInto (message);
+		//TODO: replace cNetMessage by new serializable messages
+		//settings->pushInto (message);
 	}
 	message.pushBool (settings != nullptr);
 

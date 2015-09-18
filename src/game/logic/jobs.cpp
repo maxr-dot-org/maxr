@@ -26,9 +26,10 @@
 #include <algorithm>
 #include <cassert>
 
-cJob::cJob (cVehicle& vehicle_) :
+cJob::cJob (cVehicle& vehicle_, unsigned int id) :
 	finished (false),
-	vehicle (&vehicle_)
+	vehicle (&vehicle_),
+	id(id)
 {}
 
 void cJobContainer::addJob (cJob& job)
@@ -78,8 +79,8 @@ void cJobContainer::onRemoveUnit (cUnit* unit)
 	}
 }
 
-cStartBuildJob::cStartBuildJob (cVehicle& vehicle_, const cPosition& org_, bool big_) :
-	cJob (vehicle_),
+cStartBuildJob::cStartBuildJob (cVehicle& vehicle_, const cPosition& org_, bool big_, unsigned int id) :
+	cJob (vehicle_, id),
 	org (org_),
 	big (big_)
 {
@@ -144,8 +145,8 @@ void cStartBuildJob::run (const cGameTimer& gameTimer)
 	}
 }
 
-cPlaneTakeoffJob::cPlaneTakeoffJob (cVehicle& vehicle_, bool takeoff_) :
-	cJob (vehicle_),
+cPlaneTakeoffJob::cPlaneTakeoffJob (cVehicle& vehicle_, bool takeoff_, unsigned int id) :
+	cJob (vehicle_, id),
 	takeoff (takeoff_)
 {}
 

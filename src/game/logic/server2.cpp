@@ -26,6 +26,7 @@
 #include "game/data/player/playerbasicdata.h"
 #include <time.h>
 #include "utility/random.h"
+#include "game/data/savegame.h"
 
 //------------------------------------------------------------------------------
 cServer2::cServer2() :
@@ -75,6 +76,37 @@ void cServer2::setPlayers(const std::vector<cPlayerBasicData>& splayers)
 {
 	model.setPlayerList(splayers);
 	gameTimer.setNumberOfPlayers(splayers.size());
+}
+
+//------------------------------------------------------------------------------
+const cModel& cServer2::getModel() const
+{
+	return model;
+}
+//------------------------------------------------------------------------------
+void cServer2::saveModel(cSavegame& savegame, int saveGameNumber, const std::string& saveName)
+{
+	if (SDL_ThreadID() != SDL_GetThreadID(serverThread))
+	{
+		//allow save writing of the server model from the main thread
+		bExit = true;
+		SDL_WaitThread(serverThread, nullptr);
+		serverThread = nullptr;
+	}
+
+	savegame.save(model, saveGameNumber, saveName);
+
+	if (!serverThread)
+	{
+		bExit = false;
+		serverThread = SDL_CreateThread(serverThreadCallback, "server", this);
+	}
+}
+//------------------------------------------------------------------------------
+void cServer2::loadModel(cSavegame& savegame, int saveGameNumber)
+{
+	savegame.loadModel(model, saveGameNumber);
+	gameTimer.setNumberOfPlayers(model.getPlayerList().size());
 }
 //------------------------------------------------------------------------------
 void cServer2::pushMessage(std::unique_ptr<cNetMessage2> message)

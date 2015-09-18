@@ -56,6 +56,15 @@ public:
 	unsigned char r, g, b;
 	unsigned char a;
 
+	template<typename T>
+	void serialize(T& archive)
+	{
+		archive & NVP(r);
+		archive & NVP(g);
+		archive & NVP(b);
+		archive & NVP(a);
+	}
+
 	// predefined colors
 	inline static cRgbColor red (unsigned char alpha_ = 0xFF) { return cRgbColor (0xFF, 0, 0, alpha_); }
 	inline static cRgbColor green (unsigned char alpha_ = 0xFF) { return cRgbColor (0, 0xFF, 0, alpha_); }

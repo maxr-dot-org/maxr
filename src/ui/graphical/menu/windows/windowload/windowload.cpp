@@ -18,15 +18,18 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/windows/windowload/windowload.h"
-#include "ui/graphical/menu/windows/windowload/savegamedata.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/saveslotwidget.h"
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
+#include "ui/graphical/application.h"
+#include "ui/graphical/menu/dialogs/dialogok.h"
 #include "pcx.h"
 #include "main.h"
+#include "utility/log.h"
 #include "utility/files.h"
-#include "game/logic/savegame.h"
+#include "game/data/savegameinfo.h"
+#include "game/data/savegame.h"
 
 //------------------------------------------------------------------------------
 cWindowLoad::cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
@@ -84,6 +87,8 @@ void cWindowLoad::update()
 //------------------------------------------------------------------------------
 void cWindowLoad::loadSaves()
 {
+	cSavegame savegame;
+
 	auto saveFileNames = getFilesOfDirectory (cSettings::getInstance().getSavesPath());
 
 	for (size_t i = 0; i != saveFileNames.size(); ++i)
@@ -102,18 +107,17 @@ void cWindowLoad::loadSaves()
 		bool found = false;
 		for (unsigned int j = 0; j < saveGames.size(); j++)
 		{
-			if (saveGames[j].getNumber() == number)
+			if (saveGames[j].number == number)
 			{
 				found = true;
 				break;
 			}
 		}
 		if (found) continue;
+
 		// read the information and add it to the saves list
-		std::string gameName, type, time;
-		cSavegame Savegame (number);
-		Savegame.loadHeader (&gameName, &type, &time);
-		saveGames.push_back (cSaveGameData (file, gameName, type, time, number));
+		cSaveGameInfo saveInfo = savegame.loadSaveInfo(number);
+		saveGames.push_back(saveInfo);
 	}
 }
 
@@ -160,6 +164,19 @@ void cWindowLoad::handleSlotDoubleClicked (size_t index)
 
 	const auto saveNumber = page * (columns * rows) + index + 1;
 
+	auto saveInfo = getSaveFile(saveNumber);
+	if (cVersion(saveInfo->saveVersion) == cVersion("0.0"))
+	{
+		getActiveApplication()->show(std::make_shared<cDialogOk>(lngPack.i18n("Text~Error_Messages~ERROR_Save_Loading")));
+		return;
+	}
+	if (cVersion(saveInfo->saveVersion) < cVersion(MINIMUM_REQUIRED_SAVE_VERSION))
+	{
+		getActiveApplication()->show(std::make_shared<cDialogOk>(lngPack.i18n("Text~Error_Messages~ERROR_Save_Incompatible", MINIMUM_REQUIRED_MAXR_VERSION)));
+		Log.write("Savegame Version " + saveInfo->gameVersion + " of file " + cSavegame::getFileName(saveNumber) + " is not compatible", cLog::eLOG_TYPE_NET_WARNING);
+		return;
+	}
+
 	load (saveNumber);
 }
 
@@ -176,7 +193,7 @@ void cWindowLoad::selectSlot (size_t slotIndex, bool makeRenameable)
 	selectedSaveNumber = page * (columns * rows) + slotIndex + 1;
 
 	auto newSelected = getSaveFile (selectedSaveNumber);
-	selectedOriginalName = newSelected ? newSelected->getGameName() : "";
+	selectedOriginalName = newSelected ? newSelected->gameName : "";
 
 	bool isEmptySlot = true;
 	for (size_t x = 0; x < columns; x++)
@@ -209,9 +226,9 @@ int cWindowLoad::getSelectedSaveNumber() const
 }
 
 //------------------------------------------------------------------------------
-cSaveGameData* cWindowLoad::getSaveFile (int saveNumber)
+cSaveGameInfo* cWindowLoad::getSaveFile (int saveNumber)
 {
-	auto iter = std::find_if (saveGames.begin(), saveGames.end(), [ = ] (const cSaveGameData & save) { return save.getNumber() == saveNumber; });
+	auto iter = std::find_if (saveGames.begin(), saveGames.end(), [ = ] (const cSaveGameInfo & save) { return save.number == saveNumber; });
 	return iter == saveGames.end() ? nullptr : & (*iter);
 }
 
@@ -258,5 +275,18 @@ void cWindowLoad::handleLoadClicked()
 {
 	if (selectedSaveNumber == -1) return;
 
+	auto saveInfo = getSaveFile(selectedSaveNumber);
+	if (cVersion(saveInfo->saveVersion) == cVersion("0.0"))
+	{
+		getActiveApplication()->show(std::make_shared<cDialogOk>(lngPack.i18n("Text~Error_Messages~ERROR_Save_Loading")));
+		return;
+	}
+	if (cVersion(saveInfo->saveVersion) < cVersion(MINIMUM_REQUIRED_SAVE_VERSION))
+	{
+		getActiveApplication()->show(std::make_shared<cDialogOk>(lngPack.i18n("Text~Error_Messages~ERROR_Save_Incompatible", MINIMUM_REQUIRED_MAXR_VERSION)));
+		Log.write("Savegame Version " + saveInfo->gameVersion + " of file " + cSavegame::getFileName(selectedSaveNumber) + " is not compatible", cLog::eLOG_TYPE_NET_WARNING);
+		return;
+	}
+	
 	load (selectedSaveNumber);
 }

@@ -125,6 +125,13 @@ public:
 
 	cSignal<void ()> typeChanged;
 	cSignal<void ()> remainingMetalChanged;
+
+	template<typename T>
+	void serialize(T& archive)
+	{
+		archive & NVP(type);
+		archive & NVP(remainingMetal);
+	}
 private:
 	sID type;
 	int remainingMetal;
@@ -249,6 +256,43 @@ public:
 	cSignal<void ()> buildListChanged;
 	cSignal<void ()> buildListFirstItemDataChanged;
 	cSignal<void ()> researchAreaChanged;
+
+	template <typename T>
+	void serialize(T& archive)
+	{
+		serializeBase(archive); //serialize cUnit members
+
+		archive & NVP(RubbleTyp);
+		archive & NVP(RubbleValue);
+		archive & NVP(BaseN);
+		archive & NVP(BaseE);
+		archive & NVP(BaseS);
+		archive & NVP(BaseW);
+		archive & NVP(BaseBN);
+		archive & NVP(BaseBE);
+		archive & NVP(BaseBS);
+		archive & NVP(BaseBW);
+		archive & NVP(MaxMetalProd);
+		archive & NVP(MaxOilProd);
+		archive & NVP(MaxGoldProd);
+		archive & NVP(BuildSpeed);
+		archive & NVP(MetalPerRound);
+		archive & NVP(RepeatBuild);
+		archive & NVP(DamageFXPointX);
+		archive & NVP(DamageFXPointY);
+		archive & NVP(DamageFXPointX2);
+		archive & NVP(DamageFXPointY2);
+		archive & NVP(wasWorking);
+		archive & NVP(points);
+		archive & NVP(isWorking);
+		archive & NVP(researchArea);
+		archive & NVP(buildList);
+
+		if (!archive.isWriter)
+		{
+			uiData = UnitsData.getBuildingUI(data.ID);
+		}
+	}
 private:
 	cSignalConnectionManager buildListFirstItemSignalConnectionManager;
 	cSignalConnectionManager ownerSignalConnectionManager;

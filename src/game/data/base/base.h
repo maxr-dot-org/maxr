@@ -22,6 +22,7 @@
 
 #include <vector>
 #include "game/data/units/unitdata.h"
+#include "utility/serialization/serialization.h"
 
 class cBuilding;
 class cMap;
@@ -192,7 +193,7 @@ public:
 	//private:
 	//	friend class cBase;
 	std::vector<cBuilding*> buildings;
-	cPlayer* owner;
+	cPlayer* owner; //TODO: remove
 
 	int MaxMetal;
 	int MaxOil;
@@ -213,10 +214,19 @@ public:
 	int HumanNeed;
 	int MaxHumanNeed;
 
+	//TODO: save individual production values in cBuilding
 	int MetalProd;
 	int OilProd;
 	int GoldProd;
 
+	template <typename T>
+	void serialize(T& archive)
+	{
+		archive & NVP(MetalProd);
+		archive & NVP(OilProd);
+		archive & NVP(GoldProd);
+		archive & NVP(buildings);
+	}
 private:
 	int metal;
 	int oil;
@@ -263,6 +273,31 @@ public:
 public:
 	std::vector<sSubBase*> SubBases;
 	cMap* map;
+
+	template <typename T>
+	void save(T& archive)
+	{
+		archive & serialization::makeNvp("NumSubBases", (int)SubBases.size());
+		for (auto subbase : SubBases)
+		{
+			archive & serialization::makeNvp("subbase", *subbase);
+		}
+	}
+	template<typename T>
+	void load(T& archive)
+	{
+		SubBases.clear();
+		int NumSubBases;
+		archive & NVP(NumSubBases);
+		for (int i = 0; i < NumSubBases; i++)
+		{
+			sSubBase* subbase = new sSubBase(NULL); //TODO: remove owner form subbase
+			archive & serialization::makeNvp("subbase", *subbase);
+			SubBases.push_back(subbase);
+		}
+		refreshSubbases();
+	}
+	SERIALIZATION_SPLIT_MEMBER();
 };
 
 #endif // game_data_base_baseH

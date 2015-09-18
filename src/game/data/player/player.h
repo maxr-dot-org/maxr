@@ -29,17 +29,18 @@
 #include "game/data/base/base.h"
 #include "main.h" // for sID
 #include "game/data/units/unit.h" // sUnitLess
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
 #include "game/logic/upgradecalculator.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 #include "utility/flatset.h"
 #include "game/data/player/playerbasicdata.h"
+#include "utility/serialization/serialization.h"
 
-class cBuilding;
 class cHud;
 class cMapField;
 class cUnit;
-class cVehicle;
 class cPosition;
 
 struct sTurnstartReport;
@@ -63,7 +64,7 @@ public:
 	const cPlayerColor& getColor() const { return splayer.getColor(); }
 	void setColor (cPlayerColor color) { return splayer.setColor (std::move (color)); }
 
-	int getNr() const { return splayer.getNr(); }
+	int getId() const { return splayer.getNr(); }
 
 	int getSocketNum() const { return splayer.getSocketIndex(); }
 	void setSocketIndex (int index) { splayer.setSocketIndex (index); }
@@ -180,6 +181,93 @@ public:
 	mutable cSignal<void ()> isRemovedFromGameChanged;
 	mutable cSignal<void (cResearch::ResearchArea)> researchCentersWorkingOnAreaChanged;
 	mutable cSignal<void ()> researchCentersWorkingTotalChanged;
+
+	template <typename T>
+	void save(T& archive)
+	{
+		archive & NVP(splayer);
+		archive & NVP(VehicleData);
+		archive & NVP(BuildingData);
+		archive & serialization::makeNvp("vehicleNum", (int)vehicles.size());
+		for (auto vehicle : vehicles)
+		{
+			archive & serialization::makeNvp("vehicleID", vehicle->getId());
+			archive & serialization::makeNvp("vehicle", *vehicle);
+		}
+		archive & serialization::makeNvp("buildingNum", (int)buildings.size());
+		for (auto building : buildings)
+		{
+			archive & serialization::makeNvp("buildingID", building->getId());
+			archive & serialization::makeNvp("building", *building);
+		}
+		archive & NVP(base);
+		archive & NVP(landingPos);
+		archive & serialization::makeNvp("ResourceMap", resourceMapToString());
+		archive & NVP(pointsHistory);
+		archive & NVP(isDefeated);
+		archive & NVP(clan);
+		archive & NVP(credits);
+		archive & NVP(currentTurnResearchAreasFinished);
+		archive & NVP(hasFinishedTurn);
+		archive & NVP(isRemovedFromGame);
+		archive & NVP(researchState);
+	}
+	template<typename T>
+	void load(T& archive)
+	{
+		archive & NVP(splayer);
+		archive & NVP(VehicleData);
+		archive & NVP(BuildingData);
+
+		vehicles.clear();
+		int vehicleNum;
+		archive & NVP(vehicleNum);
+		for (int i = 0; i < vehicleNum; i++)
+		{
+			unsigned int vehicleID;
+			archive & NVP(vehicleID);
+			sUnitData data;
+			auto vehicle = std::make_shared<cVehicle>(data, this, vehicleID);
+			archive & serialization::makeNvp("vehicle", *vehicle);
+			vehicles.insert(std::move(vehicle));
+		}
+
+		buildings.clear();
+		int buildingNum;
+		archive & NVP(buildingNum);
+		for (int i = 0; i < buildingNum; i++)
+		{
+			unsigned int buildingID;
+			archive & NVP(buildingID);
+			sUnitData data;
+			auto building = std::make_shared<cBuilding>(&data, this, buildingID);
+			archive & serialization::makeNvp("building", *building);
+			buildings.insert(std::move(building));
+		}
+
+		archive & NVP(base);
+		archive & NVP(landingPos);
+
+		std::string ResourceMap;
+		archive & NVP(ResourceMap);
+		setResourceMapFromString(ResourceMap);
+
+		archive & NVP(pointsHistory);
+		archive & NVP(isDefeated);
+		archive & NVP(clan);
+		archive & NVP(credits);
+		archive & NVP(currentTurnResearchAreasFinished);
+		archive & NVP(hasFinishedTurn);
+		archive & NVP(isRemovedFromGame);
+		archive & NVP(researchState);
+
+		doScan();
+		refreshSentryAir();
+		refreshSentryGround();
+		refreshResearchCentersWorkingOnArea();
+		countEcoSpheres();
+	}
+	SERIALIZATION_SPLIT_MEMBER();
 private:
 	/**
 	* draws a circle on the map for the fog
@@ -208,6 +296,8 @@ private:
 	cBuilding* getPrevMiningStation (cBuilding* start) const;
 	cVehicle* getPrevVehicle (cVehicle* start) const;
 
+	std::string resourceMapToString() const;
+	void setResourceMapFromString(const std::string& str);
 private:
 	cPlayerBasicData splayer;
 public:
@@ -232,8 +322,7 @@ public:
 	mutable PointsHistory pointsHistory; // history of player's total score (from eco-spheres) for graph //TODO: not mutable, since this information is public
 	mutable std::vector<std::unique_ptr<cSavedReport>> savedReportsList; //mutable, because adding a report doesn't change the game model
 	bool isDefeated;        // true if the player has been defeated
-	int numEcos;            // number of ecospheres. call countEcoSpheres on server to update.
-	unsigned int lastDeletedUnit;  /*!< used for detecting ownerchanges of a unit, e.g. a unit is readded with different player*/ //TODO: remove
+	int numEcos;            // number of ecospheres. call countEcoSpheres to update.
 private:
 	int clan;
 

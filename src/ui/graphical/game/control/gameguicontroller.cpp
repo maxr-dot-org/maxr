@@ -46,7 +46,6 @@
 #include "ui/graphical/menu/windows/windowupgrades/windowupgrades.h"
 #include "ui/graphical/menu/windows/windowreports/windowreports.h"
 #include "ui/graphical/menu/windows/windowloadsave/windowloadsave.h"
-#include "ui/graphical/menu/windows/windowload/savegamedata.h"
 
 #include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffect.h"
@@ -112,7 +111,7 @@ void cGameGuiController::start()
 
 	if (activeClient)
 	{
-		auto iter = playerGameGuiStates.find (activeClient->getActivePlayer().getNr());
+		auto iter = playerGameGuiStates.find (activeClient->getActivePlayer().getId());
 		if (iter != playerGameGuiStates.end())
 		{
 			gameGui->restoreState (iter->second);
@@ -128,7 +127,7 @@ void cGameGuiController::start()
 //------------------------------------------------------------------------------
 void cGameGuiController::addPlayerGameGuiState (const cPlayer& player, cGameGuiState playerGameGuiState)
 {
-	playerGameGuiStates[player.getNr()] = std::move (playerGameGuiState);
+	playerGameGuiStates[player.getId()] = std::move (playerGameGuiState);
 }
 
 //------------------------------------------------------------------------------
@@ -139,7 +138,7 @@ void cGameGuiController::setSingleClient (std::shared_ptr<cClient> client)
 	if (client != nullptr)
 	{
 		clients.push_back (client);
-		activePlayerNumber = client->getActivePlayer().getNr();
+		activePlayerNumber = client->getActivePlayer().getId();
 	}
 	setClients (std::move (clients), activePlayerNumber);
 }
@@ -151,7 +150,7 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 
 	clients = std::move (clients_);
 
-	auto iter = std::find_if (clients.begin(), clients.end(), [ = ] (const std::shared_ptr<cClient>& client) { return client->getActivePlayer().getNr() == activePlayerNumber; });
+	auto iter = std::find_if (clients.begin(), clients.end(), [ = ] (const std::shared_ptr<cClient>& client) { return client->getActivePlayer().getId() == activePlayerNumber; });
 	if (iter != clients.end()) setActiveClient (*iter);
 	else setActiveClient (nullptr);
 
@@ -166,13 +165,13 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 			}
 			else
 			{
-				sendGameGuiState (*client, playerGameGuiStates[client->getActivePlayer().getNr()], client->getActivePlayer(), saveingId);
+				sendGameGuiState (*client, playerGameGuiStates[client->getActivePlayer().getId()], client->getActivePlayer(), saveingId);
 			}
 		});
 
 		allClientsSignalConnectionManager.connect (clients[i]->gameGuiStateReceived, [this, client] (const cGameGuiState & state)
 		{
-			playerGameGuiStates[client->getActivePlayer().getNr()] = state;
+			playerGameGuiStates[client->getActivePlayer().getId()] = state;
 			if (client == activeClient.get())
 			{
 				gameGui->restoreState (state);
@@ -198,7 +197,7 @@ void cGameGuiController::setActiveClient (std::shared_ptr<cClient> client_)
 	if (activeClient != nullptr)
 	{
 		connectClient (*activeClient);
-		auto iter = playerGameGuiStates.find (activeClient->getActivePlayer().getNr());
+		auto iter = playerGameGuiStates.find (activeClient->getActivePlayer().getId());
 		if (iter != playerGameGuiStates.end())
 		{
 			gameGui->restoreState (iter->second);
@@ -672,13 +671,13 @@ void cGameGuiController::connectClient (cClient& client)
 	//
 	clientSignalConnectionManager.connect (client.playerFinishedTurn, [&] (int currentPlayerNumber, int nextPlayerNumber)
 	{
-		if (currentPlayerNumber != client.getActivePlayer().getNr()) return;
+		if (currentPlayerNumber != client.getActivePlayer().getId()) return;
 
 		if (client.getModel().getGameSettings()->getGameType() == eGameSettingsGameType::HotSeat)
 		{
 			gameGui->getHud().unlockEndButton();
 
-			auto iter = std::find_if (clients.begin(), clients.end(), [ = ] (const std::shared_ptr<cClient>& client) { return client->getActivePlayer().getNr() == nextPlayerNumber; });
+			auto iter = std::find_if (clients.begin(), clients.end(), [ = ] (const std::shared_ptr<cClient>& client) { return client->getActivePlayer().getId() == nextPlayerNumber; });
 			if (iter != clients.end())
 			{
 				playerGameGuiStates[currentPlayerNumber] = gameGui->getCurrentState();
@@ -834,7 +833,8 @@ void cGameGuiController::showFilesWindow()
 		}
 		catch (std::runtime_error& e)
 		{
-			application.show (std::make_shared<cDialogOk> (e.what()));
+			Log.write(e.what(), cLog::eLOG_TYPE_ERROR);
+			application.show (std::make_shared<cDialogOk> ("Writing savegame file failed"));
 		}
 	});
 }
@@ -1615,7 +1615,7 @@ std::shared_ptr<const cPlayer> cGameGuiController::getActivePlayer() const
 
 	const auto& clientPlayerList = activeClient->getModel().getPlayerList();
 
-	auto iter = std::find_if (clientPlayerList.begin(), clientPlayerList.end(), [this] (const std::shared_ptr<cPlayer>& player) { return player->getNr() == activeClient->getActivePlayer().getNr(); });
+	auto iter = std::find_if (clientPlayerList.begin(), clientPlayerList.end(), [this] (const std::shared_ptr<cPlayer>& player) { return player->getId() == activeClient->getActivePlayer().getId(); });
 
 	if (iter == clientPlayerList.end()) return nullptr;  // should never happen; just to be on the safe side
 

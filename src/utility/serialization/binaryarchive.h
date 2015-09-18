@@ -65,6 +65,9 @@ private:
 	void pushValue(unsigned long long value);
 	void pushValue(float value);
 	void pushValue(double value);
+
+	template<typename T2, typename T1>
+	void pushGenericIEEE754As(T1 value);
 };
 
 /**
@@ -76,7 +79,7 @@ public:
 
 	static const bool isWriter = false;
 
-	cBinaryArchiveOut(const unsigned char* data, size_t length);
+	cBinaryArchiveOut(const unsigned char* data, size_t length, serialization::cPointerLoader* pointerLoader = NULL);
 
 	template<typename T>
 	cBinaryArchiveOut& operator>>(T& value);
@@ -84,10 +87,12 @@ public:
 	cBinaryArchiveOut& operator&(T& value);
 
 	void rewind();
-
+	serialization::cPointerLoader* getPointerLoader() const;
 private:
 	std::vector<unsigned char> buffer;
 	size_t readPosition;
+
+	serialization::cPointerLoader* pointerLoader;
 
 	template<size_t SIZE, typename T1>
 	void readFromBuffer(T1& value);
@@ -114,6 +119,9 @@ private:
 	void popValue(unsigned long long& value);
 	void popValue(float& value);
 	void popValue(double& value);
+
+	template<typename T2, typename T1>
+	void popGenericIEEE754As(T1& value);
 };
 
 //------------------------------------------------------------------------------
@@ -186,6 +194,61 @@ void cBinaryArchiveIn::pushValue(const serialization::sNameValuePair<T>& nvp)
 }
 
 //------------------------------------------------------------------------------
+template<typename T2, typename T1>
+void cBinaryArchiveIn::pushGenericIEEE754As(T1 value)
+{
+	assert(sizeof(T1) == 4 || sizeof(T1) == 8); // TODO: make static assert
+	assert(sizeof(T1) == sizeof(T2)); // TODO: make static assert
+
+	const unsigned int BITS = sizeof(T1)* CHAR_BIT;
+	const unsigned int EXPBITS = sizeof(T1) == 4 ? 8 : 11;
+	const unsigned int SIGNIFICANTBITS = BITS - EXPBITS - 1; // -1 for sign bit
+
+	if (value == 0.0)
+	{
+		writeToBuffer(T2(0));
+		return;
+	}
+
+	T1 norm;
+	T2 sign;
+	// check sign and begin normalization
+	if (value < 0)
+	{
+		sign = 1;
+		norm = -value;
+	}
+	else
+	{
+		sign = 0;
+		norm = value;
+	}
+
+	// get the normalized form of f and track the exponent
+	T2 shift = 0;
+	while (norm >= 2.0)
+	{
+		norm /= 2.0;
+		shift++;
+	}
+	while (norm < 1.0)
+	{
+		norm *= 2.0;
+		shift--;
+	}
+	norm -= 1.0;
+
+	// calculate the binary form (non-float) of the significand data
+	const T2 significand = T2(norm * ((1LL << SIGNIFICANTBITS) + 0.5f));
+
+	// get the biased exponent
+	const T2 exp = shift + ((1 << (EXPBITS - 1)) - 1);  // shift + bias
+
+	writeToBuffer(T2((sign << (BITS - 1)) | (exp << (BITS - EXPBITS - 1)) | significand));
+}
+
+
+//------------------------------------------------------------------------------
 template<typename T>
 cBinaryArchiveOut& cBinaryArchiveOut::operator>>(T& value)
 {
@@ -208,7 +271,7 @@ void cBinaryArchiveOut::readFromBuffer(T1& value)
 	if (buffer.size() - readPosition < SIZE)
 	{
 		//TODO: catch
-		throw std::runtime_error("Buffer to small");
+		throw std::runtime_error("cBinaryArchiveOut: Buffer underrun");
 	}
 
 	switch (SIZE)
@@ -216,7 +279,7 @@ void cBinaryArchiveOut::readFromBuffer(T1& value)
 	case 1:
 	{
 		Sint8 temp = *reinterpret_cast<Sint8*>(&buffer[readPosition]);
-		value = static_cast<T1>(temp); //TODO: warum warning?!?
+		value = static_cast<T1>(temp);
 		break;
 	}
 	case 2:
@@ -256,4 +319,47 @@ void cBinaryArchiveOut::popValue(serialization::sNameValuePair<T>& nvp)
 	popValue(nvp.value);
 }
 
+//------------------------------------------------------------------------------
+template<typename T2, typename T1>
+void cBinaryArchiveOut::popGenericIEEE754As(T1& value)
+{
+	assert(sizeof(T1) == 4 || sizeof(T1) == 8); // TODO: make static assert
+	assert(sizeof(T1) == sizeof(T2)); // TODO: make static assert
+
+	const unsigned int BITS = sizeof(T1)* CHAR_BIT;
+	const unsigned int EXPBITS = sizeof(T1) == 4 ? 8 : 11;
+	const unsigned int SIGNIFICANTBITS = BITS - EXPBITS - 1; // -1 for sign bit
+
+	// get data
+	T2 i;
+	readFromBuffer<sizeof(T2)>(i);
+
+	if (i == 0)
+	{
+		value = 0;
+		return;
+	}
+
+	// pull the significand
+	value = T1(i & ((1LL << SIGNIFICANTBITS) - 1));    // mask
+	value /= (1LL << SIGNIFICANTBITS);   // convert back to float
+	value += 1.0; // add the one back on
+
+	// deal with the exponent
+	unsigned int bias = (1 << (EXPBITS - 1)) - 1;
+	long long shift = ((i >> SIGNIFICANTBITS) & ((1LL << EXPBITS) - 1)) - bias;
+	while (shift > 0)
+	{
+		value *= 2.0;
+		shift--;
+	}
+	while (shift < 0)
+	{
+		value /= 2.0;
+		shift++;
+	}
+
+	// sign it
+	value *= T1(((i >> (BITS - 1)) & 1) ? -1.0 : 1.0);
+}
 #endif //serialization_binaryarchiveH

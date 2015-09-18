@@ -24,7 +24,7 @@
 #include "game/logic/server.h"
 #include "game/data/player/player.h"
 #include "game/logic/clientevents.h"
-#include "game/logic/savegame.h"
+#include "game/data/savegame.h"
 #include "game/data/report/savedreport.h"
 
 //------------------------------------------------------------------------------
@@ -33,8 +33,8 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	server = std::make_unique<cServer> (network);
 	//localClient = std::make_shared<cClient> (server.get(), nullptr); //TODO: use new server
 
-	cSavegame savegame (saveGameNumber);
-	if (savegame.load (*server) == false) return; // TODO: error message
+	//cSavegame savegame (saveGameNumber);
+	//if (savegame.load (*server) == false) return; // TODO: error message
 
 	auto staticMap = server->Map->staticMap;
 //	localClient->setMap (staticMap);
@@ -49,7 +49,7 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	{
 		auto& serverPlayer = *serverPlayerList[i];
 
-		auto iter = std::find_if (players.begin(), players.end(), [&] (const cPlayerBasicData & player) { return player.getNr() == serverPlayer.getNr(); });
+		auto iter = std::find_if (players.begin(), players.end(), [&] (const cPlayerBasicData & player) { return player.getNr() == serverPlayer.getId(); });
 
 		assert (iter != players.end());
 		const auto& listPlayer = *iter;
@@ -73,7 +73,7 @@ void cNetworkHostGameSaved::start (cApplication& application)
 
 	server->start();
 
-	sendRequestResync (*localClient, serverPlayerList[serverListLocalPlayerIndex]->getNr(), true);
+	sendRequestResync (*localClient, serverPlayerList[serverListLocalPlayerIndex]->getId(), true);
 
 	// TODO: move that in server
 	for (size_t i = 0; i != serverPlayerList.size(); ++i)

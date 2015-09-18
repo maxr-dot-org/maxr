@@ -325,6 +325,43 @@ public:
 
 	mutable cSignal<void ()> clientMoveJobChanged;
 	mutable cSignal<void ()> autoMoveJobChanged;
+
+	template <typename T>
+	void serialize(T& archive)
+	{
+		serializeBase(archive); //serialize cUnit members
+		//TODO: moveJob
+		//TODO: surveyor AI
+		archive & NVP(MoveJobActive);
+		archive & NVP(bandPosition);
+		archive & NVP(buildBigSavedPosition);
+		archive & NVP(BuildPath);
+		archive & NVP(DamageFXPointX);
+		archive & NVP(DamageFXPointY);
+		archive & NVP(WalkFrame);
+
+		archive & NVP(detectedInThisTurnByPlayerList);
+		archive & NVP(tileMovementOffset);
+		archive & NVP(loaded);
+		archive & NVP(moving);
+		archive & NVP(isBuilding);
+		archive & NVP(buildingTyp);
+		archive & NVP(buildCosts);
+		archive & NVP(buildTurns);
+		archive & NVP(buildTurnsStart);
+		archive & NVP(buildCostsStart);
+		archive & NVP(isClearing);
+		archive & NVP(clearingTurns);
+		archive & NVP(layMines);
+		archive & NVP(clearMines);
+		archive & NVP(flightHeight);
+		archive & NVP(commandoRank);
+
+		if (!archive.isWriter)
+		{
+			uiData = UnitsData.getVehicleUI(data.ID);
+		}
+	}
 private:
 
 	void render_BuildingOrBigClearing (const cMap& map, unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;

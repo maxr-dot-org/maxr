@@ -17,63 +17,57 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef game_logic_server2H
-#define game_logic_server2H
 
-#include <memory>
-
-#include "SDL_thread.h"
-
+#include "serialization.h"
 #include "game/data/model.h"
-#include "netmessage2.h"
-#include "utility/thread/concurrentqueue.h"
-#include "gametimer.h"
+#include "utility/log.h"
 
-class cClient;
-class cPlayerBasicData;
-class cSavegame;
-
-//TODO: network einbinden
-class cServer2
+namespace serialization
 {
-	friend class cDebugOutputWidget;
-public:
 
-	explicit cServer2();
-	~cServer2();
+	cPointerLoader::cPointerLoader(cModel& model) :
+		model(model)
+	{}
 
-	void pushMessage(std::unique_ptr<cNetMessage2> message);
+	void cPointerLoader::get(unsigned int id, cJob*& value)
+	{
+		assert(false);
+		//TODO
+	}
 
-	void sendMessageToClients(std::unique_ptr<cNetMessage2> message, int playerNr = -1) const;
+	void cPointerLoader::get(unsigned int id, cPlayer*& value)
+	{
+		value = model.getPlayer(id);
+		if (value == nullptr && id != -1)
+			Log.write("Player with id " + iToStr(id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
+	}
 
-	void start();
-	void stop();
+	void cPointerLoader::get(unsigned int id, cBuilding*& value)
+	{
+		value = model.getBuildingFromID(id);
+		if (value == nullptr && id != -1)
+			Log.write("Building with id " + iToStr(id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
+	}
 
-	void setLocalClient(cClient* client);
-	void setGameSettings(const cGameSettings& gameSettings);
-	void setMap(std::shared_ptr<cStaticMap> staticMap);
-	void setPlayers(const std::vector<cPlayerBasicData>& splayers);
-	const cModel& getModel() const;
-	void saveModel(cSavegame& savegame, int saveGameNumber, const std::string& saveName);
-	void loadModel(cSavegame& savegame, int saveGameNumber);
+	void cPointerLoader::get(unsigned int id, cVehicle*& value)
+	{
+		value = model.getVehicleFromID(id);
+		if (value == nullptr && id != -1)
+			Log.write("Vehicle with id " + iToStr(id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
+	}
 
-private:
-	cModel model;
-	//std::vector<cPlayerConnectionState> playerConnectionStates;
-	//cPlayerConnectionManager playerConnectionManager;
-	cGameTimerServer gameTimer;
+	void cPointerLoader::get(unsigned int id, cUnit*& value)
+	{
+		value = model.getUnitFromID(id);
+		if (value == nullptr && id != -1)
+			Log.write("Unit with id " + iToStr(id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
+	}
 
-	cClient* localClient;
-	cConcurrentQueue<std::unique_ptr<cNetMessage2>> eventQueue;
+	template<typename T>
+	void cPointerLoader::get(unsigned int id, T*& value)
+	{
+		//Pointer type not implemented
+		assert(false);
+	}
 
-	void initRandomGenerator();
-
-	// manage the server thread
-	static int serverThreadCallback(void* arg);
-	void run();
-	SDL_Thread* serverThread;
-	bool bExit;
-	
-};
-
-#endif
+}

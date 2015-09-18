@@ -38,6 +38,7 @@
 #include "utility/autosurface.h"
 #include "defines.h"
 #include "utility/language.h"
+#include "utility/serialization/serialization.h"
 
 // Predeclarations
 class cPlayer;
@@ -88,8 +89,8 @@ struct sID
 	template<typename T>
 	void serialize(T& archive)
 	{
-		archive & iFirstPart;
-		archive & iSecondPart;
+		archive & NVP(iFirstPart);
+		archive & NVP(iSecondPart);
 	}
 
 public:
@@ -396,6 +397,9 @@ T Square (T v) { return v * v; }
 *@return rounded num
 */
 int Round (float num);
+
+std::string getHexValue(unsigned char byte);
+unsigned char getByteValue(const std::string& str, int index);
 
 void Quit();
 

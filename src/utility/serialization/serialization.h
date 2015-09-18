@@ -22,6 +22,15 @@
 
 #include <string>
 #include <vector>
+#include <chrono>
+
+#include "game/logic/jobs.h"
+
+class cModel;
+class cPlayer;
+class cBuilding;
+class cVehicle;
+class cUnit;
 
 namespace serialization
 {
@@ -140,7 +149,7 @@ namespace serialization
 			{
 				if (archive.isWriter)
 				{
-					int tmp = enumValue;
+					int tmp = static_cast<int>(enumValue);
 					archive & tmp;
 					//TODO: operator<< does not work
 				}
@@ -149,7 +158,7 @@ namespace serialization
 					int tmp;
 					archive & tmp;
 					//TODO: operator>> does not work
-					enumValue = (T)tmp;
+					enumValue = static_cast<T>(tmp);
 				}
 			}
 			template<typename T, typename A>
@@ -157,7 +166,7 @@ namespace serialization
 			{
 				if (archive.isWriter)
 				{
-					int tmp = nvp.value;
+					int tmp = static_cast<int>(nvp.value);
 					archive & makeNvp(nvp.name, tmp);
 					//TODO: operator<< does not work
 				}
@@ -165,7 +174,7 @@ namespace serialization
 				{
 					int tmp;
 					archive & makeNvp(nvp.name, tmp);
-					nvp.value = (T)tmp;
+					nvp.value = static_cast<T>(tmp);
 					//TODO: operator>> does not work
 				}
 			}
@@ -208,7 +217,7 @@ namespace serialization
 	}
 
 	//
-	// free serialization functions (for e. g. STL types)
+	// free serialization functions (for e. g. STL types, pointers, enums)
 	//
 	//-------------------------------------------------------------------------
 	template<typename A, typename T1, typename T2>
@@ -274,6 +283,109 @@ namespace serialization
 	void serialize(A& archive, std::string& value)
 	{
 		serialization::detail::splitFree(archive, value);
+	}
+	//-------------------------------------------------------------------------
+	template<typename A>
+	void save(A& archive, const std::chrono::seconds& value)
+	{
+		archive << makeNvp("seconds", value.count());
+	}
+	template<typename A>
+	void load(A& archive, std::chrono::seconds& value)
+	{
+		long long tmp;
+		archive >> makeNvp("seconds", tmp);
+		value = std::chrono::seconds(tmp);
+	}
+	template<typename A>
+	void serialize(A& archive, std::chrono::seconds& value)
+	{
+		serialization::detail::splitFree(archive, value);
+	}
+	//-------------------------------------------------------------------------
+	/**
+	* The class cPointerLoader is used to translate IDs into pointer values during deserialisation.
+	* It looks for an object with the given ID in the model and returns the pointer.
+	* The object with the ID must exist in the model when the pointer is deserialized, otherwiese an
+	* exception is thrown.
+	* Serialization/Deserialisatoin of a pointer needs the target class of the pointer to have
+	* a getId() method. That method should return an unique ID to identify the
+	* pointer target.
+	*/
+	class cPointerLoader
+	{
+	public:
+		cPointerLoader(cModel& model);
+		void get(unsigned int id, cJob*& value);
+		void get(unsigned int id, cPlayer*& value);
+		void get(unsigned int id, cBuilding*& value);
+		void get(unsigned int id, cVehicle*& value);
+		void get(unsigned int id, cUnit*& value);
+
+		template<typename T>
+		void get(unsigned int id, T*& value);
+	private:
+		cModel& model;
+	};
+
+	template<typename A, typename T>
+	void save(A& archive, const T* value)
+	{
+		int id = value ? value->getId() : -1;
+		archive << id;
+	}
+	template<typename A, typename T>
+	void load(A& archive, T*& value)
+	{
+		assert(archive.getPointerLoader() != nullptr);
+
+		int id;
+		archive >> id;
+		if (id == -1)
+		{
+			value = nullptr;
+			return;
+		}
+
+		archive.getPointerLoader()->get(id, value);
+
+		if (value == nullptr)
+			throw std::runtime_error("Error creating pointer to object from id");
+	}
+	template<typename A, typename T>
+	void serialize(A& archive, T*& value)
+	{
+		serialization::detail::splitFree(archive, value);
+	}
+
+	template<typename A, typename T>
+	void save(A& archive, const sNameValuePair<T*>& nvp)
+	{
+		int id = nvp.value ? nvp.value->getId() : -1;
+		archive << makeNvp(nvp.name, id);
+	}
+	template<typename A, typename T>
+	void load(A& archive, sNameValuePair<T*>& nvp)
+	{
+		assert(archive.getPointerLoader() != nullptr);
+		
+		int id;
+		archive >> makeNvp(nvp.name, id);
+		if (id == -1)
+		{
+			nvp.value = nullptr;
+			return;
+		}
+
+		archive.getPointerLoader()->get(id, nvp.value);
+
+		if (nvp.value == nullptr)
+			throw std::runtime_error("Error creating pointer to object from id");
+	}
+	template<typename A, typename T>
+	void serialize(A& archive, sNameValuePair<T*> nvp)
+	{
+		serialization::detail::splitFree(archive, nvp);
 	}
 
 } //namespace sersialization

@@ -37,7 +37,6 @@
 #include "netmessage.h"
 #include "network.h"
 #include "game/data/player/player.h"
-#include "game/logic/savegame.h"
 #include "game/logic/serverevents.h"
 #include "settings.h"
 #include "game/logic/upgradecalculator.h"
@@ -224,7 +223,7 @@ void cServer::pushEvent (std::unique_ptr<cNetMessage> message)
 //------------------------------------------------------------------------------
 void cServer::sendNetMessage (std::unique_ptr<cNetMessage> message, const cPlayer* player)
 {
-	const auto playerNumber = player != nullptr ? player->getNr() : -1;
+	const auto playerNumber = player != nullptr ? player->getId() : -1;
 	const auto playerName = player != nullptr ? player->getName() : "all players";
 
 	message->iPlayerNr = playerNumber;
@@ -250,7 +249,7 @@ void cServer::sendNetMessage (std::unique_ptr<cNetMessage> message, const cPlaye
 	{
 		for (size_t i = 0; i != localClients.size(); ++i)
 		{
-			if (localClients[i]->getActivePlayer().getNr() == player->getNr())
+			if (localClients[i]->getActivePlayer().getId() == player->getId())
 			{
 				localClients[i]->pushEvent (std::move (message));
 				break;
@@ -471,7 +470,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_TO_END_TURN (cNetMessage& message)
 
 	if (isTurnBasedGame())
 	{
-		if (activeTurnPlayer->getNr() != message.iPlayerNr) return;
+		if (activeTurnPlayer->getId() != message.iPlayerNr) return;
 	}
 
 	if (player.base.checkTurnEnd (*this)) return;
@@ -487,7 +486,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_START_WORK (cNetMessage& message)
 	const int iID = message.popInt32();
 	cBuilding* building = getBuildingFromID (iID);
 
-	if (building == nullptr || building->getOwner()->getNr() != message.iPlayerNr) return;
+	if (building == nullptr || building->getOwner()->getId() != message.iPlayerNr) return;
 
 	building->ServerStartWork (*this);
 }
@@ -500,7 +499,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_STOP_WORK (cNetMessage& message)
 	const int iID = message.popInt32();
 	cBuilding* building = getBuildingFromID (iID);
 
-	if (building == nullptr || building->getOwner()->getNr() != message.iPlayerNr) return;
+	if (building == nullptr || building->getOwner()->getId() != message.iPlayerNr) return;
 
 	building->ServerStopWork (*this, false);
 }
@@ -559,7 +558,7 @@ void cServer::handleNetMessage_GAME_EV_MOVEJOB_RESUME (cNetMessage& message)
 	else
 	{
 		cVehicle* vehicle = getVehicleFromID (vehicleId);
-		if (!vehicle || vehicle->getOwner()->getNr() != message.iPlayerNr) return;
+		if (!vehicle || vehicle->getOwner()->getId() != message.iPlayerNr) return;
 
 		if (vehicle->ServerMoveJob)
 			vehicle->ServerMoveJob->resume();
@@ -583,7 +582,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 		Log.write (" Server: vehicle with ID " + iToStr (aggressorID) + " not found", cLog::eLOG_TYPE_NET_WARNING);
 		return;
 	}
-	if (aggressor->getOwner()->getNr() != message.iPlayerNr)
+	if (aggressor->getOwner()->getId() != message.iPlayerNr)
 	{
 		Log.write (" Server: Message was not send by vehicle owner!", cLog::eLOG_TYPE_NET_ERROR);
 		return;
@@ -730,7 +729,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	Vehicle->BuildPath = bBuildPath;
 
 	sendBuildAnswer (*this, true, *Vehicle);
-	addJob (new cStartBuildJob (*Vehicle, oldPosition, Data.isBig));
+	//addJob (new cStartBuildJob (*Vehicle, oldPosition, Data.isBig));
 
 	if (Vehicle->ServerMoveJob) Vehicle->ServerMoveJob->release();
 }
@@ -1368,7 +1367,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 	Vehicle->setClearing (true);
 	Vehicle->setClearingTurns (building->data.isBig ? 4 : 1);
 	Vehicle->getOwner()->doScan();
-	addJob (new cStartBuildJob (*Vehicle, Vehicle->getPosition(), building->data.isBig));
+	//addJob (new cStartBuildJob (*Vehicle, Vehicle->getPosition(), building->data.isBig));
 
 	sendClearAnswer (*this, 0, *Vehicle, Vehicle->getClearingTurns(), rubblePosition, Vehicle->getOwner());
 	for (size_t i = 0; i != Vehicle->seenByPlayerList.size(); ++i)
@@ -1466,7 +1465,7 @@ void cServer::handleNetMessage_GAME_EV_RECON_SUCCESS (cNetMessage& message)
 	// remove the player from the disconnected list
 	for (size_t i = 0; i != DisconnectedPlayerList.size(); ++i)
 	{
-		if (DisconnectedPlayerList[i]->getNr() == playerNum)
+		if (DisconnectedPlayerList[i]->getId() == playerNum)
 		{
 			player = DisconnectedPlayerList[i];
 			DisconnectedPlayerList.erase (DisconnectedPlayerList.begin() + i);
@@ -1894,7 +1893,7 @@ void cServer::handleNetMessage_GAME_EV_SAVE_HUD_INFO (cNetMessage& message)
 	if (msgSaveingID != savingID) return;
 	cPlayer& player = getPlayerFromNumber (message.popInt16());
 
-	playerGameGuiStates[player.getNr()].popFrom (message);
+	playerGameGuiStates[player.getId()].popFrom (message);
 }
 
 //------------------------------------------------------------------------------
@@ -1918,8 +1917,8 @@ void cServer::handleNetMessage_GAME_EV_FIN_SEND_SAVE_INFO (cNetMessage& message)
 	if (msgSaveingID != savingID) return;
 	auto& player = getPlayerFromNumber (message.popInt16());
 
-	cSavegame savegame (savingIndex);
-	savegame.writeAdditionalInfo (playerGameGuiStates[player.getNr()], player.savedReportsList, &player);
+	//cSavegame savegame (savingIndex);
+	//savegame.writeAdditionalInfo (playerGameGuiStates[player.getNr()], player.savedReportsList, &player);
 }
 
 //------------------------------------------------------------------------------
@@ -1938,7 +1937,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_SELFDESTROY (cNetMessage& message)
 	assert (message.iType == GAME_EV_WANT_SELFDESTROY);
 
 	cBuilding* building = getBuildingFromID (message.popInt16());
-	if (!building || building->getOwner()->getNr() != message.iPlayerNr) return;
+	if (!building || building->getOwner()->getId() != message.iPlayerNr) return;
 
 	if (building->isBeeingAttacked()) return;
 
@@ -2422,7 +2421,7 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 	cPlayer* owner = unit->getOwner();
 
 	if (unit->getOwner() && casualtiesTracker != nullptr && ((unit->isABuilding() && unit->data.buildCosts <= 2) == false))
-		casualtiesTracker->logCasualty (unit->data.ID, unit->getOwner()->getNr());
+		casualtiesTracker->logCasualty (unit->data.ID, unit->getOwner()->getId());
 
 	std::shared_ptr<cUnit> owningPtr; // keep owning ptr to make sure that unit instance will outlive this method.
 	if (unit->isABuilding())
@@ -2497,7 +2496,7 @@ void cServer::checkPlayerUnits (cVehicle& vehicle, cPlayer& MapPlayer)
 				sendMoveJobServer (*this, *vehicle.ServerMoveJob, MapPlayer);
 				if (Contains (ActiveMJobs, vehicle.ServerMoveJob) && !vehicle.ServerMoveJob->bFinished && !vehicle.ServerMoveJob->bEndForNow && vehicle.isUnitMoving())
 				{
-					Log.write (" Server: sending extra MJOB_OK for unit ID " + iToStr (vehicle.iID) + " to client " + iToStr (MapPlayer.getNr()), cLog::eLOG_TYPE_NET_DEBUG);
+					Log.write (" Server: sending extra MJOB_OK for unit ID " + iToStr (vehicle.iID) + " to client " + iToStr (MapPlayer.getId()), cLog::eLOG_TYPE_NET_DEBUG);
 					auto message = std::make_unique<cNetMessage> (GAME_EV_NEXT_MOVE);
 					message->pushChar (MJOB_OK);
 					message->pushInt16 (vehicle.iID);
@@ -2656,7 +2655,7 @@ cPlayer& cServer::getPlayerFromNumber (int playerNumber)
 //------------------------------------------------------------------------------
 const cPlayer& cServer::getPlayerFromNumber (int playerNumber) const
 {
-	auto iter = std::find_if (playerList.begin(), playerList.end(), [playerNumber] (const std::unique_ptr<cPlayer>& player) { return player->getNr() == playerNumber; });
+	auto iter = std::find_if (playerList.begin(), playerList.end(), [playerNumber] (const std::unique_ptr<cPlayer>& player) { return player->getId() == playerNumber; });
 	if (iter == playerList.end()) throw std::runtime_error ("Could not find player with number '" + iToStr (playerNumber) + "'");
 
 	auto& player = *iter;
@@ -2686,7 +2685,7 @@ void cServer::setActiveTurnPlayer (const cPlayer& player)
 {
 	for (size_t i = 0; i < playerList.size(); ++i)
 	{
-		if (playerList[i]->getNr() == player.getNr())
+		if (playerList[i]->getId() == player.getId())
 		{
 			activeTurnPlayer = playerList[i].get();
 		}
@@ -2709,7 +2708,7 @@ void cServer::handleEnd (cPlayer& player)
 		sendTurnFinished (*this, player, nullptr);
 		if (checkRemainingMoveJobs (&player))
 		{
-			pendingEndTurnPlayerNumber = player.getNr();
+			pendingEndTurnPlayerNumber = player.getId();
 			return;
 		}
 
@@ -2724,7 +2723,7 @@ void cServer::handleEnd (cPlayer& player)
 	{
 		if (checkRemainingMoveJobs (&player))
 		{
-			pendingEndTurnPlayerNumber = player.getNr();
+			pendingEndTurnPlayerNumber = player.getId();
 			return;
 		}
 
@@ -2766,7 +2765,7 @@ void cServer::handleEnd (cPlayer& player)
 		// check whether this player has already finished his turn
 		for (size_t i = 0; i != playerEndList.size(); ++i)
 		{
-			if (playerEndList[i]->getNr() == player.getNr()) return;
+			if (playerEndList[i]->getId() == player.getId()) return;
 		}
 		playerEndList.push_back (&player);
 		const bool firstTimeEnded = playerEndList.size() == 1;
@@ -2872,7 +2871,7 @@ void cServer::handleWantEnd()
 
 	if (pendingEndTurnPlayerNumber != -1 && pendingEndTurnPlayerNumber != -2)
 	{
-		playerEndList.erase (std::remove_if (playerEndList.begin(), playerEndList.end(), [ = ] (const cPlayer * player) { return player->getNr() == pendingEndTurnPlayerNumber; }), playerEndList.end());
+		playerEndList.erase (std::remove_if (playerEndList.begin(), playerEndList.end(), [ = ] (const cPlayer * player) { return player->getId() == pendingEndTurnPlayerNumber; }), playerEndList.end());
 
 		handleEnd (getPlayerFromNumber (pendingEndTurnPlayerNumber));
 	}
@@ -3039,9 +3038,9 @@ void cServer::makeTurnStart (cPlayer& player)
 		// make autosave
 		if (cSettings::getInstance().shouldAutosave())
 		{
-			cSavegame Savegame (10); // autosaves are always in slot 10
-			Savegame.save (*this, lngPack.i18n ("Text~Comp~Turn_5") + " " + iToStr (turnClock->getTurn()) + " - " + lngPack.i18n ("Text~Settings~Autosave"));
-			makeAdditionalSaveRequest (10);
+			//cSavegame Savegame (10); // autosaves are always in slot 10
+			//Savegame.save (*this, lngPack.i18n ("Text~Comp~Turn_5") + " " + iToStr (turnClock->getTurn()) + " - " + lngPack.i18n ("Text~Settings~Autosave"));
+			//makeAdditionalSaveRequest (10);
 		}
 	}
 #if DEDICATED_SERVER_APPLICATION
@@ -3260,7 +3259,7 @@ void cServer::handleMoveJobs()
 			{
 				if (Vehicle->data.getStoredResources() >= Vehicle->getBuildCostsStart() && Map->possiblePlaceBuilding (*Vehicle->getBuildingType().getUnitDataOriginalVersion(), Vehicle->getPosition(), Vehicle))
 				{
-					addJob (new cStartBuildJob (*Vehicle, Vehicle->getPosition(), Vehicle->data.isBig));
+					//addJob (new cStartBuildJob (*Vehicle, Vehicle->getPosition(), Vehicle->data.isBig));
 					Vehicle->setBuildingABuilding (true);
 					Vehicle->setBuildCosts (Vehicle->getBuildCostsStart());
 					Vehicle->setBuildTurns (Vehicle->getBuildTurnsStart());
@@ -3717,7 +3716,7 @@ bool cServer::addMoveJob (const cPosition& source, const cPosition& destination,
 void cServer::changeUnitOwner (cVehicle& vehicle, cPlayer& newOwner)
 {
 	if (vehicle.getOwner() && casualtiesTracker != nullptr)
-		casualtiesTracker->logCasualty (vehicle.data.ID, vehicle.getOwner()->getNr());
+		casualtiesTracker->logCasualty (vehicle.data.ID, vehicle.getOwner()->getId());
 
 	// delete vehicle in the list of the old player
 	cPlayer* oldOwner = vehicle.getOwner();
@@ -3956,5 +3955,5 @@ void cServer::disableFreezeMode (eFreezeMode mode)
 
 const cGameGuiState& cServer::getPlayerGameGuiState (const cPlayer& player)
 {
-	return playerGameGuiStates[player.getNr()];
+	return playerGameGuiStates[player.getId()];
 }

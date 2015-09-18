@@ -100,20 +100,19 @@ void cBinaryArchiveIn::pushValue(unsigned long long value)
 //------------------------------------------------------------------------------
 void cBinaryArchiveIn::pushValue(float value)
 {
-	//TODO
-	assert (false);
+	pushGenericIEEE754As<Sint32>(value);
 }
 //------------------------------------------------------------------------------
 void cBinaryArchiveIn::pushValue(double value)
 {
-	//TODO
-	assert(false);
+	pushGenericIEEE754As<Sint64>(value);
 }
 
 //------------------------------------------------------------------------------
-cBinaryArchiveOut::cBinaryArchiveOut(const unsigned char* data, size_t length) :
+cBinaryArchiveOut::cBinaryArchiveOut(const unsigned char* data, size_t length, serialization::cPointerLoader* pointerLoader) :
 	buffer(length),
-	readPosition(0)
+	readPosition(0),
+	pointerLoader(pointerLoader)
 {
 	memcpy(buffer.data(), data, length); //TODO: was ist das sinnvollste hier?
 }
@@ -121,6 +120,11 @@ cBinaryArchiveOut::cBinaryArchiveOut(const unsigned char* data, size_t length) :
 void cBinaryArchiveOut::rewind()
 {
 	readPosition = 0;
+}
+//------------------------------------------------------------------------------
+serialization::cPointerLoader* cBinaryArchiveOut::getPointerLoader() const
+{
+	return pointerLoader;
 }
 //------------------------------------------------------------------------------
 void cBinaryArchiveOut::popValue(bool& value)
@@ -147,7 +151,7 @@ void cBinaryArchiveOut::popValue(unsigned char& value)
 //------------------------------------------------------------------------------
 void cBinaryArchiveOut::popValue(signed short& value)
 {
-	readFromBuffer<2>(value); //TODO: 4 im alzi code?!?
+	readFromBuffer<2>(value);
 }
 //------------------------------------------------------------------------------
 void cBinaryArchiveOut::popValue(unsigned short& value)
@@ -187,12 +191,10 @@ void cBinaryArchiveOut::popValue(unsigned long long& value)
 //------------------------------------------------------------------------------
 void cBinaryArchiveOut::popValue(float& value)
 {
-	//TODO
-	assert(false);
+	popGenericIEEE754As<Sint32>(value);
 }
 //------------------------------------------------------------------------------
 void cBinaryArchiveOut::popValue(double& value)
 {
-	//TODO
-	assert(false);
+	popGenericIEEE754As<Sint64>(value);
 }

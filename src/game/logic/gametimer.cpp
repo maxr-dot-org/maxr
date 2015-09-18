@@ -135,8 +135,10 @@ void cGameTimerServer::run(cModel& model, cServer2& server)
 {
 	checkPlayersResponding(model.getPlayerList(), server);
 
-	while (popEvent())
+	for (unsigned int i = 0; i < maxEventQueueSize; i++)
 	{
+		if (!popEvent()) break;
+		
 		gameTime++;
 		gameTimeChanged();
 		handleTimer();
@@ -147,9 +149,9 @@ void cGameTimerServer::run(cModel& model, cServer2& server)
 		{
 			auto message = std::make_unique<cNetMessageSyncServer>();
 			message->checksum = checksum;
-			message->ping = static_cast<int>(clientDebugData[player->getNr()].ping);
+			message->ping = static_cast<int>(clientDebugData[player->getId()].ping);
 			message->gameTime = gameTime;
-			server.sendMessageToClients(std::move(message), player->getNr());
+			server.sendMessageToClients(std::move(message), player->getId());
 		}
 	}
 }

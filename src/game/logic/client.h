@@ -58,6 +58,7 @@ class cTurnTimeClock;
 class cTurnTimeDeadline;
 class cGameGuiState;
 struct sSubBase;
+class cSavegame;
 
 Uint32 TimerCallback (Uint32 interval, void* arg);
 
@@ -70,13 +71,14 @@ class cClient : public INetMessageReceiver
 	friend class cDebugOutputWidget;
 	friend class cPlayer;
 public:
-	cClient (cServer2* server2, cServer* server, std::shared_ptr<cTCP> network);
+	cClient (cServer2* server, std::shared_ptr<cTCP> network);
 	~cClient();
 
 	const cModel& getModel() const { return model; };
 	void runModel() { model.runJobs(*gameTimer); };
 
 	const cPlayer& getActivePlayer() const { return *activePlayer; }
+	void setActivePlayer(cPlayer* player) { activePlayer = player; }
 
 	void setGameSettings(const cGameSettings& gameSettings);
 	void setMap(std::shared_ptr<cStaticMap> staticMap);
@@ -179,6 +181,8 @@ public:
 
 
 	const std::shared_ptr<cGameTimerClient>& getGameTimer() const { return gameTimer; }
+
+	void loadModel(cSavegame& savegame, int saveGameNumber);
 
 
 	//TODO: move signals to model

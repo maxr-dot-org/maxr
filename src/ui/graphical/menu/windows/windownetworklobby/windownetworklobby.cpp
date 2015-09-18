@@ -34,7 +34,7 @@
 #include "network.h"
 #include "game/data/map/map.h"
 #include "video.h"
-#include "game/logic/savegame.h"
+#include "game/data/savegame.h"
 #include "network.h"
 #include "menuevents.h"
 #include "maxrversion.h"

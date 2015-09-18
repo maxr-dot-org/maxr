@@ -972,7 +972,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 
 			if (Vehicle->data.factorAir > 0 && Vehicle->getFlightHeight() < 64)
 			{
-				client->addJob (new cPlaneTakeoffJob (*Vehicle, true));
+				//client->addJob (new cPlaneTakeoffJob (*Vehicle, true));
 			}
 
 			moved (*Vehicle);
@@ -1059,7 +1059,7 @@ void cClientMoveJob::moveVehicle()
 
 		if (Vehicle->data.factorAir > 0 && Vehicle->getFlightHeight() < 64)
 		{
-			client->addJob (new cPlaneTakeoffJob (*Vehicle, true));
+			//client->addJob (new cPlaneTakeoffJob (*Vehicle, true));
 		}
 
 		moved (*Vehicle);

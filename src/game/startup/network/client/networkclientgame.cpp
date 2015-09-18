@@ -19,7 +19,6 @@
 
 #include "game/startup/network/client/networkclientgame.h"
 #include "game/logic/client.h"
-#include "game/logic/savegame.h"
 #include "loaddata.h"
 
 //------------------------------------------------------------------------------

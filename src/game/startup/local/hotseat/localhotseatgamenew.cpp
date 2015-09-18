@@ -100,7 +100,7 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 	auto activePlayer = server->getActiveTurnPlayer();
 	assert (activePlayer != nullptr);
 
-	gameGuiController->setClients (clients, activePlayer->getNr());
+	gameGuiController->setClients (clients, activePlayer->getId());
 
 	gameGuiController->start();
 

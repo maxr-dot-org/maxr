@@ -36,6 +36,7 @@
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/thread/concurrentqueue.h"
 #include "utility/flatset.h"
+#include "game/data/savegameinfo.h"
 
 class cBuilding;
 class cCasualtiesTracker;
@@ -55,12 +56,14 @@ class cGameSettings;
 /**
 * The Types which are possible for a game
 */
+/*
 enum eGameTypes
 {
 	GAME_TYPE_SINGLE,  // a singleplayer game
 	GAME_TYPE_HOTSEAT, // a hotseat multiplayer game
 	GAME_TYPE_TCPIP    // a multiplayergame over TCP/IP
 };
+*/
 
 enum eServerState
 {

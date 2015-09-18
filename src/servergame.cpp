@@ -23,7 +23,7 @@
 #include "menuevents.h"
 #include "netmessage.h"
 #include "game/data/player/player.h"
-#include "game/logic/savegame.h"
+#include "game/data/savegame.h"
 #include "game/logic/serverevents.h"
 #include "game/data/map/map.h"
 #include "game/logic/server.h"
@@ -76,12 +76,13 @@ void cServerGame::runInThread()
 //------------------------------------------------------------------------------
 bool cServerGame::loadGame (int saveGameNumber)
 {
-	cSavegame savegame (saveGameNumber);
+	/*cSavegame savegame (saveGameNumber);
 	server = std::make_unique<cServer> (network);
 	if (savegame.load (*server) == false)
 		return false;
 	server->markAllPlayersAsDisconnected();
 	server->serverState = SERVER_STATE_INGAME;
+	*/
 	return true;
 }
 
@@ -146,10 +147,11 @@ void cServerGame::run()
 
 			if (shouldSave)
 			{
-				cSavegame saveGame (saveGameNumber);
+				/*cSavegame saveGame (saveGameNumber);
 				saveGame.save (*server, "Dedicated Server Savegame");
 				cout << "...saved to slot " << saveGameNumber << endl;
 				shouldSave = false;
+				*/
 			}
 		}
 

@@ -25,7 +25,7 @@
 #include "game/logic/server2.h"
 #include "game/data/player/player.h"
 #include "game/logic/clientevents.h"
-#include "game/logic/savegame.h"
+#include "game/data/savegame.h"
 #include "game/data/report/savedreport.h"
 
 //------------------------------------------------------------------------------
@@ -34,8 +34,8 @@ void cLocalHotSeatGameSaved::start (cApplication& application)
 	//TODO: new server
 	server = std::make_unique<cServer> (nullptr);
 
-	cSavegame savegame (saveGameNumber);
-	if (savegame.load (*server) == false) return;
+	//cSavegame savegame (saveGameNumber);
+	//if (savegame.load (*server) == false) return;
 
 	auto staticMap = server->Map->staticMap;
 
@@ -49,7 +49,7 @@ void cLocalHotSeatGameSaved::start (cApplication& application)
 	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
 		const auto& p = *serverPlayerList[i];
-		clientPlayerList.push_back (cPlayerBasicData (p.getName(), p.getColor(), p.getNr(), p.getSocketNum()));
+		clientPlayerList.push_back (cPlayerBasicData (p.getName(), p.getColor(), p.getId(), p.getSocketNum()));
 
 		serverPlayerList[i]->setLocal();
 	}
@@ -67,7 +67,7 @@ void cLocalHotSeatGameSaved::start (cApplication& application)
 
 	for (size_t i = 0; i < clients.size(); ++i)
 	{
-		sendRequestResync (*clients[i], clients[i]->getActivePlayer().getNr(), true);
+		sendRequestResync (*clients[i], clients[i]->getActivePlayer().getId(), true);
 	}
 
 	// TODO: move that in server
@@ -94,7 +94,7 @@ void cLocalHotSeatGameSaved::start (cApplication& application)
 	auto activePlayer = server->getActiveTurnPlayer();
 	if (activePlayer == nullptr) activePlayer = server->playerList[0].get();
 
-	gameGuiController->setClients (clients, activePlayer->getNr());
+	gameGuiController->setClients (clients, activePlayer->getId());
 
 	gameGuiController->start();
 

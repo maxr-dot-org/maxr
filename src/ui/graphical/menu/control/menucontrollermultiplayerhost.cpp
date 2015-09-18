@@ -28,7 +28,6 @@
 #include "ui/graphical/menu/windows/windowgamesettings/windowgamesettings.h"
 #include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
 #include "ui/graphical/menu/windows/windowload/windowload.h"
-#include "ui/graphical/menu/windows/windowload/savegamedata.h"
 #include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
 #include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"
 #include "ui/graphical/game/widgets/chatbox.h"
@@ -44,9 +43,10 @@
 #include "menuevents.h"
 #include "netmessage.h"
 #include "mapdownload.h"
-#include "game/logic/savegame.h"
+#include "game/data/savegame.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
+#include "game/data/savegameinfo.h"
 
 // TODO: remove
 std::vector<std::pair<sID, int>> createInitialLandingUnitsList (int clan, const cGameSettings& gameSettings); // defined in windowsingleplayer.cpp
@@ -285,15 +285,19 @@ void cMenuControllerMultiplayerHost::checkGameStart()
 
 	if (windowNetworkLobby->getSaveGameNumber() != -1)
 	{
-		cSavegame savegame (windowNetworkLobby->getSaveGameNumber());
-		auto savegamePlayers = savegame.loadPlayers();
+		//TODO: is parsing the save xml nessesary here? Or can we get the saveinfo from the load menu?
+		cSavegame savegame;
+		cSaveGameInfo info = savegame.loadSaveInfo(windowNetworkLobby->getSaveGameNumber());
+		
+
+		auto savegamePlayerNames = info.playerNames;
 
 		auto menuPlayers = windowNetworkLobby->getPlayers();
 
 		// check whether all necessary players are connected
-		for (size_t i = 0; i < savegamePlayers.size(); ++i)
+		for (size_t i = 0; i < savegamePlayerNames.size(); ++i)
 		{
-			auto iter = std::find_if (menuPlayers.begin(), menuPlayers.end(), [&] (const std::shared_ptr<cPlayerBasicData>& player) { return player->getName() == savegamePlayers[i].getName(); });
+			auto iter = std::find_if (menuPlayers.begin(), menuPlayers.end(), [&] (const std::shared_ptr<cPlayerBasicData>& player) { return player->getName() == savegamePlayerNames[i]; });
 			if (iter == menuPlayers.end())
 			{
 				windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Player_Wrong"));
@@ -302,7 +306,8 @@ void cMenuControllerMultiplayerHost::checkGameStart()
 		}
 
 		// disconnect or update menu players
-		for (auto i = menuPlayers.begin(); i < menuPlayers.end();)
+		//TODO: setting player attributes like color / nr is done by savegame.load
+		/*for (auto i = menuPlayers.begin(); i < menuPlayers.end();)
 		{
 			auto menuPlayer = *i;
 			auto iter = std::find_if (savegamePlayers.begin(), savegamePlayers.end(), [&] (const cPlayerBasicData & player) { return player.getName() == menuPlayer->getName(); });
@@ -343,7 +348,10 @@ void cMenuControllerMultiplayerHost::checkGameStart()
 		saveOptions();
 
 		sendGo (*network);
+
 		startSavedGame();
+
+		*/
 	}
 	else
 	{
@@ -358,18 +366,29 @@ void cMenuControllerMultiplayerHost::checkGameStart()
 void cMenuControllerMultiplayerHost::startSavedGame()
 {
 	if (!windowNetworkLobby || windowNetworkLobby->getSaveGameNumber() == -1) return;
-
 	auto savedGame = std::make_shared<cNetworkHostGameSaved> ();
 
 	savedGame->setNetwork (network);
 	savedGame->setSaveGameNumber (windowNetworkLobby->getSaveGameNumber());
+
+	//TODO: playerlist is loaded by savegame.load
 	savedGame->setPlayers (windowNetworkLobby->getPlayersNotShared(), *windowNetworkLobby->getLocalPlayer());
+
+	try
+	{
+		savedGame->start(application);
+	}
+	catch (std::runtime_error e)
+	{
+		application.show(std::make_shared<cDialogOk>(lngPack.i18n("Text~Error_Messages~ERROR_Save_Loading")));
+		return;
+	}
 
 	application.closeTill (*windowNetworkLobby);
 	windowNetworkLobby->close();
 	signalConnectionManager.connect (windowNetworkLobby->terminated, [&]() { windowNetworkLobby = nullptr; });
 
-	savedGame->start (application);
+	
 }
 
 //------------------------------------------------------------------------------

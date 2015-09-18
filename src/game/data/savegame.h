@@ -17,63 +17,53 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef game_logic_server2H
-#define game_logic_server2H
+#ifndef game_data_savegameH
+#define game_data_savegameH
 
-#include <memory>
+#include <string>
 
-#include "SDL_thread.h"
+#include "tinyxml2.h"
 
-#include "game/data/model.h"
-#include "netmessage2.h"
-#include "utility/thread/concurrentqueue.h"
-#include "gametimer.h"
+class cModel;
+class cSaveGameInfo;
+class cVersion;
 
-class cClient;
-class cPlayerBasicData;
-class cSavegame;
+//Versions prior to 1.0 are no longer compatible
+#define SAVE_FORMAT_VERSION		((std::string)"1.0")
+#define MINIMUM_REQUIRED_SAVE_VERSION ((std::string)"1.0")
+#define MINIMUM_REQUIRED_MAXR_VERSION ((std::string)">0.2.9") //TODO: set to next release version!
 
-//TODO: network einbinden
-class cServer2
+class cSavegame
 {
-	friend class cDebugOutputWidget;
 public:
+	cSavegame();
 
-	explicit cServer2();
-	~cServer2();
+	static std::string getFileName(int slot);
 
-	void pushMessage(std::unique_ptr<cNetMessage2> message);
+	/* saves the current gamestate to a file */
+	void save(const cModel& model, int slot, const std::string& saveName);
 
-	void sendMessageToClients(std::unique_ptr<cNetMessage2> message, int playerNr = -1) const;
+	cSaveGameInfo loadSaveInfo(int slot);
 
-	void start();
-	void stop();
-
-	void setLocalClient(cClient* client);
-	void setGameSettings(const cGameSettings& gameSettings);
-	void setMap(std::shared_ptr<cStaticMap> staticMap);
-	void setPlayers(const std::vector<cPlayerBasicData>& splayers);
-	const cModel& getModel() const;
-	void saveModel(cSavegame& savegame, int saveGameNumber, const std::string& saveName);
-	void loadModel(cSavegame& savegame, int saveGameNumber);
-
+	void loadModel(cModel& model, int slot);
+	//loadGUIState(...);
 private:
-	cModel model;
-	//std::vector<cPlayerConnectionState> playerConnectionStates;
-	//cPlayerConnectionManager playerConnectionManager;
-	cGameTimerServer gameTimer;
 
-	cClient* localClient;
-	cConcurrentQueue<std::unique_ptr<cNetMessage2>> eventQueue;
+	/**
+	* Loads header information from old save file with version <1.0.
+	* Only loading of header information is supportet, to be able to display
+	* these save files in the multiplayer menu. Loading game state from
+	* savefiles <1.0 is not supported.
+	*/
+	void loadLegacyHeader(cSaveGameInfo& info);
+	void writeHeader(int slot, const std::string& saveName, const cModel &model);
+	bool loadDocument(int slot);
+	bool loadVersion(cVersion& version);
 
-	void initRandomGenerator();
+	int saveingID; //for requesting GUI states
+	int loadedSlot;
 
-	// manage the server thread
-	static int serverThreadCallback(void* arg);
-	void run();
-	SDL_Thread* serverThread;
-	bool bExit;
-	
+	tinyxml2::XMLDocument xmlDocument;
 };
 
-#endif
+#endif //game_data_savegameH

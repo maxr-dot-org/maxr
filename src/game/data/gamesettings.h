@@ -24,6 +24,7 @@
 #include <chrono>
 
 #include "utility/signal/signal.h"
+#include "utility/serialization/serialization.h"
 
 class cNetMessage;
 
@@ -160,9 +161,6 @@ public:
 	bool isTurnLimitActive() const;
 	void setTurnLimitActive (bool value);
 
-	void pushInto (cNetMessage& message) const;
-	void popFrom (cNetMessage& message);
-
 	mutable cSignal<void ()> metalAmountChanged;
 	mutable cSignal<void ()> oilAmountChanged;
 	mutable cSignal<void ()> goldAmountChanged;
@@ -186,6 +184,27 @@ public:
 
 	mutable cSignal<void ()> turnLimitChanged;
 	mutable cSignal<void ()> turnLimitActiveChanged;
+
+	template<typename T>
+	void serialize(T& archive)
+	{
+		archive & NVP(metalAmount);
+		archive & NVP(oilAmount);
+		archive & NVP(goldAmount);
+		archive & NVP(resourceDensity);
+		archive & NVP(bridgeheadType);
+		archive & NVP(gameType);
+		archive & NVP(clansEnabled);
+		archive & NVP(startCredits);
+		archive & NVP(victoryConditionType);
+		archive & NVP(victoryTurns);
+		archive & NVP(victoryPoints);
+		archive & NVP(turnEndDeadline);
+		archive & NVP(turnEndDeadlineActive);
+		archive & NVP(turnLimit);
+		archive & NVP(turnLimitActive);
+	}
+
 private:
 	eGameSettingsResourceAmount metalAmount;
 	eGameSettingsResourceAmount oilAmount;

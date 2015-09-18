@@ -21,6 +21,7 @@
 
 #include "ui/graphical/menu/windows/windowsingleplayer.h"
 #include "game/data/gamesettings.h"
+#include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/windows/windowgamesettings/windowgamesettings.h"
 #include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
 #include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
@@ -32,7 +33,7 @@
 #include "ui/graphical/game/gamegui.h"
 #include "game/startup/local/singleplayer/localsingleplayergamenew.h"
 #include "game/startup/local/singleplayer/localsingleplayergamesaved.h"
-
+#include "utility/log.h"
 #include "main.h"
 #include "network.h"
 #include "game/data/player/player.h"
@@ -235,7 +236,18 @@ void cWindowSinglePlayer::loadGameClicked()
 	{
 		auto game = std::make_shared<cLocalSingleplayerGameSaved> ();
 		game->setSaveGameNumber (saveGameNumber);
-		game->start (*application);
+		try
+		{
+			game->start(*application);
+		}
+		catch (std::runtime_error e)
+		{
+			Log.write("Could not start saved game.", cLog::eLOG_TYPE_ERROR);
+			Log.write(e.what(), cLog::eLOG_TYPE_ERROR);
+			application->show(std::make_shared<cDialogOk>(lngPack.i18n("Text~Error_Messages~ERROR_Save_Loading")));
+			return;
+		}
+
 
 		windowLoad->close();
 	});

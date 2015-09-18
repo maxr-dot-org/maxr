@@ -26,9 +26,9 @@
 #include "game/startup/game.h"
 #include "maxrconfig.h"
 #include "ui/graphical/game/control/gameguicontroller.h"
+#include "game/data/savegame.h"
 
 class cClient;
-class cServer;
 class cServer2;
 class cGameGuiController;
 
@@ -46,6 +46,8 @@ protected:
 	std::unique_ptr<cServer2> server;
 
 	std::unique_ptr<cGameGuiController> gameGuiController;
+	
+	cSavegame savegame;
 };
 
 #endif // game_startup_local_singleplayer_localsingleplayergameH

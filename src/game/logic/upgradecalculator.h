@@ -303,6 +303,18 @@ public:
 	mutable cSignal<void (ResearchArea)> currentResearchLevelChanged;
 	mutable cSignal<void (ResearchArea)> currentResearchPointsChanged;
 	mutable cSignal<void (ResearchArea)> neededResearchPointsChanged;
+
+	template<typename T>
+	void serialize(T& archive)
+	{
+		assert(kNrResearchAreas == 8);
+		for (int i = 0; i < kNrResearchAreas; i++)
+		{
+			archive & serialization::makeNvp("curResearchLevel", curResearchLevel[i]);
+			archive & serialization::makeNvp("curResearchPoints", curResearchPoints[i]);
+			archive & serialization::makeNvp("neededResearchPoints", neededResearchPoints[i]);
+		}
+	}
 	//-------------------------------------------
 protected:
 	void init();  ///< sets all research information to the initial values

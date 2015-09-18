@@ -59,7 +59,7 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 	assert (gameSettings != nullptr);
 
 	server = std::make_unique<cServer2>();
-	client = std::make_shared<cClient>(server.get(), nullptr, nullptr);
+	client = std::make_shared<cClient>(server.get(), nullptr);
 
 	client->setMap (staticMap);
 	server->setMap(staticMap);

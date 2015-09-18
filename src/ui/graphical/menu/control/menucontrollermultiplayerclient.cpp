@@ -42,6 +42,7 @@
 #include "game/logic/serverevents.h"
 #include "netmessage.h"
 #include "mapdownload.h"
+#include "utility/files.h"
 
 // TODO: remove
 std::vector<std::pair<sID, int>> createInitialLandingUnitsList (int clan, const cGameSettings& gameSettings); // defined in windowsingleplayer.cpp
@@ -463,11 +464,13 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_OPTINS (cNetMessa
 
 	if (!network || !windowNetworkLobby) return;
 
+	//TODO: reimplement
+
 	//pop game settings
 	if (message.popBool())
 	{
 		auto settings = std::make_unique<cGameSettings> ();
-		settings->popFrom (message);
+		//settings->popFrom (message);
 		windowNetworkLobby->setGameSettings (std::move (settings));
 	}
 	else

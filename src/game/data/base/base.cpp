@@ -951,7 +951,6 @@ void sSubBase::merge (sSubBase* sb)
 	{
 		cBuilding* building = sb->buildings[i];
 		addBuilding (building);
-		building->SubBase = this;
 	}
 	sb->buildings.clear();
 
@@ -978,6 +977,8 @@ int sSubBase::getID() const
 void sSubBase::addBuilding (cBuilding* b)
 {
 	buildings.push_back (b);
+	b->SubBase = this;
+
 	// calculate storage level
 	switch (b->data.storeResType)
 	{
@@ -1183,7 +1184,6 @@ void cBase::addBuilding (cBuilding* building)
 	{
 		// no neighbours found, just generate new subbase and add the building
 		sSubBase* NewSubBase = new sSubBase (building->getOwner());
-		building->SubBase = NewSubBase;
 		NewSubBase->addBuilding (building);
 		SubBases.push_back (NewSubBase);
 
@@ -1193,7 +1193,6 @@ void cBase::addBuilding (cBuilding* building)
 	// found neighbours, so add the building to the first neighbour subbase
 	sSubBase* const firstNeighbour = NeighbourList[0];
 	firstNeighbour->addBuilding (building);
-	building->SubBase = firstNeighbour;
 	NeighbourList.erase (NeighbourList.begin());
 
 	// now merge the other neighbours to the first one, if necessary

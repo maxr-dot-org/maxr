@@ -29,6 +29,7 @@
 #include "video.h"
 #include "utility/position.h"
 #include "game/data/model.h"
+#include "mapdownload.h"
 
 #if 1 // TODO: [SDL2]: SDL_SetColors
 inline void SDL_SetColors (SDL_Surface* surface, SDL_Color* colors, int index, int size)
@@ -218,7 +219,7 @@ void cMapField::removeAll()
 
 // cStaticMap //////////////////////////////////////////////////
 
-cStaticMap::cStaticMap() : size (0), terrains()
+cStaticMap::cStaticMap() : size(0), terrains(), crc(0)
 {
 }
 
@@ -255,6 +256,7 @@ void cStaticMap::clear()
 {
 	filename.clear();
 	size = 0;
+	crc = 0;
 	terrains.clear();
 	Kacheln.clear();
 }
@@ -410,6 +412,9 @@ bool cStaticMap::loadMap (const std::string& filename_)
 		}
 	}
 	SDL_RWclose (fpMapFile);
+
+	//save crc, to check map file equality when loading a game
+	crc = MapDownload::calculateCheckSum(fullFilename);
 	return true;
 }
 
@@ -577,11 +582,23 @@ AutoSurface cStaticMap::createBigSurface (int sizex, int sizey) const
 
 // Funktionen der Map-Klasse /////////////////////////////////////////////////
 cMap::cMap (std::shared_ptr<cStaticMap> staticMap_) :
-	staticMap (std::move (staticMap_))
+	staticMap (std::move (staticMap_)),
+	fields(nullptr)
+{
+	init();
+
+}
+
+void cMap::init()
 {
 	const int size = staticMap->getSize().x() * staticMap->getSize().y();
-	fields = new cMapField[size];
-	Resources.resize (size);
+	if (Resources.size() != size)
+	{
+		Resources.resize(size);
+		std::fill(Resources.begin(), Resources.end(), sResources());
+		delete[] fields;
+		fields = new cMapField[size];
+	}
 }
 
 cMap::~cMap()
@@ -610,24 +627,6 @@ bool cMap::isWaterOrCoast (const cPosition& position) const
 	return terrainType.water | terrainType.coast;
 }
 
-void cMap::assignRessources (const cMap& rhs)
-{
-	Resources = rhs.Resources;
-}
-
-//--------------------------------------------------------------------------
-static std::string getHexValue (unsigned char byte)
-{
-	std::string str = "";
-	const char hexChars[] = "0123456789ABCDEF";
-	const unsigned char high = (byte >> 4) & 0x0F;
-	const unsigned char low = byte & 0x0F;
-
-	str += hexChars[high];
-	str += hexChars[low];
-	return str;
-}
-
 //--------------------------------------------------------------------------
 std::string cMap::resourcesToString() const
 {
@@ -639,17 +638,6 @@ std::string cMap::resourcesToString() const
 		str += getHexValue (Resources[i].value);
 	}
 	return str;
-}
-
-//--------------------------------------------------------------------------
-static unsigned char getByteValue (const std::string& str, int index)
-{
-	unsigned char first = str[index + 0] - '0';
-	unsigned char second = str[index + 1] - '0';
-
-	if (first >= 'A' - '0') first -= 'A' - '0' - 10;
-	if (second >= 'A' - '0') second -= 'A' - '0' - 10;
-	return (first * 16 + second);
 }
 
 //--------------------------------------------------------------------------

@@ -23,6 +23,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <utility>
 
 #include "utility/autosurface.h"
 #include "defines.h"
@@ -44,6 +45,12 @@ struct sResources
 {
 public:
 	sResources() : value (0), typ (0) {}
+	template <typename T>
+	void serialize(T& archive)
+	{
+		archive & NVP(value);
+		archive & NVP(typ);
+	}
 public:
 	unsigned char value;
 	unsigned char typ;
@@ -178,11 +185,32 @@ public:
 	void generateNextAnimationFrame();
 	void scaleSurfaces (int pixelSize);
 	static AutoSurface loadMapPreview (const std::string& mapPath, int* mapSize = nullptr);
+
+	template<typename T>
+	void save(T& archive)
+	{
+		archive << NVP(filename);
+		archive << NVP(crc);
+	}
+	template<typename T>
+	void load(T& archive)
+	{
+		std::string fileToLoad;
+		archive >> serialization::makeNvp("filename", fileToLoad);
+		if (!loadMap(fileToLoad))
+			throw std::runtime_error("Loading map failed.");
+		int crcFromSave;
+		archive >> serialization::makeNvp("crc", crcFromSave);
+		if (crc != crcFromSave && crcFromSave != 0)
+			throw std::runtime_error("CRC error while loading map. The loaded map file is not equal to the one the game was started with.");
+	}
+	SERIALIZATION_SPLIT_MEMBER();
 private:
 	static AutoSurface loadTerrGraph (SDL_RWops* fpMapFile, Sint64 iGraphicsPos, const SDL_Color (&colors)[256], int iNum);
 	void copySrfToTerData (SDL_Surface& surface, int iNum);
 
 	std::string filename;   // Name of the current map
+	uint32_t crc;
 	int size;
 	std::vector<sTerrain> terrains; // The different terrain type.
 	std::vector<int> Kacheln; // Terrain numbers of the map fields
@@ -195,6 +223,7 @@ class cMap
 {
 public:
 	explicit cMap (std::shared_ptr<cStaticMap> staticMap_);
+
 	~cMap();
 
 	const std::string& getName() const { return staticMap->getName(); }
@@ -210,18 +239,6 @@ public:
 
 	const sResources& getResource (const cPosition& position) const { return Resources[getOffset (position)]; }
 	sResources& getResource (const cPosition& position) { return Resources[getOffset (position)]; }
-	void assignRessources (const cMap& rhs);
-
-	/**
-	* converts the resource data to a string in HEX format
-	*@author alzi alias DoctorDeath
-	*/
-	std::string resourcesToString() const; //TODO: remove
-	/**
-	* converts from HEX-string to the resources
-	*@author alzi alias DoctorDeath
-	*/
-	void setResourcesFromString (const std::string& str);
 
 	void placeRessources(cModel& model);
 	/**
@@ -273,7 +290,31 @@ public:
 	*/
 	void reset();
 
+	template<typename T>
+	void save(T& archive)
+	{
+		archive << serialization::makeNvp("mapFile", *staticMap);
+		const std::string ressources = resourcesToString();
+		archive << NVP(ressources);
+	}
+	template<typename T>
+	void load(T& archive)
+	{
+		assert(staticMap != nullptr);
+		archive >> serialization::makeNvp("mapFile", *staticMap);
+		init();
+
+		std::string ressources;
+		archive >> NVP(ressources);
+		setResourcesFromString(ressources);
+	}
+	SERIALIZATION_SPLIT_MEMBER();
+
 private:
+	void init();
+	std::string resourcesToString() const;
+	void setResourcesFromString(const std::string& str);
+
 	static int getMapLevel (const cBuilding& building);
 	static int getMapLevel (const cVehicle& vehicle);
 	static int getResourceDensityFactor (eGameSettingsResourceDensity density);

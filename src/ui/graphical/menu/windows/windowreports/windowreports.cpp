@@ -390,7 +390,7 @@ void cWindowReports::rebuildDisadvantagesList()
 
 			if (player)
 			{
-				unitCasualities.push_back (casualties->getCasualtiesOfUnitType (unitId, player->getNr()));
+				unitCasualities.push_back (casualties->getCasualtiesOfUnitType (unitId, player->getId()));
 			}
 		}
 

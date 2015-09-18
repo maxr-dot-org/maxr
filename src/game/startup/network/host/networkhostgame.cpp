@@ -20,7 +20,7 @@
 #include "game/startup/network/host/networkhostgame.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
-#include "game/logic/savegame.h"
+#include "game/data/savegame.h"
 #include "loaddata.h"
 
 //------------------------------------------------------------------------------
@@ -44,9 +44,9 @@ void cNetworkHostGame::save (int saveNumber, const std::string& saveName)
 {
 	if (!server) throw std::runtime_error ("Game not started!"); // should never happen (hence a translation is not necessary).
 
-	cSavegame savegame (saveNumber);
-	savegame.save (*server, saveName);
-	server->makeAdditionalSaveRequest (saveNumber);
+	cSavegame savegame;
+	//savegame.save(server->getModel(), saveNumber, saveName);
+	//server->makeAdditionalSaveRequest (saveNumber); //TODO: save gameGuiStates
 }
 
 //------------------------------------------------------------------------------

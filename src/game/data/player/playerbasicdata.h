@@ -55,6 +55,16 @@ public:
 	mutable cSignal<void ()> colorChanged;
 	mutable cSignal<void ()> socketIndexChanged;
 	mutable cSignal<void ()> readyChanged;
+
+	template <typename T>
+	void serialize(T& archive)
+	{
+		archive & NVP(name);
+		archive & NVP(color);
+		archive & NVP(Nr);
+		//archive & NVP(socketIndex); //TODO: new socket number from multiplayer menu, when loading? Move socket to Client/Server
+		archive & NVP(ready);
+	}
 private:
 	std::string name;
 	cPlayerColor color;
@@ -63,7 +73,7 @@ private:
 	// Index in socket array of cServer::network
 	// if MAX_CLIENTS it's the local connected player
 	// -1 for unknown
-	int socketIndex;
+	int socketIndex; //TODO: move to cPlayerConnectionManager
 	bool ready;
 };
 

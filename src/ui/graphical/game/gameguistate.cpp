@@ -21,7 +21,6 @@
 #include "ui/graphical/game/unitselection.h"
 #include "ui/graphical/game/unitlocklist.h"
 #include "game/data/units/unit.h"
-#include "game/logic/savegame.h"
 #include "netmessage.h"
 #include "game/logic/clientevents.h"
 
@@ -341,6 +340,8 @@ void cGameGuiState::popFrom (cNetMessage& message)
 //------------------------------------------------------------------------------
 void cGameGuiState::pushInto (tinyxml2::XMLElement& element) const
 {
+	//TODO: implement saving GUI state
+	/*
 	cSavegame::addAttributeElement (&element, "Offset", "x", iToStr (mapPosition.x()), "y", iToStr (mapPosition.y()));
 	cSavegame::addAttributeElement (&element, "Zoom", "num", fToStr (mapZoomFactor));
 	if (colorActive) cSavegame::addMainElement (&element, "Colors");
@@ -374,12 +375,13 @@ void cGameGuiState::pushInto (tinyxml2::XMLElement& element) const
 			cSavegame::addAttributeElement (lockedUnitsElement, "LockedUnit", "num", iToStr (lockedUnitIds[i]));
 		}
 	}
+	*/
 }
 
 //------------------------------------------------------------------------------
 void cGameGuiState::popFrom (const tinyxml2::XMLElement& element, const cVersion& saveVersion)
 {
-	mapPosition.x() = element.FirstChildElement ("Offset")->IntAttribute ("x");
+	/*mapPosition.x() = element.FirstChildElement ("Offset")->IntAttribute ("x");
 	mapPosition.y() = element.FirstChildElement ("Offset")->IntAttribute ("y");
 	mapZoomFactor = element.FirstChildElement ("Zoom")->FloatAttribute ("num");
 	colorActive = element.FirstChildElement ("Colors") != nullptr;
@@ -433,5 +435,5 @@ void cGameGuiState::popFrom (const tinyxml2::XMLElement& element, const cVersion
 		{
 			selectedUnitIds.push_back (selectedUnitElement->IntAttribute ("num"));
 		}
-	}
+	}*/
 }

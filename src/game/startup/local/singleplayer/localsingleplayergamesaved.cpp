@@ -21,48 +21,32 @@
 #include "game/data/gamesettings.h"
 #include "ui/graphical/application.h"
 #include "game/logic/client.h"
-#include "game/logic/server.h"
+#include "game/logic/server2.h"
 #include "game/data/player/player.h"
 #include "game/logic/clientevents.h"
-#include "game/logic/savegame.h"
+#include "game/data/savegame.h"
 #include "game/data/report/savedreport.h"
 
 //------------------------------------------------------------------------------
 void cLocalSingleplayerGameSaved::start (cApplication& application)
 {
-	/*server = std::make_unique<cServer> (nullptr);
-	//client = std::make_shared<cClient> (server.get(), nullptr); //TODO: use new server
+	server = std::make_unique<cServer2>();
+	server->loadModel(savegame, saveGameNumber);
+	server->getModel().getPlayerList()[0]->setLocal();	 // in single player the first player is always the local one
 
-	cSavegame savegame (saveGameNumber);
-	if (savegame.load (*server) == false) return;
-
-	auto staticMap = server->Map->staticMap;
-	client->setMap (staticMap);
-
-	const auto& serverPlayerList = server->playerList;
-	if (serverPlayerList.empty()) return;
-
-	const int player = 0;
-
-	// Following may be simplified according to serverGame::loadGame
-	std::vector<cPlayerBasicData> clientPlayerList;
-
-	// copy players for client
-	for (size_t i = 0; i != serverPlayerList.size(); ++i)
-	{
-		const auto& p = *serverPlayerList[i];
-		clientPlayerList.push_back (cPlayerBasicData (p.getName(), p.getColor(), p.getNr(), p.getSocketNum()));
-	}
-	client->setPlayers (clientPlayerList, player);
+	client = std::make_shared<cClient> (server.get(), nullptr);
+	auto staticMap = server->getModel().getMap()->staticMap;
+	client->setMap(staticMap);
+	client->loadModel(savegame, saveGameNumber);
+	auto localPlayer = client->getModel().getPlayerList()[0];
+	localPlayer->setLocal();
+	client->setActivePlayer(localPlayer.get());
 
 	server->start();
 
-	// in single player only the first player is important
-	serverPlayerList[player]->setLocal();
-	sendRequestResync (*client, serverPlayerList[player]->getNr(), true);
 
-	// TODO: move that in server
-	for (size_t i = 0; i != serverPlayerList.size(); ++i)
+	// TODO: resync gamegui states
+/*	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
 		//sendGameSettings (*server, *serverPlayerList[i]);
 		sendGameGuiState (*server, server->getPlayerGameGuiState (*serverPlayerList[i]), *serverPlayerList[i]);
@@ -72,13 +56,10 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 			sendSavedReport (*server, *reportList[j], serverPlayerList[i].get());
 		}
 		reportList.clear();
-	}
-
-	// start game
-	server->serverState = SERVER_STATE_INGAME;
-
+	}*/
+	
 	// TODO: save/load game time
-	server->startTurnTimers();
+	//server->startTurnTimers();
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
@@ -94,7 +75,6 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 	application.addRunnable (shared_from_this());
 
 	signalConnectionManager.connect (gameGuiController->terminated, [&]() { terminate = true; });
-	*/
 }
 
 void cLocalSingleplayerGameSaved::setSaveGameNumber (int saveGameNumber_)

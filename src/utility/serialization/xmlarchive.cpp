@@ -20,17 +20,13 @@
 #include <sstream>
 #include "extendedtinyxml.h"
 #include "xmlarchive.h"
+#include "utility/listhelpers.h"
 
 
 cXmlArchiveIn::cXmlArchiveIn(tinyxml2::XMLElement& rootElement) :
 	buffer(rootElement),
 	currentElement(&rootElement)
 {}
-//------------------------------------------------------------------------------
-const tinyxml2::XMLElement* cXmlArchiveIn::data() const
-{
-	return &buffer;
-}
 //------------------------------------------------------------------------------
 void cXmlArchiveIn::convertAttributeToChild(const std::string& name)
 {
@@ -87,21 +83,21 @@ void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<bool>& nvp)
 void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<char>& nvp)
 {
 	std::stringstream ss;
-	ss << nvp.value;
+	ss << static_cast<int>(nvp.value);
 	addToCurrentElement(nvp.name, ss.str());
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<signed char>& nvp)
 {
 	std::stringstream ss;
-	ss << nvp.value;
+	ss << static_cast<int>(nvp.value);
 	addToCurrentElement(nvp.name, ss.str());
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<unsigned char>& nvp)
 {
 	std::stringstream ss;
-	ss << nvp.value;
+	ss << static_cast<int>(nvp.value);
 	addToCurrentElement(nvp.name, ss.str());
 }
 //------------------------------------------------------------------------------
@@ -179,32 +175,39 @@ void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<std::string>& 
 {
 	addToCurrentElement(nvp.name, nvp.value);
 }
+
 //------------------------------------------------------------------------------
-cXmlArchiveOut::cXmlArchiveOut(const tinyxml2::XMLElement& rootElement) :
+cXmlArchiveOut::cXmlArchiveOut(const tinyxml2::XMLElement& rootElement, serialization::cPointerLoader* pointerLoader) :
 	buffer(rootElement),
 	currentElement(&rootElement),
-	lastChildElement(nullptr)
+	pointerLoader(pointerLoader)
 {}
 //------------------------------------------------------------------------------
 void cXmlArchiveOut::enterChild(const std::string& name)
 {
 	const tinyxml2::XMLElement* nextElement;
-	if (lastChildElement && name == lastChildElement->Name())
-		nextElement = lastChildElement->NextSiblingElement(name.c_str());
-	else
-		nextElement = currentElement->FirstChildElement(name.c_str());
+	nextElement = currentElement->FirstChildElement(name.c_str());
+
+	while (Contains(visitedElements, nextElement))
+	{
+		nextElement = nextElement->NextSiblingElement(name.c_str());
+	}
 
 	if (nextElement == nullptr)
 		throw std::runtime_error("Attribute or element not found: " + printXMLPath(currentElement) + "~" + name);
 
+	visitedElements.push_back(nextElement);
 	currentElement = nextElement;
-	lastChildElement = NULL;
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveOut::leaveChild()
 {
-	lastChildElement = currentElement;
 	currentElement = currentElement->Parent()->ToElement();
+}
+//------------------------------------------------------------------------------
+serialization::cPointerLoader* cXmlArchiveOut::getPointerLoader() const
+{
+	return pointerLoader;
 }
 //------------------------------------------------------------------------------
 std::string cXmlArchiveOut::getStringFromCurrentElement(const std::string& name)
@@ -233,17 +236,20 @@ void cXmlArchiveOut::popValue(serialization::sNameValuePair<bool>& nvp)
 //------------------------------------------------------------------------------
 void cXmlArchiveOut::popValue(serialization::sNameValuePair<char>& nvp)
 {
-	getFromCurrentElement(nvp);
+	auto tmp = serialization::makeNvp(nvp.name, (int)nvp.value);
+	getFromCurrentElement(tmp);
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveOut::popValue(serialization::sNameValuePair<signed char>& nvp)
 {
-	getFromCurrentElement(nvp);
+	auto tmp = serialization::makeNvp(nvp.name, (int)nvp.value);
+	getFromCurrentElement(tmp);
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveOut::popValue(serialization::sNameValuePair<unsigned char>& nvp)
 {
-	getFromCurrentElement(nvp);
+	auto tmp = serialization::makeNvp(nvp.name, (int)nvp.value);
+	getFromCurrentElement(tmp);
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveOut::popValue(serialization::sNameValuePair<signed short>& nvp)

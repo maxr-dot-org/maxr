@@ -40,7 +40,6 @@ using namespace std;
 cPlayer::cPlayer (const cPlayerBasicData& splayer_) :
 	splayer (splayer_),
 	numEcos (0),
-	lastDeletedUnit (0),
 	clan (-1),
 	hasFinishedTurn (false),
 	isRemovedFromGame (false)
@@ -609,6 +608,28 @@ cUnit* cPlayer::getPrevUnit (cUnit* start) const
 	// since list order is by increasing age, take the first in list.
 	return getNextMiningStation (nullptr);
 }
+
+//--------------------------------------------------------------------------
+std::string cPlayer::resourceMapToString() const
+{
+	std::string str;
+	str.reserve(ResourceMap.size() + 1);
+	for (size_t i = 0; i != ResourceMap.size(); ++i)
+	{
+		str += getHexValue(ResourceMap[i]);
+	}
+	return str;
+}
+
+//--------------------------------------------------------------------------
+void cPlayer::setResourceMapFromString(const std::string& str)
+{
+	for (size_t i = 0; i != ResourceMap.size(); ++i)
+	{
+		ResourceMap[i] = getByteValue(str, i);
+	}
+}
+
 
 //------------------------------------------------------------------------------
 bool cPlayer::hasUnits() const

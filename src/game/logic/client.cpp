@@ -57,6 +57,7 @@
 #include "game/logic/turnclock.h"
 #include "game/logic/turntimeclock.h"
 #include "game/logic/action.h"
+#include "game/data/savegame.h"
 #include "utility/serialization/textarchive.h"
 
 using namespace std;
@@ -66,9 +67,9 @@ using namespace std;
 //------------------------------------------------------------------------
 
 //------------------------------------------------------------------------
-cClient::cClient (cServer2* server2, cServer* server, std::shared_ptr<cTCP> network_) :
-	server (server),
-	server2(server2),
+cClient::cClient (cServer2* server, std::shared_ptr<cTCP> network_) :
+	server (nullptr),
+	server2(server),
 	network (std::move (network_)),
 	gameTimer (std::make_shared<cGameTimerClient> ()),
 	activePlayer (nullptr),
@@ -115,7 +116,7 @@ class LessByNr
 public:
 	bool operator() (const cPlayer* lhs, const cPlayer* rhs) const
 	{
-		return lhs->getNr() < rhs->getNr();
+		return lhs->getId() < rhs->getId();
 	}
 };
 
@@ -158,7 +159,7 @@ void cClient::pushMessage(std::unique_ptr<cNetMessage2> message)
 
 void cClient::sendNetMessage (std::unique_ptr<cNetMessage> message) const
 {
-	message->iPlayerNr = activePlayer->getNr();
+	message->iPlayerNr = activePlayer->getId();
 
 /*	if (message->iType != NET_GAME_TIME_CLIENT)
 	{
@@ -184,7 +185,7 @@ void cClient::sendNetMessage (std::unique_ptr<cNetMessage> message) const
 
 void cClient::sendNetMessage(std::unique_ptr<cNetMessage2> message) const
 {
-	message->playerNr = activePlayer->getNr();
+	message->playerNr = activePlayer->getId();
 
 	if (message->getType() != cNetMessage2::GAMETIME_SYNC_CLIENT)
 	{
@@ -415,7 +416,7 @@ void cClient::HandleNetMessage_GAME_EV_WAIT_FOR (cNetMessage& message)
 
 	const int nextPlayerNum = message.popInt32();
 
-	if (nextPlayerNum == activePlayer->getNr())
+	if (nextPlayerNum == activePlayer->getId())
 	{
 		disableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
 	}
@@ -1026,7 +1027,7 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 				Vehicle->getOwner()->doScan();
 			}
 			Vehicle->setClearing (true);
-			addJob (new cStartBuildJob (*Vehicle, orgiginalPosition, (bigPosition.x() >= 0 && bigPosition.y() >= 0)));
+			//addJob (new cStartBuildJob (*Vehicle, orgiginalPosition, (bigPosition.x() >= 0 && bigPosition.y() >= 0)));
 		}
 		break;
 		case 1:
@@ -1417,9 +1418,9 @@ void cClient::HandleNetMessage_GAME_EV_REQ_SAVE_INFO (cNetMessage& message)
 	const auto& savedReports = activePlayer->savedReportsList;
 	for (size_t i = std::max<int> (0, savedReports.size() - 50); i != savedReports.size(); ++i)
 	{
-		sendSaveReportInfo (*this, *savedReports[i], activePlayer->getNr(), saveingID);
+		sendSaveReportInfo (*this, *savedReports[i], activePlayer->getId(), saveingID);
 	}
-	sendFinishedSendSaveInfo (*this, activePlayer->getNr(), saveingID);
+	sendFinishedSendSaveInfo (*this, activePlayer->getId(), saveingID);
 }
 
 void cClient::HandleNetMessage_GAME_EV_SAVED_REPORT (cNetMessage& message)
@@ -1961,4 +1962,9 @@ void cClient::handleChatMessage (const std::string& message)
 	if (message.empty()) return;
 
 	sendChatMessageToServer (*this, message);
+}
+//------------------------------------------------------------------------------
+void cClient::loadModel(cSavegame& savegame, int saveGameNumber)
+{
+	savegame.loadModel(model, saveGameNumber);
 }

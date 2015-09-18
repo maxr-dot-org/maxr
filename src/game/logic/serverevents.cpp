@@ -47,7 +47,7 @@ void sendAddUnit (cServer& server, const cPosition& position, int id, bool isVeh
 	message->pushInt16 (id);
 	message->pushPosition (position);
 	message->pushID (unitID);
-	message->pushInt16 (player.getNr());
+	message->pushInt16 (player.getId());
 	message->pushBool (isInit);
 
 	server.sendNetMessage (std::move (message), &player);
@@ -102,7 +102,7 @@ void sendAddEnemyUnit (cServer& server, const cUnit& unit, const cPlayer& receiv
 		message->pushInt16 (unit.dir);
 	message->pushPosition (unit.getPosition());
 	message->pushID (unit.data.ID);
-	message->pushInt16 (unit.getOwner()->getNr());
+	message->pushInt16 (unit.getOwner()->getId());
 
 	server.sendNetMessage (std::move (message), &receiver);
 }
@@ -122,14 +122,14 @@ void sendTurnFinished (cServer& server, const cPlayer& playerWhoEndedTurn, const
 
 	if (nextPlayer)
 	{
-		message->pushInt16 (nextPlayer->getNr());
+		message->pushInt16 (nextPlayer->getId());
 		message->pushBool (true);
 	}
 	else
 	{
 		message->pushBool (false);
 	}
-	message->pushInt16 (playerWhoEndedTurn.getNr());
+	message->pushInt16 (playerWhoEndedTurn.getId());
 
 	server.sendNetMessage (std::move (message), receiver);
 }
@@ -229,7 +229,7 @@ void sendUnitData (cServer& server, const cUnit& unit, const cPlayer& receiver)
 	message->pushPosition (unit.getPosition());
 	message->pushBool (unit.isAVehicle());
 	message->pushInt16 (unit.iID);
-	message->pushInt16 (unit.getOwner()->getNr());
+	message->pushInt16 (unit.getOwner()->getId());
 
 	server.sendNetMessage (std::move (message), &receiver);
 }
@@ -425,7 +425,7 @@ void sendScore (cServer& server, const cPlayer& subject, int turn, const cPlayer
 		auto message = std::make_unique<cNetMessage> (GAME_EV_SCORE);
 		message->pushInt16 (subject.getScore (turn));
 		message->pushInt16 (turn);
-		message->pushInt16 (subject.getNr());
+		message->pushInt16 (subject.getId());
 
 		server.sendNetMessage (std::move (message), receiver);
 	}
@@ -453,7 +453,7 @@ void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver)
 	{
 		auto message = std::make_unique<cNetMessage> (GAME_EV_NUM_ECOS);
 		message->pushInt16 (subject.numEcos);
-		message->pushInt16 (subject.getNr());
+		message->pushInt16 (subject.getId());
 
 		server.sendNetMessage (std::move (message), receiver);
 	}
@@ -597,7 +597,7 @@ void sendNoFog (cServer& server, const cPlayer& receiver)
 void sendDefeated (cServer& server, const cPlayer& player, const cPlayer* receiver)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_DEFEATED);
-	message->pushInt16 (player.getNr());
+	message->pushInt16 (player.getId());
 	server.sendNetMessage (std::move (message), receiver);
 }
 
@@ -622,7 +622,7 @@ void sendUnfreeze (cServer& server, eFreezeMode mode)
 void sendWaitFor (cServer& server, const cPlayer& player, const cPlayer* receiver)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_WAIT_FOR);
-	message->pushInt32 (player.getNr());
+	message->pushInt32 (player.getId());
 	server.sendNetMessage (std::move (message), receiver);
 }
 
@@ -630,7 +630,7 @@ void sendWaitFor (cServer& server, const cPlayer& player, const cPlayer* receive
 void sendDeletePlayer (cServer& server, const cPlayer& player, const cPlayer* receiver)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_DEL_PLAYER);
-	message->pushInt16 (player.getNr());
+	message->pushInt16 (player.getId());
 	server.sendNetMessage (std::move (message), receiver);
 }
 
@@ -663,14 +663,14 @@ void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& play
 	{
 		const auto& secondPlayer = *playerList[i];
 		if (&player == &secondPlayer) continue;
-		message.pushInt16 (secondPlayer.getNr());
+		message.pushInt16 (secondPlayer.getId());
 		message.pushColor (secondPlayer.getColor().getColor());
 		message.pushString (secondPlayer.getName());
 	}
 	message.pushInt16 ((int) playerList.size());
 	message.pushString (server.Map->getName());
 	message.pushColor (player.getColor().getColor());
-	message.pushInt16 (player.getNr());
+	message.pushInt16 (player.getId());
 
 	message.pushBool (true);
 
@@ -817,7 +817,7 @@ void sendUpgradeBuildings (cServer& server, const std::vector<cBuilding*>& upgra
 	{
 		const auto curPlayer = playerList[n].get();
 		// don't send to the owner of the buildings
-		if (curPlayer == 0 || curPlayer->getNr() == receiver.getNr()) continue;
+		if (curPlayer == 0 || curPlayer->getId() == receiver.getId()) continue;
 
 		for (unsigned int buildingIdx = 0; buildingIdx < upgradedBuildings.size(); buildingIdx++)
 		{
@@ -887,7 +887,7 @@ void sendClans (cServer& server, const std::vector<std::unique_ptr<cPlayer>>& pl
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		message->pushChar (playerList[i]->getClan());
-		message->pushChar (playerList[i]->getNr());
+		message->pushChar (playerList[i]->getId());
 	}
 	server.sendNetMessage (std::move (message), &receiver);
 }

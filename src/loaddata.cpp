@@ -1997,3 +1997,18 @@ void createShadowGfx()
 										   0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
 	SDL_FillRect (GraphicsData.gfx_shadow.get(), nullptr, SDL_MapRGBA (GraphicsData.gfx_shadow->format, 0, 0, 0, 50));
 }
+
+void Split(const std::string& s, const char* seps, std::vector<std::string>& words)
+{
+	if (s.empty()) return;
+	size_t beg = 0;
+	size_t end = s.find_first_of(seps, beg);
+
+	while (end != string::npos)
+	{
+		words.push_back(s.substr(beg, end - beg));
+		beg = end + 1;
+		end = s.find_first_of(seps, beg);
+	}
+	words.push_back(s.substr(beg));
+}
