@@ -54,8 +54,8 @@
 			<Custom_11 ENG="Custom" localized="Eigner Wert"/>
 			<Game_Type ENG="Game Type" localized="Spielart"/>
 			<Gold ENG="Gold" localized="Gold"/>
-			<Human ENG="Human" localized="Mensch"/>
 			<HotSeat ENG="Hot Seat" localized="Hot Seat"/>
+			<Human ENG="Human" localized="Mensch"/>
 			<IP ENG="IP" localized="IP"/>
 			<Labs ENG="Research menu" localized="Forschungsmenü"/>
 			<Load ENG="Load Menu" localized="Laden-Menü"/>

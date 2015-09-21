@@ -51,6 +51,7 @@
 			<Connect ENG="Connect" localized="Povezava"/>
 			<Credits ENG="Credit" localized="Sredstva"/>
 			<Credits_start ENG="Credit at gamestart" localized="Začetna sredstva"/>
+			<Custom_11 ENG="Custom" localized=""/><!--TODO: translation needed-->
 			<Game_Type ENG="Game Type" localized="Tip igre"/>
 			<Gold ENG="Gold" localized="Zlato"/>
 			<HotSeat ENG="Hot Seat" localized="Vroči stol"/>
@@ -75,11 +76,10 @@
 			<Savegame ENG="Saved Games" localized="Shranjene igre"/><!--unused?! -->
 			<Send ENG="Send" localized="Pošlji"/>
 			<Team ENG="Team" localized="Moštvo"/><!-- e.g. Player 1 is called as one team -->
-			<Unitinfo ENG="Unit status screen" localized="Informacije o enoti"/>
-			<Upgrades_Menu ENG="Upgrades menu" localized="Meni Nadgradnje"/>
-			<Custom_11 ENG="Custom" localized=""/><!--TODO: translation needed-->
 			<Turn_end ENG="Turn end" localized=""/><!--TODO: translation needed-->
 			<Turn_limit ENG="Turn limit" localized=""/><!--TODO: translation needed-->
+			<Unitinfo ENG="Unit status screen" localized="Informacije o enoti"/>
+			<Upgrades_Menu ENG="Upgrades menu" localized="Meni Nadgradnje"/>
 		</Title>
 		<Others>
 			<Active ENG="Active" localized="Aktiven"/>
@@ -176,6 +176,7 @@
 			<Teams_7 ENG="Teams" localized="Moštva"/><!-- the workes for the habit -->
 			<Total ENG="Total" localized="Skupaj"/>
 			<Transfer_7 ENG="X-fer" localized="Prenos"/>
+			<Unit_destroyed ENG="Unit destroyed!" localized=""/><!--TODO: translation needed-->
 			<Units ENG="Units" localized="Enote"/>
 			<Upgrade ENG="Upgrade" localized="Nadgradi"/><!-- used where you select your start units -->
 			<UpgradeAll_7 ENG="Up.all" localized="Nad.vse"/>
@@ -184,7 +185,6 @@
 			<Upgradethis_7 ENG="Upgrade" localized="Nadgradi"/>
 			<Usage_7 ENG="Usage" localized="Poraba"/>
 			<Yes ENG="Yes" localized="Da"/>
-			<Unit_destroyed ENG="Unit destroyed!" localized=""/><!--TODO: translation needed-->
 		</Others>
 		<Option>
 			<Definite ENG="Built (original)" localized="Je izgrajena"/>
@@ -213,6 +213,7 @@
 			<Disable ENG="Disable" localized="Onemogoči"/>
 			<Effects ENG="Effects" localized="Efekti"/>
 			<Intro ENG="Show intro" localized="Prikaži uvod"/>
+			<Language ENG="Language" localized=""/><!--TODO: translation needed-->
 			<Music ENG="Music" localized="Glasba"/>
 			<Preferences ENG="Preferences" localized="Lastnosti"/>
 			<Resolution ENG="Resolution" localized="Resolucija"/>
@@ -221,11 +222,10 @@
 			<ShowDamage ENG="Buildingdamage" localized="Poškodbe stavb"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Poškodbe vozil"/>
 			<Tracks ENG="Vehicletracks" localized="Sledi vozil"/>
+			<Unlimited_11 ENG="No limit" localized=""/><!--TODO: translation needed-->
 			<Voices ENG="Voices" localized="Glasovi"/>
 			<Volume ENG="Volume" localized="Glasnost"/>
 			<Window ENG="Windowed" localized="V oknu"/>
-			<Language ENG="Language" localized=""/><!--TODO: translation needed-->
-			<Unlimited_11 ENG="No limit" localized=""/><!--TODO: translation needed-->
 		</Settings>
 		<Multiplayer>
 			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Strežnik; pritisni F2 za preklic čakanja."/>
@@ -239,6 +239,7 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="Strežnik želi da: Ne potrdiš pripravljenosti"/>
 			<Go_Ready ENG="Ready to go" localized="Pripravljen"/>
 			<Go_Ready_No ENG="not ready to go" localized="nisem pripravljen"/>
+			<Host_command ENG="Host entered following command" localized=""/><!--TODO: translation needed-->
 			<Lost_Connection ENG="Lost connection to %s." localized="Povezava z %s je bila prekinjena."/>
 			<Map_NoSet ENG="--no map selected--" localized="--brez nastavitev pokrajine--"/>
 			<MapDL_Cancel ENG="Aborted" localized="Prekinjeno"/>
@@ -295,7 +296,6 @@
 			<Wait_TurnEnd ENG="Please wait while turn end is executed." localized="Počakaj, da se izvede zaključek poteze."/>
 			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Počakaj, da %s zaključi potezo."/>
 			<Waiting ENG="Waiting for other players..." localized="Čakam na druge igralce..."/>
-			<Host_command ENG="Host entered following command" localized=""/><!--TODO: translation needed-->
 		</Multiplayer>
 		<Comp>
 			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Popravek: črpanje goriva je povečano za "/>
@@ -357,6 +357,7 @@
 			<Repeat ENG="Again" localized="Ponovno"/>
 			<Reserve ENG="Reserve" localized="Rezerva"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Opozorilo: nepodprt video način v konfiguraciji"/>
+			<RestartRequired ENG="Please restart 'Mechanized Assault and eXploration Reloaded' to take effect the change." localized=""/><!--TODO: translation needed-->
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Posnetek zaslona je shranjen v %s"/>
 			<Sentry ENG="on sentry" localized="na preži"/>
 			<Stolen ENG="stolen" localized="ukraden"/>
@@ -374,7 +375,6 @@
 			<Upgrades_Done2 ENG="unit(s) of type %s" localized="enote tipa %s"/>
 			<Waits ENG="waiting" localized="v mirovanju"/>
 			<Working ENG="working" localized="v delovanju"/>
-			<RestartRequired ENG="Please restart 'Mechanized Assault and eXploration Reloaded' to take effect the change." localized=""/><!--TODO: translation needed-->
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Ne najdem datoteke: %s"/>

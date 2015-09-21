@@ -38,15 +38,23 @@
 		<Title>
 			<Alien_Tech ENG="Alien remains" localized="Idegen technológia"/><!--TODO: review needed (english string has been changed)-->
 			<BridgeHead ENG="Starting Base" localized="Kezdeti bázis"/>
+			<Build_Factory ENG="Factory Menu" localized=""/><!--TODO: translation needed-->
+			<Build_Vehicle ENG="Construction Menu" localized=""/><!--TODO: translation needed-->
 			<Cargo ENG="Cargo" localized="Rakomány"/>
+			<Choose_Clan ENG="Choose Clan" localized=""/><!--TODO: translation needed-->
 			<Choose_Planet ENG="Choose planet" localized="Bolygóválasztás"/>
+			<Choose_Units ENG="Choose Units" localized=""/><!--TODO: translation needed-->
+			<Clan ENG="Clan" localized=""/><!--TODO: translation needed-->
 			<Clans ENG="Clans" localized="Klánok"/>
 			<Color ENG="Color:" localized="Szín:"/>
 			<Computer ENG="Computer" localized="Számítógép"/>
 			<Connect ENG="Connect" localized="Csatlakozás"/>
 			<Credits ENG="Credit" localized="Pénz"/><!--TODO: review needed (english string has been changed)-->
+			<Credits_start ENG="Credit at gamestart" localized=""/><!--TODO: translation needed-->
+			<Custom_11 ENG="Custom" localized=""/><!--TODO: translation needed-->
 			<Game_Type ENG="Game Type" localized="Játéktípus"/>
 			<Gold ENG="Gold" localized="Arany"/>
+			<HotSeat ENG="Hot Seat" localized=""/><!--TODO: translation needed-->
 			<Human ENG="Human" localized="Ember"/>
 			<IP ENG="IP" localized="IP"/>
 			<Labs ENG="Research menu" localized="Fejlesztés Menü"/>
@@ -68,22 +76,15 @@
 			<Savegame ENG="Saved Games" localized="Mentés"/><!--TODO: review needed (english string has been changed)-->
 			<Send ENG="Send" localized="Küldés"/>
 			<Team ENG="Team" localized="Csapat"/>
-			<Unitinfo ENG="Unit status screen" localized="Egységstátusz képernyő"/>
-			<Build_Factory ENG="Factory Menu" localized=""/><!--TODO: translation needed-->
-			<Build_Vehicle ENG="Construction Menu" localized=""/><!--TODO: translation needed-->
-			<Choose_Clan ENG="Choose Clan" localized=""/><!--TODO: translation needed-->
-			<Choose_Units ENG="Choose Units" localized=""/><!--TODO: translation needed-->
-			<Clan ENG="Clan" localized=""/><!--TODO: translation needed-->
-			<Credits_start ENG="Credit at gamestart" localized=""/><!--TODO: translation needed-->
-			<Custom_11 ENG="Custom" localized=""/><!--TODO: translation needed-->
-			<HotSeat ENG="Hot Seat" localized=""/><!--TODO: translation needed-->
 			<Turn_end ENG="Turn end" localized=""/><!--TODO: translation needed-->
 			<Turn_limit ENG="Turn limit" localized=""/><!--TODO: translation needed-->
+			<Unitinfo ENG="Unit status screen" localized="Egységstátusz képernyő"/>
 			<Upgrades_Menu ENG="Upgrades menu" localized=""/><!--TODO: translation needed-->
 		</Title>
 		<Others>
 			<Active ENG="Active" localized="Aktiválás"/>
 			<Active_7 ENG="Activ." localized="Aktív"/>
+			<ActiveAll_9 ENG="Activ All" localized=""/><!--TODO: translation needed-->
 			<Air_Units ENG="Airunits" localized="Légi egységek"/>
 			<Ammo ENG="Ammunition" localized="Muníció"/>
 			<Ammo_7 ENG="Ammo" localized="Lőszer"/>
@@ -104,6 +105,7 @@
 			<Destroy_7 ENG="Delete" localized="Törlés"/>
 			<Disable_7 ENG="Disable" localized="Megbénítás"/>
 			<Disadvantages_8cut ENG="Disadvantages" localized="Hátrányok"/>
+			<Distribution_7 ENG="Distr." localized=""/><!--TODO: translation needed-->
 			<Done ENG="Done" localized="Kész"/>
 			<Done_7 ENG="Done" localized="Kész"/>
 			<End ENG="End" localized="Vége"/>
@@ -129,6 +131,7 @@
 			<Load_7 ENG="Load" localized="Betöltés"/>
 			<Log ENG="Log" localized="Log"/>
 			<Mani ENG="Manifestation" localized="Nyilatkozat"/>
+			<ManualFireMode_7 ENG="Manual" localized=""/><!--TODO: translation needed-->
 			<Multi_Player ENG="Multiplayer" localized="Többjátékos Mód"/>
 			<No ENG="No" localized="Nem"/>
 			<OK ENG="OK" localized="Ok"/>
@@ -139,9 +142,12 @@
 			<Produce_Units ENG="Producing units" localized="Termelő egységek"/>
 			<Range ENG="Range" localized="Lőtáv"/>
 			<Range_7 ENG="Range" localized="Lőtáv"/>
+			<Reload ENG="Reload" localized=""/><!--TODO: translation needed-->
 			<Reload_7 ENG="Reload" localized="Újratöltés"/>
+			<ReloadAll_9 ENG="Reload All" localized=""/><!--TODO: translation needed-->
 			<Repair ENG="Repair" localized="Javítás"/>
 			<Repair_7 ENG="Repair" localized="Javítás"/>
+			<RepairAll_9 ENG="Rep. All" localized=""/><!--TODO: translation needed-->
 			<Reports ENG="Reports" localized="Jelentések"/>
 			<Research ENG="Research" localized="Kutatás"/>
 			<Save ENG="Save" localized="Mentés"/>
@@ -170,21 +176,15 @@
 			<Teams_7 ENG="Teams" localized="Munkások"/>
 			<Total ENG="Total" localized="Összes"/>
 			<Transfer_7 ENG="X-fer" localized="Átvitel"/>
+			<Unit_destroyed ENG="Unit destroyed!" localized=""/><!--TODO: translation needed-->
 			<Units ENG="Units" localized="Egység"/>
 			<Upgrade ENG="Upgrade" localized="Fejlesztés"/>
 			<UpgradeAll_7 ENG="Up.all" localized="Összes fejl."/>
+			<UpgradeAll_9 ENG="Upgrd.All" localized=""/><!--TODO: translation needed-->
 			<Upgrademenu_7 ENG="Up.Menu" localized="Fejlesztések"/>
 			<Upgradethis_7 ENG="Upgrade" localized="Kutatás"/>
 			<Usage_7 ENG="Usage" localized="Fogyaszt"/>
 			<Yes ENG="Yes" localized="Igen"/>
-			<ActiveAll_9 ENG="Activ All" localized=""/><!--TODO: translation needed-->
-			<Distribution_7 ENG="Distr." localized=""/><!--TODO: translation needed-->
-			<ManualFireMode_7 ENG="Manual" localized=""/><!--TODO: translation needed-->
-			<Reload ENG="Reload" localized=""/><!--TODO: translation needed-->
-			<ReloadAll_9 ENG="Reload All" localized=""/><!--TODO: translation needed-->
-			<RepairAll_9 ENG="Rep. All" localized=""/><!--TODO: translation needed-->
-			<Unit_destroyed ENG="Unit destroyed!" localized=""/><!--TODO: translation needed-->
-			<UpgradeAll_9 ENG="Upgrd.All" localized=""/><!--TODO: translation needed-->
 		</Others>
 		<Option>
 			<Definite ENG="Built (original)" localized="Felépült (eredeti)"/>
@@ -213,6 +213,7 @@
 			<Disable ENG="Disable" localized="Kikapcsol"/>
 			<Effects ENG="Effects" localized="Effektusok"/>
 			<Intro ENG="Show intro" localized="Bevezető lejátszása"/>
+			<Language ENG="Language" localized=""/><!--TODO: translation needed-->
 			<Music ENG="Music" localized="Zene"/>
 			<Preferences ENG="Preferences" localized="Beállítások"/>
 			<Resolution ENG="Resolution" localized="Felbontás"/>
@@ -221,11 +222,10 @@
 			<ShowDamage ENG="Buildingdamage" localized="Épületsebződés"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Járműsebződés"/>
 			<Tracks ENG="Vehicletracks" localized="Járműnyomok"/>
+			<Unlimited_11 ENG="No limit" localized=""/><!--TODO: translation needed-->
 			<Voices ENG="Voices" localized="Hangok"/>
 			<Volume ENG="Volume" localized="Hangerő"/>
 			<Window ENG="Windowed" localized="Futtatás ablakban"/>
-			<Language ENG="Language" localized=""/><!--TODO: translation needed-->
-			<Unlimited_11 ENG="No limit" localized=""/><!--TODO: translation needed-->
 		</Settings>
 		<Multiplayer>
 			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Kiszolgáló, a várakozás megszakításához nyomj F2-őt."/>
@@ -239,6 +239,7 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="A Host állapota: Nem áll készen"/>
 			<Go_Ready ENG="Ready to go" localized="Indulhat a játék"/>
 			<Go_Ready_No ENG="not ready to go" localized="nem indulhat a játék"/>
+			<Host_command ENG="Host entered following command" localized=""/><!--TODO: translation needed-->
 			<Lost_Connection ENG="Lost connection to %s." localized="A kapcsolat megszakadt %s gépével."/>
 			<Map_NoSet ENG="--no map selected--" localized="--nincs Térkép kiválasztva--"/><!--TODO: review needed (english string has been changed)-->
 			<MapDL_Cancel ENG="Aborted" localized="Visszavonva"/>
@@ -246,8 +247,10 @@
 			<MapDL_DownloadInvalid ENG="original M.A.X. map %s from server (licensed)!" localized="%s M.A.X. térkép letöltése a szerverről (licencelt)!"/><!--TODO: review needed (english string has been changed)-->
 			<MapDL_DownloadRequest ENG="Map not installed: Requesting to download custom" localized="Nincs telepítve a térkép: letöltés kezdeményezése"/>
 			<MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download" localized="A térkép nincs telepítve: Nem engedélyezett az eredeti"/>
+			<MapDL_Finished ENG="Map download finished." localized=""/><!--TODO: translation needed-->
 			<MapDL_Percent ENG="Map download: %s%" localized="Térkép letöltés: %s%"/>
 			<MapDL_Upload ENG="Uploading map to %s..." localized="Térkép feltöltése %s gépére..."/>
+			<MapDL_UploadFinished ENG="Map upload to %s finished." localized=""/><!--TODO: translation needed-->
 			<Missing_Settings ENG="Options, map or savegame are not set" localized="Nincsenek beállítva a paraméterek, a térkép vagy a játékmentés"/>
 			<Network_Closed ENG="Connection closed" localized="A kapcsolat bezárult"/>
 			<Network_Connected ENG="Connected" localized="Csatlakozva"/>
@@ -259,31 +262,11 @@
 			<Network_Open ENG="Game open" localized="Játék megnyitva"/>
 			<Network_Syncing ENG="Synchronizing..." localized="Szinkronizálás..."/>
 			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="A %s térkép nem tölthető be. Így nem indíthatod a játékot."/>
+			<No_Response ENG="Waiting for network response from player %s" localized=""/><!--TODO: translation needed-->
 			<Not_Ready ENG="is not ready" localized="nem készült el"/>
 			<Option_NoSet ENG="--no options set--" localized="--nincsenek paraméterek beállítva--"/>
-			<Player ENG="Player" localized="Játékos"/>
-			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum." localized="Kérlek állítsd be a játékosok számát. HotSeat játék esetén legalább két emberi játékos kell. Maximum 8 játékos lehet."/>
-			<Player_Few ENG="Not enough players!" localized="Nincs elég játékos!"/>
-			<Player_Joined ENG="%s has joined" localized="%s csatlakozott a játékhoz"/>
-			<Player_Left ENG="%s has left the game" localized="%s elhagyta a játékot"/>
-			<Player_Many ENG="Too many players!" localized="Túl sok játékos!"/>
-			<Player_MustHost ENG="must be host in turn based game!" localized="Körökre osztott játéknál lennie kell host-nak!"/>
-			<Player_Turn ENG="%s:\nBegin turn." localized="%s köre következik"/><!--TODO: review needed (english string has been changed)-->
-			<Player_Turn_End ENG="%s ended turn" localized="%s befejezte a körét"/>
-			<Player_Twice ENG="Playername exists twice: " localized="Duplán szereplő játékosnév: "/>
-			<Player_Wrong ENG="Missing a correct player's name" localized="Az egyik játékosnak nem megfelelő a neve!"/>
-			<Reconnect ENG="This game is running already.\nIf you have lost connection to the game, you can reconnect.\n\nDo you want to reconnect?" localized="Ez a játék már fut. Ha megszakadt a kapcsolatod a játékkal, újracsatlakozhatsz. Szeretnél újra csatlakozni?"/><!--TODO: review needed (english string has been changed)-->
-			<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="A szerver nem engedélyezi az újracsatlakozást."/>
-			<Save_Only_Host ENG="Only the host can save the current games." localized="Csak a kiszolgáló mentheti el a játékot."/><!--TODO: review needed (english string has been changed)-->
-			<Server_Not_Running ENG="The server is not running." localized="Nem fut a szerver"/>
-			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Várakozás egy játékos újracsatlakozására."/>
-			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Kérlek várd meg míg %s befejezi a körét."/>
-			<Waiting ENG="Waiting for other players..." localized="Várakozás a többi játékosra..."/>
-			<Host_command ENG="Host entered following command" localized=""/><!--TODO: translation needed-->
-			<MapDL_Finished ENG="Map download finished." localized=""/><!--TODO: translation needed-->
-			<MapDL_UploadFinished ENG="Map upload to %s finished." localized=""/><!--TODO: translation needed-->
-			<No_Response ENG="Waiting for network response from player %s" localized=""/><!--TODO: translation needed-->
 			<Pause ENG="Game has been paused." localized=""/><!--TODO: translation needed-->
+			<Player ENG="Player" localized="Játékos"/>
 			<Player1 ENG="Player 1" localized=""/><!--TODO: translation needed-->
 			<Player2 ENG="Player 2" localized=""/><!--TODO: translation needed-->
 			<Player3 ENG="Player 3" localized=""/><!--TODO: translation needed-->
@@ -292,17 +275,37 @@
 			<Player6 ENG="Player 6" localized=""/><!--TODO: translation needed-->
 			<Player7 ENG="Player 7" localized=""/><!--TODO: translation needed-->
 			<Player8 ENG="Player 8" localized=""/><!--TODO: translation needed-->
+			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum." localized="Kérlek állítsd be a játékosok számát. HotSeat játék esetén legalább két emberi játékos kell. Maximum 8 játékos lehet."/>
 			<Player_Color_Taken ENG="Playercolor already in use, please select an other color to be unique" localized=""/><!--TODO: translation needed-->
+			<Player_Few ENG="Not enough players!" localized="Nincs elég játékos!"/>
+			<Player_Joined ENG="%s has joined" localized="%s csatlakozott a játékhoz"/>
+			<Player_Left ENG="%s has left the game" localized="%s elhagyta a játékot"/>
+			<Player_Many ENG="Too many players!" localized="Túl sok játékos!"/>
+			<Player_MustHost ENG="must be host in turn based game!" localized="Körökre osztott játéknál lennie kell host-nak!"/>
 			<Player_Name_Taken ENG="Playername already in use, please select an other name to be unique" localized=""/><!--TODO: translation needed-->
+			<Player_Turn ENG="%s:\nBegin turn." localized="%s köre következik"/><!--TODO: review needed (english string has been changed)-->
+			<Player_Turn_End ENG="%s ended turn" localized="%s befejezte a körét"/>
+			<Player_Twice ENG="Playername exists twice: " localized="Duplán szereplő játékosnév: "/>
+			<Player_Wrong ENG="Missing a correct player's name" localized="Az egyik játékosnak nem megfelelő a neve!"/>
+			<Reconnect ENG="This game is running already.\nIf you have lost connection to the game, you can reconnect.\n\nDo you want to reconnect?" localized="Ez a játék már fut. Ha megszakadt a kapcsolatod a játékkal, újracsatlakozhatsz. Szeretnél újra csatlakozni?"/><!--TODO: review needed (english string has been changed)-->
+			<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="A szerver nem engedélyezi az újracsatlakozást."/>
+			<Save_Only_Host ENG="Only the host can save the current games." localized="Csak a kiszolgáló mentheti el a játékot."/><!--TODO: review needed (english string has been changed)-->
+			<Server_Not_Running ENG="The server is not running." localized="Nem fut a szerver"/>
 			<Wait_For_Server ENG="Waiting for network response from server" localized=""/><!--TODO: translation needed-->
+			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Várakozás egy játékos újracsatlakozására."/>
 			<Wait_TurnEnd ENG="Please wait while turn end is executed." localized=""/><!--TODO: translation needed-->
+			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Kérlek várd meg míg %s befejezi a körét."/>
+			<Waiting ENG="Waiting for other players..." localized="Várakozás a többi játékosra..."/>
 		</Multiplayer>
 		<Comp>
 			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Módosítás történt, nőtt az üzemanyag kitermelés: "/>
 			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Módosítás történt, csökkent az aranykitermelés: "/>
 			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by " localized="Módosítás történt, csökkent a nyersanyag kitermelés: "/><!--TODO: review needed (english string has been changed)-->
 			<Attacked ENG="is under attack" localized="támadás alatt áll"/>
+			<AttackingEnemy ENG="%s is attacking the enemy" localized=""/><!--TODO: translation needed-->
+			<AttackingStatusStr ENG="attacking" localized=""/><!--TODO: translation needed-->
 			<Building_Disabled ENG="Building turned off" localized="Épület működésképtelen"/><!--TODO: review needed (english string has been changed)-->
+			<CapturedByEnemy ENG="%s has been captured by the enemy" localized=""/><!--TODO: translation needed-->
 			<Cheat ENG="used cheat" localized="csaláskód:"/>
 			<Clearing ENG="clearing" localized="Takarít"/><!--TODO: review needed (english string has been changed)-->
 			<Clearing_Fin ENG="clearing done" localized="elkészült a takarítás"/>
@@ -310,6 +313,7 @@
 			<CommandoRank_Average ENG="Average" localized="Középszerű"/>
 			<CommandoRank_Elite ENG="Elite" localized="Elit"/>
 			<CommandoRank_Expert ENG="Expert" localized="Szakértő"/>
+			<CommandoRank_GrandMaster ENG="Grand Master" localized=""/><!--TODO: translation needed-->
 			<CommandoRank_Greenhorn ENG="Greenhorn" localized="Zöldfülű"/>
 			<CommandoRank_Veteran ENG="Veteran" localized="Veterán"/>
 			<Dated ENG="dated" localized="elavult"/>
@@ -332,22 +336,28 @@
 			<GameEndsAt ENG="Game ends at" localized="A játék véget ér "/>
 			<Gold_Insufficient ENG="Cannot start, gold needed." localized="Nincs elegendő arany az elindításhoz."/>
 			<Gold_Low ENG="More gold needed, refinery turned off." localized="Nincs elég arany, feldolgozó leállítva!"/>
+			<IsBeeingAttacked ENG="Is beeing attacked" localized=""/><!--TODO: translation needed-->
 			<Labs ENG="Labs" localized="Laborok"/>
+			<Landing_Select ENG="Please select starting location." localized=""/><!--TODO: translation needed-->
 			<Landing_Too_Close ENG="Landing position is too close to an other player. Please reselect your position." localized="A leszállási pozíció túl közel van egy másik játékoshoz. Kérlek válassz másik pozíciót."/>
 			<Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle or select another position." localized="A leszállási pozíció egy másik játékos közelében van. A jelenlegi pozíció megerősítéséhez kattints a piros körön belülre, vagy válassz egy másikat."/><!--TODO: review needed (english string has been changed)-->
 			<Laying ENG="minelaying" localized="aknát telepít"/><!--TODO: review needed (english string has been changed)-->
 			<Metal_Insufficient ENG="Cannot start, raw materials needed." localized="Nincs elegendő nyersanyag az elindításhoz."/><!--TODO: review needed (english string has been changed)-->
 			<Metal_Low ENG="More raw materials needed, factory turned off." localized="Nincs elég nyersanyag, épület leállítva!"/><!--TODO: review needed (english string has been changed)-->
 			<Moving ENG="moving" localized="mozog"/>
+			<MovingToAttack ENG="moving to attack" localized=""/><!--TODO: translation needed-->
 			<NoLimit ENG="Fight to the death!" localized="Harc a végsőkig!"/>
+			<Path_interrupted ENG="Pathbuilding order could not be resumed." localized=""/><!--TODO: translation needed-->
 			<Point ENG="point" localized="pontnál"/>
 			<Points ENG="points" localized="pontnál"/>
 			<Producing ENG="Building" localized="Épít"/>
 			<Producing_Err ENG="Buildposition blocked or insufficient raw materials to build" localized="Az építési terület nem tiszta, vagy nincs elegendő nyersanyag"/><!--TODO: review needed (english string has been changed)-->
 			<Producing_Fin ENG="finished building" localized="Gyártás befejezve"/>
+			<ReactionFireOff ENG="Reaction Fire Off" localized=""/><!--TODO: translation needed-->
 			<Repeat ENG="Again" localized="Újra"/>
 			<Reserve ENG="Reserve" localized="Tartalék"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Figyelem: Nem támogatott videó mód a beállításban"/>
+			<RestartRequired ENG="Please restart 'Mechanized Assault and eXploration Reloaded' to take effect the change." localized=""/><!--TODO: translation needed-->
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Pillanatkép elmentve: "/>
 			<Sentry ENG="on sentry" localized="őrtáll"/>
 			<Stolen ENG="stolen" localized="ellopva"/>
@@ -365,16 +375,6 @@
 			<Upgrades_Done2 ENG="unit(s) of type %s" localized="egység %s típusúvá"/>
 			<Waits ENG="waiting" localized="várakozik"/>
 			<Working ENG="working" localized="működik"/>
-			<AttackingEnemy ENG="%s is attacking the enemy" localized=""/><!--TODO: translation needed-->
-			<AttackingStatusStr ENG="attacking" localized=""/><!--TODO: translation needed-->
-			<CapturedByEnemy ENG="%s has been captured by the enemy" localized=""/><!--TODO: translation needed-->
-			<CommandoRank_GrandMaster ENG="Grand Master" localized=""/><!--TODO: translation needed-->
-			<IsBeeingAttacked ENG="Is beeing attacked" localized=""/><!--TODO: translation needed-->
-			<Landing_Select ENG="Please select starting location." localized=""/><!--TODO: translation needed-->
-			<MovingToAttack ENG="moving to attack" localized=""/><!--TODO: translation needed-->
-			<Path_interrupted ENG="Pathbuilding order could not be resumed." localized=""/><!--TODO: translation needed-->
-			<ReactionFireOff ENG="Reaction Fire Off" localized=""/><!--TODO: translation needed-->
-			<RestartRequired ENG="Please restart 'Mechanized Assault and eXploration Reloaded' to take effect the change." localized=""/><!--TODO: translation needed-->
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Nincs meg a fájl: %s"/>
