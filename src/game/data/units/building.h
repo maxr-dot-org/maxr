@@ -240,7 +240,7 @@ public:
 
 	int getBuildSpeed() const;
 	int getMetalPerRound() const;
-	int getRepeatBuild() const;
+	bool getRepeatBuild() const;
 
 	void setWorking (bool value);
 	void setBuildSpeed(int value);

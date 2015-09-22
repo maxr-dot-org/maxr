@@ -1546,7 +1546,7 @@ int cBuilding::getMetalPerRound() const
 }
 
 //-----------------------------------------------------------------------------
-int cBuilding::getRepeatBuild() const
+bool cBuilding::getRepeatBuild() const
 {
 	return repeatBuild;
 }
