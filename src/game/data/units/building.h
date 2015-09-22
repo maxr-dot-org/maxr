@@ -159,9 +159,6 @@ public:
 	bool BaseBN, BaseBE, BaseBS, BaseBW; // is the building connected in this direction (only for big buildings)
 	struct sSubBase* SubBase;     // the subbase to which this building belongs
 	int MaxMetalProd, MaxOilProd, MaxGoldProd; // the maximum possible production of the building
-	int BuildSpeed;  // Die baugeschwindigkeit der Fabrik
-	int MetalPerRound; //Die Menge an Metal, die die Fabrik bei momentaner Baugeschwindigkeit pro Runde maximal verbaut
-	bool RepeatBuild; // Gibt an, ob der Bau wiederholt werden soll
 	int DamageFXPointX, DamageFXPointY, DamageFXPointX2, DamageFXPointY2; // the points, where smoke will be generated when the building is damaged
 	/** true if the building was has been working before it was disabled */
 	bool wasWorking;
@@ -241,7 +238,14 @@ public:
 	void addBuildListItem (cBuildListItem item);
 	void removeBuildListItem (size_t index);
 
+	int getBuildSpeed() const;
+	int getMetalPerRound() const;
+	int getRepeatBuild() const;
+
 	void setWorking (bool value);
+	void setBuildSpeed(int value);
+	void setMetalPerRound(int value);
+	void setRepeatBuild(bool value);
 
 	void setResearchArea (cResearch::ResearchArea area);
 	cResearch::ResearchArea getResearchArea() const;
@@ -249,6 +253,10 @@ public:
 	cSignal<void ()> buildListChanged;
 	cSignal<void ()> buildListFirstItemDataChanged;
 	cSignal<void ()> researchAreaChanged;
+
+	cSignal<void()> buildSpeedChanged;
+	cSignal<void()> metalPerRoundChanged;
+	cSignal<void()> repeatBuildChanged;
 private:
 	cSignalConnectionManager buildListFirstItemSignalConnectionManager;
 	cSignalConnectionManager ownerSignalConnectionManager;
@@ -262,6 +270,10 @@ private:
 	void render_beton (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const;
 
 	bool isWorking;  // is the building currently working?
+
+	int buildSpeed;
+	int metalPerRound;
+	bool repeatBuild;
 
 	cResearch::ResearchArea researchArea; ///< if the building can research, this is the area the building last researched or is researching
 

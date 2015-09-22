@@ -1020,9 +1020,9 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 	}
 
 	const int iBuildSpeed = message.popInt16();
-	if (iBuildSpeed == 0) Building->MetalPerRound =  1 * Building->data.needsMetal;
-	if (iBuildSpeed == 1) Building->MetalPerRound =  4 * Building->data.needsMetal;
-	if (iBuildSpeed == 2) Building->MetalPerRound = 12 * Building->data.needsMetal;
+	if (iBuildSpeed == 0) Building->setMetalPerRound ( 1 * Building->data.needsMetal);
+	if (iBuildSpeed == 1) Building->setMetalPerRound ( 4 * Building->data.needsMetal);
+	if (iBuildSpeed == 2) Building->setMetalPerRound (12 * Building->data.needsMetal);
 
 	std::vector<cBuildListItem> NewBuildList;
 
@@ -1068,8 +1068,8 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 			Building->getBuildListItem (0).setRemainingMetal (iTurboBuildCosts[iBuildSpeed]);
 		}
 
-		Building->RepeatBuild = message.popBool();
-		Building->BuildSpeed = iBuildSpeed;
+		Building->setRepeatBuild(message.popBool());
+		Building->setBuildSpeed(iBuildSpeed);
 		if (Building->getBuildListItem (0).getRemainingMetal() > 0)
 		{
 			Building->ServerStartWork (*this);
@@ -1105,7 +1105,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message)
 	addVehicle (position, BuildingListItem.getType(), Building->getOwner(), false);
 
 	// start new buildjob
-	if (Building->RepeatBuild)
+	if (Building->getRepeatBuild())
 	{
 		BuildingListItem.setRemainingMetal (-1);
 		Building->addBuildListItem (BuildingListItem);
@@ -1120,7 +1120,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message)
 			std::array<int, 3> iTurboBuildRounds;
 			std::array<int, 3> iTurboBuildCosts;
 			Building->calcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Building->getOwner()->getUnitDataCurrentVersion (BuildingListItem.getType())->buildCosts);
-			BuildingListItem.setRemainingMetal (iTurboBuildCosts[Building->BuildSpeed]);
+			BuildingListItem.setRemainingMetal (iTurboBuildCosts[Building->getBuildSpeed()]);
 		}
 		Building->ServerStartWork (*this);
 	}

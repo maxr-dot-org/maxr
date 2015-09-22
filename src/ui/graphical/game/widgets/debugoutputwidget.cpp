@@ -474,8 +474,8 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 
 	const size_t buildingBuildListSize = building.getBuildListSize();
 	tmpString =
-		"build_speed: "        + iToStr (building.BuildSpeed) +
-		" repeat_build: "      + iToStr (building.RepeatBuild) +
+		"build_speed: "        + iToStr (building.getBuildSpeed()) +
+		" repeat_build: "      + iToStr (building.getRepeatBuild()) +
 		" build_list_count: +" + iToStr ((int)buildingBuildListSize);
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;

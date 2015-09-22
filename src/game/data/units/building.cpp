@@ -142,7 +142,7 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 	BaseBS = false;
 	BaseW = false;
 	BaseBW = false;
-	RepeatBuild = false;
+	repeatBuild = false;
 
 	MaxMetalProd = 0;
 	MaxGoldProd = 0;
@@ -150,7 +150,7 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 	data.setHitpoints (data.getHitpointsMax());
 	data.setAmmo (data.getAmmoMax());
 	SubBase = nullptr;
-	BuildSpeed = 0;
+	buildSpeed = 0;
 
 	if (data.isBig)
 	{
@@ -170,6 +170,7 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 	buildListChanged.connect ([&]() { statusChanged(); });
 	buildListFirstItemDataChanged.connect ([&]() { statusChanged(); });
 	researchAreaChanged.connect ([&]() { statusChanged(); });
+	metalPerRoundChanged.connect([&]() { statusChanged(); });
 	ownerChanged.connect ([&]() { registerOwnerEvents(); });
 
 	registerOwnerEvents();
@@ -205,7 +206,7 @@ string cBuilding::getStatusStr (const cPlayer* player) const
 			{
 				int iRound;
 
-				iRound = (int) ceilf (buildListItem.getRemainingMetal() / (float) MetalPerRound);
+				iRound = (int) ceilf (buildListItem.getRemainingMetal() / (float)getMetalPerRound());
 				sText = lngPack.i18n ("Text~Comp~Producing") + lngPack.i18n ("Text~Punctuation~Colon");
 				sText += unitName + " (";
 				sText += iToStr (iRound) + ")";
@@ -713,7 +714,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	// needs raw material:
 	if (data.needsMetal)
 	{
-		if (SubBase->MetalNeed + std::min (MetalPerRound, buildList[0].getRemainingMetal()) > SubBase->getMetalProd() + SubBase->getMetal())
+		if (SubBase->MetalNeed + std::min (getMetalPerRound(), buildList[0].getRemainingMetal()) > SubBase->getMetalProd() + SubBase->getMetal())
 		{
 			sendSavedReport (server, cSavedReportSimple (eSavedReportType::MetalInsufficient), getOwner());
 			return;
@@ -820,7 +821,7 @@ void cBuilding::ServerStartWork (cServer& server)
 
 	// raw material consumer:
 	if (data.needsMetal)
-		SubBase->MetalNeed += std::min (MetalPerRound, buildList[0].getRemainingMetal());
+		SubBase->MetalNeed += std::min (getMetalPerRound(), buildList[0].getRemainingMetal());
 
 	// gold consumer:
 	SubBase->GoldNeed += data.convertsGold;
@@ -884,7 +885,7 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 
 	// raw material consumer:
 	if (data.needsMetal)
-		SubBase->MetalNeed -= std::min (MetalPerRound, buildList[0].getRemainingMetal());
+		SubBase->MetalNeed -= std::min (getMetalPerRound(), buildList[0].getRemainingMetal());
 
 	// gold consumer
 	if (data.convertsGold)
@@ -1299,7 +1300,7 @@ void cBuilding::calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array
 	{
 		float WorkedRounds;
 
-		switch (BuildSpeed)  // BuildSpeed here is the previous build speed
+		switch (buildSpeed)  // BuildSpeed here is the previous build speed
 		{
 			case 0:
 				WorkedRounds = (turboBuildCosts[0] - remainingMetal) / (1.f * data.needsMetal);
@@ -1533,10 +1534,49 @@ void cBuilding::removeBuildListItem (size_t index)
 }
 
 //-----------------------------------------------------------------------------
+int cBuilding::getBuildSpeed() const
+{
+	return buildSpeed;
+}
+
+//-----------------------------------------------------------------------------
+int cBuilding::getMetalPerRound() const
+{
+	return metalPerRound;
+}
+
+//-----------------------------------------------------------------------------
+int cBuilding::getRepeatBuild() const
+{
+	return repeatBuild;
+}
+
+//-----------------------------------------------------------------------------
 void cBuilding::setWorking (bool value)
 {
 	std::swap (isWorking, value);
 	if (value != isWorking) workingChanged();
+}
+
+//-----------------------------------------------------------------------------
+void cBuilding::setBuildSpeed(int value)
+{
+	std::swap(buildSpeed, value);
+	if(value != buildSpeed) buildSpeedChanged();
+}
+
+//-----------------------------------------------------------------------------
+void cBuilding::setMetalPerRound(int value)
+{
+	std::swap(metalPerRound, value);
+	if(value != metalPerRound) metalPerRoundChanged();
+}
+
+//-----------------------------------------------------------------------------
+void cBuilding::setRepeatBuild(bool value)
+{
+	std::swap(repeatBuild, value);
+	if(value != repeatBuild) repeatBuildChanged();
 }
 
 //-----------------------------------------------------------------------------

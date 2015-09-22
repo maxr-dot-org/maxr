@@ -908,9 +908,9 @@ void cClient::HandleNetMessage_GAME_EV_BUILDLIST (cNetMessage& message)
 	}
 	Building->setBuildList (std::move (newBuildList));
 
-	Building->MetalPerRound = message.popInt16();
-	Building->BuildSpeed = message.popInt16();
-	Building->RepeatBuild = message.popBool();
+	Building->setMetalPerRound(message.popInt16());
+	Building->setBuildSpeed(message.popInt16());
+	Building->setRepeatBuild(message.popBool());
 }
 
 void cClient::HandleNetMessage_GAME_EV_MINE_PRODUCE_VALUES (cNetMessage& message)

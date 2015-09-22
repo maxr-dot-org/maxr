@@ -957,9 +957,9 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, const sID& 
 	if (XMLElement* const element = unitNode->FirstChildElement ("Building"))
 	{
 		XMLElement* buildNode = element;
-		if (XMLElement* const element = buildNode->FirstChildElement ("BuildSpeed"))    element->QueryIntAttribute ("num", &building.BuildSpeed);
-		if (XMLElement* const element = buildNode->FirstChildElement ("MetalPerRound")) element->QueryIntAttribute ("num", &building.MetalPerRound);
-		if (buildNode->FirstChildElement ("RepeatBuild")) building.RepeatBuild = true;
+		if (XMLElement* const element = buildNode->FirstChildElement ("BuildSpeed"))    building.setBuildSpeed (element->IntAttribute ("num"));
+		if (XMLElement* const element = buildNode->FirstChildElement ("MetalPerRound")) building.setMetalPerRound (element->IntAttribute ("num"));
+		if (buildNode->FirstChildElement ("RepeatBuild")) building.setRepeatBuild(true);
 
 		int itemnum = 0;
 		const XMLElement* itemElement = buildNode->FirstChildElement ("BuildList")->FirstChildElement ("Item_0");
@@ -1670,9 +1670,9 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int
 	if (!building.isBuildListEmpty())
 	{
 		XMLElement* buildNode = addMainElement (unitNode, "Building");
-		addAttributeElement (buildNode, "BuildSpeed", "num", iToStr (building.BuildSpeed));
-		addAttributeElement (buildNode, "MetalPerRound", "num", iToStr (building.MetalPerRound));
-		if (building.RepeatBuild) addMainElement (buildNode, "RepeatBuild");
+		addAttributeElement (buildNode, "BuildSpeed", "num", iToStr (building.getBuildSpeed()));
+		addAttributeElement (buildNode, "MetalPerRound", "num", iToStr (building.getMetalPerRound()));
+		if (building.getRepeatBuild()) addMainElement (buildNode, "RepeatBuild");
 
 		XMLElement* buildlistNode = addMainElement (buildNode, "BuildList");
 		for (size_t i = 0; i != building.getBuildListSize(); ++i)

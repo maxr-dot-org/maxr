@@ -876,13 +876,13 @@ void sSubBase::makeTurnStartBuild (cServer& server, cBuilding& building)
 		// in the next round can change
 		// so we first subtract the old value from MetalNeed and
 		// then add the new one, to hold the base up to date
-		MetalNeed -= min (building.MetalPerRound, buildListItem.getRemainingMetal());
+		MetalNeed -= min (building.getMetalPerRound(), buildListItem.getRemainingMetal());
 
-		auto value = buildListItem.getRemainingMetal() - std::min (building.MetalPerRound, buildListItem.getRemainingMetal());
+		auto value = buildListItem.getRemainingMetal() - std::min (building.getMetalPerRound(), buildListItem.getRemainingMetal());
 		value = std::max (value, 0);
 		buildListItem.setRemainingMetal (value);
 
-		MetalNeed += min (building.MetalPerRound, buildListItem.getRemainingMetal());
+		MetalNeed += min (building.getMetalPerRound(), buildListItem.getRemainingMetal());
 		sendBuildList (server, building);
 		sendSubbaseValues (server, *this, *owner);
 	}
@@ -1021,7 +1021,7 @@ void sSubBase::addBuilding (cBuilding* b)
 		MaxMetalNeed += b->data.needsMetal * 12;
 		if (b->isUnitWorking())
 		{
-			MetalNeed += min (b->MetalPerRound, b->getBuildListItem (0).getRemainingMetal());
+			MetalNeed += min (b->getMetalPerRound(), b->getBuildListItem (0).getRemainingMetal());
 		}
 	}
 	// calculate gold
