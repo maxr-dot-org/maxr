@@ -220,7 +220,13 @@ void cSavegame::recalcSubbases (cServer& server)
 void cSavegame::loadHeader (string* name, string* type, string* time)
 {
 	if (!loadFile()) return;
+	if (!loadVersion()) return;
 
+	if (version >= cVersion("1.0"))
+	{
+		if (name) *name = "Incompatible Savefile";
+		return;
+	}
 	const XMLElement* headerNode = SaveFile.RootElement()->FirstChildElement ("Header");
 
 	if (name) *name = headerNode->FirstChildElement ("Name")->Attribute ("string");

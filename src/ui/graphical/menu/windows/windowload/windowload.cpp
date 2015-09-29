@@ -27,6 +27,9 @@
 #include "main.h"
 #include "utility/files.h"
 #include "game/logic/savegame.h"
+#include "ui/graphical/application.h"
+#include "../../dialogs/dialogok.h"
+
 
 //------------------------------------------------------------------------------
 cWindowLoad::cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
@@ -160,6 +163,13 @@ void cWindowLoad::handleSlotDoubleClicked (size_t index)
 
 	const auto saveNumber = page * (columns * rows) + index + 1;
 
+	auto selectedSaveInfo = getSaveFile(saveNumber);
+	if (selectedSaveInfo && selectedSaveInfo->getGameName() == "Incompatible Savefile")
+	{
+		getActiveApplication()->show(std::make_shared<cDialogOk>("A newer version of maxr is needed to load this save file."));
+		return;
+	}
+
 	load (saveNumber);
 }
 
@@ -257,6 +267,13 @@ void cWindowLoad::handleUpClicked()
 void cWindowLoad::handleLoadClicked()
 {
 	if (selectedSaveNumber == -1) return;
+
+	auto selectedSaveInfo = getSaveFile(selectedSaveNumber);
+	if (selectedSaveInfo && selectedSaveInfo->getGameName() == "Incompatible Savefile")
+	{
+		getActiveApplication()->show(std::make_shared<cDialogOk>("A newer version of maxr is needed to load this save file."));
+		return;
+	}
 
 	load (selectedSaveNumber);
 }
