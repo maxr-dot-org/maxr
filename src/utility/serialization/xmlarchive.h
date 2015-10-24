@@ -39,6 +39,8 @@ public:
 	template<typename T>
 	cXmlArchiveIn& operator&(const serialization::sNameValuePair<T>& nvp);
 
+	void openNewChild(const std::string& name);
+	void closeChild();
 private:
 	tinyxml2::XMLElement& buffer;
 
@@ -47,8 +49,7 @@ private:
 	// xml handling methods
 	void addToCurrentElement(const std::string& name, const std::string& value);
 	void convertAttributeToChild(const std::string& name);
-	void openNewChild(const std::string& name);
-	void closeChild();
+
 	
 	template<typename T>
 	void pushValue(const serialization::sNameValuePair<T>& nvp);
@@ -90,6 +91,10 @@ public:
 	cXmlArchiveOut& operator&(serialization::sNameValuePair<T>& nvp);
 
 	serialization::cPointerLoader* getPointerLoader() const;
+
+	void enterChild(const std::string& name);
+	void leaveChild();
+
 private:
 	const tinyxml2::XMLElement& buffer;
 
@@ -102,8 +107,6 @@ private:
 	template <typename T>
 	void getFromCurrentElement(serialization::sNameValuePair<T>& nvp);
 	std::string getStringFromCurrentElement(const std::string& name);
-	void enterChild(const std::string& name);
-	void leaveChild();
 
 	template<typename T>
 	void popValue(serialization::sNameValuePair<T>& nvp);

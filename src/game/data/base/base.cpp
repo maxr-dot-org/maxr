@@ -409,7 +409,7 @@ bool sSubBase::increaseEnergyProd (cServer& server, int value)
 	if (neededFuel > getOil() + getMaxOilProd())
 	{
 		// not possible to produce enough fuel
-		sendSavedReport (server, cSavedReportSimple (eSavedReportType::FuelInsufficient), owner);
+		//sendSavedReport (server, cSavedReportSimple (eSavedReportType::FuelInsufficient), owner);
 		return false;
 	}
 
@@ -674,11 +674,11 @@ bool sSubBase::checkOil (cServer& server)
 		setGoldProd (gold);
 		setMetalProd (metal);
 
-		sendSavedReport (server, cSavedReportResourceChanged (RES_OIL, missingOil, true), owner);
-		if (getMetalProd() < metal)
-			sendSavedReport (server, cSavedReportResourceChanged (RES_METAL, metal - MetalProd, false), owner);
-		if (getGoldProd() < gold)
-			sendSavedReport (server, cSavedReportResourceChanged (RES_GOLD, gold - GoldProd, false), owner);
+		//sendSavedReport (server, cSavedReportResourceChanged (RES_OIL, missingOil, true), owner);
+		//if (getMetalProd() < metal)
+			//sendSavedReport (server, cSavedReportResourceChanged (RES_METAL, metal - MetalProd, false), owner);
+		//if (getGoldProd() < gold)
+			//sendSavedReport (server, cSavedReportResourceChanged (RES_GOLD, gold - GoldProd, false), owner);
 	}
 
 	// stop unneeded buildings
@@ -765,19 +765,19 @@ bool sSubBase::checkTurnEnd (cServer& server)
 
 	if (checkMetalConsumer (server))
 	{
-		sendSavedReport (server, cSavedReportSimple (eSavedReportType::MetalLow), owner);
+		//sendSavedReport (server, cSavedReportSimple (eSavedReportType::MetalLow), owner);
 		changedSomething = true;
 	}
 
 	if (checkHumanConsumer (server))
 	{
-		sendSavedReport (server, cSavedReportSimple (eSavedReportType::TeamLow), owner);
+		//sendSavedReport (server, cSavedReportSimple (eSavedReportType::TeamLow), owner);
 		changedSomething = true;
 	}
 
 	if (checkGoldConsumer (server))
 	{
-		sendSavedReport (server, cSavedReportSimple (eSavedReportType::GoldLow), owner);
+		//sendSavedReport (server, cSavedReportSimple (eSavedReportType::GoldLow), owner);
 		changedSomething = true;
 	}
 
@@ -806,13 +806,13 @@ bool sSubBase::checkTurnEnd (cServer& server)
 	}
 	if (oilMissing)
 	{
-		sendSavedReport (server, cSavedReportSimple (eSavedReportType::FuelLow), owner);
+		//sendSavedReport (server, cSavedReportSimple (eSavedReportType::FuelLow), owner);
 		changedSomething = true;
 	}
 
 	if (energyMissing)
 	{
-		sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyLow), owner);
+		//sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyLow), owner);
 		changedSomething = true;
 	}
 
@@ -821,13 +821,13 @@ bool sSubBase::checkTurnEnd (cServer& server)
 	// due to a lack of energy
 	if (checkMetalConsumer (server))
 	{
-		sendSavedReport (server, cSavedReportSimple (eSavedReportType::MetalLow), owner);
+		//sendSavedReport (server, cSavedReportSimple (eSavedReportType::MetalLow), owner);
 		changedSomething = true;
 	}
 
 	if (checkGoldConsumer (server))
 	{
-		sendSavedReport (server, cSavedReportSimple (eSavedReportType::GoldLow), owner);
+		//sendSavedReport (server, cSavedReportSimple (eSavedReportType::GoldLow), owner);
 		changedSomething = true;
 	}
 

@@ -27,6 +27,7 @@
 #include <time.h>
 #include "utility/random.h"
 #include "game/data/savegame.h"
+#include "netmessage2.h"
 
 //------------------------------------------------------------------------------
 cServer2::cServer2() :
@@ -84,7 +85,7 @@ const cModel& cServer2::getModel() const
 	return model;
 }
 //------------------------------------------------------------------------------
-void cServer2::saveModel(cSavegame& savegame, int saveGameNumber, const std::string& saveName)
+void cServer2::saveGameState(int saveGameNumber, const std::string& saveName) const
 {
 	if (SDL_ThreadID() != SDL_GetThreadID(serverThread))
 	{
@@ -94,19 +95,27 @@ void cServer2::saveModel(cSavegame& savegame, int saveGameNumber, const std::str
 		serverThread = nullptr;
 	}
 
-	savegame.save(model, saveGameNumber, saveName);
+	int saveingID = savegame.save(model, saveGameNumber, saveName);
+	cNetMessageRequestGUISaveInfo message(saveingID);
+	sendMessageToClients(message);
 
 	if (!serverThread)
 	{
 		bExit = false;
-		serverThread = SDL_CreateThread(serverThreadCallback, "server", this);
+		serverThread = SDL_CreateThread(serverThreadCallback, "server", const_cast<cServer2*>(this));
 	}
 }
 //------------------------------------------------------------------------------
-void cServer2::loadModel(cSavegame& savegame, int saveGameNumber)
+void cServer2::loadGameState(int saveGameNumber)
 {
 	savegame.loadModel(model, saveGameNumber);
 	gameTimer.setNumberOfPlayers(model.getPlayerList().size());
+}
+//------------------------------------------------------------------------------
+void cServer2::sendGuiInfoToClients(int saveGameNumber)
+{
+	//TODO: do this in loadGameState()?
+	savegame.loadGuiInfo(this, saveGameNumber);
 }
 //------------------------------------------------------------------------------
 void cServer2::pushMessage(std::unique_ptr<cNetMessage2> message)
@@ -117,12 +126,12 @@ void cServer2::pushMessage(std::unique_ptr<cNetMessage2> message)
 
 //------------------------------------------------------------------------------
 //TODO: send to specific player
-void cServer2::sendMessageToClients(std::unique_ptr<cNetMessage2> message, int playerNr) const
+void cServer2::sendMessageToClients(const cNetMessage2& message, int playerNr) const
 {
-	if (message->getType() != cNetMessage2::GAMETIME_SYNC_SERVER)
+	if (message.getType() != eNetMessageType::GAMETIME_SYNC_SERVER)
 	{
 		cTextArchiveIn archive;
-		archive << *message;
+		archive << message;
 		Log.write("Server: --> Data: " + archive.data() + " @" + iToStr(gameTimer.gameTime), cLog::eLOG_TYPE_NET_DEBUG);
 
 	}
@@ -132,8 +141,7 @@ void cServer2::sendMessageToClients(std::unique_ptr<cNetMessage2> message, int p
 	//if (network)
 	//	network->send(message->iLength, message->data);
 
-	localClient->pushMessage(std::move(message));
-
+	localClient->pushMessage(message.clone());
 }
 
 //------------------------------------------------------------------------------
@@ -169,32 +177,42 @@ void cServer2::run()
 		std::unique_ptr<cNetMessage2> message;
 		while (eventQueue.try_pop(message))
 		{
-			if (message->getType() != cNetMessage2::GAMETIME_SYNC_CLIENT)
+			if (message->getType() != eNetMessageType::GAMETIME_SYNC_CLIENT)
 			{
 				cTextArchiveIn archive;
 				archive << *message;
 				Log.write("Server: <-- Data: " + archive.data() + " @" + iToStr(gameTimer.gameTime), cLog::eLOG_TYPE_NET_DEBUG);
 			}
 
+			if (model.getPlayer(message->playerNr) == nullptr) continue;
+
 			switch (message->getType())
 			{
-			case cNetMessage2::ACTION:
+			case eNetMessageType::ACTION:
 				{
 					const cAction* action = static_cast<cAction*>(message.get());
 					action->execute(model);
 
-					sendMessageToClients(std::move(message));
+					sendMessageToClients(*message);
 				}
 				break;
-			case cNetMessage2::GAMETIME_SYNC_CLIENT:
+			case eNetMessageType::GAMETIME_SYNC_CLIENT:
 				{
 					const cNetMessageSyncClient& syncMessage = *static_cast<cNetMessageSyncClient*>(message.get());
 					gameTimer.handleSyncMessage(syncMessage);
 				}
 				break;
+			case eNetMessageType::CHAT:
+				sendMessageToClients(*message);
+				break;
+			case eNetMessageType::GUI_SAVE_INFO:
+				{
+					const cNetMessageGUISaveInfo& saveInfo = *static_cast<cNetMessageGUISaveInfo*>(message.get());
+					savegame.saveGuiInfo(saveInfo);
+				}
+				break;
 			default:
 				Log.write(" Server: Can not handle net message!", cLog::eLOG_TYPE_NET_ERROR);
-				sendMessageToClients(std::move(message));
 				break;
 			}
 			
@@ -211,8 +229,8 @@ void cServer2::initRandomGenerator()
 {
 	uint64_t t = random(UINT64_MAX);
 	model.randomGenerator.seed(t);
-	auto msg = std::make_unique<cNetMessageRandomSeed>(t);
-	sendMessageToClients(std::move(msg));
+	cNetMessageRandomSeed msg(t);
+	sendMessageToClients(msg);
 }
 
 //------------------------------------------------------------------------------

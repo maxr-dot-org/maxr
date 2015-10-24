@@ -262,7 +262,7 @@ void cAutoMJob::planLongMove (const std::vector<cAutoMJob*>& jobs)
 	}
 	if (minValue == 0)
 	{
-		client.getActivePlayer().addSavedReport (std::make_unique<cSavedReportSurveyorAiSenseless> (vehicle));
+		//client.getActivePlayer().addSavedReport (std::make_unique<cSavedReportSurveyorAiSenseless> (vehicle));
 		finished = true;
 	}
 	else
@@ -273,7 +273,7 @@ void cAutoMJob::planLongMove (const std::vector<cAutoMJob*>& jobs)
 		}
 		else
 		{
-			client.getActivePlayer().addSavedReport (std::make_unique<cSavedReportSurveyorAiConfused> (vehicle));
+			//client.getActivePlayer().addSavedReport (std::make_unique<cSavedReportSurveyorAiConfused> (vehicle));
 			finished = true;
 		}
 	}

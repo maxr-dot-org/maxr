@@ -23,19 +23,9 @@
 #include "binaryarchive.h"
 
 
-cBinaryArchiveIn::cBinaryArchiveIn()
+cBinaryArchiveIn::cBinaryArchiveIn(std::vector<unsigned char>& buffer) :
+	buffer(buffer)
 {};
-//------------------------------------------------------------------------------
-const unsigned char* cBinaryArchiveIn::data() const
-{
-	return buffer.data();
-}
-
-//------------------------------------------------------------------------------
-size_t cBinaryArchiveIn::length() const
-{
-	return buffer.size();
-}
 //------------------------------------------------------------------------------
 void cBinaryArchiveIn::pushValue(bool value)
 {
@@ -109,13 +99,11 @@ void cBinaryArchiveIn::pushValue(double value)
 }
 
 //------------------------------------------------------------------------------
-cBinaryArchiveOut::cBinaryArchiveOut(const unsigned char* data, size_t length, serialization::cPointerLoader* pointerLoader) :
-	buffer(length),
+cBinaryArchiveOut::cBinaryArchiveOut(const std::vector<unsigned char>& buffer, serialization::cPointerLoader* pointerLoader) :
+	buffer(buffer),
 	readPosition(0),
 	pointerLoader(pointerLoader)
-{
-	memcpy(buffer.data(), data, length); //TODO: was ist das sinnvollste hier?
-}
+{}
 //------------------------------------------------------------------------------
 void cBinaryArchiveOut::rewind()
 {

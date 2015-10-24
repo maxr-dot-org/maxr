@@ -37,43 +37,6 @@ cSavedReportChat::cSavedReportChat (std::string playerName_, std::string text_) 
 {}
 
 //------------------------------------------------------------------------------
-cSavedReportChat::cSavedReportChat (cNetMessage& message)
-{
-	playerName = message.popString();
-	playerNumber = message.popInt32();
-	text = message.popString();
-}
-
-//------------------------------------------------------------------------------
-cSavedReportChat::cSavedReportChat (const tinyxml2::XMLElement& element)
-{
-	text = element.Attribute ("msg");
-	if (auto value = element.Attribute ("playername")) playerName = value;
-	playerNumber = 0;
-	element.QueryIntAttribute ("playernumber", &playerNumber);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportChat::pushInto (cNetMessage& message) const
-{
-	message.pushString (text);
-	message.pushInt32 (playerNumber);
-	message.pushString (playerName);
-
-	cSavedReport::pushInto (message);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportChat::pushInto (tinyxml2::XMLElement& element) const
-{
-	element.SetAttribute ("msg", text.c_str());
-	element.SetAttribute ("playername", playerName.c_str());
-	element.SetAttribute ("playernumber", iToStr (playerNumber).c_str());
-
-	cSavedReport::pushInto (element);
-}
-
-//------------------------------------------------------------------------------
 eSavedReportType cSavedReportChat::getType() const
 {
 	return eSavedReportType::Chat;

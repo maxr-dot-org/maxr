@@ -41,13 +41,3 @@ void cLocalHotSeatGame::run()
 	//	clients[i]->getGameTimer()->run();
 	}
 }
-
-//------------------------------------------------------------------------------
-void cLocalHotSeatGame::save (int saveNumber, const std::string& saveName)
-{
-	if (!server) throw std::runtime_error ("Game not started!"); // should never happen (hence a translation is not necessary).
-
-	cSavegame savegame;
-	//savegame.save(server->getModel(), saveNumber, saveName);
-	//server->makeAdditionalSaveRequest (saveNumber); //TODO: save gameGuiStates
-}

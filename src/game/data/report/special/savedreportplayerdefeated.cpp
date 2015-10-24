@@ -27,34 +27,6 @@ cSavedReportPlayerDefeated::cSavedReportPlayerDefeated (const cPlayer& player) :
 {}
 
 //------------------------------------------------------------------------------
-cSavedReportPlayerDefeated::cSavedReportPlayerDefeated (cNetMessage& message)
-{
-	playerName = message.popString();
-}
-
-//------------------------------------------------------------------------------
-cSavedReportPlayerDefeated::cSavedReportPlayerDefeated (const tinyxml2::XMLElement& element)
-{
-	playerName = element.Attribute ("playerName");
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportPlayerDefeated::pushInto (cNetMessage& message) const
-{
-	message.pushString (playerName);
-
-	cSavedReport::pushInto (message);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportPlayerDefeated::pushInto (tinyxml2::XMLElement& element) const
-{
-	element.SetAttribute ("playerName", playerName.c_str());
-
-	cSavedReport::pushInto (element);
-}
-
-//------------------------------------------------------------------------------
 eSavedReportType cSavedReportPlayerDefeated::getType() const
 {
 	return eSavedReportType::PlayerDefeated;

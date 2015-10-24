@@ -30,11 +30,10 @@ class cSavedReportPathInterrupted : public cSavedReportUnit
 {
 public:
 	cSavedReportPathInterrupted (const cUnit& unit);
-	explicit cSavedReportPathInterrupted (cNetMessage& message);
-	explicit cSavedReportPathInterrupted (const tinyxml2::XMLElement& element);
-
-	virtual void pushInto (cNetMessage& message) const MAXR_OVERRIDE_FUNCTION;
-	virtual void pushInto (tinyxml2::XMLElement& element) const MAXR_OVERRIDE_FUNCTION;
+	template <typename T, ENABLE_ARCHIVE_OUT>
+	explicit cSavedReportPathInterrupted(T& archive) :
+		cSavedReportUnit(archive)
+	{}
 
 	virtual eSavedReportType getType() const MAXR_OVERRIDE_FUNCTION;
 

@@ -23,9 +23,10 @@
 #include <string>
 #include <memory>
 
-#include "tinyxml2.h"
+#include "utility/serialization/binaryarchive.h"
+#include "utility/serialization/textarchive.h"
+#include "utility/serialization/xmlarchive.h"
 
-class cNetMessage;
 class cSoundManager;
 class cPosition;
 struct sID;
@@ -103,11 +104,20 @@ public:
 
 	virtual void playSound (cSoundManager& soundManager) const;
 
-	virtual void pushInto (cNetMessage& message) const;
-	virtual void pushInto (tinyxml2::XMLElement& element) const;
+	static std::unique_ptr<cSavedReport> createFrom(cBinaryArchiveOut& archive);
+	static std::unique_ptr<cSavedReport> createFrom(cXmlArchiveOut& archive, const std::string& name);
 
-	static std::unique_ptr<cSavedReport> createFrom (cNetMessage& message);
-	static std::unique_ptr<cSavedReport> createFrom (const tinyxml2::XMLElement& element);
+	virtual void serialize(cBinaryArchiveIn& archive) { serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive) { serializeThis(archive); }
+	virtual void serialize(cXmlArchiveIn& archive) { serializeThis(archive); }
+private:
+	template <typename T>
+	static std::unique_ptr<cSavedReport> createFromImpl(T& archive);
+	template <typename T>
+	void serializeThis(T& archive)
+	{
+		archive & serialization::makeNvp("type", getType());
+	}
 };
 
 #endif // game_data_reports_savedreportH

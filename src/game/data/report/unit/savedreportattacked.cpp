@@ -32,36 +32,6 @@ cSavedReportAttacked::cSavedReportAttacked (const cUnit& unit) :
 {}
 
 //------------------------------------------------------------------------------
-cSavedReportAttacked::cSavedReportAttacked (cNetMessage& message) :
-	cSavedReportUnit (message)
-{
-	unitName = message.popString();
-}
-
-//------------------------------------------------------------------------------
-cSavedReportAttacked::cSavedReportAttacked (const tinyxml2::XMLElement& element) :
-	cSavedReportUnit (element)
-{
-	unitName = element.Attribute ("unitName");
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportAttacked::pushInto (cNetMessage& message) const
-{
-	message.pushString (unitName);
-
-	cSavedReportUnit::pushInto (message);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportAttacked::pushInto (tinyxml2::XMLElement& element) const
-{
-	element.SetAttribute ("unitName", unitName.c_str());
-
-	cSavedReportUnit::pushInto (element);
-}
-
-//------------------------------------------------------------------------------
 eSavedReportType cSavedReportAttacked::getType() const
 {
 	return eSavedReportType::Attacked;

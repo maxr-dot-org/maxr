@@ -38,8 +38,6 @@ public:
 
 	virtual void run() MAXR_OVERRIDE_FUNCTION;
 
-	virtual void save (int saveNumber, const std::string& saveName) MAXR_OVERRIDE_FUNCTION;
-
 protected:
 	std::vector<std::shared_ptr<cClient>> clients;
 	std::unique_ptr<cServer> server;

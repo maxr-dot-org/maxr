@@ -30,11 +30,16 @@ class cSavedReportDestroyed : public cSavedReportUnit
 {
 public:
 	cSavedReportDestroyed (const cUnit& unit);
-	explicit cSavedReportDestroyed (cNetMessage& message);
-	explicit cSavedReportDestroyed (const tinyxml2::XMLElement& element);
+	template <typename T, ENABLE_ARCHIVE_OUT>
+	explicit cSavedReportDestroyed(T& archive) :
+		cSavedReportUnit(archive)
+	{
+		serializeThis(archive);
+	}
 
-	virtual void pushInto (cNetMessage& message) const MAXR_OVERRIDE_FUNCTION;
-	virtual void pushInto (tinyxml2::XMLElement& element) const MAXR_OVERRIDE_FUNCTION;
+	virtual void serialize(cBinaryArchiveIn& archive) { cSavedReportUnit::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cXmlArchiveIn& archive) { cSavedReportUnit::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive) { cSavedReportUnit::serialize(archive); serializeThis(archive); }
 
 	virtual eSavedReportType getType() const MAXR_OVERRIDE_FUNCTION;
 
@@ -44,6 +49,12 @@ protected:
 	virtual std::string getText() const MAXR_OVERRIDE_FUNCTION;
 
 private:
+	template <typename T>
+	void serializeThis(T& archive)
+	{
+		archive & NVP(unitName);
+	}
+
 	std::string unitName;
 };
 

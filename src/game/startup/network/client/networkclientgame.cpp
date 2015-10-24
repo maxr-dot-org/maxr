@@ -32,12 +32,6 @@ void cNetworkClientGame::run()
 }
 
 //------------------------------------------------------------------------------
-void cNetworkClientGame::save (int saveNumber, const std::string& saveName)
-{
-	throw std::runtime_error (lngPack.i18n ("Text~Multiplayer~Save_Only_Host"));
-}
-
-//------------------------------------------------------------------------------
 void cNetworkClientGame::setNetwork (std::shared_ptr<cTCP> network_)
 {
 	network = network_;

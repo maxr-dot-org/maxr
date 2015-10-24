@@ -26,7 +26,36 @@
 #include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
 
+std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
+{
+	eActiontype type;
+	archive >> type;
 
+	switch (type)
+	{
+	case eActiontype::ACTION_INIT_NEW_GAME:
+		return std::make_unique<cActionInitNewGame>(archive);
+	default:
+		//TODO: to throw or not to throw...
+		Log.write("Unknown action type " + iToStr(static_cast<int>(type)), cLog::eLOG_TYPE_NET_ERROR);
+		return nullptr;
+	}
+}
+
+//------------------------------------------------------------------------------
+cActionInitNewGame::cActionInitNewGame() : 
+	cAction(eActiontype::ACTION_INIT_NEW_GAME), 
+	clan(-1)
+{};
+
+//------------------------------------------------------------------------------
+cActionInitNewGame::cActionInitNewGame(cBinaryArchiveOut& archive)
+	: cAction(eActiontype::ACTION_INIT_NEW_GAME)
+{
+	serializeThis(archive);
+}
+
+//------------------------------------------------------------------------------
 void cActionInitNewGame::execute(cModel& model) const
 {
 	//TODO: clan

@@ -19,32 +19,57 @@
 
 #include <memory>
 
+#include "game/logic/action.h"
+
 #include "main.h"
 #include "netmessage2.h"
 
-std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(cBinaryArchiveOut& archive)
+std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(const std::vector<unsigned char>& serialMessage)
 {
+	cBinaryArchiveOut archive(serialMessage);
+
 	eNetMessageType type;
 	archive >> type;
+
+	int playerNr;
+	archive >> playerNr;
+
 	std::unique_ptr<cNetMessage2> message;
 	switch (type)
 	{
-	//case cNetMessage2::ACTION:
-	//	break;
-	//case cNetMessage2::SYNC:
-	//	break;
-	//case cNetMessage2::PLAYERSTATE:
-	//	break;
-	case cNetMessage2::CHAT:
-		message = std::make_unique<cNetMessageChat>();
-		break;
+	case eNetMessageType::ACTION:
+		message = cAction::createFromBuffer(archive); break;
+	case eNetMessageType::GAMETIME_SYNC_SERVER:
+		message = std::make_unique<cNetMessageSyncServer>(archive); break;
+	case eNetMessageType::GAMETIME_SYNC_CLIENT:
+		message = std::make_unique<cNetMessageSyncClient>(archive); break;
+	case eNetMessageType::RANDOM_SEED:
+		message = std::make_unique<cNetMessageRandomSeed>(archive); break;
+	//case eNetMessageType::PLAYERSTATE:
+	//	message = std::make_unique<cNe>(archive); break;
+	case eNetMessageType::CHAT:
+		message = std::make_unique<cNetMessageChat>(archive); break;
+	case eNetMessageType::GUI_SAVE_INFO:
+		message = std::make_unique<cNetMessageGUISaveInfo>(archive); break;
+	case eNetMessageType::REQUEST_GUI_SAVE_INFO:
+		message = std::make_unique<cNetMessageRequestGUISaveInfo>(archive); break;
+		
 	default:
-		throw std::runtime_error("Unknown action type " + iToStr(type));
+		//TODO: Do not throw. Or catch errors on handling netmessages.
+		throw std::runtime_error("Unknown net message type " + iToStr(static_cast<int>(type)));
 		break;
 	}
 
-	archive.rewind();
-	archive >> *message;
+	message->playerNr = playerNr;
 
-	return std::move(message);
+	return message;
+}
+
+std::unique_ptr<cNetMessage2> cNetMessage2::clone() const
+{
+	std::vector<unsigned char> serialMessage;
+	cBinaryArchiveIn archiveIn(serialMessage);
+	archiveIn << *this;
+
+	return cNetMessage2::createFromBuffer(serialMessage);
 }

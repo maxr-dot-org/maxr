@@ -39,12 +39,3 @@ void cLocalSingleplayerGame::run()
 {
 	if (client) client->getGameTimer()->run(*client);
 }
-
-//------------------------------------------------------------------------------
-void cLocalSingleplayerGame::save (int saveNumber, const std::string& saveName)
-{
-	if (!server) throw std::runtime_error ("Game not started!"); // should never happen (hence a translation is not necessary).
-
-	server->saveModel (savegame, saveNumber, saveName);
-	//server->makeAdditionalSaveRequest (saveNumber); //TODO: save gameGuiStates
-}

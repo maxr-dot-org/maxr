@@ -380,6 +380,7 @@
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>
 			<ERROR_Map_Loading ENG="Error loading map" localized="Fehler beim Laden der Karte"/>
 			<ERROR_Save_Loading ENG="Error while loading saved game" localized="Fehler beim Laden des gespeicherten Spielstands"/>
+			<ERROR_Save_Writing ENG="Error while writing save game file" localized="Fehler beim Schreiben des Spielstands"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="fehlende Übersetzung: %s"/>
 			<INFO_Language_initialised ENG="Language is now initialised" localized="Sprach ist nun initialisiert"/>
 			<INFO_Not_Implemented ENG="Not yet implemented" localized="Noch nicht umgesetzt"/>

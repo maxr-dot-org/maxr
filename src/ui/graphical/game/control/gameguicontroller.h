@@ -67,11 +67,13 @@ public:
 	void start();
 
 	void addPlayerGameGuiState (const cPlayer& player, cGameGuiState playerGameGuiState);
+	
+	void addSavedReport(std::unique_ptr<cSavedReport> savedReport, int playerNr);
+	const std::vector<std::unique_ptr<cSavedReport>>& getSavedReports(int playerNr) const;
 
 	void setSingleClient (std::shared_ptr<cClient> clients);
 	void setClients (std::vector<std::shared_ptr<cClient>> clients, int activePlayerNumber);
 
-	mutable cSignal<void (int saveNumber, const std::string& name)> triggeredSave;
 	mutable cSignal<void ()> terminated;
 private:
 	cSignalConnectionManager signalConnectionManager;
@@ -86,10 +88,11 @@ private:
 	std::shared_ptr<cAnimationTimer> animationTimer;
 
 	std::shared_ptr<cGameGui> gameGui;
-	std::shared_ptr<cClient> activeClient; //TODO: rename -> client
-	std::vector<std::shared_ptr<cClient>> clients; //TODO: remove
+	std::shared_ptr<cClient> activeClient;
+	std::vector<std::shared_ptr<cClient>> clients;
 
 	std::map<int, cGameGuiState> playerGameGuiStates;
+	std::map<int, std::shared_ptr<std::vector<std::unique_ptr<cSavedReport>>>> playerReports;
 
 	std::pair<bool, cPosition> savedReportPosition;
 	std::shared_ptr<cWindowUpgradesFilterState> upgradesFilterState;
@@ -99,9 +102,10 @@ private:
 
 	void connectGuiStaticCommands();
 
-	void setActiveClient (std::shared_ptr<cClient> client); //Todo: set active player. Oder signal active player changed
+	void setActiveClient (std::shared_ptr<cClient> client);
 
 	void connectClient (cClient& client);
+	void connectReportSources(cClient& client);
 
 	void showNextPlayerDialog();
 
@@ -121,7 +125,7 @@ private:
 
 	void handleChatCommand (const std::string& command);
 
-	void handleReport (const cSavedReport& report);
+	void handleReportForActivePlayer (const cSavedReport& report);
 
 	void selectNextUnit();
 	void selectPreviousUnit();

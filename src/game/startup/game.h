@@ -32,8 +32,6 @@ public:
 	{}
 	virtual ~cGame() {}
 
-	virtual void save (int saveNumber, const std::string& saveName) = 0;
-
 	virtual bool wantsToTerminate() const MAXR_OVERRIDE_FUNCTION
 	{
 		return terminate;

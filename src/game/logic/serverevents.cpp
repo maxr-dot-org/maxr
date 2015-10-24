@@ -687,16 +687,6 @@ void sendTurn (cServer& server, int turn, const cPlayer& receiver)
 }
 
 //------------------------------------------------------------------------------
-void sendGameGuiState (cServer& server, const cGameGuiState& gameGuiState, const cPlayer& player)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_HUD_SETTINGS);
-
-	gameGuiState.pushInto (*message);
-
-	server.sendNetMessage (std::move (message), &player);
-}
-
-//------------------------------------------------------------------------------
 void sendStoreVehicle (cServer& server, int unitid, bool vehicle, int storedunitid, const cPlayer& receiver)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_STORE_UNIT);
@@ -923,23 +913,6 @@ void sendCommandoAnswer (cServer& server, bool success, bool steal, const cVehic
 	message->pushBool (steal);
 	message->pushBool (success);
 	server.sendNetMessage (std::move (message), &receiver);
-}
-
-//------------------------------------------------------------------------------
-void sendRequestSaveInfo (cServer& server, int saveingID)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_REQ_SAVE_INFO);
-	message->pushInt16 (saveingID);
-	server.sendNetMessage (std::move (message));
-}
-
-//------------------------------------------------------------------------------
-void sendSavedReport (cServer& server, const cSavedReport& savedReport, const cPlayer* receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_SAVED_REPORT);
-
-	savedReport.pushInto (*message);
-	server.sendNetMessage (std::move (message), receiver);
 }
 
 //------------------------------------------------------------------------------

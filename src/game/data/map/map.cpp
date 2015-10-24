@@ -414,7 +414,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	SDL_RWclose (fpMapFile);
 
 	//save crc, to check map file equality when loading a game
-	crc = MapDownload::calculateCheckSum(fullFilename);
+	crc = MapDownload::calculateCheckSum(filename);
 	return true;
 }
 

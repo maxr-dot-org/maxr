@@ -45,9 +45,6 @@ void cNetworkClientGameReconnection::start (cApplication& application)
 
 	gameGuiController->start();
 
-	using namespace std::placeholders;
-	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cNetworkClientGameReconnection::save, this, _1, _2));
-
 	terminate = false;
 
 	application.addRunnable (shared_from_this());

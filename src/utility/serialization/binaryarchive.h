@@ -26,7 +26,7 @@
 class cBinaryArchiveIn
 {
 public:
-	cBinaryArchiveIn();
+	cBinaryArchiveIn(std::vector<unsigned char>& buffer);
 
 	static const bool isWriter = true;
 
@@ -34,11 +34,8 @@ public:
 	cBinaryArchiveIn& operator<<(const T& value);
 	template<typename T>
 	cBinaryArchiveIn& operator&(const T& value);
-
-	const unsigned char* data() const;
-	size_t length() const;
 private:
-	std::vector<unsigned char> buffer;
+	std::vector<unsigned char>& buffer;
 
 	template <typename T>
 	void writeToBuffer(const T& value);
@@ -79,7 +76,7 @@ public:
 
 	static const bool isWriter = false;
 
-	cBinaryArchiveOut(const unsigned char* data, size_t length, serialization::cPointerLoader* pointerLoader = NULL);
+	cBinaryArchiveOut(const std::vector<unsigned char>& buffer, serialization::cPointerLoader* pointerLoader = NULL);
 
 	template<typename T>
 	cBinaryArchiveOut& operator>>(T& value);
@@ -89,7 +86,7 @@ public:
 	void rewind();
 	serialization::cPointerLoader* getPointerLoader() const;
 private:
-	std::vector<unsigned char> buffer;
+	const std::vector<unsigned char>& buffer;
 	size_t readPosition;
 
 	serialization::cPointerLoader* pointerLoader;
@@ -270,7 +267,6 @@ void cBinaryArchiveOut::readFromBuffer(T1& value)
 
 	if (buffer.size() - readPosition < SIZE)
 	{
-		//TODO: catch
 		throw std::runtime_error("cBinaryArchiveOut: Buffer underrun");
 	}
 
@@ -278,25 +274,25 @@ void cBinaryArchiveOut::readFromBuffer(T1& value)
 	{
 	case 1:
 	{
-		Sint8 temp = *reinterpret_cast<Sint8*>(&buffer[readPosition]);
+		Sint8 temp = *reinterpret_cast<const Sint8*>(&buffer[readPosition]);
 		value = static_cast<T1>(temp);
 		break;
 	}
 	case 2:
 	{
-		Sint16 temp = SDL_SwapLE16(*reinterpret_cast<Sint16*>(&buffer[readPosition]));
+		Sint16 temp = SDL_SwapLE16(*reinterpret_cast<const Sint16*>(&buffer[readPosition]));
 		value = static_cast<T1>(temp);
 		break;
 	}
 	case 4:
 	{
-		Sint32 temp = SDL_SwapLE32(*reinterpret_cast<Sint32*>(&buffer[readPosition]));
+		Sint32 temp = SDL_SwapLE32(*reinterpret_cast<const Sint32*>(&buffer[readPosition]));
 		value = static_cast<T1>(temp);
 		break;
 	}
 	case 8:
 	{
-		Sint32 temp = SDL_SwapLE32(*reinterpret_cast<Sint32*>(&buffer[readPosition]));
+		Sint64 temp = SDL_SwapLE64(*reinterpret_cast<const Sint64*>(&buffer[readPosition]));
 		value = static_cast<T1>(temp);		
 		break;
 	}

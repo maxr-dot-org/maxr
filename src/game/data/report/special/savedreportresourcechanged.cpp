@@ -18,10 +18,8 @@
  ***************************************************************************/
 
 #include "game/data/report/special/savedreportresourcechanged.h"
-#include "netmessage.h"
 #include "game/data/player/player.h"
 #include "game/data/map/map.h" // RES_XYZ
-#include "extendedtinyxml.h"
 
 //------------------------------------------------------------------------------
 cSavedReportResourceChanged::cSavedReportResourceChanged (int resourceType_, int amount_, bool increase_) :
@@ -29,42 +27,6 @@ cSavedReportResourceChanged::cSavedReportResourceChanged (int resourceType_, int
 	amount (amount_),
 	increase (increase_)
 {}
-
-//------------------------------------------------------------------------------
-cSavedReportResourceChanged::cSavedReportResourceChanged (cNetMessage& message)
-{
-	amount = message.popInt32();
-	resourceType = message.popInt32();
-	increase = message.popBool();
-}
-
-//------------------------------------------------------------------------------
-cSavedReportResourceChanged::cSavedReportResourceChanged (const tinyxml2::XMLElement& element)
-{
-	amount = element.IntAttribute ("amount");
-	resourceType = element.IntAttribute ("resourceType");
-	increase = getXMLAttributeBoolFromElement(&element, "increase");
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportResourceChanged::pushInto (cNetMessage& message) const
-{
-	message.pushBool (increase);
-	message.pushInt32 (resourceType);
-	message.pushInt32 (amount);
-
-	cSavedReport::pushInto (message);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportResourceChanged::pushInto (tinyxml2::XMLElement& element) const
-{
-	element.SetAttribute ("amount", iToStr (amount).c_str());
-	element.SetAttribute ("resourceType", iToStr (resourceType).c_str());
-	element.SetAttribute ("increase", bToStr (increase).c_str());
-
-	cSavedReport::pushInto (element);
-}
 
 //------------------------------------------------------------------------------
 eSavedReportType cSavedReportResourceChanged::getType() const

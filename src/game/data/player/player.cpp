@@ -738,7 +738,9 @@ void cPlayer::setScore (int s, int turn)
 	unsigned int t = turn;
 
 	if (pointsHistory.size() < t)
-		pointsHistory.resize (t);
+	{
+		pointsHistory.resize(t, pointsHistory.back());
+	}
 	pointsHistory[t - 1] = s;
 }
 
@@ -764,8 +766,7 @@ int cPlayer::getScore (int turn) const
 
 	if (pointsHistory.size() < t)
 	{
-		const int score = pointsHistory.empty() ? 0 : pointsHistory.back();
-		pointsHistory.resize (t, score);
+		return pointsHistory.empty() ? 0 : pointsHistory.back();
 	}
 	return pointsHistory[t - 1];
 }
@@ -1098,22 +1099,6 @@ void cPlayer::drawSpecialCircleBig (const cPosition& position, int iRadius, std:
 				map[k + (position.y() - rx + 1) *mapsize.x()] |= 1;
 		}
 	}
-}
-
-//------------------------------------------------------------------------------
-void cPlayer::addSavedReport (std::unique_ptr<cSavedReport> savedReport) const
-{
-	if (savedReport == nullptr) return;
-
-	savedReportsList.push_back (std::move (savedReport));
-
-	reportAdded (*savedReportsList.back());
-}
-
-//------------------------------------------------------------------------------
-const std::vector<std::unique_ptr<cSavedReport>>& cPlayer::getSavedReports() const
-{
-	return savedReportsList;
 }
 
 //------------------------------------------------------------------------------

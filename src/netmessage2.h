@@ -27,34 +27,34 @@
 #include "utility/serialization/textarchive.h"
 #include "utility/serialization/binaryarchive.h"
 #include "game/logic/gametimer.h"
+#include "game/data/report/savedreport.h"
+#include "ui/graphical/game/gameguistate.h"
 
-class cModel;
+class cSavedReport;
+
+enum class eNetMessageType {
+	ACTION, /** the set of actions a client (AI or player) can trigger to influence the game */
+	GAMETIME_SYNC_SERVER, /** sync message from server to clients */
+	GAMETIME_SYNC_CLIENT, /** sync message from client to server */
+	RANDOM_SEED,
+	PLAYERSTATE,
+	CHAT,
+	GUI_SAVE_INFO,
+	REQUEST_GUI_SAVE_INFO
+};
 
 class cNetMessage2
 {
 public:
-	enum eNetMessageType {
-		ACTION, /** the set of actions a client (AI or player) can trigger to influence the game */
-		GAMETIME_SYNC_SERVER, /** sync message from server to clients */
-		GAMETIME_SYNC_CLIENT, /** sync message from client to server */
-		RANDOM_SEED,
-		PLAYERSTATE,
-		CHAT //TODO: action?
-	};
-	static std::unique_ptr<cNetMessage2> createFromBuffer(cBinaryArchiveOut& archive);
+
+	static std::unique_ptr<cNetMessage2> createFromBuffer(const std::vector<unsigned char>& serialMessage);
 	
 	virtual ~cNetMessage2() {}
 
 	eNetMessageType getType() const { return type; };
+	std::unique_ptr<cNetMessage2> clone() const;
 
-	template <typename T>
-	void serializeThis(T& archive)
-	{ 
-		archive & type; 
-		archive & playerNr;
-	}
 	virtual void serialize(cBinaryArchiveIn& archive) { serializeThis(archive); } 
-	virtual void serialize(cBinaryArchiveOut& archive) { serializeThis(archive); }
 	virtual void serialize(cTextArchiveIn& archive) { serializeThis(archive); }
 
 	int playerNr;
@@ -62,72 +62,83 @@ public:
 protected:
 	cNetMessage2(eNetMessageType type) : type(type), playerNr(-1) {};
 private:
+	template <typename T>
+	void serializeThis(T& archive)
+	{
+		archive & type;
+		archive & playerNr;
+	}
+
 	cNetMessage2(const cNetMessage2&) MAXR_DELETE_FUNCTION;
 	cNetMessage2& operator=(const cNetMessage2&) MAXR_DELETE_FUNCTION;
+
 	eNetMessageType type;
 };
 
 class cNetMessageChat : public cNetMessage2 
 {
 public:
-	cNetMessageChat(std::string message) : cNetMessage2(CHAT), message(message) {};
-	cNetMessageChat() : cNetMessage2(CHAT) {};
+	cNetMessageChat(std::string message) : cNetMessage2(eNetMessageType::CHAT), message(message) {};
+	cNetMessageChat() :	cNetMessage2(eNetMessageType::CHAT) {};
 
+	cNetMessageChat(cBinaryArchiveOut& archive) :
+		cNetMessage2(eNetMessageType::CHAT)
+	{
+		serializeThis(archive);
+	}
+
+	virtual void serialize(cBinaryArchiveIn& archive) { cNetMessage2::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive)   { cNetMessage2::serialize(archive); serializeThis(archive); }
+
+	std::string message;
+
+private:
 	template<typename T>
 	void serializeThis(T& archive)
 	{
-		cNetMessage2::serialize(archive);
 		archive & message;
 	}
-	virtual void serialize(cBinaryArchiveIn& archive) { serializeThis(archive); }
-	virtual void serialize(cBinaryArchiveOut& archive) { serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive) { serializeThis(archive); }
-
-	std::string message;
 };
 
 class cNetMessageSyncServer : public cNetMessage2
 {
 public:
-	cNetMessageSyncServer() : cNetMessage2(GAMETIME_SYNC_SERVER) {};
-
-	template<typename T>
-	void serializeThis(T& archive)
+	cNetMessageSyncServer() : cNetMessage2(eNetMessageType::GAMETIME_SYNC_SERVER) {};
+	cNetMessageSyncServer(cBinaryArchiveOut& archive) :
+		cNetMessage2(eNetMessageType::GAMETIME_SYNC_SERVER)
 	{
-		cNetMessage2::serialize(archive);
-		archive & gameTime;
-		archive & checksum;
-		archive & ping;
+		serializeThis(archive);
 	}
-	virtual void serialize(cBinaryArchiveIn& archive) { serializeThis(archive); }
-	virtual void serialize(cBinaryArchiveOut& archive) { serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive) { serializeThis(archive); }
+
+	virtual void serialize(cBinaryArchiveIn& archive) { cNetMessage2::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive)   { cNetMessage2::serialize(archive); serializeThis(archive); }
 
 	unsigned int gameTime;
 	unsigned int checksum;
 	unsigned int ping;
+
+private:
+	template<typename T>
+	void serializeThis(T& archive)
+	{
+		archive & gameTime;
+		archive & checksum;
+		archive & ping;
+	}
 };
 
 class cNetMessageSyncClient : public cNetMessage2
 {
 public:
-	cNetMessageSyncClient() : cNetMessage2(GAMETIME_SYNC_CLIENT) {};
-
-	template<typename T>
-	void serializeThis(T& archive)
+	cNetMessageSyncClient() : cNetMessage2(eNetMessageType::GAMETIME_SYNC_CLIENT) {};
+	cNetMessageSyncClient(cBinaryArchiveOut& archive) :
+		cNetMessage2(eNetMessageType::GAMETIME_SYNC_CLIENT)
 	{
-		cNetMessage2::serialize(archive);
-		archive & gameTime;
-		archive & crcOK;
-		archive & timeBuffer;
-		archive & ticksPerFrame;
-		archive & queueSize;
-		archive & eventCounter;
+		serializeThis(archive);
 	}
-	virtual void serialize(cBinaryArchiveIn& archive) { serializeThis(archive); }
-	virtual void serialize(cBinaryArchiveOut& archive) { serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive) { serializeThis(archive); }
 
+	virtual void serialize(cBinaryArchiveIn& archive) { cNetMessage2::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive)   { cNetMessage2::serialize(archive); serializeThis(archive); }
 
 	unsigned int gameTime;
 
@@ -137,27 +148,122 @@ public:
 	unsigned int ticksPerFrame;
 	unsigned int queueSize;
 	unsigned int eventCounter;
+
+private:
+	template<typename T>
+	void serializeThis(T& archive)
+	{
+		archive & gameTime;
+		archive & crcOK;
+		archive & timeBuffer;
+		archive & ticksPerFrame;
+		archive & queueSize;
+		archive & eventCounter;
+	}
 };
 
 class cNetMessageRandomSeed : public cNetMessage2
 {
 public:
 	cNetMessageRandomSeed(uint64_t seed) : 
-		cNetMessage2(RANDOM_SEED),
+		cNetMessage2(eNetMessageType::RANDOM_SEED),
 		seed(seed) 
 	{};
+	cNetMessageRandomSeed(cBinaryArchiveOut& archive) :
+		cNetMessage2(eNetMessageType::RANDOM_SEED)
+	{
+		serializeThis(archive);
+	}
 
+	virtual void serialize(cBinaryArchiveIn& archive) { cNetMessage2::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive)   { cNetMessage2::serialize(archive); serializeThis(archive); }
+
+	uint64_t seed;
+private:
 	template<typename T>
 	void serializeThis(T& archive)
 	{
-		cNetMessage2::serialize(archive);
 		archive & seed;
 	}
-	virtual void serialize(cBinaryArchiveIn& archive) { serializeThis(archive); }
-	virtual void serialize(cBinaryArchiveOut& archive) { serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive) { serializeThis(archive); }
-
-	uint64_t seed;
 };
 
+class cNetMessageGUISaveInfo : public cNetMessage2
+{
+public:
+	cNetMessageGUISaveInfo(int savingID) :
+		cNetMessage2(eNetMessageType::GUI_SAVE_INFO),
+		savingID(savingID),
+		reports(nullptr)
+	{};
+	cNetMessageGUISaveInfo(cBinaryArchiveOut& archive) :
+		cNetMessage2(eNetMessageType::GUI_SAVE_INFO)
+	{
+		loadThis(archive);
+	}
+
+	virtual void serialize(cBinaryArchiveIn& archive) { cNetMessage2::serialize(archive); saveThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive)   { cNetMessage2::serialize(archive); saveThis(archive); }
+
+	std::shared_ptr<std::vector<std::unique_ptr<cSavedReport>>> reports;
+	cGameGuiState guiState;
+	int saveSlot;
+	int savingID;
+private:
+	template<typename T>
+	void loadThis(T& archive)
+	{
+		if (reports == nullptr)
+			reports = std::make_shared<std::vector<std::unique_ptr<cSavedReport>>>();
+
+		int size;
+		archive >> size;
+		reports->resize(size);
+		//for (int i = 0; i < size; i++)
+		for (auto& report : *reports)
+		{
+			report = cSavedReport::createFrom(archive);
+		}
+		archive >> guiState;
+		archive >> savingID;
+	}
+	template<typename T>
+	void saveThis(T& archive)
+	{
+		if (reports == nullptr)
+			reports = std::make_shared<std::vector<std::unique_ptr<cSavedReport>>>();
+
+		archive << (int)reports->size();
+		for (auto& report : *reports)
+		{
+			archive << *report;
+		}
+		archive << guiState;
+		archive << savingID;
+	}
+};
+
+class cNetMessageRequestGUISaveInfo : public cNetMessage2
+{
+public:
+	cNetMessageRequestGUISaveInfo(int savingID) :
+		cNetMessage2(eNetMessageType::REQUEST_GUI_SAVE_INFO),
+		savingID(savingID)
+	{};
+	cNetMessageRequestGUISaveInfo(cBinaryArchiveOut& archive) :
+		cNetMessage2(eNetMessageType::REQUEST_GUI_SAVE_INFO)
+	{
+		serializeThis(archive);
+	};
+
+	virtual void serialize(cBinaryArchiveIn& archive) { cNetMessage2::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive)   { cNetMessage2::serialize(archive); serializeThis(archive); }
+
+	int savingID;
+private:
+	template<typename T>
+	void serializeThis(T& archive)
+	{
+		archive & savingID;
+	}
+};
 #endif //netmessage2H

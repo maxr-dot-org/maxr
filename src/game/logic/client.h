@@ -62,10 +62,7 @@ class cSavegame;
 
 Uint32 TimerCallback (Uint32 interval, void* arg);
 
-/**
-* Client class which handles the in and output for a player
-*@author alzi alias DoctorDeath
-*/
+
 class cClient : public INetMessageReceiver
 {
 	friend class cDebugOutputWidget;
@@ -84,7 +81,7 @@ public:
 	void setMap(std::shared_ptr<cStaticMap> staticMap);
 	void setPlayers(const std::vector<cPlayerBasicData>& splayers, size_t activePlayerIndex);
 
-	unsigned int getNetMessageQueueSize() const { return eventQueue.safe_size(); };
+	unsigned int getNetMessageQueueSize() const { return static_cast<unsigned int>(eventQueue.safe_size()); };
 	const cServer2* getServer() const { return server2; }
 	virtual void pushEvent (std::unique_ptr<cNetMessage> message) MAXR_OVERRIDE_FUNCTION;
 	void pushMessage(std::unique_ptr<cNetMessage2> message);
@@ -133,7 +130,7 @@ public:
 	*@param message The netMessage to be send.
 	*/
 	void sendNetMessage (std::unique_ptr<cNetMessage> message) const;
-	void sendNetMessage(std::unique_ptr<cNetMessage2> message) const;
+	void sendNetMessage(cNetMessage2& message) const;
 
 	/**
 	* gets the vehicle with the ID
@@ -171,8 +168,6 @@ public:
 
 	void deletePlayer (cPlayer& player);
 
-	void handleChatMessage (const std::string& message);
-
 	const std::shared_ptr<cCasualtiesTracker>& getCasualtiesTracker() { return casualtiesTracker; }
 	std::shared_ptr<const cCasualtiesTracker> getCasualtiesTracker() const { return casualtiesTracker; }
 
@@ -182,8 +177,12 @@ public:
 
 	const std::shared_ptr<cGameTimerClient>& getGameTimer() const { return gameTimer; }
 
-	void loadModel(cSavegame& savegame, int saveGameNumber);
+	void loadModel(int saveGameNumber);
 
+
+	mutable cSignal<void (int fromPlayerNr, const std::string& message, int toPlayerNr)> chatMessageReceived;
+	mutable cSignal<void (int savingID)> guiSaveInfoRequested;
+	mutable cSignal<void(const cNetMessageGUISaveInfo& guiInfo)> guiSaveInfoReceived;
 
 	//TODO: move signals to model
 	mutable cSignal<void (int, int)> playerFinishedTurn;
@@ -209,8 +208,6 @@ public:
 
 	mutable cSignal<void (const std::shared_ptr<cFx>&, bool)> addedEffect;
 
-	mutable cSignal<void (int)> additionalSaveInfoRequested;
-	mutable cSignal<void (const cGameGuiState&)> gameGuiStateReceived;
 private:
 
 	/**
@@ -278,7 +275,6 @@ private:
 	void HandleNetMessage_GAME_EV_UNFREEZE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_TURN (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_HUD_SETTINGS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_STORE_UNIT (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message);

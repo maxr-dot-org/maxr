@@ -239,8 +239,8 @@ void sendReadyToStart (const cClient& client)
 
 void sendChatMessageToServer (const cClient& client, const string& msg)
 {
-	auto message = std::make_unique<cNetMessageChat> (msg);
-	client.sendNetMessage (std::move (message));
+	cNetMessageChat netMsg(msg);
+	client.sendNetMessage (netMsg);
 }
 
 void sendWantToEndTurn (const cClient& client)
@@ -528,34 +528,6 @@ void sendWantResearchChange (const cClient& client, const std::array<int, cResea
 		message->pushInt16 (newResearchSettings[i]);
 	}
 	message->pushInt16 (player.getId());
-	client.sendNetMessage (std::move (message));
-}
-
-void sendGameGuiState (const cClient& client, const cGameGuiState& gameGuiState, const cPlayer& owner, int savingID)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_SAVE_HUD_INFO);
-
-	gameGuiState.pushInto (*message);
-	message->pushInt16 (owner.getId());
-	message->pushInt16 (savingID);
-
-	client.sendNetMessage (std::move (message));
-}
-
-void sendSaveReportInfo (const cClient& client, const cSavedReport& savedReport, int ownerNr, int savingID)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_SAVE_REPORT_INFO);
-	savedReport.pushInto (*message);
-	message->pushInt16 (ownerNr);
-	message->pushInt16 (savingID);
-	client.sendNetMessage (std::move (message));
-}
-
-void sendFinishedSendSaveInfo (const cClient& client, int ownerNr, int savingID)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_FIN_SEND_SAVE_INFO);
-	message->pushInt16 (ownerNr);
-	message->pushInt16 (savingID);
 	client.sendNetMessage (std::move (message));
 }
 

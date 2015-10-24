@@ -41,20 +41,88 @@
 #include "game/data/report/special/savedreportupgraded.h"
 #include "game/data/report/special/savedreportturnstart.h"
 
-#include "netmessage.h"
-#include "utility/tounderlyingtype.h"
 #include "main.h"
 
-//------------------------------------------------------------------------------
-void cSavedReport::pushInto (cNetMessage& message) const
+template <typename T>
+static std::unique_ptr<cSavedReport> cSavedReport::createFromImpl (T& archive)
 {
-	message.pushInt32 (toUnderlyingType (getType()));
+	eSavedReportType type;
+	archive >> NVP(type);
+
+	switch (type)
+	{
+	case eSavedReportType::Chat:
+		return std::make_unique<cSavedReportChat>(archive);
+	case eSavedReportType::Attacked:
+		return std::make_unique<cSavedReportAttacked>(archive);
+	case eSavedReportType::AttackingEnemy:
+		return std::make_unique<cSavedReportAttackingEnemy>(archive);
+	case eSavedReportType::CapturedByEnemy:
+		return std::make_unique<cSavedReportCapturedByEnemy>(archive);
+	case eSavedReportType::Destroyed:
+		return std::make_unique<cSavedReportDestroyed>(archive);
+	case eSavedReportType::Detected:
+		return std::make_unique<cSavedReportDetected>(archive);
+	case eSavedReportType::Disabled:
+		return std::make_unique<cSavedReportDisabled>(archive);
+	case eSavedReportType::PathInterrupted:
+		return std::make_unique<cSavedReportPathInterrupted>(archive);
+	case eSavedReportType::SurveyorAiConfused:
+		return std::make_unique<cSavedReportSurveyorAiConfused>(archive);
+	case eSavedReportType::SurveyorAiSenseless:
+		return std::make_unique<cSavedReportSurveyorAiSenseless>(archive);
+	case eSavedReportType::HostCommand:
+		return std::make_unique<cSavedReportHostCommand>(archive);
+	case eSavedReportType::ResourceChanged:
+		return std::make_unique<cSavedReportResourceChanged>(archive);
+	case eSavedReportType::PlayerEndedTurn:
+		return std::make_unique<cSavedReportPlayerEndedTurn>(archive);
+	case eSavedReportType::LostConnection:
+		return std::make_unique<cSavedReportLostConnection>(archive);
+	case eSavedReportType::PlayerDefeated:
+		return std::make_unique<cSavedReportPlayerDefeated>(archive);
+	case eSavedReportType::PlayerLeft:
+		return std::make_unique<cSavedReportPlayerLeft>(archive);
+	case eSavedReportType::Upgraded:
+		return std::make_unique<cSavedReportUpgraded>(archive);
+	case eSavedReportType::TurnStart:
+		return std::make_unique<cSavedReportTurnStart>(archive);
+	case eSavedReportType::MetalInsufficient:
+	case eSavedReportType::FuelInsufficient:
+	case eSavedReportType::GoldInsufficient:
+	case eSavedReportType::EnergyInsufficient:
+	case eSavedReportType::TeamInsufficient:
+	case eSavedReportType::MetalLow:
+	case eSavedReportType::FuelLow:
+	case eSavedReportType::GoldLow:
+	case eSavedReportType::EnergyLow:
+	case eSavedReportType::TeamLow:
+	case eSavedReportType::EnergyToLow:
+	case eSavedReportType::EnergyIsNeeded:
+	case eSavedReportType::BuildingDisabled:
+	case eSavedReportType::ProducingError:
+	case eSavedReportType::TurnWait:
+	case eSavedReportType::TurnAutoMove:
+		return std::make_unique<cSavedReportSimple>(type);
+	default:
+		//TODO: throw
+		return nullptr;
+	}
 }
 
 //------------------------------------------------------------------------------
-void cSavedReport::pushInto (tinyxml2::XMLElement& element) const
+std::unique_ptr<cSavedReport> cSavedReport::createFrom(cBinaryArchiveOut& archive)
 {
-	element.SetAttribute ("type", iToStr (toUnderlyingType (getType())).c_str());
+	return createFromImpl(archive);
+}
+
+//------------------------------------------------------------------------------
+std::unique_ptr<cSavedReport> cSavedReport::createFrom(cXmlArchiveOut& archive, const std::string& name)
+{
+	archive.enterChild(name);
+	auto report = createFromImpl(archive);
+	archive.leaveChild();
+	return report;
 }
 
 //------------------------------------------------------------------------------
@@ -86,133 +154,3 @@ const cPosition& cSavedReport::getPosition() const
 //------------------------------------------------------------------------------
 void cSavedReport::playSound (cSoundManager& soundManager) const
 {}
-
-//------------------------------------------------------------------------------
-std::unique_ptr<cSavedReport> cSavedReport::createFrom (cNetMessage& message)
-{
-	auto type = (eSavedReportType)message.popInt32();
-
-	switch (type)
-	{
-		case eSavedReportType::Chat:
-			return std::make_unique<cSavedReportChat> (message);
-		case eSavedReportType::Attacked:
-			return std::make_unique<cSavedReportAttacked> (message);
-		case eSavedReportType::AttackingEnemy:
-			return std::make_unique<cSavedReportAttackingEnemy> (message);
-		case eSavedReportType::CapturedByEnemy:
-			return std::make_unique<cSavedReportCapturedByEnemy> (message);
-		case eSavedReportType::Destroyed:
-			return std::make_unique<cSavedReportDestroyed> (message);
-		case eSavedReportType::Detected:
-			return std::make_unique<cSavedReportDetected> (message);
-		case eSavedReportType::Disabled:
-			return std::make_unique<cSavedReportDisabled> (message);
-		case eSavedReportType::PathInterrupted:
-			return std::make_unique<cSavedReportPathInterrupted> (message);
-		case eSavedReportType::SurveyorAiConfused:
-			return std::make_unique<cSavedReportSurveyorAiConfused> (message);
-		case eSavedReportType::SurveyorAiSenseless:
-			return std::make_unique<cSavedReportSurveyorAiSenseless> (message);
-		case eSavedReportType::HostCommand:
-			return std::make_unique<cSavedReportHostCommand> (message);
-		case eSavedReportType::ResourceChanged:
-			return std::make_unique<cSavedReportResourceChanged> (message);
-		case eSavedReportType::PlayerEndedTurn:
-			return std::make_unique<cSavedReportPlayerEndedTurn> (message);
-		case eSavedReportType::LostConnection:
-			return std::make_unique<cSavedReportLostConnection> (message);
-		case eSavedReportType::PlayerDefeated:
-			return std::make_unique<cSavedReportPlayerDefeated> (message);
-		case eSavedReportType::PlayerLeft:
-			return std::make_unique<cSavedReportPlayerLeft> (message);
-		case eSavedReportType::Upgraded:
-			return std::make_unique<cSavedReportUpgraded> (message);
-		case eSavedReportType::TurnStart:
-			return std::make_unique<cSavedReportTurnStart> (message);
-		case eSavedReportType::MetalInsufficient:
-		case eSavedReportType::FuelInsufficient:
-		case eSavedReportType::GoldInsufficient:
-		case eSavedReportType::EnergyInsufficient:
-		case eSavedReportType::TeamInsufficient:
-		case eSavedReportType::MetalLow:
-		case eSavedReportType::FuelLow:
-		case eSavedReportType::GoldLow:
-		case eSavedReportType::EnergyLow:
-		case eSavedReportType::TeamLow:
-		case eSavedReportType::EnergyToLow:
-		case eSavedReportType::EnergyIsNeeded:
-		case eSavedReportType::BuildingDisabled:
-		case eSavedReportType::ProducingError:
-		case eSavedReportType::TurnWait:
-		case eSavedReportType::TurnAutoMove:
-			return std::make_unique<cSavedReportSimple> (type);
-		default:
-			return nullptr;
-	}
-}
-
-//------------------------------------------------------------------------------
-std::unique_ptr<cSavedReport> cSavedReport::createFrom (const tinyxml2::XMLElement& element)
-{
-	auto type = (eSavedReportType)element.IntAttribute ("type");
-
-	switch (type)
-	{
-		case eSavedReportType::Chat:
-			return std::make_unique<cSavedReportChat> (element);
-		case eSavedReportType::Attacked:
-			return std::make_unique<cSavedReportAttacked> (element);
-		case eSavedReportType::AttackingEnemy:
-			return std::make_unique<cSavedReportAttackingEnemy> (element);
-		case eSavedReportType::CapturedByEnemy:
-			return std::make_unique<cSavedReportCapturedByEnemy> (element);
-		case eSavedReportType::Destroyed:
-			return std::make_unique<cSavedReportDestroyed> (element);
-		case eSavedReportType::Detected:
-			return std::make_unique<cSavedReportDetected> (element);
-		case eSavedReportType::Disabled:
-			return std::make_unique<cSavedReportDisabled> (element);
-		case eSavedReportType::PathInterrupted:
-			return std::make_unique<cSavedReportPathInterrupted> (element);
-		case eSavedReportType::SurveyorAiConfused:
-			return std::make_unique<cSavedReportSurveyorAiConfused> (element);
-		case eSavedReportType::SurveyorAiSenseless:
-			return std::make_unique<cSavedReportSurveyorAiSenseless> (element);
-		case eSavedReportType::HostCommand:
-			return std::make_unique<cSavedReportHostCommand> (element);
-		case eSavedReportType::ResourceChanged:
-			return std::make_unique<cSavedReportResourceChanged> (element);
-		case eSavedReportType::PlayerEndedTurn:
-			return std::make_unique<cSavedReportPlayerEndedTurn> (element);
-		case eSavedReportType::LostConnection:
-			return std::make_unique<cSavedReportLostConnection> (element);
-		case eSavedReportType::PlayerDefeated:
-			return std::make_unique<cSavedReportPlayerDefeated> (element);
-		case eSavedReportType::PlayerLeft:
-			return std::make_unique<cSavedReportPlayerLeft> (element);
-		case eSavedReportType::Upgraded:
-			return std::make_unique<cSavedReportUpgraded> (element);
-		case eSavedReportType::TurnStart:
-			return std::make_unique<cSavedReportTurnStart> (element);
-		case eSavedReportType::MetalInsufficient:
-		case eSavedReportType::FuelInsufficient:
-		case eSavedReportType::GoldInsufficient:
-		case eSavedReportType::EnergyInsufficient:
-		case eSavedReportType::TeamInsufficient:
-		case eSavedReportType::MetalLow:
-		case eSavedReportType::FuelLow:
-		case eSavedReportType::GoldLow:
-		case eSavedReportType::EnergyLow:
-		case eSavedReportType::TeamLow:
-		case eSavedReportType::EnergyToLow:
-		case eSavedReportType::EnergyIsNeeded:
-		case eSavedReportType::BuildingDisabled:
-		case eSavedReportType::ProducingError:
-		case eSavedReportType::TurnWait:
-		case eSavedReportType::TurnAutoMove:
-			return std::make_unique<cSavedReportSimple> (type);
-		default:
-			return nullptr;
-	}
-}

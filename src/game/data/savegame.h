@@ -27,6 +27,8 @@
 class cModel;
 class cSaveGameInfo;
 class cVersion;
+class cNetMessageGUISaveInfo;
+class cServer2;
 
 //Versions prior to 1.0 are no longer compatible
 #define SAVE_FORMAT_VERSION		((std::string)"1.0")
@@ -41,12 +43,13 @@ public:
 	static std::string getFileName(int slot);
 
 	/* saves the current gamestate to a file */
-	void save(const cModel& model, int slot, const std::string& saveName);
+	int save(const cModel& model, int slot, const std::string& saveName);
+	void saveGuiInfo(const cNetMessageGUISaveInfo& guiInfo);
 
 	cSaveGameInfo loadSaveInfo(int slot);
 
 	void loadModel(cModel& model, int slot);
-	//loadGUIState(...);
+	void loadGuiInfo(const cServer2* server, int slot);
 private:
 
 	/**
@@ -60,7 +63,7 @@ private:
 	bool loadDocument(int slot);
 	bool loadVersion(cVersion& version);
 
-	int saveingID; //for requesting GUI states
+	int saveingID; //identifier number, to make sure the gui info from clients are written to the correct save file
 	int loadedSlot;
 
 	tinyxml2::XMLDocument xmlDocument;

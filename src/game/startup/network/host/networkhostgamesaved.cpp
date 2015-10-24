@@ -79,13 +79,14 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
 //		sendGameSettings (*server, *serverPlayerList[i]);
-		sendGameGuiState (*server, server->getPlayerGameGuiState (*serverPlayerList[i]), *serverPlayerList[i]);
-		auto& reportList = serverPlayerList[i]->savedReportsList;
+		//sendGameGuiState (*server, server->getPlayerGameGuiState (*serverPlayerList[i]), *serverPlayerList[i]);
+/*		auto& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size(); ++j)
 		{
 			sendSavedReport (*server, *reportList[j], serverPlayerList[i].get());
 		}
 		reportList.clear();
+		*/
 	}
 
 	// start game
@@ -99,9 +100,6 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	gameGuiController->setSingleClient (localClient);
 
 	gameGuiController->start();
-
-	using namespace std::placeholders;
-	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cNetworkHostGameSaved::save, this, _1, _2));
 
 	terminate = false;
 

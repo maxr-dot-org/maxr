@@ -218,7 +218,6 @@ private:
 	SDL_Color palette_shw[256];
 };
 
-// Die Map-Klasse ////////////////////////////////////////////////////////////
 class cMap
 {
 public:

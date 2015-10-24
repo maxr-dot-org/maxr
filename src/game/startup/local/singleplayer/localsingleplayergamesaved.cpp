@@ -31,44 +31,28 @@
 void cLocalSingleplayerGameSaved::start (cApplication& application)
 {
 	server = std::make_unique<cServer2>();
-	server->loadModel(savegame, saveGameNumber);
+	server->loadGameState(saveGameNumber);
 	server->getModel().getPlayerList()[0]->setLocal();	 // in single player the first player is always the local one
 
 	client = std::make_shared<cClient> (server.get(), nullptr);
 	auto staticMap = server->getModel().getMap()->staticMap;
 	client->setMap(staticMap);
-	client->loadModel(savegame, saveGameNumber);
+	client->loadModel(saveGameNumber); //TODO: resync model from server
 	auto localPlayer = client->getModel().getPlayerList()[0];
 	localPlayer->setLocal();
 	client->setActivePlayer(localPlayer.get());
 
+	server->sendGuiInfoToClients(saveGameNumber);
+
 	server->start();
 
-
-	// TODO: resync gamegui states
-/*	for (size_t i = 0; i != serverPlayerList.size(); ++i)
-	{
-		//sendGameSettings (*server, *serverPlayerList[i]);
-		sendGameGuiState (*server, server->getPlayerGameGuiState (*serverPlayerList[i]), *serverPlayerList[i]);
-		auto& reportList = serverPlayerList[i]->savedReportsList;
-		for (size_t j = 0; j != reportList.size(); ++j)
-		{
-			sendSavedReport (*server, *reportList[j], serverPlayerList[i].get());
-		}
-		reportList.clear();
-	}*/
-	
 	// TODO: save/load game time
 	//server->startTurnTimers();
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
 	gameGuiController->setSingleClient (client);
-
 	gameGuiController->start();
-
-	using namespace std::placeholders;
-	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cLocalSingleplayerGameSaved::save, this, _1, _2));
 
 	terminate = false;
 

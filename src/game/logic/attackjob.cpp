@@ -608,11 +608,11 @@ bool cAttackJob::impactSingle (const cPosition& position, std::vector<cUnit*>* a
 	{
 		if (destroyed)
 		{
-			target->getOwner()->addSavedReport (std::make_unique<cSavedReportDestroyed> (*target));
+			//target->getOwner()->addSavedReport (std::make_unique<cSavedReportDestroyed> (*target));
 		}
 		else
 		{
-			target->getOwner()->addSavedReport (std::make_unique<cSavedReportAttacked> (*target));
+			//target->getOwner()->addSavedReport (std::make_unique<cSavedReportAttacked> (*target));
 		}
 	}
 

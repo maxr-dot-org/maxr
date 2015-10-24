@@ -40,16 +40,6 @@ void cNetworkHostGame::run()
 }
 
 //------------------------------------------------------------------------------
-void cNetworkHostGame::save (int saveNumber, const std::string& saveName)
-{
-	if (!server) throw std::runtime_error ("Game not started!"); // should never happen (hence a translation is not necessary).
-
-	cSavegame savegame;
-	//savegame.save(server->getModel(), saveNumber, saveName);
-	//server->makeAdditionalSaveRequest (saveNumber); //TODO: save gameGuiStates
-}
-
-//------------------------------------------------------------------------------
 void cNetworkHostGame::setNetwork (std::shared_ptr<cTCP> network_)
 {
 	network = network_;

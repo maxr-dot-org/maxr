@@ -18,41 +18,12 @@
  ***************************************************************************/
 
 #include "game/data/report/special/savedreportplayerendedturn.h"
-#include "netmessage.h"
 #include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------
 cSavedReportPlayerEndedTurn::cSavedReportPlayerEndedTurn (const cPlayer& player) :
 	playerName (player.getName())
 {}
-
-//------------------------------------------------------------------------------
-cSavedReportPlayerEndedTurn::cSavedReportPlayerEndedTurn (cNetMessage& message)
-{
-	playerName = message.popString();
-}
-
-//------------------------------------------------------------------------------
-cSavedReportPlayerEndedTurn::cSavedReportPlayerEndedTurn (const tinyxml2::XMLElement& element)
-{
-	playerName = element.Attribute ("playerName");
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportPlayerEndedTurn::pushInto (cNetMessage& message) const
-{
-	message.pushString (playerName);
-
-	cSavedReport::pushInto (message);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportPlayerEndedTurn::pushInto (tinyxml2::XMLElement& element) const
-{
-	element.SetAttribute ("playerName", playerName.c_str());
-
-	cSavedReport::pushInto (element);
-}
 
 //------------------------------------------------------------------------------
 eSavedReportType cSavedReportPlayerEndedTurn::getType() const
@@ -71,3 +42,4 @@ bool cSavedReportPlayerEndedTurn::isAlert() const
 {
 	return false;
 }
+

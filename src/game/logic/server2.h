@@ -28,10 +28,10 @@
 #include "netmessage2.h"
 #include "utility/thread/concurrentqueue.h"
 #include "gametimer.h"
+#include "game/data/savegame.h"
 
 class cClient;
 class cPlayerBasicData;
-class cSavegame;
 
 //TODO: network einbinden
 class cServer2
@@ -44,7 +44,7 @@ public:
 
 	void pushMessage(std::unique_ptr<cNetMessage2> message);
 
-	void sendMessageToClients(std::unique_ptr<cNetMessage2> message, int playerNr = -1) const;
+	void sendMessageToClients(const cNetMessage2& message, int playerNr = -1) const;
 
 	void start();
 	void stop();
@@ -54,8 +54,9 @@ public:
 	void setMap(std::shared_ptr<cStaticMap> staticMap);
 	void setPlayers(const std::vector<cPlayerBasicData>& splayers);
 	const cModel& getModel() const;
-	void saveModel(cSavegame& savegame, int saveGameNumber, const std::string& saveName);
-	void loadModel(cSavegame& savegame, int saveGameNumber);
+	void saveGameState(int saveGameNumber, const std::string & saveName) const;
+	void loadGameState(int saveGameNumber);
+	void sendGuiInfoToClients(int saveGameNumber);
 
 private:
 	cModel model;
@@ -63,16 +64,18 @@ private:
 	//cPlayerConnectionManager playerConnectionManager;
 	cGameTimerServer gameTimer;
 
-	cClient* localClient;
+	cClient* localClient; //TODO: multiple clients for HotSeat
 	cConcurrentQueue<std::unique_ptr<cNetMessage2>> eventQueue;
+	
+	mutable cSavegame savegame;
 
 	void initRandomGenerator();
 
 	// manage the server thread
 	static int serverThreadCallback(void* arg);
 	void run();
-	SDL_Thread* serverThread;
-	bool bExit;
+	mutable SDL_Thread* serverThread;
+	mutable bool bExit;
 	
 };
 

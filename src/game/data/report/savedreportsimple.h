@@ -34,7 +34,6 @@ public:
 	virtual std::string getMessage() const MAXR_OVERRIDE_FUNCTION;
 
 	virtual bool isAlert() const MAXR_OVERRIDE_FUNCTION;
-
 private:
 	eSavedReportType type;
 };

@@ -25,28 +25,6 @@ cSavedReportSurveyorAiConfused::cSavedReportSurveyorAiConfused (const cUnit& uni
 {}
 
 //------------------------------------------------------------------------------
-cSavedReportSurveyorAiConfused::cSavedReportSurveyorAiConfused (cNetMessage& message) :
-	cSavedReportUnit (message)
-{}
-
-//------------------------------------------------------------------------------
-cSavedReportSurveyorAiConfused::cSavedReportSurveyorAiConfused (const tinyxml2::XMLElement& element) :
-	cSavedReportUnit (element)
-{}
-
-//------------------------------------------------------------------------------
-void cSavedReportSurveyorAiConfused::pushInto (cNetMessage& message) const
-{
-	cSavedReportUnit::pushInto (message);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportSurveyorAiConfused::pushInto (tinyxml2::XMLElement& element) const
-{
-	cSavedReportUnit::pushInto (element);
-}
-
-//------------------------------------------------------------------------------
 eSavedReportType cSavedReportSurveyorAiConfused::getType() const
 {
 	return eSavedReportType::SurveyorAiConfused;

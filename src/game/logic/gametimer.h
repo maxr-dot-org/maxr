@@ -125,7 +125,7 @@ public:
 	unsigned int getReceivedTime();
 
 	void run(cClient& client);
-	void handleSyncMessage (cNetMessageSyncServer& message);
+	void handleSyncMessage (const cNetMessageSyncServer& message);
 };
 
 

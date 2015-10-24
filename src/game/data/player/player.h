@@ -43,7 +43,25 @@ class cMapField;
 class cUnit;
 class cPosition;
 
-struct sTurnstartReport;
+/**
+* Structure for generating the report about finished units at turn start
+*/
+struct sTurnstartReport
+{
+	template <typename T>
+	void serialize(T& archive)
+	{
+		archive & NVP(type);
+		archive & NVP(count);
+	}
+
+	/** unit type of the report */
+	sID type;
+	/** counter for this report */
+	int count;
+};
+
+
 struct sUnitData;
 
 class cSavedReport;
@@ -125,9 +143,6 @@ public:
 	void setScore (int score, int turn);
 	void clearDone();
 
-	void addSavedReport (std::unique_ptr<cSavedReport> savedReport) const;
-	const std::vector<std::unique_ptr<cSavedReport>>& getSavedReports() const;
-
 	void setClan (int newClan);
 	int getClan() const { return clan; }
 
@@ -176,7 +191,6 @@ public:
 	mutable cSignal<void ()> nameChanged;
 	mutable cSignal<void ()> colorChanged;
 	mutable cSignal<void ()> creditsChanged;
-	mutable cSignal<void (const cSavedReport&)> reportAdded;
 	mutable cSignal<void ()> hasFinishedTurnChanged;
 	mutable cSignal<void ()> isRemovedFromGameChanged;
 	mutable cSignal<void (cResearch::ResearchArea)> researchCentersWorkingOnAreaChanged;
@@ -319,8 +333,7 @@ private:
 	std::vector<char> DetectSeaMap;       // Map mit den Gebieten, die im Wasser gesehen werden kˆnnen.
 	std::vector<char> DetectMinesMap;     /** the area where the player can detect mines */
 public:
-	mutable PointsHistory pointsHistory; // history of player's total score (from eco-spheres) for graph //TODO: not mutable, since this information is public
-	mutable std::vector<std::unique_ptr<cSavedReport>> savedReportsList; //mutable, because adding a report doesn't change the game model
+	PointsHistory pointsHistory; // history of player's total score (from eco-spheres) for graph
 	bool isDefeated;        // true if the player has been defeated
 	int numEcos;            // number of ecospheres. call countEcoSpheres to update.
 private:

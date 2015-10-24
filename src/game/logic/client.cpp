@@ -34,6 +34,7 @@
 #include "utility/log.h"
 #include "main.h"
 #include "netmessage.h"
+#include "netmessage2.h"
 #include "game/data/player/player.h"
 #include "game/logic/server.h"
 #include "game/logic/server2.h"
@@ -146,7 +147,7 @@ void cClient::setPlayers (const std::vector<cPlayerBasicData>& splayers, size_t 
 
 void cClient::pushMessage(std::unique_ptr<cNetMessage2> message)
 {
-	if (message->getType() == cNetMessage2::GAMETIME_SYNC_SERVER)
+	if (message->getType() == eNetMessageType::GAMETIME_SYNC_SERVER)
 	{
 		// This is a preview for the client to know
 		// how many sync messages are in queue.
@@ -159,6 +160,7 @@ void cClient::pushMessage(std::unique_ptr<cNetMessage2> message)
 
 void cClient::sendNetMessage (std::unique_ptr<cNetMessage> message) const
 {
+	return;
 	message->iPlayerNr = activePlayer->getId();
 
 /*	if (message->iType != NET_GAME_TIME_CLIENT)
@@ -183,14 +185,14 @@ void cClient::sendNetMessage (std::unique_ptr<cNetMessage> message) const
 	}
 }
 
-void cClient::sendNetMessage(std::unique_ptr<cNetMessage2> message) const
+void cClient::sendNetMessage(cNetMessage2& message) const
 {
-	message->playerNr = activePlayer->getId();
+	message.playerNr = activePlayer->getId();
 
-	if (message->getType() != cNetMessage2::GAMETIME_SYNC_CLIENT)
+	if (message.getType() != eNetMessageType::GAMETIME_SYNC_CLIENT)
 	{
 		cTextArchiveIn archive;
-		archive << *message;
+		archive << message;
 		Log.write(getActivePlayer().getName() + ": --> Data: " + archive.data() + " @" + iToStr(gameTimer->gameTime), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
@@ -198,7 +200,7 @@ void cClient::sendNetMessage(std::unique_ptr<cNetMessage2> message) const
 	{
 		// push an event to the local server in singleplayer, HotSeat or
 		// if this machine is the host
-		server2->pushMessage(std::move(message));
+		server2->pushMessage(message.clone());
 	}
 	else // else send it over the net
 	{
@@ -1139,14 +1141,6 @@ void cClient::HandleNetMessage_GAME_EV_TURN (cNetMessage& message)
 	turnClock->setTurn (message.popInt16());
 }
 
-void cClient::HandleNetMessage_GAME_EV_HUD_SETTINGS (cNetMessage& message)
-{
-	cGameGuiState state;
-	state.popFrom (message);
-
-	gameGuiStateReceived (state);
-}
-
 void cClient::HandleNetMessage_GAME_EV_STORE_UNIT (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_STORE_UNIT);
@@ -1290,7 +1284,7 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message)
 		}
 	}
 	assert (unitData != nullptr);
-	activePlayer->addSavedReport (std::make_unique<cSavedReportUpgraded> (unitData->ID, buildingsInMsg, totalCosts));
+	//activePlayer->addSavedReport (std::make_unique<cSavedReportUpgraded> (unitData->ID, buildingsInMsg, totalCosts));
 	if (scanNecessary)
 		activePlayer->doScan();
 }
@@ -1321,7 +1315,7 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message)
 		}
 	}
 	assert (unitData != nullptr);
-	activePlayer->addSavedReport (std::make_unique<cSavedReportUpgraded> (unitData->ID, vehiclesInMsg, totalCosts));
+	//activePlayer->addSavedReport (std::make_unique<cSavedReportUpgraded> (unitData->ID, vehiclesInMsg, totalCosts));
 }
 
 void cClient::HandleNetMessage_GAME_EV_RESEARCH_SETTINGS (cNetMessage& message)
@@ -1413,21 +1407,21 @@ void cClient::HandleNetMessage_GAME_EV_REQ_SAVE_INFO (cNetMessage& message)
 
 	const int saveingID = message.popInt16();
 
-	additionalSaveInfoRequested (saveingID);
+//	guiSaveInfoRequested (saveingID);
 
-	const auto& savedReports = activePlayer->savedReportsList;
+	/*const auto& savedReports = activePlayer->savedReportsList;
 	for (size_t i = std::max<int> (0, savedReports.size() - 50); i != savedReports.size(); ++i)
 	{
 		sendSaveReportInfo (*this, *savedReports[i], activePlayer->getId(), saveingID);
-	}
-	sendFinishedSendSaveInfo (*this, activePlayer->getId(), saveingID);
+	}*/
+//	sendFinishedSendSaveInfo (*this, activePlayer->getId(), saveingID);
 }
 
 void cClient::HandleNetMessage_GAME_EV_SAVED_REPORT (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_SAVED_REPORT);
 
-	activePlayer->addSavedReport (cSavedReport::createFrom (message));
+	//activePlayer->addSavedReport (cSavedReport::createFrom (message));
 }
 
 void cClient::HandleNetMessage_GAME_EV_CASUALTIES_REPORT (cNetMessage& message)
@@ -1514,7 +1508,7 @@ void cClient::handleNetMessages()
 	while (eventQueue2.try_pop(message))
 	{
 
-		if (message->getType() != cNetMessage2::GAMETIME_SYNC_SERVER)
+		if (message->getType() != eNetMessageType::GAMETIME_SYNC_SERVER)
 		{
 			cTextArchiveIn archive;
 			archive << *message;
@@ -1523,32 +1517,50 @@ void cClient::handleNetMessages()
 
 		switch (message->getType())
 		{
-		case cNetMessage2::CHAT:
+		case eNetMessageType::CHAT:
 			{
-				//TODO: was passiert mit chat auf dem Server?
-				cNetMessageChat* chatMessage = static_cast<cNetMessageChat*>(message.get());
-				activePlayer->addSavedReport(std::make_unique<cSavedReportChat>(model.getPlayer(chatMessage->playerNr)->getName(), chatMessage->message));
+				if (model.getPlayer(message->playerNr) == nullptr) continue;
+
+				const cNetMessageChat* chatMessage = static_cast<cNetMessageChat*>(message.get());
+				chatMessageReceived(chatMessage->playerNr, chatMessage->message, activePlayer->getId());
 			}
 			break;
-		case cNetMessage2::ACTION:
+		case eNetMessageType::ACTION:
 			{
-				cAction* action = static_cast<cAction*>(message.get());
+				if (model.getPlayer(message->playerNr) == nullptr) continue;
+
+				const cAction* action = static_cast<cAction*>(message.get());
 				action->execute(model);
 			}
 			break;
-		case cNetMessage2::GAMETIME_SYNC_SERVER:
+		case eNetMessageType::GAMETIME_SYNC_SERVER:
 			{
-				cNetMessageSyncServer* syncMessage = static_cast<cNetMessageSyncServer*>(message.get());
+				const cNetMessageSyncServer* syncMessage = static_cast<cNetMessageSyncServer*>(message.get());
 				gameTimer->handleSyncMessage(*syncMessage);
 				return; //stop processing messages after receiving a sync message. Gametime needs to be increased before handling the next message.
 			}
 			break;
-		case cNetMessage2::RANDOM_SEED:
+		case eNetMessageType::RANDOM_SEED:
 			{
-				cNetMessageRandomSeed* msg = static_cast<cNetMessageRandomSeed*>(message.get());
+				const cNetMessageRandomSeed* msg = static_cast<cNetMessageRandomSeed*>(message.get());
 				model.randomGenerator.seed(msg->seed);
 			}
+			break;
+		case eNetMessageType::REQUEST_GUI_SAVE_INFO:
+			{
+				const cNetMessageRequestGUISaveInfo* msg = static_cast<cNetMessageRequestGUISaveInfo*>(message.get());
+				guiSaveInfoRequested(msg->savingID);
+			}
+			break;
+		case eNetMessageType::GUI_SAVE_INFO:
+			{
+				const cNetMessageGUISaveInfo* msg = static_cast<cNetMessageGUISaveInfo*>(message.get());
+				if (msg->playerNr != activePlayer->getId()) continue;
+				guiSaveInfoReceived(*msg);
+			}
+			break;
 		default:
+			Log.write(" Client: received unknown net message type", cLog::eLOG_TYPE_NET_WARNING);
 			break;
 		}
 	}
@@ -1602,7 +1614,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_UNFREEZE: HandleNetMessage_GAME_EV_UNFREEZE (message); break;
 		case GAME_EV_DEL_PLAYER: HandleNetMessage_GAME_EV_DEL_PLAYER (message); break;
 		case GAME_EV_TURN: HandleNetMessage_GAME_EV_TURN (message); break;
-		case GAME_EV_HUD_SETTINGS: HandleNetMessage_GAME_EV_HUD_SETTINGS (message); break;
 		case GAME_EV_STORE_UNIT: HandleNetMessage_GAME_EV_STORE_UNIT (message); break;
 		case GAME_EV_EXIT_UNIT: HandleNetMessage_GAME_EV_EXIT_UNIT (message); break;
 		case GAME_EV_DELETE_EVERYTHING: HandleNetMessage_GAME_EV_DELETE_EVERYTHING (message); break;
@@ -1955,16 +1966,9 @@ bool cClient::getFreezeMode (eFreezeMode mode) const
 {
 	return freezeModes.isEnable (mode);
 }
-
 //------------------------------------------------------------------------------
-void cClient::handleChatMessage (const std::string& message)
+void cClient::loadModel(int saveGameNumber)
 {
-	if (message.empty()) return;
-
-	sendChatMessageToServer (*this, message);
-}
-//------------------------------------------------------------------------------
-void cClient::loadModel(cSavegame& savegame, int saveGameNumber)
-{
+	cSavegame savegame;
 	savegame.loadModel(model, saveGameNumber);
 }

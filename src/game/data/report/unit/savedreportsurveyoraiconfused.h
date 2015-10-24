@@ -30,12 +30,11 @@ class cSavedReportSurveyorAiConfused : public cSavedReportUnit
 {
 public:
 	cSavedReportSurveyorAiConfused (const cUnit& unit);
-	explicit cSavedReportSurveyorAiConfused (cNetMessage& message);
-	explicit cSavedReportSurveyorAiConfused (const tinyxml2::XMLElement& element);
-
-	virtual void pushInto (cNetMessage& message) const MAXR_OVERRIDE_FUNCTION;
-	virtual void pushInto (tinyxml2::XMLElement& element) const MAXR_OVERRIDE_FUNCTION;
-
+	template<typename T, ENABLE_ARCHIVE_OUT>
+	cSavedReportSurveyorAiConfused(T& archive) :
+		cSavedReportUnit(archive)
+	{}
+	
 	virtual eSavedReportType getType() const MAXR_OVERRIDE_FUNCTION;
 
 protected:

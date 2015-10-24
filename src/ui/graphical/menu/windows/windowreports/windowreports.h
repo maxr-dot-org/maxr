@@ -45,12 +45,14 @@ struct sUnitData;
 class cWindowReports : public cWindow
 {
 public:
+	//TODO: pass model, instead of individual members of the model
 	cWindowReports (std::vector<std::shared_ptr<const cPlayer>> players,
 					std::shared_ptr<const cPlayer> localPlayer,
 					std::shared_ptr<const cCasualtiesTracker> casualties,
 					std::shared_ptr<const cTurnClock> turnClock,
 					std::shared_ptr<const cTurnTimeClock> turnTimeClock,
-					std::shared_ptr<const cGameSettings> gameSettings);
+					std::shared_ptr<const cGameSettings> gameSettings,
+					const std::vector<std::unique_ptr<cSavedReport>>& reports);
 
 	cSignal<void (cUnit&)> unitClickedSecondTime;
 	cSignal<void (const cSavedReport&)> reportClickedSecondTime;
@@ -94,6 +96,7 @@ private:
 	std::shared_ptr<const cCasualtiesTracker> casualties;
 	std::shared_ptr<const cTurnClock> turnClock;
 	std::shared_ptr<const cGameSettings> gameSettings;
+	const std::vector<std::unique_ptr<cSavedReport>>& reports;
 
 	bool unitListDirty;
 	bool disadvantagesListDirty;

@@ -59,13 +59,15 @@ cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> play
 								std::shared_ptr<const cCasualtiesTracker> casualties_,
 								std::shared_ptr<const cTurnClock> turnClock_,
 								std::shared_ptr<const cTurnTimeClock> turnTimeClock,
-								std::shared_ptr<const cGameSettings> gameSettings_) :
+								std::shared_ptr<const cGameSettings> gameSettings_,
+								const std::vector<std::unique_ptr<cSavedReport>>& reports_) :
 	cWindow (LoadPCX (GFXOD_REPORTS)),
 	players (std::move (players_)),
 	localPlayer (localPlayer_),
 	casualties (std::move (casualties_)),
 	turnClock (std::move (turnClock_)),
 	gameSettings (std::move (gameSettings_)),
+	reports(reports_),
 	unitListDirty (true),
 	disadvantagesListDirty (true),
 	reportsListDirty (true)
@@ -409,12 +411,10 @@ void cWindowReports::rebuildReportsList()
 
 	reportsList->clearItems();
 
-	const auto& savedReports = localPlayer->getSavedReports();
-
 	cReportMessageListViewItem* lastItem = nullptr;
-	for (size_t i = 0; i < savedReports.size(); ++i)
+	for (size_t i = 0; i < reports.size(); ++i)
 	{
-		const auto& savedReport = savedReports[i];
+		const auto& savedReport = reports[i];
 
 		if (savedReport)
 		{

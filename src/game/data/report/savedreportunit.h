@@ -31,16 +31,20 @@ class cUnit;
 class cSavedReportUnit : public cSavedReport
 {
 public:
-	cSavedReportUnit (const cUnit& unit);
-	explicit cSavedReportUnit (cNetMessage& message);
-	explicit cSavedReportUnit (const tinyxml2::XMLElement& element);
+	explicit cSavedReportUnit (const cUnit& unit);
+	template <typename T, ENABLE_ARCHIVE_OUT>
+	explicit cSavedReportUnit(T& archive)
+	{
+		serializeThis(archive);
+	}
 
 	virtual std::string getMessage() const MAXR_OVERRIDE_FUNCTION;
 
 	virtual bool isAlert() const MAXR_OVERRIDE_FUNCTION;
 
-	virtual void pushInto (cNetMessage& message) const MAXR_OVERRIDE_FUNCTION;
-	virtual void pushInto (tinyxml2::XMLElement& element) const MAXR_OVERRIDE_FUNCTION;
+	virtual void serialize(cBinaryArchiveIn& archive) { cSavedReport::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cXmlArchiveIn& archive) { cSavedReport::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive) { cSavedReport::serialize(archive); serializeThis(archive); }
 
 	virtual bool hasUnitId() const MAXR_OVERRIDE_FUNCTION;
 	virtual const sID& getUnitId() const MAXR_OVERRIDE_FUNCTION;
@@ -52,6 +56,13 @@ protected:
 	virtual std::string getText() const = 0;
 
 private:
+	template <typename T>
+	void serializeThis(T& archive)
+	{
+		archive & NVP(unitId);
+		archive & NVP(position);
+	}
+
 	sID unitId;
 	cPosition position;
 };

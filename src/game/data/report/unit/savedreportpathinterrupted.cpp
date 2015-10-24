@@ -26,28 +26,6 @@ cSavedReportPathInterrupted::cSavedReportPathInterrupted (const cUnit& unit) :
 {}
 
 //------------------------------------------------------------------------------
-cSavedReportPathInterrupted::cSavedReportPathInterrupted (cNetMessage& message) :
-	cSavedReportUnit (message)
-{}
-
-//------------------------------------------------------------------------------
-cSavedReportPathInterrupted::cSavedReportPathInterrupted (const tinyxml2::XMLElement& element) :
-	cSavedReportUnit (element)
-{}
-
-//------------------------------------------------------------------------------
-void cSavedReportPathInterrupted::pushInto (cNetMessage& message) const
-{
-	cSavedReportUnit::pushInto (message);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportPathInterrupted::pushInto (tinyxml2::XMLElement& element) const
-{
-	cSavedReportUnit::pushInto (element);
-}
-
-//------------------------------------------------------------------------------
 eSavedReportType cSavedReportPathInterrupted::getType() const
 {
 	return eSavedReportType::PathInterrupted;

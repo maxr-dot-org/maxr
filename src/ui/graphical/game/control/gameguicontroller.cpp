@@ -63,7 +63,7 @@
 
 #include "keys.h"
 #include "game/logic/client.h"
-#include "game/logic/server.h"
+#include "game/logic/server2.h"
 #include "game/logic/clientevents.h"
 #include "game/logic/turntimeclock.h"
 #include "game/data/units/unit.h"
@@ -129,6 +129,22 @@ void cGameGuiController::addPlayerGameGuiState (const cPlayer& player, cGameGuiS
 {
 	playerGameGuiStates[player.getId()] = std::move (playerGameGuiState);
 }
+//------------------------------------------------------------------------------
+void cGameGuiController::addSavedReport(std::unique_ptr<cSavedReport> savedReport, int playerNr)
+{
+	if (savedReport == nullptr) return;
+
+	playerReports[playerNr]->push_back(std::move(savedReport));
+
+	if (activeClient->getActivePlayer().getId() == playerNr)
+		handleReportForActivePlayer(*playerReports[playerNr]->back());
+}
+
+//------------------------------------------------------------------------------
+const std::vector<std::unique_ptr<cSavedReport>>& cGameGuiController::getSavedReports(int playerNr) const
+{
+	return *playerReports.at(playerNr);
+}
 
 //------------------------------------------------------------------------------
 void cGameGuiController::setSingleClient (std::shared_ptr<cClient> client)
@@ -157,24 +173,46 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 	for (size_t i = 0; i < clients.size(); ++i)
 	{
 		auto client = clients[i].get();
-		allClientsSignalConnectionManager.connect (clients[i]->additionalSaveInfoRequested, [this, client] (int saveingId)
+
+		connectReportSources(*client);
+
+		allClientsSignalConnectionManager.connect (client->guiSaveInfoRequested, [this, client] (int saveingId)
 		{
+			cNetMessageGUISaveInfo message(saveingId);
+
+			auto reports = playerReports[client->getActivePlayer().getId()];
+			message.reports = reports;
+
 			if (client == activeClient.get())
 			{
-				sendGameGuiState (*client, gameGui->getCurrentState(), client->getActivePlayer(), saveingId);
+				message.guiState = gameGui->getCurrentState();
 			}
 			else
 			{
-				sendGameGuiState (*client, playerGameGuiStates[client->getActivePlayer().getId()], client->getActivePlayer(), saveingId);
+				message.guiState = playerGameGuiStates[client->getActivePlayer().getId()];
 			}
+
+			client->sendNetMessage(message);
 		});
 
-		allClientsSignalConnectionManager.connect (clients[i]->gameGuiStateReceived, [this, client] (const cGameGuiState & state)
+		allClientsSignalConnectionManager.connect (client->guiSaveInfoReceived, [this, client] (const cNetMessageGUISaveInfo & guiInfo)
 		{
-			playerGameGuiStates[client->getActivePlayer().getId()] = state;
+			if (guiInfo.playerNr != client->getActivePlayer().getId()) return;
+
+			const cPosition& mapPosition = guiInfo.guiState.getMapPosition();
+			if (mapPosition.x() < 0 || mapPosition.x() > client->getModel().getMap()->getSize().x()) return;
+			if (mapPosition.y() < 0 || mapPosition.y() > client->getModel().getMap()->getSize().y()) return;
+
+			playerGameGuiStates[guiInfo.playerNr] = guiInfo.guiState;
+			playerReports[guiInfo.playerNr] = guiInfo.reports;
+
 			if (client == activeClient.get())
 			{
-				gameGui->restoreState (state);
+				gameGui->restoreState(guiInfo.guiState);
+				for (const auto& report : *guiInfo.reports)
+				{
+					handleReportForActivePlayer(*report);
+				}
 			}
 		});
 	}
@@ -782,14 +820,18 @@ void cGameGuiController::connectClient (cClient& client)
 	{
 		soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceTurnAlertTimeReached, getRandom (VoiceData.VOITurnEnd20Sec)));
 	});
+}
+//------------------------------------------------------------------------------
+void cGameGuiController::connectReportSources(cClient& client)
+{
+	//this is the place where all reports about certain events in the model are generated...
 
-	//
-	// client player to GUI
-	//
-	auto& player = client.getActivePlayer();
+	playerReports[client.getActivePlayer().getId()] = std::make_shared<std::vector<std::unique_ptr<cSavedReport>>>();
 
-	using namespace std::placeholders;
-	clientSignalConnectionManager.connect (player.reportAdded, std::bind (&cGameGuiController::handleReport, this, _1));
+	allClientsSignalConnectionManager.connect(client.chatMessageReceived, [&](int fromPlayerNr, const std::string& message, int toPlayerNr)
+	{
+		addSavedReport(std::make_unique<cSavedReportChat>(*client.getModel().getPlayer(fromPlayerNr), message), toPlayerNr);
+	});
 }
 
 //------------------------------------------------------------------------------
@@ -825,16 +867,18 @@ void cGameGuiController::showFilesWindow()
 	{
 		try
 		{
-			triggeredSave (saveNumber, name);
+			if (activeClient->getServer() == nullptr)
+				throw std::runtime_error(lngPack.i18n("Text~Multiplayer~Save_Only_Host"));
 
-			cSoundDevice::getInstance().playVoice (VoiceData.VOISaved);
+			activeClient->getServer()->saveGameState(saveNumber, name);
+			cSoundDevice::getInstance().playVoice(VoiceData.VOISaved);
 
 			loadSaveWindow->update();
 		}
 		catch (std::runtime_error& e)
 		{
 			Log.write(e.what(), cLog::eLOG_TYPE_ERROR);
-			application.show (std::make_shared<cDialogOk> ("Writing savegame file failed"));
+			application.show (std::make_shared<cDialogOk> (lngPack.i18n("Text~Error_Messages~ERROR_Save_Writing")));
 		}
 	});
 }
@@ -844,11 +888,11 @@ void cGameGuiController::showPreferencesDialog()
 {
 	application.show (std::make_shared<cDialogPreferences> ());
 }
-
+ 
 //------------------------------------------------------------------------------
 void cGameGuiController::showReportsWindow()
 {
-	auto reportsWindow = application.show (std::make_shared<cWindowReports> (getPlayers(), getActivePlayer(), getCasualtiesTracker(), getTurnClock(), getTurnTimeClock(), getGameSettings()));
+	auto reportsWindow = application.show (std::make_shared<cWindowReports> (getPlayers(), getActivePlayer(), getCasualtiesTracker(), getTurnClock(), getTurnTimeClock(), getGameSettings(), getSavedReports(getActivePlayer()->getId())));
 
 	signalConnectionManager.connect (reportsWindow->unitClickedSecondTime, [this, reportsWindow] (cUnit & unit)
 	{
@@ -1097,6 +1141,7 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 			if (storedUnit.data.getHitpoints() < storedUnit.data.getHitpointsMax())
 			{
 				repairTriggered (unit, storedUnit);
+				//TODO: don't decide, which units can be repaired in the GUI code
 				auto value = storedUnit.data.getHitpoints();
 				while (value < storedUnit.data.getHitpointsMax() && remainingResources > 0)
 				{
@@ -1483,12 +1528,12 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 	// normal chat message
 	else if (activeClient)
 	{
-		activeClient->handleChatMessage (command);
+		sendChatMessageToServer(*activeClient, command);
 	}
 }
 
 //------------------------------------------------------------------------------
-void cGameGuiController::handleReport (const cSavedReport& report)
+void cGameGuiController::handleReportForActivePlayer (const cSavedReport& report)
 {
 	if (report.getType() == eSavedReportType::Chat)
 	{

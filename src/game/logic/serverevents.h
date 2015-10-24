@@ -282,7 +282,6 @@ void sendReconnectAnswer (cServer& server, int socketNumber);
 void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& player);
 
 void sendTurn (cServer& server, int turn, const cPlayer& receiver);
-void sendGameGuiState (cServer& server, const cGameGuiState& state, const cPlayer& player);
 void sendStoreVehicle (cServer& server, int unitid, bool vehicle, int storedunitid, const cPlayer& receiver);
 void sendActivateVehicle (cServer& server, int unitid, bool vehicle, int activatunitid, const cPosition& position, const cPlayer& receiver);
 void sendDeleteEverything (cServer& server, const cPlayer& receiver);
@@ -302,8 +301,6 @@ void sendSetAutomoving (cServer& server, const cVehicle& vehicle);
 *@author alzi alias DoctorDeath
 */
 void sendCommandoAnswer (cServer& server, bool success, bool steal, const cVehicle& srcUnit, const cPlayer& receiver);
-void sendRequestSaveInfo (cServer& server, const int saveingID);
-void sendSavedReport (cServer& server, const cSavedReport& savedReport, const cPlayer* receiver);
 
 void sendCasualtiesReport (cServer& server, const cPlayer* receiver);
 

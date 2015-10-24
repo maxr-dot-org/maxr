@@ -37,8 +37,6 @@ public:
 
 	virtual void run() MAXR_OVERRIDE_FUNCTION;
 
-	virtual void save (int saveNumber, const std::string& saveName) MAXR_OVERRIDE_FUNCTION;
-
 	void setNetwork (std::shared_ptr<cTCP> network);
 protected:
 	std::shared_ptr<cTCP> network;

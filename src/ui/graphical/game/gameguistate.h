@@ -22,6 +22,7 @@
 
 #include <vector>
 
+#include "utility/serialization/serialization.h"
 #include "utility/position.h"
 #include "tinyxml2.h"
 
@@ -89,11 +90,28 @@ public:
 	void setLockedUnits (const cUnitLockList& unitLockList);
 	const std::vector<unsigned int>& getLockedUnitIds() const;
 
-	void pushInto (cNetMessage& message) const;
-	void popFrom (cNetMessage& message);
-
-	void pushInto (tinyxml2::XMLElement& element) const;
-	void popFrom (const tinyxml2::XMLElement& element, const cVersion& saveVersion);
+	template <typename T>
+	void serialize(T& archive)
+	{
+		archive & NVP(mapPosition);
+		archive & NVP(mapZoomFactor);
+		archive & NVP(surveyActive);
+		archive & NVP(hitsActive);
+		archive & NVP(scanActive);
+		archive & NVP(statusActive);
+		archive & NVP(ammoActive);
+		archive & NVP(gridActive);
+		archive & NVP(colorActive);
+		archive & NVP(rangeActive);
+		archive & NVP(fogActive);
+		archive & NVP(lockActive);
+		archive & NVP(miniMapZoomFactorActive);
+		archive & NVP(miniMapAttackUnitsOnly);
+		archive & NVP(unitVideoPlaying);
+		archive & NVP(chatActive);
+		archive & NVP(selectedUnitIds);
+		archive & NVP(lockedUnitIds);
+	}
 private:
 	cPosition mapPosition;
 	float mapZoomFactor;

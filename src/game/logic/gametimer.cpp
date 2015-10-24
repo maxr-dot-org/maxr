@@ -147,11 +147,11 @@ void cGameTimerServer::run(cModel& model, cServer2& server)
 		uint32_t checksum = model.calcChecksum();
 		for (auto player : model.getPlayerList())
 		{
-			auto message = std::make_unique<cNetMessageSyncServer>();
-			message->checksum = checksum;
-			message->ping = static_cast<int>(clientDebugData[player->getId()].ping);
-			message->gameTime = gameTime;
-			server.sendMessageToClients(std::move(message), player->getId());
+			cNetMessageSyncServer message;
+			message.checksum = checksum;
+			message.ping = static_cast<int>(clientDebugData[player->getId()].ping);
+			message.gameTime = gameTime;
+			server.sendMessageToClients(message, player->getId());
 		}
 	}
 }
@@ -181,7 +181,7 @@ unsigned int cGameTimerClient::getReceivedTime()
 	return receivedTime;
 }
 
-void cGameTimerClient::handleSyncMessage (cNetMessageSyncServer& message)
+void cGameTimerClient::handleSyncMessage (const cNetMessageSyncServer& message)
 {
 
 	remoteChecksum = message.checksum;
@@ -219,6 +219,7 @@ void cGameTimerClient::run(cClient& client)
 	//collect some debug data
 	const unsigned int timeBuffer = getReceivedTime() - gameTime;
 	const unsigned int tickPerFrame = std::min(timeBuffer, eventCounter);	//assumes, that this function is called once per frame
+																			//and we are not running in the maxWorkingTime limit
 
 	while (popEvent())
 	{
@@ -246,16 +247,16 @@ void cGameTimerClient::run(cClient& client)
 			syncMessageReceived = false;
 
 			//send syncMessage
-			auto message = std::make_unique<cNetMessageSyncClient>();
-			message->gameTime = gameTime;
+			cNetMessageSyncClient message;
+			message.gameTime = gameTime;
 			//add debug data
-			message->crcOK = (localChecksum == remoteChecksum);
-			message->eventCounter = eventCounter;
-			message->queueSize = client.getNetMessageQueueSize();
-			message->ticksPerFrame = tickPerFrame;
-			message->timeBuffer = timeBuffer;
+			message.crcOK = (localChecksum == remoteChecksum);
+			message.eventCounter = eventCounter;
+			message.queueSize = client.getNetMessageQueueSize();
+			message.ticksPerFrame = tickPerFrame;
+			message.timeBuffer = timeBuffer;
 				
-			client.sendNetMessage(std::move(message));
+			client.sendNetMessage(message);
 			
 			if (SDL_GetTicks() - startGameTime >= maxWorkingTime)
 				break;

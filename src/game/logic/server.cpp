@@ -443,7 +443,7 @@ void cServer::handleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage
 		// because it's expected client behaviour
 		if (DEDICATED_SERVER == false)
 			enableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
-		sendSavedReport (*this, cSavedReportLostConnection (*Player), nullptr);
+		//sendSavedReport (*this, cSavedReportLostConnection (*Player), nullptr);
 
 		DisconnectedPlayerList.push_back (Player);
 
@@ -458,7 +458,7 @@ void cServer::handleNetMessage_GAME_EV_CHAT_CLIENT (cNetMessage& message)
 
 	const auto& player = getPlayerFromNumber (message.popChar());
 
-	sendSavedReport (*this, cSavedReportChat (player, message.popString()), nullptr);
+	//sendSavedReport (*this, cSavedReportChat (player, message.popString()), nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -1893,7 +1893,7 @@ void cServer::handleNetMessage_GAME_EV_SAVE_HUD_INFO (cNetMessage& message)
 	if (msgSaveingID != savingID) return;
 	cPlayer& player = getPlayerFromNumber (message.popInt16());
 
-	playerGameGuiStates[player.getId()].popFrom (message);
+//	playerGameGuiStates[player.getId()].popFrom (message);
 }
 
 //------------------------------------------------------------------------------
@@ -1905,7 +1905,7 @@ void cServer::handleNetMessage_GAME_EV_SAVE_REPORT_INFO (cNetMessage& message)
 	if (msgSaveingID != savingID) return;
 	auto& player = getPlayerFromNumber (message.popInt16());
 
-	player.savedReportsList.push_back (cSavedReport::createFrom (message));
+//	player.savedReportsList.push_back (cSavedReport::createFrom (message));
 }
 
 //------------------------------------------------------------------------------
@@ -2843,7 +2843,7 @@ void cServer::handleWantEnd()
 
 		if (getGameType() == GAME_TYPE_HOTSEAT || isTurnBasedGame())
 		{
-			sendSavedReport (*this, cSavedReportTurnStart (*activeTurnPlayer, turnClock->getTurn()), activeTurnPlayer);
+			//sendSavedReport (*this, cSavedReportTurnStart (*activeTurnPlayer, turnClock->getTurn()), activeTurnPlayer);
 			activeTurnPlayer->resetTurnReportData();
 
 			// when it's the turn of the first player again, we start the next turn
@@ -2857,7 +2857,7 @@ void cServer::handleWantEnd()
 			// send reports to all players
 			for (size_t i = 0; i != playerList.size(); ++i)
 			{
-				sendSavedReport (*this, cSavedReportTurnStart (*playerList[i], turnClock->getTurn()), playerList[i].get());
+				//sendSavedReport (*this, cSavedReportTurnStart (*playerList[i], turnClock->getTurn()), playerList[i].get());
 				playerList[i]->resetTurnReportData();
 			}
 			sendMakeTurnEnd (*this);
@@ -2914,20 +2914,20 @@ bool cServer::checkRemainingMoveJobs (const cPlayer* player)
 		{
 			if (pendingEndTurnPlayerNumber == -1)
 			{
-				if (startedNewMoveJobs) sendSavedReport (*this, cSavedReportSimple (eSavedReportType::TurnAutoMove), player);
+				/*if (startedNewMoveJobs) sendSavedReport (*this, cSavedReportSimple (eSavedReportType::TurnAutoMove), player);
 				else sendSavedReport (*this, cSavedReportSimple (eSavedReportType::TurnWait), player);
-
+*/
 			}
 		}
 		else
 		{
 			if (pendingEndTurnPlayerNumber == -1)
 			{
-				for (size_t i = 0; i != playerList.size(); ++i)
+				/*for (size_t i = 0; i != playerList.size(); ++i)
 				{
 					if (startedNewMoveJobs) sendSavedReport (*this, cSavedReportSimple (eSavedReportType::TurnAutoMove), playerList[i].get());
 					else sendSavedReport (*this, cSavedReportSimple (eSavedReportType::TurnWait), playerList[i].get());
-				}
+				}*/
 			}
 		}
 		return true;
@@ -3668,7 +3668,7 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete, bool withGuiState
 
 	if (withGuiState)
 	{
-		sendGameGuiState (*this, getPlayerGameGuiState (player), player);
+		//sendGameGuiState (*this, getPlayerGameGuiState (player), player);
 	}
 
 	Log.write (" Server:  ============================= end resync  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
@@ -3893,7 +3893,7 @@ void cServer::makeAdditionalSaveRequest (int saveNum)
 {
 	savingID++;
 	savingIndex = saveNum;
-	sendRequestSaveInfo (*this, savingID);
+//	sendRequestSaveInfo (*this, savingID);
 }
 
 void cServer::addJob (cJob* job)

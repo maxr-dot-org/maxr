@@ -462,7 +462,7 @@ void cDedicatedServer::sendChatMessage (const string& text, int type, int socket
 		if (msg.getType() == GAME_EV_SAVED_REPORT)
 		{
 			cSavedReportChat report ("dedicated_server", line);
-			report.pushInto (msg);
+			//report.pushInto (msg);
 		}
 		else
 		{

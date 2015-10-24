@@ -32,36 +32,6 @@ cSavedReportDestroyed::cSavedReportDestroyed (const cUnit& unit) :
 {}
 
 //------------------------------------------------------------------------------
-cSavedReportDestroyed::cSavedReportDestroyed (cNetMessage& message) :
-	cSavedReportUnit (message)
-{
-	unitName = message.popString();
-}
-
-//------------------------------------------------------------------------------
-cSavedReportDestroyed::cSavedReportDestroyed (const tinyxml2::XMLElement& element) :
-	cSavedReportUnit (element)
-{
-	unitName = element.Attribute ("unitName");
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportDestroyed::pushInto (cNetMessage& message) const
-{
-	message.pushString (unitName);
-
-	cSavedReportUnit::pushInto (message);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportDestroyed::pushInto (tinyxml2::XMLElement& element) const
-{
-	element.SetAttribute ("unitName", unitName.c_str());
-
-	cSavedReportUnit::pushInto (element);
-}
-
-//------------------------------------------------------------------------------
 eSavedReportType cSavedReportDestroyed::getType() const
 {
 	return eSavedReportType::Destroyed;

@@ -30,6 +30,8 @@
 #include "utility/serialization/xmlarchive.h"
 #include "utility/log.h"
 #include "extendedtinyxml.h"
+#include "netmessage2.h"
+#include "game/logic/server2.h"
 
 #define LOAD_ERROR(msg)                        \
 	{                                          \
@@ -43,7 +45,7 @@ cSavegame::cSavegame() :
 	saveingID(-1)
 {}
 
-void cSavegame::save(const cModel& model, int slot, const std::string& saveName)
+int cSavegame::save(const cModel& model, int slot, const std::string& saveName)
 {
 #if 0 //---serialization test code---	
 	//write 1st xml archive
@@ -71,13 +73,49 @@ void cSavegame::save(const cModel& model, int slot, const std::string& saveName)
 	document2.SaveFile("test2.xml");
 	//both files should now be identical
 #endif
+	loadedSlot = -1;
 
 	writeHeader(slot, saveName, model);
 
 	cXmlArchiveIn archive(*xmlDocument.RootElement());
 	archive << NVP(model);
 
-	xmlDocument.SaveFile(getFileName(slot).c_str());
+	loadedSlot = slot;
+	tinyxml2::XMLError result = xmlDocument.SaveFile(getFileName(slot).c_str());
+	if (result != tinyxml2::XML_NO_ERROR)
+	{
+		throw std::runtime_error(getXMLErrorMsg(xmlDocument));
+	}
+	saveingID++;
+	return saveingID;
+
+}
+
+void cSavegame::saveGuiInfo(const cNetMessageGUISaveInfo& guiInfo)
+{
+	if (saveingID != guiInfo.savingID)
+	{
+		Log.write("Received GuiSaveInfo with wrong savingID", cLog::eLOG_TYPE_NET_WARNING);
+		return;
+	}
+
+	cXmlArchiveIn archive(*xmlDocument.RootElement());
+	archive.openNewChild("GuiInfo");
+
+	archive << serialization::makeNvp("playerNr", guiInfo.playerNr);
+	archive << serialization::makeNvp("guiState", guiInfo.guiState);
+	archive << serialization::makeNvp("reportsNr", (int)guiInfo.reports->size());
+	for (const auto &report : *guiInfo.reports)
+	{
+		archive << serialization::makeNvp("report", *report);
+	}
+	archive.closeChild();
+
+	tinyxml2::XMLError result = xmlDocument.SaveFile(getFileName(loadedSlot).c_str());
+	if (result != tinyxml2::XML_NO_ERROR)
+	{
+		Log.write("Writing savegame file failed: " + getXMLErrorMsg(xmlDocument), cLog::eLOG_TYPE_NET_WARNING);
+	}
 }
 
 cSaveGameInfo cSavegame::loadSaveInfo(int slot)
@@ -128,6 +166,7 @@ std::string cSavegame::getFileName(int slot)
 void cSavegame::writeHeader(int slot, const std::string& saveName, const cModel &model)
 {
 	//init document
+	loadedSlot = -1;
 	xmlDocument.Clear();
 	xmlDocument.LinkEndChild(xmlDocument.NewDeclaration());
 	tinyxml2::XMLElement* rootnode = xmlDocument.NewElement("MAXR_SAVE_FILE");
@@ -228,6 +267,37 @@ void cSavegame::loadModel(cModel& model, int slot)
 	serialization::cPointerLoader loader(model);
 	cXmlArchiveOut archive(*xmlDocument.RootElement(), &loader);
 	archive >> NVP(model);
+}
+
+void cSavegame::loadGuiInfo(const cServer2* server, int slot)
+{
+	if (!loadDocument(slot))
+	{
+		throw std::runtime_error("Could not load savegame file " + iToStr(slot));
+	}
+
+	tinyxml2::XMLElement* guiInfoElement = xmlDocument.RootElement()->FirstChildElement("GuiInfo");
+	while (guiInfoElement)
+	{
+		cXmlArchiveOut archive(*guiInfoElement);
+		cNetMessageGUISaveInfo guiInfo(slot);
+
+		guiInfo.reports = std::make_shared<std::vector<std::unique_ptr<cSavedReport>>>();
+
+		archive >> serialization::makeNvp("playerNr", guiInfo.playerNr);
+		archive >> serialization::makeNvp("guiState", guiInfo.guiState);
+		int size;
+		archive >> serialization::makeNvp("reportsNr", size);
+		guiInfo.reports->resize(size);
+		for (auto &report : *guiInfo.reports)
+		{
+			report = cSavedReport::createFrom(archive, "report");
+		}
+
+		server->sendMessageToClients(guiInfo, guiInfo.playerNr);
+
+		guiInfoElement = guiInfoElement->NextSiblingElement("GuiInfo");
+	}
 }
 
 bool cSavegame::loadDocument(int slot)

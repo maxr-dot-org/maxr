@@ -27,34 +27,6 @@ cSavedReportHostCommand::cSavedReportHostCommand (std::string command_) :
 {}
 
 //------------------------------------------------------------------------------
-cSavedReportHostCommand::cSavedReportHostCommand (cNetMessage& message)
-{
-	command = message.popString();
-}
-
-//------------------------------------------------------------------------------
-cSavedReportHostCommand::cSavedReportHostCommand (const tinyxml2::XMLElement& element)
-{
-	command = element.Attribute ("command");
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportHostCommand::pushInto (cNetMessage& message) const
-{
-	message.pushString (command);
-
-	cSavedReport::pushInto (message);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportHostCommand::pushInto (tinyxml2::XMLElement& element) const
-{
-	element.SetAttribute ("command", command.c_str());
-
-	cSavedReport::pushInto (element);
-}
-
-//------------------------------------------------------------------------------
 eSavedReportType cSavedReportHostCommand::getType() const
 {
 	return eSavedReportType::HostCommand;

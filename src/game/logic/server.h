@@ -71,16 +71,6 @@ enum eServerState
 	SERVER_STATE_INGAME,   // Game is running
 };
 
-/**
- * Structure for the reports
- */
-struct sTurnstartReport
-{
-	/** unit type of the report */
-	sID type;
-	/** counter for this report */
-	int count;
-};
 
 /**
 * Callback function for the serverthread

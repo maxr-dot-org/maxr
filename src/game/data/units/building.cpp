@@ -687,7 +687,7 @@ void cBuilding::ServerStartWork (cServer& server)
 
 	if (isDisabled())
 	{
-		sendSavedReport (server, cSavedReportSimple (eSavedReportType::BuildingDisabled), getOwner());
+		//sendSavedReport (server, cSavedReportSimple (eSavedReportType::BuildingDisabled), getOwner());
 		return;
 	}
 
@@ -696,7 +696,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	{
 		if (SubBase->HumanNeed + data.needsHumans > SubBase->HumanProd)
 		{
-			sendSavedReport (server, cSavedReportSimple (eSavedReportType::TeamInsufficient), getOwner());
+			//sendSavedReport (server, cSavedReportSimple (eSavedReportType::TeamInsufficient), getOwner());
 			return;
 		}
 	}
@@ -706,7 +706,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	{
 		if (data.convertsGold + SubBase->GoldNeed > SubBase->getGoldProd() + SubBase->getGold())
 		{
-			sendSavedReport (server, cSavedReportSimple (eSavedReportType::GoldInsufficient), getOwner());
+			//sendSavedReport (server, cSavedReportSimple (eSavedReportType::GoldInsufficient), getOwner());
 			return;
 		}
 	}
@@ -716,7 +716,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	{
 		if (SubBase->MetalNeed + std::min (MetalPerRound, buildList[0].getRemainingMetal()) > SubBase->getMetalProd() + SubBase->getMetal())
 		{
-			sendSavedReport (server, cSavedReportSimple (eSavedReportType::MetalInsufficient), getOwner());
+			//sendSavedReport (server, cSavedReportSimple (eSavedReportType::MetalInsufficient), getOwner());
 			return;
 		}
 	}
@@ -728,7 +728,7 @@ void cBuilding::ServerStartWork (cServer& server)
 		// (current production + reserves)
 		if (data.needsOil + SubBase->OilNeed > SubBase->getOil() + SubBase->getMaxOilProd())
 		{
-			sendSavedReport (server, cSavedReportSimple (eSavedReportType::FuelInsufficient), getOwner());
+			//sendSavedReport (server, cSavedReportSimple (eSavedReportType::FuelInsufficient), getOwner());
 			return;
 		}
 		else if (data.needsOil + SubBase->OilNeed > SubBase->getOil() + SubBase->getOilProd())
@@ -748,11 +748,11 @@ void cBuilding::ServerStartWork (cServer& server)
 			SubBase->setGoldProd (gold);
 			SubBase->setMetalProd (metal);
 
-			sendSavedReport (server, cSavedReportResourceChanged (RES_OIL, missingOil, true), getOwner());
-			if (SubBase->getMetalProd() < metal)
-				sendSavedReport (server, cSavedReportResourceChanged (RES_METAL, metal - SubBase->getMetalProd(), false), getOwner());
-			if (SubBase->getGoldProd() < gold)
-				sendSavedReport (server, cSavedReportResourceChanged (RES_GOLD, gold - SubBase->getGoldProd(), false), getOwner());
+			//sendSavedReport (server, cSavedReportResourceChanged (RES_OIL, missingOil, true), getOwner());
+			//if (SubBase->getMetalProd() < metal)
+			//	sendSavedReport (server, cSavedReportResourceChanged (RES_METAL, metal - SubBase->getMetalProd(), false), getOwner());
+			//if (SubBase->getGoldProd() < gold)
+			//	sendSavedReport (server, cSavedReportResourceChanged (RES_GOLD, gold - SubBase->getGoldProd(), false), getOwner());
 		}
 	}
 
@@ -802,10 +802,10 @@ void cBuilding::ServerStartWork (cServer& server)
 					SubBase->setOilProd (min (oil, SubBase->getMaxAllowedOilProd()));
 				}
 
-				sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyInsufficient), getOwner());
+				//sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyInsufficient), getOwner());
 				return;
 			}
-			sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyToLow), getOwner());
+			//sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyToLow), getOwner());
 		}
 	}
 
@@ -869,7 +869,7 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 	{
 		if (SubBase->EnergyNeed > SubBase->EnergyProd - data.produceEnergy && !override)
 		{
-			sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyIsNeeded), getOwner());
+			//sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyIsNeeded), getOwner());
 			return;
 		}
 

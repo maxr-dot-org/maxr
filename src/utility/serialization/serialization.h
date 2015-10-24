@@ -32,6 +32,28 @@ class cBuilding;
 class cVehicle;
 class cUnit;
 
+//used to constrain a template definition to use with out-archive types only
+#define ENABLE_ARCHIVE_OUT                       \
+	typename = std::enable_if_t<                 \
+	std::is_same<T, cBinaryArchiveOut>::value || \
+	std::is_same<T, cXmlArchiveOut>::value>
+
+//used to constrain a template definition to use with in-archive types only
+#define ENABLE_ARCHIVE_IN                        \
+	typename = std::enable_if_t<                 \
+	std::is_same<T, cBinaryArchiveIn>::value  || \
+	std::is_same<T, cXmlArchiveIn>::value     || \
+	std::is_same<T, cTextArchiveIn>::value>
+
+//used to constrain a template definition to use with archive types only
+#define ENABLE_ARCHIVES                          \
+	typename = std::enable_if_t<                 \
+	std::is_same<T, cBinaryArchiveOut>::value || \
+	std::is_same<T, cXmlArchiveOut>::value    || \
+	std::is_same<T, cBinaryArchiveIn>::value  || \
+	std::is_same<T, cXmlArchiveIn>::value     || \
+	std::is_same<T, cTextArchiveIn>::value>
+
 namespace serialization
 {
 	//--------------------------------------------------------------------------

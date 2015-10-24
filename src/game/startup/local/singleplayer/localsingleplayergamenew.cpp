@@ -62,7 +62,7 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 	client = std::make_shared<cClient>(server.get(), nullptr);
 
 	client->setMap (staticMap);
-	server->setMap(staticMap);
+	server->setMap (staticMap);
 
 	client->setGameSettings (*gameSettings);
 	server->setGameSettings (*gameSettings);
@@ -75,12 +75,12 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 
 	server->start();
 
-	auto action = std::make_unique<cActionInitNewGame>();
-	action->clan = playerClan;
-	action->landingUnits = landingUnits;
-	action->landingPosition = landingPosition;
-	action->unitUpgrades = unitUpgrades;
-	client->sendNetMessage(std::move(action));
+	cActionInitNewGame action;
+	action.clan = playerClan;
+	action.landingUnits = landingUnits;
+	action.landingPosition = landingPosition;
+	action.unitUpgrades = unitUpgrades;
+	client->sendNetMessage(action);
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
@@ -91,9 +91,6 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 	gameGuiController->addPlayerGameGuiState (client->getActivePlayer(), std::move (playerGameGuiState));
 
 	gameGuiController->start();
-
-	using namespace std::placeholders;
-	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cLocalSingleplayerGameNew::save, this, _1, _2));
 
 	terminate = false;
 

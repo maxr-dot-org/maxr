@@ -28,41 +28,6 @@ cSavedReportUnit::cSavedReportUnit (const cUnit& unit) :
 	position (unit.getPosition())
 {}
 
-
-//------------------------------------------------------------------------------
-cSavedReportUnit::cSavedReportUnit (cNetMessage& message)
-{
-	position = message.popPosition();
-	unitId = message.popID();
-}
-
-//------------------------------------------------------------------------------
-cSavedReportUnit::cSavedReportUnit (const tinyxml2::XMLElement& element)
-{
-	position.x() = element.IntAttribute ("xPos");
-	position.y() = element.IntAttribute ("yPos");
-	unitId.generate (element.Attribute ("id"));
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportUnit::pushInto (cNetMessage& message) const
-{
-	message.pushID (unitId);
-	message.pushPosition (position);
-
-	cSavedReport::pushInto (message);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportUnit::pushInto (tinyxml2::XMLElement& element) const
-{
-	element.SetAttribute ("xPos", iToStr (position.x()).c_str());
-	element.SetAttribute ("yPos", iToStr (position.y()).c_str());
-	element.SetAttribute ("id", unitId.getText().c_str());
-
-	cSavedReport::pushInto (element);
-}
-
 //------------------------------------------------------------------------------
 bool cSavedReportUnit::hasUnitId() const
 {
