@@ -98,7 +98,6 @@ sUnitData::sUnitData()
 	storageResCur = 0;
 	storeResType = STORE_RES_NONE;
 	storageUnitsMax = 0;
-	storageUnitsCur = 0;
 	storeUnitsImageType = STORE_UNIT_IMG_NONE;
 
 	// Graphic
@@ -190,7 +189,6 @@ sUnitData& sUnitData::operator= (const sUnitData& other)
 	storageResCur = other.storageResCur;
 	storeResType = other.storeResType;
 	storageUnitsMax = other.storageUnitsMax;
-	storageUnitsCur = other.storageUnitsCur;
 	storeUnitsImageType = other.storeUnitsImageType;
 	storeUnitsTypes = other.storeUnitsTypes;
 	isStorageType = other.isStorageType;
@@ -395,18 +393,4 @@ void sUnitData::setStoredResources (int value)
 	value = std::max (std::min (value, storageResMax), 0);
 	std::swap (storageResCur, value);
 	if (storageResCur != value) storedResourcesChanged();
-}
-
-//------------------------------------------------------------------------------
-int sUnitData::getStoredUnits() const
-{
-	return storageUnitsCur;
-}
-
-//------------------------------------------------------------------------------
-void sUnitData::setStoredUnits (int value)
-{
-	value = std::max (std::min (value, storageUnitsMax), 0);
-	std::swap (storageUnitsCur, value);
-	if (storageUnitsCur != value) storedUnitsChanged();
 }

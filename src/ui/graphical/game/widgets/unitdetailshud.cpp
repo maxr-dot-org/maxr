@@ -173,7 +173,7 @@ void cUnitDetailsHud::reset()
 				case sUnitData::STORE_UNIT_IMG_NONE: break;
 			}
 
-			drawRow (1, symbolType, data.getStoredUnits(), data.storageUnitsMax, lngPack.i18n ("Text~Others~Cargo_7"));
+			drawRow (1, symbolType, unit->storedUnits.size(), data.storageUnitsMax, lngPack.i18n ("Text~Others~Cargo_7"));
 		}
 	}
 	else if (data.canAttack && !data.explodesOnContact)

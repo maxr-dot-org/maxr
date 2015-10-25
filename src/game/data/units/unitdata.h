@@ -212,9 +212,6 @@ struct sUnitData
 	int getStoredResources() const;
 	void setStoredResources (int value);
 
-	int getStoredUnits() const;
-	void setStoredUnits (int value);
-
 	mutable cSignal<void ()> versionChanged;
 	mutable cSignal<void ()> speedChanged;
 	mutable cSignal<void ()> speedMaxChanged;
@@ -229,7 +226,6 @@ struct sUnitData
 	mutable cSignal<void ()> damageChanged;
 	mutable cSignal<void ()> armorChanged;
 	mutable cSignal<void ()> storedResourcesChanged;
-	mutable cSignal<void ()> storedUnitsChanged;
 
 	template<typename T>
 	void serialize(T& archive)
@@ -315,7 +311,6 @@ struct sUnitData
 		archive & NVP(damage);
 		archive & NVP(armor);
 		archive & NVP(storageResCur);
-		archive & NVP(storageUnitsCur);
 	}
 private:
 	int version;
@@ -337,7 +332,6 @@ private:
 	int armor;
 
 	int storageResCur;
-	int storageUnitsCur;
 };
 
 #endif // game_data_units_unitdataH

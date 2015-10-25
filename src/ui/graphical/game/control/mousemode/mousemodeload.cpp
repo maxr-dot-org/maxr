@@ -81,7 +81,7 @@ void cMouseModeLoad::establishUnitSelectionConnections()
 
 	if (selectedUnit)
 	{
-		selectedUnitSignalConnectionManager.connect (selectedUnit->data.storedUnitsChanged, [this]() { needRefresh(); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->storedUnitsChanged, [this]() { needRefresh(); });
 		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, [this]() { needRefresh(); });
 	}
 }

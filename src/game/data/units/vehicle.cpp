@@ -990,7 +990,7 @@ bool cVehicle::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 
 	if (Vehicle->isUnitLoaded()) return false;
 
-	if (data.getStoredUnits() >= data.storageUnitsMax) return false;
+	if (storedUnits.size() >= data.storageUnitsMax) return false;
 
 	if (checkPosition && !isNextTo (Vehicle->getPosition())) return false;
 
@@ -1022,7 +1022,7 @@ void cVehicle::storeVehicle (cVehicle& vehicle, cMap& map)
 	vehicle.setIsBeeinAttacked (false);
 
 	storedUnits.push_back (&vehicle);
-	data.setStoredUnits (data.getStoredUnits() + 1);
+	storedUnitsChanged();
 
 	getOwner()->doScan();
 }
@@ -1034,7 +1034,7 @@ void cVehicle::exitVehicleTo (cVehicle& vehicle, const cPosition& position, cMap
 {
 	Remove (storedUnits, &vehicle);
 
-	data.setStoredUnits (data.getStoredUnits() - 1);
+	storedUnitsChanged();
 
 	map.addVehicle (vehicle, position);
 

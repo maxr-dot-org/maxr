@@ -176,7 +176,6 @@ void sendUnitData (cServer& server, const cUnit& unit, const cPlayer& receiver)
 	message->pushInt16 (unit.data.getShots());
 	message->pushInt16 (unit.data.getDamage());
 	message->pushInt16 (unit.data.storageUnitsMax);
-	message->pushInt16 (unit.data.getStoredUnits());
 	message->pushInt16 (unit.data.storageResMax);
 	message->pushInt16 (unit.data.getStoredResources());
 	message->pushInt16 (unit.data.getAmmoMax());

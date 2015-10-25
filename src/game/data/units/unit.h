@@ -149,8 +149,9 @@ public:
 	mutable cSignal<void ()> beenAttackedChanged;
 	mutable cSignal<void ()> movingChanged;
 
-	mutable cSignal<void ()> stored;
-	mutable cSignal<void ()> activated;
+	mutable cSignal<void()> storedUnitsChanged; //the unit has loaded or unloaded another unit
+	mutable cSignal<void ()> stored;            //this unit has been loaded by another unit
+	mutable cSignal<void ()> activated;         //this unit has been unloaded by another unit
 
 	mutable cSignal<void ()> layingMinesChanged;
 	mutable cSignal<void ()> clearingMinesChanged;
