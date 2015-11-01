@@ -828,6 +828,7 @@ void cEndMoveAction::executeAttackAction (cServer& server)
 {
 	// get the target unit
 	const cUnit* destUnit = server.getUnitFromID (destID_);
+	if (destUnit == nullptr) return;
 
 	const auto& position = destUnit->getPosition();
 	cMap& map = *server.Map;
