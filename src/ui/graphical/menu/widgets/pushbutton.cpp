@@ -38,7 +38,10 @@ cPushButton::cPushButton (const cBox<cPosition>& area) :
 	text (""),
 	clickSound (&SoundData.SNDHudButton),
 	isLocked (false)
+
 {
+	if (buttonType >= ePushButtonType::HudNext && buttonType <= ePushButtonType::HudFiles)
+		fontType = FONT_LATIN_SMALL_WHITE;
 	renewSurface();
 }
 
@@ -51,6 +54,8 @@ cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_
 	clickSound (&SoundData.SNDHudButton),
 	isLocked (false)
 {
+	if (buttonType >= ePushButtonType::HudNext && buttonType <= ePushButtonType::HudFiles)
+		fontType = FONT_LATIN_SMALL_WHITE;
 	renewSurface();
 }
 
@@ -63,6 +68,8 @@ cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_
 	clickSound (clickSound_),
 	isLocked (false)
 {
+	if (buttonType >= ePushButtonType::HudNext && buttonType <= ePushButtonType::HudFiles)
+		fontType = FONT_LATIN_SMALL_WHITE;
 	renewSurface();
 }
 
@@ -75,6 +82,8 @@ cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_
 	clickSound (&SoundData.SNDHudButton),
 	isLocked (false)
 {
+	if (buttonType >= ePushButtonType::HudNext && buttonType <= ePushButtonType::HudFiles)
+		fontType = FONT_LATIN_SMALL_WHITE;
 	renewSurface();
 }
 
@@ -87,6 +96,8 @@ cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_
 	clickSound (clickSound_),
 	isLocked (false)
 {
+	if (buttonType >= ePushButtonType::HudNext && buttonType <= ePushButtonType::HudFiles)
+		fontType = FONT_LATIN_SMALL_WHITE;
 	renewSurface();
 }
 

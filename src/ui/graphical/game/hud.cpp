@@ -116,7 +116,7 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	auto prevButton = addChild (std::make_unique<cPushButton> (cPosition (60, 227), ePushButtonType::HudPrev, "<<"));
 	prevButton->addClickShortcut (KeysList.keyUnitPrev);
 	signalConnectionManager.connect (prevButton->clicked, [&]() { prevClicked(); });
-	auto doneButton = addChild (std::make_unique<cPushButton> (cPosition (99, 227), ePushButtonType::HudDone, lngPack.i18n ("Text~Others~Proceed")));
+	auto doneButton = addChild (std::make_unique<cPushButton> (cPosition (99, 227), ePushButtonType::HudDone, lngPack.i18n ("Text~Others~Proceed_4")));
 	doneButton->addClickShortcut (KeysList.keyUnitDone);
 	signalConnectionManager.connect (doneButton->clicked, [&]() { doneClicked(); });
 
