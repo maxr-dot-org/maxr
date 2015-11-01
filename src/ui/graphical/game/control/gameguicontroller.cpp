@@ -1372,14 +1372,14 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 			}
 			else if (command.compare (0, 7, "/resync") == 0)
 			{
-				if (command.length() > 7)
+				if (command.length() > 8)
 				{
 					if (!server)
 					{
 						gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
 						return;
 					}
-					cPlayer* player = activeClient->getPlayerFromString (command.substr (7, 8));
+					cPlayer* player = activeClient->getPlayerFromString (command.substr (8));
 					if (!player)
 					{
 						gameGui->getGameMessageList().addMessage ("Wrong parameter");
