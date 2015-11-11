@@ -260,7 +260,7 @@ void cTCP::HandleNetworkThread_CLIENT (unsigned int socketIndex)
 		//read available data from the socket to the buffer
 		int recvlength;
 		recvlength = SDLNet_TCP_Recv (s.socket, s.buffer.getWritePointer(), s.buffer.getFreeSpace());
-		if (recvlength < 0) //TODO: gleich 0???
+		if (recvlength <= 0)
 		{
 			pushEventTCP_Close (socketIndex);
 			s.iState = STATE_DYING;
@@ -325,7 +325,11 @@ void cTCP::HandleNetworkThread()
 	while (!bExit)
 	{
 		const int timeout = 10;
-		SDLNet_CheckSockets (SocketSet, timeout);
+		if (SDLNet_CheckSockets(SocketSet, timeout) == -1)
+		{
+			//return value of -1 means that most likely the socket set is empty
+			SDL_Delay(10);
+		}
 
 		// Check all Sockets
 		for (unsigned int i = 0; !bExit && i < iLast_Socket; i++)
