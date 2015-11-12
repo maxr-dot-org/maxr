@@ -36,6 +36,13 @@
 
 class cAbstractListViewItem;
 
+enum class eAddListItemScrollType
+{
+	None,
+	Always,
+	IfAtBottom
+};
+
 template<typename ItemType>
 class cListView : public cClickableWidget
 {
@@ -53,11 +60,11 @@ public:
 
 	void setScrollOffset (int offset);
 
-	const cPosition& getBeginMargin();
-	const cPosition& getEndMargin();
-	int getItemDistance();
+	const cPosition& getBeginMargin() const;
+	const cPosition& getEndMargin() const;
+	int getItemDistance() const;
 
-	ItemType* addItem (std::unique_ptr<ItemType> item);
+	ItemType* addItem (std::unique_ptr<ItemType> item, eAddListItemScrollType scrollType = eAddListItemScrollType::None);
 
 	std::unique_ptr<ItemType> removeItem (ItemType& item);
 
@@ -81,6 +88,9 @@ public:
 
 	void pageDown();
 	void pageUp();
+
+	bool isAtMinScroll () const;
+	bool isAtMaxScroll () const;
 
 	cSignal<void ()> itemRemoved;
 	cSignal<void ()> itemAdded;
@@ -225,31 +235,32 @@ void cListView<ItemType>::setScrollOffset (int offset)
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
-const cPosition& cListView<ItemType>::getBeginMargin()
+const cPosition& cListView<ItemType>::getBeginMargin() const
 {
 	return beginMargin;
 }
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
-const cPosition& cListView<ItemType>::getEndMargin()
+const cPosition& cListView<ItemType>::getEndMargin() const
 {
 	return endMargin;
 }
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
-int cListView<ItemType>::getItemDistance()
+int cListView<ItemType>::getItemDistance() const
 {
 	return itemDistance;
 }
 
-
 //------------------------------------------------------------------------------
 template<typename ItemType>
-ItemType* cListView<ItemType>::addItem (std::unique_ptr<ItemType> item)
+ItemType* cListView<ItemType>::addItem (std::unique_ptr<ItemType> item, eAddListItemScrollType scrollType)
 {
 	if (item == nullptr) return nullptr;
+
+	const auto wasAtMaxScroll = isAtMaxScroll ();
 
 	auto newItemPos = items.empty() ? 0 : items.back().first + items.back().second->getSize().y() + getItemDistance();
 	items.emplace_back (newItemPos, std::move (item));
@@ -284,6 +295,11 @@ ItemType* cListView<ItemType>::addItem (std::unique_ptr<ItemType> item)
 	{
 		const auto pixelSize = getSize().y() - getBeginMargin().y() - getEndMargin().y();
 		scrollBar->setRange (std::max (items.back().first + items.back().second->getSize().y() - pixelSize, 0));
+	}
+
+	if (scrollType == eAddListItemScrollType::Always || (scrollType == eAddListItemScrollType::IfAtBottom && wasAtMaxScroll))
+	{
+		scrollToItem (&addedItem);
 	}
 
 	updateDisplayItems();
@@ -723,6 +739,24 @@ void cListView<ItemType>::pageUp()
 	pixelOffset = std::max (pixelOffset - pixelSize, 0);
 
 	updateDisplayItems();
+}
+
+//------------------------------------------------------------------------------
+template<typename ItemType>
+bool cListView<ItemType>::isAtMinScroll () const
+{
+	return pixelOffset <= 0;
+}
+
+//------------------------------------------------------------------------------
+template<typename ItemType>
+bool cListView<ItemType>::isAtMaxScroll () const
+{
+	if (items.empty ()) return true;
+
+	const auto pixelSize = getSize ().y () - getBeginMargin ().y () - getEndMargin ().y ();
+
+	return pixelOffset >= items.back ().first + items.back ().second->getSize ().y () - pixelSize;
 }
 
 //------------------------------------------------------------------------------

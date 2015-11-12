@@ -196,8 +196,7 @@ void cChatBox<ChatListItemType, PlayerListItemType>::removePlayerEntry (int play
 template<typename ChatListItemType, typename PlayerListItemType>
 void cChatBox<ChatListItemType, PlayerListItemType>::addChatEntry (std::unique_ptr<ChatListItemType> entry)
 {
-	auto newItem = chatList->addItem (std::move (entry));
-	chatList->scrollToItem (newItem);
+	auto newItem = chatList->addItem (std::move (entry), eAddListItemScrollType::IfAtBottom);
 }
 
 //------------------------------------------------------------------------------

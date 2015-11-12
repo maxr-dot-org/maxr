@@ -239,16 +239,14 @@ void cWindowNetworkLobby::triggerChatMessage (bool keepFocus)
 //------------------------------------------------------------------------------
 void cWindowNetworkLobby::addChatEntry (const std::string& playerName, const std::string& message)
 {
-	auto addedItem = chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (playerName, message));
-	chatList->scrollToItem (addedItem);
+	auto addedItem = chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (playerName, message), eAddListItemScrollType::IfAtBottom);
 	cSoundDevice::getInstance().playSoundEffect (SoundData.SNDChat);
 }
 
 //------------------------------------------------------------------------------
 void cWindowNetworkLobby::addInfoEntry (const std::string& message)
 {
-	auto addedItem = chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (message));
-	chatList->scrollToItem (addedItem);
+	auto addedItem = chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (message), eAddListItemScrollType::IfAtBottom);
 }
 
 //------------------------------------------------------------------------------
