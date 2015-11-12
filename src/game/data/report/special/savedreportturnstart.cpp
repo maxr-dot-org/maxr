@@ -38,7 +38,7 @@ eSavedReportType cSavedReportTurnStart::getType() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportTurnStart::getMessage() const
+std::string cSavedReportTurnStart::getMessage(const cUnitsData& unitsData) const
 {
 	std::string message = lngPack.i18n ("Text~Comp~Turn_Start") + " " + iToStr (turn);
 
@@ -52,7 +52,7 @@ std::string cSavedReportTurnStart::getMessage() const
 
 			if (i > 0) message += ", ";
 			totalUnitsCount += entry.count;
-			message += entry.count > 1 ? (iToStr (entry.count) + " " + entry.type.getUnitDataOriginalVersion()->name) : (entry.type.getUnitDataOriginalVersion()->name);
+			message += entry.count > 1 ? (iToStr(entry.count) + " " + unitsData.getStaticUnitData(entry.type).getName()) : (unitsData.getStaticUnitData(entry.type).getName());
 		}
 		if (totalUnitsCount == 1) message += " " + lngPack.i18n ("Text~Comp~Finished") + ".";
 		else if (totalUnitsCount > 1) message += " " + lngPack.i18n ("Text~Comp~Finished2") + ".";

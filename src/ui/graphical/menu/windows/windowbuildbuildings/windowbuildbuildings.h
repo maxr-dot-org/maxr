@@ -25,11 +25,12 @@
 class cVehicle;
 class cBuildSpeedHandlerWidget;
 class cTurnTimeClock;
+class cUnitsData;
 
 class cWindowBuildBuildings : public cWindowHangar
 {
 public:
-	cWindowBuildBuildings (const cVehicle& vehicle, std::shared_ptr<const cTurnTimeClock> turnTimeClock);
+	cWindowBuildBuildings (const cVehicle& vehicle, std::shared_ptr<const cTurnTimeClock> turnTimeClock, std::shared_ptr<const cUnitsData> unitsData);
 
 	const sID* getSelectedUnitId() const;
 	int getSelectedBuildSpeed() const;
@@ -45,7 +46,7 @@ private:
 
 	cBuildSpeedHandlerWidget* speedHandler;
 
-	void generateSelectionList (const cVehicle& vehicle);
+	void generateSelectionList (const cVehicle& vehicle, const cUnitsData& unitsData);
 
 	void closeOnUnitDestruction();
 };

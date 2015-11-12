@@ -30,6 +30,7 @@
 class cSoundManager;
 class cPosition;
 struct sID;
+class cUnitsData;
 
 enum class eSavedReportType
 {
@@ -92,7 +93,7 @@ public:
 
 	virtual eSavedReportType getType() const = 0;
 
-	virtual std::string getMessage() const = 0;
+	virtual std::string getMessage(const cUnitsData& unitsData) const = 0;
 
 	virtual bool isAlert() const = 0;
 

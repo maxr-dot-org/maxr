@@ -52,8 +52,6 @@ enum eLoadingState
 */
 int LoadData (void* loadingState);
 
-void reloadUnitValues();
-
 void createShadowGfx();
 
 /**

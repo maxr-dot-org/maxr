@@ -28,12 +28,12 @@
 #include "utility/color.h"
 
 //------------------------------------------------------------------------------
-cReportMessageListViewItem::cReportMessageListViewItem (const cSavedReport& report_) :
+cReportMessageListViewItem::cReportMessageListViewItem (const cSavedReport& report_, const cUnitsData& unitsData) :
 	report (report_)
 {
 	const int unitImageSize = 32;
 
-	auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImageSize, 0), cPosition (450, 0)), report.getMessage(), FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
+	auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImageSize, 0), cPosition (450, 0)), report.getMessage(unitsData), FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
 	textLabel->setWordWrap (true);
 	textLabel->resizeToTextHeight();
 
@@ -48,19 +48,19 @@ cReportMessageListViewItem::cReportMessageListViewItem (const cSavedReport& repo
 		SDL_FillRect (unitSurface.get(), nullptr, 0x00FF00FF);
 		SDL_Rect dest = {0, 0, 0, 0};
 
-		const auto& data = *unitId.getUnitDataOriginalVersion();
+		const cStaticUnitData& data = unitsData.getStaticUnitData(unitId);
 		if (unitId.isAVehicle())
 		{
 			const float zoomFactor = unitImageSize / 64.0f;
-			const auto& uiData = *UnitsData.getVehicleUI (unitId);
-			cVehicle::render_simple (unitSurface.get(), dest, zoomFactor, data, uiData, nullptr);
-			cVehicle::drawOverlayAnimation (unitSurface.get(), dest, zoomFactor, data, uiData);
+			const auto& uiData = *UnitsUiData.getVehicleUI (unitId);
+			cVehicle::render_simple (unitSurface.get(), dest, zoomFactor, uiData, nullptr);
+			cVehicle::drawOverlayAnimation (unitSurface.get(), dest, zoomFactor, uiData);
 		}
 		else if (unitId.isABuilding())
 		{
 			const float zoomFactor = unitImageSize / (data.isBig ? 128.0f : 64.0f);
-			const auto& uiData = *UnitsData.getBuildingUI (unitId);
-			cBuilding::render_simple (unitSurface.get(), dest, zoomFactor, data, uiData, nullptr);
+			const auto& uiData = *UnitsUiData.getBuildingUI (unitId);
+			cBuilding::render_simple (unitSurface.get(), dest, zoomFactor, uiData, nullptr);
 		}
 		addChild (std::make_unique<cImage> (cPosition (0, (totalHeight - unitImageSize) / 2), unitSurface.get()));
 	}

@@ -333,16 +333,16 @@ float cNetMessage::popFloat()
 
 void cNetMessage::pushID (const sID& id)
 {
-	pushInt16 (id.iSecondPart);
-	pushInt16 (id.iFirstPart);
+	pushInt16 (id.secondPart);
+	pushInt16 (id.firstPart);
 }
 
 sID cNetMessage::popID()
 {
 	sID id;
 
-	id.iFirstPart = popInt16();
-	id.iSecondPart = popInt16();
+	id.firstPart = popInt16();
+	id.secondPart = popInt16();
 	return id;
 }
 

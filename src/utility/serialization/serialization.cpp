@@ -21,6 +21,7 @@
 #include "serialization.h"
 #include "game/data/model.h"
 #include "utility/log.h"
+#include "main.h"
 
 namespace serialization
 {
@@ -29,45 +30,47 @@ namespace serialization
 		model(model)
 	{}
 
-	void cPointerLoader::get(unsigned int id, cJob*& value)
+	void cPointerLoader::get(int id, cJob*& value)
 	{
 		assert(false);
 		//TODO
 	}
 
-	void cPointerLoader::get(unsigned int id, cPlayer*& value)
+	void cPointerLoader::get(int id, cPlayer*& value)
 	{
 		value = model.getPlayer(id);
 		if (value == nullptr && id != -1)
 			Log.write("Player with id " + iToStr(id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
 	}
 
-	void cPointerLoader::get(unsigned int id, cBuilding*& value)
+	void cPointerLoader::get(int id, cBuilding*& value)
 	{
 		value = model.getBuildingFromID(id);
 		if (value == nullptr && id != -1)
 			Log.write("Building with id " + iToStr(id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
 	}
 
-	void cPointerLoader::get(unsigned int id, cVehicle*& value)
+	void cPointerLoader::get(int id, cVehicle*& value)
 	{
 		value = model.getVehicleFromID(id);
 		if (value == nullptr && id != -1)
 			Log.write("Vehicle with id " + iToStr(id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
 	}
 
-	void cPointerLoader::get(unsigned int id, cUnit*& value)
+	void cPointerLoader::get(int id, cUnit*& value)
 	{
 		value = model.getUnitFromID(id);
 		if (value == nullptr && id != -1)
 			Log.write("Unit with id " + iToStr(id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
 	}
 
-	template<typename T>
-	void cPointerLoader::get(unsigned int id, T*& value)
+	void cPointerLoader::get(sID id, const cStaticUnitData*& value)
 	{
-		//Pointer type not implemented
-		assert(false);
+		if (!model.getUnitsData()->isValidId(id))
+		{
+			Log.write("Static unit data for sID " + id.getText() + " not found.", cLog::eLOG_TYPE_NET_ERROR);
+			throw std::runtime_error("Error restoring pointer to static unitdata");
+		}
+		value = &model.getUnitsData()->getStaticUnitData(id);
 	}
-
 }

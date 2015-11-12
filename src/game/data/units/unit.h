@@ -39,7 +39,7 @@ class cSoundManager;
 class cUnit
 {
 public:
-	cUnit (const sUnitData* unitData, cPlayer* owner, unsigned int ID);
+	cUnit(const cDynamicUnitData* unitData, const cStaticUnitData* staticData, cPlayer* owner, unsigned int ID);
 	virtual ~cUnit();
 
 	unsigned int getId() const { return iID; };
@@ -51,8 +51,8 @@ public:
 	void setOwner (cPlayer* owner);
 
 	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const = 0;
-	virtual bool canExitTo (const cPosition& position, const cMap& map, const sUnitData& unitData) const = 0;
-	virtual std::string getStatusStr (const cPlayer* player) const = 0;
+	virtual bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const = 0;
+	virtual std::string getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData& unitsData) const = 0;
 
 	virtual void makeReport (cSoundManager& soundManager) const = 0;
 
@@ -75,8 +75,7 @@ public:
 	bool isAbove (const cPosition& position) const;
 
 
-	const std::string& getName() const { return name; }
-	bool isNameOriginal() const { return isOriginalName; }
+	std::string getName() const;
 	std::string getNamePrefix() const;
 	std::string getDisplayName() const;
 	void changeName (const std::string& newName);
@@ -112,6 +111,9 @@ public:
 	bool isMarkedAsDone() const;
 	bool hasBeenAttacked() const;
 
+	int getStoredResources() const;
+	void setStoredResources(int value);
+
 	//protected:
 	virtual bool isUnitMoving() const { return false; }
 	virtual bool isAutoMoveJobActive() const { return false; }
@@ -126,6 +128,9 @@ public:
 	virtual bool canBeStoppedViaUnitMenu() const = 0;
 
 	virtual void executeStopCommand (const cClient& client) const = 0;
+
+	bool getIsBig() const;
+	void setIsBig(bool value);
 
 	// Important NOTE: This signal will be triggered when the destructor of the unit gets called.
 	//                 This means when the signal is triggered it can not be guaranteed that all
@@ -149,7 +154,7 @@ public:
 	mutable cSignal<void ()> beenAttackedChanged;
 	mutable cSignal<void ()> movingChanged;
 
-	mutable cSignal<void()> storedUnitsChanged; //the unit has loaded or unloaded another unit
+	mutable cSignal<void ()> storedUnitsChanged; //the unit has loaded or unloaded another unit
 	mutable cSignal<void ()> stored;            //this unit has been loaded by another unit
 	mutable cSignal<void ()> activated;         //this unit has been unloaded by another unit
 
@@ -158,6 +163,8 @@ public:
 	mutable cSignal<void ()> buildingChanged;
 	mutable cSignal<void ()> clearingChanged;
 	mutable cSignal<void ()> workingChanged;
+	mutable cSignal<void ()> storedResourcesChanged;
+	mutable cSignal<void ()> isBigChanged;
 
 	template<typename T>
 	void serializeBase(T& archive)
@@ -170,8 +177,7 @@ public:
 		archive & NVP(job);
 		archive & NVP(owner);
 		archive & NVP(position);
-		archive & NVP(isOriginalName);
-		archive & NVP(name);
+		archive & NVP(customName);
 		archive & NVP(turnsDisabled);
 		archive & NVP(sentryActive);
 		archive & NVP(manualFireActive);
@@ -179,6 +185,14 @@ public:
 		archive & NVP(beeingAttacked);
 		archive & NVP(markedAsDone);
 		archive & NVP(beenAttacked);
+		archive & NVP(isBig);
+		archive & NVP(storageResCur);
+
+		if (!archive.isWriter)
+		{
+			//restore pointer to static unit data
+			archive.getPointerLoader()->get(data.getId(), staticData);
+		}
 
 		//TODO: detection?
 	}
@@ -195,14 +209,15 @@ public:
 		}
 	}
 public: // TODO: make protected/private and make getters/setters
-	sUnitData data; ///< basic data of the unit
-	const unsigned int iID; ///< the identification number of this unit
-	int dir; // ?Frame of the unit/current direction the unit is facing?
+	const cStaticUnitData& getStaticUnitData() const;
+	cDynamicUnitData data;		// basic data of the unit
+	const unsigned int iID;		// the identification number of this unit
+	int dir;					// ?Frame of the unit/current direction the unit is facing?
 
-	std::vector<cVehicle*> storedUnits; ///< list with the vehicles, that are stored in this unit
+	std::vector<cVehicle*> storedUnits;		// list with the vehicles, that are stored in this unit
 
-	std::vector<cPlayer*> seenByPlayerList; ///< a list of all players who can see this unit //TODO: remove
-	std::vector<cPlayer*> detectedByPlayerList; ///< a list of all players who have detected this unit
+	std::vector<cPlayer*> seenByPlayerList; // a list of all players who can see this unit //TODO: remove
+	std::vector<cPlayer*> detectedByPlayerList;		// a list of all players who have detected this unit
 
 	// little jobs, running on the vehicle.
 	// e.g. rotating to a specific direction
@@ -211,12 +226,16 @@ public: // TODO: make protected/private and make getters/setters
 	mutable int alphaEffectValue;
 
 	//-----------------------------------------------------------------------------
+protected:
+	const cStaticUnitData* staticData;
+	bool isBig;
+
+	//-----------------------------------------------------------------------------
 private:
 	cPlayer* owner;
 	cPosition position;
 
-	bool isOriginalName; // indicates whether the name has been changed by the player or not
-	std::string name;    // name of the building
+	std::string customName; //stores the name of the unit, when the player enters an own name for the unit. Otherwise the string is empty.
 
 	int turnsDisabled;  ///< the number of turns this unit will be disabled, 0 if the unit is active
 	bool sentryActive; ///< is the unit on sentry?
@@ -225,6 +244,8 @@ private:
 	bool beeingAttacked; ///< true when an attack on this unit is running
 	bool markedAsDone; ///< the player has pressed the done button for this unit
 	bool beenAttacked; //the unit was attacked in this turn
+	int storageResCur; //amount of stored ressources
+
 };
 
 template<typename T>

@@ -83,7 +83,7 @@ private:
 		archive & landingPosition;
 	}
 	void makeLanding(const cPosition& landingPosition, cPlayer& player, const std::vector<sLandingUnit>& landingUnits, cModel& model) const;
-	cVehicle* landVehicle(const cPosition& landingPosition, int iWidth, int iHeight, const sUnitData& unitData, cPlayer& player, cModel& model) const;
+	cVehicle* landVehicle(const cPosition& landingPosition, int iWidth, int iHeight, const sID& id, cPlayer& player, cModel& model) const;
 };
 
 

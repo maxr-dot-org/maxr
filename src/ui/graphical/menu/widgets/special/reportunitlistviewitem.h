@@ -23,13 +23,13 @@
 #include "ui/graphical/menu/widgets/abstractlistviewitem.h"
 
 class cImage;
-
+class cUnitsData;
 class cUnit;
 
 class cReportUnitListViewItem : public cAbstractListViewItem
 {
 public:
-	explicit cReportUnitListViewItem (cUnit& unit);
+	explicit cReportUnitListViewItem (cUnit& unit, const cUnitsData& unitsData);
 
 	cUnit& getUnit() const;
 

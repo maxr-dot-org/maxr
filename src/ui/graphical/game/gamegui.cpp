@@ -222,23 +222,6 @@ void cGameGui::setDynamicMap (std::shared_ptr<const cMap> dynamicMap_)
 	dynamicMap = std::move (dynamicMap_);
 	gameMap->setDynamicMap (dynamicMap);
 	miniMap->setDynamicMap (dynamicMap);
-
-	dynamicMapSignalConnectionManager.disconnectAll();
-
-	if (dynamicMap != nullptr)
-	{
-		dynamicMapSignalConnectionManager.connect (dynamicMap->addedUnit, [&] (const cUnit & unit)
-		{
-			if (unit.data.ID == UnitsData.specialIDLandMine) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectPlaceMine, SoundData.SNDLandMinePlace, unit));
-			else if (unit.data.ID == UnitsData.specialIDSeaMine) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectPlaceMine, SoundData.SNDSeaMinePlace, unit));
-		});
-		dynamicMapSignalConnectionManager.connect (dynamicMap->removedUnit, [&] (const cUnit & unit)
-		{
-			if (unit.data.ID == UnitsData.specialIDLandMine) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectClearMine, SoundData.SNDLandMineClear, unit));
-			else if (unit.data.ID == UnitsData.specialIDSeaMine) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectClearMine, SoundData.SNDSeaMineClear, unit));
-		});
-		//dynamicMapSignalConnectionManager.connect (dynamicMap->movedVehicle, [&](const cVehicle&){ });
-	}
 }
 
 //------------------------------------------------------------------------------
@@ -280,6 +263,12 @@ void cGameGui::setGameSettings (std::shared_ptr<const cGameSettings> gameSetting
 	hud->setGameSettings (gameSettings);
 }
 
+//------------------------------------------------------------------------------
+void cGameGui::setUnitsData(std::shared_ptr<const cUnitsData> unitsData)
+{
+	gameMap->setUnitsData (unitsData);
+	hud->setUnitsData(unitsData);
+}
 //------------------------------------------------------------------------------
 cHud& cGameGui::getHud()
 {
@@ -514,7 +503,7 @@ void cGameGui::connectSelectedUnit()
 	selectedUnitConnectionManager.connect (selectedUnit->workingChanged, [selectedUnit, this]()
 	{
 		stopSelectedUnitSound();
-		if (selectedUnit->data.ID.isABuilding())
+		if (selectedUnit->data.getId().isABuilding())
 		{
 			if (selectedUnit->isUnitWorking()) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStartWork, static_cast<const cBuilding&> (*selectedUnit).uiData->Start, *selectedUnit));
 			else soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStopWork, static_cast<const cBuilding&> (*selectedUnit).uiData->Stop, *selectedUnit));
@@ -533,7 +522,7 @@ void cGameGui::connectSelectedUnit()
 		updateSelectedUnitIdleSound();
 	});
 
-	if (selectedUnit->data.ID.isAVehicle())
+	if (selectedUnit->data.getId().isAVehicle())
 	{
 		const auto selectedVehicle = static_cast<cVehicle*> (selectedUnit);
 		selectedUnitConnectionManager.connect (selectedVehicle->clientMoveJobChanged, [selectedVehicle, this]()
@@ -567,10 +556,10 @@ void cGameGui::connectMoveJob (const cVehicle& vehicle)
 			{
 				const auto building = dynamicMap->getField (vehicle.getPosition()).getBaseBuilding();
 				bool water = dynamicMap->isWater (vehicle.getPosition());
-				if (vehicle.data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
+				if (vehicle.getStaticUnitData().factorGround > 0 && building && (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 
 				stopSelectedUnitSound();
-				if (water && vehicle.data.factorSea > 0) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStopMove, vehicle.uiData->StopWater, vehicle));
+				if (water && vehicle.getStaticUnitData().factorSea > 0) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectStopMove, vehicle.uiData->StopWater, vehicle));
 				else soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStopMove, vehicle.uiData->Stop, vehicle));
 
 				updateSelectedUnitIdleSound();
@@ -744,7 +733,7 @@ void cGameGui::updateSelectedUnitIdleSound()
 	{
 		stopSelectedUnitSound();
 	}
-	else if (selectedUnit->data.ID.isABuilding())
+	else if (selectedUnit->isABuilding())
 	{
 		const auto& building = static_cast<const cBuilding&> (*selectedUnit);
 		if (building.isUnitWorking())
@@ -756,13 +745,13 @@ void cGameGui::updateSelectedUnitIdleSound()
 			startSelectedUnitSound (building, building.uiData->Wait);
 		}
 	}
-	else if (selectedUnit->data.ID.isAVehicle())
+	else
 	{
 		const auto& vehicle = static_cast<const cVehicle&> (*selectedUnit);
 
 		const cBuilding* building = dynamicMap ? dynamicMap->getField (vehicle.getPosition()).getBaseBuilding() : nullptr;
 		bool water = staticMap->isWater (vehicle.getPosition());
-		if (vehicle.data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
+		if (vehicle.getStaticUnitData().factorGround > 0 && building && (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 
 		if (vehicle.isUnitBuildingABuilding() && (vehicle.getBuildTurns() || player.get() != vehicle.getOwner()))
 		{
@@ -772,7 +761,7 @@ void cGameGui::updateSelectedUnitIdleSound()
 		{
 			startSelectedUnitSound (vehicle, SoundData.SNDClearing);
 		}
-		else if (water && vehicle.data.factorSea > 0)
+		else if (water && vehicle.getStaticUnitData().factorSea > 0)
 		{
 			startSelectedUnitSound (vehicle, vehicle.uiData->WaitWater);
 		}
@@ -794,16 +783,16 @@ void cGameGui::updateSelectedUnitMoveSound (bool startedNew)
 
 	const auto building = dynamicMap->getField (vehicle.getPosition()).getBaseBuilding();
 	bool water = dynamicMap->isWater (vehicle.getPosition());
-	if (vehicle.data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
+	if (vehicle.getStaticUnitData().factorGround > 0 && building && (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 	stopSelectedUnitSound();
 
 	if (startedNew)
 	{
-		if (water && vehicle.data.factorSea != 0) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStartMove, vehicle.uiData->StartWater, vehicle));
+		if (water && vehicle.getStaticUnitData().factorSea != 0) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectStartMove, vehicle.uiData->StartWater, vehicle));
 		else soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStartMove, vehicle.uiData->Start, vehicle));
 	}
 
-	if (water && vehicle.data.factorSea != 0)
+	if (water && vehicle.getStaticUnitData().factorSea != 0)
 		startSelectedUnitSound (vehicle, vehicle.uiData->DriveWater);
 	else
 		startSelectedUnitSound (vehicle, vehicle.uiData->Drive);

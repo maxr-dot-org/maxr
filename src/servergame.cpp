@@ -287,10 +287,10 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 
 						server = std::make_unique<cServer> (network);
 						// copy playerlist for server
-						for (size_t i = 0; i != menuPlayers.size(); ++i)
+						/*for (size_t i = 0; i != menuPlayers.size(); ++i)
 						{
 							server->addPlayer (std::make_unique<cPlayer> (*menuPlayers[i]));
-						}
+						}*/
 
 						if (settings.getGameType() == eGameSettingsGameType::Turns)
 						{

@@ -32,7 +32,7 @@ eSavedReportType cSavedReportPlayerLeft::getType() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportPlayerLeft::getMessage() const
+std::string cSavedReportPlayerLeft::getMessage(const cUnitsData& unitsData) const
 {
 	return lngPack.i18n ("Text~Multiplayer~Player_Left", playerName);
 }

@@ -115,25 +115,20 @@ void cBuildListItem::setRemainingMetal (int value)
 //--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
-cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
-	cUnit ((Owner != 0 && b != 0) ? Owner->getUnitDataCurrentVersion (b->ID) : 0,
-		   Owner,
-		   ID),
+cBuilding::cBuilding (const cStaticUnitData* staticData, const cDynamicUnitData* data, cPlayer* owner, unsigned int ID) :
+	cUnit(data, staticData, owner, ID),
 	isWorking (false),
-	wasWorking(false)
+	wasWorking(false),
+	MetalPerRound(0),
+	effectAlpha(0)
 {
-	setSentryActive (data.canAttack != TERRAIN_NONE);
+	setSentryActive (staticData && staticData->canAttack != TERRAIN_NONE);
 
 	RubbleTyp = 0;
 	RubbleValue = 0;
 	researchArea = cResearch::kAttackResearch;
-	uiData = b ? UnitsData.getBuildingUI (b->ID) : 0;
+	uiData = staticData ? UnitsUiData.getBuildingUI(staticData->ID) : 0;
 	points = 0;
-
-	if (Owner == nullptr || b == nullptr)
-	{
-		return; //WTF? jump out of the contructor and leave remaining members uninitialized?!?
-	}
 
 	BaseN = false;
 	BaseBN = false;
@@ -148,12 +143,11 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 	MaxMetalProd = 0;
 	MaxGoldProd = 0;
 	MaxOilProd = 0;
-	data.setHitpoints (data.getHitpointsMax());
-	data.setAmmo (data.getAmmoMax());
+
 	SubBase = nullptr;
 	BuildSpeed = 0;
 
-	if (data.isBig)
+	if (isBig)
 	{
 		DamageFXPointX  = random (64) + 32;
 		DamageFXPointY  = random (64) + 32;
@@ -164,6 +158,8 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 	{
 		DamageFXPointX = random (64 - 24);
 		DamageFXPointY = random (64 - 24);
+		DamageFXPointX2 = 0;
+		DamageFXPointY2 = 0;
 	}
 
 	refreshData();
@@ -184,7 +180,7 @@ cBuilding::~cBuilding()
 //----------------------------------------------------
 /** Returns a string with the current state */
 //----------------------------------------------------
-string cBuilding::getStatusStr (const cPlayer* player) const
+string cBuilding::getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData& unitsData) const
 {
 	if (isDisabled())
 	{
@@ -196,10 +192,10 @@ string cBuilding::getStatusStr (const cPlayer* player) const
 	if (isUnitWorking() || (factoryHasJustFinishedBuilding() && isDisabled() == false))
 	{
 		// Factory:
-		if (!data.canBuild.empty() && !buildList.empty() && getOwner() == player)
+		if (!staticData->canBuild.empty() && !buildList.empty() && getOwner() == whoWantsToKnow)
 		{
 			const cBuildListItem& buildListItem = buildList[0];
-			const string& unitName = buildListItem.getType().getUnitDataOriginalVersion()->name;
+			const string& unitName = unitsData.getStaticUnitData(buildListItem.getType()).getName();
 			string sText;
 
 			if (buildListItem.getRemainingMetal() > 0)
@@ -237,7 +233,7 @@ string cBuilding::getStatusStr (const cPlayer* player) const
 		}
 
 		// Research Center
-		if (data.canResearch && getOwner() == player)
+		if (staticData->canResearch && getOwner() == whoWantsToKnow)
 		{
 			string sText = lngPack.i18n ("Text~Comp~Working") + "\n";
 			for (int area = 0; area < cResearch::kNrResearchAreas; area++)
@@ -262,7 +258,7 @@ string cBuilding::getStatusStr (const cPlayer* player) const
 		}
 
 		// Goldraffinerie:
-		if (data.convertsGold && getOwner() == player)
+		if (staticData->convertsGold && getOwner() == whoWantsToKnow)
 		{
 			string sText;
 			sText = lngPack.i18n ("Text~Comp~Working") + "\n";
@@ -290,7 +286,7 @@ string cBuilding::getStatusStr (const cPlayer* player) const
 //--------------------------------------------------------------------------
 void cBuilding::makeReport (cSoundManager& soundManager) const
 {
-	if (data.canResearch && isUnitWorking() && getOwner() && getOwner()->isCurrentTurnResearchAreaFinished (getResearchArea()))
+	if (staticData->canResearch && isUnitWorking() && getOwner() && getOwner()->isCurrentTurnResearchAreaFinished (getResearchArea()))
 	{
 		soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, VoiceData.VOIResearchComplete));
 	}
@@ -317,15 +313,15 @@ void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float
 
 	SDL_Rect src;
 
-	if (data.isBig)
+	if (isBig)
 	{
-		if (!UnitsData.dirt_big) return;
-		src.w = src.h = (int) (UnitsData.dirt_big_org->h * zoomFactor);
+		if (!UnitsUiData.dirt_big) return;
+		src.w = src.h = (int) (UnitsUiData.dirt_big_org->h * zoomFactor);
 	}
 	else
 	{
-		if (!UnitsData.dirt_small) return;
-		src.w = src.h = (int) (UnitsData.dirt_small_org->h * zoomFactor);
+		if (!UnitsUiData.dirt_small) return;
+		src.w = src.h = (int) (UnitsUiData.dirt_small_org->h * zoomFactor);
 	}
 
 	src.x = src.w * RubbleTyp;
@@ -335,37 +331,37 @@ void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float
 	// draw the shadows
 	if (drawShadow)
 	{
-		if (data.isBig)
+		if (isBig)
 		{
-			CHECK_SCALING (*UnitsData.dirt_big_shw, *UnitsData.dirt_big_shw_org, zoomFactor);
-			SDL_BlitSurface (UnitsData.dirt_big_shw.get(), &src, surface, &tmp);
+			CHECK_SCALING (*UnitsUiData.dirt_big_shw, *UnitsUiData.dirt_big_shw_org, zoomFactor);
+			SDL_BlitSurface (UnitsUiData.dirt_big_shw.get(), &src, surface, &tmp);
 		}
 		else
 		{
-			CHECK_SCALING (*UnitsData.dirt_small_shw, *UnitsData.dirt_small_shw_org, zoomFactor);
-			SDL_BlitSurface (UnitsData.dirt_small_shw.get(), &src, surface, &tmp);
+			CHECK_SCALING (*UnitsUiData.dirt_small_shw, *UnitsUiData.dirt_small_shw_org, zoomFactor);
+			SDL_BlitSurface (UnitsUiData.dirt_small_shw.get(), &src, surface, &tmp);
 		}
 	}
 
 	// draw the building
 	tmp = dest;
 
-	if (data.isBig)
+	if (isBig)
 	{
-		CHECK_SCALING (*UnitsData.dirt_big, *UnitsData.dirt_big_org, zoomFactor);
-		SDL_BlitSurface (UnitsData.dirt_big.get(), &src, surface, &tmp);
+		CHECK_SCALING (*UnitsUiData.dirt_big, *UnitsUiData.dirt_big_org, zoomFactor);
+		SDL_BlitSurface (UnitsUiData.dirt_big.get(), &src, surface, &tmp);
 	}
 	else
 	{
-		CHECK_SCALING (*UnitsData.dirt_small, *UnitsData.dirt_small_org, zoomFactor);
-		SDL_BlitSurface (UnitsData.dirt_small.get(), &src, surface, &tmp);
+		CHECK_SCALING (*UnitsUiData.dirt_small, *UnitsUiData.dirt_small_org, zoomFactor);
+		SDL_BlitSurface (UnitsUiData.dirt_small.get(), &src, surface, &tmp);
 	}
 }
 
 void cBuilding::render_beton (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const
 {
 	SDL_Rect tmp = dest;
-	if (data.isBig)
+	if (isBig)
 	{
 		CHECK_SCALING (*GraphicsData.gfx_big_beton, *GraphicsData.gfx_big_beton_org, zoomFactor);
 
@@ -378,36 +374,36 @@ void cBuilding::render_beton (SDL_Surface* surface, const SDL_Rect& dest, float 
 	}
 	else
 	{
-		CHECK_SCALING (*UnitsData.ptr_small_beton, *UnitsData.ptr_small_beton_org, zoomFactor);
+		CHECK_SCALING (*UnitsUiData.ptr_small_beton, *UnitsUiData.ptr_small_beton_org, zoomFactor);
 		if (alphaEffectValue && cSettings::getInstance().isAlphaEffects())
-			SDL_SetSurfaceAlphaMod (UnitsData.ptr_small_beton, alphaEffectValue);
+			SDL_SetSurfaceAlphaMod(UnitsUiData.ptr_small_beton, alphaEffectValue);
 		else
-			SDL_SetSurfaceAlphaMod (UnitsData.ptr_small_beton, 254);
+			SDL_SetSurfaceAlphaMod(UnitsUiData.ptr_small_beton, 254);
 
-		SDL_BlitSurface (UnitsData.ptr_small_beton, nullptr, surface, &tmp);
-		SDL_SetSurfaceAlphaMod (UnitsData.ptr_small_beton, 254);
+		SDL_BlitSurface(UnitsUiData.ptr_small_beton, nullptr, surface, &tmp);
+		SDL_SetSurfaceAlphaMod(UnitsUiData.ptr_small_beton, 254);
 	}
 }
 
 void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, unsigned long long animationTime, int alpha) const
 {
 	int frameNr = dir;
-	if (data.hasFrames && data.isAnimated && cSettings::getInstance().isAnimations() &&
+	if (uiData->hasFrames && uiData->isAnimated && cSettings::getInstance().isAnimations() &&
 		isDisabled() == false)
 	{
-		frameNr = (animationTime % data.hasFrames);
+		frameNr = (animationTime % uiData->hasFrames);
 	}
 
-	render_simple (surface, dest, zoomFactor, data, *uiData, getOwner(), frameNr, alpha);
+	render_simple (surface, dest, zoomFactor, *uiData, getOwner(), frameNr, alpha);
 }
 
-/*static*/ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sUnitData& data, const sBuildingUIData& uiData, const cPlayer* owner, int frameNr, int alpha)
+/*static*/ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sBuildingUIData& uiData, const cPlayer* owner, int frameNr, int alpha)
 {
 	// read the size:
 	SDL_Rect src;
 	src.x = 0;
 	src.y = 0;
-	if (data.hasFrames)
+	if (uiData.hasFrames)
 	{
 		src.w = Round (64.0f * zoomFactor);
 		src.h = Round (64.0f * zoomFactor);
@@ -419,10 +415,10 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 	}
 
 	// blit the players color and building graphic
-	if (data.hasPlayerColor && owner) SDL_BlitSurface (owner->getColor().getTexture(), nullptr, GraphicsData.gfx_tmp.get(), nullptr);
+	if (uiData.hasPlayerColor && owner) SDL_BlitSurface(owner->getColor().getTexture(), nullptr, GraphicsData.gfx_tmp.get(), nullptr);
 	else SDL_FillRect (GraphicsData.gfx_tmp.get(), nullptr, 0x00FF00FF);
 
-	if (data.hasFrames)
+	if (uiData.hasFrames)
 	{
 		src.x = frameNr * Round (64.0f * zoomFactor);
 
@@ -431,7 +427,7 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 
 		src.x = 0;
 	}
-	else if (data.hasClanLogos)
+	else if (uiData.hasClanLogos)
 	{
 		CHECK_SCALING (*uiData.img, *uiData.img_org, zoomFactor);
 		src.x = 0;
@@ -473,15 +469,15 @@ void cBuilding::render (unsigned long long animationTime, SDL_Surface* surface, 
 	}
 
 	// draw the concrete
-	if (data.hasBetonUnderground && drawConcrete)
+	if (uiData->hasBetonUnderground && drawConcrete)
 	{
 		render_beton (surface, dest, zoomFactor);
 	}
 	// draw the connector slots:
-	if ((this->SubBase && !alphaEffectValue) || data.isConnectorGraphic)
+	if ((this->SubBase && !alphaEffectValue) || uiData->isConnectorGraphic)
 	{
 		drawConnectors (surface, dest, zoomFactor, drawShadow);
-		if (data.isConnectorGraphic) return;
+		if (uiData->isConnectorGraphic) return;
 	}
 
 	// draw the shadows
@@ -503,7 +499,7 @@ void cBuilding::render (unsigned long long animationTime, SDL_Surface* surface, 
 //--------------------------------------------------------------------------
 void cBuilding::updateNeighbours (const cMap& map)
 {
-	if (!data.isBig)
+	if (!isBig)
 	{
 		getOwner()->base.checkNeighbour (getPosition() + cPosition (0, -1), *this);
 		getOwner()->base.checkNeighbour (getPosition() + cPosition (1, 0), *this);
@@ -533,11 +529,11 @@ void cBuilding::CheckNeighbours (const cMap& map)
 	if (map.isValidPosition (cPosition(x, y))) \
 	{ \
 		const cBuilding* b = map.getField(cPosition(x, y)).getTopBuilding(); \
-		if (b && b->getOwner() == getOwner() && b->data.connectsToBase) \
+		if (b && b->getOwner() == getOwner() && b->staticData->connectsToBase) \
 		{m = true;}else{m = false;} \
 	}
 
-	if (!data.isBig)
+	if (!isBig)
 	{
 		CHECK_NEIGHBOUR (getPosition().x()    , getPosition().y() - 1, BaseN)
 		CHECK_NEIGHBOUR (getPosition().x() + 1, getPosition().y()    , BaseE)
@@ -564,17 +560,17 @@ void cBuilding::drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomF
 {
 	SDL_Rect src, temp;
 
-	CHECK_SCALING (*UnitsData.ptr_connector, *UnitsData.ptr_connector_org, zoomFactor);
-	CHECK_SCALING (*UnitsData.ptr_connector_shw, *UnitsData.ptr_connector_shw_org, zoomFactor);
+	CHECK_SCALING(*UnitsUiData.ptr_connector, *UnitsUiData.ptr_connector_org, zoomFactor);
+	CHECK_SCALING(*UnitsUiData.ptr_connector_shw, *UnitsUiData.ptr_connector_shw_org, zoomFactor);
 
-	if (alphaEffectValue) SDL_SetSurfaceAlphaMod (UnitsData.ptr_connector, alphaEffectValue);
-	else SDL_SetSurfaceAlphaMod (UnitsData.ptr_connector, 254);
+	if (alphaEffectValue) SDL_SetSurfaceAlphaMod(UnitsUiData.ptr_connector, alphaEffectValue);
+	else SDL_SetSurfaceAlphaMod(UnitsUiData.ptr_connector, 254);
 
 	src.y = 0;
 	src.x = 0;
-	src.h = src.w = UnitsData.ptr_connector->h;
+	src.h = src.w = UnitsUiData.ptr_connector->h;
 
-	if (!data.isBig)
+	if (!isBig)
 	{
 		if (BaseN &&  BaseE &&  BaseS &&  BaseW) src.x = 15;
 		else if (BaseN &&  BaseE &&  BaseS && !BaseW) src.x = 13;
@@ -594,14 +590,14 @@ void cBuilding::drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomF
 		else if (!BaseN && !BaseE && !BaseS && !BaseW) src.x =  0;
 		src.x *= src.h;
 
-		if (src.x != 0 || data.isConnectorGraphic)
+		if (src.x != 0 || uiData->isConnectorGraphic)
 		{
 			// blit shadow
 			temp = dest;
-			if (drawShadow) blittAlphaSurface (UnitsData.ptr_connector_shw, &src, surface, &temp);
+			if (drawShadow) blittAlphaSurface (UnitsUiData.ptr_connector_shw, &src, surface, &temp);
 			// blit the image
 			temp = dest;
-			SDL_BlitSurface (UnitsData.ptr_connector, &src, surface, &temp);
+			SDL_BlitSurface (UnitsUiData.ptr_connector, &src, surface, &temp);
 		}
 	}
 	else
@@ -617,9 +613,9 @@ void cBuilding::drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomF
 		if (src.x != 0)
 		{
 			temp = dest;
-			if (drawShadow) blittAlphaSurface (UnitsData.ptr_connector_shw, &src, surface, &temp);
+			if (drawShadow) blittAlphaSurface (UnitsUiData.ptr_connector_shw, &src, surface, &temp);
 			temp = dest;
-			SDL_BlitSurface (UnitsData.ptr_connector, &src, surface, &temp);
+			SDL_BlitSurface (UnitsUiData.ptr_connector, &src, surface, &temp);
 		}
 
 		// upper right field
@@ -633,9 +629,9 @@ void cBuilding::drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomF
 		if (src.x != 0)
 		{
 			temp = dest;
-			if (drawShadow) blittAlphaSurface (UnitsData.ptr_connector_shw, &src, surface, &temp);
+			if (drawShadow) blittAlphaSurface (UnitsUiData.ptr_connector_shw, &src, surface, &temp);
 			temp = dest;
-			SDL_BlitSurface (UnitsData.ptr_connector, &src, surface, &temp);
+			SDL_BlitSurface (UnitsUiData.ptr_connector, &src, surface, &temp);
 		}
 
 		// lower right field
@@ -649,9 +645,9 @@ void cBuilding::drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomF
 		if (src.x != 0)
 		{
 			temp = dest;
-			if (drawShadow) blittAlphaSurface (UnitsData.ptr_connector_shw, &src, surface, &temp);
+			if (drawShadow) blittAlphaSurface (UnitsUiData.ptr_connector_shw, &src, surface, &temp);
 			temp = dest;
-			SDL_BlitSurface (UnitsData.ptr_connector, &src, surface, &temp);
+			SDL_BlitSurface (UnitsUiData.ptr_connector, &src, surface, &temp);
 		}
 
 		// lower left field
@@ -665,9 +661,9 @@ void cBuilding::drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomF
 		if (src.x != 0)
 		{
 			temp = dest;
-			if (drawShadow) blittAlphaSurface (UnitsData.ptr_connector_shw, &src, surface, &temp);
+			if (drawShadow) blittAlphaSurface (UnitsUiData.ptr_connector_shw, &src, surface, &temp);
 			temp = dest;
-			SDL_BlitSurface (UnitsData.ptr_connector, &src, surface, &temp);
+			SDL_BlitSurface (UnitsUiData.ptr_connector, &src, surface, &temp);
 		}
 	}
 }
@@ -692,9 +688,9 @@ void cBuilding::ServerStartWork (cServer& server)
 	}
 
 	// needs human workers:
-	if (data.needsHumans)
+	if (staticData->needsHumans)
 	{
-		if (SubBase->HumanNeed + data.needsHumans > SubBase->HumanProd)
+		if (SubBase->HumanNeed + staticData->needsHumans > SubBase->HumanProd)
 		{
 			//sendSavedReport (server, cSavedReportSimple (eSavedReportType::TeamInsufficient), getOwner());
 			return;
@@ -702,9 +698,9 @@ void cBuilding::ServerStartWork (cServer& server)
 	}
 
 	// needs gold:
-	if (data.convertsGold)
+	if (staticData->convertsGold)
 	{
-		if (data.convertsGold + SubBase->GoldNeed > SubBase->getGoldProd() + SubBase->getGold())
+		if (staticData->convertsGold + SubBase->GoldNeed > SubBase->getGoldProd() + SubBase->getGold())
 		{
 			//sendSavedReport (server, cSavedReportSimple (eSavedReportType::GoldInsufficient), getOwner());
 			return;
@@ -712,7 +708,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	}
 
 	// needs raw material:
-	if (data.needsMetal)
+	if (staticData->needsMetal)
 	{
 		if (SubBase->MetalNeed + std::min (MetalPerRound, buildList[0].getRemainingMetal()) > SubBase->getMetalProd() + SubBase->getMetal())
 		{
@@ -722,19 +718,19 @@ void cBuilding::ServerStartWork (cServer& server)
 	}
 
 	// needs oil:
-	if (data.needsOil)
+	if (staticData->needsOil)
 	{
 		// check if there is enough Oil for the generators
 		// (current production + reserves)
-		if (data.needsOil + SubBase->OilNeed > SubBase->getOil() + SubBase->getMaxOilProd())
+		if (staticData->needsOil + SubBase->OilNeed > SubBase->getOil() + SubBase->getMaxOilProd())
 		{
 			//sendSavedReport (server, cSavedReportSimple (eSavedReportType::FuelInsufficient), getOwner());
 			return;
 		}
-		else if (data.needsOil + SubBase->OilNeed > SubBase->getOil() + SubBase->getOilProd())
+		else if (staticData->needsOil + SubBase->OilNeed > SubBase->getOil() + SubBase->getOilProd())
 		{
 			// increase oil production
-			int missingOil = data.needsOil + SubBase->OilNeed - (SubBase->getOil() + SubBase->getOilProd());
+			int missingOil = staticData->needsOil + SubBase->OilNeed - (SubBase->getOil() + SubBase->getOilProd());
 
 			int metal = SubBase->getMetalProd();
 			int gold = SubBase->getGoldProd();
@@ -763,9 +759,9 @@ void cBuilding::ServerStartWork (cServer& server)
 	setWorking (true);
 
 	// set mine values. This has to be undone, if the energy is insufficient
-	if (data.canMineMaxRes > 0)
+	if (staticData->canMineMaxRes > 0)
 	{
-		int mineFree = data.canMineMaxRes;
+		int mineFree = staticData->canMineMaxRes;
 
 		SubBase->changeMetalProd (MaxMetalProd);
 		mineFree -= MaxMetalProd;
@@ -777,17 +773,17 @@ void cBuilding::ServerStartWork (cServer& server)
 	}
 
 	// Energy consumers:
-	if (data.needsEnergy)
+	if (staticData->needsEnergy)
 	{
-		if (data.needsEnergy + SubBase->EnergyNeed > SubBase->EnergyProd)
+		if (staticData->needsEnergy + SubBase->EnergyNeed > SubBase->EnergyProd)
 		{
 			// try to increase energy production
-			if (!SubBase->increaseEnergyProd (server, data.needsEnergy + SubBase->EnergyNeed - SubBase->EnergyProd))
+			if (!SubBase->increaseEnergyProd(server, staticData->needsEnergy + SubBase->EnergyNeed - SubBase->EnergyProd))
 			{
 				setWorking (false);
 
 				// reset mine values
-				if (data.canMineMaxRes > 0)
+				if (staticData->canMineMaxRes > 0)
 				{
 					int metal = SubBase->getMetalProd();
 					int oil =  SubBase->getOilProd();
@@ -811,28 +807,28 @@ void cBuilding::ServerStartWork (cServer& server)
 
 	//-- everything is ready to start the building
 
-	SubBase->EnergyProd += data.produceEnergy;
-	SubBase->EnergyNeed += data.needsEnergy;
+	SubBase->EnergyProd += staticData->produceEnergy;
+	SubBase->EnergyNeed += staticData->needsEnergy;
 
-	SubBase->HumanNeed += data.needsHumans;
-	SubBase->HumanProd += data.produceHumans;
+	SubBase->HumanNeed += staticData->needsHumans;
+	SubBase->HumanProd += staticData->produceHumans;
 
-	SubBase->OilNeed += data.needsOil;
+	SubBase->OilNeed += staticData->needsOil;
 
 	// raw material consumer:
-	if (data.needsMetal)
+	if (staticData->needsMetal)
 		SubBase->MetalNeed += std::min (MetalPerRound, buildList[0].getRemainingMetal());
 
 	// gold consumer:
-	SubBase->GoldNeed += data.convertsGold;
+	SubBase->GoldNeed += staticData->convertsGold;
 
 	// research building
-	if (data.canResearch)
+	if (staticData->canResearch)
 	{
 		getOwner()->startAResearch (researchArea);
 	}
 
-	if (data.canScore)
+	if (staticData->canScore)
 	{
 		sendNumEcos (server, *getOwner());
 	}
@@ -849,7 +845,7 @@ void cBuilding::clientStartWork()
 	if (isUnitWorking())
 		return;
 	setWorking (true);
-	if (data.canResearch)
+	if (staticData->canResearch)
 		getOwner()->startAResearch (researchArea);
 }
 
@@ -865,38 +861,38 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 	}
 
 	// energy generators
-	if (data.produceEnergy)
+	if (staticData->produceEnergy)
 	{
-		if (SubBase->EnergyNeed > SubBase->EnergyProd - data.produceEnergy && !override)
+		if (SubBase->EnergyNeed > SubBase->EnergyProd - staticData->produceEnergy && !override)
 		{
 			//sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyIsNeeded), getOwner());
 			return;
 		}
 
-		SubBase->EnergyProd -= data.produceEnergy;
-		SubBase->OilNeed -= data.needsOil;
+		SubBase->EnergyProd -= staticData->produceEnergy;
+		SubBase->OilNeed -= staticData->needsOil;
 	}
 
 	setWorking (false);
 
 	// Energy consumers:
-	if (data.needsEnergy)
-		SubBase->EnergyNeed -= data.needsEnergy;
+	if (staticData->needsEnergy)
+		SubBase->EnergyNeed -= staticData->needsEnergy;
 
 	// raw material consumer:
-	if (data.needsMetal)
+	if (staticData->needsMetal)
 		SubBase->MetalNeed -= std::min (MetalPerRound, buildList[0].getRemainingMetal());
 
 	// gold consumer
-	if (data.convertsGold)
-		SubBase->GoldNeed -= data.convertsGold;
+	if (staticData->convertsGold)
+		SubBase->GoldNeed -= staticData->convertsGold;
 
 	// human consumer
-	if (data.needsHumans)
-		SubBase->HumanNeed -= data.needsHumans;
+	if (staticData->needsHumans)
+		SubBase->HumanNeed -= staticData->needsHumans;
 
 	// Minen:
-	if (data.canMineMaxRes > 0)
+	if (staticData->canMineMaxRes > 0)
 	{
 		int metal = SubBase->getMetalProd();
 		int oil =  SubBase->getOilProd();
@@ -911,12 +907,12 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 		SubBase->setOilProd (min (oil, SubBase->getMaxAllowedOilProd()));
 	}
 
-	if (data.canResearch)
+	if (staticData->canResearch)
 	{
 		getOwner()->stopAResearch (researchArea);
 	}
 
-	if (data.canScore)
+	if (staticData->canScore)
 	{
 		sendNumEcos (server, *getOwner());
 	}
@@ -933,7 +929,7 @@ void cBuilding::clientStopWork()
 	if (!isUnitWorking())
 		return;
 	setWorking (false);
-	if (data.canResearch)
+	if (staticData->canResearch)
 		getOwner()->stopAResearch (researchArea);
 }
 
@@ -947,7 +943,7 @@ bool cBuilding::canTransferTo (const cPosition& position, const cMapField& overU
 		if (v->getOwner() != this->getOwner())
 			return false;
 
-		if (v->data.storeResType != data.storeResType)
+		if (v->getStaticUnitData().storeResType != staticData->storeResType)
 			return false;
 
 		if (v->isUnitBuildingABuilding() || v->isUnitClearing())
@@ -975,7 +971,7 @@ bool cBuilding::canTransferTo (const cPosition& position, const cMapField& overU
 		if (b->getOwner() != this->getOwner())
 			return false;
 
-		if (data.storeResType != b->data.storeResType)
+		if (staticData->storeResType != b->getStaticUnitData().storeResType)
 			return false;
 
 		return true;
@@ -984,7 +980,7 @@ bool cBuilding::canTransferTo (const cPosition& position, const cMapField& overU
 }
 
 //--------------------------------------------------------------------------
-bool cBuilding::canExitTo (const cPosition& position, const cMap& map, const sUnitData& vehicleData) const
+bool cBuilding::canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& vehicleData) const
 {
 	if (!map.possiblePlaceVehicle (vehicleData, position, getOwner())) return false;
 	if (!isNextTo (position)) return false;
@@ -1010,11 +1006,11 @@ bool cBuilding::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 
 	if (Vehicle->isUnitLoaded()) return false;
 
-	if (storedUnits.size() == data.storageUnitsMax) return false;
+	if (storedUnits.size() == staticData->storageUnitsMax) return false;
 
 	if (checkPosition && !isNextTo (Vehicle->getPosition())) return false;
 
-	if (!Contains (data.storeUnitsTypes, Vehicle->data.isStorageType)) return false;
+	if (!Contains(staticData->storeUnitsTypes, Vehicle->getStaticUnitData().isStorageType)) return false;
 
 	if (Vehicle->getClientMoveJob() && (Vehicle->isUnitMoving() || Vehicle->isAttacking() || Vehicle->MoveJobActive)) return false;
 
@@ -1255,9 +1251,9 @@ void cBuilding::checkRessourceProd (const cMap& map)
 		case RES_OIL:   MaxOilProd   += res->value; break;
 	}
 
-	MaxMetalProd = min (MaxMetalProd, data.canMineMaxRes);
-	MaxGoldProd  = min (MaxGoldProd,  data.canMineMaxRes);
-	MaxOilProd   = min (MaxOilProd,   data.canMineMaxRes);
+	MaxMetalProd = min (MaxMetalProd, staticData->canMineMaxRes);
+	MaxGoldProd  = min (MaxGoldProd, staticData->canMineMaxRes);
+	MaxOilProd   = min (MaxOilProd, staticData->canMineMaxRes);
 }
 
 //--------------------------------------------------------------------------
@@ -1277,10 +1273,10 @@ void cBuilding::calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array
 	int a = turboBuildCosts[0];
 	turboBuildCosts[1] = turboBuildCosts[0];
 
-	while (a >= 2 * data.needsMetal)
+	while (a >= 2 * staticData->needsMetal)
 	{
-		turboBuildCosts[1] += 2 * data.needsMetal;
-		a -= 2 * data.needsMetal;
+		turboBuildCosts[1] += 2 * staticData->needsMetal;
+		a -= 2 * staticData->needsMetal;
 	}
 
 	// 4x
@@ -1289,8 +1285,8 @@ void cBuilding::calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array
 
 	while (a >= 15)
 	{
-		turboBuildCosts[2] += (12 * data.needsMetal - min (a, 8 * data.needsMetal));
-		a -= 8 * data.needsMetal;
+		turboBuildCosts[2] += (12 * staticData->needsMetal - min(a, 8 * staticData->needsMetal));
+		a -= 8 * staticData->needsMetal;
 	}
 
 	// now this is a litle bit tricky ...
@@ -1303,35 +1299,35 @@ void cBuilding::calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array
 		switch (BuildSpeed)  // BuildSpeed here is the previous build speed
 		{
 			case 0:
-				WorkedRounds = (turboBuildCosts[0] - remainingMetal) / (1.f * data.needsMetal);
-				turboBuildCosts[0] -= (int) (1     *  1 * data.needsMetal * WorkedRounds);
-				turboBuildCosts[1] -= (int) (0.5f  *  4 * data.needsMetal * WorkedRounds);
-				turboBuildCosts[2] -= (int) (0.25f * 12 * data.needsMetal * WorkedRounds);
+				WorkedRounds = (turboBuildCosts[0] - remainingMetal) / (1.f * staticData->needsMetal);
+				turboBuildCosts[0] -= (int) (1     *  1 * staticData->needsMetal * WorkedRounds);
+				turboBuildCosts[1] -= (int) (0.5f  *  4 * staticData->needsMetal * WorkedRounds);
+				turboBuildCosts[2] -= (int) (0.25f * 12 * staticData->needsMetal * WorkedRounds);
 				break;
 
 			case 1:
-				WorkedRounds = (turboBuildCosts[1] - remainingMetal) / (float) (4 * data.needsMetal);
-				turboBuildCosts[0] -= (int) (2    *  1 * data.needsMetal * WorkedRounds);
-				turboBuildCosts[1] -= (int) (1    *  4 * data.needsMetal * WorkedRounds);
-				turboBuildCosts[2] -= (int) (0.5f * 12 * data.needsMetal * WorkedRounds);
+				WorkedRounds = (turboBuildCosts[1] - remainingMetal) / (float)(4 * staticData->needsMetal);
+				turboBuildCosts[0] -= (int) (2    *  1 * staticData->needsMetal * WorkedRounds);
+				turboBuildCosts[1] -= (int) (1    *  4 * staticData->needsMetal * WorkedRounds);
+				turboBuildCosts[2] -= (int) (0.5f * 12 * staticData->needsMetal * WorkedRounds);
 				break;
 
 			case 2:
-				WorkedRounds = (turboBuildCosts[2] - remainingMetal) / (float) (12 * data.needsMetal);
-				turboBuildCosts[0] -= (int) (4 *  1 * data.needsMetal * WorkedRounds);
-				turboBuildCosts[1] -= (int) (2 *  4 * data.needsMetal * WorkedRounds);
-				turboBuildCosts[2] -= (int) (1 * 12 * data.needsMetal * WorkedRounds);
+				WorkedRounds = (turboBuildCosts[2] - remainingMetal) / (float)(12 * staticData->needsMetal);
+				turboBuildCosts[0] -= (int) (4 *  1 * staticData->needsMetal * WorkedRounds);
+				turboBuildCosts[1] -= (int) (2 *  4 * staticData->needsMetal * WorkedRounds);
+				turboBuildCosts[2] -= (int) (1 * 12 * staticData->needsMetal * WorkedRounds);
 				break;
 		}
 	}
 
-	// calc needed Rounds
-	turboBuildRounds[0] = (int) ceilf (turboBuildCosts[0] / (1.f * data.needsMetal));
+	// calc needed turns
+	turboBuildRounds[0] = (int) ceilf (turboBuildCosts[0] / (1.f * staticData->needsMetal));
 
-	if (data.maxBuildFactor > 1)
+	if (staticData->maxBuildFactor > 1)
 	{
-		turboBuildRounds[1] = (int) ceilf (turboBuildCosts[1] / (4.f * data.needsMetal));
-		turboBuildRounds[2] = (int) ceilf (turboBuildCosts[2] / (12.f * data.needsMetal));
+		turboBuildRounds[1] = (int) ceilf (turboBuildCosts[1] / (4.f * staticData->needsMetal));
+		turboBuildRounds[2] = (int) ceilf (turboBuildCosts[2] / (12.f * staticData->needsMetal));
 	}
 	else
 	{
@@ -1363,9 +1359,9 @@ void cBuilding::resetDetectedByPlayer (const cPlayer* player)
 void cBuilding::makeDetection (cServer& server)
 {
 	// check whether the building has been detected by others
-	if (data.isStealthOn == TERRAIN_NONE) return;
+	if (staticData->isStealthOn == TERRAIN_NONE) return;
 
-	if (data.isStealthOn & AREA_EXP_MINE)
+	if (staticData->isStealthOn & AREA_EXP_MINE)
 	{
 		auto& playerList = server.playerList;
 		for (unsigned int i = 0; i < playerList.size(); i++)
@@ -1381,7 +1377,17 @@ void cBuilding::makeDetection (cServer& server)
 }
 
 //--------------------------------------------------------------------------
-sBuildingUIData::sBuildingUIData()
+sBuildingUIData::sBuildingUIData():
+	hasClanLogos(false),
+	hasDamageEffect(false),
+	hasBetonUnderground(false),
+	hasPlayerColor(false),
+	hasOverlay(false),
+	buildUpGraphic(false),
+	powerOnGraphic(false),
+	isAnimated(false),
+	isConnectorGraphic(false),
+	hasFrames(0)
 {}
 
 //--------------------------------------------------------------------------
@@ -1395,7 +1401,17 @@ sBuildingUIData::sBuildingUIData (sBuildingUIData&& other) :
 	Running (std::move (other.Running)),
 	Stop (std::move (other.Stop)),
 	Attack (std::move (other.Attack)),
-	Wait (std::move (other.Wait))
+	Wait (std::move (other.Wait)),
+	hasClanLogos(other.hasClanLogos),
+	hasDamageEffect(other.hasDamageEffect),
+	hasBetonUnderground(other.hasBetonUnderground),
+	hasPlayerColor(other.hasPlayerColor),
+	hasOverlay(other.hasOverlay),
+	buildUpGraphic(other.buildUpGraphic),
+	powerOnGraphic(other.powerOnGraphic),
+	isAnimated(isAnimated),
+	isConnectorGraphic(isConnectorGraphic),
+	hasFrames(other.hasFrames)
 {}
 
 //--------------------------------------------------------------------------
@@ -1415,6 +1431,18 @@ sBuildingUIData& sBuildingUIData::operator= (sBuildingUIData && other)
 	Stop = std::move (other.Stop);
 	Attack = std::move (other.Attack);
 	Wait = std::move (other.Wait);
+
+	hasClanLogos = other.hasClanLogos;
+	hasDamageEffect = other.hasDamageEffect;
+	hasBetonUnderground = other.hasBetonUnderground;
+	hasPlayerColor = other.hasPlayerColor;
+	hasOverlay = other.hasOverlay;
+	buildUpGraphic = other.buildUpGraphic;
+	powerOnGraphic = other.powerOnGraphic;
+	isAnimated = isAnimated;
+	isConnectorGraphic = isConnectorGraphic;
+	hasFrames = other.hasFrames;
+
 	return *this;
 }
 
@@ -1453,14 +1481,14 @@ void cBuilding::executeUpdateBuildingCommmand (const cClient& client, bool updat
 //-----------------------------------------------------------------------------
 bool cBuilding::buildingCanBeStarted() const
 {
-	return (data.canWork && isUnitWorking() == false
-			&& (!buildList.empty() || data.canBuild.empty()));
+	return (staticData->canWork && isUnitWorking() == false
+		&& (!buildList.empty() || staticData->canBuild.empty()));
 }
 
 //-----------------------------------------------------------------------------
 bool cBuilding::buildingCanBeUpgraded() const
 {
-	const sUnitData& upgraded = *getOwner()->getUnitDataCurrentVersion (data.ID);
+	const cDynamicUnitData& upgraded = *getOwner()->getUnitDataCurrentVersion (data.getId());
 	return (data.getVersion() != upgraded.getVersion() && SubBase && SubBase->getMetal() >= 2);
 }
 
@@ -1558,14 +1586,14 @@ void cBuilding::registerOwnerEvents()
 {
 	ownerSignalConnectionManager.disconnectAll();
 
-	if (getOwner() == nullptr) return;
+	if (getOwner() == nullptr || staticData == nullptr) return;
 
-	if (data.convertsGold)
+	if (staticData->convertsGold)
 	{
 		ownerSignalConnectionManager.connect (getOwner()->creditsChanged, [&]() { statusChanged(); });
 	}
 
-	if (data.canResearch)
+	if (staticData->canResearch)
 	{
 		ownerSignalConnectionManager.connect (getOwner()->researchCentersWorkingOnAreaChanged, [&] (cResearch::ResearchArea) { statusChanged(); });
 		ownerSignalConnectionManager.connect (getOwner()->getResearchState().neededResearchPointsChanged, [&] (cResearch::ResearchArea) { statusChanged(); });

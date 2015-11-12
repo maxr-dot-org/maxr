@@ -41,7 +41,7 @@ eMouseModeType cMouseModeDisable::getType() const
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeDisable::setCursor (cMouse& mouse, const cPosition& mapPosition) const
+void cMouseModeDisable::setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	if (canExecuteAction (mapPosition))
 	{
@@ -64,7 +64,7 @@ void cMouseModeDisable::setCursor (cMouse& mouse, const cPosition& mapPosition) 
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeDisable::getMouseAction (const cPosition& mapPosition) const
+std::unique_ptr<cMouseAction> cMouseModeDisable::getMouseAction(const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	if (canExecuteAction (mapPosition))
 	{

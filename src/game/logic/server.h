@@ -37,6 +37,7 @@
 #include "utility/thread/concurrentqueue.h"
 #include "utility/flatset.h"
 #include "game/data/savegameinfo.h"
+#include "game/data/model.h"
 
 class cBuilding;
 class cCasualtiesTracker;
@@ -105,6 +106,8 @@ public:
 	void addPlayer (std::unique_ptr<cPlayer> player);
 	void start();
 	void stop();
+
+	cModel model;
 
 	/** the type of the current game */
 	eGameTypes getGameType() const;
@@ -266,7 +269,7 @@ public:
 	void kickPlayer (cPlayer& player);
 
 	void sideStepStealthUnit (const cPosition& position, const cVehicle& vehicle, const cPosition& bigOffset = cPosition (-1, -1));
-	void sideStepStealthUnit (const cPosition& position, const sUnitData& vehicleData, cPlayer* vehicleOwner, const cPosition& bigOffset = cPosition (-1, -1));
+	void sideStepStealthUnit (const cPosition& position, const cStaticUnitData& vehicleData, cPlayer* vehicleOwner, const cPosition& bigOffset = cPosition (-1, -1));
 
 	void makeAdditionalSaveRequest (int saveNum);
 
@@ -302,9 +305,9 @@ private:
 	*@param landingUnits List with all units to land.
 	*@param bFixed true if the bridgehead is fixed.
 	*/
-	void makeLanding (const cPosition& landingPosition, cPlayer& player, const std::vector<sLandingUnit>& landingUnits, bool isFixed);
+	//void makeLanding (const cPosition& landingPosition, cPlayer& player, const std::vector<sLandingUnit>& landingUnits, bool isFixed);
 	//void makeLanding (const std::vector<cPosition>& landPos, const std::vector<std::vector<sLandingUnit>*>& landingUnits);
-	void makeLanding();
+	//void makeLanding();
 	/**
 	 *
 	 */
@@ -376,7 +379,7 @@ private:
 	*@return nullptr if the vehicle could not be landed,
 	*        else a pointer to the vehicle.
 	*/
-	cVehicle* landVehicle (const cPosition& landingPosition, int iWidth, int iHeight, const sUnitData& unitData, cPlayer& player);
+	cVehicle* landVehicle (const cPosition& landingPosition, int iWidth, int iHeight, const cStaticUnitData& unitData, cPlayer& player);
 
 	/**
 	* handles the pressed end of a player

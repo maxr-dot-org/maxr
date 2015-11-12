@@ -61,8 +61,28 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 	server = std::make_unique<cServer2>();
 	client = std::make_shared<cClient>(server.get(), nullptr);
 
+	//TODO: use following init sequence
+	//make server
+	//set unitsdata
+	//set map
+	//set gamesettings
+	//set players
+
+	//make client
+	//set client map //use same instance of static map
+	//resync client  //copy model state to client.
+
+	//start server //models are in sync now, and server is running. Model changes only via actions/netmessages from now on.
+
+	//send init action
+
+	//make gamegui
+
 	client->setMap (staticMap);
 	server->setMap (staticMap);
+
+	server->setUnitsData(unitsData); //TODO: don't copy unitsData here, but move cGame::unitsData?
+	client->setUnitsData(unitsData);
 
 	client->setGameSettings (*gameSettings);
 	server->setGameSettings (*gameSettings);

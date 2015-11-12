@@ -30,7 +30,6 @@ cLocalSingleplayerGame::~cLocalSingleplayerGame()
 	if (server)
 	{
 		server->stop();
-		reloadUnitValues();
 	}
 }
 

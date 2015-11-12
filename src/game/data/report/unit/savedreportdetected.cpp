@@ -29,7 +29,8 @@
 cSavedReportDetected::cSavedReportDetected (const cUnit& unit) :
 	cSavedReportUnit (unit),
 	unitName (unit.getDisplayName()),
-	playerName (unit.getOwner()->getName())
+	playerName (unit.getOwner()->getName()),
+	submarine(unit.getStaticUnitData().isStealthOn & TERRAIN_SEA && unit.getStaticUnitData().canAttack)
 {}
 
 //------------------------------------------------------------------------------
@@ -47,9 +48,8 @@ std::string cSavedReportDetected::getText() const
 //------------------------------------------------------------------------------
 void cSavedReportDetected::playSound (cSoundManager& soundManager) const
 {
-	const auto& unitData = *getUnitId().getUnitDataOriginalVersion();
 
-	if (unitData.isStealthOn & TERRAIN_SEA && unitData.canAttack)
+	if (submarine)
 	{
 		soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceDetected, VoiceData.VOISubDetected));
 	}

@@ -67,15 +67,15 @@ cWindowSinglePlayer::~cWindowSinglePlayer()
 
 // TODO: find nice place
 //------------------------------------------------------------------------------
-std::vector<std::pair<sID, int>> createInitialLandingUnitsList (int clan, const cGameSettings& gameSettings)
+std::vector<std::pair<sID, int>> createInitialLandingUnitsList(int clan, const cGameSettings& gameSettings, const cUnitsData& unitsData)
 {
 	std::vector<std::pair<sID, int>> initialLandingUnits;
 
 	if (gameSettings.getBridgeheadType() == eGameSettingsBridgeheadType::Mobile) return initialLandingUnits;
 
-	const auto& constructorID = UnitsData.getConstructorID();
-	const auto& engineerID = UnitsData.getEngineerID();
-	const auto& surveyorID = UnitsData.getSurveyorID();
+	const auto& constructorID = unitsData.getConstructorData().ID;
+	const auto& engineerID = unitsData.getEngineerData().ID;
+	const auto& surveyorID = unitsData.getSurveyorData().ID;
 
 	initialLandingUnits.push_back (std::make_pair (constructorID, 40));
 	initialLandingUnits.push_back (std::make_pair (engineerID, 20));
@@ -135,6 +135,9 @@ void cWindowSinglePlayer::newGameClicked()
 
 	auto game = std::make_shared<cLocalSingleplayerGameNew> ();
 
+	//initialize copy of unitsData that will be used in game
+	game->setUnitsData(std::make_shared<const cUnitsData>(UnitsDataGlobal));
+
 	auto windowGameSettings = getActiveApplication()->show (std::make_shared<cWindowGameSettings> ());
 	windowGameSettings->applySettings (cGameSettings());
 
@@ -157,16 +160,16 @@ void cWindowSinglePlayer::newGameClicked()
 
 			if (gameSettings->getClansEnabled())
 			{
-				auto windowClanSelection = application->show (std::make_shared<cWindowClanSelection> ());
+				auto windowClanSelection = application->show (std::make_shared<cWindowClanSelection> (game->getUnitsData()));
 
 				signalConnectionManager.connect (windowClanSelection->canceled, [windowClanSelection]() { windowClanSelection->close(); });
 				windowClanSelection->done.connect ([ = ]()
 				{
 					game->setPlayerClan (windowClanSelection->getSelectedClan());
 
-					auto initialLandingUnits = createInitialLandingUnitsList (windowClanSelection->getSelectedClan(), *gameSettings);
+					auto initialLandingUnits = createInitialLandingUnitsList (windowClanSelection->getSelectedClan(), *gameSettings, *game->getUnitsData());
 
-					auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), windowClanSelection->getSelectedClan(), initialLandingUnits, gameSettings->getStartCredits()));
+					auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), windowClanSelection->getSelectedClan(), initialLandingUnits, gameSettings->getStartCredits(), game->getUnitsData()));
 
 					signalConnectionManager.connect (windowLandingUnitSelection->canceled, [windowLandingUnitSelection]() { windowLandingUnitSelection->close(); });
 					windowLandingUnitSelection->done.connect ([ = ]()
@@ -194,9 +197,9 @@ void cWindowSinglePlayer::newGameClicked()
 			}
 			else
 			{
-				auto initialLandingUnits = createInitialLandingUnitsList (-1, *gameSettings);
+				auto initialLandingUnits = createInitialLandingUnitsList (-1, *gameSettings, *game->getUnitsData());
 
-				auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), -1, initialLandingUnits, gameSettings->getStartCredits()));
+				auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), -1, initialLandingUnits, gameSettings->getStartCredits(), game->getUnitsData()));
 
 				signalConnectionManager.connect (windowLandingUnitSelection->canceled, [windowLandingUnitSelection]() { windowLandingUnitSelection->close(); });
 				windowLandingUnitSelection->done.connect ([ = ]()

@@ -23,6 +23,7 @@
 #include "ui/graphical/menu/widgets/checkbox.h"
 #include "game/data/units/unit.h"
 #include "game/data/map/map.h"
+#include "main.h"
 
 //------------------------------------------------------------------------------
 cUnitContextMenuWidget::cUnitContextMenuWidget() :
@@ -290,37 +291,37 @@ const cUnit* cUnitContextMenuWidget::getUnit()
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasAttackEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->data.canAttack && unit->data.getShots();
+	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canAttack && unit->data.getShots();
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasBuildEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && !unit->data.canBuild.empty() && !unit->isUnitBuildingABuilding();
+	return unit && !unit->isDisabled() && unit->getOwner() == player && !unit->getStaticUnitData().canBuild.empty() && !unit->isUnitBuildingABuilding();
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasDistributeEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->data.canMineMaxRes > 0 && unit->isUnitWorking();
+	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canMineMaxRes > 0 && unit->isUnitWorking();
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasTransferEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->data.storeResType != sUnitData::STORE_RES_NONE && !unit->isUnitBuildingABuilding() && !unit->isUnitClearing();
+	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().storeResType != cStaticUnitData::STORE_RES_NONE && !unit->isUnitBuildingABuilding() && !unit->isUnitClearing();
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasStartEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->data.canWork && unit->buildingCanBeStarted();
+	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canWork && unit->buildingCanBeStarted();
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasAutoEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->data.canSurvey;
+	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canSurvey;
 }
 
 //------------------------------------------------------------------------------
@@ -332,43 +333,43 @@ const cUnit* cUnitContextMenuWidget::getUnit()
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasRemoveEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->data.canClearArea && dynamicMap && dynamicMap->getField (unit->getPosition()).getRubble() && !unit->isUnitClearing();
+	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canClearArea && dynamicMap && dynamicMap->getField(unit->getPosition()).getRubble() && !unit->isUnitClearing();
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasManualFireEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && (unit->isManualFireActive() || unit->data.canAttack);
+	return unit && !unit->isDisabled() && unit->getOwner() == player && (unit->isManualFireActive() || unit->getStaticUnitData().canAttack);
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasSentryEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && (unit->isSentryActive() || unit->data.canAttack || (!unit->isABuilding() && !unit->canBeStoppedViaUnitMenu()));
+	return unit && !unit->isDisabled() && unit->getOwner() == player && (unit->isSentryActive() || unit->getStaticUnitData().canAttack || (!unit->isABuilding() && !unit->canBeStoppedViaUnitMenu()));
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasActivateEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->data.storageUnitsMax > 0;
+	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().storageUnitsMax > 0;
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasLoadEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->data.storageUnitsMax > 0;
+	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().storageUnitsMax > 0;
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasResearchEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->data.canResearch && unit->isUnitWorking();
+	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canResearch && unit->isUnitWorking();
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasBuyEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->data.convertsGold;
+	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().convertsGold;
 }
 
 //------------------------------------------------------------------------------
@@ -386,43 +387,43 @@ const cUnit* cUnitContextMenuWidget::getUnit()
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasSelfDestroyEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->data.canSelfDestroy;
+	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canSelfDestroy;
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasSupplyEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->data.canRearm && unit->data.getStoredResources() >= 1;
+	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canRearm && unit->getStoredResources() >= 1;
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasRepairEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->data.canRepair && unit->data.getStoredResources() >= 1;
+	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canRepair && unit->getStoredResources() >= 1;
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasLayMinesEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->data.canPlaceMines && unit->data.getStoredResources() > 0;
+	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canPlaceMines && unit->getStoredResources() > 0;
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasCollectMinesEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->data.canPlaceMines && unit->data.getStoredResources() < unit->data.storageResMax;
+	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canPlaceMines && unit->getStoredResources() < unit->getStaticUnitData().storageResMax;
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasSabotageEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->data.canDisable && unit->data.getShots();
+	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canDisable && unit->data.getShots();
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasStealEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->data.canCapture && unit->data.getShots();
+	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canCapture && unit->data.getShots();
 }
 
 //------------------------------------------------------------------------------

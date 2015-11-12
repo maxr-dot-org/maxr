@@ -29,7 +29,6 @@ cNetworkHostGame::~cNetworkHostGame()
 	if (server)
 	{
 		server->stop();
-		reloadUnitValues();
 	}
 }
 

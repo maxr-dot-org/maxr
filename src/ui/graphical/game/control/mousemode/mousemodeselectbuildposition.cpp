@@ -38,13 +38,13 @@ eMouseModeType cMouseModeSelectBuildPosition::getType() const
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeSelectBuildPosition::setCursor (cMouse& mouse, const cPosition& mapPosition) const
+void cMouseModeSelectBuildPosition::setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Band));
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeSelectBuildPosition::getMouseAction (const cPosition& mapPosition) const
+std::unique_ptr<cMouseAction> cMouseModeSelectBuildPosition::getMouseAction(const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	const auto selectedUnit = unitSelection.getSelectedUnit();
 
@@ -52,21 +52,21 @@ std::unique_ptr<cMouseAction> cMouseModeSelectBuildPosition::getMouseAction (con
 
 	bool validPosition;
 	cPosition destination;
-	std::tie (validPosition, destination) = findNextBuildPosition (selectedUnit->getPosition(), mapPosition);
+	std::tie (validPosition, destination) = findNextBuildPosition (selectedUnit->getPosition(), mapPosition, unitsData);
 	if (!validPosition) return nullptr;
 
 	return std::make_unique<cMouseActionSelectBuildPosition> (buildId, destination);
 }
 
 //------------------------------------------------------------------------------
-std::pair<bool, cPosition> cMouseModeSelectBuildPosition::findNextBuildPosition (const cPosition& sourcePosition, const cPosition& desiredPosition) const
+std::pair<bool, cPosition> cMouseModeSelectBuildPosition::findNextBuildPosition(const cPosition& sourcePosition, const cPosition& desiredPosition, const cUnitsData& unitsData) const
 {
 	if (!map) return std::make_pair (false, cPosition());
 
 	bool pos[4] = {false, false, false, false};
 
 	//check, which positions are available
-	const auto& unitData = *buildId.getUnitDataOriginalVersion();
+	const auto& unitData = unitsData.getStaticUnitData(buildId);
 	if (map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x() - 1, sourcePosition.y() - 1))
 		&& map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x(), sourcePosition.y() - 1))
 		&& map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x() - 1, sourcePosition.y())))
@@ -137,7 +137,7 @@ std::pair<bool, cPosition> cMouseModeSelectBuildPosition::findNextBuildPosition 
 		return std::make_pair (true, cPosition (sourcePosition.x() - 1, sourcePosition.y()));
 	}
 
-	if (unitData.isBig)
+	if (unitsData.getStaticUnitData(buildId).isBig)
 	{
 		return std::make_pair (true, cPosition (sourcePosition.x(), sourcePosition.y()));
 	}

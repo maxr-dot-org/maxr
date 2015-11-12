@@ -62,7 +62,7 @@ void sendAddRubble (cServer& server, const cBuilding& building, const cPlayer& r
 	message->pushInt16 (building.iID);
 	message->pushInt16 (building.RubbleValue);
 	message->pushInt16 (building.RubbleTyp);
-	message->pushBool (building.data.isBig);
+	message->pushBool (building.getIsBig());
 
 	server.sendNetMessage (std::move (message), &receiver);
 }
@@ -101,7 +101,7 @@ void sendAddEnemyUnit (cServer& server, const cUnit& unit, const cPlayer& receiv
 	if (unit.isAVehicle())
 		message->pushInt16 (unit.dir);
 	message->pushPosition (unit.getPosition());
-	message->pushID (unit.data.ID);
+	message->pushID (unit.data.getId());
 	message->pushInt16 (unit.getOwner()->getId());
 
 	server.sendNetMessage (std::move (message), &receiver);
@@ -152,98 +152,6 @@ void sendTurnEndDeadlineStartTime (cServer& server, unsigned int gameTime)
 	message->pushInt32 (gameTime);
 
 	server.sendNetMessage (std::move (message));
-}
-
-//------------------------------------------------------------------------------
-void sendUnitData (cServer& server, const cUnit& unit, const cPlayer& receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_UNIT_DATA);
-
-	// The unit data values
-	if (unit.isAVehicle())
-	{
-		message->pushInt16 (static_cast<const cVehicle*> (&unit)->getFlightHeight());
-		message->pushInt16 (unit.data.getSpeedMax());
-		message->pushInt16 (unit.data.getSpeed());
-	}
-	message->pushInt16 (unit.data.getVersion());
-	message->pushInt16 (unit.data.getHitpointsMax());
-	message->pushInt16 (unit.data.getHitpoints());
-	message->pushInt16 (unit.data.getArmor());
-	message->pushInt16 (unit.data.getScan());
-	message->pushInt16 (unit.data.getRange());
-	message->pushInt16 (unit.data.getShotsMax());
-	message->pushInt16 (unit.data.getShots());
-	message->pushInt16 (unit.data.getDamage());
-	message->pushInt16 (unit.data.storageUnitsMax);
-	message->pushInt16 (unit.data.storageResMax);
-	message->pushInt16 (unit.data.getStoredResources());
-	message->pushInt16 (unit.data.getAmmoMax());
-	message->pushInt16 (unit.data.getAmmo());
-	message->pushInt16 (unit.data.buildCosts);
-
-	// Current state of the unit
-	// TODO: remove information such sentrystatus,
-	//       build or clearrounds from normal data
-	//       because this data will be received by enemys, too
-	if (unit.isABuilding())
-		message->pushInt16 (static_cast<const cBuilding*> (&unit)->points);
-
-	message->pushBool (unit.isManualFireActive());
-	message->pushBool (unit.isSentryActive());
-
-	if (unit.isAVehicle())
-	{
-		const cVehicle& vehicle = *static_cast<const cVehicle*> (&unit);
-		message->pushInt16 (vehicle.getClearingTurns());
-		message->pushInt16 (vehicle.getBuildTurns());
-		message->pushBool (vehicle.isUnitBuildingABuilding());
-		message->pushBool (vehicle.isUnitClearing());
-		message->pushInt16 ((int) vehicle.getCommandoRank());
-	}
-	else
-	{
-		const cBuilding& building = *static_cast<const cBuilding*> (&unit);
-		message->pushBool (building.isUnitWorking());
-		message->pushInt16 (building.getResearchArea());
-	}
-
-	message->pushInt16 (unit.getDisabledTurns());
-
-	message->pushBool (unit.isBeeingAttacked());
-	message->pushBool (unit.isAttacking());
-
-	if (unit.isNameOriginal() == false)
-	{
-		message->pushString (unit.getName());
-		message->pushBool (true);
-	}
-	else
-		message->pushBool (false);
-
-	if (unit.isAVehicle())
-		message->pushBool (unit.data.isBig);
-
-	// Data for identifying the unit by the client
-	message->pushPosition (unit.getPosition());
-	message->pushBool (unit.isAVehicle());
-	message->pushInt16 (unit.iID);
-	message->pushInt16 (unit.getOwner()->getId());
-
-	server.sendNetMessage (std::move (message), &receiver);
-}
-
-//------------------------------------------------------------------------------
-void sendUnitData (cServer& server, const cUnit& unit)
-{
-	if (unit.getOwner())
-	{
-		sendUnitData (server, unit, *unit.getOwner());
-	}
-	for (size_t i = 0; i < unit.seenByPlayerList.size(); ++i)
-	{
-		sendUnitData (server, unit, *unit.seenByPlayerList[i]);
-	}
 }
 
 //------------------------------------------------------------------------------
@@ -469,7 +377,7 @@ void sendBuildAnswer (cServer& server, bool bOK, const cVehicle& vehicle)
 		message->pushBool (vehicle.BuildPath);
 		message->pushInt16 (vehicle.getBuildTurns());
 		message->pushID (vehicle.getBuildingType());
-		message->pushBool (vehicle.getBuildingType().getUnitDataOriginalVersion()->isBig);
+	//	message->pushBool (vehicle.getBuildingType().getUnitDataOriginalVersion()->isBig);
 		message->pushPosition (vehicle.getPosition());
 	}
 
@@ -483,7 +391,7 @@ void sendBuildAnswer (cServer& server, bool bOK, const cVehicle& vehicle)
 		auto message = std::make_unique<cNetMessage> (GAME_EV_BUILD_ANSWER);
 		if (bOK)
 		{
-			message->pushBool (vehicle.getBuildingType().getUnitDataOriginalVersion()->isBig);
+	//		message->pushBool (vehicle.getBuildingType().getUnitDataOriginalVersion()->isBig);
 			message->pushPosition (vehicle.getPosition());
 		}
 		message->pushInt16 (vehicle.iID);
@@ -745,7 +653,7 @@ void sendRefreshResearchCount (cServer& server, const cPlayer& receiver)
 }
 
 //------------------------------------------------------------------------------
-void sendUnitUpgrades (cServer& server, const sUnitData& unitData, const cPlayer& receiver)
+void sendUnitUpgrades (cServer& server, const cDynamicUnitData& unitData, const cPlayer& receiver)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_UNIT_UPGRADE_VALUES);
 	message->pushInt16 (unitData.getHitpointsMax());
@@ -753,12 +661,12 @@ void sendUnitUpgrades (cServer& server, const sUnitData& unitData, const cPlayer
 	message->pushInt16 (unitData.getShotsMax());
 	message->pushInt16 (unitData.getSpeedMax());
 	message->pushInt16 (unitData.getArmor());
-	message->pushInt16 (unitData.buildCosts);
+	message->pushInt16 (unitData.getBuildCost());
 	message->pushInt16 (unitData.getDamage());
 	message->pushInt16 (unitData.getRange());
 	message->pushInt16 (unitData.getScan());
 	message->pushInt16 (unitData.getVersion());
-	message->pushID (unitData.ID);
+	message->pushID (unitData.getId());
 	server.sendNetMessage (std::move (message), &receiver);
 }
 
@@ -810,8 +718,8 @@ void sendUpgradeBuildings (cServer& server, const std::vector<cBuilding*>& upgra
 
 		for (unsigned int buildingIdx = 0; buildingIdx < upgradedBuildings.size(); buildingIdx++)
 		{
-			if (Contains (upgradedBuildings[buildingIdx]->seenByPlayerList, curPlayer)) // that player can see the building
-				sendUnitData (server, *upgradedBuildings[buildingIdx], *curPlayer);
+			//if (Contains (upgradedBuildings[buildingIdx]->seenByPlayerList, curPlayer)) // that player can see the building
+				//sendUnitData (server, *upgradedBuildings[buildingIdx], *curPlayer);
 		}
 	}
 }
@@ -912,20 +820,6 @@ void sendCommandoAnswer (cServer& server, bool success, bool steal, const cVehic
 	message->pushBool (steal);
 	message->pushBool (success);
 	server.sendNetMessage (std::move (message), &receiver);
-}
-
-//------------------------------------------------------------------------------
-void sendCasualtiesReport (cServer& server, const cPlayer* receiver)
-{
-	const auto casualtiesTracker = server.getCasualtiesTracker().get();
-	if (casualtiesTracker)
-	{
-		auto messages = casualtiesTracker->prepareNetMessagesForClient (GAME_EV_CASUALTIES_REPORT);
-		for (auto&& message : messages)
-		{
-			server.sendNetMessage (std::move (message), receiver);
-		}
-	}
 }
 
 //------------------------------------------------------------------------------

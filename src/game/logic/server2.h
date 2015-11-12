@@ -52,6 +52,7 @@ public:
 	void setLocalClient(cClient* client);
 	void setGameSettings(const cGameSettings& gameSettings);
 	void setMap(std::shared_ptr<cStaticMap> staticMap);
+	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData);
 	void setPlayers(const std::vector<cPlayerBasicData>& splayers);
 	const cModel& getModel() const;
 	void saveGameState(int saveGameNumber, const std::string & saveName) const;

@@ -51,6 +51,8 @@ public:
 	void runJobs(const cGameTimer& timer); //advanceGameTime
 	uint32_t calcChecksum() const;
 
+	void setUnitsData(std::shared_ptr<cUnitsData> unitsData);
+	std::shared_ptr<const cUnitsData> getUnitsData() const { return unitsData; };
 
 	std::shared_ptr<const cGameSettings> getGameSettings() const { return gameSettings; };
 	std::shared_ptr<cGameSettings> getGameSettings() { return gameSettings; };
@@ -82,6 +84,7 @@ public:
 	{
 		archive & serialization::makeNvp("gameSettings", *gameSettings);
 		archive & serialization::makeNvp("map", *map);
+		archive & serialization::makeNvp("unitsData", *unitsData);
 		archive & serialization::makeNvp("numPlayers", (int)playerList.size());
 		for (auto player : playerList)
 		{
@@ -104,13 +107,21 @@ public:
 		}
 		archive & serialization::makeNvp("map", *map);
 
+		if (unitsData == nullptr)
+		{
+			unitsData = std::make_shared<cUnitsData>();
+		}
+		archive & serialization::makeNvp("unitsData", *unitsData);
+		//check UIData available
+
+
 		playerList.clear();
 		int numPlayers;
 		archive & NVP(numPlayers);
 		for (int i = 0; i < numPlayers; i++)
 		{
 			cPlayerBasicData basicPlayerData;
-			auto player = std::make_shared<cPlayer>(basicPlayerData);
+			auto player = std::make_shared<cPlayer>(basicPlayerData, *unitsData);
 			player->initMaps(*map);
 			playerList.push_back(player);
 			archive & serialization::makeNvp("player", *player);
@@ -124,8 +135,6 @@ public:
 private:
 	void refreshMapPointer();
 
-
-
 	std::shared_ptr<cGameSettings> gameSettings;
 	std::shared_ptr<cMap> map;
 	std::vector<std::shared_ptr<cPlayer>> playerList;
@@ -133,6 +142,9 @@ private:
 	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> neutralBuildings;
 
 	int nextUnitId;
+
+	std::shared_ptr<cUnitsData> unitsData;
+
 	//jobs
 	//casualtiesTracker
 	//turnnr
@@ -143,7 +155,6 @@ private:
 
 	//signalConnectionManager?
 
-	//random generator
 };
 
 #endif

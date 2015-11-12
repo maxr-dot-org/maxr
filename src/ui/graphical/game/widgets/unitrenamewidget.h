@@ -37,16 +37,17 @@ class cUnit;
 class cLabel;
 class cLineEdit;
 class cPlayer;
+class cUnitsData;
 
 class cUnitRenameWidget : public cWidget
 {
 public:
 	cUnitRenameWidget (const cPosition& position, int width);
 
-	void setUnit (const cUnit* unit);
+	void setUnit (const cUnit* unit, const cUnitsData& unitsData);
 	const cUnit* getUnit() const;
 
-	void setPlayer (const cPlayer* player);
+	void setPlayer (const cPlayer* player, const cUnitsData& unitsData);
 
 	const std::string& getUnitName() const;
 

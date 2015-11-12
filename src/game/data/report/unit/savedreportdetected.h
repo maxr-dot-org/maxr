@@ -55,11 +55,13 @@ private:
 	{
 		archive & NVP(unitName);
 		archive & NVP(playerName);
+		archive & NVP(submarine);
 	}
 
 
 	std::string unitName;
 	std::string playerName;
+	bool submarine;
 };
 
 #endif // game_data_reports_savedreportdetectedH

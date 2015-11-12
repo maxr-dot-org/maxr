@@ -30,8 +30,8 @@ const int cReportDisadvantagesListViewItem::casualityLabelWidth = 75;
 const int cReportDisadvantagesListViewItem::maxItemsInRow = 4;
 
 //------------------------------------------------------------------------------
-cReportDisadvantagesListViewItem::cReportDisadvantagesListViewItem (const sID& unitId_, std::vector<int> disadvantages_) :
-	unitId (unitId_),
+cReportDisadvantagesListViewItem::cReportDisadvantagesListViewItem (const cStaticUnitData& data, std::vector<int> disadvantages_) :
+	unitId (data.ID),
 	disadvantages (disadvantages_)
 {
 	const auto totalHeight = std::max (unitImageHeight, (int) (disadvantages.size() / maxItemsInRow + 1) * font->getFontHeight());
@@ -41,23 +41,22 @@ cReportDisadvantagesListViewItem::cReportDisadvantagesListViewItem (const sID& u
 	SDL_FillRect (unitSurface.get(), nullptr, 0x00FF00FF);
 	SDL_Rect dest = {0, 0, 0, 0};
 
-	const auto& data = *unitId.getUnitDataOriginalVersion();
 	if (unitId.isAVehicle())
 	{
 		const float zoomFactor = unitImageWidth / 64.0f;
-		const auto& uiData = *UnitsData.getVehicleUI (unitId);
-		cVehicle::render_simple (unitSurface.get(), dest, zoomFactor, data, uiData, nullptr);
-		cVehicle::drawOverlayAnimation (unitSurface.get(), dest, zoomFactor, data, uiData);
+		const auto& uiData = *UnitsUiData.getVehicleUI (unitId);
+		cVehicle::render_simple (unitSurface.get(), dest, zoomFactor, uiData, nullptr);
+		cVehicle::drawOverlayAnimation (unitSurface.get(), dest, zoomFactor, uiData);
 	}
 	else if (unitId.isABuilding())
 	{
 		const float zoomFactor = unitImageWidth / (data.isBig ? 128.0f : 64.0f);
-		const auto& uiData = *UnitsData.getBuildingUI (unitId);
-		cBuilding::render_simple (unitSurface.get(), dest, zoomFactor, data, uiData, nullptr);
+		const auto& uiData = *UnitsUiData.getBuildingUI (unitId);
+		cBuilding::render_simple (unitSurface.get(), dest, zoomFactor, uiData, nullptr);
 	}
 	auto unitImage = addChild (std::make_unique<cImage> (cPosition (0, (totalHeight - unitImageHeight) / 2), unitSurface.get()));
 
-	auto nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImage->getEndPosition().x(), 0), cPosition (unitImage->getEndPosition().x() + unitNameWidth, totalHeight)), unitId.getUnitDataOriginalVersion()->name, FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
+	auto nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImage->getEndPosition().x(), 0), cPosition (unitImage->getEndPosition().x() + unitNameWidth, totalHeight)), data.getName(), FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
 	nameLabel->setWordWrap (true);
 
 	for (size_t i = 0; i < disadvantages.size(); ++i)

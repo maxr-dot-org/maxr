@@ -39,7 +39,7 @@ public:
 	int getModificationValue (const std::string& key) const;
 	bool hasModification (const std::string& key) const;
 
-	std::string getClanStatsDescription() const;
+	std::string getClanStatsDescription(const cUnitsData& originalData) const;
 
 	//-------------------------------------------------------------------------
 private:
@@ -57,7 +57,7 @@ public:
 	void setDescription (const std::string& newDescription);
 	const std::string& getDescription() const { return description; }
 
-	std::vector<std::string> getClanStatsDescription() const;
+	std::vector<std::string> getClanStatsDescription(const cUnitsData& originalData) const;
 
 	void setName (const std::string& newName);
 	const std::string& getName() const { return name; }

@@ -99,8 +99,8 @@ void cPathCalculator::init (const cPosition& source, const cMap& Map, const cVeh
 	this->Map = &Map;
 	this->Vehicle = &Vehicle;
 	this->group = group;
-	bPlane = Vehicle.data.factorAir > 0;
-	bShip = Vehicle.data.factorSea > 0 && Vehicle.data.factorGround == 0;
+	bPlane = Vehicle.getStaticUnitData().factorAir > 0;
+	bShip = Vehicle.getStaticUnitData().factorSea > 0 && Vehicle.getStaticUnitData().factorGround == 0;
 
 	Waypoints = nullptr;
 	MemBlocks = nullptr;
@@ -217,7 +217,7 @@ void cPathCalculator::expandNodes (sPathNode* ParentNode)
 				{
 					// get the blocking unit
 					cVehicle* blockingUnit;
-					if (Vehicle->data.factorAir > 0) blockingUnit = Map->getField (currentPosition).getPlane();
+					if (Vehicle->getStaticUnitData().factorAir > 0) blockingUnit = Map->getField(currentPosition).getPlane();
 					else blockingUnit = Map->getField (currentPosition).getVehicle();
 					// check whether the blocking unit is the group
 					bool isInGroup = Contains (*group, blockingUnit);
@@ -340,23 +340,23 @@ int cPathCalculator::calcNextCost (const cPosition& source, const cPosition& des
 {
 	int costs;
 	// first we check whether the unit can fly
-	if (Vehicle->data.factorAir > 0)
+	if (Vehicle->getStaticUnitData().factorAir > 0)
 	{
-		if (source.x() != destination.x() && source.y() != destination.y()) return (int) (4 * 1.5f * Vehicle->data.factorAir);
-		else return (int) (4 * Vehicle->data.factorAir);
+		if (source.x() != destination.x() && source.y() != destination.y()) return (int) (4 * 1.5f * Vehicle->getStaticUnitData().factorAir);
+		else return (int) (4 * Vehicle->getStaticUnitData().factorAir);
 	}
 	const cBuilding* building = Map->getField (destination).getBaseBuilding();
 	// moving on water will cost more
-	if (Map->isWater (destination) && (!building || (building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE)) && Vehicle->data.factorSea > 0) costs = (int) (4 * Vehicle->data.factorSea);
-	else if (Map->isCoast (destination) && !building && Vehicle->data.factorCoast > 0) costs = (int) (4 * Vehicle->data.factorCoast);
-	else if (Vehicle->data.factorGround > 0) costs = (int) (4 * Vehicle->data.factorGround);
+	if (Map->isWater (destination) && (!building || (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BENEATH_SEA || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE)) && Vehicle->getStaticUnitData().factorSea > 0) costs = (int) (4 * Vehicle->getStaticUnitData().factorSea);
+	else if (Map->isCoast (destination) && !building && Vehicle->getStaticUnitData().factorCoast > 0) costs = (int) (4 * Vehicle->getStaticUnitData().factorCoast);
+	else if (Vehicle->getStaticUnitData().factorGround > 0) costs = (int)(4 * Vehicle->getStaticUnitData().factorGround);
 	else
 	{
 		Log.write ("Where can this unit move? " + iToStr (Vehicle->iID), cLog::eLOG_TYPE_NET_WARNING);
 		costs = 4;
 	}
 	// moving on a road is cheaper
-	if (building && building->data.modifiesSpeed != 0) costs = (int) (costs * building->data.modifiesSpeed);
+	if (building && building->getStaticUnitData().modifiesSpeed != 0) costs = (int)(costs * building->getStaticUnitData().modifiesSpeed);
 
 	// multiplicate with the factor 1.5 for diagonal movements
 	if (source.x() != destination.x() && source.y() != destination.y()) costs = (int) (costs * 1.5f);
@@ -400,7 +400,7 @@ cServerMoveJob::cServerMoveJob (cServer& server_, const cPosition& source_, cons
 	this->Vehicle = vehicle;
 	source = source_;
 	destination = destination_;
-	bPlane = (Vehicle->data.factorAir > 0);
+	bPlane = (Vehicle->getStaticUnitData().factorAir > 0);
 	bFinished = false;
 	bEndForNow = false;
 	iSavedSpeed = 0;
@@ -412,7 +412,7 @@ cServerMoveJob::cServerMoveJob (cServer& server_, const cPosition& source_, cons
 	{
 		Vehicle->getOwner()->deleteSentry (*Vehicle);
 	}
-	sendUnitData (*server, *Vehicle);
+	//sendUnitData (*server, *Vehicle);
 
 	if (Vehicle->ServerMoveJob)
 	{
@@ -649,7 +649,7 @@ bool cServerMoveJob::checkMove()
 	Vehicle->DecSpeed (Waypoints->next->Costs);
 
 	//reset detected flag, when a water stealth unit drives into the water
-	if (Vehicle->data.isStealthOn & TERRAIN_SEA && Vehicle->data.factorGround)
+	if (Vehicle->getStaticUnitData().isStealthOn & TERRAIN_SEA && Vehicle->getStaticUnitData().factorGround)
 	{
 		bool wasOnLand = !Map->isWater (Waypoints->position);
 		bool driveIntoWater = Map->isWater (Waypoints->next->position);
@@ -679,16 +679,16 @@ void cServerMoveJob::moveVehicle()
 	int iSpeed;
 	if (!Vehicle)
 		return;
-	if (Vehicle->data.animationMovement)
+	if (Vehicle->uiData->animationMovement)
 		iSpeed = MOVE_SPEED / 2;
-	else if (! (Vehicle->data.factorAir > 0) && ! (Vehicle->data.factorSea > 0 && Vehicle->data.factorGround == 0))
+	else if (!(Vehicle->getStaticUnitData().factorAir > 0) && !(Vehicle->getStaticUnitData().factorSea > 0 && Vehicle->getStaticUnitData().factorGround == 0))
 	{
 		iSpeed = MOVE_SPEED;
 		cBuilding* building = Map->getField (Waypoints->next->position).getBaseBuilding();
-		if (building && building->data.modifiesSpeed)
-			iSpeed = (int) (iSpeed / building->data.modifiesSpeed);
+		if (building && building->getStaticUnitData().modifiesSpeed)
+			iSpeed = (int)(iSpeed / building->getStaticUnitData().modifiesSpeed);
 	}
-	else if (Vehicle->data.factorAir > 0)
+	else if (Vehicle->getStaticUnitData().factorAir > 0)
 		iSpeed = MOVE_SPEED * 2;
 	else
 		iSpeed = MOVE_SPEED;
@@ -720,14 +720,14 @@ void cServerMoveJob::doEndMoveVehicle()
 
 	// make mines explode if necessary
 	cBuilding* mine = Map->getField (Vehicle->getPosition()).getMine();
-	if (Vehicle->data.factorAir == 0 && mine && mine->getOwner() != Vehicle->getOwner())
+	if (Vehicle->getStaticUnitData().factorAir == 0 && mine && mine->getOwner() != Vehicle->getOwner())
 	{
 		server->addAttackJob (mine, Vehicle->getPosition());
 		bEndForNow = true;
 	}
 
 	// search for resources if necessary
-	if (Vehicle->data.canSurvey)
+	if (Vehicle->getStaticUnitData().canSurvey)
 	{
 		sendVehicleResources (*server, *Vehicle);
 		Vehicle->doSurvey (*server->Map);
@@ -740,7 +740,7 @@ void cServerMoveJob::doEndMoveVehicle()
 	Vehicle->InSentryRange (*server);
 
 	// lay/clear mines if necessary
-	if (Vehicle->data.canPlaceMines)
+	if (Vehicle->getStaticUnitData().canPlaceMines)
 	{
 		bool bResult = false;
 		if (Vehicle->isUnitLayingMines()) bResult = Vehicle->layMine (*server);
@@ -748,7 +748,7 @@ void cServerMoveJob::doEndMoveVehicle()
 		if (bResult)
 		{
 			// send new unit values
-			sendUnitData (*server, *Vehicle);
+			//sendUnitData (*server, *Vehicle);
 		}
 	}
 
@@ -855,7 +855,7 @@ void cClientMoveJob::init (const cPosition& source_, cVehicle* Vehicle)
 	//Map = client->getMap().get();
 	this->Vehicle = Vehicle;
 	source = source_;
-	this->bPlane = (Vehicle->data.factorAir > 0);
+	this->bPlane = (Vehicle->getStaticUnitData().factorAir > 0);
 	bFinished = false;
 	bEndForNow = false;
 	iSavedSpeed = 0;
@@ -970,7 +970,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			Vehicle->setMovementOffset (cPosition (0, 0));
 			setOffset (Vehicle, iNextDir, -64);
 
-			if (Vehicle->data.factorAir > 0 && Vehicle->getFlightHeight() < 64)
+			if (Vehicle->getStaticUnitData().factorAir > 0 && Vehicle->getFlightHeight() < 64)
 			{
 				//client->addJob (new cPlaneTakeoffJob (*Vehicle, true));
 			}
@@ -1057,7 +1057,7 @@ void cClientMoveJob::moveVehicle()
 		setOffset (Vehicle, iNextDir, -64);
 		Vehicle->setMoving (true);
 
-		if (Vehicle->data.factorAir > 0 && Vehicle->getFlightHeight() < 64)
+		if (Vehicle->getStaticUnitData().factorAir > 0 && Vehicle->getFlightHeight() < 64)
 		{
 			//client->addJob (new cPlaneTakeoffJob (*Vehicle, true));
 		}
@@ -1066,24 +1066,24 @@ void cClientMoveJob::moveVehicle()
 	}
 
 	int iSpeed;
-	if (Vehicle->data.animationMovement)
+	if (Vehicle->uiData->animationMovement)
 	{
 		if (client->getGameTimer()->timer50ms)
 			Vehicle->WalkFrame++;
 		if (Vehicle->WalkFrame >= 13) Vehicle->WalkFrame = 1;
 		iSpeed = MOVE_SPEED / 2;
 	}
-	else if (! (Vehicle->data.factorAir > 0) && ! (Vehicle->data.factorSea > 0 && Vehicle->data.factorGround == 0))
+	else if (!(Vehicle->getStaticUnitData().factorAir > 0) && !(Vehicle->getStaticUnitData().factorSea > 0 && Vehicle->getStaticUnitData().factorGround == 0))
 	{
 		iSpeed = MOVE_SPEED;
 		cBuilding* building = Map->getField (Waypoints->next->position).getBaseBuilding();
-		if (Waypoints && Waypoints->next && building && building->data.modifiesSpeed) iSpeed = (int) (iSpeed / building->data.modifiesSpeed);
+		if (Waypoints && Waypoints->next && building && building->getStaticUnitData().modifiesSpeed) iSpeed = (int)(iSpeed / building->getStaticUnitData().modifiesSpeed);
 	}
-	else if (Vehicle->data.factorAir > 0) iSpeed = MOVE_SPEED * 2;
+	else if (Vehicle->getStaticUnitData().factorAir > 0) iSpeed = MOVE_SPEED * 2;
 	else iSpeed = MOVE_SPEED;
 
 	// Ggf Tracks malen:
-	if (cSettings::getInstance().isMakeTracks() && Vehicle->data.makeTracks && !Map->isWaterOrCoast (Vehicle->getPosition()) && !
+	if (cSettings::getInstance().isMakeTracks() && Vehicle->uiData->makeTracks && !Map->isWaterOrCoast(Vehicle->getPosition()) && !
 		(Waypoints && Waypoints->next && Map->isWater (Waypoints->next->position)) &&
 		(Vehicle->getOwner() == &client->getActivePlayer() || client->getActivePlayer().canSeeAnyAreaUnder (*Vehicle)))
 	{

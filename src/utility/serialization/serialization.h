@@ -31,6 +31,8 @@ class cPlayer;
 class cBuilding;
 class cVehicle;
 class cUnit;
+class cStaticUnitData;
+struct sID;
 
 //used to constrain a template definition to use with out-archive types only
 #define ENABLE_ARCHIVE_OUT                       \
@@ -338,14 +340,13 @@ namespace serialization
 	{
 	public:
 		cPointerLoader(cModel& model);
-		void get(unsigned int id, cJob*& value);
-		void get(unsigned int id, cPlayer*& value);
-		void get(unsigned int id, cBuilding*& value);
-		void get(unsigned int id, cVehicle*& value);
-		void get(unsigned int id, cUnit*& value);
+		void get(int id, cJob*& value);
+		void get(int id, cPlayer*& value);
+		void get(int id, cBuilding*& value);
+		void get(int id, cVehicle*& value);
+		void get(int id, cUnit*& value);
+		void get(sID id, const cStaticUnitData*& value);
 
-		template<typename T>
-		void get(unsigned int id, T*& value);
 	private:
 		cModel& model;
 	};

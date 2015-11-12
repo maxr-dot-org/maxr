@@ -49,7 +49,7 @@
 #include "game/data/savegameinfo.h"
 
 // TODO: remove
-std::vector<std::pair<sID, int>> createInitialLandingUnitsList (int clan, const cGameSettings& gameSettings); // defined in windowsingleplayer.cpp
+std::vector<std::pair<sID, int>> createInitialLandingUnitsList(int clan, const cGameSettings& gameSettings, const cUnitsData& unitsData); // defined in windowsingleplayer.cpp
 
 //------------------------------------------------------------------------------
 cMenuControllerMultiplayerHost::cMenuControllerMultiplayerHost (cApplication& application_) :
@@ -401,6 +401,9 @@ void cMenuControllerMultiplayerHost::startGamePreparation()
 
 	newGame = std::make_shared<cNetworkHostGameNew> ();
 
+	//initialize copy of unitsData that will be used in game
+	newGame->setUnitsData(std::make_shared<const cUnitsData>(UnitsDataGlobal));
+
 	newGame->setPlayers (windowNetworkLobby->getPlayersNotShared(), *windowNetworkLobby->getLocalPlayer());
 	newGame->setGameSettings (gameSettings);
 	newGame->setStaticMap (staticMap);
@@ -440,7 +443,7 @@ void cMenuControllerMultiplayerHost::startClanSelection()
 {
 	if (!newGame) return;
 
-	auto windowClanSelection = application.show (std::make_shared<cWindowClanSelection> ());
+	auto windowClanSelection = application.show (std::make_shared<cWindowClanSelection> (newGame->getUnitsData()));
 
 	signalConnectionManager.connect (windowClanSelection->canceled, [windowClanSelection]() { windowClanSelection->close(); });
 	signalConnectionManager.connect (windowClanSelection->done, [this, windowClanSelection]()
@@ -456,9 +459,9 @@ void cMenuControllerMultiplayerHost::startLandingUnitSelection()
 {
 	if (!newGame || !newGame->getGameSettings()) return;
 
-	auto initialLandingUnits = createInitialLandingUnitsList (newGame->getLocalPlayerClan(), *newGame->getGameSettings());
+	auto initialLandingUnits = createInitialLandingUnitsList (newGame->getLocalPlayerClan(), *newGame->getGameSettings(), *newGame->getUnitsData());
 
-	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), newGame->getLocalPlayerClan(), initialLandingUnits, newGame->getGameSettings()->getStartCredits()));
+	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), newGame->getLocalPlayerClan(), initialLandingUnits, newGame->getGameSettings()->getStartCredits(), newGame->getUnitsData()));
 
 	signalConnectionManager.connect (windowLandingUnitSelection->canceled, [windowLandingUnitSelection]() { windowLandingUnitSelection->close(); });
 	signalConnectionManager.connect (windowLandingUnitSelection->done, [this, windowLandingUnitSelection]()

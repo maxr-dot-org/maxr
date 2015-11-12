@@ -29,12 +29,12 @@ cAnimationWork::cAnimationWork (cAnimationTimer& animationTimer_, const cBuildin
 	building (&building_),
 	incrementEffect (false)
 {
-	if (building->isUnitWorking() || building->data.powerOnGraphic)
+	if (building->isUnitWorking() || building->uiData->powerOnGraphic)
 	{
 		activate();
 	}
 
-	if (!building->data.powerOnGraphic)
+	if (!building->uiData->powerOnGraphic)
 	{
 		signalConnectionManager.connect (building->workingChanged, [this]()
 		{

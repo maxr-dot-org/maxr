@@ -40,8 +40,8 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 	cWindow (nullptr),
 	unit (unit_),
 	canRepairReloadUpgrade (unit_.isABuilding()),
-	canStorePlanes (unit_.data.storeUnitsImageType == sUnitData::STORE_UNIT_IMG_PLANE),
-	canStoreShips (unit_.data.storeUnitsImageType == sUnitData::STORE_UNIT_IMG_SHIP),
+	canStorePlanes (unit_.getStaticUnitData().storeUnitsImageType == cStaticUnitData::STORE_UNIT_IMG_PLANE),
+	canStoreShips (unit_.getStaticUnitData().storeUnitsImageType == cStaticUnitData::STORE_UNIT_IMG_SHIP),
 	columns (canStorePlanes ? 2 : 3),
 	page (0)
 {
@@ -144,7 +144,7 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 //------------------------------------------------------------------------------
 void cWindowStorage::updateUnitButtons (const cVehicle& storedUnit, size_t positionIndex)
 {
-	const auto& upgraded = *storedUnit.getOwner()->getUnitDataCurrentVersion (storedUnit.data.ID);
+	const auto& upgraded = *storedUnit.getOwner()->getUnitDataCurrentVersion (storedUnit.data.getId());
 
 	activateButtons[positionIndex]->unlock();
 	if (storedUnit.data.getAmmo() != storedUnit.data.getAmmoMax() && metalBar->getValue() >= 1) reloadButtons[positionIndex]->unlock();
@@ -160,7 +160,7 @@ void cWindowStorage::updateUnitName (const cVehicle& storedUnit, size_t position
 {
 	auto name = storedUnit.getDisplayName();
 
-	const auto& upgraded = *storedUnit.getOwner()->getUnitDataCurrentVersion (storedUnit.data.ID);
+	const auto& upgraded = *storedUnit.getOwner()->getUnitDataCurrentVersion (storedUnit.data.getId());
 	if (storedUnit.data.getVersion() != upgraded.getVersion())
 	{
 		name += "\n(" + lngPack.i18n ("Text~Comp~Dated") + ")";
@@ -245,7 +245,7 @@ void cWindowStorage::updateGlobalButtons()
 		for (size_t i = 0; i != unit.storedUnits.size(); ++i)
 		{
 			const auto& vehicle = *unit.storedUnits[i];
-			const auto& upgraded = *vehicle.getOwner()->getUnitDataCurrentVersion (vehicle.data.ID);
+			const auto& upgraded = *vehicle.getOwner()->getUnitDataCurrentVersion (vehicle.data.getId());
 
 			if (vehicle.data.getAmmo() != vehicle.data.getAmmoMax()) reloadAllButton->unlock();
 			if (vehicle.data.getHitpoints() != vehicle.data.getHitpointsMax()) repairAllButton->unlock();

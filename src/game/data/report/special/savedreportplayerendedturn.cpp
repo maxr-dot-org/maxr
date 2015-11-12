@@ -32,7 +32,7 @@ eSavedReportType cSavedReportPlayerEndedTurn::getType() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportPlayerEndedTurn::getMessage() const
+std::string cSavedReportPlayerEndedTurn::getMessage(const cUnitsData& unitsData) const
 {
 	return lngPack.i18n ("Text~Multiplayer~Player_Turn_End", playerName);
 }

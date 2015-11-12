@@ -815,7 +815,7 @@ void cClient::HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message)
 
 	const auto newPosition = message.popPosition();
 
-	if (Vehicle->data.isBig)
+	if (Vehicle->getIsBig())
 	{
 //		getMap()->moveVehicle (*Vehicle, newPosition);
 		Vehicle->getOwner()->doScan();
@@ -966,9 +966,9 @@ void cClient::HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message)
 	const int typ = message.popInt16();
 	const int value = message.popInt16();
 	const unsigned int ID = message.popInt16();
-	auto rubble = std::make_shared<cBuilding> (nullptr, nullptr, ID);
+	auto rubble = std::make_shared<cBuilding> (nullptr, nullptr, nullptr, ID);
 
-	rubble->data.isBig = big;
+	rubble->setIsBig(big);
 	rubble->RubbleTyp = typ;
 	rubble->RubbleValue = value;
 	const auto position = message.popPosition();
@@ -1233,14 +1233,14 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_UPGRADE_VALUES (cNetMessage& message
 	assert (message.iType == GAME_EV_UNIT_UPGRADE_VALUES);
 
 	const sID ID = message.popID();
-	sUnitData* Data = activePlayer->getUnitDataCurrentVersion (ID);
+	cDynamicUnitData* Data = activePlayer->getUnitDataCurrentVersion (ID);
 	if (Data == nullptr) return;
 
 	Data->setVersion (message.popInt16());
 	Data->setScan (message.popInt16());
 	Data->setRange (message.popInt16());
 	Data->setDamage (message.popInt16());
-	Data->buildCosts = message.popInt16();
+	Data->setBuildCost(message.popInt16());
 	Data->setArmor (message.popInt16());
 	Data->setSpeedMax (message.popInt16());
 	Data->setShotsMax (message.popInt16());
@@ -1263,7 +1263,7 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message)
 	const int totalCosts = message.popInt16();
 	if (buildingsInMsg <= 0) return;
 
-	const sUnitData* unitData = nullptr;
+	const cDynamicUnitData* unitData = nullptr;
 	bool scanNecessary = false;
 	for (int i = 0; i < buildingsInMsg; i++)
 	{
@@ -1274,7 +1274,7 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message)
 			Log.write (" Client: Unknown building with ID: " + iToStr (buildingID), cLog::eLOG_TYPE_NET_ERROR);
 			break;
 		}
-		const sUnitData& upgraded = *activePlayer->getUnitDataCurrentVersion (building->data.ID);
+		const cDynamicUnitData& upgraded = *activePlayer->getUnitDataCurrentVersion (building->data.getId());
 		if (building->data.getScan() < upgraded.getScan())
 			scanNecessary = true; // Scan range was upgraded. So trigger a scan.
 		building->upgradeToCurrentVersion();
@@ -1298,7 +1298,7 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message)
 	/*const unsigned int storingBuildingID =*/ message.popInt32();
 	if (vehiclesInMsg <= 0) return;
 
-	const sUnitData* unitData = nullptr;
+	const cDynamicUnitData* unitData = nullptr;
 	for (int i = 0; i < vehiclesInMsg; i++)
 	{
 		const int vehicleID = message.popInt32();
@@ -1328,7 +1328,7 @@ void cClient::HandleNetMessage_GAME_EV_RESEARCH_SETTINGS (cNetMessage& message)
 		const int buildingID = message.popInt32();
 		const cResearch::ResearchArea newArea = (cResearch::ResearchArea)message.popChar();
 		cBuilding* building = getBuildingFromID (buildingID);
-		if (building && building->data.canResearch && 0 <= newArea && newArea <= cResearch::kNrResearchAreas)
+		if (building && building->getStaticUnitData().canResearch && 0 <= newArea && newArea <= cResearch::kNrResearchAreas)
 			building->setResearchArea (newArea);
 	}
 	// now update the research center count for the areas
@@ -1424,13 +1424,6 @@ void cClient::HandleNetMessage_GAME_EV_SAVED_REPORT (cNetMessage& message)
 	//activePlayer->addSavedReport (cSavedReport::createFrom (message));
 }
 
-void cClient::HandleNetMessage_GAME_EV_CASUALTIES_REPORT (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_CASUALTIES_REPORT);
-
-	casualtiesTracker->updateCasualtiesFromNetMessage (&message);
-}
-
 void cClient::HandleNetMessage_GAME_EV_SCORE (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_SCORE);
@@ -1500,6 +1493,11 @@ void cClient::HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message)
 	assert (message.iType == GAME_EV_REVEAL_MAP);
 
 	activePlayer->revealMap();
+}
+
+void cClient::setUnitsData(std::shared_ptr<const cUnitsData> unitsData)
+{
+	model.setUnitsData(std::make_shared<cUnitsData>(*unitsData));
 }
 
 void cClient::handleNetMessages()
@@ -1630,7 +1628,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_COMMANDO_ANSWER: HandleNetMessage_GAME_EV_COMMANDO_ANSWER (message); break;
 		case GAME_EV_REQ_SAVE_INFO: HandleNetMessage_GAME_EV_REQ_SAVE_INFO (message); break;
 		case GAME_EV_SAVED_REPORT: HandleNetMessage_GAME_EV_SAVED_REPORT (message); break;
-		case GAME_EV_CASUALTIES_REPORT: HandleNetMessage_GAME_EV_CASUALTIES_REPORT (message); break;
 		case GAME_EV_SCORE: HandleNetMessage_GAME_EV_SCORE (message); break;
 		case GAME_EV_NUM_ECOS: HandleNetMessage_GAME_EV_NUM_ECOS (message); break;
 		case GAME_EV_UNIT_SCORE: HandleNetMessage_GAME_EV_UNIT_SCORE (message); break;
@@ -1876,11 +1873,11 @@ sSubBase* cClient::getSubBaseFromID (int iID)
 void cClient::addDestroyFx (cVehicle& vehicle)
 {
 	// play explosion
-	if (vehicle.data.isBig)
+	if (vehicle.getIsBig())
 	{
 		addFx (std::make_shared<cFxExploBig> (vehicle.getPosition() * 64 + 64, model.getMap()->isWaterOrCoast (vehicle.getPosition())));
 	}
-	else if (vehicle.data.factorAir > 0 && vehicle.getFlightHeight() != 0)
+	else if (vehicle.getStaticUnitData().factorAir > 0 && vehicle.getFlightHeight() != 0)
 	{
 		addFx (std::make_shared<cFxExploAir> (vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
 	}
@@ -1893,7 +1890,7 @@ void cClient::addDestroyFx (cVehicle& vehicle)
 		addFx (std::make_shared<cFxExploSmall> (vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
 	}
 
-	if (vehicle.data.hasCorpse)
+	if (vehicle.uiData->hasCorpse)
 	{
 		// add corpse
 		addFx (std::make_shared<cFxCorpse> (vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
@@ -1904,7 +1901,7 @@ void cClient::addDestroyFx (cBuilding& building)
 {
 	// play explosion animation
 	cBuilding* topBuilding = model.getMap()->getField(building.getPosition()).getBuilding();
-	if (topBuilding && topBuilding->data.isBig)
+	if (topBuilding && topBuilding->getIsBig())
 	{
 		addFx(std::make_shared<cFxExploBig>(topBuilding->getPosition() * 64 + 64, model.getMap()->isWaterOrCoast(topBuilding->getPosition())));
 	}

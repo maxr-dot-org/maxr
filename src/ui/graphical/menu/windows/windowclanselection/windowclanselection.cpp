@@ -26,8 +26,9 @@
 #include "ui/graphical/menu/widgets/image.h"
 
 //------------------------------------------------------------------------------
-cWindowClanSelection::cWindowClanSelection() :
+cWindowClanSelection::cWindowClanSelection(std::shared_ptr<const cUnitsData> unitsData) :
 	cWindow (LoadPCX (GFXOD_CLAN_SELECT)),
+	unitsData(unitsData),
 	selectedClan (0)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Title~Choose_Clan"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
@@ -128,7 +129,7 @@ void cWindowClanSelection::updateClanDescription()
 	auto clanInfo = cClanData::instance().getClan (selectedClan);
 	if (clanInfo)
 	{
-		auto strings = clanInfo->getClanStatsDescription();
+		auto strings = clanInfo->getClanStatsDescription(*unitsData);
 
 		std::string desc1;
 		for (size_t i = 0; i < 4 && i < strings.size(); ++i)

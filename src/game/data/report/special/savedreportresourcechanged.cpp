@@ -35,7 +35,7 @@ eSavedReportType cSavedReportResourceChanged::getType() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportResourceChanged::getMessage() const
+std::string cSavedReportResourceChanged::getMessage(const cUnitsData& unitsData) const
 {
 	std::string text;
 	if (increase)

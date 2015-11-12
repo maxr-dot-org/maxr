@@ -33,7 +33,7 @@ eSavedReportType cSavedReportHostCommand::getType() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportHostCommand::getMessage() const
+std::string cSavedReportHostCommand::getMessage(const cUnitsData& unitsData) const
 {
 	return lngPack.i18n ("Text~Multiplayer~Host_command") + " '" + command + "'";
 }

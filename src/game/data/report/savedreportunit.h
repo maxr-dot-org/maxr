@@ -38,7 +38,7 @@ public:
 		serializeThis(archive);
 	}
 
-	virtual std::string getMessage() const MAXR_OVERRIDE_FUNCTION;
+	virtual std::string getMessage(const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
 
 	virtual bool isAlert() const MAXR_OVERRIDE_FUNCTION;
 

@@ -73,6 +73,22 @@ struct sUpgradeNew
 //--------------------------------------------------------------------------
 struct sBuildingUIData
 {
+	sID id;
+
+	bool hasClanLogos;
+	bool hasDamageEffect;
+	bool hasBetonUnderground;
+	bool hasPlayerColor;
+	bool hasOverlay;
+
+	bool buildUpGraphic;
+	bool powerOnGraphic;
+	bool isAnimated;
+
+	bool isConnectorGraphic;
+	int hasFrames;
+
+
 	AutoSurface img, img_org; // Surface of the building
 	AutoSurface shw, shw_org; // Surfaces of the shadow
 	AutoSurface eff, eff_org; // Surfaces of the effects
@@ -151,7 +167,7 @@ enum ResourceKind
 class cBuilding : public cUnit
 {
 public:
-	cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID);
+	cBuilding(const cStaticUnitData* staticData, const cDynamicUnitData* data, cPlayer* Owner, unsigned int ID);
 	virtual ~cBuilding();
 
 	virtual bool isAVehicle() const { return false; }
@@ -175,7 +191,7 @@ public:
 	int points;     // accumulated eco-sphere points
 
 	int playStream();
-	virtual std::string getStatusStr (const cPlayer* player) const MAXR_OVERRIDE_FUNCTION;
+	virtual std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
 
 	virtual void makeReport (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 
@@ -196,7 +212,7 @@ public:
 	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const MAXR_OVERRIDE_FUNCTION;
 	void checkRessourceProd (const cMap& map);
 	void calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array<int, 3>& turboBuildCosts, int vehicleCosts, int remainingMetal = -1) const;
-	virtual bool canExitTo (const cPosition& position, const cMap& map, const sUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
+	virtual bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
 	bool canLoad (const cPosition& position, const cMap& map, bool checkPosition = true) const;
 	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const;
 	void storeVehicle (cVehicle& vehicle, cMap& map);
@@ -230,7 +246,7 @@ public:
 	*/
 	void render (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow, bool drawConcrete) const;
 	void render_simple(SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, unsigned long long animationTime = 0, int alpha = 254) const;
-	static void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sUnitData& data, const sBuildingUIData& uiData, const cPlayer* owner, int frameNr = 0, int alpha = 254);
+	static void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sBuildingUIData& uiData, const cPlayer* owner, int frameNr = 0, int alpha = 254);
 
 	void executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType) const;
 
@@ -290,7 +306,8 @@ public:
 
 		if (!archive.isWriter)
 		{
-			uiData = UnitsData.getBuildingUI(data.ID);
+			uiData = UnitsUiData.getBuildingUI(data.getId());
+			registerOwnerEvents();
 		}
 	}
 private:

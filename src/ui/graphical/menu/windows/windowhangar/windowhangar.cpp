@@ -31,20 +31,22 @@
 #include "ui/graphical/menu/widgets/special/unitdetails.h"
 
 //------------------------------------------------------------------------------
-cWindowHangar::cWindowHangar (AutoSurface surface, cPlayerColor playerColor, int playerClan) :
+cWindowHangar::cWindowHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, cPlayerColor playerColor, int playerClan) :
 	cWindow (std::move (surface)),
-	temporaryPlayer (new cPlayer (cPlayerBasicData ("unnamed", std::move (playerColor), 0))),
-	player (*temporaryPlayer)
+	temporaryPlayer (new cPlayer (cPlayerBasicData ("unnamed", std::move (playerColor), 0), *unitsData)),
+	player (*temporaryPlayer),
+	unitsData (unitsData)
 {
-	if (playerClan != -1) temporaryPlayer->setClan (playerClan);
+	if (playerClan != -1) temporaryPlayer->setClan (playerClan, *unitsData);
 
 	initialize();
 }
 
 //------------------------------------------------------------------------------
-cWindowHangar::cWindowHangar (AutoSurface surface, const cPlayer& player_) :
+cWindowHangar::cWindowHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, const cPlayer& player_) :
 	cWindow (std::move (surface)),
-	player (player_)
+	player (player_),
+	unitsData (unitsData)
 {
 	initialize();
 }
@@ -62,7 +64,6 @@ void cWindowHangar::initialize()
 	signalConnectionManager.connect (infoTextCheckBox->toggled, std::bind (&cWindowHangar::infoCheckBoxToggled, this));
 
 	unitDetails = addChild (std::make_unique<cUnitDetails> (getPosition() + cPosition (16, 297)));
-
 
 	using namespace std::placeholders;
 
@@ -115,20 +116,20 @@ void cWindowHangar::setActiveUnit (const sID& unitId)
 {
 	if (unitId.isAVehicle())
 	{
-		const auto& uiData = *UnitsData.getVehicleUI (unitId);
+		const auto& uiData = *UnitsUiData.getVehicleUI (unitId);
 
 		infoImage->setImage (uiData.info.get());
 	}
 	else if (unitId.isABuilding())
 	{
-		const auto& uiData = *UnitsData.getBuildingUI (unitId);
+		const auto& uiData = *UnitsUiData.getBuildingUI (unitId);
 
 		infoImage->setImage (uiData.info.get());
 	}
 
-	infoLabel->setText (unitId.getUnitDataOriginalVersion()->description);
+	infoLabel->setText (unitsData->getStaticUnitData(unitId).getDescripton());
 
-	unitDetails->setUnit (unitId, getPlayer());
+	unitDetails->setUnit (unitId, getPlayer(), *unitsData);
 }
 
 //------------------------------------------------------------------------------
@@ -151,7 +152,7 @@ void cWindowHangar::handleSelectionChanged()
 //------------------------------------------------------------------------------
 cUnitListViewItemBuy& cWindowHangar::addSelectionUnit (const sID& unitId)
 {
-	auto selectedItem = selectionUnitList->addItem (std::make_unique<cUnitListViewItemBuy> (selectionUnitList->getSize().x() - 9, unitId, getPlayer()));
+	auto selectedItem = selectionUnitList->addItem (std::make_unique<cUnitListViewItemBuy> (selectionUnitList->getSize().x() - 9, unitId, getPlayer(), *unitsData));
 	return *selectedItem;
 }
 

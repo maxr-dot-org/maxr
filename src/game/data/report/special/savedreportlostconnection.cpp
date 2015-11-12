@@ -33,7 +33,7 @@ eSavedReportType cSavedReportLostConnection::getType() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportLostConnection::getMessage() const
+std::string cSavedReportLostConnection::getMessage(const cUnitsData& unitsData) const
 {
 	return lngPack.i18n ("Text~Multiplayer~Lost_Connection", playerName);
 }

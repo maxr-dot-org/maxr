@@ -185,10 +185,10 @@ private:
 	* adds/subtracts resources of the type storeResType to/from the subbase
 	* @author eiko
 	*/
-	void addRessouce (cServer& server, sUnitData::eStorageResType storeResType, int value);
+	void addRessouce (cServer& server, cStaticUnitData::eStorageResType storeResType, int value);
 
-	int getResource (sUnitData::eStorageResType storeResType) const;
-	void setResource (sUnitData::eStorageResType storeResType, int value);
+	int getResource (cStaticUnitData::eStorageResType storeResType) const;
+	void setResource (cStaticUnitData::eStorageResType storeResType, int value);
 public:
 	//private:
 	//	friend class cBase;

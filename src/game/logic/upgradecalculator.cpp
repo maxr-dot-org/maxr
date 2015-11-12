@@ -1534,11 +1534,11 @@ int sUnitUpgrade::computedPurchasedCount (const cResearch& researchLevel)
 }
 
 //--------------------------------------------------
-void cUnitUpgrade::init (const sUnitData& origData, const sUnitData& curData, const cResearch& researchLevel)
+void cUnitUpgrade::init (const cDynamicUnitData& origData, const cDynamicUnitData& curData, const cStaticUnitData& staticData, const cResearch& researchLevel)
 {
 	int i = 0;
 
-	if (curData.canAttack)
+	if (staticData.canAttack)
 	{
 		// Damage:
 		upgrades[i].startValue = origData.getDamage();
@@ -1546,7 +1546,7 @@ void cUnitUpgrade::init (const sUnitData& origData, const sUnitData& curData, co
 		upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.getDamage(), origData.getDamage(), cUpgradeCalculator::kAttack, researchLevel);
 		upgrades[i].type = sUnitUpgrade::UPGRADE_TYPE_DAMAGE;
 		i++;
-		if (!curData.explodesOnContact)
+		if (!staticData.explodesOnContact)
 		{
 			// Shots:
 			upgrades[i].startValue = origData.getShotsMax();
@@ -1569,14 +1569,14 @@ void cUnitUpgrade::init (const sUnitData& origData, const sUnitData& curData, co
 		}
 	}
 
-	if (curData.storeResType != sUnitData::STORE_RES_NONE)
+	if (staticData.storeResType != cStaticUnitData::STORE_RES_NONE)
 	{
 		i++;
 	}
 
-	if (curData.produceEnergy) i += 2;
+	if (staticData.produceEnergy) i += 2;
 
-	if (curData.produceHumans) i++;
+	if (staticData.produceHumans) i++;
 
 	// Armor:
 	upgrades[i].startValue = origData.getArmor();
@@ -1670,7 +1670,7 @@ bool cUnitUpgrade::hasBeenPurchased() const
 }
 
 //--------------------------------------------------
-void cUnitUpgrade::updateUnitData (sUnitData& data) const
+void cUnitUpgrade::updateUnitData (cDynamicUnitData& data) const
 {
 	for (int i = 0; i < 8; ++i)
 	{

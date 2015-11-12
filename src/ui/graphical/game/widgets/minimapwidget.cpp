@@ -323,7 +323,7 @@ void cMiniMapWidget::drawUnits()
 			const cBuilding* building = field.getBuilding();
 			if (building && building->getOwner())
 			{
-				if (!attackUnitsOnly || building->data.canAttack)
+				if (!attackUnitsOnly || building->getStaticUnitData().canAttack)
 				{
 					SDL_FillRect (surface.get(), &rect, building->getOwner()->getColor().getColor().toMappedSdlRGBAColor (surface->format));
 				}
@@ -333,7 +333,7 @@ void cMiniMapWidget::drawUnits()
 			const cVehicle* vehicle = field.getVehicle();
 			if (vehicle)
 			{
-				if (!attackUnitsOnly || vehicle->data.canAttack)
+				if (!attackUnitsOnly || vehicle->getStaticUnitData().canAttack)
 				{
 					SDL_FillRect (surface.get(), &rect, vehicle->getOwner()->getColor().getColor().toMappedSdlRGBAColor (surface->format));
 				}
@@ -343,7 +343,7 @@ void cMiniMapWidget::drawUnits()
 			vehicle = field.getPlane();
 			if (vehicle)
 			{
-				if (!attackUnitsOnly || vehicle->data.canAttack)
+				if (!attackUnitsOnly || vehicle->getStaticUnitData().canAttack)
 				{
 					SDL_FillRect (surface.get(), &rect, vehicle->getOwner()->getColor().getColor().toMappedSdlRGBAColor (surface->format));
 				}

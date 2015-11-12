@@ -26,7 +26,8 @@
 
 class cResearch;
 class cUnitUpgrade;
-struct sUnitData;
+class cDynamicUnitData;
+class cStaticUnitData;
 
 //------------------------------------------------------------------------------
 /**
@@ -388,14 +389,14 @@ private:
 class cUnitUpgrade
 {
 public:
-	void init (const sUnitData& origData, const sUnitData& curData, const cResearch& researchLevel);
+	void init (const cDynamicUnitData& origData, const cDynamicUnitData& curData, const cStaticUnitData& staticData, const cResearch& researchLevel);
 	sUnitUpgrade* getUpgrade (sUnitUpgrade::eUpgradeTypes type);
 	const sUnitUpgrade* getUpgrade (sUnitUpgrade::eUpgradeTypes type) const;
 
 	int computedPurchasedCount (const cResearch& researchLevel);
 	bool hasBeenPurchased() const;
 	int getValueOrDefault (sUnitUpgrade::eUpgradeTypes upgradeType, int defaultValue) const;
-	void updateUnitData (sUnitData& data) const;
+	void updateUnitData (cDynamicUnitData& data) const;
 
 	template<typename T>
 	void serialize(T& archive)

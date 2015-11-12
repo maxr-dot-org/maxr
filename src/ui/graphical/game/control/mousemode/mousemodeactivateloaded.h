@@ -31,9 +31,9 @@ public:
 
 	virtual eMouseModeType getType() const MAXR_OVERRIDE_FUNCTION;
 
-	virtual void setCursor (cMouse& mouse, const cPosition& mapPosition) const MAXR_OVERRIDE_FUNCTION;
+	virtual void setCursor (cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
 
-	virtual std::unique_ptr<cMouseAction> getMouseAction (const cPosition& mapPosition) const MAXR_OVERRIDE_FUNCTION;
+	virtual std::unique_ptr<cMouseAction> getMouseAction(const cPosition& mapPosition, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
 
 	size_t getVehicleToActivateIndex() const;
 

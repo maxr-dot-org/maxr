@@ -58,6 +58,7 @@ class cGameGuiState;
 struct sID;
 class cBuildListItem;
 class cFrameCounter;
+class cUnitsData;
 
 class cGameGui : public cWindow
 {
@@ -70,6 +71,7 @@ public:
 	void setTurnClock (std::shared_ptr<const cTurnClock> turnClock);
 	void setTurnTimeClock (std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 	void setGameSettings (std::shared_ptr<const cGameSettings> gameSettings);
+	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData);
 
 	cHud& getHud();
 	const cHud& getHud() const;
@@ -107,7 +109,6 @@ protected:
 	virtual std::unique_ptr<cMouseCursor> getDefaultCursor() const MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
-	cSignalConnectionManager dynamicMapSignalConnectionManager;
 	cSignalConnectionManager moveJobSignalConnectionManager;
 	cSignalConnectionManager panelSignalConnectionManager;
 	cSignalConnectionManager selectedUnitConnectionManager;

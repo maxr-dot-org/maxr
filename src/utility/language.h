@@ -60,6 +60,8 @@
 #include "defines.h"
 #include "tinyxml2.h"
 
+struct sID;
+
 class cLanguage
 {
 public:
@@ -71,8 +73,9 @@ public:
 	// Translation with replace %s
 	std::string i18n (const std::string& szMainText, const std::string& szInsertText);
 	int         ReadLanguagePack();
-	int         CheckCurrentLanguagePack (bool bInsertMissingEntries);
 	std::vector<std::string> getAvailableLanguages() const;
+	std::string getUnitName(const sID& id) const;
+	std::string getUnitDescription(const sID& id) const;
 
 private:
 	typedef std::map<std::string, std::string> StrStrMap;

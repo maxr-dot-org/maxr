@@ -35,7 +35,7 @@
 #include "game/logic/upgradecalculator.h"
 
 // TODO: remove
-std::vector<std::pair<sID, int>> createInitialLandingUnitsList (int clan, const cGameSettings& gameSettings); // defined in windowsingleplayer.cpp
+std::vector<std::pair<sID, int>> createInitialLandingUnitsList(int clan, const cGameSettings& gameSettings, const cUnitsData& unitsData); // defined in windowsingleplayer.cpp
 
 //------------------------------------------------------------------------------
 cMenuControllerMultiplayerHotSeat::cMenuControllerMultiplayerHotSeat (cApplication& application_) :
@@ -46,6 +46,9 @@ cMenuControllerMultiplayerHotSeat::cMenuControllerMultiplayerHotSeat (cApplicati
 void cMenuControllerMultiplayerHotSeat::start()
 {
 	game = std::make_shared<cLocalHotSeatGameNew> ();
+
+	//initialize copy of unitsData that will be used in game
+	game->setUnitsData(std::make_shared<const cUnitsData>(UnitsDataGlobal));
 
 	selectGameSettings();
 }
@@ -185,7 +188,7 @@ void cMenuControllerMultiplayerHotSeat::selectClan (size_t playerIndex, bool fir
 {
 	if (!game) return;
 
-	auto windowClanSelection = application.show (std::make_shared<cWindowClanSelection> ());
+	auto windowClanSelection = application.show (std::make_shared<cWindowClanSelection> (game->getUnitsData()));
 
 	windowClanSelection->done.connect ([ = ]()
 	{
@@ -212,9 +215,9 @@ void cMenuControllerMultiplayerHotSeat::selectLandingUnits (size_t playerIndex, 
 {
 	if (!game) return;
 
-	auto initialLandingUnits = createInitialLandingUnitsList (game->getPlayerClan (playerIndex), *game->getGameSettings());
+	auto initialLandingUnits = createInitialLandingUnitsList (game->getPlayerClan (playerIndex), *game->getGameSettings(), *game->getUnitsData());
 
-	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (game->getPlayer (playerIndex).getColor(), game->getPlayerClan (playerIndex), initialLandingUnits, game->getGameSettings()->getStartCredits()));
+	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (game->getPlayer (playerIndex).getColor(), game->getPlayerClan (playerIndex), initialLandingUnits, game->getGameSettings()->getStartCredits(), game->getUnitsData()));
 
 	windowLandingUnitSelection->done.connect ([ = ]()
 	{

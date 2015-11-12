@@ -35,9 +35,9 @@ eSavedReportType cSavedReportUpgraded::getType() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportUpgraded::getMessage() const
+std::string cSavedReportUpgraded::getMessage(const cUnitsData& unitsData) const
 {
-	const auto& unitName = unitId.getUnitDataOriginalVersion()->name;
+	const auto& unitName = unitsData.getStaticUnitData(unitId).getName();
 	return lngPack.i18n ("Text~Comp~Upgrades_Done") + " " + iToStr (unitsCount) + " " + lngPack.i18n ("Text~Comp~Upgrades_Done2", unitName) + " (" + lngPack.i18n ("Text~Others~Costs") + lngPack.i18n ("Text~Punctuation~Colon") + iToStr (costs) + ")";
 }
 

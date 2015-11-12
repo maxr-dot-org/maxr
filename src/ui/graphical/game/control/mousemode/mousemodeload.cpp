@@ -40,7 +40,7 @@ eMouseModeType cMouseModeLoad::getType() const
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeLoad::setCursor (cMouse& mouse, const cPosition& mapPosition) const
+void cMouseModeLoad::setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	if (canExecuteAction (mapPosition))
 	{
@@ -53,7 +53,7 @@ void cMouseModeLoad::setCursor (cMouse& mouse, const cPosition& mapPosition) con
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeLoad::getMouseAction (const cPosition& mapPosition) const
+std::unique_ptr<cMouseAction> cMouseModeLoad::getMouseAction(const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	if (canExecuteAction (mapPosition))
 	{

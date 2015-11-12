@@ -53,6 +53,7 @@ class cTurnClock;
 class cSavedReport;
 class cBuildListItem;
 class cWindowUpgradesFilterState;
+class cUnitsData;
 
 class cPosition;
 
@@ -143,6 +144,7 @@ private:
 	std::shared_ptr<const cGameSettings> getGameSettings() const;
 	std::shared_ptr<const cCasualtiesTracker> getCasualtiesTracker() const;
 	std::shared_ptr<const cMap> getDynamicMap() const;
+	std::shared_ptr<const cUnitsData> getUnitsData() const;
 
 	mutable cSignal<void (const cUnit&, const cUnit&, int, int)> transferTriggered;
 	mutable cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingTriggered;

@@ -66,7 +66,7 @@ void sendUnitUpgrades (const cClient& client)
 	int count = 0;
 
 	// send vehicles
-	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); ++i)
+	/*for (unsigned int i = 0; i < UnitsData.getNrVehicles(); ++i)
 	{
 		const sUnitData& playerData = player.VehicleData[i];
 		const sUnitData& originalData = UnitsData.getVehicle (i, player.getClan());
@@ -94,6 +94,7 @@ void sendUnitUpgrades (const cClient& client)
 		message->pushInt16 (playerData.getShotsMax());
 		message->pushInt16 (playerData.getDamage());
 		message->pushID (playerData.ID);
+
 
 		count++;
 
@@ -156,7 +157,7 @@ void sendUnitUpgrades (const cClient& client)
 		message->pushInt16 (count);
 		message->pushInt16 (player.getId());
 		client.sendNetMessage (std::move (message));
-	}
+	}*/
 }
 
 void sendReconnectionSuccess (const cClient& client)
@@ -196,7 +197,7 @@ void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, 
 		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_RANGE, currentVersion->getRange()));
 		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_SHOTS, currentVersion->getShotsMax()));
 		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_DAMAGE, currentVersion->getDamage()));
-		msg->pushID (currentVersion->ID);
+		msg->pushID (currentVersion->getId());
 
 		iCount++; // msg contains one more upgrade struct
 
@@ -498,8 +499,8 @@ void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool
 	if (building.getOwner() == 0)
 		return;
 
-	const sUnitData& currentVersion = building.data;
-	const sUnitData& upgradedVersion = *building.getOwner()->getUnitDataCurrentVersion (building.data.ID);
+	const cDynamicUnitData& currentVersion = building.data;
+	const cDynamicUnitData& upgradedVersion = *building.getOwner()->getUnitDataCurrentVersion (building.data.getId());
 	if (currentVersion.getVersion() >= upgradedVersion.getVersion())
 		return; // already uptodate
 
@@ -537,10 +538,10 @@ void sendRequestCasualtiesReport (const cClient& client)
 	client.sendNetMessage (std::move (message));
 }
 
-void sendWantSelfDestroy (const cClient& client, const cBuilding& building)
+void sendWantSelfDestroy (const cClient& client, int unitId)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_SELFDESTROY);
-	message->pushInt16 (building.iID);
+	message->pushInt16 (unitId);
 	client.sendNetMessage (std::move (message));
 }
 

@@ -19,12 +19,11 @@
 
 #include "game/data/report/savedreportunit.h"
 
-#include "netmessage.h"
 #include "game/data/units/unit.h"
 
 //------------------------------------------------------------------------------
 cSavedReportUnit::cSavedReportUnit (const cUnit& unit) :
-	unitId (unit.data.ID),
+	unitId (unit.data.getId()),
 	position (unit.getPosition())
 {}
 
@@ -53,7 +52,7 @@ const cPosition& cSavedReportUnit::getPosition() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportUnit::getMessage() const
+std::string cSavedReportUnit::getMessage(const cUnitsData& unitsData) const
 {
 	return "[" + iToStr (position.x()) + ", " + iToStr (position.y()) + "] " + getText();
 }

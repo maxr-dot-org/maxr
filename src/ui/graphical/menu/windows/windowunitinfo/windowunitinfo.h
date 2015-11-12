@@ -26,12 +26,13 @@
 class cCheckBox;
 class cLabel;
 class cPlayer;
-struct sUnitData;
+class cUnitsData;
+class cDynamicUnitData;
 
 class cWindowUnitInfo : public cWindow
 {
 public:
-	cWindowUnitInfo (const sUnitData& unitData, const cPlayer& owner);
+	cWindowUnitInfo(const cDynamicUnitData& currentUnitData, const cPlayer& owner, const cUnitsData& unitsData);
 private:
 	cSignalConnectionManager signalConnectionManager;
 };

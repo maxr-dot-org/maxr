@@ -32,8 +32,8 @@
 #include "ui/graphical/menu/widgets/special/unitlistviewitemcargo.h"
 
 //------------------------------------------------------------------------------
-cWindowLandingUnitSelection::cWindowLandingUnitSelection (cPlayerColor playerColor, int playerClan, const std::vector<std::pair<sID, int>>& initialUnits, unsigned int initialGold) :
-	cWindowAdvancedHangar<cUnitListViewItemCargo> (LoadPCX (GFXOD_HANGAR), playerColor, playerClan),
+cWindowLandingUnitSelection::cWindowLandingUnitSelection (cPlayerColor playerColor, int playerClan, const std::vector<std::pair<sID, int>>& initialUnits, unsigned int initialGold, std::shared_ptr<const cUnitsData> unitsData) :
+	cWindowAdvancedHangar<cUnitListViewItemCargo> (LoadPCX (GFXOD_HANGAR), unitsData, playerColor, playerClan),
 	selectedCargoUnit (nullptr)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (474, 12), getPosition() + cPosition (474 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Choose_Units"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
@@ -176,16 +176,7 @@ void cWindowLandingUnitSelection::setActiveUnit (const sID& unitId)
 	{
 		unitUpgrade = &unitUpgrades[unitId];
 
-		if (unitId.isAVehicle())
-		{
-			auto index = UnitsData.getVehicleIndexBy (unitId);
-			unitUpgrade->init (UnitsData.getVehicle (index, getPlayer().getClan()), getPlayer().VehicleData[index], getPlayer().getResearchState());
-		}
-		else
-		{
-			auto index = UnitsData.getBuildingIndexBy (unitId);
-			unitUpgrade->init (UnitsData.getBuilding (index, getPlayer().getClan()), getPlayer().BuildingData[index], getPlayer().getResearchState());
-		}
+		unitUpgrade->init(unitsData->getDynamicUnitData(unitId, getPlayer().getClan()), *getPlayer().getUnitDataCurrentVersion(unitId), unitsData->getStaticUnitData(unitId), getPlayer().getResearchState());
 	}
 	else
 	{
@@ -260,15 +251,19 @@ void cWindowLandingUnitSelection::updateUpgradeButtons()
 bool cWindowLandingUnitSelection::tryAddSelectedUnit (const cUnitListViewItemBuy& unitItem) const
 {
 	const auto& unitId = unitItem.getUnitId();
-	const auto unitData = unitId.getUnitDataOriginalVersion (&getPlayer());
+	if (!unitsData->isValidId(unitId)) return false;
 
-	if (!unitData || !unitId.isAVehicle()) return false;
+	const auto unitData = unitsData->getStaticUnitData(unitId);
 
-	if (unitData->factorGround == 0) return false;
-	if (unitData->isHuman) return false;
-	if (unitData->buildCosts > goldBar->getValue()) return false;
+	// is this unit type allowed to be bought for landing?
+	if (!unitId.isAVehicle()) return false;
+	if (unitData.factorGround == 0) return false;
+	if (unitData.isHuman) return false;
 
-	goldBar->decrease (unitData->buildCosts);
+	int buildCosts = unitsData->getDynamicUnitData(unitId, getPlayer().getClan()).getBuildCost();
+	if (buildCosts > goldBar->getValue()) return false;
+
+	goldBar->decrease (buildCosts);
 
 	return true;
 }
@@ -279,9 +274,9 @@ bool cWindowLandingUnitSelection::tryRemoveSelectedUnit (const cUnitListViewItem
 	if (std::find (fixedSelectedUnits.begin(), fixedSelectedUnits.end(), &unitItem) != fixedSelectedUnits.end()) return false;
 
 	const auto& unitId = unitItem.getUnitId();
-	const auto unitData = unitId.getUnitDataOriginalVersion (&getPlayer());
+	int buildCosts = unitsData->getDynamicUnitData(unitId, getPlayer().getClan()).getBuildCost();
 
-	const auto value = unitData->buildCosts + (unitItem.getCargo() / singleCreditResourceAmount);
+	const auto value = buildCosts + (unitItem.getCargo() / singleCreditResourceAmount);
 
 	if (goldBar->getValue() + value > goldBar->getMaxValue()) return false;
 
@@ -302,37 +297,23 @@ void cWindowLandingUnitSelection::generateSelectionList (bool select)
 
 	clearSelectionUnits();
 
-	if (tank || ship || plane)
+	for (const auto& data : unitsData->getStaticUnitsData())
 	{
-		for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
+		if (data.ID.isABuilding() && !build) continue;
+		if (data.isHuman && buy) continue;
+		if (!data.canAttack && tnt) continue;
+		if (!data.ID.isABuilding())
 		{
-			const sUnitData& data = UnitsData.getVehicle (i, getPlayer().getClan());
-			if (data.isHuman && buy) continue;
-			if (tnt && !data.canAttack) continue;
 			if (data.factorAir > 0 && !plane) continue;
 			if (data.factorSea > 0 && data.factorGround == 0 && !ship) continue;
 			if (data.factorGround > 0 && !tank) continue;
-			const auto& item = addSelectionUnit (data.ID);
-			if (select)
-			{
-				setSelectedSelectionItem (item);
-				select = false;
-			}
 		}
-	}
 
-	if (build)
-	{
-		for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
+		const auto& item = addSelectionUnit(data.ID);
+		if (select)
 		{
-			const sUnitData& data = UnitsData.getBuilding (i, getPlayer().getClan());
-			if (tnt && !data.canAttack) continue;
-			const auto& item = addSelectionUnit (data.ID);
-			if (select)
-			{
-				setSelectedSelectionItem (item);
-				select = false;
-			}
+			setSelectedSelectionItem(item);
+			select = false;
 		}
 	}
 }
@@ -422,7 +403,7 @@ void cWindowLandingUnitSelection::upgradeDecreaseClicked (size_t index)
 	auto& unitUpgrade = unitUpgrades.at (*activeUnitId);
 	const auto& researchLevel = getPlayer().getResearchState();
 
-	const auto cost = unitUpgrade.upgrades[index].cancelPurchase (researchLevel);
+	const int cost = unitUpgrade.upgrades[index].cancelPurchase (researchLevel);
 	goldBar->increase (-cost);
 
 	updateUpgradeButtons();
@@ -431,8 +412,8 @@ void cWindowLandingUnitSelection::upgradeDecreaseClicked (size_t index)
 //------------------------------------------------------------------------------
 void cWindowLandingUnitSelection::handleSelectedUnitSelectionChanged (cUnitListViewItemCargo* unitItem)
 {
-	if (unitItem == nullptr || ! (unitItem->getUnitId().getUnitDataOriginalVersion (&getPlayer())->storeResType == sUnitData::STORE_RES_METAL ||
-								  unitItem->getUnitId().getUnitDataOriginalVersion (&getPlayer())->storeResType == sUnitData::STORE_RES_OIL))
+	if (unitItem == nullptr || ! (unitsData->getStaticUnitData(unitItem->getUnitId()).storeResType == cStaticUnitData::STORE_RES_METAL ||
+								  unitsData->getStaticUnitData(unitItem->getUnitId()).storeResType == cStaticUnitData::STORE_RES_OIL))
 	{
 		selectedCargoUnit = nullptr;
 		metalBar->setValue (0);
@@ -444,8 +425,8 @@ void cWindowLandingUnitSelection::handleSelectedUnitSelectionChanged (cUnitListV
 	else
 	{
 		selectedCargoUnit = nullptr;
-		const auto data = unitItem->getUnitId().getUnitDataOriginalVersion (&getPlayer());
-		if (data->storeResType == sUnitData::STORE_RES_OIL)
+		const auto& data = unitsData->getStaticUnitData(unitItem->getUnitId());
+		if (data.storeResType == cStaticUnitData::STORE_RES_OIL)
 		{
 			metalBar->setType (eResourceBarType::Oil);
 		}
@@ -454,7 +435,7 @@ void cWindowLandingUnitSelection::handleSelectedUnitSelectionChanged (cUnitListV
 			metalBar->setType (eResourceBarType::Metal);
 		}
 		metalBar->setMinValue (0);
-		metalBar->setMaxValue (data->storageResMax);
+		metalBar->setMaxValue (data.storageResMax);
 		metalBar->setValue (unitItem->getCargo());
 		metalBar->enable();
 		metalBarAmountLabel->show();

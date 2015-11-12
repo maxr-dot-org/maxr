@@ -34,6 +34,8 @@ public:
 	cBinaryArchiveIn& operator<<(const T& value);
 	template<typename T>
 	cBinaryArchiveIn& operator&(const T& value);
+
+	serialization::cPointerLoader* getPointerLoader() const { return nullptr; };
 private:
 	std::vector<unsigned char>& buffer;
 

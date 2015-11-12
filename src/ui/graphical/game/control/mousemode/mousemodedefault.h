@@ -41,9 +41,9 @@ public:
 
 	virtual eMouseModeType getType() const MAXR_OVERRIDE_FUNCTION;
 
-	virtual void setCursor (cMouse& mouse, const cPosition& mapPosition) const MAXR_OVERRIDE_FUNCTION;
+	virtual void setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
 
-	virtual std::unique_ptr<cMouseAction> getMouseAction (const cPosition& mapPosition) const MAXR_OVERRIDE_FUNCTION;
+	virtual std::unique_ptr<cMouseAction> getMouseAction (const cPosition& mapPosition, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
 
 protected:
 	virtual void establishUnitSelectionConnections() MAXR_OVERRIDE_FUNCTION;
@@ -52,7 +52,7 @@ protected:
 private:
 	cSignalConnectionManager keyboardConnectionManager;
 
-	eActionType selectAction (const cPosition& mapPosition) const;
+	eActionType selectAction (const cPosition& mapPosition, const cUnitsData& unitData) const;
 
 	void updateFieldUnitConnections (const cMapField& field);
 };

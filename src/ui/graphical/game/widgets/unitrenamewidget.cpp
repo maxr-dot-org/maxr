@@ -46,7 +46,7 @@ cUnitRenameWidget::cUnitRenameWidget (const cPosition& position, int width) :
 	{
 		if (activeUnit)
 		{
-			selectedUnitNameEdit->setText (activeUnit->isNameOriginal() ? activeUnit->data.name : activeUnit->getName());
+			selectedUnitNameEdit->setText (activeUnit->getName());
 		}
 	});
 	signalConnectionManager.connect (selectedUnitNameEdit->textSet, [&]()
@@ -65,7 +65,7 @@ cUnitRenameWidget::cUnitRenameWidget (const cPosition& position, int width) :
 	resize (area.getSize());
 }
 
-void cUnitRenameWidget::setUnit (const cUnit* unit)
+void cUnitRenameWidget::setUnit (const cUnit* unit, const cUnitsData& unitsData)
 {
 	activeUnit = unit;
 	unitSignalConnectionManager.disconnectAll();
@@ -73,21 +73,21 @@ void cUnitRenameWidget::setUnit (const cUnit* unit)
 	if (unit)
 	{
 		selectedUnitNamePrefixLabel->setText (unit->getNamePrefix());
-		selectedUnitNameEdit->setText (unit->isNameOriginal() ? unit->data.name : unit->getName());
-		selectedUnitStatusLabel->setText (unit->getStatusStr (player));
+		selectedUnitNameEdit->setText (unit->getName());
+		selectedUnitStatusLabel->setText (unit->getStatusStr (player, unitsData));
 
 		unitSignalConnectionManager.connect (unit->renamed, [&]()
 		{
 			if (activeUnit)
 			{
-				selectedUnitNameEdit->setText (activeUnit->isNameOriginal() ? activeUnit->data.name : activeUnit->getName());
+				selectedUnitNameEdit->setText (activeUnit->getName());
 			}
 		});
 		unitSignalConnectionManager.connect (unit->statusChanged, [&]()
 		{
 			if (activeUnit)
 			{
-				selectedUnitStatusLabel->setText (activeUnit->getStatusStr (player));
+				selectedUnitStatusLabel->setText (activeUnit->getStatusStr (player, unitsData));
 			}
 		});
 	}
@@ -115,12 +115,12 @@ const cUnit* cUnitRenameWidget::getUnit() const
 }
 
 //------------------------------------------------------------------------------
-void cUnitRenameWidget::setPlayer (const cPlayer* player_)
+void cUnitRenameWidget::setPlayer (const cPlayer* player_, const cUnitsData& unitsData)
 {
 	player = player_;
 	if (activeUnit)
 	{
-		selectedUnitStatusLabel->setText (activeUnit->getStatusStr (player));
+		selectedUnitStatusLabel->setText (activeUnit->getStatusStr (player, unitsData));
 	}
 }
 

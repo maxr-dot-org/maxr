@@ -40,7 +40,8 @@ class cSavedReport;
 class cTurnClock;
 class cTurnTimeClock;
 class cGameSettings;
-struct sUnitData;
+class cUnitsData;
+class cStaticUnitData;
 
 class cWindowReports : public cWindow
 {
@@ -52,7 +53,8 @@ public:
 					std::shared_ptr<const cTurnClock> turnClock,
 					std::shared_ptr<const cTurnTimeClock> turnTimeClock,
 					std::shared_ptr<const cGameSettings> gameSettings,
-					const std::vector<std::unique_ptr<cSavedReport>>& reports);
+					const std::vector<std::unique_ptr<cSavedReport>>& reports,
+					std::shared_ptr<const cUnitsData> unitsData);
 
 	cSignal<void (cUnit&)> unitClickedSecondTime;
 	cSignal<void (const cSavedReport&)> reportClickedSecondTime;
@@ -97,12 +99,14 @@ private:
 	std::shared_ptr<const cTurnClock> turnClock;
 	std::shared_ptr<const cGameSettings> gameSettings;
 	const std::vector<std::unique_ptr<cSavedReport>>& reports;
+	std::shared_ptr<const cUnitsData> unitsData;
 
 	bool unitListDirty;
 	bool disadvantagesListDirty;
 	bool reportsListDirty;
 
-	bool checkFilter (const sUnitData& data) const;
+	bool checkFilter (const cUnit& unit) const;
+	bool checkFilter (const cStaticUnitData& data) const;
 
 	void handleFilterChanged();
 

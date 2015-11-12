@@ -60,14 +60,16 @@ cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> play
 								std::shared_ptr<const cTurnClock> turnClock_,
 								std::shared_ptr<const cTurnTimeClock> turnTimeClock,
 								std::shared_ptr<const cGameSettings> gameSettings_,
-								const std::vector<std::unique_ptr<cSavedReport>>& reports_) :
+								const std::vector<std::unique_ptr<cSavedReport>>& reports_,
+								std::shared_ptr<const cUnitsData> unitsData) :
 	cWindow (LoadPCX (GFXOD_REPORTS)),
 	players (std::move (players_)),
 	localPlayer (localPlayer_),
 	casualties (std::move (casualties_)),
 	turnClock (std::move (turnClock_)),
 	gameSettings (std::move (gameSettings_)),
-	reports(reports_),
+	unitsData (std::move(unitsData)),
+	reports (reports_),
 	unitListDirty (true),
 	disadvantagesListDirty (true),
 	reportsListDirty (true)
@@ -286,8 +288,16 @@ void cWindowReports::downPressed()
 	}
 }
 
+//------------------------------------------------------------------------------
+bool cWindowReports::checkFilter(const cUnit& unit) const
+{
+	if (unit.data.getHitpoints() >= unit.data.getHitpointsMax() && damagedCheckBox->isChecked()) return false;
+
+	return checkFilter(unit.getStaticUnitData());
+}
+
 //-----------------------------------------------------------------------------
-bool cWindowReports::checkFilter (const sUnitData& data) const
+bool cWindowReports::checkFilter(const cStaticUnitData& data) const
 {
 	if (data.ID.isAVehicle())
 	{
@@ -302,10 +312,10 @@ bool cWindowReports::checkFilter (const sUnitData& data) const
 
 	if (data.canBuild.empty() && produceCheckBox->isChecked()) return false;
 	if (!data.canAttack && fightCheckBox->isChecked()) return false;
-	if (data.getHitpoints() >= data.getHitpointsMax() && damagedCheckBox->isChecked()) return false;
+	
 	if (!data.isStealthOn && stealthCheckBox->isChecked()) return false;
 
-	if (data.surfacePosition != sUnitData::SURFACE_POS_GROUND) return false;
+	if (data.surfacePosition != cStaticUnitData::SURFACE_POS_GROUND) return false;
 
 	return true;
 }
@@ -342,9 +352,9 @@ void cWindowReports::rebuildUnitList()
 		for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
 		{
 			const auto& vehicle = *i;
-			if (checkFilter (vehicle->data))
+			if (checkFilter (*vehicle))
 			{
-				unitsList->addItem (std::make_unique<cReportUnitListViewItem> (*vehicle));
+				unitsList->addItem (std::make_unique<cReportUnitListViewItem> (*vehicle, *unitsData));
 			}
 		}
 
@@ -354,9 +364,9 @@ void cWindowReports::rebuildUnitList()
 			for (auto i = buildings.begin(); i != buildings.end(); ++i)
 			{
 				const auto& building = *i;
-				if (checkFilter (building->data))
+				if (checkFilter (*building))
 				{
-					unitsList->addItem (std::make_unique<cReportUnitListViewItem> (*building));
+					unitsList->addItem (std::make_unique<cReportUnitListViewItem> (*building, *unitsData));
 				}
 			}
 		}
@@ -380,7 +390,7 @@ void cWindowReports::rebuildDisadvantagesList()
 	{
 		const auto& unitId = unitTypesWithLosses[i];
 
-		const auto& unitData = UnitsData.getUnit (unitId);
+		const cStaticUnitData& unitData = unitsData->getStaticUnitData (unitId);
 
 		if (!checkFilter (unitData)) continue;
 
@@ -396,7 +406,7 @@ void cWindowReports::rebuildDisadvantagesList()
 			}
 		}
 
-		disadvantagesList->addItem (std::make_unique<cReportDisadvantagesListViewItem> (unitId, std::move (unitCasualities)));
+		disadvantagesList->addItem (std::make_unique<cReportDisadvantagesListViewItem> (unitData, std::move (unitCasualities)));
 	}
 
 	disadvantagesListDirty = false;
@@ -420,7 +430,7 @@ void cWindowReports::rebuildReportsList()
 		{
 			if (savedReport->getType() == eSavedReportType::Chat) continue;
 
-			lastItem = reportsList->addItem (std::make_unique<cReportMessageListViewItem> (*savedReport));
+			lastItem = reportsList->addItem (std::make_unique<cReportMessageListViewItem> (*savedReport, *unitsData));
 		}
 	}
 	if (lastItem) reportsList->scrollToItem (lastItem);

@@ -137,20 +137,6 @@ void sendTurnStartTime (cServer& server, unsigned int gameTime);
 
 void sendTurnEndDeadlineStartTime (cServer& server, unsigned int gameTime);
 
-/**
- * Sends the data values of this unit to the client
- *
- * @param unit The unit from which the data should be taken
- * @param player The player who should receive this message
- */
-void sendUnitData (cServer& server, const cUnit& unit, const cPlayer& receiver);
-/**
- * Sends the unit data to the owner of the unit (if there is one) and to
- * all players that can see the unit.
- *
- * @param unit The unit from which the data should be taken
- */
-void sendUnitData (cServer& server, const cUnit& unit);
 
 void sendSpecificUnitData (cServer& server, const cVehicle& Vehicle);
 
@@ -285,7 +271,7 @@ void sendTurn (cServer& server, int turn, const cPlayer& receiver);
 void sendStoreVehicle (cServer& server, int unitid, bool vehicle, int storedunitid, const cPlayer& receiver);
 void sendActivateVehicle (cServer& server, int unitid, bool vehicle, int activatunitid, const cPosition& position, const cPlayer& receiver);
 void sendDeleteEverything (cServer& server, const cPlayer& receiver);
-void sendUnitUpgrades (cServer& server, const sUnitData& Data, const cPlayer& receiver);
+void sendUnitUpgrades (cServer& server, const cDynamicUnitData& Data, const cPlayer& receiver);
 void sendCredits (cServer& server, int newCredits, const cPlayer& receiver);
 void sendUpgradeBuildings (cServer& server, const std::vector<cBuilding*>& upgradedBuildings, int totalCosts, const cPlayer& receiver);
 void sendUpgradeVehicles (cServer& server, const std::vector<cVehicle*>& upgradedVehicles, int totalCosts, unsigned int storingBuildingID, const cPlayer& receiver);
@@ -302,7 +288,6 @@ void sendSetAutomoving (cServer& server, const cVehicle& vehicle);
 */
 void sendCommandoAnswer (cServer& server, bool success, bool steal, const cVehicle& srcUnit, const cPlayer& receiver);
 
-void sendCasualtiesReport (cServer& server, const cPlayer* receiver);
 
 void sendScore (cServer& server, const cPlayer& subject, int turn, const cPlayer* receiver = nullptr);
 void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver = nullptr);

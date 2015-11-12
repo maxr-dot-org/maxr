@@ -92,6 +92,22 @@ enum eSymbolsBig
 //-----------------------------------------------------------------------------
 struct sVehicleUIData
 {
+	sID id;
+
+	bool hasCorpse;
+	bool hasDamageEffect;
+	bool hasPlayerColor;
+	bool hasOverlay;
+
+	bool buildUpGraphic;
+	bool animationMovement;
+	bool powerOnGraphic;
+	bool isAnimated;
+	bool makeTracks;
+
+	int hasFrames;
+
+
 	std::array<AutoSurface, 8> img, img_org; // 8 Surfaces of the vehicle
 	std::array<AutoSurface, 8> shw, shw_org; // 8 Surfaces of shadows
 	AutoSurface build, build_org;        // Surfaces when building
@@ -131,7 +147,7 @@ class cVehicle : public cUnit
 {
 	//-----------------------------------------------------------------------------
 public:
-	cVehicle (const sUnitData& unitData, cPlayer* Owner, unsigned int ID);
+	cVehicle (const cStaticUnitData& staticData,  const cDynamicUnitData& data, cPlayer* Owner, unsigned int ID);
 	virtual ~cVehicle();
 
 	virtual bool isAVehicle() const { return true; }
@@ -161,13 +177,13 @@ public:
 	bool proceedBuilding (cServer& server);
 	bool proceedClearing (cServer& server);
 
-	virtual std::string getStatusStr (const cPlayer* player) const MAXR_OVERRIDE_FUNCTION;
+	virtual std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
 	void DecSpeed (int value);
 	void doSurvey (const cMap& map);
 	virtual void makeReport (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const MAXR_OVERRIDE_FUNCTION;
 	bool InSentryRange (cServer& server);
-	virtual bool canExitTo (const cPosition& position, const cMap& map, const sUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
+	virtual bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
 	bool canLoad (const cPosition& position, const cMap& map, bool checkPosition = true) const;
 	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const;
 	void storeVehicle (cVehicle& vehicle, cMap& map);
@@ -255,14 +271,14 @@ public:
 	*/
 	void render (const cMap* map, unsigned long long animationTime, const cPlayer* activePlayer, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
 	void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int alpha = 254) const;
-	static void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sUnitData& data, const sVehicleUIData& uiData, const cPlayer* owner, int dir = 0, int walkFrame = 0, int alpha = 254);
+	static void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sVehicleUIData& uiData, const cPlayer* owner, int dir = 0, int walkFrame = 0, int alpha = 254);
 	/**
 	* draws the overlay animation of the vehicle on the given surface
 	*@author: eiko
 	*/
 	void drawOverlayAnimation (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const;
 	void drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha = 254) const;
-	static void drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sUnitData& data, const sVehicleUIData& uiData, int frameNr = 0, int alpha = 254);
+	static void drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sVehicleUIData& uiData, int frameNr = 0, int alpha = 254);
 
 	bool isUnitLoaded() const { return loaded; }
 
@@ -359,7 +375,7 @@ public:
 
 		if (!archive.isWriter)
 		{
-			uiData = UnitsData.getVehicleUI(data.ID);
+			uiData = UnitsUiData.getVehicleUI(data.getId());
 		}
 	}
 private:

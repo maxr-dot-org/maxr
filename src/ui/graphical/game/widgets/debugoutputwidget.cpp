@@ -416,7 +416,7 @@ void cDebugOutputWidget::traceVehicle (const cVehicle& vehicle, cPosition& drawP
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
-	tmpString = " is_clearing: " + iToStr (vehicle.isUnitClearing()) + " clearing_rounds: +" + iToStr (vehicle.getClearingTurns()) + " clear_big: " + iToStr (vehicle.data.isBig) + " loaded: " + iToStr (vehicle.isUnitLoaded());
+	tmpString = " is_clearing: " + iToStr (vehicle.isUnitClearing()) + " clearing_rounds: +" + iToStr (vehicle.getClearingTurns()) + " clear_big: " + iToStr (vehicle.getIsBig()) + " loaded: " + iToStr (vehicle.isUnitLoaded());
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
@@ -468,7 +468,7 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
-	tmpString = "attacking: " + iToStr (building.isAttacking()) + " UnitsData.dirt_typ: " + iToStr (building.RubbleTyp) + " UnitsData.dirt_value: +" + iToStr (building.RubbleValue) + " big_dirt: " + iToStr (building.data.isBig) + " is_working: " + iToStr (building.isUnitWorking());
+	tmpString = "attacking: " + iToStr (building.isAttacking()) + " UnitsData.dirt_typ: " + iToStr (building.RubbleTyp) + " UnitsData.dirt_value: +" + iToStr (building.RubbleValue) + " big_dirt: " + iToStr (building.getIsBig()) + " is_working: " + iToStr (building.isUnitWorking());
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
@@ -504,7 +504,7 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 	for (size_t i = 0; i != buildingBuildListSize; ++i)
 	{
 		const auto& item = building.getBuildListItem (i);
-		font->showText (drawPosition, "  build " + iToStr (i) + lngPack.i18n ("Text~Punctuation~Colon") + item.getType().getText() + " \"" + item.getType().getUnitDataOriginalVersion()->name + "\"", FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPosition, "  build " + iToStr (i) + lngPack.i18n ("Text~Punctuation~Colon") + item.getType().getText() + " \"" + client->getModel().getUnitsData()->getStaticUnitData(item.getType()).getName() + "\"", FONT_LATIN_SMALL_WHITE);
 		drawPosition.y() += 8;
 	}
 

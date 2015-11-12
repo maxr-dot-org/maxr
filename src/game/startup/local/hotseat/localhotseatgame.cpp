@@ -29,7 +29,6 @@ cLocalHotSeatGame::~cLocalHotSeatGame()
 	if (server)
 	{
 		server->stop();
-		reloadUnitValues();
 	}
 }
 

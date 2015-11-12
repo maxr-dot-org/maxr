@@ -40,7 +40,7 @@ eMouseModeType cMouseModeRepair::getType() const
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeRepair::setCursor (cMouse& mouse, const cPosition& mapPosition) const
+void cMouseModeRepair::setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	if (canExecuteAction (mapPosition))
 	{
@@ -53,7 +53,7 @@ void cMouseModeRepair::setCursor (cMouse& mouse, const cPosition& mapPosition) c
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeRepair::getMouseAction (const cPosition& mapPosition) const
+std::unique_ptr<cMouseAction> cMouseModeRepair::getMouseAction(const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	if (canExecuteAction (mapPosition))
 	{
@@ -79,7 +79,7 @@ void cMouseModeRepair::establishUnitSelectionConnections()
 
 	if (selectedUnit)
 	{
-		selectedUnitSignalConnectionManager.connect (selectedUnit->data.storedResourcesChanged, [this]() { needRefresh(); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->storedResourcesChanged, [this]() { needRefresh(); });
 		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, [this]() { needRefresh(); });
 	}
 }

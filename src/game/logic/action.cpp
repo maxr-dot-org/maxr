@@ -76,16 +76,16 @@ void cActionInitNewGame::makeLanding(const cPosition& landingPosition, cPlayer& 
 
 	// Find place for mine if bridgehead is fixed
 	if (model.getGameSettings()->getBridgeheadType() == eGameSettingsBridgeheadType::Definite)
-	{
-		if (map.possiblePlaceBuilding(*UnitsData.specialIDSmallGen.getUnitDataOriginalVersion(), landingPosition + cPosition(-1, 0)) &&
-			map.possiblePlaceBuilding(*UnitsData.specialIDMine.getUnitDataOriginalVersion(), landingPosition + cPosition(0, -1)) &&
-			map.possiblePlaceBuilding(*UnitsData.specialIDMine.getUnitDataOriginalVersion(), landingPosition + cPosition(1, -1)) &&
-			map.possiblePlaceBuilding(*UnitsData.specialIDMine.getUnitDataOriginalVersion(), landingPosition + cPosition(1, 0)) &&
-			map.possiblePlaceBuilding(*UnitsData.specialIDMine.getUnitDataOriginalVersion(), landingPosition + cPosition(0, 0)))
+	{ //
+		if (map.possiblePlaceBuilding(model.getUnitsData()->getSmallGeneratorData(), landingPosition + cPosition(-1, 0)) &&
+			map.possiblePlaceBuilding(model.getUnitsData()->getMineData(), landingPosition + cPosition(0, -1)) &&
+			map.possiblePlaceBuilding(model.getUnitsData()->getMineData(), landingPosition + cPosition(1, -1)) &&
+			map.possiblePlaceBuilding(model.getUnitsData()->getMineData(), landingPosition + cPosition(1, 0)) &&
+			map.possiblePlaceBuilding(model.getUnitsData()->getMineData(), landingPosition + cPosition(0, 0)))
 		{
 			// place buildings:
-			model.addBuilding(landingPosition + cPosition(-1, 0), UnitsData.specialIDSmallGen, &player, true);
-			model.addBuilding(landingPosition + cPosition(0, -1), UnitsData.specialIDMine, &player, true);
+			model.addBuilding(landingPosition + cPosition(-1, 0), model.getUnitsData()->specialIDSmallGen, &player, true);
+			model.addBuilding(landingPosition + cPosition(0, -1), model.getUnitsData()->specialIDMine, &player, true);
 		}
 		else
 		{
@@ -98,29 +98,29 @@ void cActionInitNewGame::makeLanding(const cPosition& landingPosition, cPlayer& 
 	for (size_t i = 0; i != landingUnits.size(); ++i)
 	{
 		const sLandingUnit& landing = landingUnits[i];
-		cVehicle* vehicle = landVehicle(landingPosition, iWidth, iHeight, *landing.unitID.getUnitDataOriginalVersion(&player), player, model);
+		cVehicle* vehicle = landVehicle(landingPosition, iWidth, iHeight, landing.unitID, player, model);
 		while (!vehicle)
 		{
 			iWidth += 2;
 			iHeight += 2;
-			vehicle = landVehicle(landingPosition, iWidth, iHeight, *landing.unitID.getUnitDataOriginalVersion(&player), player, model);
+			vehicle = landVehicle(landingPosition, iWidth, iHeight, landing.unitID, player, model);
 		}
 		if (landing.cargo && vehicle)
 		{
-			vehicle->data.setStoredResources(landing.cargo);
+			vehicle->setStoredResources(landing.cargo);
 		}
 	}
 }
 //------------------------------------------------------------------------------
-cVehicle* cActionInitNewGame::landVehicle(const cPosition& landingPosition, int iWidth, int iHeight, const sUnitData& unitData, cPlayer& player, cModel& model) const
+cVehicle* cActionInitNewGame::landVehicle(const cPosition& landingPosition, int iWidth, int iHeight, const sID& id, cPlayer& player, cModel& model) const
 {
 	for (int offY = -iHeight / 2; offY < iHeight / 2; ++offY)
 	{
 		for (int offX = -iWidth / 2; offX < iWidth / 2; ++offX)
 		{
-			if (!model.getMap()->possiblePlaceVehicle(unitData, landingPosition + cPosition(offX, offY), &player)) continue;
+			if (!model.getMap()->possiblePlaceVehicle(model.getUnitsData()->getStaticUnitData(id), landingPosition + cPosition(offX, offY), &player)) continue;
 
-			return &model.addVehicle(landingPosition + cPosition(offX, offY), unitData.ID, &player, true);
+			return &model.addVehicle(landingPosition + cPosition(offX, offY), id, &player, true);
 		}
 	}
 	return nullptr;

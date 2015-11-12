@@ -34,6 +34,7 @@ class cUnitDetails;
 template<typename T>
 class cListView;
 class cUnitListViewItemBuy;
+class cUnitsData;
 
 class cUnitUpgrade;
 struct sID;
@@ -41,8 +42,8 @@ struct sID;
 class cWindowHangar : public cWindow
 {
 public:
-	cWindowHangar (AutoSurface surface, cPlayerColor playerColor, int playerClan);
-	cWindowHangar (AutoSurface surface, const cPlayer& player);
+	cWindowHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, cPlayerColor playerColor, int playerClan);
+	cWindowHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, const cPlayer& player);
 	~cWindowHangar();
 
 	cSignal<void ()> done;
@@ -60,6 +61,8 @@ protected:
 	virtual void setActiveUnit (const sID& unitId);
 
 	const sID* getActiveUnit() const;
+
+	std::shared_ptr<const cUnitsData> unitsData;
 
 	// TODO: the following widgets should be private instead.
 	// They are protect at the moment because some inheriting windows need to move/resize the widgets.

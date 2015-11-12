@@ -27,7 +27,7 @@
 #include "utility/drawing.h"
 
 //------------------------------------------------------------------------------
-cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, const cPlayer& owner) :
+cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, const cPlayer& owner, const cUnitsData& unitsData) :
 	unitId (unitId_)
 {
 	const int unitImageSize = 32;
@@ -36,26 +36,26 @@ cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, co
 	SDL_FillRect (surface.get(), nullptr, 0x00FF00FF);
 	SDL_Rect dest = {0, 0, 0, 0};
 
-	const auto& data = *unitId.getUnitDataOriginalVersion();
+	const auto& data = unitsData.getStaticUnitData(unitId);
 	if (unitId.isAVehicle())
 	{
 		const float zoomFactor = unitImageSize / 64.0f;
-		const auto& uiData = *UnitsData.getVehicleUI (unitId);
-		cVehicle::render_simple (surface.get(), dest, zoomFactor, data, uiData, &owner);
-		cVehicle::drawOverlayAnimation (surface.get(), dest, zoomFactor, data, uiData);
+		const auto& uiData = *UnitsUiData.getVehicleUI (unitId);
+		cVehicle::render_simple (surface.get(), dest, zoomFactor, uiData, &owner);
+		cVehicle::drawOverlayAnimation (surface.get(), dest, zoomFactor, uiData);
 	}
 	else if (unitId.isABuilding())
 	{
 		const float zoomFactor = unitImageSize / (data.isBig ? 128.0f : 64.0f);
-		const auto& uiData = *UnitsData.getBuildingUI (unitId);
-		cBuilding::render_simple (surface.get(), dest, zoomFactor, data, uiData, &owner);
+		const auto& uiData = *UnitsUiData.getBuildingUI (unitId);
+		cBuilding::render_simple (surface.get(), dest, zoomFactor, uiData, &owner);
 	}
 	else surface = nullptr;
 
 	unitImage = addChild (std::make_unique<cImage> (cPosition (0, 0), surface.get()));
 	unitImage->setConsumeClick (false);
 
-	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImage->getEndPosition().x() + 3, 0), cPosition (width, unitImage->getEndPosition().y())), owner.getUnitDataCurrentVersion (unitId)->name, FONT_LATIN_SMALL_WHITE, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
+	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImage->getEndPosition().x() + 3, 0), cPosition (width, unitImage->getEndPosition().y())), data.getName(), FONT_LATIN_SMALL_WHITE, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
 	nameLabel->setWordWrap (true);
 
 	auto size = unitImage->getArea();

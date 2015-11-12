@@ -274,7 +274,7 @@ void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool
 void sendWantUpgrade (const cClient& client, int buildingID, int storageSlot, bool upgradeAll);
 void sendWantResearchChange (const cClient& client, const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings);
 
-void sendWantSelfDestroy (const cClient& client, const cBuilding& building);
+void sendWantSelfDestroy (const cClient& client, int unitId);
 void sendWantChangeUnitName (const cClient& client, const std::string& newName, int unitID);
 
 void sendEndMoveAction (const cClient& client, int vehicleID, int destID, eEndMoveActionType type);

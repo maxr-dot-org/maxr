@@ -61,9 +61,6 @@ struct sTurnstartReport
 	int count;
 };
 
-
-struct sUnitData;
-
 class cSavedReport;
 
 typedef std::vector<int> PointsHistory;
@@ -73,7 +70,7 @@ class cPlayer
 {
 	cPlayer (const cPlayer&) MAXR_DELETE_FUNCTION;
 public:
-	explicit cPlayer (const cPlayerBasicData& splayer);
+	explicit cPlayer(const cPlayerBasicData& splayer_, const cUnitsData& unitsData);
 	~cPlayer();
 
 	const std::string& getName() const { return splayer.getName(); }
@@ -96,8 +93,8 @@ public:
 	void setCredits (int credits);
 
 	/** Get the most modern version of a unit (including all his upgrades). */
-	sUnitData* getUnitDataCurrentVersion (const sID& id);
-	const sUnitData* getUnitDataCurrentVersion (const sID& id) const;
+	cDynamicUnitData* getUnitDataCurrentVersion (const sID& id);
+	const cDynamicUnitData* getUnitDataCurrentVersion (const sID& id) const;
 
 	void setLandingPos (const cPosition& position) { landingPos = position; }
 	const cPosition& getLandingPos() const { return landingPos; };
@@ -112,8 +109,8 @@ public:
 	bool canSeeAnyAreaUnder (const cUnit& unit) const;
 	bool canSeeAt (const cPosition& position) const;
 
-	cVehicle& addNewVehicle (const cPosition& position, const sID& id, unsigned int uid);
-	cBuilding& addNewBuilding (const cPosition& position, const sID& id, unsigned int uid);
+	cVehicle& addNewVehicle (const cPosition& position, const cStaticUnitData& unitData, unsigned int uid);
+	cBuilding& addNewBuilding (const cPosition& position, const cStaticUnitData& unitData, unsigned int uid);
 
 	void addUnit (std::shared_ptr<cVehicle> vehicle);
 	void addUnit (std::shared_ptr<cBuilding> building);
@@ -136,14 +133,14 @@ public:
 
 	void addSentry (cUnit& u);
 	void deleteSentry (cUnit& u);
-	void upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, std::vector<sUnitData*>& resultUpgradedUnitDatas);
+	void upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, const cUnitsData& originalUnitsData);
 	void countEcoSpheres();
 	int getScore (int turn) const;
 	int getScore() const;
 	void setScore (int score, int turn);
 	void clearDone();
 
-	void setClan (int newClan);
+	void setClan (int newClan, const cUnitsData& unitsData);
 	int getClan() const { return clan; }
 
 	bool getHasFinishedTurn() const;
@@ -160,7 +157,7 @@ public:
 	bool hasMineDetection (const cPosition& pos) const { return DetectMinesMap[getOffset (pos)] != 0; }
 	bool hasSeaDetection (const cPosition& pos) const { return DetectSeaMap[getOffset (pos)] != 0; }
 
-	void doResearch (cServer& server);  ///< proceed with the research at turn end
+	void doResearch(const cUnitsData& unitsData);  // proceed with the research at turn end
 	void accumulateScore (cServer& server); // at turn end
 
 	void refreshSentryAir();
@@ -200,8 +197,7 @@ public:
 	void save(T& archive)
 	{
 		archive & NVP(splayer);
-		archive & NVP(VehicleData);
-		archive & NVP(BuildingData);
+		archive & NVP(dynamicUnitsData);
 		archive & serialization::makeNvp("vehicleNum", (int)vehicles.size());
 		for (auto vehicle : vehicles)
 		{
@@ -230,8 +226,9 @@ public:
 	void load(T& archive)
 	{
 		archive & NVP(splayer);
-		archive & NVP(VehicleData);
-		archive & NVP(BuildingData);
+
+		dynamicUnitsData.clear();
+		archive & NVP(dynamicUnitsData);
 
 		vehicles.clear();
 		int vehicleNum;
@@ -240,8 +237,9 @@ public:
 		{
 			unsigned int vehicleID;
 			archive & NVP(vehicleID);
-			sUnitData data;
-			auto vehicle = std::make_shared<cVehicle>(data, this, vehicleID);
+			cStaticUnitData dummy1;
+			cDynamicUnitData dummy2;
+			auto vehicle = std::make_shared<cVehicle>(dummy1, dummy2, this, vehicleID);
 			archive & serialization::makeNvp("vehicle", *vehicle);
 			vehicles.insert(std::move(vehicle));
 		}
@@ -253,8 +251,7 @@ public:
 		{
 			unsigned int buildingID;
 			archive & NVP(buildingID);
-			sUnitData data;
-			auto building = std::make_shared<cBuilding>(&data, this, buildingID);
+			auto building = std::make_shared<cBuilding>(nullptr, nullptr, this, buildingID);
 			archive & serialization::makeNvp("building", *building);
 			buildings.insert(std::move(building));
 		}
@@ -315,9 +312,8 @@ private:
 private:
 	cPlayerBasicData splayer;
 public:
-	std::vector<sUnitData> VehicleData; // Current version of vehicles.
-	std::vector<sUnitData> BuildingData; // Current version of buildings.
-	cBase base;               // Die Basis dieses Spielers.
+	std::vector<cDynamicUnitData> dynamicUnitsData; // Current version of vehicles.
+	cBase base;               // the base (groups of connected buildings) of the player
 private:
 	cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>> vehicles;
 	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> buildings;

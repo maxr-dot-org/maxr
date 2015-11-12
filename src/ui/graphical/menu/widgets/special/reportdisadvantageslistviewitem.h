@@ -34,7 +34,7 @@ public:
 	static const int casualityLabelWidth;
 	static const int maxItemsInRow;
 
-	cReportDisadvantagesListViewItem (const sID& unitId, std::vector<int> disadvantages);
+	cReportDisadvantagesListViewItem (const cStaticUnitData& data, std::vector<int> disadvantages);
 
 protected:
 	sID unitId;

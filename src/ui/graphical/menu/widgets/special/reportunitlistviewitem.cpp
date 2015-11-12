@@ -28,7 +28,7 @@
 #include "utility/color.h"
 
 //------------------------------------------------------------------------------
-cReportUnitListViewItem::cReportUnitListViewItem (cUnit& unit_) :
+cReportUnitListViewItem::cReportUnitListViewItem (cUnit& unit_, const cUnitsData& unitsData) :
 	cAbstractListViewItem(),
 	unit (unit_)
 {
@@ -38,17 +38,17 @@ cReportUnitListViewItem::cReportUnitListViewItem (cUnit& unit_) :
 	SDL_FillRect (surface.get(), nullptr, 0x00FF00FF);
 	SDL_Rect dest = {0, 0, 0, 0};
 
-	if (unit.data.ID.isAVehicle())
+	if (unit.data.getId().isAVehicle())
 	{
 		const auto& vehicle = static_cast<const cVehicle&> (unit);
 		const float zoomFactor = unitImageSize / 64.0f;
 		vehicle.render_simple (surface.get(), dest, zoomFactor);
 		vehicle.drawOverlayAnimation (surface.get(), dest, zoomFactor, 0);
 	}
-	else if (unit.data.ID.isABuilding())
+	else if (unit.data.getId().isABuilding())
 	{
 		const auto& building = static_cast<const cBuilding&> (unit);
-		const float zoomFactor = unitImageSize / (building.data.isBig ? 128.0f : 64.0f);
+		const float zoomFactor = unitImageSize / (building.getIsBig() ? 128.0f : 64.0f);
 		building.render_simple (surface.get(), dest, zoomFactor, 0);
 	}
 	else surface = nullptr;
@@ -65,7 +65,7 @@ cReportUnitListViewItem::cReportUnitListViewItem (cUnit& unit_) :
 
 	auto positionLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitDetails->getEndPosition().x() + 5, 0), cPosition (unitDetails->getEndPosition().x() + 5 + 50, unitDetails->getEndPosition().y())), iToStr (unit.getPosition().x()) + "," + iToStr (unit.getPosition().y()), FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::CenterVerical));
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (positionLabel->getEndPosition().x(), 0), cPosition (positionLabel->getEndPosition().x() + 120, unitDetails->getEndPosition().y())), unit.getStatusStr (unit.getOwner()), FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (positionLabel->getEndPosition().x(), 0), cPosition (positionLabel->getEndPosition().x() + 120, unitDetails->getEndPosition().y())), unit.getStatusStr (unit.getOwner(), unitsData), FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
 
 	fitToChildren();
 }

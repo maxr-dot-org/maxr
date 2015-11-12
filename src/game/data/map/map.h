@@ -37,8 +37,8 @@ class cVehicle;
 class cBuilding;
 class cPlayer;
 class cPosition;
-struct sUnitData;
 class cModel;
+class cStaticUnitData;
 
 // Resources Struktur ////////////////////////////////////////////////////////
 struct sResources
@@ -274,15 +274,15 @@ public:
 	* if checkPlayer is passed, the function uses the players point of view, so it does not check for units that are not in sight
 	*/
 	bool possiblePlace (const cVehicle& vehicle, const cPosition& position, bool checkPlayer = false) const;
-	bool possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool checkPlayer = false) const;
+	bool possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool checkPlayer = false) const;
 
 	/**
 	* checks, whether the given field is an allowed place for the building
 	* if a vehicle is passed, it will be ignored in the check, so a constructing vehicle does not block its own position
 	* Note: that the function can check for map border overflows (with margin).
 	*/
-	bool possiblePlaceBuilding (const sUnitData& buildingData, const cPosition& position, const cVehicle* vehicle = nullptr) const;
-	bool possiblePlaceBuildingWithMargin (const sUnitData& buildingData, const cPosition& position, int margin, const cVehicle* vehicle = nullptr) const;
+	bool possiblePlaceBuilding (const cStaticUnitData& buildingData, const cPosition& position, const cVehicle* vehicle = nullptr) const;
+	bool possiblePlaceBuildingWithMargin (const cStaticUnitData& buildingData, const cPosition& position, int margin, const cVehicle* vehicle = nullptr) const;
 
 	/**
 	* removes all units from the map structure

@@ -231,6 +231,7 @@ void cGameGuiController::setActiveClient (std::shared_ptr<cClient> client_)
 	gameGui->setGameSettings (getGameSettings());
 	gameGui->getDebugOutput().setClient (activeClient.get());
 	gameGui->getDebugOutput().setServer (activeClient->getServer());
+	gameGui->setUnitsData(getUnitsData());
 
 	if (activeClient != nullptr)
 	{
@@ -423,8 +424,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (selfDestructionTriggered, [&] (const cUnit & unit)
 	{
-		if (!unit.data.ID.isABuilding()) return;
-		sendWantSelfDestroy (client, static_cast<const cBuilding&> (unit));
+		sendWantSelfDestroy (client, unit.iID);
 	});
 	clientSignalConnectionManager.connect (resumeMoveJobTriggered, [&] (const cUnit & unit)
 	{
@@ -452,7 +452,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredAutoMoveJob, [&] (const cUnit & unit)
 	{
-		if (unit.data.ID.isAVehicle())
+		if (unit.isAVehicle())
 		{
 			auto vehicle = client.getVehicleFromID (unit.iID);
 			if (!vehicle) return;
@@ -461,7 +461,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStartClear, [&] (const cUnit & unit)
 	{
-		if (unit.data.ID.isAVehicle()) sendWantStartClear (client, static_cast<const cVehicle&> (unit));
+		if (unit.isAVehicle()) sendWantStartClear (client, static_cast<const cVehicle&> (unit));
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredManualFire, [&] (const cUnit & unit)
 	{
@@ -473,15 +473,15 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUpgradeThis, [&] (const cUnit & unit)
 	{
-		if (unit.data.ID.isABuilding()) static_cast<const cBuilding&> (unit).executeUpdateBuildingCommmand (client, false);
+		if (unit.isABuilding()) static_cast<const cBuilding&> (unit).executeUpdateBuildingCommmand (client, false);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUpgradeAll, [&] (const cUnit & unit)
 	{
-		if (unit.data.ID.isABuilding()) static_cast<const cBuilding&> (unit).executeUpdateBuildingCommmand (client, true);
+		if (unit.isABuilding()) static_cast<const cBuilding&> (unit).executeUpdateBuildingCommmand (client, true);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredLayMines, [&] (const cUnit & unit)
 	{
-		if (unit.data.ID.isAVehicle())
+		if (unit.isAVehicle())
 		{
 			auto vehicle = client.getVehicleFromID (unit.iID);
 			if (!vehicle) return;
@@ -490,7 +490,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredCollectMines, [&] (const cUnit & unit)
 	{
-		if (unit.data.ID.isAVehicle())
+		if (unit.isAVehicle())
 		{
 			auto vehicle = client.getVehicleFromID (unit.iID);
 			if (!vehicle) return;
@@ -499,14 +499,14 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUnitDone, [&] (const cUnit & unit)
 	{
-		if (unit.data.ID.isAVehicle())
+		if (unit.isAVehicle())
 		{
 			auto vehicle = client.getVehicleFromID (unit.iID);
 			if (!vehicle) return;
 			vehicle->setMarkedAsDone (true);
 			sendMoveJobResume (client, vehicle->iID);
 		}
-		else if (unit.data.ID.isABuilding())
+		else if (unit.isABuilding())
 		{
 			auto building = client.getBuildingFromID (unit.iID);
 			if (!building) return;
@@ -546,7 +546,7 @@ void cGameGuiController::connectClient (cClient& client)
 		if (unit.isAVehicle())
 		{
 			const auto& vehicle = static_cast<const cVehicle&> (unit);
-			if (vehicle.data.factorAir > 0 && overVehicle)
+			if (vehicle.getStaticUnitData().factorAir > 0 && overVehicle)
 			{
 				if (overVehicle->getPosition() == vehicle.getPosition()) sendWantLoad (client, vehicle.iID, true, overVehicle->iID);
 				else
@@ -638,7 +638,7 @@ void cGameGuiController::connectClient (cClient& client)
 		{
 			const auto& vehicle = static_cast<const cVehicle&> (unit);
 
-			cUnit* target = cAttackJob::selectTarget (position, vehicle.data.canAttack, *client.getModel().getMap(), vehicle.getOwner());
+			cUnit* target = cAttackJob::selectTarget (position, vehicle.getStaticUnitData().canAttack, *client.getModel().getMap(), vehicle.getOwner());
 
 			if (vehicle.isInRange (position))
 			{
@@ -670,7 +670,7 @@ void cGameGuiController::connectClient (cClient& client)
 			const cMap& map = *client.getModel().getMap();
 
 			int targetId = 0;
-			cUnit* target = cAttackJob::selectTarget (position, building.data.canAttack, map, building.getOwner());
+			cUnit* target = cAttackJob::selectTarget (position, building.getStaticUnitData().canAttack, map, building.getOwner());
 
 			if (target) targetId = target->iID;
 
@@ -820,6 +820,22 @@ void cGameGuiController::connectClient (cClient& client)
 	{
 		soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceTurnAlertTimeReached, getRandom (VoiceData.VOITurnEnd20Sec)));
 	});
+
+	clientSignalConnectionManager.connect (getDynamicMap()->addedUnit, [&] (const cUnit & unit)
+	{
+		if (activeClient->getActivePlayer().canSeeAnyAreaUnder(unit)) return;
+
+		if (unit.data.getId() == client.getModel().getUnitsData()->specialIDSeaMine) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectPlaceMine, SoundData.SNDSeaMinePlace, unit));
+		else if (unit.data.getId() == client.getModel().getUnitsData()->specialIDLandMine) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectPlaceMine, SoundData.SNDLandMinePlace, unit));
+	});
+	clientSignalConnectionManager.connect(getDynamicMap()->removedUnit, [&] (const cUnit & unit)
+	{
+		if (activeClient->getActivePlayer().canSeeAnyAreaUnder(unit)) return;
+
+		if (unit.data.getId() == client.getModel().getUnitsData()->specialIDLandMine) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectClearMine, SoundData.SNDLandMineClear, unit));
+		else if (unit.data.getId() == client.getModel().getUnitsData()->specialIDSeaMine) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectClearMine, SoundData.SNDSeaMineClear, unit));
+	});
+
 }
 //------------------------------------------------------------------------------
 void cGameGuiController::connectReportSources(cClient& client)
@@ -892,7 +908,7 @@ void cGameGuiController::showPreferencesDialog()
 //------------------------------------------------------------------------------
 void cGameGuiController::showReportsWindow()
 {
-	auto reportsWindow = application.show (std::make_shared<cWindowReports> (getPlayers(), getActivePlayer(), getCasualtiesTracker(), getTurnClock(), getTurnTimeClock(), getGameSettings(), getSavedReports(getActivePlayer()->getId())));
+	auto reportsWindow = application.show(std::make_shared<cWindowReports>(getPlayers(), getActivePlayer(), getCasualtiesTracker(), getTurnClock(), getTurnTimeClock(), getGameSettings(), getSavedReports(getActivePlayer()->getId()), getUnitsData()));
 
 	signalConnectionManager.connect (reportsWindow->unitClickedSecondTime, [this, reportsWindow] (cUnit & unit)
 	{
@@ -914,7 +930,7 @@ void cGameGuiController::showReportsWindow()
 //------------------------------------------------------------------------------
 void cGameGuiController::showUnitHelpWindow (const cUnit& unit)
 {
-	application.show (std::make_shared<cWindowUnitInfo> (unit.data, *unit.getOwner()));
+	application.show (std::make_shared<cWindowUnitInfo> (unit.data, *unit.getOwner(), *getUnitsData()));
 }
 
 //------------------------------------------------------------------------------
@@ -931,14 +947,14 @@ void cGameGuiController::showUnitTransferDialog (const cUnit& sourceUnit, const 
 //------------------------------------------------------------------------------
 void cGameGuiController::showBuildBuildingsWindow (const cVehicle& vehicle)
 {
-	auto buildWindow = application.show (std::make_shared<cWindowBuildBuildings> (vehicle, getTurnTimeClock()));
+	auto buildWindow = application.show (std::make_shared<cWindowBuildBuildings> (vehicle, getTurnTimeClock(), getUnitsData()));
 
 	buildWindow->canceled.connect ([buildWindow]() { buildWindow->close(); });
 	buildWindow->done.connect ([&, buildWindow]()
 	{
 		if (buildWindow->getSelectedUnitId())
 		{
-			if (buildWindow->getSelectedUnitId()->getUnitDataOriginalVersion()->isBig)
+			if (activeClient->getModel().getUnitsData()->getStaticUnitData(*buildWindow->getSelectedUnitId()).isBig)
 			{
 				gameGui->getGameMap().startFindBuildPosition (*buildWindow->getSelectedUnitId());
 				auto buildType = *buildWindow->getSelectedUnitId();
@@ -984,7 +1000,7 @@ void cGameGuiController::showBuildVehiclesWindow (const cBuilding& building)
 
 	if (!dynamicMap) return;
 
-	auto buildWindow = application.show (std::make_shared<cWindowBuildVehicles> (building, *dynamicMap, getTurnTimeClock()));
+	auto buildWindow = application.show(std::make_shared<cWindowBuildVehicles>(building, *dynamicMap, getUnitsData(), getTurnTimeClock()));
 
 	buildWindow->canceled.connect ([buildWindow]() { buildWindow->close(); });
 	buildWindow->done.connect ([&, buildWindow]()
@@ -1035,7 +1051,7 @@ void cGameGuiController::showUpgradesWindow (const cUnit& unit)
 	if (unit.getOwner() != player.get()) return;
 	if (!player) return;
 
-	auto upgradesWindow = application.show (std::make_shared<cWindowUpgrades> (*player, getTurnTimeClock(), upgradesFilterState));
+	auto upgradesWindow = application.show (std::make_shared<cWindowUpgrades> (*player, getTurnTimeClock(), upgradesFilterState, getUnitsData()));
 
 
 	upgradesWindow->canceled.connect ([upgradesWindow]() { upgradesWindow->close(); });
@@ -1052,7 +1068,7 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 	auto storageWindow = application.show (std::make_shared<cWindowStorage> (unit, getTurnTimeClock()));
 	storageWindow->activate.connect ([&, storageWindow] (size_t index)
 	{
-		if (unit.isAVehicle() && unit.data.factorAir > 0)
+		if (unit.isAVehicle() && unit.getStaticUnitData().factorAir > 0)
 		{
 			activateAtTriggered (unit, index, unit.getPosition());
 		}
@@ -1088,19 +1104,19 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 				const auto& storedUnit = *unit.storedUnits[i];
 
 				bool activated = false;
-				for (int ypos = unit.getPosition().y() - 1, poscount = 0; ypos <= unit.getPosition().y() + (unit.data.isBig ? 2 : 1); ypos++)
+				for (int ypos = unit.getPosition().y() - 1, poscount = 0; ypos <= unit.getPosition().y() + (unit.getIsBig() ? 2 : 1); ypos++)
 				{
 					if (ypos < 0 || ypos >= dynamicMap->getSize().y()) continue;
-					for (int xpos = unit.getPosition().x() - 1; xpos <= unit.getPosition().x() + (unit.data.isBig ? 2 : 1); xpos++, poscount++)
+					for (int xpos = unit.getPosition().x() - 1; xpos <= unit.getPosition().x() + (unit.getIsBig() ? 2 : 1); xpos++, poscount++)
 					{
 						if (hasCheckedPlace[poscount]) continue;
 
 						if (xpos < 0 || xpos >= dynamicMap->getSize().x()) continue;
 
-						if (((ypos == unit.getPosition().y() && unit.data.factorAir == 0) || (ypos == unit.getPosition().y() + 1 && unit.data.isBig)) &&
-							((xpos == unit.getPosition().x() && unit.data.factorAir == 0) || (xpos == unit.getPosition().x() + 1 && unit.data.isBig))) continue;
+						if (((ypos == unit.getPosition().y() && unit.getStaticUnitData().factorAir == 0) || (ypos == unit.getPosition().y() + 1 && unit.getIsBig())) &&
+							((xpos == unit.getPosition().x() && unit.getStaticUnitData().factorAir == 0) || (xpos == unit.getPosition().x() + 1 && unit.getIsBig()))) continue;
 
-						if (unit.canExitTo (cPosition (xpos, ypos), *dynamicMap, storedUnit.data))
+						if (unit.canExitTo (cPosition (xpos, ypos), *dynamicMap, storedUnit.getStaticUnitData()))
 						{
 							activateAtTriggered (unit, i, cPosition (xpos, ypos));
 							hasCheckedPlace[poscount] = true;
@@ -1145,7 +1161,7 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 				auto value = storedUnit.data.getHitpoints();
 				while (value < storedUnit.data.getHitpointsMax() && remainingResources > 0)
 				{
-					value += Round (((float)storedUnit.data.getHitpointsMax() / storedUnit.data.buildCosts) * 4);
+					value += Round (((float)storedUnit.data.getHitpointsMax() / storedUnit.data.getBuildCost()) * 4);
 					remainingResources--;
 				}
 			}
@@ -1160,7 +1176,7 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 //------------------------------------------------------------------------------
 void cGameGuiController::showSelfDestroyDialog (const cUnit& unit)
 {
-	if (unit.data.canSelfDestroy)
+	if (unit.getStaticUnitData().canSelfDestroy)
 	{
 		auto selfDestroyDialog = application.show (std::make_shared<cDialogSelfDestruction> (unit, animationTimer));
 		signalConnectionManager.connect (selfDestroyDialog->triggeredDestruction, [this, selfDestroyDialog, &unit]()
@@ -1555,17 +1571,17 @@ void cGameGuiController::handleReportForActivePlayer (const cSavedReport& report
 		savedReportPosition.first = true;
 		savedReportPosition.second = report.getPosition();
 
-		gameGui->getGameMessageList().addMessage (report.getMessage() + " (" + KeysList.keyJumpToAction.toString() + ")", eGameMessageListViewItemBackgroundColor::LightGray);
+		gameGui->getGameMessageList().addMessage (report.getMessage(*getUnitsData()) + " (" + KeysList.keyJumpToAction.toString() + ")", eGameMessageListViewItemBackgroundColor::LightGray);
 	}
 	else
 	{
-		gameGui->getGameMessageList().addMessage (report.getMessage(), report.isAlert() ? eGameMessageListViewItemBackgroundColor::Red : eGameMessageListViewItemBackgroundColor::DarkGray);
+		gameGui->getGameMessageList().addMessage(report.getMessage(*getUnitsData()), report.isAlert() ? eGameMessageListViewItemBackgroundColor::Red : eGameMessageListViewItemBackgroundColor::DarkGray);
 		if (report.isAlert()) soundManager->playSound (std::make_shared<cSoundEffect> (eSoundEffectType::EffectAlert, SoundData.SNDQuitsch));
 	}
 
 	report.playSound (*soundManager);
 
-	if (cSettings::getInstance().isDebug()) Log.write (report.getMessage(), cLog::eLOG_TYPE_DEBUG);
+	if (cSettings::getInstance().isDebug()) Log.write (report.getMessage(*getUnitsData()), cLog::eLOG_TYPE_DEBUG);
 }
 
 //------------------------------------------------------------------------------
@@ -1695,4 +1711,9 @@ std::shared_ptr<const cCasualtiesTracker> cGameGuiController::getCasualtiesTrack
 std::shared_ptr<const cMap> cGameGuiController::getDynamicMap() const
 {
 	return activeClient ? activeClient->getModel().getMap() : nullptr;
+}
+//------------------------------------------------------------------------------
+std::shared_ptr<const cUnitsData> cGameGuiController::getUnitsData() const
+{
+	return activeClient ? activeClient->getModel().getUnitsData() : nullptr;
 }

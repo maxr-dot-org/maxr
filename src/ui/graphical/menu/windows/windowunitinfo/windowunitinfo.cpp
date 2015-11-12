@@ -27,7 +27,7 @@
 #include "game/data/units/building.h"
 
 //------------------------------------------------------------------------------
-cWindowUnitInfo::cWindowUnitInfo (const sUnitData& unitData, const cPlayer& owner) :
+cWindowUnitInfo::cWindowUnitInfo (const cDynamicUnitData& currentUnitData, const cPlayer& owner, const cUnitsData& unitsData) :
 	cWindow (LoadPCX (GFXOD_HELP), eWindowBackgrounds::Black)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Unitinfo"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
@@ -43,20 +43,20 @@ cWindowUnitInfo::cWindowUnitInfo (const sUnitData& unitData, const cPlayer& owne
 	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (okButton->clicked, [&]() { close(); });
 
-	if (unitData.ID.isAVehicle())
+	if (currentUnitData.getId().isAVehicle())
 	{
-		const auto& uiData = *UnitsData.getVehicleUI (unitData.ID);
+		const auto& uiData = *UnitsUiData.getVehicleUI(currentUnitData.getId());
 
 		infoImage->setImage (uiData.info.get());
 	}
-	else if (unitData.ID.isABuilding())
+	else if (currentUnitData.getId().isABuilding())
 	{
-		const auto& uiData = *UnitsData.getBuildingUI (unitData.ID);
+		const auto& uiData = *UnitsUiData.getBuildingUI(currentUnitData.getId());
 
 		infoImage->setImage (uiData.info.get());
 	}
 
-	infoLabel->setText (unitData.ID.getUnitDataOriginalVersion()->description);
+	infoLabel->setText (unitsData.getStaticUnitData(currentUnitData.getId()).getDescripton());
 
-	unitDetails->setUnit (unitData.ID, owner, &unitData);
+	unitDetails->setUnit(currentUnitData.getId(), owner, unitsData, &currentUnitData);
 }

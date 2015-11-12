@@ -77,6 +77,7 @@ public:
 	const cPlayer& getActivePlayer() const { return *activePlayer; }
 	void setActivePlayer(cPlayer* player) { activePlayer = player; }
 
+	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData);
 	void setGameSettings(const cGameSettings& gameSettings);
 	void setMap(std::shared_ptr<cStaticMap> staticMap);
 	void setPlayers(const std::vector<cPlayerBasicData>& splayers, size_t activePlayerIndex);
@@ -290,7 +291,6 @@ private:
 	void HandleNetMessage_GAME_EV_COMMANDO_ANSWER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_REQ_SAVE_INFO (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SAVED_REPORT (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_CASUALTIES_REPORT (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SCORE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_NUM_ECOS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UNIT_SCORE (cNetMessage& message);
@@ -298,7 +298,6 @@ private:
 	void HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message);
-
 private:
 	cModel model;
 

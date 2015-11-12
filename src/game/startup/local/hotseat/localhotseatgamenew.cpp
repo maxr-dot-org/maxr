@@ -55,9 +55,9 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 //		clients[i]->setMap (staticMap);
 		clients[i]->setGameSettings (*gameSettings);
 
-		players.push_back (playersData[i].basicData);
+	/*	players.push_back (playersData[i].basicData);
 
-		auto serverPlayer = std::make_unique<cPlayer> (playersData[i].basicData);
+		auto serverPlayer = std::make_unique<cPlayer>(playersData[i].basicData);
 		auto& playerRef = *serverPlayer;
 
 		serverPlayer->setLocal();
@@ -66,7 +66,7 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 		if (i == 0)
 		{
 			server->setActiveTurnPlayer (playerRef);
-		}
+		}*/
 	}
 
 	server->start();

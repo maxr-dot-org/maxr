@@ -25,7 +25,7 @@
 class cUnitListViewItemBuy : public cUnitListViewItem
 {
 public:
-	cUnitListViewItemBuy (unsigned int width, const sID& unitId, const cPlayer& owner);
+	cUnitListViewItemBuy (unsigned int width, const sID& unitId, const cPlayer& owner,const cUnitsData& unitsData);
 
 	void markAsInsufficient();
 	void unmarkAsInsufficient();

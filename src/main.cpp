@@ -313,9 +313,6 @@ void Quit()
 {
 	delete font;
 
-	UnitsData.svehicles.clear();
-	UnitsData.sbuildings.clear();
-
 	//unload files here
 	cSoundDevice::getInstance().close();
 	SDLNet_Quit();
@@ -376,315 +373,54 @@ int Round (float dValueToRound)
 	return (int) Round (dValueToRound, 0);
 }
 
+//------------------------------------------------------------------------------
+cUnitsUiData::cUnitsUiData() :
+	ptr_small_beton(0),
+	ptr_small_beton_org(0),
+	ptr_connector(0),
+	ptr_connector_org(0),
+	ptr_connector_shw(0),
+	ptr_connector_shw_org(0)
+{}
 
 //------------------------------------------------------------------------------
-// ----------- sID Implementation ----------------------------------------------
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-string sID::getText() const
-{
-	char tmp[6];
-	TIXML_SNPRINTF (tmp, sizeof (tmp), "%.2d %.2d", iFirstPart, iSecondPart);
-	return tmp;
-}
-
-//------------------------------------------------------------------------------
-void sID::generate (const string& text)
-{
-	const string::size_type spacePos = text.find (" ", 0);
-	iFirstPart = atoi (text.substr (0, spacePos).c_str());
-	iSecondPart = atoi (text.substr (spacePos, text.length()).c_str());
-}
-
-//------------------------------------------------------------------------------
-const sUnitData* sID::getUnitDataOriginalVersion (const cPlayer* Owner) const
-{
-	if (isAVehicle())
-	{
-		int index = UnitsData.getVehicleIndexBy (*this);
-		const int clan = Owner ? Owner->getClan() : -1;
-		return &UnitsData.getVehicle (index, clan);
-	}
-	else
-	{
-		int index = UnitsData.getBuildingIndexBy (*this);
-		const int clan = Owner ? Owner->getClan() : -1;
-		return &UnitsData.getBuilding (index, clan);
-	}
-}
-
-//------------------------------------------------------------------------------
-bool sID::less_buildingFirst (const sID& ID) const
-{
-	return iFirstPart == ID.iFirstPart ? iSecondPart < ID.iSecondPart : iFirstPart > ID.iFirstPart;
-}
-
-//------------------------------------------------------------------------------
-bool sID::less_vehicleFirst (const sID& ID) const
-{
-	return iFirstPart == ID.iFirstPart ? iSecondPart < ID.iSecondPart : iFirstPart < ID.iFirstPart;
-}
-
-//------------------------------------------------------------------------------
-bool sID::operator == (const sID& ID) const
-{
-	if (iFirstPart == ID.iFirstPart && iSecondPart == ID.iSecondPart) return true;
-	return false;
-}
-
-//------------------------------------------------------------------------------
-cUnitsData::cUnitsData() :
-	ptr_small_beton (0),
-	ptr_small_beton_org (0),
-	ptr_connector (0),
-	ptr_connector_org (0),
-	ptr_connector_shw (0),
-	ptr_connector_shw_org (0),
-	initializedClanUnitData (false)
-{
-}
-
-//------------------------------------------------------------------------------
-const sUnitData& cUnitsData::getVehicle (int nr, int clan)
-{
-	return getUnitData_Vehicles (clan) [nr];
-}
-
-//------------------------------------------------------------------------------
-const sUnitData& cUnitsData::getBuilding (int nr, int clan)
-{
-	return getUnitData_Buildings (clan) [nr];
-}
-
-//------------------------------------------------------------------------------
-const sUnitData& cUnitsData::getUnit (const sID& id, int clan)
-{
-	if (id.isAVehicle())
-	{
-		return getVehicle (getVehicleIndexBy (id), clan);
-	}
-	else
-	{
-		assert (id.isABuilding());
-		return getBuilding (getBuildingIndexBy (id), clan);
-	}
-}
-
-const std::vector<sUnitData>& cUnitsData::getUnitData_Vehicles (int clan)
-{
-	if (!initializedClanUnitData)
-		initializeClanUnitData();
-
-	if (clan < 0 || clan > (int) clanUnitDataVehicles.size())
-	{
-		return svehicles;
-	}
-	return clanUnitDataVehicles[clan];
-}
-
-const std::vector<sUnitData>& cUnitsData::getUnitData_Buildings (int clan)
-{
-	if (!initializedClanUnitData)
-		initializeClanUnitData();
-
-	if (clan < 0 || clan > (int) clanUnitDataBuildings.size())
-	{
-		return sbuildings;
-	}
-	return clanUnitDataBuildings[clan];
-}
-
-int cUnitsData::getBuildingIndexBy (sID id) const
-{
-	if (id.isABuilding() == false) return -1;
-	for (unsigned int i = 0; i != UnitsData.getNrBuildings(); ++i)
-	{
-		if (sbuildings[i].ID == id) return i;
-	}
-	return -1;
-}
-
-int cUnitsData::getVehicleIndexBy (sID id) const
-{
-	if (id.isAVehicle() == false) return -1;
-	for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
-	{
-		if (svehicles[i].ID == id) return i;
-	}
-	return -1;
-}
-
-const sBuildingUIData* cUnitsData::getBuildingUI (sID id) const
-{
-	const int index = getBuildingIndexBy (id);
-	if (index == -1) return 0;
-	return &buildingUIs[index];
-}
-
-const sVehicleUIData* cUnitsData::getVehicleUI (sID id) const
-{
-	const int index = getVehicleIndexBy (id);
-	if (index == -1) return 0;
-	return &vehicleUIs[index];
-}
-
-unsigned int cUnitsData::getNrVehicles() const
-{
-	return (int) svehicles.size();
-}
-
-unsigned int cUnitsData::getNrBuildings() const
-{
-	return (int) sbuildings.size();
-}
-
-static int getConstructorIndex()
-{
-	for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
-	{
-		const sUnitData& vehicle = UnitsData.svehicles[i];
-
-		if (vehicle.canBuild.compare ("BigBuilding") == 0)
-		{
-			return i;
-		}
-	}
-	return -1;
-}
-
-static int getEngineerIndex()
-{
-	for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
-	{
-		const sUnitData& vehicle = UnitsData.svehicles[i];
-
-		if (vehicle.canBuild.compare ("SmallBuilding") == 0)
-		{
-			return i;
-		}
-	}
-	return -1;
-}
-
-static int getSurveyorIndex()
-{
-	for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
-	{
-		const sUnitData& vehicle = UnitsData.svehicles[i];
-
-		if (vehicle.canSurvey)
-		{
-			return i;
-		}
-	}
-	return -1;
-}
-
-void cUnitsData::initializeIDData()
-{
-	int constructorIndex = getConstructorIndex();
-	int engineerIndex = getEngineerIndex();
-	int surveyorIndex = getSurveyorIndex();
-
-	assert (constructorIndex != -1);
-	assert (engineerIndex != -1);
-	assert (surveyorIndex != -1);
-
-	constructorID = svehicles[constructorIndex].ID;
-	engineerID = svehicles[engineerIndex].ID;
-	surveyorID = svehicles[surveyorIndex].ID;
-}
-
-//------------------------------------------------------------------------------
-void cUnitsData::initializeClanUnitData()
-{
-	if (initializedClanUnitData == true) return;
-
-	cClanData& clanData = cClanData::instance();
-	clanUnitDataVehicles.resize (clanData.getNrClans());
-	clanUnitDataBuildings.resize (clanData.getNrClans());
-	for (int i = 0; i != clanData.getNrClans(); ++i)
-	{
-		const cClan* clan = clanData.getClan (i);
-		if (clan == 0)
-			continue;
-
-		vector<sUnitData>& clanListVehicles = clanUnitDataVehicles[i];
-
-		// make a copy of the vehicle's stats
-		clanListVehicles = svehicles;
-		for (size_t j = 0; j != svehicles.size(); ++j)
-		{
-			const sUnitData& curVehicle = svehicles[j];
-			const cClanUnitStat* changedStat = clan->getUnitStat (curVehicle.ID);
-
-			if (changedStat == nullptr) continue;
-
-			sUnitData& clanVehicle = clanListVehicles[j];
-			if (changedStat->hasModification ("Damage"))
-				clanVehicle.setDamage (changedStat->getModificationValue ("Damage"));
-			if (changedStat->hasModification ("Range"))
-				clanVehicle.setRange (changedStat->getModificationValue ("Range"));
-			if (changedStat->hasModification ("Armor"))
-				clanVehicle.setArmor (changedStat->getModificationValue ("Armor"));
-			if (changedStat->hasModification ("Hitpoints"))
-				clanVehicle.setHitpointsMax (changedStat->getModificationValue ("Hitpoints"));
-			if (changedStat->hasModification ("Scan"))
-				clanVehicle.setScan (changedStat->getModificationValue ("Scan"));
-			if (changedStat->hasModification ("Speed"))
-				clanVehicle.setSpeedMax (changedStat->getModificationValue ("Speed") * 4);
-			if (changedStat->hasModification ("Built_Costs"))
-				clanVehicle.buildCosts = changedStat->getModificationValue ("Built_Costs");
-		}
-
-		vector<sUnitData>& clanListBuildings = clanUnitDataBuildings[i];
-		// make a copy of the building's stats
-		clanListBuildings = sbuildings;
-		for (size_t j = 0; j != sbuildings.size(); ++j)
-		{
-			const sUnitData& curBuilding = sbuildings[j];
-			const cClanUnitStat* changedStat = clan->getUnitStat (curBuilding.ID);
-			if (changedStat == nullptr) continue;
-			sUnitData& clanBuilding = clanListBuildings[j];
-			if (changedStat->hasModification ("Damage"))
-				clanBuilding.setDamage (changedStat->getModificationValue ("Damage"));
-			if (changedStat->hasModification ("Range"))
-				clanBuilding.setRange (changedStat->getModificationValue ("Range"));
-			if (changedStat->hasModification ("Armor"))
-				clanBuilding.setArmor (changedStat->getModificationValue ("Armor"));
-			if (changedStat->hasModification ("Hitpoints"))
-				clanBuilding.setHitpointsMax (changedStat->getModificationValue ("Hitpoints"));
-			if (changedStat->hasModification ("Scan"))
-				clanBuilding.setScan (changedStat->getModificationValue ("Scan"));
-			if (changedStat->hasModification ("Speed"))
-				clanBuilding.setSpeedMax (changedStat->getModificationValue ("Speed") * 4);
-			if (changedStat->hasModification ("Built_Costs"))
-				clanBuilding.buildCosts = changedStat->getModificationValue ("Built_Costs");
-		}
-	}
-
-	initializedClanUnitData = true;
-}
-
-//------------------------------------------------------------------------------
-void cUnitsData::scaleSurfaces (float zoom)
+void cUnitsUiData::scaleSurfaces(float zoomFactor)
 {
 	// Vehicles:
-	for (unsigned int i = 0; i < getNrVehicles(); ++i)
+	for (unsigned int i = 0; i < vehicleUIs.size(); ++i)
 	{
-		vehicleUIs[i].scaleSurfaces (zoom);
+		vehicleUIs[i].scaleSurfaces(zoomFactor);
 	}
 	// Buildings:
-	for (unsigned int i = 0; i < getNrBuildings(); ++i)
+	for (unsigned int i = 0; i < buildingUIs.size(); ++i)
 	{
-		buildingUIs[i].scaleSurfaces (zoom);
+		buildingUIs[i].scaleSurfaces(zoomFactor);
 	}
 
-	if (dirt_small_org != nullptr && dirt_small != nullptr) scaleSurface (dirt_small_org.get(), dirt_small.get(), (int) (dirt_small_org->w * zoom), (int) (dirt_small_org->h * zoom));
-	if (dirt_small_shw_org != nullptr && dirt_small_shw != nullptr) scaleSurface (dirt_small_shw_org.get(), dirt_small_shw.get(), (int) (dirt_small_shw_org->w * zoom), (int) (dirt_small_shw_org->h * zoom));
-	if (dirt_big_org != nullptr && dirt_big != nullptr) scaleSurface (dirt_big_org.get(), dirt_big.get(), (int) (dirt_big_org->w * zoom), (int) (dirt_big_org->h * zoom));
-	if (dirt_big_shw_org != nullptr && dirt_big_shw != nullptr) scaleSurface (dirt_big_shw_org.get(), dirt_big_shw.get(), (int) (dirt_big_shw_org->w * zoom), (int) (dirt_big_shw_org->h * zoom));
+	if (dirt_small_org != nullptr && dirt_small != nullptr) scaleSurface(dirt_small_org.get(), dirt_small.get(), (int)(dirt_small_org->w * zoomFactor), (int)(dirt_small_org->h * zoomFactor));
+	if (dirt_small_shw_org != nullptr && dirt_small_shw != nullptr) scaleSurface(dirt_small_shw_org.get(), dirt_small_shw.get(), (int)(dirt_small_shw_org->w * zoomFactor), (int)(dirt_small_shw_org->h * zoomFactor));
+	if (dirt_big_org != nullptr && dirt_big != nullptr) scaleSurface(dirt_big_org.get(), dirt_big.get(), (int)(dirt_big_org->w * zoomFactor), (int)(dirt_big_org->h * zoomFactor));
+	if (dirt_big_shw_org != nullptr && dirt_big_shw != nullptr) scaleSurface(dirt_big_shw_org.get(), dirt_big_shw.get(), (int)(dirt_big_shw_org->w * zoomFactor), (int)(dirt_big_shw_org->h * zoomFactor));
+}
+
+//------------------------------------------------------------------------------
+const sBuildingUIData* cUnitsUiData::getBuildingUI(sID id) const
+{
+	for (unsigned int i = 0; i < buildingUIs.size(); ++i)
+	{
+		if (buildingUIs[i].id == id)
+			return &buildingUIs[i];
+	}
+}
+
+//------------------------------------------------------------------------------
+const sVehicleUIData* cUnitsUiData::getVehicleUI(sID id) const
+{
+	for (unsigned int i = 0; i < vehicleUIs.size(); ++i)
+	{
+		if (vehicleUIs[i].id == id)
+			return &vehicleUIs[i];
+	}
 }
 
 //------------------------------------------------------------------------------

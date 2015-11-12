@@ -225,6 +225,11 @@ void cServer2::run()
 	}
 }
 
+void cServer2::setUnitsData(std::shared_ptr<const cUnitsData> unitsData)
+{
+	model.setUnitsData(std::make_shared<cUnitsData>(*unitsData));
+}
+
 void cServer2::initRandomGenerator()
 {
 	uint64_t t = random(UINT64_MAX);

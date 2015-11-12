@@ -28,7 +28,8 @@
 //------------------------------------------------------------------------------
 cModel::cModel() :
 	nextUnitId(0),
-	gameSettings(std::make_shared<cGameSettings>())
+	gameSettings(std::make_shared<cGameSettings>()),
+	unitsData(std::make_shared<cUnitsData>())
 {
 	/*signalConnectionManager.connect(model.getGameSettings()->turnEndDeadlineChanged, [this]()
 	{
@@ -147,7 +148,7 @@ void cModel::setPlayerList(const std::vector<cPlayerBasicData>& splayers)
 
 	for (auto playerInfo : splayers)
 	{
-		auto player = std::make_shared<cPlayer>(playerInfo);
+		auto player = std::make_shared<cPlayer>(playerInfo, *unitsData);
 		if (map) player->initMaps(*map);
 		playerList.push_back(player);
 
@@ -157,14 +158,14 @@ void cModel::setPlayerList(const std::vector<cPlayerBasicData>& splayers)
 cVehicle& cModel::addVehicle(const cPosition& position, const sID& id, cPlayer* player, bool init, bool addToMap)
 {
 	// generate the vehicle:
-	cVehicle& addedVehicle = player->addNewVehicle(position, id, nextUnitId);
+	cVehicle& addedVehicle = player->addNewVehicle(position, unitsData->getStaticUnitData(id), nextUnitId);
 	nextUnitId++;
 
 	// place the vehicle:
 	if (addToMap) map->addVehicle(addedVehicle, position);
 
 	// scan with surveyor:
-	if (addedVehicle.data.canSurvey)
+	if (addedVehicle.getStaticUnitData().canSurvey)
 	{
 		addedVehicle.doSurvey(*map);
 	}
@@ -185,10 +186,10 @@ cVehicle& cModel::addVehicle(const cPosition& position, const sID& id, cPlayer* 
 cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer* player, bool init)
 {
 	// generate the building:
-	cBuilding& addedBuilding = player->addNewBuilding(position, id, nextUnitId);
+	cBuilding& addedBuilding = player->addNewBuilding(position, unitsData->getStaticUnitData(id), nextUnitId);
 	nextUnitId++;
 
-	if (addedBuilding.data.canMineMaxRes > 0) addedBuilding.checkRessourceProd(*map);
+	if (addedBuilding.getStaticUnitData().canMineMaxRes > 0) addedBuilding.checkRessourceProd(*map);
 	
 	cBuilding* buildingToBeDeleted = map->getField(position).getTopBuilding();
 
@@ -198,16 +199,16 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 	player->base.addBuilding(&addedBuilding);
 
 	// if this is a top building, delete connectors, mines and roads
-	if (addedBuilding.data.surfacePosition == sUnitData::SURFACE_POS_GROUND)
+	if (addedBuilding.getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_GROUND)
 	{
-		if (addedBuilding.data.isBig)
+		if (addedBuilding.getIsBig())
 		{
 			auto bigPosition = position;
 			auto buildings = &map->getField(bigPosition).getBuildings();
 
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if ((*buildings)[i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if ((*buildings)[i]->getStaticUnitData().canBeOverbuild == cStaticUnitData::OVERBUILD_TYPE_YESNREMOVE)
 				{
 					deleteUnit((*buildings)[i]);
 					--i;
@@ -217,7 +218,7 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 			buildings = &map->getField(bigPosition).getBuildings();
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if ((*buildings)[i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if ((*buildings)[i]->getStaticUnitData().canBeOverbuild == cStaticUnitData::OVERBUILD_TYPE_YESNREMOVE)
 				{
 					deleteUnit((*buildings)[i]);
 					--i;
@@ -227,7 +228,7 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 			buildings = &map->getField(bigPosition).getBuildings();
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if ((*buildings)[i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if ((*buildings)[i]->getStaticUnitData().canBeOverbuild == cStaticUnitData::OVERBUILD_TYPE_YESNREMOVE)
 				{
 					deleteUnit((*buildings)[i]);
 					--i;
@@ -237,7 +238,7 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 			buildings = &map->getField(bigPosition).getBuildings();
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if ((*buildings)[i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if ((*buildings)[i]->getStaticUnitData().canBeOverbuild == cStaticUnitData::OVERBUILD_TYPE_YESNREMOVE)
 				{
 					deleteUnit((*buildings)[i]);
 					--i;
@@ -251,7 +252,7 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 			const auto& buildings = map->getField(position).getBuildings();
 			for (size_t i = 0; i != buildings.size(); ++i)
 			{
-				if (buildings[i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if (buildings[i]->getStaticUnitData().canBeOverbuild == cStaticUnitData::OVERBUILD_TYPE_YESNREMOVE)
 				{
 					deleteUnit(buildings[i]);
 					--i;
@@ -260,7 +261,7 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 		}
 	}
 
-	if (addedBuilding.data.canMineMaxRes > 0)
+	if (addedBuilding.getStaticUnitData().canMineMaxRes > 0)
 	{
 		//TODO: start work
 	}
@@ -391,4 +392,10 @@ void cModel::refreshMapPointer()
 			map->addBuilding(*building, building->getPosition());
 		}
 	}
+}
+
+//------------------------------------------------------------------------------
+void cModel::setUnitsData(std::shared_ptr<cUnitsData> unitsData_)
+{
+	unitsData = unitsData_;
 }

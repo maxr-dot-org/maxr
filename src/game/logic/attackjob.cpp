@@ -56,7 +56,7 @@ cUnit* cAttackJob::selectTarget (const cPosition& position, char attackMode, con
 	if (!targetVehicle && (attackMode & TERRAIN_GROUND))
 	{
 		targetVehicle = mapField.getVehicle();
-		if (targetVehicle && (targetVehicle->data.isStealthOn & TERRAIN_SEA) && map.isWater (position) && ! (attackMode & AREA_SUB)) targetVehicle = nullptr;
+		if (targetVehicle && (targetVehicle->getStaticUnitData().isStealthOn & TERRAIN_SEA) && map.isWater (position) && ! (attackMode & AREA_SUB)) targetVehicle = nullptr;
 	}
 
 	// buildings
@@ -89,8 +89,8 @@ cAttackJob::cAttackJob (cServer* server_, cUnit* aggressor_, const cPosition& ta
 	aggressorID (aggressor_->iID),
 	aggressorPlayerNr (aggressor_->getOwner()->getId()),
 	aggressorPosition (aggressor_->getPosition()),
-	attackMode (aggressor_->data.canAttack),
-	muzzleType (aggressor_->data.muzzleType),
+	attackMode(aggressor_->getStaticUnitData().canAttack),
+	muzzleType(aggressor_->getStaticUnitData().muzzleType),
 	attackPoints (aggressor_->data.getDamage()),
 	targetPosition (targetPosition_),
 	server (server_),
@@ -302,7 +302,7 @@ void cAttackJob::lockTarget()
 	const cMap&    map = client ? *client->getModel().getMap() : *server->Map;
 
 	int range = 0;
-	if (muzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER)
+	if (muzzleType == cStaticUnitData::MUZZLE_TYPE_ROCKET_CLUSTER)
 		range = 2;
 
 	for (int x = -range; x <= range; x++)
@@ -332,7 +332,7 @@ void cAttackJob::fire()
 	{
 		aggressor->data.setShots (aggressor->data.getShots() - 1);
 		aggressor->data.setAmmo (aggressor->data.getAmmo() - 1);
-		if (aggressor->isAVehicle() && aggressor->data.canDriveAndFire == false)
+		if (aggressor->isAVehicle() && aggressor->getStaticUnitData().canDriveAndFire == false)
 			aggressor->data.setSpeed (aggressor->data.getSpeed() - (int) (((float) aggressor->data.getSpeedMax()) / aggressor->data.getShotsMax()));
 	}
 
@@ -349,7 +349,7 @@ void cAttackJob::fire()
 	}
 
 	//make explosive mines explode
-	if (aggressor && aggressor->data.explodesOnContact && aggressorPosition == targetPosition)
+	if (aggressor && aggressor->getStaticUnitData().explodesOnContact && aggressorPosition == targetPosition)
 	{
 /*		if (client)
 		{
@@ -382,12 +382,12 @@ std::unique_ptr<cFx> cAttackJob::createMuzzleFx (cUnit* aggressor)
 
 	sID id;
 	if (aggressor)
-		id = aggressor->data.ID;
+		id = aggressor->data.getId();
 
 	cPosition offset (0, 0);
 	switch (muzzleType)
 	{
-		case sUnitData::MUZZLE_TYPE_BIG:
+		case cStaticUnitData::MUZZLE_TYPE_BIG:
 			switch (fireDir)
 			{
 				case 0:
@@ -421,15 +421,15 @@ std::unique_ptr<cFx> cAttackJob::createMuzzleFx (cUnit* aggressor)
 			}
 			return std::make_unique<cFxMuzzleBig> (aggressorPosition * 64 + offset, fireDir, id);
 
-		case sUnitData::MUZZLE_TYPE_SMALL:
+		case cStaticUnitData::MUZZLE_TYPE_SMALL:
 			return std::make_unique<cFxMuzzleSmall> (aggressorPosition * 64, fireDir, id);
 
-		case sUnitData::MUZZLE_TYPE_ROCKET:
-		case sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER:
+		case cStaticUnitData::MUZZLE_TYPE_ROCKET:
+		case cStaticUnitData::MUZZLE_TYPE_ROCKET_CLUSTER:
 			return std::make_unique<cFxRocket> (aggressorPosition * 64 + cPosition (32, 32), targetPosition * 64 + cPosition (32, 32), fireDir, false, id);
 
-		case sUnitData::MUZZLE_TYPE_MED:
-		case sUnitData::MUZZLE_TYPE_MED_LONG:
+		case cStaticUnitData::MUZZLE_TYPE_MED:
+		case cStaticUnitData::MUZZLE_TYPE_MED_LONG:
 			switch (fireDir)
 			{
 				case 0:
@@ -461,14 +461,14 @@ std::unique_ptr<cFx> cAttackJob::createMuzzleFx (cUnit* aggressor)
 					offset.y() = -12;
 					break;
 			}
-			if (muzzleType == sUnitData::MUZZLE_TYPE_MED)
+			if (muzzleType == cStaticUnitData::MUZZLE_TYPE_MED)
 				return std::make_unique<cFxMuzzleMed> (aggressorPosition * 64 + offset, fireDir, id);
 			else
 				return std::make_unique<cFxMuzzleMedLong> (aggressorPosition * 64 + offset, fireDir, id);
 
-		case sUnitData::MUZZLE_TYPE_TORPEDO:
+		case cStaticUnitData::MUZZLE_TYPE_TORPEDO:
 			return std::make_unique<cFxRocket> (aggressorPosition * 64 + cPosition (32, 32), targetPosition * 64 + cPosition (32, 32), fireDir, true, id);
-		case sUnitData::MUZZLE_TYPE_SNIPER:
+		case cStaticUnitData::MUZZLE_TYPE_SNIPER:
 		//TODO: sniper has no animation?!?
 		default:
 			return nullptr;
@@ -478,7 +478,7 @@ std::unique_ptr<cFx> cAttackJob::createMuzzleFx (cUnit* aggressor)
 bool cAttackJob::impact()
 {
 	bool destroyed = false;
-	if (muzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER)
+	if (muzzleType == cStaticUnitData::MUZZLE_TYPE_ROCKET_CLUSTER)
 		destroyed = impactCluster();
 	else
 		destroyed = impactSingle (targetPosition);
@@ -553,7 +553,7 @@ bool cAttackJob::impactSingle (const cPosition& position, std::vector<cUnit*>* a
 	sID unitID;
 
 	// if taget is a stealth unit, make it visible on all clients
-	if (server && target && target->data.isStealthOn != TERRAIN_NONE)
+	if (server && target && target->getStaticUnitData().isStealthOn != TERRAIN_NONE)
 	{
 		for (const auto& player : server->playerList)
 		{
@@ -572,7 +572,7 @@ bool cAttackJob::impactSingle (const cPosition& position, std::vector<cUnit*>* a
 		target->setIsBeeinAttacked (false);
 
 		name = target->getDisplayName();
-		unitID = target->data.ID;
+		unitID = target->data.getId();
 
 		if (target->data.getHitpoints() <= 0)
 		{
@@ -595,7 +595,7 @@ bool cAttackJob::impactSingle (const cPosition& position, std::vector<cUnit*>* a
 		bool targetHit = target != nullptr;
 		bool bigTarget = false;
 		if (target)
-			bigTarget = target->data.isBig;
+			bigTarget = target->getIsBig();
 		client->addFx (std::make_unique<cFxHit> (position * 64 + offset + cPosition (32, 32), targetHit, bigTarget), playSound);
 	}
 
