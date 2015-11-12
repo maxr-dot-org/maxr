@@ -129,3 +129,8 @@ const std::string& cUnitRenameWidget::getUnitName() const
 {
 	return selectedUnitNameEdit->getText();
 }
+
+bool cUnitRenameWidget::isAt (const cPosition& position) const
+{
+	return selectedUnitNameEdit->isAt (position);
+}
