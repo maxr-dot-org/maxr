@@ -298,8 +298,11 @@ std::string cSettings::searchDataDir (const std::string& sDataDirFromConf)
 	// assuming data is in same folder as binary (or current working directory)
 	sPathToGameData = exePath;
 #elif WIN32
-	// assuming data is in current working directory
-	//sPathToGameData = "";
+	if(!sDataDirFromConf.empty())
+	{
+		sPathToGameData = sDataDirFromConf;
+		sPathToGameData += PATH_DELIMITER;
+	}
 #elif __amigaos4__
 	// assuming data is in same folder as binary (or current working directory)
 	sPathToGameData = exePath;
