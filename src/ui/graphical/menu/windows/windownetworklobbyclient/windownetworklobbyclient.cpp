@@ -20,6 +20,7 @@
 #include "ui/graphical/menu/windows/windownetworklobbyclient/windownetworklobbyclient.h"
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
+#include "ui/graphical/menu/widgets/lineedit.h"
 #include "main.h"
 #include "network.h"
 #include "utility/log.h"
@@ -33,6 +34,11 @@ cWindowNetworkLobbyClient::cWindowNetworkLobbyClient() :
 {
 	auto connectButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 200), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Connect")));
 	signalConnectionManager.connect (connectButton->clicked, std::bind (&cWindowNetworkLobbyClient::handleConnectClicked, this));
+
+	signalConnectionManager.connect (ipLineEdit->returnPressed, [this]()
+	{
+		triggeredConnect ();
+	});
 }
 
 //------------------------------------------------------------------------------
