@@ -1562,7 +1562,6 @@ void cGameGuiController::markSelectedUnitAsDone()
 
 	if (unit && unit->getOwner() == player.get())
 	{
-		gameGui->getGameMap().centerAt (unit->getPosition());
 		unit->setMarkedAsDone (true);
 		resumeMoveJobTriggered (*unit);
 	}
