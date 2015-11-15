@@ -275,7 +275,7 @@ bool cGameTimerServer::nextTickAllowed (cServer& server)
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
 		cPlayer& player = *playerList[i];
-		if (!server.isPlayerDisconnected (player) && getReceivedTime (i) + PAUSE_GAME_TIMEOUT < gameTime)
+		if (!server.isPlayerDisconnected (player) && getReceivedTime (player.getNr()) + PAUSE_GAME_TIMEOUT < gameTime)
 			newWaitingForPlayer = player.getNr();
 	}
 
