@@ -890,8 +890,15 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 			if (element->QueryIntAttribute ("ThisTurn", &wasDetectedThisTurnAttrib) != XML_NO_ERROR)
 				wasDetectedThisTurnAttrib = 1;
 			bool wasDetectedThisTurn = (wasDetectedThisTurnAttrib != 0);
-			cPlayer& Player = server.getPlayerFromNumber (playerNum);
-			vehicle.setDetectedByPlayer (server, &Player, wasDetectedThisTurn);
+			try
+			{
+				cPlayer& Player = server.getPlayerFromNumber(playerNum);
+				vehicle.setDetectedByPlayer(server, &Player, wasDetectedThisTurn);
+			}
+			catch (std::runtime_error &e)
+			{
+				Log.write(std::string("Could not set detectedByPlayer info. Reason: ") + e.what(), cLog::eLOG_TYPE_ERROR);
+			}
 			playerNodeNum++;
 		}
 	}
