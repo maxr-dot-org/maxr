@@ -2903,10 +2903,9 @@ void cServer::handleWantEnd()
 	// and we can start the new turn simultaneously on all clients
 	if (freezeModes.waitForTurnEnd && !executingRemainingMovements)
 	{
-		for (size_t i = 0; i != playerList.size(); ++i)
+		for (const auto& player : playerList)
 		{
-			cPlayer& player = *playerList[i];
-			if (!isPlayerDisconnected (player) && gameTimer->getReceivedTime (i) <= lastTurnEnd)
+			if (!isPlayerDisconnected (*player) && gameTimer->getReceivedTime (player->getNr()) <= lastTurnEnd)
 				return;
 		}
 

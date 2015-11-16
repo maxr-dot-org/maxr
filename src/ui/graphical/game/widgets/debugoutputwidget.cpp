@@ -275,13 +275,13 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 			font->showText (drawPositionX, drawPositionY, "-Client Lag: ", FONT_LATIN_SMALL_WHITE);
 			drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
-			for (size_t i = 0; i != server->playerList.size(); ++i)
+			for (const auto& player : server->playerList)
 			{
 				eUnicodeFontType fontType = FONT_LATIN_SMALL_WHITE;
-				if (server->gameTimer->getReceivedTime (i) + PAUSE_GAME_TIMEOUT < server->gameTimer->gameTime)
+				if (server->gameTimer->getReceivedTime (player->getNr()) + PAUSE_GAME_TIMEOUT < server->gameTimer->gameTime)
 					fontType = FONT_LATIN_SMALL_RED;
-				font->showText (drawPositionX + 10, drawPositionY, "Client " + iToStr (i) + lngPack.i18n ("Text~Punctuation~Colon"), fontType);
-				font->showText (drawPositionX + 110, drawPositionY, iToStr (server->gameTimer->gameTime - server->gameTimer->getReceivedTime (i)), fontType);
+				font->showText (drawPositionX + 10, drawPositionY, "Client " + iToStr (player->getNr()) + lngPack.i18n ("Text~Punctuation~Colon"), fontType);
+				font->showText (drawPositionX + 110, drawPositionY, iToStr (server->gameTimer->gameTime - server->gameTimer->getReceivedTime (player->getNr())), fontType);
 				drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 			}
 		}
