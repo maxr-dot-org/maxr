@@ -1396,7 +1396,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 	cVehicle* Vehicle = getVehicleFromID (id);
 	if (Vehicle == nullptr)
 	{
-		Log.write ("Server: Can not find vehicle with id " + iToStr (id) + " for clearing", LOG_TYPE_NET_WARNING);
+		Log.write ("Server: Can not find vehicle with id " + iToStr (id) + " for clearing", cLog::eLOG_TYPE_NET_WARNING);
 		return;
 	}
 
@@ -1452,7 +1452,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message)
 	cVehicle* Vehicle = getVehicleFromID (id);
 	if (Vehicle == nullptr)
 	{
-		Log.write ("Server: Can not find vehicle with id " + iToStr (id) + " for stop clearing", LOG_TYPE_NET_WARNING);
+		Log.write ("Server: Can not find vehicle with id " + iToStr (id) + " for stop clearing", cLog::eLOG_TYPE_NET_WARNING);
 		return;
 	}
 
@@ -3353,7 +3353,7 @@ void cServer::handleMoveJobs()
 				ActiveMJobs.erase (ActiveMJobs.begin() + i);
 				delete MoveJob;
 				Vehicle->ServerMoveJob = nullptr;
-				Log.write (" Server: Movejob deleted and informed the clients to stop this movejob", LOG_TYPE_NET_DEBUG);
+				Log.write (" Server: Movejob deleted and informed the clients to stop this movejob", cLog::eLOG_TYPE_NET_DEBUG);
 				continue;
 			}
 			if (MoveJob->bEndForNow)

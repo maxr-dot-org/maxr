@@ -607,7 +607,7 @@ bool cServerMoveJob::checkMove()
 	// not enough waypoints for this move?
 	if (Vehicle->data.getSpeed() < Waypoints->next->Costs)
 	{
-		Log.write (" Server: Vehicle has not enough waypoints for the next move -> EndForNow: ID: " + iToStr (Vehicle->iID) + ", X: " + iToStr (Waypoints->next->position.x()) + ", Y: " + iToStr (Waypoints->next->position.y()), LOG_TYPE_NET_DEBUG);
+		Log.write (" Server: Vehicle has not enough waypoints for the next move -> EndForNow: ID: " + iToStr (Vehicle->iID) + ", X: " + iToStr (Waypoints->next->position.x()) + ", Y: " + iToStr (Waypoints->next->position.y()), cLog::eLOG_TYPE_NET_DEBUG);
 		iSavedSpeed += Vehicle->data.getSpeed();
 		Vehicle->data.setSpeed (0);
 		bEndForNow = true;
@@ -624,7 +624,7 @@ bool cServerMoveJob::checkMove()
 	//when the next field is still blocked, inform the client
 	if (!Map->possiblePlace (*Vehicle, Waypoints->next->position))// || bInSentryRange)    //TODO: bInSentryRange?? Why?
 	{
-		Log.write (" Server: Next point is blocked: ID: " + iToStr (Vehicle->iID) + ", X: " + iToStr (Waypoints->next->position.x()) + ", Y: " + iToStr (Waypoints->next->position.y()), LOG_TYPE_NET_DEBUG);
+		Log.write (" Server: Next point is blocked: ID: " + iToStr (Vehicle->iID) + ", X: " + iToStr (Waypoints->next->position.x()) + ", Y: " + iToStr (Waypoints->next->position.y()), cLog::eLOG_TYPE_NET_DEBUG);
 		// if the next point would be the last, finish the job here
 		if (Waypoints->next->position == destination)
 		{

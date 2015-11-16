@@ -147,7 +147,7 @@ bool cSavegame::load (cServer& server)
 	// load standard unit values
 	if (version <= cVersion (0, 2))
 	{
-		Log.write ("Skipping loading standard unit values because save game has version 0.2 or older.", LOG_TYPE_DEBUG);
+		Log.write ("Skipping loading standard unit values because save game has version 0.2 or older.", cLog::eLOG_TYPE_DEBUG);
 	}
 	else
 	{

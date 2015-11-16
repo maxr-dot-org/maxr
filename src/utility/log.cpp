@@ -16,12 +16,12 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
+ 
 #include <ctime>
 #include <iostream>
-
+ 
 #include "utility/log.h"
-
+ 
 #include "utility/thread/mutex.h"
 #include "utility/files.h"
 #include "settings.h"
@@ -39,164 +39,162 @@
 /**mem error*/
 #define MM "(MM): "
 
+//------------------------------------------------------------------------------
 cLog::cLog() :
-	mutex()
+	logfile(nullptr),
+	netLogfile(nullptr)
+{}
+
+//------------------------------------------------------------------------------
+cLog::~cLog()
 {
-	logfile = nullptr;
-	bNetlogStarted = false;
-	bFirstRun = true;
+	if (netLogfile) fclose (netLogfile);
+	if (logfile) fclose (logfile);
 }
 
-bool cLog::open (int TYPE)
+//------------------------------------------------------------------------------
+void cLog::write(const char* msg)
 {
-	//check if netlog file name is initialized
-	if (bFirstRun)
-	{
-		time_t tTime = time (nullptr);
-#if defined (_MSC_VER)
-		tm tm_;
-		tm* tmTime = &tm_;
-		localtime_s (tmTime, &tTime);
-#else
-		// Not thread safe, but we have a mutex which protects also that.
-		tm* tmTime = localtime (&tTime);
-#endif
-		char timestr[25];
-		strftime (timestr, 21, "%Y-%m-%d-%H%M_", tmTime);
-		std::string sTime = timestr;
-		cSettings::getInstance().setNetLogPath ((getUserLogDir() + sTime + MAX_NET_LOG).c_str());
-		bFirstRun = false;
-	}
-
-	if (logfile == nullptr || ((TYPE == LOG_TYPE_NET_DEBUG || TYPE == LOG_TYPE_NET_WARNING || TYPE == LOG_TYPE_NET_ERROR) && !bNetlogStarted))
-	{
-		if (TYPE == LOG_TYPE_NET_DEBUG || TYPE == LOG_TYPE_NET_WARNING || TYPE == LOG_TYPE_NET_ERROR)
-		{
-			logfile = SDL_RWFromFile (NETLOGFILE, "w+t");  //Start new network-log and write at beginning of file
-			bNetlogStarted = true;
-		}
-		else
-		{
-			logfile = SDL_RWFromFile (LOGFILE, "w+t");  //Start new log and write at beginning of file
-		}
-	}
-	else
-	{
-		if (TYPE == LOG_TYPE_NET_DEBUG || TYPE == LOG_TYPE_NET_WARNING || TYPE == LOG_TYPE_NET_ERROR)
-		{
-			logfile = SDL_RWFromFile (NETLOGFILE, "a+t");  //Reopen network-log and write at end of file
-		}
-		else
-		{
-			logfile = SDL_RWFromFile (LOGFILE, "a+t");  //Reopen log and write at end of file
-		}
-	}
-
-	int blocks; //sanity check - is file readable?
-	char buf[256];
-
-	if (logfile)   //can access logfile
-	{
-		blocks = SDL_RWread (logfile, buf, 16, 256 / 16);
-	}
-	else
-	{
-		fprintf (stderr, "(EE): Couldn't open maxr.log!\n Please check file/directory permissions\n");
-		return false;
-	}
-	if (blocks <= 0)
-	{
-		fprintf (stderr, "(EE): Couldn't read maxr.log!\n Please check file/directory permissions\n");
-
-		if (logfile != nullptr) return true;
-		else return false;
-	}
-	else return true;
-
+	write(std::string(msg), eLOG_TYPE_INFO);
 }
 
-int cLog::write (const char* str, int TYPE)
+//------------------------------------------------------------------------------
+void cLog::write(const std::string& msg)
 {
-	return write (std::string (str), TYPE);
+	write(msg, eLOG_TYPE_INFO);
 }
 
-int cLog::write (const std::string& s, int TYPE)
+//------------------------------------------------------------------------------
+void cLog::write (const char* msg, eLogType type)
 {
-	std::string str (s);
+	return write (std::string (msg), type);
+}
+
+//------------------------------------------------------------------------------
+void cLog::write (const std::string& msg, eLogType type)
+{
 	cLockGuard<cMutex> l (mutex);
 
-	if ((TYPE == LOG_TYPE_DEBUG || TYPE == LOG_TYPE_NET_DEBUG) && !cSettings::getInstance().isDebug())     //in case debug is disabled we skip message
-	{
-		return 0;
-	}
+	if ((type == eLOG_TYPE_DEBUG || type == eLOG_TYPE_NET_DEBUG) && !cSettings::getInstance().isDebug())
+ 	{
+		//in case debug is disabled we skip message
+ 		return;
+ 	}
 
-	if (open (TYPE))
+	checkOpenFile(type);
+
+	//attach log message type to string
+	std::string tmp;
+	switch (type)
 	{
-		switch (TYPE)  //Attach log message type to tmp
-		{
-			case LOG_TYPE_NET_WARNING :
-			case LOG_TYPE_WARNING : str = str.insert (0, WW); break;
-			case LOG_TYPE_NET_ERROR :
-			case LOG_TYPE_ERROR :   str = str.insert (0, EE); std::cout << str << "\n"; break;
-			case LOG_TYPE_NET_DEBUG :
-			case LOG_TYPE_DEBUG :   str = str.insert (0, DD); break;
-			case LOG_TYPE_INFO :    str = str.insert (0, II); break;
-			case LOG_TYPE_MEM :     str = str.insert (0, MM); break;
-			default :               str = str.insert (0, II); break;
-		}
-		str += TEXT_FILE_LF;
-		return writeMessage (str);   //add log message itself to tmp and send it for writing
+		case eLOG_TYPE_NET_WARNING :
+		case eLOG_TYPE_WARNING : 
+			tmp = WW + msg;
+			break;
+		case eLOG_TYPE_NET_ERROR :
+		case eLOG_TYPE_ERROR :
+			tmp = EE + msg;
+			std::cout << tmp << "\n"; break;
+		case eLOG_TYPE_NET_DEBUG :
+		case eLOG_TYPE_DEBUG :   
+			tmp = DD + msg;
+			break;
+		case eLOG_TYPE_INFO :
+			tmp = II + msg;
+			break;
+		case eLOG_TYPE_MEM :     
+			tmp = MM + msg; break;
+		default :               
+			tmp = II + msg;
 	}
-	else return -1;
+	tmp += TEXT_FILE_LF;
+
+	if (type == eLOG_TYPE_NET_DEBUG || type == eLOG_TYPE_NET_WARNING || type == eLOG_TYPE_NET_ERROR)
+	{
+		writeToFile(tmp, netLogfile);
+	}
+	else
+	{
+		writeToFile(tmp, logfile);
+
+	}
 }
 
-int cLog::write (const char* str)
-{
-	return write (std::string (str), LOG_TYPE_INFO);
-}
-
+//------------------------------------------------------------------------------
 void cLog::mark()
 {
 	cLockGuard<cMutex> l (mutex);
 
+	checkOpenFile(eLOG_TYPE_INFO);
+
 	std::string str = "==============================(MARK)==============================";
 	str += TEXT_FILE_LF;
-	if (open (-1)) writeMessage (str);
+
+	writeToFile(str, logfile);
 }
 
-int cLog::writeMessage (const char* str)
+//------------------------------------------------------------------------------
+void cLog::checkOpenFile(eLogType type)
 {
-	return writeMessage (std::string (str));
-}
 
-int cLog::writeMessage (const std::string& str)
-{
-	if (logfile)
+	if (type == eLOG_TYPE_NET_DEBUG || type == eLOG_TYPE_NET_WARNING || type == eLOG_TYPE_NET_ERROR)
 	{
-		const int wrote = SDL_RWwrite (logfile, str.c_str(), 1, (int) str.length());
-		//std::cout << str;
-		if (wrote <= 0)   //sanity check - was file writable?
+		if (netLogfile)
 		{
-			fprintf (stderr, "Couldn't write to maxr.log\nPlease check permissions for maxr.log\nLog message was:\n%s", str.c_str());
-			return -1;
+			//file is already open
+			return;
 		}
-		else close(); //after successful writing of all information we close log here and nowhere else!
-		return 0;
+
+		//append time stamp to log file name
+		time_t tTime = time(nullptr);
+#if defined (_MSC_VER)
+		tm tm_;
+		tm* tmTime = &tm_;
+		localtime_s(tmTime, &tTime);
+#else
+		// Not thread safe, but we have a mutex which protects also that.
+		tm* tmTime = localtime(&tTime);
+#endif
+		char timestr[25];
+		strftime(timestr, 21, "%Y-%m-%d-%H%M_", tmTime);
+		std::string sTime = timestr;
+		cSettings::getInstance().setNetLogPath((getUserLogDir() + sTime + MAX_NET_LOG).c_str());
+
+		//create + open new log file
+		netLogfile = fopen(NETLOGFILE, "wt");
+		if (netLogfile == nullptr)
+		{
+			fprintf(stderr, "(EE): Couldn't open net.log!\n Please check file/directory permissions\n");
+		}
 	}
 	else
 	{
-		fprintf (stderr, "Couldn't write to maxr.log\nPlease check permissions for maxr.log\nLog message was:\n%s", str.c_str());
+		if (logfile)
+		{
+			//file is already open
+			return;
+		}
+
+		//create + open new log file
+		logfile = fopen(LOGFILE, "wt");
+		if (logfile == nullptr)
+		{
+			fprintf(stderr, "(EE): Couldn't open maxr.log!\n Please check file/directory permissions\n");
+		}
 	}
-	return -1;
 }
 
-
-void cLog::close()
+//------------------------------------------------------------------------------
+void cLog::writeToFile(std::string &msg, FILE* file)
 {
-	SDL_RWclose (logfile);   //function RWclose always returns 0 in SDL <= 1.2.9 - no sanity check possible
-}
-
-bool cLog::isInitialized() const
-{
-	return !bFirstRun;
+	int result = 0;
+	if (file)
+	{
+		result = fputs(msg.c_str(), file);
+		fflush(file);
+	}
+	if (file == nullptr || result == EOF)
+	{
+		fprintf(stderr, msg.c_str());
+	}
 }

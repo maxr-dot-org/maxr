@@ -30,7 +30,7 @@ using namespace std;
 
 cNetMessage::cNetMessage (const char* c)
 {
-	if (c[0] != START_CHAR) Log.write ("NetMessage has wrong start character", LOG_TYPE_NET_ERROR);
+	if (c[0] != START_CHAR) Log.write ("NetMessage has wrong start character", cLog::eLOG_TYPE_NET_ERROR);
 	// Use temporary variable to avoid gcc warning:
 	// "dereferencing type-punned pointer will break strict-aliasing rules"
 	const Sint16* data16 = reinterpret_cast<const Sint16*> (c + 1);

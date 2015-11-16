@@ -560,7 +560,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		if (Vehicle->getPosition() != position || Vehicle->data.isBig != bBig)
 		{
 			// should never happen
-			int iLogType = cLog::eLOG_TYPE_NET_WARNING;
+			cLog::eLogType iLogType = cLog::eLOG_TYPE_NET_WARNING;
 			if (Vehicle->isUnitBuildingABuilding() || Vehicle->isUnitClearing() || Vehicle->isUnitMoving()) iLogType = cLog::eLOG_TYPE_NET_DEBUG;
 			Log.write (" Client: Vehicle identificated by ID (" + iToStr (iID) + ") but has wrong position [IS: X" + iToStr (Vehicle->getPosition().x()) + " Y" + iToStr (Vehicle->getPosition().y()) + "; SHOULD: X" + iToStr (position.x()) + " Y" + iToStr (position.y()) + "]", iLogType);
 
@@ -1053,7 +1053,7 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 			cVehicle* Vehicle = getVehicleFromID (id);
 			if (Vehicle == nullptr)
 			{
-				Log.write ("Client: Can not find vehicle with id " + iToStr (id) + " for clearing", LOG_TYPE_NET_WARNING);
+				Log.write ("Client: Can not find vehicle with id " + iToStr (id) + " for clearing", cLog::eLOG_TYPE_NET_WARNING);
 				break;
 			}
 			const auto orgiginalPosition = Vehicle->getPosition();
@@ -1074,7 +1074,7 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 			// gameGUI->addMessage ("blocked");
 			break;
 		case 2:
-			Log.write ("Client: warning on start of clearing", LOG_TYPE_NET_WARNING);
+			Log.write ("Client: warning on start of clearing", cLog::eLOG_TYPE_NET_WARNING);
 			break;
 		default:
 			break;
@@ -1089,7 +1089,7 @@ void cClient::HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message)
 	cVehicle* Vehicle = getVehicleFromID (id);
 	if (Vehicle == nullptr)
 	{
-		Log.write ("Client: Can not find vehicle with id " + iToStr (id) + " for stop clearing", LOG_TYPE_NET_WARNING);
+		Log.write ("Client: Can not find vehicle with id " + iToStr (id) + " for stop clearing", cLog::eLOG_TYPE_NET_WARNING);
 		return;
 	}
 
@@ -1118,7 +1118,7 @@ void cClient::HandleNetMessage_GAME_EV_DEFEATED (cNetMessage& message)
 	cPlayer* Player = getPlayerFromNumber (iTmp);
 	if (Player == nullptr)
 	{
-		Log.write ("Client: Cannot find defeated player!", LOG_TYPE_NET_WARNING);
+		Log.write ("Client: Cannot find defeated player!", cLog::eLOG_TYPE_NET_WARNING);
 		return;
 	}
 	Player->isDefeated = true;
@@ -1159,12 +1159,12 @@ void cClient::HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message)
 	cPlayer* Player = getPlayerFromNumber (message.popInt16());
 	if (Player == ActivePlayer)
 	{
-		Log.write ("Client: Cannot delete own player!", LOG_TYPE_NET_WARNING);
+		Log.write ("Client: Cannot delete own player!", cLog::eLOG_TYPE_NET_WARNING);
 		return;
 	}
 	if (Player->hasUnits())
 	{
-		Log.write ("Client: Player to be deleted has some units left !", LOG_TYPE_NET_ERROR);
+		Log.write ("Client: Player to be deleted has some units left !", cLog::eLOG_TYPE_NET_ERROR);
 	}
 	ActivePlayer->addSavedReport (std::make_unique<cSavedReportPlayerLeft> (*Player));
 

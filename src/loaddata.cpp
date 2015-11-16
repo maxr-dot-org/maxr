@@ -146,7 +146,7 @@ int LoadData (void* data)
 			|| !FileExists ((fontPath + "latin_big_gold.pcx").c_str())
 			|| !FileExists ((fontPath + "latin_small.pcx").c_str()))
 		{
-			Log.write ("Missing a file needed for game. Check log and config! ", LOG_TYPE_ERROR);
+			Log.write ("Missing a file needed for game. Check log and config! ", cLog::eLOG_TYPE_ERROR);
 			loadingState = LOAD_ERROR;
 			return 0;
 		}
@@ -205,7 +205,7 @@ int LoadData (void* data)
 	}
 	catch (std::runtime_error& e)
 	{
-		Log.write (e.what(), LOG_TYPE_ERROR);
+		Log.write (e.what(), cLog::eLOG_TYPE_ERROR);
 		MakeLog ("", -1, 3);
 		SDL_Delay (5000);
 		loadingState = LOAD_ERROR;
@@ -227,7 +227,7 @@ int LoadData (void* data)
 	if (LoadGraphics (cSettings::getInstance().getGfxPath().c_str()) != 1)
 	{
 		MakeLog ("", -1, 5);
-		Log.write ("Error while loading graphics", LOG_TYPE_ERROR);
+		Log.write ("Error while loading graphics", cLog::eLOG_TYPE_ERROR);
 		SDL_Delay (5000);
 		loadingState = LOAD_ERROR;
 		return -1;
@@ -322,14 +322,14 @@ int LoadData (void* data)
 
 		// Load Sounds
 		MakeLog (lngPack.i18n ("Text~Init~Sounds"), 0, 11);
-		Log.write ("Loading Sounds", LOG_TYPE_INFO);
+		Log.write ("Loading Sounds", cLog::eLOG_TYPE_INFO);
 		SoundData.load (cSettings::getInstance().getSoundsPath().c_str());
 		MakeLog ("", 1, 11);
 		Log.mark();
 
 		// Load Voices
 		MakeLog (lngPack.i18n ("Text~Init~Voices"), 0, 12);
-		Log.write ("Loading Voices", LOG_TYPE_INFO);
+		Log.write ("Loading Voices", cLog::eLOG_TYPE_INFO);
 		VoiceData.load (cSettings::getInstance().getVoicesPath().c_str());
 		MakeLog ("", 1, 12);
 		Log.mark();
@@ -400,7 +400,7 @@ static int LoadGraphicToSurface (AutoSurface& dest, const char* directory, const
 	dest = LoadPCX (filepath);
 
 	filepath.insert (0, "File loaded: ");
-	Log.write (filepath.c_str(), LOG_TYPE_DEBUG);
+	Log.write (filepath.c_str(), cLog::eLOG_TYPE_DEBUG);
 
 	return 1;
 }
@@ -431,7 +431,7 @@ static int LoadEffectGraphicToSurface (AutoSurface (&dest) [2], const char* dire
 	dest[1] = CloneSDLSurface (*dest[0]);
 
 	filepath.insert (0, "Effect successful loaded: ");
-	Log.write (filepath.c_str(), LOG_TYPE_DEBUG);
+	Log.write (filepath.c_str(), cLog::eLOG_TYPE_DEBUG);
 
 	return 1;
 }
@@ -456,7 +456,7 @@ static int LoadEffectAlphaToSurface (AutoSurface (&dest) [2], const char* direct
 	SDL_SetSurfaceAlphaMod (dest[1].get(), alpha);
 
 	filepath.insert (0, "Effectalpha loaded: ");
-	Log.write (filepath.c_str(), LOG_TYPE_DEBUG);
+	Log.write (filepath.c_str(), cLog::eLOG_TYPE_DEBUG);
 
 	return 1;
 }
@@ -524,7 +524,7 @@ static void LoadUnitSoundfile (cSoundChunk& dest, const char* directory, const c
 			}
 			catch (std::runtime_error& e)
 			{
-				Log.write (std::string ("Can't load dummy.ogg: ") + e.what(), LOG_TYPE_WARNING);
+				Log.write (std::string ("Can't load dummy.ogg: ") + e.what(), cLog::eLOG_TYPE_WARNING);
 			}
 		}
 	}
@@ -560,7 +560,7 @@ static int LoadLanguage()
 
 static int LoadEffects (const char* path)
 {
-	Log.write ("Loading Effects", LOG_TYPE_INFO);
+	Log.write ("Loading Effects", cLog::eLOG_TYPE_INFO);
 
 	if (DEDICATED_SERVER) return 1;
 
@@ -588,7 +588,7 @@ void cEffectsData::load (const char* path)
 
 static int LoadMusic (const char* path)
 {
-	Log.write ("Loading music", LOG_TYPE_INFO);
+	Log.write ("Loading music", cLog::eLOG_TYPE_INFO);
 
 	// Prepare music.xml for reading
 	tinyxml2::XMLDocument MusicXml;
@@ -600,7 +600,7 @@ static int LoadMusic (const char* path)
 	}
 	if (MusicXml.LoadFile (sTmpString.c_str()) != XML_NO_ERROR)
 	{
-		Log.write ("Can't load music.xml ", LOG_TYPE_ERROR);
+		Log.write ("Can't load music.xml ", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
 	XMLElement* xmlElement;
@@ -608,7 +608,7 @@ static int LoadMusic (const char* path)
 	xmlElement = XmlGetFirstElement (MusicXml, "Music", "Menus", "main", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
-		Log.write ("Can't find \"main\" in music.xml ", LOG_TYPE_ERROR);
+		Log.write ("Can't find \"main\" in music.xml ", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
 	MainMusicFile = xmlElement->Attribute ("Text");
@@ -616,7 +616,7 @@ static int LoadMusic (const char* path)
 	xmlElement = XmlGetFirstElement (MusicXml, "Music", "Menus", "credits", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
-		Log.write ("Can't find \"credits\" in music.xml ", LOG_TYPE_ERROR);
+		Log.write ("Can't find \"credits\" in music.xml ", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
 	CreditsMusicFile = xmlElement->Attribute ("Text");
@@ -624,7 +624,7 @@ static int LoadMusic (const char* path)
 	xmlElement = XmlGetFirstElement (MusicXml, "Music", "Game", "bkgcount", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("Num"))
 	{
-		Log.write ("Can't find \"bkgcount\" in music.xml ", LOG_TYPE_ERROR);
+		Log.write ("Can't find \"bkgcount\" in music.xml ", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
 	int const MusicAnz = xmlElement->IntAttribute ("Num");
@@ -638,7 +638,7 @@ static int LoadMusic (const char* path)
 		}
 		else
 		{
-			Log.write ("Can't find \"bkg" + iToStr (i) + "\" in music.xml", LOG_TYPE_WARNING);
+			Log.write ("Can't find \"bkg" + iToStr (i) + "\" in music.xml", cLog::eLOG_TYPE_WARNING);
 			continue;
 		}
 		if (!FileExists (name.c_str()))
@@ -758,10 +758,10 @@ void cVoiceData::load (const char* path)
 
 static int LoadGraphics (const char* path)
 {
-	Log.write ("Loading Graphics", LOG_TYPE_INFO);
+	Log.write ("Loading Graphics", cLog::eLOG_TYPE_INFO);
 	if (DEDICATED_SERVER) return 1;
 
-	Log.write ("Gamegraphics...", LOG_TYPE_DEBUG);
+	Log.write ("Gamegraphics...", cLog::eLOG_TYPE_DEBUG);
 	if (!LoadGraphicToSurface (GraphicsData.gfx_Chand, path, "hand.pcx") ||
 		!LoadGraphicToSurface (GraphicsData.gfx_Cno, path, "no.pcx") ||
 		!LoadGraphicToSurface (GraphicsData.gfx_Cselect, path, "select.pcx") ||
@@ -825,7 +825,7 @@ static int LoadGraphics (const char* path)
 	FileExists (GraphicsData.Dialog2Path.c_str());
 	FileExists (GraphicsData.Dialog3Path.c_str());
 
-	Log.write ("Shadowgraphics...", LOG_TYPE_DEBUG);
+	Log.write ("Shadowgraphics...", cLog::eLOG_TYPE_DEBUG);
 	// Shadow:
 	createShadowGfx();
 	Video.resolutionChanged.connect ([]()
@@ -837,16 +837,16 @@ static int LoadGraphics (const char* path)
 	SDL_SetColorKey (GraphicsData.gfx_tmp.get(), SDL_TRUE, 0xFF00FF);
 
 	// Glas:
-	Log.write ("Glassgraphic...", LOG_TYPE_DEBUG);
+	Log.write ("Glassgraphic...", cLog::eLOG_TYPE_DEBUG);
 	LoadGraphicToSurface (GraphicsData.gfx_destruction_glas, path, "destruction_glas.pcx");
 	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_destruction_glas.get(), 150);
 
 	// Waypoints:
-	Log.write ("Waypointgraphics...", LOG_TYPE_DEBUG);
+	Log.write ("Waypointgraphics...", cLog::eLOG_TYPE_DEBUG);
 	OtherData.loadWayPoints();
 
 	// Resources:
-	Log.write ("Resourcegraphics...", LOG_TYPE_DEBUG);
+	Log.write ("Resourcegraphics...", cLog::eLOG_TYPE_DEBUG);
 	ResourceData.load (path);
 	return 1;
 }
@@ -901,7 +901,7 @@ void cResourceData::load (const char* path)
 
 static int LoadVehicles()
 {
-	Log.write ("Loading Vehicles", LOG_TYPE_INFO);
+	Log.write ("Loading Vehicles", cLog::eLOG_TYPE_INFO);
 
 	tinyxml2::XMLDocument VehiclesXml;
 
@@ -913,13 +913,13 @@ static int LoadVehicles()
 	}
 	if (VehiclesXml.LoadFile (sTmpString.c_str()) != XML_NO_ERROR)
 	{
-		Log.write ("Can't load vehicles.xml!", LOG_TYPE_ERROR);
+		Log.write ("Can't load vehicles.xml!", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
 	XMLElement* xmlElement = XmlGetFirstElement (VehiclesXml, "VehicleData", "Vehicles", nullptr);
 	if (xmlElement == nullptr)
 	{
-		Log.write ("Can't read \"VehicleData->Vehicles\" node!", LOG_TYPE_ERROR);
+		Log.write ("Can't read \"VehicleData->Vehicles\" node!", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
 	// read vehicles.xml
@@ -934,7 +934,7 @@ static int LoadVehicles()
 		else
 		{
 			string msg = string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
-			Log.write (msg, LOG_TYPE_WARNING);
+			Log.write (msg, cLog::eLOG_TYPE_WARNING);
 		}
 
 		if (xmlElement->Attribute ("num"))
@@ -942,11 +942,11 @@ static int LoadVehicles()
 		else
 		{
 			string msg = string ("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node";
-			Log.write (msg, LOG_TYPE_WARNING);
+			Log.write (msg, cLog::eLOG_TYPE_WARNING);
 		}
 	}
 	else
-		Log.write ("No vehicles defined in vehicles.xml!", LOG_TYPE_WARNING);
+		Log.write ("No vehicles defined in vehicles.xml!", cLog::eLOG_TYPE_WARNING);
 	while (xmlElement != nullptr)
 	{
 		xmlElement = xmlElement->NextSiblingElement();
@@ -959,7 +959,7 @@ static int LoadVehicles()
 		else
 		{
 			string msg = string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
-			Log.write (msg, LOG_TYPE_WARNING);
+			Log.write (msg, cLog::eLOG_TYPE_WARNING);
 		}
 
 		if (xmlElement->Attribute ("num"))
@@ -967,7 +967,7 @@ static int LoadVehicles()
 		else
 		{
 			string msg = string ("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node";
-			Log.write (msg, LOG_TYPE_WARNING);
+			Log.write (msg, cLog::eLOG_TYPE_WARNING);
 		}
 	}
 	// load found units
@@ -1309,13 +1309,13 @@ static void translateClanData (int num)
 
 	if (clan == 0)
 	{
-		Log.write ("Can't find clan id " + iToStr (num) + " for translation", LOG_TYPE_WARNING);
+		Log.write ("Can't find clan id " + iToStr (num) + " for translation", cLog::eLOG_TYPE_WARNING);
 		return;
 	}
 	XMLElement* xmlElement = LanguageFile.RootElement()->FirstChildElement ("Clans");
 	if (!xmlElement)
 	{
-		Log.write ("Can't find clan node in language file. Please report this to your translation team!", LOG_TYPE_WARNING);
+		Log.write ("Can't find clan node in language file. Please report this to your translation team!", cLog::eLOG_TYPE_WARNING);
 		return;
 	}
 
@@ -1325,7 +1325,7 @@ static void translateClanData (int num)
 		if (xmlElement->QueryIntAttribute ("ID", &id) != XML_NO_ERROR) continue;
 		if (id != num) continue;
 
-		Log.write ("Found clan translation for clan id " + iToStr (num), LOG_TYPE_DEBUG);
+		Log.write ("Found clan translation for clan id " + iToStr (num), cLog::eLOG_TYPE_DEBUG);
 		if (cSettings::getInstance().getLanguage() != "ENG")
 		{
 			const char* name = xmlElement->Attribute ("localized");
@@ -1419,7 +1419,7 @@ static bool translateUnitData (sID ID, bool vehicle)
 
 static int LoadBuildings()
 {
-	Log.write ("Loading Buildings", LOG_TYPE_INFO);
+	Log.write ("Loading Buildings", cLog::eLOG_TYPE_INFO);
 
 	// read buildings.xml
 	string sTmpString = cSettings::getInstance().getBuildingsPath();
@@ -1432,13 +1432,13 @@ static int LoadBuildings()
 	tinyxml2::XMLDocument BuildingsXml;
 	if (BuildingsXml.LoadFile (sTmpString.c_str()) != XML_NO_ERROR)
 	{
-		Log.write ("Can't load buildings.xml!", LOG_TYPE_ERROR);
+		Log.write ("Can't load buildings.xml!", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
 	XMLElement* xmlElement = XmlGetFirstElement (BuildingsXml, "BuildingsData", "Buildings", nullptr);
 	if (xmlElement == nullptr)
 	{
-		Log.write ("Can't read \"BuildingData->Building\" node!", LOG_TYPE_ERROR);
+		Log.write ("Can't read \"BuildingData->Building\" node!", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
 	std::vector<std::string> BuildingList;
@@ -1446,7 +1446,7 @@ static int LoadBuildings()
 	xmlElement = xmlElement->FirstChildElement();
 	if (xmlElement == nullptr)
 	{
-		Log.write ("There are no buildings in the buildings.xml defined", LOG_TYPE_ERROR);
+		Log.write ("There are no buildings in the buildings.xml defined", cLog::eLOG_TYPE_ERROR);
 		return 1;
 	}
 
@@ -1456,7 +1456,7 @@ static int LoadBuildings()
 	else
 	{
 		string msg = string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
-		Log.write (msg, LOG_TYPE_WARNING);
+		Log.write (msg, cLog::eLOG_TYPE_WARNING);
 	}
 
 	if (xmlElement->Attribute ("num"))
@@ -1464,7 +1464,7 @@ static int LoadBuildings()
 	else
 	{
 		string msg = string ("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node";
-		Log.write (msg, LOG_TYPE_WARNING);
+		Log.write (msg, cLog::eLOG_TYPE_WARNING);
 	}
 
 	const char* spezial = xmlElement->Attribute ("special");
@@ -1477,7 +1477,7 @@ static int LoadBuildings()
 		else if (specialString == "landmine")   UnitsData.specialIDLandMine.iSecondPart   = IDList.back();
 		else if (specialString == "seamine")    UnitsData.specialIDSeaMine.iSecondPart    = IDList.back();
 		else if (specialString == "smallBeton") UnitsData.specialIDSmallBeton.iSecondPart = IDList.back();
-		else Log.write ("Unknown spacial in buildings.xml \"" + specialString + "\"", LOG_TYPE_WARNING);
+		else Log.write ("Unknown spacial in buildings.xml \"" + specialString + "\"", cLog::eLOG_TYPE_WARNING);
 	}
 
 	while (xmlElement != nullptr)
@@ -1492,7 +1492,7 @@ static int LoadBuildings()
 		else
 		{
 			string msg = string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
-			Log.write (msg, LOG_TYPE_WARNING);
+			Log.write (msg, cLog::eLOG_TYPE_WARNING);
 		}
 
 		if (xmlElement->Attribute ("num"))
@@ -1500,7 +1500,7 @@ static int LoadBuildings()
 		else
 		{
 			string msg = string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
-			Log.write (msg, LOG_TYPE_WARNING);
+			Log.write (msg, cLog::eLOG_TYPE_WARNING);
 		}
 
 		const char* spezial = xmlElement->Attribute ("special");
@@ -1513,16 +1513,16 @@ static int LoadBuildings()
 			else if (specialString == "landmine")   UnitsData.specialIDLandMine.iSecondPart   = IDList.back();
 			else if (specialString == "seamine")    UnitsData.specialIDSeaMine.iSecondPart    = IDList.back();
 			else if (specialString == "smallBeton") UnitsData.specialIDSmallBeton.iSecondPart = IDList.back();
-			else Log.write ("Unknown spacial in buildings.xml \"" + specialString + "\"", LOG_TYPE_WARNING);
+			else Log.write ("Unknown spacial in buildings.xml \"" + specialString + "\"", cLog::eLOG_TYPE_WARNING);
 		}
 	}
 
-	if (UnitsData.specialIDMine.iSecondPart       == 0) Log.write ("special \"mine\" missing in buildings.xml", LOG_TYPE_WARNING);
-	if (UnitsData.specialIDSmallGen.iSecondPart   == 0) Log.write ("special \"energy\" missing in buildings.xml", LOG_TYPE_WARNING);
-	if (UnitsData.specialIDConnector.iSecondPart  == 0) Log.write ("special \"connector\" missing in buildings.xml", LOG_TYPE_WARNING);
-	if (UnitsData.specialIDLandMine.iSecondPart   == 0) Log.write ("special \"landmine\" missing in buildings.xml", LOG_TYPE_WARNING);
-	if (UnitsData.specialIDSeaMine.iSecondPart    == 0) Log.write ("special \"seamine\" missing in buildings.xml", LOG_TYPE_WARNING);
-	if (UnitsData.specialIDSmallBeton.iSecondPart == 0) Log.write ("special \"smallBeton\" missing in buildings.xml", LOG_TYPE_WARNING);
+	if (UnitsData.specialIDMine.iSecondPart       == 0) Log.write ("special \"mine\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
+	if (UnitsData.specialIDSmallGen.iSecondPart   == 0) Log.write ("special \"energy\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
+	if (UnitsData.specialIDConnector.iSecondPart  == 0) Log.write ("special \"connector\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
+	if (UnitsData.specialIDLandMine.iSecondPart   == 0) Log.write ("special \"landmine\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
+	if (UnitsData.specialIDSeaMine.iSecondPart    == 0) Log.write ("special \"seamine\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
+	if (UnitsData.specialIDSmallBeton.iSecondPart == 0) Log.write ("special \"smallBeton\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
 
 	UnitsData.specialIDMine.iFirstPart = UnitsData.specialIDSmallGen.iFirstPart = UnitsData.specialIDConnector.iFirstPart = UnitsData.specialIDLandMine.iFirstPart = UnitsData.specialIDSeaMine.iFirstPart = UnitsData.specialIDSmallBeton.iFirstPart = 1;
 	// load found units
@@ -1658,7 +1658,7 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 
 	if (unitDataXml.LoadFile (path.c_str()) != XML_NO_ERROR)
 	{
-		Log.write ("Can't load " + path, LOG_TYPE_WARNING);
+		Log.write ("Can't load " + path, cLog::eLOG_TYPE_WARNING);
 		return ;
 	}
 	// Read minimal game version
@@ -1680,7 +1680,7 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 			if (UnitsData.svehicles[i].ID == id)
 			{
 				TIXML_SNPRINTF (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", id.iFirstPart, id.iSecondPart);
-				Log.write (szTmp, LOG_TYPE_WARNING);
+				Log.write (szTmp, cLog::eLOG_TYPE_WARNING);
 				return ;
 			}
 		}
@@ -1692,7 +1692,7 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 			if (UnitsData.sbuildings[i].ID == id)
 			{
 				TIXML_SNPRINTF (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", id.iFirstPart, id.iSecondPart);
-				Log.write (szTmp, LOG_TYPE_WARNING);
+				Log.write (szTmp, cLog::eLOG_TYPE_WARNING);
 				return ;
 			}
 		}
@@ -1702,13 +1702,13 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 	if (iID != atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()))
 	{
 		TIXML_SNPRINTF (szTmp, sizeof (szTmp), "ID %.2d %.2d isn't equal with ID for unit \"%s\" ", atoi (idString.substr (0, idString.find (" ", 0)).c_str()), atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()), directory);
-		Log.write (szTmp, LOG_TYPE_WARNING);
+		Log.write (szTmp, cLog::eLOG_TYPE_WARNING);
 		return ;
 	}
 	else
 	{
 		TIXML_SNPRINTF (szTmp, sizeof (szTmp), "ID %.2d %.2d verified", atoi (idString.substr (0, idString.find (" ", 0)).c_str()), atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()));
-		Log.write (szTmp, LOG_TYPE_DEBUG);
+		Log.write (szTmp, cLog::eLOG_TYPE_DEBUG);
 	}
 	//read name
 	Data->name = getXMLAttributeString (unitDataXml, "name", "Unit", nullptr);
@@ -1871,7 +1871,7 @@ static void LoadUnitGraphicData (sUnitData* Data, char const* directory)
 
 	if (unitGraphicsXml.LoadFile (path.c_str()) != XML_NO_ERROR)
 	{
-		Log.write ("Can't load " + path, LOG_TYPE_WARNING);
+		Log.write ("Can't load " + path, cLog::eLOG_TYPE_WARNING);
 		return ;
 	}
 
@@ -1899,14 +1899,14 @@ static int LoadClans()
 		return 0;
 	if (clansXml.LoadFile (clansXMLPath.c_str()) != XML_NO_ERROR)
 	{
-		Log.write ("Can't load " + clansXMLPath, LOG_TYPE_ERROR);
+		Log.write ("Can't load " + clansXMLPath, cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
 
 	XMLElement* xmlElement = clansXml.FirstChildElement ("Clans");
 	if (xmlElement == 0)
 	{
-		Log.write ("Can't read \"Clans\" node!", LOG_TYPE_ERROR);
+		Log.write ("Can't read \"Clans\" node!", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
 
@@ -1930,7 +1930,7 @@ static int LoadClans()
 			const char* idAttr = statsElement->Attribute ("UnitID");
 			if (idAttr == 0)
 			{
-				Log.write ("Couldn't read UnitID for ChangedUnitStat for clans", LOG_TYPE_ERROR);
+				Log.write ("Couldn't read UnitID for ChangedUnitStat for clans", cLog::eLOG_TYPE_ERROR);
 				continue;
 			}
 			string idAttrStr (idAttr);

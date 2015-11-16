@@ -421,7 +421,7 @@ void cSettings::initialize()
 	}
 	if (configFile.LoadFile (configPath.c_str()) != XML_NO_ERROR)
 	{
-		Log.write ("Can't read max.xml\n", LOG_TYPE_WARNING);
+		Log.write ("Can't read max.xml\n", cLog::eLOG_TYPE_WARNING);
 		if (!createConfigFile()) return;
 	}
 
@@ -435,7 +435,7 @@ void cSettings::initialize()
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "Resolution", nullptr);
 		if (!xmlElement || !xmlElement->Attribute ("Text"))
 		{
-			Log.write ("Can't load resolution from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load resolution from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			Video.setResolution (Video.getMinW(), Video.getMinH(), false);
 			saveResolution();
 		}
@@ -451,7 +451,7 @@ void cSettings::initialize()
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "ColourDepth", nullptr);
 		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
-			Log.write ("Can't load color depth from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load color depth from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			Video.setColDepth (32);
 			saveColorDepth();
 		}
@@ -464,7 +464,7 @@ void cSettings::initialize()
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "Intro", nullptr);
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
-			Log.write ("Can't load intro from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load intro from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			setShowIntro (true);
 		}
 		else
@@ -476,7 +476,7 @@ void cSettings::initialize()
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "Windowmode", nullptr);
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
-			Log.write ("Can't load window mode from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load window mode from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			Video.setWindowMode (true);
 			saveWindowMode();
 		}
@@ -489,7 +489,7 @@ void cSettings::initialize()
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "Display", nullptr);
 		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
-			Log.write ("Can't load display index from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load display index from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			Video.setDisplayIndex (0);
 			saveDisplayIndex();
 		}
@@ -502,7 +502,7 @@ void cSettings::initialize()
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "Fastmode", nullptr);
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
-			Log.write ("Can't load fast mode from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load fast mode from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			setFastMode (false);
 		}
 		else
@@ -514,7 +514,7 @@ void cSettings::initialize()
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "PreScale", nullptr);
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
-			Log.write ("Can't load pre scale from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load pre scale from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			setDoPrescale (false);
 		}
 		else
@@ -526,7 +526,7 @@ void cSettings::initialize()
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "CacheSize", nullptr);
 		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
-			Log.write ("Can't load cache size from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load cache size from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			setCacheSize (400);
 		}
 		else
@@ -539,7 +539,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "Language", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
-		Log.write ("Can't load language from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load language from config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setLanguage ("ENG");
 	}
 	else
@@ -553,7 +553,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "VoiceLanguage", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
-		Log.write ("Can't load language from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load language from config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setVoiceLanguage ("");
 	}
 	else
@@ -567,7 +567,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableAutosave", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
-		Log.write ("Can't load autosave from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load autosave from config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setAutosave (true);
 	}
 	else
@@ -579,7 +579,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableDebug", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
-		Log.write ("Can't load debug from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load debug from config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setDebug (true);
 	}
 	else
@@ -593,7 +593,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableAnimations", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
-		Log.write ("Can't load animations from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load animations from config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setAnimations (true);
 	}
 	else
@@ -605,7 +605,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableShadows", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
-		Log.write ("Can't load shadows from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load shadows from config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setShadows (true);
 	}
 	else
@@ -617,7 +617,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableAlphaEffects", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
-		Log.write ("Can't load alpha effects from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load alpha effects from config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setAlphaEffects (true);
 	}
 	else
@@ -629,7 +629,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableDescribtions", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
-		Log.write ("Can't load descriptions from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load descriptions from config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setShowDescription (true);
 	}
 	else
@@ -641,7 +641,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableDamageEffects", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
-		Log.write ("Can't load damage effects from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load damage effects from config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setDamageEffects (true);
 	}
 	else
@@ -653,7 +653,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableDamageEffectsVehicles", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
-		Log.write ("Can't load damaga effects vehicles from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load damaga effects vehicles from config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setDamageEffectsVehicles (true);
 	}
 	else
@@ -665,7 +665,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableMakeTracks", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
-		Log.write ("Can't load make tracks from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load make tracks from config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setMakeTracks (true);
 	}
 	else
@@ -677,7 +677,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "ScrollSpeed", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("Num"))
 	{
-		Log.write ("Can't load scroll speed from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load scroll speed from config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setScrollSpeed (32);
 	}
 	else
@@ -692,7 +692,7 @@ void cSettings::initialize()
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "Enabled", nullptr);
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
-			Log.write ("Can't load sound enabled from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load sound enabled from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			setSoundEnabled (true);
 		}
 		else
@@ -704,7 +704,7 @@ void cSettings::initialize()
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "MusicMute", nullptr);
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
-			Log.write ("Can't load music mute from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load music mute from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			setMusicMute (false);
 		}
 		else
@@ -716,7 +716,7 @@ void cSettings::initialize()
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "SoundMute", nullptr);
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
-			Log.write ("Can't load sound mute from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load sound mute from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			setSoundMute (false);
 		}
 		else
@@ -728,7 +728,7 @@ void cSettings::initialize()
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "VoiceMute", nullptr);
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
-			Log.write ("Can't load voice mute from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load voice mute from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			setVoiceMute (false);
 		}
 		else
@@ -740,7 +740,7 @@ void cSettings::initialize()
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "Sound3D", nullptr);
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
-			Log.write ("Can't load 3D sound from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load 3D sound from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			set3DSound (true);
 		}
 		else
@@ -752,7 +752,7 @@ void cSettings::initialize()
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "MusicVol", nullptr);
 		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
-			Log.write ("Can't load music volume from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load music volume from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			setMusicVol (128);
 		}
 		else
@@ -764,7 +764,7 @@ void cSettings::initialize()
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "SoundVol", nullptr);
 		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
-			Log.write ("Can't load music volume from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load music volume from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			setSoundVol (128);
 		}
 		else
@@ -776,7 +776,7 @@ void cSettings::initialize()
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "VoiceVol", nullptr);
 		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
-			Log.write ("Can't load music volume from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load music volume from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			setVoiceVol (128);
 		}
 		else
@@ -788,7 +788,7 @@ void cSettings::initialize()
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "ChunkSize", nullptr);
 		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
-			Log.write ("Can't load music volume from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load music volume from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			setChunkSize (2048);
 		}
 		else
@@ -800,7 +800,7 @@ void cSettings::initialize()
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "Frequency", nullptr);
 		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
-			Log.write ("Can't load music volume from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load music volume from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			setFrequence (44100);
 		}
 		else
@@ -814,7 +814,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Gamedata", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
-		Log.write ("Can't load gamedata from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load gamedata from config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setDataDir (searchDataDir().c_str(), true);
 	}
 	else
@@ -826,7 +826,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Languages", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
-		Log.write ("Can't load language path from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load language path from config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setLangPath ("languages");
 		langPath = dataDir + "languages";
 	}
@@ -839,7 +839,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Fonts", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
-		Log.write ("Can't load fonts path from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load fonts path from config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setFontPath ("fonts");
 		fontPath = dataDir + "fonts";
 	}
@@ -852,7 +852,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "FX", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
-		Log.write ("Can't load fx path from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load fx path from config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setFxPath ("fx");
 		fxPath = dataDir + "fx";
 	}
@@ -865,7 +865,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "GFX", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
-		Log.write ("Can't load gfx path from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load gfx path from config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setGfxPath ("gfx");
 		gfxPath = dataDir + "gfx";
 	}
@@ -878,7 +878,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Maps", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
-		Log.write ("Can't load maps path from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load maps path from config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setMapsPath ("maps");
 		mapsPath = dataDir + "maps";
 	}
@@ -891,7 +891,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Saves", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
-		Log.write ("Can't load saves path from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load saves path from config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setSavesPath ("saves");
 		savesPath = homeDir + "saves";
 	}
@@ -910,9 +910,9 @@ void cSettings::initialize()
 	if (!FileExists (getSavesPath().c_str()))
 	{
 		if (mkdir (getSavesPath().c_str(), 0755) == 0)
-			Log.write ("Created new save directory " + getSavesPath(), LOG_TYPE_INFO);
+			Log.write ("Created new save directory " + getSavesPath(), cLog::eLOG_TYPE_INFO);
 		else
-			Log.write ("Can't create save directory " + getSavesPath(), LOG_TYPE_ERROR);
+			Log.write ("Can't create save directory " + getSavesPath(), cLog::eLOG_TYPE_ERROR);
 	}
 #endif
 
@@ -922,7 +922,7 @@ void cSettings::initialize()
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Sounds", nullptr);
 		if (!xmlElement || !xmlElement->Attribute ("Text"))
 		{
-			Log.write ("Can't load sounds path from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load sounds path from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			setSoundsPath ("sounds");
 			soundsPath = dataDir + "sounds";
 		}
@@ -935,7 +935,7 @@ void cSettings::initialize()
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Voices", nullptr);
 		if (!xmlElement || !xmlElement->Attribute ("Text"))
 		{
-			Log.write ("Can't load voices path from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load voices path from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			setVoicesPath ("voices");
 			voicesPath = dataDir + "voices";
 		}
@@ -948,7 +948,7 @@ void cSettings::initialize()
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Music", nullptr);
 		if (!xmlElement || !xmlElement->Attribute ("Text"))
 		{
-			Log.write ("Can't load music path from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load music path from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			setMusicPath ("music");
 			musicPath = dataDir + "music";
 		}
@@ -962,7 +962,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Vehicles", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
-		Log.write ("Can't load vehicles path from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load vehicles path from config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setVehiclesPath ("vehicles");
 		vehiclesPath = dataDir + "vehicles";
 	}
@@ -975,7 +975,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Buildings", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
-		Log.write ("Can't load buildings path from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load buildings path from config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setBuildingsPath ("buildings");
 		buildingsPath = dataDir + "buildings";
 	}
@@ -990,7 +990,7 @@ void cSettings::initialize()
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "MVEs", nullptr);
 		if (!xmlElement || !xmlElement->Attribute ("Text"))
 		{
-			Log.write ("Can't load language path from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load language path from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			setMvePath ("mve");
 			mvePath = dataDir + "mve";
 		}
@@ -1005,7 +1005,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Net", "IP", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
-		Log.write ("Can't load IP from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load IP from config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setIP ("127.0.0.1");
 	}
 	else
@@ -1017,7 +1017,7 @@ void cSettings::initialize()
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Net", "Port", nullptr);
 	if (!xmlElement || !xmlElement->Attribute ("Num"))
 	{
-		Log.write ("Can't load Port config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load Port config file: using default value", cLog::eLOG_TYPE_WARNING);
 		setPort (DEFAULTPORT);
 	}
 	else
@@ -1029,7 +1029,7 @@ void cSettings::initialize()
 	auto playerXmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Net", "PlayerName", nullptr);
 	if (!playerXmlElement || !playerXmlElement->Attribute ("Text"))
 	{
-		Log.write ("Can't load player name from config file: using default value", LOG_TYPE_WARNING);
+		Log.write ("Can't load player name from config file: using default value", cLog::eLOG_TYPE_WARNING);
 
 		char* user;
 
@@ -1061,7 +1061,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			Log.write ("Can't load player color from config file: using default value", LOG_TYPE_WARNING);
+			Log.write ("Can't load player color from config file: using default value", cLog::eLOG_TYPE_WARNING);
 			setPlayerColor (cRgbColor::red());
 		}
 	}
