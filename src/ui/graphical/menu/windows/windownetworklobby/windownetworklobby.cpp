@@ -73,6 +73,10 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 		ipLineEdit->setText ("-");
 		ipLineEdit->setReadOnly (true);
 	}
+	else
+	{
+		ipLineEdit->setText(cSettings::getInstance().getIP());
+	}
 	portLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (230, 260), getPosition() + cPosition (230 + 95, 260 + 10))));
 	portLineEdit->setText (iToStr (cSettings::getInstance().getPort()));
 	portLineEdit->setValidator (std::make_unique<cValidatorInt> (0, 65535));
