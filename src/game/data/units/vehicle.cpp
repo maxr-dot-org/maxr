@@ -137,8 +137,13 @@ void cVehicle::drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest,
 void cVehicle::drawOverlayAnimation (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const
 {
 	if (data.hasOverlay == false || cSettings::getInstance().isAnimations() == false) return;
+	int frameNr = 0;
+	if (isDisabled() == false)
+	{
+		frameNr = animationTime % (uiData->overlay_org->w / uiData->overlay_org->h);
+	}
 
-	drawOverlayAnimation (surface, dest, zoomFactor, alphaEffectValue && cSettings::getInstance().isAlphaEffects() ? alphaEffectValue : 254);
+	drawOverlayAnimation(surface, dest, zoomFactor, frameNr, alphaEffectValue && cSettings::getInstance().isAlphaEffects() ? alphaEffectValue : 254);
 }
 
 void cVehicle::render_BuildingOrBigClearing (const cMap& map, unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
