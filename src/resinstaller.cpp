@@ -3989,7 +3989,7 @@ void checkWritePermissions()
 		{
 			writeLog(string("Retrying with admin rights...") + TEXT_FILE_LF);	
 			SDL_RWclose(logFile);
-			string parameter = "\"" + sMAXPath + "\"\" \"" + sOutputPath + "\"\" " + sLanguage + " /donotelevate";
+			string parameter = "\"" + sMAXPath + "\"\" \"" + sOutputPath + "\"\" " + sLanguage + " " + sResChoice + " /donotelevate";
 
 			HINSTANCE result = ShellExecute(
 				NULL,
