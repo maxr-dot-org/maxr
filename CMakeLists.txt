@@ -131,7 +131,7 @@ include(GetGitRevisionDescription)
 git_describe(GIT_DESC --always)
 
 if (GIT_DESC)
-  message("Setting cpp define PACKAGE_REV to ${GIT_DESC}")
+  message(STATUS "Setting cpp define PACKAGE_REV to ${GIT_DESC}")
   add_definitions("-DHAVE_AUTOVERSION_H")
   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/autoversion.h.in" "${CMAKE_CURRENT_BINARY_DIR}/autoversion.h")
   include_directories(${CMAKE_CURRENT_BINARY_DIR})
