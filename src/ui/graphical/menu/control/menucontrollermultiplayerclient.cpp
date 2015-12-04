@@ -232,32 +232,42 @@ void cMenuControllerMultiplayerClient::startGamePreparation()
 
 	if (newGame->getGameSettings()->getClansEnabled())
 	{
-		startClanSelection();
+		startClanSelection(true);
 	}
 	else
 	{
-		startLandingUnitSelection();
+		startLandingUnitSelection(true);
 	}
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerClient::startClanSelection()
+void cMenuControllerMultiplayerClient::startClanSelection(bool isFirstWindowOnGamePreparation)
 {
 	if (!newGame) return;
 
 	auto windowClanSelection = application.show (std::make_shared<cWindowClanSelection> ());
 
-	signalConnectionManager.connect (windowClanSelection->canceled, [windowClanSelection]() { windowClanSelection->close(); });
+	signalConnectionManager.connect (windowClanSelection->canceled, [this, windowClanSelection, isFirstWindowOnGamePreparation]()
+	{
+		if(isFirstWindowOnGamePreparation)
+		{
+			checkReallyWantsToQuit();
+		}
+		else
+		{
+			windowClanSelection->close();
+		}
+	});
 	signalConnectionManager.connect (windowClanSelection->done, [this, windowClanSelection]()
 	{
 		newGame->setLocalPlayerClan (windowClanSelection->getSelectedClan());
 
-		startLandingUnitSelection();
+		startLandingUnitSelection(false);
 	});
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerClient::startLandingUnitSelection()
+void cMenuControllerMultiplayerClient::startLandingUnitSelection(bool isFirstWindowOnGamePreparation)
 {
 	if (!newGame || !newGame->getGameSettings()) return;
 
@@ -265,7 +275,17 @@ void cMenuControllerMultiplayerClient::startLandingUnitSelection()
 
 	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), newGame->getLocalPlayerClan(), initialLandingUnits, newGame->getGameSettings()->getStartCredits()));
 
-	signalConnectionManager.connect (windowLandingUnitSelection->canceled, [windowLandingUnitSelection]() { windowLandingUnitSelection->close(); });
+	signalConnectionManager.connect (windowLandingUnitSelection->canceled, [this, windowLandingUnitSelection, isFirstWindowOnGamePreparation]()
+	{
+		if(isFirstWindowOnGamePreparation)
+		{
+			checkReallyWantsToQuit();
+		}
+		else
+		{
+			windowLandingUnitSelection->close();
+		}
+	});
 	signalConnectionManager.connect (windowLandingUnitSelection->done, [this, windowLandingUnitSelection]()
 	{
 		newGame->setLocalPlayerLandingUnits (windowLandingUnitSelection->getLandingUnits());
@@ -327,6 +347,18 @@ void cMenuControllerMultiplayerClient::startNewGame()
 }
 
 //------------------------------------------------------------------------------
+void cMenuControllerMultiplayerClient::checkReallyWantsToQuit()
+{
+	auto yesNoDialog = application.show(std::make_shared<cDialogYesNo>("Are you sure you want to abort the game preparation?")); // TODO: translate
+
+	signalConnectionManager.connect(yesNoDialog->yesClicked, [this]()
+	{
+		sendPlayerHasAbortedGamePreparation(*network, newGame->getLocalPlayer());
+		application.closeTill(*windowNetworkLobby);
+	});
+}
+
+//------------------------------------------------------------------------------
 void cMenuControllerMultiplayerClient::handleNetMessage (cNetMessage& message)
 {
 	Log.write ("Menu: <-- " + message.getTypeAsString() + ", Hexdump: " + message.getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
@@ -350,6 +382,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_RECONNECT_ANSWER: handleNetMessage_GAME_EV_RECONNECT_ANSWER (message); break;
 		case MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS: handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS (message); break;
 		case MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION: handleNetMessage_MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION (message); break;
+		case MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION: handleNetMessage_MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION(message); break;
 		default:
 			Log.write ("Client Menu Controller: Can not handle message type " + message.getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 			break;
@@ -719,6 +752,26 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_PLAYER_HAS_SELECT
 	auto& playerLandingStatus = **iter;
 
 	playerLandingStatus.setHasSelectedPosition (true);
+}
+
+//------------------------------------------------------------------------------
+void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION(cNetMessage & message)
+{
+	auto players = windowNetworkLobby->getPlayers();
+
+	const auto playerNr = message.popInt32();
+
+	auto iter = std::find_if(players.begin(), players.end(), [playerNr](const std::shared_ptr<cPlayerBasicData>& player) { return player->getNr() == playerNr; });
+	if(iter == players.end()) return;
+
+	const auto& player = **iter;
+
+	auto yesNoDialog = application.show(std::make_shared<cDialogOk>("Player " + player.getName() + " has quit from game preparation")); // TODO: translate
+
+	signalConnectionManager.connect(yesNoDialog->done, [this]()
+	{
+		application.closeTill(*windowNetworkLobby);
+	});
 }
 
 //------------------------------------------------------------------------------

@@ -194,3 +194,12 @@ void sendPlayerHasSelectedLandingPosition (cTCP& network, const cPlayerBasicData
 
 	sendMessage (network, message, receiver);
 }
+
+//------------------------------------------------------------------------------
+void sendPlayerHasAbortedGamePreparation(cTCP& network, const cPlayerBasicData& player, const cPlayerBasicData* receiver)
+{
+	cNetMessage message(MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION);
+	message.pushInt32(player.getNr());
+
+	sendMessage(network, message, receiver);
+}
