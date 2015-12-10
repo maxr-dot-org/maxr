@@ -97,22 +97,22 @@ void drawSelectionCorner (SDL_Surface& surface, const cBox<cPosition>& rectangle
 	const auto sdlColor = color.toMappedSdlRGBAColor (surface.format);
 
 	SDL_FillRect (&surface, &line_h, sdlColor);
-	line_h.x += size.x() - 1 - cornerSize;
+	line_h.x += size.x() - cornerSize;
 	SDL_FillRect (&surface, &line_h, sdlColor);
 	line_h.x = rectangle.getMinCorner().x();
 	line_h.y += size.y() - 1;
 	SDL_FillRect (&surface, &line_h, sdlColor);
-	line_h.x += size.x() - 1 - cornerSize;
+	line_h.x += size.x() - cornerSize;
 	SDL_FillRect (&surface, &line_h, sdlColor);
 
 	SDL_Rect line_v = {rectangle.getMinCorner().x(), rectangle.getMinCorner().y(), 1, cornerSize};
 	SDL_FillRect (&surface, &line_v, sdlColor);
-	line_v.y += size.y() - 1 - cornerSize;
+	line_v.y += size.y() - cornerSize;
 	SDL_FillRect (&surface, &line_v, sdlColor);
 	line_v.x += size.x() - 1;
 	line_v.y = rectangle.getMinCorner().y();
 	SDL_FillRect (&surface, &line_v, sdlColor);
-	line_v.y += size.y() - 1 - cornerSize;
+	line_v.y += size.y() - cornerSize;
 	SDL_FillRect (&surface, &line_v, sdlColor);
 }
 
