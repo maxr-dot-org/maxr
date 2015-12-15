@@ -847,12 +847,17 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 			element->QueryIntAttribute ("endx", &vehicle.bandPosition.x());
 			element->QueryIntAttribute ("endy", &vehicle.bandPosition.y());
 
-			if (!vehicle.isUnitBuildingABuilding())
+			if (!vehicle.isUnitBuildingABuilding() &&
+				vehicle.data.getStoredResources() >= vehicle.getBuildCostsStart() && server.Map->possiblePlaceBuilding(*vehicle.getBuildingType().getUnitDataOriginalVersion(), vehicle.getPosition(), &vehicle))
 			{
 				server.addJob (new cStartBuildJob (vehicle, vehicle.getPosition(), vehicle.data.isBig));
 				vehicle.setBuildingABuilding (true);
 				vehicle.setBuildCosts (vehicle.getBuildCostsStart());
 				vehicle.setBuildTurns (vehicle.getBuildTurnsStart());
+			}
+			else
+			{
+				vehicle.BuildPath = false;
 			}
 		}
 	}
