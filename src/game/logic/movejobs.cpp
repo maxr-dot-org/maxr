@@ -518,6 +518,11 @@ cServerMoveJob* cServerMoveJob::generateFromMessage (cServer& server, cNetMessag
 		Log.write (" Server: cannot move a vehicle currently building", cLog::eLOG_TYPE_NET_DEBUG);
 		return nullptr;
 	}
+	if (vehicle->isDisabled())
+	{
+		Log.write(" Server: cannot move a vehicle currently disabled", cLog::eLOG_TYPE_NET_DEBUG);
+		return nullptr;
+	}
 
 	// reconstruct path
 	sWaypoint* path = nullptr;
