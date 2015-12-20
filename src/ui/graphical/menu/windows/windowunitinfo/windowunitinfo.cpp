@@ -27,8 +27,9 @@
 #include "game/data/units/building.h"
 
 //------------------------------------------------------------------------------
-cWindowUnitInfo::cWindowUnitInfo (const sUnitData& unitData, const cPlayer& owner) :
-	cWindow (LoadPCX (GFXOD_HELP), eWindowBackgrounds::Black)
+cWindowUnitInfo::cWindowUnitInfo (const sUnitData& unitData_, const cPlayer& owner) :
+	cWindow (LoadPCX (GFXOD_HELP), eWindowBackgrounds::Black),
+	unitData(unitData_)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Unitinfo"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 

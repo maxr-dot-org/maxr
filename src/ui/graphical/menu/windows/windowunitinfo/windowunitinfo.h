@@ -22,11 +22,11 @@
 
 #include "ui/graphical/window.h"
 #include "utility/signal/signalconnectionmanager.h"
+#include "game/data/units/unitdata.h"
 
 class cCheckBox;
 class cLabel;
 class cPlayer;
-struct sUnitData;
 
 class cWindowUnitInfo : public cWindow
 {
@@ -34,6 +34,7 @@ public:
 	cWindowUnitInfo (const sUnitData& unitData, const cPlayer& owner);
 private:
 	cSignalConnectionManager signalConnectionManager;
+	sUnitData unitData;
 };
 
 #endif // ui_graphical_menu_windows_windowunitinfo_windowunitinfoH
