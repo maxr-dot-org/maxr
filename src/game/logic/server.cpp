@@ -3493,7 +3493,6 @@ int cServer::deleteBuildings (cMapField& field, bool deleteConnector)
 			rubble += (*b_it)->data.getStoredResources() * 2; // stored material is always added completely to the rubble
 
 		deleteUnit (*b_it);
-		b_it = buildings.begin();
 	}
 
 	return rubble;
