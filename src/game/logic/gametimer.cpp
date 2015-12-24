@@ -219,7 +219,7 @@ void cGameTimerClient::run()
 		if (localChecksum != remoteChecksum)
 		{
 			//gameGUI.debugOutput.debugSync = true;
-			Log.write ("OUT OF SYNC", cLog::eLOG_TYPE_NET_ERROR);
+			//Log.write ("OUT OF SYNC", cLog::eLOG_TYPE_NET_ERROR); //disabled message, as long as move jobs are out of sync most of the time
 		}
 
 		if (syncDebugSingleStep)
