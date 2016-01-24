@@ -34,9 +34,12 @@ class cPosition;
 enum eMenuMessages
 {
 	MU_MSG_CHAT = FIRST_MENU_MESSAGE,	// simple text message
+	// Note: Do not change the values of MU_MSG_REQ_IDENTIFIKATION and MU_MSG_IDENTIFIKATION.
+	//       Otherwise the game version and compatibility check when connecting to a server doesn't work anymore
 	MU_MSG_REQ_IDENTIFIKATION,	// host requests a identification of this player
-	MU_MSG_PLAYER_NUMBER,		// host assigns a new player number to a player
 	MU_MSG_IDENTIFIKATION,		// player send his identification
+	
+	MU_MSG_PLAYER_NUMBER,		// host assigns a new player number to a player
 	MU_MSG_PLAYERLIST,			// a list with all players and their data
 	MU_MSG_OPTINS,				// all options selected by the host
 	// Map down/up-load
