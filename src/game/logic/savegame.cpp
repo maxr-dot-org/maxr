@@ -1018,6 +1018,12 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, const sID& 
 			playerNodeNum++;
 		}
 	}
+
+	if(building.isUnitWorking() && building.data.needsMetal && building.getBuildListSize() == 0)
+	{
+		Log.write("Found a building that can build vehicles and that is working but has no items in the build list. Disabling working state. Unit ID is " + iToStr(building.iID), cLog::eLOG_TYPE_WARNING);
+		building.setWorking(false);
+	}
 }
 
 //--------------------------------------------------------------------------
