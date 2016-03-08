@@ -187,7 +187,7 @@ void cSettings::setPaths()
 		homeDir += ".maxr";
 		homeDir += PATH_DELIMITER;
 		configPath = homeDir;
-		configPath += MAX_XML; // set config to $HOME/.maxr/max.xml
+		configPath += MAX_XML; // set config to $HOME/.maxr/maxr.xml
 
 		// check whether home dir is set up and readable.
 		// under linux everything is a file -- beko
@@ -421,7 +421,7 @@ void cSettings::initialize()
 	}
 	if (configFile.LoadFile (configPath.c_str()) != XML_NO_ERROR)
 	{
-		Log.write ("Can't read max.xml\n", cLog::eLOG_TYPE_WARNING);
+		Log.write ("Can't read maxr.xml\n", cLog::eLOG_TYPE_WARNING);
 		if (!createConfigFile()) return;
 	}
 
@@ -585,7 +585,7 @@ void cSettings::initialize()
 	else
 	{
 		debug = xmlElement->BoolAttribute ("YN");
-		if (!debug) Log.write ("Debugmode disabled - for verbose output please enable Debug in max.xml", cLog::eLOG_TYPE_WARNING);
+		if (!debug) Log.write ("Debugmode disabled - for verbose output please enable Debug in maxr.xml", cLog::eLOG_TYPE_WARNING);
 		else Log.write ("Debugmode enabled", cLog::eLOG_TYPE_INFO);
 	}
 

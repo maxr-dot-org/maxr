@@ -77,9 +77,9 @@ Section "Main Files (requierd)" Section_Main
         # first install files which will be needed by the resinstaller
         File "${RESINSTALLER_EXE}"
         File "${RESINSTALLER_TESTFILE}"
-        File /r /x "max.xml" "${FILESFOLDER}*.xml" ; xml files are just installed to get the directory structure of buildings and vehicles
+        File /r /x "maxr.xml" "${FILESFOLDER}*.xml" ; xml files are just installed to get the directory structure of buildings and vehicles
 
-        # the resinstaller will run _before_ copying the free graphics so that they will be keeped
+        # the resinstaller will run _before_ copying the free graphics so that they will be kept
         ${If} $SELECTION_STATUS == "Keep"
         # create rest of directorys for the resinstaller
         CreateDirectory "$INSTDIR\gfx"
@@ -90,7 +90,7 @@ Section "Main Files (requierd)" Section_Main
         CreateDirectory "$INSTDIR\voices"
         CreateDirectory "$INSTDIR\mve"
         # copy graphics which will be needed by the resinstaller
-        # these files will be replaced after the resinstaller has pased by the free graphics in this mode
+        # these files will be replaced after the resinstaller has passed by the free graphics in this mode
         File /r "${FILESFOLDER}*effect_org.pcx"
         File /r "${FILESFOLDER}*effect.pcx"
         File /r "${FILESFOLDER}hud_stuff.pcx"
@@ -109,7 +109,7 @@ Section "Main Files (requierd)" Section_Main
 
         CreateDirectory "$DOCUMENTS\maxr"
         SetOutPath "$DOCUMENTS\maxr"
-        File "max.xml"
+        File "maxr.xml"
         SetOutPath $INSTDIR
                 Call ChangeLanguage
 SectionEnd
@@ -120,8 +120,8 @@ VAR FILE_LENGTH
 VAR LANGUAGE_CODE
 
 Function ChangeLanguage
-         # open the max.xml
-         FileOpen $MAX_XML_FILE $DOCUMENTS\maxr\max.xml a
+         # open the maxr.xml
+         FileOpen $MAX_XML_FILE $DOCUMENTS\maxr\maxr.xml a
          StrCpy $FILE_LENGTH "0"
 
          # get the code of the selected language

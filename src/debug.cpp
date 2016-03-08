@@ -29,6 +29,7 @@
 
 #include "utility/log.h"
 #include "maxrversion.h"
+#include "defines.h"
 #include "settings.h"
 #include "video.h"
 
@@ -46,10 +47,10 @@ int CALLBACK CrashCallback(CR_CRASH_CALLBACK_INFO* pInfo)
 			SDL_SaveBMP(cVideo::buffer, path.c_str());
 			crAddFile2(path.c_str(), NULL, "Screenshot at the moment of the crash", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 		}
-		
+
 	}
 
-	
+
 	// Return CR_CB_DODEFAULT to generate error report
 	return CR_CB_DODEFAULT;
 }
@@ -104,7 +105,7 @@ void initCrashreporting()
 		crAddFile2(log.c_str(), NULL, "Maxr Logfile", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 	}
 
-	std::string settings = cSettings::getInstance().getHomeDir() + "max.xml";
+	std::string settings = cSettings::getInstance().getHomeDir() + MAX_XML;
 	if (!settings.empty())
 	{
 		crAddFile2(settings.c_str(), NULL, "Maxr Configuration File", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
@@ -126,7 +127,7 @@ void initCrashreporting()
 	//crAddScreenshot2(CR_AS_PROCESS_WINDOWS, 0);
 
 
-	
+
 
 
 }
