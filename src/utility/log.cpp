@@ -40,19 +40,6 @@
 #define MM "(MM): "
 
 //------------------------------------------------------------------------------
-cLog::cLog() :
-	logfile(nullptr),
-	netLogfile(nullptr)
-{}
-
-//------------------------------------------------------------------------------
-cLog::~cLog()
-{
-	if (netLogfile) fclose (netLogfile);
-	if (logfile) fclose (logfile);
-}
-
-//------------------------------------------------------------------------------
 void cLog::write(const char* msg)
 {
 	write(std::string(msg), eLOG_TYPE_INFO);
@@ -139,7 +126,7 @@ void cLog::checkOpenFile(eLogType type)
 
 	if (type == eLOG_TYPE_NET_DEBUG || type == eLOG_TYPE_NET_WARNING || type == eLOG_TYPE_NET_ERROR)
 	{
-		if (netLogfile)
+		if (netLogfile.is_open())
 		{
 			//file is already open
 			return;
@@ -161,40 +148,37 @@ void cLog::checkOpenFile(eLogType type)
 		cSettings::getInstance().setNetLogPath((getUserLogDir() + sTime + MAX_NET_LOG).c_str());
 
 		//create + open new log file
-		netLogfile = fopen(NETLOGFILE, "wt");
-		if (netLogfile == nullptr)
+		netLogfile.open(NETLOGFILE, std::fstream::out | std::fstream::trunc);
+		if (!netLogfile.is_open())
 		{
-			fprintf(stderr, "(EE): Couldn't open net.log!\n Please check file/directory permissions\n");
+			std::cerr << "(EE): Couldn't open net.log!\n Please check file/directory permissions\n";
 		}
 	}
 	else
 	{
-		if (logfile)
+		if (logfile.is_open())
 		{
 			//file is already open
 			return;
 		}
 
 		//create + open new log file
-		logfile = fopen(LOGFILE, "wt");
-		if (logfile == nullptr)
+		logfile.open(LOGFILE, std::fstream::out | std::fstream::trunc);
+		if (!logfile.is_open())
 		{
-			fprintf(stderr, "(EE): Couldn't open maxr.log!\n Please check file/directory permissions\n");
+			std::cerr << "(EE): Couldn't open maxr.log!\n Please check file/directory permissions\n";
 		}
 	}
 }
 
 //------------------------------------------------------------------------------
-void cLog::writeToFile(std::string &msg, FILE* file)
+void cLog::writeToFile(const std::string &msg, std::ofstream& file)
 {
-	int result = 0;
-	if (file)
+	file << msg;
+	file.flush();
+
+	if (file.bad())
 	{
-		result = fputs(msg.c_str(), file);
-		fflush(file);
-	}
-	if (file == nullptr || result == EOF)
-	{
-		fprintf(stderr, msg.c_str());
+		std::cerr << msg;
 	}
 }

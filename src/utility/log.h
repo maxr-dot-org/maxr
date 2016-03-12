@@ -20,10 +20,10 @@
 #ifndef utility_logH
 #define utility_logH
 
+#include <fstream>
+
 #include "defines.h"
 #include "utility/thread/mutex.h"
-
-
 
 class cLog
 {
@@ -39,9 +39,6 @@ public:
 		eLOG_TYPE_NET_WARNING,
 		eLOG_TYPE_NET_ERROR,
 	};
-
-	cLog();
-	~cLog();
 
 	/**
 	* Writes message with default type (II) to the logfile
@@ -64,13 +61,13 @@ public:
 	void mark();
 
 private:
-	FILE* logfile;
-	FILE* netLogfile;
+	std::ofstream logfile;
+	std::ofstream netLogfile;
 	cMutex mutex;
 
 	void checkOpenFile(eLogType type);
 
-	void writeToFile(std::string &msg, FILE* file);
+	void writeToFile(const std::string &msg, std::ofstream& file);
 
 } EX Log;
 
