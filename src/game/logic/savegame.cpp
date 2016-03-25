@@ -246,6 +246,20 @@ string cSavegame::loadMapName()
 
 bool cSavegame::loadVersion()
 {
+	const XMLElement* headerNode = SaveFile.RootElement()->FirstChildElement("Header");
+	if (headerNode)
+	{
+		const XMLElement* gameVersionNode = headerNode->FirstChildElement("Game_Version");
+		if (gameVersionNode)
+		{
+			auto loadedGameVersion = gameVersionNode->Attribute("string");
+			if (loadedGameVersion)
+			{
+				gameVersion = loadedGameVersion;
+			}
+		}
+	}
+
 	auto versionString = SaveFile.RootElement()->Attribute ("version");
 
 	// TODO: reorganize the whole save game loading/saving to support exception and do not catch this one internally.
@@ -1349,11 +1363,24 @@ string cSavegame::convertScanMapToString (const cPlayer& player) const
 //--------------------------------------------------------------------------
 void cSavegame::convertStringToScanMap (const string& str, cPlayer& player)
 {
-	for (int x = 0; x != player.getMapSize().x(); ++x)
+	if (gameVersion == "0.2.8")
 	{
 		for (int y = 0; y != player.getMapSize().y(); ++y)
 		{
-			if (!str.compare (x * player.getMapSize().y() + y, 1, "1")) player.exploreResource (cPosition (x, y));
+			for (int x = 0; x != player.getMapSize().x(); ++x)
+			{
+				if (!str.compare(y * player.getMapSize().y() + x, 1, "1")) player.exploreResource(cPosition(x, y));
+			}
+		}
+	}
+	else
+	{
+		for (int x = 0; x != player.getMapSize().x(); ++x)
+		{
+			for (int y = 0; y != player.getMapSize().y(); ++y)
+			{
+				if (!str.compare(x * player.getMapSize().y() + y, 1, "1")) player.exploreResource(cPosition(x, y));
+			}
 		}
 	}
 }

@@ -124,6 +124,8 @@ private:
 	tinyxml2::XMLDocument SaveFile;
 	/* the version of a loaded savegame */
 	cVersion version;
+	/* game version number of a loaded savegame */
+	std::string gameVersion;
 
 	/* list with loaded movejobs */
 	std::vector<sMoveJobLoad*> MoveJobsLoad;
