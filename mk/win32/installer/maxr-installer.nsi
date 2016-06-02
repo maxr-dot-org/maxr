@@ -227,7 +227,7 @@ Function LanguageDialog
     !insertmacro MUI_HEADER_TEXT "Choose language" "Choose the language you would prefer to play $(^NameDA) in."
 
     # Create Dialog-Items
-    ${NSD_CreateLabel} 0 0 100% 36u "Setup will change the default language of $(^NameDA). Please select your prefered language from the following list. If your language is not listed there, the language is not supported yet. Feel free to help us translating the game and write the translation yourselve. More information at www.maxr.org."
+    ${NSD_CreateLabel} 0 0 100% 36u "Setup will change the default language of $(^NameDA). Please select your prefered language from the following list. If your language is not listed there, the language is not supported yet. Feel free to help us translating the game and write the translation yourself. More information at www.maxr.org."
     ${NSD_CreateDropList} 0 78 180 12 ""
     Pop $LANGUAGE_DROPLIST
 
