@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 2.8)
 
 project(resinstaller)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/mk/cmake)
+
 # ============================================
 # === Global additional includes directories
 # ============================================
@@ -76,9 +78,11 @@ endif()
 # ============================================
 add_executable(resinstaller src/converter.cpp src/file.cpp src/ogg_encode.cpp src/pcx.cpp src/resinstaller.cpp src/SDL_flic.c src/wave.cpp)
 
+find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIR})
 target_link_libraries(resinstaller ${SDL2_LIBRARY})
 
+find_package(OggVorbis REQUIRED)
 include_directories(${VORBIS_INCLUDE_DIR})
 target_link_libraries(resinstaller ${VORBIS_LIBRARY})
 

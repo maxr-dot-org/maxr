@@ -67,11 +67,15 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
+set(SDL2_DIR "" CACHE PATH "Path to the directory where SDL2 is located")
+
 find_path(SDL2_INCLUDE_DIR SDL.h
   HINTS
     ENV SDL2DIR
+    ${SDL2_DIR}
   PATH_SUFFIXES include/SDL2 include
 )
+
 
 # SDL-1.1 is the name used by FreeBSD ports...
 # don't confuse it for the version number.
@@ -79,6 +83,7 @@ find_library(SDL2_LIBRARY_TEMP
   NAMES SDL2
   HINTS
     ENV SDL2DIR
+    ${SDL2_DIR}
   PATH_SUFFIXES lib
 )
 
@@ -92,6 +97,7 @@ if(NOT SDL2_BUILDING_LIBRARY)
       NAMES SDL2main
       HINTS
         ENV SDL2DIR
+        ${SDL2_DIR}
       PATH_SUFFIXES lib
       PATHS
       /sw
@@ -106,9 +112,9 @@ endif()
 # The Apple build may not need an explicit flag because one of the
 # frameworks may already provide it.
 # But for non-OSX systems, I will use the CMake Threads package.
-#if(NOT APPLE)
-#  find_package(Threads)
-#endif()
+if(NOT APPLE)
+  find_package(Threads)
+endif()
 
 # MinGW needs an additional library, mwindows
 # It's total link flags should look like -lmingw32 -lSDL2main -lSDL2 -lmwindows
@@ -171,8 +177,13 @@ if(SDL2_INCLUDE_DIR AND EXISTS "${SDL2_INCLUDE_DIR}/SDL_version.h")
   unset(SDL2_VERSION_PATCH)
 endif()
 
-#include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
-#
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(SDL2
+include(FindPackageHandleStandardArgs)
+
+mark_as_advanced(SDL2_LIBRARY_TEMP SDL2_LIBRARY SDL2MAIN_LIBRARY SDL2_INCLUDE_DIR)
+
+find_package_handle_standard_args(SDL2
                                   REQUIRED_VARS SDL2_LIBRARY SDL2_INCLUDE_DIR
-                                  VERSION_VAR SDL2_VERSION_STRING)
+                                  VERSION_VAR SDL2_VERSION_STRING
+                                  FAIL_MESSAGE "Could NOT find SDL2: Set SDL2_DIR to a directory containing the folders 'include' and 'lib' or set SDL2_INCLUDE_DIR, SDL2_LIBRARY and SDL2MAIN_LIBRARY directly")
+
+mark_as_advanced(SDL2_DIR)
