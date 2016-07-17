@@ -22,7 +22,9 @@
 #ifndef DefinesH
 #define DefinesH
 
-#define VERSION "0.8"
+#ifndef VERSION
+	#define VERSION "0.2.9"
+#endif
 
 #ifdef __resinstaller__
 #define EX

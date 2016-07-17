@@ -3989,7 +3989,7 @@ void checkWritePermissions()
 		{
 			writeLog(string("Retrying with admin rights...") + TEXT_FILE_LF);	
 			SDL_RWclose(logFile);
-			string parameter = "\"" + sMAXPath + "\"\" \"" + sOutputPath + "\"\" " + sLanguage + " /donotelevate";
+			string parameter = "\"" + sMAXPath + "\"\" \"" + sOutputPath + "\"\" " + sLanguage + " " + sResChoice + " /donotelevate";
 
 			HINSTANCE result = ShellExecute(
 				NULL,
@@ -4554,21 +4554,21 @@ int main ( int argc, char* argv[] )
 	else if ( !sLanguage.empty() )
 	{
 		writeLog("Language argument from command line: " + sLanguage );
-		if ( sLanguage.compare("english") == 0 )
+		if ( sLanguage == "english" || sLanguage =="ENG")
 		{
 			sVoicePath = sMAXPath;
-			}
-		else if ( sLanguage.compare("german") == 0 && bGerman )
+		}
+		else if ( (sLanguage == "german" || sLanguage == "GER") && bGerman )
 		{
 			if ( bUppercase ) sVoicePath = sMAXPath + "GERMAN" + PATH_DELIMITER;
 			else sVoicePath = sMAXPath + "german" + PATH_DELIMITER;
 		}
-		else if ( sLanguage.compare("french") == 0 && bFrench )
+		else if ( (sLanguage == "french" || sLanguage == "FRE") && bFrench )
 		{
 			if ( bUppercase ) sVoicePath = sMAXPath + "FRENCH" + PATH_DELIMITER;
 			else sVoicePath = sMAXPath + "french" + PATH_DELIMITER;
 		}
-		else if ( sLanguage.compare("italian") == 0 && bItalian )
+		else if ( (sLanguage == "italian" || sLanguage == "ITA") && bItalian )
 		{
 			if ( bUppercase ) sVoicePath = sMAXPath + "ITALIAN" + PATH_DELIMITER;
 			else sVoicePath = sMAXPath + "italian" + PATH_DELIMITER;
