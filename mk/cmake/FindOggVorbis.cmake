@@ -76,19 +76,23 @@ FIND_LIBRARY(VORBIS_LIBRARY
   ${DEPENDENCY_DIR}/libvorbis-1.2.0/lib
   )
 
-FIND_LIBRARY(VORBISENC_LIBRARY
-  NAMES vorbisenc
-  PATHS
-  /usr/pack/oggvorbis-1.0-ds/i686-debian-linux3.1/lib
-  /usr/local/lib
-  /usr/lib
-  /sw/lib
-  /opt/local/lib
-  /opt/csw/lib
-  /opt/lib
-  ../libs/libvorbis-1.2.0/lib/.libs
-  )
-
+if(WIN32)
+	SET (VORBISENC_LIBRARY "unused")
+elseif()
+	FIND_LIBRARY(VORBISENC_LIBRARY
+	  NAMES vorbisenc
+	  PATHS
+	  /usr/pack/oggvorbis-1.0-ds/i686-debian-linux3.1/lib
+	  /usr/local/lib
+	  /usr/lib
+	  /sw/lib
+	  /opt/local/lib
+	  /opt/csw/lib
+	  /opt/lib
+	  ../libs/libvorbis-1.2.0/lib/.libs
+	)
+endif()
+	  
 FIND_LIBRARY(VORBISFILE_LIBRARY
   NAMES vorbisfile
   PATHS
