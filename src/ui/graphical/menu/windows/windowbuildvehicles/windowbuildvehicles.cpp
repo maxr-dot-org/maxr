@@ -65,6 +65,9 @@ cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cM
 	generateSelectionList (building, map, *unitsData);
 	generateBuildList (building);
 
+	speedHandler->setBuildSpeedIndex(building.getBuildSpeed());
+	repeatCheckBox->setChecked(building.getRepeatBuild());
+
 	signalConnectionManager.connect (building.destroyed, std::bind (&cWindowBuildVehicles::closeOnUnitDestruction, this));
 }
 

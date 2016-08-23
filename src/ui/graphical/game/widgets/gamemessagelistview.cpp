@@ -34,8 +34,7 @@ cGameMessageListView::cGameMessageListView (const cBox<cPosition>& area) :
 //------------------------------------------------------------------------------
 void cGameMessageListView::addMessage (const std::string& message, eGameMessageListViewItemBackgroundColor backgroundColor)
 {
-	auto addedItem = listView->addItem (std::make_unique<cGameMessageListViewItem> (message, backgroundColor));
-	listView->scrollToItem (addedItem);
+	auto addedItem = listView->addItem (std::make_unique<cGameMessageListViewItem> (message, backgroundColor), eAddListItemScrollType::Always);
 }
 
 //------------------------------------------------------------------------------

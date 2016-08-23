@@ -34,9 +34,12 @@ class cPosition;
 enum eMenuMessages
 {
 	MU_MSG_CHAT = FIRST_MENU_MESSAGE,	// simple text message
+	// Note: Do not change the values of MU_MSG_REQ_IDENTIFIKATION and MU_MSG_IDENTIFIKATION.
+	//       Otherwise the game version and compatibility check when connecting to a server doesn't work anymore
 	MU_MSG_REQ_IDENTIFIKATION,	// host requests a identification of this player
-	MU_MSG_PLAYER_NUMBER,		// host assigns a new player number to a player
 	MU_MSG_IDENTIFIKATION,		// player send his identification
+	
+	MU_MSG_PLAYER_NUMBER,		// host assigns a new player number to a player
 	MU_MSG_PLAYERLIST,			// a list with all players and their data
 	MU_MSG_OPTINS,				// all options selected by the host
 	// Map down/up-load
@@ -51,7 +54,8 @@ enum eMenuMessages
 	MU_MSG_LANDING_POSITION,	// landing position during landing position selection
 	MU_MSG_ALL_LANDED,          // all players have selected there landing points and clients can start game
 	MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS,
-	MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION
+	MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION,
+	MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION
 };
 
 void sendMenuChatMessage (cTCP& network, const std::string& chatMsg, const cPlayerBasicData* player = nullptr, int fromPlayerNr = -1, bool translationText = false);
@@ -81,5 +85,7 @@ void sendLandingPosition (cTCP& network, const cPosition& position, const cPlaye
 void sendInLandingPositionSelectionStatus (cTCP& network, const cPlayerBasicData& player, bool isIn, const cPlayerBasicData* receiver);
 
 void sendPlayerHasSelectedLandingPosition (cTCP& network, const cPlayerBasicData& player, const cPlayerBasicData* receiver);
+
+void sendPlayerHasAbortedGamePreparation(cTCP& network, const cPlayerBasicData& player, const cPlayerBasicData* receiver = nullptr);
 
 #endif // menueventsH

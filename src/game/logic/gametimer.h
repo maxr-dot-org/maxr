@@ -68,6 +68,9 @@ protected:
 	unsigned int eventCounter;
 
 	void timerCallback();
+
+	void pushEvent();
+
 	void handleTimer(); 
 	bool popEvent();
 public:

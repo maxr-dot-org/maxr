@@ -58,6 +58,18 @@ void cJobContainer::run (cGameTimer& gameTimer)
 	}
 }
 
+void cJobContainer::clear()
+{
+	for (int i = 0; i < jobs.size(); i++)
+	{
+		cJob* job = jobs[i];
+		assert(job->vehicle->job == job);
+		job->vehicle->job = nullptr;
+		delete job;
+	}
+	jobs.clear();
+}
+
 std::vector<cJob*>::iterator cJobContainer::releaseJob (std::vector<cJob*>::iterator it)
 {
 	if (it == jobs.end()) return jobs.end();

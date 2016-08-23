@@ -882,7 +882,7 @@ string cUnicodeFont::shortenStringToSize (const string& str, int size, eUnicodeF
 
 	if (getTextWide (res, fonttype) > size)
 	{
-		while (getTextWide (res + ".") > size)
+		while (getTextWide (res + ".", fonttype) > size)
 		{
 			res.erase (res.length() - 1, res.length());
 		}

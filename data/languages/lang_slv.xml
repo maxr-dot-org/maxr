@@ -51,13 +51,13 @@
 			<Connect ENG="Connect" localized="Povezava"/>
 			<Credits ENG="Credit" localized="Sredstva"/>
 			<Credits_start ENG="Credit at gamestart" localized="Začetna sredstva"/>
-
+			<Custom_11 ENG="Custom" localized=""/><!--TODO: translation needed-->
 			<Game_Type ENG="Game Type" localized="Tip igre"/>
 			<Gold ENG="Gold" localized="Zlato"/>
 			<HotSeat ENG="Hot Seat" localized="Vroči stol"/>
 			<Human ENG="Human" localized="Človek"/>
 			<IP ENG="IP" localized="IP"/>
-			<Labs ENG="Researchmenu" localized="Meni Raziskave"/>
+			<Labs ENG="Research menu" localized="Meni Raziskave"/><!--TODO: review needed (english string has been changed)-->
 			<Load ENG="Load Menu" localized="Meni Naloži"/>
 			<LoadSave ENG="Load/Save Menu" localized="Meni Naloži/Shrani"/>
 			<MainMenu ENG="Main Menu" localized="Glavni meni"/>
@@ -67,7 +67,7 @@
 			<Nobody ENG="Nobody" localized="Nihče"/>
 			<Oil ENG="Fuel" localized="Gorivo"/>
 			<Options ENG="Options" localized="Možnosti"/>
-			<Player_Name ENG="Playername:" localized="Ime igralca:"/>
+			<Player_Name ENG="Player Name:" localized="Ime igralca:"/><!--TODO: review needed (english string has been changed)-->
 			<Player_Select ENG="Player options" localized="Možnosti igralca"/><!-- unused?! -->
 			<Players ENG="Players:" localized="Igralci:"/>
 			<Port ENG="Port" localized="Vrata"/>
@@ -75,9 +75,9 @@
 			<Resource_Density ENG="Resource frequency" localized="Pogostost rudnin"/>
 			<Savegame ENG="Saved Games" localized="Shranjene igre"/><!--unused?! -->
 			<Send ENG="Send" localized="Pošlji"/>
-			<Team ENG="Team" localized="Moštvo"/> <!-- e.g. Player 1 is called as one team -->
-
-
+			<Team ENG="Team" localized="Moštvo"/><!-- e.g. Player 1 is called as one team -->
+			<Turn_end ENG="Turn end" localized=""/><!--TODO: translation needed-->
+			<Turn_limit ENG="Turn limit" localized=""/><!--TODO: translation needed-->
 			<Unitinfo ENG="Unit status screen" localized="Informacije o enoti"/>
 			<Upgrades_Menu ENG="Upgrades menu" localized="Meni Nadgradnje"/>
 		</Title>
@@ -137,7 +137,7 @@
 			<OK ENG="OK" localized="OK"/>
 			<Path ENG="Path" localized="Pot"/>
 			<Power ENG="Power" localized="Energija"/>
-			<Proceed_4 ENG="Do" localized="OK"/> <!-- it's for the " « [DO] » " above the log-button -->
+			<Proceed_4 ENG="Do" localized="OK"/><!-- it's for the " « [DO] » " above the log-button -->
 			<Produce_7 ENG="Produces" localized="Proizvaja"/>
 			<Produce_Units ENG="Producing units" localized="Proizvodnja enot"/>
 			<Range ENG="Range" localized="Domet"/>
@@ -156,7 +156,7 @@
 			<Score ENG="Score" localized="Rezultat"/>
 			<Sea_Units ENG="Seaunits" localized="Pomorske enote"/>
 			<Seed ENG="Seed" localized="Zasej"/>
-			<Seed_7 ENG="Seed" localized="Zasej"/> <!-- minelayer -->
+			<Seed_7 ENG="Seed" localized="Zasej"/><!-- minelayer -->
 			<Sentry ENG="Sentry" localized="Nadzor"/>
 			<Settings ENG="Settings" localized="Nastavitve"/>
 			<Shots ENG="Shots" localized="Streli"/>
@@ -173,12 +173,12 @@
 			<Survey ENG="Survey" localized="Analiziraj"/>
 			<TCPIP_Client ENG="TCP/IP Client" localized="TCP/IP odjemalec"/>
 			<TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP gostitelj"/>
-			<Teams_7 ENG="Teams" localized="Moštva"/> <!-- the workes for the habit -->
+			<Teams_7 ENG="Teams" localized="Moštva"/><!-- the workes for the habit -->
 			<Total ENG="Total" localized="Skupaj"/>
 			<Transfer_7 ENG="X-fer" localized="Prenos"/>
-
+			<Unit_destroyed ENG="Unit destroyed!" localized=""/><!--TODO: translation needed-->
 			<Units ENG="Units" localized="Enote"/>
-			<Upgrade ENG="Upgrade" localized="Nadgradi"/> <!-- used where you select your start units -->
+			<Upgrade ENG="Upgrade" localized="Nadgradi"/><!-- used where you select your start units -->
 			<UpgradeAll_7 ENG="Up.all" localized="Nad.vse"/>
 			<UpgradeAll_9 ENG="Upgrd.All" localized="Nadg.vse"/>
 			<Upgrademenu_7 ENG="Up.Menu" localized="Nakup"/>
@@ -199,7 +199,7 @@
 			<Off ENG="off" localized="Izklop"/>
 			<On ENG="on" localized="Vklop"/>
 			<Sparse ENG="Sparse" localized="Redko"/>
-			<TooMuch ENG="Too Much!" localized="Preveč"/>
+			<TooMuch ENG="Too Much" localized="Preveč"/><!--TODO: review needed (english string has been changed)-->
 			<Type_Simu ENG="Simultaneous" localized="Sočasne poteze"/>
 			<Type_Turns ENG="Turn based" localized="Izmenljive poteze"/>
 		</Option>
@@ -213,7 +213,7 @@
 			<Disable ENG="Disable" localized="Onemogoči"/>
 			<Effects ENG="Effects" localized="Efekti"/>
 			<Intro ENG="Show intro" localized="Prikaži uvod"/>
-
+			<Language ENG="Language" localized=""/><!--TODO: translation needed-->
 			<Music ENG="Music" localized="Glasba"/>
 			<Preferences ENG="Preferences" localized="Lastnosti"/>
 			<Resolution ENG="Resolution" localized="Resolucija"/>
@@ -222,7 +222,7 @@
 			<ShowDamage ENG="Buildingdamage" localized="Poškodbe stavb"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Poškodbe vozil"/>
 			<Tracks ENG="Vehicletracks" localized="Sledi vozil"/>
-
+			<Unlimited_11 ENG="No limit" localized=""/><!--TODO: translation needed-->
 			<Voices ENG="Voices" localized="Glasovi"/>
 			<Volume ENG="Volume" localized="Glasnost"/>
 			<Window ENG="Windowed" localized="V oknu"/>
@@ -239,7 +239,7 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="Strežnik želi da: Ne potrdiš pripravljenosti"/>
 			<Go_Ready ENG="Ready to go" localized="Pripravljen"/>
 			<Go_Ready_No ENG="not ready to go" localized="nisem pripravljen"/>
-
+			<Host_command ENG="Host entered following command" localized=""/><!--TODO: translation needed-->
 			<Lost_Connection ENG="Lost connection to %s." localized="Povezava z %s je bila prekinjena."/>
 			<Map_NoSet ENG="--no map selected--" localized="--brez nastavitev pokrajine--"/>
 			<MapDL_Cancel ENG="Aborted" localized="Prekinjeno"/>
@@ -281,7 +281,7 @@
 			<Player_Joined ENG="%s has joined" localized="pridružil se je %s"/>
 			<Player_Left ENG="%s has left the game" localized="%s je zapustil igro"/>
 			<Player_Many ENG="Too many players!" localized="Preveč igralcev!"/>
-			<Player_MustHost ENG="must be host in turnbased game!" localized="mora biti strežnik v potezni igri!"/>
+			<Player_MustHost ENG="must be host in turn based game!" localized="mora biti strežnik v potezni igri!"/><!--TODO: review needed (english string has been changed)-->
 			<Player_Name_Taken ENG="Playername already in use, please select an other name to be unique" localized="Ime igralca je že oddano. Izberite drugačno ime."/>
 			<Player_Turn ENG="%s:\nBegin turn." localized="%s:\nZačni potezo."/>
 			<Player_Turn_End ENG="%s ended turn" localized="%s je končal potezo"/>
@@ -307,7 +307,7 @@
 			<Building_Disabled ENG="Building turned off" localized="Zgradba je izključena"/>
 			<CapturedByEnemy ENG="%s has been captured by the enemy" localized="%s je sovražnik zajel"/>
 			<Cheat ENG="used cheat" localized="uporaba goljufije"/>
-			<Clearing ENG="Clearing" localized="Čiščenje"/>
+			<Clearing ENG="clearing" localized="Čiščenje"/><!--TODO: review needed (english string has been changed)-->
 			<Clearing_Fin ENG="clearing done" localized="Čiščenje končano"/>
 			<Clearing_Mine ENG="clearing mines" localized="Čisti mine"/>
 			<CommandoRank_Average ENG="Average" localized="Povprečen"/>
@@ -357,7 +357,7 @@
 			<Repeat ENG="Again" localized="Ponovno"/>
 			<Reserve ENG="Reserve" localized="Rezerva"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Opozorilo: nepodprt video način v konfiguraciji"/>
-
+			<RestartRequired ENG="Please restart 'Mechanized Assault and eXploration Reloaded' to take effect the change." localized=""/><!--TODO: translation needed-->
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Posnetek zaslona je shranjen v %s"/>
 			<Sentry ENG="on sentry" localized="na preži"/>
 			<Stolen ENG="stolen" localized="ukraden"/>
@@ -378,7 +378,7 @@
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Ne najdem datoteke: %s"/>
-			<ERROR_Map_Loading ENG="Error loading map" localized="Napaka pri nalaganju pokrajine"/>
+			<ERROR_Map_Loading ENG="Error while loading map" localized="Napaka pri nalaganju pokrajine"/><!--TODO: review needed (english string has been changed)-->
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="manjkajoč prevod: %s"/>
 			<INFO_Language_initialised ENG="Language is now initialized" localized="Jezik je nastavljen"/>
 			<INFO_Not_Implemented ENG="Not yet implemented" localized="Funkcija še ni implementirana"/>

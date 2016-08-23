@@ -378,10 +378,15 @@ void cApplication::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 
 	const bool isShortcutKey = cKeyCombination::isRepresentableKey (key);
 
-	if (isShortcutKey) currentKeySequence.addKeyCombination (cKeyCombination (keyboard.getCurrentModifiers(), key));
-
 	bool eventHandled = false;
-	if (widget)
+	if (isShortcutKey)
+	{
+		currentKeySequence.addKeyCombination (cKeyCombination (keyboard.getCurrentModifiers (), key));
+
+		eventHandled = hitShortcuts (currentKeySequence);
+	}
+
+	if (widget && !eventHandled)
 	{
 		eventHandled = widget->handleKeyPressed (*this, keyboard, key);
 	}
@@ -402,11 +407,6 @@ void cApplication::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 
 	if (isShortcutKey)
 	{
-		if (!eventHandled)
-		{
-			hitShortcuts (currentKeySequence);
-		}
-
 		while (currentKeySequence.length() >= maximalShortcutSequenceLength)
 		{
 			currentKeySequence.removeFirst();

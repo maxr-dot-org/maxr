@@ -2,7 +2,7 @@ MECHANIZED ASSAULT AND EXPLORATION RELOADED MANUAL
 
 OPTIONS
 
-Startoptionen and gamesettings are configured in MAX.XML. To change
+Startoptionen and gamesettings are configured in maxr.xml. To change
 settings simply open the file in a texteditor (not word!) or change
 settings ingame (not all options are offered ingame however).
 
@@ -108,4 +108,3 @@ MULTIPLAYER
 OTHER RESOURCES
 
 Not much yet - please visit http://www.maxr.org/ for questions
-

@@ -55,6 +55,7 @@ public:
 	void addJob (cJob& job);
 	void onRemoveUnit (cUnit* unit);
 	void run (cGameTimer& gameTimer);
+	void clear();
 private:
 	std::vector<cJob*>::iterator releaseJob (std::vector<cJob*>::iterator it);
 private:

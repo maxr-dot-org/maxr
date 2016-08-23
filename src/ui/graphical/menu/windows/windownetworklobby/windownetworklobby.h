@@ -79,7 +79,7 @@ public:
 	cSignal<void ()> staticMapChanged;
 	cSignal<void ()> gameSettingsChanged;
 	cSignal<void ()> saveGameChanged;
-private:
+protected:
 	cSignalConnectionManager signalConnectionManager;
 
 	cImage* mapImage;

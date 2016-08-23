@@ -117,7 +117,7 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	auto prevButton = addChild (std::make_unique<cPushButton> (cPosition (60, 227), ePushButtonType::HudPrev, "<<"));
 	prevButton->addClickShortcut (KeysList.keyUnitPrev);
 	signalConnectionManager.connect (prevButton->clicked, [&]() { prevClicked(); });
-	auto doneButton = addChild (std::make_unique<cPushButton> (cPosition (99, 227), ePushButtonType::HudDone, lngPack.i18n ("Text~Others~Proceed")));
+	auto doneButton = addChild (std::make_unique<cPushButton> (cPosition (99, 227), ePushButtonType::HudDone, lngPack.i18n ("Text~Others~Proceed_4")));
 	doneButton->addClickShortcut (KeysList.keyUnitDone);
 	signalConnectionManager.connect (doneButton->clicked, [&]() { doneClicked(); });
 
@@ -134,6 +134,13 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	signalConnectionManager.connect (zoomMinusButton->clicked, std::bind (&cHud::handleZoomMinusClicked, this));
 
 	unitVideo = addChild (std::make_unique<cUnitVideoWidget> (cBox<cPosition> (cPosition (10, 29), cPosition (10 + 125, 29 + 125)), animationTimer));
+	signalConnectionManager.connect (unitVideo->clicked, [this]()
+	{
+		if (unitVideo->hasAnimation ())
+		{
+			unitVideo->toggle ();
+		}
+	});
 	auto playButton = addChild (std::make_unique<cPushButton> (cPosition (146, 123), ePushButtonType::HudPlay));
 	signalConnectionManager.connect (playButton->clicked, std::bind (&cUnitVideoWidget::start, unitVideo));
 	auto stopButton = addChild (std::make_unique<cPushButton> (cPosition (146, 143), ePushButtonType::HudStop));

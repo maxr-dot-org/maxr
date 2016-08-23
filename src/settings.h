@@ -104,7 +104,6 @@ public:
 	void setDataDir (const char* dataDir, bool save = true);
 
 	const std::string& getExePath() const;
-	void setExePath (const char* exePath);
 
 	const std::string& getLogPath() const;
 	void setLogPath (const char* logPath);

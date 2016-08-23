@@ -20,100 +20,55 @@
 #ifndef utility_logH
 #define utility_logH
 
-#include <SDL_rwops.h>
+#include <fstream>
+
 #include "defines.h"
 #include "utility/thread/mutex.h"
 
-enum
-{
-	LOG_TYPE_WARNING = 1,
-	LOG_TYPE_ERROR = 2,
-	LOG_TYPE_DEBUG = 3,
-	LOG_TYPE_INFO = 4,
-	LOG_TYPE_MEM = 5,
-	LOG_TYPE_NET_DEBUG = 6,
-	LOG_TYPE_NET_WARNING = 7,
-	LOG_TYPE_NET_ERROR = 8
-};
-
-/**
-* Log class. Simple log class :-)
-*
-* @author Bernd "beko" Kosmahl
-*/
 class cLog
 {
-private:
-	SDL_RWops* logfile;
-	bool bNetlogStarted;
-	bool bFirstRun;
-	cMutex mutex;
-
-	/**
-	* Writes message finally to logfile
-	*/
-	int writeMessage (const char*);
-	int writeMessage (const std::string&);
-
-	/**
-	* Closes the logfile.
-	*/
-	void close();
-
-	/**
-	* Opens the Logfile.
-	*
-	* @return true on success
-	*/
-	bool open (int TYPE);
 public:
-	cLog();
+	enum eLogType
+	{
+		eLOG_TYPE_DEBUG,
+		eLOG_TYPE_INFO,
+		eLOG_TYPE_WARNING,
+		eLOG_TYPE_ERROR,
+		eLOG_TYPE_MEM,
+		eLOG_TYPE_NET_DEBUG,
+		eLOG_TYPE_NET_WARNING,
+		eLOG_TYPE_NET_ERROR,
+	};
+
+	/**
+	* Writes message with default type (II) to the logfile
+	*/
+	void write(const char* msg);
+	void write(const std::string& msg);
+
 	/**
 	* Writes message with given type to logfile
 	*
 	* @param str Message for the log
-	* @param TYPE Type for the log.<br>
-	* 1 		== warning 	(WW):<br>
-	* 2 		== error	(EE):<br>
-	* 3		== debug	(DD):<br>
-	* 4		== information	(II):<br>
-	* 5		== memory prob. (MM):<br>
-	* else		== information	(II):
-	*
-	* @return 0 on success
+	* @param type Type for the log
 	*/
-	int write (const char* str, int TYPE);
-	int write (const std::string& str, int TYPE);
-
-	/**
-	* Writes message with default type (II) to the logfile
-	*
-	* @param str Message for the log
-	*
-	* @return 0 on success
-	*/
-	int write (const char* str);
-	//int write (const std::string& str);
-
-	enum LOG_TYPE
-	{
-		eLOG_TYPE_UNKNOWN = 0,
-		eLOG_TYPE_WARNING = 1,
-		eLOG_TYPE_ERROR   = 2,
-		eLOG_TYPE_DEBUG   = 3,
-		eLOG_TYPE_INFO    = 4,
-		eLOG_TYPE_MEM	  = 5,
-		eLOG_TYPE_NET_DEBUG = 6,
-		eLOG_TYPE_NET_WARNING = 7,
-		eLOG_TYPE_NET_ERROR = 8,
-	};
+	void write (const char* msg, eLogType type);
+	void write (const std::string& msg, eLogType type);
 
 	/**
 	* Writes a marker into logfile - please use only veeeery few times!
 	*/
 	void mark();
 
-	bool isInitialized() const;
+private:
+	std::ofstream logfile;
+	std::ofstream netLogfile;
+	cMutex mutex;
+
+	void checkOpenFile(eLogType type);
+
+	void writeToFile(const std::string &msg, std::ofstream& file);
+
 } EX Log;
 
 #endif // utility_logH

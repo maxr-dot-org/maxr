@@ -27,10 +27,15 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
+set(SDL2_DIR "" CACHE PATH "Path to the directory where SDL2 is located")
+set(SDL2_MIXER_DIR "" CACHE PATH "Path to the directory where SDL2_Mixer is located")
+
 find_path(SDL2_MIXER_INCLUDE_DIR SDL_mixer.h
   HINTS
     ENV SDL2MIXERDIR
     ENV SDL2DIR
+    ${SDL2_DIR}
+    ${SDL2_MIXER_DIR}
   PATH_SUFFIXES include/SDL2 include
 )
 
@@ -39,6 +44,8 @@ find_library(SDL2_MIXER_LIBRARY
   HINTS
     ENV SDL2MIXERDIR
     ENV SDL2DIR
+    ${SDL2_DIR}
+    ${SDL2_MIXER_DIR}
   PATH_SUFFIXES lib
 )
 
@@ -61,10 +68,14 @@ endif()
 set(SDL2_MIXER_LIBRARIES ${SDL2_MIXER_LIBRARY})
 set(SDL2_MIXER_INCLUDE_DIRS ${SDL2_MIXER_INCLUDE_DIR})
 
-#include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
-#
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(SDL2_mixer
-                                  REQUIRED_VARS SDL2_MIXER_LIBRARIES SDL2_MIXER_INCLUDE_DIRS
-                                  VERSION_VAR SDL2_MIXER_VERSION_STRING)
+include(FindPackageHandleStandardArgs)
 
 mark_as_advanced(SDL2_MIXER_LIBRARY SDL2_MIXER_INCLUDE_DIR)
+
+find_package_handle_standard_args(SDL2_mixer
+                                  REQUIRED_VARS SDL2_MIXER_LIBRARIES SDL2_MIXER_INCLUDE_DIRS
+                                  VERSION_VAR SDL2_MIXER_VERSION_STRING
+                                  FAIL_MESSAGE "Could NOT find SDL2_Mixer: Set SDL2_MIXER_DIR to a directory containing the folders 'include' and 'lib' or set SDL2_MIXER_LIBRARY and SDL2_MIXER_INCLUDE_DIR directly")
+
+
+mark_as_advanced(SDL2_DIR SDL2_MIXER_DIR)

@@ -72,9 +72,19 @@ void cGameTimer::stop()
 
 void cGameTimer::timerCallback()
 {
-	//increase event counter and let the event handler increase the gametime
-	cLockGuard<cMutex> lock (mutex);
+	// Obviously this is the only way, to increase the timer thread priority in SDL.
+	// This is needed, because the timer loose events otherwise, when the CPU usage is too high.
+	SDL_SetThreadPriority(SDL_THREAD_PRIORITY_HIGH);
 
+	pushEvent();
+
+}
+
+void cGameTimer::pushEvent()
+{
+	cLockGuard<cMutex> lock(mutex);
+
+	//increase event counter and let the event handler increase the gametime
 	if (eventCounter < maxEventQueueSize || maxEventQueueSize == -1)
 	{
 		eventCounter++;
@@ -267,6 +277,7 @@ void cGameTimerClient::run(cClient& client)
 	if (gameTime + MAX_CLIENT_LAG < getReceivedTime())
 	{
 		//inject an extra timer event
-		timerCallback();
+		for (int i = 0; i < (getReceivedTime() - gameTime) / 2; i++)
+			pushEvent();
 	}
 }

@@ -33,7 +33,7 @@ class cServer2;
 //Versions prior to 1.0 are no longer compatible
 #define SAVE_FORMAT_VERSION		((std::string)"1.0")
 #define MINIMUM_REQUIRED_SAVE_VERSION ((std::string)"1.0")
-#define MINIMUM_REQUIRED_MAXR_VERSION ((std::string)">0.2.9") //TODO: set to next release version!
+#define MINIMUM_REQUIRED_MAXR_VERSION ((std::string)"0.2.10")
 
 class cSavegame
 {

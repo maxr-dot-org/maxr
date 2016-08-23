@@ -42,13 +42,11 @@ cWindowMultiPlayer::cWindowMultiPlayer() :
 	auto clientButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~TCPIP_Client")));
 	signalConnectionManager.connect (clientButton->clicked, std::bind (&cWindowMultiPlayer::tcpClientClicked, this));
 
-#ifndef RELEASE
 	auto newHotSeatButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 2), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~HotSeat_New")));
 	signalConnectionManager.connect (newHotSeatButton->clicked, std::bind (&cWindowMultiPlayer::newHotSeatClicked, this));
 
 	auto loadHotSeatButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 3), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~HotSeat_Load")));
 	signalConnectionManager.connect (loadHotSeatButton->clicked, std::bind (&cWindowMultiPlayer::loadHotSeatClicked, this));
-#endif
 
 	auto backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Back")));
 	signalConnectionManager.connect (backButton->clicked, std::bind (&cWindowMultiPlayer::backClicked, this));

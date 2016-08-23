@@ -123,8 +123,6 @@ class cSignal<R (Args...), MutexType, ResultCombinerType> : public cSignalBase
 {
 	typedef cSlot<R (Args...)> SlotType;
 	typedef std::list<SlotType> SlotsContainerType;
-	typedef std::tuple<Args...> ArgumentsContainerType;
-	typedef sSignalCallIterator<R, ArgumentsContainerType, typename SlotsContainerType::const_iterator> CallIteratorType;
 
 public:
 	typedef typename ResultCombinerType::result_type result_type;
@@ -290,6 +288,9 @@ template<typename R, typename... Args, typename MutexType, typename ResultCombin
 template<typename... Args2>
 typename cSignal<R (Args...), MutexType, ResultCombinerType>::result_type cSignal<R (Args...), MutexType, ResultCombinerType>::operator() (Args2&& ... args)
 {
+	typedef std::tuple<Args2...> ArgumentsContainerType;
+	typedef sSignalCallIterator<R, ArgumentsContainerType, typename SlotsContainerType::const_iterator> CallIteratorType;
+
 	cLockGuard<MutexType> lock (mutex);
 
 	auto arguments = ArgumentsContainerType (std::forward<Args2> (args)...);

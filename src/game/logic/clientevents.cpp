@@ -272,14 +272,15 @@ void sendMoveJob (const cClient& client, sWaypoint* path, int vehicleID)
 	int iCount = 0;
 	while (waypoint)
 	{
+
+		if (message->iLength + 10 > PACKAGE_LENGTH - 19)
+		{
+			Log.write (" Client: Error sending movejob: message too long, sending partial path", cLog::eLOG_TYPE_NET_ERROR);
+			break; // send part of movejob
+ 		}
+
 		message->pushInt16 (waypoint->Costs);
 		message->pushPosition (waypoint->position);
-
-		if (message->iLength > PACKAGE_LENGTH - 19)
-		{
-			Log.write (" Client: Error sending movejob: message too long", cLog::eLOG_TYPE_NET_ERROR);
-			return; // don't send movejobs that are to long
-		}
 
 		waypoint = waypoint->next;
 		iCount++;

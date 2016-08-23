@@ -45,6 +45,7 @@ class cModel
 	friend class cDebugOutputWidget;
 public:
 	cModel();
+	~cModel();
 
 	cCrossPlattformRandom randomGenerator;
 

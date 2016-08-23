@@ -51,6 +51,8 @@ public:
 
 	const std::string& getUnitName() const;
 
+	virtual bool isAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
+
 	cSignal<void ()> unitRenameTriggered;
 private:
 	cLabel* selectedUnitStatusLabel;

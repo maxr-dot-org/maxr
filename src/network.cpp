@@ -170,7 +170,7 @@ int cTCP::sendTo (unsigned int iClientNumber, unsigned int iLength, const char* 
 	// this will result in an error in nearly all cases
 	if (iLength > PACKAGE_LENGTH)
 	{
-		Log.write ("Cut size of message!", LOG_TYPE_NET_ERROR);
+		Log.write ("Cut size of message!", cLog::eLOG_TYPE_NET_ERROR);
 		iLength = PACKAGE_LENGTH;
 	}
 
@@ -260,7 +260,7 @@ void cTCP::HandleNetworkThread_CLIENT (unsigned int socketIndex)
 		//read available data from the socket to the buffer
 		int recvlength;
 		recvlength = SDLNet_TCP_Recv (s.socket, s.buffer.getWritePointer(), s.buffer.getFreeSpace());
-		if (recvlength < 0) //TODO: gleich 0???
+		if (recvlength <= 0)
 		{
 			pushEventTCP_Close (socketIndex);
 			s.iState = STATE_DYING;
@@ -287,7 +287,7 @@ void cTCP::HandleNetworkThread_CLIENT_pushReadyMessage (unsigned int socketIndex
 			if (s.buffer.data[readPos] != START_CHAR)
 			{
 				//something went terribly wrong. We are unable to continue the communication.
-				Log.write ("Wrong start character in received message. Socket closed!", LOG_TYPE_NET_ERROR);
+				Log.write ("Wrong start character in received message. Socket closed!", cLog::eLOG_TYPE_NET_ERROR);
 				pushEventTCP_Close (socketIndex);
 				s.iState = STATE_DYING;
 				break;
@@ -298,7 +298,7 @@ void cTCP::HandleNetworkThread_CLIENT_pushReadyMessage (unsigned int socketIndex
 			s.messagelength = SDL_SwapLE16 (*data16);
 			if (s.messagelength > PACKAGE_LENGTH)
 			{
-				Log.write ("Length of received message exceeds PACKAGE_LENGTH", LOG_TYPE_NET_ERROR);
+				Log.write ("Length of received message exceeds PACKAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR);
 				pushEventTCP_Close (socketIndex);
 				s.iState = STATE_DYING;
 				break;
@@ -325,7 +325,11 @@ void cTCP::HandleNetworkThread()
 	while (!bExit)
 	{
 		const int timeout = 10;
-		SDLNet_CheckSockets (SocketSet, timeout);
+		if (SDLNet_CheckSockets(SocketSet, timeout) == -1)
+		{
+			//return value of -1 means that most likely the socket set is empty
+			SDL_Delay(10);
+		}
 
 		// Check all Sockets
 		for (unsigned int i = 0; !bExit && i < iLast_Socket; i++)
@@ -362,7 +366,7 @@ void cTCP::pushEvent (std::unique_ptr<cNetMessage> message)
 {
 	if (messageReceiver == nullptr)
 	{
-		Log.write ("Discarded message: no receiver!", LOG_TYPE_NET_ERROR);
+		Log.write ("Discarded message: no receiver!", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
 	messageReceiver->pushEvent (std::move (message));
@@ -403,11 +407,23 @@ void cTCP::deleteSocket (int iNum)
 }
 
 //------------------------------------------------------------------------
-void cTCP::setMessageReceiver (INetMessageReceiver* messageReceiver_)
+void cTCP::setMessageReceiver (INetMessageReceiver* newMessageReceiver)
 {
 	cLockGuard<cMutex> lock (TCPMutex);
 
-	this->messageReceiver = messageReceiver_;
+	// workaroud for lost messages at game init:
+	// when switching to the client netmessage receiver,
+	// all remaining messages from the multiplayer menu controller
+	// are moved to the clients queue
+	if (messageReceiver && newMessageReceiver)
+	{
+		std::unique_ptr<cNetMessage> message;
+		while (message = messageReceiver->popEvent())
+			newMessageReceiver->pushEvent(std::move(message));
+	}
+
+	messageReceiver = newMessageReceiver;
+
 }
 
 //------------------------------------------------------------------------

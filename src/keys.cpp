@@ -150,27 +150,27 @@ cKeysList::cKeysList() :
 //------------------------------------------------------------------------------
 void cKeysList::loadFromFile()
 {
-	Log.write ("Loading Keys", LOG_TYPE_INFO);
+	Log.write ("Loading Keys", cLog::eLOG_TYPE_INFO);
 	if (!FileExists (KEYS_XMLUsers) && !FileExists (KEYS_XMLGame))
 	{
-		Log.write ("generating new keys-file", LOG_TYPE_WARNING);
+		Log.write ("generating new keys-file", cLog::eLOG_TYPE_WARNING);
 		saveToFile();
 		return;
 	}
 	else if (!FileExists (KEYS_XMLUsers))
 	{
 		copyFile (KEYS_XMLGame, KEYS_XMLUsers);
-		Log.write ("Key-file copied from gamedir to userdir", LOG_TYPE_INFO);
+		Log.write ("Key-file copied from gamedir to userdir", cLog::eLOG_TYPE_INFO);
 	}
 	else // => (FileExists (KEYS_XMLUsers))
 	{
-		Log.write ("User key-file in use", LOG_TYPE_INFO);
+		Log.write ("User key-file in use", cLog::eLOG_TYPE_INFO);
 	}
 
 	XMLDocument keysXml;
 	if (keysXml.LoadFile (KEYS_XMLUsers) != XML_NO_ERROR)
 	{
-		Log.write ("cannot load keys.xml\ngenerating new file", LOG_TYPE_WARNING);
+		Log.write ("cannot load keys.xml\ngenerating new file", cLog::eLOG_TYPE_WARNING);
 		saveToFile();
 		return;
 	}
@@ -179,7 +179,7 @@ void cKeysList::loadFromFile()
 
 	if (!keysElement)
 	{
-		Log.write ("invalid keys.xml: missing 'Keys' element\ngenerating new file", LOG_TYPE_WARNING);
+		Log.write ("invalid keys.xml: missing 'Keys' element\ngenerating new file", cLog::eLOG_TYPE_WARNING);
 		saveToFile();
 		return;
 	}
@@ -188,7 +188,7 @@ void cKeysList::loadFromFile()
 
 	if (!mouseElement)
 	{
-		Log.write ("invalid keys.xml: missing 'Mouse' element\ngenerating new file", LOG_TYPE_WARNING);
+		Log.write ("invalid keys.xml: missing 'Mouse' element\ngenerating new file", cLog::eLOG_TYPE_WARNING);
 		saveToFile();
 		return;
 	}
@@ -271,18 +271,18 @@ void cKeysList::loadFromFile()
 			else
 			{
 				mouseStyle = eMouseStyle::Modern;
-				Log.write (std::string ("Unknown mouse style '") + attribute->Value() + "'. Fall back to modern style.", LOG_TYPE_WARNING);
+				Log.write (std::string ("Unknown mouse style '") + attribute->Value() + "'. Fall back to modern style.", cLog::eLOG_TYPE_WARNING);
 			}
 		}
 		else
 		{
-			Log.write ("Could not find XML attribute 'Text' in element 'MOUSE_STYLE' in keys XML. Skipping loading of mouse style.", LOG_TYPE_WARNING);
+			Log.write ("Could not find XML attribute 'Text' in element 'MOUSE_STYLE' in keys XML. Skipping loading of mouse style.", cLog::eLOG_TYPE_WARNING);
 			loadedAll = false;
 		}
 	}
 	else
 	{
-		Log.write ("Could not find XML element 'MOUSE_STYLE' in keys XML. Skipping loading of this mouse information.", LOG_TYPE_WARNING);
+		Log.write ("Could not find XML element 'MOUSE_STYLE' in keys XML. Skipping loading of this mouse information.", cLog::eLOG_TYPE_WARNING);
 		loadedAll = false;
 	}
 
@@ -292,7 +292,7 @@ void cKeysList::loadFromFile()
 		saveToFile();
 	}
 
-	Log.write ("Done", LOG_TYPE_DEBUG);
+	Log.write ("Done", cLog::eLOG_TYPE_DEBUG);
 }
 
 //------------------------------------------------------------------------------
@@ -384,7 +384,7 @@ bool cKeysList::tryLoadSingleKey (const tinyxml2::XMLElement& parentElement, con
 
 	if (!keyElement)
 	{
-		Log.write ("Could not find XML element '" + elementName + "' in keys XML. Skipping loading of this key.", LOG_TYPE_WARNING);
+		Log.write ("Could not find XML element '" + elementName + "' in keys XML. Skipping loading of this key.", cLog::eLOG_TYPE_WARNING);
 		return false;
 	}
 
@@ -392,7 +392,7 @@ bool cKeysList::tryLoadSingleKey (const tinyxml2::XMLElement& parentElement, con
 
 	if (!attribute)
 	{
-		Log.write ("Could not find XML attribute 'Text' in element '" + elementName + "' in keys XML. Skipping loading of this key.", LOG_TYPE_WARNING);
+		Log.write ("Could not find XML attribute 'Text' in element '" + elementName + "' in keys XML. Skipping loading of this key.", cLog::eLOG_TYPE_WARNING);
 		return false;
 	}
 
@@ -402,7 +402,7 @@ bool cKeysList::tryLoadSingleKey (const tinyxml2::XMLElement& parentElement, con
 	}
 	catch (std::runtime_error& e)
 	{
-		Log.write ("Error while reading key sequence of element '" + elementName + "' in keys XML: " + e.what(), LOG_TYPE_WARNING);
+		Log.write ("Error while reading key sequence of element '" + elementName + "' in keys XML: " + e.what(), cLog::eLOG_TYPE_WARNING);
 		return false;
 	}
 

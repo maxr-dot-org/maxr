@@ -35,6 +35,8 @@ cUnitVideoWidget::cUnitVideoWidget (const cBox<cPosition>& area, std::shared_ptr
 {
 	currentFrameImage = addChild (std::make_unique<cImage> (getPosition()));
 
+	currentFrameImage->clicked.connect ([this]() { clicked (); });
+
 	signalConnectionManager.connect (animationTimer->triggered100ms, std::bind (&cUnitVideoWidget::nextFrame, this));
 }
 
@@ -51,9 +53,21 @@ void cUnitVideoWidget::stop()
 }
 
 //------------------------------------------------------------------------------
+void cUnitVideoWidget::toggle ()
+{
+	playing = !playing;
+}
+
+//------------------------------------------------------------------------------
 bool cUnitVideoWidget::isPlaying() const
 {
 	return playing;
+}
+
+//------------------------------------------------------------------------------
+bool cUnitVideoWidget::hasAnimation () const
+{
+	return fliAnimation != nullptr;
 }
 
 //------------------------------------------------------------------------------

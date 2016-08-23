@@ -11,9 +11,9 @@ SDL libraries can be found at http://www.libsdl.org
 
 WINDOWS
 
-Unzip maxr-x.y.z.rar to a folder of your choise - e.g. 
+Unzip maxr-x.y.z.rar to a folder of your choise - e.g.
 C:\Program Files\
-	
+
 We decided to provide the windows package with a working set of
 required SDL-libraries for Win32. If you want to use your own version
 from e.g. c:\windows\system32 simply delete the dlls from the game
@@ -36,10 +36,10 @@ and extract the original gfx automagically from your existing max.res
 Resinstaller also takes care of sounds, videos, maps and music.
 
 The tool can be found on our website and easily installs and converts
-the needed data for you. Please check the bbs at maxr.org for more 
+the needed data for you. Please check the bbs at maxr.org for more
 informations.
 
-If you don't own an original maxcd but you want to play with the 
+If you don't own an original maxcd but you want to play with the
 original look'n'feel you've another chance in downloading
 Mechanized Assault and eXploration from cdosabandonware.com since you
 won't find any gamecds from this any more on stores - too old.
@@ -48,9 +48,9 @@ This version is however lacking some files like videos, music and some
 sounds.
 
 Warning: Resinstaller will overwrite existing graphics. If you want to
-keep existing free graphics for some reasons *backup* the folders fx, 
+keep existing free graphics for some reasons *backup* the folders fx,
 gfx, vehicles and buildings. It's save to copy the files back after the
-resinstaller has done it's magic. 
+resinstaller has done it's magic.
 
 TROUBLESHOOTING
 
@@ -62,16 +62,16 @@ SDL_mixer prior 1.2.8.
 
 Screenresolution:
 
-It is possible to set the resolution in max.xml however you should keep 
-in mind that all menus and displays are designed for 640x480. If you 
-choose a resolution not offered in our settings dialog you may 
+It is possible to set the resolution in maxr.xml however you should keep
+in mind that all menus and displays are designed for 640x480. If you
+choose a resolution not offered in our settings dialog you may
 experience odd graphical problems.
 
 Sound:
 
 If you experience problems with soundquality (especially on WinXP) you
-may increase the chunksize in max.xml. Default is 1024 and 2205Hz. Next
-proper value is 2048 or 4096. If you increasing frequency you have to 
+may increase the chunksize in maxr.xml. Default is 1024 and 2205Hz. Next
+proper value is 2048 or 4096. If you increasing frequency you have to
 increase the chunksize, too. However increasing frequency has only a
 small benefit to the backgroundmusic.
 
@@ -86,10 +86,10 @@ The orignal maps are 100% compatible. See BOTH.
 
 Known Bugs:
 
-Many. There is no AI! This is one of the first releases featuring 
+Many. There is no AI! This is one of the first releases featuring
 network games using TCP/IP. Expect and report crashes (with backtrace
 if possible) and odd behaivors. Some features that may have worked in
 prior releases are disabled. For more known and/or fixed bugs please
-visit our bugtracker: 
+visit our bugtracker:
 
 http://www.maxr.org/docs.php?id=22

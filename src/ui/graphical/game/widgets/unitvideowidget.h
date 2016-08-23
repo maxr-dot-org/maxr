@@ -44,10 +44,15 @@ public:
 
 	void start();
 	void stop();
+	void toggle();
 
 	bool isPlaying() const;
 
+	bool hasAnimation () const;
+
 	void setUnit (const cUnit* unit);
+	
+	cSignal<void ()> clicked;
 private:
 	cImage* currentFrameImage;
 	FliAnimationPointerType fliAnimation;

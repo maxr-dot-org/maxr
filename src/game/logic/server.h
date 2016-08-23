@@ -186,7 +186,7 @@ public:
 	*@param event The SDL_Event to be pushed.
 	*/
 	virtual void pushEvent (std::unique_ptr<cNetMessage> event) MAXR_OVERRIDE_FUNCTION;
-
+	virtual std::unique_ptr<cNetMessage> popEvent() MAXR_OVERRIDE_FUNCTION;
 	/**
 	* sends a netMessage to the client
 	* on which the player with 'iPlayerNum' is playing

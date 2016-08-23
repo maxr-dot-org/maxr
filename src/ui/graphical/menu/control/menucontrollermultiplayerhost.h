@@ -48,6 +48,7 @@ public:
 	void start();
 
 	virtual void pushEvent (std::unique_ptr<cNetMessage> message) MAXR_OVERRIDE_FUNCTION;
+	virtual std::unique_ptr<cNetMessage> popEvent() MAXR_OVERRIDE_FUNCTION;
 
 	virtual void run() MAXR_OVERRIDE_FUNCTION;
 private:
@@ -96,10 +97,11 @@ private:
 
 	void startGamePreparation();
 
-	void startClanSelection();
-	void startLandingUnitSelection();
+	void startClanSelection(bool isFirstWindowOnGamePreparation);
+	void startLandingUnitSelection(bool isFirstWindowOnGamePreparation);
 	void startLandingPositionSelection();
 	void startNewGame();
+	void checkReallyWantsToQuit();
 
 	void handleNetMessage (cNetMessage& message);
 
@@ -111,6 +113,7 @@ private:
 	void handleNetMessage_MU_MSG_FINISHED_MAP_DOWNLOAD (cNetMessage& message);
 	void handleNetMessage_MU_MSG_LANDING_POSITION (cNetMessage& message);
 	void handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS (cNetMessage& message);
+	void handleNetMessage_MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION(cNetMessage& message);
 
 	void saveOptions();
 };

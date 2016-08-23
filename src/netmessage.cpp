@@ -30,7 +30,7 @@ using namespace std;
 
 cNetMessage::cNetMessage (const char* c)
 {
-	if (c[0] != START_CHAR) Log.write ("NetMessage has wrong start character", LOG_TYPE_NET_ERROR);
+	if (c[0] != START_CHAR) Log.write ("NetMessage has wrong start character", cLog::eLOG_TYPE_NET_ERROR);
 	// Use temporary variable to avoid gcc warning:
 	// "dereferencing type-punned pointer will break strict-aliasing rules"
 	const Sint16* data16 = reinterpret_cast<const Sint16*> (c + 1);
@@ -401,6 +401,7 @@ string cNetMessage::getTypeAsString() const
 		case MU_MSG_LANDING_POSITION: return "MU_MSG_LANDING_POSITION";
 		case MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS: return "MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS";
 		case MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION: return "MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION";
+		case MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION: return "MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION";
 		case MU_MSG_START_MAP_DOWNLOAD: return "MU_MSG_START_MAP_DOWNLOAD";
 		case MU_MSG_MAP_DOWNLOAD_DATA: return "MU_MSG_MAP_DOWNLOAD_DATA";
 		case MU_MSG_CANCELED_MAP_DOWNLOAD: return "MU_MSG_CANCELED_MAP_DOWNLOAD";

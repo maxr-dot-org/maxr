@@ -429,9 +429,9 @@ void sendSubbaseValues (cServer& server, const sSubBase& subBase, const cPlayer&
 void sendBuildList (cServer& server, const cBuilding& building)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_BUILDLIST);
-	message->pushBool (building.RepeatBuild);
-	message->pushInt16 (building.BuildSpeed);
-	message->pushInt16 (building.MetalPerRound);
+	message->pushBool (building.getRepeatBuild());
+	message->pushInt16 (building.getBuildSpeed());
+	message->pushInt16 (building.getMetalPerRound());
 	for (int i = (int) building.getBuildListSize() - 1; i >= 0; i--)
 	{
 		message->pushInt16 (building.getBuildListItem (i).getRemainingMetal());

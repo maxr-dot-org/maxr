@@ -273,23 +273,23 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 			font->showText (drawPositionX + 110, drawPositionY, iToStr (server->gameTimer.eventCounter), FONT_LATIN_SMALL_WHITE);
 			drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
-			for (size_t i = 0; i != server->model.playerList.size(); ++i)
+			for (const auto& player : server->model.playerList)
 			{
-				font->showText(drawPositionX, drawPositionY, "Client " + iToStr(i) + lngPack.i18n("Text~Punctuation~Colon"), FONT_LATIN_SMALL_WHITE);
+				font->showText(drawPositionX, drawPositionY, "Client " + iToStr(player->getId()) + lngPack.i18n("Text~Punctuation~Colon"), FONT_LATIN_SMALL_WHITE);
 				drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 				font->showText(drawPositionX + 10, drawPositionY, "Client time: ", FONT_LATIN_SMALL_WHITE);
-				font->showText(drawPositionX + 110, drawPositionY, iToStr(server->gameTimer.receivedTime[i]), FONT_LATIN_SMALL_WHITE);
+				font->showText(drawPositionX + 110, drawPositionY, iToStr(server->gameTimer.receivedTime[player->getId()]), FONT_LATIN_SMALL_WHITE);
 				drawPositionY += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
 
 
-				if (server->gameTimer.clientDebugData[i].crcOK)
+				if (server->gameTimer.clientDebugData[player->getId()].crcOK)
 					font->showText(drawPositionX + 10, drawPositionY, "Sync OK", FONT_LATIN_SMALL_GREEN);
 				else
 					font->showText(drawPositionX + 10, drawPositionY, "Out of Sync!", FONT_LATIN_SMALL_RED);
 				drawPositionY += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
 
-				const auto& debugData= server->gameTimer.clientDebugData[i];
+				const auto& debugData= server->gameTimer.clientDebugData[player->getId()];
 				font->showText(drawPositionX + 10, drawPositionY, "Timebuffer: ", FONT_LATIN_SMALL_WHITE);
 				font->showText(drawPositionX + 110, drawPositionY, iToStr(debugData.timeBuffer), FONT_LATIN_SMALL_WHITE);
 				drawPositionY += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
@@ -495,8 +495,8 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 
 	const size_t buildingBuildListSize = building.getBuildListSize();
 	tmpString =
-		"build_speed: "        + iToStr (building.BuildSpeed) +
-		" repeat_build: "      + iToStr (building.RepeatBuild) +
+		"build_speed: "        + iToStr (building.getBuildSpeed()) +
+		" repeat_build: "      + iToStr (building.getRepeatBuild()) +
 		" build_list_count: +" + iToStr ((int)buildingBuildListSize);
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;

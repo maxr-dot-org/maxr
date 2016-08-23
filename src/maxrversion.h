@@ -10,13 +10,15 @@
 # ifdef NDEBUG
 #  define PACKAGE_REV "Releaseversion"
 # else
-#    define PACKAGE_REV "GIT Hash unknown"
+#  define PACKAGE_REV "GIT Hash unknown"
 # endif
 #endif
 
 #if HAVE_CONFIG_H
 # include "config.h"
 #else // We have no config.h => take care of these manually
-# define PACKAGE_VERSION "0.2.8"
+# ifndef PACKAGE_VERSION
+#  define PACKAGE_VERSION "0.2.9"
+# endif
 # define PACKAGE_NAME "M.A.X.R."
 #endif

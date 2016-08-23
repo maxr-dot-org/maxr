@@ -69,6 +69,12 @@ cModel::cModel() :
 		}
 	}); */
 };
+
+cModel::~cModel()
+{
+	map->reset();
+}
+
 //------------------------------------------------------------------------------
 void cModel::runJobs(const cGameTimer& timer)
 {

@@ -79,6 +79,8 @@
 #include "game/data/report/savedreportunit.h"
 #include "game/data/report/special/savedreporthostcommand.h"
 
+#include "debug.h"
+
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
 	application (application_),
@@ -725,6 +727,10 @@ void cGameGuiController::connectClient (cClient& client)
 				showNextPlayerDialog();
 			}
 			else setActiveClient (nullptr);
+		}
+		else
+		{
+			gameGui->getHud().lockEndButton();
 		}
 	});
 
@@ -1430,14 +1436,14 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 			else if (command.compare (0, 7, "/resync") == 0)
 			{
 				/*
-				if (command.length() > 7)
+				if (command.length() > 8)
 				{
 					if (!server)
 					{
 						gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
 						return;
 					}
-					const cPlayer* player = activeClient->getModel().getPlayer(command.substr (7, 8));
+					const cPlayer* player = activeClient->getModel().getPlayer(command.substr (8));
 					if (!player)
 					{
 						gameGui->getGameMessageList().addMessage ("Wrong parameter");
@@ -1535,6 +1541,10 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 				server->disableFreezeMode (FREEZE_PAUSE);
 				*/
 			}
+			else if (command.compare(0, 6, "/crash") == 0)
+			{
+				CR_EMULATE_CRASH();
+			}
 			if (server)
 			{
 				//sendSavedReport (*server, cSavedReportHostCommand (command), nullptr);
@@ -1622,7 +1632,6 @@ void cGameGuiController::markSelectedUnitAsDone()
 
 	if (unit && unit->getOwner() == player.get())
 	{
-		gameGui->getGameMap().centerAt (unit->getPosition());
 		unit->setMarkedAsDone (true);
 		resumeMoveJobTriggered (*unit);
 	}

@@ -98,7 +98,7 @@
 // Other Resources /////////////////////////////////////////////////////////////
 
 #define DEFAULTPORT 58600
-#define MAX_XML "max.xml"
+#define MAX_XML "maxr.xml"
 #define MAX_LOG "maxr.log"
 #define MAX_NET_LOG "net.log"
 #define MAX_LOG_DIR "log_files"

@@ -51,6 +51,7 @@
 #include "game/logic/turnclock.h"
 #include "game/logic/turntimeclock.h"
 #include "utility/random.h"
+#include "debug.h"
 
 #if DEDICATED_SERVER_APPLICATION
 # include "dedicatedserver.h"
@@ -59,6 +60,8 @@
 //------------------------------------------------------------------------------
 int CallbackRunServerThread (void* arg)
 {
+	CR_ENABLE_CRASH_RPT_CURRENT_THREAD();
+
 	cServer* server = reinterpret_cast<cServer*> (arg);
 	server->run();
 	return 0;
@@ -217,6 +220,13 @@ void cServer::setTurnLimitActive (bool value)
 void cServer::pushEvent (std::unique_ptr<cNetMessage> message)
 {
 	eventQueue.push (std::move (message));
+}
+//------------------------------------------------------------------------------
+std::unique_ptr<cNetMessage> cServer::popEvent()
+{
+	std::unique_ptr<cNetMessage> message;
+	eventQueue.try_pop(message);
+	return message;
 }
 
 
@@ -955,9 +965,9 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 	}
 
 	const int iBuildSpeed = message.popInt16();
-	if (iBuildSpeed == 0) Building->MetalPerRound =  1 * Building->getStaticUnitData().needsMetal;
-	if (iBuildSpeed == 1) Building->MetalPerRound =  4 * Building->getStaticUnitData().needsMetal;
-	if (iBuildSpeed == 2) Building->MetalPerRound = 12 * Building->getStaticUnitData().needsMetal;
+	if (iBuildSpeed == 0) Building->setMetalPerRound ( 1 * Building->getStaticUnitData().needsMetal);
+	if (iBuildSpeed == 1) Building->setMetalPerRound ( 4 * Building->getStaticUnitData().needsMetal);
+	if (iBuildSpeed == 2) Building->setMetalPerRound (12 * Building->getStaticUnitData().needsMetal);
 	std::vector<cBuildListItem> NewBuildList;
 
 	const int iCount = message.popInt16();
@@ -1002,8 +1012,8 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 			Building->getBuildListItem (0).setRemainingMetal (iTurboBuildCosts[iBuildSpeed]);
 		}
 
-		Building->RepeatBuild = message.popBool();
-		Building->BuildSpeed = iBuildSpeed;
+		Building->setRepeatBuild(message.popBool());
+		Building->setBuildSpeed(iBuildSpeed);
 		if (Building->getBuildListItem (0).getRemainingMetal() > 0)
 		{
 			Building->ServerStartWork (*this);
@@ -1039,7 +1049,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message)
 	addVehicle (position, BuildingListItem.getType(), Building->getOwner(), false);
 
 	// start new buildjob
-	if (Building->RepeatBuild)
+	if (Building->getRepeatBuild())
 	{
 		BuildingListItem.setRemainingMetal (-1);
 		Building->addBuildListItem (BuildingListItem);
@@ -1054,7 +1064,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message)
 			std::array<int, 3> iTurboBuildRounds;
 			std::array<int, 3> iTurboBuildCosts;
 			Building->calcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Building->getOwner()->getUnitDataCurrentVersion (BuildingListItem.getType())->getBuildCost());
-			BuildingListItem.setRemainingMetal (iTurboBuildCosts[Building->BuildSpeed]);
+			BuildingListItem.setRemainingMetal (iTurboBuildCosts[Building->getBuildSpeed()]);
 		}
 		Building->ServerStartWork (*this);
 	}
@@ -1330,7 +1340,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 	cVehicle* Vehicle = getVehicleFromID (id);
 	if (Vehicle == nullptr)
 	{
-		Log.write ("Server: Can not find vehicle with id " + iToStr (id) + " for clearing", LOG_TYPE_NET_WARNING);
+		Log.write ("Server: Can not find vehicle with id " + iToStr (id) + " for clearing", cLog::eLOG_TYPE_NET_WARNING);
 		return;
 	}
 
@@ -1386,7 +1396,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message)
 	cVehicle* Vehicle = getVehicleFromID (id);
 	if (Vehicle == nullptr)
 	{
-		Log.write ("Server: Can not find vehicle with id " + iToStr (id) + " for stop clearing", LOG_TYPE_NET_WARNING);
+		Log.write ("Server: Can not find vehicle with id " + iToStr (id) + " for stop clearing", cLog::eLOG_TYPE_NET_WARNING);
 		return;
 	}
 
@@ -2737,7 +2747,7 @@ void cServer::handleEnd (cPlayer& player)
 		{
 			if (checkRemainingMoveJobs (nullptr))
 			{
-				pendingEndTurnPlayerNumber = -2;
+				pendingEndTurnPlayerNumber = player.getId();
 				return;
 			}
 
@@ -2767,10 +2777,9 @@ void cServer::handleWantEnd()
 	// and we can start the new turn simultaneously on all clients
 	if (freezeModes.waitForTurnEnd && !executingRemainingMovements)
 	{
-		for (size_t i = 0; i != playerList.size(); ++i)
+		for (const auto& player : playerList)
 		{
-			cPlayer& player = *playerList[i];
-//			if (!isPlayerDisconnected (player) && gameTimer->getReceivedTime (i) <= lastTurnEnd)
+//			if (!isPlayerDisconnected (*player) && gameTimer->getReceivedTime (player->getNr()) <= lastTurnEnd)
 //				return;
 		}
 
@@ -3217,7 +3226,7 @@ void cServer::handleMoveJobs()
 				ActiveMJobs.erase (ActiveMJobs.begin() + i);
 				delete MoveJob;
 				Vehicle->ServerMoveJob = nullptr;
-				Log.write (" Server: Movejob deleted and informed the clients to stop this movejob", LOG_TYPE_NET_DEBUG);
+				Log.write (" Server: Movejob deleted and informed the clients to stop this movejob", cLog::eLOG_TYPE_NET_DEBUG);
 				continue;
 			}
 			if (MoveJob->bEndForNow)
@@ -3358,7 +3367,6 @@ int cServer::deleteBuildings (cMapField& field, bool deleteConnector)
 			rubble += (*b_it)->getStoredResources() * 2; // stored material is always added completely to the rubble
 
 		deleteUnit (*b_it);
-		b_it = buildings.begin();
 	}
 
 	return rubble;

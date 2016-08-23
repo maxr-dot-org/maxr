@@ -58,6 +58,7 @@
 
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/windows/windowstart.h"
+#include "debug.h"
 
 using namespace std;
 
@@ -74,6 +75,10 @@ int main (int argc, char* argv[])
 		Quit();
 		return -1;
 	}
+
+	CR_INIT_CRASHREPORTING();
+
+
 	// stop on error during init of SDL basics. WARNINGS will be ignored!
 	if (initSDL() == -1) return -1;
 

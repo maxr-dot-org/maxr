@@ -176,7 +176,11 @@ void cWindowLandingPositionSelection::unlockBack()
 //------------------------------------------------------------------------------
 void cWindowLandingPositionSelection::handleActivated (cApplication& application, bool firstTime)
 {
-	if (firstTime) cSoundDevice::getInstance().playVoice (getRandom (VoiceData.VOILanding));
+	if (firstTime)
+	{
+		cSoundDevice::getInstance().playVoice (getRandom (VoiceData.VOILanding));
+		setInfoMessage (lngPack.i18n ("Text~Comp~Landing_Select"));
+	}
 	application.addRunnable (animationTimer);
 	cWindow::handleActivated (application, firstTime);
 	if (firstTime) opened();

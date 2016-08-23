@@ -26,7 +26,8 @@
 
 //------------------------------------------------------------------------------
 cWindowNetworkLobbyHost::cWindowNetworkLobbyHost() :
-	cWindowNetworkLobby (lngPack.i18n ("Text~Others~TCPIP_Host"), true)
+	cWindowNetworkLobby (lngPack.i18n ("Text~Others~TCPIP_Host"), true),
+	saveGameNumber(-1)
 {
 	auto mapButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 42), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Choose_Planet")));
 	signalConnectionManager.connect (mapButton->clicked, std::bind (&cWindowNetworkLobbyHost::handleMapClicked, this));

@@ -42,29 +42,24 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	const auto& serverPlayerList = server->playerList;
 	if (serverPlayerList.empty()) return;
 
-	// Following may be simplified according to serverGame::loadGame
-	size_t serverListLocalPlayerIndex = 0;
-	// copy players for client
-	for (size_t i = 0; i != serverPlayerList.size(); ++i)
+	// set socket index for server players
+	for (const auto& serverPlayer : serverPlayerList)
 	{
-		auto& serverPlayer = *serverPlayerList[i];
-
-		auto iter = std::find_if (players.begin(), players.end(), [&] (const cPlayerBasicData & player) { return player.getNr() == serverPlayer.getId(); });
-
-		assert (iter != players.end());
-		const auto& listPlayer = *iter;
-
-		if (listPlayer.getNr() == players[localPlayerIndex].getNr())
+		if (serverPlayer->getId() == players[localPlayerIndex].getNr())
 		{
-			serverPlayer.setLocal();
-			serverListLocalPlayerIndex = i;
+			serverPlayer->setLocal();
 		}
 		else
 		{
-			serverPlayer.setSocketIndex (listPlayer.getSocketIndex());
+			auto iter = std::find_if(players.begin(), players.end(), [&] (const cPlayerBasicData & player) { return player.getNr() == serverPlayer->getId(); });
+			assert(iter != players.end());
+			const auto& listPlayer = *iter;
+
+			serverPlayer->setSocketIndex (listPlayer.getSocketIndex());
 		}
 	}
-	localClient->setPlayers (players, serverListLocalPlayerIndex);
+
+	localClient->setPlayers (players, localPlayerIndex);
 
 	/*if (server->getGameSettings()->getGameType() == eGameSettingsGameType::Turns)
 	{
@@ -73,7 +68,7 @@ void cNetworkHostGameSaved::start (cApplication& application)
 
 	server->start();
 
-	sendRequestResync (*localClient, serverPlayerList[serverListLocalPlayerIndex]->getId(), true);
+	sendRequestResync (*localClient, players[localPlayerIndex].getNr(), true);
 
 	// TODO: move that in server
 	for (size_t i = 0; i != serverPlayerList.size(); ++i)
