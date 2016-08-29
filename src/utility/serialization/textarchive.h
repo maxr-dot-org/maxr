@@ -46,7 +46,7 @@ private:
 	void closeBracket();
 	void addComma();
 
-	template<typename T>
+	template<typename T, typename = std::enable_if_t <!std::is_enum<T>::value>>
 	void pushValue(const T& value);
 	template<typename T>
 	void pushValue(const serialization::sNameValuePair<T>& nvp);
@@ -71,9 +71,11 @@ private:
 	void pushValue(double value);
 
 	//
-	// push STL types
+	// push types that need a special handling in text archives
 	//
 	void pushValue(const std::string& value);
+	template <typename T, typename = std::enable_if_t <std::is_enum<T>::value>>
+	void pushValue(T value);
 };
 //------------------------------------------------------------------------------
 template<typename T>
@@ -90,17 +92,15 @@ cTextArchiveIn& cTextArchiveIn::operator&(const T& value)
 	return *this;
 }
 //------------------------------------------------------------------------------
-template<typename T>
+template<typename T, typename>
 void cTextArchiveIn::pushValue(const T& value)
 {
-	if (!std::is_enum<T>::value)
-		openBracket();
+	openBracket();
 
 	T& valueNonConst = const_cast<T&>(value);
 	serialization::serialize(*this, valueNonConst);
 
-	if (!std::is_enum<T>::value)
-		closeBracket();
+	closeBracket();
 }
 //------------------------------------------------------------------------------
 template<typename T>
@@ -109,4 +109,14 @@ void cTextArchiveIn::pushValue(const serialization::sNameValuePair<T>& nvp)
 	pushValue(nvp.value);
 }
 
+
+//------------------------------------------------------------------------------
+template <typename T, typename /*= std::enable_if_t <std::is_enum<T>::value>*/>
+void cTextArchiveIn::pushValue(T value)
+{
+	addComma();
+	buffer << enumToString(value);
+	nextCommaNeeded = true;
+}
+ 
 #endif //serialization_binaryarchiveH

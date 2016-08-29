@@ -25,6 +25,7 @@
 #include "game/data/player/player.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
+#include "utility/string/toString.h"
 
 std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 {
@@ -39,6 +40,21 @@ std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 		//TODO: to throw or not to throw...
 		Log.write("Unknown action type " + iToStr(static_cast<int>(type)), cLog::eLOG_TYPE_NET_ERROR);
 		return nullptr;
+	}
+}
+
+//------------------------------------------------------------------------------
+std::string enumToString(cAction::eActiontype value)
+{
+	switch (value)
+	{
+	case cAction::eActiontype::ACTION_INIT_NEW_GAME:
+		return "ACTION_INIT_NEW_GAME";
+		break;
+	default:
+		assert(false);
+		return toString(static_cast<int>(value));
+		break;
 	}
 }
 

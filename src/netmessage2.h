@@ -42,6 +42,7 @@ enum class eNetMessageType {
 	GUI_SAVE_INFO,
 	REQUEST_GUI_SAVE_INFO
 };
+std::string enumToString(eNetMessageType value);
 
 class cNetMessage2
 {

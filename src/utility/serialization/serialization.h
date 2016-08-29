@@ -56,6 +56,16 @@ struct sID;
 	std::is_same<T, cXmlArchiveIn>::value     || \
 	std::is_same<T, cTextArchiveIn>::value>
 
+template<typename T, typename = std::enable_if_t <std::is_enum<T>::value>>
+std::string enumToString(T value)
+{
+	std::stringstream ss;
+	ss.imbue(std::locale("C"));
+	ss << static_cast<int>(value);
+
+	return ss.str();
+}
+
 namespace serialization
 {
 	//--------------------------------------------------------------------------
@@ -241,7 +251,7 @@ namespace serialization
 	}
 
 	//
-	// free serialization functions (for e. g. STL types, pointers, enums)
+	// free serialization functions (for e. g. STL types, pointers)
 	//
 	//-------------------------------------------------------------------------
 	template<typename A, typename T1, typename T2>

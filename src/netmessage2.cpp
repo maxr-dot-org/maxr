@@ -23,6 +23,7 @@
 
 #include "main.h"
 #include "netmessage2.h"
+#include "utility/string/toString.h"
 
 std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(const std::vector<unsigned char>& serialMessage)
 {
@@ -72,4 +73,39 @@ std::unique_ptr<cNetMessage2> cNetMessage2::clone() const
 	archiveIn << *this;
 
 	return cNetMessage2::createFromBuffer(serialMessage);
+}
+
+std::string enumToString(eNetMessageType value)
+{
+	switch (value)
+	{
+	case eNetMessageType::ACTION:
+		return "ACTION";
+		break;
+	case eNetMessageType::GAMETIME_SYNC_SERVER:
+		return "GAMETIME_SYNC_SERVER";
+		break;
+	case eNetMessageType::GAMETIME_SYNC_CLIENT:
+		return "GAMETIME_SYNC_CLIENT";
+		break;
+	case eNetMessageType::RANDOM_SEED:
+		return "RANDOM_SEED";
+		break;
+	case eNetMessageType::PLAYERSTATE:
+		return "PLAYERSTATE";
+		break;
+	case eNetMessageType::CHAT:
+		return "CHAT";
+		break;
+	case eNetMessageType::GUI_SAVE_INFO:
+		return "GUI_SAVE_INFO";
+		break;
+	case eNetMessageType::REQUEST_GUI_SAVE_INFO:
+		return "REQUEST_GUI_SAVE_INFO";
+		break;
+	default:
+		assert(false);
+		return toString(static_cast<int>(value));
+		break;
+	}
 }

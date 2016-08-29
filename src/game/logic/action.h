@@ -54,6 +54,8 @@ private:
 	eActiontype type;
 };
 
+std::string enumToString(cAction::eActiontype value);
+
 //TODOO: new file
 class cVehicle;
 class cBuilding;
