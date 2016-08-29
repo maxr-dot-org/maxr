@@ -94,7 +94,7 @@ void cLog::write (const std::string& msg, eLogType type)
 		default :               
 			tmp = II + msg;
 	}
-	tmp += TEXT_FILE_LF;
+	tmp += '\n';
 
 	if (type == eLOG_TYPE_NET_DEBUG || type == eLOG_TYPE_NET_WARNING || type == eLOG_TYPE_NET_ERROR)
 	{
@@ -115,7 +115,7 @@ void cLog::mark()
 	checkOpenFile(eLOG_TYPE_INFO);
 
 	std::string str = "==============================(MARK)==============================";
-	str += TEXT_FILE_LF;
+	str += '\n';
 
 	writeToFile(str, logfile);
 }
@@ -174,7 +174,7 @@ void cLog::checkOpenFile(eLogType type)
 //------------------------------------------------------------------------------
 void cLog::writeToFile(const std::string &msg, std::ofstream& file)
 {
-	file << msg;
+	file.write(msg.c_str(), msg.length());
 	file.flush();
 
 	if (file.bad())
