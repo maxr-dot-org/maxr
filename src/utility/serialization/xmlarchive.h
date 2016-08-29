@@ -186,8 +186,8 @@ void cXmlArchiveOut::getFromCurrentElement(serialization::sNameValuePair<T>& nvp
 {
 	std::string value = getStringFromCurrentElement(nvp.name);
 
-	std::stringstream ss;
-	ss.str(value);
+	std::stringstream ss(value);
+	ss.imbue(std::locale("C"));
 	ss >> nvp.value;
 
 	if (ss.fail() || !ss.eof()) //test eof, because all characters in the string should belong to the converted value

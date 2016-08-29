@@ -24,6 +24,7 @@
 cTextArchiveIn::cTextArchiveIn() :
 	nextCommaNeeded(false)
 {
+	buffer.imbue(std::locale("C"));
 }
 //------------------------------------------------------------------------------
 const std::string cTextArchiveIn::data() const
