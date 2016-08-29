@@ -153,7 +153,17 @@ void cTextArchiveIn::pushValue(double value)
 //------------------------------------------------------------------------------
 void cTextArchiveIn::pushValue(const std::string& value)
 {
+	std::string s = value;
+
+	//replace line breaks in string by "\n"
+	size_t pos = 0;
+	while ((pos = s.find('\n', pos)) != std::string::npos)
+	{
+		s.replace(pos, 1, "\\n");
+		pos += 2;
+	}
+
 	addComma();
-	buffer << "\"" << value << "\"";
+	buffer << "\"" << s << "\"";
 	nextCommaNeeded = true;
 }

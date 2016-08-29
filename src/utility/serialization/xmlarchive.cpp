@@ -145,7 +145,17 @@ void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<double>& nvp)
 //------------------------------------------------------------------------------
 void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<std::string>& nvp)
 {
-	addToCurrentElement(nvp.name, nvp.value);
+	std::string value = nvp.value;
+
+	//replace line breaks in string by "\n"
+	size_t pos = 0;
+	while ((pos = value.find('\n', pos)) != std::string::npos)
+	{
+		value.replace(pos, 1, "\\n");
+		pos += 2;
+	}
+
+	addToCurrentElement(nvp.name, value);
 }
 
 //------------------------------------------------------------------------------
@@ -277,4 +287,11 @@ void cXmlArchiveOut::popValue(serialization::sNameValuePair<double>& nvp)
 void cXmlArchiveOut::popValue(serialization::sNameValuePair<std::string>& nvp)
 {
 	nvp.value = getStringFromCurrentElement(nvp.name);
+	//replace "\n" in string by real line breaks
+	size_t pos = 0;
+	while ((pos = nvp.value.find("\\n", pos)) != std::string::npos)
+	{
+		nvp.value.replace(pos, 2, "\n");
+		pos += 1;
+	}
 }
