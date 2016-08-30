@@ -35,7 +35,7 @@ cNetworkHostGame::~cNetworkHostGame()
 //------------------------------------------------------------------------------
 void cNetworkHostGame::run()
 {
-	if (localClient) localClient->getGameTimer()->run(*localClient);
+	if (localClient) localClient->run();
 }
 
 //------------------------------------------------------------------------------

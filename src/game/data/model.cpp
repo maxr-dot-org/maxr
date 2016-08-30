@@ -76,10 +76,20 @@ cModel::~cModel()
 }
 
 //------------------------------------------------------------------------------
-void cModel::runJobs(const cGameTimer& timer)
+void cModel::advanceGameTime()
 {
-	//TODO
+	gameTime++;
+	gameTimeChanged();
+
+	//TODO: run jobs
 }
+
+//------------------------------------------------------------------------------
+unsigned int cModel::getGameTime() const
+{
+	return gameTime;
+}
+
 //------------------------------------------------------------------------------
 uint32_t cModel::calcChecksum() const
 {

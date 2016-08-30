@@ -73,7 +73,7 @@ cServer::cServer(std::shared_ptr<cTCP> network_) :
 	gameTimer(std::make_shared<cGameTimerServer>()),
 	serverThread(nullptr),
 	turnClock(std::make_unique<cTurnClock>(1)),
-	turnTimeClock(std::make_unique<cTurnTimeClock>(gameTimer)),
+	turnTimeClock(std::make_unique<cTurnTimeClock>(model)),
 	lastTurnEnd(0),
 	executingRemainingMovements(false),
 	gameSettings(std::make_unique<cGameSettings>()),
@@ -242,7 +242,7 @@ void cServer::sendNetMessage (std::unique_ptr<cNetMessage> message, const cPlaye
 	{
 		Log.write ("Server: --> " + playerName + " (" + iToStr (playerNumber) + ") "
 				   + message->getTypeAsString()
-				   + ", gameTime:" + iToStr (this->gameTimer->gameTime)
+				   + ", gameTime:" + iToStr(model.getGameTime())
 				   + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
@@ -287,14 +287,14 @@ void cServer::run()
 		}
 
 		// don't do anything if games hasn't been started yet!
-		unsigned int lastTime = gameTimer->gameTime;
+		unsigned int lastTime = model.getGameTime();
 		if (serverState == SERVER_STATE_INGAME)
 		{
 			//gameTimer->run (*this);
 		}
 
 		// nothing done
-		if (!message && lastTime == gameTimer->gameTime)
+		if (!message && lastTime == model.getGameTime())
 		{
 			SDL_Delay (10);
 		}
@@ -2000,7 +2000,7 @@ int cServer::handleNetMessage (cNetMessage& message)
 	{
 		Log.write ("Server: <-- Player " + iToStr (message.iPlayerNr) + " "
 				   + message.getTypeAsString()
-				   + ", gameTime:" + iToStr (this->gameTimer->gameTime)
+				   + ", gameTime:" + iToStr(model.getGameTime())
 				   + ", Hexdump: " + message.getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
@@ -2769,7 +2769,7 @@ void cServer::handleEnd (cPlayer& player)
 //------------------------------------------------------------------------------
 void cServer::handleWantEnd()
 {
-	if (!gameTimer->timer50ms) return;
+	//if (!gameTimer->timer50ms) return;
 
 	// wait until all clients have reported a gametime
 	// that is after the turn end.
@@ -2901,7 +2901,7 @@ bool cServer::executeRemainingMoveJobs (const cPlayer& player)
 void cServer::makeTurnStart (cPlayer& player)
 {
 	enableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
-	lastTurnEnd = gameTimer->gameTime;
+	lastTurnEnd = model.getGameTime();
 
 	player.base.checkTurnEnd (*this);
 
@@ -3118,7 +3118,7 @@ void cServer::checkDefeats()
 //------------------------------------------------------------------------------
 void cServer::checkDeadline()
 {
-	if (!gameTimer->timer50ms) return;
+	//if (!gameTimer->timer50ms) return;
 
 	if (!turnTimeClock->hasReachedAnyDeadline()) return;
 
@@ -3241,7 +3241,7 @@ void cServer::handleMoveJobs()
 		if (MoveJob->iNextDir != Vehicle->dir)
 		{
 			// rotate vehicle
-			if (gameTimer->timer100ms)
+			//if (gameTimer->timer100ms)
 			{
 				Vehicle->rotateTo (MoveJob->iNextDir);
 			}
@@ -3525,8 +3525,6 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete, bool withGuiState
 		}
 		sendDeleteEverything (*this, player);
 	}
-
-	sendGameTime (*this, player, gameTimer->gameTime);
 
 	//if (settings->clans == SETTING_CLANS_ON)
 	{

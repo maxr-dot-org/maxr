@@ -28,7 +28,7 @@
 #include "game/data/units/vehicle.h"
 #include "game/data/units/landingunit.h"
 #include "game/logic/clientevents.h" //TODO: remove
-#include "game/logic/action.h"
+#include "game/logic/action/actioninitnewgame.h"
 
 // TODO: find nice place
 //------------------------------------------------------------------------------

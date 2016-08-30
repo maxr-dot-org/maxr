@@ -262,7 +262,7 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 			font->showText (drawPositionX - 10, drawPositionY, "-Server:", FONT_LATIN_SMALL_YELLOW);
 			drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 			font->showText (drawPositionX, drawPositionY, "Server Time: ", FONT_LATIN_SMALL_WHITE);
-			font->showText (drawPositionX + 110, drawPositionY, iToStr (server->gameTimer.gameTime), FONT_LATIN_SMALL_WHITE);
+			font->showText(drawPositionX + 110, drawPositionY, iToStr(server->model.getGameTime()), FONT_LATIN_SMALL_WHITE);
 			drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 			font->showText (drawPositionX, drawPositionY, "Net MSG Queue: ", FONT_LATIN_SMALL_WHITE);
@@ -326,7 +326,7 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		font->showText (drawPositionX, drawPositionY, "Client Time: ", FONT_LATIN_SMALL_WHITE);
-		font->showText (drawPositionX + 110, drawPositionY, iToStr (client->gameTimer->gameTime), FONT_LATIN_SMALL_WHITE);
+		font->showText(drawPositionX + 110, drawPositionY, iToStr(client->model.getGameTime()), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		font->showText (drawPositionX, drawPositionY, "Net MGS Queue: ", FONT_LATIN_SMALL_WHITE);
@@ -338,13 +338,13 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		font->showText (drawPositionX, drawPositionY, "Time Buffer: ", FONT_LATIN_SMALL_WHITE);
-		font->showText (drawPositionX + 110, drawPositionY, iToStr (client->gameTimer->getReceivedTime() - client->gameTimer->gameTime), FONT_LATIN_SMALL_WHITE);
+		font->showText(drawPositionX + 110, drawPositionY, iToStr(client->gameTimer->getReceivedTime() - client->model.getGameTime()), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		font->showText (drawPositionX, drawPositionY, "Ticks per Frame ", FONT_LATIN_SMALL_WHITE);
 		static unsigned int lastGameTime = 0;
-		font->showText (drawPositionX + 110, drawPositionY, iToStr (client->gameTimer->gameTime - lastGameTime), FONT_LATIN_SMALL_WHITE);
-		lastGameTime = client->gameTimer->gameTime;
+		font->showText(drawPositionX + 110, drawPositionY, iToStr(client->model.getGameTime() - lastGameTime), FONT_LATIN_SMALL_WHITE);
+		lastGameTime = client->model.getGameTime();
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		font->showText(drawPositionX, drawPositionY, "Ping: ", FONT_LATIN_SMALL_WHITE);

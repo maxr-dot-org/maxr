@@ -21,7 +21,7 @@
 
 #include "server2.h"
 #include "client.h"
-#include "action.h"
+#include "game/logic/action/action.h"
 #include "utility/log.h"
 #include "game/data/player/playerbasicdata.h"
 #include <time.h>
@@ -132,7 +132,7 @@ void cServer2::sendMessageToClients(const cNetMessage2& message, int playerNr) c
 	{
 		cTextArchiveIn archive;
 		archive << message;
-		Log.write("Server: --> Data: " + archive.data() + " @" + iToStr(gameTimer.gameTime), cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write("Server: --> Data: " + archive.data() + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 
 	}
 
@@ -181,7 +181,7 @@ void cServer2::run()
 			{
 				cTextArchiveIn archive;
 				archive << *message;
-				Log.write("Server: <-- Data: " + archive.data() + " @" + iToStr(gameTimer.gameTime), cLog::eLOG_TYPE_NET_DEBUG);
+				Log.write("Server: <-- Data: " + archive.data() + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 			}
 
 			if (model.getPlayer(message->playerNr) == nullptr) continue;
@@ -199,7 +199,7 @@ void cServer2::run()
 			case eNetMessageType::GAMETIME_SYNC_CLIENT:
 				{
 					const cNetMessageSyncClient& syncMessage = *static_cast<cNetMessageSyncClient*>(message.get());
-					gameTimer.handleSyncMessage(syncMessage);
+					gameTimer.handleSyncMessage(syncMessage, model.getGameTime());
 				}
 				break;
 			case eNetMessageType::CHAT:

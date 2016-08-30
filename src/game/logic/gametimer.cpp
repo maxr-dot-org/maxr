@@ -39,14 +39,8 @@ Uint32 cGameTimer::gameTimerCallback (Uint32 interval, void* arg)
 cGameTimer::cGameTimer() :
 	mutex()
 {
-	gameTime = 0;
 	eventCounter = 0;
-
 	maxEventQueueSize = -1;
-
-	timer50ms = false;
-	timer100ms = false;
-
 	timerID = 0;
 }
 
@@ -106,19 +100,13 @@ bool cGameTimer::popEvent()
 	}
 }
 
-void cGameTimer::handleTimer()
-{
-	timer50ms  = (gameTime %  5) != 0;
-	timer100ms = (gameTime % 10) != 0;
-}
-
 void cGameTimerServer::setNumberOfPlayers(unsigned int players)
 {
 	receivedTime.resize(players);
 	clientDebugData.resize(players);
 }
 
-void cGameTimerServer::handleSyncMessage(const cNetMessageSyncClient& message)
+void cGameTimerServer::handleSyncMessage(const cNetMessageSyncClient& message, unsigned int gameTime)
 {
 	int playerNr = message.playerNr;
 	receivedTime[playerNr] = message.gameTime;
@@ -149,10 +137,7 @@ void cGameTimerServer::run(cModel& model, cServer2& server)
 	{
 		if (!popEvent()) break;
 		
-		gameTime++;
-		gameTimeChanged();
-		handleTimer();
-		model.runJobs(*this);
+		model.advanceGameTime();
 
 		uint32_t checksum = model.calcChecksum();
 		for (auto player : model.getPlayerList())
@@ -160,7 +145,7 @@ void cGameTimerServer::run(cModel& model, cServer2& server)
 			cNetMessageSyncServer message;
 			message.checksum = checksum;
 			message.ping = static_cast<int>(clientDebugData[player->getId()].ping);
-			message.gameTime = gameTime;
+			message.gameTime = model.getGameTime();
 			server.sendMessageToClients(message, player->getId());
 		}
 	}
@@ -191,7 +176,7 @@ unsigned int cGameTimerClient::getReceivedTime()
 	return receivedTime;
 }
 
-void cGameTimerClient::handleSyncMessage (const cNetMessageSyncServer& message)
+void cGameTimerClient::handleSyncMessage(const cNetMessageSyncServer& message, unsigned int gameTime)
 {
 
 	remoteChecksum = message.checksum;
@@ -220,14 +205,14 @@ void cGameTimerClient::checkServerResponding(cClient& client)
 	}
 }
 
-void cGameTimerClient::run(cClient& client)
+void cGameTimerClient::run(cClient& client, cModel& model)
 {
 	// maximum time before GUI update
 	const unsigned int maxWorkingTime = 500; // milliseconds
 	unsigned int startGameTime = SDL_GetTicks();
 
 	//collect some debug data
-	const unsigned int timeBuffer = getReceivedTime() - gameTime;
+	const unsigned int timeBuffer = getReceivedTime() - model.getGameTime();
 	const unsigned int tickPerFrame = std::min(timeBuffer, eventCounter);	//assumes, that this function is called once per frame
 																			//and we are not running in the maxWorkingTime limit
 
@@ -241,13 +226,11 @@ void cGameTimerClient::run(cClient& client)
 
 		if (syncMessageReceived)
 		{
-			gameTime++;
-			gameTimeChanged();
-			handleTimer();
-			client.runModel();
+			
+			model.advanceGameTime();
 
 			//check crc
-			localChecksum = client.getModel().calcChecksum();
+			localChecksum = model.calcChecksum();
 			debugRemoteChecksum = remoteChecksum;
 			if (localChecksum != remoteChecksum)
 			{
@@ -258,7 +241,7 @@ void cGameTimerClient::run(cClient& client)
 
 			//send syncMessage
 			cNetMessageSyncClient message;
-			message.gameTime = gameTime;
+			message.gameTime = model.getGameTime();
 			//add debug data
 			message.crcOK = (localChecksum == remoteChecksum);
 			message.eventCounter = eventCounter;
@@ -274,10 +257,10 @@ void cGameTimerClient::run(cClient& client)
 	}
 
 	//check whether the client time lags too much behind the server time and add an extra increment of the client time
-	if (gameTime + MAX_CLIENT_LAG < getReceivedTime())
+	if (model.getGameTime() + MAX_CLIENT_LAG < getReceivedTime())
 	{
 		//inject an extra timer event
-		for (int i = 0; i < (getReceivedTime() - gameTime) / 2; i++)
+		for (int i = 0; i < (getReceivedTime() - model.getGameTime()) / 2; i++)
 			pushEvent();
 	}
 }

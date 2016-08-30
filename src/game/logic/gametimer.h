@@ -70,23 +70,16 @@ protected:
 	void timerCallback();
 
 	void pushEvent();
-
-	void handleTimer(); 
 	bool popEvent();
 public:
 	~cGameTimer();
 
 	unsigned int maxEventQueueSize;
-
-	unsigned int gameTime;
-
-	bool timer50ms;
-	bool timer100ms;
 	
 	void start();
 	void stop();
 
-	cSignal<void ()> gameTimeChanged;
+	
 };
 
 class cGameTimerServer : public cGameTimer
@@ -98,7 +91,7 @@ private:
 	std::vector<unsigned int> receivedTime;
 public:
 	void run (cModel& model, cServer2& server);
-	void handleSyncMessage (const cNetMessageSyncClient& message);
+	void handleSyncMessage (const cNetMessageSyncClient& message, unsigned int gameTime);
 	void setNumberOfPlayers(unsigned int players);
 
 };
@@ -108,7 +101,7 @@ class cGameTimerClient : public cGameTimer
 	friend class cDebugOutputWidget;
 private:
 	unsigned int receivedTime;			//gametime of the latest sync message in the netmessage queue
-	unsigned int remoteChecksum;		//received checksum from server. After running the jobs for the next gematime, the clientmodel should have the same checksum!
+	unsigned int remoteChecksum;		//received checksum from server. After running the jobs for the next gametime, the clientmodel should have the same checksum!
 	unsigned int timeSinceLastSyncMessage; //when no sync message is received for a certain time, user gets message "waiting for server" 
 
 	bool syncMessageReceived; // The gametime can only be increased, after the sync message for the next gametime from the server has been received.
@@ -127,8 +120,8 @@ public:
 	void setReceivedTime(unsigned int time);
 	unsigned int getReceivedTime();
 
-	void run(cClient& client);
-	void handleSyncMessage (const cNetMessageSyncServer& message);
+	void run(cClient& client, cModel& model);
+	void handleSyncMessage (const cNetMessageSyncServer& message, unsigned int gameTime);
 };
 
 

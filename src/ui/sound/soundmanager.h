@@ -29,7 +29,7 @@
 class cSoundEffect;
 class cSoundChannel;
 
-class cGameTimer;
+class cModel;
 
 class cSoundManager
 {
@@ -37,7 +37,7 @@ public:
 	cSoundManager();
 	~cSoundManager();
 
-	void setGameTimer (std::shared_ptr<const cGameTimer> gameTimer);
+	void setModel (const cModel* model);
 
 	void mute();
 	void unmute();
@@ -68,7 +68,7 @@ private:
 	};
 	cSignalConnectionManager signalConnectionManager;
 
-	std::shared_ptr<const cGameTimer> gameTimer;
+	const cModel* model;
 
 	cRecursiveMutex playingSoundsMutex;
 	std::vector<sStoredSound> playingSounds;

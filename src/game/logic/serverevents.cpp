@@ -790,14 +790,6 @@ void sendClans (cServer& server, const std::vector<std::unique_ptr<cPlayer>>& pl
 }
 
 //------------------------------------------------------------------------------
-void sendGameTime (cServer& server, const cPlayer& receiver, int gameTime)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_SET_GAME_TIME);
-	message->pushInt32 (gameTime);
-	server.sendNetMessage (std::move (message), &receiver);
-}
-
-//------------------------------------------------------------------------------
 void sendClansToClients (cServer& server, const std::vector<std::unique_ptr<cPlayer>>& playerList)
 {
 	for (unsigned int n = 0; n < playerList.size(); n++)

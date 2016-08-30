@@ -49,7 +49,10 @@ public:
 
 	cCrossPlattformRandom randomGenerator;
 
-	void runJobs(const cGameTimer& timer); //advanceGameTime
+	void advanceGameTime();
+	unsigned int getGameTime() const;
+	mutable cSignal<void()> gameTimeChanged;
+
 	uint32_t calcChecksum() const;
 
 	void setUnitsData(std::shared_ptr<cUnitsData> unitsData);
@@ -83,6 +86,7 @@ public:
 	template<typename T>
 	void save(T& archive)
 	{
+		archive & NVP(gameTime);
 		archive & serialization::makeNvp("gameSettings", *gameSettings);
 		archive & serialization::makeNvp("map", *map);
 		archive & serialization::makeNvp("unitsData", *unitsData);
@@ -98,6 +102,8 @@ public:
 	template<typename T>
 	void load(T& archive)
 	{
+		archive & NVP(gameTime);
+
 		assert(gameSettings != nullptr);
 		archive & serialization::makeNvp("gameSettings", *gameSettings);
 
@@ -136,6 +142,8 @@ public:
 private:
 	void refreshMapPointer();
 
+	unsigned int gameTime;
+
 	std::shared_ptr<cGameSettings> gameSettings;
 	std::shared_ptr<cMap> map;
 	std::vector<std::shared_ptr<cPlayer>> playerList;
@@ -150,7 +158,6 @@ private:
 	//casualtiesTracker
 	//turnnr
 	//turn u. deadline timer
-	//gametime?
 	
 	//effect list
 

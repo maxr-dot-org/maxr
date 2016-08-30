@@ -19,7 +19,7 @@
 
 #include <memory>
 
-#include "game/logic/action.h"
+#include "game/logic/action/action.h"
 
 #include "main.h"
 #include "netmessage2.h"

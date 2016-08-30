@@ -57,7 +57,7 @@
 #include "game/data/report/special/savedreportupgraded.h"
 #include "game/logic/turnclock.h"
 #include "game/logic/turntimeclock.h"
-#include "game/logic/action.h"
+#include "game/logic/action/action.h"
 #include "game/data/savegame.h"
 #include "utility/serialization/textarchive.h"
 
@@ -75,7 +75,7 @@ cClient::cClient (cServer2* server, std::shared_ptr<cTCP> network_) :
 	gameTimer (std::make_shared<cGameTimerClient> ()),
 	activePlayer (nullptr),
 	turnClock (std::make_shared<cTurnClock> (1)),
-	turnTimeClock (std::make_shared<cTurnTimeClock> (gameTimer)),
+	turnTimeClock (std::make_shared<cTurnTimeClock> (model)),
 	casualtiesTracker (std::make_shared<cCasualtiesTracker> ()),
 	effectsList (new cFxContainer)
 {
@@ -194,7 +194,7 @@ void cClient::sendNetMessage(cNetMessage2& message) const
 	{
 		cTextArchiveIn archive;
 		archive << message;
-		Log.write(getActivePlayer().getName() + ": --> Data: " + archive.data() + " @" + iToStr(gameTimer->gameTime), cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write(getActivePlayer().getName() + ": --> Data: " + archive.data() + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
 	if (server2)
@@ -692,7 +692,7 @@ void cClient::HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message)
 	cClientMoveJob* MoveJob = new cClientMoveJob (*this, srcPosition, destPosition, Vehicle);
 	MoveJob->iSavedSpeed = iSavedSpeed;
 	if (!MoveJob->generateFromMessage (message)) return;
-	Log.write (" Client: Added received movejob at time " + iToStr (gameTimer->gameTime), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Client: Added received movejob at time " + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 }
 
 void cClient::HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message)
@@ -704,7 +704,7 @@ void cClient::HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message)
 	int iSavedSpeed = -1;
 	if (iType == MJOB_STOP) iSavedSpeed = message.popChar();
 
-	Log.write (" Client: Received information for next move: ID: " + iToStr (iID) + ", Type: " + iToStr (iType) + ", Time: " + iToStr (gameTimer->gameTime), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write(" Client: Received information for next move: ID: " + iToStr(iID) + ", Type: " + iToStr(iType) + ", Time: " + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 
 	cVehicle* Vehicle = getVehicleFromID (iID);
 	if (Vehicle && Vehicle->getClientMoveJob())
@@ -1481,18 +1481,6 @@ void cClient::HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& mess
 	vehicle->getClientMoveJob()->endMoveAction = new cEndMoveAction (vehicle, destID, type);
 }
 
-void cClient::HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_SET_GAME_TIME);
-
-	const unsigned int newGameTime = message.popInt32();
-	gameTimer->gameTime = newGameTime;
-
-	//confirm new time to the server
-	auto response = std::make_unique<cNetMessage> (NET_GAME_TIME_CLIENT);
-	response->pushInt32 (gameTimer->gameTime);
-	sendNetMessage (std::move (response));
-}
 
 void cClient::HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message)
 {
@@ -1516,7 +1504,7 @@ void cClient::handleNetMessages()
 		{
 			cTextArchiveIn archive;
 			archive << *message;
-			Log.write(getActivePlayer().getName() + ": <-- Data: " + archive.data() + " @" + iToStr(gameTimer->gameTime), cLog::eLOG_TYPE_NET_DEBUG);
+			Log.write(getActivePlayer().getName() + ": <-- Data: " + archive.data() + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 		}
 
 		switch (message->getType())
@@ -1540,7 +1528,7 @@ void cClient::handleNetMessages()
 		case eNetMessageType::GAMETIME_SYNC_SERVER:
 			{
 				const cNetMessageSyncServer* syncMessage = static_cast<cNetMessageSyncServer*>(message.get());
-				gameTimer->handleSyncMessage(*syncMessage);
+				gameTimer->handleSyncMessage(*syncMessage, model.getGameTime());
 				return; //stop processing messages after receiving a sync message. Gametime needs to be increased before handling the next message.
 			}
 			break;
@@ -1639,7 +1627,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_UNIT_SCORE: HandleNetMessage_GAME_EV_UNIT_SCORE (message); break;
 		case GAME_EV_SELFDESTROY: HandleNetMessage_GAME_EV_SELFDESTROY (message); break;
 		case GAME_EV_END_MOVE_ACTION_SERVER: HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (message); break;
-		case GAME_EV_SET_GAME_TIME: HandleNetMessage_GAME_EV_SET_GAME_TIME (message); break;
 		case GAME_EV_REVEAL_MAP: HandleNetMessage_GAME_EV_REVEAL_MAP (message); break;
 
 		default:
@@ -1749,7 +1736,7 @@ void cClient::handleMoveJobs()
 		if (MoveJob->iNextDir != Vehicle->dir && Vehicle->data.getSpeed())
 		{
 			// rotate vehicle
-			if (gameTimer->timer100ms)
+			//if (gameTimer->timer100ms)
 			{
 				Vehicle->rotateTo (MoveJob->iNextDir);
 			}
@@ -1860,7 +1847,7 @@ void cClient::doGameActions()
 	handleMoveJobs();
 
 	// run surveyor ai
-	if (gameTimer->timer50ms)
+	//if (gameTimer->timer50ms)
 	{
 		handleAutoMoveJobs();
 	}
@@ -1974,4 +1961,9 @@ void cClient::loadModel(int saveGameNumber)
 {
 	cSavegame savegame;
 	savegame.loadModel(model, saveGameNumber);
+}
+//------------------------------------------------------------------------------
+void cClient::run()
+{
+	gameTimer->run(*this, model);
 }

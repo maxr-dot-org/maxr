@@ -120,7 +120,7 @@ void cStartBuildJob::run (const cGameTimer& gameTimer)
 
 		if (vehicle->getMovementOffset().x() == 32)
 		{
-			if (!gameTimer.timer100ms) return;
+			//if (!gameTimer.timer100ms) return;
 			vehicle->rotateTo (0);
 			if (vehicle->dir == 0)
 			{
@@ -142,13 +142,13 @@ void cStartBuildJob::run (const cGameTimer& gameTimer)
 		}
 		else
 		{
-			if (!gameTimer.timer100ms) return;
+			//if (!gameTimer.timer100ms) return;
 			vehicle->rotateTo (dir);
 		}
 	}
 	else
 	{
-		if (!gameTimer.timer100ms) return;
+		//if (!gameTimer.timer100ms) return;
 		vehicle->rotateTo (0);
 		if (vehicle->dir == 0)
 		{

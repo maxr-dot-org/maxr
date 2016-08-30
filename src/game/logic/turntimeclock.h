@@ -26,7 +26,7 @@
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
-class cGameTimer;
+class cModel;
 
 class cTurnTimeDeadline
 {
@@ -49,7 +49,7 @@ class cTurnTimeClock
 public:
 	static const std::chrono::seconds alertRemainingTime;
 
-	explicit cTurnTimeClock (std::shared_ptr<cGameTimer> gameTimer);
+	explicit cTurnTimeClock (const cModel& model);
 
 	void restartFromNow();
 	void restartFrom (unsigned int gameTime);
@@ -82,7 +82,7 @@ public:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	std::shared_ptr<cGameTimer> gameTimer;
+	const cModel& model;
 	std::vector<std::shared_ptr<cTurnTimeDeadline>> deadlines;
 
 	unsigned int startTurnGameTime;

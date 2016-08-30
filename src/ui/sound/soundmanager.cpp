@@ -24,7 +24,7 @@
 #include "output/sound/soundchannel.h"
 
 #include "settings.h"
-#include "game/logic/gametimer.h"
+#include "game/data/model.h"
 
 //--------------------------------------------------------------------------
 cSoundManager::sStoredSound::sStoredSound (std::shared_ptr<cSoundEffect> sound_, unsigned int startGameTime_, bool active_) :
@@ -77,9 +77,9 @@ cSoundManager::~cSoundManager()
 }
 
 //--------------------------------------------------------------------------
-void cSoundManager::setGameTimer (std::shared_ptr<const cGameTimer> gameTimer_)
+void cSoundManager::setModel (const cModel* model_)
 {
-	gameTimer = gameTimer_;
+	model = model_;
 }
 
 //--------------------------------------------------------------------------
@@ -154,7 +154,7 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 	playingSounds.erase (std::remove_if (playingSounds.begin(), playingSounds.end(),
 	[] (const sStoredSound & storedSound) { return !storedSound.active; }), playingSounds.end());
 
-	const unsigned int currentGameTime = gameTimer ? gameTimer->gameTime : 0;
+	const unsigned int currentGameTime = model ? model->getGameTime() : 0;
 
 	const auto soundConflictHandlingType = sound->getSoundConflictHandlingType();
 

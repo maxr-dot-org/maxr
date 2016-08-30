@@ -72,7 +72,6 @@ public:
 	~cClient();
 
 	const cModel& getModel() const { return model; };
-	void runModel() { model.runJobs(*gameTimer); };
 
 	const cPlayer& getActivePlayer() const { return *activePlayer; }
 	void setActivePlayer(cPlayer* player) { activePlayer = player; }
@@ -209,6 +208,7 @@ public:
 
 	mutable cSignal<void (const std::shared_ptr<cFx>&, bool)> addedEffect;
 
+	void run();
 private:
 
 	/**
@@ -296,7 +296,6 @@ private:
 	void HandleNetMessage_GAME_EV_UNIT_SCORE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SELFDESTROY (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message);
 private:
 	cModel model;
@@ -316,31 +315,31 @@ private:
 	/** the active Player */
 	cPlayer* activePlayer;
 
-	cJobContainer helperJobs;
+	cJobContainer helperJobs; //TODO: move to cModel
 
 	/** list with buildings without owner, e. g. rubble fields */
-	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> neutralBuildings;
+	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> neutralBuildings; //TODO: move to cModel
 	/** true if the player has been defeated */
-	bool bDefeated; //TODO: player
+	bool bDefeated;                                          //TODO: move to cPlayer
 
-	std::shared_ptr<cTurnClock> turnClock;
-	std::shared_ptr<cTurnTimeClock> turnTimeClock;
-	std::shared_ptr<cTurnTimeDeadline> turnLimitDeadline;
-	std::shared_ptr<cTurnTimeDeadline> turnEndDeadline;
+	std::shared_ptr<cTurnClock> turnClock;                   //TODO: move to cModel
+	std::shared_ptr<cTurnTimeClock> turnTimeClock;           //TODO: move to cModel
+	std::shared_ptr<cTurnTimeDeadline> turnLimitDeadline;    //TODO: move to cModel
+	std::shared_ptr<cTurnTimeDeadline> turnEndDeadline;      //TODO: move to cModel
 
-	std::shared_ptr<cCasualtiesTracker> casualtiesTracker;
+	std::shared_ptr<cCasualtiesTracker> casualtiesTracker; //TODO: move to cModel
 
 	sFreezeModes freezeModes;
 
 	/** lists with all FX-Animation */
-	std::unique_ptr<cFxContainer> effectsList;
+	std::unique_ptr<cFxContainer> effectsList; //TODO: move to cModel
 
-	std::list<std::weak_ptr<cAutoMJob>> autoMoveJobs;
+	std::list<std::weak_ptr<cAutoMJob>> autoMoveJobs; //TODO: move to cModel
 public:
 	/** list with the running clientAttackJobs */
-	std::vector<cAttackJob*> attackJobs;
+	std::vector<cAttackJob*> attackJobs; //TODO: move to cModel
 	/** List with all active movejobs */
-	std::vector<cClientMoveJob*> ActiveMJobs;
+	std::vector<cClientMoveJob*> ActiveMJobs; //TODO: move to cModel
 };
 
 #endif // game_logic_clientH

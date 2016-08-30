@@ -280,7 +280,6 @@ void sendResearchLevel (cServer& server, const cResearch& researchLevel, const c
 void sendFinishedResearchAreas (cServer& server, const std::vector<int>& areas, const cPlayer& receiver);
 void sendRefreshResearchCount (cServer& server, const cPlayer& receiver);
 void sendClansToClients (cServer& server, const std::vector<std::unique_ptr<cPlayer>>& playerList);
-void sendGameTime (cServer& server, const cPlayer& receiver, int gameTime);
 void sendSetAutomoving (cServer& server, const cVehicle& vehicle);
 /**
 * sends the result of a infiltrating action to the client

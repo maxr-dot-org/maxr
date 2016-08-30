@@ -243,10 +243,12 @@ void cGameGuiController::setActiveClient (std::shared_ptr<cClient> client_)
 		{
 			gameGui->restoreState (iter->second);
 		}
+		soundManager->setModel(&activeClient->getModel());
 	}
 	else
 	{
 		clientSignalConnectionManager.disconnectAll();
+		soundManager->setModel(nullptr);
 	}
 }
 
@@ -367,8 +369,6 @@ void cGameGuiController::connectGuiStaticCommands()
 void cGameGuiController::connectClient (cClient& client)
 {
 	clientSignalConnectionManager.disconnectAll();
-
-	soundManager->setGameTimer (client.getGameTimer());
 
 	//
 	// GUI to client (action)
