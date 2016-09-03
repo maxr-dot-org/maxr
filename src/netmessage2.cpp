@@ -24,6 +24,8 @@
 #include "main.h"
 #include "netmessage2.h"
 #include "utility/string/toString.h"
+#include "game/data/model.h"
+#include "utility/serialization/serialization.h"
 
 std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(const std::vector<unsigned char>& serialMessage)
 {
@@ -54,7 +56,9 @@ std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(const std::vector<u
 		message = std::make_unique<cNetMessageGUISaveInfo>(archive); break;
 	case eNetMessageType::REQUEST_GUI_SAVE_INFO:
 		message = std::make_unique<cNetMessageRequestGUISaveInfo>(archive); break;
-		
+	case eNetMessageType::RESYNC_MODEL:
+		message = std::make_unique<cNetMessageResyncModel>(archive); break;
+
 	default:
 		//TODO: Do not throw. Or catch errors on handling netmessages.
 		throw std::runtime_error("Unknown net message type " + iToStr(static_cast<int>(type)));
@@ -66,6 +70,7 @@ std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(const std::vector<u
 	return message;
 }
 
+//------------------------------------------------------------------------------
 std::unique_ptr<cNetMessage2> cNetMessage2::clone() const
 {
 	std::vector<unsigned char> serialMessage;
@@ -75,37 +80,37 @@ std::unique_ptr<cNetMessage2> cNetMessage2::clone() const
 	return cNetMessage2::createFromBuffer(serialMessage);
 }
 
+//------------------------------------------------------------------------------
 std::string enumToString(eNetMessageType value)
 {
 	switch (value)
 	{
-	case eNetMessageType::ACTION:
-		return "ACTION";
-		break;
-	case eNetMessageType::GAMETIME_SYNC_SERVER:
-		return "GAMETIME_SYNC_SERVER";
-		break;
-	case eNetMessageType::GAMETIME_SYNC_CLIENT:
-		return "GAMETIME_SYNC_CLIENT";
-		break;
-	case eNetMessageType::RANDOM_SEED:
-		return "RANDOM_SEED";
-		break;
-	case eNetMessageType::PLAYERSTATE:
-		return "PLAYERSTATE";
-		break;
-	case eNetMessageType::CHAT:
-		return "CHAT";
-		break;
-	case eNetMessageType::GUI_SAVE_INFO:
-		return "GUI_SAVE_INFO";
-		break;
-	case eNetMessageType::REQUEST_GUI_SAVE_INFO:
-		return "REQUEST_GUI_SAVE_INFO";
-		break;
+	case eNetMessageType::ACTION: return "ACTION";
+	case eNetMessageType::GAMETIME_SYNC_SERVER: return "GAMETIME_SYNC_SERVER";
+	case eNetMessageType::GAMETIME_SYNC_CLIENT: return "GAMETIME_SYNC_CLIENT";
+	case eNetMessageType::RANDOM_SEED: return "RANDOM_SEED";
+	case eNetMessageType::PLAYERSTATE: return "PLAYERSTATE";
+	case eNetMessageType::CHAT: return "CHAT";
+	case eNetMessageType::GUI_SAVE_INFO: return "GUI_SAVE_INFO";
+	case eNetMessageType::REQUEST_GUI_SAVE_INFO: return "REQUEST_GUI_SAVE_INFO";
+	case eNetMessageType::RESYNC_MODEL: return "RESYNC_MODEL";
 	default:
 		assert(false);
 		return toString(static_cast<int>(value));
-		break;
 	}
+}
+
+//------------------------------------------------------------------------------
+cNetMessageResyncModel::cNetMessageResyncModel(const cModel& model) :
+	cNetMessage2(eNetMessageType::RESYNC_MODEL)
+{
+	cBinaryArchiveIn archive(data);
+	archive << model;
+}
+
+void cNetMessageResyncModel::apply(cModel& model) const
+{
+	serialization::cPointerLoader p(model);
+	cBinaryArchiveOut archive(data, &p);
+	archive >> model;
 }

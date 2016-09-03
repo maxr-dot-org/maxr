@@ -32,6 +32,7 @@
 
 class cSavedReport;
 
+// When changing this enum, also update function enumToString(eNetMessageType value)!
 enum class eNetMessageType {
 	ACTION, /** the set of actions a client (AI or player) can trigger to influence the game */
 	GAMETIME_SYNC_SERVER, /** sync message from server to clients */
@@ -40,10 +41,12 @@ enum class eNetMessageType {
 	PLAYERSTATE,
 	CHAT,
 	GUI_SAVE_INFO,
-	REQUEST_GUI_SAVE_INFO
+	REQUEST_GUI_SAVE_INFO,
+	RESYNC_MODEL
 };
 std::string enumToString(eNetMessageType value);
 
+//------------------------------------------------------------------------------
 class cNetMessage2
 {
 public:
@@ -76,6 +79,7 @@ private:
 	eNetMessageType type;
 };
 
+//------------------------------------------------------------------------------
 class cNetMessageChat : public cNetMessage2 
 {
 public:
@@ -101,6 +105,7 @@ private:
 	}
 };
 
+//------------------------------------------------------------------------------
 class cNetMessageSyncServer : public cNetMessage2
 {
 public:
@@ -128,6 +133,7 @@ private:
 	}
 };
 
+//------------------------------------------------------------------------------
 class cNetMessageSyncClient : public cNetMessage2
 {
 public:
@@ -163,6 +169,7 @@ private:
 	}
 };
 
+//------------------------------------------------------------------------------
 class cNetMessageRandomSeed : public cNetMessage2
 {
 public:
@@ -188,6 +195,7 @@ private:
 	}
 };
 
+//------------------------------------------------------------------------------
 class cNetMessageGUISaveInfo : public cNetMessage2
 {
 public:
@@ -207,7 +215,6 @@ public:
 
 	std::shared_ptr<std::vector<std::unique_ptr<cSavedReport>>> reports;
 	cGameGuiState guiState;
-	int saveSlot;
 	int savingID;
 private:
 	template<typename T>
@@ -219,7 +226,6 @@ private:
 		int size;
 		archive >> size;
 		reports->resize(size);
-		//for (int i = 0; i < size; i++)
 		for (auto& report : *reports)
 		{
 			report = cSavedReport::createFrom(archive);
@@ -243,6 +249,7 @@ private:
 	}
 };
 
+//------------------------------------------------------------------------------
 class cNetMessageRequestGUISaveInfo : public cNetMessage2
 {
 public:
@@ -266,5 +273,29 @@ private:
 	{
 		archive & savingID;
 	}
+};
+
+//------------------------------------------------------------------------------
+class cNetMessageResyncModel : public cNetMessage2
+{
+public:
+	cNetMessageResyncModel(const cModel& model);
+	cNetMessageResyncModel(cBinaryArchiveOut& archive) :
+		cNetMessage2(eNetMessageType::RESYNC_MODEL)
+	{
+		serializeThis(archive);
+	};
+	virtual void serialize(cBinaryArchiveIn& archive) { cNetMessage2::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive)   { cNetMessage2::serialize(archive); serializeThis(archive); }
+
+	void apply(cModel& model) const;
+private:
+	template<typename T>
+	void serializeThis(T& archive)
+	{
+		archive & data;
+	}
+
+	std::vector<uint8_t> data;
 };
 #endif //netmessage2H

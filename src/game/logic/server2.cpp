@@ -108,6 +108,7 @@ void cServer2::saveGameState(int saveGameNumber, const std::string& saveName) co
 //------------------------------------------------------------------------------
 void cServer2::loadGameState(int saveGameNumber)
 {
+	Log.write(" Server: loading game state from save file " + iToStr(saveGameNumber), cLog::eLOG_TYPE_NET_DEBUG);
 	savegame.loadModel(model, saveGameNumber);
 	gameTimer.setNumberOfPlayers(model.getPlayerList().size());
 }
@@ -117,6 +118,29 @@ void cServer2::sendGuiInfoToClients(int saveGameNumber)
 	//TODO: do this in loadGameState()?
 	savegame.loadGuiInfo(this, saveGameNumber);
 }
+
+//------------------------------------------------------------------------------
+void cServer2::resyncClientModel(int playerNr /*= -1*/) const
+{
+	if (SDL_ThreadID() != SDL_GetThreadID(serverThread))
+	{
+		//allow resync from main thread
+		bExit = true;
+		SDL_WaitThread(serverThread, nullptr);
+		serverThread = nullptr;
+	}
+
+	Log.write(" Server: Resyncronize client model " + iToStr(playerNr), cLog::eLOG_TYPE_NET_DEBUG);
+	cNetMessageResyncModel msg(model);
+	sendMessageToClients(msg, playerNr);
+
+	if (!serverThread)
+	{
+		bExit = false;
+		serverThread = SDL_CreateThread(serverThreadCallback, "server", const_cast<cServer2*>(this));
+	}
+}
+
 //------------------------------------------------------------------------------
 void cServer2::pushMessage(std::unique_ptr<cNetMessage2> message)
 {
@@ -128,11 +152,11 @@ void cServer2::pushMessage(std::unique_ptr<cNetMessage2> message)
 //TODO: send to specific player
 void cServer2::sendMessageToClients(const cNetMessage2& message, int playerNr) const
 {
-	if (message.getType() != eNetMessageType::GAMETIME_SYNC_SERVER)
+	if (message.getType() != eNetMessageType::GAMETIME_SYNC_SERVER && message.getType() != eNetMessageType::RESYNC_MODEL)
 	{
 		cTextArchiveIn archive;
 		archive << message;
-		Log.write("Server: --> Data: " + archive.data() + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write("Server: --> " + archive.data() + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 
 	}
 
@@ -181,7 +205,7 @@ void cServer2::run()
 			{
 				cTextArchiveIn archive;
 				archive << *message;
-				Log.write("Server: <-- Data: " + archive.data() + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+				Log.write("Server: <-- " + archive.data() + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 			}
 
 			if (model.getPlayer(message->playerNr) == nullptr) continue;

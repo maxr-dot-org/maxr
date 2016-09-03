@@ -25,6 +25,7 @@
 class cAction : public cNetMessage2
 {
 public:
+	// When changing this enum, also update function enumToString(eActiontype value)!
 	enum class eActiontype {
 		ACTION_INIT_NEW_GAME
 	};

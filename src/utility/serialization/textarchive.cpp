@@ -63,21 +63,21 @@ void cTextArchiveIn::pushValue(bool value)
 void cTextArchiveIn::pushValue(char value)
 {
 	addComma();
-	buffer << value;
+	buffer << static_cast<int>(value);
 	nextCommaNeeded = true;
 }
 //------------------------------------------------------------------------------
 void cTextArchiveIn::pushValue(signed char value)
 {
 	addComma();
-	buffer << value;
+	buffer << static_cast<int>(value);
 	nextCommaNeeded = true;
 }
 //------------------------------------------------------------------------------
 void cTextArchiveIn::pushValue(unsigned char value)
 {
 	addComma();
-	buffer << value;
+	buffer << static_cast<int>(value);
 	nextCommaNeeded = true;
 }
 //------------------------------------------------------------------------------

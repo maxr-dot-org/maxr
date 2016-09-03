@@ -31,6 +31,7 @@
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 #include "game/data/gamesettings.h"
+#include "utility/log.h"
 
 class cUnit;
 class cVehicle;
@@ -197,10 +198,17 @@ public:
 	{
 		std::string fileToLoad;
 		archive >> serialization::makeNvp("filename", fileToLoad);
-		if (!loadMap(fileToLoad))
-			throw std::runtime_error("Loading map failed.");
 		int crcFromSave;
 		archive >> serialization::makeNvp("crc", crcFromSave);
+
+		if (filename == fileToLoad && crc == crcFromSave)
+		{
+			Log.write("Static map already loaded. Skipped...", cLog::eLOG_TYPE_NET_DEBUG);
+			return;
+		}
+		if (!loadMap(fileToLoad))
+			throw std::runtime_error("Loading map failed.");
+		
 		if (crc != crcFromSave && crcFromSave != 0)
 			throw std::runtime_error("CRC error while loading map. The loaded map file is not equal to the one the game was started with.");
 	}

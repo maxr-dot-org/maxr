@@ -194,7 +194,7 @@ void cClient::sendNetMessage(cNetMessage2& message) const
 	{
 		cTextArchiveIn archive;
 		archive << message;
-		Log.write(getActivePlayer().getName() + ": --> Data: " + archive.data() + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write(getActivePlayer().getName() + ": --> " + archive.data() + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
 	if (server2)
@@ -1500,11 +1500,11 @@ void cClient::handleNetMessages()
 	while (eventQueue2.try_pop(message))
 	{
 
-		if (message->getType() != eNetMessageType::GAMETIME_SYNC_SERVER)
+		if (message->getType() != eNetMessageType::GAMETIME_SYNC_SERVER && message->getType() != eNetMessageType::RESYNC_MODEL)
 		{
 			cTextArchiveIn archive;
 			archive << *message;
-			Log.write(getActivePlayer().getName() + ": <-- Data: " + archive.data() + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+			Log.write(getActivePlayer().getName() + ": <-- " + archive.data() + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 		}
 
 		switch (message->getType())
@@ -1549,6 +1549,13 @@ void cClient::handleNetMessages()
 				const cNetMessageGUISaveInfo* msg = static_cast<cNetMessageGUISaveInfo*>(message.get());
 				if (msg->playerNr != activePlayer->getId()) continue;
 				guiSaveInfoReceived(*msg);
+			}
+			break;
+		case eNetMessageType::RESYNC_MODEL:
+			{
+				Log.write(" Client: Received model data for resynchonization", cLog::eLOG_TYPE_NET_DEBUG);
+				const cNetMessageResyncModel* msg = static_cast<cNetMessageResyncModel*>(message.get());
+				msg->apply(model);
 			}
 			break;
 		default:

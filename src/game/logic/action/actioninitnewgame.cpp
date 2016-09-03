@@ -72,7 +72,7 @@ void cActionInitNewGame::makeLanding(const cPosition& landingPosition, cPlayer& 
 		}
 		else
 		{
-			Log.write("couldn't place player start mine: " + player.getName(), cLog::eLOG_TYPE_ERROR);
+			Log.write("couldn't place player start mine: " + player.getName(), cLog::eLOG_TYPE_NET_ERROR);
 		}
 	}
 

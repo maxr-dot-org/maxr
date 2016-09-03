@@ -1435,10 +1435,10 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 			}
 			else if (command.compare (0, 7, "/resync") == 0)
 			{
-				/*
+				
 				if (command.length() > 8)
 				{
-					if (!server)
+				/*	if (!server)
 					{
 						gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
 						return;
@@ -1450,23 +1450,26 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 						return;
 					}
 					sendRequestResync (*activeClient, player->getNr(), false);
+					*/
 				}
 				else
 				{
 					if (server)
 					{
+						server->resyncClientModel();
+						/*
 						const auto& playerList = server->playerList;
 						for (unsigned int i = 0; i < playerList.size(); i++)
 						{
 							sendRequestResync (*activeClient, playerList[i]->getNr(), false);
 						}
+						*/
 					}
 					else
 					{
-						sendRequestResync (*activeClient, activeClient->getActivePlayer().getNr(), false);
+						//sendRequestResync (*activeClient, activeClient->getActivePlayer().getNr(), false);
 					}
 				}
-				*/
 			}
 			else if (command.compare (0, 5, "/mark") == 0)
 			{

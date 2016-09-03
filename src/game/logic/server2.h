@@ -44,6 +44,9 @@ public:
 
 	void pushMessage(std::unique_ptr<cNetMessage2> message);
 
+	/**
+	* Send a serialized copy of the message to the specified player(s).
+	*/
 	void sendMessageToClients(const cNetMessage2& message, int playerNr = -1) const;
 
 	void start();
@@ -58,6 +61,8 @@ public:
 	void saveGameState(int saveGameNumber, const std::string & saveName) const;
 	void loadGameState(int saveGameNumber);
 	void sendGuiInfoToClients(int saveGameNumber);
+
+	void resyncClientModel(int playerNr = -1) const;
 
 private:
 	cModel model;

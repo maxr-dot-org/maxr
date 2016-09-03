@@ -46,9 +46,6 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 
 	server->start();
 
-	// TODO: save/load game time
-	//server->startTurnTimers();
-
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
 	gameGuiController->setSingleClient (client);

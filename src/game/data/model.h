@@ -28,10 +28,10 @@
 #include "utility/crossplattformrandom.h"
 #include "utility/serialization/serialization.h"
 #include "game/data/map/map.h"
+#include "game/data/player/player.h"
 
 class cPlayerBasicData;
 class cGameSettings;
-class cPlayer;
 class cStaticMap;
 class cBuilding;
 class cVehicle;
@@ -113,6 +113,7 @@ public:
 			map = std::make_shared<cMap>(staticMap);
 		}
 		archive & serialization::makeNvp("map", *map);
+		map->reset();
 
 		if (unitsData == nullptr)
 		{
@@ -121,16 +122,17 @@ public:
 		archive & serialization::makeNvp("unitsData", *unitsData);
 		//check UIData available
 
-
-		playerList.clear();
 		int numPlayers;
 		archive & NVP(numPlayers);
-		for (int i = 0; i < numPlayers; i++)
+		playerList.resize(numPlayers);
+		for (auto& player : playerList)
 		{
-			cPlayerBasicData basicPlayerData;
-			auto player = std::make_shared<cPlayer>(basicPlayerData, *unitsData);
+			if (player == nullptr)
+			{
+				cPlayerBasicData basicPlayerData;
+				player = std::make_shared<cPlayer>(basicPlayerData, *unitsData);
+			}
 			player->initMaps(*map);
-			playerList.push_back(player);
 			archive & serialization::makeNvp("player", *player);
 		}
 		refreshMapPointer();

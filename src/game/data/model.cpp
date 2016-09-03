@@ -29,7 +29,8 @@
 cModel::cModel() :
 	nextUnitId(0),
 	gameSettings(std::make_shared<cGameSettings>()),
-	unitsData(std::make_shared<cUnitsData>())
+	unitsData(std::make_shared<cUnitsData>()),
+	gameTime(0)
 {
 	/*signalConnectionManager.connect(model.getGameSettings()->turnEndDeadlineChanged, [this]()
 	{
@@ -72,7 +73,10 @@ cModel::cModel() :
 
 cModel::~cModel()
 {
-	map->reset();
+	if (map != nullptr)
+	{
+		map->reset();
+	}
 }
 
 //------------------------------------------------------------------------------

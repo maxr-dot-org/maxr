@@ -130,6 +130,9 @@ public:
 	*@param message The netMessage to be send.
 	*/
 	void sendNetMessage (std::unique_ptr<cNetMessage> message) const;
+	/**
+	* sends a serialized copy of the netmessage to the server.
+	*/
 	void sendNetMessage(cNetMessage2& message) const;
 
 	/**
