@@ -171,6 +171,12 @@ const std::shared_ptr<cGameSettings>& cLocalHotSeatGameNew::getGameSettings()
 }
 
 //------------------------------------------------------------------------------
+const std::vector<sLandingUnit>& cLocalHotSeatGameNew::getLandingUnits(size_t playerIndex)
+{
+	return playersData[playerIndex].landingUnits;
+}
+
+//------------------------------------------------------------------------------
 size_t cLocalHotSeatGameNew::getPlayerCount() const
 {
 	return playersData.size();

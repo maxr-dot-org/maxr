@@ -23,6 +23,7 @@
 #include "game/data/map/map.h"
 #include "utility/log.h"
 #include "game/data/player/player.h"
+#include "utility/listhelpers.h"
 
 
 //------------------------------------------------------------------------------
@@ -52,19 +53,65 @@ void cActionInitNewGame::execute(cModel& model) const
 	model.getMap()->placeRessources(model);
 }
 
+bool cActionInitNewGame::isValidLandingPosition(cPosition position, std::shared_ptr<cStaticMap> map, bool fixedBridgeHead, const std::vector<sLandingUnit>& units, std::shared_ptr<const cUnitsData> unitsData)
+{
+	std::vector<cPosition> blockedPositions;
+	if (fixedBridgeHead)
+	{
+		bool found = findPositionForStartMine(position, unitsData, map);
+		if (!found)
+			return false;
+
+		//small generator
+		blockedPositions.push_back(position + cPosition(-1, 0));
+		//mine
+		blockedPositions.push_back(position + cPosition(0, -1));
+		blockedPositions.push_back(position + cPosition(1, -1));
+		blockedPositions.push_back(position + cPosition(1,  0));
+		blockedPositions.push_back(position + cPosition(0,  0));
+	}
+
+	for (const auto& unit : units)
+	{
+		const cStaticUnitData& unitData = unitsData->getStaticUnitData(unit.unitID);
+		bool placed = false;
+		int landingRadius = 1;
+
+		while (!placed)
+		{
+			landingRadius += 1;
+
+			//prevent, that units are placed far away from the starting position
+			if (landingRadius > sqrt(units.size()) && landingRadius > 3) return false;
+
+			for (int offY = -landingRadius; (offY < landingRadius) && !placed; ++offY)
+			{
+				for (int offX = -landingRadius; (offX < landingRadius) && !placed; ++offX)
+				{
+					const cPosition place = position + cPosition(offX, offY);
+					if (map->possiblePlace(unitData, place) && !Contains(blockedPositions, place))
+					{
+						blockedPositions.push_back(place);
+						placed = true;
+					}
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
 //------------------------------------------------------------------------------
-void cActionInitNewGame::makeLanding(const cPosition& landingPosition, cPlayer& player, const std::vector<sLandingUnit>& landingUnits, cModel& model) const
+void cActionInitNewGame::makeLanding(const cPosition& position, cPlayer& player, const std::vector<sLandingUnit>& landingUnits, cModel& model) const
 {
 	cMap& map = *model.getMap();
+	cPosition landingPosition = position;
 
 	// Find place for mine if bridgehead is fixed
 	if (model.getGameSettings()->getBridgeheadType() == eGameSettingsBridgeheadType::Definite)
-	{ //
-		if (map.possiblePlaceBuilding(model.getUnitsData()->getSmallGeneratorData(), landingPosition + cPosition(-1, 0)) &&
-			map.possiblePlaceBuilding(model.getUnitsData()->getMineData(), landingPosition + cPosition(0, -1)) &&
-			map.possiblePlaceBuilding(model.getUnitsData()->getMineData(), landingPosition + cPosition(1, -1)) &&
-			map.possiblePlaceBuilding(model.getUnitsData()->getMineData(), landingPosition + cPosition(1, 0)) &&
-			map.possiblePlaceBuilding(model.getUnitsData()->getMineData(), landingPosition + cPosition(0, 0)))
+	{
+		if (findPositionForStartMine(landingPosition, model.getUnitsData(), map.staticMap))
 		{
 			// place buildings:
 			model.addBuilding(landingPosition + cPosition(-1, 0), model.getUnitsData()->specialIDSmallGen, &player, true);
@@ -76,17 +123,16 @@ void cActionInitNewGame::makeLanding(const cPosition& landingPosition, cPlayer& 
 		}
 	}
 
-	int iWidth = 2;
-	int iHeight = 2;
 	for (size_t i = 0; i != landingUnits.size(); ++i)
 	{
 		const sLandingUnit& landing = landingUnits[i];
-		cVehicle* vehicle = landVehicle(landingPosition, iWidth, iHeight, landing.unitID, player, model);
+		cVehicle* vehicle = nullptr;
+		int radius = 1;
+
 		while (!vehicle)
 		{
-			iWidth += 2;
-			iHeight += 2;
-			vehicle = landVehicle(landingPosition, iWidth, iHeight, landing.unitID, player, model);
+			vehicle = landVehicle(landingPosition, radius, landing.unitID, player, model);
+			radius += 1;
 		}
 		if (landing.cargo && vehicle)
 		{
@@ -95,11 +141,11 @@ void cActionInitNewGame::makeLanding(const cPosition& landingPosition, cPlayer& 
 	}
 }
 //------------------------------------------------------------------------------
-cVehicle* cActionInitNewGame::landVehicle(const cPosition& landingPosition, int iWidth, int iHeight, const sID& id, cPlayer& player, cModel& model) const
+cVehicle* cActionInitNewGame::landVehicle(const cPosition& landingPosition, int radius, const sID& id, cPlayer& player, cModel& model) const
 {
-	for (int offY = -iHeight / 2; offY < iHeight / 2; ++offY)
+	for (int offY = -radius; offY < radius; ++offY)
 	{
-		for (int offX = -iWidth / 2; offX < iWidth / 2; ++offX)
+		for (int offX = -radius; offX < radius; ++offX)
 		{
 			if (!model.getMap()->possiblePlaceVehicle(model.getUnitsData()->getStaticUnitData(id), landingPosition + cPosition(offX, offY), &player)) continue;
 
@@ -107,4 +153,32 @@ cVehicle* cActionInitNewGame::landVehicle(const cPosition& landingPosition, int 
 		}
 	}
 	return nullptr;
+}
+
+bool cActionInitNewGame::findPositionForStartMine(cPosition& position, std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cStaticMap> map)
+{
+	int radius = 1;
+	while (true)
+	{
+		for (int offY = -radius; offY < radius; ++offY)
+		{
+			for (int offX = -radius; offX < radius; ++offX)
+			{
+				const cPosition place = position + cPosition(offX, offY);
+				if (map->possiblePlace(unitsData->getSmallGeneratorData(), place + cPosition(-1, 0)) &&
+					map->possiblePlace(unitsData->getMineData(), place + cPosition(0, -1)))
+				{
+					position = place;
+					return true;
+				}
+			}
+		}
+		radius += 1;
+
+		if (radius > 2)
+		{
+			return false;
+		}
+	}
+
 }

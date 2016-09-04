@@ -179,6 +179,9 @@ public:
 	bool isBlocked (const cPosition& position) const;
 	bool isCoast (const cPosition& position) const;
 	bool isWater (const cPosition& position) const;
+	bool isGround (const cPosition& position) const;
+
+	bool possiblePlace(const cStaticUnitData& data, const cPosition& position) const;
 
 	const sTerrain& getTerrain (const cPosition& position) const;
 
@@ -287,10 +290,8 @@ public:
 	/**
 	* checks, whether the given field is an allowed place for the building
 	* if a vehicle is passed, it will be ignored in the check, so a constructing vehicle does not block its own position
-	* Note: that the function can check for map border overflows (with margin).
 	*/
 	bool possiblePlaceBuilding (const cStaticUnitData& buildingData, const cPosition& position, const cVehicle* vehicle = nullptr) const;
-	bool possiblePlaceBuildingWithMargin (const cStaticUnitData& buildingData, const cPosition& position, int margin, const cVehicle* vehicle = nullptr) const;
 
 	/**
 	* removes all units from the map structure

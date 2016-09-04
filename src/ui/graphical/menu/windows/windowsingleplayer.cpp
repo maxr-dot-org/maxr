@@ -177,7 +177,10 @@ void cWindowSinglePlayer::newGameClicked()
 						game->setLandingUnits (windowLandingUnitSelection->getLandingUnits());
 						game->setUnitUpgrades (windowLandingUnitSelection->getUnitUpgrades());
 
-						auto windowLandingPositionSelection = application->show (std::make_shared<cWindowLandingPositionSelection> (staticMap, false));
+						bool fixedBridgeHead = gameSettings->getBridgeheadType() == eGameSettingsBridgeheadType::Definite;
+						auto& landingUnits = windowLandingUnitSelection->getLandingUnits();
+						auto& unitsdata = game->getUnitsData();
+						auto windowLandingPositionSelection = application->show (std::make_shared<cWindowLandingPositionSelection> (staticMap, fixedBridgeHead, landingUnits, unitsdata, false));
 
 						signalConnectionManager.connect (windowLandingPositionSelection->canceled, [windowLandingPositionSelection]() { windowLandingPositionSelection->close(); });
 						windowLandingPositionSelection->selectedPosition.connect ([ = ] (cPosition landingPosition)
@@ -207,7 +210,10 @@ void cWindowSinglePlayer::newGameClicked()
 					game->setLandingUnits (windowLandingUnitSelection->getLandingUnits());
 					game->setUnitUpgrades (windowLandingUnitSelection->getUnitUpgrades());
 
-					auto windowLandingPositionSelection = application->show (std::make_shared<cWindowLandingPositionSelection> (staticMap, false));
+					bool fixedBridgeHead = gameSettings->getBridgeheadType() == eGameSettingsBridgeheadType::Definite;
+					auto& landingUnits = windowLandingUnitSelection->getLandingUnits();
+					auto& unitsdata = game->getUnitsData();
+					auto windowLandingPositionSelection = application->show(std::make_shared<cWindowLandingPositionSelection>(staticMap, fixedBridgeHead, landingUnits, unitsdata, false));
 
 					signalConnectionManager.connect (windowLandingPositionSelection->canceled, [windowLandingPositionSelection]() { windowLandingPositionSelection->close(); });
 					windowLandingPositionSelection->selectedPosition.connect ([ = ] (cPosition landingPosition)

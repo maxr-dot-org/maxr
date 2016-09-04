@@ -27,6 +27,7 @@
 
 class cVehicle;
 class cBuilding;
+class cStaticMap;
 
 class cActionInitNewGame : public cAction
 {
@@ -38,6 +39,7 @@ public:
 	virtual void serialize(cTextArchiveIn& archive)   { cAction::serialize(archive); serializeThis(archive); }
 
 	virtual void execute(cModel& model) const override;
+	static bool isValidLandingPosition(cPosition position, std::shared_ptr<cStaticMap> map, bool fixedBridgeHead, const std::vector<sLandingUnit>& units, std::shared_ptr<const cUnitsData> unitsData);
 
 	std::vector<sLandingUnit> landingUnits;
 	int clan;
@@ -53,7 +55,8 @@ private:
 		archive & landingPosition;
 	}
 	void makeLanding(const cPosition& landingPosition, cPlayer& player, const std::vector<sLandingUnit>& landingUnits, cModel& model) const;
-	cVehicle* landVehicle(const cPosition& landingPosition, int iWidth, int iHeight, const sID& id, cPlayer& player, cModel& model) const;
+	cVehicle* landVehicle(const cPosition& landingPosition, int radius, const sID& id, cPlayer& player, cModel& model) const;
+	static bool findPositionForStartMine(cPosition& position, std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cStaticMap> map);
 };
 
 

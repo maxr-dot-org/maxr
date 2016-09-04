@@ -297,22 +297,6 @@ private:
 
 	void placeInitialResources();
 
-	/**
-	* lands all units at the given position
-	*@author alzi alias DoctorDeath
-	*@param landingPosition The coordinates where to land.
-	*@param Player The Player who wants to land.
-	*@param landingUnits List with all units to land.
-	*@param bFixed true if the bridgehead is fixed.
-	*/
-	//void makeLanding (const cPosition& landingPosition, cPlayer& player, const std::vector<sLandingUnit>& landingUnits, bool isFixed);
-	//void makeLanding (const std::vector<cPosition>& landPos, const std::vector<std::vector<sLandingUnit>*>& landingUnits);
-	//void makeLanding();
-	/**
-	 *
-	 */
-	void correctLandingPos (cPosition& landingPosition);
-
 
 	void defeatLoserPlayers();
 	bool isVictoryConditionMet() const;

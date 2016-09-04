@@ -301,7 +301,11 @@ void cMenuControllerMultiplayerClient::startLandingPositionSelection()
 {
 	if (!newGame || !newGame->getStaticMap() || !network) return;
 
-	windowLandingPositionSelection = std::make_shared<cWindowLandingPositionSelection> (newGame->getStaticMap(), true);
+	auto& map = newGame->getStaticMap();
+	bool fixedBridgeHead = newGame->getGameSettings()->getBridgeheadType() == eGameSettingsBridgeheadType::Definite;
+	auto& landingUnits = newGame->getLandingUnits();
+	auto& unitsData = newGame->getUnitsData();
+	windowLandingPositionSelection = std::make_shared<cWindowLandingPositionSelection> (map, fixedBridgeHead, landingUnits, unitsData, true);
 
 	signalConnectionManager.connect (windowLandingPositionSelection->opened, [this]()
 	{

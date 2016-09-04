@@ -2157,7 +2157,6 @@ void cServer::placeInitialResources()
 	for (auto& p : playerLandingPositions)
 	{
 		auto& landingPosition = p.second;
-		correctLandingPos (landingPosition);
 		landingPositions.push_back (landingPosition);
 	}
 //	Map->placeRessources (landingPositions, *gameSettings);
@@ -2176,36 +2175,6 @@ cVehicle* cServer::landVehicle (const cPosition& landingPosition, int iWidth, in
 		}
 	}
 	return nullptr;
-}
-
-
-//------------------------------------------------------------------------------
-void cServer::correctLandingPos (cPosition& landingPosition)
-{
-	int iWidth = 2;
-	int iHeight = 2;
-	const int margin = 1;
-	while (true)
-	{
-		for (int offY = -iHeight / 2; offY < iHeight / 2; ++offY)
-		{
-			for (int offX = -iWidth / 2; offX < iWidth / 2; ++offX)
-			{
-				if (Map->possiblePlaceBuildingWithMargin (model.getUnitsData()->getSmallGeneratorData(), landingPosition + cPosition (offX, offY + 1), margin) &&
-					Map->possiblePlaceBuildingWithMargin (model.getUnitsData()->getMineData(), landingPosition + cPosition (offX + 1, offY), margin) &&
-					Map->possiblePlaceBuildingWithMargin (model.getUnitsData()->getMineData(), landingPosition + cPosition(offX + 2, offY), margin) &&
-					Map->possiblePlaceBuildingWithMargin (model.getUnitsData()->getMineData(), landingPosition + cPosition(offX + 2, offY + 1), margin) &&
-					Map->possiblePlaceBuildingWithMargin (model.getUnitsData()->getMineData(), landingPosition + cPosition(offX + 1, offY + 1), margin))
-				{
-					landingPosition.x() += offX + 1;
-					landingPosition.y() += offY + 1;
-					return;
-				}
-			}
-		}
-		iWidth += 2;
-		iHeight += 2;
-	}
 }
 
 //------------------------------------------------------------------------------

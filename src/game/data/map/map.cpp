@@ -247,6 +247,82 @@ bool cStaticMap::isWater (const cPosition& position) const
 	return getTerrain (position).water;
 }
 
+bool cStaticMap::isGround(const cPosition& position) const
+{
+	return !getTerrain(position).water && !getTerrain(position).coast;
+}
+
+bool cStaticMap::possiblePlace(const cStaticUnitData& data, const cPosition& position) const
+{
+	if (!isValidPosition(position)) return false;
+	if (data.isBig)
+	{
+		if (!isValidPosition(position + cPosition(0, 1)) || 
+			!isValidPosition(position + cPosition(1, 0)) ||
+			!isValidPosition(position + cPosition(1, 1)) )
+		{
+			return false;
+		}
+	}
+
+	if (data.factorAir > 0) return true;
+
+	if (isBlocked(position)) return false;
+	if (data.isBig)
+	{
+		if (isBlocked(position + cPosition(0, 1)) ||
+			isBlocked(position + cPosition(1, 0)) ||
+			isBlocked(position + cPosition(1, 1)) )
+		{
+			return false;
+		}
+	}
+
+	if (data.factorSea == 0)
+	{
+		if (isWater(position)) return false;
+		if (data.isBig)
+		{
+			if (isWater(position + cPosition(0, 1)) ||
+				isWater(position + cPosition(1, 0)) ||
+				isWater(position + cPosition(1, 1)) )
+			{
+				return false;
+			}
+		}
+	}
+
+	if (data.factorCoast == 0)
+	{
+		if (isCoast(position)) return false;
+		if (data.isBig)
+		{
+			if (isCoast(position + cPosition(0, 1)) ||
+				isCoast(position + cPosition(1, 0)) ||
+				isCoast(position + cPosition(1, 1)) )
+			{
+				return false;
+			}
+		}
+	}
+
+	if (data.factorGround == 0)
+	{
+		if (isGround(position)) return false;
+		if (data.isBig)
+		{
+			if (isGround(position + cPosition(0, 1)) ||
+				isGround(position + cPosition(1, 0)) ||
+				isGround(position + cPosition(1, 1)) )
+			{
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
 bool cStaticMap::isValidPosition (const cPosition& position) const
 {
 	return 0 <= position.x() && position.x() < size && 0 <= position.y() && position.y() < size;
@@ -1055,13 +1131,6 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 		}
 	}
 	return true;
-}
-
-// can't place it too near to the map border
-bool cMap::possiblePlaceBuildingWithMargin (const cStaticUnitData& buildingData, const cPosition& position, int margin, const cVehicle* vehicle) const
-{
-	if (position.x() < margin || position.x() >= getSize().x() - margin || position.y() < margin || position.y() >= getSize().y() - margin) return false;
-	return possiblePlaceBuilding (buildingData, position, vehicle);
 }
 
 bool cMap::possiblePlaceBuilding (const cStaticUnitData& buildingData, const cPosition& position, const cVehicle* vehicle) const

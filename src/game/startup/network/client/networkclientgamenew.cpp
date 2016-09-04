@@ -137,6 +137,11 @@ const std::vector<cPlayerBasicData>& cNetworkClientGameNew::getPlayers()
 	return players;
 }
 
+const std::vector<sLandingUnit>& cNetworkClientGameNew::getLandingUnits()
+{
+	return localPlayerLandingUnits;
+}
+
 //------------------------------------------------------------------------------
 const cPlayerBasicData& cNetworkClientGameNew::getLocalPlayer()
 {

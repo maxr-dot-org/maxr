@@ -168,6 +168,12 @@ const cPlayerBasicData& cNetworkHostGameNew::getLocalPlayer()
 }
 
 //------------------------------------------------------------------------------
+const std::vector<sLandingUnit>& cNetworkHostGameNew::getLandingUnits()
+{
+	return localPlayerLandingUnits;
+}
+
+//------------------------------------------------------------------------------
 int cNetworkHostGameNew::getLocalPlayerClan() const
 {
 	return localPlayerClan;

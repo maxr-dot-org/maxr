@@ -74,9 +74,6 @@ public:
 	void setName(std::string name_){ name = name_; }
 	void setDescription(std::string text) { description = text; }
 
-	//sUnitData(const sUnitData& other);			//TODO: default implementation should be ok
-	//sUnitData& operator= (const sUnitData& other);//TODO: default implementation should be ok
-
 	// Main
 	sID ID;
 	

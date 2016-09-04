@@ -66,6 +66,7 @@ public:
 	const std::shared_ptr<cStaticMap>& getStaticMap();
 	const std::vector<cPlayerBasicData>& getPlayers();
 	const cPlayerBasicData& getLocalPlayer();
+	const std::vector<sLandingUnit>& getLandingUnits();
 
 	int getLocalPlayerClan() const;
 private:
