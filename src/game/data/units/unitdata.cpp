@@ -141,6 +141,12 @@ bool cUnitsData::isValidId(const sID& id) const
 }
 
 //------------------------------------------------------------------------------
+size_t cUnitsData::getNrOfClans() const
+{
+	return clanDynamicUnitData.size();
+}
+
+//------------------------------------------------------------------------------
 const cDynamicUnitData& cUnitsData::getDynamicUnitData(const sID& id, int clan /*= -1*/) const
 {
 	if (clan < 0 || clan >= clanDynamicUnitData.size())

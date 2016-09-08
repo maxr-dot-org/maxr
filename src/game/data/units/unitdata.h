@@ -376,6 +376,7 @@ public:
 	void addData(const cStaticUnitData& data)  { staticUnitData.push_back(data); }
 
 	bool isValidId(const sID& id) const;
+	size_t getNrOfClans() const;
 
 
 	// clan = -1: without clans

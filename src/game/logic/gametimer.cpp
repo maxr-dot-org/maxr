@@ -109,6 +109,12 @@ void cGameTimerServer::setNumberOfPlayers(unsigned int players)
 void cGameTimerServer::handleSyncMessage(const cNetMessageSyncClient& message, unsigned int gameTime)
 {
 	int playerNr = message.playerNr;
+
+	if (message.gameTime > gameTime)
+	{
+		Log.write(" Server: the received game time from client is in the future", cLog::eLOG_TYPE_NET_ERROR);
+		return;
+	}
 	receivedTime[playerNr] = message.gameTime;
 
 	//save debug data from clients

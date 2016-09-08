@@ -42,33 +42,6 @@ class cMapField;
 class cServer;
 
 //--------------------------------------------------------------------------
-/** Struct for one upgrade (one kind of value, e.g. hitpointsMax) */
-//--------------------------------------------------------------------------
-struct sUpgrade
-{
-	bool active; // is this upgrade buyable for the player
-	int NextPrice; // what will the next upgrade cost
-	int Purchased;
-	int* value; // what is the current value
-	int StartValue; // the initial value for this unit type
-	std::string name; // the name of this upgrade type, e.g. Ammo
-};
-
-//--------------------------------------------------------------------------
-/** Struct for one upgrade (one kind of value, e.g. hitpointsMax)
-	When the hangar is made nice code, too, the sUpgradeNew and the sUpgrade have to be united, again. */
-//--------------------------------------------------------------------------
-struct sUpgradeNew
-{
-	bool active; // is this upgrade buyable for the player
-	int nextPrice; // what will the next upgrade cost
-	int purchased; // how many upgrades of this type has the player purchased
-	int curValue; // what is the current value
-	int startValue; // the value that this unit would have without all upgrades
-	std::string name; // the name of this upgrade type, e.g. Ammo
-};
-
-//--------------------------------------------------------------------------
 /** struct for the images and sounds */
 //--------------------------------------------------------------------------
 struct sBuildingUIData

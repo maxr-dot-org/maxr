@@ -116,7 +116,7 @@ public:
 	 * @return the costs for this upgrade or kNoPriceAvailable
 	 *         if such an upgrade is impossible
 	 */
-	int getCostForUpgrade (int orgValue, int curValue, int newValue, int upgradeType, cResearch& researchLevel) const;
+	int getCostForUpgrade (int orgValue, int curValue, int newValue, int upgradeType, const cResearch& researchLevel) const;
 
 	/**
 	 * Calculates the turns needed for one research center
@@ -397,6 +397,7 @@ public:
 	bool hasBeenPurchased() const;
 	int getValueOrDefault (sUnitUpgrade::eUpgradeTypes upgradeType, int defaultValue) const;
 	void updateUnitData (cDynamicUnitData& data) const;
+	int calcTotalCosts(const cDynamicUnitData& originalData, const cDynamicUnitData& currentData, const cResearch& reseachState) const;
 
 	template<typename T>
 	void serialize(T& archive)

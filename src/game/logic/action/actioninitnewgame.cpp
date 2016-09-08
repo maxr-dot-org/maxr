@@ -24,6 +24,10 @@
 #include "utility/log.h"
 #include "game/data/player/player.h"
 #include "utility/listhelpers.h"
+#include "game/data/player/clans.h"
+
+// TODO: remove
+std::vector<std::pair<sID, int>> createInitialLandingUnitsList(int clan, const cGameSettings& gameSettings, const cUnitsData& unitsData); // defined in windowsingleplayer.cpp
 
 
 //------------------------------------------------------------------------------
@@ -42,14 +46,91 @@ cActionInitNewGame::cActionInitNewGame(cBinaryArchiveOut& archive)
 //------------------------------------------------------------------------------
 void cActionInitNewGame::execute(cModel& model) const
 {
-	//TODO: clan
-	//TODO: upgrades
-	//TODO: copy credits
-	//TODO: delete all units
-	//TODO: Fehlerprüfung der empfangenen Nachricht
 	cPlayer& player = *model.getPlayer(playerNr);
+	const cUnitsData& unitsdata = *model.getUnitsData();
+
+	player.removeAllUnits();
+
+	// init clan
+	if (model.getGameSettings()->getClansEnabled())
+	{
+		if (clan < 0 || clan >= unitsdata.getNrOfClans())
+		{
+			Log.write(" Landing failed. Invalid clan number.", cLog::eLOG_TYPE_NET_ERROR);
+			return;
+		}
+		player.setClan(clan, unitsdata);
+	}
+
+	// init landing position
+	if (!model.getMap()->isValidPosition(landingPosition))
+	{
+		Log.write(" Received invalid landing position", cLog::eLOG_TYPE_NET_ERROR);
+		return;
+	}
 	player.setLandingPos(landingPosition);
+
+	
+	// apply upgrades
+	int credits = model.getGameSettings()->getStartCredits();
+	for (const auto& upgrade : unitUpgrades)
+	{
+		const sID& unitId = upgrade.first;
+		const cUnitUpgrade& upgradeValues = upgrade.second;
+
+		if (!unitsdata.isValidId(unitId))
+		{
+			Log.write(" Apply upgrades failed. Unknown sID: " + unitId.getText(), cLog::eLOG_TYPE_NET_ERROR);
+			return;
+		}
+		int costs = upgradeValues.calcTotalCosts(unitsdata.getDynamicUnitData(unitId, clan), *player.getUnitDataCurrentVersion(unitId), player.getResearchState());
+		if (costs <= 0)
+		{
+			Log.write(" Apply upgrades failed. Couldn't calculate costs.", cLog::eLOG_TYPE_NET_ERROR);
+			return;
+		}
+		credits -= costs;
+		if (credits <= 0)
+		{
+			Log.write(" Apply upgrade failed. Used more than the available credits.", cLog::eLOG_TYPE_NET_ERROR);
+			return;
+		}
+		upgradeValues.updateUnitData(*player.getUnitDataCurrentVersion(unitId));
+	}
+
+	// land vehicles
+	auto initialLandingUnits = createInitialLandingUnitsList(clan, *model.getGameSettings(), unitsdata);
+	for (const auto& landing : landingUnits)
+	{
+		if (!unitsdata.isValidId(landing.unitID))
+		{
+			Log.write(" Landing failed. Unknown sID: " + landing.unitID.getText(), cLog::eLOG_TYPE_NET_ERROR);
+			return;
+		}
+
+		auto it = std::find_if(initialLandingUnits.begin(), initialLandingUnits.end(), [landing](std::pair<sID, int> unit){ return unit.first == landing.unitID; });
+		if (it != initialLandingUnits.end())
+		{
+			credits -= (landing.cargo - it->second) / 5;
+			initialLandingUnits.erase(it);
+		}
+		else
+		{
+			credits -= landing.cargo / 5;
+			credits -= unitsdata.getDynamicUnitData(landing.unitID, clan).getBuildCost();
+		}
+	}
+	if (credits < 0)
+	{
+		Log.write(" Landing failed. Used more than the available credits", cLog::eLOG_TYPE_ERROR);
+		return;
+	}
 	makeLanding(landingPosition, player, landingUnits, model);
+
+	//transfer remaining credits to player
+	player.setCredits(credits);
+
+	// place new ressources
 	model.getMap()->placeRessources(model);
 }
 
@@ -81,8 +162,8 @@ bool cActionInitNewGame::isValidLandingPosition(cPosition position, std::shared_
 		{
 			landingRadius += 1;
 
-			//prevent, that units are placed far away from the starting position
-			if (landingRadius > sqrt(units.size()) && landingRadius > 3) return false;
+			// prevent, that units are placed far away from the starting position 
+			if (landingRadius > 1.5 * sqrt(units.size()) && landingRadius > 3) return false;
 
 			for (int offY = -landingRadius; (offY < landingRadius) && !placed; ++offY)
 			{
@@ -129,6 +210,12 @@ void cActionInitNewGame::makeLanding(const cPosition& position, cPlayer& player,
 		cVehicle* vehicle = nullptr;
 		int radius = 1;
 
+		if (!model.getUnitsData()->isValidId(landing.unitID))
+		{
+			Log.write(" Landing of unit failed. Unknown sID: " + landing.unitID.getText(), cLog::eLOG_TYPE_NET_ERROR);
+			continue;
+		}
+
 		while (!vehicle)
 		{
 			vehicle = landVehicle(landingPosition, radius, landing.unitID, player, model);
@@ -136,7 +223,8 @@ void cActionInitNewGame::makeLanding(const cPosition& position, cPlayer& player,
 		}
 		if (landing.cargo && vehicle)
 		{
-			vehicle->setStoredResources(landing.cargo);
+			if (vehicle->getStaticUnitData().storeResType != cStaticUnitData::STORE_RES_GOLD)
+				vehicle->setStoredResources(landing.cargo);
 		}
 	}
 }
