@@ -54,7 +54,7 @@ void cActionInitNewGame::execute(cModel& model) const
 	// init clan
 	if (model.getGameSettings()->getClansEnabled())
 	{
-		if (clan < 0 || clan >= unitsdata.getNrOfClans())
+		if (clan < 0 || static_cast<size_t>(clan) >= unitsdata.getNrOfClans())
 		{
 			Log.write(" Landing failed. Invalid clan number.", cLog::eLOG_TYPE_NET_ERROR);
 			return;

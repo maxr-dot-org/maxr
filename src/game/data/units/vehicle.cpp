@@ -993,7 +993,7 @@ bool cVehicle::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 
 	if (Vehicle->isUnitLoaded()) return false;
 
-	if (storedUnits.size() >= staticData->storageUnitsMax) return false;
+	if (storedUnits.size() >= static_cast<unsigned> (staticData->storageUnitsMax)) return false;
 
 	if (checkPosition && !isNextTo (Vehicle->getPosition())) return false;
 

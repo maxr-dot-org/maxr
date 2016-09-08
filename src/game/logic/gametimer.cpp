@@ -115,6 +115,11 @@ void cGameTimerServer::handleSyncMessage(const cNetMessageSyncClient& message, u
 		Log.write(" Server: the received game time from client is in the future", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
+	if (message.gameTime < receivedTime[playerNr])
+	{
+		Log.write(" Server: the received game time from client is older than the last one", cLog::eLOG_TYPE_NET_ERROR);
+		return;
+	}
 	receivedTime[playerNr] = message.gameTime;
 
 	//save debug data from clients

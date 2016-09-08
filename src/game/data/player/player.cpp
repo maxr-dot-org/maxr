@@ -65,7 +65,9 @@ cPlayer::~cPlayer()
 //------------------------------------------------------------------------------
 void cPlayer::setClan (int newClan, const cUnitsData& unitsData)
 {
-	if (newClan < -1 || newClan >= unitsData.getNrOfClans())
+	if (newClan < -1)
+		return;
+	if (newClan > 0 && static_cast<size_t>(newClan) >= unitsData.getNrOfClans())
 		return;
 
 	clan = newClan;

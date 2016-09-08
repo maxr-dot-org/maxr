@@ -269,7 +269,7 @@ std::string cLanguage::getUnitName(const sID& id) const
 	while (xmlElement != nullptr)
 	{
 		const char* value = xmlElement->Attribute("ID");
-		if (value == nullptr) return "";
+		if (value == nullptr) continue;
 
 		sID elementID;
 		elementID.generate(value);
@@ -287,6 +287,7 @@ std::string cLanguage::getUnitName(const sID& id) const
 		}
 		xmlElement = xmlElement->NextSiblingElement();
 	}
+	return "";
 }
 
 std::string cLanguage::getUnitDescription(const sID& id) const
@@ -298,7 +299,7 @@ std::string cLanguage::getUnitDescription(const sID& id) const
 	while (xmlElement != nullptr)
 	{
 		const char* value = xmlElement->Attribute("ID");
-		if (value == nullptr) return "";
+		if (value == nullptr) continue;
 
 		sID elementID;
 		elementID.generate(value);
@@ -318,6 +319,7 @@ std::string cLanguage::getUnitDescription(const sID& id) const
 		}
 		xmlElement = xmlElement->NextSiblingElement();
 	}
+	return "";
 }
 
 int cLanguage::ReadSingleTranslation(const char* pszCurrent, ...)

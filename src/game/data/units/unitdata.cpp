@@ -155,7 +155,7 @@ const cDynamicUnitData& cUnitsData::getDynamicUnitData(const sID& id, int clan /
 		{
 			if (data.getId() == id) return data;
 		}
-		assert(false);
+		throw std::runtime_error("Unitdata not found" + id.getText());
 	}
 	else
 	{
@@ -163,7 +163,7 @@ const cDynamicUnitData& cUnitsData::getDynamicUnitData(const sID& id, int clan /
 		{
 			if (data.getId() == id) return data;
 		}
-		assert(false);
+		throw std::runtime_error("Unitdata not found" + id.getText());
 	}
 }
 
@@ -174,7 +174,7 @@ const cStaticUnitData& cUnitsData::getStaticUnitData(const sID& id) const
 	{
 		if (data.ID == id) return data;
 	}
-	assert(false);
+	throw std::runtime_error("Unitdata not found" + id.getText());
 }
 
 //------------------------------------------------------------------------------

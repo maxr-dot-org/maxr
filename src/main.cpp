@@ -416,6 +416,7 @@ const sBuildingUIData* cUnitsUiData::getBuildingUI(sID id) const
 		if (buildingUIs[i].id == id)
 			return &buildingUIs[i];
 	}
+	return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -426,6 +427,7 @@ const sVehicleUIData* cUnitsUiData::getVehicleUI(sID id) const
 		if (vehicleUIs[i].id == id)
 			return &vehicleUIs[i];
 	}
+	return nullptr;
 }
 
 //------------------------------------------------------------------------------
