@@ -332,7 +332,7 @@
 			<Finished ENG="is finished" localized="wurde fertig gestellt"/>
 			<Finished2 ENG="are finished" localized="wurden fertig gestellt"/>
 			<Fuel_Insufficient ENG="Cannot start, fuel needed." localized="Nicht genug Treibstoff zum Einschalten vorhanden!"/>
-			<Fuel_Low ENG="Fuel needed, generator turned off." localized="Treibstoff benötigt, Generator wurde abgeschalten!"/>
+			<Fuel_Low ENG="Fuel needed, generator turned off." localized="Treibstoff benötigt, Generator wurde abgeschaltet!"/>
 			<GameEndsAt ENG="Game ends at" localized="Spiel endet bei"/>
 			<Gold_Insufficient ENG="Cannot start, gold needed." localized="Nicht genug Gold zum Einschalten vorhanden!"/>
 			<Gold_Low ENG="More gold needed, refinery turned off." localized="Mehr Gold benötigt, Raffinerie abgeschaltet!"/>
