@@ -464,7 +464,7 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
-	tmpString = "dir: " + iToStr (building.dir) + " on sentry: +" + iToStr (building.isSentryActive()) + " sub_base: " + pToStr (building.SubBase);
+	tmpString = "dir: " + iToStr (building.dir) + " on sentry: +" + iToStr (building.isSentryActive()) + " sub_base: " + pToStr (building.subBase);
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
@@ -472,9 +472,9 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
-	tmpString = " max_metal_p: " + iToStr (building.MaxMetalProd) +
-				" max_oil_p: " + iToStr (building.MaxOilProd) +
-				" max_gold_p: " + iToStr (building.MaxGoldProd);
+	tmpString = " max_metal_p: " + iToStr (building.maxMetalProd) +
+				" max_oil_p: " + iToStr (building.maxOilProd) +
+				" max_gold_p: " + iToStr (building.maxGoldProd);
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 

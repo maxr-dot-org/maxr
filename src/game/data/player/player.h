@@ -184,6 +184,7 @@ public:
 	void stopAResearch (cResearch::ResearchArea researchArea);
 
 	void refreshResearchCentersWorkingOnArea();
+	void refreshBase(const cMap& map);
 
 	mutable cSignal<void ()> nameChanged;
 	mutable cSignal<void ()> colorChanged;
@@ -210,7 +211,6 @@ public:
 			archive & serialization::makeNvp("buildingID", building->getId());
 			archive & serialization::makeNvp("building", *building);
 		}
-		archive & NVP(base);
 		archive & NVP(landingPos);
 		archive & serialization::makeNvp("ResourceMap", resourceMapToString());
 		archive & NVP(pointsHistory);
@@ -256,7 +256,6 @@ public:
 			buildings.insert(std::move(building));
 		}
 
-		archive & NVP(base);
 		archive & NVP(landingPos);
 
 		std::string ResourceMap;
@@ -337,7 +336,7 @@ private:
 
 	int credits;
 
-	std::vector<sTurnstartReport> currentTurnUnitReports;
+	std::vector<sTurnstartReport> currentTurnUnitReports; //TODO: remove. Shouldn't be part of the game model
 	std::vector<int> currentTurnResearchAreasFinished;
 
 	bool hasFinishedTurn;

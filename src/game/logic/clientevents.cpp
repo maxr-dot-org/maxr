@@ -250,20 +250,6 @@ void sendWantToEndTurn (const cClient& client)
 	client.sendNetMessage (std::move (message));
 }
 
-void sendWantStartWork (const cClient& client, const cUnit& building)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_START_WORK);
-	message->pushInt32 (building.iID);
-	client.sendNetMessage (std::move (message));
-}
-
-void sendWantStopWork (const cClient& client, const cUnit& building)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_STOP_WORK);
-	message->pushInt32 (building.iID);
-	client.sendNetMessage (std::move (message));
-}
-
 void sendMoveJob (const cClient& client, sWaypoint* path, int vehicleID)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_MOVE_JOB_CLIENT);

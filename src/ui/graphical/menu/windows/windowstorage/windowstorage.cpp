@@ -97,11 +97,11 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 	{
 		const auto& building = static_cast<const cBuilding&> (unit);
 
-		metalValue = building.SubBase->getMetal();
+		metalValue = building.subBase->getMetalStored();
 
-		signalConnectionManager.connect (building.SubBase->metalChanged, [&]()
+		signalConnectionManager.connect (building.subBase->metalChanged, [&]()
 		{
-			metalBar->setValue (building.SubBase->getMetal());
+			metalBar->setValue (building.subBase->getMetalStored());
 		});
 	}
 

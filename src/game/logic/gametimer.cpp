@@ -108,7 +108,10 @@ void cGameTimerServer::setNumberOfPlayers(unsigned int players)
 
 void cGameTimerServer::handleSyncMessage(const cNetMessageSyncClient& message, unsigned int gameTime)
 {
+	//Note: this funktion handels incoming data from network. Make every possible sanity check!
+
 	int playerNr = message.playerNr;
+	if (playerNr >= receivedTime.size()) return;
 
 	if (message.gameTime > gameTime)
 	{

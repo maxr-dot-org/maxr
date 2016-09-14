@@ -40,6 +40,7 @@ class cVehicle;
 class cMap;
 class cMapField;
 class cServer;
+class cSubBase;
 
 //--------------------------------------------------------------------------
 /** struct for the images and sounds */
@@ -140,6 +141,8 @@ enum ResourceKind
 class cBuilding : public cUnit
 {
 public:
+	friend class cDebugOutputWidget;
+
 	cBuilding(const cStaticUnitData* staticData, const cDynamicUnitData* data, cPlayer* Owner, unsigned int ID);
 	virtual ~cBuilding();
 
@@ -153,8 +156,9 @@ public:
 	int RubbleValue;   // Wert des Drecks
 	bool BaseN, BaseE, BaseS, BaseW; // is the building connected in this direction?
 	bool BaseBN, BaseBE, BaseBS, BaseBW; // is the building connected in this direction (only for big buildings)
-	struct sSubBase* SubBase;     // the subbase to which this building belongs
-	int MaxMetalProd, MaxOilProd, MaxGoldProd; // the maximum possible production of the building
+	cSubBase* subBase;     // the subbase to which this building belongs
+	int metalProd, oilProd, goldProd;          // production settings (from mine allocation menu)
+
 	int DamageFXPointX, DamageFXPointY, DamageFXPointX2, DamageFXPointY2; // the points, where smoke will be generated when the building is damaged
 	/** true if the building was has been working before it was disabled */
 	bool wasWorking;
@@ -174,13 +178,13 @@ public:
 	void DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int value, int orgvalue, SDL_Surface* sf);
 	void updateNeighbours (const cMap& map);
 	void CheckNeighbours (const cMap& Map);
-	void ServerStartWork (cServer& server);
-	void clientStartWork();
-	void ServerStopWork (cServer& server, bool override);
-	void clientStopWork();
+
+	void startWork ();
+	void stopWork (bool forced = false);
+
 	/** check whether a transfer to a unit on the field is possible */
 	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const MAXR_OVERRIDE_FUNCTION;
-	void checkRessourceProd (const cMap& map);
+	void initMineRessourceProd (const cMap& map);
 	void calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array<int, 3>& turboBuildCosts, int vehicleCosts, int remainingMetal = -1) const;
 	virtual bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
 	bool canLoad (const cPosition& position, const cMap& map, bool checkPosition = true) const;
@@ -243,6 +247,8 @@ public:
 	void setMetalPerRound(int value);
 	void setRepeatBuild(bool value);
 
+	int getMaxProd(int type) const;
+
 	void setResearchArea (cResearch::ResearchArea area);
 	cResearch::ResearchArea getResearchArea() const;
 
@@ -269,9 +275,12 @@ public:
 		archive & NVP(BaseBE);
 		archive & NVP(BaseBS);
 		archive & NVP(BaseBW);
-		archive & NVP(MaxMetalProd);
-		archive & NVP(MaxOilProd);
-		archive & NVP(MaxGoldProd);
+		archive & NVP(maxMetalProd);
+		archive & NVP(maxOilProd);
+		archive & NVP(maxGoldProd);
+		archive & NVP(metalProd);
+		archive & NVP(oilProd);
+		archive & NVP(goldProd);
 		archive & NVP(buildSpeed);
 		archive & NVP(metalPerRound);
 		archive & NVP(repeatBuild);
@@ -308,6 +317,8 @@ private:
 	int buildSpeed;
 	int metalPerRound;
 	bool repeatBuild;
+
+	int maxMetalProd, maxOilProd, maxGoldProd; // the maximum possible production of the building (ressources under the building)
 
 	cResearch::ResearchArea researchArea; ///< if the building can research, this is the area the building last researched or is researching
 

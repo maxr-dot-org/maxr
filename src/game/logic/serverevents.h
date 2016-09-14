@@ -35,15 +35,13 @@ class cResearch;
 class cUnit;
 class cSavedReport;
 class cGameGuiState;
-struct sSubBase;
+class cSubBase;
 
 enum SERVER_EVENT_TYPES
 {
 	// Types between FIRST_SERVER_MESSAGE and FIRST_CLIENT_MESSAGE are for the server
 	GAME_EV_CHAT_CLIENT = FIRST_SERVER_MESSAGE,		// a chat message from client to server
 	GAME_EV_WANT_TO_END_TURN,		// a client wants to end the turn
-	GAME_EV_WANT_START_WORK,		// a client wants to start a building
-	GAME_EV_WANT_STOP_WORK,			// a client wants to stop a building
 	GAME_EV_MOVE_JOB_CLIENT,		// a message with all waypoints
 	GAME_EV_WANT_STOP_MOVE,			// a client wants to stop a moving vehicle
 	GAME_EV_MOVEJOB_RESUME,			// a client wants a paused movejob to be resumed
@@ -141,18 +139,6 @@ void sendTurnEndDeadlineStartTime (cServer& server, unsigned int gameTime);
 void sendSpecificUnitData (cServer& server, const cVehicle& Vehicle);
 
 /**
-* sends all necessary information to all clients to start the building
-*@ author Eiko
-*/
-void sendDoStartWork (cServer& server, const cBuilding& building);
-
-/**
-* sends all necessary information to all clients to stop the building
-*@ author Eiko
-*/
-void sendDoStopWork (cServer& server, const cBuilding& building);
-
-/**
 * sends information about the move to the next field of a client
 *@author alzi alias DoctorDeath
 */
@@ -181,24 +167,14 @@ void sendBuildAnswer (cServer& server, bool bOK, const cVehicle& vehicle);
 *@author alzi alias DoctorDeath
 */
 void sendStopBuild (cServer& server, int iVehicleID, const cPosition& newPosition, const cPlayer& receiver);
-/**
-* send the values if a subbase.
-*@author alzi alias DoctorDeath
-*@param subbase the subbase which values should be send
-*/
-void sendSubbaseValues (cServer& server, const sSubBase& subbase, const cPlayer& receiver);
+
 /**
 * sends a list with all units which are wanted to be produced by the building
 *@author alzi alias DoctorDeath
 *@param building the building which buildlist should be send
 */
 void sendBuildList (cServer& server, const cBuilding& building);
-/**
-* send the new values of resource production of a building
-*@author alzi alias DoctorDeath
-*@param building the building which producevalues should be send
-*/
-void sendProduceValues (cServer& server, const cBuilding& building);
+
 /**
 * sends that a unit has to be rearmed or repaired
 *@author alzi alias DoctorDeath

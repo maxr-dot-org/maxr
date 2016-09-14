@@ -310,8 +310,6 @@ private:
 	void handleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage& message);
 	void handleNetMessage_GAME_EV_CHAT_CLIENT (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_TO_END_TURN (cNetMessage& message);
-	void handleNetMessage_GAME_EV_WANT_START_WORK (cNetMessage& message);
-	void handleNetMessage_GAME_EV_WANT_STOP_WORK (cNetMessage& message);
 	void handleNetMessage_GAME_EV_MOVE_JOB_CLIENT (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_STOP_MOVE (cNetMessage& message);
 	void handleNetMessage_GAME_EV_MOVEJOB_RESUME (cNetMessage& message);

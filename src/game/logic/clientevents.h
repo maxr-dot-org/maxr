@@ -52,8 +52,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_UNIT_DATA,				// set new data values for a vehicle
 	GAME_EV_SPECIFIC_UNIT_DATA,		// more specific unit values which are only for the owner
 	GAME_EV_UNIT_UPGRADE_VALUES,	// message contains upgraded values for a unit
-	GAME_EV_DO_START_WORK,			// starts a building
-	GAME_EV_DO_STOP_WORK,			// stops a building
 	GAME_EV_NEXT_MOVE,				// infos about the next move
 	GAME_EV_MOVE_JOB_SERVER,		// a message with all waypoints
 	GAME_EV_ATTACKJOB,				// sends an cAttackJob object to a client
@@ -128,18 +126,6 @@ void sendChatMessageToServer (const cClient& client, const std::string& message)
 *@author alzi alias DoctorDeath
 */
 void sendWantToEndTurn (const cClient& client);
-
-/**
-* sends a request to start a building to the Server
-*@author Eiko
-*/
-void sendWantStartWork (const cClient& client, const cUnit& building);
-
-/**
-* sends a request to stop a building to the Server
-*@author Eiko
-*/
-void sendWantStopWork (const cClient& client, const cUnit& building);
 
 /**
 * sends all waypoints of a movejob to the server.

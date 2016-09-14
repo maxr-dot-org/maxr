@@ -209,14 +209,14 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 	cBuilding& addedBuilding = player->addNewBuilding(position, unitsData->getStaticUnitData(id), nextUnitId);
 	nextUnitId++;
 
-	if (addedBuilding.getStaticUnitData().canMineMaxRes > 0) addedBuilding.checkRessourceProd(*map);
+	addedBuilding.initMineRessourceProd(*map);
 	
 	cBuilding* buildingToBeDeleted = map->getField(position).getTopBuilding();
 
 	map->addBuilding(addedBuilding, position);
 
 	// integrate the building to the base:
-	player->base.addBuilding(&addedBuilding);
+	player->base.addBuilding(&addedBuilding, *map);
 
 	// if this is a top building, delete connectors, mines and roads
 	if (addedBuilding.getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_GROUND)
@@ -283,7 +283,7 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 
 	if (addedBuilding.getStaticUnitData().canMineMaxRes > 0)
 	{
-		//TODO: start work
+		addedBuilding.startWork();
 	}
 	//TODO: detection
 	return addedBuilding;
@@ -331,13 +331,13 @@ void cModel::deleteUnit(cUnit* unit)
 	}
 
 	// remove from sentry list
-	unit->getOwner()->deleteSentry(*unit);
+	owner->deleteSentry(*unit);
 
 	// lose eco points
 	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->points != 0)
 	{
 		//unit->getOwner()->setScore(unit->getOwner()->getScore(turnClock->getTurn()) - static_cast<cBuilding*> (unit)->points, turnClock->getTurn());
-		unit->getOwner()->countEcoSpheres();
+		owner->countEcoSpheres();
 	}
 
 	if (unit->isABuilding())
@@ -345,8 +345,8 @@ void cModel::deleteUnit(cUnit* unit)
 	else
 		map->deleteVehicle(*static_cast<cVehicle*> (unit));
 
-	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->SubBase != nullptr)
-		unit->getOwner()->base.deleteBuilding(static_cast<cBuilding*> (unit));
+	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->subBase != nullptr)
+		owner->base.deleteBuilding(static_cast<cBuilding*> (unit), *map);
 
 	if (owner != nullptr)
 	{

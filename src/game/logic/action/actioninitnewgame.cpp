@@ -46,6 +46,8 @@ cActionInitNewGame::cActionInitNewGame(cBinaryArchiveOut& archive)
 //------------------------------------------------------------------------------
 void cActionInitNewGame::execute(cModel& model) const
 {
+	//Note: this funktion handels incoming data from network. Make every possible sanity check!
+
 	cPlayer& player = *model.getPlayer(playerNr);
 	const cUnitsData& unitsdata = *model.getUnitsData();
 
@@ -61,6 +63,10 @@ void cActionInitNewGame::execute(cModel& model) const
 		}
 		player.setClan(clan, unitsdata);
 	}
+	else
+	{
+		player.setClan(-1, unitsdata);
+	}
 
 	// init landing position
 	if (!model.getMap()->isValidPosition(landingPosition))
@@ -68,9 +74,21 @@ void cActionInitNewGame::execute(cModel& model) const
 		Log.write(" Received invalid landing position", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
-	player.setLandingPos(landingPosition);
+	cPosition updatedLandingPosition = landingPosition;
+	if (model.getGameSettings()->getBridgeheadType() == eGameSettingsBridgeheadType::Definite)
+	{
+		// Find place for mine if bridgehead is fixed
+		if (!findPositionForStartMine(updatedLandingPosition, model.getUnitsData(), model.getMap()->staticMap))
+		{
+			Log.write("couldn't place player start mine: " + player.getName(), cLog::eLOG_TYPE_NET_ERROR);
+			return;
+		}
+	}
+	player.setLandingPos(updatedLandingPosition);
 
-	
+	// place new ressources
+	model.getMap()->placeRessources(model);
+
 	// apply upgrades
 	int credits = model.getGameSettings()->getStartCredits();
 	for (const auto& upgrade : unitUpgrades)
@@ -83,7 +101,7 @@ void cActionInitNewGame::execute(cModel& model) const
 			Log.write(" Apply upgrades failed. Unknown sID: " + unitId.getText(), cLog::eLOG_TYPE_NET_ERROR);
 			return;
 		}
-		int costs = upgradeValues.calcTotalCosts(unitsdata.getDynamicUnitData(unitId, clan), *player.getUnitDataCurrentVersion(unitId), player.getResearchState());
+		int costs = upgradeValues.calcTotalCosts(unitsdata.getDynamicUnitData(unitId, player.getClan()), *player.getUnitDataCurrentVersion(unitId), player.getResearchState());
 		if (costs <= 0)
 		{
 			Log.write(" Apply upgrades failed. Couldn't calculate costs.", cLog::eLOG_TYPE_NET_ERROR);
@@ -111,6 +129,8 @@ void cActionInitNewGame::execute(cModel& model) const
 		auto it = std::find_if(initialLandingUnits.begin(), initialLandingUnits.end(), [landing](std::pair<sID, int> unit){ return unit.first == landing.unitID; });
 		if (it != initialLandingUnits.end())
 		{
+			// landing unit is one of the initial landing units, that the player gets for free
+			// so don't pay for the unit and the default cargo
 			credits -= (landing.cargo - it->second) / 5;
 			initialLandingUnits.erase(it);
 		}
@@ -125,13 +145,10 @@ void cActionInitNewGame::execute(cModel& model) const
 		Log.write(" Landing failed. Used more than the available credits", cLog::eLOG_TYPE_ERROR);
 		return;
 	}
-	makeLanding(landingPosition, player, landingUnits, model);
+	makeLanding(player, landingUnits, model);
 
 	//transfer remaining credits to player
 	player.setCredits(credits);
-
-	// place new ressources
-	model.getMap()->placeRessources(model);
 }
 
 bool cActionInitNewGame::isValidLandingPosition(cPosition position, std::shared_ptr<cStaticMap> map, bool fixedBridgeHead, const std::vector<sLandingUnit>& units, std::shared_ptr<const cUnitsData> unitsData)
@@ -184,24 +201,16 @@ bool cActionInitNewGame::isValidLandingPosition(cPosition position, std::shared_
 }
 
 //------------------------------------------------------------------------------
-void cActionInitNewGame::makeLanding(const cPosition& position, cPlayer& player, const std::vector<sLandingUnit>& landingUnits, cModel& model) const
+void cActionInitNewGame::makeLanding(cPlayer& player, const std::vector<sLandingUnit>& landingUnits, cModel& model) const
 {
 	cMap& map = *model.getMap();
-	cPosition landingPosition = position;
+	cPosition landingPosition = player.getLandingPos();
 
-	// Find place for mine if bridgehead is fixed
 	if (model.getGameSettings()->getBridgeheadType() == eGameSettingsBridgeheadType::Definite)
 	{
-		if (findPositionForStartMine(landingPosition, model.getUnitsData(), map.staticMap))
-		{
-			// place buildings:
-			model.addBuilding(landingPosition + cPosition(-1, 0), model.getUnitsData()->specialIDSmallGen, &player, true);
-			model.addBuilding(landingPosition + cPosition(0, -1), model.getUnitsData()->specialIDMine, &player, true);
-		}
-		else
-		{
-			Log.write("couldn't place player start mine: " + player.getName(), cLog::eLOG_TYPE_NET_ERROR);
-		}
+		// place buildings:
+		model.addBuilding(landingPosition + cPosition(-1, 0), model.getUnitsData()->specialIDSmallGen, &player, true);
+		model.addBuilding(landingPosition + cPosition(0, -1), model.getUnitsData()->specialIDMine, &player, true);
 	}
 
 	for (size_t i = 0; i != landingUnits.size(); ++i)
@@ -245,12 +254,12 @@ cVehicle* cActionInitNewGame::landVehicle(const cPosition& landingPosition, int 
 
 bool cActionInitNewGame::findPositionForStartMine(cPosition& position, std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cStaticMap> map)
 {
-	int radius = 1;
+	int radius = 0;
 	while (true)
 	{
-		for (int offY = -radius; offY < radius; ++offY)
+		for (int offY = -radius; offY <= radius; ++offY)
 		{
-			for (int offX = -radius; offX < radius; ++offX)
+			for (int offX = -radius; offX <= radius; ++offX)
 			{
 				const cPosition place = position + cPosition(offX, offY);
 				if (map->possiblePlace(unitsData->getSmallGeneratorData(), place + cPosition(-1, 0)) &&

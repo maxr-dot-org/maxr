@@ -57,7 +57,7 @@ class cTurnClock;
 class cTurnTimeClock;
 class cTurnTimeDeadline;
 class cGameGuiState;
-struct sSubBase;
+class cSubBase;
 class cSavegame;
 
 Uint32 TimerCallback (Uint32 interval, void* arg);
@@ -238,7 +238,7 @@ private:
 	*@author alzi alias DoctorDeath
 	*@param iID Id of the subbase
 	*/
-	sSubBase* getSubBaseFromID (int iID);
+	cSubBase* getSubBaseFromID (int iID);
 
 	void runJobs();
 
@@ -257,16 +257,12 @@ private:
 	void HandleNetMessage_GAME_EV_TURN_END_DEADLINE_START_TIME (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_DO_START_WORK (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_DO_STOP_WORK (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_SUBBASE_VALUES (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_BUILDLIST (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_MINE_PRODUCE_VALUES (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_MARK_LOG (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message);

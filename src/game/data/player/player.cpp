@@ -42,7 +42,8 @@ cPlayer::cPlayer (const cPlayerBasicData& splayer_, const cUnitsData& unitsData)
 	numEcos (0),
 	clan (-1),
 	hasFinishedTurn (false),
-	isRemovedFromGame (false)
+	isRemovedFromGame (false),
+	base(*this)
 {
 	// get the default (no clan) unit data
 	dynamicUnitsData = unitsData.getDynamicUnitsData(-1);
@@ -119,7 +120,6 @@ void cPlayer::initMaps (cMap& map)
 	ResourceMap.clear();
 	ResourceMap.resize (size, 0);
 
-	base.map = &map;
 	// Sentry-Map:
 	SentriesMapAir.clear();
 	SentriesMapAir.resize (size, 0);
@@ -845,6 +845,16 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 		}
 	}
 	if (researchCentersWorkingTotal != newResearchCount) researchCentersWorkingTotalChanged();
+}
+
+//------------------------------------------------------------------------------
+void cPlayer::refreshBase(const cMap& map)
+{
+	base.reset();
+	for (auto& building : buildings)
+	{
+		base.addBuilding(building.get(), map);
+	}
 }
 
 //------------------------------------------------------------------------------

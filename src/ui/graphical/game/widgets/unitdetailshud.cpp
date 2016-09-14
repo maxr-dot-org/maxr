@@ -144,13 +144,13 @@ void cUnitDetailsHud::reset()
 				switch (staticData.storeResType)
 				{
 					case cStaticUnitData::STORE_RES_METAL:
-						drawRow (2, symbolType, building.SubBase->getMetal(), building.SubBase->MaxMetal, lngPack.i18n ("Text~Others~Total"));
+						drawRow (2, symbolType, building.subBase->getMetalStored(), building.subBase->getMaxMetalStored(), lngPack.i18n ("Text~Others~Total"));
 						break;
 					case cStaticUnitData::STORE_RES_OIL:
-						drawRow (2, symbolType, building.SubBase->getOil(), building.SubBase->MaxOil, lngPack.i18n ("Text~Others~Total"));
+						drawRow (2, symbolType, building.subBase->getOilStored(), building.subBase->getMaxOilStored(), lngPack.i18n ("Text~Others~Total"));
 						break;
 					case cStaticUnitData::STORE_RES_GOLD:
-						drawRow (2, symbolType, building.SubBase->getGold(), building.SubBase->MaxGold, lngPack.i18n ("Text~Others~Total"));
+						drawRow (2, symbolType, building.subBase->getGoldStored(), building.subBase->getMaxGoldStored(), lngPack.i18n ("Text~Others~Total"));
 						break;
 					case cStaticUnitData::STORE_RES_NONE: break;
 				}
@@ -190,8 +190,8 @@ void cUnitDetailsHud::reset()
 
 		if (unit->getOwner() == player)
 		{
-			drawRow (2, eUnitDataSymbolType::Energy, building.SubBase->EnergyProd, building.SubBase->MaxEnergyProd, lngPack.i18n ("Text~Others~Total"));
-			drawRow (3, eUnitDataSymbolType::Energy, building.SubBase->EnergyNeed, building.SubBase->MaxEnergyNeed, lngPack.i18n ("Text~Others~Usage_7"));
+			drawRow (2, eUnitDataSymbolType::Energy, building.subBase->getEnergyProd(), building.subBase->getMaxEnergyProd(), lngPack.i18n ("Text~Others~Total"));
+			drawRow (3, eUnitDataSymbolType::Energy, building.subBase->getEnergyNeed(), building.subBase->getMaxEnergyNeed(), lngPack.i18n ("Text~Others~Usage_7"));
 		}
 	}
 	else if (staticData.produceHumans && unit->isABuilding())
@@ -201,8 +201,8 @@ void cUnitDetailsHud::reset()
 
 		if (unit->getOwner() == player)
 		{
-			drawRow (2, eUnitDataSymbolType::Human, building.SubBase->HumanProd, building.SubBase->HumanProd, lngPack.i18n ("Text~Others~Total"));
-			drawRow (3, eUnitDataSymbolType::Human, building.SubBase->HumanNeed, building.SubBase->MaxHumanNeed, lngPack.i18n ("Text~Others~Usage_7"));
+			drawRow (2, eUnitDataSymbolType::Human, building.subBase->getHumanProd(), building.subBase->getHumanProd(), lngPack.i18n ("Text~Others~Total"));
+			drawRow (3, eUnitDataSymbolType::Human, building.subBase->getHumanNeed(), building.subBase->getMaxHumanNeed(), lngPack.i18n ("Text~Others~Usage_7"));
 		}
 	}
 	else if (staticData.needsHumans && unit->isABuilding())
@@ -211,7 +211,7 @@ void cUnitDetailsHud::reset()
 		if (building.isUnitWorking()) drawRow (1, eUnitDataSymbolType::Human, staticData.needsHumans, staticData.needsHumans, lngPack.i18n ("Text~Others~Usage_7"));
 		else drawRow (1, eUnitDataSymbolType::Human, 0, staticData.needsHumans, lngPack.i18n ("Text~Others~Usage_7"));
 
-		if (unit->getOwner() == player) drawRow (2, eUnitDataSymbolType::Human, building.SubBase->HumanNeed, building.SubBase->MaxHumanNeed, lngPack.i18n ("Text~Others~Total"));
+		if (unit->getOwner() == player) drawRow (2, eUnitDataSymbolType::Human, building.subBase->getHumanNeed(), building.subBase->getMaxHumanNeed(), lngPack.i18n ("Text~Others~Total"));
 	}
 }
 

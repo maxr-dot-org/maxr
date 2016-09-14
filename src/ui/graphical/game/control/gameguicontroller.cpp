@@ -80,6 +80,8 @@
 #include "game/data/report/special/savedreporthostcommand.h"
 
 #include "debug.h"
+#include "game/logic/action/actionstartwork.h"
+#include "game/data/report/special/savedreportresourcechanged.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -446,7 +448,8 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStartWork, [&] (const cUnit & unit)
 	{
-		sendWantStartWork (client, unit);
+		cActionStartWork msg(unit.getId());
+		client.sendNetMessage(msg);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStopWork, [&] (const cUnit & unit)
 	{
@@ -848,11 +851,67 @@ void cGameGuiController::connectReportSources(cClient& client)
 {
 	//this is the place where all reports about certain events in the model are generated...
 
-	playerReports[client.getActivePlayer().getId()] = std::make_shared<std::vector<std::unique_ptr<cSavedReport>>>();
+	const cPlayer& player = client.getActivePlayer();
+
+	playerReports[player.getId()] = std::make_shared<std::vector<std::unique_ptr<cSavedReport>>>();
 
 	allClientsSignalConnectionManager.connect(client.chatMessageReceived, [&](int fromPlayerNr, const std::string& message, int toPlayerNr)
 	{
 		addSavedReport(std::make_unique<cSavedReportChat>(*client.getModel().getPlayer(fromPlayerNr), message), toPlayerNr);
+	});
+
+	//reports from the players base:
+	allClientsSignalConnectionManager.connect(player.base.forcedRessouceProductionChance, [&](int resourceType, int amount, bool increase)
+	{
+		addSavedReport(std::make_unique<cSavedReportResourceChanged>(resourceType, amount, increase), player.getId());
+	});
+	allClientsSignalConnectionManager.connect(player.base.fuelInsufficient, [&]()
+	{
+		addSavedReport(std::make_unique<cSavedReportSimple>(eSavedReportType::FuelInsufficient), player.getId());
+	});
+	allClientsSignalConnectionManager.connect(player.base.metalLow, [&]()
+	{
+		addSavedReport(std::make_unique<cSavedReportSimple>(eSavedReportType::MetalLow), player.getId());
+	});
+	allClientsSignalConnectionManager.connect(player.base.goldLow, [&]()
+	{
+		addSavedReport(std::make_unique<cSavedReportSimple>(eSavedReportType::GoldLow), player.getId());
+	});
+	allClientsSignalConnectionManager.connect(player.base.teamLow, [&]()
+	{
+		addSavedReport(std::make_unique<cSavedReportSimple>(eSavedReportType::TeamLow), player.getId());
+	});
+	allClientsSignalConnectionManager.connect(player.base.energyLow, [&]()
+	{
+		addSavedReport(std::make_unique<cSavedReportSimple>(eSavedReportType::EnergyLow), player.getId());
+	});
+	allClientsSignalConnectionManager.connect(player.base.fuelLow, [&]()
+	{
+		addSavedReport(std::make_unique<cSavedReportSimple>(eSavedReportType::FuelLow), player.getId());
+	});
+	allClientsSignalConnectionManager.connect(player.base.teamInsufficient, [&]()
+	{
+		addSavedReport(std::make_unique<cSavedReportSimple>(eSavedReportType::TeamInsufficient), player.getId());
+	});
+	allClientsSignalConnectionManager.connect(player.base.goldInsufficient, [&]()
+	{
+		addSavedReport(std::make_unique<cSavedReportSimple>(eSavedReportType::GoldInsufficient), player.getId());
+	});
+	allClientsSignalConnectionManager.connect(player.base.metalInsufficient, [&]()
+	{
+		addSavedReport(std::make_unique<cSavedReportSimple>(eSavedReportType::MetalInsufficient), player.getId());
+	});
+	allClientsSignalConnectionManager.connect(player.base.energyInsufficient, [&]()
+	{
+		addSavedReport(std::make_unique<cSavedReportSimple>(eSavedReportType::EnergyInsufficient), player.getId());
+	});
+	allClientsSignalConnectionManager.connect(player.base.energyToLow, [&]()
+	{
+		addSavedReport(std::make_unique<cSavedReportSimple>(eSavedReportType::EnergyToLow), player.getId());
+	});
+	allClientsSignalConnectionManager.connect(player.base.energyIsNeeded, [&]()
+	{
+		addSavedReport(std::make_unique<cSavedReportSimple>(eSavedReportType::EnergyIsNeeded), player.getId());
 	});
 }
 
@@ -1023,7 +1082,7 @@ void cGameGuiController::showResourceDistributionDialog (const cUnit& unit)
 
 	const auto& building = static_cast<const cBuilding&> (unit);
 
-	auto resourceDistributionWindow = application.show (std::make_shared<cWindowResourceDistribution> (*building.SubBase, getTurnTimeClock()));
+	auto resourceDistributionWindow = application.show (std::make_shared<cWindowResourceDistribution> (*building.subBase, getTurnTimeClock()));
 	resourceDistributionWindow->done.connect ([&, resourceDistributionWindow]()
 	{
 		changeResourceDistributionTriggered (building, resourceDistributionWindow->getMetalProduction(), resourceDistributionWindow->getOilProduction(), resourceDistributionWindow->getGoldProduction());
@@ -1140,7 +1199,7 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 	storageWindow->reloadAll.connect ([&, storageWindow]()
 	{
 		if (!unit.isABuilding()) return;
-		auto remainingResources = static_cast<const cBuilding&> (unit).SubBase->getMetal();
+		auto remainingResources = static_cast<const cBuilding&> (unit).subBase->getMetalStored();
 		for (size_t i = 0; i < unit.storedUnits.size() && remainingResources > 0; ++i)
 		{
 			const auto& storedUnit = *unit.storedUnits[i];
@@ -1155,7 +1214,7 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 	storageWindow->repairAll.connect ([&, storageWindow]()
 	{
 		if (!unit.isABuilding()) return;
-		auto remainingResources = static_cast<const cBuilding&> (unit).SubBase->getMetal();
+		auto remainingResources = static_cast<const cBuilding&> (unit).subBase->getMetalStored();
 		for (size_t i = 0; i < unit.storedUnits.size() && remainingResources > 0; ++i)
 		{
 			const auto& storedUnit = *unit.storedUnits[i];

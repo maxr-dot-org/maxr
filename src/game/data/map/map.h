@@ -201,7 +201,7 @@ public:
 	{
 		std::string fileToLoad;
 		archive >> serialization::makeNvp("filename", fileToLoad);
-		int crcFromSave;
+		uint32_t crcFromSave;
 		archive >> serialization::makeNvp("crc", crcFromSave);
 
 		if (filename == fileToLoad && crc == crcFromSave)

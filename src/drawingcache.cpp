@@ -202,7 +202,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cBuilding& building, double zo
 		// check whether the entry's properties are equal to the building
 		if (entry.id != building.data.getId()) continue;
 		if (entry.owner != building.getOwner()) continue;
-		if (building.SubBase)
+		if (building.subBase)
 		{
 			if (building.BaseN != entry.BaseN ||
 				building.BaseE != entry.BaseE ||

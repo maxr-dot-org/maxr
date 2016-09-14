@@ -641,37 +641,6 @@ void cClient::HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (cNetMessage& message)
 	Vehicle->bandPosition = message.popPosition();
 }
 
-void cClient::HandleNetMessage_GAME_EV_DO_START_WORK (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_DO_START_WORK);
-
-	const int iID = message.popInt32();
-
-	cBuilding* building = getBuildingFromID (iID);
-	if (building == nullptr)
-	{
-		Log.write (" Client: Can't start work of building: Unknown building with id: " + iToStr (iID), cLog::eLOG_TYPE_NET_ERROR);
-		// TODO: Request sync of building
-		return;
-	}
-	building->clientStartWork();
-}
-
-void cClient::HandleNetMessage_GAME_EV_DO_STOP_WORK (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_DO_STOP_WORK);
-
-	const int iID = message.popInt32();
-	cBuilding* building = getBuildingFromID (iID);
-	if (building == nullptr)
-	{
-		Log.write (" Client: Can't stop work of building: Unknown building with id: " + iToStr (iID), cLog::eLOG_TYPE_NET_WARNING);
-		// TODO: Request sync of building
-		return;
-	}
-	building->clientStopWork();
-}
-
 void cClient::HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_MOVE_JOB_SERVER);
@@ -826,28 +795,6 @@ void cClient::HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message)
 	Vehicle->BuildPath = false;
 }
 
-void cClient::HandleNetMessage_GAME_EV_SUBBASE_VALUES (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_SUBBASE_VALUES);
-
-	const int iID = message.popInt16();
-	sSubBase* subBase = getSubBaseFromID (iID);
-	if (subBase == nullptr)
-	{
-		Log.write (" Client: Can't add subbase values: Unknown subbase with ID: " + iToStr (iID), cLog::eLOG_TYPE_NET_WARNING);
-		// TODO: Request sync of subbases
-		return;
-	}
-
-	subBase->popFrom (message);
-
-	// temporary debug check
-	if (subBase->isDitributionMaximized() == false)
-	{
-		Log.write (" Server: Mine distribution values are not a maximum", cLog::eLOG_TYPE_NET_WARNING);
-	}
-}
-
 void cClient::HandleNetMessage_GAME_EV_BUILDLIST (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_BUILDLIST);
@@ -875,24 +822,6 @@ void cClient::HandleNetMessage_GAME_EV_BUILDLIST (cNetMessage& message)
 	Building->setMetalPerRound(message.popInt16());
 	Building->setBuildSpeed(message.popInt16());
 	Building->setRepeatBuild(message.popBool());
-}
-
-void cClient::HandleNetMessage_GAME_EV_MINE_PRODUCE_VALUES (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_MINE_PRODUCE_VALUES);
-
-	const int iID = message.popInt16();
-	cBuilding* Building = getBuildingFromID (iID);
-	if (Building == nullptr)
-	{
-		Log.write (" Client: Can't set produce values of building: Unknown building with ID: " + iToStr (iID), cLog::eLOG_TYPE_NET_WARNING);
-		// TODO: Request sync of building
-		return;
-	}
-
-	Building->MaxMetalProd = message.popInt16();
-	Building->MaxOilProd = message.popInt16();
-	Building->MaxGoldProd = message.popInt16();
 }
 
 void cClient::HandleNetMessage_GAME_EV_MARK_LOG (cNetMessage& message)
@@ -1555,7 +1484,14 @@ void cClient::handleNetMessages()
 			{
 				Log.write(" Client: Received model data for resynchonization", cLog::eLOG_TYPE_NET_DEBUG);
 				const cNetMessageResyncModel* msg = static_cast<cNetMessageResyncModel*>(message.get());
-				msg->apply(model);
+				try
+				{
+					msg->apply(model);
+				}
+				catch (std::runtime_error& e)
+				{
+					Log.write(std::string(" Client: error loading received model data: ") + e.what(), cLog::eLOG_TYPE_NET_ERROR);
+				}
 			}
 			break;
 		default:
@@ -1591,16 +1527,12 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_TURN_END_DEADLINE_START_TIME: HandleNetMessage_GAME_EV_TURN_END_DEADLINE_START_TIME (message); break;
 		case GAME_EV_UNIT_DATA: HandleNetMessage_GAME_EV_UNIT_DATA (message); break;
 		case GAME_EV_SPECIFIC_UNIT_DATA: HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (message); break;
-		case GAME_EV_DO_START_WORK: HandleNetMessage_GAME_EV_DO_START_WORK (message); break;
-		case GAME_EV_DO_STOP_WORK: HandleNetMessage_GAME_EV_DO_STOP_WORK (message); break;
 		case GAME_EV_MOVE_JOB_SERVER: HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (message); break;
 		case GAME_EV_NEXT_MOVE: HandleNetMessage_GAME_EV_NEXT_MOVE (message); break;
 		case GAME_EV_RESOURCES: HandleNetMessage_GAME_EV_RESOURCES (message); break;
 		case GAME_EV_BUILD_ANSWER: HandleNetMessage_GAME_EV_BUILD_ANSWER (message); break;
 		case GAME_EV_STOP_BUILD: HandleNetMessage_GAME_EV_STOP_BUILD (message); break;
-		case GAME_EV_SUBBASE_VALUES: HandleNetMessage_GAME_EV_SUBBASE_VALUES (message); break;
 		case GAME_EV_BUILDLIST: HandleNetMessage_GAME_EV_BUILDLIST (message); break;
-		case GAME_EV_MINE_PRODUCE_VALUES: HandleNetMessage_GAME_EV_MINE_PRODUCE_VALUES (message); break;
 		case GAME_EV_MARK_LOG: HandleNetMessage_GAME_EV_MARK_LOG (message); break;
 		case GAME_EV_SUPPLY: HandleNetMessage_GAME_EV_SUPPLY (message); break;
 		case GAME_EV_ADD_RUBBLE: HandleNetMessage_GAME_EV_ADD_RUBBLE (message); break;
@@ -1862,11 +1794,11 @@ void cClient::doGameActions()
 	runJobs();
 }
 
-sSubBase* cClient::getSubBaseFromID (int iID)
+cSubBase* cClient::getSubBaseFromID (int iID)
 {
 	cBuilding* building = getBuildingFromID (iID);
 	if (building)
-		return building->SubBase;
+		return building->subBase;
 	return nullptr;
 }
 

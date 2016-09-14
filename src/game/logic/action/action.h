@@ -27,7 +27,9 @@ class cAction : public cNetMessage2
 public:
 	// When changing this enum, also update function enumToString(eActiontype value)!
 	enum class eActiontype {
-		ACTION_INIT_NEW_GAME
+		ACTION_INIT_NEW_GAME,
+		ACTION_START_WORK,
+		ACTION_STOP_WORK
 	};
 	static std::unique_ptr<cAction> createFromBuffer(cBinaryArchiveOut& archive);
 
@@ -36,6 +38,7 @@ public:
 	virtual void serialize(cBinaryArchiveIn& archive) { cNetMessage2::serialize(archive); serializeThis(archive); }
 	virtual void serialize(cTextArchiveIn& archive)   { cNetMessage2::serialize(archive); serializeThis(archive); }
 
+	//Note: this funktion handels incoming data from network. Make every possible sanity check!
 	virtual void execute(cModel& model) const = NULL;
 protected:
 	cAction(eActiontype type) : cNetMessage2(eNetMessageType::ACTION), type(type){};

@@ -54,7 +54,7 @@ private:
 		archive & unitUpgrades;
 		archive & landingPosition;
 	}
-	void makeLanding(const cPosition& landingPosition, cPlayer& player, const std::vector<sLandingUnit>& landingUnits, cModel& model) const;
+	void makeLanding(cPlayer& player, const std::vector<sLandingUnit>& landingUnits, cModel& model) const;
 	cVehicle* landVehicle(const cPosition& landingPosition, int radius, const sID& id, cPlayer& player, cModel& model) const;
 	static bool findPositionForStartMine(cPosition& position, std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cStaticMap> map);
 };

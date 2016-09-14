@@ -60,7 +60,6 @@ std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(const std::vector<u
 		message = std::make_unique<cNetMessageResyncModel>(archive); break;
 
 	default:
-		//TODO: Do not throw. Or catch errors on handling netmessages.
 		throw std::runtime_error("Unknown net message type " + iToStr(static_cast<int>(type)));
 		break;
 	}

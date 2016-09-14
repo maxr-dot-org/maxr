@@ -41,6 +41,7 @@
 
 #include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffectvoice.h"
+#include "game/logic/action/actionstopwork.h"
 
 using namespace std;
 
@@ -140,11 +141,14 @@ cBuilding::cBuilding (const cStaticUnitData* staticData, const cDynamicUnitData*
 	BaseBW = false;
 	repeatBuild = false;
 
-	MaxMetalProd = 0;
-	MaxGoldProd = 0;
-	MaxOilProd = 0;
+	maxMetalProd = 0;
+	maxGoldProd = 0;
+	maxOilProd = 0;
+	metalProd = 0;
+	goldProd = 0;
+	oilProd = 0;
 
-	SubBase = nullptr;
+	subBase = nullptr;
 	buildSpeed = 0;
 
 	if (isBig)
@@ -475,7 +479,7 @@ void cBuilding::render (unsigned long long animationTime, SDL_Surface* surface, 
 		render_beton (surface, dest, zoomFactor);
 	}
 	// draw the connector slots:
-	if ((this->SubBase && !alphaEffectValue) || uiData->isConnectorGraphic)
+	if ((this->subBase && !alphaEffectValue) || uiData->isConnectorGraphic)
 	{
 		drawConnectors (surface, dest, zoomFactor, drawShadow);
 		if (uiData->isConnectorGraphic) return;
@@ -502,21 +506,21 @@ void cBuilding::updateNeighbours (const cMap& map)
 {
 	if (!isBig)
 	{
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (0, -1), *this);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (1, 0), *this);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (0, 1), *this);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (-1, 0), *this);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition ( 0, -1), *this, map);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition ( 1,  0), *this, map);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition ( 0,  1), *this, map);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (-1,  0), *this, map);
 	}
 	else
 	{
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (0, -1), *this);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (1, -1), *this);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (2, 0), *this);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (2, 1), *this);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (0, 2), *this);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (1, 2), *this);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (-1, 0), *this);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (-1, 1), *this);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition ( 0, -1), *this, map);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition ( 1, -1), *this, map);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition ( 2,  0), *this, map);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition ( 2,  1), *this, map);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition ( 0,  2), *this, map);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition ( 1,  2), *this, map);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (-1,  0), *this, map);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (-1,  1), *this, map);
 	}
 	CheckNeighbours (map);
 }
@@ -672,156 +676,22 @@ void cBuilding::drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomF
 //--------------------------------------------------------------------------
 /** starts the building for the server thread */
 //--------------------------------------------------------------------------
-void cBuilding::ServerStartWork (cServer& server)
+void cBuilding::startWork ()
 {
 	if (isUnitWorking())
 	{
-		sendDoStartWork (server, *this);
 		return;
 	}
 
-	//-- first check all requirements
-
 	if (isDisabled())
 	{
+		//TODO: is report needed?
 		//sendSavedReport (server, cSavedReportSimple (eSavedReportType::BuildingDisabled), getOwner());
 		return;
 	}
 
-	// needs human workers:
-	if (staticData->needsHumans)
-	{
-		if (SubBase->HumanNeed + staticData->needsHumans > SubBase->HumanProd)
-		{
-			//sendSavedReport (server, cSavedReportSimple (eSavedReportType::TeamInsufficient), getOwner());
-			return;
-		}
-	}
-
-	// needs gold:
-	if (staticData->convertsGold)
-	{
-		if (staticData->convertsGold + SubBase->GoldNeed > SubBase->getGoldProd() + SubBase->getGold())
-		{
-			//sendSavedReport (server, cSavedReportSimple (eSavedReportType::GoldInsufficient), getOwner());
-			return;
-		}
-	}
-
-	// needs raw material:
-	if (staticData->needsMetal)
-	{
-		if (SubBase->MetalNeed + std::min (getMetalPerRound(), buildList[0].getRemainingMetal()) > SubBase->getMetalProd() + SubBase->getMetal())
-		{
-			//sendSavedReport (server, cSavedReportSimple (eSavedReportType::MetalInsufficient), getOwner());
-			return;
-		}
-	}
-
-	// needs oil:
-	if (staticData->needsOil)
-	{
-		// check if there is enough Oil for the generators
-		// (current production + reserves)
-		if (staticData->needsOil + SubBase->OilNeed > SubBase->getOil() + SubBase->getMaxOilProd())
-		{
-			//sendSavedReport (server, cSavedReportSimple (eSavedReportType::FuelInsufficient), getOwner());
-			return;
-		}
-		else if (staticData->needsOil + SubBase->OilNeed > SubBase->getOil() + SubBase->getOilProd())
-		{
-			// increase oil production
-			int missingOil = staticData->needsOil + SubBase->OilNeed - (SubBase->getOil() + SubBase->getOilProd());
-
-			int metal = SubBase->getMetalProd();
-			int gold = SubBase->getGoldProd();
-
-			// temporay decrease metal and gold production
-			SubBase->setMetalProd (0);
-			SubBase->setGoldProd (0);
-
-			SubBase->changeOilProd (missingOil);
-
-			SubBase->setGoldProd (gold);
-			SubBase->setMetalProd (metal);
-
-			//sendSavedReport (server, cSavedReportResourceChanged (RES_OIL, missingOil, true), getOwner());
-			//if (SubBase->getMetalProd() < metal)
-			//	sendSavedReport (server, cSavedReportResourceChanged (RES_METAL, metal - SubBase->getMetalProd(), false), getOwner());
-			//if (SubBase->getGoldProd() < gold)
-			//	sendSavedReport (server, cSavedReportResourceChanged (RES_GOLD, gold - SubBase->getGoldProd(), false), getOwner());
-		}
-	}
-
-	// IsWorking is set to true before checking the energy production.
-	// So if an energy generator has to be started,
-	// it can use the fuel production of this building
-	// (when this building is a mine).
-	setWorking (true);
-
-	// set mine values. This has to be undone, if the energy is insufficient
-	if (staticData->canMineMaxRes > 0)
-	{
-		int mineFree = staticData->canMineMaxRes;
-
-		SubBase->changeMetalProd (MaxMetalProd);
-		mineFree -= MaxMetalProd;
-
-		SubBase->changeGoldProd (min (MaxGoldProd, mineFree));
-		mineFree -= min (MaxGoldProd, mineFree);
-
-		SubBase->changeOilProd (min (MaxOilProd, mineFree));
-	}
-
-	// Energy consumers:
-	if (staticData->needsEnergy)
-	{
-		if (staticData->needsEnergy + SubBase->EnergyNeed > SubBase->EnergyProd)
-		{
-			// try to increase energy production
-			if (!SubBase->increaseEnergyProd(server, staticData->needsEnergy + SubBase->EnergyNeed - SubBase->EnergyProd))
-			{
-				setWorking (false);
-
-				// reset mine values
-				if (staticData->canMineMaxRes > 0)
-				{
-					int metal = SubBase->getMetalProd();
-					int oil =  SubBase->getOilProd();
-					int gold = SubBase->getGoldProd();
-
-					SubBase->setMetalProd (0);
-					SubBase->setOilProd (0);
-					SubBase->setGoldProd (0);
-
-					SubBase->setMetalProd (min (metal, SubBase->getMaxAllowedMetalProd()));
-					SubBase->setGoldProd (min (gold, SubBase->getMaxAllowedGoldProd()));
-					SubBase->setOilProd (min (oil, SubBase->getMaxAllowedOilProd()));
-				}
-
-				//sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyInsufficient), getOwner());
-				return;
-			}
-			//sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyToLow), getOwner());
-		}
-	}
-
-	//-- everything is ready to start the building
-
-	SubBase->EnergyProd += staticData->produceEnergy;
-	SubBase->EnergyNeed += staticData->needsEnergy;
-
-	SubBase->HumanNeed += staticData->needsHumans;
-	SubBase->HumanProd += staticData->produceHumans;
-
-	SubBase->OilNeed += staticData->needsOil;
-
-	// raw material consumer:
-	if (staticData->needsMetal)
-		SubBase->MetalNeed += std::min (getMetalPerRound(), buildList[0].getRemainingMetal());
-
-	// gold consumer:
-	SubBase->GoldNeed += staticData->convertsGold;
+	if (!subBase->startBuilding(this))
+		return;
 
 	// research building
 	if (staticData->canResearch)
@@ -831,83 +701,20 @@ void cBuilding::ServerStartWork (cServer& server)
 
 	if (staticData->canScore)
 	{
-		sendNumEcos (server, *getOwner());
+		//sendNumEcos (server, *getOwner());
 	}
-
-	sendSubbaseValues (server, *SubBase, *getOwner());
-	sendDoStartWork (server, *this);
-}
-
-//------------------------------------------------------------
-/** starts the building in the client thread */
-//------------------------------------------------------------
-void cBuilding::clientStartWork()
-{
-	if (isUnitWorking())
-		return;
-	setWorking (true);
-	if (staticData->canResearch)
-		getOwner()->startAResearch (researchArea);
 }
 
 //--------------------------------------------------------------------------
-/** Stops the building's working in the server thread */
+/** Stops the building's working */
 //--------------------------------------------------------------------------
-void cBuilding::ServerStopWork (cServer& server, bool override)
+void cBuilding::stopWork (bool forced)
 {
-	if (!isUnitWorking())
-	{
-		sendDoStopWork (server, *this);
+	if (!isUnitWorking()) return;
+
+	if (!subBase->stopBuilding(this, forced))
 		return;
-	}
-
-	// energy generators
-	if (staticData->produceEnergy)
-	{
-		if (SubBase->EnergyNeed > SubBase->EnergyProd - staticData->produceEnergy && !override)
-		{
-			//sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyIsNeeded), getOwner());
-			return;
-		}
-
-		SubBase->EnergyProd -= staticData->produceEnergy;
-		SubBase->OilNeed -= staticData->needsOil;
-	}
-
-	setWorking (false);
-
-	// Energy consumers:
-	if (staticData->needsEnergy)
-		SubBase->EnergyNeed -= staticData->needsEnergy;
-
-	// raw material consumer:
-	if (staticData->needsMetal)
-		SubBase->MetalNeed -= std::min (getMetalPerRound(), buildList[0].getRemainingMetal());
-
-	// gold consumer
-	if (staticData->convertsGold)
-		SubBase->GoldNeed -= staticData->convertsGold;
-
-	// human consumer
-	if (staticData->needsHumans)
-		SubBase->HumanNeed -= staticData->needsHumans;
-
-	// Minen:
-	if (staticData->canMineMaxRes > 0)
-	{
-		int metal = SubBase->getMetalProd();
-		int oil =  SubBase->getOilProd();
-		int gold = SubBase->getGoldProd();
-
-		SubBase->setMetalProd (0);
-		SubBase->setOilProd (0);
-		SubBase->setGoldProd (0);
-
-		SubBase->setMetalProd (min (metal, SubBase->getMaxAllowedMetalProd()));
-		SubBase->setGoldProd (min (gold, SubBase->getMaxAllowedGoldProd()));
-		SubBase->setOilProd (min (oil, SubBase->getMaxAllowedOilProd()));
-	}
-
+	
 	if (staticData->canResearch)
 	{
 		getOwner()->stopAResearch (researchArea);
@@ -915,23 +722,8 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 
 	if (staticData->canScore)
 	{
-		sendNumEcos (server, *getOwner());
+		//sendNumEcos (server, *getOwner());
 	}
-
-	sendSubbaseValues (server, *SubBase, *getOwner());
-	sendDoStopWork (server, *this);
-}
-
-//------------------------------------------------------------
-/** stops the building in the client thread */
-//------------------------------------------------------------
-void cBuilding::clientStopWork()
-{
-	if (!isUnitWorking())
-		return;
-	setWorking (false);
-	if (staticData->canResearch)
-		getOwner()->stopAResearch (researchArea);
 }
 
 //------------------------------------------------------------
@@ -950,10 +742,8 @@ bool cBuilding::canTransferTo (const cPosition& position, const cMapField& overU
 		if (v->isUnitBuildingABuilding() || v->isUnitClearing())
 			return false;
 
-		for (size_t i = 0; i != SubBase->buildings.size(); ++i)
+		for (const auto b : subBase->getBuildings())
 		{
-			const cBuilding* b = SubBase->buildings[i];
-
 			if (b->isNextTo (position)) return true;
 		}
 
@@ -966,7 +756,7 @@ bool cBuilding::canTransferTo (const cPosition& position, const cMapField& overU
 		if (b == this)
 			return false;
 
-		if (b->SubBase != SubBase)
+		if (b->subBase != subBase)
 			return false;
 
 		if (b->getOwner() != this->getOwner())
@@ -1209,52 +999,66 @@ void cBuilding::DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int valu
 /** checks the resources that are available under the mining station */
 //--------------------------------------------------------------------------
 
-void cBuilding::checkRessourceProd (const cMap& map)
+void cBuilding::initMineRessourceProd (const cMap& map)
 {
+	if (!staticData->canMineMaxRes) return;
+
 	auto position = getPosition();
 
-	MaxMetalProd = 0;
-	MaxGoldProd = 0;
-	MaxOilProd = 0;
+	maxMetalProd = 0;
+	maxGoldProd = 0;
+	maxOilProd = 0;
 	const sResources* res = &map.getResource (position);
 
 	switch (res->typ)
 	{
-		case RES_METAL: MaxMetalProd += res->value; break;
-		case RES_GOLD:  MaxGoldProd  += res->value; break;
-		case RES_OIL:   MaxOilProd   += res->value; break;
+		case RES_METAL: maxMetalProd += res->value; break;
+		case RES_GOLD:  maxGoldProd  += res->value; break;
+		case RES_OIL:   maxOilProd   += res->value; break;
 	}
 
-	position.x()++;
-	res = &map.getResource(position);
-	switch (res->typ)
+	if (isBig)
 	{
-		case RES_METAL: MaxMetalProd += res->value; break;
-		case RES_GOLD:  MaxGoldProd  += res->value; break;
-		case RES_OIL:   MaxOilProd   += res->value; break;
+		position.x()++;
+		res = &map.getResource(position);
+		switch (res->typ)
+		{
+		case RES_METAL: maxMetalProd += res->value; break;
+		case RES_GOLD:  maxGoldProd += res->value; break;
+		case RES_OIL:   maxOilProd += res->value; break;
+		}
+
+		position.y()++;
+		res = &map.getResource(position);
+		switch (res->typ)
+		{
+		case RES_METAL: maxMetalProd += res->value; break;
+		case RES_GOLD:  maxGoldProd += res->value; break;
+		case RES_OIL:   maxOilProd += res->value; break;
+		}
+
+		position.x()--;
+		res = &map.getResource(position);
+		switch (res->typ)
+		{
+		case RES_METAL: maxMetalProd += res->value; break;
+		case RES_GOLD:  maxGoldProd += res->value; break;
+		case RES_OIL:   maxOilProd += res->value; break;
+		}
 	}
 
-	position.y()++;
-	res = &map.getResource(position);
-	switch (res->typ)
-	{
-		case RES_METAL: MaxMetalProd += res->value; break;
-		case RES_GOLD:  MaxGoldProd  += res->value; break;
-		case RES_OIL:   MaxOilProd   += res->value; break;
-	}
+	maxMetalProd = min (maxMetalProd, staticData->canMineMaxRes);
+	maxGoldProd  = min (maxGoldProd, staticData->canMineMaxRes);
+	maxOilProd   = min (maxOilProd, staticData->canMineMaxRes);
 
-	position.x()--;
-	res = &map.getResource(position);
-	switch (res->typ)
-	{
-		case RES_METAL: MaxMetalProd += res->value; break;
-		case RES_GOLD:  MaxGoldProd  += res->value; break;
-		case RES_OIL:   MaxOilProd   += res->value; break;
-	}
+	// set default mine allocation
+	int freeProductionCapacity = staticData->canMineMaxRes;
+	metalProd = maxMetalProd;
+	freeProductionCapacity -= metalProd;
+	goldProd = min(maxGoldProd, freeProductionCapacity);
+	freeProductionCapacity -= goldProd;
+	oilProd = min(maxOilProd, freeProductionCapacity);
 
-	MaxMetalProd = min (MaxMetalProd, staticData->canMineMaxRes);
-	MaxGoldProd  = min (MaxGoldProd, staticData->canMineMaxRes);
-	MaxOilProd   = min (MaxOilProd, staticData->canMineMaxRes);
 }
 
 //--------------------------------------------------------------------------
@@ -1470,7 +1274,7 @@ bool cBuilding::factoryHasJustFinishedBuilding() const
 //-----------------------------------------------------------------------------
 void cBuilding::executeStopCommand (const cClient& client) const
 {
-	sendWantStopWork (client, *this);
+	client.sendNetMessage(cActionStopWork(iID));
 }
 
 //-----------------------------------------------------------------------------
@@ -1490,7 +1294,7 @@ bool cBuilding::buildingCanBeStarted() const
 bool cBuilding::buildingCanBeUpgraded() const
 {
 	const cDynamicUnitData& upgraded = *getOwner()->getUnitDataCurrentVersion (data.getId());
-	return (data.getVersion() != upgraded.getVersion() && SubBase && SubBase->getMetal() >= 2);
+	return (data.getVersion() != upgraded.getVersion() && subBase && subBase->getMetalStored() >= 2);
 }
 
 //-----------------------------------------------------------------------------
@@ -1571,7 +1375,10 @@ int cBuilding::getBuildSpeed() const
 //-----------------------------------------------------------------------------
 int cBuilding::getMetalPerRound() const
 {
-	return metalPerRound;
+	if (buildList.size() > 0)
+		return min(metalPerRound, buildList[0].getRemainingMetal());
+	else
+		return 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -1606,6 +1413,21 @@ void cBuilding::setRepeatBuild(bool value)
 {
 	std::swap(repeatBuild, value);
 	if(value != repeatBuild) repeatBuildChanged();
+}
+
+int cBuilding::getMaxProd(int type) const
+{
+	switch (type)
+	{
+	case RES_METAL:
+		return maxMetalProd;
+	case RES_GOLD:
+		return maxGoldProd;
+	case RES_OIL:
+		return maxOilProd;
+	default:
+		return 0;
+	}
 }
 
 //-----------------------------------------------------------------------------

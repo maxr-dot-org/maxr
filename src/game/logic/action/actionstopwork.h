@@ -17,50 +17,29 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
+#ifndef game_logic_actionStopWorkH
+#define game_logic_actionStopWorkH
+
 #include "action.h"
-#include "utility/log.h"
-#include "utility/string/toString.h"
-#include "main.h"
-#include "actioninitnewgame.h"
-#include "actionstartwork.h"
-#include "actionstopwork.h"
 
-std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
+class cActionStopWork : public cAction
 {
-	eActiontype type;
-	archive >> type;
+public:
+	cActionStopWork(unsigned int id);
+	cActionStopWork(cBinaryArchiveOut& archive);
 
-	switch (type)
-	{
-	case eActiontype::ACTION_INIT_NEW_GAME:
-		return std::make_unique<cActionInitNewGame>(archive);
-	case eActiontype::ACTION_START_WORK:
-		return std::make_unique<cActionStartWork>(archive);
-	case eActiontype::ACTION_STOP_WORK:
-		return std::make_unique<cActionStopWork>(archive);
-	default:
-		throw std::runtime_error("Unknown action type " + iToStr(static_cast<int>(type)));
-		return nullptr;
-	}
-}
+	virtual void serialize(cBinaryArchiveIn& archive) { cAction::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive)   { cAction::serialize(archive); serializeThis(archive); }
 
-//------------------------------------------------------------------------------
-std::string enumToString(cAction::eActiontype value)
-{
-	switch (value)
+	virtual void execute(cModel& model) const override;
+	
+	int unitId;
+private:
+	template<typename T>
+	void serializeThis(T& archive)
 	{
-	case cAction::eActiontype::ACTION_INIT_NEW_GAME:
-		return "ACTION_INIT_NEW_GAME";
-		break;
-	case cAction::eActiontype::ACTION_START_WORK:
-		return "ACTION_START_WORK";
-		break;
-	case cAction::eActiontype::ACTION_STOP_WORK:
-		return "ACTION_STOP_WORK";
-		break;
-	default:
-		assert(false);
-		return toString(static_cast<int>(value));
-		break;
+		archive & unitId;
 	}
-}
+};
+
+#endif

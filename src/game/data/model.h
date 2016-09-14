@@ -120,7 +120,7 @@ public:
 			unitsData = std::make_shared<cUnitsData>();
 		}
 		archive & serialization::makeNvp("unitsData", *unitsData);
-		//check UIData available
+		//TODO: check UIData available
 
 		int numPlayers;
 		archive & NVP(numPlayers);
@@ -136,6 +136,10 @@ public:
 			archive & serialization::makeNvp("player", *player);
 		}
 		refreshMapPointer();
+		for (auto& player : playerList)
+		{
+			player->refreshBase(*map);
+		}
 		
 		archive & NVP(nextUnitId);
 	}

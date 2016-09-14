@@ -167,42 +167,6 @@ void sendSpecificUnitData (cServer& server, const cVehicle& vehicle)
 }
 
 //------------------------------------------------------------------------------
-void sendDoStartWork (cServer& server, const cBuilding& building)
-{
-	//check all players
-	const auto& playerList = server.playerList;
-	for (unsigned int i = 0; i < playerList.size(); i++)
-	{
-		const auto& player = *playerList[i];
-
-		//do not send to players who can't see the building
-		if (!player.canSeeAnyAreaUnder (building) && &player != building.getOwner()) continue;
-
-		auto message = std::make_unique<cNetMessage> (GAME_EV_DO_START_WORK);
-		message->pushInt32 (building.iID);
-		server.sendNetMessage (std::move (message), &player);
-	}
-}
-
-//------------------------------------------------------------------------------
-void sendDoStopWork (cServer& server, const cBuilding& building)
-{
-	//check all players
-	const auto& playerList = server.playerList;
-	for (unsigned int i = 0; i < playerList.size(); i++)
-	{
-		const auto& player = *playerList[i];
-
-		//do not send to players who can't see the building
-		if (!player.canSeeAnyAreaUnder (building) && &player != building.getOwner()) continue;
-
-		auto message = std::make_unique<cNetMessage> (GAME_EV_DO_STOP_WORK);
-		message->pushInt32 (building.iID);
-		server.sendNetMessage (std::move (message), &player);
-	}
-}
-
-//------------------------------------------------------------------------------
 void sendNextMove (cServer& server, const cVehicle& vehicle, int iType, int iSavedSpeed)
 {
 	for (unsigned int i = 0; i < vehicle.seenByPlayerList.size(); i++)
@@ -410,22 +374,6 @@ void sendStopBuild (cServer& server, int iVehicleID, const cPosition& newPositio
 }
 
 //------------------------------------------------------------------------------
-void sendSubbaseValues (cServer& server, const sSubBase& subBase, const cPlayer& receiver)
-{
-	// temporary debug check
-	if (subBase.isDitributionMaximized() == false)
-	{
-		Log.write (" Server: Mine distribution values are not a maximum", cLog::eLOG_TYPE_NET_WARNING);
-	}
-
-	auto message = std::make_unique<cNetMessage> (GAME_EV_SUBBASE_VALUES);
-
-	subBase.pushInto (*message);
-	message->pushInt16 (subBase.getID());
-	server.sendNetMessage (std::move (message), &receiver);
-}
-
-//------------------------------------------------------------------------------
 void sendBuildList (cServer& server, const cBuilding& building)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_BUILDLIST);
@@ -438,17 +386,6 @@ void sendBuildList (cServer& server, const cBuilding& building)
 		message->pushID (building.getBuildListItem (i).getType());
 	}
 	message->pushInt16 ((int)building.getBuildListSize());
-	message->pushInt16 (building.iID);
-	server.sendNetMessage (std::move (message), building.getOwner());
-}
-
-//------------------------------------------------------------------------------
-void sendProduceValues (cServer& server, const cBuilding& building)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_MINE_PRODUCE_VALUES);
-	message->pushInt16 (building.MaxGoldProd);
-	message->pushInt16 (building.MaxOilProd);
-	message->pushInt16 (building.MaxMetalProd);
 	message->pushInt16 (building.iID);
 	server.sendNetMessage (std::move (message), building.getOwner());
 }
