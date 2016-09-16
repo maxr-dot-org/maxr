@@ -614,7 +614,7 @@ void cPlayer::setResourceMapFromString(const std::string& str)
 {
 	for (size_t i = 0; i != ResourceMap.size(); ++i)
 	{
-		ResourceMap[i] = getByteValue(str, i);
+		ResourceMap.set(i, getByteValue(str, 2*i));
 	}
 }
 
