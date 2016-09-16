@@ -834,15 +834,15 @@ void cGameGuiController::connectClient (cClient& client)
 	{
 		if (activeClient->getActivePlayer().canSeeAnyAreaUnder(unit)) return;
 
-		if (unit.data.getId() == client.getModel().getUnitsData()->specialIDSeaMine) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectPlaceMine, SoundData.SNDSeaMinePlace, unit));
-		else if (unit.data.getId() == client.getModel().getUnitsData()->specialIDLandMine) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectPlaceMine, SoundData.SNDLandMinePlace, unit));
+		if (unit.data.getId() == client.getModel().getUnitsData()->getSpecialIDSeaMine()) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectPlaceMine, SoundData.SNDSeaMinePlace, unit));
+		else if (unit.data.getId() == client.getModel().getUnitsData()->getSpecialIDLandMine()) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectPlaceMine, SoundData.SNDLandMinePlace, unit));
 	});
 	clientSignalConnectionManager.connect(getDynamicMap()->removedUnit, [&] (const cUnit & unit)
 	{
 		if (activeClient->getActivePlayer().canSeeAnyAreaUnder(unit)) return;
 
-		if (unit.data.getId() == client.getModel().getUnitsData()->specialIDLandMine) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectClearMine, SoundData.SNDLandMineClear, unit));
-		else if (unit.data.getId() == client.getModel().getUnitsData()->specialIDSeaMine) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectClearMine, SoundData.SNDSeaMineClear, unit));
+		if (unit.data.getId() == client.getModel().getUnitsData()->getSpecialIDLandMine()) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectClearMine, SoundData.SNDLandMineClear, unit));
+		else if (unit.data.getId() == client.getModel().getUnitsData()->getSpecialIDSeaMine()) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectClearMine, SoundData.SNDSeaMineClear, unit));
 	});
 
 }

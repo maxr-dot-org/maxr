@@ -24,6 +24,7 @@
 #include "game/data/player/clans.h"
 #include "utility/log.h"
 #include "utility/language.h"
+#include "utility/crc.h"
 
 
 //------------------------------------------------------------------------------
@@ -53,6 +54,15 @@ bool sID::less_buildingFirst(const sID& ID) const
 }
 
 //------------------------------------------------------------------------------
+uint32_t sID::getChecksum(uint32_t crc) const
+{
+	crc = calcCheckSum(firstPart, crc);
+	crc = calcCheckSum(secondPart, crc);
+
+	return crc;
+}
+
+//------------------------------------------------------------------------------
 bool sID::less_vehicleFirst(const sID& ID) const
 {
 	return firstPart == ID.firstPart ? secondPart < ID.secondPart : firstPart < ID.firstPart;
@@ -64,6 +74,12 @@ bool sID::operator == (const sID& ID) const
 	if (firstPart == ID.firstPart && secondPart == ID.secondPart) return true;
 	return false;
 }
+
+//------------------------------------------------------------------------------
+cUnitsData::cUnitsData() :
+	crcValid(false),
+	crcCache(0)
+{}
 
 //------------------------------------------------------------------------------
 int cUnitsData::getUnitIndexBy(sID id) const
@@ -92,11 +108,14 @@ void cUnitsData::initializeIDData()
 	if (engineerID    == sID(0, 0)) Log.write("Engineer index not found. Engineer needs to have the property \"Can_Build = SmallBuilding\"", cLog::eLOG_TYPE_ERROR);
 	if (surveyorID    == sID(0, 0)) Log.write("Surveyor index not found. Surveyor needs to have the property \"Can_Survey = Yes\"", cLog::eLOG_TYPE_ERROR);
 
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
 void cUnitsData::initializeClanUnitData()
 {
+	crcValid = false;
+
 	cClanData& clanData = cClanData::instance();
 	clanDynamicUnitData.resize(clanData.getNrClans());
 
@@ -149,7 +168,7 @@ size_t cUnitsData::getNrOfClans() const
 //------------------------------------------------------------------------------
 const cDynamicUnitData& cUnitsData::getDynamicUnitData(const sID& id, int clan /*= -1*/) const
 {
-	if (clan < 0 || clan >= clanDynamicUnitData.size())
+	if (clan < 0 || static_cast<unsigned>(clan) >= clanDynamicUnitData.size())
 	{
 		for (const auto& data : dynamicUnitData)
 		{
@@ -180,7 +199,7 @@ const cStaticUnitData& cUnitsData::getStaticUnitData(const sID& id) const
 //------------------------------------------------------------------------------
 const std::vector<cDynamicUnitData>& cUnitsData::getDynamicUnitsData(int clan /*= -1*/) const
 {
-	if (clan < 0 || clan >= clanDynamicUnitData.size())
+	if (clan < 0 || static_cast<unsigned>(clan) >= clanDynamicUnitData.size())
 	{
 		return dynamicUnitData;
 	}
@@ -194,6 +213,32 @@ const std::vector<cDynamicUnitData>& cUnitsData::getDynamicUnitsData(int clan /*
 const std::vector<cStaticUnitData>& cUnitsData::getStaticUnitsData() const
 {
 	return staticUnitData;
+}
+
+//------------------------------------------------------------------------------
+
+uint32_t cUnitsData::getChecksum(uint32_t crc) const
+{
+	if (!crcValid)
+	{
+		crcCache = 0;
+		crcCache = calcCheckSum(constructorID, crcCache);
+		crcCache = calcCheckSum(engineerID, crcCache);
+		crcCache = calcCheckSum(surveyorID, crcCache);
+		crcCache = calcCheckSum(specialIDLandMine, crcCache);
+		crcCache = calcCheckSum(specialIDSeaMine, crcCache);
+		crcCache = calcCheckSum(specialIDMine, crcCache);
+		crcCache = calcCheckSum(specialIDSmallGen, crcCache);
+		crcCache = calcCheckSum(specialIDConnector, crcCache);
+		crcCache = calcCheckSum(specialIDSmallBeton, crcCache);
+		crcCache = calcCheckSum(staticUnitData, crcCache);
+		crcCache = calcCheckSum(dynamicUnitData, crcCache);
+		crcCache = calcCheckSum(clanDynamicUnitData, crcCache);
+
+		crcValid = true;
+	}
+
+	return calcCheckSum(crcCache, crc);
 }
 
 //------------------------------------------------------------------------------
@@ -281,6 +326,66 @@ std::string cStaticUnitData::getDescripton() const
 }
 
 //------------------------------------------------------------------------------
+uint32_t cStaticUnitData::getChecksum(uint32_t crc) const
+{
+	crc = calcCheckSum(ID, crc);
+	crc = calcCheckSum(muzzleType, crc);
+	crc = calcCheckSum(canAttack, crc);
+	crc = calcCheckSum(canDriveAndFire, crc);
+	crc = calcCheckSum(canBuild, crc);
+	crc = calcCheckSum(buildAs, crc);
+	crc = calcCheckSum(maxBuildFactor, crc);
+	crc = calcCheckSum(canBuildPath, crc);
+	crc = calcCheckSum(canBuildRepeat, crc);
+	crc = calcCheckSum(factorGround, crc);
+	crc = calcCheckSum(factorSea, crc);
+	crc = calcCheckSum(factorAir, crc);
+	crc = calcCheckSum(factorCoast, crc);
+	crc = calcCheckSum(connectsToBase, crc);
+	crc = calcCheckSum(modifiesSpeed, crc);
+	crc = calcCheckSum(canClearArea, crc);
+	crc = calcCheckSum(canBeCaptured, crc);
+	crc = calcCheckSum(canBeDisabled, crc);
+	crc = calcCheckSum(canCapture, crc);
+	crc = calcCheckSum(canDisable, crc);
+	crc = calcCheckSum(canRepair, crc);
+	crc = calcCheckSum(canRearm, crc);
+	crc = calcCheckSum(canResearch, crc);
+	crc = calcCheckSum(canPlaceMines, crc);
+	crc = calcCheckSum(canSurvey, crc);
+	crc = calcCheckSum(doesSelfRepair, crc);
+	crc = calcCheckSum(convertsGold, crc);
+	crc = calcCheckSum(canSelfDestroy, crc);
+	crc = calcCheckSum(canScore, crc);
+	crc = calcCheckSum(canMineMaxRes, crc);
+	crc = calcCheckSum(needsMetal, crc);
+	crc = calcCheckSum(needsOil, crc);
+	crc = calcCheckSum(needsEnergy, crc);
+	crc = calcCheckSum(needsHumans, crc);
+	crc = calcCheckSum(produceEnergy, crc);
+	crc = calcCheckSum(produceHumans, crc);
+	crc = calcCheckSum(isStealthOn, crc);
+	crc = calcCheckSum(canDetectStealthOn, crc);
+	crc = calcCheckSum(surfacePosition, crc);
+	crc = calcCheckSum(canBeOverbuild, crc);
+	crc = calcCheckSum(canBeLandedOn, crc);
+	crc = calcCheckSum(canWork, crc);
+	crc = calcCheckSum(explodesOnContact, crc);
+	crc = calcCheckSum(isHuman, crc);
+	crc = calcCheckSum(isBig, crc);
+	crc = calcCheckSum(storageResMax, crc);
+	crc = calcCheckSum(storeResType, crc);
+	crc = calcCheckSum(storageUnitsMax, crc);
+	crc = calcCheckSum(storeUnitsImageType, crc);
+	crc = calcCheckSum(storeUnitsTypes, crc);
+	crc = calcCheckSum(isStorageType, crc);
+	crc = calcCheckSum(description, crc);
+	crc = calcCheckSum(name, crc);
+
+	return crc;
+}
+
+//------------------------------------------------------------------------------
 cDynamicUnitData::cDynamicUnitData() :
 	id(),
 	buildCosts(0),
@@ -296,7 +401,9 @@ cDynamicUnitData::cDynamicUnitData() :
 	range(0),
 	scan(0),
 	damage(0),
-	armor(0)
+	armor(0),
+	crcCache(0),
+	crcValid(false)
 {}
 
 //------------------------------------------------------------------------------
@@ -315,7 +422,9 @@ cDynamicUnitData::cDynamicUnitData(const cDynamicUnitData& other) :
 	range(other.range),
 	scan(other.scan),
 	damage(other.damage),
-	armor(other.armor)
+	armor(other.armor),
+	crcCache(0),
+	crcValid(false)
 {}
 
 //------------------------------------------------------------------------------
@@ -336,6 +445,8 @@ cDynamicUnitData& cDynamicUnitData::operator=(const cDynamicUnitData& other)
 	scan = other.scan;
 	damage = other.damage;
 	armor = other.armor;
+	crcCache = 0;
+	crcValid = false;
 
 	return *this;
 }
@@ -350,6 +461,7 @@ sID cDynamicUnitData::getId() const
 void cDynamicUnitData::setId(const sID& value)
 {
 	id = value;
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
@@ -363,6 +475,7 @@ void cDynamicUnitData::setBuildCost(int value)
 {
 	std::swap(buildCosts, value);
 	if (buildCosts != value) buildCostsChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
@@ -376,6 +489,7 @@ void cDynamicUnitData::setVersion(int value)
 {
 	std::swap(version, value);
 	if (version != value) versionChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
@@ -389,6 +503,7 @@ void cDynamicUnitData::setSpeed(int value)
 {
 	std::swap(speedCur, value);
 	if (speedCur != value) speedChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
@@ -402,6 +517,7 @@ void cDynamicUnitData::setSpeedMax(int value)
 {
 	std::swap(speedMax, value);
 	if (speedMax != value) speedMaxChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
@@ -415,6 +531,7 @@ void cDynamicUnitData::setHitpoints(int value)
 {
 	std::swap(hitpointsCur, value);
 	if (hitpointsCur != value) hitpointsChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
@@ -428,6 +545,7 @@ void cDynamicUnitData::setHitpointsMax(int value)
 {
 	std::swap(hitpointsMax, value);
 	if (hitpointsMax != value) hitpointsMaxChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
@@ -441,6 +559,7 @@ void cDynamicUnitData::setScan(int value)
 {
 	std::swap(scan, value);
 	if (scan != value) scanChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
@@ -454,6 +573,7 @@ void cDynamicUnitData::setRange(int value)
 {
 	std::swap(range, value);
 	if (range != value) rangeChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
@@ -467,6 +587,7 @@ void cDynamicUnitData::setShots(int value)
 {
 	std::swap(shotsCur, value);
 	if (shotsCur != value) shotsChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
@@ -480,6 +601,7 @@ void cDynamicUnitData::setShotsMax(int value)
 {
 	std::swap(shotsMax, value);
 	if (shotsMax != value) shotsMaxChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
@@ -493,6 +615,7 @@ void cDynamicUnitData::setAmmo(int value)
 {
 	std::swap(ammoCur, value);
 	if (ammoCur != value) ammoChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
@@ -506,6 +629,7 @@ void cDynamicUnitData::setAmmoMax(int value)
 {
 	std::swap(ammoMax, value);
 	if (ammoMax != value) ammoMaxChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
@@ -519,6 +643,7 @@ void cDynamicUnitData::setDamage(int value)
 {
 	std::swap(damage, value);
 	if (damage != value) damageChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
@@ -532,6 +657,35 @@ void cDynamicUnitData::setArmor(int value)
 {
 	std::swap(armor, value);
 	if (armor != value) armorChanged();
+	crcValid = false;
+}
+
+//------------------------------------------------------------------------------
+uint32_t cDynamicUnitData::getChecksum(uint32_t crc) const
+{
+	if (!crcValid)
+	{
+		crcCache = 0;
+		crcCache = calcCheckSum(id, crcCache);
+		crcCache = calcCheckSum(buildCosts, crcCache);
+		crcCache = calcCheckSum(version, crcCache);
+		crcCache = calcCheckSum(speedCur, crcCache);
+		crcCache = calcCheckSum(speedMax, crcCache);
+		crcCache = calcCheckSum(hitpointsCur, crcCache);
+		crcCache = calcCheckSum(hitpointsMax, crcCache);
+		crcCache = calcCheckSum(shotsCur, crcCache);
+		crcCache = calcCheckSum(shotsMax, crcCache);
+		crcCache = calcCheckSum(ammoCur, crcCache);
+		crcCache = calcCheckSum(ammoMax, crcCache);
+		crcCache = calcCheckSum(range, crcCache);
+		crcCache = calcCheckSum(scan, crcCache);
+		crcCache = calcCheckSum(damage, crcCache);
+		crcCache = calcCheckSum(armor, crcCache);
+
+		crcValid = true;
+	}
+
+	return calcCheckSum(crcCache, crc);
 }
 
 //------------------------------------------------------------------------------
@@ -541,4 +695,6 @@ void cDynamicUnitData::setMaximumCurrentValues()
 	ammoCur      = ammoMax;
 	shotsCur     = shotsMax;
 	hitpointsCur = hitpointsMax;
+
+	crcValid = false;
 }

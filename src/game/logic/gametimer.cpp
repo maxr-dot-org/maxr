@@ -111,7 +111,7 @@ void cGameTimerServer::handleSyncMessage(const cNetMessageSyncClient& message, u
 	//Note: this funktion handels incoming data from network. Make every possible sanity check!
 
 	int playerNr = message.playerNr;
-	if (playerNr >= receivedTime.size()) return;
+	if (playerNr < 0 || static_cast<size_t>(playerNr) >= receivedTime.size()) return;
 
 	if (message.gameTime > gameTime)
 	{
@@ -153,7 +153,7 @@ void cGameTimerServer::run(cModel& model, cServer2& server)
 		
 		model.advanceGameTime();
 
-		uint32_t checksum = model.calcChecksum();
+		uint32_t checksum = model.getChecksum();
 		for (auto player : model.getPlayerList())
 		{
 			cNetMessageSyncServer message;
@@ -244,7 +244,7 @@ void cGameTimerClient::run(cClient& client, cModel& model)
 			model.advanceGameTime();
 
 			//check crc
-			localChecksum = model.calcChecksum();
+			localChecksum = model.getChecksum();
 			debugRemoteChecksum = remoteChecksum;
 			if (localChecksum != remoteChecksum)
 			{
@@ -274,7 +274,7 @@ void cGameTimerClient::run(cClient& client, cModel& model)
 	if (model.getGameTime() + MAX_CLIENT_LAG < getReceivedTime())
 	{
 		//inject an extra timer event
-		for (int i = 0; i < (getReceivedTime() - model.getGameTime()) / 2; i++)
+		for (unsigned i = 0; i < (getReceivedTime() - model.getGameTime()) / 2; i++)
 			pushEvent();
 	}
 }

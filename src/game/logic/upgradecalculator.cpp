@@ -24,6 +24,7 @@
 #include "main.h"
 #include "game/data/units/unitdata.h"
 #include <sstream>
+#include "utility/crc.h"
 
 //--------------------------------------------------
 cUpgradeCalculator& cUpgradeCalculator::instance()
@@ -1448,6 +1449,18 @@ int cResearch::getResearchArea (int upgradeCalculatorType) const
 		case cUpgradeCalculator::kCost: return kCostResearch;
 	}
 	return 0;
+}
+
+uint32_t cResearch::getChecksum(uint32_t crc) const
+{
+	for (int i = 0; i < kNrResearchAreas; i++)
+		crc = calcCheckSum(curResearchLevel[i], crc);
+	for (int i = 0; i < kNrResearchAreas; i++)
+		crc = calcCheckSum(curResearchPoints[i], crc);
+	for (int i = 0; i < kNrResearchAreas; i++)
+		crc = calcCheckSum(neededResearchPoints[i], crc);
+
+	return crc;
 }
 
 //--------------------------------------------------

@@ -132,6 +132,8 @@ public:
 	bool getIsBig() const;
 	void setIsBig(bool value);
 
+	virtual uint32_t getChecksum(uint32_t crc) const;
+
 	// Important NOTE: This signal will be triggered when the destructor of the unit gets called.
 	//                 This means when the signal is triggered it can not be guaranteed that all
 	//                 of the objects attributes are still valid (especially the ones of derived classes).

@@ -23,7 +23,7 @@
 #include "units/vehicle.h"
 #include "units/building.h"
 #include "game/logic/movejobs.h"
-#include "utility/files.h"
+#include "utility/crc.h"
 
 //------------------------------------------------------------------------------
 cModel::cModel() :
@@ -95,19 +95,19 @@ unsigned int cModel::getGameTime() const
 }
 
 //------------------------------------------------------------------------------
-uint32_t cModel::calcChecksum() const
+uint32_t cModel::getChecksum() const
 {
 	uint32_t crc = 0;
+	//crc = calcCheckSum(gameTime, crc);
+	crc = gameSettings->getChecksum(crc);
+	crc = map->getChecksum(crc);
+	for (const auto& player : playerList)
+		crc = player->getChecksum(crc);
+	for (const auto& building : neutralBuildings)
+		crc = building->getChecksum(crc);
 	crc = calcCheckSum(nextUnitId, crc);
-	for (int x = 0; x < map->getSize().x(); x++)
-	{
-		for (int y = 0; y < map->getSize().y(); y++)
-		{
-			const auto res = map->getResource(cPosition(x, y));
-			crc = calcCheckSum(res.typ, crc);
-			crc = calcCheckSum(res.value, crc);
-		}
-	}
+	crc = calcCheckSum(*unitsData, crc);
+
 	return crc;
 }
 //------------------------------------------------------------------------------

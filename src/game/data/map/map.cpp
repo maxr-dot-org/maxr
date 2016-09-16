@@ -22,6 +22,7 @@
 #include "game/data/units/building.h"
 #include "utility/listhelpers.h"
 #include "utility/files.h"
+#include "utility/crc.h"
 #include "utility/log.h"
 #include "game/data/player/player.h"
 #include "settings.h"
@@ -562,6 +563,11 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	return mapSurface;
 }
 
+uint32_t cStaticMap::getChecksum(uint32_t crc)
+{
+	return calcCheckSum(this->crc, crc);
+}
+
 void cStaticMap::copySrfToTerData (SDL_Surface& surface, int iNum)
 {
 	//before the surfaces are copied, the colortable of both surfaces has to be equal
@@ -670,8 +676,7 @@ void cMap::init()
 	const int size = staticMap->getSize().x() * staticMap->getSize().y();
 	if (Resources.size() != size)
 	{
-		Resources.resize(size);
-		std::fill(Resources.begin(), Resources.end(), sResources());
+		Resources.resize(size, sResources());
 		delete[] fields;
 		fields = new cMapField[size];
 	}
@@ -721,8 +726,11 @@ void cMap::setResourcesFromString (const std::string& str)
 {
 	for (size_t i = 0; i != Resources.size(); ++i)
 	{
-		Resources[i].typ = getByteValue (str, 4 * i);
-		Resources[i].value = getByteValue (str, 4 * i + 2);
+		sResources res;
+		res.typ   = getByteValue(str, 4 * i);
+		res.value = getByteValue(str, 4 * i + 2);
+
+		Resources.set(i, res);
 	}
 }
 
@@ -731,7 +739,7 @@ void cMap::placeRessources(cModel& model)
 	const auto& playerList = model.getPlayerList();
 	const auto& gameSettings = *model.getGameSettings();
 
-	std::fill (Resources.begin(), Resources.end(), sResources());
+	Resources.fill(sResources());
 
 	std::vector<int> resSpotTypes(playerList.size(), RES_METAL);
 	std::vector<T_2<int>> resSpots;
@@ -845,19 +853,20 @@ void cMap::placeRessources(cModel& model)
 					((hasGold && i >= playerCount) || resSpotTypes[i] == RES_GOLD || type != RES_GOLD) &&
 					!isBlocked (cPosition (absPos.x, absPos.y)))
 				{
-					Resources[index].typ = type;
+					sResources res;
+					res.typ = type;
 					if (i >= playerCount)
 					{
-						Resources[index].value = 1 + model.randomGenerator.get (2 + getResourceAmountFactor (frequencies[type]) * 2);
-						if (p == pos) Resources[index].value += 3 + model.randomGenerator.get(4 + getResourceAmountFactor(frequencies[type]) * 2);
+						res.value = 1 + model.randomGenerator.get (2 + getResourceAmountFactor (frequencies[type]) * 2);
+						if (p == pos) res.value += 3 + model.randomGenerator.get(4 + getResourceAmountFactor(frequencies[type]) * 2);
 					}
 					else
 					{
-						Resources[index].value = 1 + 4 + getResourceAmountFactor (frequencies[type]);
-						if (p == pos) Resources[index].value += 3 + 2 + getResourceAmountFactor (frequencies[type]);
+						res.value = 1 + 4 + getResourceAmountFactor (frequencies[type]);
+						if (p == pos) res.value += 3 + 2 + getResourceAmountFactor (frequencies[type]);
 					}
-
-					Resources[index].value = std::min<unsigned char> (16, Resources[index].value);
+					res.value = std::min<unsigned char> (16, res.value);
+					Resources.set(index, res);
 				}
 			}
 		}
@@ -1206,6 +1215,15 @@ void cMap::reset()
 	}
 }
 
+uint32_t cMap::getChecksum(uint32_t crc) const
+{
+	crc = staticMap->getChecksum(crc);
+	//cMapField* fields;
+	crc = calcCheckSum(Resources, crc);
+
+	return crc;
+}
+
 /*static*/ int cMap::getResourceDensityFactor (eGameSettingsResourceDensity density)
 {
 	switch (density)
@@ -1238,4 +1256,12 @@ void cMap::reset()
 	}
 	assert (false);
 	return 0;
+}
+
+uint32_t sResources::getChecksum(uint32_t crc) const
+{
+	crc = calcCheckSum(value, crc);
+	crc = calcCheckSum(typ, crc);
+
+	return crc;
 }

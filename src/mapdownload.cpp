@@ -28,6 +28,7 @@
 #include <cassert>
 
 #include "defines.h"
+#include "utility/crc.h"
 #include "utility/files.h"
 #include "utility/log.h"
 #include "menuevents.h"
@@ -137,7 +138,7 @@ int32_t MapDownload::calculateCheckSum (const std::string& mapName)
 		{
 			file.read (data.data() + 9, relevantMapDataSize);
 			if (!file.bad() && !file.eof())
-				result = calcCheckSum (data.data(), relevantMapDataSize + 9);
+				result = calcCheckSum (data.data(), relevantMapDataSize + 9, 0);
 		}
 	}
 	return result;

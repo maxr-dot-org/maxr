@@ -32,6 +32,7 @@
 #include "utility/signal/signal.h"
 #include "game/data/gamesettings.h"
 #include "utility/log.h"
+#include "utility/arraycrc.h"
 
 class cUnit;
 class cVehicle;
@@ -52,6 +53,7 @@ public:
 		archive & NVP(value);
 		archive & NVP(typ);
 	}
+	uint32_t getChecksum(uint32_t crc) const;
 public:
 	unsigned char value;
 	unsigned char typ;
@@ -190,6 +192,8 @@ public:
 	void scaleSurfaces (int pixelSize);
 	static AutoSurface loadMapPreview (const std::string& mapPath, int* mapSize = nullptr);
 
+	uint32_t getChecksum(uint32_t crc);
+
 	template<typename T>
 	void save(T& archive)
 	{
@@ -248,7 +252,6 @@ public:
 	bool isWaterOrCoast (const cPosition& position) const;
 
 	const sResources& getResource (const cPosition& position) const { return Resources[getOffset (position)]; }
-	sResources& getResource (const cPosition& position) { return Resources[getOffset (position)]; }
 
 	void placeRessources(cModel& model);
 	/**
@@ -298,6 +301,8 @@ public:
 	*/
 	void reset();
 
+	uint32_t getChecksum(uint32_t crc) const;
+
 	template<typename T>
 	void save(T& archive)
 	{
@@ -339,7 +344,7 @@ private:
 	* the information about the fields
 	*/
 	cMapField* fields;
-	std::vector<sResources> Resources; // field with the ressource data
+	cArrayCrc<sResources> Resources; // field with the ressource data
 };
 
 #endif // game_data_map_mapH

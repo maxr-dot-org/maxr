@@ -56,6 +56,8 @@ public:
 	unsigned char r, g, b;
 	unsigned char a;
 
+	uint32_t getChecksum(uint32_t crc) const;
+
 	template<typename T>
 	void serialize(T& archive)
 	{

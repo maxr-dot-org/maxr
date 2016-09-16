@@ -25,7 +25,7 @@
 #include "utility/tounderlyingtype.h"
 #include "utility/string/iequals.h"
 #include "main.h"
-#include "netmessage.h"
+#include "utility/crc.h"
 
 const std::chrono::seconds cGameSettings::defaultTurnLimitOption0 (60);
 const std::chrono::seconds cGameSettings::defaultTurnLimitOption1 (120);
@@ -501,4 +501,25 @@ void cGameSettings::setTurnLimitActive (bool value)
 {
 	std::swap (turnLimitActive, value);
 	if (turnLimitActive != value) turnLimitActiveChanged();
+}
+
+uint32_t cGameSettings::getChecksum(uint32_t crc)
+{
+	crc = calcCheckSum(metalAmount, crc);
+	crc = calcCheckSum(oilAmount, crc);
+	crc = calcCheckSum(goldAmount, crc);
+	crc = calcCheckSum(resourceDensity, crc);
+	crc = calcCheckSum(bridgeheadType, crc);
+	crc = calcCheckSum(gameType, crc);
+	crc = calcCheckSum(clansEnabled, crc);
+	crc = calcCheckSum(startCredits, crc);
+	crc = calcCheckSum(victoryConditionType, crc);
+	crc = calcCheckSum(victoryTurns, crc);
+	crc = calcCheckSum(victoryPoints, crc);
+	crc = calcCheckSum(turnEndDeadline.count(), crc);
+	crc = calcCheckSum(turnEndDeadlineActive, crc);
+	crc = calcCheckSum(turnLimit.count(), crc);
+	crc = calcCheckSum(turnLimitActive, crc);
+
+	return crc;
 }

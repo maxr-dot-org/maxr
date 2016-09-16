@@ -332,6 +332,8 @@ public:
 	cBuilding* getContainerBuilding();
 	cVehicle* getContainerVehicle();
 
+	virtual uint32_t getChecksum(uint32_t crc) const;
+
 	mutable cSignal<void ()> clearingTurnsChanged;
 	mutable cSignal<void ()> buildingTurnsChanged;
 	mutable cSignal<void ()> buildingCostsChanged;
@@ -347,13 +349,11 @@ public:
 	{
 		serializeBase(archive); //serialize cUnit members
 		//TODO: moveJob
-		//TODO: surveyor AI
+		archive & NVP(hasAutoMoveJob);
 		archive & NVP(MoveJobActive);
 		archive & NVP(bandPosition);
 		archive & NVP(buildBigSavedPosition);
 		archive & NVP(BuildPath);
-		archive & NVP(DamageFXPointX);
-		archive & NVP(DamageFXPointY);
 		archive & NVP(WalkFrame);
 
 		archive & NVP(detectedInThisTurnByPlayerList);

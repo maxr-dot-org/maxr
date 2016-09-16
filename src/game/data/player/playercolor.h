@@ -47,6 +47,8 @@ public:
 	bool operator== (const cPlayerColor& other) const;
 	bool operator!= (const cPlayerColor& other) const;
 
+	uint32_t getChecksum(uint32_t crc) const;
+
 	template<typename T>
 	void save(T& archive)
 	{

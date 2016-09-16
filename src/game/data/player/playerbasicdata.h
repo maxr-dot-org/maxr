@@ -50,6 +50,8 @@ public:
 	void setReady (bool ready);
 	bool isReady() const;
 
+	uint32_t getChecksum(uint32_t crc) const;
+
 	mutable cSignal<void ()> nameChanged;
 	mutable cSignal<void ()> numberChanged;
 	mutable cSignal<void ()> colorChanged;

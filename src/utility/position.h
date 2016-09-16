@@ -20,6 +20,8 @@
 #ifndef utility_positionH
 #define utility_positionH
 
+#include <stdint.h>
+
 #include "utility/fixedvector.h"
 
 /**
@@ -40,6 +42,8 @@ public:
 		x() = x_;
 		y() = y_;
 	}
+
+	uint32_t getChecksum(uint32_t crc) const;
 
 	template<typename T>
 	void serialize(T& archive)

@@ -209,8 +209,8 @@ void cActionInitNewGame::makeLanding(cPlayer& player, const std::vector<sLanding
 	if (model.getGameSettings()->getBridgeheadType() == eGameSettingsBridgeheadType::Definite)
 	{
 		// place buildings:
-		model.addBuilding(landingPosition + cPosition(-1, 0), model.getUnitsData()->specialIDSmallGen, &player, true);
-		model.addBuilding(landingPosition + cPosition(0, -1), model.getUnitsData()->specialIDMine, &player, true);
+		model.addBuilding(landingPosition + cPosition(-1, 0), model.getUnitsData()->getSpecialIDSmallGen(), &player, true);
+		model.addBuilding(landingPosition + cPosition(0, -1), model.getUnitsData()->getSpecialIDMine(), &player, true);
 	}
 
 	for (size_t i = 0; i != landingUnits.size(); ++i)

@@ -19,6 +19,7 @@
 
 #include "utility/color.h"
 #include "utility/comparison.h"
+#include "crc.h"
 
 //------------------------------------------------------------------------------
 cRgbColor::cRgbColor() :
@@ -85,6 +86,16 @@ cRgbColor cRgbColor::exchangeBlue (unsigned char blue_) const
 cRgbColor cRgbColor::exchangeAlpha (unsigned char alpha_) const
 {
 	return cRgbColor (r, g, b, alpha_);
+}
+
+uint32_t cRgbColor::getChecksum(uint32_t crc) const
+{
+	crc = calcCheckSum(r, crc);
+	crc = calcCheckSum(g, crc);
+	crc = calcCheckSum(b, crc);
+	crc = calcCheckSum(a, crc);
+
+	return crc;
 }
 
 //------------------------------------------------------------------------------

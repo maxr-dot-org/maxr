@@ -30,6 +30,7 @@
 #include "game/logic/serverevents.h"
 #include "game/data/report/savedreportsimple.h"
 #include "game/data/report/special/savedreportresourcechanged.h"
+#include "utility/crc.h"
 
 using namespace std;
 
@@ -262,6 +263,34 @@ int cSubBase::getMaxHumanNeed() const
 const std::vector<cBuilding*>& cSubBase::getBuildings() const
 {
 	return buildings;
+}
+
+uint32_t cSubBase::getChecksum(uint32_t crc) const
+{
+	crc = calcCheckSum( maxMetalStored, crc);
+	crc = calcCheckSum( maxOilStored, crc);
+	crc = calcCheckSum( maxGoldStored, crc);
+	crc = calcCheckSum( maxEnergyProd, crc);
+	crc = calcCheckSum( energyProd, crc);
+	crc = calcCheckSum( maxEnergyNeed, crc);
+	crc = calcCheckSum( energyNeed, crc);
+	crc = calcCheckSum( metalNeed, crc);
+	crc = calcCheckSum( oilNeed, crc);
+	crc = calcCheckSum( goldNeed, crc);
+	crc = calcCheckSum( maxMetalNeed, crc);
+	crc = calcCheckSum( maxOilNeed, crc);
+	crc = calcCheckSum( maxGoldNeed, crc);
+	crc = calcCheckSum( humanProd, crc);
+	crc = calcCheckSum( humanNeed, crc);
+	crc = calcCheckSum( maxHumanNeed, crc);
+	crc = calcCheckSum( metalProd, crc);
+	crc = calcCheckSum( oilProd, crc);
+	crc = calcCheckSum( goldProd, crc);
+	crc = calcCheckSum( metalStored, crc);
+	crc = calcCheckSum( oilStored, crc);
+	crc = calcCheckSum( goldStored, crc);
+
+	return crc;
 }
 
 void cSubBase::setGold (int value)
@@ -1250,6 +1279,14 @@ cSubBase* cBase::checkNeighbour (const cPosition& position, const cBuilding& bui
 		return b->subBase;
 	}
 	return nullptr;
+}
+
+uint32_t cBase::getChecksum(uint32_t crc) const
+{
+	for (const auto& sb : SubBases)
+		crc = calcCheckSum(*sb, crc);
+
+	return crc;
 }
 
 void cBase::addBuilding (cBuilding* building, const cMap& map)

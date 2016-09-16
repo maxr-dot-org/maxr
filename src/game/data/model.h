@@ -53,7 +53,7 @@ public:
 	unsigned int getGameTime() const;
 	mutable cSignal<void()> gameTimeChanged;
 
-	uint32_t calcChecksum() const;
+	uint32_t getChecksum() const;
 
 	void setUnitsData(std::shared_ptr<cUnitsData> unitsData);
 	std::shared_ptr<const cUnitsData> getUnitsData() const { return unitsData; };

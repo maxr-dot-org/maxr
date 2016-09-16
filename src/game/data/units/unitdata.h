@@ -52,6 +52,8 @@ struct sID
 	bool less_vehicleFirst(const sID& ID) const;
 	bool less_buildingFirst(const sID& ID) const;
 
+	uint32_t getChecksum(uint32_t crc) const;
+
 	template<typename T>
 	void serialize(T& archive)
 	{
@@ -73,6 +75,8 @@ public:
 	std::string getDescripton() const;
 	void setName(std::string name_){ name = name_; }
 	void setDescription(std::string text) { description = text; }
+
+	uint32_t getChecksum(uint32_t crc) const;
 
 	// Main
 	sID ID;
@@ -306,6 +310,8 @@ public:
 	int getArmor() const;
 	void setArmor(int value);
 
+	uint32_t getChecksum(uint32_t crc) const;
+
 	mutable cSignal<void()> buildCostsChanged;
 	mutable cSignal<void()> versionChanged;
 	mutable cSignal<void()> speedChanged;
@@ -364,16 +370,21 @@ private:
 
 	int damage;
 	int armor;
+
+	mutable uint32_t crcCache;
+	mutable bool crcValid;
 };
 
 class cUnitsData
 {
 public:
+	cUnitsData();
+
 	void initializeIDData();
 	void initializeClanUnitData();
 
-	void addData(const cDynamicUnitData& data) { dynamicUnitData.push_back(data); }
-	void addData(const cStaticUnitData& data)  { staticUnitData.push_back(data); }
+	void addData(const cDynamicUnitData& data) { crcValid = false; dynamicUnitData.push_back(data); }
+	void addData(const cStaticUnitData& data)  { crcValid = false; staticUnitData.push_back(data); }
 
 	bool isValidId(const sID& id) const;
 	size_t getNrOfClans() const;
@@ -387,6 +398,7 @@ public:
 	const std::vector<cDynamicUnitData>& getDynamicUnitsData(int clan = -1) const;
 	const std::vector<cStaticUnitData>& getStaticUnitsData() const;
 
+	uint32_t getChecksum(uint32_t crc) const;
 
 	const cStaticUnitData& getConstructorData() const { return getStaticUnitData(constructorID); }
 	const cStaticUnitData& getEngineerData() const { return getStaticUnitData(engineerID); }
@@ -396,15 +408,22 @@ public:
 	const cStaticUnitData& getLandMineData() const { return getStaticUnitData(specialIDLandMine); }
 	const cStaticUnitData& getSeaMineData() const { return getStaticUnitData(specialIDSeaMine); }
 
-	sID constructorID;
-	sID engineerID;
-	sID surveyorID;
-	sID specialIDLandMine;
-	sID specialIDSeaMine;
-	sID specialIDMine;
-	sID specialIDSmallGen;
-	sID specialIDConnector;
-	sID specialIDSmallBeton;
+	sID getConstructorID() const { return constructorID; };
+	sID getEngineerID() const { return engineerID; };
+	sID getSurveyorID() const { return surveyorID; };
+	sID getSpecialIDLandMine() const { return specialIDLandMine; };
+	sID getSpecialIDSeaMine() const { return specialIDSeaMine; };
+	sID getSpecialIDMine() const { return specialIDMine; };
+	sID getSpecialIDSmallGen() const { return specialIDSmallGen; };
+	sID getSpecialIDConnector() const { return specialIDConnector; };
+	sID getSpecialIDSmallBeton() const { return specialIDSmallBeton; };
+
+	void setSpecialIDLandMine(sID id) { specialIDLandMine = id; crcValid = false; };
+	void setSpecialIDSeaMine(sID id)  { specialIDSeaMine = id; crcValid = false; };
+	void setSpecialIDMine(sID id) { specialIDMine = id; crcValid = false; };
+	void setSpecialIDSmallGen(sID id) { specialIDSmallGen = id; crcValid = false; };
+	void setSpecialIDConnector(sID id) { specialIDConnector = id; crcValid = false; };
+	void setSpecialIDSmallBeton(sID id) { specialIDSmallBeton = id; crcValid = false; };
 
 	template <typename T>
 	void serialize(T& archive)
@@ -433,6 +452,16 @@ public:
 private:
 	int getUnitIndexBy(sID id) const;
 
+	sID constructorID;
+	sID engineerID;
+	sID surveyorID;
+	sID specialIDLandMine;
+	sID specialIDSeaMine;
+	sID specialIDMine;
+	sID specialIDSmallGen;
+	sID specialIDConnector;
+	sID specialIDSmallBeton;
+
 	// the static unit data
 	std::vector<cStaticUnitData> staticUnitData;
 
@@ -442,6 +471,10 @@ private:
 	// the dynamic unit data. Contains the modified versions for the clans
 	std::vector<std::vector<cDynamicUnitData> > clanDynamicUnitData;
 
+	// unitdata does not change during the game. 
+	// So caching the checksum saves a lot cpu ressources.
+	mutable uint32_t crcCache;
+	mutable bool crcValid;
 };
 
 #endif // game_data_units_unitdataH

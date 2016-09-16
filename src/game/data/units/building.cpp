@@ -42,6 +42,7 @@
 #include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffectvoice.h"
 #include "game/logic/action/actionstopwork.h"
+#include "utility/crc.h"
 
 using namespace std;
 
@@ -109,6 +110,15 @@ void cBuildListItem::setRemainingMetal (int value)
 {
 	std::swap (remainingMetal, value);
 	if (value != remainingMetal) remainingMetalChanged();
+}
+
+//--------------------------------------------------------------------------
+uint32_t cBuildListItem::getChecksum(uint32_t crc) const
+{
+	crc = calcCheckSum(type, crc);
+	crc = calcCheckSum(remainingMetal, crc);
+
+	return crc;
 }
 
 //--------------------------------------------------------------------------
@@ -1441,6 +1451,37 @@ void cBuilding::setResearchArea (cResearch::ResearchArea area)
 cResearch::ResearchArea cBuilding::getResearchArea() const
 {
 	return researchArea;
+}
+
+uint32_t cBuilding::getChecksum(uint32_t crc) const
+{
+	crc = cUnit::getChecksum(crc);
+	crc = calcCheckSum(RubbleTyp, crc);
+	crc = calcCheckSum(RubbleValue, crc);
+	crc = calcCheckSum(BaseN, crc);
+	crc = calcCheckSum(BaseE, crc);
+	crc = calcCheckSum(BaseS, crc);
+	crc = calcCheckSum(BaseW, crc);
+	crc = calcCheckSum(BaseBN, crc);
+	crc = calcCheckSum(BaseBE, crc);
+	crc = calcCheckSum(BaseBS, crc);
+	crc = calcCheckSum(BaseBW, crc);
+	crc = calcCheckSum(metalProd, crc);
+	crc = calcCheckSum(oilProd, crc);
+	crc = calcCheckSum(goldProd, crc);
+	crc = calcCheckSum(wasWorking, crc);
+	crc = calcCheckSum(points, crc);
+	crc = calcCheckSum(isWorking, crc);
+	crc = calcCheckSum(buildSpeed, crc);
+	crc = calcCheckSum(metalPerRound, crc);
+	crc = calcCheckSum(repeatBuild, crc);
+	crc = calcCheckSum(maxMetalProd, crc);
+	crc = calcCheckSum(maxOilProd, crc);
+	crc = calcCheckSum(maxGoldProd, crc);
+	crc = calcCheckSum(researchArea, crc);
+	crc = calcCheckSum(buildList, crc);
+
+	return crc;
 }
 
 //-----------------------------------------------------------------------------

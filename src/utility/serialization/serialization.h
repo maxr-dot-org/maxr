@@ -305,6 +305,7 @@ namespace serialization
 	{
 		uint32_t length;
 		archive >> length;
+		value.clear();
 		value.reserve(length);
 		for (size_t i = 0; i < length; i++)
 		{

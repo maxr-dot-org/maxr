@@ -19,6 +19,7 @@
 
 #include "game/data/player/playerbasicdata.h"
 #include "network.h"
+#include "utility/crc.h"
 
 //------------------------------------------------------------------------------
 cPlayerBasicData::cPlayerBasicData()
@@ -135,4 +136,15 @@ void cPlayerBasicData::setReady (bool ready_)
 bool cPlayerBasicData::isReady() const
 {
 	return ready;
+}
+
+//------------------------------------------------------------------------------
+uint32_t cPlayerBasicData::getChecksum(uint32_t crc) const
+{
+	crc = calcCheckSum(name, crc);
+	crc = calcCheckSum(color, crc);
+	crc = calcCheckSum(Nr, crc);
+	crc = calcCheckSum(ready, crc);
+
+	return crc;
 }

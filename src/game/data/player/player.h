@@ -37,6 +37,7 @@
 #include "utility/flatset.h"
 #include "game/data/player/playerbasicdata.h"
 #include "utility/serialization/serialization.h"
+#include "utility/arraycrc.h"
 
 class cHud;
 class cMapField;
@@ -149,7 +150,7 @@ public:
 	bool getIsRemovedFromGame() const;
 	void setIsRemovedFromGame (bool value);
 
-	void exploreResource (const cPosition& pos) { ResourceMap[getOffset (pos)] = 1; }
+	void exploreResource (const cPosition& pos) { ResourceMap.set(getOffset (pos), 1); }
 	bool hasResourceExplored (const cPosition& pos) const { return ResourceMap[getOffset (pos)] != 0; }
 	bool hasSentriesAir (const cPosition& pos) const { return SentriesMapAir[getOffset (pos)] != 0; }
 	bool hasSentriesGround (const cPosition& pos) const { return SentriesMapGround[getOffset (pos)] != 0; }
@@ -185,6 +186,8 @@ public:
 
 	void refreshResearchCentersWorkingOnArea();
 	void refreshBase(const cMap& map);
+
+	uint32_t getChecksum(uint32_t crc) const;
 
 	mutable cSignal<void ()> nameChanged;
 	mutable cSignal<void ()> colorChanged;
@@ -287,7 +290,7 @@ private:
 	* @param iRadius radius of the circle
 	* @param map map were to store the data of the circle
 	*/
-	void drawSpecialCircle (const cPosition& position, int iRadius, std::vector<char>& map, const cPosition& mapsize);
+	void drawSpecialCircle (const cPosition& position, int iRadius, cArrayCrc<uint8_t>& map, const cPosition& mapsize);
 	/**
 	* draws a big circle on the map for the fog
 	* @author alzi alias DoctorDeath
@@ -296,7 +299,7 @@ private:
 	* @param iRadius radius of the circle
 	* @param map map were to store the data of the circle
 	*/
-	void drawSpecialCircleBig (const cPosition& position, int iRadius, std::vector<char>& map, const cPosition& mapsize);
+	void drawSpecialCircleBig (const cPosition& position, int iRadius, cArrayCrc<uint8_t>& map, const cPosition& mapsize);
 
 	cBuilding* getNextBuilding (cBuilding* start) const;
 	cBuilding* getNextMiningStation (cBuilding* start) const;
@@ -320,13 +323,14 @@ private:
 	cPosition landingPos;
 	cPosition mapSize; // Width and Height of the map.
 
-	std::vector<char> ScanMap;            // seen Map tile.
-	std::vector<char> ResourceMap;        // Map with explored resources.
-	std::vector<char> SentriesMapAir;     /**< the covered air area */
-	std::vector<char> SentriesMapGround;  /**< the covered ground area */
-	std::vector<char> DetectLandMap;      // Map mit den Gebieten, die an Land gesehen werden kˆnnen.
-	std::vector<char> DetectSeaMap;       // Map mit den Gebieten, die im Wasser gesehen werden kˆnnen.
-	std::vector<char> DetectMinesMap;     /** the area where the player can detect mines */
+	// using a special array with cached checksum. This speeds up the calculation of the model checksum.
+	cArrayCrc<uint8_t> ScanMap;            // seen Map tiles.
+	cArrayCrc<uint8_t> ResourceMap;        // Map with explored resources.
+	cArrayCrc<uint8_t> SentriesMapAir;     /**< the covered air area */
+	cArrayCrc<uint8_t> SentriesMapGround;  /**< the covered ground area */
+	cArrayCrc<uint8_t> DetectLandMap;      // Map mit den Gebieten, die an Land gesehen werden kˆnnen.
+	cArrayCrc<uint8_t> DetectSeaMap;       // Map mit den Gebieten, die im Wasser gesehen werden kˆnnen.
+	cArrayCrc<uint8_t> DetectMinesMap;     /** the area where the player can detect mines */
 public:
 	PointsHistory pointsHistory; // history of player's total score (from eco-spheres) for graph
 	bool isDefeated;        // true if the player has been defeated

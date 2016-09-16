@@ -124,6 +124,8 @@ public:
 
 	const std::vector<cBuilding*>& getBuildings() const;
 
+	uint32_t getChecksum(uint32_t crc) const;
+
 	mutable cSignal<void ()> destroyed;
 
 	mutable cSignal<void ()> metalChanged;
@@ -265,6 +267,8 @@ public:
 	void reset();
 
 	cSubBase* checkNeighbour (const cPosition& position, const cBuilding& Building, const cMap& map);
+
+	uint32_t getChecksum(uint32_t crc) const;
 
 	// report sources for the player:
 	mutable cSignal<void(int resourceType, int amount, bool increase)> forcedRessouceProductionChance;

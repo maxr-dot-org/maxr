@@ -74,11 +74,5 @@ std::string getUserScreenshotsDir();
 std::string getUserLogDir();
 void copyFile (const std::string& source, const std::string& dest);
 
-/**
-* @author pagra
-* @return a checksum of all bytes in the given data chunk
-*/
-uint32_t calcCheckSum (const char* data, size_t dataSize, uint32_t checksum = 0);
-uint32_t calcCheckSum (uint32_t data, uint32_t checksum);
 
 #endif // utility_filesH

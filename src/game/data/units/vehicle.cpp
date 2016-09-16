@@ -45,6 +45,7 @@
 #include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffectvoice.h"
 #include "utility/random.h"
+#include "utility/crc.h"
 
 using namespace std;
 
@@ -1109,12 +1110,12 @@ bool cVehicle::layMine (cServer& server)
 	if (staticData->factorSea > 0 && staticData->factorGround == 0)
 	{
 		if (!map.possiblePlaceBuilding (server.model.getUnitsData()->getSeaMineData(), getPosition(), this)) return false;
-		server.addBuilding(getPosition(), server.model.getUnitsData()->specialIDSeaMine, getOwner(), false);
+		server.addBuilding(getPosition(), server.model.getUnitsData()->getSpecialIDSeaMine(), getOwner(), false);
 	}
 	else
 	{
 		if (!map.possiblePlaceBuilding(server.model.getUnitsData()->getLandMineData(), getPosition(), this)) return false;
-		server.addBuilding(getPosition(), server.model.getUnitsData()->specialIDLandMine, getOwner(), false);
+		server.addBuilding(getPosition(), server.model.getUnitsData()->getSpecialIDLandMine(), getOwner(), false);
 	}
 	setStoredResources (getStoredResources() - 1);
 
@@ -1572,6 +1573,39 @@ cVehicle* cVehicle::getContainerVehicle()
 	}
 
 	return nullptr;
+}
+
+uint32_t cVehicle::getChecksum(uint32_t crc) const
+{
+	//cServerMoveJob* ServerMoveJob;
+	crc = cUnit::getChecksum(crc);
+	crc = calcCheckSum(hasAutoMoveJob, crc);
+	crc = calcCheckSum(MoveJobActive, crc);
+	crc = calcCheckSum(bandPosition, crc);
+	crc = calcCheckSum(buildBigSavedPosition, crc);
+	crc = calcCheckSum(BuildPath, crc);
+	crc = calcCheckSum(WalkFrame, crc);
+	for ( const auto& p : detectedInThisTurnByPlayerList)
+		crc = calcCheckSum(p->getId(), crc);
+	//cClientMoveJob* clientMoveJob;
+	//std::shared_ptr<cAutoMJob> autoMoveJob;
+	crc = calcCheckSum(tileMovementOffset, crc);
+	crc = calcCheckSum(loaded, crc);
+	crc = calcCheckSum(moving, crc);
+	crc = calcCheckSum(isBuilding, crc);
+	crc = calcCheckSum(buildingTyp, crc);
+	crc = calcCheckSum(buildCosts, crc);
+	crc = calcCheckSum(buildTurns, crc);
+	crc = calcCheckSum(buildTurnsStart, crc);
+	crc = calcCheckSum(buildCostsStart, crc);
+	crc = calcCheckSum(isClearing, crc);
+	crc = calcCheckSum(clearingTurns, crc);
+	crc = calcCheckSum(layMines, crc);
+	crc = calcCheckSum(clearMines, crc);
+	crc = calcCheckSum(flightHeight, crc);
+	crc = calcCheckSum(commandoRank, crc);
+	
+	return crc;
 }
 
 //-----------------------------------------------------------------------------

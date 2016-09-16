@@ -29,6 +29,7 @@
 #include "game/data/units/vehicle.h"
 #include "game/data/report/savedreport.h"
 #include "game/logic/turnclock.h"
+#include "utility/crc.h"
 
 using namespace std;
 
@@ -114,24 +115,17 @@ void cPlayer::initMaps (cMap& map)
 	mapSize = map.getSize();
 	const int size = mapSize.x() * mapSize.y();
 	// Scanner-Map:
-	ScanMap.clear();
 	ScanMap.resize (size, 0);
 	// Ressource-Map
-	ResourceMap.clear();
 	ResourceMap.resize (size, 0);
 
 	// Sentry-Map:
-	SentriesMapAir.clear();
 	SentriesMapAir.resize (size, 0);
-	SentriesMapGround.clear();
 	SentriesMapGround.resize (size, 0);
 
 	// Detect-Maps:
-	DetectLandMap.clear();
 	DetectLandMap.resize (size, 0);
-	DetectSeaMap.clear();
 	DetectSeaMap.resize (size, 0);
-	DetectMinesMap.clear();
 	DetectMinesMap.resize (size, 0);
 }
 
@@ -157,7 +151,7 @@ cVehicle& cPlayer::addNewVehicle (const cPosition& position, const cStaticUnitDa
 		const int maxy = std::min (vehicle->getPosition().y() + 1, mapSize.y() - 1);
 		for (int x = minx; x <= maxx; ++x)
 			for (int y = miny; y <= maxy; ++y)
-				DetectMinesMap[x + mapSize.x() * y] = 1;
+				DetectMinesMap.set(x + mapSize.x() * y, 1);
 	}
 
 	auto result = vehicles.insert (std::move (vehicle));
@@ -282,7 +276,7 @@ void cPlayer::deleteSentry (cUnit& u)
 //------------------------------------------------------------------------------
 void cPlayer::refreshSentryAir()
 {
-	std::fill (SentriesMapAir.begin(), SentriesMapAir.end(), 0);
+	SentriesMapAir.fill(0);
 
 	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
 	{
@@ -306,7 +300,7 @@ void cPlayer::refreshSentryAir()
 //------------------------------------------------------------------------------
 void cPlayer::refreshSentryGround()
 {
-	std::fill (SentriesMapGround.begin(), SentriesMapGround.end(), 0);
+	SentriesMapGround.fill(0);
 
 	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
 	{
@@ -332,10 +326,10 @@ void cPlayer::refreshSentryGround()
 void cPlayer::doScan()
 {
 	if (isDefeated) return;
-	std::fill (ScanMap.begin(), ScanMap.end(), 0);
-	std::fill (DetectLandMap.begin(), DetectLandMap.end(), 0);
-	std::fill (DetectSeaMap.begin(), DetectSeaMap.end(), 0);
-	std::fill (DetectMinesMap.begin(), DetectMinesMap.end(), 0);
+	ScanMap.fill(0);
+	DetectLandMap.fill(0);
+	DetectSeaMap.fill(0);
+	DetectMinesMap.fill(0);
 
 	// iterate the vehicle list
 	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
@@ -344,7 +338,7 @@ void cPlayer::doScan()
 		if (vp->isUnitLoaded()) continue;
 
 		if (vp->isDisabled())
-			ScanMap[getOffset (vp->getPosition())] = 1;
+			ScanMap.set(getOffset (vp->getPosition()), 1);
 		else
 		{
 			if (vp->getIsBig())
@@ -365,7 +359,7 @@ void cPlayer::doScan()
 				{
 					for (int y = miny; y <= maxy; ++y)
 					{
-						DetectMinesMap[x + mapSize.x() * y] = 1;
+						DetectMinesMap.set(x + mapSize.x() * y, 1);
 					}
 				}
 			}
@@ -377,7 +371,7 @@ void cPlayer::doScan()
 	{
 		const auto& bp = *i;
 		if (bp->isDisabled())
-			ScanMap[getOffset (bp->getPosition())] = 1;
+			ScanMap.set(getOffset (bp->getPosition()), 1);
 		else if (bp->data.getScan())
 		{
 			if (bp->getIsBig())
@@ -390,19 +384,19 @@ void cPlayer::doScan()
 
 void cPlayer::revealMap()
 {
-	std::fill (ScanMap.begin(), ScanMap.end(), 1);
+	ScanMap.fill(1);
 }
 
 void cPlayer::revealPosition (const cPosition& position)
 {
 	if (position.x() < 0 || position.x() >= mapSize.x() || position.y() < 0 || position.y() >= mapSize.y()) return;
 
-	ScanMap[getOffset (position)] = 1;
+	ScanMap.set(getOffset (position), 1);
 }
 
 void cPlayer::revealResource()
 {
-	std::fill (ResourceMap.begin(), ResourceMap.end(), 1);
+	ResourceMap.fill(1);
 }
 
 bool cPlayer::canSeeAnyAreaUnder (const cUnit& unit) const
@@ -857,6 +851,40 @@ void cPlayer::refreshBase(const cMap& map)
 	}
 }
 
+uint32_t cPlayer::getChecksum(uint32_t crc) const
+{
+	crc = calcCheckSum(splayer, crc);
+	crc = calcCheckSum(dynamicUnitsData, crc);
+	crc = calcCheckSum(base, crc);
+	for (const auto& v : vehicles)
+		crc = calcCheckSum(*v, crc);
+	for (const auto& b : buildings)
+		crc = calcCheckSum(*b, crc);
+	crc = calcCheckSum(landingPos, crc);
+	crc = calcCheckSum(mapSize, crc);
+	crc = calcCheckSum(ScanMap, crc);
+	crc = calcCheckSum(ResourceMap, crc);
+	crc = calcCheckSum(SentriesMapAir, crc);
+	crc = calcCheckSum(SentriesMapGround, crc);
+	crc = calcCheckSum(DetectLandMap, crc);
+	crc = calcCheckSum(DetectSeaMap, crc);
+	crc = calcCheckSum(DetectMinesMap, crc);
+	crc = calcCheckSum(pointsHistory, crc);
+	crc = calcCheckSum(isDefeated, crc);
+	crc = calcCheckSum(numEcos, crc);
+	crc = calcCheckSum(clan, crc);
+	crc = calcCheckSum(credits, crc);
+	crc = calcCheckSum(currentTurnResearchAreasFinished, crc);
+	crc = calcCheckSum(hasFinishedTurn, crc);
+	crc = calcCheckSum(isRemovedFromGame, crc);
+	crc = calcCheckSum(researchState, crc);
+	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
+		crc = calcCheckSum(researchCentersWorkingOnArea[i], crc);
+	crc = calcCheckSum(researchCentersWorkingTotal, crc);
+
+	return crc;
+}
+
 //------------------------------------------------------------------------------
 bool cPlayer::mayHaveOffensiveUnit() const
 {
@@ -953,7 +981,7 @@ bool cPlayer::canSeeAt (const cPosition& position) const
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::drawSpecialCircle (const cPosition& position, int iRadius, std::vector<char>& map, const cPosition& mapsize)
+void cPlayer::drawSpecialCircle (const cPosition& position, int iRadius, cArrayCrc<uint8_t>& map, const cPosition& mapsize)
 {
 	const float PI_ON_180 = 0.017453f;
 	const float PI_ON_4 = PI_ON_180 * 45;
@@ -976,9 +1004,9 @@ void cPlayer::drawSpecialCircle (const cPosition& position, int iRadius, std::ve
 			if (k < 0) continue;
 			if (k >= mapsize.x()) break;
 			if (position.y() + ry >= 0 && position.y() + ry < mapsize.y())
-				map[k + (position.y() + ry) * mapsize.x()] |= 1;
+				map.set(k + (position.y() + ry) * mapsize.x(), 1);
 			if (position.y() - ry >= 0 && position.y() - ry < mapsize.y())
-				map[k + (position.y() - ry) * mapsize.x()] |= 1;
+				map.set(k + (position.y() - ry) * mapsize.x(), 1);
 		}
 
 		x1 = ry + position.x();
@@ -988,15 +1016,15 @@ void cPlayer::drawSpecialCircle (const cPosition& position, int iRadius, std::ve
 			if (k < 0) continue;
 			if (k >= mapsize.x()) break;
 			if (position.y() + rx >= 0 && position.y() + rx < mapsize.y())
-				map[k + (position.y() + rx) *mapsize.x()] |= 1;
+				map.set(k + (position.y() + rx) *mapsize.x(), 1);
 			if (position.y() - rx >= 0 && position.y() - rx < mapsize.y())
-				map[k + (position.y() - rx) *mapsize.x()] |= 1;
+				map.set(k + (position.y() - rx) *mapsize.x(), 1);
 		}
 	}
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::drawSpecialCircleBig (const cPosition& position, int iRadius, std::vector<char>& map, const cPosition& mapsize)
+void cPlayer::drawSpecialCircleBig (const cPosition& position, int iRadius, cArrayCrc<uint8_t>& map, const cPosition& mapsize)
 {
 	const float PI_ON_180 = 0.017453f;
 	const float PI_ON_4 = PI_ON_180 * 45;
@@ -1019,14 +1047,14 @@ void cPlayer::drawSpecialCircleBig (const cPosition& position, int iRadius, std:
 			if (k < 0) continue;
 			if (k >= mapsize.x()) break;
 			if (position.y() + ry >= 0 && position.y() + ry < mapsize.y())
-				map[k + (position.y() + ry) *mapsize.x()] |= 1;
+				map.set(k + (position.y() + ry) *mapsize.x(), 1);
 			if (position.y() - ry >= 0 && position.y() - ry < mapsize.y())
-				map[k + (position.y() - ry) *mapsize.x()] |= 1;
+				map.set(k + (position.y() - ry) *mapsize.x(), 1);
 
 			if (position.y() + ry + 1 >= 0 && position.y() + ry + 1 < mapsize.y())
-				map[k + (position.y() + ry + 1) *mapsize.x()] |= 1;
+				map.set(k + (position.y() + ry + 1) *mapsize.x(), 1);
 			if (position.y() - ry + 1 >= 0 && position.y() - ry + 1 < mapsize.y())
-				map[k + (position.y() - ry + 1) *mapsize.x()] |= 1;
+				map.set(k + (position.y() - ry + 1) *mapsize.x(), 1);
 		}
 
 		x1 = ry + position.x();
@@ -1036,14 +1064,14 @@ void cPlayer::drawSpecialCircleBig (const cPosition& position, int iRadius, std:
 			if (k < 0) continue;
 			if (k >= mapsize.x()) break;
 			if (position.y() + rx >= 0 && position.y() + rx < mapsize.y())
-				map[k + (position.y() + rx) *mapsize.x()] |= 1;
+				map.set(k + (position.y() + rx) *mapsize.x(), 1);
 			if (position.y() - rx >= 0 && position.y() - rx < mapsize.y())
-				map[k + (position.y() - rx) *mapsize.x()] |= 1;
+				map.set(k + (position.y() - rx) *mapsize.x(), 1);
 
 			if (position.y() + rx + 1 >= 0 && position.y() + rx + 1 < mapsize.y())
-				map[k + (position.y() + rx + 1) *mapsize.x()] |= 1;
+				map.set(k + (position.y() + rx + 1) *mapsize.x(), 1);
 			if (position.y() - rx + 1 >= 0 && position.y() - rx + 1 < mapsize.y())
-				map[k + (position.y() - rx + 1) *mapsize.x()] |= 1;
+				map.set(k + (position.y() - rx + 1) *mapsize.x(), 1);
 		}
 	}
 }

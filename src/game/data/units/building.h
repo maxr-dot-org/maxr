@@ -113,6 +113,8 @@ public:
 	int getRemainingMetal() const;
 	void setRemainingMetal (int value);
 
+	uint32_t getChecksum(uint32_t crc) const;
+
 	cSignal<void ()> typeChanged;
 	cSignal<void ()> remainingMetalChanged;
 
@@ -252,6 +254,8 @@ public:
 	void setResearchArea (cResearch::ResearchArea area);
 	cResearch::ResearchArea getResearchArea() const;
 
+	virtual uint32_t getChecksum(uint32_t crc) const;
+
 	cSignal<void ()> buildListChanged;
 	cSignal<void ()> buildListFirstItemDataChanged;
 	cSignal<void ()> researchAreaChanged;
@@ -284,10 +288,6 @@ public:
 		archive & NVP(buildSpeed);
 		archive & NVP(metalPerRound);
 		archive & NVP(repeatBuild);
-		archive & NVP(DamageFXPointX);
-		archive & NVP(DamageFXPointY);
-		archive & NVP(DamageFXPointX2);
-		archive & NVP(DamageFXPointY2);
 		archive & NVP(wasWorking);
 		archive & NVP(points);
 		archive & NVP(isWorking);

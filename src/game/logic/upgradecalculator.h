@@ -301,6 +301,8 @@ public:
 	int getUpgradeCalculatorUpgradeType (int researchArea) const;
 	int getResearchArea (int upgradeCalculatorType) const;
 
+	uint32_t getChecksum(uint32_t crc) const;
+
 	mutable cSignal<void (ResearchArea)> currentResearchLevelChanged;
 	mutable cSignal<void (ResearchArea)> currentResearchPointsChanged;
 	mutable cSignal<void (ResearchArea)> neededResearchPointsChanged;

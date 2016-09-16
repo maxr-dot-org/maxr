@@ -32,6 +32,7 @@
 
 #include "utility/position.h"
 #include "utility/box.h"
+#include "utility/crc.h"
 
 using namespace std;
 
@@ -194,6 +195,34 @@ void cUnit::setIsBig(bool value)
 {
 	std::swap(isBig, value);
 	if (isBig != value) isBigChanged();
+}
+
+uint32_t cUnit::getChecksum(uint32_t crc) const
+{
+	crc = calcCheckSum(data, crc);
+	crc = calcCheckSum(iID, crc);
+	crc = calcCheckSum(dir, crc);
+	for (const auto& u : storedUnits)
+		crc = calcCheckSum(u->getId(), crc);
+	for (const auto& p : seenByPlayerList)
+		crc = calcCheckSum(p->getId(), crc);
+	for (const auto& p : detectedByPlayerList)
+		crc = calcCheckSum(p->getId(), crc); 
+	//cJob* job
+	crc = calcCheckSum(isBig, crc);
+	crc = calcCheckSum(owner->getId(), crc);
+	crc = calcCheckSum(position, crc);
+	crc = calcCheckSum(customName, crc);
+	crc = calcCheckSum(turnsDisabled, crc);
+	crc = calcCheckSum(sentryActive, crc);
+	crc = calcCheckSum(manualFireActive, crc);
+	crc = calcCheckSum(attacking, crc);
+	crc = calcCheckSum(beeingAttacked, crc);
+	crc = calcCheckSum(markedAsDone, crc);
+	crc = calcCheckSum(beeingAttacked, crc);
+	crc = calcCheckSum(storageResCur, crc);
+
+	return crc;
 }
 
 //------------------------------------------------------------------------------
