@@ -186,6 +186,7 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 
 			auto reports = playerReports[client->getActivePlayer().getId()];
 			message.reports = reports;
+			message.savedPositions = savedPositions;
 
 			if (client == activeClient.get())
 			{
@@ -202,10 +203,11 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 		allClientsSignalConnectionManager.connect (client->guiSaveInfoReceived, [this, client] (const cNetMessageGUISaveInfo & guiInfo)
 		{
 			if (guiInfo.playerNr != client->getActivePlayer().getId()) return;
+			
+			savedPositions = guiInfo.savedPositions;
 
 			const cPosition& mapPosition = guiInfo.guiState.getMapPosition();
-			if (mapPosition.x() < 0 || mapPosition.x() > client->getModel().getMap()->getSize().x()) return;
-			if (mapPosition.y() < 0 || mapPosition.y() > client->getModel().getMap()->getSize().y()) return;
+			if (!client->getModel().getMap()->isValidPosition(mapPosition)) return;
 
 			playerGameGuiStates[guiInfo.playerNr] = guiInfo.guiState;
 			playerReports[guiInfo.playerNr] = guiInfo.reports;

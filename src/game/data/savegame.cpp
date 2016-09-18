@@ -26,7 +26,6 @@
 #include "gamesettings.h"
 #include "maxrversion.h"
 #include "utility/serialization/serialization.h"
-//#include "utility/serialization/binaryarchive.h"
 #include "utility/serialization/xmlarchive.h"
 #include "utility/log.h"
 #include "extendedtinyxml.h"
@@ -109,6 +108,7 @@ void cSavegame::saveGuiInfo(const cNetMessageGUISaveInfo& guiInfo)
 	{
 		archive << serialization::makeNvp("report", *report);
 	}
+	archive << serialization::makeNvp("savedPositions", guiInfo.savedPositions);
 	archive.closeChild();
 
 	tinyxml2::XMLError result = xmlDocument.SaveFile(getFileName(loadedSlot).c_str());
@@ -293,6 +293,7 @@ void cSavegame::loadGuiInfo(const cServer2* server, int slot)
 		{
 			report = cSavedReport::createFrom(archive, "report");
 		}
+		archive >> serialization::makeNvp("savedPositions", guiInfo.savedPositions);
 
 		server->sendMessageToClients(guiInfo, guiInfo.playerNr);
 

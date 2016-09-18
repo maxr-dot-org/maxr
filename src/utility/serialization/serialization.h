@@ -23,6 +23,7 @@
 #include <string>
 #include <vector>
 #include <chrono>
+#include <array>
 
 #include "game/logic/jobs.h"
 
@@ -253,6 +254,15 @@ namespace serialization
 	//
 	// free serialization functions (for e. g. STL types, pointers)
 	//
+	//-------------------------------------------------------------------------
+	template<typename A, typename T, size_t SIZE>
+	void serialize(A& archive, std::array<T, SIZE>& value)
+	{
+		for (size_t i = 0; i < SIZE; i++)
+		{
+			archive & makeNvp("item", value[i]);
+		}
+	}
 	//-------------------------------------------------------------------------
 	template<typename A, typename T1, typename T2>
 	void serialize(A& archive, std::pair<T1, T2>& value)
