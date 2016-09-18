@@ -218,20 +218,23 @@ void cXmlArchiveOut::popValue(serialization::sNameValuePair<bool>& nvp)
 //------------------------------------------------------------------------------
 void cXmlArchiveOut::popValue(serialization::sNameValuePair<char>& nvp)
 {
-	auto tmp = serialization::makeNvp(nvp.name, (int)nvp.value);
-	getFromCurrentElement(tmp);
+	int tmp;
+	getFromCurrentElement(serialization::makeNvp(nvp.name, tmp));
+	nvp.value = tmp;
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveOut::popValue(serialization::sNameValuePair<signed char>& nvp)
 {
-	auto tmp = serialization::makeNvp(nvp.name, (int)nvp.value);
-	getFromCurrentElement(tmp);
+	int tmp;
+	getFromCurrentElement(serialization::makeNvp(nvp.name, tmp));
+	nvp.value = tmp;
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveOut::popValue(serialization::sNameValuePair<unsigned char>& nvp)
 {
-	auto tmp = serialization::makeNvp(nvp.name, (int)nvp.value);
-	getFromCurrentElement(tmp);
+	int tmp;
+	getFromCurrentElement(serialization::makeNvp(nvp.name, tmp));
+	nvp.value = tmp;
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveOut::popValue(serialization::sNameValuePair<signed short>& nvp)

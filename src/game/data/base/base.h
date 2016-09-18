@@ -246,7 +246,6 @@ public:
 	/**
 	* deletes a building from the base and updates the subbase structures
 	* @param building the building, that is deleted to the base
-	* @param server when not null, the resulting subbase values are sent to the client
 	* @author eiko
 	*/
 	void deleteBuilding (cBuilding* building, const cMap& map);

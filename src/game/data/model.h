@@ -49,6 +49,9 @@ public:
 
 	cCrossPlattformRandom randomGenerator;
 
+	unsigned int getGameId() const { return gameId; }
+	void setGameId(unsigned int val) { gameId = val; }
+
 	void advanceGameTime();
 	unsigned int getGameTime() const;
 	mutable cSignal<void()> gameTimeChanged;
@@ -86,6 +89,7 @@ public:
 	template<typename T>
 	void save(T& archive)
 	{
+		archive & NVP(gameId);
 		archive & NVP(gameTime);
 		archive & serialization::makeNvp("gameSettings", *gameSettings);
 		archive & serialization::makeNvp("map", *map);
@@ -102,6 +106,7 @@ public:
 	template<typename T>
 	void load(T& archive)
 	{
+		archive & NVP(gameId);
 		archive & NVP(gameTime);
 
 		assert(gameSettings != nullptr);
@@ -144,9 +149,10 @@ public:
 		archive & NVP(nextUnitId);
 	}
 	SERIALIZATION_SPLIT_MEMBER();
-
 private:
 	void refreshMapPointer();
+
+	unsigned int gameId; //this id can be used to check, which log files, and save file belong to the same game.
 
 	unsigned int gameTime;
 

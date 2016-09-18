@@ -204,10 +204,16 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 		{
 			if (guiInfo.playerNr != client->getActivePlayer().getId()) return;
 			
+			const cMap& map = *client->getModel().getMap();
+
+			for (size_t i = 0; i < savedPositions.size(); i++)
+			{
+				if (savedPositions[i].first && !map.isValidPosition(guiInfo.savedPositions[i].second)) return;
+			}
 			savedPositions = guiInfo.savedPositions;
 
 			const cPosition& mapPosition = guiInfo.guiState.getMapPosition();
-			if (!client->getModel().getMap()->isValidPosition(mapPosition)) return;
+			if (!map.isValidPosition(mapPosition)) return;
 
 			playerGameGuiStates[guiInfo.playerNr] = guiInfo.guiState;
 			playerReports[guiInfo.playerNr] = guiInfo.reports;

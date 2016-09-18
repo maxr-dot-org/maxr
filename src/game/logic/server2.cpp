@@ -28,6 +28,7 @@
 #include "utility/random.h"
 #include "game/data/savegame.h"
 #include "netmessage2.h"
+#include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
 cServer2::cServer2() :
@@ -37,7 +38,7 @@ cServer2::cServer2() :
 	serverThread(nullptr),
 	bExit(false)
 {
-
+	model.setGameId(random(UINT32_MAX));
 }
 
 //------------------------------------------------------------------------------
@@ -94,6 +95,8 @@ void cServer2::saveGameState(int saveGameNumber, const std::string& saveName) co
 		SDL_WaitThread(serverThread, nullptr);
 		serverThread = nullptr;
 	}
+
+	Log.write(" Server: writing gamestate to save file " + toString(saveGameNumber) + ", Modelcrc: " + toString(model.getChecksum()), cLog::eLOG_TYPE_NET_DEBUG);
 
 	int saveingID = savegame.save(model, saveGameNumber, saveName);
 	cNetMessageRequestGUISaveInfo message(saveingID);

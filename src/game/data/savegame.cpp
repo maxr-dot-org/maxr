@@ -31,6 +31,7 @@
 #include "extendedtinyxml.h"
 #include "netmessage2.h"
 #include "game/logic/server2.h"
+#include "utility/string/toString.h"
 
 #define LOAD_ERROR(msg)                        \
 	{                                          \
@@ -78,6 +79,11 @@ int cSavegame::save(const cModel& model, int slot, const std::string& saveName)
 
 	cXmlArchiveIn archive(*xmlDocument.RootElement());
 	archive << NVP(model);
+
+	// add model crc
+	archive.openNewChild("model");
+	archive << serialization::makeNvp("modelcrc", model.getChecksum());
+	archive.closeChild();
 
 	loadedSlot = slot;
 	tinyxml2::XMLError result = xmlDocument.SaveFile(getFileName(slot).c_str());
@@ -267,6 +273,23 @@ void cSavegame::loadModel(cModel& model, int slot)
 	serialization::cPointerLoader loader(model);
 	cXmlArchiveOut archive(*xmlDocument.RootElement(), &loader);
 	archive >> NVP(model);
+
+	// check crc
+	uint32_t crcFromSave;
+	archive.enterChild("model");
+	archive >> serialization::makeNvp("modelcrc", crcFromSave);
+	archive.leaveChild();
+	Log.write(" Checksum from save file: " + toString(crcFromSave), cLog::eLOG_TYPE_NET_DEBUG);
+	
+	uint32_t modelCrc = model.getChecksum();
+	Log.write(" Checksum after loading model: " + toString(modelCrc), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write(" GameId: " + toString(model.getGameId()), cLog::eLOG_TYPE_NET_DEBUG);
+	
+	if (crcFromSave != modelCrc)
+	{
+		Log.write(" Crc of loaded model does not match the saved crc!", cLog::eLOG_TYPE_ERROR);
+		//TODO: what to do in this case?
+	}
 }
 
 void cSavegame::loadGuiInfo(const cServer2* server, int slot)

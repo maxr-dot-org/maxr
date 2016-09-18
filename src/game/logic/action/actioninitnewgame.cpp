@@ -25,6 +25,7 @@
 #include "game/data/player/player.h"
 #include "utility/listhelpers.h"
 #include "game/data/player/clans.h"
+#include "utility/string/toString.h"
 
 // TODO: remove
 std::vector<std::pair<sID, int>> createInitialLandingUnitsList(int clan, const cGameSettings& gameSettings, const cUnitsData& unitsData); // defined in windowsingleplayer.cpp
@@ -47,11 +48,12 @@ cActionInitNewGame::cActionInitNewGame(cBinaryArchiveOut& archive)
 void cActionInitNewGame::execute(cModel& model) const
 {
 	//Note: this funktion handels incoming data from network. Make every possible sanity check!
-
+	
 	cPlayer& player = *model.getPlayer(playerNr);
 	const cUnitsData& unitsdata = *model.getUnitsData();
 
 	player.removeAllUnits();
+	Log.write(" GameId: " + toString(model.getGameId()), cLog::eLOG_TYPE_NET_DEBUG);
 
 	// init clan
 	if (model.getGameSettings()->getClansEnabled())

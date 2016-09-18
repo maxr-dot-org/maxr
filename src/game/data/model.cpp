@@ -30,7 +30,8 @@ cModel::cModel() :
 	nextUnitId(0),
 	gameSettings(std::make_shared<cGameSettings>()),
 	unitsData(std::make_shared<cUnitsData>()),
-	gameTime(0)
+	gameTime(0),
+	gameId(0)
 {
 	/*signalConnectionManager.connect(model.getGameSettings()->turnEndDeadlineChanged, [this]()
 	{
@@ -99,6 +100,7 @@ uint32_t cModel::getChecksum() const
 {
 	uint32_t crc = 0;
 	//crc = calcCheckSum(gameTime, crc);
+	crc = calcCheckSum(gameId, crc);
 	crc = gameSettings->getChecksum(crc);
 	crc = map->getChecksum(crc);
 	for (const auto& player : playerList)

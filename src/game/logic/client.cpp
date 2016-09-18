@@ -60,6 +60,7 @@
 #include "game/logic/action/action.h"
 #include "game/data/savegame.h"
 #include "utility/serialization/textarchive.h"
+#include "utility/string/toString.h"
 
 using namespace std;
 
@@ -87,6 +88,7 @@ cClient::cClient (cServer2* server, std::shared_ptr<cTCP> network_) :
 
 	gameTimer->start();
 
+	model.setGameId(server2->getModel().getGameId());
 }
 
 cClient::~cClient()
@@ -1900,6 +1902,8 @@ void cClient::loadModel(int saveGameNumber)
 {
 	cSavegame savegame;
 	savegame.loadModel(model, saveGameNumber);
+
+	Log.write(" Client: loaded model. GameId: " + toString(model.getGameId()), cLog::eLOG_TYPE_NET_DEBUG);
 }
 //------------------------------------------------------------------------------
 void cClient::run()
