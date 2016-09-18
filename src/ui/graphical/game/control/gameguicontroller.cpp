@@ -1637,7 +1637,7 @@ void cGameGuiController::showResourceDistributionDialog (const cUnit& unit)
 
 	const auto& building = static_cast<const cBuilding&> (unit);
 
-	auto resourceDistributionWindow = application.show (std::make_shared<cWindowResourceDistribution> (*building.subBase, getTurnTimeClock()));
+	auto resourceDistributionWindow = application.show (std::make_shared<cWindowResourceDistribution> (building, getTurnTimeClock()));
 	resourceDistributionWindow->done.connect ([&, resourceDistributionWindow]()
 	{
 		changeResourceDistributionTriggered (building, resourceDistributionWindow->getMetalProduction(), resourceDistributionWindow->getOilProduction(), resourceDistributionWindow->getGoldProduction());
