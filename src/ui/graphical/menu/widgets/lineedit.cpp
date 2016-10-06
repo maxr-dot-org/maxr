@@ -403,13 +403,13 @@ bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard
 			deleteRight();
 			break;
 		case SDLK_c:
-			if (keyboard.getCurrentModifiers() & (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight))
+			if (keyboard.isAnyModifierActive(toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight))
 			{
 				SDL_SetClipboardText (text.c_str());
 			}
 			break;
 		case SDLK_x:
-			if (keyboard.getCurrentModifiers() & (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight))
+			if (keyboard.isAnyModifierActive(toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight))
 			{
 				SDL_SetClipboardText (text.c_str());
 				text.clear();
@@ -417,7 +417,7 @@ bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard
 			}
 			break;
 		case SDLK_v:
-			if (keyboard.getCurrentModifiers() & (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight) &&
+			if (keyboard.isAnyModifierActive(toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight) &&
 				SDL_HasClipboardText())
 			{
 				const auto clipboardText = SDL_GetClipboardText();
