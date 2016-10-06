@@ -46,8 +46,8 @@ public:
 
 	operator bool() const;
 
-	bool operator== (cEnumFlag<E> other);
-	bool operator!= (cEnumFlag<E> other);
+	bool operator== (cEnumFlag<E> other) const;
+	bool operator!= (cEnumFlag<E> other) const;
 
 	cEnumFlag<E> operator| (E other) const;
 	cEnumFlag<E> operator| (cEnumFlag<E> other) const;
@@ -123,14 +123,14 @@ cEnumFlag<E>::operator bool() const
 
 //------------------------------------------------------------------------------
 template<typename E>
-bool cEnumFlag<E>::operator== (cEnumFlag<E> other)
+bool cEnumFlag<E>::operator== (cEnumFlag<E> other) const
 {
 	return data_ == other.data_;
 }
 
 //------------------------------------------------------------------------------
 template<typename E>
-bool cEnumFlag<E>::operator!= (cEnumFlag<E> other)
+bool cEnumFlag<E>::operator!= (cEnumFlag<E> other) const
 {
 	return data_ != other.data_;
 }
