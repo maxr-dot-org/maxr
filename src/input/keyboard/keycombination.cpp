@@ -187,20 +187,17 @@ void cKeyCombination::addKey (const std::string& sequence)
 
 	if (iequals (trimmed, "Ctrl"))
 	{
-		modifiers |= eKeyModifierType::CtrlLeft;
-		modifiers |= eKeyModifierType::CtrlRight;
+		modifiers |= eKeyModifierType::Ctrl;
 		return;
 	}
 	else if (iequals (trimmed, "Alt"))
 	{
-		modifiers |= eKeyModifierType::AltLeft;
-		modifiers |= eKeyModifierType::AltRight;
+		modifiers |= eKeyModifierType::Alt;
 		return;
 	}
 	else if (iequals (trimmed, "Shift"))
 	{
-		modifiers |= eKeyModifierType::ShiftLeft;
-		modifiers |= eKeyModifierType::ShiftRight;
+		modifiers |= eKeyModifierType::Shift;
 		return;
 	}
 	else if (iequals (trimmed, "Num"))
@@ -227,21 +224,18 @@ void cKeyCombination::addKey (const std::string& sequence)
 std::string cKeyCombination::toString() const
 {
 	std::string result;
-	if (modifiers & eKeyModifierType::CtrlLeft ||
-		modifiers & eKeyModifierType::CtrlRight)
+	if (modifiers & eKeyModifierType::Ctrl)
 	{
 		result += "Ctrl";
 	}
 
-	if (modifiers & eKeyModifierType::AltLeft ||
-		modifiers & eKeyModifierType::AltRight)
+	if (modifiers & eKeyModifierType::Alt)
 	{
 		if (!result.empty()) result += "+";
 		result += "Alt";
 	}
 
-	if (modifiers & eKeyModifierType::ShiftLeft ||
-		modifiers & eKeyModifierType::ShiftRight)
+	if (modifiers & eKeyModifierType::Shift)
 	{
 		if (!result.empty()) result += "+";
 		result += "Shift";

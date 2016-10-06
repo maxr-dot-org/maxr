@@ -249,16 +249,16 @@ void cGameGuiController::initShortcuts()
 		selectNextUnit();
 	});
 
-	auto savePosition1Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::AltLeft) | eKeyModifierType::AltRight, SDLK_F5))));
+	auto savePosition1Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::Alt), SDLK_F5))));
 	signalConnectionManager.connect (savePosition1Shortcut->triggered, std::bind (&cGameGuiController::savePosition, this, 0));
 
-	auto savePosition2Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::AltLeft) | eKeyModifierType::AltRight, SDLK_F6))));
+	auto savePosition2Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::Alt), SDLK_F6))));
 	signalConnectionManager.connect (savePosition2Shortcut->triggered, std::bind (&cGameGuiController::savePosition, this, 1));
 
-	auto savePosition3Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::AltLeft) | eKeyModifierType::AltRight, SDLK_F7))));
+	auto savePosition3Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::Alt), SDLK_F7))));
 	signalConnectionManager.connect (savePosition3Shortcut->triggered, std::bind (&cGameGuiController::savePosition, this, 2));
 
-	auto savePosition4Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::AltLeft) | eKeyModifierType::AltRight, SDLK_F8))));
+	auto savePosition4Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::Alt), SDLK_F8))));
 	signalConnectionManager.connect (savePosition4Shortcut->triggered, std::bind (&cGameGuiController::savePosition, this, 3));
 
 	auto loadPosition1Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_F5))));
@@ -294,7 +294,7 @@ void cGameGuiController::connectGuiStaticCommands()
 	signalConnectionManager.connect (gameGui->getHud().doneClicked, [this]()
 	{
 		auto keyboard = application.getActiveKeyboard();
-		if (keyboard && keyboard->isAnyModifierActive (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight))
+		if (keyboard && keyboard->isAnyModifierActive (toEnumFlag (eKeyModifierType::Ctrl)))
 		{
 			resumeAllMoveJobsTriggered();
 		}

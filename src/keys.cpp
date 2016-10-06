@@ -119,7 +119,7 @@ cKeysList::cKeysList() :
 	keyCenterUnit (cKeyCombination (eKeyModifierType::None, SDLK_f)),
 	keyUnitDone (cKeyCombination (eKeyModifierType::None, SDLK_e)),
 	keyUnitDoneAndNext (cKeyCombination (eKeyModifierType::None, SDLK_SPACE)),
-	keyAllDoneAndNext (cKeyCombination (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight, SDLK_SPACE)),
+	keyAllDoneAndNext (cKeyCombination (toEnumFlag (eKeyModifierType::Ctrl), SDLK_SPACE)),
 	keyUnitNext (cKeyCombination (eKeyModifierType::None, SDLK_w)),
 	keyUnitPrev (cKeyCombination (eKeyModifierType::None, SDLK_q)),
 	keyUnitMenuAttack (cKeyCombination (eKeyModifierType::None, SDLK_a)),

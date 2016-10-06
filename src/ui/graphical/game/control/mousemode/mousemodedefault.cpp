@@ -156,7 +156,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 	const auto selectedBuilding = unitSelection.getSelectedBuilding();
 
-	const bool modifierForceMoveActive = cKeyboard::getInstance().isAnyModifierActive(toEnumFlag(eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight);
+	const bool modifierForceMoveActive = cKeyboard::getInstance().isAnyModifierActive(toEnumFlag(eKeyModifierType::Ctrl));
 
 	// Infiltrators: auto selected disable vs. vehicle/building
 	if (selectedVehicle && selectedVehicle->getOwner() == player && selectedVehicle->canDoCommandoAction (mapPosition, *map, false))
