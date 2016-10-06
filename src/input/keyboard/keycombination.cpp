@@ -263,11 +263,24 @@ std::string cKeyCombination::toString() const
 //------------------------------------------------------------------------------
 bool cKeyCombination::operator== (const cKeyCombination& other) const
 {
-	return modifiers == other.modifiers && key == other.key;
+	return (modifiers == other.modifiers) && (key == other.key);
 }
 
 //------------------------------------------------------------------------------
 bool cKeyCombination::operator!= (const cKeyCombination& other) const
 {
 	return ! (*this == other);
+}
+
+//------------------------------------------------------------------------------
+bool cKeyCombination::matches(const cKeyCombination& other) const
+{
+	return (key == other.key) &&
+		(!(other.modifiers & eKeyModifierType::Shift) || ((other.modifiers & modifiers) & eKeyModifierType::Shift)) &&
+		(!(other.modifiers & eKeyModifierType::Ctrl) || ((other.modifiers & modifiers) & eKeyModifierType::Ctrl)) &&
+		(!(other.modifiers & eKeyModifierType::Alt) || ((other.modifiers & modifiers) & eKeyModifierType::Alt)) &&
+		(!(other.modifiers & eKeyModifierType::Gui) || ((other.modifiers & modifiers) & eKeyModifierType::Ctrl)) &&
+		(!(other.modifiers & eKeyModifierType::Num) || ((other.modifiers & modifiers) & eKeyModifierType::Num)) &&
+		(!(other.modifiers & eKeyModifierType::Caps) || ((other.modifiers & modifiers) & eKeyModifierType::Caps)) &&
+		(!(other.modifiers & eKeyModifierType::Mode) || ((other.modifiers & modifiers) & eKeyModifierType::Mode));
 }

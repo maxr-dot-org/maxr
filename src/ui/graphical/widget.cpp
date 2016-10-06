@@ -461,7 +461,7 @@ bool cWidget::hitShortcuts (const cKeySequence& keySequence)
 		bool match = true;
 		for (size_t j = 1; j <= shortcutSequence.length(); ++j)
 		{
-			if (keySequence[keySequence.length() - j] != shortcutSequence[shortcutSequence.length() - j])
+			if (!keySequence[keySequence.length() - j].matches(shortcutSequence[shortcutSequence.length() - j]))
 			{
 				match = false;
 				break;
