@@ -62,7 +62,7 @@ cApplication::cApplication() :
 		if (!shouldDrawFramesPerSecond) drawFramesPerSecond (0, false); // make sure the last fps will not be visible
 	});
 
-	const auto widgetFramesShortcut = addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::Ctrl), SDLK_w))));
+	const auto widgetFramesShortcut = addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::Ctrl) | eKeyModifierType::Alt, SDLK_w))));
 	signalConnectionManager.connect (widgetFramesShortcut->triggered, [this]()
 	{
 		cWidget::toggleDrawDebugFrames();
