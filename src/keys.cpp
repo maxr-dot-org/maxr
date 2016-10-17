@@ -47,6 +47,14 @@ const std::string cKeysList::keyZoomInaName = "KeyZoomIna";
 const std::string cKeysList::keyZoomInbName = "KeyZoomInb";
 const std::string cKeysList::keyZoomOutaName = "KeyZoomOuta";
 const std::string cKeysList::keyZoomOutbName = "KeyZoomOutb";
+const std::string cKeysList::keySavePosition1Name = "KeySavePosition1";
+const std::string cKeysList::keySavePosition2Name = "KeySavePosition2";
+const std::string cKeysList::keySavePosition3Name = "KeySavePosition3";
+const std::string cKeysList::keySavePosition4Name = "KeySavePosition4";
+const std::string cKeysList::keyPosition1Name = "KeyPosition1";
+const std::string cKeysList::keyPosition2Name = "KeyPosition2";
+const std::string cKeysList::keyPosition3Name = "KeyPosition3";
+const std::string cKeysList::keyPosition4Name = "KeyPosition4";
 const std::string cKeysList::keyFogName = "KeyFog";
 const std::string cKeysList::keyGridName = "KeyGrid";
 const std::string cKeysList::keyScanName = "KeyScan";
@@ -107,6 +115,14 @@ cKeysList::cKeysList() :
 	keyZoomInb (cKeyCombination (eKeyModifierType::None, SDLK_KP_PLUS)),
 	keyZoomOuta (cKeyCombination (eKeyModifierType::None, SDLK_SLASH)),
 	keyZoomOutb (cKeyCombination (eKeyModifierType::None, SDLK_KP_MINUS)),
+    keySavePosition1 (cKeyCombination (toEnumFlag (eKeyModifierType::AltLeft) | eKeyModifierType::AltRight, SDLK_F5)),
+    keySavePosition2 (cKeyCombination (toEnumFlag (eKeyModifierType::AltLeft) | eKeyModifierType::AltRight, SDLK_F6)),
+    keySavePosition3 (cKeyCombination (toEnumFlag (eKeyModifierType::AltLeft) | eKeyModifierType::AltRight, SDLK_F7)),
+    keySavePosition4 (cKeyCombination (toEnumFlag (eKeyModifierType::AltLeft) | eKeyModifierType::AltRight, SDLK_F8)),
+    keyPosition1 (cKeyCombination (eKeyModifierType::None, SDLK_F5)),
+    keyPosition2 (cKeyCombination (eKeyModifierType::None, SDLK_F6)),
+    keyPosition3 (cKeyCombination (eKeyModifierType::None, SDLK_F7)),
+    keyPosition4 (cKeyCombination (eKeyModifierType::None, SDLK_F8)),
 	keyFog (cKeyCombination (eKeyModifierType::None, SDLK_n)),
 	keyGrid (cKeyCombination (eKeyModifierType::None, SDLK_g)),
 	keyScan (cKeyCombination (eKeyModifierType::None, SDLK_s)),
@@ -214,6 +230,14 @@ void cKeysList::loadFromFile()
 	loadedAll = tryLoadSingleKey (*keysElement, keyZoomInbName, keyZoomInb) && loadedAll;
 	loadedAll = tryLoadSingleKey (*keysElement, keyZoomOutaName, keyZoomOuta) && loadedAll;
 	loadedAll = tryLoadSingleKey (*keysElement, keyZoomOutbName, keyZoomOutb) && loadedAll;
+    loadedAll = tryLoadSingleKey (*keysElement, keySavePosition1Name, keySavePosition1) && loadedAll;
+    loadedAll = tryLoadSingleKey (*keysElement, keySavePosition2Name, keySavePosition2) && loadedAll;
+    loadedAll = tryLoadSingleKey (*keysElement, keySavePosition3Name, keySavePosition3) && loadedAll;
+    loadedAll = tryLoadSingleKey (*keysElement, keySavePosition4Name, keySavePosition4) && loadedAll;
+    loadedAll = tryLoadSingleKey (*keysElement, keyPosition1Name, keyPosition1) && loadedAll;
+    loadedAll = tryLoadSingleKey (*keysElement, keyPosition2Name, keyPosition2) && loadedAll;
+    loadedAll = tryLoadSingleKey (*keysElement, keyPosition3Name, keyPosition3) && loadedAll;
+    loadedAll = tryLoadSingleKey (*keysElement, keyPosition4Name, keyPosition4) && loadedAll;
 	loadedAll = tryLoadSingleKey (*keysElement, keyFogName, keyFog) && loadedAll;
 	loadedAll = tryLoadSingleKey (*keysElement, keyGridName, keyGrid) && loadedAll;
 	loadedAll = tryLoadSingleKey (*keysElement, keyScanName, keyScan) && loadedAll;
@@ -325,6 +349,14 @@ void cKeysList::saveToFile()
 	saveSingleKey (*keysElement, keyZoomInbName, keyZoomInb);
 	saveSingleKey (*keysElement, keyZoomOutaName, keyZoomOuta);
 	saveSingleKey (*keysElement, keyZoomOutbName, keyZoomOutb);
+    saveSingleKey (*keysElement, keySavePosition1Name, keySavePosition1);
+    saveSingleKey (*keysElement, keySavePosition2Name, keySavePosition2);
+    saveSingleKey (*keysElement, keySavePosition3Name, keySavePosition3);
+    saveSingleKey (*keysElement, keySavePosition4Name, keySavePosition4);
+    saveSingleKey (*keysElement, keyPosition1Name, keyPosition1);
+    saveSingleKey (*keysElement, keyPosition2Name, keyPosition2);
+    saveSingleKey (*keysElement, keyPosition3Name, keyPosition3);
+    saveSingleKey (*keysElement, keyPosition4Name, keyPosition4);
 	saveSingleKey (*keysElement, keyFogName, keyFog);
 	saveSingleKey (*keysElement, keyGridName, keyGrid);
 	saveSingleKey (*keysElement, keyScanName, keyScan);
