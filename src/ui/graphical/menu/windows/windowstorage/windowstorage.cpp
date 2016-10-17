@@ -59,27 +59,29 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 	//
 	// Units
 	//
-	const int stepX = canStorePlanes ? 227 : 155;
-	const int stepImageX = canStorePlanes ? 227 : 155;
-	const int startX = canStorePlanes ? 42 : 8;
+    const int stepX = canStorePlanes ? 227 : 156;
+    const int stepImageX = canStorePlanes ? 227 : 156;
+    const int startX = canStorePlanes ? 39 : 2;
 	const int nameLabelX = canStorePlanes ? 190 : 118;
+	
 
 	for (size_t x = 0; x < columns; x++)
 	{
 		for (size_t y = 0; y < maxRows; y++)
 		{
-			const auto index = x + y * columns;
-			activateButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (startX + x * stepX, 191 + y * 236), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Active"), FONT_LATIN_NORMAL));
-			signalConnectionManager.connect (activateButtons[index]->clicked, std::bind (&cWindowStorage::activateClicked, this, index));
+            const auto index = x + y * columns;
 
-			reloadButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (startX + x * stepX, 191 + 25 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Reload") : "", FONT_LATIN_NORMAL));
-			signalConnectionManager.connect (reloadButtons[index]->clicked, std::bind (&cWindowStorage::reloadClicked, this, index));
+            activateButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (startX + x * stepX, 188 + y * 236), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Active"), FONT_LATIN_NORMAL));
+            signalConnectionManager.connect (activateButtons[index]->clicked, std::bind (&cWindowStorage::activateClicked, this, index));
 
-			repairButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (75 + startX + x * stepX, 191 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Repair") : "", FONT_LATIN_NORMAL));
-			signalConnectionManager.connect (repairButtons[index]->clicked, std::bind (&cWindowStorage::repairClicked, this, index));
+            reloadButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (startX + x * stepX, 188 + 23 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Reload") : "", FONT_LATIN_NORMAL));
+            signalConnectionManager.connect (reloadButtons[index]->clicked, std::bind (&cWindowStorage::reloadClicked, this, index));
 
-			upgradeButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (75 + startX + x * stepX, 191 + 25 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Upgrade") : "", FONT_LATIN_NORMAL));
-			signalConnectionManager.connect (upgradeButtons[index]->clicked, std::bind (&cWindowStorage::upgradeClicked, this, index));
+            repairButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (78 + startX + x * stepX, 188 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Repair") : "", FONT_LATIN_NORMAL));
+            signalConnectionManager.connect (repairButtons[index]->clicked, std::bind (&cWindowStorage::repairClicked, this, index));
+
+            upgradeButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (78 + startX + x * stepX, 188 + 23 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Upgrade") : "", FONT_LATIN_NORMAL));
+            signalConnectionManager.connect (upgradeButtons[index]->clicked, std::bind (&cWindowStorage::upgradeClicked, this, index));
 
 			unitImages[index] = addChild (std::make_unique<cImage> (getPosition() + cPosition (17 + x * stepImageX, 9 + y * 236)));
 			unitNames[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (17 + x * stepImageX + 5, 9 + y * 236 + 5), getPosition() + cPosition (17 + x * stepImageX + 5 + nameLabelX, 9 + y * 236 + 5 + 118)), ""));
