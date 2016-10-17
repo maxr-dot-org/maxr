@@ -88,7 +88,7 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	rangeShortcut = &rangeButton->addClickShortcut (KeysList.keyRange);
 	signalConnectionManager.connect (rangeButton->toggled, [&]() { rangeToggled(); });
 
-	fogButton = addChild (std::make_unique<cCheckBox> (cPosition (112, 296 + 18 + 16), lngPack.i18n ("Text~Others~Fog"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_21, false, &SoundData.SNDHudSwitch));
+	fogButton = addChild (std::make_unique<cCheckBox> (cPosition (112, 296 + 18 + 16), lngPack.i18n ("Text~Others~Fog"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_22, false, &SoundData.SNDHudSwitch));
 	fogShortcut = &fogButton->addClickShortcut (KeysList.keyFog);
 	signalConnectionManager.connect (fogButton->toggled, [&]() { fogToggled(); });
 
@@ -103,6 +103,7 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	auto helpButton = addChild (std::make_unique<cPushButton> (cPosition (20, 250), ePushButtonType::HudHelp));
 	signalConnectionManager.connect (helpButton->clicked, [&]() { helpClicked(); });
 	auto centerButton = addChild (std::make_unique<cPushButton> (cPosition (4, 227), ePushButtonType::HudCenter));
+	centerButton->addClickShortcut (KeysList.keyCenterUnit);
 	signalConnectionManager.connect (centerButton->clicked, [&]() { centerClicked(); });
 
 	auto reportsButton = addChild (std::make_unique<cPushButton> (cPosition (101, 252), ePushButtonType::HudReport, lngPack.i18n ("Text~Others~Log")));
