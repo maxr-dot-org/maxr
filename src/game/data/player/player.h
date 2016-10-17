@@ -77,18 +77,11 @@ public:
 	const std::string& getName() const { return splayer.getName(); }
 	void setName (const std::string& name) { splayer.setName (name); }
 
+	bool isHuman() const { return true; } // only human players are implemented yed.
 	const cPlayerColor& getColor() const { return splayer.getColor(); }
 	void setColor (cPlayerColor color) { return splayer.setColor (std::move (color)); }
 
 	int getId() const { return splayer.getNr(); }
-
-	int getSocketNum() const { return splayer.getSocketIndex(); }
-	void setSocketIndex (int index) { splayer.setSocketIndex (index); }
-
-	void onSocketIndexDisconnected (unsigned int socketIndex) { splayer.onSocketIndexDisconnected (socketIndex); }
-
-	void setLocal() { splayer.setLocal(); }
-	bool isLocal() const { return splayer.isLocal(); }
 
 	int getCredits() const;
 	void setCredits (int credits);

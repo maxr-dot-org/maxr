@@ -23,8 +23,8 @@
 #include "utility/listhelpers.h"
 #include "defines.h"
 #include "utility/files.h"
-#include "menuevents.h"
 #include "netmessage.h"
+#include "netmessage2.h"
 #include "network.h"
 #include "game/logic/serverevents.h"
 #include "game/data/report/savedreportchat.h"
@@ -174,13 +174,14 @@ bool cDedicatedServer::startServer (int saveGameNumber)
 	cout << "Starting server on port " << configuration->port << "..." << endl;
 
 	assert (network == 0);
-	network = std::make_shared<cTCP>();
+	/*network = std::make_shared<cTCP>();
 	network->setMessageReceiver (this);
 	if (network->create (configuration->port) == -1)
 	{
 		cout << "ERROR: Initializing network failed." << endl;
 		return false;
 	}
+	*/
 
 	// TODO: muss von Clients ausgeloest werden. Aber, dann muss ganze Infrastruktur angepasst werden,
 	// dass z.B. NetMessages an richtiges Game/cServer gehen und dass die Methoden nicht auf einem globalen
@@ -384,13 +385,14 @@ void cDedicatedServer::printHelp (eHelpCommands helpCommand) const
 }
 
 //------------------------------------------------------------------------
-void cDedicatedServer::pushEvent (std::unique_ptr<cNetMessage> message)
+void cDedicatedServer::pushMessage (std::unique_ptr<cNetMessage2> message)
 {
-	if (handleDedicatedServerEvents (*message))
+	/*if (handleDedicatedServerEvents (*message))
 		return;
 	// TODO: delegate to correct game (and not simply first game)
 	if (games.empty() == false)
 		games[0]->pushEvent (std::move (message));
+	*/
 }
 
 //------------------------------------------------------------------------
@@ -398,7 +400,7 @@ bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage& message)
 {
 	switch (message.getType())
 	{
-		case GAME_EV_CHAT_CLIENT:
+	/*	case GAME_EV_CHAT_CLIENT:
 		case MU_MSG_CHAT:
 		{
 			if (message.getType() == MU_MSG_CHAT)
@@ -445,7 +447,7 @@ bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage& message)
 				}
 			}
 			break;
-		}
+		}*/
 		default: return false;
 	}
 	return false;
@@ -470,11 +472,12 @@ void cDedicatedServer::sendChatMessage (const string& text, int type, int socket
 			msg.pushBool (false);
 		}
 		msg.iPlayerNr = -1;
-		if (socket < 0)
+		/*if (socket < 0)
 			network->send (msg.iLength, msg.serialize());
 		else
 			network->sendTo (socket, msg.iLength, msg.serialize());
-	}
+		*/
+		}
 }
 
 //------------------------------------------------------------------------

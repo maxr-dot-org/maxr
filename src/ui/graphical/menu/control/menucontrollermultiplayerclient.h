@@ -23,19 +23,18 @@
 #include <memory>
 
 #include "utility/signal/signalconnectionmanager.h"
-#include "network.h"
 #include "utility/runnable.h"
 #include "utility/thread/concurrentqueue.h"
+#include "connectionmanager.h"
+#include "menuevents.h"
 
 class cApplication;
 class cWindowNetworkLobbyClient;
 class cWindowLandingPositionSelection;
 class cNetworkClientGameNew;
-class cNetMessage;
 class cMapReceiver;
 class cPlayerLandingStatus;
 
-class cTCP;
 
 class cMenuControllerMultiplayerClient : public INetMessageReceiver, public cRunnable, public std::enable_shared_from_this<cMenuControllerMultiplayerClient>
 {
@@ -45,16 +44,15 @@ public:
 
 	void start();
 
-	virtual void pushEvent (std::unique_ptr<cNetMessage> message) MAXR_OVERRIDE_FUNCTION;
-	virtual std::unique_ptr<cNetMessage> popEvent() MAXR_OVERRIDE_FUNCTION;
+	virtual void pushMessage (std::unique_ptr<cNetMessage2> message) MAXR_OVERRIDE_FUNCTION;
 
 	virtual void run() MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	cConcurrentQueue<std::unique_ptr<cNetMessage>> messageQueue;
+	cConcurrentQueue<std::unique_ptr<cNetMessage2>> messageQueue;
 
-	std::shared_ptr<cTCP> network;
+	std::shared_ptr<cConnectionManager> connectionManager;
 
 	cApplication& application;
 
@@ -89,28 +87,31 @@ private:
 	void startNewGame();
 	void checkReallyWantsToQuit();
 
-	void handleNetMessage (cNetMessage& message);
+	void handleNetMessage (cNetMessage2& message);
 
-	void handleNetMessage_TCP_CLOSE (cNetMessage& message);
-	void handleNetMessage_MU_MSG_CHAT (cNetMessage& message);
-	void handleNetMessage_MU_MSG_REQ_IDENTIFIKATION (cNetMessage& message);
-	void handleNetMessage_MU_MSG_PLAYER_NUMBER (cNetMessage& message);
-	void handleNetMessage_MU_MSG_PLAYERLIST (cNetMessage& message);
-	void handleNetMessage_MU_MSG_OPTINS (cNetMessage& message);
-	void handleNetMessage_MU_MSG_GO (cNetMessage& message);
-	void handleNetMessage_MU_MSG_LANDING_STATE (cNetMessage& message);
-	void handleNetMessage_MU_MSG_ALL_LANDED (cNetMessage& message);
-	void handleNetMessage_GAME_EV_REQ_RECON_IDENT (cNetMessage& message);
-	void handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage& message);
-	void handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS (cNetMessage& message);
-	void handleNetMessage_MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION (cNetMessage& message);
-	void handleNetMessage_MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION (cNetMessage& message);
+	void handleNetMessage_TCP_CONNECTED(cNetMessageTcpConnected& message);
+	void handleNetMessage_TCP_CONNECT_FAILED(cNetMessageTcpConnectFailed& message);
+	void handleNetMessage_TCP_CLOSE(cNetMessageTcpClose& message);
 
-	void initMapDownload (cNetMessage& message);
-	void receiveMapData (cNetMessage& message);
-	void canceledMapDownload (cNetMessage& message);
-	void finishedMapDownload (cNetMessage& message);
+	void handleNetMessage_MU_MSG_CHAT(cMuMsgChat& message);
+	void handleNetMessage_MU_MSG_PLAYER_NUMBER(cMuMsgPlayerNr& message);
+	void handleNetMessage_MU_MSG_PLAYERLIST(cMuMsgPlayerList& message);
+	void handleNetMessage_MU_MSG_OPTIONS(cMuMsgOptions& message);
+	void handleNetMessage_MU_MSG_GO(cMuMsgGo& message);
+	void handleNetMessage_MU_MSG_LANDING_STATE(cMuMsgLandingState& message);
+	void handleNetMessage_MU_MSG_ALL_LANDED(cMuMsgAllLanded& message);
+	//void handleNetMessage_GAME_EV_REQ_RECON_IDENT (cNetMessage2& message);
+	//void handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage2& message);
+	void handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS(cMuMsgInLandingPositionSelectionStatus& message);
+	void handleNetMessage_MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION(cMuMsgPlayerHasSelectedLandingPosition& message);
+	void handleNetMessage_MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION(cMuMsgPlayerAbortedGamePreparations& message);
 
+	void initMapDownload(cMuMsgStartMapDownload& message);
+	void receiveMapData(cMuMsgMapDownloadData& message);
+	void canceledMapDownload(cMuMsgCanceledMapDownload& message);
+	void finishedMapDownload(cMuMsgFinishedMapDownload& message);
+
+	void sendNetMessage(cNetMessage2& message);
 	void saveOptions();
 };
 

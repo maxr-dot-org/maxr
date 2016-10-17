@@ -231,6 +231,12 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 }
 
 //------------------------------------------------------------------------------
+void cGameGuiController::setServer(const cServer2* server_)
+{
+	server = server_;
+}
+
+//------------------------------------------------------------------------------
 void cGameGuiController::setActiveClient (std::shared_ptr<cClient> client_)
 {
 	activeClient = std::move (client_);
@@ -242,7 +248,7 @@ void cGameGuiController::setActiveClient (std::shared_ptr<cClient> client_)
 	gameGui->setTurnTimeClock (getTurnTimeClock());
 	gameGui->setGameSettings (getGameSettings());
 	gameGui->getDebugOutput().setClient (activeClient.get());
-	gameGui->getDebugOutput().setServer (activeClient->getServer());
+	gameGui->getDebugOutput().setServer (server);
 	gameGui->setUnitsData(getUnitsData());
 
 	if (activeClient != nullptr)
@@ -772,7 +778,7 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 		else if (client.getFreezeMode (FREEZE_WAIT_FOR_RECONNECT))
 		{
-			std::string s = client.getServer() ? lngPack.i18n ("Text~Multiplayer~Abort_Waiting") : "";
+			std::string s = server ? lngPack.i18n ("Text~Multiplayer~Abort_Waiting") : "";
 			gameGui->setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Reconnect"), s);
 		}
 		else if (client.getFreezeMode (FREEZE_WAIT_FOR_PLAYER))
@@ -956,10 +962,10 @@ void cGameGuiController::showFilesWindow()
 	{
 		try
 		{
-			if (activeClient->getServer() == nullptr)
+			if (server == nullptr)
 				throw std::runtime_error(lngPack.i18n("Text~Multiplayer~Save_Only_Host"));
 
-			activeClient->getServer()->saveGameState(saveNumber, name);
+			server->saveGameState(saveNumber, name);
 			cSoundDevice::getInstance().playVoice(VoiceData.VOISaved);
 
 			loadSaveWindow->update();
@@ -1353,7 +1359,6 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 		//
 		else if (activeClient)
 		{
-			auto server = activeClient->getServer();
 			if (command.compare (0, 6, "/kick ") == 0)
 			{
 				if (!server)

@@ -193,11 +193,14 @@ void cSavegame::writeHeader(int slot, const std::string& saveName, const cModel 
 		header.playerNames.push_back(player->getName());
 	}
 	header.type = GAME_TYPE_SINGLE;
+	int humanPlayers = 0;
 	for (auto player : model.getPlayerList())
 	{
-		if (!player->isLocal())
-			header.type = GAME_TYPE_TCPIP;
+		if (!player->isHuman())
+			humanPlayers++;
 	}
+	if (humanPlayers > 1)
+		header.type = GAME_TYPE_TCPIP;
 	if (model.getGameSettings()->getGameType() == eGameSettingsGameType::HotSeat)
 		header.type = GAME_TYPE_HOTSEAT;
 

@@ -27,7 +27,7 @@
 #include "game/logic/jobs.h"
 #include "game/logic/gametimer.h"
 #include "main.h"
-#include "network.h"
+#include "connectionmanager.h"
 #include "game/data/units/unit.h" // sUnitLess
 #include "utility/thread/concurrentqueue.h"
 #include "utility/signal/signal.h"
@@ -47,9 +47,7 @@ class cJob;
 class cMap;
 class cNetMessage;
 class cPlayer;
-class cServer2;
 class cStaticMap;
-class cTCP;
 class cPlayerBasicData;
 class cGameSettings;
 class cPosition;
@@ -68,7 +66,7 @@ class cClient : public INetMessageReceiver
 	friend class cDebugOutputWidget;
 	friend class cPlayer;
 public:
-	cClient (cServer2* server, std::shared_ptr<cTCP> network);
+	cClient (std::shared_ptr<cConnectionManager> connectionManager, int gameId);
 	~cClient();
 
 	const cModel& getModel() const { return model; };
@@ -82,9 +80,7 @@ public:
 	void setPlayers(const std::vector<cPlayerBasicData>& splayers, size_t activePlayerIndex);
 
 	unsigned int getNetMessageQueueSize() const { return static_cast<unsigned int>(eventQueue.safe_size()); };
-	const cServer2* getServer() const { return server2; }
-	virtual void pushEvent (std::unique_ptr<cNetMessage> message) MAXR_OVERRIDE_FUNCTION;
-	void pushMessage(std::unique_ptr<cNetMessage2> message);
+	virtual void pushMessage(std::unique_ptr<cNetMessage2> message) MAXR_OVERRIDE_FUNCTION;
 
 	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);
 	void disableFreezeMode (eFreezeMode mode);
@@ -302,9 +298,7 @@ private:
 	cSignalConnectionManager signalConnectionManager;
 
 	cServer* server;
-	cServer2* server2;
-
-	std::shared_ptr<cTCP> network;
+	std::shared_ptr<cConnectionManager> connectionManager;
 
 	cConcurrentQueue<std::unique_ptr<cNetMessage>> eventQueue;
 	cConcurrentQueue<std::unique_ptr<cNetMessage2>> eventQueue2;

@@ -32,7 +32,7 @@
 #include "game/logic/gametimer.h"
 #include "game/logic/jobs.h"
 #include "utility/log.h"
-#include "menuevents.h"
+//#include "menuevents.h"
 #include "game/logic/movejobs.h"
 #include "netmessage.h"
 #include "network.h"
@@ -90,7 +90,7 @@ cServer::cServer(std::shared_ptr<cTCP> network_) :
 
 	if (!DEDICATED_SERVER)
 	{
-		if (network) network->setMessageReceiver(this);
+		//if (network) network->setMessageReceiver(this);
 	}
 
 	gameTimer->maxEventQueueSize = MAX_SERVER_EVENT_COUNTER;
@@ -112,7 +112,7 @@ cServer::~cServer()
 	stop();
 
 	// disconnect clients
-	if (network)
+	/*if (network)
 	{
 		for (size_t i = 0; i != playerList.size(); ++i)
 		{
@@ -120,7 +120,7 @@ cServer::~cServer()
 		}
 		network->setMessageReceiver (nullptr);
 	}
-
+	*/
 	for (size_t i = 0; i != AJobs.size(); ++i)
 	{
 		delete AJobs[i];
@@ -246,7 +246,7 @@ void cServer::sendNetMessage (std::unique_ptr<cNetMessage> message, const cPlaye
 				   + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
-	if (player == nullptr)
+	/*if (player == nullptr)
 	{
 		if (network)
 			network->send (message->iLength, message->data);
@@ -271,6 +271,7 @@ void cServer::sendNetMessage (std::unique_ptr<cNetMessage> message, const cPlaye
 	{
 		if (network) network->sendTo (player->getSocketNum(), message->iLength, message->serialize());
 	}
+	*/
 }
 
 //------------------------------------------------------------------------------
@@ -316,7 +317,7 @@ void cServer::handleNetMessage_TCP_ACCEPT (cNetMessage& message)
 {
 	assert (message.iType == TCP_ACCEPT);
 
-	sendRequestIdentification (*network, message.popInt16());
+	//sendRequestIdentification (*network, message.popInt16());
 }
 
 //------------------------------------------------------------------------------
@@ -426,7 +427,7 @@ void cServer::handleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage
 	{
 		iSocketNumber = message.popInt16();
 	}
-	else // a client disconnected. Useful for play with DEDICATED_SERVER
+/*	else // a client disconnected. Useful for play with DEDICATED_SERVER
 	{
 		const auto& player = getPlayerFromNumber (message.iPlayerNr);
 		iSocketNumber = player.getSocketNum();
@@ -461,6 +462,7 @@ void cServer::handleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage
 
 		Player->revealMap();
 	}
+	*/
 }
 
 //------------------------------------------------------------------------------
@@ -1408,7 +1410,7 @@ void cServer::handleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message)
 	if (DisconnectedPlayerList.empty()) return;
 	// only server player can abort the waiting
 	auto& LocalPlayer = getPlayerFromNumber (message.iPlayerNr);
-	if (LocalPlayer.isLocal() == false) return;
+	//if (LocalPlayer.isLocal() == false) return;
 
 	// delete disconnected players
 	for (size_t i = 0; i != DisconnectedPlayerList.size(); ++i)
@@ -1432,7 +1434,7 @@ void cServer::handleNetMessage_GAME_EV_IDENTIFICATION (cNetMessage& message)
 	{
 		if (playerName == DisconnectedPlayerList[i]->getName())
 		{
-			DisconnectedPlayerList[i]->setSocketIndex (socketNumber);
+			//DisconnectedPlayerList[i]->setSocketIndex (socketNumber);
 			sendReconnectAnswer (*this, socketNumber, *DisconnectedPlayerList[i]);
 			return;
 		}
@@ -2496,11 +2498,11 @@ void cServer::checkPlayerUnits()
 //------------------------------------------------------------------------------
 bool cServer::isPlayerDisconnected (const cPlayer& player) const
 {
-	if (player.isLocal()) return false;
+	/*if (player.isLocal()) return false;
 
 	if (network)
 		return !network->isConnected (player.getSocketNum());
-
+*/
 	return true;
 }
 
@@ -2508,13 +2510,14 @@ bool cServer::isPlayerDisconnected (const cPlayer& player) const
 void cServer::kickPlayer (cPlayer& player)
 {
 	// close the socket
-	const int socketIndex = player.getSocketNum();
+	/*const int socketIndex = player.getSocketNum();
 	if (network) network->close (socketIndex);
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
 		playerList[i]->onSocketIndexDisconnected (socketIndex);
 	}
 	deletePlayer (player);
+	*/
 }
 
 //------------------------------------------------------------------------------

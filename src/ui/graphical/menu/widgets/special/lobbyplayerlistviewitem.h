@@ -37,6 +37,7 @@ public:
 	explicit cLobbyPlayerListViewItem (std::shared_ptr<cPlayerBasicData> player);
 
 	const std::shared_ptr<cPlayerBasicData>& getPlayer() const;
+	void update();
 
 	cSignal<void ()> readyClicked;
 

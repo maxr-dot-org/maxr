@@ -30,17 +30,24 @@
 //------------------------------------------------------------------------------
 void cLocalSingleplayerGameSaved::start (cApplication& application)
 {
-	server = std::make_unique<cServer2>();
-	server->loadGameState(saveGameNumber);
-	server->getModel().getPlayerList()[0]->setLocal();	 // in single player the first player is always the local one
+	auto connectionManager = std::make_shared<cConnectionManager>();
 
-	client = std::make_shared<cClient> (server.get(), nullptr);
+	//set up server
+	server = std::make_unique<cServer2>(connectionManager);
+	connectionManager->setLocalServer(server.get());
+	server->loadGameState(saveGameNumber);
+
+	//setup client
+	int gameId = server->getModel().getGameId();
+	client = std::make_shared<cClient> (connectionManager, gameId);
 	auto staticMap = server->getModel().getMap()->staticMap;
 	client->setMap(staticMap);
 	client->loadModel(saveGameNumber); //TODO: resync model from server
+
+	//use player 0 as local player
 	auto localPlayer = client->getModel().getPlayerList()[0];
-	localPlayer->setLocal();
 	client->setActivePlayer(localPlayer.get());
+	connectionManager->setLocalClient(client.get(), 0);
 
 	server->sendGuiInfoToClients(saveGameNumber);
 

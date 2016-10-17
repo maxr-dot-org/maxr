@@ -32,7 +32,7 @@
 void cLocalHotSeatGameSaved::start (cApplication& application)
 {
 	//TODO: new server
-	server = std::make_unique<cServer> (nullptr);
+	//server = std::make_unique<cServer> (nullptr);
 
 	//cSavegame savegame (saveGameNumber);
 	//if (savegame.load (*server) == false) return;
@@ -49,9 +49,9 @@ void cLocalHotSeatGameSaved::start (cApplication& application)
 	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
 		const auto& p = *serverPlayerList[i];
-		clientPlayerList.push_back (cPlayerBasicData (p.getName(), p.getColor(), p.getId(), p.getSocketNum()));
+		//clientPlayerList.push_back (cPlayerBasicData (p.getName(), p.getColor(), p.getId(), p.getSocketNum()));
 
-		serverPlayerList[i]->setLocal();
+		//serverPlayerList[i]->setLocal();
 	}
 
 	clients.resize (clientPlayerList.size());

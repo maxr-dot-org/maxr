@@ -32,7 +32,7 @@ class cPlayerBasicData
 {
 public:
 	cPlayerBasicData();
-	cPlayerBasicData (const std::string& name_, cPlayerColor color, int Nr_, int socketIndex_ = -1);
+	cPlayerBasicData (const std::string& name_, cPlayerColor color, int Nr_);
 	cPlayerBasicData (const cPlayerBasicData& other);
 	cPlayerBasicData& operator= (const cPlayerBasicData& other);
 
@@ -42,11 +42,6 @@ public:
 	void setColor (cPlayerColor color);
 	int getNr() const;
 	void setNr (int index);
-	int getSocketIndex() const;
-	void setSocketIndex (int index);
-	void setLocal();
-	bool isLocal() const;
-	void onSocketIndexDisconnected (int socketIndex);
 	void setReady (bool ready);
 	bool isReady() const;
 
@@ -55,7 +50,6 @@ public:
 	mutable cSignal<void ()> nameChanged;
 	mutable cSignal<void ()> numberChanged;
 	mutable cSignal<void ()> colorChanged;
-	mutable cSignal<void ()> socketIndexChanged;
 	mutable cSignal<void ()> readyChanged;
 
 	template <typename T>
@@ -64,18 +58,12 @@ public:
 		archive & NVP(name);
 		archive & NVP(color);
 		archive & NVP(Nr);
-		//archive & NVP(socketIndex); //TODO: new socket number from multiplayer menu, when loading? Move socket to Client/Server
 		archive & NVP(ready);
 	}
 private:
 	std::string name;
 	cPlayerColor color;
 	int Nr;
-
-	// Index in socket array of cServer::network
-	// if MAX_CLIENTS it's the local connected player
-	// -1 for unknown
-	int socketIndex; //TODO: move to cPlayerConnectionManager
 	bool ready;
 };
 

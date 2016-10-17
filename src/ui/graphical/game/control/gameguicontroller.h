@@ -54,8 +54,7 @@ class cSavedReport;
 class cBuildListItem;
 class cWindowUpgradesFilterState;
 class cUnitsData;
-
-class cPosition;
+class cServer2;
 
 struct sID;
 
@@ -74,6 +73,7 @@ public:
 
 	void setSingleClient (std::shared_ptr<cClient> clients);
 	void setClients (std::vector<std::shared_ptr<cClient>> clients, int activePlayerNumber);
+	void setServer(const cServer2* server);
 
 	mutable cSignal<void ()> terminated;
 private:
@@ -91,6 +91,7 @@ private:
 	std::shared_ptr<cGameGui> gameGui;
 	std::shared_ptr<cClient> activeClient;
 	std::vector<std::shared_ptr<cClient>> clients;
+	const cServer2* server;
 
 	std::map<int, cGameGuiState> playerGameGuiStates;
 	std::map<int, std::shared_ptr<std::vector<std::unique_ptr<cSavedReport>>>> playerReports;

@@ -40,7 +40,7 @@ class cSubBase;
 enum SERVER_EVENT_TYPES
 {
 	// Types between FIRST_SERVER_MESSAGE and FIRST_CLIENT_MESSAGE are for the server
-	GAME_EV_CHAT_CLIENT = FIRST_SERVER_MESSAGE,		// a chat message from client to server
+	GAME_EV_CHAT_CLIENT = 200,		// a chat message from client to server
 	GAME_EV_WANT_TO_END_TURN,		// a client wants to end the turn
 	GAME_EV_MOVE_JOB_CLIENT,		// a message with all waypoints
 	GAME_EV_WANT_STOP_MOVE,			// a client wants to stop a moving vehicle
@@ -235,7 +235,7 @@ void sendDeletePlayer (cServer& server, const cPlayer& player, const cPlayer* re
 * the server wants to get an identification of the new connected player
 *@author alzi alias DoctorDeath
 */
-void sendRequestIdentification (cTCP& network, int iSocket);
+//void sendRequestIdentification (cTCP& network, int iSocket);
 /**
 * the server gives its ok to the reconnection
 *@author alzi alias DoctorDeath

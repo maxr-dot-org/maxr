@@ -39,26 +39,10 @@ cLocalSingleplayerGameNew::cLocalSingleplayerGameNew() :
 void cLocalSingleplayerGameNew::start (cApplication& application)
 {
 	assert (gameSettings != nullptr);
+	auto connectionManager = std::make_shared<cConnectionManager>();
 
-	server = std::make_unique<cServer2>();
-	client = std::make_shared<cClient>(server.get(), nullptr);
-
-	//TODO: use following init sequence
-	//make server
-	//set unitsdata
-	//set map
-	//set gamesettings
-	//set players
-
-	//make client
-	//set client map //use same instance of static map
-	//resync client  //copy model state to client.
-
-	//start server //models are in sync now, and server is running. Model changes only via actions/netmessages from now on.
-
-	//send init action
-
-	//make gamegui
+	server = std::make_unique<cServer2>(connectionManager);
+	client = std::make_shared<cClient>(connectionManager, server->getModel().getGameId());
 
 	client->setMap (staticMap);
 	server->setMap (staticMap);
@@ -75,6 +59,9 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 	client->setPlayers (players, 0);
 	server->setPlayers(players);
 
+	connectionManager->setLocalServer(server.get());
+	connectionManager->setLocalClient(client.get(), 0);
+
 	server->start();
 
 	cActionInitNewGame action;
@@ -87,6 +74,7 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
 	gameGuiController->setSingleClient (client);
+	gameGuiController->setServer(server.get());
 
 	cGameGuiState playerGameGuiState;
 	playerGameGuiState.setMapPosition (landingPosition);
@@ -141,8 +129,6 @@ void cLocalSingleplayerGameNew::setLandingPosition (const cPosition& landingPosi
 cPlayerBasicData cLocalSingleplayerGameNew::createPlayer()
 {
 	cPlayerBasicData player (cSettings::getInstance().getPlayerName(), cPlayerColor(), 0);
-
-	player.setLocal();
 
 	return player;
 }

@@ -25,8 +25,7 @@
 #include "network.h"
 #include "utility/log.h"
 #include "game/data/player/player.h"
-#include "netmessage.h"
-#include "menuevents.h"
+#include "ui/graphical/menu/control/menuevents.h"
 
 //------------------------------------------------------------------------------
 cWindowNetworkLobbyClient::cWindowNetworkLobbyClient() :

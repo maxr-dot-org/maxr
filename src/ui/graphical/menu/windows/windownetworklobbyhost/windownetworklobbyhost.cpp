@@ -82,7 +82,6 @@ void cWindowNetworkLobbyHost::handleOkClicked()
 void cWindowNetworkLobbyHost::setSaveGame (int saveGameNumber_)
 {
 	saveGameNumber = saveGameNumber_;
-	throw std::runtime_error("not implemented");
 
 	/*if (saveGameNumber >= 0)
 	{

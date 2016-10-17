@@ -25,9 +25,10 @@
 
 #include <SDL.h>
 
-class cNetMessage;
-class cTCP;
 struct SDL_Thread;
+class cConnectionManager;
+class cMuMsgMapDownloadData;
+class cNetMessage2;
 
 int mapSenderThreadFunction (void* data);
 
@@ -52,7 +53,7 @@ class cMapReceiver
 public:
 	cMapReceiver (const std::string& mapName, int mapSize);
 
-	bool receiveData (cNetMessage& message);
+	bool receiveData (cMuMsgMapDownloadData& message);
 	bool finished();
 
 	const std::string& getMapName() const { return mapName; }
@@ -68,12 +69,12 @@ private:
 class cMapSender
 {
 public:
-	cMapSender (cTCP& network_, int toSocket,
+	cMapSender (cConnectionManager& connectionManager, int toPlayerNr,
 				const std::string& mapName,
 				const std::string& receivingPlayerName);
 	~cMapSender();
 
-	int getToSocket() const { return toSocket; }
+	int getToPlayerNr() const { return toPlayerNr; }
 
 	void runInThread();
 
@@ -84,11 +85,11 @@ private:
 	void run();
 
 	bool getMapFileContent();
-	void sendMsg (cNetMessage& msg);
+	void sendMsg (cNetMessage2& msg);
 
 private:
-	cTCP* network;
-	int toSocket;
+	cConnectionManager& connectionManager;
+	int toPlayerNr;
 	std::string receivingPlayerName;
 	std::string mapName;
 	std::size_t bytesSent;

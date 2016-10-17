@@ -29,17 +29,17 @@
 #include "utility/thread/concurrentqueue.h"
 #include "gametimer.h"
 #include "game/data/savegame.h"
+#include "connectionmanager.h"
 
-class cClient;
+class cConnectionManager;
 class cPlayerBasicData;
 
-//TODO: network einbinden
-class cServer2
+class cServer2 : public INetMessageReceiver
 {
 	friend class cDebugOutputWidget;
 public:
 
-	explicit cServer2();
+	cServer2(std::shared_ptr<cConnectionManager> connectionManager);
 	~cServer2();
 
 	void pushMessage(std::unique_ptr<cNetMessage2> message);
@@ -52,7 +52,6 @@ public:
 	void start();
 	void stop();
 
-	void setLocalClient(cClient* client);
 	void setGameSettings(const cGameSettings& gameSettings);
 	void setMap(std::shared_ptr<cStaticMap> staticMap);
 	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData);
@@ -70,7 +69,7 @@ private:
 	//cPlayerConnectionManager playerConnectionManager;
 	cGameTimerServer gameTimer;
 
-	cClient* localClient; //TODO: multiple clients for HotSeat
+	std::shared_ptr<cConnectionManager> connectionManager;
 	cConcurrentQueue<std::unique_ptr<cNetMessage2>> eventQueue;
 	
 	mutable cSavegame savegame;
@@ -81,7 +80,7 @@ private:
 	static int serverThreadCallback(void* arg);
 	void run();
 	mutable SDL_Thread* serverThread;
-	mutable bool bExit;
+	mutable bool exit;
 	
 };
 

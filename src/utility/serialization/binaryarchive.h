@@ -78,7 +78,7 @@ public:
 
 	static const bool isWriter = false;
 
-	cBinaryArchiveOut(const std::vector<unsigned char>& buffer, serialization::cPointerLoader* pointerLoader = NULL);
+	cBinaryArchiveOut(const unsigned char* data, int length, serialization::cPointerLoader* pointerLoader = NULL);
 
 	template<typename T>
 	cBinaryArchiveOut& operator>>(T& value);
@@ -88,7 +88,9 @@ public:
 	void rewind();
 	serialization::cPointerLoader* getPointerLoader() const;
 private:
-	const std::vector<unsigned char>& buffer;
+	const unsigned char* data;
+	int length;
+
 	size_t readPosition;
 
 	serialization::cPointerLoader* pointerLoader;
@@ -267,7 +269,7 @@ void cBinaryArchiveOut::readFromBuffer(T1& value)
 {
 	assert(CHAR_BIT == 8); // TODO: make static assert
 
-	if (buffer.size() - readPosition < SIZE)
+	if (length - readPosition < SIZE)
 	{
 		throw std::runtime_error("cBinaryArchiveOut: Buffer underrun");
 	}
@@ -276,25 +278,25 @@ void cBinaryArchiveOut::readFromBuffer(T1& value)
 	{
 	case 1:
 	{
-		Sint8 temp = *reinterpret_cast<const Sint8*>(&buffer[readPosition]);
+		Sint8 temp = *reinterpret_cast<const Sint8*>(&data[readPosition]);
 		value = static_cast<T1>(temp);
 		break;
 	}
 	case 2:
 	{
-		Sint16 temp = SDL_SwapLE16(*reinterpret_cast<const Sint16*>(&buffer[readPosition]));
+		Sint16 temp = SDL_SwapLE16(*reinterpret_cast<const Sint16*>(&data[readPosition]));
 		value = static_cast<T1>(temp);
 		break;
 	}
 	case 4:
 	{
-		Sint32 temp = SDL_SwapLE32(*reinterpret_cast<const Sint32*>(&buffer[readPosition]));
+		Sint32 temp = SDL_SwapLE32(*reinterpret_cast<const Sint32*>(&data[readPosition]));
 		value = static_cast<T1>(temp);
 		break;
 	}
 	case 8:
 	{
-		Sint64 temp = SDL_SwapLE64(*reinterpret_cast<const Sint64*>(&buffer[readPosition]));
+		Sint64 temp = SDL_SwapLE64(*reinterpret_cast<const Sint64*>(&data[readPosition]));
 		value = static_cast<T1>(temp);		
 		break;
 	}

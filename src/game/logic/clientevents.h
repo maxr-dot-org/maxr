@@ -38,7 +38,7 @@ struct sLandingUnit;
 enum CLIENT_EVENT_TYPES
 {
 	// Types between FIRST_CLIENT_MESSAGE and FIRST_MENU_MESSAGE are for the client
-	GAME_EV_ADD_BUILDING = FIRST_CLIENT_MESSAGE,	// adds a building
+	GAME_EV_ADD_BUILDING = 100,	// adds a building
 	GAME_EV_ADD_VEHICLE,			// adds a vehicle
 	GAME_EV_DEL_BUILDING,			// deletes a building
 	GAME_EV_DEL_VEHICLE,			// deletes a vehicle

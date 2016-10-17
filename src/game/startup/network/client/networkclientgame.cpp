@@ -32,7 +32,7 @@ void cNetworkClientGame::run()
 }
 
 //------------------------------------------------------------------------------
-void cNetworkClientGame::setNetwork (std::shared_ptr<cTCP> network_)
+void cNetworkClientGame::setConnectionManager (std::shared_ptr<cConnectionManager> connectionManager_)
 {
-	network = network_;
+	connectionManager = connectionManager_;
 }

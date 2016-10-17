@@ -30,7 +30,7 @@
 //------------------------------------------------------------------------------
 void cNetworkHostGameSaved::start (cApplication& application)
 {
-	server = std::make_unique<cServer> (network);
+	//server = std::make_unique<cServer> (network);
 	//localClient = std::make_shared<cClient> (server.get(), nullptr); //TODO: use new server
 
 	//cSavegame savegame (saveGameNumber);
@@ -43,7 +43,7 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	if (serverPlayerList.empty()) return;
 
 	// set socket index for server players
-	for (const auto& serverPlayer : serverPlayerList)
+/*	for (const auto& serverPlayer : serverPlayerList)
 	{
 		if (serverPlayer->getId() == players[localPlayerIndex].getNr())
 		{
@@ -58,7 +58,7 @@ void cNetworkHostGameSaved::start (cApplication& application)
 			serverPlayer->setSocketIndex (listPlayer.getSocketIndex());
 		}
 	}
-
+*/
 	localClient->setPlayers (players, localPlayerIndex);
 
 	/*if (server->getGameSettings()->getGameType() == eGameSettingsGameType::Turns)

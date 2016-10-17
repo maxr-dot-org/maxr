@@ -69,10 +69,9 @@ using namespace std;
 //------------------------------------------------------------------------
 
 //------------------------------------------------------------------------
-cClient::cClient (cServer2* server, std::shared_ptr<cTCP> network_) :
+cClient::cClient (std::shared_ptr<cConnectionManager> connectionManager, int gameId) :
 	server (nullptr),
-	server2(server),
-	network (std::move (network_)),
+	connectionManager(connectionManager),
 	gameTimer (std::make_shared<cGameTimerClient> ()),
 	activePlayer (nullptr),
 	turnClock (std::make_shared<cTurnClock> (1)),
@@ -80,21 +79,16 @@ cClient::cClient (cServer2* server, std::shared_ptr<cTCP> network_) :
 	casualtiesTracker (std::make_shared<cCasualtiesTracker> ()),
 	effectsList (new cFxContainer)
 {
-	assert (server2 != nullptr || network != nullptr);
-
-	if (server2) server2->setLocalClient(this);
-	else network->setMessageReceiver (this);
 	bDefeated = false;
 
 	gameTimer->start();
 
-	model.setGameId(server2->getModel().getGameId());
+	model.setGameId(gameId);
 }
 
 cClient::~cClient()
 {
-	if (network != nullptr) network->setMessageReceiver (nullptr);
-
+	connectionManager->setLocalClient(nullptr, -1);
 	gameTimer->stop();
 
 	for (unsigned int i = 0; i < attackJobs.size(); i++)
@@ -132,22 +126,6 @@ void cClient::setPlayers (const std::vector<cPlayerBasicData>& splayers, size_t 
 	activePlayer = model.getPlayer(activePlayerIndex);
 }
 
-/*virtual*/ void cClient::pushEvent (std::unique_ptr<cNetMessage> message)
-{
-	if (message->iType == NET_GAME_TIME_SERVER)
-	{
-		// this is a preview for the client to know
-		// how many sync messages are in queue
-		// used to detect a growing lag behind the server time
-		message->popInt32();
-		unsigned int receivedTime = message->popInt32();
-		message->rewind();
-
-		gameTimer->setReceivedTime (receivedTime);
-	}
-	eventQueue.push (std::move (message));
-}
-
 void cClient::pushMessage(std::unique_ptr<cNetMessage2> message)
 {
 	if (message->getType() == eNetMessageType::GAMETIME_SYNC_SERVER)
@@ -163,29 +141,7 @@ void cClient::pushMessage(std::unique_ptr<cNetMessage2> message)
 
 void cClient::sendNetMessage (std::unique_ptr<cNetMessage> message) const
 {
-	return;
-	message->iPlayerNr = activePlayer->getId();
 
-/*	if (message->iType != NET_GAME_TIME_CLIENT)
-	{
-		Log.write ("Client: " + getactivePlayer().getName() + " --> "
-				   + message->getTypeAsString()
-				   + ", gameTime:" + iToStr (this->gameTimer->gameTime)
-				   + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
-	} */
-
-	if (server)
-	{
-		// push an event to the local server in singleplayer, HotSeat or
-		// if this machine is the host
-		server->pushEvent (std::move (message));
-	}
-	else // else send it over the net
-	{
-		//the client is only connected to one socket
-		//so network->send() only sends to the server
-		//network->send (message->iLength, message->serialize());
-	}
 }
 
 void cClient::sendNetMessage(cNetMessage2& message) const
@@ -199,18 +155,7 @@ void cClient::sendNetMessage(cNetMessage2& message) const
 		Log.write(getActivePlayer().getName() + ": --> " + archive.data() + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
-	if (server2)
-	{
-		// push an event to the local server in singleplayer, HotSeat or
-		// if this machine is the host
-		server2->pushMessage(message.clone());
-	}
-	else // else send it over the net
-	{
-		//TODO: network implementation
-		assert(false);
-		//network->send(message->iLength, message->serialize());
-	}
+	connectionManager->sendToServer(message);
 }
 
 bool cClient::addMoveJob (cVehicle& vehicle, const cPosition& destination, const std::vector<cVehicle*>* group)
@@ -284,7 +229,7 @@ void cClient::HandleNetMessage_TCP_CLOSE (cNetMessage& message)
 {
 	assert (message.iType == TCP_CLOSE);
 
-	network->close (message.popInt16());
+	//network->close (message.popInt16());
 	//TODO: gameGUI
 	//gameGUI->onLostConnection();
 }

@@ -29,7 +29,7 @@
 
 class cClient;
 class cServer;
-class cTCP;
+class cConnectionManager;
 
 class cNetworkHostGame : public cGame
 {
@@ -38,9 +38,9 @@ public:
 
 	virtual void run() MAXR_OVERRIDE_FUNCTION;
 
-	void setNetwork (std::shared_ptr<cTCP> network);
+	void setConnectionManager (std::shared_ptr<cConnectionManager> network);
 protected:
-	std::shared_ptr<cTCP> network;
+	std::shared_ptr<cConnectionManager> network;
 
 	std::shared_ptr<cClient> localClient;
 	std::unique_ptr<cServer> server;

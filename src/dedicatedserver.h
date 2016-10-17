@@ -24,6 +24,8 @@
 #include <vector>
 #include <memory>
 #include "network.h"
+#include "connectionmanager.h"
+
 
 class cDedicatedServerConfig;
 class cTCP;
@@ -41,7 +43,7 @@ public:
 	static cDedicatedServer& instance();
 
 	void run();
-	void pushEvent (std::unique_ptr<cNetMessage> message);
+	void pushMessage (std::unique_ptr<cNetMessage2> message);
 
 	void doAutoSave (cServer& server);
 

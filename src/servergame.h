@@ -28,7 +28,7 @@
 #include "utility/signal/signalconnectionmanager.h"
 #include "game/data/gamesettings.h"
 
-class cNetMessage;
+class cNetMessage2;
 class cPlayer;
 class cServer;
 class cTCP;
@@ -54,7 +54,7 @@ public:
 
 	void runInThread();
 
-	void pushEvent (std::unique_ptr<cNetMessage> message);
+	void pushEvent (std::unique_ptr<cNetMessage2> message);
 
 	// retrieve state
 	std::string getGameState() const;

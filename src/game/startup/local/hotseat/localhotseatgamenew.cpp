@@ -40,7 +40,7 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 {
 	assert (gameSettings != nullptr);
 
-	server = std::make_unique<cServer> (nullptr);
+	//server = std::make_unique<cServer> (nullptr);
 
 	server->setMap (staticMap);
 

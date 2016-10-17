@@ -39,7 +39,7 @@ void cNetworkHostGame::run()
 }
 
 //------------------------------------------------------------------------------
-void cNetworkHostGame::setNetwork (std::shared_ptr<cTCP> network_)
+void cNetworkHostGame::setConnectionManager(std::shared_ptr<cConnectionManager> network_)
 {
 	network = network_;
 }

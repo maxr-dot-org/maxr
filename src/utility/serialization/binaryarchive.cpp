@@ -99,8 +99,9 @@ void cBinaryArchiveIn::pushValue(double value)
 }
 
 //------------------------------------------------------------------------------
-cBinaryArchiveOut::cBinaryArchiveOut(const std::vector<unsigned char>& buffer, serialization::cPointerLoader* pointerLoader) :
-	buffer(buffer),
+cBinaryArchiveOut::cBinaryArchiveOut(const unsigned char* data, int length, serialization::cPointerLoader* pointerLoader) :
+	data(data),
+	length(length),
 	readPosition(0),
 	pointerLoader(pointerLoader)
 {}

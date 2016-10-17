@@ -20,7 +20,6 @@
 #include <SDL_thread.h>
 
 #include "server2.h"
-#include "client.h"
 #include "game/logic/action/action.h"
 #include "utility/log.h"
 #include "game/data/player/playerbasicdata.h"
@@ -29,14 +28,15 @@
 #include "game/data/savegame.h"
 #include "netmessage2.h"
 #include "utility/string/toString.h"
+#include "connectionmanager.h"
 
 //------------------------------------------------------------------------------
-cServer2::cServer2() :
+cServer2::cServer2(std::shared_ptr<cConnectionManager> connectionManager) :
 	model(),
 	gameTimer(),
-	localClient(nullptr),
 	serverThread(nullptr),
-	bExit(false)
+	exit(false),
+	connectionManager(connectionManager)
 {
 	model.setGameId(random(UINT32_MAX));
 }
@@ -45,21 +45,9 @@ cServer2::cServer2() :
 cServer2::~cServer2()
 {
 	stop();
-	// disconnect clients
-	/*if (network)
-	{
-		for (size_t i = 0; i != playerList.size(); ++i)
-		{
-			network->close(playerList[i]->getSocketNum());
-		}
-		network->setMessageReceiver(nullptr);
-	}*/
-}
-
-//------------------------------------------------------------------------------
-void cServer2::setLocalClient(cClient* client)
-{
-	localClient = client;
+	connectionManager->closeServer();
+	connectionManager->disconnectAll();
+	connectionManager->setLocalServer(nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -91,7 +79,7 @@ void cServer2::saveGameState(int saveGameNumber, const std::string& saveName) co
 	if (SDL_ThreadID() != SDL_GetThreadID(serverThread))
 	{
 		//allow save writing of the server model from the main thread
-		bExit = true;
+		exit = true;
 		SDL_WaitThread(serverThread, nullptr);
 		serverThread = nullptr;
 	}
@@ -104,7 +92,7 @@ void cServer2::saveGameState(int saveGameNumber, const std::string& saveName) co
 
 	if (!serverThread)
 	{
-		bExit = false;
+		exit = false;
 		serverThread = SDL_CreateThread(serverThreadCallback, "server", const_cast<cServer2*>(this));
 	}
 }
@@ -128,7 +116,7 @@ void cServer2::resyncClientModel(int playerNr /*= -1*/) const
 	if (SDL_ThreadID() != SDL_GetThreadID(serverThread))
 	{
 		//allow resync from main thread
-		bExit = true;
+		exit = true;
 		SDL_WaitThread(serverThread, nullptr);
 		serverThread = nullptr;
 	}
@@ -139,7 +127,7 @@ void cServer2::resyncClientModel(int playerNr /*= -1*/) const
 
 	if (!serverThread)
 	{
-		bExit = false;
+		exit = false;
 		serverThread = SDL_CreateThread(serverThreadCallback, "server", const_cast<cServer2*>(this));
 	}
 }
@@ -152,23 +140,19 @@ void cServer2::pushMessage(std::unique_ptr<cNetMessage2> message)
 
 
 //------------------------------------------------------------------------------
-//TODO: send to specific player
-void cServer2::sendMessageToClients(const cNetMessage2& message, int playerNr) const
+void cServer2::sendMessageToClients(const cNetMessage2& message, int playerNr /* = -1 */) const
 {
 	if (message.getType() != eNetMessageType::GAMETIME_SYNC_SERVER && message.getType() != eNetMessageType::RESYNC_MODEL)
 	{
 		cTextArchiveIn archive;
 		archive << message;
 		Log.write("Server: --> " + archive.data() + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
-
 	}
 
-
-	//TODO: network
-	//if (network)
-	//	network->send(message->iLength, message->data);
-
-	localClient->pushMessage(message.clone());
+	if (playerNr == -1)
+		connectionManager->sendToPlayers(message);
+	else
+		connectionManager->sendToPlayer(message, playerNr);
 }
 
 //------------------------------------------------------------------------------
@@ -186,7 +170,7 @@ void cServer2::start()
 //------------------------------------------------------------------------------
 void cServer2::stop()
 {
-	bExit = true;
+	exit = true;
 	gameTimer.stop();
 
 	if (serverThread)
@@ -199,7 +183,7 @@ void cServer2::stop()
 //------------------------------------------------------------------------------
 void cServer2::run()
 {
-	while (!bExit)
+	while (!exit)
 	{
 		std::unique_ptr<cNetMessage2> message;
 		while (eventQueue.try_pop(message))

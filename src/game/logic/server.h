@@ -38,6 +38,7 @@
 #include "utility/flatset.h"
 #include "game/data/savegameinfo.h"
 #include "game/data/model.h"
+#include "connectionmanager.h"
 
 class cBuilding;
 class cCasualtiesTracker;
@@ -185,8 +186,8 @@ public:
 	*@author alzi alias DoctorDeath
 	*@param event The SDL_Event to be pushed.
 	*/
-	virtual void pushEvent (std::unique_ptr<cNetMessage> event) MAXR_OVERRIDE_FUNCTION;
-	virtual std::unique_ptr<cNetMessage> popEvent() MAXR_OVERRIDE_FUNCTION;
+	virtual void pushEvent (std::unique_ptr<cNetMessage> event);
+	virtual std::unique_ptr<cNetMessage> popEvent();
 	/**
 	* sends a netMessage to the client
 	* on which the player with 'iPlayerNum' is playing

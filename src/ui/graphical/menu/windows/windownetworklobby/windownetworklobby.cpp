@@ -31,18 +31,15 @@
 #include "game/data/player/player.h"
 #include "pcx.h"
 #include "main.h"
-#include "network.h"
 #include "game/data/map/map.h"
 #include "video.h"
 #include "game/data/savegame.h"
-#include "network.h"
-#include "menuevents.h"
 #include "maxrversion.h"
 
 //------------------------------------------------------------------------------
 cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableIp) :
 	cWindow (LoadPCX (GFXOD_MULT)),
-	localPlayer (std::make_shared<cPlayerBasicData> (cSettings::getInstance().getPlayerName(), cPlayerColor (cSettings::getInstance().getPlayerColor()), 0, MAX_CLIENTS))
+	localPlayer (std::make_shared<cPlayerBasicData> (cSettings::getInstance().getPlayerName(), cPlayerColor (cSettings::getInstance().getPlayerColor()), 0))
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 11), getPosition() + cPosition (getArea().getMaxCorner().x(), 11 + 10)), title, FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
@@ -391,6 +388,20 @@ std::vector<cPlayerBasicData> cWindowNetworkLobby::getPlayersNotShared() const
 }
 
 //------------------------------------------------------------------------------
+std::shared_ptr<cPlayerBasicData> cWindowNetworkLobby::getPlayer(int playerNr) const
+{
+	for (size_t i = 0; i < playersList->getItemsCount(); ++i)
+	{
+		const auto& item = playersList->getItem(i);
+		if (item.getPlayer()->getNr() == playerNr)
+		{
+			return item.getPlayer();
+		}
+	}
+	return nullptr;
+}
+
+//------------------------------------------------------------------------------
 unsigned short cWindowNetworkLobby::getPort() const
 {
 	return atoi (portLineEdit->getText().c_str());
@@ -418,4 +429,25 @@ void cWindowNetworkLobby::disablePortEdit()
 void cWindowNetworkLobby::disableIpEdit()
 {
 	ipLineEdit->disable();
+}
+
+//------------------------------------------------------------------------------
+void cWindowNetworkLobby::enablePortEdit()
+{
+	portLineEdit->enable();
+}
+
+//------------------------------------------------------------------------------
+void cWindowNetworkLobby::enableIpEdit()
+{
+	ipLineEdit->enable();
+}
+
+//------------------------------------------------------------------------------
+void cWindowNetworkLobby::updatePlayerListView()
+{
+	for (unsigned int i = 0; i < playersList->getItemsCount(); i++)
+	{
+		playersList->getItem(i).update();
+	}
 }

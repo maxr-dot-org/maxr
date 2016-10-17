@@ -26,10 +26,11 @@
 #include "utility/string/toString.h"
 #include "game/data/model.h"
 #include "utility/serialization/serialization.h"
+#include "ui/graphical/menu/control/menuevents.h"
 
-std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(const std::vector<unsigned char>& serialMessage)
+std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(const unsigned char* data, int length)
 {
-	cBinaryArchiveOut archive(serialMessage);
+	cBinaryArchiveOut archive(data, length);
 
 	eNetMessageType type;
 	archive >> type;
@@ -40,6 +41,12 @@ std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(const std::vector<u
 	std::unique_ptr<cNetMessage2> message;
 	switch (type)
 	{
+	case eNetMessageType::TCP_HELLO: 
+		message = std::make_unique<cNetMessageTcpHello>(archive); break;
+	case eNetMessageType::TCP_WANT_CONNECT: 
+		message = std::make_unique<cNetMessageTcpWantConnect>(archive); break;
+	case eNetMessageType::TCP_CONNECTED: 
+		message = std::make_unique<cNetMessageTcpConnected>(archive); break;
 	case eNetMessageType::ACTION:
 		message = cAction::createFromBuffer(archive); break;
 	case eNetMessageType::GAMETIME_SYNC_SERVER:
@@ -58,6 +65,8 @@ std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(const std::vector<u
 		message = std::make_unique<cNetMessageRequestGUISaveInfo>(archive); break;
 	case eNetMessageType::RESYNC_MODEL:
 		message = std::make_unique<cNetMessageResyncModel>(archive); break;
+	case eNetMessageType::MULTIPLAYER_LOBBY:
+		message = cMultiplayerLobbyMessage::createFromBuffer(archive); break;
 
 	default:
 		throw std::runtime_error("Unknown net message type " + iToStr(static_cast<int>(type)));
@@ -76,7 +85,7 @@ std::unique_ptr<cNetMessage2> cNetMessage2::clone() const
 	cBinaryArchiveIn archiveIn(serialMessage);
 	archiveIn << *this;
 
-	return cNetMessage2::createFromBuffer(serialMessage);
+	return cNetMessage2::createFromBuffer(serialMessage.data(), serialMessage.size());
 }
 
 //------------------------------------------------------------------------------
@@ -93,6 +102,12 @@ std::string enumToString(eNetMessageType value)
 	case eNetMessageType::GUI_SAVE_INFO: return "GUI_SAVE_INFO";
 	case eNetMessageType::REQUEST_GUI_SAVE_INFO: return "REQUEST_GUI_SAVE_INFO";
 	case eNetMessageType::RESYNC_MODEL: return "RESYNC_MODEL";
+	case eNetMessageType::MULTIPLAYER_LOBBY: return "MULTIPLAYER_LOBBY";
+	case eNetMessageType::TCP_HELLO: return "TCP_HELLO";
+	case eNetMessageType::TCP_WANT_CONNECT: return "TCP_WANT_CONNECT";
+	case eNetMessageType::TCP_CONNECTED: return "TCP_CONNECTED";
+	case eNetMessageType::TCP_CONNECT_FAILED: return "TCP_CONNECT_FAILED";
+	case eNetMessageType::TCP_CLOSE: return "TCP_CLOSE";
 	default:
 		assert(false);
 		return toString(static_cast<int>(value));
@@ -110,6 +125,6 @@ cNetMessageResyncModel::cNetMessageResyncModel(const cModel& model) :
 void cNetMessageResyncModel::apply(cModel& model) const
 {
 	serialization::cPointerLoader p(model);
-	cBinaryArchiveOut archive(data, &p);
+	cBinaryArchiveOut archive(data.data(), data.size(), &p);
 	archive >> model;
 }

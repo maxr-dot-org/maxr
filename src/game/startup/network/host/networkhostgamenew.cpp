@@ -39,7 +39,7 @@ void cNetworkHostGameNew::start (cApplication& application)
 {
 	assert (gameSettings != nullptr);
 
-	server = std::make_unique<cServer> (network);
+	//server = std::make_unique<cServer> (network);
 	//localClient = std::make_shared<cClient> (server.get(), nullptr); //TODO: new server
 
 	/*for (size_t i = 0; i < players.size(); ++i)
