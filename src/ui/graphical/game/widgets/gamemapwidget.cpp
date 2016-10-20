@@ -1895,17 +1895,17 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 					}
 					else if (selectedBuilding)
 					{
-						if (overBuilding == selectedBuilding)
+						if (overBaseBuilding == selectedBuilding)
+						{
+                            if (unitSelection.canSelect (overPlane)) next = overPlane;
+							else if (unitSelection.canSelect (overVehicle)) next = overVehicle;
+                            else if (unitSelection.canSelect (overBuilding)) next = overBuilding;
+						}
+						else
 						{
 							if (unitSelection.canSelect (overBaseBuilding)) next = overBaseBuilding;
 							else if (unitSelection.canSelect (overPlane)) next = overPlane;
 							else if (unitSelection.canSelect (overVehicle)) next = overVehicle;
-						}
-						else
-						{
-							if (unitSelection.canSelect (overPlane)) next = overPlane;
-							else if (unitSelection.canSelect (overVehicle)) next = overVehicle;
-							else if (unitSelection.canSelect (overBuilding)) next = overBuilding;
 						}
 					}
 
