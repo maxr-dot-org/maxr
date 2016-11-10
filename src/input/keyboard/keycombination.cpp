@@ -275,12 +275,9 @@ bool cKeyCombination::operator!= (const cKeyCombination& other) const
 //------------------------------------------------------------------------------
 bool cKeyCombination::matches(const cKeyCombination& other) const
 {
+	// NOTE: we do not check for "fixable" modifiers like CAPS, NUM, ... here because they are usually reflected in the key already.
 	return (key == other.key) &&
-		(!(other.modifiers & eKeyModifierType::Shift) || ((other.modifiers & modifiers) & eKeyModifierType::Shift)) &&
-		(!(other.modifiers & eKeyModifierType::Ctrl) || ((other.modifiers & modifiers) & eKeyModifierType::Ctrl)) &&
-		(!(other.modifiers & eKeyModifierType::Alt) || ((other.modifiers & modifiers) & eKeyModifierType::Alt)) &&
-		(!(other.modifiers & eKeyModifierType::Gui) || ((other.modifiers & modifiers) & eKeyModifierType::Ctrl)) &&
-		(!(other.modifiers & eKeyModifierType::Num) || ((other.modifiers & modifiers) & eKeyModifierType::Num)) &&
-		(!(other.modifiers & eKeyModifierType::Caps) || ((other.modifiers & modifiers) & eKeyModifierType::Caps)) &&
-		(!(other.modifiers & eKeyModifierType::Mode) || ((other.modifiers & modifiers) & eKeyModifierType::Mode));
+		((!(other.modifiers & eKeyModifierType::Shift) && !(modifiers & eKeyModifierType::Shift)) || ((other.modifiers & modifiers) & eKeyModifierType::Shift)) &&
+		((!(other.modifiers & eKeyModifierType::Ctrl) && !(modifiers & eKeyModifierType::Ctrl)) || ((other.modifiers & modifiers) & eKeyModifierType::Ctrl)) &&
+		((!(other.modifiers & eKeyModifierType::Alt) && !(modifiers & eKeyModifierType::Alt)) || ((other.modifiers & modifiers) & eKeyModifierType::Alt));;
 }
