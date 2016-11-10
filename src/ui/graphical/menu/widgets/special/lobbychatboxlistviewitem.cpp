@@ -24,7 +24,7 @@
 cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& text) :
 	cAbstractListViewItem (cPosition (50, 0))
 {
-	playerNameLabel = nullptr;
+	prefixLabel = nullptr;
 
 	messageLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition(), getPosition() + cPosition (getSize().x() - 1, 0)), text));
 	messageLabel->setWordWrap (true);
@@ -34,30 +34,35 @@ cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& text) :
 }
 
 //------------------------------------------------------------------------------
-cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& playerName, const std::string& text) :
+cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& prefix, const std::string& text, bool addColon) :
+	cLobbyChatBoxListViewItem (prefix, 0, text, addColon)
+{}
+
+//------------------------------------------------------------------------------
+cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& prefix, int desiredPrefixTextWidth, const std::string& text, bool addColon) :
 	cAbstractListViewItem (cPosition (50, 0))
 {
-	int playerNameTextWidth;
-	if (!playerName.empty())
+	int prefixTextWidth;
+	if (!prefix.empty ())
 	{
-		const auto playerNameText = playerName + lngPack.i18n ("Text~Punctuation~Colon");
-		playerNameTextWidth = font->getTextWide (playerNameText);
-		playerNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition(), getPosition() + cPosition (playerNameTextWidth, 10)), playerNameText));
+		const auto prefixText = addColon ? prefix + lngPack.i18n ("Text~Punctuation~Colon") : prefix;
+		prefixTextWidth = std::max (desiredPrefixTextWidth, font->getTextWide (prefixText));
+		prefixLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition (), getPosition () + cPosition (prefixTextWidth, 10)), prefixText));
 	}
 	else
 	{
-		playerNameTextWidth = 0;
-		playerNameLabel = nullptr;
+		prefixTextWidth = 0;
+		prefixLabel = nullptr;
 	}
 
-	const cPosition messageLabelBeginPos = getPosition() + cPosition (playerNameTextWidth, 0);
-	const cPosition messageLabelEndPos (std::max (getPosition().x() + getSize().x() - 1, messageLabelBeginPos.x() + 1), getPosition().y() + 5);
+	const cPosition messageLabelBeginPos = getPosition () + cPosition (prefixTextWidth, 0);
+	const cPosition messageLabelEndPos (std::max (getPosition ().x () + getSize ().x () - 1, messageLabelBeginPos.x () + 1), getPosition ().y () + 5);
 
 	messageLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (messageLabelBeginPos, messageLabelEndPos), text));
 	messageLabel->setWordWrap (true);
-	messageLabel->resizeToTextHeight();
+	messageLabel->resizeToTextHeight ();
 
-	fitToChildren();
+	fitToChildren ();
 }
 
 //------------------------------------------------------------------------------
@@ -67,9 +72,36 @@ void cLobbyChatBoxListViewItem::handleResized (const cPosition& oldSize)
 
 	if (oldSize.x() == getSize().x()) return;
 
-	auto playerNameTextWidth = playerNameLabel ? playerNameLabel->getSize().x() - 1 : 0;
-	messageLabel->resize (cPosition (getSize().x() - playerNameTextWidth, messageLabel->getSize().y()));
+	auto prefixTextWidth = prefixLabel ? prefixLabel->getSize().x() - 1 : 0;
+	messageLabel->resize (cPosition (getSize().x() - prefixTextWidth, messageLabel->getSize().y()));
 	messageLabel->resizeToTextHeight();
 
 	fitToChildren();
+}
+
+//------------------------------------------------------------------------------
+int cLobbyChatBoxListViewItem::getPrefixLabelWidth () const
+{
+	return prefixLabel ? prefixLabel->getSize ().x () : 0;
+}
+
+//------------------------------------------------------------------------------
+void cLobbyChatBoxListViewItem::setDesiredPrefixLabelWidth (int width)
+{
+	int prefixTextWidth;
+	if (prefixLabel != nullptr)
+	{
+		prefixTextWidth = std::max (prefixLabel->getSize ().x (), width);
+		prefixLabel->resize (cPosition (prefixTextWidth, prefixLabel->getSize ().y ()));
+		prefixTextWidth -= 1;
+	}
+	else
+	{
+		prefixTextWidth = std::max (0, width);
+	}
+	messageLabel->resize (cPosition (getSize ().x () - prefixTextWidth, messageLabel->getSize ().y ()));
+	messageLabel->moveTo (getPosition () + cPosition (prefixTextWidth, 0));
+	messageLabel->resizeToTextHeight ();
+
+	fitToChildren ();
 }

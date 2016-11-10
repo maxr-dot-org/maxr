@@ -33,13 +33,17 @@ class cLobbyChatBoxListViewItem : public cAbstractListViewItem
 {
 public:
 	cLobbyChatBoxListViewItem (const std::string& text);
-	cLobbyChatBoxListViewItem (const std::string& playerName, const std::string& text);
+	cLobbyChatBoxListViewItem (const std::string& prefix, const std::string& text, bool addColon = true);
+	cLobbyChatBoxListViewItem (const std::string& prefix, int desiredPrefixTextWidth, const std::string& text, bool addColon = true);
+
+	int getPrefixLabelWidth () const;
+	void setDesiredPrefixLabelWidth (int width);
 
 	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
 
 private:
 	cLabel* messageLabel;
-	cLabel* playerNameLabel;
+	cLabel* prefixLabel;
 };
 
 #endif // ui_graphical_menu_widgets_special_lobbychatboxlistviewitemH
