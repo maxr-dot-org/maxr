@@ -61,6 +61,7 @@ public:
 	virtual bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key) MAXR_OVERRIDE_FUNCTION;
 	virtual void handleTextEntered (cApplication& application, cKeyboard& keyboard, const char* text) MAXR_OVERRIDE_FUNCTION;
 
+	cSignal<void ()> clicked;
 	cSignal<void ()> textSet;
 	cSignal<void ()> escapePressed;
 	cSignal<void ()> returnPressed;

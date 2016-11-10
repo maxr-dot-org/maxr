@@ -189,6 +189,8 @@ void cLineEdit::handleLooseKeyFocus (cApplication& application)
 //------------------------------------------------------------------------------
 bool cLineEdit::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
+	clicked ();
+
 	if (readOnly) return false;
 
 	int x = mouse.getPosition().x() - (getPosition().x() + getTextDrawOffset().x());
