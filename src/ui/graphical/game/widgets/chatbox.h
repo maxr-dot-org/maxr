@@ -55,14 +55,14 @@ public:
 
 	void clearPlayers();
 
-	void addPlayerEntry (std::unique_ptr<PlayerListItemType> player);
+	PlayerListItemType* addPlayerEntry (std::unique_ptr<PlayerListItemType> player);
 
 	const PlayerListItemType* getPlayerEntryFromNumber (int playerNumber) const;
 	PlayerListItemType* getPlayerEntryFromNumber (int playerNumber);
 
 	void removePlayerEntry (int playerNumber);
 
-	void addChatEntry (std::unique_ptr<ChatListItemType> entry);
+	ChatListItemType* addChatEntry (std::unique_ptr<ChatListItemType> entry);
 
 	void focus();
 
@@ -152,9 +152,9 @@ void cChatBox<ChatListItemType, PlayerListItemType>::clearPlayers()
 
 //------------------------------------------------------------------------------
 template<typename ChatListItemType, typename PlayerListItemType>
-void cChatBox<ChatListItemType, PlayerListItemType>::addPlayerEntry (std::unique_ptr<PlayerListItemType> player)
+PlayerListItemType* cChatBox<ChatListItemType, PlayerListItemType>::addPlayerEntry (std::unique_ptr<PlayerListItemType> player)
 {
-	playersList->addItem (std::move (player));
+	return playersList->addItem (std::move (player));
 }
 
 //------------------------------------------------------------------------------
@@ -194,9 +194,9 @@ void cChatBox<ChatListItemType, PlayerListItemType>::removePlayerEntry (int play
 
 //------------------------------------------------------------------------------
 template<typename ChatListItemType, typename PlayerListItemType>
-void cChatBox<ChatListItemType, PlayerListItemType>::addChatEntry (std::unique_ptr<ChatListItemType> entry)
+ChatListItemType* cChatBox<ChatListItemType, PlayerListItemType>::addChatEntry (std::unique_ptr<ChatListItemType> entry)
 {
-	auto newItem = chatList->addItem (std::move (entry), eAddListItemScrollType::IfAtBottom);
+	return chatList->addItem (std::move (entry), eAddListItemScrollType::IfAtBottom);
 }
 
 //------------------------------------------------------------------------------
