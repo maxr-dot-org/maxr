@@ -24,11 +24,11 @@
 #include <vector>
 
 #include "maxrconfig.h"
-#include "ui/graphical/widget.h"
+#include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "ui/graphical/alignment.h"
 #include "unifonts.h"
 
-class cLabel : public cWidget
+class cLabel : public cClickableWidget
 {
 public:
 	cLabel (const cBox<cPosition>& area, const std::string& text, eUnicodeFontType fontType_ = FONT_LATIN_NORMAL, AlignmentFlags alignment = toEnumFlag (eAlignmentType::Left)  | eAlignmentType::Top);
@@ -45,6 +45,11 @@ public:
 	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 
 	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
+
+	cSignal<void ()> clicked;
+protected:
+
+	virtual bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 private:
 	std::string text;
 	eUnicodeFontType fontType;

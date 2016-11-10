@@ -22,7 +22,7 @@
 
 //------------------------------------------------------------------------------
 cLabel::cLabel (const cBox<cPosition>& area, const std::string& text_, eUnicodeFontType fontType_, AlignmentFlags alignment_) :
-	cWidget (area),
+	cClickableWidget (area),
 	fontType (fontType_),
 	alignment (alignment_),
 	wordWrap (false)
@@ -264,4 +264,12 @@ void cLabel::handleResized (const cPosition& oldSize)
 	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
 
 	updateDisplayInformation();
+}
+
+//------------------------------------------------------------------------------
+bool cLabel::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
+{
+	clicked ();
+
+	return false;
 }
