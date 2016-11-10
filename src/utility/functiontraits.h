@@ -31,7 +31,8 @@
  * @tparam F
  */
 template<typename F>
-struct sFunctionTraits;
+struct sFunctionTraits : public sFunctionTraits<decltype(&F::operator())>
+{};
 
 #if MAXR_NO_VARIADIC_TEMPLATES
 
@@ -126,23 +127,31 @@ struct sFunctionTraits<R (Arg1, Arg2, Arg3, Arg4)>
 #else
 
 template<typename R, typename... Args>
+struct sFunctionTraits<R(Args...)>
+{
+    typedef R result_type;
+
+    static const size_t arity = sizeof... (Args);
+
+    template<size_t N>
+    struct argument
+    {
+        static_assert (N < arity, "Invalid argument index.");
+        typedef typename std::tuple_element<N, std::tuple<Args...>>::type type;
+    };
+};
+
+template<typename R, typename... Args>
 struct sFunctionTraits<R (*) (Args...)> : public sFunctionTraits<R (Args...)>
 {};
 
-template<typename R, typename... Args>
-struct sFunctionTraits<R (Args...)>
-{
-	typedef R result_type;
+template<typename C, typename R, typename... Args>
+struct sFunctionTraits<R (C::*) (Args...)> : public sFunctionTraits<R(Args...)>
+{};
 
-	static const size_t arity = sizeof... (Args);
-
-	template<size_t N>
-	struct argument
-	{
-		static_assert (N < arity, "Invalid argument index.");
-		typedef typename std::tuple_element<N, std::tuple<Args...>>::type type;
-	};
-};
+template<typename C, typename R, typename... Args>
+struct sFunctionTraits<R (C::*) (Args...) const> : public sFunctionTraits<R(Args...)>
+{};
 
 #endif // MAXR_NO_VARIADIC_TEMPLATES
 
