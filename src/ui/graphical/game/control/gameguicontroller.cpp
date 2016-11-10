@@ -255,28 +255,28 @@ void cGameGuiController::initShortcuts()
 		selectNextUnit();
 	});
 
-    auto savePosition1Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keySavePosition1));
+	auto savePosition1Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keySavePosition1));
 	signalConnectionManager.connect (savePosition1Shortcut->triggered, std::bind (&cGameGuiController::savePosition, this, 0));
 
-    auto savePosition2Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keySavePosition2));
+	auto savePosition2Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keySavePosition2));
 	signalConnectionManager.connect (savePosition2Shortcut->triggered, std::bind (&cGameGuiController::savePosition, this, 1));
 
-    auto savePosition3Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keySavePosition3));
+	auto savePosition3Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keySavePosition3));
 	signalConnectionManager.connect (savePosition3Shortcut->triggered, std::bind (&cGameGuiController::savePosition, this, 2));
 
-    auto savePosition4Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keySavePosition4));
+	auto savePosition4Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keySavePosition4));
 	signalConnectionManager.connect (savePosition4Shortcut->triggered, std::bind (&cGameGuiController::savePosition, this, 3));
 
-    auto loadPosition1Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keyPosition1));
+	auto loadPosition1Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keyPosition1));
 	signalConnectionManager.connect (loadPosition1Shortcut->triggered, std::bind (&cGameGuiController::jumpToSavedPosition, this, 0));
 
-    auto loadPosition2Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keyPosition2));
+	auto loadPosition2Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keyPosition2));
 	signalConnectionManager.connect (loadPosition2Shortcut->triggered, std::bind (&cGameGuiController::jumpToSavedPosition, this, 1));
 
-    auto loadPosition3Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keyPosition3));
+	auto loadPosition3Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keyPosition3));
 	signalConnectionManager.connect (loadPosition3Shortcut->triggered, std::bind (&cGameGuiController::jumpToSavedPosition, this, 2));
 
-    auto loadPosition4Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keyPosition4));
+	auto loadPosition4Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keyPosition4));
 	signalConnectionManager.connect (loadPosition4Shortcut->triggered, std::bind (&cGameGuiController::jumpToSavedPosition, this, 3));
 
 }
