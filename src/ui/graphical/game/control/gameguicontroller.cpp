@@ -18,8 +18,13 @@
  ***************************************************************************/
 
 #include <cassert>
+#include <sstream>
 
 #include "ui/graphical/game/control/gameguicontroller.h"
+#include "ui/graphical/game/control/chatcommand/chatcommand.h"
+#include "ui/graphical/game/control/chatcommand/chatcommandexecutor.h"
+#include "ui/graphical/game/control/chatcommand/chatcommandparser.h"
+#include "ui/graphical/game/control/chatcommand/chatcommandarguments.h"
 #include "ui/graphical/game/gamegui.h"
 #include "ui/graphical/game/hud.h"
 #include "ui/graphical/game/widgets/gamemapwidget.h"
@@ -93,6 +98,7 @@ cGameGuiController::cGameGuiController (cApplication& application_, std::shared_
 {
 	connectGuiStaticCommands();
 	initShortcuts();
+	initChatCommands();
 	application.addRunnable (animationTimer);
 
 	for (size_t i = 0; i < savedPositions.size(); ++i)
@@ -273,6 +279,341 @@ void cGameGuiController::initShortcuts()
     auto loadPosition4Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keyPosition4));
 	signalConnectionManager.connect (loadPosition4Shortcut->triggered, std::bind (&cGameGuiController::jumpToSavedPosition, this, 3));
 
+}
+
+//------------------------------------------------------------------------------
+void cGameGuiController::initChatCommands()
+{
+	// TODO: translate descriptions?
+	chatCommands.push_back(
+		cChatCommand("help", "Show this help message")
+		.setAction([&]()
+		{
+			int maxPrefixLabelWidth = 0;
+			std::vector<cLobbyChatBoxListViewItem*> chatBoxCommandEntries;
+			gameGui->getChatBox ().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> ("Available commands:"));
+			for (const auto& commandExecutor : chatCommands)
+			{
+				const auto& command = commandExecutor->getCommand ();
+				if (command.getIsServerOnly () && (!activeClient || !activeClient->getServer ())) continue;
+
+				std::stringstream commandName;
+				commandName << command.getName ();
+				commandExecutor->printArguments (commandName);
+				commandName << " ";
+				auto entry = gameGui->getChatBox ().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (commandName.str (), command.getDescription (), false));
+				maxPrefixLabelWidth = std::max(maxPrefixLabelWidth, entry->getPrefixLabelWidth ());
+				chatBoxCommandEntries.push_back (entry);
+			}
+			for (auto& entry : chatBoxCommandEntries)
+			{
+				entry->setDesiredPrefixLabelWidth (maxPrefixLabelWidth);
+			}
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("base", "Enable/disable debug information about bases")
+		.addArgument<cChatCommandArgumentChoice>(std::vector<std::string>{"client", "server", "off"})
+		.setAction([&](const std::string& value)
+		{
+			if(value == "server")
+			{
+				gameGui->getDebugOutput().setDebugBaseServer(true);
+				gameGui->getDebugOutput().setDebugBaseClient(false);
+			}
+			else if(value == "client")
+			{
+				gameGui->getDebugOutput().setDebugBaseServer(false);
+				gameGui->getDebugOutput().setDebugBaseClient(true);
+			}
+			else
+			{
+				gameGui->getDebugOutput().setDebugBaseServer(false);
+				gameGui->getDebugOutput().setDebugBaseClient(false);
+			}
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("sentry", "Enable/disable debug information about the sentry status")
+		.addArgument<cChatCommandArgumentChoice>(std::vector<std::string>{"server", "off"})
+		.setAction([&](const std::string& value)
+		{
+			gameGui->getDebugOutput().setDebugSentry(value == "server");
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("fx", "Enable/disable debug information about effects")
+		.addArgument<cChatCommandArgumentBool>()
+		.setAction([&](bool flag)
+		{
+			gameGui->getDebugOutput().setDebugFX(flag);
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("trace", "Enable/disable debug information about the unit currently under the cursor")
+		.addArgument<cChatCommandArgumentChoice>(std::vector<std::string>{"client", "server", "off"})
+		.setAction([&](const std::string& value)
+		{
+			if(value == "server")
+			{
+				gameGui->getDebugOutput().setDebugTraceServer(true);
+				gameGui->getDebugOutput().setDebugTraceClient(false);
+			}
+			else if(value == "client")
+			{
+				gameGui->getDebugOutput().setDebugTraceServer(false);
+				gameGui->getDebugOutput().setDebugTraceClient(true);
+			}
+			else
+			{
+				gameGui->getDebugOutput().setDebugTraceServer(false);
+				gameGui->getDebugOutput().setDebugTraceClient(false);
+			}
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("ajobs", "Enable/disable debug information about attack jobs")
+		.addArgument<cChatCommandArgumentBool>()
+		.setAction([&](bool flag)
+		{
+			gameGui->getDebugOutput().setDebugAjobs(flag);
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("players", "Enable/disable debug information about players")
+		.addArgument<cChatCommandArgumentBool>()
+		.setAction([&](bool flag)
+		{
+			gameGui->getDebugOutput().setDebugPlayers(flag);
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("singlestep", "Toggle single step") // TODO: description: what exactly is the effect of this?!
+		.setAction([&]()
+		{
+			cGameTimer::syncDebugSingleStep = !cGameTimer::syncDebugSingleStep;
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("cache size", "Set the drawing cache size")
+		.addArgument<cChatCommandArgumentInt<unsigned int>>("size")
+		.setAction([&](unsigned int size)
+		{
+			gameGui->getGameMap().getDrawingCache().setMaxCacheSize(size);
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("cache flush", "Flush the drawing cache")
+		.setAction([&]()
+		{
+			gameGui->getGameMap().getDrawingCache().flush();
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("cache debug", "Enable/disable debug information about the drawing cache")
+		.addArgument<cChatCommandArgumentBool>()
+		.setAction([&](bool flag)
+		{
+			gameGui->getDebugOutput().setDebugCache(flag);
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("sync debug", "Enable/disable debug information about the sync state of the game data")
+		.addArgument<cChatCommandArgumentBool>()
+		.setAction([&](bool flag)
+		{
+			gameGui->getDebugOutput().setDebugSync(flag);
+		})
+	);
+
+	chatCommands.push_back(
+		cChatCommand("kick", "Remove a player from the game")
+		.addArgument<cChatCommandArgumentClientPlayer>(activeClient)
+		.addArgument<cChatCommandArgumentClient>(activeClient)
+		.setAction([&](cPlayer* player, cClient* client)
+		{
+			sentWantKickPlayer(*client, *player);
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("credits", "Set a given amount of credits to a player")
+		.setShouldBeReported(true)
+		.setIsServerOnly (true)
+		.addArgument<cChatCommandArgumentServerPlayer>(activeClient)
+		.addArgument<cChatCommandArgumentInt<int>>("credits")
+		.addArgument<cChatCommandArgumentServer>(activeClient)
+		.setAction([&](cPlayer* player, int credits, cServer* server)
+		{
+			player->setCredits(credits);
+			sendCredits(*server, credits, *player);
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("turnend", "Set a new turn end deadline. Use a value < 0 to disable the deadline entirely")
+		.setShouldBeReported (true)
+		.setIsServerOnly (true)
+		.addArgument<cChatCommandArgumentInt<int>>("seconds")
+		.addArgument<cChatCommandArgumentServer>(activeClient)
+		.setAction([&](int seconds, cServer* server)
+		{
+			// FIXME: do not do changes on server data that are not synchronized with the server thread!
+			if(seconds >= 0)
+			{
+				server->setTurnEndDeadline(std::chrono::seconds(seconds));
+				server->setTurnEndDeadlineActive(true);
+			}
+			else
+			{
+				server->setTurnEndDeadlineActive(false);
+			}
+			Log.write("Turn end deadline changed to " + std::to_string(seconds), cLog::eLOG_TYPE_INFO);
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("turnlimit", "Set a new turn limit. Use a value <= 0 to disable the limit entirely")
+		.setShouldBeReported (true)
+		.setIsServerOnly (true)
+		.addArgument<cChatCommandArgumentInt<int>>("seconds")
+		.addArgument<cChatCommandArgumentServer>(activeClient)
+		.setAction([&](int seconds, cServer* server)
+		{
+			// FIXME: do not do changes on server data that are not synchronized with the server thread!
+			if(seconds > 0)
+			{
+				server->setTurnLimit(std::chrono::seconds(seconds));
+				server->setTurnLimitActive(true);
+			}
+			else
+			{
+				server->setTurnLimitActive(false);
+			}
+			Log.write("Turn limit changed to " + std::to_string(seconds), cLog::eLOG_TYPE_INFO);
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("mark", "Add a mark to the log file")
+		.addArgument<cChatCommandArgumentString>("text", true)
+		.addArgument<cChatCommandArgumentClient>(activeClient)
+		.setAction([&](const std::string& text, cClient* client)
+		{
+			auto message = std::make_unique<cNetMessage>(GAME_EV_WANT_MARK_LOG);
+			message->pushString(text);
+			client->sendNetMessage(std::move(message));
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("color", "Change the color of the current player")
+		.addArgument<cChatCommandArgumentInt<size_t>>("colornum")
+		.addArgument<cChatCommandArgumentClient>(activeClient)
+		.setAction([&](size_t colorNum, cClient* client)
+		{
+			colorNum %= cPlayerColor::predefinedColorsCount;
+			client->getActivePlayer().setColor(cPlayerColor(cPlayerColor::predefinedColors[colorNum]));
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("survey", "Reveal all resources on the map")
+		.setShouldBeReported (true)
+		.setIsServerOnly (true)
+		.addArgument<cChatCommandArgumentServer>(activeClient)
+		.addArgument<cChatCommandArgumentClient>(activeClient)
+		.setAction([&](cServer* server, cClient* client)
+		{
+			client->getMap()->assignRessources(*server->Map);
+			client->getActivePlayer().revealResource();
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("pause", "Pause the game")
+		.setIsServerOnly (true)
+		.addArgument<cChatCommandArgumentServer>(activeClient)
+		.setAction([&](cServer* server)
+		{
+			// FIXME: do not do changes on server data that are not synchronized with the server thread!
+			server->enableFreezeMode(FREEZE_PAUSE);
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("resume", "Resume a paused game")
+		.setIsServerOnly (true)
+		.addArgument<cChatCommandArgumentServer>(activeClient)
+		.setAction([&](cServer* server)
+		{
+			// FIXME: do not do changes on server data that are not synchronized with the server thread!
+			server->disableFreezeMode(FREEZE_PAUSE);
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("crash", "Emulates a crash")
+		.setAction([&]()
+		{
+			CR_EMULATE_CRASH();
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("disconnect", "Disconnect a player")
+		.setIsServerOnly (true)
+		.addArgument<cChatCommandArgumentServerPlayer>(activeClient)
+		.addArgument<cChatCommandArgumentServer>(activeClient)
+		.setAction([&](cPlayer* player, cServer* server)
+		{
+			if(player->isLocal())
+			{
+				// TODO: translate
+				throw std::runtime_error("Can not disconnect this player");
+			}
+
+			auto message = std::make_unique<cNetMessage>(TCP_CLOSE);
+			message->pushInt16(player->getSocketNum());
+			server->pushEvent(std::move(message));
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("resync", "Resync a player")
+		.addArgument<cChatCommandArgumentClientPlayer>(activeClient, true)
+		.addArgument<cChatCommandArgumentClient>(activeClient)
+		.addArgument<cChatCommandArgumentServer>(activeClient, true)
+		.setAction([&](cPlayer* player, cClient* client, cServer* server)
+		{
+			if(player != nullptr)
+			{
+				sendRequestResync(*client, player->getNr(), false);
+			}
+			else
+			{
+				if(server)
+				{
+					const auto& playerList = server->playerList;
+					for(unsigned int i = 0; i < playerList.size(); i++)
+					{
+						sendRequestResync(*client, playerList[i]->getNr(), false);
+					}
+				}
+				else
+				{
+					sendRequestResync(*client, client->getActivePlayer().getNr(), false);
+				}
+			}
+		})
+	);
+	chatCommands.push_back(
+		cChatCommand("fog off", "Reveal the whole map for a player")
+		.setShouldBeReported (true)
+		.setIsServerOnly (true)
+		.addArgument<cChatCommandArgumentServerPlayer>(activeClient, true)
+		.addArgument<cChatCommandArgumentClient>(activeClient)
+		.addArgument<cChatCommandArgumentServer>(activeClient)
+		.setAction([&](cPlayer* player, cClient* client, cServer* server)
+		{
+			if(player == nullptr)
+			{
+				player = &server->getPlayerFromNumber(client->getActivePlayer().getNr());
+			}
+			// FIXME: do not do changes on server data that are not synchronized with the server thread!
+			player->revealMap();
+			sendRevealMap(*server, *player);
+		})
+	);
 }
 
 //------------------------------------------------------------------------------
@@ -1134,357 +1475,43 @@ void cGameGuiController::showSelfDestroyDialog (const cUnit& unit)
 }
 
 //------------------------------------------------------------------------------
-void cGameGuiController::handleChatCommand (const std::string& command)
+void cGameGuiController::handleChatCommand(const std::string& chatString)
 {
-	if (command.empty()) return;
-
-	// Special commands start with a '/'
-	if (command[0] == '/')
+	if(cChatCommand::isCommand(chatString))
 	{
-		if (command.compare ("/help") == 0)
+		bool commandExecuted = false;
+		bool errorDetected = false;
+		try
 		{
-			gameGui->getChatBox().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> ("",
-												"Available commands:\n"
-												"- /help\n"
-												"- /base [client/server/off]\n"
-												"- /sentry [server/off]\n"
-												"- /fx [on/off]\n"
-												"- /trace [client/server/off]\n"
-												"- /ajobs [on/off]\n"
-												"- /players [on/off]\n"
-												"- /singlestep\n"
-												"- /cache size <size>\n"
-												"- /cache flush\n"
-												"- /cache debug [on/off]\n"
-												"- /sync debug [on/off]\n"
-												"- /kick <playerID>\n"
-												"- /credits <playerID> <credits>\n"
-												"- /disconnect <playerID>\n"
-												"- /turnend <seconds>\n"
-												"- /turnlimit <seconds>\n"
-												"- /resync <playerID>\n"
-												"- /mark\n"
-												"- /color <colorNum>\n"
-												"- /fog off <playerID>\n"
-												"- /survey\n"
-												"- /pause\n"
-												"- /resume"
-																							));
-		}
-		//
-		// commands that control the GUI itself
-		//
-		else if (command.compare ("/base client") == 0) { gameGui->getDebugOutput().setDebugBaseClient (true);  gameGui->getDebugOutput().setDebugBaseServer (false); }
-		else if (command.compare ("/base server") == 0) { gameGui->getDebugOutput().setDebugBaseServer (true);  gameGui->getDebugOutput().setDebugBaseClient (false); }
-		else if (command.compare ("/base off") == 0) { gameGui->getDebugOutput().setDebugBaseServer (false);  gameGui->getDebugOutput().setDebugBaseClient (false); }
-		else if (command.compare ("/sentry server") == 0) { gameGui->getDebugOutput().setDebugSentry (true); }
-		else if (command.compare ("/sentry off") == 0) { gameGui->getDebugOutput().setDebugSentry (false); }
-		else if (command.compare ("/fx on") == 0) { gameGui->getDebugOutput().setDebugFX (true); }
-		else if (command.compare ("/fx off") == 0) { gameGui->getDebugOutput().setDebugFX (false); }
-		else if (command.compare ("/trace server") == 0) { gameGui->getDebugOutput().setDebugTraceServer (true);  gameGui->getDebugOutput().setDebugTraceClient (false); }
-		else if (command.compare ("/trace client") == 0) { gameGui->getDebugOutput().setDebugTraceClient (true);  gameGui->getDebugOutput().setDebugTraceServer (false); }
-		else if (command.compare ("/trace off") == 0) { gameGui->getDebugOutput().setDebugTraceServer (false);  gameGui->getDebugOutput().setDebugTraceClient (false); }
-		else if (command.compare ("/ajobs on") == 0) { gameGui->getDebugOutput().setDebugAjobs (true); }
-		else if (command.compare ("/ajobs off") == 0) { gameGui->getDebugOutput().setDebugAjobs (false); }
-		else if (command.compare ("/players on") == 0) { gameGui->getDebugOutput().setDebugPlayers (true); }
-		else if (command.compare ("/players off") == 0) { gameGui->getDebugOutput().setDebugPlayers (false); }
-		else if (command.compare ("/singlestep") == 0) { cGameTimer::syncDebugSingleStep = !cGameTimer::syncDebugSingleStep; }
-		else if (command.compare (0, 12, "/cache size ") == 0)
-		{
-			int size = atoi (command.substr (12, command.length()).c_str());
-			// since atoi is too stupid to report an error,
-			// do an extra check, when the number is 0
-			if (size == 0 && command[12] != '0')
+			for(const auto& commandExecutor : chatCommands)
 			{
-				gameGui->getGameMessageList().addMessage ("Wrong parameter");
-				return;
-			}
-			gameGui->getGameMap().getDrawingCache().setMaxCacheSize (size);
-		}
-		else if (command.compare ("/cache flush") == 0)
-		{
-			gameGui->getGameMap().getDrawingCache().flush();
-		}
-		else if (command.compare ("/cache debug on") == 0)
-		{
-			gameGui->getDebugOutput().setDebugCache (true);
-		}
-		else if (command.compare ("/cache debug off") == 0)
-		{
-			gameGui->getDebugOutput().setDebugCache (false);
-		}
-		else if (command.compare ("/sync debug on") == 0)
-		{
-			gameGui->getDebugOutput().setDebugSync (true);
-		}
-		else if (command.compare ("/sync debug off") == 0)
-		{
-			gameGui->getDebugOutput().setDebugSync (false);
-		}
-
-		//
-		// Commands for client or server
-		//
-		else if (activeClient)
-		{
-			auto server = activeClient->getServer();
-			if (command.compare (0, 6, "/kick ") == 0)
-			{
-				if (!server)
+				if(commandExecutor->tryExecute(chatString))
 				{
-					gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
-					return;
-				}
-				if (command.length() <= 6)
-				{
-					gameGui->getGameMessageList().addMessage ("Wrong parameter");
-					return;
-				}
-				const cPlayer* player = activeClient->getPlayerFromString (command.substr (6, command.length()));
-
-				// server can not be kicked
-				if (!player)
-				{
-					gameGui->getGameMessageList().addMessage ("Wrong parameter");
-					return;
-				}
-
-				sentWantKickPlayer (*activeClient, *player);
-			}
-			else if (command.compare (0, 9, "/credits ") == 0)
-			{
-				if (!server)
-				{
-					gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
-					return;
-				}
-				if (command.length() <= 9)
-				{
-					gameGui->getGameMessageList().addMessage ("Wrong parameter");
-					return;
-				}
-				const auto playerStr = command.substr (9, command.find_first_of (" ", 9) - 9);
-				const auto creditsStr = command.substr (command.find_first_of (" ", 9) + 1, command.length());
-
-				cPlayer* player = server->getPlayerFromString (playerStr);
-
-				if (!player)
-				{
-					gameGui->getGameMessageList().addMessage ("Wrong parameter");
-					return;
-				}
-				const int credits = atoi (creditsStr.c_str());
-
-				// FIXME: do not do changes on server data that are not synchronized with the server thread!
-				player->setCredits (credits);
-
-				sendCredits (*server, credits, *player);
-			}
-			else if (command.compare (0, 12, "/disconnect ") == 0)
-			{
-				if (!server)
-				{
-					gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
-					return;
-				}
-				if (command.length() <= 12)
-				{
-					gameGui->getGameMessageList().addMessage ("Wrong parameter");
-					return;
-				}
-				cPlayer* player = server->getPlayerFromString (command.substr (12, command.length()));
-
-				// server cannot be disconnected
-				// can not disconnect local players
-				if (!player || player->getNr() == 0 || player->isLocal())
-				{
-					gameGui->getGameMessageList().addMessage ("Wrong parameter");
-					return;
-				}
-
-				auto message = std::make_unique<cNetMessage> (TCP_CLOSE);
-				message->pushInt16 (player->getSocketNum());
-				server->pushEvent (std::move (message));
-			}
-			else if (command.compare (0, 8, "/turnend") == 0)
-			{
-				if (!server)
-				{
-					gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
-					return;
-				}
-				if (command.length() <= 8)
-				{
-					gameGui->getGameMessageList().addMessage ("Wrong parameter");
-					return;
-				}
-
-				const int i = atoi (command.substr (8, command.length()).c_str());
-				if (i == 0 && command[9] != '0')
-				{
-					gameGui->getGameMessageList().addMessage ("Wrong parameter");
-					return;
-				}
-
-				// FIXME: do not do changes on server data that are not synchronized with the server thread!
-				if (i >= 0)
-				{
-					server->setTurnEndDeadline (std::chrono::seconds (i));
-					server->setTurnEndDeadlineActive (true);
-				}
-				else
-				{
-					server->setTurnEndDeadlineActive (false);
-				}
-				Log.write ("Deadline changed to " + iToStr (i), cLog::eLOG_TYPE_INFO);
-			}
-			else if (command.compare (0, 10, "/turnlimit") == 0)
-			{
-				if (!server)
-				{
-					gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
-					return;
-				}
-				if (command.length() <= 10)
-				{
-					gameGui->getGameMessageList().addMessage ("Wrong parameter");
-					return;
-				}
-
-				const int i = atoi (command.substr (10, command.length()).c_str());
-				if (i == 0 && command[11] != '0')
-				{
-					gameGui->getGameMessageList().addMessage ("Wrong parameter");
-					return;
-				}
-
-				// FIXME: do not do changes on server data that are not synchronized with the server thread!
-				if (i > 0)
-				{
-					server->setTurnLimit (std::chrono::seconds (i));
-					server->setTurnLimitActive (true);
-				}
-				else
-				{
-					server->setTurnLimitActive (false);
-				}
-				Log.write ("Limit changed to " + iToStr (i), cLog::eLOG_TYPE_INFO);
-			}
-			else if (command.compare (0, 7, "/resync") == 0)
-			{
-				if (command.length() > 8)
-				{
-					if (!server)
+					commandExecuted = true;
+					if(commandExecutor->getCommand().getShouldBeReported() && activeClient && activeClient->getServer())
 					{
-						gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
-						return;
+						sendSavedReport(*activeClient->getServer(), cSavedReportHostCommand(chatString), nullptr);
 					}
-					cPlayer* player = activeClient->getPlayerFromString (command.substr (8));
-					if (!player)
-					{
-						gameGui->getGameMessageList().addMessage ("Wrong parameter");
-						return;
-					}
-					sendRequestResync (*activeClient, player->getNr(), false);
-				}
-				else
-				{
-					if (server)
-					{
-						const auto& playerList = server->playerList;
-						for (unsigned int i = 0; i < playerList.size(); i++)
-						{
-							sendRequestResync (*activeClient, playerList[i]->getNr(), false);
-						}
-					}
-					else
-					{
-						sendRequestResync (*activeClient, activeClient->getActivePlayer().getNr(), false);
-					}
+					break;
 				}
 			}
-			else if (command.compare (0, 5, "/mark") == 0)
-			{
-				std::string cmdArg (command);
-				cmdArg.erase (0, 5);
-				auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_MARK_LOG);
-				message->pushString (cmdArg);
-				activeClient->sendNetMessage (std::move (message));
-			}
-			else if (command.compare (0, 7, "/color ") == 0)
-			{
-				int cl = 0;
-				sscanf (command.c_str(), "/color %d", &cl);
-				cl %= cPlayerColor::predefinedColorsCount;
-				activeClient->getActivePlayer().setColor (cPlayerColor (cPlayerColor::predefinedColors[cl]));
-			}
-			else if (command.compare (0, 8, "/fog off") == 0)
-			{
-				if (!server)
-				{
-					gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
-					return;
-				}
-				cPlayer* serverPlayer = 0;
-				if (command.length() > 8)
-				{
-					serverPlayer = server->getPlayerFromString (command.substr (9));
-				}
-				else
-				{
-					serverPlayer = &server->getPlayerFromNumber (activeClient->getActivePlayer().getNr());
-				}
-				// FIXME: do not do changes on server data that are not synchronized with the server thread!
-				if (serverPlayer)
-				{
-					serverPlayer->revealMap();
-					sendRevealMap (*server, *serverPlayer);
-				}
-			}
-			else if (command.compare ("/survey") == 0)
-			{
-				if (!server)
-				{
-					gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
-					return;
-				}
-				activeClient->getMap()->assignRessources (*server->Map);
-				activeClient->getActivePlayer().revealResource();
-			}
-			else if (command.compare (0, 6, "/pause") == 0)
-			{
-				if (!server)
-				{
-					gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
-					return;
-				}
-				// FIXME: do not do changes on server data that are not synchronized with the server thread!
-				server->enableFreezeMode (FREEZE_PAUSE);
-			}
-			else if (command.compare (0, 7, "/resume") == 0)
-			{
-				if (!server)
-				{
-					gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
-					return;
-				}
-				// FIXME: do not do changes on server data that are not synchronized with the server thread!
-				server->disableFreezeMode (FREEZE_PAUSE);
-			}
-			else if (command.compare(0, 6, "/crash") == 0)
-			{
-				CR_EMULATE_CRASH();
-			}
-			if (server)
-			{
-				sendSavedReport (*server, cSavedReportHostCommand (command), nullptr);
-			}
+		}
+		catch(const std::runtime_error& e)
+		{
+			gameGui->getChatBox().addChatEntry(std::make_unique<cLobbyChatBoxListViewItem>(chatString));
+			gameGui->getChatBox().addChatEntry(std::make_unique<cLobbyChatBoxListViewItem>(e.what()));
+			errorDetected = true;
+		}
+
+		if(!commandExecuted && !errorDetected)
+		{
+			// TODO: translate
+			gameGui->getChatBox().addChatEntry(std::make_unique<cLobbyChatBoxListViewItem>("Could not recognize chat command '" + chatString + "'"));
 		}
 	}
-	// normal chat message
-	else if (activeClient)
+	else if(activeClient)
 	{
-		activeClient->handleChatMessage (command);
+		activeClient->handleChatMessage(chatString);
 	}
 }
 

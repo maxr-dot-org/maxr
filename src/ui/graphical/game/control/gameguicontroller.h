@@ -56,6 +56,8 @@ class cWindowUpgradesFilterState;
 
 class cPosition;
 
+class cChatCommandExecutor;
+
 struct sID;
 
 class cGameGuiController
@@ -89,6 +91,8 @@ private:
 	std::shared_ptr<cClient> activeClient;
 	std::vector<std::shared_ptr<cClient>> clients;
 
+	std::vector<std::unique_ptr<cChatCommandExecutor>> chatCommands;
+
 	std::map<int, cGameGuiState> playerGameGuiStates;
 
 	std::pair<bool, cPosition> savedReportPosition;
@@ -96,6 +100,7 @@ private:
 	std::array<std::pair<bool, cPosition>, 4> savedPositions;
 
 	void initShortcuts();
+	void initChatCommands();
 
 	void connectGuiStaticCommands();
 
