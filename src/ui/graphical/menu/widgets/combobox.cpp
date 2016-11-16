@@ -45,6 +45,11 @@ cComboBox::cComboBox (const cBox<cPosition>& area) :
 	lineEdit = addChild (std::make_unique<cLineEdit> (lineEditArea));
 	lineEdit->setReadOnly (true);
 
+	signalConnectionManager.connect (lineEdit->clicked, [this, area] ()
+	{
+		downButton->toggle ();
+	});
+
 	signalConnectionManager.connect (downButton->toggled, [this, area]()
 	{
 		if (downButton->isChecked())
