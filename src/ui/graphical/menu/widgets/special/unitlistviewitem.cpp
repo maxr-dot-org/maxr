@@ -57,6 +57,7 @@ cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, co
 
 	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImage->getEndPosition().x() + 3, 0), cPosition (width, unitImage->getEndPosition().y())), owner.getUnitDataCurrentVersion (unitId)->name, FONT_LATIN_SMALL_WHITE, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
 	nameLabel->setWordWrap (true);
+	nameLabel->setConsumeClick (false);
 
 	auto size = unitImage->getArea();
 	size.add (nameLabel->getArea());

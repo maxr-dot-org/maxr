@@ -33,6 +33,7 @@ cUnitListViewItemCargo::cUnitListViewItemCargo (unsigned int width, const sID& u
 	if (unitData->storeResType == sUnitData::STORE_RES_METAL || unitData->storeResType == sUnitData::STORE_RES_OIL)
 	{
 		cargoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (nameLabel->getPosition().x() + 15, nameLabel->getEndPosition().y() - 13), nameLabel->getEndPosition() - cPosition (0, 3)), iToStr (owner.getUnitDataCurrentVersion (unitId)->buildCosts), FONT_LATIN_SMALL_YELLOW, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
+		cargoLabel->setConsumeClick (false);
 
 		nameLabel->resize (nameLabel->getSize() - cPosition (0, 13));
 		nameLabel->setAlignment (toEnumFlag (eAlignmentType::Left) | eAlignmentType::Bottom);

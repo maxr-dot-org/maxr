@@ -62,10 +62,13 @@ cReportUnitListViewItem::cReportUnitListViewItem (cUnit& unit_) :
 
 	auto nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImage->getEndPosition().x() + 3, 0), cPosition (unitDetails->getPosition().x() - 3, unitDetails->getEndPosition().y())), unit.getDisplayName(), FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
 	nameLabel->setWordWrap (true);
+	nameLabel->setConsumeClick (false);
 
 	auto positionLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitDetails->getEndPosition().x() + 5, 0), cPosition (unitDetails->getEndPosition().x() + 5 + 50, unitDetails->getEndPosition().y())), iToStr (unit.getPosition().x()) + "," + iToStr (unit.getPosition().y()), FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::CenterVerical));
+	positionLabel->setConsumeClick (false);
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (positionLabel->getEndPosition().x(), 0), cPosition (positionLabel->getEndPosition().x() + 120, unitDetails->getEndPosition().y())), unit.getStatusStr (unit.getOwner()), FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
+	auto statusLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (positionLabel->getEndPosition().x(), 0), cPosition (positionLabel->getEndPosition().x() + 120, unitDetails->getEndPosition().y())), unit.getStatusStr (unit.getOwner()), FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
+	statusLabel->setConsumeClick (false);
 
 	fitToChildren();
 }

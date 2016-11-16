@@ -36,6 +36,7 @@ cReportMessageListViewItem::cReportMessageListViewItem (const cSavedReport& repo
 	auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImageSize, 0), cPosition (450, 0)), report.getMessage(), FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
 	textLabel->setWordWrap (true);
 	textLabel->resizeToTextHeight();
+	textLabel->setConsumeClick (false);
 
 	if (report.hasUnitId())
 	{

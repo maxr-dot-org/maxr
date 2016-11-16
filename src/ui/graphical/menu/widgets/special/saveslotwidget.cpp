@@ -35,8 +35,11 @@ cSaveSlotWidget::cSaveSlotWidget (const cPosition& position) :
 	renameable (false)
 {
 	numberLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (13, 28), getPosition() + cPosition (13 + 20, 28 + 15)), "", FONT_LATIN_BIG));
+	numberLabel->setConsumeClick (false);
 	timeLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (42, 19), getPosition() + cPosition (42 + 98, 19 + 10)), ""));
+	timeLabel->setConsumeClick (false);
 	typeLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (145, 19), getPosition() + cPosition (145 + 46, 19 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	typeLabel->setConsumeClick (false);
 	nameLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (42, 42), getPosition() + cPosition (42 + 148, 42 + 10))));
 	nameLineEdit->setReadOnly (true);
 

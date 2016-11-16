@@ -35,6 +35,7 @@ cChatBoxPlayerListViewItem::cChatBoxPlayerListViewItem (const cPlayer& player_) 
 	updatePlayerFinishedTurn();
 
 	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (colorImage->getEndPosition().x() + 4, 0), getPosition() + cPosition (getSize().x() - readyImage->getSize().x(), readyImage->getSize().y())), player->getName()));
+	nameLabel->setConsumeClick (false);
 
 	fitToChildren();
 

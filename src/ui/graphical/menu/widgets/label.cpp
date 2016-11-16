@@ -271,5 +271,5 @@ bool cLabel::handleClicked (cApplication& application, cMouse& mouse, eMouseButt
 {
 	clicked ();
 
-	return false;
+	return true;
 }

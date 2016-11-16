@@ -38,6 +38,7 @@ cLobbyPlayerListViewItem::cLobbyPlayerListViewItem (std::shared_ptr<cPlayerBasic
 	updatePlayerReady();
 
 	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (colorImage->getEndPosition().x() + 4, 0), cPosition (readyImage->getPosition().x(), readyImage->getEndPosition().y())), player->getName()));
+	nameLabel->setConsumeClick (false);
 
 	fitToChildren();
 

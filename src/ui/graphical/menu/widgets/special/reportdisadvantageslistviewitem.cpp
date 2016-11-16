@@ -59,6 +59,7 @@ cReportDisadvantagesListViewItem::cReportDisadvantagesListViewItem (const sID& u
 
 	auto nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImage->getEndPosition().x(), 0), cPosition (unitImage->getEndPosition().x() + unitNameWidth, totalHeight)), unitId.getUnitDataOriginalVersion()->name, FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
 	nameLabel->setWordWrap (true);
+	nameLabel->setConsumeClick (false);
 
 	for (size_t i = 0; i < disadvantages.size(); ++i)
 	{
@@ -67,7 +68,8 @@ cReportDisadvantagesListViewItem::cReportDisadvantagesListViewItem (const sID& u
 		const int row = static_cast<int> (i / maxItemsInRow);
 		const int col = static_cast<int> (i % maxItemsInRow);
 
-		addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (nameLabel->getEndPosition().x() + casualityLabelWidth * col + (row % 2 == 0 ? 15 : 0), font->getFontHeight()*row), cPosition (nameLabel->getEndPosition().x() + casualityLabelWidth * (col + 1) + (row % 2 == 0 ? 15 : 0), font->getFontHeight() * (row + 1))), iToStr (disadvantage), FONT_LATIN_NORMAL, eAlignmentType::Center));
+		auto disadvantageLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (nameLabel->getEndPosition().x() + casualityLabelWidth * col + (row % 2 == 0 ? 15 : 0), font->getFontHeight()*row), cPosition (nameLabel->getEndPosition().x() + casualityLabelWidth * (col + 1) + (row % 2 == 0 ? 15 : 0), font->getFontHeight() * (row + 1))), iToStr (disadvantage), FONT_LATIN_NORMAL, eAlignmentType::Center));
+		disadvantageLabel->setConsumeClick (false);
 	}
 
 	fitToChildren();

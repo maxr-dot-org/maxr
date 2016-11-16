@@ -29,6 +29,7 @@ cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& text) :
 	messageLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition(), getPosition() + cPosition (getSize().x() - 1, 0)), text));
 	messageLabel->setWordWrap (true);
 	messageLabel->resizeToTextHeight();
+	messageLabel->setConsumeClick (false);
 
 	fitToChildren();
 }
@@ -48,6 +49,7 @@ cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& prefix,
 		const auto prefixText = addColon ? prefix + lngPack.i18n ("Text~Punctuation~Colon") : prefix;
 		prefixTextWidth = std::max (desiredPrefixTextWidth, font->getTextWide (prefixText));
 		prefixLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition (), getPosition () + cPosition (prefixTextWidth, 10)), prefixText));
+		prefixLabel->setConsumeClick (false);
 	}
 	else
 	{
@@ -61,6 +63,7 @@ cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& prefix,
 	messageLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (messageLabelBeginPos, messageLabelEndPos), text));
 	messageLabel->setWordWrap (true);
 	messageLabel->resizeToTextHeight ();
+	messageLabel->setConsumeClick (false);
 
 	fitToChildren ();
 }
@@ -102,6 +105,7 @@ void cLobbyChatBoxListViewItem::setDesiredPrefixLabelWidth (int width)
 	messageLabel->resize (cPosition (getSize ().x () - prefixTextWidth, messageLabel->getSize ().y ()));
 	messageLabel->moveTo (getPosition () + cPosition (prefixTextWidth, 0));
 	messageLabel->resizeToTextHeight ();
+	messageLabel->setConsumeClick (false);
 
 	fitToChildren ();
 }
