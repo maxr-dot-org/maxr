@@ -58,6 +58,13 @@ public:
 	 * signals according to this interval.
 	 */
 	virtual void run() MAXR_OVERRIDE_FUNCTION;
+	
+	/*
+	 * The following signals get called during the run method.
+	 *
+	 * It gets called each time run() is executed, which means each time a frame has been drawn.
+	 */
+	cSignal<void ()> triggeredFrame;
 
 	/*
 	 * The following signals get called during the run method.

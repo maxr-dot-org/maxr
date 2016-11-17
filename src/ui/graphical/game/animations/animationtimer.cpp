@@ -67,6 +67,8 @@ void cAnimationTimer::run()
 {
 	static const size_t maxCatchUp = 10;
 
+	triggeredFrame ();
+
 	if (timerTime >= nextTrigger10msTime)
 	{
 		triggered10ms();
