@@ -83,7 +83,11 @@ void cHudPanels::doOpenStep()
 	{
 		percentClosed = std::max (0., percentClosed);
 		signalConnectionManager.disconnectAll();
-		opened();
+		signalConnectionManager.connect (animationTimer->triggeredFrame, [this] ()
+		{
+			signalConnectionManager.disconnectAll ();
+			opened ();
+		});
 	}
 }
 
@@ -93,7 +97,11 @@ void cHudPanels::doCloseStep()
 	if (percentClosed >= 100.)
 	{
 		signalConnectionManager.disconnectAll();
-		closed();
+		signalConnectionManager.connect (animationTimer->triggeredFrame, [this] ()
+		{
+			signalConnectionManager.disconnectAll ();
+			closed ();
+		});
 		return;
 	}
 
