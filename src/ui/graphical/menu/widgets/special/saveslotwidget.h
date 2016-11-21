@@ -26,7 +26,7 @@
 class cLabel;
 class cLineEdit;
 class cPosition;
-class cSaveGameData;
+class cSaveGameInfo;
 
 class cSaveSlotWidget : public cClickableWidget
 {
@@ -39,7 +39,7 @@ public:
 
 	void setRenameable (bool renameable);
 
-	void setSaveData (const cSaveGameData& saveFile);
+	void setSaveData (const cSaveGameInfo& saveFile);
 	void reset (int number);
 
 	bool isEmpty() const;

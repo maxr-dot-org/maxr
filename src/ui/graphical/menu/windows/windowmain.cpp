@@ -61,27 +61,27 @@ SDL_Surface* cWindowMain::getRandomInfoImage()
 	int unitShow = -1;
 	SDL_Surface* surface = nullptr;
 
-	if (showBuilding == 1 && UnitsData.getNrBuildings() > 0)
+	if (showBuilding == 1 && UnitsUiData.buildingUIs.size() > 0)
 	{
 		// that's a 33% chance that we show a building on 1
 		do
 		{
-			unitShow = random (UnitsData.getNrBuildings() - 1);
+			unitShow = random (UnitsUiData.buildingUIs.size() - 1);
 			// make sure we don't show same unit twice
 		}
-		while (unitShow == lastUnitShow && UnitsData.getNrBuildings() > 1);
-		surface = UnitsData.buildingUIs[unitShow].info.get();
+		while (unitShow == lastUnitShow && UnitsUiData.buildingUIs.size() > 1);
+		surface = UnitsUiData.buildingUIs[unitShow].info.get();
 	}
-	else if (UnitsData.getNrVehicles() > 0)
+	else if (UnitsUiData.vehicleUIs.size() > 0)
 	{
 		// and a 66% chance to show a vehicle on 0 or 2
 		do
 		{
-			unitShow = random (UnitsData.getNrVehicles() - 1);
+			unitShow = random(UnitsUiData.vehicleUIs.size() - 1);
 			// make sure we don't show same unit twice
 		}
-		while (unitShow == lastUnitShow && UnitsData.getNrVehicles() > 1);
-		surface = UnitsData.vehicleUIs[unitShow].info.get();
+		while (unitShow == lastUnitShow && UnitsUiData.vehicleUIs.size() > 1);
+		surface = UnitsUiData.vehicleUIs[unitShow].info.get();
 	}
 	else surface = nullptr;
 	lastUnitShow = unitShow; //store shown unit

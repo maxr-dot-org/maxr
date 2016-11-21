@@ -37,12 +37,14 @@ class cJob
 {
 	friend class cJobContainer;
 protected:
-	explicit cJob (cVehicle& vehicle_);
+	cJob (cVehicle& vehicle_, unsigned int id);
 public:
 	virtual ~cJob() {}
 	virtual void run (const cGameTimer& gameTimer) = 0;
+	unsigned int getId() const { return id; };
 
 protected:
+	unsigned int id;
 	bool finished;
 	cVehicle* vehicle;
 };
@@ -67,7 +69,7 @@ private:
 	cPosition org;
 	bool big;
 public:
-	cStartBuildJob (cVehicle& vehicle, const cPosition& org, bool big);
+	cStartBuildJob (cVehicle& vehicle, const cPosition& org, bool big, unsigned int id);
 	virtual void run (const cGameTimer& gameTimer);
 };
 
@@ -77,7 +79,7 @@ class cPlaneTakeoffJob : public cJob
 private:
 	bool takeoff;
 public:
-	cPlaneTakeoffJob (cVehicle& vehicle_, bool takeoff_);
+	cPlaneTakeoffJob (cVehicle& vehicle_, bool takeoff_, unsigned int id);
 	virtual void run (const cGameTimer& gameTimer);
 };
 

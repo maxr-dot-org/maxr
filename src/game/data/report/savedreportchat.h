@@ -31,23 +31,35 @@ class cSavedReportChat : public cSavedReport
 public:
 	cSavedReportChat (const cPlayer& player, std::string text);
 	cSavedReportChat (std::string playerName, std::string text);
-	explicit cSavedReportChat (cNetMessage& message);
-	explicit cSavedReportChat (const tinyxml2::XMLElement& element);
+	template <typename T, ENABLE_ARCHIVE_OUT>
+	explicit cSavedReportChat(T& archive)
+	{
+		serializeThis(archive);
+	}
 
 	virtual eSavedReportType getType() const MAXR_OVERRIDE_FUNCTION;
 
-	virtual std::string getMessage() const MAXR_OVERRIDE_FUNCTION;
+	virtual std::string getMessage(const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
 
 	virtual bool isAlert() const MAXR_OVERRIDE_FUNCTION;
 
-	virtual void pushInto (cNetMessage& message) const MAXR_OVERRIDE_FUNCTION;
-	virtual void pushInto (tinyxml2::XMLElement& element) const MAXR_OVERRIDE_FUNCTION;
+	virtual void serialize(cBinaryArchiveIn& archive) { cSavedReport::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cXmlArchiveIn& archive) { cSavedReport::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive) { cSavedReport::serialize(archive); serializeThis(archive); }
 
 	int getPlayerNumber() const;
 	const std::string& getText() const;
 	const std::string& getPlayerName() const;
 
 private:
+	template <typename T>
+	void serializeThis(T& archive)
+	{
+		archive & NVP(playerName);
+		archive & NVP(playerNumber);
+		archive & NVP(text);
+	}
+
 	std::string playerName;
 	int playerNumber;
 	std::string text;

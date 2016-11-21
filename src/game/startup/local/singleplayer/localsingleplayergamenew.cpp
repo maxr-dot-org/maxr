@@ -18,33 +18,17 @@
  ***************************************************************************/
 
 #include "game/startup/local/singleplayer/localsingleplayergamenew.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 #include "ui/graphical/application.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
+#include "game/logic/server2.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/units/landingunit.h"
-#include "game/logic/clientevents.h"
-
-// TODO: find nice place
-//------------------------------------------------------------------------------
-void applyUnitUpgrades (cPlayer& player, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades)
-{
-	for (size_t i = 0; i < unitUpgrades.size(); ++i)
-	{
-		const auto& unitId = unitUpgrades[i].first;
-
-		auto unitData = player.getUnitDataCurrentVersion (unitId);
-
-		if (unitData)
-		{
-			const auto& upgrades = unitUpgrades[i].second;
-			upgrades.updateUnitData (*unitData);
-		}
-	}
-}
+#include "game/logic/clientevents.h" //TODO: remove
+#include "game/logic/action/actioninitnewgame.h"
 
 //------------------------------------------------------------------------------
 cLocalSingleplayerGameNew::cLocalSingleplayerGameNew() :
@@ -55,59 +39,48 @@ cLocalSingleplayerGameNew::cLocalSingleplayerGameNew() :
 void cLocalSingleplayerGameNew::start (cApplication& application)
 {
 	assert (gameSettings != nullptr);
+	auto connectionManager = std::make_shared<cConnectionManager>();
 
-	server = std::make_unique<cServer> (nullptr);
-	client = std::make_shared<cClient> (server.get(), nullptr);
+	server = std::make_unique<cServer2>(connectionManager);
+	client = std::make_shared<cClient>(connectionManager, server->getModel().getGameId());
 
-	server->setMap (staticMap);
 	client->setMap (staticMap);
+	server->setMap (staticMap);
 
-	server->setGameSettings (*gameSettings);
+	server->setUnitsData(unitsData); //TODO: don't copy unitsData here, but move cGame::unitsData?
+	client->setUnitsData(unitsData);
+
 	client->setGameSettings (*gameSettings);
+	server->setGameSettings (*gameSettings);
 
 	auto player = createPlayer();
-
-	server->addPlayer (std::make_unique<cPlayer> (player));
-	//server->changeStateToInitGame ();
-
 	std::vector<cPlayerBasicData> players;
 	players.push_back (player);
 	client->setPlayers (players, 0);
+	server->setPlayers(players);
 
-	if (gameSettings->getGameType() == eGameSettingsGameType::Turns)
-	{
-		server->setActiveTurnPlayer (*server->playerList[0]);
-	}
-
-	auto& clientPlayer = client->getActivePlayer();
-	if (playerClan != -1) clientPlayer.setClan (playerClan);
+	connectionManager->setLocalServer(server.get());
+	connectionManager->setLocalClient(client.get(), 0);
 
 	server->start();
 
-	applyUnitUpgrades (clientPlayer, unitUpgrades);
-
-	sendClan (*client);
-	sendLandingUnits (*client, landingUnits);
-	sendUnitUpgrades (*client);
-
-	sendLandingCoords (*client, landingPosition);
-
-	sendReadyToStart (*client);
-
-	server->startTurnTimers();
+	cActionInitNewGame action;
+	action.clan = playerClan;
+	action.landingUnits = landingUnits;
+	action.landingPosition = landingPosition;
+	action.unitUpgrades = unitUpgrades;
+	client->sendNetMessage(action);
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
 	gameGuiController->setSingleClient (client);
+	gameGuiController->setServer(server.get());
 
 	cGameGuiState playerGameGuiState;
 	playerGameGuiState.setMapPosition (landingPosition);
-	gameGuiController->addPlayerGameGuiState (clientPlayer, std::move (playerGameGuiState));
+	gameGuiController->addPlayerGameGuiState (client->getActivePlayer(), std::move (playerGameGuiState));
 
 	gameGuiController->start();
-
-	using namespace std::placeholders;
-	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cLocalSingleplayerGameNew::save, this, _1, _2));
 
 	terminate = false;
 
@@ -156,8 +129,6 @@ void cLocalSingleplayerGameNew::setLandingPosition (const cPosition& landingPosi
 cPlayerBasicData cLocalSingleplayerGameNew::createPlayer()
 {
 	cPlayerBasicData player (cSettings::getInstance().getPlayerName(), cPlayerColor(), 0);
-
-	player.setLocal();
 
 	return player;
 }

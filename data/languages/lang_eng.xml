@@ -379,9 +379,12 @@
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s"/>
 			<ERROR_Map_Loading ENG="Error while loading map"/>
+			<ERROR_Save_Loading ENG="Error while loading saved game"/>
+			<ERROR_Save_Writing ENG="Error while writing save game file"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s"/>
 			<INFO_Language_initialised ENG="Language is now initialized"/>
 			<INFO_Not_Implemented ENG="Not yet implemented"/>
+			<ERROR_Save_Incompatible ENG="Savegames from Maxr versions before %s are not compatible."/>
 		</Error_Messages>
 	</Text>
 	<Units>

@@ -28,9 +28,11 @@
 
 
 class cClient;
-class cNetMessage;
+class cServer2;
+class cNetMessageSyncServer;
+class cNetMessageSyncClient;
+class cModel;
 class cPlayer;
-class cServer;
 
 #define GAME_TICK_TIME 10				/** Number of milliseconds of one game time tick */
 #define MAX_CLIENT_LAG 15				/** Maximum ticks, the clients time is allowed to be behind 
@@ -41,6 +43,16 @@ class cServer;
 											when there are more than MAX_SERVER_EVENT_COUNTER timer events pending */
 #define MAX_WAITING_FOR_SERVER 50		/** The client will display the "Waiting for Server message" when no sync messages are
 											received for MAX_WAITING_FOR_SERVER ticks */
+
+struct sGameTimerClientDebugData
+{
+	bool crcOK;
+	float timeBuffer;
+	float ticksPerFrame;
+	float queueSize;
+	float eventCounter;
+	float ping;
+};
 
 class cGameTimer
 {
@@ -53,50 +65,34 @@ protected:
 	/** SDL_Timer that controls the game time */
 	SDL_TimerID timerID;
 	cMutex mutex;
-	int eventCounter;
-	unsigned int lastTimerCall;
-	std::vector<unsigned int> receivedTime;
+	unsigned int eventCounter;
 
 	void timerCallback();
 
 	void pushEvent();
-
-	void handleTimer();
 	bool popEvent();
 public:
 	~cGameTimer();
 
-	int maxEventQueueSize;
-
-	unsigned int gameTime;
-
-	bool timer10ms;
-	bool timer50ms;
-	bool timer100ms;
-
-	void setReceivedTime (unsigned int time, unsigned int nr = 0);
-	unsigned int getReceivedTime (unsigned int nr = 0);
-
+	unsigned int maxEventQueueSize;
+	
 	void start();
 	void stop();
 
-	static bool syncDebugSingleStep;
-
-	cSignal<void ()> gameTimeChanged;
+	
 };
 
 class cGameTimerServer : public cGameTimer
 {
 	friend class cDebugOutputWidget;
 private:
-	int waitingForPlayer;
-
-	bool nextTickAllowed (cServer& server);
+	void checkPlayersResponding(const std::vector<std::shared_ptr<cPlayer>>& playerList, cServer2& server);
+	std::vector<sGameTimerClientDebugData> clientDebugData;
+	std::vector<unsigned int> receivedTime;
 public:
-	cGameTimerServer();
-
-	void run (cServer& server);
-	void handleSyncMessage (cNetMessage& message);
+	void run (cModel& model, cServer2& server);
+	void handleSyncMessage (const cNetMessageSyncClient& message, unsigned int gameTime);
+	void setNumberOfPlayers(unsigned int players);
 
 };
 
@@ -104,26 +100,29 @@ class cGameTimerClient : public cGameTimer
 {
 	friend class cDebugOutputWidget;
 private:
-	cClient* client;
-	unsigned int remoteChecksum;
-	unsigned int localChecksum;
-	unsigned int waitingForServer;
-	unsigned int debugRemoteChecksum;	//saved data for debug view only
-	int gameTimeAdjustment;				//saved data for debug view only
+	unsigned int receivedTime;			//gametime of the latest sync message in the netmessage queue
+	unsigned int remoteChecksum;		//received checksum from server. After running the jobs for the next gametime, the clientmodel should have the same checksum!
+	unsigned int timeSinceLastSyncMessage; //when no sync message is received for a certain time, user gets message "waiting for server" 
 
-	bool nextTickAllowed();
+	bool syncMessageReceived; // The gametime can only be increased, after the sync message for the next gametime from the server has been received.
+							  // After the sync message has been received, all following netmessages belong to the next gametime step. So handling of
+							  // messages is stoped, until client reached the next gametime.
+
+
+	unsigned int localChecksum;			// saved local checksum for debug view
+	unsigned int debugRemoteChecksum;	// saved data for debug view only
+	unsigned int ping;                  // saved data for debug view only
+
+	void checkServerResponding(cClient& client);
 public:
-	bool nextMsgIsNextGameTime;
 	cGameTimerClient();
-	void setClient (cClient* client);
 
-	void run();
-	void handleSyncMessage (cNetMessage& message);
+	void setReceivedTime(unsigned int time);
+	unsigned int getReceivedTime();
+
+	void run(cClient& client, cModel& model);
+	void handleSyncMessage (const cNetMessageSyncServer& message, unsigned int gameTime);
 };
 
-uint32_t calcClientChecksum (const cClient& client);
-uint32_t calcServerChecksum (const cServer& server, const cPlayer* player);
-
-void compareGameData (const cClient& client, const cServer& server);
 
 #endif // game_logic_gametimerH

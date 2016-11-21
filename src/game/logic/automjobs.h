@@ -23,7 +23,6 @@
 #include "utility/position.h"
 
 class cClient;
-class cClientMoveJob;
 class cVehicle;
 
 class cAutoMJob

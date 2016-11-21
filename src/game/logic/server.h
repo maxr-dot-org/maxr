@@ -36,6 +36,9 @@
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/thread/concurrentqueue.h"
 #include "utility/flatset.h"
+#include "game/data/savegameinfo.h"
+#include "game/data/model.h"
+#include "connectionmanager.h"
 
 class cBuilding;
 class cCasualtiesTracker;
@@ -55,12 +58,14 @@ class cGameSettings;
 /**
 * The Types which are possible for a game
 */
+/*
 enum eGameTypes
 {
 	GAME_TYPE_SINGLE,  // a singleplayer game
 	GAME_TYPE_HOTSEAT, // a hotseat multiplayer game
 	GAME_TYPE_TCPIP    // a multiplayergame over TCP/IP
 };
+*/
 
 enum eServerState
 {
@@ -68,16 +73,6 @@ enum eServerState
 	SERVER_STATE_INGAME,   // Game is running
 };
 
-/**
- * Structure for the reports
- */
-struct sTurnstartReport
-{
-	/** unit type of the report */
-	sID type;
-	/** counter for this report */
-	int count;
-};
 
 /**
 * Callback function for the serverthread
@@ -112,6 +107,8 @@ public:
 	void addPlayer (std::unique_ptr<cPlayer> player);
 	void start();
 	void stop();
+
+	cModel model;
 
 	/** the type of the current game */
 	eGameTypes getGameType() const;
@@ -189,8 +186,8 @@ public:
 	*@author alzi alias DoctorDeath
 	*@param event The SDL_Event to be pushed.
 	*/
-	virtual void pushEvent (std::unique_ptr<cNetMessage> event) MAXR_OVERRIDE_FUNCTION;
-	virtual std::unique_ptr<cNetMessage> popEvent() MAXR_OVERRIDE_FUNCTION;
+	virtual void pushEvent (std::unique_ptr<cNetMessage> event);
+	virtual std::unique_ptr<cNetMessage> popEvent();
 	/**
 	* sends a netMessage to the client
 	* on which the player with 'iPlayerNum' is playing
@@ -273,7 +270,7 @@ public:
 	void kickPlayer (cPlayer& player);
 
 	void sideStepStealthUnit (const cPosition& position, const cVehicle& vehicle, const cPosition& bigOffset = cPosition (-1, -1));
-	void sideStepStealthUnit (const cPosition& position, const sUnitData& vehicleData, cPlayer* vehicleOwner, const cPosition& bigOffset = cPosition (-1, -1));
+	void sideStepStealthUnit (const cPosition& position, const cStaticUnitData& vehicleData, cPlayer* vehicleOwner, const cPosition& bigOffset = cPosition (-1, -1));
 
 	void makeAdditionalSaveRequest (int saveNum);
 
@@ -301,22 +298,6 @@ private:
 
 	void placeInitialResources();
 
-	/**
-	* lands all units at the given position
-	*@author alzi alias DoctorDeath
-	*@param landingPosition The coordinates where to land.
-	*@param Player The Player who wants to land.
-	*@param landingUnits List with all units to land.
-	*@param bFixed true if the bridgehead is fixed.
-	*/
-	void makeLanding (const cPosition& landingPosition, cPlayer& player, const std::vector<sLandingUnit>& landingUnits, bool isFixed);
-	//void makeLanding (const std::vector<cPosition>& landPos, const std::vector<std::vector<sLandingUnit>*>& landingUnits);
-	void makeLanding();
-	/**
-	 *
-	 */
-	void correctLandingPos (cPosition& landingPosition);
-
 
 	void defeatLoserPlayers();
 	bool isVictoryConditionMet() const;
@@ -330,8 +311,6 @@ private:
 	void handleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage& message);
 	void handleNetMessage_GAME_EV_CHAT_CLIENT (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_TO_END_TURN (cNetMessage& message);
-	void handleNetMessage_GAME_EV_WANT_START_WORK (cNetMessage& message);
-	void handleNetMessage_GAME_EV_WANT_STOP_WORK (cNetMessage& message);
 	void handleNetMessage_GAME_EV_MOVE_JOB_CLIENT (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_STOP_MOVE (cNetMessage& message);
 	void handleNetMessage_GAME_EV_MOVEJOB_RESUME (cNetMessage& message);
@@ -383,7 +362,7 @@ private:
 	*@return nullptr if the vehicle could not be landed,
 	*        else a pointer to the vehicle.
 	*/
-	cVehicle* landVehicle (const cPosition& landingPosition, int iWidth, int iHeight, const sUnitData& unitData, cPlayer& player);
+	cVehicle* landVehicle (const cPosition& landingPosition, int iWidth, int iHeight, const cStaticUnitData& unitData, cPlayer& player);
 
 	/**
 	* handles the pressed end of a player

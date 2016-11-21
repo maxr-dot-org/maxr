@@ -19,45 +19,249 @@
 
 #include <algorithm>
 
-#include "game/data/units/unitdata.h"
+#include "unitdata.h"
+#include "tinyxml2.h"
+#include "game/data/player/clans.h"
+#include "utility/log.h"
+#include "utility/language.h"
+#include "utility/crc.h"
+
 
 //------------------------------------------------------------------------------
-sUnitData::sUnitData()
+// ----------- sID Implementation ----------------------------------------------
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+std::string sID::getText() const
 {
-	version = 0;
+	char tmp[6];
+	TIXML_SNPRINTF(tmp, sizeof(tmp), "%.2d %.2d", firstPart, secondPart);
+	return tmp;
+}
+
+//------------------------------------------------------------------------------
+void sID::generate(const std::string& text)
+{
+	const std::string::size_type spacePos = text.find(" ", 0);
+	firstPart = atoi(text.substr(0, spacePos).c_str());
+	secondPart = atoi(text.substr(spacePos, text.length()).c_str());
+}
+
+//------------------------------------------------------------------------------
+bool sID::less_buildingFirst(const sID& ID) const
+{
+	return firstPart == ID.firstPart ? secondPart < ID.secondPart : firstPart > ID.firstPart;
+}
+
+//------------------------------------------------------------------------------
+uint32_t sID::getChecksum(uint32_t crc) const
+{
+	crc = calcCheckSum(firstPart, crc);
+	crc = calcCheckSum(secondPart, crc);
+
+	return crc;
+}
+
+//------------------------------------------------------------------------------
+bool sID::less_vehicleFirst(const sID& ID) const
+{
+	return firstPart == ID.firstPart ? secondPart < ID.secondPart : firstPart < ID.firstPart;
+}
+
+//------------------------------------------------------------------------------
+bool sID::operator == (const sID& ID) const
+{
+	if (firstPart == ID.firstPart && secondPart == ID.secondPart) return true;
+	return false;
+}
+
+//------------------------------------------------------------------------------
+cUnitsData::cUnitsData() :
+	crcValid(false),
+	crcCache(0)
+{}
+
+//------------------------------------------------------------------------------
+int cUnitsData::getUnitIndexBy(sID id) const
+{
+	for (unsigned int i = 0; i != staticUnitData.size(); ++i)
+	{
+		if (staticUnitData[i].ID == id) return i;
+	}
+	Log.write("Unitdata with id (" + iToStr(id.firstPart) + ", " + iToStr(id.secondPart) + ") not found", cLog::eLOG_TYPE_ERROR);
+	return -1;
+}
+
+//------------------------------------------------------------------------------
+void cUnitsData::initializeIDData()
+{
+	for (const auto& data : staticUnitData)
+	{
+		if (data.canBuild == "BigBuilding")	  
+			constructorID = data.ID;
+		if (data.canBuild == "SmallBuilding") 
+			engineerID = data.ID;
+		if (data.canSurvey)                   
+			surveyorID = data.ID;
+	}
+	if (constructorID == sID(0, 0)) Log.write("Constructor index not found. Constructor needs to have the property \"Can_Build = BigBuilding\"", cLog::eLOG_TYPE_ERROR);
+	if (engineerID    == sID(0, 0)) Log.write("Engineer index not found. Engineer needs to have the property \"Can_Build = SmallBuilding\"", cLog::eLOG_TYPE_ERROR);
+	if (surveyorID    == sID(0, 0)) Log.write("Surveyor index not found. Surveyor needs to have the property \"Can_Survey = Yes\"", cLog::eLOG_TYPE_ERROR);
+
+	crcValid = false;
+}
+
+//------------------------------------------------------------------------------
+void cUnitsData::initializeClanUnitData()
+{
+	crcValid = false;
+
+	cClanData& clanData = cClanData::instance();
+	clanDynamicUnitData.resize(clanData.getNrClans());
+
+	for (int i = 0; i != clanData.getNrClans(); ++i)
+	{
+		const cClan* clan = clanData.getClan(i);
+		if (clan == nullptr)
+			continue;
+
+		std::vector<cDynamicUnitData>& clanListVehicles = clanDynamicUnitData[i];
+
+		// make a copy of the vehicle's stats
+		clanListVehicles = dynamicUnitData;
+		for (size_t j = 0; j != dynamicUnitData.size(); ++j)
+		{
+			cDynamicUnitData& clanVehicle = clanListVehicles[j];
+			const cClanUnitStat* changedStat = clan->getUnitStat(clanVehicle.getId());
+			if (changedStat == nullptr) continue;
+			
+			if (changedStat->hasModification("Damage"))
+				clanVehicle.setDamage(changedStat->getModificationValue("Damage"));
+			if (changedStat->hasModification("Range"))
+				clanVehicle.setRange(changedStat->getModificationValue("Range"));
+			if (changedStat->hasModification("Armor"))
+				clanVehicle.setArmor(changedStat->getModificationValue("Armor"));
+			if (changedStat->hasModification("Hitpoints"))
+				clanVehicle.setHitpointsMax(changedStat->getModificationValue("Hitpoints"));
+			if (changedStat->hasModification("Scan"))
+				clanVehicle.setScan(changedStat->getModificationValue("Scan"));
+			if (changedStat->hasModification("Speed"))
+				clanVehicle.setSpeedMax(changedStat->getModificationValue("Speed") * 4);
+			if (changedStat->hasModification("Built_Costs"))
+				clanVehicle.setBuildCost(changedStat->getModificationValue("Built_Costs"));
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+bool cUnitsData::isValidId(const sID& id) const
+{
+	return getUnitIndexBy(id) != -1;
+}
+
+//------------------------------------------------------------------------------
+size_t cUnitsData::getNrOfClans() const
+{
+	return clanDynamicUnitData.size();
+}
+
+//------------------------------------------------------------------------------
+const cDynamicUnitData& cUnitsData::getDynamicUnitData(const sID& id, int clan /*= -1*/) const
+{
+	if (clan < 0 || static_cast<unsigned>(clan) >= clanDynamicUnitData.size())
+	{
+		for (const auto& data : dynamicUnitData)
+		{
+			if (data.getId() == id) return data;
+		}
+		throw std::runtime_error("Unitdata not found" + id.getText());
+	}
+	else
+	{
+		for (const auto& data : clanDynamicUnitData[clan])
+		{
+			if (data.getId() == id) return data;
+		}
+		throw std::runtime_error("Unitdata not found" + id.getText());
+	}
+}
+
+//------------------------------------------------------------------------------
+const cStaticUnitData& cUnitsData::getStaticUnitData(const sID& id) const
+{
+	for (const auto& data : staticUnitData)
+	{
+		if (data.ID == id) return data;
+	}
+	throw std::runtime_error("Unitdata not found" + id.getText());
+}
+
+//------------------------------------------------------------------------------
+const std::vector<cDynamicUnitData>& cUnitsData::getDynamicUnitsData(int clan /*= -1*/) const
+{
+	if (clan < 0 || static_cast<unsigned>(clan) >= clanDynamicUnitData.size())
+	{
+		return dynamicUnitData;
+	}
+	else
+	{
+		return clanDynamicUnitData[clan];
+	}
+}
+
+//------------------------------------------------------------------------------
+const std::vector<cStaticUnitData>& cUnitsData::getStaticUnitsData() const
+{
+	return staticUnitData;
+}
+
+//------------------------------------------------------------------------------
+
+uint32_t cUnitsData::getChecksum(uint32_t crc) const
+{
+	if (!crcValid)
+	{
+		crcCache = 0;
+		crcCache = calcCheckSum(constructorID, crcCache);
+		crcCache = calcCheckSum(engineerID, crcCache);
+		crcCache = calcCheckSum(surveyorID, crcCache);
+		crcCache = calcCheckSum(specialIDLandMine, crcCache);
+		crcCache = calcCheckSum(specialIDSeaMine, crcCache);
+		crcCache = calcCheckSum(specialIDMine, crcCache);
+		crcCache = calcCheckSum(specialIDSmallGen, crcCache);
+		crcCache = calcCheckSum(specialIDConnector, crcCache);
+		crcCache = calcCheckSum(specialIDSmallBeton, crcCache);
+		crcCache = calcCheckSum(staticUnitData, crcCache);
+		crcCache = calcCheckSum(dynamicUnitData, crcCache);
+		crcCache = calcCheckSum(clanDynamicUnitData, crcCache);
+
+		crcValid = true;
+	}
+
+	return calcCheckSum(crcCache, crc);
+}
+
+//------------------------------------------------------------------------------
+cStaticUnitData::cStaticUnitData()
+{
 	muzzleType = MUZZLE_TYPE_NONE;
 
-	ammoMax = 0;
-	ammoCur = 0;
-	shotsMax = 0;
-	shotsCur = 0;
-	range = 0;
-	damage = 0;
 	canAttack = 0;
 	canDriveAndFire = false;
 
-	buildCosts = 0;
 	maxBuildFactor = 0;
 
 	canBuildPath = false;
 	canBuildRepeat = false;
 
 	// Movement
-	speedMax = 0;
-	speedCur = 0;
-
 	factorGround = 0.0f;
 	factorSea = 0.0f;
 	factorAir = 0.0f;
 	factorCoast = 0.0f;
 
 	// Abilities
-	isBig = false;
 	connectsToBase = false;
-	armor = 0;
-	hitpointsMax = 0;
-	hitpointsCur = 0;
-	scan = 0;
 	modifiesSpeed = 0.0f;
 	canClearArea = false;
 	canBeCaptured = false;
@@ -92,321 +296,405 @@ sUnitData::sUnitData()
 	canWork = false;
 	explodesOnContact = false;
 	isHuman = false;
+	isBig = false;
 
 	// Storage
 	storageResMax = 0;
-	storageResCur = 0;
 	storeResType = STORE_RES_NONE;
 	storageUnitsMax = 0;
-	storageUnitsCur = 0;
 	storeUnitsImageType = STORE_UNIT_IMG_NONE;
-
-	// Graphic
-	hasClanLogos = false;
-	hasCorpse = false;
-	hasDamageEffect = false;
-	hasBetonUnderground = false;
-	hasPlayerColor = false;
-	hasOverlay = false;
-
-	buildUpGraphic = false;
-	animationMovement = false;
-	powerOnGraphic = false;
-	isAnimated = false;
-	makeTracks = false;
-
-	isConnectorGraphic = false;
-	hasFrames = 0;
 }
 
 //------------------------------------------------------------------------------
-sUnitData::sUnitData (const sUnitData& other)
+std::string cStaticUnitData::getName() const
 {
-	(*this) = other;
+	std::string translatedName = lngPack.getUnitName(ID);
+	if (!translatedName.empty())
+		return translatedName;
+
+	return name;
 }
 
 //------------------------------------------------------------------------------
-sUnitData& sUnitData::operator= (const sUnitData& other)
+std::string cStaticUnitData::getDescripton() const
 {
-	ID = other.ID;
-	name = other.name;
-	description = other.description;
-	version = other.version;
-	muzzleType = other.muzzleType;
-	ammoMax = other.getAmmoMax();
-	shotsMax = other.getShotsMax();
-	range = other.range;
-	damage = other.damage;
-	canAttack = other.canAttack;
-	canDriveAndFire = other.canDriveAndFire;
+	std::string translatedDescription = lngPack.getUnitDescription(ID);
+	if (!translatedDescription.empty())
+		return translatedDescription;
+
+	return description;
+}
+
+//------------------------------------------------------------------------------
+uint32_t cStaticUnitData::getChecksum(uint32_t crc) const
+{
+	crc = calcCheckSum(ID, crc);
+	crc = calcCheckSum(muzzleType, crc);
+	crc = calcCheckSum(canAttack, crc);
+	crc = calcCheckSum(canDriveAndFire, crc);
+	crc = calcCheckSum(canBuild, crc);
+	crc = calcCheckSum(buildAs, crc);
+	crc = calcCheckSum(maxBuildFactor, crc);
+	crc = calcCheckSum(canBuildPath, crc);
+	crc = calcCheckSum(canBuildRepeat, crc);
+	crc = calcCheckSum(factorGround, crc);
+	crc = calcCheckSum(factorSea, crc);
+	crc = calcCheckSum(factorAir, crc);
+	crc = calcCheckSum(factorCoast, crc);
+	crc = calcCheckSum(connectsToBase, crc);
+	crc = calcCheckSum(modifiesSpeed, crc);
+	crc = calcCheckSum(canClearArea, crc);
+	crc = calcCheckSum(canBeCaptured, crc);
+	crc = calcCheckSum(canBeDisabled, crc);
+	crc = calcCheckSum(canCapture, crc);
+	crc = calcCheckSum(canDisable, crc);
+	crc = calcCheckSum(canRepair, crc);
+	crc = calcCheckSum(canRearm, crc);
+	crc = calcCheckSum(canResearch, crc);
+	crc = calcCheckSum(canPlaceMines, crc);
+	crc = calcCheckSum(canSurvey, crc);
+	crc = calcCheckSum(doesSelfRepair, crc);
+	crc = calcCheckSum(convertsGold, crc);
+	crc = calcCheckSum(canSelfDestroy, crc);
+	crc = calcCheckSum(canScore, crc);
+	crc = calcCheckSum(canMineMaxRes, crc);
+	crc = calcCheckSum(needsMetal, crc);
+	crc = calcCheckSum(needsOil, crc);
+	crc = calcCheckSum(needsEnergy, crc);
+	crc = calcCheckSum(needsHumans, crc);
+	crc = calcCheckSum(produceEnergy, crc);
+	crc = calcCheckSum(produceHumans, crc);
+	crc = calcCheckSum(isStealthOn, crc);
+	crc = calcCheckSum(canDetectStealthOn, crc);
+	crc = calcCheckSum(surfacePosition, crc);
+	crc = calcCheckSum(canBeOverbuild, crc);
+	crc = calcCheckSum(canBeLandedOn, crc);
+	crc = calcCheckSum(canWork, crc);
+	crc = calcCheckSum(explodesOnContact, crc);
+	crc = calcCheckSum(isHuman, crc);
+	crc = calcCheckSum(isBig, crc);
+	crc = calcCheckSum(storageResMax, crc);
+	crc = calcCheckSum(storeResType, crc);
+	crc = calcCheckSum(storageUnitsMax, crc);
+	crc = calcCheckSum(storeUnitsImageType, crc);
+	crc = calcCheckSum(storeUnitsTypes, crc);
+	crc = calcCheckSum(isStorageType, crc);
+	crc = calcCheckSum(description, crc);
+	crc = calcCheckSum(name, crc);
+
+	return crc;
+}
+
+//------------------------------------------------------------------------------
+cDynamicUnitData::cDynamicUnitData() :
+	id(),
+	buildCosts(0),
+	version(0),
+	speedCur(0),
+	speedMax(0),
+	hitpointsCur(0),
+	hitpointsMax(0),
+	shotsCur(0),
+	shotsMax(0),
+	ammoCur(0),
+	ammoMax(0),
+	range(0),
+	scan(0),
+	damage(0),
+	armor(0),
+	crcCache(0),
+	crcValid(false)
+{}
+
+//------------------------------------------------------------------------------
+cDynamicUnitData::cDynamicUnitData(const cDynamicUnitData& other) :
+	id(other.id),
+	buildCosts(other.buildCosts),
+	version(other.version),
+	speedCur(other.speedCur),
+	speedMax(other.speedMax),
+	hitpointsCur(other.hitpointsCur),
+	hitpointsMax(other.hitpointsMax),
+	shotsCur(other.shotsCur),
+	shotsMax(other.shotsMax),
+	ammoCur(other.ammoCur),
+	ammoMax(other.ammoMax),
+	range(other.range),
+	scan(other.scan),
+	damage(other.damage),
+	armor(other.armor),
+	crcCache(0),
+	crcValid(false)
+{}
+
+//------------------------------------------------------------------------------
+cDynamicUnitData& cDynamicUnitData::operator=(const cDynamicUnitData& other)
+{
+	id = other.id;
 	buildCosts = other.buildCosts;
-	canBuild = other.canBuild;
-	buildAs = other.buildAs;
-	maxBuildFactor = other.maxBuildFactor;
-	canBuildPath = other.canBuildPath;
-	canBuildRepeat = other.canBuildRepeat;
-	speedMax = other.getSpeedMax();
-	speedCur = other.getSpeed();
-	factorGround = other.factorGround;
-	factorSea = other.factorSea;
-	factorAir = other.factorAir;
-	factorCoast = other.factorCoast;
-	isBig = other.isBig;
-	connectsToBase = other.connectsToBase;
-	armor = other.armor;
-	hitpointsMax = other.getHitpointsMax();
-	scan = other.scan;
-	modifiesSpeed = other.modifiesSpeed;
-	canClearArea = other.canClearArea;
-	canBeCaptured = other.canBeCaptured;
-	canBeDisabled = other.canBeDisabled;
-	canCapture = other.canCapture;
-	canDisable = other.canDisable;
-	canRepair = other.canRepair;
-	canRearm = other.canRearm;
-	canResearch = other.canResearch;
-	canPlaceMines = other.canPlaceMines;
-	canSurvey = other.canSurvey;
-	doesSelfRepair = other.doesSelfRepair;
-	convertsGold = other.convertsGold;
-	canSelfDestroy = other.canSelfDestroy;
-	canScore = other.canScore;
-	canMineMaxRes = other.canMineMaxRes;
-	needsMetal = other.needsMetal;
-	needsOil = other.needsOil;
-	needsEnergy = other.needsEnergy;
-	needsHumans = other.needsHumans;
-	produceEnergy = other.produceEnergy;
-	produceHumans = other.produceHumans;
-	isStealthOn = other.isStealthOn;
-	canDetectStealthOn = other.canDetectStealthOn;
-	surfacePosition = other.surfacePosition;
-	canBeOverbuild = other.canBeOverbuild;
-	canBeLandedOn = other.canBeLandedOn;
-	canWork = other.canWork;
-	explodesOnContact = other.explodesOnContact;
-	isHuman = other.isHuman;
-	storageResMax = other.storageResMax;
-	storageResCur = other.storageResCur;
-	storeResType = other.storeResType;
-	storageUnitsMax = other.storageUnitsMax;
-	storageUnitsCur = other.storageUnitsCur;
-	storeUnitsImageType = other.storeUnitsImageType;
-	storeUnitsTypes = other.storeUnitsTypes;
-	isStorageType = other.isStorageType;
-	hasClanLogos = other.hasClanLogos;
-	hasCorpse = other.hasCorpse;
-	hasDamageEffect = other.hasDamageEffect;
-	hasBetonUnderground = other.hasBetonUnderground;
-	hasPlayerColor = other.hasPlayerColor;
-	hasOverlay = other.hasOverlay;
-	buildUpGraphic = other.buildUpGraphic;
-	animationMovement = other.animationMovement;
-	powerOnGraphic = other.powerOnGraphic;
-	isAnimated = other.isAnimated;
-	makeTracks = other.makeTracks;
-	isConnectorGraphic = other.isConnectorGraphic;
-	hasFrames = other.hasFrames;
+	version = other.version;
+	speedCur = other.speedCur;
+	speedMax = other.speedMax;
 	hitpointsCur = other.hitpointsCur;
+	hitpointsMax = other.hitpointsMax;
 	shotsCur = other.shotsCur;
+	shotsMax = other.shotsMax;
 	ammoCur = other.ammoCur;
+	ammoMax = other.ammoMax;
+	range = other.range;
+	scan = other.scan;
+	damage = other.damage;
+	armor = other.armor;
+	crcCache = 0;
+	crcValid = false;
 
 	return *this;
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getVersion() const
+sID cDynamicUnitData::getId() const
+{
+	return id;
+}
+
+//------------------------------------------------------------------------------
+void cDynamicUnitData::setId(const sID& value)
+{
+	id = value;
+	crcValid = false;
+}
+
+//------------------------------------------------------------------------------
+int cDynamicUnitData::getBuildCost() const
+{
+	return buildCosts;
+}
+
+//------------------------------------------------------------------------------
+void cDynamicUnitData::setBuildCost(int value)
+{
+	std::swap(buildCosts, value);
+	if (buildCosts != value) buildCostsChanged();
+	crcValid = false;
+}
+
+//------------------------------------------------------------------------------
+int cDynamicUnitData::getVersion() const
 {
 	return version;
 }
 
 //------------------------------------------------------------------------------
-void sUnitData::setVersion (int value)
+void cDynamicUnitData::setVersion(int value)
 {
-	std::swap (version, value);
+	std::swap(version, value);
 	if (version != value) versionChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getSpeed() const
+int cDynamicUnitData::getSpeed() const
 {
 	return speedCur;
 }
 
 //------------------------------------------------------------------------------
-void sUnitData::setSpeed (int value)
+void cDynamicUnitData::setSpeed(int value)
 {
-	std::swap (speedCur, value);
+	std::swap(speedCur, value);
 	if (speedCur != value) speedChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getSpeedMax() const
+int cDynamicUnitData::getSpeedMax() const
 {
 	return speedMax;
 }
 
 //------------------------------------------------------------------------------
-void sUnitData::setSpeedMax (int value)
+void cDynamicUnitData::setSpeedMax(int value)
 {
-	std::swap (speedMax, value);
+	std::swap(speedMax, value);
 	if (speedMax != value) speedMaxChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getHitpoints() const
+int cDynamicUnitData::getHitpoints() const
 {
 	return hitpointsCur;
 }
 
 //------------------------------------------------------------------------------
-void sUnitData::setHitpoints (int value)
+void cDynamicUnitData::setHitpoints(int value)
 {
-	std::swap (hitpointsCur, value);
+	std::swap(hitpointsCur, value);
 	if (hitpointsCur != value) hitpointsChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getHitpointsMax() const
+int cDynamicUnitData::getHitpointsMax() const
 {
 	return hitpointsMax;
 }
 
 //------------------------------------------------------------------------------
-void sUnitData::setHitpointsMax (int value)
+void cDynamicUnitData::setHitpointsMax(int value)
 {
-	std::swap (hitpointsMax, value);
+	std::swap(hitpointsMax, value);
 	if (hitpointsMax != value) hitpointsMaxChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getScan() const
+int cDynamicUnitData::getScan() const
 {
 	return scan;
 }
 
 //------------------------------------------------------------------------------
-void sUnitData::setScan (int value)
+void cDynamicUnitData::setScan(int value)
 {
-	std::swap (scan, value);
+	std::swap(scan, value);
 	if (scan != value) scanChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getRange() const
+int cDynamicUnitData::getRange() const
 {
 	return range;
 }
 
 //------------------------------------------------------------------------------
-void sUnitData::setRange (int value)
+void cDynamicUnitData::setRange(int value)
 {
-	std::swap (range, value);
+	std::swap(range, value);
 	if (range != value) rangeChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getShots() const
+int cDynamicUnitData::getShots() const
 {
 	return shotsCur;
 }
 
 //------------------------------------------------------------------------------
-void sUnitData::setShots (int value)
+void cDynamicUnitData::setShots(int value)
 {
-	std::swap (shotsCur, value);
+	std::swap(shotsCur, value);
 	if (shotsCur != value) shotsChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getShotsMax() const
+int cDynamicUnitData::getShotsMax() const
 {
 	return shotsMax;
 }
 
 //------------------------------------------------------------------------------
-void sUnitData::setShotsMax (int value)
+void cDynamicUnitData::setShotsMax(int value)
 {
-	std::swap (shotsMax, value);
+	std::swap(shotsMax, value);
 	if (shotsMax != value) shotsMaxChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getAmmo() const
+int cDynamicUnitData::getAmmo() const
 {
 	return ammoCur;
 }
 
 //------------------------------------------------------------------------------
-void sUnitData::setAmmo (int value)
+void cDynamicUnitData::setAmmo(int value)
 {
-	std::swap (ammoCur, value);
+	std::swap(ammoCur, value);
 	if (ammoCur != value) ammoChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getAmmoMax() const
+int cDynamicUnitData::getAmmoMax() const
 {
 	return ammoMax;
 }
 
 //------------------------------------------------------------------------------
-void sUnitData::setAmmoMax (int value)
+void cDynamicUnitData::setAmmoMax(int value)
 {
-	std::swap (ammoMax, value);
+	std::swap(ammoMax, value);
 	if (ammoMax != value) ammoMaxChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getDamage() const
+int cDynamicUnitData::getDamage() const
 {
 	return damage;
 }
 
 //------------------------------------------------------------------------------
-void sUnitData::setDamage (int value)
+void cDynamicUnitData::setDamage(int value)
 {
-	std::swap (damage, value);
+	std::swap(damage, value);
 	if (damage != value) damageChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getArmor() const
+int cDynamicUnitData::getArmor() const
 {
 	return armor;
 }
 
 //------------------------------------------------------------------------------
-void sUnitData::setArmor (int value)
+void cDynamicUnitData::setArmor(int value)
 {
-	std::swap (armor, value);
+	std::swap(armor, value);
 	if (armor != value) armorChanged();
+	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
-int sUnitData::getStoredResources() const
+uint32_t cDynamicUnitData::getChecksum(uint32_t crc) const
 {
-	return storageResCur;
+	if (!crcValid)
+	{
+		crcCache = 0;
+		crcCache = calcCheckSum(id, crcCache);
+		crcCache = calcCheckSum(buildCosts, crcCache);
+		crcCache = calcCheckSum(version, crcCache);
+		crcCache = calcCheckSum(speedCur, crcCache);
+		crcCache = calcCheckSum(speedMax, crcCache);
+		crcCache = calcCheckSum(hitpointsCur, crcCache);
+		crcCache = calcCheckSum(hitpointsMax, crcCache);
+		crcCache = calcCheckSum(shotsCur, crcCache);
+		crcCache = calcCheckSum(shotsMax, crcCache);
+		crcCache = calcCheckSum(ammoCur, crcCache);
+		crcCache = calcCheckSum(ammoMax, crcCache);
+		crcCache = calcCheckSum(range, crcCache);
+		crcCache = calcCheckSum(scan, crcCache);
+		crcCache = calcCheckSum(damage, crcCache);
+		crcCache = calcCheckSum(armor, crcCache);
+
+		crcValid = true;
+	}
+
+	return calcCheckSum(crcCache, crc);
 }
 
 //------------------------------------------------------------------------------
-void sUnitData::setStoredResources (int value)
+void cDynamicUnitData::setMaximumCurrentValues()
 {
-	value = std::max (std::min (value, storageResMax), 0);
-	std::swap (storageResCur, value);
-	if (storageResCur != value) storedResourcesChanged();
-}
+	speedCur     = speedMax;
+	ammoCur      = ammoMax;
+	shotsCur     = shotsMax;
+	hitpointsCur = hitpointsMax;
 
-//------------------------------------------------------------------------------
-int sUnitData::getStoredUnits() const
-{
-	return storageUnitsCur;
-}
-
-//------------------------------------------------------------------------------
-void sUnitData::setStoredUnits (int value)
-{
-	value = std::max (std::min (value, storageUnitsMax), 0);
-	std::swap (storageUnitsCur, value);
-	if (storageUnitsCur != value) storedUnitsChanged();
+	crcValid = false;
 }

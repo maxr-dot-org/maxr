@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include "game/startup/local/hotseat/localhotseatgamenew.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 #include "ui/graphical/application.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
@@ -40,7 +40,7 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 {
 	assert (gameSettings != nullptr);
 
-	server = std::make_unique<cServer> (nullptr);
+	//server = std::make_unique<cServer> (nullptr);
 
 	server->setMap (staticMap);
 
@@ -51,13 +51,13 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 	std::vector<cPlayerBasicData> players;
 	for (size_t i = 0; i < playersData.size(); ++i)
 	{
-		clients[i] = std::make_shared<cClient> (server.get(), nullptr);
-		clients[i]->setMap (staticMap);
+		//clients[i] = std::make_shared<cClient> (server.get(), nullptr); //TODO: use new server
+//		clients[i]->setMap (staticMap);
 		clients[i]->setGameSettings (*gameSettings);
 
-		players.push_back (playersData[i].basicData);
+	/*	players.push_back (playersData[i].basicData);
 
-		auto serverPlayer = std::make_unique<cPlayer> (playersData[i].basicData);
+		auto serverPlayer = std::make_unique<cPlayer>(playersData[i].basicData);
 		auto& playerRef = *serverPlayer;
 
 		serverPlayer->setLocal();
@@ -66,7 +66,7 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 		if (i == 0)
 		{
 			server->setActiveTurnPlayer (playerRef);
-		}
+		}*/
 	}
 
 	server->start();
@@ -78,9 +78,9 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 		clients[i]->setPlayers (players, i);
 
 		auto& clientPlayer = clients[i]->getActivePlayer();
-		if (gameSettings->getClansEnabled()) clientPlayer.setClan (playersData[i].clan);
+//		if (gameSettings->getClansEnabled()) clientPlayer.setClan (playersData[i].clan);
 
-		applyUnitUpgrades (clientPlayer, playersData[i].unitUpgrades);
+//		applyUnitUpgrades (clientPlayer, playersData[i].unitUpgrades);
 
 		sendClan (*clients[i]);
 		sendLandingUnits (*clients[i], playersData[i].landingUnits);
@@ -100,12 +100,9 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 	auto activePlayer = server->getActiveTurnPlayer();
 	assert (activePlayer != nullptr);
 
-	gameGuiController->setClients (clients, activePlayer->getNr());
+	gameGuiController->setClients (clients, activePlayer->getId());
 
 	gameGuiController->start();
-
-	using namespace std::placeholders;
-	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cLocalHotSeatGameNew::save, this, _1, _2));
 
 	terminate = false;
 
@@ -171,6 +168,12 @@ const std::shared_ptr<cStaticMap>& cLocalHotSeatGameNew::getStaticMap()
 const std::shared_ptr<cGameSettings>& cLocalHotSeatGameNew::getGameSettings()
 {
 	return gameSettings;
+}
+
+//------------------------------------------------------------------------------
+const std::vector<sLandingUnit>& cLocalHotSeatGameNew::getLandingUnits(size_t playerIndex)
+{
+	return playersData[playerIndex].landingUnits;
 }
 
 //------------------------------------------------------------------------------

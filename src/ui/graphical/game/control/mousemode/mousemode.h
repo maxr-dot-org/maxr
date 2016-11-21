@@ -34,6 +34,7 @@ class cUnitSelection;
 class cMouseAction;
 class cPlayer;
 class cMapField;
+class cUnitsData;
 
 /**
  * Abstract base class for mouse modes.
@@ -87,7 +88,7 @@ public:
 	 * @param mouse The mouse to set the cursor to.
 	 * @param mapPosition The position on the map where the mouse is currently located on.
 	 */
-	virtual void setCursor (cMouse& mouse, const cPosition& mapPosition) const = 0;
+	virtual void setCursor (cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const = 0;
 
 	/**
 	 * Gets the action that should be performed on a click at the given map position.
@@ -96,7 +97,7 @@ public:
 	 * @return The action to be performed. Can be null if the mouse modes implementation
 	 *         can not execute any action at the given position.
 	 */
-	virtual std::unique_ptr<cMouseAction> getMouseAction (const cPosition& mapPosition) const = 0;
+	virtual std::unique_ptr<cMouseAction> getMouseAction (const cPosition& mapPosition, const cUnitsData& unitsData) const = 0;
 
 	/**
 	 * Gets called when the mouse mode needs to be refreshed (E.g. because the active map

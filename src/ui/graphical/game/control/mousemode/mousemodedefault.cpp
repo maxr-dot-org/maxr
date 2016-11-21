@@ -51,9 +51,9 @@ eMouseModeType cMouseModeDefault::getType() const
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeDefault::setCursor (cMouse& mouse, const cPosition& mapPosition) const
+void cMouseModeDefault::setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
-	const auto mouseClickAction = selectAction (mapPosition);
+	const auto mouseClickAction = selectAction (mapPosition, unitsData);
 
 	switch (mouseClickAction)
 	{
@@ -113,9 +113,9 @@ void cMouseModeDefault::setCursor (cMouse& mouse, const cPosition& mapPosition) 
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeDefault::getMouseAction (const cPosition& mapPosition) const
+std::unique_ptr<cMouseAction> cMouseModeDefault::getMouseAction (const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
-	const auto mouseClickAction = selectAction (mapPosition);
+	const auto mouseClickAction = selectAction (mapPosition, unitsData);
 
 	switch (mouseClickAction)
 	{
@@ -146,7 +146,7 @@ std::unique_ptr<cMouseAction> cMouseModeDefault::getMouseAction (const cPosition
 }
 
 //------------------------------------------------------------------------------
-cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition& mapPosition) const
+cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	if (!map) return eActionType::Unknown;
 
@@ -189,11 +189,11 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 				 selectedVehicle->getOwner() != player ||
 				 (
 					 (
-						 selectedVehicle->data.factorAir > 0 ||
+						 selectedVehicle->getStaticUnitData().factorAir > 0 ||
 						 field.getVehicle() ||
 						 (
 							 field.getTopBuilding() &&
-							 field.getTopBuilding()->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE
+							 field.getTopBuilding()->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE
 						 ) ||
 						 (
 							 (KeysList.getMouseStyle() == eMouseStyle::OldSchool || !modifierForceMoveActive) &&
@@ -201,7 +201,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 						 )
 					 ) &&
 					 (
-						 selectedVehicle->data.factorAir == 0 ||
+						 selectedVehicle->getStaticUnitData().factorAir == 0 ||
 						 (field.getPlane() && !modifierForceMoveActive) ||
 						 (
 							 (KeysList.getMouseStyle() == eMouseStyle::OldSchool || !modifierForceMoveActive) &&
@@ -209,8 +209,8 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 								 field.getVehicle() ||
 								 (
 									 field.getTopBuilding() &&
-									 field.getTopBuilding()->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE &&
-									 !field.getTopBuilding()->data.canBeLandedOn
+									 field.getTopBuilding()->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE &&
+									 !field.getTopBuilding()->getStaticUnitData().canBeLandedOn
 								 )
 							 )
 						 )
@@ -268,7 +268,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 			 !selectedBuilding->isUnitWorking() &&
 			 selectedBuilding->getBuildListItem (0).getRemainingMetal() <= 0)
 	{
-		if (selectedBuilding->canExitTo (mapPosition, *map, *selectedBuilding->getBuildListItem (0).getType().getUnitDataOriginalVersion()) && selectedUnit->isDisabled() == false)
+		if (selectedBuilding->canExitTo (mapPosition, *map, unitsData.getStaticUnitData(selectedBuilding->getBuildListItem (0).getType())) && selectedUnit->isDisabled() == false)
 		{
 			return eActionType::ActivateFinished;
 		}
@@ -347,19 +347,19 @@ void cMouseModeDefault::updateFieldUnitConnections (const cMapField& field)
 		mapFieldUnitsSignalConnectionManager.connect (plane->flightHeightChanged, [this]() { needRefresh(); });
 		mapFieldUnitsSignalConnectionManager.connect (plane->data.hitpointsChanged, [this]() { needRefresh(); });
 		mapFieldUnitsSignalConnectionManager.connect (plane->disabledChanged, [this]() { needRefresh(); });
-		mapFieldUnitsSignalConnectionManager.connect (plane->data.storedUnitsChanged, [this]() { needRefresh(); });
+		mapFieldUnitsSignalConnectionManager.connect (plane->storedUnitsChanged, [this]() { needRefresh(); });
 	}
 	auto vehicle = field.getVehicle();
 	if (vehicle)
 	{
-		mapFieldUnitsSignalConnectionManager.connect (vehicle->data.storedUnitsChanged, [this]() { needRefresh(); });
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->storedUnitsChanged, [this]() { needRefresh(); });
 		mapFieldUnitsSignalConnectionManager.connect (vehicle->disabledChanged, [this]() { needRefresh(); });
 		mapFieldUnitsSignalConnectionManager.connect (vehicle->data.hitpointsChanged, [this]() { needRefresh(); });
 	}
 	auto building = field.getBuilding();
 	if (building)
 	{
-		mapFieldUnitsSignalConnectionManager.connect (building->data.storedUnitsChanged, [this]() { needRefresh(); });
+		mapFieldUnitsSignalConnectionManager.connect (building->storedUnitsChanged, [this]() { needRefresh(); });
 		mapFieldUnitsSignalConnectionManager.connect (building->disabledChanged, [this]() { needRefresh(); });
 		mapFieldUnitsSignalConnectionManager.connect (building->data.hitpointsChanged, [this]() { needRefresh(); });
 	}

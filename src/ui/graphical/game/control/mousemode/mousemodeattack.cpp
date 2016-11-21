@@ -41,7 +41,7 @@ eMouseModeType cMouseModeAttack::getType() const
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeAttack::setCursor (cMouse& mouse, const cPosition& mapPosition) const
+void cMouseModeAttack::setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	if (canExecuteAction (mapPosition))
 	{
@@ -63,7 +63,7 @@ void cMouseModeAttack::setCursor (cMouse& mouse, const cPosition& mapPosition) c
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeAttack::getMouseAction (const cPosition& mapPosition) const
+std::unique_ptr<cMouseAction> cMouseModeAttack::getMouseAction(const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	if (canExecuteAction (mapPosition))
 	{
@@ -80,7 +80,7 @@ bool cMouseModeAttack::canExecuteAction (const cPosition& mapPosition) const
 	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 	const auto selectedBuilding = unitSelection.getSelectedBuilding();
 
-	return (selectedVehicle && (selectedVehicle->data.muzzleType != sUnitData::MUZZLE_TYPE_TORPEDO || map->isWaterOrCoast (mapPosition))) ||
+	return (selectedVehicle && (selectedVehicle->getStaticUnitData().muzzleType != cStaticUnitData::MUZZLE_TYPE_TORPEDO || map->isWaterOrCoast (mapPosition))) ||
 		   (selectedBuilding && selectedBuilding->isInRange (mapPosition));
 }
 

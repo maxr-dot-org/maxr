@@ -39,6 +39,7 @@ class cPlayer;
 class cTurnClock;
 class cTurnTimeClock;
 class cGameSettings;
+class cUnitsData;
 
 class cHud : public cWidget
 {
@@ -153,6 +154,7 @@ public:
 	mutable cSignal<void (const cUnit&, const std::string&)> triggeredRenameUnit;
 
 	void setActiveUnit (const cUnit* unit);
+	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData);
 
 	virtual bool isAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
 
@@ -164,6 +166,7 @@ private:
 
 	std::shared_ptr<const cPlayer> player;
 	std::shared_ptr<const cTurnClock> turnClock;
+	std::shared_ptr<const cUnitsData> unitsData;
 
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager turnClockSignalConnectionManager;

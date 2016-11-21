@@ -53,7 +53,7 @@ class cWindowUpgrades : public cWindowHangar
 {
 	// TODO: remove code duplication with @ref cWindowLandingUnitSelection
 public:
-	explicit cWindowUpgrades (const cPlayer& player, std::shared_ptr<const cTurnTimeClock> turnTimeClock, std::shared_ptr<cWindowUpgradesFilterState> filterState);
+	explicit cWindowUpgrades (const cPlayer& player, std::shared_ptr<const cTurnTimeClock> turnTimeClock, std::shared_ptr<cWindowUpgradesFilterState> filterState, std::shared_ptr<const cUnitsData> unitsData);
 
 	std::vector<std::pair<sID, cUnitUpgrade>> getUnitUpgrades() const;
 

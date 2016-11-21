@@ -26,12 +26,13 @@
 #include "utility/signal/signal.h"
 
 class cStaticMap;
-struct sTerrain;
+struct sLandingUnit;
+class cUnitsData;
 
 class cLandingPositionSelectionMap : public cClickableWidget
 {
 public:
-	cLandingPositionSelectionMap (const cBox<cPosition>& area, std::shared_ptr<cStaticMap> map);
+	cLandingPositionSelectionMap(const cBox<cPosition>& area, std::shared_ptr<cStaticMap> map, bool fixedBridgeHead, const std::vector<sLandingUnit>& landingUnits, std::shared_ptr<const cUnitsData> unitsData);
 
 	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 
@@ -45,9 +46,11 @@ private:
 	AutoSurface mapSurface;
 
 	std::shared_ptr<cStaticMap> map;
+	bool fixedBridgeHead;
+	const std::vector<sLandingUnit> landingUnits;
+	std::shared_ptr<const cUnitsData> unitsData;
 
-	const sTerrain* getMapTile (const cPosition& position, cPosition& tilePosition);
-	bool isAllowedTerrain (const sTerrain& terrain);
+	bool isValidLandingLocation(const cPosition& position);
 };
 
 #endif // ui_graphical_menu_widgets_special_landingpositionselectionmapH

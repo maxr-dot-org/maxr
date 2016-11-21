@@ -19,17 +19,17 @@
 
 #include "game/data/player/playerbasicdata.h"
 #include "network.h"
+#include "utility/crc.h"
 
 //------------------------------------------------------------------------------
 cPlayerBasicData::cPlayerBasicData()
 {}
 
 //------------------------------------------------------------------------------
-cPlayerBasicData::cPlayerBasicData (const std::string& name_, cPlayerColor color_, int nr_, int socketIndex_) :
+cPlayerBasicData::cPlayerBasicData (const std::string& name_, cPlayerColor color_, int nr_) :
 	name (name_),
 	color (std::move (color_)),
 	Nr (nr_),
-	socketIndex (socketIndex_),
 	ready (false)
 {}
 
@@ -38,7 +38,6 @@ cPlayerBasicData::cPlayerBasicData (const cPlayerBasicData& other) :
 	name (other.name),
 	color (other.color),
 	Nr (other.Nr),
-	socketIndex (other.socketIndex),
 	ready (other.ready)
 {}
 
@@ -48,7 +47,6 @@ cPlayerBasicData& cPlayerBasicData::operator= (const cPlayerBasicData& other)
 	name = other.name;
 	color = other.color;
 	Nr = other.Nr;
-	socketIndex = other.socketIndex;
 	ready = other.ready;
 	return *this;
 }
@@ -78,45 +76,6 @@ void cPlayerBasicData::setNr (int nr)
 	std::swap (Nr, nr);
 	if (Nr != nr) numberChanged();
 }
-
-//------------------------------------------------------------------------------
-int cPlayerBasicData::getSocketIndex() const
-{
-	return socketIndex;
-}
-
-//------------------------------------------------------------------------------
-void cPlayerBasicData::setSocketIndex (int index)
-{
-	std::swap (socketIndex, index);
-	if (socketIndex != index) socketIndexChanged();
-}
-
-//------------------------------------------------------------------------------
-void cPlayerBasicData::setLocal()
-{
-	socketIndex = MAX_CLIENTS;
-}
-
-//------------------------------------------------------------------------------
-bool cPlayerBasicData::isLocal() const
-{
-	return socketIndex == MAX_CLIENTS;
-}
-
-//------------------------------------------------------------------------------
-void cPlayerBasicData::onSocketIndexDisconnected (int socketIndex_)
-{
-	if (isLocal() || socketIndex == -1) return;
-	if (socketIndex == socketIndex_)
-	{
-		socketIndex = -1;
-	}
-	else if (socketIndex > socketIndex_)
-	{
-		--socketIndex;
-	}
-}
 //------------------------------------------------------------------------------
 void cPlayerBasicData::setColor (cPlayerColor color_)
 {
@@ -135,4 +94,15 @@ void cPlayerBasicData::setReady (bool ready_)
 bool cPlayerBasicData::isReady() const
 {
 	return ready;
+}
+
+//------------------------------------------------------------------------------
+uint32_t cPlayerBasicData::getChecksum(uint32_t crc) const
+{
+	crc = calcCheckSum(name, crc);
+	crc = calcCheckSum(color, crc);
+	crc = calcCheckSum(Nr, crc);
+	crc = calcCheckSum(ready, crc);
+
+	return crc;
 }

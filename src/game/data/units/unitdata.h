@@ -24,22 +24,63 @@
 #include <utility>
 #include <vector>
 
-#include "main.h" // sID
 #include "utility/signal/signal.h"
+#include "utility/serialization/serialization.h"
 
-// struct for vehicle properties
-struct sUnitData
+
+struct sID
 {
-	sUnitData();
-	sUnitData (const sUnitData& other);
+	sID() : firstPart(0), secondPart(0) {}
+	sID(int first, int second) : firstPart(first), secondPart(second) {}
 
-	sUnitData& operator= (const sUnitData& other);
+	std::string getText() const;
+	void generate(const std::string& text);
+
+	bool isAVehicle() const { return firstPart == 0; }
+	bool isABuilding() const { return firstPart == 1; }
+
+	/** Get the basic version of a unit.
+	* @param Owner If Owner is given, his clan will be taken
+	*        into consideration for modifications of the unit's values.
+	* @return the sUnitData of the owner without upgrades
+	*         (but with the owner's clan modifications) */
+	//const sUnitData* getUnitDataOriginalVersion (const cPlayer* Owner = nullptr) const;
+
+	bool operator== (const sID& ID) const;
+	bool operator!= (const sID& rhs) const { return !(*this == rhs); }
+	bool operator< (const sID& rhs) const { return less_vehicleFirst(rhs); }
+	bool less_vehicleFirst(const sID& ID) const;
+	bool less_buildingFirst(const sID& ID) const;
+
+	uint32_t getChecksum(uint32_t crc) const;
+
+	template<typename T>
+	void serialize(T& archive)
+	{
+		archive & NVP(firstPart);
+		archive & NVP(secondPart);
+	}
+
+public:
+	int firstPart;
+	int secondPart;
+};
+
+// class for vehicle properties, that are constant and equal for all instances of a unit type
+class cStaticUnitData
+{
+public:
+	cStaticUnitData();
+	std::string getName() const;
+	std::string getDescripton() const;
+	void setName(std::string name_){ name = name_; }
+	void setDescription(std::string text) { description = text; }
+
+	uint32_t getChecksum(uint32_t crc) const;
 
 	// Main
 	sID ID;
-	std::string name;
-	std::string description;
-
+	
 	// Attack
 	enum eMuzzleType
 	{
@@ -59,8 +100,6 @@ struct sUnitData
 
 	bool canDriveAndFire;
 
-	// Production
-	int buildCosts;
 	std::string canBuild;
 	std::string buildAs;
 
@@ -75,7 +114,6 @@ struct sUnitData
 	float factorCoast;
 
 	// Abilities
-	bool isBig;
 	bool connectsToBase;
 	float modifiesSpeed;
 	bool canClearArea;
@@ -128,6 +166,7 @@ struct sUnitData
 	bool canWork;
 	bool explodesOnContact;
 	bool isHuman;
+	bool isBig;
 
 	// Storage
 	int storageResMax;
@@ -153,84 +192,167 @@ struct sUnitData
 	std::vector<std::string> storeUnitsTypes;
 	std::string isStorageType;
 
-	// Graphic
-	bool hasClanLogos;
-	bool hasCorpse;
-	bool hasDamageEffect;
-	bool hasBetonUnderground;
-	bool hasPlayerColor;
-	bool hasOverlay;
+	template<typename T>
+	void serialize(T& archive)
+	{
+		archive & NVP(ID);
+		archive & NVP(muzzleType);
+		archive & NVP(canAttack);
+		archive & NVP(canDriveAndFire);
+		archive & NVP(canBuild);
+		archive & NVP(buildAs);
+		archive & NVP(maxBuildFactor);
+		archive & NVP(canBuildPath);
+		archive & NVP(canBuildRepeat);
+		archive & NVP(factorGround);
+		archive & NVP(factorSea);
+		archive & NVP(factorAir);
+		archive & NVP(factorCoast);
+		archive & NVP(connectsToBase);
+		archive & NVP(modifiesSpeed);
+		archive & NVP(canClearArea);
+		archive & NVP(canBeCaptured);
+		archive & NVP(canBeDisabled);
+		archive & NVP(canCapture);
+		archive & NVP(canDisable);
+		archive & NVP(canRepair);
+		archive & NVP(canRearm);
+		archive & NVP(canResearch);
+		archive & NVP(canPlaceMines);
+		archive & NVP(canSurvey);
+		archive & NVP(doesSelfRepair);
+		archive & NVP(convertsGold);
+		archive & NVP(canSelfDestroy);
+		archive & NVP(canScore);
+		archive & NVP(canMineMaxRes);
+		archive & NVP(needsMetal);
+		archive & NVP(needsOil);
+		archive & NVP(needsEnergy);
+		archive & NVP(needsHumans);
+		archive & NVP(produceEnergy);
+		archive & NVP(produceHumans);
+		archive & NVP(isStealthOn);
+		archive & NVP(canDetectStealthOn);
+		archive & NVP(surfacePosition);
+		archive & NVP(canBeOverbuild);
+		archive & NVP(canBeLandedOn);
+		archive & NVP(canWork);
+		archive & NVP(explodesOnContact);
+		archive & NVP(isHuman);
+		archive & NVP(isBig);
+		archive & NVP(storageResMax);
+		archive & NVP(storeResType);
+		archive & NVP(storageUnitsMax);
+		archive & NVP(storeUnitsImageType);
+		archive & NVP(storeUnitsTypes);
+		archive & NVP(isStorageType);
+		archive & NVP(description);
+		archive & NVP(name);
+	}
 
-	bool buildUpGraphic;
-	bool animationMovement;
-	bool powerOnGraphic;
-	bool isAnimated;
-	bool makeTracks;
+private:
+	std::string description; //untranslated data from unit xml. Will be used, when translation for the unit is not available
+	std::string name;        //untranslated data from unit xml. Will be used, when translation for the unit is not available
+};
 
-	bool isConnectorGraphic;
-	int hasFrames;
+//class for vehicle properties, that are individual for each instance of a unit
+class cDynamicUnitData
+{
+public:
+	cDynamicUnitData();
+	cDynamicUnitData(const cDynamicUnitData& other);
+	cDynamicUnitData& operator= (const cDynamicUnitData& other);
+
+	void setMaximumCurrentValues();
+
+	sID getId() const;
+	void setId(const sID& value);
+
+	int getBuildCost() const;
+	void setBuildCost(int value);
 
 	int getVersion() const;
-	void setVersion (int value);
+	void setVersion(int value);
 
 	int getSpeed() const;
-	void setSpeed (int value);
+	void setSpeed(int value);
 
 	int getSpeedMax() const;
-	void setSpeedMax (int value);
+	void setSpeedMax(int value);
 
 	int getHitpoints() const;
-	void setHitpoints (int value);
+	void setHitpoints(int value);
 
 	int getHitpointsMax() const;
-	void setHitpointsMax (int value);
+	void setHitpointsMax(int value);
 
 	int getScan() const;
-	void setScan (int value);
+	void setScan(int value);
 
 	int getRange() const;
-	void setRange (int value);
+	void setRange(int value);
 
 	int getShots() const;
-	void setShots (int value);
+	void setShots(int value);
 
 	int getShotsMax() const;
-	void setShotsMax (int value);
+	void setShotsMax(int value);
 
 	int getAmmo() const;
-	void setAmmo (int value);
+	void setAmmo(int value);
 
 	int getAmmoMax() const;
-	void setAmmoMax (int value);
+	void setAmmoMax(int value);
 
 	int getDamage() const;
-	void setDamage (int value);
+	void setDamage(int value);
 
 	int getArmor() const;
-	void setArmor (int value);
+	void setArmor(int value);
 
-	int getStoredResources() const;
-	void setStoredResources (int value);
+	uint32_t getChecksum(uint32_t crc) const;
 
-	int getStoredUnits() const;
-	void setStoredUnits (int value);
+	mutable cSignal<void()> buildCostsChanged;
+	mutable cSignal<void()> versionChanged;
+	mutable cSignal<void()> speedChanged;
+	mutable cSignal<void()> speedMaxChanged;
+	mutable cSignal<void()> hitpointsChanged;
+	mutable cSignal<void()> hitpointsMaxChanged;
+	mutable cSignal<void()> shotsChanged;
+	mutable cSignal<void()> shotsMaxChanged;
+	mutable cSignal<void()> ammoChanged;
+	mutable cSignal<void()> ammoMaxChanged;
+	mutable cSignal<void()> scanChanged;
+	mutable cSignal<void()> rangeChanged;
+	mutable cSignal<void()> damageChanged;
+	mutable cSignal<void()> armorChanged;
 
-	mutable cSignal<void ()> versionChanged;
-	mutable cSignal<void ()> speedChanged;
-	mutable cSignal<void ()> speedMaxChanged;
-	mutable cSignal<void ()> hitpointsChanged;
-	mutable cSignal<void ()> hitpointsMaxChanged;
-	mutable cSignal<void ()> shotsChanged;
-	mutable cSignal<void ()> shotsMaxChanged;
-	mutable cSignal<void ()> ammoChanged;
-	mutable cSignal<void ()> ammoMaxChanged;
-	mutable cSignal<void ()> scanChanged;
-	mutable cSignal<void ()> rangeChanged;
-	mutable cSignal<void ()> damageChanged;
-	mutable cSignal<void ()> armorChanged;
-	mutable cSignal<void ()> storedResourcesChanged;
-	mutable cSignal<void ()> storedUnitsChanged;
+	template <typename T>
+	void serialize(T& archive)
+	{
+		archive & NVP(id);
+		archive & NVP(buildCosts);
+		archive & NVP(version);
+		archive & NVP(speedCur);
+		archive & NVP(speedMax);
+		archive & NVP(hitpointsCur);
+		archive & NVP(hitpointsMax);
+		archive & NVP(shotsCur);
+		archive & NVP(shotsMax);
+		archive & NVP(ammoCur);
+		archive & NVP(ammoMax);
+		archive & NVP(range);
+		archive & NVP(scan);
+		archive & NVP(damage);
+		archive & NVP(armor);
+	}
 private:
+	// Main
+	sID id;
+
+	// Production
+	int buildCosts;
+
 	int version;
 
 	int speedCur;
@@ -249,8 +371,110 @@ private:
 	int damage;
 	int armor;
 
-	int storageResCur;
-	int storageUnitsCur;
+	mutable uint32_t crcCache;
+	mutable bool crcValid;
+};
+
+class cUnitsData
+{
+public:
+	cUnitsData();
+
+	void initializeIDData();
+	void initializeClanUnitData();
+
+	void addData(const cDynamicUnitData& data) { crcValid = false; dynamicUnitData.push_back(data); }
+	void addData(const cStaticUnitData& data)  { crcValid = false; staticUnitData.push_back(data); }
+
+	bool isValidId(const sID& id) const;
+	size_t getNrOfClans() const;
+
+
+	// clan = -1: without clans
+	const cDynamicUnitData& getDynamicUnitData(const sID& id, int clan = -1) const;
+	const cStaticUnitData& getStaticUnitData(const sID& id) const;
+
+	// clan = -1: without clans
+	const std::vector<cDynamicUnitData>& getDynamicUnitsData(int clan = -1) const;
+	const std::vector<cStaticUnitData>& getStaticUnitsData() const;
+
+	uint32_t getChecksum(uint32_t crc) const;
+
+	const cStaticUnitData& getConstructorData() const { return getStaticUnitData(constructorID); }
+	const cStaticUnitData& getEngineerData() const { return getStaticUnitData(engineerID); }
+	const cStaticUnitData& getSurveyorData() const { return getStaticUnitData(surveyorID); }
+	const cStaticUnitData& getMineData() const { return getStaticUnitData(specialIDMine); }
+	const cStaticUnitData& getSmallGeneratorData() const { return getStaticUnitData(specialIDSmallGen); }
+	const cStaticUnitData& getLandMineData() const { return getStaticUnitData(specialIDLandMine); }
+	const cStaticUnitData& getSeaMineData() const { return getStaticUnitData(specialIDSeaMine); }
+
+	sID getConstructorID() const { return constructorID; };
+	sID getEngineerID() const { return engineerID; };
+	sID getSurveyorID() const { return surveyorID; };
+	sID getSpecialIDLandMine() const { return specialIDLandMine; };
+	sID getSpecialIDSeaMine() const { return specialIDSeaMine; };
+	sID getSpecialIDMine() const { return specialIDMine; };
+	sID getSpecialIDSmallGen() const { return specialIDSmallGen; };
+	sID getSpecialIDConnector() const { return specialIDConnector; };
+	sID getSpecialIDSmallBeton() const { return specialIDSmallBeton; };
+
+	void setSpecialIDLandMine(sID id) { specialIDLandMine = id; crcValid = false; };
+	void setSpecialIDSeaMine(sID id)  { specialIDSeaMine = id; crcValid = false; };
+	void setSpecialIDMine(sID id) { specialIDMine = id; crcValid = false; };
+	void setSpecialIDSmallGen(sID id) { specialIDSmallGen = id; crcValid = false; };
+	void setSpecialIDConnector(sID id) { specialIDConnector = id; crcValid = false; };
+	void setSpecialIDSmallBeton(sID id) { specialIDSmallBeton = id; crcValid = false; };
+
+	template <typename T>
+	void serialize(T& archive)
+	{
+		if (!archive.isWriter)
+		{
+			staticUnitData.clear();
+			dynamicUnitData.clear();
+			clanDynamicUnitData.clear();
+		}
+
+		archive & NVP(constructorID);
+		archive & NVP(engineerID);
+		archive & NVP(surveyorID);
+		archive & NVP(specialIDLandMine);
+		archive & NVP(specialIDSeaMine);
+		archive & NVP(specialIDMine);
+		archive & NVP(specialIDSmallGen);
+		archive & NVP(specialIDConnector);
+		archive & NVP(specialIDSmallBeton);
+		archive & NVP(staticUnitData);
+		archive & NVP(dynamicUnitData);
+		archive & NVP(clanDynamicUnitData);
+	}
+
+private:
+	int getUnitIndexBy(sID id) const;
+
+	sID constructorID;
+	sID engineerID;
+	sID surveyorID;
+	sID specialIDLandMine;
+	sID specialIDSeaMine;
+	sID specialIDMine;
+	sID specialIDSmallGen;
+	sID specialIDConnector;
+	sID specialIDSmallBeton;
+
+	// the static unit data
+	std::vector<cStaticUnitData> staticUnitData;
+
+	// the dynamic unit data. Standard version without clan modifications
+	std::vector<cDynamicUnitData> dynamicUnitData;
+
+	// the dynamic unit data. Contains the modified versions for the clans
+	std::vector<std::vector<cDynamicUnitData> > clanDynamicUnitData;
+
+	// unitdata does not change during the game. 
+	// So caching the checksum saves a lot cpu ressources.
+	mutable uint32_t crcCache;
+	mutable bool crcValid;
 };
 
 #endif // game_data_units_unitdataH

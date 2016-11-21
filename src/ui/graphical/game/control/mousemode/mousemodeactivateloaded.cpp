@@ -41,7 +41,7 @@ eMouseModeType cMouseModeActivateLoaded::getType() const
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeActivateLoaded::setCursor (cMouse& mouse, const cPosition& mapPosition) const
+void cMouseModeActivateLoaded::setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	if (canExecuteAction (mapPosition))
 	{
@@ -54,7 +54,7 @@ void cMouseModeActivateLoaded::setCursor (cMouse& mouse, const cPosition& mapPos
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeActivateLoaded::getMouseAction (const cPosition& mapPosition) const
+std::unique_ptr<cMouseAction> cMouseModeActivateLoaded::getMouseAction(const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	if (canExecuteAction (mapPosition))
 	{
@@ -71,8 +71,8 @@ bool cMouseModeActivateLoaded::canExecuteAction (const cPosition& mapPosition) c
 	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 	const auto selectedBuilding = unitSelection.getSelectedBuilding();
 
-	return (selectedVehicle && !selectedVehicle->isDisabled() && selectedVehicle->canExitTo (mapPosition, *map, selectedVehicle->storedUnits[vehicleToActivateIndex]->data)) ||
-		   (selectedBuilding && !selectedBuilding->isDisabled() && selectedBuilding->canExitTo (mapPosition, *map, selectedBuilding->storedUnits[vehicleToActivateIndex]->data));
+	return (selectedVehicle && !selectedVehicle->isDisabled() && selectedVehicle->canExitTo (mapPosition, *map, selectedVehicle->storedUnits[vehicleToActivateIndex]->getStaticUnitData())) ||
+		   (selectedBuilding && !selectedBuilding->isDisabled() && selectedBuilding->canExitTo (mapPosition, *map, selectedBuilding->storedUnits[vehicleToActivateIndex]->getStaticUnitData()));
 }
 
 //------------------------------------------------------------------------------

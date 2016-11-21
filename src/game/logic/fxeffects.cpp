@@ -124,9 +124,9 @@ void cFxMuzzle::draw (float zoom, const cPosition& destination) const
 void cFxMuzzle::playSound (cSoundManager& soundManager) const
 {
 	if (id.isABuilding())
-		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, UnitsData.getBuildingUI (id)->Attack, cPosition (position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, UnitsUiData.getBuildingUI (id)->Attack, cPosition (position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
 	else
-		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, UnitsData.getVehicleUI (id)->Attack, cPosition (position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, UnitsUiData.getVehicleUI (id)->Attack, cPosition (position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
 }
 
 //------------------------------------------------------------------------------
@@ -371,9 +371,9 @@ cFxRocket::cFxRocket (const cPosition& startPosition_, const cPosition& endPosit
 void cFxRocket::playSound (cSoundManager& soundManager) const
 {
 	if (id.isABuilding())
-		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, UnitsData.getBuildingUI (id)->Attack, cPosition (position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, UnitsUiData.getBuildingUI (id)->Attack, cPosition (position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
 	else
-		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, UnitsData.getVehicleUI (id)->Attack, cPosition (position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, UnitsUiData.getVehicleUI (id)->Attack, cPosition (position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
 }
 
 cFxRocket::~cFxRocket()

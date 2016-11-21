@@ -41,7 +41,7 @@ bool cUnitSelection::selectUnitAt (const cMapField& field, bool base)
 	}
 	cBuilding* topBuilding = field.getTopBuilding();
 	const cVehicle* selectedVehicle = getSelectedVehicle();
-	if (topBuilding && (base || ((topBuilding->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE || !selectedVehicle) && (!field.getTopBuilding()->data.canBeLandedOn || (!selectedVehicle || selectedVehicle->data.factorAir == 0)))))
+	if (topBuilding && (base || ((topBuilding->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE || !selectedVehicle) && (!field.getTopBuilding()->getStaticUnitData().canBeLandedOn || (!selectedVehicle || selectedVehicle->getStaticUnitData().factorAir == 0)))))
 	{
 		return selectUnit (*topBuilding);
 	}
@@ -217,7 +217,7 @@ std::vector<cVehicle*> cUnitSelection::getSelectedVehicles() const
 	std::vector<cVehicle*> result;
 	for (auto i = selectedUnits.begin(); i != selectedUnits.end(); ++i)
 	{
-		if (i->first->data.ID.isAVehicle())
+		if (i->first->isAVehicle())
 		{
 			result.push_back (static_cast<cVehicle*> (i->first));
 		}
@@ -231,7 +231,7 @@ std::vector<cBuilding*> cUnitSelection::getSelectedBuildings() const
 	std::vector<cBuilding*> result;
 	for (auto i = selectedUnits.begin(); i != selectedUnits.end(); ++i)
 	{
-		if (i->first->data.ID.isABuilding())
+		if (i->first->isABuilding())
 		{
 			result.push_back (static_cast<cBuilding*> (i->first));
 		}
@@ -251,7 +251,7 @@ size_t cUnitSelection::getSelectedVehiclesCount() const
 	size_t result = 0;
 	for (auto i = selectedUnits.begin(); i != selectedUnits.end(); ++i)
 	{
-		if (i->first->data.ID.isAVehicle()) ++result;
+		if (i->first->isAVehicle()) ++result;
 	}
 	return result;
 }
@@ -262,7 +262,7 @@ size_t cUnitSelection::getSelectedBuildingsCount() const
 	size_t result = 0;
 	for (auto i = selectedUnits.begin(); i != selectedUnits.end(); ++i)
 	{
-		if (i->first->data.ID.isABuilding()) ++result;
+		if (i->first->isABuilding()) ++result;
 	}
 	return result;
 }

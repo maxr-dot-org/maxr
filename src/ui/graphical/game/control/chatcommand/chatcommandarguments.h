@@ -32,7 +32,7 @@ size_t getNextWordLength(const std::string& s, size_t position);
 
 class cPlayer;
 class cClient;
-class cServer;
+class cServer2;
 
 template<typename Impl>
 class cChatCommandArgument
@@ -139,9 +139,9 @@ private:
 class cChatCommandArgumentServer : public cChatCommandArgument<cChatCommandArgumentServer>
 {
 public:
-	using ValueType = cServer*;
+	using ValueType = cServer2*;
 
-	explicit cChatCommandArgumentServer(const std::shared_ptr<cClient>& activeClientPointer, bool isOptional = false, ValueType defaultValue = nullptr);
+	explicit cChatCommandArgumentServer(cServer2*& serverPointer, bool isOptional = false, ValueType defaultValue = nullptr);
 
 	size_t parse(const std::string& command, size_t position);
 
@@ -151,7 +151,7 @@ public:
 private:
 	ValueType value;
 	const ValueType defaultValue;
-	const std::shared_ptr<cClient>& activeClientPointer;
+	cServer2*& serverPointer;
 };
 
 class cChatCommandArgumentClient : public cChatCommandArgument<cChatCommandArgumentClient>
@@ -175,9 +175,9 @@ private:
 class cChatCommandArgumentServerPlayer : public cChatCommandArgument<cChatCommandArgumentServerPlayer>
 {
 public:
-	using ValueType = cPlayer*;
+	using ValueType = const cPlayer*;
 
-	explicit cChatCommandArgumentServerPlayer(const std::shared_ptr<cClient>& activeClientPointer, bool isOptional = false, ValueType defaultValue = nullptr);
+	explicit cChatCommandArgumentServerPlayer(cServer2*& serverPointer, bool isOptional = false, ValueType defaultValue = nullptr);
 
 	size_t parse(const std::string& command, size_t position);
 
@@ -187,13 +187,13 @@ public:
 private:
 	ValueType value;
 	const ValueType defaultValue;
-	const std::shared_ptr<cClient>& activeClientPointer;
+	cServer2*& serverPointer;
 };
 
 class cChatCommandArgumentClientPlayer : public cChatCommandArgument<cChatCommandArgumentClientPlayer>
 {
 public:
-	using ValueType = cPlayer*;
+	using ValueType = const cPlayer*;
 
 	explicit cChatCommandArgumentClientPlayer(const std::shared_ptr<cClient>& activeClientPointer, bool isOptional = false, ValueType defaultValue = nullptr);
 

@@ -34,8 +34,8 @@
 #include "game/data/map/map.h"
 
 //------------------------------------------------------------------------------
-cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cMap& map, std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
-	cWindowAdvancedHangar (LoadPCX (GFXOD_FAC_BUILD_SCREEN), *building_.getOwner()),
+cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cMap& map, std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
+	cWindowAdvancedHangar (LoadPCX (GFXOD_FAC_BUILD_SCREEN), unitsData, *building_.getOwner()),
 	building (building_)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Factory"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
@@ -62,7 +62,7 @@ cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cM
 
 	repeatCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (447, 322), lngPack.i18n ("Text~Comp~Repeat"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Standard));
 
-	generateSelectionList (building, map);
+	generateSelectionList (building, map, *unitsData);
 	generateBuildList (building);
 
 	speedHandler->setBuildSpeedIndex(building.getBuildSpeed());
@@ -107,7 +107,7 @@ void cWindowBuildVehicles::setActiveUnit (const sID& unitId)
 	const auto remainingMetal = selectedUnit ? selectedUnit->getRemainingMetal() : -1;
 	std::array<int, 3> turns;
 	std::array<int, 3> costs;
-	building.calcTurboBuild (turns, costs, vehicleData.buildCosts, remainingMetal);
+	building.calcTurboBuild (turns, costs, vehicleData.getBuildCost(), remainingMetal);
 
 	speedHandler->setValues (turns, costs);
 
@@ -115,12 +115,13 @@ void cWindowBuildVehicles::setActiveUnit (const sID& unitId)
 }
 
 //------------------------------------------------------------------------------
-void cWindowBuildVehicles::generateSelectionList (const cBuilding& building, const cMap& map)
+void cWindowBuildVehicles::generateSelectionList (const cBuilding& building, const cMap& map, const cUnitsData& unitsData)
 {
 	bool select = true;
-	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
+	for (const auto& unitData : unitsData.getStaticUnitsData())
 	{
-		sUnitData& unitData = building.getOwner()->VehicleData[i];
+		if (unitData.ID.isABuilding()) continue;
+
 		bool land = false;
 		bool water = false;
 		int x = building.getPosition().x() - 2;
@@ -144,10 +145,10 @@ void cWindowBuildVehicles::generateSelectionList (const cBuilding& building, con
 			auto b_it = buildings.begin();
 			auto b_end = buildings.end();
 
-			while (b_it != b_end && ((*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE || (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) ++b_it;
+			while (b_it != b_end && ((*b_it)->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE || (*b_it)->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE)) ++b_it;
 
-			if (!map.isWaterOrCoast (cPosition (x, y)) || (b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_BASE)) land = true;
-			else if (map.isWaterOrCoast (cPosition (x, y)) && b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
+			if (!map.isWaterOrCoast (cPosition (x, y)) || (b_it != b_end && (*b_it)->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE)) land = true;
+			else if (map.isWaterOrCoast (cPosition (x, y)) && b_it != b_end && (*b_it)->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA)
 			{
 				land = true;
 				water = true;
@@ -159,7 +160,7 @@ void cWindowBuildVehicles::generateSelectionList (const cBuilding& building, con
 		if (unitData.factorSea > 0 && unitData.factorGround == 0 && !water) continue;
 		else if (unitData.factorGround > 0 && unitData.factorSea == 0 && !land) continue;
 
-		if (building.data.canBuild != unitData.buildAs) continue;
+		if (building.getStaticUnitData().canBuild != unitData.buildAs) continue;
 
 		auto& item = addSelectionUnit (unitData.ID);
 

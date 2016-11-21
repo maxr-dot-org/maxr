@@ -18,9 +18,10 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/windows/windowloadsave/windowloadsave.h"
-#include "ui/graphical/menu/windows/windowload/savegamedata.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/saveslotwidget.h"
+#include "game/data/savegame.h"
+#include "game/data/savegameinfo.h"
 #include "main.h"
 
 //------------------------------------------------------------------------------
@@ -67,6 +68,6 @@ void cWindowLoadSave::handleSaveClicked()
 		auto saveFile = getSaveFile (saveNumber);
 		if (!saveFile) return;
 
-		save (saveNumber, saveFile->getFileName());
+		save (saveNumber, cSavegame::getFileName(saveNumber));
 	}
 }

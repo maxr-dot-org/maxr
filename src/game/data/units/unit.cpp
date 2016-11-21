@@ -32,18 +32,18 @@
 
 #include "utility/position.h"
 #include "utility/box.h"
+#include "utility/crc.h"
 
 using namespace std;
 
 //------------------------------------------------------------------------------
-cUnit::cUnit (const sUnitData* unitData, cPlayer* owner, unsigned int ID)
+cUnit::cUnit (const cDynamicUnitData* unitData, const cStaticUnitData* staticData, cPlayer* owner, unsigned int ID)
 	: iID (ID)
 	, dir (0)
 	, job (nullptr)
 	, alphaEffectValue (0)
 	, owner (owner)
 	, position (0, 0)
-	, isOriginalName (true)
 	, turnsDisabled (0)
 	, sentryActive (false)
 	, manualFireActive (false)
@@ -51,9 +51,15 @@ cUnit::cUnit (const sUnitData* unitData, cPlayer* owner, unsigned int ID)
 	, beeingAttacked (false)
 	, markedAsDone (false)
 	, beenAttacked (false)
+	, staticData(staticData)
+	, storageResCur(0)
 {
-	if (unitData != 0)
+	if (unitData != nullptr)
 		data = *unitData;
+
+	data.setMaximumCurrentValues();
+
+	isBig = (staticData && staticData->isBig);
 
 	disabledChanged.connect ([&]() { statusChanged(); });
 	sentryChanged.connect ([&]() { statusChanged(); });
@@ -106,7 +112,7 @@ std::vector<cPosition> cUnit::getAdjacentPositions() const
 {
 	std::vector<cPosition> adjacentPositions;
 
-	if (data.isBig)
+	if (isBig)
 	{
 		adjacentPositions.push_back (position + cPosition (-1, -1));
 		adjacentPositions.push_back (position + cPosition (0, -1));
@@ -165,7 +171,7 @@ bool cUnit::isNextTo (const cPosition& position) const
 	if (position.x() + 1 < this->position.x() || position.y() + 1 < this->position.y())
 		return false;
 
-	const int size = data.isBig ? 2 : 1;
+	const int size = isBig ? 2 : 1;
 
 	if (position.x() - size > this->position.x() || position.y() - size > this->position.y())
 		return false;
@@ -179,9 +185,50 @@ bool cUnit::isAbove (const cPosition& position) const
 }
 
 //------------------------------------------------------------------------------
+bool cUnit::getIsBig() const
+{
+	return isBig;
+}
+
+//------------------------------------------------------------------------------
+void cUnit::setIsBig(bool value)
+{
+	std::swap(isBig, value);
+	if (isBig != value) isBigChanged();
+}
+
+uint32_t cUnit::getChecksum(uint32_t crc) const
+{
+	crc = calcCheckSum(data, crc);
+	crc = calcCheckSum(iID, crc);
+	crc = calcCheckSum(dir, crc);
+	for (const auto& u : storedUnits)
+		crc = calcCheckSum(u->getId(), crc);
+	for (const auto& p : seenByPlayerList)
+		crc = calcCheckSum(p->getId(), crc);
+	for (const auto& p : detectedByPlayerList)
+		crc = calcCheckSum(p->getId(), crc); 
+	//cJob* job
+	crc = calcCheckSum(isBig, crc);
+	crc = calcCheckSum(owner->getId(), crc);
+	crc = calcCheckSum(position, crc);
+	crc = calcCheckSum(customName, crc);
+	crc = calcCheckSum(turnsDisabled, crc);
+	crc = calcCheckSum(sentryActive, crc);
+	crc = calcCheckSum(manualFireActive, crc);
+	crc = calcCheckSum(attacking, crc);
+	crc = calcCheckSum(beeingAttacked, crc);
+	crc = calcCheckSum(markedAsDone, crc);
+	crc = calcCheckSum(beeingAttacked, crc);
+	crc = calcCheckSum(storageResCur, crc);
+
+	return crc;
+}
+
+//------------------------------------------------------------------------------
 cBox<cPosition> cUnit::getArea() const
 {
-	return cBox<cPosition> (position, position + (data.isBig ? cPosition (1, 1) : cPosition (0, 0)));
+	return cBox<cPosition> (position, position + (isBig ? cPosition (1, 1) : cPosition (0, 0)));
 }
 
 // http://rosettacode.org/wiki/Roman_numerals/Encode#C.2B.2B
@@ -213,6 +260,15 @@ static std::string to_roman (unsigned int value)
 }
 
 //------------------------------------------------------------------------------
+std::string cUnit::getName() const
+{
+	if (!customName.empty())
+		return customName;
+	else
+		return staticData->getName();
+}
+
+//------------------------------------------------------------------------------
 /** generates the name for the unit depending on the versionnumber */
 //------------------------------------------------------------------------------
 string cUnit::getNamePrefix() const
@@ -229,7 +285,7 @@ string cUnit::getNamePrefix() const
 //------------------------------------------------------------------------------
 string cUnit::getDisplayName() const
 {
-	return getNamePrefix() + " " + (isNameOriginal() ? data.name : name);
+	return getNamePrefix() + " " + getName();
 }
 
 //------------------------------------------------------------------------------
@@ -237,8 +293,7 @@ string cUnit::getDisplayName() const
 //------------------------------------------------------------------------------
 void cUnit::changeName (const string& newName)
 {
-	name = newName;
-	isOriginalName = false;
+	customName = newName;
 	renamed();
 }
 
@@ -285,7 +340,7 @@ void cUnit::rotateTo (int newDir)
 //------------------------------------------------------------------------------
 bool cUnit::canAttackObjectAt (const cPosition& position, const cMap& map, bool forceAttack, bool checkRange) const
 {
-	if (data.canAttack == false) return false;
+	if (staticData->canAttack == false) return false;
 	if (data.getShots() <= 0) return false;
 	if (data.getAmmo() <= 0) return false;
 	if (attacking) return false;
@@ -294,10 +349,10 @@ bool cUnit::canAttackObjectAt (const cPosition& position, const cMap& map, bool 
 	if (map.isValidPosition (position) == false) return false;
 	if (checkRange && isInRange (position) == false) return false;
 
-	if (data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && map.isWaterOrCoast (position) == false)
+	if (staticData->muzzleType == cStaticUnitData::MUZZLE_TYPE_TORPEDO && map.isWaterOrCoast(position) == false)
 		return false;
 
-	const cUnit* target = cAttackJob::selectTarget (position, data.canAttack, map, owner);
+	const cUnit* target = cAttackJob::selectTarget(position, staticData->canAttack, map, owner);
 
 	if (target && target->iID == iID)  // a unit cannot fire on itself
 		return false;
@@ -313,7 +368,7 @@ bool cUnit::canAttackObjectAt (const cPosition& position, const cMap& map, bool 
 
 	// do not fire on e.g. platforms, connectors etc.
 	// see ticket #253 on bug tracker
-	if (target->isABuilding() && isAVehicle() && data.factorAir == 0 && map.possiblePlace (*static_cast<const cVehicle*> (this), position))
+	if (target->isABuilding() && isAVehicle() && staticData->factorAir == 0 && map.possiblePlace (*static_cast<const cVehicle*> (this), position))
 		return false;
 
 	if (target->owner == owner)
@@ -326,7 +381,7 @@ bool cUnit::canAttackObjectAt (const cPosition& position, const cMap& map, bool 
 void cUnit::upgradeToCurrentVersion()
 {
 	if (owner == nullptr) return;
-	const sUnitData* upgradeVersion = owner->getUnitDataCurrentVersion (data.ID);
+	const cDynamicUnitData* upgradeVersion = owner->getUnitDataCurrentVersion (data.getId());
 	if (upgradeVersion == nullptr) return;
 
 	data.setVersion (upgradeVersion->getVersion());
@@ -349,7 +404,7 @@ void cUnit::upgradeToCurrentVersion()
 	// don't change the current shot-amount!
 	data.setShotsMax (upgradeVersion->getShotsMax());
 	data.setDamage (upgradeVersion->getDamage());
-	data.buildCosts = upgradeVersion->buildCosts;
+	data.setBuildCost(upgradeVersion->getBuildCost());
 }
 
 //------------------------------------------------------------------------------
@@ -441,4 +496,23 @@ bool cUnit::isMarkedAsDone() const
 bool cUnit::hasBeenAttacked() const
 {
 	return beenAttacked;
+}
+//------------------------------------------------------------------------------
+int cUnit::getStoredResources() const
+{
+	return storageResCur;
+}
+
+//------------------------------------------------------------------------------
+void cUnit::setStoredResources(int value)
+{
+	value = std::max(std::min(value, staticData->storageResMax), 0);
+	std::swap(storageResCur, value);
+	if (storageResCur != value) storedResourcesChanged();
+}
+
+//------------------------------------------------------------------------------
+const cStaticUnitData& cUnit::getStaticUnitData() const
+{
+	return *staticData;
 }

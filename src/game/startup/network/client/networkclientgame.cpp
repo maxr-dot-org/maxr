@@ -19,7 +19,6 @@
 
 #include "game/startup/network/client/networkclientgame.h"
 #include "game/logic/client.h"
-#include "game/logic/savegame.h"
 #include "loaddata.h"
 
 //------------------------------------------------------------------------------
@@ -29,17 +28,11 @@ cNetworkClientGame::~cNetworkClientGame()
 //------------------------------------------------------------------------------
 void cNetworkClientGame::run()
 {
-	if (localClient) localClient->getGameTimer()->run();
+	if (localClient) localClient->run();
 }
 
 //------------------------------------------------------------------------------
-void cNetworkClientGame::save (int saveNumber, const std::string& saveName)
+void cNetworkClientGame::setConnectionManager (std::shared_ptr<cConnectionManager> connectionManager_)
 {
-	throw std::runtime_error (lngPack.i18n ("Text~Multiplayer~Save_Only_Host"));
-}
-
-//------------------------------------------------------------------------------
-void cNetworkClientGame::setNetwork (std::shared_ptr<cTCP> network_)
-{
-	network = network_;
+	connectionManager = connectionManager_;
 }

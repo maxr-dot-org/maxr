@@ -23,6 +23,7 @@
 #include <SDL.h>
 #include "utility/color.h"
 #include "utility/autosurface.h"
+#include "utility/serialization/serialization.h"
 
 class cPlayerColor
 {
@@ -45,6 +46,21 @@ public:
 
 	bool operator== (const cPlayerColor& other) const;
 	bool operator!= (const cPlayerColor& other) const;
+
+	uint32_t getChecksum(uint32_t crc) const;
+
+	template<typename T>
+	void save(T& archive)
+	{
+		archive & NVP(color);
+	}
+	template<typename T>
+	void load(T& archive)
+	{
+		archive & NVP(color);
+		createTexture();
+	}
+	SERIALIZATION_SPLIT_MEMBER();
 private:
 	cRgbColor color;
 	AutoSurface texture;

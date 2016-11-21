@@ -32,36 +32,6 @@ cSavedReportAttackingEnemy::cSavedReportAttackingEnemy (const cUnit& unit) :
 {}
 
 //------------------------------------------------------------------------------
-cSavedReportAttackingEnemy::cSavedReportAttackingEnemy (cNetMessage& message) :
-	cSavedReportUnit (message)
-{
-	unitName = message.popString();
-}
-
-//------------------------------------------------------------------------------
-cSavedReportAttackingEnemy::cSavedReportAttackingEnemy (const tinyxml2::XMLElement& element) :
-	cSavedReportUnit (element)
-{
-	unitName = element.Attribute ("unitName");
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportAttackingEnemy::pushInto (cNetMessage& message) const
-{
-	message.pushString (unitName);
-
-	cSavedReportUnit::pushInto (message);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportAttackingEnemy::pushInto (tinyxml2::XMLElement& element) const
-{
-	element.SetAttribute ("unitName", unitName.c_str());
-
-	cSavedReportUnit::pushInto (element);
-}
-
-//------------------------------------------------------------------------------
 eSavedReportType cSavedReportAttackingEnemy::getType() const
 {
 	return eSavedReportType::AttackingEnemy;

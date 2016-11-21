@@ -24,17 +24,16 @@
 #include "utility/signal/signalconnectionmanager.h"
 #include "game/data/units/unitdata.h"
 
-class cCheckBox;
-class cLabel;
 class cPlayer;
+class cUnitsData;
 
 class cWindowUnitInfo : public cWindow
 {
 public:
-	cWindowUnitInfo (const sUnitData& unitData, const cPlayer& owner);
+	cWindowUnitInfo(const cDynamicUnitData& currentUnitData, const cPlayer& owner, const cUnitsData& unitsData);
 private:
 	cSignalConnectionManager signalConnectionManager;
-	sUnitData unitData;
+	cDynamicUnitData unitData;
 };
 
 #endif // ui_graphical_menu_windows_windowunitinfo_windowunitinfoH

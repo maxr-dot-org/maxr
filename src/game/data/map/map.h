@@ -23,26 +23,37 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <utility>
 
 #include "utility/autosurface.h"
 #include "defines.h"
 #include "t_2.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
+#include "utility/log.h"
+#include "utility/arraycrc.h"
 
 class cUnit;
 class cVehicle;
 class cBuilding;
 class cPlayer;
 class cPosition;
-struct sUnitData;
+class cModel;
+class cStaticUnitData;
 
 // Resources Struktur ////////////////////////////////////////////////////////
 struct sResources
 {
 public:
 	sResources() : value (0), typ (0) {}
+	template <typename T>
+	void serialize(T& archive)
+	{
+		archive & NVP(value);
+		archive & NVP(typ);
+	}
+	uint32_t getChecksum(uint32_t crc) const;
 public:
 	unsigned char value;
 	unsigned char typ;
@@ -170,6 +181,9 @@ public:
 	bool isBlocked (const cPosition& position) const;
 	bool isCoast (const cPosition& position) const;
 	bool isWater (const cPosition& position) const;
+	bool isGround (const cPosition& position) const;
+
+	bool possiblePlace(const cStaticUnitData& data, const cPosition& position) const;
 
 	const sTerrain& getTerrain (const cPosition& position) const;
 
@@ -177,11 +191,41 @@ public:
 	void generateNextAnimationFrame();
 	void scaleSurfaces (int pixelSize);
 	static AutoSurface loadMapPreview (const std::string& mapPath, int* mapSize = nullptr);
+
+	uint32_t getChecksum(uint32_t crc);
+
+	template<typename T>
+	void save(T& archive)
+	{
+		archive << NVP(filename);
+		archive << NVP(crc);
+	}
+	template<typename T>
+	void load(T& archive)
+	{
+		std::string fileToLoad;
+		archive >> serialization::makeNvp("filename", fileToLoad);
+		uint32_t crcFromSave;
+		archive >> serialization::makeNvp("crc", crcFromSave);
+
+		if (filename == fileToLoad && crc == crcFromSave)
+		{
+			Log.write("Static map already loaded. Skipped...", cLog::eLOG_TYPE_NET_DEBUG);
+			return;
+		}
+		if (!loadMap(fileToLoad))
+			throw std::runtime_error("Loading map failed.");
+		
+		if (crc != crcFromSave && crcFromSave != 0)
+			throw std::runtime_error("CRC error while loading map. The loaded map file is not equal to the one the game was started with.");
+	}
+	SERIALIZATION_SPLIT_MEMBER();
 private:
-	static AutoSurface loadTerrGraph (SDL_RWops* fpMapFile, int iGraphicsPos, const SDL_Color (&colors)[256], int iNum);
+	static AutoSurface loadTerrGraph (SDL_RWops* fpMapFile, Sint64 iGraphicsPos, const SDL_Color (&colors)[256], int iNum);
 	void copySrfToTerData (SDL_Surface& surface, int iNum);
 
 	std::string filename;   // Name of the current map
+	uint32_t crc;
 	int size;
 	std::vector<sTerrain> terrains; // The different terrain type.
 	std::vector<int> Kacheln; // Terrain numbers of the map fields
@@ -189,11 +233,11 @@ private:
 	SDL_Color palette_shw[256];
 };
 
-// Die Map-Klasse ////////////////////////////////////////////////////////////
 class cMap
 {
 public:
 	explicit cMap (std::shared_ptr<cStaticMap> staticMap_);
+
 	~cMap();
 
 	const std::string& getName() const { return staticMap->getName(); }
@@ -208,22 +252,8 @@ public:
 	bool isWaterOrCoast (const cPosition& position) const;
 
 	const sResources& getResource (const cPosition& position) const { return Resources[getOffset (position)]; }
-	sResources& getResource (const cPosition& position) { return Resources[getOffset (position)]; }
-	void assignRessources (const cMap& rhs);
 
-	/**
-	* converts the resource data to a string in HEX format
-	*@author alzi alias DoctorDeath
-	*/
-	std::string resourcesToString() const;
-	/**
-	* converts from HEX-string to the resources
-	*@author alzi alias DoctorDeath
-	*/
-	void setResourcesFromString (const std::string& str);
-
-	void placeRessources (const std::vector<cPosition>& landingPositions, const cGameSettings& gameSetting);
-
+	void placeRessources(cModel& model);
 	/**
 	* Access to a map field
 	* @param the offset of the map field
@@ -258,22 +288,46 @@ public:
 	* if checkPlayer is passed, the function uses the players point of view, so it does not check for units that are not in sight
 	*/
 	bool possiblePlace (const cVehicle& vehicle, const cPosition& position, bool checkPlayer = false) const;
-	bool possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool checkPlayer = false) const;
+	bool possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool checkPlayer = false) const;
 
 	/**
 	* checks, whether the given field is an allowed place for the building
 	* if a vehicle is passed, it will be ignored in the check, so a constructing vehicle does not block its own position
-	* Note: that the function can check for map border overflows (with margin).
 	*/
-	bool possiblePlaceBuilding (const sUnitData& buildingData, const cPosition& position, const cVehicle* vehicle = nullptr) const;
-	bool possiblePlaceBuildingWithMargin (const sUnitData& buildingData, const cPosition& position, int margin, const cVehicle* vehicle = nullptr) const;
+	bool possiblePlaceBuilding (const cStaticUnitData& buildingData, const cPosition& position, const cVehicle* vehicle = nullptr) const;
 
 	/**
 	* removes all units from the map structure
 	*/
 	void reset();
 
+	uint32_t getChecksum(uint32_t crc) const;
+
+	template<typename T>
+	void save(T& archive)
+	{
+		archive << serialization::makeNvp("mapFile", *staticMap);
+		const std::string ressources = resourcesToString();
+		archive << NVP(ressources);
+	}
+	template<typename T>
+	void load(T& archive)
+	{
+		assert(staticMap != nullptr);
+		archive >> serialization::makeNvp("mapFile", *staticMap);
+		init();
+
+		std::string ressources;
+		archive >> NVP(ressources);
+		setResourcesFromString(ressources);
+	}
+	SERIALIZATION_SPLIT_MEMBER();
+
 private:
+	void init();
+	std::string resourcesToString() const;
+	void setResourcesFromString(const std::string& str);
+
 	static int getMapLevel (const cBuilding& building);
 	static int getMapLevel (const cVehicle& vehicle);
 	static int getResourceDensityFactor (eGameSettingsResourceDensity density);
@@ -290,7 +344,7 @@ private:
 	* the information about the fields
 	*/
 	cMapField* fields;
-	std::vector<sResources> Resources; // field with the ressource data
+	cArrayCrc<sResources> Resources; // field with the ressource data
 };
 
 #endif // game_data_map_mapH

@@ -20,7 +20,7 @@
 #include "game/startup/local/hotseat/localhotseatgame.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
-#include "game/logic/savegame.h"
+#include "game/data/savegame.h"
 #include "loaddata.h"
 
 //------------------------------------------------------------------------------
@@ -29,7 +29,6 @@ cLocalHotSeatGame::~cLocalHotSeatGame()
 	if (server)
 	{
 		server->stop();
-		reloadUnitValues();
 	}
 }
 
@@ -38,16 +37,6 @@ void cLocalHotSeatGame::run()
 {
 	for (size_t i = 0; i < clients.size(); ++i)
 	{
-		clients[i]->getGameTimer()->run();
+	//	clients[i]->getGameTimer()->run();
 	}
-}
-
-//------------------------------------------------------------------------------
-void cLocalHotSeatGame::save (int saveNumber, const std::string& saveName)
-{
-	if (!server) throw std::runtime_error ("Game not started!"); // should never happen (hence a translation is not necessary).
-
-	cSavegame savegame (saveNumber);
-	savegame.save (*server, saveName);
-	server->makeAdditionalSaveRequest (saveNumber);
 }

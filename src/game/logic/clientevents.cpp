@@ -39,7 +39,7 @@ void sendClan (const cClient& client)
 	const cPlayer& player = client.getActivePlayer();
 
 	message->pushInt16 (player.getClan());
-	message->pushInt16 (player.getNr());
+	message->pushInt16 (player.getId());
 
 	client.sendNetMessage (std::move (message));
 }
@@ -54,7 +54,7 @@ void sendLandingUnits (const cClient& client, const std::vector<sLandingUnit>& l
 		message->pushInt16 (landingList[i].cargo);
 	}
 	message->pushInt16 ((int) landingList.size());
-	message->pushInt16 (client.getActivePlayer().getNr());
+	message->pushInt16 (client.getActivePlayer().getId());
 
 	client.sendNetMessage (std::move (message));
 }
@@ -66,7 +66,7 @@ void sendUnitUpgrades (const cClient& client)
 	int count = 0;
 
 	// send vehicles
-	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); ++i)
+	/*for (unsigned int i = 0; i < UnitsData.getNrVehicles(); ++i)
 	{
 		const sUnitData& playerData = player.VehicleData[i];
 		const sUnitData& originalData = UnitsData.getVehicle (i, player.getClan());
@@ -95,12 +95,13 @@ void sendUnitUpgrades (const cClient& client)
 		message->pushInt16 (playerData.getDamage());
 		message->pushID (playerData.ID);
 
+
 		count++;
 
 		if (message->iLength + 38 > PACKAGE_LENGTH)
 		{
 			message->pushInt16 (count);
-			message->pushInt16 (player.getNr());
+			message->pushInt16 (player.getId());
 			client.sendNetMessage (std::move (message));
 			count = 0;
 		}
@@ -108,7 +109,7 @@ void sendUnitUpgrades (const cClient& client)
 	if (message != nullptr)
 	{
 		message->pushInt16 (count);
-		message->pushInt16 (player.getNr());
+		message->pushInt16 (player.getId());
 		client.sendNetMessage (std::move (message));
 		count = 0;
 	}
@@ -146,7 +147,7 @@ void sendUnitUpgrades (const cClient& client)
 		if (message->iLength + 34 > PACKAGE_LENGTH)
 		{
 			message->pushInt16 (count);
-			message->pushInt16 (player.getNr());
+			message->pushInt16 (player.getId());
 			client.sendNetMessage (std::move (message));
 			count = 0;
 		}
@@ -154,16 +155,16 @@ void sendUnitUpgrades (const cClient& client)
 	if (message != nullptr)
 	{
 		message->pushInt16 (count);
-		message->pushInt16 (player.getNr());
+		message->pushInt16 (player.getId());
 		client.sendNetMessage (std::move (message));
-	}
+	}*/
 }
 
 void sendReconnectionSuccess (const cClient& client)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_RECON_SUCCESS);
 
-	message->pushInt16 (client.getActivePlayer().getNr());
+	message->pushInt16 (client.getActivePlayer().getId());
 	client.sendNetMessage (std::move (message));
 }
 
@@ -196,7 +197,7 @@ void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, 
 		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_RANGE, currentVersion->getRange()));
 		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_SHOTS, currentVersion->getShotsMax()));
 		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_DAMAGE, currentVersion->getDamage()));
-		msg->pushID (currentVersion->ID);
+		msg->pushID (currentVersion->getId());
 
 		iCount++; // msg contains one more upgrade struct
 
@@ -206,7 +207,7 @@ void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, 
 		if (msg->iLength + 38 > PACKAGE_LENGTH)
 		{
 			msg->pushInt16 (iCount);
-			msg->pushInt16 (player.getNr());
+			msg->pushInt16 (player.getId());
 			client.sendNetMessage (std::move (msg));
 		}
 	}
@@ -214,7 +215,7 @@ void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, 
 	if (msg != nullptr)
 	{
 		msg->pushInt16 (iCount);
-		msg->pushInt16 (player.getNr());
+		msg->pushInt16 (player.getId());
 		client.sendNetMessage (std::move (msg));
 	}
 }
@@ -224,7 +225,7 @@ void sendLandingCoords (const cClient& client, const cPosition& coords)
 	Log.write ("Client: sending landing coords", cLog::eLOG_TYPE_NET_DEBUG);
 	auto message = std::make_unique<cNetMessage> (MU_MSG_LANDING_COORDS);
 	message->pushPosition (coords);
-	message->pushChar (client.getActivePlayer().getNr());
+	message->pushChar (client.getActivePlayer().getId());
 
 	client.sendNetMessage (std::move (message));
 }
@@ -232,36 +233,20 @@ void sendLandingCoords (const cClient& client, const cPosition& coords)
 void sendReadyToStart (const cClient& client)
 {
 	auto message = std::make_unique<cNetMessage> (MU_MSG_READY_TO_START);
-	message->pushChar (client.getActivePlayer().getNr());
+	message->pushChar (client.getActivePlayer().getId());
 
 	client.sendNetMessage (std::move (message));
 }
 
-void sendChatMessageToServer (const cClient& client, const cPlayer& player, const string& msg)
+void sendChatMessageToServer (const cClient& client, const string& msg)
 {
-	auto message = std::make_unique<cNetMessage> (GAME_EV_CHAT_CLIENT);
-	message->pushString (msg);
-	message->pushChar (player.getNr());
-	client.sendNetMessage (std::move (message));
+	cNetMessageChat netMsg(msg);
+	client.sendNetMessage (netMsg);
 }
 
 void sendWantToEndTurn (const cClient& client)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_TO_END_TURN);
-	client.sendNetMessage (std::move (message));
-}
-
-void sendWantStartWork (const cClient& client, const cUnit& building)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_START_WORK);
-	message->pushInt32 (building.iID);
-	client.sendNetMessage (std::move (message));
-}
-
-void sendWantStopWork (const cClient& client, const cUnit& building)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_STOP_WORK);
-	message->pushInt32 (building.iID);
 	client.sendNetMessage (std::move (message));
 }
 
@@ -501,8 +486,8 @@ void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool
 	if (building.getOwner() == 0)
 		return;
 
-	const sUnitData& currentVersion = building.data;
-	const sUnitData& upgradedVersion = *building.getOwner()->getUnitDataCurrentVersion (building.data.ID);
+	const cDynamicUnitData& currentVersion = building.data;
+	const cDynamicUnitData& upgradedVersion = *building.getOwner()->getUnitDataCurrentVersion (building.data.getId());
 	if (currentVersion.getVersion() >= upgradedVersion.getVersion())
 		return; // already uptodate
 
@@ -530,35 +515,7 @@ void sendWantResearchChange (const cClient& client, const std::array<int, cResea
 	{
 		message->pushInt16 (newResearchSettings[i]);
 	}
-	message->pushInt16 (player.getNr());
-	client.sendNetMessage (std::move (message));
-}
-
-void sendGameGuiState (const cClient& client, const cGameGuiState& gameGuiState, const cPlayer& owner, int savingID)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_SAVE_HUD_INFO);
-
-	gameGuiState.pushInto (*message);
-	message->pushInt16 (owner.getNr());
-	message->pushInt16 (savingID);
-
-	client.sendNetMessage (std::move (message));
-}
-
-void sendSaveReportInfo (const cClient& client, const cSavedReport& savedReport, int ownerNr, int savingID)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_SAVE_REPORT_INFO);
-	savedReport.pushInto (*message);
-	message->pushInt16 (ownerNr);
-	message->pushInt16 (savingID);
-	client.sendNetMessage (std::move (message));
-}
-
-void sendFinishedSendSaveInfo (const cClient& client, int ownerNr, int savingID)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_FIN_SEND_SAVE_INFO);
-	message->pushInt16 (ownerNr);
-	message->pushInt16 (savingID);
+	message->pushInt16 (player.getId());
 	client.sendNetMessage (std::move (message));
 }
 
@@ -568,10 +525,10 @@ void sendRequestCasualtiesReport (const cClient& client)
 	client.sendNetMessage (std::move (message));
 }
 
-void sendWantSelfDestroy (const cClient& client, const cBuilding& building)
+void sendWantSelfDestroy (const cClient& client, int unitId)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_SELFDESTROY);
-	message->pushInt16 (building.iID);
+	message->pushInt16 (unitId);
 	client.sendNetMessage (std::move (message));
 }
 
@@ -595,6 +552,6 @@ void sendEndMoveAction (const cClient& client, int vehicleID, int destID, eEndMo
 void sentWantKickPlayer (const cClient& client, const cPlayer& player)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_KICK_PLAYER);
-	message->pushInt32 (player.getNr());
+	message->pushInt32 (player.getId());
 	client.sendNetMessage (std::move (message));
 }

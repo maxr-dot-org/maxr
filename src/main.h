@@ -38,6 +38,8 @@
 #include "utility/autosurface.h"
 #include "defines.h"
 #include "utility/language.h"
+#include "game/data/units/unitdata.h"
+
 
 // Predeclarations
 class cPlayer;
@@ -60,35 +62,6 @@ EX cLanguage lngPack;
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-struct sUnitData;
-
-struct sID
-{
-	sID() : iFirstPart (0), iSecondPart (0) {}
-
-	std::string getText() const;
-	void generate (const std::string& text);
-
-	bool isAVehicle() const { return iFirstPart == 0; }
-	bool isABuilding() const { return iFirstPart == 1; }
-
-	/** Get the basic version of a unit.
-	 * @param Owner If Owner is given, his clan will be taken
-	 *        into consideration for modifications of the unit's values.
-	 * @return the sUnitData of the owner without upgrades
-	 *         (but with the owner's clan modifications) */
-	const sUnitData* getUnitDataOriginalVersion (const cPlayer* Owner = nullptr) const;
-
-	bool operator== (const sID& ID) const;
-	bool operator!= (const sID& rhs) const { return ! (*this == rhs); }
-	bool operator< (const sID& rhs) const { return less_vehicleFirst (rhs); }
-	bool less_vehicleFirst (const sID& ID) const;
-	bool less_buildingFirst (const sID& ID) const;
-
-public:
-	int iFirstPart;
-	int iSecondPart;
-};
 
 enum
 {
@@ -209,49 +182,19 @@ public:
 } EX ResourceData;
 
 // UnitsData - Class containing all building/vehicle surfaces & data ///////////////
-class cUnitsData
+EX cUnitsData UnitsDataGlobal;
+
+class cUnitsUiData
 {
 public:
-	cUnitsData();
+	cUnitsUiData();
 
-	void initializeIDData();
+	void scaleSurfaces(float zoomFactor);
+	const sBuildingUIData* getBuildingUI(sID id) const;
+	const sVehicleUIData* getVehicleUI(sID id) const;
 
-	int getBuildingIndexBy (sID id) const;
-	int getVehicleIndexBy (sID id) const;
 
-	const sBuildingUIData* getBuildingUI (sID id) const;
-	const sVehicleUIData* getVehicleUI (sID id) const;
-
-	// clan = -1: without clans
-	const sUnitData& getVehicle (int nr, int clan = -1);
-	const sUnitData& getBuilding (int nr, int clan = -1);
-	const sUnitData& getUnit (const sID& id, int clan = -1);
-
-	// clan = -1: without clans
-	const std::vector<sUnitData>& getUnitData_Vehicles (int clan);
-	const std::vector<sUnitData>& getUnitData_Buildings (int clan);
-
-	unsigned int getNrVehicles() const;
-	unsigned int getNrBuildings() const;
-
-	const sID& getConstructorID() const { return constructorID; }
-	const sID& getEngineerID() const { return engineerID; }
-	const sID& getSurveyorID() const { return surveyorID; }
-
-	void scaleSurfaces (float zoomFactor);
-
-private:
-	void initializeClanUnitData();
-
-public: // TODO: private
-	// Vehicles
-	// the standard version without clan modifications
-	std::vector<sUnitData> svehicles;
 	std::vector<sVehicleUIData> vehicleUIs;
-
-	// Buildings
-	// the standard version without clan modifications
-	std::vector<sUnitData> sbuildings;
 	std::vector<sBuildingUIData> buildingUIs;
 
 	AutoSurface dirt_small_org;
@@ -270,25 +213,7 @@ public: // TODO: private
 	SDL_Surface* ptr_connector_org;
 	SDL_Surface* ptr_connector_shw;
 	SDL_Surface* ptr_connector_shw_org;
-
-private:
-	// contains the modified versions for the clans
-	std::vector<std::vector<sUnitData> > clanUnitDataVehicles;
-	// contains the modified versions for the clans
-	std::vector<std::vector<sUnitData> > clanUnitDataBuildings;
-	bool initializedClanUnitData;
-
-	sID constructorID;
-	sID engineerID;
-	sID surveyorID;
-public: // TODO : private
-	sID specialIDLandMine;
-	sID specialIDSeaMine;
-	sID specialIDMine;
-	sID specialIDSmallGen;
-	sID specialIDConnector;
-	sID specialIDSmallBeton;
-} EX UnitsData;
+} EX UnitsUiData;
 
 enum eFreezeMode
 {
@@ -389,6 +314,9 @@ T Square (T v) { return v * v; }
 *@return rounded num
 */
 int Round (float num);
+
+std::string getHexValue(unsigned char byte);
+unsigned char getByteValue(const std::string& str, int index);
 
 void Quit();
 

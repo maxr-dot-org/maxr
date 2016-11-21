@@ -179,6 +179,26 @@ string getXMLAttributeString (tinyxml2::XMLDocument& document, const char* attri
 }
 
 //------------------------------------------------------------------------------
+bool getXMLAttributeBoolFromElement(const tinyxml2::XMLElement* element, const char* name)
+{
+	string value = element->Attribute(name);
+	std::transform(value.begin(), value.end(), value.begin(), tolower);
+	if (value == "true" ||
+		value == "y" ||
+		value == "yes")
+	{
+		return true;
+	}
+	else if (value == "false" ||
+		value == "n" ||
+		value == "no")
+	{
+		return false;
+	}
+	Log.write((string)"Error reading boolen attribute of element \"" + element->Name() + "\": Illegal value \"" + value + "\"", cLog::eLOG_TYPE_WARNING);
+	return false;
+}
+//------------------------------------------------------------------------------
 bool getXMLAttributeBool (tinyxml2::XMLDocument& document, const char* first, ...)
 {
 	va_list list;
@@ -188,10 +208,9 @@ bool getXMLAttributeBool (tinyxml2::XMLDocument& document, const char* first, ..
 
 	if (element == NULL) return false;
 
-
-	if (element->Attribute ("YN"))
+	if (element->Attribute("YN"))
 	{
-		return element->BoolAttribute ("YN");
+		return getXMLAttributeBoolFromElement(element,"YN");
 	}
 	else
 	{
@@ -205,4 +224,53 @@ bool getXMLAttributeBool (tinyxml2::XMLDocument& document, const char* first, ..
 		Log.write (((string) "Can't read \"YN\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING);
 		return false;
 	}
+}
+
+string printXMLPath(const tinyxml2::XMLElement* element)
+{
+	string path = element->Name();
+	while (element = element->Parent()->ToElement())
+	{
+		path = string(element->Name()) + "~" + path;
+	}
+
+	return path;
+}
+
+string getXMLErrorMsg(const tinyxml2::XMLDocument& document)
+{
+	string msg;
+	switch (document.ErrorID())
+	{
+		case XML_NO_ERROR: msg = "XML_NO_ERROR"; break;
+		case XML_NO_ATTRIBUTE: msg = "XML_NO_ATTRIBUTE"; break;
+		case XML_WRONG_ATTRIBUTE_TYPE: msg = "XML_WRONG_ATTRIBUTE_TYPE"; break;
+		case XML_ERROR_FILE_NOT_FOUND: msg = "XML_ERROR_FILE_NOT_FOUND"; break;
+		case XML_ERROR_FILE_COULD_NOT_BE_OPENED: msg = "XML_ERROR_FILE_COULD_NOT_BE_OPENED"; break;
+		case XML_ERROR_FILE_READ_ERROR: msg = "XML_ERROR_FILE_READ_ERROR"; break;
+		case XML_ERROR_ELEMENT_MISMATCH: msg = "XML_ERROR_ELEMENT_MISMATCH"; break;
+		case XML_ERROR_PARSING_ELEMENT: msg = "XML_ERROR_PARSING_ELEMENT"; break;
+		case XML_ERROR_PARSING_ATTRIBUTE: msg = "XML_ERROR_PARSING_ATTRIBUTE"; break;
+		case XML_ERROR_IDENTIFYING_TAG: msg = "XML_ERROR_IDENTIFYING_TAG"; break;
+		case XML_ERROR_PARSING_TEXT: msg = "XML_ERROR_PARSING_TEXT"; break;
+		case XML_ERROR_PARSING_CDATA: msg = "XML_ERROR_PARSING_CDATA"; break;
+		case XML_ERROR_PARSING_COMMENT: msg = "XML_ERROR_PARSING_COMMENT"; break;
+		case XML_ERROR_PARSING_DECLARATION: msg = "XML_ERROR_PARSING_DECLARATION"; break;
+		case XML_ERROR_PARSING_UNKNOWN: msg = "XML_ERROR_PARSING_UNKNOWN"; break;
+		case XML_ERROR_EMPTY_DOCUMENT: msg = "XML_ERROR_EMPTY_DOCUMENT"; break;
+		case XML_ERROR_MISMATCHED_ELEMENT: msg = "XML_ERROR_MISMATCHED_ELEMENT"; break;
+		case XML_ERROR_PARSING: msg = "XML_ERROR_PARSING"; break;
+		case XML_CAN_NOT_CONVERT_TEXT: msg = "XML_CAN_NOT_CONVERT_TEXT"; break;
+		case XML_NO_TEXT_NODE: msg = "XML_NO_TEXT_NODE"; break;
+		default: msg = "Unknown error";	break;
+	}
+
+	const char* reason;
+	if (reason = document.GetErrorStr1())
+		msg += (std::string)" " + reason;
+
+	if (reason = document.GetErrorStr2())
+		msg += (std::string)" " + reason;
+
+	return msg;
 }

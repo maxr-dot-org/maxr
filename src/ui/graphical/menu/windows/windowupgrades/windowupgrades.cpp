@@ -28,8 +28,8 @@
 #include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------
-cWindowUpgrades::cWindowUpgrades (const cPlayer& player, std::shared_ptr<const cTurnTimeClock> turnTimeClock, std::shared_ptr<cWindowUpgradesFilterState> filterState_) :
-	cWindowHangar (LoadPCX (GFXOD_UPGRADE), player),
+cWindowUpgrades::cWindowUpgrades (const cPlayer& player, std::shared_ptr<const cTurnTimeClock> turnTimeClock, std::shared_ptr<cWindowUpgradesFilterState> filterState_, std::shared_ptr<const cUnitsData> unitsData) :
+	cWindowHangar (LoadPCX (GFXOD_UPGRADE), unitsData, player),
 	filterState(filterState_)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Upgrades_Menu"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
@@ -113,17 +113,7 @@ void cWindowUpgrades::setActiveUnit (const sID& unitId)
 	if (iter == unitUpgrades.end())
 	{
 		unitUpgrade = &unitUpgrades[unitId];
-
-		if (unitId.isAVehicle())
-		{
-			auto index = UnitsData.getVehicleIndexBy (unitId);
-			unitUpgrade->init (UnitsData.getVehicle (index, getPlayer().getClan()), getPlayer().VehicleData[index], getPlayer().getResearchState());
-		}
-		else
-		{
-			auto index = UnitsData.getBuildingIndexBy (unitId);
-			unitUpgrade->init (UnitsData.getBuilding (index, getPlayer().getClan()), getPlayer().BuildingData[index], getPlayer().getResearchState());
-		}
+		unitUpgrade->init(unitsData->getDynamicUnitData(unitId, getPlayer().getClan()), *getPlayer().getUnitDataCurrentVersion(unitId), unitsData->getStaticUnitData(unitId), getPlayer().getResearchState());
 	}
 	else
 	{
@@ -212,36 +202,22 @@ void cWindowUpgrades::generateSelectionList (bool select)
 
 	clearSelectionUnits();
 
-	if (tank || ship || plane)
+	for (const auto& data : unitsData->getStaticUnitsData())
 	{
-		for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
+		if (data.ID.isABuilding() && !build) continue;
+		if (!data.canAttack && tnt) continue;
+		if (!data.ID.isABuilding())
 		{
-			const sUnitData& data = UnitsData.getVehicle (i, getPlayer().getClan());
-			if (tnt && !data.canAttack) continue;
 			if (data.factorAir > 0 && !plane) continue;
 			if (data.factorSea > 0 && data.factorGround == 0 && !ship) continue;
 			if (data.factorGround > 0 && !tank) continue;
-			const auto& item = addSelectionUnit (data.ID);
-			if (select)
-			{
-				setSelectedSelectionItem (item);
-				select = false;
-			}
 		}
-	}
 
-	if (build)
-	{
-		for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
+		const auto& item = addSelectionUnit(data.ID);
+		if (select)
 		{
-			const sUnitData& data = UnitsData.getBuilding (i, getPlayer().getClan());
-			if (tnt && !data.canAttack) continue;
-			const auto& item = addSelectionUnit (data.ID);
-			if (select)
-			{
-				setSelectedSelectionItem (item);
-				select = false;
-			}
+			setSelectedSelectionItem(item);
+			select = false;
 		}
 	}
 }

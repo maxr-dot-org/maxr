@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include "game/startup/network/client/networkclientgamenew.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 #include "ui/graphical/application.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
@@ -39,15 +39,15 @@ void cNetworkClientGameNew::start (cApplication& application)
 {
 	assert (gameSettings != nullptr);
 
-	localClient = std::make_shared<cClient> (nullptr, network);
+	//localClient = std::make_shared<cClient> (nullptr, network); //TODO
 
 	localClient->setPlayers (players, localPlayerIndex);
-	localClient->setMap (staticMap);
+//	localClient->setMap (staticMap);
 	localClient->setGameSettings (*gameSettings);
 
 	auto& clientPlayer = localClient->getActivePlayer();
-	if (localPlayerClan != -1) clientPlayer.setClan (localPlayerClan);
-	applyUnitUpgrades (clientPlayer, localPlayerUnitUpgrades);
+//	if (localPlayerClan != -1) clientPlayer.setClan (localPlayerClan);
+//	applyUnitUpgrades (clientPlayer, localPlayerUnitUpgrades);
 
 	sendClan (*localClient);
 	sendLandingUnits (*localClient, localPlayerLandingUnits);
@@ -66,9 +66,6 @@ void cNetworkClientGameNew::start (cApplication& application)
 	gameGuiController->addPlayerGameGuiState (clientPlayer, std::move (playerGameGuiState));
 
 	gameGuiController->start();
-
-	using namespace std::placeholders;
-	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cNetworkClientGameNew::save, this, _1, _2));
 
 	terminate = false;
 
@@ -138,6 +135,11 @@ const std::shared_ptr<cStaticMap>& cNetworkClientGameNew::getStaticMap()
 const std::vector<cPlayerBasicData>& cNetworkClientGameNew::getPlayers()
 {
 	return players;
+}
+
+const std::vector<sLandingUnit>& cNetworkClientGameNew::getLandingUnits()
+{
+	return localPlayerLandingUnits;
 }
 
 //------------------------------------------------------------------------------

@@ -23,7 +23,7 @@
 #include "ui/graphical/widget.h"
 
 class cClient;
-class cServer;
+class cServer2;
 class cPosition;
 class cVehicle;
 class cBuilding;
@@ -44,7 +44,7 @@ public:
 	cDebugOutputWidget (const cBox<cPosition>& area);
 
 	void setClient (const cClient* client);
-	void setServer (const cServer* server);
+	void setServer (const cServer2* server);
 	void setGameMap (const cGameMapWidget* gameMap);
 
 	void setDebugAjobs (bool value);
@@ -60,7 +60,7 @@ public:
 
 	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 private:
-	const cServer* server;
+	const cServer2* server;
 	const cClient* client;
 	const cGameMapWidget* gameMap;
 

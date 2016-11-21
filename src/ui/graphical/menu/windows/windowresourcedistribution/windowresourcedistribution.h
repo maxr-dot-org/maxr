@@ -34,7 +34,7 @@ class cTurnTimeClock;
 class cWindowResourceDistribution : public cWindow
 {
 public:
-	cWindowResourceDistribution (const sSubBase& subBase, std::shared_ptr<const cTurnTimeClock> turnTimeClock);
+	cWindowResourceDistribution (const cSubBase& subBase, std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 
 	int getMetalProduction();
 	int getOilProduction();
@@ -44,7 +44,7 @@ public:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	sSubBase subBase; // TODO: do we really need to copy the whole subBase?
+	cSubBase subBase; // TODO: do we really need to copy the whole subBase?
 
 	std::array<cResourceBar*, 3> metalBars;
 	std::array<cResourceBar*, 3> oilBars;

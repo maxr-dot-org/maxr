@@ -18,7 +18,6 @@
  ***************************************************************************/
 
 #include "game/data/report/special/savedreportplayerendedturn.h"
-#include "netmessage.h"
 #include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------
@@ -27,41 +26,13 @@ cSavedReportPlayerEndedTurn::cSavedReportPlayerEndedTurn (const cPlayer& player)
 {}
 
 //------------------------------------------------------------------------------
-cSavedReportPlayerEndedTurn::cSavedReportPlayerEndedTurn (cNetMessage& message)
-{
-	playerName = message.popString();
-}
-
-//------------------------------------------------------------------------------
-cSavedReportPlayerEndedTurn::cSavedReportPlayerEndedTurn (const tinyxml2::XMLElement& element)
-{
-	playerName = element.Attribute ("playerName");
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportPlayerEndedTurn::pushInto (cNetMessage& message) const
-{
-	message.pushString (playerName);
-
-	cSavedReport::pushInto (message);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportPlayerEndedTurn::pushInto (tinyxml2::XMLElement& element) const
-{
-	element.SetAttribute ("playerName", playerName.c_str());
-
-	cSavedReport::pushInto (element);
-}
-
-//------------------------------------------------------------------------------
 eSavedReportType cSavedReportPlayerEndedTurn::getType() const
 {
 	return eSavedReportType::PlayerEndedTurn;
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportPlayerEndedTurn::getMessage() const
+std::string cSavedReportPlayerEndedTurn::getMessage(const cUnitsData& unitsData) const
 {
 	return lngPack.i18n ("Text~Multiplayer~Player_Turn_End", playerName);
 }
@@ -71,3 +42,4 @@ bool cSavedReportPlayerEndedTurn::isAlert() const
 {
 	return false;
 }
+

@@ -57,13 +57,13 @@ static string GetModificatorString (int original, int modified)
 }
 
 //--------------------------------------------------
-string cClanUnitStat::getClanStatsDescription() const
+string cClanUnitStat::getClanStatsDescription(const cUnitsData& originalData) const
 {
-	const sUnitData* data = unitId.getUnitDataOriginalVersion();
+	const cDynamicUnitData* data = &originalData.getDynamicUnitData(unitId);
 
 	if (data == nullptr) return "Unknown";
 
-	string result = string (data->name) + lngPack.i18n ("Text~Punctuation~Colon");
+	string result = originalData.getStaticUnitData(unitId).getName() + lngPack.i18n ("Text~Punctuation~Colon");
 	const char* const commaSep = ", ";
 	const char* sep = "";
 
@@ -95,7 +95,7 @@ string cClanUnitStat::getClanStatsDescription() const
 	{
 		result += sep;
 		int nrTurns = getModificationValue ("Built_Costs");
-		if (data->isHuman == false) nrTurns /= unitId.isAVehicle() == 0 ? 2 : 3;
+		if (originalData.getStaticUnitData(data->getId()).isHuman == false) nrTurns /= unitId.isAVehicle() == 0 ? 2 : 3;
 
 		result += iToStr (nrTurns) + " " + lngPack.i18n ("Text~Comp~Turns");
 	}
@@ -143,13 +143,13 @@ void cClan::setName (const string& newName)
 }
 
 //--------------------------------------------------
-vector<string> cClan::getClanStatsDescription() const
+vector<string> cClan::getClanStatsDescription(const cUnitsData& originalData) const
 {
 	vector<string> result;
 	for (int i = 0; i != getNrUnitStats(); ++i)
 	{
 		cClanUnitStat* stat = getUnitStat (i);
-		result.push_back (stat->getClanStatsDescription());
+		result.push_back (stat->getClanStatsDescription(originalData));
 	}
 	return result;
 }

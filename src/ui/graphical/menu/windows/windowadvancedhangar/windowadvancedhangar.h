@@ -30,8 +30,8 @@ template<typename SelectedUnitItemType>
 class cWindowAdvancedHangar : public cWindowHangar
 {
 public:
-	cWindowAdvancedHangar (AutoSurface surface, cPlayerColor playerColor, int playerClan);
-	cWindowAdvancedHangar (AutoSurface surface, const cPlayer& player);
+	cWindowAdvancedHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, cPlayerColor playerColor, int playerClan);
+	cWindowAdvancedHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, const cPlayer& player);
 	~cWindowAdvancedHangar();
 
 protected:
@@ -65,16 +65,16 @@ private:
 
 //------------------------------------------------------------------------------
 template<typename SelectedUnitItemType>
-cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (AutoSurface surface, cPlayerColor playerColor, int playerClan) :
-	cWindowHangar (std::move (surface), playerColor, playerClan)
+cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, cPlayerColor playerColor, int playerClan) :
+	cWindowHangar (std::move (surface), unitsData, playerColor, playerClan)
 {
 	initialize();
 }
 
 //------------------------------------------------------------------------------
 template<typename SelectedUnitItemType>
-cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (AutoSurface surface, const cPlayer& player) :
-	cWindowHangar (std::move (surface), player)
+cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, const cPlayer& player) :
+	cWindowHangar (std::move (surface), unitsData, player)
 {
 	initialize();
 }
@@ -124,7 +124,7 @@ bool cWindowAdvancedHangar<SelectedUnitItemType>::tryRemoveSelectedUnit (const S
 template<typename SelectedUnitItemType>
 SelectedUnitItemType& cWindowAdvancedHangar<SelectedUnitItemType>::addSelectedUnit (const sID& unitId)
 {
-	auto addedItem = selectedUnitList->addItem (std::make_unique<SelectedUnitItemType> (selectedUnitList->getSize().x() - 9, unitId, getPlayer()));
+	auto addedItem = selectedUnitList->addItem (std::make_unique<SelectedUnitItemType> (selectedUnitList->getSize().x() - 9, unitId, getPlayer(), *unitsData));
 	return *addedItem;
 }
 

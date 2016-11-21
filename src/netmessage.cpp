@@ -22,11 +22,13 @@
 #include "game/logic/clientevents.h"
 #include "utility/log.h"
 #include "main.h"
-#include "menuevents.h"
+#include "ui/graphical/menu/control/menuevents.h"
 #include "network.h"
 #include "game/logic/serverevents.h"
 
 using namespace std;
+
+#define START_CHAR 0xFF
 
 cNetMessage::cNetMessage (const char* c)
 {
@@ -82,13 +84,6 @@ void cNetMessage::rewind()
 
 eNetMessageClass cNetMessage::getClass() const
 {
-	if (iType < FIRST_SERVER_MESSAGE)
-		return NET_MSG_STATUS;
-	else if (iType < FIRST_CLIENT_MESSAGE)
-		return NET_MSG_SERVER;
-	else if (iType < FIRST_MENU_MESSAGE)
-		return NET_MSG_CLIENT;
-	else
 		return NET_MSG_MENU;
 }
 
@@ -333,16 +328,16 @@ float cNetMessage::popFloat()
 
 void cNetMessage::pushID (const sID& id)
 {
-	pushInt16 (id.iSecondPart);
-	pushInt16 (id.iFirstPart);
+	pushInt16 (id.secondPart);
+	pushInt16 (id.firstPart);
 }
 
 sID cNetMessage::popID()
 {
 	sID id;
 
-	id.iFirstPart = popInt16();
-	id.iSecondPart = popInt16();
+	id.firstPart = popInt16();
+	id.secondPart = popInt16();
 	return id;
 }
 
@@ -384,29 +379,6 @@ string cNetMessage::getTypeAsString() const
 	{
 		case TCP_CLOSE: return "TCP_CLOSE";
 		case TCP_ACCEPT: return "TCP_ACCEPT";
-		case MU_MSG_CHAT: return "MU_MSG_CHAT";
-		case MU_MSG_REQ_IDENTIFIKATION: return "MU_MSG_REQ_IDENTIFIKATION";
-		case MU_MSG_PLAYER_NUMBER: return "MU_MSG_PLAYER_NUMBER";
-		case MU_MSG_IDENTIFIKATION: return "MU_MSG_IDENTIFIKATION";
-		case MU_MSG_PLAYERLIST: return "MU_MSG_PLAYERLIST";
-		case MU_MSG_OPTINS: return "MU_MSG_OPTINS";
-		case MU_MSG_GO: return "MU_MSG_GO";
-		case MU_MSG_CLAN: return "MU_MSG_CLAN";
-		case MU_MSG_LANDING_VEHICLES: return "MU_MSG_LANDING_VEHICLES";
-		case MU_MSG_UPGRADES: return "MU_MSG_UPGRADES";
-		case MU_MSG_LANDING_COORDS: return "MU_MSG_LANDING_COORDS";
-		case MU_MSG_READY_TO_START: return "MU_MSG_READY_TO_START";
-		case MU_MSG_LANDING_STATE: return "MU_MSG_LANDING_STATE";
-		case MU_MSG_ALL_LANDED: return "MU_MSG_ALL_LANDED";
-		case MU_MSG_LANDING_POSITION: return "MU_MSG_LANDING_POSITION";
-		case MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS: return "MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS";
-		case MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION: return "MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION";
-		case MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION: return "MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION";
-		case MU_MSG_START_MAP_DOWNLOAD: return "MU_MSG_START_MAP_DOWNLOAD";
-		case MU_MSG_MAP_DOWNLOAD_DATA: return "MU_MSG_MAP_DOWNLOAD_DATA";
-		case MU_MSG_CANCELED_MAP_DOWNLOAD: return "MU_MSG_CANCELED_MAP_DOWNLOAD";
-		case MU_MSG_FINISHED_MAP_DOWNLOAD: return "MU_MSG_FINISHED_MAP_DOWNLOAD";
-		case MU_MSG_REQUEST_MAP: return "MU_MSG_REQUEST_MAP";
 		case GAME_EV_PLAYER_CLANS: return "GAME_EV_PLAYER_CLANS";
 		case GAME_EV_ADD_BUILDING: return "GAME_EV_ADD_BUILDING";
 		case GAME_EV_ADD_VEHICLE: return "GAME_EV_ADD_VEHICLE";
@@ -421,10 +393,6 @@ string cNetMessage::getTypeAsString() const
 		case GAME_EV_TURN_START_TIME: return "GAME_EV_TURN_START_TIME";
 		case GAME_EV_TURN_END_DEADLINE_START_TIME: return "GAME_EV_TURN_END_DEADLINE_START_TIME";
 		case GAME_EV_UNIT_DATA: return "GAME_EV_UNIT_DATA";
-		case GAME_EV_WANT_START_WORK: return "GAME_EV_WANT_START_WORK";
-		case GAME_EV_WANT_STOP_WORK: return "GAME_EV_WANT_STOP_WORK";
-		case GAME_EV_DO_START_WORK: return "GAME_EV_DO_START_WORK";
-		case GAME_EV_DO_STOP_WORK: return "GAME_EV_DO_STOP_WORK";
 		case GAME_EV_NEXT_MOVE: return "GAME_EV_NEXT_MOVE";
 		case GAME_EV_MOVE_JOB_SERVER: return "GAME_EV_MOVE_JOB_SERVER";
 		case GAME_EV_MOVE_JOB_CLIENT: return "GAME_EV_MOVE_JOB_CLIENT";
@@ -503,7 +471,6 @@ string cNetMessage::getTypeAsString() const
 		case GAME_EV_SCORE: return "GAME_EV_SCORE";
 		case GAME_EV_NUM_ECOS: return "GAME_EV_NUM_ECOS";
 		case GAME_EV_UNIT_SCORE: return "GAME_EV_UNIT_SCORE";
-		case GAME_EV_GAME_SETTINGS: return "GAME_EV_GAME_SETTINGS";
 		case GAME_EV_WAIT_FOR: return "GAME_EV_WAIT_FOR";
 		case GAME_EV_END_MOVE_ACTION_SERVER: return "GAME_EV_END_MOVE_ACTION_SERVER";
 		case GAME_EV_END_MOVE_ACTION: return "GAME_EV_END_MOVE_ACTION";

@@ -20,8 +20,8 @@
 #include "ui/graphical/menu/widgets/special/unitlistviewitembuild.h"
 
 //------------------------------------------------------------------------------
-cUnitListViewItemBuild::cUnitListViewItemBuild (unsigned int width, const sID& unitId, const cPlayer& owner) :
-	cUnitListViewItem (width, unitId, owner),
+cUnitListViewItemBuild::cUnitListViewItemBuild (unsigned int width, const sID& unitId, const cPlayer& owner, const cUnitsData& unitsData) :
+	cUnitListViewItem (width, unitId, owner, unitsData),
 	remainingMetal (-1)
 {}
 

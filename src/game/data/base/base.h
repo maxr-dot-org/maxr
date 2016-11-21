@@ -25,63 +25,46 @@
 
 class cBuilding;
 class cMap;
-class cNetMessage;
 class cPlayer;
-class cServer;
 class cPosition;
+class cBase;
 
-struct sSubBase
+class cSubBase
 {
 public:
-	explicit sSubBase (cPlayer* owner_);
-	sSubBase (const sSubBase& other);
-	~sSubBase();
+	explicit cSubBase (cBase& base);
+	cSubBase (const cSubBase& other);
+	~cSubBase();
 
 	/**
 	* integrates all building of the given subbase in the own one
 	* @author eiko
 	*/
-	void merge (sSubBase* sb);
-
-	/**
-	* returns an unique number to identify the subbase
-	* @author eiko
-	*/
-	int getID() const;
+	void merge (cSubBase* sb);
 
 	void addBuilding (cBuilding* b);
 
-	/**
-	* adds/subtracts a resource to/from the subbase
-	* @author eiko
-	*/
-	void addMetal (cServer& server, int value);
-	void addOil (cServer& server, int value);
-	void addGold (cServer& server, int value);
+	bool startBuilding(cBuilding* b);
+	bool stopBuilding(cBuilding* b, bool forced = false);
 
 	/**
-	* recalculates the values of all subbases
+	* transfers a resource to/from the subbase
 	* @author eiko
 	*/
-	void refresh();
-
-	/**
-	* inreases the energy production of the subbase by
-	* starting offline generators/stations
-	* @author eiko
-	*/
-	bool increaseEnergyProd (cServer& server, int value);
+	void addMetal (int value);
+	void addOil (int value);
+	void addGold (int value);
 
 	/**
 	 * Checks, if there are consumers, that have to be shut down,
 	 * due to a lack of a resources
 	 */
-	bool checkTurnEnd (cServer& server);
+	bool checkTurnEnd ();
 
 	/**
 	 * Produces resources, builds units and repairs/reloads units at turn start.
 	 */
-	void makeTurnStart (cServer& server);
+	void makeTurnStart ();
 
 	//------------------------------------
 	//resource management:
@@ -109,24 +92,39 @@ public:
 	void setGoldProd (int value);
 	void setOilProd (int value);
 
-	int getMetal() const;
-	void setMetal (int value);
-
-	int getOil() const;
-	void setOil (int value);
-
-	int getGold() const;
-	void setGold (int value);
-
 	/** changes the production of a resource by value. */
-	void changeMetalProd (int value);
-	void changeGoldProd (int value);
-	void changeOilProd (int value);
+	void changeMetalProd(int value);
+	void changeGoldProd(int value);
+	void changeOilProd(int value);
 
-	bool isDitributionMaximized() const;
+	int getMaxMetalStored() const;
+	int getMaxGoldStored() const;
+	int getMaxOilStored() const;
 
-	void pushInto (cNetMessage& message) const;
-	void popFrom (cNetMessage& message);
+	int getMetalStored() const;
+	int getOilStored() const;
+	int getGoldStored() const;
+
+	int getMaxEnergyProd() const;
+	int getEnergyProd() const;
+	int getMaxEnergyNeed() const;
+	int getEnergyNeed() const;
+
+	int getMetalNeed() const;
+	int getOilNeed() const;
+	int getGoldNeed() const;
+	
+	int getMaxMetalNeed() const;
+	int getMaxOilNeed() const;
+	int getMaxGoldNeed() const;
+
+	int getHumanProd() const;
+	int getHumanNeed() const;
+	int getMaxHumanNeed() const;
+
+	const std::vector<cBuilding*>& getBuildings() const;
+
+	uint32_t getChecksum(uint32_t crc) const;
 
 	mutable cSignal<void ()> destroyed;
 
@@ -134,6 +132,13 @@ public:
 	mutable cSignal<void ()> oilChanged;
 	mutable cSignal<void ()> goldChanged;
 private:
+
+	/**
+	* inreases the energy production of the subbase by
+	* starting offline generators/stations
+	* @author eiko
+	*/
+	bool increaseEnergyProd(int value);
 
 	//-----------------------------------
 	//turn end management:
@@ -143,9 +148,9 @@ private:
 	 * @return returns true, if consumers have been shut down
 	 * @author eiko
 	 */
-	bool checkGoldConsumer (cServer& server);
-	bool checkHumanConsumer (cServer& server);
-	bool checkMetalConsumer (cServer& server);
+	bool checkGoldConsumer ();
+	bool checkHumanConsumer ();
+	bool checkMetalConsumer ();
 	/**
 	 * - switches off unneeded fuel consumers(=energy producers)
 	 * - sets the optimal amount of generators and stations
@@ -156,17 +161,17 @@ private:
 	 *          due to a lack of oil
 	 * @author eiko
 	 */
-	bool checkOil (cServer& server);
+	bool checkOil ();
 	/**
 	 * switches off energy consumers, if necessary
 	 * @return returns true, if a energy consumers have been shut down
 	 * @author eiko
 	 */
-	bool checkEnergy (cServer& server);
+	bool checkEnergy ();
 
-	void makeTurnStartRepairs (cServer& server, cBuilding& building);
-	void makeTurnStartReload (cServer& server, cBuilding& building);
-	void makeTurnStartBuild (cServer& server, cBuilding& building);
+	void makeTurnStartRepairs (cBuilding& building);
+	void makeTurnStartReload (cBuilding& building);
+	void makeTurnStartBuild (cBuilding& building);
 
 
 	/**
@@ -184,86 +189,106 @@ private:
 	* adds/subtracts resources of the type storeResType to/from the subbase
 	* @author eiko
 	*/
-	void addRessouce (cServer& server, sUnitData::eStorageResType storeResType, int value);
+	void addRessouce (cStaticUnitData::eStorageResType storeResType, int value);
 
-	int getResource (sUnitData::eStorageResType storeResType) const;
-	void setResource (sUnitData::eStorageResType storeResType, int value);
-public:
-	//private:
-	//	friend class cBase;
-	std::vector<cBuilding*> buildings;
-	cPlayer* owner;
+	int getResource (cStaticUnitData::eStorageResType storeResType) const;
+	void setResource (cStaticUnitData::eStorageResType storeResType, int value);
 
-	int MaxMetal;
-	int MaxOil;
-	int MaxGold;
-
-	int MaxEnergyProd;
-	int EnergyProd;
-	int MaxEnergyNeed;
-	int EnergyNeed;
-	int MetalNeed;
-	int OilNeed;
-	int GoldNeed;
-	int MaxMetalNeed;
-	int MaxOilNeed;
-	int MaxGoldNeed;
-
-	int HumanProd;
-	int HumanNeed;
-	int MaxHumanNeed;
-
-	int MetalProd;
-	int OilProd;
-	int GoldProd;
+	void setMetal(int value);
+	void setOil(int value);
+	void setGold(int value);
 
 private:
-	int metal;
-	int oil;
-	int gold;
+	std::vector<cBuilding*> buildings;
+
+	int maxMetalStored;
+	int maxOilStored;
+	int maxGoldStored;
+
+	int maxEnergyProd;
+	int energyProd;
+	int maxEnergyNeed;
+	int energyNeed;
+	int metalNeed;
+	int oilNeed;
+	int goldNeed;
+	int maxMetalNeed;
+	int maxOilNeed;
+	int maxGoldNeed;
+
+	int humanProd;
+	int humanNeed;
+	int maxHumanNeed;
+
+	int metalProd;
+	int oilProd;
+	int goldProd;
+
+	cBase& base;
+
+	int metalStored;
+	int oilStored;
+	int goldStored;
 };
 
 class cBase
 {
 public:
-	cBase();
+	cBase(cPlayer& owner);
 	~cBase();
 
 	/**
 	* adds a building to the base and updates the subbase structures
 	* @param building the building, that is added to the base
-	* @param server when not null, the resulting subbase values are sent to the client
 	* @author eiko
 	*/
-	void addBuilding (cBuilding* building, cServer* server);
+	void addBuilding (cBuilding* building, const cMap& map);
 	/**
 	* deletes a building from the base and updates the subbase structures
 	* @param building the building, that is deleted to the base
-	* @param server when not null, the resulting subbase values are sent to the client
 	* @author eiko
 	*/
-	void deleteBuilding (cBuilding* building, cServer* server);
+	void deleteBuilding (cBuilding* building, const cMap& map);
 
-	bool checkTurnEnd (cServer& server);
+	bool checkTurnEnd ();
 
 	/**
 	 * Handles the turn start for all sub bases.
 	 *
 	 * This produces resources, builds units and repairs/reloads units.
 	 */
-	void makeTurnStart (cServer& server);
+	void makeTurnStart ();
 
 	/**
 	* recalculates the values of all subbases
 	*@author eiko
 	*/
-	void refreshSubbases();
+	void reset();
 
-	sSubBase* checkNeighbour (const cPosition& position, const cBuilding& Building);
+	cSubBase* checkNeighbour (const cPosition& position, const cBuilding& Building, const cMap& map);
+
+	uint32_t getChecksum(uint32_t crc) const;
+
+	// report sources for the player:
+	mutable cSignal<void(int resourceType, int amount, bool increase)> forcedRessouceProductionChance;
+	mutable cSignal<void()> teamLow;
+	mutable cSignal<void()> metalLow;
+	mutable cSignal<void()> goldLow;
+	mutable cSignal<void()> fuelLow;
+	mutable cSignal<void()> energyLow;
+
+	mutable cSignal<void()> fuelInsufficient;
+	mutable cSignal<void()> teamInsufficient;
+	mutable cSignal<void()> goldInsufficient;
+	mutable cSignal<void()> metalInsufficient;
+	mutable cSignal<void()> energyInsufficient;
+
+	mutable cSignal<void()> energyToLow;
+	mutable cSignal<void()> energyIsNeeded;
 
 public:
-	std::vector<sSubBase*> SubBases;
-	cMap* map;
+	std::vector<cSubBase*> SubBases;
+	cPlayer& owner;
 };
 
 #endif // game_data_base_baseH

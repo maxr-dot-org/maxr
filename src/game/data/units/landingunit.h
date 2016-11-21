@@ -25,7 +25,14 @@
 struct sLandingUnit
 {
 	sID unitID;
-	int cargo;
+	unsigned cargo;
+
+	template<typename T>
+	void serialize(T& archive)
+	{
+		archive & unitID;
+		archive & cargo;
+	}
 };
 
 #endif // game_data_units_landingunitH

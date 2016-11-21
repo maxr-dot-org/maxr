@@ -29,10 +29,11 @@
 #include "pcx.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/player/player.h"
+#include "game/data/units/unitdata.h"
 
 //------------------------------------------------------------------------------
-cWindowBuildBuildings::cWindowBuildBuildings (const cVehicle& vehicle_, std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
-	cWindowHangar (LoadPCX (GFXOD_BUILD_SCREEN), *vehicle_.getOwner()),
+cWindowBuildBuildings::cWindowBuildBuildings (const cVehicle& vehicle_, std::shared_ptr<const cTurnTimeClock> turnTimeClock, std::shared_ptr<const cUnitsData> unitsData) :
+	cWindowHangar (LoadPCX (GFXOD_BUILD_SCREEN), unitsData, *vehicle_.getOwner()),
 	vehicle (vehicle_)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Vehicle"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
@@ -51,13 +52,13 @@ cWindowBuildBuildings::cWindowBuildBuildings (const cVehicle& vehicle_, std::sha
 	backButton->moveTo (getPosition() + cPosition (300, 452));
 	okButton->moveTo (getPosition() + cPosition (387, 452));
 
-	if (vehicle.data.canBuildPath)
+	if (vehicle.getStaticUnitData().canBuildPath)
 	{
 		auto pathButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (338, 428), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Path"), FONT_LATIN_NORMAL));
 		signalConnectionManager.connect (pathButton->clicked, [&]() { donePath(); });
 	}
 
-	generateSelectionList (vehicle);
+	generateSelectionList (vehicle, *unitsData);
 
 	signalConnectionManager.connect (selectionUnitClickedSecondTime, [&] (const cUnitListViewItemBuy&) { done(); });
 
@@ -84,22 +85,23 @@ void cWindowBuildBuildings::setActiveUnit (const sID& unitId)
 	const auto& buildingData = *vehicle.getOwner()->getUnitDataCurrentVersion (unitId);
 	std::array<int, 3> turns;
 	std::array<int, 3> costs;
-	vehicle.calcTurboBuild (turns, costs, buildingData.buildCosts);
+	vehicle.calcTurboBuild (turns, costs, buildingData.getBuildCost());
 
 	speedHandler->setValues (turns, costs);
 }
 
 //------------------------------------------------------------------------------
-void cWindowBuildBuildings::generateSelectionList (const cVehicle& vehicle)
+void cWindowBuildBuildings::generateSelectionList (const cVehicle& vehicle, const cUnitsData& unitsData)
 {
 	bool select = true;
-	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); ++i)
+	for (const auto& data : unitsData.getStaticUnitsData())
 	{
-		if (UnitsData.sbuildings[i].explodesOnContact) continue;
+		if (data.explodesOnContact) continue;
+		if (data.ID.isAVehicle()) continue;
 
-		if (vehicle.data.canBuild != UnitsData.sbuildings[i].buildAs) continue;
+		if (vehicle.getStaticUnitData().canBuild != data.buildAs) continue;
 
-		auto& item = addSelectionUnit (UnitsData.sbuildings[i].ID);
+		auto& item = addSelectionUnit (data.ID);
 
 		if (select)
 		{
@@ -107,7 +109,7 @@ void cWindowBuildBuildings::generateSelectionList (const cVehicle& vehicle)
 			select = false;
 		}
 
-		if (vehicle.data.getStoredResources() < vehicle.getOwner()->BuildingData[i].buildCosts) item.markAsInsufficient();
+		if (vehicle.getStoredResources() < vehicle.getOwner()->getUnitDataCurrentVersion(data.ID)->getBuildCost()) item.markAsInsufficient();
 	}
 }
 

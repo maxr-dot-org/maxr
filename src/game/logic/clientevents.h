@@ -38,7 +38,7 @@ struct sLandingUnit;
 enum CLIENT_EVENT_TYPES
 {
 	// Types between FIRST_CLIENT_MESSAGE and FIRST_MENU_MESSAGE are for the client
-	GAME_EV_ADD_BUILDING = FIRST_CLIENT_MESSAGE,	// adds a building
+	GAME_EV_ADD_BUILDING = 100,	// adds a building
 	GAME_EV_ADD_VEHICLE,			// adds a vehicle
 	GAME_EV_DEL_BUILDING,			// deletes a building
 	GAME_EV_DEL_VEHICLE,			// deletes a vehicle
@@ -52,8 +52,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_UNIT_DATA,				// set new data values for a vehicle
 	GAME_EV_SPECIFIC_UNIT_DATA,		// more specific unit values which are only for the owner
 	GAME_EV_UNIT_UPGRADE_VALUES,	// message contains upgraded values for a unit
-	GAME_EV_DO_START_WORK,			// starts a building
-	GAME_EV_DO_STOP_WORK,			// stops a building
 	GAME_EV_NEXT_MOVE,				// infos about the next move
 	GAME_EV_MOVE_JOB_SERVER,		// a message with all waypoints
 	GAME_EV_ATTACKJOB,				// sends an cAttackJob object to a client
@@ -94,7 +92,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_SCORE,                  // sends a player's score to a client
 	GAME_EV_NUM_ECOS,               // sends a player's ecosphere count to a client
 	GAME_EV_UNIT_SCORE,             // sends a unit's score to its owner
-	GAME_EV_GAME_SETTINGS,          // the game settings
 	GAME_EV_SELFDESTROY,
 	GAME_EV_END_MOVE_ACTION_SERVER,	// the server has added an end move action to a movejob
 	GAME_EV_CASUALTIES_REPORT,		// sends the casualties stats to a client
@@ -123,24 +120,12 @@ void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, 
 * Generates a event with a chat message and pushes it to the event queue or sends it over TCP/IP if necessary
 *@param sMsg the chat message.
 */
-void sendChatMessageToServer (const cClient& client, const cPlayer& player, const std::string& message);
+void sendChatMessageToServer (const cClient& client, const std::string& message);
 /**
 * Sends an event that the player wants to end this turn
 *@author alzi alias DoctorDeath
 */
 void sendWantToEndTurn (const cClient& client);
-
-/**
-* sends a request to start a building to the Server
-*@author Eiko
-*/
-void sendWantStartWork (const cClient& client, const cUnit& building);
-
-/**
-* sends a request to stop a building to the Server
-*@author Eiko
-*/
-void sendWantStopWork (const cClient& client, const cUnit& building);
 
 /**
 * sends all waypoints of a movejob to the server.
@@ -274,11 +259,8 @@ void sendWantComAction (const cClient& client, int srcUnitID, int destUnitID, bo
 void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool upgradeAll);
 void sendWantUpgrade (const cClient& client, int buildingID, int storageSlot, bool upgradeAll);
 void sendWantResearchChange (const cClient& client, const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings);
-void sendGameGuiState (const cClient& client, const cGameGuiState& gameGuiState, const cPlayer& owner, int savingID);
-void sendSaveReportInfo (const cClient& client, const cSavedReport& savedReport, int ownerNr, int savingID);
-void sendFinishedSendSaveInfo (const cClient& client, int ownerNr, int savingID);
 
-void sendWantSelfDestroy (const cClient& client, const cBuilding& building);
+void sendWantSelfDestroy (const cClient& client, int unitId);
 void sendWantChangeUnitName (const cClient& client, const std::string& newName, int unitID);
 
 void sendEndMoveAction (const cClient& client, int vehicleID, int destID, eEndMoveActionType type);

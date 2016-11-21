@@ -39,13 +39,12 @@ cMouseCursorAttack::cMouseCursorAttack (const cUnit& sourceUnit, const cPosition
 	newHealthPercent (-1),
 	inRange (sourceUnit.isInRange (targetPosition))
 {
-	const sUnitData& data = sourceUnit.data;
-	const cUnit* target = cAttackJob::selectTarget (targetPosition, data.canAttack, map, sourceUnit.getOwner());
+	const cUnit* target = cAttackJob::selectTarget (targetPosition, sourceUnit.getStaticUnitData().canAttack, map, sourceUnit.getOwner());
 
 	if (target && (target != &sourceUnit))
 	{
 		currentHealthPercent = 100 * target->data.getHitpoints() / target->data.getHitpointsMax();
-		newHealthPercent = 100 * target->calcHealth (data.getDamage()) / target->data.getHitpointsMax();
+		newHealthPercent = 100 * target->calcHealth (sourceUnit.data.getDamage()) / target->data.getHitpointsMax();
 	}
 	assert (currentHealthPercent >= newHealthPercent);
 }

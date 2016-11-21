@@ -24,6 +24,8 @@
 #include "utility/runnable.h"
 #include "maxrconfig.h"
 
+class cUnitsData;
+
 class cGame : public cRunnable, public std::enable_shared_from_this<cGame>
 {
 public:
@@ -32,15 +34,16 @@ public:
 	{}
 	virtual ~cGame() {}
 
-	virtual void save (int saveNumber, const std::string& saveName) = 0;
-
 	virtual bool wantsToTerminate() const MAXR_OVERRIDE_FUNCTION
 	{
 		return terminate;
 	}
 
+	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData_) { unitsData = std::move(unitsData_); }
+	std::shared_ptr<const cUnitsData> getUnitsData() const { return unitsData; }
 protected:
 	bool terminate;
+	std::shared_ptr<const cUnitsData> unitsData;
 };
 
 #endif // game_startup_gameH

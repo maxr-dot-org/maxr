@@ -32,101 +32,13 @@ cSavedReportTurnStart::cSavedReportTurnStart (const cPlayer& player, int turn_) 
 {}
 
 //------------------------------------------------------------------------------
-cSavedReportTurnStart::cSavedReportTurnStart (cNetMessage& message)
-{
-	turn = message.popInt32();
-
-	researchAreas.resize (message.popInt32());
-	for (auto iter = researchAreas.begin(); iter != researchAreas.end(); ++iter)
-	{
-		*iter = message.popInt32();
-	}
-
-	unitReports.resize (message.popInt32());
-	for (auto iter = unitReports.begin(); iter != unitReports.end(); ++iter)
-	{
-		iter->type = message.popID();
-		iter->count = message.popInt32();
-	}
-}
-
-//------------------------------------------------------------------------------
-cSavedReportTurnStart::cSavedReportTurnStart (const tinyxml2::XMLElement& element)
-{
-	turn = element.IntAttribute ("turn");
-
-	auto unitElement = element.FirstChildElement ("Unit");
-	while (unitElement)
-	{
-		sTurnstartReport entry;
-		entry.count = unitElement->IntAttribute ("count");
-		entry.type.generate (unitElement->Attribute ("id"));
-		unitReports.push_back (entry);
-
-		unitElement = unitElement->NextSiblingElement ("Unit");
-	}
-
-	auto researchElement = element.FirstChildElement ("ResearchArea");
-	while (researchElement)
-	{
-		researchAreas.push_back (researchElement->IntAttribute ("id"));
-
-		researchElement = researchElement->NextSiblingElement ("ResearchArea");
-	}
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportTurnStart::pushInto (cNetMessage& message) const
-{
-	for (auto iter = unitReports.crbegin(); iter != unitReports.crend(); ++iter)
-	{
-		const auto& entry = *iter;
-		message.pushInt32 (entry.count);
-		message.pushID (entry.type);
-	}
-	message.pushInt32 (unitReports.size());
-
-	for (auto iter = researchAreas.crbegin(); iter != researchAreas.crend(); ++iter)
-	{
-		message.pushInt32 (*iter);
-	}
-	message.pushInt32 (researchAreas.size());
-
-	message.pushInt32 (turn);
-
-	cSavedReport::pushInto (message);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportTurnStart::pushInto (tinyxml2::XMLElement& element) const
-{
-	element.SetAttribute ("turn", iToStr (turn).c_str());
-
-	for (auto iter = unitReports.crbegin(); iter != unitReports.crend(); ++iter)
-	{
-		auto unitElement = element.GetDocument()->NewElement ("Unit");
-		element.LinkEndChild (unitElement);
-		unitElement->SetAttribute ("id", iter->type.getText().c_str());
-		unitElement->SetAttribute ("count", iToStr (iter->count).c_str());
-	}
-
-	for (auto iter = researchAreas.crbegin(); iter != researchAreas.crend(); ++iter)
-	{
-		auto unitElement = element.GetDocument()->NewElement ("ResearchArea");
-		element.LinkEndChild (unitElement);
-		unitElement->SetAttribute ("id", iToStr (*iter).c_str());
-	}
-	cSavedReport::pushInto (element);
-}
-
-//------------------------------------------------------------------------------
 eSavedReportType cSavedReportTurnStart::getType() const
 {
 	return eSavedReportType::TurnStart;
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportTurnStart::getMessage() const
+std::string cSavedReportTurnStart::getMessage(const cUnitsData& unitsData) const
 {
 	std::string message = lngPack.i18n ("Text~Comp~Turn_Start") + " " + iToStr (turn);
 
@@ -140,7 +52,7 @@ std::string cSavedReportTurnStart::getMessage() const
 
 			if (i > 0) message += ", ";
 			totalUnitsCount += entry.count;
-			message += entry.count > 1 ? (iToStr (entry.count) + " " + entry.type.getUnitDataOriginalVersion()->name) : (entry.type.getUnitDataOriginalVersion()->name);
+			message += entry.count > 1 ? (iToStr(entry.count) + " " + unitsData.getStaticUnitData(entry.type).getName()) : (unitsData.getStaticUnitData(entry.type).getName());
 		}
 		if (totalUnitsCount == 1) message += " " + lngPack.i18n ("Text~Comp~Finished") + ".";
 		else if (totalUnitsCount > 1) message += " " + lngPack.i18n ("Text~Comp~Finished2") + ".";

@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include "game/startup/network/client/networkclientgamesaved.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 #include "ui/graphical/application.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
@@ -32,22 +32,19 @@ cNetworkClientGameSaved::cNetworkClientGameSaved()
 //------------------------------------------------------------------------------
 void cNetworkClientGameSaved::start (cApplication& application)
 {
-	localClient = std::make_shared<cClient> (nullptr, network);
+	//localClient = std::make_shared<cClient> (nullptr, network); //TODO
 
 	localClient->setPlayers (players, localPlayerIndex);
-	localClient->setMap (staticMap);
+//	localClient->setMap (staticMap);
 	localClient->setGameSettings (*gameSettings);
 
-	sendRequestResync (*localClient, localClient->getActivePlayer().getNr(), true);
+	sendRequestResync (*localClient, localClient->getActivePlayer().getId(), true);
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
 	gameGuiController->setSingleClient (localClient);
 
 	gameGuiController->start();
-
-	using namespace std::placeholders;
-	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cNetworkClientGameSaved::save, this, _1, _2));
 
 	terminate = false;
 

@@ -78,7 +78,7 @@ public:
 	/**
 	* selects a target unit from a map field, depending on the attack mode.
 	*/
-	static cUnit* selectTarget (const cPosition& position, char attackMode, const cMap& map, cPlayer* owner);
+	static cUnit* selectTarget (const cPosition& position, char attackMode, const cMap& map, const cPlayer* owner);
 	static void runAttackJobs (std::vector<cAttackJob*>& attackJobs);
 
 	cAttackJob (cServer* server, cUnit* aggressor, const cPosition& targetPosition);

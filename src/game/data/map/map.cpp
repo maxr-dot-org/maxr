@@ -22,13 +22,15 @@
 #include "game/data/units/building.h"
 #include "utility/listhelpers.h"
 #include "utility/files.h"
+#include "utility/crc.h"
 #include "utility/log.h"
 #include "game/data/player/player.h"
 #include "settings.h"
 #include "game/data/units/vehicle.h"
 #include "video.h"
 #include "utility/position.h"
-#include "utility/random.h"
+#include "game/data/model.h"
+#include "mapdownload.h"
 
 #if 1 // TODO: [SDL2]: SDL_SetColors
 inline void SDL_SetColors (SDL_Surface* surface, SDL_Color* colors, int index, int size)
@@ -117,8 +119,8 @@ cBuilding* cMapField::getTopBuilding() const
 	if (buildings.empty()) return nullptr;
 	cBuilding* building = buildings[0];
 
-	if ((building->data.surfacePosition == sUnitData::SURFACE_POS_GROUND ||
-		 building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) &&
+	if ((building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_GROUND ||
+		 building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE) &&
 		building->getOwner())
 		return building;
 	return nullptr;
@@ -128,8 +130,8 @@ cBuilding* cMapField::getBaseBuilding() const
 {
 	for (cBuilding* building : buildings)
 	{
-		if (building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND &&
-			building->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE &&
+		if (building->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_GROUND &&
+			building->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE &&
 			building->getOwner())
 		{
 			return building;
@@ -149,7 +151,7 @@ cBuilding* cMapField::getRubble() const
 cBuilding* cMapField::getMine() const
 {
 	for (cBuilding* building : buildings)
-		if (building->data.explodesOnContact)
+		if (building->getStaticUnitData().explodesOnContact)
 			return building;
 	return nullptr;
 }
@@ -218,7 +220,7 @@ void cMapField::removeAll()
 
 // cStaticMap //////////////////////////////////////////////////
 
-cStaticMap::cStaticMap() : size (0), terrains()
+cStaticMap::cStaticMap() : size(0), terrains(), crc(0)
 {
 }
 
@@ -246,6 +248,82 @@ bool cStaticMap::isWater (const cPosition& position) const
 	return getTerrain (position).water;
 }
 
+bool cStaticMap::isGround(const cPosition& position) const
+{
+	return !getTerrain(position).water && !getTerrain(position).coast;
+}
+
+bool cStaticMap::possiblePlace(const cStaticUnitData& data, const cPosition& position) const
+{
+	if (!isValidPosition(position)) return false;
+	if (data.isBig)
+	{
+		if (!isValidPosition(position + cPosition(0, 1)) || 
+			!isValidPosition(position + cPosition(1, 0)) ||
+			!isValidPosition(position + cPosition(1, 1)) )
+		{
+			return false;
+		}
+	}
+
+	if (data.factorAir > 0) return true;
+
+	if (isBlocked(position)) return false;
+	if (data.isBig)
+	{
+		if (isBlocked(position + cPosition(0, 1)) ||
+			isBlocked(position + cPosition(1, 0)) ||
+			isBlocked(position + cPosition(1, 1)) )
+		{
+			return false;
+		}
+	}
+
+	if (data.factorSea == 0)
+	{
+		if (isWater(position)) return false;
+		if (data.isBig)
+		{
+			if (isWater(position + cPosition(0, 1)) ||
+				isWater(position + cPosition(1, 0)) ||
+				isWater(position + cPosition(1, 1)) )
+			{
+				return false;
+			}
+		}
+	}
+
+	if (data.factorCoast == 0)
+	{
+		if (isCoast(position)) return false;
+		if (data.isBig)
+		{
+			if (isCoast(position + cPosition(0, 1)) ||
+				isCoast(position + cPosition(1, 0)) ||
+				isCoast(position + cPosition(1, 1)) )
+			{
+				return false;
+			}
+		}
+	}
+
+	if (data.factorGround == 0)
+	{
+		if (isGround(position)) return false;
+		if (data.isBig)
+		{
+			if (isGround(position + cPosition(0, 1)) ||
+				isGround(position + cPosition(1, 0)) ||
+				isGround(position + cPosition(1, 1)) )
+			{
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
 bool cStaticMap::isValidPosition (const cPosition& position) const
 {
 	return 0 <= position.x() && position.x() < size && 0 <= position.y() && position.y() < size;
@@ -255,6 +333,7 @@ void cStaticMap::clear()
 {
 	filename.clear();
 	size = 0;
+	crc = 0;
 	terrains.clear();
 	Kacheln.clear();
 }
@@ -314,13 +393,13 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	const short sHeight = SDL_ReadLE16 (fpMapFile);
 	Log.write ("SizeY: " + iToStr (sHeight), cLog::eLOG_TYPE_DEBUG);
 	SDL_RWseek (fpMapFile, sWidth * sHeight, SEEK_CUR); // Ignore Mini-Map
-	const int iDataPos = SDL_RWtell (fpMapFile); // Map-Data
+	const Sint64 iDataPos = SDL_RWtell (fpMapFile); // Map-Data
 	SDL_RWseek (fpMapFile, sWidth * sHeight * 2, SEEK_CUR);
 	const int iNumberOfTerrains = SDL_ReadLE16 (fpMapFile); // Read PicCount
 	Log.write ("Number of terrains: " + iToStr (iNumberOfTerrains), cLog::eLOG_TYPE_DEBUG);
-	const int iGraphicsPos = SDL_RWtell (fpMapFile); // Terrain Graphics
-	const int iPalettePos = iGraphicsPos + iNumberOfTerrains * 64 * 64; // Palette
-	const int iInfoPos = iPalettePos + 256 * 3; // Special informations
+	const Sint64 iGraphicsPos = SDL_RWtell (fpMapFile); // Terrain Graphics
+	const Sint64 iPalettePos = iGraphicsPos + iNumberOfTerrains * 64 * 64; // Palette
+	const Sint64 iInfoPos = iPalettePos + 256 * 3; // Special informations
 
 	if (sWidth != sHeight)
 	{
@@ -410,10 +489,13 @@ bool cStaticMap::loadMap (const std::string& filename_)
 		}
 	}
 	SDL_RWclose (fpMapFile);
+
+	//save crc, to check map file equality when loading a game
+	crc = MapDownload::calculateCheckSum(filename);
 	return true;
 }
 
-/*static*/AutoSurface cStaticMap::loadTerrGraph (SDL_RWops* fpMapFile, int iGraphicsPos, const SDL_Color (&colors)[256], int iNum)
+/*static*/AutoSurface cStaticMap::loadTerrGraph (SDL_RWops* fpMapFile, Sint64 iGraphicsPos, const SDL_Color (&colors)[256], int iNum)
 {
 	// Create new surface and copy palette
 	AutoSurface surface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
@@ -479,6 +561,11 @@ bool cStaticMap::loadMap (const std::string& filename_)
 
 	if (mapSize != nullptr) *mapSize = size;
 	return mapSurface;
+}
+
+uint32_t cStaticMap::getChecksum(uint32_t crc)
+{
+	return calcCheckSum(this->crc, crc);
 }
 
 void cStaticMap::copySrfToTerData (SDL_Surface& surface, int iNum)
@@ -577,11 +664,22 @@ AutoSurface cStaticMap::createBigSurface (int sizex, int sizey) const
 
 // Funktionen der Map-Klasse /////////////////////////////////////////////////
 cMap::cMap (std::shared_ptr<cStaticMap> staticMap_) :
-	staticMap (std::move (staticMap_))
+	staticMap (std::move (staticMap_)),
+	fields(nullptr)
+{
+	init();
+
+}
+
+void cMap::init()
 {
 	const int size = staticMap->getSize().x() * staticMap->getSize().y();
-	fields = new cMapField[size];
-	Resources.resize (size);
+	if (Resources.size() != size)
+	{
+		Resources.resize(size, sResources());
+		delete[] fields;
+		fields = new cMapField[size];
+	}
 }
 
 cMap::~cMap()
@@ -610,24 +708,6 @@ bool cMap::isWaterOrCoast (const cPosition& position) const
 	return terrainType.water | terrainType.coast;
 }
 
-void cMap::assignRessources (const cMap& rhs)
-{
-	Resources = rhs.Resources;
-}
-
-//--------------------------------------------------------------------------
-static std::string getHexValue (unsigned char byte)
-{
-	std::string str = "";
-	const char hexChars[] = "0123456789ABCDEF";
-	const unsigned char high = (byte >> 4) & 0x0F;
-	const unsigned char low = byte & 0x0F;
-
-	str += hexChars[high];
-	str += hexChars[low];
-	return str;
-}
-
 //--------------------------------------------------------------------------
 std::string cMap::resourcesToString() const
 {
@@ -642,53 +722,49 @@ std::string cMap::resourcesToString() const
 }
 
 //--------------------------------------------------------------------------
-static unsigned char getByteValue (const std::string& str, int index)
-{
-	unsigned char first = str[index + 0] - '0';
-	unsigned char second = str[index + 1] - '0';
-
-	if (first >= 'A' - '0') first -= 'A' - '0' - 10;
-	if (second >= 'A' - '0') second -= 'A' - '0' - 10;
-	return (first * 16 + second);
-}
-
-//--------------------------------------------------------------------------
 void cMap::setResourcesFromString (const std::string& str)
 {
 	for (size_t i = 0; i != Resources.size(); ++i)
 	{
-		Resources[i].typ = getByteValue (str, 4 * i);
-		Resources[i].value = getByteValue (str, 4 * i + 2);
+		sResources res;
+		res.typ   = getByteValue(str, 4 * i);
+		res.value = getByteValue(str, 4 * i + 2);
+
+		Resources.set(i, res);
 	}
 }
 
-void cMap::placeRessources (const std::vector<cPosition>& landingPositions, const cGameSettings& gameSetting)
+void cMap::placeRessources(cModel& model)
 {
-	std::fill (Resources.begin(), Resources.end(), sResources());
+	const auto& playerList = model.getPlayerList();
+	const auto& gameSettings = *model.getGameSettings();
 
-	std::vector<int> resSpotTypes(landingPositions.size(), RES_METAL);
+	Resources.fill(sResources());
+
+	std::vector<int> resSpotTypes(playerList.size(), RES_METAL);
 	std::vector<T_2<int>> resSpots;
-	for (const auto& position : landingPositions)
+	for (const auto& player : playerList)
 	{
+		const auto& position = player->getLandingPos();
 		resSpots.push_back(T_2<int> ((position.x() & ~1) + (RES_METAL % 2), (position.y() & ~1) + ((RES_METAL / 2) % 2)));
 	}
 
-	const eGameSettingsResourceDensity density = gameSetting.getResourceDensity();
+	const eGameSettingsResourceDensity density = gameSettings.getResourceDensity();
 	eGameSettingsResourceAmount frequencies[RES_COUNT];
 
-	frequencies[RES_METAL] = gameSetting.getMetalAmount();
-	frequencies[RES_OIL] = gameSetting.getOilAmount();
-	frequencies[RES_GOLD] = gameSetting.getGoldAmount();
+	frequencies[RES_METAL] = gameSettings.getMetalAmount();
+	frequencies[RES_OIL] = gameSettings.getOilAmount();
+	frequencies[RES_GOLD] = gameSettings.getGoldAmount();
 
 	const std::size_t resSpotCount = (std::size_t) (getSize().x() * getSize().y() * 0.003f * (1.5f + getResourceDensityFactor (density)));
-	const std::size_t playerCount = landingPositions.size();
+	const std::size_t playerCount = playerList.size();
 	// create remaining resource positions
 	while (resSpots.size() < resSpotCount)
 	{
 		T_2<int> pos;
 
-		pos.x = 2 + random (getSize().x() - 4);
-		pos.y = 2 + random (getSize().y() - 4);
+		pos.x = 2 + model.randomGenerator.get (getSize().x() - 4);
+		pos.y = 2 + model.randomGenerator.get (getSize().y() - 4);
 		resSpots.push_back(pos);
 	}
 	resSpotTypes.resize (resSpotCount);
@@ -760,7 +836,7 @@ void cMap::placeRessources (const std::vector<cPosition>& landingPositions, cons
 	{
 		T_2<int> pos = resSpots[i];
 		T_2<int> p;
-		bool hasGold = random (100) < 40;
+		bool hasGold = model.randomGenerator.get (100) < 40;
 		const int minx = std::max (pos.x - 1, 0);
 		const int maxx = std::min (pos.x + 1, getSize().x() - 1);
 		const int miny = std::max (pos.y - 1, 0);
@@ -777,19 +853,20 @@ void cMap::placeRessources (const std::vector<cPosition>& landingPositions, cons
 					((hasGold && i >= playerCount) || resSpotTypes[i] == RES_GOLD || type != RES_GOLD) &&
 					!isBlocked (cPosition (absPos.x, absPos.y)))
 				{
-					Resources[index].typ = type;
+					sResources res;
+					res.typ = type;
 					if (i >= playerCount)
 					{
-						Resources[index].value = 1 + random (2 + getResourceAmountFactor (frequencies[type]) * 2);
-						if (p == pos) Resources[index].value += 3 + random (4 + getResourceAmountFactor (frequencies[type]) * 2);
+						res.value = 1 + model.randomGenerator.get (2 + getResourceAmountFactor (frequencies[type]) * 2);
+						if (p == pos) res.value += 3 + model.randomGenerator.get(4 + getResourceAmountFactor(frequencies[type]) * 2);
 					}
 					else
 					{
-						Resources[index].value = 1 + 4 + getResourceAmountFactor (frequencies[type]);
-						if (p == pos) Resources[index].value += 3 + 2 + getResourceAmountFactor (frequencies[type]);
+						res.value = 1 + 4 + getResourceAmountFactor (frequencies[type]);
+						if (p == pos) res.value += 3 + 2 + getResourceAmountFactor (frequencies[type]);
 					}
-
-					Resources[index].value = std::min<unsigned char> (16, Resources[index].value);
+					res.value = std::min<unsigned char> (16, res.value);
+					Resources.set(index, res);
 				}
 			}
 		}
@@ -798,22 +875,22 @@ void cMap::placeRessources (const std::vector<cPosition>& landingPositions, cons
 
 /* static */ int cMap::getMapLevel (const cBuilding& building)
 {
-	const sUnitData& data = building.data;
+	const cStaticUnitData& data = building.getStaticUnitData();
 
-	if (data.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA) return 9; // seamine
-	if (data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA) return 7; // bridge
-	if (data.surfacePosition == sUnitData::SURFACE_POS_BASE && data.canBeOverbuild) return 6; // platform
-	if (data.surfacePosition == sUnitData::SURFACE_POS_BASE) return 5; // road
+	if (data.surfacePosition == cStaticUnitData::SURFACE_POS_BENEATH_SEA) return 9; // seamine
+	if (data.surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA) return 7; // bridge
+	if (data.surfacePosition == cStaticUnitData::SURFACE_POS_BASE && data.canBeOverbuild) return 6; // platform
+	if (data.surfacePosition == cStaticUnitData::SURFACE_POS_BASE) return 5; // road
 	if (!building.getOwner()) return 4;  // rubble
-	if (data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE) return 3; // landmine
+	if (data.surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE) return 3; // landmine
 
 	return 1; // other buildings
 }
 
 /* static */ int cMap::getMapLevel (const cVehicle& vehicle)
 {
-	if (vehicle.data.factorSea > 0 && vehicle.data.factorGround == 0) return 8; // ships
-	if (vehicle.data.factorAir > 0) return 0; // planes
+	if (vehicle.getStaticUnitData().factorSea > 0 && vehicle.getStaticUnitData().factorGround == 0) return 8; // ships
+	if (vehicle.getStaticUnitData().factorAir > 0) return 0; // planes
 
 	return 2; // other vehicles
 }
@@ -821,12 +898,12 @@ void cMap::placeRessources (const std::vector<cPosition>& landingPositions, cons
 void cMap::addBuilding (cBuilding& building, const cPosition& position)
 {
 	//big base building are not implemented
-	if (building.data.surfacePosition != sUnitData::SURFACE_POS_GROUND && building.data.isBig && building.getOwner()) return;
+	if (building.getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_GROUND && building.getIsBig() && building.getOwner()) return;
 
 	const int mapLevel = cMap::getMapLevel (building);
 	size_t i = 0;
 
-	if (building.data.isBig)
+	if (building.getIsBig())
 	{
 		auto& field = getField (position);
 		i = 0;
@@ -861,7 +938,7 @@ void cMap::addBuilding (cBuilding& building, const cPosition& position)
 void cMap::addVehicle (cVehicle& vehicle, const cPosition& position)
 {
 	auto& field = getField (position);
-	if (vehicle.data.factorAir > 0)
+	if (vehicle.getStaticUnitData().factorAir > 0)
 	{
 		field.addPlane (vehicle, 0);
 	}
@@ -876,7 +953,7 @@ void cMap::deleteBuilding (const cBuilding& building)
 {
 	getField (building.getPosition()).removeBuilding (building);
 
-	if (building.data.isBig)
+	if (building.getIsBig())
 	{
 		getField (building.getPosition() + cPosition (1, 0)).removeBuilding (building);
 		getField (building.getPosition() + cPosition (1, 1)).removeBuilding (building);
@@ -887,7 +964,7 @@ void cMap::deleteBuilding (const cBuilding& building)
 
 void cMap::deleteVehicle (const cVehicle& vehicle)
 {
-	if (vehicle.data.factorAir > 0)
+	if (vehicle.getStaticUnitData().factorAir > 0)
 	{
 		getField (vehicle.getPosition()).removePlane (vehicle);
 	}
@@ -895,7 +972,7 @@ void cMap::deleteVehicle (const cVehicle& vehicle)
 	{
 		getField (vehicle.getPosition()).removeVehicle (vehicle);
 
-		if (vehicle.data.isBig)
+		if (vehicle.getIsBig())
 		{
 			getField (vehicle.getPosition() + cPosition (1, 0)).removeVehicle (vehicle);
 			getField (vehicle.getPosition() + cPosition (1, 1)).removeVehicle (vehicle);
@@ -924,7 +1001,7 @@ void cMap::moveVehicle (cVehicle& vehicle, const cPosition& position, int height
 
 	vehicle.setPosition (position);
 
-	if (vehicle.data.factorAir > 0)
+	if (vehicle.getStaticUnitData().factorAir > 0)
 	{
 		getField (oldPosition).removePlane (vehicle);
 		height = std::min<int> (getField (position).getPlanes().size(), height);
@@ -935,13 +1012,13 @@ void cMap::moveVehicle (cVehicle& vehicle, const cPosition& position, int height
 		getField (oldPosition).removeVehicle (vehicle);
 
 		//check, whether the vehicle is centered on 4 map fields
-		if (vehicle.data.isBig)
+		if (vehicle.getIsBig())
 		{
 			getField (oldPosition + cPosition (1, 0)).removeVehicle (vehicle);
 			getField (oldPosition + cPosition (1, 1)).removeVehicle (vehicle);
 			getField (oldPosition + cPosition (0, 1)).removeVehicle (vehicle);
 
-			vehicle.data.isBig = false;
+			vehicle.setIsBig(false);
 		}
 
 		getField (position).addVehicle (vehicle, 0);
@@ -951,7 +1028,7 @@ void cMap::moveVehicle (cVehicle& vehicle, const cPosition& position, int height
 
 void cMap::moveVehicleBig (cVehicle& vehicle, const cPosition& position)
 {
-	if (vehicle.data.isBig)
+	if (vehicle.getIsBig())
 	{
 		Log.write ("Calling moveVehicleBig on a big vehicle", cLog::eLOG_TYPE_NET_ERROR);
 		//calling this function twice is always an error.
@@ -970,17 +1047,17 @@ void cMap::moveVehicleBig (cVehicle& vehicle, const cPosition& position)
 	getField (position + cPosition (1, 1)).addVehicle (vehicle, 0);
 	getField (position + cPosition (0, 1)).addVehicle (vehicle, 0);
 
-	vehicle.data.isBig = true;
+	vehicle.setIsBig(true);
 
 	movedVehicle (vehicle, oldPosition);
 }
 
 bool cMap::possiblePlace (const cVehicle& vehicle, const cPosition& position, bool checkPlayer) const
 {
-	return possiblePlaceVehicle (vehicle.data, position, vehicle.getOwner(), checkPlayer);
+	return possiblePlaceVehicle (vehicle.getStaticUnitData(), position, vehicle.getOwner(), checkPlayer);
 }
 
-bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool checkPlayer) const
+bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool checkPlayer) const
 {
 	if (isValidPosition (position) == false) return false;
 
@@ -989,7 +1066,7 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& 
 	std::vector<cBuilding*>::const_iterator b_end = buildings.end();
 
 	//search first building, that is not a connector
-	if (b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
+	if (b_it != b_end && (*b_it)->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE) ++b_it;
 
 	if (vehicleData.factorAir > 0)
 	{
@@ -1008,13 +1085,13 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& 
 
 			//vehicle can drive on water, if there is a bridge, platform or road
 			if (b_it == b_end) return false;
-			if ((*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_SEA &&
-				(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_BASE &&
-				(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE) return false;
+			if ((*b_it)->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE_SEA &&
+				(*b_it)->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_BASE &&
+				(*b_it)->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE_BASE) return false;
 		}
 		//check for enemy mines
 		if (player && b_it != b_end && (*b_it)->getOwner() != player &&
-			(*b_it)->data.explodesOnContact &&
+			(*b_it)->getStaticUnitData().explodesOnContact &&
 			((*b_it)->isDetectedByPlayer (player) || checkPlayer))
 			return false;
 
@@ -1025,10 +1102,10 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& 
 		{
 			// only base buildings and rubble is allowed on the same field with a vehicle
 			// (connectors have been skiped, so doesn't matter here)
-			if ((*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_SEA &&
-				(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_BASE &&
-				(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE &&
-				(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH_SEA &&
+			if ((*b_it)->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE_SEA &&
+				(*b_it)->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_BASE &&
+				(*b_it)->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE_BASE &&
+				(*b_it)->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_BENEATH_SEA &&
 				(*b_it)->getOwner()) return false;
 		}
 	}
@@ -1041,7 +1118,7 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& 
 
 		//check for enemy mines
 		if (player && b_it != b_end && (*b_it)->getOwner() != player &&
-			(*b_it)->data.explodesOnContact && (*b_it)->isDetectedByPlayer (player))
+			(*b_it)->getStaticUnitData().explodesOnContact && (*b_it)->isDetectedByPlayer(player))
 			return false;
 
 		if (checkPlayer && player && !player->canSeeAt (position)) return true;
@@ -1050,14 +1127,14 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& 
 
 		//only bridge and sea mine are allowed on the same field with a ship (connectors have been skiped, so doesn't matter here)
 		if (b_it != b_end &&
-			(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_SEA &&
-			(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH_SEA)
+			(*b_it)->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE_SEA &&
+			(*b_it)->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_BENEATH_SEA)
 		{
 			// if the building is a landmine, we have to check whether it's on a bridge or not
-			if ((*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)
+			if ((*b_it)->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE)
 			{
 				++b_it;
-				if (b_it == b_end || (*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_SEA) return false;
+				if (b_it == b_end || (*b_it)->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE_SEA) return false;
 			}
 			else return false;
 		}
@@ -1065,14 +1142,7 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& 
 	return true;
 }
 
-// can't place it too near to the map border
-bool cMap::possiblePlaceBuildingWithMargin (const sUnitData& buildingData, const cPosition& position, int margin, const cVehicle* vehicle) const
-{
-	if (position.x() < margin || position.x() >= getSize().x() - margin || position.y() < margin || position.y() >= getSize().y() - margin) return false;
-	return possiblePlaceBuilding (buildingData, position, vehicle);
-}
-
-bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, const cPosition& position, const cVehicle* vehicle) const
+bool cMap::possiblePlaceBuilding (const cStaticUnitData& buildingData, const cPosition& position, const cVehicle* vehicle) const
 {
 	if (!isValidPosition (position)) return false;
 	if (isBlocked (position)) return false;
@@ -1084,7 +1154,7 @@ bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, const cPosition
 	const std::vector<cBuilding*>& buildings = field.getBuildings();
 	for (const cBuilding* building : buildings)
 	{
-		if (building->data.ID == buildingData.ID)
+		if (building->getStaticUnitData().ID == buildingData.ID)
 		{
 			return false;
 		}
@@ -1097,27 +1167,27 @@ bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, const cPosition
 
 	for (const cBuilding* building : buildings)
 	{
-		if (buildingData.surfacePosition == building->data.surfacePosition &&
-			building->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO) return false;
-		switch (building->data.surfacePosition)
+		if (buildingData.surfacePosition == building->getStaticUnitData().surfacePosition &&
+			building->getStaticUnitData().canBeOverbuild == cStaticUnitData::OVERBUILD_TYPE_NO) return false;
+		switch (building->getStaticUnitData().surfacePosition)
 		{
-			case sUnitData::SURFACE_POS_GROUND:
-			case sUnitData::SURFACE_POS_ABOVE_SEA: // bridge
-				if (buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE &&
-					buildingData.surfacePosition != sUnitData::SURFACE_POS_BASE && // mine can be placed on bridge
-					buildingData.surfacePosition != sUnitData::SURFACE_POS_BENEATH_SEA && // seamine can be placed under bridge
-					building->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO) return false;
+			case cStaticUnitData::SURFACE_POS_GROUND:
+			case cStaticUnitData::SURFACE_POS_ABOVE_SEA: // bridge
+				if (buildingData.surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE &&
+					buildingData.surfacePosition != cStaticUnitData::SURFACE_POS_BASE && // mine can be placed on bridge
+					buildingData.surfacePosition != cStaticUnitData::SURFACE_POS_BENEATH_SEA && // seamine can be placed under bridge
+					building->getStaticUnitData().canBeOverbuild == cStaticUnitData::OVERBUILD_TYPE_NO) return false;
 				break;
-			case sUnitData::SURFACE_POS_BENEATH_SEA: // seamine
-			case sUnitData::SURFACE_POS_ABOVE_BASE:  // landmine
+			case cStaticUnitData::SURFACE_POS_BENEATH_SEA: // seamine
+			case cStaticUnitData::SURFACE_POS_ABOVE_BASE:  // landmine
 				// mine must be removed first
-				if (buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE) return false;
+				if (buildingData.surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE) return false;
 				break;
-			case sUnitData::SURFACE_POS_BASE: // platform, road
+			case cStaticUnitData::SURFACE_POS_BASE: // platform, road
 				water = coast = false;
 				ground = true;
 				break;
-			case sUnitData::SURFACE_POS_ABOVE: // connector
+			case cStaticUnitData::SURFACE_POS_ABOVE: // connector
 				break;
 		}
 	}
@@ -1127,8 +1197,8 @@ bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, const cPosition
 
 	//can not build on rubble
 	if (field.getRubble() &&
-		buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE &&
-		buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE) return false;
+		buildingData.surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE &&
+		buildingData.surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE_BASE) return false;
 
 	if (field.getVehicles().empty() == false)
 	{
@@ -1143,6 +1213,15 @@ void cMap::reset()
 	{
 		fields[i].removeAll();
 	}
+}
+
+uint32_t cMap::getChecksum(uint32_t crc) const
+{
+	crc = staticMap->getChecksum(crc);
+	//cMapField* fields;
+	crc = calcCheckSum(Resources, crc);
+
+	return crc;
 }
 
 /*static*/ int cMap::getResourceDensityFactor (eGameSettingsResourceDensity density)
@@ -1177,4 +1256,12 @@ void cMap::reset()
 	}
 	assert (false);
 	return 0;
+}
+
+uint32_t sResources::getChecksum(uint32_t crc) const
+{
+	crc = calcCheckSum(value, crc);
+	crc = calcCheckSum(typ, crc);
+
+	return crc;
 }

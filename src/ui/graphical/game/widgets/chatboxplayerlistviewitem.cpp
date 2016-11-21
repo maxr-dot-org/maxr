@@ -54,7 +54,7 @@ const cPlayer& cChatBoxPlayerListViewItem::getPlayer() const
 //------------------------------------------------------------------------------
 int cChatBoxPlayerListViewItem::getPlayerNumber() const
 {
-	return player->getNr();
+	return player->getId();
 }
 
 //------------------------------------------------------------------------------

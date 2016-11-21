@@ -53,8 +53,8 @@ class cTurnClock;
 class cSavedReport;
 class cBuildListItem;
 class cWindowUpgradesFilterState;
-
-class cPosition;
+class cUnitsData;
+class cServer2;
 
 class cChatCommandExecutor;
 
@@ -69,11 +69,14 @@ public:
 	void start();
 
 	void addPlayerGameGuiState (const cPlayer& player, cGameGuiState playerGameGuiState);
+	
+	void addSavedReport(std::unique_ptr<cSavedReport> savedReport, int playerNr);
+	const std::vector<std::unique_ptr<cSavedReport>>& getSavedReports(int playerNr) const;
 
 	void setSingleClient (std::shared_ptr<cClient> clients);
 	void setClients (std::vector<std::shared_ptr<cClient>> clients, int activePlayerNumber);
+	void setServer(cServer2* server);
 
-	mutable cSignal<void (int saveNumber, const std::string& name)> triggeredSave;
 	mutable cSignal<void ()> terminated;
 private:
 	cSignalConnectionManager signalConnectionManager;
@@ -90,10 +93,12 @@ private:
 	std::shared_ptr<cGameGui> gameGui;
 	std::shared_ptr<cClient> activeClient;
 	std::vector<std::shared_ptr<cClient>> clients;
+	cServer2* server;
 
 	std::vector<std::unique_ptr<cChatCommandExecutor>> chatCommands;
 
 	std::map<int, cGameGuiState> playerGameGuiStates;
+	std::map<int, std::shared_ptr<std::vector<std::unique_ptr<cSavedReport>>>> playerReports;
 
 	std::pair<bool, cPosition> savedReportPosition;
 	std::shared_ptr<cWindowUpgradesFilterState> upgradesFilterState;
@@ -107,6 +112,7 @@ private:
 	void setActiveClient (std::shared_ptr<cClient> client);
 
 	void connectClient (cClient& client);
+	void connectReportSources(cClient& client);
 
 	void showNextPlayerDialog();
 
@@ -126,7 +132,7 @@ private:
 
 	void handleChatCommand (const std::string& command);
 
-	void handleReport (const cSavedReport& report);
+	void handleReportForActivePlayer (const cSavedReport& report);
 
 	void selectNextUnit();
 	void selectPreviousUnit();
@@ -144,6 +150,7 @@ private:
 	std::shared_ptr<const cGameSettings> getGameSettings() const;
 	std::shared_ptr<const cCasualtiesTracker> getCasualtiesTracker() const;
 	std::shared_ptr<const cMap> getDynamicMap() const;
+	std::shared_ptr<const cUnitsData> getUnitsData() const;
 
 	mutable cSignal<void (const cUnit&, const cUnit&, int, int)> transferTriggered;
 	mutable cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingTriggered;

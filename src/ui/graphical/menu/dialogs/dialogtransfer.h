@@ -38,13 +38,13 @@ public:
 
 	int getTransferValue() const;
 
-	sUnitData::eStorageResType getResourceType() const;
+	cStaticUnitData::eStorageResType getResourceType() const;
 
 	cSignal<void ()> done;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	sUnitData::eStorageResType getCommonResourceType (const cUnit& sourceUnit, const cUnit& destinationUnit) const;
+	cStaticUnitData::eStorageResType getCommonResourceType (const cUnit& sourceUnit, const cUnit& destinationUnit) const;
 	eResourceBarType getResourceBarType (const cUnit& sourceUnit, const cUnit& destinationUnit) const;
 
 	void initUnitImage (cImage& image, const cUnit& unit);
@@ -59,7 +59,7 @@ private:
 	cLabel* sourceUnitCargoLabel;
 	cLabel* destinationUnitCargoLabel;
 
-	const sUnitData::eStorageResType resourceType;
+	const cStaticUnitData::eStorageResType resourceType;
 
 	int sourceCargo;
 	int sourceMaxCargo;

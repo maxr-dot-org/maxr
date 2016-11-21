@@ -27,12 +27,14 @@
 #include "game/logic/jobs.h"
 #include "game/logic/gametimer.h"
 #include "main.h"
-#include "network.h"
+#include "connectionmanager.h"
 #include "game/data/units/unit.h" // sUnitLess
 #include "utility/thread/concurrentqueue.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/flatset.h"
+#include "netmessage2.h"
+#include "game/data/model.h"
 
 class cBuilding;
 class cCasualtiesTracker;
@@ -45,9 +47,7 @@ class cJob;
 class cMap;
 class cNetMessage;
 class cPlayer;
-class cServer;
 class cStaticMap;
-class cTCP;
 class cPlayerBasicData;
 class cGameSettings;
 class cPosition;
@@ -55,30 +55,32 @@ class cTurnClock;
 class cTurnTimeClock;
 class cTurnTimeDeadline;
 class cGameGuiState;
-struct sSubBase;
+class cSubBase;
+class cSavegame;
 
 Uint32 TimerCallback (Uint32 interval, void* arg);
 
-/**
-* Client class which handles the in and output for a player
-*@author alzi alias DoctorDeath
-*/
+
 class cClient : public INetMessageReceiver
 {
 	friend class cDebugOutputWidget;
 	friend class cPlayer;
 public:
-	cClient (cServer* server, std::shared_ptr<cTCP> network);
+	cClient (std::shared_ptr<cConnectionManager> connectionManager, int gameId);
 	~cClient();
 
-	void setMap (std::shared_ptr<cStaticMap> staticMap);
-	void setPlayers (const std::vector<cPlayerBasicData>& splayers, size_t activePlayerIndex);
+	const cModel& getModel() const { return model; };
 
-	// Return local server if any.
-	// TODO: should be const cServer*
-	cServer* getServer() const { return server; }
-	virtual void pushEvent (std::unique_ptr<cNetMessage> message) MAXR_OVERRIDE_FUNCTION;
-	virtual std::unique_ptr<cNetMessage> popEvent() MAXR_OVERRIDE_FUNCTION;
+	const cPlayer& getActivePlayer() const { return *activePlayer; }
+	void setActivePlayer(cPlayer* player) { activePlayer = player; }
+
+	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData);
+	void setGameSettings(const cGameSettings& gameSettings);
+	void setMap(std::shared_ptr<cStaticMap> staticMap);
+	void setPlayers(const std::vector<cPlayerBasicData>& splayers, size_t activePlayerIndex);
+
+	unsigned int getNetMessageQueueSize() const { return static_cast<unsigned int>(eventQueue.safe_size()); };
+	virtual void pushMessage(std::unique_ptr<cNetMessage2> message) MAXR_OVERRIDE_FUNCTION;
 
 	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);
 	void disableFreezeMode (eFreezeMode mode);
@@ -117,32 +119,18 @@ public:
 	void addActiveMoveJob (cClientMoveJob& MJob);
 
 	void addAutoMoveJob (std::weak_ptr<cAutoMJob> autoMoveJob);
-	/**
-	* returns the player with the given number
-	*@author alzi alias DoctorDeath
-	*@param iNum The number of the player.
-	*@return The wanted player.
-	*/
-	cPlayer* getPlayerFromNumber (int iNum);
-	/**
-	* returns the player identified by playerID
-	*@author eiko
-	*@param playerID Can be a representation of the player number or player name
-	*/
-	cPlayer* getPlayerFromString (const std::string& playerID);
-	/**
-	* deletes the unit
-	*@author alzi alias DoctorDeath
-	*@param Building Building which should be deleted.
-	*@param Vehicle Vehicle which should be deleted.
-	*/
-	void deleteUnit (cUnit* unit);
+
 	/**
 	* sends the netMessage to the server.
 	*@author Eiko
 	*@param message The netMessage to be send.
 	*/
 	void sendNetMessage (std::unique_ptr<cNetMessage> message) const;
+	/**
+	* sends a serialized copy of the netmessage to the server.
+	*/
+	void sendNetMessage(cNetMessage2& message) const;
+
 	/**
 	* gets the vehicle with the ID
 	*@author alzi alias DoctorDeath
@@ -179,27 +167,23 @@ public:
 
 	void deletePlayer (cPlayer& player);
 
-	void handleChatMessage (const std::string& message);
-
 	const std::shared_ptr<cCasualtiesTracker>& getCasualtiesTracker() { return casualtiesTracker; }
 	std::shared_ptr<const cCasualtiesTracker> getCasualtiesTracker() const { return casualtiesTracker; }
-
-	std::shared_ptr<const cMap> getMap() const { return Map; }
-	const std::shared_ptr<cMap>& getMap() { return Map; }
 
 	std::shared_ptr<const cTurnClock> getTurnClock() const { return turnClock; }
 	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock() const { return turnTimeClock; }
 
-	const std::vector<std::shared_ptr<cPlayer>>& getPlayerList() const { return playerList; }
-
-	const cPlayer& getActivePlayer() const { return *ActivePlayer; }
-	cPlayer& getActivePlayer() { return *ActivePlayer; }
-
-	void setGameSettings (const cGameSettings& gameSettings_);
-	std::shared_ptr<const cGameSettings> getGameSettings() const { return gameSettings; }
 
 	const std::shared_ptr<cGameTimerClient>& getGameTimer() const { return gameTimer; }
 
+	void loadModel(int saveGameNumber);
+
+
+	mutable cSignal<void (int fromPlayerNr, const std::string& message, int toPlayerNr)> chatMessageReceived;
+	mutable cSignal<void (int savingID)> guiSaveInfoRequested;
+	mutable cSignal<void(const cNetMessageGUISaveInfo& guiInfo)> guiSaveInfoReceived;
+
+	//TODO: move signals to model
 	mutable cSignal<void (int, int)> playerFinishedTurn;
 
 	mutable cSignal<void (eFreezeMode)> freezeModeChanged;
@@ -215,18 +199,16 @@ public:
 	mutable cSignal<void (const cUnit&)> unitRepaired;
 
 	mutable cSignal<void (const cUnit&)> unitDisabled;
-	mutable cSignal<void (const cUnit&)> unitStolen;
+	mutable cSignal<void (const cUnit&)> unitStolen; //TODO: was in addUnit()
 
-	mutable cSignal<void (const cUnit&)> unitDetected;
+	mutable cSignal<void (const cUnit&)> unitDetected; //TODO: was in addUnit()
 
 	mutable cSignal<void (const cVehicle&)> moveJobBlocked;
 
 	mutable cSignal<void (const std::shared_ptr<cFx>&, bool)> addedEffect;
 
-	mutable cSignal<void (int)> additionalSaveInfoRequested;
-	mutable cSignal<void (const cGameGuiState&)> gameGuiStateReceived;
+	void run();
 private:
-	void initPlayersWithMap();
 
 	/**
 	* adds the unit to the map and player.
@@ -252,7 +234,7 @@ private:
 	*@author alzi alias DoctorDeath
 	*@param iID Id of the subbase
 	*/
-	sSubBase* getSubBaseFromID (int iID);
+	cSubBase* getSubBaseFromID (int iID);
 
 	void runJobs();
 
@@ -271,16 +253,12 @@ private:
 	void HandleNetMessage_GAME_EV_TURN_END_DEADLINE_START_TIME (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_DO_START_WORK (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_DO_STOP_WORK (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_SUBBASE_VALUES (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_BUILDLIST (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_MINE_PRODUCE_VALUES (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_MARK_LOG (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message);
@@ -293,7 +271,6 @@ private:
 	void HandleNetMessage_GAME_EV_UNFREEZE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_TURN (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_HUD_SETTINGS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_STORE_UNIT (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message);
@@ -309,63 +286,53 @@ private:
 	void HandleNetMessage_GAME_EV_COMMANDO_ANSWER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_REQ_SAVE_INFO (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SAVED_REPORT (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_CASUALTIES_REPORT (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SCORE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_NUM_ECOS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UNIT_SCORE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_GAME_SETTINGS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SELFDESTROY (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message);
-	
 private:
+	cModel model;
+
 	cSignalConnectionManager signalConnectionManager;
 
 	cServer* server;
-
-	std::shared_ptr<cTCP> network;
+	std::shared_ptr<cConnectionManager> connectionManager;
 
 	cConcurrentQueue<std::unique_ptr<cNetMessage>> eventQueue;
+	cConcurrentQueue<std::unique_ptr<cNetMessage2>> eventQueue2;
 
 	std::shared_ptr<cGameTimerClient> gameTimer;
 
-	/** the map */
-	std::shared_ptr<cMap> Map;
-	/** List with all players */
-	std::vector<std::shared_ptr<cPlayer>> playerList;
 	/** the active Player */
-	cPlayer* ActivePlayer;
+	cPlayer* activePlayer;
 
-	cJobContainer helperJobs;
+	cJobContainer helperJobs; //TODO: move to cModel
 
 	/** list with buildings without owner, e. g. rubble fields */
-	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> neutralBuildings;
+	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> neutralBuildings; //TODO: move to cModel
 	/** true if the player has been defeated */
-	bool bDefeated;
+	bool bDefeated;                                          //TODO: move to cPlayer
 
-	std::shared_ptr<cTurnClock> turnClock;
-	std::shared_ptr<cTurnTimeClock> turnTimeClock;
-	std::shared_ptr<cTurnTimeDeadline> turnLimitDeadline;
-	std::shared_ptr<cTurnTimeDeadline> turnEndDeadline;
+	std::shared_ptr<cTurnClock> turnClock;                   //TODO: move to cModel
+	std::shared_ptr<cTurnTimeClock> turnTimeClock;           //TODO: move to cModel
+	std::shared_ptr<cTurnTimeDeadline> turnLimitDeadline;    //TODO: move to cModel
+	std::shared_ptr<cTurnTimeDeadline> turnEndDeadline;      //TODO: move to cModel
 
-	/** this client's copy of the gameSettings **/
-	std::shared_ptr<cGameSettings> gameSettings;
-
-	std::shared_ptr<cCasualtiesTracker> casualtiesTracker;
+	std::shared_ptr<cCasualtiesTracker> casualtiesTracker; //TODO: move to cModel
 
 	sFreezeModes freezeModes;
 
 	/** lists with all FX-Animation */
-	std::unique_ptr<cFxContainer> effectsList;
+	std::unique_ptr<cFxContainer> effectsList; //TODO: move to cModel
 
-	std::list<std::weak_ptr<cAutoMJob>> autoMoveJobs;
+	std::list<std::weak_ptr<cAutoMJob>> autoMoveJobs; //TODO: move to cModel
 public:
 	/** list with the running clientAttackJobs */
-	std::vector<cAttackJob*> attackJobs;
+	std::vector<cAttackJob*> attackJobs; //TODO: move to cModel
 	/** List with all active movejobs */
-	std::vector<cClientMoveJob*> ActiveMJobs;
-
+	std::vector<cClientMoveJob*> ActiveMJobs; //TODO: move to cModel
 };
 
 #endif // game_logic_clientH

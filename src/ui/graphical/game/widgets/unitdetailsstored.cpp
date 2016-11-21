@@ -95,7 +95,7 @@ void cUnitDetailsStored::reset()
 
 	drawRow (0, eUnitDataSymbolType::Hits, data.getHitpoints(), data.getHitpointsMax(), lngPack.i18n ("Text~Others~Hitpoints_7"));
 
-	if (data.canAttack) drawRow (1, eUnitDataSymbolType::Ammo, data.getAmmo(), data.getAmmoMax(), lngPack.i18n ("Text~Others~Ammo_7"));
+	if (unit->getStaticUnitData().canAttack) drawRow (1, eUnitDataSymbolType::Ammo, data.getAmmo(), data.getAmmoMax(), lngPack.i18n ("Text~Others~Ammo_7"));
 }
 
 //------------------------------------------------------------------------------

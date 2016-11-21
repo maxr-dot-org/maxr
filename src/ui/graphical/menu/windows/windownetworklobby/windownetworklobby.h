@@ -35,7 +35,6 @@ class cLobbyPlayerListViewItem;
 class cPlayerBasicData;
 class cStaticMap;
 class cGameSettings;
-class cTCP;
 
 class cWindowNetworkLobby : public cWindow
 {
@@ -64,6 +63,7 @@ public:
 	const std::shared_ptr<cPlayerBasicData>& getLocalPlayer() const;
 	std::vector<std::shared_ptr<cPlayerBasicData>> getPlayers() const;
 	std::vector<cPlayerBasicData> getPlayersNotShared() const;
+	std::shared_ptr<cPlayerBasicData> getPlayer(int i) const;
 
 	unsigned short getPort() const;
 	const std::string& getIp() const;
@@ -72,6 +72,10 @@ public:
 
 	void disablePortEdit();
 	void disableIpEdit();
+	void enablePortEdit();
+	void enableIpEdit();
+
+	void updatePlayerListView();
 
 	cSignal<void ()> backClicked;
 	cSignal<void ()> wantLocalPlayerReadyChange;

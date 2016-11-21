@@ -24,6 +24,7 @@
 #include "game/data/player/playercolor.h"
 #include "utility/random.h"
 #include "utility/comparison.h"
+#include "utility/crc.h"
 
 const cRgbColor cPlayerColor::predefinedColors[predefinedColorsCount] =
 {
@@ -112,6 +113,11 @@ const cRgbColor& cPlayerColor::getColor() const
 SDL_Surface* cPlayerColor::getTexture() const
 {
 	return texture.get();
+}
+
+uint32_t cPlayerColor::getChecksum(uint32_t crc) const
+{
+	return calcCheckSum(color, crc);
 }
 
 //------------------------------------------------------------------------------

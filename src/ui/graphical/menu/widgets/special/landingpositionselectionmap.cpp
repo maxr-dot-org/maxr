@@ -24,11 +24,17 @@
 #include "video.h"
 #include "input/mouse/mouse.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
+#include "game/data/units/landingunit.h"
+#include "game/data/units/unitdata.h"
+#include "game/logic/action/actioninitnewgame.h"
 
 //------------------------------------------------------------------------------
-cLandingPositionSelectionMap::cLandingPositionSelectionMap (const cBox<cPosition>& area, std::shared_ptr<cStaticMap> map_) :
+cLandingPositionSelectionMap::cLandingPositionSelectionMap(const cBox<cPosition>& area, std::shared_ptr<cStaticMap> map_, bool fixedBridgeHead, const std::vector<sLandingUnit>& landingUnits, std::shared_ptr<const cUnitsData> unitsData) :
 	cClickableWidget (area),
-	map (std::move (map_))
+	map (std::move (map_)),
+	fixedBridgeHead(fixedBridgeHead),
+	landingUnits(landingUnits),
+	unitsData(unitsData)
 {
 	mapSurface = map->createBigSurface (getSize().x(), getSize().y());
 }
@@ -48,12 +54,11 @@ void cLandingPositionSelectionMap::draw (SDL_Surface& destination, const cBox<cP
 //------------------------------------------------------------------------------
 bool cLandingPositionSelectionMap::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
-	cPosition tilePosition;
-	auto mapTile = getMapTile (mouse.getPosition(), tilePosition);
+	cPosition mapPosition = (mouse.getPosition() - getPosition()) * map->getSize() / getSize();
 
-	if (mapTile && isAllowedTerrain (*mapTile))
+	if (isValidLandingLocation(mapPosition))
 	{
-		clickedTile (tilePosition);
+		clickedTile (mapPosition);
 		return true;
 	}
 	return false;
@@ -64,31 +69,18 @@ bool cLandingPositionSelectionMap::handleMouseMoved (cApplication& application, 
 {
 	cClickableWidget::handleMouseMoved (application, mouse, offset);
 
-	cPosition tilePosition;
-	auto mapTile = getMapTile (mouse.getPosition(), tilePosition);
+	cPosition mapPosition = (mouse.getPosition() - getPosition()) * map->getSize() / getSize();
 
-	if (mapTile)
-	{
-		if (isAllowedTerrain (*mapTile)) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Move));
-		else mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::No));
-	}
-	else
-	{
-		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
-	}
+	if (isValidLandingLocation(mapPosition))
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Move));
+	else 
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::No));
+	
 	return true;
 }
 
 //------------------------------------------------------------------------------
-const sTerrain* cLandingPositionSelectionMap::getMapTile (const cPosition& position, cPosition& tilePosition)
+bool cLandingPositionSelectionMap::isValidLandingLocation(const cPosition& position)
 {
-	tilePosition = (position - getPosition()) * map->getSize() / getSize();
-
-	return &map->getTerrain (tilePosition);
-}
-
-//------------------------------------------------------------------------------
-bool cLandingPositionSelectionMap::isAllowedTerrain (const sTerrain& terrain)
-{
-	return !terrain.water && !terrain.coast && !terrain.blocked;
+	return cActionInitNewGame::isValidLandingPosition(position, map, fixedBridgeHead, landingUnits, unitsData);
 }

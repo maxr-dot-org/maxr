@@ -22,17 +22,15 @@
 
 #include "ui/graphical/menu/widgets/special/unitlistviewitem.h"
 
-struct sUnitData;
-
 class cUnitListViewItemCargo : public cUnitListViewItem
 {
 public:
-	cUnitListViewItemCargo (unsigned int width, const sID& unitId, const cPlayer& owner);
+	cUnitListViewItemCargo (unsigned int width, const sID& unitId, const cPlayer& owner, const cUnitsData& unitsData);
 
 	int getCargo() const;
 	void setCargo (int cargo);
 private:
-	const sUnitData* unitData;
+	const cStaticUnitData* unitData;
 	int cargo;
 
 	cLabel* cargoLabel;

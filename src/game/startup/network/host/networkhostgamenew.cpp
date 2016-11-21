@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include "game/startup/network/host/networkhostgamenew.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 #include "ui/graphical/application.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
@@ -39,13 +39,13 @@ void cNetworkHostGameNew::start (cApplication& application)
 {
 	assert (gameSettings != nullptr);
 
-	server = std::make_unique<cServer> (network);
-	localClient = std::make_shared<cClient> (server.get(), nullptr);
+	//server = std::make_unique<cServer> (network);
+	//localClient = std::make_shared<cClient> (server.get(), nullptr); //TODO: new server
 
-	for (size_t i = 0; i < players.size(); ++i)
+	/*for (size_t i = 0; i < players.size(); ++i)
 	{
 		server->addPlayer (std::make_unique<cPlayer> (players[i]));
-	}
+	}*/
 	localClient->setPlayers (players, localPlayerIndex);
 
 	if (gameSettings->getGameType() == eGameSettingsGameType::Turns)
@@ -54,17 +54,17 @@ void cNetworkHostGameNew::start (cApplication& application)
 	}
 
 	server->setMap (staticMap);
-	localClient->setMap (staticMap);
+//	localClient->setMap (staticMap);
 
 	server->setGameSettings (*gameSettings);
 	localClient->setGameSettings (*gameSettings);
 
 	auto& clientPlayer = localClient->getActivePlayer();
-	if (localPlayerClan != -1) clientPlayer.setClan (localPlayerClan);
+//	if (localPlayerClan != -1) clientPlayer.setClan (localPlayerClan);
 
 	server->start();
 
-	applyUnitUpgrades (clientPlayer, localPlayerUnitUpgrades);
+//	applyUnitUpgrades (clientPlayer, localPlayerUnitUpgrades);
 
 	sendClan (*localClient);
 	sendLandingUnits (*localClient, localPlayerLandingUnits);
@@ -90,9 +90,6 @@ void cNetworkHostGameNew::start (cApplication& application)
 	gameGuiController->addPlayerGameGuiState (clientPlayer, std::move (playerGameGuiState));
 
 	gameGuiController->start();
-
-	using namespace std::placeholders;
-	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cNetworkHostGameNew::save, this, _1, _2));
 
 	terminate = false;
 
@@ -168,6 +165,12 @@ const std::vector<cPlayerBasicData>& cNetworkHostGameNew::getPlayers()
 const cPlayerBasicData& cNetworkHostGameNew::getLocalPlayer()
 {
 	return players[localPlayerIndex];
+}
+
+//------------------------------------------------------------------------------
+const std::vector<sLandingUnit>& cNetworkHostGameNew::getLandingUnits()
+{
+	return localPlayerLandingUnits;
 }
 
 //------------------------------------------------------------------------------

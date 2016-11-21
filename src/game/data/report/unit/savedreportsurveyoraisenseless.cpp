@@ -25,28 +25,6 @@ cSavedReportSurveyorAiSenseless::cSavedReportSurveyorAiSenseless (const cUnit& u
 {}
 
 //------------------------------------------------------------------------------
-cSavedReportSurveyorAiSenseless::cSavedReportSurveyorAiSenseless (cNetMessage& message) :
-	cSavedReportUnit (message)
-{}
-
-//------------------------------------------------------------------------------
-cSavedReportSurveyorAiSenseless::cSavedReportSurveyorAiSenseless (const tinyxml2::XMLElement& element) :
-	cSavedReportUnit (element)
-{}
-
-//------------------------------------------------------------------------------
-void cSavedReportSurveyorAiSenseless::pushInto (cNetMessage& message) const
-{
-	cSavedReportUnit::pushInto (message);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportSurveyorAiSenseless::pushInto (tinyxml2::XMLElement& element) const
-{
-	cSavedReportUnit::pushInto (element);
-}
-
-//------------------------------------------------------------------------------
 eSavedReportType cSavedReportSurveyorAiSenseless::getType() const
 {
 	return eSavedReportType::SurveyorAiSenseless;

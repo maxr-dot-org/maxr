@@ -54,6 +54,14 @@ const std::shared_ptr<cPlayerBasicData>& cLobbyPlayerListViewItem::getPlayer() c
 }
 
 //------------------------------------------------------------------------------
+void cLobbyPlayerListViewItem::update()
+{
+	updatePlayerColor();
+	updatePlayerName();
+	updatePlayerReady();
+}
+
+//------------------------------------------------------------------------------
 void cLobbyPlayerListViewItem::updatePlayerName()
 {
 	nameLabel->setText (player->getName());

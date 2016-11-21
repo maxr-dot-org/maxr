@@ -29,6 +29,7 @@ cUnitDetails::cUnitDetails (const cPosition& position) :
 	playerOriginalData (nullptr),
 	playerCurrentData (nullptr),
 	unitObjectCurrentData (nullptr),
+	staticUnitData(nullptr),
 	upgrades (nullptr)
 {
 	for (size_t i = 0; i < maxRows; ++i)
@@ -71,11 +72,12 @@ const sID* cUnitDetails::getCurrentUnitId()
 }
 
 //------------------------------------------------------------------------------
-void cUnitDetails::setUnit (const sID& unitId_, const cPlayer& owner, const sUnitData* unitObjectCurrentData_, const cUnitUpgrade* upgrades_)
+void cUnitDetails::setUnit (const sID& unitId_, const cPlayer& owner, const cUnitsData& unitsData, const cDynamicUnitData* unitObjectCurrentData_, const cUnitUpgrade* upgrades_)
 {
 	unitId = unitId_;
 
-	playerOriginalData = unitId.getUnitDataOriginalVersion (&owner);
+	staticUnitData = &unitsData.getStaticUnitData(unitId);
+	playerOriginalData = &unitsData.getDynamicUnitData(unitId, owner.getClan());
 	playerCurrentData = owner.getUnitDataCurrentVersion (unitId);
 
 	if (unitObjectCurrentData_ == nullptr)
@@ -127,13 +129,13 @@ void cUnitDetails::reset()
 	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
 	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
 
-	if (unitObjectCurrentData->canAttack)
+	if (staticUnitData->canAttack)
 	{
 		// Damage:
 		upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_DAMAGE) : nullptr;
 		drawRow (rowIndex++, eUnitDataSymbolType::Attack, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getDamage(), lngPack.i18n ("Text~Others~Attack_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getDamage(), playerOriginalData->getDamage());
 
-		if (!unitObjectCurrentData->explodesOnContact)
+		if (!staticUnitData->explodesOnContact)
 		{
 			// Shots:
 			upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SHOTS) : nullptr;
@@ -149,42 +151,40 @@ void cUnitDetails::reset()
 		}
 	}
 
-	sUnitData::eStorageResType transport;
-	if (unitId.isAVehicle()) transport = unitObjectCurrentData->storeResType;
-	else transport = unitObjectCurrentData->storeResType;
-
-	if (transport != sUnitData::STORE_RES_NONE)
+	cStaticUnitData::eStorageResType transport = staticUnitData->storeResType;
+	
+	if (transport != cStaticUnitData::STORE_RES_NONE)
 	{
 		eUnitDataSymbolType symbolType;
 		switch (transport)
 		{
-			case sUnitData::STORE_RES_METAL:
+			case cStaticUnitData::STORE_RES_METAL:
 				symbolType = eUnitDataSymbolType::Metal;
 				break;
-			case sUnitData::STORE_RES_OIL:
+			case cStaticUnitData::STORE_RES_OIL:
 				symbolType = eUnitDataSymbolType::Oil;
 				break;
-			case sUnitData::STORE_RES_GOLD:
+			case cStaticUnitData::STORE_RES_GOLD:
 				symbolType = eUnitDataSymbolType::Gold;
 				break;
-			case sUnitData::STORE_RES_NONE: break;
+			case cStaticUnitData::STORE_RES_NONE: break;
 		}
-		drawRow (rowIndex++, symbolType, unitObjectCurrentData->storageResMax, lngPack.i18n ("Text~Others~Cargo_7"), unitObjectCurrentData->storageResMax, playerOriginalData->storageResMax);
+		drawRow (rowIndex++, symbolType, staticUnitData->storageResMax, lngPack.i18n ("Text~Others~Cargo_7"), staticUnitData->storageResMax, staticUnitData->storageResMax);
 	}
 
-	if (unitObjectCurrentData->produceEnergy)
+	if (staticUnitData->produceEnergy)
 	{
 		// Energy production:
-		drawRow (rowIndex++, eUnitDataSymbolType::Energy, unitObjectCurrentData->produceEnergy, lngPack.i18n ("Text~Others~Produce_7"), unitObjectCurrentData->produceEnergy, playerOriginalData->produceEnergy);
+		drawRow (rowIndex++, eUnitDataSymbolType::Energy, staticUnitData->produceEnergy, lngPack.i18n ("Text~Others~Produce_7"), staticUnitData->produceEnergy, staticUnitData->produceEnergy);
 
 		// Oil consumption:
-		drawRow (rowIndex++, eUnitDataSymbolType::Oil, unitObjectCurrentData->needsOil, lngPack.i18n ("Text~Others~Usage_7"), unitObjectCurrentData->needsOil, playerOriginalData->needsOil);
+		drawRow (rowIndex++, eUnitDataSymbolType::Oil, staticUnitData->needsOil, lngPack.i18n ("Text~Others~Usage_7"), staticUnitData->needsOil, staticUnitData->needsOil);
 	}
 
-	if (unitObjectCurrentData->produceHumans)
+	if (staticUnitData->produceHumans)
 	{
 		// Human production:
-		drawRow (rowIndex++, eUnitDataSymbolType::Human, unitObjectCurrentData->produceHumans, lngPack.i18n ("Text~Others~Produce_7"), unitObjectCurrentData->produceHumans, playerOriginalData->produceHumans);
+		drawRow (rowIndex++, eUnitDataSymbolType::Human, staticUnitData->produceHumans, lngPack.i18n ("Text~Others~Produce_7"), staticUnitData->produceHumans, staticUnitData->produceHumans);
 	}
 
 	// Armor:
@@ -210,33 +210,33 @@ void cUnitDetails::reset()
 	}
 
 	// energy consumption:
-	if (unitObjectCurrentData->needsEnergy)
+	if (staticUnitData->needsEnergy)
 	{
-		drawRow (rowIndex++, eUnitDataSymbolType::Energy, unitObjectCurrentData->needsEnergy, lngPack.i18n ("Text~Others~Usage_7"), unitObjectCurrentData->needsEnergy, playerOriginalData->needsEnergy);
+		drawRow (rowIndex++, eUnitDataSymbolType::Energy, staticUnitData->needsEnergy, lngPack.i18n ("Text~Others~Usage_7"), staticUnitData->needsEnergy, staticUnitData->needsEnergy);
 	}
 
 	// humans needed:
-	if (unitObjectCurrentData->needsHumans)
+	if (staticUnitData->needsHumans)
 	{
-		drawRow (rowIndex++, eUnitDataSymbolType::Human, unitObjectCurrentData->needsHumans, lngPack.i18n ("Text~Others~Usage_7"), unitObjectCurrentData->needsHumans, playerOriginalData->needsHumans);
+		drawRow (rowIndex++, eUnitDataSymbolType::Human, staticUnitData->needsHumans, lngPack.i18n ("Text~Others~Usage_7"), staticUnitData->needsHumans, staticUnitData->needsHumans);
 	}
 
 	// raw material consumption:
-	if (unitObjectCurrentData->needsMetal)
+	if (staticUnitData->needsMetal)
 	{
-		drawRow (rowIndex++, eUnitDataSymbolType::Metal, unitObjectCurrentData->needsMetal, lngPack.i18n ("Text~Others~Usage_7"), unitObjectCurrentData->needsMetal, playerOriginalData->needsMetal);
+		drawRow (rowIndex++, eUnitDataSymbolType::Metal, staticUnitData->needsMetal, lngPack.i18n ("Text~Others~Usage_7"), staticUnitData->needsMetal, staticUnitData->needsMetal);
 	}
 
 	// gold consumption:
-	if (unitObjectCurrentData->convertsGold)
+	if (staticUnitData->convertsGold)
 	{
-		drawRow (rowIndex++, eUnitDataSymbolType::Gold, unitObjectCurrentData->convertsGold, lngPack.i18n ("Text~Others~Usage_7"), unitObjectCurrentData->convertsGold, playerOriginalData->convertsGold);
+		drawRow (rowIndex++, eUnitDataSymbolType::Gold, staticUnitData->convertsGold, lngPack.i18n ("Text~Others~Usage_7"), staticUnitData->convertsGold, staticUnitData->convertsGold);
 	}
 
 	// Costs:
 	// Do not use unit data but currentVersion data
 	// since cost doesn't change unit version
-	drawRow (rowIndex++, eUnitDataSymbolType::Metal, playerCurrentData->buildCosts, lngPack.i18n ("Text~Others~Costs"), playerCurrentData->buildCosts, playerOriginalData->buildCosts);
+	drawRow (rowIndex++, eUnitDataSymbolType::Metal, playerCurrentData->getBuildCost(), lngPack.i18n ("Text~Others~Costs"), playerCurrentData->getBuildCost(), playerOriginalData->getBuildCost());
 
 	while (rowIndex < maxRows)
 	{

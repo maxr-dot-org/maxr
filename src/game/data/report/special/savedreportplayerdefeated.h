@@ -30,19 +30,30 @@ class cSavedReportPlayerDefeated : public cSavedReport
 {
 public:
 	cSavedReportPlayerDefeated (const cPlayer& player);
-	explicit cSavedReportPlayerDefeated (cNetMessage& message);
-	explicit cSavedReportPlayerDefeated (const tinyxml2::XMLElement& element);
-
-	virtual void pushInto (cNetMessage& message) const MAXR_OVERRIDE_FUNCTION;
-	virtual void pushInto (tinyxml2::XMLElement& element) const MAXR_OVERRIDE_FUNCTION;
+	template <typename T, ENABLE_ARCHIVE_OUT>
+	explicit cSavedReportPlayerDefeated(T& archive)
+	{
+		serializeThis(archive);
+	}
+	
+	virtual void serialize(cBinaryArchiveIn& archive) { cSavedReport::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cXmlArchiveIn& archive) { cSavedReport::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive) { cSavedReport::serialize(archive); serializeThis(archive); }
 
 	virtual eSavedReportType getType() const MAXR_OVERRIDE_FUNCTION;
 
-	virtual std::string getMessage() const MAXR_OVERRIDE_FUNCTION;
+	virtual std::string getMessage(const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
 
 	virtual bool isAlert() const MAXR_OVERRIDE_FUNCTION;
 
 private:
+	template <typename T>
+	void serializeThis(T& archive)
+	{
+		archive & NVP(playerName);
+	}
+
+
 	std::string playerName;
 };
 

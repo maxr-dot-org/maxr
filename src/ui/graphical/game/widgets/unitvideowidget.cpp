@@ -80,7 +80,7 @@ void cUnitVideoWidget::setUnit (const cUnit* unit)
 	}
 	else
 	{
-		if (unit->data.ID.isAVehicle())
+		if (unit->isAVehicle())
 		{
 			const auto& vehicle = *static_cast<const cVehicle*> (unit);
 			if (FileExists (vehicle.uiData->FLCFile.c_str()))
@@ -96,7 +96,7 @@ void cUnitVideoWidget::setUnit (const cUnit* unit)
 				currentFrameImage->setImage (vehicle.uiData->storage.get());
 			}
 		}
-		else if (unit->data.ID.isABuilding())
+		else if (unit->isABuilding())
 		{
 			const auto& building = *static_cast<const cBuilding*> (unit);
 

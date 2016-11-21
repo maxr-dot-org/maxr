@@ -28,7 +28,7 @@
 #include "ui/graphical/game/control/gameguicontroller.h"
 
 class cClient;
-class cTCP;
+class cConnectionManager;
 
 class cNetworkClientGame : public cGame
 {
@@ -37,11 +37,9 @@ public:
 
 	virtual void run() MAXR_OVERRIDE_FUNCTION;
 
-	virtual void save (int saveNumber, const std::string& saveName) MAXR_OVERRIDE_FUNCTION;
-
-	void setNetwork (std::shared_ptr<cTCP> network);
+	void setConnectionManager (std::shared_ptr<cConnectionManager> network); //TODO: in constructor?
 protected:
-	std::shared_ptr<cTCP> network;
+	std::shared_ptr<cConnectionManager> connectionManager;
 
 	std::shared_ptr<cClient> localClient;
 

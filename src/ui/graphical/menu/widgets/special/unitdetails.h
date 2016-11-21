@@ -30,7 +30,6 @@
 
 class cLabel;
 class cUnitUpgrade;
-struct sUnitData;
 struct sID;
 
 class cUnitDetails : public cWidget
@@ -42,7 +41,7 @@ public:
 
 	const sID* getCurrentUnitId();
 
-	void setUnit (const sID& unitId, const cPlayer& owner, const sUnitData* unitObjectCurrentData = nullptr, const cUnitUpgrade* upgrades = nullptr);
+	void setUnit(const sID& unitId_, const cPlayer& owner, const cUnitsData& unitsData, const cDynamicUnitData* unitObjectCurrentData_ = nullptr, const cUnitUpgrade* upgrades_ = nullptr);
 	void setUpgrades (const cUnitUpgrade* upgrades);
 private:
 	AutoSurface surface;
@@ -62,9 +61,10 @@ private:
 	std::array<cLabel*, maxRows> nameLabels;
 
 	sID unitId;
-	const sUnitData* playerOriginalData;
-	const sUnitData* playerCurrentData;
-	const sUnitData* unitObjectCurrentData;
+	const cStaticUnitData* staticUnitData;
+	const cDynamicUnitData* playerOriginalData;
+	const cDynamicUnitData* playerCurrentData;
+	const cDynamicUnitData* unitObjectCurrentData;
 	const cUnitUpgrade* upgrades;
 };
 

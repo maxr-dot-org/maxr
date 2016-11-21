@@ -42,7 +42,8 @@
 
 //------------------------------------------------------------------------------
 cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
-	player (nullptr)
+	player (nullptr),
+	unitsData(nullptr)
 {
 	surface = generateSurface();
 	resize (cPosition (surface->w, surface->h));
@@ -162,7 +163,7 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 void cHud::setPlayer (std::shared_ptr<const cPlayer> player_)
 {
 	player = std::move (player_);
-	unitRenameWidget->setPlayer (player.get());
+	unitRenameWidget->setPlayer (player.get(), *unitsData);
 	unitDetails->setPlayer (player.get());
 }
 
@@ -578,10 +579,15 @@ void cHud::handleZoomMinusClicked()
 	zoomSlider->increase ((zoomSlider->getMaxValue() - zoomSlider->getMinValue()) / 6);
 }
 
+void cHud::setUnitsData(std::shared_ptr<const cUnitsData> unitsData_)
+{
+	unitsData = unitsData_;
+}
+
 //------------------------------------------------------------------------------
 void cHud::setActiveUnit (const cUnit* unit)
 {
-	unitRenameWidget->setUnit (unit);
+	unitRenameWidget->setUnit (unit, *unitsData);
 	unitVideo->setUnit (unit);
 	unitDetails->setUnit (unit);
 }

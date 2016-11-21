@@ -29,7 +29,7 @@
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
 
 //------------------------------------------------------------------------------
-cWindowResourceDistribution::cWindowResourceDistribution (const sSubBase& subBase_, std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
+cWindowResourceDistribution::cWindowResourceDistribution (const cSubBase& subBase_, std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
 	cWindow (LoadPCX (GFXOD_MINEMANAGER)),
 	subBase (subBase_)
 {
@@ -143,16 +143,16 @@ std::string cWindowResourceDistribution::secondBarText (int prod, int need)
 void cWindowResourceDistribution::setBarLabels()
 {
 	metalLabels[0]->setText (iToStr (subBase.getMetalProd()));
-	metalLabels[1]->setText (secondBarText (subBase.getMetalProd(), subBase.MetalNeed));
-	metalLabels[2]->setText (iToStr (subBase.getMetal()));
+	metalLabels[1]->setText (secondBarText (subBase.getMetalProd(), subBase.getMetalNeed()));
+	metalLabels[2]->setText (iToStr (subBase.getMetalStored()));
 
 	oilLabels[0]->setText (iToStr (subBase.getOilProd()));
-	oilLabels[1]->setText (secondBarText (subBase.getOilProd(), subBase.OilNeed));
-	oilLabels[2]->setText (iToStr (subBase.getOil()));
+	oilLabels[1]->setText (secondBarText (subBase.getOilProd(), subBase.getOilNeed()));
+	oilLabels[2]->setText (iToStr (subBase.getOilStored()));
 
 	goldLabels[0]->setText (iToStr (subBase.getGoldProd()));
-	goldLabels[1]->setText (secondBarText (subBase.getGoldProd(), subBase.GoldNeed));
-	goldLabels[2]->setText (iToStr (subBase.getGold()));
+	goldLabels[1]->setText (secondBarText (subBase.getGoldProd(), subBase.getGoldNeed()));
+	goldLabels[2]->setText (iToStr (subBase.getGoldStored()));
 }
 
 //------------------------------------------------------------------------------
@@ -160,30 +160,30 @@ void cWindowResourceDistribution::setBarValues()
 {
 	metalBars[0]->setMaxValue (subBase.getMaxMetalProd());
 	metalBars[0]->setValue (subBase.getMetalProd());
-	metalBars[1]->setMaxValue (subBase.MaxMetalNeed);
-	metalBars[1]->setValue (subBase.MetalNeed);
-	metalBars[2]->setMaxValue (subBase.MaxMetal);
-	metalBars[2]->setValue (subBase.getMetal());
+	metalBars[1]->setMaxValue (subBase.getMaxMetalNeed());
+	metalBars[1]->setValue (subBase.getMetalNeed());
+	metalBars[2]->setMaxValue (subBase.getMaxMetalStored());
+	metalBars[2]->setValue (subBase.getMetalStored());
 
 	noneBars[0]->setMaxValue (subBase.getMaxMetalProd());
 	noneBars[0]->setValue (subBase.getMaxMetalProd() - subBase.getMaxAllowedMetalProd());
 
 	oilBars[0]->setMaxValue (subBase.getMaxOilProd());
 	oilBars[0]->setValue (subBase.getOilProd());
-	oilBars[1]->setMaxValue (subBase.MaxOilNeed);
-	oilBars[1]->setValue (subBase.OilNeed);
-	oilBars[2]->setMaxValue (subBase.MaxOil);
-	oilBars[2]->setValue (subBase.getOil());
+	oilBars[1]->setMaxValue (subBase.getMaxOilNeed());
+	oilBars[1]->setValue (subBase.getOilNeed());
+	oilBars[2]->setMaxValue (subBase.getMaxOilStored());
+	oilBars[2]->setValue (subBase.getOilStored());
 
 	noneBars[1]->setMaxValue (subBase.getMaxOilProd());
 	noneBars[1]->setValue (subBase.getMaxOilProd() - subBase.getMaxAllowedOilProd());
 
 	goldBars[0]->setMaxValue (subBase.getMaxGoldProd());
 	goldBars[0]->setValue (subBase.getGoldProd());
-	goldBars[1]->setMaxValue (subBase.MaxGoldNeed);
-	goldBars[1]->setValue (subBase.GoldNeed);
-	goldBars[2]->setMaxValue (subBase.MaxGold);
-	goldBars[2]->setValue (subBase.getGold());
+	goldBars[1]->setMaxValue (subBase.getMaxGoldNeed());
+	goldBars[1]->setValue (subBase.getGoldNeed());
+	goldBars[2]->setMaxValue (subBase.getMaxGoldStored());
+	goldBars[2]->setValue (subBase.getGoldStored());
 
 	noneBars[2]->setMaxValue (subBase.getMaxGoldProd());
 	noneBars[2]->setValue (subBase.getMaxGoldProd() - subBase.getMaxAllowedGoldProd());

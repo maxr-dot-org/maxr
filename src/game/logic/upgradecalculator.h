@@ -26,7 +26,8 @@
 
 class cResearch;
 class cUnitUpgrade;
-struct sUnitData;
+class cDynamicUnitData;
+class cStaticUnitData;
 
 //------------------------------------------------------------------------------
 /**
@@ -115,7 +116,7 @@ public:
 	 * @return the costs for this upgrade or kNoPriceAvailable
 	 *         if such an upgrade is impossible
 	 */
-	int getCostForUpgrade (int orgValue, int curValue, int newValue, int upgradeType, cResearch& researchLevel) const;
+	int getCostForUpgrade (int orgValue, int curValue, int newValue, int upgradeType, const cResearch& researchLevel) const;
 
 	/**
 	 * Calculates the turns needed for one research center
@@ -300,9 +301,23 @@ public:
 	int getUpgradeCalculatorUpgradeType (int researchArea) const;
 	int getResearchArea (int upgradeCalculatorType) const;
 
+	uint32_t getChecksum(uint32_t crc) const;
+
 	mutable cSignal<void (ResearchArea)> currentResearchLevelChanged;
 	mutable cSignal<void (ResearchArea)> currentResearchPointsChanged;
 	mutable cSignal<void (ResearchArea)> neededResearchPointsChanged;
+
+	template<typename T>
+	void serialize(T& archive)
+	{
+		assert(kNrResearchAreas == 8);
+		for (int i = 0; i < kNrResearchAreas; i++)
+		{
+			archive & serialization::makeNvp("curResearchLevel", curResearchLevel[i]);
+			archive & serialization::makeNvp("curResearchPoints", curResearchPoints[i]);
+			archive & serialization::makeNvp("neededResearchPoints", neededResearchPoints[i]);
+		}
+	}
 	//-------------------------------------------
 protected:
 	void init();  ///< sets all research information to the initial values
@@ -347,6 +362,18 @@ struct sUnitUpgrade
 	eUpgradeTypes getType() const { return type; }
 	int getNextPrice() const { return nextPrice; }
 	int getPurchased() const { return purchased; }
+
+
+	template<typename T>
+	void serialize(T& archive)
+	{
+		archive & nextPrice;
+		archive & purchased;
+		archive & curValue;
+		archive & startValue;
+		archive & type;
+	}
+
 private:
 	friend class cUnitUpgrade;
 	/** what will the next upgrade cost */
@@ -364,14 +391,22 @@ private:
 class cUnitUpgrade
 {
 public:
-	void init (const sUnitData& origData, const sUnitData& curData, const cResearch& researchLevel);
+	void init (const cDynamicUnitData& origData, const cDynamicUnitData& curData, const cStaticUnitData& staticData, const cResearch& researchLevel);
 	sUnitUpgrade* getUpgrade (sUnitUpgrade::eUpgradeTypes type);
 	const sUnitUpgrade* getUpgrade (sUnitUpgrade::eUpgradeTypes type) const;
 
 	int computedPurchasedCount (const cResearch& researchLevel);
 	bool hasBeenPurchased() const;
 	int getValueOrDefault (sUnitUpgrade::eUpgradeTypes upgradeType, int defaultValue) const;
-	void updateUnitData (sUnitData& data) const;
+	void updateUnitData (cDynamicUnitData& data) const;
+	int calcTotalCosts(const cDynamicUnitData& originalData, const cDynamicUnitData& currentData, const cResearch& reseachState) const;
+
+	template<typename T>
+	void serialize(T& archive)
+	{
+		for (int i = 0; i < 8; i++)
+			archive & upgrades[i];
+	}
 public:
 	sUnitUpgrade upgrades[8];
 };

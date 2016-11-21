@@ -109,7 +109,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	if (!building.getOwner()) return;
 
 	// draw the effect if necessary
-	if (building.data.powerOnGraphic && cSettings::getInstance().isAnimations() && (building.isUnitWorking() || !building.data.canWork))
+	if (building.uiData->powerOnGraphic && cSettings::getInstance().isAnimations() && (building.isUnitWorking() || !building.getStaticUnitData().canWork))
 	{
 		SDL_Rect tmp = dest;
 		SDL_SetSurfaceAlphaMod (building.uiData->eff.get(), building.effectAlpha);
@@ -120,10 +120,10 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 
 	// draw the mark, when a build order is finished
 	if (building.getOwner() == player && ((!building.isBuildListEmpty() && !building.isUnitWorking() && building.getBuildListItem (0).getRemainingMetal() <= 0) ||
-										  (building.data.canResearch && building.getOwner()->isCurrentTurnResearchAreaFinished (building.getResearchArea()))))
+		(building.getStaticUnitData().canResearch && building.getOwner()->isCurrentTurnResearchAreaFinished(building.getResearchArea()))))
 	{
 		const cRgbColor finishedMarkColor = cRgbColor::green();
-		const cBox<cPosition> d (cPosition (dest.x + 2, dest.y + 2), cPosition (dest.x + 2 + (building.data.isBig ? 2 * destination.w - 3 : destination.w - 3), dest.y + 2 + (building.data.isBig ? 2 * destination.h - 3 : destination.h - 3)));
+		const cBox<cPosition> d (cPosition (dest.x + 2, dest.y + 2), cPosition (dest.x + 2 + (building.getIsBig() ? 2 * destination.w - 3 : destination.w - 3), dest.y + 2 + (building.getIsBig() ? 2 * destination.h - 3 : destination.h - 3)));
 
 		drawRectangle (*cVideo::buffer, d, finishedMarkColor.exchangeGreen (255 - 16 * (animationTime % 0x8)), 3);
 	}
@@ -146,8 +146,8 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	// draw the seleted-unit-flash-frame for bulidings
 	if (unitSelection && &building == unitSelection->getSelectedBuilding())
 	{
-		Uint16 maxX = building.data.isBig ? destination.w  * 2 : destination.w;
-		Uint16 maxY = building.data.isBig ? destination.h  * 2 : destination.h;
+		Uint16 maxX = building.getIsBig() ? destination.w  * 2 : destination.w;
+		Uint16 maxY = building.getIsBig() ? destination.h * 2 : destination.h;
 		const int len = maxX / 4;
 		maxX -= 3;
 		maxY -= 3;
@@ -163,7 +163,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	}
 
 	// draw ammo bar
-	if (shouldDrawAmmo && (!player || building.getOwner() == player) && building.data.canAttack && building.data.getAmmoMax() > 0)
+	if (shouldDrawAmmo && (!player || building.getOwner() == player) && building.getStaticUnitData().canAttack && building.data.getAmmoMax() > 0)
 	{
 		drawMunBar (building, destination);
 	}
@@ -245,7 +245,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	if (vehicle.isUnitBuildingABuilding() && vehicle.getBuildTurns() == 0 && vehicle.getOwner() == player && !vehicle.BuildPath)
 	{
 		const cRgbColor finishedMarkColor = cRgbColor::green();
-		const cBox<cPosition> d (cPosition (destination.x + 2, destination.y + 2), cPosition (destination.x + 2 + (vehicle.data.isBig ? 2 * destination.w - 3 : destination.w - 3), destination.y + 2 + (vehicle.data.isBig ? 2 * destination.h - 3 : destination.h - 3)));
+		const cBox<cPosition> d (cPosition (destination.x + 2, destination.y + 2), cPosition (destination.x + 2 + (vehicle.getIsBig() ? 2 * destination.w - 3 : destination.w - 3), destination.y + 2 + (vehicle.getIsBig() ? 2 * destination.h - 3 : destination.h - 3)));
 
 		drawRectangle (*cVideo::buffer, d, finishedMarkColor.exchangeGreen (255 - 16 * (animationTime % 0x8)), 3);
 	}
@@ -253,7 +253,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	// Draw the colored frame if necessary
 	if (shouldDrawColor)
 	{
-		const cBox<cPosition> d (cPosition (destination.x + 1, destination.y + 1), cPosition (destination.x + 1 + (vehicle.data.isBig ? 2 * destination.w - 1 : destination.w - 1), destination.y + 1 + (vehicle.data.isBig ? 2 * destination.h - 1 : destination.h - 1)));
+		const cBox<cPosition> d (cPosition (destination.x + 1, destination.y + 1), cPosition (destination.x + 1 + (vehicle.getIsBig() ? 2 * destination.w - 1 : destination.w - 1), destination.y + 1 + (vehicle.getIsBig() ? 2 * destination.h - 1 : destination.h - 1)));
 
 		drawRectangle (*cVideo::buffer, d, vehicle.getOwner()->getColor().getColor());
 	}
@@ -262,15 +262,15 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	if (unitSelection && unitSelection->getSelectedUnitsCount() > 1 && unitSelection->isSelected (vehicle))
 	{
 		const cRgbColor groupSelectionColor = cRgbColor::yellow();
-		const cBox<cPosition> d (cPosition (destination.x + 2, destination.y + 2), cPosition (destination.x + 2 + (vehicle.data.isBig ? 2 * destination.w - 3 : destination.w - 3), destination.y + 2 + (vehicle.data.isBig ? 2 * destination.h - 3 : destination.h - 3)));
+		const cBox<cPosition> d (cPosition (destination.x + 2, destination.y + 2), cPosition (destination.x + 2 + (vehicle.getIsBig() ? 2 * destination.w - 3 : destination.w - 3), destination.y + 2 + (vehicle.getIsBig() ? 2 * destination.h - 3 : destination.h - 3)));
 
 		drawRectangle (*cVideo::buffer, d, groupSelectionColor, 1);
 	}
 	// draw the seleted-unit-flash-frame for vehicles
 	if (unitSelection && &vehicle == unitSelection->getSelectedVehicle())
 	{
-		Uint16 maxX = vehicle.data.isBig ? destination.w * 2 : destination.w;
-		Uint16 maxY = vehicle.data.isBig ? destination.h * 2 : destination.h;
+		Uint16 maxX = vehicle.getIsBig() ? destination.w * 2 : destination.w;
+		Uint16 maxY = vehicle.getIsBig() ? destination.h * 2 : destination.h;
 		const int len = maxX / 4;
 		maxX -= 3;
 		maxY -= 3;
@@ -286,7 +286,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	}
 
 	// draw ammo bar
-	if (shouldDrawAmmo && (!player || vehicle.getOwner() == player) && vehicle.data.canAttack)
+	if (shouldDrawAmmo && (!player || vehicle.getOwner() == player) && vehicle.getStaticUnitData().canAttack)
 	{
 		drawMunBar (vehicle, destination);
 	}
@@ -308,7 +308,7 @@ void cUnitDrawingEngine::drawHealthBar (const cUnit& unit, SDL_Rect destination)
 	r1.w = destination.w * 8 / 10;
 	r1.h = destination.h / 8;
 
-	if (unit.data.isBig)
+	if (unit.getIsBig())
 	{
 		r1.w += destination.w;
 		r1.h *= 2;
@@ -380,7 +380,7 @@ void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 			return;
 		dest.x = destination.x + destination.w / 2 - 12;
 		dest.y = destination.y + destination.h / 2 - 12;
-		if (unit.data.isBig)
+		if (unit.getIsBig())
 		{
 			dest.y += (destination.h / 2);
 			dest.x += (destination.w / 2);
@@ -391,7 +391,7 @@ void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 	{
 		dest.y = destination.y + destination.h - 11;
 		dest.x = destination.x + destination.w / 2 - 4;
-		if (unit.data.isBig)
+		if (unit.getIsBig())
 		{
 			dest.y += (destination.h / 2);
 			dest.x += (destination.w / 2);

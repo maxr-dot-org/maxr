@@ -72,6 +72,7 @@ public:
 
 	const std::shared_ptr<cStaticMap>& getStaticMap();
 	const std::shared_ptr<cGameSettings>& getGameSettings();
+	const std::vector<sLandingUnit>& getLandingUnits(size_t playerIndex);
 
 	size_t getPlayerCount() const;
 	const cPlayerBasicData& getPlayer (size_t playerIndex) const;

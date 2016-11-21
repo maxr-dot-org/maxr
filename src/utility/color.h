@@ -26,6 +26,8 @@
 
 #include <SDL.h>
 
+#include "serialization/serialization.h"
+
 class cHsvColor;
 class cLabColor;
 
@@ -55,6 +57,17 @@ public:
 
 	unsigned char r, g, b;
 	unsigned char a;
+
+	uint32_t getChecksum(uint32_t crc) const;
+
+	template<typename T>
+	void serialize(T& archive)
+	{
+		archive & NVP(r);
+		archive & NVP(g);
+		archive & NVP(b);
+		archive & NVP(a);
+	}
 
 	// predefined colors
 	inline static cRgbColor red (unsigned char alpha_ = 0xFF) { return cRgbColor (0xFF, 0, 0, alpha_); }

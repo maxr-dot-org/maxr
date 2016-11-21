@@ -24,26 +24,15 @@
 #include "utility/signal/signal.h"
 #include <vector>
 
-class cNetMessage;
-namespace tinyxml2
-{
-class XMLElement;
-}
-
 //-------------------------------------------------------------------------------
 class cCasualtiesTracker
 {
 public:
 	cCasualtiesTracker() {}
 
-	void initFromXML (tinyxml2::XMLElement* casualtiesNode);
-	void storeToXML (tinyxml2::XMLElement* casualtiesNode) const;
 
 	void logCasualty (sID unitType, int playerNr);
 	int getCasualtiesOfUnitType (sID unitType, int playerNr) const;
-
-	void updateCasualtiesFromNetMessage (cNetMessage* message);
-	std::vector<std::unique_ptr<cNetMessage>> prepareNetMessagesForClient (int msgType);
 
 	std::vector<sID> getUnitTypesWithLosses() const;
 
@@ -65,8 +54,6 @@ private:
 
 	std::vector<Casualty>& getCasualtiesOfPlayer (int playerNr) const;
 	void setCasualty (sID unitType, int numberOfLosses, int playerNr);
-
-	void debugPrint();
 };
 
 

@@ -18,42 +18,13 @@
  ***************************************************************************/
 
 #include "game/data/report/special/savedreportlostconnection.h"
-#include "netmessage.h"
+
 #include "game/data/player/player.h"
 #include "main.h"
 
-//------------------------------------------------------------------------------
-cSavedReportLostConnection::cSavedReportLostConnection (const cPlayer& player) :
-	playerName (player.getName())
+cSavedReportLostConnection::cSavedReportLostConnection(const cPlayer& player) :
+	playerName(player.getName())
 {}
-
-//------------------------------------------------------------------------------
-cSavedReportLostConnection::cSavedReportLostConnection (cNetMessage& message)
-{
-	playerName = message.popString();
-}
-
-//------------------------------------------------------------------------------
-cSavedReportLostConnection::cSavedReportLostConnection (const tinyxml2::XMLElement& element)
-{
-	playerName = element.Attribute ("playerName");
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportLostConnection::pushInto (cNetMessage& message) const
-{
-	message.pushString (playerName);
-
-	cSavedReport::pushInto (message);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportLostConnection::pushInto (tinyxml2::XMLElement& element) const
-{
-	element.SetAttribute ("playerName", playerName.c_str());
-
-	cSavedReport::pushInto (element);
-}
 
 //------------------------------------------------------------------------------
 eSavedReportType cSavedReportLostConnection::getType() const
@@ -62,7 +33,7 @@ eSavedReportType cSavedReportLostConnection::getType() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportLostConnection::getMessage() const
+std::string cSavedReportLostConnection::getMessage(const cUnitsData& unitsData) const
 {
 	return lngPack.i18n ("Text~Multiplayer~Lost_Connection", playerName);
 }

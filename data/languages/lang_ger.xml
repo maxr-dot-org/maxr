@@ -332,7 +332,7 @@
 			<Finished ENG="is finished" localized="wurde fertig gestellt"/>
 			<Finished2 ENG="are finished" localized="wurden fertig gestellt"/>
 			<Fuel_Insufficient ENG="Cannot start, fuel needed." localized="Nicht genug Treibstoff zum Einschalten vorhanden!"/>
-			<Fuel_Low ENG="Fuel needed, generator turned off." localized="Treibstoff benötigt, Generator wurde abgeschalten!"/>
+			<Fuel_Low ENG="Fuel needed, generator turned off." localized="Treibstoff benötigt, Generator wurde abgeschaltet!"/>
 			<GameEndsAt ENG="Game ends at" localized="Spiel endet bei"/>
 			<Gold_Insufficient ENG="Cannot start, gold needed." localized="Nicht genug Gold zum Einschalten vorhanden!"/>
 			<Gold_Low ENG="More gold needed, refinery turned off." localized="Mehr Gold benötigt, Raffinerie abgeschaltet!"/>
@@ -379,9 +379,12 @@
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>
 			<ERROR_Map_Loading ENG="Error while loading map" localized="Fehler beim Laden der Karte"/>
+			<ERROR_Save_Loading ENG="Error while loading saved game" localized="Fehler beim Laden des gespeicherten Spielstands"/>
+			<ERROR_Save_Writing ENG="Error while writing save game file" localized="Fehler beim Schreiben des Spielstands"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="fehlende Übersetzung: %s"/>
 			<INFO_Language_initialised ENG="Language is now initialized" localized="Sprach ist nun initialisiert"/>
 			<INFO_Not_Implemented ENG="Not yet implemented" localized="Noch nicht umgesetzt"/>
+			<ERROR_Save_Incompatible ENG="Savegames from Maxr versions before %s are not compatible." localized="Gespeicherte Spielstände von Maxr Versionen vor %s sind nicht kompatibel."/>
 		</Error_Messages>
 	</Text>
 	<Units>

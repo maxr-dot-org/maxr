@@ -160,7 +160,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 		if (!selectedUnit) return;
 
 		selectedUnitSignalConnectionManager.connect (selectedUnit->data.shotsChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
-		selectedUnitSignalConnectionManager.connect (selectedUnit->data.storedResourcesChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
+		selectedUnitSignalConnectionManager.connect (selectedUnit->storedResourcesChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
 		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
 		selectedUnitSignalConnectionManager.connect (selectedUnit->sentryChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
 		selectedUnitSignalConnectionManager.connect (selectedUnit->manualFireChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
@@ -504,6 +504,11 @@ void cGameMapWidget::setPlayer (std::shared_ptr<const cPlayer> player_)
 	}
 }
 
+void cGameMapWidget::setUnitsData(std::shared_ptr<const cUnitsData> unitsData_)
+{
+	unitsData = unitsData_;
+}
+
 //------------------------------------------------------------------------------
 void cGameMapWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
@@ -524,7 +529,7 @@ void cGameMapWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clip
 	drawPlanes();
 
 	auto selectedVehicle = unitSelection.getSelectedVehicle();
-	if (shouldDrawSurvey || (selectedVehicle && selectedVehicle->getOwner() == player.get() && selectedVehicle->data.canSurvey))
+	if (shouldDrawSurvey || (selectedVehicle && selectedVehicle->getOwner() == player.get() && selectedVehicle->getStaticUnitData().canSurvey))
 	{
 		drawResources();
 	}
@@ -1062,8 +1067,8 @@ void cGameMapWidget::drawBaseUnits()
 
 			const auto& building = * (*it);
 
-			if (building.data.surfacePosition != sUnitData::SURFACE_POS_BENEATH_SEA &&
-				building.data.surfacePosition != sUnitData::SURFACE_POS_BASE &&
+			if (building.getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_BENEATH_SEA &&
+				building.getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_BASE &&
 				building.getOwner()) break;
 
 			if (!player || player->canSeeAnyAreaUnder (building))
@@ -1092,7 +1097,7 @@ void cGameMapWidget::drawTopBuildings()
 		auto& mapField = dynamicMap->getField (*i);
 		auto building = mapField.getTopBuilding();
 		if (building == nullptr) continue;
-		if (building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND) continue;
+		if (building->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_GROUND) continue;
 		if (!player || !player->canSeeAnyAreaUnder (*building)) continue;
 		if (!shouldDrawUnit (*building, *i, tileDrawingRange)) continue;
 
@@ -1120,7 +1125,7 @@ void cGameMapWidget::drawShips()
 		auto& mapField = dynamicMap->getField (*i);
 		auto vehicle = mapField.getVehicle();
 		if (vehicle == nullptr) continue;
-		if (vehicle->data.factorSea > 0 && vehicle->data.factorGround == 0)
+		if (vehicle->getStaticUnitData().factorSea > 0 && vehicle->getStaticUnitData().factorGround == 0)
 		{
 			auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
 			unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor(), *dynamicMap, &unitSelection, player.get());
@@ -1145,7 +1150,7 @@ void cGameMapWidget::drawAboveSeaBaseUnits()
 		for (auto it = buildings.begin(); it != buildings.end(); ++it)
 		{
 			const auto& building = * (*it);
-			if (building.data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
+			if (building.getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA)
 			{
 				const auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building.getPosition());
 				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), &unitSelection, player.get());
@@ -1154,7 +1159,7 @@ void cGameMapWidget::drawAboveSeaBaseUnits()
 		for (auto it = buildings.begin(); it != buildings.end(); ++it)
 		{
 			const auto& building = * (*it);
-			if ((*it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)
+			if ((*it)->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE)
 			{
 				const auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building.getPosition());
 				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), &unitSelection, player.get());
@@ -1178,7 +1183,7 @@ bool cGameMapWidget::shouldDrawUnit (const cUnit& unit, const cPosition& visitin
 {
 	assert (unit.isAbove (visitingPosition));
 
-	if (!unit.data.isBig)
+	if (!unit.getIsBig())
 	{
 		return true;
 	}
@@ -1209,7 +1214,7 @@ void cGameMapWidget::drawVehicles()
 		auto& mapField = dynamicMap->getField (*i);
 		auto vehicle = mapField.getVehicle();
 		if (vehicle == nullptr) continue;
-		if (vehicle->data.factorGround != 0 && !vehicle->isUnitBuildingABuilding() && !vehicle->isUnitClearing())
+		if (vehicle->getStaticUnitData().factorGround != 0 && !vehicle->isUnitBuildingABuilding() && !vehicle->isUnitClearing())
 		{
 			auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
 			unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor(), *dynamicMap, &unitSelection, player.get());
@@ -1231,7 +1236,7 @@ void cGameMapWidget::drawConnectors()
 		auto& mapField = dynamicMap->getField (*i);
 		auto building = mapField.getTopBuilding();
 		if (building == nullptr) continue;
-		if (building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE)
+		if (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE)
 		{
 			auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
 			unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor(), &unitSelection, player.get());
@@ -1369,7 +1374,7 @@ void cGameMapWidget::drawUnitCircles()
 		const auto screenPosition = getScreenPosition (*selectedVehicle, movementOffset);
 		if (shouldDrawScan)
 		{
-			if (selectedVehicle->data.isBig)
+			if (selectedVehicle->getIsBig())
 			{
 				drawCircle (screenPosition.x() + zoomedTileSize.x(), screenPosition.y() + zoomedTileSize.y(), selectedVehicle->data.getScan() * zoomedTileSize.x(), SCAN_COLOR, *cVideo::buffer);
 			}
@@ -1380,7 +1385,7 @@ void cGameMapWidget::drawUnitCircles()
 		}
 		if (shouldDrawRange)
 		{
-			if (selectedVehicle->data.canAttack & TERRAIN_AIR) drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2, selectedVehicle->data.getRange() * zoomedTileSize.x() + 2, RANGE_AIR_COLOR, *cVideo::buffer);
+			if (selectedVehicle->getStaticUnitData().canAttack & TERRAIN_AIR) drawCircle(screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2, selectedVehicle->data.getRange() * zoomedTileSize.x() + 2, RANGE_AIR_COLOR, *cVideo::buffer);
 			else drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2, selectedVehicle->data.getRange() * zoomedTileSize.x() + 1, RANGE_GROUND_COLOR, *cVideo::buffer);
 		}
 	}
@@ -1389,7 +1394,7 @@ void cGameMapWidget::drawUnitCircles()
 		const auto screenPosition = getScreenPosition (*selectedBuilding);
 		if (shouldDrawScan)
 		{
-			if (selectedBuilding->data.isBig)
+			if (selectedBuilding->getIsBig())
 			{
 				drawCircle (screenPosition. x() + zoomedTileSize.x(),
 							screenPosition. y() + zoomedTileSize.y(),
@@ -1402,13 +1407,13 @@ void cGameMapWidget::drawUnitCircles()
 							selectedBuilding->data.getScan() * zoomedTileSize.x(), SCAN_COLOR, *cVideo::buffer);
 			}
 		}
-		if (shouldDrawRange && (selectedBuilding->data.canAttack & TERRAIN_GROUND) && !selectedBuilding->data.explodesOnContact)
+		if (shouldDrawRange && (selectedBuilding->getStaticUnitData().canAttack & TERRAIN_GROUND) && !selectedBuilding->getStaticUnitData().explodesOnContact)
 		{
 			drawCircle (screenPosition. x() + zoomedTileSize.x() / 2,
 						screenPosition. y() + zoomedTileSize.y() / 2,
 						selectedBuilding->data.getRange() * zoomedTileSize.x() + 2, RANGE_GROUND_COLOR, *cVideo::buffer);
 		}
-		if (shouldDrawRange && (selectedBuilding->data.canAttack & TERRAIN_AIR))
+		if (shouldDrawRange && (selectedBuilding->getStaticUnitData().canAttack & TERRAIN_AIR))
 		{
 			drawCircle (screenPosition. x() + zoomedTileSize.x() / 2,
 						screenPosition. y() + zoomedTileSize.y() / 2,
@@ -1438,7 +1443,7 @@ void cGameMapWidget::drawExitPoints()
 		if (mouseMode->getType() == eMouseModeType::Activate && selectedVehicle->getOwner() == player.get())
 		{
 			auto activateMouseMode = static_cast<cMouseModeActivateLoaded*> (mouseMode.get());
-			auto unitToExit = selectedVehicle->storedUnits[activateMouseMode->getVehicleToActivateIndex()]->data;
+			auto unitToExit = selectedVehicle->storedUnits[activateMouseMode->getVehicleToActivateIndex()]->getStaticUnitData();
 			drawExitPointsIf (*selectedVehicle, [&] (const cPosition & position) { return selectedVehicle->canExitTo (position, *dynamicMap, unitToExit); });
 		}
 	}
@@ -1449,13 +1454,13 @@ void cGameMapWidget::drawExitPoints()
 			selectedBuilding->getBuildListItem (0).getRemainingMetal() <= 0 &&
 			selectedBuilding->getOwner() == player.get())
 		{
-			auto unitToExit = selectedBuilding->getBuildListItem (0).getType().getUnitDataOriginalVersion();
-			drawExitPointsIf (*selectedBuilding, [&] (const cPosition & position) { return selectedBuilding->canExitTo (position, *dynamicMap, *unitToExit); });
+			auto unitToExit = unitsData->getStaticUnitData(selectedBuilding->getBuildListItem (0).getType());
+			drawExitPointsIf (*selectedBuilding, [&] (const cPosition & position) { return selectedBuilding->canExitTo (position, *dynamicMap, unitToExit); });
 		}
 		if (mouseMode->getType() == eMouseModeType::Activate && selectedBuilding->getOwner() == player.get())
 		{
 			auto activateMouseMode = static_cast<cMouseModeActivateLoaded*> (mouseMode.get());
-			auto unitToExit = selectedBuilding->storedUnits[activateMouseMode->getVehicleToActivateIndex()]->data;
+			auto unitToExit = selectedBuilding->storedUnits[activateMouseMode->getVehicleToActivateIndex ()]->getStaticUnitData ();
 			drawExitPointsIf (*selectedBuilding, [&] (const cPosition & position) { return selectedBuilding->canExitTo (position, *dynamicMap, unitToExit); });
 		}
 	}
@@ -1517,7 +1522,7 @@ void cGameMapWidget::drawBuildBand()
 			auto selectBuildPositionMode = static_cast<const cMouseModeSelectBuildPosition*> (mouseMode.get());
 			bool validPosition;
 			cPosition destination;
-			std::tie (validPosition, destination) = selectBuildPositionMode->findNextBuildPosition (selectedVehicle->getPosition(), getMapTilePosition (mouse->getPosition()));
+			std::tie (validPosition, destination) = selectBuildPositionMode->findNextBuildPosition (selectedVehicle->getPosition(), getMapTilePosition (mouse->getPosition()), *unitsData);
 			if (!validPosition) return;
 
 			SDL_Rect dest;
@@ -1559,15 +1564,15 @@ void cGameMapWidget::drawLockList (const cPlayer& player)
 
 		if (shouldDrawScan)
 		{
-			if (unit->data.isBig)
+			if (unit->getIsBig())
 				drawCircle (screenPosition.x() + zoomedTileSize.x(), screenPosition.y() + zoomedTileSize.y(), unit->data.getScan() * zoomedTileSize.x(), SCAN_COLOR, *cVideo::buffer);
 			else
 				drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2, unit->data.getScan() * zoomedTileSize.x(), SCAN_COLOR, *cVideo::buffer);
 		}
-		if (shouldDrawRange && (unit->data.canAttack & TERRAIN_GROUND))
+		if (shouldDrawRange && (unit->getStaticUnitData().canAttack & TERRAIN_GROUND))
 			drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2,
 						unit->data.getRange() * zoomedTileSize.x() + 1, RANGE_GROUND_COLOR, *cVideo::buffer);
-		if (shouldDrawRange && (unit->data.canAttack & TERRAIN_AIR))
+		if (shouldDrawRange && (unit->getIsBig() & TERRAIN_AIR))
 			drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2,
 						unit->data.getRange() * zoomedTileSize.x() + 2, RANGE_AIR_COLOR, *cVideo::buffer);
 		//if (ammoChecked () && unit->data.canAttack)
@@ -1895,7 +1900,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 	{
 		bool consumed = false;
 
-		auto action = mouseMode->getMouseAction (tilePosition);
+		auto action = mouseMode->getMouseAction (tilePosition, *unitsData);
 		if (action && (changeAllowed || !action->doesChangeState()))
 		{
 			consumed = action->executeLeftClick (*this, *dynamicMap, tilePosition, unitSelection, changeAllowed);
@@ -2012,23 +2017,28 @@ void cGameMapWidget::addAnimationsForUnit (const cUnit& unit)
 {
 	if (!cSettings::getInstance().isAnimations()) return;
 
-	if (unit.data.powerOnGraphic || unit.data.canWork)
+	
+	if (unit.isABuilding())
 	{
-		assert (unit.data.ID.isABuilding());
-		auto& building = static_cast<const cBuilding&> (unit);
+		const cBuilding& building = static_cast<const cBuilding&>(unit);
+		if (building.uiData->powerOnGraphic || unit.getStaticUnitData().canWork)
+		{
+			assert(unit.isABuilding());
+			auto& building = static_cast<const cBuilding&> (unit);
 
-		animations.push_back (std::make_unique<cAnimationWork> (*animationTimer, building));
+			animations.push_back(std::make_unique<cAnimationWork>(*animationTimer, building));
+		}
 	}
-	if (unit.data.factorAir > 0)
+	if (unit.getStaticUnitData().factorAir > 0)
 	{
-		assert (unit.data.ID.isAVehicle());
+		assert (unit.isAVehicle());
 		auto& vehicle = static_cast<const cVehicle&> (unit);
 
 		animations.push_back (std::make_unique<cAnimationDither> (*animationTimer, vehicle));
 	}
-	if (unit.data.canBuild.compare ("BigBuilding") == 0)
+	if (unit.getStaticUnitData().canBuild.compare("BigBuilding") == 0)
 	{
-		assert (unit.data.ID.isAVehicle());
+		assert (unit.isAVehicle());
 		auto& vehicle = static_cast<const cVehicle&> (unit);
 
 		animations.push_back (std::make_unique<cAnimationStartUpBuildingSite> (*animationTimer, vehicle));
@@ -2048,7 +2058,7 @@ void cGameMapWidget::updateUnitMenuPosition()
 	auto position = getScreenPosition (unit);
 
 	auto unitSize = getZoomedTileSize();
-	if (unit.data.isBig) unitSize *= 2;
+	if (unit.getIsBig()) unitSize *= 2;
 
 	if (position.x() + unitSize.x() + menuSize.x() >= getEndPosition().x())
 	{
@@ -2102,7 +2112,7 @@ void cGameMapWidget::updateMouseCursor (cMouse& mouse)
 	}
 	else
 	{
-		mouseMode->setCursor (mouse, getMapTilePosition (mouse.getPosition()));
+		mouseMode->setCursor (mouse, getMapTilePosition (mouse.getPosition()), *unitsData);
 	}
 }
 
@@ -2290,14 +2300,14 @@ void cGameMapWidget::renewDamageEffects()
 //------------------------------------------------------------------------------
 void cGameMapWidget::renewDamageEffect (const cBuilding& building)
 {
-	if (building.data.hasDamageEffect &&
+	if (building.uiData->hasDamageEffect &&
 		building.data.getHitpoints() < building.data.getHitpointsMax() &&
 		(building.getOwner() == player.get() || (!player || player->canSeeAnyAreaUnder (building))))
 	{
 		int intense = (int) (200 - 200 * ((float)building.data.getHitpoints() / building.data.getHitpointsMax()));
 		addEffect (std::make_shared<cFxDarkSmoke> (cPosition (building.getPosition().x() * 64 + building.DamageFXPointX, building.getPosition().y() * 64 + building.DamageFXPointY), intense, windDirection));
 
-		if (building.data.isBig && intense > 50)
+		if (building.getIsBig() && intense > 50)
 		{
 			intense -= 50;
 			addEffect (std::make_shared<cFxDarkSmoke> (cPosition (building.getPosition().x() * 64 + building.DamageFXPointX2, building.getPosition().y() * 64 + building.DamageFXPointY2), intense, windDirection));

@@ -19,46 +19,15 @@
 
 #include "game/data/report/unit/savedreportcapturedbyenemy.h"
 #include "game/data/units/unit.h"
-#include "netmessage.h"
 #include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffectvoice.h"
 #include "sound.h"
 
 //------------------------------------------------------------------------------
-cSavedReportCapturedByEnemy::cSavedReportCapturedByEnemy (const cUnit& unit) :
-	cSavedReportUnit (unit),
-	unitName (unit.getDisplayName())
+cSavedReportCapturedByEnemy::cSavedReportCapturedByEnemy(const cUnit& unit) :
+cSavedReportUnit(unit),
+unitName(unit.getDisplayName())
 {}
-
-//------------------------------------------------------------------------------
-cSavedReportCapturedByEnemy::cSavedReportCapturedByEnemy (cNetMessage& message) :
-	cSavedReportUnit (message)
-{
-	unitName = message.popString();
-}
-
-//------------------------------------------------------------------------------
-cSavedReportCapturedByEnemy::cSavedReportCapturedByEnemy (const tinyxml2::XMLElement& element) :
-	cSavedReportUnit (element)
-{
-	unitName = element.Attribute ("unitName");
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportCapturedByEnemy::pushInto (cNetMessage& message) const
-{
-	message.pushString (unitName);
-
-	cSavedReportUnit::pushInto (message);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportCapturedByEnemy::pushInto (tinyxml2::XMLElement& element) const
-{
-	element.SetAttribute ("unitName", unitName.c_str());
-
-	cSavedReportUnit::pushInto (element);
-}
 
 //------------------------------------------------------------------------------
 eSavedReportType cSavedReportCapturedByEnemy::getType() const

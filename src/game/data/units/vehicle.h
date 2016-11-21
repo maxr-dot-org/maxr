@@ -92,6 +92,22 @@ enum eSymbolsBig
 //-----------------------------------------------------------------------------
 struct sVehicleUIData
 {
+	sID id;
+
+	bool hasCorpse;
+	bool hasDamageEffect;
+	bool hasPlayerColor;
+	bool hasOverlay;
+
+	bool buildUpGraphic;
+	bool animationMovement;
+	bool powerOnGraphic;
+	bool isAnimated;
+	bool makeTracks;
+
+	int hasFrames;
+
+
 	std::array<AutoSurface, 8> img, img_org; // 8 Surfaces of the vehicle
 	std::array<AutoSurface, 8> shw, shw_org; // 8 Surfaces of shadows
 	AutoSurface build, build_org;        // Surfaces when building
@@ -131,7 +147,7 @@ class cVehicle : public cUnit
 {
 	//-----------------------------------------------------------------------------
 public:
-	cVehicle (const sUnitData& unitData, cPlayer* Owner, unsigned int ID);
+	cVehicle (const cStaticUnitData& staticData,  const cDynamicUnitData& data, cPlayer* Owner, unsigned int ID);
 	virtual ~cVehicle();
 
 	virtual bool isAVehicle() const { return true; }
@@ -161,13 +177,13 @@ public:
 	bool proceedBuilding (cServer& server);
 	bool proceedClearing (cServer& server);
 
-	virtual std::string getStatusStr (const cPlayer* player) const MAXR_OVERRIDE_FUNCTION;
+	virtual std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
 	void DecSpeed (int value);
-	void doSurvey (const cServer& server);
+	void doSurvey (const cMap& map);
 	virtual void makeReport (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const MAXR_OVERRIDE_FUNCTION;
 	bool InSentryRange (cServer& server);
-	virtual bool canExitTo (const cPosition& position, const cMap& map, const sUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
+	virtual bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
 	bool canLoad (const cPosition& position, const cMap& map, bool checkPosition = true) const;
 	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const;
 	void storeVehicle (cVehicle& vehicle, cMap& map);
@@ -255,14 +271,14 @@ public:
 	*/
 	void render (const cMap* map, unsigned long long animationTime, const cPlayer* activePlayer, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
 	void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int alpha = 254) const;
-	static void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sUnitData& data, const sVehicleUIData& uiData, const cPlayer* owner, int dir = 0, int walkFrame = 0, int alpha = 254);
+	static void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sVehicleUIData& uiData, const cPlayer* owner, int dir = 0, int walkFrame = 0, int alpha = 254);
 	/**
 	* draws the overlay animation of the vehicle on the given surface
 	*@author: eiko
 	*/
 	void drawOverlayAnimation (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const;
 	void drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha = 254) const;
-	static void drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sUnitData& data, const sVehicleUIData& uiData, int frameNr = 0, int alpha = 254);
+	static void drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sVehicleUIData& uiData, int frameNr = 0, int alpha = 254);
 
 	bool isUnitLoaded() const { return loaded; }
 
@@ -316,6 +332,8 @@ public:
 	cBuilding* getContainerBuilding();
 	cVehicle* getContainerVehicle();
 
+	virtual uint32_t getChecksum(uint32_t crc) const;
+
 	mutable cSignal<void ()> clearingTurnsChanged;
 	mutable cSignal<void ()> buildingTurnsChanged;
 	mutable cSignal<void ()> buildingCostsChanged;
@@ -325,6 +343,41 @@ public:
 
 	mutable cSignal<void ()> clientMoveJobChanged;
 	mutable cSignal<void ()> autoMoveJobChanged;
+
+	template <typename T>
+	void serialize(T& archive)
+	{
+		serializeBase(archive); //serialize cUnit members
+		//TODO: moveJob
+		archive & NVP(hasAutoMoveJob);
+		archive & NVP(MoveJobActive);
+		archive & NVP(bandPosition);
+		archive & NVP(buildBigSavedPosition);
+		archive & NVP(BuildPath);
+		archive & NVP(WalkFrame);
+
+		archive & NVP(detectedInThisTurnByPlayerList);
+		archive & NVP(tileMovementOffset);
+		archive & NVP(loaded);
+		archive & NVP(moving);
+		archive & NVP(isBuilding);
+		archive & NVP(buildingTyp);
+		archive & NVP(buildCosts);
+		archive & NVP(buildTurns);
+		archive & NVP(buildTurnsStart);
+		archive & NVP(buildCostsStart);
+		archive & NVP(isClearing);
+		archive & NVP(clearingTurns);
+		archive & NVP(layMines);
+		archive & NVP(clearMines);
+		archive & NVP(flightHeight);
+		archive & NVP(commandoRank);
+
+		if (!archive.isWriter)
+		{
+			uiData = UnitsUiData.getVehicleUI(data.getId());
+		}
+	}
 private:
 
 	void render_BuildingOrBigClearing (const cMap& map, unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;

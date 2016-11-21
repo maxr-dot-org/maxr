@@ -24,15 +24,15 @@
 #include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------
-cUnitListViewItemCargo::cUnitListViewItemCargo (unsigned int width, const sID& unitId, const cPlayer& owner) :
-	cUnitListViewItem (width, unitId, owner),
+cUnitListViewItemCargo::cUnitListViewItemCargo (unsigned int width, const sID& unitId, const cPlayer& owner, const cUnitsData& unitsData) :
+	cUnitListViewItem (width, unitId, owner, unitsData),
 	cargo (0)
 {
-	unitData = unitId.getUnitDataOriginalVersion (&owner);
+	unitData = &unitsData.getStaticUnitData(unitId);
 
-	if (unitData->storeResType == sUnitData::STORE_RES_METAL || unitData->storeResType == sUnitData::STORE_RES_OIL)
+	if (unitData->storeResType == cStaticUnitData::STORE_RES_METAL || unitData->storeResType == cStaticUnitData::STORE_RES_OIL)
 	{
-		cargoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (nameLabel->getPosition().x() + 15, nameLabel->getEndPosition().y() - 13), nameLabel->getEndPosition() - cPosition (0, 3)), iToStr (owner.getUnitDataCurrentVersion (unitId)->buildCosts), FONT_LATIN_SMALL_YELLOW, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
+		cargoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (nameLabel->getPosition().x() + 15, nameLabel->getEndPosition().y() - 13), nameLabel->getEndPosition() - cPosition (0, 3)), iToStr (owner.getUnitDataCurrentVersion (unitId)->getBuildCost()), FONT_LATIN_SMALL_YELLOW, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
 		cargoLabel->setConsumeClick (false);
 
 		nameLabel->resize (nameLabel->getSize() - cPosition (0, 13));

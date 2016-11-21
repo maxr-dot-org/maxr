@@ -23,7 +23,7 @@
 
 #include "ui/graphical/game/control/chatcommand/chatcommandarguments.h"
 #include "game/logic/client.h"
-#include "game/logic/server.h"
+#include "game/logic/server2.h"
 
 /*static*/ const char* const cChatCommandArgumentBool::trueName = "on";
 /*static*/ const char* const cChatCommandArgumentBool::falseName = "off";
@@ -227,29 +227,17 @@ const cChatCommandArgumentString::ValueType& cChatCommandArgumentString::getValu
 }
 
 //------------------------------------------------------------------------------
-cChatCommandArgumentServer::cChatCommandArgumentServer(const std::shared_ptr<cClient>& activeClientPointer_, bool isOptional_, ValueType defaultValue_) :
+cChatCommandArgumentServer::cChatCommandArgumentServer(cServer2*& serverPointer_, bool isOptional_, ValueType defaultValue_) :
 	cChatCommandArgument<cChatCommandArgumentServer>(isOptional_),
-	activeClientPointer(activeClientPointer_),
 	value(defaultValue_),
-	defaultValue(defaultValue_)
+	defaultValue(defaultValue_),
+	serverPointer(serverPointer_)
 {}
 
 //------------------------------------------------------------------------------
 size_t cChatCommandArgumentServer::parse(const std::string& command, size_t position)
 {
-	if(activeClientPointer == nullptr)
-	{
-		if(this->isOptional)
-		{
-			value = defaultValue;
-		}
-		else
-		{
-			// TODO: translate
-			throw std::runtime_error("Command can not be executed when there is no active client");
-		}
-	}
-	value = activeClientPointer->getServer();
+	value = serverPointer;
 	if(value == nullptr)
 	{
 		if(this->isOptional)
@@ -320,9 +308,9 @@ const cChatCommandArgumentClient::ValueType& cChatCommandArgumentClient::getValu
 }
 
 //------------------------------------------------------------------------------
-cChatCommandArgumentServerPlayer::cChatCommandArgumentServerPlayer(const std::shared_ptr<cClient>& activeClientPointer_, bool isOptional_, ValueType defaultValue_) :
+cChatCommandArgumentServerPlayer::cChatCommandArgumentServerPlayer(cServer2*& serverPointer_, bool isOptional_, ValueType defaultValue_) :
 	cChatCommandArgument<cChatCommandArgumentServerPlayer>(isOptional_),
-	activeClientPointer(activeClientPointer_),
+	serverPointer(serverPointer_),
 	value(defaultValue_),
 	defaultValue(defaultValue_)
 {}
@@ -330,12 +318,7 @@ cChatCommandArgumentServerPlayer::cChatCommandArgumentServerPlayer(const std::sh
 //------------------------------------------------------------------------------
 size_t cChatCommandArgumentServerPlayer::parse(const std::string& command, size_t position)
 {
-	if(activeClientPointer == nullptr)
-	{
-		// TODO: translate
-		throw std::runtime_error("Command can not be executed when there is no active client");
-	}
-	const auto server = activeClientPointer->getServer();
+	const auto server = serverPointer;
 	if(server == nullptr)
 	{
 		// TODO: translate
@@ -370,7 +353,7 @@ size_t cChatCommandArgumentServerPlayer::parse(const std::string& command, size_
 	{
 		try
 		{
-			value = &server->getPlayerFromNumber(playerNumber);
+			value = server->getModel().getPlayer(playerNumber);
 		}
 		catch(std::exception&)
 		{
@@ -382,7 +365,7 @@ size_t cChatCommandArgumentServerPlayer::parse(const std::string& command, size_
 	{
 		const auto& playerName = command.substr(position, nextWordLength);
 
-		value = server->getPlayerFromString(playerName);
+		value = server->getModel().getPlayer(playerName);
 
 		if(value == nullptr)
 		{
@@ -461,7 +444,7 @@ size_t cChatCommandArgumentClientPlayer::parse(const std::string& command, size_
 
 	if(isNumber)
 	{
-		value = activeClientPointer->getPlayerFromNumber(playerNumber);
+		value = activeClientPointer->getModel().getPlayer(playerNumber);
 
 		if(value == nullptr)
 		{
@@ -473,7 +456,7 @@ size_t cChatCommandArgumentClientPlayer::parse(const std::string& command, size_
 	{
 		const auto& playerName = command.substr(position, nextWordLength);
 
-		value = activeClientPointer->getPlayerFromString(playerName);
+		value = activeClientPointer->getModel().getPlayer(playerName);
 
 		if(value == nullptr)
 		{

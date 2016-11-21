@@ -39,7 +39,7 @@ eMouseModeType cMouseModeSupplyAmmo::getType() const
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeSupplyAmmo::setCursor (cMouse& mouse, const cPosition& mapPosition) const
+void cMouseModeSupplyAmmo::setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	if (canExecuteAction (mapPosition))
 	{
@@ -52,7 +52,7 @@ void cMouseModeSupplyAmmo::setCursor (cMouse& mouse, const cPosition& mapPositio
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeSupplyAmmo::getMouseAction (const cPosition& mapPosition) const
+std::unique_ptr<cMouseAction> cMouseModeSupplyAmmo::getMouseAction(const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	if (canExecuteAction (mapPosition))
 	{
@@ -78,7 +78,7 @@ void cMouseModeSupplyAmmo::establishUnitSelectionConnections()
 
 	if (selectedUnit)
 	{
-		selectedUnitSignalConnectionManager.connect (selectedUnit->data.storedResourcesChanged, [this]() { needRefresh(); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->storedResourcesChanged, [this]() { needRefresh(); });
 		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, [this]() { needRefresh(); });
 	}
 }

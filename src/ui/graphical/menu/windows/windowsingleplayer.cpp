@@ -20,7 +20,8 @@
 #include <functional>
 
 #include "ui/graphical/menu/windows/windowsingleplayer.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
+#include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/windows/windowgamesettings/windowgamesettings.h"
 #include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
 #include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
@@ -32,7 +33,7 @@
 #include "ui/graphical/game/gamegui.h"
 #include "game/startup/local/singleplayer/localsingleplayergamenew.h"
 #include "game/startup/local/singleplayer/localsingleplayergamesaved.h"
-
+#include "utility/log.h"
 #include "main.h"
 #include "network.h"
 #include "game/data/player/player.h"
@@ -40,6 +41,7 @@
 #include "settings.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
+#include "game/logic/server2.h"
 
 #include "game/logic/clientevents.h"
 
@@ -65,15 +67,15 @@ cWindowSinglePlayer::~cWindowSinglePlayer()
 
 // TODO: find nice place
 //------------------------------------------------------------------------------
-std::vector<std::pair<sID, int>> createInitialLandingUnitsList (int clan, const cGameSettings& gameSettings)
+std::vector<std::pair<sID, int>> createInitialLandingUnitsList(int clan, const cGameSettings& gameSettings, const cUnitsData& unitsData)
 {
 	std::vector<std::pair<sID, int>> initialLandingUnits;
 
 	if (gameSettings.getBridgeheadType() == eGameSettingsBridgeheadType::Mobile) return initialLandingUnits;
 
-	const auto& constructorID = UnitsData.getConstructorID();
-	const auto& engineerID = UnitsData.getEngineerID();
-	const auto& surveyorID = UnitsData.getSurveyorID();
+	const auto& constructorID = unitsData.getConstructorData().ID;
+	const auto& engineerID = unitsData.getEngineerData().ID;
+	const auto& surveyorID = unitsData.getSurveyorData().ID;
 
 	initialLandingUnits.push_back (std::make_pair (constructorID, 40));
 	initialLandingUnits.push_back (std::make_pair (engineerID, 20));
@@ -133,6 +135,9 @@ void cWindowSinglePlayer::newGameClicked()
 
 	auto game = std::make_shared<cLocalSingleplayerGameNew> ();
 
+	//initialize copy of unitsData that will be used in game
+	game->setUnitsData(std::make_shared<const cUnitsData>(UnitsDataGlobal));
+
 	auto windowGameSettings = getActiveApplication()->show (std::make_shared<cWindowGameSettings> ());
 	windowGameSettings->applySettings (cGameSettings());
 
@@ -155,16 +160,16 @@ void cWindowSinglePlayer::newGameClicked()
 
 			if (gameSettings->getClansEnabled())
 			{
-				auto windowClanSelection = application->show (std::make_shared<cWindowClanSelection> ());
+				auto windowClanSelection = application->show (std::make_shared<cWindowClanSelection> (game->getUnitsData()));
 
 				signalConnectionManager.connect (windowClanSelection->canceled, [windowClanSelection]() { windowClanSelection->close(); });
 				windowClanSelection->done.connect ([ = ]()
 				{
 					game->setPlayerClan (windowClanSelection->getSelectedClan());
 
-					auto initialLandingUnits = createInitialLandingUnitsList (windowClanSelection->getSelectedClan(), *gameSettings);
+					auto initialLandingUnits = createInitialLandingUnitsList (windowClanSelection->getSelectedClan(), *gameSettings, *game->getUnitsData());
 
-					auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), windowClanSelection->getSelectedClan(), initialLandingUnits, gameSettings->getStartCredits()));
+					auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), windowClanSelection->getSelectedClan(), initialLandingUnits, gameSettings->getStartCredits(), game->getUnitsData()));
 
 					signalConnectionManager.connect (windowLandingUnitSelection->canceled, [windowLandingUnitSelection]() { windowLandingUnitSelection->close(); });
 					windowLandingUnitSelection->done.connect ([ = ]()
@@ -172,7 +177,10 @@ void cWindowSinglePlayer::newGameClicked()
 						game->setLandingUnits (windowLandingUnitSelection->getLandingUnits());
 						game->setUnitUpgrades (windowLandingUnitSelection->getUnitUpgrades());
 
-						auto windowLandingPositionSelection = application->show (std::make_shared<cWindowLandingPositionSelection> (staticMap, false));
+						bool fixedBridgeHead = gameSettings->getBridgeheadType() == eGameSettingsBridgeheadType::Definite;
+						auto& landingUnits = windowLandingUnitSelection->getLandingUnits();
+						auto& unitsdata = game->getUnitsData();
+						auto windowLandingPositionSelection = application->show (std::make_shared<cWindowLandingPositionSelection> (staticMap, fixedBridgeHead, landingUnits, unitsdata, false));
 
 						signalConnectionManager.connect (windowLandingPositionSelection->canceled, [windowLandingPositionSelection]() { windowLandingPositionSelection->close(); });
 						windowLandingPositionSelection->selectedPosition.connect ([ = ] (cPosition landingPosition)
@@ -192,9 +200,9 @@ void cWindowSinglePlayer::newGameClicked()
 			}
 			else
 			{
-				auto initialLandingUnits = createInitialLandingUnitsList (-1, *gameSettings);
+				auto initialLandingUnits = createInitialLandingUnitsList (-1, *gameSettings, *game->getUnitsData());
 
-				auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), -1, initialLandingUnits, gameSettings->getStartCredits()));
+				auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), -1, initialLandingUnits, gameSettings->getStartCredits(), game->getUnitsData()));
 
 				signalConnectionManager.connect (windowLandingUnitSelection->canceled, [windowLandingUnitSelection]() { windowLandingUnitSelection->close(); });
 				windowLandingUnitSelection->done.connect ([ = ]()
@@ -202,7 +210,10 @@ void cWindowSinglePlayer::newGameClicked()
 					game->setLandingUnits (windowLandingUnitSelection->getLandingUnits());
 					game->setUnitUpgrades (windowLandingUnitSelection->getUnitUpgrades());
 
-					auto windowLandingPositionSelection = application->show (std::make_shared<cWindowLandingPositionSelection> (staticMap, false));
+					bool fixedBridgeHead = gameSettings->getBridgeheadType() == eGameSettingsBridgeheadType::Definite;
+					auto& landingUnits = windowLandingUnitSelection->getLandingUnits();
+					auto& unitsdata = game->getUnitsData();
+					auto windowLandingPositionSelection = application->show(std::make_shared<cWindowLandingPositionSelection>(staticMap, fixedBridgeHead, landingUnits, unitsdata, false));
 
 					signalConnectionManager.connect (windowLandingPositionSelection->canceled, [windowLandingPositionSelection]() { windowLandingPositionSelection->close(); });
 					windowLandingPositionSelection->selectedPosition.connect ([ = ] (cPosition landingPosition)
@@ -234,7 +245,18 @@ void cWindowSinglePlayer::loadGameClicked()
 	{
 		auto game = std::make_shared<cLocalSingleplayerGameSaved> ();
 		game->setSaveGameNumber (saveGameNumber);
-		game->start (*application);
+		try
+		{
+			game->start(*application);
+		}
+		catch (std::runtime_error e)
+		{
+			Log.write("Could not start saved game.", cLog::eLOG_TYPE_ERROR);
+			Log.write(e.what(), cLog::eLOG_TYPE_ERROR);
+			application->show(std::make_shared<cDialogOk>(lngPack.i18n("Text~Error_Messages~ERROR_Save_Loading")));
+			return;
+		}
+
 
 		windowLoad->close();
 	});

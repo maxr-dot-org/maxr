@@ -28,7 +28,7 @@
 #include "ui/graphical/game/control/gameguicontroller.h"
 
 class cClient;
-class cServer;
+class cServer2;
 class cGameGuiController;
 
 class cLocalSingleplayerGame : public cGame
@@ -38,13 +38,12 @@ public:
 
 	virtual void run() MAXR_OVERRIDE_FUNCTION;
 
-	virtual void save (int saveNumber, const std::string& saveName) MAXR_OVERRIDE_FUNCTION;
-
 protected:
 	std::shared_ptr<cClient> client;
-	std::unique_ptr<cServer> server;
+	std::unique_ptr<cServer2> server;
 
 	std::unique_ptr<cGameGuiController> gameGuiController;
+	
 };
 
 #endif // game_startup_local_singleplayer_localsingleplayergameH

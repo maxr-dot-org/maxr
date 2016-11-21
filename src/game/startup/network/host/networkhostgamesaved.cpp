@@ -18,53 +18,53 @@
  ***************************************************************************/
 
 #include "game/startup/network/host/networkhostgamesaved.h"
-#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/gamesettings.h"
 #include "ui/graphical/application.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
 #include "game/data/player/player.h"
 #include "game/logic/clientevents.h"
-#include "game/logic/savegame.h"
+#include "game/data/savegame.h"
 #include "game/data/report/savedreport.h"
 
 //------------------------------------------------------------------------------
 void cNetworkHostGameSaved::start (cApplication& application)
 {
-	server = std::make_unique<cServer> (network);
-	localClient = std::make_shared<cClient> (server.get(), nullptr);
+	//server = std::make_unique<cServer> (network);
+	//localClient = std::make_shared<cClient> (server.get(), nullptr); //TODO: use new server
 
-	cSavegame savegame (saveGameNumber);
-	if (savegame.load (*server) == false) return; // TODO: error message
+	//cSavegame savegame (saveGameNumber);
+	//if (savegame.load (*server) == false) return; // TODO: error message
 
 	auto staticMap = server->Map->staticMap;
-	localClient->setMap (staticMap);
+//	localClient->setMap (staticMap);
 
 	const auto& serverPlayerList = server->playerList;
 	if (serverPlayerList.empty()) return;
 
 	// set socket index for server players
-	for (const auto& serverPlayer : serverPlayerList)
+/*	for (const auto& serverPlayer : serverPlayerList)
 	{
-		if (serverPlayer->getNr() == players[localPlayerIndex].getNr())
+		if (serverPlayer->getId() == players[localPlayerIndex].getNr())
 		{
 			serverPlayer->setLocal();
 		}
 		else
 		{
-			auto iter = std::find_if(players.begin(), players.end(), [&] (const cPlayerBasicData & player) { return player.getNr() == serverPlayer->getNr(); });
+			auto iter = std::find_if(players.begin(), players.end(), [&] (const cPlayerBasicData & player) { return player.getNr() == serverPlayer->getId(); });
 			assert(iter != players.end());
 			const auto& listPlayer = *iter;
 
 			serverPlayer->setSocketIndex (listPlayer.getSocketIndex());
 		}
 	}
-
+*/
 	localClient->setPlayers (players, localPlayerIndex);
 
-	if (server->getGameSettings()->getGameType() == eGameSettingsGameType::Turns)
+	/*if (server->getGameSettings()->getGameType() == eGameSettingsGameType::Turns)
 	{
 		sendWaitFor (*server, *server->getActiveTurnPlayer(), nullptr);
-	}
+	}*/
 
 	server->start();
 
@@ -73,14 +73,15 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	// TODO: move that in server
 	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
-		sendGameSettings (*server, *serverPlayerList[i]);
-		sendGameGuiState (*server, server->getPlayerGameGuiState (*serverPlayerList[i]), *serverPlayerList[i]);
-		auto& reportList = serverPlayerList[i]->savedReportsList;
+//		sendGameSettings (*server, *serverPlayerList[i]);
+		//sendGameGuiState (*server, server->getPlayerGameGuiState (*serverPlayerList[i]), *serverPlayerList[i]);
+/*		auto& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size(); ++j)
 		{
 			sendSavedReport (*server, *reportList[j], serverPlayerList[i].get());
 		}
 		reportList.clear();
+		*/
 	}
 
 	// start game
@@ -94,9 +95,6 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	gameGuiController->setSingleClient (localClient);
 
 	gameGuiController->start();
-
-	using namespace std::placeholders;
-	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cNetworkHostGameSaved::save, this, _1, _2));
 
 	terminate = false;
 

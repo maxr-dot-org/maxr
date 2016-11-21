@@ -28,12 +28,15 @@
 #include <cassert>
 
 #include "defines.h"
+#include "utility/crc.h"
 #include "utility/files.h"
 #include "utility/log.h"
-#include "menuevents.h"
-#include "netmessage.h"
 #include "settings.h"
 #include "utility/string/tolower.h"
+#include "ui/graphical/menu/control/menuevents.h"
+#include "utility/string/toString.h"
+#include "connectionmanager.h"
+#include "netmessage2.h"
 
 using namespace std;
 
@@ -137,7 +140,7 @@ int32_t MapDownload::calculateCheckSum (const std::string& mapName)
 		{
 			file.read (data.data() + 9, relevantMapDataSize);
 			if (!file.bad() && !file.eof())
-				result = calcCheckSum (data.data(), relevantMapDataSize + 9);
+				result = calcCheckSum (data.data(), relevantMapDataSize + 9, 0);
 		}
 	}
 	return result;
@@ -156,16 +159,14 @@ cMapReceiver::cMapReceiver (const std::string& mapName, int mapSize) :
 }
 
 //------------------------------------------------------------------------------
-bool cMapReceiver::receiveData (cNetMessage& message)
+bool cMapReceiver::receiveData (cMuMsgMapDownloadData& message)
 {
-	assert (message.iType == MU_MSG_MAP_DOWNLOAD_DATA);
-
-	const int bytesInMsg = message.popInt32();
+	const int bytesInMsg = message.data.size();
 	if (bytesInMsg <= 0 || bytesReceived + bytesInMsg > readBuffer.size())
 		return false;
 
-	for (int i = bytesInMsg - 1; i >= 0; i--)
-		readBuffer[bytesReceived + i] = message.popChar();
+	for (int i = 0; i < bytesInMsg; i++)
+		readBuffer[bytesReceived + i] = message.data[i];
 
 	bytesReceived += bytesInMsg;
 	std::ostringstream os;
@@ -212,11 +213,11 @@ int mapSenderThreadFunction (void* data)
 }
 
 //------------------------------------------------------------------------------
-cMapSender::cMapSender (cTCP& network_, int toSocket,
+cMapSender::cMapSender(cConnectionManager& connectionManager, int toPlayerNr,
 						const std::string& mapName,
 						const std::string& receivingPlayerName) :
-	network (&network_),
-	toSocket (toSocket),
+	connectionManager (connectionManager),
+	toPlayerNr (toPlayerNr),
 	receivingPlayerName (receivingPlayerName),
 	mapName (mapName),
 	bytesSent (0),
@@ -240,9 +241,8 @@ cMapSender::~cMapSender()
 		// the thread was not finished yet
 		// (else it would have deleted sendBuffer already)
 		// send a canceled msg to the client
-		cNetMessage msg (MU_MSG_CANCELED_MAP_DOWNLOAD);
-		sendMsg (msg);
 		Log.write ("MapSender: Canceling an unfinished upload thread", cLog::eLOG_TYPE_DEBUG);
+		sendMsg (cMuMsgCanceledMapDownload());
 	}
 }
 
@@ -287,24 +287,22 @@ void cMapSender::run()
 	if (canceled) return;
 
 	{
-		cNetMessage msg (MU_MSG_START_MAP_DOWNLOAD);
-		msg.pushString (mapName);
-		msg.pushInt32 (sendBuffer.size());
-		sendMsg (msg);
+		sendMsg(cMuMsgStartMapDownload(mapName, sendBuffer.size()));
 	}
 	int msgCount = 0;
+	const int MAX_MESSAGE_SIZE = 10 * 1024;
+
 	while (bytesSent < sendBuffer.size())
 	{
 		if (canceled) return;
 
-		cNetMessage msg (MU_MSG_MAP_DOWNLOAD_DATA);
+		cMuMsgMapDownloadData msg;
 		int bytesToSend = sendBuffer.size() - bytesSent;
-		if (bytesToSend + msg.iLength + 4 > PACKAGE_LENGTH)
-			bytesToSend = PACKAGE_LENGTH - msg.iLength - 4;
+		if (bytesToSend  > MAX_MESSAGE_SIZE)
+			bytesToSend = MAX_MESSAGE_SIZE;
 		for (int i = 0; i < bytesToSend; i++)
-			msg.pushChar (sendBuffer[bytesSent + i]);
+			msg.data.push_back(sendBuffer[bytesSent + i]);
 		bytesSent += bytesToSend;
-		msg.pushInt32 (bytesToSend);
 		sendMsg (msg);
 
 		msgCount++;
@@ -315,9 +313,7 @@ void cMapSender::run()
 	// finished
 	sendBuffer.clear();
 
-	cNetMessage msg (MU_MSG_FINISHED_MAP_DOWNLOAD);
-	msg.pushString (receivingPlayerName);
-	sendMsg (msg);
+	sendMsg (cMuMsgFinishedMapDownload(receivingPlayerName));
 
 	// Push message also to client, that belongs to the host,
 	// to give feedback about the finished upload state.
@@ -336,10 +332,13 @@ void cMapSender::run()
 }
 
 //------------------------------------------------------------------------------
-void cMapSender::sendMsg (cNetMessage& msg)
+void cMapSender::sendMsg (cNetMessage2& msg)
 {
-	msg.iPlayerNr = -1;
-	network->sendTo (toSocket, msg.iLength, msg.serialize());
+	msg.playerNr = -1;
 
-	Log.write ("MapSender: --> " + msg.getTypeAsString() + ", Hexdump: " + msg.getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	cTextArchiveIn archive;
+	archive << msg;
+	Log.write ("MapSender: --> " + archive.data() + " to " + toString(toPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
+
+	connectionManager.sendToPlayer(msg, toPlayerNr);
 }

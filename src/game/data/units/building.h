@@ -40,39 +40,29 @@ class cVehicle;
 class cMap;
 class cMapField;
 class cServer;
-
-//--------------------------------------------------------------------------
-/** Struct for one upgrade (one kind of value, e.g. hitpointsMax) */
-//--------------------------------------------------------------------------
-struct sUpgrade
-{
-	bool active; // is this upgrade buyable for the player
-	int NextPrice; // what will the next upgrade cost
-	int Purchased;
-	int* value; // what is the current value
-	int StartValue; // the initial value for this unit type
-	std::string name; // the name of this upgrade type, e.g. Ammo
-};
-
-//--------------------------------------------------------------------------
-/** Struct for one upgrade (one kind of value, e.g. hitpointsMax)
-	When the hangar is made nice code, too, the sUpgradeNew and the sUpgrade have to be united, again. */
-//--------------------------------------------------------------------------
-struct sUpgradeNew
-{
-	bool active; // is this upgrade buyable for the player
-	int nextPrice; // what will the next upgrade cost
-	int purchased; // how many upgrades of this type has the player purchased
-	int curValue; // what is the current value
-	int startValue; // the value that this unit would have without all upgrades
-	std::string name; // the name of this upgrade type, e.g. Ammo
-};
+class cSubBase;
 
 //--------------------------------------------------------------------------
 /** struct for the images and sounds */
 //--------------------------------------------------------------------------
 struct sBuildingUIData
 {
+	sID id;
+
+	bool hasClanLogos;
+	bool hasDamageEffect;
+	bool hasBetonUnderground;
+	bool hasPlayerColor;
+	bool hasOverlay;
+
+	bool buildUpGraphic;
+	bool powerOnGraphic;
+	bool isAnimated;
+
+	bool isConnectorGraphic;
+	int hasFrames;
+
+
 	AutoSurface img, img_org; // Surface of the building
 	AutoSurface shw, shw_org; // Surfaces of the shadow
 	AutoSurface eff, eff_org; // Surfaces of the effects
@@ -123,8 +113,17 @@ public:
 	int getRemainingMetal() const;
 	void setRemainingMetal (int value);
 
+	uint32_t getChecksum(uint32_t crc) const;
+
 	cSignal<void ()> typeChanged;
 	cSignal<void ()> remainingMetalChanged;
+
+	template<typename T>
+	void serialize(T& archive)
+	{
+		archive & NVP(type);
+		archive & NVP(remainingMetal);
+	}
 private:
 	sID type;
 	int remainingMetal;
@@ -144,7 +143,9 @@ enum ResourceKind
 class cBuilding : public cUnit
 {
 public:
-	cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID);
+	friend class cDebugOutputWidget;
+
+	cBuilding(const cStaticUnitData* staticData, const cDynamicUnitData* data, cPlayer* Owner, unsigned int ID);
 	virtual ~cBuilding();
 
 	virtual bool isAVehicle() const { return false; }
@@ -157,15 +158,16 @@ public:
 	int RubbleValue;   // Wert des Drecks
 	bool BaseN, BaseE, BaseS, BaseW; // is the building connected in this direction?
 	bool BaseBN, BaseBE, BaseBS, BaseBW; // is the building connected in this direction (only for big buildings)
-	struct sSubBase* SubBase;     // the subbase to which this building belongs
-	int MaxMetalProd, MaxOilProd, MaxGoldProd; // the maximum possible production of the building
+	cSubBase* subBase;     // the subbase to which this building belongs
+	int metalProd, oilProd, goldProd;          // production settings (from mine allocation menu)
+
 	int DamageFXPointX, DamageFXPointY, DamageFXPointX2, DamageFXPointY2; // the points, where smoke will be generated when the building is damaged
 	/** true if the building was has been working before it was disabled */
 	bool wasWorking;
 	int points;     // accumulated eco-sphere points
 
 	int playStream();
-	virtual std::string getStatusStr (const cPlayer* player) const MAXR_OVERRIDE_FUNCTION;
+	virtual std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
 
 	virtual void makeReport (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 
@@ -178,15 +180,15 @@ public:
 	void DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int value, int orgvalue, SDL_Surface* sf);
 	void updateNeighbours (const cMap& map);
 	void CheckNeighbours (const cMap& Map);
-	void ServerStartWork (cServer& server);
-	void clientStartWork();
-	void ServerStopWork (cServer& server, bool override);
-	void clientStopWork();
+
+	void startWork ();
+	void stopWork (bool forced = false);
+
 	/** check whether a transfer to a unit on the field is possible */
 	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const MAXR_OVERRIDE_FUNCTION;
-	void CheckRessourceProd (const cServer& server);
+	void initMineRessourceProd (const cMap& map);
 	void calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array<int, 3>& turboBuildCosts, int vehicleCosts, int remainingMetal = -1) const;
-	virtual bool canExitTo (const cPosition& position, const cMap& map, const sUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
+	virtual bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
 	bool canLoad (const cPosition& position, const cMap& map, bool checkPosition = true) const;
 	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const;
 	void storeVehicle (cVehicle& vehicle, cMap& map);
@@ -219,8 +221,8 @@ public:
 	* draws the main image of the building onto the given surface
 	*/
 	void render (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow, bool drawConcrete) const;
-	void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int animationTime = 0, int alpha = 254) const;
-	static void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sUnitData& data, const sBuildingUIData& uiData, const cPlayer* owner, int frameNr = 0, int alpha = 254);
+	void render_simple(SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, unsigned long long animationTime = 0, int alpha = 254) const;
+	static void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sBuildingUIData& uiData, const cPlayer* owner, int frameNr = 0, int alpha = 254);
 
 	void executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType) const;
 
@@ -247,8 +249,12 @@ public:
 	void setMetalPerRound(int value);
 	void setRepeatBuild(bool value);
 
+	int getMaxProd(int type) const;
+
 	void setResearchArea (cResearch::ResearchArea area);
 	cResearch::ResearchArea getResearchArea() const;
+
+	virtual uint32_t getChecksum(uint32_t crc) const;
 
 	cSignal<void ()> buildListChanged;
 	cSignal<void ()> buildListFirstItemDataChanged;
@@ -257,6 +263,43 @@ public:
 	cSignal<void()> buildSpeedChanged;
 	cSignal<void()> metalPerRoundChanged;
 	cSignal<void()> repeatBuildChanged;
+	
+	template <typename T>
+	void serialize(T& archive)
+	{
+		serializeBase(archive); //serialize cUnit members
+
+		archive & NVP(RubbleTyp);
+		archive & NVP(RubbleValue);
+		archive & NVP(BaseN);
+		archive & NVP(BaseE);
+		archive & NVP(BaseS);
+		archive & NVP(BaseW);
+		archive & NVP(BaseBN);
+		archive & NVP(BaseBE);
+		archive & NVP(BaseBS);
+		archive & NVP(BaseBW);
+		archive & NVP(maxMetalProd);
+		archive & NVP(maxOilProd);
+		archive & NVP(maxGoldProd);
+		archive & NVP(metalProd);
+		archive & NVP(oilProd);
+		archive & NVP(goldProd);
+		archive & NVP(buildSpeed);
+		archive & NVP(metalPerRound);
+		archive & NVP(repeatBuild);
+		archive & NVP(wasWorking);
+		archive & NVP(points);
+		archive & NVP(isWorking);
+		archive & NVP(researchArea);
+		archive & NVP(buildList);
+
+		if (!archive.isWriter)
+		{
+			uiData = UnitsUiData.getBuildingUI(data.getId());
+			registerOwnerEvents();
+		}
+	}
 private:
 	cSignalConnectionManager buildListFirstItemSignalConnectionManager;
 	cSignalConnectionManager ownerSignalConnectionManager;
@@ -274,6 +317,8 @@ private:
 	int buildSpeed;
 	int metalPerRound;
 	bool repeatBuild;
+
+	int maxMetalProd, maxOilProd, maxGoldProd; // the maximum possible production of the building (ressources under the building)
 
 	cResearch::ResearchArea researchArea; ///< if the building can research, this is the area the building last researched or is researching
 

@@ -42,8 +42,8 @@ cNewDialogTransfer::cNewDialogTransfer (const cUnit& sourceUnit, const cUnit& de
 
 	arrowImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (140, 77)));
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (20, 105), getPosition() + cPosition (40 + 80, 105 + 10)), sourceUnit.data.name, FONT_LATIN_SMALL_WHITE, eAlignmentType::CenterHorizontal));
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (190, 105), getPosition() + cPosition (210 + 80, 105 + 10)), destinationUnit.data.name, FONT_LATIN_SMALL_WHITE, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (20, 105), getPosition() + cPosition (40 + 80, 105 + 10)), sourceUnit.getName(), FONT_LATIN_SMALL_WHITE, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (190, 105), getPosition() + cPosition (210 + 80, 105 + 10)), destinationUnit.getName(), FONT_LATIN_SMALL_WHITE, eAlignmentType::CenterHorizontal));
 
 	sourceUnitCargoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (18, 60), getPosition() + cPosition (18 + 20, 60 + 10)), "", FONT_LATIN_SMALL_WHITE, eAlignmentType::CenterHorizontal));
 	destinationUnitCargoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (272, 60), getPosition() + cPosition (272 + 20, 60 + 10)), "", FONT_LATIN_SMALL_WHITE, eAlignmentType::CenterHorizontal));
@@ -90,11 +90,11 @@ cNewDialogTransfer::cNewDialogTransfer (const cUnit& sourceUnit, const cUnit& de
 }
 
 //------------------------------------------------------------------------------
-sUnitData::eStorageResType cNewDialogTransfer::getCommonResourceType (const cUnit& sourceUnit, const cUnit& destinationUnit) const
+cStaticUnitData::eStorageResType cNewDialogTransfer::getCommonResourceType(const cUnit& sourceUnit, const cUnit& destinationUnit) const
 {
-	sUnitData::eStorageResType commonResourceType = sUnitData::STORE_RES_NONE;
-	const auto sourceResource = sourceUnit.data.storeResType;
-	const auto destinationResource = destinationUnit.data.storeResType;
+	cStaticUnitData::eStorageResType commonResourceType = cStaticUnitData::STORE_RES_NONE;
+	const auto sourceResource = sourceUnit.getStaticUnitData().storeResType;
+	const auto destinationResource = destinationUnit.getStaticUnitData().storeResType;
 	if (sourceResource == destinationResource)
 	{
 		commonResourceType = destinationResource;
@@ -114,11 +114,11 @@ eResourceBarType cNewDialogTransfer::getResourceBarType (const cUnit& sourceUnit
 	switch (getCommonResourceType (sourceUnit, destinationUnit))
 	{
 		default:
-		case sUnitData::STORE_RES_METAL:
+		case cStaticUnitData::STORE_RES_METAL:
 			return eResourceBarType::MetalSlim;
-		case sUnitData::STORE_RES_OIL:
+		case cStaticUnitData::STORE_RES_OIL:
 			return eResourceBarType::OilSlim;
-		case sUnitData::STORE_RES_GOLD:
+		case cStaticUnitData::STORE_RES_GOLD:
 			return eResourceBarType::GoldSlim;
 	}
 }
@@ -129,7 +129,7 @@ void cNewDialogTransfer::initUnitImage (cImage& image, const cUnit& unit)
 	const int unitImageWidth = 64;
 	const int unitImageHeight = 64;
 
-	const auto zoom = (float)unitImageWidth / (unit.data.isBig ? cStaticMap::tilePixelWidth * 2 : cStaticMap::tilePixelWidth);
+	const auto zoom = (float)unitImageWidth / (unit.getIsBig() ? cStaticMap::tilePixelWidth * 2 : cStaticMap::tilePixelWidth);
 
 	AutoSurface unitImageSurface (SDL_CreateRGBSurface (0, unitImageWidth, unitImageHeight, Video.getColDepth(), 0, 0, 0, 0));
 	SDL_FillRect (unitImageSurface.get(), nullptr, 0xFF00FF);
@@ -160,33 +160,33 @@ void cNewDialogTransfer::initCargo (int& cargo, int& maxCargo, const cUnit& unit
 
 		if (unit2.isAVehicle())
 		{
-			switch (unit2.data.storeResType)
+			switch (unit2.getStaticUnitData().storeResType)
 			{
 				default:
-				case sUnitData::STORE_RES_METAL:
-					maxCargo = building.SubBase->MaxMetal;
-					cargo = building.SubBase->getMetal();
+				case cStaticUnitData::STORE_RES_METAL:
+					maxCargo = building.subBase->getMaxMetalStored();
+					cargo = building.subBase->getMetalStored();
 					break;
-				case sUnitData::STORE_RES_OIL:
-					maxCargo = building.SubBase->MaxOil;
-					cargo = building.SubBase->getOil();
+				case cStaticUnitData::STORE_RES_OIL:
+					maxCargo = building.subBase->getMaxOilStored();
+					cargo = building.subBase->getOilStored();
 					break;
-				case sUnitData::STORE_RES_GOLD:
-					maxCargo = building.SubBase->MaxGold;
-					cargo = building.SubBase->getGold();
+				case cStaticUnitData::STORE_RES_GOLD:
+					maxCargo = building.subBase->getMaxGoldStored();
+					cargo = building.subBase->getGoldStored();
 					break;
 			}
 		}
 		else if (unit2.isABuilding())
 		{
-			maxCargo = building.data.storageResMax;
-			cargo = building.data.getStoredResources();
+			maxCargo = building.getStaticUnitData().storageResMax;
+			cargo = building.getStoredResources();
 		}
 	}
 	else if (unit1.isAVehicle())
 	{
-		maxCargo = unit1.data.storageResMax;
-		cargo = unit1.data.getStoredResources();
+		maxCargo = unit1.getStaticUnitData().storageResMax;
+		cargo = unit1.getStoredResources();
 	}
 }
 
@@ -219,7 +219,7 @@ int cNewDialogTransfer::getTransferValue() const
 }
 
 //------------------------------------------------------------------------------
-sUnitData::eStorageResType cNewDialogTransfer::getResourceType() const
+cStaticUnitData::eStorageResType cNewDialogTransfer::getResourceType() const
 {
 	return resourceType;
 }

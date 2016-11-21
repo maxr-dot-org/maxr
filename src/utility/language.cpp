@@ -36,6 +36,7 @@
 #include "utility/files.h"
 #include "tinyxml2.h"
 #include "utility/string/toupper.h"
+#include "game/data/units/unitdata.h"
 
 using namespace tinyxml2;
 
@@ -228,12 +229,6 @@ int cLanguage::ReadLanguagePack()
 	return 0;
 }
 
-int cLanguage::CheckCurrentLanguagePack (bool bInsertMissingEntries)
-{
-	//TODO: - JCK: Check and correct a language pack
-	return 0;
-}
-
 std::vector<std::string> cLanguage::getAvailableLanguages() const
 {
 	std::vector<std::string> languageCodes;
@@ -265,7 +260,69 @@ std::vector<std::string> cLanguage::getAvailableLanguages() const
 	return languageCodes;
 }
 
-int cLanguage::ReadSingleTranslation (const char* pszCurrent, ...)
+std::string cLanguage::getUnitName(const sID& id) const
+{
+	const XMLElement* xmlElement = m_XmlDoc.RootElement()->FirstChildElement("Units");
+	if (xmlElement == nullptr) return "";
+
+	xmlElement = xmlElement->FirstChildElement();
+	while (xmlElement != nullptr)
+	{
+		const char* value = xmlElement->Attribute("ID");
+		if (value == nullptr) continue;
+
+		sID elementID;
+		elementID.generate(value);
+
+		if (elementID == id)
+		{
+			const char* value;
+			if (cSettings::getInstance().getLanguage() != "ENG")
+				value = xmlElement->Attribute("localized");
+			else
+				value = xmlElement->Attribute("ENG");
+			if (value == nullptr) return "";
+
+			return std::string(value);
+		}
+		xmlElement = xmlElement->NextSiblingElement();
+	}
+	return "";
+}
+
+std::string cLanguage::getUnitDescription(const sID& id) const
+{
+	const XMLElement* xmlElement = m_XmlDoc.RootElement()->FirstChildElement("Units");
+	if (xmlElement == nullptr) return "";
+
+	xmlElement = xmlElement->FirstChildElement();
+	while (xmlElement != nullptr)
+	{
+		const char* value = xmlElement->Attribute("ID");
+		if (value == nullptr) continue;
+
+		sID elementID;
+		elementID.generate(value);
+
+		if (elementID == id)
+		{
+			const char* value = xmlElement->GetText();
+			if (value == nullptr) return "";
+
+			std::string description = value;
+			size_t pos;
+			while ((pos = description.find("\\n")) != std::string::npos)
+			{
+				description.replace(pos, 2, "\n");
+			}
+			return description;
+		}
+		xmlElement = xmlElement->NextSiblingElement();
+	}
+	return "";
+}
+
+int cLanguage::ReadSingleTranslation(const char* pszCurrent, ...)
 {
 	va_list pvaArg;
 	va_start (pvaArg, pszCurrent);

@@ -29,7 +29,7 @@ class cSavedReport;
 class cReportMessageListViewItem : public cAbstractListViewItem
 {
 public:
-	explicit cReportMessageListViewItem (const cSavedReport& report);
+	explicit cReportMessageListViewItem (const cSavedReport& report, const cUnitsData& unitsData);
 
 	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 

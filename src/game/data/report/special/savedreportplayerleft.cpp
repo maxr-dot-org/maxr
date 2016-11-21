@@ -18,7 +18,6 @@
  ***************************************************************************/
 
 #include "game/data/report/special/savedreportplayerleft.h"
-#include "netmessage.h"
 #include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------
@@ -27,41 +26,13 @@ cSavedReportPlayerLeft::cSavedReportPlayerLeft (const cPlayer& player) :
 {}
 
 //------------------------------------------------------------------------------
-cSavedReportPlayerLeft::cSavedReportPlayerLeft (cNetMessage& message)
-{
-	playerName = message.popString();
-}
-
-//------------------------------------------------------------------------------
-cSavedReportPlayerLeft::cSavedReportPlayerLeft (const tinyxml2::XMLElement& element)
-{
-	playerName = element.Attribute ("playerName");
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportPlayerLeft::pushInto (cNetMessage& message) const
-{
-	message.pushString (playerName);
-
-	cSavedReport::pushInto (message);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportPlayerLeft::pushInto (tinyxml2::XMLElement& element) const
-{
-	element.SetAttribute ("playerName", playerName.c_str());
-
-	cSavedReport::pushInto (element);
-}
-
-//------------------------------------------------------------------------------
 eSavedReportType cSavedReportPlayerLeft::getType() const
 {
 	return eSavedReportType::PlayerLeft;
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportPlayerLeft::getMessage() const
+std::string cSavedReportPlayerLeft::getMessage(const cUnitsData& unitsData) const
 {
 	return lngPack.i18n ("Text~Multiplayer~Player_Left", playerName);
 }

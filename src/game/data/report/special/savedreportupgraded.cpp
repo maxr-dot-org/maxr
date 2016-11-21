@@ -29,51 +29,15 @@ cSavedReportUpgraded::cSavedReportUpgraded (const sID& unitId_, int unitsCount_,
 {}
 
 //------------------------------------------------------------------------------
-cSavedReportUpgraded::cSavedReportUpgraded (cNetMessage& message)
-{
-	costs = message.popInt32();
-	unitsCount = message.popInt32();
-	unitId = message.popID();
-}
-
-//------------------------------------------------------------------------------
-cSavedReportUpgraded::cSavedReportUpgraded (const tinyxml2::XMLElement& element)
-{
-	unitId.generate (element.Attribute ("id"));
-	unitsCount = element.IntAttribute ("unitsCount");
-	costs = element.IntAttribute ("costs");
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportUpgraded::pushInto (cNetMessage& message) const
-{
-	message.pushID (unitId);
-	message.pushInt32 (unitsCount);
-	message.pushInt32 (costs);
-
-	cSavedReport::pushInto (message);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportUpgraded::pushInto (tinyxml2::XMLElement& element) const
-{
-	element.SetAttribute ("id", unitId.getText().c_str());
-	element.SetAttribute ("unitsCount", iToStr (unitsCount).c_str());
-	element.SetAttribute ("costs", iToStr (costs).c_str());
-
-	cSavedReport::pushInto (element);
-}
-
-//------------------------------------------------------------------------------
 eSavedReportType cSavedReportUpgraded::getType() const
 {
 	return eSavedReportType::Upgraded;
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportUpgraded::getMessage() const
+std::string cSavedReportUpgraded::getMessage(const cUnitsData& unitsData) const
 {
-	const auto& unitName = unitId.getUnitDataOriginalVersion()->name;
+	const auto& unitName = unitsData.getStaticUnitData(unitId).getName();
 	return lngPack.i18n ("Text~Comp~Upgrades_Done") + " " + iToStr (unitsCount) + " " + lngPack.i18n ("Text~Comp~Upgrades_Done2", unitName) + " (" + lngPack.i18n ("Text~Others~Costs") + lngPack.i18n ("Text~Punctuation~Colon") + iToStr (costs) + ")";
 }
 

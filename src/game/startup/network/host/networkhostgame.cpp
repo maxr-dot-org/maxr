@@ -20,7 +20,7 @@
 #include "game/startup/network/host/networkhostgame.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
-#include "game/logic/savegame.h"
+#include "game/data/savegame.h"
 #include "loaddata.h"
 
 //------------------------------------------------------------------------------
@@ -29,28 +29,17 @@ cNetworkHostGame::~cNetworkHostGame()
 	if (server)
 	{
 		server->stop();
-		reloadUnitValues();
 	}
 }
 
 //------------------------------------------------------------------------------
 void cNetworkHostGame::run()
 {
-	if (localClient) localClient->getGameTimer()->run();
+	if (localClient) localClient->run();
 }
 
 //------------------------------------------------------------------------------
-void cNetworkHostGame::save (int saveNumber, const std::string& saveName)
-{
-	if (!server) throw std::runtime_error ("Game not started!"); // should never happen (hence a translation is not necessary).
-
-	cSavegame savegame (saveNumber);
-	savegame.save (*server, saveName);
-	server->makeAdditionalSaveRequest (saveNumber);
-}
-
-//------------------------------------------------------------------------------
-void cNetworkHostGame::setNetwork (std::shared_ptr<cTCP> network_)
+void cNetworkHostGame::setConnectionManager(std::shared_ptr<cConnectionManager> network_)
 {
 	network = network_;
 }

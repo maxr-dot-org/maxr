@@ -20,7 +20,6 @@
 #include "game/data/report/unit/savedreportdetected.h"
 #include "game/data/units/unit.h"
 #include "game/data/player/player.h"
-#include "netmessage.h"
 #include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffectvoice.h"
 #include "sound.h"
@@ -30,42 +29,9 @@
 cSavedReportDetected::cSavedReportDetected (const cUnit& unit) :
 	cSavedReportUnit (unit),
 	unitName (unit.getDisplayName()),
-	playerName (unit.getOwner()->getName())
+	playerName (unit.getOwner()->getName()),
+	submarine(unit.getStaticUnitData().isStealthOn & TERRAIN_SEA && unit.getStaticUnitData().canAttack)
 {}
-
-//------------------------------------------------------------------------------
-cSavedReportDetected::cSavedReportDetected (cNetMessage& message) :
-	cSavedReportUnit (message)
-{
-	unitName = message.popString();
-	playerName = message.popString();
-}
-
-//------------------------------------------------------------------------------
-cSavedReportDetected::cSavedReportDetected (const tinyxml2::XMLElement& element) :
-	cSavedReportUnit (element)
-{
-	unitName = element.Attribute ("unitName");
-	playerName = element.Attribute ("playerName");
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportDetected::pushInto (cNetMessage& message) const
-{
-	message.pushString (playerName);
-	message.pushString (unitName);
-
-	cSavedReportUnit::pushInto (message);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportDetected::pushInto (tinyxml2::XMLElement& element) const
-{
-	element.SetAttribute ("unitName", unitName.c_str());
-	element.SetAttribute ("playerName", playerName.c_str());
-
-	cSavedReportUnit::pushInto (element);
-}
 
 //------------------------------------------------------------------------------
 eSavedReportType cSavedReportDetected::getType() const
@@ -82,9 +48,8 @@ std::string cSavedReportDetected::getText() const
 //------------------------------------------------------------------------------
 void cSavedReportDetected::playSound (cSoundManager& soundManager) const
 {
-	const auto& unitData = *getUnitId().getUnitDataOriginalVersion();
 
-	if (unitData.isStealthOn & TERRAIN_SEA && unitData.canAttack)
+	if (submarine)
 	{
 		soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceDetected, VoiceData.VOISubDetected));
 	}

@@ -20,13 +20,13 @@
 #include "ui/graphical/menu/widgets/special/saveslotwidget.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/lineedit.h"
-#include "ui/graphical/menu/windows/windowload/savegamedata.h"
 #include "ui/graphical/application.h"
 #include "input/mouse/mouse.h"
 #include "sound.h"
 #include "main.h" // iToStr
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
+#include "game/data/savegameinfo.h"
 
 //------------------------------------------------------------------------------
 cSaveSlotWidget::cSaveSlotWidget (const cPosition& position) :
@@ -67,12 +67,23 @@ void cSaveSlotWidget::setRenameable (bool renameable_)
 }
 
 //------------------------------------------------------------------------------
-void cSaveSlotWidget::setSaveData (const cSaveGameData& saveFile)
+void cSaveSlotWidget::setSaveData(const cSaveGameInfo& saveFile)
 {
-	numberLabel->setText (iToStr (saveFile.getNumber()));
-	timeLabel->setText (saveFile.getDate());
-	typeLabel->setText (saveFile.getType());
-	nameLineEdit->setText (saveFile.getGameName());
+	numberLabel->setText(iToStr(saveFile.number));
+	timeLabel->setText(saveFile.date);
+	switch (saveFile.type)
+	{
+		case GAME_TYPE_HOTSEAT:
+			typeLabel->setText("HOT");
+			break;
+		case GAME_TYPE_SINGLE:
+			typeLabel->setText("IND");
+			break;
+		case GAME_TYPE_TCPIP:
+			typeLabel->setText("NET");
+			break;
+	}
+	nameLineEdit->setText (saveFile.gameName);
 	nameLineEdit->setReadOnly (!renameable);
 
 	empty = false;

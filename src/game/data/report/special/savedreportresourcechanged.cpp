@@ -18,7 +18,6 @@
  ***************************************************************************/
 
 #include "game/data/report/special/savedreportresourcechanged.h"
-#include "netmessage.h"
 #include "game/data/player/player.h"
 #include "game/data/map/map.h" // RES_XYZ
 
@@ -30,49 +29,13 @@ cSavedReportResourceChanged::cSavedReportResourceChanged (int resourceType_, int
 {}
 
 //------------------------------------------------------------------------------
-cSavedReportResourceChanged::cSavedReportResourceChanged (cNetMessage& message)
-{
-	amount = message.popInt32();
-	resourceType = message.popInt32();
-	increase = message.popBool();
-}
-
-//------------------------------------------------------------------------------
-cSavedReportResourceChanged::cSavedReportResourceChanged (const tinyxml2::XMLElement& element)
-{
-	amount = element.IntAttribute ("amount");
-	resourceType = element.IntAttribute ("resourceType");
-	increase = element.BoolAttribute ("increase");
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportResourceChanged::pushInto (cNetMessage& message) const
-{
-	message.pushBool (increase);
-	message.pushInt32 (resourceType);
-	message.pushInt32 (amount);
-
-	cSavedReport::pushInto (message);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportResourceChanged::pushInto (tinyxml2::XMLElement& element) const
-{
-	element.SetAttribute ("amount", iToStr (amount).c_str());
-	element.SetAttribute ("resourceType", iToStr (resourceType).c_str());
-	element.SetAttribute ("increase", bToStr (increase).c_str());
-
-	cSavedReport::pushInto (element);
-}
-
-//------------------------------------------------------------------------------
 eSavedReportType cSavedReportResourceChanged::getType() const
 {
 	return eSavedReportType::ResourceChanged;
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportResourceChanged::getMessage() const
+std::string cSavedReportResourceChanged::getMessage(const cUnitsData& unitsData) const
 {
 	std::string text;
 	if (increase)

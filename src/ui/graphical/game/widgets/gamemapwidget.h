@@ -56,6 +56,7 @@ public:
 	~cGameMapWidget();
 	void setDynamicMap (std::shared_ptr<const cMap> dynamicMap);
 	void setPlayer (std::shared_ptr<const cPlayer> player);
+	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData);
 	void setUnitSelection (const cUnitSelection* unitSelection);
 
 	void setZoomFactor (float zoomFactor, bool center);
@@ -193,6 +194,7 @@ private:
 	std::shared_ptr<const cStaticMap> staticMap;
 	std::shared_ptr<const cMap> dynamicMap; // may be null
 	std::shared_ptr<const cPlayer> player; // may be null
+	std::shared_ptr<const cUnitsData> unitsData;
 
 	cUnitDrawingEngine unitDrawingEngine;
 

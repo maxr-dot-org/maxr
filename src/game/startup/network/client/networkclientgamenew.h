@@ -65,6 +65,7 @@ public:
 	const std::shared_ptr<cGameSettings>& getGameSettings();
 	const std::shared_ptr<cStaticMap>& getStaticMap();
 	const std::vector<cPlayerBasicData>& getPlayers();
+	const std::vector<sLandingUnit>& getLandingUnits();
 	const cPlayerBasicData& getLocalPlayer();
 
 	int getLocalPlayerClan() const;

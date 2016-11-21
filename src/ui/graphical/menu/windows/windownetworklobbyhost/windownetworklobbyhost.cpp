@@ -21,7 +21,7 @@
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "main.h"
 #include "game/data/player/player.h"
-#include "game/logic/savegame.h"
+#include "game/data/savegame.h"
 #include "game/data/map/map.h"
 
 //------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ void cWindowNetworkLobbyHost::setSaveGame (int saveGameNumber_)
 {
 	saveGameNumber = saveGameNumber_;
 
-	if (saveGameNumber >= 0)
+	/*if (saveGameNumber >= 0)
 	{
 		cSavegame saveGame (saveGameNumber_);
 
@@ -101,7 +101,7 @@ void cWindowNetworkLobbyHost::setSaveGame (int saveGameNumber_)
 	{
 		saveGamePlayers.clear();
 		saveGameName.clear();
-	}
+	}*/
 
 	updateMap();
 	updateSettingsText();
