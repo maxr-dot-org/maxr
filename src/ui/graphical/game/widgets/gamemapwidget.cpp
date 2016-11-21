@@ -1866,56 +1866,22 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 			{
 				if (selectedUnit && selectedUnit->isAbove (tilePosition))
 				{
-					const auto& planes = field.getPlanes();
 					cUnit* next = nullptr;
 
-					if (selectedVehicle)
-					{
-						auto it = std::find (planes.begin(), planes.end(), selectedVehicle);
+                    std::vector<cUnit*> units;
+                    field.getUnits(units);
 
-						if (it == planes.end())
-						{
-							if (unitSelection.canSelect (overBuilding)) next = overBuilding;
-							else if (unitSelection.canSelect (overBaseBuilding)) next = overBaseBuilding;
-							else if (unitSelection.canSelect (overPlane)) next = overPlane;
-						}
-						else
-						{
-							++it;
-
-							if (it != planes.end()) next = *it;
-							else if (unitSelection.canSelect (overVehicle)) next = overVehicle;
-							else if (unitSelection.canSelect (overBuilding)) next = overBuilding;
-							else if (unitSelection.canSelect (overBaseBuilding)) next = overBaseBuilding;
-							else if (planes.size() > 1)
-							{
-								next = planes[0];
-							}
-						}
-					}
-					else if (selectedBuilding)
-					{
-						if (overBuilding == selectedBuilding)
-						{
-							if (unitSelection.canSelect (overBaseBuilding)) next = overBaseBuilding;
-							else if (unitSelection.canSelect (overPlane)) next = overPlane;
-							else if (unitSelection.canSelect (overVehicle)) next = overVehicle;
-						}
-						else
-						{
-							if (unitSelection.canSelect (overPlane)) next = overPlane;
-							else if (unitSelection.canSelect (overVehicle)) next = overVehicle;
-							else if (unitSelection.canSelect (overBuilding)) next = overBuilding;
-						}
-					}
+                    auto it = std::find(units.begin(), units.end(), selectedUnit);
+                    if(it != units.end())
+                    {
+                        it++;
+                        if(it == units.end()) it = units.begin();
+                        next = *it;
+                    }
 
 					if (next)
 					{
 						unitSelection.selectUnit (*next);
-					}
-					else
-					{
-						unitSelection.deselectUnits();
 					}
 				}
 				else
