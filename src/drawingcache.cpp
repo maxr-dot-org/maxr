@@ -305,7 +305,11 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 
 SDL_Surface* cDrawingCache::createNewEntry (const cBuilding& building, double zoom, unsigned long long animationTime)
 {
-	if (!canCache (building)) return nullptr;
+	if (!canCache (building))
+		return nullptr;
+
+	if (cachedImages.size() == 0)
+		return nullptr;
 
 	if (cacheSize < cachedImages.size())   //cache hasn't reached the max size, so allocate a new entry
 	{
@@ -345,6 +349,9 @@ SDL_Surface* cDrawingCache::createNewEntry (const cBuilding& building, double zo
 SDL_Surface* cDrawingCache::createNewEntry (const cVehicle& vehicle, double zoom, const cMap& map, unsigned long long animationTime)
 {
 	if (!canCache (vehicle))
+		return nullptr;
+
+	if (cachedImages.size() == 0)
 		return nullptr;
 
 	if (cacheSize < cachedImages.size())   //cache hasn't reached the max size, so allocate a new entry
