@@ -30,6 +30,7 @@
 #include "utility/position.h"
 #include "game/data/report/savedreport.h"
 #include "ui/graphical/game/gameguistate.h"
+#include "../data/report/savedreportchat.h"
 
 using namespace std;
 
@@ -238,9 +239,9 @@ void sendReadyToStart (const cClient& client)
 	client.sendNetMessage (std::move (message));
 }
 
-void sendChatMessageToServer (const cClient& client, const string& msg)
+void sendChatMessageToServer (const cClient& client, const string& msg, const cPlayer& player)
 {
-	cNetMessageChat netMsg(msg);
+	cNetMessageReport netMsg(std::make_unique<cSavedReportChat>(player, msg));
 	client.sendNetMessage (netMsg);
 }
 

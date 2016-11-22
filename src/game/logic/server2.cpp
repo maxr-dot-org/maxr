@@ -213,7 +213,7 @@ void cServer2::run()
 					gameTimer.handleSyncMessage(syncMessage, model.getGameTime());
 				}
 				break;
-			case eNetMessageType::CHAT:
+			case eNetMessageType::REPORT:
 				sendMessageToClients(*message);
 				break;
 			case eNetMessageType::GUI_SAVE_INFO:

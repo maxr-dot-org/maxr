@@ -508,6 +508,7 @@ void cGameGuiController::initChatCommands()
 		.addArgument<cChatCommandArgumentServer>(server)
 		.setAction([&](int seconds, cServer2* server)
 		{
+			throw std::runtime_error("Command not implemented");
 			// FIXME: do not do changes on server data that are not synchronized with the server thread!
 			/*if(seconds >= 0)
 			{
@@ -1212,9 +1213,9 @@ void cGameGuiController::connectReportSources(cClient& client)
 
 	playerReports[player.getId()] = std::make_shared<std::vector<std::unique_ptr<cSavedReport>>>();
 
-	allClientsSignalConnectionManager.connect(client.chatMessageReceived, [&](int fromPlayerNr, const std::string& message, int toPlayerNr)
+	allClientsSignalConnectionManager.connect(client.reportMessageReceived, [&](int fromPlayerNr, std::unique_ptr<cSavedReport>& report, int toPlayerNr)
 	{
-		addSavedReport(std::make_unique<cSavedReportChat>(*client.getModel().getPlayer(fromPlayerNr), message), toPlayerNr);
+		addSavedReport(std::move(report), toPlayerNr);
 	});
 
 	//reports from the players base:
@@ -1625,8 +1626,7 @@ void cGameGuiController::handleChatCommand(const std::string& chatString)
 					commandExecuted = true;
 					if(commandExecutor->getCommand().getShouldBeReported() && server)
 					{
-						//TODO:
-						//sendSavedReport(*activeClient->getServer(), cSavedReportHostCommand(chatString), nullptr);
+						activeClient->sendNetMessage(cNetMessageReport(std::make_unique<cSavedReportHostCommand>(chatString)));
 					}
 					break;
 				}
@@ -1647,7 +1647,7 @@ void cGameGuiController::handleChatCommand(const std::string& chatString)
 	}
 	else if(activeClient)
 	{
-		sendChatMessageToServer(*activeClient, chatString);
+		sendChatMessageToServer(*activeClient, chatString, *getActivePlayer());
 	}
 }
 

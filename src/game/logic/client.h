@@ -179,7 +179,7 @@ public:
 	void loadModel(int saveGameNumber);
 
 
-	mutable cSignal<void (int fromPlayerNr, const std::string& message, int toPlayerNr)> chatMessageReceived;
+	mutable cSignal<void (int fromPlayerNr, std::unique_ptr<cSavedReport>& report, int toPlayerNr)> reportMessageReceived;
 	mutable cSignal<void (int savingID)> guiSaveInfoRequested;
 	mutable cSignal<void(const cNetMessageGUISaveInfo& guiInfo)> guiSaveInfoReceived;
 

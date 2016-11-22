@@ -1385,12 +1385,12 @@ void cClient::handleNetMessages()
 
 		switch (message->getType())
 		{
-		case eNetMessageType::CHAT:
+		case eNetMessageType::REPORT:
 			{
 				if (model.getPlayer(message->playerNr) == nullptr) continue;
 
-				const cNetMessageChat* chatMessage = static_cast<cNetMessageChat*>(message.get());
-				chatMessageReceived(chatMessage->playerNr, chatMessage->message, activePlayer->getId());
+				cNetMessageReport* chatMessage = static_cast<cNetMessageReport*>(message.get());
+				reportMessageReceived(chatMessage->playerNr, chatMessage->report, activePlayer->getId());
 			}
 			break;
 		case eNetMessageType::ACTION:
