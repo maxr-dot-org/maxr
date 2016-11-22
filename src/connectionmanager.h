@@ -22,8 +22,8 @@
 
 #include <memory>
 #include <vector>
-#include "utility\color.h"
-#include "utility\thread\mutex.h"
+#include "utility/color.h"
+#include "utility/thread/mutex.h"
 
 class cNetwork;
 class cSocket;

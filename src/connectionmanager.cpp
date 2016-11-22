@@ -20,11 +20,11 @@
 #include "network.h"
 
 #include "connectionmanager.h"
-#include "game\data\player\playerbasicdata.h"
-#include "utility\log.h"
+#include "game/data/player/playerbasicdata.h"
+#include "utility/log.h"
 #include "netmessage2.h"
 #include "maxrversion.h"
-#include "utility\string\toString.h"
+#include "utility/string/toString.h"
 
 cConnectionManager::cConnectionManager() :
 	network(nullptr),

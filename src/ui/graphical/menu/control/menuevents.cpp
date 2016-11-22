@@ -20,7 +20,7 @@
 #include <memory>
 
 #include "menuevents.h"
-#include "utility\string\toString.h"
+#include "utility/string/toString.h"
 
 std::unique_ptr<cMultiplayerLobbyMessage> cMultiplayerLobbyMessage::createFromBuffer(cBinaryArchiveOut& archive)
 {
