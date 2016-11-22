@@ -95,7 +95,8 @@ cGameGuiController::cGameGuiController (cApplication& application_, std::shared_
 	animationTimer (std::make_shared<cAnimationTimer> ()),
 	gameGui (std::make_shared<cGameGui> (std::move (staticMap), soundManager, animationTimer, application_.frameCounter)),
 	savedReportPosition (false, cPosition()),
-	upgradesFilterState(std::make_shared<cWindowUpgradesFilterState>())
+	upgradesFilterState(std::make_shared<cWindowUpgradesFilterState>()),
+	server(nullptr)
 {
 	connectGuiStaticCommands();
 	initShortcuts();

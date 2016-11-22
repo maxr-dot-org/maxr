@@ -56,6 +56,7 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
 	gameGuiController->setSingleClient (client);
+	gameGuiController->setServer(server.get());
 	gameGuiController->start();
 
 	terminate = false;
