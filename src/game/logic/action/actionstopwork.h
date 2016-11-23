@@ -25,7 +25,7 @@
 class cActionStopWork : public cAction
 {
 public:
-	cActionStopWork(unsigned int id);
+	cActionStopWork(const cUnit& unit);
 	cActionStopWork(cBinaryArchiveOut& archive);
 
 	virtual void serialize(cBinaryArchiveIn& archive) { cAction::serialize(archive); serializeThis(archive); }
@@ -33,8 +33,9 @@ public:
 
 	virtual void execute(cModel& model) const override;
 	
-	int unitId;
 private:
+	int unitId;
+
 	template<typename T>
 	void serializeThis(T& archive)
 	{

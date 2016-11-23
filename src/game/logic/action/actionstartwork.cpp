@@ -22,9 +22,9 @@
 #include "utility/log.h"
 
 //------------------------------------------------------------------------------
-cActionStartWork::cActionStartWork(unsigned int id) :
+cActionStartWork::cActionStartWork(const cUnit& unit) :
 	cAction(eActiontype::ACTION_START_WORK), 
-	unitId(id)
+	unitId(unit.getId())
 {};
 
 //------------------------------------------------------------------------------

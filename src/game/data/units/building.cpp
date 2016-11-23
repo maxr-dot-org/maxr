@@ -1284,7 +1284,7 @@ bool cBuilding::factoryHasJustFinishedBuilding() const
 //-----------------------------------------------------------------------------
 void cBuilding::executeStopCommand (const cClient& client) const
 {
-	client.sendNetMessage(cActionStopWork(iID));
+	client.sendNetMessage(cActionStopWork(*this));
 }
 
 //-----------------------------------------------------------------------------

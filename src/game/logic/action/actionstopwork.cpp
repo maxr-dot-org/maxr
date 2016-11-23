@@ -22,9 +22,9 @@
 #include "utility/log.h"
 
 //------------------------------------------------------------------------------
-cActionStopWork::cActionStopWork(unsigned int id) :
+cActionStopWork::cActionStopWork(const cUnit& unit) :
 	cAction(eActiontype::ACTION_STOP_WORK), 
-	unitId(id)
+	unitId(unit.getId())
 {};
 
 //------------------------------------------------------------------------------

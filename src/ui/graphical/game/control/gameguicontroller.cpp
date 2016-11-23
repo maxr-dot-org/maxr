@@ -809,7 +809,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStartWork, [&] (const cUnit & unit)
 	{
-		cActionStartWork msg(unit.getId());
+		cActionStartWork msg(unit);
 		client.sendNetMessage(msg);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStopWork, [&] (const cUnit & unit)
