@@ -319,7 +319,6 @@ private:
 	void handleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message);
 	void handleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_STOP_BUILDING (cNetMessage& message);
-	void handleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message);
 	void handleNetMessage_GAME_EV_CHANGE_RESOURCES (cNetMessage& message);

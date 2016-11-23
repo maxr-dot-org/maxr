@@ -183,18 +183,6 @@ void sendWantEndBuilding (const cClient& client, const cVehicle& vehicle, const 
 */
 void sendWantStopBuilding (const cClient& client, int iVehicleID);
 /**
-* sends that the client wants to transfer resources
-*@author alzi alias DoctorDeath
-*@param bSrcVehicle true if the source unit is a vehicle
-*@param iSrcID ID of the source unit
-*@param bDestVehicle true if the destination unit is a vehicle
-*@param iDestID ID of the destination unit
-*@param iTransferValue value of the transfer
-*@param iType Type of resources which will be transferred.
-*       (See: NEED_METAL, NEED_OIL or NEED_GOLD)
-*/
-void sendWantTransfer (const cClient& client, bool bSrcVehicle, int iSrcID, bool bDestVehicle, int iDestID, int iTransferValue, int iType);
-/**
 * sends a request for building all vehicles in the buildlist of the building
 *@author alzi alias DoctorDeath
 */

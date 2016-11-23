@@ -58,6 +58,8 @@ class cServer2;
 
 class cChatCommandExecutor;
 
+enum class eResourceType;
+
 struct sID;
 
 class cGameGuiController
@@ -152,7 +154,7 @@ private:
 	std::shared_ptr<const cMap> getDynamicMap() const;
 	std::shared_ptr<const cUnitsData> getUnitsData() const;
 
-	mutable cSignal<void (const cUnit&, const cUnit&, int, int)> transferTriggered;
+	mutable cSignal<void (const cUnit&, const cUnit&, int, eResourceType)> transferTriggered;
 	mutable cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingTriggered;
 	mutable cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingPathTriggered;
 	mutable cSignal<void (const cBuilding&, const std::vector<cBuildListItem>&, int, bool)> buildVehiclesTriggered;

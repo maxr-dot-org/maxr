@@ -345,18 +345,6 @@ void sendWantStopBuilding (const cClient& client, int iVehicleID)
 	client.sendNetMessage (std::move (message));
 }
 
-void sendWantTransfer (const cClient& client, bool bSrcVehicle, int iSrcID, bool bDestVehicle, int iDestID, int iTransferValue, int iType)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_TRANSFER);
-	message->pushInt16 (iType);
-	message->pushInt16 (iTransferValue);
-	message->pushInt16 (iDestID);
-	message->pushBool (bDestVehicle);
-	message->pushInt16 (iSrcID);
-	message->pushBool (bSrcVehicle);
-	client.sendNetMessage (std::move (message));
-}
-
 void sendWantBuildList (const cClient& client, const cBuilding& building, const std::vector<cBuildListItem>& buildList, bool bRepeat, int buildSpeed)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_BUILDLIST);

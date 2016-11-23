@@ -37,7 +37,7 @@ cActionStopWork::cActionStopWork(cBinaryArchiveOut& archive)
 //------------------------------------------------------------------------------
 void cActionStopWork::execute(cModel& model) const
 {
-	//Note: this funktion handels incoming data from network. Make every possible sanity check!
+	//Note: this function handles incoming data from network. Make every possible sanity check!
 
 	cBuilding* b = model.getBuildingFromID(unitId);
 	if (b == nullptr) return;

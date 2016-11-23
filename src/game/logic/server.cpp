@@ -778,121 +778,6 @@ void cServer::handleNetMessage_GAME_EV_WANT_STOP_BUILDING (cNetMessage& message)
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_WANT_TRANSFER);
-
-	cVehicle* SrcVehicle = nullptr;
-	cVehicle* DestVehicle = nullptr;
-	cBuilding* SrcBuilding = nullptr;
-	cBuilding* DestBuilding = nullptr;
-
-	if (message.popBool()) SrcVehicle = getVehicleFromID (message.popInt16());
-	else SrcBuilding = getBuildingFromID (message.popInt16());
-
-	if (message.popBool()) DestVehicle = getVehicleFromID (message.popInt16());
-	else DestBuilding = getBuildingFromID (message.popInt16());
-
-	if ((!SrcBuilding && !SrcVehicle) || (!DestBuilding && !DestVehicle)) return;
-
-	const int iTranfer = message.popInt16();
-	const int iType = message.popInt16();
-
-	if (SrcBuilding)
-	{
-		bool bBreakSwitch = false;
-		if (DestBuilding)
-		{
-			if (SrcBuilding->subBase != DestBuilding->subBase) return;
-			if (SrcBuilding->getOwner() != DestBuilding->getOwner()) return;
-			if (SrcBuilding->getStaticUnitData().storeResType != iType) return;
-			if (SrcBuilding->getStaticUnitData().storeResType != DestBuilding->getStaticUnitData().storeResType) return;
-			if (DestBuilding->getStoredResources() + iTranfer > DestBuilding->getStaticUnitData().storageResMax || DestBuilding->getStoredResources() + iTranfer < 0) return;
-			if (SrcBuilding->getStoredResources() - iTranfer > SrcBuilding->getStaticUnitData().storageResMax || SrcBuilding->getStoredResources() - iTranfer < 0) return;
-
-			DestBuilding->setStoredResources (DestBuilding->getStoredResources() + iTranfer);
-			SrcBuilding->setStoredResources (SrcBuilding->getStoredResources() - iTranfer);
-			//sendUnitData (*this, *DestBuilding, *DestBuilding->getOwner());
-			//sendUnitData (*this, *SrcBuilding, *SrcBuilding->getOwner());
-		}
-		else
-		{
-			if (DestVehicle->isUnitBuildingABuilding() || DestVehicle->isUnitClearing()) return;
-			if (DestVehicle->getStaticUnitData().storeResType != iType) return;
-			if (DestVehicle->getStoredResources() + iTranfer > DestVehicle->getStaticUnitData().storageResMax || DestVehicle->getStoredResources() + iTranfer < 0) return;
-			switch (iType)
-			{
-				case cStaticUnitData::STORE_RES_METAL:
-				{
-					if (SrcBuilding->subBase->getMetalStored() - iTranfer > SrcBuilding->subBase->getMaxMetalStored() || SrcBuilding->subBase->getMetalStored() - iTranfer < 0) bBreakSwitch = true;
-					if (!bBreakSwitch) SrcBuilding->subBase->addMetal (-iTranfer);
-				}
-				break;
-				case cStaticUnitData::STORE_RES_OIL:
-				{
-					if (SrcBuilding->subBase->getOilStored() - iTranfer > SrcBuilding->subBase->getMaxOilStored() || SrcBuilding->subBase->getOilStored() - iTranfer < 0) bBreakSwitch = true;
-					if (!bBreakSwitch) SrcBuilding->subBase->addOil (-iTranfer);
-				}
-				break;
-				case cStaticUnitData::STORE_RES_GOLD:
-				{
-					if (SrcBuilding->subBase->getGoldStored() - iTranfer > SrcBuilding->subBase->getMaxGoldStored() || SrcBuilding->subBase->getGoldStored() - iTranfer < 0) bBreakSwitch = true;
-					if (!bBreakSwitch) SrcBuilding->subBase->addGold (-iTranfer);
-				}
-				break;
-			}
-			if (bBreakSwitch) return;
-			//sendSubbaseValues (*this, *SrcBuilding->SubBase, *SrcBuilding->getOwner());
-			DestVehicle->setStoredResources (DestVehicle->getStoredResources() + iTranfer);
-			//sendUnitData (*this, *DestVehicle, *DestVehicle->getOwner());
-		}
-	}
-	else
-	{
-		if (SrcVehicle->getStaticUnitData().storeResType != iType) return;
-		if (SrcVehicle->isUnitBuildingABuilding() || SrcVehicle->isUnitClearing()) return;
-		if (SrcVehicle->getStoredResources() - iTranfer > SrcVehicle->getStaticUnitData().storageResMax || SrcVehicle->getStoredResources() - iTranfer < 0) return;
-		if (DestBuilding)
-		{
-			bool bBreakSwitch = false;
-			switch (iType)
-			{
-				case cStaticUnitData::STORE_RES_METAL:
-				{
-					if (DestBuilding->subBase->getMetalStored() + iTranfer > DestBuilding->subBase->getMaxMetalStored() || DestBuilding->subBase->getMetalStored() + iTranfer < 0) bBreakSwitch = true;
-					if (!bBreakSwitch) DestBuilding->subBase->addMetal (iTranfer);
-				}
-				break;
-				case cStaticUnitData::STORE_RES_OIL:
-				{
-					if (DestBuilding->subBase->getOilStored() + iTranfer > DestBuilding->subBase->getMaxOilStored() || DestBuilding->subBase->getOilStored() + iTranfer < 0) bBreakSwitch = true;
-					if (!bBreakSwitch) DestBuilding->subBase->addOil (iTranfer);
-				}
-				break;
-				case cStaticUnitData::STORE_RES_GOLD:
-				{
-					if (DestBuilding->subBase->getGoldStored() + iTranfer > DestBuilding->subBase->getMaxGoldStored() || DestBuilding->subBase->getGoldStored() + iTranfer < 0) bBreakSwitch = true;
-					if (!bBreakSwitch) DestBuilding->subBase->addGold (iTranfer);
-				}
-				break;
-			}
-			if (bBreakSwitch) return;
-			//sendSubbaseValues (*this, *DestBuilding->SubBase, *DestBuilding->getOwner());
-		}
-		else
-		{
-			if (DestVehicle->isUnitBuildingABuilding() || DestVehicle->isUnitClearing()) return;
-			if (DestVehicle->getStaticUnitData().storeResType != iType) return;
-			if (DestVehicle->getStoredResources() + iTranfer > DestVehicle->getStaticUnitData().storageResMax || DestVehicle->getStoredResources() + iTranfer < 0) return;
-			DestVehicle->setStoredResources (DestVehicle->getStoredResources() + iTranfer);
-			//sendUnitData (*this, *DestVehicle, *DestVehicle->getOwner());
-		}
-		SrcVehicle->setStoredResources (SrcVehicle->getStoredResources() - iTranfer);
-		//sendUnitData (*this, *SrcVehicle, *SrcVehicle->getOwner());
-	}
-}
-
-//------------------------------------------------------------------------------
 void cServer::handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_BUILDLIST);
@@ -2003,7 +1888,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 		case GAME_EV_WANT_BUILD: handleNetMessage_GAME_EV_WANT_BUILD (message); break;
 		case GAME_EV_END_BUILDING: handleNetMessage_GAME_EV_END_BUILDING (message); break;
 		case GAME_EV_WANT_STOP_BUILDING: handleNetMessage_GAME_EV_WANT_STOP_BUILDING (message); break;
-		case GAME_EV_WANT_TRANSFER: handleNetMessage_GAME_EV_WANT_TRANSFER (message); break;
 		case GAME_EV_WANT_BUILDLIST: handleNetMessage_GAME_EV_WANT_BUILDLIST (message); break;
 		case GAME_EV_WANT_EXIT_FIN_VEH: handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (message); break;
 		case GAME_EV_CHANGE_RESOURCES : handleNetMessage_GAME_EV_CHANGE_RESOURCES (message); break;

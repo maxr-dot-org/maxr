@@ -50,7 +50,6 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_WANT_BUILD,				// a vehicle wants to start building a building
 	GAME_EV_END_BUILDING,			// a vehicle has finished building and will leave the building lot now
 	GAME_EV_WANT_STOP_BUILDING,		// a vehicle wants to stop building
-	GAME_EV_WANT_TRANSFER,			// information about a resource transfer
 	GAME_EV_WANT_BUILDLIST,			// a building wants his buildlist to be verified by the server and start work
 	GAME_EV_WANT_EXIT_FIN_VEH,		// a client wants to exit a finished vehicle out of a building
 	GAME_EV_CHANGE_RESOURCES,		// a client wants to change his resource production

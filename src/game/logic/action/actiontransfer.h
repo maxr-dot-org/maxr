@@ -17,31 +17,38 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include "actionstartwork.h"
-#include "game/data/model.h"
-#include "utility/log.h"
+#ifndef game_logic_actionTransferH
+#define game_logic_actionTransferH
 
-//------------------------------------------------------------------------------
-cActionStartWork::cActionStartWork(unsigned int id) :
-	cAction(eActiontype::ACTION_START_WORK), 
-	unitId(id)
-{};
+#include "action.h"
 
-//------------------------------------------------------------------------------
-cActionStartWork::cActionStartWork(cBinaryArchiveOut& archive)
-	: cAction(eActiontype::ACTION_START_WORK)
+class cUnit;
+enum class eResourceType;
+
+class cActionTransfer : public cAction
 {
-	serializeThis(archive);
-}
+public:
+	cActionTransfer(const cUnit& sourceUnit, const cUnit& destinationUnit, int transferValue, eResourceType resourceType);
+	cActionTransfer(cBinaryArchiveOut& archive);
 
-//------------------------------------------------------------------------------
-void cActionStartWork::execute(cModel& model) const
-{
-	//Note: this function handles incoming data from network. Make every possible sanity check!
+	virtual void serialize(cBinaryArchiveIn& archive) { cAction::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive)   { cAction::serialize(archive); serializeThis(archive); }
 
-	cBuilding* b = model.getBuildingFromID(unitId);
-	if (b == nullptr) return;
-	if (b->getOwner()->getId() != playerNr) return;
+	virtual void execute(cModel& model) const override;
+private:
+	template<typename T>
+	void serializeThis(T& archive)
+	{
+		archive & sourceUnitId;
+		archive & destinationUnitId;
+		archive & transferValue;
+		archive & resourceType;
+	}
 
-	b->startWork();
-}
+	unsigned int sourceUnitId;
+	unsigned int destinationUnitId;
+	int transferValue;
+	eResourceType resourceType;
+};
+
+#endif // game_logic_actionTransferH

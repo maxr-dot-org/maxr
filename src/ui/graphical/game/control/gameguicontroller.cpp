@@ -83,9 +83,11 @@
 #include "game/data/report/savedreportchat.h"
 #include "game/data/report/savedreportunit.h"
 #include "game/data/report/special/savedreporthostcommand.h"
+#include "game/data/resourcetype.h"
 
 #include "debug.h"
 #include "game/logic/action/actionstartwork.h"
+#include "game/logic/action/actiontransfer.h"
 #include "game/data/report/special/savedreportresourcechanged.h"
 
 //------------------------------------------------------------------------------
@@ -733,11 +735,12 @@ void cGameGuiController::connectClient (cClient& client)
 	//
 	// GUI to client (action)
 	//
-	clientSignalConnectionManager.connect (transferTriggered, [&] (const cUnit & sourceUnit, const cUnit & destinationUnit, int transferValue, int resourceType)
+	clientSignalConnectionManager.connect (transferTriggered, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit, int transferValue, eResourceType resourceType)
 	{
 		if (transferValue != 0)
 		{
-			sendWantTransfer (client, sourceUnit.isAVehicle(), sourceUnit.iID, destinationUnit.isAVehicle(), destinationUnit.iID, transferValue, resourceType);
+			cActionTransfer msg(sourceUnit, destinationUnit, transferValue, resourceType);
+			client.sendNetMessage(msg);
 		}
 	});
 	clientSignalConnectionManager.connect (buildBuildingTriggered, [&] (const cVehicle & vehicle, const cPosition & destination, const sID & unitId, int buildSpeed)

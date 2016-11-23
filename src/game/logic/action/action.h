@@ -29,7 +29,8 @@ public:
 	enum class eActiontype {
 		ACTION_INIT_NEW_GAME,
 		ACTION_START_WORK,
-		ACTION_STOP_WORK
+		ACTION_STOP_WORK,
+		ACTION_TRANSFER
 	};
 	static std::unique_ptr<cAction> createFromBuffer(cBinaryArchiveOut& archive);
 
