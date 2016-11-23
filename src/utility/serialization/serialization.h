@@ -274,7 +274,7 @@ namespace serialization
 	template<typename A, typename T>
 	void save(A& archive, const std::vector<T>& value)
 	{
-		uint32_t length = value.size();
+		uint32_t length = static_cast<uint32_t>(value.size());
 		archive << NVP(length);
 		for (auto item : value)
 		{
@@ -303,7 +303,7 @@ namespace serialization
 	template<typename A>
 	void save(A& archive, const std::string& value)
 	{
-		uint32_t length = value.length();
+		uint32_t length = static_cast<uint32_t>(value.length());
 		archive << NVP(length);
 		for (char c : value)
 		{
