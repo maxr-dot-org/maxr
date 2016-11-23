@@ -73,6 +73,12 @@ std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(const unsigned char
 		break;
 	}
 
+	if (archive.dataLeft() > 0)
+	{
+		//when there is unread data left in the buffer, something is wrong with the message.
+		throw std::runtime_error("cNetMessage: Error while deserialising. Too much data in buffer");
+	}
+
 	message->playerNr = playerNr;
 
 	return message;

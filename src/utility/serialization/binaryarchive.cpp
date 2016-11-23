@@ -99,17 +99,18 @@ void cBinaryArchiveIn::pushValue(double value)
 }
 
 //------------------------------------------------------------------------------
-cBinaryArchiveOut::cBinaryArchiveOut(const unsigned char* data, int length, serialization::cPointerLoader* pointerLoader) :
+cBinaryArchiveOut::cBinaryArchiveOut(const unsigned char* data, size_t length, serialization::cPointerLoader* pointerLoader) :
 	data(data),
 	length(length),
 	readPosition(0),
 	pointerLoader(pointerLoader)
 {}
 //------------------------------------------------------------------------------
-void cBinaryArchiveOut::rewind()
+size_t cBinaryArchiveOut::dataLeft() const
 {
-	readPosition = 0;
+	return length - readPosition;
 }
+
 //------------------------------------------------------------------------------
 serialization::cPointerLoader* cBinaryArchiveOut::getPointerLoader() const
 {

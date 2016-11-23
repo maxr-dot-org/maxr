@@ -78,18 +78,18 @@ public:
 
 	static const bool isWriter = false;
 
-	cBinaryArchiveOut(const unsigned char* data, int length, serialization::cPointerLoader* pointerLoader = NULL);
+	cBinaryArchiveOut(const unsigned char* data, size_t length, serialization::cPointerLoader* pointerLoader = NULL);
 
 	template<typename T>
 	cBinaryArchiveOut& operator>>(T& value);
 	template<typename T>
 	cBinaryArchiveOut& operator&(T& value);
 
-	void rewind();
+	size_t dataLeft() const;
 	serialization::cPointerLoader* getPointerLoader() const;
 private:
 	const unsigned char* data;
-	int length;
+	size_t length;
 
 	size_t readPosition;
 
