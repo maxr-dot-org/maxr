@@ -412,8 +412,8 @@ void cWindowLandingUnitSelection::upgradeDecreaseClicked (size_t index)
 //------------------------------------------------------------------------------
 void cWindowLandingUnitSelection::handleSelectedUnitSelectionChanged (cUnitListViewItemCargo* unitItem)
 {
-	if (unitItem == nullptr || ! (unitsData->getStaticUnitData(unitItem->getUnitId()).storeResType == cStaticUnitData::STORE_RES_METAL ||
-								  unitsData->getStaticUnitData(unitItem->getUnitId()).storeResType == cStaticUnitData::STORE_RES_OIL))
+	if (unitItem == nullptr || ! (unitsData->getStaticUnitData(unitItem->getUnitId()).storeResType == eResourceType::Metal ||
+								  unitsData->getStaticUnitData(unitItem->getUnitId()).storeResType == eResourceType::Oil))
 	{
 		selectedCargoUnit = nullptr;
 		metalBar->setValue (0);
@@ -426,7 +426,7 @@ void cWindowLandingUnitSelection::handleSelectedUnitSelectionChanged (cUnitListV
 	{
 		selectedCargoUnit = nullptr;
 		const auto& data = unitsData->getStaticUnitData(unitItem->getUnitId());
-		if (data.storeResType == cStaticUnitData::STORE_RES_OIL)
+		if (data.storeResType == eResourceType::Oil)
 		{
 			metalBar->setType (eResourceBarType::Oil);
 		}

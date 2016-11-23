@@ -309,7 +309,7 @@ const cUnit* cUnitContextMenuWidget::getUnit()
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasTransferEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().storeResType != cStaticUnitData::STORE_RES_NONE && !unit->isUnitBuildingABuilding() && !unit->isUnitClearing();
+	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().storeResType != eResourceType::None && !unit->isUnitBuildingABuilding() && !unit->isUnitClearing();
 }
 
 //------------------------------------------------------------------------------

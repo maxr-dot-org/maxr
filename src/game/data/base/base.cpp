@@ -546,28 +546,28 @@ bool cSubBase::increaseEnergyProd (int value)
 
 void cSubBase::addMetal (int value)
 {
-	addRessouce (cStaticUnitData::STORE_RES_METAL, value);
+	addRessouce (eResourceType::Metal, value);
 }
 
 void cSubBase::addOil (int value)
 {
-	addRessouce (cStaticUnitData::STORE_RES_OIL, value);
+	addRessouce (eResourceType::Oil, value);
 }
 
 void cSubBase::addGold (int value)
 {
-	addRessouce (cStaticUnitData::STORE_RES_GOLD, value);
+	addRessouce (eResourceType::Gold, value);
 }
 
-int cSubBase::getResource (cStaticUnitData::eStorageResType storeResType) const
+int cSubBase::getResource (eResourceType storeResType) const
 {
 	switch (storeResType)
 	{
-		case cStaticUnitData::STORE_RES_METAL:
+		case eResourceType::Metal:
 			return getMetalStored();
-		case cStaticUnitData::STORE_RES_OIL:
+		case eResourceType::Oil:
 			return getOilStored();
-		case cStaticUnitData::STORE_RES_GOLD:
+		case eResourceType::Gold:
 			return getGoldStored();
 		default:
 			assert (0);
@@ -575,17 +575,17 @@ int cSubBase::getResource (cStaticUnitData::eStorageResType storeResType) const
 	return 0;
 }
 
-void cSubBase::setResource (cStaticUnitData::eStorageResType storeResType, int value)
+void cSubBase::setResource (eResourceType storeResType, int value)
 {
 	switch (storeResType)
 	{
-		case cStaticUnitData::STORE_RES_METAL:
+		case eResourceType::Metal:
 			setMetal (value);
 			break;
-		case cStaticUnitData::STORE_RES_OIL:
+		case eResourceType::Oil:
 			setOil (value);
 			break;
-		case cStaticUnitData::STORE_RES_GOLD:
+		case eResourceType::Gold:
 			setGold (value);
 			break;
 		default:
@@ -593,7 +593,7 @@ void cSubBase::setResource (cStaticUnitData::eStorageResType storeResType, int v
 	}
 }
 
-void cSubBase::addRessouce (cStaticUnitData::eStorageResType storeResType, int value)
+void cSubBase::addRessouce (eResourceType storeResType, int value)
 {
 	int storedRessources = getResource (storeResType);
 	value = std::max (value, -storedRessources);
@@ -1010,19 +1010,19 @@ void cSubBase::addBuilding (cBuilding* b)
 	// calculate storage level
 	switch (b->getStaticUnitData().storeResType)
 	{
-		case cStaticUnitData::STORE_RES_METAL:
+		case eResourceType::Metal:
 			maxMetalStored += b->getStaticUnitData().storageResMax;
 			setMetal (getMetalStored() + b->getStoredResources());
 			break;
-		case cStaticUnitData::STORE_RES_OIL:
+		case eResourceType::Oil:
 			maxOilStored += b->getStaticUnitData().storageResMax;
 			setOil (getOilStored() + b->getStoredResources());
 			break;
-		case cStaticUnitData::STORE_RES_GOLD:
+		case eResourceType::Gold:
 			maxGoldStored += b->getStaticUnitData().storageResMax;
 			setGold (getGoldStored() + b->getStoredResources());
 			break;
-		case cStaticUnitData::STORE_RES_NONE:
+		case eResourceType::None:
 			break;
 	}
 	// calculate energy

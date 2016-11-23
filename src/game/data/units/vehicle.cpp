@@ -774,13 +774,13 @@ bool cVehicle::canTransferTo (const cPosition& position, const cMapField& overUn
 		if (!b->subBase)
 			return false;
 
-		if (staticData->storeResType == cStaticUnitData::STORE_RES_METAL && b->subBase->getMaxMetalStored() == 0)
+		if (staticData->storeResType == eResourceType::Metal && b->subBase->getMaxMetalStored() == 0)
 			return false;
 
-		if (staticData->storeResType == cStaticUnitData::STORE_RES_OIL && b->subBase->getMaxOilStored() == 0)
+		if (staticData->storeResType == eResourceType::Oil && b->subBase->getMaxOilStored() == 0)
 			return false;
 
-		if (staticData->storeResType == cStaticUnitData::STORE_RES_GOLD && b->subBase->getMaxGoldStored() == 0)
+		if (staticData->storeResType == eResourceType::Gold && b->subBase->getMaxGoldStored() == 0)
 			return false;
 
 		return true;

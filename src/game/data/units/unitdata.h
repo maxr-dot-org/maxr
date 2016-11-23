@@ -24,6 +24,8 @@
 #include <utility>
 #include <vector>
 
+#include "game/data/resourcetype.h"
+
 #include "utility/signal/signal.h"
 #include "utility/serialization/serialization.h"
 
@@ -170,14 +172,7 @@ public:
 
 	// Storage
 	int storageResMax;
-	enum eStorageResType
-	{
-		STORE_RES_NONE,
-		STORE_RES_METAL,
-		STORE_RES_OIL,
-		STORE_RES_GOLD
-	};
-	eStorageResType storeResType;
+	eResourceType storeResType;
 
 	int storageUnitsMax;
 	enum eStorageUnitsImageType

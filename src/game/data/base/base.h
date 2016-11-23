@@ -189,10 +189,10 @@ private:
 	* adds/subtracts resources of the type storeResType to/from the subbase
 	* @author eiko
 	*/
-	void addRessouce (cStaticUnitData::eStorageResType storeResType, int value);
+	void addRessouce (eResourceType storeResType, int value);
 
-	int getResource (cStaticUnitData::eStorageResType storeResType) const;
-	void setResource (cStaticUnitData::eStorageResType storeResType, int value);
+	int getResource (eResourceType storeResType) const;
+	void setResource (eResourceType storeResType, int value);
 
 	void setMetal(int value);
 	void setOil(int value);

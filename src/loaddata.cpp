@@ -1758,10 +1758,10 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	staticData.storageResMax = getXMLAttributeInt(unitDataXml, "Unit", "Storage", "Capacity_Resources", nullptr);
 
 	string storeResString = getXMLAttributeString (unitDataXml, "Const", "Unit", "Storage", "Capacity_Res_Type", nullptr);
-	if (storeResString.compare("Metal") == 0) staticData.storeResType = cStaticUnitData::STORE_RES_METAL;
-	else if (storeResString.compare("Oil") == 0) staticData.storeResType = cStaticUnitData::STORE_RES_OIL;
-	else if (storeResString.compare("Gold") == 0) staticData.storeResType = cStaticUnitData::STORE_RES_GOLD;
-	else staticData.storeResType = cStaticUnitData::STORE_RES_NONE;
+	if (storeResString.compare("Metal") == 0) staticData.storeResType = eResourceType::Metal;
+	else if (storeResString.compare("Oil") == 0) staticData.storeResType = eResourceType::Oil;
+	else if (storeResString.compare("Gold") == 0) staticData.storeResType = eResourceType::Gold;
+	else staticData.storeResType = eResourceType::None;
 
 	staticData.storageUnitsMax = getXMLAttributeInt(unitDataXml, "Unit", "Storage", "Capacity_Units", nullptr);
 

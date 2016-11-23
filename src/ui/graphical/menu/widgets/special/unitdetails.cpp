@@ -151,23 +151,23 @@ void cUnitDetails::reset()
 		}
 	}
 
-	cStaticUnitData::eStorageResType transport = staticUnitData->storeResType;
+	eResourceType transport = staticUnitData->storeResType;
 	
-	if (transport != cStaticUnitData::STORE_RES_NONE)
+	if (transport != eResourceType::None)
 	{
 		eUnitDataSymbolType symbolType;
 		switch (transport)
 		{
-			case cStaticUnitData::STORE_RES_METAL:
+			case eResourceType::Metal:
 				symbolType = eUnitDataSymbolType::Metal;
 				break;
-			case cStaticUnitData::STORE_RES_OIL:
+			case eResourceType::Oil:
 				symbolType = eUnitDataSymbolType::Oil;
 				break;
-			case cStaticUnitData::STORE_RES_GOLD:
+			case eResourceType::Gold:
 				symbolType = eUnitDataSymbolType::Gold;
 				break;
-			case cStaticUnitData::STORE_RES_NONE: break;
+			case eResourceType::None: break;
 		}
 		drawRow (rowIndex++, symbolType, staticUnitData->storageResMax, lngPack.i18n ("Text~Others~Cargo_7"), staticUnitData->storageResMax, staticUnitData->storageResMax);
 	}

@@ -117,23 +117,23 @@ void cUnitDetailsHud::reset()
 		drawRow (1, eUnitDataSymbolType::Human, unitScore, unitScore, lngPack.i18n ("Text~Others~Score"));
 		drawRow (2, eUnitDataSymbolType::Human, totalScore, goalScore, lngPack.i18n ("Text~Others~Total"));
 	}
-	else if ((staticData.storeResType != cStaticUnitData::STORE_RES_NONE || staticData.storageUnitsMax > 0) && unit->getOwner() == player)
+	else if ((staticData.storeResType != eResourceType::None || staticData.storageUnitsMax > 0) && unit->getOwner() == player)
 	{
 		if (staticData.storageResMax > 0)
 		{
 			eUnitDataSymbolType symbolType;
 			switch (staticData.storeResType)
 			{
-				case cStaticUnitData::STORE_RES_METAL:
+				case eResourceType::Metal:
 					symbolType = eUnitDataSymbolType::Metal;
 					break;
-				case cStaticUnitData::STORE_RES_OIL:
+				case eResourceType::Oil:
 					symbolType = eUnitDataSymbolType::Oil;
 					break;
-				case cStaticUnitData::STORE_RES_GOLD:
+				case eResourceType::Gold:
 					symbolType = eUnitDataSymbolType::Gold;
 					break;
-				case cStaticUnitData::STORE_RES_NONE: break;
+				case eResourceType::None: break;
 			}
 
 			drawRow (1, symbolType, unit->getStoredResources(), staticData.storageResMax, lngPack.i18n ("Text~Others~Cargo_7"));
@@ -143,16 +143,16 @@ void cUnitDetailsHud::reset()
 				const auto& building = static_cast<const cBuilding&> (*unit);
 				switch (staticData.storeResType)
 				{
-					case cStaticUnitData::STORE_RES_METAL:
+					case eResourceType::Metal:
 						drawRow (2, symbolType, building.subBase->getMetalStored(), building.subBase->getMaxMetalStored(), lngPack.i18n ("Text~Others~Total"));
 						break;
-					case cStaticUnitData::STORE_RES_OIL:
+					case eResourceType::Oil:
 						drawRow (2, symbolType, building.subBase->getOilStored(), building.subBase->getMaxOilStored(), lngPack.i18n ("Text~Others~Total"));
 						break;
-					case cStaticUnitData::STORE_RES_GOLD:
+					case eResourceType::Gold:
 						drawRow (2, symbolType, building.subBase->getGoldStored(), building.subBase->getMaxGoldStored(), lngPack.i18n ("Text~Others~Total"));
 						break;
-					case cStaticUnitData::STORE_RES_NONE: break;
+					case eResourceType::None: break;
 				}
 			}
 		}

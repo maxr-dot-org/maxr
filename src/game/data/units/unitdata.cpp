@@ -300,7 +300,7 @@ cStaticUnitData::cStaticUnitData()
 
 	// Storage
 	storageResMax = 0;
-	storeResType = STORE_RES_NONE;
+	storeResType = eResourceType::None;
 	storageUnitsMax = 0;
 	storeUnitsImageType = STORE_UNIT_IMG_NONE;
 }

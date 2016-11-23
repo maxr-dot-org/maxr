@@ -1582,7 +1582,7 @@ void cUnitUpgrade::init (const cDynamicUnitData& origData, const cDynamicUnitDat
 		}
 	}
 
-	if (staticData.storeResType != cStaticUnitData::STORE_RES_NONE)
+	if (staticData.storeResType != eResourceType::None)
 	{
 		i++;
 	}

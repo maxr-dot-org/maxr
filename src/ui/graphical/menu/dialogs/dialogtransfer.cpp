@@ -90,9 +90,9 @@ cNewDialogTransfer::cNewDialogTransfer (const cUnit& sourceUnit, const cUnit& de
 }
 
 //------------------------------------------------------------------------------
-cStaticUnitData::eStorageResType cNewDialogTransfer::getCommonResourceType(const cUnit& sourceUnit, const cUnit& destinationUnit) const
+eResourceType cNewDialogTransfer::getCommonResourceType(const cUnit& sourceUnit, const cUnit& destinationUnit) const
 {
-	cStaticUnitData::eStorageResType commonResourceType = cStaticUnitData::STORE_RES_NONE;
+	eResourceType commonResourceType = eResourceType::None;
 	const auto sourceResource = sourceUnit.getStaticUnitData().storeResType;
 	const auto destinationResource = destinationUnit.getStaticUnitData().storeResType;
 	if (sourceResource == destinationResource)
@@ -114,11 +114,11 @@ eResourceBarType cNewDialogTransfer::getResourceBarType (const cUnit& sourceUnit
 	switch (getCommonResourceType (sourceUnit, destinationUnit))
 	{
 		default:
-		case cStaticUnitData::STORE_RES_METAL:
+		case eResourceType::Metal:
 			return eResourceBarType::MetalSlim;
-		case cStaticUnitData::STORE_RES_OIL:
+		case eResourceType::Oil:
 			return eResourceBarType::OilSlim;
-		case cStaticUnitData::STORE_RES_GOLD:
+		case eResourceType::Gold:
 			return eResourceBarType::GoldSlim;
 	}
 }
@@ -163,15 +163,15 @@ void cNewDialogTransfer::initCargo (int& cargo, int& maxCargo, const cUnit& unit
 			switch (unit2.getStaticUnitData().storeResType)
 			{
 				default:
-				case cStaticUnitData::STORE_RES_METAL:
+				case eResourceType::Metal:
 					maxCargo = building.subBase->getMaxMetalStored();
 					cargo = building.subBase->getMetalStored();
 					break;
-				case cStaticUnitData::STORE_RES_OIL:
+				case eResourceType::Oil:
 					maxCargo = building.subBase->getMaxOilStored();
 					cargo = building.subBase->getOilStored();
 					break;
-				case cStaticUnitData::STORE_RES_GOLD:
+				case eResourceType::Gold:
 					maxCargo = building.subBase->getMaxGoldStored();
 					cargo = building.subBase->getGoldStored();
 					break;
@@ -219,7 +219,7 @@ int cNewDialogTransfer::getTransferValue() const
 }
 
 //------------------------------------------------------------------------------
-cStaticUnitData::eStorageResType cNewDialogTransfer::getResourceType() const
+eResourceType cNewDialogTransfer::getResourceType() const
 {
 	return resourceType;
 }

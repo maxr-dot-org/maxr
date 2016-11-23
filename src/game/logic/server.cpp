@@ -3263,7 +3263,7 @@ void cServer::destroyUnit (cUnit& unit)
 	{
 		rubbleValue += unit.data.getBuildCost();
 		// stored material is always added completely to the rubble
-		if (unit.getStaticUnitData().storeResType == cStaticUnitData::STORE_RES_METAL)
+		if (unit.getStaticUnitData().storeResType == eResourceType::Metal)
 			rubbleValue += unit.getStoredResources() * 2;
 	}
 	deleteUnit (&unit);
@@ -3307,7 +3307,7 @@ int cServer::deleteBuildings (cMapField& field, bool deleteConnector)
 
 		if ((*b_it)->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE) //no rubble for connectors
 			rubble += (*b_it)->data.getBuildCost();
-		if ((*b_it)->getStaticUnitData().storeResType == cStaticUnitData::STORE_RES_METAL)
+		if ((*b_it)->getStaticUnitData().storeResType == eResourceType::Metal)
 			rubble += (*b_it)->getStoredResources() * 2; // stored material is always added completely to the rubble
 
 		deleteUnit (*b_it);

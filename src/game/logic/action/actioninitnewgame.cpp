@@ -234,7 +234,7 @@ void cActionInitNewGame::makeLanding(cPlayer& player, const std::vector<sLanding
 		}
 		if (landing.cargo && vehicle)
 		{
-			if (vehicle->getStaticUnitData().storeResType != cStaticUnitData::STORE_RES_GOLD)
+			if (vehicle->getStaticUnitData().storeResType != eResourceType::Gold)
 				vehicle->setStoredResources(landing.cargo);
 		}
 	}
