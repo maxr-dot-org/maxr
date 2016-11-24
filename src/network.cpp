@@ -39,13 +39,6 @@ cSocket::cSocket(TCPsocket socket):
 {}
 
 //------------------------------------------------------------------------
-cSocket::~cSocket()
-{
-	if (sdlSocket != nullptr) SDLNet_TCP_Close (sdlSocket);
-}
-
-
-//------------------------------------------------------------------------
 // cDataBuffer implementation
 //------------------------------------------------------------------------
 cDataBuffer::cDataBuffer() :
@@ -93,10 +86,9 @@ cNetwork::cNetwork(cConnectionManager& connectionManager, cMutex& mutex) :
 	exit(false),
 	connectionManager(connectionManager),
 	serverSocket(nullptr),
-	socketsChanged(false),
 	tcpMutex(mutex)
 {
-	socketSet = SDLNet_AllocSocketSet(0);
+	socketSet = SDLNet_AllocSocketSet(MAX_TCP_CONNECTIONS);
 	tcpHandleThread = SDL_CreateThread(networkThreadCallback, "network", this);
 }
 
@@ -113,6 +105,7 @@ cNetwork::~cNetwork()
 	cleanupClosedSockets();
 	for (auto socket : sockets)
 	{
+		SDLNet_TCP_Close(socket->sdlSocket);
 		delete socket;
 	}
 }
@@ -137,7 +130,7 @@ int cNetwork::openServer(int port)
 	}
 
 	serverSocket = socket;
-	socketsChanged = true;
+	SDLNet_TCP_AddSocket(socketSet, serverSocket);
 
 	return 0;
 }
@@ -147,9 +140,10 @@ void cNetwork::closeServer()
 {
 	cLockGuard<cMutex> tl(tcpMutex);
 
-	SDLNet_TCP_Close(serverSocket);
+	if (serverSocket == nullptr) return;
+	
+	closingSockets.push_back(serverSocket);
 	serverSocket = nullptr;
-	socketsChanged = true;
 }
 
 //------------------------------------------------------------------------
@@ -180,11 +174,11 @@ void cNetwork::close(cSocket* socket)
 	}
 	connectionManager.connectionClosed(socket);
 
-	// socket will be cleaned up later by the networkthread. This cannot be done
+	// sdl socket will be cleaned up later by the networkthread. This cannot be done
 	// immediately, because the network thread may be still using the socket in SDLNet_CheckSockets
-	closingSockets.push_back(socket);
+	closingSockets.push_back(socket->sdlSocket);
 	Remove(sockets, socket);
-	socketsChanged = true;
+	delete socket;
 }
 
 //------------------------------------------------------------------------
@@ -242,7 +236,7 @@ void cNetwork::handleNetworkThread()
 			SDL_Delay(10);
 		}
 
-		if (readySockets > 0 || socketsChanged || !connectToIp.empty())
+		if (readySockets > 0 || closingSockets.size() > 0 || !connectToIp.empty())
 		{
 			cLockGuard<cMutex> tl(tcpMutex);
 
@@ -271,7 +265,6 @@ void cNetwork::handleNetworkThread()
 			//handle incoming connections
 			if (serverSocket && SDLNet_SocketReady(serverSocket))
 			{
-				//TODO: close server socket, when max clients reached?
 				TCPsocket sdlSocket = SDLNet_TCP_Accept(serverSocket);
 
 				if (sdlSocket != nullptr)
@@ -286,9 +279,16 @@ void cNetwork::handleNetworkThread()
 						
 						Log.write("Network: Incoming connection from " + ip, cLog::eLOG_TYPE_NET_DEBUG);
 					}
+
+					if (sockets.size() + 1 >= MAX_TCP_CONNECTIONS ) // +1 for serverSocket
+					{
+						SDLNet_TCP_Close(sdlSocket);
+						Log.write("Network: Maximum number of tcp connections reached. Connection closed.", cLog::eLOG_TYPE_NET_WARNING);
+					}
+
 					cSocket* socket = new cSocket(sdlSocket);
 					sockets.push_back(socket);
-					socketsChanged = true;
+					SDLNet_TCP_AddSocket(socketSet, sdlSocket);
 					connectionManager.incomingConnection(socket);
 				}
 			}
@@ -304,30 +304,24 @@ void cNetwork::handleNetworkThread()
 				}
 				else
 				{
-					TCPsocket tcpSocket = SDLNet_TCP_Open(&ipaddr);
-					if (tcpSocket == nullptr)
+					TCPsocket sdlSocket = SDLNet_TCP_Open(&ipaddr);
+					if (sdlSocket == nullptr)
 					{
 						Log.write("Network: Couldn't connect to host", cLog::eLOG_TYPE_WARNING);
 						connectionManager.connectionResult(nullptr);
 					}
 					else
 					{
-						cSocket* socket = new cSocket(tcpSocket);
+						cSocket* socket = new cSocket(sdlSocket);
 						sockets.push_back(socket);
-						socketsChanged = true;
+						SDLNet_TCP_AddSocket(socketSet, sdlSocket);
 						connectionManager.connectionResult(socket);
 					}
 				}
 				connectToIp.clear();
 			}
 
-			//update socket management structures
-			if (socketsChanged)
-			{
-				cleanupClosedSockets();
-				updateSocketSet();
-				socketsChanged = false;
-			}
+			cleanupClosedSockets();
 		}		
 	}
 }
@@ -382,28 +376,15 @@ void cNetwork::pushReadyMessages(cSocket* socket)
 }
 
 //------------------------------------------------------------------------
-void cNetwork::updateSocketSet()
-{
-	SDLNet_FreeSocketSet(socketSet);
-
-	SDLNet_AllocSocketSet(sockets.size() + 1);
-
-	for (const auto& socket : sockets)
-	{
-		SDLNet_TCP_AddSocket (socketSet, socket->sdlSocket);
-	}
-	if (serverSocket != nullptr)
-	{
-		SDLNet_TCP_AddSocket(socketSet, serverSocket);
-	}
-}
-
-//------------------------------------------------------------------------
 void cNetwork::cleanupClosedSockets()
 {
-	for (cSocket* socket : closingSockets)
+	for (TCPsocket socket : closingSockets)
 	{
-		delete socket;
+		if (socket != nullptr)
+		{
+			SDLNet_TCP_Close(socket);
+			SDLNet_TCP_DelSocket(socketSet, socket);
+		}
 	}
 	closingSockets.clear();
 }

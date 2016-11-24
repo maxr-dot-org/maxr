@@ -24,6 +24,8 @@
 
 #include "utility\thread\mutex.h"
 
+//this is probably the maximum of the underlying os 'select' call
+#define MAX_TCP_CONNECTIONS 64
 
 class cConnectionManager;
 
@@ -50,7 +52,6 @@ class cSocket
 {
 public:
 	cSocket(TCPsocket socket);
-	~cSocket();
 
 	const TCPsocket sdlSocket;
 	cDataBuffer buffer;
@@ -89,8 +90,7 @@ private:
 	TCPsocket serverSocket;
 	std::vector<cSocket*> sockets;
 	SDLNet_SocketSet socketSet;
-	bool socketsChanged;				  //indicates, that the socketset has to be updated. This needs to be done inside the network thread.
-	std::vector<cSocket*> closingSockets; //list of sockets to be closed. This needs to be done inside the network thread.
+	std::vector<TCPsocket> closingSockets; //list of sockets to be closed. This needs to be done inside the network thread.
 	
 	cConnectionManager& connectionManager;
 
