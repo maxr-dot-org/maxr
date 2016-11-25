@@ -163,7 +163,7 @@ void cNetwork::connectToServer(const std::string& ip, int port)
 }
 
 //------------------------------------------------------------------------
-void cNetwork::close(cSocket* socket)
+void cNetwork::close(const cSocket* socket)
 {
 	cLockGuard<cMutex> tl(tcpMutex);
 
@@ -182,7 +182,7 @@ void cNetwork::close(cSocket* socket)
 }
 
 //------------------------------------------------------------------------
-int cNetwork::sendMessage(cSocket* socket, unsigned int length, const unsigned char* buffer)
+int cNetwork::sendMessage(const cSocket* socket, unsigned int length, const unsigned char* buffer)
 {
 	cLockGuard<cMutex> tl(tcpMutex);
 
@@ -205,7 +205,7 @@ int cNetwork::sendMessage(cSocket* socket, unsigned int length, const unsigned c
 }
 
 //------------------------------------------------------------------------
-int cNetwork::send(cSocket* socket, const unsigned char* buffer, unsigned int length)
+int cNetwork::send(const cSocket* socket, const unsigned char* buffer, unsigned int length)
 {
 	const unsigned int bytesSent = SDLNet_TCP_Send(socket->sdlSocket, buffer, length);
 
@@ -285,11 +285,13 @@ void cNetwork::handleNetworkThread()
 						SDLNet_TCP_Close(sdlSocket);
 						Log.write("Network: Maximum number of tcp connections reached. Connection closed.", cLog::eLOG_TYPE_NET_WARNING);
 					}
-
-					cSocket* socket = new cSocket(sdlSocket);
-					sockets.push_back(socket);
-					SDLNet_TCP_AddSocket(socketSet, sdlSocket);
-					connectionManager.incomingConnection(socket);
+					else
+					{
+						cSocket* socket = new cSocket(sdlSocket);
+						sockets.push_back(socket);
+						SDLNet_TCP_AddSocket(socketSet, sdlSocket);
+						connectionManager.incomingConnection(socket);
+					}
 				}
 			}
 
@@ -367,6 +369,9 @@ void cNetwork::pushReadyMessages(cSocket* socket)
 
 		//push message
 		connectionManager.messageReceived(socket, socket->buffer.data + readPos + HEADER_LENGTH, messageLength);
+
+		//socket died during handling in connectionManager
+		if (std::find(sockets.begin(), sockets.end(), socket) == sockets.end()) return;
 
 		//save position of next message
 		readPos += messageLength + HEADER_LENGTH;

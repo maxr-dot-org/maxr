@@ -29,6 +29,7 @@ class cNetwork;
 class cSocket;
 class cNetMessage2;
 class cPlayerBasicData;
+class cHandshakeTimeout;
 
 /**
 * Interface called each time a message is received by network.
@@ -50,8 +51,8 @@ public:
 	void closeServer();
 	bool isServerOpen() const;
 
-	void acceptConnection(cSocket* socket, int playerNr);
-	void declineConnection(cSocket* socket);
+	void acceptConnection(const cSocket* socket, int playerNr);
+	void declineConnection(const cSocket* socket);
 	void connectToServer(const std::string& host, int port, const cPlayerBasicData& player);
 	bool isConnectedToServer() const;
 
@@ -66,15 +67,18 @@ public:
 
 
 	//callbacks from network thread
-	void connectionClosed(cSocket* socket);
-	void incomingConnection(cSocket* socket);
+	void connectionClosed(const cSocket* socket);
+	void incomingConnection(const cSocket* socket);
 
+	void messageReceived(const cSocket* socket, unsigned char* data, int length);
+	void connectionResult(const cSocket* socket);
 
-	void messageReceived(cSocket* socket, unsigned char* data, int length);
-	void connectionResult(cSocket* socket);
-
+	//callback from timeout timer
+	void handshakeTimeoutCallback(cHandshakeTimeout* timer);
 private:
-	int sendMessage(cSocket* socket, const cNetMessage2& message);
+	void startTimeout(const cSocket* socket);
+	void stopTimeout(const cSocket* socket);
+	int sendMessage(const cSocket* socket, const cNetMessage2& message);
 
 	cNetwork* network;
 	INetMessageReceiver* localClient;
@@ -82,8 +86,10 @@ private:
 	mutable cMutex mutex;
 
 	int localPlayer;
-	std::vector<std::pair<cSocket*, int>> clientSockets;
-	cSocket* serverSocket;
+	std::vector<std::pair<const cSocket*, int>> clientSockets;
+	const cSocket* serverSocket;
+
+	std::vector<cHandshakeTimeout*> timeouts;
 
 	bool serverOpen;
 

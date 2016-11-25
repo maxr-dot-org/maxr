@@ -371,7 +371,7 @@ public:
 	cRgbColor playerColor;
 	bool ready;
 	std::string gameVersion;
-	cSocket* socket;
+	const cSocket* socket;
 
 private:
 	template<typename T>

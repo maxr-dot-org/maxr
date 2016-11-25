@@ -26,6 +26,45 @@
 #include "maxrversion.h"
 #include "utility/string/toString.h"
 
+#define HANDSHAKE_TIMEOUT_MS 3000 
+#define DISABLE_TIMEOUTS 0 // this can be used, when debugging the conection handshake
+                           // and timeouts are not wanted
+
+class cHandshakeTimeout
+{
+public:
+	cHandshakeTimeout(const cSocket* socket, cConnectionManager* connectionManager) :
+		socket(socket),
+		connectionManager(connectionManager)
+	{
+		timer = SDL_AddTimer(HANDSHAKE_TIMEOUT_MS, callback, (void*)this);
+	}
+
+	~cHandshakeTimeout()
+	{
+		SDL_RemoveTimer(timer);
+	}
+
+	const cSocket* getSocket() const
+	{
+		return socket;
+	}
+private:
+	static uint32_t callback(uint32_t intervall, void* arg)
+	{
+		cHandshakeTimeout* thisPtr = reinterpret_cast<cHandshakeTimeout*> (arg);
+		thisPtr->connectionManager->handshakeTimeoutCallback(thisPtr);
+
+		return 0;
+	}
+
+	cConnectionManager* connectionManager;
+	SDL_TimerID timer;
+	const cSocket* socket;
+};
+
+
+//------------------------------------------------------------------------------
 cConnectionManager::cConnectionManager() :
 	network(nullptr),
 	localClient(nullptr),
@@ -81,13 +120,15 @@ bool cConnectionManager::isServerOpen() const
 }
 
 //------------------------------------------------------------------------------
-void cConnectionManager::acceptConnection(cSocket* socket, int playerNr)
+void cConnectionManager::acceptConnection(const cSocket* socket, int playerNr)
 {
 	assert(localServer != nullptr);
 
 	cLockGuard<cMutex> tl(mutex);
+
+	stopTimeout(socket);
 	
-	auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<cSocket*, int>& x) { return x.first == socket; });
+	auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<const cSocket*, int>& x) { return x.first == socket; });
 	if (x == clientSockets.end())
 	{
 		//looks like the connection was disconnected during the handshake
@@ -110,13 +151,15 @@ void cConnectionManager::acceptConnection(cSocket* socket, int playerNr)
 }
 
 //------------------------------------------------------------------------------
-void cConnectionManager::declineConnection(cSocket* socket)
+void cConnectionManager::declineConnection(const cSocket* socket)
 {
 	assert(localServer != nullptr);
 
 	cLockGuard<cMutex> tl(mutex);
 
-	auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<cSocket*, int>& x) { return x.first == socket; });
+	stopTimeout(socket);
+
+	auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<const cSocket*, int>& x) { return x.first == socket; });
 	if (x == clientSockets.end())
 	{
 		//looks like the connection was disconnected during the handshake
@@ -206,7 +249,7 @@ int cConnectionManager::sendToPlayer(const cNetMessage2& message, int playerNr)
 	}
 	else
 	{
-		auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<cSocket*, int>& x) { return x.second == playerNr; });
+		auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<const cSocket*, int>& x) { return x.second == playerNr; });
 		if (x == clientSockets.end())
 		{
 			Log.write("Connection Manager: Can't send message. No connection to player " + toString(playerNr), cLog::eLOG_TYPE_NET_ERROR);
@@ -259,8 +302,10 @@ void cConnectionManager::disconnectAll()
 }
 
 //------------------------------------------------------------------------------
-void cConnectionManager::connectionClosed(cSocket* socket)
+void cConnectionManager::connectionClosed(const cSocket* socket)
 {
+	stopTimeout(socket);
+
 	if (socket == serverSocket)
 	{
 		if (localClient)
@@ -271,7 +316,7 @@ void cConnectionManager::connectionClosed(cSocket* socket)
 	}
 	else
 	{
-		auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<cSocket*, int>& x) { return x.first == socket; });
+		auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<const cSocket*, int>& x) { return x.first == socket; });
 		if (x == clientSockets.end())
 		{
 			Log.write("ConnectionManager: An unknown connection was closed", cLog::eLOG_TYPE_ERROR);
@@ -289,9 +334,11 @@ void cConnectionManager::connectionClosed(cSocket* socket)
 }
 
 //------------------------------------------------------------------------------
-void cConnectionManager::incomingConnection(cSocket* socket)
+void cConnectionManager::incomingConnection(const cSocket* socket)
 {
-	std::pair<cSocket*, int> connection;
+	startTimeout(socket);
+
+	std::pair<const cSocket*, int> connection;
 	connection.first = socket;
 	connection.second = -1;
 	clientSockets.push_back(connection);
@@ -306,7 +353,7 @@ void cConnectionManager::incomingConnection(cSocket* socket)
 }
 
 //------------------------------------------------------------------------------
-int cConnectionManager::sendMessage(cSocket* socket, const cNetMessage2& message)
+int cConnectionManager::sendMessage(const cSocket* socket, const cNetMessage2& message)
 {
 	// serialize...
 	std::vector<unsigned char> buffer;
@@ -317,7 +364,7 @@ int cConnectionManager::sendMessage(cSocket* socket, const cNetMessage2& message
 }
 
 //------------------------------------------------------------------------------
-void cConnectionManager::messageReceived(cSocket* socket, unsigned char* data, int length)
+void cConnectionManager::messageReceived(const cSocket* socket, unsigned char* data, int length)
 {
 	std::unique_ptr<cNetMessage2> message;
 	try
@@ -372,7 +419,7 @@ void cConnectionManager::messageReceived(cSocket* socket, unsigned char* data, i
 			// clients shouldn't get this message
 			return;
 		}
-		auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<cSocket*, int>& x) { return x.first == socket; });
+		auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<const cSocket*, int>& x) { return x.first == socket; });
 		assert(x != clientSockets.end());
 
 		if (x->second != -1)
@@ -399,6 +446,8 @@ void cConnectionManager::messageReceived(cSocket* socket, unsigned char* data, i
 		archive << *message;
 		Log.write("ConnectionManager: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
 
+		stopTimeout(socket);
+
 		//TODO: set localPlayerNr?
 		break;
 	}
@@ -414,12 +463,20 @@ void cConnectionManager::messageReceived(cSocket* socket, unsigned char* data, i
 	{
 		localClient->pushMessage(std::move(message));
 	}
+	else
+	{
+		Log.write("ConnectionManager: Cannot handle message. No message receiver.", cLog::eLOG_TYPE_NET_ERROR);
+	}
 }
 
 //------------------------------------------------------------------------------
-void cConnectionManager::connectionResult(cSocket* socket)
+void cConnectionManager::connectionResult(const cSocket* socket)
 {
 	assert(localClient);
+	if (socket != nullptr)
+	{
+		startTimeout(socket);
+	}
 
 	connecting = false;
 	serverSocket = socket;
@@ -429,5 +486,40 @@ void cConnectionManager::connectionResult(cSocket* socket)
 		Log.write("ConnectionManager: Connect to server failed", cLog::eLOG_TYPE_NET_WARNING);
 		auto message = std::make_unique<cNetMessageTcpConnectFailed>();
 		localClient->pushMessage(std::move(message));
+	}
+}
+
+//------------------------------------------------------------------------------
+void cConnectionManager::startTimeout(const cSocket* socket)
+{
+#if DISABLE_TIMEOUTS == 0
+	timeouts.push_back(new cHandshakeTimeout(socket, this));
+#endif
+}
+
+//------------------------------------------------------------------------------
+void cConnectionManager::stopTimeout(const cSocket* socket)
+{
+	auto t = std::find_if(timeouts.begin(), timeouts.end(), [&](cHandshakeTimeout* timer) { return timer->getSocket() == socket; });
+	if (t != timeouts.end())
+	{
+		delete *t;
+		timeouts.erase(t);
+	}
+}
+
+//------------------------------------------------------------------------------
+void cConnectionManager::handshakeTimeoutCallback(cHandshakeTimeout* timer)
+{
+	Log.write("ConnectionManager: Handshake timed out", cLog::eLOG_TYPE_NET_WARNING);
+
+	cLockGuard<cMutex> tl(mutex);
+
+	auto t = std::find(timeouts.begin(), timeouts.end(), timer);
+	if (t != timeouts.end())
+	{
+		timeouts.erase(t);
+		network->close(timer->getSocket());
+		delete timer;
 	}
 }

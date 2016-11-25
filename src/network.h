@@ -68,15 +68,15 @@ public:
 	void closeServer();
 	void connectToServer (const std::string& ip, int port);
 	
-	void close(cSocket* socket);
-	int sendMessage(cSocket* socket, unsigned int length, const unsigned char* buffer);
+	void close(const cSocket* socket);
+	int sendMessage(const cSocket* socket, unsigned int length, const unsigned char* buffer);
 
 private:
 	void handleNetworkThread();
 	static int networkThreadCallback(void* arg);
 
 	void pushReadyMessages(cSocket* socket);
-	int send(cSocket* socket, const unsigned char* buffer, unsigned int length);
+	int send(const cSocket* socket, const unsigned char* buffer, unsigned int length);
 
 	void updateSocketSet();
 	void cleanupClosedSockets();
