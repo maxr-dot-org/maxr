@@ -738,7 +738,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_TCP_CLOSE(cNetMessageTcpCl
 	if (playerToRemove == nullptr) return;
 	
 	windowNetworkLobby->addInfoEntry(lngPack.i18n("Text~Multiplayer~Player_Left", playerToRemove->getName()));
-	//TODO: message to clients?
+	sendNetMessage(cMuMsgChat("Text~Multiplayer~Player_Left", true, playerToRemove->getName()));
 	windowNetworkLobby->removePlayer(*playerToRemove);
 
 	sendNetMessage(cMuMsgPlayerList(windowNetworkLobby->getPlayers()));
@@ -760,7 +760,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_CHAT (cMuMsgChat& m
 		{
 			if (message.translate)
 			{
-				windowLandingPositionSelection->getChatBox()->addChatEntry(std::make_unique<cLobbyChatBoxListViewItem>(lngPack.i18n(message.message)));
+				windowLandingPositionSelection->getChatBox()->addChatEntry(std::make_unique<cLobbyChatBoxListViewItem>(lngPack.i18n(message.message, message.insertText)));
 			}
 			else
 			{
@@ -783,7 +783,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_CHAT (cMuMsgChat& m
 
 		if (message.translate)
 		{
-			windowNetworkLobby->addInfoEntry (lngPack.i18n (message.message));
+			windowNetworkLobby->addInfoEntry (lngPack.i18n (message.message, message.insertText));
 		}
 		else
 		{

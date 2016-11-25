@@ -511,9 +511,9 @@ void cConnectionManager::stopTimeout(const cSocket* socket)
 //------------------------------------------------------------------------------
 void cConnectionManager::handshakeTimeoutCallback(cHandshakeTimeout* timer)
 {
-	Log.write("ConnectionManager: Handshake timed out", cLog::eLOG_TYPE_NET_WARNING);
-
 	cLockGuard<cMutex> tl(mutex);
+
+	Log.write("ConnectionManager: Handshake timed out", cLog::eLOG_TYPE_NET_WARNING);
 
 	auto t = std::find(timeouts.begin(), timeouts.end(), timer);
 	if (t != timeouts.end())

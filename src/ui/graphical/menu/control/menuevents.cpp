@@ -139,10 +139,11 @@ std::string enumToString(cMultiplayerLobbyMessage::eMessageType value)
 }
 
 //------------------------------------------------------------------------------
-cMuMsgChat::cMuMsgChat(const std::string& message, bool translate /*= false*/) :
+cMuMsgChat::cMuMsgChat(const std::string& message, bool translate /*= false*/, const std::string& insertText /*= ""*/) :
 	cMultiplayerLobbyMessage(eMessageType::MU_MSG_CHAT),
 	message(message),
-	translate(translate)
+	translate(translate),
+	insertText(insertText)
 {}
 
 cMuMsgChat::cMuMsgChat(cBinaryArchiveOut& archive) :

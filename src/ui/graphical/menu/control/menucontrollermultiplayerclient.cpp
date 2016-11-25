@@ -480,7 +480,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_CHAT (cMuMsgChat&
 	{
 		if (message.translate)
 		{
-			windowLandingPositionSelection->getChatBox()->addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (lngPack.i18n (message.message)));
+			windowLandingPositionSelection->getChatBox()->addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (lngPack.i18n (message.message, message.insertText)));
 		}
 		else
 		{
@@ -492,7 +492,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_CHAT (cMuMsgChat&
 	{
 		if (message.translate)
 		{
-			windowNetworkLobby->addInfoEntry (lngPack.i18n (message.message));
+			windowNetworkLobby->addInfoEntry (lngPack.i18n (message.message, message.insertText));
 		}
 		else
 		{

@@ -76,7 +76,7 @@ std::string enumToString(cMultiplayerLobbyMessage::eMessageType value);
 class cMuMsgChat : public cMultiplayerLobbyMessage
 {
 public:
-	cMuMsgChat(const std::string& message, bool translate = false);
+	cMuMsgChat(const std::string& message, bool translate = false, const std::string& insertText = "");
 	cMuMsgChat(cBinaryArchiveOut& archive);
 
 	virtual void serialize(cBinaryArchiveIn& archive);
@@ -84,12 +84,14 @@ public:
 
 	std::string message;
 	bool translate;
+	std::string insertText;
 private:
 	template<typename T>
 	void serializeThis(T& archive)
 	{
 		archive & message;
 		archive & translate;
+		archive & insertText;
 	}
 };
 
