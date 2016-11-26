@@ -377,8 +377,19 @@ void cConnectionManager::messageReceived(const cSocket* socket, unsigned char* d
 		return;
 	}
 
-	//TODO: security filter
-
+	//compare the sender playerNr of the message with the playerNr that is expected behind the socket
+	int playerOnSocket = -1;
+	auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<const cSocket*, int>& x) { return x.first == socket; });
+	if (x != clientSockets.end())
+	{
+		playerOnSocket = x->second;
+		if (message->playerNr != playerOnSocket)
+		{
+			Log.write("ConnectionManager: Discarding message with wrong sender id", cLog::eLOG_TYPE_NET_WARNING);
+			return;
+		}
+	}
+	
 	// handle messages for the connection handshake
 	switch (message->getType())
 	{
@@ -419,10 +430,8 @@ void cConnectionManager::messageReceived(const cSocket* socket, unsigned char* d
 			// clients shouldn't get this message
 			return;
 		}
-		auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<const cSocket*, int>& x) { return x.first == socket; });
-		assert(x != clientSockets.end());
-
-		if (x->second != -1)
+		
+		if (playerOnSocket != -1)
 		{
 			Log.write("ConnectionManager: Received TCP_WANT_CONNECT from alreay connected player", cLog::eLOG_TYPE_NET_ERROR);
 			return;
