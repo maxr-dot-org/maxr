@@ -436,14 +436,19 @@ void cMenuControllerMultiplayerClient::handleNetMessage_TCP_CONNECTED(cNetMessag
 {
 	if (!windowNetworkLobby) return;
 
-	//TODO: game version check
-	
 	auto& localPlayer = windowNetworkLobby->getLocalPlayer();
 	localPlayer->setNr(message.playerNr);
 
 	sendNetMessage(cMuMsgIdentification(*localPlayer));
 
 	windowNetworkLobby->addInfoEntry(lngPack.i18n("Text~Multiplayer~Network_Connected"));
+
+	if (message.packageVersion != PACKAGE_VERSION || message.packageRev != PACKAGE_REV)
+	{
+		windowNetworkLobby->addInfoEntry(lngPack.i18n("Text~Multiplayer~Gameversion_Warning_Client", message.packageVersion + " " + message.packageRev));
+		windowNetworkLobby->addInfoEntry(lngPack.i18n("Text~Multiplayer~Gameversion_Own", (std::string)PACKAGE_VERSION + " " + PACKAGE_REV));
+	}
+
 	Log.write("Connected and assigned playerNr: " + toString(message.playerNr), cLog::eLOG_TYPE_INFO);
 }
 
@@ -466,6 +471,9 @@ void cMenuControllerMultiplayerClient::handleNetMessage_TCP_CLOSE (cNetMessageTc
 	const auto& localPlayer = windowNetworkLobby->getLocalPlayer();
 	localPlayer->setReady (false);
 	windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Lost_Connection", "server"));
+
+	windowNetworkLobby->enablePortEdit();
+	windowNetworkLobby->enableIpEdit();
 }
 
 //------------------------------------------------------------------------------

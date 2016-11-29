@@ -30,6 +30,7 @@
 #include "game/data/report/savedreport.h"
 #include "ui/graphical/game/gameguistate.h"
 #include "utility/color.h"
+#include "maxrversion.h"
 
 class cSavedReport;
 class cSocket;
@@ -325,9 +326,10 @@ private:
 class cNetMessageTcpHello : public cNetMessage2
 {
 public:
-	cNetMessageTcpHello(const std::string& gameVersion) :
+	cNetMessageTcpHello() :
 		cNetMessage2(eNetMessageType::TCP_HELLO),
-		gameVersion(gameVersion)
+		packageVersion(PACKAGE_VERSION),
+		packageRev(PACKAGE_REV)
 	{};
 	cNetMessageTcpHello(cBinaryArchiveOut& archive) :
 		cNetMessage2(eNetMessageType::TCP_HELLO)
@@ -338,13 +340,15 @@ public:
 	virtual void serialize(cBinaryArchiveIn& archive) { cNetMessage2::serialize(archive); serializeThis(archive); }
 	virtual void serialize(cTextArchiveIn& archive)   { cNetMessage2::serialize(archive); serializeThis(archive); }
 
-	std::string gameVersion;
+	std::string packageVersion;
+	std::string packageRev;
 
 private:
 	template<typename T>
 	void serializeThis(T& archive)
 	{
-		archive & gameVersion;
+		archive & packageVersion;
+		archive & packageRev;
 	}
 };
 
@@ -356,6 +360,8 @@ public:
 	cNetMessageTcpWantConnect() :
 		cNetMessage2(eNetMessageType::TCP_WANT_CONNECT),
 		ready(false),
+		packageVersion(PACKAGE_VERSION),
+		packageRev(PACKAGE_REV),
 		socket(nullptr)
 	{};
 	cNetMessageTcpWantConnect(cBinaryArchiveOut& archive) :
@@ -370,7 +376,9 @@ public:
 	std::string playerName;
 	cRgbColor playerColor;
 	bool ready;
-	std::string gameVersion;
+	std::string packageVersion;
+	std::string packageRev;
+
 	const cSocket* socket;
 
 private:
@@ -380,7 +388,8 @@ private:
 		archive & playerName;
 		archive & playerColor;
 		archive & ready;
-		archive & gameVersion;
+		archive & packageVersion;
+		archive & packageRev;
 		// socket is not serialized
 	}
 };
@@ -389,10 +398,11 @@ private:
 class cNetMessageTcpConnected : public cNetMessage2
 {
 public:
-	cNetMessageTcpConnected(int playerNr, const std::string& gameVersion) :
+	cNetMessageTcpConnected(int playerNr) :
+		cNetMessage2(eNetMessageType::TCP_CONNECTED),
 		playerNr(playerNr),
-		gameVersion(gameVersion),
-		cNetMessage2(eNetMessageType::TCP_CONNECTED)
+		packageVersion(PACKAGE_VERSION),
+		packageRev(PACKAGE_REV)
 	{};
 	cNetMessageTcpConnected(cBinaryArchiveOut& archive) :
 		cNetMessage2(eNetMessageType::TCP_CONNECTED)
@@ -404,14 +414,16 @@ public:
 	virtual void serialize(cTextArchiveIn& archive)   { cNetMessage2::serialize(archive); serializeThis(archive); }
 
 	int playerNr;
-	std::string gameVersion;
+	std::string packageVersion;
+	std::string packageRev;
 	
 private:
 	template<typename T>
 	void serializeThis(T& archive)
 	{
 		archive & playerNr;
-		archive & gameVersion;
+		archive & packageVersion;
+		archive & packageRev;
 	}
 };
 
@@ -419,9 +431,13 @@ private:
 class cNetMessageTcpConnectFailed : public cNetMessage2
 {
 public:
-	cNetMessageTcpConnectFailed() :
-		cNetMessage2(eNetMessageType::TCP_CONNECT_FAILED)
+	cNetMessageTcpConnectFailed(const std::string& message = "") :
+		cNetMessage2(eNetMessageType::TCP_CONNECT_FAILED),
+		message(message)
 	{};
+
+	const std::string message;
+
 	// no serialization needed, because this is a local event
 };
 

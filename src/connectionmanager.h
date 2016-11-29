@@ -69,7 +69,6 @@ public:
 	//callbacks from network thread
 	void connectionClosed(const cSocket* socket);
 	void incomingConnection(const cSocket* socket);
-
 	void messageReceived(const cSocket* socket, unsigned char* data, int length);
 	void connectionResult(const cSocket* socket);
 
@@ -79,6 +78,7 @@ private:
 	void startTimeout(const cSocket* socket);
 	void stopTimeout(const cSocket* socket);
 	int sendMessage(const cSocket* socket, const cNetMessage2& message);
+	bool handeConnectionHandshake(const std::unique_ptr<cNetMessage2> &message, const cSocket* socket, int playerOnSocket);
 
 	cNetwork* network;
 	INetMessageReceiver* localClient;

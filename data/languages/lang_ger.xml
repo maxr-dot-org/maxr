@@ -261,6 +261,10 @@
 			<Network_New ENG="New connection" localized="Neue Verbindung"/>
 			<Network_Open ENG="Game open" localized="Spiel offen"/>
 			<Network_Syncing ENG="Synchronizing..." localized="Synchronisieren..."/>
+			<Gameversion_Warning_Client ENG="Warning: Gameversion of server is: %s." localized="Warnung: Spielversion des Servers ist: %s."/>
+			<Gameversion_Warning_Server ENG="Warning: Gameversion of player is: %s." localized="Warnung: Spielversion des Spielers ist: %s."/>
+			<Gameversion_Error ENG="Couldn't connect: Gameversion of server is: %s." localized="Verbindung nicht möglich: Spielversion des Servers ist: %s."/>
+			<Gameversion_Own ENG="Your version is: %s." localized="Eigene Version ist: %s."/>
 			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Die Karte %s konnte nicht geladen werden. Daher können Sie nicht loslegen."/>
 			<No_Response ENG="Waiting for network response from player %s" localized="Warte auf Netzwerkantwort von Spieler %s"/>
 			<Not_Ready ENG="is not ready" localized="ist nicht bereit"/>

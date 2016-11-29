@@ -25,6 +25,8 @@
 #include "netmessage2.h"
 #include "maxrversion.h"
 #include "utility/string/toString.h"
+#include "ui/graphical/menu/control/menuevents.h"
+#include "main.h"
 
 #define HANDSHAKE_TIMEOUT_MS 3000 
 #define DISABLE_TIMEOUTS 0 // this can be used, when debugging the conection handshake
@@ -141,7 +143,7 @@ void cConnectionManager::acceptConnection(const cSocket* socket, int playerNr)
 	//assign playerNr to the socket
 	x->second = playerNr;
 
-	cNetMessageTcpConnected message(playerNr, std::string(PACKAGE_VERSION) + PACKAGE_REV);
+	cNetMessageTcpConnected message(playerNr);
 
 	cTextArchiveIn archive;
 	archive << message;
@@ -343,7 +345,7 @@ void cConnectionManager::incomingConnection(const cSocket* socket)
 	connection.second = -1;
 	clientSockets.push_back(connection);
 
-	cNetMessageTcpHello message(std::string(PACKAGE_VERSION) + PACKAGE_REV);
+	cNetMessageTcpHello message;
 
 	cTextArchiveIn archive;
 	archive << message;
@@ -391,77 +393,9 @@ void cConnectionManager::messageReceived(const cSocket* socket, unsigned char* d
 	}
 	
 	// handle messages for the connection handshake
-	switch (message->getType())
+	if (handeConnectionHandshake(message, socket, playerOnSocket))
 	{
-	case eNetMessageType::TCP_HELLO:
-	{
-		cTextArchiveIn archive;
-		archive << *message;
-		Log.write("ConnectionManager: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
-
-		//TODO: game version check
-		if (localServer)
-		{
-			// server shouldn't get this message
-			return;
-		}
-
-		cNetMessageTcpWantConnect response;
-		response.playerName = connectingPlayerName;
-		response.playerColor = connectingPlayerColor;
-		response.ready = connectingPlayerReady;
-		response.gameVersion = std::string(PACKAGE_VERSION) + PACKAGE_REV;
-
-		cTextArchiveIn archiveResponse;
-		archiveResponse << response;
-		Log.write("ConnectionManager: --> " + archiveResponse.data(), cLog::eLOG_TYPE_NET_DEBUG);
-
-		sendMessage(socket, response);
 		return;
-	}
-	case eNetMessageType::TCP_WANT_CONNECT:
-	{
-		cTextArchiveIn archive;
-		archive << *message;
-		Log.write("ConnectionManager: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
-
-		if (!localServer)
-		{
-			// clients shouldn't get this message
-			return;
-		}
-		
-		if (playerOnSocket != -1)
-		{
-			Log.write("ConnectionManager: Received TCP_WANT_CONNECT from alreay connected player", cLog::eLOG_TYPE_NET_ERROR);
-			return;
-		}
-				
-		//TODO: game version check
-
-		auto msgTcpWantConnect = static_cast<cNetMessageTcpWantConnect*>(message.get());
-		msgTcpWantConnect->socket = socket;
-
-		break;
-	}
-	case eNetMessageType::TCP_CONNECTED:
-	{
-		if (localServer)
-		{
-			// server shouldn't get this message
-			return;
-		}
-		cTextArchiveIn archive;
-		archive << *message;
-		Log.write("ConnectionManager: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
-
-		stopTimeout(socket);
-
-		//TODO: set localPlayerNr?
-		break;
-	}
-	default:
-		break;
 	}
 
 	if (localServer)
@@ -476,6 +410,99 @@ void cConnectionManager::messageReceived(const cSocket* socket, unsigned char* d
 	{
 		Log.write("ConnectionManager: Cannot handle message. No message receiver.", cLog::eLOG_TYPE_NET_ERROR);
 	}
+}
+
+bool cConnectionManager::handeConnectionHandshake(const std::unique_ptr<cNetMessage2> &message, const cSocket* socket, int playerOnSocket)
+{
+	switch (message->getType())
+	{
+	case eNetMessageType::TCP_HELLO:
+	{
+		cTextArchiveIn archive;
+		archive << *message;
+		Log.write("ConnectionManager: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
+
+		if (localServer)
+		{
+			// server shouldn't get this message
+			return true;
+		}
+
+		//check compatible game version
+		const auto& msgTcpHello = static_cast<cNetMessageTcpHello&>(*message);
+		if (msgTcpHello.packageVersion != PACKAGE_VERSION)
+		{
+			localClient->pushMessage(std::make_unique<cMuMsgChat>("Text~Multiplayer~Gameversion_Error", true, msgTcpHello.packageVersion));
+			localClient->pushMessage(std::make_unique<cMuMsgChat>("Text~Multiplayer~Gameversion_Own", true, PACKAGE_VERSION));
+			network->close(socket);
+			return true;
+		}
+
+
+		cNetMessageTcpWantConnect response;
+		response.playerName = connectingPlayerName;
+		response.playerColor = connectingPlayerColor;
+		response.ready = connectingPlayerReady;
+
+		cTextArchiveIn archiveResponse;
+		archiveResponse << response;
+		Log.write("ConnectionManager: --> " + archiveResponse.data(), cLog::eLOG_TYPE_NET_DEBUG);
+
+		sendMessage(socket, response);
+		return true;
+	}
+	case eNetMessageType::TCP_WANT_CONNECT:
+	{
+		cTextArchiveIn archive;
+		archive << *message;
+		Log.write("ConnectionManager: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
+
+		if (!localServer)
+		{
+			// clients shouldn't get this message
+			return true;
+		}
+
+		if (playerOnSocket != -1)
+		{
+			Log.write("ConnectionManager: Received TCP_WANT_CONNECT from alreay connected player", cLog::eLOG_TYPE_NET_ERROR);
+			return true;
+		}
+
+		auto& msgTcpWantConnect = static_cast<cNetMessageTcpWantConnect&>(*message);
+		msgTcpWantConnect.socket = socket;
+
+		//check compatible game version
+		if (msgTcpWantConnect.packageVersion != PACKAGE_VERSION)
+		{
+			sendMessage(socket, cMuMsgChat("Text~Multiplayer~Gameversion_Error", true, PACKAGE_VERSION));
+			sendMessage(socket, cMuMsgChat("Text~Multiplayer~Gameversion_Own", true, msgTcpWantConnect.packageVersion));
+			network->close(socket);
+			return true;
+		}
+		break;
+	}
+	case eNetMessageType::TCP_CONNECTED:
+	{
+		if (localServer)
+		{
+			// server shouldn't get this message
+			return true;
+		}
+		cTextArchiveIn archive;
+		archive << *message;
+		Log.write("ConnectionManager: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
+
+		stopTimeout(socket);
+
+		//TODO: set localPlayerNr?
+		break;
+	}
+	default:
+		break;
+	}
+
+	return false;
 }
 
 //------------------------------------------------------------------------------

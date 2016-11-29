@@ -261,6 +261,10 @@
 			<Network_New ENG="New connection"/>
 			<Network_Open ENG="Game open"/>
 			<Network_Syncing ENG="Synchronizing..."/>
+			<Gameversion_Warning_Client ENG="Warning: Gameversion of server is: %s."/>
+			<Gameversion_Warning_Server ENG="Warning: Gameversion of player is: %s."/>
+			<Gameversion_Error ENG="Couldn't connect: Gameversion of server is: %s."/>
+			<Gameversion_Own ENG="Your version is: %s."/>
 			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready."/>
 			<No_Response ENG="Waiting for network response from player %s"/>
 			<Not_Ready ENG="is not ready"/>

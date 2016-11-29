@@ -713,13 +713,17 @@ void cMenuControllerMultiplayerHost::handleNetMessage_TCP_WANT_CONNECT(cNetMessa
 {
 	if (!connectionManager || !windowNetworkLobby) return;
 
-	//TODO: game version check
-
 	//add player
 	auto newPlayer = std::make_shared<cPlayerBasicData>(message.playerName, cPlayerColor(message.playerColor), nextPlayerNumber++);
 	windowNetworkLobby->addPlayer(newPlayer);
 
 	windowNetworkLobby->addInfoEntry(lngPack.i18n("Text~Multiplayer~Player_Joined", newPlayer->getName()));
+	
+	if (message.packageVersion != PACKAGE_VERSION || message.packageRev != PACKAGE_REV)
+	{
+		windowNetworkLobby->addInfoEntry(lngPack.i18n("Text~Multiplayer~Gameversion_Warning_Server", message.packageVersion + " " + message.packageRev));
+		windowNetworkLobby->addInfoEntry(lngPack.i18n("Text~Multiplayer~Gameversion_Own", (std::string)PACKAGE_VERSION + " " + PACKAGE_REV));
+	}
 
 	//accept the connection and assign the new player number
 	connectionManager->acceptConnection(message.socket, newPlayer->getNr());
