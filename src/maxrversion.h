@@ -18,7 +18,7 @@
 # include "config.h"
 #else // We have no config.h => take care of these manually
 # ifndef PACKAGE_VERSION
-#  define PACKAGE_VERSION "0.2.9"
+#  define PACKAGE_VERSION "0.2.10"
 # endif
 # define PACKAGE_NAME "M.A.X.R."
 #endif
