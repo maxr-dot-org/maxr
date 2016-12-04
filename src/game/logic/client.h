@@ -77,7 +77,7 @@ public:
 	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData);
 	void setGameSettings(const cGameSettings& gameSettings);
 	void setMap(std::shared_ptr<cStaticMap> staticMap);
-	void setPlayers(const std::vector<cPlayerBasicData>& splayers, size_t activePlayerIndex);
+	void setPlayers(const std::vector<cPlayerBasicData>& splayers, size_t activePlayerNr);
 
 	unsigned int getNetMessageQueueSize() const { return static_cast<unsigned int>(eventQueue.safe_size()); };
 	virtual void pushMessage(std::unique_ptr<cNetMessage2> message) MAXR_OVERRIDE_FUNCTION;

@@ -118,12 +118,12 @@ public:
 	}
 };
 
-void cClient::setPlayers (const std::vector<cPlayerBasicData>& splayers, size_t activePlayerIndex)
+void cClient::setPlayers (const std::vector<cPlayerBasicData>& splayers, size_t activePlayerNr)
 {
-	assert (activePlayerIndex < splayers.size());
+	assert (activePlayerNr < splayers.size());
 
 	model.setPlayerList(splayers);
-	activePlayer = model.getPlayer(activePlayerIndex);
+	activePlayer = model.getPlayer(activePlayerNr);
 }
 
 void cClient::pushMessage(std::unique_ptr<cNetMessage2> message)

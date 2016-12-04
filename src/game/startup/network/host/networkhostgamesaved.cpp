@@ -59,7 +59,7 @@ void cNetworkHostGameSaved::start (cApplication& application)
 		}
 	}
 */
-	localClient->setPlayers (players, localPlayerIndex);
+	localClient->setPlayers (players, localPlayerNr);
 
 	/*if (server->getGameSettings()->getGameType() == eGameSettingsGameType::Turns)
 	{
@@ -68,7 +68,7 @@ void cNetworkHostGameSaved::start (cApplication& application)
 
 	server->start();
 
-	sendRequestResync (*localClient, players[localPlayerIndex].getNr(), true);
+	sendRequestResync (*localClient, localPlayerNr, true);
 
 	// TODO: move that in server
 	for (size_t i = 0; i != serverPlayerList.size(); ++i)
@@ -113,9 +113,7 @@ void cNetworkHostGameSaved::setSaveGameNumber (int saveGameNumber_)
 void cNetworkHostGameSaved::setPlayers (std::vector<cPlayerBasicData> players_, const cPlayerBasicData& localPlayer)
 {
 	players = players_;
-	auto localPlayerIter = std::find_if (players.begin(), players.end(), [&] (const cPlayerBasicData & player) { return player.getNr() == localPlayer.getNr(); });
-	assert (localPlayerIter != players.end());
-	localPlayerIndex = localPlayerIter - players.begin();
+	localPlayerNr = localPlayer.getNr();
 }
 
 //------------------------------------------------------------------------------
@@ -127,5 +125,5 @@ const std::vector<cPlayerBasicData>& cNetworkHostGameSaved::getPlayers()
 //------------------------------------------------------------------------------
 const cPlayerBasicData& cNetworkHostGameSaved::getLocalPlayer()
 {
-	return players[localPlayerIndex];
+	return *std::find_if(players.begin(), players.end(), [&](const cPlayerBasicData& player) { return player.getNr() == localPlayerNr; });
 }

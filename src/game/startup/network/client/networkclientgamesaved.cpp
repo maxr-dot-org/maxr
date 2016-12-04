@@ -34,7 +34,7 @@ void cNetworkClientGameSaved::start (cApplication& application)
 {
 	//localClient = std::make_shared<cClient> (nullptr, network); //TODO
 
-	localClient->setPlayers (players, localPlayerIndex);
+	localClient->setPlayers (players, localPlayerNr);
 //	localClient->setMap (staticMap);
 	localClient->setGameSettings (*gameSettings);
 
@@ -57,9 +57,7 @@ void cNetworkClientGameSaved::start (cApplication& application)
 void cNetworkClientGameSaved::setPlayers (std::vector<cPlayerBasicData> players_, const cPlayerBasicData& localPlayer)
 {
 	players = players_;
-	auto localPlayerIter = std::find_if (players.begin(), players.end(), [&] (const cPlayerBasicData & player) { return player.getNr() == localPlayer.getNr(); });
-	assert (localPlayerIter != players.end());
-	localPlayerIndex = localPlayerIter - players.begin();
+	localPlayerNr = localPlayer.getNr();
 }
 
 //------------------------------------------------------------------------------
@@ -96,5 +94,5 @@ const std::vector<cPlayerBasicData>& cNetworkClientGameSaved::getPlayers()
 //------------------------------------------------------------------------------
 const cPlayerBasicData& cNetworkClientGameSaved::getLocalPlayer()
 {
-	return players[localPlayerIndex];
+	return *std::find_if(players.begin(), players.end(), [&](const cPlayerBasicData& player) { return player.getNr() == localPlayerNr; });
 }

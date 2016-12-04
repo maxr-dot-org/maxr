@@ -46,7 +46,7 @@ void cNetworkHostGameNew::start (cApplication& application)
 	{
 		server->addPlayer (std::make_unique<cPlayer> (players[i]));
 	}*/
-	localClient->setPlayers (players, localPlayerIndex);
+	localClient->setPlayers (players, localPlayerNr);
 
 	if (gameSettings->getGameType() == eGameSettingsGameType::Turns)
 	{
@@ -102,9 +102,7 @@ void cNetworkHostGameNew::start (cApplication& application)
 void cNetworkHostGameNew::setPlayers (std::vector<cPlayerBasicData> players_, const cPlayerBasicData& localPlayer)
 {
 	players = players_;
-	auto localPlayerIter = std::find_if (players.begin(), players.end(), [&] (const cPlayerBasicData & player) { return player.getNr() == localPlayer.getNr(); });
-	assert (localPlayerIter != players.end());
-	localPlayerIndex = localPlayerIter - players.begin();
+	localPlayerNr = localPlayer.getNr();
 }
 
 //------------------------------------------------------------------------------
@@ -164,7 +162,7 @@ const std::vector<cPlayerBasicData>& cNetworkHostGameNew::getPlayers()
 //------------------------------------------------------------------------------
 const cPlayerBasicData& cNetworkHostGameNew::getLocalPlayer()
 {
-	return players[localPlayerIndex];
+	return *std::find_if(players.begin(), players.end(), [&](const cPlayerBasicData& player) { return player.getNr() == localPlayerNr; });
 }
 
 //------------------------------------------------------------------------------

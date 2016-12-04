@@ -51,7 +51,7 @@ public:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	size_t localPlayerIndex;
+	size_t localPlayerNr;
 	std::vector<cPlayerBasicData> players;
 
 	std::shared_ptr<cStaticMap> staticMap;
