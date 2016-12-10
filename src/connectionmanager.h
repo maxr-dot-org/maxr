@@ -39,6 +39,7 @@ class INetMessageReceiver
 public:
 	virtual ~INetMessageReceiver() {}
 	virtual void pushMessage(std::unique_ptr<cNetMessage2> message) = 0;
+	virtual std::unique_ptr<cNetMessage2> popMessage() { throw std::runtime_error("Method not implemented"); };
 };
 
 class cConnectionManager

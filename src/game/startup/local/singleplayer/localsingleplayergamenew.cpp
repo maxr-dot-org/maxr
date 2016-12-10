@@ -42,7 +42,7 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 	auto connectionManager = std::make_shared<cConnectionManager>();
 
 	server = std::make_unique<cServer2>(connectionManager);
-	client = std::make_shared<cClient>(connectionManager, server->getModel().getGameId());
+	client = std::make_shared<cClient>(connectionManager);
 
 	client->setMap (staticMap);
 	server->setMap (staticMap);
@@ -78,7 +78,7 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 
 	cGameGuiState playerGameGuiState;
 	playerGameGuiState.setMapPosition (landingPosition);
-	gameGuiController->addPlayerGameGuiState (client->getActivePlayer(), std::move (playerGameGuiState));
+	gameGuiController->addPlayerGameGuiState (0, std::move (playerGameGuiState));
 
 	gameGuiController->start();
 

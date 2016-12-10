@@ -21,6 +21,7 @@
 #define game_logic_gametimerH
 
 #include <vector>
+#include <map>
 #include <SDL.h>
 
 #include "utility/thread/mutex.h"
@@ -87,12 +88,12 @@ class cGameTimerServer : public cGameTimer
 	friend class cDebugOutputWidget;
 private:
 	void checkPlayersResponding(const std::vector<std::shared_ptr<cPlayer>>& playerList, cServer2& server);
-	std::vector<sGameTimerClientDebugData> clientDebugData;
-	std::vector<unsigned int> receivedTime;
+	std::map<int, sGameTimerClientDebugData> clientDebugData;
+	std::map<int, unsigned int> receivedTime;
 public:
 	void run (cModel& model, cServer2& server);
 	void handleSyncMessage (const cNetMessageSyncClient& message, unsigned int gameTime);
-	void setNumberOfPlayers(unsigned int players);
+	void setPlayerNumbers(const std::vector<std::shared_ptr<cPlayer>>& playerList);
 
 };
 

@@ -286,19 +286,12 @@ void cWindowNetworkLobby::removePlayer (const cPlayerBasicData& player)
 }
 
 //------------------------------------------------------------------------------
-void cWindowNetworkLobby::removeNonLocalPlayers()
+void cWindowNetworkLobby::removePlayers()
 {
 	for (size_t i = 0; i < playersList->getItemsCount();)
 	{
-		auto& item = playersList->getItem (i);
-		if (item.getPlayer().get() != localPlayer.get())
-		{
-			playersList->removeItem (item);
-		}
-		else
-		{
-			++i;
-		}
+		auto& item = playersList->getItem(i);
+		playersList->removeItem (item);
 	}
 }
 

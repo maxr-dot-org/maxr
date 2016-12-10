@@ -21,13 +21,11 @@
 #include "game/data/gamesettings.h"
 #include "ui/graphical/application.h"
 #include "game/logic/client.h"
-#include "game/logic/server.h"
+#include "game/logic/server2.h"
 #include "game/data/player/player.h"
 #include "game/data/units/landingunit.h"
 #include "game/logic/clientevents.h"
-
-// TODO: remove
-void applyUnitUpgrades (cPlayer& player, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades);
+#include "game/logic/action/actioninitnewgame.h"
 
 //------------------------------------------------------------------------------
 cNetworkHostGameNew::cNetworkHostGameNew() :
@@ -39,55 +37,58 @@ void cNetworkHostGameNew::start (cApplication& application)
 {
 	assert (gameSettings != nullptr);
 
-	//server = std::make_unique<cServer> (network);
-	//localClient = std::make_shared<cClient> (server.get(), nullptr); //TODO: new server
-
-	/*for (size_t i = 0; i < players.size(); ++i)
-	{
-		server->addPlayer (std::make_unique<cPlayer> (players[i]));
-	}*/
-	localClient->setPlayers (players, localPlayerNr);
-
-	if (gameSettings->getGameType() == eGameSettingsGameType::Turns)
-	{
-		server->setActiveTurnPlayer (*server->playerList[0]);
-	}
+	server = std::make_unique<cServer2> (connectionManager);
+	localClient = std::make_shared<cClient> (connectionManager);
 
 	server->setMap (staticMap);
-//	localClient->setMap (staticMap);
+	localClient->setMap(staticMap);
 
+	server->setUnitsData(unitsData);
+	localClient->setUnitsData(unitsData);
+
+	//TODO: set clandata
+
+	localClient->setPlayers(players, localPlayerNr);
+	server->setPlayers(players);
+
+	//TODO: turn based mode
+	//if (gameSettings->getGameType() == eGameSettingsGameType::Turns)
+	//{
+	//	server->setActiveTurnPlayer (*server->playerList[0]);
+	//}
+
+	
 	server->setGameSettings (*gameSettings);
-	localClient->setGameSettings (*gameSettings);
+	localClient->setGameSettings(*gameSettings);
 
-	auto& clientPlayer = localClient->getActivePlayer();
-//	if (localPlayerClan != -1) clientPlayer.setClan (localPlayerClan);
+	connectionManager->setLocalServer(server.get());
+	connectionManager->setLocalClient(localClient.get(), localPlayerNr);
 
 	server->start();
 
-//	applyUnitUpgrades (clientPlayer, localPlayerUnitUpgrades);
+	cActionInitNewGame action;
+	action.clan = localPlayerClan;
+	action.landingUnits = localPlayerLandingUnits;
+	action.landingPosition = localPlayerLandingPosition;
+	action.unitUpgrades = localPlayerUnitUpgrades;
+	localClient->sendNetMessage(action);
 
-	sendClan (*localClient);
-	sendLandingUnits (*localClient, localPlayerLandingUnits);
-	sendUnitUpgrades (*localClient);
+	//TODO: turnbased mode
+	//if (gameSettings->getGameType() == eGameSettingsGameType::Turns)
+	//{
+	//	sendWaitFor (*server, *server->getActiveTurnPlayer(), nullptr);
+	//}
 
-	sendLandingCoords (*localClient, localPlayerLandingPosition);
-
-	sendReadyToStart (*localClient);
-
-	if (gameSettings->getGameType() == eGameSettingsGameType::Turns)
-	{
-		sendWaitFor (*server, *server->getActiveTurnPlayer(), nullptr);
-	}
-
-	server->startTurnTimers();
+	//TODO: turn timers
+	//server->startTurnTimers();
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
-
-	gameGuiController->setSingleClient (localClient);
+	gameGuiController->setSingleClient(localClient);
+	gameGuiController->setServer(server.get());
 
 	cGameGuiState playerGameGuiState;
 	playerGameGuiState.setMapPosition (localPlayerLandingPosition);
-	gameGuiController->addPlayerGameGuiState (clientPlayer, std::move (playerGameGuiState));
+	gameGuiController->addPlayerGameGuiState (localPlayerNr, std::move (playerGameGuiState));
 
 	gameGuiController->start();
 

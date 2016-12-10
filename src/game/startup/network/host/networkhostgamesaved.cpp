@@ -21,7 +21,7 @@
 #include "game/data/gamesettings.h"
 #include "ui/graphical/application.h"
 #include "game/logic/client.h"
-#include "game/logic/server.h"
+#include "game/logic/server2.h"
 #include "game/data/player/player.h"
 #include "game/logic/clientevents.h"
 #include "game/data/savegame.h"
@@ -36,11 +36,11 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	//cSavegame savegame (saveGameNumber);
 	//if (savegame.load (*server) == false) return; // TODO: error message
 
-	auto staticMap = server->Map->staticMap;
+//	auto staticMap = server->Map->staticMap;
 //	localClient->setMap (staticMap);
 
-	const auto& serverPlayerList = server->playerList;
-	if (serverPlayerList.empty()) return;
+//	const auto& serverPlayerList = server->playerList;
+//	if (serverPlayerList.empty()) return;
 
 	// set socket index for server players
 /*	for (const auto& serverPlayer : serverPlayerList)
@@ -71,7 +71,7 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	sendRequestResync (*localClient, localPlayerNr, true);
 
 	// TODO: move that in server
-	for (size_t i = 0; i != serverPlayerList.size(); ++i)
+//	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
 //		sendGameSettings (*server, *serverPlayerList[i]);
 		//sendGameGuiState (*server, server->getPlayerGameGuiState (*serverPlayerList[i]), *serverPlayerList[i]);
@@ -85,12 +85,12 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	}
 
 	// start game
-	server->serverState = SERVER_STATE_INGAME;
+//	server->serverState = SERVER_STATE_INGAME;
 
 	// TODO: save/load game time
-	server->startTurnTimers();
+//	server->startTurnTimers();
 
-	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
+//	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
 	gameGuiController->setSingleClient (localClient);
 

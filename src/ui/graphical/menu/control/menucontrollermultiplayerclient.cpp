@@ -104,6 +104,14 @@ void cMenuControllerMultiplayerClient::pushMessage (std::unique_ptr<cNetMessage2
 }
 
 //------------------------------------------------------------------------------
+std::unique_ptr<cNetMessage2> cMenuControllerMultiplayerClient::popMessage()
+{
+	std::unique_ptr<cNetMessage2> message;
+	messageQueue.try_pop(message);
+	return message;
+}
+
+//------------------------------------------------------------------------------
 void cMenuControllerMultiplayerClient::run()
 {
 	std::unique_ptr<cNetMessage2> message;
@@ -209,6 +217,9 @@ void cMenuControllerMultiplayerClient::startGamePreparation()
 	if (!staticMap || !gameSettings || !connectionManager) return;
 
 	newGame = std::make_shared<cNetworkClientGameNew> ();
+
+	//TODO: remove!
+	newGame->setUnitsData(std::make_shared<const cUnitsData>(UnitsDataGlobal));
 	
 	newGame->setPlayers (windowNetworkLobby->getPlayersNotShared(), *windowNetworkLobby->getLocalPlayer());
 	newGame->setGameSettings (gameSettings);
@@ -401,14 +412,14 @@ void cMenuControllerMultiplayerClient::handleNetMessage (cNetMessage2& message)
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_FINISHED_MAP_DOWNLOAD:
 			finishedMapDownload(static_cast<cMuMsgFinishedMapDownload&>(muMessage));
 			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_GO: 
-			handleNetMessage_MU_MSG_GO(static_cast<cMuMsgGo&>(muMessage));
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME_PREPARATIONS: 
+			handleNetMessage_MU_MSG_START_GAME_PREPARATIONS(static_cast<cMuMsgStartGamePreparations&>(muMessage));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_STATE: 
 			handleNetMessage_MU_MSG_LANDING_STATE(static_cast<cMuMsgLandingState&>(muMessage));
 			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_ALL_LANDED: 
-			handleNetMessage_MU_MSG_ALL_LANDED(static_cast<cMuMsgAllLanded&>(muMessage));
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME: 
+			handleNetMessage_MU_MSG_START_GAME(static_cast<cMuMsgStartGame&>(muMessage));
 			break;
 		/*case cMultiplayerLobbyMessage::eMessageType::GAME_EV_REQ_RECON_IDENT: 
 			handleNetMessage_GAME_EV_REQ_RECON_IDENT(static_cast<&>(muMessage));
@@ -467,7 +478,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage_TCP_CLOSE (cNetMessageTc
 {
 	if (!connectionManager || !windowNetworkLobby) return;
 
-	windowNetworkLobby->removeNonLocalPlayers();
+	windowNetworkLobby->removePlayers();
 	const auto& localPlayer = windowNetworkLobby->getLocalPlayer();
 	localPlayer->setReady (false);
 	windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Lost_Connection", "server"));
@@ -522,14 +533,15 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_PLAYERLIST(cMuMsg
 {
 	if (!connectionManager || !windowNetworkLobby) return;
 
-	const auto& localPlayer = windowNetworkLobby->getLocalPlayer();
-	windowNetworkLobby->removeNonLocalPlayers();
+	const auto localPlayer = windowNetworkLobby->getLocalPlayer();
+	windowNetworkLobby->removePlayers();
 
 	for (const auto& playerData : message.playerList)
 	{
 		if (playerData.getNr() == localPlayer->getNr())
 		{
 			*localPlayer = playerData;
+			windowNetworkLobby->addPlayer(std::move(localPlayer));
 		}
 		else
 		{
@@ -617,7 +629,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_OPTIONS(cMuMsgOpt
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_GO(cMuMsgGo& message)
+void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_START_GAME_PREPARATIONS(cMuMsgStartGamePreparations& message)
 {
 	windowLandingPositionSelection = nullptr;
 
@@ -642,7 +654,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_LANDING_STATE(cMu
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_ALL_LANDED(cMuMsgAllLanded& message)
+void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_START_GAME(cMuMsgStartGame& message)
 {
 	if (!newGame) return;
 

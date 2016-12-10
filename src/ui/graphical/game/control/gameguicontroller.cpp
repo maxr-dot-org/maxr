@@ -138,10 +138,11 @@ void cGameGuiController::start()
 }
 
 //------------------------------------------------------------------------------
-void cGameGuiController::addPlayerGameGuiState (const cPlayer& player, cGameGuiState playerGameGuiState)
+void cGameGuiController::addPlayerGameGuiState (int playerNr, cGameGuiState playerGameGuiState)
 {
-	playerGameGuiStates[player.getId()] = std::move (playerGameGuiState);
+	playerGameGuiStates[playerNr] = std::move (playerGameGuiState);
 }
+
 //------------------------------------------------------------------------------
 void cGameGuiController::addSavedReport(std::unique_ptr<cSavedReport> savedReport, int playerNr)
 {
@@ -243,6 +244,7 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 void cGameGuiController::setServer(cServer2* server_)
 {
 	server = server_;
+	gameGui->getDebugOutput().setServer(server);
 }
 
 //------------------------------------------------------------------------------

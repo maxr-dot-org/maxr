@@ -82,17 +82,17 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 
 //		applyUnitUpgrades (clientPlayer, playersData[i].unitUpgrades);
 
-		sendClan (*clients[i]);
-		sendLandingUnits (*clients[i], playersData[i].landingUnits);
-		sendUnitUpgrades (*clients[i]);
+//		sendClan (*clients[i]);
+//		sendLandingUnits (*clients[i], playersData[i].landingUnits);
+//		sendUnitUpgrades (*clients[i]);
 
-		sendLandingCoords (*clients[i], playersData[i].landingPosition);
+//		sendLandingCoords (*clients[i], playersData[i].landingPosition);
 
-		sendReadyToStart (*clients[i]);
+//		sendReadyToStart (*clients[i]);
 
 		cGameGuiState gameGuiState;
 		gameGuiState.setMapPosition (playersData[i].landingPosition);
-		gameGuiController->addPlayerGameGuiState (clientPlayer, gameGuiState);
+		gameGuiController->addPlayerGameGuiState (clientPlayer.getId(), gameGuiState);
 	}
 
 	server->startTurnTimers();

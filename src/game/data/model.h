@@ -50,7 +50,7 @@ public:
 	cCrossPlattformRandom randomGenerator;
 
 	unsigned int getGameId() const { return gameId; }
-	void setGameId(unsigned int val) { gameId = val; }
+	void initGameId();
 
 	void advanceGameTime();
 	unsigned int getGameTime() const;

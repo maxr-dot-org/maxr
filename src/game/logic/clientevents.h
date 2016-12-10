@@ -108,11 +108,6 @@ enum CHAT_MESSAGE_TYPES
 	SERVER_INFO_MESSAGE,
 };
 
-void sendClan (const cClient& client);
-void sendLandingUnits (const cClient& client, const std::vector<sLandingUnit>& landingList);
-void sendUnitUpgrades (const cClient& client);
-void sendLandingCoords (const cClient& client, const cPosition& coords);
-void sendReadyToStart (const cClient& client);
 
 void sendReconnectionSuccess (const cClient& client);
 void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades);

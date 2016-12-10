@@ -46,7 +46,7 @@ public:
 
 	void addPlayer (const std::shared_ptr<cPlayerBasicData>& player);
 	void removePlayer (const cPlayerBasicData& player);
-	void removeNonLocalPlayers();
+	void removePlayers();
 
 	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
 	void setGameSettings (std::unique_ptr<cGameSettings> gameSettings);

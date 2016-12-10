@@ -25,6 +25,7 @@
 #include "game/data/player/player.h"
 #include "game/data/units/landingunit.h"
 #include "game/logic/clientevents.h"
+#include "game/logic/action/actioninitnewgame.h"
 
 // TODO: remove
 void applyUnitUpgrades (cPlayer& player, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades);
@@ -39,23 +40,20 @@ void cNetworkClientGameNew::start (cApplication& application)
 {
 	assert (gameSettings != nullptr);
 
-	//localClient = std::make_shared<cClient> (nullptr, network); //TODO
+	localClient = std::make_shared<cClient>(connectionManager);
+	connectionManager->setLocalClient(localClient.get(), localPlayerNr);
 
 	localClient->setPlayers (players, localPlayerNr);
-//	localClient->setMap (staticMap);
+	localClient->setMap (staticMap);
 	localClient->setGameSettings (*gameSettings);
+	localClient->setUnitsData(unitsData);
 
-	auto& clientPlayer = localClient->getActivePlayer();
-//	if (localPlayerClan != -1) clientPlayer.setClan (localPlayerClan);
-//	applyUnitUpgrades (clientPlayer, localPlayerUnitUpgrades);
-
-	sendClan (*localClient);
-	sendLandingUnits (*localClient, localPlayerLandingUnits);
-	sendUnitUpgrades (*localClient);
-
-	sendLandingCoords (*localClient, localPlayerLandingPosition);
-
-	sendReadyToStart (*localClient);
+	cActionInitNewGame action;
+	action.clan = localPlayerClan;
+	action.landingUnits = localPlayerLandingUnits;
+	action.landingPosition = localPlayerLandingPosition;
+	action.unitUpgrades = localPlayerUnitUpgrades;
+	localClient->sendNetMessage(action);
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
@@ -63,7 +61,7 @@ void cNetworkClientGameNew::start (cApplication& application)
 
 	cGameGuiState playerGameGuiState;
 	playerGameGuiState.setMapPosition (localPlayerLandingPosition);
-	gameGuiController->addPlayerGameGuiState (clientPlayer, std::move (playerGameGuiState));
+	gameGuiController->addPlayerGameGuiState (localPlayerNr, std::move (playerGameGuiState));
 
 	gameGuiController->start();
 

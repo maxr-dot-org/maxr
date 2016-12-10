@@ -100,10 +100,13 @@ bool cGameTimer::popEvent()
 	}
 }
 
-void cGameTimerServer::setNumberOfPlayers(unsigned int players)
+void cGameTimerServer::setPlayerNumbers(const std::vector<std::shared_ptr<cPlayer>>& playerList)
 {
-	receivedTime.resize(players);
-	clientDebugData.resize(players);
+	for (const auto& p : playerList)
+	{
+		receivedTime[p->getId()] = 0;
+		clientDebugData[p->getId()] = sGameTimerClientDebugData();
+	}
 }
 
 void cGameTimerServer::handleSyncMessage(const cNetMessageSyncClient& message, unsigned int gameTime)
@@ -111,7 +114,7 @@ void cGameTimerServer::handleSyncMessage(const cNetMessageSyncClient& message, u
 	//Note: this funktion handels incoming data from network. Make every possible sanity check!
 
 	int playerNr = message.playerNr;
-	if (playerNr < 0 || static_cast<size_t>(playerNr) >= receivedTime.size()) return;
+	if (receivedTime.find(playerNr) == receivedTime.end()) return;
 
 	if (message.gameTime > gameTime)
 	{
@@ -126,13 +129,15 @@ void cGameTimerServer::handleSyncMessage(const cNetMessageSyncClient& message, u
 	receivedTime[playerNr] = message.gameTime;
 
 	//save debug data from clients
-	clientDebugData[playerNr].crcOK = message.crcOK;
+	auto& debugData = clientDebugData[playerNr];
+
+	debugData.crcOK = message.crcOK;
 	const float filter = 0.1F;
-	clientDebugData[playerNr].eventCounter  = (1-filter)*clientDebugData[playerNr].eventCounter  + filter*message.eventCounter;
-	clientDebugData[playerNr].queueSize     = (1-filter)*clientDebugData[playerNr].queueSize     + filter*message.queueSize;
-	clientDebugData[playerNr].ticksPerFrame = (1-filter)*clientDebugData[playerNr].ticksPerFrame + filter*message.ticksPerFrame;
-	clientDebugData[playerNr].timeBuffer    = (1-filter)*clientDebugData[playerNr].timeBuffer    + filter*message.timeBuffer;
-	clientDebugData[playerNr].ping          = (1-filter)*clientDebugData[playerNr].ping          + filter*10*(gameTime - message.gameTime);
+	debugData.eventCounter  = (1 - filter) * debugData.eventCounter  + filter * message.eventCounter;
+	debugData.queueSize     = (1 - filter) * debugData.queueSize     + filter * message.queueSize;
+	debugData.ticksPerFrame = (1 - filter) * debugData.ticksPerFrame + filter * message.ticksPerFrame;
+	debugData.timeBuffer    = (1 - filter) * debugData.timeBuffer    + filter * message.timeBuffer;
+	debugData.ping          = (1 - filter) * debugData.ping          + filter * 10 * (gameTime - message.gameTime);
 }
 
 void cGameTimerServer::checkPlayersResponding(const std::vector<std::shared_ptr<cPlayer>>& playerList, cServer2& server)

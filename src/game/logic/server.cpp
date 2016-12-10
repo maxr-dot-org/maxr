@@ -321,102 +321,6 @@ void cServer::handleNetMessage_TCP_ACCEPT (cNetMessage& message)
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleNetMessage_MU_MSG_CLAN (cNetMessage& message)
-{
-	assert (message.iType == MU_MSG_CLAN);
-	assert (serverState == SERVER_STATE_INITGAME);
-
-	unsigned int playerNr = message.popInt16();
-	int clanNr = message.popInt16();   // -1 = no clan
-
-	auto& player = getPlayerFromNumber (playerNr);
-	//player.setClan (clanNr);
-}
-
-//------------------------------------------------------------------------------
-void cServer::handleNetMessage_MU_MSG_LANDING_VEHICLES (cNetMessage& message)
-{
-	assert (message.iType == MU_MSG_LANDING_VEHICLES);
-	assert (serverState == SERVER_STATE_INITGAME);
-
-	unsigned int playerNr = message.popInt16();
-	auto& player = getPlayerFromNumber (playerNr);
-
-	auto& landingUnits = playerLandingUnits[&player];
-
-	int iCount = message.popInt16();
-	for (int i = 0; i < iCount; i++)
-	{
-		sLandingUnit unit;
-		unit.cargo = message.popInt16();
-		unit.unitID = message.popID();
-		landingUnits.push_back (unit);
-	}
-}
-
-//------------------------------------------------------------------------------
-void cServer::handleNetMessage_MU_MSG_UPGRADES (cNetMessage& message)
-{
-	assert (message.iType == MU_MSG_UPGRADES);
-	assert (serverState == SERVER_STATE_INITGAME);
-
-	// TODO: check that it is possible (gold...)
-	const int playerNr = message.popInt16();
-	auto& player = getPlayerFromNumber (playerNr);
-
-	const int count = message.popInt16();
-	for (int i = 0; i < count; i++)
-	{
-/*
-		const sID ID = message.popID();
-		sUnitData& unitData = *player.getUnitDataCurrentVersion (ID);
-
-		unitData.setDamage (message.popInt16());
-		unitData.setShotsMax (message.popInt16());
-		unitData.setRange (message.popInt16());
-		unitData.setAmmoMax (message.popInt16());
-		unitData.setArmor (message.popInt16());
-		unitData.setHitpointsMax (message.popInt16());
-		unitData.setScan (message.popInt16());
-		if (ID.isAVehicle()) unitData.setSpeedMax (message.popInt16());
-		unitData.setVersion (unitData.getVersion() + 1);
-*/
-	}
-}
-
-//------------------------------------------------------------------------------
-void cServer::handleNetMessage_MU_MSG_LANDING_COORDS (cNetMessage& message)
-{
-	assert (message.iType == MU_MSG_LANDING_COORDS);
-	assert (serverState == SERVER_STATE_INITGAME);
-
-	int playerNr = message.popChar();
-	Log.write ("Server: received landing coords from Player " + iToStr (playerNr), cLog::eLOG_TYPE_NET_DEBUG);
-
-	auto& player = getPlayerFromNumber (playerNr);
-
-	playerLandingPositions[&player] = message.popPosition();
-}
-
-//------------------------------------------------------------------------------
-void cServer::handleNetMessage_MU_MSG_READY_TO_START (cNetMessage& message)
-{
-	assert (message.iType == MU_MSG_READY_TO_START);
-	assert (serverState == SERVER_STATE_INITGAME);
-
-	int playerNr = message.popChar();
-	Log.write ("Server: received ready to start from Player " + iToStr (playerNr), cLog::eLOG_TYPE_NET_DEBUG);
-
-	auto& player = getPlayerFromNumber (playerNr);
-
-	readyToStartPlayers.insert (&player);
-
-	if (readyToStartPlayers.size() < playerList.size()) return;
-
-	startNewGame();
-}
-
-//------------------------------------------------------------------------------
 void cServer::handleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage& message)
 {
 	assert (message.iType == TCP_CLOSE || message.iType == GAME_EV_WANT_DISCONNECT);
@@ -1868,11 +1772,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 	switch (message.iType)
 	{
 		case TCP_ACCEPT: handleNetMessage_TCP_ACCEPT (message); break;
-		case MU_MSG_CLAN: handleNetMessage_MU_MSG_CLAN (message); break;
-		case MU_MSG_LANDING_VEHICLES: handleNetMessage_MU_MSG_LANDING_VEHICLES (message); break;
-		case MU_MSG_UPGRADES: handleNetMessage_MU_MSG_UPGRADES (message); break;
-		case MU_MSG_LANDING_COORDS: handleNetMessage_MU_MSG_LANDING_COORDS (message); break;
-		case MU_MSG_READY_TO_START: handleNetMessage_MU_MSG_READY_TO_START (message); break;
 
 		case TCP_CLOSE: // Follow
 		case GAME_EV_WANT_DISCONNECT:

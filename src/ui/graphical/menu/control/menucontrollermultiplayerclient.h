@@ -45,6 +45,7 @@ public:
 	void start();
 
 	virtual void pushMessage (std::unique_ptr<cNetMessage2> message) MAXR_OVERRIDE_FUNCTION;
+	std::unique_ptr<cNetMessage2> popMessage() MAXR_OVERRIDE_FUNCTION;
 
 	virtual void run() MAXR_OVERRIDE_FUNCTION;
 private:
@@ -97,9 +98,9 @@ private:
 	void handleNetMessage_MU_MSG_PLAYER_NUMBER(cMuMsgPlayerNr& message);
 	void handleNetMessage_MU_MSG_PLAYERLIST(cMuMsgPlayerList& message);
 	void handleNetMessage_MU_MSG_OPTIONS(cMuMsgOptions& message);
-	void handleNetMessage_MU_MSG_GO(cMuMsgGo& message);
+	void handleNetMessage_MU_MSG_START_GAME_PREPARATIONS(cMuMsgStartGamePreparations& message);
 	void handleNetMessage_MU_MSG_LANDING_STATE(cMuMsgLandingState& message);
-	void handleNetMessage_MU_MSG_ALL_LANDED(cMuMsgAllLanded& message);
+	void handleNetMessage_MU_MSG_START_GAME(cMuMsgStartGame& message);
 	//void handleNetMessage_GAME_EV_REQ_RECON_IDENT (cNetMessage2& message);
 	//void handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage2& message);
 	void handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS(cMuMsgInLandingPositionSelectionStatus& message);

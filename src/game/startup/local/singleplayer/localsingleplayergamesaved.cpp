@@ -38,8 +38,7 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 	server->loadGameState(saveGameNumber);
 
 	//setup client
-	int gameId = server->getModel().getGameId();
-	client = std::make_shared<cClient> (connectionManager, gameId);
+	client = std::make_shared<cClient> (connectionManager);
 	auto staticMap = server->getModel().getMap()->staticMap;
 	client->setMap(staticMap);
 	client->loadModel(saveGameNumber); //TODO: resync model from server

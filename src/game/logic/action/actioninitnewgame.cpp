@@ -49,6 +49,8 @@ void cActionInitNewGame::execute(cModel& model) const
 {
 	//Note: this funktion handels incoming data from network. Make every possible sanity check!
 	
+	model.initGameId();
+
 	cPlayer& player = *model.getPlayer(playerNr);
 	const cUnitsData& unitsdata = *model.getUnitsData();
 

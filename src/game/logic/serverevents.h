@@ -82,13 +82,6 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_REQ_RECON_IDENT,        // a server of a running game requests an identification of a player who wants to reconnect
 	GAME_EV_RECONNECT_ANSWER,       // a server returns an answer for the reconnect
 
-	// Preparation room
-	MU_MSG_CLAN,					// a player sends his clan
-	MU_MSG_LANDING_VEHICLES,		// the list of purchased vehicles
-	MU_MSG_UPGRADES,				// data of upgraded units
-	MU_MSG_LANDING_COORDS,			// the selected landing coords of a client
-	MU_MSG_READY_TO_START,			// the client is ready and wants the server to start the game
-
 	// DEDICATED_SERVER
 	GAME_EV_WANT_DISCONNECT,		// the player wants to disconnect (but later reconnect to the dedicated server)
 	GAME_EV_REQUEST_CASUALTIES_REPORT, // a client wants to have the current casualties data

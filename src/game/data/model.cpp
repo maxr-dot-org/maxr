@@ -81,6 +81,15 @@ cModel::~cModel()
 }
 
 //------------------------------------------------------------------------------
+void cModel::initGameId()
+{
+	if (gameId == 0)
+	{
+		while ((gameId = randomGenerator.get()) == 0);
+	}
+}
+
+//------------------------------------------------------------------------------
 void cModel::advanceGameTime()
 {
 	gameTime++;

@@ -70,7 +70,7 @@ public:
 
 	void start();
 
-	void addPlayerGameGuiState (const cPlayer& player, cGameGuiState playerGameGuiState);
+	void addPlayerGameGuiState (int playerNr, cGameGuiState playerGameGuiState);
 	
 	void addSavedReport(std::unique_ptr<cSavedReport> savedReport, int playerNr);
 	const std::vector<std::unique_ptr<cSavedReport>>& getSavedReports(int playerNr) const;

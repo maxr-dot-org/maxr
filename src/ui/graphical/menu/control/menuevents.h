@@ -30,26 +30,27 @@ class cMultiplayerLobbyMessage : public cNetMessage2
 public:
 	// When changing this enum, also update function enumToString(eActiontype value)!
 	enum class eMessageType {
-		MU_MSG_CHAT,                 // simple text message
-		MU_MSG_IDENTIFIKATION,	     // player send his properties (name, color, ready)
-		MU_MSG_PLAYER_NUMBER,        // host assigns a new player number to a player (used to reassign playernummers when loading a save game)
+		MU_MSG_CHAT,                 // sent by host/client: simple text message
+		MU_MSG_IDENTIFIKATION,	     // sent by client: player send his properties (name, color, ready)
+		MU_MSG_PLAYER_NUMBER,        // sent by host: assign a new id to a player (used to restore player id when loading a save game)
 
-		MU_MSG_PLAYERLIST,			// a list with all players and their data
-		MU_MSG_OPTIONS,				// all options selected by the host
+		MU_MSG_PLAYERLIST,			// sent by host: a list with all players and their data
+		MU_MSG_OPTIONS,				// sent by host: all options selected by the host
 		// Map down/up-load
-		MU_MSG_START_MAP_DOWNLOAD,    // the host start a map upload to the client
-		MU_MSG_MAP_DOWNLOAD_DATA,     // the host sends map data to the client
-		MU_MSG_CANCELED_MAP_DOWNLOAD, // the host canceled the map upload to the client
-		MU_MSG_FINISHED_MAP_DOWNLOAD, // the host finished uploading the map
-		MU_MSG_REQUEST_MAP,           // a player wants to download a map from the server
+		MU_MSG_START_MAP_DOWNLOAD,    // sent by host: start a map upload to the client
+		MU_MSG_MAP_DOWNLOAD_DATA,     // sent by host: map data for the running map upload
+		MU_MSG_CANCELED_MAP_DOWNLOAD, // sent by host: canceled the map upload to the client
+		MU_MSG_FINISHED_MAP_DOWNLOAD, // sent by host: finished uploading the map
+		MU_MSG_REQUEST_MAP,           // sent by client: a client is missing the selected map and requests a download
 		// Game Preparation
-		MU_MSG_GO,                  // host wants to start the game/preparation
-		MU_MSG_LANDING_STATE,       // informs a client about the state of the landing position selection he is currently in
-		MU_MSG_LANDING_POSITION,	// landing position during landing position selection
-		MU_MSG_ALL_LANDED,          // all players have selected there landing points and clients can start game
-		MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS,
-		MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION,
-		MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION
+		MU_MSG_START_GAME_PREPARATIONS,  // sent by host: all clients should start game preparation menus
+		MU_MSG_LANDING_STATE,         // sent by host: informs a client about the state of the landing position selection he is currently in
+		MU_MSG_LANDING_POSITION,	  // sent by client: selected landing position 
+		MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS, // sent by host/client: is player in landing selection menu?
+		MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION, // sent by host: inform clients, which player have already selected a position
+		MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION,  // sent by host/client: a player has left. Abort game preparations and return to lobby
+		// Transition to ingame logic
+		MU_MSG_START_GAME,            // sent by host: clients should start the ingame client and swith to game gui
 	};
 	static std::unique_ptr<cMultiplayerLobbyMessage> createFromBuffer(cBinaryArchiveOut& archive);
 
@@ -164,11 +165,11 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cMuMsgGo : public cMultiplayerLobbyMessage
+class cMuMsgStartGamePreparations : public cMultiplayerLobbyMessage
 {
 public:
-	cMuMsgGo();
-	cMuMsgGo(cBinaryArchiveOut& archive);
+	cMuMsgStartGamePreparations();
+	cMuMsgStartGamePreparations(cBinaryArchiveOut& archive);
 };
 
 
@@ -232,11 +233,19 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cMuMsgAllLanded : public cMultiplayerLobbyMessage
+class cMuMsgStartGame : public cMultiplayerLobbyMessage
 {
 public:
-	cMuMsgAllLanded();
-	cMuMsgAllLanded(cBinaryArchiveOut& archive);
+	cMuMsgStartGame();
+	cMuMsgStartGame(cBinaryArchiveOut& archive);
+};
+
+//------------------------------------------------------------------------------
+class cMuMsgGameStarted : public cMultiplayerLobbyMessage
+{
+public:
+	cMuMsgGameStarted();
+	cMuMsgGameStarted(cBinaryArchiveOut& archive);
 };
 
 //------------------------------------------------------------------------------

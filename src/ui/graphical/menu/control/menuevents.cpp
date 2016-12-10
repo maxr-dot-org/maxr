@@ -40,6 +40,8 @@ std::unique_ptr<cMultiplayerLobbyMessage> cMultiplayerLobbyMessage::createFromBu
 		message = std::make_unique<cMuMsgPlayerList>(archive); break;
 	case eMessageType::MU_MSG_OPTIONS:
 		message = std::make_unique<cMuMsgOptions>(archive); break;
+	case eMessageType::MU_MSG_START_GAME_PREPARATIONS:
+		message = std::make_unique<cMuMsgStartGamePreparations>(archive); break;
 	case eMessageType::MU_MSG_START_MAP_DOWNLOAD:
 		message = std::make_unique<cMuMsgStartMapDownload>(archive); break;
 	case eMessageType::MU_MSG_MAP_DOWNLOAD_DATA:
@@ -50,14 +52,12 @@ std::unique_ptr<cMultiplayerLobbyMessage> cMultiplayerLobbyMessage::createFromBu
 		message = std::make_unique<cMuMsgFinishedMapDownload>(archive); break;
 	case eMessageType::MU_MSG_REQUEST_MAP:
 		message = std::make_unique<cMuMsgRequestMap>(archive); break;
-//	case eMessageType::MU_MSG_GO:
-//		message = std::make_unique<cMuMsgGo>(archive); break;
 	case eMessageType::MU_MSG_LANDING_STATE:
 		message = std::make_unique<cMuMsgLandingState>(archive); break;
 	case eMessageType::MU_MSG_LANDING_POSITION:
 		message = std::make_unique<cMuMsgLandingPosition>(archive); break;
-	case eMessageType::MU_MSG_ALL_LANDED:
-		message = std::make_unique<cMuMsgAllLanded>(archive); break;
+	case eMessageType::MU_MSG_START_GAME:
+		message = std::make_unique<cMuMsgStartGame>(archive); break;
 	case eMessageType::MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS:
 		message = std::make_unique<cMuMsgInLandingPositionSelectionStatus>(archive); break;
 	case eMessageType::MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION:
@@ -118,14 +118,14 @@ std::string enumToString(cMultiplayerLobbyMessage::eMessageType value)
 		return "MU_MSG_FINISHED_MAP_DOWNLOAD";
 	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_REQUEST_MAP:
 		return "MU_MSG_REQUEST_MAP";
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_GO:
-		return "MU_MSG_GO";
+	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME_PREPARATIONS:
+		return "MU_MSG_START_GAME_PREPARATIONS";
 	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_STATE:
 		return "MU_MSG_LANDING_STATE";
 	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_POSITION:
 		return "MU_MSG_LANDING_POSITION";
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_ALL_LANDED:
-		return "MU_MSG_ALL_LANDED";
+	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME:
+		return "MU_MSG_START_GAME";
 	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS:
 		return "MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS";
 	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION:
@@ -242,12 +242,12 @@ void cMuMsgPlayerList::serialize(cTextArchiveIn& archive)
 }
 
 //------------------------------------------------------------------------------
-cMuMsgGo::cMuMsgGo() :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_GO)
+cMuMsgStartGamePreparations::cMuMsgStartGamePreparations() :
+	cMultiplayerLobbyMessage(eMessageType::MU_MSG_START_GAME_PREPARATIONS)
 {}
 
-cMuMsgGo::cMuMsgGo(cBinaryArchiveOut& archive) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_GO)
+cMuMsgStartGamePreparations::cMuMsgStartGamePreparations(cBinaryArchiveOut& archive) :
+	cMultiplayerLobbyMessage(eMessageType::MU_MSG_START_GAME_PREPARATIONS)
 {}
 
 //------------------------------------------------------------------------------
@@ -324,12 +324,12 @@ void cMuMsgLandingState::serialize(cTextArchiveIn& archive)
 }
 
 //------------------------------------------------------------------------------
-cMuMsgAllLanded::cMuMsgAllLanded(cBinaryArchiveOut& archive) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_ALL_LANDED)
+cMuMsgStartGame::cMuMsgStartGame(cBinaryArchiveOut& archive) :
+cMultiplayerLobbyMessage(eMessageType::MU_MSG_START_GAME)
 {}
 
-cMuMsgAllLanded::cMuMsgAllLanded() :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_ALL_LANDED)
+cMuMsgStartGame::cMuMsgStartGame() :
+cMultiplayerLobbyMessage(eMessageType::MU_MSG_START_GAME)
 {}
 
 //------------------------------------------------------------------------------

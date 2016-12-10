@@ -431,13 +431,9 @@ private:
 class cNetMessageTcpConnectFailed : public cNetMessage2
 {
 public:
-	cNetMessageTcpConnectFailed(const std::string& message = "") :
-		cNetMessage2(eNetMessageType::TCP_CONNECT_FAILED),
-		message(message)
+	cNetMessageTcpConnectFailed() :
+		cNetMessage2(eNetMessageType::TCP_CONNECT_FAILED)
 	{};
-
-	const std::string message;
-
 	// no serialization needed, because this is a local event
 };
 

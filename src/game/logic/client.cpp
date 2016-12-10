@@ -69,7 +69,7 @@ using namespace std;
 //------------------------------------------------------------------------
 
 //------------------------------------------------------------------------
-cClient::cClient (std::shared_ptr<cConnectionManager> connectionManager, int gameId) :
+cClient::cClient (std::shared_ptr<cConnectionManager> connectionManager) :
 	server (nullptr),
 	connectionManager(connectionManager),
 	gameTimer (std::make_shared<cGameTimerClient> ()),
@@ -82,13 +82,12 @@ cClient::cClient (std::shared_ptr<cConnectionManager> connectionManager, int gam
 	bDefeated = false;
 
 	gameTimer->start();
-
-	model.setGameId(gameId);
 }
 
 cClient::~cClient()
 {
 	connectionManager->setLocalClient(nullptr, -1);
+	connectionManager->disconnectAll();
 	gameTimer->stop();
 
 	for (unsigned int i = 0; i < attackJobs.size(); i++)
@@ -120,8 +119,6 @@ public:
 
 void cClient::setPlayers (const std::vector<cPlayerBasicData>& splayers, size_t activePlayerNr)
 {
-	assert (activePlayerNr < splayers.size());
-
 	model.setPlayerList(splayers);
 	activePlayer = model.getPlayer(activePlayerNr);
 }

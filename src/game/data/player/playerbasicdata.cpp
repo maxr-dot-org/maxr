@@ -22,7 +22,9 @@
 #include "utility/crc.h"
 
 //------------------------------------------------------------------------------
-cPlayerBasicData::cPlayerBasicData()
+cPlayerBasicData::cPlayerBasicData() :
+	Nr(0),
+	ready(false)
 {}
 
 //------------------------------------------------------------------------------

@@ -21,6 +21,7 @@
 #define ui_graphical_menu_control_menucontrollermultiplayerhostH
 
 #include <memory>
+#include <map>
 
 #include "utility/signal/signalconnectionmanager.h"
 #include "connectionmanager.h"
@@ -36,6 +37,7 @@ class cNetworkHostGameNew;
 class cPlayerBasicData;
 class cMapSender;
 class cPlayerLandingStatus;
+class cActionInitNewGame;
 
 
 class cMenuControllerMultiplayerHost : public INetMessageReceiver, public cRunnable, public std::enable_shared_from_this<cMenuControllerMultiplayerHost>
@@ -47,6 +49,7 @@ public:
 	void start();
 
 	virtual void pushMessage (std::unique_ptr<cNetMessage2> message) MAXR_OVERRIDE_FUNCTION;
+	virtual std::unique_ptr<cNetMessage2> popMessage() MAXR_OVERRIDE_FUNCTION;
 
 	virtual void run() MAXR_OVERRIDE_FUNCTION;
 private:

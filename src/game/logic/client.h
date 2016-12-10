@@ -66,7 +66,7 @@ class cClient : public INetMessageReceiver
 	friend class cDebugOutputWidget;
 	friend class cPlayer;
 public:
-	cClient (std::shared_ptr<cConnectionManager> connectionManager, int gameId);
+	cClient (std::shared_ptr<cConnectionManager> connectionManager);
 	~cClient();
 
 	const cModel& getModel() const { return model; };

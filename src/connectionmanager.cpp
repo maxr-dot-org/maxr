@@ -136,6 +136,8 @@ void cConnectionManager::acceptConnection(const cSocket* socket, int playerNr)
 		//looks like the connection was disconnected during the handshake
 		Log.write("ConnectionManager: accept called for unknown socket", cLog::eLOG_TYPE_WARNING);
 		localServer->pushMessage(std::make_unique<cNetMessageTcpClose>(playerNr));
+
+		return;
 	}
 
 	Log.write("ConnectionManager: Accepted connection and assigned playerNr: " + toString(playerNr), cLog::eLOG_TYPE_NET_DEBUG);
@@ -205,6 +207,15 @@ void cConnectionManager::setLocalClient(INetMessageReceiver* client, int playerN
 {
 	cLockGuard<cMutex> tl(mutex);
 
+	//move pending messages in the event queue to new receiver
+	if (localClient && client)
+	{
+		while (auto message = localClient->popMessage())
+		{
+			client->pushMessage(std::move(message));
+		}
+	}
+
 	localPlayer = playerNr;
 	localClient = client;
 }
@@ -213,6 +224,15 @@ void cConnectionManager::setLocalClient(INetMessageReceiver* client, int playerN
 void cConnectionManager::setLocalServer(INetMessageReceiver* server)
 {
 	cLockGuard<cMutex> tl(mutex);
+
+	//move pending messages in the event queue to new receiver
+	if (localServer && server)
+	{
+		while (auto message = localServer->popMessage())
+		{
+			server->pushMessage(std::move(message));
+		}
+	}
 
 	localServer = server;
 }

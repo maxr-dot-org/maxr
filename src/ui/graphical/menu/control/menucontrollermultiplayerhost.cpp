@@ -43,9 +43,10 @@
 #include "mapdownload.h"
 #include "game/data/savegame.h"
 #include "game/logic/client.h"
-#include "game/logic/server.h"
+#include "game/logic/server2.h"
 #include "game/data/savegameinfo.h"
 #include "utility/string/toString.h"
+#include "game/logic/action/action.h"
 
 // TODO: remove
 std::vector<std::pair<sID, int>> createInitialLandingUnitsList(int clan, const cGameSettings& gameSettings, const cUnitsData& unitsData); // defined in windowsingleplayer.cpp
@@ -53,7 +54,7 @@ std::vector<std::pair<sID, int>> createInitialLandingUnitsList(int clan, const c
 //------------------------------------------------------------------------------
 cMenuControllerMultiplayerHost::cMenuControllerMultiplayerHost (cApplication& application_) :
 	application (application_),
-	nextPlayerNumber (0)
+	nextPlayerNumber (1)
 {}
 
 //------------------------------------------------------------------------------
@@ -138,6 +139,14 @@ void cMenuControllerMultiplayerHost::reset()
 void cMenuControllerMultiplayerHost::pushMessage (std::unique_ptr<cNetMessage2> message)
 {
 	messageQueue.push (std::move (message));
+}
+
+//------------------------------------------------------------------------------
+std::unique_ptr<cNetMessage2> cMenuControllerMultiplayerHost::popMessage()
+{
+	std::unique_ptr<cNetMessage2> message;
+	messageQueue.try_pop(message);
+	return message;
 }
 
 //------------------------------------------------------------------------------
@@ -367,6 +376,7 @@ void cMenuControllerMultiplayerHost::checkGameStart()
 		}
 		saveOptions();
 
+		//TODO: send cMuMsgStartGame();
 		sendGo (*network);
 
 		startSavedGame();
@@ -377,7 +387,8 @@ void cMenuControllerMultiplayerHost::checkGameStart()
 	{
 		saveOptions();
 
-		sendNetMessage(cMuMsgGo());
+		//TODO: send unitsdata & clan data
+		sendNetMessage(cMuMsgStartGamePreparations());
 		startGamePreparation();
 	}
 }
@@ -423,6 +434,7 @@ void cMenuControllerMultiplayerHost::startGamePreparation()
 
 	//initialize copy of unitsData that will be used in game
 	newGame->setUnitsData(std::make_shared<const cUnitsData>(UnitsDataGlobal));
+	//TODO: set clan data
 
 	newGame->setPlayers (windowNetworkLobby->getPlayersNotShared(), *windowNetworkLobby->getLocalPlayer());
 	newGame->setGameSettings (gameSettings);
@@ -597,7 +609,7 @@ void cMenuControllerMultiplayerHost::startLandingPositionSelection()
 
 	signalConnectionManager.connect (landingPositionManager->allPositionsValid, [this]()
 	{
-		sendNetMessage(cMuMsgAllLanded());
+		sendNetMessage(cMuMsgStartGame());
 
 		newGame->setLocalPlayerLandingPosition (windowLandingPositionSelection->getSelectedPosition());
 

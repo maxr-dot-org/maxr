@@ -37,9 +37,7 @@ cServer2::cServer2(std::shared_ptr<cConnectionManager> connectionManager) :
 	serverThread(nullptr),
 	exit(false),
 	connectionManager(connectionManager)
-{
-	model.setGameId(random(UINT32_MAX));
-}
+{}
 
 //------------------------------------------------------------------------------
 cServer2::~cServer2()
@@ -65,7 +63,7 @@ void cServer2::setGameSettings(const cGameSettings& gameSettings)
 void cServer2::setPlayers(const std::vector<cPlayerBasicData>& splayers)
 {
 	model.setPlayerList(splayers);
-	gameTimer.setNumberOfPlayers(splayers.size());
+	gameTimer.setPlayerNumbers(model.getPlayerList());
 }
 
 //------------------------------------------------------------------------------
@@ -101,7 +99,7 @@ void cServer2::loadGameState(int saveGameNumber)
 {
 	Log.write(" Server: loading game state from save file " + iToStr(saveGameNumber), cLog::eLOG_TYPE_NET_DEBUG);
 	savegame.loadModel(model, saveGameNumber);
-	gameTimer.setNumberOfPlayers(model.getPlayerList().size());
+	gameTimer.setPlayerNumbers(model.getPlayerList());
 }
 //------------------------------------------------------------------------------
 void cServer2::sendGuiInfoToClients(int saveGameNumber)
@@ -113,19 +111,21 @@ void cServer2::sendGuiInfoToClients(int saveGameNumber)
 //------------------------------------------------------------------------------
 void cServer2::resyncClientModel(int playerNr /*= -1*/) const
 {
-	if (SDL_ThreadID() != SDL_GetThreadID(serverThread))
+	bool wasRunning = false;
+	if (serverThread && SDL_ThreadID() != SDL_GetThreadID(serverThread))
 	{
 		//allow resync from main thread
 		exit = true;
 		SDL_WaitThread(serverThread, nullptr);
 		serverThread = nullptr;
+		wasRunning = true;
 	}
 
 	Log.write(" Server: Resyncronize client model " + iToStr(playerNr), cLog::eLOG_TYPE_NET_DEBUG);
 	cNetMessageResyncModel msg(model);
 	sendMessageToClients(msg, playerNr);
 
-	if (!serverThread)
+	if (!serverThread && wasRunning)
 	{
 		exit = false;
 		serverThread = SDL_CreateThread(serverThreadCallback, "server", const_cast<cServer2*>(this));

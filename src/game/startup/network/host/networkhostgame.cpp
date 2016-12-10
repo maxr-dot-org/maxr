@@ -19,7 +19,7 @@
 
 #include "game/startup/network/host/networkhostgame.h"
 #include "game/logic/client.h"
-#include "game/logic/server.h"
+#include "game/logic/server2.h"
 #include "game/data/savegame.h"
 #include "loaddata.h"
 
@@ -39,7 +39,7 @@ void cNetworkHostGame::run()
 }
 
 //------------------------------------------------------------------------------
-void cNetworkHostGame::setConnectionManager(std::shared_ptr<cConnectionManager> network_)
+void cNetworkHostGame::setConnectionManager(std::shared_ptr<cConnectionManager> connectionManager_)
 {
-	network = network_;
+	connectionManager = connectionManager_;
 }
