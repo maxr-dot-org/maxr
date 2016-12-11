@@ -387,8 +387,7 @@ void cMenuControllerMultiplayerHost::checkGameStart()
 	{
 		saveOptions();
 
-		//TODO: send unitsdata & clan data
-		sendNetMessage(cMuMsgStartGamePreparations());
+
 		startGamePreparation();
 	}
 }
@@ -433,13 +432,18 @@ void cMenuControllerMultiplayerHost::startGamePreparation()
 	newGame = std::make_shared<cNetworkHostGameNew> ();
 
 	//initialize copy of unitsData that will be used in game
-	newGame->setUnitsData(std::make_shared<const cUnitsData>(UnitsDataGlobal));
-	//TODO: set clan data
+	auto unitsData = std::make_shared<const cUnitsData>(UnitsDataGlobal);
+	newGame->setUnitsData(unitsData);
+	auto clanData = std::make_shared<const cClanData>(ClanDataGlobal);
+	newGame->setClanData(clanData);
+
 
 	newGame->setPlayers (windowNetworkLobby->getPlayersNotShared(), *windowNetworkLobby->getLocalPlayer());
 	newGame->setGameSettings (gameSettings);
 	newGame->setStaticMap (staticMap);
 	newGame->setConnectionManager (connectionManager);
+
+	sendNetMessage(cMuMsgStartGamePreparations(unitsData, clanData));
 
 	landingPositionManager = std::make_shared<cLandingPositionManager> (newGame->getPlayers());
 
@@ -475,7 +479,7 @@ void cMenuControllerMultiplayerHost::startClanSelection(bool isFirstWindowOnGame
 {
 	if (!newGame) return;
 
-	auto windowClanSelection = application.show (std::make_shared<cWindowClanSelection> (newGame->getUnitsData()));
+	auto windowClanSelection = application.show (std::make_shared<cWindowClanSelection> (newGame->getUnitsData(), newGame->getClanData()));
 
 	signalConnectionManager.connect (windowClanSelection->canceled, [this, windowClanSelection, isFirstWindowOnGamePreparation]()
 	{

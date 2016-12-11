@@ -25,12 +25,14 @@
 #include <vector>
 
 #include "main.h"
+#include "utility\serialization\serialization.h"
 
 //-------------------------------------------------------------------------
 class cClanUnitStat
 {
 public:
-	cClanUnitStat (sID unitId_) : unitId (unitId_) {}
+	cClanUnitStat (sID unitId_) : unitId (unitId_) {};
+	cClanUnitStat () {};
 
 	void addModification (const std::string& area, int value);
 
@@ -40,6 +42,12 @@ public:
 	bool hasModification (const std::string& key) const;
 
 	std::string getClanStatsDescription(const cUnitsData& originalData) const;
+	template<typename T>
+	void serialize(T& archive)
+	{
+		archive & unitId;
+		archive & modifications;
+	}
 
 	//-------------------------------------------------------------------------
 private:
@@ -51,16 +59,18 @@ private:
 class cClan
 {
 public:
-	cClan (int num) : num (num) {}
-	~cClan();
+	cClan (int num) : num(num) {};
+	cClan () : num(-1) {};
+	
+	cClan (const cClan& other);
 
 	void setDescription (const std::string& newDescription);
-	const std::string& getDescription() const { return description; }
+	const std::string getDescription() const;
 
 	std::vector<std::string> getClanStatsDescription(const cUnitsData& originalData) const;
 
 	void setName (const std::string& newName);
-	const std::string& getName() const { return name; }
+	const std::string getName() const;
 
 	int getClanID() const { return num; }
 
@@ -68,6 +78,36 @@ public:
 	cClanUnitStat* getUnitStat (unsigned int index) const;
 	cClanUnitStat* addUnitStat (sID id);
 	int getNrUnitStats() const { return static_cast<int> (stats.size()); }
+
+	template <typename T>
+	void save(T& archive)
+	{
+		archive << num;
+		archive << description;
+		archive << name;
+
+		archive << static_cast<uint32_t>(stats.size());
+		for (const auto& stat : stats)
+			archive << *stat;
+	}
+	template <typename T>
+	void load(T& archive)
+	{
+		archive >> num;
+		archive >> description;
+		archive >> name;
+
+		uint32_t length;
+		archive >> length;
+		stats.clear();
+		for (size_t i = 0; i < length; i++)
+		{
+			cClanUnitStat stat;
+			archive >> stat;
+			stats.push_back(std::make_unique<cClanUnitStat>(stat));
+		}
+	}
+	SERIALIZATION_SPLIT_MEMBER();
 
 	//-------------------------------------------------------------------------
 private:
@@ -81,16 +121,38 @@ private:
 class cClanData
 {
 public:
-	static cClanData& instance();
-	~cClanData();
+	cClanData() {};
+	cClanData(const cClanData& other);
 
 	cClan* addClan();
-	cClan* getClan (unsigned int num);
+	cClan* getClan (unsigned int num) const;
 	int getNrClans() const { return static_cast<int> (clans.size()); }
+
+	template <typename T>
+	void save(T& archive)
+	{
+		archive << static_cast<uint32_t>(clans.size());
+		for (const auto& clan : clans)
+			archive << *clan;
+	}
+	template <typename T>
+	void load(T& archive)
+	{
+		uint32_t length;
+		archive >> length;
+		clans.clear();
+		for (size_t i = 0; i < length; i++)
+		{
+			cClan clan;
+			archive >> clan;
+			clans.push_back(std::make_unique<cClan>(clan));
+		}
+	}
+	SERIALIZATION_SPLIT_MEMBER();
 
 	//-------------------------------------------------------------------------
 private:
-	cClanData() {}
+
 	std::vector<std::unique_ptr<cClan>> clans;
 };
 

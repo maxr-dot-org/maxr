@@ -77,6 +77,9 @@ public:
 	std::string getUnitName(const sID& id) const;
 	std::string getUnitDescription(const sID& id) const;
 
+	std::string getClanName(int num) const;
+	std::string getClanDescription(int num) const;
+
 private:
 	typedef std::map<std::string, std::string> StrStrMap;
 

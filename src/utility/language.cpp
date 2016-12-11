@@ -37,6 +37,7 @@
 #include "tinyxml2.h"
 #include "utility/string/toupper.h"
 #include "game/data/units/unitdata.h"
+#include "string/toString.h"
 
 using namespace tinyxml2;
 
@@ -319,6 +320,63 @@ std::string cLanguage::getUnitDescription(const sID& id) const
 		}
 		xmlElement = xmlElement->NextSiblingElement();
 	}
+	return "";
+}
+
+std::string cLanguage::getClanName(int num) const
+{
+	const XMLElement* xmlElement = m_XmlDoc.RootElement()->FirstChildElement("Clans");
+	if (!xmlElement)
+	{
+		Log.write("Can't find clan node in language file. Please report this to your translation team!", cLog::eLOG_TYPE_WARNING);
+		return "";
+	}
+
+	for (xmlElement = xmlElement->FirstChildElement("Clan"); xmlElement; xmlElement = xmlElement->NextSiblingElement("Clan"))
+	{
+		int id;
+		if (xmlElement->QueryIntAttribute("ID", &id) != XML_NO_ERROR) continue;
+		if (id != num) continue;
+
+		if (cSettings::getInstance().getLanguage() != "ENG")
+		{
+			const char* name = xmlElement->Attribute("localized");
+			if (!name) continue;
+			return std::string(name);
+		}
+		else
+		{
+			const char* name = xmlElement->Attribute("ENG");
+			if (!name) continue;
+			return std::string(name);
+		}
+	}
+
+	Log.write("Can't find clan translation for clan " + toString(num), cLog::eLOG_TYPE_WARNING);
+	return "";
+}
+
+std::string cLanguage::getClanDescription(int num) const
+{
+	const XMLElement* xmlElement = m_XmlDoc.RootElement()->FirstChildElement("Clans");
+	if (!xmlElement)
+	{
+		Log.write("Can't find clan node in language file. Please report this to your translation team!", cLog::eLOG_TYPE_WARNING);
+		return "";
+	}
+
+	for (xmlElement = xmlElement->FirstChildElement("Clan"); xmlElement; xmlElement = xmlElement->NextSiblingElement("Clan"))
+	{
+		int id;
+		if (xmlElement->QueryIntAttribute("ID", &id) != XML_NO_ERROR) continue;
+		if (id != num) continue;
+
+		const char* description = xmlElement->GetText();
+		if (description != nullptr)
+			return std::string(description);
+	}
+
+	Log.write("Can't find clan translation for clan " + toString(num), cLog::eLOG_TYPE_WARNING);
 	return "";
 }
 

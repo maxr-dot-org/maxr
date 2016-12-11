@@ -24,6 +24,7 @@
 #include <vector>
 #include <chrono>
 #include <array>
+#include <map>
 
 #include "game/logic/jobs.h"
 
@@ -347,6 +348,35 @@ namespace serialization
 	{
 		serialization::detail::splitFree(archive, value);
 	}
+	//------------------------------------------------------------------------------
+	template<typename A, typename K, typename T>
+	void save(A& archive, const std::map<K, T>& value)
+	{
+		uint32_t length = static_cast<uint32_t>(value.size());
+		archive << NVP(length);
+		for (auto pair : value)
+		{
+			archive << NVP(pair);
+		}
+	}
+	template<typename A, typename K, typename T>
+	void load(A& archive, std::map<K, T>& value)
+	{
+		uint32_t length;
+		archive >> NVP(length);
+		for (size_t i = 0; i < length; i++)
+		{
+			std::pair<K, T> c;
+			archive >> makeNvp("pair", c);
+			value.insert(c);
+		}
+	}
+	template<typename A, typename K, typename T>
+	void serialize(A& archive, std::map<K, T>& value)
+	{
+		serialization::detail::splitFree(archive, value);
+	}
+
 	//-------------------------------------------------------------------------
 	/**
 	* The class cPointerLoader is used to translate IDs into pointer values during deserialisation.

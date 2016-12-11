@@ -209,7 +209,7 @@ void cMenuControllerMultiplayerClient::startSavedGame()
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerClient::startGamePreparation()
+void cMenuControllerMultiplayerClient::startGamePreparation(cMuMsgStartGamePreparations& message)
 {
 	const auto& staticMap = windowNetworkLobby->getStaticMap();
 	const auto& gameSettings = windowNetworkLobby->getGameSettings();
@@ -218,8 +218,8 @@ void cMenuControllerMultiplayerClient::startGamePreparation()
 
 	newGame = std::make_shared<cNetworkClientGameNew> ();
 
-	//TODO: remove!
-	newGame->setUnitsData(std::make_shared<const cUnitsData>(UnitsDataGlobal));
+	newGame->setUnitsData(message.unitsData);
+	newGame->setClanData(message.clanData);
 	
 	newGame->setPlayers (windowNetworkLobby->getPlayersNotShared(), *windowNetworkLobby->getLocalPlayer());
 	newGame->setGameSettings (gameSettings);
@@ -241,7 +241,7 @@ void cMenuControllerMultiplayerClient::startClanSelection(bool isFirstWindowOnGa
 {
 	if (!newGame) return;
 
-	auto windowClanSelection = application.show (std::make_shared<cWindowClanSelection> (newGame->getUnitsData()));
+	auto windowClanSelection = application.show (std::make_shared<cWindowClanSelection> (newGame->getUnitsData(), newGame->getClanData()));
 
 	signalConnectionManager.connect (windowClanSelection->canceled, [this, windowClanSelection, isFirstWindowOnGamePreparation]()
 	{
@@ -641,7 +641,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_START_GAME_PREPAR
 	}
 	else
 	{
-		startGamePreparation();
+		startGamePreparation(message);
 	}
 }
 

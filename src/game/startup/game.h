@@ -25,6 +25,7 @@
 #include "maxrconfig.h"
 
 class cUnitsData;
+class cClanData;
 
 class cGame : public cRunnable, public std::enable_shared_from_this<cGame>
 {
@@ -41,9 +42,12 @@ public:
 
 	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData_) { unitsData = std::move(unitsData_); }
 	std::shared_ptr<const cUnitsData> getUnitsData() const { return unitsData; }
+	void setClanData(std::shared_ptr<const cClanData> clanData_) { clanData = std::move(clanData_); }
+	std::shared_ptr<const cClanData> getClanData() const { return clanData; }
 protected:
 	bool terminate;
 	std::shared_ptr<const cUnitsData> unitsData;
+	std::shared_ptr<const cClanData> clanData;
 };
 
 #endif // game_startup_gameH

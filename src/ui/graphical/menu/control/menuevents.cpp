@@ -21,6 +21,8 @@
 
 #include "menuevents.h"
 #include "utility/string/toString.h"
+#include "game/data/units/unitdata.h"
+#include "game/data/player/clans.h"
 
 std::unique_ptr<cMultiplayerLobbyMessage> cMultiplayerLobbyMessage::createFromBuffer(cBinaryArchiveOut& archive)
 {
@@ -242,13 +244,29 @@ void cMuMsgPlayerList::serialize(cTextArchiveIn& archive)
 }
 
 //------------------------------------------------------------------------------
-cMuMsgStartGamePreparations::cMuMsgStartGamePreparations() :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_START_GAME_PREPARATIONS)
+cMuMsgStartGamePreparations::cMuMsgStartGamePreparations(std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cClanData> clanData) :
+	cMultiplayerLobbyMessage(eMessageType::MU_MSG_START_GAME_PREPARATIONS),
+	unitsData(unitsData),
+	clanData(clanData)
 {}
 
 cMuMsgStartGamePreparations::cMuMsgStartGamePreparations(cBinaryArchiveOut& archive) :
 	cMultiplayerLobbyMessage(eMessageType::MU_MSG_START_GAME_PREPARATIONS)
-{}
+{
+	loadThis(archive);
+}
+
+void cMuMsgStartGamePreparations::serialize(cBinaryArchiveIn& archive)
+{
+	cMultiplayerLobbyMessage::serialize(archive);
+	saveThis(archive);
+}
+
+void cMuMsgStartGamePreparations::serialize(cTextArchiveIn& archive)
+{
+	cMultiplayerLobbyMessage::serialize(archive);
+	saveThis(archive);
+}
 
 //------------------------------------------------------------------------------
 cMuMsgPlayerHasSelectedLandingPosition::cMuMsgPlayerHasSelectedLandingPosition(int landedPlayer) :

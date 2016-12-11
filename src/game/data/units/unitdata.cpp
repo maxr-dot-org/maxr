@@ -112,11 +112,10 @@ void cUnitsData::initializeIDData()
 }
 
 //------------------------------------------------------------------------------
-void cUnitsData::initializeClanUnitData()
+void cUnitsData::initializeClanUnitData(const cClanData& clanData)
 {
 	crcValid = false;
-
-	cClanData& clanData = cClanData::instance();
+ 
 	clanDynamicUnitData.resize(clanData.getNrClans());
 
 	for (int i = 0; i != clanData.getNrClans(); ++i)

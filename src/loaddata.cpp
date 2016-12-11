@@ -1301,53 +1301,6 @@ static int LoadVehicles()
 	return 1;
 }
 
-/**
-* Gets the name and (text) description for clan with internal id num from language file
-* If no translation exists a warning is issued and the existing strings are not altered
-* @param num engine internal ID of clan sorted by oder of clans in clan.xml
-*/
-static void translateClanData (int num)
-{
-	cClanData& clanData = cClanData::instance();
-	cClan* clan = clanData.getClan (num);
-
-	if (clan == 0)
-	{
-		Log.write ("Can't find clan id " + iToStr (num) + " for translation", cLog::eLOG_TYPE_WARNING);
-		return;
-	}
-	XMLElement* xmlElement = LanguageFile.RootElement()->FirstChildElement ("Clans");
-	if (!xmlElement)
-	{
-		Log.write ("Can't find clan node in language file. Please report this to your translation team!", cLog::eLOG_TYPE_WARNING);
-		return;
-	}
-
-	for (xmlElement = xmlElement->FirstChildElement ("Clan"); xmlElement; xmlElement = xmlElement->NextSiblingElement ("Clan"))
-	{
-		int id;
-		if (xmlElement->QueryIntAttribute ("ID", &id) != XML_NO_ERROR) continue;
-		if (id != num) continue;
-
-		Log.write ("Found clan translation for clan id " + iToStr (num), cLog::eLOG_TYPE_DEBUG);
-		if (cSettings::getInstance().getLanguage() != "ENG")
-		{
-			const char* name = xmlElement->Attribute ("localized");
-			if (!name) continue;
-			clan->setName (name);
-		}
-		else
-		{
-			const char* name = xmlElement->Attribute ("ENG");
-			if (!name) continue;
-			clan->setName (name);
-		}
-		const char* description = xmlElement->GetText();
-		if (description != nullptr)
-			clan->setDescription (description);
-	}
-}
-
 static int LoadBuildings()
 {
 	Log.write ("Loading Buildings", cLog::eLOG_TYPE_INFO);
@@ -1859,7 +1812,7 @@ static int LoadClans()
 
 	for (XMLElement* clanElement = xmlElement->FirstChildElement ("Clan"); clanElement; clanElement = clanElement->NextSiblingElement ("Clan"))
 	{
-		cClan* newClan = cClanData::instance().addClan();
+		cClan* newClan = ClanDataGlobal.addClan();
 		string nameAttr = clanElement->Attribute ("Name");
 		newClan->setName (nameAttr);
 
@@ -1869,8 +1822,6 @@ static int LoadClans()
 			string descriptionString = descriptionNode->GetText();
 			newClan->setDescription (descriptionString);
 		}
-
-		translateClanData (newClan->getClanID());
 
 		for (XMLElement* statsElement = clanElement->FirstChildElement ("ChangedUnitStat"); statsElement; statsElement = statsElement->NextSiblingElement ("ChangedUnitStat"))
 		{
@@ -1897,7 +1848,7 @@ static int LoadClans()
 			}
 		}
 	}
-	UnitsDataGlobal.initializeClanUnitData();
+	UnitsDataGlobal.initializeClanUnitData(ClanDataGlobal);
 
 	return 1;
 }

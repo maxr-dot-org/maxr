@@ -25,6 +25,9 @@
 #include "game\data\player\playerbasicdata.h"
 #include "game\logic\landingpositionstate.h"
 
+class cUnitsData;
+class cClanData;
+
 class cMultiplayerLobbyMessage : public cNetMessage2
 {
 public:
@@ -168,10 +171,33 @@ private:
 class cMuMsgStartGamePreparations : public cMultiplayerLobbyMessage
 {
 public:
-	cMuMsgStartGamePreparations();
+	cMuMsgStartGamePreparations(std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cClanData> clanData);
 	cMuMsgStartGamePreparations(cBinaryArchiveOut& archive);
-};
 
+	virtual void serialize(cBinaryArchiveIn& archive);
+	virtual void serialize(cTextArchiveIn& archive);
+
+	std::shared_ptr<const cUnitsData> unitsData;
+	std::shared_ptr<const cClanData> clanData;
+private:
+	template<typename T>
+	void loadThis(T& archive)
+	{
+		auto unitDataNonConst = std::make_shared<cUnitsData>();
+		archive >> *unitDataNonConst;
+		unitsData = unitDataNonConst;
+
+		auto clanDataNonConst = std::make_shared<cClanData>();
+		archive >> *clanDataNonConst;
+		clanData = clanDataNonConst;
+	}
+	template<typename T>
+	void saveThis(T& archive)
+	{
+		archive << *unitsData;
+		archive << *clanData;
+	}
+};
 
 //------------------------------------------------------------------------------
 class cMuMsgPlayerHasSelectedLandingPosition : public cMultiplayerLobbyMessage

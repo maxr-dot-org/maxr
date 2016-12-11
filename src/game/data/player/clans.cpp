@@ -103,11 +103,6 @@ string cClanUnitStat::getClanStatsDescription(const cUnitsData& originalData) co
 }
 
 //--------------------------------------------------
-cClan::~cClan()
-{
-}
-
-//--------------------------------------------------
 cClanUnitStat* cClan::getUnitStat (sID id) const
 {
 	for (const auto& stat : stats)
@@ -131,15 +126,48 @@ cClanUnitStat* cClan::addUnitStat (sID id)
 	return stats.back().get();
 }
 
+//---------------------------------------------------
+cClan::cClan(const cClan& other) :
+	num(other.num),
+	description(other.description),
+	name(other.name)
+{
+	for (const auto& stat : other.stats)
+	{
+		stats.push_back(std::make_unique<cClanUnitStat>(*stat));
+	}
+}
+
 //--------------------------------------------------
 void cClan::setDescription (const string& newDescription)
 {
 	description = newDescription;
 }
+
+//---------------------------------------------------
+const std::string cClan::getDescription() const
+{
+	std::string translatedDescription = lngPack.getClanDescription(num);
+	if (!translatedDescription.empty())
+		return translatedDescription;
+
+	return description;
+}
+
 //--------------------------------------------------
 void cClan::setName (const string& newName)
 {
 	name = newName;
+}
+
+//--------------------------------------------------
+const std::string cClan::getName() const
+{
+	std::string translatedName = lngPack.getClanName(num);
+	if (!translatedName.empty())
+		return translatedName;
+
+	return name;
 }
 
 //--------------------------------------------------
@@ -154,16 +182,13 @@ vector<string> cClan::getClanStatsDescription(const cUnitsData& originalData) co
 	return result;
 }
 
-//--------------------------------------------------
-/*static*/ cClanData& cClanData::instance()
+//---------------------------------------------------
+cClanData::cClanData(const cClanData& other)
 {
-	static cClanData _instance;
-	return _instance;
-}
-
-//--------------------------------------------------
-cClanData::~cClanData()
-{
+	for (const auto& clan : other.clans)
+	{
+		clans.push_back(std::make_unique<cClan>(*clan));
+	}
 }
 
 //--------------------------------------------------
@@ -174,7 +199,7 @@ cClan* cClanData::addClan()
 }
 
 //--------------------------------------------------
-cClan* cClanData::getClan (unsigned int num)
+cClan* cClanData::getClan (unsigned int num) const
 {
 	if (num < clans.size())
 		return clans[num].get();

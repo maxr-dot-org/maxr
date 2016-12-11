@@ -29,11 +29,12 @@
 class cImage;
 class cLabel;
 class cUnitsData;
+class cClanData;
 
 class cWindowClanSelection : public cWindow
 {
 public:
-	cWindowClanSelection(std::shared_ptr<const cUnitsData> unitsData);
+	cWindowClanSelection(std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cClanData> clanData);
 	~cWindowClanSelection();
 
 	cSignal<void ()> done;
@@ -55,6 +56,7 @@ private:
 	cLabel* clanShortDescription;
 
 	std::shared_ptr<const cUnitsData> unitsData;
+	std::shared_ptr<const cClanData> clanData;
 
 	unsigned int selectedClan;
 

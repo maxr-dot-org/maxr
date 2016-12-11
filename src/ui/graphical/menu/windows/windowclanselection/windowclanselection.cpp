@@ -26,9 +26,10 @@
 #include "ui/graphical/menu/widgets/image.h"
 
 //------------------------------------------------------------------------------
-cWindowClanSelection::cWindowClanSelection(std::shared_ptr<const cUnitsData> unitsData) :
+cWindowClanSelection::cWindowClanSelection(std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cClanData> clanData) :
 	cWindow (LoadPCX (GFXOD_CLAN_SELECT)),
 	unitsData(unitsData),
+	clanData(clanData),
 	selectedClan (0)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Title~Choose_Clan"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
@@ -58,10 +59,10 @@ cWindowClanSelection::cWindowClanSelection(std::shared_ptr<const cUnitsData> uni
 			clanImages[index] = addChild (std::make_unique<cImage> (getPosition() + cPosition (88 + 154 * column - (image ? (image->w / 2) : 0), 48 + 150 * row), image.get(), &SoundData.SNDHudButton));
 			signalConnectionManager.connect (clanImages[index]->clicked, std::bind (&cWindowClanSelection::clanClicked, this, clanImages[index]));
 
-			clanTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (37 + 155 * column, 144 + 150 * row), getPosition() + cPosition (135 + 155 * column, 144 + 10 + 150 * row)), cClanData::instance().getClan (index)->getName(), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+			clanTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (37 + 155 * column, 144 + 150 * row), getPosition() + cPosition (135 + 155 * column, 144 + 10 + 150 * row)), clanData->getClan (index)->getName(), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 		}
 	}
-	clanTitles[selectedClan]->setText (">" + cClanData::instance().getClan (selectedClan)->getName() + "<");
+	clanTitles[selectedClan]->setText (">" + clanData->getClan (selectedClan)->getName() + "<");
 
 	//
 	// Clan Description
@@ -101,9 +102,9 @@ void cWindowClanSelection::clanClicked (const cImage* clanImage)
 		{
 			if (i != selectedClan)
 			{
-				clanTitles[selectedClan]->setText (cClanData::instance().getClan (selectedClan)->getName());
+				clanTitles[selectedClan]->setText (clanData->getClan (selectedClan)->getName());
 				selectedClan = i;
-				clanTitles[selectedClan]->setText (">" + cClanData::instance().getClan (selectedClan)->getName() + "<");
+				clanTitles[selectedClan]->setText (">" + clanData->getClan (selectedClan)->getName() + "<");
 				updateClanDescription();
 			}
 			break;
@@ -126,7 +127,7 @@ void cWindowClanSelection::backClicked()
 //------------------------------------------------------------------------------
 void cWindowClanSelection::updateClanDescription()
 {
-	auto clanInfo = cClanData::instance().getClan (selectedClan);
+	auto clanInfo = clanData->getClan(selectedClan);
 	if (clanInfo)
 	{
 		auto strings = clanInfo->getClanStatsDescription(*unitsData);

@@ -39,6 +39,7 @@
 #include "defines.h"
 #include "utility/language.h"
 #include "game/data/units/unitdata.h"
+#include "game/data/player/clans.h"
 
 
 // Predeclarations
@@ -46,6 +47,7 @@ class cPlayer;
 class cLanguage;
 struct sBuildingUIData;
 struct sVehicleUIData;
+class cClanData;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Globals
@@ -183,6 +185,7 @@ public:
 
 // UnitsData - Class containing all building/vehicle surfaces & data ///////////////
 EX cUnitsData UnitsDataGlobal;
+EX cClanData  ClanDataGlobal;
 
 class cUnitsUiData
 {

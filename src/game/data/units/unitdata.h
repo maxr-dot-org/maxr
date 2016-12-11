@@ -29,6 +29,8 @@
 #include "utility/signal/signal.h"
 #include "utility/serialization/serialization.h"
 
+class cClanData;
+
 
 struct sID
 {
@@ -340,6 +342,9 @@ public:
 		archive & NVP(scan);
 		archive & NVP(damage);
 		archive & NVP(armor);
+
+		if (!archive.isWriter)
+			crcValid = false;
 	}
 private:
 	// Main
@@ -376,7 +381,7 @@ public:
 	cUnitsData();
 
 	void initializeIDData();
-	void initializeClanUnitData();
+	void initializeClanUnitData(const cClanData& clanData);
 
 	void addData(const cDynamicUnitData& data) { crcValid = false; dynamicUnitData.push_back(data); }
 	void addData(const cStaticUnitData& data)  { crcValid = false; staticUnitData.push_back(data); }
@@ -428,6 +433,7 @@ public:
 			staticUnitData.clear();
 			dynamicUnitData.clear();
 			clanDynamicUnitData.clear();
+			crcValid = false;
 		}
 
 		archive & NVP(constructorID);

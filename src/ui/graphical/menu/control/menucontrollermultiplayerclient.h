@@ -80,7 +80,7 @@ private:
 
 	void startSavedGame();
 
-	void startGamePreparation();
+	void startGamePreparation(cMuMsgStartGamePreparations& message);
 
 	void startClanSelection(bool isFirstWindowOnGamePreparation);
 	void startLandingUnitSelection(bool isFirstWindowOnGamePreparation);

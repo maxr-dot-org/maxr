@@ -137,6 +137,7 @@ void cWindowSinglePlayer::newGameClicked()
 
 	//initialize copy of unitsData that will be used in game
 	game->setUnitsData(std::make_shared<const cUnitsData>(UnitsDataGlobal));
+	game->setClanData(std::make_shared<const cClanData>(ClanDataGlobal));
 
 	auto windowGameSettings = getActiveApplication()->show (std::make_shared<cWindowGameSettings> ());
 	windowGameSettings->applySettings (cGameSettings());
@@ -160,7 +161,7 @@ void cWindowSinglePlayer::newGameClicked()
 
 			if (gameSettings->getClansEnabled())
 			{
-				auto windowClanSelection = application->show (std::make_shared<cWindowClanSelection> (game->getUnitsData()));
+				auto windowClanSelection = application->show (std::make_shared<cWindowClanSelection> (game->getUnitsData(), game->getClanData()));
 
 				signalConnectionManager.connect (windowClanSelection->canceled, [windowClanSelection]() { windowClanSelection->close(); });
 				windowClanSelection->done.connect ([ = ]()

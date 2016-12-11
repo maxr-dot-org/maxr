@@ -49,6 +49,7 @@ void cMenuControllerMultiplayerHotSeat::start()
 
 	//initialize copy of unitsData that will be used in game
 	game->setUnitsData(std::make_shared<const cUnitsData>(UnitsDataGlobal));
+	game->setClanData(std::make_shared<const cClanData>(ClanDataGlobal));
 
 	selectGameSettings();
 }
@@ -188,7 +189,7 @@ void cMenuControllerMultiplayerHotSeat::selectClan (size_t playerIndex, bool fir
 {
 	if (!game) return;
 
-	auto windowClanSelection = application.show (std::make_shared<cWindowClanSelection> (game->getUnitsData()));
+	auto windowClanSelection = application.show (std::make_shared<cWindowClanSelection> (game->getUnitsData(), game->getClanData()));
 
 	windowClanSelection->done.connect ([ = ]()
 	{
