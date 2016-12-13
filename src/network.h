@@ -22,7 +22,7 @@
 #include <vector>
 #include <SDL_net.h>
 
-#include "utility\thread\mutex.h"
+#include "utility/thread/mutex.h"
 
 //this is probably the maximum of the underlying os 'select' call
 #define MAX_TCP_CONNECTIONS 64

@@ -24,6 +24,8 @@
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
+class cSaveGameInfo;
+
 class cWindowNetworkLobbyClient : public cWindowNetworkLobby
 {
 public:
@@ -31,7 +33,7 @@ public:
 
 	cSignal<void ()> triggeredConnect;
 
-	void setSaveGame (const std::vector<cPlayerBasicData>& players, std::string saveGameName_);
+	void setSaveGame (const cSaveGameInfo& safeInfo);
 private:
 	cSignalConnectionManager signalConnectionManager;
 

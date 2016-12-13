@@ -102,34 +102,27 @@ void cServer2::loadGameState(int saveGameNumber)
 	gameTimer.setPlayerNumbers(model.getPlayerList());
 }
 //------------------------------------------------------------------------------
-void cServer2::sendGuiInfoToClients(int saveGameNumber)
+void cServer2::sendGuiInfoToClients(int saveGameNumber, int playerNr /*= -1*/)
 {
-	//TODO: do this in loadGameState()?
-	savegame.loadGuiInfo(this, saveGameNumber);
+	try 
+	{
+		savegame.loadGuiInfo(this, saveGameNumber);
+	}
+	catch (std::runtime_error& e)
+	{
+		Log.write((std::string) " Server: Loading GuiInfo from savegame failed: " + e.what(), cLog::eLOG_TYPE_NET_ERROR);
+	}
 }
 
 //------------------------------------------------------------------------------
 void cServer2::resyncClientModel(int playerNr /*= -1*/) const
 {
-	bool wasRunning = false;
-	if (serverThread && SDL_ThreadID() != SDL_GetThreadID(serverThread))
-	{
-		//allow resync from main thread
-		exit = true;
-		SDL_WaitThread(serverThread, nullptr);
-		serverThread = nullptr;
-		wasRunning = true;
-	}
+	assert(SDL_ThreadID() == SDL_GetThreadID(serverThread));
 
 	Log.write(" Server: Resyncronize client model " + iToStr(playerNr), cLog::eLOG_TYPE_NET_DEBUG);
 	cNetMessageResyncModel msg(model);
 	sendMessageToClients(msg, playerNr);
 
-	if (!serverThread && wasRunning)
-	{
-		exit = false;
-		serverThread = SDL_CreateThread(serverThreadCallback, "server", const_cast<cServer2*>(this));
-	}
 }
 
 //------------------------------------------------------------------------------
@@ -222,6 +215,16 @@ void cServer2::run()
 					savegame.saveGuiInfo(saveInfo);
 				}
 				break;
+			case eNetMessageType::REQUEST_RESYNC_MODEL:
+			{
+				const cNetMessageRequestResync& requestMessage = *static_cast<cNetMessageRequestResync*>(message.get());
+				resyncClientModel(requestMessage.playerToSync);
+				if (requestMessage.saveNumberForGuiInfo != -1)
+				{
+					sendGuiInfoToClients(requestMessage.saveNumberForGuiInfo, requestMessage.playerToSync);
+				}
+				break;
+			}
 			default:
 				Log.write(" Server: Can not handle net message!", cLog::eLOG_TYPE_NET_ERROR);
 				break;

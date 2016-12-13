@@ -49,7 +49,7 @@ public:
 	cSaveGameInfo loadSaveInfo(int slot);
 
 	void loadModel(cModel& model, int slot);
-	void loadGuiInfo(const cServer2* server, int slot);
+	void loadGuiInfo(const cServer2* server, int slot, int playerNr = -1);
 private:
 
 	/**

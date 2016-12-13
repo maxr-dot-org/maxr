@@ -23,6 +23,7 @@
 #include "ui/graphical/menu/windows/windownetworklobby/windownetworklobby.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
+#include "game/data/savegameinfo.h"
 
 class cWindowNetworkLobbyHost : public cWindowNetworkLobby
 {
@@ -36,12 +37,9 @@ public:
 	cSignal<void ()> triggeredStartGame;
 	cSignal<void ()> triggeredStartHost;
 
-	void setSaveGame (int saveGameNumber_);
-	int getSaveGameNumber() const;
+	bool setSaveGame (const cSaveGameInfo& saveGameNumber, cApplication* application);
 private:
 	cSignalConnectionManager signalConnectionManager;
-
-	int saveGameNumber;
 
 	void handleMapClicked();
 	void handleSettingsClicked();

@@ -177,7 +177,7 @@ void cWindowLoad::handleSlotDoubleClicked (size_t index)
 		return;
 	}
 
-	load (saveNumber);
+	load (*saveInfo);
 }
 
 //------------------------------------------------------------------------------
@@ -288,5 +288,5 @@ void cWindowLoad::handleLoadClicked()
 		return;
 	}
 	
-	load (selectedSaveNumber);
+	load (*saveInfo);
 }

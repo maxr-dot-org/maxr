@@ -191,21 +191,21 @@ void cMenuControllerMultiplayerClient::connect()
 //------------------------------------------------------------------------------
 void cMenuControllerMultiplayerClient::startSavedGame()
 {
-	if (!connectionManager || !windowNetworkLobby || !windowNetworkLobby->getStaticMap() || !windowNetworkLobby->getGameSettings()) return;
+	if (!connectionManager || !windowNetworkLobby || !windowNetworkLobby->getStaticMap()) return;
 
 	auto savedGame = std::make_shared<cNetworkClientGameSaved> ();
 
-	/*savedGame->setNetwork (connectionManager);
+	savedGame->setConnectionManager (connectionManager);
 	savedGame->setStaticMap (windowNetworkLobby->getStaticMap());
-	savedGame->setGameSettings (windowNetworkLobby->getGameSettings());
-	savedGame->setPlayers (windowNetworkLobby->getPlayersNotShared(), *windowNetworkLobby->getLocalPlayer());
+	//savedGame->setPlayers (windowNetworkLobby->getPlayersNotShared(), *windowNetworkLobby->getLocalPlayer());
+	savedGame->setPlayers(windowNetworkLobby->getSaveGameInfo().players, *windowNetworkLobby->getLocalPlayer());
 
 	application.closeTill (*windowNetworkLobby);
 	windowNetworkLobby->close();
 	signalConnectionManager.connect (windowNetworkLobby->terminated, [&]() { windowNetworkLobby = nullptr; });
 
 	savedGame->start (application);
-	*/
+	
 }
 
 //------------------------------------------------------------------------------
@@ -525,7 +525,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_PLAYER_NUMBER(cMu
 {
 	if (!connectionManager || !windowNetworkLobby) return;
 
-	windowNetworkLobby->getLocalPlayer()->setNr (message.playerNr);
+	windowNetworkLobby->getLocalPlayer()->setNr (message.newPlayerNr);
 }
 
 //------------------------------------------------------------------------------
@@ -624,25 +624,20 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_OPTIONS(cMuMsgOpt
 		windowNetworkLobby->setStaticMap (nullptr);
 	}
 	
-	windowNetworkLobby->setSaveGame (message.savePlayers, message.saveGameName);
+	windowNetworkLobby->setSaveGame (message.saveInfo);
 
 }
 
 //------------------------------------------------------------------------------
 void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_START_GAME_PREPARATIONS(cMuMsgStartGamePreparations& message)
 {
+	if (windowNetworkLobby->getSaveGameInfo().number != -1) return;
+
 	windowLandingPositionSelection = nullptr;
 
 	saveOptions();
 
-	if (windowNetworkLobby->getSaveGamePlayers().size() != 0)
-	{
-		startSavedGame();
-	}
-	else
-	{
-		startGamePreparation(message);
-	}
+	startGamePreparation(message);
 }
 
 //------------------------------------------------------------------------------
@@ -656,9 +651,16 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_LANDING_STATE(cMu
 //------------------------------------------------------------------------------
 void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_START_GAME(cMuMsgStartGame& message)
 {
-	if (!newGame) return;
+	if (windowNetworkLobby->getSaveGameInfo().number != -1)
+	{
+		startSavedGame();
+	}
+	else
+	{
+		if (!newGame) return;
 
-	startNewGame();
+		startNewGame();
+	}
 }
 
 //------------------------------------------------------------------------------

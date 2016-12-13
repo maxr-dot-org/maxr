@@ -644,15 +644,15 @@ void cGameGuiController::initChatCommands()
 			if (!server)
 			{
 				//resync command on clients not yet implemented
-				throw std::runtime_error("Command not implemented");
+				client->sendNetMessage(cNetMessageRequestResync(client->getActivePlayer().getId()));
 			}
 			if (player != nullptr)
 			{
-				server->resyncClientModel(player->getId());
+				client->sendNetMessage(cNetMessageRequestResync(player->getId()));
 			}
 			else
 			{
-				server->resyncClientModel();
+				client->sendNetMessage(cNetMessageRequestResync());
 			}
 		})
 	);
@@ -1302,7 +1302,7 @@ void cGameGuiController::showFilesWindow()
 			gameGui->exit();
 		});
 	});
-	loadSaveWindow->load.connect ([this, loadSaveWindow] (int saveNumber)
+	loadSaveWindow->load.connect ([this, loadSaveWindow] (const cSaveGameInfo& saveInfo)
 	{
 		// loading games while game is running is not yet implemented
 		application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~INFO_Not_Implemented")));

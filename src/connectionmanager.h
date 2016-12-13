@@ -56,6 +56,7 @@ public:
 	void declineConnection(const cSocket* socket);
 	void connectToServer(const std::string& host, int port, const cPlayerBasicData& player);
 	bool isConnectedToServer() const;
+	void changePlayerNumber(int currentNr, int newNr);
 
 	void setLocalClient(INetMessageReceiver* client, int playerNr);
 	void setLocalServer(INetMessageReceiver* server);
@@ -64,6 +65,7 @@ public:
 	int sendToPlayer(const cNetMessage2& message, int playerNr);
 	int sendToPlayers(const cNetMessage2& message);
 
+	void disconnect(int player);
 	void disconnectAll();
 
 

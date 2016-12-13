@@ -23,11 +23,13 @@
 #include "game/data/player/player.h"
 #include "game/data/savegame.h"
 #include "game/data/map/map.h"
+#include "mapdownload.h"
+#include "../../../application.h"
+#include "../../dialogs/dialogok.h"
 
 //------------------------------------------------------------------------------
 cWindowNetworkLobbyHost::cWindowNetworkLobbyHost() :
-	cWindowNetworkLobby (lngPack.i18n ("Text~Others~TCPIP_Host"), true),
-	saveGameNumber(-1)
+	cWindowNetworkLobby (lngPack.i18n ("Text~Others~TCPIP_Host"), true)
 {
 	auto mapButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 42), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Choose_Planet")));
 	signalConnectionManager.connect (mapButton->clicked, std::bind (&cWindowNetworkLobbyHost::handleMapClicked, this));
@@ -44,8 +46,8 @@ cWindowNetworkLobbyHost::cWindowNetworkLobbyHost() :
 	auto okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 450), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
 	signalConnectionManager.connect (okButton->clicked, std::bind (&cWindowNetworkLobbyHost::handleOkClicked, this));
 
-	signalConnectionManager.connect (staticMapChanged, [this]() {setSaveGame (-1); });
-	signalConnectionManager.connect (gameSettingsChanged, [this]() {setSaveGame (-1); });
+	signalConnectionManager.connect (staticMapChanged, [this]() {setSaveGame (cSaveGameInfo(-1), nullptr); });
+	signalConnectionManager.connect(gameSettingsChanged, [this]() {setSaveGame(cSaveGameInfo(-1), nullptr); });
 }
 
 //------------------------------------------------------------------------------
@@ -79,36 +81,31 @@ void cWindowNetworkLobbyHost::handleOkClicked()
 }
 
 //------------------------------------------------------------------------------
-void cWindowNetworkLobbyHost::setSaveGame (int saveGameNumber_)
+bool cWindowNetworkLobbyHost::setSaveGame(const cSaveGameInfo& saveGameInfo_, cApplication* application)
 {
-	saveGameNumber = saveGameNumber_;
 
-	/*if (saveGameNumber >= 0)
+	if (saveGameInfo_.number >= 0)
 	{
-		cSavegame saveGame (saveGameNumber_);
-
-		saveGame.loadHeader (&saveGameName, nullptr, nullptr);
-		saveGamePlayers = saveGame.loadPlayers();
-
 		staticMap = std::make_shared<cStaticMap>();
-		if (!staticMap->loadMap (saveGame.loadMapName()))
+		if (!staticMap->loadMap(saveGameInfo_.mapName))
 		{
-			// error dialog
 			staticMap = nullptr;
+			application->show(std::make_shared<cDialogOk>("Map \"" + saveGameInfo_.mapName + "\" not found"));
+			return false;
+		}
+		else if (MapDownload::calculateCheckSum(saveGameInfo_.mapName) != saveGameInfo_.mapCrc)
+		{
+			staticMap = nullptr;
+			application->show(std::make_shared<cDialogOk>("The map \"" + saveGameInfo_.mapName + "\" does not match the map the game was started with")); // TODO: translate
+			return false;
 		}
 	}
-	else
-	{
-		saveGamePlayers.clear();
-		saveGameName.clear();
-	}*/
+
+	saveGameInfo = saveGameInfo_;
 
 	updateMap();
 	updateSettingsText();
 	saveGameChanged();
-}
-//------------------------------------------------------------------------------
-int cWindowNetworkLobbyHost::getSaveGameNumber() const
-{
-	return saveGameNumber;
+
+	return true;
 }

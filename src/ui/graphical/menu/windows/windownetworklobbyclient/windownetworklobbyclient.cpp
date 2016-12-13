@@ -47,10 +47,9 @@ void cWindowNetworkLobbyClient::handleConnectClicked()
 }
 
 //------------------------------------------------------------------------------
-void cWindowNetworkLobbyClient::setSaveGame (const std::vector<cPlayerBasicData>& players, std::string saveGameName_)
+void cWindowNetworkLobbyClient::setSaveGame (const cSaveGameInfo& saveInfo_)
 {
-	saveGamePlayers = players;
-	saveGameName = saveGameName_;
+	saveGameInfo = saveInfo_;
 
 	updateSettingsText();
 }

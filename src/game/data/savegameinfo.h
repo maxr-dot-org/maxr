@@ -24,6 +24,7 @@
 
 #include "utility/version.h"
 #include "utility/serialization/serialization.h"
+#include "player/playerbasicdata.h"
 
 /**
 * The Types which are possible for a game
@@ -43,7 +44,7 @@ class cSaveGameInfo
 public:
 	explicit cSaveGameInfo(int number);
 
-	std::vector<std::string> playerNames; //TODO: color? ID?
+	// header
 	cVersion saveVersion;
 	std::string gameVersion;
 	std::string gameName;
@@ -52,19 +53,28 @@ public:
 	/** the date and time when this save game was saved */
 	std::string date;
 
+	// infos from model
+	std::vector<cPlayerBasicData> players;
+	std::string mapName;
+	uint32_t mapCrc;
+	//int turn;
+
 	/** the slot number of the save game */
 	int number;
 
 	template <typename T>
 	void serialize(T& archive)
 	{
-		archive & NVP(playerNames);
-		archive & NVP(gameVersion);
-		//archive & NVP(saveVersion); // version is written as attribute of the root element
-		archive & NVP(gameName);
-		archive & NVP(type);
-		archive & NVP(date);
-		//archive & NVP(number);      // slot number is not part of the save xml
+		archive & saveVersion;
+		archive & gameVersion;
+		archive & gameName;
+		archive & type;
+		archive & date;
+		archive & players;
+		archive & mapName;
+		archive & mapCrc;
+		//archive & turn;
+		archive & number;
 	}
 };
 

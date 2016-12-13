@@ -59,7 +59,7 @@ public:
 	const cModel& getModel() const;
 	void saveGameState(int saveGameNumber, const std::string & saveName) const;
 	void loadGameState(int saveGameNumber);
-	void sendGuiInfoToClients(int saveGameNumber);
+	void sendGuiInfoToClients(int saveGameNumber, int playerNr = -1);
 
 	void resyncClientModel(int playerNr = -1) const;
 

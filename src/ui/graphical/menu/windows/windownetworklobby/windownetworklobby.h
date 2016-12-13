@@ -25,6 +25,7 @@
 #include "ui/graphical/window.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
+#include "game/data/savegameinfo.h"
 
 class cLabel;
 class cImage;
@@ -50,16 +51,13 @@ public:
 
 	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
 	void setGameSettings (std::unique_ptr<cGameSettings> gameSettings);
-	void setSaveGame (int saveGameNumber);
 
 	void setMapDownloadPercent (int percent);
 	void setMapDownloadCanceled();
 
 	const std::shared_ptr<cStaticMap>& getStaticMap() const;
 	const std::shared_ptr<cGameSettings>& getGameSettings() const;
-	const std::vector<cPlayerBasicData>& getSaveGamePlayers() const;
-	std::string getSaveGameName() const;
-
+	const cSaveGameInfo& getSaveGameInfo() const;
 	const std::shared_ptr<cPlayerBasicData>& getLocalPlayer() const;
 	std::vector<std::shared_ptr<cPlayerBasicData>> getPlayers() const;
 	std::vector<cPlayerBasicData> getPlayersNotShared() const;
@@ -104,9 +102,7 @@ protected:
 	std::shared_ptr<cPlayerBasicData> localPlayer;
 	std::shared_ptr<cStaticMap> staticMap;
 	std::shared_ptr<cGameSettings> gameSettings;
-
-	std::string saveGameName;
-	std::vector<cPlayerBasicData> saveGamePlayers;
+	cSaveGameInfo saveGameInfo;
 
 	void updateSettingsText();
 	void updateMap();

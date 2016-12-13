@@ -194,11 +194,13 @@ void cMuMsgPlayerNr::serialize(cTextArchiveIn& archive)
 cMuMsgOptions::cMuMsgOptions() :
 	cMultiplayerLobbyMessage(eMessageType::MU_MSG_OPTIONS),
 	mapCrc(0),
-	settingsValid(false)
+	settingsValid(false),
+	saveInfo(-1)
 {}
 
 cMuMsgOptions::cMuMsgOptions(cBinaryArchiveOut& archive) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_OPTIONS)
+	cMultiplayerLobbyMessage(eMessageType::MU_MSG_OPTIONS),
+	saveInfo(-1)
 {
 	serializeThis(archive);
 }

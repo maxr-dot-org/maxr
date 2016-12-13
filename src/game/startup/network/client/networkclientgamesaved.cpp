@@ -32,13 +32,10 @@ cNetworkClientGameSaved::cNetworkClientGameSaved()
 //------------------------------------------------------------------------------
 void cNetworkClientGameSaved::start (cApplication& application)
 {
-	//localClient = std::make_shared<cClient> (nullptr, network); //TODO
-
+	localClient = std::make_shared<cClient> (connectionManager);
+	connectionManager->setLocalClient(localClient.get(), localPlayerNr);
 	localClient->setPlayers (players, localPlayerNr);
-//	localClient->setMap (staticMap);
-	localClient->setGameSettings (*gameSettings);
-
-	sendRequestResync (*localClient, localClient->getActivePlayer().getId(), true);
+	localClient->setMap (staticMap);
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
@@ -61,22 +58,9 @@ void cNetworkClientGameSaved::setPlayers (std::vector<cPlayerBasicData> players_
 }
 
 //------------------------------------------------------------------------------
-void cNetworkClientGameSaved::setGameSettings (std::shared_ptr<cGameSettings> gameSettings_)
-{
-	gameSettings = gameSettings_;
-}
-
-
-//------------------------------------------------------------------------------
 void cNetworkClientGameSaved::setStaticMap (std::shared_ptr<cStaticMap> staticMap_)
 {
 	staticMap = staticMap_;
-}
-
-//------------------------------------------------------------------------------
-const std::shared_ptr<cGameSettings>& cNetworkClientGameSaved::getGameSettings()
-{
-	return gameSettings;
 }
 
 //------------------------------------------------------------------------------

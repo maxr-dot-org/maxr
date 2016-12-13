@@ -33,6 +33,7 @@ class cPlayerBasicData;
 class cNetworkHostGameSaved : public cNetworkHostGame
 {
 public:
+	void loadGameData();
 	void start (cApplication& application);
 
 	void setSaveGameNumber (int saveGameNumber);

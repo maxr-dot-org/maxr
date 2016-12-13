@@ -22,7 +22,6 @@
 
 uint32_t cPosition::getChecksum(uint32_t crc) const
 {
-	//TODO: test performance
 	crc = calcCheckSum((*this)[0], crc);
 	crc = calcCheckSum((*this)[1], crc);
 

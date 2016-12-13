@@ -27,72 +27,47 @@
 #include "game/data/savegame.h"
 #include "game/data/report/savedreport.h"
 
+void cNetworkHostGameSaved::loadGameData()
+{
+	// cNetworkHostGameSaved::start() must not throw any errors,
+	// because clients are already started. So try to load 
+	// game data in this function, before initializing gameGui & clients
+
+	server = std::make_unique<cServer2>(connectionManager);
+	server->loadGameState(saveGameNumber);
+
+}
+
 //------------------------------------------------------------------------------
 void cNetworkHostGameSaved::start (cApplication& application)
 {
-	//server = std::make_unique<cServer> (network);
-	//localClient = std::make_shared<cClient> (server.get(), nullptr); //TODO: use new server
+	// setup server
+	connectionManager->setLocalServer(server.get());
 
-	//cSavegame savegame (saveGameNumber);
-	//if (savegame.load (*server) == false) return; // TODO: error message
+	//setup client
+	localClient = std::make_shared<cClient> (connectionManager);
+	connectionManager->setLocalClient(localClient.get(), localPlayerNr);
+	localClient->setPlayers(players, localPlayerNr);
+	auto staticMap = server->getModel().getMap()->staticMap;
+	localClient->setMap (staticMap);
 
-//	auto staticMap = server->Map->staticMap;
-//	localClient->setMap (staticMap);
+	
+	//TODO: turnbased mode
+	//if (server->getGameSettings()->getGameType() == eGameSettingsGameType::Turns)
+	//{
+	//	sendWaitFor (*server, *server->getActiveTurnPlayer(), nullptr);
+	//}
 
-//	const auto& serverPlayerList = server->playerList;
-//	if (serverPlayerList.empty()) return;
-
-	// set socket index for server players
-/*	for (const auto& serverPlayer : serverPlayerList)
-	{
-		if (serverPlayer->getId() == players[localPlayerIndex].getNr())
-		{
-			serverPlayer->setLocal();
-		}
-		else
-		{
-			auto iter = std::find_if(players.begin(), players.end(), [&] (const cPlayerBasicData & player) { return player.getNr() == serverPlayer->getId(); });
-			assert(iter != players.end());
-			const auto& listPlayer = *iter;
-
-			serverPlayer->setSocketIndex (listPlayer.getSocketIndex());
-		}
-	}
-*/
-	localClient->setPlayers (players, localPlayerNr);
-
-	/*if (server->getGameSettings()->getGameType() == eGameSettingsGameType::Turns)
-	{
-		sendWaitFor (*server, *server->getActiveTurnPlayer(), nullptr);
-	}*/
-
+	localClient->sendNetMessage(cNetMessageRequestResync(-1, saveGameNumber));
 	server->start();
 
-	sendRequestResync (*localClient, localPlayerNr, true);
+	// TODO: implement timers
+	//server->startTurnTimers();
 
-	// TODO: move that in server
-//	for (size_t i = 0; i != serverPlayerList.size(); ++i)
-	{
-//		sendGameSettings (*server, *serverPlayerList[i]);
-		//sendGameGuiState (*server, server->getPlayerGameGuiState (*serverPlayerList[i]), *serverPlayerList[i]);
-/*		auto& reportList = serverPlayerList[i]->savedReportsList;
-		for (size_t j = 0; j != reportList.size(); ++j)
-		{
-			sendSavedReport (*server, *reportList[j], serverPlayerList[i].get());
-		}
-		reportList.clear();
-		*/
-	}
-
-	// start game
-//	server->serverState = SERVER_STATE_INGAME;
-
-	// TODO: save/load game time
-//	server->startTurnTimers();
-
-//	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
+	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
 	gameGuiController->setSingleClient (localClient);
+	gameGuiController->setServer(server.get());
 
 	gameGuiController->start();
 

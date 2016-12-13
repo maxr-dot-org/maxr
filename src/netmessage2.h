@@ -49,13 +49,14 @@ enum class eNetMessageType {
 	ACTION, /** the set of actions a client (AI or player) can trigger to influence the game */
 	GAMETIME_SYNC_SERVER, /** sync message from server to clients */
 	GAMETIME_SYNC_CLIENT, /** sync message from client to server */
-	RANDOM_SEED,
-	PLAYERSTATE,
-	REPORT,
-	GUI_SAVE_INFO,
-	REQUEST_GUI_SAVE_INFO,
-	RESYNC_MODEL,
-	MULTIPLAYER_LOBBY,
+	RANDOM_SEED,          /** initialize the synchonized random generator of the models */
+	PLAYERSTATE, 
+	REPORT,               /** chat messages and other reports for the player */
+	GUI_SAVE_INFO,        /** saved reports and gui settings */
+	REQUEST_GUI_SAVE_INFO,/** requests the clients to send their gui data for saving */
+	RESYNC_MODEL,         /** transfer a copy of the complete modeldata to clients */
+	REQUEST_RESYNC_MODEL, /** instructs the server to send a copy of the model */
+	MULTIPLAYER_LOBBY,    /** messages for multiplayer lobby and game preparation menus */
 };
 std::string enumToString(eNetMessageType value);
 
@@ -448,6 +449,36 @@ public:
 	// no serialization needed, because this is a local event
 
 	int playerNr;
+};
+
+//------------------------------------------------------------------------------
+class cNetMessageRequestResync : public cNetMessage2
+{
+public:
+	cNetMessageRequestResync(int playerToSync = -1, int saveNumberForGuiInfo = -1) :
+		cNetMessage2(eNetMessageType::REQUEST_RESYNC_MODEL),
+		playerToSync(playerToSync),
+		saveNumberForGuiInfo(saveNumberForGuiInfo)
+	{};
+	cNetMessageRequestResync(cBinaryArchiveOut& archive) :
+		cNetMessage2(eNetMessageType::REQUEST_RESYNC_MODEL)
+	{
+		serializeThis(archive);
+	};
+
+	virtual void serialize(cBinaryArchiveIn& archive) { cNetMessage2::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive)   { cNetMessage2::serialize(archive); serializeThis(archive); }
+
+	int playerToSync;         // playerNr who will receive the data. -1 for all connected players
+	int saveNumberForGuiInfo; // number of save game file, from which gui info will be loaded. -1 disables loading gui data
+
+private:
+	template<typename T>
+	void serializeThis(T& archive)
+	{
+		archive & playerToSync;
+		archive & saveNumberForGuiInfo;
+	}
 };
 
 #endif //netmessage2H

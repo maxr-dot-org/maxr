@@ -150,7 +150,33 @@ cSaveGameInfo cSavegame::loadSaveInfo(int slot)
 	try
 	{
 		cXmlArchiveOut archive(*xmlDocument.RootElement());
-		archive >> serialization::makeNvp("header", info);
+		archive.enterChild("header");
+		archive >> serialization::makeNvp("gameVersion", info.gameVersion);
+		archive >> serialization::makeNvp("gameName", info.gameName);
+		archive >> serialization::makeNvp("type", info.type);
+		archive >> serialization::makeNvp("date", info.date);
+		archive.leaveChild(); // header
+
+		archive.enterChild("model");
+		int numPlayers;
+		archive >> NVP(numPlayers);
+		info.players.resize(numPlayers);
+		for (int i = 0; i < numPlayers; i++)
+		{
+			archive.enterChild("player");
+			archive >> serialization::makeNvp("splayer", info.players[i]);
+			archive.leaveChild(); // player
+		}
+		archive.enterChild("map");
+		archive.enterChild("mapFile");
+		archive >> serialization::makeNvp("filename", info.mapName);
+		archive >> serialization::makeNvp("crc", info.mapCrc);
+		archive.leaveChild(); // mapFile
+		archive.leaveChild(); // map
+		archive.leaveChild(); // model
+		
+		//TODO: load turn
+
 	}
 	catch (std::runtime_error e)
 	{
@@ -185,30 +211,25 @@ void cSavegame::writeHeader(int slot, const std::string& saveName, const cModel 
 	tm* tmTime = localtime(&tTime);
 	strftime(timestr, 21, "%d.%m.%y %H:%M", tmTime);
 
-	cSaveGameInfo header(slot);
-	header.date = timestr;
-	header.gameName = saveName;
-	for (auto player : model.getPlayerList())
-	{
-		header.playerNames.push_back(player->getName());
-	}
-	header.type = GAME_TYPE_SINGLE;
+	eGameTypes type = GAME_TYPE_SINGLE;
 	int humanPlayers = 0;
 	for (auto player : model.getPlayerList())
 	{
-		if (!player->isHuman())
+		if (player->isHuman())
 			humanPlayers++;
 	}
 	if (humanPlayers > 1)
-		header.type = GAME_TYPE_TCPIP;
+		type = GAME_TYPE_TCPIP;
 	if (model.getGameSettings()->getGameType() == eGameSettingsGameType::HotSeat)
-		header.type = GAME_TYPE_HOTSEAT;
-
-	header.saveVersion = cVersion(SAVE_FORMAT_VERSION);
-	header.gameVersion = (std::string) PACKAGE_VERSION + " " + PACKAGE_REV;
+		type = GAME_TYPE_HOTSEAT;
 
 	cXmlArchiveIn archive(*xmlDocument.RootElement());
-	archive << NVP(header);
+	archive.openNewChild("header");
+	archive << serialization::makeNvp("gameVersion", std::string(PACKAGE_VERSION  " "  PACKAGE_REV));
+	archive << serialization::makeNvp("gameName", saveName);
+	archive << serialization::makeNvp("type", type);
+	archive << serialization::makeNvp("date", std::string(timestr));
+	archive.closeChild();
 }
 
 
@@ -290,12 +311,12 @@ void cSavegame::loadModel(cModel& model, int slot)
 	
 	if (crcFromSave != modelCrc)
 	{
-		Log.write(" Crc of loaded model does not match the saved crc!", cLog::eLOG_TYPE_ERROR);
+		Log.write(" Crc of loaded model does not match the saved crc!", cLog::eLOG_TYPE_NET_ERROR);
 		//TODO: what to do in this case?
 	}
 }
 
-void cSavegame::loadGuiInfo(const cServer2* server, int slot)
+void cSavegame::loadGuiInfo(const cServer2* server, int slot, int playerNr)
 {
 	if (!loadDocument(slot))
 	{
@@ -321,7 +342,10 @@ void cSavegame::loadGuiInfo(const cServer2* server, int slot)
 		}
 		archive >> serialization::makeNvp("savedPositions", guiInfo.savedPositions);
 
-		server->sendMessageToClients(guiInfo, guiInfo.playerNr);
+		if (guiInfo.playerNr == playerNr || playerNr == -1)
+		{
+			server->sendMessageToClients(guiInfo, guiInfo.playerNr);
+		}
 
 		guiInfoElement = guiInfoElement->NextSiblingElement("GuiInfo");
 	}

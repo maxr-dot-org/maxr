@@ -134,7 +134,7 @@ void cConnectionManager::acceptConnection(const cSocket* socket, int playerNr)
 	if (x == clientSockets.end())
 	{
 		//looks like the connection was disconnected during the handshake
-		Log.write("ConnectionManager: accept called for unknown socket", cLog::eLOG_TYPE_WARNING);
+		Log.write("ConnectionManager: accept called for unknown socket", cLog::eLOG_TYPE_NET_WARNING);
 		localServer->pushMessage(std::make_unique<cNetMessageTcpClose>(playerNr));
 
 		return;
@@ -149,7 +149,7 @@ void cConnectionManager::acceptConnection(const cSocket* socket, int playerNr)
 
 	cTextArchiveIn archive;
 	archive << message;
-	Log.write("ConnectionManager: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write("ConnectionManager: --> " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
 
 	sendMessage(socket, message);
 }
@@ -167,7 +167,7 @@ void cConnectionManager::declineConnection(const cSocket* socket)
 	if (x == clientSockets.end())
 	{
 		//looks like the connection was disconnected during the handshake
-		Log.write("ConnectionManager: decline called for unknown socket", cLog::eLOG_TYPE_WARNING);
+		Log.write("ConnectionManager: decline called for unknown socket", cLog::eLOG_TYPE_NET_WARNING);
 	}
 
 	network->close(socket);
@@ -200,6 +200,26 @@ bool cConnectionManager::isConnectedToServer() const
 	cLockGuard<cMutex> tl(mutex);
 
 	return connecting || serverSocket != nullptr;
+}
+
+//------------------------------------------------------------------------------
+void cConnectionManager::changePlayerNumber(int currentNr, int newNr)
+{
+	cLockGuard<cMutex> tl(mutex);
+
+	if (localPlayer == currentNr)
+	{
+		localPlayer = newNr;
+		return;
+	}
+
+	auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<const cSocket*, int>& x) { return x.second == currentNr; });
+	if (x == clientSockets.end())
+	{
+		Log.write("Connection Manager: Can't change playerNr. Unknown player " + toString(currentNr), cLog::eLOG_TYPE_NET_ERROR);
+		return;
+	}
+	x->second = newNr;
 }
 
 //------------------------------------------------------------------------------
@@ -261,7 +281,6 @@ int cConnectionManager::sendToServer(const cNetMessage2& message)
 //------------------------------------------------------------------------------
 int cConnectionManager::sendToPlayer(const cNetMessage2& message, int playerNr)
 {
-	//TODO: listen to MU_MSG_PLAYER_NR
 	cLockGuard<cMutex> tl(mutex);
 
 	if (playerNr == localPlayer)
@@ -307,6 +326,21 @@ int cConnectionManager::sendToPlayers(const cNetMessage2& message)
 }
 
 //------------------------------------------------------------------------------
+void cConnectionManager::disconnect(int player)
+{
+	cLockGuard<cMutex> tl(mutex);
+
+	auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<const cSocket*, int>& x) { return x.second == player; });
+	if (x == clientSockets.end())
+	{
+		Log.write("ConnectionManager: Can't disconnect player. No connection to player " + toString(player), cLog::eLOG_TYPE_NET_ERROR);
+		return;
+	}
+
+	network->close(x->first);
+}
+
+//------------------------------------------------------------------------------
 void cConnectionManager::disconnectAll()
 {
 	cLockGuard<cMutex> tl(mutex);
@@ -341,7 +375,7 @@ void cConnectionManager::connectionClosed(const cSocket* socket)
 		auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<const cSocket*, int>& x) { return x.first == socket; });
 		if (x == clientSockets.end())
 		{
-			Log.write("ConnectionManager: An unknown connection was closed", cLog::eLOG_TYPE_ERROR);
+			Log.write("ConnectionManager: An unknown connection was closed", cLog::eLOG_TYPE_NET_ERROR);
 			return;
 		}
 

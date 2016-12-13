@@ -50,11 +50,8 @@ public:
 
 	void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
 
-	void setGameSettings (std::shared_ptr<cGameSettings> gameSettings);
-
 	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
 
-	const std::shared_ptr<cGameSettings>& getGameSettings();
 	const std::shared_ptr<cStaticMap>& getStaticMap();
 	const std::vector<cPlayerBasicData>& getPlayers();
 	const cPlayerBasicData& getLocalPlayer();
@@ -67,7 +64,6 @@ private:
 	std::vector<cPlayerBasicData> players;
 
 	std::shared_ptr<cStaticMap> staticMap;
-	std::shared_ptr<cGameSettings> gameSettings;
 };
 
 #endif // game_startup_network_client_networkclientgamesavedH

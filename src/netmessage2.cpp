@@ -65,6 +65,8 @@ std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(const unsigned char
 		message = std::make_unique<cNetMessageRequestGUISaveInfo>(archive); break;
 	case eNetMessageType::RESYNC_MODEL:
 		message = std::make_unique<cNetMessageResyncModel>(archive); break;
+	case eNetMessageType::REQUEST_RESYNC_MODEL:
+		message = std::make_unique<cNetMessageRequestResync>(archive); break;
 	case eNetMessageType::MULTIPLAYER_LOBBY:
 		message = cMultiplayerLobbyMessage::createFromBuffer(archive); break;
 
@@ -108,6 +110,7 @@ std::string enumToString(eNetMessageType value)
 	case eNetMessageType::GUI_SAVE_INFO: return "GUI_SAVE_INFO";
 	case eNetMessageType::REQUEST_GUI_SAVE_INFO: return "REQUEST_GUI_SAVE_INFO";
 	case eNetMessageType::RESYNC_MODEL: return "RESYNC_MODEL";
+	case eNetMessageType::REQUEST_RESYNC_MODEL: return "REQUEST_RESYNC_MODEL";
 	case eNetMessageType::MULTIPLAYER_LOBBY: return "MULTIPLAYER_LOBBY";
 	case eNetMessageType::TCP_HELLO: return "TCP_HELLO";
 	case eNetMessageType::TCP_WANT_CONNECT: return "TCP_WANT_CONNECT";

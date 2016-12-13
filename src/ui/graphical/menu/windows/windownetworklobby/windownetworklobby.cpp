@@ -39,7 +39,8 @@
 //------------------------------------------------------------------------------
 cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableIp) :
 	cWindow (LoadPCX (GFXOD_MULT)),
-	localPlayer (std::make_shared<cPlayerBasicData> (cSettings::getInstance().getPlayerName(), cPlayerColor (cSettings::getInstance().getPlayerColor()), 0))
+	saveGameInfo(-1),
+	localPlayer (std::make_shared<cPlayerBasicData> (cSettings::getInstance().getPlayerName(), cPlayerColor (cSettings::getInstance().getPlayerColor()), 1))
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 11), getPosition() + cPosition (getArea().getMaxCorner().x(), 11 + 10)), title, FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
@@ -142,14 +143,13 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 void cWindowNetworkLobby::updateSettingsText()
 {
 	std::string text = lngPack.i18n ("Text~Main~Version", PACKAGE_VERSION) + "\n";
-	//text += "Checksum: " + iToStr (cSettings::getInstance().Checksum) + "\n\n";
 
-	if (saveGamePlayers.size() != 0)
+	if (saveGameInfo.number >= 0)
 	{
-		text += lngPack.i18n ("Text~Title~Savegame") + ":\n  " + saveGameName +  "\n\n" + lngPack.i18n ("Text~Title~Players") + "\n";
-		for (size_t i = 0; i < saveGamePlayers.size(); ++i)
+		text += lngPack.i18n("Text~Title~Savegame") + ":\n  " + saveGameInfo.gameName + "\n\n" + lngPack.i18n("Text~Title~Players") + "\n";
+		for (size_t i = 0; i < saveGameInfo.players.size(); ++i)
 		{
-			text += saveGamePlayers[i].getName() + "\n";
+			text += saveGameInfo.players[i].getName() + "\n";
 		}
 		text += "\n";
 	}
@@ -158,11 +158,14 @@ void cWindowNetworkLobby::updateSettingsText()
 		text += lngPack.i18n ("Text~Title~Map") + lngPack.i18n ("Text~Punctuation~Colon") + staticMap->getName();
 		text += " (" + iToStr (staticMap->getSize().x()) + "x" + iToStr (staticMap->getSize().y()) + ")\n";
 	}
-	else if (saveGamePlayers.size() == 0) text += lngPack.i18n ("Text~Multiplayer~Map_NoSet") + "\n";
+	else if (saveGameInfo.number < 0)
+	{
+		text += lngPack.i18n ("Text~Multiplayer~Map_NoSet") + "\n";
+	}
 
 	text += "\n";
 
-	if (saveGamePlayers.size() == 0)
+	if (saveGameInfo.number < 0)
 	{
 		if (gameSettings)
 		{
@@ -333,21 +336,15 @@ const std::shared_ptr<cGameSettings>& cWindowNetworkLobby::getGameSettings() con
 }
 
 //------------------------------------------------------------------------------
+const cSaveGameInfo& cWindowNetworkLobby::getSaveGameInfo() const
+{
+	return saveGameInfo;
+}
+
+//------------------------------------------------------------------------------
 const std::shared_ptr<cStaticMap>& cWindowNetworkLobby::getStaticMap() const
 {
 	return staticMap;
-}
-
-//------------------------------------------------------------------------------
-const std::vector<cPlayerBasicData>& cWindowNetworkLobby::getSaveGamePlayers() const
-{
-	return saveGamePlayers;
-}
-
-//------------------------------------------------------------------------------
-std::string cWindowNetworkLobby::getSaveGameName() const
-{
-	return saveGameName;
 }
 
 //------------------------------------------------------------------------------

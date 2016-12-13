@@ -40,7 +40,7 @@ public:
 
 	void update();
 
-	cSignal<void (int)> load;
+	cSignal<void (const cSaveGameInfo&)> load;
 
 protected:
 	virtual void handleSlotClicked (size_t index);

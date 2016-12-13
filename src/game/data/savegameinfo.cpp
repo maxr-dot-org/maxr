@@ -26,4 +26,5 @@ cSaveGameInfo::cSaveGameInfo(int number) :
 	type(GAME_TYPE_SINGLE),
 	number(number),
 	saveVersion("0.0")
+	//turn(0)
 {}

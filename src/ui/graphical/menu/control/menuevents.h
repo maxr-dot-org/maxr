@@ -21,9 +21,10 @@
 
 
 #include "netmessage2.h"
-#include "game\data\gamesettings.h"
-#include "game\data\player\playerbasicdata.h"
-#include "game\logic\landingpositionstate.h"
+#include "game/data/gamesettings.h"
+#include "game/data/player/playerbasicdata.h"
+#include "game/logic/landingpositionstate.h"
+#include "game/data/savegameinfo.h"
 
 class cUnitsData;
 class cClanData;
@@ -128,8 +129,7 @@ public:
 	virtual void serialize(cBinaryArchiveIn& archive);
 	virtual void serialize(cTextArchiveIn& archive);
 
-	std::string saveGameName;
-	std::vector<cPlayerBasicData> savePlayers;
+	cSaveGameInfo saveInfo;
 	std::string mapName;
 	Uint32 mapCrc;
 	cGameSettings settings;
@@ -139,8 +139,7 @@ private:
 	template<typename T>
 	void serializeThis(T& archive)
 	{
-		archive & saveGameName;
-		archive & savePlayers;
+		archive & saveInfo;
 		archive & mapName;
 		archive & mapCrc;
 		archive & settings;
