@@ -123,7 +123,8 @@ void cVehicle::drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest,
 	if (uiData.hasOverlay == false || cSettings::getInstance().isAnimations() == false) return;
 
 	const Uint16 size = (Uint16) (uiData.overlay_org->h * zoomFactor);
-	SDL_Rect src = {Sint16 (frameNr * size), 0, size, size};
+	const Uint16 srcX = Round((uiData.overlay_org->h * frameNr) * zoomFactor);
+	SDL_Rect src = {srcX, 0, size, size};
 
 	SDL_Rect tmp = dest;
 	const int offset = Round (64.0f * zoomFactor) / 2 - src.h / 2;
@@ -133,7 +134,7 @@ void cVehicle::drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest,
 	SDL_SetSurfaceAlphaMod (uiData.overlay.get(), alpha);
 	blitWithPreScale (uiData.overlay_org.get(), uiData.overlay.get(), &src, surface, &tmp, zoomFactor);
 }
-
+ 
 void cVehicle::drawOverlayAnimation (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const
 {
 	if (uiData->hasOverlay == false || cSettings::getInstance().isAnimations() == false) return;
