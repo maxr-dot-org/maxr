@@ -86,6 +86,7 @@ private:
 	void startLandingUnitSelection(bool isFirstWindowOnGamePreparation);
 	void startLandingPositionSelection();
 	void startNewGame();
+	void reconnectToGame(const cNetMessageGameAlreadyRunning& message);
 	void checkReallyWantsToQuit();
 
 	void handleNetMessage (cNetMessage2& message);
@@ -101,8 +102,7 @@ private:
 	void handleNetMessage_MU_MSG_START_GAME_PREPARATIONS(cMuMsgStartGamePreparations& message);
 	void handleNetMessage_MU_MSG_LANDING_STATE(cMuMsgLandingState& message);
 	void handleNetMessage_MU_MSG_START_GAME(cMuMsgStartGame& message);
-	//void handleNetMessage_GAME_EV_REQ_RECON_IDENT (cNetMessage2& message);
-	//void handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage2& message);
+	void handleNetMessage_GAME_ALREADY_RUNNING(cNetMessageGameAlreadyRunning& message);
 	void handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS(cMuMsgInLandingPositionSelectionStatus& message);
 	void handleNetMessage_MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION(cMuMsgPlayerHasSelectedLandingPosition& message);
 	void handleNetMessage_MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION(cMuMsgPlayerAbortedGamePreparations& message);

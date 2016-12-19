@@ -155,7 +155,7 @@ void cConnectionManager::acceptConnection(const cSocket* socket, int playerNr)
 }
 
 //------------------------------------------------------------------------------
-void cConnectionManager::declineConnection(const cSocket* socket)
+void cConnectionManager::declineConnection(const cSocket* socket, const std::string& reason)
 {
 	assert(localServer != nullptr);
 
@@ -168,7 +168,16 @@ void cConnectionManager::declineConnection(const cSocket* socket)
 	{
 		//looks like the connection was disconnected during the handshake
 		Log.write("ConnectionManager: decline called for unknown socket", cLog::eLOG_TYPE_NET_WARNING);
+		return;
 	}
+
+	cNetMessageTcpConnectFailed message(reason);
+
+	cTextArchiveIn archive;
+	archive << message;
+	Log.write("ConnectionManager: --> " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
+
+	sendMessage(socket, message);
 
 	network->close(socket);
 }

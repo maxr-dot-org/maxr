@@ -53,7 +53,7 @@ public:
 	bool isServerOpen() const;
 
 	void acceptConnection(const cSocket* socket, int playerNr);
-	void declineConnection(const cSocket* socket);
+	void declineConnection(const cSocket* socket, const std::string& reason);
 	void connectToServer(const std::string& host, int port, const cPlayerBasicData& player);
 	bool isConnectedToServer() const;
 	void changePlayerNumber(int currentNr, int newNr);

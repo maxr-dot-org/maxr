@@ -347,6 +347,40 @@ void cMenuControllerMultiplayerClient::startNewGame()
 }
 
 //------------------------------------------------------------------------------
+void cMenuControllerMultiplayerClient::reconnectToGame(const cNetMessageGameAlreadyRunning& message)
+{
+	auto staticMap = std::make_shared<cStaticMap>();
+	
+	if (!staticMap->loadMap(message.mapName))
+	{
+		application.show(std::make_shared<cDialogOk>("Map \"" + message.mapName + "\" not found")); //TODO: translate
+		connectionManager->disconnectAll();
+		return;
+	}
+	else if (MapDownload::calculateCheckSum(message.mapName) != message.mapCrc)
+	{
+		application.show(std::make_shared<cDialogOk>("The map \"" + message.mapName + "\" does not match the map of the server")); // TODO: translate
+		connectionManager->disconnectAll();
+		return;
+	}
+	
+	auto reconnectionGame = std::make_shared<cNetworkClientGameReconnection>();
+
+	reconnectionGame->setConnectionManager(connectionManager);
+	reconnectionGame->setStaticMap(staticMap);
+	reconnectionGame->setPlayers(message.playerList, *windowNetworkLobby->getLocalPlayer());
+
+	sendNetMessage(cNetMessageWantRejoinGame());
+
+	application.closeTill(*windowNetworkLobby);
+	windowNetworkLobby->close();
+	signalConnectionManager.connect(windowNetworkLobby->terminated, [&]() { windowNetworkLobby = nullptr; });
+
+	reconnectionGame->start(application);
+
+}
+
+//------------------------------------------------------------------------------
 void cMenuControllerMultiplayerClient::checkReallyWantsToQuit()
 {
 	auto yesNoDialog = application.show(std::make_shared<cDialogYesNo>("Are you sure you want to abort the game preparation?")); // TODO: translate
@@ -379,6 +413,9 @@ void cMenuControllerMultiplayerClient::handleNetMessage (cNetMessage2& message)
 		case eNetMessageType::MULTIPLAYER_LOBBY:
 			//will be handled in the next switch statement
 			break;
+		case eNetMessageType::GAME_ALREADY_RUNNING:
+			handleNetMessage_GAME_ALREADY_RUNNING(static_cast<cNetMessageGameAlreadyRunning&>(message));
+			return;
 		default:
 			Log.write("Client Menu Controller: Can not handle message", cLog::eLOG_TYPE_NET_ERROR);
 			return;
@@ -421,13 +458,6 @@ void cMenuControllerMultiplayerClient::handleNetMessage (cNetMessage2& message)
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME: 
 			handleNetMessage_MU_MSG_START_GAME(static_cast<cMuMsgStartGame&>(muMessage));
 			break;
-		/*case cMultiplayerLobbyMessage::eMessageType::GAME_EV_REQ_RECON_IDENT: 
-			handleNetMessage_GAME_EV_REQ_RECON_IDENT(static_cast<&>(muMessage));
-			break;
-		case cMultiplayerLobbyMessage::eMessageType::GAME_EV_RECONNECT_ANSWER:
-			handleNetMessage_GAME_EV_RECONNECT_ANSWER(static_cast<&>(muMessage));
-			break;
-		*/
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS: 
 			handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS(static_cast<cMuMsgInLandingPositionSelectionStatus&>(muMessage));
 			break;
@@ -466,7 +496,15 @@ void cMenuControllerMultiplayerClient::handleNetMessage_TCP_CONNECTED(cNetMessag
 //------------------------------------------------------------------------------
 void cMenuControllerMultiplayerClient::handleNetMessage_TCP_CONNECT_FAILED(cNetMessageTcpConnectFailed& message)
 {
-	windowNetworkLobby->addInfoEntry(lngPack.i18n("Text~Multiplayer~Network_Error_Connect", "server"));
+	if (message.reason.empty())
+	{
+		windowNetworkLobby->addInfoEntry(lngPack.i18n("Text~Multiplayer~Network_Error_Connect", "server"));
+	}
+	else
+	{
+		windowNetworkLobby->addInfoEntry(lngPack.i18n(message.reason));
+	}
+
 	Log.write("Error on connecting to server", cLog::eLOG_TYPE_WARNING);
 
 	windowNetworkLobby->enablePortEdit();
@@ -664,76 +702,21 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_START_GAME(cMuMsg
 }
 
 //------------------------------------------------------------------------------
-/*void cMenuControllerMultiplayerClient::handleNetMessage_GAME_EV_REQ_RECON_IDENT(cMultiplayerLobbyMessage& message)
+void cMenuControllerMultiplayerClient::handleNetMessage_GAME_ALREADY_RUNNING(cNetMessageGameAlreadyRunning& message)
 {
 	if (!connectionManager || !windowNetworkLobby) return;
 
-	auto yesNoDialog = application.show (std::make_shared<cDialogYesNo> (lngPack.i18n ("Text~Multiplayer~Reconnect")));
-
-	const auto socket = message.popInt16();
-
-	signalConnectionManager.connect (yesNoDialog->yesClicked, [this, socket]()
+	auto yesNoDialog = application.show(std::make_shared<cDialogYesNo>(lngPack.i18n("Text~Multiplayer~Reconnect")));
+	signalConnectionManager.connect(yesNoDialog->yesClicked, [this, message]()
 	{
-		sendGameIdentification (*network, *windowNetworkLobby->getLocalPlayer(), socket);
+		reconnectToGame(message);
 	});
 
-	signalConnectionManager.connect (yesNoDialog->noClicked, [this]()
+	signalConnectionManager.connect(yesNoDialog->noClicked, [this]()
 	{
-		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Connection_Terminated"));
-		network->close (0);
+		connectionManager->disconnectAll();
 	});
-}*/
-
-/*
-//------------------------------------------------------------------------------
-void cMenuControllerMultiplayerClient::handleNetMessage_GAME_EV_RECONNECT_ANSWER(cMultiplayerLobbyMessage& message)
-{
-	if (!connectionManager || !windowNetworkLobby) return;
-
-	if (message.popBool())
-	{
-		const int localPlayerNumber = message.popInt16();
-		const auto localPlayerColor = message.popColor();
-
-		const auto mapName = message.popString();
-
-		auto staticMap = std::make_shared<cStaticMap> ();
-		if (!staticMap->loadMap (mapName)) return; // TODO: error message
-
-		auto reconnectionGame = std::make_shared<cNetworkClientGameReconnection> ();
-
-		int playerCount = message.popInt16();
-
-		std::vector<cPlayerBasicData> players;
-		players.push_back (cPlayerBasicData (windowNetworkLobby->getLocalPlayer()->getName(), cPlayerColor (localPlayerColor), localPlayerNumber));
-		const auto localPlayer = players.back();
-		while (playerCount > 1)
-		{
-			const auto playerName = message.popString();
-			const auto playerColor = message.popColor();
-			const int playerNr = message.popInt16();
-			players.push_back (cPlayerBasicData (playerName, cPlayerColor (playerColor), playerNr));
-			playerCount--;
-		}
-
-		reconnectionGame->setNetwork (network);
-		reconnectionGame->setStaticMap (staticMap);
-		reconnectionGame->setPlayers (players, localPlayer);
-
-		application.closeTill (*windowNetworkLobby);
-		windowNetworkLobby->close();
-		signalConnectionManager.connect (windowNetworkLobby->terminated, [&]() { windowNetworkLobby = nullptr; });
-
-		reconnectionGame->start (application);
-	}
-	else
-	{
-		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Reconnect_Forbidden"));
-		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Connection_Terminated"));
-		network->close (0);
-	}
 }
-*/
 
 //------------------------------------------------------------------------------
 void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS(cMuMsgInLandingPositionSelectionStatus& message)

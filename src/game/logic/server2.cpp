@@ -188,33 +188,36 @@ void cServer2::run()
 				Log.write("Server: <-- " + archive.data() + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 			}
 
-			if (model.getPlayer(message->playerNr) == nullptr) continue;
+			if (model.getPlayer(message->playerNr) == nullptr && 
+				message->getType() != eNetMessageType::TCP_WANT_CONNECT) continue;
 
 			switch (message->getType())
 			{
 			case eNetMessageType::ACTION:
-				{
-					const cAction* action = static_cast<cAction*>(message.get());
-					action->execute(model);
+			{
+				const cAction* action = static_cast<cAction*>(message.get());
+				action->execute(model);
 
-					sendMessageToClients(*message);
-				}
-				break;
-			case eNetMessageType::GAMETIME_SYNC_CLIENT:
-				{
-					const cNetMessageSyncClient& syncMessage = *static_cast<cNetMessageSyncClient*>(message.get());
-					gameTimer.handleSyncMessage(syncMessage, model.getGameTime());
-				}
-				break;
-			case eNetMessageType::REPORT:
 				sendMessageToClients(*message);
 				break;
-			case eNetMessageType::GUI_SAVE_INFO:
-				{
-					const cNetMessageGUISaveInfo& saveInfo = *static_cast<cNetMessageGUISaveInfo*>(message.get());
-					savegame.saveGuiInfo(saveInfo);
-				}
+			}
+			case eNetMessageType::GAMETIME_SYNC_CLIENT:
+			{
+				const cNetMessageSyncClient& syncMessage = *static_cast<cNetMessageSyncClient*>(message.get());
+				gameTimer.handleSyncMessage(syncMessage, model.getGameTime());
 				break;
+			}
+			case eNetMessageType::REPORT:
+			{
+				sendMessageToClients(*message);
+				break;
+			}
+			case eNetMessageType::GUI_SAVE_INFO:
+			{
+				const cNetMessageGUISaveInfo& saveInfo = *static_cast<cNetMessageGUISaveInfo*>(message.get());
+				savegame.saveGuiInfo(saveInfo);
+				break;
+			}
 			case eNetMessageType::REQUEST_RESYNC_MODEL:
 			{
 				const cNetMessageRequestResync& requestMessage = *static_cast<cNetMessageRequestResync*>(message.get());
@@ -222,6 +225,39 @@ void cServer2::run()
 				if (requestMessage.saveNumberForGuiInfo != -1)
 				{
 					sendGuiInfoToClients(requestMessage.saveNumberForGuiInfo, requestMessage.playerToSync);
+				}
+				break;
+			}
+			case eNetMessageType::TCP_WANT_CONNECT:
+			{
+				const cNetMessageTcpWantConnect& connectMessage = *static_cast<cNetMessageTcpWantConnect*>(message.get());
+				const cPlayer* player = model.getPlayer(connectMessage.playerName);
+				if (player == nullptr)
+				{
+					Log.write(" Server: Connecting player " + connectMessage.playerName + " is not part of the game", cLog::eLOG_TYPE_NET_WARNING);
+					connectionManager->declineConnection(connectMessage.socket, "Text~Multiplayer~Reconnect_Not_Part_Of_Game");
+					break;
+				}
+				//TODO: check if player is disconnected
+
+				connectionManager->acceptConnection(connectMessage.socket, player->getId());
+
+				sendMessageToClients(cNetMessageGameAlreadyRunning(model), player->getId());
+				break;
+			}
+			case eNetMessageType::TCP_CLOSE:
+			{
+				//TODO: set player status
+				break;
+			}
+			case eNetMessageType::WANT_REJOIN_GAME:
+			{
+				//TODO: check player is disconnected
+				//TODO: set player status
+				resyncClientModel(message->playerNr);
+				if (savegame.getLastUsedSaveSlot() != -1)
+				{
+					savegame.loadGuiInfo(this, savegame.getLastUsedSaveSlot(), message->playerNr);
 				}
 				break;
 			}

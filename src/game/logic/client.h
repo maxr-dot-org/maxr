@@ -188,8 +188,8 @@ public:
 
 	mutable cSignal<void (eFreezeMode)> freezeModeChanged;
 
-	mutable cSignal<void (const cUnit&, const cUnit&)> unitStored; // storing, stored
-	mutable cSignal<void (const cUnit&, const cUnit&)> unitActivated; // storing, stored
+	mutable cSignal<void (const cUnit& storingUnit, const cUnit& storedUnit)> unitStored;
+	mutable cSignal<void (const cUnit& storingUnit, const cUnit&storedUnit)> unitActivated;
 
 	mutable cSignal<void (const cUnit&)> unitHasStolenSuccessfully;
 	mutable cSignal<void (const cUnit&)> unitHasDisabledSuccessfully;

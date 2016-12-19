@@ -351,6 +351,11 @@ void cSavegame::loadGuiInfo(const cServer2* server, int slot, int playerNr)
 	}
 }
 
+int cSavegame::getLastUsedSaveSlot() const
+{
+	return loadedSlot;
+}
+
 bool cSavegame::loadDocument(int slot)
 {
 

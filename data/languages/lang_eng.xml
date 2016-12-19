@@ -292,7 +292,8 @@
 			<Player_Twice ENG="Playername exists twice: "/><!-- not used?! ~~ nonsinn -->
 			<Player_Wrong ENG="Missing a correct player's name"/>
 			<Reconnect ENG="This game is running already.\nIf you have lost connection to the game, you can reconnect.\n\nDo you want to reconnect?"/>
-			<Reconnect_Forbidden ENG="Reconnecting forbidden by server."/>
+			<Reconnect_Not_Part_Of_Game ENG="Reconnecting forbidden by server. You are not part of the game."/>
+			<Reconnect_Already_Connected ENG="Reconnecting forbidden by server. A player with your name is already connected."/>
 			<Save_Only_Host ENG="Only the host can save the current games."/>
 			<Server_Not_Running ENG="The server is not running."/>
 			<Wait_For_Server ENG="Waiting for network response from server" />

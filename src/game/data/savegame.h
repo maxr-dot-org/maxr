@@ -50,6 +50,8 @@ public:
 
 	void loadModel(cModel& model, int slot);
 	void loadGuiInfo(const cServer2* server, int slot, int playerNr = -1);
+
+	int getLastUsedSaveSlot() const;
 private:
 
 	/**

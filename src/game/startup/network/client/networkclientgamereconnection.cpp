@@ -32,13 +32,13 @@ cNetworkClientGameReconnection::cNetworkClientGameReconnection()
 //------------------------------------------------------------------------------
 void cNetworkClientGameReconnection::start (cApplication& application)
 {
-	//localClient = std::make_unique<cClient> (nullptr, network); //TODO
+	// set up client
+	localClient = std::make_shared<cClient>(connectionManager);
+	connectionManager->setLocalClient(localClient.get(), localPlayerNr);
+	localClient->setPlayers(players, localPlayerNr);
+	localClient->setMap(staticMap);
 
-	localClient->setPlayers (players, localPlayerNr);
-	//localClient->setMap (staticMap);
-
-	sendReconnectionSuccess (*localClient);
-
+	// set up game gui
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
 	gameGuiController->setSingleClient (localClient);

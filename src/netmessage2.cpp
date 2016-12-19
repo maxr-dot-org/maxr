@@ -47,6 +47,8 @@ std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(const unsigned char
 		message = std::make_unique<cNetMessageTcpWantConnect>(archive); break;
 	case eNetMessageType::TCP_CONNECTED: 
 		message = std::make_unique<cNetMessageTcpConnected>(archive); break;
+	case eNetMessageType::TCP_CONNECT_FAILED:
+		message = std::make_unique<cNetMessageTcpConnectFailed>(archive); break;
 	case eNetMessageType::ACTION:
 		message = cAction::createFromBuffer(archive); break;
 	case eNetMessageType::GAMETIME_SYNC_SERVER:
@@ -69,7 +71,10 @@ std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(const unsigned char
 		message = std::make_unique<cNetMessageRequestResync>(archive); break;
 	case eNetMessageType::MULTIPLAYER_LOBBY:
 		message = cMultiplayerLobbyMessage::createFromBuffer(archive); break;
-
+	case eNetMessageType::GAME_ALREADY_RUNNING:
+		message = std::make_unique<cNetMessageGameAlreadyRunning>(archive); break;
+	case eNetMessageType::WANT_REJOIN_GAME:
+		message = std::make_unique<cNetMessageWantRejoinGame>(archive); break;
 	default:
 		throw std::runtime_error("Unknown net message type " + iToStr(static_cast<int>(type)));
 		break;
@@ -117,6 +122,8 @@ std::string enumToString(eNetMessageType value)
 	case eNetMessageType::TCP_CONNECTED: return "TCP_CONNECTED";
 	case eNetMessageType::TCP_CONNECT_FAILED: return "TCP_CONNECT_FAILED";
 	case eNetMessageType::TCP_CLOSE: return "TCP_CLOSE";
+	case eNetMessageType::GAME_ALREADY_RUNNING: return "GAME_ALREADY_RUNNING";
+	case eNetMessageType::WANT_REJOIN_GAME: return "WANT_REJOIN_GAME";
 	default:
 		assert(false);
 		return toString(static_cast<int>(value));
