@@ -1280,29 +1280,6 @@ void cClient::HandleNetMessage_GAME_EV_COMMANDO_ANSWER (cNetMessage& message)
 	}
 }
 
-void cClient::HandleNetMessage_GAME_EV_REQ_SAVE_INFO (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_REQ_SAVE_INFO);
-
-	const int saveingID = message.popInt16();
-
-//	guiSaveInfoRequested (saveingID);
-
-	/*const auto& savedReports = activePlayer->savedReportsList;
-	for (size_t i = std::max<int> (0, savedReports.size() - 50); i != savedReports.size(); ++i)
-	{
-		sendSaveReportInfo (*this, *savedReports[i], activePlayer->getId(), saveingID);
-	}*/
-//	sendFinishedSendSaveInfo (*this, activePlayer->getId(), saveingID);
-}
-
-void cClient::HandleNetMessage_GAME_EV_SAVED_REPORT (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_SAVED_REPORT);
-
-	//activePlayer->addSavedReport (cSavedReport::createFrom (message));
-}
-
 void cClient::HandleNetMessage_GAME_EV_SCORE (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_SCORE);
@@ -1503,8 +1480,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 			HandleNetMessage_GAME_EV_REFRESH_RESEARCH_COUNT (message); break;
 		case GAME_EV_SET_AUTOMOVE: HandleNetMessage_GAME_EV_SET_AUTOMOVE (message); break;
 		case GAME_EV_COMMANDO_ANSWER: HandleNetMessage_GAME_EV_COMMANDO_ANSWER (message); break;
-		case GAME_EV_REQ_SAVE_INFO: HandleNetMessage_GAME_EV_REQ_SAVE_INFO (message); break;
-		case GAME_EV_SAVED_REPORT: HandleNetMessage_GAME_EV_SAVED_REPORT (message); break;
 		case GAME_EV_SCORE: HandleNetMessage_GAME_EV_SCORE (message); break;
 		case GAME_EV_NUM_ECOS: HandleNetMessage_GAME_EV_NUM_ECOS (message); break;
 		case GAME_EV_UNIT_SCORE: HandleNetMessage_GAME_EV_UNIT_SCORE (message); break;

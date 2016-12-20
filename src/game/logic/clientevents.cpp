@@ -35,14 +35,6 @@
 using namespace std;
 
 
-void sendReconnectionSuccess (const cClient& client)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_RECON_SUCCESS);
-
-	message->pushInt16 (client.getActivePlayer().getId());
-	client.sendNetMessage (std::move (message));
-}
-
 void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades)
 {
 	const cPlayer& player = client.getActivePlayer();
@@ -296,14 +288,6 @@ void sendWantActivate (const cClient& client, int unitid, bool vehicle, int acti
 	message->pushInt16 (unitid);
 	message->pushBool (vehicle);
 	message->pushInt16 (activatunitid);
-	client.sendNetMessage (std::move (message));
-}
-
-void sendRequestResync (const cClient& client, char playerNumber, bool newGame)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_REQUEST_RESYNC);
-	message->pushBool (newGame);
-	message->pushInt32 (playerNumber);
 	client.sendNetMessage (std::move (message));
 }
 

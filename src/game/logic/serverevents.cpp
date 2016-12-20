@@ -479,50 +479,6 @@ void sendDeletePlayer (cServer& server, const cPlayer& player, const cPlayer* re
 }
 
 //------------------------------------------------------------------------------
-void sendRequestIdentification (cTCP& network, int iSocket)
-{
-	cNetMessage message (GAME_EV_REQ_RECON_IDENT);
-	message.pushInt16 (iSocket);
-	Log.write ("Server: --> " + message.getTypeAsString() + ", Hexdump: " + message.getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
-	//network.sendTo (iSocket, message.iLength, message.serialize());
-}
-
-//------------------------------------------------------------------------------
-void sendReconnectAnswer (cServer& server, int socketNumber)
-{
-	cNetMessage message (GAME_EV_RECONNECT_ANSWER);
-	message.pushBool (false);
-
-	Log.write ("Server: --> " + message.getTypeAsString() + ", Hexdump: " + message.getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
-	//server.network->sendTo (socketNumber, message.iLength, message.serialize());
-}
-
-//------------------------------------------------------------------------------
-void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& player)
-{
-	cNetMessage message (GAME_EV_RECONNECT_ANSWER);
-
-	const auto& playerList = server.playerList;
-	for (unsigned int i = 0; i < playerList.size(); i++)
-	{
-		const auto& secondPlayer = *playerList[i];
-		if (&player == &secondPlayer) continue;
-		message.pushInt16 (secondPlayer.getId());
-		message.pushColor (secondPlayer.getColor().getColor());
-		message.pushString (secondPlayer.getName());
-	}
-	message.pushInt16 ((int) playerList.size());
-	message.pushString (server.Map->getName());
-	message.pushColor (player.getColor().getColor());
-	message.pushInt16 (player.getId());
-
-	message.pushBool (true);
-
-	Log.write ("Server: --> " + message.getTypeAsString() + ", Hexdump: " + message.getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
-	//server.network->sendTo (socketNumber, message.iLength, message.serialize());
-}
-
-//------------------------------------------------------------------------------
 void sendTurn (cServer& server, int turn, const cPlayer& receiver)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_TURN);

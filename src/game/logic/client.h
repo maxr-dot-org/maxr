@@ -284,8 +284,6 @@ private:
 	void HandleNetMessage_GAME_EV_REFRESH_RESEARCH_COUNT (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SET_AUTOMOVE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_COMMANDO_ANSWER (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_REQ_SAVE_INFO (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_SAVED_REPORT (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SCORE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_NUM_ECOS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UNIT_SCORE (cNetMessage& message);

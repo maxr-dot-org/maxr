@@ -61,31 +61,21 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_WANT_START_CLEAR,		// a bulldowzer wants to start clearing the field under his position
 	GAME_EV_WANT_STOP_CLEAR,		// a bulldowzer wants to stop the clearing
 	GAME_EV_ABORT_WAITING,			// the player wants to abort waiting for the reconnect of a disconnected player
-	GAME_EV_IDENTIFICATION,			// a message with the name of the player who wants to reconnect
-	GAME_EV_RECON_SUCCESS,			// a client has reconnected successfully and is ready to receive his game data
 	GAME_EV_WANT_LOAD,				// a client wants to load a unit into another
 	GAME_EV_WANT_EXIT,				// a client wants to exit a stored unit
-	GAME_EV_REQUEST_RESYNC,			// requests the server to resync a client
 	GAME_EV_WANT_BUY_UPGRADES,		// a client wants to buy gold upgrades for units
 	GAME_EV_WANT_BUILDING_UPGRADE,	// a client wants to upgrade one or more buildings to the newest version
 	GAME_EV_WANT_RESEARCH_CHANGE,	// a client wants to change the research assignments of his research centers
 	GAME_EV_AUTOMOVE_STATUS,		// a unit has been set to automoving
-	GAME_EV_SAVE_HUD_INFO,			// the current hud settings
-	GAME_EV_SAVE_REPORT_INFO,		// a saved report
-	GAME_EV_FIN_SEND_SAVE_INFO,		//
 	GAME_EV_WANT_COM_ACTION,		// an infiltrator wants to steal or disable another unit
 	GAME_EV_WANT_SELFDESTROY,
 	GAME_EV_WANT_CHANGE_UNIT_NAME,	// the player wants to change the name of an unit
 	GAME_EV_END_MOVE_ACTION,		// specifies an action, which will be executed at the end of a movejob
-
 	GAME_EV_WANT_KICK_PLAYER,
-	GAME_EV_REQ_RECON_IDENT,        // a server of a running game requests an identification of a player who wants to reconnect
-	GAME_EV_RECONNECT_ANSWER,       // a server returns an answer for the reconnect
 
 	// DEDICATED_SERVER
 	GAME_EV_WANT_DISCONNECT,		// the player wants to disconnect (but later reconnect to the dedicated server)
 	GAME_EV_REQUEST_CASUALTIES_REPORT, // a client wants to have the current casualties data
-	NET_GAME_TIME_CLIENT,			//reports the current gametime of the client to server
 };
 
 /**
@@ -223,17 +213,6 @@ void sendWaitFor (cServer& server, const cPlayer& player, const cPlayer* receive
 *@author alzi alias DoctorDeath
 */
 void sendDeletePlayer (cServer& server, const cPlayer& player, const cPlayer* receiver);
-/**
-* the server wants to get an identification of the new connected player
-*@author alzi alias DoctorDeath
-*/
-//void sendRequestIdentification (cTCP& network, int iSocket);
-/**
-* the server gives its ok to the reconnection
-*@author alzi alias DoctorDeath
-*/
-void sendReconnectAnswer (cServer& server, int socketNumber);
-void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& player);
 
 void sendTurn (cServer& server, int turn, const cPlayer& receiver);
 void sendStoreVehicle (cServer& server, int unitid, bool vehicle, int storedunitid, const cPlayer& receiver);

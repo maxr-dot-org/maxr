@@ -88,8 +88,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_REFRESH_RESEARCH_COUNT,	// the client has to refresh the researchCount and the research sums for the areas after a resync
 	GAME_EV_SET_AUTOMOVE,			// a unit has to enable automoving
 	GAME_EV_COMMANDO_ANSWER,		// information about the result of a commando action
-	GAME_EV_REQ_SAVE_INFO,			// request the hud state and the saved reports from a client
-	GAME_EV_SAVED_REPORT,			// sends saved reports to a client
 	GAME_EV_SCORE,                  // sends a player's score to a client
 	GAME_EV_NUM_ECOS,               // sends a player's ecosphere count to a client
 	GAME_EV_UNIT_SCORE,             // sends a unit's score to its owner
@@ -97,8 +95,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_END_MOVE_ACTION_SERVER,	// the server has added an end move action to a movejob
 	GAME_EV_CASUALTIES_REPORT,		// sends the casualties stats to a client
 	GAME_EV_REVEAL_MAP,             // a client should reveal the whole map
-	NET_GAME_TIME_SERVER,			// notification about current server time
-	GAME_EV_SET_GAME_TIME,			// used to resync the gametime of a client
 };
 
 enum CHAT_MESSAGE_TYPES
@@ -109,7 +105,6 @@ enum CHAT_MESSAGE_TYPES
 };
 
 
-void sendReconnectionSuccess (const cClient& client);
 void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades);
 
 /**
@@ -224,10 +219,6 @@ void sendWantStopClear (const cClient& client, const cVehicle& vehicle);
 void sendAbortWaiting (const cClient& client);
 void sendWantLoad (const cClient& client, int unitid, bool vehicle, int loadedunitid);
 void sendWantActivate (const cClient& client, int unitid, bool vehicle, int activatunitid, const cPosition& position);
-/**
-* sends a request to resync the player
-*/
-void sendRequestResync (const cClient& client, char playerNumber, bool newGame);
 
 void sendRequestCasualtiesReport (const cClient& client);
 

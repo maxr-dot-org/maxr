@@ -233,6 +233,7 @@ std::unique_ptr<cNetMessage> cServer::popEvent()
 //------------------------------------------------------------------------------
 void cServer::sendNetMessage (std::unique_ptr<cNetMessage> message, const cPlayer* player)
 {
+	/*
 	const auto playerNumber = player != nullptr ? player->getId() : -1;
 	const auto playerName = player != nullptr ? player->getName() : "all players";
 
@@ -246,7 +247,7 @@ void cServer::sendNetMessage (std::unique_ptr<cNetMessage> message, const cPlaye
 				   + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
-	/*if (player == nullptr)
+	if (player == nullptr)
 	{
 		if (network)
 			network->send (message->iLength, message->data);
@@ -283,8 +284,8 @@ void cServer::run()
 		while (eventQueue.try_pop (message))
 		{
 			handleNetMessage (*message);
-			if (message->iType != NET_GAME_TIME_CLIENT)
-				checkPlayerUnits();
+//			if (message->iType != NET_GAME_TIME_CLIENT)
+//				checkPlayerUnits();
 		}
 
 		// don't do anything if games hasn't been started yet!
@@ -1212,50 +1213,6 @@ void cServer::handleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message)
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_IDENTIFICATION (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_IDENTIFICATION);
-
-	const std::string playerName = message.popString();
-	const int socketNumber = message.popInt16();
-
-	for (size_t i = 0; i != DisconnectedPlayerList.size(); ++i)
-	{
-		if (playerName == DisconnectedPlayerList[i]->getName())
-		{
-			//DisconnectedPlayerList[i]->setSocketIndex (socketNumber);
-			sendReconnectAnswer (*this, socketNumber, *DisconnectedPlayerList[i]);
-			return;
-		}
-	}
-	sendReconnectAnswer (*this, socketNumber);
-}
-
-//------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_RECON_SUCCESS (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_RECON_SUCCESS);
-
-	cPlayer* player = nullptr;
-	const int playerNum = message.popInt16();
-	// remove the player from the disconnected list
-	for (size_t i = 0; i != DisconnectedPlayerList.size(); ++i)
-	{
-		if (DisconnectedPlayerList[i]->getId() == playerNum)
-		{
-			player = DisconnectedPlayerList[i];
-			DisconnectedPlayerList.erase (DisconnectedPlayerList.begin() + i);
-			break;
-		}
-	}
-	if (player == nullptr) return;
-	resyncPlayer (*player, false, true);
-
-	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
-	if (isTurnBasedGame()) sendWaitFor (*this, *activeTurnPlayer, nullptr);
-}
-
-//------------------------------------------------------------------------------
 void cServer::handleNetMessage_GAME_EV_WANT_LOAD (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_LOAD);
@@ -1358,16 +1315,6 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 			StoredVehicle->InSentryRange (*this);
 		}
 	}
-}
-
-//------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_REQUEST_RESYNC (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_REQUEST_RESYNC);
-
-	auto& player = getPlayerFromNumber (message.popInt32());
-	const auto newGame = message.popBool();
-	resyncPlayer (player, !newGame, newGame);
 }
 
 //------------------------------------------------------------------------------
@@ -1661,43 +1608,6 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_SAVE_HUD_INFO (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_SAVE_HUD_INFO);
-
-	const int msgSaveingID = message.popInt16();
-	if (msgSaveingID != savingID) return;
-	cPlayer& player = getPlayerFromNumber (message.popInt16());
-
-//	playerGameGuiStates[player.getId()].popFrom (message);
-}
-
-//------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_SAVE_REPORT_INFO (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_SAVE_REPORT_INFO);
-
-	const int msgSaveingID = message.popInt16();
-	if (msgSaveingID != savingID) return;
-	auto& player = getPlayerFromNumber (message.popInt16());
-
-//	player.savedReportsList.push_back (cSavedReport::createFrom (message));
-}
-
-//------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_FIN_SEND_SAVE_INFO (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_FIN_SEND_SAVE_INFO);
-
-	const int msgSaveingID = message.popInt16();
-	if (msgSaveingID != savingID) return;
-	auto& player = getPlayerFromNumber (message.popInt16());
-
-	//cSavegame savegame (savingIndex);
-	//savegame.writeAdditionalInfo (playerGameGuiStates[player.getNr()], player.savedReportsList, &player);
-}
-
-//------------------------------------------------------------------------------
 void cServer::handleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_REQUEST_CASUALTIES_REPORT);
@@ -1761,7 +1671,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_KICK_PLAYER (cNetMessage& message)
 //------------------------------------------------------------------------------
 int cServer::handleNetMessage (cNetMessage& message)
 {
-	if (message.iType != NET_GAME_TIME_CLIENT)
+	//if (message.iType != NET_GAME_TIME_CLIENT)
 	{
 		Log.write ("Server: <-- Player " + iToStr (message.iPlayerNr) + " "
 				   + message.getTypeAsString()
@@ -1798,19 +1708,13 @@ int cServer::handleNetMessage (cNetMessage& message)
 		case GAME_EV_WANT_START_CLEAR: handleNetMessage_GAME_EV_WANT_START_CLEAR (message); break;
 		case GAME_EV_WANT_STOP_CLEAR: handleNetMessage_GAME_EV_WANT_STOP_CLEAR (message); break;
 		case GAME_EV_ABORT_WAITING: handleNetMessage_GAME_EV_ABORT_WAITING (message); break;
-		case GAME_EV_IDENTIFICATION: handleNetMessage_GAME_EV_IDENTIFICATION (message); break;
-		case GAME_EV_RECON_SUCCESS: handleNetMessage_GAME_EV_RECON_SUCCESS (message); break;
 		case GAME_EV_WANT_LOAD: handleNetMessage_GAME_EV_WANT_LOAD (message); break;
 		case GAME_EV_WANT_EXIT: handleNetMessage_GAME_EV_WANT_EXIT (message); break;
-		case GAME_EV_REQUEST_RESYNC: handleNetMessage_GAME_EV_REQUEST_RESYNC (message); break;
 		case GAME_EV_WANT_BUY_UPGRADES: handleNetMessage_GAME_EV_WANT_BUY_UPGRADES (message); break;
 		case GAME_EV_WANT_BUILDING_UPGRADE: handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (message); break;
 		case GAME_EV_WANT_RESEARCH_CHANGE: handleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (message); break;
 		case GAME_EV_AUTOMOVE_STATUS: handleNetMessage_GAME_EV_AUTOMOVE_STATUS (message); break;
 		case GAME_EV_WANT_COM_ACTION: handleNetMessage_GAME_EV_WANT_COM_ACTION (message); break;
-		case GAME_EV_SAVE_HUD_INFO: handleNetMessage_GAME_EV_SAVE_HUD_INFO (message); break;
-		case GAME_EV_SAVE_REPORT_INFO: handleNetMessage_GAME_EV_SAVE_REPORT_INFO (message); break;
-		case GAME_EV_FIN_SEND_SAVE_INFO: handleNetMessage_GAME_EV_FIN_SEND_SAVE_INFO (message); break;
 		case GAME_EV_REQUEST_CASUALTIES_REPORT: handleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (message); break;
 		case GAME_EV_WANT_SELFDESTROY: handleNetMessage_GAME_EV_WANT_SELFDESTROY (message); break;
 		case GAME_EV_WANT_CHANGE_UNIT_NAME: handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (message); break;

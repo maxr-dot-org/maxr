@@ -456,6 +456,7 @@ bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage& message)
 //------------------------------------------------------------------------
 void cDedicatedServer::sendChatMessage (const string& text, int type, int socket)
 {
+/*
 	stringstream ss (text);
 	string line;
 	while (getline (ss, line))
@@ -464,7 +465,7 @@ void cDedicatedServer::sendChatMessage (const string& text, int type, int socket
 		if (msg.getType() == GAME_EV_SAVED_REPORT)
 		{
 			cSavedReportChat report ("dedicated_server", line);
-			//report.pushInto (msg);
+			report.pushInto (msg);
 		}
 		else
 		{
@@ -472,12 +473,11 @@ void cDedicatedServer::sendChatMessage (const string& text, int type, int socket
 			msg.pushBool (false);
 		}
 		msg.iPlayerNr = -1;
-		/*if (socket < 0)
+		if (socket < 0)
 			network->send (msg.iLength, msg.serialize());
 		else
 			network->sendTo (socket, msg.iLength, msg.serialize());
-		*/
-		}
+		}*/
 }
 
 //------------------------------------------------------------------------
