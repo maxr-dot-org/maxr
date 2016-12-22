@@ -20,6 +20,10 @@
 #ifndef serialization_binaryarchiveH
 #define serialization_binaryarchiveH
 
+#include <stdint.h>
+#include <limits.h>
+
+#include <SDL_endian.h>
 
 #include "serialization.h"
 
@@ -83,7 +87,11 @@ public:
 	template<typename T>
 	cBinaryArchiveOut& operator>>(T& value);
 	template<typename T>
+	cBinaryArchiveOut& operator>>(const serialization::sNameValuePair<T>& nvp);
+	template<typename T>
 	cBinaryArchiveOut& operator&(T& value);
+	template<typename T>
+	cBinaryArchiveOut& operator&(const serialization::sNameValuePair<T>& nvp);
 
 	size_t dataLeft() const;
 	serialization::cPointerLoader* getPointerLoader() const;
@@ -100,9 +108,7 @@ private:
 
 	template<typename T>
 	void popValue(T& value);
-	template<typename T>
-	void popValue(serialization::sNameValuePair<T>& value);
-
+	
 	//
 	// pop fundamental types
 	//
@@ -153,26 +159,26 @@ void cBinaryArchiveIn::writeToBuffer(const T& value)
 	{
 	case 1:
 	{
-		Sint8* dest = reinterpret_cast<Sint8*>(&buffer[buffer.size() - sizeof(T)]);
-		*dest = static_cast<Sint8>(value);
+		int8_t* dest = reinterpret_cast<int8_t*>(&buffer[buffer.size() - sizeof(T)]);
+		*dest = static_cast<int8_t>(value);
 		break;
 	}
 	case 2:
 	{
-		Sint16* dest = reinterpret_cast<Sint16*>(&buffer[buffer.size() - sizeof(T)]);
-		*dest = SDL_SwapLE16(static_cast<Sint16>(value));
+		int16_t* dest = reinterpret_cast<int16_t*>(&buffer[buffer.size() - sizeof(T)]);
+		*dest = SDL_SwapLE16(static_cast<int16_t>(value));
 		break;
 	}
 	case 4:
 	{
-		Sint32* dest = reinterpret_cast<Sint32*>(&buffer[buffer.size() - sizeof(T)]);
-		*dest = SDL_SwapLE32(static_cast<Sint32>(value));
+		int32_t* dest = reinterpret_cast<int32_t*>(&buffer[buffer.size() - sizeof(T)]);
+		*dest = SDL_SwapLE32(static_cast<int32_t>(value));
 		break;
 	}
 	case 8:
 	{
-		Sint64* dest = reinterpret_cast<Sint64*>(&buffer[buffer.size() - sizeof(T)]);
-		*dest = SDL_SwapLE64(static_cast<Sint64>(value));
+		int64_t* dest = reinterpret_cast<int64_t*>(&buffer[buffer.size() - sizeof(T)]);
+		*dest = SDL_SwapLE64(static_cast<int64_t>(value));
 		break;
 	}
 	default:
@@ -258,9 +264,23 @@ cBinaryArchiveOut& cBinaryArchiveOut::operator>>(T& value)
 }
 //------------------------------------------------------------------------------
 template<typename T>
+cBinaryArchiveOut& cBinaryArchiveOut::operator>>(const serialization::sNameValuePair<T>& nvp)
+{
+	popValue(nvp.value);
+	return *this;
+}
+//------------------------------------------------------------------------------
+template<typename T>
 cBinaryArchiveOut& cBinaryArchiveOut::operator&(T& value)
 {
 	popValue(value);
+	return *this;
+}
+//------------------------------------------------------------------------------
+template<typename T>
+cBinaryArchiveOut& cBinaryArchiveOut::operator&(const serialization::sNameValuePair<T>& nvp)
+{
+	popValue(nvp.value);
 	return *this;
 }
 //------------------------------------------------------------------------------
@@ -278,25 +298,25 @@ void cBinaryArchiveOut::readFromBuffer(T1& value)
 	{
 	case 1:
 	{
-		Sint8 temp = *reinterpret_cast<const Sint8*>(&data[readPosition]);
+		int8_t temp = *reinterpret_cast<const int8_t*>(&data[readPosition]);
 		value = static_cast<T1>(temp);
 		break;
 	}
 	case 2:
 	{
-		Sint16 temp = SDL_SwapLE16(*reinterpret_cast<const Sint16*>(&data[readPosition]));
+		int16_t temp = SDL_SwapLE16(*reinterpret_cast<const int16_t*>(&data[readPosition]));
 		value = static_cast<T1>(temp);
 		break;
 	}
 	case 4:
 	{
-		Sint32 temp = SDL_SwapLE32(*reinterpret_cast<const Sint32*>(&data[readPosition]));
+		int32_t temp = SDL_SwapLE32(*reinterpret_cast<const int32_t*>(&data[readPosition]));
 		value = static_cast<T1>(temp);
 		break;
 	}
 	case 8:
 	{
-		Sint64 temp = SDL_SwapLE64(*reinterpret_cast<const Sint64*>(&data[readPosition]));
+		int64_t temp = SDL_SwapLE64(*reinterpret_cast<const int64_t*>(&data[readPosition]));
 		value = static_cast<T1>(temp);		
 		break;
 	}
@@ -311,12 +331,6 @@ template<typename T>
 void cBinaryArchiveOut::popValue(T& value)
 {
 	serialization::serialize(*this, value);
-}
-//------------------------------------------------------------------------------
-template<typename T>
-void cBinaryArchiveOut::popValue(serialization::sNameValuePair<T>& nvp)
-{
-	popValue(nvp.value);
 }
 
 //------------------------------------------------------------------------------

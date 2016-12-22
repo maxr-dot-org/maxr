@@ -250,7 +250,7 @@ void cMenuControllerMultiplayerHotSeat::selectLandingPosition (size_t playerInde
 	auto& map = game->getStaticMap();
 	bool fixedBridgeHead = game->getGameSettings()->getBridgeheadType() == eGameSettingsBridgeheadType::Definite;
 	auto& landingUnits = game->getLandingUnits(playerIndex);
-	auto& unitsData = game->getUnitsData();
+	auto unitsData = game->getUnitsData();
 	playerLandingSelectionWindows[playerIndex] = std::make_shared<cWindowLandingPositionSelection>(map, fixedBridgeHead, landingUnits, unitsData, true);
 
 	auto windowLandingPositionSelection = application.show (playerLandingSelectionWindows[playerIndex]);

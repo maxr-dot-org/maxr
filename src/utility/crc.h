@@ -20,8 +20,12 @@
 #ifndef utility_crcH
 #define utility_crcH
 
+#include <stddef.h>
 #include <stdint.h>
 #include <vector>
+#include <string>
+
+#include "SDL_endian.h"
 
 
 uint32_t calcCheckSum(const char* data, size_t dataSize, uint32_t checksum);
@@ -66,7 +70,7 @@ struct sCrcClass
 template<typename T>
 uint32_t calcCheckSum(const T& data, uint32_t crc)
 {
-	typedef std::conditional
+	typedef typename std::conditional
 		<
 		std::is_enum<T>::value, 
 		sCrcEnum, 

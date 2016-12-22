@@ -299,7 +299,7 @@ void cMenuControllerMultiplayerClient::startLandingPositionSelection()
 	auto& map = newGame->getStaticMap();
 	bool fixedBridgeHead = newGame->getGameSettings()->getBridgeheadType() == eGameSettingsBridgeheadType::Definite;
 	auto& landingUnits = newGame->getLandingUnits();
-	auto& unitsData = newGame->getUnitsData();
+	auto unitsData = newGame->getUnitsData();
 	windowLandingPositionSelection = std::make_shared<cWindowLandingPositionSelection> (map, fixedBridgeHead, landingUnits, unitsData, true);
 
 	signalConnectionManager.connect (windowLandingPositionSelection->opened, [this]()
@@ -838,6 +838,12 @@ void cMenuControllerMultiplayerClient::sendNetMessage(cNetMessage2& message)
 	Log.write("Menu: --> " + archive.data() + " to host", cLog::eLOG_TYPE_NET_DEBUG);
 
 	connectionManager->sendToServer(message);
+}
+
+//------------------------------------------------------------------------------
+void cMenuControllerMultiplayerClient::sendNetMessage(cNetMessage2&& message)
+{
+	sendNetMessage(static_cast<cNetMessage2&>(message));
 }
 
 //------------------------------------------------------------------------------

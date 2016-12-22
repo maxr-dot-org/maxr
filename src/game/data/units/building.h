@@ -267,7 +267,7 @@ public:
 	template <typename T>
 	void serialize(T& archive)
 	{
-		serializeBase(archive); //serialize cUnit members
+		cUnit::serializeThis(archive); //serialize cUnit members
 
 		archive & NVP(RubbleTyp);
 		archive & NVP(RubbleValue);
@@ -300,6 +300,7 @@ public:
 			registerOwnerEvents();
 		}
 	}
+
 private:
 	cSignalConnectionManager buildListFirstItemSignalConnectionManager;
 	cSignalConnectionManager ownerSignalConnectionManager;

@@ -31,8 +31,8 @@
 #include "ui/graphical/game/gameguistate.h"
 #include "utility/color.h"
 #include "maxrversion.h"
-#include "game/data/model.h"
 #include "mapdownload.h"
+#include "game/data/player/playerbasicdata.h"
 
 class cSavedReport;
 class cSocket;
@@ -505,14 +505,7 @@ private:
 class cNetMessageGameAlreadyRunning : public cNetMessage2
 {
 public:
-	cNetMessageGameAlreadyRunning(const cModel& model) :
-		cNetMessage2(eNetMessageType::GAME_ALREADY_RUNNING)
-	{
-		for (const auto& p : model.getPlayerList())
-			playerList.push_back(cPlayerBasicData(p->getName(), p->getColor(), p->getId()));
-		mapName = model.getMap()->getName();
-		mapCrc = MapDownload::calculateCheckSum(mapName);
-	};
+	cNetMessageGameAlreadyRunning(const cModel& model);
 	cNetMessageGameAlreadyRunning(cBinaryArchiveOut& archive) :
 		cNetMessage2(eNetMessageType::GAME_ALREADY_RUNNING)
 	{

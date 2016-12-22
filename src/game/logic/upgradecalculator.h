@@ -23,6 +23,7 @@
 #include <map>
 
 #include "utility/signal/signal.h"
+#include "utility/serialization/nvp.h"
 
 class cResearch;
 class cUnitUpgrade;

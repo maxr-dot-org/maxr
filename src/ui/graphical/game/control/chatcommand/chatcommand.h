@@ -28,6 +28,9 @@ class cChatCommandParser;
 
 class cChatCommandExecutor;
 
+template<typename F, typename... Arguments>
+class cChatCommandExecutorImpl;
+
 class cChatCommand
 {
 public:

@@ -23,6 +23,7 @@
 #include <stdint.h>
 
 #include "utility/fixedvector.h"
+#include "serialization/serialization.h"
 
 /**
  * Fixed vector class for 2-dimensional integer positions.

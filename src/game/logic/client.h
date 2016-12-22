@@ -130,6 +130,7 @@ public:
 	* sends a serialized copy of the netmessage to the server.
 	*/
 	void sendNetMessage(cNetMessage2& message) const;
+	void sendNetMessage(cNetMessage2&& message) const;
 
 	/**
 	* gets the vehicle with the ID

@@ -342,3 +342,9 @@ void cMapSender::sendMsg (cNetMessage2& msg)
 
 	connectionManager.sendToPlayer(msg, toPlayerNr);
 }
+
+//------------------------------------------------------------------------------
+void cMapSender::sendMsg (cNetMessage2&& msg)
+{
+	sendMsg(static_cast<cNetMessage2&>(msg));
+}

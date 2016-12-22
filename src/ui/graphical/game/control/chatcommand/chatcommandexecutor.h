@@ -23,6 +23,10 @@
 #include <string>
 #include <iostream>
 
+class cChatCommand;
+
+void skipWhiteSpace(const std::string& command, size_t& position);
+
 class cChatCommandExecutor
 {
 public:

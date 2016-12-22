@@ -155,6 +155,11 @@ void cClient::sendNetMessage(cNetMessage2& message) const
 	connectionManager->sendToServer(message);
 }
 
+void cClient::sendNetMessage(cNetMessage2&& message) const
+{
+	sendNetMessage(static_cast<cNetMessage2&>(message));
+}
+
 bool cClient::addMoveJob (cVehicle& vehicle, const cPosition& destination, const std::vector<cVehicle*>* group)
 {
 	sWaypoint* path = cClientMoveJob::calcPath(*model.getMap(), vehicle.getPosition(), destination, vehicle, group);

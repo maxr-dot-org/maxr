@@ -26,7 +26,7 @@
 
 #include <SDL.h>
 
-#include "serialization/serialization.h"
+#include "serialization/nvp.h"
 
 class cHsvColor;
 class cLabColor;

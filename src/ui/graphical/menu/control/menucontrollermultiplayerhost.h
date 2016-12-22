@@ -120,6 +120,7 @@ private:
 	void handleNetMessage_MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION(cMuMsgPlayerAbortedGamePreparations& message);
 
 	void sendNetMessage(cNetMessage2& message, int receiverPlayerNr = -1, int senderPlayerNr = -1);
+	void sendNetMessage(cNetMessage2&& message, int receiverPlayerNr = -1, int senderPlayerNr = -1);
 
 	void saveOptions();
 };

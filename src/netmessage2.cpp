@@ -144,3 +144,13 @@ void cNetMessageResyncModel::apply(cModel& model) const
 	cBinaryArchiveOut archive(data.data(), data.size(), &p);
 	archive >> model;
 }
+
+//------------------------------------------------------------------------------
+cNetMessageGameAlreadyRunning::cNetMessageGameAlreadyRunning(const cModel& model) :
+	cNetMessage2(eNetMessageType::GAME_ALREADY_RUNNING)
+{
+	for (const auto& p : model.getPlayerList())
+		playerList.push_back(cPlayerBasicData(p->getName(), p->getColor(), p->getId()));
+	mapName = model.getMap()->getName();
+	mapCrc = MapDownload::calculateCheckSum(mapName);
+}

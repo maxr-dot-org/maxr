@@ -113,6 +113,7 @@ private:
 	void finishedMapDownload(cMuMsgFinishedMapDownload& message);
 
 	void sendNetMessage(cNetMessage2& message);
+	void sendNetMessage(cNetMessage2&& message);
 	void saveOptions();
 };
 

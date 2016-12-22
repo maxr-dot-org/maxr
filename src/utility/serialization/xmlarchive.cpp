@@ -211,83 +211,83 @@ std::string cXmlArchiveOut::getStringFromCurrentElement(const std::string& name)
 	return value;
 }
 //------------------------------------------------------------------------------
-void cXmlArchiveOut::popValue(serialization::sNameValuePair<bool>& nvp)
+void cXmlArchiveOut::popValue(const serialization::sNameValuePair<bool>& nvp)
 {
 	getFromCurrentElement(nvp);
 }
 //------------------------------------------------------------------------------
-void cXmlArchiveOut::popValue(serialization::sNameValuePair<char>& nvp)
+void cXmlArchiveOut::popValue(const serialization::sNameValuePair<char>& nvp)
 {
 	int tmp;
 	getFromCurrentElement(serialization::makeNvp(nvp.name, tmp));
 	nvp.value = tmp;
 }
 //------------------------------------------------------------------------------
-void cXmlArchiveOut::popValue(serialization::sNameValuePair<signed char>& nvp)
+void cXmlArchiveOut::popValue(const serialization::sNameValuePair<signed char>& nvp)
 {
 	int tmp;
 	getFromCurrentElement(serialization::makeNvp(nvp.name, tmp));
 	nvp.value = tmp;
 }
 //------------------------------------------------------------------------------
-void cXmlArchiveOut::popValue(serialization::sNameValuePair<unsigned char>& nvp)
+void cXmlArchiveOut::popValue(const serialization::sNameValuePair<unsigned char>& nvp)
 {
 	int tmp;
 	getFromCurrentElement(serialization::makeNvp(nvp.name, tmp));
 	nvp.value = tmp;
 }
 //------------------------------------------------------------------------------
-void cXmlArchiveOut::popValue(serialization::sNameValuePair<signed short>& nvp)
+void cXmlArchiveOut::popValue(const serialization::sNameValuePair<signed short>& nvp)
 {
 	getFromCurrentElement(nvp);
 }
 //------------------------------------------------------------------------------
-void cXmlArchiveOut::popValue(serialization::sNameValuePair<unsigned short>& nvp)
+void cXmlArchiveOut::popValue(const serialization::sNameValuePair<unsigned short>& nvp)
 {
 	getFromCurrentElement(nvp);
 }
 //------------------------------------------------------------------------------
-void cXmlArchiveOut::popValue(serialization::sNameValuePair<signed int>& nvp)
+void cXmlArchiveOut::popValue(const serialization::sNameValuePair<signed int>& nvp)
 {
 	getFromCurrentElement(nvp);
 }
 //------------------------------------------------------------------------------
-void cXmlArchiveOut::popValue(serialization::sNameValuePair<unsigned int>& nvp)
+void cXmlArchiveOut::popValue(const serialization::sNameValuePair<unsigned int>& nvp)
 {
 	getFromCurrentElement(nvp);
 }
 //------------------------------------------------------------------------------
-void cXmlArchiveOut::popValue(serialization::sNameValuePair<signed long>& nvp)
+void cXmlArchiveOut::popValue(const serialization::sNameValuePair<signed long>& nvp)
 {
 	getFromCurrentElement(nvp);
 }
 //------------------------------------------------------------------------------
-void cXmlArchiveOut::popValue(serialization::sNameValuePair<unsigned long>& nvp)
+void cXmlArchiveOut::popValue(const serialization::sNameValuePair<unsigned long>& nvp)
 {
 	getFromCurrentElement(nvp);
 }
 //------------------------------------------------------------------------------
-void cXmlArchiveOut::popValue(serialization::sNameValuePair<signed long long>& nvp)
+void cXmlArchiveOut::popValue(const serialization::sNameValuePair<signed long long>& nvp)
 {
 	getFromCurrentElement(nvp);
 }
 //------------------------------------------------------------------------------
-void cXmlArchiveOut::popValue(serialization::sNameValuePair<unsigned long long>& nvp)
+void cXmlArchiveOut::popValue(const serialization::sNameValuePair<unsigned long long>& nvp)
 {
 	getFromCurrentElement(nvp);
 }
 //------------------------------------------------------------------------------
-void cXmlArchiveOut::popValue(serialization::sNameValuePair<float>& nvp)
+void cXmlArchiveOut::popValue(const serialization::sNameValuePair<float>& nvp)
 {
 	getFromCurrentElement(nvp);
 }
 //------------------------------------------------------------------------------
-void cXmlArchiveOut::popValue(serialization::sNameValuePair<double>& nvp)
+void cXmlArchiveOut::popValue(const serialization::sNameValuePair<double>& nvp)
 {
 	getFromCurrentElement(nvp);
 }
 //------------------------------------------------------------------------------
-void cXmlArchiveOut::popValue(serialization::sNameValuePair<std::string>& nvp)
+void cXmlArchiveOut::popValue(const serialization::sNameValuePair<std::string>& nvp)
 {
 	nvp.value = getStringFromCurrentElement(nvp.name);
 	//replace "\n" in string by real line breaks

@@ -17,46 +17,37 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef game_logic_actionH
-#define game_logic_actionH
+#ifndef serialization_nvpH
+#define serialization_nvpH
 
-#include "netmessage2.h"
-
-class cAction : public cNetMessage2
+namespace serialization
 {
-public:
-	// When changing this enum, also update function enumToString(eActiontype value)!
-	enum class eActiontype {
-		ACTION_INIT_NEW_GAME,
-		ACTION_START_WORK,
-		ACTION_STOP_WORK,
-		ACTION_TRANSFER
-	};
-	static std::unique_ptr<cAction> createFromBuffer(cBinaryArchiveOut& archive);
-
-	eActiontype getType() const;
-
-	virtual void serialize(cBinaryArchiveIn& archive) { cNetMessage2::serialize(archive); serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive)   { cNetMessage2::serialize(archive); serializeThis(archive); }
-
-	//Note: this funktion handels incoming data from network. Make every possible sanity check!
-	virtual void execute(cModel& model) const = 0;
-protected:
-	cAction(eActiontype type) : cNetMessage2(eNetMessageType::ACTION), type(type){};
-private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	struct sNameValuePair
 	{
-		archive & type;
+		sNameValuePair(const std::string& name, T& value) :
+			name(name),
+			value(value)
+		{}
+
+		const std::string& name;
+		T& value;
+	};
+
+	template<typename T>
+	sNameValuePair<T> makeNvp(const std::string& name, T& value)
+	{
+		return sNameValuePair<T>(name, value);
+	}
+	template<typename T>
+	const sNameValuePair<T> makeNvp(const std::string& name, const T& value)
+	{
+		T& value_nonconst = const_cast<T&>(value);
+		return sNameValuePair<T>(name, value_nonconst);
 	}
 
-	cAction(const cAction&) MAXR_DELETE_FUNCTION;
-	cAction& operator=(const cAction&)MAXR_DELETE_FUNCTION;
-
-	eActiontype type;
-};
-
-std::string enumToString(cAction::eActiontype value);
-
+	#define NVP_QUOTE(x) #x
+	#define NVP(value) serialization::makeNvp(NVP_QUOTE(value), value)
+}
 
 #endif

@@ -20,11 +20,12 @@
 #ifndef serialization_xmlarchiveH
 #define  serialization_xmlarchiveH
 
+#include <assert.h>
+#include <typeinfo>
+
 #include "tinyxml2.h"
-
 #include "serialization.h"
-
-class serialization::cPointerLoader;
+#include "extendedtinyxml.h"
 
 
 class cXmlArchiveIn
@@ -88,9 +89,9 @@ public:
 	static const bool isWriter = false;
 
 	template<typename T>
-	cXmlArchiveOut& operator>>(serialization::sNameValuePair<T>& nvp);
+	cXmlArchiveOut& operator>>(const serialization::sNameValuePair<T>& nvp);
 	template<typename T>
-	cXmlArchiveOut& operator&(serialization::sNameValuePair<T>& nvp);
+	cXmlArchiveOut& operator&(const serialization::sNameValuePair<T>& nvp);
 
 	serialization::cPointerLoader* getPointerLoader() const;
 
@@ -107,34 +108,34 @@ private:
 
 	// xml handling methods
 	template <typename T>
-	void getFromCurrentElement(serialization::sNameValuePair<T>& nvp);
+	void getFromCurrentElement(const serialization::sNameValuePair<T>& nvp);
 	std::string getStringFromCurrentElement(const std::string& name);
 
 	template<typename T>
-	void popValue(serialization::sNameValuePair<T>& nvp);
+	void popValue(const serialization::sNameValuePair<T>& nvp);
 
 	//
 	// pop fundamental types
 	//
-	void popValue(serialization::sNameValuePair<bool>& nvp);
-	void popValue(serialization::sNameValuePair<char>& nvp);
-	void popValue(serialization::sNameValuePair<signed char>& nvp);
-	void popValue(serialization::sNameValuePair<unsigned char>& nvp);
-	void popValue(serialization::sNameValuePair<signed short>& nvp);
-	void popValue(serialization::sNameValuePair<unsigned short>& nvp);
-	void popValue(serialization::sNameValuePair<signed int>& nvp);
-	void popValue(serialization::sNameValuePair<unsigned int>& nvp);
-	void popValue(serialization::sNameValuePair<signed long>& nvp);
-	void popValue(serialization::sNameValuePair<unsigned long>& nvp);
-	void popValue(serialization::sNameValuePair<signed long long>& nvp);
-	void popValue(serialization::sNameValuePair<unsigned long long>& nvp);
-	void popValue(serialization::sNameValuePair<float>& nvp);
-	void popValue(serialization::sNameValuePair<double>& nvp);
+	void popValue(const serialization::sNameValuePair<bool>& nvp);
+	void popValue(const serialization::sNameValuePair<char>& nvp);
+	void popValue(const serialization::sNameValuePair<signed char>& nvp);
+	void popValue(const serialization::sNameValuePair<unsigned char>& nvp);
+	void popValue(const serialization::sNameValuePair<signed short>& nvp);
+	void popValue(const serialization::sNameValuePair<unsigned short>& nvp);
+	void popValue(const serialization::sNameValuePair<signed int>& nvp);
+	void popValue(const serialization::sNameValuePair<unsigned int>& nvp);
+	void popValue(const serialization::sNameValuePair<signed long>& nvp);
+	void popValue(const serialization::sNameValuePair<unsigned long>& nvp);
+	void popValue(const serialization::sNameValuePair<signed long long>& nvp);
+	void popValue(const serialization::sNameValuePair<unsigned long long>& nvp);
+	void popValue(const serialization::sNameValuePair<float>& nvp);
+	void popValue(const serialization::sNameValuePair<double>& nvp);
 
 	//
 	// pop STL types
 	//
-	void popValue(serialization::sNameValuePair<std::string>& nvp);
+	void popValue(const serialization::sNameValuePair<std::string>& nvp);
 };
 //------------------------------------------------------------------------------
 template<typename T>
@@ -160,29 +161,28 @@ void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<T>& nvp)
 	if (std::is_class<T>::value)
 		openNewChild(nvp.name);
 
-	serialization::sNameValuePair<T>& valueNonConst = const_cast<serialization::sNameValuePair<T>&>(nvp);
-	serialize(*this, valueNonConst);
+	serialize(*this, nvp);
 	
 	if (std::is_class<T>::value)
 		closeChild();
 }
 //------------------------------------------------------------------------------
 template<typename T>
-cXmlArchiveOut& cXmlArchiveOut::operator>>(serialization::sNameValuePair<T>& nvp)
+cXmlArchiveOut& cXmlArchiveOut::operator>>(const serialization::sNameValuePair<T>& nvp)
 {
 	popValue(nvp);
 	return *this;
 }
 //------------------------------------------------------------------------------
 template<typename T>
-cXmlArchiveOut& cXmlArchiveOut::operator&(serialization::sNameValuePair<T>& nvp)
+cXmlArchiveOut& cXmlArchiveOut::operator&(const serialization::sNameValuePair<T>& nvp)
 {
 	popValue(nvp);
 	return *this;
 }
 //------------------------------------------------------------------------------
 template<typename T>
-void cXmlArchiveOut::getFromCurrentElement(serialization::sNameValuePair<T>& nvp)
+void cXmlArchiveOut::getFromCurrentElement(const serialization::sNameValuePair<T>& nvp)
 {
 	std::string value = getStringFromCurrentElement(nvp.name);
 
@@ -196,7 +196,7 @@ void cXmlArchiveOut::getFromCurrentElement(serialization::sNameValuePair<T>& nvp
 }
 //------------------------------------------------------------------------------
 template<typename T>
-void cXmlArchiveOut::popValue(serialization::sNameValuePair<T>& nvp)
+void cXmlArchiveOut::popValue(const serialization::sNameValuePair<T>& nvp)
 {
 	if (std::is_class<T>::value)
 		enterChild(nvp.name);

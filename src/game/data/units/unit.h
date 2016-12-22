@@ -24,6 +24,7 @@
 #include "game/data/units/unitdata.h"
 #include "utility/signal/signal.h"
 #include "utility/position.h"
+#include "game/logic/jobs.h"
 
 class cClient;
 class cJob;
@@ -169,7 +170,7 @@ public:
 	mutable cSignal<void ()> isBigChanged;
 
 	template<typename T>
-	void serializeBase(T& archive)
+	void serializeThis(T& archive)
 	{
 		archive & NVP(data);
 		//archive & NVP(iID);  //const member. needs to be deserialized before calling constructor
@@ -198,18 +199,8 @@ public:
 
 		//TODO: detection?
 	}
-	template<typename T>
-	void serialize(T& archive)
-	{
-		if (isAVehicle())
-		{
-			static_cast<cVehicle*>(this)->serialize(archive);
-		}
-		else
-		{
-			static_cast<cBuilding*>(this)->serialize(archive);
-		}
-	}
+
+	
 public: // TODO: make protected/private and make getters/setters
 	const cStaticUnitData& getStaticUnitData() const;
 	cDynamicUnitData data;		// basic data of the unit

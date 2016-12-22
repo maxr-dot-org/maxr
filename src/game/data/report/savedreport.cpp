@@ -44,7 +44,7 @@
 #include "main.h"
 
 template <typename T>
-static std::unique_ptr<cSavedReport> cSavedReport::createFromImpl (T& archive)
+std::unique_ptr<cSavedReport> cSavedReport::createFromImpl (T& archive)
 {
 	eSavedReportType type;
 	archive >> NVP(type);

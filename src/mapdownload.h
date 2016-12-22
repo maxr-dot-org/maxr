@@ -86,6 +86,7 @@ private:
 
 	bool getMapFileContent();
 	void sendMsg (cNetMessage2& msg);
+	void sendMsg (cNetMessage2&& msg);
 
 private:
 	cConnectionManager& connectionManager;

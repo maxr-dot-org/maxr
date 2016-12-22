@@ -22,7 +22,7 @@
 
 #include <string>
 #include <tuple>
-#include <iostream>
+#include <sstream>
 
 #include "utility/meta/appendtotuple.h"
 
@@ -94,7 +94,7 @@ size_t cChatCommandParser<Argument, LastArguments...>::parse(const std::string& 
 	{
 		std::stringstream errorString;
 		// TODO: translate
-		errorString << "Invalid value for argument: " << e.what();
+		errorString << std::string("Invalid value for argument: ") << e.what();
 		throw std::runtime_error(errorString.str());
 	}
 	skipWhiteSpace(command, position);

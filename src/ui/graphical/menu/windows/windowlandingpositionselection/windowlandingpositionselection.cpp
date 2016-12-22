@@ -39,6 +39,8 @@
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
 #include "utility/random.h"
+#include "game/data/units/landingunit.h"
+
 
 //------------------------------------------------------------------------------
 cWindowLandingPositionSelection::cWindowLandingPositionSelection(std::shared_ptr<cStaticMap> staticMap_, bool fixedBridgeHead, const std::vector<sLandingUnit>& landingUnits, std::shared_ptr<const cUnitsData> unitsData, bool withChatBox) :

@@ -182,7 +182,7 @@ string getXMLAttributeString (tinyxml2::XMLDocument& document, const char* attri
 bool getXMLAttributeBoolFromElement(const tinyxml2::XMLElement* element, const char* name)
 {
 	string value = element->Attribute(name);
-	std::transform(value.begin(), value.end(), value.begin(), tolower);
+	std::transform(value.begin(), value.end(), value.begin(), ::tolower);
 	if (value == "true" ||
 		value == "y" ||
 		value == "yes")

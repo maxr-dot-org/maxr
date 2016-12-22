@@ -347,7 +347,8 @@ public:
 	template <typename T>
 	void serialize(T& archive)
 	{
-		serializeBase(archive); //serialize cUnit members
+		cUnit::serializeThis (archive); //serialize cUnit members
+
 		//TODO: moveJob
 		archive & NVP(hasAutoMoveJob);
 		archive & NVP(MoveJobActive);
