@@ -111,7 +111,7 @@ void cGameTimerServer::setPlayerNumbers(const std::vector<std::shared_ptr<cPlaye
 
 void cGameTimerServer::handleSyncMessage(const cNetMessageSyncClient& message, unsigned int gameTime)
 {
-	//Note: this funktion handels incoming data from network. Make every possible sanity check!
+	//Note: this function handles incoming data from network. Make every possible sanity check!
 
 	int playerNr = message.playerNr;
 	if (receivedTime.find(playerNr) == receivedTime.end()) return;
@@ -202,7 +202,7 @@ void cGameTimerClient::handleSyncMessage(const cNetMessageSyncServer& message, u
 	ping = message.ping;
 
 	if (message.gameTime != gameTime + 1)
-		Log.write ("Game Synchonisation Error: Received out of order sync message", cLog::eLOG_TYPE_NET_ERROR);
+		Log.write ("Game Synchronization Error: Received out of order sync message", cLog::eLOG_TYPE_NET_ERROR);
 
 	syncMessageReceived = true;
 }

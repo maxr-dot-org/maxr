@@ -77,7 +77,7 @@ public:
 	const std::string& getName() const { return splayer.getName(); }
 	void setName (const std::string& name) { splayer.setName (name); }
 
-	bool isHuman() const { return true; } // only human players are implemented yed.
+	bool isHuman() const { return true; } // only human players are implemented yet.
 	const cPlayerColor& getColor() const { return splayer.getColor(); }
 	void setColor (cPlayerColor color) { return splayer.setColor (std::move (color)); }
 

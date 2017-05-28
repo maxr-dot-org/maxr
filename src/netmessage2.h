@@ -51,8 +51,8 @@ enum class eNetMessageType {
 	ACTION,               /** the set of actions a client (AI or player) can trigger to influence the game */
 	GAMETIME_SYNC_SERVER, /** sync message from server to clients */
 	GAMETIME_SYNC_CLIENT, /** sync message from client to server */
-	RANDOM_SEED,          /** initialize the synchonized random generator of the models */
 	PLAYERSTATE, 
+	RANDOM_SEED,          /** initialize the synchronized random generator of the models */
 	REPORT,               /** chat messages and other reports for the player */
 	GUI_SAVE_INFO,        /** saved reports and gui settings */
 	REQUEST_GUI_SAVE_INFO,/** requests the clients to send their gui data for saving */

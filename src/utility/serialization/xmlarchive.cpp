@@ -198,7 +198,7 @@ std::string cXmlArchiveOut::getStringFromCurrentElement(const std::string& name)
 	if (currentElement->FindAttribute(name.c_str()))
 	{
 		if (currentElement->FirstChildElement(name.c_str()))
-			throw std::runtime_error(std::string("XML Element \"") + currentElement->Name() + "\" has an attribure and child with the same name");
+			throw std::runtime_error(std::string("XML Element \"") + currentElement->Name() + "\" has an attribute and child with the same name");
 
 		value = currentElement->Attribute(name.c_str());
 	}

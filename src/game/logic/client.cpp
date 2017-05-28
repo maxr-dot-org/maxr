@@ -1408,7 +1408,7 @@ void cClient::handleNetMessages()
 			break;
 		case eNetMessageType::RESYNC_MODEL:
 			{
-				Log.write(" Client: Received model data for resynchonization", cLog::eLOG_TYPE_NET_DEBUG);
+				Log.write(" Client: Received model data for resynchronization", cLog::eLOG_TYPE_NET_DEBUG);
 				const cNetMessageResyncModel* msg = static_cast<cNetMessageResyncModel*>(message.get());
 				try
 				{

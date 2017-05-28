@@ -107,7 +107,7 @@ private:
 
 	bool syncMessageReceived; // The gametime can only be increased, after the sync message for the next gametime from the server has been received.
 							  // After the sync message has been received, all following netmessages belong to the next gametime step. So handling of
-							  // messages is stoped, until client reached the next gametime.
+							  // messages is stopped, until client reached the next gametime.
 
 
 	unsigned int localChecksum;			// saved local checksum for debug view
