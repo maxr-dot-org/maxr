@@ -100,6 +100,11 @@ bool cGameTimer::popEvent()
 	}
 }
 
+cGameTimerServer::cGameTimerServer() :
+	cGameTimer(),
+	sentGameTime(0)
+{}
+
 void cGameTimerServer::setPlayerNumbers(const std::vector<std::shared_ptr<cPlayer>>& playerList)
 {
 	for (const auto& p : playerList)
@@ -144,14 +149,23 @@ void cGameTimerServer::checkPlayersResponding(const std::vector<std::shared_ptr<
 {
 	for (auto player : playerList)
 	{
-		//TODO: playerconnection manager
+		const unsigned int playersTime = receivedTime[player->getId()];
+
+		if (playersTime + PAUSE_GAME_TIMEOUT < sentGameTime)
+		{
+			server.setPlayerNotResponding(player->getId());
+		}
+		else if (playersTime == sentGameTime)
+		{
+			//if player is not in state NOT_RESPONDING, following call does nothing
+			server.clearPlayerNotResponding(player->getId());
+		}
 	}
 }
 
 void cGameTimerServer::run(cModel& model, cServer2& server)
 {
 	checkPlayersResponding(model.getPlayerList(), server);
-
 	for (unsigned int i = 0; i < maxEventQueueSize; i++)
 	{
 		if (!popEvent()) break;
@@ -166,6 +180,8 @@ void cGameTimerServer::run(cModel& model, cServer2& server)
 			message.ping = static_cast<int>(clientDebugData[player->getId()].ping);
 			message.gameTime = model.getGameTime();
 			server.sendMessageToClients(message, player->getId());
+
+			sentGameTime = model.getGameTime();
 		}
 	}
 }
@@ -209,17 +225,21 @@ void cGameTimerClient::handleSyncMessage(const cNetMessageSyncServer& message, u
 
 void cGameTimerClient::checkServerResponding(cClient& client)
 {
+	const auto& freezeModes = client.getFreezeModes();
 	if (syncMessageReceived)
 	{
-		client.disableFreezeMode(FREEZE_WAIT_FOR_SERVER);
 		timeSinceLastSyncMessage = 0;
+		if (freezeModes.isEnabled(eFreezeMode::WAIT_FOR_SERVER))
+		{
+			client.disableFreezeMode(eFreezeMode::WAIT_FOR_SERVER);
+		}
 	}
-	else
+	else if (!freezeModes.gameTimePaused())
 	{
 		timeSinceLastSyncMessage++;
-		if (timeSinceLastSyncMessage > MAX_WAITING_FOR_SERVER)
+		if (timeSinceLastSyncMessage > MAX_WAITING_FOR_SERVER && !freezeModes.isEnabled(eFreezeMode::WAIT_FOR_SERVER))
 		{
-			client.enableFreezeMode(FREEZE_WAIT_FOR_SERVER);
+			client.enableFreezeMode(eFreezeMode::WAIT_FOR_SERVER);
 		}
 	}
 }
@@ -258,18 +278,8 @@ void cGameTimerClient::run(cClient& client, cModel& model)
 
 			syncMessageReceived = false;
 
-			//send syncMessage
-			cNetMessageSyncClient message;
-			message.gameTime = model.getGameTime();
-			//add debug data
-			message.crcOK = (localChecksum == remoteChecksum);
-			message.eventCounter = eventCounter;
-			message.queueSize = client.getNetMessageQueueSize();
-			message.ticksPerFrame = tickPerFrame;
-			message.timeBuffer = timeBuffer;
-				
-			client.sendNetMessage(message);
-			
+			sendSyncMessage(client, model.getGameTime(), tickPerFrame, timeBuffer);
+
 			if (SDL_GetTicks() - startGameTime >= maxWorkingTime)
 				break;
 		}
@@ -282,4 +292,18 @@ void cGameTimerClient::run(cClient& client, cModel& model)
 		for (unsigned i = 0; i < (getReceivedTime() - model.getGameTime()) / 2; i++)
 			pushEvent();
 	}
+}
+
+void cGameTimerClient::sendSyncMessage(const cClient &client, unsigned int gameTime, unsigned int tickPerFrame, unsigned int timeBuffer)
+{
+	cNetMessageSyncClient message;
+	message.gameTime = gameTime;
+	//add debug data (only for displaying in 'sync debug' on the host
+	message.crcOK = (localChecksum == remoteChecksum);
+	message.eventCounter = eventCounter;
+	message.queueSize = client.getNetMessageQueueSize();
+	message.ticksPerFrame = tickPerFrame;
+	message.timeBuffer = timeBuffer;
+
+	client.sendNetMessage(message);
 }

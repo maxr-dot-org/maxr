@@ -446,23 +446,6 @@ void sendDefeated (cServer& server, const cPlayer& player, const cPlayer* receiv
 }
 
 //------------------------------------------------------------------------------
-void sendFreeze (cServer& server, eFreezeMode mode, int waitForPlayer)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_FREEZE);
-	message->pushInt16 (waitForPlayer);
-	message->pushInt16 (mode);
-	server.sendNetMessage (std::move (message), nullptr);
-}
-
-//------------------------------------------------------------------------------
-void sendUnfreeze (cServer& server, eFreezeMode mode)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_UNFREEZE);
-	message->pushInt16 (mode);
-	server.sendNetMessage (std::move (message), nullptr);
-}
-
-//------------------------------------------------------------------------------
 void sendWaitFor (cServer& server, const cPlayer& player, const cPlayer* receiver)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_WAIT_FOR);

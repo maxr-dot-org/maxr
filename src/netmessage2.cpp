@@ -57,8 +57,8 @@ std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(const unsigned char
 		message = std::make_unique<cNetMessageSyncClient>(archive); break;
 	case eNetMessageType::RANDOM_SEED:
 		message = std::make_unique<cNetMessageRandomSeed>(archive); break;
-	//case eNetMessageType::PLAYERSTATE:
-	//	message = std::make_unique<cNe>(archive); break;
+	case eNetMessageType::FREEZE_MODES:
+		message = std::make_unique<cNetMessageFreezeModes>(archive); break;
 	case eNetMessageType::REPORT:
 		message = std::make_unique<cNetMessageReport>(archive); break;
 	case eNetMessageType::GUI_SAVE_INFO:
@@ -110,7 +110,7 @@ std::string enumToString(eNetMessageType value)
 	case eNetMessageType::GAMETIME_SYNC_SERVER: return "GAMETIME_SYNC_SERVER";
 	case eNetMessageType::GAMETIME_SYNC_CLIENT: return "GAMETIME_SYNC_CLIENT";
 	case eNetMessageType::RANDOM_SEED: return "RANDOM_SEED";
-	case eNetMessageType::PLAYERSTATE: return "PLAYERSTATE";
+	case eNetMessageType::FREEZE_MODES: return "FREEZE_MODES";
 	case eNetMessageType::REPORT: return "REPORT";
 	case eNetMessageType::GUI_SAVE_INFO: return "GUI_SAVE_INFO";
 	case eNetMessageType::REQUEST_GUI_SAVE_INFO: return "REQUEST_GUI_SAVE_INFO";

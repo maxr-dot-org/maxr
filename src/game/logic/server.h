@@ -281,9 +281,6 @@ public:
 	std::shared_ptr<const cGameSettings> getGameSettings() const { return gameSettings; }
 	bool isTurnBasedGame() const;
 
-	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);
-	void disableFreezeMode (eFreezeMode mode);
-
 	void startTurnTimers();
 
 	void setTurnEndDeadline (const std::chrono::seconds& deadline);
@@ -499,7 +496,6 @@ private:
 
 	std::shared_ptr<cGameSettings> gameSettings;
 	std::shared_ptr<cCasualtiesTracker> casualtiesTracker;
-	sFreezeModes freezeModes;
 
 	std::map<int, cGameGuiState> playerGameGuiStates;
 	/** List with all attackjobs */

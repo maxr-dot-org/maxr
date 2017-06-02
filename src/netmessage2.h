@@ -33,6 +33,7 @@
 #include "maxrversion.h"
 #include "mapdownload.h"
 #include "game/data/player/playerbasicdata.h"
+#include "main.h"
 
 class cSavedReport;
 class cSocket;
@@ -51,8 +52,8 @@ enum class eNetMessageType {
 	ACTION,               /** the set of actions a client (AI or player) can trigger to influence the game */
 	GAMETIME_SYNC_SERVER, /** sync message from server to clients */
 	GAMETIME_SYNC_CLIENT, /** sync message from client to server */
-	PLAYERSTATE, 
 	RANDOM_SEED,          /** initialize the synchronized random generator of the models */
+	FREEZE_MODES,         /** Is the game running? And if it isn't, why not? */
 	REPORT,               /** chat messages and other reports for the player */
 	GUI_SAVE_INFO,        /** saved reports and gui settings */
 	REQUEST_GUI_SAVE_INFO,/** requests the clients to send their gui data for saving */
@@ -217,6 +218,35 @@ private:
 	void serializeThis(T& archive)
 	{
 		archive & seed;
+	}
+};
+
+//------------------------------------------------------------------------------
+class cNetMessageFreezeModes : public cNetMessage2
+{
+public:
+	cNetMessageFreezeModes(const cFreezeModes& freezeModes, std::map<int, ePlayerConnectionState> playerStates) :
+		cNetMessage2(eNetMessageType::FREEZE_MODES),
+		freezeModes(freezeModes),
+		playerStates(playerStates)
+	{};
+	cNetMessageFreezeModes(cBinaryArchiveOut& archive) :
+		cNetMessage2(eNetMessageType::FREEZE_MODES)
+	{
+		serializeThis(archive);
+	}
+
+	virtual void serialize(cBinaryArchiveIn& archive) { cNetMessage2::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive)   { cNetMessage2::serialize(archive); serializeThis(archive); }
+
+	cFreezeModes freezeModes;
+	std::map<int, ePlayerConnectionState> playerStates;
+private:
+	template<typename T>
+	void serializeThis(T& archive)
+	{
+		archive & freezeModes;
+		archive & playerStates;
 	}
 };
 
@@ -462,13 +492,11 @@ private:
 class cNetMessageTcpClose : public cNetMessage2
 {
 public:
-	cNetMessageTcpClose(int playerNr) :
-		cNetMessage2(eNetMessageType::TCP_CLOSE),
-		playerNr(playerNr)
-	{};
-	// no serialization needed, because this is a local event
-
-	int playerNr;
+	cNetMessageTcpClose(int playerNr_) :
+		cNetMessage2(eNetMessageType::TCP_CLOSE)
+	{
+		playerNr = playerNr_;
+	};
 };
 
 //------------------------------------------------------------------------------

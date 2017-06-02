@@ -218,35 +218,53 @@ public:
 	SDL_Surface* ptr_connector_shw_org;
 } EX UnitsUiData;
 
-enum eFreezeMode
+enum class ePlayerConnectionState
 {
-	FREEZE_WAIT_FOR_SERVER,    // waiting response from server
-	FREEZE_WAIT_FOR_OTHERS,    // waiting for the others turn, in turn based mode
-	FREEZE_PAUSE,              // pause, because... pause
-	FREEZE_WAIT_FOR_RECONNECT, // game is paused, because the connection to a player is lost
-	FREEZE_WAIT_FOR_TURNEND,   // server is processing the turn end
-	FREEZE_WAIT_FOR_PLAYER     // waiting for response from a client
+	INACTIVE,       // player is not connected, but game can continue (e. g. defeated player)
+	CONNECTED,      // player is connected. Normal operation.
+	NOT_RESPONDING, // player is connected, but no sync message received for some time. Game should be paused.
+	DISCONNECTED    // player has lost connection. Game should be paused.
+};
+std::string enumToString(ePlayerConnectionState value);
+
+enum class eFreezeMode
+{
+	WAIT_FOR_OTHERS_TURN,    // waiting for the others turn, in turn based mode
+	WAIT_FOR_TURNEND,   // server is processing the turn end
+	PAUSE,              // pause, because... pause
+	WAIT_FOR_CLIENT,    // waiting for response from client
+	WAIT_FOR_SERVER     // waiting for response from server
 };
 
-class sFreezeModes
+class cFreezeModes
 {
 public:
-	sFreezeModes();
+	cFreezeModes();
 
 	void disable (eFreezeMode mode);
-	void enable (eFreezeMode mode, int playerNumber);
-	bool isEnable (eFreezeMode mode) const;
-	int getPlayerNumber() const { return playerNumber; }
+	void enable (eFreezeMode mode);
+	bool isEnabled (eFreezeMode mode) const;
 	bool isFreezed() const;
-public:
-	bool waitForOthers;    // waiting for the others turn, in turn based mode
-	bool waitForServer;    // waiting response from server
-	bool waitForReconnect; // paused, because the connection to a player is lost
-	bool waitForTurnEnd;   // server is processing the turn end
-	bool pause;            // pause, because... pause
-	bool waitForPlayer;    // waiting for response from a client
-private:
-	int playerNumber;
+	bool gameTimePaused() const;
+
+	template<typename T>
+	void serialize(T& archive)
+	{
+		archive & waitForOthersTurn;
+		archive & waitForTurnEnd;
+		archive & pause;
+		archive & waitForClient;
+		archive & waitForServer;
+	}
+
+	// These modes are triggered on server (and synchronized to clients):
+	bool waitForOthersTurn; // waiting for the others turn, in turn based mode
+	bool waitForTurnEnd;    // server is processing the turn end
+	bool pause;             // pause, because... pause
+	bool waitForClient;      // waiting for response from client
+	
+	// This mode is triggered on client (and not synchronized with server or other clients):
+	bool waitForServer;     // waiting for response from server
 };
 
 // OtherData - Class containing the rest of surfaces //////////////////////////

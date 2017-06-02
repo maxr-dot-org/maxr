@@ -57,6 +57,7 @@ public:
 	void connectToServer(const std::string& host, int port, const cPlayerBasicData& player);
 	bool isConnectedToServer() const;
 	void changePlayerNumber(int currentNr, int newNr);
+	bool isPlayerConnected(int playerNr) const;
 
 	void setLocalClient(INetMessageReceiver* client, int playerNr);
 	void setLocalServer(INetMessageReceiver* server);
@@ -101,7 +102,6 @@ private:
 	std::string connectingPlayerName;
 	cRgbColor connectingPlayerColor;
 	bool connectingPlayerReady;
-
 };
 
 #endif

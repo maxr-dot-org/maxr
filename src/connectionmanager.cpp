@@ -569,6 +569,18 @@ bool cConnectionManager::handeConnectionHandshake(const std::unique_ptr<cNetMess
 }
 
 //------------------------------------------------------------------------------
+bool cConnectionManager::isPlayerConnected(int playerNr) const
+{
+	if (playerNr == localPlayer)
+	{
+		return true;
+	}
+
+	auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<const cSocket*, int>& x) { return x.second == playerNr; });
+	return x != clientSockets.end();
+}
+
+//------------------------------------------------------------------------------
 void cConnectionManager::connectionResult(const cSocket* socket)
 {
 	assert(localClient);

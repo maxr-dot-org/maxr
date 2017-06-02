@@ -82,11 +82,11 @@ public:
 	unsigned int getNetMessageQueueSize() const { return static_cast<unsigned int>(eventQueue.safe_size()); };
 	virtual void pushMessage(std::unique_ptr<cNetMessage2> message) MAXR_OVERRIDE_FUNCTION;
 
-	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);
+	//
+	void enableFreezeMode (eFreezeMode mode);
 	void disableFreezeMode (eFreezeMode mode);
-	bool isFreezed() const;
-	int getFreezeInfoPlayerNumber() const { return freezeModes.getPlayerNumber(); }
-	bool getFreezeMode (eFreezeMode mode) const;
+	const cFreezeModes& getFreezeModes () const;
+	//
 
 	/**
 	* handles the end of a turn
@@ -183,11 +183,11 @@ public:
 	mutable cSignal<void (int fromPlayerNr, std::unique_ptr<cSavedReport>& report, int toPlayerNr)> reportMessageReceived;
 	mutable cSignal<void (int savingID)> guiSaveInfoRequested;
 	mutable cSignal<void(const cNetMessageGUISaveInfo& guiInfo)> guiSaveInfoReceived;
+	mutable cSignal<void(const cFreezeModes& freeseModes, const std::map<int, ePlayerConnectionState>& playerConnectionStates)> freezeModeChanged;
+
 
 	//TODO: move signals to model
 	mutable cSignal<void (int, int)> playerFinishedTurn;
-
-	mutable cSignal<void (eFreezeMode)> freezeModeChanged;
 
 	mutable cSignal<void (const cUnit& storingUnit, const cUnit& storedUnit)> unitStored;
 	mutable cSignal<void (const cUnit& storingUnit, const cUnit&storedUnit)> unitActivated;
@@ -268,8 +268,6 @@ private:
 	void HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_NOFOG (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_DEFEATED (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_FREEZE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_UNFREEZE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_TURN (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_STORE_UNIT (cNetMessage& message);
@@ -321,7 +319,8 @@ private:
 
 	std::shared_ptr<cCasualtiesTracker> casualtiesTracker; //TODO: move to cModel
 
-	sFreezeModes freezeModes;
+	cFreezeModes freezeModes;
+	std::map<int, ePlayerConnectionState> playerConnectionStates;
 
 	/** lists with all FX-Animation */
 	std::unique_ptr<cFxContainer> effectsList; //TODO: move to cModel

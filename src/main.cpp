@@ -59,6 +59,7 @@
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/windows/windowstart.h"
 #include "debug.h"
+#include "utility/string/toString.h"
 
 using namespace std;
 
@@ -431,61 +432,96 @@ const sVehicleUIData* cUnitsUiData::getVehicleUI(sID id) const
 }
 
 //------------------------------------------------------------------------------
-sFreezeModes::sFreezeModes() :
-	waitForOthers (false),
-	waitForServer (false),
-	waitForReconnect (false),
+std::string enumToString(ePlayerConnectionState value)
+{
+	switch (value)
+	{
+	case ePlayerConnectionState::INACTIVE: return "INACTIVE";
+	case ePlayerConnectionState::CONNECTED: return "CONNECTED";
+	case ePlayerConnectionState::NOT_RESPONDING: return "NOT_RESPONDING";
+	case ePlayerConnectionState::DISCONNECTED: return "DISCONNECTED";
+	default:
+		assert(false);
+		return toString(static_cast<int>(value));
+	}
+}
+
+//------------------------------------------------------------------------------
+cFreezeModes::cFreezeModes() :
+	waitForOthersTurn (false),
 	waitForTurnEnd (false),
 	pause (false),
-	waitForPlayer (false),
-	playerNumber (-1)
+	waitForClient (false),
+	waitForServer (false)
 {}
 
-void sFreezeModes::enable (eFreezeMode mode, int playerNumber_)
+void cFreezeModes::enable (eFreezeMode mode)
 {
 	switch (mode)
 	{
-		case FREEZE_WAIT_FOR_SERVER: waitForServer = true; break;
-		case FREEZE_WAIT_FOR_OTHERS: waitForOthers = true; break;
-		case FREEZE_PAUSE: pause = true; break;
-		case FREEZE_WAIT_FOR_RECONNECT: waitForReconnect = true; break;
-		case FREEZE_WAIT_FOR_TURNEND: waitForTurnEnd = true; break;
-		case FREEZE_WAIT_FOR_PLAYER: waitForPlayer = true; break;
-	}
-
-	if (playerNumber_ != -1)
-		playerNumber = playerNumber_;
-}
-
-void sFreezeModes::disable (eFreezeMode mode)
-{
-	switch (mode)
-	{
-		case FREEZE_WAIT_FOR_SERVER: waitForServer = false; break;
-		case FREEZE_WAIT_FOR_OTHERS: waitForOthers = false; break;
-		case FREEZE_PAUSE: pause = false; break;
-		case FREEZE_WAIT_FOR_RECONNECT: waitForReconnect = false; break;
-		case FREEZE_WAIT_FOR_TURNEND: waitForTurnEnd = false; break;
-		case FREEZE_WAIT_FOR_PLAYER: waitForPlayer = false; break;
+	case eFreezeMode::WAIT_FOR_OTHERS_TURN:
+		waitForOthersTurn = true;
+		break;
+	case eFreezeMode::WAIT_FOR_TURNEND:
+		waitForTurnEnd = true;
+		break;
+	case eFreezeMode::PAUSE:
+		pause = true;
+		break;
+	case eFreezeMode::WAIT_FOR_CLIENT:
+		waitForClient = true;
+		break; 
+	case eFreezeMode::WAIT_FOR_SERVER:
+		waitForServer = true;
+		break;
+	default:
+		assert(false);
 	}
 }
 
-bool sFreezeModes::isFreezed() const
-{
-	return waitForServer | waitForOthers | pause |
-		   waitForReconnect | waitForTurnEnd | waitForPlayer;
-}
-
-bool sFreezeModes::isEnable (eFreezeMode mode) const
+void cFreezeModes::disable (eFreezeMode mode)
 {
 	switch (mode)
 	{
-		case FREEZE_WAIT_FOR_SERVER: return waitForServer;
-		case FREEZE_WAIT_FOR_OTHERS: return waitForOthers;
-		case FREEZE_PAUSE: return pause;
-		case FREEZE_WAIT_FOR_RECONNECT: return waitForReconnect;
-		case FREEZE_WAIT_FOR_TURNEND: return waitForTurnEnd;
-		case FREEZE_WAIT_FOR_PLAYER: return waitForPlayer;
+	case eFreezeMode::WAIT_FOR_OTHERS_TURN:
+		waitForOthersTurn = false;
+		break;
+	case eFreezeMode::WAIT_FOR_TURNEND:
+		waitForTurnEnd = false;
+		break;
+	case eFreezeMode::PAUSE:
+		pause = false;
+		break;
+	case eFreezeMode::WAIT_FOR_CLIENT:
+		waitForClient = false;
+		break;
+	case eFreezeMode::WAIT_FOR_SERVER:
+		waitForServer = false;
+		break;
+	default:
+		assert(false);
+	}
+}
+
+bool cFreezeModes::isFreezed() const
+{
+	return waitForOthersTurn | pause | waitForTurnEnd | waitForClient | waitForServer;
+}
+
+bool cFreezeModes::gameTimePaused() const
+{
+	return waitForClient | pause;
+}
+
+bool cFreezeModes::isEnabled (eFreezeMode mode) const
+{
+	switch (mode)
+	{
+		case eFreezeMode::WAIT_FOR_OTHERS_TURN: return waitForOthersTurn;
+		case eFreezeMode::PAUSE: return pause;
+		case eFreezeMode::WAIT_FOR_TURNEND: return waitForTurnEnd;
+		case eFreezeMode::WAIT_FOR_CLIENT: return waitForClient;
+		case eFreezeMode::WAIT_FOR_SERVER: return waitForServer;
 	}
 	assert (0); // Incorrect parameter
 	return false;

@@ -370,11 +370,11 @@ void cClient::HandleNetMessage_GAME_EV_WAIT_FOR (cNetMessage& message)
 
 	if (nextPlayerNum == activePlayer->getId())
 	{
-		disableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
+		//disableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
 	}
 	else
 	{
-		enableFreezeMode (FREEZE_WAIT_FOR_OTHERS, nextPlayerNum);
+		//enableFreezeMode (FREEZE_WAIT_FOR_OTHERS, nextPlayerNum);
 	}
 }
 
@@ -976,24 +976,6 @@ void cClient::HandleNetMessage_GAME_EV_DEFEATED (cNetMessage& message)
 	}
 #endif*/
 }
-
-void cClient::HandleNetMessage_GAME_EV_FREEZE (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_FREEZE);
-
-	const eFreezeMode mode = (eFreezeMode) message.popInt16();
-	const int playerNumber = message.popInt16();
-	enableFreezeMode (mode, playerNumber);
-}
-
-void cClient::HandleNetMessage_GAME_EV_UNFREEZE (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_UNFREEZE);
-
-	eFreezeMode mode = (eFreezeMode) message.popInt16();
-	disableFreezeMode (mode);
-}
-
 void cClient::HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_DEL_PLAYER);
@@ -1366,7 +1348,7 @@ void cClient::handleNetMessages()
 		{
 		case eNetMessageType::REPORT:
 			{
-				if (model.getPlayer(message->playerNr) == nullptr) continue;
+				if (message->playerNr != -1 && model.getPlayer(message->playerNr) == nullptr) continue;
 
 				cNetMessageReport* chatMessage = static_cast<cNetMessageReport*>(message.get());
 				reportMessageReceived(chatMessage->playerNr, chatMessage->report, activePlayer->getId());
@@ -1413,11 +1395,39 @@ void cClient::handleNetMessages()
 				try
 				{
 					msg->apply(model);
+					gameTimer->sendSyncMessage(*this, model.getGameTime(), 0, 0);
 				}
 				catch (std::runtime_error& e)
 				{
 					Log.write(std::string(" Client: error loading received model data: ") + e.what(), cLog::eLOG_TYPE_NET_ERROR);
 				}
+			}
+			break;
+		case eNetMessageType::FREEZE_MODES:
+			{
+				const cNetMessageFreezeModes* msg = static_cast<cNetMessageFreezeModes*>(message.get());
+				
+				// don't overwrite waitForServer flag
+				bool waitForServer = freezeModes.isEnabled(eFreezeMode::WAIT_FOR_SERVER);
+				freezeModes = msg->freezeModes;
+				if (waitForServer) freezeModes.enable(eFreezeMode::WAIT_FOR_SERVER);
+				
+				for (auto state : msg->playerStates)
+				{
+					if (model.getPlayer(state.first) == nullptr)
+					{
+						Log.write(" Client: Invalid player id: " + toString(state.first), cLog::eLOG_TYPE_NET_ERROR);
+						break;
+					}
+				}
+				if (msg->playerStates.size() != model.getPlayerList().size())
+				{
+					Log.write(" Client: Wrong size of playerState map " + toString(msg->playerStates.size()), cLog::eLOG_TYPE_NET_ERROR);
+					break;
+				}
+				playerConnectionStates = msg->playerStates;
+
+				freezeModeChanged(freezeModes, playerConnectionStates);
 			}
 			break;
 		default:
@@ -1467,8 +1477,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_STOP_CLEARING: HandleNetMessage_GAME_EV_STOP_CLEARING (message); break;
 		case GAME_EV_NOFOG: HandleNetMessage_GAME_EV_NOFOG (message); break;
 		case GAME_EV_DEFEATED: HandleNetMessage_GAME_EV_DEFEATED (message); break;
-		case GAME_EV_FREEZE: HandleNetMessage_GAME_EV_FREEZE (message); break;
-		case GAME_EV_UNFREEZE: HandleNetMessage_GAME_EV_UNFREEZE (message); break;
 		case GAME_EV_DEL_PLAYER: HandleNetMessage_GAME_EV_DEL_PLAYER (message); break;
 		case GAME_EV_TURN: HandleNetMessage_GAME_EV_TURN (message); break;
 		case GAME_EV_STORE_UNIT: HandleNetMessage_GAME_EV_STORE_UNIT (message); break;
@@ -1534,7 +1542,7 @@ void cClient::addUnit (const cPosition& position, cBuilding& addedBuilding)
 
 void cClient::handleEnd()
 {
-	if (isFreezed()) return;
+	if (freezeModes.isFreezed()) return;
 	sendWantToEndTurn (*this);
 }
 
@@ -1788,37 +1796,33 @@ void cClient::runJobs()
 }
 
 //------------------------------------------------------------------------------
-void cClient::enableFreezeMode (eFreezeMode mode, int playerNumber)
+void cClient::enableFreezeMode(eFreezeMode mode)
 {
-	const auto wasEnabled = freezeModes.isEnable (mode);
-	const auto oldPlayerNumber = freezeModes.getPlayerNumber();
+	Log.write(" Client: enabled freeze mode: " + enumToString(mode), cLog::eLOG_TYPE_NET_DEBUG);
+	const auto wasEnabled = freezeModes.isEnabled (mode);
 
-	freezeModes.enable (mode, playerNumber);
+	freezeModes.enable (mode);
 
-	if (!wasEnabled || oldPlayerNumber != playerNumber) freezeModeChanged (mode);
+	if (!wasEnabled) freezeModeChanged (freezeModes, playerConnectionStates);
 }
 
 //------------------------------------------------------------------------------
 void cClient::disableFreezeMode (eFreezeMode mode)
 {
-	const auto wasDisabled = !freezeModes.isEnable (mode);
+	Log.write(" Client: disabled freeze mode: " + enumToString(mode), cLog::eLOG_TYPE_NET_DEBUG);
+	const auto wasDisabled = !freezeModes.isEnabled (mode);
 
 	freezeModes.disable (mode);
 
-	if (!wasDisabled) freezeModeChanged (mode);
+	if (!wasDisabled) freezeModeChanged (freezeModes, playerConnectionStates);
 }
 
 //------------------------------------------------------------------------------
-bool cClient::isFreezed() const
+const cFreezeModes& cClient::getFreezeModes () const
 {
-	return freezeModes.isFreezed();
+	return freezeModes;
 }
 
-//------------------------------------------------------------------------------
-bool cClient::getFreezeMode (eFreezeMode mode) const
-{
-	return freezeModes.isEnable (mode);
-}
 //------------------------------------------------------------------------------
 void cClient::loadModel(int saveGameNumber)
 {

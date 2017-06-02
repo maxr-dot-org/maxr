@@ -29,6 +29,7 @@
 #include "netmessage2.h"
 #include "utility/string/toString.h"
 #include "connectionmanager.h"
+#include "game/data/report/special/savedreportlostconnection.h"
 
 //------------------------------------------------------------------------------
 cServer2::cServer2(std::shared_ptr<cConnectionManager> connectionManager) :
@@ -59,6 +60,7 @@ void cServer2::setGameSettings(const cGameSettings& gameSettings)
 {
 	model.setGameSettings(gameSettings);
 }
+
 //------------------------------------------------------------------------------
 void cServer2::setPlayers(const std::vector<cPlayerBasicData>& splayers)
 {
@@ -71,6 +73,7 @@ const cModel& cServer2::getModel() const
 {
 	return model;
 }
+
 //------------------------------------------------------------------------------
 void cServer2::saveGameState(int saveGameNumber, const std::string& saveName) const
 {
@@ -99,6 +102,7 @@ void cServer2::loadGameState(int saveGameNumber)
 {
 	Log.write(" Server: loading game state from save file " + iToStr(saveGameNumber), cLog::eLOG_TYPE_NET_DEBUG);
 	savegame.loadModel(model, saveGameNumber);
+
 	gameTimer.setPlayerNumbers(model.getPlayerList());
 }
 //------------------------------------------------------------------------------
@@ -119,10 +123,9 @@ void cServer2::resyncClientModel(int playerNr /*= -1*/) const
 {
 	assert(SDL_ThreadID() == SDL_GetThreadID(serverThread));
 
-	Log.write(" Server: Resyncronize client model " + iToStr(playerNr), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write(" Server: Resynchronize client model " + iToStr(playerNr), cLog::eLOG_TYPE_NET_DEBUG);
 	cNetMessageResyncModel msg(model);
 	sendMessageToClients(msg, playerNr);
-
 }
 
 //------------------------------------------------------------------------------
@@ -143,9 +146,13 @@ void cServer2::sendMessageToClients(const cNetMessage2& message, int playerNr /*
 	}
 
 	if (playerNr == -1)
+	{
 		connectionManager->sendToPlayers(message);
-	else
+	}
+	else if (connectionManager->isPlayerConnected(playerNr))
+	{
 		connectionManager->sendToPlayer(message, playerNr);
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -154,6 +161,8 @@ void cServer2::start()
 	if (serverThread) return;
 
 	initRandomGenerator();
+	initPlayerConnectionState();
+	updateWaitForClientFlag();
 
 	serverThread = SDL_CreateThread(serverThreadCallback, "server", this);
 	gameTimer.maxEventQueueSize = MAX_SERVER_EVENT_COUNTER;
@@ -238,7 +247,12 @@ void cServer2::run()
 					connectionManager->declineConnection(connectMessage.socket, "Text~Multiplayer~Reconnect_Not_Part_Of_Game");
 					break;
 				}
-				//TODO: check if player is disconnected
+				if (connectionManager->isPlayerConnected(player->getId()))
+				{
+					Log.write(" Server: Connecting player " + connectMessage.playerName + " is already connected", cLog::eLOG_TYPE_NET_WARNING);
+					connectionManager->declineConnection(connectMessage.socket, "Text~Multiplayer~Reconnect_Already_Connected");
+					break;
+				}
 
 				connectionManager->acceptConnection(connectMessage.socket, player->getId());
 
@@ -247,14 +261,25 @@ void cServer2::run()
 			}
 			case eNetMessageType::TCP_CLOSE:
 			{
-				//TODO: set player status
+				const cNetMessageTcpClose&  msg = *static_cast<cNetMessageTcpClose*>(message.get());
+				sendMessageToClients(cNetMessageReport(std::make_unique<cSavedReportLostConnection>(*model.getPlayer(msg.playerNr))));
+				playerDisconnected(msg.playerNr);
 				break;
 			}
 			case eNetMessageType::WANT_REJOIN_GAME:
 			{
-				//TODO: check player is disconnected
-				//TODO: set player status
+				const cNetMessageWantRejoinGame&  msg = *static_cast<cNetMessageWantRejoinGame*>(message.get());
+
+				const auto player = model.getPlayer(msg.playerNr);
+				if (player == nullptr)
+				{
+					Log.write(" Server: Invalid player id: " + toString(msg.playerNr), cLog::eLOG_TYPE_NET_ERROR);
+					break;
+				}
+
 				resyncClientModel(message->playerNr);
+				playerConnected(msg.playerNr);
+
 				if (savegame.getLastUsedSaveSlot() != -1)
 				{
 					savegame.loadGuiInfo(this, savegame.getLastUsedSaveSlot(), message->playerNr);
@@ -275,17 +300,135 @@ void cServer2::run()
 	}
 }
 
+//------------------------------------------------------------------------------
 void cServer2::setUnitsData(std::shared_ptr<const cUnitsData> unitsData)
 {
 	model.setUnitsData(std::make_shared<cUnitsData>(*unitsData));
 }
 
+//------------------------------------------------------------------------------
 void cServer2::initRandomGenerator()
 {
 	uint64_t t = random(UINT64_MAX);
 	model.randomGenerator.seed(t);
 	cNetMessageRandomSeed msg(t);
 	sendMessageToClients(msg);
+}
+
+//------------------------------------------------------------------------------
+void cServer2::enableFreezeMode(eFreezeMode mode)
+{
+	freezeModes.enable(mode);
+	updateGameTimerstate();
+
+	sendMessageToClients(cNetMessageFreezeModes(freezeModes, playerConnectionStates));
+}
+
+//------------------------------------------------------------------------------
+void cServer2::disableFreezeMode(eFreezeMode mode)
+{
+	freezeModes.disable(mode);
+	updateGameTimerstate();
+
+	sendMessageToClients(cNetMessageFreezeModes(freezeModes, playerConnectionStates));
+}
+
+//------------------------------------------------------------------------------
+void cServer2::setPlayerNotResponding(int playerId)
+{
+	if (playerConnectionStates[playerId] != ePlayerConnectionState::CONNECTED) return;
+
+	playerConnectionStates[playerId] = ePlayerConnectionState::NOT_RESPONDING;
+	Log.write(" Server: Player " + toString(playerId) + " not responding", cLog::eLOG_TYPE_NET_DEBUG);
+	updateWaitForClientFlag();
+}
+
+//------------------------------------------------------------------------------
+void cServer2::clearPlayerNotResponding(int playerId)
+{
+	if (playerConnectionStates[playerId] != ePlayerConnectionState::NOT_RESPONDING) return;
+
+	playerConnectionStates[playerId] = ePlayerConnectionState::CONNECTED;
+	Log.write(" Server: Player " + toString(playerId) + " responding again", cLog::eLOG_TYPE_NET_DEBUG);
+	updateWaitForClientFlag();
+}
+
+//------------------------------------------------------------------------------
+void cServer2::playerDisconnected(int playerId)
+{
+	const auto player = model.getPlayer(playerId);
+	if (player->isDefeated)
+	{
+		playerConnectionStates[playerId] = ePlayerConnectionState::INACTIVE;
+	}
+	else
+	{
+		//TODO: set to INACTIVE when running in dedicated mode
+		playerConnectionStates[playerId] = ePlayerConnectionState::DISCONNECTED;
+	}
+	Log.write(" Server: Player " + toString(playerId) + " dissconnected", cLog::eLOG_TYPE_NET_DEBUG);
+	updateWaitForClientFlag();
+}
+
+//------------------------------------------------------------------------------
+void cServer2::playerConnected(int playerId)
+{
+	playerConnectionStates[playerId] = ePlayerConnectionState::CONNECTED;
+	Log.write(" Server: Player " + toString(playerId) + " connected", cLog::eLOG_TYPE_NET_DEBUG);
+	updateWaitForClientFlag(); 
+}
+
+//------------------------------------------------------------------------------
+void cServer2::updateWaitForClientFlag()
+{
+	bool freeze = false;
+	for (auto state : playerConnectionStates)
+	{
+		if (state.second == ePlayerConnectionState::DISCONNECTED || state.second == ePlayerConnectionState::NOT_RESPONDING)
+		{
+			freeze = true;
+		}
+	}
+
+	if (freeze)
+	{
+		enableFreezeMode(eFreezeMode::WAIT_FOR_CLIENT);
+	}
+	else
+	{
+		disableFreezeMode(eFreezeMode::WAIT_FOR_CLIENT);
+	}
+}
+
+//------------------------------------------------------------------------------
+void cServer2::updateGameTimerstate()
+{
+	if (freezeModes.gameTimePaused())
+	{
+		gameTimer.stop();
+	}
+	else if (serverThread != nullptr)
+	{
+		gameTimer.start();
+	}
+}
+
+//------------------------------------------------------------------------------
+void cServer2::initPlayerConnectionState()
+{
+	for (const auto player : model.getPlayerList())
+	{
+		if (connectionManager->isPlayerConnected(player->getId()))
+		{
+			playerConnectionStates[player->getId()] = ePlayerConnectionState::CONNECTED;
+		}
+		else
+		{
+			// assume that game always start with all necessary players connected.
+			// So set the disconnected players to INACTIVE
+			playerConnectionStates[player->getId()] = ePlayerConnectionState::INACTIVE;
+		}
+	}
 }
 
 //------------------------------------------------------------------------------

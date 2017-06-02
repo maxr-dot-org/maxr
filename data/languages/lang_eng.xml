@@ -297,7 +297,7 @@
 			<Save_Only_Host ENG="Only the host can save the current games."/>
 			<Server_Not_Running ENG="The server is not running."/>
 			<Wait_For_Server ENG="Waiting for network response from server" />
-			<Wait_Reconnect ENG="Waiting for reconnection of player."/>
+			<Wait_Reconnect ENG="Waiting for reconnection of player %s"/>
 			<Wait_TurnEnd ENG="Please wait while turn end is executed." />
 			<Wait_Until ENG="Please wait until %s has finished his turn."/>
 			<Waiting ENG="Waiting for other players..."/>

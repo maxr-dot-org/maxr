@@ -194,15 +194,7 @@ void sendNoFog (cServer& server, const cPlayer& receiver);
 *@author alzi alias DoctorDeath
 */
 void sendDefeated (cServer& server, const cPlayer& player, const cPlayer* receiver = nullptr);
-/**
-* sends that a client has to wait until he will be defrezzed
-*@param waitForPlayer tells the client, for which other player he is waiting
-*/
-void sendFreeze (cServer& server, eFreezeMode mode, int waitForPlayer);
-/**
-* sends that the client can abort waiting
-*/
-void sendUnfreeze (cServer& server, eFreezeMode mode);
+
 /**
 * sends that a client has to wait for another player to end his turn
 *@author alzi alias DoctorDeath

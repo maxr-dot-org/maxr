@@ -1208,7 +1208,7 @@ void cServer::handleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message)
 		deletePlayer (*DisconnectedPlayerList[i]);
 	}
 	DisconnectedPlayerList.clear();
-	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
+//	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
 	if (isTurnBasedGame()) sendWaitFor (*this, *activeTurnPlayer, nullptr);
 }
 
@@ -2406,7 +2406,7 @@ void cServer::handleWantEnd()
 	// that is after the turn end.
 	// that means they have finished processing all the turn end messages,
 	// and we can start the new turn simultaneously on all clients
-	if (freezeModes.waitForTurnEnd && !executingRemainingMovements)
+	//if (freezeModes.waitForTurnEnd && !executingRemainingMovements)
 	{
 		for (const auto& player : playerList)
 		{
@@ -2439,7 +2439,7 @@ void cServer::handleWantEnd()
 		startTurnTimers();
 
 		// begin the new turn
-		disableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
+		//disableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
 	}
 
 	if (pendingEndTurnPlayerNumber != -1 && pendingEndTurnPlayerNumber != -2)
@@ -2453,7 +2453,7 @@ void cServer::handleWantEnd()
 //------------------------------------------------------------------------------
 bool cServer::checkRemainingMoveJobs (const cPlayer* player)
 {
-	enableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
+	//enableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
 
 	executingRemainingMovements = false;
 	bool startedNewMoveJobs = false;
@@ -2531,7 +2531,7 @@ bool cServer::executeRemainingMoveJobs (const cPlayer& player)
 //------------------------------------------------------------------------------
 void cServer::makeTurnStart (cPlayer& player)
 {
-	enableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
+	//enableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
 	lastTurnEnd = model.getGameTime();
 
 	player.base.checkTurnEnd ();
@@ -3484,46 +3484,6 @@ void cServer::addAttackJob (cUnit* aggressor, const cPosition& targetPosition)
 	AJobs.push_back (attackJob);
 }
 
-void cServer::enableFreezeMode (eFreezeMode mode, int playerNumber)
-{
-	freezeModes.enable (mode, playerNumber);
-	switch (mode)
-	{
-		case FREEZE_PAUSE: gameTimer->stop(); break;
-		case FREEZE_WAIT_FOR_RECONNECT: gameTimer->stop(); break;
-		case FREEZE_WAIT_FOR_TURNEND: break;
-		case FREEZE_WAIT_FOR_PLAYER:
-			//gameTimer->stop(); //done in cGameTimer::nextTickAllowed();
-			break;
-		default:
-			Log.write (" Server: Tried to enable unsupported freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
-			break;
-	}
-
-	sendFreeze (*this, mode, freezeModes.getPlayerNumber());
-}
-
-void cServer::disableFreezeMode (eFreezeMode mode)
-{
-	freezeModes.disable (mode);
-	switch (mode)
-	{
-		case FREEZE_PAUSE:
-		case FREEZE_WAIT_FOR_RECONNECT:
-		case FREEZE_WAIT_FOR_TURNEND:
-		case FREEZE_WAIT_FOR_PLAYER:
-			sendUnfreeze (*this, mode);
-			break;
-		default:
-			Log.write (" Server: Tried to disable unsupported freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
-			break;
-	}
-
-	if (!freezeModes.pause && !freezeModes.waitForReconnect)
-	{
-		gameTimer->start();
-	}
-}
 
 const cGameGuiState& cServer::getPlayerGameGuiState (const cPlayer& player)
 {

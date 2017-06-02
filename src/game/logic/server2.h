@@ -56,17 +56,34 @@ public:
 	void setMap(std::shared_ptr<cStaticMap> staticMap);
 	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData);
 	void setPlayers(const std::vector<cPlayerBasicData>& splayers);
+
 	const cModel& getModel() const;
 	void saveGameState(int saveGameNumber, const std::string & saveName) const;
 	void loadGameState(int saveGameNumber);
 	void sendGuiInfoToClients(int saveGameNumber, int playerNr = -1);
 
 	void resyncClientModel(int playerNr = -1) const;
+	void enableFreezeMode(eFreezeMode mode);
+	void disableFreezeMode(eFreezeMode mode);
+
+	/**
+	* Set player state to NOT_RESPONDING. Freeze mode WAIT_FOR_CLIENT will
+	* be enabled if necessary. 
+	*/
+	void setPlayerNotResponding(int playerId);
+
+	/**
+	* Set player state to CONNECTED. Freeze mode WAIT_FOR_CLIENT will
+	* be disabled if possible.
+	*/
+	void clearPlayerNotResponding(int playerId);
+
 
 private:
 	cModel model;
-	//std::vector<cPlayerConnectionState> playerConnectionStates;
-	//cPlayerConnectionManager playerConnectionManager;
+
+	std::map<int, ePlayerConnectionState> playerConnectionStates;
+	cFreezeModes freezeModes;
 	cGameTimerServer gameTimer;
 
 	std::shared_ptr<cConnectionManager> connectionManager;
@@ -75,6 +92,30 @@ private:
 	mutable cSavegame savegame;
 
 	void initRandomGenerator();
+	/**
+	* Update the player connection state and halt game if necessary.
+	*/
+	void playerConnected(int playerId);
+
+	/**
+	* Update the player connection state and resume game if possible.
+	*/
+	void playerDisconnected(int playerId);
+
+	/**
+	* Enables or disables the WaitForClient freeze mode after player connection state has changed.
+	*/
+	void updateWaitForClientFlag();
+
+	/**
+	* Starts or stops the gametimer after freezemodes have changed
+	*/
+	void updateGameTimerstate();
+
+	/**
+	* sets the initial player connection states after starting or loading a game
+	*/
+	void initPlayerConnectionState();
 
 	// manage the server thread
 	static int serverThreadCallback(void* arg);

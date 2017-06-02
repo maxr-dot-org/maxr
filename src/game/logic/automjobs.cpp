@@ -75,7 +75,7 @@ cAutoMJob::cAutoMJob (cClient& client_, cVehicle& vehicle_) :
 void cAutoMJob::doAutoMove (const std::vector<cAutoMJob*>& jobs)
 {
 	if (vehicle.isBeeingAttacked()) return;
-	if (client.isFreezed()) return;
+	//if (client.isFreezed()) return;
 	if (vehicle.getOwner() != &client.getActivePlayer()) return;
 
 	if (vehicle.getClientMoveJob() == nullptr || vehicle.getClientMoveJob()->bFinished)

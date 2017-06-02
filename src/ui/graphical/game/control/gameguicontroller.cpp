@@ -591,9 +591,8 @@ void cGameGuiController::initChatCommands()
 		.addArgument<cChatCommandArgumentServer>(server)
 		.setAction([&](cServer2* server)
 		{
-			throw std::runtime_error("Command not implemented");
 			// FIXME: do not do changes on server data that are not synchronized with the server thread!
-			//server->enableFreezeMode(FREEZE_PAUSE);
+			server->enableFreezeMode(eFreezeMode::PAUSE);
 		})
 	);
 	chatCommands.push_back(
@@ -602,9 +601,8 @@ void cGameGuiController::initChatCommands()
 		.addArgument<cChatCommandArgumentServer>(server)
 		.setAction([&](cServer2* server)
 		{
-			throw std::runtime_error("Command not implemented");
 			// FIXME: do not do changes on server data that are not synchronized with the server thread!
-			//server->disableFreezeMode(FREEZE_PAUSE);
+			server->disableFreezeMode(eFreezeMode::PAUSE);
 		})
 	);
 	chatCommands.push_back(
@@ -1100,41 +1098,68 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (client.freezeModeChanged, [&] (eFreezeMode mode)
+	clientSignalConnectionManager.connect(client.freezeModeChanged, [&](const cFreezeModes& freezeModes, const std::map<int, ePlayerConnectionState>& playerConnectionStates)
 	{
-		const int playerNumber = client.getFreezeInfoPlayerNumber();
-		const cPlayer* player = client.getModel().getPlayer(playerNumber);
-
-		if (mode == FREEZE_WAIT_FOR_OTHERS || mode == FREEZE_WAIT_FOR_TURNEND)
+		// set state of 'end' button
+		if (freezeModes.isEnabled(eFreezeMode::WAIT_FOR_OTHERS_TURN) || freezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND))
 		{
-			if (client.getFreezeMode (FREEZE_WAIT_FOR_OTHERS) || client.getFreezeMode (FREEZE_WAIT_FOR_TURNEND)) gameGui->getHud().lockEndButton();
-			else gameGui->getHud().unlockEndButton();
+			gameGui->getHud().lockEndButton();
+		}
+		else
+		{
+			gameGui->getHud().unlockEndButton();
 		}
 
-		if (client.getFreezeMode (FREEZE_WAIT_FOR_OTHERS))
-		{
-			// TODO: Fix message
-			const std::string& name = player ? player->getName() : "other players";
-			gameGui->setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Until", name), "");
-		}
-		else if (client.getFreezeMode (FREEZE_PAUSE))
+		// set overlay into message
+		if (freezeModes.isEnabled (eFreezeMode::PAUSE))
 		{
 			gameGui->setInfoTexts (lngPack.i18n ("Text~Multiplayer~Pause"), "");
 		}
-		else if (client.getFreezeMode (FREEZE_WAIT_FOR_SERVER))
+		else if (freezeModes.isEnabled (eFreezeMode::WAIT_FOR_CLIENT))
 		{
-			gameGui->setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_For_Server"), "");
+			std::string disconncetedPlayers;
+			std::string notRespondingPlayers;
+			for (const auto playerState : playerConnectionStates)
+			{
+				const cPlayer& player = *client.getModel().getPlayer(playerState.first);
+				if (playerState.second == ePlayerConnectionState::DISCONNECTED)
+				{
+					if (!disconncetedPlayers.empty())
+					{
+						disconncetedPlayers += ", ";
+					}
+					disconncetedPlayers += player.getName();
+				}
+				if (playerState.second == ePlayerConnectionState::NOT_RESPONDING)
+				{
+					if (!notRespondingPlayers.empty())
+					{
+						notRespondingPlayers += ", ";
+					}
+					notRespondingPlayers += player.getName();
+				}
+			}
+			if (!disconncetedPlayers.empty())
+			{
+				std::string s = server ? lngPack.i18n("Text~Multiplayer~Abort_Waiting") : "";
+				gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_Reconnect", disconncetedPlayers), s);
+			}
+			else if (!notRespondingPlayers.empty())
+			{
+				gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~No_Response", notRespondingPlayers), "");
+			}
 		}
-		else if (client.getFreezeMode (FREEZE_WAIT_FOR_RECONNECT))
+		else if (freezeModes.isEnabled (eFreezeMode::WAIT_FOR_SERVER))
 		{
-			std::string s = server ? lngPack.i18n ("Text~Multiplayer~Abort_Waiting") : "";
-			gameGui->setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Reconnect"), s);
+			gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_For_Server"), "");
 		}
-		else if (client.getFreezeMode (FREEZE_WAIT_FOR_PLAYER))
+		else if (freezeModes.isEnabled (eFreezeMode::WAIT_FOR_OTHERS_TURN))
 		{
-			gameGui->setInfoTexts (lngPack.i18n ("Text~Multiplayer~No_Response", player->getName()), "");
+			// TODO: Fix message
+			const std::string& name = /* player ? player->getName() : */ "other players";
+			gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_Until", name), "");
 		}
-		else if (client.getFreezeMode (FREEZE_WAIT_FOR_TURNEND))
+		else if (freezeModes.isEnabled (eFreezeMode::WAIT_FOR_TURNEND))
 		{
 			gameGui->setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_TurnEnd"), "");
 		}
@@ -1143,7 +1168,8 @@ void cGameGuiController::connectClient (cClient& client)
 			gameGui->setInfoTexts ("", "");
 		}
 
-		gameGui->getGameMap().setChangeAllowed (!client.isFreezed());
+		// set gui change allowed
+		gameGui->getGameMap().setChangeAllowed (!freezeModes.isFreezed());
 	});
 
 	clientSignalConnectionManager.connect (client.unitStored, [&] (const cUnit & storingUnit, const cUnit& /*storedUnit*/)

@@ -89,8 +89,11 @@ class cGameTimerServer : public cGameTimer
 private:
 	void checkPlayersResponding(const std::vector<std::shared_ptr<cPlayer>>& playerList, cServer2& server);
 	std::map<int, sGameTimerClientDebugData> clientDebugData;
-	std::map<int, unsigned int> receivedTime;
+	std::map<int, unsigned int> receivedTime; // time that the client has reported to server in last sync message
+	unsigned int sentGameTime;                // time that has server has reportet to clients in last sync message
+
 public:
+	cGameTimerServer();
 	void run (cModel& model, cServer2& server);
 	void handleSyncMessage (const cNetMessageSyncClient& message, unsigned int gameTime);
 	void setPlayerNumbers(const std::vector<std::shared_ptr<cPlayer>>& playerList);
@@ -122,7 +125,10 @@ public:
 	unsigned int getReceivedTime();
 
 	void run(cClient& client, cModel& model);
-	void handleSyncMessage (const cNetMessageSyncServer& message, unsigned int gameTime);
+
+	void sendSyncMessage(const cClient &client, unsigned int gameTime, unsigned int tickPerFrame, unsigned int timeBuffer);
+
+	void handleSyncMessage(const cNetMessageSyncServer& message, unsigned int gameTime);
 };
 
 
