@@ -102,15 +102,6 @@ cServerMoveJob::cServerMoveJob (cServer& server_, const cPosition& source_, cons
 
 cServerMoveJob::~cServerMoveJob()
 {
-	sWaypoint* NextWaypoint;
-	while (Waypoints)
-	{
-		NextWaypoint = Waypoints->next;
-		delete Waypoints;
-		Waypoints = NextWaypoint;
-	}
-	Waypoints = nullptr;
-
 	delete endAction;
 }
 
@@ -122,11 +113,11 @@ void cServerMoveJob::stop()
 	// so the vehicle stops on the next field
 	if (Waypoints && Waypoints->next && Waypoints->next->next)
 	{
-		sWaypoint* wayPoint = Waypoints->next->next;
+		sWaypointOld* wayPoint = Waypoints->next->next;
 		Waypoints->next->next = nullptr;
 		while (wayPoint)
 		{
-			sWaypoint* nextWayPoint = wayPoint->next;
+			sWaypointOld* nextWayPoint = wayPoint->next;
 			delete wayPoint;
 			wayPoint = nextWayPoint;
 		}
@@ -162,7 +153,6 @@ void cServerMoveJob::addEndAction (int destID, eEndMoveActionType type)
 
 cServerMoveJob* cServerMoveJob::generateFromMessage (cServer& server, cNetMessage& message)
 {
-	if (message.iType != GAME_EV_MOVE_JOB_CLIENT) return nullptr;
 
 	int iVehicleID = message.popInt32();
 	cVehicle* vehicle = server.getVehicleFromID (iVehicleID);
@@ -200,8 +190,8 @@ cServerMoveJob* cServerMoveJob::generateFromMessage (cServer& server, cNetMessag
 	}
 
 	// reconstruct path
-	sWaypoint* path = nullptr;
-	sWaypoint* dest = nullptr;
+	sWaypointOld* path = nullptr;
+	sWaypointOld* dest = nullptr;
 	int iCount = 0;
 	int iReceivedCount = message.popInt16();
 
@@ -212,7 +202,7 @@ cServerMoveJob* cServerMoveJob::generateFromMessage (cServer& server, cNetMessag
 
 	while (iCount < iReceivedCount)
 	{
-		sWaypoint* waypoint = new sWaypoint;
+		sWaypointOld* waypoint = new sWaypointOld;
 		waypoint->position = message.popPosition();
 		waypoint->Costs = message.popInt16();
 
@@ -231,7 +221,7 @@ cServerMoveJob* cServerMoveJob::generateFromMessage (cServer& server, cNetMessag
 
 		while (path)
 		{
-			sWaypoint* waypoint = path;
+			sWaypointOld* waypoint = path;
 			path = path->next;
 			delete waypoint;
 		}
@@ -252,8 +242,8 @@ bool cServerMoveJob::calcPath()
 {
 	if (source == destination) return false;
 
-	cPathCalculator PathCalculator (source, destination, *Map, *Vehicle);
-	Waypoints = PathCalculator.calcPath();
+	cPathCalculator PathCalculator (*Vehicle, *Map, destination, false);
+	Waypoints = nullptr; // PathCalculator.calcPath();
 	if (Waypoints)
 	{
 		calcNextDir();
@@ -384,7 +374,7 @@ void cServerMoveJob::doEndMoveVehicle()
 {
 	Log.write (" Server: Vehicle reached the next field: ID: " + iToStr (Vehicle->iID) + ", X: " + iToStr (Waypoints->next->position.x()) + ", Y: " + iToStr (Waypoints->next->position.y()), cLog::eLOG_TYPE_NET_DEBUG);
 
-	sWaypoint* Waypoint;
+	sWaypointOld* Waypoint;
 	Waypoint = Waypoints->next;
 	delete Waypoints;
 	Waypoints = Waypoint;
@@ -410,7 +400,7 @@ void cServerMoveJob::doEndMoveVehicle()
 	if (Vehicle->getStaticUnitData().canSurvey)
 	{
 		sendVehicleResources (*server, *Vehicle);
-		Vehicle->doSurvey (*server->Map);
+		Vehicle->doSurvey ();
 	}
 
 	//handle detection
@@ -542,19 +532,19 @@ void cClientMoveJob::init (const cPosition& source_, cVehicle* Vehicle)
 	iSavedSpeed = 0;
 	bSuspended = false;
 
-	if (Vehicle->getClientMoveJob())
+/*	if (Vehicle->getClientMoveJob())
 	{
 		Vehicle->getClientMoveJob()->release();
 		Vehicle->setMoving (false);
 		Vehicle->MoveJobActive = false;
 	}
-	Vehicle->setClientMoveJob (this);
+	Vehicle->setClientMoveJob (this);*/
 	endMoveAction = nullptr;
 }
 
 cClientMoveJob::~cClientMoveJob()
 {
-	sWaypoint* NextWaypoint;
+	sWaypointOld* NextWaypoint;
 	while (Waypoints)
 	{
 		NextWaypoint = Waypoints->next;
@@ -567,7 +557,7 @@ cClientMoveJob::~cClientMoveJob()
 
 bool cClientMoveJob::generateFromMessage (cNetMessage& message)
 {
-	if (message.iType != GAME_EV_MOVE_JOB_SERVER) return false;
+//	if (message.iType != GAME_EV_MOVE_JOB_SERVER) return false;
 	int iCount = 0;
 	int iReceivedCount = message.popInt16();
 
@@ -576,7 +566,7 @@ bool cClientMoveJob::generateFromMessage (cNetMessage& message)
 	// Add the waypoints
 	while (iCount < iReceivedCount)
 	{
-		sWaypoint* waypoint = new sWaypoint;
+		sWaypointOld* waypoint = new sWaypointOld;
 		waypoint->position = message.popPosition();
 		waypoint->Costs = message.popInt16();
 
@@ -590,12 +580,12 @@ bool cClientMoveJob::generateFromMessage (cNetMessage& message)
 	return true;
 }
 
-sWaypoint* cClientMoveJob::calcPath (const cMap& map, const cPosition& source, const cPosition& destination, const cVehicle& vehicle, const std::vector<cVehicle*>* group)
+std::forward_list<sWaypoint> cClientMoveJob::calcPath (const cMap& map, const cPosition& source, const cPosition& destination, const cVehicle& vehicle, const std::vector<cVehicle*>* group)
 {
-	if (source == destination) return 0;
+	//if (source == destination) return 0;
 
-	cPathCalculator PathCalculator (source, destination, map, vehicle, group);
-	sWaypoint* waypoints = PathCalculator.calcPath();
+	cPathCalculator PathCalculator (vehicle, map, destination, group);
+	const auto waypoints = PathCalculator.calcPath();
 
 	return waypoints;
 }
@@ -634,7 +624,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			if (bEndForNow)
 			{
 				bEndForNow = false;
-				client->addActiveMoveJob (*Vehicle->getClientMoveJob());
+				//client->addActiveMoveJob (*Vehicle->getClientMoveJob());
 				Log.write (" Client: reactivated movejob; Vehicle-ID: " + iToStr (Vehicle->iID), cLog::eLOG_TYPE_NET_DEBUG);
 			}
 			Vehicle->MoveJobActive = true;
@@ -692,7 +682,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			sWaypoint* path;// = calcPath(*client->getMap(), Vehicle->getPosition(), destination, *Vehicle);
 			if (path)
 			{
-				sendMoveJob (*client, path, Vehicle->iID);
+				//sendMoveJob (*client, path, Vehicle->iID);
 				if (endMoveAction) sendEndMoveAction (*client, Vehicle->iID, endMoveAction->destID_, endMoveAction->type_);
 			}
 			else
@@ -708,7 +698,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 
 void cClientMoveJob::moveVehicle()
 {
-	if (Vehicle == nullptr || Vehicle->getClientMoveJob() != this) return;
+	//if (Vehicle == nullptr || Vehicle->getClientMoveJob() != this) return;
 
 	// do not move the vehicle, if the movejob hasn't got any more waypoints
 	if (Waypoints == nullptr || Waypoints->next == nullptr)
@@ -824,7 +814,7 @@ void cClientMoveJob::moveVehicle()
 
 void cClientMoveJob::doEndMoveVehicle()
 {
-	if (Vehicle == nullptr || Vehicle->getClientMoveJob() != this) return;
+	//if (Vehicle == nullptr || Vehicle->getClientMoveJob() != this) return;
 
 	if (Waypoints->next == nullptr)
 	{
@@ -835,7 +825,7 @@ void cClientMoveJob::doEndMoveVehicle()
 
 	Vehicle->WalkFrame = 0;
 
-	sWaypoint* Waypoint = Waypoints;
+	sWaypointOld* Waypoint = Waypoints;
 	Waypoints = Waypoints->next;
 	delete Waypoint;
 

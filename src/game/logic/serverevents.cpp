@@ -186,37 +186,6 @@ void sendNextMove (cServer& server, const cVehicle& vehicle, int iType, int iSav
 }
 
 //------------------------------------------------------------------------------
-void sendMoveJobServer (cServer& server, const cServerMoveJob& moveJob, const cPlayer& receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_MOVE_JOB_SERVER);
-
-	const sWaypoint* waypoint = moveJob.Waypoints;
-	int iCount = 0;
-	while (waypoint)
-	{
-		message->pushInt16 (waypoint->Costs);
-		message->pushPosition (waypoint->position);
-
-		if (message->iLength > PACKAGE_LENGTH - 19)
-		{
-			Log.write (" Server: Error sending movejob: message too long", cLog::eLOG_TYPE_NET_ERROR);
-			return; // don't send movejobs that are to long
-		}
-
-		waypoint = waypoint->next;
-		iCount++;
-	}
-
-	message->pushInt16 (iCount);
-	message->pushInt16 (moveJob.iSavedSpeed);
-	message->pushPosition (moveJob.destination);
-	message->pushPosition (moveJob.source);
-	message->pushInt32 (moveJob.Vehicle->iID);
-
-	server.sendNetMessage (std::move (message), &receiver);
-}
-
-//------------------------------------------------------------------------------
 void sendVehicleResources (cServer& server, const cVehicle& vehicle)
 {
 	int iCount = 0;

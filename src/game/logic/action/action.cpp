@@ -25,6 +25,7 @@
 #include "actionstartwork.h"
 #include "actionstopwork.h"
 #include "actiontransfer.h"
+#include "actionstartmove.h"
 
 std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 {
@@ -41,6 +42,8 @@ std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 		return std::make_unique<cActionStopWork>(archive);
 	case eActiontype::ACTION_TRANSFER:
 		return std::make_unique<cActionTransfer>(archive);
+	case eActiontype::ACTION_START_MOVE:
+		return std::make_unique<cActionStartMove>(archive);
 	default:
 		throw std::runtime_error("Unknown action type " + iToStr(static_cast<int>(type)));
 		return nullptr;
@@ -54,16 +57,14 @@ std::string enumToString(cAction::eActiontype value)
 	{
 	case cAction::eActiontype::ACTION_INIT_NEW_GAME:
 		return "ACTION_INIT_NEW_GAME";
-		break;
 	case cAction::eActiontype::ACTION_START_WORK:
 		return "ACTION_START_WORK";
-		break;
 	case cAction::eActiontype::ACTION_STOP_WORK:
 		return "ACTION_STOP_WORK";
-		break;
 	case cAction::eActiontype::ACTION_TRANSFER:
 		return "ACTION_TRANSFER";
-		break;
+	case cAction::eActiontype::ACTION_START_MOVE:
+		return "ACTION_START_MOVE";
 	default:
 		assert(false);
 		return toString(static_cast<int>(value));

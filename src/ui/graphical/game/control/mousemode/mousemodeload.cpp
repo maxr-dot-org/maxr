@@ -111,7 +111,7 @@ void cMouseModeLoad::updateFieldUnitConnections (const cMapField& field)
 	auto vehicle = field.getVehicle();
 	if (vehicle)
 	{
-		mapFieldUnitsSignalConnectionManager.connect (vehicle->clientMoveJobChanged, [this]() { needRefresh(); });
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->moveJobChanged, [this]() { needRefresh(); });
 		mapFieldUnitsSignalConnectionManager.connect (vehicle->clearingChanged, [this]() { needRefresh(); });
 		mapFieldUnitsSignalConnectionManager.connect (vehicle->beeingAttackedChanged, [this]() { needRefresh(); });
 		mapFieldUnitsSignalConnectionManager.connect (vehicle->attackingChanged, [this]() { needRefresh(); });

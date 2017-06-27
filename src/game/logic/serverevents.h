@@ -42,7 +42,6 @@ enum SERVER_EVENT_TYPES
 	// Types between FIRST_SERVER_MESSAGE and FIRST_CLIENT_MESSAGE are for the server
 	GAME_EV_CHAT_CLIENT = 200,		// a chat message from client to server
 	GAME_EV_WANT_TO_END_TURN,		// a client wants to end the turn
-	GAME_EV_MOVE_JOB_CLIENT,		// a message with all waypoints
 	GAME_EV_WANT_STOP_MOVE,			// a client wants to stop a moving vehicle
 	GAME_EV_MOVEJOB_RESUME,			// a client wants a paused movejob to be resumed
 	GAME_EV_WANT_ATTACK,			// a client wants to attack an other unit
@@ -126,13 +125,7 @@ void sendSpecificUnitData (cServer& server, const cVehicle& Vehicle);
 */
 void sendNextMove (cServer& server, const cVehicle& vehicle, int iType, int iSavedSpeed = -1);
 
-/**
-* sends all waypoints of a movejob to a client.
-* If the movejob is already running,
-* the sourceoffset will be changed to the actual position of the vehicle
-*@author alzi alias DoctorDeath
-*/
-void sendMoveJobServer (cServer& server, const cServerMoveJob& MoveJob, const cPlayer& receiver);
+
 /**
 * sends the resourcedata of new scaned fields around the unit to a client
 *@author alzi alias DoctorDeath

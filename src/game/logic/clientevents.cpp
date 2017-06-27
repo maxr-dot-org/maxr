@@ -99,41 +99,6 @@ void sendWantToEndTurn (const cClient& client)
 	client.sendNetMessage (std::move (message));
 }
 
-void sendMoveJob (const cClient& client, sWaypoint* path, int vehicleID)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_MOVE_JOB_CLIENT);
-
-	const sWaypoint* waypoint = path;
-	int iCount = 0;
-	while (waypoint)
-	{
-
-		if (message->iLength + 10 > PACKAGE_LENGTH - 19)
-		{
-			Log.write (" Client: Error sending movejob: message too long, sending partial path", cLog::eLOG_TYPE_NET_ERROR);
-			break; // send part of movejob
- 		}
-
-		message->pushInt16 (waypoint->Costs);
-		message->pushPosition (waypoint->position);
-
-		waypoint = waypoint->next;
-		iCount++;
-	}
-
-	message->pushInt16 (iCount);
-	message->pushInt32 (vehicleID);
-
-	client.sendNetMessage (std::move (message));
-
-	while (path)
-	{
-		waypoint = path;
-		path = path->next;
-		delete waypoint;
-	}
-}
-
 void sendWantStopMove (const cClient& client, int iVehicleID)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_STOP_MOVE);

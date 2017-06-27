@@ -22,6 +22,7 @@
 
 #include <vector>
 #include <memory>
+#include <forward_list>
 
 #include "utility/flatset.h"
 #include "units/unit.h"
@@ -29,6 +30,7 @@
 #include "utility/serialization/serialization.h"
 #include "game/data/map/map.h"
 #include "game/data/player/player.h"
+#include "game/logic/pathcalculator.h"
 
 class cPlayerBasicData;
 class cGameSettings;
@@ -85,6 +87,8 @@ public:
 	cBuilding& addBuilding(const cPosition& position, const sID& id, cPlayer* player, bool init = false);
 	void deleteUnit(cUnit* unit);
 	void deleteRubble(cBuilding* rubble);
+
+	void addMoveJob(cVehicle& vehicle, const std::forward_list<sWaypoint>& path);
 
 	template<typename T>
 	void save(T& archive)
@@ -151,6 +155,7 @@ public:
 	SERIALIZATION_SPLIT_MEMBER();
 private:
 	void refreshMapPointer();
+	void runMoveJobs();
 
 	unsigned int gameId; //this id can be used to check, which log files, and save file belong to the same game.
 
@@ -165,6 +170,8 @@ private:
 	int nextUnitId;
 
 	std::shared_ptr<cUnitsData> unitsData;
+
+	std::vector<cMoveJob*> moveJobs; //TODO: serialize
 
 	//jobs
 	//casualtiesTracker

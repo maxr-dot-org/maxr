@@ -22,8 +22,9 @@
 #include "map/map.h"
 #include "units/vehicle.h"
 #include "units/building.h"
-#include "game/logic/movejobs.h"
+#include "game/logic/movejob.h"
 #include "utility/crc.h"
+#include "game/logic/pathcalculator.h"
 
 //------------------------------------------------------------------------------
 cModel::cModel() :
@@ -95,7 +96,7 @@ void cModel::advanceGameTime()
 	gameTime++;
 	gameTimeChanged();
 
-	//TODO: run jobs
+	runMoveJobs();
 }
 
 //------------------------------------------------------------------------------
@@ -198,7 +199,7 @@ cVehicle& cModel::addVehicle(const cPosition& position, const sID& id, cPlayer* 
 	// scan with surveyor:
 	if (addedVehicle.getStaticUnitData().canSurvey)
 	{
-		addedVehicle.doSurvey(*map);
+		addedVehicle.doSurvey();
 	}
 
 	if (addedVehicle.canLand(*map))
@@ -335,9 +336,9 @@ void cModel::deleteUnit(cUnit* unit)
 	if (unit->isAVehicle())
 	{
 		cVehicle* vehicle = static_cast<cVehicle*> (unit);
-		if (vehicle->ServerMoveJob)
+		if (vehicle->getMoveJob())
 		{
-			vehicle->ServerMoveJob->Vehicle = nullptr;
+			vehicle->getMoveJob()->removeVehicle(vehicle);
 		}
 	}
 
@@ -377,6 +378,31 @@ void cModel::deleteRubble(cBuilding* rubble)
 		neutralBuildings.erase(iter);
 	}
 }
+
+//------------------------------------------------------------------------------
+void cModel::addMoveJob(cVehicle& vehicle, const std::forward_list<sWaypoint>& path)
+{
+	cMoveJob* currentMoveJob = vehicle.getMoveJob();
+	if (currentMoveJob)
+	{
+		if (currentMoveJob->isActive())
+		{
+			// cannot add movejob while the unit is already moving
+			return;
+		}
+		else
+		{
+			// a waiting movejob can be replaced by new one
+			currentMoveJob->stop();
+		}
+	}
+
+	cMoveJob* moveJob = new cMoveJob(path, vehicle, *map);
+	vehicle.setMoveJob(moveJob);
+
+	moveJobs.push_back(moveJob);
+}
+
 //------------------------------------------------------------------------------
 cUnit* cModel::getUnitFromID(unsigned int id) const
 {
@@ -423,6 +449,26 @@ void cModel::refreshMapPointer()
 			map->addBuilding(*building, building->getPosition());
 		}
 	}
+}
+
+//------------------------------------------------------------------------------
+void cModel::runMoveJobs()
+{
+	for (auto& moveJob : moveJobs)
+	{
+		moveJob->run(*map);
+		if (moveJob->isFinished())
+		{
+			cVehicle* vehicle = moveJob->getVehicle();
+			if (vehicle != nullptr && vehicle->getMoveJob() == moveJob)
+			{
+				vehicle->setMoveJob(nullptr);
+			}
+			delete moveJob;
+			moveJob = nullptr;
+		}
+	}
+	moveJobs.erase(std::remove(moveJobs.begin(), moveJobs.end(), nullptr), moveJobs.end());
 }
 
 //------------------------------------------------------------------------------

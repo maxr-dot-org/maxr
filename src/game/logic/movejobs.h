@@ -34,8 +34,12 @@ class cServer;
 class cUnit;
 class cVehicle;
 
-/* Size of a memory block while pathfinding */
-#define MEM_BLOCK_SIZE 10
+struct sWaypointOld
+{
+	sWaypointOld* next, *prev;
+	int Costs;
+	cPosition position;
+};
 
 enum MJOB_TYPES
 {
@@ -93,7 +97,7 @@ public:
 	bool bPlane;
 	cEndMoveAction* endAction;
 
-	sWaypoint* Waypoints;
+	sWaypointOld* Waypoints;
 
 	static cServerMoveJob* generateFromMessage (cServer& server, cNetMessage& message);
 
@@ -114,7 +118,7 @@ class cClientMoveJob
 
 	void init (const cPosition& source, cVehicle* Vehicle);
 public:
-	static sWaypoint* calcPath (const cMap& map, const cPosition& source, const cPosition& destination, const cVehicle& vehicle, const std::vector<cVehicle*>* group = nullptr);
+	static std::forward_list<sWaypoint> calcPath (const cMap& map, const cPosition& source, const cPosition& destination, const cVehicle& vehicle, const std::vector<cVehicle*>* group = nullptr);
 
 	cClientMoveJob (cClient& client_, const cPosition& source, const cPosition& destination, cVehicle* Vehicle);
 	~cClientMoveJob();
@@ -131,7 +135,7 @@ public:
 	int iSavedSpeed;
 	bool bPlane;
 
-	sWaypoint* Waypoints;
+	sWaypointOld* Waypoints;
 
 	bool generateFromMessage (cNetMessage& message);
 

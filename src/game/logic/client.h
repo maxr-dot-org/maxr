@@ -109,7 +109,6 @@ public:
 	* @param vehicle the vehicle to be moved
 	* @param iDestOffset the Destination
 	*/
-	bool addMoveJob (cVehicle& vehicle, const cPosition& destination, const std::vector<cVehicle*>* group = nullptr);
 	void startGroupMove (const std::vector<cVehicle*>& group_, const cPosition& mainDestination);
 	/**
 	* adds a new movejob
@@ -204,7 +203,6 @@ public:
 
 	mutable cSignal<void (const cUnit&)> unitDetected; //TODO: was in addUnit()
 
-	mutable cSignal<void (const cVehicle&)> moveJobBlocked;
 
 	mutable cSignal<void (const std::shared_ptr<cFx>&, bool)> addedEffect;
 
@@ -222,11 +220,6 @@ private:
 	void addUnit (const cPosition& position, cVehicle& addedVehicle, bool addToMap = true);
 	void addUnit (const cPosition& position, cBuilding& addedBuilding);
 
-	/**
-	* handles all active movejobs
-	*@author alzi alias DoctorDeath
-	*/
-	void handleMoveJobs();
 
 	void handleAutoMoveJobs();
 
@@ -255,7 +248,6 @@ private:
 	void HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message);

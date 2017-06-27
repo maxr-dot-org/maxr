@@ -813,7 +813,7 @@ bool cBuilding::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 
 	if (!Contains(staticData->storeUnitsTypes, Vehicle->getStaticUnitData().isStorageType)) return false;
 
-	if (Vehicle->getClientMoveJob() && (Vehicle->isUnitMoving() || Vehicle->isAttacking() || Vehicle->MoveJobActive)) return false;
+	if (Vehicle->isUnitMoving() || Vehicle->isAttacking()) return false;
 
 	if (Vehicle->getOwner() != getOwner() || Vehicle->isUnitBuildingABuilding() || Vehicle->isUnitClearing()) return false;
 

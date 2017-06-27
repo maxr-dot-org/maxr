@@ -270,7 +270,7 @@ public:
 	/**
 	* moves a vehicle to the given position
 	* resets the vehicle to a single field, when it was centered on four fields
-	* @param height defines the flight hight, when more then one planes on a field. 0 means top/highest.
+	* @param height defines the flight hight, when more than one plane on a field. 0 means top/highest.
 	*/
 	void moveVehicle (cVehicle& vehicle, const cPosition& position, int height = 0);
 

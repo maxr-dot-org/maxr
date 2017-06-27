@@ -525,7 +525,7 @@ void cGameGui::connectSelectedUnit()
 	if (selectedUnit->data.getId().isAVehicle())
 	{
 		const auto selectedVehicle = static_cast<cVehicle*> (selectedUnit);
-		selectedUnitConnectionManager.connect (selectedVehicle->clientMoveJobChanged, [selectedVehicle, this]()
+		selectedUnitConnectionManager.connect (selectedVehicle->moveJobChanged, [selectedVehicle, this]()
 		{
 			connectMoveJob (*selectedVehicle);
 		});
@@ -538,11 +538,11 @@ void cGameGui::connectMoveJob (const cVehicle& vehicle)
 {
 	moveJobSignalConnectionManager.disconnectAll();
 
-	if (&vehicle == gameMap->getUnitSelection().getSelectedVehicle() && vehicle.getClientMoveJob())
+	if (&vehicle == gameMap->getUnitSelection().getSelectedVehicle() && vehicle.getMoveJob())
 	{
-		auto& moveJob = *vehicle.getClientMoveJob();
-
-		moveJobSignalConnectionManager.connect (moveJob.activated, [&] (const cVehicle & vehicle)
+		auto& moveJob = *vehicle.getMoveJob();
+//TODO: implement movejob sounds
+/*		moveJobSignalConnectionManager.connect (moveJob.activated, [&] (const cVehicle & vehicle)
 		{
 			if (&vehicle == gameMap->getUnitSelection().getSelectedVehicle())
 			{
@@ -578,17 +578,17 @@ void cGameGui::connectMoveJob (const cVehicle& vehicle)
 		{
 			if (&vehicle == gameMap->getUnitSelection().getSelectedVehicle())
 			{
-				if (!vehicle.getClientMoveJob()) return;
+				if (!vehicle.getMoveJob()) return;
 
-				bool wasWater = dynamicMap->isWater (vehicle.getClientMoveJob()->Waypoints->position);
-				bool water = dynamicMap->isWater (vehicle.getClientMoveJob()->Waypoints->next->position);
+				bool wasWater = dynamicMap->isWater (vehicle.getMoveJob()->Waypoints->position);
+				bool water = dynamicMap->isWater (vehicle.getMoveJob()->Waypoints->next->position);
 
 				if (wasWater != water)
 				{
 					updateSelectedUnitMoveSound (false);
 				}
 			}
-		});
+		});*/
 	}
 }
 

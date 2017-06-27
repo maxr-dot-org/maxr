@@ -71,7 +71,8 @@ cVehicle::cVehicle (const cStaticUnitData& staticData, const cDynamicUnitData& d
 	autoMoveJob(nullptr),
 	tileMovementOffset(0, 0),
 	buildBigSavedPosition(0, 0),
-	bandPosition(0, 0)
+	bandPosition(0, 0),
+	moveJob(nullptr)
 {
 	uiData = UnitsUiData.getVehicleUI (staticData.ID);
 	ditherX = 0;
@@ -94,7 +95,7 @@ cVehicle::cVehicle (const cStaticUnitData& staticData, const cDynamicUnitData& d
 	buildingTurnsChanged.connect ([&]() { statusChanged(); });
 	buildingTypeChanged.connect ([&]() { statusChanged(); });
 	commandoRankChanged.connect ([&]() { statusChanged(); });
-	clientMoveJobChanged.connect ([&]() { statusChanged(); });
+	moveJobChanged.connect ([&]() { statusChanged(); });
 	autoMoveJobChanged.connect ([&]() { statusChanged(); });
 }
 
@@ -534,7 +535,7 @@ string cVehicle::getStatusStr(const cPlayer* player, const cUnitsData& unitsData
 	{
 		if (clientMoveJob && clientMoveJob->endMoveAction && clientMoveJob->endMoveAction->type_ == EMAT_ATTACK)
 			sTmp = lngPack.i18n ("Text~Comp~MovingToAttack");
-		else if (clientMoveJob)
+		else if (moveJob)
 			sTmp = lngPack.i18n ("Text~Comp~Moving");
 		else if (isAttacking())
 			sTmp = lngPack.i18n ("Text~Comp~AttackingStatusStr");
@@ -642,12 +643,14 @@ void cVehicle::calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<i
 //-----------------------------------------------------------------------------
 /** Scans for resources */
 //-----------------------------------------------------------------------------
-void cVehicle::doSurvey (const cMap& map)
+void cVehicle::doSurvey()
 {
+	const auto& owner = *getOwner();
+
 	const int minx = std::max (getPosition().x() - 1, 0);
-	const int maxx = std::min (getPosition().x() + 1, map.getSize().x() - 1);
+	const int maxx = std::min (getPosition().x() + 1, owner.getMapSize().x() - 1);
 	const int miny = std::max (getPosition().y() - 1, 0);
-	const int maxy = std::min (getPosition().y() + 1, map.getSize().y() - 1);
+	const int maxy = std::min (getPosition().y() + 1, owner.getMapSize().y() - 1);
 
 	for (int y = miny; y <= maxy; ++y)
 	{
@@ -1669,7 +1672,7 @@ bool cVehicle::canLand (const cMap& map) const
 	// normal vehicles are always "landed"
 	if (staticData->factorAir == 0) return true;
 
-	if (moving || (clientMoveJob && clientMoveJob->Waypoints && clientMoveJob->Waypoints->next)  || (ServerMoveJob && ServerMoveJob->Waypoints && ServerMoveJob->Waypoints->next) || isAttacking()) return false;      //vehicle busy?
+	if (moveJob != nullptr || isAttacking()) return false;      //vehicle busy?
 
 	// landing pad there?
 	const std::vector<cBuilding*>& buildings = map.getField (getPosition()).getBuildings();
@@ -1852,22 +1855,22 @@ void cVehicle::setFlightHeight (int value)
 }
 
 //-----------------------------------------------------------------------------
-cClientMoveJob* cVehicle::getClientMoveJob()
+cMoveJob* cVehicle::getMoveJob()
 {
-	return clientMoveJob;
+	return moveJob;
 }
 
 //-----------------------------------------------------------------------------
-const cClientMoveJob* cVehicle::getClientMoveJob() const
+const cMoveJob* cVehicle::getMoveJob() const
 {
-	return clientMoveJob;
+	return moveJob;
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::setClientMoveJob (cClientMoveJob* clientMoveJob_)
+void cVehicle::setMoveJob (cMoveJob* moveJob_)
 {
-	std::swap (clientMoveJob, clientMoveJob_);
-	if (clientMoveJob != clientMoveJob_) clientMoveJobChanged();
+	std::swap (moveJob, moveJob_);
+	if (moveJob != moveJob_) moveJobChanged();
 }
 
 //-----------------------------------------------------------------------------

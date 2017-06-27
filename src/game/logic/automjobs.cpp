@@ -78,20 +78,20 @@ void cAutoMJob::doAutoMove (const std::vector<cAutoMJob*>& jobs)
 	//if (client.isFreezed()) return;
 	if (vehicle.getOwner() != &client.getActivePlayer()) return;
 
-	if (vehicle.getClientMoveJob() == nullptr || vehicle.getClientMoveJob()->bFinished)
+	if (vehicle.getMoveJob() == nullptr)
 	{
 		changeOP();
 		planNextMove (jobs);
 	}
 	else
 	{
-		if (vehicle.getClientMoveJob() && (vehicle.getClientMoveJob()->destination != lastDestination))
+		//if (vehicle.getClientMoveJob() && (vehicle.getClientMoveJob()->destination != lastDestination))
 		{
 			playerMJob = true;
 		}
-		if (vehicle.getClientMoveJob()->bSuspended && vehicle.data.getSpeed())
+		//if (vehicle.getClientMoveJob()->bSuspended && vehicle.data.getSpeed())
 		{
-			client.addMoveJob (vehicle, vehicle.getClientMoveJob()->destination);
+			//client.addMoveJob (vehicle, vehicle.getClientMoveJob()->destination);
 		}
 	}
 }
@@ -267,7 +267,7 @@ void cAutoMJob::planLongMove (const std::vector<cAutoMJob*>& jobs)
 	}
 	else
 	{
-		if (client.addMoveJob (vehicle, bestPosition))
+		/*if (client.addMoveJob (vehicle, bestPosition))
 		{
 			lastDestination = bestPosition;
 		}
@@ -276,6 +276,7 @@ void cAutoMJob::planLongMove (const std::vector<cAutoMJob*>& jobs)
 			//client.getActivePlayer().addSavedReport (std::make_unique<cSavedReportSurveyorAiConfused> (vehicle));
 			finished = true;
 		}
+		*/
 	}
 }
 
