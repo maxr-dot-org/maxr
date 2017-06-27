@@ -25,6 +25,7 @@
 
 #include "utility/signal/signal.h"
 #include "utility/position.h"
+#include "pathcalculator.h"
 
 class cClient;
 class cMap;
@@ -44,122 +45,7 @@ enum MJOB_TYPES
 	MJOB_BLOCKED
 };
 
-// structures for the calculation of the path
-struct sWaypoint
-{
-	sWaypoint* next;
-	cPosition position;
-	int Costs;
-};
 
-/* node structure for pathfinding */
-struct sPathNode
-{
-	/* x and y coords */
-	cPosition position;
-	/* the difrent cost types */
-	int costF, costG, costH;
-	/* previous and next node of this one in the hole path */
-	sPathNode* prev, *next;
-
-	/* the costs to enter on this field */
-	int fieldCosts;
-};
-
-enum ePathDestinationTypes
-{
-	PATH_DEST_TYPE_POS,
-	PATH_DEST_TYPE_LOAD,
-	PATH_DEST_TYPE_ATTACK
-};
-
-class cPathDestHandler
-{
-	ePathDestinationTypes type;
-
-	const cVehicle* srcVehicle;
-
-	const cUnit* destUnit;
-	cPosition destination;
-public:
-	cPathDestHandler (ePathDestinationTypes type_, const cPosition& destination, const cVehicle* srcVehicle_, const cUnit* destUnit_);
-
-	bool hasReachedDestination (const cPosition& position) const;
-	int heuristicCost (const cPosition& source) const;
-};
-
-class cPathCalculator
-{
-	void init (const cPosition& source, const cMap& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group);
-
-public:
-	cPathCalculator (const cPosition& source, const cPosition& destination, const cMap& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group = nullptr);
-	cPathCalculator (const cPosition& source, const cUnit& destUnit, const cMap& Map, const cVehicle& Vehicle, bool load);
-	cPathCalculator (const cPosition& source, const cMap& Map, const cVehicle& Vehicle, const cPosition& attack);
-	~cPathCalculator();
-
-	/**
-	* calculates the best path in costs and length
-	*@author alzi alias DoctorDeath
-	*/
-	sWaypoint* calcPath();
-	/**
-	* calculates the costs for moving from the source- to the destinationfield
-	*@author alzi alias DoctorDeath
-	*/
-	int calcNextCost (const cPosition& source, const cPosition& destination) const;
-
-	/* the map on which the path will be calculated */
-	const cMap* Map;
-	/* the moving vehicle */
-	const cVehicle* Vehicle;
-	/* if more then one vehicle is moving in a group this is the list of all moving vehicles */
-	const std::vector<cVehicle*>* group;
-	/* source and destination coords */
-	cPosition source;
-	bool bPlane, bShip;
-	cPathDestHandler* destHandler;
-
-
-private:
-	/* the waypoints of the found path*/
-	sWaypoint* Waypoints;
-	/* memoryblocks for the nodes */
-	sPathNode** MemBlocks;
-	/* number of blocks */
-	int blocknum;
-	/* restsize of the last block */
-	int blocksize;
-
-	/* heaplist where all nodes are sorted by there costF value */
-	std::vector<sPathNode*> nodesHeap;
-	/* open nodes map */
-	std::vector<sPathNode*> openList;
-	/* closed nodes map */
-	std::vector<sPathNode*> closedList;
-	/* number of nodes saved on the heaplist; equal to number of nodes in the openlist */
-	int heapCount;
-	/**
-	* expands the nodes around the overgiven one
-	*@author alzi alias DoctorDeath
-	*/
-	void expandNodes (sPathNode* Node);
-	/**
-	* returns a pointer to allocated memory and allocets a new block in memory if necessary
-	*@author alzi alias DoctorDeath
-	*/
-	sPathNode* allocNode();
-	/**
-	* inserts a node into the heaplist and sets it to the right position by its costF value.
-	*@author alzi alias DoctorDeath
-	*/
-	void insertToHeap (sPathNode* Node, bool exists);
-	/**
-	* deletes the first node in the heaplist and resorts the rest.
-	*@author alzi alias DoctorDeath
-	*/
-	void deleteFirstFromHeap();
-};
 
 
 enum eEndMoveActionType
