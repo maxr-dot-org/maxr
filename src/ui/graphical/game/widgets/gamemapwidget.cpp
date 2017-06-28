@@ -1640,18 +1640,7 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 
 	const auto zoomedTileSize = getZoomedTileSize();
 
-	int sp = vehicle.data.getSpeed();
-	int save;
-
-	if (sp)
-	{
-		save = 0;
-		sp += moveJob->getSavedSpeed();
-	}
-	else
-	{
-		save = moveJob->getSavedSpeed();
-	}
+	int sp = vehicle.data.getSpeed() + moveJob->getSavedSpeed();
 
 	SDL_Rect dest;
 	dest.x = getPosition().x() - (int) (pixelOffset.x() * getZoomFactor()) + zoomedTileSize.x() * vehicle.getPosition().x();
@@ -1662,61 +1651,46 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 
 	int mx = 0;
 	int my = 0;
-	const auto& path = moveJob->GetPath();
-	for (auto wp = path.begin(); wp != path.end();  ++wp)
+	cPosition wp = vehicle.getPosition();
+	const auto& path = moveJob->getPath();
+	for (const auto& nextWp : path)
 	{
-		auto nextWp = std::next(wp);
+		ndest.x += mx = nextWp.position.x() * zoomedTileSize.x() - wp.x() * zoomedTileSize.x();
+		ndest.y += my = nextWp.position.y() * zoomedTileSize.y() - wp.y() * zoomedTileSize.y();
 
-		if (nextWp != path.end())
+		wp = nextWp.position;
+
+		if (sp < nextWp.costs)
 		{
-			ndest.x += mx = nextWp->position.x() * zoomedTileSize.x() - wp->position.x() * zoomedTileSize.x();
-			ndest.y += my = nextWp->position.y() * zoomedTileSize.y() - wp->position.y() * zoomedTileSize.y();
+			drawPathArrow (dest, ndest, true);
+			sp += vehicle.data.getSpeedMax();
 		}
 		else
 		{
-			ndest.x += mx;
-			ndest.y += my;
+			drawPathArrow (dest, ndest, false);
 		}
-
-		if (sp == 0)
-		{
-			drawPathArrow (dest, &ndest, true);
-			sp += vehicle.data.getSpeedMax() + save;
-			save = 0;
-		}
-		else
-		{
-			drawPathArrow (dest, &ndest, false);
-		}
-
+		sp -= nextWp.costs;
 		dest = ndest;
-
-		if (nextWp != path.end())
-		{
-			sp -= nextWp->costs;
-
-			auto nextnextWp = std::next(nextWp);
-			if (nextnextWp != path.end() && sp < nextnextWp->costs)
-			{
-				save = sp;
-				sp = 0;
-			}
-		}
 	}
+
+	ndest.x += mx;
+	ndest.y += my;
+	drawPathArrow (dest, ndest, false);
+
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::drawPathArrow(SDL_Rect dest, SDL_Rect* lastDest, bool spezialColor) const
+void cGameMapWidget::drawPathArrow(SDL_Rect dest, const SDL_Rect& lastDest, bool spezialColor) const
 {
 	int index;
-	if      (dest.x >  lastDest->x && dest.y <  lastDest->y) index = 0;
-	else if (dest.x == lastDest->x && dest.y <  lastDest->y) index = 1;
-	else if (dest.x <  lastDest->x && dest.y <  lastDest->y) index = 2;
-	else if (dest.x >  lastDest->x && dest.y == lastDest->y) index = 3;
-	else if (dest.x <  lastDest->x && dest.y == lastDest->y) index = 4;
-	else if (dest.x >  lastDest->x && dest.y >  lastDest->y) index = 5;
-	else if (dest.x == lastDest->x && dest.y >  lastDest->y) index = 6;
-	else if (dest.x <  lastDest->x && dest.y >  lastDest->y) index = 7;
+	if      (dest.x >  lastDest.x && dest.y <  lastDest.y) index = 0;
+	else if (dest.x == lastDest.x && dest.y <  lastDest.y) index = 1;
+	else if (dest.x <  lastDest.x && dest.y <  lastDest.y) index = 2;
+	else if (dest.x >  lastDest.x && dest.y == lastDest.y) index = 3;
+	else if (dest.x <  lastDest.x && dest.y == lastDest.y) index = 4;
+	else if (dest.x >  lastDest.x && dest.y >  lastDest.y) index = 5;
+	else if (dest.x == lastDest.x && dest.y >  lastDest.y) index = 6;
+	else if (dest.x <  lastDest.x && dest.y >  lastDest.y) index = 7;
 	else return;
 
 	if (spezialColor)

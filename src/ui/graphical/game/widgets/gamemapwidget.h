@@ -277,7 +277,7 @@ private:
 	void drawResources();
 
 	void drawPath (const cVehicle& vehicle);
-	void drawPathArrow (SDL_Rect dest, SDL_Rect* lastDest, bool spezialColor) const;
+	void drawPathArrow(SDL_Rect dest, const SDL_Rect& lastDest, bool spezialColor) const;
 	void drawBuildPath (const cVehicle& vehicle);
 
 	void drawSelectionBox();

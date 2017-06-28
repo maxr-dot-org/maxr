@@ -44,7 +44,7 @@ cMoveJob::cMoveJob(const std::forward_list<sWaypoint>& path, cVehicle& vehicle, 
 }
 
 //------------------------------------------------------------------------------
-const std::forward_list<sWaypoint>& cMoveJob::GetPath() const
+const std::forward_list<sWaypoint>& cMoveJob::getPath() const
 {
 	return path;
 }

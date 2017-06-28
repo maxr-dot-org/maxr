@@ -35,7 +35,7 @@ public:
 	* gets the list of position that make up the path. First element is the position,
 	* the unit will drive to when starting the next movement step.
 	*/
-	const std::forward_list<sWaypoint>& GetPath() const;
+	const std::forward_list<sWaypoint>& getPath() const;
 	/**
 	* return the moved vehiclee
 	*/
