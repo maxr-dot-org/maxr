@@ -100,11 +100,10 @@ void cActionStartMove::execute(cModel& model) const
 
 	// everything is ok. add the movejob
 
-	//TODO: unset sentry
-
-	if (vehicle->getMoveJob())
+	// unset sentry status when moving a vehicle
+	if (vehicle->isSentryActive())
 	{
-		//TODO: model.removeMoveJob();
+		vehicle->getOwner()->deleteSentry(*vehicle);
 	}
 
 	model.addMoveJob(*vehicle, path);
