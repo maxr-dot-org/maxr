@@ -1655,12 +1655,12 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 	const auto& path = moveJob->getPath();
 	for (const auto& nextWp : path)
 	{
-		ndest.x += mx = nextWp.position.x() * zoomedTileSize.x() - wp.x() * zoomedTileSize.x();
-		ndest.y += my = nextWp.position.y() * zoomedTileSize.y() - wp.y() * zoomedTileSize.y();
+		ndest.x += mx = nextWp.x() * zoomedTileSize.x() - wp.x() * zoomedTileSize.x();
+		ndest.y += my = nextWp.y() * zoomedTileSize.y() - wp.y() * zoomedTileSize.y();
 
-		wp = nextWp.position;
-
-		if (sp < nextWp.costs)
+		
+		int costs = cPathCalculator::calcNextCost(wp, nextWp, &vehicle, dynamicMap.get());
+		if (sp < costs)
 		{
 			drawPathArrow (dest, ndest, true);
 			sp += vehicle.data.getSpeedMax();
@@ -1669,7 +1669,9 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 		{
 			drawPathArrow (dest, ndest, false);
 		}
-		sp -= nextWp.costs;
+		sp -= costs;
+
+		wp = nextWp;
 		dest = ndest;
 	}
 

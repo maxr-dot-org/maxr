@@ -580,7 +580,7 @@ bool cClientMoveJob::generateFromMessage (cNetMessage& message)
 	return true;
 }
 
-std::forward_list<sWaypoint> cClientMoveJob::calcPath (const cMap& map, const cPosition& source, const cPosition& destination, const cVehicle& vehicle, const std::vector<cVehicle*>* group)
+std::forward_list<cPosition> cClientMoveJob::calcPath (const cMap& map, const cPosition& source, const cPosition& destination, const cVehicle& vehicle, const std::vector<cVehicle*>* group)
 {
 	//if (source == destination) return 0;
 
@@ -679,7 +679,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			}
 
 			bEndForNow = true;
-			sWaypoint* path;// = calcPath(*client->getMap(), Vehicle->getPosition(), destination, *Vehicle);
+			cPosition* path;// = calcPath(*client->getMap(), Vehicle->getPosition(), destination, *Vehicle);
 			if (path)
 			{
 				//sendMoveJob (*client, path, Vehicle->iID);

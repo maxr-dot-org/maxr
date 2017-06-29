@@ -118,7 +118,7 @@ class cClientMoveJob
 
 	void init (const cPosition& source, cVehicle* Vehicle);
 public:
-	static std::forward_list<sWaypoint> calcPath (const cMap& map, const cPosition& source, const cPosition& destination, const cVehicle& vehicle, const std::vector<cVehicle*>* group = nullptr);
+	static std::forward_list<cPosition> calcPath (const cMap& map, const cPosition& source, const cPosition& destination, const cVehicle& vehicle, const std::vector<cVehicle*>* group = nullptr);
 
 	cClientMoveJob (cClient& client_, const cPosition& source, const cPosition& destination, cVehicle* Vehicle);
 	~cClientMoveJob();

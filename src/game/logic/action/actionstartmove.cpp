@@ -32,7 +32,7 @@ cActionStartMove::cActionStartMove(cBinaryArchiveOut& archive) :
 }
 
 //------------------------------------------------------------------------------
-cActionStartMove::cActionStartMove(const cVehicle& vehicle, const std::forward_list<sWaypoint>& path) :
+cActionStartMove::cActionStartMove(const cVehicle& vehicle, const std::forward_list<cPosition>& path) :
 	cAction(eActiontype::ACTION_START_MOVE),
 	path(path),
 	unitId(vehicle.getId())
@@ -52,12 +52,11 @@ void cActionStartMove::execute(cModel& model) const
 	
 	if (vehicle->getOwner()->getId() != playerNr) return;
 	
-	sWaypoint lastWaypoint;
-	lastWaypoint.position = vehicle->getPosition();
+	cPosition lastWaypoint = lastWaypoint = vehicle->getPosition();
 	for (auto& waypoint : path)
 	{
 		// one step at a time please...
-		if ((waypoint.position - lastWaypoint.position).l2NormSquared() > 2)
+		if ((waypoint - lastWaypoint).l2NormSquared() > 2)
 		{
 			return;
 		}

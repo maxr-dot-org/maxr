@@ -380,7 +380,7 @@ void cModel::deleteRubble(cBuilding* rubble)
 }
 
 //------------------------------------------------------------------------------
-void cModel::addMoveJob(cVehicle& vehicle, const std::forward_list<sWaypoint>& path)
+void cModel::addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& path)
 {
 	cMoveJob* currentMoveJob = vehicle.getMoveJob();
 	if (currentMoveJob)

@@ -3379,8 +3379,7 @@ void cServer::sideStepStealthUnit (const cPosition& position, const cStaticUnitD
 			if (!Map->possiblePlace (*stealthVehicle, currentPosition)) continue;
 
 			// check costs of the move
-			cPathCalculator pathCalculator (*stealthVehicle, *Map, cPosition(0,0), false);
-			int costs = pathCalculator.calcNextCost (position, currentPosition);
+			int costs = cPathCalculator::calcNextCost (position, currentPosition, stealthVehicle, Map.get());
 			if (costs > stealthVehicle->data.getSpeed()) continue;
 
 			// check whether the vehicle would be detected

@@ -27,7 +27,7 @@
 class cActionStartMove : public cAction
 {
 public:
-	cActionStartMove(const cVehicle& vehicle, const std::forward_list<sWaypoint>& path);
+	cActionStartMove(const cVehicle& vehicle, const std::forward_list<cPosition>& path);
 	cActionStartMove(cBinaryArchiveOut& archive);
 
 	virtual void serialize(cBinaryArchiveIn& archive) { cAction::serialize(archive); serializeThis(archive); }
@@ -42,7 +42,7 @@ private:
 		archive & path;
 	}
 
-	std::forward_list<sWaypoint> path;
+	std::forward_list<cPosition> path;
 	unsigned int unitId;
 };
 

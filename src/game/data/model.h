@@ -88,7 +88,7 @@ public:
 	void deleteUnit(cUnit* unit);
 	void deleteRubble(cBuilding* rubble);
 
-	void addMoveJob(cVehicle& vehicle, const std::forward_list<sWaypoint>& path);
+	void addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& path);
 
 	template<typename T>
 	void save(T& archive)

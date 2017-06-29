@@ -115,9 +115,9 @@ cPathCalculator::~cPathCalculator()
 	}
 }
 
-std::forward_list<sWaypoint> cPathCalculator::calcPath()
+std::forward_list<cPosition> cPathCalculator::calcPath()
 {
-	std::forward_list<sWaypoint> path;
+	std::forward_list<cPosition> path;
 
 	// generate open and closed list
 	nodesHeap.resize (Map->getSize().x() * Map->getSize().y() + 1, nullptr);
@@ -151,11 +151,10 @@ std::forward_list<sWaypoint> cPathCalculator::calcPath()
 
 			sPathNode* pathNode = CurrentNode;
 			
-			sWaypoint waypoint;
+			cPosition waypoint;
 			while (pathNode->prev != nullptr)
 			{
-				waypoint.position = pathNode->position;
-				waypoint.costs = calcNextCost (pathNode->prev->position, pathNode->position);
+				waypoint = pathNode->position;
 				path.push_front(waypoint);
 
 				pathNode = pathNode->prev;
@@ -209,7 +208,7 @@ void cPathCalculator::expandNodes (sPathNode* ParentNode)
 				// generate new node
 				sPathNode* NewNode = allocNode();
 				NewNode->position = currentPosition;
-				NewNode->costG = calcNextCost (ParentNode->position, currentPosition) + ParentNode->costG;
+				NewNode->costG = calcNextCost (ParentNode->position, currentPosition, Vehicle, Map) + ParentNode->costG;
 				NewNode->costH = destHandler->heuristicCost (currentPosition);
 				NewNode->costF = NewNode->costG + NewNode->costH;
 				NewNode->prev = ParentNode;
@@ -220,7 +219,7 @@ void cPathCalculator::expandNodes (sPathNode* ParentNode)
 			{
 				// modify existing node
 				int costG, costH, costF;
-				costG = calcNextCost (ParentNode->position, currentPosition) + ParentNode->costG;
+				costG = calcNextCost (ParentNode->position, currentPosition, Vehicle, Map) + ParentNode->costG;
 				costH = destHandler->heuristicCost (currentPosition);
 				costF = costG + costH;
 				if (costF < openList[Map->getOffset (currentPosition)]->costF)
@@ -313,23 +312,23 @@ void cPathCalculator::deleteFirstFromHeap()
 	}
 }
 
-int cPathCalculator::calcNextCost (const cPosition& source, const cPosition& destination) const
+int cPathCalculator::calcNextCost(const cPosition& source, const cPosition& destination, const cVehicle* vehicle, const cMap* map)
 {
 	int costs;
 	// first we check whether the unit can fly
-	if (Vehicle->getStaticUnitData().factorAir > 0)
+	if (vehicle->getStaticUnitData().factorAir > 0)
 	{
-		if (source.x() != destination.x() && source.y() != destination.y()) return (int) (4 * 1.5f * Vehicle->getStaticUnitData().factorAir);
-		else return (int) (4 * Vehicle->getStaticUnitData().factorAir);
+		if (source.x() != destination.x() && source.y() != destination.y()) return (int) (4 * 1.5f * vehicle->getStaticUnitData().factorAir);
+		else return (int) (4 * vehicle->getStaticUnitData().factorAir);
 	}
-	const cBuilding* building = Map->getField (destination).getBaseBuilding();
+	const cBuilding* building = map->getField (destination).getBaseBuilding();
 	// moving on water will cost more
-	if (Map->isWater (destination) && (!building || (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BENEATH_SEA || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE)) && Vehicle->getStaticUnitData().factorSea > 0) costs = (int) (4 * Vehicle->getStaticUnitData().factorSea);
-	else if (Map->isCoast (destination) && !building && Vehicle->getStaticUnitData().factorCoast > 0) costs = (int) (4 * Vehicle->getStaticUnitData().factorCoast);
-	else if (Vehicle->getStaticUnitData().factorGround > 0) costs = (int)(4 * Vehicle->getStaticUnitData().factorGround);
+	if (map->isWater (destination) && (!building || (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BENEATH_SEA || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE)) && vehicle->getStaticUnitData().factorSea > 0) costs = (int) (4 * vehicle->getStaticUnitData().factorSea);
+	else if (map->isCoast (destination) && !building && vehicle->getStaticUnitData().factorCoast > 0) costs = (int) (4 * vehicle->getStaticUnitData().factorCoast);
+	else if (vehicle->getStaticUnitData().factorGround > 0) costs = (int)(4 * vehicle->getStaticUnitData().factorGround);
 	else
 	{
-		Log.write ("Where can this unit move? " + iToStr (Vehicle->iID), cLog::eLOG_TYPE_NET_WARNING);
+		Log.write ("Where can this unit move? " + iToStr (vehicle->iID), cLog::eLOG_TYPE_NET_WARNING);
 		costs = 4;
 	}
 	// moving on a road is cheaper

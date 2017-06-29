@@ -31,7 +31,7 @@
 #include "game/data/map/map.h"
 #include "utility/string/toString.h"
 
-cMoveJob::cMoveJob(const std::forward_list<sWaypoint>& path, cVehicle& vehicle, cMap& map) :
+cMoveJob::cMoveJob(const std::forward_list<cPosition>& path, cVehicle& vehicle, cMap& map) :
 	path(path),
 	vehicle(&vehicle),
 	savedSpeed(0),
@@ -44,7 +44,7 @@ cMoveJob::cMoveJob(const std::forward_list<sWaypoint>& path, cVehicle& vehicle, 
 }
 
 //------------------------------------------------------------------------------
-const std::forward_list<sWaypoint>& cMoveJob::getPath() const
+const std::forward_list<cPosition>& cMoveJob::getPath() const
 {
 	return path;
 }
@@ -136,7 +136,7 @@ void cMoveJob::calcNextDir()
 {
 	if (path.empty()) return;
 
-	const cPosition diff = path.begin()->position - vehicle->getPosition();
+	const cPosition diff = path.front() - vehicle->getPosition();
 
 	//                       N, NE, E, SE, S, SW,  W, NW
 	const int offsetX[8] = { 0, 1, 1, 1, 0, -1, -1, -1 };
@@ -176,8 +176,9 @@ void cMoveJob::startMove(cMap& map)
 		return;
 	}
 
-	//TODO: don't use precalculated costs
-	if (vehicle->data.getSpeed() < path.front().costs)
+	const cPosition& nextPosition = path.front();
+	int nextCosts = cPathCalculator::calcNextCost(vehicle->getPosition(), nextPosition, vehicle, &map);
+	if (vehicle->data.getSpeed() < nextCosts)
 	{
 		savedSpeed += vehicle->data.getSpeed();
 		vehicle->data.setSpeed(0);
@@ -186,7 +187,7 @@ void cMoveJob::startMove(cMap& map)
 		return;
 	}
 
-	if (!map.possiblePlace(*vehicle, path.front().position))
+	if (!map.possiblePlace(*vehicle, nextPosition))
 	{
 		//TODO: do nothing, when field is temporary blocked
 		//TODO: sidestep stealth unit
@@ -204,9 +205,9 @@ void cMoveJob::startMove(cMap& map)
 	
 	vehicle->data.setSpeed(vehicle->data.getSpeed() + savedSpeed);
 	savedSpeed = 0;
-	vehicle->DecSpeed(path.front().costs);
+	vehicle->DecSpeed(nextCosts);
 
-	map.moveVehicle(*vehicle, path.front().position);
+	map.moveVehicle(*vehicle, nextPosition);
 	path.pop_front();
 	vehicle->setMovementOffset(cPosition(0, 0));
 	changeVehicleOffset(-64);

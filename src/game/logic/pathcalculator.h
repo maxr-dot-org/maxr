@@ -27,24 +27,6 @@ class cVehicle;
 class cUnit;
 class cMap;
 
-// structures for the calculation of the path
-struct sWaypoint
-{
-	sWaypoint() :
-		costs(0)
-	{}
-
-	cPosition position;
-	int costs;
-
-	template <typename T>
-	void serialize(T& archive)
-	{
-		archive & position;
-		archive & costs;
-	}
-};
-
 /* node structure for pathfinding */
 struct sPathNode
 {
@@ -93,13 +75,13 @@ public:
 	* calculates the best path in costs and length
 	*@author alzi alias DoctorDeath
 	*/
-	std::forward_list<sWaypoint> calcPath();
+	std::forward_list<cPosition> calcPath();
 
 	/**
 	* calculates the costs for moving from the source- to the destinationfield
 	*@author alzi alias DoctorDeath
 	*/
-	int calcNextCost (const cPosition& source, const cPosition& destination) const;
+	static int calcNextCost (const cPosition& source, const cPosition& destination, const cVehicle* vehicle, const cMap* map);
 
 	/* the map on which the path will be calculated */
 	const cMap* Map;

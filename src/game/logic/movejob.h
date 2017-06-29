@@ -30,12 +30,12 @@ struct SDL_Rect;
 class cMoveJob
 {
 public:
-	cMoveJob(const std::forward_list<sWaypoint>& path, cVehicle& vehicle, cMap& map);
+	cMoveJob(const std::forward_list<cPosition>& path, cVehicle& vehicle, cMap& map);
 	/**
 	* gets the list of position that make up the path. First element is the position,
 	* the unit will drive to when starting the next movement step.
 	*/
-	const std::forward_list<sWaypoint>& getPath() const;
+	const std::forward_list<cPosition>& getPath() const;
 	/**
 	* return the moved vehiclee
 	*/
@@ -105,7 +105,7 @@ private:
 	/** the vehicle to move */
 	cVehicle* vehicle;
 	/** list of positions. First element is the next field, that the unit will drive to after the current one. */
-	std::forward_list<sWaypoint> path;
+	std::forward_list<cPosition> path;
 	eMoveJobState state;
 
 	/** movement points, that are taken to the next turn, to prevent that the player looses movement points due to rounding issues */
