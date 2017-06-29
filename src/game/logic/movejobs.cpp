@@ -94,7 +94,7 @@ cServerMoveJob::cServerMoveJob (cServer& server_, const cPosition& source_, cons
 		iSavedSpeed = Vehicle->ServerMoveJob->iSavedSpeed;
 		Vehicle->ServerMoveJob->release();
 		Vehicle->setMoving (false);
-		Vehicle->MoveJobActive = false;
+//		Vehicle->MoveJobActive = false;
 		Vehicle->ServerMoveJob->Vehicle = nullptr;
 	}
 	Vehicle->ServerMoveJob = this;
@@ -311,7 +311,7 @@ bool cServerMoveJob::checkMove()
 	// next step can be executed.
 	// start the move and set the vehicle to the next field
 	calcNextDir();
-	Vehicle->MoveJobActive = true;
+	//Vehicle->MoveJobActive = true;
 	Vehicle->setMoving (true);
 
 	Vehicle->data.setSpeed (Vehicle->data.getSpeed() + iSavedSpeed);
@@ -616,7 +616,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 	{
 		case MJOB_OK:
 		{
-			if (!Vehicle->MoveJobActive)
+/*			if (!Vehicle->MoveJobActive)
 			{
 				client->addActiveMoveJob (*this);
 				activated (*Vehicle);
@@ -629,7 +629,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			}
 			Vehicle->MoveJobActive = true;
 			if (Vehicle->isUnitMoving()) doEndMoveVehicle();
-
+*/
 			Vehicle->setMoving (true);
 			Map->moveVehicle (*Vehicle, Waypoints->next->position);
 

@@ -2791,7 +2791,7 @@ void cServer::handleMoveJobs()
 				Log.write (" Server: Movejob is finished and will be deleted now", cLog::eLOG_TYPE_NET_DEBUG);
 				Vehicle->ServerMoveJob = nullptr;
 				Vehicle->setMoving (false);
-				Vehicle->MoveJobActive = false;
+//				Vehicle->MoveJobActive = false;
 
 				sendNextMove (*this, *Vehicle, MJOB_FINISHED);
 			}

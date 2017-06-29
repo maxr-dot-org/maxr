@@ -116,7 +116,7 @@ public:
 	void setStoredResources(int value);
 
 	//protected:
-	virtual bool isUnitMoving() const { return false; }
+	virtual bool isUnitMoving() const { return false; } //test if the vehicle is moving right now. Having a waiting movejob doesn't count a moving
 	virtual bool isAutoMoveJobActive() const { return false; }
 	virtual bool isUnitWorking() const { return false; }
 	virtual bool isUnitClearing() const { return false; }

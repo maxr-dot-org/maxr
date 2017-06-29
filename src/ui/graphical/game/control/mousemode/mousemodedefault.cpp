@@ -234,7 +234,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 	{
 		if (!selectedVehicle->isUnitBuildingABuilding() && !selectedVehicle->isUnitClearing())
 		{
-			if (selectedVehicle->MoveJobActive)
+			if (selectedVehicle->isUnitMoving())
 			{
 				return eActionType::None;
 			}

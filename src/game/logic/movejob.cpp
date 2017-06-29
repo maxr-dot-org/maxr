@@ -121,6 +121,7 @@ void cMoveJob::stop()
 	else
 	{
 		state = FINISHED;
+		vehicle->setMoving(false);
 	}
 }
 
@@ -171,6 +172,7 @@ void cMoveJob::startMove(cMap& map)
 	if (path.empty() || state == STOPPING)
 	{
 		state = FINISHED;
+		vehicle->setMoving(false);
 		return;
 	}
 
@@ -179,6 +181,7 @@ void cMoveJob::startMove(cMap& map)
 	{
 		savedSpeed += vehicle->data.getSpeed();
 		vehicle->data.setSpeed(0);
+		vehicle->setMoving(false);
 		state = WAITING;
 		return;
 	}
@@ -189,12 +192,14 @@ void cMoveJob::startMove(cMap& map)
 		//TODO: sidestep stealth unit
 		//TODO: recalc path & continue
 		state = FINISHED;
+		vehicle->setMoving(false);
 		return;
 	}
 
 	// next step can be executed.
 	// start the move
 
+	vehicle->setMoving(true);
 	calcNextDir();
 	
 	vehicle->data.setSpeed(vehicle->data.getSpeed() + savedSpeed);

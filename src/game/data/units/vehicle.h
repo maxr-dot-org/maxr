@@ -170,8 +170,6 @@ public:
 	//TODO: remove
 	cServerMoveJob* ServerMoveJob;
 	cClientMoveJob* clientMoveJob;
-	bool MoveJobActive; // Gibt an, ob der MoveJob gerade ausgeführt wird
-
 
 	/**
 	* refreshes speedCur and shotsCur and continues building or clearing
@@ -287,7 +285,7 @@ public:
 
 	bool isUnitLoaded() const { return loaded; }
 
-	virtual bool isUnitMoving() const { return moving; }
+	virtual bool isUnitMoving() const { return moving; } //test if the vehicle is moving right now. Having a waiting movejob doesn't count a moving
 	virtual bool isAutoMoveJobActive() const { return autoMoveJob != nullptr; }
 	virtual bool isUnitClearing() const { return isClearing; }
 	virtual bool isUnitLayingMines() const { return layMines; }
@@ -325,7 +323,6 @@ public:
 	cMoveJob* getMoveJob();
 	const cMoveJob* getMoveJob() const;
 	void setMoveJob (cMoveJob* moveJob);
-	//TODO: isMoving(); //test if the vehicle is moving right now. Having a waiting movejob doesn't count a moving
 
 	cAutoMJob* getAutoMoveJob();
 	const cAutoMJob* getAutoMoveJob() const;
@@ -357,7 +354,6 @@ public:
 
 		//TODO: moveJob
 		archive & NVP(hasAutoMoveJob);
-		archive & NVP(MoveJobActive);
 		archive & NVP(bandPosition);
 		archive & NVP(buildBigSavedPosition);
 		archive & NVP(BuildPath);

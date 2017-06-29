@@ -83,7 +83,6 @@ cVehicle::cVehicle (const cStaticUnitData& staticData, const cDynamicUnitData& d
 	ServerMoveJob = nullptr;
 	hasAutoMoveJob = false;
 	moving = false;
-	MoveJobActive = false;
 	BuildPath = false;
 	bigBetonAlpha = 254;
 
@@ -1006,7 +1005,7 @@ bool cVehicle::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 
 	if (!Contains (staticData->storeUnitsTypes, Vehicle->getStaticUnitData().isStorageType)) return false;
 
-	if (Vehicle->clientMoveJob && (Vehicle->moving || Vehicle->isAttacking() || Vehicle->MoveJobActive)) return false;
+	if (Vehicle->moving || Vehicle->isAttacking()) return false;
 
 	if (Vehicle->getOwner() != getOwner() || Vehicle->isUnitBuildingABuilding() || Vehicle->isUnitClearing()) return false;
 
@@ -1584,7 +1583,6 @@ uint32_t cVehicle::getChecksum(uint32_t crc) const
 	//cServerMoveJob* ServerMoveJob;
 	crc = cUnit::getChecksum(crc);
 	crc = calcCheckSum(hasAutoMoveJob, crc);
-	crc = calcCheckSum(MoveJobActive, crc);
 	crc = calcCheckSum(bandPosition, crc);
 	crc = calcCheckSum(buildBigSavedPosition, crc);
 	crc = calcCheckSum(BuildPath, crc);
