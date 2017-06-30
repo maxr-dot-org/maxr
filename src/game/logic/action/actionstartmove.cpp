@@ -52,7 +52,7 @@ void cActionStartMove::execute(cModel& model) const
 	
 	if (vehicle->getOwner()->getId() != playerNr) return;
 	
-	cPosition lastWaypoint = lastWaypoint = vehicle->getPosition();
+	cPosition lastWaypoint = vehicle->getPosition();
 	for (auto& waypoint : path)
 	{
 		// one step at a time please...

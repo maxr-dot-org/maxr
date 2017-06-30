@@ -305,6 +305,7 @@ void cMouseModeDefault::establishUnitSelectionConnections()
 	{
 		assert (selectedVehicle == selectedUnit);
 		selectedUnitSignalConnectionManager.connect (selectedVehicle->moveJobChanged, [this]() { needRefresh(); });
+		selectedUnitSignalConnectionManager.connect (selectedVehicle->movingChanged, [this]() { needRefresh(); });
 		selectedUnitSignalConnectionManager.connect (selectedVehicle->buildingTurnsChanged, [this]() { needRefresh(); });
 		selectedUnitSignalConnectionManager.connect (selectedVehicle->clearingTurnsChanged, [this]() { needRefresh(); });
 	}

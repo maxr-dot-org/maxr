@@ -72,6 +72,8 @@ public:
 
 	virtual const cPosition& getPosition() const;
 
+	const cSoundChunk* getSound() const;
+
 	cSignal<void ()> started;
 	cSignal<void (), cRecursiveMutex> stopped;
 

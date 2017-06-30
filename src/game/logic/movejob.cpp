@@ -194,6 +194,7 @@ void cMoveJob::startMove(cMap& map)
 		//TODO: recalc path & continue
 		state = FINISHED;
 		vehicle->setMoving(false);
+		vehicle->moveJobBlocked();
 		return;
 	}
 
@@ -220,7 +221,7 @@ void cMoveJob::startMove(cMap& map)
 //------------------------------------------------------------------------------
 bool cMoveJob::reachedField() const
 {
-	return (abs(vehicle->getMovementOffset().x()) < currentSpeed && abs(vehicle->getMovementOffset().y()) < currentSpeed);
+	return (abs(vehicle->getMovementOffset().x()) < static_cast<int>(currentSpeed) && abs(vehicle->getMovementOffset().y()) < static_cast<int>(currentSpeed));
 }
 
 //------------------------------------------------------------------------------

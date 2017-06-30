@@ -109,7 +109,6 @@ protected:
 	virtual std::unique_ptr<cMouseCursor> getDefaultCursor() const MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
-	cSignalConnectionManager moveJobSignalConnectionManager;
 	cSignalConnectionManager panelSignalConnectionManager;
 	cSignalConnectionManager selectedUnitConnectionManager;
 
@@ -146,7 +145,6 @@ private:
 	void updateHudUnitName (const cPosition& tilePosition);
 
 	void connectSelectedUnit();
-	void connectMoveJob (const cVehicle& vehicle);
 
 	void initShortcuts();
 

@@ -346,6 +346,7 @@ public:
 
 	mutable cSignal<void ()> moveJobChanged;
 	mutable cSignal<void ()> autoMoveJobChanged;
+	mutable cSignal<void ()> moveJobBlocked;
 
 	template <typename T>
 	void serialize(T& archive)
@@ -413,7 +414,7 @@ private:
 
 	cPosition tileMovementOffset;  // offset within tile during movement
 
-	bool moving; //TODO: remove
+	bool moving;
 	cMoveJob* moveJob;
 
 	std::shared_ptr<cAutoMJob> autoMoveJob; //the auto move AI of the vehicle
