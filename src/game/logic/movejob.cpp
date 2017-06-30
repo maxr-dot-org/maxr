@@ -122,6 +122,7 @@ void cMoveJob::stop()
 	{
 		state = FINISHED;
 		vehicle->setMoving(false);
+		vehicle->data.setSpeed(savedSpeed);
 	}
 }
 
