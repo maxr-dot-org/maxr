@@ -114,6 +114,8 @@ private:
 	unsigned int nextDir; 
 	/** 100 ms timer tick */
 	unsigned int timer100ms;
+	/** 50 ms timer tick */
+	unsigned int timer50ms;
 	/** speed of the vehicle in pixel per game time tick */
 	unsigned int currentSpeed;
 

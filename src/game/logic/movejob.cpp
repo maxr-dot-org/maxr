@@ -39,6 +39,7 @@ cMoveJob::cMoveJob(const std::forward_list<cPosition>& path, cVehicle& vehicle, 
 	state(ACTIVE),
 	nextDir(0),
 	timer100ms(1),
+	timer50ms(1),
 	currentSpeed(0)
 {
 	startMove(model);
@@ -82,6 +83,8 @@ void cMoveJob::run(cModel& model)
 	
 	timer100ms++;
 	if (timer100ms == 10) timer100ms = 0;
+	timer50ms++;
+	if (timer50ms == 5) timer50ms = 0;
 
 	if (nextDir != vehicle->dir)
 	{
@@ -175,6 +178,7 @@ void cMoveJob::startMove(cModel& model)
 	{
 		state = FINISHED;
 		vehicle->setMoving(false);
+		vehicle->WalkFrame = 0;
 		return;
 	}
 
@@ -187,6 +191,7 @@ void cMoveJob::startMove(cModel& model)
 		savedSpeed += vehicle->data.getSpeed();
 		vehicle->data.setSpeed(0);
 		vehicle->setMoving(false);
+		vehicle->WalkFrame = 0;
 		state = WAITING;
 		return;
 	}
@@ -198,6 +203,7 @@ void cMoveJob::startMove(cModel& model)
 		//TODO: recalc path & continue
 		state = FINISHED;
 		vehicle->setMoving(false);
+		vehicle->WalkFrame = 0;
 		vehicle->moveJobBlocked();
 		return;
 	}
@@ -231,16 +237,20 @@ bool cMoveJob::reachedField() const
 //------------------------------------------------------------------------------
 void cMoveJob::moveVehicle(cModel& model)
 {
-	// TODO: walkframe
-
 	calcSpeed(*model.getMap());
+	
+	if (timer50ms == 0)
+	{
+		vehicle->WalkFrame++;
+		if (vehicle->WalkFrame > 12) vehicle->WalkFrame = 0;
+	}
 
-	// this is a bit crude, but I don't know another simple way of notifying the
-	// gui, that is might wants to add a track effect.
 	int x = abs(vehicle->getMovementOffset().x());
 	int y = abs(vehicle->getMovementOffset().y());
 	if ((x > 32 && x - currentSpeed <= 32) || (y > 32 && y - currentSpeed <= 32) || x == 64 || y == 64)
 	{
+		// this is a bit crude, but I don't know another simple way of notifying the
+		// gui, that is might wants to add a track effect.
 		model.triggeredAddTracks(*vehicle);
 	}
 
