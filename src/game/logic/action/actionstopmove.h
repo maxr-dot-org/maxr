@@ -17,48 +17,29 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef game_logic_actionH
-#define game_logic_actionH
+#ifndef game_logic_actionStopMoveH
+#define game_logic_actionStopMoveH
 
-#include "netmessage2.h"
+#include "action.h"
 
-class cAction : public cNetMessage2
+class cActionStopMove : public cAction
 {
 public:
-	// When changing this enum, also update function enumToString(eActiontype value)!
-	enum class eActiontype {
-		ACTION_INIT_NEW_GAME,
-		ACTION_START_WORK,
-		ACTION_STOP_WORK,
-		ACTION_TRANSFER,
-		ACTION_START_MOVE,
-		ACTION_STOP_MOVE
-	};
-	static std::unique_ptr<cAction> createFromBuffer(cBinaryArchiveOut& archive);
+	cActionStopMove(const cVehicle& vehicle);
+	cActionStopMove(cBinaryArchiveOut& archive);
 
-	eActiontype getType() const;
+	virtual void serialize(cBinaryArchiveIn& archive) { cAction::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive)   { cAction::serialize(archive); serializeThis(archive); }
 
-	virtual void serialize(cBinaryArchiveIn& archive) { cNetMessage2::serialize(archive); serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive)   { cNetMessage2::serialize(archive); serializeThis(archive); }
-
-	//Note: this funktion handels incoming data from network. Make every possible sanity check!
-	virtual void execute(cModel& model) const = 0;
-protected:
-	cAction(eActiontype type) : cNetMessage2(eNetMessageType::ACTION), type(type){};
+	virtual void execute(cModel& model) const override;
 private:
 	template<typename T>
 	void serializeThis(T& archive)
 	{
-		archive & type;
+		archive & unitId;
 	}
 
-	cAction(const cAction&) MAXR_DELETE_FUNCTION;
-	cAction& operator=(const cAction&)MAXR_DELETE_FUNCTION;
-
-	eActiontype type;
+	unsigned int unitId;
 };
 
-std::string enumToString(cAction::eActiontype value);
-
-
-#endif
+#endif // game_logic_actionStopMoveH
