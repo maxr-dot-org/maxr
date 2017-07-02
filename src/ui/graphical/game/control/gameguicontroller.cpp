@@ -91,6 +91,7 @@
 #include "game/data/report/special/savedreportresourcechanged.h"
 #include "game/logic/movejob.h"
 #include "game/logic/action/actionstartmove.h"
+#include "game/logic/action/actionresumemove.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -793,13 +794,13 @@ void cGameGuiController::connectClient (cClient& client)
 	{
 		sendWantSelfDestroy (client, unit.iID);
 	});
-	clientSignalConnectionManager.connect (resumeMoveJobTriggered, [&] (const cUnit & unit)
+	clientSignalConnectionManager.connect (resumeMoveJobTriggered, [&] (const cVehicle & vehicle)
 	{
-		sendMoveJobResume (client, unit.iID);
+		client.sendNetMessage (cActionResumeMove (vehicle));
 	});
 	clientSignalConnectionManager.connect (resumeAllMoveJobsTriggered, [&]()
 	{
-		sendMoveJobResume (client, 0);
+		client.sendNetMessage (cActionResumeMove());
 	});
 	clientSignalConnectionManager.connect (gameGui->getHud().endClicked, [&]()
 	{
@@ -872,7 +873,10 @@ void cGameGuiController::connectClient (cClient& client)
 			auto vehicle = client.getVehicleFromID (unit.iID);
 			if (!vehicle) return;
 			vehicle->setMarkedAsDone (true);
-			sendMoveJobResume (client, vehicle->iID);
+			if (vehicle->getMoveJob() && !vehicle->isUnitMoving())
+			{
+				resumeMoveJobTriggered(*vehicle);
+			}		
 		}
 		else if (unit.isABuilding())
 		{
@@ -1829,8 +1833,15 @@ void cGameGuiController::markSelectedUnitAsDone()
 
 	if (unit && unit->getOwner() == player.get())
 	{
-		unit->setMarkedAsDone (true);
-		resumeMoveJobTriggered (*unit);
+		unit->setMarkedAsDone (true); // FIXME: Don't alter game objects directly from the gui!
+		if (unit->isAVehicle())
+		{
+			const cVehicle* vehicle = static_cast<const cVehicle*>(unit);
+			if (vehicle->getMoveJob() && !vehicle->isUnitMoving())
+			{
+				resumeMoveJobTriggered(*vehicle);
+			}
+		}
 	}
 }
 

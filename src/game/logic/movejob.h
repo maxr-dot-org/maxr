@@ -71,6 +71,10 @@ public:
 	* If the job is active, the state of the job is set to STOPPING and the job will be halted when the unit reaches the next field.
 	*/
 	void stop();
+	/**
+	* Resume execution of a waiting movejob.
+	*/
+	void resume();
 
 private:
 	enum eMoveJobState {ACTIVE, WAITING, STOPPING, FINISHED};

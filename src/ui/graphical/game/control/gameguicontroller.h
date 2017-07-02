@@ -167,7 +167,7 @@ private:
 	mutable cSignal<void (const std::array<int, cResearch::kNrResearchAreas>&)> changeResearchSettingsTriggered;
 	mutable cSignal<void (const std::vector<std::pair<sID, cUnitUpgrade>>&)> takeUnitUpgradesTriggered;
 	mutable cSignal<void (const cUnit&)> selfDestructionTriggered;
-	mutable cSignal<void (const cUnit&)> resumeMoveJobTriggered;
+	mutable cSignal<void (const cVehicle& vehicle)> resumeMoveJobTriggered;
 	mutable cSignal<void ()> resumeAllMoveJobsTriggered;
 };
 

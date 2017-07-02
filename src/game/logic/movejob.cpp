@@ -322,3 +322,12 @@ void cMoveJob::endMove()
 		vehicle->doSurvey();
 	}
 }
+
+//------------------------------------------------------------------------------
+void cMoveJob::resume()
+{
+	if (state == WAITING)
+	{
+		state = ACTIVE;
+	}
+}
