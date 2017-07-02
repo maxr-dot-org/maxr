@@ -1188,6 +1188,63 @@ void cGameGuiController::connectClient (cClient& client)
 		gameGui->getGameMap().setChangeAllowed (!freezeModes.isFreezed());
 	});
 
+	clientSignalConnectionManager.connect(client.getModel().triggeredAddTracks, [&](const cVehicle & vehicle)
+	{
+		if (!cSettings::getInstance().isMakeTracks() || !vehicle.uiData->makeTracks) return;
+		if (vehicle.getStaticUnitData().isStealthOn == TERRAIN_GROUND &&  !vehicle.isDetectedByPlayer(&client.getActivePlayer())) return;
+		if (vehicle.getOwner() != &client.getActivePlayer() && !client.getActivePlayer().canSeeAnyAreaUnder(vehicle)) return;
+
+		auto& map = gameGui->getGameMap();
+
+		cPosition vehiclePixelPos = vehicle.getPosition() * 64 + vehicle.getMovementOffset();
+		if (client.getModel().getMap()->isWaterOrCoast(vehiclePixelPos / 64)) return;
+
+		if (abs(vehicle.getMovementOffset().x()) == 64 || abs(vehicle.getMovementOffset().y()) == 64)
+		{
+			switch (vehicle.dir)
+			{
+			case 0:
+				map.addEffect(std::make_shared<cFxTracks>(vehiclePixelPos + cPosition(0, -10), 0));
+				break;
+			case 4:
+				map.addEffect(std::make_shared<cFxTracks>(vehiclePixelPos + cPosition(0, 10), 0));
+				break;
+			case 2:
+				map.addEffect(std::make_shared<cFxTracks>(vehiclePixelPos + cPosition(10, 0), 2));
+				break;
+			case 6:
+				map.addEffect(std::make_shared<cFxTracks>(vehiclePixelPos + cPosition(-10, 0), 2));
+				break;
+			case 1:
+				map.addEffect(std::make_shared<cFxTracks>(vehiclePixelPos + cPosition(10, -10), 1));
+				break;
+			case 5:
+				map.addEffect(std::make_shared<cFxTracks>(vehiclePixelPos + cPosition(-10, 10), 1));
+				break;
+			case 3:
+				map.addEffect(std::make_shared<cFxTracks>(vehiclePixelPos + cPosition(10, 10), 3));
+				break;
+			case 7:
+				map.addEffect(std::make_shared<cFxTracks>(vehiclePixelPos + cPosition(-10, -10), 3));
+				break;
+			}
+		}
+		else
+		{
+			switch (vehicle.dir)
+			{
+			case 1:
+			case 5:
+				map.addEffect(std::make_shared<cFxTracks>(vehiclePixelPos, 1));
+				break;
+			case 3:
+			case 7:
+				map.addEffect(std::make_shared<cFxTracks>(vehiclePixelPos, 3));
+				break;;
+			}
+		}
+	});
+
 	clientSignalConnectionManager.connect (client.unitStored, [&] (const cUnit & storingUnit, const cUnit& /*storedUnit*/)
 	{
 		soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectLoad, SoundData.SNDLoad, storingUnit));

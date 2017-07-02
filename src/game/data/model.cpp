@@ -397,7 +397,7 @@ void cModel::addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& p
 		}
 	}
 
-	cMoveJob* moveJob = new cMoveJob(path, vehicle, *map);
+	cMoveJob* moveJob = new cMoveJob(path, vehicle, *this);
 	vehicle.setMoveJob(moveJob);
 
 	moveJobs.push_back(moveJob);
@@ -456,7 +456,7 @@ void cModel::runMoveJobs()
 {
 	for (auto& moveJob : moveJobs)
 	{
-		moveJob->run(*map);
+		moveJob->run(*this);
 		if (moveJob->isFinished())
 		{
 			cVehicle* vehicle = moveJob->getVehicle();

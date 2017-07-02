@@ -30,8 +30,9 @@
 #include "game/data/player/player.h"
 #include "game/data/map/map.h"
 #include "utility/string/toString.h"
+#include "game/data/model.h"
 
-cMoveJob::cMoveJob(const std::forward_list<cPosition>& path, cVehicle& vehicle, cMap& map) :
+cMoveJob::cMoveJob(const std::forward_list<cPosition>& path, cVehicle& vehicle, cModel& model) :
 	path(path),
 	vehicle(&vehicle),
 	savedSpeed(0),
@@ -40,7 +41,7 @@ cMoveJob::cMoveJob(const std::forward_list<cPosition>& path, cVehicle& vehicle, 
 	timer100ms(1),
 	currentSpeed(0)
 {
-	startMove(map);
+	startMove(model);
 }
 
 //------------------------------------------------------------------------------
@@ -62,7 +63,7 @@ void cMoveJob::removeVehicle(cVehicle* vehicle)
 }
 
 //------------------------------------------------------------------------------
-void cMoveJob::run(cMap& map)
+void cMoveJob::run(cModel& model)
 {
 	if (!vehicle || vehicle->getMoveJob() != this)
 	{
@@ -91,11 +92,11 @@ void cMoveJob::run(cMap& map)
 	}
 	else if (!reachedField())
 	{
-		moveVehicle(map);
+		moveVehicle(model);
 	}
 	else
 	{
-		startMove(map);
+		startMove(model);
 	}
 }
 
@@ -168,7 +169,7 @@ void cMoveJob::changeVehicleOffset(int offset) const
 
 
 //------------------------------------------------------------------------------
-void cMoveJob::startMove(cMap& map)
+void cMoveJob::startMove(cModel& model)
 {
 	if (path.empty() || state == STOPPING)
 	{
@@ -176,6 +177,8 @@ void cMoveJob::startMove(cMap& map)
 		vehicle->setMoving(false);
 		return;
 	}
+
+	cMap& map = *model.getMap();
 
 	const cPosition& nextPosition = path.front();
 	int nextCosts = cPathCalculator::calcNextCost(vehicle->getPosition(), nextPosition, vehicle, &map);
@@ -226,20 +229,29 @@ bool cMoveJob::reachedField() const
 }
 
 //------------------------------------------------------------------------------
-void cMoveJob::moveVehicle(cMap& map)
+void cMoveJob::moveVehicle(cModel& model)
 {
 	// TODO: walkframe
-	// TODO: tracks
 
-	calcSpeed(map);
+	calcSpeed(*model.getMap());
+
+	// this is a bit crude, but I don't know another simple way of notifying the
+	// gui, that is might wants to add a track effect.
+	int x = abs(vehicle->getMovementOffset().x());
+	int y = abs(vehicle->getMovementOffset().y());
+	if ((x > 32 && x - currentSpeed <= 32) || (y > 32 && y - currentSpeed <= 32) || x == 64 || y == 64)
+	{
+		model.triggeredAddTracks(*vehicle);
+	}
 
 	changeVehicleOffset(currentSpeed);
 
 	if (reachedField())
 	{
 		endMove();
-		startMove(map);
+		startMove(model);
 	}
+
 }
 
 //------------------------------------------------------------------------------

@@ -56,7 +56,6 @@ public:
 
 	void advanceGameTime();
 	unsigned int getGameTime() const;
-	mutable cSignal<void()> gameTimeChanged;
 
 	uint32_t getChecksum() const;
 
@@ -89,6 +88,9 @@ public:
 	void deleteRubble(cBuilding* rubble);
 
 	void addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& path);
+
+	mutable cSignal<void()> gameTimeChanged;
+	mutable cSignal<void(const cVehicle& vehicle)> triggeredAddTracks;
 
 	template<typename T>
 	void save(T& archive)

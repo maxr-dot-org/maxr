@@ -224,6 +224,7 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 			drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 			const auto runningAnimations = std::count_if (gameMap->animations.cbegin(), gameMap->animations.cend(), [ ] (const std::unique_ptr<cAnimation>& animation) { return animation->isRunning(); });
 			font->showText (drawPositionX, drawPositionY, "running-animations-count: " + iToStr (runningAnimations), FONT_LATIN_SMALL_WHITE);
+			drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 			const auto finishedAnimations = std::count_if (gameMap->animations.cbegin(), gameMap->animations.cend(), [] (const std::unique_ptr<cAnimation>& animation) { return animation->isFinished(); });
 			font->showText (drawPositionX, drawPositionY, "finished-animations-count: " + iToStr (finishedAnimations), FONT_LATIN_SMALL_WHITE);
 			drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);

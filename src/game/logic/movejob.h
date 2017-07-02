@@ -30,7 +30,7 @@ struct SDL_Rect;
 class cMoveJob
 {
 public:
-	cMoveJob(const std::forward_list<cPosition>& path, cVehicle& vehicle, cMap& map);
+	cMoveJob(const std::forward_list<cPosition>& path, cVehicle& vehicle, cModel& model);
 	/**
 	* gets the list of position that make up the path. First element is the position,
 	* the unit will drive to when starting the next movement step.
@@ -62,7 +62,7 @@ public:
 	/**
 	* Execute the movement for the next game time tick
 	*/
-	void run(cMap& map);
+	void run(cModel& model);
 	/**
 	* Stop the movejob. If the job is not active, it is stopped immediately.
 	* If the job is active, the state of the job is set to STOPPING and the job will be halted when the unit reaches the next field.
@@ -83,15 +83,15 @@ private:
 	/**
 	* triggers all actions, that need to be done before starting a movement step
 	*/
-	void startMove(cMap& map);
+	void startMove(cModel& model);
 	/**
 	* check, if the unit finished the current movement step
 	*/
 	bool reachedField() const;
 	/**
-	* actually ecexute the movement
+	* actually execute the movement
 	*/
-	void moveVehicle(cMap& map);
+	void moveVehicle(cModel& model);
 	/**
 	* updates the current speed of the vehicle (for accelerating and breaking)
 	*/
