@@ -32,6 +32,11 @@
 #include "utility/string/toString.h"
 #include "game/data/model.h"
 
+//                           N, NE, E, SE, S, SW, W, NW
+const int directionDx[8] = { 0, 1, 1, 1, 0, -1, -1, -1 };
+const int directionDy[8] = { -1, -1, 0, 1, 1, 1, 0, -1 };
+
+
 cMoveJob::cMoveJob(const std::forward_list<cPosition>& path, cVehicle& vehicle, cModel& model) :
 	path(path),
 	vehicle(&vehicle),
@@ -40,7 +45,8 @@ cMoveJob::cMoveJob(const std::forward_list<cPosition>& path, cVehicle& vehicle, 
 	nextDir(0),
 	timer100ms(1),
 	timer50ms(1),
-	currentSpeed(0)
+	currentSpeed(0),
+	pixelToMove(0)
 {
 	startMove(model);
 }
@@ -143,13 +149,9 @@ void cMoveJob::calcNextDir()
 
 	const cPosition diff = path.front() - vehicle->getPosition();
 
-	//                       N, NE, E, SE, S, SW,  W, NW
-	const int offsetX[8] = { 0, 1, 1, 1, 0, -1, -1, -1 };
-	const int offsetY[8] = { -1, -1, 0, 1, 1, 1, 0, -1 };
-
 	for (int i = 0; i != 8; ++i)
 	{
-		if (diff.x() == offsetX[i] && diff.y() == offsetY[i])
+		if (diff.x() == directionDx[i] && diff.y() == directionDy[i])
 		{
 			nextDir = i;
 		}
@@ -159,13 +161,9 @@ void cMoveJob::calcNextDir()
 //------------------------------------------------------------------------------
 void cMoveJob::changeVehicleOffset(int offset) const
 {
-	//                       N, NE, E, SE, S, SW,  W, NW
-	const int offsetX[8] = { 0, 1, 1, 1, 0, -1, -1, -1 };
-	const int offsetY[8] = { -1, -1, 0, 1, 1, 1, 0, -1 };
-
 	auto newOffset = vehicle->getMovementOffset();
-	newOffset.x() += offsetX[nextDir] * offset;
-	newOffset.y() += offsetY[nextDir] * offset;
+	newOffset.x() += directionDx[nextDir] * offset;
+	newOffset.y() += directionDy[nextDir] * offset;
 
 	vehicle->setMovementOffset(newOffset);
 }
@@ -231,13 +229,14 @@ void cMoveJob::startMove(cModel& model)
 //------------------------------------------------------------------------------
 bool cMoveJob::reachedField() const
 {
-	return (abs(vehicle->getMovementOffset().x()) < static_cast<int>(currentSpeed) && abs(vehicle->getMovementOffset().y()) < static_cast<int>(currentSpeed));
+	const auto& offset = vehicle->getMovementOffset();
+	return (offset.x() * directionDx[nextDir] >= 0 && offset.y() * directionDy[nextDir] >= 0);
 }
 
 //------------------------------------------------------------------------------
 void cMoveJob::moveVehicle(cModel& model)
 {
-	calcSpeed(*model.getMap());
+	updateSpeed(*model.getMap());
 	
 	if (timer50ms == 0)
 	{
@@ -245,46 +244,66 @@ void cMoveJob::moveVehicle(cModel& model)
 		if (vehicle->WalkFrame > 12) vehicle->WalkFrame = 0;
 	}
 
+	pixelToMove += currentSpeed;
+
 	int x = abs(vehicle->getMovementOffset().x());
 	int y = abs(vehicle->getMovementOffset().y());
-	if ((x > 32 && x - currentSpeed <= 32) || (y > 32 && y - currentSpeed <= 32) || x == 64 || y == 64)
+	if ((x > 32 && x - pixelToMove <= 32) ||
+		(y > 32 && y - pixelToMove <= 32) ||
+		(x == 64 && pixelToMove >= 1) ||
+		(y == 64 && pixelToMove >= 1))
 	{
 		// this is a bit crude, but I don't know another simple way of notifying the
 		// gui, that is might wants to add a track effect.
 		model.triggeredAddTracks(*vehicle);
 	}
 
-	changeVehicleOffset(currentSpeed);
+	changeVehicleOffset(static_cast<int>(pixelToMove));
+	pixelToMove -= static_cast<int>(pixelToMove);
 
 	if (reachedField())
 	{
 		endMove();
 		startMove(model);
 	}
-
 }
 
 //------------------------------------------------------------------------------
-void cMoveJob::calcSpeed(const cMap &map)
+void cMoveJob::updateSpeed(const cMap &map)
 {
+	double maxSpeed = MOVE_SPEED;
 	if (vehicle->uiData->animationMovement)
 	{
-		currentSpeed = MOVE_SPEED / 2;
+		maxSpeed = MOVE_SPEED / 2;
 	}
 	else if (!(vehicle->getStaticUnitData().factorAir > 0) && !(vehicle->getStaticUnitData().factorSea > 0 && vehicle->getStaticUnitData().factorGround == 0))
 	{
-		currentSpeed = MOVE_SPEED;
+		maxSpeed = MOVE_SPEED;
 		cBuilding* building = map.getField(vehicle->getPosition()).getBaseBuilding();
 		if (building && building->getStaticUnitData().modifiesSpeed)
-			currentSpeed = (int)(currentSpeed / building->getStaticUnitData().modifiesSpeed);
+			maxSpeed = (int)(maxSpeed / building->getStaticUnitData().modifiesSpeed);
 	}
 	else if (vehicle->getStaticUnitData().factorAir > 0)
 	{
-		currentSpeed = MOVE_SPEED * 2;
+		maxSpeed = MOVE_SPEED * 2;
 	}
-	else
+
+	if (path.empty() || state == STOPPING || cPathCalculator::calcNextCost(vehicle->getPosition(), path.front(), vehicle, &map) > vehicle->data.getSpeed())
 	{
-		currentSpeed = MOVE_SPEED;
+		double maxSpeedBreaking = sqrt(2 * MOVE_ACCELERATION * vehicle->getMovementOffset().l2Norm());
+		maxSpeed = std::min(maxSpeed, maxSpeedBreaking);
+		
+		//don't break to zero before movejob is stopped
+		maxSpeed = std::max(maxSpeed, 0.1);
+	}
+	
+	if (currentSpeed < maxSpeed)
+	{
+		currentSpeed += MOVE_ACCELERATION;
+	}
+	if (currentSpeed > maxSpeed)
+	{
+		currentSpeed = maxSpeed;
 	}
 }
 

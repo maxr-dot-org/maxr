@@ -25,6 +25,9 @@
 #include "utility/position.h"
 #include "pathcalculator.h"
 
+#define MOVE_SPEED 4     // speed of vehicle movements
+#define MOVE_ACCELERATION 0.08 // change of vehicle speed per tick
+
 struct SDL_Rect;
 
 class cMoveJob
@@ -95,7 +98,7 @@ private:
 	/**
 	* updates the current speed of the vehicle (for accelerating and breaking)
 	*/
-	void calcSpeed(const cMap &map);
+	void updateSpeed(const cMap &map);
 	/**
 	* triggers all actions, that need to be done after finishing a movement step
 	*/
@@ -117,8 +120,9 @@ private:
 	/** 50 ms timer tick */
 	unsigned int timer50ms;
 	/** speed of the vehicle in pixel per game time tick */
-	unsigned int currentSpeed;
+	double currentSpeed;
 
+	double pixelToMove;
 };
 
 #endif // game_logic_movejobsH

@@ -36,6 +36,7 @@
 #include "game/data/units/vehicle.h"
 #include "video.h"
 
+#define MOVE_SPEED 4
 
 
 static void setOffset (cVehicle* Vehicle, int nextDir, int offset)
