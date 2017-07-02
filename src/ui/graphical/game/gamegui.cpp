@@ -167,7 +167,7 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 	});
 
 	signalConnectionManager.connect (gameMap->getUnitSelection().mainSelectionChanged, [&]() { hud->setActiveUnit (gameMap->getUnitSelection().getSelectedUnit()); });
-	signalConnectionManager.connect (gameMap->getUnitSelection().mainSelectionChanged, std::bind (&cGameGui::updateSelectedUnitIdleSound, this));
+	signalConnectionManager.connect (gameMap->getUnitSelection().mainSelectionChanged, std::bind (&cGameGui::updateSelectedUnitSound, this));
 	signalConnectionManager.connect (gameMap->getUnitSelection().mainSelectionChanged, std::bind (&cGameGui::connectSelectedUnit, this));
 	signalConnectionManager.connect (gameMap->getUnitSelection().mainSelectionChanged, [&]()
 	{
@@ -712,6 +712,20 @@ void cGameGui::startClosePanel()
 void cGameGui::resetMiniMapViewWindow()
 {
 	miniMap->setViewWindow (gameMap->getDisplayedMapArea());
+}
+
+//------------------------------------------------------------------------------
+void cGameGui::updateSelectedUnitSound()
+{
+	auto selectedUnit = gameMap->getUnitSelection().getSelectedUnit();
+	if (selectedUnit && selectedUnit->isUnitMoving())
+	{
+		updateSelectedUnitMoveSound(false);
+	}
+	else
+	{
+		updateSelectedUnitIdleSound();
+	}
 }
 
 //------------------------------------------------------------------------------

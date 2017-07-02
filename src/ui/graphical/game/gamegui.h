@@ -150,6 +150,7 @@ private:
 
 	void handleResolutionChange();
 
+	void updateSelectedUnitSound();
 	void updateSelectedUnitIdleSound();
 	void updateSelectedUnitMoveSound (bool startedNew);
 

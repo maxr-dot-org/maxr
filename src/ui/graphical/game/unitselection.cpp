@@ -30,12 +30,12 @@
 bool cUnitSelection::selectUnitAt (const cMapField& field, bool base)
 {
 	cVehicle* plane = field.getPlane();
-	if (plane && !plane->isUnitMoving())
+	if (plane)
 	{
 		return selectUnit (*plane);
 	}
 	cVehicle* vehicle = field.getVehicle();
-	if (vehicle && !vehicle->isUnitMoving() && ! (plane /*&& (unitMenuActive || vehicle->owner != player)*/))
+	if (vehicle && ! (plane /*&& (unitMenuActive || vehicle->owner != player)*/))
 	{
 		return selectUnit (*vehicle);
 	}
