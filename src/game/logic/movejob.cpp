@@ -132,7 +132,7 @@ void cMoveJob::stop()
 	{
 		state = FINISHED;
 		vehicle->setMoving(false);
-		vehicle->data.setSpeed(savedSpeed);
+		vehicle->data.setSpeed(vehicle->data.getSpeed() + savedSpeed);
 	}
 }
 
@@ -182,8 +182,30 @@ void cMoveJob::startMove(cModel& model)
 
 	cMap& map = *model.getMap();
 
-	const cPosition& nextPosition = path.front();
-	int nextCosts = cPathCalculator::calcNextCost(vehicle->getPosition(), nextPosition, vehicle, &map);
+	if (!map.possiblePlace(*vehicle, path.front()))
+	{
+		//TODO: do nothing, when field is temporary blocked
+		//TODO: sidestep stealth unit
+
+		cPosition dest;
+		for (const auto& pos : path) dest = pos;
+		//TODO: don't execute path calculation on each model
+		cPathCalculator pc(*vehicle, map, dest, false);
+		auto newPath = pc.calcPath();
+		if (newPath.empty())
+		{
+			state = FINISHED;
+			vehicle->setMoving(false);
+			vehicle->WalkFrame = 0;
+			vehicle->moveJobBlocked();
+			return;
+		}
+
+		path.swap(newPath);
+
+	}
+
+	int nextCosts = cPathCalculator::calcNextCost(vehicle->getPosition(), path.front(), vehicle, &map);
 	if (vehicle->data.getSpeed() < nextCosts)
 	{
 		savedSpeed += vehicle->data.getSpeed();
@@ -194,17 +216,6 @@ void cMoveJob::startMove(cModel& model)
 		return;
 	}
 
-	if (!map.possiblePlace(*vehicle, nextPosition))
-	{
-		//TODO: do nothing, when field is temporary blocked
-		//TODO: sidestep stealth unit
-		//TODO: recalc path & continue
-		state = FINISHED;
-		vehicle->setMoving(false);
-		vehicle->WalkFrame = 0;
-		vehicle->moveJobBlocked();
-		return;
-	}
 
 	// next step can be executed.
 	// start the move
@@ -216,7 +227,7 @@ void cMoveJob::startMove(cModel& model)
 	savedSpeed = 0;
 	vehicle->DecSpeed(nextCosts);
 
-	map.moveVehicle(*vehicle, nextPosition);
+	map.moveVehicle(*vehicle, path.front());
 	path.pop_front();
 	vehicle->setMovementOffset(cPosition(0, 0));
 	changeVehicleOffset(-64);
