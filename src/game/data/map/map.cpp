@@ -1052,12 +1052,12 @@ void cMap::moveVehicleBig (cVehicle& vehicle, const cPosition& position)
 	movedVehicle (vehicle, oldPosition);
 }
 
-bool cMap::possiblePlace (const cVehicle& vehicle, const cPosition& position, bool checkPlayer) const
+bool cMap::possiblePlace (const cVehicle& vehicle, const cPosition& position, bool checkPlayer, bool ignoreMovingVehicles) const
 {
-	return possiblePlaceVehicle (vehicle.getStaticUnitData(), position, vehicle.getOwner(), checkPlayer);
+	return possiblePlaceVehicle (vehicle.getStaticUnitData(), position, vehicle.getOwner(), checkPlayer, ignoreMovingVehicles);
 }
 
-bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool checkPlayer) const
+bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool checkPlayer, bool ignoreMovingVehicles) const
 {
 	if (isValidPosition (position) == false) return false;
 
@@ -1071,8 +1071,24 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 	if (vehicleData.factorAir > 0)
 	{
 		if (checkPlayer && player && !player->canSeeAt (position)) return true;
-		//only one plane per field for now
-		if (getField (position).getPlanes().size() >= MAX_PLANES_PER_FIELD) return false;
+
+		const auto& planes = getField(position).getPlanes();
+		if (!ignoreMovingVehicles)
+		{
+			if (planes.size() >= MAX_PLANES_PER_FIELD) return false;
+		}
+		else
+		{
+			int notMovingPlanes = 0;
+			for (const auto& plane : planes)
+			{
+				if (!plane->isUnitMoving())
+				{
+					notMovingPlanes++;
+				}
+			}
+			if (notMovingPlanes >= MAX_PLANES_PER_FIELD) return false;
+		}
 	}
 	if (vehicleData.factorGround > 0)
 	{
@@ -1097,7 +1113,10 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 
 		if (checkPlayer && player && !player->canSeeAt (position)) return true;
 
-		if (getField (position).getVehicles().empty() == false) return false;
+		if (getField(position).getVehicles().empty() == false && (!ignoreMovingVehicles || !getField(position).getVehicle()->isUnitMoving()))
+		{
+			return false;
+		}
 		if (b_it != b_end)
 		{
 			// only base buildings and rubble is allowed on the same field with a vehicle
@@ -1123,7 +1142,10 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 
 		if (checkPlayer && player && !player->canSeeAt (position)) return true;
 
-		if (getField (position).getVehicles().empty() == false) return false;
+		if (getField(position).getVehicles().empty() == false && (!ignoreMovingVehicles || !getField(position).getVehicle()->isUnitMoving()))
+		{
+			return false;
+		}
 
 		//only bridge and sea mine are allowed on the same field with a ship (connectors have been skiped, so doesn't matter here)
 		if (b_it != b_end &&

@@ -287,8 +287,8 @@ public:
 	* checks, whether the given field is an allowed place for the vehicle
 	* if checkPlayer is passed, the function uses the players point of view, so it does not check for units that are not in sight
 	*/
-	bool possiblePlace (const cVehicle& vehicle, const cPosition& position, bool checkPlayer = false) const;
-	bool possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool checkPlayer = false) const;
+	bool possiblePlace (const cVehicle& vehicle, const cPosition& position, bool checkPlayer = false, bool ignoreMovingVehicles = false) const;
+	bool possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool checkPlayer = false, bool ignoreMovingVehicles = false) const;
 
 	/**
 	* checks, whether the given field is an allowed place for the building

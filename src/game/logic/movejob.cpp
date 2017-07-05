@@ -172,6 +172,8 @@ void cMoveJob::changeVehicleOffset(int offset) const
 //------------------------------------------------------------------------------
 void cMoveJob::startMove(cModel& model)
 {
+	cMap& map = *model.getMap();
+
 	if (path.empty() || state == STOPPING)
 	{
 		state = FINISHED;
@@ -180,29 +182,10 @@ void cMoveJob::startMove(cModel& model)
 		return;
 	}
 
-	cMap& map = *model.getMap();
-
-	if (!map.possiblePlace(*vehicle, path.front()))
+	bool nextFieldFree = handleCollision(map);
+	if (!nextFieldFree)
 	{
-		//TODO: do nothing, when field is temporary blocked
-		//TODO: sidestep stealth unit
-
-		cPosition dest;
-		for (const auto& pos : path) dest = pos;
-		//TODO: don't execute path calculation on each model
-		cPathCalculator pc(*vehicle, map, dest, false);
-		auto newPath = pc.calcPath();
-		if (newPath.empty())
-		{
-			state = FINISHED;
-			vehicle->setMoving(false);
-			vehicle->WalkFrame = 0;
-			vehicle->moveJobBlocked();
-			return;
-		}
-
-		path.swap(newPath);
-
+		return;
 	}
 
 	int nextCosts = cPathCalculator::calcNextCost(vehicle->getPosition(), path.front(), vehicle, &map);
@@ -215,7 +198,6 @@ void cMoveJob::startMove(cModel& model)
 		state = WAITING;
 		return;
 	}
-
 
 	// next step can be executed.
 	// start the move
@@ -235,6 +217,47 @@ void cMoveJob::startMove(cModel& model)
 	vehicle->getOwner()->doScan();
 
 	//TODO: handle detection of this unit
+}
+
+//------------------------------------------------------------------------------
+bool cMoveJob::handleCollision(cMap &map)
+{
+	if (map.possiblePlace(*vehicle, path.front()))
+	{
+		return true;
+	}
+
+	//TODO: model.sideStepStealthUnit();
+	if (map.possiblePlace(*vehicle, path.front()))
+	{
+		return true;
+	}
+		
+	if (map.possiblePlace(*vehicle, path.front(), false, true))
+	{
+		// if the target field is blocked by a moving unit,
+		// just wait and see if it gets free later
+		return false;
+	}
+
+	// field is definitely blocked. Try to find another path to destination
+	cPosition dest;
+	for (const auto& pos : path) dest = pos;
+	cPathCalculator pc(*vehicle, map, dest, false);
+	auto newPath = pc.calcPath(); //TODO: don't execute path calculation on each model
+	if (newPath.empty())
+	{
+		// no path to destination
+		state = FINISHED;
+		vehicle->setMoving(false);
+		vehicle->WalkFrame = 0;
+		vehicle->moveJobBlocked();
+		return false;
+	}
+
+	// new path is ok. Use it to continue movement...
+	path.swap(newPath);
+	return true;
 }
 
 //------------------------------------------------------------------------------

@@ -91,6 +91,13 @@ private:
 	* triggers all actions, that need to be done before starting a movement step
 	*/
 	void startMove(cModel& model);
+
+	/**
+	* check, weather the next field is free and make the necessary actions if it is not.
+	* Return true, if the movement can be continued.
+	*/
+	bool handleCollision(cMap &map);
+
 	/**
 	* check, if the unit finished the current movement step
 	*/

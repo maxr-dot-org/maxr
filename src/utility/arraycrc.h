@@ -26,7 +26,7 @@
 
 /**
 * This is a wrapper class around a dynamically allocated array. The purpose 
-* of this wrapper is to cache the crc value of the array, and only recalulate 
+* of this wrapper is to cache the crc value of the array, and only recalculate 
 * it, when the array was modified after the last call to getChecksum(). 
 */
 template<typename T>
