@@ -25,6 +25,7 @@
 #include "game/logic/movejob.h"
 #include "utility/crc.h"
 #include "game/logic/pathcalculator.h"
+#include "utility/listhelpers.h"
 
 //------------------------------------------------------------------------------
 cModel::cModel() :
@@ -468,7 +469,7 @@ void cModel::runMoveJobs()
 			moveJob = nullptr;
 		}
 	}
-	moveJobs.erase(std::remove(moveJobs.begin(), moveJobs.end(), nullptr), moveJobs.end());
+	Remove(moveJobs, nullptr);
 }
 
 //------------------------------------------------------------------------------

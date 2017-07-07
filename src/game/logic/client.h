@@ -105,12 +105,6 @@ public:
 	void runFx();
 
 	/**
-	* creates a new moveJob and transmits it to the server
-	* @param vehicle the vehicle to be moved
-	* @param iDestOffset the Destination
-	*/
-	void startGroupMove (const std::vector<cVehicle*>& group_, const cPosition& mainDestination);
-	/**
 	* adds a new movejob
 	*@author alzi alias DoctorDeath
 	*@param MJob the movejob to be added

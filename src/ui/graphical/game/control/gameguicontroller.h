@@ -169,6 +169,8 @@ private:
 	mutable cSignal<void (const cUnit&)> selfDestructionTriggered;
 	mutable cSignal<void (const cVehicle& vehicle)> resumeMoveJobTriggered;
 	mutable cSignal<void ()> resumeAllMoveJobsTriggered;
+
+	void sendStartGroupMoveAction(std::vector<cVehicle*> group, const cPosition& destination);
 };
 
 #endif // ui_graphical_game_control_gameguicontrollerH

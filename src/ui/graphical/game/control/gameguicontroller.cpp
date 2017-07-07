@@ -65,6 +65,7 @@
 
 #include "utility/random.h"
 #include "utility/position.h"
+#include "utility/listhelpers.h"
 
 #include "keys.h"
 #include "game/logic/client.h"
@@ -908,7 +909,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredMoveGroup, [&] (const std::vector<cVehicle*>& vehicles, const cPosition & destination)
 	{
-		client.startGroupMove (vehicles, destination);
+		sendStartGroupMoveAction (vehicles, destination);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredActivateAt, [&] (const cUnit & unit, size_t index, const cPosition & position)
 	{
@@ -1072,7 +1073,7 @@ void cGameGuiController::connectClient (cClient& client)
 		const auto selectedVehiclesCount = unitSelection.getSelectedVehiclesCount();
 		if (selectedVehiclesCount > 1)
 		{
-			client.startGroupMove (unitSelection.getSelectedVehicles(), destination);
+			sendStartGroupMoveAction (unitSelection.getSelectedVehicles(), destination);
 		}
 		else if (selectedVehiclesCount == 1)
 		{
@@ -1933,4 +1934,63 @@ std::shared_ptr<const cMap> cGameGuiController::getDynamicMap() const
 std::shared_ptr<const cUnitsData> cGameGuiController::getUnitsData() const
 {
 	return activeClient ? activeClient->getModel().getUnitsData() : nullptr;
+}
+
+//------------------------------------------------------------------------------
+void cGameGuiController::sendStartGroupMoveAction(std::vector<cVehicle*> group, const cPosition& destination)
+{
+	if (group.size() == 0) return;
+
+	const auto& map = *activeClient->getModel().getMap();
+	const cPosition moveVector = destination - group[0]->getPosition();
+
+	// calc paths for all units
+	std::vector<std::forward_list<cPosition>> paths;
+	for (auto it = group.begin(); it != group.end();)
+	{
+		const cVehicle& vehicle = **it;
+		cPosition vehicleDestination = vehicle.getPosition() + moveVector;
+		cPathCalculator pc(vehicle, map, vehicleDestination, &group);
+		auto path = pc.calcPath();
+		if (path.empty())
+		{
+			soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceNoPath, getRandom (VoiceData.VOINoPath)));
+			it = group.erase(it);
+		}
+		else
+		{
+			paths.push_back(std::move(path));
+			++it;
+		}
+	}
+
+	// start movement of units, beginning with those, whose next waypoint is free
+	bool moveStarted = true;
+	while (moveStarted)
+	{
+		moveStarted = false;
+		for (size_t i = 0; i < group.size(); i++)
+		{
+			auto& vehicle = group[i];
+			auto& path = paths[i];
+			if (map.possiblePlace(*vehicle, path.front(), false, true))
+			{
+				activeClient->sendNetMessage(cActionStartMove(*vehicle, path));
+				moveStarted = true;
+				vehicle = nullptr;
+				path.clear();
+			}
+		}
+		Remove(group, nullptr);
+		RemoveEmpty(paths);
+	}
+
+	// start remaining movements. This is necessary, when there are group members, that have no path 
+	// to destination, or not enough movement points.
+	for (size_t i = 0; i < group.size(); i++)
+	{
+		const auto& vehicle = group[i];
+		const auto& path = paths[i];
+		activeClient->sendNetMessage(cActionStartMove(*vehicle, path));
+	}
 }

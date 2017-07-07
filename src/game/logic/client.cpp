@@ -160,46 +160,6 @@ void cClient::sendNetMessage(cNetMessage2&& message) const
 	sendNetMessage(static_cast<cNetMessage2&>(message));
 }
 
-void cClient::startGroupMove (const std::vector<cVehicle*>& group_, const cPosition& mainDestination)
-{
-	const auto& mainPosition = group_[0]->getPosition();
-
-	// copy the selected-units-list
-	std::vector<cVehicle*> group = group_;
-
-	// go trough all vehicles in the list
-	while (group.size())
-	{
-		// we will start moving the vehicles in the list with the vehicle
-		// that is the closest to the destination.
-		// this will avoid that the units will crash into each other
-		// because the one infront of them has started
-		// his move and the next field is free.
-		// TODO: sort group by ditance, then proceed.
-		int shortestWaySquareLength = 0x7FFFFFFF;
-		int shortestWayVehNum = 0;
-		for (unsigned int i = 0; i < group.size(); i++)
-		{
-			cVehicle* vehicle = group[i];
-			const auto delta = vehicle->getPosition() + mainDestination + vehicle->getPosition() - mainPosition;
-			const int waySquareLength = delta.l2NormSquared();
-
-			if (waySquareLength < shortestWaySquareLength)
-			{
-				shortestWaySquareLength = waySquareLength;
-				shortestWayVehNum = i;
-			}
-		}
-		cVehicle& vehicle = *group[shortestWayVehNum];
-		// add the movejob to the destination of the unit.
-		// the formation of the vehicle group will stay as destination formation.
-		auto destination = mainDestination + vehicle.getPosition() - mainPosition;
-		//addMoveJob (vehicle, destination, &group_);
-		// delete the unit from the copyed list
-		group.erase (group.begin() + shortestWayVehNum);
-	}
-}
-
 void cClient::runFx()
 {
 	effectsList->run();
