@@ -821,7 +821,11 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStopWork, [&] (const cUnit & unit)
 	{
-		unit.executeStopCommand (client);
+		const auto& units = gameGui->getGameMap().getUnitSelection().getSelectedUnits();
+		for (const auto& u : units)
+		{
+			u->executeStopCommand(client);
+		}
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredAutoMoveJob, [&] (const cUnit & unit)
 	{
