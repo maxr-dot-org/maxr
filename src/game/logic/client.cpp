@@ -327,7 +327,6 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 	assert (message.iType == GAME_EV_MAKE_TURNEND);
 
 	turnClock->increaseTurn();
-	activePlayer->clearDone();
 	Log.write ("######### Turn " + iToStr (turnClock->getTurn()) + " ###########", cLog::eLOG_TYPE_NET_DEBUG);
 /*	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{

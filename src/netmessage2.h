@@ -271,6 +271,7 @@ public:
 	std::shared_ptr<std::vector<std::unique_ptr<cSavedReport>>> reports;
 	cGameGuiState guiState;
 	std::array<std::pair<bool, cPosition>, 4> savedPositions;
+	std::vector<unsigned int> doneList;
 	int savingID;
 private:
 	template<typename T>
@@ -289,6 +290,7 @@ private:
 		archive >> guiState;
 		archive >> savingID;
 		archive >> savedPositions;
+		archive >> doneList;
 	}
 	template<typename T>
 	void saveThis(T& archive)
@@ -304,6 +306,7 @@ private:
 		archive << guiState;
 		archive << savingID;
 		archive << savedPositions;
+		archive << doneList;
 	}
 };
 

@@ -115,6 +115,7 @@ void cSavegame::saveGuiInfo(const cNetMessageGUISaveInfo& guiInfo)
 		archive << serialization::makeNvp("report", *report);
 	}
 	archive << serialization::makeNvp("savedPositions", guiInfo.savedPositions);
+	archive << serialization::makeNvp("doneList", guiInfo.doneList);
 	archive.closeChild();
 
 	tinyxml2::XMLError result = xmlDocument.SaveFile(getFileName(loadedSlot).c_str());
@@ -341,6 +342,7 @@ void cSavegame::loadGuiInfo(const cServer2* server, int slot, int playerNr)
 			report = cSavedReport::createFrom(archive, "report");
 		}
 		archive >> serialization::makeNvp("savedPositions", guiInfo.savedPositions);
+		archive >> serialization::makeNvp("doneList", guiInfo.doneList);
 
 		if (guiInfo.playerNr == playerNr || playerNr == -1)
 		{

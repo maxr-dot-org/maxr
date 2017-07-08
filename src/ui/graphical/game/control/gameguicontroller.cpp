@@ -93,6 +93,7 @@
 #include "game/logic/movejob.h"
 #include "game/logic/action/actionstartmove.h"
 #include "game/logic/action/actionresumemove.h"
+#include "game/logic/turnclock.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -201,6 +202,7 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 			auto reports = playerReports[client->getActivePlayer().getId()];
 			message.reports = reports;
 			message.savedPositions = savedPositions;
+			message.doneList = doneList;
 
 			if (client == activeClient.get())
 			{
@@ -225,6 +227,7 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 				if (savedPositions[i].first && !map.isValidPosition(guiInfo.savedPositions[i].second)) return;
 			}
 			savedPositions = guiInfo.savedPositions;
+			doneList = guiInfo.doneList;
 
 			const cPosition& mapPosition = guiInfo.guiState.getMapPosition();
 			if (!map.isValidPosition(mapPosition)) return;
@@ -873,18 +876,12 @@ void cGameGuiController::connectClient (cClient& client)
 		{
 			auto vehicle = client.getVehicleFromID (unit.iID);
 			if (!vehicle) return;
-			vehicle->setMarkedAsDone (true);
 			if (vehicle->getMoveJob() && !vehicle->isUnitMoving())
 			{
 				resumeMoveJobTriggered(*vehicle);
 			}		
 		}
-		else if (unit.isABuilding())
-		{
-			auto building = client.getBuildingFromID (unit.iID);
-			if (!building) return;
-			building->setMarkedAsDone (true);
-		}
+		doneList.push_back(unit.getId());
 	});
 
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredEndBuilding, [&] (const cVehicle & vehicle, const cPosition & destination)
@@ -1094,6 +1091,10 @@ void cGameGuiController::connectClient (cClient& client)
 	//
 	// client to GUI (reaction)
 	//
+	clientSignalConnectionManager.connect(client.getTurnClock()->turnChanged, [&]()
+	{
+		doneList.clear();
+	});
 	clientSignalConnectionManager.connect (client.playerFinishedTurn, [&] (int currentPlayerNumber, int nextPlayerNumber)
 	{
 		if (currentPlayerNumber != client.getActivePlayer().getId()) return;
@@ -1802,11 +1803,13 @@ void cGameGuiController::selectNextUnit()
 	const auto player = getActivePlayer();
 	if (!player) return;
 
-	const auto nextUnit = player->getNextUnit (gameGui->getGameMap().getUnitSelection().getSelectedUnit());
-	if (nextUnit)
+	auto& unitSelection = gameGui->getGameMap().getUnitSelection();
+	unitSelection.selectNextUnit(*player, doneList);
+
+	const cUnit* selectedUnit = unitSelection.getSelectedUnit();
+	if (selectedUnit)
 	{
-		gameGui->getGameMap().getUnitSelection().selectUnit (*nextUnit);
-		gameGui->getGameMap().centerAt (nextUnit->getPosition());
+		gameGui->getGameMap().centerAt(selectedUnit->getPosition());
 	}
 }
 
@@ -1816,11 +1819,13 @@ void cGameGuiController::selectPreviousUnit()
 	const auto player = getActivePlayer();
 	if (!player) return;
 
-	const auto prevUnit = player->getPrevUnit (gameGui->getGameMap().getUnitSelection().getSelectedUnit());
-	if (prevUnit)
+	auto& unitSelection = gameGui->getGameMap().getUnitSelection();
+	unitSelection.selectPrevUnit(*player, doneList);
+
+	const cUnit* selectedUnit = unitSelection.getSelectedUnit();
+	if (selectedUnit)
 	{
-		gameGui->getGameMap().getUnitSelection().selectUnit (*prevUnit);
-		gameGui->getGameMap().centerAt (prevUnit->getPosition());
+		gameGui->getGameMap().centerAt (selectedUnit->getPosition());
 	}
 }
 
@@ -1834,7 +1839,7 @@ void cGameGuiController::markSelectedUnitAsDone()
 
 	if (unit && unit->getOwner() == player.get())
 	{
-		unit->setMarkedAsDone (true); // FIXME: Don't alter game objects directly from the gui!
+		doneList.push_back(unit->getId());
 		if (unit->isAVehicle())
 		{
 			const cVehicle* vehicle = static_cast<const cVehicle*>(unit);

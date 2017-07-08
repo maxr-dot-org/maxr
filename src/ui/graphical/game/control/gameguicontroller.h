@@ -105,6 +105,7 @@ private:
 	std::pair<bool, cPosition> savedReportPosition;
 	std::shared_ptr<cWindowUpgradesFilterState> upgradesFilterState;
 	std::array<std::pair<bool, cPosition>, 4> savedPositions;
+	std::vector<unsigned int> doneList;
 
 	void initShortcuts();
 	void initChatCommands();
