@@ -196,18 +196,6 @@ public:
 	void run();
 private:
 
-	/**
-	* adds the unit to the map and player.
-	*@author alzi alias DoctorDeath
-	*@param iPosX The X were the unit should be added.
-	*@param iPosY The Y were the unit should be added.
-	*@param addedVehicle Vehicle which should be added.
-	*@param addedBuilding Building which should be added.
-	*/
-	void addUnit (const cPosition& position, cVehicle& addedVehicle, bool addToMap = true);
-	void addUnit (const cPosition& position, cBuilding& addedBuilding);
-
-
 	void handleAutoMoveJobs();
 
 	/**
@@ -219,14 +207,8 @@ private:
 
 	void runJobs();
 
-	void HandleNetMessage_TCP_CLOSE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_PLAYER_CLANS (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_ADD_BUILDING (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_DEL_BUILDING (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_DEL_VEHICLE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_WAIT_FOR (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message);
@@ -250,7 +232,6 @@ private:
 	void HandleNetMessage_GAME_EV_TURN (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_STORE_UNIT (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UNIT_UPGRADE_VALUES (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_CREDITS_CHANGED (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message);

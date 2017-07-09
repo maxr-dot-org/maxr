@@ -171,70 +171,6 @@ void cClient::addFx (std::shared_ptr<cFx> fx, bool playSound)
 	addedEffect (fx, playSound);
 }
 
-void cClient::HandleNetMessage_TCP_CLOSE (cNetMessage& message)
-{
-	assert (message.iType == TCP_CLOSE);
-
-	//network->close (message.popInt16());
-	//TODO: gameGUI
-	//gameGUI->onLostConnection();
-}
-
-void cClient::HandleNetMessage_GAME_EV_PLAYER_CLANS (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_PLAYER_CLANS);
-
-/*	for (unsigned int i = 0; i < getPlayerList().size(); i++)
-	{
-		const int playerNr = message.popChar();
-		const int clan = message.popChar();
-
-		cPlayer* player = getPlayerFromNumber (playerNr);
-		player->setClan (clan);
-	} */
-}
-
-void cClient::HandleNetMessage_GAME_EV_ADD_BUILDING (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_ADD_BUILDING);
-
-	/*const bool Init =*/ message.popBool();
-/*	cPlayer* Player = getPlayerFromNumber (message.popInt16());
-	if (!Player)
-	{
-		Log.write ("Player not found", cLog::eLOG_TYPE_NET_ERROR);
-		return;
-	}
-	const sID UnitID = message.popID();
-	const auto position = message.popPosition();
-	unsigned int ID = message.popInt16();
-	auto& addedBuilding = Player->addNewBuilding (position, UnitID, ID);
-
-	addUnit (position, addedBuilding);
-
-	Player->base.addBuilding (&addedBuilding, nullptr); */
-}
-
-void cClient::HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_ADD_VEHICLE);
-
-	/*const bool Init =*/ message.popBool();
-/*	cPlayer* Player = getPlayerFromNumber (message.popInt16());
-	if (!Player)
-	{
-		Log.write ("Player not found", cLog::eLOG_TYPE_NET_ERROR);
-		return;
-	}
-	const sID UnitID = message.popID();
-	const auto position = message.popPosition();
-	const unsigned int ID = message.popInt16();
-	const bool addToMap = message.popBool();
-
-	auto& addedVehicle = Player->addNewVehicle (position, UnitID, ID);
-	addUnit (position, addedVehicle, addToMap); */
-}
-
 void cClient::HandleNetMessage_GAME_EV_DEL_BUILDING (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_DEL_BUILDING);
@@ -254,56 +190,6 @@ void cClient::HandleNetMessage_GAME_EV_DEL_VEHICLE (cNetMessage& message)
 	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
 
 	//if (Vehicle) deleteUnit (Vehicle);
-}
-
-void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_ADD_ENEM_VEHICLE);
-
-/*	cPlayer* Player = getPlayerFromNumber (message.popInt16());
-	if (!Player)
-	{
-		Log.write ("Player not found", cLog::eLOG_TYPE_NET_ERROR);
-		return;
-	}
-	const sID UnitID = message.popID();
-	const auto position = message.popPosition();
-	const int dir = message.popInt16();
-	const int ID = message.popInt16();
-	const int version = message.popInt16();
-	auto& addedVehicle = Player->addNewVehicle (position, UnitID, ID);
-
-	addedVehicle.dir = dir;
-	addedVehicle.data.setVersion (version);
-	addUnit (position, addedVehicle); */
-}
-
-void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_ADD_ENEM_BUILDING);
-
-/*	cPlayer* Player = getPlayerFromNumber (message.popInt16());
-	if (!Player)
-	{
-		Log.write ("Player not found", cLog::eLOG_TYPE_NET_ERROR);
-		return;
-	}
-	const sID UnitID = message.popID();
-	const auto position = message.popPosition();
-	const int ID = message.popInt16();
-	const int version = message.popInt16();
-	auto& addedBuilding = Player->addNewBuilding (position, UnitID, ID);
-
-	addedBuilding.data.setVersion (version);
-	addUnit (position, addedBuilding);
-
-	if (addedBuilding.data.connectsToBase)
-	{
-		Player->base.SubBases[0]->buildings.push_back (&addedBuilding);
-		addedBuilding.SubBase = Player->base.SubBases[0];
-
-//		addedBuilding.updateNeighbours (*getMap());
-	}*/
 }
 
 void cClient::HandleNetMessage_GAME_EV_WAIT_FOR (cNetMessage& message)
@@ -948,48 +834,6 @@ void cClient::HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message)
 	}
 }
 
-void cClient::HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_DELETE_EVERYTHING);
-
-/*	for (unsigned int i = 0; i < getPlayerList().size(); i++)
-	{
-		auto vehicles = getPlayerList()[i]->getVehicles();
-		for (auto vehicle : vehicles)
-			deleteUnit(vehicle.get());
-
-		auto buildings = getPlayerList()[i]->getBuildings();
-		for (auto building : buildings)
-			deleteUnit(building.get());
-
-	}
-
-	//delete subbases
-	// TODO: check that each subbase is deleted
-	activePlayer->base.SubBases.clear();
-
-	for (auto i = neutralBuildings.begin(); i != neutralBuildings.end(); ++i)
-	{
-//		getMap()->deleteBuilding (**i);
-	}
-	neutralBuildings.clear();
-
-	//delete attack jobs
-	for (size_t i = 0; i != attackJobs.size(); ++i)
-	{
-		delete attackJobs[i];
-	}
-	attackJobs.clear();
-
-	//TODO: delete fx effects???
-
-	// delete all eventually remaining pointers on the map, to prevent crashes after a resync.
-	// Normally there shouldn't be any pointers left after deleting all units, but a resync is not
-	// executed in normal situations and there are situations, when this happens.
-//	getMap()->reset();
-*/
-}
-
 void cClient::HandleNetMessage_GAME_EV_UNIT_UPGRADE_VALUES (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_UNIT_UPGRADE_VALUES);
@@ -1340,18 +1184,9 @@ int cClient::handleNetMessage (cNetMessage& message)
 
 	switch (message.iType)
 	{
-		case TCP_ACCEPT:
-			//should not happen
-			break;
-		case TCP_CLOSE: HandleNetMessage_TCP_CLOSE (message); break;
-		case GAME_EV_PLAYER_CLANS: HandleNetMessage_GAME_EV_PLAYER_CLANS (message); break;
-		case GAME_EV_ADD_BUILDING: HandleNetMessage_GAME_EV_ADD_BUILDING (message); break;
-		case GAME_EV_ADD_VEHICLE: HandleNetMessage_GAME_EV_ADD_VEHICLE (message); break;
 		case GAME_EV_DEL_BUILDING: HandleNetMessage_GAME_EV_DEL_BUILDING (message); break;
 		case GAME_EV_DEL_VEHICLE: HandleNetMessage_GAME_EV_DEL_VEHICLE (message); break;
 		case GAME_EV_ATTACKJOB: attackJobs.push_back (new cAttackJob (this, message)); break;
-		case GAME_EV_ADD_ENEM_VEHICLE: HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE (message); break;
-		case GAME_EV_ADD_ENEM_BUILDING: HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (message); break;
 		case GAME_EV_WAIT_FOR: HandleNetMessage_GAME_EV_WAIT_FOR (message); break;
 		case GAME_EV_MAKE_TURNEND: HandleNetMessage_GAME_EV_MAKE_TURNEND (message); break;
 		case GAME_EV_FINISHED_TURN: HandleNetMessage_GAME_EV_FINISHED_TURN (message); break;
@@ -1375,7 +1210,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_TURN: HandleNetMessage_GAME_EV_TURN (message); break;
 		case GAME_EV_STORE_UNIT: HandleNetMessage_GAME_EV_STORE_UNIT (message); break;
 		case GAME_EV_EXIT_UNIT: HandleNetMessage_GAME_EV_EXIT_UNIT (message); break;
-		case GAME_EV_DELETE_EVERYTHING: HandleNetMessage_GAME_EV_DELETE_EVERYTHING (message); break;
 		case GAME_EV_UNIT_UPGRADE_VALUES: HandleNetMessage_GAME_EV_UNIT_UPGRADE_VALUES (message); break;
 		case GAME_EV_CREDITS_CHANGED: HandleNetMessage_GAME_EV_CREDITS_CHANGED (message); break;
 		case GAME_EV_UPGRADED_BUILDINGS: HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (message); break;
@@ -1400,38 +1234,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 	}
 
 	return 0;
-}
-
-void cClient::addUnit (const cPosition& position, cVehicle& addedVehicle, bool addToMap)
-{
-	// place the vehicle
-//	if (addToMap) model.map->addVehicle (addedVehicle, position);
-
-/*	if (addedVehicle.canLand(*model.map))
-	{
-		addedVehicle.setFlightHeight(0);
-	}
-	else
-	{
-		addedVehicle.setFlightHeight(64);
-	}
-
-	if (addedVehicle.getOwner() != activePlayer && addedVehicle.iID == activePlayer->lastDeletedUnit)
-	{
-		activePlayer->addSavedReport (std::make_unique<cSavedReportCapturedByEnemy> (addedVehicle));
-		unitStolen (addedVehicle);
-	}
-	else if (addedVehicle.getOwner() != activePlayer)
-	{
-		activePlayer->addSavedReport (std::make_unique<cSavedReportDetected> (addedVehicle));
-		unitDetected (addedVehicle);
-	}*/
-}
-
-void cClient::addUnit (const cPosition& position, cBuilding& addedBuilding)
-{
-	// place the building
-//	getMap()->addBuilding (addedBuilding, position);
 }
 
 void cClient::handleEnd()

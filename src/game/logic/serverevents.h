@@ -43,9 +43,8 @@ struct sID;
 
 enum SERVER_EVENT_TYPES
 {
-	// Types between FIRST_SERVER_MESSAGE and FIRST_CLIENT_MESSAGE are for the server
-	GAME_EV_CHAT_CLIENT = 200,		// a chat message from client to server
-	GAME_EV_WANT_TO_END_TURN,		// a client wants to end the turn
+	// Types between FIRST_SERVER_MESSAGE and FIRST_CLIENT_MESSAGE are for the serverserver
+	GAME_EV_WANT_TO_END_TURN = 201,		// a client wants to end the turn
 	GAME_EV_WANT_ATTACK,			// a client wants to attack an other unit
 	GAME_EV_MINELAYERSTATUS,		// a minelayer changes his laying status
 	GAME_EV_WANT_BUILD,				// a vehicle wants to start building a building
@@ -80,16 +79,6 @@ enum SERVER_EVENT_TYPES
 };
 
 /**
-* Sends an event to a player that a new unit has to be added
-*@author alzi alias DoctorDeath
-*@param position The position of the unit
-*@param bVehicle True if the unit is an vehicle
-*@param iUnitNum The typ number of the unit
-*@param player The player who should receive this event and get the new unit
-*@param bInit True if this is called by game initialisation
-*/
-void sendAddUnit (cServer& server, const cPosition& position, int iID, bool bVehicle, sID UnitID, const cPlayer& player, bool bInit, bool bAddToMap = true);
-/**
 * Sends an event to a player that a unit has to be deleted
 *@param unit unit that has to be deleted
 *@param receiver The player who should receive this event.
@@ -101,14 +90,6 @@ void sendDeleteUnitMessage (cServer& server, const cUnit& unit, const cPlayer& r
 * adds a rubble object to the client
 */
 void sendAddRubble (cServer& server, const cBuilding& building, const cPlayer& receiver);
-/**
-* Sends an event to a player that he has detected
-* an enemy unit and should add it
-*@author alzi alias DoctorDeath
-*@param unit The unit that should be added by the player
-*@param player The player who should receive this event
-*/
-void sendAddEnemyUnit (cServer& server, const cUnit& unit, const cPlayer& receiver);
 
 void sendMakeTurnEnd (cServer& server, const cPlayer* receiver = nullptr);
 
@@ -120,13 +101,6 @@ void sendTurnEndDeadlineStartTime (cServer& server, unsigned int gameTime);
 
 
 void sendSpecificUnitData (cServer& server, const cVehicle& Vehicle);
-
-/**
-* sends information about the move to the next field of a client
-*@author alzi alias DoctorDeath
-*/
-void sendNextMove (cServer& server, const cVehicle& vehicle, int iType, int iSavedSpeed = -1);
-
 
 /**
 * sends the resourcedata of new scaned fields around the unit to a client
@@ -204,7 +178,6 @@ void sendDeletePlayer (cServer& server, const cPlayer& player, const cPlayer* re
 void sendTurn (cServer& server, int turn, const cPlayer& receiver);
 void sendStoreVehicle (cServer& server, int unitid, bool vehicle, int storedunitid, const cPlayer& receiver);
 void sendActivateVehicle (cServer& server, int unitid, bool vehicle, int activatunitid, const cPosition& position, const cPlayer& receiver);
-void sendDeleteEverything (cServer& server, const cPlayer& receiver);
 void sendUnitUpgrades (cServer& server, const cDynamicUnitData& Data, const cPlayer& receiver);
 void sendCredits (cServer& server, int newCredits, const cPlayer& receiver);
 void sendUpgradeBuildings (cServer& server, const std::vector<cBuilding*>& upgradedBuildings, int totalCosts, const cPlayer& receiver);
@@ -213,7 +186,6 @@ void sendResearchSettings (cServer& server, const std::vector<cBuilding*>& resea
 void sendResearchLevel (cServer& server, const cResearch& researchLevel, const cPlayer& receiver);
 void sendFinishedResearchAreas (cServer& server, const std::vector<int>& areas, const cPlayer& receiver);
 void sendRefreshResearchCount (cServer& server, const cPlayer& receiver);
-void sendClansToClients (cServer& server, const std::vector<std::unique_ptr<cPlayer>>& playerList);
 void sendSetAutomoving (cServer& server, const cVehicle& vehicle);
 /**
 * sends the result of a infiltrating action to the client

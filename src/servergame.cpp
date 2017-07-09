@@ -164,7 +164,6 @@ void cServerGame::run()
 //------------------------------------------------------------------------------
 void cServerGame::handleNetMessage_TCP_ACCEPT (cNetMessage& message)
 {
-	assert (message.iType == TCP_ACCEPT);
 
 //	auto player = std::make_shared<cPlayerBasicData> ("unidentified", cPlayerColor(), nextPlayerNumber++, message.popInt16());
 //	menuPlayers.push_back (player);
@@ -175,7 +174,6 @@ void cServerGame::handleNetMessage_TCP_ACCEPT (cNetMessage& message)
 //------------------------------------------------------------------------------
 void cServerGame::handleNetMessage_TCP_CLOSE (cNetMessage& message)
 {
-	assert (message.iType == TCP_CLOSE);
 
 	int socket = message.popInt16();
 //	network->close (socket);
@@ -387,8 +385,6 @@ void cServerGame::handleNetMessage (cNetMessage& message)
 	// TODO: reduce/avoid duplicate code with cNetwork(Host)Menu
 	switch (message.iType)
 	{
-		case TCP_ACCEPT: handleNetMessage_TCP_ACCEPT (message); break;
-		case TCP_CLOSE: handleNetMessage_TCP_CLOSE (message); break;
 // 		case MU_MSG_IDENTIFIKATION: handleNetMessage_MU_MSG_IDENTIFIKATION (message); break;
 // 		case MU_MSG_CHAT: handleNetMessage_MU_MSG_CHAT (message); break;
 // 		case MU_MSG_LANDING_POSITION: handleNetMessage_MU_MSG_LANDING_POSITION (message); break;

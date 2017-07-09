@@ -384,7 +384,7 @@ bool cVehicle::proceedBuilding (cServer& server)
 		if (server.model.getUnitsData()->getStaticUnitData(getBuildingType()).surfacePosition != staticData->surfacePosition)
 		{
 			setBuildingABuilding (false);
-			server.addBuilding (getPosition(), getBuildingType(), getOwner());
+			//server.addBuilding (getPosition(), getBuildingType(), getOwner());
 		}
 	}
 	return true;
@@ -1100,12 +1100,12 @@ bool cVehicle::layMine (cServer& server)
 	if (staticData->factorSea > 0 && staticData->factorGround == 0)
 	{
 		if (!map.possiblePlaceBuilding (server.model.getUnitsData()->getSeaMineData(), getPosition(), this)) return false;
-		server.addBuilding(getPosition(), server.model.getUnitsData()->getSpecialIDSeaMine(), getOwner(), false);
+		//server.addBuilding(getPosition(), server.model.getUnitsData()->getSpecialIDSeaMine(), getOwner(), false);
 	}
 	else
 	{
 		if (!map.possiblePlaceBuilding(server.model.getUnitsData()->getLandMineData(), getPosition(), this)) return false;
-		server.addBuilding(getPosition(), server.model.getUnitsData()->getSpecialIDLandMine(), getOwner(), false);
+		//server.addBuilding(getPosition(), server.model.getUnitsData()->getSpecialIDLandMine(), getOwner(), false);
 	}
 	setStoredResources (getStoredResources() - 1);
 

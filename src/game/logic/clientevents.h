@@ -39,13 +39,8 @@ class cPlayer;
 enum CLIENT_EVENT_TYPES
 {
 	// Types between FIRST_CLIENT_MESSAGE and FIRST_MENU_MESSAGE are for the client
-	GAME_EV_ADD_BUILDING = 100,	// adds a building
-	GAME_EV_ADD_VEHICLE,			// adds a vehicle
-	GAME_EV_DEL_BUILDING,			// deletes a building
+	GAME_EV_DEL_BUILDING = 102,			// deletes a building
 	GAME_EV_DEL_VEHICLE,			// deletes a vehicle
-	GAME_EV_ADD_ENEM_BUILDING,		// adds a enemy building with current data
-	GAME_EV_ADD_ENEM_VEHICLE,		// adds a vehicle with current data
-	GAME_EV_PLAYER_CLANS,			// data about the clans of the players
 	GAME_EV_MAKE_TURNEND,			// a player has to do actions for a turn ending
 	GAME_EV_FINISHED_TURN,			// a player has finished his turn
 	GAME_EV_TURN_START_TIME,		// time at that the turn started
@@ -53,7 +48,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_UNIT_DATA,				// set new data values for a vehicle
 	GAME_EV_SPECIFIC_UNIT_DATA,		// more specific unit values which are only for the owner
 	GAME_EV_UNIT_UPGRADE_VALUES,	// message contains upgraded values for a unit
-	GAME_EV_NEXT_MOVE,				// infos about the next move
 	GAME_EV_ATTACKJOB,				// sends an cAttackJob object to a client
 	GAME_EV_RESOURCES,				// a message with new scaned resources for a client
 	GAME_EV_BUILD_ANSWER,			// the answer of the server to a build request of a client
@@ -77,7 +71,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_HUD_SETTINGS,			// hud settings for a client
 	GAME_EV_STORE_UNIT,				// a unit has to be stored
 	GAME_EV_EXIT_UNIT,				// a unit has to be exit
-	GAME_EV_DELETE_EVERYTHING,		// a client has to delete all units to be ready for a resync
 	GAME_EV_CREDITS_CHANGED,		// the credits of a player changed (e.g. because he bought upgrades)
 	GAME_EV_UPGRADED_BUILDINGS,		// the buildings in the msg have been upgraded to the current version
 	GAME_EV_UPGRADED_VEHICLES,		// the vehicles in the msg have been upgraded to the current version

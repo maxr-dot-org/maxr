@@ -27,12 +27,6 @@ struct sID;
 class cPosition;
 class cRgbColor;
 
-enum eNetStatusMsg
-{
-	TCP_ACCEPT = 0,
-	TCP_CLOSE
-};
-
 enum eNetMessageClass { NET_MSG_SERVER, NET_MSG_CLIENT, NET_MSG_MENU, NET_MSG_STATUS };
 
 

@@ -35,24 +35,6 @@
 #include "game/data/report/savedreport.h"
 
 //------------------------------------------------------------------------------
-void sendAddUnit (cServer& server, const cPosition& position, int id, bool isVehicle, sID unitID, const cPlayer& player, bool isInit, bool shouldAddToMap)
-{
-	std::unique_ptr<cNetMessage> message;
-
-	if (isVehicle) message = std::make_unique<cNetMessage> (GAME_EV_ADD_VEHICLE);
-	else message = std::make_unique<cNetMessage> (GAME_EV_ADD_BUILDING);
-
-	message->pushBool (shouldAddToMap);
-	message->pushInt16 (id);
-	message->pushPosition (position);
-	message->pushID (unitID);
-	message->pushInt16 (player.getId());
-	message->pushBool (isInit);
-
-	server.sendNetMessage (std::move (message), &player);
-}
-
-//------------------------------------------------------------------------------
 void sendAddRubble (cServer& server, const cBuilding& building, const cPlayer& receiver)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_ADD_RUBBLE);
@@ -88,22 +70,6 @@ void sendDeleteUnit (cServer& server, const cUnit& unit, const cPlayer* receiver
 	}
 	else
 		sendDeleteUnitMessage (server, unit, *receiver);
-}
-
-//------------------------------------------------------------------------------
-void sendAddEnemyUnit (cServer& server, const cUnit& unit, const cPlayer& receiver)
-{
-	auto message = std::make_unique<cNetMessage> (unit.isABuilding() ? GAME_EV_ADD_ENEM_BUILDING : GAME_EV_ADD_ENEM_VEHICLE);
-
-	message->pushInt16 (unit.data.getVersion());
-	message->pushInt16 (unit.iID);
-	if (unit.isAVehicle())
-		message->pushInt16 (unit.dir);
-	message->pushPosition (unit.getPosition());
-	message->pushID (unit.data.getId());
-	message->pushInt16 (unit.getOwner()->getId());
-
-	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------
@@ -161,25 +127,6 @@ void sendSpecificUnitData (cServer& server, const cVehicle& vehicle)
 	message->pushBool (vehicle.BuildPath);
 	message->pushID (vehicle.getBuildingType());
 	message->pushInt16 (vehicle.dir);
-	message->pushInt16 (vehicle.iID);
-	server.sendNetMessage (std::move (message), vehicle.getOwner());
-}
-
-//------------------------------------------------------------------------------
-void sendNextMove (cServer& server, const cVehicle& vehicle, int iType, int iSavedSpeed)
-{
-	for (unsigned int i = 0; i < vehicle.seenByPlayerList.size(); i++)
-	{
-		auto message = std::make_unique<cNetMessage> (GAME_EV_NEXT_MOVE);
-		if (iSavedSpeed >= 0) message->pushChar (iSavedSpeed);
-		message->pushChar (iType);
-		message->pushInt16 (vehicle.iID);
-		server.sendNetMessage (std::move (message), vehicle.seenByPlayerList[i]);
-	}
-
-	auto message = std::make_unique<cNetMessage> (GAME_EV_NEXT_MOVE);
-	if (iSavedSpeed >= 0) message->pushChar (iSavedSpeed);
-	message->pushChar (iType);
 	message->pushInt16 (vehicle.iID);
 	server.sendNetMessage (std::move (message), vehicle.getOwner());
 }
@@ -459,13 +406,6 @@ void sendActivateVehicle (cServer& server, int unitid, bool vehicle, int activat
 }
 
 //------------------------------------------------------------------------------
-void sendDeleteEverything (cServer& server, const cPlayer& receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_DELETE_EVERYTHING);
-	server.sendNetMessage (std::move (message), &receiver);
-}
-
-//------------------------------------------------------------------------------
 void sendResearchLevel (cServer& server, const cResearch& researchLevel, const cPlayer& receiver)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_RESEARCH_LEVEL);
@@ -619,25 +559,6 @@ void sendResearchSettings (cServer& server, const std::vector<cBuilding*>& resea
 		message->pushInt16 (buildingsInMsg);
 		server.sendNetMessage (std::move (message), &receiver);
 	}
-}
-
-//------------------------------------------------------------------------------
-void sendClans (cServer& server, const std::vector<std::unique_ptr<cPlayer>>& playerList, const cPlayer& receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_PLAYER_CLANS);
-	for (unsigned int i = 0; i < playerList.size(); i++)
-	{
-		message->pushChar (playerList[i]->getClan());
-		message->pushChar (playerList[i]->getId());
-	}
-	server.sendNetMessage (std::move (message), &receiver);
-}
-
-//------------------------------------------------------------------------------
-void sendClansToClients (cServer& server, const std::vector<std::unique_ptr<cPlayer>>& playerList)
-{
-	for (unsigned int n = 0; n < playerList.size(); n++)
-		sendClans (server, playerList, *playerList[n]);
 }
 
 //------------------------------------------------------------------------------

@@ -226,17 +226,6 @@ public:
 	void destroyUnit (cUnit& unit);
 
 	/**
-	* adds the unit to the map and player.
-	*@author alzi alias DoctorDeath
-	*@param position The position were the unit should be added.
-	*@param id id of the unit which should be added.
-	*@param Player Player whose vehicle should be added.
-	*@param bInit true if this is a initialisation call.
-	*/
-	cVehicle& addVehicle (const cPosition& position, const sID& id, cPlayer* Player, bool bInit = false, bool bAddToMap = true, unsigned int uid = 0);
-	cBuilding& addBuilding (const cPosition& position, const sID& id, cPlayer* Player, bool bInit = false, unsigned int uid = 0);
-
-	/**
 	* adds a new rubble object to the game
 	* @param position The position where the rubble is added
 	* @param value the amount of material in the rubble field
@@ -249,8 +238,6 @@ public:
 	*/
 	void deleteRubble (cBuilding* rubble);
 
-	void resyncPlayer (cPlayer& player, bool firstDelete, bool withGuiState);
-	void resyncVehicle (const cVehicle& Vehicle, const cPlayer& Player);
 	/**
 	* deletes a player and all his units
 	*@author alzi alias DoctorDeath
@@ -261,8 +248,6 @@ public:
 
 	void sideStepStealthUnit (const cPosition& position, const cVehicle& vehicle, const cPosition& bigOffset = cPosition (-1, -1));
 	void sideStepStealthUnit (const cPosition& position, const cStaticUnitData& vehicleData, cPlayer* vehicleOwner, const cPosition& bigOffset = cPosition (-1, -1));
-
-	void makeAdditionalSaveRequest (int saveNum);
 
 	std::shared_ptr<const cTurnClock> getTurnClock() const { return turnClock; }
 
@@ -281,22 +266,15 @@ public:
 
 	const cGameGuiState& getPlayerGameGuiState (const cPlayer& player);
 private:
-	void startNewGame();
-
-	void placeInitialResources();
-
 
 	void defeatLoserPlayers();
 	bool isVictoryConditionMet() const;
 
-	void handleNetMessage_TCP_ACCEPT (cNetMessage& message);
 	void handleNetMessage_MU_MSG_CLAN (cNetMessage& message);
 	void handleNetMessage_MU_MSG_LANDING_VEHICLES (cNetMessage& message);
 	void handleNetMessage_MU_MSG_UPGRADES (cNetMessage& message);
 	void handleNetMessage_MU_MSG_LANDING_COORDS (cNetMessage& message);
 	void handleNetMessage_MU_MSG_READY_TO_START (cNetMessage& message);
-	void handleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage& message);
-	void handleNetMessage_GAME_EV_CHAT_CLIENT (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_TO_END_TURN (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message);
 	void handleNetMessage_GAME_EV_MINELAYERSTATUS (cNetMessage& message);
@@ -326,20 +304,6 @@ private:
 	void handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& message);
 	void handleNetMessage_GAME_EV_END_MOVE_ACTION (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_KICK_PLAYER (cNetMessage& message);
-
-	/**
-	* lands the vehicle at a free position in the radius
-	*@author alzi alias DoctorDeath
-	*@param iX The X coordinate to land.
-	*@param iY The Y coordinate to land.
-	*@param iWidth Width of the field.
-	*@param iHeight iHeight of the field.
-	*@param unitData Vehicle to land.
-	*@param player Player whose vehicle should be land.
-	*@return nullptr if the vehicle could not be landed,
-	*        else a pointer to the vehicle.
-	*/
-	cVehicle* landVehicle (const cPosition& landingPosition, int iWidth, int iHeight, const cStaticUnitData& unitData, cPlayer& player);
 
 	/**
 	* handles the pressed end of a player
