@@ -533,29 +533,6 @@ void cClient::HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (cNetMessage& message)
 	Vehicle->bandPosition = message.popPosition();
 }
 
-void cClient::HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message)
-{
-//	assert (message.iType == GAME_EV_MOVE_JOB_SERVER);
-
-	const int iVehicleID = message.popInt32();
-	const auto srcPosition = message.popPosition();
-	const auto destPosition = message.popPosition();
-	const int iSavedSpeed = message.popInt16();
-	cVehicle* Vehicle = getVehicleFromID (iVehicleID);
-
-	if (Vehicle == nullptr)
-	{
-		Log.write (" Client: Can't find vehicle with id " + iToStr (iVehicleID) + " for movejob from " + iToStr (srcPosition.x()) + "x" + iToStr (srcPosition.y()) + " to " + iToStr (destPosition.x()) + "x" + iToStr (destPosition.y()), cLog::eLOG_TYPE_NET_WARNING);
-		// TODO: request sync of vehicle
-		return;
-	}
-
-	cClientMoveJob* MoveJob = new cClientMoveJob (*this, srcPosition, destPosition, Vehicle);
-	MoveJob->iSavedSpeed = iSavedSpeed;
-	if (!MoveJob->generateFromMessage (message)) return;
-	Log.write (" Client: Added received movejob at time " + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
-}
-
 void cClient::HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_RESOURCES);
@@ -1460,15 +1437,7 @@ void cClient::addUnit (const cPosition& position, cBuilding& addedBuilding)
 void cClient::handleEnd()
 {
 	if (freezeModes.isFreezed()) return;
-	sendWantToEndTurn (*this);
-}
-
-
-void cClient::addActiveMoveJob (cClientMoveJob& MoveJob)
-{
-	MoveJob.bSuspended = false;
-	if (Contains (ActiveMJobs, &MoveJob)) return;
-	ActiveMJobs.push_back (&MoveJob);
+	sendWantToEndTurn(*this);
 }
 
 void cClient::addAutoMoveJob (std::weak_ptr<cAutoMJob> autoMoveJob)

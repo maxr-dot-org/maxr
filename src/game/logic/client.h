@@ -104,13 +104,6 @@ public:
 	*/
 	void runFx();
 
-	/**
-	* adds a new movejob
-	*@author alzi alias DoctorDeath
-	*@param MJob the movejob to be added
-	*/
-	void addActiveMoveJob (cClientMoveJob& MJob);
-
 	void addAutoMoveJob (std::weak_ptr<cAutoMJob> autoMoveJob);
 
 	/**
@@ -241,7 +234,6 @@ private:
 	void HandleNetMessage_GAME_EV_TURN_END_DEADLINE_START_TIME (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message);
@@ -315,8 +307,6 @@ private:
 public:
 	/** list with the running clientAttackJobs */
 	std::vector<cAttackJob*> attackJobs; //TODO: move to cModel
-	/** List with all active movejobs */
-	std::vector<cClientMoveJob*> ActiveMJobs; //TODO: move to cModel
 };
 
 #endif // game_logic_clientH

@@ -25,7 +25,6 @@
 #include "game/logic/client.h"
 #include "game/logic/clientevents.h"
 #include "utility/listhelpers.h"
-#include "game/logic/movejobs.h"
 #include "game/data/player/player.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/map/map.h"
@@ -100,7 +99,7 @@ void cAutoMJob::stop()
 {
 	if (!playerMJob)
 	{
-		sendWantStopMove (client, vehicle.iID);
+		//sendWantStopMove (client, vehicle.iID);
 	}
 	sendSetAutoStatus (client, vehicle.iID, false);
 }

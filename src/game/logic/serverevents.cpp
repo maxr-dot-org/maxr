@@ -24,7 +24,6 @@
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 //#include "menuevents.h"
-#include "game/logic/movejobs.h"
 #include "netmessage.h"
 #include "network.h"
 #include "game/data/player/player.h"

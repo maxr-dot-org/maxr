@@ -118,18 +118,6 @@ void sendChatMessageToServer(const cClient& client, const std::string& msg, cons
 void sendWantToEndTurn (const cClient& client);
 
 /**
-*
-*@author alzi alias DoctorDeath
-*/
-void sendWantStopMove (const cClient& client, int iVehicleID);
-
-/**
-*requests the server to resume the movejob of the vehicle. If 0 is passed, all movejobs of the player will be resumed.
-*@author eiko
-*/
-void sendMoveJobResume (const cClient& client, int unitId);
-
-/**
 * sends all necessary information to identify aggressor
 * and target of an attack to the server
 */

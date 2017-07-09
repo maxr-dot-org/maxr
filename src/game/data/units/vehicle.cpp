@@ -80,8 +80,6 @@ cVehicle::cVehicle (const cStaticUnitData& staticData, const cDynamicUnitData& d
 	ditherY = 0;
 	flightHeight = 0;
 	WalkFrame = 0;
-	clientMoveJob = nullptr;
-	ServerMoveJob = nullptr;
 	hasAutoMoveJob = false;
 	moving = false;
 	BuildPath = false;
@@ -102,16 +100,6 @@ cVehicle::cVehicle (const cStaticUnitData& staticData, const cDynamicUnitData& d
 //-----------------------------------------------------------------------------
 cVehicle::~cVehicle()
 {
-	if (clientMoveJob)
-	{
-		clientMoveJob->release();
-		clientMoveJob->Vehicle = nullptr;
-	}
-	if (ServerMoveJob)
-	{
-		ServerMoveJob->release();
-		ServerMoveJob->Vehicle = nullptr;
-	}
 }
 
 void cVehicle::drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha) const
@@ -373,25 +361,21 @@ bool cVehicle::proceedBuilding (cServer& server)
 		}
 
 		// If we've found somewhere to move to, move there now.
-		if (found_next && server.addMoveJob (getPosition(), nextPosition, this))
-		{
-			setBuildingABuilding (false);
-			server.addBuilding (getPosition(), getBuildingType(), getOwner());
-			// Begin the movement immediately,
-			// so no other unit can block the destination field.
-			this->ServerMoveJob->checkMove();
-		}
-
-		else
-		{
-			if (server.model.getUnitsData()->getStaticUnitData(getBuildingType()).surfacePosition != cStaticUnitData::SURFACE_POS_GROUND)
-			{
-				server.addBuilding (getPosition(), getBuildingType(), getOwner());
-				setBuildingABuilding (false);
-			}
-			BuildPath = false;
-			sendBuildAnswer (server, false, *this);
-		}
+//		if (found_next && server.addMoveJob (getPosition(), nextPosition, this))
+// 		{
+// 			setBuildingABuilding (false);
+// 			server.addBuilding (getPosition(), getBuildingType(), getOwner());
+// 		}
+// 		else
+// 		{
+// 			if (server.model.getUnitsData()->getStaticUnitData(getBuildingType()).surfacePosition != cStaticUnitData::SURFACE_POS_GROUND)
+// 			{
+// 				server.addBuilding (getPosition(), getBuildingType(), getOwner());
+// 				setBuildingABuilding (false);
+// 			}
+// 			BuildPath = false;
+// 			sendBuildAnswer (server, false, *this);
+// 		}
 	}
 	else
 	{
@@ -530,12 +514,14 @@ string cVehicle::getStatusStr(const cPlayer* player, const cUnitsData& unitsData
 			return lngPack.i18n ("Text~Comp~Clearing_Fin");
 	}
 
-	// generate other infos for normall non-unit-related-events and infiltartors
+	// generate other infos for normal non-unit-related-events and infiltartors
 	string sTmp;
 	{
-		if (clientMoveJob && clientMoveJob->endMoveAction && clientMoveJob->endMoveAction->type_ == EMAT_ATTACK)
-			sTmp = lngPack.i18n ("Text~Comp~MovingToAttack");
-		else if (moveJob)
+		//TODO: #1065 
+		//if (moveJob && moveJob->getEndMoveAction() && moveJob->getEndMoveAction()->getType == EMAT_ATTACK)
+		//	sTmp = lngPack.i18n ("Text~Comp~MovingToAttack");
+		//else if (moveJob)
+		if (moveJob)
 			sTmp = lngPack.i18n ("Text~Comp~Moving");
 		else if (isAttacking())
 			sTmp = lngPack.i18n ("Text~Comp~AttackingStatusStr");
@@ -675,11 +661,13 @@ void cVehicle::makeReport (cSoundManager& soundManager) const
 	else if (data.getHitpoints() > data.getHitpointsMax() / 2)
 	{
 		// Status green
-		if (clientMoveJob && clientMoveJob->endMoveAction && clientMoveJob->endMoveAction->type_ == EMAT_ATTACK)
-		{
-			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIAttacking)));
-		}
-		else if (autoMoveJob)
+		//TODO: #1065
+		//if (clientMoveJob && clientMoveJob->endMoveAction && clientMoveJob->endMoveAction->type_ == EMAT_ATTACK)
+		//{
+		//	soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIAttacking)));
+		//}
+		//else if (autoMoveJob)
+		if (autoMoveJob)
 		{
 			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOISurveying)));
 		}
@@ -802,8 +790,6 @@ bool cVehicle::makeAttackOnThis (cServer& server, cUnit* opponentUnit, const str
 
 	server.addAttackJob (opponentUnit, getPosition());
 
-	if (ServerMoveJob != 0)
-		ServerMoveJob->bFinished = true;
 	return true;
 }
 

@@ -23,9 +23,9 @@
 #include <string>
 #include "defines.h"
 #include "main.h" // for sID
-#include "game/logic/movejobs.h"
 #include "game/logic/upgradecalculator.h" // cResearch::ResearchArea
 #include "network.h"
+#include "endmoveaction.h"
 
 class cBuilding;
 class cHud;
@@ -36,14 +36,16 @@ class cUnit;
 class cSavedReport;
 class cGameGuiState;
 class cSubBase;
+class cServer;
+class cPosition;
+class cPlayer;
+struct sID;
 
 enum SERVER_EVENT_TYPES
 {
 	// Types between FIRST_SERVER_MESSAGE and FIRST_CLIENT_MESSAGE are for the server
 	GAME_EV_CHAT_CLIENT = 200,		// a chat message from client to server
 	GAME_EV_WANT_TO_END_TURN,		// a client wants to end the turn
-	GAME_EV_WANT_STOP_MOVE,			// a client wants to stop a moving vehicle
-	GAME_EV_MOVEJOB_RESUME,			// a client wants a paused movejob to be resumed
 	GAME_EV_WANT_ATTACK,			// a client wants to attack an other unit
 	GAME_EV_MINELAYERSTATUS,		// a minelayer changes his laying status
 	GAME_EV_WANT_BUILD,				// a vehicle wants to start building a building

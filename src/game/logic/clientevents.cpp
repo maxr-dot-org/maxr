@@ -99,20 +99,6 @@ void sendWantToEndTurn (const cClient& client)
 	client.sendNetMessage (std::move (message));
 }
 
-void sendWantStopMove (const cClient& client, int iVehicleID)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_STOP_MOVE);
-	message->pushInt16 (iVehicleID);
-	client.sendNetMessage (std::move (message));
-}
-
-void sendMoveJobResume (const cClient& client, int unitId)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_MOVEJOB_RESUME);
-	message->pushInt32 (unitId);
-	client.sendNetMessage (std::move (message));
-}
-
 void sendWantAttack (const cClient& client, int aggressorID, const cPosition& targetPosition, int targetID)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_ATTACK);

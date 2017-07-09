@@ -167,10 +167,6 @@ public:
 	int DamageFXPointX, DamageFXPointY; // Die Punkte, an denen Rauch bei beschädigung aufsteigen wird
 	unsigned int WalkFrame; // Frame der Geh-Annimation
 
-	//TODO: remove
-	cServerMoveJob* ServerMoveJob;
-	cClientMoveJob* clientMoveJob;
-
 	/**
 	* refreshes speedCur and shotsCur and continues building or clearing
 	*@author alzi alias DoctorDeath
