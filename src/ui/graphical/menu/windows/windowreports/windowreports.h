@@ -37,7 +37,7 @@ class cPlayer;
 class cCasualtiesTracker;
 class cUnit;
 class cSavedReport;
-class cTurnClock;
+class cTurnCounter;
 class cTurnTimeClock;
 class cGameSettings;
 class cUnitsData;
@@ -50,7 +50,7 @@ public:
 	cWindowReports (std::vector<std::shared_ptr<const cPlayer>> players,
 					std::shared_ptr<const cPlayer> localPlayer,
 					std::shared_ptr<const cCasualtiesTracker> casualties,
-					std::shared_ptr<const cTurnClock> turnClock,
+					std::shared_ptr<const cTurnCounter> turnClock,
 					std::shared_ptr<const cTurnTimeClock> turnTimeClock,
 					std::shared_ptr<const cGameSettings> gameSettings,
 					const std::vector<std::unique_ptr<cSavedReport>>& reports,
@@ -96,7 +96,7 @@ private:
 	std::shared_ptr<const cPlayer> localPlayer;
 
 	std::shared_ptr<const cCasualtiesTracker> casualties;
-	std::shared_ptr<const cTurnClock> turnClock;
+	std::shared_ptr<const cTurnCounter> turnClock;
 	std::shared_ptr<const cGameSettings> gameSettings;
 	const std::vector<std::unique_ptr<cSavedReport>>& reports;
 	std::shared_ptr<const cUnitsData> unitsData;

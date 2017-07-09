@@ -1911,7 +1911,7 @@ std::shared_ptr<const cPlayer> cGameGuiController::getActivePlayer() const
 }
 
 //------------------------------------------------------------------------------
-std::shared_ptr<const cTurnClock> cGameGuiController::getTurnClock() const
+std::shared_ptr<const cTurnCounter> cGameGuiController::getTurnClock() const
 {
 	return activeClient ? activeClient->getTurnClock() : nullptr;
 }

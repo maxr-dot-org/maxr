@@ -48,7 +48,7 @@ class cAttackJob;
 class cServerMoveJob;
 class cTCP;
 class cUnit;
-class cTurnClock;
+class cTurnCounter;
 class cTurnTimeClock;
 class cTurnTimeDeadline;
 class cGameGuiState;
@@ -249,7 +249,7 @@ public:
 	void sideStepStealthUnit (const cPosition& position, const cVehicle& vehicle, const cPosition& bigOffset = cPosition (-1, -1));
 	void sideStepStealthUnit (const cPosition& position, const cStaticUnitData& vehicleData, cPlayer* vehicleOwner, const cPosition& bigOffset = cPosition (-1, -1));
 
-	std::shared_ptr<const cTurnClock> getTurnClock() const { return turnClock; }
+	std::shared_ptr<const cTurnCounter> getTurnClock() const { return turnClock; }
 
 	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock() const { return turnTimeClock; }
 
@@ -409,7 +409,7 @@ private:
 	/** a list with the numbers of all players who have ended their turn. Valid only for simultaneous games */
 	std::vector<const cPlayer*> playerEndList;
 
-	std::shared_ptr<cTurnClock> turnClock;
+	std::shared_ptr<cTurnCounter> turnClock;
 
 	std::shared_ptr<cTurnTimeClock> turnTimeClock;
 	std::shared_ptr<cTurnTimeDeadline> turnEndDeadline;

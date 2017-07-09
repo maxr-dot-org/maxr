@@ -20,25 +20,25 @@
 #include "game/logic/turnclock.h"
 
 //------------------------------------------------------------------------------
-cTurnClock::cTurnClock (int turn_) :
+cTurnCounter::cTurnCounter (int turn_) :
 	turn (turn_)
 {}
 
 //------------------------------------------------------------------------------
-int cTurnClock::getTurn() const
+int cTurnCounter::getTurn() const
 {
 	return turn;
 }
 
 //------------------------------------------------------------------------------
-void cTurnClock::setTurn (int turn_)
+void cTurnCounter::setTurn (int turn_)
 {
 	std::swap (turn, turn_);
 	if (turn != turn_) turnChanged();
 }
 
 //------------------------------------------------------------------------------
-void cTurnClock::increaseTurn()
+void cTurnCounter::increaseTurn()
 {
 	++turn;
 	turnChanged();

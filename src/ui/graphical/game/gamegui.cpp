@@ -247,7 +247,7 @@ void cGameGui::setPlayers (std::vector<std::shared_ptr<const cPlayer>> players)
 }
 
 //------------------------------------------------------------------------------
-void cGameGui::setTurnClock (std::shared_ptr<const cTurnClock> turnClock)
+void cGameGui::setTurnClock (std::shared_ptr<const cTurnCounter> turnClock)
 {
 	hud->setTurnClock (turnClock);
 }

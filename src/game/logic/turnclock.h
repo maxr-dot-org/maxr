@@ -22,10 +22,10 @@
 
 #include "utility/signal/signal.h"
 
-class cTurnClock
+class cTurnCounter
 {
 public:
-	explicit cTurnClock (int turn);
+	explicit cTurnCounter (int turn);
 
 	int getTurn() const;
 

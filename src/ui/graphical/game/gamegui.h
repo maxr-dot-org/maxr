@@ -49,7 +49,7 @@ class cClient;
 class cHudPanels;
 class cSavedReport;
 class cCasualtiesTracker;
-class cTurnClock;
+class cTurnCounter;
 class cTurnTimeClock;
 class cGameSettings;
 class cSoundManager;
@@ -68,7 +68,7 @@ public:
 	void setDynamicMap (std::shared_ptr<const cMap> dynamicMap);
 	void setPlayer (std::shared_ptr<const cPlayer> player);
 	void setPlayers (std::vector<std::shared_ptr<const cPlayer>> players);
-	void setTurnClock (std::shared_ptr<const cTurnClock> turnClock);
+	void setTurnClock (std::shared_ptr<const cTurnCounter> turnClock);
 	void setTurnTimeClock (std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 	void setGameSettings (std::shared_ptr<const cGameSettings> gameSettings);
 	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData);

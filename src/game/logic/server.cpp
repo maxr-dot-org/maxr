@@ -72,7 +72,7 @@ cServer::cServer(std::shared_ptr<cTCP> network_) :
 	network(std::move(network_)),
 	gameTimer(std::make_shared<cGameTimerServer>()),
 	serverThread(nullptr),
-	turnClock(std::make_unique<cTurnClock>(1)),
+	turnClock(std::make_unique<cTurnCounter>(1)),
 	turnTimeClock(std::make_unique<cTurnTimeClock>(model)),
 	lastTurnEnd(0),
 	executingRemainingMovements(false),

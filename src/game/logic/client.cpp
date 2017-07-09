@@ -74,7 +74,7 @@ cClient::cClient (std::shared_ptr<cConnectionManager> connectionManager) :
 	connectionManager(connectionManager),
 	gameTimer (std::make_shared<cGameTimerClient> ()),
 	activePlayer (nullptr),
-	turnClock (std::make_shared<cTurnClock> (1)),
+	turnClock (std::make_shared<cTurnCounter> (1)),
 	turnTimeClock (std::make_shared<cTurnTimeClock> (model)),
 	casualtiesTracker (std::make_shared<cCasualtiesTracker> ()),
 	effectsList (new cFxContainer)
