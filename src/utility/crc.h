@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include <vector>
 #include <string>
+#include <forward_list>
 
 #include "SDL_endian.h"
 
@@ -82,6 +83,15 @@ uint32_t calcCheckSum(const T& data, uint32_t crc)
 
 template<typename T>
 uint32_t calcCheckSum(const std::vector<T>& data, uint32_t checksum)
+{
+	for (const auto& x : data)
+		checksum = calcCheckSum(x, checksum);
+
+	return checksum;
+};
+
+template<typename T>
+uint32_t calcCheckSum(const std::forward_list<T>& data, uint32_t checksum)
 {
 	for (const auto& x : data)
 		checksum = calcCheckSum(x, checksum);

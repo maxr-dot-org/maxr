@@ -237,16 +237,6 @@ public:
 	cBuilding& addBuilding (const cPosition& position, const sID& id, cPlayer* Player, bool bInit = false, unsigned int uid = 0);
 
 	/**
-	* adds a new movejob
-	*@author alzi alias DoctorDeath
-	*@param MJob the movejob to be added
-	*/
-	void addActiveMoveJob (cServerMoveJob& MoveJob);
-	/**
-	* generates a new movejob
-	*/
-	bool addMoveJob (const cPosition& source, const cPosition& destination, cVehicle* vehicle);
-	/**
 	* adds a new rubble object to the game
 	* @param position The position where the rubble is added
 	* @param value the amount of material in the rubble field
@@ -308,9 +298,6 @@ private:
 	void handleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage& message);
 	void handleNetMessage_GAME_EV_CHAT_CLIENT (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_TO_END_TURN (cNetMessage& message);
-	void handleNetMessage_GAME_EV_MOVE_JOB_CLIENT (cNetMessage& message);
-	void handleNetMessage_GAME_EV_WANT_STOP_MOVE (cNetMessage& message);
-	void handleNetMessage_GAME_EV_MOVEJOB_RESUME (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message);
 	void handleNetMessage_GAME_EV_MINELAYERSTATUS (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message);
@@ -392,11 +379,6 @@ private:
 	*@author alzi alias DoctorDeath
 	*/
 	void checkDeadline();
-	/**
-	* handles all active movejobs
-	*@author alzi alias DoctorDeath
-	*/
-	void handleMoveJobs();
 
 	/**
 	* Calculates the cost, that this upgrade would have for the given player.

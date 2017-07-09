@@ -38,10 +38,10 @@ class cUnitSelection
 {
 public:
 	bool selectUnitAt (const cMapField& field, bool base);
-
 	bool selectVehiclesAt (const cBox<cPosition>& box, const cMap& map, const cPlayer& player);
-
 	bool selectUnit (cUnit& unit, bool add = false);
+	bool selectNextUnit(const cPlayer& player, const std::vector<unsigned int>& doneList);
+	bool selectPrevUnit(const cPlayer& player, const std::vector<unsigned int>& doneList);
 
 	void deselectUnit (const cUnit& unit);
 	void deselectUnits();
@@ -74,8 +74,17 @@ private:
 	void addSelectedUnitFront (cUnit& unit);
 
 	void removeSelectedUnit (const cUnit& unit);
-
 	void removeAllSelectedUnits();
+
+	cVehicle* getNextVehicle (const cPlayer& player, const std::vector<unsigned int>& doneList, const cVehicle* start) const;
+	cBuilding* getNextBuilding (const cPlayer& player, const std::vector<unsigned int>& doneList, const cBuilding* start) const;
+	cBuilding* getNextMiningStation (const cPlayer& player, const cBuilding* start) const;
+	cUnit* getNextUnit (const cPlayer& player, const std::vector<unsigned int>& doneList, cUnit* start) const;
+
+	cVehicle* getPrevVehicle (const cPlayer& player, const std::vector<unsigned int>& doneList, const cVehicle* start) const;
+	cBuilding* getPrevBuilding (const cPlayer& player, const std::vector<unsigned int>& doneList, const cBuilding* start) const;
+	cBuilding* getPrevMiningStation (const cPlayer& player, const cBuilding* start) const;
+	cUnit* getPrevUnit (const cPlayer& player, const std::vector<unsigned int>& doneList, cUnit* start) const;
 };
 
 #endif // ui_graphical_game_unitselectionH

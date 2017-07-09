@@ -33,7 +33,6 @@
 #include "game/logic/jobs.h"
 #include "utility/log.h"
 //#include "menuevents.h"
-#include "game/logic/movejobs.h"
 #include "netmessage.h"
 #include "network.h"
 #include "game/data/player/player.h"
@@ -56,6 +55,7 @@
 #if DEDICATED_SERVER_APPLICATION
 # include "dedicatedserver.h"
 #endif
+#include "movejob.h"
 
 //------------------------------------------------------------------------------
 int CallbackRunServerThread (void* arg)
@@ -306,7 +306,6 @@ void cServer::run()
 void cServer::doGameActions()
 {
 	checkDeadline();
-	handleMoveJobs();
 	cAttackJob::runAttackJobs (AJobs);
 	runJobs();
 	handleWantEnd();
@@ -396,68 +395,6 @@ void cServer::handleNetMessage_GAME_EV_WANT_TO_END_TURN (cNetMessage& message)
 
 	handleEnd (player);
 }
-
-//------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_MOVE_JOB_CLIENT (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_MOVE_JOB_CLIENT);
-
-	cServerMoveJob* MoveJob = cServerMoveJob::generateFromMessage (*this, message);
-	if (!MoveJob)
-	{
-		return;
-	}
-
-	addActiveMoveJob (*MoveJob);
-	Log.write (" Server: Added received movejob", cLog::eLOG_TYPE_NET_DEBUG);
-	// send the movejob to all players who can see this unit
-	const cVehicle& vehicle = *MoveJob->Vehicle;
-	sendMoveJobServer (*this, *MoveJob, *vehicle.getOwner());
-	for (size_t i = 0; i != vehicle.seenByPlayerList.size(); ++i)
-	{
-		sendMoveJobServer (*this, *MoveJob, *vehicle.seenByPlayerList[i]);
-	}
-}
-
-//------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_WANT_STOP_MOVE (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_WANT_STOP_MOVE);
-
-	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
-	if (Vehicle == nullptr || Vehicle->ServerMoveJob == nullptr) return;
-
-	Vehicle->ServerMoveJob->stop();
-}
-
-//------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_MOVEJOB_RESUME (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_MOVEJOB_RESUME);
-
-	const int vehicleId = message.popInt32();
-	if (vehicleId == 0) // All vehicles
-	{
-		auto& player = getPlayerFromNumber (message.iPlayerNr);
-
-		const auto& vehicles = player.getVehicles();
-		for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
-		{
-			const auto& vehicle = *i;
-			if (vehicle->ServerMoveJob && !vehicle->isUnitMoving())
-				vehicle->ServerMoveJob->resume();
-		}
-	}
-	else
-	{
-		cVehicle* vehicle = getVehicleFromID (vehicleId);
-		if (!vehicle || vehicle->getOwner()->getId() != message.iPlayerNr) return;
-
-		if (vehicle->ServerMoveJob)
-			vehicle->ServerMoveJob->resume();
-	}
-}
-
 //------------------------------------------------------------------------------
 void cServer::handleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 {
@@ -624,7 +561,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	sendBuildAnswer (*this, true, *Vehicle);
 	//addJob (new cStartBuildJob (*Vehicle, oldPosition, Data.isBig));
 
-	if (Vehicle->ServerMoveJob) Vehicle->ServerMoveJob->release();
+	if (Vehicle->getMoveJob()) Vehicle->getMoveJob()->stop();
 }
 
 //------------------------------------------------------------------------------
@@ -665,10 +602,10 @@ void cServer::handleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message)
 	}
 
 	// drive away from the building lot
-	addMoveJob (Vehicle->getPosition(), escapePosition, Vehicle);
+	//addMoveJob (Vehicle->getPosition(), escapePosition, Vehicle);
 	// begin the movement immediately,
 	// so no other unit can block the destination field
-	Vehicle->ServerMoveJob->checkMove();
+	//Vehicle->ServerMoveJob->checkMove();
 }
 
 //------------------------------------------------------------------------------
@@ -1228,7 +1165,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_LOAD (cNetMessage& message)
 		if (StoringVehicle->canLoad (StoredVehicle))
 		{
 			StoringVehicle->storeVehicle (*StoredVehicle, *Map);
-			if (StoredVehicle->ServerMoveJob) StoredVehicle->ServerMoveJob->release();
+			if (StoredVehicle->getMoveJob()) StoredVehicle->getMoveJob()->stop();
 			// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
 			sendStoreVehicle (*this, StoringVehicle->iID, true, StoredVehicle->iID, *StoringVehicle->getOwner());
 		}
@@ -1241,7 +1178,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_LOAD (cNetMessage& message)
 		if (StoringBuilding->canLoad (StoredVehicle))
 		{
 			StoringBuilding->storeVehicle (*StoredVehicle, *Map);
-			if (StoredVehicle->ServerMoveJob) StoredVehicle->ServerMoveJob->release();
+			if (StoredVehicle->getMoveJob()) StoredVehicle->getMoveJob()->stop();
 			// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
 			sendStoreVehicle (*this, StoringBuilding->iID, false, StoredVehicle->iID, *StoringBuilding->getOwner());
 		}
@@ -1276,7 +1213,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 			if (StoredVehicle->getStaticUnitData().canSurvey)
 			{
 				sendVehicleResources (*this, *StoredVehicle);
-				StoredVehicle->doSurvey (*Map);
+				StoredVehicle->doSurvey ();
 			}
 
 			if (StoredVehicle->canLand (*Map))
@@ -1310,7 +1247,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 			if (StoredVehicle->getStaticUnitData().canSurvey)
 			{
 				sendVehicleResources (*this, *StoredVehicle);
-				StoredVehicle->doSurvey (*Map);
+				StoredVehicle->doSurvey ();
 			}
 			StoredVehicle->InSentryRange (*this);
 		}
@@ -1552,7 +1489,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 			{
 				// change the owner
 				if (destVehicle->isUnitBuildingABuilding()) stopVehicleBuilding (*destVehicle);
-				if (destVehicle->ServerMoveJob) destVehicle->ServerMoveJob->release();
+				if (destVehicle->getMoveJob()) destVehicle->getMoveJob()->stop();
 				changeUnitOwner (*destVehicle, *srcVehicle->getOwner());
 			}
 		}
@@ -1570,7 +1507,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 			if (destVehicle)
 			{
 				if (destVehicle->isUnitBuildingABuilding()) stopVehicleBuilding (*destVehicle);
-				if (destVehicle->ServerMoveJob) destVehicle->ServerMoveJob->release();
+				if (destVehicle->getMoveJob()) destVehicle->getMoveJob()->stop();
 			}
 			else if (destBuilding)
 			{
@@ -1651,11 +1588,11 @@ void cServer::handleNetMessage_GAME_EV_END_MOVE_ACTION (cNetMessage& message)
 	assert (message.iType == GAME_EV_END_MOVE_ACTION);
 
 	cVehicle* vehicle = getVehicleFromID (message.popInt32());
-	if (!vehicle || !vehicle->ServerMoveJob) return;
+	//if (!vehicle || !vehicle->ServerMoveJob) return;
 
 	const int destID = message.popInt32();
 	eEndMoveActionType type = (eEndMoveActionType) message.popChar();
-	vehicle->ServerMoveJob->addEndAction (destID, type);
+	//vehicle->ServerMoveJob->addEndAction (destID, type);
 }
 
 //------------------------------------------------------------------------------
@@ -1689,9 +1626,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 			break;
 		case GAME_EV_CHAT_CLIENT: handleNetMessage_GAME_EV_CHAT_CLIENT (message); break;
 		case GAME_EV_WANT_TO_END_TURN: handleNetMessage_GAME_EV_WANT_TO_END_TURN (message); break;
-		case GAME_EV_MOVE_JOB_CLIENT: handleNetMessage_GAME_EV_MOVE_JOB_CLIENT (message); break;
-		case GAME_EV_WANT_STOP_MOVE: handleNetMessage_GAME_EV_WANT_STOP_MOVE (message); break;
-		case GAME_EV_MOVEJOB_RESUME: handleNetMessage_GAME_EV_MOVEJOB_RESUME (message); break;
 		case GAME_EV_WANT_ATTACK: handleNetMessage_GAME_EV_WANT_ATTACK (message); break;
 		case GAME_EV_MINELAYERSTATUS: handleNetMessage_GAME_EV_MINELAYERSTATUS (message); break;
 		case GAME_EV_WANT_BUILD: handleNetMessage_GAME_EV_WANT_BUILD (message); break;
@@ -1869,7 +1803,7 @@ cVehicle& cServer::addVehicle (const cPosition& position, const sID& id, cPlayer
 	if (addedVehicle.getStaticUnitData().canSurvey)
 	{
 		sendVehicleResources (*this, addedVehicle);
-		addedVehicle.doSurvey (*Map);
+		addedVehicle.doSurvey ();
 	}
 	if (!bInit) addedVehicle.InSentryRange (*this);
 
@@ -2013,11 +1947,11 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 	// detach from move job
 	if (unit->isAVehicle())
 	{
-		cVehicle* vehicle = static_cast<cVehicle*> (unit);
+		/*cVehicle* vehicle = static_cast<cVehicle*> (unit);
 		if (vehicle->ServerMoveJob)
 		{
 			vehicle->ServerMoveJob->Vehicle = nullptr;
-		}
+		}*/
 	}
 
 	// remove from sentry list
@@ -2056,38 +1990,38 @@ void cServer::checkPlayerUnits (cVehicle& vehicle, cPlayer& MapPlayer)
 	std::vector<cPlayer*>& seenByPlayers = vehicle.seenByPlayerList;
 	const bool stealthUnit = vehicle.getStaticUnitData().isStealthOn != TERRAIN_NONE;
 
-	if (MapPlayer.canSeeAnyAreaUnder (vehicle) && !vehicle.isUnitLoaded() &&
-		(!stealthUnit || vehicle.isDetectedByPlayer (&MapPlayer) || (MapPlayer.isDefeated && openMapDefeat)))
-	{
-		if (Contains (seenByPlayers, &MapPlayer) == false)
-		{
-			seenByPlayers.push_back (&MapPlayer);
-			sendAddEnemyUnit (*this, vehicle, MapPlayer);
-			//sendUnitData (*this, vehicle, MapPlayer);
-			if (vehicle.ServerMoveJob)
-			{
-				sendMoveJobServer (*this, *vehicle.ServerMoveJob, MapPlayer);
-				if (Contains (ActiveMJobs, vehicle.ServerMoveJob) && !vehicle.ServerMoveJob->bFinished && !vehicle.ServerMoveJob->bEndForNow && vehicle.isUnitMoving())
-				{
-					Log.write (" Server: sending extra MJOB_OK for unit ID " + iToStr (vehicle.iID) + " to client " + iToStr (MapPlayer.getId()), cLog::eLOG_TYPE_NET_DEBUG);
-					auto message = std::make_unique<cNetMessage> (GAME_EV_NEXT_MOVE);
-					message->pushChar (MJOB_OK);
-					message->pushInt16 (vehicle.iID);
-					sendNetMessage (std::move (message), &MapPlayer);
-				}
-			}
-		}
-	}
-	else
-	{
-		std::vector<cPlayer*>::iterator it = std::find (seenByPlayers.begin(), seenByPlayers.end(), &MapPlayer);
-
-		if (it != seenByPlayers.end())
-		{
-			seenByPlayers.erase (it);
-			sendDeleteUnit (*this, vehicle, &MapPlayer);
-		}
-	}
+// 	if (MapPlayer.canSeeAnyAreaUnder (vehicle) && !vehicle.isUnitLoaded() &&
+// 		(!stealthUnit || vehicle.isDetectedByPlayer (&MapPlayer) || (MapPlayer.isDefeated && openMapDefeat)))
+// 	{
+// 		if (Contains (seenByPlayers, &MapPlayer) == false)
+// 		{
+// 			seenByPlayers.push_back (&MapPlayer);
+// 			sendAddEnemyUnit (*this, vehicle, MapPlayer);
+// 			sendUnitData (*this, vehicle, MapPlayer);
+// 			if (vehicle.ServerMoveJob)
+// 			{
+// 				sendMoveJobServer (*this, *vehicle.ServerMoveJob, MapPlayer);
+// 				if (Contains (ActiveMJobs, vehicle.ServerMoveJob) && !vehicle.ServerMoveJob->bFinished && !vehicle.ServerMoveJob->bEndForNow && vehicle.isUnitMoving())
+// 				{
+// 					Log.write (" Server: sending extra MJOB_OK for unit ID " + iToStr (vehicle.iID) + " to client " + iToStr (MapPlayer.getId()), cLog::eLOG_TYPE_NET_DEBUG);
+// 					auto message = std::make_unique<cNetMessage> (GAME_EV_NEXT_MOVE);
+// 					message->pushChar (MJOB_OK);
+// 					message->pushInt16 (vehicle.iID);
+// 					sendNetMessage (std::move (message), &MapPlayer);
+// 				}
+// 			}
+// 		}
+// 	}
+// 	else
+// 	{
+// 		std::vector<cPlayer*>::iterator it = std::find (seenByPlayers.begin(), seenByPlayers.end(), &MapPlayer);
+// 
+// 		if (it != seenByPlayers.end())
+// 		{
+// 			seenByPlayers.erase (it);
+// 			sendDeleteUnit (*this, vehicle, &MapPlayer);
+// 		}
+// 	}
 }
 
 //------------------------------------------------------------------------------
@@ -2517,10 +2451,10 @@ bool cServer::executeRemainingMoveJobs (const cPlayer& player)
 	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
 	{
 		const auto& vehicle = *i;
-		if (vehicle->ServerMoveJob && vehicle->data.getSpeed() > 0 && !vehicle->isUnitMoving())
+		if (vehicle->getMoveJob() && vehicle->data.getSpeed() > 0 && !vehicle->isUnitMoving())
 		{
 			// restart movejob
-			vehicle->ServerMoveJob->resume();
+			vehicle->getMoveJob()->resume();
 			hasStartedMoveJobs = true;
 		}
 	}
@@ -2579,7 +2513,6 @@ void cServer::makeTurnStart (cPlayer& player)
 		{
 			//sendUnitData (*this, *vehicle);
 		}
-		if (vehicle->ServerMoveJob) vehicle->ServerMoveJob->bEndForNow = false;
 	}
 
 	// hide stealth units
@@ -2779,113 +2712,6 @@ void cServer::checkDeadline()
 		checkDefeats();
 	}
 	turnTimeClock->clearAllDeadlines();
-}
-
-//------------------------------------------------------------------------------
-void cServer::addActiveMoveJob (cServerMoveJob& MoveJob)
-{
-	ActiveMJobs.push_back (&MoveJob);
-}
-
-//------------------------------------------------------------------------------
-void cServer::handleMoveJobs()
-{
-	for (int i = ActiveMJobs.size() - 1; i >= 0; i--)
-	{
-		cServerMoveJob* MoveJob = ActiveMJobs[i];
-		cVehicle* Vehicle = MoveJob->Vehicle;
-
-		//suspend movejobs of attacked vehicles
-		if (Vehicle && Vehicle->isBeeingAttacked())
-			continue;
-
-		// stop the job
-		if (MoveJob->bEndForNow && Vehicle)
-		{
-			Log.write (" Server: Movejob has end for now and will be stopped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
-			sendNextMove (*this, *Vehicle, MJOB_STOP, MoveJob->iSavedSpeed);
-			ActiveMJobs.erase (ActiveMJobs.begin() + i);
-			continue;
-		}
-		else if (MoveJob->bFinished || MoveJob->Vehicle == nullptr)
-		{
-			if (Vehicle && Vehicle->ServerMoveJob == MoveJob)
-			{
-				Log.write (" Server: Movejob is finished and will be deleted now", cLog::eLOG_TYPE_NET_DEBUG);
-				Vehicle->ServerMoveJob = nullptr;
-				Vehicle->setMoving (false);
-				Vehicle->MoveJobActive = false;
-
-				sendNextMove (*this, *Vehicle, MJOB_FINISHED);
-			}
-			else Log.write (" Server: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
-
-			// execute endMoveAction
-			if (Vehicle && MoveJob->endAction) MoveJob->endAction->execute (*this);
-
-			delete MoveJob;
-			ActiveMJobs.erase (ActiveMJobs.begin() + i);
-
-
-			// continue path building
-			if (Vehicle && Vehicle->BuildPath)
-			{
-				if (Vehicle->getStoredResources() >= Vehicle->getBuildCostsStart() && Map->possiblePlaceBuilding (model.getUnitsData()->getStaticUnitData(Vehicle->getBuildingType()), Vehicle->getPosition(), Vehicle))
-				{
-					//addJob (new cStartBuildJob (*Vehicle, Vehicle->getPosition(), Vehicle->data.isBig));
-					Vehicle->setBuildingABuilding (true);
-					Vehicle->setBuildCosts (Vehicle->getBuildCostsStart());
-					Vehicle->setBuildTurns (Vehicle->getBuildTurnsStart());
-					sendBuildAnswer (*this, true, *Vehicle);
-				}
-				else
-				{
-					Vehicle->BuildPath = false;
-					sendBuildAnswer (*this, false, *Vehicle);
-				}
-			}
-
-			continue;
-		}
-
-		if (Vehicle == nullptr) continue;
-
-		if (!Vehicle->isUnitMoving())
-		{
-			if (!MoveJob->checkMove() && !MoveJob->bFinished)
-			{
-				ActiveMJobs.erase (ActiveMJobs.begin() + i);
-				delete MoveJob;
-				Vehicle->ServerMoveJob = nullptr;
-				Log.write (" Server: Movejob deleted and informed the clients to stop this movejob", cLog::eLOG_TYPE_NET_DEBUG);
-				continue;
-			}
-			if (MoveJob->bEndForNow)
-			{
-				Log.write (" Server: Movejob has end for now and will be stopped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
-				sendNextMove (*this, *Vehicle, MJOB_STOP, MoveJob->iSavedSpeed);
-				ActiveMJobs.erase (ActiveMJobs.begin() + i);
-				continue;
-			}
-		}
-
-		if (MoveJob->iNextDir != Vehicle->dir)
-		{
-			// rotate vehicle
-			//if (gameTimer->timer100ms)
-			{
-				Vehicle->rotateTo (MoveJob->iNextDir);
-			}
-		}
-		else
-		{
-			// move the vehicle
-//			if (gameTimer->timer10ms)
-			{
-				MoveJob->moveVehicle();
-			}
-		}
-	}
 }
 
 //------------------------------------------------------------------------------
@@ -3250,7 +3076,7 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete, bool withGuiState
 void cServer::resyncVehicle (const cVehicle& Vehicle, const cPlayer& Player)
 {
 	sendAddUnit (*this, Vehicle.getPosition(), Vehicle.iID, true, Vehicle.data.getId(), Player, true, !Vehicle.isUnitLoaded());
-	if (Vehicle.ServerMoveJob) sendMoveJobServer (*this, *Vehicle.ServerMoveJob, Player);
+//	if (Vehicle.ServerMoveJob) sendMoveJobServer (*this, *Vehicle.ServerMoveJob, Player);
 	for (size_t i = 0; i != Vehicle.storedUnits.size(); ++i)
 	{
 		const cVehicle& storedVehicle = *Vehicle.storedUnits[i];
@@ -3261,27 +3087,6 @@ void cServer::resyncVehicle (const cVehicle& Vehicle, const cPlayer& Player)
 	sendSpecificUnitData (*this, Vehicle);
 	if (Vehicle.hasAutoMoveJob) sendSetAutomoving (*this, Vehicle);
 	if (Vehicle.detectedByPlayerList.empty() == false) sendDetectionState (*this, Vehicle);
-}
-
-//------------------------------------------------------------------------------
-bool cServer::addMoveJob (const cPosition& source, const cPosition& destination, cVehicle* vehicle)
-{
-	cServerMoveJob* MoveJob = new cServerMoveJob (*this, source, destination, vehicle);
-	if (!MoveJob->calcPath())
-	{
-		delete MoveJob;
-		vehicle->ServerMoveJob = nullptr;
-		return false;
-	}
-
-	sendMoveJobServer (*this, *MoveJob, *vehicle->getOwner());
-	for (size_t i = 0; i != vehicle->seenByPlayerList.size(); ++i)
-	{
-		sendMoveJobServer (*this, *MoveJob, *vehicle->seenByPlayerList[i]);
-	}
-
-	addActiveMoveJob (*MoveJob);
-	return true;
 }
 
 //------------------------------------------------------------------------------
@@ -3321,7 +3126,7 @@ void cServer::changeUnitOwner (cVehicle& vehicle, cPlayer& newOwner)
 	if (vehicle.getStaticUnitData().canSurvey)
 	{
 		sendVehicleResources (*this, vehicle);
-		vehicle.doSurvey (*Map);
+		vehicle.doSurvey ();
 	}
 	vehicle.makeDetection (*this);
 }
@@ -3368,9 +3173,11 @@ void cServer::sideStepStealthUnit (const cPosition& position, const cStaticUnitD
 	if (stealthVehicle->getStaticUnitData().isStealthOn == TERRAIN_NONE) return;
 	if (stealthVehicle->isDetectedByPlayer (vehicleOwner)) return;
 
-	// make sure a running movement is finished,
-	// before starting the side step move
-	if (stealthVehicle->isUnitMoving()) stealthVehicle->ServerMoveJob->doEndMoveVehicle();
+	if (stealthVehicle->isUnitMoving())
+	{
+		stealthVehicle->setDetectedByPlayer(*this, vehicleOwner);
+		return;
+	}
 
 	// found a stealth unit. Try to find a place where the unit can move
 	bool placeFound = false;
@@ -3402,8 +3209,7 @@ void cServer::sideStepStealthUnit (const cPosition& position, const cStaticUnitD
 			if (!Map->possiblePlace (*stealthVehicle, currentPosition)) continue;
 
 			// check costs of the move
-			cPathCalculator pathCalculator (cPosition (0, 0), cPosition (0, 0), *Map, *stealthVehicle);
-			int costs = pathCalculator.calcNextCost (position, currentPosition);
+			int costs = cPathCalculator::calcNextCost (position, currentPosition, stealthVehicle, Map.get());
 			if (costs > stealthVehicle->data.getSpeed()) continue;
 
 			// check whether the vehicle would be detected
@@ -3449,10 +3255,9 @@ void cServer::sideStepStealthUnit (const cPosition& position, const cStaticUnitD
 
 	if (placeFound)
 	{
-		addMoveJob (position, bestPosition, stealthVehicle);
+		//addMoveJob (position, bestPosition, stealthVehicle);
 		// begin the movement immediately,
 		// so no other unit can block the destination field
-		stealthVehicle->ServerMoveJob->checkMove();
 		return;
 	}
 

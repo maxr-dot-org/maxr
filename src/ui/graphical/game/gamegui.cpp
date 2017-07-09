@@ -66,6 +66,7 @@
 #include "game/logic/turnclock.h"
 #include "utility/random.h"
 #include "utility/indexiterator.h"
+#include "game/logic/movejob.h"
 
 //------------------------------------------------------------------------------
 cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_ptr<cSoundManager> soundManager_, std::shared_ptr<cAnimationTimer> animationTimer_, std::shared_ptr<const cFrameCounter> frameCounter) :
@@ -166,7 +167,7 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 	});
 
 	signalConnectionManager.connect (gameMap->getUnitSelection().mainSelectionChanged, [&]() { hud->setActiveUnit (gameMap->getUnitSelection().getSelectedUnit()); });
-	signalConnectionManager.connect (gameMap->getUnitSelection().mainSelectionChanged, std::bind (&cGameGui::updateSelectedUnitIdleSound, this));
+	signalConnectionManager.connect (gameMap->getUnitSelection().mainSelectionChanged, std::bind (&cGameGui::updateSelectedUnitSound, this));
 	signalConnectionManager.connect (gameMap->getUnitSelection().mainSelectionChanged, std::bind (&cGameGui::connectSelectedUnit, this));
 	signalConnectionManager.connect (gameMap->getUnitSelection().mainSelectionChanged, [&]()
 	{
@@ -522,71 +523,59 @@ void cGameGui::connectSelectedUnit()
 		updateSelectedUnitIdleSound();
 	});
 
-	if (selectedUnit->data.getId().isAVehicle())
+	if (selectedUnit->isAVehicle())
 	{
 		const auto selectedVehicle = static_cast<cVehicle*> (selectedUnit);
-		selectedUnitConnectionManager.connect (selectedVehicle->clientMoveJobChanged, [selectedVehicle, this]()
+		selectedUnitConnectionManager.connect(selectedVehicle->movingChanged, [selectedVehicle, this]()
 		{
-			connectMoveJob (*selectedVehicle);
-		});
-		connectMoveJob (*selectedVehicle);
-	}
-}
-
-//------------------------------------------------------------------------------
-void cGameGui::connectMoveJob (const cVehicle& vehicle)
-{
-	moveJobSignalConnectionManager.disconnectAll();
-
-	if (&vehicle == gameMap->getUnitSelection().getSelectedVehicle() && vehicle.getClientMoveJob())
-	{
-		auto& moveJob = *vehicle.getClientMoveJob();
-
-		moveJobSignalConnectionManager.connect (moveJob.activated, [&] (const cVehicle & vehicle)
-		{
-			if (&vehicle == gameMap->getUnitSelection().getSelectedVehicle())
+			if (selectedVehicle == gameMap->getUnitSelection().getSelectedVehicle())
 			{
-				updateSelectedUnitMoveSound (true);
-			}
-		});
-
-		moveJobSignalConnectionManager.connect (moveJob.stopped, [&] (const cVehicle & vehicle)
-		{
-			if (&vehicle == gameMap->getUnitSelection().getSelectedVehicle() && dynamicMap)
-			{
-				const auto building = dynamicMap->getField (vehicle.getPosition()).getBaseBuilding();
-				bool water = dynamicMap->isWater (vehicle.getPosition());
-				if (vehicle.getStaticUnitData().factorGround > 0 && building && (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
-
-				stopSelectedUnitSound();
-				if (water && vehicle.getStaticUnitData().factorSea > 0) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectStopMove, vehicle.uiData->StopWater, vehicle));
-				else soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStopMove, vehicle.uiData->Stop, vehicle));
-
-				updateSelectedUnitIdleSound();
-			}
-		});
-
-		moveJobSignalConnectionManager.connect (moveJob.blocked, [&] (const cVehicle & vehicle)
-		{
-			if (&vehicle == gameMap->getUnitSelection().getSelectedVehicle())
-			{
-				soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceNoPath, getRandom (VoiceData.VOINoPath)));
-			}
-		});
-
-		moveJobSignalConnectionManager.connect (moveJob.moved, [&] (const cVehicle & vehicle)
-		{
-			if (&vehicle == gameMap->getUnitSelection().getSelectedVehicle())
-			{
-				if (!vehicle.getClientMoveJob()) return;
-
-				bool wasWater = dynamicMap->isWater (vehicle.getClientMoveJob()->Waypoints->position);
-				bool water = dynamicMap->isWater (vehicle.getClientMoveJob()->Waypoints->next->position);
-
-				if (wasWater != water)
+				if (selectedVehicle->isUnitMoving())
 				{
-					updateSelectedUnitMoveSound (false);
+					updateSelectedUnitMoveSound(true);
 				}
+				else
+				{
+					if (dynamicMap)
+					{
+						const auto building = dynamicMap->getField(selectedVehicle->getPosition()).getBaseBuilding();
+						bool water = dynamicMap->isWater(selectedVehicle->getPosition());
+						if (selectedVehicle->getStaticUnitData().factorGround > 0 && building && (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
+
+						stopSelectedUnitSound();
+						if (water && selectedVehicle->getStaticUnitData().factorSea > 0) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectStopMove, selectedVehicle->uiData->StopWater, *selectedVehicle));
+						else soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectStopMove, selectedVehicle->uiData->Stop, *selectedVehicle));
+
+						updateSelectedUnitIdleSound();
+					}
+				}
+			}
+		});
+		selectedUnitConnectionManager.connect(selectedVehicle->positionChanged, [selectedVehicle, this]()
+		{
+			if (selectedVehicle->isUnitMoving() && selectedVehicle == gameMap->getUnitSelection().getSelectedVehicle())
+			{
+				if (!dynamicMap) return;
+
+				const auto building = dynamicMap->getField(selectedVehicle->getPosition()).getBaseBuilding();
+				bool water = dynamicMap->isWater(selectedVehicle->getPosition());
+				if (selectedVehicle->getStaticUnitData().factorGround > 0 && building && (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA))
+				{
+					water = false;
+				}
+
+				if ((water && *selectedUnitSoundLoop->getSound() == selectedVehicle->uiData->Drive) ||
+					(!water && *selectedUnitSoundLoop->getSound() == selectedVehicle->uiData->DriveWater))
+				{
+					updateSelectedUnitMoveSound(false);
+				}
+			}
+		});
+		selectedUnitConnectionManager.connect(selectedVehicle->moveJobBlocked, [selectedVehicle, this]()
+		{
+			if (selectedVehicle == gameMap->getUnitSelection().getSelectedVehicle())
+			{
+				soundManager->playSound(std::make_shared<cSoundEffectVoice>(eSoundEffectType::VoiceNoPath, getRandom(VoiceData.VOINoPath)));
 			}
 		});
 	}
@@ -723,6 +712,20 @@ void cGameGui::startClosePanel()
 void cGameGui::resetMiniMapViewWindow()
 {
 	miniMap->setViewWindow (gameMap->getDisplayedMapArea());
+}
+
+//------------------------------------------------------------------------------
+void cGameGui::updateSelectedUnitSound()
+{
+	auto selectedUnit = gameMap->getUnitSelection().getSelectedUnit();
+	if (selectedUnit && selectedUnit->isUnitMoving())
+	{
+		updateSelectedUnitMoveSound(false);
+	}
+	else
+	{
+		updateSelectedUnitIdleSound();
+	}
 }
 
 //------------------------------------------------------------------------------

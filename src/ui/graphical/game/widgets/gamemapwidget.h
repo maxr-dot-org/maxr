@@ -132,8 +132,8 @@ public:
 	//
 	cSignal<void (const cUnit&)> triggeredUnitHelp;
 	cSignal<void (const cUnit&, const cUnit&)> triggeredTransfer;
-	cSignal<void (cVehicle&, const cPosition&)> triggeredEndBuilding;
-	cSignal<void (cVehicle&, const cPosition&)> triggeredMoveSingle;
+	cSignal<void (const cVehicle&, const cPosition&)> triggeredEndBuilding;
+	cSignal<void (const cVehicle&, const cPosition&)> triggeredMoveSingle;
 	cSignal<void (const std::vector<cVehicle*>&, const cPosition&)> triggeredMoveGroup;
 	cSignal<void (const cVehicle&, const cPosition&)> selectedBuildPosition;
 	cSignal<void (const cVehicle&, const cPosition&)> selectedBuildPathDestination;
@@ -277,6 +277,7 @@ private:
 	void drawResources();
 
 	void drawPath (const cVehicle& vehicle);
+	void drawPathArrow(SDL_Rect dest, const SDL_Rect& lastDest, bool spezialColor) const;
 	void drawBuildPath (const cVehicle& vehicle);
 
 	void drawSelectionBox();

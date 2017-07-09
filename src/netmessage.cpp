@@ -394,9 +394,6 @@ string cNetMessage::getTypeAsString() const
 		case GAME_EV_TURN_END_DEADLINE_START_TIME: return "GAME_EV_TURN_END_DEADLINE_START_TIME";
 		case GAME_EV_UNIT_DATA: return "GAME_EV_UNIT_DATA";
 		case GAME_EV_NEXT_MOVE: return "GAME_EV_NEXT_MOVE";
-		case GAME_EV_MOVE_JOB_SERVER: return "GAME_EV_MOVE_JOB_SERVER";
-		case GAME_EV_MOVE_JOB_CLIENT: return "GAME_EV_MOVE_JOB_CLIENT";
-		case GAME_EV_WANT_STOP_MOVE: return "GAME_EV_WANT_STOP_MOVE";
 		case GAME_EV_WANT_ATTACK: return "GAME_EV_WANT_ATTACK";
 		case GAME_EV_ATTACKJOB: return "GAME_EV_ATTACKJOB";
 		case GAME_EV_RESOURCES: return "GAME_EV_RESOURCES";
@@ -464,7 +461,6 @@ string cNetMessage::getTypeAsString() const
 		case GAME_EV_END_MOVE_ACTION_SERVER: return "GAME_EV_END_MOVE_ACTION_SERVER";
 		case GAME_EV_END_MOVE_ACTION: return "GAME_EV_END_MOVE_ACTION";
 		case GAME_EV_REVEAL_MAP: return "GAME_EV_REVEAL_MAP";
-		case GAME_EV_MOVEJOB_RESUME: return "GAME_EV_MOVEJOB_RESUME";
 		default: return iToStr (iType);
 	}
 }

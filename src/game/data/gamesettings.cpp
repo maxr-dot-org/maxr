@@ -503,7 +503,7 @@ void cGameSettings::setTurnLimitActive (bool value)
 	if (turnLimitActive != value) turnLimitActiveChanged();
 }
 
-uint32_t cGameSettings::getChecksum(uint32_t crc)
+uint32_t cGameSettings::getChecksum(uint32_t crc) const
 {
 	crc = calcCheckSum(metalAmount, crc);
 	crc = calcCheckSum(oilAmount, crc);

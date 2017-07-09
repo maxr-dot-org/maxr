@@ -160,62 +160,6 @@ void cClient::sendNetMessage(cNetMessage2&& message) const
 	sendNetMessage(static_cast<cNetMessage2&>(message));
 }
 
-bool cClient::addMoveJob (cVehicle& vehicle, const cPosition& destination, const std::vector<cVehicle*>* group)
-{
-	sWaypoint* path = cClientMoveJob::calcPath(*model.getMap(), vehicle.getPosition(), destination, vehicle, group);
-	if (path)
-	{
-		sendMoveJob (*this, path, vehicle.iID);
-		Log.write (" Client: Added new movejob: VehicleID: " + iToStr (vehicle.iID) + ", SrcX: " + iToStr (vehicle.getPosition().x()) + ", SrcY: " + iToStr (vehicle.getPosition().y()) + ", DestX: " + iToStr (destination.x()) + ", DestY: " + iToStr (destination.y()), cLog::eLOG_TYPE_NET_DEBUG);
-		return true;
-	}
-	else
-	{
-		moveJobBlocked (vehicle);
-		return false;
-	}
-}
-
-void cClient::startGroupMove (const std::vector<cVehicle*>& group_, const cPosition& mainDestination)
-{
-	const auto& mainPosition = group_[0]->getPosition();
-
-	// copy the selected-units-list
-	std::vector<cVehicle*> group = group_;
-
-	// go trough all vehicles in the list
-	while (group.size())
-	{
-		// we will start moving the vehicles in the list with the vehicle
-		// that is the closest to the destination.
-		// this will avoid that the units will crash into each other
-		// because the one infront of them has started
-		// his move and the next field is free.
-		// TODO: sort group by ditance, then proceed.
-		int shortestWaySquareLength = 0x7FFFFFFF;
-		int shortestWayVehNum = 0;
-		for (unsigned int i = 0; i < group.size(); i++)
-		{
-			cVehicle* vehicle = group[i];
-			const auto delta = vehicle->getPosition() + mainDestination + vehicle->getPosition() - mainPosition;
-			const int waySquareLength = delta.l2NormSquared();
-
-			if (waySquareLength < shortestWaySquareLength)
-			{
-				shortestWaySquareLength = waySquareLength;
-				shortestWayVehNum = i;
-			}
-		}
-		cVehicle& vehicle = *group[shortestWayVehNum];
-		// add the movejob to the destination of the unit.
-		// the formation of the vehicle group will stay as destination formation.
-		auto destination = mainDestination + vehicle.getPosition() - mainPosition;
-		addMoveJob (vehicle, destination, &group_);
-		// delete the unit from the copyed list
-		group.erase (group.begin() + shortestWayVehNum);
-	}
-}
-
 void cClient::runFx()
 {
 	effectsList->run();
@@ -383,7 +327,6 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 	assert (message.iType == GAME_EV_MAKE_TURNEND);
 
 	turnClock->increaseTurn();
-	activePlayer->clearDone();
 	Log.write ("######### Turn " + iToStr (turnClock->getTurn()) + " ###########", cLog::eLOG_TYPE_NET_DEBUG);
 /*	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{
@@ -588,53 +531,6 @@ void cClient::HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (cNetMessage& message)
 	Vehicle->setBuildingType (message.popID());
 	Vehicle->BuildPath = message.popBool();
 	Vehicle->bandPosition = message.popPosition();
-}
-
-void cClient::HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_MOVE_JOB_SERVER);
-
-	const int iVehicleID = message.popInt32();
-	const auto srcPosition = message.popPosition();
-	const auto destPosition = message.popPosition();
-	const int iSavedSpeed = message.popInt16();
-	cVehicle* Vehicle = getVehicleFromID (iVehicleID);
-
-	if (Vehicle == nullptr)
-	{
-		Log.write (" Client: Can't find vehicle with id " + iToStr (iVehicleID) + " for movejob from " + iToStr (srcPosition.x()) + "x" + iToStr (srcPosition.y()) + " to " + iToStr (destPosition.x()) + "x" + iToStr (destPosition.y()), cLog::eLOG_TYPE_NET_WARNING);
-		// TODO: request sync of vehicle
-		return;
-	}
-
-	cClientMoveJob* MoveJob = new cClientMoveJob (*this, srcPosition, destPosition, Vehicle);
-	MoveJob->iSavedSpeed = iSavedSpeed;
-	if (!MoveJob->generateFromMessage (message)) return;
-	Log.write (" Client: Added received movejob at time " + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
-}
-
-void cClient::HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_NEXT_MOVE);
-
-	const int iID = message.popInt16();
-	const int iType = message.popChar();
-	int iSavedSpeed = -1;
-	if (iType == MJOB_STOP) iSavedSpeed = message.popChar();
-
-	Log.write(" Client: Received information for next move: ID: " + iToStr(iID) + ", Type: " + iToStr(iType) + ", Time: " + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
-
-	cVehicle* Vehicle = getVehicleFromID (iID);
-	if (Vehicle && Vehicle->getClientMoveJob())
-	{
-		Vehicle->getClientMoveJob()->handleNextMove (iType, iSavedSpeed);
-	}
-	else
-	{
-		if (Vehicle == nullptr) Log.write (" Client: Can't find vehicle with ID " + iToStr (iID), cLog::eLOG_TYPE_NET_WARNING);
-		else Log.write (" Client: Vehicle with ID " + iToStr (iID) + "has no movejob", cLog::eLOG_TYPE_NET_WARNING);
-		// TODO: request sync of vehicle
-	}
 }
 
 void cClient::HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message)
@@ -1311,11 +1207,11 @@ void cClient::HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& mess
 	assert (message.iType == GAME_EV_END_MOVE_ACTION_SERVER);
 
 	cVehicle* vehicle = getVehicleFromID (message.popInt32());
-	if (!vehicle || !vehicle->getClientMoveJob()) return;
+	if (!vehicle || !vehicle->getMoveJob()) return;
 
 	const int destID = message.popInt32();
 	eEndMoveActionType type = (eEndMoveActionType) message.popChar();
-	vehicle->getClientMoveJob()->endMoveAction = new cEndMoveAction (vehicle, destID, type);
+	//vehicle->getMoveJob()->endMoveAction = new cEndMoveAction (vehicle, destID, type);
 }
 
 
@@ -1463,8 +1359,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_TURN_END_DEADLINE_START_TIME: HandleNetMessage_GAME_EV_TURN_END_DEADLINE_START_TIME (message); break;
 		case GAME_EV_UNIT_DATA: HandleNetMessage_GAME_EV_UNIT_DATA (message); break;
 		case GAME_EV_SPECIFIC_UNIT_DATA: HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (message); break;
-		case GAME_EV_MOVE_JOB_SERVER: HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (message); break;
-		case GAME_EV_NEXT_MOVE: HandleNetMessage_GAME_EV_NEXT_MOVE (message); break;
 		case GAME_EV_RESOURCES: HandleNetMessage_GAME_EV_RESOURCES (message); break;
 		case GAME_EV_BUILD_ANSWER: HandleNetMessage_GAME_EV_BUILD_ANSWER (message); break;
 		case GAME_EV_STOP_BUILD: HandleNetMessage_GAME_EV_STOP_BUILD (message); break;
@@ -1543,84 +1437,12 @@ void cClient::addUnit (const cPosition& position, cBuilding& addedBuilding)
 void cClient::handleEnd()
 {
 	if (freezeModes.isFreezed()) return;
-	sendWantToEndTurn (*this);
-}
-
-
-void cClient::addActiveMoveJob (cClientMoveJob& MoveJob)
-{
-	MoveJob.bSuspended = false;
-	if (MoveJob.Vehicle) MoveJob.Vehicle->MoveJobActive = true;
-	if (Contains (ActiveMJobs, &MoveJob)) return;
-	ActiveMJobs.push_back (&MoveJob);
+	sendWantToEndTurn(*this);
 }
 
 void cClient::addAutoMoveJob (std::weak_ptr<cAutoMJob> autoMoveJob)
 {
 	autoMoveJobs.push_back (std::move (autoMoveJob));
-}
-
-void cClient::handleMoveJobs()
-{
-	for (int i = ActiveMJobs.size() - 1; i >= 0; i--)
-	{
-		cClientMoveJob* MoveJob = ActiveMJobs[i];
-		cVehicle* Vehicle = MoveJob->Vehicle;
-
-		// suspend movejobs of attacked vehicles
-		if (Vehicle && Vehicle->isBeeingAttacked()) continue;
-
-		if (MoveJob->bFinished || MoveJob->bEndForNow)
-		{
-			if (Vehicle) MoveJob->stopped (*Vehicle);
-		}
-
-		if (MoveJob->bFinished)
-		{
-			if (Vehicle && Vehicle->getClientMoveJob() == MoveJob)
-			{
-				Log.write (" Client: Movejob is finished and will be deleted now", cLog::eLOG_TYPE_NET_DEBUG);
-				Vehicle->setClientMoveJob (nullptr);
-				Vehicle->setMoving (false);
-				Vehicle->MoveJobActive = false;
-			}
-			else Log.write (" Client: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
-			ActiveMJobs.erase (ActiveMJobs.begin() + i);
-			delete MoveJob;
-			continue;
-		}
-		if (MoveJob->bEndForNow)
-		{
-			Log.write (" Client: Movejob has end for now and will be stopped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
-			if (Vehicle)
-			{
-				Vehicle->MoveJobActive = false;
-				Vehicle->setMoving (false);
-			}
-			ActiveMJobs.erase (ActiveMJobs.begin() + i);
-			continue;
-		}
-
-		if (Vehicle == nullptr) continue;
-
-
-		if (MoveJob->iNextDir != Vehicle->dir && Vehicle->data.getSpeed())
-		{
-			// rotate vehicle
-			//if (gameTimer->timer100ms)
-			{
-				Vehicle->rotateTo (MoveJob->iNextDir);
-			}
-		}
-		else if (Vehicle->MoveJobActive)
-		{
-			// move vehicle
-//			if (gameTimer->timer10ms)
-			{
-				MoveJob->moveVehicle();
-			}
-		}
-	}
 }
 
 void cClient::handleAutoMoveJobs()
@@ -1713,9 +1535,6 @@ void cClient::doGameActions()
 
 	// run attackJobs
 	cAttackJob::runAttackJobs (attackJobs);
-
-	// run moveJobs - this has to be called before handling the auto movejobs
-	handleMoveJobs();
 
 	// run surveyor ai
 	//if (gameTimer->timer50ms)

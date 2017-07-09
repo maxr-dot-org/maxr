@@ -32,7 +32,7 @@ bool cMouseActionAttack::executeLeftClick (cGameMapWidget& gameMapWidget, const 
 	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 	const auto selectedBuilding = unitSelection.getSelectedBuilding();
 
-	if (selectedVehicle && !selectedVehicle->isAttacking() && !selectedVehicle->MoveJobActive)
+	if (selectedVehicle && !selectedVehicle->isAttacking() && !selectedVehicle->isUnitMoving())
 	{
 		gameMapWidget.triggeredAttack (*selectedVehicle, mapPosition);
 	}

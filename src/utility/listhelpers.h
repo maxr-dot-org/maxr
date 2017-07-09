@@ -47,6 +47,12 @@ void Remove (std::vector<T>& container, const typename trait_add_const<T>::type&
 	container.erase (std::remove (container.begin(), container.end(), elem), container.end());
 }
 
+template <typename T>
+void RemoveEmpty(std::vector<T>& container)
+{
+	container.erase(std::remove_if(container.begin(), container.end(), [](const T& elem){return elem.empty(); }), container.end());
+}
+
 template<typename T>
 void RemoveDuplicates (std::vector<T>& container)
 {

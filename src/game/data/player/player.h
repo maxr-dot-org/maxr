@@ -120,9 +120,6 @@ public:
 	const cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>>& getVehicles() const;
 	const cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>>& getBuildings() const;
 
-	cUnit* getNextUnit (cUnit* start) const;
-	cUnit* getPrevUnit (cUnit* start) const;
-
 	bool hasUnits() const;
 
 	void addSentry (cUnit& u);
@@ -132,7 +129,6 @@ public:
 	int getScore (int turn) const;
 	int getScore() const;
 	void setScore (int score, int turn);
-	void clearDone();
 
 	void setClan (int newClan, const cUnitsData& unitsData);
 	int getClan() const { return clan; }
@@ -293,14 +289,6 @@ private:
 	* @param map map were to store the data of the circle
 	*/
 	void drawSpecialCircleBig (const cPosition& position, int iRadius, cArrayCrc<uint8_t>& map, const cPosition& mapsize);
-
-	cBuilding* getNextBuilding (cBuilding* start) const;
-	cBuilding* getNextMiningStation (cBuilding* start) const;
-	cVehicle* getNextVehicle (cVehicle* start) const;
-
-	cBuilding* getPrevBuilding (cBuilding* start) const;
-	cBuilding* getPrevMiningStation (cBuilding* start) const;
-	cVehicle* getPrevVehicle (cVehicle* start) const;
 
 	std::string resourceMapToString() const;
 	void setResourceMapFromString(const std::string& str);

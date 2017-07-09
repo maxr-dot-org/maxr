@@ -22,8 +22,10 @@
 #include "map/map.h"
 #include "units/vehicle.h"
 #include "units/building.h"
-#include "game/logic/movejobs.h"
+#include "game/logic/movejob.h"
 #include "utility/crc.h"
+#include "game/logic/pathcalculator.h"
+#include "utility/listhelpers.h"
 
 //------------------------------------------------------------------------------
 cModel::cModel() :
@@ -95,7 +97,7 @@ void cModel::advanceGameTime()
 	gameTime++;
 	gameTimeChanged();
 
-	//TODO: run jobs
+	runMoveJobs();
 }
 
 //------------------------------------------------------------------------------
@@ -110,14 +112,16 @@ uint32_t cModel::getChecksum() const
 	uint32_t crc = 0;
 	//crc = calcCheckSum(gameTime, crc);
 	crc = calcCheckSum(gameId, crc);
-	crc = gameSettings->getChecksum(crc);
-	crc = map->getChecksum(crc);
+	crc = calcCheckSum(*gameSettings, crc);
+	crc = calcCheckSum(*map, crc);
 	for (const auto& player : playerList)
-		crc = player->getChecksum(crc);
+		crc = calcCheckSum(*player, crc);
 	for (const auto& building : neutralBuildings)
-		crc = building->getChecksum(crc);
+		crc = calcCheckSum(*building, crc);
 	crc = calcCheckSum(nextUnitId, crc);
 	crc = calcCheckSum(*unitsData, crc);
+	for (const auto& movejob : moveJobs)
+		crc = calcCheckSum(*movejob, crc);
 
 	return crc;
 }
@@ -198,7 +202,7 @@ cVehicle& cModel::addVehicle(const cPosition& position, const sID& id, cPlayer* 
 	// scan with surveyor:
 	if (addedVehicle.getStaticUnitData().canSurvey)
 	{
-		addedVehicle.doSurvey(*map);
+		addedVehicle.doSurvey();
 	}
 
 	if (addedVehicle.canLand(*map))
@@ -335,9 +339,9 @@ void cModel::deleteUnit(cUnit* unit)
 	if (unit->isAVehicle())
 	{
 		cVehicle* vehicle = static_cast<cVehicle*> (unit);
-		if (vehicle->ServerMoveJob)
+		if (vehicle->getMoveJob())
 		{
-			vehicle->ServerMoveJob->Vehicle = nullptr;
+			vehicle->getMoveJob()->removeVehicle(vehicle);
 		}
 	}
 
@@ -377,6 +381,31 @@ void cModel::deleteRubble(cBuilding* rubble)
 		neutralBuildings.erase(iter);
 	}
 }
+
+//------------------------------------------------------------------------------
+void cModel::addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& path)
+{
+	cMoveJob* currentMoveJob = vehicle.getMoveJob();
+	if (currentMoveJob)
+	{
+		if (currentMoveJob->isActive())
+		{
+			// cannot add movejob while the unit is already moving
+			return;
+		}
+		else
+		{
+			// a waiting movejob can be replaced by new one
+			currentMoveJob->stop();
+		}
+	}
+
+	cMoveJob* moveJob = new cMoveJob(path, vehicle, *this);
+	vehicle.setMoveJob(moveJob);
+
+	moveJobs.push_back(moveJob);
+}
+
 //------------------------------------------------------------------------------
 cUnit* cModel::getUnitFromID(unsigned int id) const
 {
@@ -423,6 +452,26 @@ void cModel::refreshMapPointer()
 			map->addBuilding(*building, building->getPosition());
 		}
 	}
+}
+
+//------------------------------------------------------------------------------
+void cModel::runMoveJobs()
+{
+	for (auto& moveJob : moveJobs)
+	{
+		moveJob->run(*this);
+		if (moveJob->isFinished())
+		{
+			cVehicle* vehicle = moveJob->getVehicle();
+			if (vehicle != nullptr && vehicle->getMoveJob() == moveJob)
+			{
+				vehicle->setMoveJob(nullptr);
+			}
+			delete moveJob;
+			moveJob = nullptr;
+		}
+	}
+	Remove(moveJobs, nullptr);
 }
 
 //------------------------------------------------------------------------------

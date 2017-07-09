@@ -17,17 +17,29 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef playerconnectionstate_h
-#define playerconnectionstate_h
+#ifndef game_logic_actionStopMoveH
+#define game_logic_actionStopMoveH
 
-class cPlayerConnectionState
+#include "action.h"
+
+class cActionStopMove : public cAction
 {
-	int networkSocket;
-	bool local;
+public:
+	cActionStopMove(const cVehicle& vehicle);
+	cActionStopMove(cBinaryArchiveOut& archive);
 
-	ePlayerConnectionState state;
+	virtual void serialize(cBinaryArchiveIn& archive) { cAction::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive)   { cAction::serialize(archive); serializeThis(archive); }
 
-	int gameTime;
+	virtual void execute(cModel& model) const override;
+private:
+	template<typename T>
+	void serializeThis(T& archive)
+	{
+		archive & unitId;
+	}
+
+	unsigned int unitId;
 };
 
-#endif
+#endif // game_logic_actionStopMoveH

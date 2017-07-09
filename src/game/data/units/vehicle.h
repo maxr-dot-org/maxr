@@ -44,6 +44,7 @@ class cServer;
 class cServerMoveJob;
 class cApplication;
 class cSoundManager;
+class cMoveJob;
 
 //-----------------------------------------------------------------------------
 // Enum for the symbols
@@ -159,9 +160,7 @@ public:
 	const sVehicleUIData* uiData;
 	mutable int ditherX, ditherY;
 	mutable int bigBetonAlpha;
-	cServerMoveJob* ServerMoveJob;
 	bool hasAutoMoveJob; // this is just a status information for the server, so that he can write the information to the saves
-	bool MoveJobActive; // Gibt an, ob der MoveJob gerade ausgeführt wird
 	cPosition bandPosition; // X,Y Position für das Band
 	cPosition buildBigSavedPosition; // last position before building has started
 	bool BuildPath;   // Gibt an, ob ein Pfad gebaut werden soll
@@ -179,7 +178,7 @@ public:
 
 	virtual std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
 	void DecSpeed (int value);
-	void doSurvey (const cMap& map);
+	void doSurvey ();
 	virtual void makeReport (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const MAXR_OVERRIDE_FUNCTION;
 	bool InSentryRange (cServer& server);
@@ -282,7 +281,7 @@ public:
 
 	bool isUnitLoaded() const { return loaded; }
 
-	virtual bool isUnitMoving() const { return moving; }
+	virtual bool isUnitMoving() const { return moving; } //test if the vehicle is moving right now. Having a waiting movejob doesn't count a moving
 	virtual bool isAutoMoveJobActive() const { return autoMoveJob != nullptr; }
 	virtual bool isUnitClearing() const { return isClearing; }
 	virtual bool isUnitLayingMines() const { return layMines; }
@@ -317,9 +316,9 @@ public:
 	int getFlightHeight() const;
 	void setFlightHeight (int value);
 
-	cClientMoveJob* getClientMoveJob();
-	const cClientMoveJob* getClientMoveJob() const;
-	void setClientMoveJob (cClientMoveJob* clientMoveJob);
+	cMoveJob* getMoveJob();
+	const cMoveJob* getMoveJob() const;
+	void setMoveJob (cMoveJob* moveJob);
 
 	cAutoMJob* getAutoMoveJob();
 	const cAutoMJob* getAutoMoveJob() const;
@@ -341,17 +340,16 @@ public:
 	mutable cSignal<void ()> commandoRankChanged;
 	mutable cSignal<void ()> flightHeightChanged;
 
-	mutable cSignal<void ()> clientMoveJobChanged;
+	mutable cSignal<void ()> moveJobChanged;
 	mutable cSignal<void ()> autoMoveJobChanged;
+	mutable cSignal<void ()> moveJobBlocked;
 
 	template <typename T>
 	void serialize(T& archive)
 	{
 		cUnit::serializeThis (archive); //serialize cUnit members
 
-		//TODO: moveJob
 		archive & NVP(hasAutoMoveJob);
-		archive & NVP(MoveJobActive);
 		archive & NVP(bandPosition);
 		archive & NVP(buildBigSavedPosition);
 		archive & NVP(BuildPath);
@@ -411,11 +409,12 @@ private:
 
 	cPosition tileMovementOffset;  // offset within tile during movement
 
-	cClientMoveJob* clientMoveJob;
+	bool moving;
+	cMoveJob* moveJob;
+
 	std::shared_ptr<cAutoMJob> autoMoveJob; //the auto move AI of the vehicle
 
 	bool loaded;
-	bool moving;
 
 	bool isBuilding;
 	sID buildingTyp;

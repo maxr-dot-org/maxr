@@ -234,7 +234,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 	{
 		if (!selectedVehicle->isUnitBuildingABuilding() && !selectedVehicle->isUnitClearing())
 		{
-			if (selectedVehicle->MoveJobActive)
+			if (selectedVehicle->isUnitMoving())
 			{
 				return eActionType::None;
 			}
@@ -304,7 +304,8 @@ void cMouseModeDefault::establishUnitSelectionConnections()
 	if (selectedVehicle)
 	{
 		assert (selectedVehicle == selectedUnit);
-		selectedUnitSignalConnectionManager.connect (selectedVehicle->clientMoveJobChanged, [this]() { needRefresh(); });
+		selectedUnitSignalConnectionManager.connect (selectedVehicle->moveJobChanged, [this]() { needRefresh(); });
+		selectedUnitSignalConnectionManager.connect (selectedVehicle->movingChanged, [this]() { needRefresh(); });
 		selectedUnitSignalConnectionManager.connect (selectedVehicle->buildingTurnsChanged, [this]() { needRefresh(); });
 		selectedUnitSignalConnectionManager.connect (selectedVehicle->clearingTurnsChanged, [this]() { needRefresh(); });
 	}

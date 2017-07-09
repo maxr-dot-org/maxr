@@ -49,7 +49,6 @@ cUnit::cUnit (const cDynamicUnitData* unitData, const cStaticUnitData* staticDat
 	, manualFireActive (false)
 	, attacking (false)
 	, beeingAttacked (false)
-	, markedAsDone (false)
 	, beenAttacked (false)
 	, staticData(staticData)
 	, storageResCur(0)
@@ -218,7 +217,6 @@ uint32_t cUnit::getChecksum(uint32_t crc) const
 	crc = calcCheckSum(manualFireActive, crc);
 	crc = calcCheckSum(attacking, crc);
 	crc = calcCheckSum(beeingAttacked, crc);
-	crc = calcCheckSum(markedAsDone, crc);
 	crc = calcCheckSum(beeingAttacked, crc);
 	crc = calcCheckSum(storageResCur, crc);
 
@@ -443,13 +441,6 @@ void cUnit::setIsBeeinAttacked (bool value)
 }
 
 //------------------------------------------------------------------------------
-void cUnit::setMarkedAsDone (bool value)
-{
-	std::swap (markedAsDone, value);
-	if (value != markedAsDone) markedAsDoneChanged();
-}
-
-//------------------------------------------------------------------------------
 void cUnit::setHasBeenAttacked (bool value)
 {
 	std::swap (beenAttacked, value);
@@ -484,12 +475,6 @@ bool cUnit::isAttacking() const
 bool cUnit::isBeeingAttacked() const
 {
 	return beeingAttacked;
-}
-
-//------------------------------------------------------------------------------
-bool cUnit::isMarkedAsDone() const
-{
-	return markedAsDone;
 }
 
 //------------------------------------------------------------------------------

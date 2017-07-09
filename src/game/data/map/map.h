@@ -270,7 +270,7 @@ public:
 	/**
 	* moves a vehicle to the given position
 	* resets the vehicle to a single field, when it was centered on four fields
-	* @param height defines the flight hight, when more then one planes on a field. 0 means top/highest.
+	* @param height defines the flight hight, when more than one plane on a field. 0 means top/highest.
 	*/
 	void moveVehicle (cVehicle& vehicle, const cPosition& position, int height = 0);
 
@@ -287,8 +287,8 @@ public:
 	* checks, whether the given field is an allowed place for the vehicle
 	* if checkPlayer is passed, the function uses the players point of view, so it does not check for units that are not in sight
 	*/
-	bool possiblePlace (const cVehicle& vehicle, const cPosition& position, bool checkPlayer = false) const;
-	bool possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool checkPlayer = false) const;
+	bool possiblePlace (const cVehicle& vehicle, const cPosition& position, bool checkPlayer = false, bool ignoreMovingVehicles = false) const;
+	bool possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool checkPlayer = false, bool ignoreMovingVehicles = false) const;
 
 	/**
 	* checks, whether the given field is an allowed place for the building

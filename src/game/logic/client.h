@@ -104,20 +104,6 @@ public:
 	*/
 	void runFx();
 
-	/**
-	* creates a new moveJob and transmits it to the server
-	* @param vehicle the vehicle to be moved
-	* @param iDestOffset the Destination
-	*/
-	bool addMoveJob (cVehicle& vehicle, const cPosition& destination, const std::vector<cVehicle*>* group = nullptr);
-	void startGroupMove (const std::vector<cVehicle*>& group_, const cPosition& mainDestination);
-	/**
-	* adds a new movejob
-	*@author alzi alias DoctorDeath
-	*@param MJob the movejob to be added
-	*/
-	void addActiveMoveJob (cClientMoveJob& MJob);
-
 	void addAutoMoveJob (std::weak_ptr<cAutoMJob> autoMoveJob);
 
 	/**
@@ -204,7 +190,6 @@ public:
 
 	mutable cSignal<void (const cUnit&)> unitDetected; //TODO: was in addUnit()
 
-	mutable cSignal<void (const cVehicle&)> moveJobBlocked;
 
 	mutable cSignal<void (const std::shared_ptr<cFx>&, bool)> addedEffect;
 
@@ -222,11 +207,6 @@ private:
 	void addUnit (const cPosition& position, cVehicle& addedVehicle, bool addToMap = true);
 	void addUnit (const cPosition& position, cBuilding& addedBuilding);
 
-	/**
-	* handles all active movejobs
-	*@author alzi alias DoctorDeath
-	*/
-	void handleMoveJobs();
 
 	void handleAutoMoveJobs();
 
@@ -254,8 +234,6 @@ private:
 	void HandleNetMessage_GAME_EV_TURN_END_DEADLINE_START_TIME (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message);
@@ -329,8 +307,6 @@ private:
 public:
 	/** list with the running clientAttackJobs */
 	std::vector<cAttackJob*> attackJobs; //TODO: move to cModel
-	/** List with all active movejobs */
-	std::vector<cClientMoveJob*> ActiveMJobs; //TODO: move to cModel
 };
 
 #endif // game_logic_clientH

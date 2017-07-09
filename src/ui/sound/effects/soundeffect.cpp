@@ -234,3 +234,9 @@ const cPosition& cSoundEffect::getPosition() const
 	static cPosition dummyPosition (0, 0);
 	return dummyPosition;
 }
+
+//------------------------------------------------------------------------------
+const cSoundChunk* cSoundEffect::getSound() const
+{
+	return sound;
+}

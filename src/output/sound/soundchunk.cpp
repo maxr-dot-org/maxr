@@ -36,6 +36,12 @@ cSoundChunk& cSoundChunk::operator= (cSoundChunk && other)
 	return *this;
 }
 
+//------------------------------------------------------------------------------
+bool cSoundChunk::operator==(const cSoundChunk& other) const
+{
+	return sdlSound == other.sdlSound;
+}
+
 //--------------------------------------------------------------------------
 void cSoundChunk::load (const std::string& fileName)
 {

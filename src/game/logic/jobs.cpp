@@ -22,6 +22,7 @@
 #include "game/logic/gametimer.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
+#include "game/logic/movejob.h"
 
 #include <algorithm>
 #include <cassert>

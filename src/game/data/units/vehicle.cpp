@@ -46,6 +46,7 @@
 #include "ui/sound/effects/soundeffectvoice.h"
 #include "utility/random.h"
 #include "utility/crc.h"
+#include "game/logic/action/actionstopmove.h"
 
 using namespace std;
 
@@ -71,18 +72,16 @@ cVehicle::cVehicle (const cStaticUnitData& staticData, const cDynamicUnitData& d
 	autoMoveJob(nullptr),
 	tileMovementOffset(0, 0),
 	buildBigSavedPosition(0, 0),
-	bandPosition(0, 0)
+	bandPosition(0, 0),
+	moveJob(nullptr)
 {
 	uiData = UnitsUiData.getVehicleUI (staticData.ID);
 	ditherX = 0;
 	ditherY = 0;
 	flightHeight = 0;
 	WalkFrame = 0;
-	clientMoveJob = nullptr;
-	ServerMoveJob = nullptr;
 	hasAutoMoveJob = false;
 	moving = false;
-	MoveJobActive = false;
 	BuildPath = false;
 	bigBetonAlpha = 254;
 
@@ -94,23 +93,13 @@ cVehicle::cVehicle (const cStaticUnitData& staticData, const cDynamicUnitData& d
 	buildingTurnsChanged.connect ([&]() { statusChanged(); });
 	buildingTypeChanged.connect ([&]() { statusChanged(); });
 	commandoRankChanged.connect ([&]() { statusChanged(); });
-	clientMoveJobChanged.connect ([&]() { statusChanged(); });
+	moveJobChanged.connect ([&]() { statusChanged(); });
 	autoMoveJobChanged.connect ([&]() { statusChanged(); });
 }
 
 //-----------------------------------------------------------------------------
 cVehicle::~cVehicle()
 {
-	if (clientMoveJob)
-	{
-		clientMoveJob->release();
-		clientMoveJob->Vehicle = nullptr;
-	}
-	if (ServerMoveJob)
-	{
-		ServerMoveJob->release();
-		ServerMoveJob->Vehicle = nullptr;
-	}
 }
 
 void cVehicle::drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha) const
@@ -372,25 +361,21 @@ bool cVehicle::proceedBuilding (cServer& server)
 		}
 
 		// If we've found somewhere to move to, move there now.
-		if (found_next && server.addMoveJob (getPosition(), nextPosition, this))
-		{
-			setBuildingABuilding (false);
-			server.addBuilding (getPosition(), getBuildingType(), getOwner());
-			// Begin the movement immediately,
-			// so no other unit can block the destination field.
-			this->ServerMoveJob->checkMove();
-		}
-
-		else
-		{
-			if (server.model.getUnitsData()->getStaticUnitData(getBuildingType()).surfacePosition != cStaticUnitData::SURFACE_POS_GROUND)
-			{
-				server.addBuilding (getPosition(), getBuildingType(), getOwner());
-				setBuildingABuilding (false);
-			}
-			BuildPath = false;
-			sendBuildAnswer (server, false, *this);
-		}
+//		if (found_next && server.addMoveJob (getPosition(), nextPosition, this))
+// 		{
+// 			setBuildingABuilding (false);
+// 			server.addBuilding (getPosition(), getBuildingType(), getOwner());
+// 		}
+// 		else
+// 		{
+// 			if (server.model.getUnitsData()->getStaticUnitData(getBuildingType()).surfacePosition != cStaticUnitData::SURFACE_POS_GROUND)
+// 			{
+// 				server.addBuilding (getPosition(), getBuildingType(), getOwner());
+// 				setBuildingABuilding (false);
+// 			}
+// 			BuildPath = false;
+// 			sendBuildAnswer (server, false, *this);
+// 		}
 	}
 	else
 	{
@@ -529,12 +514,14 @@ string cVehicle::getStatusStr(const cPlayer* player, const cUnitsData& unitsData
 			return lngPack.i18n ("Text~Comp~Clearing_Fin");
 	}
 
-	// generate other infos for normall non-unit-related-events and infiltartors
+	// generate other infos for normal non-unit-related-events and infiltartors
 	string sTmp;
 	{
-		if (clientMoveJob && clientMoveJob->endMoveAction && clientMoveJob->endMoveAction->type_ == EMAT_ATTACK)
-			sTmp = lngPack.i18n ("Text~Comp~MovingToAttack");
-		else if (clientMoveJob)
+		//TODO: #1065 
+		//if (moveJob && moveJob->getEndMoveAction() && moveJob->getEndMoveAction()->getType == EMAT_ATTACK)
+		//	sTmp = lngPack.i18n ("Text~Comp~MovingToAttack");
+		//else if (moveJob)
+		if (moveJob)
 			sTmp = lngPack.i18n ("Text~Comp~Moving");
 		else if (isAttacking())
 			sTmp = lngPack.i18n ("Text~Comp~AttackingStatusStr");
@@ -642,12 +629,14 @@ void cVehicle::calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<i
 //-----------------------------------------------------------------------------
 /** Scans for resources */
 //-----------------------------------------------------------------------------
-void cVehicle::doSurvey (const cMap& map)
+void cVehicle::doSurvey()
 {
+	const auto& owner = *getOwner();
+
 	const int minx = std::max (getPosition().x() - 1, 0);
-	const int maxx = std::min (getPosition().x() + 1, map.getSize().x() - 1);
+	const int maxx = std::min (getPosition().x() + 1, owner.getMapSize().x() - 1);
 	const int miny = std::max (getPosition().y() - 1, 0);
-	const int maxy = std::min (getPosition().y() + 1, map.getSize().y() - 1);
+	const int maxy = std::min (getPosition().y() + 1, owner.getMapSize().y() - 1);
 
 	for (int y = miny; y <= maxy; ++y)
 	{
@@ -672,11 +661,13 @@ void cVehicle::makeReport (cSoundManager& soundManager) const
 	else if (data.getHitpoints() > data.getHitpointsMax() / 2)
 	{
 		// Status green
-		if (clientMoveJob && clientMoveJob->endMoveAction && clientMoveJob->endMoveAction->type_ == EMAT_ATTACK)
-		{
-			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIAttacking)));
-		}
-		else if (autoMoveJob)
+		//TODO: #1065
+		//if (clientMoveJob && clientMoveJob->endMoveAction && clientMoveJob->endMoveAction->type_ == EMAT_ATTACK)
+		//{
+		//	soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIAttacking)));
+		//}
+		//else if (autoMoveJob)
+		if (autoMoveJob)
 		{
 			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOISurveying)));
 		}
@@ -799,8 +790,6 @@ bool cVehicle::makeAttackOnThis (cServer& server, cUnit* opponentUnit, const str
 
 	server.addAttackJob (opponentUnit, getPosition());
 
-	if (ServerMoveJob != 0)
-		ServerMoveJob->bFinished = true;
 	return true;
 }
 
@@ -1003,7 +992,7 @@ bool cVehicle::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 
 	if (!Contains (staticData->storeUnitsTypes, Vehicle->getStaticUnitData().isStorageType)) return false;
 
-	if (Vehicle->clientMoveJob && (Vehicle->moving || Vehicle->isAttacking() || Vehicle->MoveJobActive)) return false;
+	if (Vehicle->moving || Vehicle->isAttacking()) return false;
 
 	if (Vehicle->getOwner() != getOwner() || Vehicle->isUnitBuildingABuilding() || Vehicle->isUnitClearing()) return false;
 
@@ -1581,7 +1570,6 @@ uint32_t cVehicle::getChecksum(uint32_t crc) const
 	//cServerMoveJob* ServerMoveJob;
 	crc = cUnit::getChecksum(crc);
 	crc = calcCheckSum(hasAutoMoveJob, crc);
-	crc = calcCheckSum(MoveJobActive, crc);
 	crc = calcCheckSum(bandPosition, crc);
 	crc = calcCheckSum(buildBigSavedPosition, crc);
 	crc = calcCheckSum(BuildPath, crc);
@@ -1618,14 +1606,14 @@ uint32_t cVehicle::getChecksum(uint32_t crc) const
 //-----------------------------------------------------------------------------
 bool cVehicle::canBeStoppedViaUnitMenu() const
 {
-	return (clientMoveJob != 0 || (isUnitBuildingABuilding() && getBuildTurns() > 0) || (isUnitClearing() && getClearingTurns() > 0));
+	return (moveJob != nullptr || (isUnitBuildingABuilding() && getBuildTurns() > 0) || (isUnitClearing() && getClearingTurns() > 0));
 }
 
 //-----------------------------------------------------------------------------
 void cVehicle::executeStopCommand (const cClient& client) const
 {
-	if (clientMoveJob != 0)
-		sendWantStopMove (client, iID);
+	if (moveJob != nullptr)
+		client.sendNetMessage(cActionStopMove(*this));
 	else if (isUnitBuildingABuilding())
 		sendWantStopBuilding (client, iID);
 	else if (isUnitClearing())
@@ -1669,7 +1657,7 @@ bool cVehicle::canLand (const cMap& map) const
 	// normal vehicles are always "landed"
 	if (staticData->factorAir == 0) return true;
 
-	if (moving || (clientMoveJob && clientMoveJob->Waypoints && clientMoveJob->Waypoints->next)  || (ServerMoveJob && ServerMoveJob->Waypoints && ServerMoveJob->Waypoints->next) || isAttacking()) return false;      //vehicle busy?
+	if (moveJob != nullptr || isAttacking()) return false;      //vehicle busy?
 
 	// landing pad there?
 	const std::vector<cBuilding*>& buildings = map.getField (getPosition()).getBuildings();
@@ -1852,22 +1840,22 @@ void cVehicle::setFlightHeight (int value)
 }
 
 //-----------------------------------------------------------------------------
-cClientMoveJob* cVehicle::getClientMoveJob()
+cMoveJob* cVehicle::getMoveJob()
 {
-	return clientMoveJob;
+	return moveJob;
 }
 
 //-----------------------------------------------------------------------------
-const cClientMoveJob* cVehicle::getClientMoveJob() const
+const cMoveJob* cVehicle::getMoveJob() const
 {
-	return clientMoveJob;
+	return moveJob;
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::setClientMoveJob (cClientMoveJob* clientMoveJob_)
+void cVehicle::setMoveJob (cMoveJob* moveJob_)
 {
-	std::swap (clientMoveJob, clientMoveJob_);
-	if (clientMoveJob != clientMoveJob_) clientMoveJobChanged();
+	std::swap (moveJob, moveJob_);
+	if (moveJob != moveJob_) moveJobChanged();
 }
 
 //-----------------------------------------------------------------------------

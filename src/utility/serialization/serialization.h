@@ -27,6 +27,8 @@
 #include <map>
 #include <assert.h>
 #include <sstream>
+#include <forward_list>
+
 #include "nvp.h"
 
 class cModel;
@@ -218,6 +220,37 @@ namespace serialization
 	}
 	template<typename A, typename K, typename T>
 	void serialize(A& archive, std::map<K, T>& value)
+	{
+		serialization::detail::splitFree(archive, value);
+	}
+
+	//-------------------------------------------------------------------------
+	template<typename A, typename T>
+	void save(A& archive, const std::forward_list<T>& value)
+	{
+		uint32_t length = 0;
+		for (const auto& x : value) length++;
+		archive << NVP(length);
+
+		for (const auto& item : value)
+		{
+			archive << NVP(item);
+		}
+	}
+	template<typename A, typename T>
+	void load(A& archive, std::forward_list<T>& value)
+	{
+		uint32_t length;
+		archive >> NVP(length);
+		value.resize(length);
+
+		for (auto& item : value)
+		{
+			archive >> NVP(item);
+		}
+	}
+	template<typename A, typename T>
+	void serialize(A& archive, std::forward_list<T>& value)
 	{
 		serialization::detail::splitFree(archive, value);
 	}

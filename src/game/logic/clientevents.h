@@ -54,7 +54,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_SPECIFIC_UNIT_DATA,		// more specific unit values which are only for the owner
 	GAME_EV_UNIT_UPGRADE_VALUES,	// message contains upgraded values for a unit
 	GAME_EV_NEXT_MOVE,				// infos about the next move
-	GAME_EV_MOVE_JOB_SERVER,		// a message with all waypoints
 	GAME_EV_ATTACKJOB,				// sends an cAttackJob object to a client
 	GAME_EV_RESOURCES,				// a message with new scaned resources for a client
 	GAME_EV_BUILD_ANSWER,			// the answer of the server to a build request of a client
@@ -117,24 +116,6 @@ void sendChatMessageToServer(const cClient& client, const std::string& msg, cons
 *@author alzi alias DoctorDeath
 */
 void sendWantToEndTurn (const cClient& client);
-
-/**
-* sends all waypoints of a movejob to the server.
-*@author alzi alias DoctorDeath
-*/
-void sendMoveJob (const cClient& client, sWaypoint* path, int vehicleID);
-
-/**
-*
-*@author alzi alias DoctorDeath
-*/
-void sendWantStopMove (const cClient& client, int iVehicleID);
-
-/**
-*requests the server to resume the movejob of the vehicle. If 0 is passed, all movejobs of the player will be resumed.
-*@author eiko
-*/
-void sendMoveJobResume (const cClient& client, int unitId);
 
 /**
 * sends all necessary information to identify aggressor

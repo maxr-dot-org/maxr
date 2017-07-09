@@ -101,7 +101,6 @@ public:
 	void setManualFireActive (bool value);
 	void setAttacking (bool value);
 	void setIsBeeinAttacked (bool value);
-	void setMarkedAsDone (bool value);
 	void setHasBeenAttacked (bool value);
 
 	int getDisabledTurns() const;
@@ -109,14 +108,13 @@ public:
 	bool isManualFireActive() const;
 	bool isAttacking() const;
 	bool isBeeingAttacked() const;
-	bool isMarkedAsDone() const;
 	bool hasBeenAttacked() const;
 
 	int getStoredResources() const;
 	void setStoredResources(int value);
 
 	//protected:
-	virtual bool isUnitMoving() const { return false; }
+	virtual bool isUnitMoving() const { return false; } //test if the vehicle is moving right now. Having a waiting movejob doesn't count a moving
 	virtual bool isAutoMoveJobActive() const { return false; }
 	virtual bool isUnitWorking() const { return false; }
 	virtual bool isUnitClearing() const { return false; }
@@ -153,7 +151,6 @@ public:
 	mutable cSignal<void ()> manualFireChanged;
 	mutable cSignal<void ()> attackingChanged;
 	mutable cSignal<void ()> beeingAttackedChanged;
-	mutable cSignal<void ()> markedAsDoneChanged;
 	mutable cSignal<void ()> beenAttackedChanged;
 	mutable cSignal<void ()> movingChanged;
 
@@ -186,7 +183,6 @@ public:
 		archive & NVP(manualFireActive);
 		archive & NVP(attacking);
 		archive & NVP(beeingAttacked);
-		archive & NVP(markedAsDone);
 		archive & NVP(beenAttacked);
 		archive & NVP(isBig);
 		archive & NVP(storageResCur);
@@ -235,7 +231,6 @@ private:
 	bool manualFireActive; ///< if active, then the unit only fires by manual control and not as reaction fire
 	bool attacking;  ///< is the unit currently attacking?
 	bool beeingAttacked; ///< true when an attack on this unit is running
-	bool markedAsDone; ///< the player has pressed the done button for this unit
 	bool beenAttacked; //the unit was attacked in this turn
 	int storageResCur; //amount of stored ressources
 

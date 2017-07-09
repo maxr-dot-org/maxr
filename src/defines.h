@@ -26,7 +26,7 @@
 #define RANGE_AIR_COLOR    0xFFFCA800 // color of range circles for air attack
 #define PFEIL_COLOR        0xFF0000FF // color of a waypointarrow
 #define PFEILS_COLOR       0xFF00FF00 // color of a special waypointarrow
-#define MOVE_SPEED 2     // speed of vehiclemovements
+
 #define MAX_PLANES_PER_FIELD 5
 
 // minimap configuration

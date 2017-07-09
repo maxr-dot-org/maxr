@@ -53,7 +53,6 @@
 #include "keys.h"
 #include "utility/listhelpers.h"
 #include "sound.h"
-#include "game/logic/movejobs.h"
 #include "utility/indexiterator.h"
 #include "utility/random.h"
 #include "input/mouse/mouse.h"
@@ -62,6 +61,7 @@
 #include "input/mouse/cursor/mousecursorattack.h"
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
+#include "game/logic/movejob.h"
 
 //------------------------------------------------------------------------------
 cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap_, std::shared_ptr<cAnimationTimer> animationTimer_, std::shared_ptr<cSoundManager> soundManager_, std::shared_ptr<const cFrameCounter> frameCounter) :
@@ -170,7 +170,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 		if (selectedUnit->isAVehicle())
 		{
 			const auto selectedVehicle = static_cast<const cVehicle*> (selectedUnit);
-			selectedUnitSignalConnectionManager.connect (selectedVehicle->clientMoveJobChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
+			selectedUnitSignalConnectionManager.connect (selectedVehicle->moveJobChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
 			selectedUnitSignalConnectionManager.connect (selectedVehicle->clearingTurnsChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
 			selectedUnitSignalConnectionManager.connect (selectedVehicle->buildingTurnsChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
 		}
@@ -534,7 +534,7 @@ void cGameMapWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clip
 		drawResources();
 	}
 
-	if (selectedVehicle && ((selectedVehicle->getClientMoveJob() && selectedVehicle->getClientMoveJob()->bSuspended) || selectedVehicle->BuildPath))
+	if (selectedVehicle && ((selectedVehicle->getMoveJob() && !selectedVehicle->isUnitMoving()) || selectedVehicle->BuildPath))
 	{
 		drawPath (*selectedVehicle);
 	}
@@ -1629,9 +1629,9 @@ void cGameMapWidget::drawBuildPath (const cVehicle& vehicle)
 //------------------------------------------------------------------------------
 void cGameMapWidget::drawPath (const cVehicle& vehicle)
 {
-	auto moveJob = vehicle.getClientMoveJob();
+	const auto moveJob = vehicle.getMoveJob();
 
-	if (!moveJob || !moveJob->Waypoints || vehicle.getOwner() != player.get())
+	if (!moveJob || vehicle.getOwner() != player.get())
 	{
 		drawBuildPath (vehicle);
 		return;
@@ -1639,15 +1639,7 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 
 	const auto zoomedTileSize = getZoomedTileSize();
 
-	int sp = vehicle.data.getSpeed();
-	int save;
-
-	if (sp)
-	{
-		save = 0;
-		sp += moveJob->iSavedSpeed;
-	}
-	else save = moveJob->iSavedSpeed;
+	int sp = vehicle.data.getSpeed() + moveJob->getSavedSpeed();
 
 	SDL_Rect dest;
 	dest.x = getPosition().x() - (int) (pixelOffset.x() * getZoomFactor()) + zoomedTileSize.x() * vehicle.getPosition().x();
@@ -1658,44 +1650,57 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 
 	int mx = 0;
 	int my = 0;
-	sWaypoint* wp = moveJob->Waypoints;
-	while (wp)
+	cPosition wp = vehicle.getPosition();
+	const auto& path = moveJob->getPath();
+	for (const auto& nextWp : path)
 	{
-		if (wp->next)
+		ndest.x += mx = nextWp.x() * zoomedTileSize.x() - wp.x() * zoomedTileSize.x();
+		ndest.y += my = nextWp.y() * zoomedTileSize.y() - wp.y() * zoomedTileSize.y();
+
+		
+		int costs = cPathCalculator::calcNextCost(wp, nextWp, &vehicle, dynamicMap.get());
+		if (sp < costs)
 		{
-			ndest.x += mx = wp->next->position.x() * zoomedTileSize.x() - wp->position.x() * zoomedTileSize.x();
-			ndest.y += my = wp->next->position.y() * zoomedTileSize.y() - wp->position.y() * zoomedTileSize.y();
+			drawPathArrow (dest, ndest, true);
+			sp += vehicle.data.getSpeedMax();
 		}
 		else
 		{
-			ndest.x += mx;
-			ndest.y += my;
+			drawPathArrow (dest, ndest, false);
 		}
+		sp -= costs;
 
-		if (sp == 0)
-		{
-			moveJob->drawArrow (dest, &ndest, true);
-			sp += vehicle.data.getSpeedMax() + save;
-			save = 0;
-		}
-		else
-		{
-			moveJob->drawArrow (dest, &ndest, false);
-		}
-
+		wp = nextWp;
 		dest = ndest;
-		wp = wp->next;
+	}
 
-		if (wp)
-		{
-			sp -= wp->Costs;
+	ndest.x += mx;
+	ndest.y += my;
+	drawPathArrow (dest, ndest, false);
 
-			if (wp->next && sp < wp->next->Costs)
-			{
-				save = sp;
-				sp = 0;
-			}
-		}
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::drawPathArrow(SDL_Rect dest, const SDL_Rect& lastDest, bool spezialColor) const
+{
+	int index;
+	if      (dest.x >  lastDest.x && dest.y <  lastDest.y) index = 0;
+	else if (dest.x == lastDest.x && dest.y <  lastDest.y) index = 1;
+	else if (dest.x <  lastDest.x && dest.y <  lastDest.y) index = 2;
+	else if (dest.x >  lastDest.x && dest.y == lastDest.y) index = 3;
+	else if (dest.x <  lastDest.x && dest.y == lastDest.y) index = 4;
+	else if (dest.x >  lastDest.x && dest.y >  lastDest.y) index = 5;
+	else if (dest.x == lastDest.x && dest.y >  lastDest.y) index = 6;
+	else if (dest.x <  lastDest.x && dest.y >  lastDest.y) index = 7;
+	else return;
+
+	if (spezialColor)
+	{
+		SDL_BlitSurface(OtherData.WayPointPfeileSpecial[index][64 - dest.w].get(), nullptr, cVideo::buffer, &dest);
+	}
+	else
+	{
+		SDL_BlitSurface(OtherData.WayPointPfeile[index][64 - dest.w].get(), nullptr, cVideo::buffer, &dest);
 	}
 }
 

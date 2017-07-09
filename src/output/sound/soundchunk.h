@@ -35,6 +35,8 @@ public:
 	cSoundChunk (cSoundChunk&& other);
 	cSoundChunk& operator= (cSoundChunk && other);
 
+	bool operator==(const cSoundChunk& other) const;
+
 	void load (const std::string& fileName);
 
 	bool empty() const;
