@@ -51,6 +51,17 @@ cMoveJob::cMoveJob(const std::forward_list<cPosition>& path, cVehicle& vehicle, 
 	startMove(model);
 }
 
+cMoveJob::cMoveJob() :
+	vehicle(nullptr),
+	savedSpeed(0),
+	state(FINISHED),
+	nextDir(0),
+	timer100ms(1),
+	timer50ms(1),
+	currentSpeed(0),
+	pixelToMove(0)
+{}
+
 //------------------------------------------------------------------------------
 const std::forward_list<cPosition>& cMoveJob::getPath() const
 {
@@ -196,6 +207,7 @@ void cMoveJob::startMove(cModel& model)
 		vehicle->setMoving(false);
 		vehicle->WalkFrame = 0;
 		state = WAITING;
+		currentSpeed = 0;
 		return;
 	}
 
@@ -364,4 +376,20 @@ void cMoveJob::resume()
 	{
 		state = ACTIVE;
 	}
+}
+
+//------------------------------------------------------------------------------
+uint32_t cMoveJob::getChecksum(uint32_t crc) const
+{
+	crc = calcCheckSum(vehicle->getId(), crc);
+	crc = calcCheckSum(path, crc);
+	crc = calcCheckSum(state, crc);
+	crc = calcCheckSum(savedSpeed, crc);
+	crc = calcCheckSum(nextDir, crc);
+	crc = calcCheckSum(timer100ms, crc);
+	crc = calcCheckSum(timer50ms, crc);
+	crc = calcCheckSum(currentSpeed, crc);
+	crc = calcCheckSum(pixelToMove, crc);
+
+	return crc;
 }

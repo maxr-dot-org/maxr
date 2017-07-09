@@ -31,6 +31,7 @@
 #include "game/data/map/map.h"
 #include "game/data/player/player.h"
 #include "game/logic/pathcalculator.h"
+#include "game/logic/movejob.h"
 
 class cPlayerBasicData;
 class cGameSettings;
@@ -95,46 +96,50 @@ public:
 	template<typename T>
 	void save(T& archive)
 	{
-		archive & NVP(gameId);
-		archive & NVP(gameTime);
-		archive & serialization::makeNvp("gameSettings", *gameSettings);
-		archive & serialization::makeNvp("map", *map);
-		archive & serialization::makeNvp("unitsData", *unitsData);
-		archive & serialization::makeNvp("numPlayers", (int)playerList.size());
+		archive << NVP(gameId);
+		archive << NVP(gameTime);
+		archive << serialization::makeNvp("gameSettings", *gameSettings);
+		archive << serialization::makeNvp("map", *map);
+		archive << serialization::makeNvp("unitsData", *unitsData);
+		archive << serialization::makeNvp("numPlayers", (int)playerList.size());
 		for (auto player : playerList)
 		{
-			archive & serialization::makeNvp("player", *player);
+			archive << serialization::makeNvp("player", *player);
 		}
-		
+		archive << serialization::makeNvp("numMoveJobs", (int)moveJobs.size());
+		for (auto moveJob : moveJobs)
+		{
+			archive << serialization::makeNvp("moveJob", *moveJob);
+		}
 		//archive & NVP(neutralBuildings);
-		archive & NVP(nextUnitId);
+		archive << NVP(nextUnitId);
 	};
 	template<typename T>
 	void load(T& archive)
 	{
-		archive & NVP(gameId);
-		archive & NVP(gameTime);
+		archive >> NVP(gameId);
+		archive >> NVP(gameTime);
 
 		assert(gameSettings != nullptr);
-		archive & serialization::makeNvp("gameSettings", *gameSettings);
+		archive >> serialization::makeNvp("gameSettings", *gameSettings);
 
 		if (map == nullptr)
 		{
 			auto staticMap = std::make_shared<cStaticMap>();
 			map = std::make_shared<cMap>(staticMap);
 		}
-		archive & serialization::makeNvp("map", *map);
+		archive >> serialization::makeNvp("map", *map);
 		map->reset();
 
 		if (unitsData == nullptr)
 		{
 			unitsData = std::make_shared<cUnitsData>();
 		}
-		archive & serialization::makeNvp("unitsData", *unitsData);
+		archive >> serialization::makeNvp("unitsData", *unitsData);
 		//TODO: check UIData available
 
 		int numPlayers;
-		archive & NVP(numPlayers);
+		archive >> NVP(numPlayers);
 		playerList.resize(numPlayers);
 		for (auto& player : playerList)
 		{
@@ -144,15 +149,27 @@ public:
 				player = std::make_shared<cPlayer>(basicPlayerData, *unitsData);
 			}
 			player->initMaps(*map);
-			archive & serialization::makeNvp("player", *player);
+			archive >> serialization::makeNvp("player", *player);
 		}
 		refreshMapPointer();
 		for (auto& player : playerList)
 		{
 			player->refreshBase(*map);
 		}
-		
-		archive & NVP(nextUnitId);
+		int numMoveJobs;
+		archive >> NVP(numMoveJobs);
+		for (auto moveJob : moveJobs)
+		{
+			delete moveJob;
+		}
+		moveJobs.clear();
+		moveJobs.resize(numMoveJobs);
+		for (auto& moveJob : moveJobs)
+		{
+			moveJob = new cMoveJob();
+			archive >> serialization::makeNvp("moveJob", *moveJob);
+		}
+		archive >> NVP(nextUnitId);
 	}
 	SERIALIZATION_SPLIT_MEMBER();
 private:

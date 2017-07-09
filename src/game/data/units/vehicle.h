@@ -353,7 +353,6 @@ public:
 	{
 		cUnit::serializeThis (archive); //serialize cUnit members
 
-		//TODO: moveJob
 		archive & NVP(hasAutoMoveJob);
 		archive & NVP(bandPosition);
 		archive & NVP(buildBigSavedPosition);

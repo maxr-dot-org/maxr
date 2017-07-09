@@ -21,6 +21,7 @@
 #define game_logic_movejobs2H
 
 #include <forward_list>
+#include <assert.h>
 
 #include "utility/position.h"
 #include "pathcalculator.h"
@@ -34,6 +35,7 @@ class cMoveJob
 {
 public:
 	cMoveJob(const std::forward_list<cPosition>& path, cVehicle& vehicle, cModel& model);
+	cMoveJob();
 	/**
 	* gets the list of position that make up the path. First element is the position,
 	* the unit will drive to when starting the next movement step.
@@ -76,6 +78,29 @@ public:
 	*/
 	void resume();
 
+	uint32_t getChecksum(uint32_t crc) const;
+
+	template <typename T>
+	void serialize(T& archive)
+	{
+		archive & NVP(vehicle);
+		archive & NVP(path);
+		archive & NVP(state);
+		archive & NVP(savedSpeed);
+		archive & NVP(nextDir);
+		archive & NVP(timer100ms);
+		archive & NVP(timer50ms);
+		archive & NVP(currentSpeed);
+		archive & NVP(pixelToMove);
+
+		if (!archive.isWriter)
+		{
+			if (vehicle != nullptr)
+			{
+				vehicle->setMoveJob(this);
+			}
+		}
+	}
 private:
 	enum eMoveJobState {ACTIVE, WAITING, STOPPING, FINISHED};
 	

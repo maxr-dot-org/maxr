@@ -161,7 +161,7 @@ public:
 	bool isTurnLimitActive() const;
 	void setTurnLimitActive (bool value);
 
-	uint32_t getChecksum(uint32_t crc);
+	uint32_t getChecksum(uint32_t crc) const;
 
 	mutable cSignal<void ()> metalAmountChanged;
 	mutable cSignal<void ()> oilAmountChanged;

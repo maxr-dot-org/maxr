@@ -112,14 +112,16 @@ uint32_t cModel::getChecksum() const
 	uint32_t crc = 0;
 	//crc = calcCheckSum(gameTime, crc);
 	crc = calcCheckSum(gameId, crc);
-	crc = gameSettings->getChecksum(crc);
-	crc = map->getChecksum(crc);
+	crc = calcCheckSum(*gameSettings, crc);
+	crc = calcCheckSum(*map, crc);
 	for (const auto& player : playerList)
-		crc = player->getChecksum(crc);
+		crc = calcCheckSum(*player, crc);
 	for (const auto& building : neutralBuildings)
-		crc = building->getChecksum(crc);
+		crc = calcCheckSum(*building, crc);
 	crc = calcCheckSum(nextUnitId, crc);
 	crc = calcCheckSum(*unitsData, crc);
+	for (const auto& movejob : moveJobs)
+		crc = calcCheckSum(*movejob, crc);
 
 	return crc;
 }
