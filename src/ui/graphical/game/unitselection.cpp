@@ -337,7 +337,7 @@ cBuilding* cUnitSelection::getNextBuilding(const cPlayer& player, const std::vec
 	for (; it != buildings.end(); ++it)
 	{
 		const cBuilding& b = **it;
-		if (! !Contains(doneList, b.getId()) &&
+		if (!Contains(doneList, b.getId()) &&
 			!b.isUnitWorking() &&
 			!b.isSentryActive() && 
 			(!b.getStaticUnitData().canBuild.empty() || b.data.getShots()
@@ -410,6 +410,7 @@ cVehicle* cUnitSelection::getPrevVehicle(const cPlayer& player, const std::vecto
 	if (vehicles.empty()) return nullptr;
 
 	auto it = (start == nullptr) ? vehicles.end() - 1 : vehicles.find(*start);
+	if (start != nullptr && it == vehicles.begin()) return nullptr;
 	if (start != nullptr && it != vehicles.begin() && it != vehicles.end()) --it;
 	for (; it != vehicles.end(); --it)
 	{
@@ -435,6 +436,7 @@ cBuilding* cUnitSelection::getPrevBuilding(const cPlayer& player, const std::vec
 	if (buildings.empty()) return nullptr;
 
 	auto it = (start == nullptr) ? buildings.end() - 1 : buildings.find(*start);
+	if (start != nullptr && it == buildings.begin()) return nullptr;
 	if (start != nullptr && it != buildings.begin() && it != buildings.end()) --it;
 	for (; it != buildings.end(); --it)
 	{
