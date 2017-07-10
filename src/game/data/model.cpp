@@ -35,7 +35,8 @@ cModel::cModel() :
 	unitsData(std::make_shared<cUnitsData>()),
 	turnCounter (std::make_shared<cTurnCounter> (1)),
 	gameTime(0),
-	gameId(0)
+	gameId(0),
+	executingRemainingMovements(false)
 {
 	/*signalConnectionManager.connect(model.getGameSettings()->turnEndDeadlineChanged, [this]()
 	{
@@ -126,6 +127,7 @@ uint32_t cModel::getChecksum() const
 	for (const auto& movejob : moveJobs)
 		crc = calcCheckSum(*movejob, crc);
 	crc = calcCheckSum(*turnCounter, crc);
+	crc = calcCheckSum(executingRemainingMovements, crc);
 
 	return crc;
 }
@@ -486,26 +488,50 @@ void cModel::runMoveJobs()
 //------------------------------------------------------------------------------
 void cModel::handleTurnEnd()
 {
-	bool allPlayersFinished = true;
 	for (const auto& player : playerList)
 	{
 		if (!player->getHasFinishedTurn() && !player->isDefeated)
 		{
-			allPlayersFinished = false;
+			return;
 		}
 	}
 
-	if (allPlayersFinished)
+	if (!executingRemainingMovements)
 	{
-		turnCounter->increaseTurn();
-
-		for (auto& player : playerList)
+		executingRemainingMovements = true;
+		bool moveJobsStarted = false;
+		for (const auto& moveJob : moveJobs)
 		{
-			player->makeTurnEnd();
+			if (moveJob->isWaiting() && moveJob->getVehicle() && moveJob->getVehicle()->data.getSpeed() > 0)
+			{
+				moveJob->resume();
+				moveJobsStarted = true;
+			}
 		}
-
-		newTurnStarted();
+		if (moveJobsStarted)
+		{
+			moveJobsResumedOnTurnEnd();
+			return;
+		}
 	}
+
+	for (const auto& moveJob : moveJobs)
+	{
+		if (moveJob->isActive())
+		{
+			return;
+		}
+	}
+
+	executingRemainingMovements = false;
+	turnCounter->increaseTurn();
+
+	for (auto& player : playerList)
+	{
+		player->makeTurnEnd();
+	}
+
+	newTurnStarted();
 
 }
 

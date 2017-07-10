@@ -1351,6 +1351,10 @@ void cGameGuiController::connectReportSources(cClient& client)
 			addSavedReport(std::make_unique<cSavedReportPlayerEndedTurn>(player), player.getId());
 		}
 	});
+	allClientsSignalConnectionManager.connect(model.moveJobsResumedOnTurnEnd, [&]()
+	{
+		addSavedReport(std::make_unique<cSavedReportSimple>(eSavedReportType::TurnAutoMove), player.getId());
+	});
 	allClientsSignalConnectionManager.connect(model.newTurnStarted, [&]()
 	{
 		addSavedReport (std::make_unique<cSavedReportTurnStart> (player, model.getTurnCounter()->getTurn()), player.getId());

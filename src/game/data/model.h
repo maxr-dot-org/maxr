@@ -97,6 +97,7 @@ public:
 	mutable cSignal<void(const cVehicle& vehicle)> triggeredAddTracks;
 	mutable cSignal<void(const cPlayer& player)> playerFinishedTurn;
 	mutable cSignal<void()> newTurnStarted;
+	mutable cSignal<void()> moveJobsResumedOnTurnEnd;
 
 	template<typename T>
 	void save(T& archive)
@@ -119,6 +120,7 @@ public:
 		//archive & NVP(neutralBuildings);
 		archive << NVP(nextUnitId);
 		archive << serialization::makeNvp("turnCounter", *turnCounter);
+		archive << NVP(executingRemainingMovements);
 	};
 	template<typename T>
 	void load(T& archive)
@@ -177,6 +179,7 @@ public:
 		}
 		archive >> NVP(nextUnitId);
 		archive >> serialization::makeNvp("turnCounter", *turnCounter);
+		archive >> NVP(executingRemainingMovements);
 	}
 	SERIALIZATION_SPLIT_MEMBER();
 private:
@@ -202,6 +205,7 @@ private:
 	std::vector<cMoveJob*> moveJobs;
 
 	std::shared_ptr<cTurnCounter> turnCounter;
+	bool executingRemainingMovements;
 
 	//jobs
 	//casualtiesTracker
@@ -211,6 +215,7 @@ private:
 
 	//signalConnectionManager?
 
+	
 };
 
 #endif

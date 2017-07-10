@@ -127,6 +127,12 @@ bool cMoveJob::isFinished() const
 }
 
 //------------------------------------------------------------------------------
+bool cMoveJob::isWaiting() const
+{
+	return state == WAITING;
+}
+
+//------------------------------------------------------------------------------
 bool cMoveJob::isActive() const
 {
 	return state == ACTIVE || state == STOPPING;
