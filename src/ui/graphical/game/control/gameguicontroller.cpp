@@ -97,6 +97,7 @@
 #include "game/logic/action/actionendturn.h"
 #include "game/data/report/special/savedreportplayerendedturn.h"
 #include "game/logic/turncounter.h"
+#include "game/data/report/special/savedreportturnstart.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -1347,8 +1348,12 @@ void cGameGuiController::connectReportSources(cClient& client)
 	{
 		if (player.getId() != getActivePlayer()->getId())
 		{
-			addSavedReport (std::make_unique<cSavedReportPlayerEndedTurn> (player), player.getId());
+			addSavedReport(std::make_unique<cSavedReportPlayerEndedTurn>(player), player.getId());
 		}
+	});
+	allClientsSignalConnectionManager.connect(model.newTurnStarted, [&]()
+	{
+		addSavedReport (std::make_unique<cSavedReportTurnStart> (player, model.getTurnCounter()->getTurn()), player.getId());
 	});
 
 	//reports from the players base:

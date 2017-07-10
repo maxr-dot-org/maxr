@@ -944,7 +944,7 @@ void cSubBase::makeTurnStartBuild (cBuilding& building)
 	}
 	if (buildListItem.getRemainingMetal() <= 0)
 	{
-		//TODO: owner->addTurnReportUnit (buildListItem.getType());
+		base.owner.addTurnReportUnit (buildListItem.getType());
 		building.stopWork (false);
 	}
 }
