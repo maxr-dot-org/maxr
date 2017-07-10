@@ -157,7 +157,6 @@ public:
 	const std::shared_ptr<cCasualtiesTracker>& getCasualtiesTracker() { return casualtiesTracker; }
 	std::shared_ptr<const cCasualtiesTracker> getCasualtiesTracker() const { return casualtiesTracker; }
 
-	std::shared_ptr<const cTurnCounter> getTurnClock() const { return turnClock; }
 	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock() const { return turnTimeClock; }
 
 
@@ -173,8 +172,6 @@ public:
 
 
 	//TODO: move signals to model
-	mutable cSignal<void (int currentPlayerNumber, int nextPlayerNumber)> playerFinishedTurn;
-
 	mutable cSignal<void (const cUnit& storingUnit, const cUnit& storedUnit)> unitStored;
 	mutable cSignal<void (const cUnit& storingUnit, const cUnit&storedUnit)> unitActivated;
 
@@ -271,7 +268,6 @@ private:
 	/** true if the player has been defeated */
 	bool bDefeated;                                          //TODO: move to cPlayer
 
-	std::shared_ptr<cTurnCounter> turnClock;                   //TODO: move to cModel
 	std::shared_ptr<cTurnTimeClock> turnTimeClock;           //TODO: move to cModel
 	std::shared_ptr<cTurnTimeDeadline> turnLimitDeadline;    //TODO: move to cModel
 	std::shared_ptr<cTurnTimeDeadline> turnEndDeadline;      //TODO: move to cModel

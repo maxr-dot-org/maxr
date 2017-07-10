@@ -26,12 +26,14 @@
 #include "utility/crc.h"
 #include "game/logic/pathcalculator.h"
 #include "utility/listhelpers.h"
+#include "game/logic/turncounter.h"
 
 //------------------------------------------------------------------------------
 cModel::cModel() :
 	nextUnitId(0),
 	gameSettings(std::make_shared<cGameSettings>()),
 	unitsData(std::make_shared<cUnitsData>()),
+	turnCounter (std::make_shared<cTurnCounter> (1)),
 	gameTime(0),
 	gameId(0)
 {
@@ -98,6 +100,7 @@ void cModel::advanceGameTime()
 	gameTimeChanged();
 
 	runMoveJobs();
+	handleTurnEnd();
 }
 
 //------------------------------------------------------------------------------
@@ -122,6 +125,7 @@ uint32_t cModel::getChecksum() const
 	crc = calcCheckSum(*unitsData, crc);
 	for (const auto& movejob : moveJobs)
 		crc = calcCheckSum(*movejob, crc);
+	crc = calcCheckSum(*turnCounter, crc);
 
 	return crc;
 }
@@ -406,6 +410,11 @@ void cModel::addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& p
 	moveJobs.push_back(moveJob);
 }
 
+std::shared_ptr<const cTurnCounter> cModel::getTurnCounter() const
+{
+	return turnCounter;
+}
+
 //------------------------------------------------------------------------------
 cUnit* cModel::getUnitFromID(unsigned int id) const
 {
@@ -472,6 +481,32 @@ void cModel::runMoveJobs()
 		}
 	}
 	Remove(moveJobs, nullptr);
+}
+
+//------------------------------------------------------------------------------
+void cModel::handleTurnEnd()
+{
+	bool allPlayersFinished = true;
+	for (const auto& player : playerList)
+	{
+		if (!player->getHasFinishedTurn() && !player->isDefeated)
+		{
+			allPlayersFinished = false;
+		}
+	}
+
+	if (allPlayersFinished)
+	{
+		turnCounter->increaseTurn();
+
+		for (auto& player : playerList)
+		{
+			player->makeTurnEnd();
+		}
+
+		newTurnStarted();
+	}
+
 }
 
 //------------------------------------------------------------------------------

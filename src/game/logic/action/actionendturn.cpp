@@ -17,50 +17,42 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef game_logic_actionH
-#define game_logic_actionH
+#include "actionendturn.h"
+#include "game/data/model.h"
 
-#include "netmessage2.h"
 
-class cAction : public cNetMessage2
+//------------------------------------------------------------------------------
+cActionEndTurn::cActionEndTurn() :
+	cAction(eActiontype::ACTION_END_TURN)
+{};
+
+//------------------------------------------------------------------------------
+cActionEndTurn::cActionEndTurn(cBinaryArchiveOut& archive) : 
+	cAction(eActiontype::ACTION_END_TURN)
+{};
+
+//------------------------------------------------------------------------------
+void cActionEndTurn::execute(cModel& model) const
 {
-public:
-	// When changing this enum, also update function enumToString(eActiontype value)!
-	enum class eActiontype {
-		ACTION_INIT_NEW_GAME,
-		ACTION_START_WORK,
-		ACTION_STOP_WORK,
-		ACTION_TRANSFER,
-		ACTION_START_MOVE,
-		ACTION_STOP_MOVE,
-		ACTION_RESUME_MOVE,
-		ACTION_END_TURN
-	};
-	static std::unique_ptr<cAction> createFromBuffer(cBinaryArchiveOut& archive);
-
-	eActiontype getType() const;
-
-	virtual void serialize(cBinaryArchiveIn& archive) { cNetMessage2::serialize(archive); serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive)   { cNetMessage2::serialize(archive); serializeThis(archive); }
-
 	//Note: this function handles incoming data from network. Make every possible sanity check!
-	virtual void execute(cModel& model) const = 0;
-protected:
-	cAction(eActiontype type) : cNetMessage2(eNetMessageType::ACTION), type(type){};
-private:
-	template<typename T>
-	void serializeThis(T& archive)
+
+	cPlayer* player = model.getPlayer(playerNr);
+	if (player == nullptr) return;
+
+	// defeated player are ignored when they hit the end button
+	if (player->isDefeated) return;
+
+	if (model.getGameSettings()->getGameType() == eGameSettingsGameType::Turns)
 	{
-		archive & type;
+		//TODO: turn based mode
+		//if (activeTurnPlayer->getId() != message.iPlayerNr) return;
 	}
 
-	cAction(const cAction&) MAXR_DELETE_FUNCTION;
-	cAction& operator=(const cAction&)MAXR_DELETE_FUNCTION;
+	if (player->base.checkTurnEnd())
+	{
+		return;
+	}
 
-	eActiontype type;
-};
-
-std::string enumToString(cAction::eActiontype value);
-
-
-#endif
+	player->setHasFinishedTurn(true);
+	model.playerFinishedTurn(*player);
+}

@@ -55,7 +55,6 @@
 #include "game/data/report/special/savedreportplayerdefeated.h"
 #include "game/data/report/special/savedreportplayerleft.h"
 #include "game/data/report/special/savedreportupgraded.h"
-#include "game/logic/turnclock.h"
 #include "game/logic/turntimeclock.h"
 #include "game/logic/action/action.h"
 #include "game/data/savegame.h"
@@ -74,7 +73,6 @@ cClient::cClient (std::shared_ptr<cConnectionManager> connectionManager) :
 	connectionManager(connectionManager),
 	gameTimer (std::make_shared<cGameTimerClient> ()),
 	activePlayer (nullptr),
-	turnClock (std::make_shared<cTurnCounter> (1)),
 	turnTimeClock (std::make_shared<cTurnTimeClock> (model)),
 	casualtiesTracker (std::make_shared<cCasualtiesTracker> ()),
 	effectsList (new cFxContainer)
@@ -212,8 +210,8 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_MAKE_TURNEND);
 
-	turnClock->increaseTurn();
-	Log.write ("######### Turn " + iToStr (turnClock->getTurn()) + " ###########", cLog::eLOG_TYPE_NET_DEBUG);
+	//turnClock->increaseTurn();
+	//Log.write ("######### Turn " + iToStr (turnClock->getTurn()) + " ###########", cLog::eLOG_TYPE_NET_DEBUG);
 /*	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{
 		getPlayerList() [i]->setHasFinishedTurn (false);
@@ -781,7 +779,7 @@ void cClient::HandleNetMessage_GAME_EV_TURN (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_TURN);
 
-	turnClock->setTurn (message.popInt16());
+	//turnClock->setTurn (message.popInt16());
 }
 
 void cClient::HandleNetMessage_GAME_EV_STORE_UNIT (cNetMessage& message)

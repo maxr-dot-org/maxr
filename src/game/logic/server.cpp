@@ -47,7 +47,7 @@
 #include "game/data/report/savedreportchat.h"
 #include "game/data/report/special/savedreportlostconnection.h"
 #include "game/data/report/special/savedreportturnstart.h"
-#include "game/logic/turnclock.h"
+#include "game/logic/turncounter.h"
 #include "game/logic/turntimeclock.h"
 #include "utility/random.h"
 #include "debug.h"
@@ -2296,23 +2296,13 @@ void cServer::makeTurnStart (cPlayer& player)
 		vehicle->InSentryRange (*this);
 	}
 
-	if (DEDICATED_SERVER == false)
+	// make autosave
+	if (cSettings::getInstance().shouldAutosave())
 	{
-		// FIXME: saving of running attack jobs does not work correctly yet.
-		// make autosave
-		if (cSettings::getInstance().shouldAutosave())
-		{
-			//cSavegame Savegame (10); // autosaves are always in slot 10
-			//Savegame.save (*this, lngPack.i18n ("Text~Comp~Turn_5") + " " + iToStr (turnClock->getTurn()) + " - " + lngPack.i18n ("Text~Settings~Autosave"));
-			//makeAdditionalSaveRequest (10);
-		}
+		//cSavegame Savegame (10); // autosaves are always in slot 10
+		//Savegame.save (*this, lngPack.i18n ("Text~Comp~Turn_5") + " " + iToStr (turnClock->getTurn()) + " - " + lngPack.i18n ("Text~Settings~Autosave"));
+		//makeAdditionalSaveRequest (10);
 	}
-#if DEDICATED_SERVER_APPLICATION
-	else
-	{
-		cDedicatedServer::instance().doAutoSave (*this);
-	}
-#endif
 }
 
 //------------------------------------------------------------------------------

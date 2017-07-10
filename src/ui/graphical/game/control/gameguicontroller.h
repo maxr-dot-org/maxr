@@ -148,7 +148,7 @@ private:
 
 	std::vector<std::shared_ptr<const cPlayer>> getPlayers() const;
 	std::shared_ptr<const cPlayer> getActivePlayer() const;
-	std::shared_ptr<const cTurnCounter> getTurnClock() const;
+	std::shared_ptr<const cTurnCounter> getTurnCounter() const;
 	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock() const;
 	std::shared_ptr<const cGameSettings> getGameSettings() const;
 	std::shared_ptr<const cCasualtiesTracker> getCasualtiesTracker() const;

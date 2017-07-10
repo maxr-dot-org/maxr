@@ -26,7 +26,7 @@
 #include "game/logic/serverevents.h"
 #include "game/data/map/map.h"
 #include "game/logic/server.h"
-#include "game/logic/turnclock.h"
+#include "game/logic/turncounter.h"
 #include "game/logic/landingpositionmanager.h"
 
 #include <algorithm>

@@ -176,6 +176,8 @@ public:
 	void refreshResearchCentersWorkingOnArea();
 	void refreshBase(const cMap& map);
 
+	void makeTurnEnd();
+
 	uint32_t getChecksum(uint32_t crc) const;
 
 	mutable cSignal<void ()> nameChanged;

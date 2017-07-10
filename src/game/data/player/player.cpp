@@ -28,7 +28,7 @@
 #include "game/logic/serverevents.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/report/savedreport.h"
-#include "game/logic/turnclock.h"
+#include "game/logic/turncounter.h"
 #include "utility/crc.h"
 
 using namespace std;
@@ -654,6 +654,69 @@ void cPlayer::refreshBase(const cMap& map)
 	}
 }
 
+//------------------------------------------------------------------------------
+void cPlayer::makeTurnEnd()
+{
+	setHasFinishedTurn(false);
+
+	base.checkTurnEnd();
+
+	base.makeTurnStart();
+
+	// reload all buildings
+	for (auto& building : buildings)
+	{
+		if (building->isDisabled())
+		{
+			building->setDisabledTurns(building->getDisabledTurns() - 1);
+			if (building->isDisabled() == false && building->wasWorking)
+			{
+				building->startWork();
+				building->wasWorking = false;
+			}
+		}
+		building->refreshData();
+	}
+
+	// reload all vehicles
+	for (auto& vehicle : vehicles)
+	{
+		if (vehicle->isDisabled())
+		{
+			vehicle->setDisabledTurns(vehicle->getDisabledTurns() - 1);
+		}
+		vehicle->refreshData();
+		//vehicle->proceedBuilding(*this);
+		//vehicle->proceedClearing(*this);
+	}
+
+	// hide stealth units
+	doScan(); // make sure the detection maps are up to date
+
+	for (auto& vehicle : vehicles)
+	{
+		vehicle->clearDetectedInThisTurnPlayerList();
+		//TODO: stealth units
+		//vehicle->makeDetection(*this);
+	}
+
+	// do research:
+	//TODO: research
+	//doResearch(*model.getUnitsData());
+
+	// eco-spheres:
+	//TODO:
+	//accumulateScore(*this);
+
+	// Gun'em down:
+	for (auto& vehicle : vehicles)
+	{
+		//TODO: sentry
+		//vehicle->InSentryRange(*this);
+	}
+}
+
+//------------------------------------------------------------------------------
 uint32_t cPlayer::getChecksum(uint32_t crc) const
 {
 	crc = calcCheckSum(splayer, crc);

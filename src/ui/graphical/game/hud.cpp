@@ -37,7 +37,7 @@
 #include "main.h"
 #include "game/data/units/unit.h"
 #include "keys.h"
-#include "game/logic/turnclock.h"
+#include "game/logic/turncounter.h"
 #include "game/logic/turntimeclock.h"
 
 //------------------------------------------------------------------------------

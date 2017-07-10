@@ -32,6 +32,7 @@
 #include "game/data/player/player.h"
 #include "game/logic/pathcalculator.h"
 #include "game/logic/movejob.h"
+#include "game/logic/turncounter.h"
 
 class cPlayerBasicData;
 class cGameSettings;
@@ -77,6 +78,8 @@ public:
 	const std::vector<std::shared_ptr<cPlayer>>& getPlayerList() const { return /*static_cast<std::vector<std::shared_ptr<const cPlayer>>>*/(playerList); }; //TODO: cast to const cPlayer
 	std::vector<std::shared_ptr<cPlayer>>& getPlayerList() { return playerList; };
 	void setPlayerList(const std::vector<cPlayerBasicData>& splayers);
+	
+	std::shared_ptr<const cTurnCounter> getTurnCounter() const;
 
 	cUnit* getUnitFromID(unsigned int id) const;
 	cVehicle* getVehicleFromID(unsigned int id) const;
@@ -92,6 +95,8 @@ public:
 
 	mutable cSignal<void()> gameTimeChanged;
 	mutable cSignal<void(const cVehicle& vehicle)> triggeredAddTracks;
+	mutable cSignal<void(const cPlayer& player)> playerFinishedTurn;
+	mutable cSignal<void()> newTurnStarted;
 
 	template<typename T>
 	void save(T& archive)
@@ -113,6 +118,7 @@ public:
 		}
 		//archive & NVP(neutralBuildings);
 		archive << NVP(nextUnitId);
+		archive << serialization::makeNvp("turnCounter", *turnCounter);
 	};
 	template<typename T>
 	void load(T& archive)
@@ -170,12 +176,15 @@ public:
 			archive >> serialization::makeNvp("moveJob", *moveJob);
 		}
 		archive >> NVP(nextUnitId);
+		archive >> serialization::makeNvp("turnCounter", *turnCounter);
 	}
 	SERIALIZATION_SPLIT_MEMBER();
 private:
 	void refreshMapPointer();
 	void runMoveJobs();
+	void handleTurnEnd();
 
+	//------------------------------------------------------------------------------
 	unsigned int gameId; //this id can be used to check, which log files, and save file belong to the same game.
 
 	unsigned int gameTime;
@@ -190,11 +199,12 @@ private:
 
 	std::shared_ptr<cUnitsData> unitsData;
 
-	std::vector<cMoveJob*> moveJobs; //TODO: serialize
+	std::vector<cMoveJob*> moveJobs;
+
+	std::shared_ptr<cTurnCounter> turnCounter;
 
 	//jobs
 	//casualtiesTracker
-	//turnnr
 	//turn u. deadline timer
 	
 	//effect list

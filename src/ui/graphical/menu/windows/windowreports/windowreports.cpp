@@ -38,7 +38,7 @@
 #include "game/data/units/building.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/data/report/savedreport.h"
-#include "game/logic/turnclock.h"
+#include "game/logic/turncounter.h"
 #include "game/data/gamesettings.h"
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
 

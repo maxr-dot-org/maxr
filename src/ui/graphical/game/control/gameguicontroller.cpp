@@ -93,7 +93,10 @@
 #include "game/logic/movejob.h"
 #include "game/logic/action/actionstartmove.h"
 #include "game/logic/action/actionresumemove.h"
-#include "game/logic/turnclock.h"
+#include "game/logic/turncounter.h"
+#include "game/logic/action/actionendturn.h"
+#include "game/data/report/special/savedreportplayerendedturn.h"
+#include "game/logic/turncounter.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -262,7 +265,7 @@ void cGameGuiController::setActiveClient (std::shared_ptr<cClient> client_)
 	gameGui->setDynamicMap (getDynamicMap());
 	gameGui->setPlayers (getPlayers());
 	gameGui->setPlayer (getActivePlayer());
-	gameGui->setTurnClock (getTurnClock());
+	gameGui->setTurnClock (getTurnCounter());
 	gameGui->setTurnTimeClock (getTurnTimeClock());
 	gameGui->setGameSettings (getGameSettings());
 	gameGui->getDebugOutput().setClient (activeClient.get());
@@ -808,7 +811,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getHud().endClicked, [&]()
 	{
-		client.handleEnd();
+		if (!client.getFreezeModes().isFreezed()) client.sendNetMessage(cActionEndTurn());
 	});
 	clientSignalConnectionManager.connect (gameGui->getHud().triggeredRenameUnit, [&] (const cUnit & unit, const std::string & name)
 	{
@@ -1095,11 +1098,21 @@ void cGameGuiController::connectClient (cClient& client)
 	//
 	// client to GUI (reaction)
 	//
-	clientSignalConnectionManager.connect(client.getTurnClock()->turnChanged, [&]()
+	const cModel& model = client.getModel();
+
+	clientSignalConnectionManager.connect(model.newTurnStarted, [&]()
 	{
 		doneList.clear();
+		gameGui->getHud().unlockEndButton();
 	});
-	clientSignalConnectionManager.connect (client.playerFinishedTurn, [&] (int currentPlayerNumber, int nextPlayerNumber)
+	clientSignalConnectionManager.connect(model.playerFinishedTurn, [&](const cPlayer& player)
+	{
+		if (player.getId() == getActivePlayer()->getId())
+		{
+			gameGui->getHud().lockEndButton();
+		}
+	});
+/*	clientSignalConnectionManager.connect (client.playerFinishedTurn, [&] (int currentPlayerNumber, int nextPlayerNumber)
 	{
 		if (currentPlayerNumber != client.getActivePlayer().getId()) return;
 
@@ -1118,12 +1131,8 @@ void cGameGuiController::connectClient (cClient& client)
 			}
 			else setActiveClient (nullptr);
 		}
-		else
-		{
-			gameGui->getHud().lockEndButton();
-		}
 	});
-
+*/
 	clientSignalConnectionManager.connect(client.freezeModeChanged, [&](const cFreezeModes& freezeModes, const std::map<int, ePlayerConnectionState>& playerConnectionStates)
 	{
 		// set state of 'end' button
@@ -1323,13 +1332,23 @@ void cGameGuiController::connectReportSources(cClient& client)
 {
 	//this is the place where all reports about certain events in the model are generated...
 
+	const cModel& model = client.getModel();
 	const cPlayer& player = client.getActivePlayer();
 
 	playerReports[player.getId()] = std::make_shared<std::vector<std::unique_ptr<cSavedReport>>>();
 
+	//report message received from server
 	allClientsSignalConnectionManager.connect(client.reportMessageReceived, [&](int fromPlayerNr, std::unique_ptr<cSavedReport>& report, int toPlayerNr)
 	{
 		addSavedReport(std::move(report), toPlayerNr);
+	});
+
+	allClientsSignalConnectionManager.connect(model.playerFinishedTurn, [&](const cPlayer& player)
+	{
+		if (player.getId() != getActivePlayer()->getId())
+		{
+			addSavedReport (std::make_unique<cSavedReportPlayerEndedTurn> (player), player.getId());
+		}
 	});
 
 	//reports from the players base:
@@ -1445,7 +1464,7 @@ void cGameGuiController::showPreferencesDialog()
 //------------------------------------------------------------------------------
 void cGameGuiController::showReportsWindow()
 {
-	auto reportsWindow = application.show(std::make_shared<cWindowReports>(getPlayers(), getActivePlayer(), getCasualtiesTracker(), getTurnClock(), getTurnTimeClock(), getGameSettings(), getSavedReports(getActivePlayer()->getId()), getUnitsData()));
+	auto reportsWindow = application.show(std::make_shared<cWindowReports>(getPlayers(), getActivePlayer(), getCasualtiesTracker(), getTurnCounter(), getTurnTimeClock(), getGameSettings(), getSavedReports(getActivePlayer()->getId()), getUnitsData()));
 
 	signalConnectionManager.connect (reportsWindow->unitClickedSecondTime, [this, reportsWindow] (cUnit & unit)
 	{
@@ -1911,9 +1930,9 @@ std::shared_ptr<const cPlayer> cGameGuiController::getActivePlayer() const
 }
 
 //------------------------------------------------------------------------------
-std::shared_ptr<const cTurnCounter> cGameGuiController::getTurnClock() const
+std::shared_ptr<const cTurnCounter> cGameGuiController::getTurnCounter() const
 {
-	return activeClient ? activeClient->getTurnClock() : nullptr;
+	return activeClient ? activeClient->getModel().getTurnCounter() : nullptr;
 }
 
 //------------------------------------------------------------------------------
