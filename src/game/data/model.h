@@ -95,9 +95,10 @@ public:
 
 	mutable cSignal<void()> gameTimeChanged;
 	mutable cSignal<void(const cVehicle& vehicle)> triggeredAddTracks;
-	mutable cSignal<void(const cPlayer& player)> playerFinishedTurn;
-	mutable cSignal<void()> newTurnStarted;
-	mutable cSignal<void()> moveJobsResumedOnTurnEnd;
+	mutable cSignal<void(const cPlayer& player)> playerFinishedTurn; // triggered when a player wants to end the turn
+	mutable cSignal<void()> turnEnded; // triggered when all players ended the turn or the turn time clock reached a deadline
+	mutable cSignal<void()> newTurnStarted; // triggered when the model has done all calculations for the new turn. 
+                                            // Note: this is usually the moment to trigger the autosave, not to start the new turn in the gui
 
 	template<typename T>
 	void save(T& archive)

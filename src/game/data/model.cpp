@@ -499,20 +499,22 @@ void cModel::handleTurnEnd()
 	if (!executingRemainingMovements)
 	{
 		executingRemainingMovements = true;
-		bool moveJobsStarted = false;
+		turnEnded();
+		std::vector<const cPlayer*> players;
 		for (const auto& moveJob : moveJobs)
 		{
 			if (moveJob->isWaiting() && moveJob->getVehicle() && moveJob->getVehicle()->data.getSpeed() > 0)
 			{
 				moveJob->resume();
-				moveJobsStarted = true;
+				players.push_back(moveJob->getVehicle()->getOwner());
 			}
 		}
-		if (moveJobsStarted)
+		RemoveDuplicates(players);
+		for (const auto& player : players)
 		{
-			moveJobsResumedOnTurnEnd();
-			return;
+			player->turnEndMovementsStarted();
 		}
+		return;
 	}
 
 	for (const auto& moveJob : moveJobs)

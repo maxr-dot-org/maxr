@@ -1101,11 +1101,6 @@ void cGameGuiController::connectClient (cClient& client)
 	//
 	const cModel& model = client.getModel();
 
-	clientSignalConnectionManager.connect(model.newTurnStarted, [&]()
-	{
-		doneList.clear();
-		gameGui->getHud().unlockEndButton();
-	});
 	clientSignalConnectionManager.connect(model.playerFinishedTurn, [&](const cPlayer& player)
 	{
 		if (player.getId() == getActivePlayer()->getId())
@@ -1134,17 +1129,21 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 */
-	clientSignalConnectionManager.connect(client.freezeModeChanged, [&](const cFreezeModes& freezeModes, const std::map<int, ePlayerConnectionState>& playerConnectionStates)
+	clientSignalConnectionManager.connect(client.freezeModeChanged, [&](const cFreezeModes& oldFreezeModes, const std::map<int, ePlayerConnectionState>& playerConnectionStates)
 	{
+		const cFreezeModes& freezeModes = client.getFreezeModes();
+
 		// set state of 'end' button
 		if (freezeModes.isEnabled(eFreezeMode::WAIT_FOR_OTHERS_TURN) || freezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND))
 		{
 			gameGui->getHud().lockEndButton();
 		}
-		else
+		else if (oldFreezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND))
 		{
+			doneList.clear();
 			gameGui->getHud().unlockEndButton();
 		}
+
 
 		// set overlay into message
 		if (freezeModes.isEnabled (eFreezeMode::PAUSE))
@@ -1185,6 +1184,10 @@ void cGameGuiController::connectClient (cClient& client)
 				gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~No_Response", notRespondingPlayers), "");
 			}
 		}
+		else if (freezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND))
+		{
+			gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_TurnEnd"), "");
+		}
 		else if (freezeModes.isEnabled (eFreezeMode::WAIT_FOR_SERVER))
 		{
 			gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_For_Server"), "");
@@ -1194,10 +1197,6 @@ void cGameGuiController::connectClient (cClient& client)
 			// TODO: Fix message
 			const std::string& name = /* player ? player->getName() : */ "other players";
 			gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_Until", name), "");
-		}
-		else if (freezeModes.isEnabled (eFreezeMode::WAIT_FOR_TURNEND))
-		{
-			gameGui->setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_TurnEnd"), "");
 		}
 		else
 		{
@@ -1351,13 +1350,18 @@ void cGameGuiController::connectReportSources(cClient& client)
 			addSavedReport(std::make_unique<cSavedReportPlayerEndedTurn>(player), player.getId());
 		}
 	});
-	allClientsSignalConnectionManager.connect(model.moveJobsResumedOnTurnEnd, [&]()
+	allClientsSignalConnectionManager.connect(player.turnEndMovementsStarted, [&]()
 	{
 		addSavedReport(std::make_unique<cSavedReportSimple>(eSavedReportType::TurnAutoMove), player.getId());
 	});
-	allClientsSignalConnectionManager.connect(model.newTurnStarted, [&]()
+	clientSignalConnectionManager.connect(client.freezeModeChanged, [&](const cFreezeModes& oldFreezeModes, const std::map<int, ePlayerConnectionState>& playerConnectionStates)
 	{
-		addSavedReport (std::make_unique<cSavedReportTurnStart> (player, model.getTurnCounter()->getTurn()), player.getId());
+		const cFreezeModes& freezeModes = client.getFreezeModes();
+
+		if (!freezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND) && oldFreezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND))
+		{
+			addSavedReport(std::make_unique<cSavedReportTurnStart>(player, model.getTurnCounter()->getTurn()), player.getId());
+		}
 	});
 
 	//reports from the players base:

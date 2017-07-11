@@ -187,6 +187,7 @@ public:
 	mutable cSignal<void ()> isRemovedFromGameChanged;
 	mutable cSignal<void (cResearch::ResearchArea)> researchCentersWorkingOnAreaChanged;
 	mutable cSignal<void ()> researchCentersWorkingTotalChanged;
+	mutable cSignal<void ()> turnEndMovementsStarted;
 
 	template <typename T>
 	void save(T& archive)

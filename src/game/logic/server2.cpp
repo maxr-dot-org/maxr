@@ -37,8 +37,25 @@ cServer2::cServer2(std::shared_ptr<cConnectionManager> connectionManager) :
 	gameTimer(),
 	serverThread(nullptr),
 	exit(false),
-	connectionManager(connectionManager)
-{}
+	connectionManager(connectionManager),
+	turnEndAutoSaveRequested(false)
+{
+	model.turnEnded.connect([&]()
+	{
+		enableFreezeMode(eFreezeMode::WAIT_FOR_TURNEND);
+	});
+	model.newTurnStarted.connect([&]()
+	{
+		if (cSettings::getInstance().shouldAutosave())
+		{
+			turnEndAutoSaveRequested = true;
+		}
+		else
+		{
+			disableFreezeMode(eFreezeMode::WAIT_FOR_TURNEND);
+		}
+	});
+}
 
 //------------------------------------------------------------------------------
 cServer2::~cServer2()
@@ -296,6 +313,12 @@ void cServer2::run()
 		//TODO: gameinit: start timer, when all clients are ready
 		gameTimer.run(model, *this);
 
+		if (turnEndAutoSaveRequested)
+		{
+			saveGameState(10, lngPack.i18n("Text~Comp~Turn_5") + " " + toString(model.getTurnCounter()->getTurn()) + " - " + lngPack.i18n("Text~Settings~Autosave"));
+			disableFreezeMode(eFreezeMode::WAIT_FOR_TURNEND);
+			turnEndAutoSaveRequested = false;
+		}
 		SDL_Delay(10);
 	}
 }
