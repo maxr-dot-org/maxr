@@ -655,7 +655,7 @@ void cPlayer::refreshBase(const cMap& map)
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::makeTurnEnd()
+void cPlayer::makeTurnStart()
 {
 	setHasFinishedTurn(false);
 	resetTurnReportData();

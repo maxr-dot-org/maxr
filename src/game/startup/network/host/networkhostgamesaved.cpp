@@ -51,13 +51,6 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	auto staticMap = server->getModel().getMap()->staticMap;
 	localClient->setMap (staticMap);
 
-	
-	//TODO: turnbased mode
-	//if (server->getGameSettings()->getGameType() == eGameSettingsGameType::Turns)
-	//{
-	//	sendWaitFor (*server, *server->getActiveTurnPlayer(), nullptr);
-	//}
-
 	localClient->sendNetMessage(cNetMessageRequestResync(-1, saveGameNumber));
 	server->start();
 

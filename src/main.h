@@ -229,7 +229,6 @@ std::string enumToString(ePlayerConnectionState value);
 
 enum class eFreezeMode
 {
-	WAIT_FOR_OTHERS_TURN,    // waiting for the others turn, in turn based mode
 	WAIT_FOR_TURNEND,   // server is processing the turn end
 	PAUSE,              // pause, because... pause
 	WAIT_FOR_CLIENT,    // waiting for response from client
@@ -250,7 +249,6 @@ public:
 	template<typename T>
 	void serialize(T& archive)
 	{
-		archive & waitForOthersTurn;
 		archive & waitForTurnEnd;
 		archive & pause;
 		archive & waitForClient;
@@ -258,7 +256,6 @@ public:
 	}
 
 	// These modes are triggered on server (and synchronized to clients):
-	bool waitForOthersTurn; // waiting for the others turn, in turn based mode
 	bool waitForTurnEnd;    // server is processing the turn end
 	bool pause;             // pause, because... pause
 	bool waitForClient;      // waiting for response from client

@@ -86,6 +86,7 @@ public:
 	void enableFreezeMode (eFreezeMode mode);
 	void disableFreezeMode (eFreezeMode mode);
 	const cFreezeModes& getFreezeModes () const;
+	const std::map<int, ePlayerConnectionState>& getPlayerConnectionStates() const;
 	//
 
 	/**

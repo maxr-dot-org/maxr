@@ -176,7 +176,7 @@ public:
 	void refreshResearchCentersWorkingOnArea();
 	void refreshBase(const cMap& map);
 
-	void makeTurnEnd();
+	void makeTurnStart();
 
 	uint32_t getChecksum(uint32_t crc) const;
 

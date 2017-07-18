@@ -39,8 +39,9 @@ void cActionEndTurn::execute(cModel& model) const
 	cPlayer* player = model.getPlayer(playerNr);
 	if (player == nullptr) return;
 
-	// defeated player are ignored when they hit the end button
+	// defeated players are ignored when they hit the end button
 	if (player->isDefeated) return;
+	if (player->getHasFinishedTurn()) return;
 
 	if (model.getGameSettings()->getGameType() == eGameSettingsGameType::Turns)
 	{

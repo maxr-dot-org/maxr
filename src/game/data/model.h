@@ -78,6 +78,7 @@ public:
 	const std::vector<std::shared_ptr<cPlayer>>& getPlayerList() const { return /*static_cast<std::vector<std::shared_ptr<const cPlayer>>>*/(playerList); }; //TODO: cast to const cPlayer
 	std::vector<std::shared_ptr<cPlayer>>& getPlayerList() { return playerList; };
 	void setPlayerList(const std::vector<cPlayerBasicData>& splayers);
+	const cPlayer* getActiveTurnPlayer() const;
 	
 	std::shared_ptr<const cTurnCounter> getTurnCounter() const;
 
@@ -122,6 +123,7 @@ public:
 		archive << NVP(nextUnitId);
 		archive << serialization::makeNvp("turnCounter", *turnCounter);
 		archive << NVP(executingRemainingMovements);
+		archive << NVP(activeTurnPlayer);
 	};
 	template<typename T>
 	void load(T& archive)
@@ -181,6 +183,7 @@ public:
 		archive >> NVP(nextUnitId);
 		archive >> serialization::makeNvp("turnCounter", *turnCounter);
 		archive >> NVP(executingRemainingMovements);
+		archive >> NVP(activeTurnPlayer);
 	}
 	SERIALIZATION_SPLIT_MEMBER();
 private:
@@ -196,6 +199,7 @@ private:
 	std::shared_ptr<cGameSettings> gameSettings;
 	std::shared_ptr<cMap> map;
 	std::vector<std::shared_ptr<cPlayer>> playerList;
+	cPlayer* activeTurnPlayer;
 
 	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> neutralBuildings;
 

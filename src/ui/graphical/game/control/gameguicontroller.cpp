@@ -282,6 +282,10 @@ void cGameGuiController::setActiveClient (std::shared_ptr<cClient> client_)
 			gameGui->restoreState (iter->second);
 		}
 		soundManager->setModel(&activeClient->getModel());
+
+		updateEndButtonState();
+		updateGuiInfoTexts();
+		updateChangeAllowed();
 	}
 	else
 	{
@@ -1133,78 +1137,15 @@ void cGameGuiController::connectClient (cClient& client)
 	{
 		const cFreezeModes& freezeModes = client.getFreezeModes();
 
-		// set state of 'end' button
-		if (freezeModes.isEnabled(eFreezeMode::WAIT_FOR_OTHERS_TURN) || freezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND))
-		{
-			gameGui->getHud().lockEndButton();
-		}
-		else if (oldFreezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND))
+		if (!freezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND) && oldFreezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND) && activeClient->getModel().getActiveTurnPlayer() != getActivePlayer().get())
 		{
 			doneList.clear();
-			gameGui->getHud().unlockEndButton();
 		}
 
-
-		// set overlay into message
-		if (freezeModes.isEnabled (eFreezeMode::PAUSE))
-		{
-			gameGui->setInfoTexts (lngPack.i18n ("Text~Multiplayer~Pause"), "");
-		}
-		else if (freezeModes.isEnabled (eFreezeMode::WAIT_FOR_CLIENT))
-		{
-			std::string disconncetedPlayers;
-			std::string notRespondingPlayers;
-			for (const auto playerState : playerConnectionStates)
-			{
-				const cPlayer& player = *client.getModel().getPlayer(playerState.first);
-				if (playerState.second == ePlayerConnectionState::DISCONNECTED)
-				{
-					if (!disconncetedPlayers.empty())
-					{
-						disconncetedPlayers += ", ";
-					}
-					disconncetedPlayers += player.getName();
-				}
-				if (playerState.second == ePlayerConnectionState::NOT_RESPONDING)
-				{
-					if (!notRespondingPlayers.empty())
-					{
-						notRespondingPlayers += ", ";
-					}
-					notRespondingPlayers += player.getName();
-				}
-			}
-			if (!disconncetedPlayers.empty())
-			{
-				std::string s = server ? lngPack.i18n("Text~Multiplayer~Abort_Waiting") : "";
-				gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_Reconnect", disconncetedPlayers), s);
-			}
-			else if (!notRespondingPlayers.empty())
-			{
-				gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~No_Response", notRespondingPlayers), "");
-			}
-		}
-		else if (freezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND))
-		{
-			gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_TurnEnd"), "");
-		}
-		else if (freezeModes.isEnabled (eFreezeMode::WAIT_FOR_SERVER))
-		{
-			gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_For_Server"), "");
-		}
-		else if (freezeModes.isEnabled (eFreezeMode::WAIT_FOR_OTHERS_TURN))
-		{
-			// TODO: Fix message
-			const std::string& name = /* player ? player->getName() : */ "other players";
-			gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_Until", name), "");
-		}
-		else
-		{
-			gameGui->setInfoTexts ("", "");
-		}
-
-		// set gui change allowed
-		gameGui->getGameMap().setChangeAllowed (!freezeModes.isFreezed());
+		updateEndButtonState();
+		updateGuiInfoTexts();
+		updateChangeAllowed();
+		
 	});
 
 	clientSignalConnectionManager.connect(client.getModel().triggeredAddTracks, [&](const cVehicle & vehicle)
@@ -1343,11 +1284,11 @@ void cGameGuiController::connectReportSources(cClient& client)
 		addSavedReport(std::move(report), toPlayerNr);
 	});
 
-	allClientsSignalConnectionManager.connect(model.playerFinishedTurn, [&](const cPlayer& player)
+	allClientsSignalConnectionManager.connect(model.playerFinishedTurn, [&](const cPlayer& otherPlayer)
 	{
-		if (player.getId() != getActivePlayer()->getId())
+		if (otherPlayer.getId() != getActivePlayer()->getId())
 		{
-			addSavedReport(std::make_unique<cSavedReportPlayerEndedTurn>(player), player.getId());
+			addSavedReport(std::make_unique<cSavedReportPlayerEndedTurn>(otherPlayer), player.getId());
 		}
 	});
 	allClientsSignalConnectionManager.connect(player.turnEndMovementsStarted, [&]()
@@ -1358,7 +1299,8 @@ void cGameGuiController::connectReportSources(cClient& client)
 	{
 		const cFreezeModes& freezeModes = client.getFreezeModes();
 
-		if (!freezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND) && oldFreezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND))
+		if (!freezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND) && oldFreezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND) &&
+			(model.getActiveTurnPlayer() == getActivePlayer().get() || model.getGameSettings()->getGameType() == eGameSettingsGameType::Simultaneous))
 		{
 			addSavedReport(std::make_unique<cSavedReportTurnStart>(player, model.getTurnCounter()->getTurn()), player.getId());
 		}
@@ -2033,5 +1975,97 @@ void cGameGuiController::sendStartGroupMoveAction(std::vector<cVehicle*> group, 
 		const auto& vehicle = group[i];
 		const auto& path = paths[i];
 		activeClient->sendNetMessage(cActionStartMove(*vehicle, path));
+	}
+}
+
+//------------------------------------------------------------------------------
+void cGameGuiController::updateChangeAllowed()
+{
+	const cFreezeModes& freezeModes = activeClient->getFreezeModes();
+	const auto& model = activeClient->getModel();
+
+	bool changeAllowed = !freezeModes.isFreezed() && (activeClient->getModel().getActiveTurnPlayer() == getActivePlayer().get() || model.getGameSettings()->getGameType() == eGameSettingsGameType::Simultaneous);
+	gameGui->getGameMap().setChangeAllowed (changeAllowed);
+}
+
+//------------------------------------------------------------------------------
+void cGameGuiController::updateEndButtonState()
+{
+	const cFreezeModes& freezeModes = activeClient->getFreezeModes();
+	const auto& model = activeClient->getModel();
+
+	if (freezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND) || 
+	   (activeClient->getModel().getActiveTurnPlayer() != getActivePlayer().get() && model.getGameSettings()->getGameType() == eGameSettingsGameType::Turns))
+	{
+		gameGui->getHud().lockEndButton();
+	}
+	else
+	{
+		gameGui->getHud().unlockEndButton();
+	}
+}
+
+//------------------------------------------------------------------------------
+void cGameGuiController::updateGuiInfoTexts()
+{
+	const cFreezeModes& freezeModes = activeClient->getFreezeModes();
+	const auto& playerConnectionStates = activeClient->getPlayerConnectionStates();
+	const auto& model = activeClient->getModel();
+
+	// set overlay into message
+	if (freezeModes.isEnabled(eFreezeMode::PAUSE))
+	{
+		gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Pause"), "");
+	}
+	else if (freezeModes.isEnabled(eFreezeMode::WAIT_FOR_CLIENT))
+	{
+		std::string disconncetedPlayers;
+		std::string notRespondingPlayers;
+		for (const auto playerState : playerConnectionStates)
+		{
+			const cPlayer& player = *activeClient->getModel().getPlayer(playerState.first);
+			if (playerState.second == ePlayerConnectionState::DISCONNECTED)
+			{
+				if (!disconncetedPlayers.empty())
+				{
+					disconncetedPlayers += ", ";
+				}
+				disconncetedPlayers += player.getName();
+			}
+			if (playerState.second == ePlayerConnectionState::NOT_RESPONDING)
+			{
+				if (!notRespondingPlayers.empty())
+				{
+					notRespondingPlayers += ", ";
+				}
+				notRespondingPlayers += player.getName();
+			}
+		}
+		if (!disconncetedPlayers.empty())
+		{
+			std::string s = server ? lngPack.i18n("Text~Multiplayer~Abort_Waiting") : "";
+			gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_Reconnect", disconncetedPlayers), s);
+		}
+		else if (!notRespondingPlayers.empty())
+		{
+			gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~No_Response", notRespondingPlayers), "");
+		}
+	}
+	else if (freezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND))
+	{
+		gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_TurnEnd"), "");
+	}
+	else if (freezeModes.isEnabled(eFreezeMode::WAIT_FOR_SERVER))
+	{
+		gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_For_Server"), "");
+	}
+	else if (activeClient->getModel().getActiveTurnPlayer() != getActivePlayer().get() && model.getGameSettings()->getGameType() == eGameSettingsGameType::Turns)
+	{
+		const std::string& name = activeClient->getModel().getActiveTurnPlayer()->getName();
+		gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_Until", name), "");
+	}
+	else
+	{
+		gameGui->setInfoTexts("", "");
 	}
 }

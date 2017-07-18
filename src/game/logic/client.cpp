@@ -1444,6 +1444,12 @@ const cFreezeModes& cClient::getFreezeModes () const
 }
 
 //------------------------------------------------------------------------------
+const std::map<int, ePlayerConnectionState>& cClient::getPlayerConnectionStates() const
+{
+	return playerConnectionStates;
+}
+
+//------------------------------------------------------------------------------
 void cClient::loadModel(int saveGameNumber)
 {
 	cSavegame savegame;

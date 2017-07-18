@@ -51,13 +51,6 @@ void cNetworkHostGameNew::start (cApplication& application)
 	localClient->setPlayers(players, localPlayerNr);
 	server->setPlayers(players);
 
-	//TODO: turn based mode
-	//if (gameSettings->getGameType() == eGameSettingsGameType::Turns)
-	//{
-	//	server->setActiveTurnPlayer (*server->playerList[0]);
-	//}
-
-	
 	server->setGameSettings (*gameSettings);
 	localClient->setGameSettings(*gameSettings);
 
@@ -72,12 +65,6 @@ void cNetworkHostGameNew::start (cApplication& application)
 	action.landingPosition = localPlayerLandingPosition;
 	action.unitUpgrades = localPlayerUnitUpgrades;
 	localClient->sendNetMessage(action);
-
-	//TODO: turnbased mode
-	//if (gameSettings->getGameType() == eGameSettingsGameType::Turns)
-	//{
-	//	sendWaitFor (*server, *server->getActiveTurnPlayer(), nullptr);
-	//}
 
 	//TODO: turn timers
 	//server->startTurnTimers();
