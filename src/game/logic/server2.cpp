@@ -217,6 +217,18 @@ void cServer2::run()
 			{
 			case eNetMessageType::ACTION:
 			{
+				// filter disallowed actions
+				if (freezeModes.isFreezed())
+				{
+					Log.write(" Server: Discarding action, because game is freezed.", cLog::eLOG_TYPE_NET_WARNING);
+					break;
+				}
+				if (model.getGameSettings()->getGameType() == eGameSettingsGameType::Turns && message->playerNr != model.getActiveTurnPlayer()->getId())
+				{
+					Log.write(" Server: Discarding action, because it's another payers turn.", cLog::eLOG_TYPE_NET_WARNING);
+					break;
+				}
+
 				const cAction* action = static_cast<cAction*>(message.get());
 				action->execute(model);
 
