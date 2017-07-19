@@ -73,9 +73,6 @@ cServer::cServer(std::shared_ptr<cTCP> network_) :
 	gameTimer(std::make_shared<cGameTimerServer>()),
 	serverThread(nullptr),
 	turnClock(std::make_unique<cTurnCounter>(1)),
-	turnTimeClock(std::make_unique<cTurnTimeClock>(model)),
-	lastTurnEnd(0),
-	executingRemainingMovements(false),
 	gameSettings(std::make_unique<cGameSettings>()),
 	casualtiesTracker(new cCasualtiesTracker()),
 	serverState(SERVER_STATE_INITGAME)
@@ -84,7 +81,6 @@ cServer::cServer(std::shared_ptr<cTCP> network_) :
 	openMapDefeat = true;
 	activeTurnPlayer = nullptr;
 	iNextUnitID = 1;
-	pendingEndTurnPlayerNumber = -1;
 	savingID = 0;
 	savingIndex = -1;
 
@@ -193,30 +189,6 @@ void cServer::stop()
 }
 
 //------------------------------------------------------------------------------
-void cServer::setTurnEndDeadline (const std::chrono::seconds& deadline)
-{
-	gameSettings->setTurnEndDeadline (deadline);
-}
-
-//------------------------------------------------------------------------------
-void cServer::setTurnEndDeadlineActive (bool value)
-{
-	gameSettings->setTurnEndDeadlineActive (value);
-}
-
-//------------------------------------------------------------------------------
-void cServer::setTurnLimit (const std::chrono::seconds& deadline)
-{
-	gameSettings->setTurnLimit (deadline);
-}
-
-//------------------------------------------------------------------------------
-void cServer::setTurnLimitActive (bool value)
-{
-	gameSettings->setTurnLimitActive (value);
-}
-
-//------------------------------------------------------------------------------
 void cServer::pushEvent (std::unique_ptr<cNetMessage> message)
 {
 	eventQueue.push (std::move (message));
@@ -305,29 +277,11 @@ void cServer::run()
 
 void cServer::doGameActions()
 {
-	checkDeadline();
 	cAttackJob::runAttackJobs (AJobs);
 	runJobs();
-	handleWantEnd();
 	checkPlayerUnits();
 }
 
-//------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_WANT_TO_END_TURN (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_WANT_TO_END_TURN);
-
-	auto& player = getPlayerFromNumber (message.iPlayerNr);
-
-	if (isTurnBasedGame())
-	{
-		if (activeTurnPlayer->getId() != message.iPlayerNr) return;
-	}
-
-	if (player.base.checkTurnEnd ()) return;
-
-	handleEnd (player);
-}
 //------------------------------------------------------------------------------
 void cServer::handleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 {
@@ -1079,7 +1033,7 @@ void cServer::handleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message)
 	}
 	DisconnectedPlayerList.clear();
 //	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
-	if (isTurnBasedGame()) sendWaitFor (*this, *activeTurnPlayer, nullptr);
+	//if (isTurnBasedGame()) sendWaitFor (*this, *activeTurnPlayer, nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -1551,7 +1505,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 
 	switch (message.iType)
 	{
-		case GAME_EV_WANT_TO_END_TURN: handleNetMessage_GAME_EV_WANT_TO_END_TURN (message); break;
 		case GAME_EV_WANT_ATTACK: handleNetMessage_GAME_EV_WANT_ATTACK (message); break;
 		case GAME_EV_MINELAYERSTATUS: handleNetMessage_GAME_EV_MINELAYERSTATUS (message); break;
 		case GAME_EV_WANT_BUILD: handleNetMessage_GAME_EV_WANT_BUILD (message); break;
@@ -1965,359 +1918,6 @@ cPlayer* cServer::getActiveTurnPlayer()
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleEnd (cPlayer& player)
-{
-	const eGameTypes gameType = getGameType();
-
-	if (gameType == GAME_TYPE_SINGLE)
-	{
-		sendTurnFinished (*this, player, nullptr);
-		if (checkRemainingMoveJobs (&player))
-		{
-			pendingEndTurnPlayerNumber = player.getId();
-			return;
-		}
-
-		pendingEndTurnPlayerNumber = -1;
-
-		checkDefeats();
-		turnClock->increaseTurn();
-
-		makeTurnStart (player);
-	}
-	else if (gameType == GAME_TYPE_HOTSEAT || isTurnBasedGame())
-	{
-		if (checkRemainingMoveJobs (&player))
-		{
-			pendingEndTurnPlayerNumber = player.getId();
-			return;
-		}
-
-		pendingEndTurnPlayerNumber = -1;
-
-		// select next player
-		auto nextPlayerIter = std::find_if (playerList.begin(), playerList.end(), [this] (const std::unique_ptr<cPlayer>& player) {return player.get() == activeTurnPlayer; });
-		assert (nextPlayerIter != playerList.end());
-		++nextPlayerIter;
-
-		bool newTurn = false;
-		if (nextPlayerIter == playerList.end())
-		{
-			activeTurnPlayer = playerList.front().get();
-			newTurn = true;
-		}
-		else
-		{
-			activeTurnPlayer = nextPlayerIter->get();
-		}
-
-		sendTurnFinished (*this, player, activeTurnPlayer);
-
-		if (newTurn)
-		{
-			checkDefeats();
-			turnClock->increaseTurn();
-		}
-
-		if (isTurnBasedGame()) sendWaitFor (*this, *activeTurnPlayer, nullptr);
-
-		makeTurnStart (*activeTurnPlayer);
-	}
-	else // it's a simultaneous TCP/IP multiplayer game
-	{
-		// defeated player are ignored when they hit the end button
-		if (player.isDefeated) return;
-
-		// check whether this player has already finished his turn
-		for (size_t i = 0; i != playerEndList.size(); ++i)
-		{
-			if (playerEndList[i]->getId() == player.getId()) return;
-		}
-		playerEndList.push_back (&player);
-		const bool firstTimeEnded = playerEndList.size() == 1;
-
-		// make sure that all defeated players are added to the endlist
-		for (size_t i = 0; i != playerList.size(); ++i)
-		{
-			auto& currentPlayer = *playerList[i];
-			if (currentPlayer.isDefeated)
-			{
-				if (!Contains (playerEndList, &currentPlayer))
-				{
-					playerEndList.push_back (&currentPlayer);
-				}
-			}
-		}
-
-		if (pendingEndTurnPlayerNumber == -1)
-		{
-			sendTurnFinished (*this, player, nullptr);
-
-			// When playing with dedicated server
-			// where a player is not connected, play without a deadline,
-			// but wait till all players pressed "End".
-			if (firstTimeEnded && (DEDICATED_SERVER == false || DisconnectedPlayerList.empty()))
-			{
-				if (gameSettings->getGameType() != eGameSettingsGameType::Turns && gameSettings->getGameType() != eGameSettingsGameType::HotSeat && gameSettings->isTurnEndDeadlineActive())
-				{
-					//turnEndDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnEndDeadline());
-					sendTurnEndDeadlineStartTime (*this, turnEndDeadline->getStartGameTime());
-				}
-			}
-		}
-
-		if (playerEndList.size() >= playerList.size())
-		{
-			if (checkRemainingMoveJobs (nullptr))
-			{
-				pendingEndTurnPlayerNumber = player.getId();
-				return;
-			}
-
-			pendingEndTurnPlayerNumber = -1;
-
-			playerEndList.clear();
-
-			checkDefeats();
-			turnClock->increaseTurn();
-
-			for (size_t i = 0; i < playerList.size(); ++i)
-			{
-				makeTurnStart (*playerList[i]);
-			}
-		}
-	}
-}
-
-//------------------------------------------------------------------------------
-void cServer::handleWantEnd()
-{
-	//if (!gameTimer->timer50ms) return;
-
-	// wait until all clients have reported a gametime
-	// that is after the turn end.
-	// that means they have finished processing all the turn end messages,
-	// and we can start the new turn simultaneously on all clients
-	//if (freezeModes.waitForTurnEnd && !executingRemainingMovements)
-	{
-		for (const auto& player : playerList)
-		{
-//			if (!isPlayerDisconnected (*player) && gameTimer->getReceivedTime (player->getNr()) <= lastTurnEnd)
-//				return;
-		}
-
-		if (getGameType() == GAME_TYPE_HOTSEAT || isTurnBasedGame())
-		{
-			//sendSavedReport (*this, cSavedReportTurnStart (*activeTurnPlayer, turnClock->getTurn()), activeTurnPlayer);
-			activeTurnPlayer->resetTurnReportData();
-
-			// when it's the turn of the first player again, we start the next turn
-			if (activeTurnPlayer == playerList.front().get())
-			{
-				sendMakeTurnEnd (*this);
-			}
-		}
-		else
-		{
-			// send reports to all players
-			for (size_t i = 0; i != playerList.size(); ++i)
-			{
-				//sendSavedReport (*this, cSavedReportTurnStart (*playerList[i], turnClock->getTurn()), playerList[i].get());
-				playerList[i]->resetTurnReportData();
-			}
-			sendMakeTurnEnd (*this);
-		}
-
-		startTurnTimers();
-
-		// begin the new turn
-		//disableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
-	}
-
-	if (pendingEndTurnPlayerNumber != -1 && pendingEndTurnPlayerNumber != -2)
-	{
-		playerEndList.erase (std::remove_if (playerEndList.begin(), playerEndList.end(), [ = ] (const cPlayer * player) { return player->getId() == pendingEndTurnPlayerNumber; }), playerEndList.end());
-
-		handleEnd (getPlayerFromNumber (pendingEndTurnPlayerNumber));
-	}
-}
-
-//------------------------------------------------------------------------------
-bool cServer::checkRemainingMoveJobs (const cPlayer* player)
-{
-	//enableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
-
-	executingRemainingMovements = false;
-	bool startedNewMoveJobs = false;
-	if (!ActiveMJobs.empty())
-	{
-		executingRemainingMovements = true;
-	}
-	else
-	{
-		if (player)
-		{
-			if (executeRemainingMoveJobs (*player))
-			{
-				executingRemainingMovements = startedNewMoveJobs = true;
-			}
-		}
-		else
-		{
-			for (size_t i = 0; i != playerList.size(); ++i)
-			{
-				if (executeRemainingMoveJobs (*playerList[i]))
-				{
-					executingRemainingMovements = startedNewMoveJobs = true;
-				}
-			}
-		}
-	}
-	if (executingRemainingMovements)
-	{
-		if (player != nullptr)
-		{
-			if (pendingEndTurnPlayerNumber == -1)
-			{
-				/*if (startedNewMoveJobs) sendSavedReport (*this, cSavedReportSimple (eSavedReportType::TurnAutoMove), player);
-				else sendSavedReport (*this, cSavedReportSimple (eSavedReportType::TurnWait), player);
-*/
-			}
-		}
-		else
-		{
-			if (pendingEndTurnPlayerNumber == -1)
-			{
-				/*for (size_t i = 0; i != playerList.size(); ++i)
-				{
-					if (startedNewMoveJobs) sendSavedReport (*this, cSavedReportSimple (eSavedReportType::TurnAutoMove), playerList[i].get());
-					else sendSavedReport (*this, cSavedReportSimple (eSavedReportType::TurnWait), playerList[i].get());
-				}*/
-			}
-		}
-		return true;
-	}
-	return false;
-}
-
-//------------------------------------------------------------------------------
-bool cServer::executeRemainingMoveJobs (const cPlayer& player)
-{
-	bool hasStartedMoveJobs = false;
-
-	const auto& vehicles = player.getVehicles();
-	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
-	{
-		const auto& vehicle = *i;
-		if (vehicle->getMoveJob() && vehicle->data.getSpeed() > 0 && !vehicle->isUnitMoving())
-		{
-			// restart movejob
-			vehicle->getMoveJob()->resume();
-			hasStartedMoveJobs = true;
-		}
-	}
-
-	return hasStartedMoveJobs;
-}
-
-//------------------------------------------------------------------------------
-void cServer::makeTurnStart (cPlayer& player)
-{
-	//enableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
-	lastTurnEnd = model.getGameTime();
-
-	player.base.checkTurnEnd ();
-
-	player.base.makeTurnStart ();
-
-	// reload all buildings
-	const auto& buildings = player.getBuildings();
-	for (auto i = buildings.begin(); i != buildings.end(); ++i)
-	{
-		const auto& building = *i;
-
-		if (building->isDisabled())
-		{
-			building->setDisabledTurns (building->getDisabledTurns() - 1);
-			if (building->isDisabled() == false && building->wasWorking)
-			{
-				building->startWork ();
-				building->wasWorking = false;
-			}
-		}
-		if (building->getStaticUnitData().canAttack && building->refreshData())
-		{
-			//sendUnitData (*this, *building);
-		}
-	}
-
-	// reload all vehicles
-	const auto& vehicles = player.getVehicles();
-	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
-	{
-		const auto& vehicle = *i;
-
-		bool isModified = false;
-		if (vehicle->isDisabled())
-		{
-			vehicle->setDisabledTurns (vehicle->getDisabledTurns() - 1);
-			isModified = true;
-		}
-		isModified |= vehicle->refreshData();
-		isModified |= vehicle->proceedBuilding (*this);
-		isModified |= vehicle->proceedClearing (*this);
-
-		if (isModified)
-		{
-			//sendUnitData (*this, *vehicle);
-		}
-	}
-
-	// hide stealth units
-	player.doScan(); // make sure the detection maps are up to date
-
-	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
-	{
-		const auto& vehicle = *i;
-		vehicle->clearDetectedInThisTurnPlayerList();
-		vehicle->makeDetection (*this);
-	}
-
-	// do research:
-	player.doResearch (*model.getUnitsData());
-
-	// eco-spheres:
-	player.accumulateScore (*this);
-
-	// Gun'em down:
-	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
-	{
-		const auto& vehicle = *i;
-		vehicle->InSentryRange (*this);
-	}
-
-	// make autosave
-	if (cSettings::getInstance().shouldAutosave())
-	{
-		//cSavegame Savegame (10); // autosaves are always in slot 10
-		//Savegame.save (*this, lngPack.i18n ("Text~Comp~Turn_5") + " " + iToStr (turnClock->getTurn()) + " - " + lngPack.i18n ("Text~Settings~Autosave"));
-		//makeAdditionalSaveRequest (10);
-	}
-}
-
-//------------------------------------------------------------------------------
-void cServer::startTurnTimers()
-{
-	turnTimeClock->restartFromNow();
-	sendTurnStartTime (*this, turnTimeClock->getStartGameTime());
-	turnTimeClock->clearAllDeadlines();
-	if (gameSettings->isTurnLimitActive())
-	{
-		//turnLimitDeadline = turnTimeClock->startNewDeadlineFrom (turnTimeClock->getStartGameTime(), gameSettings->getTurnLimit());
-	}
-}
-
-//------------------------------------------------------------------------------
 bool cServer::isVictoryConditionMet() const
 {
 	switch (gameSettings->getVictoryCondition())
@@ -2425,41 +2025,6 @@ void cServer::checkDefeats()
 		//	sendSavedReport (*this, cSavedReportTranslated ("Text~Comp~SuddenDeath"), playerList[i].get ());
 	}
 	// TODO: send win message to the winner.
-}
-
-//------------------------------------------------------------------------------
-void cServer::checkDeadline()
-{
-	//if (!gameTimer->timer50ms) return;
-
-	if (!turnTimeClock->hasReachedAnyDeadline()) return;
-
-	if (gameSettings->getGameType() == eGameSettingsGameType::Turns || gameSettings->getGameType() == eGameSettingsGameType::HotSeat)
-	{
-		handleEnd (*activeTurnPlayer);
-	}
-	else
-	{
-		if (checkRemainingMoveJobs (nullptr))
-		{
-			pendingEndTurnPlayerNumber = -2;
-			return;
-		}
-
-		pendingEndTurnPlayerNumber = -1;
-
-		playerEndList.clear();
-
-		turnClock->increaseTurn();
-
-		for (size_t i = 0; i < playerList.size(); ++i)
-		{
-			makeTurnStart (*playerList[i]);
-		}
-
-		checkDefeats();
-	}
-	turnTimeClock->clearAllDeadlines();
 }
 
 //------------------------------------------------------------------------------

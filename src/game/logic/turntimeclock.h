@@ -63,13 +63,6 @@ public:
 	explicit cTurnTimeClock (const cModel& model);
 
 	void restartFromNow();
-	void restartFrom (unsigned int gameTime);
-
-	void stop();
-	void stopAt (unsigned int gameTime);
-
-	void resume();
-	void resumeAt (unsigned int gameTime);
 
 	unsigned int getStartGameTime() const;
 
@@ -99,10 +92,7 @@ public:
 	{
 		archive & NVP(deadlines);
 		archive & NVP(startTurnGameTime);
-		archive & NVP(stoppedAtTime);
 		archive & NVP(nextDeadlineId);
-		archive & NVP(stoppedTicks);
-		archive & NVP(stopped);
 	}
 private:
 	cSignalConnectionManager signalConnectionManager;
@@ -112,9 +102,6 @@ private:
 
 	unsigned int nextDeadlineId;
 	unsigned int startTurnGameTime;
-	unsigned int stoppedAtTime;
-	unsigned int stoppedTicks;
-	bool stopped;
 
 	std::chrono::milliseconds getTimeTillDeadlineReached (const cTurnTimeDeadline& deadline) const;
 

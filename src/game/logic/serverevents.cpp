@@ -73,53 +73,6 @@ void sendDeleteUnit (cServer& server, const cUnit& unit, const cPlayer* receiver
 }
 
 //------------------------------------------------------------------------------
-void sendMakeTurnEnd (cServer& server, const cPlayer* receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_MAKE_TURNEND);
-
-	server.sendNetMessage (std::move (message), receiver);
-}
-
-//------------------------------------------------------------------------------
-void sendTurnFinished (cServer& server, const cPlayer& playerWhoEndedTurn, const cPlayer* nextPlayer, const cPlayer* receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_FINISHED_TURN);
-
-	if (nextPlayer)
-	{
-		message->pushInt16 (nextPlayer->getId());
-		message->pushBool (true);
-	}
-	else
-	{
-		message->pushBool (false);
-	}
-	message->pushInt16 (playerWhoEndedTurn.getId());
-
-	server.sendNetMessage (std::move (message), receiver);
-}
-
-//------------------------------------------------------------------------------
-void sendTurnStartTime (cServer& server, unsigned int gameTime)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_TURN_START_TIME);
-
-	message->pushInt32 (gameTime);
-
-	server.sendNetMessage (std::move (message));
-}
-
-//------------------------------------------------------------------------------
-void sendTurnEndDeadlineStartTime (cServer& server, unsigned int gameTime)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_TURN_END_DEADLINE_START_TIME);
-
-	message->pushInt32 (gameTime);
-
-	server.sendNetMessage (std::move (message));
-}
-
-//------------------------------------------------------------------------------
 void sendSpecificUnitData (cServer& server, const cVehicle& vehicle)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_SPECIFIC_UNIT_DATA);
@@ -361,27 +314,11 @@ void sendDefeated (cServer& server, const cPlayer& player, const cPlayer* receiv
 }
 
 //------------------------------------------------------------------------------
-void sendWaitFor (cServer& server, const cPlayer& player, const cPlayer* receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WAIT_FOR);
-	message->pushInt32 (player.getId());
-	server.sendNetMessage (std::move (message), receiver);
-}
-
-//------------------------------------------------------------------------------
 void sendDeletePlayer (cServer& server, const cPlayer& player, const cPlayer* receiver)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_DEL_PLAYER);
 	message->pushInt16 (player.getId());
 	server.sendNetMessage (std::move (message), receiver);
-}
-
-//------------------------------------------------------------------------------
-void sendTurn (cServer& server, int turn, const cPlayer& receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_TURN);
-	message->pushInt16 (turn);
-	server.sendNetMessage (std::move (message), &receiver);
 }
 
 //------------------------------------------------------------------------------

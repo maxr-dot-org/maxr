@@ -93,12 +93,6 @@ void sendChatMessageToServer (const cClient& client, const string& msg, const cP
 	client.sendNetMessage (netMsg);
 }
 
-void sendWantToEndTurn (const cClient& client)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_TO_END_TURN);
-	client.sendNetMessage (std::move (message));
-}
-
 void sendWantAttack (const cClient& client, int aggressorID, const cPosition& targetPosition, int targetID)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_ATTACK);

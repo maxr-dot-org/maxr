@@ -44,8 +44,7 @@ struct sID;
 enum SERVER_EVENT_TYPES
 {
 	// Types between FIRST_SERVER_MESSAGE and FIRST_CLIENT_MESSAGE are for the serverserver
-	GAME_EV_WANT_TO_END_TURN = 201,		// a client wants to end the turn
-	GAME_EV_WANT_ATTACK,			// a client wants to attack an other unit
+	GAME_EV_WANT_ATTACK = 202,			// a client wants to attack an other unit
 	GAME_EV_MINELAYERSTATUS,		// a minelayer changes his laying status
 	GAME_EV_WANT_BUILD,				// a vehicle wants to start building a building
 	GAME_EV_END_BUILDING,			// a vehicle has finished building and will leave the building lot now
@@ -90,15 +89,6 @@ void sendDeleteUnitMessage (cServer& server, const cUnit& unit, const cPlayer& r
 * adds a rubble object to the client
 */
 void sendAddRubble (cServer& server, const cBuilding& building, const cPlayer& receiver);
-
-void sendMakeTurnEnd (cServer& server, const cPlayer* receiver = nullptr);
-
-void sendTurnFinished (cServer& server, const cPlayer& playerWhoEndedTurn, const cPlayer* nextPlayer, const cPlayer* receiver = nullptr);
-
-void sendTurnStartTime (cServer& server, unsigned int gameTime);
-
-void sendTurnEndDeadlineStartTime (cServer& server, unsigned int gameTime);
-
 
 void sendSpecificUnitData (cServer& server, const cVehicle& Vehicle);
 
@@ -165,17 +155,11 @@ void sendNoFog (cServer& server, const cPlayer& receiver);
 void sendDefeated (cServer& server, const cPlayer& player, const cPlayer* receiver = nullptr);
 
 /**
-* sends that a client has to wait for another player to end his turn
-*@author alzi alias DoctorDeath
-*/
-void sendWaitFor (cServer& server, const cPlayer& player, const cPlayer* receiver);
-/**
 * sends that a player has to be deleted
 *@author alzi alias DoctorDeath
 */
 void sendDeletePlayer (cServer& server, const cPlayer& player, const cPlayer* receiver);
 
-void sendTurn (cServer& server, int turn, const cPlayer& receiver);
 void sendStoreVehicle (cServer& server, int unitid, bool vehicle, int storedunitid, const cPlayer& receiver);
 void sendActivateVehicle (cServer& server, int unitid, bool vehicle, int activatunitid, const cPosition& position, const cPlayer& receiver);
 void sendUnitUpgrades (cServer& server, const cDynamicUnitData& Data, const cPlayer& receiver);

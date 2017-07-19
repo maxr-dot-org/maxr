@@ -89,12 +89,6 @@ public:
 	const std::map<int, ePlayerConnectionState>& getPlayerConnectionStates() const;
 	//
 
-	/**
-	* handles the end of a turn
-	*@author alzi alias DoctorDeath
-	*/
-	void handleEnd();
-
 	void addJob (cJob* job);
 
 	/**
@@ -204,11 +198,6 @@ private:
 
 	void HandleNetMessage_GAME_EV_DEL_BUILDING (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_DEL_VEHICLE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WAIT_FOR (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_TURN_START_TIME (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_TURN_END_DEADLINE_START_TIME (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message);
@@ -224,7 +213,6 @@ private:
 	void HandleNetMessage_GAME_EV_NOFOG (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_DEFEATED (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_TURN (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_STORE_UNIT (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UNIT_UPGRADE_VALUES (cNetMessage& message);
@@ -263,10 +251,6 @@ private:
 
 	/** list with buildings without owner, e. g. rubble fields */
 	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> neutralBuildings; //TODO: move to cModel
-
-	std::shared_ptr<cTurnTimeClock> turnTimeClock;           //TODO: move to cModel
-	std::shared_ptr<cTurnTimeDeadline> turnLimitDeadline;    //TODO: move to cModel
-	std::shared_ptr<cTurnTimeDeadline> turnEndDeadline;      //TODO: move to cModel
 
 	std::shared_ptr<cCasualtiesTracker> casualtiesTracker; //TODO: move to cModel
 

@@ -251,18 +251,8 @@ public:
 
 	std::shared_ptr<const cTurnCounter> getTurnClock() const { return turnClock; }
 
-	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock() const { return turnTimeClock; }
-
 	std::shared_ptr<const cGameSettings> getGameSettings() const { return gameSettings; }
 	bool isTurnBasedGame() const;
-
-	void startTurnTimers();
-
-	void setTurnEndDeadline (const std::chrono::seconds& deadline);
-	void setTurnEndDeadlineActive (bool value);
-
-	void setTurnLimit (const std::chrono::seconds& deadline);
-	void setTurnLimitActive (bool value);
 
 	const cGameGuiState& getPlayerGameGuiState (const cPlayer& player);
 private:
@@ -275,7 +265,6 @@ private:
 	void handleNetMessage_MU_MSG_UPGRADES (cNetMessage& message);
 	void handleNetMessage_MU_MSG_LANDING_COORDS (cNetMessage& message);
 	void handleNetMessage_MU_MSG_READY_TO_START (cNetMessage& message);
-	void handleNetMessage_GAME_EV_WANT_TO_END_TURN (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message);
 	void handleNetMessage_GAME_EV_MINELAYERSTATUS (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message);
@@ -306,43 +295,10 @@ private:
 	void handleNetMessage_GAME_EV_WANT_KICK_PLAYER (cNetMessage& message);
 
 	/**
-	* handles the pressed end of a player
-	*@author alzi alias DoctorDeath
-	*/
-	void handleEnd (cPlayer& player);
-	/**
-	 * executes everything for a turn start
-	 */
-	void makeTurnStart (cPlayer& player);
-	/**
 	* checks whether a player is defeated
 	*@author alzi alias DoctorDeath
 	*/
 	void checkDefeats();
-
-	/**
-	* rechecks the end actions when a player wanted to finish his turn
-	*@author alzi alias DoctorDeath
-	*/
-	void handleWantEnd();
-
-	/**
-	 * checks whether some units are moving and restarts remaining movements
-	 *
-	 * @author alzi alias DoctorDeath
-	 * @param player The player who will receive the messages
-	 *       when the turn can't be finished now; nullptr for all players
-	 * @return true if there were found some moving units
-	 */
-	bool checkRemainingMoveJobs (const cPlayer* player);
-
-	bool executeRemainingMoveJobs (const cPlayer& player);
-
-	/**
-	* checks whether the deadline has run down
-	*@author alzi alias DoctorDeath
-	*/
-	void checkDeadline();
 
 	/**
 	* Calculates the cost, that this upgrade would have for the given player.
@@ -411,19 +367,6 @@ private:
 
 	std::shared_ptr<cTurnCounter> turnClock;
 
-	std::shared_ptr<cTurnTimeClock> turnTimeClock;
-	std::shared_ptr<cTurnTimeDeadline> turnEndDeadline;
-	std::shared_ptr<cTurnTimeDeadline> turnLimitDeadline;
-
-	/** stores the gametime of the last turn end. */
-	unsigned int lastTurnEnd;
-
-	/**
-	 * Number of the Player who wants to end his turn:
-	 * -1 for no player
-	 * -2 for undefined player
-	 */
-	int pendingEndTurnPlayerNumber;
 
 	/** The next unique ID for the unit creation */
 	unsigned int iNextUnitID;
@@ -436,9 +379,6 @@ private:
 	int savingID;
 	/** the index of the saveslot where additional save info should be added */
 	int savingIndex;
-	/** server is executing all remaining movements,
-	 * before turn end is processed */
-	bool executingRemainingMovements;
 
 	std::shared_ptr<cGameSettings> gameSettings;
 	std::shared_ptr<cCasualtiesTracker> casualtiesTracker;

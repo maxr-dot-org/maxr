@@ -298,7 +298,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 						server->setGameSettings (settings);
 
 						server->start();
-						server->startTurnTimers();
+						//server->startTurnTimers();
 					});
 					//sendGo (*network);
 				}

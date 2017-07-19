@@ -73,7 +73,6 @@ cClient::cClient (std::shared_ptr<cConnectionManager> connectionManager) :
 	connectionManager(connectionManager),
 	gameTimer (std::make_shared<cGameTimerClient> ()),
 	activePlayer (nullptr),
-	turnTimeClock (std::make_shared<cTurnTimeClock> (model)),
 	casualtiesTracker (std::make_shared<cCasualtiesTracker> ()),
 	effectsList (new cFxContainer)
 {
@@ -186,88 +185,6 @@ void cClient::HandleNetMessage_GAME_EV_DEL_VEHICLE (cNetMessage& message)
 	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
 
 	//if (Vehicle) deleteUnit (Vehicle);
-}
-
-void cClient::HandleNetMessage_GAME_EV_WAIT_FOR (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_WAIT_FOR);
-
-	const int nextPlayerNum = message.popInt32();
-
-	if (nextPlayerNum == activePlayer->getId())
-	{
-		//disableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
-	}
-	else
-	{
-		//enableFreezeMode (FREEZE_WAIT_FOR_OTHERS, nextPlayerNum);
-	}
-}
-
-void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_MAKE_TURNEND);
-
-	//turnClock->increaseTurn();
-	//Log.write ("######### Turn " + iToStr (turnClock->getTurn()) + " ###########", cLog::eLOG_TYPE_NET_DEBUG);
-/*	for (unsigned int i = 0; i < getPlayerList().size(); i++)
-	{
-		getPlayerList() [i]->setHasFinishedTurn (false);
-	}*/
-}
-
-void cClient::HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_FINISHED_TURN);
-
-	const int playerNumber = message.popInt16();
-/*	cPlayer* player = getPlayerFromNumber (playerNumber);
-
-	const bool hasNextPlayerInfo = message.popBool();
-	int nextPlayerNumber = -1;
-	if (hasNextPlayerInfo)
-	{
-		nextPlayerNumber = message.popInt16();
-	}
-
-	if (player == nullptr)
-	{
-		Log.write (" Client: Player with nr " + iToStr (playerNumber) + " has finished turn, but can't find him", cLog::eLOG_TYPE_NET_WARNING);
-		return;
-	}
-
-	if (playerNumber != activePlayer->getNr())
-	{
-		activePlayer->addSavedReport (std::make_unique<cSavedReportPlayerEndedTurn> (*player));
-	}
-
-	player->setHasFinishedTurn (true);
-
-	playerFinishedTurn (playerNumber, nextPlayerNumber);*/
-}
-
-void cClient::HandleNetMessage_GAME_EV_TURN_START_TIME (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_TURN_START_TIME);
-
-	const auto time = message.popInt32();
-
-	turnTimeClock->restartFrom (time);
-	turnTimeClock->clearAllDeadlines();
-
-/*	if (model.gameSettings->isTurnLimitActive())
-	{
-		turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow (model.gameSettings->getTurnLimit());
-	}*/
-}
-
-void cClient::HandleNetMessage_GAME_EV_TURN_END_DEADLINE_START_TIME (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_TURN_END_DEADLINE_START_TIME);
-
-	const auto time = message.popInt32();
-
-//	turnEndDeadline = turnTimeClock->startNewDeadlineFrom (time, model.gameSettings->getTurnEndDeadline());
 }
 
 void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
@@ -773,13 +690,6 @@ void cClient::HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message)
 	deletePlayer (*Player);*/
 }
 
-void cClient::HandleNetMessage_GAME_EV_TURN (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_TURN);
-
-	//turnClock->setTurn (message.popInt16());
-}
-
 void cClient::HandleNetMessage_GAME_EV_STORE_UNIT (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_STORE_UNIT);
@@ -1183,11 +1093,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_DEL_BUILDING: HandleNetMessage_GAME_EV_DEL_BUILDING (message); break;
 		case GAME_EV_DEL_VEHICLE: HandleNetMessage_GAME_EV_DEL_VEHICLE (message); break;
 		case GAME_EV_ATTACKJOB: attackJobs.push_back (new cAttackJob (this, message)); break;
-		case GAME_EV_WAIT_FOR: HandleNetMessage_GAME_EV_WAIT_FOR (message); break;
-		case GAME_EV_MAKE_TURNEND: HandleNetMessage_GAME_EV_MAKE_TURNEND (message); break;
-		case GAME_EV_FINISHED_TURN: HandleNetMessage_GAME_EV_FINISHED_TURN (message); break;
-		case GAME_EV_TURN_START_TIME: HandleNetMessage_GAME_EV_TURN_START_TIME (message); break;
-		case GAME_EV_TURN_END_DEADLINE_START_TIME: HandleNetMessage_GAME_EV_TURN_END_DEADLINE_START_TIME (message); break;
 		case GAME_EV_UNIT_DATA: HandleNetMessage_GAME_EV_UNIT_DATA (message); break;
 		case GAME_EV_SPECIFIC_UNIT_DATA: HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (message); break;
 		case GAME_EV_RESOURCES: HandleNetMessage_GAME_EV_RESOURCES (message); break;
@@ -1203,7 +1108,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_NOFOG: HandleNetMessage_GAME_EV_NOFOG (message); break;
 		case GAME_EV_DEFEATED: HandleNetMessage_GAME_EV_DEFEATED (message); break;
 		case GAME_EV_DEL_PLAYER: HandleNetMessage_GAME_EV_DEL_PLAYER (message); break;
-		case GAME_EV_TURN: HandleNetMessage_GAME_EV_TURN (message); break;
 		case GAME_EV_STORE_UNIT: HandleNetMessage_GAME_EV_STORE_UNIT (message); break;
 		case GAME_EV_EXIT_UNIT: HandleNetMessage_GAME_EV_EXIT_UNIT (message); break;
 		case GAME_EV_UNIT_UPGRADE_VALUES: HandleNetMessage_GAME_EV_UNIT_UPGRADE_VALUES (message); break;
@@ -1230,12 +1134,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 	}
 
 	return 0;
-}
-
-void cClient::handleEnd()
-{
-	if (freezeModes.isFreezed()) return;
-	sendWantToEndTurn(*this);
 }
 
 void cClient::addAutoMoveJob (std::weak_ptr<cAutoMJob> autoMoveJob)

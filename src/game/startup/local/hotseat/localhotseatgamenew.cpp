@@ -95,7 +95,7 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 		gameGuiController->addPlayerGameGuiState (clientPlayer.getId(), gameGuiState);
 	}
 
-	server->startTurnTimers();
+	//server->startTurnTimers();
 
 	auto activePlayer = server->getActiveTurnPlayer();
 	assert (activePlayer != nullptr);
