@@ -37,8 +37,7 @@ cServer2::cServer2(std::shared_ptr<cConnectionManager> connectionManager) :
 	gameTimer(),
 	serverThread(nullptr),
 	exit(false),
-	connectionManager(connectionManager),
-	turnEndAutoSaveRequested(false)
+	connectionManager(connectionManager)
 {
 	model.turnEnded.connect([&]()
 	{
@@ -48,12 +47,9 @@ cServer2::cServer2(std::shared_ptr<cConnectionManager> connectionManager) :
 	{
 		if (cSettings::getInstance().shouldAutosave())
 		{
-			turnEndAutoSaveRequested = true;
+			saveGameState(10, lngPack.i18n("Text~Comp~Turn_5") + " " + toString(model.getTurnCounter()->getTurn()) + " - " + lngPack.i18n("Text~Settings~Autosave"));
 		}
-		else
-		{
-			disableFreezeMode(eFreezeMode::WAIT_FOR_TURNEND);
-		}
+		disableFreezeMode(eFreezeMode::WAIT_FOR_TURNEND);
 	});
 }
 
@@ -313,12 +309,6 @@ void cServer2::run()
 		//TODO: gameinit: start timer, when all clients are ready
 		gameTimer.run(model, *this);
 
-		if (turnEndAutoSaveRequested)
-		{
-			saveGameState(10, lngPack.i18n("Text~Comp~Turn_5") + " " + toString(model.getTurnCounter()->getTurn()) + " - " + lngPack.i18n("Text~Settings~Autosave"));
-			disableFreezeMode(eFreezeMode::WAIT_FOR_TURNEND);
-			turnEndAutoSaveRequested = false;
-		}
 		SDL_Delay(10);
 	}
 }
@@ -389,7 +379,7 @@ void cServer2::playerDisconnected(int playerId)
 		//TODO: set to INACTIVE when running in dedicated mode
 		playerConnectionStates[playerId] = ePlayerConnectionState::DISCONNECTED;
 	}
-	Log.write(" Server: Player " + toString(playerId) + " dissconnected", cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write(" Server: Player " + toString(playerId) + " disconnected", cLog::eLOG_TYPE_NET_DEBUG);
 	updateWaitForClientFlag();
 }
 

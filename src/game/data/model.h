@@ -93,6 +93,7 @@ public:
 	void deleteRubble(cBuilding* rubble);
 
 	void addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& path);
+	std::vector<const cPlayer*> resumeMoveJobs(const cPlayer* player = nullptr);
 
 	mutable cSignal<void()> gameTimeChanged;
 	mutable cSignal<void(const cVehicle& vehicle)> triggeredAddTracks;
@@ -122,7 +123,7 @@ public:
 		//archive & NVP(neutralBuildings);
 		archive << NVP(nextUnitId);
 		archive << serialization::makeNvp("turnCounter", *turnCounter);
-		archive << NVP(executingRemainingMovements);
+		archive << NVP(turnEndState);
 		archive << NVP(activeTurnPlayer);
 	};
 	template<typename T>
@@ -182,7 +183,7 @@ public:
 		}
 		archive >> NVP(nextUnitId);
 		archive >> serialization::makeNvp("turnCounter", *turnCounter);
-		archive >> NVP(executingRemainingMovements);
+		archive >> NVP(turnEndState);
 		archive >> NVP(activeTurnPlayer);
 	}
 	SERIALIZATION_SPLIT_MEMBER();
@@ -210,7 +211,7 @@ private:
 	std::vector<cMoveJob*> moveJobs;
 
 	std::shared_ptr<cTurnCounter> turnCounter;
-	bool executingRemainingMovements;
+	enum {TURN_ACTIVE, EXECUTE_REMAINING_MOVEMENTS, EXECUTE_TURN_START} turnEndState;
 
 	//jobs
 	//casualtiesTracker

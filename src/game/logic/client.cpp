@@ -1146,7 +1146,6 @@ void cClient::handleNetMessages()
 				const cNetMessageFreezeModes* msg = static_cast<cNetMessageFreezeModes*>(message.get());
 				
 				// don't overwrite waitForServer flag
-				const auto oldFreezeModes = freezeModes;
 				bool waitForServer = freezeModes.isEnabled(eFreezeMode::WAIT_FOR_SERVER);
 				freezeModes = msg->freezeModes;
 				if (waitForServer) freezeModes.enable(eFreezeMode::WAIT_FOR_SERVER);
@@ -1166,7 +1165,7 @@ void cClient::handleNetMessages()
 				}
 				playerConnectionStates = msg->playerStates;
 
-				freezeModeChanged(oldFreezeModes, playerConnectionStates);
+				freezeModeChanged();
 			}
 			break;
 		default:
@@ -1423,7 +1422,7 @@ void cClient::enableFreezeMode(eFreezeMode mode)
 
 	freezeModes.enable (mode);
 
-	if (!wasEnabled) freezeModeChanged (freezeModes, playerConnectionStates);
+	if (!wasEnabled) freezeModeChanged ();
 }
 
 //------------------------------------------------------------------------------
@@ -1434,7 +1433,7 @@ void cClient::disableFreezeMode (eFreezeMode mode)
 
 	freezeModes.disable (mode);
 
-	if (!wasDisabled) freezeModeChanged (freezeModes, playerConnectionStates);
+	if (!wasDisabled) freezeModeChanged ();
 }
 
 //------------------------------------------------------------------------------

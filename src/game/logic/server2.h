@@ -123,7 +123,6 @@ private:
 	mutable SDL_Thread* serverThread;
 	mutable bool exit;
 	
-	bool turnEndAutoSaveRequested;
 };
 
 #endif

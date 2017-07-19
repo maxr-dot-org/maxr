@@ -1133,11 +1133,17 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 */
-	clientSignalConnectionManager.connect(client.freezeModeChanged, [&](const cFreezeModes& oldFreezeModes, const std::map<int, ePlayerConnectionState>& playerConnectionStates)
-	{
-		const cFreezeModes& freezeModes = client.getFreezeModes();
 
-		if (!freezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND) && oldFreezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND) && activeClient->getModel().getActiveTurnPlayer() != getActivePlayer().get())
+	clientSignalConnectionManager.connect(client.freezeModeChanged, [&]()
+	{
+		updateEndButtonState();
+		updateGuiInfoTexts();
+		updateChangeAllowed();
+	});
+
+	clientSignalConnectionManager.connect(model.newTurnStarted, [&]()
+	{
+		if (activeClient->getModel().getActiveTurnPlayer() == getActivePlayer().get())
 		{
 			doneList.clear();
 		}
@@ -1145,7 +1151,6 @@ void cGameGuiController::connectClient (cClient& client)
 		updateEndButtonState();
 		updateGuiInfoTexts();
 		updateChangeAllowed();
-		
 	});
 
 	clientSignalConnectionManager.connect(client.getModel().triggeredAddTracks, [&](const cVehicle & vehicle)
@@ -1295,12 +1300,9 @@ void cGameGuiController::connectReportSources(cClient& client)
 	{
 		addSavedReport(std::make_unique<cSavedReportSimple>(eSavedReportType::TurnAutoMove), player.getId());
 	});
-	clientSignalConnectionManager.connect(client.freezeModeChanged, [&](const cFreezeModes& oldFreezeModes, const std::map<int, ePlayerConnectionState>& playerConnectionStates)
+	clientSignalConnectionManager.connect(model.newTurnStarted, [&]()
 	{
-		const cFreezeModes& freezeModes = client.getFreezeModes();
-
-		if (!freezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND) && oldFreezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND) &&
-			(model.getActiveTurnPlayer() == getActivePlayer().get() || model.getGameSettings()->getGameType() == eGameSettingsGameType::Simultaneous))
+		if (model.getActiveTurnPlayer() == getActivePlayer().get() || model.getGameSettings()->getGameType() == eGameSettingsGameType::Simultaneous)
 		{
 			addSavedReport(std::make_unique<cSavedReportTurnStart>(player, model.getTurnCounter()->getTurn()), player.getId());
 		}

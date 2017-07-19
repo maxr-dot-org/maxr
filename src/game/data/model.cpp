@@ -36,7 +36,7 @@ cModel::cModel() :
 	turnCounter (std::make_shared<cTurnCounter> (1)),
 	gameTime(0),
 	gameId(0),
-	executingRemainingMovements(false),
+	turnEndState(TURN_ACTIVE),
 	activeTurnPlayer(nullptr)
 {
 	/*signalConnectionManager.connect(model.getGameSettings()->turnEndDeadlineChanged, [this]()
@@ -128,7 +128,7 @@ uint32_t cModel::getChecksum() const
 	for (const auto& movejob : moveJobs)
 		crc = calcCheckSum(*movejob, crc);
 	crc = calcCheckSum(*turnCounter, crc);
-	crc = calcCheckSum(executingRemainingMovements, crc);
+	crc = calcCheckSum(turnEndState, crc);
 	crc = calcCheckSum(activeTurnPlayer->getId(), crc);
 
 	return crc;
@@ -422,6 +422,28 @@ void cModel::addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& p
 	moveJobs.push_back(moveJob);
 }
 
+//------------------------------------------------------------------------------
+std::vector<const cPlayer*> cModel::resumeMoveJobs(const cPlayer* player /*= nullptr*/)
+{
+	std::vector<const cPlayer*> players;
+	for (const auto& moveJob : moveJobs)
+	{
+		if ((player && moveJob->getVehicle()->getOwner() != player) || !moveJob->getVehicle())
+		{
+			continue;
+		}
+		if (moveJob->isWaiting() && moveJob->getVehicle() && moveJob->getVehicle()->data.getSpeed() > 0)
+		{
+			moveJob->resume();
+			players.push_back(moveJob->getVehicle()->getOwner());
+		}
+	}
+	RemoveDuplicates(players);
+
+	return players;
+}
+
+//------------------------------------------------------------------------------
 std::shared_ptr<const cTurnCounter> cModel::getTurnCounter() const
 {
 	return turnCounter;
@@ -498,120 +520,105 @@ void cModel::runMoveJobs()
 //------------------------------------------------------------------------------
 void cModel::handleTurnEnd()
 {
-	if (gameSettings->getGameType() == eGameSettingsGameType::Turns)
+	switch (turnEndState)
 	{
-		if (!activeTurnPlayer->getHasFinishedTurn())
+	case TURN_ACTIVE:
 		{
-			return;
-		}
-
-		if (!executingRemainingMovements)
-		{
-			executingRemainingMovements = true;
-			turnEnded();
-			bool movementsStarted = false;
-			for (const auto& moveJob : moveJobs)
+			bool turnFinished = true;
+			if (gameSettings->getGameType() == eGameSettingsGameType::Turns)
 			{
-				if (moveJob->isWaiting() && moveJob->getVehicle() && moveJob->getVehicle()->data.getSpeed() > 0 && moveJob->getVehicle()->getOwner() == activeTurnPlayer)
+				if (!activeTurnPlayer->getHasFinishedTurn())
 				{
-					moveJob->resume();
-					movementsStarted = true;
+					turnFinished = false;
 				}
 			}
-			if (movementsStarted)
+			else
 			{
-				activeTurnPlayer->turnEndMovementsStarted();
-			}
-			return;
-		}
-
-		for (const auto& moveJob : moveJobs)
-		{
-			if (moveJob->isActive())
-			{
-				return;
-			}
-		}
-
-		executingRemainingMovements = false;
-
-		// select next player
-		//TODO: skip defeated player
-		auto nextPlayerIter = std::find_if(playerList.begin(), playerList.end(), [this](const std::shared_ptr<cPlayer>& player) {return player.get() == activeTurnPlayer; });
-		assert(nextPlayerIter != playerList.end());
-		++nextPlayerIter;
-		if (nextPlayerIter == playerList.end())
-		{
-			activeTurnPlayer = playerList.front().get();
-		}
-		else
-		{
-			activeTurnPlayer = nextPlayerIter->get();
-		}
-
-		if (activeTurnPlayer == playerList.front().get())
-		{
-			//TODO: checkDefeats();
-			turnCounter->increaseTurn();
-		}
-		
-		if (turnCounter->getTurn() > 1)
-		{
-			// don't execute turn start action in turn 1, because model is already completely initialized for turn 1
-			activeTurnPlayer->makeTurnStart();
-		}
-		newTurnStarted();
-	}
-	else
-	{
-		for (const auto& player : playerList)
-		{
-			if (!player->getHasFinishedTurn() && !player->isDefeated)
-			{
-				return;
-			}
-		}
-
-		if (!executingRemainingMovements)
-		{
-			executingRemainingMovements = true;
-			turnEnded();
-			std::vector<const cPlayer*> players;
-			for (const auto& moveJob : moveJobs)
-			{
-				if (moveJob->isWaiting() && moveJob->getVehicle() && moveJob->getVehicle()->data.getSpeed() > 0)
+				for (const auto& player : playerList)
 				{
-					moveJob->resume();
-					players.push_back(moveJob->getVehicle()->getOwner());
+					if (!player->getHasFinishedTurn() && !player->isDefeated)
+					{
+						turnFinished = false;
+					}
 				}
 			}
-			RemoveDuplicates(players);
-			for (const auto& player : players)
+			if (turnFinished)
 			{
-				player->turnEndMovementsStarted();
-			}
-			return;
-		}
+				turnEnded();
 
-		for (const auto& moveJob : moveJobs)
+				const auto player = gameSettings->getGameType() == eGameSettingsGameType::Turns ? activeTurnPlayer : nullptr;
+				const auto resumedMJobOwners = resumeMoveJobs(player);
+				for (const auto& player : resumedMJobOwners)
+				{
+					player->turnEndMovementsStarted();
+				}
+
+				turnEndState = EXECUTE_REMAINING_MOVEMENTS;
+			}
+		}
+		break;
+	case EXECUTE_REMAINING_MOVEMENTS:
 		{
-			if (moveJob->isActive())
+			bool activeMoveJob = false;
+			for (const auto& moveJob : moveJobs)
 			{
-				return;
+				if (moveJob->isActive())
+				{
+					activeMoveJob = true;
+				}
+			}
+			if (!activeMoveJob)
+			{
+				turnEndState = EXECUTE_TURN_START;
 			}
 		}
-
-		executingRemainingMovements = false;
-		turnCounter->increaseTurn();
-
-		for (auto& player : playerList)
+		break;
+	case EXECUTE_TURN_START:
 		{
-			player->makeTurnStart();
-		}
+			if (gameSettings->getGameType() == eGameSettingsGameType::Turns)
+			{
+				// select next player
+				//TODO: skip defeated player?
+				auto nextPlayerIter = std::find_if(playerList.begin(), playerList.end(), [this](const std::shared_ptr<cPlayer>& player) {return player.get() == activeTurnPlayer; });
+				assert(nextPlayerIter != playerList.end());
+				++nextPlayerIter;
+				if (nextPlayerIter == playerList.end())
+				{
+					activeTurnPlayer = playerList.front().get();
+				}
+				else
+				{
+					activeTurnPlayer = nextPlayerIter->get();
+				}
 
-		newTurnStarted();
+				if (activeTurnPlayer == playerList.front().get())
+				{
+					//TODO: checkDefeats();
+					turnCounter->increaseTurn();
+				}
+
+				if (turnCounter->getTurn() > 1)
+				{
+					// don't execute turn start action in turn 1, because model is already completely initialized for turn 1
+					activeTurnPlayer->makeTurnStart();
+				}
+			}
+			else
+			{
+				turnCounter->increaseTurn();
+
+				for (auto& player : playerList)
+				{
+					player->makeTurnStart();
+				}
+
+			}
+
+			turnEndState = TURN_ACTIVE;
+			newTurnStarted();
+		}
+		break;
 	}
-
 }
 
 //------------------------------------------------------------------------------

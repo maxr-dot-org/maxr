@@ -168,8 +168,8 @@ public:
 
 	mutable cSignal<void (int fromPlayerNr, std::unique_ptr<cSavedReport>& report, int toPlayerNr)> reportMessageReceived;
 	mutable cSignal<void (int savingID)> guiSaveInfoRequested;
-	mutable cSignal<void(const cNetMessageGUISaveInfo& guiInfo)> guiSaveInfoReceived;
-	mutable cSignal<void(const cFreezeModes& oldFreezeModes, const std::map<int, ePlayerConnectionState>& playerConnectionStates)> freezeModeChanged;
+	mutable cSignal<void (const cNetMessageGUISaveInfo& guiInfo)> guiSaveInfoReceived;
+	mutable cSignal<void ()> freezeModeChanged;
 
 
 	//TODO: move signals to model
