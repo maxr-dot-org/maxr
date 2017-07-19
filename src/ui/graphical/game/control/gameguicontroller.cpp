@@ -1252,7 +1252,7 @@ void cGameGuiController::connectClient (cClient& client)
 		gameGui->getGameMap().addEffect (effect, playSound);
 	});
 
-	clientSignalConnectionManager.connect (client.getTurnTimeClock()->alertTimeReached, [this]()
+	clientSignalConnectionManager.connect (model.getTurnTimeClock()->alertTimeReached, [this]()
 	{
 		soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceTurnAlertTimeReached, getRandom (VoiceData.VOITurnEnd20Sec)));
 	});
@@ -1895,7 +1895,7 @@ std::shared_ptr<const cTurnCounter> cGameGuiController::getTurnCounter() const
 //------------------------------------------------------------------------------
 std::shared_ptr<const cTurnTimeClock> cGameGuiController::getTurnTimeClock() const
 {
-	return activeClient ? activeClient->getTurnTimeClock() : nullptr;
+	return activeClient ? activeClient->getModel().getTurnTimeClock() : nullptr;
 }
 
 //------------------------------------------------------------------------------

@@ -27,6 +27,7 @@
 #include "game/logic/pathcalculator.h"
 #include "utility/listhelpers.h"
 #include "game/logic/turncounter.h"
+#include "game/logic/turntimeclock.h"
 
 //------------------------------------------------------------------------------
 cModel::cModel() :
@@ -37,45 +38,49 @@ cModel::cModel() :
 	gameTime(0),
 	gameId(0),
 	turnEndState(TURN_ACTIVE),
-	activeTurnPlayer(nullptr)
+	activeTurnPlayer(nullptr),
+	turnEndDeadline(0),
+	turnLimitDeadline(0)
 {
-	/*signalConnectionManager.connect(model.getGameSettings()->turnEndDeadlineChanged, [this]()
+	turnTimeClock = std::make_shared<cTurnTimeClock>(*this);
+
+	gameSettings->turnEndDeadlineChanged.connect([this]()
 	{
 		if (turnEndDeadline)
 		{
-			turnEndDeadline->changeDeadline(model.getGameSettings()->getTurnEndDeadline());
+			turnTimeClock->changeDeadline(turnEndDeadline, gameSettings->getTurnEndDeadline());
 		}
 	});
 
-	signalConnectionManager.connect(model.getGameSettings()->turnEndDeadlineActiveChanged, [this]()
+	gameSettings->turnEndDeadlineActiveChanged.connect([this]()
 	{
-		if (!model.getGameSettings()->isTurnEndDeadlineActive() && turnEndDeadline)
+		if (!gameSettings->isTurnEndDeadlineActive() && turnEndDeadline)
 		{
 			turnTimeClock->removeDeadline(turnEndDeadline);
-			turnEndDeadline = nullptr;
+			turnEndDeadline = 0;
 		}
 	});
 
-	signalConnectionManager.connect(model.getGameSettings()->turnLimitChanged, [this]()
+	gameSettings->turnLimitChanged.connect([this]()
 	{
 		if (turnLimitDeadline)
 		{
-			turnLimitDeadline->changeDeadline(model.getGameSettings()->getTurnLimit());
+			turnTimeClock->changeDeadline(turnLimitDeadline, gameSettings->getTurnLimit());
 		}
 	});
 
-	signalConnectionManager.connect(model.getGameSettings()->turnLimitActiveChanged, [this]()
+	gameSettings->turnLimitActiveChanged.connect([this]()
 	{
-		if (!model.getGameSettings()->isTurnLimitActive() && turnLimitDeadline)
+		if (!gameSettings->isTurnLimitActive() && turnLimitDeadline)
 		{
 			turnTimeClock->removeDeadline(turnLimitDeadline);
-			turnLimitDeadline = nullptr;
+			turnLimitDeadline = 0;
 		}
-		else if (model.getGameSettings()->isTurnLimitActive() && !turnLimitDeadline)
+		else if (gameSettings->isTurnLimitActive() && !turnLimitDeadline)
 		{
-			turnLimitDeadline = turnTimeClock->startNewDeadlineFrom(turnTimeClock->getStartGameTime(), model.getGameSettings()->getTurnLimit());
+			turnLimitDeadline = turnTimeClock->startNewDeadlineFrom(turnTimeClock->getStartGameTime(), gameSettings->getTurnLimit());
 		}
-	}); */
+	});
 };
 
 cModel::~cModel()
@@ -130,6 +135,9 @@ uint32_t cModel::getChecksum() const
 	crc = calcCheckSum(*turnCounter, crc);
 	crc = calcCheckSum(turnEndState, crc);
 	crc = calcCheckSum(activeTurnPlayer->getId(), crc);
+	crc = calcCheckSum(turnEndDeadline, crc);
+	crc = calcCheckSum(turnLimitDeadline, crc);
+	crc = calcCheckSum(*turnTimeClock, crc);
 
 	return crc;
 }
@@ -137,6 +145,11 @@ uint32_t cModel::getChecksum() const
 void cModel::setGameSettings(const cGameSettings& gameSettings_)
 {
 	*gameSettings = gameSettings_;
+
+	if (gameSettings->isTurnLimitActive())
+	{
+		turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow(gameSettings->getTurnLimit());
+	}
 }
 //------------------------------------------------------------------------------
 void cModel::setMap(std::shared_ptr<cStaticMap> map_)
@@ -444,6 +457,25 @@ std::vector<const cPlayer*> cModel::resumeMoveJobs(const cPlayer* player /*= nul
 }
 
 //------------------------------------------------------------------------------
+void cModel::handlePlayerFinishedTurn(cPlayer& player)
+{
+	player.setHasFinishedTurn(true);
+
+	if (gameSettings->getGameType() != eGameSettingsGameType::Turns && gameSettings->isTurnEndDeadlineActive() && !turnEndDeadline)
+	{
+		turnEndDeadline = turnTimeClock->startNewDeadlineFromNow(gameSettings->getTurnEndDeadline());
+	}
+
+	playerFinishedTurn(player);
+}
+
+//------------------------------------------------------------------------------
+std::shared_ptr<const cTurnTimeClock> cModel::getTurnTimeClock() const
+{
+	return turnTimeClock;
+}
+
+//------------------------------------------------------------------------------
 std::shared_ptr<const cTurnCounter> cModel::getTurnCounter() const
 {
 	return turnCounter;
@@ -542,7 +574,7 @@ void cModel::handleTurnEnd()
 					}
 				}
 			}
-			if (turnFinished)
+			if (turnFinished || turnTimeClock->hasReachedAnyDeadline())
 			{
 				turnEnded();
 
@@ -612,6 +644,15 @@ void cModel::handleTurnEnd()
 					player->makeTurnStart();
 				}
 
+			}
+
+			turnTimeClock->restartFromNow();
+			turnTimeClock->clearAllDeadlines();
+			turnEndDeadline = 0;
+			turnLimitDeadline = 0;
+			if (gameSettings->isTurnLimitActive())
+			{
+				turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow(gameSettings->getTurnLimit());
 			}
 
 			turnEndState = TURN_ACTIVE;

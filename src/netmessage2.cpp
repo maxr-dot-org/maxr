@@ -27,6 +27,7 @@
 #include "game/data/model.h"
 #include "utility/serialization/serialization.h"
 #include "ui/graphical/menu/control/menuevents.h"
+#include "game/logic/turntimeclock.h"
 
 std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(const unsigned char* data, int length)
 {

@@ -43,6 +43,8 @@ struct sID;
 class cPosition;
 class cUnit;
 class cGameTimer;
+class cTurnTimeClock;
+class cTurnTimeDeadline;
 
 class cModel
 {
@@ -81,6 +83,7 @@ public:
 	const cPlayer* getActiveTurnPlayer() const;
 	
 	std::shared_ptr<const cTurnCounter> getTurnCounter() const;
+	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock() const;
 
 	cUnit* getUnitFromID(unsigned int id) const;
 	cVehicle* getVehicleFromID(unsigned int id) const;
@@ -94,6 +97,8 @@ public:
 
 	void addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& path);
 	std::vector<const cPlayer*> resumeMoveJobs(const cPlayer* player = nullptr);
+
+	void handlePlayerFinishedTurn(cPlayer& player);
 
 	mutable cSignal<void()> gameTimeChanged;
 	mutable cSignal<void(const cVehicle& vehicle)> triggeredAddTracks;
@@ -123,6 +128,9 @@ public:
 		//archive & NVP(neutralBuildings);
 		archive << NVP(nextUnitId);
 		archive << serialization::makeNvp("turnCounter", *turnCounter);
+		archive << serialization::makeNvp("turnTimeClock", *turnTimeClock);
+		archive << NVP(turnEndDeadline);
+		archive << NVP(turnLimitDeadline);
 		archive << NVP(turnEndState);
 		archive << NVP(activeTurnPlayer);
 	};
@@ -183,10 +191,14 @@ public:
 		}
 		archive >> NVP(nextUnitId);
 		archive >> serialization::makeNvp("turnCounter", *turnCounter);
+		archive >> serialization::makeNvp("turnTimeClock", *turnTimeClock);
+		archive >> NVP(turnEndDeadline);
+		archive >> NVP(turnLimitDeadline);
 		archive >> NVP(turnEndState);
 		archive >> NVP(activeTurnPlayer);
 	}
 	SERIALIZATION_SPLIT_MEMBER();
+
 private:
 	void refreshMapPointer();
 	void runMoveJobs();
@@ -211,17 +223,17 @@ private:
 	std::vector<cMoveJob*> moveJobs;
 
 	std::shared_ptr<cTurnCounter> turnCounter;
+	std::shared_ptr<cTurnTimeClock> turnTimeClock;
+	unsigned int turnEndDeadline;
+	unsigned int turnLimitDeadline;
+
 	enum {TURN_ACTIVE, EXECUTE_REMAINING_MOVEMENTS, EXECUTE_TURN_START} turnEndState;
 
 	//jobs
 	//casualtiesTracker
-	//turn u. deadline timer
 	
 	//effect list
 
-	//signalConnectionManager?
-
-	
 };
 
 #endif

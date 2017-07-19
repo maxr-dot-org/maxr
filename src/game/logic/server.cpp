@@ -2060,7 +2060,7 @@ void cServer::handleEnd (cPlayer& player)
 			{
 				if (gameSettings->getGameType() != eGameSettingsGameType::Turns && gameSettings->getGameType() != eGameSettingsGameType::HotSeat && gameSettings->isTurnEndDeadlineActive())
 				{
-					turnEndDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnEndDeadline());
+					//turnEndDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnEndDeadline());
 					sendTurnEndDeadlineStartTime (*this, turnEndDeadline->getStartGameTime());
 				}
 			}
@@ -2313,7 +2313,7 @@ void cServer::startTurnTimers()
 	turnTimeClock->clearAllDeadlines();
 	if (gameSettings->isTurnLimitActive())
 	{
-		turnLimitDeadline = turnTimeClock->startNewDeadlineFrom (turnTimeClock->getStartGameTime(), gameSettings->getTurnLimit());
+		//turnLimitDeadline = turnTimeClock->startNewDeadlineFrom (turnTimeClock->getStartGameTime(), gameSettings->getTurnLimit());
 	}
 }
 

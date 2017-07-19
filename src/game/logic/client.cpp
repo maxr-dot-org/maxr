@@ -77,8 +77,6 @@ cClient::cClient (std::shared_ptr<cConnectionManager> connectionManager) :
 	casualtiesTracker (std::make_shared<cCasualtiesTracker> ()),
 	effectsList (new cFxContainer)
 {
-	bDefeated = false;
-
 	gameTimer->start();
 }
 

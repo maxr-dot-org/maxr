@@ -43,17 +43,10 @@ void cActionEndTurn::execute(cModel& model) const
 	if (player->isDefeated) return;
 	if (player->getHasFinishedTurn()) return;
 
-	if (model.getGameSettings()->getGameType() == eGameSettingsGameType::Turns)
-	{
-		//TODO: turn based mode
-		//if (activeTurnPlayer->getId() != message.iPlayerNr) return;
-	}
-
 	if (player->base.checkTurnEnd())
 	{
 		return;
 	}
 
-	player->setHasFinishedTurn(true);
-	model.playerFinishedTurn(*player);
+	model.handlePlayerFinishedTurn(*player);
 }

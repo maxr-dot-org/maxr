@@ -158,9 +158,6 @@ public:
 	const std::shared_ptr<cCasualtiesTracker>& getCasualtiesTracker() { return casualtiesTracker; }
 	std::shared_ptr<const cCasualtiesTracker> getCasualtiesTracker() const { return casualtiesTracker; }
 
-	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock() const { return turnTimeClock; }
-
-
 	const std::shared_ptr<cGameTimerClient>& getGameTimer() const { return gameTimer; }
 
 	void loadModel(int saveGameNumber);
@@ -266,8 +263,6 @@ private:
 
 	/** list with buildings without owner, e. g. rubble fields */
 	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> neutralBuildings; //TODO: move to cModel
-	/** true if the player has been defeated */
-	bool bDefeated;                                          //TODO: move to cPlayer
 
 	std::shared_ptr<cTurnTimeClock> turnTimeClock;           //TODO: move to cModel
 	std::shared_ptr<cTurnTimeDeadline> turnLimitDeadline;    //TODO: move to cModel
