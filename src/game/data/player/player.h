@@ -266,6 +266,7 @@ public:
 		archive & NVP(isRemovedFromGame);
 		archive & NVP(researchState);
 
+		hasFinishedTurnChanged(); //FIXME: deserialization does not trigger signals on changed data members. But this signal is needed for the gui after loading a save game...
 		doScan();
 		refreshSentryAir();
 		refreshSentryGround();

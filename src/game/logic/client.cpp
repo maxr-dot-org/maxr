@@ -1047,6 +1047,9 @@ void cClient::handleNetMessages()
 				{
 					Log.write(std::string(" Client: error loading received model data: ") + e.what(), cLog::eLOG_TYPE_NET_ERROR);
 				}
+
+				//FIXME: deserializing model does not trigger signals on changed data members. Use this signal to trigger some gui updates
+				freezeModeChanged(); 
 			}
 			break;
 		case eNetMessageType::FREEZE_MODES:

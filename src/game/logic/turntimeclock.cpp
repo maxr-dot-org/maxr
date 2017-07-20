@@ -76,7 +76,8 @@ uint32_t cTurnTimeDeadline::getChecksum(uint32_t crc) const
 //------------------------------------------------------------------------------
 cTurnTimeClock::cTurnTimeClock (const cModel& model) :
 	model (model),
-	startTurnGameTime (0)
+	startTurnGameTime (0),
+	nextDeadlineId(1)
 {
 	std::chrono::seconds lastCheckedSeconds (0);
 	std::chrono::seconds lastTimeTillFirstDeadline (std::numeric_limits<std::chrono::seconds::rep>::max());
@@ -125,18 +126,18 @@ void cTurnTimeClock::clearAllDeadlines()
 //------------------------------------------------------------------------------
 unsigned int cTurnTimeClock::startNewDeadlineFromNow (const std::chrono::milliseconds& duration)
 {
-	cTurnTimeDeadline deadline(model.getGameTime(), duration, nextDeadlineId);
-	nextDeadlineId++;
-
-	deadlines.push_back(deadline);
-	deadlinesChanged();
-	return deadline.getId();
+	return startNewDeadlineFrom(model.getGameTime(), duration);
 }
 
 //------------------------------------------------------------------------------
 unsigned int cTurnTimeClock::startNewDeadlineFrom (unsigned int gameTime, const std::chrono::milliseconds& duration)
 {
+	cTurnTimeDeadline deadline(gameTime, duration, nextDeadlineId);
+	nextDeadlineId++;
 
+	deadlines.push_back (deadline);
+	deadlinesChanged();
+	return deadline.getId();
 }
 
 //------------------------------------------------------------------------------

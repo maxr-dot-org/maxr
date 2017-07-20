@@ -1997,7 +1997,8 @@ void cGameGuiController::updateEndButtonState()
 	const auto& model = activeClient->getModel();
 
 	if (freezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND) || 
-	   (activeClient->getModel().getActiveTurnPlayer() != getActivePlayer().get() && model.getGameSettings()->getGameType() == eGameSettingsGameType::Turns))
+	   (activeClient->getModel().getActiveTurnPlayer() != getActivePlayer().get() && model.getGameSettings()->getGameType() == eGameSettingsGameType::Turns) ||
+	    getActivePlayer()->getHasFinishedTurn())
 	{
 		gameGui->getHud().lockEndButton();
 	}
