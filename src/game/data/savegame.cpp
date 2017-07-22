@@ -32,6 +32,7 @@
 #include "netmessage2.h"
 #include "game/logic/server2.h"
 #include "utility/string/toString.h"
+#include "game/logic/turntimeclock.h"
 
 #define LOAD_ERROR(msg)                        \
 	{                                          \

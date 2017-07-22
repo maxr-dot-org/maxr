@@ -88,7 +88,7 @@ void cLocalHotSeatGameSaved::start (cApplication& application)
 	server->serverState = SERVER_STATE_INGAME;
 
 	// TODO: save/load game time
-	server->startTurnTimers();
+	//server->startTurnTimers();
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 

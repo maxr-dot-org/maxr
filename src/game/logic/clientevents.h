@@ -41,10 +41,6 @@ enum CLIENT_EVENT_TYPES
 	// Types between FIRST_CLIENT_MESSAGE and FIRST_MENU_MESSAGE are for the client
 	GAME_EV_DEL_BUILDING = 102,			// deletes a building
 	GAME_EV_DEL_VEHICLE,			// deletes a vehicle
-	GAME_EV_MAKE_TURNEND,			// a player has to do actions for a turn ending
-	GAME_EV_FINISHED_TURN,			// a player has finished his turn
-	GAME_EV_TURN_START_TIME,		// time at that the turn started
-	GAME_EV_TURN_END_DEADLINE_START_TIME,	// time at that the turn deadline started
 	GAME_EV_UNIT_DATA,				// set new data values for a vehicle
 	GAME_EV_SPECIFIC_UNIT_DATA,		// more specific unit values which are only for the owner
 	GAME_EV_UNIT_UPGRADE_VALUES,	// message contains upgraded values for a unit
@@ -63,11 +59,7 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_STOP_CLEARING,			// a bulldowzer has to stop clearing
 	GAME_EV_NOFOG,					// the player can disable his fog
 	GAME_EV_DEFEATED,				// a player has been defeated
-	GAME_EV_FREEZE,					// a client has to be freezed
-	GAME_EV_UNFREEZE,				// a client has to be defreezed
-	GAME_EV_WAIT_FOR,				// a client has to wait for an other player to finish his turn
 	GAME_EV_DEL_PLAYER,				// a client has to delete a player
-	GAME_EV_TURN,					// a message with the current turn
 	GAME_EV_HUD_SETTINGS,			// hud settings for a client
 	GAME_EV_STORE_UNIT,				// a unit has to be stored
 	GAME_EV_EXIT_UNIT,				// a unit has to be exit
@@ -104,11 +96,6 @@ void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, 
 *@param sMsg the chat message.
 */
 void sendChatMessageToServer(const cClient& client, const std::string& msg, const cPlayer& player);
-/**
-* Sends an event that the player wants to end this turn
-*@author alzi alias DoctorDeath
-*/
-void sendWantToEndTurn (const cClient& client);
 
 /**
 * sends all necessary information to identify aggressor

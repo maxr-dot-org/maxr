@@ -31,17 +31,28 @@ class cModel;
 class cTurnTimeDeadline
 {
 public:
-	cTurnTimeDeadline (unsigned int startGameTime, const std::chrono::milliseconds& deadline);
+	cTurnTimeDeadline (unsigned int startGameTime, const std::chrono::milliseconds& deadline, unsigned int id);
+	cTurnTimeDeadline ();
 
 	unsigned int getStartGameTime() const;
-
 	const std::chrono::milliseconds& getDeadline() const;
+	unsigned int getId() const;
 
 	void changeDeadline (const std::chrono::milliseconds& deadline);
 
+	uint32_t getChecksum(uint32_t crc) const;
+
+	template <typename T>
+	void serialize(T& archive)
+	{
+		archive & NVP(startGameTime);
+		archive & NVP(deadline);
+		archive & NVP(id);
+	}
 private:
 	unsigned int startGameTime;
 	std::chrono::milliseconds deadline;
+	unsigned int id;
 };
 
 class cTurnTimeClock
@@ -52,22 +63,16 @@ public:
 	explicit cTurnTimeClock (const cModel& model);
 
 	void restartFromNow();
-	void restartFrom (unsigned int gameTime);
-
-	void stop();
-	void stopAt (unsigned int gameTime);
-
-	void resume();
-	void resumeAt (unsigned int gameTime);
 
 	unsigned int getStartGameTime() const;
 
 	void clearAllDeadlines();
 
-	std::shared_ptr<cTurnTimeDeadline> startNewDeadlineFromNow (const std::chrono::milliseconds& deadline);
-	std::shared_ptr<cTurnTimeDeadline> startNewDeadlineFrom (unsigned int gameTime, const std::chrono::milliseconds& deadline);
+	unsigned int startNewDeadlineFromNow (const std::chrono::milliseconds& duration);
+	unsigned int startNewDeadlineFrom (unsigned int gameTime, const std::chrono::milliseconds& duration);
 
-	void removeDeadline (const std::shared_ptr<cTurnTimeDeadline>& deadline);
+	void removeDeadline (unsigned int id);
+	void changeDeadline(unsigned int turnEndDeadline, const std::chrono::seconds& duration);
 
 	std::chrono::milliseconds getTimeSinceStart() const;
 	std::chrono::milliseconds getTimeTillFirstDeadline() const;
@@ -79,18 +84,27 @@ public:
 	mutable cSignal<void ()> secondChanged;
 	mutable cSignal<void ()> deadlinesChanged;
 	mutable cSignal<void ()> alertTimeReached;
+
+	uint32_t getChecksum(uint32_t crc) const;
+
+	template <typename T>
+	void serialize(T& archive)
+	{
+		archive & NVP(deadlines);
+		archive & NVP(startTurnGameTime);
+		archive & NVP(nextDeadlineId);
+	}
 private:
 	cSignalConnectionManager signalConnectionManager;
 
 	const cModel& model;
-	std::vector<std::shared_ptr<cTurnTimeDeadline>> deadlines;
+	std::vector<cTurnTimeDeadline> deadlines;
 
+	unsigned int nextDeadlineId;
 	unsigned int startTurnGameTime;
-	unsigned int stoppedAtTime;
-	unsigned int stoppedTicks;
-	bool stopped;
 
 	std::chrono::milliseconds getTimeTillDeadlineReached (const cTurnTimeDeadline& deadline) const;
+
 };
 
 #endif // game_logic_turnclockH

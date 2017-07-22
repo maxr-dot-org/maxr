@@ -49,16 +49,18 @@ class cGameSettings;
 class cUnitUpgrade;
 class cCasualtiesTracker;
 class cTurnTimeClock;
-class cTurnClock;
+class cTurnCounter;
 class cSavedReport;
 class cBuildListItem;
 class cWindowUpgradesFilterState;
 class cUnitsData;
 class cServer2;
+class cFreezeModes;
 
 class cChatCommandExecutor;
 
 enum class eResourceType;
+enum class ePlayerConnectionState;
 
 struct sID;
 
@@ -146,9 +148,15 @@ private:
 	void savePosition (size_t index);
 	void jumpToSavedPosition (size_t index);
 
+	void sendStartGroupMoveAction(std::vector<cVehicle*> group, const cPosition& destination);
+
+	void updateChangeAllowed();
+	void updateEndButtonState();
+	void updateGuiInfoTexts();
+
 	std::vector<std::shared_ptr<const cPlayer>> getPlayers() const;
 	std::shared_ptr<const cPlayer> getActivePlayer() const;
-	std::shared_ptr<const cTurnClock> getTurnClock() const;
+	std::shared_ptr<const cTurnCounter> getTurnCounter() const;
 	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock() const;
 	std::shared_ptr<const cGameSettings> getGameSettings() const;
 	std::shared_ptr<const cCasualtiesTracker> getCasualtiesTracker() const;
@@ -170,8 +178,6 @@ private:
 	mutable cSignal<void (const cUnit&)> selfDestructionTriggered;
 	mutable cSignal<void (const cVehicle& vehicle)> resumeMoveJobTriggered;
 	mutable cSignal<void ()> resumeAllMoveJobsTriggered;
-
-	void sendStartGroupMoveAction(std::vector<cVehicle*> group, const cPosition& destination);
 };
 
 #endif // ui_graphical_game_control_gameguicontrollerH

@@ -448,7 +448,6 @@ std::string enumToString(ePlayerConnectionState value)
 
 //------------------------------------------------------------------------------
 cFreezeModes::cFreezeModes() :
-	waitForOthersTurn (false),
 	waitForTurnEnd (false),
 	pause (false),
 	waitForClient (false),
@@ -459,9 +458,6 @@ void cFreezeModes::enable (eFreezeMode mode)
 {
 	switch (mode)
 	{
-	case eFreezeMode::WAIT_FOR_OTHERS_TURN:
-		waitForOthersTurn = true;
-		break;
 	case eFreezeMode::WAIT_FOR_TURNEND:
 		waitForTurnEnd = true;
 		break;
@@ -483,9 +479,6 @@ void cFreezeModes::disable (eFreezeMode mode)
 {
 	switch (mode)
 	{
-	case eFreezeMode::WAIT_FOR_OTHERS_TURN:
-		waitForOthersTurn = false;
-		break;
 	case eFreezeMode::WAIT_FOR_TURNEND:
 		waitForTurnEnd = false;
 		break;
@@ -505,7 +498,7 @@ void cFreezeModes::disable (eFreezeMode mode)
 
 bool cFreezeModes::isFreezed() const
 {
-	return waitForOthersTurn | pause | waitForTurnEnd | waitForClient | waitForServer;
+	return pause | waitForTurnEnd | waitForClient | waitForServer;
 }
 
 bool cFreezeModes::gameTimePaused() const
@@ -517,7 +510,6 @@ bool cFreezeModes::isEnabled (eFreezeMode mode) const
 {
 	switch (mode)
 	{
-		case eFreezeMode::WAIT_FOR_OTHERS_TURN: return waitForOthersTurn;
 		case eFreezeMode::PAUSE: return pause;
 		case eFreezeMode::WAIT_FOR_TURNEND: return waitForTurnEnd;
 		case eFreezeMode::WAIT_FOR_CLIENT: return waitForClient;

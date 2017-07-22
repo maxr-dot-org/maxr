@@ -32,6 +32,7 @@
 #include "game/data/player/player.h"
 #include "game/logic/pathcalculator.h"
 #include "game/logic/movejob.h"
+#include "game/logic/turncounter.h"
 
 class cPlayerBasicData;
 class cGameSettings;
@@ -42,6 +43,8 @@ struct sID;
 class cPosition;
 class cUnit;
 class cGameTimer;
+class cTurnTimeClock;
+class cTurnTimeDeadline;
 
 class cModel
 {
@@ -77,6 +80,10 @@ public:
 	const std::vector<std::shared_ptr<cPlayer>>& getPlayerList() const { return /*static_cast<std::vector<std::shared_ptr<const cPlayer>>>*/(playerList); }; //TODO: cast to const cPlayer
 	std::vector<std::shared_ptr<cPlayer>>& getPlayerList() { return playerList; };
 	void setPlayerList(const std::vector<cPlayerBasicData>& splayers);
+	const cPlayer* getActiveTurnPlayer() const;
+	
+	std::shared_ptr<const cTurnCounter> getTurnCounter() const;
+	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock() const;
 
 	cUnit* getUnitFromID(unsigned int id) const;
 	cVehicle* getVehicleFromID(unsigned int id) const;
@@ -89,9 +96,16 @@ public:
 	void deleteRubble(cBuilding* rubble);
 
 	void addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& path);
+	std::vector<const cPlayer*> resumeMoveJobs(const cPlayer* player = nullptr);
+
+	void handlePlayerFinishedTurn(cPlayer& player);
 
 	mutable cSignal<void()> gameTimeChanged;
 	mutable cSignal<void(const cVehicle& vehicle)> triggeredAddTracks;
+	mutable cSignal<void(const cPlayer& player)> playerFinishedTurn; // triggered when a player wants to end the turn
+	mutable cSignal<void()> turnEnded; // triggered when all players ended the turn or the turn time clock reached a deadline
+	mutable cSignal<void()> newTurnStarted; // triggered when the model has done all calculations for the new turn. 
+                                            // Note: this is usually the moment to trigger the autosave, not to start the new turn in the gui
 
 	template<typename T>
 	void save(T& archive)
@@ -113,6 +127,12 @@ public:
 		}
 		//archive & NVP(neutralBuildings);
 		archive << NVP(nextUnitId);
+		archive << serialization::makeNvp("turnCounter", *turnCounter);
+		archive << serialization::makeNvp("turnTimeClock", *turnTimeClock);
+		archive << NVP(turnEndDeadline);
+		archive << NVP(turnLimitDeadline);
+		archive << NVP(turnEndState);
+		archive << NVP(activeTurnPlayer);
 	};
 	template<typename T>
 	void load(T& archive)
@@ -170,12 +190,21 @@ public:
 			archive >> serialization::makeNvp("moveJob", *moveJob);
 		}
 		archive >> NVP(nextUnitId);
+		archive >> serialization::makeNvp("turnCounter", *turnCounter);
+		archive >> serialization::makeNvp("turnTimeClock", *turnTimeClock);
+		archive >> NVP(turnEndDeadline);
+		archive >> NVP(turnLimitDeadline);
+		archive >> NVP(turnEndState);
+		archive >> NVP(activeTurnPlayer);
 	}
 	SERIALIZATION_SPLIT_MEMBER();
+
 private:
 	void refreshMapPointer();
 	void runMoveJobs();
+	void handleTurnEnd();
 
+	//------------------------------------------------------------------------------
 	unsigned int gameId; //this id can be used to check, which log files, and save file belong to the same game.
 
 	unsigned int gameTime;
@@ -183,6 +212,7 @@ private:
 	std::shared_ptr<cGameSettings> gameSettings;
 	std::shared_ptr<cMap> map;
 	std::vector<std::shared_ptr<cPlayer>> playerList;
+	cPlayer* activeTurnPlayer;
 
 	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> neutralBuildings;
 
@@ -190,16 +220,19 @@ private:
 
 	std::shared_ptr<cUnitsData> unitsData;
 
-	std::vector<cMoveJob*> moveJobs; //TODO: serialize
+	std::vector<cMoveJob*> moveJobs;
+
+	std::shared_ptr<cTurnCounter> turnCounter;
+	std::shared_ptr<cTurnTimeClock> turnTimeClock;
+	unsigned int turnEndDeadline;
+	unsigned int turnLimitDeadline;
+
+	enum {TURN_ACTIVE, EXECUTE_REMAINING_MOVEMENTS, EXECUTE_TURN_START} turnEndState;
 
 	//jobs
 	//casualtiesTracker
-	//turnnr
-	//turn u. deadline timer
 	
 	//effect list
-
-	//signalConnectionManager?
 
 };
 

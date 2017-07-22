@@ -37,7 +37,7 @@
 #include "main.h"
 #include "game/data/units/unit.h"
 #include "keys.h"
-#include "game/logic/turnclock.h"
+#include "game/logic/turncounter.h"
 #include "game/logic/turntimeclock.h"
 
 //------------------------------------------------------------------------------
@@ -168,7 +168,7 @@ void cHud::setPlayer (std::shared_ptr<const cPlayer> player_)
 }
 
 //------------------------------------------------------------------------------
-void cHud::setTurnClock (std::shared_ptr<const cTurnClock> turnClock_)
+void cHud::setTurnClock (std::shared_ptr<const cTurnCounter> turnClock_)
 {
 	turnClock = std::move (turnClock_);
 

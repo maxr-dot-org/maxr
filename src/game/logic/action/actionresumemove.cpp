@@ -52,13 +52,7 @@ void cActionResumeMove::execute (cModel& model) const
 		const cPlayer* player = model.getPlayer(playerNr);
 		if (player == nullptr) return;
 	
-		for (const auto& vehicle : player->getVehicles())
-		{
-			if (vehicle->getMoveJob())
-			{
-				vehicle->getMoveJob()->resume();
-			}
-		}
+		model.resumeMoveJobs(player);
 	}
 	else
 	{

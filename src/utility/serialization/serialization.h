@@ -177,6 +177,26 @@ namespace serialization
 	{
 		serialization::detail::splitFree(archive, value);
 	}
+
+	//-------------------------------------------------------------------------
+	template<typename A>
+	void save(A& archive, const std::chrono::milliseconds& value)
+	{
+		archive << makeNvp("milliseconds", value.count());
+	}
+	template<typename A>
+	void load(A& archive, std::chrono::milliseconds& value)
+	{
+		long long tmp;
+		archive >> makeNvp("milliseconds", tmp);
+		value = std::chrono::milliseconds(tmp);
+	}
+	template<typename A>
+	void serialize(A& archive, std::chrono::milliseconds& value)
+	{
+		serialization::detail::splitFree(archive, value);
+	}
+
 	//-------------------------------------------------------------------------
 	template<typename A>
 	void save(A& archive, const std::chrono::seconds& value)
@@ -195,6 +215,7 @@ namespace serialization
 	{
 		serialization::detail::splitFree(archive, value);
 	}
+
 	//------------------------------------------------------------------------------
 	template<typename A, typename K, typename T>
 	void save(A& archive, const std::map<K, T>& value)

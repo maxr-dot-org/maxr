@@ -56,6 +56,10 @@ public:
 	*/
 	bool isFinished() const;
 	/**
+	* return true, if the movejob is waiting to be resumed
+	*/
+	bool isWaiting() const;
+	/**
 	* returns true, if the vehicle is currently moving (or rotating).
 	*/
 	bool isActive() const;

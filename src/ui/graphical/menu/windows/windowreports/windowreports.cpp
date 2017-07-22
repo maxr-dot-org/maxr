@@ -38,7 +38,7 @@
 #include "game/data/units/building.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/data/report/savedreport.h"
-#include "game/logic/turnclock.h"
+#include "game/logic/turncounter.h"
 #include "game/data/gamesettings.h"
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
 
@@ -57,7 +57,7 @@ std::string plural (int n, const std::string& sing, const std::string& plu)
 cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> players_,
 								std::shared_ptr<const cPlayer> localPlayer_,
 								std::shared_ptr<const cCasualtiesTracker> casualties_,
-								std::shared_ptr<const cTurnClock> turnClock_,
+								std::shared_ptr<const cTurnCounter> turnClock_,
 								std::shared_ptr<const cTurnTimeClock> turnTimeClock,
 								std::shared_ptr<const cGameSettings> gameSettings_,
 								const std::vector<std::unique_ptr<cSavedReport>>& reports_,

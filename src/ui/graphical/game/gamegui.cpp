@@ -63,7 +63,7 @@
 #include "game/data/report/savedreportchat.h"
 #include "game/data/report/savedreportunit.h"
 #include "game/data/report/special/savedreporthostcommand.h"
-#include "game/logic/turnclock.h"
+#include "game/logic/turncounter.h"
 #include "utility/random.h"
 #include "utility/indexiterator.h"
 #include "game/logic/movejob.h"
@@ -247,7 +247,7 @@ void cGameGui::setPlayers (std::vector<std::shared_ptr<const cPlayer>> players)
 }
 
 //------------------------------------------------------------------------------
-void cGameGui::setTurnClock (std::shared_ptr<const cTurnClock> turnClock)
+void cGameGui::setTurnClock (std::shared_ptr<const cTurnCounter> turnClock)
 {
 	hud->setTurnClock (turnClock);
 }

@@ -176,6 +176,8 @@ public:
 	void refreshResearchCentersWorkingOnArea();
 	void refreshBase(const cMap& map);
 
+	void makeTurnStart();
+
 	uint32_t getChecksum(uint32_t crc) const;
 
 	mutable cSignal<void ()> nameChanged;
@@ -185,6 +187,7 @@ public:
 	mutable cSignal<void ()> isRemovedFromGameChanged;
 	mutable cSignal<void (cResearch::ResearchArea)> researchCentersWorkingOnAreaChanged;
 	mutable cSignal<void ()> researchCentersWorkingTotalChanged;
+	mutable cSignal<void ()> turnEndMovementsStarted;
 
 	template <typename T>
 	void save(T& archive)
@@ -263,6 +266,7 @@ public:
 		archive & NVP(isRemovedFromGame);
 		archive & NVP(researchState);
 
+		hasFinishedTurnChanged(); //FIXME: deserialization does not trigger signals on changed data members. But this signal is needed for the gui after loading a save game...
 		doScan();
 		refreshSentryAir();
 		refreshSentryGround();

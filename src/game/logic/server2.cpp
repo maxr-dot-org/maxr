@@ -38,7 +38,20 @@ cServer2::cServer2(std::shared_ptr<cConnectionManager> connectionManager) :
 	serverThread(nullptr),
 	exit(false),
 	connectionManager(connectionManager)
-{}
+{
+	model.turnEnded.connect([&]()
+	{
+		enableFreezeMode(eFreezeMode::WAIT_FOR_TURNEND);
+	});
+	model.newTurnStarted.connect([&]()
+	{
+		if (cSettings::getInstance().shouldAutosave())
+		{
+			saveGameState(10, lngPack.i18n("Text~Comp~Turn_5") + " " + toString(model.getTurnCounter()->getTurn()) + " - " + lngPack.i18n("Text~Settings~Autosave"));
+		}
+		disableFreezeMode(eFreezeMode::WAIT_FOR_TURNEND);
+	});
+}
 
 //------------------------------------------------------------------------------
 cServer2::~cServer2()
@@ -204,6 +217,22 @@ void cServer2::run()
 			{
 			case eNetMessageType::ACTION:
 			{
+				// filter disallowed actions
+				if (freezeModes.isFreezed())
+				{
+					Log.write(" Server: Discarding action, because game is freezed.", cLog::eLOG_TYPE_NET_WARNING);
+					break;
+				}
+				if (model.getGameSettings()->getGameType() == eGameSettingsGameType::Turns && message->playerNr != model.getActiveTurnPlayer()->getId())
+				{
+					const cAction& action = *static_cast<cAction*>(message.get());
+					if (action.getType() != cAction::eActiontype::ACTION_INIT_NEW_GAME)
+					{
+						Log.write(" Server: Discarding action, because it's another payers turn.", cLog::eLOG_TYPE_NET_WARNING);
+						break;
+					}
+				}
+
 				const cAction* action = static_cast<cAction*>(message.get());
 				action->execute(model);
 
@@ -366,7 +395,7 @@ void cServer2::playerDisconnected(int playerId)
 		//TODO: set to INACTIVE when running in dedicated mode
 		playerConnectionStates[playerId] = ePlayerConnectionState::DISCONNECTED;
 	}
-	Log.write(" Server: Player " + toString(playerId) + " dissconnected", cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write(" Server: Player " + toString(playerId) + " disconnected", cLog::eLOG_TYPE_NET_DEBUG);
 	updateWaitForClientFlag();
 }
 

@@ -93,7 +93,11 @@
 #include "game/logic/movejob.h"
 #include "game/logic/action/actionstartmove.h"
 #include "game/logic/action/actionresumemove.h"
-#include "game/logic/turnclock.h"
+#include "game/logic/turncounter.h"
+#include "game/logic/action/actionendturn.h"
+#include "game/data/report/special/savedreportplayerendedturn.h"
+#include "game/logic/turncounter.h"
+#include "game/data/report/special/savedreportturnstart.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -262,7 +266,7 @@ void cGameGuiController::setActiveClient (std::shared_ptr<cClient> client_)
 	gameGui->setDynamicMap (getDynamicMap());
 	gameGui->setPlayers (getPlayers());
 	gameGui->setPlayer (getActivePlayer());
-	gameGui->setTurnClock (getTurnClock());
+	gameGui->setTurnClock (getTurnCounter());
 	gameGui->setTurnTimeClock (getTurnTimeClock());
 	gameGui->setGameSettings (getGameSettings());
 	gameGui->getDebugOutput().setClient (activeClient.get());
@@ -278,6 +282,10 @@ void cGameGuiController::setActiveClient (std::shared_ptr<cClient> client_)
 			gameGui->restoreState (iter->second);
 		}
 		soundManager->setModel(&activeClient->getModel());
+
+		updateEndButtonState();
+		updateGuiInfoTexts();
+		updateChangeAllowed();
 	}
 	else
 	{
@@ -808,7 +816,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getHud().endClicked, [&]()
 	{
-		client.handleEnd();
+		if (!client.getFreezeModes().isFreezed()) client.sendNetMessage(cActionEndTurn());
 	});
 	clientSignalConnectionManager.connect (gameGui->getHud().triggeredRenameUnit, [&] (const cUnit & unit, const std::string & name)
 	{
@@ -1095,11 +1103,16 @@ void cGameGuiController::connectClient (cClient& client)
 	//
 	// client to GUI (reaction)
 	//
-	clientSignalConnectionManager.connect(client.getTurnClock()->turnChanged, [&]()
+	const cModel& model = client.getModel();
+
+	clientSignalConnectionManager.connect(model.playerFinishedTurn, [&](const cPlayer& player)
 	{
-		doneList.clear();
+		if (player.getId() == getActivePlayer()->getId())
+		{
+			gameGui->getHud().lockEndButton();
+		}
 	});
-	clientSignalConnectionManager.connect (client.playerFinishedTurn, [&] (int currentPlayerNumber, int nextPlayerNumber)
+/*	clientSignalConnectionManager.connect (client.playerFinishedTurn, [&] (int currentPlayerNumber, int nextPlayerNumber)
 	{
 		if (currentPlayerNumber != client.getActivePlayer().getId()) return;
 
@@ -1118,84 +1131,26 @@ void cGameGuiController::connectClient (cClient& client)
 			}
 			else setActiveClient (nullptr);
 		}
-		else
-		{
-			gameGui->getHud().lockEndButton();
-		}
+	});
+*/
+
+	clientSignalConnectionManager.connect(client.freezeModeChanged, [&]()
+	{
+		updateEndButtonState();
+		updateGuiInfoTexts();
+		updateChangeAllowed();
 	});
 
-	clientSignalConnectionManager.connect(client.freezeModeChanged, [&](const cFreezeModes& freezeModes, const std::map<int, ePlayerConnectionState>& playerConnectionStates)
+	clientSignalConnectionManager.connect(model.newTurnStarted, [&]()
 	{
-		// set state of 'end' button
-		if (freezeModes.isEnabled(eFreezeMode::WAIT_FOR_OTHERS_TURN) || freezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND))
+		if (activeClient->getModel().getActiveTurnPlayer() == getActivePlayer().get())
 		{
-			gameGui->getHud().lockEndButton();
-		}
-		else
-		{
-			gameGui->getHud().unlockEndButton();
+			doneList.clear();
 		}
 
-		// set overlay into message
-		if (freezeModes.isEnabled (eFreezeMode::PAUSE))
-		{
-			gameGui->setInfoTexts (lngPack.i18n ("Text~Multiplayer~Pause"), "");
-		}
-		else if (freezeModes.isEnabled (eFreezeMode::WAIT_FOR_CLIENT))
-		{
-			std::string disconncetedPlayers;
-			std::string notRespondingPlayers;
-			for (const auto playerState : playerConnectionStates)
-			{
-				const cPlayer& player = *client.getModel().getPlayer(playerState.first);
-				if (playerState.second == ePlayerConnectionState::DISCONNECTED)
-				{
-					if (!disconncetedPlayers.empty())
-					{
-						disconncetedPlayers += ", ";
-					}
-					disconncetedPlayers += player.getName();
-				}
-				if (playerState.second == ePlayerConnectionState::NOT_RESPONDING)
-				{
-					if (!notRespondingPlayers.empty())
-					{
-						notRespondingPlayers += ", ";
-					}
-					notRespondingPlayers += player.getName();
-				}
-			}
-			if (!disconncetedPlayers.empty())
-			{
-				std::string s = server ? lngPack.i18n("Text~Multiplayer~Abort_Waiting") : "";
-				gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_Reconnect", disconncetedPlayers), s);
-			}
-			else if (!notRespondingPlayers.empty())
-			{
-				gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~No_Response", notRespondingPlayers), "");
-			}
-		}
-		else if (freezeModes.isEnabled (eFreezeMode::WAIT_FOR_SERVER))
-		{
-			gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_For_Server"), "");
-		}
-		else if (freezeModes.isEnabled (eFreezeMode::WAIT_FOR_OTHERS_TURN))
-		{
-			// TODO: Fix message
-			const std::string& name = /* player ? player->getName() : */ "other players";
-			gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_Until", name), "");
-		}
-		else if (freezeModes.isEnabled (eFreezeMode::WAIT_FOR_TURNEND))
-		{
-			gameGui->setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_TurnEnd"), "");
-		}
-		else
-		{
-			gameGui->setInfoTexts ("", "");
-		}
-
-		// set gui change allowed
-		gameGui->getGameMap().setChangeAllowed (!freezeModes.isFreezed());
+		updateEndButtonState();
+		updateGuiInfoTexts();
+		updateChangeAllowed();
 	});
 
 	clientSignalConnectionManager.connect(client.getModel().triggeredAddTracks, [&](const cVehicle & vehicle)
@@ -1297,7 +1252,7 @@ void cGameGuiController::connectClient (cClient& client)
 		gameGui->getGameMap().addEffect (effect, playSound);
 	});
 
-	clientSignalConnectionManager.connect (client.getTurnTimeClock()->alertTimeReached, [this]()
+	clientSignalConnectionManager.connect (model.getTurnTimeClock()->alertTimeReached, [this]()
 	{
 		soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceTurnAlertTimeReached, getRandom (VoiceData.VOITurnEnd20Sec)));
 	});
@@ -1323,13 +1278,34 @@ void cGameGuiController::connectReportSources(cClient& client)
 {
 	//this is the place where all reports about certain events in the model are generated...
 
+	const cModel& model = client.getModel();
 	const cPlayer& player = client.getActivePlayer();
 
 	playerReports[player.getId()] = std::make_shared<std::vector<std::unique_ptr<cSavedReport>>>();
 
+	//report message received from server
 	allClientsSignalConnectionManager.connect(client.reportMessageReceived, [&](int fromPlayerNr, std::unique_ptr<cSavedReport>& report, int toPlayerNr)
 	{
 		addSavedReport(std::move(report), toPlayerNr);
+	});
+
+	allClientsSignalConnectionManager.connect(model.playerFinishedTurn, [&](const cPlayer& otherPlayer)
+	{
+		if (otherPlayer.getId() != getActivePlayer()->getId())
+		{
+			addSavedReport(std::make_unique<cSavedReportPlayerEndedTurn>(otherPlayer), player.getId());
+		}
+	});
+	allClientsSignalConnectionManager.connect(player.turnEndMovementsStarted, [&]()
+	{
+		addSavedReport(std::make_unique<cSavedReportSimple>(eSavedReportType::TurnAutoMove), player.getId());
+	});
+	clientSignalConnectionManager.connect(model.newTurnStarted, [&]()
+	{
+		if (model.getActiveTurnPlayer() == getActivePlayer().get() || model.getGameSettings()->getGameType() == eGameSettingsGameType::Simultaneous)
+		{
+			addSavedReport(std::make_unique<cSavedReportTurnStart>(player, model.getTurnCounter()->getTurn()), player.getId());
+		}
 	});
 
 	//reports from the players base:
@@ -1445,7 +1421,7 @@ void cGameGuiController::showPreferencesDialog()
 //------------------------------------------------------------------------------
 void cGameGuiController::showReportsWindow()
 {
-	auto reportsWindow = application.show(std::make_shared<cWindowReports>(getPlayers(), getActivePlayer(), getCasualtiesTracker(), getTurnClock(), getTurnTimeClock(), getGameSettings(), getSavedReports(getActivePlayer()->getId()), getUnitsData()));
+	auto reportsWindow = application.show(std::make_shared<cWindowReports>(getPlayers(), getActivePlayer(), getCasualtiesTracker(), getTurnCounter(), getTurnTimeClock(), getGameSettings(), getSavedReports(getActivePlayer()->getId()), getUnitsData()));
 
 	signalConnectionManager.connect (reportsWindow->unitClickedSecondTime, [this, reportsWindow] (cUnit & unit)
 	{
@@ -1911,15 +1887,15 @@ std::shared_ptr<const cPlayer> cGameGuiController::getActivePlayer() const
 }
 
 //------------------------------------------------------------------------------
-std::shared_ptr<const cTurnClock> cGameGuiController::getTurnClock() const
+std::shared_ptr<const cTurnCounter> cGameGuiController::getTurnCounter() const
 {
-	return activeClient ? activeClient->getTurnClock() : nullptr;
+	return activeClient ? activeClient->getModel().getTurnCounter() : nullptr;
 }
 
 //------------------------------------------------------------------------------
 std::shared_ptr<const cTurnTimeClock> cGameGuiController::getTurnTimeClock() const
 {
-	return activeClient ? activeClient->getTurnTimeClock() : nullptr;
+	return activeClient ? activeClient->getModel().getTurnTimeClock() : nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -2001,5 +1977,98 @@ void cGameGuiController::sendStartGroupMoveAction(std::vector<cVehicle*> group, 
 		const auto& vehicle = group[i];
 		const auto& path = paths[i];
 		activeClient->sendNetMessage(cActionStartMove(*vehicle, path));
+	}
+}
+
+//------------------------------------------------------------------------------
+void cGameGuiController::updateChangeAllowed()
+{
+	const cFreezeModes& freezeModes = activeClient->getFreezeModes();
+	const auto& model = activeClient->getModel();
+
+	bool changeAllowed = !freezeModes.isFreezed() && (activeClient->getModel().getActiveTurnPlayer() == getActivePlayer().get() || model.getGameSettings()->getGameType() == eGameSettingsGameType::Simultaneous);
+	gameGui->getGameMap().setChangeAllowed (changeAllowed);
+}
+
+//------------------------------------------------------------------------------
+void cGameGuiController::updateEndButtonState()
+{
+	const cFreezeModes& freezeModes = activeClient->getFreezeModes();
+	const auto& model = activeClient->getModel();
+
+	if (freezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND) || 
+	   (activeClient->getModel().getActiveTurnPlayer() != getActivePlayer().get() && model.getGameSettings()->getGameType() == eGameSettingsGameType::Turns) ||
+	    getActivePlayer()->getHasFinishedTurn())
+	{
+		gameGui->getHud().lockEndButton();
+	}
+	else
+	{
+		gameGui->getHud().unlockEndButton();
+	}
+}
+
+//------------------------------------------------------------------------------
+void cGameGuiController::updateGuiInfoTexts()
+{
+	const cFreezeModes& freezeModes = activeClient->getFreezeModes();
+	const auto& playerConnectionStates = activeClient->getPlayerConnectionStates();
+	const auto& model = activeClient->getModel();
+
+	// set overlay into message
+	if (freezeModes.isEnabled(eFreezeMode::PAUSE))
+	{
+		gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Pause"), "");
+	}
+	else if (freezeModes.isEnabled(eFreezeMode::WAIT_FOR_CLIENT))
+	{
+		std::string disconncetedPlayers;
+		std::string notRespondingPlayers;
+		for (const auto playerState : playerConnectionStates)
+		{
+			const cPlayer& player = *activeClient->getModel().getPlayer(playerState.first);
+			if (playerState.second == ePlayerConnectionState::DISCONNECTED)
+			{
+				if (!disconncetedPlayers.empty())
+				{
+					disconncetedPlayers += ", ";
+				}
+				disconncetedPlayers += player.getName();
+			}
+			if (playerState.second == ePlayerConnectionState::NOT_RESPONDING)
+			{
+				if (!notRespondingPlayers.empty())
+				{
+					notRespondingPlayers += ", ";
+				}
+				notRespondingPlayers += player.getName();
+			}
+		}
+		if (!disconncetedPlayers.empty())
+		{
+			std::string s = server ? lngPack.i18n("Text~Multiplayer~Abort_Waiting") : "";
+			gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_Reconnect", disconncetedPlayers), s);
+		}
+		else if (!notRespondingPlayers.empty())
+		{
+			gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~No_Response", notRespondingPlayers), "");
+		}
+	}
+	else if (freezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND))
+	{
+		gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_TurnEnd"), "");
+	}
+	else if (freezeModes.isEnabled(eFreezeMode::WAIT_FOR_SERVER))
+	{
+		gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_For_Server"), "");
+	}
+	else if (activeClient->getModel().getActiveTurnPlayer() != getActivePlayer().get() && model.getGameSettings()->getGameType() == eGameSettingsGameType::Turns)
+	{
+		const std::string& name = activeClient->getModel().getActiveTurnPlayer()->getName();
+		gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_Until", name), "");
+	}
+	else
+	{
+		gameGui->setInfoTexts("", "");
 	}
 }

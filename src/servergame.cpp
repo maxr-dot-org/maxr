@@ -26,7 +26,7 @@
 #include "game/logic/serverevents.h"
 #include "game/data/map/map.h"
 #include "game/logic/server.h"
-#include "game/logic/turnclock.h"
+#include "game/logic/turncounter.h"
 #include "game/logic/landingpositionmanager.h"
 
 #include <algorithm>
@@ -298,7 +298,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 						server->setGameSettings (settings);
 
 						server->start();
-						server->startTurnTimers();
+						//server->startTurnTimers();
 					});
 					//sendGo (*network);
 				}

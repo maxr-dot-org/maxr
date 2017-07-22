@@ -36,7 +36,7 @@ class cUnitRenameWidget;
 class cUnit;
 class cAnimationTimer;
 class cPlayer;
-class cTurnClock;
+class cTurnCounter;
 class cTurnTimeClock;
 class cGameSettings;
 class cUnitsData;
@@ -54,7 +54,7 @@ public:
 	cHud (std::shared_ptr<cAnimationTimer> animationTimer);
 
 	void setPlayer (std::shared_ptr<const cPlayer> player);
-	void setTurnClock (std::shared_ptr<const cTurnClock> turnClock);
+	void setTurnClock (std::shared_ptr<const cTurnCounter> turnClock);
 	void setTurnTimeClock (std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 	void setGameSettings (std::shared_ptr<const cGameSettings> gameSettings);
 
@@ -165,7 +165,7 @@ private:
 	AutoSurface surface;
 
 	std::shared_ptr<const cPlayer> player;
-	std::shared_ptr<const cTurnClock> turnClock;
+	std::shared_ptr<const cTurnCounter> turnClock;
 	std::shared_ptr<const cUnitsData> unitsData;
 
 	cSignalConnectionManager signalConnectionManager;
