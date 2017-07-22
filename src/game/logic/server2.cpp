@@ -225,8 +225,12 @@ void cServer2::run()
 				}
 				if (model.getGameSettings()->getGameType() == eGameSettingsGameType::Turns && message->playerNr != model.getActiveTurnPlayer()->getId())
 				{
-					Log.write(" Server: Discarding action, because it's another payers turn.", cLog::eLOG_TYPE_NET_WARNING);
-					break;
+					const cAction& action = *static_cast<cAction*>(message.get());
+					if (action.getType() != cAction::eActiontype::ACTION_INIT_NEW_GAME)
+					{
+						Log.write(" Server: Discarding action, because it's another payers turn.", cLog::eLOG_TYPE_NET_WARNING);
+						break;
+					}
 				}
 
 				const cAction* action = static_cast<cAction*>(message.get());

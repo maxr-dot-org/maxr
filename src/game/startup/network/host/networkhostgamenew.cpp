@@ -66,9 +66,6 @@ void cNetworkHostGameNew::start (cApplication& application)
 	action.unitUpgrades = localPlayerUnitUpgrades;
 	localClient->sendNetMessage(action);
 
-	//TODO: turn timers
-	//server->startTurnTimers();
-
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 	gameGuiController->setSingleClient(localClient);
 	gameGuiController->setServer(server.get());

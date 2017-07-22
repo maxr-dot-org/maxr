@@ -60,6 +60,12 @@ std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 }
 
 //------------------------------------------------------------------------------
+cAction::eActiontype cAction::getType() const
+{
+	return type;
+}
+
+//------------------------------------------------------------------------------
 std::string enumToString(cAction::eActiontype value)
 {
 	switch (value)
