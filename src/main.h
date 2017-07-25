@@ -234,6 +234,7 @@ enum class eFreezeMode
 	WAIT_FOR_CLIENT,    // waiting for response from client
 	WAIT_FOR_SERVER     // waiting for response from server
 };
+std::string enumToString(eFreezeMode value);
 
 class cFreezeModes
 {

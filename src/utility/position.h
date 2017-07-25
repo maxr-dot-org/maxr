@@ -31,7 +31,12 @@
 class cPosition : public cFixedVector<int, 2>
 {
 public:
-	cPosition() {}
+	cPosition()
+	{
+		x() = 0;
+		y() = 0;
+	}
+
 	cPosition (const cPosition& other) :
 		cFixedVector<int, 2> (other)
 	{}

@@ -447,6 +447,21 @@ std::string enumToString(ePlayerConnectionState value)
 }
 
 //------------------------------------------------------------------------------
+std::string enumToString(eFreezeMode value)
+{
+	switch (value)
+	{
+	case eFreezeMode::WAIT_FOR_TURNEND: return "WAIT_FOR_TURNEND";
+	case eFreezeMode::PAUSE: return "PAUSE";
+	case eFreezeMode::WAIT_FOR_CLIENT: return "WAIT_FOR_CLIENT";
+	case eFreezeMode::WAIT_FOR_SERVER: return "WAIT_FOR_SERVER";
+	default:
+		assert(false);
+		return toString(static_cast<int>(value));
+	}
+}
+
+//------------------------------------------------------------------------------
 cFreezeModes::cFreezeModes() :
 	waitForTurnEnd (false),
 	pause (false),
