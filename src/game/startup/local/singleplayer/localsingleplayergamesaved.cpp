@@ -58,11 +58,11 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 	gameGuiController->setServer(server.get());
 	gameGuiController->start();
 
-	terminate = false;
+	resetTerminating();
 
 	application.addRunnable (shared_from_this());
 
-	signalConnectionManager.connect (gameGuiController->terminated, [&]() { terminate = true; });
+	signalConnectionManager.connect (gameGuiController->terminated, [&]() { exit(); });
 }
 
 void cLocalSingleplayerGameSaved::setSaveGameNumber (int saveGameNumber_)

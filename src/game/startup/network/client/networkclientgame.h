@@ -37,7 +37,9 @@ public:
 
 	virtual void run() MAXR_OVERRIDE_FUNCTION;
 
-	void setConnectionManager (std::shared_ptr<cConnectionManager> network); //TODO: in constructor?
+	void setConnectionManager (std::shared_ptr<cConnectionManager> network);
+
+	const cClient& getLocalClient() const;
 protected:
 	std::shared_ptr<cConnectionManager> connectionManager;
 

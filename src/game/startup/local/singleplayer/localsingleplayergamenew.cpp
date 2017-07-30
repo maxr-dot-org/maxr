@@ -82,11 +82,11 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 
 	gameGuiController->start();
 
-	terminate = false;
+	resetTerminating();
 
 	application.addRunnable (shared_from_this());
 
-	signalConnectionManager.connect (gameGuiController->terminated, [&]() { terminate = true; });
+	signalConnectionManager.connect(gameGuiController->terminated, [&]() { exit(); });
 }
 
 //------------------------------------------------------------------------------

@@ -54,9 +54,6 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	localClient->sendNetMessage(cNetMessageRequestResync(-1, saveGameNumber));
 	server->start();
 
-	// TODO: implement timers
-	//server->startTurnTimers();
-
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
 	gameGuiController->setSingleClient (localClient);
@@ -64,11 +61,11 @@ void cNetworkHostGameSaved::start (cApplication& application)
 
 	gameGuiController->start();
 
-	terminate = false;
+	resetTerminating();
 
 	application.addRunnable (shared_from_this());
 
-	signalConnectionManager.connect (gameGuiController->terminated, [&]() { terminate = true; });
+	signalConnectionManager.connect (gameGuiController->terminated, [&]() { exit(); });
 }
 
 //------------------------------------------------------------------------------

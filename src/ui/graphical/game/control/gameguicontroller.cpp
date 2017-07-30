@@ -1133,6 +1133,10 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 */
+	clientSignalConnectionManager.connect(client.connectionToServerLost, [&]()
+	{
+		gameGui->exit();
+	});
 
 	clientSignalConnectionManager.connect(client.freezeModeChanged, [&]()
 	{

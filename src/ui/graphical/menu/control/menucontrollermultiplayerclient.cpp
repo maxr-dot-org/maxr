@@ -42,6 +42,7 @@
 #include "mapdownload.h"
 #include "utility/files.h"
 #include "utility/string/toString.h"
+#include "game/logic/client.h"
 
 // TODO: remove
 std::vector<std::pair<sID, int>> createInitialLandingUnitsList(int clan, const cGameSettings& gameSettings, const cUnitsData& unitsData); // defined in windowsingleplayer.cpp
@@ -60,6 +61,8 @@ cMenuControllerMultiplayerClient::~cMenuControllerMultiplayerClient()
 //------------------------------------------------------------------------------
 void cMenuControllerMultiplayerClient::start()
 {
+	connectionLost = false;
+
 	connectionManager = std::make_shared<cConnectionManager> ();
 	connectionManager->setLocalClient (this, -1);
 
@@ -197,7 +200,6 @@ void cMenuControllerMultiplayerClient::startSavedGame()
 
 	savedGame->setConnectionManager (connectionManager);
 	savedGame->setStaticMap (windowNetworkLobby->getStaticMap());
-	//savedGame->setPlayers (windowNetworkLobby->getPlayersNotShared(), *windowNetworkLobby->getLocalPlayer());
 	savedGame->setPlayers(windowNetworkLobby->getSaveGameInfo().players, *windowNetworkLobby->getLocalPlayer());
 
 	application.closeTill (*windowNetworkLobby);
@@ -206,6 +208,16 @@ void cMenuControllerMultiplayerClient::startSavedGame()
 
 	savedGame->start (application);
 	
+	signalConnectionManager.connect(savedGame->getLocalClient().connectionToServerLost, [&]() { connectionLost = true; });
+	signalConnectionManager.connect(savedGame->terminated, [&]()
+	{
+		if (connectionLost)
+		{
+			reset();
+			start();
+			windowNetworkLobby->addInfoEntry(lngPack.i18n("Text~Multiplayer~Lost_Connection", "server"));
+		}
+	});
 }
 
 //------------------------------------------------------------------------------
@@ -304,11 +316,17 @@ void cMenuControllerMultiplayerClient::startLandingPositionSelection()
 
 	signalConnectionManager.connect (windowLandingPositionSelection->opened, [this]()
 	{
-		sendNetMessage(cMuMsgInLandingPositionSelectionStatus(newGame->getLocalPlayer().getNr(), true));
+		if (newGame)
+		{
+			sendNetMessage(cMuMsgInLandingPositionSelectionStatus(newGame->getLocalPlayer().getNr(), true));
+		}
 	});
 	signalConnectionManager.connect (windowLandingPositionSelection->closed, [this]()
 	{
-		sendNetMessage(cMuMsgInLandingPositionSelectionStatus(newGame->getLocalPlayer().getNr(), false));
+		if (newGame)
+		{
+			sendNetMessage(cMuMsgInLandingPositionSelectionStatus(newGame->getLocalPlayer().getNr(), false));
+		}
 	});
 
 	for (const auto& status : playersLandingStatus)
@@ -344,6 +362,17 @@ void cMenuControllerMultiplayerClient::startNewGame()
 	signalConnectionManager.connect (windowNetworkLobby->terminated, [&]() { windowNetworkLobby = nullptr; });
 
 	newGame->start (application);
+
+	signalConnectionManager.connect(newGame->getLocalClient().connectionToServerLost, [&]() { connectionLost = true; });
+	signalConnectionManager.connect(newGame->terminated, [&]() 
+	{
+		if (connectionLost)
+		{
+			reset();
+			start();
+			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Lost_Connection", "server"));
+		}
+	});
 }
 
 //------------------------------------------------------------------------------
@@ -378,6 +407,16 @@ void cMenuControllerMultiplayerClient::reconnectToGame(const cNetMessageGameAlre
 
 	reconnectionGame->start(application);
 
+	signalConnectionManager.connect(reconnectionGame->getLocalClient().connectionToServerLost, [&]() { connectionLost = true; });
+	signalConnectionManager.connect(reconnectionGame->terminated, [&]()
+	{
+		if (connectionLost)
+		{
+			reset();
+			start();
+			windowNetworkLobby->addInfoEntry(lngPack.i18n("Text~Multiplayer~Lost_Connection", "server"));
+		}
+	});
 }
 
 //------------------------------------------------------------------------------

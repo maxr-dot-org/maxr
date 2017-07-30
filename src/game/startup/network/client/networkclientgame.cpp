@@ -36,3 +36,9 @@ void cNetworkClientGame::setConnectionManager (std::shared_ptr<cConnectionManage
 {
 	connectionManager = connectionManager_;
 }
+
+//------------------------------------------------------------------------------
+const cClient& cNetworkClientGame::getLocalClient() const
+{
+	return *localClient;
+}

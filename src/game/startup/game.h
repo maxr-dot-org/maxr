@@ -23,6 +23,7 @@
 #include <memory>
 #include "utility/runnable.h"
 #include "maxrconfig.h"
+#include "utility/signal/signal.h"
 
 class cUnitsData;
 class cClanData;
@@ -39,15 +40,27 @@ public:
 	{
 		return terminate;
 	}
+	void exit()
+	{
+		terminate = true;
+		terminated();
+	}
+	void resetTerminating()
+	{
+		terminate = false;
+	}
 
 	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData_) { unitsData = std::move(unitsData_); }
 	std::shared_ptr<const cUnitsData> getUnitsData() const { return unitsData; }
 	void setClanData(std::shared_ptr<const cClanData> clanData_) { clanData = std::move(clanData_); }
 	std::shared_ptr<const cClanData> getClanData() const { return clanData; }
+
+	mutable cSignal<void()> terminated;
 protected:
-	bool terminate;
 	std::shared_ptr<const cUnitsData> unitsData;
 	std::shared_ptr<const cClanData> clanData;
+private:
+	bool terminate;
 };
 
 #endif // game_startup_gameH

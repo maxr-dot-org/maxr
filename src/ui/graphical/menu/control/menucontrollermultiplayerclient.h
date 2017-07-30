@@ -115,6 +115,7 @@ private:
 	void sendNetMessage(cNetMessage2& message);
 	void sendNetMessage(cNetMessage2&& message);
 	void saveOptions();
+	bool connectionLost;
 };
 
 #endif // ui_graphical_menu_control_menucontrollermultiplayerclientH

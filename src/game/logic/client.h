@@ -161,6 +161,7 @@ public:
 	mutable cSignal<void (int savingID)> guiSaveInfoRequested;
 	mutable cSignal<void (const cNetMessageGUISaveInfo& guiInfo)> guiSaveInfoReceived;
 	mutable cSignal<void ()> freezeModeChanged;
+	mutable cSignal<void ()> connectionToServerLost;
 
 
 	//TODO: move signals to model

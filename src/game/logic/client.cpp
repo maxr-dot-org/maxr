@@ -1079,6 +1079,11 @@ void cClient::handleNetMessages()
 				freezeModeChanged();
 			}
 			break;
+		case eNetMessageType::TCP_CLOSE:
+			{
+				connectionToServerLost();
+			}
+			break;
 		default:
 			Log.write(" Client: received unknown net message type", cLog::eLOG_TYPE_NET_WARNING);
 			break;
