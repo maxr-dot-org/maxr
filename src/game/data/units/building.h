@@ -298,7 +298,21 @@ public:
 
 		if (!archive.isWriter)
 		{
-			uiData = UnitsUiData.getBuildingUI(data.getId());
+			if (isRubble())
+			{
+				if (isBig)
+				{
+					uiData = UnitsUiData.rubbleBig;
+				}
+				else
+				{
+					uiData = UnitsUiData.rubbleSmall;
+				}
+			}
+			else
+			{
+				uiData = UnitsUiData.getBuildingUI(data.getId());
+			}
 			registerOwnerEvents();
 		}
 	}

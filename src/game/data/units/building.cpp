@@ -330,13 +330,13 @@ void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float
 
 	if (isBig)
 	{
-		if (!UnitsUiData.dirt_big) return;
-		src.w = src.h = (int) (UnitsUiData.dirt_big_org->h * zoomFactor);
+		if (!UnitsUiData.rubbleBig->img) return;
+		src.w = src.h = (int) (UnitsUiData.rubbleBig->img_org->h * zoomFactor);
 	}
 	else
 	{
-		if (!UnitsUiData.dirt_small) return;
-		src.w = src.h = (int) (UnitsUiData.dirt_small_org->h * zoomFactor);
+		if (!UnitsUiData.rubbleSmall->img) return;
+		src.w = src.h = (int) (UnitsUiData.rubbleSmall->img_org->h * zoomFactor);
 	}
 
 	src.x = src.w * rubbleTyp;
@@ -348,13 +348,13 @@ void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float
 	{
 		if (isBig)
 		{
-			CHECK_SCALING (*UnitsUiData.dirt_big_shw, *UnitsUiData.dirt_big_shw_org, zoomFactor);
-			SDL_BlitSurface (UnitsUiData.dirt_big_shw.get(), &src, surface, &tmp);
+			CHECK_SCALING (*UnitsUiData.rubbleBig->shw, *UnitsUiData.rubbleBig->shw_org, zoomFactor);
+			SDL_BlitSurface (UnitsUiData.rubbleBig->shw.get(), &src, surface, &tmp);
 		}
 		else
 		{
-			CHECK_SCALING (*UnitsUiData.dirt_small_shw, *UnitsUiData.dirt_small_shw_org, zoomFactor);
-			SDL_BlitSurface (UnitsUiData.dirt_small_shw.get(), &src, surface, &tmp);
+			CHECK_SCALING (*UnitsUiData.rubbleSmall->shw, *UnitsUiData.rubbleSmall->shw_org, zoomFactor);
+			SDL_BlitSurface (UnitsUiData.rubbleSmall->shw.get(), &src, surface, &tmp);
 		}
 	}
 
@@ -363,13 +363,13 @@ void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float
 
 	if (isBig)
 	{
-		CHECK_SCALING (*UnitsUiData.dirt_big, *UnitsUiData.dirt_big_org, zoomFactor);
-		SDL_BlitSurface (UnitsUiData.dirt_big.get(), &src, surface, &tmp);
+		CHECK_SCALING (*UnitsUiData.rubbleBig->img, *UnitsUiData.rubbleBig->img_org, zoomFactor);
+		SDL_BlitSurface (UnitsUiData.rubbleBig->img.get(), &src, surface, &tmp);
 	}
 	else
 	{
-		CHECK_SCALING (*UnitsUiData.dirt_small, *UnitsUiData.dirt_small_org, zoomFactor);
-		SDL_BlitSurface (UnitsUiData.dirt_small.get(), &src, surface, &tmp);
+		CHECK_SCALING (*UnitsUiData.rubbleSmall->img, *UnitsUiData.rubbleSmall->img_org, zoomFactor);
+		SDL_BlitSurface (UnitsUiData.rubbleSmall->img.get(), &src, surface, &tmp);
 	}
 }
 
@@ -1461,10 +1461,12 @@ void cBuilding::setRubbleValue(int value, cCrossPlattformRandom& randomGenerator
 	if (isBig)
 	{
 		rubbleTyp = randomGenerator.get(2);
+		uiData = UnitsUiData.rubbleBig;
 	}
 	else
 	{
 		rubbleTyp = randomGenerator.get(5);
+		uiData = UnitsUiData.rubbleSmall;
 	}
 }
 

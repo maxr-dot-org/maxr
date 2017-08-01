@@ -1067,7 +1067,7 @@ void cGameMapWidget::drawBaseUnits()
 
 			const auto& building = * (*it);
 
-			if (building.isRubble() || (
+			if (!building.isRubble() && (
 				building.getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_BENEATH_SEA &&
 				building.getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_BASE))
 				break;

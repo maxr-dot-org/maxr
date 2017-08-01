@@ -79,7 +79,10 @@ bool sID::operator == (const sID& ID) const
 cUnitsData::cUnitsData() :
 	crcValid(false),
 	crcCache(0)
-{}
+{
+	rubbleBig.isBig = true;
+	rubbleSmall.isBig = false;
+}
 
 //------------------------------------------------------------------------------
 int cUnitsData::getUnitIndexBy(sID id) const

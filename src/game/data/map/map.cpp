@@ -900,7 +900,7 @@ void cMap::placeRessources(cModel& model)
 void cMap::addBuilding (cBuilding& building, const cPosition& position)
 {
 	//big base building are not implemented
-	if (building.getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_GROUND && building.getIsBig()) return;
+	if (building.getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_GROUND && building.getIsBig() && !building.isRubble()) return;
 
 	const int mapLevel = cMap::getMapLevel (building);
 	size_t i = 0;
