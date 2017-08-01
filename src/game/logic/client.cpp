@@ -543,8 +543,8 @@ void cClient::HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message)
 	auto rubble = std::make_shared<cBuilding> (nullptr, nullptr, nullptr, ID);
 
 	rubble->setIsBig(big);
-	rubble->RubbleTyp = typ;
-	rubble->RubbleValue = value;
+//	rubble->RubbleTyp = typ;
+//	rubble->RubbleValue = value;
 	const auto position = message.popPosition();
 
 	rubble->setPosition (position);

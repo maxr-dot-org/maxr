@@ -469,7 +469,7 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
-	tmpString = "attacking: " + iToStr (building.isAttacking()) + " UnitsData.dirt_typ: " + iToStr (building.RubbleTyp) + " UnitsData.dirt_value: +" + iToStr (building.RubbleValue) + " big_dirt: " + iToStr (building.getIsBig()) + " is_working: " + iToStr (building.isUnitWorking());
+	tmpString = "attacking: " + iToStr (building.isAttacking()) + " UnitsData.dirt_typ: " + iToStr (building.rubbleTyp) + " UnitsData.dirt_value: +" + iToStr (building.rubbleValue) + " big_dirt: " + iToStr (building.getIsBig()) + " is_working: " + iToStr (building.isUnitWorking());
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 

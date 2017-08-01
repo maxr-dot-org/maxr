@@ -338,7 +338,7 @@ void cModel::deleteUnit(cUnit* unit)
 	if (unit == 0)
 		return;
 
-	if (unit->isABuilding() && unit->getOwner() == 0)
+	if (unit->isABuilding() && static_cast<cBuilding*>(unit)->isRubble())
 	{
 		deleteRubble(static_cast<cBuilding*> (unit));
 		return;
@@ -400,6 +400,8 @@ void cModel::deleteUnit(cUnit* unit)
 //------------------------------------------------------------------------------
 void cModel::deleteRubble(cBuilding* rubble)
 {
+	assert(rubble->isRubble());
+
 	map->deleteBuilding(*rubble);
 
 	auto iter = neutralBuildings.find(*rubble);

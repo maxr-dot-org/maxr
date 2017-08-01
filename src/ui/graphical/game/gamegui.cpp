@@ -481,7 +481,7 @@ void cGameGui::updateHudUnitName (const cPosition& tilePosition)
 		if (field.getVehicle() != nullptr) unit = field.getVehicle();
 		else if (field.getPlane() != nullptr) unit = field.getPlane();
 		else if (field.getTopBuilding() != nullptr) unit = field.getTopBuilding();
-		else if (field.getBaseBuilding() != nullptr && field.getBaseBuilding()->getOwner()) unit = field.getBaseBuilding();
+		else if (field.getBaseBuilding() != nullptr && !field.getBaseBuilding()->isRubble()) unit = field.getBaseBuilding();
 
 		if (unit != nullptr)
 		{

@@ -419,7 +419,7 @@ bool cVehicle::proceedClearing (cServer& server)
 			sendStopClear (server, *this, cPosition (-1, -1), *seenByPlayerList[i]);
 		}
 	}
-	setStoredResources (getStoredResources() + Rubble->RubbleValue);
+	setStoredResources (getStoredResources() + Rubble->getRubbleValue());
 	server.deleteRubble (Rubble);
 
 	return true;
@@ -1163,7 +1163,7 @@ bool cVehicle::canDoCommandoAction (const cUnit* unit, bool steal) const
 		return false;
 
 	if (steal == false && unit->isDisabled()) return false;
-	if (unit->isABuilding() && unit->getOwner() == 0) return false;     // rubble
+	if (unit->isABuilding() && static_cast<const cBuilding*>(unit)->isRubble()) return false;
 	if (steal && unit->getStaticUnitData().canBeCaptured == false) return false;
 	if (steal == false && unit->getStaticUnitData().canBeDisabled == false) return false;
 	if (steal && unit->storedUnits.empty() == false) return false;

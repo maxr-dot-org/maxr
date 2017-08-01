@@ -63,7 +63,7 @@ cUnit* cAttackJob::selectTarget (const cPosition& position, char attackMode, con
 	if (!targetVehicle && (attackMode & TERRAIN_GROUND))
 	{
 		targetBuilding = mapField.getBuilding();
-		if (targetBuilding && !targetBuilding->getOwner()) targetBuilding = nullptr;
+		if (targetBuilding && !targetBuilding->isRubble()) targetBuilding = nullptr;
 	}
 
 	if (targetVehicle) return targetVehicle;

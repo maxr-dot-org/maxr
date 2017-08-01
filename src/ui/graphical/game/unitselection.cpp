@@ -50,7 +50,7 @@ bool cUnitSelection::selectUnitAt (const cMapField& field, bool base)
 		return selectUnit (*topBuilding);
 	}
 	cBuilding* baseBuilding = field.getBaseBuilding();
-	if ((base || !selectedVehicle) && baseBuilding && baseBuilding->getOwner() != nullptr)
+	if ((base || !selectedVehicle) && baseBuilding && !baseBuilding->isRubble())
 	{
 		return selectUnit (*baseBuilding);
 	}
@@ -281,7 +281,7 @@ bool cUnitSelection::isSelected (const cUnit& unit) const
 //------------------------------------------------------------------------------
 bool cUnitSelection::canSelect (const cUnit* unit) const
 {
-	return unit && unit->getOwner();
+	return unit && !(unit->isABuilding() && static_cast<const cBuilding*>(unit)->isRubble());
 }
 
 //------------------------------------------------------------------------------

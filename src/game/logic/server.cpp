@@ -2107,11 +2107,11 @@ void cServer::destroyUnit (cUnit& unit)
 	auto rubble = field.getRubble();
 	if (rubble)
 	{
-		rubble->RubbleValue += rubbleValue / 2;
+/*		rubble->RubbleValue += rubbleValue / 2;
 		if (rubble->getIsBig())
 			rubble->RubbleTyp = random (2);
 		else
-			rubble->RubbleTyp = random (5);
+			rubble->RubbleTyp = random (5); */
 	}
 	else
 	{
@@ -2189,18 +2189,18 @@ void cServer::addRubble (const cPosition& position, int value, bool big)
 	rubble->setPosition (position);
 
 	rubble->setIsBig(big);
-	rubble->RubbleValue = value;
+	//rubble->RubbleValue = value;
 
 	Map->addBuilding (*rubble, position);
 
-	if (big)
+	/*if (big)
 	{
 		rubble->RubbleTyp = random (2);
 	}
 	else
 	{
 		rubble->RubbleTyp = random (5);
-	}
+	}*/
 	neutralBuildings.insert (std::move (rubble));
 }
 
