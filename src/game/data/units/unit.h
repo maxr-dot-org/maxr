@@ -39,8 +39,9 @@ class cSoundManager;
 //-----------------------------------------------------------------------------
 class cUnit
 {
-public:
+protected:
 	cUnit(const cDynamicUnitData* unitData, const cStaticUnitData* staticData, cPlayer* owner, unsigned int ID);
+public:
 	virtual ~cUnit();
 
 	unsigned int getId() const { return iID; };
