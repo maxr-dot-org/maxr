@@ -98,6 +98,7 @@
 #include "game/data/report/special/savedreportplayerendedturn.h"
 #include "game/logic/turncounter.h"
 #include "game/data/report/special/savedreportturnstart.h"
+#include "game/logic/action/actionselfdestroy.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -804,7 +805,8 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (selfDestructionTriggered, [&] (const cUnit & unit)
 	{
-		sendWantSelfDestroy (client, unit.iID);
+		if (unit.isAVehicle()) return;
+		client.sendNetMessage(cActionSelfDestroy(*static_cast<const cBuilding*>(&unit)));
 	});
 	clientSignalConnectionManager.connect (resumeMoveJobTriggered, [&] (const cVehicle & vehicle)
 	{
@@ -1251,9 +1253,9 @@ void cGameGuiController::connectClient (cClient& client)
 		soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceRepair, getRandom (VoiceData.VOIRepaired)));
 	});
 
-	clientSignalConnectionManager.connect (client.addedEffect, [&] (const std::shared_ptr<cFx>& effect, bool playSound)
+	clientSignalConnectionManager.connect (client.getModel().addedEffect, [&] (const std::shared_ptr<cFx>& effect)
 	{
-		gameGui->getGameMap().addEffect (effect, playSound);
+		gameGui->getGameMap().addEffect (effect, true);
 	});
 
 	clientSignalConnectionManager.connect (model.getTurnTimeClock()->alertTimeReached, [this]()

@@ -1522,16 +1522,17 @@ static int LoadBuildings()
 	// Dirtsurfaces
 	if (!DEDICATED_SERVER)
 	{
-		LoadGraphicToSurface (UnitsUiData.dirt_big_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big.pcx");
-		UnitsUiData.dirt_big = CloneSDLSurface (*UnitsUiData.dirt_big_org);
-		LoadGraphicToSurface(UnitsUiData.dirt_big_shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big_shw.pcx");
-		UnitsUiData.dirt_big_shw = CloneSDLSurface(*UnitsUiData.dirt_big_shw_org);
-		if (UnitsUiData.dirt_big_shw != nullptr) SDL_SetSurfaceAlphaMod(UnitsUiData.dirt_big_shw.get(), 50);
-		LoadGraphicToSurface(UnitsUiData.dirt_small_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small.pcx");
-		UnitsUiData.dirt_small = CloneSDLSurface(*UnitsUiData.dirt_small_org);
-		LoadGraphicToSurface(UnitsUiData.dirt_small_shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small_shw.pcx");
-		UnitsUiData.dirt_small_shw = CloneSDLSurface(*UnitsUiData.dirt_small_shw_org);
-		if (UnitsUiData.dirt_small_shw != nullptr) SDL_SetSurfaceAlphaMod(UnitsUiData.dirt_small_shw.get(), 50);
+		LoadGraphicToSurface (UnitsUiData.rubbleBig->img_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big.pcx");
+		UnitsUiData.rubbleBig->img = CloneSDLSurface (*UnitsUiData.rubbleBig->img_org);
+		LoadGraphicToSurface(UnitsUiData.rubbleBig->shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big_shw.pcx");
+		UnitsUiData.rubbleBig->shw = CloneSDLSurface(*UnitsUiData.rubbleBig->shw_org);
+		if (UnitsUiData.rubbleBig->shw != nullptr) SDL_SetSurfaceAlphaMod(UnitsUiData.rubbleBig->shw.get(), 50);
+
+		LoadGraphicToSurface(UnitsUiData.rubbleSmall->img_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small.pcx");
+		UnitsUiData.rubbleSmall->img = CloneSDLSurface(*UnitsUiData.rubbleSmall->img_org);
+		LoadGraphicToSurface(UnitsUiData.rubbleSmall->shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small_shw.pcx");
+		UnitsUiData.rubbleSmall->shw = CloneSDLSurface(*UnitsUiData.rubbleSmall->shw_org);
+		if (UnitsUiData.rubbleSmall->shw != nullptr) SDL_SetSurfaceAlphaMod(UnitsUiData.rubbleSmall->shw.get(), 50);
 	}
 	return 1;
 }

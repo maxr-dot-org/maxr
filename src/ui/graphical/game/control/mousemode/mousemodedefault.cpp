@@ -181,7 +181,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 				 field.getPlane() ||
 				 (
 					 field.getBuilding() &&
-					 field.getBuilding()->getOwner()
+					 !field.getBuilding()->isRubble()
 				 )
 			 ) &&
 			 (

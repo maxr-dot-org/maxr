@@ -73,8 +73,7 @@ cClient::cClient (std::shared_ptr<cConnectionManager> connectionManager) :
 	connectionManager(connectionManager),
 	gameTimer (std::make_shared<cGameTimerClient> ()),
 	activePlayer (nullptr),
-	casualtiesTracker (std::make_shared<cCasualtiesTracker> ()),
-	effectsList (new cFxContainer)
+	casualtiesTracker (std::make_shared<cCasualtiesTracker> ())
 {
 	gameTimer->start();
 }
@@ -89,7 +88,6 @@ cClient::~cClient()
 	{
 		delete attackJobs[i];
 	}
-	neutralBuildings.clear();
 	helperJobs.clear();
 }
 
@@ -155,15 +153,9 @@ void cClient::sendNetMessage(cNetMessage2&& message) const
 	sendNetMessage(static_cast<cNetMessage2&>(message));
 }
 
-void cClient::runFx()
-{
-	effectsList->run();
-}
-
 void cClient::addFx (std::shared_ptr<cFx> fx, bool playSound)
 {
-	effectsList->push_back (fx);
-	addedEffect (fx, playSound);
+
 }
 
 void cClient::HandleNetMessage_GAME_EV_DEL_BUILDING (cNetMessage& message)
@@ -543,16 +535,16 @@ void cClient::HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message)
 	auto rubble = std::make_shared<cBuilding> (nullptr, nullptr, nullptr, ID);
 
 	rubble->setIsBig(big);
-	rubble->RubbleTyp = typ;
-	rubble->RubbleValue = value;
+//	rubble->RubbleTyp = typ;
+//	rubble->RubbleValue = value;
 	const auto position = message.popPosition();
 
 	rubble->setPosition (position);
 
 //	getMap()->addBuilding (*rubble, rubble->getPosition());
 
-	auto result = neutralBuildings.insert (std::move (rubble));
-	assert (result.second);
+//	auto result = neutralBuildings.insert (std::move (rubble));
+//	assert (result.second);
 }
 
 void cClient::HandleNetMessage_GAME_EV_DETECTION_STATE (cNetMessage& message)
@@ -942,16 +934,6 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_SCORE (cNetMessage& message)
 	b->points = message.popInt16();
 }
 
-void cClient::HandleNetMessage_GAME_EV_SELFDESTROY (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_SELFDESTROY);
-
-	cBuilding* building = getBuildingFromID (message.popInt16());
-	if (!building) return;
-
-	addDestroyFx (*building);
-}
-
 void cClient::HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_END_MOVE_ACTION_SERVER);
@@ -1132,7 +1114,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_SCORE: HandleNetMessage_GAME_EV_SCORE (message); break;
 		case GAME_EV_NUM_ECOS: HandleNetMessage_GAME_EV_NUM_ECOS (message); break;
 		case GAME_EV_UNIT_SCORE: HandleNetMessage_GAME_EV_UNIT_SCORE (message); break;
-		case GAME_EV_SELFDESTROY: HandleNetMessage_GAME_EV_SELFDESTROY (message); break;
 		case GAME_EV_END_MOVE_ACTION_SERVER: HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (message); break;
 		case GAME_EV_REVEAL_MAP: HandleNetMessage_GAME_EV_REVEAL_MAP (message); break;
 
@@ -1220,8 +1201,8 @@ cBuilding* cClient::getBuildingFromID (unsigned int id) const
 		auto unit = player.getBuildingFromId (id);
 		if (unit) return unit;
 	}
-	auto iter = neutralBuildings.find (id);
-	return iter == neutralBuildings.end() ? nullptr : iter->get();
+//	auto iter = neutralBuildings.find (id);
+//	return iter == neutralBuildings.end() ? nullptr : iter->get();
 }
 
 cUnit* cClient::getUnitFromID (unsigned int id) const
@@ -1235,8 +1216,6 @@ cUnit* cClient::getUnitFromID (unsigned int id) const
 
 void cClient::doGameActions()
 {
-	runFx();
-
 	// run attackJobs
 	cAttackJob::runAttackJobs (attackJobs);
 
@@ -1255,47 +1234,6 @@ cSubBase* cClient::getSubBaseFromID (int iID)
 	if (building)
 		return building->subBase;
 	return nullptr;
-}
-
-void cClient::addDestroyFx (cVehicle& vehicle)
-{
-	// play explosion
-	if (vehicle.getIsBig())
-	{
-		addFx (std::make_shared<cFxExploBig> (vehicle.getPosition() * 64 + 64, model.getMap()->isWaterOrCoast (vehicle.getPosition())));
-	}
-	else if (vehicle.getStaticUnitData().factorAir > 0 && vehicle.getFlightHeight() != 0)
-	{
-		addFx (std::make_shared<cFxExploAir> (vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
-	}
-	else if (model.getMap()->isWaterOrCoast(vehicle.getPosition()))
-	{
-		addFx (std::make_shared<cFxExploWater> (vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
-	}
-	else
-	{
-		addFx (std::make_shared<cFxExploSmall> (vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
-	}
-
-	if (vehicle.uiData->hasCorpse)
-	{
-		// add corpse
-		addFx (std::make_shared<cFxCorpse> (vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
-	}
-}
-
-void cClient::addDestroyFx (cBuilding& building)
-{
-	// play explosion animation
-	cBuilding* topBuilding = model.getMap()->getField(building.getPosition()).getBuilding();
-	if (topBuilding && topBuilding->getIsBig())
-	{
-		addFx(std::make_shared<cFxExploBig>(topBuilding->getPosition() * 64 + 64, model.getMap()->isWaterOrCoast(topBuilding->getPosition())));
-	}
-	else
-	{
-		addFx (std::make_shared<cFxExploSmall> (building.getPosition() * 64 + 32));
-	}
 }
 
 //------------------------------------------------------------------------------

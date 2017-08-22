@@ -41,6 +41,7 @@ class cMap;
 class cMapField;
 class cServer;
 class cSubBase;
+class cCrossPlattformRandom;
 
 //--------------------------------------------------------------------------
 /** struct for the images and sounds */
@@ -150,12 +151,10 @@ public:
 
 	virtual bool isAVehicle() const { return false; }
 	virtual bool isABuilding() const { return true; }
+	bool isRubble() const { return rubbleValue > 0; }
 
 	const sBuildingUIData* uiData;
 	mutable int effectAlpha; // alpha value for the effect
-
-	int RubbleTyp;     // Typ des Drecks
-	int RubbleValue;   // Wert des Drecks
 	bool BaseN, BaseE, BaseS, BaseW; // is the building connected in this direction?
 	bool BaseBN, BaseBE, BaseBS, BaseBW; // is the building connected in this direction (only for big buildings)
 	cSubBase* subBase;     // the subbase to which this building belongs
@@ -254,6 +253,9 @@ public:
 	void setResearchArea (cResearch::ResearchArea area);
 	cResearch::ResearchArea getResearchArea() const;
 
+	void setRubbleValue(int value, cCrossPlattformRandom& randomGenerator);
+	int getRubbleValue() const;
+
 	virtual uint32_t getChecksum(uint32_t crc) const;
 
 	cSignal<void ()> buildListChanged;
@@ -269,8 +271,8 @@ public:
 	{
 		cUnit::serializeThis(archive); //serialize cUnit members
 
-		archive & NVP(RubbleTyp);
-		archive & NVP(RubbleValue);
+		archive & NVP(rubbleTyp);
+		archive & NVP(rubbleValue);
 		archive & NVP(BaseN);
 		archive & NVP(BaseE);
 		archive & NVP(BaseS);
@@ -296,7 +298,23 @@ public:
 
 		if (!archive.isWriter)
 		{
-			uiData = UnitsUiData.getBuildingUI(data.getId());
+			if (isRubble())
+			{
+				if (isBig)
+				{
+					uiData = UnitsUiData.rubbleBig;
+					staticData = archive.getPointerLoader()->getBigRubbleData();
+				}
+				else
+				{
+					uiData = UnitsUiData.rubbleSmall;
+					staticData = archive.getPointerLoader()->getSmallRubbleData();
+				}
+			}
+			else
+			{
+				uiData = UnitsUiData.getBuildingUI(data.getId());
+			}
 			registerOwnerEvents();
 		}
 	}
@@ -320,6 +338,9 @@ private:
 	bool repeatBuild;
 
 	int maxMetalProd, maxOilProd, maxGoldProd; // the maximum possible production of the building (ressources under the building)
+
+	int rubbleTyp;     // type of the rubble graphic (when unit is rubble)
+	int rubbleValue;   // number of resources in the rubble field
 
 	cResearch::ResearchArea researchArea; ///< if the building can research, this is the area the building last researched or is researching
 

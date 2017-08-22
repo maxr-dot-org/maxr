@@ -106,7 +106,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 		dest = destination;
 	}
 
-	if (!building.getOwner()) return;
+	if (building.isRubble()) return;
 
 	// draw the effect if necessary
 	if (building.uiData->powerOnGraphic && cSettings::getInstance().isAnimations() && (building.isUnitWorking() || !building.getStaticUnitData().canWork))

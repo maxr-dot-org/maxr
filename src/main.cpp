@@ -386,27 +386,16 @@ cUnitsUiData::cUnitsUiData() :
 	ptr_connector(0),
 	ptr_connector_org(0),
 	ptr_connector_shw(0),
-	ptr_connector_shw_org(0)
+	ptr_connector_shw_org(0),
+	rubbleBig(new sBuildingUIData()),
+	rubbleSmall(new sBuildingUIData())
 {}
 
 //------------------------------------------------------------------------------
-void cUnitsUiData::scaleSurfaces(float zoomFactor)
+cUnitsUiData::~cUnitsUiData()
 {
-	// Vehicles:
-	for (unsigned int i = 0; i < vehicleUIs.size(); ++i)
-	{
-		vehicleUIs[i].scaleSurfaces(zoomFactor);
-	}
-	// Buildings:
-	for (unsigned int i = 0; i < buildingUIs.size(); ++i)
-	{
-		buildingUIs[i].scaleSurfaces(zoomFactor);
-	}
-
-	if (dirt_small_org != nullptr && dirt_small != nullptr) scaleSurface(dirt_small_org.get(), dirt_small.get(), (int)(dirt_small_org->w * zoomFactor), (int)(dirt_small_org->h * zoomFactor));
-	if (dirt_small_shw_org != nullptr && dirt_small_shw != nullptr) scaleSurface(dirt_small_shw_org.get(), dirt_small_shw.get(), (int)(dirt_small_shw_org->w * zoomFactor), (int)(dirt_small_shw_org->h * zoomFactor));
-	if (dirt_big_org != nullptr && dirt_big != nullptr) scaleSurface(dirt_big_org.get(), dirt_big.get(), (int)(dirt_big_org->w * zoomFactor), (int)(dirt_big_org->h * zoomFactor));
-	if (dirt_big_shw_org != nullptr && dirt_big_shw != nullptr) scaleSurface(dirt_big_shw_org.get(), dirt_big_shw.get(), (int)(dirt_big_shw_org->w * zoomFactor), (int)(dirt_big_shw_org->h * zoomFactor));
+	delete rubbleBig;
+	delete rubbleSmall;
 }
 
 //------------------------------------------------------------------------------

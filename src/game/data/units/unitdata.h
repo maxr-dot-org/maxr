@@ -407,6 +407,8 @@ public:
 	const cStaticUnitData& getSmallGeneratorData() const { return getStaticUnitData(specialIDSmallGen); }
 	const cStaticUnitData& getLandMineData() const { return getStaticUnitData(specialIDLandMine); }
 	const cStaticUnitData& getSeaMineData() const { return getStaticUnitData(specialIDSeaMine); }
+	const cStaticUnitData& getRubbleSmallData() const { return rubbleSmall; }
+	const cStaticUnitData& getRubbleBigData() const { return rubbleBig; }
 
 	sID getConstructorID() const { return constructorID; };
 	sID getEngineerID() const { return engineerID; };
@@ -471,6 +473,9 @@ private:
 
 	// the dynamic unit data. Contains the modified versions for the clans
 	std::vector<std::vector<cDynamicUnitData> > clanDynamicUnitData;
+
+	cStaticUnitData rubbleSmall;
+	cStaticUnitData rubbleBig;
 
 	// unitdata does not change during the game. 
 	// So caching the checksum saves a lot cpu ressources.

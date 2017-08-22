@@ -211,34 +211,6 @@ public:
 	void doGameActions();
 
 	/**
-	* deletes a Unit
-	*@author alzi alias DoctorDeath
-	*@param unit the unit which should be deleted.
-	*@param notifyClient when false, the Unit is only removed locally.
-	*       The caller must make sure to inform the clients
-	*/
-	void deleteUnit (cUnit* unit, bool notifyClient = true);
-
-	/**
-	* deletes a unit (and additional units on the same field if necessary)
-	* from the game, creates rubble
-	*/
-	void destroyUnit (cUnit& unit);
-
-	/**
-	* adds a new rubble object to the game
-	* @param position The position where the rubble is added
-	* @param value the amount of material in the rubble field
-	* @param big size of the rubble field
-	*/
-	void addRubble (const cPosition& position, int value, bool big);
-	/**
-	* deletes a rubble object from the game
-	* @param rubble pointer to the rubble object which will be deleted
-	*/
-	void deleteRubble (cBuilding* rubble);
-
-	/**
 	* deletes a player and all his units
 	*@author alzi alias DoctorDeath
 	*/
@@ -289,7 +261,6 @@ private:
 	void handleNetMessage_GAME_EV_AUTOMOVE_STATUS (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message);
 	void handleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (cNetMessage& message);
-	void handleNetMessage_GAME_EV_WANT_SELFDESTROY (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& message);
 	void handleNetMessage_GAME_EV_END_MOVE_ACTION (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_KICK_PLAYER (cNetMessage& message);
@@ -319,12 +290,7 @@ private:
 	*/
 	void stopVehicleBuilding (cVehicle& vehicle);
 
-	/**
-	 * Helper for destroyUnit() that deletes all buildings
-	 * and returns the generated rubble value.
-	 */
-	int deleteBuildings (cMapField& field, bool deleteConnector);
-
+	
 	void runJobs();
 
 	void checkPlayerUnits (cVehicle& vehicle, cPlayer& MapPlayer);

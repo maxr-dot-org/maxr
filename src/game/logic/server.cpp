@@ -1442,20 +1442,6 @@ void cServer::handleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (cNetMessage& m
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_WANT_SELFDESTROY (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_WANT_SELFDESTROY);
-
-	cBuilding* building = getBuildingFromID (message.popInt16());
-	if (!building || building->getOwner()->getId() != message.iPlayerNr) return;
-
-	if (building->isBeeingAttacked()) return;
-
-	sendSelfDestroy (*this, *building);
-	destroyUnit (*building);
-}
-
-//------------------------------------------------------------------------------
 void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_CHANGE_UNIT_NAME);
@@ -1529,7 +1515,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 		case GAME_EV_AUTOMOVE_STATUS: handleNetMessage_GAME_EV_AUTOMOVE_STATUS (message); break;
 		case GAME_EV_WANT_COM_ACTION: handleNetMessage_GAME_EV_WANT_COM_ACTION (message); break;
 		case GAME_EV_REQUEST_CASUALTIES_REPORT: handleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (message); break;
-		case GAME_EV_WANT_SELFDESTROY: handleNetMessage_GAME_EV_WANT_SELFDESTROY (message); break;
 		case GAME_EV_WANT_CHANGE_UNIT_NAME: handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (message); break;
 		case GAME_EV_END_MOVE_ACTION: handleNetMessage_GAME_EV_END_MOVE_ACTION (message); break;
 		case GAME_EV_WANT_KICK_PLAYER: handleNetMessage_GAME_EV_WANT_KICK_PLAYER (message); break;
@@ -1622,75 +1607,6 @@ int cServer::getUpgradeCosts (const sID& ID, cPlayer& player,
 	}
 
 	return cost;
-}
-
-//------------------------------------------------------------------------------
-void cServer::deleteUnit (cUnit* unit, bool notifyClient)
-{
-	if (unit == 0)
-		return;
-
-	if (unit->isABuilding() && unit->getOwner() == 0)
-	{
-		deleteRubble (static_cast<cBuilding*> (unit));
-		return;
-	}
-
-	cPlayer* owner = unit->getOwner();
-
-	if (unit->getOwner() && casualtiesTracker != nullptr && ((unit->isABuilding() && unit->data.getBuildCost() <= 2) == false))
-		casualtiesTracker->logCasualty (unit->data.getId(), unit->getOwner()->getId());
-
-	std::shared_ptr<cUnit> owningPtr; // keep owning ptr to make sure that unit instance will outlive this method.
-	if (unit->isABuilding())
-	{
-		cBuilding* building = static_cast<cBuilding*> (unit);
-		owningPtr = owner->removeUnit (*building);
-	}
-	else
-	{
-		cVehicle* vehicle = static_cast<cVehicle*> (unit);
-		owningPtr = owner->removeUnit (*vehicle);
-	}
-
-	helperJobs.onRemoveUnit (unit);
-
-	// detach from move job
-	if (unit->isAVehicle())
-	{
-		/*cVehicle* vehicle = static_cast<cVehicle*> (unit);
-		if (vehicle->ServerMoveJob)
-		{
-			vehicle->ServerMoveJob->Vehicle = nullptr;
-		}*/
-	}
-
-	// remove from sentry list
-	unit->getOwner()->deleteSentry (*unit);
-
-	// lose eco points
-	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->points != 0)
-	{
-		unit->getOwner()->setScore (unit->getOwner()->getScore (turnClock->getTurn()) - static_cast<cBuilding*> (unit)->points, turnClock->getTurn());
-		sendScore (*this, *unit->getOwner(), turnClock->getTurn());
-		sendNumEcos (*this, *unit->getOwner());
-	}
-
-	if (unit->isABuilding())
-		Map->deleteBuilding (*static_cast<cBuilding*> (unit));
-	else
-		Map->deleteVehicle (*static_cast<cVehicle*> (unit));
-
-	if (notifyClient)
-		sendDeleteUnit (*this, *unit, nullptr);
-
-	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->subBase != 0)
-		unit->getOwner()->base.deleteBuilding (static_cast<cBuilding*> (unit), *Map);
-
-	if (owner != 0)
-	{
-		owner->doScan();
-	}
 }
 
 //------------------------------------------------------------------------------
@@ -2058,169 +1974,6 @@ cBuilding* cServer::getBuildingFromID (unsigned int id) const
 	return 0;
 }
 
-//------------------------------------------------------------------------------
-void cServer::destroyUnit (cUnit& unit)
-{
-	bool isVehicle = false;
-	const auto position = unit.getPosition();
-	auto& field = Map->getField (position);
-
-	//delete planes immediately
-	if (unit.isAVehicle())
-	{
-		isVehicle = true;
-		auto& vehicle = static_cast<cVehicle&> (unit);
-		if (vehicle.getStaticUnitData().factorAir > 0 && vehicle.getFlightHeight() > 0)
-		{
-			deleteUnit (&vehicle);
-			return;
-		}
-	}
-
-	//check, if there is a big unit on the field
-	bool bigUnit = false;
-	auto topBuilding = field.getTopBuilding();
-	if ((topBuilding && topBuilding->getIsBig()) || unit.getIsBig())
-		bigUnit = true;
-
-	//delete unit
-	int rubbleValue = 0;
-	if (!unit.getStaticUnitData().isHuman)
-	{
-		rubbleValue += unit.data.getBuildCost();
-		// stored material is always added completely to the rubble
-		if (unit.getStaticUnitData().storeResType == eResourceType::Metal)
-			rubbleValue += unit.getStoredResources() * 2;
-	}
-	deleteUnit (&unit);
-
-	//delete all buildings (except connectors, when a vehicle is destroyed)
-	rubbleValue += deleteBuildings (field, !isVehicle);
-	if (bigUnit)
-	{
-		rubbleValue += deleteBuildings (Map->getField (position + cPosition (1, 0)), !isVehicle);
-		rubbleValue += deleteBuildings (Map->getField (position + cPosition (0, 1)), !isVehicle);
-		rubbleValue += deleteBuildings (Map->getField (position + cPosition (1, 1)), !isVehicle);
-	}
-
-	//add rubble
-	auto rubble = field.getRubble();
-	if (rubble)
-	{
-		rubble->RubbleValue += rubbleValue / 2;
-		if (rubble->getIsBig())
-			rubble->RubbleTyp = random (2);
-		else
-			rubble->RubbleTyp = random (5);
-	}
-	else
-	{
-		if (rubbleValue > 2)
-			addRubble (position, rubbleValue / 2, bigUnit);
-	}
-}
-
-//------------------------------------------------------------------------------
-int cServer::deleteBuildings (cMapField& field, bool deleteConnector)
-{
-	auto buildings = field.getBuildings();
-	int rubble = 0;
-
-	for (auto b_it = buildings.begin(); b_it != buildings.end(); ++b_it)
-	{
-		if ((*b_it)->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE && deleteConnector == false) continue;
-		if ((*b_it)->getOwner() == nullptr) continue;
-
-		if ((*b_it)->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE) //no rubble for connectors
-			rubble += (*b_it)->data.getBuildCost();
-		if ((*b_it)->getStaticUnitData().storeResType == eResourceType::Metal)
-			rubble += (*b_it)->getStoredResources() * 2; // stored material is always added completely to the rubble
-
-		deleteUnit (*b_it);
-	}
-
-	return rubble;
-}
-
-//------------------------------------------------------------------------------
-void cServer::addRubble (const cPosition& position, int value, bool big)
-{
-	value = std::max (1, value);
-
-	if (Map->isWaterOrCoast (position))
-	{
-		if (big)
-		{
-			addRubble (position + cPosition (1, 0), value / 4, false);
-			addRubble (position + cPosition (0, 1), value / 4, false);
-			addRubble (position + cPosition (1, 1), value / 4, false);
-		}
-		return;
-	}
-
-	if (big && Map->isWaterOrCoast (position + cPosition (1, 0)))
-	{
-		addRubble (position,                   value / 4, false);
-		addRubble (position + cPosition (0, 1), value / 4, false);
-		addRubble (position + cPosition (1, 1), value / 4, false);
-		return;
-	}
-
-	if (big && Map->isWaterOrCoast (position + cPosition (0, 1)))
-	{
-		addRubble (position,                   value / 4, false);
-		addRubble (position + cPosition (1, 0), value / 4, false);
-		addRubble (position + cPosition (1, 1), value / 4, false);
-		return;
-	}
-
-	if (big && Map->isWaterOrCoast (position + cPosition (1, 1)))
-	{
-		addRubble (position,                   value / 4, false);
-		addRubble (position + cPosition (1, 0), value / 4, false);
-		addRubble (position + cPosition (0, 1), value / 4, false);
-		return;
-	}
-
-	auto rubble = std::make_shared<cBuilding> (nullptr, nullptr, nullptr, iNextUnitID);
-
-	iNextUnitID++;
-
-	rubble->setPosition (position);
-
-	rubble->setIsBig(big);
-	rubble->RubbleValue = value;
-
-	Map->addBuilding (*rubble, position);
-
-	if (big)
-	{
-		rubble->RubbleTyp = random (2);
-	}
-	else
-	{
-		rubble->RubbleTyp = random (5);
-	}
-	neutralBuildings.insert (std::move (rubble));
-}
-
-//------------------------------------------------------------------------------
-void cServer::deleteRubble (cBuilding* rubble)
-{
-	Map->deleteBuilding (*rubble);
-
-	auto iter = neutralBuildings.find (*rubble);
-	assert (iter != neutralBuildings.end());
-
-	if (iter != neutralBuildings.end())
-	{
-		auto owningUnitPtr = *iter;
-
-		neutralBuildings.erase (iter);
-
-		sendDeleteUnit (*this, *owningUnitPtr, nullptr);
-	}
-}
 
 //------------------------------------------------------------------------------
 void cServer::deletePlayer (cPlayer& player)
@@ -2229,12 +1982,12 @@ void cServer::deletePlayer (cPlayer& player)
 	const auto& vehicles = player.getVehicles();
 	while (!vehicles.empty())
 	{
-		deleteUnit (vehicles.begin()->get());
+		//deleteUnit (vehicles.begin()->get());
 	}
 	const auto& buildings = player.getVehicles();
 	while (!buildings.empty())
 	{
-		deleteUnit (buildings.begin()->get());
+		//deleteUnit (buildings.begin()->get());
 	}
 
 	// remove the player of all detected by player lists

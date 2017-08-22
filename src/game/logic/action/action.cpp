@@ -29,6 +29,7 @@
 #include "actionstopmove.h"
 #include "actionresumemove.h"
 #include "actionendturn.h"
+#include "actionselfdestroy.h"
 
 std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 {
@@ -52,7 +53,9 @@ std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 	case eActiontype::ACTION_RESUME_MOVE:
 		return std::make_unique<cActionResumeMove>(archive); 
 	case eActiontype::ACTION_END_TURN:
-			return std::make_unique<cActionEndTurn>(archive);
+		return std::make_unique<cActionEndTurn>(archive);	
+	case eActiontype::ACTION_SELF_DESTROY:
+		return std::make_unique<cActionSelfDestroy>(archive);
 	default:
 		throw std::runtime_error("Unknown action type " + iToStr(static_cast<int>(type)));
 		return nullptr;
@@ -86,6 +89,8 @@ std::string enumToString(cAction::eActiontype value)
 		return "ACTION_RESUME_MOVE";
 	case cAction::eActiontype::ACTION_END_TURN:
 		return "ACTION_END_TURN";
+	case cAction::eActiontype::ACTION_SELF_DESTROY:
+		return "ACTION_SELF_DESTROY";
 	default:
 		assert(false);
 		return toString(static_cast<int>(value));

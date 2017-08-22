@@ -209,7 +209,7 @@ uint32_t cUnit::getChecksum(uint32_t crc) const
 		crc = calcCheckSum(p->getId(), crc); 
 	//cJob* job
 	crc = calcCheckSum(isBig, crc);
-	crc = calcCheckSum(owner->getId(), crc);
+	crc = calcCheckSum(owner?owner->getId():0, crc);
 	crc = calcCheckSum(position, crc);
 	crc = calcCheckSum(customName, crc);
 	crc = calcCheckSum(turnsDisabled, crc);

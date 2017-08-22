@@ -58,7 +58,7 @@ std::string cSavedReportSimple::getMessage(const cUnitsData& unitsData) const
 		case eSavedReportType::GoldLow:
 			return lngPack.i18n ("Text~Comp~Gold_Low");
 		case eSavedReportType::EnergyLow:
-			return lngPack.i18n ("Text~Comp~Energy_ToLow");
+			return lngPack.i18n ("Text~Comp~Energy_Low");
 		case eSavedReportType::TeamLow:
 			return lngPack.i18n ("Text~Comp~Team_Low");
 

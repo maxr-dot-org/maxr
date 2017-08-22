@@ -1067,9 +1067,10 @@ void cGameMapWidget::drawBaseUnits()
 
 			const auto& building = * (*it);
 
-			if (building.getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_BENEATH_SEA &&
-				building.getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_BASE &&
-				building.getOwner()) break;
+			if (!building.isRubble() && (
+				building.getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_BENEATH_SEA &&
+				building.getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_BASE))
+				break;
 
 			if (!player || player->canSeeAnyAreaUnder (building))
 			{
@@ -2021,11 +2022,12 @@ void cGameMapWidget::updateActiveAnimations (const std::pair<cPosition, cPositio
 void cGameMapWidget::addAnimationsForUnit (const cUnit& unit)
 {
 	if (!cSettings::getInstance().isAnimations()) return;
-
 	
 	if (unit.isABuilding())
 	{
 		const cBuilding& building = static_cast<const cBuilding&>(unit);
+		if (building.isRubble()) return;
+
 		if (building.uiData->powerOnGraphic || unit.getStaticUnitData().canWork)
 		{
 			assert(unit.isABuilding());
@@ -2305,6 +2307,8 @@ void cGameMapWidget::renewDamageEffects()
 //------------------------------------------------------------------------------
 void cGameMapWidget::renewDamageEffect (const cBuilding& building)
 {
+	if (building.isRubble()) return;
+
 	if (building.uiData->hasDamageEffect &&
 		building.data.getHitpoints() < building.data.getHitpointsMax() &&
 		(building.getOwner() == player.get() || (!player || player->canSeeAnyAreaUnder (building))))

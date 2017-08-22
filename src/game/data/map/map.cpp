@@ -121,7 +121,7 @@ cBuilding* cMapField::getTopBuilding() const
 
 	if ((building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_GROUND ||
 		 building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE) &&
-		building->getOwner())
+		!building->isRubble())
 		return building;
 	return nullptr;
 }
@@ -132,7 +132,7 @@ cBuilding* cMapField::getBaseBuilding() const
 	{
 		if (building->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_GROUND &&
 			building->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE &&
-			building->getOwner())
+			!building->isRubble())
 		{
 			return building;
 		}
@@ -143,7 +143,7 @@ cBuilding* cMapField::getBaseBuilding() const
 cBuilding* cMapField::getRubble() const
 {
 	for (cBuilding* building : buildings)
-		if (!building->getOwner())
+		if (building->isRubble())
 			return building;
 	return nullptr;
 }
@@ -877,11 +877,13 @@ void cMap::placeRessources(cModel& model)
 {
 	const cStaticUnitData& data = building.getStaticUnitData();
 
+	if (!building.isRubble()) return 4;  // rubble
+
 	if (data.surfacePosition == cStaticUnitData::SURFACE_POS_BENEATH_SEA) return 9; // seamine
 	if (data.surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA) return 7; // bridge
 	if (data.surfacePosition == cStaticUnitData::SURFACE_POS_BASE && data.canBeOverbuild) return 6; // platform
 	if (data.surfacePosition == cStaticUnitData::SURFACE_POS_BASE) return 5; // road
-	if (!building.getOwner()) return 4;  // rubble
+
 	if (data.surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE) return 3; // landmine
 
 	return 1; // other buildings
@@ -898,7 +900,7 @@ void cMap::placeRessources(cModel& model)
 void cMap::addBuilding (cBuilding& building, const cPosition& position)
 {
 	//big base building are not implemented
-	if (building.getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_GROUND && building.getIsBig() && building.getOwner()) return;
+	if (building.getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_GROUND && building.getIsBig() && !building.isRubble()) return;
 
 	const int mapLevel = cMap::getMapLevel (building);
 	size_t i = 0;
@@ -1125,7 +1127,7 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 				(*b_it)->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_BASE &&
 				(*b_it)->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE_BASE &&
 				(*b_it)->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_BENEATH_SEA &&
-				(*b_it)->getOwner()) return false;
+				!(*b_it)->isRubble()) return false;
 		}
 	}
 	else if (vehicleData.factorSea > 0)

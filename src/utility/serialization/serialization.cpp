@@ -30,41 +30,41 @@ namespace serialization
 		model(model)
 	{}
 
-	void cPointerLoader::get(int id, cJob*& value)
+	void cPointerLoader::get(int id, cJob*& value) const
 	{
 		assert(false);
 		//TODO
 	}
 
-	void cPointerLoader::get(int id, cPlayer*& value)
+	void cPointerLoader::get(int id, cPlayer*& value) const
 	{
 		value = model.getPlayer(id);
 		if (value == nullptr && id != -1)
 			Log.write("Player with id " + iToStr(id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
 	}
 
-	void cPointerLoader::get(int id, cBuilding*& value)
+	void cPointerLoader::get(int id, cBuilding*& value) const
 	{
 		value = model.getBuildingFromID(id);
 		if (value == nullptr && id != -1)
 			Log.write("Building with id " + iToStr(id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
 	}
 
-	void cPointerLoader::get(int id, cVehicle*& value)
+	void cPointerLoader::get(int id, cVehicle*& value) const
 	{
 		value = model.getVehicleFromID(id);
 		if (value == nullptr && id != -1)
 			Log.write("Vehicle with id " + iToStr(id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
 	}
 
-	void cPointerLoader::get(int id, cUnit*& value)
+	void cPointerLoader::get(int id, cUnit*& value) const
 	{
 		value = model.getUnitFromID(id);
 		if (value == nullptr && id != -1)
 			Log.write("Unit with id " + iToStr(id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
 	}
 
-	void cPointerLoader::get(sID id, const cStaticUnitData*& value)
+	void cPointerLoader::get(sID id, const cStaticUnitData*& value) const
 	{
 		if (!model.getUnitsData()->isValidId(id))
 		{
@@ -73,4 +73,15 @@ namespace serialization
 		}
 		value = &model.getUnitsData()->getStaticUnitData(id);
 	}
+
+	const cStaticUnitData* cPointerLoader::getBigRubbleData() const
+	{
+		return &model.getUnitsData()->getRubbleBigData();
+	}
+
+	const cStaticUnitData* cPointerLoader::getSmallRubbleData() const
+	{
+		return &model.getUnitsData()->getRubbleSmallData();
+	}
+
 }

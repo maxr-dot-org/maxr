@@ -39,8 +39,9 @@ class cSoundManager;
 //-----------------------------------------------------------------------------
 class cUnit
 {
-public:
+protected:
 	cUnit(const cDynamicUnitData* unitData, const cStaticUnitData* staticData, cPlayer* owner, unsigned int ID);
+public:
 	virtual ~cUnit();
 
 	unsigned int getId() const { return iID; };
@@ -187,7 +188,7 @@ public:
 		archive & NVP(isBig);
 		archive & NVP(storageResCur);
 
-		if (!archive.isWriter)
+		if (!archive.isWriter && data.getId() != sID(0, 0))
 		{
 			//restore pointer to static unit data
 			archive.getPointerLoader()->get(data.getId(), staticData);

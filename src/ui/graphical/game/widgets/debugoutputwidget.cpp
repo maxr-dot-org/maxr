@@ -231,7 +231,7 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 			font->showText (drawPositionX, drawPositionY, "gui-fx-count: " + iToStr (gameMap->effects.size()), FONT_LATIN_SMALL_WHITE);
 			drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 		}
-		font->showText (drawPositionX, drawPositionY, "client-fx-count: " + iToStr (client->effectsList->size()), FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPositionX, drawPositionY, "client-fx-count: " + iToStr (client->getModel().effectsList.size()), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 	}
 	if (debugTraceServer || debugTraceClient)
@@ -469,7 +469,7 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
-	tmpString = "attacking: " + iToStr (building.isAttacking()) + " UnitsData.dirt_typ: " + iToStr (building.RubbleTyp) + " UnitsData.dirt_value: +" + iToStr (building.RubbleValue) + " big_dirt: " + iToStr (building.getIsBig()) + " is_working: " + iToStr (building.isUnitWorking());
+	tmpString = "attacking: " + iToStr (building.isAttacking()) + " UnitsData.dirt_typ: " + iToStr (building.rubbleTyp) + " UnitsData.dirt_value: +" + iToStr (building.rubbleValue) + " big_dirt: " + iToStr (building.getIsBig()) + " is_working: " + iToStr (building.isUnitWorking());
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 

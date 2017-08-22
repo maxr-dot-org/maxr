@@ -90,15 +90,7 @@ public:
 	//
 
 	void addJob (cJob* job);
-
-	/**
-	* handles the game relevant actions
-	* (for example moving the current position of a rocket)
-	* of the fx-effects,
-	* so that they are handled also, when the effects are not drawn.
-	*/
-	void runFx();
-
+	
 	void addAutoMoveJob (std::weak_ptr<cAutoMJob> autoMoveJob);
 
 	/**
@@ -140,12 +132,6 @@ public:
 
 	void addFx (std::shared_ptr<cFx> fx, bool playSound = true);
 
-	/**
-	* destroys a unit
-	* play FX, add rubble and delete Unit
-	*/
-	void addDestroyFx (cVehicle& vehicle);
-	void addDestroyFx (cBuilding& building);
 
 	void deletePlayer (cPlayer& player);
 
@@ -179,9 +165,6 @@ public:
 	mutable cSignal<void (const cUnit&)> unitStolen; //TODO: was in addUnit()
 
 	mutable cSignal<void (const cUnit&)> unitDetected; //TODO: was in addUnit()
-
-
-	mutable cSignal<void (const std::shared_ptr<cFx>&, bool)> addedEffect;
 
 	void run();
 private:
@@ -229,7 +212,6 @@ private:
 	void HandleNetMessage_GAME_EV_SCORE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_NUM_ECOS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UNIT_SCORE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_SELFDESTROY (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message);
 private:
@@ -250,16 +232,10 @@ private:
 
 	cJobContainer helperJobs; //TODO: move to cModel
 
-	/** list with buildings without owner, e. g. rubble fields */
-	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> neutralBuildings; //TODO: move to cModel
-
 	std::shared_ptr<cCasualtiesTracker> casualtiesTracker; //TODO: move to cModel
 
 	cFreezeModes freezeModes;
 	std::map<int, ePlayerConnectionState> playerConnectionStates;
-
-	/** lists with all FX-Animation */
-	std::unique_ptr<cFxContainer> effectsList; //TODO: move to cModel
 
 	std::list<std::weak_ptr<cAutoMJob>> autoMoveJobs; //TODO: move to cModel
 public:

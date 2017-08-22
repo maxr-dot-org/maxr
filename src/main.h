@@ -191,8 +191,8 @@ class cUnitsUiData
 {
 public:
 	cUnitsUiData();
+	~cUnitsUiData();
 
-	void scaleSurfaces(float zoomFactor);
 	const sBuildingUIData* getBuildingUI(sID id) const;
 	const sVehicleUIData* getVehicleUI(sID id) const;
 
@@ -200,14 +200,8 @@ public:
 	std::vector<sVehicleUIData> vehicleUIs;
 	std::vector<sBuildingUIData> buildingUIs;
 
-	AutoSurface dirt_small_org;
-	AutoSurface dirt_small;
-	AutoSurface dirt_small_shw_org;
-	AutoSurface dirt_small_shw;
-	AutoSurface dirt_big_org;
-	AutoSurface dirt_big;
-	AutoSurface dirt_big_shw_org;
-	AutoSurface dirt_big_shw;
+	sBuildingUIData* rubbleBig;
+	sBuildingUIData* rubbleSmall;
 
 	// direct pointer on some of the building graphics
 	SDL_Surface* ptr_small_beton;

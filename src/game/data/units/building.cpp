@@ -135,10 +135,10 @@ cBuilding::cBuilding (const cStaticUnitData* staticData, const cDynamicUnitData*
 {
 	setSentryActive (staticData && staticData->canAttack != TERRAIN_NONE);
 
-	RubbleTyp = 0;
-	RubbleValue = 0;
+	rubbleTyp = 0;
+	rubbleValue = 0;
 	researchArea = cResearch::kAttackResearch;
-	uiData = staticData ? UnitsUiData.getBuildingUI(staticData->ID) : 0;
+	uiData = staticData ? UnitsUiData.getBuildingUI(staticData->ID) : nullptr;
 	points = 0;
 
 	BaseN = false;
@@ -301,7 +301,7 @@ string cBuilding::getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData&
 //--------------------------------------------------------------------------
 void cBuilding::makeReport (cSoundManager& soundManager) const
 {
-	if (staticData->canResearch && isUnitWorking() && getOwner() && getOwner()->isCurrentTurnResearchAreaFinished (getResearchArea()))
+	if (staticData && staticData->canResearch && isUnitWorking() && getOwner() && getOwner()->isCurrentTurnResearchAreaFinished (getResearchArea()))
 	{
 		soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, VoiceData.VOIResearchComplete));
 	}
@@ -324,22 +324,22 @@ bool cBuilding::refreshData()
 
 void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
 {
-	assert (!getOwner());
+	assert (isRubble());
 
 	SDL_Rect src;
 
 	if (isBig)
 	{
-		if (!UnitsUiData.dirt_big) return;
-		src.w = src.h = (int) (UnitsUiData.dirt_big_org->h * zoomFactor);
+		if (!UnitsUiData.rubbleBig->img) return;
+		src.w = src.h = (int) (UnitsUiData.rubbleBig->img_org->h * zoomFactor);
 	}
 	else
 	{
-		if (!UnitsUiData.dirt_small) return;
-		src.w = src.h = (int) (UnitsUiData.dirt_small_org->h * zoomFactor);
+		if (!UnitsUiData.rubbleSmall->img) return;
+		src.w = src.h = (int) (UnitsUiData.rubbleSmall->img_org->h * zoomFactor);
 	}
 
-	src.x = src.w * RubbleTyp;
+	src.x = src.w * rubbleTyp;
 	SDL_Rect tmp = dest;
 	src.y = 0;
 
@@ -348,13 +348,13 @@ void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float
 	{
 		if (isBig)
 		{
-			CHECK_SCALING (*UnitsUiData.dirt_big_shw, *UnitsUiData.dirt_big_shw_org, zoomFactor);
-			SDL_BlitSurface (UnitsUiData.dirt_big_shw.get(), &src, surface, &tmp);
+			CHECK_SCALING (*UnitsUiData.rubbleBig->shw, *UnitsUiData.rubbleBig->shw_org, zoomFactor);
+			SDL_BlitSurface (UnitsUiData.rubbleBig->shw.get(), &src, surface, &tmp);
 		}
 		else
 		{
-			CHECK_SCALING (*UnitsUiData.dirt_small_shw, *UnitsUiData.dirt_small_shw_org, zoomFactor);
-			SDL_BlitSurface (UnitsUiData.dirt_small_shw.get(), &src, surface, &tmp);
+			CHECK_SCALING (*UnitsUiData.rubbleSmall->shw, *UnitsUiData.rubbleSmall->shw_org, zoomFactor);
+			SDL_BlitSurface (UnitsUiData.rubbleSmall->shw.get(), &src, surface, &tmp);
 		}
 	}
 
@@ -363,13 +363,13 @@ void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float
 
 	if (isBig)
 	{
-		CHECK_SCALING (*UnitsUiData.dirt_big, *UnitsUiData.dirt_big_org, zoomFactor);
-		SDL_BlitSurface (UnitsUiData.dirt_big.get(), &src, surface, &tmp);
+		CHECK_SCALING (*UnitsUiData.rubbleBig->img, *UnitsUiData.rubbleBig->img_org, zoomFactor);
+		SDL_BlitSurface (UnitsUiData.rubbleBig->img.get(), &src, surface, &tmp);
 	}
 	else
 	{
-		CHECK_SCALING (*UnitsUiData.dirt_small, *UnitsUiData.dirt_small_org, zoomFactor);
-		SDL_BlitSurface (UnitsUiData.dirt_small.get(), &src, surface, &tmp);
+		CHECK_SCALING (*UnitsUiData.rubbleSmall->img, *UnitsUiData.rubbleSmall->img_org, zoomFactor);
+		SDL_BlitSurface (UnitsUiData.rubbleSmall->img.get(), &src, surface, &tmp);
 	}
 }
 
@@ -477,7 +477,7 @@ void cBuilding::render (unsigned long long animationTime, SDL_Surface* surface, 
 	// make sure to update the caching rules!
 
 	// check, if it is dirt:
-	if (!getOwner())
+	if (isRubble())
 	{
 		render_rubble (surface, dest, zoomFactor, drawShadow);
 		return;
@@ -1453,11 +1453,35 @@ cResearch::ResearchArea cBuilding::getResearchArea() const
 	return researchArea;
 }
 
+//------------------------------------------------------------------------------
+void cBuilding::setRubbleValue(int value, cCrossPlattformRandom& randomGenerator)
+{
+	rubbleValue = value;
+
+	if (isBig)
+	{
+		rubbleTyp = randomGenerator.get(2);
+		uiData = UnitsUiData.rubbleBig;
+	}
+	else
+	{
+		rubbleTyp = randomGenerator.get(5);
+		uiData = UnitsUiData.rubbleSmall;
+	}
+}
+
+//------------------------------------------------------------------------------
+int cBuilding::getRubbleValue() const
+{
+	return rubbleValue;
+}
+
+//------------------------------------------------------------------------------
 uint32_t cBuilding::getChecksum(uint32_t crc) const
 {
 	crc = cUnit::getChecksum(crc);
-	crc = calcCheckSum(RubbleTyp, crc);
-	crc = calcCheckSum(RubbleValue, crc);
+	crc = calcCheckSum(rubbleTyp, crc);
+	crc = calcCheckSum(rubbleValue, crc);
 	crc = calcCheckSum(BaseN, crc);
 	crc = calcCheckSum(BaseE, crc);
 	crc = calcCheckSum(BaseS, crc);

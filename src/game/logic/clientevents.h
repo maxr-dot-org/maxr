@@ -75,7 +75,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_SCORE,                  // sends a player's score to a client
 	GAME_EV_NUM_ECOS,               // sends a player's ecosphere count to a client
 	GAME_EV_UNIT_SCORE,             // sends a unit's score to its owner
-	GAME_EV_SELFDESTROY,
 	GAME_EV_END_MOVE_ACTION_SERVER,	// the server has added an end move action to a movejob
 	GAME_EV_CASUALTIES_REPORT,		// sends the casualties stats to a client
 	GAME_EV_REVEAL_MAP,             // a client should reveal the whole map
@@ -196,7 +195,6 @@ void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool
 void sendWantUpgrade (const cClient& client, int buildingID, int storageSlot, bool upgradeAll);
 void sendWantResearchChange (const cClient& client, const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings);
 
-void sendWantSelfDestroy (const cClient& client, int unitId);
 void sendWantChangeUnitName (const cClient& client, const std::string& newName, int unitID);
 
 void sendEndMoveAction (const cClient& client, int vehicleID, int destID, eEndMoveActionType type);
