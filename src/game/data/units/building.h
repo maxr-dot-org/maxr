@@ -303,10 +303,12 @@ public:
 				if (isBig)
 				{
 					uiData = UnitsUiData.rubbleBig;
+					staticData = archive.getPointerLoader()->getBigRubbleData();
 				}
 				else
 				{
 					uiData = UnitsUiData.rubbleSmall;
+					staticData = archive.getPointerLoader()->getSmallRubbleData();
 				}
 			}
 			else

@@ -28,6 +28,7 @@
 #include "utility/listhelpers.h"
 #include "game/logic/turncounter.h"
 #include "game/logic/turntimeclock.h"
+#include "game/logic/fxeffects.h"
 
 //------------------------------------------------------------------------------
 cModel::cModel() :
@@ -107,6 +108,7 @@ void cModel::advanceGameTime()
 	gameTimeChanged();
 
 	runMoveJobs();
+	effectsList.run();
 	handleTurnEnd();
 }
 
@@ -332,6 +334,199 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 	//TODO: detection
 	return addedBuilding;
 }
+
+//------------------------------------------------------------------------------
+void cModel::destroyUnit(cUnit& unit)
+{
+	bool isVehicle = false;
+	const auto position = unit.getPosition();
+	auto& field = map->getField(position);
+
+	//delete planes immediately
+	if (unit.isAVehicle())
+	{
+		isVehicle = true;
+		auto& vehicle = static_cast<cVehicle&> (unit);
+		if (vehicle.getStaticUnitData().factorAir > 0 && vehicle.getFlightHeight() > 0)
+		{
+			deleteUnit(&vehicle);
+			return;
+		}
+	}
+
+	//check, if there is a big unit on the field
+	bool bigUnit = false;
+	auto topBuilding = field.getTopBuilding();
+	if ((topBuilding && topBuilding->getIsBig()) || unit.getIsBig())
+		bigUnit = true;
+
+	if (unit.isAVehicle())
+	{
+		addDestroyFx(static_cast<cVehicle&> (unit));
+	}
+	else
+	{
+		addDestroyFx(static_cast<cBuilding&> (unit));
+	}
+
+	//delete unit
+	int rubbleValue = 0;
+	if (!unit.getStaticUnitData().isHuman)
+	{
+		rubbleValue += unit.data.getBuildCost();
+		// stored material is always added completely to the rubble
+		if (unit.getStaticUnitData().storeResType == eResourceType::Metal)
+			rubbleValue += unit.getStoredResources() * 2;
+	}
+	deleteUnit(&unit);
+
+	//delete all buildings (except connectors, when a vehicle is destroyed)
+	rubbleValue += deleteBuildings(field, !isVehicle);
+	if (bigUnit)
+	{
+		rubbleValue += deleteBuildings(map->getField(position + cPosition(1, 0)), !isVehicle);
+		rubbleValue += deleteBuildings(map->getField(position + cPosition(0, 1)), !isVehicle);
+		rubbleValue += deleteBuildings(map->getField(position + cPosition(1, 1)), !isVehicle);
+	}
+
+	//add rubble
+	auto rubble = field.getRubble();
+	if (rubble)
+	{
+		rubble->setRubbleValue(rubble->getRubbleValue() + rubbleValue / 2, randomGenerator);
+	}
+	else
+	{
+		if (rubbleValue > 2)
+			addRubble(position, rubbleValue / 2, bigUnit);
+	}
+}
+
+//------------------------------------------------------------------------------
+void cModel::addDestroyFx(const cVehicle& vehicle)
+{
+	if (vehicle.getIsBig())
+	{
+		addFx(std::make_shared<cFxExploBig>(vehicle.getPosition() * 64 + 64, map->isWaterOrCoast(vehicle.getPosition())));
+	}
+	else if (vehicle.getStaticUnitData().factorAir > 0 && vehicle.getFlightHeight() != 0)
+	{
+		addFx(std::make_shared<cFxExploAir>(vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
+	}
+	else if (map->isWaterOrCoast(vehicle.getPosition()))
+	{
+		addFx(std::make_shared<cFxExploWater>(vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
+	}
+	else
+	{
+		addFx(std::make_shared<cFxExploSmall>(vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
+	}
+
+	if (vehicle.uiData->hasCorpse)
+	{
+		// add corpse
+		addFx(std::make_shared<cFxCorpse>(vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
+	}
+}
+
+//------------------------------------------------------------------------------
+void cModel::addDestroyFx(const cBuilding& building)
+{
+	const cBuilding* topBuilding = map->getField(building.getPosition()).getBuilding();
+	if (topBuilding && topBuilding->getIsBig())
+	{
+		addFx(std::make_shared<cFxExploBig>(topBuilding->getPosition() * 64 + 64, map->isWaterOrCoast(topBuilding->getPosition())));
+	}
+	else
+	{
+		addFx(std::make_shared<cFxExploSmall>(building.getPosition() * 64 + 32));
+	}
+}
+
+//------------------------------------------------------------------------------
+int cModel::deleteBuildings(cMapField& field, bool deleteConnector)
+{
+	auto buildings = field.getBuildings();
+	int rubble = 0;
+
+	for (auto b_it = buildings.begin(); b_it != buildings.end(); ++b_it)
+	{
+		if ((*b_it)->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE && deleteConnector == false) continue;
+		if ((*b_it)->isRubble()) continue;
+
+		if ((*b_it)->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE) //no rubble for connectors
+			rubble += (*b_it)->data.getBuildCost();
+		if ((*b_it)->getStaticUnitData().storeResType == eResourceType::Metal)
+			rubble += (*b_it)->getStoredResources() * 2; // stored material is always added completely to the rubble
+
+		deleteUnit(*b_it);
+	}
+
+	return rubble;
+}
+
+//------------------------------------------------------------------------------
+void cModel::addRubble(const cPosition& position, int value, bool big)
+{
+	value = std::max(1, value);
+
+	if (map->isWaterOrCoast(position))
+	{
+		if (big)
+		{
+			addRubble(position + cPosition(1, 0), value / 4, false);
+			addRubble(position + cPosition(0, 1), value / 4, false);
+			addRubble(position + cPosition(1, 1), value / 4, false);
+		}
+		return;
+	}
+
+	if (big && map->isWaterOrCoast(position + cPosition(1, 0)))
+	{
+		addRubble(position, value / 4, false);
+		addRubble(position + cPosition(0, 1), value / 4, false);
+		addRubble(position + cPosition(1, 1), value / 4, false);
+		return;
+	}
+
+	if (big && map->isWaterOrCoast(position + cPosition(0, 1)))
+	{
+		addRubble(position, value / 4, false);
+		addRubble(position + cPosition(1, 0), value / 4, false);
+		addRubble(position + cPosition(1, 1), value / 4, false);
+		return;
+	}
+
+	if (big && map->isWaterOrCoast(position + cPosition(1, 1)))
+	{
+		addRubble(position, value / 4, false);
+		addRubble(position + cPosition(1, 0), value / 4, false);
+		addRubble(position + cPosition(0, 1), value / 4, false);
+		return;
+	}
+
+	std::shared_ptr<cBuilding> rubble;
+	if (big)
+	{
+		rubble = std::make_shared<cBuilding>(&unitsData->getRubbleBigData(), nullptr, nullptr, nextUnitId);
+	}
+	else
+	{
+		rubble = std::make_shared<cBuilding>(&unitsData->getRubbleSmallData(), nullptr, nullptr, nextUnitId);
+	}
+
+	nextUnitId++;
+
+	rubble->setPosition(position);
+
+	rubble->setRubbleValue(value, randomGenerator);
+
+	map->addBuilding(*rubble, position);
+
+
+	neutralBuildings.insert(std::move(rubble));
+}
+
 //------------------------------------------------------------------------------
 void cModel::deleteUnit(cUnit* unit)
 {
@@ -472,6 +667,13 @@ void cModel::handlePlayerFinishedTurn(cPlayer& player)
 }
 
 //------------------------------------------------------------------------------
+void cModel::addFx(std::shared_ptr<cFx> fx)
+{
+	effectsList.push_back(fx);
+	addedEffect(fx);
+}
+
+//------------------------------------------------------------------------------
 std::shared_ptr<const cTurnTimeClock> cModel::getTurnTimeClock() const
 {
 	return turnTimeClock;
@@ -511,23 +713,29 @@ cBuilding* cModel::getBuildingFromID(unsigned int id) const
 		auto unit = playerList[i]->getBuildingFromId(id);
 		if (unit) return unit;
 	}
-	return 0;
+
+	auto iter = neutralBuildings.find(id);
+	return iter == neutralBuildings.end() ? nullptr : iter->get();
 }
 
 //------------------------------------------------------------------------------
 void cModel::refreshMapPointer()
 {
-	for (auto player : playerList)
+	for (const auto& player : playerList)
 	{
-		for (auto vehicle : player->getVehicles())
+		for (const auto& vehicle : player->getVehicles())
 		{
 			if (!vehicle->isUnitLoaded())
 				map->addVehicle(*vehicle, vehicle->getPosition());
 		}
-		for (auto building : player->getBuildings())
+		for (const auto& building : player->getBuildings())
 		{
 			map->addBuilding(*building, building->getPosition());
 		}
+	}
+	for (const auto& building : neutralBuildings)
+	{
+		map->addBuilding(*building, building->getPosition());
 	}
 }
 

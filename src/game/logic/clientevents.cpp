@@ -299,13 +299,6 @@ void sendRequestCasualtiesReport (const cClient& client)
 	client.sendNetMessage (std::move (message));
 }
 
-void sendWantSelfDestroy (const cClient& client, int unitId)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_SELFDESTROY);
-	message->pushInt16 (unitId);
-	client.sendNetMessage (std::move (message));
-}
-
 void sendWantChangeUnitName (const cClient& client, const string& newName, int unitID)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_CHANGE_UNIT_NAME);

@@ -17,51 +17,33 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef game_logic_actionH
-#define game_logic_actionH
+#include "actionselfdestroy.h"
+#include "game/data/model.h"
+#include "utility/log.h"
 
-#include "netmessage2.h"
+//------------------------------------------------------------------------------
+cActionSelfDestroy::cActionSelfDestroy(const cBuilding& unit) :
+	cAction(eActiontype::ACTION_SELF_DESTROY), 
+	unitId(unit.getId())
+{};
 
-class cAction : public cNetMessage2
+//------------------------------------------------------------------------------
+cActionSelfDestroy::cActionSelfDestroy(cBinaryArchiveOut& archive)
+	: cAction(eActiontype::ACTION_SELF_DESTROY)
 {
-public:
-	// When changing this enum, also update function enumToString(eActiontype value)!
-	enum class eActiontype {
-		ACTION_INIT_NEW_GAME,
-		ACTION_START_WORK,
-		ACTION_STOP_WORK,
-		ACTION_TRANSFER,
-		ACTION_START_MOVE,
-		ACTION_STOP_MOVE,
-		ACTION_RESUME_MOVE,
-		ACTION_END_TURN,
-		ACTION_SELF_DESTROY
-	};
-	static std::unique_ptr<cAction> createFromBuffer(cBinaryArchiveOut& archive);
+	serializeThis(archive);
+}
 
-	eActiontype getType() const;
-
-	virtual void serialize(cBinaryArchiveIn& archive) { cNetMessage2::serialize(archive); serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive)   { cNetMessage2::serialize(archive); serializeThis(archive); }
-
+//------------------------------------------------------------------------------
+void cActionSelfDestroy::execute(cModel& model) const
+{
 	//Note: this function handles incoming data from network. Make every possible sanity check!
-	virtual void execute(cModel& model) const = 0;
-protected:
-	cAction(eActiontype type) : cNetMessage2(eNetMessageType::ACTION), type(type){};
-private:
-	template<typename T>
-	void serializeThis(T& archive)
-	{
-		archive & type;
-	}
 
-	cAction(const cAction&) MAXR_DELETE_FUNCTION;
-	cAction& operator=(const cAction&)MAXR_DELETE_FUNCTION;
+	cBuilding* b = model.getBuildingFromID(unitId);
+	if (b == nullptr) return;
+	if (b->getOwner()->getId() != playerNr) return;
 
-	eActiontype type;
-};
+	if (b->isBeeingAttacked()) return;
 
-std::string enumToString(cAction::eActiontype value);
-
-
-#endif
+	model.destroyUnit(*b);
+}

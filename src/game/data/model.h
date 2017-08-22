@@ -33,6 +33,7 @@
 #include "game/logic/pathcalculator.h"
 #include "game/logic/movejob.h"
 #include "game/logic/turncounter.h"
+#include "game/logic/fxeffects.h"
 
 class cPlayerBasicData;
 class cGameSettings;
@@ -92,6 +93,12 @@ public:
 	//TODO: check if init and addToMap are needed
 	cVehicle& addVehicle(const cPosition& position, const sID& id, cPlayer* player, bool init = false, bool addToMap = true);
 	cBuilding& addBuilding(const cPosition& position, const sID& id, cPlayer* player, bool init = false);
+	void destroyUnit(cUnit& unit);
+	void addDestroyFx(const cVehicle& vehicle);
+	void addDestroyFx(const cBuilding& vehicle);
+
+	int deleteBuildings(cMapField& field, bool deleteConnector);
+	void addRubble(const cPosition& position, int value, bool big);
 	void deleteUnit(cUnit* unit);
 	void deleteRubble(cBuilding* rubble);
 
@@ -100,12 +107,14 @@ public:
 
 	void handlePlayerFinishedTurn(cPlayer& player);
 
+	void addFx(std::shared_ptr<cFx> fx);
+
 	mutable cSignal<void()> gameTimeChanged;
 	mutable cSignal<void(const cVehicle& vehicle)> triggeredAddTracks;
 	mutable cSignal<void(const cPlayer& player)> playerFinishedTurn; // triggered when a player wants to end the turn
 	mutable cSignal<void()> turnEnded; // triggered when all players ended the turn or the turn time clock reached a deadline
 	mutable cSignal<void()> newTurnStarted; // triggered when the model has done all calculations for the new turn. 
-                                            // Note: this is usually the moment to trigger the autosave, not to start the new turn in the gui
+	mutable cSignal<void (const std::shared_ptr<cFx>& fx)> addedEffect;
 
 	template<typename T>
 	void save(T& archive)
@@ -125,7 +134,12 @@ public:
 		{
 			archive << serialization::makeNvp("moveJob", *moveJob);
 		}
-		//archive & NVP(neutralBuildings);
+		archive << serialization::makeNvp("neutralBuildingNum", (int)neutralBuildings.size());
+		for (auto building : neutralBuildings)
+		{
+			archive << serialization::makeNvp("buildingID", building->getId());
+			archive << serialization::makeNvp("building", *building);
+		}
 		archive << NVP(nextUnitId);
 		archive << serialization::makeNvp("turnCounter", *turnCounter);
 		archive << serialization::makeNvp("turnTimeClock", *turnTimeClock);
@@ -133,6 +147,7 @@ public:
 		archive << NVP(turnLimitDeadline);
 		archive << NVP(turnEndState);
 		archive << NVP(activeTurnPlayer);
+		//TODO: serialize effectList
 	};
 	template<typename T>
 	void load(T& archive)
@@ -171,7 +186,6 @@ public:
 			player->initMaps(*map);
 			archive >> serialization::makeNvp("player", *player);
 		}
-		refreshMapPointer();
 		for (auto& player : playerList)
 		{
 			player->refreshBase(*map);
@@ -189,6 +203,18 @@ public:
 			moveJob = new cMoveJob();
 			archive >> serialization::makeNvp("moveJob", *moveJob);
 		}
+
+		neutralBuildings.clear();
+		int neutralBuildingNum;
+		archive >> NVP(neutralBuildingNum);
+		for (int i = 0; i < neutralBuildingNum; i++)
+		{
+			unsigned int buildingID;
+			archive >> NVP(buildingID);
+			auto building = std::make_shared<cBuilding>(nullptr, nullptr, nullptr, buildingID);
+			archive >> serialization::makeNvp("building", *building);
+			neutralBuildings.insert(std::move(building));
+		}
 		archive >> NVP(nextUnitId);
 		archive >> serialization::makeNvp("turnCounter", *turnCounter);
 		archive >> serialization::makeNvp("turnTimeClock", *turnTimeClock);
@@ -196,6 +222,9 @@ public:
 		archive >> NVP(turnLimitDeadline);
 		archive >> NVP(turnEndState);
 		archive >> NVP(activeTurnPlayer);
+		//TODO: clear effect list, deserialize effects, call addedEffect()
+
+		refreshMapPointer();
 	}
 	SERIALIZATION_SPLIT_MEMBER();
 
@@ -229,11 +258,12 @@ private:
 
 	enum {TURN_ACTIVE, EXECUTE_REMAINING_MOVEMENTS, EXECUTE_TURN_START} turnEndState;
 
+	/** lists with all FX-Animation */
+	cFxContainer effectsList;
+
 	//jobs
 	//casualtiesTracker
 	
-	//effect list
-
 };
 
 #endif

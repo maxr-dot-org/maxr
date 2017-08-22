@@ -420,7 +420,7 @@ bool cVehicle::proceedClearing (cServer& server)
 		}
 	}
 	setStoredResources (getStoredResources() + Rubble->getRubbleValue());
-	server.deleteRubble (Rubble);
+	//server.deleteRubble (Rubble);
 
 	return true;
 }
@@ -1124,7 +1124,7 @@ bool cVehicle::clearMine (cServer& server)
 	if (Mine->getStaticUnitData().factorGround > 0 && staticData->factorGround == 0) return false;
 	if (Mine->getStaticUnitData().factorSea > 0 && staticData->factorSea == 0) return false;
 
-	server.deleteUnit (Mine);
+	//server.deleteUnit (Mine);
 	setStoredResources (getStoredResources() + 1);
 
 	if (getStoredResources() >= staticData->storageResMax) setClearMines (false);

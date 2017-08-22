@@ -231,7 +231,7 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 			font->showText (drawPositionX, drawPositionY, "gui-fx-count: " + iToStr (gameMap->effects.size()), FONT_LATIN_SMALL_WHITE);
 			drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 		}
-		font->showText (drawPositionX, drawPositionY, "client-fx-count: " + iToStr (client->effectsList->size()), FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPositionX, drawPositionY, "client-fx-count: " + iToStr (client->getModel().effectsList.size()), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 	}
 	if (debugTraceServer || debugTraceClient)

@@ -188,7 +188,7 @@ public:
 		archive & NVP(isBig);
 		archive & NVP(storageResCur);
 
-		if (!archive.isWriter)
+		if (!archive.isWriter && data.getId() != sID(0, 0))
 		{
 			//restore pointer to static unit data
 			archive.getPointerLoader()->get(data.getId(), staticData);

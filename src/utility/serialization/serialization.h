@@ -290,12 +290,16 @@ namespace serialization
 	{
 	public:
 		cPointerLoader(cModel& model);
-		void get(int id, cJob*& value);
-		void get(int id, cPlayer*& value);
-		void get(int id, cBuilding*& value);
-		void get(int id, cVehicle*& value);
-		void get(int id, cUnit*& value);
-		void get(sID id, const cStaticUnitData*& value);
+
+		void get(int id, cJob*& value) const;
+		void get(int id, cPlayer*& value) const;
+		void get(int id, cBuilding*& value) const;
+		void get(int id, cVehicle*& value) const;
+		void get(int id, cUnit*& value) const;
+		void get(sID id, const cStaticUnitData*& value) const;
+
+		const cStaticUnitData* getBigRubbleData() const;
+		const cStaticUnitData* getSmallRubbleData() const;
 
 	private:
 		cModel& model;

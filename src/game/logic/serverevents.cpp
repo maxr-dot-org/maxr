@@ -41,8 +41,8 @@ void sendAddRubble (cServer& server, const cBuilding& building, const cPlayer& r
 
 	message->pushPosition (building.getPosition());
 	message->pushInt16 (building.iID);
-	message->pushInt16 (building.RubbleValue);
-	message->pushInt16 (building.RubbleTyp);
+//	message->pushInt16 (building.RubbleValue);
+//	message->pushInt16 (building.RubbleTyp);
 	message->pushBool (building.getIsBig());
 
 	server.sendNetMessage (std::move (message), &receiver);
@@ -516,20 +516,6 @@ void sendCommandoAnswer (cServer& server, bool success, bool steal, const cVehic
 	server.sendNetMessage (std::move (message), &receiver);
 }
 
-//------------------------------------------------------------------------------
-void sendSelfDestroy (cServer& server, const cBuilding& building)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_SELFDESTROY);
-	message->pushInt16 (building.iID);
-	server.sendNetMessage (std::move (message), building.getOwner());
-
-	for (unsigned int i = 0; i < building.seenByPlayerList.size(); i++)
-	{
-		message = std::make_unique<cNetMessage> (GAME_EV_SELFDESTROY);
-		message->pushInt16 (building.iID);
-		server.sendNetMessage (std::move (message), building.seenByPlayerList[i]);
-	}
-}
 
 //------------------------------------------------------------------------------
 void sendEndMoveActionToClient (cServer& server, const cVehicle& vehicle, int destID, eEndMoveActionType type)

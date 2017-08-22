@@ -581,10 +581,12 @@ bool cAttackJob::impactSingle (const cPosition& position, std::vector<cUnit*>* a
 			destroyedTargets.push_back (target->iID);
 			if (client)
 			{
+				/*
 				if (target->isAVehicle())
 					client->addDestroyFx (*static_cast<cVehicle*> (target));
 				else
 					client->addDestroyFx (*static_cast<cBuilding*> (target));
+				*/
 			}
 		}
 	}
@@ -647,7 +649,7 @@ void cAttackJob::destroyTarget()
 			if (unit)
 			{
 				Log.write (" Server: AttackJob destroyed unit " + unit->getDisplayName() + " (ID: " + iToStr (unit->iID) + ") at (" + iToStr (unit->getPosition().x()) + "," + iToStr (unit->getPosition().y()) + ")", cLog::eLOG_TYPE_NET_DEBUG);
-				server->destroyUnit (*unit);
+				//server->destroyUnit (*unit);
 			}
 		}
 	}

@@ -67,7 +67,6 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_WANT_RESEARCH_CHANGE,	// a client wants to change the research assignments of his research centers
 	GAME_EV_AUTOMOVE_STATUS,		// a unit has been set to automoving
 	GAME_EV_WANT_COM_ACTION,		// an infiltrator wants to steal or disable another unit
-	GAME_EV_WANT_SELFDESTROY,
 	GAME_EV_WANT_CHANGE_UNIT_NAME,	// the player wants to change the name of an unit
 	GAME_EV_END_MOVE_ACTION,		// specifies an action, which will be executed at the end of a movejob
 	GAME_EV_WANT_KICK_PLAYER,
@@ -183,7 +182,6 @@ void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver = n
 void sendUnitScore (cServer& server, const cBuilding&);
 
 
-void sendSelfDestroy (cServer& server, const cBuilding& building);
 
 void sendEndMoveActionToClient (cServer& server, const cVehicle& vehicle, int destID, eEndMoveActionType type);
 
