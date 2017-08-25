@@ -44,8 +44,7 @@ struct sID;
 enum SERVER_EVENT_TYPES
 {
 	// Types between FIRST_SERVER_MESSAGE and FIRST_CLIENT_MESSAGE are for the serverserver
-	GAME_EV_WANT_ATTACK = 202,			// a client wants to attack an other unit
-	GAME_EV_MINELAYERSTATUS,		// a minelayer changes his laying status
+	GAME_EV_MINELAYERSTATUS = 203,		// a minelayer changes his laying status
 	GAME_EV_WANT_BUILD,				// a vehicle wants to start building a building
 	GAME_EV_END_BUILDING,			// a vehicle has finished building and will leave the building lot now
 	GAME_EV_WANT_STOP_BUILDING,		// a vehicle wants to stop building

@@ -238,9 +238,6 @@ private:
 	std::map<int, ePlayerConnectionState> playerConnectionStates;
 
 	std::list<std::weak_ptr<cAutoMJob>> autoMoveJobs; //TODO: move to cModel
-public:
-	/** list with the running clientAttackJobs */
-	std::vector<cAttackJob*> attackJobs; //TODO: move to cModel
 };
 
 #endif // game_logic_clientH

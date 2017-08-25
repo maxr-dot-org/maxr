@@ -1158,7 +1158,7 @@ bool cBuilding::isDetectedByPlayer (const cPlayer* player) const
 }
 
 //--------------------------------------------------------------------------
-void cBuilding::setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList)
+void cBuilding::setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList)
 {
 	if (!isDetectedByPlayer (player))
 		detectedByPlayerList.push_back (player);
@@ -1185,7 +1185,7 @@ void cBuilding::makeDetection (cServer& server)
 			if (&player == getOwner()) continue;
 			if (player.hasMineDetection (getPosition()))
 			{
-				setDetectedByPlayer (server, &player);
+				setDetectedByPlayer (&player);
 			}
 		}
 	}

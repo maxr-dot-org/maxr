@@ -34,6 +34,7 @@
 #include "game/logic/movejob.h"
 #include "game/logic/turncounter.h"
 #include "game/logic/fxeffects.h"
+#include "game/logic/attackjob.h"
 
 class cPlayerBasicData;
 class cGameSettings;
@@ -105,6 +106,8 @@ public:
 	void addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& path);
 	std::vector<const cPlayer*> resumeMoveJobs(const cPlayer* player = nullptr);
 
+	void addAttackJob(cUnit& aggressor, const cPosition& targetPosition);
+
 	void handlePlayerFinishedTurn(cPlayer& player);
 
 	void addFx(std::shared_ptr<cFx> fx);
@@ -133,6 +136,11 @@ public:
 		for (auto moveJob : moveJobs)
 		{
 			archive << serialization::makeNvp("moveJob", *moveJob);
+		}
+		archive << serialization::makeNvp("numAttackJobs", (int)attackJobs.size());
+		for (auto attackJob : attackJobs)
+		{
+			archive << serialization::makeNvp("attackJob", *attackJob);
 		}
 		archive << serialization::makeNvp("neutralBuildingNum", (int)neutralBuildings.size());
 		for (auto building : neutralBuildings)
@@ -203,6 +211,19 @@ public:
 			moveJob = new cMoveJob();
 			archive >> serialization::makeNvp("moveJob", *moveJob);
 		}
+		int numAttackJobs;
+		archive >> NVP(numAttackJobs);
+		for (auto attackJob : attackJobs)
+		{
+			delete attackJob;
+		}
+		attackJobs.clear();
+		attackJobs.resize(numAttackJobs);
+		for (auto& attackJob : attackJobs)
+		{
+			attackJob = new cAttackJob();
+			archive >> serialization::makeNvp("attackJob", *attackJob);
+		}
 
 		neutralBuildings.clear();
 		int neutralBuildingNum;
@@ -231,6 +252,7 @@ public:
 private:
 	void refreshMapPointer();
 	void runMoveJobs();
+	void runAttackJobs();
 	void handleTurnEnd();
 
 	//------------------------------------------------------------------------------
@@ -250,6 +272,7 @@ private:
 	std::shared_ptr<cUnitsData> unitsData;
 
 	std::vector<cMoveJob*> moveJobs;
+	std::vector<cAttackJob*> attackJobs;
 
 	std::shared_ptr<cTurnCounter> turnCounter;
 	std::shared_ptr<cTurnTimeClock> turnTimeClock;

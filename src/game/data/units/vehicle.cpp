@@ -1235,7 +1235,7 @@ bool cVehicle::isDetectedByPlayer (const cPlayer* player) const
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList)
+void cVehicle::setDetectedByPlayer(cPlayer* player, bool addToDetectedInThisTurnList /*= true*/)
 {
 	//TODO: make voice / text massage for owner and player
 	bool wasDetected = (detectedByPlayerList.empty() == false);
@@ -1243,7 +1243,6 @@ void cVehicle::setDetectedByPlayer (cServer& server, cPlayer* player, bool addTo
 	if (!isDetectedByPlayer (player))
 		detectedByPlayerList.push_back (player);
 
-	if (!wasDetected) sendDetectionState (server, *this);
 
 	if (addToDetectedInThisTurnList && Contains (detectedInThisTurnByPlayerList, player) == false)
 		detectedInThisTurnByPlayerList.push_back (player);
@@ -1347,7 +1346,7 @@ void cVehicle::makeDetection (cServer& server)
 	// check whether the vehicle has been detected by others
 	std::vector<cPlayer*> playersThatDetectThisVehicle = calcDetectedByPlayer (server);
 	for (unsigned int i = 0; i < playersThatDetectThisVehicle.size(); i++)
-		setDetectedByPlayer (server, playersThatDetectThisVehicle[i]);
+		setDetectedByPlayer (playersThatDetectThisVehicle[i]);
 
 	// detect other units
 	if (staticData->canDetectStealthOn == false) return;
@@ -1371,18 +1370,18 @@ void cVehicle::makeDetection (cServer& server)
 			{
 				if ((staticData->canDetectStealthOn & TERRAIN_GROUND) && getOwner()->hasLandDetection(position) && (vehicle->getStaticUnitData().isStealthOn & TERRAIN_GROUND))
 				{
-					vehicle->setDetectedByPlayer (server, getOwner());
+					vehicle->setDetectedByPlayer (getOwner());
 				}
 				if ((staticData->canDetectStealthOn & TERRAIN_SEA) && getOwner()->hasSeaDetection(position) && (vehicle->getStaticUnitData().isStealthOn & TERRAIN_SEA))
 				{
-					vehicle->setDetectedByPlayer (server, getOwner());
+					vehicle->setDetectedByPlayer (getOwner());
 				}
 			}
 			if (building && building->getOwner() != getOwner())
 			{
 				if ((staticData->canDetectStealthOn & AREA_EXP_MINE) && getOwner()->hasMineDetection(position) && (building->getStaticUnitData().isStealthOn & AREA_EXP_MINE))
 				{
-					building->setDetectedByPlayer (server, getOwner());
+					building->setDetectedByPlayer (getOwner());
 				}
 			}
 		}

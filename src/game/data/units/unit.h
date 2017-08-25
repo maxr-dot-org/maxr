@@ -60,7 +60,7 @@ public:
 
 	virtual const cPosition& getMovementOffset() const { static const cPosition dummy (0, 0); return dummy; }
 
-	virtual void setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList = true) = 0;
+	virtual void setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList = true) = 0;
 
 	const cPosition& getPosition() const;
 	void setPosition (cPosition position);

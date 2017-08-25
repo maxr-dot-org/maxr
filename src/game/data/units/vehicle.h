@@ -232,7 +232,7 @@ public:
 	/**
 	* adds a player to the DetecedByPlayerList
 	*/
-	virtual void setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList = true);
+	virtual void setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList = true) MAXR_OVERRIDE_FUNCTION;
 	/**
 	* - detects stealth units in the scan range of the vehicle
 	* - checks whether the vehicle has been detected by an other unit

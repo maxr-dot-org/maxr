@@ -84,11 +84,20 @@ cModel::cModel() :
 	});
 };
 
+//------------------------------------------------------------------------------
 cModel::~cModel()
 {
 	if (map != nullptr)
 	{
 		map->reset();
+	}
+	for (auto attackjob : attackJobs)
+	{
+		delete attackjob;
+	}	
+	for (auto movejob : moveJobs)
+	{
+		delete movejob;
 	}
 }
 
@@ -108,6 +117,7 @@ void cModel::advanceGameTime()
 	gameTimeChanged();
 
 	runMoveJobs();
+	runAttackJobs();
 	effectsList.run();
 	handleTurnEnd();
 }
@@ -134,6 +144,8 @@ uint32_t cModel::getChecksum() const
 	crc = calcCheckSum(*unitsData, crc);
 	for (const auto& movejob : moveJobs)
 		crc = calcCheckSum(*movejob, crc);
+	for (const auto& attackJob : attackJobs)
+		crc = calcCheckSum(*attackJob, crc);
 	crc = calcCheckSum(*turnCounter, crc);
 	crc = calcCheckSum(turnEndState, crc);
 	crc = calcCheckSum(activeTurnPlayer->getId(), crc);
@@ -654,6 +666,13 @@ std::vector<const cPlayer*> cModel::resumeMoveJobs(const cPlayer* player /*= nul
 }
 
 //------------------------------------------------------------------------------
+void cModel::addAttackJob(cUnit& aggressor, const cPosition& targetPosition)
+{
+	cAttackJob* attackJob = new cAttackJob(aggressor, targetPosition, *this);
+	attackJobs.push_back(attackJob);
+}
+
+//------------------------------------------------------------------------------
 void cModel::handlePlayerFinishedTurn(cPlayer& player)
 {
 	player.setHasFinishedTurn(true);
@@ -757,6 +776,21 @@ void cModel::runMoveJobs()
 		}
 	}
 	Remove(moveJobs, nullptr);
+}
+
+//------------------------------------------------------------------------------
+void cModel::runAttackJobs()
+{
+	auto attackJobsTemp = attackJobs;
+	for (auto attackJob : attackJobsTemp)
+	{
+		attackJob->run(*this); //this can add new items to 'attackjobs'
+		if (attackJob->finished())
+		{
+			delete attackJob;
+			attackJobs.erase(std::find(attackJobs.begin(), attackJobs.end(), attackJob));
+		}
+	}
 }
 
 //------------------------------------------------------------------------------

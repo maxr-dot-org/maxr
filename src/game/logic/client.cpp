@@ -21,7 +21,6 @@
 
 #include "game/logic/client.h"
 
-#include "game/logic/attackjob.h"
 #include "game/logic/automjobs.h"
 #include "game/data/units/building.h"
 #include "game/logic/casualtiestracker.h"
@@ -30,7 +29,6 @@
 #include "game/logic/fxeffects.h"
 #include "game/logic/gametimer.h"
 #include "game/logic/jobs.h"
-#include "game/logic/automjobs.h"
 #include "utility/log.h"
 #include "main.h"
 #include "netmessage.h"
@@ -84,10 +82,6 @@ cClient::~cClient()
 	connectionManager->disconnectAll();
 	gameTimer->stop();
 
-	for (unsigned int i = 0; i < attackJobs.size(); i++)
-	{
-		delete attackJobs[i];
-	}
 	helperJobs.clear();
 }
 
@@ -1082,7 +1076,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 	{
 		case GAME_EV_DEL_BUILDING: HandleNetMessage_GAME_EV_DEL_BUILDING (message); break;
 		case GAME_EV_DEL_VEHICLE: HandleNetMessage_GAME_EV_DEL_VEHICLE (message); break;
-		case GAME_EV_ATTACKJOB: attackJobs.push_back (new cAttackJob (this, message)); break;
 		case GAME_EV_UNIT_DATA: HandleNetMessage_GAME_EV_UNIT_DATA (message); break;
 		case GAME_EV_SPECIFIC_UNIT_DATA: HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (message); break;
 		case GAME_EV_RESOURCES: HandleNetMessage_GAME_EV_RESOURCES (message); break;
@@ -1216,8 +1209,6 @@ cUnit* cClient::getUnitFromID (unsigned int id) const
 
 void cClient::doGameActions()
 {
-	// run attackJobs
-	cAttackJob::runAttackJobs (attackJobs);
 
 	// run surveyor ai
 	//if (gameTimer->timer50ms)
