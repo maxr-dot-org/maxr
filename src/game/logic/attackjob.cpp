@@ -172,6 +172,15 @@ bool cAttackJob::finished() const
 }
 
 //------------------------------------------------------------------------------
+void cAttackJob::onRemoveUnit(const cUnit& unit)
+{
+	if (aggressor == &unit)
+	{
+		aggressor = nullptr;
+	}
+}
+
+//------------------------------------------------------------------------------
 uint32_t cAttackJob::getChecksum(uint32_t crc) const
 {
 	crc = calcCheckSum(aggressor->getId(), crc);

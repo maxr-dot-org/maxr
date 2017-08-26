@@ -460,6 +460,13 @@ void cModel::deleteUnit(cUnit* unit)
 			vehicle->getMoveJob()->removeVehicle(vehicle);
 		}
 	}
+	if (unit->isAttacking())
+	{
+		for (auto attackJob : attackJobs)
+		{
+			attackJob->onRemoveUnit(*unit);
+		}
+	}
 
 	// remove from sentry list
 	owner->deleteSentry(*unit);

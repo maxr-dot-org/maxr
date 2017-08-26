@@ -42,6 +42,7 @@ public:
 
 	void run(cModel& model);
 	bool finished() const;
+	void onRemoveUnit(const cUnit& unit);
 
 	uint32_t getChecksum(uint32_t crc) const;
 
