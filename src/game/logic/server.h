@@ -28,7 +28,7 @@
 
 #include "defines.h"
 #include "game/logic/gametimer.h"
-#include "game/logic/jobs.h"
+#include "game/logic/jobs/job.h"
 #include "main.h" // for sID
 #include "game/data/map/map.h"
 #include "network.h"
@@ -289,14 +289,9 @@ private:
 	*/
 	void stopVehicleBuilding (cVehicle& vehicle);
 
-	
-	void runJobs();
-
 	void checkPlayerUnits (cVehicle& vehicle, cPlayer& MapPlayer);
 	void checkPlayerUnits (cBuilding& building, cPlayer& MapPlayer);
 	void checkPlayerRubbles (cBuilding& building, cPlayer& MapPlayer);
-
-	void addJob (cJob* job);
 public:
 	std::shared_ptr<cTCP> network;
 private:

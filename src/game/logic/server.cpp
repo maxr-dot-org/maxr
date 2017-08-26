@@ -30,7 +30,7 @@
 #include "game/logic/clientevents.h"
 #include "utility/listhelpers.h"
 #include "game/logic/gametimer.h"
-#include "game/logic/jobs.h"
+#include "game/logic/jobs/job.h"
 #include "utility/log.h"
 //#include "menuevents.h"
 #include "netmessage.h"
@@ -273,7 +273,6 @@ void cServer::run()
 
 void cServer::doGameActions()
 {
-	runJobs();
 	checkPlayerUnits();
 }
 
@@ -2133,15 +2132,6 @@ void cServer::sideStepStealthUnit (const cPosition& position, const cStaticUnitD
 	// sidestepping failed. Uncover the vehicle.
 	stealthVehicle->setDetectedByPlayer (vehicleOwner);
 	checkPlayerUnits();
-}
-
-void cServer::addJob (cJob* job)
-{
-	helperJobs.addJob (*job);
-}
-void cServer::runJobs()
-{
-	helperJobs.run (*gameTimer);
 }
 
 //------------------------------------------------------------------------------

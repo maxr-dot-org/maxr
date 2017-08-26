@@ -24,7 +24,6 @@
 #include "game/data/units/unitdata.h"
 #include "utility/signal/signal.h"
 #include "utility/position.h"
-#include "game/logic/jobs.h"
 
 class cClient;
 class cJob;
@@ -175,7 +174,6 @@ public:
 		archive & NVP(dir);
 		archive & NVP(storedUnits);
 		archive & NVP(detectedByPlayerList);
-		archive & NVP(job);
 		archive & NVP(owner);
 		archive & NVP(position);
 		archive & NVP(customName);

@@ -35,6 +35,7 @@
 #include "game/logic/turncounter.h"
 #include "game/logic/fxeffects.h"
 #include "game/logic/attackjob.h"
+#include "game/logic/jobs/jobcontainer.h"
 
 class cPlayerBasicData;
 class cGameSettings;
@@ -95,10 +96,7 @@ public:
 	cVehicle& addVehicle(const cPosition& position, const sID& id, cPlayer* player, bool init = false, bool addToMap = true);
 	cBuilding& addBuilding(const cPosition& position, const sID& id, cPlayer* player, bool init = false);
 	void destroyUnit(cUnit& unit);
-	void addDestroyFx(const cVehicle& vehicle);
-	void addDestroyFx(const cBuilding& vehicle);
 
-	int deleteBuildings(cMapField& field, bool deleteConnector);
 	void addRubble(const cPosition& position, int value, bool big);
 	void deleteUnit(cUnit* unit);
 	void deleteRubble(cBuilding* rubble);
@@ -111,6 +109,7 @@ public:
 	void handlePlayerFinishedTurn(cPlayer& player);
 
 	void addFx(std::shared_ptr<cFx> fx);
+	void addJob(cJob* job);
 
 	mutable cSignal<void()> gameTimeChanged;
 	mutable cSignal<void(const cVehicle& vehicle)> triggeredAddTracks;
@@ -155,6 +154,7 @@ public:
 		archive << NVP(turnLimitDeadline);
 		archive << NVP(turnEndState);
 		archive << NVP(activeTurnPlayer);
+		archive << NVP(helperJobs);
 		//TODO: serialize effectList
 	};
 	template<typename T>
@@ -243,6 +243,7 @@ public:
 		archive >> NVP(turnLimitDeadline);
 		archive >> NVP(turnEndState);
 		archive >> NVP(activeTurnPlayer);
+		archive >> NVP(helperJobs);
 		//TODO: clear effect list, deserialize effects, call addedEffect()
 
 		refreshMapPointer();
@@ -284,7 +285,9 @@ private:
 	/** lists with all FX-Animation */
 	cFxContainer effectsList;
 
-	//jobs
+	/** little helper jobs, that do some time dependent actions */
+	cJobContainer helperJobs;
+
 	//casualtiesTracker
 	
 };

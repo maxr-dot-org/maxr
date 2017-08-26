@@ -22,17 +22,11 @@
 
 #include <memory>
 
-#include "SDL_flic.h"
-#include "defines.h"
-#include "game/logic/jobs.h"
 #include "game/logic/gametimer.h"
-#include "main.h"
 #include "connectionmanager.h"
-#include "game/data/units/unit.h" // sUnitLess
 #include "utility/thread/concurrentqueue.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "utility/flatset.h"
 #include "netmessage2.h"
 #include "game/data/model.h"
 
@@ -89,8 +83,6 @@ public:
 	const std::map<int, ePlayerConnectionState>& getPlayerConnectionStates() const;
 	//
 
-	void addJob (cJob* job);
-	
 	void addAutoMoveJob (std::weak_ptr<cAutoMJob> autoMoveJob);
 
 	/**
@@ -178,8 +170,6 @@ private:
 	*/
 	cSubBase* getSubBaseFromID (int iID);
 
-	void runJobs();
-
 	void HandleNetMessage_GAME_EV_DEL_BUILDING (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_DEL_VEHICLE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message);
@@ -229,8 +219,6 @@ private:
 
 	/** the active Player */
 	cPlayer* activePlayer;
-
-	cJobContainer helperJobs; //TODO: move to cModel
 
 	std::shared_ptr<cCasualtiesTracker> casualtiesTracker; //TODO: move to cModel
 

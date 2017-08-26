@@ -28,7 +28,6 @@
 #include "utility/listhelpers.h"
 #include "game/logic/fxeffects.h"
 #include "game/logic/gametimer.h"
-#include "game/logic/jobs.h"
 #include "utility/log.h"
 #include "main.h"
 #include "netmessage.h"
@@ -82,7 +81,6 @@ cClient::~cClient()
 	connectionManager->disconnectAll();
 	gameTimer->stop();
 
-	helperJobs.clear();
 }
 
 void cClient::setMap (std::shared_ptr<cStaticMap> staticMap)
@@ -1215,8 +1213,6 @@ void cClient::doGameActions()
 	{
 		handleAutoMoveJobs();
 	}
-
-	runJobs();
 }
 
 cSubBase* cClient::getSubBaseFromID (int iID)
@@ -1233,18 +1229,6 @@ void cClient::deletePlayer (cPlayer& player)
 	player.setIsRemovedFromGame (true);
 	auto playerList = model.getPlayerList();
 	playerList.erase (std::remove_if (playerList.begin(), playerList.end(), [&player] (const std::shared_ptr<cPlayer>& entry) { return entry.get() == &player; }), playerList.end());
-}
-
-//------------------------------------------------------------------------------
-void cClient::addJob (cJob* job)
-{
-	helperJobs.addJob (*job);
-}
-
-//------------------------------------------------------------------------------
-void cClient::runJobs()
-{
-	helperJobs.run (*gameTimer);
 }
 
 //------------------------------------------------------------------------------
