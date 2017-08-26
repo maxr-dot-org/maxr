@@ -1041,12 +1041,12 @@ void cGameGuiController::connectClient (cClient& client)
 			}
 			else if (target)
 			{
-				cPathCalculator pc (vehicle, *client.getModel().getMap(), position, false);
+				cPathCalculator pc (vehicle, *client.getModel().getMap(), position, true);
 				const auto path = pc.calcPath();
 				if (!path.empty())
 				{
-					activeClient->sendNetMessage(cActionStartMove(vehicle, path));
-					sendEndMoveAction (client, vehicle.iID, target->iID, EMAT_ATTACK);
+					cEndMoveAction emat(vehicle, *target, EMAT_ATTACK);
+					activeClient->sendNetMessage(cActionStartMove(vehicle, path, emat));
 				}
 				else
 				{

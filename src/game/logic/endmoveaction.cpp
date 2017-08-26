@@ -24,26 +24,58 @@
 #include "serverevents.h"
 
 
-cEndMoveAction::cEndMoveAction (cVehicle* vehicle, int destID, eEndMoveActionType type)
-{
-	destID_ = destID;
-	type_ = type;
-	vehicle_ = vehicle;
-}
+cEndMoveAction::cEndMoveAction (const cVehicle& vehicle, const cUnit& destUnit, eEndMoveActionType type) :
+	vehicleID(vehicle.getId()),
+	type(type),
+	destID(destUnit.getId())
+{}
 
-void cEndMoveAction::execute (cServer& server)
+//------------------------------------------------------------------------------
+cEndMoveAction::cEndMoveAction  () :
+	vehicleID(-1),
+	type(EMAT_NONE),
+	destID(-1)
+{}
+
+//------------------------------------------------------------------------------
+void cEndMoveAction::execute (cModel& model)
 {
-	switch (type_)
+	switch (type)
 	{
-		case EMAT_LOAD: executeLoadAction (server); break;
-		case EMAT_GET_IN: executeGetInAction (server); break;
-		case EMAT_ATTACK: executeAttackAction (server); break;
+		case EMAT_LOAD: 
+			executeLoadAction (model); 
+			break;
+		case EMAT_GET_IN:
+			executeGetInAction (model);
+			break;
+		case EMAT_ATTACK: 
+			executeAttackAction (model); 
+			break;
+		default:
+			break;
 	}
 }
 
-void cEndMoveAction::executeLoadAction (cServer& server)
+//------------------------------------------------------------------------------
+eEndMoveActionType cEndMoveAction::getType() const
 {
-	cVehicle* destVehicle = server.getVehicleFromID (destID_);
+	return type;
+}
+
+//------------------------------------------------------------------------------
+uint32_t cEndMoveAction::getChecksum(uint32_t crc) const
+{
+	crc = calcCheckSum(vehicleID, crc);
+	crc = calcCheckSum(type, crc);
+	crc = calcCheckSum(destID, crc);
+
+	return crc;
+}
+
+//------------------------------------------------------------------------------
+void cEndMoveAction::executeLoadAction (cModel& model)
+{
+/*	cVehicle* destVehicle = server.getVehicleFromID (destID_);
 	if (!destVehicle) return;
 
 	if (vehicle_->canLoad (destVehicle) == false) return;
@@ -53,11 +85,13 @@ void cEndMoveAction::executeLoadAction (cServer& server)
 
 	// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
 	sendStoreVehicle (server, vehicle_->iID, true, destVehicle->iID, *vehicle_->getOwner());
+*/
 }
 
-void cEndMoveAction::executeGetInAction (cServer& server)
+//------------------------------------------------------------------------------
+void cEndMoveAction::executeGetInAction (cModel& model)
 {
-	cVehicle* destVehicle = server.getVehicleFromID (destID_);
+/*	cVehicle* destVehicle = server.getVehicleFromID (destID_);
 	cBuilding* destBuilding = server.getBuildingFromID (destID_);
 
 	// execute the loading if possible
@@ -75,24 +109,28 @@ void cEndMoveAction::executeGetInAction (cServer& server)
 		// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
 		sendStoreVehicle (server, destBuilding->iID, false, vehicle_->iID, *destBuilding->getOwner());
 	}
+*/
 }
 
-void cEndMoveAction::executeAttackAction (cServer& server)
+//------------------------------------------------------------------------------
+void cEndMoveAction::executeAttackAction (cModel& model)
 {
+	// get the vehicle
+	cUnit* vehicle = model.getUnitFromID(vehicleID);
+	if (vehicle == nullptr) return;
+
 	// get the target unit
-	const cUnit* destUnit = server.getUnitFromID (destID_);
+	const cUnit* destUnit = model.getUnitFromID (destID);
 	if (destUnit == nullptr) return;
 
 	const auto& position = destUnit->getPosition();
-	cMap& map = *server.Map;
+	const cMap& map = *model.getMap();
 
 	// check, whether the attack is now possible
-	if (!vehicle_->canAttackObjectAt (position, map, true, true)) return;
+	if (!vehicle->canAttackObjectAt (position, map, true, true)) return;
 
 	// is the target in sight?
-	if (!vehicle_->getOwner()->canSeeAnyAreaUnder (*destUnit)) return;
+	if (!vehicle->getOwner()->canSeeAnyAreaUnder (*destUnit)) return;
 
-	server.addAttackJob (vehicle_, position);
+	model.addAttackJob (*vehicle, position);
 }
-
-

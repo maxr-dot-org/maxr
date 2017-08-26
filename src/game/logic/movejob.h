@@ -25,6 +25,7 @@
 
 #include "utility/position.h"
 #include "pathcalculator.h"
+#include "endmoveaction.h"
 
 #define MOVE_SPEED 4     // speed of vehicle movements
 #define MOVE_ACCELERATION 0.08 // change of vehicle speed per tick
@@ -42,7 +43,7 @@ public:
 	*/
 	const std::forward_list<cPosition>& getPath() const;
 	/**
-	* return the moved vehiclee
+	* return the moved vehicle
 	*/
 	cVehicle* getVehicle() const;
 	/**
@@ -81,6 +82,11 @@ public:
 	* Resume execution of a waiting movejob.
 	*/
 	void resume();
+	/**
+	* defines an action to be executed at the end of the path
+	*/
+	void setEndMoveAction(const cEndMoveAction& endMoveAction);
+	const cEndMoveAction& getEndMoveAction() const;
 
 	uint32_t getChecksum(uint32_t crc) const;
 
@@ -96,6 +102,7 @@ public:
 		archive & NVP(timer50ms);
 		archive & NVP(currentSpeed);
 		archive & NVP(pixelToMove);
+		archive & NVP(endMoveAction);
 
 		if (!archive.isWriter)
 		{
@@ -142,7 +149,7 @@ private:
 	/**
 	* triggers all actions, that need to be done after finishing a movement step
 	*/
-	void endMove();
+	void endMove(cModel& model);
 
 	//------------------------------------------------------------------------------
 	/** the vehicle to move */
@@ -163,6 +170,8 @@ private:
 	double currentSpeed;
 
 	double pixelToMove;
+
+	cEndMoveAction endMoveAction;
 };
 
 #endif // game_logic_movejobsH

@@ -501,7 +501,7 @@ void cModel::deleteRubble(cBuilding* rubble)
 }
 
 //------------------------------------------------------------------------------
-void cModel::addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& path)
+cMoveJob* cModel::addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& path)
 {
 	cMoveJob* currentMoveJob = vehicle.getMoveJob();
 	if (currentMoveJob)
@@ -509,7 +509,7 @@ void cModel::addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& p
 		if (currentMoveJob->isActive())
 		{
 			// cannot add movejob while the unit is already moving
-			return;
+			return nullptr;
 		}
 		else
 		{
@@ -522,6 +522,8 @@ void cModel::addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& p
 	vehicle.setMoveJob(moveJob);
 
 	moveJobs.push_back(moveJob);
+
+	return moveJob;
 }
 
 //------------------------------------------------------------------------------

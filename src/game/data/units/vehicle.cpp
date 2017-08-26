@@ -514,14 +514,12 @@ string cVehicle::getStatusStr(const cPlayer* player, const cUnitsData& unitsData
 			return lngPack.i18n ("Text~Comp~Clearing_Fin");
 	}
 
-	// generate other infos for normal non-unit-related-events and infiltartors
+	// generate other infos for normal non-unit-related-events and infiltrators
 	string sTmp;
 	{
-		//TODO: #1065 
-		//if (moveJob && moveJob->getEndMoveAction() && moveJob->getEndMoveAction()->getType == EMAT_ATTACK)
-		//	sTmp = lngPack.i18n ("Text~Comp~MovingToAttack");
-		//else if (moveJob)
-		if (moveJob)
+		if (moveJob && moveJob->getEndMoveAction().getType() == EMAT_ATTACK)
+			sTmp = lngPack.i18n ("Text~Comp~MovingToAttack");
+		else if (moveJob)
 			sTmp = lngPack.i18n ("Text~Comp~Moving");
 		else if (isAttacking())
 			sTmp = lngPack.i18n ("Text~Comp~AttackingStatusStr");
@@ -661,13 +659,11 @@ void cVehicle::makeReport (cSoundManager& soundManager) const
 	else if (data.getHitpoints() > data.getHitpointsMax() / 2)
 	{
 		// Status green
-		//TODO: #1065
-		//if (clientMoveJob && clientMoveJob->endMoveAction && clientMoveJob->endMoveAction->type_ == EMAT_ATTACK)
-		//{
-		//	soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIAttacking)));
-		//}
-		//else if (autoMoveJob)
-		if (autoMoveJob)
+		if (moveJob && moveJob->getEndMoveAction().getType() == EMAT_ATTACK)
+		{
+			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIAttacking)));
+		}
+		else if (autoMoveJob)
 		{
 			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOISurveying)));
 		}

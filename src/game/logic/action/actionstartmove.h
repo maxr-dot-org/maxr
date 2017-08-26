@@ -22,11 +22,12 @@
 
 #include "action.h"
 #include <forward_list>
-#include "game/logic/pathcalculator.h"
+#include "game/logic/endmoveaction.h"
 
 class cActionStartMove : public cAction
 {
 public:
+	cActionStartMove(const cVehicle& vehicle, const std::forward_list<cPosition>& path, cEndMoveAction emat);
 	cActionStartMove(const cVehicle& vehicle, const std::forward_list<cPosition>& path);
 	cActionStartMove(cBinaryArchiveOut& archive);
 
@@ -40,10 +41,12 @@ private:
 	{
 		archive & unitId;
 		archive & path;
+		archive & endMoveAction;
 	}
 
 	std::forward_list<cPosition> path;
 	unsigned int unitId;
+	cEndMoveAction endMoveAction;
 };
 
 #endif // game_logic_actionStartMoveH

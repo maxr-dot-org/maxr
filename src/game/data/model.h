@@ -101,7 +101,7 @@ public:
 	void deleteUnit(cUnit* unit);
 	void deleteRubble(cBuilding* rubble);
 
-	void addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& path);
+	cMoveJob* addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& path);
 	std::vector<const cPlayer*> resumeMoveJobs(const cPlayer* player = nullptr);
 
 	void addAttackJob(cUnit& aggressor, const cPosition& targetPosition);

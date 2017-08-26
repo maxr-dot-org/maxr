@@ -20,11 +20,15 @@
 #ifndef game_logic_endmoveaction_h
 #define game_logic_endmoveaction_h
 
+#include<stdint.h>
+
 class cVehicle;
-class cServer;
+class cModel;
+class cUnit;
 
 enum eEndMoveActionType
 {
+	EMAT_NONE,
 	EMAT_LOAD,
 	EMAT_GET_IN,
 	EMAT_ATTACK
@@ -33,21 +37,28 @@ enum eEndMoveActionType
 class cEndMoveAction
 {
 public:
-	cVehicle* vehicle_;
-	eEndMoveActionType type_;
-	int destID_;		//we store the ID and not a pointer to vehicle/building,
-	//so we don't have to invalidate the pointer, when the dest unit gets destroyed
+	cEndMoveAction ();
+	cEndMoveAction (const cVehicle& vehicle, const cUnit& destUnit, eEndMoveActionType type);
 
+	void execute (cModel& model);
+	eEndMoveActionType getType() const;
+	uint32_t getChecksum(uint32_t crc) const;
+
+	template <typename T>
+	void serialize(T& archive)
+	{
+		archive & NVP(vehicleID);
+		archive & NVP(type);
+		archive & NVP(destID);
+	}
 private:
-	void executeLoadAction (cServer& server);
-	void executeGetInAction (cServer& server);
-	void executeAttackAction (cServer& server);
+	void executeLoadAction (cModel& model);
+	void executeGetInAction (cModel& model);
+	void executeAttackAction (cModel& model);
 
-public:
-	cEndMoveAction (cVehicle* vehicle, int destID, eEndMoveActionType type);
-
-	void execute (cServer& server);
+	int vehicleID;
+	eEndMoveActionType type;
+	int destID;	
 };
-
 
 #endif // !game_logic_endmoveaction_h
