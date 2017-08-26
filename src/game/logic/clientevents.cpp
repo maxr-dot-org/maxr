@@ -93,15 +93,6 @@ void sendChatMessageToServer (const cClient& client, const string& msg, const cP
 	client.sendNetMessage (netMsg);
 }
 
-void sendWantAttack (const cClient& client, int aggressorID, const cPosition& targetPosition, int targetID)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_ATTACK);
-	message->pushInt32 (aggressorID);
-	message->pushPosition (targetPosition);
-	message->pushInt32 (targetID);
-	client.sendNetMessage (std::move (message));
-}
-
 void sendMineLayerStatus (const cClient& client, const cVehicle& vehicle)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_MINELAYERSTATUS);

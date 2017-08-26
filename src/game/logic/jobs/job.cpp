@@ -17,48 +17,58 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_logic_endmoveaction_h
-#define game_logic_endmoveaction_h
+#include <algorithm>
+#include <cassert>
 
-#include<stdint.h>
+#include "job.h"
 
-class cVehicle;
-class cModel;
-class cUnit;
+#include "utility/serialization/binaryarchive.h"
+#include "utility/serialization/xmlarchive.h"
+#include "startbuildjob.h"
+#include "planetakeoffjob.h"
+#include "destroyjob.h"
+#include "utility/string/toString.h"
 
-enum eEndMoveActionType
+cJob::cJob (cUnit& unit) :
+	finished (false),
+	unit (&unit)
+{}
+
+cJob::cJob() :
+	finished(false),
+	unit(nullptr)
+{}
+
+
+cJob* cJob::createFrom(cBinaryArchiveOut& archive, const std::string& name)
 {
-	EMAT_NONE,
-	EMAT_LOAD,
-	EMAT_GET_IN,
-	EMAT_ATTACK
-};
+	return createFromImpl(archive);
+}
 
-class cEndMoveAction
+cJob* cJob::createFrom(cXmlArchiveOut& archive, const std::string& name)
 {
-public:
-	cEndMoveAction ();
-	cEndMoveAction (const cVehicle& vehicle, const cUnit& destUnit, eEndMoveActionType type);
+	archive.enterChild(name);
+	auto job = createFromImpl(archive);
+	archive.leaveChild();
+	return job;
+}
 
-	void execute (cModel& model);
-	eEndMoveActionType getType() const;
-	uint32_t getChecksum(uint32_t crc) const;
+template <typename T>
+cJob* cJob::createFromImpl(T& archive)
+{
+	eJobType type;
+	archive >> NVP(type);
 
-	template <typename T>
-	void serialize(T& archive)
+	switch (type)
 	{
-		archive & NVP(vehicleID);
-		archive & NVP(type);
-		archive & NVP(destID);
+	case eJobType::START_BUILD:
+		return new cStartBuildJob(archive);
+	case eJobType::PLANE_TAKEOFF:
+		return new cPlaneTakeoffJob(archive);
+	case eJobType::DESTROY:
+		return new cDestroyJob(archive);
+	default:
+		throw std::runtime_error("Unknown job type " + toString(static_cast<int>(type)));
+		break;
 	}
-private:
-	void executeLoadAction (cModel& model);
-	void executeGetInAction (cModel& model);
-	void executeAttackAction (cModel& model);
-
-	int vehicleID;
-	eEndMoveActionType type;
-	int destID;	
-};
-
-#endif // !game_logic_endmoveaction_h
+}

@@ -17,48 +17,55 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_logic_endmoveaction_h
-#define game_logic_endmoveaction_h
+#include "planetakeoffjob.h"
 
-#include<stdint.h>
+#include "game/data/units/vehicle.h"
+#include "utility/crc.h"
 
-class cVehicle;
-class cModel;
-class cUnit;
 
-enum eEndMoveActionType
+cPlaneTakeoffJob::cPlaneTakeoffJob (cVehicle& vehicle_, bool takeoff_) :
+	cJob (vehicle_),
+	takeoff (takeoff_)
+{}
+
+//------------------------------------------------------------------------------
+void cPlaneTakeoffJob::run (cModel& model)
 {
-	EMAT_NONE,
-	EMAT_LOAD,
-	EMAT_GET_IN,
-	EMAT_ATTACK
-};
+	// TODO add sound #708
 
-class cEndMoveAction
-{
-public:
-	cEndMoveAction ();
-	cEndMoveAction (const cVehicle& vehicle, const cUnit& destUnit, eEndMoveActionType type);
+	assert(unit->isAVehicle());
+	cVehicle* plane = static_cast<cVehicle*>(unit);
 
-	void execute (cModel& model);
-	eEndMoveActionType getType() const;
-	uint32_t getChecksum(uint32_t crc) const;
-
-	template <typename T>
-	void serialize(T& archive)
+	if (takeoff)
 	{
-		archive & NVP(vehicleID);
-		archive & NVP(type);
-		archive & NVP(destID);
+		plane->setFlightHeight (plane->getFlightHeight() + 2);
+		if (plane->getFlightHeight() == 64)
+		{
+			finished = true;
+		}
 	}
-private:
-	void executeLoadAction (cModel& model);
-	void executeGetInAction (cModel& model);
-	void executeAttackAction (cModel& model);
+	else
+	{
+		plane->setFlightHeight (plane->getFlightHeight() - 2);
+		if (plane->getFlightHeight() == 0)
+		{
+			finished = true;
+		}
+	}
+}
 
-	int vehicleID;
-	eEndMoveActionType type;
-	int destID;	
-};
+//------------------------------------------------------------------------------
+eJobType cPlaneTakeoffJob::getType() const
+{
+	return eJobType::PLANE_TAKEOFF;
+}
 
-#endif // !game_logic_endmoveaction_h
+//------------------------------------------------------------------------------
+uint32_t cPlaneTakeoffJob::getChecksum(uint32_t crc) const
+{
+	crc = calcCheckSum(getType(), crc);
+	crc = calcCheckSum(unit ? unit->getId() : 0, crc);
+	crc = calcCheckSum(takeoff, crc);
+
+	return crc;
+}

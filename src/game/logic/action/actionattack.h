@@ -17,19 +17,18 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef game_logic_actionStartMoveH
-#define game_logic_actionStartMoveH
+#ifndef game_logic_actionAttackH
+#define game_logic_actionAttackH
 
 #include "action.h"
-#include <forward_list>
-#include "game/logic/endmoveaction.h"
 
-class cActionStartMove : public cAction
+class cUnit;
+
+class cActionAttack : public cAction
 {
 public:
-	cActionStartMove(const cVehicle& vehicle, const std::forward_list<cPosition>& path, cEndMoveAction emat);
-	cActionStartMove(const cVehicle& vehicle, const std::forward_list<cPosition>& path);
-	cActionStartMove(cBinaryArchiveOut& archive);
+	cActionAttack(const cUnit& aggressor, cPosition targetPosition, const cUnit* targetUnit);
+	cActionAttack(cBinaryArchiveOut& archive);
 
 	virtual void serialize(cBinaryArchiveIn& archive) { cAction::serialize(archive); serializeThis(archive); }
 	virtual void serialize(cTextArchiveIn& archive)   { cAction::serialize(archive); serializeThis(archive); }
@@ -39,14 +38,15 @@ private:
 	template<typename T>
 	void serializeThis(T& archive)
 	{
-		archive & unitId;
-		archive & path;
-		archive & endMoveAction;
+		archive & agressorId;
+		archive & targetPosition;
+		archive & targetId;
 	}
 
-	std::forward_list<cPosition> path;
-	unsigned int unitId;
-	cEndMoveAction endMoveAction;
+	unsigned int agressorId;
+	cPosition targetPosition;
+	unsigned int targetId;
+
 };
 
-#endif // game_logic_actionStartMoveH
+#endif // game_logic_actionAttackH

@@ -315,7 +315,7 @@ void cMoveJob::moveVehicle(cModel& model)
 
 	if (reachedField())
 	{
-		endMove();
+		endMove(model);
 		startMove(model);
 	}
 }
@@ -360,7 +360,7 @@ void cMoveJob::updateSpeed(const cMap &map)
 }
 
 //------------------------------------------------------------------------------
-void cMoveJob::endMove()
+void cMoveJob::endMove(cModel& model)
 {
 	vehicle->setMovementOffset (cPosition (0, 0));
 
@@ -373,6 +373,11 @@ void cMoveJob::endMove()
 	{
 		vehicle->doSurvey();
 	}
+
+	if (path.empty())
+	{
+		endMoveAction.execute(model);
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -382,6 +387,18 @@ void cMoveJob::resume()
 	{
 		state = ACTIVE;
 	}
+}
+
+//------------------------------------------------------------------------------
+void cMoveJob::setEndMoveAction(const cEndMoveAction& e)
+{
+	endMoveAction = e;
+}
+
+//------------------------------------------------------------------------------
+const cEndMoveAction& cMoveJob::getEndMoveAction() const
+{
+	return endMoveAction;
 }
 
 //------------------------------------------------------------------------------
@@ -396,6 +413,8 @@ uint32_t cMoveJob::getChecksum(uint32_t crc) const
 	crc = calcCheckSum(timer50ms, crc);
 	crc = calcCheckSum(currentSpeed, crc);
 	crc = calcCheckSum(pixelToMove, crc);
+	crc = calcCheckSum(endMoveAction, crc);
 
 	return crc;
 }
+

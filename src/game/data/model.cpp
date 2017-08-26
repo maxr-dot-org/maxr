@@ -18,6 +18,7 @@
 ***************************************************************************/
 
 #include "model.h"
+
 #include "player/player.h"
 #include "map/map.h"
 #include "units/vehicle.h"
@@ -29,6 +30,7 @@
 #include "game/logic/turncounter.h"
 #include "game/logic/turntimeclock.h"
 #include "game/logic/fxeffects.h"
+#include "game/logic/jobs/destroyjob.h"
 
 //------------------------------------------------------------------------------
 cModel::cModel() :
@@ -84,11 +86,20 @@ cModel::cModel() :
 	});
 };
 
+//------------------------------------------------------------------------------
 cModel::~cModel()
 {
 	if (map != nullptr)
 	{
 		map->reset();
+	}
+	for (auto attackjob : attackJobs)
+	{
+		delete attackjob;
+	}	
+	for (auto movejob : moveJobs)
+	{
+		delete movejob;
 	}
 }
 
@@ -108,8 +119,10 @@ void cModel::advanceGameTime()
 	gameTimeChanged();
 
 	runMoveJobs();
+	runAttackJobs();
 	effectsList.run();
 	handleTurnEnd();
+	helperJobs.run(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -134,12 +147,15 @@ uint32_t cModel::getChecksum() const
 	crc = calcCheckSum(*unitsData, crc);
 	for (const auto& movejob : moveJobs)
 		crc = calcCheckSum(*movejob, crc);
+	for (const auto& attackJob : attackJobs)
+		crc = calcCheckSum(*attackJob, crc);
 	crc = calcCheckSum(*turnCounter, crc);
 	crc = calcCheckSum(turnEndState, crc);
 	crc = calcCheckSum(activeTurnPlayer->getId(), crc);
 	crc = calcCheckSum(turnEndDeadline, crc);
 	crc = calcCheckSum(turnLimitDeadline, crc);
 	crc = calcCheckSum(*turnTimeClock, crc);
+	crc = calcCheckSum(helperJobs, crc);
 
 	return crc;
 }
@@ -338,131 +354,7 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 //------------------------------------------------------------------------------
 void cModel::destroyUnit(cUnit& unit)
 {
-	bool isVehicle = false;
-	const auto position = unit.getPosition();
-	auto& field = map->getField(position);
-
-	//delete planes immediately
-	if (unit.isAVehicle())
-	{
-		isVehicle = true;
-		auto& vehicle = static_cast<cVehicle&> (unit);
-		if (vehicle.getStaticUnitData().factorAir > 0 && vehicle.getFlightHeight() > 0)
-		{
-			deleteUnit(&vehicle);
-			return;
-		}
-	}
-
-	//check, if there is a big unit on the field
-	bool bigUnit = false;
-	auto topBuilding = field.getTopBuilding();
-	if ((topBuilding && topBuilding->getIsBig()) || unit.getIsBig())
-		bigUnit = true;
-
-	if (unit.isAVehicle())
-	{
-		addDestroyFx(static_cast<cVehicle&> (unit));
-	}
-	else
-	{
-		addDestroyFx(static_cast<cBuilding&> (unit));
-	}
-
-	//delete unit
-	int rubbleValue = 0;
-	if (!unit.getStaticUnitData().isHuman)
-	{
-		rubbleValue += unit.data.getBuildCost();
-		// stored material is always added completely to the rubble
-		if (unit.getStaticUnitData().storeResType == eResourceType::Metal)
-			rubbleValue += unit.getStoredResources() * 2;
-	}
-	deleteUnit(&unit);
-
-	//delete all buildings (except connectors, when a vehicle is destroyed)
-	rubbleValue += deleteBuildings(field, !isVehicle);
-	if (bigUnit)
-	{
-		rubbleValue += deleteBuildings(map->getField(position + cPosition(1, 0)), !isVehicle);
-		rubbleValue += deleteBuildings(map->getField(position + cPosition(0, 1)), !isVehicle);
-		rubbleValue += deleteBuildings(map->getField(position + cPosition(1, 1)), !isVehicle);
-	}
-
-	//add rubble
-	auto rubble = field.getRubble();
-	if (rubble)
-	{
-		rubble->setRubbleValue(rubble->getRubbleValue() + rubbleValue / 2, randomGenerator);
-	}
-	else
-	{
-		if (rubbleValue > 2)
-			addRubble(position, rubbleValue / 2, bigUnit);
-	}
-}
-
-//------------------------------------------------------------------------------
-void cModel::addDestroyFx(const cVehicle& vehicle)
-{
-	if (vehicle.getIsBig())
-	{
-		addFx(std::make_shared<cFxExploBig>(vehicle.getPosition() * 64 + 64, map->isWaterOrCoast(vehicle.getPosition())));
-	}
-	else if (vehicle.getStaticUnitData().factorAir > 0 && vehicle.getFlightHeight() != 0)
-	{
-		addFx(std::make_shared<cFxExploAir>(vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
-	}
-	else if (map->isWaterOrCoast(vehicle.getPosition()))
-	{
-		addFx(std::make_shared<cFxExploWater>(vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
-	}
-	else
-	{
-		addFx(std::make_shared<cFxExploSmall>(vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
-	}
-
-	if (vehicle.uiData->hasCorpse)
-	{
-		// add corpse
-		addFx(std::make_shared<cFxCorpse>(vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
-	}
-}
-
-//------------------------------------------------------------------------------
-void cModel::addDestroyFx(const cBuilding& building)
-{
-	const cBuilding* topBuilding = map->getField(building.getPosition()).getBuilding();
-	if (topBuilding && topBuilding->getIsBig())
-	{
-		addFx(std::make_shared<cFxExploBig>(topBuilding->getPosition() * 64 + 64, map->isWaterOrCoast(topBuilding->getPosition())));
-	}
-	else
-	{
-		addFx(std::make_shared<cFxExploSmall>(building.getPosition() * 64 + 32));
-	}
-}
-
-//------------------------------------------------------------------------------
-int cModel::deleteBuildings(cMapField& field, bool deleteConnector)
-{
-	auto buildings = field.getBuildings();
-	int rubble = 0;
-
-	for (auto b_it = buildings.begin(); b_it != buildings.end(); ++b_it)
-	{
-		if ((*b_it)->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE && deleteConnector == false) continue;
-		if ((*b_it)->isRubble()) continue;
-
-		if ((*b_it)->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE) //no rubble for connectors
-			rubble += (*b_it)->data.getBuildCost();
-		if ((*b_it)->getStaticUnitData().storeResType == eResourceType::Metal)
-			rubble += (*b_it)->getStoredResources() * 2; // stored material is always added completely to the rubble
-
-		deleteUnit(*b_it);
-	}
-
-	return rubble;
+	addJob(new cDestroyJob(unit, *this));
 }
 
 //------------------------------------------------------------------------------
@@ -557,7 +449,7 @@ void cModel::deleteUnit(cUnit* unit)
 		owningPtr = owner->removeUnit(*vehicle);
 	}
 
-	//helperJobs.onRemoveUnit(unit);
+	helperJobs.onRemoveUnit(unit);
 
 	// detach from move job
 	if (unit->isAVehicle())
@@ -566,6 +458,13 @@ void cModel::deleteUnit(cUnit* unit)
 		if (vehicle->getMoveJob())
 		{
 			vehicle->getMoveJob()->removeVehicle(vehicle);
+		}
+	}
+	if (unit->isAttacking())
+	{
+		for (auto attackJob : attackJobs)
+		{
+			attackJob->onRemoveUnit(*unit);
 		}
 	}
 
@@ -609,7 +508,7 @@ void cModel::deleteRubble(cBuilding* rubble)
 }
 
 //------------------------------------------------------------------------------
-void cModel::addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& path)
+cMoveJob* cModel::addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& path)
 {
 	cMoveJob* currentMoveJob = vehicle.getMoveJob();
 	if (currentMoveJob)
@@ -617,7 +516,7 @@ void cModel::addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& p
 		if (currentMoveJob->isActive())
 		{
 			// cannot add movejob while the unit is already moving
-			return;
+			return nullptr;
 		}
 		else
 		{
@@ -630,6 +529,8 @@ void cModel::addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& p
 	vehicle.setMoveJob(moveJob);
 
 	moveJobs.push_back(moveJob);
+
+	return moveJob;
 }
 
 //------------------------------------------------------------------------------
@@ -654,6 +555,13 @@ std::vector<const cPlayer*> cModel::resumeMoveJobs(const cPlayer* player /*= nul
 }
 
 //------------------------------------------------------------------------------
+void cModel::addAttackJob(cUnit& aggressor, const cPosition& targetPosition)
+{
+	cAttackJob* attackJob = new cAttackJob(aggressor, targetPosition, *this);
+	attackJobs.push_back(attackJob);
+}
+
+//------------------------------------------------------------------------------
 void cModel::handlePlayerFinishedTurn(cPlayer& player)
 {
 	player.setHasFinishedTurn(true);
@@ -671,6 +579,12 @@ void cModel::addFx(std::shared_ptr<cFx> fx)
 {
 	effectsList.push_back(fx);
 	addedEffect(fx);
+}
+
+//------------------------------------------------------------------------------
+void cModel::addJob(cJob* job)
+{
+	helperJobs.addJob(*job);
 }
 
 //------------------------------------------------------------------------------
@@ -757,6 +671,21 @@ void cModel::runMoveJobs()
 		}
 	}
 	Remove(moveJobs, nullptr);
+}
+
+//------------------------------------------------------------------------------
+void cModel::runAttackJobs()
+{
+	auto attackJobsTemp = attackJobs;
+	for (auto attackJob : attackJobsTemp)
+	{
+		attackJob->run(*this); //this can add new items to 'attackjobs'
+		if (attackJob->finished())
+		{
+			delete attackJob;
+			attackJobs.erase(std::find(attackJobs.begin(), attackJobs.end(), attackJob));
+		}
+	}
 }
 
 //------------------------------------------------------------------------------

@@ -99,6 +99,9 @@
 #include "game/logic/turncounter.h"
 #include "game/data/report/special/savedreportturnstart.h"
 #include "game/logic/action/actionselfdestroy.h"
+#include "game/data/report/unit/savedreportdestroyed.h"
+#include "game/data/report/unit/savedreportattacked.h"
+#include "game/logic/action/actionattack.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -1034,21 +1037,16 @@ void cGameGuiController::connectClient (cClient& client)
 
 			if (vehicle.isInRange (position))
 			{
-				// find target ID
-				int targetId = 0;
-				if (target) targetId = target->iID;
-
-				Log.write (" Client: want to attack " + iToStr (position.x()) + ":" + iToStr (position.y()) + ", Vehicle ID: " + iToStr (targetId), cLog::eLOG_TYPE_NET_DEBUG);
-				sendWantAttack (client, vehicle.iID, position, targetId);
+				activeClient->sendNetMessage(cActionAttack(vehicle, position, target));
 			}
 			else if (target)
 			{
-				cPathCalculator pc (vehicle, *client.getModel().getMap(), position, false);
+				cPathCalculator pc (vehicle, *client.getModel().getMap(), position, true);
 				const auto path = pc.calcPath();
 				if (!path.empty())
 				{
-					activeClient->sendNetMessage(cActionStartMove(vehicle, path));
-					sendEndMoveAction (client, vehicle.iID, target->iID, EMAT_ATTACK);
+					cEndMoveAction emat(vehicle, *target, EMAT_ATTACK);
+					activeClient->sendNetMessage(cActionStartMove(vehicle, path, emat));
 				}
 				else
 				{
@@ -1061,12 +1059,9 @@ void cGameGuiController::connectClient (cClient& client)
 			const auto& building = static_cast<const cBuilding&> (unit);
 			const cMap& map = *client.getModel().getMap();
 
-			int targetId = 0;
 			cUnit* target = cAttackJob::selectTarget (position, building.getStaticUnitData().canAttack, map, building.getOwner());
 
-			if (target) targetId = target->iID;
-
-			sendWantAttack (client, building.iID, position, targetId);
+			activeClient->sendNetMessage(cActionAttack(building, position, target));
 		}
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredSteal, [&] (const cUnit & sourceUnit, const cUnit & destinationUnit)
@@ -1255,6 +1250,7 @@ void cGameGuiController::connectClient (cClient& client)
 
 	clientSignalConnectionManager.connect (client.getModel().addedEffect, [&] (const std::shared_ptr<cFx>& effect)
 	{
+		//TODO: only play sound when effect in sight
 		gameGui->getGameMap().addEffect (effect, true);
 	});
 
@@ -1312,6 +1308,14 @@ void cGameGuiController::connectReportSources(cClient& client)
 		{
 			addSavedReport(std::make_unique<cSavedReportTurnStart>(player, model.getTurnCounter()->getTurn()), player.getId());
 		}
+	});
+	clientSignalConnectionManager.connect(player.unitDestroyed, [&](const cUnit& unit)
+	{
+		addSavedReport(std::make_unique<cSavedReportDestroyed>(unit), player.getId());
+	});
+	clientSignalConnectionManager.connect(player.unitAttacked, [&](const cUnit& unit)
+	{
+		addSavedReport(std::make_unique<cSavedReportAttacked>(unit), player.getId());
 	});
 
 	//reports from the players base:

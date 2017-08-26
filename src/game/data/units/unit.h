@@ -24,7 +24,6 @@
 #include "game/data/units/unitdata.h"
 #include "utility/signal/signal.h"
 #include "utility/position.h"
-#include "game/logic/jobs.h"
 
 class cClient;
 class cJob;
@@ -60,7 +59,7 @@ public:
 
 	virtual const cPosition& getMovementOffset() const { static const cPosition dummy (0, 0); return dummy; }
 
-	virtual void setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList = true) = 0;
+	virtual void setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList = true) = 0;
 
 	const cPosition& getPosition() const;
 	void setPosition (cPosition position);
@@ -175,7 +174,6 @@ public:
 		archive & NVP(dir);
 		archive & NVP(storedUnits);
 		archive & NVP(detectedByPlayerList);
-		archive & NVP(job);
 		archive & NVP(owner);
 		archive & NVP(position);
 		archive & NVP(customName);

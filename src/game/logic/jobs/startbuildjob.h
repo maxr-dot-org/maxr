@@ -17,48 +17,49 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_logic_endmoveaction_h
-#define game_logic_endmoveaction_h
+#ifndef game_logic_jobs_startbuildjobH
+#define game_logic_jobs_startbuildjobH
 
-#include<stdint.h>
+#include "job.h"
 
-class cVehicle;
-class cModel;
-class cUnit;
+#include "utility/position.h"
+#include "utility/language.h"
+#include "utility/serialization/binaryarchive.h"
+#include "utility/serialization/xmlarchive.h"
+#include "game/data/units/unit.h"
 
-enum eEndMoveActionType
-{
-	EMAT_NONE,
-	EMAT_LOAD,
-	EMAT_GET_IN,
-	EMAT_ATTACK
-};
-
-class cEndMoveAction
+class cStartBuildJob : public cJob
 {
 public:
-	cEndMoveAction ();
-	cEndMoveAction (const cVehicle& vehicle, const cUnit& destUnit, eEndMoveActionType type);
-
-	void execute (cModel& model);
-	eEndMoveActionType getType() const;
-	uint32_t getChecksum(uint32_t crc) const;
-
+	cStartBuildJob (cVehicle& vehicle, const cPosition& org, bool big);
 	template <typename T>
-	void serialize(T& archive)
-	{
-		archive & NVP(vehicleID);
-		archive & NVP(type);
-		archive & NVP(destID);
-	}
-private:
-	void executeLoadAction (cModel& model);
-	void executeGetInAction (cModel& model);
-	void executeAttackAction (cModel& model);
+	cStartBuildJob(T& archive) { serializeThis(archive); }
 
-	int vehicleID;
-	eEndMoveActionType type;
-	int destID;	
+	virtual void run (cModel& model) MAXR_OVERRIDE_FUNCTION;
+	virtual eJobType getType() const MAXR_OVERRIDE_FUNCTION;
+
+	virtual void serialize(cBinaryArchiveIn& archive) { archive << serialization::makeNvp("type", getType()); serializeThis(archive); }
+	virtual void serialize(cXmlArchiveIn& archive) { archive << serialization::makeNvp("type", getType()); serializeThis(archive); }
+	
+	virtual uint32_t getChecksum(uint32_t crc) const MAXR_OVERRIDE_FUNCTION;
+private:
+	template <typename T>
+	void serializeThis(T& archive)
+	{
+		archive & NVP(unit);
+		archive & NVP(org);
+		archive & NVP(big);
+
+		if (!archive.isWriter)
+		{
+			if (unit != nullptr)
+			{
+				unit->job = this;
+			}
+		}
+	}
+	cPosition org;
+	bool big;
 };
 
-#endif // !game_logic_endmoveaction_h
+#endif

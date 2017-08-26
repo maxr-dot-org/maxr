@@ -35,7 +35,8 @@ public:
 		ACTION_STOP_MOVE,
 		ACTION_RESUME_MOVE,
 		ACTION_END_TURN,
-		ACTION_SELF_DESTROY
+		ACTION_SELF_DESTROY,
+		ACTION_ATTACK
 	};
 	static std::unique_ptr<cAction> createFromBuffer(cBinaryArchiveOut& archive);
 

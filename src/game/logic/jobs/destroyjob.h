@@ -17,48 +17,53 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_logic_endmoveaction_h
-#define game_logic_endmoveaction_h
+#ifndef game_logic_jobs_destroyjobH
+#define game_logic_jobs_destroyjobH
 
-#include<stdint.h>
+#include "job.h"
 
-class cVehicle;
+#include "utility/language.h"
+#include "utility/serialization/binaryarchive.h"
+#include "utility/serialization/xmlarchive.h"
+
+class cMapField;
 class cModel;
-class cUnit;
 
-enum eEndMoveActionType
-{
-	EMAT_NONE,
-	EMAT_LOAD,
-	EMAT_GET_IN,
-	EMAT_ATTACK
-};
-
-class cEndMoveAction
+class cDestroyJob : public cJob
 {
 public:
-	cEndMoveAction ();
-	cEndMoveAction (const cVehicle& vehicle, const cUnit& destUnit, eEndMoveActionType type);
+	cDestroyJob(cUnit& unit, cModel& model);
+	template <typename T>
+	cDestroyJob(T& archive) { serializeThis(archive); }
 
-	void execute (cModel& model);
-	eEndMoveActionType getType() const;
-	uint32_t getChecksum(uint32_t crc) const;
+	virtual void run(cModel& model) MAXR_OVERRIDE_FUNCTION;
+	virtual eJobType getType() const MAXR_OVERRIDE_FUNCTION;
+
+	virtual void serialize(cBinaryArchiveIn& archive) { archive << serialization::makeNvp("type", getType()); serializeThis(archive); }
+	virtual void serialize(cXmlArchiveIn& archive) { archive << serialization::makeNvp("type", getType()); serializeThis(archive); }
+
+	virtual uint32_t getChecksum(uint32_t crc) const MAXR_OVERRIDE_FUNCTION;
+private:
+	void createDestroyFx(cModel& model);
+	void deleteUnit(cModel& model);
+	int deleteAllBuildingsOnField(cMapField& field, bool deleteConnector, cModel& model);
 
 	template <typename T>
-	void serialize(T& archive)
+	void serializeThis(T& archive)
 	{
-		archive & NVP(vehicleID);
-		archive & NVP(type);
-		archive & NVP(destID);
-	}
-private:
-	void executeLoadAction (cModel& model);
-	void executeGetInAction (cModel& model);
-	void executeAttackAction (cModel& model);
+		archive & NVP(unit);
+		archive & NVP(counter);
 
-	int vehicleID;
-	eEndMoveActionType type;
-	int destID;	
+		if (!archive.isWriter)
+		{
+			if (unit != nullptr)
+			{
+				unit->job = this;
+			}
+		}
+	}
+
+	int counter;
 };
 
-#endif // !game_logic_endmoveaction_h
+#endif

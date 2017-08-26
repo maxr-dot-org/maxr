@@ -32,6 +32,14 @@ cActionStartMove::cActionStartMove(cBinaryArchiveOut& archive) :
 }
 
 //------------------------------------------------------------------------------
+cActionStartMove::cActionStartMove(const cVehicle& vehicle, const std::forward_list<cPosition>& path, cEndMoveAction emat) :
+	cAction(eActiontype::ACTION_START_MOVE),
+	path(path),
+	unitId(vehicle.getId()),
+	endMoveAction(emat)
+{}
+
+//------------------------------------------------------------------------------
 cActionStartMove::cActionStartMove(const cVehicle& vehicle, const std::forward_list<cPosition>& path) :
 	cAction(eActiontype::ACTION_START_MOVE),
 	path(path),
@@ -105,5 +113,10 @@ void cActionStartMove::execute(cModel& model) const
 		vehicle->getOwner()->deleteSentry(*vehicle);
 	}
 
-	model.addMoveJob(*vehicle, path);
+	cMoveJob* movejob = model.addMoveJob(*vehicle, path);
+	
+	if (movejob)
+	{
+		movejob->setEndMoveAction(endMoveAction);
+	}
 }

@@ -1,5 +1,24 @@
+/***************************************************************************
+*      Mechanized Assault and Exploration Reloaded Projectfile            *
+*                                                                         *
+*   This program is free software; you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 2 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+*   This program is distributed in the hope that it will be useful,       *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU General Public License for more details.                          *
+*                                                                         *
+*   You should have received a copy of the GNU General Public License     *
+*   along with this program; if not, write to the                         *
+*   Free Software Foundation, Inc.,                                       *
+*   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+***************************************************************************/
 
 #include <algorithm>
+#include <memory>
 
 #include "game/logic/attackjob.h"
 
@@ -10,19 +29,15 @@
 #include "game/data/player/player.h"
 #include "game/data/report/unit/savedreportdestroyed.h"
 #include "game/data/report/unit/savedreportattacked.h"
-#include "netmessage.h"
-#include "clientevents.h"
-#include "server.h"
-#include "client.h"
 #include "fxeffects.h"
 #include "utility/log.h"
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
+#include "game/data/model.h"
+#include "utility/listhelpers.h"
+#include "utility/crc.h"
 
-
-//TODO: test alien attack (gound & air)
-//TODO: load/save attackjobs + isAttacking/isAttacked
-
+//TODO: test alien attack (ground & air)
 
 //--------------------------------------------------------------------------
 cUnit* cAttackJob::selectTarget (const cPosition& position, char attackMode, const cMap& map, const cPlayer* owner)
@@ -32,7 +47,7 @@ cUnit* cAttackJob::selectTarget (const cPosition& position, char attackMode, con
 	const cMapField& mapField = map.getField (position);
 
 	//planes
-	//prefere enemy planes. But select own one, if there is no enemy
+	//prefer enemy planes. But select own one, if there is no enemy
 	auto planes = mapField.getPlanes();
 	for (cVehicle* plane : planes)
 	{
@@ -63,197 +78,132 @@ cUnit* cAttackJob::selectTarget (const cPosition& position, char attackMode, con
 	if (!targetVehicle && (attackMode & TERRAIN_GROUND))
 	{
 		targetBuilding = mapField.getBuilding();
-		if (targetBuilding && !targetBuilding->isRubble()) targetBuilding = nullptr;
+		if (targetBuilding && targetBuilding->isRubble()) targetBuilding = nullptr;
 	}
 
 	if (targetVehicle) return targetVehicle;
 	return targetBuilding;
 }
 
-void cAttackJob::runAttackJobs (std::vector<cAttackJob*>& attackJobs)
-{
-	auto attackJobsTemp = attackJobs;
-	for (auto attackJob : attackJobsTemp)
-	{
-		attackJob->run(); //this can add new items to 'attackjobs'
-		if (attackJob->finished())
-		{
-			delete attackJob;
-			attackJobs.erase (std::find (attackJobs.begin(), attackJobs.end(), attackJob));
-		}
-	}
-}
+//------------------------------------------------------------------------------
+cAttackJob::cAttackJob() :
+	aggressor(nullptr),
+	fireDir(0),
+	state(S_ROTATING),
+	counter(0)
+{}
 
 //--------------------------------------------------------------------------
-cAttackJob::cAttackJob (cServer* server_, cUnit* aggressor_, const cPosition& targetPosition_) :
-	aggressorID (aggressor_->iID),
-	aggressorPlayerNr (aggressor_->getOwner()->getId()),
-	aggressorPosition (aggressor_->getPosition()),
-	attackMode(aggressor_->getStaticUnitData().canAttack),
-	muzzleType(aggressor_->getStaticUnitData().muzzleType),
-	attackPoints (aggressor_->data.getDamage()),
-	targetPosition (targetPosition_),
-	server (server_),
-	client (nullptr),
-	destroyedTargets(),
+cAttackJob::cAttackJob (cUnit& aggressor, const cPosition& targetPosition, const cModel& model) :
+	targetPosition (targetPosition),
+	aggressor(&aggressor),
 	fireDir (0),
-	state (S_ROTATING)
+	state (S_ROTATING),
+	counter(10)
 {
+	Log.write(" cAttackJob: Started attack, aggressor: " + aggressor.getDisplayName() + ", ID: " + iToStr(aggressor.getId()), cLog::eLOG_TYPE_NET_DEBUG);
+
 	fireDir = calcFireDir();
-	counter = calcTimeForRotation() + FIRE_DELAY;
+	
+	lockTarget(*model.getMap());
 
-	Log.write (" Server: Created AttackJob. Aggressor: " + aggressor_->getDisplayName() + " (ID: " + iToStr (aggressor_->iID) + ") at (" + iToStr (aggressorPosition.x()) + "," + iToStr (aggressorPosition.y()) + "). Target: (" + iToStr (targetPosition.x()) + "," + iToStr (targetPosition.y()) + ").", cLog::eLOG_TYPE_NET_DEBUG);
-
-	lockTarget();
-
-	server->sendNetMessage (serialize());
-
-	//lock agressor
-	aggressor_->setAttacking (true);
+	//lock aggressor
+	aggressor.setAttacking (true);
 
 	// make the aggressor visible on all clients
 	// who can see the aggressor offset
-	for (const auto& player : server->playerList)
+	for (const auto& player : model.getPlayerList())
 	{
-		if (player->canSeeAnyAreaUnder (*aggressor_) == false) continue;
-		if (aggressor_->getOwner() == player.get()) continue;
+		if (player->canSeeAnyAreaUnder (aggressor) == false) continue;
+		if (aggressor.getOwner() == player.get()) continue;
 
-		aggressor_->setDetectedByPlayer (*server, player.get());
+		aggressor.setDetectedByPlayer (player.get());
 	}
 }
 
-cAttackJob::cAttackJob (cClient* client_, cNetMessage& message) :
-	server (nullptr),
-	client (client_)
+//------------------------------------------------------------------------------
+void cAttackJob::run(cModel& model)
 {
-	state = static_cast<cAttackJob::eAJStates> (message.popInt16());
-	counter = message.popInt16();
-	targetPosition = message.popPosition();
-	attackPoints = message.popInt16();
-	muzzleType = message.popInt16();
-	attackMode = message.popInt16();
-	aggressorPosition = message.popPosition();
-	aggressorPlayerNr = message.popInt16();
-	fireDir = message.popInt16();
-	aggressorID = message.popInt32();
+	if (counter > 0) counter--;
 
-	cUnit* aggressor = client->getUnitFromID (aggressorID);
-	if (aggressor)
-		aggressor->setAttacking (true);
-
-	if (aggressor)
-		Log.write (" Client: Received AttackJob. Aggressor: " + aggressor->getDisplayName() + " (ID: " + iToStr (aggressor->iID) + ") at (" + iToStr (aggressorPosition.x()) + "," + iToStr (aggressorPosition.y()) + "). Target: (" + iToStr (targetPosition.x()) + "," + iToStr (targetPosition.y()) + ").", cLog::eLOG_TYPE_NET_DEBUG);
-	else
-		Log.write (" Client: Received AttackJob. Aggressor: instance not present on client (ID: " + iToStr (aggressorID) + ") at(" + iToStr (aggressorPosition.x()) + ", " + iToStr (aggressorPosition.y()) + ").Target: (" + iToStr (targetPosition.x()) + ", " + iToStr (targetPosition.y()) + ").", cLog::eLOG_TYPE_NET_DEBUG);
-
-	lockTarget();
-
-}
-
-cAttackJob::~cAttackJob()
-{
-	// unlock targets in case they were locked at the beginning of the attack, but are not hit by the impact
-	// for example a plane flies on the target field and takes the shot in place of the original plane
-	for (auto unitId : lockedTargets)
+	if (aggressor == nullptr)
 	{
-		cUnit* unit;
-		if (server)
-			unit = server->getUnitFromID (unitId);
-		else
-			unit = client->getUnitFromID (unitId);
-
-		if (unit)
-			unit->setIsBeeinAttacked (false);
-	}
-}
-
-std::unique_ptr<cNetMessage> cAttackJob::serialize() const
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_ATTACKJOB);
-	message->pushInt32 (aggressorID);
-	message->pushInt16 (fireDir);
-	message->pushInt16 (aggressorPlayerNr);
-	message->pushPosition (aggressorPosition);
-	message->pushInt16 (attackMode);
-	message->pushInt16 (muzzleType);
-	message->pushInt16 (attackPoints);
-	message->pushPosition (targetPosition);
-	message->pushInt16 (counter);
-	message->pushInt16 (state);
-
-	return message;
-}
-
-
-void cAttackJob::run()
-{
-	if (counter > 0)
-	{
-		counter--;
+		releaseTargets(model);
+		state = S_FINISHED;
 	}
 
 	switch (state)
 	{
 		case S_ROTATING:
 		{
-			cUnit* aggressor = getAggressor();
-			if (aggressor && (counter % ROTATION_SPEED) == 0)
-				aggressor->rotateTo (fireDir);
-
 			if (counter == 0)
 			{
-				fire();
-				state = S_FIRING;
+				if (aggressor->dir == fireDir)
+				{
+					fire(model);
+					state = S_FIRING;
+				}
+				else
+				{
+					aggressor->rotateTo(fireDir);
+					counter = 10;
+				}
 			}
 			break;
 		}
 		case S_FIRING:
 			if (counter == 0)
 			{
-				bool destroyed = impact();
-				if (destroyed)
-				{
-					counter = DESTROY_DELAY;
-					state = S_EXPLODING;
-				}
-				else
-				{
-					state = S_FINISHED;
-				}
-			}
-			break;
-		case S_EXPLODING:
-			if (counter == 0)
-			{
-				destroyTarget();
+				impact(model);
+				releaseTargets(model);
 				state = S_FINISHED;
 			}
+			break;
 		case S_FINISHED:
 		default:
 			break;
 	}
 }
 
+//------------------------------------------------------------------------------
 bool cAttackJob::finished() const
 {
 	return state == S_FINISHED;
 }
 
-//---------------------------------------------
+//------------------------------------------------------------------------------
+void cAttackJob::onRemoveUnit(const cUnit& unit)
+{
+	if (aggressor == &unit)
+	{
+		aggressor = nullptr;
+	}
+}
+
+//------------------------------------------------------------------------------
+uint32_t cAttackJob::getChecksum(uint32_t crc) const
+{
+	crc = calcCheckSum(aggressor->getId(), crc);
+	crc = calcCheckSum(targetPosition, crc);
+	crc = calcCheckSum(lockedTargets, crc);
+	crc = calcCheckSum(fireDir, crc);
+	crc = calcCheckSum(counter, crc);
+	crc = calcCheckSum(state, crc);
+
+	return crc;
+}
+
+//------------------------------------------------------------------------------
 // private functions
 
 int cAttackJob::calcFireDir()
 {
-	auto dx = (float) (targetPosition.x() - aggressorPosition.x());
-	auto dy = (float) - (targetPosition.y() - aggressorPosition.y());
+	auto dx = (float) (targetPosition.x() - aggressor->getPosition().x());
+	auto dy = (float) - (targetPosition.y() - aggressor->getPosition().y());
 	auto r = std::sqrt (dx * dx + dy * dy);
 
-	int fireDir = getAggressor()->dir;
-	if (r <= 0.001f)
-	{
-		// do not rotate aggressor
-	}
-	else
+	int fireDir = aggressor->dir;
+	if (r > 0.001f)
 	{
 		// 360 / (2 * PI) = 57.29577951f;
 		dx /= r;
@@ -280,29 +230,11 @@ int cAttackJob::calcFireDir()
 	return fireDir;
 }
 
-int cAttackJob::calcTimeForRotation()
+
+void cAttackJob::lockTarget(const cMap& map)
 {
-	int diff = abs (getAggressor()->dir - fireDir);
-	if (diff > 4) diff = 8 - diff;
-
-	return diff * ROTATION_SPEED;
-}
-
-cUnit* cAttackJob::getAggressor()
-{
-	if (server)
-		return server->getUnitFromID (aggressorID);
-	else
-		return client->getUnitFromID (aggressorID);
-}
-
-void cAttackJob::lockTarget()
-{
-	const cPlayer& player = client ? *client->getModel().getPlayer (aggressorPlayerNr) : server->getPlayerFromNumber (aggressorPlayerNr);
-	const cMap&    map = client ? *client->getModel().getMap() : *server->Map;
-
 	int range = 0;
-	if (muzzleType == cStaticUnitData::MUZZLE_TYPE_ROCKET_CLUSTER)
+	if (aggressor->getStaticUnitData().muzzleType == cStaticUnitData::MUZZLE_TYPE_ROCKET_CLUSTER)
 		range = 2;
 
 	for (int x = -range; x <= range; x++)
@@ -311,81 +243,78 @@ void cAttackJob::lockTarget()
 		{
 			if (abs (x) + abs (y) <= range && map.isValidPosition (targetPosition + cPosition (x, y)))
 			{
-				cUnit* target = selectTarget (targetPosition + cPosition (x, y), attackMode, map, &player);
+				cUnit* target = selectTarget (targetPosition + cPosition (x, y), aggressor->getStaticUnitData().canAttack, map, aggressor->getOwner());
 				if (target)
 				{
 					target->setIsBeeinAttacked (true);
 					lockedTargets.push_back (target->iID);
-					Log.write (" AttackJob locked target " + target->getDisplayName() + " (ID: " + iToStr (target->iID) + ") at (" + iToStr (targetPosition.x() + x) + "," + iToStr (targetPosition.y() + y) + ")", cLog::eLOG_TYPE_NET_DEBUG);
+					Log.write (" cAttackJob: locked target " + target->getDisplayName() + " (ID: " + iToStr (target->iID) + ") at (" + iToStr (targetPosition.x() + x) + "," + iToStr (targetPosition.y() + y) + ")", cLog::eLOG_TYPE_NET_DEBUG);
 				}
 			}
 		}
 	}
 }
 
-void cAttackJob::fire()
+void cAttackJob::releaseTargets(const cModel& model)
 {
-	cUnit* aggressor = getAggressor();
-
-	//update data
-	if (aggressor)
+	// unlock targets in case they were locked at the beginning of the attack, but are not hit by the impact
+	// for example a plane flies on the target field and takes the shot in place of the original plane
+	for (auto unitId : lockedTargets)
 	{
-		aggressor->data.setShots (aggressor->data.getShots() - 1);
-		aggressor->data.setAmmo (aggressor->data.getAmmo() - 1);
-		if (aggressor->isAVehicle() && aggressor->getStaticUnitData().canDriveAndFire == false)
-			aggressor->data.setSpeed (aggressor->data.getSpeed() - (int) (((float) aggressor->data.getSpeedMax()) / aggressor->data.getShotsMax()));
+		cUnit* unit = model.getUnitFromID(unitId);
+		
+		if (unit)
+			unit->setIsBeeinAttacked(false);
 	}
 
-	//set timer for next state
-	auto muzzle = createMuzzleFx (aggressor);
-	if (muzzle)
-		counter = muzzle->getLength() + IMPACT_DELAY;
+	lockedTargets.clear();
+}
 
-	//play muzzle flash / fire rocket
-	if (client)
+void cAttackJob::fire(cModel& model)
+{
+
+	//update data
+	aggressor->data.setShots (aggressor->data.getShots() - 1);
+	aggressor->data.setAmmo (aggressor->data.getAmmo() - 1);
+	if (aggressor->isAVehicle() && aggressor->getStaticUnitData().canDriveAndFire == false)
+		aggressor->data.setSpeed (aggressor->data.getSpeed() - (int) (((float) aggressor->data.getSpeedMax()) / aggressor->data.getShotsMax()));
+
+	auto muzzle = createMuzzleFx ();
+	if (muzzle)
 	{
-		if (muzzle)
-			client->addFx (std::move (muzzle), aggressor != nullptr);
+		//set timer for next state
+		const int IMPACT_DELAY = 10;
+		counter = muzzle->getLength() + IMPACT_DELAY;
+	
+		//play muzzle flash / fire rocket
+		model.addFx (std::move(muzzle));
 	}
 
 	//make explosive mines explode
-	if (aggressor && aggressor->getStaticUnitData().explodesOnContact && aggressorPosition == targetPosition)
+	if (aggressor->getStaticUnitData().explodesOnContact && aggressor->getPosition() == targetPosition)
 	{
-/*		if (client)
+		const cMap& map = *model.getMap();
+		if (map.isWaterOrCoast (aggressor->getPosition()))
 		{
-			cMap&    map = client ? *client->getMap() : *server->Map;
-			if (map.isWaterOrCoast (aggressor->getPosition()))
-			{
-				client->addFx (std::make_unique<cFxExploWater> (aggressor->getPosition() * 64 + cPosition (32, 32)));
-			}
-			else
-			{
-				client->addFx (std::make_unique<cFxExploSmall> (aggressor->getPosition() * 64 + cPosition (32, 32)));
-			}
-			client->deleteUnit (aggressor);
+			model.addFx (std::make_unique<cFxExploWater> (aggressor->getPosition() * 64 + cPosition (32, 32)));
 		}
 		else
 		{
-			server->deleteUnit (aggressor, false);
-		} */
+			model.addFx (std::make_unique<cFxExploSmall> (aggressor->getPosition() * 64 + cPosition (32, 32)));
+		}
+		model.deleteUnit (aggressor);
 	}
-
-
-
 }
 
-std::unique_ptr<cFx> cAttackJob::createMuzzleFx (cUnit* aggressor)
+std::unique_ptr<cFx> cAttackJob::createMuzzleFx ()
 {
-	//TODO: this shouldn't be in the attackjob class. But since
-	//the attackjobs doesn't always have an instance of the unit,
-	//it stays here for now
+	//TODO: this shouldn't be in the attackjob class.
 
-	sID id;
-	if (aggressor)
-		id = aggressor->data.getId();
+	const sID id = aggressor->data.getId();
+	const cPosition aggressorPosition = aggressor->getPosition();
 
 	cPosition offset (0, 0);
-	switch (muzzleType)
+	switch (aggressor->getStaticUnitData().muzzleType)
 	{
 		case cStaticUnitData::MUZZLE_TYPE_BIG:
 			switch (fireDir)
@@ -461,7 +390,7 @@ std::unique_ptr<cFx> cAttackJob::createMuzzleFx (cUnit* aggressor)
 					offset.y() = -12;
 					break;
 			}
-			if (muzzleType == cStaticUnitData::MUZZLE_TYPE_MED)
+			if (aggressor->getStaticUnitData().muzzleType == cStaticUnitData::MUZZLE_TYPE_MED)
 				return std::make_unique<cFxMuzzleMed> (aggressorPosition * 64 + offset, fireDir, id);
 			else
 				return std::make_unique<cFxMuzzleMedLong> (aggressorPosition * 64 + offset, fireDir, id);
@@ -475,182 +404,140 @@ std::unique_ptr<cFx> cAttackJob::createMuzzleFx (cUnit* aggressor)
 	}
 }
 
-bool cAttackJob::impact()
+void cAttackJob::impact(cModel& model)
 {
 	bool destroyed = false;
-	if (muzzleType == cStaticUnitData::MUZZLE_TYPE_ROCKET_CLUSTER)
-		destroyed = impactCluster();
+	if (aggressor->getStaticUnitData().muzzleType == cStaticUnitData::MUZZLE_TYPE_ROCKET_CLUSTER)
+		impactCluster(model);
 	else
-		destroyed = impactSingle (targetPosition);
-
-	return destroyed;
+		impactSingle (targetPosition, aggressor->data.getDamage(), model);
 }
 
-bool cAttackJob::impactCluster()
+void cAttackJob::impactCluster(cModel& model)
 {
-	const int clusterDamage = attackPoints;
-	bool destroyed = false;
 	std::vector<cUnit*> targets;
 
 	//full damage
-	destroyed = destroyed || impactSingle (targetPosition, &targets);
+	int clusterDamage = aggressor->data.getDamage();
+	impactSingle (targetPosition, clusterDamage, model, &targets);
 
 	// 3/4 damage
-	attackPoints = (clusterDamage * 3) / 4;
-	destroyed = destroyed || impactSingle (targetPosition + cPosition (-1, 0), &targets);
-	destroyed = destroyed || impactSingle (targetPosition + cPosition (+1, 0), &targets);
-	destroyed = destroyed || impactSingle (targetPosition + cPosition (0, -1), &targets);
-	destroyed = destroyed || impactSingle (targetPosition + cPosition (0, +1), &targets);
+	clusterDamage = (aggressor->data.getDamage() * 3) / 4;
+	impactSingle (targetPosition + cPosition (-1, 0), clusterDamage, model, &targets);
+	impactSingle (targetPosition + cPosition (+1, 0), clusterDamage, model, &targets);
+	impactSingle (targetPosition + cPosition (0, -1), clusterDamage, model, &targets);
+	impactSingle (targetPosition + cPosition (0, +1), clusterDamage, model, &targets);
 
 	// 1/2 damage
-	attackPoints = clusterDamage / 2;
-	destroyed = destroyed || impactSingle (targetPosition + cPosition (+1, +1), &targets);
-	destroyed = destroyed || impactSingle (targetPosition + cPosition (+1, -1), &targets);
-	destroyed = destroyed || impactSingle (targetPosition + cPosition (-1, +1), &targets);
-	destroyed = destroyed || impactSingle (targetPosition + cPosition (-1, -1), &targets);
+	clusterDamage = aggressor->data.getDamage() / 2;
+	impactSingle (targetPosition + cPosition (+1, +1), clusterDamage, model, &targets);
+	impactSingle (targetPosition + cPosition (+1, -1), clusterDamage, model, &targets);
+	impactSingle (targetPosition + cPosition (-1, +1), clusterDamage, model, &targets);
+	impactSingle (targetPosition + cPosition (-1, -1), clusterDamage, model, &targets);
 
 	// 1/3 damage
-	attackPoints = clusterDamage / 3;
-	destroyed = destroyed || impactSingle (targetPosition + cPosition (-2, 0), &targets);
-	destroyed = destroyed || impactSingle (targetPosition + cPosition (+2, 0), &targets);
-	destroyed = destroyed || impactSingle (targetPosition + cPosition (0, -2), &targets);
-	destroyed = destroyed || impactSingle (targetPosition + cPosition (0, +2), &targets);
+	clusterDamage = aggressor->data.getDamage() / 3;
+	impactSingle (targetPosition + cPosition (-2, 0), clusterDamage, model, &targets);
+	impactSingle (targetPosition + cPosition (+2, 0), clusterDamage, model, &targets);
+	impactSingle (targetPosition + cPosition (0, -2), clusterDamage, model, &targets);
+	impactSingle (targetPosition + cPosition (0, +2), clusterDamage, model, &targets);
 
-	return destroyed;
 }
 
-bool cAttackJob::impactSingle (const cPosition& position, std::vector<cUnit*>* avoidTargets)
+void cAttackJob::impactSingle (const cPosition& position, int attackPoints, cModel& model, std::vector<cUnit*>* avoidTargets)
 {
-	//select target
-	const cPlayer& player = client ? *client->getModel().getPlayer (aggressorPlayerNr) : server->getPlayerFromNumber (aggressorPlayerNr);
-	const cMap&    map = *client->getModel().getMap();
+	const cMap& map = *model.getMap();
 
 	if (!map.isValidPosition (position))
-		return false;
+		return;
 
-	cUnit* target = selectTarget (position, attackMode, map, &player);
+	cUnit* target = selectTarget (position, aggressor->getStaticUnitData().canAttack, map, aggressor->getOwner());
 
 	//check list of units that will be ignored as target.
-	//Used to prevent, that cluster attacks hit the same unit multible times
+	//Used to prevent, that cluster attacks hit the same unit multiple times
 	if (avoidTargets)
 	{
-		for (auto unit : *avoidTargets)
+		if (Contains(*avoidTargets, target))
 		{
-			if (unit == target)
-				return false;
+			return;
 		}
 		avoidTargets->push_back (target);
 	}
 
-	cPosition offset (0, 0);
-	if (target && target->isAVehicle())
+	// if target is a stealth unit, make it visible on all clients
+	if (target && target->getStaticUnitData().isStealthOn != TERRAIN_NONE)
 	{
-		offset = static_cast<cVehicle*> (target)->getMovementOffset();
-	}
-
-	bool destroyed = false;
-	std::string name;
-	sID unitID;
-
-	// if taget is a stealth unit, make it visible on all clients
-	if (server && target && target->getStaticUnitData().isStealthOn != TERRAIN_NONE)
-	{
-		for (const auto& player : server->playerList)
+		for (const auto& player : model.getPlayerList())
 		{
 			if (target->getOwner() == player.get()) continue;
 			if (!player->canSeeAnyAreaUnder (*target)) continue;
 
-			target->setDetectedByPlayer (*server, player.get());
+			target->setDetectedByPlayer (player.get());
 		}
 	}
 
 	//make impact on target
+	bool destroyed = false;
 	if (target)
 	{
-		target->data.setHitpoints (target->calcHealth (attackPoints));
+		int remainingHp = target->calcHealth(attackPoints);
+		target->data.setHitpoints (remainingHp);
 		target->setHasBeenAttacked (true);
 		target->setIsBeeinAttacked (false);
 
-		name = target->getDisplayName();
-		unitID = target->data.getId();
+		std::string name = target->getDisplayName();
+		Log.write(" cAttackJob: target hit: " + name + ", ID: " + iToStr(target->getId()) + ", remaining hp: " + iToStr(remainingHp), cLog::eLOG_TYPE_NET_DEBUG);
 
-		if (target->data.getHitpoints() <= 0)
+		if (remainingHp <= 0)
 		{
 			target->setIsBeeinAttacked (true);
 			destroyed = true;
-			destroyedTargets.push_back (target->iID);
-			if (client)
-			{
-				/*
-				if (target->isAVehicle())
-					client->addDestroyFx (*static_cast<cVehicle*> (target));
-				else
-					client->addDestroyFx (*static_cast<cBuilding*> (target));
-				*/
-			}
 		}
 	}
 
-	if (!destroyed && client)
+	if (!destroyed)
 	{
-		bool playSound = client->getActivePlayer().canSeeAt (targetPosition);
 		bool targetHit = target != nullptr;
 		bool bigTarget = false;
+		cPosition offset;
 		if (target)
+		{
 			bigTarget = target->getIsBig();
-		client->addFx (std::make_unique<cFxHit> (position * 64 + offset + cPosition (32, 32), targetHit, bigTarget), playSound);
+			offset = target->getMovementOffset();
+		}
+		model.addFx (std::make_unique<cFxHit> (position * 64 + offset + cPosition (32, 32), targetHit, bigTarget));
 	}
 
-	auto aggressor = getAggressor();
-	if (aggressor)
-		aggressor->setAttacking (false);
+	aggressor->setAttacking (false);
 
 	//make message
 	if (target)
 	{
 		if (destroyed)
 		{
-			//target->getOwner()->addSavedReport (std::make_unique<cSavedReportDestroyed> (*target));
+			target->getOwner()->unitDestroyed(*target);
 		}
 		else
 		{
-			//target->getOwner()->addSavedReport (std::make_unique<cSavedReportAttacked> (*target));
+			target->getOwner()->unitAttacked(*target);
 		}
 	}
 
-	if (target)
-		Log.write (std::string (server ? " Server: " : " Client: ") + "AttackJob Impact. Target: " + target->getDisplayName() + " (ID: " + iToStr (target->iID) + ") at (" + iToStr (targetPosition.x()) + "," + iToStr (targetPosition.y()) + "), Remaining HP: " + iToStr (target->data.getHitpoints()), cLog::eLOG_TYPE_NET_DEBUG);
-	else
-		Log.write (std::string (server ? " Server: " : " Client: ") + " AttackJob Impact. Target: none (" + iToStr (targetPosition.x()) + "," + iToStr (targetPosition.y()) + ")", cLog::eLOG_TYPE_NET_DEBUG);
+	/*
+	TODO: sentry
+	// check whether a following sentry mode attack is possible
+	if (target && target->isAVehicle() && !destroyed)
+		static_cast<cVehicle*> (target)->InSentryRange (*server);
 
-	if (server)
+	// check whether the aggressor is in sentry range
+	if (aggressor && aggressor->isAVehicle())
+		static_cast<cVehicle*> (aggressor)->InSentryRange (*server);
+	*/
+
+	// remove destroyed unit
+	if (target && destroyed)
 	{
-		// check whether a following sentry mode attack is possible
-		if (target && target->isAVehicle() && !destroyed)
-			static_cast<cVehicle*> (target)->InSentryRange (*server);
-
-		// check whether the aggressor is in sentry range
-		if (aggressor && aggressor->isAVehicle())
-			static_cast<cVehicle*> (aggressor)->InSentryRange (*server);
-	}
-
-	return destroyed;
-}
-
-void cAttackJob::destroyTarget()
-{
-	// destroy unit is only called on server, because it sends
-	// all nessesary net messages to update the client
-	if (server)
-	{
-		for (auto targetId : destroyedTargets)
-		{
-			cUnit* unit = server->getUnitFromID (targetId);
-			if (unit)
-			{
-				Log.write (" Server: AttackJob destroyed unit " + unit->getDisplayName() + " (ID: " + iToStr (unit->iID) + ") at (" + iToStr (unit->getPosition().x()) + "," + iToStr (unit->getPosition().y()) + ")", cLog::eLOG_TYPE_NET_DEBUG);
-				//server->destroyUnit (*unit);
-			}
-		}
+		model.destroyUnit(*target);
+		target = nullptr;
 	}
 }

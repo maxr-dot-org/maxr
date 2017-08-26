@@ -17,48 +17,52 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_logic_endmoveaction_h
-#define game_logic_endmoveaction_h
+#ifndef game_logic_jobs_jobcontainerH
+#define game_logic_jobs_jobcontainerH
 
-#include<stdint.h>
+#include "utility/serialization/serialization.h"
+#include "job.h"
 
-class cVehicle;
-class cModel;
+class cJob;
 class cUnit;
+class cModel;
 
-enum eEndMoveActionType
-{
-	EMAT_NONE,
-	EMAT_LOAD,
-	EMAT_GET_IN,
-	EMAT_ATTACK
-};
-
-class cEndMoveAction
+class cJobContainer
 {
 public:
-	cEndMoveAction ();
-	cEndMoveAction (const cVehicle& vehicle, const cUnit& destUnit, eEndMoveActionType type);
-
-	void execute (cModel& model);
-	eEndMoveActionType getType() const;
+	~cJobContainer();
+	void addJob (cJob& job);
+	void onRemoveUnit (cUnit* unit);
+	void run (cModel& model);
+	void clear();
 	uint32_t getChecksum(uint32_t crc) const;
 
-	template <typename T>
-	void serialize(T& archive)
+	template<typename T>
+	void save(T& archive)
 	{
-		archive & NVP(vehicleID);
-		archive & NVP(type);
-		archive & NVP(destID);
+		archive << serialization::makeNvp("numJobs", (int)jobs.size());
+		for (auto job : jobs)
+		{
+			archive << serialization::makeNvp("job", *job);
+		}
 	}
-private:
-	void executeLoadAction (cModel& model);
-	void executeGetInAction (cModel& model);
-	void executeAttackAction (cModel& model);
+	template<typename T>
+	void load(T& archive)
+	{
+		int numJobs;
+		archive >> NVP(numJobs);
+		jobs.resize(numJobs);
+		for (auto& job : jobs)
+		{
+			job = cJob::createFrom(archive, "job");
+		}
+	}
+	SERIALIZATION_SPLIT_MEMBER();
 
-	int vehicleID;
-	eEndMoveActionType type;
-	int destID;	
+private:
+	std::vector<cJob*>::iterator releaseJob (std::vector<cJob*>::iterator it);
+private:
+	std::vector<cJob*> jobs;
 };
 
-#endif // !game_logic_endmoveaction_h
+#endif

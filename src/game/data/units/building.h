@@ -207,7 +207,7 @@ public:
 	/**
 	* adds a player to the DetecedByPlayerList
 	*/
-	virtual void setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList = true);
+	virtual void setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList = true) MAXR_OVERRIDE_FUNCTION;
 	/**
 	* - checks whether the building has been detected by an other unit
 	* the detection maps have to be up to date, when calling this function

@@ -28,7 +28,7 @@
 
 #include "defines.h"
 #include "game/logic/gametimer.h"
-#include "game/logic/jobs.h"
+#include "game/logic/jobs/job.h"
 #include "main.h" // for sID
 #include "game/data/map/map.h"
 #include "network.h"
@@ -237,7 +237,6 @@ private:
 	void handleNetMessage_MU_MSG_UPGRADES (cNetMessage& message);
 	void handleNetMessage_MU_MSG_LANDING_COORDS (cNetMessage& message);
 	void handleNetMessage_MU_MSG_READY_TO_START (cNetMessage& message);
-	void handleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message);
 	void handleNetMessage_GAME_EV_MINELAYERSTATUS (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message);
 	void handleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message);
@@ -290,14 +289,9 @@ private:
 	*/
 	void stopVehicleBuilding (cVehicle& vehicle);
 
-	
-	void runJobs();
-
 	void checkPlayerUnits (cVehicle& vehicle, cPlayer& MapPlayer);
 	void checkPlayerUnits (cBuilding& building, cPlayer& MapPlayer);
 	void checkPlayerRubbles (cBuilding& building, cPlayer& MapPlayer);
-
-	void addJob (cJob* job);
 public:
 	std::shared_ptr<cTCP> network;
 private:
@@ -350,8 +344,6 @@ private:
 	std::shared_ptr<cCasualtiesTracker> casualtiesTracker;
 
 	std::map<int, cGameGuiState> playerGameGuiStates;
-	/** List with all attackjobs */
-	std::vector<cAttackJob*> AJobs;
 public:
 	void addAttackJob (cUnit* aggressor, const cPosition& targetPosition); //TODO: so oder anders?
 	/** the map */

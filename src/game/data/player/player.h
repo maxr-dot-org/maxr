@@ -188,6 +188,8 @@ public:
 	mutable cSignal<void (cResearch::ResearchArea)> researchCentersWorkingOnAreaChanged;
 	mutable cSignal<void ()> researchCentersWorkingTotalChanged;
 	mutable cSignal<void ()> turnEndMovementsStarted;
+	mutable cSignal<void (const cUnit& unit)> unitDestroyed;
+	mutable cSignal<void (const cUnit& unit)> unitAttacked;
 
 	template <typename T>
 	void save(T& archive)

@@ -44,7 +44,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_UNIT_DATA,				// set new data values for a vehicle
 	GAME_EV_SPECIFIC_UNIT_DATA,		// more specific unit values which are only for the owner
 	GAME_EV_UNIT_UPGRADE_VALUES,	// message contains upgraded values for a unit
-	GAME_EV_ATTACKJOB,				// sends an cAttackJob object to a client
 	GAME_EV_RESOURCES,				// a message with new scaned resources for a client
 	GAME_EV_BUILD_ANSWER,			// the answer of the server to a build request of a client
 	GAME_EV_STOP_BUILD,				// a vehicle has to stop building
@@ -96,11 +95,6 @@ void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, 
 */
 void sendChatMessageToServer(const cClient& client, const std::string& msg, const cPlayer& player);
 
-/**
-* sends all necessary information to identify aggressor
-* and target of an attack to the server
-*/
-void sendWantAttack (const cClient& client, int aggressorID, const cPosition& targetPosition, int targetId);
 
 /**
 * sends whether a minelayer is laying or clearing mines

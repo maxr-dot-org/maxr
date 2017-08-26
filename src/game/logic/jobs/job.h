@@ -17,48 +17,55 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_logic_endmoveaction_h
-#define game_logic_endmoveaction_h
+#ifndef game_logic_jobs_jobH
+#define game_logic_jobs_jobH
 
-#include<stdint.h>
+#include <string>
+#include <stdint.h>
 
-class cVehicle;
-class cModel;
+class cJobContainer;
 class cUnit;
+class cModel;
+class cBinaryArchiveOut;
+class cBinaryArchiveIn;
+class cXmlArchiveIn;
+class cXmlArchiveOut;
 
-enum eEndMoveActionType
+enum class eJobType
 {
-	EMAT_NONE,
-	EMAT_LOAD,
-	EMAT_GET_IN,
-	EMAT_ATTACK
+	START_BUILD,
+	PLANE_TAKEOFF,
+	DESTROY
 };
 
-class cEndMoveAction
+/**
+* little helper jobs for game time synchronous actions,
+* like rotating a unit to a specific direction or landing/takeoff
+*/
+class cJob
 {
+	friend class cJobContainer;
+protected:
+	explicit cJob (cUnit& unit);
+	cJob();
 public:
-	cEndMoveAction ();
-	cEndMoveAction (const cVehicle& vehicle, const cUnit& destUnit, eEndMoveActionType type);
+	virtual ~cJob() {}
+	virtual void run (cModel& model) = 0;
+	virtual eJobType getType() const = 0;
 
-	void execute (cModel& model);
-	eEndMoveActionType getType() const;
-	uint32_t getChecksum(uint32_t crc) const;
+	static cJob* createFrom(cBinaryArchiveOut& archive,  const std::string& name);
+	static cJob* createFrom(cXmlArchiveOut& archive, const std::string& name);
 
-	template <typename T>
-	void serialize(T& archive)
-	{
-		archive & NVP(vehicleID);
-		archive & NVP(type);
-		archive & NVP(destID);
-	}
+	virtual void serialize(cBinaryArchiveIn& archive) = 0;
+	virtual void serialize(cXmlArchiveIn& archive) = 0;
+
+	virtual uint32_t getChecksum(uint32_t crc) const = 0;
+protected:
+	bool finished;
+	cUnit* unit;
 private:
-	void executeLoadAction (cModel& model);
-	void executeGetInAction (cModel& model);
-	void executeAttackAction (cModel& model);
-
-	int vehicleID;
-	eEndMoveActionType type;
-	int destID;	
+	template <typename T>
+	static cJob* createFromImpl(T& archive);
 };
 
-#endif // !game_logic_endmoveaction_h
+#endif // game_logic_jobsH

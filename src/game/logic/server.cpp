@@ -30,7 +30,7 @@
 #include "game/logic/clientevents.h"
 #include "utility/listhelpers.h"
 #include "game/logic/gametimer.h"
-#include "game/logic/jobs.h"
+#include "game/logic/jobs/job.h"
 #include "utility/log.h"
 //#include "menuevents.h"
 #include "netmessage.h"
@@ -117,10 +117,6 @@ cServer::~cServer()
 		network->setMessageReceiver (nullptr);
 	}
 	*/
-	for (size_t i = 0; i != AJobs.size(); ++i)
-	{
-		delete AJobs[i];
-	}
 }
 
 //------------------------------------------------------------------------------
@@ -277,60 +273,7 @@ void cServer::run()
 
 void cServer::doGameActions()
 {
-	cAttackJob::runAttackJobs (AJobs);
-	runJobs();
 	checkPlayerUnits();
-}
-
-//------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_WANT_ATTACK);
-	int targetID = message.popInt32();
-	auto targetPosition = message.popPosition();
-	int aggressorID = message.popInt32();
-
-	cUnit* aggressor = getUnitFromID (aggressorID);
-	cUnit* target = getUnitFromID (targetID);
-
-	//validate aggressor
-	if (aggressor == nullptr)
-	{
-		Log.write (" Server: vehicle with ID " + iToStr (aggressorID) + " not found", cLog::eLOG_TYPE_NET_WARNING);
-		return;
-	}
-	if (aggressor->getOwner()->getId() != message.iPlayerNr)
-	{
-		Log.write (" Server: Message was not send by vehicle owner!", cLog::eLOG_TYPE_NET_ERROR);
-		return;
-	}
-	if (aggressor->isBeeingAttacked()) return;
-
-	//validate target
-	if (!Map->isValidPosition (targetPosition))
-	{
-		Log.write (" Server: Invalid target coordinates", cLog::eLOG_TYPE_NET_ERROR);
-	}
-	if (target && !target->isABuilding() && !target->getIsBig())
-	{
-		if (targetPosition != target->getPosition())
-		{
-			Log.write (" Server: target coords changed from (" + iToStr (targetPosition.x()) + "," + iToStr (targetPosition.y()) + ") to (" + iToStr (target->getPosition().x()) + "," + iToStr (target->getPosition().y()) + ") to match current unit position", cLog::eLOG_TYPE_NET_DEBUG);
-		}
-		targetPosition = target->getPosition();
-
-		Log.write (" Server: attacking unit " + target->getDisplayName() + ", " + iToStr (target->iID), cLog::eLOG_TYPE_NET_DEBUG);
-	}
-
-
-
-	// check if attack is possible
-	if (aggressor->canAttackObjectAt (targetPosition, *Map, true) == false)
-	{
-		Log.write (" Server: The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
-		return;
-	}
-	addAttackJob (aggressor, targetPosition);
 }
 
 //------------------------------------------------------------------------------
@@ -1421,7 +1364,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 			if (&player == srcVehicle->getOwner()) continue;
 			if (!player.canSeeAnyAreaUnder (*srcVehicle)) continue;
 
-			srcVehicle->setDetectedByPlayer (*this, &player);
+			srcVehicle->setDetectedByPlayer (&player);
 		}
 		checkPlayerUnits();
 		srcVehicle->InSentryRange (*this);
@@ -1491,7 +1434,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 
 	switch (message.iType)
 	{
-		case GAME_EV_WANT_ATTACK: handleNetMessage_GAME_EV_WANT_ATTACK (message); break;
 		case GAME_EV_MINELAYERSTATUS: handleNetMessage_GAME_EV_MINELAYERSTATUS (message); break;
 		case GAME_EV_WANT_BUILD: handleNetMessage_GAME_EV_WANT_BUILD (message); break;
 		case GAME_EV_END_BUILDING: handleNetMessage_GAME_EV_END_BUILDING (message); break;
@@ -2101,7 +2043,7 @@ void cServer::sideStepStealthUnit (const cPosition& position, const cStaticUnitD
 
 	if (stealthVehicle->isUnitMoving())
 	{
-		stealthVehicle->setDetectedByPlayer(*this, vehicleOwner);
+		stealthVehicle->setDetectedByPlayer(vehicleOwner);
 		return;
 	}
 
@@ -2188,24 +2130,14 @@ void cServer::sideStepStealthUnit (const cPosition& position, const cStaticUnitD
 	}
 
 	// sidestepping failed. Uncover the vehicle.
-	stealthVehicle->setDetectedByPlayer (*this, vehicleOwner);
+	stealthVehicle->setDetectedByPlayer (vehicleOwner);
 	checkPlayerUnits();
-}
-
-void cServer::addJob (cJob* job)
-{
-	helperJobs.addJob (*job);
-}
-void cServer::runJobs()
-{
-	helperJobs.run (*gameTimer);
 }
 
 //------------------------------------------------------------------------------
 void cServer::addAttackJob (cUnit* aggressor, const cPosition& targetPosition)
 {
-	cAttackJob* attackJob = new cAttackJob (this, aggressor, targetPosition);
-	AJobs.push_back (attackJob);
+	return;
 }
 
 
