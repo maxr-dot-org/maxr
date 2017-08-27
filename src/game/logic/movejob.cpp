@@ -149,6 +149,7 @@ void cMoveJob::stop()
 	{
 		state = FINISHED;
 		vehicle->setMoving(false);
+		vehicle->WalkFrame = 0;
 		vehicle->data.setSpeed(vehicle->data.getSpeed() + savedSpeed);
 	}
 }
@@ -196,6 +197,11 @@ void cMoveJob::startMove(cModel& model)
 		state = FINISHED;
 		vehicle->setMoving(false);
 		vehicle->WalkFrame = 0;
+		return;
+	}
+
+	if (state == WAITING)
+	{
 		return;
 	}
 
@@ -381,6 +387,11 @@ void cMoveJob::endMove(cModel& model)
 		mine->isManualFireActive() == false)
 	{
 		model.addAttackJob(*mine, vehicle->getPosition());
+
+		vehicle->setMoving(false);
+		vehicle->WalkFrame = 0;
+		state = WAITING;
+		currentSpeed = 0;
 	}
 
 	if (vehicle->isUnitLayingMines())
