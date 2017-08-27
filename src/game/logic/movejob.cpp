@@ -75,7 +75,7 @@ unsigned int cMoveJob::getSavedSpeed() const
 }
 
 //------------------------------------------------------------------------------
-void cMoveJob::removeVehicle(cVehicle* vehicle)
+void cMoveJob::removeVehicle()
 {
 	vehicle = nullptr;
 }

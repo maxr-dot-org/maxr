@@ -68,7 +68,7 @@ public:
 	/**
 	* must be called, when the vehicle is destroyed/removed
 	*/
-	void removeVehicle(cVehicle* vehicle);
+	void removeVehicle();
 	/**
 	* Execute the movement for the next game time tick
 	*/
