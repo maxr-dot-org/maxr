@@ -1567,7 +1567,7 @@ uint32_t cVehicle::getChecksum(uint32_t crc) const
 	crc = calcCheckSum(BuildPath, crc);
 	crc = calcCheckSum(WalkFrame, crc);
 	for ( const auto& p : detectedInThisTurnByPlayerList)
-		crc = calcCheckSum(p->getId(), crc);
+		crc = calcCheckSum(p, crc);
 	//cClientMoveJob* clientMoveJob;
 	//std::shared_ptr<cAutoMJob> autoMoveJob;
 	crc = calcCheckSum(tileMovementOffset, crc);

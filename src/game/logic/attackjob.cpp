@@ -183,7 +183,7 @@ void cAttackJob::onRemoveUnit(const cUnit& unit)
 //------------------------------------------------------------------------------
 uint32_t cAttackJob::getChecksum(uint32_t crc) const
 {
-	crc = calcCheckSum(aggressor->getId(), crc);
+	crc = calcCheckSum(aggressor, crc);
 	crc = calcCheckSum(targetPosition, crc);
 	crc = calcCheckSum(lockedTargets, crc);
 	crc = calcCheckSum(fireDir, crc);

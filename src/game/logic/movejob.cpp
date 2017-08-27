@@ -411,7 +411,7 @@ const cEndMoveAction& cMoveJob::getEndMoveAction() const
 //------------------------------------------------------------------------------
 uint32_t cMoveJob::getChecksum(uint32_t crc) const
 {
-	crc = calcCheckSum(vehicle->getId(), crc);
+	crc = calcCheckSum(vehicle, crc);
 	crc = calcCheckSum(path, crc);
 	crc = calcCheckSum(state, crc);
 	crc = calcCheckSum(savedSpeed, crc);

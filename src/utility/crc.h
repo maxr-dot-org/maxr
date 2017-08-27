@@ -81,6 +81,20 @@ uint32_t calcCheckSum(const T& data, uint32_t crc)
 	return crcWrapper::getChecksum(data, crc);
 };
 
+template <typename T>
+uint32_t calcCheckSum(const T* data, uint32_t crc)
+{
+	//target type of the pointer must have a getId() member
+	return calcCheckSum(data ? data->getId() : -1, crc);
+}
+
+template <typename T>
+uint32_t calcCheckSum(T* data, uint32_t crc)
+{
+	//target type of the pointer must have a getId() member
+	return calcCheckSum(data ? data->getId() : -1, crc);
+}
+
 template<typename T>
 uint32_t calcCheckSum(const std::vector<T>& data, uint32_t checksum)
 {
