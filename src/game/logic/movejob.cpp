@@ -375,7 +375,10 @@ void cMoveJob::endMove(cModel& model)
 	//TODO: trigger landing/take off
 
 	cBuilding* mine = model.getMap()->getField(vehicle->getPosition()).getMine();
-	if (mine && vehicle->getStaticUnitData().factorAir == 0  && mine->getOwner() != vehicle->getOwner())
+	if (mine && 
+		vehicle->getStaticUnitData().factorAir == 0  && 
+		mine->getOwner() != vehicle->getOwner() && 
+		mine->isManualFireActive() == false)
 	{
 		model.addAttackJob(*mine, vehicle->getPosition());
 	}
