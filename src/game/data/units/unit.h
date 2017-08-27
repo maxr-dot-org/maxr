@@ -83,11 +83,9 @@ public:
 
 	void rotateTo (int newDir);
 
-	/** checks if the unit can attack something at the offset
+	/** checks if the unit can attack something at the offset.
 	 *  when forceAttack is false, the function only returns true,
 	 *  if there is an enemy unit
-	 *  ATTENTION: must not be called with forceAttack == false
-	 *             from the server thread!
 	 */
 	bool canAttackObjectAt (const cPosition& position, const cMap& map, bool forceAttack = false, bool checkRange = true) const;
 
@@ -114,7 +112,7 @@ public:
 	void setStoredResources(int value);
 
 	//protected:
-	virtual bool isUnitMoving() const { return false; } //test if the vehicle is moving right now. Having a waiting movejob doesn't count a moving
+	virtual bool isUnitMoving() const { return false; } //test if the vehicle is moving right now. Having a waiting movejob doesn't count as moving
 	virtual bool isAutoMoveJobActive() const { return false; }
 	virtual bool isUnitWorking() const { return false; }
 	virtual bool isUnitClearing() const { return false; }

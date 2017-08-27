@@ -102,6 +102,8 @@
 #include "game/data/report/unit/savedreportdestroyed.h"
 #include "game/data/report/unit/savedreportattacked.h"
 #include "game/logic/action/actionattack.h"
+#include "game/logic/action/actionchangemanualfire.h"
+#include "game/logic/action/actionchangesentry.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -855,11 +857,11 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredManualFire, [&] (const cUnit & unit)
 	{
-		sendChangeManualFireStatus (client, unit.iID, unit.isAVehicle());
+		activeClient->sendNetMessage(cActionChangeManualFire(unit));
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredSentry, [&] (const cUnit & unit)
 	{
-		sendChangeSentry (client, unit.iID, unit.isAVehicle());
+		activeClient->sendNetMessage(cActionChangeSentry(unit));
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUpgradeThis, [&] (const cUnit & unit)
 	{

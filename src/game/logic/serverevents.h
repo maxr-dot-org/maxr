@@ -51,8 +51,6 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_WANT_BUILDLIST,			// a building wants his buildlist to be verified by the server and start work
 	GAME_EV_WANT_EXIT_FIN_VEH,		// a client wants to exit a finished vehicle out of a building
 	GAME_EV_CHANGE_RESOURCES,		// a client wants to change his resource production
-	GAME_EV_WANT_CHANGE_MANUAL_FIRE,// a client wants to change the manual fire status of a unit
-	GAME_EV_WANT_CHANGE_SENTRY,		// a client wants to change the sentry status of a unit
 	GAME_EV_WANT_MARK_LOG,			// marks a position in the log file
 	GAME_EV_WANT_SUPPLY,			// a client wants to rearm or repair a unit
 	GAME_EV_WANT_VEHICLE_UPGRADE,	// a client wants to upgrade a vehicle in a building to the newest version

@@ -777,79 +777,76 @@ bool cVehicle::canTransferTo (const cPosition& position, const cMapField& overUn
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::makeAttackOnThis (cServer& server, cUnit* opponentUnit, const string& reasonForLog) const
+bool cVehicle::makeAttackOnThis (cModel& model, cUnit* opponentUnit, const string& reasonForLog) const
 {
-	const cUnit* target = cAttackJob::selectTarget (getPosition(), opponentUnit->getStaticUnitData().canAttack, *server.Map, getOwner());
+	const cUnit* target = cAttackJob::selectTarget (getPosition(), opponentUnit->getStaticUnitData().canAttack, *model.getMap(), getOwner());
 	if (target != this) return false;
 
-	Log.write (" Server: " + reasonForLog + ": attacking (" + iToStr (getPosition().x()) + "," + iToStr (getPosition().y()) + "), Aggressor ID: " + iToStr (opponentUnit->iID), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" cVehicle: " + reasonForLog + ": attacking (" + iToStr (getPosition().x()) + "," + iToStr (getPosition().y()) + "), Aggressor ID: " + iToStr (opponentUnit->iID) + ", Target ID: " + iToStr(target->getId()), cLog::eLOG_TYPE_NET_DEBUG);
 
-	server.addAttackJob (opponentUnit, getPosition());
+	model.addAttackJob (*opponentUnit, getPosition());
 
 	return true;
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::makeSentryAttack (cServer& server, cUnit* sentryUnit) const
+bool cVehicle::makeSentryAttack (cModel& model, cUnit* sentryUnit) const
 {
-	if (sentryUnit != 0 && sentryUnit->isSentryActive() && sentryUnit->canAttackObjectAt (getPosition(), *server.Map, true))
+	if (sentryUnit != 0 && sentryUnit->isSentryActive() && sentryUnit->canAttackObjectAt (getPosition(), *model.getMap(), true))
 	{
-		if (makeAttackOnThis (server, sentryUnit, "sentry reaction"))
+		if (makeAttackOnThis (model, sentryUnit, "sentry reaction"))
 			return true;
 	}
 	return false;
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::InSentryRange (cServer& server)
+bool cVehicle::inSentryRange (cModel& model)
 {
-	const auto& playerList = server.playerList;
-	for (size_t i = 0; i != playerList.size(); ++i)
+	for (const auto& player : model.getPlayerList())
 	{
-		cPlayer& player = *playerList[i];
-
-		if (&player == getOwner()) continue;
+		if (player.get() == getOwner()) continue;
 
 		// Don't attack undiscovered stealth units
-		if (staticData->isStealthOn != TERRAIN_NONE && !isDetectedByPlayer (&player)) continue;
+		if (staticData->isStealthOn != TERRAIN_NONE && !isDetectedByPlayer (player.get())) continue;
 		// Don't attack units out of scan range
-		if (!player.canSeeAnyAreaUnder (*this)) continue;
+		if (!player->canSeeAnyAreaUnder (*this)) continue;
 		// Check sentry type
-		if (staticData->factorAir > 0 && player.hasSentriesAir (getPosition()) == 0) continue;
+		if (staticData->factorAir > 0 && player->hasSentriesAir (getPosition()) == 0) continue;
 		// Check sentry type
-		if (staticData->factorAir == 0 && player.hasSentriesGround (getPosition()) == 0) continue;
+		if (staticData->factorAir == 0 && player->hasSentriesGround (getPosition()) == 0) continue;
 
-		const auto& vehicles = player.getVehicles();
+		const auto& vehicles = player->getVehicles();
 		for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
 		{
 			const auto& vehicle = *i;
-			if (makeSentryAttack (server, vehicle.get()))
+			if (makeSentryAttack (model, vehicle.get()))
 				return true;
 		}
-		const auto& buildings = player.getBuildings();
+		const auto& buildings = player->getBuildings();
 		for (auto i = buildings.begin(); i != buildings.end(); ++i)
 		{
 			const auto& building = *i;
-			if (makeSentryAttack (server, building.get()))
+			if (makeSentryAttack (model, building.get()))
 				return true;
 		}
 	}
 
-	return provokeReactionFire (server);
+	return provokeReactionFire (model);
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::isOtherUnitOffendedByThis (cServer& server, const cUnit& otherUnit) const
+bool cVehicle::isOtherUnitOffendedByThis (cModel& model, const cUnit& otherUnit) const
 {
 	// don't treat the cheap buildings
 	// (connectors, roads, beton blocks) as offendable
-	if (otherUnit.isABuilding() && server.model.getUnitsData()->getDynamicUnitData(otherUnit.data.getId()).getBuildCost() <= 2)
+	if (otherUnit.isABuilding() && model.getUnitsData()->getDynamicUnitData(otherUnit.data.getId()).getBuildCost() <= 2)
 		return false;
 
-	if (isInRange (otherUnit.getPosition()) && canAttackObjectAt (otherUnit.getPosition(), *server.Map, true, false))
+	if (isInRange (otherUnit.getPosition()) && canAttackObjectAt (otherUnit.getPosition(), *model.getMap(), true, false))
 	{
 		// test, if this vehicle can really attack the opponentVehicle
-		cUnit* target = cAttackJob::selectTarget (otherUnit.getPosition(), staticData->canAttack, *server.Map, getOwner());
+		cUnit* target = cAttackJob::selectTarget (otherUnit.getPosition(), staticData->canAttack, *model.getMap(), getOwner());
 		if (target == &otherUnit)
 			return true;
 	}
@@ -857,9 +854,9 @@ bool cVehicle::isOtherUnitOffendedByThis (cServer& server, const cUnit& otherUni
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (cServer& server, const cPlayer* player) const
+bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (cModel& model, const cPlayer* player) const
 {
-	if (server.isTurnBasedGame())
+	if (model.getGameSettings()->getGameType() == eGameSettingsGameType::Turns)
 	{
 		// In the turn based game style,
 		// the opponent always fires on the unit if he can,
@@ -874,14 +871,14 @@ bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (cServer& server,
 		for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
 		{
 			const auto& opponentVehicle = *i;
-			if (isOtherUnitOffendedByThis (server, *opponentVehicle))
+			if (isOtherUnitOffendedByThis (model, *opponentVehicle))
 				return true;
 		}
 		const auto& buildings = player->getBuildings();
 		for (auto i = buildings.begin(); i != buildings.end(); ++i)
 		{
 			const auto& opponentBuilding = *i;
-			if (isOtherUnitOffendedByThis (server, *opponentBuilding))
+			if (isOtherUnitOffendedByThis (model, *opponentBuilding))
 				return true;
 		}
 	}
@@ -889,22 +886,22 @@ bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (cServer& server,
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::doReactionFireForUnit (cServer& server, cUnit* opponentUnit) const
+bool cVehicle::doReactionFireForUnit (cModel& model, cUnit* opponentUnit) const
 {
 	if (opponentUnit->isSentryActive() == false && opponentUnit->isManualFireActive() == false
-		&& opponentUnit->canAttackObjectAt (getPosition(), *server.Map, true)
+		&& opponentUnit->canAttackObjectAt (getPosition(), *model.getMap(), true)
 		// Possible TODO: better handling of stealth units.
 		// e.g. do reaction fire, if already detected ?
 		&& (opponentUnit->isAVehicle() == false || opponentUnit->getStaticUnitData().isStealthOn == TERRAIN_NONE))
 	{
-		if (makeAttackOnThis (server, opponentUnit, "reaction fire"))
+		if (makeAttackOnThis (model, opponentUnit, "reaction fire"))
 			return true;
 	}
 	return false;
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::doReactionFire (cServer& server, cPlayer* player) const
+bool cVehicle::doReactionFire (cModel& model, cPlayer* player) const
 {
 	// search a unit of the opponent, that could fire on this vehicle
 	// first look for a building
@@ -912,27 +909,27 @@ bool cVehicle::doReactionFire (cServer& server, cPlayer* player) const
 	for (auto i = buildings.begin(); i != buildings.end(); ++i)
 	{
 		const auto& opponentBuilding = *i;
-		if (doReactionFireForUnit (server, opponentBuilding.get()))
+		if (doReactionFireForUnit (model, opponentBuilding.get()))
 			return true;
 	}
 	const auto& vehicles = player->getVehicles();
 	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
 	{
 		const auto& opponentVehicle = *i;
-		if (doReactionFireForUnit (server, opponentVehicle.get()))
+		if (doReactionFireForUnit (model, opponentVehicle.get()))
 			return true;
 	}
 	return false;
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::provokeReactionFire (cServer& server)
+bool cVehicle::provokeReactionFire (cModel& model)
 {
 	// unit can't fire, so it can't provoke a reaction fire
 	if (staticData->canAttack == false || data.getShots() <= 0 || data.getAmmo() <= 0)
 		return false;
 
-	const auto& playerList = server.playerList;
+	const auto& playerList = model.getPlayerList();
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
 		cPlayer& player = *playerList[i];
@@ -946,10 +943,10 @@ bool cVehicle::provokeReactionFire (cServer& server)
 		if (player.canSeeAnyAreaUnder (*this) == false)
 			continue;
 
-		if (doesPlayerWantToFireOnThisVehicleAsReactionFire (server, &player) == false)
+		if (doesPlayerWantToFireOnThisVehicleAsReactionFire (model, &player) == false)
 			continue;
 
-		if (doReactionFire (server, &player))
+		if (doReactionFire (model, &player))
 			return true;
 	}
 	return false;

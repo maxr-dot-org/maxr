@@ -17,54 +17,34 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef game_logic_actionH
-#define game_logic_actionH
+#include "actionchangemanualfire.h"
+#include "game/data/model.h"
 
-#include "netmessage2.h"
+//------------------------------------------------------------------------------
+cActionChangeManualFire::cActionChangeManualFire(const cUnit& unit) :
+	cAction(eActiontype::ACTION_CHANGE_MANUAL_FIRE), 
+	unitId(unit.getId())
+{};
 
-class cAction : public cNetMessage2
+//------------------------------------------------------------------------------
+cActionChangeManualFire::cActionChangeManualFire(cBinaryArchiveOut& archive)
+	: cAction(eActiontype::ACTION_CHANGE_MANUAL_FIRE)
 {
-public:
-	// When changing this enum, also update function enumToString(eActiontype value)!
-	enum class eActiontype {
-		ACTION_INIT_NEW_GAME,
-		ACTION_START_WORK,
-		ACTION_STOP_WORK,
-		ACTION_TRANSFER,
-		ACTION_START_MOVE,
-		ACTION_STOP_MOVE,
-		ACTION_RESUME_MOVE,
-		ACTION_END_TURN,
-		ACTION_SELF_DESTROY,
-		ACTION_ATTACK,
-		ACTION_CHANGE_SENTRY,
-		ACTION_CHANGE_MANUAL_FIRE
-	};
-	static std::unique_ptr<cAction> createFromBuffer(cBinaryArchiveOut& archive);
+	serializeThis(archive);
+}
 
-	eActiontype getType() const;
-
-	virtual void serialize(cBinaryArchiveIn& archive) { cNetMessage2::serialize(archive); serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive)   { cNetMessage2::serialize(archive); serializeThis(archive); }
-
+//------------------------------------------------------------------------------
+void cActionChangeManualFire::execute(cModel& model) const
+{
 	//Note: this function handles incoming data from network. Make every possible sanity check!
-	virtual void execute(cModel& model) const = 0;
-protected:
-	cAction(eActiontype type) : cNetMessage2(eNetMessageType::ACTION), type(type){};
-private:
-	template<typename T>
-	void serializeThis(T& archive)
+
+	cUnit* unit = model.getUnitFromID(unitId);
+	if (unit == nullptr) return;
+	if (unit->getOwner()->getId() != playerNr) return;
+
+	unit->setManualFireActive(!unit->isManualFireActive());
+	if (unit->isManualFireActive() && unit->isSentryActive())
 	{
-		archive & type;
+		unit->getOwner()->deleteSentry(*unit);
 	}
-
-	cAction(const cAction&) MAXR_DELETE_FUNCTION;
-	cAction& operator=(const cAction&)MAXR_DELETE_FUNCTION;
-
-	eActiontype type;
-};
-
-std::string enumToString(cAction::eActiontype value);
-
-
-#endif
+}

@@ -199,6 +199,12 @@ void cMoveJob::startMove(cModel& model)
 		return;
 	}
 
+	if (vehicle->isBeeingAttacked())
+	{
+		// suspend movejobs of attacked vehicles
+		return;
+	}
+
 	bool nextFieldFree = handleCollision(map);
 	if (!nextFieldFree)
 	{
@@ -364,10 +370,11 @@ void cMoveJob::endMove(cModel& model)
 {
 	vehicle->setMovementOffset (cPosition (0, 0));
 
-	//TODO: sentry reaction
 	//TODO: expl. mines
 	//TODO: handle detection
 	//TODO: lay/ clear mines
+
+	vehicle->inSentryRange(model);
 
 	if (vehicle->getStaticUnitData().canSurvey)
 	{

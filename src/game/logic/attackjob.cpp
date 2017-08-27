@@ -101,7 +101,7 @@ cAttackJob::cAttackJob (cUnit& aggressor, const cPosition& targetPosition, const
 	state (S_ROTATING),
 	counter(10)
 {
-	Log.write(" cAttackJob: Started attack, aggressor: " + aggressor.getDisplayName() + ", ID: " + iToStr(aggressor.getId()), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write(" cAttackJob: Started attack, aggressor: " + aggressor.getDisplayName() + ", ID: " + iToStr(aggressor.getId()) + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 
 	fireDir = calcFireDir();
 	
@@ -263,8 +263,10 @@ void cAttackJob::releaseTargets(const cModel& model)
 	{
 		cUnit* unit = model.getUnitFromID(unitId);
 		
-		if (unit)
+		if (unit && unit->data.getHitpoints() > 0)
+		{
 			unit->setIsBeeinAttacked(false);
+		}
 	}
 
 	lockedTargets.clear();
@@ -483,14 +485,12 @@ void cAttackJob::impactSingle (const cPosition& position, int attackPoints, cMod
 		int remainingHp = target->calcHealth(attackPoints);
 		target->data.setHitpoints (remainingHp);
 		target->setHasBeenAttacked (true);
-		target->setIsBeeinAttacked (false);
 
 		std::string name = target->getDisplayName();
-		Log.write(" cAttackJob: target hit: " + name + ", ID: " + iToStr(target->getId()) + ", remaining hp: " + iToStr(remainingHp), cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write(" cAttackJob: target hit: " + name + ", ID: " + iToStr(target->getId()) + ", remaining hp: " + iToStr(remainingHp) + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 
 		if (remainingHp <= 0)
 		{
-			target->setIsBeeinAttacked (true);
 			destroyed = true;
 		}
 	}
@@ -523,16 +523,13 @@ void cAttackJob::impactSingle (const cPosition& position, int attackPoints, cMod
 		}
 	}
 
-	/*
-	TODO: sentry
 	// check whether a following sentry mode attack is possible
 	if (target && target->isAVehicle() && !destroyed)
-		static_cast<cVehicle*> (target)->InSentryRange (*server);
+		static_cast<cVehicle*> (target)->inSentryRange (model);
 
 	// check whether the aggressor is in sentry range
 	if (aggressor && aggressor->isAVehicle())
-		static_cast<cVehicle*> (aggressor)->InSentryRange (*server);
-	*/
+		static_cast<cVehicle*> (aggressor)->inSentryRange (model);
 
 	// remove destroyed unit
 	if (target && destroyed)

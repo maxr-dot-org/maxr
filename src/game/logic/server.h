@@ -244,8 +244,6 @@ private:
 	void handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message);
 	void handleNetMessage_GAME_EV_CHANGE_RESOURCES (cNetMessage& message);
-	void handleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (cNetMessage& message);
-	void handleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_MARK_LOG (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (cNetMessage& message);

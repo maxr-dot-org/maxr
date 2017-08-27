@@ -181,7 +181,7 @@ public:
 	void doSurvey ();
 	virtual void makeReport (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const MAXR_OVERRIDE_FUNCTION;
-	bool InSentryRange (cServer& server);
+	bool inSentryRange (cModel& model);
 	virtual bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
 	bool canLoad (const cPosition& position, const cMap& map, bool checkPosition = true) const;
 	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const;
@@ -393,13 +393,13 @@ private:
 	 * (i.e. it could attack a unit/building of the opponent).
 	 * @author: pagra
 	 */
-	bool provokeReactionFire (cServer& server);
-	bool doesPlayerWantToFireOnThisVehicleAsReactionFire (cServer& server, const cPlayer* player) const;
-	bool makeAttackOnThis (cServer& server, cUnit* opponentUnit, const std::string& reasonForLog) const;
-	bool makeSentryAttack (cServer& server, cUnit* unit) const;
-	bool isOtherUnitOffendedByThis (cServer& server, const cUnit& otherUnit) const;
-	bool doReactionFire (cServer& server, cPlayer* player) const;
-	bool doReactionFireForUnit (cServer& server, cUnit* opponentUnit) const;
+	bool provokeReactionFire (cModel& model);
+	bool doesPlayerWantToFireOnThisVehicleAsReactionFire (cModel& model, const cPlayer* player) const;
+	bool makeAttackOnThis (cModel& model, cUnit* opponentUnit, const std::string& reasonForLog) const;
+	bool makeSentryAttack (cModel& model, cUnit* unit) const;
+	bool isOtherUnitOffendedByThis (cModel& model, const cUnit& otherUnit) const;
+	bool doReactionFire (cModel& model, cPlayer* player) const;
+	bool doReactionFireForUnit (cModel& model, cUnit* opponentUnit) const;
 
 	/// helper method that returns a list of all players,
 	/// that can detect this unit
