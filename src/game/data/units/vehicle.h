@@ -195,17 +195,13 @@ public:
 	bool canSupply (const cUnit* unit, int supplyType) const;
 	void calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<int, 3>& turboBuildCosts, int buildCosts) const;
 	/**
-	* lays a mine. Should only be called by the server!
-	*@author alzi alias DoctorDeath
-	*@return true if a mine has been laid
+	* lays a mine at the current position of the unit.
 	*/
-	bool layMine (cServer& server);
+	void layMine (cModel& model);
 	/**
-	* clears a field from a mine. Should only be called by the server!
-	*@author alzi alias DoctorDeath
-	*@return true if there was a mine to be cleared
+	* clear a mine at the current position of the unit.
 	*/
-	bool clearMine (cServer& server);
+	void clearMine (cModel& model);
 	/**
 	* checks whether the commando action can be performed or not
 	*@author alzi alias DoctorDeath
@@ -254,8 +250,6 @@ public:
 	static void blitWithPreScale (SDL_Surface* org_src, SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dest, SDL_Rect* destrect, float factor, int frames = 1);
 
 	void executeAutoMoveJobCommand (cClient& client);
-	void executeLayMinesCommand (const cClient& client);
-	void executeClearMinesCommand (const cClient& client);
 
 	/**
 	* Is this a plane and is there a landing platform beneath it,

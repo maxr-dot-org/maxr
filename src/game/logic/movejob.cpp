@@ -237,6 +237,7 @@ void cMoveJob::startMove(cModel& model)
 	path.pop_front();
 	vehicle->setMovementOffset(cPosition(0, 0));
 	changeVehicleOffset(-64);
+	Log.write(" cMoveJob: Vehicle (ID: " + iToStr (vehicle->getId()) + ") moved to (" + iToStr(vehicle->getPosition().x()) + ", " + iToStr(vehicle->getPosition().y()) + ") @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 
 	vehicle->getOwner()->doScan();
 
@@ -370,9 +371,23 @@ void cMoveJob::endMove(cModel& model)
 {
 	vehicle->setMovementOffset (cPosition (0, 0));
 
-	//TODO: expl. mines
 	//TODO: handle detection
-	//TODO: lay/ clear mines
+	//TODO: trigger landing/take off
+
+	cBuilding* mine = model.getMap()->getField(vehicle->getPosition()).getMine();
+	if (mine && vehicle->getStaticUnitData().factorAir == 0  && mine->getOwner() != vehicle->getOwner())
+	{
+		model.addAttackJob(*mine, vehicle->getPosition());
+	}
+
+	if (vehicle->isUnitLayingMines())
+	{
+		vehicle->layMine(model);
+	} 
+	else if (vehicle->isUnitClearingMines())
+	{
+		vehicle->clearMine(model);
+	}
 
 	vehicle->inSentryRange(model);
 

@@ -1085,44 +1085,48 @@ bool cVehicle::canSupply (const cUnit* unit, int supplyType) const
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::layMine (cServer& server)
+void cVehicle::layMine (cModel& model)
 {
-	if (getStoredResources() <= 0) return false;
+	if (getStoredResources() <= 0) return;
 
-	const cMap& map = *server.Map;
+	const cMap& map = *model.getMap();
 	if (staticData->factorSea > 0 && staticData->factorGround == 0)
 	{
-		if (!map.possiblePlaceBuilding (server.model.getUnitsData()->getSeaMineData(), getPosition(), this)) return false;
-		//server.addBuilding(getPosition(), server.model.getUnitsData()->getSpecialIDSeaMine(), getOwner(), false);
+		const auto& staticMineData = model.getUnitsData()->getSeaMineData();
+		if (!map.possiblePlaceBuilding (staticMineData, getPosition(), this)) return;
+		model.addBuilding(getPosition(), staticMineData.ID, getOwner(), false);
 	}
 	else
 	{
-		if (!map.possiblePlaceBuilding(server.model.getUnitsData()->getLandMineData(), getPosition(), this)) return false;
-		//server.addBuilding(getPosition(), server.model.getUnitsData()->getSpecialIDLandMine(), getOwner(), false);
+		const auto& staticMineData = model.getUnitsData()->getLandMineData();
+		if (!map.possiblePlaceBuilding(staticMineData, getPosition(), this)) return;
+		model.addBuilding(getPosition(), staticMineData.ID, getOwner(), false);
 	}
 	setStoredResources (getStoredResources() - 1);
 
 	if (getStoredResources() <= 0) setLayMines (false);
 
-	return true;
+	return;
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::clearMine (cServer& server)
+void cVehicle::clearMine (cModel& model)
 {
-	const cMap& map = *server.Map;
-	cBuilding* Mine = map.getField (getPosition()).getMine();
+	const cMap& map = *model.getMap();
+	cBuilding* mine = map.getField (getPosition()).getMine();
 
-	if (!Mine || Mine->getOwner() != getOwner() || getStoredResources() >= staticData->storageResMax) return false;
-	if (Mine->getStaticUnitData().factorGround > 0 && staticData->factorGround == 0) return false;
-	if (Mine->getStaticUnitData().factorSea > 0 && staticData->factorSea == 0) return false;
+	if (!mine || mine->getOwner() != getOwner() || getStoredResources() >= staticData->storageResMax) return;
+	
+	// sea minelayer can't collect land mines and vice versa
+	if (mine->getStaticUnitData().factorGround > 0 && staticData->factorGround == 0) return;
+	if (mine->getStaticUnitData().factorSea > 0 && staticData->factorSea == 0) return;
 
-	//server.deleteUnit (Mine);
+	model.deleteUnit(mine);
 	setStoredResources (getStoredResources() + 1);
 
 	if (getStoredResources() >= staticData->storageResMax) setClearMines (false);
 
-	return true;
+	return;
 }
 
 //-----------------------------------------------------------------------------
@@ -1625,22 +1629,6 @@ void cVehicle::executeAutoMoveJobCommand (cClient& client)
 	{
 		stopAutoMoveJob();
 	}
-}
-
-//-----------------------------------------------------------------------------
-void cVehicle::executeLayMinesCommand (const cClient& client)
-{
-	setLayMines (!isUnitLayingMines());
-	setClearMines (false);
-	sendMineLayerStatus (client, *this);
-}
-
-//-----------------------------------------------------------------------------
-void cVehicle::executeClearMinesCommand (const cClient& client)
-{
-	setClearMines (!isUnitClearingMines());
-	setLayMines (false);
-	sendMineLayerStatus (client, *this);
 }
 
 //-----------------------------------------------------------------------------

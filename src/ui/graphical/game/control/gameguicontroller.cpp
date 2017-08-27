@@ -104,6 +104,7 @@
 #include "game/logic/action/actionattack.h"
 #include "game/logic/action/actionchangemanualfire.h"
 #include "game/logic/action/actionchangesentry.h"
+#include "game/logic/action/actionminelayerstatus.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -875,18 +876,16 @@ void cGameGuiController::connectClient (cClient& client)
 	{
 		if (unit.isAVehicle())
 		{
-			auto vehicle = client.getVehicleFromID (unit.iID);
-			if (!vehicle) return;
-			vehicle->executeLayMinesCommand (client);
+			auto& vehicle = *static_cast<const cVehicle*>(&unit);
+			client.sendNetMessage(cActionMinelayerStatus(vehicle, !vehicle.isUnitLayingMines(), false));
 		}
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredCollectMines, [&] (const cUnit & unit)
 	{
 		if (unit.isAVehicle())
 		{
-			auto vehicle = client.getVehicleFromID (unit.iID);
-			if (!vehicle) return;
-			vehicle->executeClearMinesCommand (client);
+			auto& vehicle = *static_cast<const cVehicle*>(&unit);
+			client.sendNetMessage(cActionMinelayerStatus(vehicle, false, !vehicle.isUnitClearingMines()));
 		}
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUnitDone, [&] (const cUnit & unit)
@@ -1263,14 +1262,16 @@ void cGameGuiController::connectClient (cClient& client)
 
 	clientSignalConnectionManager.connect (getDynamicMap()->addedUnit, [&] (const cUnit & unit)
 	{
-		if (activeClient->getActivePlayer().canSeeAnyAreaUnder(unit)) return;
+		if (!getActivePlayer()->canSeeAnyAreaUnder(unit)) return;
+		if (getActivePlayer().get() != unit.getOwner()) return;
 
 		if (unit.data.getId() == client.getModel().getUnitsData()->getSpecialIDSeaMine()) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectPlaceMine, SoundData.SNDSeaMinePlace, unit));
 		else if (unit.data.getId() == client.getModel().getUnitsData()->getSpecialIDLandMine()) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectPlaceMine, SoundData.SNDLandMinePlace, unit));
 	});
 	clientSignalConnectionManager.connect(getDynamicMap()->removedUnit, [&] (const cUnit & unit)
 	{
-		if (activeClient->getActivePlayer().canSeeAnyAreaUnder(unit)) return;
+		if (!getActivePlayer()->canSeeAnyAreaUnder(unit)) return;
+		if (getActivePlayer().get() != unit.getOwner()) return;
 
 		if (unit.data.getId() == client.getModel().getUnitsData()->getSpecialIDLandMine()) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectClearMine, SoundData.SNDLandMineClear, unit));
 		else if (unit.data.getId() == client.getModel().getUnitsData()->getSpecialIDSeaMine()) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectClearMine, SoundData.SNDSeaMineClear, unit));

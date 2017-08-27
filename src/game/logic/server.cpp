@@ -277,34 +277,6 @@ void cServer::doGameActions()
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_MINELAYERSTATUS (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_MINELAYERSTATUS);
-
-	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
-	if (!Vehicle) return;
-
-	Vehicle->setClearMines (message.popBool());
-	Vehicle->setLayMines (message.popBool());
-
-	if (Vehicle->isUnitClearingMines() && Vehicle->isUnitLayingMines())
-	{
-		Vehicle->setClearMines (false);
-		Vehicle->setLayMines (false);
-		return;
-	}
-
-	bool result = false;
-	if (Vehicle->isUnitClearingMines()) result = Vehicle->clearMine (*this);
-	if (Vehicle->isUnitLayingMines()) result = Vehicle->layMine (*this);
-
-	if (result)
-	{
-		//sendUnitData (*this, *Vehicle);
-	}
-}
-
-//------------------------------------------------------------------------------
 void cServer::handleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_BUILD);
@@ -1362,7 +1334,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 
 	switch (message.iType)
 	{
-		case GAME_EV_MINELAYERSTATUS: handleNetMessage_GAME_EV_MINELAYERSTATUS (message); break;
 		case GAME_EV_WANT_BUILD: handleNetMessage_GAME_EV_WANT_BUILD (message); break;
 		case GAME_EV_END_BUILDING: handleNetMessage_GAME_EV_END_BUILDING (message); break;
 		case GAME_EV_WANT_STOP_BUILDING: handleNetMessage_GAME_EV_WANT_STOP_BUILDING (message); break;
