@@ -1563,7 +1563,6 @@ cVehicle* cVehicle::getContainerVehicle()
 
 uint32_t cVehicle::getChecksum(uint32_t crc) const
 {
-	//cServerMoveJob* ServerMoveJob;
 	crc = cUnit::getChecksum(crc);
 	crc = calcCheckSum(hasAutoMoveJob, crc);
 	crc = calcCheckSum(bandPosition, crc);
@@ -1572,7 +1571,6 @@ uint32_t cVehicle::getChecksum(uint32_t crc) const
 	crc = calcCheckSum(WalkFrame, crc);
 	for ( const auto& p : detectedInThisTurnByPlayerList)
 		crc = calcCheckSum(p, crc);
-	//cClientMoveJob* clientMoveJob;
 	//std::shared_ptr<cAutoMJob> autoMoveJob;
 	crc = calcCheckSum(tileMovementOffset, crc);
 	crc = calcCheckSum(loaded, crc);

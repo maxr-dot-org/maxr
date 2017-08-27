@@ -216,7 +216,7 @@ uint32_t cUnit::getChecksum(uint32_t crc) const
 	crc = calcCheckSum(manualFireActive, crc);
 	crc = calcCheckSum(attacking, crc);
 	crc = calcCheckSum(beeingAttacked, crc);
-	crc = calcCheckSum(beeingAttacked, crc);
+	crc = calcCheckSum(beenAttacked, crc);
 	crc = calcCheckSum(storageResCur, crc);
 
 	return crc;
