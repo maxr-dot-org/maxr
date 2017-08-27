@@ -75,7 +75,7 @@ unsigned int cMoveJob::getSavedSpeed() const
 }
 
 //------------------------------------------------------------------------------
-void cMoveJob::removeVehicle(cVehicle* vehicle)
+void cMoveJob::removeVehicle()
 {
 	vehicle = nullptr;
 }
@@ -196,6 +196,12 @@ void cMoveJob::startMove(cModel& model)
 		state = FINISHED;
 		vehicle->setMoving(false);
 		vehicle->WalkFrame = 0;
+		return;
+	}
+
+	if (vehicle->isBeeingAttacked())
+	{
+		// suspend movejobs of attacked vehicles
 		return;
 	}
 
@@ -364,10 +370,11 @@ void cMoveJob::endMove(cModel& model)
 {
 	vehicle->setMovementOffset (cPosition (0, 0));
 
-	//TODO: sentry reaction
 	//TODO: expl. mines
 	//TODO: handle detection
 	//TODO: lay/ clear mines
+
+	vehicle->inSentryRange(model);
 
 	if (vehicle->getStaticUnitData().canSurvey)
 	{
@@ -404,7 +411,7 @@ const cEndMoveAction& cMoveJob::getEndMoveAction() const
 //------------------------------------------------------------------------------
 uint32_t cMoveJob::getChecksum(uint32_t crc) const
 {
-	crc = calcCheckSum(vehicle->getId(), crc);
+	crc = calcCheckSum(vehicle, crc);
 	crc = calcCheckSum(path, crc);
 	crc = calcCheckSum(state, crc);
 	crc = calcCheckSum(savedSpeed, crc);

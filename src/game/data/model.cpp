@@ -425,6 +425,8 @@ void cModel::deleteUnit(cUnit* unit)
 	if (unit == 0)
 		return;
 
+	Log.write(" cModel: delete unit, id: " + iToStr(unit->getId()) + " @" + iToStr(getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+
 	if (unit->isABuilding() && static_cast<cBuilding*>(unit)->isRubble())
 	{
 		deleteRubble(static_cast<cBuilding*> (unit));
@@ -457,7 +459,8 @@ void cModel::deleteUnit(cUnit* unit)
 		cVehicle* vehicle = static_cast<cVehicle*> (unit);
 		if (vehicle->getMoveJob())
 		{
-			vehicle->getMoveJob()->removeVehicle(vehicle);
+			assert(vehicle->getMoveJob()->getVehicle() == vehicle);
+			vehicle->getMoveJob()->removeVehicle();
 		}
 	}
 	if (unit->isAttacking())
@@ -522,6 +525,7 @@ cMoveJob* cModel::addMoveJob(cVehicle& vehicle, const std::forward_list<cPositio
 		{
 			// a waiting movejob can be replaced by new one
 			currentMoveJob->stop();
+			currentMoveJob->removeVehicle();
 		}
 	}
 

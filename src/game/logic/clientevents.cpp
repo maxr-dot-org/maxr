@@ -161,22 +161,6 @@ void sendChangeResources (const cClient& client, const cBuilding& building, int 
 	client.sendNetMessage (std::move (message));
 }
 
-void sendChangeManualFireStatus (const cClient& client, int iUnitID, bool bVehicle)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_CHANGE_MANUAL_FIRE);
-	message->pushInt16 (iUnitID);
-	message->pushBool (bVehicle);
-	client.sendNetMessage (std::move (message));
-}
-
-void sendChangeSentry (const cClient& client, int iUnitID, bool bVehicle)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_CHANGE_SENTRY);
-	message->pushInt16 (iUnitID);
-	message->pushBool (bVehicle);
-	client.sendNetMessage (std::move (message));
-}
-
 void sendWantSupply (const cClient& client, int iDestID, bool bDestVehicle, int iSrcID, bool bSrcVehicle, int iType)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_SUPPLY);

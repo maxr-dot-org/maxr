@@ -142,16 +142,6 @@ void sendWantExitFinishedVehicle (const cClient& client, const cBuilding& buildi
 */
 void sendChangeResources (const cClient& client, const cBuilding& building, int iMetalProd, int iOilProd, int iGoldProd);
 /**
- * sends that the client wants to change the manual fire status of a unit
- *@author pagra
- */
-void sendChangeManualFireStatus (const cClient& client, int iUnitID, bool bVehicle);
-/**
-* sends that the client wants to change the sentry status of a unit
-*@author alzi alias DoctorDeath
-*/
-void sendChangeSentry (const cClient& client, int iUnitID, bool bVehicle);
-/**
 * sends that the client wants to rearm or repair a unit by an rearm-/repairable vehicle
 *@author alzi alias DoctorDeath
 */

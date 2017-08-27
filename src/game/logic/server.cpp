@@ -632,80 +632,6 @@ void cServer::handleNetMessage_GAME_EV_CHANGE_RESOURCES (cNetMessage& message)
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_WANT_CHANGE_MANUAL_FIRE);
-
-	if (message.popBool()) // vehicle
-	{
-		cVehicle* Vehicle = getVehicleFromID (message.popInt16());
-		if (Vehicle == 0)
-			return;
-		Vehicle->setManualFireActive (!Vehicle->isManualFireActive());
-		if (Vehicle->isManualFireActive() && Vehicle->isSentryActive())
-		{
-			Vehicle->getOwner()->deleteSentry (*Vehicle);
-		}
-
-		//sendUnitData (*this, *Vehicle);
-	}
-	else // building
-	{
-		cBuilding* Building = getBuildingFromID (message.popInt16());
-		if (Building == 0)
-			return;
-		Building->setManualFireActive (!Building->isManualFireActive());
-		if (Building->isManualFireActive() && Building->isSentryActive())
-		{
-			Building->getOwner()->deleteSentry (*Building);
-		}
-
-		//sendUnitData (*this, *Building);
-	}
-}
-
-//------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_WANT_CHANGE_SENTRY);
-
-	if (message.popBool()) // vehicle
-	{
-		cVehicle* vehicle = getVehicleFromID (message.popInt16());
-		if (vehicle == nullptr) return;
-
-		if (vehicle->isSentryActive())
-		{
-			vehicle->getOwner()->deleteSentry (*vehicle);
-		}
-		else
-		{
-			vehicle->getOwner()->addSentry (*vehicle);
-			vehicle->setManualFireActive (false);
-		}
-
-		//sendUnitData (*this, *vehicle);
-	}
-	else // building
-	{
-		cBuilding* building = getBuildingFromID (message.popInt16());
-		if (building == nullptr) return;
-
-		if (building->isSentryActive())
-		{
-			building->getOwner()->deleteSentry (*building);
-		}
-		else
-		{
-			building->getOwner()->addSentry (*building);
-			building->setManualFireActive (false);
-		}
-
-		//sendUnitData (*this, *building);
-	}
-}
-
-//------------------------------------------------------------------------------
 void cServer::handleNetMessage_GAME_EV_WANT_MARK_LOG (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_MARK_LOG);
@@ -1054,7 +980,8 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 			{
 				StoredVehicle->setFlightHeight (64);
 			}
-			StoredVehicle->InSentryRange (*this);
+			//TODO: no sentry
+			//StoredVehicle->InSentryRange (*this);
 		}
 	}
 	else
@@ -1079,7 +1006,8 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 				sendVehicleResources (*this, *StoredVehicle);
 				StoredVehicle->doSurvey ();
 			}
-			StoredVehicle->InSentryRange (*this);
+			//TODO: no sentry
+			//StoredVehicle->InSentryRange (*this);
 		}
 	}
 }
@@ -1367,7 +1295,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 			srcVehicle->setDetectedByPlayer (&player);
 		}
 		checkPlayerUnits();
-		srcVehicle->InSentryRange (*this);
+		//srcVehicle->InSentryRange (*this);
 	}
 	srcVehicle->data.setShots (srcVehicle->data.getShots() - 1);
 	//sendUnitData (*this, *srcVehicle);
@@ -1441,8 +1369,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 		case GAME_EV_WANT_BUILDLIST: handleNetMessage_GAME_EV_WANT_BUILDLIST (message); break;
 		case GAME_EV_WANT_EXIT_FIN_VEH: handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (message); break;
 		case GAME_EV_CHANGE_RESOURCES : handleNetMessage_GAME_EV_CHANGE_RESOURCES (message); break;
-		case GAME_EV_WANT_CHANGE_MANUAL_FIRE: handleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (message); break;
-		case GAME_EV_WANT_CHANGE_SENTRY: handleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (message); break;
 		case GAME_EV_WANT_MARK_LOG: handleNetMessage_GAME_EV_WANT_MARK_LOG (message); break;
 		case GAME_EV_WANT_SUPPLY: handleNetMessage_GAME_EV_WANT_SUPPLY (message); break;
 		case GAME_EV_WANT_VEHICLE_UPGRADE: handleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (message); break;
