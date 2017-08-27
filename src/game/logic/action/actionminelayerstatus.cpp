@@ -17,42 +17,45 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include "actionselfdestroy.h"
+#include "actionminelayerstatus.h"
 #include "game/data/model.h"
-#include "utility/log.h"
 
 //------------------------------------------------------------------------------
-cActionSelfDestroy::cActionSelfDestroy(const cBuilding& unit) :
-	cAction(eActiontype::ACTION_SELF_DESTROY), 
-	unitId(unit.getId())
+cActionMinelayerStatus::cActionMinelayerStatus(const cVehicle& vehicle, bool layMines, bool clearMines) :
+	cAction(eActiontype::ACTION_MINELAYER_STATUS), 
+	vehicleId(vehicle.getId()),
+	layMines(layMines),
+	clearMines(clearMines)
 {};
 
 //------------------------------------------------------------------------------
-cActionSelfDestroy::cActionSelfDestroy(cBinaryArchiveOut& archive)
-	: cAction(eActiontype::ACTION_SELF_DESTROY)
+cActionMinelayerStatus::cActionMinelayerStatus(cBinaryArchiveOut& archive)
+	: cAction(eActiontype::ACTION_MINELAYER_STATUS)
 {
 	serializeThis(archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionSelfDestroy::execute(cModel& model) const
+void cActionMinelayerStatus::execute(cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	cBuilding* b = model.getBuildingFromID(unitId);
-	if (b == nullptr) return;
-	if (b->getOwner()->getId() != playerNr) return;
+	cVehicle* vehicle = model.getVehicleFromID(vehicleId);
+	if (vehicle == nullptr) return;
+	if (vehicle->getOwner()->getId() != playerNr) return;
 
-	if (b->isBeeingAttacked()) return;
+	if (layMines && clearMines) return;
+	if (!vehicle->getStaticUnitData().canPlaceMines) return;
 
-	// special case: when a land/sea mine explodes, it makes damage according to
-	// its attack points. So start an attack job instead of just destoying it.
-	if (b->getStaticUnitData().explodesOnContact)
+	vehicle->setClearMines(clearMines);
+	vehicle->setLayMines(layMines);
+
+	if (vehicle->isUnitClearingMines())
 	{
-		model.addAttackJob(*b, b->getPosition());
+		vehicle->clearMine(model);
 	}
-	else
+	else if (vehicle->isUnitLayingMines())
 	{
-		model.destroyUnit(*b);
+		vehicle->layMine(model);
 	}
 }

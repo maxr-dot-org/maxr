@@ -17,42 +17,34 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include "actionselfdestroy.h"
-#include "game/data/model.h"
-#include "utility/log.h"
+#ifndef game_logic_actionMinelayerStatusH
+#define game_logic_actionMinelayerStatusH
 
-//------------------------------------------------------------------------------
-cActionSelfDestroy::cActionSelfDestroy(const cBuilding& unit) :
-	cAction(eActiontype::ACTION_SELF_DESTROY), 
-	unitId(unit.getId())
-{};
+#include "action.h"
 
-//------------------------------------------------------------------------------
-cActionSelfDestroy::cActionSelfDestroy(cBinaryArchiveOut& archive)
-	: cAction(eActiontype::ACTION_SELF_DESTROY)
+class cActionMinelayerStatus : public cAction
 {
-	serializeThis(archive);
-}
+public:
+	cActionMinelayerStatus(const cVehicle& vehicle, bool layMines, bool clearMines);
+	cActionMinelayerStatus(cBinaryArchiveOut& archive);
 
-//------------------------------------------------------------------------------
-void cActionSelfDestroy::execute(cModel& model) const
-{
-	//Note: this function handles incoming data from network. Make every possible sanity check!
+	virtual void serialize(cBinaryArchiveIn& archive) { cAction::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive)   { cAction::serialize(archive); serializeThis(archive); }
 
-	cBuilding* b = model.getBuildingFromID(unitId);
-	if (b == nullptr) return;
-	if (b->getOwner()->getId() != playerNr) return;
+	virtual void execute(cModel& model) const override;
+	
+private:
+	int vehicleId;
+	bool layMines;
+	bool clearMines;
 
-	if (b->isBeeingAttacked()) return;
-
-	// special case: when a land/sea mine explodes, it makes damage according to
-	// its attack points. So start an attack job instead of just destoying it.
-	if (b->getStaticUnitData().explodesOnContact)
+	template<typename T>
+	void serializeThis(T& archive)
 	{
-		model.addAttackJob(*b, b->getPosition());
+		archive & vehicleId;
+		archive & layMines;
+		archive & clearMines;
 	}
-	else
-	{
-		model.destroyUnit(*b);
-	}
-}
+};
+
+#endif

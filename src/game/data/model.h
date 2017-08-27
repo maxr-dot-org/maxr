@@ -194,10 +194,6 @@ public:
 			player->initMaps(*map);
 			archive >> serialization::makeNvp("player", *player);
 		}
-		for (auto& player : playerList)
-		{
-			player->refreshBase(*map);
-		}
 		int numMoveJobs;
 		archive >> NVP(numMoveJobs);
 		for (auto moveJob : moveJobs)
@@ -247,6 +243,10 @@ public:
 		//TODO: clear effect list, deserialize effects, call addedEffect()
 
 		refreshMapPointer();
+		for (auto& player : playerList)
+		{
+			player->refreshBase(*map);
+		}
 	}
 	SERIALIZATION_SPLIT_MEMBER();
 

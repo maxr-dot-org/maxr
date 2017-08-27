@@ -149,6 +149,7 @@ void cMoveJob::stop()
 	{
 		state = FINISHED;
 		vehicle->setMoving(false);
+		vehicle->WalkFrame = 0;
 		vehicle->data.setSpeed(vehicle->data.getSpeed() + savedSpeed);
 	}
 }
@@ -199,6 +200,11 @@ void cMoveJob::startMove(cModel& model)
 		return;
 	}
 
+	if (state == WAITING)
+	{
+		return;
+	}
+
 	if (vehicle->isBeeingAttacked())
 	{
 		// suspend movejobs of attacked vehicles
@@ -237,6 +243,7 @@ void cMoveJob::startMove(cModel& model)
 	path.pop_front();
 	vehicle->setMovementOffset(cPosition(0, 0));
 	changeVehicleOffset(-64);
+	Log.write(" cMoveJob: Vehicle (ID: " + iToStr (vehicle->getId()) + ") moved to (" + iToStr(vehicle->getPosition().x()) + ", " + iToStr(vehicle->getPosition().y()) + ") @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 
 	vehicle->getOwner()->doScan();
 
@@ -370,9 +377,31 @@ void cMoveJob::endMove(cModel& model)
 {
 	vehicle->setMovementOffset (cPosition (0, 0));
 
-	//TODO: expl. mines
 	//TODO: handle detection
-	//TODO: lay/ clear mines
+	//TODO: trigger landing/take off
+
+	cBuilding* mine = model.getMap()->getField(vehicle->getPosition()).getMine();
+	if (mine && 
+		vehicle->getStaticUnitData().factorAir == 0  && 
+		mine->getOwner() != vehicle->getOwner() && 
+		mine->isManualFireActive() == false)
+	{
+		model.addAttackJob(*mine, vehicle->getPosition());
+
+		vehicle->setMoving(false);
+		vehicle->WalkFrame = 0;
+		state = WAITING;
+		currentSpeed = 0;
+	}
+
+	if (vehicle->isUnitLayingMines())
+	{
+		vehicle->layMine(model);
+	} 
+	else if (vehicle->isUnitClearingMines())
+	{
+		vehicle->clearMine(model);
+	}
 
 	vehicle->inSentryRange(model);
 

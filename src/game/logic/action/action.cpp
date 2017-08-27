@@ -33,6 +33,7 @@
 #include "actionattack.h"
 #include "actionchangesentry.h"
 #include "actionchangemanualfire.h"
+#include "actionminelayerstatus.h"
 
 std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 {
@@ -65,6 +66,8 @@ std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 		return std::make_unique<cActionChangeSentry>(archive);
 	case eActiontype::ACTION_CHANGE_MANUAL_FIRE:
 		return std::make_unique<cActionChangeManualFire>(archive);
+	case eActiontype::ACTION_MINELAYER_STATUS:
+		return std::make_unique<cActionMinelayerStatus>(archive);
 	default:
 		throw std::runtime_error("Unknown action type " + iToStr(static_cast<int>(type)));
 		return nullptr;
@@ -106,6 +109,8 @@ std::string enumToString(cAction::eActiontype value)
 		return "ACTION_CHANGE_SENTRY";
 	case cAction::eActiontype::ACTION_CHANGE_MANUAL_FIRE:
 		return "ACTION_CHANGE_MANUAL_FIRE";
+	case cAction::eActiontype::ACTION_MINELAYER_STATUS:
+		return "ACTION_MINELAYER_STATUS";
 	default:
 		assert(false);
 		return toString(static_cast<int>(value));

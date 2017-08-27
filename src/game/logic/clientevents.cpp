@@ -93,15 +93,6 @@ void sendChatMessageToServer (const cClient& client, const string& msg, const cP
 	client.sendNetMessage (netMsg);
 }
 
-void sendMineLayerStatus (const cClient& client, const cVehicle& vehicle)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_MINELAYERSTATUS);
-	message->pushBool (vehicle.isUnitLayingMines());
-	message->pushBool (vehicle.isUnitClearingMines());
-	message->pushInt16 (vehicle.iID);
-	client.sendNetMessage (std::move (message));
-}
-
 void sendWantBuild (const cClient& client, int iVehicleID, sID buildingTypeID, int iBuildSpeed, const cPosition& buildPosition, bool bBuildPath, const cPosition& pathEndPosition)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_BUILD);

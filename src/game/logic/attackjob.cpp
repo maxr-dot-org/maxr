@@ -304,7 +304,6 @@ void cAttackJob::fire(cModel& model)
 		{
 			model.addFx (std::make_unique<cFxExploSmall> (aggressor->getPosition() * 64 + cPosition (32, 32)));
 		}
-		model.deleteUnit (aggressor);
 	}
 }
 
@@ -466,6 +465,8 @@ void cAttackJob::impactSingle (const cPosition& position, int attackPoints, cMod
 		avoidTargets->push_back (target);
 	}
 
+	Log.write(" cAttackJob: Impact at (" + iToStr(position.x()) + ", " + iToStr(position.y()) + ") @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+
 	// if target is a stealth unit, make it visible on all clients
 	if (target && target->getStaticUnitData().isStealthOn != TERRAIN_NONE)
 	{
@@ -521,6 +522,12 @@ void cAttackJob::impactSingle (const cPosition& position, int attackPoints, cMod
 		{
 			target->getOwner()->unitAttacked(*target);
 		}
+	}
+
+	if (aggressor->getStaticUnitData().explodesOnContact)
+	{
+		model.deleteUnit(aggressor);
+		aggressor = nullptr;
 	}
 
 	// check whether a following sentry mode attack is possible

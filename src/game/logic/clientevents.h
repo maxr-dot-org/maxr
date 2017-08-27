@@ -95,13 +95,6 @@ void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, 
 */
 void sendChatMessageToServer(const cClient& client, const std::string& msg, const cPlayer& player);
 
-
-/**
-* sends whether a minelayer is laying or clearing mines
-*@author alzi alias DoctorDeath
-*@param Vehicle the vehicle which status has to be send
-*/
-void sendMineLayerStatus (const cClient& client, const cVehicle& vehicle);
 /**
 * sends that a vehicle wants to start building
 *@author alzi alias DoctorDeath

@@ -38,7 +38,8 @@ public:
 		ACTION_SELF_DESTROY,
 		ACTION_ATTACK,
 		ACTION_CHANGE_SENTRY,
-		ACTION_CHANGE_MANUAL_FIRE
+		ACTION_CHANGE_MANUAL_FIRE,
+		ACTION_MINELAYER_STATUS
 	};
 	static std::unique_ptr<cAction> createFromBuffer(cBinaryArchiveOut& archive);
 
