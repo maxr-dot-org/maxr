@@ -655,7 +655,7 @@ void cPlayer::refreshBase(const cMap& map)
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::makeTurnStart()
+void cPlayer::makeTurnStart(cModel& model)
 {
 	setHasFinishedTurn(false);
 	resetTurnReportData();
@@ -687,8 +687,8 @@ void cPlayer::makeTurnStart()
 			vehicle->setDisabledTurns(vehicle->getDisabledTurns() - 1);
 		}
 		vehicle->refreshData();
-		//vehicle->proceedBuilding(*this);
-		//vehicle->proceedClearing(*this);
+		vehicle->proceedBuilding(model);
+		//vehicle->proceedClearing(model);
 	}
 
 	// hide stealth units

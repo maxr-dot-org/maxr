@@ -85,7 +85,6 @@ void cActionStartBuild::execute(cModel& model) const
 	{
 		//TODO: notify GUI -> not enough material
 		// activePlayer->addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::ProducingError));
-		// activePlayer->addSavedReport (std::make_unique<cSavedReportPathInterrupted> (*Vehicle));
 		return;
 	}
 

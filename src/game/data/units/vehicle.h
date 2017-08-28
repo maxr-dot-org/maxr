@@ -173,8 +173,9 @@ public:
 	*@return true if there has been refreshed something else false.
 	*/
 	bool refreshData();
-	bool proceedBuilding (cServer& server);
-	bool proceedClearing (cServer& server);
+	void proceedBuilding (cModel& model);
+	void continuePathBuilding(cModel& model);
+	bool proceedClearing(cServer& server);
 
 	virtual std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
 	void DecSpeed (int value);

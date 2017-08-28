@@ -775,7 +775,7 @@ void cModel::handleTurnEnd()
 				if (turnCounter->getTurn() > 1)
 				{
 					// don't execute turn start action in turn 1, because model is already completely initialized for turn 1
-					activeTurnPlayer->makeTurnStart();
+					activeTurnPlayer->makeTurnStart(*this);
 				}
 			}
 			else
@@ -784,7 +784,7 @@ void cModel::handleTurnEnd()
 
 				for (auto& player : playerList)
 				{
-					player->makeTurnStart();
+					player->makeTurnStart(*this);
 				}
 
 			}

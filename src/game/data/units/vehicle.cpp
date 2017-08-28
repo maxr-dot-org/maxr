@@ -46,6 +46,7 @@
 #include "ui/sound/effects/soundeffectvoice.h"
 #include "utility/random.h"
 #include "utility/crc.h"
+#include "game/logic/jobs/startbuildjob.h"
 
 using namespace std;
 
@@ -305,23 +306,23 @@ void cVehicle::render (const cMap* map, unsigned long long animationTime, const 
 	render_simple (surface, dest, zoomFactor, alpha);
 }
 
-bool cVehicle::proceedBuilding (cServer& server)
+void cVehicle::proceedBuilding (cModel& model)
 {
-	if (isUnitBuildingABuilding() == false || getBuildTurns() == 0) return false;
+	if (isUnitBuildingABuilding() == false || getBuildTurns() == 0) return;
 
 	setStoredResources (getStoredResources() - (getBuildCosts() / getBuildTurns()));
 	setBuildCosts (getBuildCosts() - (getBuildCosts() / getBuildTurns()));
 
 	setBuildTurns (getBuildTurns() - 1);
-	if (getBuildTurns() != 0) return true;
+	if (getBuildTurns() != 0) return;
 
-	const cMap& map = *server.Map;
+	const cMap& map = *model.getMap();
 	getOwner()->addTurnReportUnit (getBuildingType());
 
 	// handle pathbuilding
 	// here the new building is added (if possible) and
 	// the move job to the next field is generated
-	// the new build event is generated in cServer::handleMoveJobs()
+	// the new build event is generated in cMoveJob::endMove()
 	if (BuildPath)
 	{
 		// Find a next position that either
@@ -343,7 +344,7 @@ bool cVehicle::proceedBuilding (cServer& server)
 			if (!map.possiblePlace (*this, nextPosition))
 			{
 				// Try sidestepping stealth units before giving up.
-				server.sideStepStealthUnit (nextPosition, *this);
+				//model.sideStepStealthUnit (nextPosition, *this);
 				if (!map.possiblePlace (*this, nextPosition))
 				{
 					// We can't build along this path any more.
@@ -351,7 +352,7 @@ bool cVehicle::proceedBuilding (cServer& server)
 				}
 			}
 			// Can we build at this next position?
-			if (map.possiblePlaceBuilding (server.model.getUnitsData()->getStaticUnitData(getBuildingType()), nextPosition))
+			if (map.possiblePlaceBuilding (model.getUnitsData()->getStaticUnitData(getBuildingType()), nextPosition))
 			{
 				// We can build here.
 				found_next = true;
@@ -359,34 +360,58 @@ bool cVehicle::proceedBuilding (cServer& server)
 			}
 		}
 
-		// If we've found somewhere to move to, move there now.
-//		if (found_next && server.addMoveJob (getPosition(), nextPosition, this))
-// 		{
-// 			setBuildingABuilding (false);
-// 			server.addBuilding (getPosition(), getBuildingType(), getOwner());
-// 		}
-// 		else
-// 		{
-// 			if (server.model.getUnitsData()->getStaticUnitData(getBuildingType()).surfacePosition != cStaticUnitData::SURFACE_POS_GROUND)
-// 			{
-// 				server.addBuilding (getPosition(), getBuildingType(), getOwner());
-// 				setBuildingABuilding (false);
-// 			}
-// 			BuildPath = false;
-// 			sendBuildAnswer (server, false, *this);
-// 		}
+		//If we've found somewhere to move to, move there now.
+		cPathCalculator pc(*this, map, nextPosition, false);
+		auto path = pc.calcPath();
+		if (found_next && !path.empty())
+		{
+			model.addBuilding (getPosition(), getBuildingType(), getOwner());
+			model.addMoveJob(*this, path);
+			setBuildingABuilding (false);
+		}
+		else
+		{
+			if (model.getUnitsData()->getStaticUnitData(getBuildingType()).surfacePosition != cStaticUnitData::SURFACE_POS_GROUND)
+			{
+				// add building immediately
+				// if it doesn't require the engineer to drive away
+				setBuildingABuilding (false);
+				model.addBuilding (getPosition(), getBuildingType(), getOwner());
+			}
+			BuildPath = false;
+			//TODO: notify GUI
+			// activePlayer->addSavedReport (std::make_unique<cSavedReportPathInterrupted> (*Vehicle));
+ 		}
 	}
 	else
 	{
-		// add building immediately
-		// if it doesn't require the engineer to drive away
-		if (server.model.getUnitsData()->getStaticUnitData(getBuildingType()).surfacePosition != staticData->surfacePosition)
+		if (model.getUnitsData()->getStaticUnitData(getBuildingType()).surfacePosition != staticData->surfacePosition)
 		{
+			// add building immediately
+			// if it doesn't require the engineer to drive away
 			setBuildingABuilding (false);
-			//server.addBuilding (getPosition(), getBuildingType(), getOwner());
+			model.addBuilding (getPosition(), getBuildingType(), getOwner());
 		}
 	}
-	return true;
+	return;
+}
+
+void cVehicle::continuePathBuilding(cModel& model)
+{
+	if (!BuildPath) return;
+	
+	if (getStoredResources() >= getBuildCostsStart() && model.getMap()->possiblePlaceBuilding(model.getUnitsData()->getStaticUnitData(getBuildingType()), getPosition(), this))
+	{
+		model.addJob(new cStartBuildJob(*this, getPosition(), getIsBig()));
+		setBuildingABuilding(true);
+		setBuildCosts(getBuildCostsStart());
+		setBuildTurns(getBuildTurnsStart());
+	}
+	else
+	{
+		BuildPath = false;
+		//TODO: notify GUI
+	}
 }
 
 bool cVehicle::proceedClearing (cServer& server)
