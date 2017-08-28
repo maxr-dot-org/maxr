@@ -237,7 +237,6 @@ private:
 	void handleNetMessage_MU_MSG_UPGRADES (cNetMessage& message);
 	void handleNetMessage_MU_MSG_LANDING_COORDS (cNetMessage& message);
 	void handleNetMessage_MU_MSG_READY_TO_START (cNetMessage& message);
-	void handleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message);
 	void handleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_STOP_BUILDING (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message);

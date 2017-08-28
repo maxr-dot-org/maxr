@@ -277,96 +277,6 @@ void cServer::doGameActions()
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_WANT_BUILD);
-
-	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
-	if (Vehicle == nullptr) return;
-	if (Vehicle->isUnitBuildingABuilding() || Vehicle->BuildPath) return;
-
-	const sID BuildingTyp = message.popID();
-	if (!model.getUnitsData()->isValidId(BuildingTyp))
-	{
-		Log.write (" Server: invalid unit: " + iToStr (BuildingTyp.firstPart) + "." + iToStr (BuildingTyp.secondPart), cLog::eLOG_TYPE_NET_ERROR);
-		return;
-	}
-	const cStaticUnitData& Data = model.getUnitsData()->getStaticUnitData(BuildingTyp);
-	const int iBuildSpeed = message.popInt16();
-	if (iBuildSpeed > 2 || iBuildSpeed < 0) return;
-	const auto buildPosition = message.popPosition();
-
-	std::array<int, 3> iTurboBuildRounds;
-	std::array<int, 3> iTurboBuildCosts;
-	Vehicle->calcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Vehicle->getOwner()->getUnitDataCurrentVersion (BuildingTyp)->getBuildCost());
-
-	if (iTurboBuildCosts[iBuildSpeed] > Vehicle->getStoredResources() ||
-		iTurboBuildRounds[iBuildSpeed] <= 0)
-	{
-		// TODO: differ between different aborting types
-		// (buildposition blocked, not enough material, ...)
-		sendBuildAnswer (*this, false, *Vehicle);
-		return;
-	}
-
-	if (Map->isValidPosition (buildPosition) == false) return;
-	const auto oldPosition = Vehicle->getPosition();
-
-	if (Vehicle->getStaticUnitData().canBuild != Data.buildAs) return;
-
-	if (Data.isBig)
-	{
-		sideStepStealthUnit (buildPosition,                   *Vehicle, buildPosition);
-		sideStepStealthUnit (buildPosition + cPosition (1, 0), *Vehicle, buildPosition);
-		sideStepStealthUnit (buildPosition + cPosition (0, 1), *Vehicle, buildPosition);
-		sideStepStealthUnit (buildPosition + cPosition (1, 1), *Vehicle, buildPosition);
-
-		if (! (Map->possiblePlaceBuilding (Data, buildPosition,                   Vehicle) &&
-			   Map->possiblePlaceBuilding (Data, buildPosition + cPosition (1, 0), Vehicle) &&
-			   Map->possiblePlaceBuilding (Data, buildPosition + cPosition (0, 1), Vehicle) &&
-			   Map->possiblePlaceBuilding (Data, buildPosition + cPosition (1, 1), Vehicle)))
-		{
-			sendBuildAnswer (*this, false, *Vehicle);
-			return;
-		}
-		Vehicle->buildBigSavedPosition = Vehicle->getPosition();
-
-		// set vehicle to build position
-		Map->moveVehicleBig (*Vehicle, buildPosition);
-		Vehicle->getOwner()->doScan();
-	}
-	else
-	{
-		if (buildPosition != Vehicle->getPosition()) return;
-
-		if (!Map->possiblePlaceBuilding (Data, buildPosition, Vehicle))
-		{
-			sendBuildAnswer (*this, false, *Vehicle);
-			return;
-		}
-	}
-
-	Vehicle->setBuildingType (BuildingTyp);
-	const bool bBuildPath = message.popBool();
-	const cPosition pathPosition = message.popPosition();
-	if (Map->isValidPosition (pathPosition) == false) return;
-	Vehicle->bandPosition = pathPosition;
-
-	Vehicle->setBuildCosts (iTurboBuildCosts[iBuildSpeed]);
-	Vehicle->setBuildTurns (iTurboBuildRounds[iBuildSpeed]);
-	Vehicle->setBuildCostsStart (Vehicle->getBuildCosts());
-	Vehicle->setBuildTurnsStart (Vehicle->getBuildTurns());
-
-	Vehicle->setBuildingABuilding (true);
-	Vehicle->BuildPath = bBuildPath;
-
-	sendBuildAnswer (*this, true, *Vehicle);
-	//addJob (new cStartBuildJob (*Vehicle, oldPosition, Data.isBig));
-
-	if (Vehicle->getMoveJob()) Vehicle->getMoveJob()->stop();
-}
-
-//------------------------------------------------------------------------------
 void cServer::handleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_END_BUILDING);
@@ -1334,7 +1244,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 
 	switch (message.iType)
 	{
-		case GAME_EV_WANT_BUILD: handleNetMessage_GAME_EV_WANT_BUILD (message); break;
 		case GAME_EV_END_BUILDING: handleNetMessage_GAME_EV_END_BUILDING (message); break;
 		case GAME_EV_WANT_STOP_BUILDING: handleNetMessage_GAME_EV_WANT_STOP_BUILDING (message); break;
 		case GAME_EV_WANT_BUILDLIST: handleNetMessage_GAME_EV_WANT_BUILDLIST (message); break;

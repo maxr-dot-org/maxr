@@ -93,18 +93,6 @@ void sendChatMessageToServer (const cClient& client, const string& msg, const cP
 	client.sendNetMessage (netMsg);
 }
 
-void sendWantBuild (const cClient& client, int iVehicleID, sID buildingTypeID, int iBuildSpeed, const cPosition& buildPosition, bool bBuildPath, const cPosition& pathEndPosition)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_BUILD);
-	message->pushPosition (pathEndPosition);
-	message->pushBool (bBuildPath);
-	message->pushPosition (buildPosition);
-	message->pushInt16 (iBuildSpeed);
-	message->pushID (buildingTypeID);
-	message->pushInt16 (iVehicleID);
-	client.sendNetMessage (std::move (message));
-}
-
 void sendWantEndBuilding (const cClient& client, const cVehicle& vehicle, const cPosition& escapePosition)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_END_BUILDING);

@@ -105,6 +105,7 @@
 #include "game/logic/action/actionchangemanualfire.h"
 #include "game/logic/action/actionchangesentry.h"
 #include "game/logic/action/actionminelayerstatus.h"
+#include "game/logic/action/actionstartbuild.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -767,11 +768,11 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (buildBuildingTriggered, [&] (const cVehicle & vehicle, const cPosition & destination, const sID & unitId, int buildSpeed)
 	{
-		sendWantBuild (client, vehicle.iID, unitId, buildSpeed, destination, false, cPosition (0, 0));
+		client.sendNetMessage(cActionStartBuild(vehicle, unitId, buildSpeed, destination));
 	});
 	clientSignalConnectionManager.connect (buildBuildingPathTriggered, [&] (const cVehicle & vehicle, const cPosition & destination, const sID & unitId, int buildSpeed)
 	{
-		sendWantBuild (client, vehicle.iID, unitId, buildSpeed, vehicle.getPosition(), true, destination);
+		client.sendNetMessage(cActionStartBuild(vehicle, unitId, buildSpeed, vehicle.getPosition(), destination));
 	});
 	clientSignalConnectionManager.connect (buildVehiclesTriggered, [&] (const cBuilding & building, const std::vector<cBuildListItem>& buildList, int buildSpeed, bool repeat)
 	{

@@ -45,7 +45,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_SPECIFIC_UNIT_DATA,		// more specific unit values which are only for the owner
 	GAME_EV_UNIT_UPGRADE_VALUES,	// message contains upgraded values for a unit
 	GAME_EV_RESOURCES,				// a message with new scaned resources for a client
-	GAME_EV_BUILD_ANSWER,			// the answer of the server to a build request of a client
 	GAME_EV_STOP_BUILD,				// a vehicle has to stop building
 	GAME_EV_SUBBASE_VALUES,			// the values of a subbase
 	GAME_EV_BUILDLIST,				// the buildlist of a building
@@ -95,17 +94,6 @@ void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, 
 */
 void sendChatMessageToServer(const cClient& client, const std::string& msg, const cPlayer& player);
 
-/**
-* sends that a vehicle wants to start building
-*@author alzi alias DoctorDeath
-*@param iVehicleID the ID of the vehicle which wants to start building
-*@param iBuildingType type of the building to be build
-*@param iBuildSpeed speed of building ( 0->1x, 1->2x or 2->4x )
-*@param iBuildOff the offest were to build. Upper left coner on big buildings
-*@param bBuildPath true if the vehicle is building in path
-*@param iPathOff offset were the path will end
-*/
-void sendWantBuild (const cClient& client, int iVehicleID, sID buildingTypeID, int iBuildSpeed, const cPosition& buildPosition, bool bBuildPath, const cPosition& pathEndPosition);
 /**
 * sends that a vehicle wants to leave the building lot
 *@author alzi alias DoctorDeath
