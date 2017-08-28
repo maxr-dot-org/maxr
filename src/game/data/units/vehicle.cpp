@@ -361,12 +361,10 @@ void cVehicle::proceedBuilding (cModel& model)
 		}
 
 		//If we've found somewhere to move to, move there now.
-		cPathCalculator pc(*this, map, nextPosition, false);
-		auto path = pc.calcPath();
-		if (found_next && !path.empty())
+		const cPosition oldPosition = getPosition();
+		if (found_next && model.addMoveJob (*this, nextPosition))
 		{
-			model.addBuilding (getPosition(), getBuildingType(), getOwner());
-			model.addMoveJob(*this, path);
+			model.addBuilding (oldPosition, getBuildingType(), getOwner());
 			setBuildingABuilding (false);
 		}
 		else
@@ -383,17 +381,13 @@ void cVehicle::proceedBuilding (cModel& model)
 			// activePlayer->addSavedReport (std::make_unique<cSavedReportPathInterrupted> (*Vehicle));
  		}
 	}
-	else
+	else if (model.getUnitsData()->getStaticUnitData(getBuildingType()).surfacePosition != staticData->surfacePosition)
 	{
-		if (model.getUnitsData()->getStaticUnitData(getBuildingType()).surfacePosition != staticData->surfacePosition)
-		{
-			// add building immediately
-			// if it doesn't require the engineer to drive away
-			setBuildingABuilding (false);
-			model.addBuilding (getPosition(), getBuildingType(), getOwner());
-		}
+		// add building immediately
+		// if it doesn't require the engineer to drive away
+		setBuildingABuilding (false);
+		model.addBuilding (getPosition(), getBuildingType(), getOwner());
 	}
-	return;
 }
 
 void cVehicle::continuePathBuilding(cModel& model)

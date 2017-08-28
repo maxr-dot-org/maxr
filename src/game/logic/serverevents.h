@@ -44,8 +44,7 @@ struct sID;
 enum SERVER_EVENT_TYPES
 {
 	// Types between FIRST_SERVER_MESSAGE and FIRST_CLIENT_MESSAGE are for the serverserver
-	GAME_EV_END_BUILDING = 205,			// a vehicle has finished building and will leave the building lot now
-	GAME_EV_WANT_BUILDLIST,			// a building wants his buildlist to be verified by the server and start work
+	GAME_EV_WANT_BUILDLIST = 206,			// a building wants his buildlist to be verified by the server and start work
 	GAME_EV_WANT_EXIT_FIN_VEH,		// a client wants to exit a finished vehicle out of a building
 	GAME_EV_CHANGE_RESOURCES,		// a client wants to change his resource production
 	GAME_EV_WANT_MARK_LOG,			// marks a position in the log file

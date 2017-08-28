@@ -277,50 +277,6 @@ void cServer::doGameActions()
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_END_BUILDING);
-
-	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
-	if (Vehicle == nullptr) return;
-
-	const cPosition escapePosition (message.popPosition());
-
-	if (!Vehicle->isUnitBuildingABuilding() || Vehicle->getBuildTurns() > 0) return;
-	if (!Map->possiblePlace (*Vehicle, escapePosition))
-	{
-		sideStepStealthUnit (escapePosition, *Vehicle);
-	}
-
-	if (!Map->possiblePlace (*Vehicle, escapePosition)) return;
-
-	//addBuilding (Vehicle->getPosition(), Vehicle->getBuildingType(), Vehicle->getOwner());
-
-	// end building
-	Vehicle->setBuildingABuilding (false);
-	Vehicle->BuildPath = false;
-
-	// set the vehicle to the border
-	if (model.getUnitsData()->getStaticUnitData(Vehicle->getBuildingType()).isBig)
-	{
-		int x = Vehicle->getPosition().x();
-		int y = Vehicle->getPosition().y();
-		if (escapePosition.x() > Vehicle->getPosition().x()) x++;
-		if (escapePosition.y() > Vehicle->getPosition().y()) y++;
-		Map->moveVehicle (*Vehicle, cPosition (x, y));
-
-		// refresh SeenByPlayerLists
-		checkPlayerUnits();
-	}
-
-	// drive away from the building lot
-	//addMoveJob (Vehicle->getPosition(), escapePosition, Vehicle);
-	// begin the movement immediately,
-	// so no other unit can block the destination field
-	//Vehicle->ServerMoveJob->checkMove();
-}
-
-//------------------------------------------------------------------------------
 void cServer::handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_BUILDLIST);
@@ -1235,7 +1191,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 
 	switch (message.iType)
 	{
-		case GAME_EV_END_BUILDING: handleNetMessage_GAME_EV_END_BUILDING (message); break;
 		case GAME_EV_WANT_BUILDLIST: handleNetMessage_GAME_EV_WANT_BUILDLIST (message); break;
 		case GAME_EV_WANT_EXIT_FIN_VEH: handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (message); break;
 		case GAME_EV_CHANGE_RESOURCES : handleNetMessage_GAME_EV_CHANGE_RESOURCES (message); break;

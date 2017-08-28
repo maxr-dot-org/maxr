@@ -102,6 +102,7 @@ public:
 	void deleteRubble(cBuilding* rubble);
 
 	cMoveJob* addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& path);
+	cMoveJob* addMoveJob(cVehicle& vehicle, const cPosition& destination);
 	std::vector<const cPlayer*> resumeMoveJobs(const cPlayer* player = nullptr);
 
 	void addAttackJob(cUnit& aggressor, const cPosition& targetPosition);

@@ -107,6 +107,7 @@
 #include "game/logic/action/actionminelayerstatus.h"
 #include "game/logic/action/actionstartbuild.h"
 #include "game/logic/action/actionstop.h"
+#include "game/logic/action/actionfinishbuild.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -906,7 +907,7 @@ void cGameGuiController::connectClient (cClient& client)
 
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredEndBuilding, [&] (const cVehicle & vehicle, const cPosition & destination)
 	{
-		sendWantEndBuilding (client, vehicle, destination);
+		client.sendNetMessage(cActionFinishBuild(vehicle, destination));
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredMoveSingle, [&] (const cVehicle & vehicle, const cPosition & destination)
 	{

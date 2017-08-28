@@ -94,15 +94,6 @@ void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, 
 void sendChatMessageToServer(const cClient& client, const std::string& msg, const cPlayer& player);
 
 /**
-* sends that a vehicle wants to leave the building lot
-*@author alzi alias DoctorDeath
-*@param Vehicle the vehicle which has finished building
-*@param EscapeX X coordinate to which he wants do move now
-*@param EscapeY Y coordinate to which he wants do move now
-*/
-void sendWantEndBuilding (const cClient& client, const cVehicle& vehicle, const cPosition& escapePosition);
-
-/**
 * sends a request for building all vehicles in the buildlist of the building
 *@author alzi alias DoctorDeath
 */

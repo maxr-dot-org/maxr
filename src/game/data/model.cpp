@@ -511,6 +511,19 @@ void cModel::deleteRubble(cBuilding* rubble)
 }
 
 //------------------------------------------------------------------------------
+cMoveJob* cModel::addMoveJob(cVehicle& vehicle, const cPosition& destination)
+{
+	cPathCalculator pc(vehicle, *map, destination, false);
+	auto path = pc.calcPath();
+	if (path.empty())
+	{
+		return nullptr;
+	}
+
+	return addMoveJob(vehicle, path);
+}
+
+//------------------------------------------------------------------------------
 cMoveJob* cModel::addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& path)
 {
 	cMoveJob* currentMoveJob = vehicle.getMoveJob();
