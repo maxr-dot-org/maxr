@@ -46,7 +46,6 @@
 #include "ui/sound/effects/soundeffectvoice.h"
 #include "utility/random.h"
 #include "utility/crc.h"
-#include "game/logic/action/actionstopmove.h"
 
 using namespace std;
 
@@ -1601,17 +1600,6 @@ uint32_t cVehicle::getChecksum(uint32_t crc) const
 bool cVehicle::canBeStoppedViaUnitMenu() const
 {
 	return (moveJob != nullptr || (isUnitBuildingABuilding() && getBuildTurns() > 0) || (isUnitClearing() && getClearingTurns() > 0));
-}
-
-//-----------------------------------------------------------------------------
-void cVehicle::executeStopCommand (const cClient& client) const
-{
-	if (moveJob != nullptr)
-		client.sendNetMessage(cActionStopMove(*this));
-	else if (isUnitBuildingABuilding())
-		sendWantStopBuilding (client, iID);
-	else if (isUnitClearing())
-		sendWantStopClear (client, *this);
 }
 
 //-----------------------------------------------------------------------------

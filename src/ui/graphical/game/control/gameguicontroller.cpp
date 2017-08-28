@@ -106,6 +106,7 @@
 #include "game/logic/action/actionchangesentry.h"
 #include "game/logic/action/actionminelayerstatus.h"
 #include "game/logic/action/actionstartbuild.h"
+#include "game/logic/action/actionstop.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -841,7 +842,7 @@ void cGameGuiController::connectClient (cClient& client)
 		const auto& units = gameGui->getGameMap().getUnitSelection().getSelectedUnits();
 		for (const auto& u : units)
 		{
-			u->executeStopCommand(client);
+			client.sendNetMessage(cActionStop(*u));
 		}
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredAutoMoveJob, [&] (const cUnit & unit)

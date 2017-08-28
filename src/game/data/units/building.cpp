@@ -41,7 +41,6 @@
 
 #include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffectvoice.h"
-#include "game/logic/action/actionstopwork.h"
 #include "utility/crc.h"
 
 using namespace std;
@@ -1279,12 +1278,6 @@ void sBuildingUIData::scaleSurfaces (float factor)
 bool cBuilding::factoryHasJustFinishedBuilding() const
 {
 	return (!buildList.empty() && isUnitWorking() == false && buildList[0].getRemainingMetal() <= 0);
-}
-
-//-----------------------------------------------------------------------------
-void cBuilding::executeStopCommand (const cClient& client) const
-{
-	client.sendNetMessage(cActionStopWork(*this));
 }
 
 //-----------------------------------------------------------------------------

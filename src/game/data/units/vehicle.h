@@ -426,14 +426,6 @@ private:
 	int flightHeight;
 
 	float commandoRank;
-
-	//--------------------------------------------------------------------------
-protected:
-	//-- methods, that have been extracted during cUnit refactoring ------------
-
-
-	// methods needed for execution of unit menu commands
-	virtual void executeStopCommand (const cClient& client) const MAXR_OVERRIDE_FUNCTION;
 };
 
 #endif // game_data_units_vehicleH

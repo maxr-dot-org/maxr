@@ -45,7 +45,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_SPECIFIC_UNIT_DATA,		// more specific unit values which are only for the owner
 	GAME_EV_UNIT_UPGRADE_VALUES,	// message contains upgraded values for a unit
 	GAME_EV_RESOURCES,				// a message with new scaned resources for a client
-	GAME_EV_STOP_BUILD,				// a vehicle has to stop building
 	GAME_EV_SUBBASE_VALUES,			// the values of a subbase
 	GAME_EV_BUILDLIST,				// the buildlist of a building
 	GAME_EV_MINE_PRODUCE_VALUES,	// the produce values of a mine
@@ -102,11 +101,7 @@ void sendChatMessageToServer(const cClient& client, const std::string& msg, cons
 *@param EscapeY Y coordinate to which he wants do move now
 */
 void sendWantEndBuilding (const cClient& client, const cVehicle& vehicle, const cPosition& escapePosition);
-/**
-* sends that the player wants a vehicle to stop building
-*@author alzi alias DoctorDeath
-*/
-void sendWantStopBuilding (const cClient& client, int iVehicleID);
+
 /**
 * sends a request for building all vehicles in the buildlist of the building
 *@author alzi alias DoctorDeath

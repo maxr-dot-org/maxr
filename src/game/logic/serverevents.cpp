@@ -199,15 +199,6 @@ void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver)
 }
 
 //------------------------------------------------------------------------------
-void sendStopBuild (cServer& server, int iVehicleID, const cPosition& newPosition, const cPlayer& receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_STOP_BUILD);
-	message->pushPosition (newPosition);
-	message->pushInt16 (iVehicleID);
-	server.sendNetMessage (std::move (message), &receiver);
-}
-
-//------------------------------------------------------------------------------
 void sendBuildList (cServer& server, const cBuilding& building)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_BUILDLIST);

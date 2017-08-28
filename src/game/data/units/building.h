@@ -347,13 +347,6 @@ private:
 	std::vector<cBuildListItem> buildList; // list with the units to be build by this factory
 
 	void registerOwnerEvents();
-
-	//-----------------------------------------------------------------------------
-protected:
-	//-- methods, that have been extracted during cUnit refactoring ---------------
-
-	// methods needed for execution of unit menu commands
-	virtual void executeStopCommand (const cClient& client) const MAXR_OVERRIDE_FUNCTION;
 };
 
 #endif // game_data_units_buildingH

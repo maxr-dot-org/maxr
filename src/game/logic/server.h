@@ -238,7 +238,6 @@ private:
 	void handleNetMessage_MU_MSG_LANDING_COORDS (cNetMessage& message);
 	void handleNetMessage_MU_MSG_READY_TO_START (cNetMessage& message);
 	void handleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message);
-	void handleNetMessage_GAME_EV_WANT_STOP_BUILDING (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message);
 	void handleNetMessage_GAME_EV_CHANGE_RESOURCES (cNetMessage& message);
@@ -279,12 +278,7 @@ private:
 	*@author alzi alias DoctorDeath
 	*/
 	void changeUnitOwner (cVehicle& vehicle, cPlayer& newOwner);
-	/**
-	* stops the buildingprocess of a working vehicle.
-	*@author alzi alias DoctorDeath
-	*/
-	void stopVehicleBuilding (cVehicle& vehicle);
-
+	
 	void checkPlayerUnits (cVehicle& vehicle, cPlayer& MapPlayer);
 	void checkPlayerUnits (cBuilding& building, cPlayer& MapPlayer);
 	void checkPlayerRubbles (cBuilding& building, cPlayer& MapPlayer);

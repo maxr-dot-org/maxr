@@ -333,31 +333,6 @@ void cClient::HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message)
 	}
 }
 
-void cClient::HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_STOP_BUILD);
-
-	const int iID = message.popInt16();
-	cVehicle* Vehicle = getVehicleFromID (iID);
-	if (Vehicle == nullptr)
-	{
-		Log.write (" Client: Can't stop building: Unknown vehicle with ID: " + iToStr (iID), cLog::eLOG_TYPE_NET_WARNING);
-		// TODO: Request sync of vehicle
-		return;
-	}
-
-	const auto newPosition = message.popPosition();
-
-	if (Vehicle->getIsBig())
-	{
-//		getMap()->moveVehicle (*Vehicle, newPosition);
-		Vehicle->getOwner()->doScan();
-	}
-
-	Vehicle->setBuildingABuilding (false);
-	Vehicle->BuildPath = false;
-}
-
 void cClient::HandleNetMessage_GAME_EV_BUILDLIST (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_BUILDLIST);
@@ -1012,7 +987,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_UNIT_DATA: HandleNetMessage_GAME_EV_UNIT_DATA (message); break;
 		case GAME_EV_SPECIFIC_UNIT_DATA: HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (message); break;
 		case GAME_EV_RESOURCES: HandleNetMessage_GAME_EV_RESOURCES (message); break;
-		case GAME_EV_STOP_BUILD: HandleNetMessage_GAME_EV_STOP_BUILD (message); break;
 		case GAME_EV_BUILDLIST: HandleNetMessage_GAME_EV_BUILDLIST (message); break;
 		case GAME_EV_MARK_LOG: HandleNetMessage_GAME_EV_MARK_LOG (message); break;
 		case GAME_EV_SUPPLY: HandleNetMessage_GAME_EV_SUPPLY (message); break;

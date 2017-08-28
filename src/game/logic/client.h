@@ -175,7 +175,6 @@ private:
 	void HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_BUILDLIST (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_MARK_LOG (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message);

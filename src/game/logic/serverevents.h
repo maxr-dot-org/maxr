@@ -45,7 +45,6 @@ enum SERVER_EVENT_TYPES
 {
 	// Types between FIRST_SERVER_MESSAGE and FIRST_CLIENT_MESSAGE are for the serverserver
 	GAME_EV_END_BUILDING = 205,			// a vehicle has finished building and will leave the building lot now
-	GAME_EV_WANT_STOP_BUILDING,		// a vehicle wants to stop building
 	GAME_EV_WANT_BUILDLIST,			// a building wants his buildlist to be verified by the server and start work
 	GAME_EV_WANT_EXIT_FIN_VEH,		// a client wants to exit a finished vehicle out of a building
 	GAME_EV_CHANGE_RESOURCES,		// a client wants to change his resource production
@@ -92,11 +91,6 @@ void sendSpecificUnitData (cServer& server, const cVehicle& Vehicle);
 */
 void sendVehicleResources (cServer& server, const cVehicle& vehicle);
 void sendResources (cServer& server, const cPlayer& player);
-/**
-* sends that a vehicle has to stop building
-*@author alzi alias DoctorDeath
-*/
-void sendStopBuild (cServer& server, int iVehicleID, const cPosition& newPosition, const cPlayer& receiver);
 
 /**
 * sends a list with all units which are wanted to be produced by the building

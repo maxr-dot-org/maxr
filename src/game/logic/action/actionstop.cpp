@@ -17,41 +17,56 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include "actionstopmove.h"
-#include "game/data/units/vehicle.h"
+#include "actionstop.h"
+
 #include "game/data/model.h"
-#include "utility/string/toString.h"
-#include "game/logic/movejob.h"
 
 //------------------------------------------------------------------------------
-cActionStopMove::cActionStopMove (cBinaryArchiveOut& archive) :
-	cAction (eActiontype::ACTION_STOP_MOVE)
+cActionStop::cActionStop(const cUnit& unit) :
+	cAction(eActiontype::ACTION_STOP), 
+	unitId(unit.getId())
+{};
+
+//------------------------------------------------------------------------------
+cActionStop::cActionStop(cBinaryArchiveOut& archive)
+	: cAction(eActiontype::ACTION_STOP)
 {
 	serializeThis(archive);
 }
 
 //------------------------------------------------------------------------------
-cActionStopMove::cActionStopMove (const cVehicle& vehicle) :
-	cAction (eActiontype::ACTION_STOP_MOVE),
-	unitId (vehicle.getId())
-{}
-
-//------------------------------------------------------------------------------
-void cActionStopMove::execute (cModel& model) const
+void cActionStop::execute(cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	cVehicle* vehicle = model.getVehicleFromID(unitId);
-	if (vehicle == nullptr)
-	{
-		Log.write(" Can't find vehicle with id " + toString(unitId), cLog::eLOG_TYPE_NET_WARNING);
-		return;
-	}
-	
-	if (vehicle->getOwner()->getId() != playerNr) return;
+	cUnit* unit = model.getUnitFromID(unitId);
+	if (unit == nullptr) return;
+	if (unit->getOwner()->getId() != playerNr) return;
 
-	if (vehicle->getMoveJob())
+	if (unit->isABuilding())
 	{
-		vehicle->getMoveJob()->stop();
+		auto b = static_cast<cBuilding*>(unit);
+
+		b->stopWork();
+	}
+	else
+	{
+		auto vehicle = static_cast<cVehicle*>(unit);
+
+		if (vehicle->getMoveJob())
+		{
+			vehicle->getMoveJob()->stop();
+		}
+		else if (vehicle->isUnitBuildingABuilding())
+		{
+			vehicle->setBuildingABuilding(false);
+			vehicle->BuildPath = false;
+
+			if (vehicle->getIsBig())
+			{
+				model.getMap()->moveVehicle(*vehicle, vehicle->buildBigSavedPosition);
+				vehicle->getOwner()->doScan();
+			}
+		}
 	}
 }

@@ -101,13 +101,6 @@ void sendWantEndBuilding (const cClient& client, const cVehicle& vehicle, const 
 	client.sendNetMessage (std::move (message));
 }
 
-void sendWantStopBuilding (const cClient& client, int iVehicleID)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_STOP_BUILDING);
-	message->pushInt16 (iVehicleID);
-	client.sendNetMessage (std::move (message));
-}
-
 void sendWantBuildList (const cClient& client, const cBuilding& building, const std::vector<cBuildListItem>& buildList, bool bRepeat, int buildSpeed)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_BUILDLIST);

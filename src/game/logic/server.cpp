@@ -321,17 +321,6 @@ void cServer::handleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message)
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_WANT_STOP_BUILDING (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_WANT_STOP_BUILDING);
-
-	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
-	if (Vehicle == nullptr) return;
-	if (!Vehicle->isUnitBuildingABuilding()) return;
-	stopVehicleBuilding (*Vehicle);
-}
-
-//------------------------------------------------------------------------------
 void cServer::handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_BUILDLIST);
@@ -1128,8 +1117,9 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 			if (destVehicle)
 			{
 				// change the owner
-				if (destVehicle->isUnitBuildingABuilding()) stopVehicleBuilding (*destVehicle);
-				if (destVehicle->getMoveJob()) destVehicle->getMoveJob()->stop();
+				//TODO: use stopAction
+				//if (destVehicle->isUnitBuildingABuilding()) stopVehicleBuilding (*destVehicle);
+				//if (destVehicle->getMoveJob()) destVehicle->getMoveJob()->stop();
 				changeUnitOwner (*destVehicle, *srcVehicle->getOwner());
 			}
 		}
@@ -1146,8 +1136,9 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 			destUnit->setDisabledTurns (strength);
 			if (destVehicle)
 			{
-				if (destVehicle->isUnitBuildingABuilding()) stopVehicleBuilding (*destVehicle);
-				if (destVehicle->getMoveJob()) destVehicle->getMoveJob()->stop();
+				//TODO: use stopAction
+				//if (destVehicle->isUnitBuildingABuilding()) stopVehicleBuilding (*destVehicle);
+				//if (destVehicle->getMoveJob()) destVehicle->getMoveJob()->stop();
 			}
 			else if (destBuilding)
 			{
@@ -1245,7 +1236,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 	switch (message.iType)
 	{
 		case GAME_EV_END_BUILDING: handleNetMessage_GAME_EV_END_BUILDING (message); break;
-		case GAME_EV_WANT_STOP_BUILDING: handleNetMessage_GAME_EV_WANT_STOP_BUILDING (message); break;
 		case GAME_EV_WANT_BUILDLIST: handleNetMessage_GAME_EV_WANT_BUILDLIST (message); break;
 		case GAME_EV_WANT_EXIT_FIN_VEH: handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (message); break;
 		case GAME_EV_CHANGE_RESOURCES : handleNetMessage_GAME_EV_CHANGE_RESOURCES (message); break;
@@ -1803,29 +1793,6 @@ void cServer::changeUnitOwner (cVehicle& vehicle, cPlayer& newOwner)
 		vehicle.doSurvey ();
 	}
 	vehicle.makeDetection (*this);
-}
-
-//------------------------------------------------------------------------------
-void cServer::stopVehicleBuilding (cVehicle& vehicle)
-{
-	if (!vehicle.isUnitBuildingABuilding()) return;
-
-	vehicle.setBuildingABuilding (false);
-	vehicle.BuildPath = false;
-
-	auto position = vehicle.getPosition();
-
-	if (vehicle.getIsBig())
-	{
-		Map->moveVehicle (vehicle, vehicle.buildBigSavedPosition);
-		position = vehicle.buildBigSavedPosition;
-		vehicle.getOwner()->doScan();
-	}
-	sendStopBuild (*this, vehicle.iID, position, *vehicle.getOwner());
-	for (size_t i = 0; i != vehicle.seenByPlayerList.size(); ++i)
-	{
-		sendStopBuild (*this, vehicle.iID, position, *vehicle.seenByPlayerList[i]);
-	}
 }
 
 void cServer::sideStepStealthUnit (const cPosition& position, const cVehicle& vehicle, const cPosition& bigOffset)
