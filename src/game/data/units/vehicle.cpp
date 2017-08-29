@@ -377,8 +377,7 @@ void cVehicle::proceedBuilding (cModel& model)
 				model.addBuilding (getPosition(), getBuildingType(), getOwner());
 			}
 			BuildPath = false;
-			//TODO: notify GUI
-			// activePlayer->addSavedReport (std::make_unique<cSavedReportPathInterrupted> (*Vehicle));
+			getOwner()->buildPathInterrupted(*this);
  		}
 	}
 	else if (model.getUnitsData()->getStaticUnitData(getBuildingType()).surfacePosition != staticData->surfacePosition)
@@ -404,7 +403,7 @@ void cVehicle::continuePathBuilding(cModel& model)
 	else
 	{
 		BuildPath = false;
-		//TODO: notify GUI
+		getOwner()->buildPathInterrupted(*this);
 	}
 }
 

@@ -108,6 +108,7 @@
 #include "game/logic/action/actionstartbuild.h"
 #include "game/logic/action/actionstop.h"
 #include "game/logic/action/actionfinishbuild.h"
+#include "game/data/report/unit/savedreportpathinterrupted.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -1322,6 +1323,18 @@ void cGameGuiController::connectReportSources(cClient& client)
 	clientSignalConnectionManager.connect(player.unitAttacked, [&](const cUnit& unit)
 	{
 		addSavedReport(std::make_unique<cSavedReportAttacked>(unit), player.getId());
+	});
+	clientSignalConnectionManager.connect(player.buildPathInterrupted, [&](const cUnit& unit)
+	{
+		addSavedReport(std::make_unique<cSavedReportPathInterrupted>(unit), player.getId());
+	});
+	clientSignalConnectionManager.connect(player.buildErrorBuildPositionBlocked, [&]()
+	{
+		addSavedReport(std::make_unique<cSavedReportSimple> (eSavedReportType::Producing_PositionBlocked), player.getId());
+	});
+	clientSignalConnectionManager.connect(player.buildErrorInsufficientMaterial, [&]()
+	{
+		addSavedReport(std::make_unique<cSavedReportSimple> (eSavedReportType::Producing_InsufficientMaterial), player.getId());
 	});
 
 	//reports from the players base:

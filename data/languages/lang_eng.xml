@@ -356,7 +356,8 @@
 			<Point ENG="point"/>
 			<Points ENG="points"/>
 			<Producing ENG="Building"/>
-			<Producing_Err ENG="Buildposition blocked or insufficient raw materials to build"/>
+			<Producing_PositionBlocked ENG="Buildposition blocked"/>
+			<Producing_InsufficientMaterial ENG="Insufficient raw materials to build"/>
 			<Producing_Fin ENG="finished building"/>
 			<ReactionFireOff ENG="Reaction Fire Off"/>
 			<Repeat ENG="Again"/>

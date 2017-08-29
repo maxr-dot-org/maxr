@@ -190,6 +190,9 @@ public:
 	mutable cSignal<void ()> turnEndMovementsStarted;
 	mutable cSignal<void (const cUnit& unit)> unitDestroyed;
 	mutable cSignal<void (const cUnit& unit)> unitAttacked;
+	mutable cSignal<void ()> buildErrorBuildPositionBlocked;
+	mutable cSignal<void ()> buildErrorInsufficientMaterial;
+	mutable cSignal<void (const cUnit& unit)> buildPathInterrupted;
 
 	template <typename T>
 	void save(T& archive)

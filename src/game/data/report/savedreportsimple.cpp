@@ -70,8 +70,11 @@ std::string cSavedReportSimple::getMessage(const cUnitsData& unitsData) const
 		case eSavedReportType::BuildingDisabled:
 			return lngPack.i18n ("Text~Comp~Building_Disabled");
 
-		case eSavedReportType::ProducingError:
-			return lngPack.i18n ("Text~Comp~Producing_Err");
+		case eSavedReportType::Producing_InsufficientMaterial:
+			return lngPack.i18n ("Text~Comp~Producing_InsufficientMaterial");
+		case eSavedReportType::Producing_PositionBlocked:
+			return lngPack.i18n("Text~Comp~Producing_PositionBlocked");
+
 
 		case eSavedReportType::TurnWait:
 			return lngPack.i18n ("Text~Comp~Turn_Wait");

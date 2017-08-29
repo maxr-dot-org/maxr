@@ -83,8 +83,7 @@ void cActionStartBuild::execute(cModel& model) const
 	if (turboBuildCosts[buildSpeed] > vehicle->getStoredResources() ||
 		turboBuildRounds[buildSpeed] <= 0)
 	{
-		//TODO: notify GUI -> not enough material
-		// activePlayer->addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::ProducingError));
+		vehicle->getOwner()->buildErrorInsufficientMaterial;
 		return;
 	}
 
@@ -101,7 +100,7 @@ void cActionStartBuild::execute(cModel& model) const
 			map.possiblePlaceBuilding(data, buildPosition + cPosition(0, 1), vehicle) &&
 			map.possiblePlaceBuilding(data, buildPosition + cPosition(1, 1), vehicle)))
 		{
-			//TODO: notify GUI -> blocked position
+			vehicle->getOwner()->buildErrorBuildPositionBlocked();
 			return;
 		}
 		vehicle->buildBigSavedPosition = vehicle->getPosition();
@@ -116,7 +115,7 @@ void cActionStartBuild::execute(cModel& model) const
 
 		if (!map.possiblePlaceBuilding(data, buildPosition, vehicle))
 		{
-			//TODO: notify GUI -> blocked position
+			vehicle->getOwner()->buildErrorBuildPositionBlocked();
 			return;
 		}
 	}
