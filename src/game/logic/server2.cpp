@@ -30,6 +30,7 @@
 #include "utility/string/toString.h"
 #include "connectionmanager.h"
 #include "game/data/report/special/savedreportlostconnection.h"
+#include "debug.h"
 
 //------------------------------------------------------------------------------
 cServer2::cServer2(std::shared_ptr<cConnectionManager> connectionManager) :
@@ -463,6 +464,8 @@ void cServer2::initPlayerConnectionState()
 //------------------------------------------------------------------------------
 int cServer2::serverThreadCallback(void* arg)
 {
+	CR_ENABLE_CRASH_RPT_CURRENT_THREAD();
+
 	cServer2* server = reinterpret_cast<cServer2*> (arg);
 	server->run();
 	return 0;
