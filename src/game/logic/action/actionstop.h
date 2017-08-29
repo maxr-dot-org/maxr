@@ -17,16 +17,16 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef game_logic_actionStopWorkH
-#define game_logic_actionStopWorkH
+#ifndef game_logic_actionStopH
+#define game_logic_actionStopH
 
 #include "action.h"
 
-class cActionStopWork : public cAction
+class cActionStop : public cAction
 {
 public:
-	cActionStopWork(const cUnit& unit);
-	cActionStopWork(cBinaryArchiveOut& archive);
+	cActionStop(const cUnit& unit);
+	cActionStop(cBinaryArchiveOut& archive);
 
 	virtual void serialize(cBinaryArchiveIn& archive) { cAction::serialize(archive); serializeThis(archive); }
 	virtual void serialize(cTextArchiveIn& archive)   { cAction::serialize(archive); serializeThis(archive); }

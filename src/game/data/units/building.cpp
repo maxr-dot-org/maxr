@@ -41,7 +41,6 @@
 
 #include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffectvoice.h"
-#include "game/logic/action/actionstopwork.h"
 #include "utility/crc.h"
 
 using namespace std;
@@ -373,6 +372,7 @@ void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float
 	}
 }
 
+//------------------------------------------------------------------------------
 void cBuilding::render_beton (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const
 {
 	SDL_Rect tmp = dest;
@@ -400,6 +400,18 @@ void cBuilding::render_beton (SDL_Surface* surface, const SDL_Rect& dest, float 
 	}
 }
 
+//------------------------------------------------------------------------------
+void cBuilding::connectFirstBuildListItem()
+{
+	buildListFirstItemSignalConnectionManager.disconnectAll();
+	if (!buildList.empty())
+	{
+		buildListFirstItemSignalConnectionManager.connect(buildList[0].remainingMetalChanged, [this]() { buildListFirstItemDataChanged(); });
+		buildListFirstItemSignalConnectionManager.connect(buildList[0].typeChanged, [this]() { buildListFirstItemDataChanged(); });
+	}
+}
+
+//------------------------------------------------------------------------------
 void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, unsigned long long animationTime, int alpha) const
 {
 	int frameNr = dir;
@@ -1282,12 +1294,6 @@ bool cBuilding::factoryHasJustFinishedBuilding() const
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::executeStopCommand (const cClient& client) const
-{
-	client.sendNetMessage(cActionStopWork(*this));
-}
-
-//-----------------------------------------------------------------------------
 void cBuilding::executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType) const
 {
 	sendUpgradeBuilding (client, *this, updateAllOfSameType);
@@ -1336,12 +1342,7 @@ void cBuilding::setBuildList (std::vector<cBuildListItem> buildList_)
 {
 	buildList = std::move (buildList_);
 
-	buildListFirstItemSignalConnectionManager.disconnectAll();
-	if (!buildList.empty())
-	{
-		buildListFirstItemSignalConnectionManager.connect (buildList[0].remainingMetalChanged, [this]() { buildListFirstItemDataChanged(); });
-		buildListFirstItemSignalConnectionManager.connect (buildList[0].typeChanged, [this]() { buildListFirstItemDataChanged(); });
-	}
+	connectFirstBuildListItem();
 
 	buildListChanged();
 }
@@ -1351,12 +1352,7 @@ void cBuilding::addBuildListItem (cBuildListItem item)
 {
 	buildList.push_back (std::move (item));
 
-	buildListFirstItemSignalConnectionManager.disconnectAll();
-	if (!buildList.empty())
-	{
-		buildListFirstItemSignalConnectionManager.connect (buildList[0].remainingMetalChanged, [this]() { buildListFirstItemDataChanged(); });
-		buildListFirstItemSignalConnectionManager.connect (buildList[0].typeChanged, [this]() { buildListFirstItemDataChanged(); });
-	}
+	connectFirstBuildListItem();
 
 	buildListChanged();
 }
@@ -1366,12 +1362,7 @@ void cBuilding::removeBuildListItem (size_t index)
 {
 	buildList.erase (buildList.begin() + index);
 
-	buildListFirstItemSignalConnectionManager.disconnectAll();
-	if (!buildList.empty())
-	{
-		buildListFirstItemSignalConnectionManager.connect (buildList[0].remainingMetalChanged, [this]() { buildListFirstItemDataChanged(); });
-		buildListFirstItemSignalConnectionManager.connect (buildList[0].typeChanged, [this]() { buildListFirstItemDataChanged(); });
-	}
+	connectFirstBuildListItem();
 
 	buildListChanged();
 }

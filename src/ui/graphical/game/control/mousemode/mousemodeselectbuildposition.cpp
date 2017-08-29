@@ -137,10 +137,5 @@ std::pair<bool, cPosition> cMouseModeSelectBuildPosition::findNextBuildPosition(
 		return std::make_pair (true, cPosition (sourcePosition.x() - 1, sourcePosition.y()));
 	}
 
-	if (unitsData.getStaticUnitData(buildId).isBig)
-	{
-		return std::make_pair (true, cPosition (sourcePosition.x(), sourcePosition.y()));
-	}
-
 	return std::make_pair (false, cPosition());
 }

@@ -17,41 +17,32 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include "actionstopmove.h"
-#include "game/data/units/vehicle.h"
-#include "game/data/model.h"
-#include "utility/string/toString.h"
-#include "game/logic/movejob.h"
+#ifndef game_logic_actionFinishBuildH
+#define game_logic_actionFinishBuildH
 
-//------------------------------------------------------------------------------
-cActionStopMove::cActionStopMove (cBinaryArchiveOut& archive) :
-	cAction (eActiontype::ACTION_STOP_MOVE)
+#include "action.h"
+
+class cActionFinishBuild : public cAction
 {
-	serializeThis(archive);
-}
+public:
+	cActionFinishBuild(const cVehicle& vehicle, const cPosition& escapePosition);
+	cActionFinishBuild(cBinaryArchiveOut& archive);
 
-//------------------------------------------------------------------------------
-cActionStopMove::cActionStopMove (const cVehicle& vehicle) :
-	cAction (eActiontype::ACTION_STOP_MOVE),
-	unitId (vehicle.getId())
-{}
+	virtual void serialize(cBinaryArchiveIn& archive) { cAction::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive)   { cAction::serialize(archive); serializeThis(archive); }
 
-//------------------------------------------------------------------------------
-void cActionStopMove::execute (cModel& model) const
-{
-	//Note: this function handles incoming data from network. Make every possible sanity check!
-
-	cVehicle* vehicle = model.getVehicleFromID(unitId);
-	if (vehicle == nullptr)
-	{
-		Log.write(" Can't find vehicle with id " + toString(unitId), cLog::eLOG_TYPE_NET_WARNING);
-		return;
-	}
+	virtual void execute(cModel& model) const override;
 	
-	if (vehicle->getOwner()->getId() != playerNr) return;
+private:
+	int vehicleId;
+	cPosition escapePosition;
 
-	if (vehicle->getMoveJob())
+	template<typename T>
+	void serializeThis(T& archive)
 	{
-		vehicle->getMoveJob()->stop();
+		archive & vehicleId;
+		archive & escapePosition;
 	}
-}
+};
+
+#endif

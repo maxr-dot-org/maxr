@@ -17,29 +17,58 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef game_logic_actionStopMoveH
-#define game_logic_actionStopMoveH
+#include "actionstop.h"
 
-#include "action.h"
+#include "game/data/model.h"
 
-class cActionStopMove : public cAction
+//------------------------------------------------------------------------------
+cActionStop::cActionStop(const cUnit& unit) :
+	cAction(eActiontype::ACTION_STOP), 
+	unitId(unit.getId())
+{};
+
+//------------------------------------------------------------------------------
+cActionStop::cActionStop(cBinaryArchiveOut& archive)
+	: cAction(eActiontype::ACTION_STOP)
 {
-public:
-	cActionStopMove(const cVehicle& vehicle);
-	cActionStopMove(cBinaryArchiveOut& archive);
+	serializeThis(archive);
+}
 
-	virtual void serialize(cBinaryArchiveIn& archive) { cAction::serialize(archive); serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive)   { cAction::serialize(archive); serializeThis(archive); }
+//------------------------------------------------------------------------------
+void cActionStop::execute(cModel& model) const
+{
+	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	virtual void execute(cModel& model) const override;
-private:
-	template<typename T>
-	void serializeThis(T& archive)
+	cUnit* unit = model.getUnitFromID(unitId);
+	if (unit == nullptr) return;
+	if (unit->getOwner()->getId() != playerNr) return;
+
+	if (unit->isABuilding())
 	{
-		archive & unitId;
+		auto b = static_cast<cBuilding*>(unit);
+
+		b->stopWork();
 	}
+	else
+	{
+		auto vehicle = static_cast<cVehicle*>(unit);
 
-	unsigned int unitId;
-};
+		if (vehicle->getMoveJob())
+		{
+			vehicle->getMoveJob()->stop();
+		}
+		else if (vehicle->isUnitBuildingABuilding())
+		{
+			if (vehicle->getBuildTurns() == 0) return; 
 
-#endif // game_logic_actionStopMoveH
+			vehicle->setBuildingABuilding(false);
+			vehicle->BuildPath = false;
+
+			if (vehicle->getIsBig())
+			{
+				model.getMap()->moveVehicle(*vehicle, vehicle->buildBigSavedPosition);
+				vehicle->getOwner()->doScan();
+			}
+		}
+	}
+}

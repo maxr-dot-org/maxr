@@ -100,7 +100,8 @@ std::unique_ptr<cSavedReport> cSavedReport::createFromImpl (T& archive)
 	case eSavedReportType::EnergyToLow:
 	case eSavedReportType::EnergyIsNeeded:
 	case eSavedReportType::BuildingDisabled:
-	case eSavedReportType::ProducingError:
+	case eSavedReportType::Producing_InsufficientMaterial:
+	case eSavedReportType::Producing_PositionBlocked:
 	case eSavedReportType::TurnWait:
 	case eSavedReportType::TurnAutoMove:
 		return std::make_unique<cSavedReportSimple>(type);

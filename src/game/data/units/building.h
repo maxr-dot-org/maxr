@@ -316,6 +316,7 @@ public:
 				uiData = UnitsUiData.getBuildingUI(data.getId());
 			}
 			registerOwnerEvents();
+			connectFirstBuildListItem();
 		}
 	}
 
@@ -330,6 +331,7 @@ private:
 
 	void render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
 	void render_beton (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const;
+	void connectFirstBuildListItem();
 
 	bool isWorking;  // is the building currently working?
 
@@ -347,13 +349,6 @@ private:
 	std::vector<cBuildListItem> buildList; // list with the units to be build by this factory
 
 	void registerOwnerEvents();
-
-	//-----------------------------------------------------------------------------
-protected:
-	//-- methods, that have been extracted during cUnit refactoring ---------------
-
-	// methods needed for execution of unit menu commands
-	virtual void executeStopCommand (const cClient& client) const MAXR_OVERRIDE_FUNCTION;
 };
 
 #endif // game_data_units_buildingH

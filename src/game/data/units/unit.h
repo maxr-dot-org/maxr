@@ -124,8 +124,6 @@ public:
 	virtual bool buildingCanBeUpgraded() const { return false; }
 	virtual bool canBeStoppedViaUnitMenu() const = 0;
 
-	virtual void executeStopCommand (const cClient& client) const = 0;
-
 	bool getIsBig() const;
 	void setIsBig(bool value);
 

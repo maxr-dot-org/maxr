@@ -53,7 +53,8 @@ enum class eSavedReportType
 
 	BuildingDisabled     = 12,
 
-	ProducingError       = 13,
+	Producing_PositionBlocked = 13,
+	Producing_InsufficientMaterial = 34,
 
 	TurnWait             = 14,
 	TurnAutoMove         = 15,

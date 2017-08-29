@@ -356,7 +356,8 @@
 			<Point ENG="point" localized="Punkt"/>
 			<Points ENG="points" localized="Punkte"/>
 			<Producing ENG="Building" localized="beim Bau"/>
-			<Producing_Err ENG="Buildposition blocked or insufficient raw materials to build" localized="Position blockiert oder ungenügend Rohstoff zum Bauen"/>
+			<Producing_PositionBlocked ENG="Buildposition blocked" localized="Kein Platz um hier zu bauen."/>
+			<Producing_InsufficientMaterial ENG="Insufficient raw materials to build" localized="Ungenügend Rohstoff zum Bauen."/>
 			<Producing_Fin ENG="finished building" localized="Bau abgeschlossen"/>
 			<ReactionFireOff ENG="Reaction Fire Off" localized="Manuell schießen"/>
 			<Repeat ENG="Again" localized="Wieder"/>

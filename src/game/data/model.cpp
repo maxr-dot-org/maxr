@@ -511,6 +511,19 @@ void cModel::deleteRubble(cBuilding* rubble)
 }
 
 //------------------------------------------------------------------------------
+cMoveJob* cModel::addMoveJob(cVehicle& vehicle, const cPosition& destination)
+{
+	cPathCalculator pc(vehicle, *map, destination, false);
+	auto path = pc.calcPath();
+	if (path.empty())
+	{
+		return nullptr;
+	}
+
+	return addMoveJob(vehicle, path);
+}
+
+//------------------------------------------------------------------------------
 cMoveJob* cModel::addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& path)
 {
 	cMoveJob* currentMoveJob = vehicle.getMoveJob();
@@ -775,7 +788,7 @@ void cModel::handleTurnEnd()
 				if (turnCounter->getTurn() > 1)
 				{
 					// don't execute turn start action in turn 1, because model is already completely initialized for turn 1
-					activeTurnPlayer->makeTurnStart();
+					activeTurnPlayer->makeTurnStart(*this);
 				}
 			}
 			else
@@ -784,7 +797,7 @@ void cModel::handleTurnEnd()
 
 				for (auto& player : playerList)
 				{
-					player->makeTurnStart();
+					player->makeTurnStart(*this);
 				}
 
 			}

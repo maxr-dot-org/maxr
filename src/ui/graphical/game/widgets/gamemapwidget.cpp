@@ -867,9 +867,23 @@ cPosition cGameMapWidget::getMapCenterOffset()
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::startFindBuildPosition (const sID& buildId)
+bool cGameMapWidget::startFindBuildPosition(const sID& buildId)
 {
-	setMouseInputMode (std::make_unique<cMouseModeSelectBuildPosition> (dynamicMap.get(), unitSelection, player.get(), buildId));
+	auto mouseMode = std::make_unique<cMouseModeSelectBuildPosition>(dynamicMap.get(), unitSelection, player.get(), buildId);
+	
+	// validate if there is any valid position, before setting mouse mode
+	const auto selectedVehicle = unitSelection.getSelectedVehicle();
+	if (selectedVehicle)
+	{
+		auto buildPos = mouseMode->findNextBuildPosition(selectedVehicle->getPosition(), selectedVehicle->getPosition(), *unitsData);
+		if (!buildPos.first)
+		{
+			return false;
+		}
+	}
+	setMouseInputMode (std::move(mouseMode));
+
+	return true;
 }
 
 //------------------------------------------------------------------------------

@@ -176,7 +176,7 @@ public:
 	void refreshResearchCentersWorkingOnArea();
 	void refreshBase(const cMap& map);
 
-	void makeTurnStart();
+	void makeTurnStart(cModel& model);
 
 	uint32_t getChecksum(uint32_t crc) const;
 
@@ -190,6 +190,9 @@ public:
 	mutable cSignal<void ()> turnEndMovementsStarted;
 	mutable cSignal<void (const cUnit& unit)> unitDestroyed;
 	mutable cSignal<void (const cUnit& unit)> unitAttacked;
+	mutable cSignal<void ()> buildErrorBuildPositionBlocked;
+	mutable cSignal<void ()> buildErrorInsufficientMaterial;
+	mutable cSignal<void (const cUnit& unit)> buildPathInterrupted;
 
 	template <typename T>
 	void save(T& archive)

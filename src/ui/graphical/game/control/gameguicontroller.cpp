@@ -105,6 +105,10 @@
 #include "game/logic/action/actionchangemanualfire.h"
 #include "game/logic/action/actionchangesentry.h"
 #include "game/logic/action/actionminelayerstatus.h"
+#include "game/logic/action/actionstartbuild.h"
+#include "game/logic/action/actionstop.h"
+#include "game/logic/action/actionfinishbuild.h"
+#include "game/data/report/unit/savedreportpathinterrupted.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -767,11 +771,11 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (buildBuildingTriggered, [&] (const cVehicle & vehicle, const cPosition & destination, const sID & unitId, int buildSpeed)
 	{
-		sendWantBuild (client, vehicle.iID, unitId, buildSpeed, destination, false, cPosition (0, 0));
+		client.sendNetMessage(cActionStartBuild(vehicle, unitId, buildSpeed, destination));
 	});
 	clientSignalConnectionManager.connect (buildBuildingPathTriggered, [&] (const cVehicle & vehicle, const cPosition & destination, const sID & unitId, int buildSpeed)
 	{
-		sendWantBuild (client, vehicle.iID, unitId, buildSpeed, vehicle.getPosition(), true, destination);
+		client.sendNetMessage(cActionStartBuild(vehicle, unitId, buildSpeed, vehicle.getPosition(), destination));
 	});
 	clientSignalConnectionManager.connect (buildVehiclesTriggered, [&] (const cBuilding & building, const std::vector<cBuildListItem>& buildList, int buildSpeed, bool repeat)
 	{
@@ -840,7 +844,7 @@ void cGameGuiController::connectClient (cClient& client)
 		const auto& units = gameGui->getGameMap().getUnitSelection().getSelectedUnits();
 		for (const auto& u : units)
 		{
-			u->executeStopCommand(client);
+			client.sendNetMessage(cActionStop(*u));
 		}
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredAutoMoveJob, [&] (const cUnit & unit)
@@ -904,7 +908,7 @@ void cGameGuiController::connectClient (cClient& client)
 
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredEndBuilding, [&] (const cVehicle & vehicle, const cPosition & destination)
 	{
-		sendWantEndBuilding (client, vehicle, destination);
+		client.sendNetMessage(cActionFinishBuild(vehicle, destination));
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredMoveSingle, [&] (const cVehicle & vehicle, const cPosition & destination)
 	{
@@ -1320,6 +1324,18 @@ void cGameGuiController::connectReportSources(cClient& client)
 	{
 		addSavedReport(std::make_unique<cSavedReportAttacked>(unit), player.getId());
 	});
+	clientSignalConnectionManager.connect(player.buildPathInterrupted, [&](const cUnit& unit)
+	{
+		addSavedReport(std::make_unique<cSavedReportPathInterrupted>(unit), player.getId());
+	});
+	clientSignalConnectionManager.connect(player.buildErrorBuildPositionBlocked, [&]()
+	{
+		addSavedReport(std::make_unique<cSavedReportSimple> (eSavedReportType::Producing_PositionBlocked), player.getId());
+	});
+	clientSignalConnectionManager.connect(player.buildErrorInsufficientMaterial, [&]()
+	{
+		addSavedReport(std::make_unique<cSavedReportSimple> (eSavedReportType::Producing_InsufficientMaterial), player.getId());
+	});
 
 	//reports from the players base:
 	allClientsSignalConnectionManager.connect(player.base.forcedRessouceProductionChance, [&](int resourceType, int amount, bool increase)
@@ -1478,18 +1494,26 @@ void cGameGuiController::showBuildBuildingsWindow (const cVehicle& vehicle)
 	buildWindow->canceled.connect ([buildWindow]() { buildWindow->close(); });
 	buildWindow->done.connect ([&, buildWindow]()
 	{
-		if (buildWindow->getSelectedUnitId())
+		const sID* buildingId = buildWindow->getSelectedUnitId();
+		if (buildingId)
 		{
-			if (activeClient->getModel().getUnitsData()->getStaticUnitData(*buildWindow->getSelectedUnitId()).isBig)
+			const auto& model = activeClient->getModel();
+			const auto& buildingData = model.getUnitsData()->getStaticUnitData(*buildingId);
+			if (buildingData.isBig)
 			{
-				gameGui->getGameMap().startFindBuildPosition (*buildWindow->getSelectedUnitId());
-				auto buildType = *buildWindow->getSelectedUnitId();
+				const auto& map = model.getMap();
+				if (!gameGui->getGameMap().startFindBuildPosition(*buildingId))
+				{
+					addSavedReport(std::make_unique<cSavedReportSimple>(eSavedReportType::Producing_PositionBlocked), activeClient->getActivePlayer().getId());
+					buildWindow->close();
+					return;
+				}
 				auto buildSpeed = buildWindow->getSelectedBuildSpeed();
 
 				buildPositionSelectionConnectionManager.disconnectAll();
-				buildPositionSelectionConnectionManager.connect (gameGui->getGameMap().selectedBuildPosition, [this, buildType, buildSpeed] (const cVehicle & selectedVehicle, const cPosition & destination)
+				buildPositionSelectionConnectionManager.connect (gameGui->getGameMap().selectedBuildPosition, [this, buildingId, buildSpeed] (const cVehicle & selectedVehicle, const cPosition & destination)
 				{
-					buildBuildingTriggered (selectedVehicle, destination, buildType, buildSpeed);
+					buildBuildingTriggered (selectedVehicle, destination, *buildingId, buildSpeed);
 					buildPositionSelectionConnectionManager.disconnectAll();
 				});
 			}

@@ -199,49 +199,6 @@ void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver)
 }
 
 //------------------------------------------------------------------------------
-void sendBuildAnswer (cServer& server, bool bOK, const cVehicle& vehicle)
-{
-	//message for the owner
-	auto message = std::make_unique<cNetMessage> (GAME_EV_BUILD_ANSWER);
-	if (bOK)
-	{
-		message->pushPosition (vehicle.bandPosition);
-		message->pushBool (vehicle.BuildPath);
-		message->pushInt16 (vehicle.getBuildTurns());
-		message->pushID (vehicle.getBuildingType());
-	//	message->pushBool (vehicle.getBuildingType().getUnitDataOriginalVersion()->isBig);
-		message->pushPosition (vehicle.getPosition());
-	}
-
-	message->pushInt16 (vehicle.iID);
-	message->pushBool (bOK);
-	server.sendNetMessage (std::move (message), vehicle.getOwner());
-
-	//message for the enemys
-	for (unsigned int i = 0; i < vehicle.seenByPlayerList.size(); i++)
-	{
-		auto message = std::make_unique<cNetMessage> (GAME_EV_BUILD_ANSWER);
-		if (bOK)
-		{
-	//		message->pushBool (vehicle.getBuildingType().getUnitDataOriginalVersion()->isBig);
-			message->pushPosition (vehicle.getPosition());
-		}
-		message->pushInt16 (vehicle.iID);
-		message->pushBool (bOK);
-		server.sendNetMessage (std::move (message), vehicle.seenByPlayerList[i]);
-	}
-}
-
-//------------------------------------------------------------------------------
-void sendStopBuild (cServer& server, int iVehicleID, const cPosition& newPosition, const cPlayer& receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_STOP_BUILD);
-	message->pushPosition (newPosition);
-	message->pushInt16 (iVehicleID);
-	server.sendNetMessage (std::move (message), &receiver);
-}
-
-//------------------------------------------------------------------------------
 void sendBuildList (cServer& server, const cBuilding& building)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_BUILDLIST);

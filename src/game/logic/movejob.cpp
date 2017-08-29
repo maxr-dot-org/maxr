@@ -413,6 +413,7 @@ void cMoveJob::endMove(cModel& model)
 	if (path.empty())
 	{
 		endMoveAction.execute(model);
+		vehicle->continuePathBuilding(model);
 	}
 }
 

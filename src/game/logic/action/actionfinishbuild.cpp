@@ -17,31 +17,61 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include "actionstopwork.h"
+#include "actionfinishbuild.h"
+
 #include "game/data/model.h"
-#include "utility/log.h"
 
 //------------------------------------------------------------------------------
-cActionStopWork::cActionStopWork(const cUnit& unit) :
-	cAction(eActiontype::ACTION_STOP_WORK), 
-	unitId(unit.getId())
+cActionFinishBuild::cActionFinishBuild(const cVehicle& vehicle, const cPosition& escapePosition) :
+	cAction(eActiontype::ACTION_FINISH_BUILD), 
+	vehicleId(vehicle.getId()),
+	escapePosition(escapePosition)
 {};
 
 //------------------------------------------------------------------------------
-cActionStopWork::cActionStopWork(cBinaryArchiveOut& archive)
-	: cAction(eActiontype::ACTION_STOP_WORK)
+cActionFinishBuild::cActionFinishBuild(cBinaryArchiveOut& archive)
+	: cAction(eActiontype::ACTION_FINISH_BUILD)
 {
 	serializeThis(archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionStopWork::execute(cModel& model) const
+void cActionFinishBuild::execute(cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	cBuilding* b = model.getBuildingFromID(unitId);
-	if (b == nullptr) return;
-	if (b->getOwner()->getId() != playerNr) return;
+	auto map = model.getMap();
 
-	b->stopWork();
+	cVehicle* vehicle = model.getVehicleFromID(vehicleId);
+	if (vehicle == nullptr) return;
+	if (vehicle->getOwner()->getId() != playerNr) return;
+
+	if (!vehicle->isUnitBuildingABuilding() || vehicle->getBuildTurns() > 0) return;
+	if (!map->isValidPosition(escapePosition)) return;
+	if (!vehicle->isNextTo(escapePosition)) return;
+	
+	if (!map->possiblePlace(*vehicle, escapePosition))
+	{
+		//model.sideStepStealthUnit(escapePosition, *vehicle);
+	}
+	if (!map->possiblePlace(*vehicle, escapePosition)) return;
+
+	model.addBuilding (vehicle->getPosition(), vehicle->getBuildingType(), vehicle->getOwner());
+
+	// end building
+	vehicle->setBuildingABuilding(false);
+	vehicle->BuildPath = false;
+
+	// set the vehicle to the border
+	if (vehicle->getIsBig())
+	{
+		int x = vehicle->getPosition().x();
+		int y = vehicle->getPosition().y();
+		if (escapePosition.x() > vehicle->getPosition().x()) x++;
+		if (escapePosition.y() > vehicle->getPosition().y()) y++;
+		map->moveVehicle(*vehicle, cPosition(x, y));
+	}
+
+	// drive away from the building lot
+	model.addMoveJob (*vehicle, escapePosition);
 }

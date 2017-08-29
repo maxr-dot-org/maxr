@@ -23,10 +23,9 @@
 #include "main.h"
 #include "actioninitnewgame.h"
 #include "actionstartwork.h"
-#include "actionstopwork.h"
+#include "actionstop.h"
 #include "actiontransfer.h"
 #include "actionstartmove.h"
-#include "actionstopmove.h"
 #include "actionresumemove.h"
 #include "actionendturn.h"
 #include "actionselfdestroy.h"
@@ -34,6 +33,8 @@
 #include "actionchangesentry.h"
 #include "actionchangemanualfire.h"
 #include "actionminelayerstatus.h"
+#include "actionstartbuild.h"
+#include "actionfinishbuild.h"
 
 std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 {
@@ -46,14 +47,12 @@ std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 		return std::make_unique<cActionInitNewGame>(archive);
 	case eActiontype::ACTION_START_WORK:
 		return std::make_unique<cActionStartWork>(archive);
-	case eActiontype::ACTION_STOP_WORK:
-		return std::make_unique<cActionStopWork>(archive);
+	case eActiontype::ACTION_STOP:
+		return std::make_unique<cActionStop>(archive);
 	case eActiontype::ACTION_TRANSFER:
 		return std::make_unique<cActionTransfer>(archive);
 	case eActiontype::ACTION_START_MOVE:
 		return std::make_unique<cActionStartMove>(archive); 
-	case eActiontype::ACTION_STOP_MOVE:
-		return std::make_unique<cActionStopMove>(archive);
 	case eActiontype::ACTION_RESUME_MOVE:
 		return std::make_unique<cActionResumeMove>(archive); 
 	case eActiontype::ACTION_END_TURN:
@@ -68,6 +67,10 @@ std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 		return std::make_unique<cActionChangeManualFire>(archive);
 	case eActiontype::ACTION_MINELAYER_STATUS:
 		return std::make_unique<cActionMinelayerStatus>(archive);
+	case eActiontype::ACTION_START_BUILD:
+		return std::make_unique<cActionStartBuild>(archive);
+	case eActiontype::ACTION_FINISH_BUILD:
+		return std::make_unique<cActionFinishBuild>(archive);
 	default:
 		throw std::runtime_error("Unknown action type " + iToStr(static_cast<int>(type)));
 		return nullptr;
@@ -89,14 +92,12 @@ std::string enumToString(cAction::eActiontype value)
 		return "ACTION_INIT_NEW_GAME";
 	case cAction::eActiontype::ACTION_START_WORK:
 		return "ACTION_START_WORK";
-	case cAction::eActiontype::ACTION_STOP_WORK:
-		return "ACTION_STOP_WORK";
+	case cAction::eActiontype::ACTION_STOP:
+		return "ACTION_STOP";
 	case cAction::eActiontype::ACTION_TRANSFER:
 		return "ACTION_TRANSFER";
 	case cAction::eActiontype::ACTION_START_MOVE:
 		return "ACTION_START_MOVE";	
-	case cAction::eActiontype::ACTION_STOP_MOVE:
-		return "ACTION_STOP_MOVE";
 	case cAction::eActiontype::ACTION_RESUME_MOVE:
 		return "ACTION_RESUME_MOVE";
 	case cAction::eActiontype::ACTION_END_TURN:
@@ -111,6 +112,10 @@ std::string enumToString(cAction::eActiontype value)
 		return "ACTION_CHANGE_MANUAL_FIRE";
 	case cAction::eActiontype::ACTION_MINELAYER_STATUS:
 		return "ACTION_MINELAYER_STATUS";
+	case cAction::eActiontype::ACTION_START_BUILD:
+		return "ACTION_START_BUILD";
+	case cAction::eActiontype::ACTION_FINISH_BUILD:
+		return "ACTION_FINISH_BUILD";
 	default:
 		assert(false);
 		return toString(static_cast<int>(value));

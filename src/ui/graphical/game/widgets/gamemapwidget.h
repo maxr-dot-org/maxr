@@ -85,7 +85,7 @@ public:
 	void centerAt (const cPosition& position);
 	cPosition getMapCenterOffset();
 
-	void startFindBuildPosition (const sID& buildId);
+	bool startFindBuildPosition (const sID& buildId);
 	void startFindPathBuildPosition();
 	void startActivateVehicle (const cUnit& unit, size_t index);
 
