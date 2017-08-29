@@ -316,6 +316,7 @@ public:
 				uiData = UnitsUiData.getBuildingUI(data.getId());
 			}
 			registerOwnerEvents();
+			connectFirstBuildListItem();
 		}
 	}
 
@@ -330,6 +331,7 @@ private:
 
 	void render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
 	void render_beton (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const;
+	void connectFirstBuildListItem();
 
 	bool isWorking;  // is the building currently working?
 

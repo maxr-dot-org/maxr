@@ -372,6 +372,7 @@ void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float
 	}
 }
 
+//------------------------------------------------------------------------------
 void cBuilding::render_beton (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const
 {
 	SDL_Rect tmp = dest;
@@ -399,6 +400,18 @@ void cBuilding::render_beton (SDL_Surface* surface, const SDL_Rect& dest, float 
 	}
 }
 
+//------------------------------------------------------------------------------
+void cBuilding::connectFirstBuildListItem()
+{
+	buildListFirstItemSignalConnectionManager.disconnectAll();
+	if (!buildList.empty())
+	{
+		buildListFirstItemSignalConnectionManager.connect(buildList[0].remainingMetalChanged, [this]() { buildListFirstItemDataChanged(); });
+		buildListFirstItemSignalConnectionManager.connect(buildList[0].typeChanged, [this]() { buildListFirstItemDataChanged(); });
+	}
+}
+
+//------------------------------------------------------------------------------
 void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, unsigned long long animationTime, int alpha) const
 {
 	int frameNr = dir;
@@ -1329,12 +1342,7 @@ void cBuilding::setBuildList (std::vector<cBuildListItem> buildList_)
 {
 	buildList = std::move (buildList_);
 
-	buildListFirstItemSignalConnectionManager.disconnectAll();
-	if (!buildList.empty())
-	{
-		buildListFirstItemSignalConnectionManager.connect (buildList[0].remainingMetalChanged, [this]() { buildListFirstItemDataChanged(); });
-		buildListFirstItemSignalConnectionManager.connect (buildList[0].typeChanged, [this]() { buildListFirstItemDataChanged(); });
-	}
+	connectFirstBuildListItem();
 
 	buildListChanged();
 }
@@ -1344,12 +1352,7 @@ void cBuilding::addBuildListItem (cBuildListItem item)
 {
 	buildList.push_back (std::move (item));
 
-	buildListFirstItemSignalConnectionManager.disconnectAll();
-	if (!buildList.empty())
-	{
-		buildListFirstItemSignalConnectionManager.connect (buildList[0].remainingMetalChanged, [this]() { buildListFirstItemDataChanged(); });
-		buildListFirstItemSignalConnectionManager.connect (buildList[0].typeChanged, [this]() { buildListFirstItemDataChanged(); });
-	}
+	connectFirstBuildListItem();
 
 	buildListChanged();
 }
@@ -1359,12 +1362,7 @@ void cBuilding::removeBuildListItem (size_t index)
 {
 	buildList.erase (buildList.begin() + index);
 
-	buildListFirstItemSignalConnectionManager.disconnectAll();
-	if (!buildList.empty())
-	{
-		buildListFirstItemSignalConnectionManager.connect (buildList[0].remainingMetalChanged, [this]() { buildListFirstItemDataChanged(); });
-		buildListFirstItemSignalConnectionManager.connect (buildList[0].typeChanged, [this]() { buildListFirstItemDataChanged(); });
-	}
+	connectFirstBuildListItem();
 
 	buildListChanged();
 }
