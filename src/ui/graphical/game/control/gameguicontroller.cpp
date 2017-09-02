@@ -1494,15 +1494,15 @@ void cGameGuiController::showBuildBuildingsWindow (const cVehicle& vehicle)
 	buildWindow->canceled.connect ([buildWindow]() { buildWindow->close(); });
 	buildWindow->done.connect ([&, buildWindow]()
 	{
-		const sID* buildingId = buildWindow->getSelectedUnitId();
-		if (buildingId)
+		if (buildWindow->getSelectedUnitId())
 		{
+			const sID buildingId = *buildWindow->getSelectedUnitId();
 			const auto& model = activeClient->getModel();
-			const auto& buildingData = model.getUnitsData()->getStaticUnitData(*buildingId);
+			const auto& buildingData = model.getUnitsData()->getStaticUnitData(buildingId);
 			if (buildingData.isBig)
 			{
 				const auto& map = model.getMap();
-				if (!gameGui->getGameMap().startFindBuildPosition(*buildingId))
+				if (!gameGui->getGameMap().startFindBuildPosition(buildingId))
 				{
 					addSavedReport(std::make_unique<cSavedReportSimple>(eSavedReportType::Producing_PositionBlocked), activeClient->getActivePlayer().getId());
 					buildWindow->close();
@@ -1513,7 +1513,7 @@ void cGameGuiController::showBuildBuildingsWindow (const cVehicle& vehicle)
 				buildPositionSelectionConnectionManager.disconnectAll();
 				buildPositionSelectionConnectionManager.connect (gameGui->getGameMap().selectedBuildPosition, [this, buildingId, buildSpeed] (const cVehicle & selectedVehicle, const cPosition & destination)
 				{
-					buildBuildingTriggered (selectedVehicle, destination, *buildingId, buildSpeed);
+					buildBuildingTriggered (selectedVehicle, destination, buildingId, buildSpeed);
 					buildPositionSelectionConnectionManager.disconnectAll();
 				});
 			}
