@@ -292,6 +292,7 @@ string cBuilding::getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData&
 	else if (isManualFireActive())
 		return lngPack.i18n ("Text~Comp~ReactionFireOff");
 
+	//GoldRaf idle + gold-amount
 	if (staticData->convertsGold && getOwner() == whoWantsToKnow && !isUnitWorking())
 	{
 		string sText;
@@ -300,6 +301,33 @@ string cBuilding::getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData&
 		sText += iToStr(getOwner()->getCredits());
 		return sText;
 	}
+
+	//Research centre idle + projects
+	// Research Center
+	if (staticData->canResearch && getOwner() == whoWantsToKnow && !isUnitWorking())
+	{
+		string sText = lngPack.i18n("Text~Comp~Waits") + "\n";
+		for (int area = 0; area < cResearch::kNrResearchAreas; area++)
+		{
+			if (getOwner()->getResearchCentersWorkingOnArea((cResearch::ResearchArea)area) > 0)
+			{
+				switch (area)
+				{
+				case cResearch::kAttackResearch: sText += lngPack.i18n("Text~Others~Attack"); break;
+				case cResearch::kShotsResearch: sText += lngPack.i18n("Text~Others~Shots_7"); break;
+				case cResearch::kRangeResearch: sText += lngPack.i18n("Text~Others~Range"); break;
+				case cResearch::kArmorResearch: sText += lngPack.i18n("Text~Others~Armor_7"); break;
+				case cResearch::kHitpointsResearch: sText += lngPack.i18n("Text~Others~Hitpoints_7"); break;
+				case cResearch::kSpeedResearch: sText += lngPack.i18n("Text~Others~Speed"); break;
+				case cResearch::kScanResearch: sText += lngPack.i18n("Text~Others~Scan"); break;
+				case cResearch::kCostResearch: sText += lngPack.i18n("Text~Others~Costs"); break;
+				}
+				sText += lngPack.i18n("Text~Punctuation~Colon") + iToStr(getOwner()->getResearchState().getRemainingTurns(area, getOwner()->getResearchCentersWorkingOnArea((cResearch::ResearchArea)area))) + "\n";
+			}
+		}
+		return sText;
+	}
+
 
 	return lngPack.i18n ("Text~Comp~Waits");
 }
