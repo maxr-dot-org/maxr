@@ -1987,6 +1987,7 @@ void cGameGuiController::sendStartGroupMoveAction(std::vector<cVehicle*> group, 
 	}
 
 	// start movement of units, beginning with those, whose next waypoint is free
+	std::vector<const cVehicle*> startedMoves;
 	bool moveStarted = true;
 	while (moveStarted)
 	{
@@ -1995,10 +1996,11 @@ void cGameGuiController::sendStartGroupMoveAction(std::vector<cVehicle*> group, 
 		{
 			auto& vehicle = group[i];
 			auto& path = paths[i];
-			if (map.possiblePlace(*vehicle, path.front(), false, true))
+			if (map.possiblePlace(*vehicle, path.front(), false, true) || Contains(startedMoves, map.getField(path.front()).getVehicle()))
 			{
 				activeClient->sendNetMessage(cActionStartMove(*vehicle, path));
 				moveStarted = true;
+				startedMoves.push_back(vehicle);
 				vehicle = nullptr;
 				path.clear();
 			}
