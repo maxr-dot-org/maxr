@@ -948,6 +948,11 @@ void cMap::addVehicle (cVehicle& vehicle, const cPosition& position)
 	{
 		field.addVehicle (vehicle, 0);
 	}
+
+	if (vehicle.getIsBig())
+	{
+		moveVehicleBig(vehicle, position);
+	}
 	addedUnit (vehicle);
 }
 
