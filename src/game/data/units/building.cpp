@@ -280,7 +280,6 @@ string cBuilding::getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData&
 			sText += iToStr (getOwner()->getCredits());
 			return sText;
 		}
-
 		return lngPack.i18n ("Text~Comp~Working");
 	}
 
@@ -292,6 +291,15 @@ string cBuilding::getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData&
 		return lngPack.i18n ("Text~Comp~Sentry");
 	else if (isManualFireActive())
 		return lngPack.i18n ("Text~Comp~ReactionFireOff");
+
+	if (staticData->convertsGold && getOwner() == whoWantsToKnow && !isUnitWorking())
+	{
+		string sText;
+		sText = lngPack.i18n("Text~Comp~Waits") + "\n";
+		sText += lngPack.i18n("Text~Title~Credits") + lngPack.i18n("Text~Punctuation~Colon");
+		sText += iToStr(getOwner()->getCredits());
+		return sText;
+	}
 
 	return lngPack.i18n ("Text~Comp~Waits");
 }
