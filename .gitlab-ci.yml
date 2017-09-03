@@ -1,3 +1,5 @@
 build-linux:
     script:
-        - echo Echo
+        - mkdir build && cd build
+        - cmake ../
+        - make -j4
