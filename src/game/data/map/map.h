@@ -97,6 +97,9 @@ public:
 	cBuilding* getRubble() const;
 	/** returns a pointer to an expl. mine, if there is one */
 	cBuilding* getMine() const;
+	
+	/** checks if there is a building that allows gorund units on water fields */
+	bool hasBridgeOrPlattform() const;
 
 	/** Adds the passed building before the given index to the building list of the field */
 	void addBuilding (cBuilding& building, size_t index);

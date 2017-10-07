@@ -28,12 +28,14 @@
 class cClient;
 class cJob;
 class cMap;
+class cMapView;
 class cMapField;
 class cPlayer;
 class cServer;
 class cVehicle;
 template<typename> class cBox;
 class cSoundManager;
+struct sTerrain;
 
 //-----------------------------------------------------------------------------
 class cUnit
@@ -93,6 +95,8 @@ public:
 	 * upgraded version of the player.
 	 */
 	void upgradeToCurrentVersion();
+	/** checks if the unit has stealth abilities on its current position */
+	bool isStealthOnCurrentTerrain(const cMapField& field, const sTerrain& terrain) const;
 
 	void setDisabledTurns (int turns);
 	void setSentryActive (bool value);

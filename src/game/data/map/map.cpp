@@ -156,6 +156,20 @@ cBuilding* cMapField::getMine() const
 	return nullptr;
 }
 
+bool cMapField::hasBridgeOrPlattform() const
+{
+	for (cBuilding* building : buildings)
+	{
+		if (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA &&
+			building->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_BASE &&
+			!building->isRubble())
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 void cMapField::addBuilding (cBuilding& building, size_t index)
 {
 	assert (index <= buildings.size());

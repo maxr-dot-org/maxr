@@ -380,6 +380,8 @@ void cPlayer::doScan()
 				drawSpecialCircle (bp->getPosition(), bp->data.getScan(), ScanMap, mapSize);
 		}
 	}
+
+	scanAreaChanged();
 }
 
 void cPlayer::revealMap()
@@ -409,6 +411,25 @@ bool cPlayer::canSeeAnyAreaUnder (const cUnit& unit) const
 		   canSeeAt (unit.getPosition() + cPosition (1, 0));
 }
 
+//------------------------------------------------------------------------------
+bool cPlayer::canSeeUnit(const cUnit& unit, const cMap& map) const
+{
+	const auto& position = unit.getPosition();
+	return canSeeUnit(unit, map.getField(position), map.staticMap->getTerrain(position));
+}
+
+//------------------------------------------------------------------------------
+bool cPlayer::canSeeUnit(const cUnit& unit, const cMapField& field, const sTerrain& terrain) const
+{
+	if (unit.getOwner() == this) return true;
+
+	if (!canSeeAnyAreaUnder(unit)) return false;
+	
+	if (!unit.isStealthOnCurrentTerrain(field, terrain)) return true;
+
+	return Contains(unit.detectedByPlayerList, this);
+}
+
 //--------------------------------------------------------------------------
 std::string cPlayer::resourceMapToString() const
 {
@@ -429,7 +450,6 @@ void cPlayer::setResourceMapFromString(const std::string& str)
 		ResourceMap.set(i, getByteValue(str, 2*i));
 	}
 }
-
 
 //------------------------------------------------------------------------------
 bool cPlayer::hasUnits() const

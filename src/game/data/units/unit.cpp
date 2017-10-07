@@ -26,6 +26,7 @@
 #include "game/logic/clientevents.h"
 #include "game/data/map/map.h"
 #include "game/data/player/player.h"
+#include "game/data/map/mapview.h"
 
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
@@ -493,6 +494,36 @@ void cUnit::setStoredResources(int value)
 	value = std::max(std::min(value, staticData->storageResMax), 0);
 	std::swap(storageResCur, value);
 	if (storageResCur != value) storedResourcesChanged();
+}
+
+//------------------------------------------------------------------------------
+bool cUnit::isStealthOnCurrentTerrain(const cMapField& field, const sTerrain& terrain) const
+{
+	if (staticData->isStealthOn & AREA_EXP_MINE)
+	{
+		return true;
+	}
+	else if (staticData->factorAir > 0 &&
+		isAVehicle() &&
+		static_cast<const cVehicle*>(this)->getFlightHeight() > 0)
+	{
+		return (staticData->isStealthOn & TERRAIN_AIR) != 0;
+	}
+	else if ((field.hasBridgeOrPlattform() && staticData->factorGround > 0) ||
+			(!terrain.coast && !terrain.water))
+	{
+		return (staticData->isStealthOn & TERRAIN_GROUND) != 0;
+	}
+	else if (terrain.coast)
+	{
+		return (staticData->isStealthOn & TERRAIN_COAST) != 0;
+	}
+	else if (terrain.water)
+	{
+		return (staticData->isStealthOn & TERRAIN_SEA) != 0;
+	}
+
+	return false;
 }
 
 //------------------------------------------------------------------------------
