@@ -22,6 +22,7 @@
 #include "game/data/model.h"
 
 #include "utility/log.h"
+#include "game/data/map/mapview.h"
 
 //------------------------------------------------------------------------------
 cActionAttack::cActionAttack(const cUnit& aggressor, cPosition targetPosition, const cUnit* targetUnit) :
@@ -71,7 +72,8 @@ void cActionAttack::execute(cModel& model) const
 	}
 
 	// check if attack is possible
-	if (aggressor->canAttackObjectAt(validatedTargetPosition, *model.getMap(), true) == false)
+	cMapView mapView(model.getMap(), nullptr);
+	if (aggressor->canAttackObjectAt(validatedTargetPosition, mapView, true) == false)
 	{
 		Log.write(" cActionAttack: Attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
 		return;

@@ -109,6 +109,7 @@
 #include "game/logic/action/actionstop.h"
 #include "game/logic/action/actionfinishbuild.h"
 #include "game/data/report/unit/savedreportpathinterrupted.h"
+#include "game/data/map/mapview.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -273,8 +274,16 @@ void cGameGuiController::setServer(cServer2* server_)
 void cGameGuiController::setActiveClient (std::shared_ptr<cClient> client_)
 {
 	activeClient = std::move (client_);
+	if (activeClient)
+	{
+		mapView = std::make_shared<const cMapView>(activeClient->getModel().getMap(), getActivePlayer());
+	}
+	else
+	{
+		mapView = nullptr;
+	}
 
-	gameGui->setDynamicMap (getDynamicMap());
+	gameGui->setMapView(mapView);
 	gameGui->setPlayers (getPlayers());
 	gameGui->setPlayer (getActivePlayer());
 	gameGui->setTurnClock (getTurnCounter());
@@ -913,9 +922,8 @@ void cGameGuiController::connectClient (cClient& client)
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredMoveSingle, [&] (const cVehicle & vehicle, const cPosition & destination)
 	{
 		if (!activeClient) return;
-		const auto& map = *activeClient->getModel().getMap();
 
-		cPathCalculator pc(vehicle, map, destination, false);
+		cPathCalculator pc(vehicle, *mapView, destination, false);
 		const auto path = pc.calcPath();
 		if (!path.empty())
 		{
@@ -951,7 +959,7 @@ void cGameGuiController::connectClient (cClient& client)
 				if (overVehicle->getPosition() == vehicle.getPosition()) sendWantLoad (client, vehicle.iID, true, overVehicle->iID);
 				else
 				{
-					cPathCalculator pc (vehicle, *client.getModel().getMap(), position, false);
+					cPathCalculator pc (vehicle, *mapView, position, false);
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
@@ -969,7 +977,7 @@ void cGameGuiController::connectClient (cClient& client)
 				if (vehicle.isNextTo (overVehicle->getPosition())) sendWantLoad (client, vehicle.iID, true, overVehicle->iID);
 				else
 				{
-					cPathCalculator pc (vehicle, *client.getModel().getMap(), *overVehicle, true);
+					cPathCalculator pc (vehicle, *mapView, *overVehicle, true);
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
@@ -991,7 +999,7 @@ void cGameGuiController::connectClient (cClient& client)
 				if (building.isNextTo (overVehicle->getPosition())) sendWantLoad (client, building.iID, false, overVehicle->iID);
 				else
 				{
-					cPathCalculator pc (*overVehicle, *client.getModel().getMap(), building, true);
+					cPathCalculator pc (*overVehicle, *mapView, building, true);
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
@@ -1009,7 +1017,7 @@ void cGameGuiController::connectClient (cClient& client)
 				if (building.isNextTo (overPlane->getPosition())) sendWantLoad (client, building.iID, false, overPlane->iID);
 				else
 				{
-					cPathCalculator pc (*overPlane, *client.getModel().getMap(), building, true);
+					cPathCalculator pc (*overPlane, *mapView, building, true);
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
@@ -1038,7 +1046,7 @@ void cGameGuiController::connectClient (cClient& client)
 		{
 			const auto& vehicle = static_cast<const cVehicle&> (unit);
 
-			cUnit* target = cAttackJob::selectTarget (position, vehicle.getStaticUnitData().canAttack, *client.getModel().getMap(), vehicle.getOwner());
+			cUnit* target = cAttackJob::selectTarget (position, vehicle.getStaticUnitData().canAttack, *mapView, vehicle.getOwner());
 
 			if (vehicle.isInRange (position))
 			{
@@ -1046,7 +1054,7 @@ void cGameGuiController::connectClient (cClient& client)
 			}
 			else if (target)
 			{
-				cPathCalculator pc (vehicle, *client.getModel().getMap(), position, true);
+				cPathCalculator pc (vehicle, *mapView, position, true);
 				const auto path = pc.calcPath();
 				if (!path.empty())
 				{
@@ -1062,9 +1070,8 @@ void cGameGuiController::connectClient (cClient& client)
 		else if (unit.isABuilding())
 		{
 			const auto& building = static_cast<const cBuilding&> (unit);
-			const cMap& map = *client.getModel().getMap();
-
-			cUnit* target = cAttackJob::selectTarget (position, building.getStaticUnitData().canAttack, map, building.getOwner());
+			
+			cUnit* target = cAttackJob::selectTarget (position, building.getStaticUnitData().canAttack, *mapView, building.getOwner());
 
 			activeClient->sendNetMessage(cActionAttack(building, position, target));
 		}
@@ -1088,7 +1095,7 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 		else if (selectedVehiclesCount == 1)
 		{
-			cPathCalculator pc(selectedVehicle, *client.getModel().getMap(), destination, false);
+			cPathCalculator pc(selectedVehicle, *mapView, destination, false);
 			const auto path = pc.calcPath();
 			if (!path.empty())
 			{
@@ -1264,17 +1271,15 @@ void cGameGuiController::connectClient (cClient& client)
 		soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceTurnAlertTimeReached, getRandom (VoiceData.VOITurnEnd20Sec)));
 	});
 
-	clientSignalConnectionManager.connect (getDynamicMap()->addedUnit, [&] (const cUnit & unit)
+	clientSignalConnectionManager.connect (mapView->unitAppeared, [&] (const cUnit & unit)
 	{
-		if (!getActivePlayer()->canSeeAnyAreaUnder(unit)) return;
 		if (getActivePlayer().get() != unit.getOwner()) return;
 
 		if (unit.data.getId() == client.getModel().getUnitsData()->getSpecialIDSeaMine()) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectPlaceMine, SoundData.SNDSeaMinePlace, unit));
 		else if (unit.data.getId() == client.getModel().getUnitsData()->getSpecialIDLandMine()) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectPlaceMine, SoundData.SNDLandMinePlace, unit));
 	});
-	clientSignalConnectionManager.connect(getDynamicMap()->removedUnit, [&] (const cUnit & unit)
+	clientSignalConnectionManager.connect(mapView->unitDissappeared, [&] (const cUnit & unit)
 	{
-		if (!getActivePlayer()->canSeeAnyAreaUnder(unit)) return;
 		if (getActivePlayer().get() != unit.getOwner()) return;
 
 		if (unit.data.getId() == client.getModel().getUnitsData()->getSpecialIDLandMine()) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectClearMine, SoundData.SNDLandMineClear, unit));
@@ -1546,11 +1551,9 @@ void cGameGuiController::showBuildBuildingsWindow (const cVehicle& vehicle)
 //------------------------------------------------------------------------------
 void cGameGuiController::showBuildVehiclesWindow (const cBuilding& building)
 {
-	const auto dynamicMap = getDynamicMap();
+	if (!mapView) return;
 
-	if (!dynamicMap) return;
-
-	auto buildWindow = application.show(std::make_shared<cWindowBuildVehicles>(building, *dynamicMap, getUnitsData(), getTurnTimeClock()));
+	auto buildWindow = application.show(std::make_shared<cWindowBuildVehicles>(building, *mapView, getUnitsData(), getTurnTimeClock()));
 
 	buildWindow->canceled.connect ([buildWindow]() { buildWindow->close(); });
 	buildWindow->done.connect ([&, buildWindow]()
@@ -1642,9 +1645,7 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 	});
 	storageWindow->activateAll.connect ([&, storageWindow]()
 	{
-		const auto dynamicMap = getDynamicMap();
-
-		if (dynamicMap)
+		if (mapView)
 		{
 			std::array<bool, 16> hasCheckedPlace;
 			hasCheckedPlace.fill (false);
@@ -1656,17 +1657,17 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 				bool activated = false;
 				for (int ypos = unit.getPosition().y() - 1, poscount = 0; ypos <= unit.getPosition().y() + (unit.getIsBig() ? 2 : 1); ypos++)
 				{
-					if (ypos < 0 || ypos >= dynamicMap->getSize().y()) continue;
+					if (ypos < 0 || ypos >= mapView->getSize().y()) continue;
 					for (int xpos = unit.getPosition().x() - 1; xpos <= unit.getPosition().x() + (unit.getIsBig() ? 2 : 1); xpos++, poscount++)
 					{
 						if (hasCheckedPlace[poscount]) continue;
 
-						if (xpos < 0 || xpos >= dynamicMap->getSize().x()) continue;
+						if (xpos < 0 || xpos >= mapView->getSize().x()) continue;
 
 						if (((ypos == unit.getPosition().y() && unit.getStaticUnitData().factorAir == 0) || (ypos == unit.getPosition().y() + 1 && unit.getIsBig())) &&
 							((xpos == unit.getPosition().x() && unit.getStaticUnitData().factorAir == 0) || (xpos == unit.getPosition().x() + 1 && unit.getIsBig()))) continue;
 
-						if (unit.canExitTo (cPosition (xpos, ypos), *dynamicMap, storedUnit.getStaticUnitData()))
+						if (unit.canExitTo (cPosition (xpos, ypos), *mapView, storedUnit.getStaticUnitData()))
 						{
 							activateAtTriggered (unit, i, cPosition (xpos, ypos));
 							hasCheckedPlace[poscount] = true;
@@ -1947,12 +1948,7 @@ std::shared_ptr<const cCasualtiesTracker> cGameGuiController::getCasualtiesTrack
 	return activeClient ? activeClient->getCasualtiesTracker() : nullptr;
 }
 
-//------------------------------------------------------------------------------
-std::shared_ptr<const cMap> cGameGuiController::getDynamicMap() const
-{
-	return activeClient ? activeClient->getModel().getMap() : nullptr;
-}
-//------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 std::shared_ptr<const cUnitsData> cGameGuiController::getUnitsData() const
 {
 	return activeClient ? activeClient->getModel().getUnitsData() : nullptr;
@@ -1963,7 +1959,6 @@ void cGameGuiController::sendStartGroupMoveAction(std::vector<cVehicle*> group, 
 {
 	if (group.size() == 0) return;
 
-	const auto& map = *activeClient->getModel().getMap();
 	const cPosition moveVector = destination - group[0]->getPosition();
 
 	// calc paths for all units
@@ -1972,7 +1967,7 @@ void cGameGuiController::sendStartGroupMoveAction(std::vector<cVehicle*> group, 
 	{
 		const cVehicle& vehicle = **it;
 		cPosition vehicleDestination = vehicle.getPosition() + moveVector;
-		cPathCalculator pc(vehicle, map, vehicleDestination, &group);
+		cPathCalculator pc(vehicle, *mapView, vehicleDestination, &group);
 		auto path = pc.calcPath();
 		if (path.empty())
 		{
@@ -1996,7 +1991,7 @@ void cGameGuiController::sendStartGroupMoveAction(std::vector<cVehicle*> group, 
 		{
 			auto& vehicle = group[i];
 			auto& path = paths[i];
-			if (map.possiblePlace(*vehicle, path.front(), false, true) || Contains(startedMoves, map.getField(path.front()).getVehicle()))
+			if (mapView->possiblePlace(*vehicle, path.front(), true) || Contains(startedMoves, mapView->getField(path.front()).getVehicle()))
 			{
 				activeClient->sendNetMessage(cActionStartMove(*vehicle, path));
 				moveStarted = true;

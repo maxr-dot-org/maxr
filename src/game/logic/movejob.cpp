@@ -31,6 +31,7 @@
 #include "game/data/map/map.h"
 #include "utility/string/toString.h"
 #include "game/data/model.h"
+#include "game/data/map/mapview.h"
 
 //                           N, NE, E, SE, S, SW, W, NW
 const int directionDx[8] = { 0, 1, 1, 1, 0, -1, -1, -1 };
@@ -211,12 +212,12 @@ void cMoveJob::startMove(cModel& model)
 		return;
 	}
 
-	bool nextFieldFree = handleCollision(map);
+	bool nextFieldFree = handleCollision(model);
 	if (!nextFieldFree)
 	{
 		return;
 	}
-
+	
 	int nextCosts = cPathCalculator::calcNextCost(vehicle->getPosition(), path.front(), vehicle, &map);
 	if (vehicle->data.getSpeed() < nextCosts)
 	{
@@ -251,15 +252,17 @@ void cMoveJob::startMove(cModel& model)
 }
 
 //------------------------------------------------------------------------------
-bool cMoveJob::handleCollision(cMap &map)
+bool cMoveJob::handleCollision(cModel &model)
 {
-	if (map.possiblePlace(*vehicle, path.front()))
+	const cMap& map = *model.getMap();
+
+	if (map.possiblePlace(*vehicle, path.front(), false))
 	{
 		return true;
 	}
 
 	//TODO: model.sideStepStealthUnit();
-	if (map.possiblePlace(*vehicle, path.front()))
+	if (map.possiblePlace(*vehicle, path.front(), false))
 	{
 		return true;
 	}
@@ -272,9 +275,14 @@ bool cMoveJob::handleCollision(cMap &map)
 	}
 
 	// field is definitely blocked. Try to find another path to destination
+	const auto& playerList = model.getPlayerList();
+	auto iter = std::find_if(playerList.begin(), playerList.end(), [this](const std::shared_ptr<cPlayer>& player) { return player->getId() == vehicle->getOwner()->getId(); });
+	const cMapView mapView(model.getMap(), *iter); //use owners mapview to calc path
+
 	cPosition dest;
 	for (const auto& pos : path) dest = pos;
-	cPathCalculator pc(*vehicle, map, dest, false);
+
+	cPathCalculator pc(*vehicle, mapView, dest, false);
 	auto newPath = pc.calcPath(); //TODO: don't execute path calculation on each model
 	if (newPath.empty())
 	{

@@ -43,7 +43,7 @@ public:
 	cUnitDrawingEngine (std::shared_ptr<cAnimationTimer> animationTimer, std::shared_ptr<const cFrameCounter> frameCounter);
 
 	void drawUnit (const cBuilding& building, SDL_Rect destination, float zoomFactor, const cUnitSelection* unitSelection = nullptr, const cPlayer* player = nullptr);
-	void drawUnit (const cVehicle& vehicle, SDL_Rect destination, float zoomFactor, const cMap& map, const cUnitSelection* unitSelection = nullptr, const cPlayer* player = nullptr);
+	void drawUnit (const cVehicle& vehicle, SDL_Rect destination, float zoomFactor, const cMapView& map, const cUnitSelection* unitSelection = nullptr, const cPlayer* player = nullptr);
 
 	void setDrawHits (bool drawHits);
 	void setDrawStatus (bool drawStatus);

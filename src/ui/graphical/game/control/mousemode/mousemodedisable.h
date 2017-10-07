@@ -26,7 +26,7 @@
 class cMouseModeDisable : public cMouseMode
 {
 public:
-	cMouseModeDisable (const cMap* map, const cUnitSelection& unitSelection, const cPlayer* player);
+	cMouseModeDisable (const cMapView* map, const cUnitSelection& unitSelection, const cPlayer* player);
 
 	virtual eMouseModeType getType() const MAXR_OVERRIDE_FUNCTION;
 
@@ -36,12 +36,12 @@ public:
 
 protected:
 	virtual void establishUnitSelectionConnections() MAXR_OVERRIDE_FUNCTION;
-	virtual void establishMapFieldConnections (const cMapField& field) MAXR_OVERRIDE_FUNCTION;
+	virtual void establishMapFieldConnections (const cMapFieldView& field) MAXR_OVERRIDE_FUNCTION;
 
 private:
 	bool canExecuteAction (const cPosition& mapPosition) const;
 
-	void updateFieldUnitConnections (const cMapField& field);
+	void updateFieldUnitConnections (const cMapFieldView& field);
 };
 
 #endif // ui_graphical_game_control_mousemode_mousemodedisableH

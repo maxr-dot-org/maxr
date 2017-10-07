@@ -53,7 +53,9 @@ public:
 	cPlayer* getOwner() const;
 	void setOwner (cPlayer* owner);
 
-	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const = 0;
+	virtual bool canTransferTo (const cPosition& position, const cMapView& map) const = 0;
+	virtual bool canTransferTo (const cUnit& unit) const = 0;
+	virtual bool canExitTo (const cPosition& position, const cMapView& map, const cStaticUnitData& unitData) const = 0;
 	virtual bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const = 0;
 	virtual std::string getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData& unitsData) const = 0;
 
@@ -89,7 +91,7 @@ public:
 	 *  when forceAttack is false, the function only returns true,
 	 *  if there is an enemy unit
 	 */
-	bool canAttackObjectAt (const cPosition& position, const cMap& map, bool forceAttack = false, bool checkRange = true) const;
+	bool canAttackObjectAt (const cPosition& position, const cMapView& map, bool forceAttack = false, bool checkRange = true) const;
 
 	/** Upgrades the unit data of this unit to the current,
 	 * upgraded version of the player.
@@ -205,7 +207,8 @@ public: // TODO: make protected/private and make getters/setters
 	std::vector<cVehicle*> storedUnits;		// list with the vehicles, that are stored in this unit
 
 	std::vector<cPlayer*> seenByPlayerList; // a list of all players who can see this unit //TODO: remove
-	std::vector<cPlayer*> detectedByPlayerList;		// a list of all players who have detected this unit
+	std::vector<cPlayer*> detectedByPlayerList;		// detection state of stealth units. Use cPlayer::canSeeUnit() to check 
+												    // if the unit is actually visible at the moment
 
 	// little jobs, running on the vehicle.
 	// e.g. rotating to a specific direction

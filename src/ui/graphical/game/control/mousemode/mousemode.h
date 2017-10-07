@@ -27,13 +27,13 @@
 #include "utility/signal/signalconnectionmanager.h"
 
 class cMouse;
-class cMap;
+class cMapView;
 class cPosition;
 class cGameMapWidget;
 class cUnitSelection;
 class cMouseAction;
 class cPlayer;
-class cMapField;
+class cMapFieldView;
 class cUnitsData;
 
 /**
@@ -51,14 +51,14 @@ public:
 	 * @param unitSelection The current unit selection.
 	 * @param player The player that is currently active in the GUI. May be null.
 	 */
-	cMouseMode (const cMap* map, const cUnitSelection& unitSelection, const cPlayer* player);
+	cMouseMode (const cMapView* map, const cUnitSelection& unitSelection, const cPlayer* player);
 	virtual ~cMouseMode();
 
 	/**
 	 * Set an other map to the mouse mode.
 	 * @param map The new map. May be null.
 	 */
-	void setMap (const cMap* map);
+	void setMap (const cMapView* map);
 	/**
 	 *
 	 * @param player
@@ -123,7 +123,7 @@ protected:
 	 */
 	cSignalConnectionManager mapFieldUnitsSignalConnectionManager;
 
-	const cMap* map;
+	const cMapView* map;
 	const cUnitSelection& unitSelection;
 	const cPlayer* player;
 
@@ -141,7 +141,7 @@ protected:
 	 *
 	 * @param field The new field below the mouse.
 	 */
-	virtual void establishMapFieldConnections (const cMapField& field);
+	virtual void establishMapFieldConnections (const cMapFieldView& field);
 
 private:
 	cSignalConnectionManager signalConnectionManager;

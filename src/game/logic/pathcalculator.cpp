@@ -17,14 +17,17 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
+#include <forward_list>
 
 #include "pathcalculator.h"
+
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
-#include "game/data/map/map.h"
+#include "game/data/map/mapview.h"
 #include "utility/listhelpers.h"
 #include "game/data/units/building.h"
-#include <forward_list>
+#include "utility/log.h"
+#include "game/data/map/mapfieldview.h"
 
 
 /* Size of a memory block while pathfinding */
@@ -68,25 +71,25 @@ int cPathDestHandler::heuristicCost (const cPosition& source) const
 	}
 }
 
-cPathCalculator::cPathCalculator(const cVehicle& Vehicle, const cMap& Map, const cPosition& destPosition, const std::vector<cVehicle*>* group)
+cPathCalculator::cPathCalculator(const cVehicle& Vehicle, const cMapView& Map, const cPosition& destPosition, const std::vector<cVehicle*>* group)
 {
 	destHandler = new cPathDestHandler (PATH_DEST_TYPE_POS, destPosition, nullptr, nullptr);
 	init (Vehicle.getPosition(), Map, Vehicle, group);
 }
 
-cPathCalculator::cPathCalculator(const cVehicle& Vehicle, const cMap& Map, const cUnit& destUnit, bool load)
+cPathCalculator::cPathCalculator(const cVehicle& Vehicle, const cMapView& Map, const cUnit& destUnit, bool load)
 {
 	destHandler = new cPathDestHandler (load ? PATH_DEST_TYPE_LOAD : PATH_DEST_TYPE_ATTACK, cPosition (0, 0), &Vehicle, &destUnit);
 	init (Vehicle.getPosition(), Map, Vehicle, nullptr);
 }
 
-cPathCalculator::cPathCalculator(const cVehicle& Vehicle, const cMap& Map, const cPosition& destPosition, bool attack)
+cPathCalculator::cPathCalculator(const cVehicle& Vehicle, const cMapView& Map, const cPosition& destPosition, bool attack)
 {
 	destHandler = new cPathDestHandler (attack ? PATH_DEST_TYPE_ATTACK : PATH_DEST_TYPE_POS, destPosition, &Vehicle, nullptr);
 	init (Vehicle.getPosition(), Map, Vehicle, nullptr);
 }
 
-void cPathCalculator::init (const cPosition& source, const cMap& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group)
+void cPathCalculator::init (const cPosition& source, const cMapView& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group)
 {
 	this->source = source;
 	this->Map = &Map;
@@ -186,7 +189,7 @@ void cPathCalculator::expandNodes (sPathNode* ParentNode)
 			const cPosition currentPosition (x, y);
 			if (currentPosition == ParentNode->position) continue;
 
-			if (!Map->possiblePlace (*Vehicle, currentPosition, true))
+			if (!Map->possiblePlace (*Vehicle, currentPosition))
 			{
 				// when we have a group of units, the units will not block each other
 				if (group)
@@ -310,32 +313,5 @@ void cPathCalculator::deleteFirstFromHeap()
 		}
 		else break;
 	}
-}
-
-int cPathCalculator::calcNextCost(const cPosition& source, const cPosition& destination, const cVehicle* vehicle, const cMap* map)
-{
-	int costs;
-	// first we check whether the unit can fly
-	if (vehicle->getStaticUnitData().factorAir > 0)
-	{
-		if (source.x() != destination.x() && source.y() != destination.y()) return (int) (4 * 1.5f * vehicle->getStaticUnitData().factorAir);
-		else return (int) (4 * vehicle->getStaticUnitData().factorAir);
-	}
-	const cBuilding* building = map->getField (destination).getBaseBuilding();
-	// moving on water will cost more
-	if (map->isWater (destination) && (!building || (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BENEATH_SEA || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE)) && vehicle->getStaticUnitData().factorSea > 0) costs = (int) (4 * vehicle->getStaticUnitData().factorSea);
-	else if (map->isCoast (destination) && !building && vehicle->getStaticUnitData().factorCoast > 0) costs = (int) (4 * vehicle->getStaticUnitData().factorCoast);
-	else if (vehicle->getStaticUnitData().factorGround > 0) costs = (int)(4 * vehicle->getStaticUnitData().factorGround);
-	else
-	{
-		Log.write ("Where can this unit move? " + iToStr (vehicle->iID), cLog::eLOG_TYPE_NET_WARNING);
-		costs = 4;
-	}
-	// moving on a road is cheaper
-	if (building && building->getStaticUnitData().modifiesSpeed != 0) costs = (int)(costs * building->getStaticUnitData().modifiesSpeed);
-
-	// multiplicate with the factor 1.5 for diagonal movements
-	if (source.x() != destination.x() && source.y() != destination.y()) costs = (int) (costs * 1.5f);
-	return costs;
 }
 

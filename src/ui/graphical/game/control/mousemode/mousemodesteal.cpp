@@ -20,15 +20,16 @@
 #include "ui/graphical/game/control/mousemode/mousemodesteal.h"
 #include "ui/graphical/game/control/mouseaction/mouseactionsteal.h"
 #include "ui/graphical/game/unitselection.h"
-#include "game/data/map/map.h"
+#include "game/data/map/mapview.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
 #include "input/mouse/mouse.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
 #include "input/mouse/cursor/mousecursoramount.h"
+#include "game/data/map/mapfieldview.h"
 
 //------------------------------------------------------------------------------
-cMouseModeSteal::cMouseModeSteal (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
+cMouseModeSteal::cMouseModeSteal (const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
 	cMouseMode (map_, unitSelection_, player_)
 {
 	establishUnitSelectionConnections();
@@ -95,15 +96,15 @@ void cMouseModeSteal::establishUnitSelectionConnections()
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeSteal::establishMapFieldConnections (const cMapField& field)
+void cMouseModeSteal::establishMapFieldConnections (const cMapFieldView& field)
 {
-	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this, &field]() { updateFieldUnitConnections (field); needRefresh(); });
+	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this, field]() { updateFieldUnitConnections (field); needRefresh(); });
 
 	updateFieldUnitConnections (field);
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeSteal::updateFieldUnitConnections (const cMapField& field)
+void cMouseModeSteal::updateFieldUnitConnections (const cMapFieldView& field)
 {
 	mapFieldUnitsSignalConnectionManager.disconnectAll();
 

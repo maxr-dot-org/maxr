@@ -1075,14 +1075,15 @@ void cMap::moveVehicleBig (cVehicle& vehicle, const cPosition& position)
 
 bool cMap::possiblePlace (const cVehicle& vehicle, const cPosition& position, bool checkPlayer, bool ignoreMovingVehicles) const
 {
-	return possiblePlaceVehicle (vehicle.getStaticUnitData(), position, vehicle.getOwner(), checkPlayer, ignoreMovingVehicles);
+	return possiblePlaceVehicle (vehicle.getStaticUnitData(), position, checkPlayer ? vehicle.getOwner() : nullptr, ignoreMovingVehicles);
 }
 
-bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool checkPlayer, bool ignoreMovingVehicles) const
+bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool ignoreMovingVehicles) const
 {
 	if (isValidPosition (position) == false) return false;
+	const auto field = cMapFieldView(getField(position), staticMap->getTerrain(position), player);
 
-	const std::vector<cBuilding*>& buildings = getField (position).getBuildings();
+	const std::vector<cBuilding*> buildings = field.getBuildings();
 	std::vector<cBuilding*>::const_iterator b_it = buildings.begin();
 	std::vector<cBuilding*>::const_iterator b_end = buildings.end();
 
@@ -1091,9 +1092,9 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 
 	if (vehicleData.factorAir > 0)
 	{
-		if (checkPlayer && player && !player->canSeeAt (position)) return true;
+		if (player && !player->canSeeAt (position)) return true;
 
-		const auto& planes = getField(position).getPlanes();
+		const auto& planes = field.getPlanes();
 		if (!ignoreMovingVehicles)
 		{
 			if (planes.size() >= MAX_PLANES_PER_FIELD) return false;
@@ -1118,7 +1119,7 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 		if ((isWater (position) && vehicleData.factorSea == 0) ||
 			(isCoast (position) && vehicleData.factorCoast == 0))
 		{
-			if (checkPlayer && player && !player->canSeeAt (position)) return false;
+			if (player && !player->canSeeAt (position)) return false;
 
 			//vehicle can drive on water, if there is a bridge, platform or road
 			if (b_it == b_end) return false;
@@ -1127,14 +1128,18 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 				(*b_it)->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE_BASE) return false;
 		}
 		//check for enemy mines
-		if (player && b_it != b_end && (*b_it)->getOwner() != player &&
+		if (player &&
+			b_it != b_end &&
+			(*b_it)->getOwner() != player &&
 			(*b_it)->getStaticUnitData().explodesOnContact &&
-			((*b_it)->isDetectedByPlayer (player) || checkPlayer))
+			(*b_it)->isDetectedByPlayer(player))
+		{
 			return false;
+		}
 
-		if (checkPlayer && player && !player->canSeeAt (position)) return true;
+		if (player && !player->canSeeAt (position)) return true;
 
-		if (getField(position).getVehicles().empty() == false && (!ignoreMovingVehicles || !getField(position).getVehicle()->isUnitMoving()))
+		if (field.getVehicle() && (!ignoreMovingVehicles || !field.getVehicle()->isUnitMoving()))
 		{
 			return false;
 		}
@@ -1157,13 +1162,18 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 			(!isCoast (position) || vehicleData.factorCoast == 0)) return false;
 
 		//check for enemy mines
-		if (player && b_it != b_end && (*b_it)->getOwner() != player &&
-			(*b_it)->getStaticUnitData().explodesOnContact && (*b_it)->isDetectedByPlayer(player))
+		if (player &&
+			b_it != b_end &&
+			(*b_it)->getOwner() != player &&
+			(*b_it)->getStaticUnitData().explodesOnContact &&
+			(*b_it)->isDetectedByPlayer(player))
+		{
 			return false;
+		}
 
-		if (checkPlayer && player && !player->canSeeAt (position)) return true;
+		if (player && !player->canSeeAt (position)) return true;
 
-		if (getField(position).getVehicles().empty() == false && (!ignoreMovingVehicles || !getField(position).getVehicle()->isUnitMoving()))
+		if (field.getVehicle() && (!ignoreMovingVehicles || !field.getVehicle()->isUnitMoving()))
 		{
 			return false;
 		}
@@ -1185,11 +1195,11 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 	return true;
 }
 
-bool cMap::possiblePlaceBuilding (const cStaticUnitData& buildingData, const cPosition& position, const cVehicle* vehicle) const
+bool cMap::possiblePlaceBuilding (const cStaticUnitData& buildingData, const cPosition& position, const cPlayer* player, const cVehicle* vehicle) const
 {
 	if (!isValidPosition (position)) return false;
 	if (isBlocked (position)) return false;
-	const cMapField& field = getField (position);
+	const auto field = cMapFieldView(getField(position), staticMap->getTerrain(position), player);
 
 	// Check all buildings in this field for a building of the same type. This
 	// will prevent roads, connectors and water platforms from building on top
@@ -1243,10 +1253,10 @@ bool cMap::possiblePlaceBuilding (const cStaticUnitData& buildingData, const cPo
 		buildingData.surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE &&
 		buildingData.surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE_BASE) return false;
 
-	if (field.getVehicles().empty() == false)
+	if (field.getVehicle())
 	{
 		if (!vehicle) return false;
-		if (vehicle != field.getVehicles()[0]) return false;
+		if (vehicle != field.getVehicle()) return false;
 	}
 	return true;
 }

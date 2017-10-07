@@ -31,6 +31,7 @@
 #include "game/logic/turntimeclock.h"
 #include "game/logic/fxeffects.h"
 #include "game/logic/jobs/destroyjob.h"
+#include "map/mapview.h"
 
 //------------------------------------------------------------------------------
 cModel::cModel() :
@@ -513,7 +514,8 @@ void cModel::deleteRubble(cBuilding* rubble)
 //------------------------------------------------------------------------------
 cMoveJob* cModel::addMoveJob(cVehicle& vehicle, const cPosition& destination)
 {
-	cPathCalculator pc(vehicle, *map, destination, false);
+	cMapView mapView(map, nullptr);
+	cPathCalculator pc(vehicle, mapView, destination, false);
 	auto path = pc.calcPath();
 	if (path.empty())
 	{

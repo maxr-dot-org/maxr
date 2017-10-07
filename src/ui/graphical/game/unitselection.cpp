@@ -21,7 +21,7 @@
 
 #include "ui/graphical/game/unitselection.h"
 
-#include "game/data/map/map.h"
+#include "game/data/map/mapview.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
 #include "utility/box.h"
@@ -29,9 +29,10 @@
 #include "game/data/units/unit.h"
 #include "game/data/player/player.h"
 #include "utility/listhelpers.h"
+#include "game/data/map/mapfieldview.h"
 
 //------------------------------------------------------------------------------
-bool cUnitSelection::selectUnitAt (const cMapField& field, bool base)
+bool cUnitSelection::selectUnitAt (const cMapFieldView& field, bool base)
 {
 	cVehicle* plane = field.getPlane();
 	if (plane)
@@ -97,7 +98,7 @@ void cUnitSelection::removeAllSelectedUnits()
 }
 
 //------------------------------------------------------------------------------
-bool cUnitSelection::selectVehiclesAt (const cBox<cPosition>& box, const cMap& map, const cPlayer& player)
+bool cUnitSelection::selectVehiclesAt (const cBox<cPosition>& box, const cMapView& map, const cPlayer& player)
 {
 	auto oldSelectedUnit = getSelectedUnit();
 

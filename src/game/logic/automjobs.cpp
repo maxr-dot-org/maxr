@@ -238,7 +238,7 @@ void cAutoMJob::planLongMove (const std::vector<cAutoMJob*>& jobs)
 
 			// if field is not passable/walkable or
 			// if it's already has been explored, continue
-			if (!map.possiblePlace (vehicle, currentPosition)) continue;
+			if (!map.possiblePlace (vehicle, currentPosition, false)) continue;
 			if (vehicle.getOwner()->hasResourceExplored (currentPosition)) continue;
 
 			// calculate the distance to other surveyors

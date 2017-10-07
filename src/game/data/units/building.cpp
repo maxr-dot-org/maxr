@@ -42,6 +42,8 @@
 #include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffectvoice.h"
 #include "utility/crc.h"
+#include "game/data/map/mapview.h"
+#include "game/data/map/mapfieldview.h"
 
 using namespace std;
 
@@ -784,15 +786,39 @@ void cBuilding::stopWork (bool forced)
 	}
 }
 
-//------------------------------------------------------------
-bool cBuilding::canTransferTo (const cPosition& position, const cMapField& overUnitField) const
+bool cBuilding::canTransferTo(const cPosition& position, const cMapView& map) const
 {
-	if (overUnitField.getVehicle())
-	{
-		const cVehicle* v = overUnitField.getVehicle();
+	const auto& field = map.getField(position);
 
-		if (v->getOwner() != this->getOwner())
-			return false;
+	const cUnit* unit = field.getVehicle();
+	if (unit)
+	{
+		return canTransferTo(*unit);
+	}
+
+	unit = field.getTopBuilding();
+	if (unit)
+	{
+		return canTransferTo(*unit);
+	}
+
+	return false;
+}
+
+//------------------------------------------------------------
+bool cBuilding::canTransferTo (const cUnit& unit) const
+{
+	if (unit.getOwner() != getOwner())
+		return false;
+
+	if (&unit == this)
+		return false;
+
+
+	if (unit.isAVehicle())
+	{
+		const cVehicle* v = static_cast<const cVehicle*>(&unit);
+
 
 		if (v->getStaticUnitData().storeResType != staticData->storeResType)
 			return false;
@@ -802,22 +828,15 @@ bool cBuilding::canTransferTo (const cPosition& position, const cMapField& overU
 
 		for (const auto b : subBase->getBuildings())
 		{
-			if (b->isNextTo (position)) return true;
+			if (b->isNextTo (v->getPosition())) return true;
 		}
 
 		return false;
 	}
-	else if (overUnitField.getTopBuilding())
+	else if (unit.isABuilding())
 	{
-		const cBuilding* b = overUnitField.getTopBuilding();
-
-		if (b == this)
-			return false;
-
+		const cBuilding* b = static_cast<const cBuilding*>(&unit);
 		if (b->subBase != subBase)
-			return false;
-
-		if (b->getOwner() != this->getOwner())
 			return false;
 
 		if (staticData->storeResType != b->getStaticUnitData().storeResType)
@@ -825,20 +844,30 @@ bool cBuilding::canTransferTo (const cPosition& position, const cMapField& overU
 
 		return true;
 	}
+
 	return false;
 }
 
 //--------------------------------------------------------------------------
-bool cBuilding::canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& vehicleData) const
+bool cBuilding::canExitTo(const cPosition& position, const cMap& map, const cStaticUnitData& vehicleData) const
 {
-	if (!map.possiblePlaceVehicle (vehicleData, position, getOwner())) return false;
-	if (!isNextTo (position)) return false;
+	if (!map.possiblePlaceVehicle(vehicleData, position, getOwner())) return false;
+	if (!isNextTo(position)) return false;
 
 	return true;
 }
 
 //--------------------------------------------------------------------------
-bool cBuilding::canLoad (const cPosition& position, const cMap& map, bool checkPosition) const
+bool cBuilding::canExitTo(const cPosition& position, const cMapView& map, const cStaticUnitData& vehicleData) const
+{
+	if (!map.possiblePlaceVehicle(vehicleData, position)) return false;
+	if (!isNextTo(position)) return false;
+
+	return true;
+}
+
+//--------------------------------------------------------------------------
+bool cBuilding::canLoad (const cPosition& position, const cMapView& map, bool checkPosition) const
 {
 	if (map.isValidPosition (position) == false) return false;
 

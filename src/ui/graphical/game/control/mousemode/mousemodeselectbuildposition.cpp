@@ -20,13 +20,13 @@
 #include "ui/graphical/game/control/mousemode/mousemodeselectbuildposition.h"
 #include "ui/graphical/game/control/mouseaction/mouseactionselectbuildposition.h"
 #include "ui/graphical/game/unitselection.h"
-#include "game/data/map/map.h"
+#include "game/data/map/mapview.h"
 #include "game/data/units/unit.h"
 #include "input/mouse/mouse.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
 
 //------------------------------------------------------------------------------
-cMouseModeSelectBuildPosition::cMouseModeSelectBuildPosition (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_, sID buildId_) :
+cMouseModeSelectBuildPosition::cMouseModeSelectBuildPosition (const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_, sID buildId_) :
 	cMouseMode (map_, unitSelection_, player_),
 	buildId (buildId_)
 {}

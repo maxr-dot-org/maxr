@@ -19,10 +19,11 @@
 
 #include "ui/graphical/game/control/mousemode/mousemode.h"
 #include "ui/graphical/game/unitselection.h"
-#include "game/data/map/map.h"
+#include "game/data/map/mapview.h"
+#include "game/data/map/mapfieldview.h"
 
 //------------------------------------------------------------------------------
-cMouseMode::cMouseMode (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
+cMouseMode::cMouseMode (const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
 	map (map_),
 	unitSelection (unitSelection_),
 	player (player_)
@@ -59,7 +60,7 @@ cMouseMode::~cMouseMode()
 {}
 
 //------------------------------------------------------------------------------
-void cMouseMode::setMap (const cMap* map_)
+void cMouseMode::setMap (const cMapView* map_)
 {
 	map = map_;
 
@@ -79,5 +80,5 @@ void cMouseMode::establishUnitSelectionConnections()
 {}
 
 //------------------------------------------------------------------------------
-void cMouseMode::establishMapFieldConnections (const cMapField& field)
+void cMouseMode::establishMapFieldConnections (const cMapFieldView& field)
 {}

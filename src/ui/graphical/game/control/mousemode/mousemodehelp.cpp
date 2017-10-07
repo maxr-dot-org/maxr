@@ -20,13 +20,13 @@
 #include "ui/graphical/game/control/mousemode/mousemodehelp.h"
 #include "ui/graphical/game/control/mouseaction/mouseactionhelp.h"
 #include "ui/graphical/game/unitselection.h"
-#include "game/data/map/map.h"
+#include "game/data/map/mapview.h"
 #include "game/data/units/unit.h"
 #include "input/mouse/mouse.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
 
 //------------------------------------------------------------------------------
-cMouseModeHelp::cMouseModeHelp (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
+cMouseModeHelp::cMouseModeHelp (const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
 	cMouseMode (map_, unitSelection_, player_)
 {}
 

@@ -40,6 +40,7 @@ class cLabel;
 class cDebugOutputWidget;
 class cStaticMap;
 class cMap;
+class cMapView;
 class cPlayer;
 class cUnit;
 class cVehicle;
@@ -65,7 +66,7 @@ class cGameGui : public cWindow
 public:
 	cGameGui (std::shared_ptr<const cStaticMap> staticMap, std::shared_ptr<cSoundManager> soundManager, std::shared_ptr<cAnimationTimer> animationTimer, std::shared_ptr<const cFrameCounter> frameCounter);
 
-	void setDynamicMap (std::shared_ptr<const cMap> dynamicMap);
+	void setMapView(std::shared_ptr<const cMapView> mapView);
 	void setPlayer (std::shared_ptr<const cPlayer> player);
 	void setPlayers (std::vector<std::shared_ptr<const cPlayer>> players);
 	void setTurnClock (std::shared_ptr<const cTurnCounter> turnClock);
@@ -116,7 +117,7 @@ private:
 	std::shared_ptr<cSoundManager> soundManager;
 
 	std::shared_ptr<const cStaticMap> staticMap;
-	std::shared_ptr<const cMap> dynamicMap;
+	std::shared_ptr<const cMapView> mapView;
 	std::shared_ptr<const cPlayer> player;
 
 	cHud* hud;

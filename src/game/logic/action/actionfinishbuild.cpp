@@ -50,11 +50,11 @@ void cActionFinishBuild::execute(cModel& model) const
 	if (!map->isValidPosition(escapePosition)) return;
 	if (!vehicle->isNextTo(escapePosition)) return;
 	
-	if (!map->possiblePlace(*vehicle, escapePosition))
+	if (!map->possiblePlace(*vehicle, escapePosition, nullptr))
 	{
 		//model.sideStepStealthUnit(escapePosition, *vehicle);
 	}
-	if (!map->possiblePlace(*vehicle, escapePosition)) return;
+	if (!map->possiblePlace(*vehicle, escapePosition, nullptr)) return;
 
 	model.addBuilding (vehicle->getPosition(), vehicle->getBuildingType(), vehicle->getOwner());
 

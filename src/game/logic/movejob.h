@@ -24,13 +24,14 @@
 #include <assert.h>
 
 #include "utility/position.h"
-#include "pathcalculator.h"
 #include "endmoveaction.h"
 
-#define MOVE_SPEED 4     // speed of vehicle movements
+#define MOVE_SPEED 4           // maximum speed (pixel per gametime tick) of vehicle movements
 #define MOVE_ACCELERATION 0.08 // change of vehicle speed per tick
 
 struct SDL_Rect;
+class cVehicle;
+class cMap;
 
 class cMoveJob
 {
@@ -132,7 +133,7 @@ private:
 	* check, weather the next field is free and make the necessary actions if it is not.
 	* Return true, if the movement can be continued.
 	*/
-	bool handleCollision(cMap &map);
+	bool handleCollision(cModel &model);
 
 	/**
 	* check, if the unit finished the current movement step

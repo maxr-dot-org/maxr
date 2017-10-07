@@ -23,7 +23,7 @@
 #include "input/mouse/cursor/mousecursorsimple.h"
 
 //------------------------------------------------------------------------------
-cMouseModeSelectBuildPathDestination::cMouseModeSelectBuildPathDestination (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
+cMouseModeSelectBuildPathDestination::cMouseModeSelectBuildPathDestination (const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
 	cMouseMode (map_, unitSelection_, player_)
 {}
 

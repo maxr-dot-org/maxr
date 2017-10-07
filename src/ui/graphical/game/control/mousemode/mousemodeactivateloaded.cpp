@@ -20,14 +20,15 @@
 #include "ui/graphical/game/control/mousemode/mousemodeactivateloaded.h"
 #include "ui/graphical/game/control/mouseaction/mouseactionactivateloaded.h"
 #include "ui/graphical/game/unitselection.h"
-#include "game/data/map/map.h"
+#include "game/data/map/mapview.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
 #include "input/mouse/mouse.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
+#include "game/data/map/mapfieldview.h"
 
 //------------------------------------------------------------------------------
-cMouseModeActivateLoaded::cMouseModeActivateLoaded (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_, int vehicleToActivateIndex_) :
+cMouseModeActivateLoaded::cMouseModeActivateLoaded (const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_, int vehicleToActivateIndex_) :
 	cMouseMode (map_, unitSelection_, player_),
 	vehicleToActivateIndex (vehicleToActivateIndex_)
 {
@@ -94,7 +95,7 @@ void cMouseModeActivateLoaded::establishUnitSelectionConnections()
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeActivateLoaded::establishMapFieldConnections (const cMapField& field)
+void cMouseModeActivateLoaded::establishMapFieldConnections (const cMapFieldView& field)
 {
 	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this]() { needRefresh(); });
 }

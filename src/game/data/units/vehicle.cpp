@@ -47,6 +47,8 @@
 #include "utility/random.h"
 #include "utility/crc.h"
 #include "game/logic/jobs/startbuildjob.h"
+#include "game/data/map/mapview.h"
+#include "game/data/map/mapfieldview.h"
 
 using namespace std;
 
@@ -136,7 +138,7 @@ void cVehicle::drawOverlayAnimation (unsigned long long animationTime, SDL_Surfa
 	drawOverlayAnimation(surface, dest, zoomFactor, frameNr, alphaEffectValue && cSettings::getInstance().isAlphaEffects() ? alphaEffectValue : 254);
 }
 
-void cVehicle::render_BuildingOrBigClearing (const cMap& map, unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
+void cVehicle::render_BuildingOrBigClearing (const cMapView& map, unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
 {
 	assert ((isUnitBuildingABuilding() || (isUnitClearing() && isBig)) && job == nullptr);
 	// draw beton if necessary
@@ -193,7 +195,7 @@ void cVehicle::render_smallClearing (unsigned long long animationTime, SDL_Surfa
 	SDL_BlitSurface (GraphicsData.gfx_tmp.get(), &src, surface, &tmp);
 }
 
-void cVehicle::render_shadow (const cStaticMap& map, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const
+void cVehicle::render_shadow (const cMapView& map, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const
 {
 	if (map.isWater (getPosition()) && (staticData->isStealthOn & TERRAIN_SEA)) return;
 
@@ -258,7 +260,7 @@ void cVehicle::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float 
 	blittAlphaSurface (GraphicsData.gfx_tmp.get(), &src, surface, &tmp);
 }
 
-void cVehicle::render (const cMap* map, unsigned long long animationTime, const cPlayer* activePlayer, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
+void cVehicle::render (const cMapView* map, unsigned long long animationTime, const cPlayer* activePlayer, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
 {
 	// Note: when changing something in this function,
 	// make sure to update the caching rules!
@@ -283,7 +285,7 @@ void cVehicle::render (const cMap* map, unsigned long long animationTime, const 
 	// draw shadow
 	if (drawShadow && map)
 	{
-		render_shadow (*map->staticMap, surface, dest, zoomFactor);
+		render_shadow (*map, surface, dest, zoomFactor);
 	}
 
 	int alpha = 254;
@@ -341,18 +343,18 @@ void cVehicle::proceedBuilding (cModel& model)
 			if (getPosition().y() < bandPosition.y()) nextPosition.y()++;
 			// Can we move to this position?
 			// If not, we need to kill the path building now.
-			if (!map.possiblePlace (*this, nextPosition))
+			if (!map.possiblePlace (*this, nextPosition, nullptr))
 			{
 				// Try sidestepping stealth units before giving up.
 				//model.sideStepStealthUnit (nextPosition, *this);
-				if (!map.possiblePlace (*this, nextPosition))
+				if (!map.possiblePlace (*this, nextPosition, nullptr))
 				{
 					// We can't build along this path any more.
 					break;
 				}
 			}
 			// Can we build at this next position?
-			if (map.possiblePlaceBuilding (model.getUnitsData()->getStaticUnitData(getBuildingType()), nextPosition))
+			if (map.possiblePlaceBuilding (model.getUnitsData()->getStaticUnitData(getBuildingType()), nextPosition, nullptr))
 			{
 				// We can build here.
 				found_next = true;
@@ -393,7 +395,7 @@ void cVehicle::continuePathBuilding(cModel& model)
 {
 	if (!BuildPath) return;
 	
-	if (getStoredResources() >= getBuildCostsStart() && model.getMap()->possiblePlaceBuilding(model.getUnitsData()->getStaticUnitData(getBuildingType()), getPosition(), this))
+	if (getStoredResources() >= getBuildCostsStart() && model.getMap()->possiblePlaceBuilding(model.getUnitsData()->getStaticUnitData(getBuildingType()), getPosition(), nullptr, this))
 	{
 		model.addJob(new cStartBuildJob(*this, getPosition(), getIsBig()));
 		setBuildingABuilding(true);
@@ -746,20 +748,42 @@ void cVehicle::makeReport (cSoundManager& soundManager) const
 //-----------------------------------------------------------------------------
 /** checks, if resources can be transferred to the unit */
 //-----------------------------------------------------------------------------
-bool cVehicle::canTransferTo (const cPosition& position, const cMapField& overUnitField) const
+bool cVehicle::canTransferTo(const cPosition& position, const cMapView& map) const
 {
-	if (isNextTo (position) == false)
+	const auto& field = map.getField(position);
+	
+	const cUnit* unit = field.getVehicle();
+	if (unit)
+	{
+		return canTransferTo(*unit);
+	}
+	
+	unit = field.getTopBuilding();
+	if (unit)
+	{
+		return canTransferTo(*unit);
+	}
+
+	return false;
+}
+
+//------------------------------------------------------------------------------
+bool cVehicle::canTransferTo (const cUnit& unit) const
+{
+	if (!unit.isNextTo(getPosition()))
 		return false;
 
-	if (overUnitField.getVehicle())
+	if (&unit == this)
+		return false;
+
+	if (unit.getOwner() != getOwner())
+		return false;
+
+
+
+	if (unit.isAVehicle())
 	{
-		const cVehicle* v = overUnitField.getVehicle();
-
-		if (v == this)
-			return false;
-
-		if (v->getOwner() != this->getOwner())
-			return false;
+		const cVehicle* v = static_cast<const cVehicle*>(&unit);
 
 		if (v->staticData->storeResType != staticData->storeResType)
 			return false;
@@ -769,12 +793,9 @@ bool cVehicle::canTransferTo (const cPosition& position, const cMapField& overUn
 
 		return true;
 	}
-	else if (overUnitField.getTopBuilding())
+	else if (unit.isABuilding())
 	{
-		const cBuilding* b = overUnitField.getTopBuilding();
-
-		if (b->getOwner() != this->getOwner())
-			return false;
+		const cBuilding* b = static_cast<const cBuilding*>(&unit);
 
 		if (!b->subBase)
 			return false;
@@ -790,13 +811,15 @@ bool cVehicle::canTransferTo (const cPosition& position, const cMapField& overUn
 
 		return true;
 	}
+
 	return false;
 }
 
 //-----------------------------------------------------------------------------
 bool cVehicle::makeAttackOnThis (cModel& model, cUnit* opponentUnit, const string& reasonForLog) const
 {
-	const cUnit* target = cAttackJob::selectTarget (getPosition(), opponentUnit->getStaticUnitData().canAttack, *model.getMap(), getOwner());
+	cMapView mapView(model.getMap(), nullptr);
+	const cUnit* target = cAttackJob::selectTarget (getPosition(), opponentUnit->getStaticUnitData().canAttack, mapView, getOwner());
 	if (target != this) return false;
 
 	Log.write (" cVehicle: " + reasonForLog + ": attacking (" + iToStr (getPosition().x()) + "," + iToStr (getPosition().y()) + "), Aggressor ID: " + iToStr (opponentUnit->iID) + ", Target ID: " + iToStr(target->getId()), cLog::eLOG_TYPE_NET_DEBUG);
@@ -809,7 +832,8 @@ bool cVehicle::makeAttackOnThis (cModel& model, cUnit* opponentUnit, const strin
 //-----------------------------------------------------------------------------
 bool cVehicle::makeSentryAttack (cModel& model, cUnit* sentryUnit) const
 {
-	if (sentryUnit != 0 && sentryUnit->isSentryActive() && sentryUnit->canAttackObjectAt (getPosition(), *model.getMap(), true))
+	cMapView mapView(model.getMap(), nullptr);
+	if (sentryUnit != 0 && sentryUnit->isSentryActive() && sentryUnit->canAttackObjectAt (getPosition(), mapView, true))
 	{
 		if (makeAttackOnThis (model, sentryUnit, "sentry reaction"))
 			return true;
@@ -860,10 +884,11 @@ bool cVehicle::isOtherUnitOffendedByThis (cModel& model, const cUnit& otherUnit)
 	if (otherUnit.isABuilding() && model.getUnitsData()->getDynamicUnitData(otherUnit.data.getId()).getBuildCost() <= 2)
 		return false;
 
-	if (isInRange (otherUnit.getPosition()) && canAttackObjectAt (otherUnit.getPosition(), *model.getMap(), true, false))
+	cMapView mapView(model.getMap(), nullptr);
+	if (isInRange (otherUnit.getPosition()) && canAttackObjectAt (otherUnit.getPosition(), mapView, true, false))
 	{
 		// test, if this vehicle can really attack the opponentVehicle
-		cUnit* target = cAttackJob::selectTarget (otherUnit.getPosition(), staticData->canAttack, *model.getMap(), getOwner());
+		cUnit* target = cAttackJob::selectTarget (otherUnit.getPosition(), staticData->canAttack, mapView, getOwner());
 		if (target == &otherUnit)
 			return true;
 	}
@@ -905,8 +930,9 @@ bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (cModel& model, c
 //-----------------------------------------------------------------------------
 bool cVehicle::doReactionFireForUnit (cModel& model, cUnit* opponentUnit) const
 {
+	cMapView mapView(model.getMap(), nullptr);
 	if (opponentUnit->isSentryActive() == false && opponentUnit->isManualFireActive() == false
-		&& opponentUnit->canAttackObjectAt (getPosition(), *model.getMap(), true)
+		&& opponentUnit->canAttackObjectAt (getPosition(), mapView, true)
 		// Possible TODO: better handling of stealth units.
 		// e.g. do reaction fire, if already detected ?
 		&& (opponentUnit->isAVehicle() == false || opponentUnit->getStaticUnitData().isStealthOn == TERRAIN_NONE))
@@ -957,7 +983,7 @@ bool cVehicle::provokeReactionFire (cModel& model)
 			continue;
 		// The vehicle can't be seen by the opposing player.
 		// No possibility for reaction fire.
-		if (player.canSeeAnyAreaUnder (*this) == false)
+		if (player.canSeeAnyAreaUnder (*this) == false) //TODO: player.isUnitVisible(vehicle)
 			continue;
 
 		if (doesPlayerWantToFireOnThisVehicleAsReactionFire (model, &player) == false)
@@ -970,17 +996,27 @@ bool cVehicle::provokeReactionFire (cModel& model)
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const
+bool cVehicle::canExitTo(const cPosition& position, const cMapView& map, const cStaticUnitData& unitData) const
 {
-	if (!map.possiblePlaceVehicle (unitData, position, getOwner())) return false;
+	if (!map.possiblePlaceVehicle(unitData, position)) return false;
 	if (staticData->factorAir > 0 && (position != getPosition())) return false;
-	if (!isNextTo (position)) return false;
+	if (!isNextTo(position)) return false;
 
 	return true;
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::canLoad (const cPosition& position, const cMap& map, bool checkPosition) const
+bool cVehicle::canExitTo(const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const
+{
+	if (!map.possiblePlaceVehicle(unitData, position, getOwner())) return false;
+	if (staticData->factorAir > 0 && (position != getPosition())) return false;
+	if (!isNextTo(position)) return false;
+
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+bool cVehicle::canLoad (const cPosition& position, const cMapView& map, bool checkPosition) const
 {
 	if (map.isValidPosition (position) == false) return false;
 
@@ -1053,11 +1089,11 @@ void cVehicle::exitVehicleTo (cVehicle& vehicle, const cPosition& position, cMap
 //-----------------------------------------------------------------------------
 /** Checks, if an object can get ammunition. */
 //-----------------------------------------------------------------------------
-bool cVehicle::canSupply (const cMap& map, const cPosition& position, int supplyType) const
+bool cVehicle::canSupply (const cMapView& map, const cPosition& position, int supplyType) const
 {
 	if (map.isValidPosition (position) == false) return false;
 
-	const cMapField& field = map.getField (position);
+	const auto& field = map.getField (position);
 	if (field.getVehicle()) return canSupply (field.getVehicle(), supplyType);
 	else if (field.getPlane()) return canSupply (field.getPlane(), supplyType);
 	else if (field.getTopBuilding()) return canSupply (field.getTopBuilding(), supplyType);
@@ -1110,13 +1146,13 @@ void cVehicle::layMine (cModel& model)
 	if (staticData->factorSea > 0 && staticData->factorGround == 0)
 	{
 		const auto& staticMineData = model.getUnitsData()->getSeaMineData();
-		if (!map.possiblePlaceBuilding (staticMineData, getPosition(), this)) return;
+		if (!map.possiblePlaceBuilding (staticMineData, getPosition(), nullptr, this)) return;
 		model.addBuilding(getPosition(), staticMineData.ID, getOwner(), false);
 	}
 	else
 	{
 		const auto& staticMineData = model.getUnitsData()->getLandMineData();
-		if (!map.possiblePlaceBuilding(staticMineData, getPosition(), this)) return;
+		if (!map.possiblePlaceBuilding(staticMineData, getPosition(), nullptr, this)) return;
 		model.addBuilding(getPosition(), staticMineData.ID, getOwner(), false);
 	}
 	setStoredResources (getStoredResources() - 1);
@@ -1149,7 +1185,7 @@ void cVehicle::clearMine (cModel& model)
 //-----------------------------------------------------------------------------
 /** Checks if the target is on a neighbor field and if it can be stolen or disabled */
 //-----------------------------------------------------------------------------
-bool cVehicle::canDoCommandoAction (const cPosition& position, const cMap& map, bool steal) const
+bool cVehicle::canDoCommandoAction (const cPosition& position, const cMapView& map, bool steal) const
 {
 	const auto& field = map.getField (position);
 

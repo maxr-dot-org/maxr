@@ -336,7 +336,7 @@ void cUnit::rotateTo (int newDir)
 //------------------------------------------------------------------------------
 /** Checks, if the unit can attack an object at the given coordinates*/
 //------------------------------------------------------------------------------
-bool cUnit::canAttackObjectAt (const cPosition& position, const cMap& map, bool forceAttack, bool checkRange) const
+bool cUnit::canAttackObjectAt (const cPosition& position, const cMapView& map, bool forceAttack, bool checkRange) const
 {
 	if (staticData->canAttack == false) return false;
 	if (data.getShots() <= 0) return false;

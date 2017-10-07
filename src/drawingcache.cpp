@@ -27,9 +27,10 @@
 #include "game/data/player/player.h"
 #include "settings.h"
 #include "game/data/units/vehicle.h"
-#include "game/data/map/map.h"
+#include "game/data/map/mapview.h"
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/graphical/framecounter.h"
+#include "game/data/map/mapfieldview.h"
 
 sDrawingCacheEntry::sDrawingCacheEntry()
 {}
@@ -90,7 +91,7 @@ sDrawingCacheEntry& sDrawingCacheEntry::operator=(sDrawingCacheEntry&& other)
 	return *this;
 }
 
-void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMap& map, const cPlayer* player, unsigned long long animationTime, double zoom_, unsigned long long frameNr)
+void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMapView& map, const cPlayer* player, unsigned long long animationTime, double zoom_, unsigned long long frameNr)
 {
 	dir = vehicle.dir;
 	owner = vehicle.getOwner();
@@ -237,7 +238,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cBuilding& building, double zo
 	return nullptr;
 }
 
-SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom, const cMap& map, unsigned long long animationTime)
+SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom, const cMapView& map, unsigned long long animationTime)
 {
 	if (!canCache (vehicle)) return nullptr;
 
@@ -346,7 +347,7 @@ SDL_Surface* cDrawingCache::createNewEntry (const cBuilding& building, double zo
 	return nullptr;
 }
 
-SDL_Surface* cDrawingCache::createNewEntry (const cVehicle& vehicle, double zoom, const cMap& map, unsigned long long animationTime)
+SDL_Surface* cDrawingCache::createNewEntry (const cVehicle& vehicle, double zoom, const cMapView& map, unsigned long long animationTime)
 {
 	if (!canCache (vehicle))
 		return nullptr;

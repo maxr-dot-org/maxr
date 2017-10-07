@@ -31,10 +31,11 @@
 #include "pcx.h"
 #include "game/data/units/building.h"
 #include "game/data/player/player.h"
-#include "game/data/map/map.h"
+#include "game/data/map/mapview.h"
+#include "game/data/map/mapfieldview.h"
 
 //------------------------------------------------------------------------------
-cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cMap& map, std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
+cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cMapView& map, std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
 	cWindowAdvancedHangar (LoadPCX (GFXOD_FAC_BUILD_SCREEN), unitsData, *building_.getOwner()),
 	building (building_)
 {
@@ -115,7 +116,7 @@ void cWindowBuildVehicles::setActiveUnit (const sID& unitId)
 }
 
 //------------------------------------------------------------------------------
-void cWindowBuildVehicles::generateSelectionList (const cBuilding& building, const cMap& map, const cUnitsData& unitsData)
+void cWindowBuildVehicles::generateSelectionList (const cBuilding& building, const cMapView& map, const cUnitsData& unitsData)
 {
 	bool select = true;
 	for (const auto& unitData : unitsData.getStaticUnitsData())

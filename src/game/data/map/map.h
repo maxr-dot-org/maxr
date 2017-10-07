@@ -140,7 +140,6 @@ private:
 	/**the list with all vehicles on this field
 	* the top vehicle is always stored at first position */
 	std::vector<cVehicle*> planes;
-
 };
 
 struct sTerrain
@@ -290,14 +289,14 @@ public:
 	* checks, whether the given field is an allowed place for the vehicle
 	* if checkPlayer is passed, the function uses the players point of view, so it does not check for units that are not in sight
 	*/
-	bool possiblePlace (const cVehicle& vehicle, const cPosition& position, bool checkPlayer = false, bool ignoreMovingVehicles = false) const;
-	bool possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool checkPlayer = false, bool ignoreMovingVehicles = false) const;
+	bool possiblePlace (const cVehicle& vehicle, const cPosition& position, bool checkPlayer, bool ignoreMovingVehicles = false) const;
+	bool possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool ignoreMovingVehicles = false) const;
 
 	/**
 	* checks, whether the given field is an allowed place for the building
 	* if a vehicle is passed, it will be ignored in the check, so a constructing vehicle does not block its own position
 	*/
-	bool possiblePlaceBuilding (const cStaticUnitData& buildingData, const cPosition& position, const cVehicle* vehicle = nullptr) const;
+	bool possiblePlaceBuilding (const cStaticUnitData& buildingData, const cPosition& position, const cPlayer* player, const cVehicle* vehicle = nullptr) const;
 
 	/**
 	* removes all units from the map structure

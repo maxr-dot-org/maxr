@@ -39,52 +39,6 @@
 
 //TODO: test alien attack (ground & air)
 
-//--------------------------------------------------------------------------
-cUnit* cAttackJob::selectTarget (const cPosition& position, char attackMode, const cMap& map, const cPlayer* owner)
-{
-	cVehicle* targetVehicle = nullptr;
-	cBuilding* targetBuilding = nullptr;
-	const cMapField& mapField = map.getField (position);
-
-	//planes
-	//prefer enemy planes. But select own one, if there is no enemy
-	auto planes = mapField.getPlanes();
-	for (cVehicle* plane : planes)
-	{
-		if (plane->getFlightHeight() >  0 && ! (attackMode & TERRAIN_AIR))    continue;
-		if (plane->getFlightHeight() == 0 && ! (attackMode & TERRAIN_GROUND)) continue;
-
-		if (targetVehicle == nullptr)
-		{
-			targetVehicle = plane;
-		}
-		else if (targetVehicle->getOwner() == owner)
-		{
-			if (plane->getOwner() != owner)
-			{
-				targetVehicle = plane;
-			}
-		}
-	}
-
-	// vehicles
-	if (!targetVehicle && (attackMode & TERRAIN_GROUND))
-	{
-		targetVehicle = mapField.getVehicle();
-		if (targetVehicle && (targetVehicle->getStaticUnitData().isStealthOn & TERRAIN_SEA) && map.isWater (position) && ! (attackMode & AREA_SUB)) targetVehicle = nullptr;
-	}
-
-	// buildings
-	if (!targetVehicle && (attackMode & TERRAIN_GROUND))
-	{
-		targetBuilding = mapField.getBuilding();
-		if (targetBuilding && targetBuilding->isRubble()) targetBuilding = nullptr;
-	}
-
-	if (targetVehicle) return targetVehicle;
-	return targetBuilding;
-}
-
 //------------------------------------------------------------------------------
 cAttackJob::cAttackJob() :
 	aggressor(nullptr),

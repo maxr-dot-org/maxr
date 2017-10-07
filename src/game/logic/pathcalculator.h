@@ -25,7 +25,7 @@
 
 class cVehicle;
 class cUnit;
-class cMap;
+class cMapView;
 
 /* node structure for pathfinding */
 struct sPathNode
@@ -63,12 +63,12 @@ public:
 
 class cPathCalculator
 {
-	void init (const cPosition& source, const cMap& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group);
+	void init (const cPosition& source, const cMapView& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group);
 
 public:
-	cPathCalculator (const cVehicle& Vehicle, const cMap& Map, const cPosition& destPosition, const std::vector<cVehicle*>* group);
-	cPathCalculator (const cVehicle& Vehicle, const cMap& Map, const cUnit& destUnit,  bool load);
-	cPathCalculator (const cVehicle& Vehicle, const cMap& Map, const cPosition& destPosition, bool attack);
+	cPathCalculator (const cVehicle& Vehicle, const cMapView& Map, const cPosition& destPosition, const std::vector<cVehicle*>* group);
+	cPathCalculator (const cVehicle& Vehicle, const cMapView& Map, const cUnit& destUnit,  bool load);
+	cPathCalculator (const cVehicle& Vehicle, const cMapView& Map, const cPosition& destPosition, bool attack);
 	~cPathCalculator();
 
 	/**
@@ -81,10 +81,11 @@ public:
 	* calculates the costs for moving from the source- to the destinationfield
 	*@author alzi alias DoctorDeath
 	*/
-	static int calcNextCost (const cPosition& source, const cPosition& destination, const cVehicle* vehicle, const cMap* map);
+	template<typename T>
+	static int calcNextCost(const cPosition& source, const cPosition& destination, const cVehicle* vehicle, const T* map);
 
 	/* the map on which the path will be calculated */
-	const cMap* Map;
+	const cMapView* Map;
 	/* the moving vehicle */
 	const cVehicle* Vehicle;
 	/* if more then one vehicle is moving in a group this is the list of all moving vehicles */
@@ -132,5 +133,35 @@ private:
 	*/
 	void deleteFirstFromHeap();
 };
+
+template<typename T>
+static int cPathCalculator::calcNextCost(const cPosition& source, const cPosition& destination, const cVehicle* vehicle, const T* map)
+{
+	static_assert(std::is_same<T, cMap>::value || std::is_same<T, cMapView>::value, "Type must be cMap or cMapView");
+
+	int costs;
+	// first we check whether the unit can fly
+	if (vehicle->getStaticUnitData().factorAir > 0)
+	{
+		if (source.x() != destination.x() && source.y() != destination.y()) return (int)(4 * 1.5f * vehicle->getStaticUnitData().factorAir);
+		else return (int)(4 * vehicle->getStaticUnitData().factorAir);
+	}
+	const cBuilding* building = map->getField(destination).getBaseBuilding();
+	// moving on water will cost more
+	if (map->isWater(destination) && (!building || (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BENEATH_SEA || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE)) && vehicle->getStaticUnitData().factorSea > 0) costs = (int)(4 * vehicle->getStaticUnitData().factorSea);
+	else if (map->isCoast(destination) && !building && vehicle->getStaticUnitData().factorCoast > 0) costs = (int)(4 * vehicle->getStaticUnitData().factorCoast);
+	else if (vehicle->getStaticUnitData().factorGround > 0) costs = (int)(4 * vehicle->getStaticUnitData().factorGround);
+	else
+	{
+		Log.write("Where can this unit move? " + iToStr(vehicle->iID), cLog::eLOG_TYPE_NET_WARNING);
+		costs = 4;
+	}
+	// moving on a road is cheaper
+	if (building && building->getStaticUnitData().modifiesSpeed != 0) costs = (int)(costs * building->getStaticUnitData().modifiesSpeed);
+
+	// multiply with the factor 1.5 for diagonal movements
+	if (source.x() != destination.x() && source.y() != destination.y()) costs = (int)(costs * 1.5f);
+	return costs;
+}
 
 #endif //game_logic_pathcalculatorH

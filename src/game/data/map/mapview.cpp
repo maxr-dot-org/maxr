@@ -176,5 +176,5 @@ bool cMapView::possiblePlaceVehicle(const cStaticUnitData& vehicleData, const cP
 //------------------------------------------------------------------------------
 bool cMapView::possiblePlaceBuilding(const cStaticUnitData& buildingData, const cPosition& position, const cVehicle* vehicle /*= nullptr*/) const
 {
-	return map->possiblePlaceBuilding(buildingData, position, vehicle);
+	return map->possiblePlaceBuilding(buildingData, position, player.get(), vehicle);
 }

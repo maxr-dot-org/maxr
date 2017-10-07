@@ -95,10 +95,10 @@ void cActionStartBuild::execute(cModel& model) const
 // 		model.sideStepStealthUnit(buildPosition + cPosition(0, 1), *vehicle, buildPosition);
 // 		model.sideStepStealthUnit(buildPosition + cPosition(1, 1), *vehicle, buildPosition);
 
-		if (!(map.possiblePlaceBuilding(data, buildPosition, vehicle) &&
-			map.possiblePlaceBuilding(data, buildPosition + cPosition(1, 0), vehicle) &&
-			map.possiblePlaceBuilding(data, buildPosition + cPosition(0, 1), vehicle) &&
-			map.possiblePlaceBuilding(data, buildPosition + cPosition(1, 1), vehicle)))
+		if (!(map.possiblePlaceBuilding(data, buildPosition, nullptr, vehicle) &&
+			map.possiblePlaceBuilding(data, buildPosition + cPosition(1, 0), nullptr, vehicle) &&
+			map.possiblePlaceBuilding(data, buildPosition + cPosition(0, 1), nullptr, vehicle) &&
+			map.possiblePlaceBuilding(data, buildPosition + cPosition(1, 1), nullptr, vehicle)))
 		{
 			vehicle->getOwner()->buildErrorBuildPositionBlocked();
 			return;
@@ -113,7 +113,7 @@ void cActionStartBuild::execute(cModel& model) const
 	{
 		if (buildPosition != vehicle->getPosition()) return;
 
-		if (!map.possiblePlaceBuilding(data, buildPosition, vehicle))
+		if (!map.possiblePlaceBuilding(data, buildPosition, nullptr, vehicle))
 		{
 			vehicle->getOwner()->buildErrorBuildPositionBlocked();
 			return;

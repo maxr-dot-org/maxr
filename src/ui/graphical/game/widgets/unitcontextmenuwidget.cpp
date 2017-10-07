@@ -22,8 +22,9 @@
 #include "ui/graphical/menu/widgets/radiogroup.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
 #include "game/data/units/unit.h"
-#include "game/data/map/map.h"
+#include "game/data/map/mapview.h"
 #include "main.h"
+#include "game/data/map/mapfieldview.h"
 
 //------------------------------------------------------------------------------
 cUnitContextMenuWidget::cUnitContextMenuWidget() :
@@ -31,7 +32,7 @@ cUnitContextMenuWidget::cUnitContextMenuWidget() :
 {}
 
 //------------------------------------------------------------------------------
-void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseInputMode, const cPlayer* player, const cMap* dynamicMap)
+void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseInputMode, const cPlayer* player, const cMapView* map)
 {
 	unit = unit_;
 	removeChildren();
@@ -43,7 +44,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	auto mouseActionGroup = addChild (std::make_unique<cRadioGroup> (true));
 
 	// Attack
-	if (unitHasAttackEntry (unit, player, dynamicMap))
+	if (unitHasAttackEntry (unit, player))
 	{
 		auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Attack_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (mouseInputMode == eMouseModeType::Attack);
@@ -53,7 +54,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Build:
-	if (unitHasBuildEntry (unit, player, dynamicMap))
+	if (unitHasBuildEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Build_7"), FONT_LATIN_SMALL_WHITE));
 		button->clicked.connect ([&]() { buildClicked(); });
@@ -62,7 +63,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Distribute:
-	if (unitHasDistributeEntry (unit, player, dynamicMap))
+	if (unitHasDistributeEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Distribution_7"), FONT_LATIN_SMALL_WHITE));
 		button->clicked.connect ([&]() { distributeClicked(); });
@@ -71,7 +72,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Transfer:
-	if (unitHasTransferEntry (unit, player, dynamicMap))
+	if (unitHasTransferEntry (unit, player))
 	{
 		auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Transfer_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (mouseInputMode == eMouseModeType::Transfer);
@@ -81,7 +82,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Start:
-	if (unitHasStartEntry (unit, player, dynamicMap))
+	if (unitHasStartEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Start_7"), FONT_LATIN_SMALL_WHITE));
 		button->clicked.connect ([&]() { startClicked(); });
@@ -90,7 +91,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Auto survey movejob of surveyor
-	if (unitHasAutoEntry (unit, player, dynamicMap))
+	if (unitHasAutoEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Auto_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (unit->isAutoMoveJobActive());
@@ -100,7 +101,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Stop:
-	if (unitHasStopEntry (unit, player, dynamicMap))
+	if (unitHasStopEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Stop_7"), FONT_LATIN_SMALL_WHITE));
 		button->clicked.connect ([&]() { stopClicked(); });
@@ -109,7 +110,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Remove:
-	if (unitHasRemoveEntry (unit, player, dynamicMap))
+	if (unitHasRemoveEntry (unit, player, map))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Clear_7"), FONT_LATIN_SMALL_WHITE));
 		button->clicked.connect ([&]() { removeClicked(); });
@@ -118,7 +119,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Manual fire
-	if (unitHasManualFireEntry (unit, player, dynamicMap))
+	if (unitHasManualFireEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~ManualFireMode_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (unit->isManualFireActive());
@@ -128,7 +129,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Sentry status:
-	if (unitHasSentryEntry (unit, player, dynamicMap))
+	if (unitHasSentryEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Sentry"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (unit->isSentryActive());
@@ -138,7 +139,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Activate
-	if (unitHasActivateEntry (unit, player, dynamicMap))
+	if (unitHasActivateEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Active_7"), FONT_LATIN_SMALL_WHITE));
 		button->clicked.connect ([&]() { activateClicked(); });
@@ -147,7 +148,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Load
-	if (unitHasLoadEntry (unit, player, dynamicMap))
+	if (unitHasLoadEntry (unit, player))
 	{
 		auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Load_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (mouseInputMode == eMouseModeType::Load);
@@ -157,7 +158,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// research
-	if (unitHasResearchEntry (unit, player, dynamicMap))
+	if (unitHasResearchEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Research"), FONT_LATIN_SMALL_WHITE));
 		button->clicked.connect ([&]() { researchClicked(); });
@@ -166,7 +167,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// gold upgrades screen
-	if (unitHasBuyEntry (unit, player, dynamicMap))
+	if (unitHasBuyEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Upgrademenu_7"), FONT_LATIN_SMALL_WHITE));
 		button->clicked.connect ([&]() { buyUpgradesClicked(); });
@@ -175,7 +176,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Update this
-	if (unitHasUpgradeThisEntry (unit, player, dynamicMap))
+	if (unitHasUpgradeThisEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Upgradethis_7"), FONT_LATIN_SMALL_WHITE));
 		button->clicked.connect ([&]() { upgradeThisClicked(); });
@@ -184,7 +185,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Update all
-	if (unitHasUpgradeAllEntry (unit, player, dynamicMap))
+	if (unitHasUpgradeAllEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~UpgradeAll_7"), FONT_LATIN_SMALL_WHITE));
 		button->clicked.connect ([&]() { upgradeAllClicked(); });
@@ -193,7 +194,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Self destruct
-	if (unitHasSelfDestroyEntry (unit, player, dynamicMap))
+	if (unitHasSelfDestroyEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Destroy_7"), FONT_LATIN_SMALL_WHITE));
 		button->clicked.connect ([&]() { selfDestroyClicked(); });
@@ -202,7 +203,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Ammo:
-	if (unitHasSupplyEntry (unit, player, dynamicMap))
+	if (unitHasSupplyEntry (unit, player))
 	{
 		auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Reload_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (mouseInputMode == eMouseModeType::SupplyAmmo);
@@ -212,7 +213,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Repair:
-	if (unitHasRepairEntry (unit, player, dynamicMap))
+	if (unitHasRepairEntry (unit, player))
 	{
 		auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Repair_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (mouseInputMode == eMouseModeType::Repair);
@@ -222,7 +223,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Lay mines:
-	if (unitHasLayMinesEntry (unit, player, dynamicMap))
+	if (unitHasLayMinesEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Seed"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (unit->isUnitLayingMines());
@@ -232,7 +233,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Collect/clear mines:
-	if (unitHasCollectMinesEntry (unit, player, dynamicMap))
+	if (unitHasCollectMinesEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Clear_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (unit->isUnitClearingMines());
@@ -242,7 +243,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Sabotage/disable:
-	if (unitHasSabotageEntry (unit, player, dynamicMap))
+	if (unitHasSabotageEntry (unit, player))
 	{
 		auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Disable_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (mouseInputMode == eMouseModeType::Disable);
@@ -252,7 +253,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Steal:
-	if (unitHasStealEntry (unit, player, dynamicMap))
+	if (unitHasStealEntry (unit, player))
 	{
 		auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Steal_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (mouseInputMode == eMouseModeType::Steal);
@@ -262,7 +263,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Info
-	if (unitHasInfoEntry (unit, player, dynamicMap))
+	if (unitHasInfoEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Info_7"), FONT_LATIN_SMALL_WHITE));
 		button->clicked.connect ([&]() { infoClicked(); });
@@ -271,7 +272,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Done
-	if (unitHasDoneEntry (unit, player, dynamicMap))
+	if (unitHasDoneEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Done_7"), FONT_LATIN_SMALL_WHITE));
 		button->clicked.connect ([&]() { doneClicked(); });
@@ -289,151 +290,151 @@ const cUnit* cUnitContextMenuWidget::getUnit()
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasAttackEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasAttackEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canAttack && unit->data.getShots();
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasBuildEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasBuildEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && !unit->getStaticUnitData().canBuild.empty() && !unit->isUnitBuildingABuilding();
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasDistributeEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasDistributeEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canMineMaxRes > 0 && unit->isUnitWorking();
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasTransferEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasTransferEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().storeResType != eResourceType::None && !unit->isUnitBuildingABuilding() && !unit->isUnitClearing();
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasStartEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasStartEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canWork && unit->buildingCanBeStarted();
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasAutoEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasAutoEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canSurvey;
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasStopEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasStopEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->canBeStoppedViaUnitMenu();
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasRemoveEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasRemoveEntry (const cUnit* unit, const cPlayer* player, const cMapView* map)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canClearArea && dynamicMap && dynamicMap->getField(unit->getPosition()).getRubble() && !unit->isUnitClearing();
+	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canClearArea && map && map->getField(unit->getPosition()).getRubble() && !unit->isUnitClearing();
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasManualFireEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasManualFireEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && (unit->isManualFireActive() || unit->getStaticUnitData().canAttack);
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasSentryEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasSentryEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && (unit->isSentryActive() || unit->getStaticUnitData().canAttack || (!unit->isABuilding() && !unit->canBeStoppedViaUnitMenu()));
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasActivateEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasActivateEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().storageUnitsMax > 0;
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasLoadEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasLoadEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().storageUnitsMax > 0;
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasResearchEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasResearchEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canResearch && unit->isUnitWorking();
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasBuyEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasBuyEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().convertsGold;
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasUpgradeThisEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasUpgradeThisEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->buildingCanBeUpgraded();
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasUpgradeAllEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasUpgradeAllEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->buildingCanBeUpgraded();
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasSelfDestroyEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasSelfDestroyEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canSelfDestroy;
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasSupplyEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasSupplyEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canRearm && unit->getStoredResources() >= 1;
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasRepairEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasRepairEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canRepair && unit->getStoredResources() >= 1;
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasLayMinesEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasLayMinesEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canPlaceMines && unit->getStoredResources() > 0;
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasCollectMinesEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasCollectMinesEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canPlaceMines && unit->getStoredResources() < unit->getStaticUnitData().storageResMax;
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasSabotageEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasSabotageEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canDisable && unit->data.getShots();
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasStealEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasStealEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canCapture && unit->data.getShots();
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasInfoEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasInfoEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit != nullptr;
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasDoneEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap)
+/*static*/ bool cUnitContextMenuWidget::unitHasDoneEntry(const cUnit* unit, const cPlayer* player)
 {
 	return unit != nullptr;
 }
