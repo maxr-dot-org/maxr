@@ -25,6 +25,7 @@
 
 #include "utility/position.h"
 #include "endmoveaction.h"
+#include "game/data/units/vehicle.h"
 
 #define MOVE_SPEED 4           // maximum speed (pixel per gametime tick) of vehicle movements
 #define MOVE_ACCELERATION 0.08 // change of vehicle speed per tick
@@ -115,9 +116,9 @@ public:
 	}
 private:
 	enum eMoveJobState {ACTIVE, WAITING, STOPPING, FINISHED};
-	
+
 	/**
-	* calculates the needed rotation before the next movement 
+	* calculates the needed rotation before the next movement
 	*/
 	void calcNextDir();
 	/**
@@ -162,7 +163,7 @@ private:
 	/** movement points, that are taken to the next turn, to prevent that the player looses movement points due to rounding issues */
 	unsigned int savedSpeed;
 	/** direction the vehicle must be rotated to, before moving */
-	unsigned int nextDir; 
+	unsigned int nextDir;
 	/** 100 ms timer tick */
 	unsigned int timer100ms;
 	/** 50 ms timer tick */

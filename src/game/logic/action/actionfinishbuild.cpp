@@ -23,7 +23,7 @@
 
 //------------------------------------------------------------------------------
 cActionFinishBuild::cActionFinishBuild(const cVehicle& vehicle, const cPosition& escapePosition) :
-	cAction(eActiontype::ACTION_FINISH_BUILD), 
+	cAction(eActiontype::ACTION_FINISH_BUILD),
 	vehicleId(vehicle.getId()),
 	escapePosition(escapePosition)
 {};
@@ -49,12 +49,12 @@ void cActionFinishBuild::execute(cModel& model) const
 	if (!vehicle->isUnitBuildingABuilding() || vehicle->getBuildTurns() > 0) return;
 	if (!map->isValidPosition(escapePosition)) return;
 	if (!vehicle->isNextTo(escapePosition)) return;
-	
-	if (!map->possiblePlace(*vehicle, escapePosition, nullptr))
+
+	if (!map->possiblePlace(*vehicle, escapePosition, false))
 	{
 		//model.sideStepStealthUnit(escapePosition, *vehicle);
 	}
-	if (!map->possiblePlace(*vehicle, escapePosition, nullptr)) return;
+	if (!map->possiblePlace(*vehicle, escapePosition, false)) return;
 
 	model.addBuilding (vehicle->getPosition(), vehicle->getBuildingType(), vehicle->getOwner());
 

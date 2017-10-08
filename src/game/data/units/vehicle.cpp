@@ -125,7 +125,7 @@ void cVehicle::drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest,
 	SDL_SetSurfaceAlphaMod (uiData.overlay.get(), alpha);
 	blitWithPreScale (uiData.overlay_org.get(), uiData.overlay.get(), &src, surface, &tmp, zoomFactor);
 }
- 
+
 void cVehicle::drawOverlayAnimation (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const
 {
 	if (uiData->hasOverlay == false || cSettings::getInstance().isAnimations() == false) return;
@@ -343,11 +343,11 @@ void cVehicle::proceedBuilding (cModel& model)
 			if (getPosition().y() < bandPosition.y()) nextPosition.y()++;
 			// Can we move to this position?
 			// If not, we need to kill the path building now.
-			if (!map.possiblePlace (*this, nextPosition, nullptr))
+			if (!map.possiblePlace (*this, nextPosition, false))
 			{
 				// Try sidestepping stealth units before giving up.
 				//model.sideStepStealthUnit (nextPosition, *this);
-				if (!map.possiblePlace (*this, nextPosition, nullptr))
+				if (!map.possiblePlace (*this, nextPosition, false))
 				{
 					// We can't build along this path any more.
 					break;
@@ -394,7 +394,7 @@ void cVehicle::proceedBuilding (cModel& model)
 void cVehicle::continuePathBuilding(cModel& model)
 {
 	if (!BuildPath) return;
-	
+
 	if (getStoredResources() >= getBuildCostsStart() && model.getMap()->possiblePlaceBuilding(model.getUnitsData()->getStaticUnitData(getBuildingType()), getPosition(), nullptr, this))
 	{
 		model.addJob(new cStartBuildJob(*this, getPosition(), getIsBig()));
@@ -751,13 +751,13 @@ void cVehicle::makeReport (cSoundManager& soundManager) const
 bool cVehicle::canTransferTo(const cPosition& position, const cMapView& map) const
 {
 	const auto& field = map.getField(position);
-	
+
 	const cUnit* unit = field.getVehicle();
 	if (unit)
 	{
 		return canTransferTo(*unit);
 	}
-	
+
 	unit = field.getTopBuilding();
 	if (unit)
 	{
@@ -1169,7 +1169,7 @@ void cVehicle::clearMine (cModel& model)
 	cBuilding* mine = map.getField (getPosition()).getMine();
 
 	if (!mine || mine->getOwner() != getOwner() || getStoredResources() >= staticData->storageResMax) return;
-	
+
 	// sea minelayer can't collect land mines and vice versa
 	if (mine->getStaticUnitData().factorGround > 0 && staticData->factorGround == 0) return;
 	if (mine->getStaticUnitData().factorSea > 0 && staticData->factorSea == 0) return;
@@ -1640,7 +1640,7 @@ uint32_t cVehicle::getChecksum(uint32_t crc) const
 	crc = calcCheckSum(clearMines, crc);
 	crc = calcCheckSum(flightHeight, crc);
 	crc = calcCheckSum(commandoRank, crc);
-	
+
 	return crc;
 }
 

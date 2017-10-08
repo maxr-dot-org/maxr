@@ -20,8 +20,13 @@
 #ifndef game_logic_pathcalculatorH
 #define game_logic_pathcalculatorH
 
-#include "utility/position.h"
 #include <forward_list>
+
+#include "utility/position.h"
+#include "game/data/map/map.h"
+#include "utility/log.h"
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
 
 class cVehicle;
 class cUnit;
@@ -135,7 +140,7 @@ private:
 };
 
 template<typename T>
-static int cPathCalculator::calcNextCost(const cPosition& source, const cPosition& destination, const cVehicle* vehicle, const T* map)
+int cPathCalculator::calcNextCost(const cPosition& source, const cPosition& destination, const cVehicle* vehicle, const T* map)
 {
 	static_assert(std::is_same<T, cMap>::value || std::is_same<T, cMapView>::value, "Type must be cMap or cMapView");
 

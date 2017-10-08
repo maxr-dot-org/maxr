@@ -25,6 +25,7 @@
 #include "utility/language.h"
 #include "utility/serialization/binaryarchive.h"
 #include "utility/serialization/xmlarchive.h"
+#include "game/data/units/unit.h"
 
 class cVehicle;
 

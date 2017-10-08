@@ -22,6 +22,8 @@
 
 #include<stdint.h>
 
+#include "utility/serialization/nvp.h"
+
 class cVehicle;
 class cModel;
 class cUnit;
@@ -58,7 +60,7 @@ private:
 
 	int vehicleID;
 	eEndMoveActionType type;
-	int destID;	
+	int destID;
 };
 
 #endif // !game_logic_endmoveaction_h

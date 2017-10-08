@@ -20,6 +20,8 @@
 #ifndef serialization_nvpH
 #define serialization_nvpH
 
+#include <string>
+
 namespace serialization
 {
 	template <typename T>

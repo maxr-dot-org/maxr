@@ -25,6 +25,7 @@
 
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
+#include "utility/serialization/nvp.h"
 
 class cModel;
 
