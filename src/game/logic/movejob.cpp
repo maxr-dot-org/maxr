@@ -256,6 +256,16 @@ bool cMoveJob::handleCollision(cModel &model)
 {
 	const cMap& map = *model.getMap();
 
+	//do not drive onto detected enemy mines
+	const auto mine = map.getField(path.front()).getMine();
+	if (mine &&
+		mine->getOwner() != vehicle->getOwner() &&
+		vehicle->getOwner()->canSeeUnit(*mine, map))
+	{
+		bool pathFound = recalculatePath(model);
+		return pathFound;
+	}
+
 	if (map.possiblePlace(*vehicle, path.front(), false))
 	{
 		return true;
@@ -275,28 +285,45 @@ bool cMoveJob::handleCollision(cModel &model)
 	}
 
 	// field is definitely blocked. Try to find another path to destination
+	bool pathFound = recalculatePath(model);
+	return pathFound;
+}
+
+//------------------------------------------------------------------------------
+bool cMoveJob::recalculatePath(cModel &model)
+{
+	//use owners mapview to calc path
 	const auto& playerList = model.getPlayerList();
 	auto iter = std::find_if(playerList.begin(), playerList.end(), [this](const std::shared_ptr<cPlayer>& player) { return player->getId() == vehicle->getOwner()->getId(); });
-	const cMapView mapView(model.getMap(), *iter); //use owners mapview to calc path
+	const cMapView mapView(model.getMap(), *iter);
 
 	cPosition dest;
 	for (const auto& pos : path) dest = pos;
 
 	cPathCalculator pc(*vehicle, mapView, dest, false);
 	auto newPath = pc.calcPath(); //TODO: don't execute path calculation on each model
-	if (newPath.empty())
+	if (!newPath.empty())
 	{
-		// no path to destination
-		state = FINISHED;
-		vehicle->setMoving(false);
-		vehicle->WalkFrame = 0;
-		vehicle->moveJobBlocked();
-		return false;
+		const cMap& map = *model.getMap();
+		if (!map.possiblePlace(*vehicle, newPath.front(), false))
+		{
+			//TODO: model.sideStepStealthUnit();
+		}
+
+		if (map.possiblePlace(*vehicle, newPath.front(), false))
+		{
+			// new path is ok. Use it to continue movement...
+			path.swap(newPath);
+			return true;
+		}
 	}
 
-	// new path is ok. Use it to continue movement...
-	path.swap(newPath);
-	return true;
+	// no path to destination
+	state = FINISHED;
+	vehicle->setMoving(false);
+	vehicle->WalkFrame = 0;
+	vehicle->moveJobBlocked();
+	return false;
 }
 
 //------------------------------------------------------------------------------

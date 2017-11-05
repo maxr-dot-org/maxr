@@ -136,6 +136,8 @@ private:
 	*/
 	bool handleCollision(cModel &model);
 
+	bool recalculatePath(cModel &model);
+
 	/**
 	* check, if the unit finished the current movement step
 	*/
