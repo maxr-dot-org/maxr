@@ -132,7 +132,7 @@ void cEndMoveAction::executeAttackAction (cModel& model)
 	if (!vehicle->canAttackObjectAt (position, mapView, true, true)) return;
 
 	// is the target in sight?
-	if (!vehicle->getOwner()->canSeeAnyAreaUnder (*destUnit)) return;
+	if (!vehicle->getOwner()->canSeeUnit (*destUnit, *model.getMap())) return;
 
 	model.addAttackJob (*vehicle, position);
 }

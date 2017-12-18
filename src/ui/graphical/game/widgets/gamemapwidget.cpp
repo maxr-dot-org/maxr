@@ -551,7 +551,7 @@ void cGameMapWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clip
 	drawExitPoints();
 	drawBuildBand();
 
-	if (lockActive && player) drawLockList (*player);
+	if (lockActive) drawLockList ();
 
 	drawEffects (false);
 
@@ -1560,7 +1560,7 @@ void cGameMapWidget::drawBuildBand()
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::drawLockList (const cPlayer& player)
+void cGameMapWidget::drawLockList ()
 {
 	const auto zoomedTileSize = getZoomedTileSize();
 
@@ -1568,7 +1568,7 @@ void cGameMapWidget::drawLockList (const cPlayer& player)
 	{
 		const cUnit* unit = unitLockList.getLockedUnit (i);
 
-		if (!player.canSeeAnyAreaUnder (*unit))
+		if (!mapView->canSeeUnit (*unit))
 		{
 			continue;
 		}
@@ -2322,7 +2322,7 @@ void cGameMapWidget::renewDamageEffect (const cBuilding& building)
 
 	if (building.uiData->hasDamageEffect &&
 		building.data.getHitpoints() < building.data.getHitpointsMax() &&
-		(building.getOwner() == player.get() || (!player || player->canSeeAnyAreaUnder (building))))
+		(building.getOwner() == player.get() || (!player || mapView->canSeeUnit (building))))
 	{
 		int intense = (int) (200 - 200 * ((float)building.data.getHitpoints() / building.data.getHitpointsMax()));
 		addEffect (std::make_shared<cFxDarkSmoke> (cPosition (building.getPosition().x() * 64 + building.DamageFXPointX, building.getPosition().y() * 64 + building.DamageFXPointY), intense, windDirection));
@@ -2339,7 +2339,7 @@ void cGameMapWidget::renewDamageEffect (const cBuilding& building)
 void cGameMapWidget::renewDamageEffect (const cVehicle& vehicle)
 {
 	if (vehicle.data.getHitpoints() < vehicle.data.getHitpointsMax() &&
-		(vehicle.getOwner() == player.get() || (!player || player->canSeeAnyAreaUnder (vehicle))))
+		(vehicle.getOwner() == player.get() || (!player || mapView->canSeeUnit (vehicle))))
 	{
 		int intense = (int) (100 - 100 * ((float)vehicle.data.getHitpoints() / vehicle.data.getHitpointsMax()));
 		addEffect (std::make_shared<cFxDarkSmoke> (cPosition (vehicle.getPosition().x() * 64 + vehicle.DamageFXPointX + vehicle.getMovementOffset().x(), vehicle.getPosition().y() * 64 + vehicle.DamageFXPointY + vehicle.getMovementOffset().y()), intense, windDirection));

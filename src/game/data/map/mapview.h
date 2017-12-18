@@ -49,6 +49,8 @@ public:
 	bool isWater(const cPosition& position) const;
 	bool isCoast(const cPosition& position) const;
 	bool isBlocked(const cPosition& position) const;
+
+	bool canSeeUnit(const cUnit& unit) const;
 	
 	cPosition getSize() const;
 	int getOffset(const cPosition& position) const;

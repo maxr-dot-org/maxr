@@ -348,10 +348,11 @@ void cMoveJob::moveVehicle(cModel& model)
 
 	int x = abs(vehicle->getMovementOffset().x());
 	int y = abs(vehicle->getMovementOffset().y());
-	if ((x > 32 && x - pixelToMove <= 32) ||
+	if ( vehicle->uiData->makeTracks && (
+		(x > 32 && x - pixelToMove <= 32) ||
 		(y > 32 && y - pixelToMove <= 32) ||
 		(x == 64 && pixelToMove >= 1) ||
-		(y == 64 && pixelToMove >= 1))
+		(y == 64 && pixelToMove >= 1)))
 	{
 		// this is a bit crude, but I don't know another simple way of notifying the
 		// gui, that is might wants to add a track effect.

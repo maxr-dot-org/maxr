@@ -1168,9 +1168,8 @@ void cGameGuiController::connectClient (cClient& client)
 
 	clientSignalConnectionManager.connect(client.getModel().triggeredAddTracks, [&](const cVehicle & vehicle)
 	{
-		if (!cSettings::getInstance().isMakeTracks() || !vehicle.uiData->makeTracks) return;
-		if (vehicle.getStaticUnitData().isStealthOn == TERRAIN_GROUND &&  !vehicle.isDetectedByPlayer(&client.getActivePlayer())) return;
-		if (vehicle.getOwner() != &client.getActivePlayer() && !client.getActivePlayer().canSeeAnyAreaUnder(vehicle)) return;
+		if (!cSettings::getInstance().isMakeTracks()) return;
+		if (!client.getActivePlayer().canSeeUnit(vehicle, *client.getModel().getMap())) return;
 
 		auto& map = gameGui->getGameMap();
 

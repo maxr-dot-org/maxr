@@ -37,7 +37,7 @@ cMapView::cMapView(std::shared_ptr<const cMap> map_, std::shared_ptr<const cPlay
 	{
 		if (!player || player->canSeeUnit(unit, *map))
 		{
-		// unit unloaded or new unit exited factory
+			// unit unloaded or new unit exited factory
 			unitAppeared(unit);
 		}
 	});
@@ -60,12 +60,12 @@ cMapView::cMapView(std::shared_ptr<const cMap> map_, std::shared_ptr<const cPlay
 		}
 		else if (!unitIsVisible && unitWasVisible)
 		{
-			//unit moved out of scan area
+			// unit moved out of scan area
 			unitDissappeared(unit);
 		}
 		else if (unitIsVisible)
 		{
-			//unit moved within scan area
+			// unit moved within scan area
 			unitMoved(unit, oldPosition);
 		}
 	});
@@ -74,7 +74,7 @@ cMapView::cMapView(std::shared_ptr<const cMap> map_, std::shared_ptr<const cPlay
 	{
 		if (!player || player->canSeeUnit(unit, *map))
 		{
-			//unit loaded or unit destroyed
+			// unit loaded or unit destroyed
 			unitDissappeared(unit);
 		}
 	});
@@ -126,6 +126,12 @@ bool cMapView::isCoast(const cPosition& position) const
 bool cMapView::isBlocked(const cPosition& position) const
 {
 	return map->isBlocked(position);
+}
+
+//------------------------------------------------------------------------------
+bool cMapView::canSeeUnit(const cUnit& unit) const
+{
+	return !player || player->canSeeUnit(unit, *map);
 }
 
 //------------------------------------------------------------------------------

@@ -283,7 +283,7 @@ private:
 	void drawSelectionBox();
 
 	void drawUnitCircles();
-	void drawLockList (const cPlayer& player);
+	void drawLockList ();
 
 	void drawExitPoints();
 	void drawExitPoint (const cPosition& position);

@@ -421,6 +421,8 @@ bool cPlayer::canSeeUnit(const cUnit& unit, const cMap& map) const
 //------------------------------------------------------------------------------
 bool cPlayer::canSeeUnit(const cUnit& unit, const cMapField& field, const sTerrain& terrain) const
 {
+	if (unit.isAVehicle() && static_cast<const cVehicle*>(&unit)->isUnitLoaded()) return false;
+
 	if (unit.getOwner() == this) return true;
 
 	if (!canSeeAnyAreaUnder(unit)) return false;
