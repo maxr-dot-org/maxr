@@ -58,9 +58,6 @@ cServer2::cServer2(std::shared_ptr<cConnectionManager> connectionManager) :
 cServer2::~cServer2()
 {
 	stop();
-	connectionManager->closeServer();
-	connectionManager->disconnectAll();
-	connectionManager->setLocalServer(nullptr);
 }
 
 //------------------------------------------------------------------------------
