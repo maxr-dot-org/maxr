@@ -96,6 +96,7 @@ protected:
 
 	cLineEdit* ipLineEdit;
 	cLineEdit* portLineEdit;
+	cImage* restoreDefaultPortButton;
 
 	cImage* colorImage;
 protected:
