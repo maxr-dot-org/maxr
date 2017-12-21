@@ -1121,7 +1121,8 @@ void cGameGuiController::connectClient (cClient& client)
 			gameGui->getHud().lockEndButton();
 		}
 	});
-/*	clientSignalConnectionManager.connect (client.playerFinishedTurn, [&] (int currentPlayerNumber, int nextPlayerNumber)
+/*	TODO: HotSeat
+	clientSignalConnectionManager.connect (client.playerFinishedTurn, [&] (int currentPlayerNumber, int nextPlayerNumber)
 	{
 		if (currentPlayerNumber != client.getActivePlayer().getId()) return;
 

@@ -848,10 +848,9 @@ bool cVehicle::inSentryRange (cModel& model)
 	{
 		if (player.get() == getOwner()) continue;
 
-		// Don't attack undiscovered stealth units
-		if (staticData->isStealthOn != TERRAIN_NONE && !isDetectedByPlayer (player.get())) continue;
-		// Don't attack units out of scan range
-		if (!player->canSeeAnyAreaUnder (*this)) continue;
+		// Don't attack invisible units
+		if (!player->canSeeUnit (*this, *model.getMap())) continue;
+
 		// Check sentry type
 		if (staticData->factorAir > 0 && player->hasSentriesAir (getPosition()) == 0) continue;
 		// Check sentry type
@@ -877,7 +876,7 @@ bool cVehicle::inSentryRange (cModel& model)
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::isOtherUnitOffendedByThis (cModel& model, const cUnit& otherUnit) const
+bool cVehicle::isOtherUnitOffendedByThis(const cModel& model, const cUnit& otherUnit) const
 {
 	// don't treat the cheap buildings
 	// (connectors, roads, beton blocks) as offendable
@@ -896,7 +895,7 @@ bool cVehicle::isOtherUnitOffendedByThis (cModel& model, const cUnit& otherUnit)
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (cModel& model, const cPlayer* player) const
+bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire(const cModel& model, const cPlayer* player) const
 {
 	if (model.getGameSettings()->getGameType() == eGameSettingsGameType::Turns)
 	{
@@ -979,14 +978,12 @@ bool cVehicle::provokeReactionFire (cModel& model)
 		if (&player == getOwner())
 			continue;
 
-		if (staticData->isStealthOn != TERRAIN_NONE && !isDetectedByPlayer (&player))
-			continue;
 		// The vehicle can't be seen by the opposing player.
 		// No possibility for reaction fire.
-		if (player.canSeeAnyAreaUnder (*this) == false) //TODO: player.isUnitVisible(vehicle)
+		if (!player.canSeeUnit (*this, *model.getMap()))
 			continue;
 
-		if (doesPlayerWantToFireOnThisVehicleAsReactionFire (model, &player) == false)
+		if (!doesPlayerWantToFireOnThisVehicleAsReactionFire (model, &player))
 			continue;
 
 		if (doReactionFire (model, &player))

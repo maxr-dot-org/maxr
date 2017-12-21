@@ -391,10 +391,10 @@ private:
 	 * @author: pagra
 	 */
 	bool provokeReactionFire (cModel& model);
-	bool doesPlayerWantToFireOnThisVehicleAsReactionFire (cModel& model, const cPlayer* player) const;
+	bool doesPlayerWantToFireOnThisVehicleAsReactionFire (const cModel& model, const cPlayer* player) const;
 	bool makeAttackOnThis (cModel& model, cUnit* opponentUnit, const std::string& reasonForLog) const;
 	bool makeSentryAttack (cModel& model, cUnit* unit) const;
-	bool isOtherUnitOffendedByThis (cModel& model, const cUnit& otherUnit) const;
+	bool isOtherUnitOffendedByThis (const cModel& model, const cUnit& otherUnit) const;
 	bool doReactionFire (cModel& model, cPlayer* player) const;
 	bool doReactionFireForUnit (cModel& model, cUnit* opponentUnit) const;
 
