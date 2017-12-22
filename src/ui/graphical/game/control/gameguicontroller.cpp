@@ -1225,45 +1225,73 @@ void cGameGuiController::connectClient (cClient& client)
 
 	clientSignalConnectionManager.connect (client.unitStored, [&] (const cUnit & storingUnit, const cUnit& /*storedUnit*/)
 	{
-		soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectLoad, SoundData.SNDLoad, storingUnit));
+		if (mapView->canSeeUnit(storingUnit))
+		{
+			soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectLoad, SoundData.SNDLoad, storingUnit));
+		}
 	});
 
 	clientSignalConnectionManager.connect (client.unitActivated, [&] (const cUnit & storingUnit, const cUnit& /*storedUnit*/)
 	{
-		soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectActivate, SoundData.SNDActivate, storingUnit));
+		if (mapView->canSeeUnit(storingUnit))
+		{
+			soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectActivate, SoundData.SNDActivate, storingUnit));
+		}
 	});
 
-	clientSignalConnectionManager.connect (client.unitHasStolenSuccessfully, [&] (const cUnit&)
+	clientSignalConnectionManager.connect (client.unitHasStolenSuccessfully, [&] (const cUnit& unit)
 	{
-		soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceCommandoAction, getRandom (VoiceData.VOIUnitStolen)));
+		if (unit.getOwner()->getId() == getActivePlayer()->getId())
+		{
+			soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceCommandoAction, getRandom (VoiceData.VOIUnitStolen)));
+		}
 	});
 
-	clientSignalConnectionManager.connect (client.unitHasDisabledSuccessfully, [&] (const cUnit&)
+	clientSignalConnectionManager.connect (client.unitHasDisabledSuccessfully, [&] (const cUnit& unit)
 	{
-		soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceCommandoAction, VoiceData.VOIUnitDisabled));
+		if (unit.getOwner()->getId() == getActivePlayer()->getId())
+		{
+			soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceCommandoAction, VoiceData.VOIUnitDisabled));
+		}
 	});
 
-	clientSignalConnectionManager.connect (client.unitStealDisableFailed, [&] (const cUnit&)
+	clientSignalConnectionManager.connect (client.unitStealDisableFailed, [&] (const cUnit& unit)
 	{
-		soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceCommandoAction, getRandom (VoiceData.VOICommandoFailed)));
+		if (unit.getOwner()->getId() == getActivePlayer()->getId())
+		{
+			soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceCommandoAction, getRandom (VoiceData.VOICommandoFailed)));
+		}
 	});
 
 	clientSignalConnectionManager.connect (client.unitSuppliedWithAmmo, [&] (const cUnit & unit)
 	{
-		soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectReload, SoundData.SNDReload, unit));
-		soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceReload, VoiceData.VOIReammo));
+		if (mapView->canSeeUnit(unit))
+		{
+			soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectReload, SoundData.SNDReload, unit));
+		}
+		if (unit.getOwner()->getId() == getActivePlayer()->getId())
+		{
+			soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceReload, VoiceData.VOIReammo));
+		}
 	});
 
 	clientSignalConnectionManager.connect (client.unitRepaired, [&] (const cUnit & unit)
 	{
-		soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectRepair, SoundData.SNDRepair, unit));
-		soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceRepair, getRandom (VoiceData.VOIRepaired)));
+		if (mapView->canSeeUnit(unit))
+		{
+			soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectRepair, SoundData.SNDRepair, unit));
+		}
+		if (unit.getOwner()->getId() == getActivePlayer()->getId())
+		{
+			soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceRepair, getRandom (VoiceData.VOIRepaired)));
+		}
 	});
 
 	clientSignalConnectionManager.connect (client.getModel().addedEffect, [&] (const std::shared_ptr<cFx>& effect)
 	{
-		//TODO: only play sound when effect in sight
-		gameGui->getGameMap().addEffect (effect, true);
+		cPosition fxPos = effect->getPosition();
+		cPosition mapPos = cPosition (fxPos.x() / cStaticMap::tilePixelWidth, fxPos.y() / cStaticMap::tilePixelHeight);
+		gameGui->getGameMap().addEffect (effect, getActivePlayer()->canSeeAt(mapPos));
 	});
 
 	clientSignalConnectionManager.connect (model.getTurnTimeClock()->alertTimeReached, [this]()

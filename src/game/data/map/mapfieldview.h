@@ -37,7 +37,7 @@ public:
 	cMapFieldView(const cMapField& mapField, const sTerrain& terrain, const cPlayer* player);
 
 	/** returns the top vehicle on this field */
-	cVehicle* getVehicle() const; //TODO: const?
+	cVehicle* getVehicle() const;
 	/** returns a Iterator for the planes on this field */
 	cVehicle* getPlane() const;
 	/** returns a pointer for the buildings on this field */
