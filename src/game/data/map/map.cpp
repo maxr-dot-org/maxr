@@ -729,7 +729,7 @@ std::string cMap::resourcesToString() const
 	str.reserve (4 * Resources.size() + 1);
 	for (size_t i = 0; i != Resources.size(); ++i)
 	{
-		str += getHexValue (Resources[i].typ);
+		str += getHexValue (static_cast<int>(Resources[i].typ));
 		str += getHexValue (Resources[i].value);
 	}
 	return str;
@@ -741,7 +741,7 @@ void cMap::setResourcesFromString (const std::string& str)
 	for (size_t i = 0; i != Resources.size(); ++i)
 	{
 		sResources res;
-		res.typ   = getByteValue(str, 4 * i);
+		res.typ   = static_cast<eResourceType>(getByteValue(str, 4 * i));
 		res.value = getByteValue(str, 4 * i + 2);
 
 		Resources.set(i, res);
@@ -755,20 +755,20 @@ void cMap::placeRessources(cModel& model)
 
 	Resources.fill(sResources());
 
-	std::vector<int> resSpotTypes(playerList.size(), RES_METAL);
+	std::vector<eResourceType> resSpotTypes(playerList.size(), eResourceType::Metal);
 	std::vector<T_2<int>> resSpots;
 	for (const auto& player : playerList)
 	{
 		const auto& position = player->getLandingPos();
-		resSpots.push_back(T_2<int> ((position.x() & ~1) + (RES_METAL % 2), (position.y() & ~1) + ((RES_METAL / 2) % 2)));
+		resSpots.push_back(T_2<int> ((position.x() & ~1) + 1, position.y() & ~1));
 	}
 
 	const eGameSettingsResourceDensity density = gameSettings.getResourceDensity();
-	eGameSettingsResourceAmount frequencies[RES_COUNT];
+	std::map<eResourceType, eGameSettingsResourceAmount> frequencies;
 
-	frequencies[RES_METAL] = gameSettings.getMetalAmount();
-	frequencies[RES_OIL] = gameSettings.getOilAmount();
-	frequencies[RES_GOLD] = gameSettings.getGoldAmount();
+	frequencies[eResourceType::Metal] = gameSettings.getMetalAmount();
+	frequencies[eResourceType::Oil] = gameSettings.getOilAmount();
+	frequencies[eResourceType::Gold] = gameSettings.getGoldAmount();
 
 	const std::size_t resSpotCount = (std::size_t) (getSize().x() * getSize().y() * 0.003f * (1.5f + getResourceDensityFactor (density)));
 	const std::size_t playerCount = playerList.size();
@@ -822,7 +822,7 @@ void cMap::placeRessources(cModel& model)
 	// Resourcen Typ bestimmen
 	for (std::size_t i = playerCount; i < resSpotCount; i++)
 	{
-		float amount[RES_COUNT] = {0.f, 0.f, 0.f, 0.f};
+		std::map<eResourceType, double> amount;
 		for (std::size_t j = 0; j < i; j++)
 		{
 			const float maxDist = 40.f;
@@ -830,20 +830,20 @@ void cMap::placeRessources(cModel& model)
 			if (dist < maxDist) amount[resSpotTypes[j]] += 1 - sqrtf (dist / maxDist);
 		}
 
-		amount[RES_METAL] /= 1.0f;
-		amount[RES_OIL] /= 0.8f;
-		amount[RES_GOLD] /= 0.4f;
+		amount[eResourceType::Metal] /= 1.0f;
+		amount[eResourceType::Oil] /= 0.8f;
+		amount[eResourceType::Gold] /= 0.4f;
 
-		int type = RES_METAL;
-		if (amount[RES_OIL] < amount[type]) type = RES_OIL;
-		if (amount[RES_GOLD] < amount[type]) type = RES_GOLD;
+		eResourceType type = eResourceType::Metal;
+		if (amount[eResourceType::Oil] < amount[type]) type = eResourceType::Oil;
+		if (amount[eResourceType::Gold] < amount[type]) type = eResourceType::Gold;
 
 		resSpots[i].x &= ~1;
 		resSpots[i].y &= ~1;
-		resSpots[i].x += type % 2;
-		resSpots[i].y += (type / 2) % 2;
+		resSpots[i].x += static_cast<int>(type) % 2;
+		resSpots[i].y += (static_cast<int>(type) / 2) % 2;
 
-		resSpotTypes[i] = ((resSpots[i].y % 2) * 2) + (resSpots[i].x % 2);
+		resSpotTypes[i] = static_cast<eResourceType>(((resSpots[i].y % 2) * 2) + (resSpots[i].x % 2));
 	}
 	// Resourcen platzieren
 	for (std::size_t i = 0; i < resSpotCount; i++)
@@ -860,11 +860,11 @@ void cMap::placeRessources(cModel& model)
 			for (p.x = minx; p.x <= maxx; ++p.x)
 			{
 				T_2<int> absPos = p;
-				int type = (absPos.y % 2) * 2 + (absPos.x % 2);
+				eResourceType type = static_cast<eResourceType>((absPos.y % 2) * 2 + (absPos.x % 2));
 
 				int index = getOffset (cPosition (absPos.x, absPos.y));
-				if (type != RES_NONE &&
-					((hasGold && i >= playerCount) || resSpotTypes[i] == RES_GOLD || type != RES_GOLD) &&
+				if (type != eResourceType::None &&
+					((hasGold && i >= playerCount) || resSpotTypes[i] == eResourceType::Gold || type != eResourceType::Gold) &&
 					!isBlocked (cPosition (absPos.x, absPos.y)))
 				{
 					sResources res;

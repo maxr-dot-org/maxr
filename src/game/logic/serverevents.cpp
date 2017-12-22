@@ -105,7 +105,7 @@ void sendVehicleResources (cServer& server, const cVehicle& vehicle)
 
 			const sResources& resource = map.getResource (position);
 			message->pushInt16 (resource.value);
-			message->pushInt16 (resource.typ);
+			//message->pushInt16 (resource.typ);
 			message->pushPosition (position);
 			iCount++;
 		}
@@ -130,7 +130,7 @@ void sendResources (cServer& server, const cPlayer& player)
 
 			const sResources& resource = server.Map->getResource (position);
 			message->pushInt16 (resource.value);
-			message->pushInt16 (resource.typ);
+			//message->pushInt16 (resource.typ);
 			message->pushPosition (position);
 			iCount++;
 

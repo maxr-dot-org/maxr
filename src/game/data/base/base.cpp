@@ -95,32 +95,32 @@ cSubBase::~cSubBase()
 
 int cSubBase::getMaxMetalProd() const
 {
-	return calcMaxProd (RES_METAL);
+	return calcMaxProd (eResourceType::Metal);
 }
 
 int cSubBase::getMaxGoldProd() const
 {
-	return calcMaxProd (RES_GOLD);
+	return calcMaxProd (eResourceType::Gold);
 }
 
 int cSubBase::getMaxOilProd() const
 {
-	return calcMaxProd (RES_OIL);
+	return calcMaxProd (eResourceType::Oil);
 }
 
 int cSubBase::getMaxAllowedMetalProd() const
 {
-	return calcMaxAllowedProd (RES_METAL);
+	return calcMaxAllowedProd (eResourceType::Metal);
 }
 
 int cSubBase::getMaxAllowedGoldProd() const
 {
-	return calcMaxAllowedProd (RES_GOLD);
+	return calcMaxAllowedProd (eResourceType::Gold);
 }
 
 int cSubBase::getMaxAllowedOilProd() const
 {
-	return calcMaxAllowedProd (RES_OIL);
+	return calcMaxAllowedProd (eResourceType::Oil);
 }
 
 int cSubBase::getMetalProd() const
@@ -329,7 +329,7 @@ void cSubBase::changeGoldProd (int value)
 	setGoldProd (goldProd + value);
 }
 
-int cSubBase::calcMaxProd (int ressourceType) const
+int cSubBase::calcMaxProd (eResourceType ressourceType) const
 {
 	int maxProd = 0;
 	for (size_t i = 0; i != buildings.size(); ++i)
@@ -343,7 +343,7 @@ int cSubBase::calcMaxProd (int ressourceType) const
 	return maxProd;
 }
 
-int cSubBase::calcMaxAllowedProd (int ressourceType) const
+int cSubBase::calcMaxAllowedProd (eResourceType ressourceType) const
 {
 	// initialize needed variables,
 	// so the algorithm itself is independent from the ressouce type
@@ -351,31 +351,31 @@ int cSubBase::calcMaxAllowedProd (int ressourceType) const
 	int ressourceToDistributeB;
 	int ressourceToDistributeC;
 
-	int ressourceTypeB;
-	int ressourceTypeC;
+	eResourceType ressourceTypeB;
+	eResourceType ressourceTypeC;
 
 	switch (ressourceType)
 	{
-		case RES_METAL:
+		case eResourceType::Metal:
 			maxAllowedProd = getMaxMetalProd();
 			ressourceToDistributeB = goldProd;
 			ressourceToDistributeC = oilProd;
-			ressourceTypeB = RES_GOLD;
-			ressourceTypeC = RES_OIL;
+			ressourceTypeB = eResourceType::Gold;
+			ressourceTypeC = eResourceType::Oil;
 			break;
-		case RES_OIL:
+		case eResourceType::Oil:
 			maxAllowedProd = getMaxOilProd();
 			ressourceToDistributeB = metalProd;
 			ressourceToDistributeC = goldProd;
-			ressourceTypeB = RES_METAL;
-			ressourceTypeC = RES_GOLD;
+			ressourceTypeB = eResourceType::Metal;
+			ressourceTypeC = eResourceType::Gold;
 			break;
-		case RES_GOLD:
+		case eResourceType::Gold:
 			maxAllowedProd = getMaxGoldProd();
 			ressourceToDistributeB = metalProd;
 			ressourceToDistributeC = oilProd;
-			ressourceTypeB = RES_METAL;
-			ressourceTypeC = RES_OIL;
+			ressourceTypeB = eResourceType::Metal;
+			ressourceTypeC = eResourceType::Oil;
 			break;
 		default:
 			return 0;
@@ -741,11 +741,11 @@ bool cSubBase::checkOil()
 		setGoldProd(oldGoldProd);
 		setMetalProd(oldMetalProd);
 
-		base.forcedRessouceProductionChance(RES_OIL, missingOil, true);
+		base.forcedRessouceProductionChance(eResourceType::Oil, missingOil, true);
 		if (getMetalProd() < oldMetalProd)
-			base.forcedRessouceProductionChance(RES_METAL, oldMetalProd - metalProd, false);
+			base.forcedRessouceProductionChance(eResourceType::Metal, oldMetalProd - metalProd, false);
 		if (getGoldProd() < oldGoldProd)
-			base.forcedRessouceProductionChance(RES_GOLD, oldGoldProd - goldProd, false);
+			base.forcedRessouceProductionChance(eResourceType::Gold, oldGoldProd - goldProd, false);
 	}
 
 	// stop unneeded buildings
@@ -785,9 +785,9 @@ bool cSubBase::checkEnergy ()
 		if (!building.getStaticUnitData().needsEnergy || !building.isUnitWorking()) continue;
 
 		// do not shut down ressource producers in the first run
-		if (building.getMaxProd(RES_METAL) > 0 ||
-			building.getMaxProd(RES_GOLD) > 0 ||
-			building.getMaxProd(RES_OIL) > 0) continue;
+		if (building.getMaxProd(eResourceType::Metal) > 0 ||
+			building.getMaxProd(eResourceType::Gold) > 0 ||
+			building.getMaxProd(eResourceType::Oil) > 0) continue;
 
 		building.stopWork (false);
 
@@ -800,7 +800,7 @@ bool cSubBase::checkEnergy ()
 		if (!building.getStaticUnitData().needsEnergy || !building.isUnitWorking()) continue;
 
 		// do not shut down oil producers in the second run
-		if (building.getMaxProd(RES_OIL) > 0) continue;
+		if (building.getMaxProd(eResourceType::Oil) > 0) continue;
 
 		building.stopWork (false);
 
@@ -1146,11 +1146,11 @@ bool cSubBase::startBuilding(cBuilding* b)
 			setGoldProd(oldGoldProd);
 			setMetalProd(oldMetalProd);
 
-			base.forcedRessouceProductionChance(RES_OIL, missingOil, true);
+			base.forcedRessouceProductionChance(eResourceType::Oil, missingOil, true);
 			if (metalProd < oldMetalProd)
-				base.forcedRessouceProductionChance(RES_METAL, oldMetalProd - metalProd, false);
+				base.forcedRessouceProductionChance(eResourceType::Metal, oldMetalProd - metalProd, false);
 			if (goldProd < oldGoldProd)
-				base.forcedRessouceProductionChance(RES_GOLD, oldGoldProd - goldProd, false);
+				base.forcedRessouceProductionChance(eResourceType::Gold, oldGoldProd - goldProd, false);
 		}
 	}
 

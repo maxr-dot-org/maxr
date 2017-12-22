@@ -19,10 +19,10 @@
 
 #include "game/data/report/special/savedreportresourcechanged.h"
 #include "game/data/player/player.h"
-#include "game/data/map/map.h" // RES_XYZ
+#include "game/data/resourcetype.h"
 
 //------------------------------------------------------------------------------
-cSavedReportResourceChanged::cSavedReportResourceChanged (int resourceType_, int amount_, bool increase_) :
+cSavedReportResourceChanged::cSavedReportResourceChanged (eResourceType resourceType_, int amount_, bool increase_) :
 	resourceType (resourceType_),
 	amount (amount_),
 	increase (increase_)
@@ -40,14 +40,14 @@ std::string cSavedReportResourceChanged::getMessage(const cUnitsData& unitsData)
 	std::string text;
 	if (increase)
 	{
-		if (resourceType == RES_GOLD) text = "Text~Comp~Adjustments_Gold_Increased";
-		else if (resourceType == RES_OIL) text = "Text~Comp~Adjustments_Fuel_Increased";
+		if (resourceType == eResourceType::Gold) text = "Text~Comp~Adjustments_Gold_Increased";
+		else if (resourceType == eResourceType::Oil) text = "Text~Comp~Adjustments_Fuel_Increased";
 		else text = "Text~Comp~Adjustments_Metal_Increased";
 	}
 	else
 	{
-		if (resourceType == RES_GOLD) text = "Text~Comp~Adjustments_Gold_Decreased";
-		else if (resourceType == RES_OIL) text = "Text~Comp~Adjustments_Fuel_Decreased";
+		if (resourceType == eResourceType::Gold) text = "Text~Comp~Adjustments_Gold_Decreased";
+		else if (resourceType == eResourceType::Oil) text = "Text~Comp~Adjustments_Fuel_Decreased";
 		else text = "Text~Comp~Adjustments_Metal_Decreased";
 	}
 	return lngPack.i18n (text, iToStr (amount));

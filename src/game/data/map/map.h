@@ -33,6 +33,7 @@
 #include "game/data/gamesettings.h"
 #include "utility/log.h"
 #include "utility/arraycrc.h"
+#include "game/data/resourcetype.h"
 
 class cUnit;
 class cVehicle;
@@ -46,7 +47,7 @@ class cStaticUnitData;
 struct sResources
 {
 public:
-	sResources() : value (0), typ (0) {}
+	sResources() : value (0), typ (eResourceType::None) {}
 	template <typename T>
 	void serialize(T& archive)
 	{
@@ -56,14 +57,8 @@ public:
 	uint32_t getChecksum(uint32_t crc) const;
 public:
 	unsigned char value;
-	unsigned char typ;
+	eResourceType typ;
 };
-// Die Resorces-Typen:
-const int RES_NONE  = 0;
-const int RES_METAL = 1;
-const int RES_OIL   = 2;
-const int RES_GOLD  = 3;
-const int RES_COUNT = 4;
 
 /** contains all information of a map field */
 class cMapField

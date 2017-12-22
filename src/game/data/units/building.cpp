@@ -1099,9 +1099,9 @@ void cBuilding::initMineRessourceProd (const cMap& map)
 
 	switch (res->typ)
 	{
-		case RES_METAL: maxMetalProd += res->value; break;
-		case RES_GOLD:  maxGoldProd  += res->value; break;
-		case RES_OIL:   maxOilProd   += res->value; break;
+		case eResourceType::Metal: maxMetalProd += res->value; break;
+		case eResourceType::Gold:  maxGoldProd  += res->value; break;
+		case eResourceType::Oil:   maxOilProd   += res->value; break;
 	}
 
 	if (isBig)
@@ -1110,27 +1110,27 @@ void cBuilding::initMineRessourceProd (const cMap& map)
 		res = &map.getResource(position);
 		switch (res->typ)
 		{
-		case RES_METAL: maxMetalProd += res->value; break;
-		case RES_GOLD:  maxGoldProd += res->value; break;
-		case RES_OIL:   maxOilProd += res->value; break;
+		case eResourceType::Metal: maxMetalProd += res->value; break;
+		case eResourceType::Gold:  maxGoldProd += res->value; break;
+		case eResourceType::Oil:   maxOilProd += res->value; break;
 		}
 
 		position.y()++;
 		res = &map.getResource(position);
 		switch (res->typ)
 		{
-		case RES_METAL: maxMetalProd += res->value; break;
-		case RES_GOLD:  maxGoldProd += res->value; break;
-		case RES_OIL:   maxOilProd += res->value; break;
+		case eResourceType::Metal: maxMetalProd += res->value; break;
+		case eResourceType::Gold:  maxGoldProd += res->value; break;
+		case eResourceType::Oil:   maxOilProd += res->value; break;
 		}
 
 		position.x()--;
 		res = &map.getResource(position);
 		switch (res->typ)
 		{
-		case RES_METAL: maxMetalProd += res->value; break;
-		case RES_GOLD:  maxGoldProd += res->value; break;
-		case RES_OIL:   maxOilProd += res->value; break;
+		case eResourceType::Metal: maxMetalProd += res->value; break;
+		case eResourceType::Gold:  maxGoldProd += res->value; break;
+		case eResourceType::Oil:   maxOilProd += res->value; break;
 		}
 	}
 
@@ -1481,15 +1481,15 @@ void cBuilding::setRepeatBuild(bool value)
 	if(value != repeatBuild) repeatBuildChanged();
 }
 
-int cBuilding::getMaxProd(int type) const
+int cBuilding::getMaxProd(eResourceType type) const
 {
 	switch (type)
 	{
-	case RES_METAL:
+	case eResourceType::Metal:
 		return maxMetalProd;
-	case RES_GOLD:
+	case eResourceType::Gold:
 		return maxGoldProd;
-	case RES_OIL:
+	case eResourceType::Oil:
 		return maxOilProd;
 	default:
 		return 0;

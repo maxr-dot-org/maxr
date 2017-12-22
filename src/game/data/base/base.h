@@ -179,12 +179,12 @@ private:
 	* without decreasing the production of the other two
 	* @author eiko
 	*/
-	int calcMaxAllowedProd (int ressourceType) const;
+	int calcMaxAllowedProd (eResourceType ressourceType) const;
 	/**
 	* calcs the maximum possible production of a resource
 	* @author eiko
 	*/
-	int calcMaxProd (int ressourceType) const;
+	int calcMaxProd (eResourceType ressourceType) const;
 	/**
 	* adds/subtracts resources of the type storeResType to/from the subbase
 	* @author eiko
@@ -270,7 +270,7 @@ public:
 	uint32_t getChecksum(uint32_t crc) const;
 
 	// report sources for the player:
-	mutable cSignal<void(int resourceType, int amount, bool increase)> forcedRessouceProductionChance;
+	mutable cSignal<void(eResourceType resourceType, int amount, bool increase)> forcedRessouceProductionChance;
 	mutable cSignal<void()> teamLow;
 	mutable cSignal<void()> metalLow;
 	mutable cSignal<void()> goldLow;

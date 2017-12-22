@@ -162,7 +162,7 @@ const sResources& cMapView::getResource(const cPosition& position) const
 	else
 	{
 		static sResources res;
-		res.typ = RES_NONE; //TODO: use eResourceType
+		res.typ = eResourceType::None;
 		return res;
 	}
 }

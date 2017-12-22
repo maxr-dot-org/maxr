@@ -250,7 +250,7 @@ public:
 	void setMetalPerRound(int value);
 	void setRepeatBuild(bool value);
 
-	int getMaxProd(int type) const;
+	int getMaxProd(eResourceType type) const;
 
 	void setResearchArea (cResearch::ResearchArea area);
 	cResearch::ResearchArea getResearchArea() const;

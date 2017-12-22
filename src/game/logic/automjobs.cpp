@@ -201,7 +201,7 @@ float cAutoMJob::calcFactor (const cPosition& position, const std::vector<cAutoM
 			const cPosition position (x, y);
 
 			// check if the surveyor already found some resources in this new direction or not
-			if (vehicle.getOwner()->hasResourceExplored (position) && map.getResource (position).typ != 0)
+			if (vehicle.getOwner()->hasResourceExplored (position) && map.getResource (position).typ != eResourceType::None)
 			{
 				NrResFound++;
 			}

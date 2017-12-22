@@ -1298,7 +1298,7 @@ void cGameMapWidget::drawResources()
 		const auto& resource = mapView->getResource (*i);
 		auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
 
-		if (resource.typ == RES_NONE)
+		if (resource.typ == eResourceType::None)
 		{
 			src.x = 0;
 			tmp = drawDestination;
@@ -1309,17 +1309,17 @@ void cGameMapWidget::drawResources()
 		{
 			src.x = resource.value * zoomedTileSize.x();
 			tmp = drawDestination;
-			if (resource.typ == RES_METAL)
+			if (resource.typ == eResourceType::Metal)
 			{
 				if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_metal->w != ResourceData.res_metal_org->w / 64 * zoomedTileSize.x() || ResourceData.res_metal->h != zoomedTileSize.y())) scaleSurface (ResourceData.res_metal_org.get(), ResourceData.res_metal.get(), ResourceData.res_metal_org->w / 64 * zoomedTileSize.x(), zoomedTileSize.y());
 				SDL_BlitSurface (ResourceData.res_metal.get(), &src, cVideo::buffer, &tmp);
 			}
-			else if (resource.typ == RES_OIL)
+			else if (resource.typ == eResourceType::Oil)
 			{
 				if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_oil->w != ResourceData.res_oil_org->w / 64 * zoomedTileSize.x() || ResourceData.res_oil->h != zoomedTileSize.y())) scaleSurface (ResourceData.res_oil_org.get(), ResourceData.res_oil.get(), ResourceData.res_oil_org->w / 64 * zoomedTileSize.x(), zoomedTileSize.y());
 				SDL_BlitSurface (ResourceData.res_oil.get(), &src, cVideo::buffer, &tmp);
 			}
-			else if (resource.typ == RES_GOLD)
+			else if (resource.typ == eResourceType::Gold)
 			{
 				if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_gold->w != ResourceData.res_gold_org->w / 64 * zoomedTileSize.x() || ResourceData.res_gold->h != zoomedTileSize.y())) scaleSurface (ResourceData.res_gold_org.get(), ResourceData.res_gold.get(), ResourceData.res_gold_org->w / 64 * zoomedTileSize.x(), zoomedTileSize.y());
 				SDL_BlitSurface (ResourceData.res_gold.get(), &src, cVideo::buffer, &tmp);
