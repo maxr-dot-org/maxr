@@ -26,7 +26,7 @@
 class cMouseModeSelectBuildPathDestination : public cMouseMode
 {
 public:
-	cMouseModeSelectBuildPathDestination (const cMap* map, const cUnitSelection& unitSelection, const cPlayer* player);
+	cMouseModeSelectBuildPathDestination (const cMapView* map, const cUnitSelection& unitSelection, const cPlayer* player);
 
 	virtual eMouseModeType getType() const MAXR_OVERRIDE_FUNCTION;
 

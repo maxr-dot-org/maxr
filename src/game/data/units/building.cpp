@@ -42,6 +42,8 @@
 #include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffectvoice.h"
 #include "utility/crc.h"
+#include "game/data/map/mapview.h"
+#include "game/data/map/mapfieldview.h"
 
 using namespace std;
 
@@ -784,15 +786,39 @@ void cBuilding::stopWork (bool forced)
 	}
 }
 
-//------------------------------------------------------------
-bool cBuilding::canTransferTo (const cPosition& position, const cMapField& overUnitField) const
+bool cBuilding::canTransferTo(const cPosition& position, const cMapView& map) const
 {
-	if (overUnitField.getVehicle())
-	{
-		const cVehicle* v = overUnitField.getVehicle();
+	const auto& field = map.getField(position);
 
-		if (v->getOwner() != this->getOwner())
-			return false;
+	const cUnit* unit = field.getVehicle();
+	if (unit)
+	{
+		return canTransferTo(*unit);
+	}
+
+	unit = field.getTopBuilding();
+	if (unit)
+	{
+		return canTransferTo(*unit);
+	}
+
+	return false;
+}
+
+//------------------------------------------------------------
+bool cBuilding::canTransferTo (const cUnit& unit) const
+{
+	if (unit.getOwner() != getOwner())
+		return false;
+
+	if (&unit == this)
+		return false;
+
+
+	if (unit.isAVehicle())
+	{
+		const cVehicle* v = static_cast<const cVehicle*>(&unit);
+
 
 		if (v->getStaticUnitData().storeResType != staticData->storeResType)
 			return false;
@@ -802,22 +828,15 @@ bool cBuilding::canTransferTo (const cPosition& position, const cMapField& overU
 
 		for (const auto b : subBase->getBuildings())
 		{
-			if (b->isNextTo (position)) return true;
+			if (b->isNextTo (v->getPosition())) return true;
 		}
 
 		return false;
 	}
-	else if (overUnitField.getTopBuilding())
+	else if (unit.isABuilding())
 	{
-		const cBuilding* b = overUnitField.getTopBuilding();
-
-		if (b == this)
-			return false;
-
+		const cBuilding* b = static_cast<const cBuilding*>(&unit);
 		if (b->subBase != subBase)
-			return false;
-
-		if (b->getOwner() != this->getOwner())
 			return false;
 
 		if (staticData->storeResType != b->getStaticUnitData().storeResType)
@@ -825,20 +844,30 @@ bool cBuilding::canTransferTo (const cPosition& position, const cMapField& overU
 
 		return true;
 	}
+
 	return false;
 }
 
 //--------------------------------------------------------------------------
-bool cBuilding::canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& vehicleData) const
+bool cBuilding::canExitTo(const cPosition& position, const cMap& map, const cStaticUnitData& vehicleData) const
 {
-	if (!map.possiblePlaceVehicle (vehicleData, position, getOwner())) return false;
-	if (!isNextTo (position)) return false;
+	if (!map.possiblePlaceVehicle(vehicleData, position, getOwner())) return false;
+	if (!isNextTo(position)) return false;
 
 	return true;
 }
 
 //--------------------------------------------------------------------------
-bool cBuilding::canLoad (const cPosition& position, const cMap& map, bool checkPosition) const
+bool cBuilding::canExitTo(const cPosition& position, const cMapView& map, const cStaticUnitData& vehicleData) const
+{
+	if (!map.possiblePlaceVehicle(vehicleData, position)) return false;
+	if (!isNextTo(position)) return false;
+
+	return true;
+}
+
+//--------------------------------------------------------------------------
+bool cBuilding::canLoad (const cPosition& position, const cMapView& map, bool checkPosition) const
 {
 	if (map.isValidPosition (position) == false) return false;
 
@@ -1070,9 +1099,9 @@ void cBuilding::initMineRessourceProd (const cMap& map)
 
 	switch (res->typ)
 	{
-		case RES_METAL: maxMetalProd += res->value; break;
-		case RES_GOLD:  maxGoldProd  += res->value; break;
-		case RES_OIL:   maxOilProd   += res->value; break;
+		case eResourceType::Metal: maxMetalProd += res->value; break;
+		case eResourceType::Gold:  maxGoldProd  += res->value; break;
+		case eResourceType::Oil:   maxOilProd   += res->value; break;
 	}
 
 	if (isBig)
@@ -1081,27 +1110,27 @@ void cBuilding::initMineRessourceProd (const cMap& map)
 		res = &map.getResource(position);
 		switch (res->typ)
 		{
-		case RES_METAL: maxMetalProd += res->value; break;
-		case RES_GOLD:  maxGoldProd += res->value; break;
-		case RES_OIL:   maxOilProd += res->value; break;
+		case eResourceType::Metal: maxMetalProd += res->value; break;
+		case eResourceType::Gold:  maxGoldProd += res->value; break;
+		case eResourceType::Oil:   maxOilProd += res->value; break;
 		}
 
 		position.y()++;
 		res = &map.getResource(position);
 		switch (res->typ)
 		{
-		case RES_METAL: maxMetalProd += res->value; break;
-		case RES_GOLD:  maxGoldProd += res->value; break;
-		case RES_OIL:   maxOilProd += res->value; break;
+		case eResourceType::Metal: maxMetalProd += res->value; break;
+		case eResourceType::Gold:  maxGoldProd += res->value; break;
+		case eResourceType::Oil:   maxOilProd += res->value; break;
 		}
 
 		position.x()--;
 		res = &map.getResource(position);
 		switch (res->typ)
 		{
-		case RES_METAL: maxMetalProd += res->value; break;
-		case RES_GOLD:  maxGoldProd += res->value; break;
-		case RES_OIL:   maxOilProd += res->value; break;
+		case eResourceType::Metal: maxMetalProd += res->value; break;
+		case eResourceType::Gold:  maxGoldProd += res->value; break;
+		case eResourceType::Oil:   maxOilProd += res->value; break;
 		}
 	}
 
@@ -1452,15 +1481,15 @@ void cBuilding::setRepeatBuild(bool value)
 	if(value != repeatBuild) repeatBuildChanged();
 }
 
-int cBuilding::getMaxProd(int type) const
+int cBuilding::getMaxProd(eResourceType type) const
 {
 	switch (type)
 	{
-	case RES_METAL:
+	case eResourceType::Metal:
 		return maxMetalProd;
-	case RES_GOLD:
+	case eResourceType::Gold:
 		return maxGoldProd;
-	case RES_OIL:
+	case eResourceType::Oil:
 		return maxOilProd;
 	default:
 		return 0;

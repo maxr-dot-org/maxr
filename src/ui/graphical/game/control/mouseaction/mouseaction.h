@@ -21,7 +21,7 @@
 #define ui_graphical_game_control_mouseaction_mouseactionH
 
 class cMouse;
-class cMap;
+class cMapView;
 class cPosition;
 class cGameMapWidget;
 class cUnitSelection;
@@ -45,7 +45,7 @@ public:
 	 *
 	 * @return True if the action has been executed successfully.
 	 */
-	virtual bool executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const = 0;
+	virtual bool executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const = 0;
 
 	/**
 	 * Should return true if the action does change the game state and therefore should not be executed while e.g. the client is frozen.

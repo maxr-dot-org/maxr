@@ -18,9 +18,10 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/unitlocklist.h"
-#include "game/data/map/map.h"
+#include "game/data/map/mapview.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
+#include "game/data/map/mapfieldview.h"
 
 //------------------------------------------------------------------------------
 cUnitLockList::cUnitLockList() :
@@ -34,7 +35,7 @@ void cUnitLockList::setPlayer (const cPlayer* player_)
 }
 
 //------------------------------------------------------------------------------
-void cUnitLockList::toggleLockAt (const cMapField& field)
+void cUnitLockList::toggleLockAt (const cMapFieldView& field)
 {
 	const cUnit* unit = nullptr;
 	if (field.getBaseBuilding() && (!player || field.getBaseBuilding()->getOwner() != player))

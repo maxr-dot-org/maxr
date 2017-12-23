@@ -26,19 +26,20 @@
 #include "utility/signal/signal.h"
 
 class cPosition;
-class cMap;
+class cMapView;
 class cPlayer;
 class cMapField;
 class cUnit;
 class cVehicle;
 class cBuilding;
+class cMapFieldView;
 template<typename T> class cBox;
 
 class cUnitSelection
 {
 public:
-	bool selectUnitAt (const cMapField& field, bool base);
-	bool selectVehiclesAt (const cBox<cPosition>& box, const cMap& map, const cPlayer& player);
+	bool selectUnitAt (const cMapFieldView& field, bool base);
+	bool selectVehiclesAt (const cBox<cPosition>& box, const cMapView& map, const cPlayer& player);
 	bool selectUnit (cUnit& unit, bool add = false);
 	bool selectNextUnit(const cPlayer& player, const std::vector<unsigned int>& doneList);
 	bool selectPrevUnit(const cPlayer& player, const std::vector<unsigned int>& doneList);

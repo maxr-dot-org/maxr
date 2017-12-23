@@ -201,7 +201,7 @@ float cAutoMJob::calcFactor (const cPosition& position, const std::vector<cAutoM
 			const cPosition position (x, y);
 
 			// check if the surveyor already found some resources in this new direction or not
-			if (vehicle.getOwner()->hasResourceExplored (position) && map.getResource (position).typ != 0)
+			if (vehicle.getOwner()->hasResourceExplored (position) && map.getResource (position).typ != eResourceType::None)
 			{
 				NrResFound++;
 			}
@@ -238,7 +238,7 @@ void cAutoMJob::planLongMove (const std::vector<cAutoMJob*>& jobs)
 
 			// if field is not passable/walkable or
 			// if it's already has been explored, continue
-			if (!map.possiblePlace (vehicle, currentPosition)) continue;
+			if (!map.possiblePlace (vehicle, currentPosition, false)) continue;
 			if (vehicle.getOwner()->hasResourceExplored (currentPosition)) continue;
 
 			// calculate the distance to other surveyors

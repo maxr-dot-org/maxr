@@ -37,7 +37,7 @@ class cMouseModeDefault : public cMouseMode
 		ActivateFinished
 	};
 public:
-	cMouseModeDefault (const cMap* map, const cUnitSelection& unitSelection, const cPlayer* player);
+	cMouseModeDefault (const cMapView* map, const cUnitSelection& unitSelection, const cPlayer* player);
 
 	virtual eMouseModeType getType() const MAXR_OVERRIDE_FUNCTION;
 
@@ -47,14 +47,14 @@ public:
 
 protected:
 	virtual void establishUnitSelectionConnections() MAXR_OVERRIDE_FUNCTION;
-	virtual void establishMapFieldConnections (const cMapField& field) MAXR_OVERRIDE_FUNCTION;
+	virtual void establishMapFieldConnections (const cMapFieldView& field) MAXR_OVERRIDE_FUNCTION;
 
 private:
 	cSignalConnectionManager keyboardConnectionManager;
 
 	eActionType selectAction (const cPosition& mapPosition, const cUnitsData& unitData) const;
 
-	void updateFieldUnitConnections (const cMapField& field);
+	void updateFieldUnitConnections (const cMapFieldView& field);
 };
 
 #endif // ui_graphical_game_control_mousemode_mousemodeH

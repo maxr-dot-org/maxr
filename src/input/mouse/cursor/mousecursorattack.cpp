@@ -34,7 +34,7 @@ cMouseCursorAttack::cMouseCursorAttack() :
 {}
 
 //------------------------------------------------------------------------------
-cMouseCursorAttack::cMouseCursorAttack (const cUnit& sourceUnit, const cPosition& targetPosition, const cMap& map) :
+cMouseCursorAttack::cMouseCursorAttack (const cUnit& sourceUnit, const cPosition& targetPosition, const cMapView& map) :
 	currentHealthPercent (-1),
 	newHealthPercent (-1),
 	inRange (sourceUnit.isInRange (targetPosition))

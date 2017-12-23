@@ -78,7 +78,6 @@ cClient::cClient (std::shared_ptr<cConnectionManager> connectionManager) :
 cClient::~cClient()
 {
 	connectionManager->setLocalClient(nullptr, -1);
-	connectionManager->disconnectAll();
 	gameTimer->stop();
 
 }

@@ -19,9 +19,11 @@
 
 
 #include "endmoveaction.h"
+
 #include "game/data/units/vehicle.h"
-#include "server.h"
-#include "serverevents.h"
+#include "game/data/map/mapview.h"
+#include "game/data/model.h"
+#include "utility/crc.h"
 
 
 cEndMoveAction::cEndMoveAction (const cVehicle& vehicle, const cUnit& destUnit, eEndMoveActionType type) :
@@ -124,13 +126,13 @@ void cEndMoveAction::executeAttackAction (cModel& model)
 	if (destUnit == nullptr) return;
 
 	const auto& position = destUnit->getPosition();
-	const cMap& map = *model.getMap();
+	cMapView mapView(model.getMap(), nullptr);
 
 	// check, whether the attack is now possible
-	if (!vehicle->canAttackObjectAt (position, map, true, true)) return;
+	if (!vehicle->canAttackObjectAt (position, mapView, true, true)) return;
 
 	// is the target in sight?
-	if (!vehicle->getOwner()->canSeeAnyAreaUnder (*destUnit)) return;
+	if (!vehicle->getOwner()->canSeeUnit (*destUnit, *model.getMap())) return;
 
 	model.addAttackJob (*vehicle, position);
 }

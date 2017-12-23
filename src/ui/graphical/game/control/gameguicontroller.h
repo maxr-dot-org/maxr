@@ -44,7 +44,7 @@ class cUnit;
 class cVehicle;
 class cBuilding;
 class cStaticMap;
-class cMap;
+class cMapView;
 class cGameSettings;
 class cUnitUpgrade;
 class cCasualtiesTracker;
@@ -97,6 +97,7 @@ private:
 	std::shared_ptr<cGameGui> gameGui;
 	std::shared_ptr<cClient> activeClient;
 	std::vector<std::shared_ptr<cClient>> clients;
+	std::shared_ptr<const cMapView> mapView;
 	cServer2* server;
 
 	std::vector<std::unique_ptr<cChatCommandExecutor>> chatCommands;
@@ -160,7 +161,6 @@ private:
 	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock() const;
 	std::shared_ptr<const cGameSettings> getGameSettings() const;
 	std::shared_ptr<const cCasualtiesTracker> getCasualtiesTracker() const;
-	std::shared_ptr<const cMap> getDynamicMap() const;
 	std::shared_ptr<const cUnitsData> getUnitsData() const;
 
 	mutable cSignal<void (const cUnit&, const cUnit&, int, eResourceType)> transferTriggered;

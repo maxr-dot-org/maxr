@@ -28,16 +28,16 @@
 struct SDL_Surface;
 
 class cStaticMap;
-class cMap;
-class cPlayer;
+class cMapView;
 
 class cMiniMapWidget : public cClickableWidget
 {
 public:
 	cMiniMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap);
 
-	void setDynamicMap (std::shared_ptr<const cMap> dynamicMap);
-	void setPlayer (std::shared_ptr<const cPlayer> player);
+//	void setDynamicMap (std::shared_ptr<const cMap> dynamicMap);
+//	void setPlayer (std::shared_ptr<const cPlayer> player);
+	void setMapView (std::shared_ptr<const cMapView> mapView);
 
 	void setViewWindow (const cBox<cPosition>& viewWindow);
 
@@ -71,8 +71,9 @@ private:
 	bool startedMoving;
 
 	std::shared_ptr<const cStaticMap> staticMap;
-	std::shared_ptr<const cMap> dynamicMap; // may be null
-	std::shared_ptr<const cPlayer> player; // may be null
+	std::shared_ptr<const cMapView> mapView; // may be null
+//	std::shared_ptr<const cMap> dynamicMap; // may be null
+//	std::shared_ptr<const cPlayer> player; // may be null
 
 	int zoomFactor; // TODO: may use floating value here
 	cPosition offset;

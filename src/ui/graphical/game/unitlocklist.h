@@ -25,7 +25,7 @@
 #include "utility/signal/signalconnectionmanager.h"
 
 class cUnit;
-class cMapField;
+class cMapFieldView;
 class cPlayer;
 
 class cUnitLockList
@@ -35,7 +35,7 @@ public:
 
 	void setPlayer (const cPlayer* player);
 
-	void toggleLockAt (const cMapField& field);
+	void toggleLockAt (const cMapFieldView& field);
 
 	size_t getLockedUnitsCount() const;
 	const cUnit* getLockedUnit (size_t index) const;

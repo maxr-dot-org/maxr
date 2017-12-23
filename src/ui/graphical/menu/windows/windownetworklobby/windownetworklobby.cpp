@@ -78,7 +78,7 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	portLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (230, 260), getPosition() + cPosition (230 + 95, 260 + 10))));
 	portLineEdit->setText (iToStr (cSettings::getInstance().getPort()));
 	portLineEdit->setValidator (std::make_unique<cValidatorInt> (0, 65535));
-	const auto restoreDefaultPortButton = addChild(std::make_unique<cImage>(getPosition() + cPosition(230 + 82, 254), GraphicsData.gfx_Cpfeil2.get()));
+	restoreDefaultPortButton = addChild(std::make_unique<cImage>(getPosition() + cPosition(230 + 82, 254), GraphicsData.gfx_Cpfeil2.get()));
 	signalConnectionManager.connect(restoreDefaultPortButton->clicked, [this]()
 	{
 		portLineEdit->setText(iToStr(DEFAULTPORT));
@@ -413,6 +413,7 @@ const std::string& cWindowNetworkLobby::getChatMessage() const
 void cWindowNetworkLobby::disablePortEdit()
 {
 	portLineEdit->disable();
+	restoreDefaultPortButton->disable();
 }
 
 //------------------------------------------------------------------------------
@@ -425,6 +426,7 @@ void cWindowNetworkLobby::disableIpEdit()
 void cWindowNetworkLobby::enablePortEdit()
 {
 	portLineEdit->enable();
+	restoreDefaultPortButton->enable();
 }
 
 //------------------------------------------------------------------------------

@@ -18,17 +18,17 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/control/mouseaction/mouseactiontransfer.h"
+
 #include "ui/graphical/game/widgets/gamemapwidget.h"
 #include "ui/graphical/game/unitselection.h"
-#include "game/data/map/map.h"
+#include "game/data/map/mapview.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
-#include "input/mouse/mouse.h"
-#include "input/mouse/cursor/mousecursorsimple.h"
+#include "game/data/map/mapfieldview.h"
 
 //------------------------------------------------------------------------------
-bool cMouseActionTransfer::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
+bool cMouseActionTransfer::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
 {
 	const auto selectedUnit = unitSelection.getSelectedUnit();
 

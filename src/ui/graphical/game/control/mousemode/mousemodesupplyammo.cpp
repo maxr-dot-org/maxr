@@ -20,13 +20,14 @@
 #include "ui/graphical/game/control/mousemode/mousemodesupplyammo.h"
 #include "ui/graphical/game/control/mouseaction/mouseactionsupplyammo.h"
 #include "ui/graphical/game/unitselection.h"
-#include "game/data/map/map.h"
+#include "game/data/map/mapview.h"
 #include "game/data/units/vehicle.h"
 #include "input/mouse/mouse.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
+#include "game/data/map/mapfieldview.h"
 
 //------------------------------------------------------------------------------
-cMouseModeSupplyAmmo::cMouseModeSupplyAmmo (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
+cMouseModeSupplyAmmo::cMouseModeSupplyAmmo (const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
 	cMouseMode (map_, unitSelection_, player_)
 {
 	establishUnitSelectionConnections();
@@ -84,15 +85,15 @@ void cMouseModeSupplyAmmo::establishUnitSelectionConnections()
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeSupplyAmmo::establishMapFieldConnections (const cMapField& field)
+void cMouseModeSupplyAmmo::establishMapFieldConnections (const cMapFieldView& field)
 {
-	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this, &field]() { updateFieldUnitConnections (field); needRefresh(); });
+	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this, field]() { updateFieldUnitConnections (field); needRefresh(); });
 
 	updateFieldUnitConnections (field);
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeSupplyAmmo::updateFieldUnitConnections (const cMapField& field)
+void cMouseModeSupplyAmmo::updateFieldUnitConnections (const cMapFieldView& field)
 {
 	mapFieldUnitsSignalConnectionManager.disconnectAll();
 

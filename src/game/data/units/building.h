@@ -184,11 +184,13 @@ public:
 	void stopWork (bool forced = false);
 
 	/** check whether a transfer to a unit on the field is possible */
-	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const MAXR_OVERRIDE_FUNCTION;
+	virtual bool canTransferTo (const cPosition& position, const cMapView& map) const MAXR_OVERRIDE_FUNCTION;
+	virtual bool canTransferTo (const cUnit& unit) const MAXR_OVERRIDE_FUNCTION;
 	void initMineRessourceProd (const cMap& map);
 	void calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array<int, 3>& turboBuildCosts, int vehicleCosts, int remainingMetal = -1) const;
 	virtual bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
-	bool canLoad (const cPosition& position, const cMap& map, bool checkPosition = true) const;
+	virtual bool canExitTo (const cPosition& position, const cMapView& map, const cStaticUnitData& vehicleData) const MAXR_OVERRIDE_FUNCTION;
+	bool canLoad(const cPosition& position, const cMapView& map, bool checkPosition = true) const;
 	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const;
 	void storeVehicle (cVehicle& vehicle, cMap& map);
 	void exitVehicleTo (cVehicle& vehicle, const cPosition& position, cMap& map);
@@ -248,7 +250,7 @@ public:
 	void setMetalPerRound(int value);
 	void setRepeatBuild(bool value);
 
-	int getMaxProd(int type) const;
+	int getMaxProd(eResourceType type) const;
 
 	void setResearchArea (cResearch::ResearchArea area);
 	cResearch::ResearchArea getResearchArea() const;

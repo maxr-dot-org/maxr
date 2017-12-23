@@ -31,6 +31,7 @@
 #include "game/data/map/map.h"
 #include "utility/string/toString.h"
 #include "game/data/model.h"
+#include "game/data/map/mapview.h"
 
 //                           N, NE, E, SE, S, SW, W, NW
 const int directionDx[8] = { 0, 1, 1, 1, 0, -1, -1, -1 };
@@ -211,12 +212,12 @@ void cMoveJob::startMove(cModel& model)
 		return;
 	}
 
-	bool nextFieldFree = handleCollision(map);
+	bool nextFieldFree = handleCollision(model);
 	if (!nextFieldFree)
 	{
 		return;
 	}
-
+	
 	int nextCosts = cPathCalculator::calcNextCost(vehicle->getPosition(), path.front(), vehicle, &map);
 	if (vehicle->data.getSpeed() < nextCosts)
 	{
@@ -251,15 +252,27 @@ void cMoveJob::startMove(cModel& model)
 }
 
 //------------------------------------------------------------------------------
-bool cMoveJob::handleCollision(cMap &map)
+bool cMoveJob::handleCollision(cModel &model)
 {
-	if (map.possiblePlace(*vehicle, path.front()))
+	const cMap& map = *model.getMap();
+
+	//do not drive onto detected enemy mines
+	const auto mine = map.getField(path.front()).getMine();
+	if (mine &&
+		mine->getOwner() != vehicle->getOwner() &&
+		vehicle->getOwner()->canSeeUnit(*mine, map))
+	{
+		bool pathFound = recalculatePath(model);
+		return pathFound;
+	}
+
+	if (map.possiblePlace(*vehicle, path.front(), false))
 	{
 		return true;
 	}
 
 	//TODO: model.sideStepStealthUnit();
-	if (map.possiblePlace(*vehicle, path.front()))
+	if (map.possiblePlace(*vehicle, path.front(), false))
 	{
 		return true;
 	}
@@ -272,23 +285,45 @@ bool cMoveJob::handleCollision(cMap &map)
 	}
 
 	// field is definitely blocked. Try to find another path to destination
+	bool pathFound = recalculatePath(model);
+	return pathFound;
+}
+
+//------------------------------------------------------------------------------
+bool cMoveJob::recalculatePath(cModel &model)
+{
+	//use owners mapview to calc path
+	const auto& playerList = model.getPlayerList();
+	auto iter = std::find_if(playerList.begin(), playerList.end(), [this](const std::shared_ptr<cPlayer>& player) { return player->getId() == vehicle->getOwner()->getId(); });
+	const cMapView mapView(model.getMap(), *iter);
+
 	cPosition dest;
 	for (const auto& pos : path) dest = pos;
-	cPathCalculator pc(*vehicle, map, dest, false);
+
+	cPathCalculator pc(*vehicle, mapView, dest, false);
 	auto newPath = pc.calcPath(); //TODO: don't execute path calculation on each model
-	if (newPath.empty())
+	if (!newPath.empty())
 	{
-		// no path to destination
-		state = FINISHED;
-		vehicle->setMoving(false);
-		vehicle->WalkFrame = 0;
-		vehicle->moveJobBlocked();
-		return false;
+		const cMap& map = *model.getMap();
+		if (!map.possiblePlace(*vehicle, newPath.front(), false))
+		{
+			//TODO: model.sideStepStealthUnit();
+		}
+
+		if (map.possiblePlace(*vehicle, newPath.front(), false))
+		{
+			// new path is ok. Use it to continue movement...
+			path.swap(newPath);
+			return true;
+		}
 	}
 
-	// new path is ok. Use it to continue movement...
-	path.swap(newPath);
-	return true;
+	// no path to destination
+	state = FINISHED;
+	vehicle->setMoving(false);
+	vehicle->WalkFrame = 0;
+	vehicle->moveJobBlocked();
+	return false;
 }
 
 //------------------------------------------------------------------------------
@@ -313,10 +348,11 @@ void cMoveJob::moveVehicle(cModel& model)
 
 	int x = abs(vehicle->getMovementOffset().x());
 	int y = abs(vehicle->getMovementOffset().y());
-	if ((x > 32 && x - pixelToMove <= 32) ||
+	if ( vehicle->uiData->makeTracks && (
+		(x > 32 && x - pixelToMove <= 32) ||
 		(y > 32 && y - pixelToMove <= 32) ||
 		(x == 64 && pixelToMove >= 1) ||
-		(y == 64 && pixelToMove >= 1))
+		(y == 64 && pixelToMove >= 1)))
 	{
 		// this is a bit crude, but I don't know another simple way of notifying the
 		// gui, that is might wants to add a track effect.

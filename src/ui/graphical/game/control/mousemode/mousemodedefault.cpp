@@ -25,7 +25,7 @@
 #include "ui/graphical/game/control/mouseaction/mouseactionmove.h"
 #include "ui/graphical/game/control/mouseaction/mouseactionactivatefinished.h"
 #include "ui/graphical/game/unitselection.h"
-#include "game/data/map/map.h"
+#include "game/data/map/mapview.h"
 #include "keys.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
@@ -34,9 +34,10 @@
 #include "input/mouse/cursor/mousecursoramount.h"
 #include "input/mouse/cursor/mousecursorattack.h"
 #include "input/keyboard/keyboard.h"
+#include "game/data/map/mapfieldview.h"
 
 //------------------------------------------------------------------------------
-cMouseModeDefault::cMouseModeDefault (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
+cMouseModeDefault::cMouseModeDefault (const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
 	cMouseMode (map_, unitSelection_, player_)
 {
 	establishUnitSelectionConnections();
@@ -238,7 +239,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 			{
 				return eActionType::None;
 			}
-			else if (map->possiblePlace (*selectedVehicle, mapPosition, true))
+			else if (map->possiblePlace (*selectedVehicle, mapPosition))
 			{
 				return eActionType::Move;
 			}
@@ -326,9 +327,9 @@ void cMouseModeDefault::establishUnitSelectionConnections()
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeDefault::establishMapFieldConnections (const cMapField& field)
+void cMouseModeDefault::establishMapFieldConnections (const cMapFieldView& field)
 {
-	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this, &field]()
+	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this, field]()
 	{
 		updateFieldUnitConnections (field);
 		needRefresh();
@@ -338,7 +339,7 @@ void cMouseModeDefault::establishMapFieldConnections (const cMapField& field)
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeDefault::updateFieldUnitConnections (const cMapField& field)
+void cMouseModeDefault::updateFieldUnitConnections (const cMapFieldView& field)
 {
 	mapFieldUnitsSignalConnectionManager.disconnectAll();
 

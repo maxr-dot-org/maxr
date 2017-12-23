@@ -218,11 +218,12 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 }
 
 //------------------------------------------------------------------------------
-void cGameGui::setDynamicMap (std::shared_ptr<const cMap> dynamicMap_)
+void cGameGui::setMapView(std::shared_ptr<const cMapView> mapView_)
 {
-	dynamicMap = std::move (dynamicMap_);
-	gameMap->setDynamicMap (dynamicMap);
-	miniMap->setDynamicMap (dynamicMap);
+	miniMap->setMapView (mapView_);
+	gameMap->setMapView (mapView_);
+
+	mapView = mapView_;
 }
 
 //------------------------------------------------------------------------------
@@ -230,7 +231,6 @@ void cGameGui::setPlayer (std::shared_ptr<const cPlayer> player_)
 {
 	player = std::move (player_);
 	gameMap->setPlayer (player);
-	miniMap->setPlayer (player);
 	hud->setPlayer (player);
 
 	messageList->clear();
@@ -416,19 +416,18 @@ void cGameGui::restoreState (const cGameGuiState& state)
 	auto selectedUnitIds = state.getSelectedUnitIds();
 	auto lockedUnitIds = state.getLockedUnitIds();
 
-	if (dynamicMap)
+	if (mapView)
 	{
 		// TODO: this may be very inefficient!
 		//       we go over all map fields to find the units on the map that need to be selected.
 		//       we may should think about a more efficient way to find specific units on the map
-		std::vector<cUnit*> fieldUnits;
-		for (auto i = makeIndexIterator (cPosition (0, 0), dynamicMap->getSize()); i.hasMore(); i.next())
+		for (auto i = makeIndexIterator (cPosition (0, 0), mapView->getSize()); i.hasMore(); i.next())
 		{
 			if (selectedUnitIds.empty() && lockedUnitIds.empty()) break;
 
-			const auto& field = dynamicMap->getField (*i);
+			const auto& field = mapView->getField (*i);
 
-			field.getUnits (fieldUnits);
+			std::vector<cUnit*> fieldUnits = field.getUnits ();
 
 			for (size_t j = 0; j < fieldUnits.size(); ++j)
 			{
@@ -473,9 +472,9 @@ void cGameGui::updateHudCoordinates (const cPosition& tilePosition)
 void cGameGui::updateHudUnitName (const cPosition& tilePosition)
 {
 	std::string unitNameString;
-	if (dynamicMap && (!player || player->canSeeAt (tilePosition)))
+	if (mapView && (!player || player->canSeeAt (tilePosition)))
 	{
-		const auto& field = dynamicMap->getField (tilePosition);
+		const auto& field = mapView->getField (tilePosition);
 
 		cUnit* unit = nullptr;
 		if (field.getVehicle() != nullptr) unit = field.getVehicle();
@@ -536,10 +535,10 @@ void cGameGui::connectSelectedUnit()
 				}
 				else
 				{
-					if (dynamicMap)
+					if (mapView)
 					{
-						const auto building = dynamicMap->getField(selectedVehicle->getPosition()).getBaseBuilding();
-						bool water = dynamicMap->isWater(selectedVehicle->getPosition());
+						const auto building = mapView->getField(selectedVehicle->getPosition()).getBaseBuilding();
+						bool water = mapView->isWater(selectedVehicle->getPosition());
 						if (selectedVehicle->getStaticUnitData().factorGround > 0 && building && (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 
 						stopSelectedUnitSound();
@@ -555,10 +554,10 @@ void cGameGui::connectSelectedUnit()
 		{
 			if (selectedVehicle->isUnitMoving() && selectedVehicle == gameMap->getUnitSelection().getSelectedVehicle())
 			{
-				if (!dynamicMap) return;
+				if (!mapView) return;
 
-				const auto building = dynamicMap->getField(selectedVehicle->getPosition()).getBaseBuilding();
-				bool water = dynamicMap->isWater(selectedVehicle->getPosition());
+				const auto building = mapView->getField(selectedVehicle->getPosition()).getBaseBuilding();
+				bool water = mapView->isWater(selectedVehicle->getPosition());
 				if (selectedVehicle->getStaticUnitData().factorGround > 0 && building && (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA))
 				{
 					water = false;
@@ -752,7 +751,7 @@ void cGameGui::updateSelectedUnitIdleSound()
 	{
 		const auto& vehicle = static_cast<const cVehicle&> (*selectedUnit);
 
-		const cBuilding* building = dynamicMap ? dynamicMap->getField (vehicle.getPosition()).getBaseBuilding() : nullptr;
+		const cBuilding* building = mapView ? mapView->getField (vehicle.getPosition()).getBaseBuilding() : nullptr;
 		bool water = staticMap->isWater (vehicle.getPosition());
 		if (vehicle.getStaticUnitData().factorGround > 0 && building && (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 
@@ -780,12 +779,12 @@ void cGameGui::updateSelectedUnitMoveSound (bool startedNew)
 {
 	auto selectedVehicle = gameMap->getUnitSelection().getSelectedVehicle();
 	if (!selectedVehicle) return;
-	if (!dynamicMap) return;
+	if (!mapView) return;
 
 	const auto& vehicle = *selectedVehicle;
 
-	const auto building = dynamicMap->getField (vehicle.getPosition()).getBaseBuilding();
-	bool water = dynamicMap->isWater (vehicle.getPosition());
+	const auto building = mapView->getField (vehicle.getPosition()).getBaseBuilding();
+	bool water = mapView->isWater (vehicle.getPosition());
 	if (vehicle.getStaticUnitData().factorGround > 0 && building && (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 	stopSelectedUnitSound();
 

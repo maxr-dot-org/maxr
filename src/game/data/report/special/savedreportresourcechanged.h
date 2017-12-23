@@ -23,13 +23,14 @@
 #include "maxrconfig.h"
 
 #include "game/data/report/savedreport.h"
+#include "game/data/resourcetype.h"
 
 class cUnit;
 
 class cSavedReportResourceChanged : public cSavedReport
 {
 public:
-	cSavedReportResourceChanged (int resourceType, int amount, bool increase);
+	cSavedReportResourceChanged (eResourceType resourceType, int amount, bool increase);
 	template <typename T, ENABLE_ARCHIVE_OUT>
 	explicit cSavedReportResourceChanged(T& archive)
 	{
@@ -55,7 +56,7 @@ private:
 		archive & NVP(increase);
 	}
 
-	int resourceType;
+	eResourceType resourceType;
 	int amount;
 	bool increase;
 };

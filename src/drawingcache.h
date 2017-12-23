@@ -29,7 +29,7 @@ class cPlayer;
 class cVehicle;
 class cBuilding;
 class cAnimationTimer;
-class cMap;
+class cMapView;
 class cFrameCounter;
 
 /**
@@ -42,7 +42,7 @@ struct sDrawingCacheEntry
 	sDrawingCacheEntry(sDrawingCacheEntry&& other);
 	sDrawingCacheEntry& operator=(sDrawingCacheEntry&& other);
 
-	//building proberties
+	//building properties
 	bool BaseN;
 	bool BaseBN;
 	bool BaseE;
@@ -74,7 +74,7 @@ struct sDrawingCacheEntry
 	/**
 	* sets all properties and initialises the surface.
 	*/
-	void init (const cVehicle& vehicle, const cMap& map, const cPlayer* player, unsigned long long animationTime, double zoom, unsigned long long frameNr);
+	void init (const cVehicle& vehicle, const cMapView& map, const cPlayer* player, unsigned long long animationTime, double zoom, unsigned long long frameNr);
 	void init (const cBuilding& building, double zoom, unsigned long long frameNr);
 
 private:
@@ -94,7 +94,7 @@ public:
 	* @return a pointer to a surface, which contains the already rendered image of the building or nullptr when no matching cache entry exists.
 	*/
 	SDL_Surface* getCachedImage (const cBuilding& building, double zoom, unsigned long long animationTime);
-	SDL_Surface* getCachedImage (const cVehicle& vehicle, double zoom, const cMap& map, unsigned long long animationTime);
+	SDL_Surface* getCachedImage (const cVehicle& vehicle, double zoom, const cMapView& map, unsigned long long animationTime);
 	/**
 	* This method creates a new chace entry, when there is space in the cache.
 	* When there is no free space, an old entry is reused.
@@ -102,7 +102,7 @@ public:
 	* @return a surface to which the building has to be drawn, after calling this function. Returns nullptr when the cache is full.
 	*/
 	SDL_Surface* createNewEntry (const cBuilding& building, double zoom, unsigned long long animationTime);
-	SDL_Surface* createNewEntry (const cVehicle& vehicle, double zoom, const cMap& map, unsigned long long animationTime);
+	SDL_Surface* createNewEntry (const cVehicle& vehicle, double zoom, const cMapView& map, unsigned long long animationTime);
 	/**
 	* Deletes all cache entries.
 	*/

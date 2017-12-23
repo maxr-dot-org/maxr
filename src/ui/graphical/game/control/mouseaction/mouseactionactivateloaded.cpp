@@ -18,12 +18,9 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/control/mouseaction/mouseactionactivateloaded.h"
+
 #include "ui/graphical/game/widgets/gamemapwidget.h"
 #include "ui/graphical/game/unitselection.h"
-#include "game/data/map/map.h"
-#include "game/data/units/unit.h"
-#include "input/mouse/mouse.h"
-#include "input/mouse/cursor/mousecursorsimple.h"
 
 //------------------------------------------------------------------------------
 cMouseActionActivateLoaded::cMouseActionActivateLoaded (int vehicleToActivateIndex_) :
@@ -31,7 +28,7 @@ cMouseActionActivateLoaded::cMouseActionActivateLoaded (int vehicleToActivateInd
 {}
 
 //------------------------------------------------------------------------------
-bool cMouseActionActivateLoaded::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
+bool cMouseActionActivateLoaded::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
 {
 	const auto selectedUnit = unitSelection.getSelectedUnit();
 

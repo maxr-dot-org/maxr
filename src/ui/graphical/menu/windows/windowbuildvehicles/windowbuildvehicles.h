@@ -26,7 +26,7 @@
 
 class cCheckBox;
 class cBuilding;
-class cMap;
+class cMapView;
 class cBuildSpeedHandlerWidget;
 class cUnitListViewItemBuild;
 class cTurnTimeClock;
@@ -36,7 +36,7 @@ class cUnitsData;
 class cWindowBuildVehicles : public cWindowAdvancedHangar<cUnitListViewItemBuild>
 {
 public:
-	cWindowBuildVehicles (const cBuilding& building, const cMap& map, std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cTurnTimeClock> turnTimeClock);
+	cWindowBuildVehicles (const cBuilding& building, const cMapView& map, std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 
 	std::vector<cBuildListItem> getBuildList() const;
 	int getSelectedBuildSpeed() const;
@@ -53,7 +53,7 @@ private:
 
 	cCheckBox* repeatCheckBox;
 
-	void generateSelectionList (const cBuilding& building, const cMap& map, const cUnitsData& unitsData);
+	void generateSelectionList (const cBuilding& building, const cMapView& map, const cUnitsData& unitsData);
 	void generateBuildList (const cBuilding& building);
 
 	void closeOnUnitDestruction();

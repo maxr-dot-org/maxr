@@ -23,11 +23,16 @@
 #include <vector>
 
 #include "utility/position.h"
+#include "game/data/map/mapview.h"
+#include "game/data/map/mapfieldview.h"
+#include "game/data/units/vehicle.h"
+#include "game/data/units/building.h"
 
 class cMap;
 class cPlayer;
 class cFx;
 class cUnit;
+class cModel;
 
 class cAttackJob
 {
@@ -35,7 +40,8 @@ public:
 	/**
 	* selects a target unit from a map field, depending on the attack mode.
 	*/
-	static cUnit* selectTarget (const cPosition& position, char attackMode, const cMap& map, const cPlayer* owner);
+	template <typename MAP>
+	static cUnit* selectTarget (const cPosition& position, char attackMode, const MAP& map, const cPlayer* owner);
 
 	cAttackJob (cUnit& aggressor, const cPosition& targetPosition, const cModel& model);
 	cAttackJob ();
@@ -77,5 +83,54 @@ private:
 	void impactSingle (const cPosition& position, int attackPoints, cModel& model, std::vector<cUnit*>* avoidTargets = nullptr);
 
 };
+
+//--------------------------------------------------------------------------
+template<typename MAP>
+cUnit* cAttackJob::selectTarget(const cPosition& position, char attackMode, const MAP& map, const cPlayer* owner)
+{
+	static_assert(std::is_same<MAP, cMap>::value || std::is_same<MAP, cMapView>::value, "Type must be cMap or cMapView");
+
+	cVehicle* targetVehicle = nullptr;
+	cBuilding* targetBuilding = nullptr;
+	const auto& mapField = map.getField(position);
+
+	//planes
+	//prefer enemy planes. But select own one, if there is no enemy
+	auto planes = mapField.getPlanes();
+	for (cVehicle* plane : planes)
+	{
+		if (plane->getFlightHeight() > 0 && !(attackMode & TERRAIN_AIR))    continue;
+		if (plane->getFlightHeight() == 0 && !(attackMode & TERRAIN_GROUND)) continue;
+
+		if (targetVehicle == nullptr)
+		{
+			targetVehicle = plane;
+		}
+		else if (targetVehicle->getOwner() == owner)
+		{
+			if (plane->getOwner() != owner)
+			{
+				targetVehicle = plane;
+			}
+		}
+	}
+
+	// vehicles
+	if (!targetVehicle && (attackMode & TERRAIN_GROUND))
+	{
+		targetVehicle = mapField.getVehicle();
+		if (targetVehicle && (targetVehicle->getStaticUnitData().isStealthOn & TERRAIN_SEA) && map.isWater(position) && !(attackMode & AREA_SUB)) targetVehicle = nullptr;
+	}
+
+	// buildings
+	if (!targetVehicle && (attackMode & TERRAIN_GROUND))
+	{
+		targetBuilding = mapField.getBuilding();
+		if (targetBuilding && targetBuilding->isRubble()) targetBuilding = nullptr;
+	}
+
+	if (targetVehicle) return targetVehicle;
+	return targetBuilding;
+}
 
 #endif // game_logic_attackjobH

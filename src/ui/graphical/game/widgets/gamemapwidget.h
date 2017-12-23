@@ -36,7 +36,7 @@
 struct SDL_Surface;
 
 class cStaticMap;
-class cMap;
+class cMapView;
 class cPlayer;
 class cUnitSelection;
 class cUnitContextMenuWidget;
@@ -54,7 +54,7 @@ class cGameMapWidget : public cClickableWidget
 public:
 	cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap, std::shared_ptr<cAnimationTimer> animationTimer, std::shared_ptr<cSoundManager> soundManager, std::shared_ptr<const cFrameCounter> frameCounter);
 	~cGameMapWidget();
-	void setDynamicMap (std::shared_ptr<const cMap> dynamicMap);
+	void setMapView(std::shared_ptr<const cMapView> mapView);
 	void setPlayer (std::shared_ptr<const cPlayer> player);
 	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData);
 	void setUnitSelection (const cUnitSelection* unitSelection);
@@ -183,7 +183,7 @@ private:
 	// data
 	//
 	cSignalConnectionManager signalConnectionManager;
-	cSignalConnectionManager dynamicMapSignalConnectionManager;
+	cSignalConnectionManager mapViewSignalConnectionManager;
 	cSignalConnectionManager mouseModeSignalConnectionManager;
 	cSignalConnectionManager unitContextMenuSignalConnectionManager;
 	cSignalConnectionManager selectedUnitSignalConnectionManager;
@@ -192,7 +192,7 @@ private:
 	std::shared_ptr<cSoundManager> soundManager;
 
 	std::shared_ptr<const cStaticMap> staticMap;
-	std::shared_ptr<const cMap> dynamicMap; // may be null
+	std::shared_ptr<const cMapView> mapView; // may be null
 	std::shared_ptr<const cPlayer> player; // may be null
 	std::shared_ptr<const cUnitsData> unitsData;
 
@@ -283,7 +283,7 @@ private:
 	void drawSelectionBox();
 
 	void drawUnitCircles();
-	void drawLockList (const cPlayer& player);
+	void drawLockList ();
 
 	void drawExitPoints();
 	void drawExitPoint (const cPosition& position);

@@ -26,13 +26,13 @@
 
 class cUnit;
 class cPosition;
-class cMap;
+class cMapView;
 
 class cMouseCursorAttack : public cMouseCursor
 {
 public:
 	cMouseCursorAttack();
-	cMouseCursorAttack (const cUnit& sourceUnit, const cPosition& targetPosition, const cMap& map);
+	cMouseCursorAttack (const cUnit& sourceUnit, const cPosition& targetPosition, const cMapView& map);
 	cMouseCursorAttack (int currentHealthPercent_, int newHealthPercent_, bool inRange);
 
 	virtual SDL_Surface* getSurface() const MAXR_OVERRIDE_FUNCTION;

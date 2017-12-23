@@ -22,10 +22,10 @@
 
 enum class eResourceType
 {
-	None,
-	Metal,
-	Oil,
-	Gold
+	None  = 0,
+	Metal = 1,
+	Oil   = 2,
+	Gold  = 3
 };
 
 #endif // game_data_units_resourcetypeH

@@ -181,17 +181,19 @@ public:
 	void DecSpeed (int value);
 	void doSurvey ();
 	virtual void makeReport (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
-	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const MAXR_OVERRIDE_FUNCTION;
+	virtual bool canTransferTo (const cPosition& position, const cMapView& map) const MAXR_OVERRIDE_FUNCTION;
+	virtual bool canTransferTo (const cUnit& position) const MAXR_OVERRIDE_FUNCTION;
 	bool inSentryRange (cModel& model);
 	virtual bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
-	bool canLoad (const cPosition& position, const cMap& map, bool checkPosition = true) const;
+	virtual bool canExitTo(const cPosition& position, const cMapView& map, const cStaticUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
+	bool canLoad(const cPosition& position, const cMapView& map, bool checkPosition = true) const;
 	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const;
 	void storeVehicle (cVehicle& vehicle, cMap& map);
 	void exitVehicleTo (cVehicle& vehicle, const cPosition& position, cMap& map);
 #define SUPPLY_TYPE_REARM 0
 #define SUPPLY_TYPE_REPAIR 1
 	/// supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
-	bool canSupply (const cMap& map, const cPosition& position, int supplyType) const;
+	bool canSupply (const cMapView& map, const cPosition& position, int supplyType) const;
 	/// supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
 	bool canSupply (const cUnit* unit, int supplyType) const;
 	void calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<int, 3>& turboBuildCosts, int buildCosts) const;
@@ -207,7 +209,7 @@ public:
 	* checks whether the commando action can be performed or not
 	*@author alzi alias DoctorDeath
 	*/
-	bool canDoCommandoAction (const cPosition& position, const cMap& map, bool steal) const;
+	bool canDoCommandoAction (const cPosition& position, const cMapView& map, bool steal) const;
 	bool canDoCommandoAction (const cUnit* unit, bool steal) const;
 	/**
 	* calculates the chance for disabling or stealing the target unit
@@ -263,7 +265,7 @@ public:
 	/**
 	* draws the main image of the vehicle onto the passed surface
 	*/
-	void render (const cMap* map, unsigned long long animationTime, const cPlayer* activePlayer, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
+	void render (const cMapView* map, unsigned long long animationTime, const cPlayer* activePlayer, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
 	void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int alpha = 254) const;
 	static void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sVehicleUIData& uiData, const cPlayer* owner, int dir = 0, int walkFrame = 0, int alpha = 254);
 	/**
@@ -374,9 +376,9 @@ public:
 	}
 private:
 
-	void render_BuildingOrBigClearing (const cMap& map, unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
+	void render_BuildingOrBigClearing (const cMapView& map, unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
 	void render_smallClearing (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
-	void render_shadow (const cStaticMap& map, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const;
+	void render_shadow (const cMapView& map, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const;
 
 	//---- sentry and reaction fire helpers ------------------------------------
 	/**
@@ -389,10 +391,10 @@ private:
 	 * @author: pagra
 	 */
 	bool provokeReactionFire (cModel& model);
-	bool doesPlayerWantToFireOnThisVehicleAsReactionFire (cModel& model, const cPlayer* player) const;
+	bool doesPlayerWantToFireOnThisVehicleAsReactionFire (const cModel& model, const cPlayer* player) const;
 	bool makeAttackOnThis (cModel& model, cUnit* opponentUnit, const std::string& reasonForLog) const;
 	bool makeSentryAttack (cModel& model, cUnit* unit) const;
-	bool isOtherUnitOffendedByThis (cModel& model, const cUnit& otherUnit) const;
+	bool isOtherUnitOffendedByThis (const cModel& model, const cUnit& otherUnit) const;
 	bool doReactionFire (cModel& model, cPlayer* player) const;
 	bool doReactionFireForUnit (cModel& model, cUnit* opponentUnit) const;
 

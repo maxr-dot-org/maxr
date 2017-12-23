@@ -26,7 +26,7 @@
 class cMouseModeHelp : public cMouseMode
 {
 public:
-	cMouseModeHelp (const cMap* map, const cUnitSelection& unitSelection, const cPlayer* player);
+	cMouseModeHelp (const cMapView* map, const cUnitSelection& unitSelection, const cPlayer* player);
 
 	virtual eMouseModeType getType() const MAXR_OVERRIDE_FUNCTION;
 

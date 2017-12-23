@@ -127,6 +127,7 @@ void cMenuControllerMultiplayerHost::sendGameData(int playerNr /* = -1 */)
 //------------------------------------------------------------------------------
 void cMenuControllerMultiplayerHost::reset()
 {
+	connectionManager->setLocalServer(nullptr);
 	connectionManager = nullptr;
 	windowNetworkLobby = nullptr;
 	windowLandingPositionSelection = nullptr;
@@ -406,6 +407,7 @@ void cMenuControllerMultiplayerHost::startSavedGame()
 	}
 	catch (std::runtime_error e)
 	{
+		Log.write((std::string)"cMenuControllerMultiplayerHost: Error loading save game. " + e.what(), cLog::eLOG_TYPE_NET_ERROR);
 		savedGame = nullptr;
 		application.show(std::make_shared<cDialogOk>(lngPack.i18n("Text~Error_Messages~ERROR_Save_Loading")));
 		return;

@@ -20,11 +20,13 @@
 #include "ui/graphical/game/widgets/minimapwidget.h"
 #include "ui/graphical/application.h"
 #include "game/data/map/map.h"
+#include "game/data/map/mapview.h"
 #include "video.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "input/mouse/mouse.h"
+#include "game/data/map/mapfieldview.h"
 
 //------------------------------------------------------------------------------
 cMiniMapWidget::cMiniMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap) :
@@ -33,8 +35,7 @@ cMiniMapWidget::cMiniMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	viewWindowSurfaeOutdated (true),
 	startedMoving (false),
 	staticMap (std::move (staticMap)),
-	dynamicMap (nullptr),
-	player (nullptr),
+	mapView (nullptr),
 	zoomFactor (1),
 	offset (0, 0),
 	attackUnitsOnly (false),
@@ -45,26 +46,19 @@ cMiniMapWidget::cMiniMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 }
 
 //------------------------------------------------------------------------------
-void cMiniMapWidget::setDynamicMap (std::shared_ptr<const cMap> dynamicMap_)
+void cMiniMapWidget::setMapView (std::shared_ptr<const cMapView> mapView_)
 {
-	dynamicMap = std::move (dynamicMap_);
+	mapView = std::move (mapView_);
 
 	dynamicMapSignalConnectionManager.disconnectAll();
-
-	if (dynamicMap != nullptr)
+	if (mapView != nullptr)
 	{
-		dynamicMapSignalConnectionManager.connect (dynamicMap->addedUnit, [&] (const cUnit&) { surfaceOutdated = true; });
-		dynamicMapSignalConnectionManager.connect (dynamicMap->removedUnit, [&] (const cUnit&) { surfaceOutdated = true; });
-		dynamicMapSignalConnectionManager.connect (dynamicMap->movedVehicle, [&] (const cVehicle&, const cPosition&) { surfaceOutdated = true; });
+		dynamicMapSignalConnectionManager.connect(mapView->unitAppeared, [&](const cUnit&) { surfaceOutdated = true; });
+		dynamicMapSignalConnectionManager.connect(mapView->unitDissappeared, [&](const cUnit&) { surfaceOutdated = true; });
+		dynamicMapSignalConnectionManager.connect(mapView->unitMoved, [&](const cUnit&, const cPosition&) { surfaceOutdated = true; });
+		dynamicMapSignalConnectionManager.connect(mapView->scanAreaChanged, [&]() { surfaceOutdated = true; });
+		//TODO: update on ownerChanged?
 	}
-
-	surfaceOutdated = true;
-}
-
-//------------------------------------------------------------------------------
-void cMiniMapWidget::setPlayer (std::shared_ptr<const cPlayer> player_)
-{
-	player = std::move (player_);
 
 	surfaceOutdated = true;
 }
@@ -266,7 +260,7 @@ void cMiniMapWidget::drawLandscape()
 //------------------------------------------------------------------------------
 void cMiniMapWidget::drawFog()
 {
-	if (!player) return;
+	if (!mapView) return;
 
 	auto minimap = static_cast<Uint32*> (surface->pixels);
 
@@ -277,7 +271,7 @@ void cMiniMapWidget::drawFog()
 		{
 			const auto terrainY = (miniMapY * staticMap->getSize(). y()) / (getSize().y() * zoomFactor) +  offset.y();
 
-			if (player->canSeeAt (cPosition (terrainX, terrainY))) continue;
+			if (mapView->isPositionVisible (cPosition (terrainX, terrainY))) continue;
 
 			Uint8* color = reinterpret_cast<Uint8*> (&minimap[miniMapX + miniMapY * getSize().x()]);
 			color[0] = static_cast<Uint8> (color[0] * 0.6f);
@@ -290,7 +284,7 @@ void cMiniMapWidget::drawFog()
 //------------------------------------------------------------------------------
 void cMiniMapWidget::drawUnits()
 {
-	if (!dynamicMap) return;
+	if (!mapView) return;
 
 
 	// here we go through each map field instead of
@@ -315,9 +309,9 @@ void cMiniMapWidget::drawUnits()
 			rect.y = ((mapy - offset.y()) * getSize().y() * zoomFactor) / staticMap->getSize(). y();
 			if (rect.y < 0 || rect.y >= getSize().y()) continue;
 
-			if (player && !player->canSeeAt (mapPosition)) continue;
+			if (!mapView->isPositionVisible (mapPosition)) continue;
 
-			const cMapField& field = dynamicMap->getField (mapPosition);
+			const cMapFieldView& field = mapView->getField (mapPosition);
 
 			// draw building
 			const cBuilding* building = field.getBuilding();

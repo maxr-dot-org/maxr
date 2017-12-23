@@ -43,6 +43,7 @@ class cHud;
 class cMapField;
 class cUnit;
 class cPosition;
+struct sTerrain;
 
 /**
 * Structure for generating the report about finished units at turn start
@@ -100,8 +101,22 @@ public:
 	void revealPosition (const cPosition& position);
 	void revealResource();
 	unsigned int getOffset (const cPosition& pos) const { return pos.x() + pos.y() * mapSize.x(); }
+	/** 
+	* Check weather any part of the unit is covered by the scan area. Do not use this to check, weather 
+	* a unit is actually visible. Use canSeeUnit() for this purpose 
+	*/
 	bool canSeeAnyAreaUnder (const cUnit& unit) const;
-	bool canSeeAt (const cPosition& position) const;
+	/**
+	* Check weather unit is visible for the player. The check includes all necessary conditions,
+	* including owner, scan area, stealth abilities and detection state.
+	*/
+	bool canSeeUnit(const cUnit& unit, const cMap& map) const;
+	bool canSeeUnit(const cUnit& unit, const cMapField& field, const sTerrain& terrain) const;
+	/** 
+	* Check weather the scan area covers position. Do not use this to check, weather 
+	* a unit on the position is actually visible. Use canSeeUnit() for this purpose 
+	*/
+	bool canSeeAt(const cPosition& position) const;
 
 	cVehicle& addNewVehicle (const cPosition& position, const cStaticUnitData& unitData, unsigned int uid);
 	cBuilding& addNewBuilding (const cPosition& position, const cStaticUnitData& unitData, unsigned int uid);
@@ -193,6 +208,7 @@ public:
 	mutable cSignal<void ()> buildErrorBuildPositionBlocked;
 	mutable cSignal<void ()> buildErrorInsufficientMaterial;
 	mutable cSignal<void (const cUnit& unit)> buildPathInterrupted;
+	mutable cSignal<void ()> scanAreaChanged;
 
 	template <typename T>
 	void save(T& archive)

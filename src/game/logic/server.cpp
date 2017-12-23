@@ -648,10 +648,10 @@ void cServer::handleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 		sideStepStealthUnit (building->getPosition() + cPosition (0, 1), *Vehicle, rubblePosition);
 		sideStepStealthUnit (building->getPosition() + cPosition (1, 1), *Vehicle, rubblePosition);
 
-		if ((!Map->possiblePlace (*Vehicle, building->getPosition()) && rubblePosition                   != Vehicle->getPosition()) ||
-			(!Map->possiblePlace (*Vehicle, building->getPosition() + cPosition (1, 0)) && rubblePosition + cPosition (1, 0) != Vehicle->getPosition()) ||
-			(!Map->possiblePlace (*Vehicle, building->getPosition() + cPosition (0, 1)) && rubblePosition + cPosition (0, 1) != Vehicle->getPosition()) ||
-			(!Map->possiblePlace (*Vehicle, building->getPosition() + cPosition (1, 1)) && rubblePosition + cPosition (1, 1) != Vehicle->getPosition()))
+		if ((!Map->possiblePlace (*Vehicle, building->getPosition(), false) && rubblePosition                   != Vehicle->getPosition()) ||
+			(!Map->possiblePlace (*Vehicle, building->getPosition() + cPosition (1, 0), false) && rubblePosition + cPosition (1, 0) != Vehicle->getPosition()) ||
+			(!Map->possiblePlace (*Vehicle, building->getPosition() + cPosition (0, 1), false) && rubblePosition + cPosition (0, 1) != Vehicle->getPosition()) ||
+			(!Map->possiblePlace (*Vehicle, building->getPosition() + cPosition (1, 1), false) && rubblePosition + cPosition (1, 1) != Vehicle->getPosition()))
 		{
 			sendClearAnswer (*this, 1, *Vehicle, 0, cPosition (-1, -1), Vehicle->getOwner());
 			return;
@@ -1058,10 +1058,10 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 	if (destUnit == nullptr) destUnit = destBuilding;
 	const bool steal = message.popBool();
 	// check whether the commando action is possible
-	if (! ((destUnit && srcVehicle->canDoCommandoAction (destUnit->getPosition(), *Map, steal)) ||
-		   (destBuilding && destBuilding->getIsBig() && srcVehicle->canDoCommandoAction (destUnit->getPosition() + cPosition (0, 1), *Map, steal)) ||
-		   (destBuilding && destBuilding->getIsBig() && srcVehicle->canDoCommandoAction (destUnit->getPosition() + cPosition (1, 0), *Map, steal)) ||
-		   (destBuilding && destBuilding->getIsBig() && srcVehicle->canDoCommandoAction (destUnit->getPosition() + cPosition (1, 1), *Map, steal)))) return;
+// 	if (! ((destUnit && srcVehicle->canDoCommandoAction (destUnit->getPosition(), *Map, steal)) ||
+// 		   (destBuilding && destBuilding->getIsBig() && srcVehicle->canDoCommandoAction (destUnit->getPosition() + cPosition (0, 1), *Map, steal)) ||
+// 		   (destBuilding && destBuilding->getIsBig() && srcVehicle->canDoCommandoAction (destUnit->getPosition() + cPosition (1, 0), *Map, steal)) ||
+// 		   (destBuilding && destBuilding->getIsBig() && srcVehicle->canDoCommandoAction (destUnit->getPosition() + cPosition (1, 1), *Map, steal)))) return;
 
 	// check whether the action is successful or not
 	const int chance = srcVehicle->calcCommandoChance (destUnit, steal);
@@ -1802,7 +1802,7 @@ void cServer::sideStepStealthUnit (const cPosition& position, const cStaticUnitD
 			}
 
 			// check whether this field is a possible destination
-			if (!Map->possiblePlace (*stealthVehicle, currentPosition)) continue;
+			if (!Map->possiblePlace (*stealthVehicle, currentPosition, false)) continue;
 
 			// check costs of the move
 			int costs = cPathCalculator::calcNextCost (position, currentPosition, stealthVehicle, Map.get());
