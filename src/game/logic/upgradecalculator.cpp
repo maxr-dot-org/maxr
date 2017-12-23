@@ -1753,7 +1753,7 @@ int cUnitUpgrade::calcTotalCosts(const cDynamicUnitData& originalData, const cDy
 			costs = cUpgradeCalculator::instance().getCostForUpgrade(originalData.getScan(), currentData.getScan(), upgrades[i].getCurValue(), cUpgradeCalculator::kScan, reseachState);
 			break;
 		case sUnitUpgrade::UPGRADE_TYPE_SPEED:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade(originalData.getSpeedMax(), currentData.getSpeedMax(), upgrades[i].getCurValue(), cUpgradeCalculator::kSpeed, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade(originalData.getSpeedMax() / 4, currentData.getSpeedMax() / 4, upgrades[i].getCurValue() / 4, cUpgradeCalculator::kSpeed, reseachState);
 			break;
 		case sUnitUpgrade::UPGRADE_TYPE_NONE:
 			break;
