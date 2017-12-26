@@ -73,14 +73,14 @@ cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cM
 }
 
 //------------------------------------------------------------------------------
-std::vector<cBuildListItem> cWindowBuildVehicles::getBuildList() const
+std::vector<sID> cWindowBuildVehicles::getBuildList() const
 {
-	std::vector<cBuildListItem> result;
+	std::vector<sID> result;
 	for (size_t i = 0; i < getSelectedUnitsCount(); ++i)
 	{
 		const auto& selectedUnitItem = getSelectedUnit (i);
 
-		result.push_back (cBuildListItem (selectedUnitItem.getUnitId(), selectedUnitItem.getRemainingMetal()));
+		result.push_back (selectedUnitItem.getUnitId());
 	}
 	return result;
 }
@@ -111,8 +111,6 @@ void cWindowBuildVehicles::setActiveUnit (const sID& unitId)
 	building.calcTurboBuild (turns, costs, vehicleData.getBuildCost(), remainingMetal);
 
 	speedHandler->setValues (turns, costs);
-
-	//	setActiveUpgrades (building.owner->getUnitDataCurrentVersion (unitId));
 }
 
 //------------------------------------------------------------------------------

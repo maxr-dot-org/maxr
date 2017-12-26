@@ -35,6 +35,7 @@
 #include "actionminelayerstatus.h"
 #include "actionstartbuild.h"
 #include "actionfinishbuild.h"
+#include "actionchangebuildlist.h"
 
 std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 {
@@ -71,6 +72,8 @@ std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 		return std::make_unique<cActionStartBuild>(archive);
 	case eActiontype::ACTION_FINISH_BUILD:
 		return std::make_unique<cActionFinishBuild>(archive);
+	case eActiontype::ACTION_CHANGE_BUILDLIST:
+		return std::make_unique<cActionChangeBuildList>(archive);
 	default:
 		throw std::runtime_error("Unknown action type " + iToStr(static_cast<int>(type)));
 		return nullptr;
@@ -116,6 +119,8 @@ std::string enumToString(cAction::eActiontype value)
 		return "ACTION_START_BUILD";
 	case cAction::eActiontype::ACTION_FINISH_BUILD:
 		return "ACTION_FINISH_BUILD";
+	case cAction::eActiontype::ACTION_CHANGE_BUILDLIST:
+		return "ACTION_CHANGE_BUILDLIST";
 	default:
 		assert(false);
 		return toString(static_cast<int>(value));

@@ -38,7 +38,7 @@ class cWindowBuildVehicles : public cWindowAdvancedHangar<cUnitListViewItemBuild
 public:
 	cWindowBuildVehicles (const cBuilding& building, const cMapView& map, std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 
-	std::vector<cBuildListItem> getBuildList() const;
+	std::vector<sID> getBuildList() const;
 	int getSelectedBuildSpeed() const;
 	bool isRepeatActive() const;
 protected:
