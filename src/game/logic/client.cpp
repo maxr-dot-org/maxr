@@ -332,35 +332,6 @@ void cClient::HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message)
 	}
 }
 
-void cClient::HandleNetMessage_GAME_EV_BUILDLIST (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_BUILDLIST);
-
-	const int iID = message.popInt16();
-	cBuilding* Building = getBuildingFromID (iID);
-	if (Building == nullptr)
-	{
-		Log.write (" Client: Can't set buildlist: Unknown building with ID: " + iToStr (iID), cLog::eLOG_TYPE_NET_WARNING);
-		// TODO: Request sync of building
-		return;
-	}
-
-	std::vector<cBuildListItem> newBuildList;
-	const int iCount = message.popInt16();
-	for (int i = 0; i < iCount; i++)
-	{
-		cBuildListItem buildListItem;
-		buildListItem.setType (message.popID());
-		buildListItem.setRemainingMetal (message.popInt16());
-		newBuildList.push_back (std::move (buildListItem));
-	}
-	Building->setBuildList (std::move (newBuildList));
-
-	Building->setMetalPerRound(message.popInt16());
-	Building->setBuildSpeed(message.popInt16());
-	Building->setRepeatBuild(message.popBool());
-}
-
 void cClient::HandleNetMessage_GAME_EV_MARK_LOG (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_MARK_LOG);
@@ -986,7 +957,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_UNIT_DATA: HandleNetMessage_GAME_EV_UNIT_DATA (message); break;
 		case GAME_EV_SPECIFIC_UNIT_DATA: HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (message); break;
 		case GAME_EV_RESOURCES: HandleNetMessage_GAME_EV_RESOURCES (message); break;
-		case GAME_EV_BUILDLIST: HandleNetMessage_GAME_EV_BUILDLIST (message); break;
 		case GAME_EV_MARK_LOG: HandleNetMessage_GAME_EV_MARK_LOG (message); break;
 		case GAME_EV_SUPPLY: HandleNetMessage_GAME_EV_SUPPLY (message); break;
 		case GAME_EV_ADD_RUBBLE: HandleNetMessage_GAME_EV_ADD_RUBBLE (message); break;

@@ -46,7 +46,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_UNIT_UPGRADE_VALUES,	// message contains upgraded values for a unit
 	GAME_EV_RESOURCES,				// a message with new scaned resources for a client
 	GAME_EV_SUBBASE_VALUES,			// the values of a subbase
-	GAME_EV_BUILDLIST,				// the buildlist of a building
 	GAME_EV_MINE_PRODUCE_VALUES,	// the produce values of a mine
 	GAME_EV_MARK_LOG,				// marks a position in the logfile
 	GAME_EV_SUPPLY,					// rearms or repairs a unit

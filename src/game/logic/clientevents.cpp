@@ -93,28 +93,6 @@ void sendChatMessageToServer (const cClient& client, const string& msg, const cP
 	client.sendNetMessage (netMsg);
 }
 
-void sendWantBuildList (const cClient& client, const cBuilding& building, const std::vector<cBuildListItem>& buildList, bool bRepeat, int buildSpeed)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_BUILDLIST);
-	message->pushBool (bRepeat);
-	for (int i = (int) buildList.size() - 1; i >= 0; i--)
-	{
-		message->pushID (buildList[i].getType());
-	}
-	message->pushInt16 ((int) buildList.size());
-	message->pushInt16 (buildSpeed);
-	message->pushInt16 (building.iID);
-	client.sendNetMessage (std::move (message));
-}
-
-void sendWantExitFinishedVehicle (const cClient& client, const cBuilding& building, const cPosition& position)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_EXIT_FIN_VEH);
-	message->pushPosition (position);
-	message->pushInt16 (building.iID);
-	client.sendNetMessage (std::move (message));
-}
-
 void sendChangeResources (const cClient& client, const cBuilding& building, int iMetalProd, int iOilProd, int iGoldProd)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_CHANGE_RESOURCES);
