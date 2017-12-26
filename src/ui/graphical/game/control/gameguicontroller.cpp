@@ -945,7 +945,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredExitFinishedUnit, [&] (const cBuilding & building, const cPosition & position)
 	{
-		sendWantExitFinishedVehicle (client, building, position);
+		client.sendNetMessage(cActionFinishBuild(building, position));
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredLoadAt, [&] (const cUnit & unit, const cPosition & position)
 	{

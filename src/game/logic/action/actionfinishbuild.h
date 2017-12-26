@@ -25,22 +25,25 @@
 class cActionFinishBuild : public cAction
 {
 public:
-	cActionFinishBuild(const cVehicle& vehicle, const cPosition& escapePosition);
+	cActionFinishBuild(const cUnit& unit, const cPosition& escapePosition);
 	cActionFinishBuild(cBinaryArchiveOut& archive);
 
 	virtual void serialize(cBinaryArchiveIn& archive) { cAction::serialize(archive); serializeThis(archive); }
 	virtual void serialize(cTextArchiveIn& archive)   { cAction::serialize(archive); serializeThis(archive); }
 
 	virtual void execute(cModel& model) const override;
-	
+
 private:
-	int vehicleId;
+	void finishABuilding(cModel &model, cVehicle& vehicle) const;
+	void finishAVehicle(cModel &model, cBuilding& building) const;
+
+	int unitId;
 	cPosition escapePosition;
 
 	template<typename T>
 	void serializeThis(T& archive)
 	{
-		archive & vehicleId;
+		archive & unitId;
 		archive & escapePosition;
 	}
 };

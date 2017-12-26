@@ -22,9 +22,9 @@
 #include "game/data/model.h"
 
 //------------------------------------------------------------------------------
-cActionFinishBuild::cActionFinishBuild(const cVehicle& vehicle, const cPosition& escapePosition) :
+cActionFinishBuild::cActionFinishBuild(const cUnit& unit, const cPosition& escapePosition) :
 	cAction(eActiontype::ACTION_FINISH_BUILD),
-	vehicleId(vehicle.getId()),
+	unitId(unit.getId()),
 	escapePosition(escapePosition)
 {};
 
@@ -40,38 +40,97 @@ void cActionFinishBuild::execute(cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
+	cUnit* unit = model.getUnitFromID(unitId);
+	if (unit == nullptr) return;
+	if (!unit->getOwner()) return;
+	if (unit->getOwner()->getId() != playerNr) return;
+
+	if (unit->isAVehicle())
+	{
+		finishABuilding(model, *static_cast<cVehicle*>(unit));
+	}
+	else
+	{
+		finishAVehicle(model, *static_cast<cBuilding*>(unit));
+	}
+	return;
+}
+
+//------------------------------------------------------------------------------
+void cActionFinishBuild::finishABuilding(cModel &model, cVehicle& vehicle) const
+{
 	auto map = model.getMap();
 
-	cVehicle* vehicle = model.getVehicleFromID(vehicleId);
-	if (vehicle == nullptr) return;
-	if (vehicle->getOwner()->getId() != playerNr) return;
-
-	if (!vehicle->isUnitBuildingABuilding() || vehicle->getBuildTurns() > 0) return;
+	if (!vehicle.isUnitBuildingABuilding() || vehicle.getBuildTurns() > 0) return;
 	if (!map->isValidPosition(escapePosition)) return;
-	if (!vehicle->isNextTo(escapePosition)) return;
+	if (!vehicle.isNextTo(escapePosition)) return;
 
-	if (!map->possiblePlace(*vehicle, escapePosition, false))
+	if (!map->possiblePlace(vehicle, escapePosition, false))
 	{
 		//model.sideStepStealthUnit(escapePosition, *vehicle);
 	}
-	if (!map->possiblePlace(*vehicle, escapePosition, false)) return;
+	if (!map->possiblePlace(vehicle, escapePosition, false)) return;
 
-	model.addBuilding (vehicle->getPosition(), vehicle->getBuildingType(), vehicle->getOwner());
+	model.addBuilding(vehicle.getPosition(), vehicle.getBuildingType(), vehicle.getOwner());
 
 	// end building
-	vehicle->setBuildingABuilding(false);
-	vehicle->BuildPath = false;
+	vehicle.setBuildingABuilding(false);
+	vehicle.BuildPath = false;
 
 	// set the vehicle to the border
-	if (vehicle->getIsBig())
+	if (vehicle.getIsBig())
 	{
-		int x = vehicle->getPosition().x();
-		int y = vehicle->getPosition().y();
-		if (escapePosition.x() > vehicle->getPosition().x()) x++;
-		if (escapePosition.y() > vehicle->getPosition().y()) y++;
-		map->moveVehicle(*vehicle, cPosition(x, y));
+		int x = vehicle.getPosition().x();
+		int y = vehicle.getPosition().y();
+		if (escapePosition.x() > vehicle.getPosition().x()) x++;
+		if (escapePosition.y() > vehicle.getPosition().y()) y++;
+		map->moveVehicle(vehicle, cPosition(x, y));
 	}
 
 	// drive away from the building lot
-	model.addMoveJob (*vehicle, escapePosition);
+	model.addMoveJob(vehicle, escapePosition);
+}
+
+//------------------------------------------------------------------------------
+void cActionFinishBuild::finishAVehicle(cModel &model, cBuilding& building) const
+{
+	auto map = model.getMap();
+
+	if (!map->isValidPosition(escapePosition)) return;
+	if (!building.isNextTo(escapePosition)) return;
+
+	if (building.isBuildListEmpty()) return;
+	cBuildListItem& buildingListItem = building.getBuildListItem(0);
+	if (buildingListItem.getRemainingMetal() > 0) return;
+
+
+	const cStaticUnitData& unitData = model.getUnitsData()->getStaticUnitData(buildingListItem.getType());
+	if (!map->possiblePlaceVehicle(unitData, escapePosition, building.getOwner()))
+	{
+		//model.sideStepStealthUnit(position, unitData, Building->getOwner());
+	}
+	if (!map->possiblePlaceVehicle(unitData, escapePosition, building.getOwner())) return;
+
+	model.addVehicle (escapePosition, buildingListItem.getType(), building.getOwner(), false);
+
+	// start new buildjob
+	if (building.getRepeatBuild())
+	{
+		buildingListItem.setRemainingMetal(-1);
+		building.addBuildListItem(buildingListItem);
+	}
+	building.removeBuildListItem(0);
+
+	if (!building.isBuildListEmpty())
+	{
+		cBuildListItem& buildingListItem = building.getBuildListItem(0);
+		if (buildingListItem.getRemainingMetal() == -1)
+		{
+			std::array<int, 3> turboBuildRounds;
+			std::array<int, 3> turboBuildCosts;
+			building.calcTurboBuild(turboBuildRounds, turboBuildCosts, building.getOwner()->getUnitDataCurrentVersion(buildingListItem.getType())->getBuildCost());
+			buildingListItem.setRemainingMetal(turboBuildCosts[building.getBuildSpeed()]);
+		}
+		building.startWork();
+	}
 }
