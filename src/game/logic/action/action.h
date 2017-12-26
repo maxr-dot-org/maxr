@@ -40,7 +40,8 @@ public:
 		ACTION_CHANGE_MANUAL_FIRE,
 		ACTION_MINELAYER_STATUS,
 		ACTION_START_BUILD,
-		ACTION_FINISH_BUILD
+		ACTION_FINISH_BUILD,
+		ACTION_CHANGE_BUILDLIST
 	};
 	static std::unique_ptr<cAction> createFromBuffer(cBinaryArchiveOut& archive);
 

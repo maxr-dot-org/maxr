@@ -110,6 +110,7 @@
 #include "game/logic/action/actionfinishbuild.h"
 #include "game/data/report/unit/savedreportpathinterrupted.h"
 #include "game/data/map/mapview.h"
+#include "game/logic/action/actionchangebuildlist.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -786,9 +787,9 @@ void cGameGuiController::connectClient (cClient& client)
 	{
 		client.sendNetMessage(cActionStartBuild(vehicle, unitId, buildSpeed, vehicle.getPosition(), destination));
 	});
-	clientSignalConnectionManager.connect (buildVehiclesTriggered, [&] (const cBuilding & building, const std::vector<cBuildListItem>& buildList, int buildSpeed, bool repeat)
+	clientSignalConnectionManager.connect (buildVehiclesTriggered, [&] (const cBuilding & building, const std::vector<sID>& buildList, int buildSpeed, bool repeat)
 	{
-		sendWantBuildList (client, building, buildList, repeat, buildSpeed);
+		client.sendNetMessage(cActionChangeBuildList(building, buildList, buildSpeed, repeat));
 	});
 	clientSignalConnectionManager.connect (activateAtTriggered, [&] (const cUnit & unit, size_t index, const cPosition & position)
 	{
@@ -944,7 +945,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredExitFinishedUnit, [&] (const cBuilding & building, const cPosition & position)
 	{
-		sendWantExitFinishedVehicle (client, building, position);
+		client.sendNetMessage(cActionFinishBuild(building, position));
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredLoadAt, [&] (const cUnit & unit, const cPosition & position)
 	{

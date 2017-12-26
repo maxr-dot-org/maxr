@@ -166,7 +166,7 @@ private:
 	mutable cSignal<void (const cUnit&, const cUnit&, int, eResourceType)> transferTriggered;
 	mutable cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingTriggered;
 	mutable cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingPathTriggered;
-	mutable cSignal<void (const cBuilding&, const std::vector<cBuildListItem>&, int, bool)> buildVehiclesTriggered;
+	mutable cSignal<void (const cBuilding&, const std::vector<sID>&, int, bool)> buildVehiclesTriggered;
 	mutable cSignal<void (const cUnit& unit, size_t index, const cPosition& position)> activateAtTriggered;
 	mutable cSignal<void (const cUnit&, const cUnit&)> reloadTriggered;
 	mutable cSignal<void (const cUnit&, const cUnit&)> repairTriggered;

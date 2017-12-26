@@ -199,23 +199,6 @@ void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver)
 }
 
 //------------------------------------------------------------------------------
-void sendBuildList (cServer& server, const cBuilding& building)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_BUILDLIST);
-	message->pushBool (building.getRepeatBuild());
-	message->pushInt16 (building.getBuildSpeed());
-	message->pushInt16 (building.getMetalPerRound());
-	for (int i = (int) building.getBuildListSize() - 1; i >= 0; i--)
-	{
-		message->pushInt16 (building.getBuildListItem (i).getRemainingMetal());
-		message->pushID (building.getBuildListItem (i).getType());
-	}
-	message->pushInt16 ((int)building.getBuildListSize());
-	message->pushInt16 (building.iID);
-	server.sendNetMessage (std::move (message), building.getOwner());
-}
-
-//------------------------------------------------------------------------------
 void sendSupply (cServer& server, int iDestID, bool bDestVehicle, int iValue, int iType, const cPlayer& receiver)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_SUPPLY);

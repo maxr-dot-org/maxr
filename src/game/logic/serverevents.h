@@ -44,9 +44,7 @@ struct sID;
 enum SERVER_EVENT_TYPES
 {
 	// Types between FIRST_SERVER_MESSAGE and FIRST_CLIENT_MESSAGE are for the serverserver
-	GAME_EV_WANT_BUILDLIST = 206,			// a building wants his buildlist to be verified by the server and start work
-	GAME_EV_WANT_EXIT_FIN_VEH,		// a client wants to exit a finished vehicle out of a building
-	GAME_EV_CHANGE_RESOURCES,		// a client wants to change his resource production
+	GAME_EV_CHANGE_RESOURCES = 208,		// a client wants to change his resource production
 	GAME_EV_WANT_MARK_LOG,			// marks a position in the log file
 	GAME_EV_WANT_SUPPLY,			// a client wants to rearm or repair a unit
 	GAME_EV_WANT_VEHICLE_UPGRADE,	// a client wants to upgrade a vehicle in a building to the newest version
@@ -90,13 +88,6 @@ void sendSpecificUnitData (cServer& server, const cVehicle& Vehicle);
 */
 void sendVehicleResources (cServer& server, const cVehicle& vehicle);
 void sendResources (cServer& server, const cPlayer& player);
-
-/**
-* sends a list with all units which are wanted to be produced by the building
-*@author alzi alias DoctorDeath
-*@param building the building which buildlist should be send
-*/
-void sendBuildList (cServer& server, const cBuilding& building);
 
 /**
 * sends that a unit has to be rearmed or repaired

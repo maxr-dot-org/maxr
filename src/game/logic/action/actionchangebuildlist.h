@@ -17,35 +17,38 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef game_logic_actionFinishBuildH
-#define game_logic_actionFinishBuildH
+#ifndef game_logic_actionChangeBuildListH
+#define game_logic_actionChangeBuildListH
 
 #include "action.h"
 
-class cActionFinishBuild : public cAction
+class cBuilding;
+struct sID;
+
+class cActionChangeBuildList : public cAction
 {
 public:
-	cActionFinishBuild(const cUnit& unit, const cPosition& escapePosition);
-	cActionFinishBuild(cBinaryArchiveOut& archive);
+	cActionChangeBuildList(const cBuilding& building, const std::vector<sID>& buildList, int buildSpeed, bool repeat);
+	cActionChangeBuildList(cBinaryArchiveOut& archive);
 
 	virtual void serialize(cBinaryArchiveIn& archive) { cAction::serialize(archive); serializeThis(archive); }
 	virtual void serialize(cTextArchiveIn& archive)   { cAction::serialize(archive); serializeThis(archive); }
 
 	virtual void execute(cModel& model) const override;
-
 private:
-	void finishABuilding(cModel &model, cVehicle& vehicle) const;
-	void finishAVehicle(cModel &model, cBuilding& building) const;
-
-	int unitId;
-	cPosition escapePosition;
-
 	template<typename T>
 	void serializeThis(T& archive)
 	{
-		archive & unitId;
-		archive & escapePosition;
+		archive & buildingId;
+		archive & buildList;
+		archive & buildSpeed;
+		archive & repeat;
 	}
+
+	int buildingId;
+	std::vector<sID> buildList;
+	int buildSpeed;
+	bool repeat;
 };
 
-#endif
+#endif // game_logic_actionChangeBuildListH
