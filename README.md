@@ -24,56 +24,33 @@ For files unter CC BY-SA 3.0 see `data/COPYING.README `
 
 Other UNIX-like operating systems may work too out of the box. Chances are huge if there's a build of SDL2 and CMake for the system.
 
-## Building MAXR with CMake
+You can find more information about how to build maxr in our Wiki:  
+[How to build](https://git.maxr.org/maxr/maxr/wikis/How-to-build)
 
-MAXR is distributed with a `CMakeLists.txt` file for CMake.
-Consequently, if you are building from source, you will have to
-set up your Makefiles with `cmake`, before you can run `make` 
-from the projects root folder:
+# Playing with original graphics and sounds
 
-```shell
-mkdir build
-cd build
-cmake ..
-make
-```
+Due the copyright we are not allowed to provide any game content
+from the original Mechanized Assault and Exploration (c) 1996 Interplay
 
-### Change between Debug and Release build:
+If you do own an original Mechanized Assault & Exploration CD
+(c) 1996 Interplay you can however make use of the tool *resinstaller*
+and install the original gfx automagically from your existing M.A.X. copy.
 
-Use the options `-DCMAKE_BUILD_TYPE=Debug` or `-DCMAKE_BUILD_TYPE=Release` when running `cmake`:
+Resinstaller also takes care of sounds, videos, maps and music.
 
-`cmake -DCMAKE_BUILD_TYPE=Release ..`
+The tool can be found on our website and easily installs and converts
+the needed data for you. Please check the bbs at maxr.org for more
+informations. When using the windows installer for maxr, the resinstaller
+is also installed, and a Start Menu shortcut is available.
 
-### Build the dedicated server of maxr:
+If you don't own an original M.A.X. CD but you want to play with the
+original look'n'feel you can still buy it at Gog.com  
+https://www.gog.com/game/m_a_x_m_a_x_2
 
-Use the options `-DMAXR_BUILD_DEDICATED_SERVER=ON` in another
-cmake build folder, because the binary will overwrite any
-existing maxr binary. From the projects root folder:
-
-```shell
-mkdir build-dedicated
-cd build-dedicated
-cmake --DMAXR_BUILD_DEDICATED_SERVER=ON ..
-```
-
-### Build and install MAXR on Linux
-
-Compiles the maxr binary and installs it along with the game data to the default prefix which is probably /usr/local.
-
-```shell
-mkdir build
-cd build
-cmake ..
-make install
-```
-
-After installing you can start maxr executing 'maxr'
-
-Use `make DESTDIR=/foo/bar install` to make use of destdir.
-
-If you just want to start maxr without installing simply
-override the data path MAXRDATA after running `make` in your
-build dir: `MAXRDATA=../cp data/ ./maxr`
+Warning: Resinstaller will overwrite existing graphics. If you want to
+keep existing free graphics for some reasons *backup* the folders fx,
+gfx, vehicles and buildings. It's save to copy the files back after the
+resinstaller has done it's magic.
 
 ## Additional important files
 
@@ -82,7 +59,5 @@ Please find additional files in `./data`:
 ABOUT `data/ABOUT`
 
 AUTHORS `data/AUTHORS`
-
-INSTALL `data/INSTALL`
 
 MANUAL `data/MANUAL`
