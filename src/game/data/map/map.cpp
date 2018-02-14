@@ -160,8 +160,8 @@ bool cMapField::hasBridgeOrPlattform() const
 {
 	for (cBuilding* building : buildings)
 	{
-		if (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA &&
-			building->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_BASE &&
+		if ((building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA ||
+			building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE) &&
 			!building->isRubble())
 		{
 			return true;

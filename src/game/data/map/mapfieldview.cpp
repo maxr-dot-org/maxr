@@ -149,6 +149,24 @@ cBuilding* cMapFieldView::getMine() const
 }
 
 //------------------------------------------------------------------------------
+bool cMapFieldView::hasBridgeOrPlattform() const
+{
+	for (const auto& building : mapField.getBuildings())
+	{
+		if (!player || player->canSeeUnit(*building, mapField, terrain))
+		{
+			if ((building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA ||
+				building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE) &&
+				!building->isRubble())
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+//------------------------------------------------------------------------------
 const std::vector<cBuilding*> cMapFieldView::getBuildings() const
 {
 	if (!player)
