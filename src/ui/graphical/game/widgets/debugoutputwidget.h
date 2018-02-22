@@ -21,6 +21,7 @@
 #define ui_graphical_game_widgets_debugoutputidgetH
 
 #include "ui/graphical/widget.h"
+#include "unifonts.h"
 
 class cClient;
 class cServer2;
@@ -59,6 +60,7 @@ public:
 	void setDebugSync (bool value);
 
 	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
+
 private:
 	const cServer2* server;
 	const cClient* client;
@@ -83,6 +85,11 @@ private:
 	/** show drawing cache debug information */
 	bool debugCache;
 	bool debugSync;
+
+	cPosition drawPosition;
+
+	void setPrintPosition(cPosition position);
+	void print(const std::string& text, eUnicodeFontType font = FONT_LATIN_SMALL_WHITE);
 
 	void trace();
 	void traceVehicle (const cVehicle& vehicle, cPosition& drawPosition);
