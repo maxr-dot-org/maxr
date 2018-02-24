@@ -59,7 +59,6 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_AUTOMOVE_STATUS,		// a unit has been set to automoving
 	GAME_EV_WANT_COM_ACTION,		// an infiltrator wants to steal or disable another unit
 	GAME_EV_WANT_CHANGE_UNIT_NAME,	// the player wants to change the name of an unit
-	GAME_EV_END_MOVE_ACTION,		// specifies an action, which will be executed at the end of a movejob
 	GAME_EV_WANT_KICK_PLAYER,
 
 	// DEDICATED_SERVER
@@ -153,10 +152,6 @@ void sendCommandoAnswer (cServer& server, bool success, bool steal, const cVehic
 void sendScore (cServer& server, const cPlayer& subject, int turn, const cPlayer* receiver = nullptr);
 void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver = nullptr);
 void sendUnitScore (cServer& server, const cBuilding&);
-
-
-
-void sendEndMoveActionToClient (cServer& server, const cVehicle& vehicle, int destID, eEndMoveActionType type);
 
 void sendRevealMap (cServer& server, const cPlayer& receiver);
 

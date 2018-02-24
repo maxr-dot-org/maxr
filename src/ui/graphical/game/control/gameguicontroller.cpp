@@ -968,8 +968,8 @@ void cGameGuiController::connectClient (cClient& client)
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						activeClient->sendNetMessage(cActionStartMove(vehicle, path));
-						sendEndMoveAction (client, vehicle.iID, overVehicle->iID, EMAT_LOAD);
+						cEndMoveAction emat(*overVehicle, unit, eEndMoveActionType::EMAT_LOAD);
+						activeClient->sendNetMessage(cActionStartMove(vehicle, path, emat));
 					}
 					else
 					{
@@ -985,12 +985,12 @@ void cGameGuiController::connectClient (cClient& client)
 				}
 				else
 				{
-					cPathCalculator pc (vehicle, *mapView, *overVehicle, true);
+					cPathCalculator pc (*overVehicle, *mapView, vehicle, true);
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						activeClient->sendNetMessage(cActionStartMove(vehicle, path));
-						sendEndMoveAction (client, overVehicle->iID, vehicle.iID, EMAT_GET_IN);
+						cEndMoveAction emat(*overVehicle, unit, eEndMoveActionType::EMAT_LOAD);
+						activeClient->sendNetMessage(cActionStartMove(*overVehicle, path, emat));
 						}
 					else
 					{
@@ -1014,8 +1014,8 @@ void cGameGuiController::connectClient (cClient& client)
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						activeClient->sendNetMessage(cActionStartMove(*overVehicle, path));
-						sendEndMoveAction (client, overVehicle->iID, building.iID, EMAT_GET_IN);
+						cEndMoveAction emat(*overVehicle, unit, eEndMoveActionType::EMAT_LOAD);
+						activeClient->sendNetMessage(cActionStartMove(*overVehicle, path, emat));
 					}
 					else
 					{
@@ -1035,8 +1035,8 @@ void cGameGuiController::connectClient (cClient& client)
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						activeClient->sendNetMessage(cActionStartMove(*overPlane, path));
-						sendEndMoveAction (client, overPlane->iID, building.iID, EMAT_GET_IN);
+						cEndMoveAction emat(*overPlane, unit, eEndMoveActionType::EMAT_LOAD);
+						activeClient->sendNetMessage(cActionStartMove(*overPlane, path, emat));;
 					}
 					else
 					{

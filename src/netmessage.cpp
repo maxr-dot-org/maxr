@@ -425,8 +425,6 @@ string cNetMessage::getTypeAsString() const
 		case GAME_EV_SCORE: return "GAME_EV_SCORE";
 		case GAME_EV_NUM_ECOS: return "GAME_EV_NUM_ECOS";
 		case GAME_EV_UNIT_SCORE: return "GAME_EV_UNIT_SCORE";
-		case GAME_EV_END_MOVE_ACTION_SERVER: return "GAME_EV_END_MOVE_ACTION_SERVER";
-		case GAME_EV_END_MOVE_ACTION: return "GAME_EV_END_MOVE_ACTION";
 		case GAME_EV_REVEAL_MAP: return "GAME_EV_REVEAL_MAP";
 		default: return iToStr (iType);
 	}

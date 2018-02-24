@@ -224,15 +224,6 @@ void sendWantChangeUnitName (const cClient& client, const string& newName, int u
 	client.sendNetMessage (std::move (message));
 }
 
-void sendEndMoveAction (const cClient& client, int vehicleID, int destID, eEndMoveActionType type)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_END_MOVE_ACTION);
-	message->pushChar (type);
-	message->pushInt32 (destID);
-	message->pushInt32 (vehicleID);
-	client.sendNetMessage (std::move (message));
-}
-
 void sentWantKickPlayer (const cClient& client, const cPlayer& player)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_KICK_PLAYER);

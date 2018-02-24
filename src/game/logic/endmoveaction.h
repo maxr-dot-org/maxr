@@ -32,7 +32,6 @@ enum eEndMoveActionType
 {
 	EMAT_NONE,
 	EMAT_LOAD,
-	EMAT_GET_IN,
 	EMAT_ATTACK
 };
 

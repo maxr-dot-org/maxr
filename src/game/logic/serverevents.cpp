@@ -446,18 +446,6 @@ void sendCommandoAnswer (cServer& server, bool success, bool steal, const cVehic
 	server.sendNetMessage (std::move (message), &receiver);
 }
 
-
-//------------------------------------------------------------------------------
-void sendEndMoveActionToClient (cServer& server, const cVehicle& vehicle, int destID, eEndMoveActionType type)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_END_MOVE_ACTION_SERVER);
-	message->pushChar (type);
-	message->pushInt32 (destID);
-	message->pushInt32 (vehicle.iID);
-
-	server.sendNetMessage (std::move (message), vehicle.getOwner());
-}
-
 //------------------------------------------------------------------------------
 void sendRevealMap (cServer& server, const cPlayer& receiver)
 {

@@ -783,19 +783,6 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_SCORE (cNetMessage& message)
 	b->points = message.popInt16();
 }
 
-void cClient::HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_END_MOVE_ACTION_SERVER);
-
-	cVehicle* vehicle = getVehicleFromID (message.popInt32());
-	if (!vehicle || !vehicle->getMoveJob()) return;
-
-	const int destID = message.popInt32();
-	eEndMoveActionType type = (eEndMoveActionType) message.popChar();
-	//vehicle->getMoveJob()->endMoveAction = new cEndMoveAction (vehicle, destID, type);
-}
-
-
 void cClient::HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_REVEAL_MAP);
@@ -958,7 +945,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_SCORE: HandleNetMessage_GAME_EV_SCORE (message); break;
 		case GAME_EV_NUM_ECOS: HandleNetMessage_GAME_EV_NUM_ECOS (message); break;
 		case GAME_EV_UNIT_SCORE: HandleNetMessage_GAME_EV_UNIT_SCORE (message); break;
-		case GAME_EV_END_MOVE_ACTION_SERVER: HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (message); break;
 		case GAME_EV_REVEAL_MAP: HandleNetMessage_GAME_EV_REVEAL_MAP (message); break;
 
 		default:

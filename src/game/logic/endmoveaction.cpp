@@ -24,6 +24,8 @@
 #include "game/data/map/mapview.h"
 #include "game/data/model.h"
 #include "utility/crc.h"
+#include "jobs/airtransportloadjob.h"
+#include "jobs/getinjob.h"
 
 
 cEndMoveAction::cEndMoveAction (const cVehicle& vehicle, const cUnit& destUnit, eEndMoveActionType type) :
@@ -46,9 +48,6 @@ void cEndMoveAction::execute (cModel& model)
 	{
 		case EMAT_LOAD: 
 			executeLoadAction (model); 
-			break;
-		case EMAT_GET_IN:
-			executeGetInAction (model);
 			break;
 		case EMAT_ATTACK: 
 			executeAttackAction (model); 
@@ -77,41 +76,24 @@ uint32_t cEndMoveAction::getChecksum(uint32_t crc) const
 //------------------------------------------------------------------------------
 void cEndMoveAction::executeLoadAction (cModel& model)
 {
-/*	cVehicle* destVehicle = server.getVehicleFromID (destID_);
-	if (!destVehicle) return;
+	// get the vehicle
+	cVehicle* loadedVehicle = model.getVehicleFromID(vehicleID);
+	if (loadedVehicle == nullptr) return;
 
-	if (vehicle_->canLoad (destVehicle) == false) return;
+	// get the target unit
+	cUnit* loadingUnit = model.getUnitFromID(destID);
+	if (loadingUnit == nullptr) return;
 
-	vehicle_->storeVehicle (*destVehicle, *server.Map);
-	if (destVehicle->getMoveJob()) destVehicle->getMoveJob()->stop();
+	if (!loadingUnit->canLoad(loadedVehicle)) return;
 
-	// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
-	sendStoreVehicle (server, vehicle_->iID, true, destVehicle->iID, *vehicle_->getOwner());
-*/
-}
-
-//------------------------------------------------------------------------------
-void cEndMoveAction::executeGetInAction (cModel& model)
-{
-/*	cVehicle* destVehicle = server.getVehicleFromID (destID_);
-	cBuilding* destBuilding = server.getBuildingFromID (destID_);
-
-	// execute the loading if possible
-	if (destVehicle && destVehicle->canLoad (vehicle_))
+	if (loadingUnit->getStaticUnitData().factorAir > 0)
 	{
-		destVehicle->storeVehicle (*vehicle_, *server.Map);
-		if (destVehicle->getMoveJob()) destVehicle->getMoveJob()->stop();
-		//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
-		sendStoreVehicle (server, destVehicle->iID, true, vehicle_->iID, *destVehicle->getOwner());
+		model.addJob(new cAirTransportLoadJob(*loadedVehicle, *loadingUnit));
 	}
-	else if (destBuilding && destBuilding->canLoad (vehicle_))
+	else
 	{
-		destBuilding->storeVehicle (*vehicle_, *server.Map);
-		if (destVehicle->getMoveJob()) destVehicle->getMoveJob()->stop();
-		// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
-		sendStoreVehicle (server, destBuilding->iID, false, vehicle_->iID, *destBuilding->getOwner());
+		model.addJob(new cGetInJob(*loadedVehicle, *loadingUnit));
 	}
-*/
 }
 
 //------------------------------------------------------------------------------
