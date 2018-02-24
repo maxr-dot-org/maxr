@@ -832,6 +832,7 @@ static int LoadGraphics (const char* path)
 	});
 
 	GraphicsData.gfx_tmp = AutoSurface (SDL_CreateRGBSurface (0, 128, 128, Video.getColDepth(), 0, 0, 0, 0));
+	SDL_SetSurfaceBlendMode(GraphicsData.gfx_tmp.get(), SDL_BLENDMODE_BLEND);
 	SDL_SetColorKey (GraphicsData.gfx_tmp.get(), SDL_TRUE, 0xFF00FF);
 
 	// Glas:

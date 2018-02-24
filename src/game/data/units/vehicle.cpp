@@ -199,8 +199,14 @@ void cVehicle::render_shadow (const cMapView& map, SDL_Surface* surface, const S
 {
 	if (map.isWater (getPosition()) && (staticData->isStealthOn & TERRAIN_SEA)) return;
 
-	if (alphaEffectValue && cSettings::getInstance().isAlphaEffects()) SDL_SetSurfaceAlphaMod (uiData->shw[dir].get(), alphaEffectValue / 5);
-	else SDL_SetSurfaceAlphaMod (uiData->shw[dir].get(), 50);
+	if (alphaEffectValue && cSettings::getInstance().isAlphaEffects())
+	{
+		SDL_SetSurfaceAlphaMod(uiData->shw[dir].get(), alphaEffectValue / 5);
+	}
+	else
+	{
+		SDL_SetSurfaceAlphaMod(uiData->shw[dir].get(), 50);
+	}
 	SDL_Rect tmp = dest;
 
 	// draw shadow
