@@ -65,6 +65,7 @@
 #include "game/data/map/mapview.h"
 #include "game/logic/pathcalculator.h"
 #include "game/data/map/mapfieldview.h"
+#include "ui/graphical/game/control/mousemode/mousemodeenter.h"
 
 //------------------------------------------------------------------------------
 cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap_, std::shared_ptr<cAnimationTimer> animationTimer_, std::shared_ptr<cSoundManager> soundManager_, std::shared_ptr<const cFrameCounter> frameCounter) :
@@ -180,6 +181,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	unitMenu->attackToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eMouseModeType::Attack));
 	unitMenu->transferToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eMouseModeType::Transfer));
+	unitMenu->enterToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eMouseModeType::Enter));
 	unitMenu->loadToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eMouseModeType::Load));
 	unitMenu->supplyAmmoToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eMouseModeType::SupplyAmmo));
 	unitMenu->repairToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eMouseModeType::Repair));
@@ -209,6 +211,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	unitMenu->buildClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
 	unitMenu->distributeClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
 	unitMenu->transferToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->enterToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
 	unitMenu->startClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
 	unitMenu->autoToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
 	unitMenu->stopClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
@@ -336,6 +339,15 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 		if (cUnitContextMenuWidget::unitHasSupplyEntry (unitSelection.getSelectedUnit(), player.get()))
 		{
 			toggleMouseInputMode (eMouseModeType::SupplyAmmo);
+		}
+	});
+
+	enterShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuEnter));
+	enterShortcut->triggered.connect ([this]()
+	{
+		if (cUnitContextMenuWidget::unitHasEnterEntry (unitSelection.getSelectedUnit(), player.get()))
+		{
+			toggleMouseInputMode (eMouseModeType::Enter);
 		}
 	});
 
@@ -776,6 +788,9 @@ void cGameMapWidget::toggleMouseInputMode (eMouseModeType mouseModeType)
 				break;
 			case eMouseModeType::Load:
 				setMouseInputMode (std::make_unique<cMouseModeLoad> (mapView.get(), unitSelection, player.get()));
+				break;
+			case eMouseModeType::Enter:
+				setMouseInputMode(std::make_unique<cMouseModeEnter>(mapView.get(), unitSelection, player.get()));
 				break;
 			case eMouseModeType::SupplyAmmo:
 				setMouseInputMode (std::make_unique<cMouseModeSupplyAmmo> (mapView.get(), unitSelection, player.get()));
@@ -2158,6 +2173,7 @@ void cGameMapWidget::buildCollidingShortcutsMap()
 	collidingUnitCommandShortcuts.insert (std::make_pair (attackShortcut, std::set<const cShortcut*> ()));
 	collidingUnitCommandShortcuts.insert (std::make_pair (buildShortcut, std::set<const cShortcut*> ()));
 	collidingUnitCommandShortcuts.insert (std::make_pair (transferShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (enterShortcut, std::set<const cShortcut*> ()));
 	collidingUnitCommandShortcuts.insert (std::make_pair (automoveShortcut, std::set<const cShortcut*> ()));
 	collidingUnitCommandShortcuts.insert (std::make_pair (startShortcut, std::set<const cShortcut*> ()));
 	collidingUnitCommandShortcuts.insert (std::make_pair (stopShortcut, std::set<const cShortcut*> ()));
@@ -2224,7 +2240,8 @@ void cGameMapWidget::updateActiveUnitCommandShortcuts()
 	if (cUnitContextMenuWidget::unitHasAttackEntry (selectedUnit, player.get())) activateShortcutConditional (*attackShortcut, blockedShortcuts, collidingUnitCommandShortcuts[attackShortcut]);
 	if (cUnitContextMenuWidget::unitHasLayMinesEntry (selectedUnit, player.get())) activateShortcutConditional (*layMineShortcut, blockedShortcuts, collidingUnitCommandShortcuts[layMineShortcut]);
 	if (cUnitContextMenuWidget::unitHasCollectMinesEntry (selectedUnit, player.get())) activateShortcutConditional (*clearMineShortcut, blockedShortcuts, collidingUnitCommandShortcuts[clearMineShortcut]);
-	if (cUnitContextMenuWidget::unitHasLoadEntry (selectedUnit, player.get())) activateShortcutConditional (*loadShortcut, blockedShortcuts, collidingUnitCommandShortcuts[loadShortcut]);
+	if (cUnitContextMenuWidget::unitHasLoadEntry(selectedUnit, player.get())) activateShortcutConditional(*loadShortcut, blockedShortcuts, collidingUnitCommandShortcuts[loadShortcut]);
+	if (cUnitContextMenuWidget::unitHasEnterEntry (selectedUnit, player.get())) activateShortcutConditional (*enterShortcut, blockedShortcuts, collidingUnitCommandShortcuts[enterShortcut]);
 	if (cUnitContextMenuWidget::unitHasActivateEntry (selectedUnit, player.get())) activateShortcutConditional (*activateShortcut, blockedShortcuts, collidingUnitCommandShortcuts[activateShortcut]);
 	if (cUnitContextMenuWidget::unitHasBuyEntry (selectedUnit, player.get())) activateShortcutConditional (*upgradeShortcut, blockedShortcuts, collidingUnitCommandShortcuts[upgradeShortcut]);
 	if (cUnitContextMenuWidget::unitHasResearchEntry (selectedUnit, player.get())) activateShortcutConditional (*researchShortcut, blockedShortcuts, collidingUnitCommandShortcuts[researchShortcut]);
@@ -2247,6 +2264,7 @@ void cGameMapWidget::deactivateUnitCommandShortcuts()
 	attackShortcut->deactivate();
 	buildShortcut->deactivate();
 	transferShortcut->deactivate();
+	enterShortcut->deactivate();
 	automoveShortcut->deactivate();
 	startShortcut->deactivate();
 	stopShortcut->deactivate();

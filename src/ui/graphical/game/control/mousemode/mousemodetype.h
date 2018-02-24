@@ -31,6 +31,7 @@ enum class eMouseModeType
 	SelectBuildPathDestintaion,
 	Transfer,
 	Load,
+	Enter,
 	SupplyAmmo,
 	Repair,
 	Activate,
