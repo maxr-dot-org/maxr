@@ -578,113 +578,6 @@ void cServer::handleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message)
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_WANT_LOAD (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_WANT_LOAD);
-
-	cVehicle* StoredVehicle = getVehicleFromID (message.popInt16());
-	if (!StoredVehicle) return;
-
-	if (message.popBool())
-	{
-		cVehicle* StoringVehicle = getVehicleFromID (message.popInt16());
-		if (!StoringVehicle) return;
-
-		if (StoringVehicle->canLoad (StoredVehicle))
-		{
-			StoringVehicle->storeVehicle (*StoredVehicle, *Map);
-			if (StoredVehicle->getMoveJob()) StoredVehicle->getMoveJob()->stop();
-			// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
-			sendStoreVehicle (*this, StoringVehicle->iID, true, StoredVehicle->iID, *StoringVehicle->getOwner());
-		}
-	}
-	else
-	{
-		cBuilding* StoringBuilding = getBuildingFromID (message.popInt16());
-		if (!StoringBuilding) return;
-
-		if (StoringBuilding->canLoad (StoredVehicle))
-		{
-			StoringBuilding->storeVehicle (*StoredVehicle, *Map);
-			if (StoredVehicle->getMoveJob()) StoredVehicle->getMoveJob()->stop();
-			// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
-			sendStoreVehicle (*this, StoringBuilding->iID, false, StoredVehicle->iID, *StoringBuilding->getOwner());
-		}
-	}
-}
-
-//------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_WANT_EXIT);
-
-	cVehicle* StoredVehicle = getVehicleFromID (message.popInt16());
-	if (!StoredVehicle) return;
-
-	if (message.popBool())
-	{
-		cVehicle* StoringVehicle = getVehicleFromID (message.popInt16());
-		if (!StoringVehicle) return;
-
-		const auto position = message.popPosition();
-
-		if (!StoringVehicle->isNextTo (position)) return;
-
-		// sidestep stealth units if necessary
-		sideStepStealthUnit (position, *StoredVehicle);
-
-		if (StoringVehicle->canExitTo (position, *Map, StoredVehicle->getStaticUnitData()))
-		{
-			StoringVehicle->exitVehicleTo (*StoredVehicle, position, *Map);
-			// vehicle is added to enemy clients by cServer::checkPlayerUnits()
-			sendActivateVehicle (*this, StoringVehicle->iID, true, StoredVehicle->iID, position, *StoringVehicle->getOwner());
-			if (StoredVehicle->getStaticUnitData().canSurvey)
-			{
-				sendVehicleResources (*this, *StoredVehicle);
-				StoredVehicle->doSurvey ();
-			}
-
-			if (StoredVehicle->canLand (*Map))
-			{
-				StoredVehicle->setFlightHeight (0);
-			}
-			else
-			{
-				StoredVehicle->setFlightHeight (64);
-			}
-			//TODO: no sentry
-			//StoredVehicle->InSentryRange (*this);
-		}
-	}
-	else
-	{
-		cBuilding* StoringBuilding = getBuildingFromID (message.popInt16());
-		if (!StoringBuilding) return;
-
-		const auto position = message.popPosition();
-
-		if (!StoringBuilding->isNextTo (position)) return;
-
-		// sidestep stealth units if necessary
-		sideStepStealthUnit (position, *StoredVehicle);
-
-		if (StoringBuilding->canExitTo(position, *Map, StoredVehicle->getStaticUnitData()))
-		{
-			StoringBuilding->exitVehicleTo (*StoredVehicle, position, *Map);
-			// vehicle is added to enemy clients by cServer::checkPlayerUnits()
-			sendActivateVehicle (*this, StoringBuilding->iID, false, StoredVehicle->iID, position, *StoringBuilding->getOwner());
-			if (StoredVehicle->getStaticUnitData().canSurvey)
-			{
-				sendVehicleResources (*this, *StoredVehicle);
-				StoredVehicle->doSurvey ();
-			}
-			//TODO: no sentry
-			//StoredVehicle->InSentryRange (*this);
-		}
-	}
-}
-
-//------------------------------------------------------------------------------
 void cServer::handleNetMessage_GAME_EV_WANT_BUY_UPGRADES (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_BUY_UPGRADES);
@@ -1001,19 +894,6 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& messa
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_END_MOVE_ACTION (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_END_MOVE_ACTION);
-
-	cVehicle* vehicle = getVehicleFromID (message.popInt32());
-	//if (!vehicle || !vehicle->ServerMoveJob) return;
-
-	const int destID = message.popInt32();
-	eEndMoveActionType type = (eEndMoveActionType) message.popChar();
-	//vehicle->ServerMoveJob->addEndAction (destID, type);
-}
-
-//------------------------------------------------------------------------------
 void cServer::handleNetMessage_GAME_EV_WANT_KICK_PLAYER (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_KICK_PLAYER);
@@ -1043,8 +923,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 		case GAME_EV_WANT_START_CLEAR: handleNetMessage_GAME_EV_WANT_START_CLEAR (message); break;
 		case GAME_EV_WANT_STOP_CLEAR: handleNetMessage_GAME_EV_WANT_STOP_CLEAR (message); break;
 		case GAME_EV_ABORT_WAITING: handleNetMessage_GAME_EV_ABORT_WAITING (message); break;
-		case GAME_EV_WANT_LOAD: handleNetMessage_GAME_EV_WANT_LOAD (message); break;
-		case GAME_EV_WANT_EXIT: handleNetMessage_GAME_EV_WANT_EXIT (message); break;
 		case GAME_EV_WANT_BUY_UPGRADES: handleNetMessage_GAME_EV_WANT_BUY_UPGRADES (message); break;
 		case GAME_EV_WANT_BUILDING_UPGRADE: handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (message); break;
 		case GAME_EV_WANT_RESEARCH_CHANGE: handleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (message); break;
@@ -1052,7 +930,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 		case GAME_EV_WANT_COM_ACTION: handleNetMessage_GAME_EV_WANT_COM_ACTION (message); break;
 		case GAME_EV_REQUEST_CASUALTIES_REPORT: handleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (message); break;
 		case GAME_EV_WANT_CHANGE_UNIT_NAME: handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (message); break;
-		case GAME_EV_END_MOVE_ACTION: handleNetMessage_GAME_EV_END_MOVE_ACTION (message); break;
 		case GAME_EV_WANT_KICK_PLAYER: handleNetMessage_GAME_EV_WANT_KICK_PLAYER (message); break;
 		default:
 			Log.write ("Server: Can not handle message, type " + message.getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);

@@ -57,8 +57,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_DEFEATED,				// a player has been defeated
 	GAME_EV_DEL_PLAYER,				// a client has to delete a player
 	GAME_EV_HUD_SETTINGS,			// hud settings for a client
-	GAME_EV_STORE_UNIT,				// a unit has to be stored
-	GAME_EV_EXIT_UNIT,				// a unit has to be exit
 	GAME_EV_CREDITS_CHANGED,		// the credits of a player changed (e.g. because he bought upgrades)
 	GAME_EV_UPGRADED_BUILDINGS,		// the buildings in the msg have been upgraded to the current version
 	GAME_EV_UPGRADED_VEHICLES,		// the vehicles in the msg have been upgraded to the current version
@@ -71,7 +69,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_SCORE,                  // sends a player's score to a client
 	GAME_EV_NUM_ECOS,               // sends a player's ecosphere count to a client
 	GAME_EV_UNIT_SCORE,             // sends a unit's score to its owner
-	GAME_EV_END_MOVE_ACTION_SERVER,	// the server has added an end move action to a movejob
 	GAME_EV_CASUALTIES_REPORT,		// sends the casualties stats to a client
 	GAME_EV_REVEAL_MAP,             // a client should reveal the whole map
 };
@@ -127,8 +124,6 @@ void sendWantStopClear (const cClient& client, const cVehicle& vehicle);
 *@author alzi alias DoctorDeath
 */
 void sendAbortWaiting (const cClient& client);
-void sendWantLoad (const cClient& client, int unitid, bool vehicle, int loadedunitid);
-void sendWantActivate (const cClient& client, int unitid, bool vehicle, int activatunitid, const cPosition& position);
 
 void sendRequestCasualtiesReport (const cClient& client);
 
@@ -147,7 +142,6 @@ void sendWantResearchChange (const cClient& client, const std::array<int, cResea
 
 void sendWantChangeUnitName (const cClient& client, const std::string& newName, int unitID);
 
-void sendEndMoveAction (const cClient& client, int vehicleID, int destID, eEndMoveActionType type);
 
 void sentWantKickPlayer (const cClient& client, const cPlayer& player);
 

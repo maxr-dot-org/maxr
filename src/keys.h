@@ -86,6 +86,7 @@ public:
 	cKeySequence keyUnitMenuAttack;
 	cKeySequence keyUnitMenuBuild;
 	cKeySequence keyUnitMenuTransfer;
+	cKeySequence keyUnitMenuEnter;
 	cKeySequence keyUnitMenuAutomove;
 	cKeySequence keyUnitMenuStart;
 	cKeySequence keyUnitMenuStop;
@@ -153,6 +154,7 @@ private:
 	const static std::string keyUnitMenuAttackName;
 	const static std::string keyUnitMenuBuildName;
 	const static std::string keyUnitMenuTransferName;
+	const static std::string keyUnitMenuEnterName;
 	const static std::string keyUnitMenuAutomoveName;
 	const static std::string keyUnitMenuStartName;
 	const static std::string keyUnitMenuStopName;

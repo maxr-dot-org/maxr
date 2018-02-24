@@ -17,55 +17,65 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "planetakeoffjob.h"
+#include "getinjob.h"
 
 #include "game/data/units/vehicle.h"
+#include "game/data/model.h"
 #include "utility/crc.h"
 
 
-cPlaneTakeoffJob::cPlaneTakeoffJob (cVehicle& vehicle_, bool takeoff_) :
-	cJob (vehicle_),
-	takeoff (takeoff_)
-{}
+cGetInJob::cGetInJob (cVehicle& loadedVehicle, cUnit& loadingUnit) :
+	cJob (loadedVehicle),
+	loadingUnit (&loadingUnit),
+	counter(32),
+	startFlightHeight(loadedVehicle.getFlightHeight())
+{
+	connectionManager.connect(loadingUnit.destroyed, [&](){finished = true; });
+	unit->alphaEffectValue = 254;
+}
 
 //------------------------------------------------------------------------------
-void cPlaneTakeoffJob::run (cModel& model)
+void cGetInJob::run (cModel& model)
 {
-	// TODO add sound #708
-
 	assert(unit->isAVehicle());
-	cVehicle* plane = static_cast<cVehicle*>(unit);
+	cVehicle* vehicle = static_cast<cVehicle*>(unit);
 
-	if (takeoff)
+	vehicle->setFlightHeight(std::max(0, vehicle->getFlightHeight() - 2));
+	//Fixme: alphaEffect should be GUI only, and not changed from the model.
+	//       Also the alphaEffect must not have any effect on the model behavior,
+	//       so using a fixed counter for the delay.
+	vehicle->alphaEffectValue = std::max(1, vehicle->alphaEffectValue - 8);
+	counter--;
+
+	if (counter <= 0 && vehicle->getFlightHeight() == 0)
 	{
-		plane->setFlightHeight (plane->getFlightHeight() + 2);
-		if (plane->getFlightHeight() >= 64)
+		if (loadingUnit->canLoad(vehicle))
 		{
-			finished = true;
+			loadingUnit->storeVehicle(*vehicle, *model.getMap());
+			model.unitStored(*loadingUnit, *vehicle);
 		}
-	}
-	else
-	{
-		plane->setFlightHeight (plane->getFlightHeight() - 2);
-		if (plane->getFlightHeight() <= 0)
-		{
-			finished = true;
-		}
+
+		vehicle->setFlightHeight(startFlightHeight);
+		vehicle->alphaEffectValue = 0;
+
+		finished = true;
 	}
 }
 
 //------------------------------------------------------------------------------
-eJobType cPlaneTakeoffJob::getType() const
+eJobType cGetInJob::getType() const
 {
-	return eJobType::PLANE_TAKEOFF;
+	return eJobType::GET_IN;
 }
 
 //------------------------------------------------------------------------------
-uint32_t cPlaneTakeoffJob::getChecksum(uint32_t crc) const
+uint32_t cGetInJob::getChecksum(uint32_t crc) const
 {
 	crc = calcCheckSum(getType(), crc);
-	crc = calcCheckSum(unit ? unit->getId() : 0, crc);
-	crc = calcCheckSum(takeoff, crc);
+	crc = calcCheckSum(unit, crc);
+	crc = calcCheckSum(loadingUnit, crc);
+	crc = calcCheckSum(counter, crc);
+	crc = calcCheckSum(startFlightHeight, crc);
 
 	return crc;
 }

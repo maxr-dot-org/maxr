@@ -129,6 +129,7 @@
 			<Limited_To ENG="Limited to"/> <!-- filter seting-->
 			<Load ENG="Load"/>
 			<Load_7 ENG="Load"/>
+			<Enter_7 ENG="Enter"/>
 			<Log ENG="Log"/>
 			<Mani ENG="Manifestation"/>
 			<ManualFireMode_7 ENG="Manual"/>

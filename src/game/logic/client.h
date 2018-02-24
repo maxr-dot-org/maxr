@@ -143,9 +143,6 @@ public:
 
 
 	//TODO: move signals to model
-	mutable cSignal<void (const cUnit& storingUnit, const cUnit& storedUnit)> unitStored;
-	mutable cSignal<void (const cUnit& storingUnit, const cUnit&storedUnit)> unitActivated;
-
 	mutable cSignal<void (const cUnit&)> unitHasStolenSuccessfully;
 	mutable cSignal<void (const cUnit&)> unitHasDisabledSuccessfully;
 	mutable cSignal<void (const cUnit&)> unitStealDisableFailed;
@@ -184,8 +181,6 @@ private:
 	void HandleNetMessage_GAME_EV_NOFOG (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_DEFEATED (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_STORE_UNIT (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UNIT_UPGRADE_VALUES (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_CREDITS_CHANGED (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message);
@@ -199,7 +194,6 @@ private:
 	void HandleNetMessage_GAME_EV_SCORE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_NUM_ECOS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UNIT_SCORE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message);
 private:
 	cModel model;

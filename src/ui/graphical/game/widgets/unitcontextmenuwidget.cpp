@@ -157,6 +157,16 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 		area.add (button->getArea());
 	}
 
+	// Enter
+	if (unitHasEnterEntry(unit, player))
+	{
+		auto button = mouseActionGroup->addButton(std::make_unique<cCheckBox>(nextButtonPosition, lngPack.i18n("Text~Others~Enter_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
+		button->setChecked(mouseInputMode == eMouseModeType::Enter);
+		button->toggled.connect([&]() { enterToggled(); });
+		nextButtonPosition.y() += button->getSize().y();
+		area.add(button->getArea());
+	}
+
 	// research
 	if (unitHasResearchEntry (unit, player))
 	{
@@ -360,6 +370,13 @@ const cUnit* cUnitContextMenuWidget::getUnit()
 {
 	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().storageUnitsMax > 0;
 }
+
+//------------------------------------------------------------------------------
+/*static*/ bool cUnitContextMenuWidget::unitHasEnterEntry(const cUnit* unit, const cPlayer* player)
+{
+	return unit && !unit->isDisabled() && unit->getOwner() == player && !unit->isABuilding() && !unit->isUnitClearing() && !unit->isUnitBuildingABuilding();
+}
+
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasResearchEntry(const cUnit* unit, const cPlayer* player)

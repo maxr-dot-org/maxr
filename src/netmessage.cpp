@@ -399,10 +399,6 @@ string cNetMessage::getTypeAsString() const
 		case GAME_EV_WANT_KICK_PLAYER: return "GAME_EV_WANT_KICK_PLAYER";
 		case GAME_EV_SPECIFIC_UNIT_DATA: return "GAME_EV_SPECIFIC_UNIT_DATA";
 		case GAME_EV_HUD_SETTINGS: return "GAME_EV_HUD_SETTINGS";
-		case GAME_EV_WANT_LOAD: return "GAME_EV_WANT_LOAD";
-		case GAME_EV_WANT_EXIT: return "GAME_EV_WANT_EXIT";
-		case GAME_EV_STORE_UNIT: return "GAME_EV_STORE_UNIT";
-		case GAME_EV_EXIT_UNIT: return "GAME_EV_EXIT_UNIT";
 		case GAME_EV_UNIT_UPGRADE_VALUES: return "GAME_EV_UNIT_UPGRADE_VALUES";
 		case GAME_EV_WANT_MARK_LOG: return "GAME_EV_WANT_MARK_LOG";
 		case GAME_EV_MARK_LOG: return "GAME_EV_MARK_LOG";
@@ -426,8 +422,6 @@ string cNetMessage::getTypeAsString() const
 		case GAME_EV_SCORE: return "GAME_EV_SCORE";
 		case GAME_EV_NUM_ECOS: return "GAME_EV_NUM_ECOS";
 		case GAME_EV_UNIT_SCORE: return "GAME_EV_UNIT_SCORE";
-		case GAME_EV_END_MOVE_ACTION_SERVER: return "GAME_EV_END_MOVE_ACTION_SERVER";
-		case GAME_EV_END_MOVE_ACTION: return "GAME_EV_END_MOVE_ACTION";
 		case GAME_EV_REVEAL_MAP: return "GAME_EV_REVEAL_MAP";
 		default: return iToStr (iType);
 	}

@@ -448,6 +448,10 @@ void cMoveJob::endMove(cModel& model)
 
 	if (path.empty())
 	{
+		state = FINISHED;
+		vehicle->setMoving(false);
+		vehicle->WalkFrame = 0;
+
 		endMoveAction.execute(model);
 		vehicle->continuePathBuilding(model);
 	}

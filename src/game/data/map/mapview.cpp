@@ -32,6 +32,8 @@ cMapView::cMapView(std::shared_ptr<const cMap> map_, std::shared_ptr<const cPlay
 
 	// TODO: unitAppeared & unitDisappeared, when scan area of player changed
 	// TODO: unitAppeared, when stealth unit detected
+	// TODO: unitDisappeared, when stealth unit hidden again
+	// TODO: unitAppeared & unitDisappeared, when stealth unit changes terrain
 	
 	connectionManager.connect(map->addedUnit, [&](const cUnit& unit)
 	{

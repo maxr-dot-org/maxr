@@ -17,49 +17,47 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_logic_endmoveaction_h
-#define game_logic_endmoveaction_h
+#include "ui/graphical/game/control/mouseaction/mouseactionenter.h"
 
-#include<stdint.h>
+#include "ui/graphical/game/widgets/gamemapwidget.h"
+#include "ui/graphical/game/unitselection.h"
+#include "game/data/units/unit.h"
+#include "game/data/map/mapview.h"
+#include "game/data/map/mapfieldview.h"
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
 
-#include "utility/serialization/nvp.h"
-
-class cVehicle;
-class cModel;
-class cUnit;
-
-enum eEndMoveActionType
+//------------------------------------------------------------------------------
+bool cMouseActionEnter::executeLeftClick(cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
 {
-	EMAT_NONE,
-	EMAT_LOAD,
-	EMAT_ATTACK
-};
+	const auto selectedUnit = unitSelection.getSelectedUnit();
 
-class cEndMoveAction
-{
-public:
-	cEndMoveAction ();
-	cEndMoveAction (const cVehicle& vehicle, const cUnit& destUnit, eEndMoveActionType type);
+	if (!selectedUnit) return false;
 
-	void execute (cModel& model);
-	eEndMoveActionType getType() const;
-	uint32_t getChecksum(uint32_t crc) const;
+	const auto& field = map.getField(mapPosition);
+	const auto overBuilding = field.getBuilding();
+	const auto overVehicle = field.getVehicle();
 
-	template <typename T>
-	void serialize(T& archive)
+	if (overBuilding)
 	{
-		archive & NVP(vehicleID);
-		archive & NVP(type);
-		archive & NVP(destID);
+		gameMapWidget.triggeredLoadAt(*overBuilding, selectedUnit->getPosition());
 	}
-private:
-	void executeLoadAction (cModel& model);
-	void executeGetInAction (cModel& model);
-	void executeAttackAction (cModel& model);
+	else if (overVehicle)
+	{
+		gameMapWidget.triggeredLoadAt(*overVehicle, selectedUnit->getPosition());
+	}
 
-	int vehicleID;
-	eEndMoveActionType type;
-	int destID;
-};
+	return true;
+}
 
-#endif // !game_logic_endmoveaction_h
+//------------------------------------------------------------------------------
+bool cMouseActionEnter::doesChangeState() const
+{
+	return true;
+}
+
+//------------------------------------------------------------------------------
+bool cMouseActionEnter::isSingleAction() const
+{
+	return true;
+}

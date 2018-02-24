@@ -36,6 +36,8 @@
 #include "actionstartbuild.h"
 #include "actionfinishbuild.h"
 #include "actionchangebuildlist.h"
+#include "actionload.h"
+#include "actionactivate.h"
 
 std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 {
@@ -74,6 +76,10 @@ std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 		return std::make_unique<cActionFinishBuild>(archive);
 	case eActiontype::ACTION_CHANGE_BUILDLIST:
 		return std::make_unique<cActionChangeBuildList>(archive);
+	case eActiontype::ACTION_LOAD:
+		return std::make_unique<cActionLoad>(archive);	
+	case eActiontype::ACTION_ACTIVATE:
+		return std::make_unique<cActionActivate>(archive);
 	default:
 		throw std::runtime_error("Unknown action type " + iToStr(static_cast<int>(type)));
 		return nullptr;
@@ -120,7 +126,11 @@ std::string enumToString(cAction::eActiontype value)
 	case cAction::eActiontype::ACTION_FINISH_BUILD:
 		return "ACTION_FINISH_BUILD";
 	case cAction::eActiontype::ACTION_CHANGE_BUILDLIST:
-		return "ACTION_CHANGE_BUILDLIST";
+		return "ACTION_CHANGE_BUILDLIST";	
+	case cAction::eActiontype::ACTION_LOAD:
+		return "ACTION_LOAD";
+	case cAction::eActiontype::ACTION_ACTIVATE:
+		return "ACTION_ACTIVATE";
 	default:
 		assert(false);
 		return toString(static_cast<int>(value));

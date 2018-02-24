@@ -55,10 +55,14 @@ public:
 
 	virtual bool canTransferTo (const cPosition& position, const cMapView& map) const = 0;
 	virtual bool canTransferTo (const cUnit& unit) const = 0;
+	virtual bool canLoad(const cVehicle* vehicle, bool checkPosition = true) const = 0;
 	virtual bool canExitTo (const cPosition& position, const cMapView& map, const cStaticUnitData& unitData) const = 0;
 	virtual bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const = 0;
 	virtual std::string getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData& unitsData) const = 0;
 
+	void storeVehicle(cVehicle& vehicle, cMap& map);
+	void exitVehicleTo(cVehicle& vehicle, const cPosition& position, cMap& map);
+	
 	virtual void makeReport (cSoundManager& soundManager) const = 0;
 
 	virtual const cPosition& getMovementOffset() const { static const cPosition dummy (0, 0); return dummy; }

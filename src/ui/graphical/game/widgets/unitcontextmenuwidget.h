@@ -48,6 +48,7 @@ public:
 	static bool unitHasSentryEntry (const cUnit* unit, const cPlayer* player);
 	static bool unitHasActivateEntry (const cUnit* unit, const cPlayer* player);
 	static bool unitHasLoadEntry (const cUnit* unit, const cPlayer* player);
+	static bool unitHasEnterEntry (const cUnit* unit, const cPlayer* player);
 	static bool unitHasResearchEntry (const cUnit* unit, const cPlayer* player);
 	static bool unitHasBuyEntry (const cUnit* unit, const cPlayer* player);
 	static bool unitHasUpgradeThisEntry (const cUnit* unit, const cPlayer* player);
@@ -74,6 +75,7 @@ public:
 	cSignal<void ()> sentryToggled;
 	cSignal<void ()> activateClicked;
 	cSignal<void ()> loadToggled;
+	cSignal<void ()> enterToggled;
 	cSignal<void ()> researchClicked;
 	cSignal<void ()> buyUpgradesClicked;
 	cSignal<void ()> upgradeThisClicked;

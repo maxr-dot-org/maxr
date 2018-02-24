@@ -129,6 +129,7 @@
 			<Limited_To ENG="Limited to" localized="Begrenzt auf"/>
 			<Load ENG="Load" localized="Laden"/>
 			<Load_7 ENG="Load" localized="Laden"/>
+			<Enter_7 ENG="Enter" localized="Hinein"/>
 			<Log ENG="Log" localized="Log"/>
 			<Mani ENG="Manifestation" localized="Hinweise"/>
 			<ManualFireMode_7 ENG="Manual" localized="Manuell"/>

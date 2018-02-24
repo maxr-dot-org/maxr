@@ -227,6 +227,7 @@ private:
 	cShortcut* manualFireShortcut;
 	cShortcut* activateShortcut;
 	cShortcut* loadShortcut;
+	cShortcut* enterShortcut;
 	cShortcut* relaodShortcut;
 	cShortcut* repairShortcut;
 	cShortcut* layMineShortcut;

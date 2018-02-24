@@ -17,49 +17,31 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_logic_endmoveaction_h
-#define game_logic_endmoveaction_h
+#ifndef ui_graphical_game_control_mousemode_mousemodeenterH
+#define ui_graphical_game_control_mousemode_mousemodeenterH
 
-#include<stdint.h>
+#include "maxrconfig.h"
+#include "ui/graphical/game/control/mousemode/mousemode.h"
 
-#include "utility/serialization/nvp.h"
-
-class cVehicle;
-class cModel;
-class cUnit;
-
-enum eEndMoveActionType
-{
-	EMAT_NONE,
-	EMAT_LOAD,
-	EMAT_ATTACK
-};
-
-class cEndMoveAction
+class cMouseModeEnter : public cMouseMode
 {
 public:
-	cEndMoveAction ();
-	cEndMoveAction (const cVehicle& vehicle, const cUnit& destUnit, eEndMoveActionType type);
+	cMouseModeEnter(const cMapView* map, const cUnitSelection& unitSelection, const cPlayer* player);
 
-	void execute (cModel& model);
-	eEndMoveActionType getType() const;
-	uint32_t getChecksum(uint32_t crc) const;
+	virtual eMouseModeType getType() const MAXR_OVERRIDE_FUNCTION;
 
-	template <typename T>
-	void serialize(T& archive)
-	{
-		archive & NVP(vehicleID);
-		archive & NVP(type);
-		archive & NVP(destID);
-	}
+	virtual void setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
+
+	virtual std::unique_ptr<cMouseAction> getMouseAction(const cPosition& mapPosition, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
+
+protected:
+	virtual void establishUnitSelectionConnections() MAXR_OVERRIDE_FUNCTION;
+	virtual void establishMapFieldConnections(const cMapFieldView& field) MAXR_OVERRIDE_FUNCTION;
+
 private:
-	void executeLoadAction (cModel& model);
-	void executeGetInAction (cModel& model);
-	void executeAttackAction (cModel& model);
+	bool canExecuteAction(const cPosition& mapPosition) const;
 
-	int vehicleID;
-	eEndMoveActionType type;
-	int destID;
+	void updateFieldUnitConnections(const cMapFieldView& field);
 };
 
-#endif // !game_logic_endmoveaction_h
+#endif

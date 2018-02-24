@@ -878,62 +878,25 @@ bool cBuilding::canLoad (const cPosition& position, const cMapView& map, bool ch
 //--------------------------------------------------------------------------
 /** returns, if the vehicle can be loaded from its position: */
 //--------------------------------------------------------------------------
-bool cBuilding::canLoad (const cVehicle* Vehicle, bool checkPosition) const
+bool cBuilding::canLoad (const cVehicle* vehicle, bool checkPosition) const
 {
-	if (!Vehicle) return false;
+	if (!vehicle) return false;
 
-	if (Vehicle->isUnitLoaded()) return false;
+	if (vehicle->isUnitLoaded()) return false;
 
 	if (storedUnits.size() == staticData->storageUnitsMax) return false;
 
-	if (checkPosition && !isNextTo (Vehicle->getPosition())) return false;
+	if (checkPosition && !isNextTo (vehicle->getPosition())) return false;
 
-	if (!Contains(staticData->storeUnitsTypes, Vehicle->getStaticUnitData().isStorageType)) return false;
+	if (!Contains(staticData->storeUnitsTypes, vehicle->getStaticUnitData().isStorageType)) return false;
 
-	if (Vehicle->isUnitMoving() || Vehicle->isAttacking()) return false;
+	if (vehicle->isUnitMoving() || vehicle->isAttacking()) return false;
 
-	if (Vehicle->getOwner() != getOwner() || Vehicle->isUnitBuildingABuilding() || Vehicle->isUnitClearing()) return false;
+	if (vehicle->getOwner() != getOwner() || vehicle->isUnitBuildingABuilding() || vehicle->isUnitClearing()) return false;
 
-	if (Vehicle->isBeeingAttacked()) return false;
+	if (vehicle->isBeeingAttacked()) return false;
 
 	return true;
-}
-
-//--------------------------------------------------------------------------
-/** loads a vehicle: */
-//--------------------------------------------------------------------------
-void cBuilding::storeVehicle (cVehicle& vehicle, cMap& map)
-{
-	map.deleteVehicle (vehicle);
-	if (vehicle.isSentryActive())
-	{
-		vehicle.getOwner()->deleteSentry (vehicle);
-	}
-
-	vehicle.setLoaded (true);
-	vehicle.setIsBeeinAttacked (false);
-
-	storedUnits.push_back (&vehicle);
-	storedUnitsChanged();
-
-	getOwner()->doScan();
-}
-
-//-----------------------------------------------------------------------
-// Unloads a vehicle
-void cBuilding::exitVehicleTo (cVehicle& vehicle, const cPosition& position, cMap& map)
-{
-	Remove (storedUnits, &vehicle);
-
-	storedUnitsChanged();
-
-	map.addVehicle (vehicle, position);
-
-	vehicle.setPosition (position);
-
-	vehicle.setLoaded (false);
-
-	getOwner()->doScan();
 }
 
 //-------------------------------------------------------------------------------

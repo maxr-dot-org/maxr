@@ -111,6 +111,8 @@
 #include "game/data/report/unit/savedreportpathinterrupted.h"
 #include "game/data/map/mapview.h"
 #include "game/logic/action/actionchangebuildlist.h"
+#include "game/logic/action/actionload.h"
+#include "game/logic/action/actionactivate.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -793,7 +795,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (activateAtTriggered, [&] (const cUnit & unit, size_t index, const cPosition & position)
 	{
-		sendWantActivate (client, unit.iID, unit.isAVehicle(), unit.storedUnits[index]->iID, position);
+		client.sendNetMessage(cActionActivate(unit, *unit.storedUnits[index], position));
 	});
 	clientSignalConnectionManager.connect (reloadTriggered, [&] (const cUnit & sourceUnit, const cUnit & destinationUnit)
 	{
@@ -941,7 +943,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredActivateAt, [&] (const cUnit & unit, size_t index, const cPosition & position)
 	{
-		sendWantActivate (client, unit.iID, unit.isAVehicle(), unit.storedUnits[index]->iID, position);
+		client.sendNetMessage(cActionActivate(unit, *unit.storedUnits[index], position));
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredExitFinishedUnit, [&] (const cBuilding & building, const cPosition & position)
 	{
@@ -957,15 +959,18 @@ void cGameGuiController::connectClient (cClient& client)
 			const auto& vehicle = static_cast<const cVehicle&> (unit);
 			if (vehicle.getStaticUnitData().factorAir > 0 && overVehicle)
 			{
-				if (overVehicle->getPosition() == vehicle.getPosition()) sendWantLoad (client, vehicle.iID, true, overVehicle->iID);
+				if (overVehicle->getPosition() == vehicle.getPosition())
+				{
+					client.sendNetMessage(cActionLoad(unit, *overVehicle));
+				}
 				else
 				{
 					cPathCalculator pc (vehicle, *mapView, position, false);
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						activeClient->sendNetMessage(cActionStartMove(vehicle, path));
-						sendEndMoveAction (client, vehicle.iID, overVehicle->iID, EMAT_LOAD);
+						cEndMoveAction emat(*overVehicle, unit, eEndMoveActionType::EMAT_LOAD);
+						activeClient->sendNetMessage(cActionStartMove(vehicle, path, emat));
 					}
 					else
 					{
@@ -975,16 +980,19 @@ void cGameGuiController::connectClient (cClient& client)
 			}
 			else if (overVehicle)
 			{
-				if (vehicle.isNextTo (overVehicle->getPosition())) sendWantLoad (client, vehicle.iID, true, overVehicle->iID);
+				if (vehicle.isNextTo(overVehicle->getPosition()))
+				{
+					client.sendNetMessage(cActionLoad(unit, *overVehicle));
+				}
 				else
 				{
-					cPathCalculator pc (vehicle, *mapView, *overVehicle, true);
+					cPathCalculator pc (*overVehicle, *mapView, vehicle, true);
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						activeClient->sendNetMessage(cActionStartMove(vehicle, path));
-						sendEndMoveAction (client, overVehicle->iID, vehicle.iID, EMAT_GET_IN);
-						}
+						cEndMoveAction emat(*overVehicle, unit, eEndMoveActionType::EMAT_LOAD);
+						activeClient->sendNetMessage(cActionStartMove(*overVehicle, path, emat));
+					}
 					else
 					{
 						soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceNoPath, getRandom (VoiceData.VOINoPath)));
@@ -997,15 +1005,18 @@ void cGameGuiController::connectClient (cClient& client)
 			const auto& building = static_cast<const cBuilding&> (unit);
 			if (overVehicle && building.canLoad (overVehicle, false))
 			{
-				if (building.isNextTo (overVehicle->getPosition())) sendWantLoad (client, building.iID, false, overVehicle->iID);
+				if (building.isNextTo(overVehicle->getPosition()))
+				{
+					client.sendNetMessage(cActionLoad(unit, *overVehicle));
+				}
 				else
 				{
 					cPathCalculator pc (*overVehicle, *mapView, building, true);
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						activeClient->sendNetMessage(cActionStartMove(*overVehicle, path));
-						sendEndMoveAction (client, overVehicle->iID, building.iID, EMAT_GET_IN);
+						cEndMoveAction emat(*overVehicle, unit, eEndMoveActionType::EMAT_LOAD);
+						activeClient->sendNetMessage(cActionStartMove(*overVehicle, path, emat));
 					}
 					else
 					{
@@ -1015,15 +1026,18 @@ void cGameGuiController::connectClient (cClient& client)
 			}
 			else if (overPlane && building.canLoad (overPlane, false))
 			{
-				if (building.isNextTo (overPlane->getPosition())) sendWantLoad (client, building.iID, false, overPlane->iID);
+				if (building.isNextTo(overPlane->getPosition()))
+				{
+					client.sendNetMessage(cActionLoad(unit, *overPlane));
+				}
 				else
 				{
 					cPathCalculator pc (*overPlane, *mapView, building, true);
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						activeClient->sendNetMessage(cActionStartMove(*overPlane, path));
-						sendEndMoveAction (client, overPlane->iID, building.iID, EMAT_GET_IN);
+						cEndMoveAction emat(*overPlane, unit, eEndMoveActionType::EMAT_LOAD);
+						activeClient->sendNetMessage(cActionStartMove(*overPlane, path, emat));;
 					}
 					else
 					{
@@ -1224,7 +1238,7 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (client.unitStored, [&] (const cUnit & storingUnit, const cUnit& /*storedUnit*/)
+	clientSignalConnectionManager.connect (model.unitStored, [&] (const cUnit & storingUnit, const cUnit& /*storedUnit*/)
 	{
 		if (mapView->canSeeUnit(storingUnit))
 		{
@@ -1232,7 +1246,7 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (client.unitActivated, [&] (const cUnit & storingUnit, const cUnit& /*storedUnit*/)
+	clientSignalConnectionManager.connect (model.unitActivated, [&] (const cUnit & storingUnit, const cUnit& /*storedUnit*/)
 	{
 		if (mapView->canSeeUnit(storingUnit))
 		{

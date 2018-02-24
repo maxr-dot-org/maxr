@@ -24,6 +24,8 @@
 #include "job.h"
 #include "game/data/units/unit.h"
 #include "utility/crc.h"
+#include "utility/string/toString.h"
+#include "utility/log.h"
 
 cJobContainer::~cJobContainer()
 {
@@ -35,6 +37,7 @@ void cJobContainer::addJob (cJob& job)
 	//only one job per unit
 	if (job.unit->job)
 	{
+		Log.write(" cJobContainer: Job canceled. Type " + enumToString(job.unit->job->getType()) + ", unit " + toString(job.unit->getId()), cLog::eLOG_TYPE_NET_WARNING);
 		std::vector<cJob*>::iterator it = std::find (jobs.begin(), jobs.end(), job.unit->job);
 		releaseJob (it);
 	}

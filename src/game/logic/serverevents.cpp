@@ -262,27 +262,6 @@ void sendDeletePlayer (cServer& server, const cPlayer& player, const cPlayer* re
 }
 
 //------------------------------------------------------------------------------
-void sendStoreVehicle (cServer& server, int unitid, bool vehicle, int storedunitid, const cPlayer& receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_STORE_UNIT);
-	message->pushInt16 (unitid);
-	message->pushBool (vehicle);
-	message->pushInt16 (storedunitid);
-	server.sendNetMessage (std::move (message), &receiver);
-}
-
-//------------------------------------------------------------------------------
-void sendActivateVehicle (cServer& server, int unitid, bool vehicle, int activatunitid, const cPosition& position, const cPlayer& receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_EXIT_UNIT);
-	message->pushPosition (position);
-	message->pushInt16 (unitid);
-	message->pushBool (vehicle);
-	message->pushInt16 (activatunitid);
-	server.sendNetMessage (std::move (message), &receiver);
-}
-
-//------------------------------------------------------------------------------
 void sendResearchLevel (cServer& server, const cResearch& researchLevel, const cPlayer& receiver)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_RESEARCH_LEVEL);
@@ -454,18 +433,6 @@ void sendCommandoAnswer (cServer& server, bool success, bool steal, const cVehic
 	message->pushBool (steal);
 	message->pushBool (success);
 	server.sendNetMessage (std::move (message), &receiver);
-}
-
-
-//------------------------------------------------------------------------------
-void sendEndMoveActionToClient (cServer& server, const cVehicle& vehicle, int destID, eEndMoveActionType type)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_END_MOVE_ACTION_SERVER);
-	message->pushChar (type);
-	message->pushInt32 (destID);
-	message->pushInt32 (vehicle.iID);
-
-	server.sendNetMessage (std::move (message), vehicle.getOwner());
 }
 
 //------------------------------------------------------------------------------

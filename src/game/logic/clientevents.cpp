@@ -134,25 +134,6 @@ void sendAbortWaiting (const cClient& client)
 	client.sendNetMessage (std::move (message));
 }
 
-void sendWantLoad (const cClient& client, int unitid, bool vehicle, int loadedunitid)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_LOAD);
-	message->pushInt16 (unitid);
-	message->pushBool (vehicle);
-	message->pushInt16 (loadedunitid);
-	client.sendNetMessage (std::move (message));
-}
-
-void sendWantActivate (const cClient& client, int unitid, bool vehicle, int activatunitid, const cPosition& position)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_EXIT);
-	message->pushPosition (position);
-	message->pushInt16 (unitid);
-	message->pushBool (vehicle);
-	message->pushInt16 (activatunitid);
-	client.sendNetMessage (std::move (message));
-}
-
 void sendSetAutoStatus (const cClient& client, int vehicleID, bool set)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_AUTOMOVE_STATUS);
@@ -221,15 +202,6 @@ void sendWantChangeUnitName (const cClient& client, const string& newName, int u
 	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_CHANGE_UNIT_NAME);
 	message->pushString (newName);
 	message->pushInt16 (unitID);
-	client.sendNetMessage (std::move (message));
-}
-
-void sendEndMoveAction (const cClient& client, int vehicleID, int destID, eEndMoveActionType type)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_END_MOVE_ACTION);
-	message->pushChar (type);
-	message->pushInt32 (destID);
-	message->pushInt32 (vehicleID);
 	client.sendNetMessage (std::move (message));
 }
 

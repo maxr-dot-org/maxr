@@ -17,49 +17,20 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_logic_endmoveaction_h
-#define game_logic_endmoveaction_h
+#ifndef ui_graphical_game_control_mouseaction_mouseactionenterH
+#define ui_graphical_game_control_mouseaction_mouseactionenterH
 
-#include<stdint.h>
+#include "maxrconfig.h"
+#include "ui/graphical/game/control/mouseaction/mouseaction.h"
 
-#include "utility/serialization/nvp.h"
-
-class cVehicle;
-class cModel;
-class cUnit;
-
-enum eEndMoveActionType
-{
-	EMAT_NONE,
-	EMAT_LOAD,
-	EMAT_ATTACK
-};
-
-class cEndMoveAction
+class cMouseActionEnter : public cMouseAction
 {
 public:
-	cEndMoveAction ();
-	cEndMoveAction (const cVehicle& vehicle, const cUnit& destUnit, eEndMoveActionType type);
+	virtual bool executeLeftClick(cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const MAXR_OVERRIDE_FUNCTION;
 
-	void execute (cModel& model);
-	eEndMoveActionType getType() const;
-	uint32_t getChecksum(uint32_t crc) const;
+	virtual bool doesChangeState() const MAXR_OVERRIDE_FUNCTION;
 
-	template <typename T>
-	void serialize(T& archive)
-	{
-		archive & NVP(vehicleID);
-		archive & NVP(type);
-		archive & NVP(destID);
-	}
-private:
-	void executeLoadAction (cModel& model);
-	void executeGetInAction (cModel& model);
-	void executeAttackAction (cModel& model);
-
-	int vehicleID;
-	eEndMoveActionType type;
-	int destID;
+	virtual bool isSingleAction() const MAXR_OVERRIDE_FUNCTION;
 };
 
-#endif // !game_logic_endmoveaction_h
+#endif

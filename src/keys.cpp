@@ -73,6 +73,7 @@ const std::string cKeysList::keyUnitPrevName = "KeyUnitPrev";
 const std::string cKeysList::keyUnitMenuAttackName = "KeyUnitMenuAttack";
 const std::string cKeysList::keyUnitMenuBuildName = "KeyUnitMenuBuild";
 const std::string cKeysList::keyUnitMenuTransferName = "KeyUnitMenuTransfer";
+const std::string cKeysList::keyUnitMenuEnterName = "KeyUnitMenuEnter";
 const std::string cKeysList::keyUnitMenuAutomoveName = "KeyUnitMenuAutomove";
 const std::string cKeysList::keyUnitMenuStartName = "KeyUnitMenuStart";
 const std::string cKeysList::keyUnitMenuStopName = "KeyUnitMenuStop";
@@ -141,6 +142,7 @@ cKeysList::cKeysList() :
 	keyUnitMenuAttack (cKeyCombination (eKeyModifierType::None, SDLK_a)),
 	keyUnitMenuBuild (cKeyCombination (eKeyModifierType::None, SDLK_b)),
 	keyUnitMenuTransfer (cKeyCombination (eKeyModifierType::None, SDLK_x)),
+	keyUnitMenuEnter (cKeyCombination (eKeyModifierType::None, SDLK_e)),
 	keyUnitMenuAutomove (cKeyCombination (eKeyModifierType::None, SDLK_a)),
 	keyUnitMenuStart (cKeyCombination (eKeyModifierType::None, SDLK_s)),
 	keyUnitMenuStop (cKeyCombination (eKeyModifierType::None, SDLK_s)),
@@ -256,6 +258,7 @@ void cKeysList::loadFromFile()
 	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuAttackName, keyUnitMenuAttack) && loadedAll;
 	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuBuildName, keyUnitMenuBuild) && loadedAll;
 	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuTransferName, keyUnitMenuTransfer) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuEnterName, keyUnitMenuEnter) && loadedAll;
 	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuAutomoveName, keyUnitMenuAutomove) && loadedAll;
 	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuStartName, keyUnitMenuStart) && loadedAll;
 	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuStopName, keyUnitMenuStop) && loadedAll;
@@ -375,6 +378,7 @@ void cKeysList::saveToFile()
 	saveSingleKey (*keysElement, keyUnitMenuAttackName, keyUnitMenuAttack);
 	saveSingleKey (*keysElement, keyUnitMenuBuildName, keyUnitMenuBuild);
 	saveSingleKey (*keysElement, keyUnitMenuTransferName, keyUnitMenuTransfer);
+	saveSingleKey (*keysElement, keyUnitMenuEnterName, keyUnitMenuEnter);
 	saveSingleKey (*keysElement, keyUnitMenuAutomoveName, keyUnitMenuAutomove);
 	saveSingleKey (*keysElement, keyUnitMenuStartName, keyUnitMenuStart);
 	saveSingleKey (*keysElement, keyUnitMenuStopName, keyUnitMenuStop);
