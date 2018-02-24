@@ -262,17 +262,6 @@ void sendDeletePlayer (cServer& server, const cPlayer& player, const cPlayer* re
 }
 
 //------------------------------------------------------------------------------
-void sendActivateVehicle (cServer& server, int unitid, bool vehicle, int activatunitid, const cPosition& position, const cPlayer& receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_EXIT_UNIT);
-	message->pushPosition (position);
-	message->pushInt16 (unitid);
-	message->pushBool (vehicle);
-	message->pushInt16 (activatunitid);
-	server.sendNetMessage (std::move (message), &receiver);
-}
-
-//------------------------------------------------------------------------------
 void sendResearchLevel (cServer& server, const cResearch& researchLevel, const cPlayer& receiver)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_RESEARCH_LEVEL);

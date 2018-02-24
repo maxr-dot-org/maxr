@@ -188,7 +188,6 @@ public:
 	virtual bool canExitTo(const cPosition& position, const cMapView& map, const cStaticUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
 	bool canLoad(const cPosition& position, const cMapView& map, bool checkPosition = true) const;
 	virtual bool canLoad(const cVehicle* Vehicle, bool checkPosition = true) const MAXR_OVERRIDE_FUNCTION;
-	void exitVehicleTo (cVehicle& vehicle, const cPosition& position, cMap& map);
 #define SUPPLY_TYPE_REARM 0
 #define SUPPLY_TYPE_REPAIR 1
 	/// supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR

@@ -578,77 +578,6 @@ void cServer::handleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message)
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_WANT_EXIT);
-
-	cVehicle* StoredVehicle = getVehicleFromID (message.popInt16());
-	if (!StoredVehicle) return;
-
-	if (message.popBool())
-	{
-		cVehicle* StoringVehicle = getVehicleFromID (message.popInt16());
-		if (!StoringVehicle) return;
-
-		const auto position = message.popPosition();
-
-		if (!StoringVehicle->isNextTo (position)) return;
-
-		// sidestep stealth units if necessary
-		sideStepStealthUnit (position, *StoredVehicle);
-
-		if (StoringVehicle->canExitTo (position, *Map, StoredVehicle->getStaticUnitData()))
-		{
-			StoringVehicle->exitVehicleTo (*StoredVehicle, position, *Map);
-			// vehicle is added to enemy clients by cServer::checkPlayerUnits()
-			sendActivateVehicle (*this, StoringVehicle->iID, true, StoredVehicle->iID, position, *StoringVehicle->getOwner());
-			if (StoredVehicle->getStaticUnitData().canSurvey)
-			{
-				sendVehicleResources (*this, *StoredVehicle);
-				StoredVehicle->doSurvey ();
-			}
-
-			if (StoredVehicle->canLand (*Map))
-			{
-				StoredVehicle->setFlightHeight (0);
-			}
-			else
-			{
-				StoredVehicle->setFlightHeight (64);
-			}
-			//TODO: no sentry
-			//StoredVehicle->InSentryRange (*this);
-		}
-	}
-	else
-	{
-		cBuilding* StoringBuilding = getBuildingFromID (message.popInt16());
-		if (!StoringBuilding) return;
-
-		const auto position = message.popPosition();
-
-		if (!StoringBuilding->isNextTo (position)) return;
-
-		// sidestep stealth units if necessary
-		sideStepStealthUnit (position, *StoredVehicle);
-
-		if (StoringBuilding->canExitTo(position, *Map, StoredVehicle->getStaticUnitData()))
-		{
-			StoringBuilding->exitVehicleTo (*StoredVehicle, position, *Map);
-			// vehicle is added to enemy clients by cServer::checkPlayerUnits()
-			sendActivateVehicle (*this, StoringBuilding->iID, false, StoredVehicle->iID, position, *StoringBuilding->getOwner());
-			if (StoredVehicle->getStaticUnitData().canSurvey)
-			{
-				sendVehicleResources (*this, *StoredVehicle);
-				StoredVehicle->doSurvey ();
-			}
-			//TODO: no sentry
-			//StoredVehicle->InSentryRange (*this);
-		}
-	}
-}
-
-//------------------------------------------------------------------------------
 void cServer::handleNetMessage_GAME_EV_WANT_BUY_UPGRADES (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_BUY_UPGRADES);
@@ -994,7 +923,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 		case GAME_EV_WANT_START_CLEAR: handleNetMessage_GAME_EV_WANT_START_CLEAR (message); break;
 		case GAME_EV_WANT_STOP_CLEAR: handleNetMessage_GAME_EV_WANT_STOP_CLEAR (message); break;
 		case GAME_EV_ABORT_WAITING: handleNetMessage_GAME_EV_ABORT_WAITING (message); break;
-		case GAME_EV_WANT_EXIT: handleNetMessage_GAME_EV_WANT_EXIT (message); break;
 		case GAME_EV_WANT_BUY_UPGRADES: handleNetMessage_GAME_EV_WANT_BUY_UPGRADES (message); break;
 		case GAME_EV_WANT_BUILDING_UPGRADE: handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (message); break;
 		case GAME_EV_WANT_RESEARCH_CHANGE: handleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (message); break;

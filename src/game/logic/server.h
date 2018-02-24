@@ -244,7 +244,6 @@ private:
 	void handleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message);
 	void handleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message);
-	void handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_BUY_UPGRADES (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (cNetMessage& message);

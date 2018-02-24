@@ -17,59 +17,35 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef game_logic_actionH
-#define game_logic_actionH
+#ifndef game_logic_actionActivateH
+#define game_logic_actionActivateH
 
-#include "netmessage2.h"
+#include "action.h"
 
-class cAction : public cNetMessage2
+class cUnit;
+
+class cActionActivate : public cAction
 {
 public:
-	// When changing this enum, also update function enumToString(eActiontype value)!
-	enum class eActiontype {
-		ACTION_INIT_NEW_GAME,
-		ACTION_START_WORK,
-		ACTION_STOP,
-		ACTION_TRANSFER,
-		ACTION_START_MOVE,
-		ACTION_RESUME_MOVE,
-		ACTION_END_TURN,
-		ACTION_SELF_DESTROY,
-		ACTION_ATTACK,
-		ACTION_CHANGE_SENTRY,
-		ACTION_CHANGE_MANUAL_FIRE,
-		ACTION_MINELAYER_STATUS,
-		ACTION_START_BUILD,
-		ACTION_FINISH_BUILD,
-		ACTION_CHANGE_BUILDLIST,
-		ACTION_LOAD,
-		ACTION_ACTIVATE
-	};
-	static std::unique_ptr<cAction> createFromBuffer(cBinaryArchiveOut& archive);
+	cActionActivate(const cUnit& containingUnit, const cVehicle& activatedVehicle, const cPosition& position);
+	cActionActivate(cBinaryArchiveOut& archive);
 
-	eActiontype getType() const;
+	virtual void serialize(cBinaryArchiveIn& archive) { cAction::serialize(archive); serializeThis(archive); }
+	virtual void serialize(cTextArchiveIn& archive)   { cAction::serialize(archive); serializeThis(archive); }
 
-	virtual void serialize(cBinaryArchiveIn& archive) { cNetMessage2::serialize(archive); serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive)   { cNetMessage2::serialize(archive); serializeThis(archive); }
-
-	//Note: this function handles incoming data from network. Make every possible sanity check!
-	virtual void execute(cModel& model) const = 0;
-protected:
-	cAction(eActiontype type) : cNetMessage2(eNetMessageType::ACTION), type(type){};
+	virtual void execute(cModel& model) const override;
 private:
 	template<typename T>
 	void serializeThis(T& archive)
 	{
-		archive & type;
+		archive & position;
+		archive & containingUnitId;
+		archive & activatedVehicleId;
 	}
 
-	cAction(const cAction&) MAXR_DELETE_FUNCTION;
-	cAction& operator=(const cAction&)MAXR_DELETE_FUNCTION;
-
-	eActiontype type;
+	cPosition position;
+	int containingUnitId;
+	int activatedVehicleId;
 };
-
-std::string enumToString(cAction::eActiontype value);
-
 
 #endif

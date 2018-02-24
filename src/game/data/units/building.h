@@ -192,7 +192,6 @@ public:
 	virtual bool canExitTo (const cPosition& position, const cMapView& map, const cStaticUnitData& vehicleData) const MAXR_OVERRIDE_FUNCTION;
 	bool canLoad(const cPosition& position, const cMapView& map, bool checkPosition = true) const;
 	virtual bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const MAXR_OVERRIDE_FUNCTION;
-	void exitVehicleTo (cVehicle& vehicle, const cPosition& position, cMap& map);
 
 	/**
 	* returns whether this player has detected this unit or not

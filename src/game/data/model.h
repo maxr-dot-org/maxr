@@ -120,6 +120,7 @@ public:
 	mutable cSignal<void (const std::shared_ptr<cFx>& fx)> addedEffect;
 	
 	mutable cSignal<void (const cUnit& storingUnit, const cUnit& storedUnit)> unitStored;
+	mutable cSignal<void (const cUnit& storingUnit, const cUnit& storedUnit)> unitActivated;
 
 
 	template<typename T>

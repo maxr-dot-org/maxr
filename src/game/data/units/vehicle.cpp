@@ -1053,25 +1053,6 @@ bool cVehicle::canLoad (const cVehicle* vehicle, bool checkPosition) const
 }
 
 //-----------------------------------------------------------------------------
-/** Exits a vehicle */
-//-----------------------------------------------------------------------------
-void cVehicle::exitVehicleTo (cVehicle& vehicle, const cPosition& position, cMap& map)
-{
-	Remove (storedUnits, &vehicle);
-
-	storedUnitsChanged();
-
-	map.addVehicle (vehicle, position);
-
-	vehicle.setPosition (position);
-
-	vehicle.setLoaded (false);
-	//vehicle.data.shotsCur = 0;
-
-	getOwner()->doScan();
-}
-
-//-----------------------------------------------------------------------------
 /** Checks, if an object can get ammunition. */
 //-----------------------------------------------------------------------------
 bool cVehicle::canSupply (const cMapView& map, const cPosition& position, int supplyType) const
@@ -1082,7 +1063,7 @@ bool cVehicle::canSupply (const cMapView& map, const cPosition& position, int su
 	if (field.getVehicle()) return canSupply (field.getVehicle(), supplyType);
 	else if (field.getPlane()) return canSupply (field.getPlane(), supplyType);
 	else if (field.getTopBuilding()) return canSupply (field.getTopBuilding(), supplyType);
-
+	
 	return false;
 }
 

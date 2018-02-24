@@ -54,11 +54,9 @@ void cGetInJob::run (cModel& model)
 			loadingUnit->storeVehicle(*vehicle, *model.getMap());
 			model.unitStored(*loadingUnit, *vehicle);
 		}
-		else
-		{
-			vehicle->setFlightHeight(startFlightHeight);
-			vehicle->alphaEffectValue = 0;
-		}
+
+		vehicle->setFlightHeight(startFlightHeight);
+		vehicle->alphaEffectValue = 0;
 
 		finished = true;
 	}

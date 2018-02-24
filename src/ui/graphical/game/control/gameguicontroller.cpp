@@ -112,6 +112,7 @@
 #include "game/data/map/mapview.h"
 #include "game/logic/action/actionchangebuildlist.h"
 #include "game/logic/action/actionload.h"
+#include "game/logic/action/actionactivate.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -794,7 +795,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (activateAtTriggered, [&] (const cUnit & unit, size_t index, const cPosition & position)
 	{
-		sendWantActivate (client, unit.iID, unit.isAVehicle(), unit.storedUnits[index]->iID, position);
+		client.sendNetMessage(cActionActivate(unit, *unit.storedUnits[index], position));
 	});
 	clientSignalConnectionManager.connect (reloadTriggered, [&] (const cUnit & sourceUnit, const cUnit & destinationUnit)
 	{
@@ -942,7 +943,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredActivateAt, [&] (const cUnit & unit, size_t index, const cPosition & position)
 	{
-		sendWantActivate (client, unit.iID, unit.isAVehicle(), unit.storedUnits[index]->iID, position);
+		client.sendNetMessage(cActionActivate(unit, *unit.storedUnits[index], position));
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredExitFinishedUnit, [&] (const cBuilding & building, const cPosition & position)
 	{
@@ -991,7 +992,7 @@ void cGameGuiController::connectClient (cClient& client)
 					{
 						cEndMoveAction emat(*overVehicle, unit, eEndMoveActionType::EMAT_LOAD);
 						activeClient->sendNetMessage(cActionStartMove(*overVehicle, path, emat));
-						}
+					}
 					else
 					{
 						soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceNoPath, getRandom (VoiceData.VOINoPath)));
@@ -1245,7 +1246,7 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (client.unitActivated, [&] (const cUnit & storingUnit, const cUnit& /*storedUnit*/)
+	clientSignalConnectionManager.connect (model.unitActivated, [&] (const cUnit & storingUnit, const cUnit& /*storedUnit*/)
 	{
 		if (mapView->canSeeUnit(storingUnit))
 		{

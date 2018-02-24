@@ -57,7 +57,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_DEFEATED,				// a player has been defeated
 	GAME_EV_DEL_PLAYER,				// a client has to delete a player
 	GAME_EV_HUD_SETTINGS,			// hud settings for a client
-	GAME_EV_EXIT_UNIT,				// a unit has to be exit
 	GAME_EV_CREDITS_CHANGED,		// the credits of a player changed (e.g. because he bought upgrades)
 	GAME_EV_UPGRADED_BUILDINGS,		// the buildings in the msg have been upgraded to the current version
 	GAME_EV_UPGRADED_VEHICLES,		// the vehicles in the msg have been upgraded to the current version
@@ -125,8 +124,6 @@ void sendWantStopClear (const cClient& client, const cVehicle& vehicle);
 *@author alzi alias DoctorDeath
 */
 void sendAbortWaiting (const cClient& client);
-void sendWantLoad (const cClient& client, int unitid, bool vehicle, int loadedunitid);
-void sendWantActivate (const cClient& client, int unitid, bool vehicle, int activatunitid, const cPosition& position);
 
 void sendRequestCasualtiesReport (const cClient& client);
 

@@ -34,6 +34,7 @@
 #include "utility/position.h"
 #include "utility/box.h"
 #include "utility/crc.h"
+#include "utility/listhelpers.h"
 
 using namespace std;
 
@@ -119,6 +120,19 @@ void cUnit::storeVehicle(cVehicle& vehicle, cMap& map)
 	{
 		vehicle.getOwner()->deleteSentry(vehicle);
 	}
+}
+
+//------------------------------------------------------------------------------
+void cUnit::exitVehicleTo(cVehicle& vehicle, const cPosition& position, cMap& map)
+{
+	Remove(storedUnits, &vehicle);
+	storedUnitsChanged();
+	vehicle.setLoaded(false);
+
+	vehicle.setPosition(position);
+	map.addVehicle(vehicle, position);
+
+	getOwner()->doScan();
 }
 
 //------------------------------------------------------------------------------

@@ -899,23 +899,6 @@ bool cBuilding::canLoad (const cVehicle* vehicle, bool checkPosition) const
 	return true;
 }
 
-//-----------------------------------------------------------------------
-// Unloads a vehicle
-void cBuilding::exitVehicleTo (cVehicle& vehicle, const cPosition& position, cMap& map)
-{
-	Remove (storedUnits, &vehicle);
-
-	storedUnitsChanged();
-
-	map.addVehicle (vehicle, position);
-
-	vehicle.setPosition (position);
-
-	vehicle.setLoaded (false);
-
-	getOwner()->doScan();
-}
-
 //-------------------------------------------------------------------------------
 // Draws big symbols for the info menu:
 //-------------------------------------------------------------------------------

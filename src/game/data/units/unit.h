@@ -61,6 +61,7 @@ public:
 	virtual std::string getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData& unitsData) const = 0;
 
 	void storeVehicle(cVehicle& vehicle, cMap& map);
+	void exitVehicleTo(cVehicle& vehicle, const cPosition& position, cMap& map);
 	
 	virtual void makeReport (cSoundManager& soundManager) const = 0;
 
