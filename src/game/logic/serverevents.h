@@ -133,7 +133,6 @@ void sendDefeated (cServer& server, const cPlayer& player, const cPlayer* receiv
 */
 void sendDeletePlayer (cServer& server, const cPlayer& player, const cPlayer* receiver);
 
-void sendStoreVehicle (cServer& server, int unitid, bool vehicle, int storedunitid, const cPlayer& receiver);
 void sendActivateVehicle (cServer& server, int unitid, bool vehicle, int activatunitid, const cPosition& position, const cPlayer& receiver);
 void sendUnitUpgrades (cServer& server, const cDynamicUnitData& Data, const cPlayer& receiver);
 void sendCredits (cServer& server, int newCredits, const cPlayer& receiver);

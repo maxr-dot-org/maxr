@@ -111,6 +111,7 @@
 #include "game/data/report/unit/savedreportpathinterrupted.h"
 #include "game/data/map/mapview.h"
 #include "game/logic/action/actionchangebuildlist.h"
+#include "game/logic/action/actionload.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -957,7 +958,10 @@ void cGameGuiController::connectClient (cClient& client)
 			const auto& vehicle = static_cast<const cVehicle&> (unit);
 			if (vehicle.getStaticUnitData().factorAir > 0 && overVehicle)
 			{
-				if (overVehicle->getPosition() == vehicle.getPosition()) sendWantLoad (client, vehicle.iID, true, overVehicle->iID);
+				if (overVehicle->getPosition() == vehicle.getPosition())
+				{
+					client.sendNetMessage(cActionLoad(unit, *overVehicle));
+				}
 				else
 				{
 					cPathCalculator pc (vehicle, *mapView, position, false);
@@ -975,7 +979,10 @@ void cGameGuiController::connectClient (cClient& client)
 			}
 			else if (overVehicle)
 			{
-				if (vehicle.isNextTo (overVehicle->getPosition())) sendWantLoad (client, vehicle.iID, true, overVehicle->iID);
+				if (vehicle.isNextTo(overVehicle->getPosition()))
+				{
+					client.sendNetMessage(cActionLoad(unit, *overVehicle));
+				}
 				else
 				{
 					cPathCalculator pc (vehicle, *mapView, *overVehicle, true);
@@ -997,7 +1004,10 @@ void cGameGuiController::connectClient (cClient& client)
 			const auto& building = static_cast<const cBuilding&> (unit);
 			if (overVehicle && building.canLoad (overVehicle, false))
 			{
-				if (building.isNextTo (overVehicle->getPosition())) sendWantLoad (client, building.iID, false, overVehicle->iID);
+				if (building.isNextTo(overVehicle->getPosition()))
+				{
+					client.sendNetMessage(cActionLoad(unit, *overVehicle));
+				}
 				else
 				{
 					cPathCalculator pc (*overVehicle, *mapView, building, true);
@@ -1015,7 +1025,10 @@ void cGameGuiController::connectClient (cClient& client)
 			}
 			else if (overPlane && building.canLoad (overPlane, false))
 			{
-				if (building.isNextTo (overPlane->getPosition())) sendWantLoad (client, building.iID, false, overPlane->iID);
+				if (building.isNextTo(overPlane->getPosition()))
+				{
+					client.sendNetMessage(cActionLoad(unit, *overPlane));
+				}
 				else
 				{
 					cPathCalculator pc (*overPlane, *mapView, building, true);
@@ -1224,7 +1237,7 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (client.unitStored, [&] (const cUnit & storingUnit, const cUnit& /*storedUnit*/)
+	clientSignalConnectionManager.connect (model.unitStored, [&] (const cUnit & storingUnit, const cUnit& /*storedUnit*/)
 	{
 		if (mapView->canSeeUnit(storingUnit))
 		{

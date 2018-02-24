@@ -17,58 +17,47 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef game_logic_actionH
-#define game_logic_actionH
+#include "actionload.h"
 
-#include "netmessage2.h"
+#include "game/data/model.h"
 
-class cAction : public cNetMessage2
+#include "utility/log.h"
+#include "game/logic/jobs/getinjob.h"
+#include "game/logic/jobs/airtransportloadjob.h"
+
+//------------------------------------------------------------------------------
+cActionLoad::cActionLoad(const cUnit& loadingUnit, const cVehicle& loadedVehicle) :
+	cAction(eActiontype::ACTION_LOAD),
+	loadingUnitId(loadingUnit.getId()),
+	loadedVehicleId(loadedVehicle.getId())
+{};
+
+//------------------------------------------------------------------------------
+cActionLoad::cActionLoad(cBinaryArchiveOut& archive) :
+	cAction(eActiontype::ACTION_LOAD)
 {
-public:
-	// When changing this enum, also update function enumToString(eActiontype value)!
-	enum class eActiontype {
-		ACTION_INIT_NEW_GAME,
-		ACTION_START_WORK,
-		ACTION_STOP,
-		ACTION_TRANSFER,
-		ACTION_START_MOVE,
-		ACTION_RESUME_MOVE,
-		ACTION_END_TURN,
-		ACTION_SELF_DESTROY,
-		ACTION_ATTACK,
-		ACTION_CHANGE_SENTRY,
-		ACTION_CHANGE_MANUAL_FIRE,
-		ACTION_MINELAYER_STATUS,
-		ACTION_START_BUILD,
-		ACTION_FINISH_BUILD,
-		ACTION_CHANGE_BUILDLIST,
-		ACTION_LOAD
-	};
-	static std::unique_ptr<cAction> createFromBuffer(cBinaryArchiveOut& archive);
+	serializeThis(archive);
+}
 
-	eActiontype getType() const;
-
-	virtual void serialize(cBinaryArchiveIn& archive) { cNetMessage2::serialize(archive); serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive)   { cNetMessage2::serialize(archive); serializeThis(archive); }
-
+//------------------------------------------------------------------------------
+void cActionLoad::execute(cModel& model) const
+{
 	//Note: this function handles incoming data from network. Make every possible sanity check!
-	virtual void execute(cModel& model) const = 0;
-protected:
-	cAction(eActiontype type) : cNetMessage2(eNetMessageType::ACTION), type(type){};
-private:
-	template<typename T>
-	void serializeThis(T& archive)
+
+	auto loadingUnit = model.getUnitFromID(loadingUnitId);
+	if (loadingUnit == nullptr) return;
+
+	auto loadedVehicle = model.getVehicleFromID(loadedVehicleId);
+	if (loadedVehicle == nullptr) return;
+
+	if (!loadingUnit->canLoad(loadedVehicle)) return;
+
+	if (loadingUnit->getStaticUnitData().factorAir > 0)
 	{
-		archive & type;
+		model.addJob(new cAirTransportLoadJob(*loadedVehicle, *loadingUnit));
 	}
-
-	cAction(const cAction&) MAXR_DELETE_FUNCTION;
-	cAction& operator=(const cAction&)MAXR_DELETE_FUNCTION;
-
-	eActiontype type;
-};
-
-std::string enumToString(cAction::eActiontype value);
-
-
-#endif
+	else
+	{
+		model.addJob(new cGetInJob(*loadedVehicle, *loadingUnit));
+	}
+}

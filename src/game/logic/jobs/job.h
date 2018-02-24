@@ -35,7 +35,9 @@ enum class eJobType
 {
 	START_BUILD,
 	PLANE_TAKEOFF,
-	DESTROY
+	DESTROY,
+	AIR_TRANSPORT_LOAD,
+	GET_IN
 };
 
 /**

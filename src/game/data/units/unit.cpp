@@ -94,6 +94,33 @@ void cUnit::setOwner (cPlayer* owner_)
 	if (owner != owner_) ownerChanged();
 }
 
+//--------------------------------------------------------------------------
+void cUnit::storeVehicle(cVehicle& vehicle, cMap& map)
+{
+	map.deleteVehicle(vehicle);
+	if (vehicle.isSentryActive())
+	{
+		vehicle.getOwner()->deleteSentry(vehicle);
+	}
+
+	if (vehicle.getMoveJob()) vehicle.getMoveJob()->stop();
+	vehicle.setManualFireActive(false);
+
+	vehicle.setLoaded(true);
+	vehicle.setIsBeeinAttacked(false);
+
+	storedUnits.push_back(&vehicle);
+	storedUnitsChanged();
+
+	getOwner()->doScan();
+
+	map.deleteVehicle(vehicle);
+	if (vehicle.isSentryActive())
+	{
+		vehicle.getOwner()->deleteSentry(vehicle);
+	}
+}
+
 //------------------------------------------------------------------------------
 const cPosition& cUnit::getPosition() const
 {

@@ -17,64 +17,61 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <algorithm>
-#include <cassert>
+#ifndef game_logic_jobs_airtransportloadjobH
+#define game_logic_jobs_airtransportloadjobH
 
 #include "job.h"
 
 #include "utility/serialization/binaryarchive.h"
 #include "utility/serialization/xmlarchive.h"
-#include "startbuildjob.h"
-#include "planetakeoffjob.h"
-#include "destroyjob.h"
-#include "getinjob.h"
-#include "utility/string/toString.h"
-#include "airtransportloadjob.h"
-
-cJob::cJob (cUnit& unit) :
-	finished (false),
-	unit (&unit)
-{}
-
-cJob::cJob() :
-	finished(false),
-	unit(nullptr)
-{}
+#include "game/data/units/unit.h"
+#include "utility/signal/signalconnectionmanager.h"
+#include "game/data/units/vehicle.h"
 
 
-cJob* cJob::createFrom(cBinaryArchiveOut& archive, const std::string& name)
+/**
+* creates the animation, when a air transporter loads a vehicle. This is a
+* job, not a gui animation, because it triggers an action on the model.
+*/
+class cAirTransportLoadJob : public cJob
 {
-	return createFromImpl(archive);
-}
+public:
+	cAirTransportLoadJob (cVehicle& loadedVehicle, cUnit& loadingUnit);
+	template <typename T>
+	cAirTransportLoadJob (T& archive);
 
-cJob* cJob::createFrom(cXmlArchiveOut& archive, const std::string& name)
-{
-	archive.enterChild(name);
-	auto job = createFromImpl(archive);
-	archive.leaveChild();
-	return job;
-}
+	virtual void run (cModel& model) MAXR_OVERRIDE_FUNCTION;
+	virtual eJobType getType() const MAXR_OVERRIDE_FUNCTION;
+
+	virtual void serialize(cBinaryArchiveIn& archive) { archive << serialization::makeNvp("type", getType()); serializeThis(archive); }
+	virtual void serialize(cXmlArchiveIn& archive) { archive << serialization::makeNvp("type", getType()); serializeThis(archive); }
+
+	virtual uint32_t getChecksum(uint32_t crc) const MAXR_OVERRIDE_FUNCTION;
+private:
+	template <typename T>
+	void serializeThis(T& archive)
+	{
+		archive & NVP(unit);
+		archive & NVP(vehicleToLoad);
+		archive & NVP(landing);
+	}
+
+	cVehicle* vehicleToLoad;
+	cSignalConnectionManager connectionManager;
+	bool landing;
+};
 
 template <typename T>
-cJob* cJob::createFromImpl(T& archive)
+cAirTransportLoadJob::cAirTransportLoadJob(T& archive)
 {
-	eJobType type;
-	archive >> NVP(type);
-
-	switch (type)
+	serializeThis(archive);
+	if (!unit || !vehicleToLoad)
 	{
-	case eJobType::START_BUILD:
-		return new cStartBuildJob(archive);
-	case eJobType::PLANE_TAKEOFF:
-		return new cPlaneTakeoffJob(archive);
-	case eJobType::DESTROY:
-		return new cDestroyJob(archive);
-	case eJobType::GET_IN:
-		return new cGetInJob(archive);
-	case eJobType::AIR_TRANSPORT_LOAD:
-		return new cAirTransportLoadJob(archive);
-	default:
-		throw std::runtime_error("Unknown job type " + toString(static_cast<int>(type)));
-		break;
+		finished = true;
+		return;
 	}
+	connectionManager.connect(vehicleToLoad->destroyed, [&](){finished = true; });
+	unit->job = this;
 }
+
+#endif

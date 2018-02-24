@@ -262,16 +262,6 @@ void sendDeletePlayer (cServer& server, const cPlayer& player, const cPlayer* re
 }
 
 //------------------------------------------------------------------------------
-void sendStoreVehicle (cServer& server, int unitid, bool vehicle, int storedunitid, const cPlayer& receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_STORE_UNIT);
-	message->pushInt16 (unitid);
-	message->pushBool (vehicle);
-	message->pushInt16 (storedunitid);
-	server.sendNetMessage (std::move (message), &receiver);
-}
-
-//------------------------------------------------------------------------------
 void sendActivateVehicle (cServer& server, int unitid, bool vehicle, int activatunitid, const cPosition& position, const cPlayer& receiver)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_EXIT_UNIT);

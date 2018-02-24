@@ -554,29 +554,6 @@ void cClient::HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message)
 	deletePlayer (*Player);*/
 }
 
-void cClient::HandleNetMessage_GAME_EV_STORE_UNIT (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_STORE_UNIT);
-
-	cVehicle* storedVehicle = getVehicleFromID (message.popInt16());
-	if (!storedVehicle) return;
-
-	if (message.popBool())
-	{
-		cVehicle* storingVehicle = getVehicleFromID (message.popInt16());
-		if (!storingVehicle) return;
-//		storingVehicle->storeVehicle (*storedVehicle, *getMap());
-		unitStored (*storingVehicle, *storedVehicle);
-	}
-	else
-	{
-		cBuilding* storingBuilding = getBuildingFromID (message.popInt16());
-		if (!storingBuilding) return;
-//		storingBuilding->storeVehicle (*storedVehicle, *getMap());
-		unitStored (*storingBuilding, *storedVehicle);
-	}
-}
-
 void cClient::HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_EXIT_UNIT);
@@ -966,7 +943,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_NOFOG: HandleNetMessage_GAME_EV_NOFOG (message); break;
 		case GAME_EV_DEFEATED: HandleNetMessage_GAME_EV_DEFEATED (message); break;
 		case GAME_EV_DEL_PLAYER: HandleNetMessage_GAME_EV_DEL_PLAYER (message); break;
-		case GAME_EV_STORE_UNIT: HandleNetMessage_GAME_EV_STORE_UNIT (message); break;
 		case GAME_EV_EXIT_UNIT: HandleNetMessage_GAME_EV_EXIT_UNIT (message); break;
 		case GAME_EV_UNIT_UPGRADE_VALUES: HandleNetMessage_GAME_EV_UNIT_UPGRADE_VALUES (message); break;
 		case GAME_EV_CREDITS_CHANGED: HandleNetMessage_GAME_EV_CREDITS_CHANGED (message); break;

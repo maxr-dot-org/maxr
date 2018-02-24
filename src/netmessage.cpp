@@ -401,7 +401,6 @@ string cNetMessage::getTypeAsString() const
 		case GAME_EV_HUD_SETTINGS: return "GAME_EV_HUD_SETTINGS";
 		case GAME_EV_WANT_LOAD: return "GAME_EV_WANT_LOAD";
 		case GAME_EV_WANT_EXIT: return "GAME_EV_WANT_EXIT";
-		case GAME_EV_STORE_UNIT: return "GAME_EV_STORE_UNIT";
 		case GAME_EV_EXIT_UNIT: return "GAME_EV_EXIT_UNIT";
 		case GAME_EV_UNIT_UPGRADE_VALUES: return "GAME_EV_UNIT_UPGRADE_VALUES";
 		case GAME_EV_WANT_MARK_LOG: return "GAME_EV_WANT_MARK_LOG";

@@ -17,37 +17,44 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "planetakeoffjob.h"
+#include "airtransportloadjob.h"
 
 #include "game/data/units/vehicle.h"
+#include "game/data/model.h"
 #include "utility/crc.h"
 
 
-cPlaneTakeoffJob::cPlaneTakeoffJob (cVehicle& vehicle_, bool takeoff_) :
-	cJob (vehicle_),
-	takeoff (takeoff_)
-{}
+cAirTransportLoadJob::cAirTransportLoadJob (cVehicle& loadedVehicle, cUnit& loadingUnit) :
+	cJob (loadingUnit),
+	vehicleToLoad (&loadedVehicle),
+	landing(true)
+{
+	connectionManager.connect(vehicleToLoad->destroyed, [&](){finished = true; });
+}
 
 //------------------------------------------------------------------------------
-void cPlaneTakeoffJob::run (cModel& model)
+void cAirTransportLoadJob::run (cModel& model)
 {
-	// TODO add sound #708
-
 	assert(unit->isAVehicle());
-	cVehicle* plane = static_cast<cVehicle*>(unit);
+	cVehicle* vehicle = static_cast<cVehicle*>(unit);
 
-	if (takeoff)
+	if (landing)
 	{
-		plane->setFlightHeight (plane->getFlightHeight() + 2);
-		if (plane->getFlightHeight() >= 64)
+		vehicle->setFlightHeight(std::max(0, vehicle->getFlightHeight() - 2));
+		if (vehicle->getFlightHeight() <= 0)
 		{
-			finished = true;
+			if (vehicle->canLoad(vehicleToLoad))
+			{
+				vehicle->storeVehicle(*vehicleToLoad, *model.getMap());
+				model.unitStored(*unit, *vehicleToLoad);
+			}
+			landing = false;
 		}
 	}
 	else
 	{
-		plane->setFlightHeight (plane->getFlightHeight() - 2);
-		if (plane->getFlightHeight() <= 0)
+		vehicle->setFlightHeight(std::min(64, vehicle->getFlightHeight() + 2));
+		if (vehicle->getFlightHeight() >= 64)
 		{
 			finished = true;
 		}
@@ -55,17 +62,18 @@ void cPlaneTakeoffJob::run (cModel& model)
 }
 
 //------------------------------------------------------------------------------
-eJobType cPlaneTakeoffJob::getType() const
+eJobType cAirTransportLoadJob::getType() const
 {
-	return eJobType::PLANE_TAKEOFF;
+	return eJobType::AIR_TRANSPORT_LOAD;
 }
 
 //------------------------------------------------------------------------------
-uint32_t cPlaneTakeoffJob::getChecksum(uint32_t crc) const
+uint32_t cAirTransportLoadJob::getChecksum(uint32_t crc) const
 {
 	crc = calcCheckSum(getType(), crc);
-	crc = calcCheckSum(unit ? unit->getId() : 0, crc);
-	crc = calcCheckSum(takeoff, crc);
+	crc = calcCheckSum(unit, crc);
+	crc = calcCheckSum(vehicleToLoad, crc);
+	crc = calcCheckSum(landing, crc);
 
 	return crc;
 }

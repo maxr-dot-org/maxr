@@ -118,6 +118,9 @@ public:
 	mutable cSignal<void()> turnEnded; // triggered when all players ended the turn or the turn time clock reached a deadline
 	mutable cSignal<void()> newTurnStarted; // triggered when the model has done all calculations for the new turn. 
 	mutable cSignal<void (const std::shared_ptr<cFx>& fx)> addedEffect;
+	
+	mutable cSignal<void (const cUnit& storingUnit, const cUnit& storedUnit)> unitStored;
+
 
 	template<typename T>
 	void save(T& archive)

@@ -541,8 +541,6 @@ void cGameMapWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clip
 		drawPath (*selectedVehicle);
 	}
 
-	//debugOutput.draw ();
-
 	drawSelectionBox();
 
 	SDL_SetClipRect (cVideo::buffer, nullptr);
