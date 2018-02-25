@@ -1731,7 +1731,7 @@ void cGameMapWidget::drawPathArrow(SDL_Rect dest, const SDL_Rect& lastDest, bool
 }
 
 //------------------------------------------------------------------------------
-SDL_Rect cGameMapWidget::computeTileDrawingArea (const cPosition& zoomedTileSize, const cPosition& zoomedStartTilePixelOffset, const cPosition& tileStartIndex, const cPosition& tileIndex)
+SDL_Rect cGameMapWidget::computeTileDrawingArea (const cPosition& zoomedTileSize, const cPosition& zoomedStartTilePixelOffset, const cPosition& tileStartIndex, const cPosition& tileIndex) const
 {
 	const cPosition startDrawPosition = getPosition() + (tileIndex - tileStartIndex) * zoomedTileSize - zoomedStartTilePixelOffset;
 

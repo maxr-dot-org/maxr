@@ -146,6 +146,7 @@ private:
 //-----------------------------------------------------------------------------
 class cVehicle : public cUnit
 {
+	friend class cDebugOutputWidget;
 	//-----------------------------------------------------------------------------
 public:
 	cVehicle (const cStaticUnitData& staticData,  const cDynamicUnitData& data, cPlayer* Owner, unsigned int ID);

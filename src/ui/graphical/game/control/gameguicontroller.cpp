@@ -517,6 +517,14 @@ void cGameGuiController::initChatCommands()
 			gameGui->getDebugOutput().setDebugSync(flag);
 		})
 	);
+	chatCommands.push_back(
+		cChatCommand("debug stealth", "Enable/disable debug information about the stealth state of units")
+		.addArgument<cChatCommandArgumentBool>()
+		.setAction([&](bool flag)
+		{
+			gameGui->getDebugOutput().setDebugStealth(flag);
+		})
+	);
 
 	chatCommands.push_back(
 		cChatCommand("kick", "Remove a player from the game")

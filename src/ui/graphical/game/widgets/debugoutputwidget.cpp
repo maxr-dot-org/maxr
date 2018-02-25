@@ -29,6 +29,8 @@
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "utility/string/toString.h"
+#include "utility/indexiterator.h"
+#include "utility/listhelpers.h"
 
 //------------------------------------------------------------------------------
 cDebugOutputWidget::cDebugOutputWidget (const cBox<cPosition>& area) :
@@ -45,7 +47,8 @@ cDebugOutputWidget::cDebugOutputWidget (const cBox<cPosition>& area) :
 	debugTraceClient (false),
 	debugPlayers (false),
 	debugCache (false),
-	debugSync (false)
+	debugSync (false),
+	debugStealth (false)
 {}
 
 //------------------------------------------------------------------------------
@@ -124,6 +127,12 @@ void cDebugOutputWidget::setDebugCache (bool value)
 void cDebugOutputWidget::setDebugSync (bool value)
 {
 	debugSync = value;
+}
+
+//------------------------------------------------------------------------------
+void cDebugOutputWidget::setDebugStealth(bool value)
+{
+	debugStealth = value;
 }
 
 //------------------------------------------------------------------------------
@@ -337,6 +346,12 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 		drawPosition.y() += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
 
 	}
+
+	if (debugStealth)
+	{
+		drawDetectedByPlayerList();
+		drawDetectionMaps();
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -514,5 +529,93 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 		}
 		font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 		drawPosition.y() += 8;
+	}
+}
+
+void cDebugOutputWidget::drawDetectedByPlayerList()
+{
+	if (!gameMap || !client) return;
+	const auto& map = *client->getModel().getMap();
+	const auto zoomedTileSize = gameMap->getZoomedTileSize();
+	const auto tileDrawingRange = gameMap->computeTileDrawingRange();
+	const auto zoomedStartTilePixelOffset = gameMap->getZoomedStartTilePixelOffset();
+
+	for (auto i = makeIndexIterator(tileDrawingRange.first, tileDrawingRange.second); i.hasMore(); i.next())
+	{
+		auto& mapField = map.getField(*i);
+		auto building = mapField.getBuilding();
+		if (building == nullptr) continue;
+		
+		auto drawDestination = gameMap->computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building->getPosition());
+		drawDestination.x += 4;
+		drawDestination.y += 4;
+
+		for (const auto& player : building->detectedByPlayerList)
+		{
+			if (Contains(building->detectedInThisTurnByPlayerList, player))
+			{
+				font->showText(drawDestination.x, drawDestination.y, iToStr(player->getId()) + "#", FONT_LATIN_SMALL_RED);
+			}
+			else
+			{
+				font->showText(drawDestination.x, drawDestination.y, iToStr(player->getId()), FONT_LATIN_SMALL_RED);
+			}
+			drawDestination.y += font->getFontHeight(FONT_LATIN_SMALL_RED);
+		}
+	}
+
+	for (auto i = makeIndexIterator(tileDrawingRange.first, tileDrawingRange.second); i.hasMore(); i.next())
+	{
+		auto& mapField = map.getField(*i);
+		auto vehicle = mapField.getVehicle();
+		if (vehicle == nullptr) continue;
+
+		auto drawDestination = gameMap->computeTileDrawingArea(zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, vehicle->getPosition());
+		drawDestination.x += (int)(4 + vehicle->getMovementOffset().x() * gameMap->getZoomFactor());
+		drawDestination.y += (int)(4 + vehicle->getMovementOffset().y() * gameMap->getZoomFactor());
+
+		for (const auto& player : vehicle->detectedByPlayerList)
+		{
+			if (Contains(vehicle->detectedInThisTurnByPlayerList, player))
+			{
+				font->showText(drawDestination.x, drawDestination.y, iToStr(player->getId()) + "#", FONT_LATIN_SMALL_RED);
+			}
+			else
+			{
+				font->showText(drawDestination.x, drawDestination.y, iToStr(player->getId()), FONT_LATIN_SMALL_RED);
+			}
+			drawDestination.y += font->getFontHeight(FONT_LATIN_SMALL_RED);
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+void cDebugOutputWidget::drawDetectionMaps()
+{
+	if (!gameMap || !client) return;
+
+	const auto& map = *client->getModel().getMap();
+	const auto zoomedTileSize = gameMap->getZoomedTileSize();
+	const auto tileDrawingRange = gameMap->computeTileDrawingRange();
+	const auto zoomedStartTilePixelOffset = gameMap->getZoomedStartTilePixelOffset();
+
+	for (auto i = makeIndexIterator(tileDrawingRange.first, tileDrawingRange.second); i.hasMore(); i.next())
+	{
+		auto drawDestination = gameMap->computeTileDrawingArea(zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
+		drawDestination.x += zoomedTileSize.x() - font->getTextWide("SLM");
+		drawDestination.y += 4;
+
+		for (const auto& player : client->getModel().getPlayerList())
+		{
+			std::string s;
+			s += player->hasSeaDetection(*i)  ? "S" : " ";
+			s += player->hasLandDetection(*i) ? "L" : " ";
+			s += player->hasMineDetection(*i) ? "M" : " ";
+			if (s != "   ")
+			{
+				font->showText(drawDestination.x, drawDestination.y, iToStr(player->getId()) + s, FONT_LATIN_SMALL_YELLOW);
+			}
+			drawDestination.y += font->getFontHeight(FONT_LATIN_SMALL_YELLOW);
+		}
 	}
 }
