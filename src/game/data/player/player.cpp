@@ -429,7 +429,7 @@ bool cPlayer::canSeeUnit(const cUnit& unit, const cMapField& field, const sTerra
 	
 	if (!unit.isStealthOnCurrentTerrain(field, terrain)) return true;
 
-	return Contains(unit.detectedByPlayerList, this);
+	return unit.isDetectedByPlayer(this);
 }
 
 //--------------------------------------------------------------------------

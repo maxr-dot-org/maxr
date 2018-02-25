@@ -1249,7 +1249,7 @@ void cVehicle::tryResetOfDetectionStateBeforeMove (const cMap& map, const std::v
 {
 	for (const auto& player : playerList)
 	{
-		if (!Contains(detectedInThisTurnByPlayerList, player.get()) && !checkDetectedByPlayer(*player, map))
+		if (!Contains(detectedInThisTurnByPlayerList, player->getId()) && !checkDetectedByPlayer(*player, map))
 		{
 			resetDetectedByPlayer(player.get());
 		}
@@ -1440,8 +1440,6 @@ uint32_t cVehicle::getChecksum(uint32_t crc) const
 	crc = calcCheckSum(buildBigSavedPosition, crc);
 	crc = calcCheckSum(BuildPath, crc);
 	crc = calcCheckSum(WalkFrame, crc);
-	for ( const auto& p : detectedInThisTurnByPlayerList)
-		crc = calcCheckSum(p, crc);
 	//std::shared_ptr<cAutoMJob> autoMoveJob;
 	crc = calcCheckSum(tileMovementOffset, crc);
 	crc = calcCheckSum(loaded, crc);

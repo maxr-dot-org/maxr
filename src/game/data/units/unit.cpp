@@ -140,13 +140,14 @@ void cUnit::setDetectedByPlayer(const cPlayer* player)
 {
 	//TODO: make voice / text massage for owner and player 
 	bool wasDetected = (detectedByPlayerList.empty() == false);
+	int playerId = player->getId();
 
-	if (!Contains(detectedByPlayerList, player))
-		detectedByPlayerList.push_back(player);
+	if (!Contains(detectedByPlayerList, playerId))
+		detectedByPlayerList.push_back(playerId);
 
 
-	if (!Contains(detectedInThisTurnByPlayerList, player))
-		detectedInThisTurnByPlayerList.push_back(player);
+	if (!Contains(detectedInThisTurnByPlayerList, playerId))
+		detectedInThisTurnByPlayerList.push_back(playerId);
 
 	//TODO: trigger signal
 }
@@ -156,8 +157,8 @@ void cUnit::resetDetectedByPlayer(const cPlayer* player)
 {
 	bool wasDetected = (detectedByPlayerList.empty() == false);
 
-	Remove(detectedByPlayerList, player);
-	Remove(detectedInThisTurnByPlayerList, player);
+	Remove(detectedByPlayerList, player->getId());
+	Remove(detectedInThisTurnByPlayerList, player->getId());
 
 	//TODO: trigger signal
 }
@@ -165,7 +166,13 @@ void cUnit::resetDetectedByPlayer(const cPlayer* player)
 //------------------------------------------------------------------------------
 bool cUnit::isDetectedByPlayer(const cPlayer* player) const
 {
-	return Contains(detectedByPlayerList, player);
+	return Contains(detectedByPlayerList, player->getId());
+}
+
+//------------------------------------------------------------------------------
+bool cUnit::isDetectedByAnyPlayer() const
+{
+	return detectedByPlayerList.size() > 0;
 }
 
 //------------------------------------------------------------------------------
@@ -283,11 +290,13 @@ uint32_t cUnit::getChecksum(uint32_t crc) const
 	crc = calcCheckSum(iID, crc);
 	crc = calcCheckSum(dir, crc);
 	for (const auto& u : storedUnits)
-		crc = calcCheckSum(u->getId(), crc);
+		crc = calcCheckSum(u, crc);
 	for (const auto& p : seenByPlayerList)
-		crc = calcCheckSum(p->getId(), crc);
+		crc = calcCheckSum(p, crc);
 	for (const auto& p : detectedByPlayerList)
-		crc = calcCheckSum(p->getId(), crc); 
+		crc = calcCheckSum(p, crc);
+	for (const auto& p : detectedInThisTurnByPlayerList)
+		crc = calcCheckSum(p, crc); 
 	crc = calcCheckSum(isBig, crc);
 	crc = calcCheckSum(owner, crc);
 	crc = calcCheckSum(position, crc);

@@ -1452,7 +1452,7 @@ void cServer::changeUnitOwner (cVehicle& vehicle, cPlayer& newOwner)
 		sendDeleteUnit (*this, vehicle, vehicle.seenByPlayerList[i]);
 	}
 	vehicle.seenByPlayerList.clear();
-	vehicle.detectedByPlayerList.clear();
+	//vehicle.detectedByPlayerList.clear();
 	//sendAddUnit (*this, vehicle.getPosition(), vehicle.iID, true, vehicle.data.getId(), *vehicle.getOwner(), false);
 	//sendUnitData (*this, vehicle, *vehicle.getOwner());
 	sendSpecificUnitData (*this, vehicle);

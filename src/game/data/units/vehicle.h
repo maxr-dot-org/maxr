@@ -321,8 +321,6 @@ public:
 		archive & NVP(buildBigSavedPosition);
 		archive & NVP(BuildPath);
 		archive & NVP(WalkFrame);
-
-		archive & NVP(detectedInThisTurnByPlayerList);
 		archive & NVP(tileMovementOffset);
 		archive & NVP(loaded);
 		archive & NVP(moving);

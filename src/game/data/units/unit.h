@@ -110,6 +110,7 @@ public:
 	void setDetectedByPlayer(const cPlayer* player);
 	void resetDetectedByPlayer(const cPlayer* player);
 	bool isDetectedByPlayer(const cPlayer* player) const;
+	bool isDetectedByAnyPlayer() const;
 
 	/** Resets the list of players, that detected this unit in this turn
 	 * (is called at turn end). */
@@ -192,6 +193,7 @@ public:
 		archive & NVP(dir);
 		archive & NVP(storedUnits);
 		archive & NVP(detectedByPlayerList);
+		archive & NVP(detectedInThisTurnByPlayerList);
 		archive & NVP(owner);
 		archive & NVP(position);
 		archive & NVP(customName);
@@ -209,8 +211,6 @@ public:
 			//restore pointer to static unit data
 			archive.getPointerLoader()->get(data.getId(), staticData);
 		}
-
-		//TODO: detection?
 	}
 
 	
@@ -224,16 +224,12 @@ public: // TODO: make protected/private and make getters/setters
 
 	std::vector<cPlayer*> seenByPlayerList; // a list of all players who can see this unit //TODO: remove
 
-	/** Detection state of stealth units. Use cPlayer::canSeeUnit() to check 
-	*   if the unit is actually visible at the moment.
-	*   This list is always empty for units without stealth abilities.
-	*/
-	std::vector<const cPlayer*> detectedByPlayerList;		
+
 												    // 
 
 	// little jobs, running on the vehicle.
 	// e.g. rotating to a specific direction
-	cJob* job;
+	cJob* job; //TODO: serialize?
 
 	mutable int alphaEffectValue;
 
@@ -245,8 +241,15 @@ protected:
 	*/
 	bool checkDetectedByPlayer(const cPlayer& player, const cMap& map) const;
 	
-	//* list of players, that detected this vehicle in this turn
-	std::vector<const cPlayer*> detectedInThisTurnByPlayerList;
+	
+	/** Detection state of stealth units. Use cPlayer::canSeeUnit() to check 
+	*   if the unit is actually visible at the moment.
+	*   This list is always empty for units without stealth abilities.
+	*/
+	std::vector<int> detectedByPlayerList;		
+
+	/** list of players, that detected this vehicle in this turn */
+	std::vector<int> detectedInThisTurnByPlayerList;
 
 	const cStaticUnitData* staticData;
 	bool isBig;

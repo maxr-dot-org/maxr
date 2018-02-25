@@ -550,15 +550,15 @@ void cDebugOutputWidget::drawDetectedByPlayerList()
 		drawDestination.x += 4;
 		drawDestination.y += 4;
 
-		for (const auto& player : building->detectedByPlayerList)
+		for (const auto& playerId : building->detectedByPlayerList)
 		{
-			if (Contains(building->detectedInThisTurnByPlayerList, player))
+			if (Contains(building->detectedInThisTurnByPlayerList, playerId))
 			{
-				font->showText(drawDestination.x, drawDestination.y, iToStr(player->getId()) + "#", FONT_LATIN_SMALL_RED);
+				font->showText(drawDestination.x, drawDestination.y, iToStr(playerId) + "#", FONT_LATIN_SMALL_RED);
 			}
 			else
 			{
-				font->showText(drawDestination.x, drawDestination.y, iToStr(player->getId()), FONT_LATIN_SMALL_RED);
+				font->showText(drawDestination.x, drawDestination.y, iToStr(playerId), FONT_LATIN_SMALL_RED);
 			}
 			drawDestination.y += font->getFontHeight(FONT_LATIN_SMALL_RED);
 		}
@@ -574,15 +574,15 @@ void cDebugOutputWidget::drawDetectedByPlayerList()
 		drawDestination.x += (int)(4 + vehicle->getMovementOffset().x() * gameMap->getZoomFactor());
 		drawDestination.y += (int)(4 + vehicle->getMovementOffset().y() * gameMap->getZoomFactor());
 
-		for (const auto& player : vehicle->detectedByPlayerList)
+		for (const auto& playerId : vehicle->detectedByPlayerList)
 		{
-			if (Contains(vehicle->detectedInThisTurnByPlayerList, player))
+			if (Contains(vehicle->detectedInThisTurnByPlayerList, playerId))
 			{
-				font->showText(drawDestination.x, drawDestination.y, iToStr(player->getId()) + "#", FONT_LATIN_SMALL_RED);
+				font->showText(drawDestination.x, drawDestination.y, iToStr(playerId) + "#", FONT_LATIN_SMALL_RED);
 			}
 			else
 			{
-				font->showText(drawDestination.x, drawDestination.y, iToStr(player->getId()), FONT_LATIN_SMALL_RED);
+				font->showText(drawDestination.x, drawDestination.y, iToStr(playerId), FONT_LATIN_SMALL_RED);
 			}
 			drawDestination.y += font->getFontHeight(FONT_LATIN_SMALL_RED);
 		}
