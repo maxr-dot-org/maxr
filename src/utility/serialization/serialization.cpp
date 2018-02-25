@@ -43,6 +43,13 @@ namespace serialization
 			Log.write("Player with id " + iToStr(id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
 	}
 
+	void cPointerLoader::get(int id, const cPlayer*& value) const
+	{
+		value = model.getPlayer(id);
+		if (value == nullptr && id != -1)
+			Log.write("Player with id " + iToStr(id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
+	}
+
 	void cPointerLoader::get(int id, cBuilding*& value) const
 	{
 		value = model.getBuildingFromID(id);

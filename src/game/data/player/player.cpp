@@ -713,14 +713,12 @@ void cPlayer::makeTurnStart(cModel& model)
 		//vehicle->proceedClearing(model);
 	}
 
-	// hide stealth units
 	doScan(); // make sure the detection maps are up to date
 
+	// allow stealth vehicles to enter stealth mode, when they move in the new turn
 	for (auto& vehicle : vehicles)
 	{
 		vehicle->clearDetectedInThisTurnPlayerList();
-		//TODO: stealth units
-		//vehicle->makeDetection(*this);
 	}
 
 	// do research:
@@ -734,8 +732,7 @@ void cPlayer::makeTurnStart(cModel& model)
 	// Gun'em down:
 	for (auto& vehicle : vehicles)
 	{
-		//TODO: sentry
-		//vehicle->InSentryRange(*this);
+		vehicle->inSentryRange(model);
 	}
 }
 

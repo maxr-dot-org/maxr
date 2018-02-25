@@ -57,6 +57,7 @@ void cActionActivate::execute(cModel& model) const
 	if (containingUnit->canExitTo(position, *model.getMap(), activatedVehicle->getStaticUnitData()))
 	{
 		//TODO: model.sideStepStealthUnit
+		activatedVehicle->tryResetOfDetectionStateBeforeMove(*model.getMap(), model.getPlayerList());
 		containingUnit->exitVehicleTo(*activatedVehicle, position, *model.getMap());
 
 		if (activatedVehicle->getStaticUnitData().canSurvey)
@@ -74,7 +75,7 @@ void cActionActivate::execute(cModel& model) const
 			activatedVehicle->setFlightHeight(64);
 		}
 
-		//TODO: detection
+		activatedVehicle->detectOtherUnits(*model.getMap());
 		
 		model.unitActivated(*containingUnit, *activatedVehicle);
 	}

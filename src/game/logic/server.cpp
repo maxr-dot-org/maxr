@@ -1413,7 +1413,7 @@ void cServer::deletePlayer (cPlayer& player)
 		for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
 		{
 			const auto& vehicle = *i;
-			if (vehicle->getStaticUnitData().isStealthOn != TERRAIN_NONE && vehicle->isDetectedByPlayer (&player)) vehicle->resetDetectedByPlayer (*this, &player);
+			if (vehicle->getStaticUnitData().isStealthOn != TERRAIN_NONE && vehicle->isDetectedByPlayer (&player)) vehicle->resetDetectedByPlayer (&player);
 		}
 	}
 	// delete the player
@@ -1467,7 +1467,8 @@ void cServer::changeUnitOwner (cVehicle& vehicle, cPlayer& newOwner)
 		sendVehicleResources (*this, vehicle);
 		vehicle.doSurvey ();
 	}
-	vehicle.makeDetection (*this);
+	//TODO: clear detection list
+	//vehicle.makeDetection (*this);
 }
 
 void cServer::sideStepStealthUnit (const cPosition& position, const cVehicle& vehicle, const cPosition& bigOffset)

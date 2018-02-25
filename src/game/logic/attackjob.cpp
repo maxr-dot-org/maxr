@@ -66,12 +66,15 @@ cAttackJob::cAttackJob (cUnit& aggressor, const cPosition& targetPosition, const
 
 	// make the aggressor visible on all clients
 	// who can see the aggressor offset
-	for (const auto& player : model.getPlayerList())
+	if (aggressor.getStaticUnitData().isStealthOn != TERRAIN_NONE)
 	{
-		if (player->canSeeAnyAreaUnder (aggressor) == false) continue;
-		if (aggressor.getOwner() == player.get()) continue;
+		for (const auto& player : model.getPlayerList())
+		{
+			if (player->canSeeAnyAreaUnder(aggressor) == false) continue;
+			if (aggressor.getOwner() == player.get()) continue;
 
-		aggressor.setDetectedByPlayer (player.get());
+			aggressor.setDetectedByPlayer(player.get());
+		}
 	}
 }
 

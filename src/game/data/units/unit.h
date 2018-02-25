@@ -67,8 +67,6 @@ public:
 
 	virtual const cPosition& getMovementOffset() const { static const cPosition dummy (0, 0); return dummy; }
 
-	virtual void setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList = true) = 0;
-
 	const cPosition& getPosition() const;
 	void setPosition (cPosition position);
 
@@ -101,8 +99,22 @@ public:
 	 * upgraded version of the player.
 	 */
 	void upgradeToCurrentVersion();
+
 	/** checks if the unit has stealth abilities on its current position */
 	bool isStealthOnCurrentTerrain(const cMapField& field, const sTerrain& terrain) const;
+	/** check whether this unit has been detected by other players */
+	void detectThisUnit(const cMap& map, const std::vector<std::shared_ptr<cPlayer>>& playerList);
+	/** detects other stealth units in scan range of this unit */
+	void detectOtherUnits(const cMap& map) const;
+
+	void setDetectedByPlayer(const cPlayer* player);
+	void resetDetectedByPlayer(const cPlayer* player);
+	bool isDetectedByPlayer(const cPlayer* player) const;
+
+	/** Resets the list of players, that detected this unit in this turn
+	 * (is called at turn end). */
+	void clearDetectedInThisTurnPlayerList();
+
 
 	void setDisabledTurns (int turns);
 	void setSentryActive (bool value);
@@ -211,8 +223,13 @@ public: // TODO: make protected/private and make getters/setters
 	std::vector<cVehicle*> storedUnits;		// list with the vehicles, that are stored in this unit
 
 	std::vector<cPlayer*> seenByPlayerList; // a list of all players who can see this unit //TODO: remove
-	std::vector<cPlayer*> detectedByPlayerList;		// detection state of stealth units. Use cPlayer::canSeeUnit() to check 
-												    // if the unit is actually visible at the moment
+
+	/** Detection state of stealth units. Use cPlayer::canSeeUnit() to check 
+	*   if the unit is actually visible at the moment.
+	*   This list is always empty for units without stealth abilities.
+	*/
+	std::vector<const cPlayer*> detectedByPlayerList;		
+												    // 
 
 	// little jobs, running on the vehicle.
 	// e.g. rotating to a specific direction
@@ -222,6 +239,15 @@ public: // TODO: make protected/private and make getters/setters
 
 	//-----------------------------------------------------------------------------
 protected:
+	/** checks if this is a stealth unit, and if it can be detected by player
+	* at it's current position. Sets the "detectedByPlayer" state in this case.
+	* Returns true, if the unit is detected by player (no matter if it was detected before.
+	*/
+	bool checkDetectedByPlayer(const cPlayer& player, const cMap& map) const;
+	
+	//* list of players, that detected this vehicle in this turn
+	std::vector<const cPlayer*> detectedInThisTurnByPlayerList;
+
 	const cStaticUnitData* staticData;
 	bool isBig;
 

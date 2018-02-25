@@ -175,7 +175,6 @@ private:
 	void HandleNetMessage_GAME_EV_MARK_LOG (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_DETECTION_STATE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_NOFOG (cNetMessage& message);

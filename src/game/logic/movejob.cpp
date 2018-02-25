@@ -240,6 +240,7 @@ void cMoveJob::startMove(cModel& model)
 	savedSpeed = 0;
 	vehicle->DecSpeed(nextCosts);
 
+	vehicle->tryResetOfDetectionStateBeforeMove(map, model.getPlayerList());
 	map.moveVehicle(*vehicle, path.front());
 	path.pop_front();
 	vehicle->setMovementOffset(cPosition(0, 0));
@@ -247,8 +248,6 @@ void cMoveJob::startMove(cModel& model)
 	Log.write(" cMoveJob: Vehicle (ID: " + iToStr (vehicle->getId()) + ") moved to (" + iToStr(vehicle->getPosition().x()) + ", " + iToStr(vehicle->getPosition().y()) + ") @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 
 	vehicle->getOwner()->doScan();
-
-	//TODO: handle detection of this unit
 }
 
 //------------------------------------------------------------------------------
@@ -413,7 +412,9 @@ void cMoveJob::endMove(cModel& model)
 {
 	vehicle->setMovementOffset (cPosition (0, 0));
 
-	//TODO: handle detection
+	vehicle->detectOtherUnits(*model.getMap());
+	vehicle->detectThisUnit(*model.getMap(), model.getPlayerList());
+
 	//TODO: trigger landing/take off
 
 	cBuilding* mine = model.getMap()->getField(vehicle->getPosition()).getMine();

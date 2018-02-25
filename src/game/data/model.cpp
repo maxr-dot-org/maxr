@@ -253,6 +253,7 @@ cVehicle& cModel::addVehicle(const cPosition& position, const sID& id, cPlayer* 
 		addedVehicle.doSurvey();
 	}
 
+	//TODO: take off animation?
 	if (addedVehicle.canLand(*map))
 	{
 		addedVehicle.setFlightHeight(0);
@@ -262,7 +263,9 @@ cVehicle& cModel::addVehicle(const cPosition& position, const sID& id, cPlayer* 
 		addedVehicle.setFlightHeight(64);
 	}
 
-	//TODO: detection
+	player->doScan();
+	addedVehicle.detectOtherUnits(*map);
+
 	return addedVehicle;
 }
 //------------------------------------------------------------------------------
@@ -348,7 +351,10 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 	{
 		addedBuilding.startWork();
 	}
-	//TODO: detection
+	
+	player->doScan();
+	addedBuilding.detectOtherUnits(*map);
+
 	return addedBuilding;
 }
 
