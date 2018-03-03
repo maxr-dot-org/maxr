@@ -153,8 +153,6 @@ public:
 	mutable cSignal<void (const cUnit&)> unitDisabled;
 	mutable cSignal<void (const cUnit&)> unitStolen; //TODO: was in addUnit()
 
-	mutable cSignal<void (const cUnit&)> unitDetected; //TODO: was in addUnit()
-
 	void run();
 private:
 

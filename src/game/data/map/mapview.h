@@ -63,13 +63,21 @@ public:
 	bool possiblePlaceBuilding (const cStaticUnitData& buildingData, const cPosition& position, const cVehicle* vehicle = nullptr) const;
 
 	/** 
-	* Triggered when a unit appeared in sight (Scan area of player changed, unit moved into scan area,
-	* stealth unit detected, unit unloaded or new unit exited factory).
+	* Triggered when a unit appeared in sight
+	* - Scan area of player changed
+	* - unit moved into scan area
+	* - stealth unit detected
+	* - unit unloaded
+	* - new unit exited factory
 	*/
 	mutable cSignal<void (const cUnit& unit)> unitAppeared;
 	/**
-	* Triggered when a unit disappeared from the view (Scan area of player changed, unit moved out of scan area,
-	* unit loaded or unit destroyed).
+	* Triggered when a unit disappeared from the view
+	* - Scan area of player changed
+	* - unit moved out of scan area
+	* - stealth unit entered stealth mode
+	* - unit loaded
+	* - unit destroyed
 	*/
 	mutable cSignal<void (const cUnit& unit)> unitDissappeared;
 	mutable cSignal<void (const cUnit& unit, const cPosition& oldPosition)> unitMoved;

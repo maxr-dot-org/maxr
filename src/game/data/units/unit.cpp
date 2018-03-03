@@ -132,29 +132,32 @@ void cUnit::exitVehicleTo(cVehicle& vehicle, const cPosition& position, cMap& ma
 //------------------------------------------------------------------------------
 void cUnit::setDetectedByPlayer(const cPlayer* player)
 {
-	//TODO: make voice / text massage for owner and player 
-	bool wasDetected = (detectedByPlayerList.empty() == false);
 	int playerId = player->getId();
 
 	if (!Contains(detectedByPlayerList, playerId))
+	{
 		detectedByPlayerList.push_back(playerId);
+		player->detectedStealthUnit(*this);
+	}
 
 
 	if (!Contains(detectedInThisTurnByPlayerList, playerId))
 		detectedInThisTurnByPlayerList.push_back(playerId);
 
-	//TODO: trigger signal
 }
 
 //------------------------------------------------------------------------------
 void cUnit::resetDetectedByPlayer(const cPlayer* player)
 {
-	bool wasDetected = (detectedByPlayerList.empty() == false);
-
-	Remove(detectedByPlayerList, player->getId());
+	if (Contains(detectedByPlayerList, player->getId()))
+	{
+		Remove(detectedByPlayerList, player->getId());
+		if (!isAVehicle() || !static_cast<const cVehicle*>(this)->isUnitLoaded())
+		{
+			player->stealthUnitDissappeared(*this);
+		}
+	}
 	Remove(detectedInThisTurnByPlayerList, player->getId());
-
-	//TODO: trigger signal
 }
 
 //------------------------------------------------------------------------------

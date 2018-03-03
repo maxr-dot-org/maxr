@@ -113,6 +113,7 @@
 #include "game/logic/action/actionchangebuildlist.h"
 #include "game/logic/action/actionload.h"
 #include "game/logic/action/actionactivate.h"
+#include "game/data/report/unit/savedreportdetected.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -1324,10 +1325,17 @@ void cGameGuiController::connectClient (cClient& client)
 
 	clientSignalConnectionManager.connect (mapView->unitAppeared, [&] (const cUnit & unit)
 	{
-		if (getActivePlayer().get() != unit.getOwner()) return;
-
-		if (unit.data.getId() == client.getModel().getUnitsData()->getSpecialIDSeaMine()) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectPlaceMine, SoundData.SNDSeaMinePlace, unit));
-		else if (unit.data.getId() == client.getModel().getUnitsData()->getSpecialIDLandMine()) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectPlaceMine, SoundData.SNDLandMinePlace, unit));
+		if (getActivePlayer().get() == unit.getOwner())
+		{
+			if (unit.data.getId() == client.getModel().getUnitsData()->getSpecialIDSeaMine())
+			{
+				soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectPlaceMine, SoundData.SNDSeaMinePlace, unit));
+			}
+			else if (unit.data.getId() == client.getModel().getUnitsData()->getSpecialIDLandMine())
+			{
+				soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectPlaceMine, SoundData.SNDLandMinePlace, unit));
+			}
+		}
 	});
 	clientSignalConnectionManager.connect(mapView->unitDissappeared, [&] (const cUnit & unit)
 	{
@@ -1354,6 +1362,13 @@ void cGameGuiController::connectReportSources(cClient& client)
 		addSavedReport(std::move(report), toPlayerNr);
 	});
 
+	clientSignalConnectionManager.connect(mapView->unitAppeared, [&](const cUnit & unit)
+	{
+		if (unit.getOwner() != nullptr && unit.getOwner()->getId() != getActivePlayer()->getId())
+		{
+			addSavedReport(std::make_unique<cSavedReportDetected>(unit), player.getId());
+		}
+	});
 	allClientsSignalConnectionManager.connect(model.playerFinishedTurn, [&](const cPlayer& otherPlayer)
 	{
 		if (otherPlayer.getId() != getActivePlayer()->getId())
@@ -1482,7 +1497,7 @@ void cGameGuiController::showFilesWindow()
 		try
 		{
 			if (server == nullptr)
-				throw std::runtime_error(lngPack.i18n("Text~Multiplayer~Save_Only_Host"));
+				application.show (std::make_shared<cDialogOk> (lngPack.i18n("Text~Multiplayer~Save_Only_Host")));
 
 			server->saveGameState(saveNumber, name);
 			cSoundDevice::getInstance().playVoice(VoiceData.VOISaved);
