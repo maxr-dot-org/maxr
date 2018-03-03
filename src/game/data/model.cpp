@@ -238,14 +238,14 @@ const cPlayer* cModel::getActiveTurnPlayer() const
 }
 
 //------------------------------------------------------------------------------
-cVehicle& cModel::addVehicle(const cPosition& position, const sID& id, cPlayer* player, bool init, bool addToMap)
+cVehicle& cModel::addVehicle(const cPosition& position, const sID& id, cPlayer* player)
 {
 	// generate the vehicle:
 	cVehicle& addedVehicle = player->addNewVehicle(position, unitsData->getStaticUnitData(id), nextUnitId);
 	nextUnitId++;
 
 	// place the vehicle:
-	if (addToMap) map->addVehicle(addedVehicle, position);
+	map->addVehicle(addedVehicle, position);
 	player->addToScan(addedVehicle);
 
 	// scan with surveyor:
@@ -269,7 +269,7 @@ cVehicle& cModel::addVehicle(const cPosition& position, const sID& id, cPlayer* 
 	return addedVehicle;
 }
 //------------------------------------------------------------------------------
-cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer* player, bool init)
+cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer* player)
 {
 	// generate the building:
 	cBuilding& addedBuilding = player->addNewBuilding(position, unitsData->getStaticUnitData(id), nextUnitId);

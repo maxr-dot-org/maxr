@@ -112,7 +112,7 @@ void cActionFinishBuild::finishAVehicle(cModel &model, cBuilding& building) cons
 	}
 	if (!map->possiblePlaceVehicle(unitData, escapePosition, building.getOwner())) return;
 
-	model.addVehicle (escapePosition, buildingListItem.getType(), building.getOwner(), false);
+	model.addVehicle (escapePosition, buildingListItem.getType(), building.getOwner());
 
 	// start new buildjob
 	if (building.getRepeatBuild())

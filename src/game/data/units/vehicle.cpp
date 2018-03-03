@@ -1114,13 +1114,13 @@ void cVehicle::layMine (cModel& model)
 	{
 		const auto& staticMineData = model.getUnitsData()->getSeaMineData();
 		if (!map.possiblePlaceBuilding (staticMineData, getPosition(), nullptr, this)) return;
-		model.addBuilding(getPosition(), staticMineData.ID, getOwner(), false);
+		model.addBuilding(getPosition(), staticMineData.ID, getOwner());
 	}
 	else
 	{
 		const auto& staticMineData = model.getUnitsData()->getLandMineData();
 		if (!map.possiblePlaceBuilding(staticMineData, getPosition(), nullptr, this)) return;
-		model.addBuilding(getPosition(), staticMineData.ID, getOwner(), false);
+		model.addBuilding(getPosition(), staticMineData.ID, getOwner());
 	}
 	setStoredResources (getStoredResources() - 1);
 

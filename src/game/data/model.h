@@ -92,9 +92,8 @@ public:
 	cVehicle* getVehicleFromID(unsigned int id) const;
 	cBuilding* getBuildingFromID(unsigned int id) const;
 
-	//TODO: check if init and addToMap are needed
-	cVehicle& addVehicle(const cPosition& position, const sID& id, cPlayer* player, bool init = false, bool addToMap = true);
-	cBuilding& addBuilding(const cPosition& position, const sID& id, cPlayer* player, bool init = false);
+	cVehicle& addVehicle(const cPosition& position, const sID& id, cPlayer* player);
+	cBuilding& addBuilding(const cPosition& position, const sID& id, cPlayer* player);
 	void destroyUnit(cUnit& unit);
 
 	void addRubble(const cPosition& position, int value, bool big);
