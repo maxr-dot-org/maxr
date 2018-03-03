@@ -429,6 +429,7 @@ bool cVehicle::proceedClearing (cServer& server)
 	cBuilding* Rubble = map.getField (getPosition()).getRubble();
 	if (isBig)
 	{
+		getOwner()->updateScan(*this, buildBigSavedPosition);
 		map.moveVehicle (*this, buildBigSavedPosition);
 		sendStopClear (server, *this, buildBigSavedPosition, *getOwner());
 		for (size_t i = 0; i != seenByPlayerList.size(); ++i)

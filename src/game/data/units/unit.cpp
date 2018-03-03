@@ -99,6 +99,8 @@ void cUnit::setOwner (cPlayer* owner_)
 void cUnit::storeVehicle(cVehicle& vehicle, cMap& map)
 {
 	map.deleteVehicle(vehicle);
+	vehicle.getOwner()->removeFromScan(vehicle);
+
 	if (vehicle.isSentryActive())
 	{
 		vehicle.getOwner()->deleteSentry(vehicle);
@@ -112,14 +114,6 @@ void cUnit::storeVehicle(cVehicle& vehicle, cMap& map)
 
 	storedUnits.push_back(&vehicle);
 	storedUnitsChanged();
-
-	getOwner()->doScan();
-
-	map.deleteVehicle(vehicle);
-	if (vehicle.isSentryActive())
-	{
-		vehicle.getOwner()->deleteSentry(vehicle);
-	}
 }
 
 //------------------------------------------------------------------------------
@@ -132,7 +126,7 @@ void cUnit::exitVehicleTo(cVehicle& vehicle, const cPosition& position, cMap& ma
 	vehicle.setPosition(position);
 	map.addVehicle(vehicle, position);
 
-	getOwner()->doScan();
+	vehicle.getOwner()->addToScan(vehicle);
 }
 
 //------------------------------------------------------------------------------
@@ -637,7 +631,7 @@ void cUnit::detectOtherUnits(const cMap& map) const
 	const int minx = std::max(getPosition().x() - data.getScan(), 0);
 	const int maxx = std::min(getPosition().x() + data.getScan(), map.getSize().x() - 1);
 	const int miny = std::max(getPosition().y() - data.getScan(), 0);
-	const int maxy = std::min(getPosition().y() + data.getScan(), map.getSize().x() - 1);
+	const int maxy = std::min(getPosition().y() + data.getScan(), map.getSize().y() - 1);
 
 	for (int x = minx; x <= maxx; ++x)
 	{

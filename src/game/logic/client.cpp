@@ -441,7 +441,7 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 			if (bigPosition.x() >= 0 && bigPosition.y() >= 0)
 			{
 //				getMap()->moveVehicleBig (*Vehicle, bigPosition);
-				Vehicle->getOwner()->doScan();
+//				Vehicle->getOwner()->doScan();
 			}
 			Vehicle->setClearing (true);
 			//addJob (new cStartBuildJob (*Vehicle, orgiginalPosition, (bigPosition.x() >= 0 && bigPosition.y() >= 0)));
@@ -475,7 +475,7 @@ void cClient::HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message)
 	if (bigPosition.x() >= 0 && bigPosition.y() >= 0)
 	{
 //		getMap()->moveVehicle (*Vehicle, bigPosition);
-		Vehicle->getOwner()->doScan();
+//		Vehicle->getOwner()->doScan();
 	}
 	Vehicle->setClearing (false);
 	Vehicle->setClearingTurns (0);
@@ -485,7 +485,7 @@ void cClient::HandleNetMessage_GAME_EV_NOFOG (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_NOFOG);
 
-	activePlayer->revealMap();
+	//activePlayer->revealMap();
 }
 
 void cClient::HandleNetMessage_GAME_EV_DEFEATED (cNetMessage& message)
@@ -588,8 +588,8 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message)
 	}
 	assert (unitData != nullptr);
 	//activePlayer->addSavedReport (std::make_unique<cSavedReportUpgraded> (unitData->ID, buildingsInMsg, totalCosts));
-	if (scanNecessary)
-		activePlayer->doScan();
+//	if (scanNecessary)
+//		activePlayer->doScan();
 }
 
 void cClient::HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message)
@@ -737,7 +737,7 @@ void cClient::HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_REVEAL_MAP);
 
-	activePlayer->revealMap();
+//	activePlayer->revealMap();
 }
 
 void cClient::setUnitsData(std::shared_ptr<const cUnitsData> unitsData)

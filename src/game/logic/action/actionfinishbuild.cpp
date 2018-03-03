@@ -80,11 +80,12 @@ void cActionFinishBuild::finishABuilding(cModel &model, cVehicle& vehicle) const
 	// set the vehicle to the border
 	if (vehicle.getIsBig())
 	{
-		int x = vehicle.getPosition().x();
-		int y = vehicle.getPosition().y();
-		if (escapePosition.x() > vehicle.getPosition().x()) x++;
-		if (escapePosition.y() > vehicle.getPosition().y()) y++;
-		map->moveVehicle(vehicle, cPosition(x, y));
+		cPosition pos = vehicle.getPosition();
+		if (escapePosition.x() > vehicle.getPosition().x()) pos.x()++;
+		if (escapePosition.y() > vehicle.getPosition().y()) pos.y()++;
+
+		vehicle.getOwner()->updateScan(vehicle, pos);
+		map->moveVehicle(vehicle, pos);
 	}
 
 	// drive away from the building lot

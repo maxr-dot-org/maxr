@@ -508,7 +508,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 
 	Vehicle->setClearing (true);
 	Vehicle->setClearingTurns (building->getIsBig() ? 4 : 1);
-	Vehicle->getOwner()->doScan();
+//	Vehicle->getOwner()->doScan();
 	//addJob (new cStartBuildJob (*Vehicle, Vehicle->getPosition(), building->data.isBig));
 
 	sendClearAnswer (*this, 0, *Vehicle, Vehicle->getClearingTurns(), rubblePosition, Vehicle->getOwner());
@@ -539,7 +539,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message)
 		if (Vehicle->getIsBig())
 		{
 			Map->moveVehicle (*Vehicle, Vehicle->buildBigSavedPosition);
-			Vehicle->getOwner()->doScan();
+			//Vehicle->getOwner()->doScan();
 			sendStopClear (*this, *Vehicle, Vehicle->buildBigSavedPosition, *Vehicle->getOwner());
 			for (size_t i = 0; i != Vehicle->seenByPlayerList.size(); ++i)
 			{
@@ -697,12 +697,12 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& messa
 			upgradedBuildings[i]->upgradeToCurrentVersion();
 		}
 		sendUpgradeBuildings (*this, upgradedBuildings, totalCosts, *player);
-		if (scanNecessary)
-			player->doScan();
+		//if (scanNecessary)
+		//	player->doScan();
 		if (refreshSentry)
 		{
-			player->refreshSentryAir();
-			player->refreshSentryGround();
+			//player->refreshSentryAir();
+			//player->refreshSentryGround();
 		}
 	}
 }
@@ -841,7 +841,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 				//sendDoStopWork (*this, *destBuilding);
 			}
 			//sendUnitData (*this, *destUnit);
-			destUnit->getOwner()->doScan();
+			//destUnit->getOwner()->doScan();
 			checkPlayerUnits();
 		}
 		success = true;
@@ -1189,7 +1189,7 @@ void cServer::markAllPlayersAsDisconnected()
 		cPlayer* player = playerList[i].get();
 		if (Contains (DisconnectedPlayerList, player) == false)
 			DisconnectedPlayerList.push_back (player);
-		player->revealMap();
+		//player->revealMap();
 	}
 }
 
@@ -1291,9 +1291,8 @@ void cServer::defeatLoserPlayers()
 
 		player.isDefeated = true;
 		sendDefeated (*this, player);
-		if (openMapDefeat == false)
-
-			player.revealMap();
+//		if (openMapDefeat == false)
+//			player.revealMap();
 		checkPlayerUnits();
 		sendNoFog (*this, player);
 	}
@@ -1337,7 +1336,7 @@ void cServer::checkDefeats()
 
 		if (openMapDefeat)
 		{
-			player.revealMap();
+//			player.revealMap();
 			checkPlayerUnits();
 			sendNoFog (*this, player);
 		}
@@ -1457,8 +1456,8 @@ void cServer::changeUnitOwner (cVehicle& vehicle, cPlayer& newOwner)
 	//sendUnitData (*this, vehicle, *vehicle.getOwner());
 	sendSpecificUnitData (*this, vehicle);
 
-	oldOwner->doScan();
-	newOwner.doScan();
+// 	oldOwner->doScan();
+// 	newOwner.doScan();
 	checkPlayerUnits();
 
 	// let the unit work for his new owner

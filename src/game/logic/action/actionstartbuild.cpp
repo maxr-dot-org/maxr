@@ -106,8 +106,8 @@ void cActionStartBuild::execute(cModel& model) const
 		vehicle->buildBigSavedPosition = vehicle->getPosition();
 
 		// set vehicle to build position
+		vehicle->getOwner()->updateScan(*vehicle, buildPosition, true);
 		map.moveVehicleBig(*vehicle, buildPosition);
-		vehicle->getOwner()->doScan();
 	}
 	else
 	{

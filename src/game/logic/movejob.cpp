@@ -241,13 +241,15 @@ void cMoveJob::startMove(cModel& model)
 	vehicle->DecSpeed(nextCosts);
 
 	vehicle->tryResetOfDetectionStateBeforeMove(map, model.getPlayerList());
+	
+	vehicle->getOwner()->updateScan(*vehicle, path.front());
 	map.moveVehicle(*vehicle, path.front());
+	
 	path.pop_front();
+	
 	vehicle->setMovementOffset(cPosition(0, 0));
 	changeVehicleOffset(-64);
 	Log.write(" cMoveJob: Vehicle (ID: " + iToStr (vehicle->getId()) + ") moved to (" + iToStr(vehicle->getPosition().x()) + ", " + iToStr(vehicle->getPosition().y()) + ") @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
-
-	vehicle->getOwner()->doScan();
 }
 
 //------------------------------------------------------------------------------

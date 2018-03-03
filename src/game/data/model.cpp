@@ -246,6 +246,7 @@ cVehicle& cModel::addVehicle(const cPosition& position, const sID& id, cPlayer* 
 
 	// place the vehicle:
 	if (addToMap) map->addVehicle(addedVehicle, position);
+	player->addToScan(addedVehicle);
 
 	// scan with surveyor:
 	if (addedVehicle.getStaticUnitData().canSurvey)
@@ -263,7 +264,6 @@ cVehicle& cModel::addVehicle(const cPosition& position, const sID& id, cPlayer* 
 		addedVehicle.setFlightHeight(64);
 	}
 
-	player->doScan();
 	addedVehicle.detectOtherUnits(*map);
 
 	return addedVehicle;
@@ -280,6 +280,7 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 	cBuilding* buildingToBeDeleted = map->getField(position).getTopBuilding();
 
 	map->addBuilding(addedBuilding, position);
+	player->addToScan(addedBuilding);
 
 	// integrate the building to the base:
 	player->base.addBuilding(&addedBuilding, *map);
@@ -352,7 +353,6 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 		addedBuilding.startWork();
 	}
 	
-	player->doScan();
 	addedBuilding.detectOtherUnits(*map);
 
 	return addedBuilding;
@@ -478,9 +478,6 @@ void cModel::deleteUnit(cUnit* unit)
 		}
 	}
 
-	// remove from sentry list
-	owner->deleteSentry(*unit);
-
 	// lose eco points
 	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->points != 0)
 	{
@@ -498,7 +495,8 @@ void cModel::deleteUnit(cUnit* unit)
 
 	if (owner != nullptr)
 	{
-		owner->doScan();
+		owner->deleteSentry(*unit);
+		owner->removeFromScan(*unit);
 	}
 }
 //------------------------------------------------------------------------------
@@ -660,6 +658,7 @@ cBuilding* cModel::getBuildingFromID(unsigned int id) const
 //------------------------------------------------------------------------------
 void cModel::refreshMapPointer()
 {
+	map->reset();
 	for (const auto& player : playerList)
 	{
 		for (const auto& vehicle : player->getVehicles())
