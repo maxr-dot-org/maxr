@@ -140,7 +140,6 @@ void cUnit::setDetectedByPlayer(const cPlayer* player)
 		player->detectedStealthUnit(*this);
 	}
 
-
 	if (!Contains(detectedInThisTurnByPlayerList, playerId))
 		detectedInThisTurnByPlayerList.push_back(playerId);
 

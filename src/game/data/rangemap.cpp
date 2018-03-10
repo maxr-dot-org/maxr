@@ -30,13 +30,6 @@ void cRangeMap::resize(const cPosition& size_)
 {
 	size = size_;
 	map.resize(size.x() * size.y());
-	clear();
-	crcValid = false;
-}
-
-//------------------------------------------------------------------------------
-void cRangeMap::clear()
-{
 	std::fill(map.begin(), map.end(), 0);
 	crcValid = false;
 }
@@ -208,8 +201,28 @@ uint32_t cRangeMap::getChecksum(uint32_t crc) const
 }
 
 //------------------------------------------------------------------------------
+void cRangeMap::subtract(const std::vector<uint16_t>& data)
+{
+	assert(map.size() == data.size());
+
+	for (size_t i = 0; i < data.size(); i++)
+	{
+		map[i] = std::max(map[i] - data[i], 0);
+		if (map[i] == 0 && data[i] > 0)
+		{
+			positionOutOfRange(cPosition(i % size.x(), i / size.x()));
+		}
+	}
+
+	crcValid = false;
+	changed();
+}
+
+//------------------------------------------------------------------------------
 bool cRangeMap::isInRange(int x, int y, const cPosition& position, int range, int unitSize, bool square) const
 {
+	// calc distance from center of unit.
+	// to prevent fractional numbers, store the double distance
 	cPosition delta2x = (cPosition(x, y) - position) * 2 - unitSize + 1;
 
 	if (square)
@@ -226,4 +239,10 @@ bool cRangeMap::isInRange(int x, int y, const cPosition& position, int range, in
 int cRangeMap::getOffset(int x, int y) const
 {
 	return x + y * size.x();
+}
+
+//------------------------------------------------------------------------------
+std::vector<uint16_t> cRangeMap::getMap() const
+{
+	return map;
 }

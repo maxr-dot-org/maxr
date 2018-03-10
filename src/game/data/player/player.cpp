@@ -350,9 +350,11 @@ void cPlayer::deleteSentry (cUnit& u)
 //------------------------------------------------------------------------------
 void cPlayer::refreshSentryMaps()
 {
-	sentriesMapAir.clear();
-	sentriesMapGround.clear();
+	//1 save original maps
+	const auto sentriesMapAirCopy = sentriesMapAir.getMap();
+	const auto sentriesMapGroundCopy = sentriesMapGround.getMap();
 
+	//2 add all units (yes they are on the scan maps twice now)
 	for (const auto& unit : vehicles)
 	{
 		if (unit->isSentryActive())
@@ -368,16 +370,27 @@ void cPlayer::refreshSentryMaps()
 			addSentry(*unit);
 		}
 	}
+
+	//3 subtract values from the saved maps
+	sentriesMapAir.subtract(sentriesMapAirCopy);
+	sentriesMapGround.subtract(sentriesMapGroundCopy);
 }
 
 //------------------------------------------------------------------------------
 void cPlayer::refreshScanMaps()
 {
-	scanMap.clear();
-	detectLandMap.clear();
-	detectSeaMap.clear();
-	detectMinesMap.clear();
+	// simply clear the maps and re-add all units would lead to a lot of
+	// false triggered events (like unit detected, etc.).
+	// so we use a special method, that only triggers signals on fields that
+	// really changed during the refresh.
 
+	//1 save original maps
+	const auto scanMapCopy = scanMap.getMap();
+	const auto detectLandMapCopy = detectLandMap.getMap();
+	const auto detectSeaMapCopy = detectSeaMap.getMap();
+	const auto detectMinesMapCopy = detectMinesMap.getMap();
+	
+	//2 add all units (yes they are on the scan maps twice now)
 	for (const auto& vehicle : vehicles)
 	{
 		if (vehicle->isUnitLoaded()) continue;
@@ -388,6 +401,12 @@ void cPlayer::refreshScanMaps()
 	{
 		addToScan(*building);
 	}
+
+	//3 subtract values from the saved maps
+	scanMap.subtract(scanMapCopy);
+	detectLandMap.subtract(detectLandMapCopy);
+	detectSeaMap.subtract(detectSeaMapCopy);
+	detectMinesMap.subtract(detectMinesMapCopy);
 }
 
 //------------------------------------------------------------------------------

@@ -35,7 +35,7 @@ public:
 	cRangeMap();
 
 	void resize(const cPosition& size);
-	void clear();
+	void subtract(const std::vector<uint16_t>& scanMapCopy);
 
 	void add(int range, const cPosition& position, int unitSize, bool square = false);
 	void update(int range, const cPosition& oldPosition, const cPosition& newPosition, int oldUnitSize, int newUnitSize, bool square = false);
@@ -44,6 +44,9 @@ public:
 
 	/** returns true, when position is in range of any of the objects in the map */
 	bool get(const cPosition& position) const;
+
+	/** returns access to the full map */
+	std::vector<uint16_t> getMap() const;
 
 	uint32_t getChecksum(uint32_t crc) const;
 
