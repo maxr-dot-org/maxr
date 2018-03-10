@@ -54,9 +54,9 @@ void cActionActivate::execute(cModel& model) const
 	if (!containingUnit->isNextTo(position)) return;
 	if (!Contains(containingUnit->storedUnits, activatedVehicle)) return;
 
+	model.sideStepStealthUnit(position, *activatedVehicle);
 	if (containingUnit->canExitTo(position, *model.getMap(), activatedVehicle->getStaticUnitData()))
 	{
-		//TODO: model.sideStepStealthUnit
 		activatedVehicle->tryResetOfDetectionStateBeforeMove(*model.getMap(), model.getPlayerList());
 		containingUnit->exitVehicleTo(*activatedVehicle, position, *model.getMap());
 

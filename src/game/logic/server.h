@@ -218,9 +218,6 @@ public:
 
 	void kickPlayer (cPlayer& player);
 
-	void sideStepStealthUnit (const cPosition& position, const cVehicle& vehicle, const cPosition& bigOffset = cPosition (-1, -1));
-	void sideStepStealthUnit (const cPosition& position, const cStaticUnitData& vehicleData, cPlayer* vehicleOwner, const cPosition& bigOffset = cPosition (-1, -1));
-
 	std::shared_ptr<const cTurnCounter> getTurnClock() const { return turnClock; }
 
 	std::shared_ptr<const cGameSettings> getGameSettings() const { return gameSettings; }

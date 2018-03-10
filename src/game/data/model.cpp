@@ -680,9 +680,11 @@ void cModel::refreshMapPointer()
 //------------------------------------------------------------------------------
 void cModel::runMoveJobs()
 {
-	for (auto& moveJob : moveJobs)
+	const int max = moveJobs.size();
+	for (int i = 0; i < max; i++)
 	{
-		moveJob->run(*this);
+		auto moveJob = moveJobs[i];
+		moveJob->run(*this); //this can add new items to 'moveJobs'
 		if (moveJob->isFinished())
 		{
 			cVehicle* vehicle = moveJob->getVehicle();
@@ -691,7 +693,7 @@ void cModel::runMoveJobs()
 				vehicle->setMoveJob(nullptr);
 			}
 			delete moveJob;
-			moveJob = nullptr;
+			moveJobs[i] = nullptr;
 		}
 	}
 	Remove(moveJobs, nullptr);
@@ -829,4 +831,121 @@ void cModel::handleTurnEnd()
 void cModel::setUnitsData(std::shared_ptr<cUnitsData> unitsData_)
 {
 	unitsData = unitsData_;
+}
+
+//------------------------------------------------------------------------------
+void cModel::sideStepStealthUnit(const cPosition& position, const cVehicle& vehicle, const cPosition& bigOffset)
+{
+	sideStepStealthUnit(position, vehicle.getStaticUnitData(), vehicle.getOwner(), bigOffset);
+}
+
+//------------------------------------------------------------------------------
+void cModel::sideStepStealthUnit(const cPosition& position, const cStaticUnitData& vehicleData, cPlayer* vehicleOwner, const cPosition& bigOffset)
+{
+	if (map->possiblePlaceVehicle(vehicleData, position, nullptr))
+	{
+		return;
+	}
+
+	if (vehicleData.factorAir > 0) return;
+
+	// first look for an undetected stealth unit
+	cVehicle* stealthVehicle = map->getField(position).getVehicle();
+	if (!stealthVehicle) return;
+	if (stealthVehicle->getOwner() == vehicleOwner) return;
+	if (stealthVehicle->getStaticUnitData().isStealthOn == TERRAIN_NONE) return;
+	if (stealthVehicle->isDetectedByPlayer(vehicleOwner)) return;
+
+	if (stealthVehicle->isUnitMoving())
+	{
+		stealthVehicle->setDetectedByPlayer(vehicleOwner);
+		return;
+	}
+
+	// found a stealth unit. Try to find a place where the unit can move
+	bool placeFound = false;
+	int minCosts = 99;
+	cPosition bestPosition;
+	const int minx = std::max(position.x() - 1, 0);
+	const int maxx = std::min(position.x() + 1, map->getSize().x() - 1);
+	const int miny = std::max(position.y() - 1, 0);
+	const int maxy = std::min(position.y() + 1, map->getSize().y() - 1);
+	for (int x = minx; x <= maxx; ++x)
+	{
+		for (int y = miny; y <= maxy; ++y)
+		{
+			const cPosition currentPosition(x, y);
+			if (currentPosition == position) continue;
+
+			// when a bigOffet was passed,
+			// for example a constructor needs space for a big building
+			// so not all directions are allowed for the side stepping
+			if (bigOffset != -1)
+			{
+				if (currentPosition == bigOffset ||
+					currentPosition == bigOffset + cPosition(1, 0) ||
+					currentPosition == bigOffset + cPosition(0, 1) ||
+					currentPosition == bigOffset + cPosition(1, 1)) continue;
+			}
+
+			// check whether this field is a possible destination
+			if (!map->possiblePlace(*stealthVehicle, currentPosition, false)) continue;
+
+			// check costs of the move
+			int costs = cPathCalculator::calcNextCost(position, currentPosition, stealthVehicle, map.get());
+			if (costs > stealthVehicle->data.getSpeed()) continue;
+
+			// check whether the vehicle would be detected
+			// on the destination field
+			bool detectOnDest = false;
+			if (stealthVehicle->getStaticUnitData().isStealthOn & TERRAIN_GROUND)
+			{
+				for (size_t i = 0; i != playerList.size(); ++i)
+				{
+					if (playerList[i].get() == stealthVehicle->getOwner()) continue;
+					if (playerList[i]->hasLandDetection(currentPosition)) detectOnDest = true;
+				}
+				if (map->isWater(currentPosition)) detectOnDest = true;
+			}
+			if (stealthVehicle->getStaticUnitData().isStealthOn & TERRAIN_SEA)
+			{
+				for (size_t i = 0; i != playerList.size(); ++i)
+				{
+					if (playerList[i].get() == stealthVehicle->getOwner()) continue;
+					if (playerList[i]->hasSeaDetection(currentPosition)) detectOnDest = true;
+				}
+				if (!map->isWater(currentPosition)) detectOnDest = true;
+
+				if (stealthVehicle->getStaticUnitData().factorGround > 0)
+				{
+					if (map->getField(currentPosition).hasBridgeOrPlattform())
+					{
+						detectOnDest = true;
+					}
+				}
+			}
+			if (detectOnDest) continue;
+
+			// take the move with the lowest costs.
+			// Decide randomly, when costs are equal
+			if (costs < minCosts || (costs == minCosts && randomGenerator.get(2)))
+			{
+				// this is a good candidate for a destination
+				minCosts = costs;
+				bestPosition = currentPosition;
+				placeFound = true;
+			}
+		}
+	}
+
+	if (placeFound)
+	{
+		std::forward_list<cPosition> path;
+		path.push_front(bestPosition);
+		addMoveJob (*stealthVehicle, path);
+		return;
+	}
+
+	// sidestepping failed. Uncover the vehicle.
+	stealthVehicle->setDetectedByPlayer(vehicleOwner);
 }

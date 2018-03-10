@@ -349,15 +349,11 @@ void cVehicle::proceedBuilding (cModel& model)
 			if (getPosition().y() < bandPosition.y()) nextPosition.y()++;
 			// Can we move to this position?
 			// If not, we need to kill the path building now.
+			model.sideStepStealthUnit (nextPosition, *this);
 			if (!map.possiblePlace (*this, nextPosition, false))
 			{
-				// Try sidestepping stealth units before giving up.
-				//model.sideStepStealthUnit (nextPosition, *this);
-				if (!map.possiblePlace (*this, nextPosition, false))
-				{
-					// We can't build along this path any more.
-					break;
-				}
+				// We can't build along this path any more.
+				break;
 			}
 			// Can we build at this next position?
 			if (map.possiblePlaceBuilding (model.getUnitsData()->getStaticUnitData(getBuildingType()), nextPosition, nullptr))

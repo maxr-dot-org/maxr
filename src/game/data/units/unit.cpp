@@ -424,10 +424,11 @@ void cUnit::rotateTo (int newDir)
 //------------------------------------------------------------------------------
 bool cUnit::canAttackObjectAt (const cPosition& position, const cMapView& map, bool forceAttack, bool checkRange) const
 {
-	if (staticData->canAttack == false) return false;
+	if (staticData->canAttack == TERRAIN_NONE) return false;
 	if (data.getShots() <= 0) return false;
 	if (data.getAmmo() <= 0) return false;
 	if (attacking) return false;
+	if (isUnitMoving()) return false;
 	if (isBeeingAttacked()) return false;
 	if (isAVehicle() && static_cast<const cVehicle*> (this)->isUnitLoaded()) return false;
 	if (map.isValidPosition (position) == false) return false;

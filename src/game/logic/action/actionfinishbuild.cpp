@@ -64,11 +64,8 @@ void cActionFinishBuild::finishABuilding(cModel &model, cVehicle& vehicle) const
 	if (!vehicle.isUnitBuildingABuilding() || vehicle.getBuildTurns() > 0) return;
 	if (!map->isValidPosition(escapePosition)) return;
 	if (!vehicle.isNextTo(escapePosition)) return;
-
-	if (!map->possiblePlace(vehicle, escapePosition, false))
-	{
-		//model.sideStepStealthUnit(escapePosition, *vehicle);
-	}
+	
+	model.sideStepStealthUnit(escapePosition, vehicle);
 	if (!map->possiblePlace(vehicle, escapePosition, false)) return;
 
 	model.addBuilding(vehicle.getPosition(), vehicle.getBuildingType(), vehicle.getOwner());
@@ -106,10 +103,8 @@ void cActionFinishBuild::finishAVehicle(cModel &model, cBuilding& building) cons
 
 
 	const cStaticUnitData& unitData = model.getUnitsData()->getStaticUnitData(buildingListItem.getType());
-	if (!map->possiblePlaceVehicle(unitData, escapePosition, building.getOwner()))
-	{
-		//model.sideStepStealthUnit(position, unitData, Building->getOwner());
-	}
+
+	model.sideStepStealthUnit(escapePosition, unitData, building.getOwner());
 	if (!map->possiblePlaceVehicle(unitData, escapePosition, building.getOwner())) return;
 
 	model.addVehicle (escapePosition, buildingListItem.getType(), building.getOwner());

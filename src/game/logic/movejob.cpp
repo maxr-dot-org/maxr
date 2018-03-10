@@ -271,18 +271,19 @@ bool cMoveJob::handleCollision(cModel &model)
 	{
 		return true;
 	}
-
-	//TODO: model.sideStepStealthUnit();
-	if (map.possiblePlace(*vehicle, path.front(), false))
-	{
-		return true;
-	}
 		
-	if (map.possiblePlace(*vehicle, path.front(), false, true))
+	if (map.possiblePlace(*vehicle, path.front(), false, true)) // ignore moving units
 	{
 		// if the target field is blocked by a moving unit,
 		// just wait and see if it gets free later
 		return false;
+	}
+
+	// enemy stealth units get the chance to get out of the way...
+	model.sideStepStealthUnit(path.front(), *vehicle);
+	if (map.possiblePlace(*vehicle, path.front(), false))
+	{
+		return true;
 	}
 
 	// field is definitely blocked. Try to find another path to destination
@@ -306,11 +307,7 @@ bool cMoveJob::recalculatePath(cModel &model)
 	if (!newPath.empty())
 	{
 		const cMap& map = *model.getMap();
-		if (!map.possiblePlace(*vehicle, newPath.front(), false))
-		{
-			//TODO: model.sideStepStealthUnit();
-		}
-
+		model.sideStepStealthUnit(newPath.front(), *vehicle);
 		if (map.possiblePlace(*vehicle, newPath.front(), false))
 		{
 			// new path is ok. Use it to continue movement...

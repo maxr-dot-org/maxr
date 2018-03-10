@@ -111,6 +111,13 @@ public:
 	void addFx(std::shared_ptr<cFx> fx);
 	void addJob(cJob* job);
 
+	/**
+	* Try to move an undetected enemy stealth unit out of the way, if necessary to free position.
+	*/
+	void sideStepStealthUnit(const cPosition& position, const cVehicle& vehicle, const cPosition& bigOffset = cPosition(-1, -1));
+	void sideStepStealthUnit(const cPosition& position, const cStaticUnitData& vehicleData, cPlayer* vehicleOwner, const cPosition& bigOffset = cPosition(-1, -1));
+
+
 	mutable cSignal<void()> gameTimeChanged;
 	mutable cSignal<void(const cVehicle& vehicle)> triggeredAddTracks;
 	mutable cSignal<void(const cPlayer& player)> playerFinishedTurn; // triggered when a player wants to end the turn
