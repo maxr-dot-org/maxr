@@ -37,6 +37,8 @@ void cRangeMap::resize(const cPosition& size_)
 //------------------------------------------------------------------------------
 void cRangeMap::add(int range, const cPosition& position, int unitSize, bool square /*= false*/)
 {
+	std::vector<const cPosition> positions;
+
 	const int minx = std::max(position.x() - range, 0);
 	const int maxx = std::min(position.x() + range, size.x() - 1);
 	const int miny = std::max(position.y() - range, 0);
@@ -52,12 +54,13 @@ void cRangeMap::add(int range, const cPosition& position, int unitSize, bool squ
 				value++;
 				if (value == 1)
 				{
-					positionInRange(cPosition(x, y));
+					positions.push_back(cPosition(x, y));
 				}
 			}
 		}
 	}
 
+	positionsInRange(positions);
 	crcValid = false;
 	changed();
 }
@@ -65,6 +68,9 @@ void cRangeMap::add(int range, const cPosition& position, int unitSize, bool squ
 //------------------------------------------------------------------------------
 void cRangeMap::update(int range, const cPosition& oldPosition, const cPosition& newPosition, int oldUnitSize, int newUnitSize, bool square /*= false*/)
 {
+	std::vector<const cPosition> inPositions;
+	std::vector<const cPosition> outPositions;
+
 	const int minx = std::max(std::min(oldPosition.x(), newPosition.x()) - range, 0);
 	const int maxx = std::min(std::max(oldPosition.x(), newPosition.x()) + range, size.x() - 1);
 	const int miny = std::max(std::min(oldPosition.y(), newPosition.y()) - range, 0);
@@ -83,7 +89,7 @@ void cRangeMap::update(int range, const cPosition& oldPosition, const cPosition&
 				++value;
 				if (value == 1)
 				{
-					positionInRange(cPosition(x, y));
+					inPositions.push_back(cPosition(x, y));
 				}
 			}
 			else if (!newInRange && oldInRange)
@@ -93,12 +99,14 @@ void cRangeMap::update(int range, const cPosition& oldPosition, const cPosition&
 				--value;
 				if (value == 0)
 				{
-					positionOutOfRange(cPosition(x, y));
+					outPositions.push_back(cPosition(x, y));
 				}
 			}
 		}
 	}
 
+	positionsInRange(inPositions);
+	positionsOutOfRange(outPositions);
 	crcValid = false;
 	changed();
 }
@@ -106,6 +114,9 @@ void cRangeMap::update(int range, const cPosition& oldPosition, const cPosition&
 //------------------------------------------------------------------------------
 void cRangeMap::update(int oldRange, int newRange, const cPosition& position, int unitSize, bool square /*= false*/)
 {
+	std::vector<const cPosition> inPositions;
+	std::vector<const cPosition> outPositions;
+
 	const int maxRange = std::max(oldRange, newRange);
 	const int minx = std::max(position.x() - maxRange, 0);
 	const int maxx = std::min(position.x() + maxRange, size.x() - 1);
@@ -125,7 +136,7 @@ void cRangeMap::update(int oldRange, int newRange, const cPosition& position, in
 				++value;
 				if (value == 1)
 				{
-					positionInRange(cPosition(x, y));
+					inPositions.push_back(cPosition(x, y));
 				}
 			}
 			else if (!newInRange && oldInRange)
@@ -135,12 +146,14 @@ void cRangeMap::update(int oldRange, int newRange, const cPosition& position, in
 				--value;
 				if (value == 0)
 				{
-					positionOutOfRange(cPosition(x, y));
+					outPositions.push_back(cPosition(x, y));
 				}
 			}
 		}
 	}
 
+	positionsInRange(inPositions);
+	positionsOutOfRange(outPositions);
 	crcValid = false;
 	changed();
 }
@@ -148,6 +161,8 @@ void cRangeMap::update(int oldRange, int newRange, const cPosition& position, in
 //------------------------------------------------------------------------------
 void cRangeMap::remove(int range, const cPosition& position, int unitSize, bool square /*= false*/)
 {
+	std::vector<const cPosition> positions;
+
 	const int minx = std::max(position.x() - range, 0);
 	const int maxx = std::min(position.x() + range, size.x() - 1);
 	const int miny = std::max(position.y() - range, 0);
@@ -163,12 +178,13 @@ void cRangeMap::remove(int range, const cPosition& position, int unitSize, bool 
 				--value;
 				if (value == 0)
 				{
-					positionOutOfRange(cPosition(x, y));
+					positions.push_back(cPosition(x, y));
 				}
 			}
 		}
 	}
 
+	positionsOutOfRange(positions);
 	crcValid = false;
 	changed();
 }
@@ -205,15 +221,19 @@ void cRangeMap::subtract(const std::vector<uint16_t>& data)
 {
 	assert(map.size() == data.size());
 
+	std::vector<const cPosition> positions;
+
 	for (size_t i = 0; i < data.size(); i++)
 	{
-		map[i] = std::max(map[i] - data[i], 0);
-		if (map[i] == 0 && data[i] > 0)
+		auto oldValue = map[i];
+		map[i] = std::max(oldValue - data[i], 0);
+		if (map[i] == 0 && oldValue > 0)
 		{
-			positionOutOfRange(cPosition(i % size.x(), i / size.x()));
+			positions.push_back(cPosition(i % size.x(), i / size.x()));
 		}
 	}
 
+	positionsOutOfRange(positions);
 	crcValid = false;
 	changed();
 }

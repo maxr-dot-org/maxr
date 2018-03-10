@@ -22,6 +22,7 @@
 #include "map.h"
 #include "game/data/player/player.h"
 #include "mapfieldview.h"
+#include <set>
 
 //------------------------------------------------------------------------------
 cMapView::cMapView(std::shared_ptr<const cMap> map_, std::shared_ptr<const cPlayer> player_) :
@@ -44,57 +45,84 @@ cMapView::cMapView(std::shared_ptr<const cMap> map_, std::shared_ptr<const cPlay
 
 		connectionManager.connect(player->stealthUnitDissappeared, [&](const cUnit& unit)
 		{
-			if (!player || player->canSeeAt(unit.getPosition()))
+			if (player->canSeeAt(unit.getPosition()))
 			{
 				// unit entered stealth mode
 				unitDissappeared(unit);
 			}
 		});
 
-		connectionManager.connect(player->getScanMap().positionInRange, [&](const cPosition& position)
+		connectionManager.connect(player->getScanMap().positionsInRange, [&](const std::vector<const cPosition>& positions)
 		{
 			// scan area of player has changed
-			const auto& vehicles = map->getField(position).getVehicles();
-			for (const auto& unit : vehicles)
+			std::set<const cUnit*> units;
+			for (const auto& position : positions)
 			{
-				if (!player || player->canSeeUnit(*unit, *map))
+				const auto& vehicles = map->getField(position).getVehicles();
+				for (const auto& unit : vehicles)
 				{
-					unitAppeared(*unit);
+					if (player->canSeeUnit(*unit, *map))
+					{
+						units.insert(unit);
+					}
+				}
+				const auto& buildings = map->getField(position).getBuildings();
+				for (const auto& unit : buildings)
+				{
+					if (player->canSeeUnit(*unit, *map))
+					{
+						units.insert(unit);
+					}
+				}
+				const auto& planes = map->getField(position).getPlanes();
+				for (const auto& unit : planes)
+				{
+					if (player->canSeeUnit(*unit, *map))
+					{
+						units.insert(unit);
+					}
 				}
 			}
-			const auto& buildings = map->getField(position).getBuildings();
-			for (const auto& unit : buildings)
+
+			for (const auto& unit : units)
 			{
-				if (!player || player->canSeeUnit(*unit, *map))
-				{
-					unitAppeared(*unit);
-				}
-			}
-			const auto& planes = map->getField(position).getPlanes();
-			for (const auto& unit : planes)
-			{
-				if (!player || player->canSeeUnit(*unit, *map))
-				{
-					unitAppeared(*unit);
-				}
+				unitAppeared(*unit);
 			}
 		});
 
-		connectionManager.connect(player->getScanMap().positionOutOfRange, [&](const cPosition& position)
+		connectionManager.connect(player->getScanMap().positionsOutOfRange, [&](const std::vector<const cPosition>& positions)
 		{
 			// scan area of player has changed
-			const auto& vehicles = map->getField(position).getVehicles();
-			for (const auto& unit : vehicles)
+			std::set<const cUnit*> units;
+			for (const auto& position : positions)
 			{
-				unitDissappeared(*unit);
+				const auto& vehicles = map->getField(position).getVehicles();
+				for (const auto& unit : vehicles)
+				{
+					if (!player->canSeeAnyAreaUnder(*unit))
+					{
+						units.insert(unit);
+					}
+				}
+				const auto& buildings = map->getField(position).getBuildings();
+				for (const auto& unit : buildings)
+				{
+					if (!player->canSeeAnyAreaUnder(*unit))
+					{
+						units.insert(unit);
+					}
+				}
+				const auto& planes = map->getField(position).getPlanes();
+				for (const auto& unit : planes)
+				{
+					if (!player->canSeeAnyAreaUnder(*unit))
+					{
+						units.insert(unit);
+					}
+				}
 			}
-			const auto& buildings = map->getField(position).getBuildings();
-			for (const auto& unit : buildings)
-			{
-				unitDissappeared(*unit);
-			}
-			const auto& planes = map->getField(position).getPlanes();
-			for (const auto& unit : planes)
+
+			for (const auto& unit : units)
 			{
 				unitDissappeared(*unit);
 			}
