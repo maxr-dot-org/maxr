@@ -50,7 +50,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_MARK_LOG,				// marks a position in the logfile
 	GAME_EV_SUPPLY,					// rearms or repairs a unit
 	GAME_EV_ADD_RUBBLE,				// adds a rubble field to the client
-	GAME_EV_DETECTION_STATE,		// informs a client whether a vehicle has been detected
 	GAME_EV_CLEAR_ANSWER,			// the answer to a clearing request
 	GAME_EV_STOP_CLEARING,			// a bulldowzer has to stop clearing
 	GAME_EV_NOFOG,					// the player can disable his fog

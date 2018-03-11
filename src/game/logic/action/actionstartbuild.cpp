@@ -90,10 +90,10 @@ void cActionStartBuild::execute(cModel& model) const
 	cPosition oldPosition = vehicle->getPosition();
 	if (data.isBig)
 	{
-// 		model.sideStepStealthUnit(buildPosition, *vehicle, buildPosition);
-// 		model.sideStepStealthUnit(buildPosition + cPosition(1, 0), *vehicle, buildPosition);
-// 		model.sideStepStealthUnit(buildPosition + cPosition(0, 1), *vehicle, buildPosition);
-// 		model.sideStepStealthUnit(buildPosition + cPosition(1, 1), *vehicle, buildPosition);
+ 		model.sideStepStealthUnit(buildPosition, *vehicle, buildPosition);
+ 		model.sideStepStealthUnit(buildPosition + cPosition(1, 0), *vehicle, buildPosition);
+ 		model.sideStepStealthUnit(buildPosition + cPosition(0, 1), *vehicle, buildPosition);
+ 		model.sideStepStealthUnit(buildPosition + cPosition(1, 1), *vehicle, buildPosition);
 
 		if (!(map.possiblePlaceBuilding(data, buildPosition, nullptr, vehicle) &&
 			map.possiblePlaceBuilding(data, buildPosition + cPosition(1, 0), nullptr, vehicle) &&
@@ -106,8 +106,8 @@ void cActionStartBuild::execute(cModel& model) const
 		vehicle->buildBigSavedPosition = vehicle->getPosition();
 
 		// set vehicle to build position
+		vehicle->getOwner()->updateScan(*vehicle, buildPosition, true);
 		map.moveVehicleBig(*vehicle, buildPosition);
-		vehicle->getOwner()->doScan();
 	}
 	else
 	{

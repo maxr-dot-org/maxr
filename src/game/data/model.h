@@ -92,9 +92,8 @@ public:
 	cVehicle* getVehicleFromID(unsigned int id) const;
 	cBuilding* getBuildingFromID(unsigned int id) const;
 
-	//TODO: check if init and addToMap are needed
-	cVehicle& addVehicle(const cPosition& position, const sID& id, cPlayer* player, bool init = false, bool addToMap = true);
-	cBuilding& addBuilding(const cPosition& position, const sID& id, cPlayer* player, bool init = false);
+	cVehicle& addVehicle(const cPosition& position, const sID& id, cPlayer* player);
+	cBuilding& addBuilding(const cPosition& position, const sID& id, cPlayer* player);
 	void destroyUnit(cUnit& unit);
 
 	void addRubble(const cPosition& position, int value, bool big);
@@ -111,6 +110,13 @@ public:
 
 	void addFx(std::shared_ptr<cFx> fx);
 	void addJob(cJob* job);
+
+	/**
+	* Try to move an undetected enemy stealth unit out of the way, if necessary to free position.
+	*/
+	void sideStepStealthUnit(const cPosition& position, const cVehicle& vehicle, const cPosition& bigOffset = cPosition(-1, -1));
+	void sideStepStealthUnit(const cPosition& position, const cStaticUnitData& vehicleData, cPlayer* vehicleOwner, const cPosition& bigOffset = cPosition(-1, -1));
+
 
 	mutable cSignal<void()> gameTimeChanged;
 	mutable cSignal<void(const cVehicle& vehicle)> triggeredAddTracks;

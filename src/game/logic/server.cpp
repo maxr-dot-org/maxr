@@ -488,10 +488,10 @@ void cServer::handleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 	{
 		rubblePosition = building->getPosition();
 
-		sideStepStealthUnit (building->getPosition()                  , *Vehicle, rubblePosition);
-		sideStepStealthUnit (building->getPosition() + cPosition (1, 0), *Vehicle, rubblePosition);
-		sideStepStealthUnit (building->getPosition() + cPosition (0, 1), *Vehicle, rubblePosition);
-		sideStepStealthUnit (building->getPosition() + cPosition (1, 1), *Vehicle, rubblePosition);
+		model.sideStepStealthUnit (building->getPosition()                   , *Vehicle, rubblePosition);
+		model.sideStepStealthUnit (building->getPosition() + cPosition (1, 0), *Vehicle, rubblePosition);
+		model.sideStepStealthUnit (building->getPosition() + cPosition (0, 1), *Vehicle, rubblePosition);
+		model.sideStepStealthUnit (building->getPosition() + cPosition (1, 1), *Vehicle, rubblePosition);
 
 		if ((!Map->possiblePlace (*Vehicle, building->getPosition(), false) && rubblePosition                   != Vehicle->getPosition()) ||
 			(!Map->possiblePlace (*Vehicle, building->getPosition() + cPosition (1, 0), false) && rubblePosition + cPosition (1, 0) != Vehicle->getPosition()) ||
@@ -508,7 +508,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 
 	Vehicle->setClearing (true);
 	Vehicle->setClearingTurns (building->getIsBig() ? 4 : 1);
-	Vehicle->getOwner()->doScan();
+//	Vehicle->getOwner()->doScan();
 	//addJob (new cStartBuildJob (*Vehicle, Vehicle->getPosition(), building->data.isBig));
 
 	sendClearAnswer (*this, 0, *Vehicle, Vehicle->getClearingTurns(), rubblePosition, Vehicle->getOwner());
@@ -539,7 +539,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message)
 		if (Vehicle->getIsBig())
 		{
 			Map->moveVehicle (*Vehicle, Vehicle->buildBigSavedPosition);
-			Vehicle->getOwner()->doScan();
+			//Vehicle->getOwner()->doScan();
 			sendStopClear (*this, *Vehicle, Vehicle->buildBigSavedPosition, *Vehicle->getOwner());
 			for (size_t i = 0; i != Vehicle->seenByPlayerList.size(); ++i)
 			{
@@ -697,12 +697,12 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& messa
 			upgradedBuildings[i]->upgradeToCurrentVersion();
 		}
 		sendUpgradeBuildings (*this, upgradedBuildings, totalCosts, *player);
-		if (scanNecessary)
-			player->doScan();
+		//if (scanNecessary)
+		//	player->doScan();
 		if (refreshSentry)
 		{
-			player->refreshSentryAir();
-			player->refreshSentryGround();
+			//player->refreshSentryAir();
+			//player->refreshSentryGround();
 		}
 	}
 }
@@ -841,7 +841,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 				//sendDoStopWork (*this, *destBuilding);
 			}
 			//sendUnitData (*this, *destUnit);
-			destUnit->getOwner()->doScan();
+			//destUnit->getOwner()->doScan();
 			checkPlayerUnits();
 		}
 		success = true;
@@ -1189,7 +1189,7 @@ void cServer::markAllPlayersAsDisconnected()
 		cPlayer* player = playerList[i].get();
 		if (Contains (DisconnectedPlayerList, player) == false)
 			DisconnectedPlayerList.push_back (player);
-		player->revealMap();
+		//player->revealMap();
 	}
 }
 
@@ -1291,9 +1291,8 @@ void cServer::defeatLoserPlayers()
 
 		player.isDefeated = true;
 		sendDefeated (*this, player);
-		if (openMapDefeat == false)
-
-			player.revealMap();
+//		if (openMapDefeat == false)
+//			player.revealMap();
 		checkPlayerUnits();
 		sendNoFog (*this, player);
 	}
@@ -1337,7 +1336,7 @@ void cServer::checkDefeats()
 
 		if (openMapDefeat)
 		{
-			player.revealMap();
+//			player.revealMap();
 			checkPlayerUnits();
 			sendNoFog (*this, player);
 		}
@@ -1413,7 +1412,7 @@ void cServer::deletePlayer (cPlayer& player)
 		for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
 		{
 			const auto& vehicle = *i;
-			if (vehicle->getStaticUnitData().isStealthOn != TERRAIN_NONE && vehicle->isDetectedByPlayer (&player)) vehicle->resetDetectedByPlayer (*this, &player);
+			if (vehicle->getStaticUnitData().isStealthOn != TERRAIN_NONE && vehicle->isDetectedByPlayer (&player)) vehicle->resetDetectedByPlayer (&player);
 		}
 	}
 	// delete the player
@@ -1452,13 +1451,13 @@ void cServer::changeUnitOwner (cVehicle& vehicle, cPlayer& newOwner)
 		sendDeleteUnit (*this, vehicle, vehicle.seenByPlayerList[i]);
 	}
 	vehicle.seenByPlayerList.clear();
-	vehicle.detectedByPlayerList.clear();
+	//vehicle.detectedByPlayerList.clear();
 	//sendAddUnit (*this, vehicle.getPosition(), vehicle.iID, true, vehicle.data.getId(), *vehicle.getOwner(), false);
 	//sendUnitData (*this, vehicle, *vehicle.getOwner());
 	sendSpecificUnitData (*this, vehicle);
 
-	oldOwner->doScan();
-	newOwner.doScan();
+// 	oldOwner->doScan();
+// 	newOwner.doScan();
 	checkPlayerUnits();
 
 	// let the unit work for his new owner
@@ -1467,119 +1466,8 @@ void cServer::changeUnitOwner (cVehicle& vehicle, cPlayer& newOwner)
 		sendVehicleResources (*this, vehicle);
 		vehicle.doSurvey ();
 	}
-	vehicle.makeDetection (*this);
-}
-
-void cServer::sideStepStealthUnit (const cPosition& position, const cVehicle& vehicle, const cPosition& bigOffset)
-{
-	sideStepStealthUnit (position, vehicle.getStaticUnitData(), vehicle.getOwner(), bigOffset);
-}
-
-void cServer::sideStepStealthUnit (const cPosition& position, const cStaticUnitData& vehicleData, cPlayer* vehicleOwner, const cPosition& bigOffset)
-{
-	// TODO: make sure, the stealth vehicle takes the direct diagonal move.
-	// Also when two straight moves would be shorter.
-
-	if (vehicleData.factorAir > 0) return;
-
-	// first look for an undetected stealth unit
-	cVehicle* stealthVehicle = Map->getField (position).getVehicle();
-	if (!stealthVehicle) return;
-	if (stealthVehicle->getOwner() == vehicleOwner) return;
-	if (stealthVehicle->getStaticUnitData().isStealthOn == TERRAIN_NONE) return;
-	if (stealthVehicle->isDetectedByPlayer (vehicleOwner)) return;
-
-	if (stealthVehicle->isUnitMoving())
-	{
-		stealthVehicle->setDetectedByPlayer(vehicleOwner);
-		return;
-	}
-
-	// found a stealth unit. Try to find a place where the unit can move
-	bool placeFound = false;
-	int minCosts = 99;
-	cPosition bestPosition;
-	const int minx = std::max (position.x() - 1, 0);
-	const int maxx = std::min (position.x() + 1, Map->getSize().x() - 1);
-	const int miny = std::max (position.y() - 1, 0);
-	const int maxy = std::min (position.y() + 1, Map->getSize().y() - 1);
-	for (int x = minx; x <= maxx; ++x)
-	{
-		for (int y = miny; y <= maxy; ++y)
-		{
-			const cPosition currentPosition (x, y);
-			if (currentPosition == position) continue;
-
-			// when a bigOffet was passed,
-			// for example a constructor needs space for a big building
-			// so not all directions are allowed for the side stepping
-			if (bigOffset != -1)
-			{
-				if (currentPosition == bigOffset ||
-					currentPosition == bigOffset + cPosition (1, 0) ||
-					currentPosition == bigOffset + cPosition (0, 1) ||
-					currentPosition == bigOffset + cPosition (1, 1)) continue;
-			}
-
-			// check whether this field is a possible destination
-			if (!Map->possiblePlace (*stealthVehicle, currentPosition, false)) continue;
-
-			// check costs of the move
-			int costs = cPathCalculator::calcNextCost (position, currentPosition, stealthVehicle, Map.get());
-			if (costs > stealthVehicle->data.getSpeed()) continue;
-
-			// check whether the vehicle would be detected
-			// on the destination field
-			bool detectOnDest = false;
-			if (stealthVehicle->getStaticUnitData().isStealthOn & TERRAIN_GROUND)
-			{
-				for (size_t i = 0; i != playerList.size(); ++i)
-				{
-					if (playerList[i].get() == stealthVehicle->getOwner()) continue;
-					if (playerList[i]->hasLandDetection (currentPosition)) detectOnDest = true;
-				}
-				if (Map->isWater (currentPosition)) detectOnDest = true;
-			}
-			if (stealthVehicle->getStaticUnitData().isStealthOn & TERRAIN_SEA)
-			{
-				for (size_t i = 0; i != playerList.size(); ++i)
-				{
-					if (playerList[i].get() == stealthVehicle->getOwner()) continue;
-					if (playerList[i]->hasSeaDetection (currentPosition)) detectOnDest = true;
-				}
-				if (!Map->isWater (currentPosition)) detectOnDest = true;
-
-				if (stealthVehicle->getStaticUnitData().factorGround > 0 && stealthVehicle->getStaticUnitData().factorSea > 0)
-				{
-					cBuilding* b = Map->getField (currentPosition).getBaseBuilding();
-					if (b && (b->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE || b->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA || b->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE)) detectOnDest = true;
-				}
-			}
-			if (detectOnDest) continue;
-
-			// take the move with the lowest costs.
-			// Decide randomly, when costs are equal
-			if (costs < minCosts || (costs == minCosts && random (2)))
-			{
-				// this is a good candidate for a destination
-				minCosts = costs;
-				bestPosition = currentPosition;
-				placeFound = true;
-			}
-		}
-	}
-
-	if (placeFound)
-	{
-		//addMoveJob (position, bestPosition, stealthVehicle);
-		// begin the movement immediately,
-		// so no other unit can block the destination field
-		return;
-	}
-
-	// sidestepping failed. Uncover the vehicle.
-	stealthVehicle->setDetectedByPlayer (vehicleOwner);
-	checkPlayerUnits();
+	//TODO: clear detection list
+	//vehicle.makeDetection (*this);
 }
 
 //------------------------------------------------------------------------------

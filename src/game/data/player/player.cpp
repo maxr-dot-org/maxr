@@ -114,19 +114,15 @@ void cPlayer::initMaps (cMap& map)
 {
 	mapSize = map.getSize();
 	const int size = mapSize.x() * mapSize.y();
-	// Scanner-Map:
-	ScanMap.resize (size, 0);
-	// Ressource-Map
-	ResourceMap.resize (size, 0);
+	
+	resourceMap.resize (size, 0);
+	sentriesMapAir.resize (mapSize);
+	sentriesMapGround.resize (mapSize);
 
-	// Sentry-Map:
-	SentriesMapAir.resize (size, 0);
-	SentriesMapGround.resize (size, 0);
-
-	// Detect-Maps:
-	DetectLandMap.resize (size, 0);
-	DetectSeaMap.resize (size, 0);
-	DetectMinesMap.resize (size, 0);
+	scanMap.resize (mapSize);
+	detectLandMap.resize (mapSize);
+	detectSeaMap.resize (mapSize);
+	detectMinesMap.resize (mapSize);
 }
 
 const cPosition& cPlayer::getMapSize() const
@@ -135,24 +131,101 @@ const cPosition& cPlayer::getMapSize() const
 }
 
 //------------------------------------------------------------------------------
+void cPlayer::addToScan(const cUnit& unit)
+{
+	assert(!unit.isDisabled());
+
+	const int size = unit.getIsBig() ? 2 : 1;
+
+	scanMap.add(unit.data.getScan(), unit.getPosition(), size);
+	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_GROUND)
+	{
+		detectLandMap.add(unit.data.getScan(), unit.getPosition(), size);
+	}
+	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_SEA)
+	{
+		detectSeaMap.add(unit.data.getScan(), unit.getPosition(), size);
+	}
+	if (unit.getStaticUnitData().canDetectStealthOn & AREA_EXP_MINE)
+	{
+		// mines can only be detected on directly adjacent fields
+		detectMinesMap.add(1, unit.getPosition(), size, true);
+	}
+}
+
+//------------------------------------------------------------------------------
+void cPlayer::updateScan(const cUnit& unit, const cPosition& newPosition, bool newIsBig)
+{
+	assert(!unit.isDisabled());
+
+	const int oldSize = unit.getIsBig() ? 2 : 1;
+	const int newSize = newIsBig ? 2 : 1;
+	scanMap.update(unit.data.getScan(), unit.getPosition(), newPosition, oldSize, newSize);
+	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_GROUND)
+	{
+		detectLandMap.update(unit.data.getScan(), unit.getPosition(), newPosition, oldSize, newSize);
+	}
+	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_SEA)
+	{
+		detectSeaMap.update(unit.data.getScan(), unit.getPosition(), newPosition, oldSize, newSize);
+	}
+	if (unit.getStaticUnitData().canDetectStealthOn & AREA_EXP_MINE)
+	{
+		// mines can only be detected on directly adjacent fields
+		detectMinesMap.update(1, unit.getPosition(), newPosition, oldSize, newSize, true);
+	}
+}
+
+//------------------------------------------------------------------------------
+void cPlayer::updateScan(const cUnit& unit, int newScanRange)
+{
+	assert(!unit.isDisabled());
+
+	const int size = unit.getIsBig() ? 2 : 1;
+	scanMap.update(unit.data.getScan(), newScanRange, unit.getPosition(), size);
+	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_GROUND)
+	{
+		detectLandMap.update(unit.data.getScan(), newScanRange, unit.getPosition(), size);
+	}
+	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_SEA)
+	{
+		detectSeaMap.update(unit.data.getScan(), newScanRange, unit.getPosition(), size);
+	}
+	// mine detection does not change
+}
+
+//------------------------------------------------------------------------------
+void cPlayer::removeFromScan(const cUnit& unit)
+{
+	const int size = unit.getIsBig() ? 2 : 1;
+
+	scanMap.remove(unit.data.getScan(), unit.getPosition(), size);
+	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_GROUND)
+	{
+		detectLandMap.remove(unit.data.getScan(), unit.getPosition(), size);
+	}
+	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_SEA)
+	{
+		detectSeaMap.remove(unit.data.getScan(), unit.getPosition(), size);
+	}
+	if (unit.getStaticUnitData().canDetectStealthOn & AREA_EXP_MINE)
+	{
+		// mines can only be detected on directly adjacent fields
+		detectMinesMap.remove(1, unit.getPosition(), size, true);
+	}
+}
+
+//------------------------------------------------------------------------------
+const cRangeMap& cPlayer::getScanMap() const
+{
+	return scanMap;
+}
+
+//------------------------------------------------------------------------------
 cVehicle& cPlayer::addNewVehicle (const cPosition& position, const cStaticUnitData& unitData, unsigned int uid)
 {
 	auto vehicle = std::make_shared<cVehicle> (unitData, *getUnitDataCurrentVersion(unitData.ID), this, uid);
 	vehicle->setPosition (position);
-
-	drawSpecialCircle (vehicle->getPosition(), vehicle->data.getScan(), ScanMap, mapSize);
-	if (vehicle->getStaticUnitData().canDetectStealthOn & TERRAIN_GROUND) drawSpecialCircle (vehicle->getPosition(), vehicle->data.getScan(), DetectLandMap, mapSize);
-	if (vehicle->getStaticUnitData().canDetectStealthOn & TERRAIN_SEA) drawSpecialCircle(vehicle->getPosition(), vehicle->data.getScan(), DetectSeaMap, mapSize);
-	if (vehicle->getStaticUnitData().canDetectStealthOn & AREA_EXP_MINE)
-	{
-		const int minx = std::max (vehicle->getPosition().x() - 1, 0);
-		const int maxx = std::min (vehicle->getPosition().x() + 1, mapSize.x() - 1);
-		const int miny = std::max (vehicle->getPosition().y() - 1, 0);
-		const int maxy = std::min (vehicle->getPosition().y() + 1, mapSize.y() - 1);
-		for (int x = minx; x <= maxx; ++x)
-			for (int y = miny; y <= maxy; ++y)
-				DetectMinesMap.set(x + mapSize.x() * y, 1);
-	}
 
 	auto result = vehicles.insert (std::move (vehicle));
 	assert (result.second);
@@ -164,14 +237,7 @@ cVehicle& cPlayer::addNewVehicle (const cPosition& position, const cStaticUnitDa
 cBuilding& cPlayer::addNewBuilding (const cPosition& position, const cStaticUnitData& unitData, unsigned int uid)
 {
 	auto building = std::make_shared<cBuilding>(&unitData, getUnitDataCurrentVersion(unitData.ID), this, uid);
-
 	building->setPosition (position);
-
-	if (building->data.getScan())
-	{
-		if (building->getIsBig()) drawSpecialCircleBig (building->getPosition(), building->data.getScan(), ScanMap, mapSize);
-		else drawSpecialCircle (building->getPosition(), building->data.getScan(), ScanMap, mapSize);
-	}
 
 	auto result = buildings.insert (std::move (building));
 	assert (result.second);
@@ -248,159 +314,108 @@ const cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>>& cPlayer::getBu
 //------------------------------------------------------------------------------
 void cPlayer::addSentry (cUnit& u)
 {
+	if (u.isSentryActive()) return;
+
 	u.setSentryActive (true);
+
+	const int size = u.getIsBig() ? 2 : 1;
 	if (u.getStaticUnitData().canAttack & TERRAIN_AIR)
 	{
-		drawSpecialCircle (u.getPosition(), u.data.getRange(), SentriesMapAir, mapSize);
+		sentriesMapAir.add(u.data.getRange(), u.getPosition(), size);
 	}
 	if ((u.getStaticUnitData().canAttack & TERRAIN_GROUND) || (u.getStaticUnitData().canAttack & TERRAIN_SEA))
 	{
-		drawSpecialCircle (u.getPosition(), u.data.getRange(), SentriesMapGround, mapSize);
+		sentriesMapGround.add(u.data.getRange(), u.getPosition(), size);
 	}
 }
 
 //------------------------------------------------------------------------------
 void cPlayer::deleteSentry (cUnit& u)
 {
+	if (!u.isSentryActive()) return;
+
 	u.setSentryActive (false);
+
+	const int size = u.getIsBig() ? 2 : 1;
 	if (u.getStaticUnitData().canAttack & TERRAIN_AIR)
 	{
-		refreshSentryAir();
+		sentriesMapGround.remove(u.data.getRange(), u.getPosition(), size);
 	}
 	else if ((u.getStaticUnitData().canAttack & TERRAIN_GROUND) || (u.getStaticUnitData().canAttack & TERRAIN_SEA))
 	{
-		refreshSentryGround();
+		sentriesMapAir.remove(u.data.getRange(), u.getPosition(), size);
 	}
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::refreshSentryAir()
+void cPlayer::refreshSentryMaps()
 {
-	SentriesMapAir.fill(0);
+	//1 save original maps
+	const auto sentriesMapAirCopy = sentriesMapAir.getMap();
+	const auto sentriesMapGroundCopy = sentriesMapGround.getMap();
 
-	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
+	//2 add all units (yes they are on the scan maps twice now)
+	for (const auto& unit : vehicles)
 	{
-		const auto& unit = *i;
-		if (unit->isSentryActive() && unit->getStaticUnitData().canAttack & TERRAIN_AIR)
+		if (unit->isSentryActive())
 		{
-			drawSpecialCircle (unit->getPosition(), unit->data.getRange(), SentriesMapAir, mapSize);
+			addSentry(*unit);
 		}
 	}
 
-	for (auto i = buildings.begin(); i != buildings.end(); ++i)
+	for (const auto& unit : buildings)
 	{
-		const auto& unit = *i;
-		if (unit->isSentryActive() && unit->getStaticUnitData().canAttack & TERRAIN_AIR)
+		if (unit->isSentryActive())
 		{
-			drawSpecialCircle (unit->getPosition(), unit->data.getRange(), SentriesMapAir, mapSize);
+			addSentry(*unit);
 		}
 	}
+
+	//3 subtract values from the saved maps
+	sentriesMapAir.subtract(sentriesMapAirCopy);
+	sentriesMapGround.subtract(sentriesMapGroundCopy);
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::refreshSentryGround()
+void cPlayer::refreshScanMaps()
 {
-	SentriesMapGround.fill(0);
+	// simply clear the maps and re-add all units would lead to a lot of
+	// false triggered events (like unit detected, etc.).
+	// so we use a special method, that only triggers signals on fields that
+	// really changed during the refresh.
 
-	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
+	//1 save original maps
+	const auto scanMapCopy = scanMap.getMap();
+	const auto detectLandMapCopy = detectLandMap.getMap();
+	const auto detectSeaMapCopy = detectSeaMap.getMap();
+	const auto detectMinesMapCopy = detectMinesMap.getMap();
+	
+	//2 add all units (yes they are on the scan maps twice now)
+	for (const auto& vehicle : vehicles)
 	{
-		const auto& unit = *i;
-		if (unit->isSentryActive() && ((unit->getStaticUnitData().canAttack & TERRAIN_GROUND) || (unit->getStaticUnitData().canAttack & TERRAIN_SEA)))
-		{
-			drawSpecialCircle (unit->getPosition(), unit->data.getRange(), SentriesMapGround, mapSize);
-		}
+		if (vehicle->isUnitLoaded()) continue;
+		addToScan(*vehicle);
 	}
-	for (auto i = buildings.begin(); i != buildings.end(); ++i)
+
+	for (const auto& building : buildings)
 	{
-		const auto& unit = *i;
-		if (unit->isSentryActive() && ((unit->getStaticUnitData().canAttack & TERRAIN_GROUND) || (unit->getStaticUnitData().canAttack & TERRAIN_SEA)))
-		{
-			drawSpecialCircle (unit->getPosition(), unit->data.getRange(), SentriesMapGround, mapSize);
-		}
+		addToScan(*building);
 	}
+
+	//3 subtract values from the saved maps
+	scanMap.subtract(scanMapCopy);
+	detectLandMap.subtract(detectLandMapCopy);
+	detectSeaMap.subtract(detectSeaMapCopy);
+	detectMinesMap.subtract(detectMinesMapCopy);
 }
 
 //------------------------------------------------------------------------------
-/** Does a scan for all units of the player */
-//------------------------------------------------------------------------------
-void cPlayer::doScan()
-{
-	if (isDefeated) return;
-	ScanMap.fill(0);
-	DetectLandMap.fill(0);
-	DetectSeaMap.fill(0);
-	DetectMinesMap.fill(0);
-
-	// iterate the vehicle list
-	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
-	{
-		const auto& vp = *i;
-		if (vp->isUnitLoaded()) continue;
-
-		if (vp->isDisabled())
-			ScanMap.set(getOffset (vp->getPosition()), 1);
-		else
-		{
-			if (vp->getIsBig())
-				drawSpecialCircleBig (vp->getPosition(), vp->data.getScan(), ScanMap, mapSize);
-			else
-				drawSpecialCircle (vp->getPosition(), vp->data.getScan(), ScanMap, mapSize);
-
-			//detection maps
-			if (vp->getStaticUnitData().canDetectStealthOn & TERRAIN_GROUND) drawSpecialCircle(vp->getPosition(), vp->data.getScan(), DetectLandMap, mapSize);
-			else if (vp->getStaticUnitData().canDetectStealthOn & TERRAIN_SEA) drawSpecialCircle(vp->getPosition(), vp->data.getScan(), DetectSeaMap, mapSize);
-			if (vp->getStaticUnitData().canDetectStealthOn & AREA_EXP_MINE)
-			{
-				const int minx = std::max (vp->getPosition().x() - 1, 0);
-				const int maxx = std::min (vp->getPosition().x() + 1, mapSize.x() - 1);
-				const int miny = std::max (vp->getPosition().y() - 1, 0);
-				const int maxy = std::min (vp->getPosition().y() + 1, mapSize.y() - 1);
-				for (int x = minx; x <= maxx; ++x)
-				{
-					for (int y = miny; y <= maxy; ++y)
-					{
-						DetectMinesMap.set(x + mapSize.x() * y, 1);
-					}
-				}
-			}
-		}
-	}
-
-	// iterate the building list
-	for (auto i = buildings.begin(); i != buildings.end(); ++i)
-	{
-		const auto& bp = *i;
-		if (bp->isDisabled())
-			ScanMap.set(getOffset (bp->getPosition()), 1);
-		else if (bp->data.getScan())
-		{
-			if (bp->getIsBig())
-				drawSpecialCircleBig (bp->getPosition(), bp->data.getScan(), ScanMap, mapSize);
-			else
-				drawSpecialCircle (bp->getPosition(), bp->data.getScan(), ScanMap, mapSize);
-		}
-	}
-
-	scanAreaChanged();
-}
-
-void cPlayer::revealMap()
-{
-	ScanMap.fill(1);
-}
-
-void cPlayer::revealPosition (const cPosition& position)
-{
-	if (position.x() < 0 || position.x() >= mapSize.x() || position.y() < 0 || position.y() >= mapSize.y()) return;
-
-	ScanMap.set(getOffset (position), 1);
-}
-
 void cPlayer::revealResource()
 {
-	ResourceMap.fill(1);
+	resourceMap.fill(1);
 }
 
+//------------------------------------------------------------------------------
 bool cPlayer::canSeeAnyAreaUnder (const cUnit& unit) const
 {
 	if (canSeeAt (unit.getPosition())) return true;
@@ -429,17 +444,17 @@ bool cPlayer::canSeeUnit(const cUnit& unit, const cMapField& field, const sTerra
 	
 	if (!unit.isStealthOnCurrentTerrain(field, terrain)) return true;
 
-	return Contains(unit.detectedByPlayerList, this);
+	return unit.isDetectedByPlayer(this);
 }
 
 //--------------------------------------------------------------------------
 std::string cPlayer::resourceMapToString() const
 {
 	std::string str;
-	str.reserve(ResourceMap.size() + 1);
-	for (size_t i = 0; i != ResourceMap.size(); ++i)
+	str.reserve(resourceMap.size() + 1);
+	for (size_t i = 0; i != resourceMap.size(); ++i)
 	{
-		str += getHexValue(ResourceMap[i]);
+		str += getHexValue(resourceMap[i]);
 	}
 	return str;
 }
@@ -447,9 +462,9 @@ std::string cPlayer::resourceMapToString() const
 //--------------------------------------------------------------------------
 void cPlayer::setResourceMapFromString(const std::string& str)
 {
-	for (size_t i = 0; i != ResourceMap.size(); ++i)
+	for (size_t i = 0; i != resourceMap.size(); ++i)
 	{
-		ResourceMap.set(i, getByteValue(str, 2*i));
+		resourceMap.set(i, getByteValue(str, 2*i));
 	}
 }
 
@@ -707,20 +722,24 @@ void cPlayer::makeTurnStart(cModel& model)
 		if (vehicle->isDisabled())
 		{
 			vehicle->setDisabledTurns(vehicle->getDisabledTurns() - 1);
+			if (!vehicle->isDisabled())
+			{
+				addToScan(*vehicle);
+			}
 		}
 		vehicle->refreshData();
 		vehicle->proceedBuilding(model);
 		//vehicle->proceedClearing(model);
 	}
 
-	// hide stealth units
-	doScan(); // make sure the detection maps are up to date
+	//just to prevent, that an error in scanmap updates have an permanent impact
+	refreshScanMaps();
+	refreshSentryMaps();
 
+	// allow stealth vehicles to enter stealth mode, when they move in the new turn
 	for (auto& vehicle : vehicles)
 	{
 		vehicle->clearDetectedInThisTurnPlayerList();
-		//TODO: stealth units
-		//vehicle->makeDetection(*this);
 	}
 
 	// do research:
@@ -734,8 +753,7 @@ void cPlayer::makeTurnStart(cModel& model)
 	// Gun'em down:
 	for (auto& vehicle : vehicles)
 	{
-		//TODO: sentry
-		//vehicle->InSentryRange(*this);
+		vehicle->inSentryRange(model);
 	}
 }
 
@@ -751,13 +769,13 @@ uint32_t cPlayer::getChecksum(uint32_t crc) const
 		crc = calcCheckSum(*b, crc);
 	crc = calcCheckSum(landingPos, crc);
 	crc = calcCheckSum(mapSize, crc);
-	crc = calcCheckSum(ScanMap, crc);
-	crc = calcCheckSum(ResourceMap, crc);
-	crc = calcCheckSum(SentriesMapAir, crc);
-	crc = calcCheckSum(SentriesMapGround, crc);
-	crc = calcCheckSum(DetectLandMap, crc);
-	crc = calcCheckSum(DetectSeaMap, crc);
-	crc = calcCheckSum(DetectMinesMap, crc);
+	crc = calcCheckSum(scanMap, crc);
+	crc = calcCheckSum(resourceMap, crc);
+	crc = calcCheckSum(sentriesMapAir, crc);
+	crc = calcCheckSum(sentriesMapGround, crc);
+	crc = calcCheckSum(detectLandMap, crc);
+	crc = calcCheckSum(detectSeaMap, crc);
+	crc = calcCheckSum(detectMinesMap, crc);
 	crc = calcCheckSum(pointsHistory, crc);
 	crc = calcCheckSum(isDefeated, crc);
 	crc = calcCheckSum(numEcos, crc);
@@ -864,105 +882,7 @@ int cPlayer::getResearchCentersWorkingOnArea (cResearch::ResearchArea area) cons
 //------------------------------------------------------------------------------
 bool cPlayer::canSeeAt (const cPosition& position) const
 {
-	if (position.x() < 0 || position.x() >= mapSize.x() || position.y() < 0 || position.y() >= mapSize.y()) return false;
-
-	return ScanMap[getOffset (position)] != 0;
-}
-
-//------------------------------------------------------------------------------
-void cPlayer::drawSpecialCircle (const cPosition& position, int iRadius, cArrayCrc<uint8_t>& map, const cPosition& mapsize)
-{
-	const float PI_ON_180 = 0.017453f;
-	const float PI_ON_4 = PI_ON_180 * 45;
-	if (iRadius <= 0) return;
-
-	iRadius *= 10;
-	const float step = (PI_ON_180 * 90 - acosf (1.0f / iRadius)) / 2;
-
-	for (float angle = 0; angle <= PI_ON_4; angle += step)
-	{
-		int rx = (int) (cosf (angle) * iRadius);
-		int ry = (int) (sinf (angle) * iRadius);
-		rx /= 10;
-		ry /= 10;
-
-		int x1 = rx + position.x();
-		int x2 = -rx + position.x();
-		for (int k = x2; k <= x1; k++)
-		{
-			if (k < 0) continue;
-			if (k >= mapsize.x()) break;
-			if (position.y() + ry >= 0 && position.y() + ry < mapsize.y())
-				map.set(k + (position.y() + ry) * mapsize.x(), 1);
-			if (position.y() - ry >= 0 && position.y() - ry < mapsize.y())
-				map.set(k + (position.y() - ry) * mapsize.x(), 1);
-		}
-
-		x1 = ry + position.x();
-		x2 = -ry + position.x();
-		for (int k = x2; k <= x1; k++)
-		{
-			if (k < 0) continue;
-			if (k >= mapsize.x()) break;
-			if (position.y() + rx >= 0 && position.y() + rx < mapsize.y())
-				map.set(k + (position.y() + rx) *mapsize.x(), 1);
-			if (position.y() - rx >= 0 && position.y() - rx < mapsize.y())
-				map.set(k + (position.y() - rx) *mapsize.x(), 1);
-		}
-	}
-}
-
-//------------------------------------------------------------------------------
-void cPlayer::drawSpecialCircleBig (const cPosition& position, int iRadius, cArrayCrc<uint8_t>& map, const cPosition& mapsize)
-{
-	const float PI_ON_180 = 0.017453f;
-	const float PI_ON_4 = PI_ON_180 * 45;
-	if (iRadius <= 0) return;
-
-	--iRadius;
-	iRadius *= 10;
-	const float step = (PI_ON_180 * 90 - acosf (1.0f / iRadius)) / 2;
-	for (float angle = 0; angle <= PI_ON_4; angle += step)
-	{
-		int rx = (int) (cosf (angle) * iRadius);
-		int ry = (int) (sinf (angle) * iRadius);
-		rx /= 10;
-		ry /= 10;
-
-		int x1 = rx + position.x();
-		int x2 = -rx + position.x();
-		for (int k = x2; k <= x1 + 1; k++)
-		{
-			if (k < 0) continue;
-			if (k >= mapsize.x()) break;
-			if (position.y() + ry >= 0 && position.y() + ry < mapsize.y())
-				map.set(k + (position.y() + ry) *mapsize.x(), 1);
-			if (position.y() - ry >= 0 && position.y() - ry < mapsize.y())
-				map.set(k + (position.y() - ry) *mapsize.x(), 1);
-
-			if (position.y() + ry + 1 >= 0 && position.y() + ry + 1 < mapsize.y())
-				map.set(k + (position.y() + ry + 1) *mapsize.x(), 1);
-			if (position.y() - ry + 1 >= 0 && position.y() - ry + 1 < mapsize.y())
-				map.set(k + (position.y() - ry + 1) *mapsize.x(), 1);
-		}
-
-		x1 = ry + position.x();
-		x2 = -ry + position.x();
-		for (int k = x2; k <= x1 + 1; k++)
-		{
-			if (k < 0) continue;
-			if (k >= mapsize.x()) break;
-			if (position.y() + rx >= 0 && position.y() + rx < mapsize.y())
-				map.set(k + (position.y() + rx) *mapsize.x(), 1);
-			if (position.y() - rx >= 0 && position.y() - rx < mapsize.y())
-				map.set(k + (position.y() - rx) *mapsize.x(), 1);
-
-			if (position.y() + rx + 1 >= 0 && position.y() + rx + 1 < mapsize.y())
-				map.set(k + (position.y() + rx + 1) *mapsize.x(), 1);
-			if (position.y() - rx + 1 >= 0 && position.y() - rx + 1 < mapsize.y())
-				map.set(k + (position.y() - rx + 1) *mapsize.x(), 1);
-		}
-	}
+	return scanMap.get(position);
 }
 
 //------------------------------------------------------------------------------

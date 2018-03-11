@@ -56,6 +56,7 @@ cAttackJob::cAttackJob (cUnit& aggressor, const cPosition& targetPosition, const
 	counter(10)
 {
 	Log.write(" cAttackJob: Started attack, aggressor: " + aggressor.getDisplayName() + ", ID: " + iToStr(aggressor.getId()) + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+	assert(!aggressor.isUnitMoving());
 
 	fireDir = calcFireDir();
 	
@@ -66,12 +67,15 @@ cAttackJob::cAttackJob (cUnit& aggressor, const cPosition& targetPosition, const
 
 	// make the aggressor visible on all clients
 	// who can see the aggressor offset
-	for (const auto& player : model.getPlayerList())
+	if (aggressor.getStaticUnitData().isStealthOn != TERRAIN_NONE)
 	{
-		if (player->canSeeAnyAreaUnder (aggressor) == false) continue;
-		if (aggressor.getOwner() == player.get()) continue;
+		for (const auto& player : model.getPlayerList())
+		{
+			if (player->canSeeAnyAreaUnder(aggressor) == false) continue;
+			if (aggressor.getOwner() == player.get()) continue;
 
-		aggressor.setDetectedByPlayer (player.get());
+			aggressor.setDetectedByPlayer(player.get());
+		}
 	}
 }
 

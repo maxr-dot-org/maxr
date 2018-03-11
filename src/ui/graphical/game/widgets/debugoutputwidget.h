@@ -21,6 +21,7 @@
 #define ui_graphical_game_widgets_debugoutputidgetH
 
 #include "ui/graphical/widget.h"
+#include "unifonts.h"
 
 class cClient;
 class cServer2;
@@ -57,8 +58,10 @@ public:
 	void setDebugPlayers (bool value);
 	void setDebugCache (bool value);
 	void setDebugSync (bool value);
+	void setDebugStealth(bool value);
 
 	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
+
 private:
 	const cServer2* server;
 	const cClient* client;
@@ -83,10 +86,21 @@ private:
 	/** show drawing cache debug information */
 	bool debugCache;
 	bool debugSync;
+	bool debugStealth;
+
+	cPosition drawPosition;
+
+	void setPrintPosition(cPosition position);
+	void print(const std::string& text, eUnicodeFontType font = FONT_LATIN_SMALL_WHITE);
 
 	void trace();
 	void traceVehicle (const cVehicle& vehicle, cPosition& drawPosition);
 	void traceBuilding (const cBuilding& Building, cPosition& drawPosition);
+	
+	/** draw the contend of the 'detectedByPlayer' lists over the units */	
+	void drawDetectedByPlayerList();
+	/** draw the detection maps of all players */
+	void drawDetectionMaps();
 };
 
 #endif // ui_graphical_game_widgets_debugoutputidgetH

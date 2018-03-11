@@ -194,29 +194,6 @@ public:
 	virtual bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const MAXR_OVERRIDE_FUNCTION;
 
 	/**
-	* returns whether this player has detected this unit or not
-	*@author alzi alias DoctorDeath
-	*@param player player for which the status should be checked
-	*@return true if the player has detected the unit
-	*/
-	bool isDetectedByPlayer (const cPlayer* player) const;
-	/**
-	* removes a player from the detectedByPlayerList
-	*/
-	void resetDetectedByPlayer (const cPlayer* player);
-	/**
-	* adds a player to the DetecedByPlayerList
-	*/
-	virtual void setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList = true) MAXR_OVERRIDE_FUNCTION;
-	/**
-	* - checks whether the building has been detected by an other unit
-	* the detection maps have to be up to date, when calling this function
-	* this function has to be called on the server
-	* every time a building is added
-	*/
-	void makeDetection (cServer& server);
-
-	/**
 	* draws the main image of the building onto the given surface
 	*/
 	void render (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow, bool drawConcrete) const;

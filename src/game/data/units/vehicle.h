@@ -146,6 +146,7 @@ private:
 //-----------------------------------------------------------------------------
 class cVehicle : public cUnit
 {
+	friend class cDebugOutputWidget;
 	//-----------------------------------------------------------------------------
 public:
 	cVehicle (const cStaticUnitData& staticData,  const cDynamicUnitData& data, cPlayer* Owner, unsigned int ID);
@@ -215,38 +216,10 @@ public:
 	*/
 	int calcCommandoChance (const cUnit* destUnit, bool steal) const;
 	int calcCommandoTurns (const cUnit* destUnit) const;
-	/**
-	* returns whether this player has detected this unit or not
-	*@author alzi alias DoctorDeath
-	*@param iPlayerNum number of player for which the status should be checked
-	*@return true if the player has detected the unit
-	*/
-	bool isDetectedByPlayer (const cPlayer* player) const;
-	/**
-	* removes a player from the detectedByPlayerList
-	*/
-	void resetDetectedByPlayer (cServer& server, cPlayer* player);
-	/**
-	* adds a player to the DetecedByPlayerList
-	*/
-	virtual void setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList = true) MAXR_OVERRIDE_FUNCTION;
-	/**
-	* - detects stealth units in the scan range of the vehicle
-	* - checks whether the vehicle has been detected by an other unit
-	* the detection maps have to be up to date,
-	* when calling this function,
-	* this function has to be called on the server
-	* every time a unit was moved, builded, unloaded...
-	*/
-	void makeDetection (cServer& server);
 
-	/** After a movement the detection state of a unit might be reset,
+	/** When starting a movement, or when unloading a stored unit, the detection state of the unit might be reset,
 	 * if it was not detected in _this_ turn. */
-	void tryResetOfDetectionStateAfterMove (cServer& server);
-	/** Resets the list of players, that detected this unit in this turn
-	 * (is called at turn end). */
-	void clearDetectedInThisTurnPlayerList();
-	bool wasDetectedInThisTurnByPlayer (const cPlayer* player) const;
+	void tryResetOfDetectionStateBeforeMove (const cMap& map, const std::vector<std::shared_ptr<cPlayer>>& playerList);
 
 	static void blitWithPreScale (SDL_Surface* org_src, SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dest, SDL_Rect* destrect, float factor, int frames = 1);
 
@@ -258,7 +231,6 @@ public:
 	* @author: eiko
 	*/
 	bool canLand (const cMap& map) const;
-
 
 	/**
 	* draws the main image of the vehicle onto the passed surface
@@ -349,8 +321,6 @@ public:
 		archive & NVP(buildBigSavedPosition);
 		archive & NVP(BuildPath);
 		archive & NVP(WalkFrame);
-
-		archive & NVP(detectedInThisTurnByPlayerList);
 		archive & NVP(tileMovementOffset);
 		archive & NVP(loaded);
 		archive & NVP(moving);
@@ -395,12 +365,6 @@ private:
 	bool isOtherUnitOffendedByThis (const cModel& model, const cUnit& otherUnit) const;
 	bool doReactionFire (cModel& model, cPlayer* player) const;
 	bool doReactionFireForUnit (cModel& model, cUnit* opponentUnit) const;
-
-	/// helper method that returns a list of all players,
-	/// that can detect this unit
-	std::vector<cPlayer*> calcDetectedByPlayer (cServer& server) const;
-	/// list of players, that detected this vehicle in this turn
-	std::vector<cPlayer*> detectedInThisTurnByPlayerList;
 
 	cPosition tileMovementOffset;  // offset within tile during movement
 

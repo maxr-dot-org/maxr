@@ -99,6 +99,8 @@ void cUnit::setOwner (cPlayer* owner_)
 void cUnit::storeVehicle(cVehicle& vehicle, cMap& map)
 {
 	map.deleteVehicle(vehicle);
+	vehicle.getOwner()->removeFromScan(vehicle);
+
 	if (vehicle.isSentryActive())
 	{
 		vehicle.getOwner()->deleteSentry(vehicle);
@@ -112,14 +114,6 @@ void cUnit::storeVehicle(cVehicle& vehicle, cMap& map)
 
 	storedUnits.push_back(&vehicle);
 	storedUnitsChanged();
-
-	getOwner()->doScan();
-
-	map.deleteVehicle(vehicle);
-	if (vehicle.isSentryActive())
-	{
-		vehicle.getOwner()->deleteSentry(vehicle);
-	}
 }
 
 //------------------------------------------------------------------------------
@@ -132,7 +126,55 @@ void cUnit::exitVehicleTo(cVehicle& vehicle, const cPosition& position, cMap& ma
 	vehicle.setPosition(position);
 	map.addVehicle(vehicle, position);
 
-	getOwner()->doScan();
+	vehicle.getOwner()->addToScan(vehicle);
+}
+
+//------------------------------------------------------------------------------
+void cUnit::setDetectedByPlayer(const cPlayer* player)
+{
+	int playerId = player->getId();
+
+	if (!Contains(detectedByPlayerList, playerId))
+	{
+		detectedByPlayerList.push_back(playerId);
+		player->detectedStealthUnit(*this);
+	}
+
+	if (!Contains(detectedInThisTurnByPlayerList, playerId))
+		detectedInThisTurnByPlayerList.push_back(playerId);
+
+}
+
+//------------------------------------------------------------------------------
+void cUnit::resetDetectedByPlayer(const cPlayer* player)
+{
+	if (Contains(detectedByPlayerList, player->getId()))
+	{
+		Remove(detectedByPlayerList, player->getId());
+		if (!isAVehicle() || !static_cast<const cVehicle*>(this)->isUnitLoaded())
+		{
+			player->stealthUnitDissappeared(*this);
+		}
+	}
+	Remove(detectedInThisTurnByPlayerList, player->getId());
+}
+
+//------------------------------------------------------------------------------
+bool cUnit::isDetectedByPlayer(const cPlayer* player) const
+{
+	return Contains(detectedByPlayerList, player->getId());
+}
+
+//------------------------------------------------------------------------------
+bool cUnit::isDetectedByAnyPlayer() const
+{
+	return detectedByPlayerList.size() > 0;
+}
+
+//------------------------------------------------------------------------------
+void cUnit::clearDetectedInThisTurnPlayerList()
+{
+	detectedInThisTurnByPlayerList.clear();
 }
 
 //------------------------------------------------------------------------------
@@ -244,11 +286,13 @@ uint32_t cUnit::getChecksum(uint32_t crc) const
 	crc = calcCheckSum(iID, crc);
 	crc = calcCheckSum(dir, crc);
 	for (const auto& u : storedUnits)
-		crc = calcCheckSum(u->getId(), crc);
+		crc = calcCheckSum(u, crc);
 	for (const auto& p : seenByPlayerList)
-		crc = calcCheckSum(p->getId(), crc);
+		crc = calcCheckSum(p, crc);
 	for (const auto& p : detectedByPlayerList)
-		crc = calcCheckSum(p->getId(), crc); 
+		crc = calcCheckSum(p, crc);
+	for (const auto& p : detectedInThisTurnByPlayerList)
+		crc = calcCheckSum(p, crc); 
 	crc = calcCheckSum(isBig, crc);
 	crc = calcCheckSum(owner, crc);
 	crc = calcCheckSum(position, crc);
@@ -379,10 +423,11 @@ void cUnit::rotateTo (int newDir)
 //------------------------------------------------------------------------------
 bool cUnit::canAttackObjectAt (const cPosition& position, const cMapView& map, bool forceAttack, bool checkRange) const
 {
-	if (staticData->canAttack == false) return false;
+	if (staticData->canAttack == TERRAIN_NONE) return false;
 	if (data.getShots() <= 0) return false;
 	if (data.getAmmo() <= 0) return false;
 	if (attacking) return false;
+	if (isUnitMoving()) return false;
 	if (isBeeingAttacked()) return false;
 	if (isAVehicle() && static_cast<const cVehicle*> (this)->isUnitLoaded()) return false;
 	if (map.isValidPosition (position) == false) return false;
@@ -568,7 +613,116 @@ bool cUnit::isStealthOnCurrentTerrain(const cMapField& field, const sTerrain& te
 }
 
 //------------------------------------------------------------------------------
+void cUnit::detectThisUnit(const cMap& map, const std::vector<std::shared_ptr<cPlayer>>& playerList)
+{
+	if (staticData->isStealthOn == TERRAIN_NONE) return;
+
+	for (const auto& player : playerList)
+	{
+		if (checkDetectedByPlayer(*player, map))
+		{
+			setDetectedByPlayer(player.get());
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+void cUnit::detectOtherUnits(const cMap& map) const
+{
+	if (staticData->canDetectStealthOn == TERRAIN_NONE) return;
+
+	const int minx = std::max(getPosition().x() - data.getScan(), 0);
+	const int maxx = std::min(getPosition().x() + data.getScan(), map.getSize().x() - 1);
+	const int miny = std::max(getPosition().y() - data.getScan(), 0);
+	const int maxy = std::min(getPosition().y() + data.getScan(), map.getSize().y() - 1);
+
+	for (int x = minx; x <= maxx; ++x)
+	{
+		for (int y = miny; y <= maxy; ++y)
+		{
+			const cPosition checkAtPos(x, y);
+			int scanSquared = data.getScan()*data.getScan();
+			if ((getPosition() - checkAtPos).l2NormSquared() > scanSquared) continue;
+
+			const auto& vehicles = map.getField(checkAtPos).getVehicles();
+			for (const auto& vehicle : vehicles)
+			{
+				if (vehicle->checkDetectedByPlayer(*owner, map))
+				{
+					vehicle->setDetectedByPlayer(owner);
+
+				}
+			}
+			const auto& buildings = map.getField(checkAtPos).getBuildings();
+			for (const auto& building : buildings)
+			{
+				if (building->checkDetectedByPlayer(*owner, map))
+				{
+					building->setDetectedByPlayer(owner);
+				}
+			}
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
 const cStaticUnitData& cUnit::getStaticUnitData() const
 {
 	return *staticData;
+}
+
+//------------------------------------------------------------------------------
+bool cUnit::checkDetectedByPlayer(const cPlayer& player, const cMap& map) const
+{
+	//big stealth units not implemented yet
+	if (isBig)
+		return false;
+
+	if (&player == owner)
+		return false;
+
+	if (staticData->isStealthOn == TERRAIN_NONE)
+		return false;
+
+	if (isAVehicle() && static_cast<const cVehicle*>(this)->isUnitLoaded())
+		return false;
+
+	// get current terrain
+	bool isOnWater = map.isWater(position);
+	bool isOnCoast = map.isCoast(position);
+
+	if (staticData->factorGround > 0 && map.getField(position).hasBridgeOrPlattform())
+	{
+		isOnWater = false;
+		isOnCoast = false;
+	}
+
+	// check stealth status
+	if (!isStealthOnCurrentTerrain(map.getField(position), map.staticMap->getTerrain(position)) && player.canSeeAnyAreaUnder(*this))
+	{
+		return true;
+	}
+	else if ((staticData->isStealthOn & TERRAIN_GROUND) && player.hasLandDetection(position) && !isOnCoast && !isOnWater)
+	{
+		return true;
+	}
+	else if ((staticData->isStealthOn & TERRAIN_SEA) && player.hasSeaDetection(position) && isOnWater)
+	{
+		return true;
+	}
+	else if ((staticData->isStealthOn & TERRAIN_COAST) && player.hasLandDetection(position) && isOnCoast && staticData->factorGround > 0)
+	{
+		return true;
+	}
+	else if ((staticData->isStealthOn & TERRAIN_COAST) && player.hasSeaDetection(position) && isOnCoast && staticData->factorSea > 0)
+	{
+		return true;
+	}
+	else if ((staticData->isStealthOn & AREA_EXP_MINE) && player.hasMineDetection(position))
+	{
+		return true;
+	}
+	//TODO: isStealthOn & TERRAIN_AIR
+
+	return false;
 }

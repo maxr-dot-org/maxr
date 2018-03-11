@@ -210,15 +210,6 @@ void sendSupply (cServer& server, int iDestID, bool bDestVehicle, int iValue, in
 }
 
 //------------------------------------------------------------------------------
-void sendDetectionState (cServer& server, const cVehicle& vehicle)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_DETECTION_STATE);
-	message->pushBool (!vehicle.detectedByPlayerList.empty());
-	message->pushInt32 (vehicle.iID);
-	server.sendNetMessage (std::move (message), vehicle.getOwner());
-}
-
-//------------------------------------------------------------------------------
 void sendClearAnswer (cServer& server, int answertype, const cVehicle& vehicle, int turns, const cPosition& bigPosition, const cPlayer* receiver)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_CLEAR_ANSWER);

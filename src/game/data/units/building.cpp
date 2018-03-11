@@ -1192,46 +1192,6 @@ void cBuilding::calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array
 }
 
 //--------------------------------------------------------------------------
-bool cBuilding::isDetectedByPlayer (const cPlayer* player) const
-{
-	return Contains (detectedByPlayerList, player);
-}
-
-//--------------------------------------------------------------------------
-void cBuilding::setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList)
-{
-	if (!isDetectedByPlayer (player))
-		detectedByPlayerList.push_back (player);
-}
-
-//--------------------------------------------------------------------------
-void cBuilding::resetDetectedByPlayer (const cPlayer* player)
-{
-	Remove (detectedByPlayerList, player);
-}
-
-//--------------------------------------------------------------------------
-void cBuilding::makeDetection (cServer& server)
-{
-	// check whether the building has been detected by others
-	if (staticData->isStealthOn == TERRAIN_NONE) return;
-
-	if (staticData->isStealthOn & AREA_EXP_MINE)
-	{
-		auto& playerList = server.playerList;
-		for (unsigned int i = 0; i < playerList.size(); i++)
-		{
-			auto& player = *playerList[i];
-			if (&player == getOwner()) continue;
-			if (player.hasMineDetection (getPosition()))
-			{
-				setDetectedByPlayer (&player);
-			}
-		}
-	}
-}
-
-//--------------------------------------------------------------------------
 sBuildingUIData::sBuildingUIData():
 	hasClanLogos(false),
 	hasDamageEffect(false),

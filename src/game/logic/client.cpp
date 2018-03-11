@@ -419,29 +419,6 @@ void cClient::HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message)
 //	assert (result.second);
 }
 
-void cClient::HandleNetMessage_GAME_EV_DETECTION_STATE (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_DETECTION_STATE);
-
-	const int id = message.popInt32();
-	cVehicle* vehicle = getVehicleFromID (id);
-	if (vehicle == nullptr)
-	{
-		Log.write (" Client: Vehicle (ID: " + iToStr (id) + ") not found", cLog::eLOG_TYPE_NET_ERROR);
-		return;
-	}
-	const bool detected = message.popBool();
-	if (detected)
-	{
-		//mark vehicle as detected with size of detectedByPlayerList > 0
-		vehicle->detectedByPlayerList.push_back (nullptr);
-	}
-	else
-	{
-		vehicle->detectedByPlayerList.clear();
-	}
-}
-
 void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_CLEAR_ANSWER);
@@ -464,7 +441,7 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 			if (bigPosition.x() >= 0 && bigPosition.y() >= 0)
 			{
 //				getMap()->moveVehicleBig (*Vehicle, bigPosition);
-				Vehicle->getOwner()->doScan();
+//				Vehicle->getOwner()->doScan();
 			}
 			Vehicle->setClearing (true);
 			//addJob (new cStartBuildJob (*Vehicle, orgiginalPosition, (bigPosition.x() >= 0 && bigPosition.y() >= 0)));
@@ -498,7 +475,7 @@ void cClient::HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message)
 	if (bigPosition.x() >= 0 && bigPosition.y() >= 0)
 	{
 //		getMap()->moveVehicle (*Vehicle, bigPosition);
-		Vehicle->getOwner()->doScan();
+//		Vehicle->getOwner()->doScan();
 	}
 	Vehicle->setClearing (false);
 	Vehicle->setClearingTurns (0);
@@ -508,7 +485,7 @@ void cClient::HandleNetMessage_GAME_EV_NOFOG (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_NOFOG);
 
-	activePlayer->revealMap();
+	//activePlayer->revealMap();
 }
 
 void cClient::HandleNetMessage_GAME_EV_DEFEATED (cNetMessage& message)
@@ -611,8 +588,8 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message)
 	}
 	assert (unitData != nullptr);
 	//activePlayer->addSavedReport (std::make_unique<cSavedReportUpgraded> (unitData->ID, buildingsInMsg, totalCosts));
-	if (scanNecessary)
-		activePlayer->doScan();
+//	if (scanNecessary)
+//		activePlayer->doScan();
 }
 
 void cClient::HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message)
@@ -760,7 +737,7 @@ void cClient::HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_REVEAL_MAP);
 
-	activePlayer->revealMap();
+//	activePlayer->revealMap();
 }
 
 void cClient::setUnitsData(std::shared_ptr<const cUnitsData> unitsData)
@@ -897,7 +874,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_MARK_LOG: HandleNetMessage_GAME_EV_MARK_LOG (message); break;
 		case GAME_EV_SUPPLY: HandleNetMessage_GAME_EV_SUPPLY (message); break;
 		case GAME_EV_ADD_RUBBLE: HandleNetMessage_GAME_EV_ADD_RUBBLE (message); break;
-		case GAME_EV_DETECTION_STATE: HandleNetMessage_GAME_EV_DETECTION_STATE (message); break;
 		case GAME_EV_CLEAR_ANSWER: HandleNetMessage_GAME_EV_CLEAR_ANSWER (message); break;
 		case GAME_EV_STOP_CLEARING: HandleNetMessage_GAME_EV_STOP_CLEARING (message); break;
 		case GAME_EV_NOFOG: HandleNetMessage_GAME_EV_NOFOG (message); break;

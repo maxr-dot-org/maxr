@@ -96,12 +96,6 @@ void sendResources (cServer& server, const cPlayer& player);
 *@param receiver The player, who will receive the message
 */
 void sendSupply (cServer& server, int iDestID, bool bDestVehicle, int iValue, int iType, const cPlayer& receiver);
-/**
-* informs the owner of the vehicle whether the vehicle has been detected
-* by another player.
-* this is used by the client for correct drawing of the unit
-*/
-void sendDetectionState (cServer& server, const cVehicle& vehicle);
 
 /**
 * sends whether and how the unit has to clean the field

@@ -387,7 +387,6 @@ string cNetMessage::getTypeAsString() const
 		case GAME_EV_ADD_RUBBLE: return "GAME_EV_ADD_RUBBLE";
 		case GAME_EV_WANT_SUPPLY: return "GAME_EV_WANT_SUPPLY";
 		case GAME_EV_SUPPLY: return "GAME_EV_SUPPLY";
-		case GAME_EV_DETECTION_STATE: return "GAME_EV_DETECTION_STATE";
 		case GAME_EV_CLEAR_ANSWER: return "GAME_EV_CLEAR_ANSWER";
 		case GAME_EV_STOP_CLEARING: return "GAME_EV_STOP_CLEARING";
 		case GAME_EV_NOFOG: return "GAME_EV_NOFOG";

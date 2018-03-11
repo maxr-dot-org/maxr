@@ -66,8 +66,8 @@ void cActionStop::execute(cModel& model) const
 
 			if (vehicle->getIsBig())
 			{
+				vehicle->getOwner()->updateScan(*vehicle, vehicle->buildBigSavedPosition);
 				model.getMap()->moveVehicle(*vehicle, vehicle->buildBigSavedPosition);
-				vehicle->getOwner()->doScan();
 			}
 		}
 	}

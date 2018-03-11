@@ -92,6 +92,9 @@ public:
 	double l2Norm() const;
 	value_type l2NormSquared() const;
 
+	value_type max() const;
+	self_type abs() const;
+
 	/**
 	 * Returns the fixed size of the vector.
 	 * @return
@@ -397,6 +400,31 @@ typename cFixedVector<T, D>::value_type cFixedVector<T, D>::l2NormSquared() cons
 {
 	return dotProduct (*this);
 }
+
+//------------------------------------------------------------------------------
+template<typename T, std::size_t D>
+typename cFixedVector<T, D>::value_type cFixedVector<T, D>::max() const
+{
+	value_type result = data_[0];
+	for (std::size_t d = 1; d < D; ++d)
+	{
+		result = std::max(result, data_[d]);
+	}
+	return result;
+}
+
+//------------------------------------------------------------------------------
+template<typename T, std::size_t D>
+typename cFixedVector<T, D>::self_type cFixedVector<T, D>::abs() const
+{
+	self_type result;
+	for (std::size_t d = 0; d < D; ++d)
+	{
+		result[d] = std::abs(data_[d]);
+	}
+	return result;
+}
+
 
 //------------------------------------------------------------------------------
 template<typename T, std::size_t D>
