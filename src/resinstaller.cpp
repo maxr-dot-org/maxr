@@ -80,7 +80,7 @@ int installVehicleGraphics()
 {
 	string path;
 
-	iTotalFiles = 808;
+	iTotalFiles = 824;
 	iErrors = 0;
 	iInstalledFiles = 0;
 
@@ -166,6 +166,11 @@ int installVehicleGraphics()
 			SDL_FreeSurface( surface);
 		}
 		END_INSTALL_FILE( path + "shw" + szNum + ".pcx" )
+	}
+	for (int i = 0; i < 8; i++)
+	{
+		sprintf(szNum, "%d", i);
+		copyFileFromRes_rpc("CLNTRANS", path + "img_stealth" + szNum + ".pcx", i);
 	}
 	copyFileFromRes("A_COLNST", path + "store.pcx");
 	copyFileFromRes("P_COLNST", path + "info.pcx");
@@ -449,6 +454,40 @@ int installVehicleGraphics()
 			}
 			END_INSTALL_FILE( path + "img" + szNum1 + "_" + szNum2 + ".pcx")
 		}
+	}
+	for (int dir = 0; dir < 8; dir++)
+	{
+		sprintf( szNum1, "%d", dir);
+		try
+		{
+			output = SDL_CreateRGBSurface(SDL_SWSURFACE, 256, 64, 32, 0, 0, 0, 0);
+			//SDL_SetPaletteColors(output->format->palette, surface->format->palette->colors, 0, 256);
+			SDL_FillRect(output, 0, SDL_MapRGBA(output->format, 255, 0, 255, 0));
+
+			SDL_Rect dest = { 0, 0, 0, 0 };
+			for (int frame = 0; frame < 4; frame++)
+			{
+				surface = getImageFromRes("COMMANDO", dir + 200);
+				for (int i = 0; i < 256; i++)
+				{
+					if (i < 7 || i > 24)
+					{
+						// remove all non animated colors
+						setColor(surface, i, 255, 0, 255);
+					}
+				}
+				generateAnimationFrame(surface, frame);
+				resizeSurface(surface, 73, 73, 64, 64);
+
+				SDL_BlitSurface(surface, 0, output, &dest);
+				SDL_FreeSurface(surface);
+				dest.x += 64;
+			}
+			
+			savePCX(output, path + "overlay_" + szNum1 + ".pcx");
+			SDL_FreeSurface(output);
+		}
+		END_INSTALL_FILE(path + "overlay_" + szNum1 + ".pcx")
 	}
 	copyFileFromRes("A_COMMAN", path + "store.pcx");
 	copyFileFromRes("P_COMMAN", path + "info.pcx");
@@ -1165,6 +1204,11 @@ int installVehicleGraphics()
 	{
 		sprintf( szNum, "%d", i);
 		copyFileFromRes_rpc("SUBMARNE", path + "img" + szNum + ".pcx", i + 8);
+	}
+	for (int i = 0; i < 8; i++)
+	{
+		sprintf(szNum, "%d", i);
+		copyFileFromRes_rpc("SUBMARNE", path + "img_stealth" + szNum + ".pcx", i);
 	}
 	copyFileFromRes("A_SUB", path + "store.pcx");
 	copyFileFromRes("P_SUB", path + "info.pcx");

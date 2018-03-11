@@ -171,10 +171,11 @@ int savePCX_32bpp(SDL_Surface* surface, string fileName)
 
 	for ( Index = 0; Index < surface->h * surface->w - 1; Index++ )
 	{
+		Uint32 sourceIndex = (Index / surface->w) * (surface->pitch/4) + (Index % surface->w);
 		//search color in table
 		for ( j = 0; j < NrColors; j++ )
 		{
-			if (colors[j] == surface_data[Index])
+			if (colors[j] == surface_data[sourceIndex])
 			{
 				bild[Index] = j;
 				break;
@@ -189,16 +190,20 @@ int savePCX_32bpp(SDL_Surface* surface, string fileName)
 				//to many colors, table full
 				throw InstallException( string("Couldn't convert image to 8 bpp, color table full") + TEXT_FILE_LF );
 			}
-			colors[NrColors] = surface_data[Index];
+			colors[NrColors] = surface_data[sourceIndex];
 			bild[Index] = NrColors;
 			NrColors++;
+		}
+		if (bild[Index] > 200)
+		{
+			int ichBrechInsEssen = 0;
 		}
 	}
 
 	// RLC berechnen
 	for (z = 0; z <= Z_Index; z++)
 	{
-		Index = (long)z * (long)surface->pitch;
+		Index = (long)z * (long)surface->w;
 		s = 0;
 		while (s <= S_Index)
 		{
