@@ -52,7 +52,7 @@ cMapView::cMapView(std::shared_ptr<const cMap> map_, std::shared_ptr<const cPlay
 			}
 		});
 
-		connectionManager.connect(player->getScanMap().positionsInRange, [&](const std::vector<const cPosition>& positions)
+		connectionManager.connect(player->getScanMap().positionsInRange, [&](const std::vector<cPosition>& positions)
 		{
 			// scan area of player has changed
 			std::set<const cUnit*> units;
@@ -90,7 +90,7 @@ cMapView::cMapView(std::shared_ptr<const cMap> map_, std::shared_ptr<const cPlay
 			}
 		});
 
-		connectionManager.connect(player->getScanMap().positionsOutOfRange, [&](const std::vector<const cPosition>& positions)
+		connectionManager.connect(player->getScanMap().positionsOutOfRange, [&](const std::vector<cPosition>& positions)
 		{
 			// scan area of player has changed
 			std::set<const cUnit*> units;
