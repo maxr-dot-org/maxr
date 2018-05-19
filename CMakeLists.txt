@@ -98,7 +98,6 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
   endif()
   
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-  add_definitions(/DNOMINMAX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /bigobj")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /ZI /bigobj")
   set(RESSOURCE_FILE src/maxr.rc)
@@ -161,7 +160,8 @@ add_executable(maxr ${maxr_SRCS} ${RESSOURCE_FILE})
 
 # set linker flags for target
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-  set_target_properties(maxr PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
+  #set_target_properties(maxr PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
+  target_compile_definitions(maxr PRIVATE "NOMINMAX" "_USE_MATH_DEFINES")
 endif()
 
 # ============================================

@@ -37,7 +37,7 @@ void cRangeMap::resize(const cPosition& size_)
 //------------------------------------------------------------------------------
 void cRangeMap::add(int range, const cPosition& position, int unitSize, bool square /*= false*/)
 {
-	std::vector<const cPosition> positions;
+	std::vector<cPosition> positions;
 
 	const int minx = std::max(position.x() - range, 0);
 	const int maxx = std::min(position.x() + range, size.x() - 1);
@@ -68,8 +68,8 @@ void cRangeMap::add(int range, const cPosition& position, int unitSize, bool squ
 //------------------------------------------------------------------------------
 void cRangeMap::update(int range, const cPosition& oldPosition, const cPosition& newPosition, int oldUnitSize, int newUnitSize, bool square /*= false*/)
 {
-	std::vector<const cPosition> inPositions;
-	std::vector<const cPosition> outPositions;
+	std::vector<cPosition> inPositions;
+	std::vector<cPosition> outPositions;
 
 	const int minx = std::max(std::min(oldPosition.x(), newPosition.x()) - range, 0);
 	const int maxx = std::min(std::max(oldPosition.x(), newPosition.x()) + range, size.x() - 1);
@@ -114,8 +114,8 @@ void cRangeMap::update(int range, const cPosition& oldPosition, const cPosition&
 //------------------------------------------------------------------------------
 void cRangeMap::update(int oldRange, int newRange, const cPosition& position, int unitSize, bool square /*= false*/)
 {
-	std::vector<const cPosition> inPositions;
-	std::vector<const cPosition> outPositions;
+	std::vector<cPosition> inPositions;
+	std::vector<cPosition> outPositions;
 
 	const int maxRange = std::max(oldRange, newRange);
 	const int minx = std::max(position.x() - maxRange, 0);
@@ -161,7 +161,7 @@ void cRangeMap::update(int oldRange, int newRange, const cPosition& position, in
 //------------------------------------------------------------------------------
 void cRangeMap::remove(int range, const cPosition& position, int unitSize, bool square /*= false*/)
 {
-	std::vector<const cPosition> positions;
+	std::vector<cPosition> positions;
 
 	const int minx = std::max(position.x() - range, 0);
 	const int maxx = std::min(position.x() + range, size.x() - 1);
@@ -221,7 +221,7 @@ void cRangeMap::subtract(const std::vector<uint16_t>& data)
 {
 	assert(map.size() == data.size());
 
-	std::vector<const cPosition> positions;
+	std::vector<cPosition> positions;
 
 	for (size_t i = 0; i < data.size(); i++)
 	{

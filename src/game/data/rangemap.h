@@ -51,8 +51,8 @@ public:
 	uint32_t getChecksum(uint32_t crc) const;
 
 	/** Triggered, when a position comes in range or goes out of range, by an add/update/remove */
-	mutable cSignal<void(const std::vector<const cPosition>& positions)> positionsInRange;
-	mutable cSignal<void(const std::vector<const cPosition>& positions)> positionsOutOfRange;
+	mutable cSignal<void(const std::vector<cPosition>& positions)> positionsInRange;
+	mutable cSignal<void(const std::vector<cPosition>& positions)> positionsOutOfRange;
 	/** Triggered after an operation changed at least the status of one position */
 	mutable cSignal<void()> changed;
 
