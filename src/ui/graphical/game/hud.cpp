@@ -247,7 +247,7 @@ AutoSurface cHud::generateSurface()
 			dest.x = panelLeftWidth;
 			dest.y = 0;
 			SDL_BlitSurface (tmpSurface.get(), &src, surface.get(), &dest);
-			src.x = 1275;
+			src.x = tmpSurface->w - 19;
 			src.w = 18;
 			src.h = panelTopHeight;
 			dest.x = surface->w - panelTopHeight;
@@ -274,12 +274,12 @@ AutoSurface cHud::generateSurface()
 			dest.x = panelLeftWidth;
 			dest.y = surface->h - 24;
 			SDL_BlitSurface (tmpSurface.get(), &src, surface.get(), &dest);
-			src.x = 1275;
+			src.x = tmpSurface->w - 41;
 			src.w = 23;
 			src.h = 24;
 			dest.x = surface->w - 23;
 			SDL_BlitSurface (tmpSurface.get(), &src, surface.get(), &dest);
-			src.x = 1299;
+			src.x = tmpSurface->w - 17;
 			src.w = 16;
 			src.h = 22;
 			dest.x = panelLeftWidth - 16;
