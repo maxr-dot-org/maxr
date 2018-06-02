@@ -277,33 +277,6 @@ void cServer::doGameActions()
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_CHANGE_RESOURCES (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_CHANGE_RESOURCES);
-
-	cBuilding* Building = getBuildingFromID (message.popInt16());
-	if (Building == nullptr) return;
-
-	const unsigned int iMetalProd = message.popInt16();
-	const unsigned int iOilProd = message.popInt16();
-	const unsigned int iGoldProd = message.popInt16();
-
-	cSubBase& subBase = *Building->subBase;
-
-	subBase.setMetalProd (0);
-	subBase.setOilProd (0);
-	subBase.setGoldProd (0);
-
-	// no need to verify the values.
-	// They will be reduced automatically, if necessary
-	subBase.setMetalProd (iMetalProd);
-	subBase.setGoldProd (iGoldProd);
-	subBase.setOilProd (iOilProd);
-
-	//sendSubbaseValues (*this, subBase, *Building->getOwner());
-}
-
-//------------------------------------------------------------------------------
 void cServer::handleNetMessage_GAME_EV_WANT_MARK_LOG (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_MARK_LOG);
@@ -814,7 +787,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 
 	switch (message.iType)
 	{
-		case GAME_EV_CHANGE_RESOURCES : handleNetMessage_GAME_EV_CHANGE_RESOURCES (message); break;
 		case GAME_EV_WANT_MARK_LOG: handleNetMessage_GAME_EV_WANT_MARK_LOG (message); break;
 		case GAME_EV_WANT_VEHICLE_UPGRADE: handleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (message); break;
 		case GAME_EV_WANT_START_CLEAR: handleNetMessage_GAME_EV_WANT_START_CLEAR (message); break;

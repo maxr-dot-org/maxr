@@ -44,8 +44,7 @@ struct sID;
 enum SERVER_EVENT_TYPES
 {
 	// Types between FIRST_SERVER_MESSAGE and FIRST_CLIENT_MESSAGE are for the serverserver
-	GAME_EV_CHANGE_RESOURCES = 208,		// a client wants to change his resource production
-	GAME_EV_WANT_MARK_LOG,			// marks a position in the log file
+	GAME_EV_WANT_MARK_LOG = 209,			// marks a position in the log file
 	GAME_EV_WANT_VEHICLE_UPGRADE,	// a client wants to upgrade a vehicle in a building to the newest version
 	GAME_EV_WANT_START_CLEAR,		// a bulldowzer wants to start clearing the field under his position
 	GAME_EV_WANT_STOP_CLEAR,		// a bulldowzer wants to stop the clearing

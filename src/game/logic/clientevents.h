@@ -45,8 +45,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_SPECIFIC_UNIT_DATA,		// more specific unit values which are only for the owner
 	GAME_EV_UNIT_UPGRADE_VALUES,	// message contains upgraded values for a unit
 	GAME_EV_RESOURCES,				// a message with new scaned resources for a client
-	GAME_EV_SUBBASE_VALUES,			// the values of a subbase
-	GAME_EV_MINE_PRODUCE_VALUES,	// the produce values of a mine
 	GAME_EV_MARK_LOG,				// marks a position in the logfile
 	GAME_EV_ADD_RUBBLE,				// adds a rubble field to the client
 	GAME_EV_CLEAR_ANSWER,			// the answer to a clearing request
@@ -97,11 +95,6 @@ void sendWantBuildList (const cClient& client, const cBuilding& building, const 
 *@author alzi alias DoctorDeath
 */
 void sendWantExitFinishedVehicle (const cClient& client, const cBuilding& building, const cPosition& position);
-/**
-* sends that the client wants to change the produce values in the minemanager of a building
-*@author alzi alias DoctorDeath
-*/
-void sendChangeResources (const cClient& client, const cBuilding& building, int iMetalProd, int iOilProd, int iGoldProd);
 /**
 * sends that the client wants to start clearing the field under the unit
 *@author alzi alias DoctorDeath

@@ -93,16 +93,6 @@ void sendChatMessageToServer (const cClient& client, const string& msg, const cP
 	client.sendNetMessage (netMsg);
 }
 
-void sendChangeResources (const cClient& client, const cBuilding& building, int iMetalProd, int iOilProd, int iGoldProd)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_CHANGE_RESOURCES);
-	message->pushInt16 (iGoldProd);
-	message->pushInt16 (iOilProd);
-	message->pushInt16 (iMetalProd);
-	message->pushInt16 (building.iID);
-	client.sendNetMessage (std::move (message));
-}
-
 void sendWantStartClear (const cClient& client, const cVehicle& vehicle)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_START_CLEAR);

@@ -115,6 +115,7 @@
 #include "game/logic/action/actionactivate.h"
 #include "game/data/report/unit/savedreportdetected.h"
 #include "game/logic/action/actionrepairreload.h"
+#include "game/logic/action/actionressourcedistribution.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -825,7 +826,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (changeResourceDistributionTriggered, [&] (const cBuilding & building, int metalProduction, int oilProduction, int goldProduction)
 	{
-		sendChangeResources (client, building, metalProduction, oilProduction, goldProduction);
+		client.sendNetMessage(cActionRessourceDistribution(building, goldProduction, oilProduction, metalProduction));
 	});
 	clientSignalConnectionManager.connect (changeResearchSettingsTriggered, [&] (const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings)
 	{
@@ -1637,7 +1638,7 @@ void cGameGuiController::showResourceDistributionDialog (const cUnit& unit)
 
 	const auto& building = static_cast<const cBuilding&> (unit);
 
-	auto resourceDistributionWindow = application.show (std::make_shared<cWindowResourceDistribution> (*building.subBase, getTurnTimeClock()));
+	auto resourceDistributionWindow = application.show (std::make_shared<cWindowResourceDistribution> (building, getTurnTimeClock()));
 	resourceDistributionWindow->done.connect ([&, resourceDistributionWindow]()
 	{
 		changeResourceDistributionTriggered (building, resourceDistributionWindow->getMetalProduction(), resourceDistributionWindow->getOilProduction(), resourceDistributionWindow->getGoldProduction());
