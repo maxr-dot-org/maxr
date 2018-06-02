@@ -1052,7 +1052,7 @@ bool cVehicle::canLoad (const cVehicle* vehicle, bool checkPosition) const
 //-----------------------------------------------------------------------------
 /** Checks, if an object can get ammunition. */
 //-----------------------------------------------------------------------------
-bool cVehicle::canSupply (const cMapView& map, const cPosition& position, int supplyType) const
+bool cVehicle::canSupply (const cMapView& map, const cPosition& position, eSupplyType supplyType) const
 {
 	if (map.isValidPosition (position) == false) return false;
 
@@ -1065,9 +1065,9 @@ bool cVehicle::canSupply (const cMapView& map, const cPosition& position, int su
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::canSupply (const cUnit* unit, int supplyType) const
+bool cVehicle::canSupply (const cUnit* unit, eSupplyType supplyType) const
 {
-	if (unit == 0)
+	if (unit == nullptr || unit == this)
 		return false;
 
 	if (getStoredResources() <= 0)
@@ -1079,18 +1079,24 @@ bool cVehicle::canSupply (const cUnit* unit, int supplyType) const
 	if (unit->isAVehicle() && unit->getStaticUnitData().factorAir > 0 && static_cast<const cVehicle*> (unit)->getFlightHeight() > 0)
 		return false;
 
+	if (unit->isAVehicle() && static_cast<const cVehicle*> (unit)->isUnitMoving())
+		return false;
+
+	if (unit->isAttacking())
+		return false;
+
 	switch (supplyType)
 	{
-		case SUPPLY_TYPE_REARM:
-			if (unit == this || unit->getStaticUnitData().canAttack == false || unit->data.getAmmo() >= unit->data.getAmmoMax()
-				|| (unit->isAVehicle() && static_cast<const cVehicle*> (unit)->isUnitMoving())
-				|| unit->isAttacking())
+		case eSupplyType::REARM:
+			if (unit->getStaticUnitData().canAttack == false || unit->data.getAmmo() >= unit->data.getAmmoMax())
+				return false;
+			if (!staticData->canRearm)
 				return false;
 			break;
-		case SUPPLY_TYPE_REPAIR:
-			if (unit == this || unit->data.getHitpoints() >= unit->data.getHitpointsMax()
-				|| (unit->isAVehicle() && static_cast<const cVehicle*> (unit)->isUnitMoving())
-				|| unit->isAttacking())
+		case eSupplyType::REPAIR:
+			if (unit->data.getHitpoints() >= unit->data.getHitpointsMax())
+				return false;
+			if (!staticData->canRepair)
 				return false;
 			break;
 		default:

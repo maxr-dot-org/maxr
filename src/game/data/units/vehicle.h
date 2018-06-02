@@ -141,6 +141,11 @@ private:
 	sVehicleUIData& operator= (const sVehicleUIData& other) MAXR_DELETE_FUNCTION;
 };
 
+enum class eSupplyType {
+	REARM,
+	REPAIR
+};
+
 //-----------------------------------------------------------------------------
 /** Class for a vehicle-unit of a player */
 //-----------------------------------------------------------------------------
@@ -189,12 +194,10 @@ public:
 	virtual bool canExitTo(const cPosition& position, const cMapView& map, const cStaticUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
 	bool canLoad(const cPosition& position, const cMapView& map, bool checkPosition = true) const;
 	virtual bool canLoad(const cVehicle* Vehicle, bool checkPosition = true) const MAXR_OVERRIDE_FUNCTION;
-#define SUPPLY_TYPE_REARM 0
-#define SUPPLY_TYPE_REPAIR 1
-	/// supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
-	bool canSupply (const cMapView& map, const cPosition& position, int supplyType) const;
-	/// supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
-	bool canSupply (const cUnit* unit, int supplyType) const;
+	bool canSupply (const cMapView& map, const cPosition& position, eSupplyType supplyType) const;
+	virtual bool canSupply (const cUnit* unit, eSupplyType supplyType) const MAXR_OVERRIDE_FUNCTION;
+	
+
 	void calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<int, 3>& turboBuildCosts, int buildCosts) const;
 	/**
 	* lays a mine at the current position of the unit.

@@ -114,6 +114,7 @@
 #include "game/logic/action/actionload.h"
 #include "game/logic/action/actionactivate.h"
 #include "game/data/report/unit/savedreportdetected.h"
+#include "game/logic/action/actionrepairreload.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -808,11 +809,11 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (reloadTriggered, [&] (const cUnit & sourceUnit, const cUnit & destinationUnit)
 	{
-		sendWantSupply (client, destinationUnit.iID, destinationUnit.isAVehicle(), sourceUnit.iID, sourceUnit.isAVehicle(), SUPPLY_TYPE_REARM);
+		client.sendNetMessage(cActionRepairReload(sourceUnit, destinationUnit, eSupplyType::REARM));
 	});
 	clientSignalConnectionManager.connect (repairTriggered, [&] (const cUnit & sourceUnit, const cUnit & destinationUnit)
 	{
-		sendWantSupply (client, destinationUnit.iID, destinationUnit.isAVehicle(), sourceUnit.iID, sourceUnit.isAVehicle(), SUPPLY_TYPE_REPAIR);
+		client.sendNetMessage(cActionRepairReload(sourceUnit, destinationUnit, eSupplyType::REPAIR));
 	});
 	clientSignalConnectionManager.connect (upgradeTriggered, [&] (const cUnit & unit, size_t index)
 	{
@@ -1058,11 +1059,11 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredSupplyAmmo, [&] (const cUnit & sourceUnit, const cUnit & destinationUnit)
 	{
-		sendWantSupply (client, destinationUnit.iID, destinationUnit.isAVehicle(), sourceUnit.iID, sourceUnit.isAVehicle(), SUPPLY_TYPE_REARM);
+		client.sendNetMessage(cActionRepairReload(sourceUnit, destinationUnit, eSupplyType::REARM));
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredRepair, [&] (const cUnit & sourceUnit, const cUnit & destinationUnit)
 	{
-		sendWantSupply (client, destinationUnit.iID, destinationUnit.isAVehicle(), sourceUnit.iID, sourceUnit.isAVehicle(), SUPPLY_TYPE_REPAIR);
+		client.sendNetMessage(cActionRepairReload(sourceUnit, destinationUnit, eSupplyType::REPAIR));
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredAttack, [&] (const cUnit & unit, const cPosition & position)
 	{
@@ -1287,7 +1288,7 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (client.unitSuppliedWithAmmo, [&] (const cUnit & unit)
+	clientSignalConnectionManager.connect (model.unitSuppliedWithAmmo, [&] (const cUnit & unit)
 	{
 		if (mapView->canSeeUnit(unit))
 		{
@@ -1299,7 +1300,7 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (client.unitRepaired, [&] (const cUnit & unit)
+	clientSignalConnectionManager.connect (model.unitRepaired, [&] (const cUnit & unit)
 	{
 		if (mapView->canSeeUnit(unit))
 		{

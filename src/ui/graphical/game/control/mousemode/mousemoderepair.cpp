@@ -70,7 +70,7 @@ bool cMouseModeRepair::canExecuteAction (const cPosition& mapPosition) const
 
 	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 
-	return selectedVehicle && selectedVehicle->canSupply (*map, mapPosition, SUPPLY_TYPE_REPAIR);
+	return selectedVehicle && selectedVehicle->canSupply (*map, mapPosition, eSupplyType::REPAIR);
 }
 
 //------------------------------------------------------------------------------

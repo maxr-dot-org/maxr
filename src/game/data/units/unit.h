@@ -36,6 +36,7 @@ class cVehicle;
 template<typename> class cBox;
 class cSoundManager;
 struct sTerrain;
+enum class eSupplyType;
 
 //-----------------------------------------------------------------------------
 class cUnit
@@ -58,6 +59,7 @@ public:
 	virtual bool canLoad(const cVehicle* vehicle, bool checkPosition = true) const = 0;
 	virtual bool canExitTo (const cPosition& position, const cMapView& map, const cStaticUnitData& unitData) const = 0;
 	virtual bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const = 0;
+	virtual bool canSupply(const cUnit* unit, eSupplyType supplyType) const = 0;
 	virtual std::string getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData& unitsData) const = 0;
 
 	void storeVehicle(cVehicle& vehicle, cMap& map);

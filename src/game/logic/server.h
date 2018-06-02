@@ -236,7 +236,6 @@ private:
 	void handleNetMessage_MU_MSG_READY_TO_START (cNetMessage& message);
 	void handleNetMessage_GAME_EV_CHANGE_RESOURCES (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_MARK_LOG (cNetMessage& message);
-	void handleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message);

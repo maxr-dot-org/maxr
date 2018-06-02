@@ -147,9 +147,6 @@ public:
 	mutable cSignal<void (const cUnit&)> unitHasDisabledSuccessfully;
 	mutable cSignal<void (const cUnit&)> unitStealDisableFailed;
 
-	mutable cSignal<void (const cUnit&)> unitSuppliedWithAmmo;
-	mutable cSignal<void (const cUnit&)> unitRepaired;
-
 	mutable cSignal<void (const cUnit&)> unitDisabled;
 	mutable cSignal<void (const cUnit&)> unitStolen; //TODO: was in addUnit()
 
@@ -171,7 +168,6 @@ private:
 	void HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_MARK_LOG (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message);

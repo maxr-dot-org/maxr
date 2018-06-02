@@ -48,7 +48,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_SUBBASE_VALUES,			// the values of a subbase
 	GAME_EV_MINE_PRODUCE_VALUES,	// the produce values of a mine
 	GAME_EV_MARK_LOG,				// marks a position in the logfile
-	GAME_EV_SUPPLY,					// rearms or repairs a unit
 	GAME_EV_ADD_RUBBLE,				// adds a rubble field to the client
 	GAME_EV_CLEAR_ANSWER,			// the answer to a clearing request
 	GAME_EV_STOP_CLEARING,			// a bulldowzer has to stop clearing
@@ -103,11 +102,6 @@ void sendWantExitFinishedVehicle (const cClient& client, const cBuilding& buildi
 *@author alzi alias DoctorDeath
 */
 void sendChangeResources (const cClient& client, const cBuilding& building, int iMetalProd, int iOilProd, int iGoldProd);
-/**
-* sends that the client wants to rearm or repair a unit by an rearm-/repairable vehicle
-*@author alzi alias DoctorDeath
-*/
-void sendWantSupply (const cClient& client, int iDestID, bool bDestVehicle, int iSrcID, bool bSrcVehicle, int iType);
 /**
 * sends that the client wants to start clearing the field under the unit
 *@author alzi alias DoctorDeath

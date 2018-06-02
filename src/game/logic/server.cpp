@@ -314,108 +314,6 @@ void cServer::handleNetMessage_GAME_EV_WANT_MARK_LOG (cNetMessage& message)
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_WANT_SUPPLY);
-
-	cVehicle* SrcVehicle = nullptr;
-	cVehicle* DestVehicle = nullptr;
-	cBuilding* SrcBuilding = nullptr;
-	cBuilding* DestBuilding = nullptr;
-
-	// get the units
-	const int iType = message.popChar();
-	if (iType > SUPPLY_TYPE_REPAIR) return;   // unknown type
-	if (message.popBool()) SrcVehicle = getVehicleFromID (message.popInt16());
-	else SrcBuilding = getBuildingFromID (message.popInt16());
-	if (message.popBool()) DestVehicle = getVehicleFromID (message.popInt16());
-	else DestBuilding = getBuildingFromID (message.popInt16());
-
-	if ((!SrcVehicle && !SrcBuilding) || (!DestVehicle && !DestBuilding)) return;
-
-	// check whether the supply is ok and reduce cargo of sourceunit
-	int iValue;
-	if (SrcVehicle)
-	{
-		if (DestVehicle && !SrcVehicle->canSupply (DestVehicle, iType)) return;
-		if (DestBuilding && !SrcVehicle->canSupply (DestBuilding, iType)) return;
-
-		// do the supply
-		if (iType == SUPPLY_TYPE_REARM)
-		{
-			SrcVehicle->setStoredResources (SrcVehicle->getStoredResources() - 1);
-			iValue = DestVehicle ? DestVehicle->data.getAmmoMax() : DestBuilding->data.getAmmoMax();
-		}
-		else
-		{
-			cDynamicUnitData* DestData = DestVehicle ? &DestVehicle->data : &DestBuilding->data;
-			// reduce cargo for repair and calculate maximal repair value
-			iValue = DestData->getHitpoints();
-			while (SrcVehicle->getStoredResources() > 0 && iValue < DestData->getHitpointsMax())
-			{
-				iValue += Round (((float)DestData->getHitpointsMax() / DestData->getBuildCost()) * 4);
-				SrcVehicle->setStoredResources (SrcVehicle->getStoredResources() - 1);
-			}
-			iValue = std::min (DestData->getHitpointsMax(), iValue);
-		}
-		// the changed values aren't interesting for enemy players,
-		// so only send the new data to the owner
-		//sendUnitData (*this, *SrcVehicle, *SrcVehicle->getOwner());
-	}
-	else
-	{
-		// buildings can only supply vehicles
-		if (!DestVehicle) return;
-
-		// do the supply
-		if (iType == SUPPLY_TYPE_REARM)
-		{
-			if (SrcBuilding->subBase->getMetalStored() < 1) return;
-			SrcBuilding->subBase->addMetal (-1);
-			iValue = DestVehicle->data.getAmmoMax();
-		}
-		else
-		{
-			// reduce cargo for repair and calculate maximal repair value
-			iValue = DestVehicle->data.getHitpoints();
-			while (SrcBuilding->subBase->getMetalStored() > 0 && iValue < DestVehicle->data.getHitpointsMax())
-			{
-				iValue += Round (((float) DestVehicle->data.getHitpointsMax() / DestVehicle->data.getBuildCost()) * 4);
-				SrcBuilding->subBase->addMetal (-1);
-			}
-			iValue = std::min (DestVehicle->data.getHitpointsMax(), iValue);
-		}
-		// the changed values aren't interesting for enemy players,
-		// so only send the new data to the owner
-		//sendUnitData (*this, *SrcBuilding, *SrcBuilding->getOwner());
-	}
-
-	// repair or reload the destination unit
-	if (DestVehicle)
-	{
-		if (iType == SUPPLY_TYPE_REARM) DestVehicle->data.setAmmo (DestVehicle->data.getAmmoMax());
-		else DestVehicle->data.setHitpoints (iValue);
-
-		sendSupply (*this, DestVehicle->iID, true, iValue, iType, *DestVehicle->getOwner());
-
-		// send unitdata to the players who are not the owner
-		//for (size_t i = 0; i != DestVehicle->seenByPlayerList.size(); ++i)
-			//sendUnitData (*this, *DestVehicle, *DestVehicle->seenByPlayerList[i]);
-	}
-	else
-	{
-		if (iType == SUPPLY_TYPE_REARM) DestBuilding->data.setAmmo (DestBuilding->data.getAmmoMax());
-		else DestBuilding->data.setHitpoints (iValue);
-
-		sendSupply (*this, DestBuilding->iID, false, iValue, iType, *DestBuilding->getOwner());
-
-		// send unitdata to the players who are not the owner
-		//for (size_t i = 0; i != DestBuilding->seenByPlayerList.size(); ++i)
-			//sendUnitData (*this, *DestBuilding, *DestBuilding->seenByPlayerList[i]);
-	}
-}
-
-//------------------------------------------------------------------------------
 void cServer::handleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_VEHICLE_UPGRADE);
@@ -918,7 +816,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 	{
 		case GAME_EV_CHANGE_RESOURCES : handleNetMessage_GAME_EV_CHANGE_RESOURCES (message); break;
 		case GAME_EV_WANT_MARK_LOG: handleNetMessage_GAME_EV_WANT_MARK_LOG (message); break;
-		case GAME_EV_WANT_SUPPLY: handleNetMessage_GAME_EV_WANT_SUPPLY (message); break;
 		case GAME_EV_WANT_VEHICLE_UPGRADE: handleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (message); break;
 		case GAME_EV_WANT_START_CLEAR: handleNetMessage_GAME_EV_WANT_START_CLEAR (message); break;
 		case GAME_EV_WANT_STOP_CLEAR: handleNetMessage_GAME_EV_WANT_STOP_CLEAR (message); break;

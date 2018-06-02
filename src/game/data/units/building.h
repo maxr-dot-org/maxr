@@ -192,6 +192,7 @@ public:
 	virtual bool canExitTo (const cPosition& position, const cMapView& map, const cStaticUnitData& vehicleData) const MAXR_OVERRIDE_FUNCTION;
 	bool canLoad(const cPosition& position, const cMapView& map, bool checkPosition = true) const;
 	virtual bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const MAXR_OVERRIDE_FUNCTION;
+	virtual bool canSupply(const cUnit* unit, eSupplyType supplyType) const MAXR_OVERRIDE_FUNCTION;
 
 	/**
 	* draws the main image of the building onto the given surface

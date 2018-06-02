@@ -899,6 +899,39 @@ bool cBuilding::canLoad (const cVehicle* vehicle, bool checkPosition) const
 	return true;
 }
 
+//------------------------------------------------------------------------------
+bool cBuilding::canSupply(const cUnit* unit, eSupplyType supplyType) const
+{
+	if (unit == nullptr || unit->isABuilding())
+		return false;
+
+	if (subBase->getMetalStored() <= 0)
+		return false;
+
+	if (!Contains(storedUnits, static_cast<const cVehicle*>(unit)))
+		return false;
+
+	switch (supplyType)
+	{
+	case eSupplyType::REARM:
+		if (unit->getStaticUnitData().canAttack == false || unit->data.getAmmo() >= unit->data.getAmmoMax())
+			return false;
+		if (!staticData->canRearm)
+			return false;
+		break;
+	case eSupplyType::REPAIR:
+		if (unit->data.getHitpoints() >= unit->data.getHitpointsMax())
+			return false;
+		if (!staticData->canRepair)
+			return false;
+		break;
+	default:
+		return false;
+	}
+
+	return true;
+}
+
 //-------------------------------------------------------------------------------
 // Draws big symbols for the info menu:
 //-------------------------------------------------------------------------------

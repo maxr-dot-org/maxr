@@ -103,17 +103,6 @@ void sendChangeResources (const cClient& client, const cBuilding& building, int 
 	client.sendNetMessage (std::move (message));
 }
 
-void sendWantSupply (const cClient& client, int iDestID, bool bDestVehicle, int iSrcID, bool bSrcVehicle, int iType)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_SUPPLY);
-	message->pushInt16 (iDestID);
-	message->pushBool (bDestVehicle);
-	message->pushInt16 (iSrcID);
-	message->pushBool (bSrcVehicle);
-	message->pushChar (iType);
-	client.sendNetMessage (std::move (message));
-}
-
 void sendWantStartClear (const cClient& client, const cVehicle& vehicle)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_START_CLEAR);

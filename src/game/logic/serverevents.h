@@ -46,7 +46,6 @@ enum SERVER_EVENT_TYPES
 	// Types between FIRST_SERVER_MESSAGE and FIRST_CLIENT_MESSAGE are for the serverserver
 	GAME_EV_CHANGE_RESOURCES = 208,		// a client wants to change his resource production
 	GAME_EV_WANT_MARK_LOG,			// marks a position in the log file
-	GAME_EV_WANT_SUPPLY,			// a client wants to rearm or repair a unit
 	GAME_EV_WANT_VEHICLE_UPGRADE,	// a client wants to upgrade a vehicle in a building to the newest version
 	GAME_EV_WANT_START_CLEAR,		// a bulldowzer wants to start clearing the field under his position
 	GAME_EV_WANT_STOP_CLEAR,		// a bulldowzer wants to stop the clearing
@@ -85,17 +84,6 @@ void sendSpecificUnitData (cServer& server, const cVehicle& Vehicle);
 */
 void sendVehicleResources (cServer& server, const cVehicle& vehicle);
 void sendResources (cServer& server, const cPlayer& player);
-
-/**
-* sends that a unit has to be rearmed or repaired
-*@author alzi alias DoctorDeath
-*@param iDestID the ID of the destination unit
-*@param bDestVehicle true if the destination unit is a vehicle
-*@param iValue the new ammo or hitpoint value to be set
-*@param iType SUPPLY_TYPE_REARM or SUPPLY_TYPE_REPAIR
-*@param receiver The player, who will receive the message
-*/
-void sendSupply (cServer& server, int iDestID, bool bDestVehicle, int iValue, int iType, const cPlayer& receiver);
 
 /**
 * sends whether and how the unit has to clean the field

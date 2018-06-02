@@ -341,61 +341,6 @@ void cClient::HandleNetMessage_GAME_EV_MARK_LOG (cNetMessage& message)
 	Log.write ("=============================================================================================", cLog::eLOG_TYPE_NET_DEBUG);
 }
 
-void cClient::HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_SUPPLY);
-
-	const int iType = message.popChar();
-	cUnit* DestUnit = nullptr;
-	if (message.popBool())
-	{
-		const int iID = message.popInt16();
-		cVehicle* DestVehicle = getVehicleFromID (iID);
-		DestUnit = DestVehicle;
-		if (!DestVehicle)
-		{
-			Log.write (" Client: Can't supply vehicle: Unknown vehicle with ID: " + iToStr (iID), cLog::eLOG_TYPE_NET_WARNING);
-			// TODO: Request sync of vehicle
-			return;
-		}
-		if (iType == SUPPLY_TYPE_REARM) DestVehicle->data.setAmmo (message.popInt16());
-		else DestVehicle->data.setHitpoints (message.popInt16());
-
-		//if (DestVehicle->isUnitLoaded ())
-		//{
-		//	// get the building which has loaded the unit
-		//	cBuilding* Building = DestVehicle->owner->BuildingList;
-		//	for (; Building; Building = Building->next)
-		//	{
-		//		if (Contains (Building->storedUnits, DestVehicle)) break;
-		//	}
-		//}
-	}
-	else
-	{
-		const int iID = message.popInt16();
-		cBuilding* DestBuilding = getBuildingFromID (iID);
-		DestUnit = DestBuilding;
-		if (!DestBuilding)
-		{
-			Log.write (" Client: Can't supply building: Unknown building with ID: " + iToStr (iID), cLog::eLOG_TYPE_NET_WARNING);
-			// TODO: Request sync of building
-			return;
-		}
-		if (iType == SUPPLY_TYPE_REARM) DestBuilding->data.setAmmo (message.popInt16());
-		else DestBuilding->data.setHitpoints (message.popInt16());
-	}
-	assert (DestUnit != nullptr);
-	if (iType == SUPPLY_TYPE_REARM)
-	{
-		unitSuppliedWithAmmo (*DestUnit);
-	}
-	else
-	{
-		unitRepaired (*DestUnit);
-	}
-}
-
 void cClient::HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_ADD_RUBBLE);
@@ -872,7 +817,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_SPECIFIC_UNIT_DATA: HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (message); break;
 		case GAME_EV_RESOURCES: HandleNetMessage_GAME_EV_RESOURCES (message); break;
 		case GAME_EV_MARK_LOG: HandleNetMessage_GAME_EV_MARK_LOG (message); break;
-		case GAME_EV_SUPPLY: HandleNetMessage_GAME_EV_SUPPLY (message); break;
 		case GAME_EV_ADD_RUBBLE: HandleNetMessage_GAME_EV_ADD_RUBBLE (message); break;
 		case GAME_EV_CLEAR_ANSWER: HandleNetMessage_GAME_EV_CLEAR_ANSWER (message); break;
 		case GAME_EV_STOP_CLEARING: HandleNetMessage_GAME_EV_STOP_CLEARING (message); break;

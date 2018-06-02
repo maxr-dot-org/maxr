@@ -199,17 +199,6 @@ void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver)
 }
 
 //------------------------------------------------------------------------------
-void sendSupply (cServer& server, int iDestID, bool bDestVehicle, int iValue, int iType, const cPlayer& receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_SUPPLY);
-	message->pushInt16 (iValue);
-	message->pushInt16 (iDestID);
-	message->pushBool (bDestVehicle);
-	message->pushChar (iType);
-	server.sendNetMessage (std::move (message), &receiver);
-}
-
-//------------------------------------------------------------------------------
 void sendClearAnswer (cServer& server, int answertype, const cVehicle& vehicle, int turns, const cPosition& bigPosition, const cPlayer* receiver)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_CLEAR_ANSWER);

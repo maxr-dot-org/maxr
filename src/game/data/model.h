@@ -128,6 +128,9 @@ public:
 	mutable cSignal<void (const cUnit& storingUnit, const cUnit& storedUnit)> unitStored;
 	mutable cSignal<void (const cUnit& storingUnit, const cUnit& storedUnit)> unitActivated;
 
+	mutable cSignal<void(const cUnit&)> unitSuppliedWithAmmo;
+	mutable cSignal<void(const cUnit&)> unitRepaired;
+
 
 	template<typename T>
 	void save(T& archive)
