@@ -96,7 +96,7 @@ void cActionRepairReload::execute(cModel& model) const
 			auto subBase = static_cast<cBuilding*>(sourceUnit)->subBase;
 			subBase->addMetal(availableMetal - subBase->getMetalStored());
 		}
-		destUnit->data.setHitpoints(newHitpoints);
+		destUnit->data.setHitpoints(std::min(newHitpoints, destUnit->data.getHitpointsMax()));
 
 	}
 
