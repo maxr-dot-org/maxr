@@ -17,61 +17,43 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef game_logic_actionH
-#define game_logic_actionH
+#include "actionressourcedistribution.h"
 
-#include "netmessage2.h"
+#include "game/data/model.h"
 
-class cAction : public cNetMessage2
+//------------------------------------------------------------------------------
+cActionRessourceDistribution::cActionRessourceDistribution(const cBuilding& building,	int goldProd, int oilProd, int metalProd) :
+	cAction(eActiontype::ACTION_RESSOURCE_DISTRIBUTION),
+	buildingId(building.getId()),
+	goldProd(goldProd),
+	oilProd(oilProd),
+	metalProd(metalProd)
+{};
+
+//------------------------------------------------------------------------------
+cActionRessourceDistribution::cActionRessourceDistribution(cBinaryArchiveOut& archive) :
+	cAction(eActiontype::ACTION_RESSOURCE_DISTRIBUTION)
 {
-public:
-	// When changing this enum, also update function enumToString(eActiontype value)!
-	enum class eActiontype {
-		ACTION_INIT_NEW_GAME,
-		ACTION_START_WORK,
-		ACTION_STOP,
-		ACTION_TRANSFER,
-		ACTION_START_MOVE,
-		ACTION_RESUME_MOVE,
-		ACTION_END_TURN,
-		ACTION_SELF_DESTROY,
-		ACTION_ATTACK,
-		ACTION_CHANGE_SENTRY,
-		ACTION_CHANGE_MANUAL_FIRE,
-		ACTION_MINELAYER_STATUS,
-		ACTION_START_BUILD,
-		ACTION_FINISH_BUILD,
-		ACTION_CHANGE_BUILDLIST,
-		ACTION_LOAD,
-		ACTION_ACTIVATE,
-		ACTION_REPAIR_RELOAD,
-		ACTION_RESSOURCE_DISTRIBUTION
-	};
-	static std::unique_ptr<cAction> createFromBuffer(cBinaryArchiveOut& archive);
+	serializeThis(archive);
+}
 
-	eActiontype getType() const;
-
-	virtual void serialize(cBinaryArchiveIn& archive) { cNetMessage2::serialize(archive); serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive)   { cNetMessage2::serialize(archive); serializeThis(archive); }
-
+//------------------------------------------------------------------------------
+void cActionRessourceDistribution::execute(cModel& model) const
+{
 	//Note: this function handles incoming data from network. Make every possible sanity check!
-	virtual void execute(cModel& model) const = 0;
-protected:
-	cAction(eActiontype type) : cNetMessage2(eNetMessageType::ACTION), type(type){};
-private:
-	template<typename T>
-	void serializeThis(T& archive)
-	{
-		archive & type;
-	}
 
-	cAction(const cAction&) MAXR_DELETE_FUNCTION;
-	cAction& operator=(const cAction&)MAXR_DELETE_FUNCTION;
+	auto building = model.getBuildingFromID(buildingId);
+	if (building == nullptr) return;
 
-	eActiontype type;
-};
+	cSubBase& subBase = *building->subBase;
 
-std::string enumToString(cAction::eActiontype value);
+	subBase.setMetalProd(0);
+	subBase.setOilProd(0);
+	subBase.setGoldProd(0);
 
-
-#endif
+	// no need to verify the values.
+	// They will be reduced automatically, if necessary
+	subBase.setMetalProd(metalProd);
+	subBase.setGoldProd(goldProd);
+	subBase.setOilProd(oilProd);
+}
