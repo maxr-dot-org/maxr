@@ -46,7 +46,6 @@ enum SERVER_EVENT_TYPES
 	// Types between FIRST_SERVER_MESSAGE and FIRST_CLIENT_MESSAGE are for the serverserver
 	GAME_EV_WANT_MARK_LOG = 209,			// marks a position in the log file
 	GAME_EV_WANT_VEHICLE_UPGRADE,	// a client wants to upgrade a vehicle in a building to the newest version
-	GAME_EV_WANT_START_CLEAR,		// a bulldowzer wants to start clearing the field under his position
 	GAME_EV_WANT_STOP_CLEAR,		// a bulldowzer wants to stop the clearing
 	GAME_EV_ABORT_WAITING,			// the player wants to abort waiting for the reconnect of a disconnected player
 	GAME_EV_WANT_BUY_UPGRADES,		// a client wants to buy gold upgrades for units
@@ -84,11 +83,6 @@ void sendSpecificUnitData (cServer& server, const cVehicle& Vehicle);
 void sendVehicleResources (cServer& server, const cVehicle& vehicle);
 void sendResources (cServer& server, const cPlayer& player);
 
-/**
-* sends whether and how the unit has to clean the field
-*@author alzi alias DoctorDeath
-*/
-void sendClearAnswer (cServer& server, int answertype, const cVehicle& vehicle, int turns, const cPosition& bigPosition, const cPlayer* player);
 /**
 * sends that a unit has to stop clearing
 *@author alzi alias DoctorDeath

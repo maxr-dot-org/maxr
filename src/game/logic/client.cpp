@@ -364,46 +364,6 @@ void cClient::HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message)
 //	assert (result.second);
 }
 
-void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_CLEAR_ANSWER);
-
-	switch (message.popInt16())
-	{
-		case 0:
-		{
-			const int id = message.popInt16();
-			cVehicle* Vehicle = getVehicleFromID (id);
-			if (Vehicle == nullptr)
-			{
-				Log.write ("Client: Can not find vehicle with id " + iToStr (id) + " for clearing", cLog::eLOG_TYPE_NET_WARNING);
-				break;
-			}
-			const auto orgiginalPosition = Vehicle->getPosition();
-
-			Vehicle->setClearingTurns (message.popInt16());
-			const auto bigPosition = message.popPosition();
-			if (bigPosition.x() >= 0 && bigPosition.y() >= 0)
-			{
-//				getMap()->moveVehicleBig (*Vehicle, bigPosition);
-//				Vehicle->getOwner()->doScan();
-			}
-			Vehicle->setClearing (true);
-			//addJob (new cStartBuildJob (*Vehicle, orgiginalPosition, (bigPosition.x() >= 0 && bigPosition.y() >= 0)));
-		}
-		break;
-		case 1:
-			// TODO: add blocked message
-			// gameGUI->addMessage ("blocked");
-			break;
-		case 2:
-			Log.write ("Client: warning on start of clearing", cLog::eLOG_TYPE_NET_WARNING);
-			break;
-		default:
-			break;
-	}
-}
-
 void cClient::HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_STOP_CLEARING);
@@ -818,7 +778,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_RESOURCES: HandleNetMessage_GAME_EV_RESOURCES (message); break;
 		case GAME_EV_MARK_LOG: HandleNetMessage_GAME_EV_MARK_LOG (message); break;
 		case GAME_EV_ADD_RUBBLE: HandleNetMessage_GAME_EV_ADD_RUBBLE (message); break;
-		case GAME_EV_CLEAR_ANSWER: HandleNetMessage_GAME_EV_CLEAR_ANSWER (message); break;
 		case GAME_EV_STOP_CLEARING: HandleNetMessage_GAME_EV_STOP_CLEARING (message); break;
 		case GAME_EV_NOFOG: HandleNetMessage_GAME_EV_NOFOG (message); break;
 		case GAME_EV_DEFEATED: HandleNetMessage_GAME_EV_DEFEATED (message); break;

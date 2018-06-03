@@ -334,62 +334,6 @@ void cServer::handleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (cNetMessage& messag
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_WANT_START_CLEAR);
-
-	const int id = message.popInt16();
-	cVehicle* Vehicle = getVehicleFromID (id);
-	if (Vehicle == nullptr)
-	{
-		Log.write ("Server: Can not find vehicle with id " + iToStr (id) + " for clearing", cLog::eLOG_TYPE_NET_WARNING);
-		return;
-	}
-
-	cBuilding* building = Map->getField (Vehicle->getPosition()).getRubble();
-
-	if (!building)
-	{
-		sendClearAnswer (*this, 2, *Vehicle, 0, cPosition (-1, -1), Vehicle->getOwner());
-		return;
-	}
-
-	cPosition rubblePosition (-1, -1);
-	if (building->getIsBig())
-	{
-		rubblePosition = building->getPosition();
-
-		model.sideStepStealthUnit (building->getPosition()                   , *Vehicle, rubblePosition);
-		model.sideStepStealthUnit (building->getPosition() + cPosition (1, 0), *Vehicle, rubblePosition);
-		model.sideStepStealthUnit (building->getPosition() + cPosition (0, 1), *Vehicle, rubblePosition);
-		model.sideStepStealthUnit (building->getPosition() + cPosition (1, 1), *Vehicle, rubblePosition);
-
-		if ((!Map->possiblePlace (*Vehicle, building->getPosition(), false) && rubblePosition                   != Vehicle->getPosition()) ||
-			(!Map->possiblePlace (*Vehicle, building->getPosition() + cPosition (1, 0), false) && rubblePosition + cPosition (1, 0) != Vehicle->getPosition()) ||
-			(!Map->possiblePlace (*Vehicle, building->getPosition() + cPosition (0, 1), false) && rubblePosition + cPosition (0, 1) != Vehicle->getPosition()) ||
-			(!Map->possiblePlace (*Vehicle, building->getPosition() + cPosition (1, 1), false) && rubblePosition + cPosition (1, 1) != Vehicle->getPosition()))
-		{
-			sendClearAnswer (*this, 1, *Vehicle, 0, cPosition (-1, -1), Vehicle->getOwner());
-			return;
-		}
-
-		Vehicle->buildBigSavedPosition = Vehicle->getPosition();
-		Map->moveVehicleBig (*Vehicle, building->getPosition());
-	}
-
-	Vehicle->setClearing (true);
-	Vehicle->setClearingTurns (building->getIsBig() ? 4 : 1);
-//	Vehicle->getOwner()->doScan();
-	//addJob (new cStartBuildJob (*Vehicle, Vehicle->getPosition(), building->data.isBig));
-
-	sendClearAnswer (*this, 0, *Vehicle, Vehicle->getClearingTurns(), rubblePosition, Vehicle->getOwner());
-	for (size_t i = 0; i != Vehicle->seenByPlayerList.size(); ++i)
-	{
-		sendClearAnswer (*this, 0, *Vehicle, 0, rubblePosition, Vehicle->seenByPlayerList[i]);
-	}
-}
-
-//------------------------------------------------------------------------------
 void cServer::handleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_STOP_CLEAR);
@@ -789,7 +733,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 	{
 		case GAME_EV_WANT_MARK_LOG: handleNetMessage_GAME_EV_WANT_MARK_LOG (message); break;
 		case GAME_EV_WANT_VEHICLE_UPGRADE: handleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (message); break;
-		case GAME_EV_WANT_START_CLEAR: handleNetMessage_GAME_EV_WANT_START_CLEAR (message); break;
 		case GAME_EV_WANT_STOP_CLEAR: handleNetMessage_GAME_EV_WANT_STOP_CLEAR (message); break;
 		case GAME_EV_ABORT_WAITING: handleNetMessage_GAME_EV_ABORT_WAITING (message); break;
 		case GAME_EV_WANT_BUY_UPGRADES: handleNetMessage_GAME_EV_WANT_BUY_UPGRADES (message); break;

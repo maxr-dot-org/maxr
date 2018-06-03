@@ -116,6 +116,7 @@
 #include "game/data/report/unit/savedreportdetected.h"
 #include "game/logic/action/actionrepairreload.h"
 #include "game/logic/action/actionressourcedistribution.h"
+#include "game/logic/action/actionclear.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -881,7 +882,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStartClear, [&] (const cUnit & unit)
 	{
-		if (unit.isAVehicle()) sendWantStartClear (client, static_cast<const cVehicle&> (unit));
+		if (unit.isAVehicle()) activeClient->sendNetMessage (cActionClear(static_cast<const cVehicle&> (unit)));
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredManualFire, [&] (const cUnit & unit)
 	{
