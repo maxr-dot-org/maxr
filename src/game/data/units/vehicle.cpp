@@ -411,40 +411,27 @@ void cVehicle::continuePathBuilding(cModel& model)
 	}
 }
 
-bool cVehicle::proceedClearing (cServer& server)
+void cVehicle::proceedClearing(cModel& model)
 {
-	if (isUnitClearing() == false || getClearingTurns() == 0) return false;
+	if (isUnitClearing() == false || getClearingTurns() == 0) return;
 
 	setClearingTurns (getClearingTurns() - 1);
 
-	cMap& map = *server.Map;
+	if (getClearingTurns() > 0) return;
 
-	if (getClearingTurns() != 0) return true;
-
+	// clearing finished
 	setClearing (false);
-	cBuilding* Rubble = map.getField (getPosition()).getRubble();
+
+	cMap& map = *model.getMap();
+	cBuilding* rubble = map.getField (getPosition()).getRubble();
 	if (isBig)
 	{
 		getOwner()->updateScan(*this, buildBigSavedPosition);
-		map.moveVehicle (*this, buildBigSavedPosition);
-		sendStopClear (server, *this, buildBigSavedPosition, *getOwner());
-		for (size_t i = 0; i != seenByPlayerList.size(); ++i)
-		{
-			sendStopClear (server, *this, buildBigSavedPosition, *seenByPlayerList[i]);
-		}
+		map.moveVehicle(*this, buildBigSavedPosition);
 	}
-	else
-	{
-		sendStopClear (server, *this, cPosition (-1, -1), *getOwner());
-		for (size_t i = 0; i != seenByPlayerList.size(); ++i)
-		{
-			sendStopClear (server, *this, cPosition (-1, -1), *seenByPlayerList[i]);
-		}
-	}
-	setStoredResources (getStoredResources() + Rubble->getRubbleValue());
-	//server.deleteRubble (Rubble);
 
-	return true;
+	setStoredResources (getStoredResources() + rubble->getRubbleValue());
+	model.deleteRubble(rubble);
 }
 
 //-----------------------------------------------------------------------------

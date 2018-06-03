@@ -181,7 +181,7 @@ public:
 	bool refreshData();
 	void proceedBuilding (cModel& model);
 	void continuePathBuilding(cModel& model);
-	bool proceedClearing(cServer& server);
+	void proceedClearing(cModel& model);
 
 	virtual std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
 	void DecSpeed (int value);

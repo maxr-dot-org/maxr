@@ -93,20 +93,6 @@ void sendChatMessageToServer (const cClient& client, const string& msg, const cP
 	client.sendNetMessage (netMsg);
 }
 
-void sendWantStartClear (const cClient& client, const cVehicle& vehicle)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_START_CLEAR);
-	message->pushInt16 (vehicle.iID);
-	client.sendNetMessage (std::move (message));
-}
-
-void sendWantStopClear (const cClient& client, const cVehicle& vehicle)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_STOP_CLEAR);
-	message->pushInt16 (vehicle.iID);
-	client.sendNetMessage (std::move (message));
-}
-
 void sendAbortWaiting (const cClient& client)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_ABORT_WAITING);

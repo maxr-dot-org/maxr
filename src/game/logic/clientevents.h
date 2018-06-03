@@ -47,8 +47,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_RESOURCES,				// a message with new scaned resources for a client
 	GAME_EV_MARK_LOG,				// marks a position in the logfile
 	GAME_EV_ADD_RUBBLE,				// adds a rubble field to the client
-	GAME_EV_CLEAR_ANSWER,			// the answer to a clearing request
-	GAME_EV_STOP_CLEARING,			// a bulldowzer has to stop clearing
 	GAME_EV_NOFOG,					// the player can disable his fog
 	GAME_EV_DEFEATED,				// a player has been defeated
 	GAME_EV_DEL_PLAYER,				// a client has to delete a player
@@ -95,16 +93,6 @@ void sendWantBuildList (const cClient& client, const cBuilding& building, const 
 *@author alzi alias DoctorDeath
 */
 void sendWantExitFinishedVehicle (const cClient& client, const cBuilding& building, const cPosition& position);
-/**
-* sends that the client wants to start clearing the field under the unit
-*@author alzi alias DoctorDeath
-*/
-void sendWantStartClear (const cClient& client, const cVehicle& vehicle);
-/**
-* sends that the client wants to stop clearing the field under the unit
-*@author alzi alias DoctorDeath
-*/
-void sendWantStopClear (const cClient& client, const cVehicle& vehicle);
 /**
 * sends that the client wants to abort waiting for the reconnect of a disconnected player
 *@author alzi alias DoctorDeath

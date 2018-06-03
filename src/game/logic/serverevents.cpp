@@ -199,26 +199,6 @@ void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver)
 }
 
 //------------------------------------------------------------------------------
-void sendClearAnswer (cServer& server, int answertype, const cVehicle& vehicle, int turns, const cPosition& bigPosition, const cPlayer* receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_CLEAR_ANSWER);
-	message->pushPosition (bigPosition);
-	message->pushInt16 (turns);
-	message->pushInt16 (vehicle.iID);
-	message->pushInt16 (answertype);
-	server.sendNetMessage (std::move (message), receiver);
-}
-
-//------------------------------------------------------------------------------
-void sendStopClear (cServer& server, const cVehicle& vehicle, const cPosition& bigPosition, const cPlayer& receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_STOP_CLEARING);
-	message->pushPosition (bigPosition);
-	message->pushInt16 (vehicle.iID);
-	server.sendNetMessage (std::move (message), &receiver);
-}
-
-//------------------------------------------------------------------------------
 void sendNoFog (cServer& server, const cPlayer& receiver)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_NOFOG);

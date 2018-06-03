@@ -707,10 +707,14 @@ void cPlayer::makeTurnStart(cModel& model)
 		if (building->isDisabled())
 		{
 			building->setDisabledTurns(building->getDisabledTurns() - 1);
-			if (building->isDisabled() == false && building->wasWorking)
+			if (!building->isDisabled())
 			{
-				building->startWork();
-				building->wasWorking = false;
+				addToScan(*building);
+				if (building->wasWorking)
+				{
+					building->startWork();
+					building->wasWorking = false;
+				}
 			}
 		}
 		building->refreshData();
@@ -729,7 +733,7 @@ void cPlayer::makeTurnStart(cModel& model)
 		}
 		vehicle->refreshData();
 		vehicle->proceedBuilding(model);
-		//vehicle->proceedClearing(model);
+		vehicle->proceedClearing(model);
 	}
 
 	//just to prevent, that an error in scanmap updates have an permanent impact

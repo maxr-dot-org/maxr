@@ -40,6 +40,7 @@
 #include "actionactivate.h"
 #include "actionrepairreload.h"
 #include "actionressourcedistribution.h"
+#include "actionclear.h"
 
 std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 {
@@ -86,6 +87,8 @@ std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 		return std::make_unique<cActionRepairReload>(archive);
 	case eActiontype::ACTION_RESSOURCE_DISTRIBUTION:
 		return std::make_unique<cActionRessourceDistribution>(archive);
+	case eActiontype::ACTION_CLEAR:
+		return std::make_unique<cActionClear>(archive);
 	default:
 		throw std::runtime_error("Unknown action type " + iToStr(static_cast<int>(type)));
 		return nullptr;
@@ -141,6 +144,8 @@ std::string enumToString(cAction::eActiontype value)
 		return "ACTION_REPAIR_RELOAD";
 	case cAction::eActiontype::ACTION_RESSOURCE_DISTRIBUTION:
 		return "ACTION_RESSOURCE_DISTRIBUTION";
+	case cAction::eActiontype::ACTION_CLEAR:
+		return "ACTION_CLEAR";
 	default:
 		assert(false);
 		return toString(static_cast<int>(value));
