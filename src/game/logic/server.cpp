@@ -334,45 +334,6 @@ void cServer::handleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (cNetMessage& messag
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_WANT_STOP_CLEAR);
-
-	const int id = message.popInt16();
-	cVehicle* Vehicle = getVehicleFromID (id);
-	if (Vehicle == nullptr)
-	{
-		Log.write ("Server: Can not find vehicle with id " + iToStr (id) + " for stop clearing", cLog::eLOG_TYPE_NET_WARNING);
-		return;
-	}
-
-	if (Vehicle->isUnitClearing())
-	{
-		Vehicle->setClearing (false);
-		Vehicle->setClearingTurns (0);
-
-		if (Vehicle->getIsBig())
-		{
-			Map->moveVehicle (*Vehicle, Vehicle->buildBigSavedPosition);
-			//Vehicle->getOwner()->doScan();
-			sendStopClear (*this, *Vehicle, Vehicle->buildBigSavedPosition, *Vehicle->getOwner());
-			for (size_t i = 0; i != Vehicle->seenByPlayerList.size(); ++i)
-			{
-				sendStopClear (*this, *Vehicle, Vehicle->buildBigSavedPosition, *Vehicle->seenByPlayerList[i]);
-			}
-		}
-		else
-		{
-			sendStopClear (*this, *Vehicle, cPosition (-1, -1), *Vehicle->getOwner());
-			for (size_t i = 0; i != Vehicle->seenByPlayerList.size(); ++i)
-			{
-				sendStopClear (*this, *Vehicle, cPosition (-1, -1), *Vehicle->seenByPlayerList[i]);
-			}
-		}
-	}
-}
-
-//------------------------------------------------------------------------------
 void cServer::handleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_ABORT_WAITING);
@@ -733,7 +694,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 	{
 		case GAME_EV_WANT_MARK_LOG: handleNetMessage_GAME_EV_WANT_MARK_LOG (message); break;
 		case GAME_EV_WANT_VEHICLE_UPGRADE: handleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (message); break;
-		case GAME_EV_WANT_STOP_CLEAR: handleNetMessage_GAME_EV_WANT_STOP_CLEAR (message); break;
 		case GAME_EV_ABORT_WAITING: handleNetMessage_GAME_EV_ABORT_WAITING (message); break;
 		case GAME_EV_WANT_BUY_UPGRADES: handleNetMessage_GAME_EV_WANT_BUY_UPGRADES (message); break;
 		case GAME_EV_WANT_BUILDING_UPGRADE: handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (message); break;

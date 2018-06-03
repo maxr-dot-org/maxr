@@ -70,5 +70,16 @@ void cActionStop::execute(cModel& model) const
 				model.getMap()->moveVehicle(*vehicle, vehicle->buildBigSavedPosition);
 			}
 		}
+		else if (vehicle->isUnitClearing())
+		{
+			vehicle->setClearing(false);
+			vehicle->setClearingTurns(0);
+
+			if (vehicle->getIsBig())
+			{
+				vehicle->getOwner()->updateScan(*vehicle, vehicle->buildBigSavedPosition);
+				model.getMap()->moveVehicle(*vehicle, vehicle->buildBigSavedPosition);
+			}
+		}
 	}
 }

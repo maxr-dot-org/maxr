@@ -364,28 +364,6 @@ void cClient::HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message)
 //	assert (result.second);
 }
 
-void cClient::HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_STOP_CLEARING);
-
-	const int id = message.popInt16();
-	cVehicle* Vehicle = getVehicleFromID (id);
-	if (Vehicle == nullptr)
-	{
-		Log.write ("Client: Can not find vehicle with id " + iToStr (id) + " for stop clearing", cLog::eLOG_TYPE_NET_WARNING);
-		return;
-	}
-
-	const auto bigPosition = message.popPosition();
-	if (bigPosition.x() >= 0 && bigPosition.y() >= 0)
-	{
-//		getMap()->moveVehicle (*Vehicle, bigPosition);
-//		Vehicle->getOwner()->doScan();
-	}
-	Vehicle->setClearing (false);
-	Vehicle->setClearingTurns (0);
-}
-
 void cClient::HandleNetMessage_GAME_EV_NOFOG (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_NOFOG);
@@ -778,7 +756,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_RESOURCES: HandleNetMessage_GAME_EV_RESOURCES (message); break;
 		case GAME_EV_MARK_LOG: HandleNetMessage_GAME_EV_MARK_LOG (message); break;
 		case GAME_EV_ADD_RUBBLE: HandleNetMessage_GAME_EV_ADD_RUBBLE (message); break;
-		case GAME_EV_STOP_CLEARING: HandleNetMessage_GAME_EV_STOP_CLEARING (message); break;
 		case GAME_EV_NOFOG: HandleNetMessage_GAME_EV_NOFOG (message); break;
 		case GAME_EV_DEFEATED: HandleNetMessage_GAME_EV_DEFEATED (message); break;
 		case GAME_EV_DEL_PLAYER: HandleNetMessage_GAME_EV_DEL_PLAYER (message); break;

@@ -427,19 +427,19 @@ bool cVehicle::proceedClearing (cServer& server)
 	{
 		getOwner()->updateScan(*this, buildBigSavedPosition);
 		map.moveVehicle (*this, buildBigSavedPosition);
-		sendStopClear (server, *this, buildBigSavedPosition, *getOwner());
+		/*sendStopClear (server, *this, buildBigSavedPosition, *getOwner());
 		for (size_t i = 0; i != seenByPlayerList.size(); ++i)
 		{
 			sendStopClear (server, *this, buildBigSavedPosition, *seenByPlayerList[i]);
-		}
+		}*/
 	}
 	else
 	{
-		sendStopClear (server, *this, cPosition (-1, -1), *getOwner());
+		/*sendStopClear (server, *this, cPosition (-1, -1), *getOwner());
 		for (size_t i = 0; i != seenByPlayerList.size(); ++i)
 		{
 			sendStopClear (server, *this, cPosition (-1, -1), *seenByPlayerList[i]);
-		}
+		}*/
 	}
 	setStoredResources (getStoredResources() + Rubble->getRubbleValue());
 	//server.deleteRubble (Rubble);
