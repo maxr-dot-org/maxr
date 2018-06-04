@@ -564,29 +564,6 @@ void cClient::HandleNetMessage_GAME_EV_SET_AUTOMOVE (cNetMessage& message)
 	}
 }
 
-void cClient::HandleNetMessage_GAME_EV_COMMANDO_ANSWER (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_COMMANDO_ANSWER);
-
-	bool success = message.popBool();
-	bool steal = false;
-	if (success) steal = message.popBool();
-	cVehicle* vehicle = getVehicleFromID (message.popInt16());
-
-	if (vehicle)
-	{
-		if (success)
-		{
-			if (steal) unitHasStolenSuccessfully (*vehicle);
-			else unitHasDisabledSuccessfully (*vehicle);
-		}
-		else
-		{
-			unitStealDisableFailed (*vehicle);
-		}
-	}
-}
-
 void cClient::HandleNetMessage_GAME_EV_SCORE (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_SCORE);
@@ -769,7 +746,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_REFRESH_RESEARCH_COUNT: // sent, when the player was resynced (or a game was loaded)
 			HandleNetMessage_GAME_EV_REFRESH_RESEARCH_COUNT (message); break;
 		case GAME_EV_SET_AUTOMOVE: HandleNetMessage_GAME_EV_SET_AUTOMOVE (message); break;
-		case GAME_EV_COMMANDO_ANSWER: HandleNetMessage_GAME_EV_COMMANDO_ANSWER (message); break;
 		case GAME_EV_SCORE: HandleNetMessage_GAME_EV_SCORE (message); break;
 		case GAME_EV_NUM_ECOS: HandleNetMessage_GAME_EV_NUM_ECOS (message); break;
 		case GAME_EV_UNIT_SCORE: HandleNetMessage_GAME_EV_UNIT_SCORE (message); break;

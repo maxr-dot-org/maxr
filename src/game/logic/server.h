@@ -241,7 +241,6 @@ private:
 	void handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (cNetMessage& message);
 	void handleNetMessage_GAME_EV_AUTOMOVE_STATUS (cNetMessage& message);
-	void handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message);
 	void handleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_KICK_PLAYER (cNetMessage& message);
@@ -260,11 +259,6 @@ private:
 						 int newDamage, int newMaxShots, int newRange, int newMaxAmmo,
 						 int newArmor, int newMaxHitPoints, int newScan, int newMaxSpeed);
 
-	/**
-	* changes the owner of a vehicle
-	*@author alzi alias DoctorDeath
-	*/
-	void changeUnitOwner (cVehicle& vehicle, cPlayer& newOwner);
 	
 	void checkPlayerUnits (cVehicle& vehicle, cPlayer& MapPlayer);
 	void checkPlayerUnits (cBuilding& building, cPlayer& MapPlayer);

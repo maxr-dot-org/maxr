@@ -59,7 +59,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_FINISHED_RESEARCH_AREAS,
 	GAME_EV_REFRESH_RESEARCH_COUNT,	// the client has to refresh the researchCount and the research sums for the areas after a resync
 	GAME_EV_SET_AUTOMOVE,			// a unit has to enable automoving
-	GAME_EV_COMMANDO_ANSWER,		// information about the result of a commando action
 	GAME_EV_SCORE,                  // sends a player's score to a client
 	GAME_EV_NUM_ECOS,               // sends a player's ecosphere count to a client
 	GAME_EV_UNIT_SCORE,             // sends a unit's score to its owner
@@ -105,11 +104,7 @@ void sendRequestCasualtiesReport (const cClient& client);
 * sends that a unit has been set to automove status
 */
 void sendSetAutoStatus (const cClient& client, int vehicleID, bool set);
-/**
-* sends that the infiltrator wants to infiltrate a unit
-*@author alzi alias DoctorDeath
-*/
-void sendWantComAction (const cClient& client, int srcUnitID, int destUnitID, bool destIsVehicle, bool steal);
+
 void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool upgradeAll);
 void sendWantUpgrade (const cClient& client, int buildingID, int storageSlot, bool upgradeAll);
 void sendWantResearchChange (const cClient& client, const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings);

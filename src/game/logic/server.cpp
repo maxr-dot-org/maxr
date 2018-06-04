@@ -557,95 +557,6 @@ void cServer::handleNetMessage_GAME_EV_AUTOMOVE_STATUS (cNetMessage& message)
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_WANT_COM_ACTION);
-
-	cVehicle* srcVehicle = getVehicleFromID (message.popInt16());
-	if (!srcVehicle) return;
-
-	cVehicle* destVehicle = nullptr;
-	cBuilding* destBuilding = nullptr;
-	if (message.popBool()) destVehicle = getVehicleFromID (message.popInt16());
-	else destBuilding = getBuildingFromID (message.popInt16());
-	cUnit* destUnit = destVehicle;
-	if (destUnit == nullptr) destUnit = destBuilding;
-	const bool steal = message.popBool();
-	// check whether the commando action is possible
-// 	if (! ((destUnit && srcVehicle->canDoCommandoAction (destUnit->getPosition(), *Map, steal)) ||
-// 		   (destBuilding && destBuilding->getIsBig() && srcVehicle->canDoCommandoAction (destUnit->getPosition() + cPosition (0, 1), *Map, steal)) ||
-// 		   (destBuilding && destBuilding->getIsBig() && srcVehicle->canDoCommandoAction (destUnit->getPosition() + cPosition (1, 0), *Map, steal)) ||
-// 		   (destBuilding && destBuilding->getIsBig() && srcVehicle->canDoCommandoAction (destUnit->getPosition() + cPosition (1, 1), *Map, steal)))) return;
-
-	// check whether the action is successful or not
-	const int chance = srcVehicle->calcCommandoChance (destUnit, steal);
-	bool success = false;
-	if (random (100) < chance)
-	{
-		if (steal)
-		{
-			if (destVehicle)
-			{
-				// change the owner
-				//TODO: use stopAction
-				//if (destVehicle->isUnitBuildingABuilding()) stopVehicleBuilding (*destVehicle);
-				//if (destVehicle->getMoveJob()) destVehicle->getMoveJob()->stop();
-				changeUnitOwner (*destVehicle, *srcVehicle->getOwner());
-			}
-		}
-		else
-		{
-			// only on disabling units the infiltrator gets exp.
-			// As higher his level is as slower he rises onto the next one.
-			// every 5 rankings he needs one successful disabling more,
-			// to get to the next ranking
-			srcVehicle->setCommandoRank (srcVehicle->getCommandoRank() +  1.f / (((int) srcVehicle->getCommandoRank() + 5) / 5));
-
-			const int strength = srcVehicle->calcCommandoTurns (destUnit);
-			// stop the unit and make it disabled
-			destUnit->setDisabledTurns (strength);
-			if (destVehicle)
-			{
-				//TODO: use stopAction
-				//if (destVehicle->isUnitBuildingABuilding()) stopVehicleBuilding (*destVehicle);
-				//if (destVehicle->getMoveJob()) destVehicle->getMoveJob()->stop();
-			}
-			else if (destBuilding)
-			{
-				destBuilding->wasWorking = destBuilding->isUnitWorking();
-				destBuilding->stopWork (true);
-				//sendDoStopWork (*this, *destBuilding);
-			}
-			//sendUnitData (*this, *destUnit);
-			//destUnit->getOwner()->doScan();
-			checkPlayerUnits();
-		}
-		success = true;
-	}
-	// disabled units fail to detect infiltrator even if he screws up
-	else if (destUnit->isDisabled() == false)
-	{
-		// detect the infiltrator on failed action
-		// and let enemy units fire on him
-		// TODO: uncover the infiltrator for all players,
-		// or only for the owner of the target unit? --eiko
-		for (size_t i = 0; i != playerList.size(); ++i)
-		{
-			auto& player = *playerList[i];
-			if (&player == srcVehicle->getOwner()) continue;
-			if (!player.canSeeAnyAreaUnder (*srcVehicle)) continue;
-
-			srcVehicle->setDetectedByPlayer (&player);
-		}
-		checkPlayerUnits();
-		//srcVehicle->InSentryRange (*this);
-	}
-	srcVehicle->data.setShots (srcVehicle->data.getShots() - 1);
-	//sendUnitData (*this, *srcVehicle);
-	sendCommandoAnswer (*this, success, steal, *srcVehicle, *srcVehicle->getOwner());
-}
-
-//------------------------------------------------------------------------------
 void cServer::handleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_REQUEST_CASUALTIES_REPORT);
@@ -699,7 +610,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 		case GAME_EV_WANT_BUILDING_UPGRADE: handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (message); break;
 		case GAME_EV_WANT_RESEARCH_CHANGE: handleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (message); break;
 		case GAME_EV_AUTOMOVE_STATUS: handleNetMessage_GAME_EV_AUTOMOVE_STATUS (message); break;
-		case GAME_EV_WANT_COM_ACTION: handleNetMessage_GAME_EV_WANT_COM_ACTION (message); break;
 		case GAME_EV_REQUEST_CASUALTIES_REPORT: handleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (message); break;
 		case GAME_EV_WANT_CHANGE_UNIT_NAME: handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (message); break;
 		case GAME_EV_WANT_KICK_PLAYER: handleNetMessage_GAME_EV_WANT_KICK_PLAYER (message); break;
@@ -1197,49 +1107,6 @@ void cServer::deletePlayer (cPlayer& player)
 			break;
 		}
 	}
-}
-
-//------------------------------------------------------------------------------
-void cServer::changeUnitOwner (cVehicle& vehicle, cPlayer& newOwner)
-{
-	if (vehicle.getOwner() && casualtiesTracker != nullptr)
-		casualtiesTracker->logCasualty (vehicle.data.getId(), vehicle.getOwner()->getId());
-
-	// delete vehicle in the list of the old player
-	cPlayer* oldOwner = vehicle.getOwner();
-
-	auto owningVehiclePtr = oldOwner->removeUnit (vehicle);
-	// add the vehicle to the list of the new player
-	vehicle.setOwner (&newOwner);
-	newOwner.addUnit (owningVehiclePtr);
-
-	//the vehicle is fully operational for the new owner
-	vehicle.setDisabledTurns (0);
-
-	// delete the unit on the clients and add it with new owner again
-	sendDeleteUnit (*this, vehicle, oldOwner);
-	for (size_t i = 0; i != vehicle.seenByPlayerList.size(); ++i)
-	{
-		sendDeleteUnit (*this, vehicle, vehicle.seenByPlayerList[i]);
-	}
-	vehicle.seenByPlayerList.clear();
-	//vehicle.detectedByPlayerList.clear();
-	//sendAddUnit (*this, vehicle.getPosition(), vehicle.iID, true, vehicle.data.getId(), *vehicle.getOwner(), false);
-	//sendUnitData (*this, vehicle, *vehicle.getOwner());
-	sendSpecificUnitData (*this, vehicle);
-
-// 	oldOwner->doScan();
-// 	newOwner.doScan();
-	checkPlayerUnits();
-
-	// let the unit work for his new owner
-	if (vehicle.getStaticUnitData().canSurvey)
-	{
-		sendVehicleResources (*this, vehicle);
-		vehicle.doSurvey ();
-	}
-	//TODO: clear detection list
-	//vehicle.makeDetection (*this);
 }
 
 //------------------------------------------------------------------------------

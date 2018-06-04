@@ -141,15 +141,6 @@ public:
 	mutable cSignal<void ()> freezeModeChanged;
 	mutable cSignal<void ()> connectionToServerLost;
 
-
-	//TODO: move signals to model
-	mutable cSignal<void (const cUnit&)> unitHasStolenSuccessfully;
-	mutable cSignal<void (const cUnit&)> unitHasDisabledSuccessfully;
-	mutable cSignal<void (const cUnit&)> unitStealDisableFailed;
-
-	mutable cSignal<void (const cUnit&)> unitDisabled;
-	mutable cSignal<void (const cUnit&)> unitStolen; //TODO: was in addUnit()
-
 	void run();
 private:
 
@@ -181,7 +172,6 @@ private:
 	void HandleNetMessage_GAME_EV_FINISHED_RESEARCH_AREAS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_REFRESH_RESEARCH_COUNT (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SET_AUTOMOVE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_COMMANDO_ANSWER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SCORE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_NUM_ECOS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UNIT_SCORE (cNetMessage& message);
