@@ -117,6 +117,9 @@
 #include "game/logic/action/actionrepairreload.h"
 #include "game/logic/action/actionressourcedistribution.h"
 #include "game/logic/action/actionclear.h"
+#include "game/data/report/unit/savedreportdisabled.h"
+#include "game/data/report/unit/savedreportcapturedbyenemy.h"
+#include "game/logic/action/actionstealdisable.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -1105,11 +1108,17 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredSteal, [&] (const cUnit & sourceUnit, const cUnit & destinationUnit)
 	{
-		sendWantComAction (client, sourceUnit.iID, destinationUnit.iID, destinationUnit.isAVehicle(), true);
+		if (sourceUnit.isAVehicle())
+		{
+			activeClient->sendNetMessage(cActionStealDisable(*static_cast<const cVehicle*>(&sourceUnit), destinationUnit, true));
+		}
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredDisable, [&] (const cUnit & sourceUnit, const cUnit & destinationUnit)
 	{
-		sendWantComAction (client, sourceUnit.iID, destinationUnit.iID, destinationUnit.isAVehicle(), false);
+		if (sourceUnit.isAVehicle())
+		{
+			activeClient->sendNetMessage(cActionStealDisable(*static_cast<const cVehicle*>(&sourceUnit), destinationUnit, false));
+		}
 	});
 	clientSignalConnectionManager.connect (gameGui->getMiniMap().triggeredMove, [&] (const cPosition & destination)
 	{
@@ -1266,25 +1275,25 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (client.unitHasStolenSuccessfully, [&] (const cUnit& unit)
+	clientSignalConnectionManager.connect (model.unitStolen, [&] (const cUnit& source, const cUnit&, const cPlayer&)
 	{
-		if (unit.getOwner()->getId() == getActivePlayer()->getId())
+		if (source.getOwner()->getId() == getActivePlayer()->getId())
 		{
 			soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceCommandoAction, getRandom (VoiceData.VOIUnitStolen)));
 		}
 	});
 
-	clientSignalConnectionManager.connect (client.unitHasDisabledSuccessfully, [&] (const cUnit& unit)
+	clientSignalConnectionManager.connect (model.unitDisabled, [&] (const cUnit& source, const cUnit&)
 	{
-		if (unit.getOwner()->getId() == getActivePlayer()->getId())
+		if (source.getOwner()->getId() == getActivePlayer()->getId())
 		{
 			soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceCommandoAction, VoiceData.VOIUnitDisabled));
 		}
 	});
 
-	clientSignalConnectionManager.connect (client.unitStealDisableFailed, [&] (const cUnit& unit)
+	clientSignalConnectionManager.connect (model.unitStealDisableFailed, [&] (const cUnit& source, const cUnit&)
 	{
-		if (unit.getOwner()->getId() == getActivePlayer()->getId())
+		if (source.getOwner()->getId() == getActivePlayer()->getId())
 		{
 			soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceCommandoAction, getRandom (VoiceData.VOICommandoFailed)));
 		}
@@ -1377,6 +1386,20 @@ void cGameGuiController::connectReportSources(cClient& client)
 		if (otherPlayer.getId() != getActivePlayer()->getId())
 		{
 			addSavedReport(std::make_unique<cSavedReportPlayerEndedTurn>(otherPlayer), player.getId());
+		}
+	});
+	allClientsSignalConnectionManager.connect(model.unitDisabled, [&](const cUnit&, const cUnit& target)
+	{
+		if (target.getOwner()->getId() == player.getId())
+		{
+			addSavedReport(std::make_unique<cSavedReportDisabled>(target), player.getId());
+		}
+	});
+	allClientsSignalConnectionManager.connect(model.unitStolen, [&](const cUnit&, const cUnit& target, const cPlayer& previousOwner)
+	{
+		if (previousOwner.getId() == player.getId())
+		{
+			addSavedReport(std::make_unique<cSavedReportCapturedByEnemy>(target), player.getId());
 		}
 	});
 	allClientsSignalConnectionManager.connect(player.turnEndMovementsStarted, [&]()

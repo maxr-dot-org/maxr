@@ -386,16 +386,6 @@ void sendSetAutomoving (cServer& server, const cVehicle& vehicle)
 }
 
 //------------------------------------------------------------------------------
-void sendCommandoAnswer (cServer& server, bool success, bool steal, const cVehicle& srcUnit, const cPlayer& receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_COMMANDO_ANSWER);
-	message->pushInt16 (srcUnit.iID);
-	message->pushBool (steal);
-	message->pushBool (success);
-	server.sendNetMessage (std::move (message), &receiver);
-}
-
-//------------------------------------------------------------------------------
 void sendRevealMap (cServer& server, const cPlayer& receiver)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_REVEAL_MAP);

@@ -128,8 +128,12 @@ public:
 	mutable cSignal<void (const cUnit& storingUnit, const cUnit& storedUnit)> unitStored;
 	mutable cSignal<void (const cUnit& storingUnit, const cUnit& storedUnit)> unitActivated;
 
-	mutable cSignal<void(const cUnit&)> unitSuppliedWithAmmo;
-	mutable cSignal<void(const cUnit&)> unitRepaired;
+	mutable cSignal<void(const cUnit& unit)> unitSuppliedWithAmmo;
+	mutable cSignal<void(const cUnit& unit)> unitRepaired;
+
+	mutable cSignal<void(const cUnit& source, const cUnit& target)> unitStealDisableFailed;
+	mutable cSignal<void(const cUnit& source, const cUnit& target)> unitDisabled;
+	mutable cSignal<void(const cUnit& source, const cUnit& target, const cPlayer& previousOwner)> unitStolen;
 
 
 	template<typename T>

@@ -51,7 +51,6 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_WANT_BUILDING_UPGRADE,	// a client wants to upgrade one or more buildings to the newest version
 	GAME_EV_WANT_RESEARCH_CHANGE,	// a client wants to change the research assignments of his research centers
 	GAME_EV_AUTOMOVE_STATUS,		// a unit has been set to automoving
-	GAME_EV_WANT_COM_ACTION,		// an infiltrator wants to steal or disable another unit
 	GAME_EV_WANT_CHANGE_UNIT_NAME,	// the player wants to change the name of an unit
 	GAME_EV_WANT_KICK_PLAYER,
 
@@ -108,12 +107,6 @@ void sendResearchLevel (cServer& server, const cResearch& researchLevel, const c
 void sendFinishedResearchAreas (cServer& server, const std::vector<int>& areas, const cPlayer& receiver);
 void sendRefreshResearchCount (cServer& server, const cPlayer& receiver);
 void sendSetAutomoving (cServer& server, const cVehicle& vehicle);
-/**
-* sends the result of a infiltrating action to the client
-*@author alzi alias DoctorDeath
-*/
-void sendCommandoAnswer (cServer& server, bool success, bool steal, const cVehicle& srcUnit, const cPlayer& receiver);
-
 
 void sendScore (cServer& server, const cPlayer& subject, int turn, const cPlayer* receiver = nullptr);
 void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver = nullptr);

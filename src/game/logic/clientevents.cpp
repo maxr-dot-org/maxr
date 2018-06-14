@@ -107,16 +107,6 @@ void sendSetAutoStatus (const cClient& client, int vehicleID, bool set)
 	client.sendNetMessage (std::move (message));
 }
 
-void sendWantComAction (const cClient& client, int srcUnitID, int destUnitID, bool destIsVehicle, bool steal)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_COM_ACTION);
-	message->pushBool (steal);
-	message->pushInt16 (destUnitID);
-	message->pushBool (destIsVehicle);
-	message->pushInt16 (srcUnitID);
-	client.sendNetMessage (std::move (message));
-}
-
 //------------------------------------------------------------------------
 void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool upgradeAll)
 {
