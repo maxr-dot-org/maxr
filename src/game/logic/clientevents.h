@@ -54,10 +54,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_CREDITS_CHANGED,		// the credits of a player changed (e.g. because he bought upgrades)
 	GAME_EV_UPGRADED_BUILDINGS,		// the buildings in the msg have been upgraded to the current version
 	GAME_EV_UPGRADED_VEHICLES,		// the vehicles in the msg have been upgraded to the current version
-	GAME_EV_RESEARCH_SETTINGS,		// the research centers were newly assigned to research areas
-	GAME_EV_RESEARCH_LEVEL,			// the research level reached by a player
-	GAME_EV_FINISHED_RESEARCH_AREAS,
-	GAME_EV_REFRESH_RESEARCH_COUNT,	// the client has to refresh the researchCount and the research sums for the areas after a resync
 	GAME_EV_SET_AUTOMOVE,			// a unit has to enable automoving
 	GAME_EV_SCORE,                  // sends a player's score to a client
 	GAME_EV_NUM_ECOS,               // sends a player's ecosphere count to a client
@@ -107,7 +103,6 @@ void sendSetAutoStatus (const cClient& client, int vehicleID, bool set);
 
 void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool upgradeAll);
 void sendWantUpgrade (const cClient& client, int buildingID, int storageSlot, bool upgradeAll);
-void sendWantResearchChange (const cClient& client, const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings);
 
 void sendWantChangeUnitName (const cClient& client, const std::string& newName, int unitID);
 

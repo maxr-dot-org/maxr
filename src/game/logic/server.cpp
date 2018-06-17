@@ -482,71 +482,6 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& messa
 		}
 	}
 }
-
-//------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_WANT_RESEARCH_CHANGE);
-
-	const int iPlayerNr = message.popInt16();
-	auto& player = getPlayerFromNumber (iPlayerNr);
-	int newUsedResearch = 0;
-	int newResearchSettings[cResearch::kNrResearchAreas];
-	for (int area = cResearch::kNrResearchAreas - 1; area >= 0; --area)
-	{
-		newResearchSettings[area] = message.popInt16();
-		newUsedResearch += newResearchSettings[area];
-	}
-	if (newUsedResearch > player.getResearchCentersWorkingTotal())
-		return; // can't turn on research centers automatically!
-
-	// needed, if newUsedResearch < player->ResearchCount
-	std::vector<cBuilding*> researchCentersToStop;
-	std::vector<cBuilding*> researchCentersToChangeArea;
-	std::vector<cResearch::ResearchArea> newAreasForResearchCenters;
-
-	bool error = false;
-	const auto buildings = player.getBuildings();
-	auto currentBuildingIter = buildings.begin();
-	for (int newArea = 0; newArea != cResearch::kNrResearchAreas; ++newArea)
-	{
-		int centersToAssign = newResearchSettings[newArea];
-		for (; currentBuildingIter != buildings.end() && centersToAssign > 0; ++currentBuildingIter)
-		{
-			auto& building = *currentBuildingIter;
-			if (building->getStaticUnitData().canResearch && building->isUnitWorking())
-			{
-				researchCentersToChangeArea.push_back (building.get());
-				newAreasForResearchCenters.push_back ((cResearch::ResearchArea)newArea);
-				--centersToAssign;
-			}
-		}
-		if (centersToAssign > 0)
-		{
-			error = true; // not enough active research centers!
-			break;
-		}
-	}
-	// shut down unused research centers
-	for (; currentBuildingIter != buildings.end(); ++currentBuildingIter)
-	{
-		auto& building = *currentBuildingIter;
-		if (building->getStaticUnitData().canResearch && building->isUnitWorking())
-			researchCentersToStop.push_back (building.get());
-	}
-	if (error)
-		return;
-
-	for (size_t i = 0; i != researchCentersToStop.size(); ++i)
-		researchCentersToStop[i]->stopWork (false);
-
-	for (size_t i = 0; i != researchCentersToChangeArea.size(); ++i)
-		researchCentersToChangeArea[i]->setResearchArea (newAreasForResearchCenters[i]);
-	player.refreshResearchCentersWorkingOnArea();
-
-	sendResearchSettings (*this, researchCentersToChangeArea, newAreasForResearchCenters, player);
-}
-
 //------------------------------------------------------------------------------
 void cServer::handleNetMessage_GAME_EV_AUTOMOVE_STATUS (cNetMessage& message)
 {
@@ -608,7 +543,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 		case GAME_EV_ABORT_WAITING: handleNetMessage_GAME_EV_ABORT_WAITING (message); break;
 		case GAME_EV_WANT_BUY_UPGRADES: handleNetMessage_GAME_EV_WANT_BUY_UPGRADES (message); break;
 		case GAME_EV_WANT_BUILDING_UPGRADE: handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (message); break;
-		case GAME_EV_WANT_RESEARCH_CHANGE: handleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (message); break;
 		case GAME_EV_AUTOMOVE_STATUS: handleNetMessage_GAME_EV_AUTOMOVE_STATUS (message); break;
 		case GAME_EV_REQUEST_CASUALTIES_REPORT: handleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (message); break;
 		case GAME_EV_WANT_CHANGE_UNIT_NAME: handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (message); break;

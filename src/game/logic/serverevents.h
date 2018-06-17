@@ -49,7 +49,6 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_ABORT_WAITING,			// the player wants to abort waiting for the reconnect of a disconnected player
 	GAME_EV_WANT_BUY_UPGRADES,		// a client wants to buy gold upgrades for units
 	GAME_EV_WANT_BUILDING_UPGRADE,	// a client wants to upgrade one or more buildings to the newest version
-	GAME_EV_WANT_RESEARCH_CHANGE,	// a client wants to change the research assignments of his research centers
 	GAME_EV_AUTOMOVE_STATUS,		// a unit has been set to automoving
 	GAME_EV_WANT_CHANGE_UNIT_NAME,	// the player wants to change the name of an unit
 	GAME_EV_WANT_KICK_PLAYER,
@@ -102,10 +101,6 @@ void sendUnitUpgrades (cServer& server, const cDynamicUnitData& Data, const cPla
 void sendCredits (cServer& server, int newCredits, const cPlayer& receiver);
 void sendUpgradeBuildings (cServer& server, const std::vector<cBuilding*>& upgradedBuildings, int totalCosts, const cPlayer& receiver);
 void sendUpgradeVehicles (cServer& server, const std::vector<cVehicle*>& upgradedVehicles, int totalCosts, unsigned int storingBuildingID, const cPlayer& receiver);
-void sendResearchSettings (cServer& server, const std::vector<cBuilding*>& researchCentersToChangeArea, const std::vector<cResearch::ResearchArea>& newAreasForResearchCenters, const cPlayer& receiver);
-void sendResearchLevel (cServer& server, const cResearch& researchLevel, const cPlayer& receiver);
-void sendFinishedResearchAreas (cServer& server, const std::vector<int>& areas, const cPlayer& receiver);
-void sendRefreshResearchCount (cServer& server, const cPlayer& receiver);
 void sendSetAutomoving (cServer& server, const cVehicle& vehicle);
 
 void sendScore (cServer& server, const cPlayer& subject, int turn, const cPlayer* receiver = nullptr);

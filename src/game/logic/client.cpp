@@ -504,55 +504,6 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message)
 	//activePlayer->addSavedReport (std::make_unique<cSavedReportUpgraded> (unitData->ID, vehiclesInMsg, totalCosts));
 }
 
-void cClient::HandleNetMessage_GAME_EV_RESEARCH_SETTINGS (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_RESEARCH_SETTINGS);
-
-	const int buildingsInMsg = message.popInt16();
-	for (int i = 0; i < buildingsInMsg; ++i)
-	{
-		const int buildingID = message.popInt32();
-		const cResearch::ResearchArea newArea = (cResearch::ResearchArea)message.popChar();
-		cBuilding* building = getBuildingFromID (buildingID);
-		if (building && building->getStaticUnitData().canResearch && 0 <= newArea && newArea <= cResearch::kNrResearchAreas)
-			building->setResearchArea (newArea);
-	}
-	// now update the research center count for the areas
-	activePlayer->refreshResearchCentersWorkingOnArea();
-}
-
-void cClient::HandleNetMessage_GAME_EV_RESEARCH_LEVEL (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_RESEARCH_LEVEL);
-
-	for (int area = cResearch::kNrResearchAreas - 1; area >= 0; area--)
-	{
-		const int newCurPoints = message.popInt16();
-		const int newLevel = message.popInt16();
-		activePlayer->getResearchState().setCurResearchLevel (newLevel, area);
-		activePlayer->getResearchState().setCurResearchPoints (newCurPoints, area);
-	}
-}
-
-void cClient::HandleNetMessage_GAME_EV_FINISHED_RESEARCH_AREAS (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_FINISHED_RESEARCH_AREAS);
-
-	std::vector<int> areas (message.popInt32());
-	for (size_t i = 0; i < areas.size(); ++i)
-	{
-		areas[i] = message.popInt32();
-	}
-	activePlayer->setCurrentTurnResearchAreasFinished (std::move (areas));
-}
-
-void cClient::HandleNetMessage_GAME_EV_REFRESH_RESEARCH_COUNT (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_REFRESH_RESEARCH_COUNT);
-
-	activePlayer->refreshResearchCentersWorkingOnArea();
-}
-
 void cClient::HandleNetMessage_GAME_EV_SET_AUTOMOVE (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_SET_AUTOMOVE);
@@ -740,11 +691,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_CREDITS_CHANGED: HandleNetMessage_GAME_EV_CREDITS_CHANGED (message); break;
 		case GAME_EV_UPGRADED_BUILDINGS: HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (message); break;
 		case GAME_EV_UPGRADED_VEHICLES: HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (message); break;
-		case GAME_EV_RESEARCH_SETTINGS: HandleNetMessage_GAME_EV_RESEARCH_SETTINGS (message); break;
-		case GAME_EV_RESEARCH_LEVEL: HandleNetMessage_GAME_EV_RESEARCH_LEVEL (message); break;
-		case GAME_EV_FINISHED_RESEARCH_AREAS: HandleNetMessage_GAME_EV_FINISHED_RESEARCH_AREAS (message); break;
-		case GAME_EV_REFRESH_RESEARCH_COUNT: // sent, when the player was resynced (or a game was loaded)
-			HandleNetMessage_GAME_EV_REFRESH_RESEARCH_COUNT (message); break;
 		case GAME_EV_SET_AUTOMOVE: HandleNetMessage_GAME_EV_SET_AUTOMOVE (message); break;
 		case GAME_EV_SCORE: HandleNetMessage_GAME_EV_SCORE (message); break;
 		case GAME_EV_NUM_ECOS: HandleNetMessage_GAME_EV_NUM_ECOS (message); break;

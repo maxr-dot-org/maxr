@@ -747,8 +747,7 @@ void cPlayer::makeTurnStart(cModel& model)
 	}
 
 	// do research:
-	//TODO: research
-	//doResearch(*model.getUnitsData());
+	doResearch(*model.getUnitsData());
 
 	// eco-spheres:
 	//TODO:

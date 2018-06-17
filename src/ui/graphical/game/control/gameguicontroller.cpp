@@ -120,6 +120,7 @@
 #include "game/data/report/unit/savedreportdisabled.h"
 #include "game/data/report/unit/savedreportcapturedbyenemy.h"
 #include "game/logic/action/actionstealdisable.h"
+#include "game/logic/action/actionchangeresearch.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -834,7 +835,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (changeResearchSettingsTriggered, [&] (const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings)
 	{
-		sendWantResearchChange (client, newResearchSettings);
+		client.sendNetMessage(cActionChangeResearch(newResearchSettings));
 	});
 	clientSignalConnectionManager.connect (takeUnitUpgradesTriggered, [&] (const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades)
 	{

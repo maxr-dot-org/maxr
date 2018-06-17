@@ -222,37 +222,6 @@ void sendDeletePlayer (cServer& server, const cPlayer& player, const cPlayer* re
 }
 
 //------------------------------------------------------------------------------
-void sendResearchLevel (cServer& server, const cResearch& researchLevel, const cPlayer& receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_RESEARCH_LEVEL);
-	for (int area = 0; area < cResearch::kNrResearchAreas; area++)
-	{
-		message->pushInt16 (researchLevel.getCurResearchLevel (area));
-		message->pushInt16 (researchLevel.getCurResearchPoints (area));
-	}
-	server.sendNetMessage (std::move (message), &receiver);
-}
-
-//------------------------------------------------------------------------------
-void sendFinishedResearchAreas (cServer& server, const std::vector<int>& areas, const cPlayer& receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_FINISHED_RESEARCH_AREAS);
-	for (size_t i = 0; i < areas.size(); ++i)
-	{
-		message->pushInt32 (areas[i]);
-	}
-	message->pushInt32 (areas.size());
-	server.sendNetMessage (std::move (message), &receiver);
-}
-
-//------------------------------------------------------------------------------
-void sendRefreshResearchCount (cServer& server, const cPlayer& receiver)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_REFRESH_RESEARCH_COUNT);
-	server.sendNetMessage (std::move (message), &receiver);
-}
-
-//------------------------------------------------------------------------------
 void sendUnitUpgrades (cServer& server, const cDynamicUnitData& unitData, const cPlayer& receiver)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_UNIT_UPGRADE_VALUES);
@@ -343,38 +312,6 @@ void sendUpgradeVehicles (cServer& server, const std::vector<cVehicle*>& upgrade
 	server.sendNetMessage (std::move (message), &receiver);
 
 	//TODO: send to other players as well?
-}
-
-//------------------------------------------------------------------------------
-void sendResearchSettings (cServer& server, const std::vector<cBuilding*>& researchCentersToChangeArea, const std::vector<cResearch::ResearchArea>& newAreasForResearchCenters, const cPlayer& receiver)
-{
-	if (researchCentersToChangeArea.size() != newAreasForResearchCenters.size())
-		return;
-
-	std::unique_ptr<cNetMessage> message;
-	int buildingsInMsg = 0;
-	for (unsigned int i = 0; i < researchCentersToChangeArea.size(); i++)
-	{
-		if (message == nullptr)
-		{
-			message = std::make_unique<cNetMessage> (GAME_EV_RESEARCH_SETTINGS);
-			buildingsInMsg = 0;
-		}
-
-		message->pushChar (newAreasForResearchCenters[i]);
-		message->pushInt32 (researchCentersToChangeArea[i]->iID);
-		buildingsInMsg++;
-		if (message->iLength + 7 > PACKAGE_LENGTH)
-		{
-			message->pushInt16 (buildingsInMsg);
-			server.sendNetMessage (std::move (message), &receiver);
-		}
-	}
-	if (message != nullptr)
-	{
-		message->pushInt16 (buildingsInMsg);
-		server.sendNetMessage (std::move (message), &receiver);
-	}
 }
 
 //------------------------------------------------------------------------------
