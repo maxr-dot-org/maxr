@@ -515,35 +515,6 @@ void cClient::HandleNetMessage_GAME_EV_SET_AUTOMOVE (cNetMessage& message)
 	}
 }
 
-void cClient::HandleNetMessage_GAME_EV_SCORE (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_SCORE);
-
-	const int pn = message.popInt16();
-	const int turn = message.popInt16();
-	const int n = message.popInt16();
-
-//	getPlayerFromNumber (pn)->setScore (n, turn);
-}
-
-void cClient::HandleNetMessage_GAME_EV_NUM_ECOS (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_NUM_ECOS);
-
-	const int pn = message.popInt16();
-	const int n = message.popInt16();
-
-//	getPlayerFromNumber (pn)->numEcos = n;
-}
-
-void cClient::HandleNetMessage_GAME_EV_UNIT_SCORE (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_UNIT_SCORE);
-
-	cBuilding* b = getBuildingFromID (message.popInt16());
-	b->points = message.popInt16();
-}
-
 void cClient::HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_REVEAL_MAP);
@@ -692,9 +663,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_UPGRADED_BUILDINGS: HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (message); break;
 		case GAME_EV_UPGRADED_VEHICLES: HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (message); break;
 		case GAME_EV_SET_AUTOMOVE: HandleNetMessage_GAME_EV_SET_AUTOMOVE (message); break;
-		case GAME_EV_SCORE: HandleNetMessage_GAME_EV_SCORE (message); break;
-		case GAME_EV_NUM_ECOS: HandleNetMessage_GAME_EV_NUM_ECOS (message); break;
-		case GAME_EV_UNIT_SCORE: HandleNetMessage_GAME_EV_UNIT_SCORE (message); break;
 		case GAME_EV_REVEAL_MAP: HandleNetMessage_GAME_EV_REVEAL_MAP (message); break;
 
 		default:

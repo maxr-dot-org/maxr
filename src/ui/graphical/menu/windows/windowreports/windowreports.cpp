@@ -172,7 +172,7 @@ cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> play
 	{
 		const auto& player = players[i];
 
-		std::string playerText = player->getName() + lngPack.i18n ("Text~Punctuation~Colon") + plural (player->getScore (turnClock->getTurn()), "Text~Comp~Point", "Text~Comp~Points") + ", " + plural (player->numEcos, "Text~Comp~EcoSphere", "Text~Comp~EcoSpheres");
+		std::string playerText = player->getName() + lngPack.i18n ("Text~Punctuation~Colon") + plural (player->getScore (turnClock->getTurn()), "Text~Comp~Point", "Text~Comp~Points") + ", " + plural (player->getNumEcoSpheres(), "Text~Comp~EcoSphere", "Text~Comp~EcoSpheres");
 
 		AutoSurface colorSurface (SDL_CreateRGBSurface (0, 8, 8, Video.getColDepth(), 0, 0, 0, 0));
 		player->getColor().getColor().toMappedSdlRGBAColor (colorSurface->format);
@@ -446,7 +446,7 @@ void cWindowReports::initializeScorePlot()
 	auto extrapolate = [ ] (const cPlayer & p, int c, int t)
 	{
 		if (t <= c) return p.getScore (t);
-		else return p.getScore (c) + p.numEcos * (t - c);
+		else return p.getScore (c) + p.getNumEcoSpheres() * (t - c);
 	};
 
 	const int displayTurns = 50;

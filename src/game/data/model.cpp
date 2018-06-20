@@ -481,8 +481,7 @@ void cModel::deleteUnit(cUnit* unit)
 	// lose eco points
 	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->points != 0)
 	{
-		//unit->getOwner()->setScore(unit->getOwner()->getScore(turnClock->getTurn()) - static_cast<cBuilding*> (unit)->points, turnClock->getTurn());
-		owner->countEcoSpheres();
+		unit->getOwner()->changeScore(- static_cast<cBuilding*> (unit)->points);
 	}
 
 	if (unit->isABuilding())

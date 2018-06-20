@@ -151,54 +151,6 @@ void sendResources (cServer& server, const cPlayer& player)
 }
 
 //------------------------------------------------------------------------------
-void sendScore (cServer& server, const cPlayer& subject, int turn, const cPlayer* receiver)
-{
-	if (!receiver)
-	{
-		const auto& playerList = server.playerList;
-		for (unsigned int n = 0; n < playerList.size(); n++)
-			sendScore (server, subject, turn, playerList[n].get());
-	}
-	else
-	{
-		auto message = std::make_unique<cNetMessage> (GAME_EV_SCORE);
-		message->pushInt16 (subject.getScore (turn));
-		message->pushInt16 (turn);
-		message->pushInt16 (subject.getId());
-
-		server.sendNetMessage (std::move (message), receiver);
-	}
-}
-
-void sendUnitScore (cServer& server, const cBuilding& building)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_UNIT_SCORE);
-	message->pushInt16 (building.points);
-	message->pushInt16 (building.iID);
-	server.sendNetMessage (std::move (message), building.getOwner());
-}
-
-void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver)
-{
-	subject.countEcoSpheres();
-
-	if (!receiver)
-	{
-		const auto& playerList = server.playerList;
-		for (unsigned int n = 0; n < playerList.size(); n++)
-			sendNumEcos (server, subject, playerList[n].get());
-	}
-	else
-	{
-		auto message = std::make_unique<cNetMessage> (GAME_EV_NUM_ECOS);
-		message->pushInt16 (subject.numEcos);
-		message->pushInt16 (subject.getId());
-
-		server.sendNetMessage (std::move (message), receiver);
-	}
-}
-
-//------------------------------------------------------------------------------
 void sendNoFog (cServer& server, const cPlayer& receiver)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_NOFOG);

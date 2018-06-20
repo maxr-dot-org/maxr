@@ -66,8 +66,6 @@ struct sTurnstartReport
 
 class cSavedReport;
 
-typedef std::vector<int> PointsHistory;
-
 // the Player class //////////////////////////////
 class cPlayer
 {
@@ -150,10 +148,17 @@ public:
 	void addSentry (cUnit& u);
 	void deleteSentry (cUnit& u);
 	void upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, const cUnitsData& originalUnitsData);
-	void countEcoSpheres();
-	int getScore (int turn) const;
+
+	/** return the number of running ecospheres */
+	int getNumEcoSpheres() const;
+	/** gets the score value from the score history */
+	int getScore (unsigned int turn) const;
+	/** gets the current score of the player */
 	int getScore() const;
-	void setScore (int score, int turn);
+	/** change the score of the player for the current turn by the given value */
+	void changeScore (int score);
+	/** count generated points at turn end and and create a new entry in the points history */
+	void accumulateScore ();
 
 	void setClan (int newClan, const cUnitsData& unitsData);
 	int getClan() const { return clan; }
@@ -173,7 +178,6 @@ public:
 	bool hasSeaDetection (const cPosition& pos) const { return detectSeaMap.get(pos); }
 
 	void doResearch(const cUnitsData& unitsData);  // proceed with the research at turn end
-	void accumulateScore (cServer& server); // at turn end
 
 	void refreshSentryMaps();
 
@@ -301,13 +305,11 @@ public:
 		refreshScanMaps();
 		refreshSentryMaps();
 		refreshResearchCentersWorkingOnArea();
-		countEcoSpheres();
 	}
 	SERIALIZATION_SPLIT_MEMBER();
 public:
 	std::vector<cDynamicUnitData> dynamicUnitsData; // Current version of vehicles.
 	cBase base;               // the base (groups of connected buildings) of the player
-	PointsHistory pointsHistory; // history of player's total score (from eco-spheres) for graph
 	bool isDefeated;        // true if the player has been defeated
 	int numEcos;            // number of ecospheres. call countEcoSpheres to update.
 
@@ -333,6 +335,7 @@ private:
 	cRangeMap detectLandMap;      /** the area where the player can detect land stealth units */
 	cRangeMap detectSeaMap;       /** the area where the player can detect sea stealth units */
 	cRangeMap detectMinesMap;     /** the area where the player can detect mines */
+	std::vector<int> pointsHistory; // history of player's total score (from eco-spheres) for graph
 
 	int clan;
 	int credits;

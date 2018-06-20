@@ -40,7 +40,6 @@ using namespace std;
 //------------------------------------------------------------------------------
 cPlayer::cPlayer (const cPlayerBasicData& splayer_, const cUnitsData& unitsData) :
 	splayer (splayer_),
-	numEcos (0),
 	clan (-1),
 	hasFinishedTurn (false),
 	isRemovedFromGame (false),
@@ -531,65 +530,55 @@ void cPlayer::doResearch (const cUnitsData& unitsData)
 	}
 }
 
-void cPlayer::accumulateScore (cServer& server)
+//------------------------------------------------------------------------------
+void cPlayer::accumulateScore ()
 {
-	const int now = server.getTurnClock()->getTurn();
 	int deltaScore = 0;
 
-	for (auto i = buildings.begin(); i != buildings.end(); ++i)
+	for (const auto& b : buildings)
 	{
-		const auto& bp = *i;
-		if (bp->getStaticUnitData().canScore && bp->isUnitWorking())
+		if (b->getStaticUnitData().canScore && b->isUnitWorking())
 		{
-			bp->points++;
+			b->points++;
 			deltaScore++;
-
-			sendUnitScore (server, *bp);
 		}
 	}
-	setScore (getScore (now) + deltaScore, now);
-	sendScore (server, *this, now);
+	pointsHistory.push_back(getScore() + deltaScore);
 }
 
-void cPlayer::countEcoSpheres()
+//------------------------------------------------------------------------------
+int cPlayer::getNumEcoSpheres() const
 {
-	numEcos = 0;
+	int numEcos = 0;
 
-	for (auto i = buildings.begin(); i != buildings.end(); ++i)
+	for (const auto& building : buildings)
 	{
-		const auto& bp = *i;
-		if (bp->getStaticUnitData().canScore && bp->isUnitWorking())
+		if (building->getStaticUnitData().canScore && building->isUnitWorking())
 			++numEcos;
 	}
+	return numEcos;
 }
 
-void cPlayer::setScore (int s, int turn)
+//------------------------------------------------------------------------------
+void cPlayer::changeScore (int s)
 {
-	// turn begins at 1.
-	unsigned int t = turn;
-
-	if (pointsHistory.size() < t)
-	{
-		pointsHistory.resize(t, pointsHistory.back());
-	}
-	pointsHistory[t - 1] = s;
+	pointsHistory.back() += s;
 }
 
-int cPlayer::getScore (int turn) const
+//------------------------------------------------------------------------------
+int cPlayer::getScore (unsigned int turn) const
 {
-	// turn begins at 1.
-	unsigned int t = turn;
-
-	if (pointsHistory.size() < t)
+	if (pointsHistory.size() < turn)
 	{
 		return pointsHistory.empty() ? 0 : pointsHistory.back();
 	}
-	return pointsHistory[t - 1];
+	return pointsHistory[turn - 1];
 }
 
+//------------------------------------------------------------------------------
 int cPlayer::getScore() const
 {
-	return pointsHistory.back();
+	return pointsHistory.empty() ? 0 : pointsHistory.back();
 }
 
 //------------------------------------------------------------------------------
@@ -750,8 +739,7 @@ void cPlayer::makeTurnStart(cModel& model)
 	doResearch(*model.getUnitsData());
 
 	// eco-spheres:
-	//TODO:
-	//accumulateScore(*this);
+	accumulateScore();
 
 	// Gun'em down:
 	for (auto& vehicle : vehicles)
@@ -781,7 +769,6 @@ uint32_t cPlayer::getChecksum(uint32_t crc) const
 	crc = calcCheckSum(detectMinesMap, crc);
 	crc = calcCheckSum(pointsHistory, crc);
 	crc = calcCheckSum(isDefeated, crc);
-	crc = calcCheckSum(numEcos, crc);
 	crc = calcCheckSum(clan, crc);
 	crc = calcCheckSum(credits, crc);
 	crc = calcCheckSum(currentTurnResearchAreasFinished, crc);
