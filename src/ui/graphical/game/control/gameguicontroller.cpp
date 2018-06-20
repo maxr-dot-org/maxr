@@ -121,6 +121,7 @@
 #include "game/data/report/unit/savedreportcapturedbyenemy.h"
 #include "game/logic/action/actionstealdisable.h"
 #include "game/logic/action/actionchangeresearch.h"
+#include "game/logic/action/actionchangeunitname.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -860,7 +861,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getHud().triggeredRenameUnit, [&] (const cUnit & unit, const std::string & name)
 	{
-		sendWantChangeUnitName (client, name, unit.iID);
+		client.sendNetMessage(cActionChangeUnitName(unit, name));
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStartWork, [&] (const cUnit & unit)
 	{

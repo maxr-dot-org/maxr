@@ -502,20 +502,6 @@ void cServer::handleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (cNetMessage& m
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_WANT_CHANGE_UNIT_NAME);
-
-	const int unitID = message.popInt16();
-	cUnit* unit = getUnitFromID (unitID);
-
-	if (unit == 0) return;
-
-	unit->changeName (message.popString());
-	//sendUnitData (*this, *unit);
-}
-
-//------------------------------------------------------------------------------
 void cServer::handleNetMessage_GAME_EV_WANT_KICK_PLAYER (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_KICK_PLAYER);
@@ -545,7 +531,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 		case GAME_EV_WANT_BUILDING_UPGRADE: handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (message); break;
 		case GAME_EV_AUTOMOVE_STATUS: handleNetMessage_GAME_EV_AUTOMOVE_STATUS (message); break;
 		case GAME_EV_REQUEST_CASUALTIES_REPORT: handleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (message); break;
-		case GAME_EV_WANT_CHANGE_UNIT_NAME: handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (message); break;
 		case GAME_EV_WANT_KICK_PLAYER: handleNetMessage_GAME_EV_WANT_KICK_PLAYER (message); break;
 		default:
 			Log.write ("Server: Can not handle message, type " + message.getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);

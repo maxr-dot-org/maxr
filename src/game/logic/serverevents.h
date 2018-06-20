@@ -50,7 +50,6 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_WANT_BUY_UPGRADES,		// a client wants to buy gold upgrades for units
 	GAME_EV_WANT_BUILDING_UPGRADE,	// a client wants to upgrade one or more buildings to the newest version
 	GAME_EV_AUTOMOVE_STATUS,		// a unit has been set to automoving
-	GAME_EV_WANT_CHANGE_UNIT_NAME,	// the player wants to change the name of an unit
 	GAME_EV_WANT_KICK_PLAYER,
 
 	// DEDICATED_SERVER

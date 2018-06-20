@@ -241,7 +241,6 @@ private:
 	void handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& message);
 	void handleNetMessage_GAME_EV_AUTOMOVE_STATUS (cNetMessage& message);
 	void handleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (cNetMessage& message);
-	void handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_KICK_PLAYER (cNetMessage& message);
 
 	/**

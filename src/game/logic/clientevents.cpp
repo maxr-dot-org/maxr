@@ -140,14 +140,6 @@ void sendRequestCasualtiesReport (const cClient& client)
 	client.sendNetMessage (std::move (message));
 }
 
-void sendWantChangeUnitName (const cClient& client, const string& newName, int unitID)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_CHANGE_UNIT_NAME);
-	message->pushString (newName);
-	message->pushInt16 (unitID);
-	client.sendNetMessage (std::move (message));
-}
-
 void sentWantKickPlayer (const cClient& client, const cPlayer& player)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_KICK_PLAYER);
