@@ -43,6 +43,7 @@
 #include "actionclear.h"
 #include "actionstealdisable.h"
 #include "actionchangeresearch.h"
+#include "actionchangeunitname.h"
 
 std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 {
@@ -95,6 +96,8 @@ std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 		return std::make_unique<cActionStealDisable>(archive);
 	case eActiontype::ACTION_CHANGE_RESEARCH:
 		return std::make_unique<cActionChangeResearch>(archive);
+	case eActiontype::ACTION_CHANGE_UNIT_NAME:
+		return std::make_unique<cActionChangeUnitName>(archive);
 	default:
 		throw std::runtime_error("Unknown action type " + iToStr(static_cast<int>(type)));
 		return nullptr;
@@ -156,6 +159,8 @@ std::string enumToString(cAction::eActiontype value)
 		return "ACTION_STEAL_DISABLE";
 	case cAction::eActiontype::ACTION_CHANGE_RESEARCH:
 		return "ACTION_CHANGE_RESEARCH";
+	case cAction::eActiontype::ACTION_CHANGE_UNIT_NAME:
+		return "ACTION_CHANGE_UNIT_NAME";
 	default:
 		assert(false);
 		return toString(static_cast<int>(value));

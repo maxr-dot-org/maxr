@@ -48,7 +48,8 @@ public:
 		ACTION_RESSOURCE_DISTRIBUTION,
 		ACTION_CLEAR,
 		ACTION_STEAL_DISABLE,
-		ACTION_CHANGE_RESEARCH
+		ACTION_CHANGE_RESEARCH,
+		ACTION_CHANGE_UNIT_NAME
 	};
 	static std::unique_ptr<cAction> createFromBuffer(cBinaryArchiveOut& archive);
 

@@ -101,7 +101,6 @@ void sendSetAutoStatus (const cClient& client, int vehicleID, bool set);
 void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool upgradeAll);
 void sendWantUpgrade (const cClient& client, int buildingID, int storageSlot, bool upgradeAll);
 
-void sendWantChangeUnitName (const cClient& client, const std::string& newName, int unitID);
 
 
 void sentWantKickPlayer (const cClient& client, const cPlayer& player);
