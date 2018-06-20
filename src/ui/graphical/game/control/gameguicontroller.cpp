@@ -125,6 +125,7 @@
 #include "game/logic/action/actionbuyupgrades.h"
 #include "game/data/report/special/savedreportupgraded.h"
 #include "game/logic/action/actionupgradevehicle.h"
+#include "game/logic/action/actionupgradebuilding.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -906,11 +907,17 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUpgradeThis, [&] (const cUnit & unit)
 	{
-		if (unit.isABuilding()) static_cast<const cBuilding&> (unit).executeUpdateBuildingCommmand (client, false);
+		if (unit.isABuilding())
+		{
+			client.sendNetMessage(cActionUpgradeBuilding(static_cast<const cBuilding&>(unit), false));
+		}
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUpgradeAll, [&] (const cUnit & unit)
 	{
-		if (unit.isABuilding()) static_cast<const cBuilding&> (unit).executeUpdateBuildingCommmand (client, true);
+		if (unit.isABuilding())
+		{
+			client.sendNetMessage(cActionUpgradeBuilding(static_cast<const cBuilding&>(unit), true));
+		}
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredLayMines, [&] (const cUnit & unit)
 	{

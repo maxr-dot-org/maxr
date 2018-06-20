@@ -18,7 +18,6 @@
 ***************************************************************************/
 
 #include "game/data/model.h"
-#include "utility/listhelpers.h"
 
 #include "actionupgradevehicle.h"
 

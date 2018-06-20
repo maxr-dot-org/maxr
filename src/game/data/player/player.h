@@ -147,6 +147,8 @@ public:
 
 	void addSentry (cUnit& u);
 	void deleteSentry (cUnit& u);
+	void updateSentry (cUnit& u, int newRange);
+
 	void upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, const cUnitsData& originalUnitsData);
 
 	/** return the number of running ecospheres */

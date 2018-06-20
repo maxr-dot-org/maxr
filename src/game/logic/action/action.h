@@ -51,7 +51,8 @@ public:
 		ACTION_CHANGE_RESEARCH,
 		ACTION_CHANGE_UNIT_NAME,
 		ACTION_BUY_UPGRADES,
-		ACTION_UPGRADE_VEHICLE
+		ACTION_UPGRADE_VEHICLE,
+		ACTION_UPGRADE_BUILDING
 	};
 	static std::unique_ptr<cAction> createFromBuffer(cBinaryArchiveOut& archive);
 
