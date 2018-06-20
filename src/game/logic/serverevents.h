@@ -103,9 +103,6 @@ void sendUpgradeBuildings (cServer& server, const std::vector<cBuilding*>& upgra
 void sendUpgradeVehicles (cServer& server, const std::vector<cVehicle*>& upgradedVehicles, int totalCosts, unsigned int storingBuildingID, const cPlayer& receiver);
 void sendSetAutomoving (cServer& server, const cVehicle& vehicle);
 
-void sendScore (cServer& server, const cPlayer& subject, int turn, const cPlayer* receiver = nullptr);
-void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver = nullptr);
-void sendUnitScore (cServer& server, const cBuilding&);
 
 void sendRevealMap (cServer& server, const cPlayer& receiver);
 

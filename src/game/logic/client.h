@@ -168,9 +168,6 @@ private:
 	void HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SET_AUTOMOVE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_SCORE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_NUM_ECOS (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_UNIT_SCORE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message);
 private:
 	cModel model;

@@ -402,9 +402,6 @@ string cNetMessage::getTypeAsString() const
 		case GAME_EV_SET_AUTOMOVE: return "GAME_EV_SET_AUTOMOVE";
 		case GAME_EV_CASUALTIES_REPORT: return "GAME_EV_CASUALTIES_REPORT";
 		case GAME_EV_REQUEST_CASUALTIES_REPORT: return "GAME_EV_REQUEST_CASUALTIES_REPORT";
-		case GAME_EV_SCORE: return "GAME_EV_SCORE";
-		case GAME_EV_NUM_ECOS: return "GAME_EV_NUM_ECOS";
-		case GAME_EV_UNIT_SCORE: return "GAME_EV_UNIT_SCORE";
 		case GAME_EV_REVEAL_MAP: return "GAME_EV_REVEAL_MAP";
 		default: return iToStr (iType);
 	}

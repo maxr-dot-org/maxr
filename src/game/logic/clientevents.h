@@ -55,9 +55,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_UPGRADED_BUILDINGS,		// the buildings in the msg have been upgraded to the current version
 	GAME_EV_UPGRADED_VEHICLES,		// the vehicles in the msg have been upgraded to the current version
 	GAME_EV_SET_AUTOMOVE,			// a unit has to enable automoving
-	GAME_EV_SCORE,                  // sends a player's score to a client
-	GAME_EV_NUM_ECOS,               // sends a player's ecosphere count to a client
-	GAME_EV_UNIT_SCORE,             // sends a unit's score to its owner
 	GAME_EV_CASUALTIES_REPORT,		// sends the casualties stats to a client
 	GAME_EV_REVEAL_MAP,             // a client should reveal the whole map
 };
