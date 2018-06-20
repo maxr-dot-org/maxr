@@ -31,10 +31,17 @@ public:
 	cCasualtiesTracker() {}
 
 
-	void logCasualty (sID unitType, int playerNr);
+	void logCasualty (const cUnit& unit);
 	int getCasualtiesOfUnitType (sID unitType, int playerNr) const;
 
 	std::vector<sID> getUnitTypesWithLosses() const;
+
+	template<typename T>
+	void serialize(T& archive)
+	{
+		archive & NVP(casualtiesPerPlayer);
+	}
+	uint32_t getChecksum(uint32_t crc) const;
 
 	mutable cSignal<void (const sID&, int)> casualtyChanged;
 	mutable cSignal<void ()> casualtiesChanged;
@@ -44,11 +51,27 @@ private:
 	{
 		sID unitID;
 		int numberOfLosses;
+
+		template<typename T>
+		void serialize(T& archive)
+		{
+			archive & NVP(unitID);
+			archive & NVP(numberOfLosses);
+		}
+		uint32_t getChecksum(uint32_t crc) const;
 	};
 	struct CasualtiesOfPlayer
 	{
 		std::vector<Casualty> casualties;
 		int playerNr;
+
+		template<typename T>
+		void serialize(T& archive)
+		{
+			archive & NVP(casualties);
+			archive & NVP(playerNr);
+		}
+		uint32_t getChecksum(uint32_t crc) const;
 	};
 	mutable std::vector<CasualtiesOfPlayer> casualtiesPerPlayer;
 

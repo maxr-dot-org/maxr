@@ -23,15 +23,21 @@
 
 #include "game/data/units/unitdata.h"
 #include "utility/log.h"
-#include "netmessage.h"
 #include "tinyxml2.h"
+#include "game/data/units/unit.h"
+#include "game/data/player/player.h"
 
 using namespace std;
 using namespace tinyxml2;
 
 //--------------------------------------------------------------------------
-void cCasualtiesTracker::logCasualty (sID unitType, int playerNr)
+void cCasualtiesTracker::logCasualty (const cUnit& unit)
 {
+	if (!unit.getOwner()) return;
+	if (unit.isABuilding() && unit.data.getBuildCost() <= 2) return;
+
+	const auto& unitType = unit.data.getId();
+	const int playerNr = unit.getOwner()->getId();
 	setCasualty (unitType, getCasualtiesOfUnitType (unitType, playerNr) + 1, playerNr);
 
 	casualtiesChanged();
@@ -121,6 +127,12 @@ vector<sID> cCasualtiesTracker::getUnitTypesWithLosses() const
 	return result;
 }
 
+//------------------------------------------------------------------------------
+uint32_t cCasualtiesTracker::getChecksum(uint32_t crc) const
+{
+	return calcCheckSum(casualtiesPerPlayer, crc);
+}
+
 //--------------------------------------------------------------------------
 vector<cCasualtiesTracker::Casualty>& cCasualtiesTracker::getCasualtiesOfPlayer (int playerNr) const
 {
@@ -143,4 +155,20 @@ vector<cCasualtiesTracker::Casualty>& cCasualtiesTracker::getCasualtiesOfPlayer 
 	}
 	casualtiesPerPlayer.push_back (newCasualtiesOfPlayer);
 	return casualtiesPerPlayer.back().casualties;
+}
+
+uint32_t cCasualtiesTracker::CasualtiesOfPlayer::getChecksum(uint32_t crc) const
+{
+	crc = calcCheckSum(casualties, crc);
+	crc = calcCheckSum(playerNr, crc);
+
+	return crc;
+}
+
+uint32_t cCasualtiesTracker::Casualty::getChecksum(uint32_t crc) const
+{
+	crc = calcCheckSum(unitID, crc);
+	crc = calcCheckSum(numberOfLosses, crc);
+
+	return crc;
 }

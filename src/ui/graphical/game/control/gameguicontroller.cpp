@@ -2039,7 +2039,7 @@ std::shared_ptr<const cGameSettings> cGameGuiController::getGameSettings() const
 //------------------------------------------------------------------------------
 std::shared_ptr<const cCasualtiesTracker> cGameGuiController::getCasualtiesTracker() const
 {
-	return activeClient ? activeClient->getCasualtiesTracker() : nullptr;
+	return activeClient ? activeClient->getModel().getCasualtiesTracker() : nullptr;
 }
 
 //-----------------------------------------------------------------------------

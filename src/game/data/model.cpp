@@ -32,6 +32,7 @@
 #include "game/logic/fxeffects.h"
 #include "game/logic/jobs/destroyjob.h"
 #include "map/mapview.h"
+#include "game/logic/casualtiestracker.h"
 
 //------------------------------------------------------------------------------
 cModel::cModel() :
@@ -44,7 +45,8 @@ cModel::cModel() :
 	turnEndState(TURN_ACTIVE),
 	activeTurnPlayer(nullptr),
 	turnEndDeadline(0),
-	turnLimitDeadline(0)
+	turnLimitDeadline(0),
+	casualtiesTracker (std::make_shared<cCasualtiesTracker> ())
 {
 	turnTimeClock = std::make_shared<cTurnTimeClock>(*this);
 
@@ -157,6 +159,7 @@ uint32_t cModel::getChecksum() const
 	crc = calcCheckSum(turnLimitDeadline, crc);
 	crc = calcCheckSum(*turnTimeClock, crc);
 	crc = calcCheckSum(helperJobs, crc);
+	crc = calcCheckSum(*casualtiesTracker, crc);
 
 	return crc;
 }
@@ -442,9 +445,7 @@ void cModel::deleteUnit(cUnit* unit)
 
 	cPlayer* owner = unit->getOwner();
 
-	//TODO
-	//if (unit->getOwner() && casualtiesTracker != nullptr && ((unit->isABuilding() && unit->data.buildCosts <= 2) == false))
-	//	casualtiesTracker->logCasualty(unit->data.ID, unit->getOwner()->getNr());
+	casualtiesTracker->logCasualty(*unit);
 
 	std::shared_ptr<cUnit> owningPtr; // keep owning ptr to make sure that unit instance will outlive the following method.
 	if (unit->isABuilding())
