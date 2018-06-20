@@ -35,57 +35,7 @@
 using namespace std;
 
 
-void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades)
-{
-	const cPlayer& player = client.getActivePlayer();
-	std::unique_ptr<cNetMessage> msg = nullptr;
-	int iCount = 0;
 
-	for (size_t i = 0; i < unitUpgrades.size(); ++i)
-	{
-		const auto& unitId = unitUpgrades[i].first;
-		const auto& curUpgrade = unitUpgrades[i].second;
-
-		if (!curUpgrade.hasBeenPurchased()) continue;
-
-		if (msg == nullptr)
-		{
-			msg = std::make_unique<cNetMessage> (GAME_EV_WANT_BUY_UPGRADES);
-			iCount = 0;
-		}
-
-		const auto currentVersion = player.getUnitDataCurrentVersion (unitId);
-
-		if (unitId.isAVehicle()) msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_SPEED, currentVersion->getSpeedMax()));
-		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_SCAN, currentVersion->getScan()));
-		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_HITS, currentVersion->getHitpointsMax()));
-		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_ARMOR, currentVersion->getArmor()));
-		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_AMMO, currentVersion->getAmmoMax()));
-		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_RANGE, currentVersion->getRange()));
-		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_SHOTS, currentVersion->getShotsMax()));
-		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_DAMAGE, currentVersion->getDamage()));
-		msg->pushID (currentVersion->getId());
-
-		iCount++; // msg contains one more upgrade struct
-
-		// the msg would be too long,
-		// if another upgrade would be written into it.
-		// So send it and put the next upgrades in a new message.
-		if (msg->iLength + 38 > PACKAGE_LENGTH)
-		{
-			msg->pushInt16 (iCount);
-			msg->pushInt16 (player.getId());
-			client.sendNetMessage (std::move (msg));
-		}
-	}
-
-	if (msg != nullptr)
-	{
-		msg->pushInt16 (iCount);
-		msg->pushInt16 (player.getId());
-		client.sendNetMessage (std::move (msg));
-	}
-}
 
 void sendChatMessageToServer (const cClient& client, const string& msg, const cPlayer& player)
 {

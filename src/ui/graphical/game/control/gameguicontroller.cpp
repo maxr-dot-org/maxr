@@ -122,6 +122,7 @@
 #include "game/logic/action/actionstealdisable.h"
 #include "game/logic/action/actionchangeresearch.h"
 #include "game/logic/action/actionchangeunitname.h"
+#include "game/logic/action/actionbuyupgrades.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -840,7 +841,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (takeUnitUpgradesTriggered, [&] (const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades)
 	{
-		sendTakenUpgrades (client, unitUpgrades);
+		client.sendNetMessage(cActionBuyUpgrades(unitUpgrades));
 	});
 	clientSignalConnectionManager.connect (selfDestructionTriggered, [&] (const cUnit & unit)
 	{
