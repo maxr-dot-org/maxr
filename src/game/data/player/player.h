@@ -223,6 +223,7 @@ public:
 	mutable cSignal<void (const cUnit& unit)> buildPathInterrupted;
 	mutable cSignal<void (const cUnit& unit)> detectedStealthUnit;
 	mutable cSignal<void (const cUnit& unit)> stealthUnitDissappeared;
+	mutable cSignal<void (const sID& unitId, int unitsCount, int costs)> unitsUpgraded;
 
 	template <typename T>
 	void save(T& archive)
