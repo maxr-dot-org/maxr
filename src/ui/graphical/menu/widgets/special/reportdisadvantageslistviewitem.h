@@ -23,8 +23,6 @@
 #include "ui/graphical/menu/widgets/abstractlistviewitem.h"
 #include "main.h" // sID
 
-class cCasualtiesTracker;
-
 class cReportDisadvantagesListViewItem : public cAbstractListViewItem
 {
 public:

@@ -22,6 +22,7 @@
 
 #include "actionstealdisable.h"
 #include "actionstop.h"
+#include "game/logic/casualtiestracker.h"
 
 cActionStealDisable::cActionStealDisable(const cVehicle& infiltrator, const cUnit& target, bool steal) :
 	cAction(eActiontype::ACTION_STEAL_DISABLE),
@@ -105,8 +106,8 @@ void cActionStealDisable::execute(cModel& model) const
 
 void cActionStealDisable::changeUnitOwner(cUnit& unit, cPlayer& newOwner, cModel& model) const
 {
-	//if (unit.getOwner() && model.getc)
-	//		casualtiesTracker->logCasualty(vehicle.data.getId(), vehicle.getOwner()->getId());
+
+	model.getCasualtiesTracker()->logCasualty(unit);
 
 	cPlayer* oldOwner = unit.getOwner();
 	if (!unit.isDisabled())

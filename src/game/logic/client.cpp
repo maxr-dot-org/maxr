@@ -69,8 +69,7 @@ cClient::cClient (std::shared_ptr<cConnectionManager> connectionManager) :
 	server (nullptr),
 	connectionManager(connectionManager),
 	gameTimer (std::make_shared<cGameTimerClient> ()),
-	activePlayer (nullptr),
-	casualtiesTracker (std::make_shared<cCasualtiesTracker> ())
+	activePlayer (nullptr)
 {
 	gameTimer->start();
 }

@@ -36,6 +36,7 @@
 #include "game/logic/fxeffects.h"
 #include "game/logic/attackjob.h"
 #include "game/logic/jobs/jobcontainer.h"
+#include "game/logic/casualtiestracker.h"
 
 class cPlayerBasicData;
 class cGameSettings;
@@ -76,6 +77,9 @@ public:
 	std::shared_ptr<const cMap> getMap() const { return map; };
 	std::shared_ptr<cMap> getMap() { return map; };
 	void setMap(std::shared_ptr<cStaticMap> map);
+
+	const std::shared_ptr<cCasualtiesTracker>& getCasualtiesTracker() { return casualtiesTracker; }
+	std::shared_ptr<const cCasualtiesTracker> getCasualtiesTracker() const { return casualtiesTracker; }
 
 	cPlayer* getPlayer(int playerNr);
 	const cPlayer* getPlayer(int playerNr) const;
@@ -173,6 +177,7 @@ public:
 		archive << NVP(turnEndState);
 		archive << NVP(activeTurnPlayer);
 		archive << NVP(helperJobs);
+		archive << serialization::makeNvp("causaliesTracker", *casualtiesTracker);
 		//TODO: serialize effectList
 	};
 	template<typename T>
@@ -258,6 +263,7 @@ public:
 		archive >> NVP(turnEndState);
 		archive >> NVP(activeTurnPlayer);
 		archive >> NVP(helperJobs);
+		archive >> serialization::makeNvp("causaliesTracker", *casualtiesTracker);
 		//TODO: clear effect list, deserialize effects, call addedEffect()
 
 		refreshMapPointer();
@@ -297,6 +303,8 @@ private:
 	std::shared_ptr<cTurnTimeClock> turnTimeClock;
 	unsigned int turnEndDeadline;
 	unsigned int turnLimitDeadline;
+
+	std::shared_ptr<cCasualtiesTracker> casualtiesTracker;
 
 	enum {TURN_ACTIVE, EXECUTE_REMAINING_MOVEMENTS, EXECUTE_TURN_START} turnEndState;
 

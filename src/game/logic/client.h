@@ -127,9 +127,6 @@ public:
 
 	void deletePlayer (cPlayer& player);
 
-	const std::shared_ptr<cCasualtiesTracker>& getCasualtiesTracker() { return casualtiesTracker; }
-	std::shared_ptr<const cCasualtiesTracker> getCasualtiesTracker() const { return casualtiesTracker; }
-
 	const std::shared_ptr<cGameTimerClient>& getGameTimer() const { return gameTimer; }
 
 	void loadModel(int saveGameNumber);
@@ -184,8 +181,6 @@ private:
 
 	/** the active Player */
 	cPlayer* activePlayer;
-
-	std::shared_ptr<cCasualtiesTracker> casualtiesTracker; //TODO: move to cModel
 
 	cFreezeModes freezeModes;
 	std::map<int, ePlayerConnectionState> playerConnectionStates;
