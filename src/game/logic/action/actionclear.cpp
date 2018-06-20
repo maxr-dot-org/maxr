@@ -47,6 +47,7 @@ void cActionClear::execute(cModel& model) const
 	if (vehicle->getOwner()->getId() != playerNr) return;
 
 	if (!vehicle->getStaticUnitData().canClearArea) return;
+	if (vehicle->isUnitMoving()) return;
 
 	auto map = model.getMap();
 	auto rubble = model.getMap()->getField(vehicle->getPosition()).getRubble();

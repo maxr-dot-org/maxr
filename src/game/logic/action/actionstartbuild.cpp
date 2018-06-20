@@ -70,6 +70,7 @@ void cActionStartBuild::execute(cModel& model) const
 	
 	if (vehicle->isUnitBuildingABuilding() || vehicle->BuildPath) return;
 	if (vehicle->isDisabled()) return;
+	if (vehicle->isUnitMoving()) return;
 
 	const cStaticUnitData& data = model.getUnitsData()->getStaticUnitData(buildingTypeID);
 
