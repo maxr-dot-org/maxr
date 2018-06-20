@@ -67,7 +67,6 @@ enum CHAT_MESSAGE_TYPES
 };
 
 
-void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades);
 
 /**
 * Generates a event with a chat message and pushes it to the event queue or sends it over TCP/IP if necessary

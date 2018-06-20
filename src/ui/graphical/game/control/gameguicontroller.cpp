@@ -122,6 +122,10 @@
 #include "game/logic/action/actionstealdisable.h"
 #include "game/logic/action/actionchangeresearch.h"
 #include "game/logic/action/actionchangeunitname.h"
+#include "game/logic/action/actionbuyupgrades.h"
+#include "game/data/report/special/savedreportupgraded.h"
+#include "game/logic/action/actionupgradevehicle.h"
+#include "game/logic/action/actionupgradebuilding.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -824,11 +828,15 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (upgradeTriggered, [&] (const cUnit & unit, size_t index)
 	{
-		sendWantUpgrade (client, unit.iID, index, false);
+		if (!unit.isABuilding()) return;
+
+		client.sendNetMessage(cActionUpgradeVehicle(*static_cast<const cBuilding*>(&unit), unit.storedUnits[index]));
 	});
 	clientSignalConnectionManager.connect (upgradeAllTriggered, [&] (const cUnit & unit)
 	{
-		sendWantUpgrade (client, unit.iID, 0, true);
+		if (!unit.isABuilding()) return;
+
+		client.sendNetMessage(cActionUpgradeVehicle(*static_cast<const cBuilding*>(&unit)));
 	});
 	clientSignalConnectionManager.connect (changeResourceDistributionTriggered, [&] (const cBuilding & building, int metalProduction, int oilProduction, int goldProduction)
 	{
@@ -840,7 +848,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (takeUnitUpgradesTriggered, [&] (const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades)
 	{
-		sendTakenUpgrades (client, unitUpgrades);
+		client.sendNetMessage(cActionBuyUpgrades(unitUpgrades));
 	});
 	clientSignalConnectionManager.connect (selfDestructionTriggered, [&] (const cUnit & unit)
 	{
@@ -899,11 +907,17 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUpgradeThis, [&] (const cUnit & unit)
 	{
-		if (unit.isABuilding()) static_cast<const cBuilding&> (unit).executeUpdateBuildingCommmand (client, false);
+		if (unit.isABuilding())
+		{
+			client.sendNetMessage(cActionUpgradeBuilding(static_cast<const cBuilding&>(unit), false));
+		}
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUpgradeAll, [&] (const cUnit & unit)
 	{
-		if (unit.isABuilding()) static_cast<const cBuilding&> (unit).executeUpdateBuildingCommmand (client, true);
+		if (unit.isABuilding())
+		{
+			client.sendNetMessage(cActionUpgradeBuilding(static_cast<const cBuilding&>(unit), true));
+		}
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredLayMines, [&] (const cUnit & unit)
 	{
@@ -1434,6 +1448,10 @@ void cGameGuiController::connectReportSources(cClient& client)
 	clientSignalConnectionManager.connect(player.buildErrorInsufficientMaterial, [&]()
 	{
 		addSavedReport(std::make_unique<cSavedReportSimple> (eSavedReportType::Producing_InsufficientMaterial), player.getId());
+	});
+	clientSignalConnectionManager.connect(player.unitsUpgraded, [&](const sID& unitId, int unitsCount, int costs)
+	{
+		addSavedReport(std::make_unique<cSavedReportUpgraded> (unitId, unitsCount, costs), player.getId());
 	});
 
 	//reports from the players base:

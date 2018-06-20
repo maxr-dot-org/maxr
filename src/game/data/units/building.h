@@ -201,8 +201,6 @@ public:
 	void render_simple(SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, unsigned long long animationTime = 0, int alpha = 254) const;
 	static void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sBuildingUIData& uiData, const cPlayer* owner, int frameNr = 0, int alpha = 254);
 
-	void executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType) const;
-
 	virtual bool isUnitWorking() const { return isWorking; }
 	virtual bool factoryHasJustFinishedBuilding() const;
 	virtual bool buildingCanBeStarted() const;

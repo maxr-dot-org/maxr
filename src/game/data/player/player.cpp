@@ -347,6 +347,22 @@ void cPlayer::deleteSentry (cUnit& u)
 }
 
 //------------------------------------------------------------------------------
+void cPlayer::updateSentry(cUnit& u, int newRange)
+{
+	if (!u.isSentryActive()) return;
+
+	const int size = u.getIsBig() ? 2 : 1;
+	if (u.getStaticUnitData().canAttack & TERRAIN_AIR)
+	{
+		sentriesMapGround.update(u.data.getRange(), newRange, u.getPosition(), size);
+	}
+	else if ((u.getStaticUnitData().canAttack & TERRAIN_GROUND) || (u.getStaticUnitData().canAttack & TERRAIN_SEA))
+	{
+		sentriesMapAir.update(u.data.getRange(), newRange, u.getPosition(), size);
+	}
+}
+
+//------------------------------------------------------------------------------
 void cPlayer::refreshSentryMaps()
 {
 	//1 save original maps

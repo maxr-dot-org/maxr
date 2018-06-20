@@ -44,6 +44,9 @@
 #include "actionstealdisable.h"
 #include "actionchangeresearch.h"
 #include "actionchangeunitname.h"
+#include "actionbuyupgrades.h"
+#include "actionupgradevehicle.h"
+#include "actionupgradebuilding.h"
 
 std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 {
@@ -98,6 +101,12 @@ std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 		return std::make_unique<cActionChangeResearch>(archive);
 	case eActiontype::ACTION_CHANGE_UNIT_NAME:
 		return std::make_unique<cActionChangeUnitName>(archive);
+	case eActiontype::ACTION_BUY_UPGRADES:
+		return std::make_unique<cActionBuyUpgrades>(archive); 
+	case eActiontype::ACTION_UPGRADE_VEHICLE:
+		return std::make_unique<cActionUpgradeVehicle>(archive);
+	case eActiontype::ACTION_UPGRADE_BUILDING:
+		return std::make_unique<cActionUpgradeBuilding>(archive);
 	default:
 		throw std::runtime_error("Unknown action type " + iToStr(static_cast<int>(type)));
 		return nullptr;
@@ -161,6 +170,12 @@ std::string enumToString(cAction::eActiontype value)
 		return "ACTION_CHANGE_RESEARCH";
 	case cAction::eActiontype::ACTION_CHANGE_UNIT_NAME:
 		return "ACTION_CHANGE_UNIT_NAME";
+	case cAction::eActiontype::ACTION_BUY_UPGRADES:
+		return "ACTION_BUY_UPGRADES";
+	case cAction::eActiontype::ACTION_UPGRADE_VEHICLE:
+		return "ACTION_UPGRADE_VEHICLE";
+	case cAction::eActiontype::ACTION_UPGRADE_BUILDING:
+		return "ACTION_UPGRADE_BUILDING";
 	default:
 		assert(false);
 		return toString(static_cast<int>(value));

@@ -1315,12 +1315,6 @@ bool cBuilding::factoryHasJustFinishedBuilding() const
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType) const
-{
-	sendUpgradeBuilding (client, *this, updateAllOfSameType);
-}
-
-//-----------------------------------------------------------------------------
 bool cBuilding::buildingCanBeStarted() const
 {
 	return (staticData->canWork && isUnitWorking() == false
