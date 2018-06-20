@@ -134,18 +134,6 @@ void sendWantUpgrade (const cClient& client, int buildingID, int storageSlot, bo
 	client.sendNetMessage (std::move (message));
 }
 
-void sendWantResearchChange (const cClient& client, const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_RESEARCH_CHANGE);
-	const cPlayer& player = client.getActivePlayer();
-	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
-	{
-		message->pushInt16 (newResearchSettings[i]);
-	}
-	message->pushInt16 (player.getId());
-	client.sendNetMessage (std::move (message));
-}
-
 void sendRequestCasualtiesReport (const cClient& client)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_REQUEST_CASUALTIES_REPORT);

@@ -167,10 +167,6 @@ private:
 	void HandleNetMessage_GAME_EV_CREDITS_CHANGED (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_RESEARCH_SETTINGS (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_RESEARCH_LEVEL (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_FINISHED_RESEARCH_AREAS (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_REFRESH_RESEARCH_COUNT (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SET_AUTOMOVE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SCORE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_NUM_ECOS (cNetMessage& message);
