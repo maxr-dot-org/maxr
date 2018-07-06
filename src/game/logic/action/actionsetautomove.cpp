@@ -17,38 +17,34 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef game_logic_actionStartMoveH
-#define game_logic_actionStartMoveH
+#include "actionsetautomove.h"
 
-#include "action.h"
-#include <forward_list>
-#include "game/logic/endmoveaction.h"
+#include "game/data/model.h"
 
-class cActionStartMove : public cAction
+//------------------------------------------------------------------------------
+cActionSetAutoMove::cActionSetAutoMove(const cVehicle& vehicle, bool autoMoveActive) :
+	cAction(eActiontype::ACTION_SET_AUTO_MOVE),
+	vehicleId(vehicle.getId()),
+	autoMoveActive(autoMoveActive)
+{};
+
+//------------------------------------------------------------------------------
+cActionSetAutoMove::cActionSetAutoMove(cBinaryArchiveOut& archive) :
+	cAction(eActiontype::ACTION_SET_AUTO_MOVE)
 {
-public:
-	cActionStartMove(const cVehicle& vehicle, const std::forward_list<cPosition>& path, cEndMoveAction emat);
-	cActionStartMove(const cVehicle& vehicle, const std::forward_list<cPosition>& path, bool stopOnDetectRessource = false);
-	cActionStartMove(cBinaryArchiveOut& archive);
+	serializeThis(archive);
+}
 
-	virtual void serialize(cBinaryArchiveIn& archive) { cAction::serialize(archive); serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive)   { cAction::serialize(archive); serializeThis(archive); }
+//------------------------------------------------------------------------------
+void cActionSetAutoMove::execute(cModel& model) const
+{
+	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	virtual void execute(cModel& model) const override;
-private:
-	template<typename T>
-	void serializeThis(T& archive)
-	{
-		archive & unitId;
-		archive & path;
-		archive & endMoveAction;
-		archive & stopOnDetectResource;
-	}
+	cVehicle* surveyor = model.getVehicleFromID(vehicleId);
+	if (!surveyor) return;
 
-	std::forward_list<cPosition> path;
-	unsigned int unitId;
-	cEndMoveAction endMoveAction;
-	bool stopOnDetectResource;
-};
+	if (surveyor->getOwner()->getId() != playerNr) return;
+	if (!surveyor->getStaticUnitData().canSurvey) return;
 
-#endif // game_logic_actionStartMoveH
+	surveyor->setSurveyorAutoMoveActive(autoMoveActive);
+}

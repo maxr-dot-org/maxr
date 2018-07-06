@@ -17,19 +17,18 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef game_logic_actionStartMoveH
-#define game_logic_actionStartMoveH
+#ifndef game_logic_actionSetAutoMoveH
+#define game_logic_actionSetAutoMoveH
 
 #include "action.h"
-#include <forward_list>
-#include "game/logic/endmoveaction.h"
 
-class cActionStartMove : public cAction
+class cUnit;
+
+class cActionSetAutoMove : public cAction
 {
 public:
-	cActionStartMove(const cVehicle& vehicle, const std::forward_list<cPosition>& path, cEndMoveAction emat);
-	cActionStartMove(const cVehicle& vehicle, const std::forward_list<cPosition>& path, bool stopOnDetectRessource = false);
-	cActionStartMove(cBinaryArchiveOut& archive);
+	cActionSetAutoMove(const cVehicle& vehicle, bool autoMoveActive);
+	cActionSetAutoMove(cBinaryArchiveOut& archive);
 
 	virtual void serialize(cBinaryArchiveIn& archive) { cAction::serialize(archive); serializeThis(archive); }
 	virtual void serialize(cTextArchiveIn& archive)   { cAction::serialize(archive); serializeThis(archive); }
@@ -39,16 +38,12 @@ private:
 	template<typename T>
 	void serializeThis(T& archive)
 	{
-		archive & unitId;
-		archive & path;
-		archive & endMoveAction;
-		archive & stopOnDetectResource;
+		archive & vehicleId;
+		archive & autoMoveActive;
 	}
 
-	std::forward_list<cPosition> path;
-	unsigned int unitId;
-	cEndMoveAction endMoveAction;
-	bool stopOnDetectResource;
+	int vehicleId;
+	bool autoMoveActive;
 };
 
-#endif // game_logic_actionStartMoveH
+#endif

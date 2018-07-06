@@ -21,7 +21,6 @@
 
 #include "game/logic/client.h"
 
-#include "game/logic/automjobs.h"
 #include "game/data/units/building.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/clientevents.h"
@@ -57,6 +56,8 @@
 #include "game/data/savegame.h"
 #include "utility/serialization/textarchive.h"
 #include "utility/string/toString.h"
+#include "surveyorai.h"
+#include "action/actionsetautomove.h"
 
 using namespace std;
 
@@ -503,22 +504,19 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message)
 	//activePlayer->addSavedReport (std::make_unique<cSavedReportUpgraded> (unitData->ID, vehiclesInMsg, totalCosts));
 }
 
-void cClient::HandleNetMessage_GAME_EV_SET_AUTOMOVE (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_SET_AUTOMOVE);
-
-	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
-	if (Vehicle)
-	{
-		Vehicle->startAutoMoveJob (*this);
-	}
-}
-
 void cClient::HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_REVEAL_MAP);
 
 //	activePlayer->revealMap();
+}
+
+//------------------------------------------------------------------------------
+void cClient::runClientJobs(const cModel& model)
+{
+	// run surveyor AI
+	handleSurveyorMoveJobs();
+
 }
 
 void cClient::setUnitsData(std::shared_ptr<const cUnitsData> unitsData)
@@ -590,6 +588,7 @@ void cClient::handleNetMessages()
 				try
 				{
 					msg->apply(model);
+					recreateSurveyorMoveJobs();
 					gameTimer->sendSyncMessage(*this, model.getGameTime(), 0, 0);
 				}
 				catch (std::runtime_error& e)
@@ -661,7 +660,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_CREDITS_CHANGED: HandleNetMessage_GAME_EV_CREDITS_CHANGED (message); break;
 		case GAME_EV_UPGRADED_BUILDINGS: HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (message); break;
 		case GAME_EV_UPGRADED_VEHICLES: HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (message); break;
-		case GAME_EV_SET_AUTOMOVE: HandleNetMessage_GAME_EV_SET_AUTOMOVE (message); break;
 		case GAME_EV_REVEAL_MAP: HandleNetMessage_GAME_EV_REVEAL_MAP (message); break;
 
 		default:
@@ -672,61 +670,19 @@ int cClient::handleNetMessage (cNetMessage& message)
 	return 0;
 }
 
-void cClient::addAutoMoveJob (std::weak_ptr<cAutoMJob> autoMoveJob)
+//------------------------------------------------------------------------------
+void cClient::handleSurveyorMoveJobs()
 {
-	autoMoveJobs.push_back (std::move (autoMoveJob));
-}
-
-void cClient::handleAutoMoveJobs()
-{
-	std::vector<cAutoMJob*> activeAutoMoveJobs;
-
-	// clean up deleted and finished move jobs
-	for (auto i = autoMoveJobs.begin(); i != autoMoveJobs.end(); /*erase in loop*/)
+	for (auto& job : surveyorAiJobs)
 	{
-		if (i->expired())
+		job->run(*this, surveyorAiJobs);
+
+		if (job->isFinished())
 		{
-			i = autoMoveJobs.erase (i);
-		}
-		else
-		{
-			auto job = i->lock();
-			if (job->isFinished())
-			{
-				job->getVehicle().stopAutoMoveJob();
-				if (job.use_count() == 1)
-				{
-					i = autoMoveJobs.erase (i);
-				}
-			}
-			else
-			{
-				activeAutoMoveJobs.push_back (job.get());
-				++i;
-			}
+			job = nullptr;
 		}
 	}
-
-	// We do not want to execute all auto move jobs at the same time.
-	// instead we do a round-robin like scheduling for the auto move jobs:
-	// we do executed only a limited number of auto move jobs at a time.
-	// To do so we execute only the first N auto move jobs in the list
-	// and afterwards push them to the end of the list so that they will only be executed
-	// when all the other jobs have been executed once as well.
-	const size_t maxConcurrentJobs = 2;
-
-	auto jobsToExecute = std::min (activeAutoMoveJobs.size(), maxConcurrentJobs);
-
-	while (jobsToExecute > 0)
-	{
-		auto job = autoMoveJobs.front().lock();
-		job->doAutoMove (activeAutoMoveJobs);
-
-		autoMoveJobs.pop_front();
-		autoMoveJobs.push_back (job);
-
-		--jobsToExecute;
-	}
+	Remove(surveyorAiJobs, nullptr);
 }
 
 cVehicle* cClient::getVehicleFromID (unsigned int id) const
@@ -759,16 +715,6 @@ cUnit* cClient::getUnitFromID (unsigned int id) const
 	if (result == nullptr)
 		result = getBuildingFromID (id);
 	return result;
-}
-
-void cClient::doGameActions()
-{
-
-	// run surveyor ai
-	//if (gameTimer->timer50ms)
-	{
-		handleAutoMoveJobs();
-	}
 }
 
 cSubBase* cClient::getSubBaseFromID (int iID)
@@ -822,10 +768,63 @@ const std::map<int, ePlayerConnectionState>& cClient::getPlayerConnectionStates(
 }
 
 //------------------------------------------------------------------------------
-void cClient::loadModel(int saveGameNumber)
+void cClient::addSurveyorMoveJob(const cVehicle& vehicle)
+{
+	if (!vehicle.getStaticUnitData().canSurvey) return;
+	
+	sendNetMessage(cActionSetAutoMove(vehicle, true));
+
+	//don't add new job, if there is already one for this vehicle
+	auto it = std::find_if(surveyorAiJobs.begin(), surveyorAiJobs.end(), [&](const std::unique_ptr<cSurveyorAi>& job)
+	{
+		return job->getVehicle().getId() == vehicle.getId();
+	});
+	if (it != surveyorAiJobs.end())
+	{
+		return;
+	}
+	
+	surveyorAiJobs.push_back(std::make_unique<cSurveyorAi>(vehicle));
+}
+
+//------------------------------------------------------------------------------
+void cClient::removeSurveyorMoveJob(const cVehicle& vehicle)
+{
+	sendNetMessage(cActionSetAutoMove(vehicle, false));
+
+	auto it = std::find_if(surveyorAiJobs.begin(), surveyorAiJobs.end(), [&](const std::unique_ptr<cSurveyorAi>& job)
+	{
+		return job->getVehicle().getId() == vehicle.getId();
+	});
+	if (it != surveyorAiJobs.end())
+	{
+		surveyorAiJobs.erase(it);
+	}
+}
+
+//------------------------------------------------------------------------------
+void cClient::recreateSurveyorMoveJobs()
+{
+	surveyorAiJobs.clear();
+
+	for (const auto& vehicle : activePlayer->getVehicles())
+	{
+		if (vehicle->isSurveyorAutoMoveActive())
+		{
+			surveyorAiJobs.push_back(std::make_unique<cSurveyorAi>(*vehicle));
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+void cClient::loadModel(int saveGameNumber, int playerNr)
 {
 	cSavegame savegame;
 	savegame.loadModel(model, saveGameNumber);
+
+	activePlayer = model.getPlayerList()[playerNr].get();
+
+	recreateSurveyorMoveJobs();
 
 	Log.write(" Client: loaded model. GameId: " + toString(model.getGameId()), cLog::eLOG_TYPE_NET_DEBUG);
 }

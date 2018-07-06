@@ -54,7 +54,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_CREDITS_CHANGED,		// the credits of a player changed (e.g. because he bought upgrades)
 	GAME_EV_UPGRADED_BUILDINGS,		// the buildings in the msg have been upgraded to the current version
 	GAME_EV_UPGRADED_VEHICLES,		// the vehicles in the msg have been upgraded to the current version
-	GAME_EV_SET_AUTOMOVE,			// a unit has to enable automoving
 	GAME_EV_CASUALTIES_REPORT,		// sends the casualties stats to a client
 	GAME_EV_REVEAL_MAP,             // a client should reveal the whole map
 };
@@ -91,11 +90,6 @@ void sendWantExitFinishedVehicle (const cClient& client, const cBuilding& buildi
 void sendAbortWaiting (const cClient& client);
 
 void sendRequestCasualtiesReport (const cClient& client);
-
-/**
-* sends that a unit has been set to automove status
-*/
-void sendSetAutoStatus (const cClient& client, int vehicleID, bool set);
 
 void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool upgradeAll);
 void sendWantUpgrade (const cClient& client, int buildingID, int storageSlot, bool upgradeAll);

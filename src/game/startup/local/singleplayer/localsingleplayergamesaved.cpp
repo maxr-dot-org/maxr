@@ -41,19 +41,14 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 	client = std::make_shared<cClient> (connectionManager);
 	auto staticMap = server->getModel().getMap()->staticMap;
 	client->setMap(staticMap);
-	client->loadModel(saveGameNumber); //TODO: resync model from server
-
 	//use player 0 as local player
-	auto localPlayer = client->getModel().getPlayerList()[0];
-	client->setActivePlayer(localPlayer.get());
+	client->loadModel(saveGameNumber, 0); //TODO: resync model from server
 	connectionManager->setLocalClient(client.get(), 0);
 
 	server->sendGuiInfoToClients(saveGameNumber);
-
 	server->start();
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
-
 	gameGuiController->setSingleClient (client);
 	gameGuiController->setServer(server.get());
 	gameGuiController->start();

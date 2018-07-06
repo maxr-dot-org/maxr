@@ -138,7 +138,6 @@ public:
 
 	//protected:
 	virtual bool isUnitMoving() const { return false; } //test if the vehicle is moving right now. Having a waiting movejob doesn't count as moving
-	virtual bool isAutoMoveJobActive() const { return false; }
 	virtual bool isUnitWorking() const { return false; }
 	virtual bool isUnitClearing() const { return false; }
 	virtual bool isUnitLayingMines() const { return false; }
@@ -148,6 +147,7 @@ public:
 	virtual bool buildingCanBeStarted() const { return false; }
 	virtual bool buildingCanBeUpgraded() const { return false; }
 	virtual bool canBeStoppedViaUnitMenu() const = 0;
+	virtual bool isSurveyorAutoMoveActive() const { return false; }
 
 	bool getIsBig() const;
 	void setIsBig(bool value);

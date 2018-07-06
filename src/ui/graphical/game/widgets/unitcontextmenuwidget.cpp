@@ -94,7 +94,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	if (unitHasAutoEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Auto_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
-		button->setChecked (unit->isAutoMoveJobActive());
+		button->setChecked (unit->isSurveyorAutoMoveActive());
 		button->toggled.connect ([&]() { autoToggled(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());

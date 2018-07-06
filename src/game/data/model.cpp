@@ -254,7 +254,7 @@ cVehicle& cModel::addVehicle(const cPosition& position, const sID& id, cPlayer* 
 	// scan with surveyor:
 	if (addedVehicle.getStaticUnitData().canSurvey)
 	{
-		addedVehicle.doSurvey();
+		addedVehicle.doSurvey(*getMap());
 	}
 
 	//TODO: take off animation?

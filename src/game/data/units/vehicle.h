@@ -166,7 +166,6 @@ public:
 	const sVehicleUIData* uiData;
 	mutable int ditherX, ditherY;
 	mutable int bigBetonAlpha;
-	bool hasAutoMoveJob; // this is just a status information for the server, so that he can write the information to the saves
 	cPosition bandPosition; // X,Y Position für das Band
 	cPosition buildBigSavedPosition; // last position before building has started
 	bool BuildPath;   // Gibt an, ob ein Pfad gebaut werden soll
@@ -185,7 +184,7 @@ public:
 
 	virtual std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
 	void DecSpeed (int value);
-	void doSurvey ();
+	bool doSurvey(const cMap& map);
 	virtual void makeReport (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 	virtual bool canTransferTo (const cPosition& position, const cMapView& map) const MAXR_OVERRIDE_FUNCTION;
 	virtual bool canTransferTo (const cUnit& position) const MAXR_OVERRIDE_FUNCTION;
@@ -226,8 +225,6 @@ public:
 
 	static void blitWithPreScale (SDL_Surface* org_src, SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dest, SDL_Rect* destrect, float factor, int frames = 1);
 
-	void executeAutoMoveJobCommand (cClient& client);
-
 	/**
 	* Is this a plane and is there a landing platform beneath it,
 	* that can be used to land on?
@@ -251,13 +248,13 @@ public:
 
 	bool isUnitLoaded() const { return loaded; }
 
-	virtual bool isUnitMoving() const { return moving; } //test if the vehicle is moving right now. Having a waiting movejob doesn't count a moving
-	virtual bool isAutoMoveJobActive() const { return autoMoveJob != nullptr; }
-	virtual bool isUnitClearing() const { return isClearing; }
-	virtual bool isUnitLayingMines() const { return layMines; }
-	virtual bool isUnitClearingMines() const { return clearMines; }
-	virtual bool isUnitBuildingABuilding() const { return isBuilding; }
-	virtual bool canBeStoppedViaUnitMenu() const;
+	virtual bool isUnitMoving() const MAXR_OVERRIDE_FUNCTION { return moving; } //test if the vehicle is moving right now. Having a waiting movejob doesn't count a moving
+	virtual bool isUnitClearing() const MAXR_OVERRIDE_FUNCTION { return isClearing; }
+	virtual bool isUnitLayingMines() const MAXR_OVERRIDE_FUNCTION { return layMines; }
+	virtual bool isUnitClearingMines() const MAXR_OVERRIDE_FUNCTION { return clearMines; }
+	virtual bool isUnitBuildingABuilding() const MAXR_OVERRIDE_FUNCTION { return isBuilding; }
+	virtual bool canBeStoppedViaUnitMenu() const MAXR_OVERRIDE_FUNCTION;
+	virtual bool isSurveyorAutoMoveActive() const MAXR_OVERRIDE_FUNCTION { return surveyorAutoMoveActive; };
 
 	void setMoving (bool value);
 	void setLoaded (bool value);
@@ -265,6 +262,8 @@ public:
 	void setBuildingABuilding (bool value);
 	void setLayMines (bool value);
 	void setClearMines (bool value);
+	void setBuildTurnsStart (int value);
+	void setSurveyorAutoMoveActive(bool value);
 
 	int getClearingTurns() const;
 	void setClearingTurns (int value);
@@ -281,7 +280,7 @@ public:
 	int getBuildCostsStart() const;
 	void setBuildCostsStart (int value);
 	int getBuildTurnsStart() const;
-	void setBuildTurnsStart (int value);
+	
 
 	int getFlightHeight() const;
 	void setFlightHeight (int value);
@@ -289,11 +288,6 @@ public:
 	cMoveJob* getMoveJob();
 	const cMoveJob* getMoveJob() const;
 	void setMoveJob (cMoveJob* moveJob);
-
-	cAutoMJob* getAutoMoveJob();
-	const cAutoMJob* getAutoMoveJob() const;
-	void startAutoMoveJob (cClient& client);
-	void stopAutoMoveJob();
 
 	/**
 	* return the unit which contains this vehicle
@@ -319,7 +313,7 @@ public:
 	{
 		cUnit::serializeThis (archive); //serialize cUnit members
 
-		archive & NVP(hasAutoMoveJob);
+		archive & NVP(surveyorAutoMoveActive);
 		archive & NVP(bandPosition);
 		archive & NVP(buildBigSavedPosition);
 		archive & NVP(BuildPath);
@@ -373,8 +367,7 @@ private:
 
 	bool moving;
 	cMoveJob* moveJob;
-
-	std::shared_ptr<cAutoMJob> autoMoveJob; //the auto move AI of the vehicle
+	bool surveyorAutoMoveActive;
 
 	bool loaded;
 
