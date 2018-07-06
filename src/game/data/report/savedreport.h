@@ -81,7 +81,6 @@ enum class eSavedReportType
 	Disabled             = 29,
 	PathInterrupted      = 30,
 	SurveyorAiConfused   = 31,
-	SurveyorAiSenseless  = 32,
 
 	// Chat report
 	Chat                 = 33

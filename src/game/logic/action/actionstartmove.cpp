@@ -36,14 +36,16 @@ cActionStartMove::cActionStartMove(const cVehicle& vehicle, const std::forward_l
 	cAction(eActiontype::ACTION_START_MOVE),
 	path(path),
 	unitId(vehicle.getId()),
-	endMoveAction(emat)
+	endMoveAction(emat),
+	stopOnDetectResource(false)
 {}
 
 //------------------------------------------------------------------------------
-cActionStartMove::cActionStartMove(const cVehicle& vehicle, const std::forward_list<cPosition>& path) :
+cActionStartMove::cActionStartMove(const cVehicle& vehicle, const std::forward_list<cPosition>& path, bool stopOnDetectResource) :
 	cAction(eActiontype::ACTION_START_MOVE),
 	path(path),
-	unitId(vehicle.getId())
+	unitId(vehicle.getId()),
+	stopOnDetectResource(stopOnDetectResource)
 {}
 
 //------------------------------------------------------------------------------
@@ -118,5 +120,6 @@ void cActionStartMove::execute(cModel& model) const
 	if (movejob)
 	{
 		movejob->setEndMoveAction(endMoveAction);
+		movejob->setStopOnDetectRessource(stopOnDetectResource);
 	}
 }

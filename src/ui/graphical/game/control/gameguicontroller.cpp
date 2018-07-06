@@ -126,6 +126,7 @@
 #include "game/data/report/special/savedreportupgraded.h"
 #include "game/logic/action/actionupgradevehicle.h"
 #include "game/logic/action/actionupgradebuilding.h"
+#include "game/data/report/unit/savedreportsurveyoraiconfused.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -888,9 +889,16 @@ void cGameGuiController::connectClient (cClient& client)
 	{
 		if (unit.isAVehicle())
 		{
-			auto vehicle = client.getVehicleFromID (unit.iID);
-			if (!vehicle) return;
-			vehicle->executeAutoMoveJobCommand (client);
+			auto& vehicle = static_cast<const cVehicle&>(unit);
+			
+			if (!vehicle.isSurveyorAutoMoveActive())
+			{
+				client.addSurveyorMoveJob(vehicle);
+			}
+			else
+			{
+				client.removeSurveyorMoveJob(vehicle);
+			}
 		}
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStartClear, [&] (const cUnit & unit)
@@ -1390,6 +1398,13 @@ void cGameGuiController::connectReportSources(cClient& client)
 		addSavedReport(std::move(report), toPlayerNr);
 	});
 
+	clientSignalConnectionManager.connect(client.surveyorAiConfused, [&](const cVehicle& vehicle)
+	{
+		if (vehicle.getOwner() != nullptr && vehicle.getOwner()->getId() != getActivePlayer()->getId())
+		{
+			addSavedReport(std::make_unique<cSavedReportSurveyorAiConfused>(vehicle), player.getId());
+		}
+	});
 	clientSignalConnectionManager.connect(mapView->unitAppeared, [&](const cUnit & unit)
 	{
 		if (unit.getOwner() != nullptr && unit.getOwner()->getId() != getActivePlayer()->getId())

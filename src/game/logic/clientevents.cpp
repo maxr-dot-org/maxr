@@ -49,14 +49,6 @@ void sendAbortWaiting (const cClient& client)
 	client.sendNetMessage (std::move (message));
 }
 
-void sendSetAutoStatus (const cClient& client, int vehicleID, bool set)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_AUTOMOVE_STATUS);
-	message->pushBool (set);
-	message->pushInt16 (vehicleID);
-	client.sendNetMessage (std::move (message));
-}
-
 //------------------------------------------------------------------------
 void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool upgradeAll)
 {

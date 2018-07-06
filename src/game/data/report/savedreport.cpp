@@ -30,7 +30,6 @@
 #include "game/data/report/unit/savedreportdisabled.h"
 #include "game/data/report/unit/savedreportpathinterrupted.h"
 #include "game/data/report/unit/savedreportsurveyoraiconfused.h"
-#include "game/data/report/unit/savedreportsurveyoraisenseless.h"
 
 #include "game/data/report/special/savedreporthostcommand.h"
 #include "game/data/report/special/savedreportresourcechanged.h"
@@ -69,8 +68,6 @@ std::unique_ptr<cSavedReport> cSavedReport::createFromImpl (T& archive)
 		return std::make_unique<cSavedReportPathInterrupted>(archive);
 	case eSavedReportType::SurveyorAiConfused:
 		return std::make_unique<cSavedReportSurveyorAiConfused>(archive);
-	case eSavedReportType::SurveyorAiSenseless:
-		return std::make_unique<cSavedReportSurveyorAiSenseless>(archive);
 	case eSavedReportType::HostCommand:
 		return std::make_unique<cSavedReportHostCommand>(archive);
 	case eSavedReportType::ResourceChanged:

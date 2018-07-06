@@ -62,7 +62,7 @@ void cActionActivate::execute(cModel& model) const
 
 		if (activatedVehicle->getStaticUnitData().canSurvey)
 		{
-			activatedVehicle->doSurvey();
+			activatedVehicle->doSurvey(*model.getMap());
 		}
 
 		//TODO: plane takeoff animation?

@@ -51,6 +51,7 @@ class cTurnTimeDeadline;
 class cGameGuiState;
 class cSubBase;
 class cSavegame;
+class cSurveyorAi;
 
 Uint32 TimerCallback (Uint32 interval, void* arg);
 
@@ -66,8 +67,7 @@ public:
 	const cModel& getModel() const { return model; };
 
 	const cPlayer& getActivePlayer() const { return *activePlayer; }
-	void setActivePlayer(cPlayer* player) { activePlayer = player; }
-
+	
 	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData);
 	void setGameSettings(const cGameSettings& gameSettings);
 	void setMap(std::shared_ptr<cStaticMap> staticMap);
@@ -83,7 +83,9 @@ public:
 	const std::map<int, ePlayerConnectionState>& getPlayerConnectionStates() const;
 	//
 
-	void addAutoMoveJob (std::weak_ptr<cAutoMJob> autoMoveJob);
+	void addSurveyorMoveJob (const cVehicle& vehicle);
+	void removeSurveyorMoveJob (const cVehicle& vehicle);
+	void recreateSurveyorMoveJobs();
 
 	/**
 	* sends the netMessage to the server.
@@ -106,13 +108,10 @@ public:
 	cBuilding* getBuildingFromID (unsigned int id) const;
 	cUnit* getUnitFromID (unsigned int id) const;
 
-	/**
-	* handles move and attack jobs
-	* this function should be called in all menu loops
-	*/
-	void doGameActions();
 
 	void handleNetMessages();
+
+	void runClientJobs(const cModel& model);
 
 	/**
 	* processes everything that is need for this netMessage
@@ -129,7 +128,7 @@ public:
 
 	const std::shared_ptr<cGameTimerClient>& getGameTimer() const { return gameTimer; }
 
-	void loadModel(int saveGameNumber);
+	void loadModel(int saveGameNumber, int playerNr);
 
 
 	mutable cSignal<void (int fromPlayerNr, std::unique_ptr<cSavedReport>& report, int toPlayerNr)> reportMessageReceived;
@@ -137,12 +136,12 @@ public:
 	mutable cSignal<void (const cNetMessageGUISaveInfo& guiInfo)> guiSaveInfoReceived;
 	mutable cSignal<void ()> freezeModeChanged;
 	mutable cSignal<void ()> connectionToServerLost;
+	mutable cSignal<void (const cVehicle& vehicle)> surveyorAiConfused;
 
 	void run();
 private:
 
-	void handleAutoMoveJobs();
-
+	void handleSurveyorMoveJobs();
 	/**
 	* gets the subbase with the id
 	*@author alzi alias DoctorDeath
@@ -164,7 +163,6 @@ private:
 	void HandleNetMessage_GAME_EV_CREDITS_CHANGED (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_SET_AUTOMOVE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message);
 private:
 	cModel model;
@@ -178,14 +176,13 @@ private:
 	cConcurrentQueue<std::unique_ptr<cNetMessage2>> eventQueue2;
 
 	std::shared_ptr<cGameTimerClient> gameTimer;
-
-	/** the active Player */
-	cPlayer* activePlayer;
+	
+	cPlayer* activePlayer; /** the active Player */
 
 	cFreezeModes freezeModes;
 	std::map<int, ePlayerConnectionState> playerConnectionStates;
 
-	std::list<std::weak_ptr<cAutoMJob>> autoMoveJobs; //TODO: move to cModel
+	std::vector<std::unique_ptr<cSurveyorAi>> surveyorAiJobs;
 };
 
 #endif // game_logic_clientH

@@ -47,7 +47,8 @@ cMoveJob::cMoveJob(const std::forward_list<cPosition>& path, cVehicle& vehicle, 
 	timer100ms(1),
 	timer50ms(1),
 	currentSpeed(0),
-	pixelToMove(0)
+	pixelToMove(0),
+	stopOnDetectResource(false)
 {
 	startMove(model);
 }
@@ -60,7 +61,8 @@ cMoveJob::cMoveJob() :
 	timer100ms(1),
 	timer50ms(1),
 	currentSpeed(0),
-	pixelToMove(0)
+	pixelToMove(0),
+	stopOnDetectResource(false)
 {}
 
 //------------------------------------------------------------------------------
@@ -409,14 +411,15 @@ void cMoveJob::updateSpeed(const cMap &map)
 //------------------------------------------------------------------------------
 void cMoveJob::endMove(cModel& model)
 {
+	const cMap& map = *model.getMap();
 	vehicle->setMovementOffset (cPosition (0, 0));
 
-	vehicle->detectOtherUnits(*model.getMap());
-	vehicle->detectThisUnit(*model.getMap(), model.getPlayerList());
+	vehicle->detectOtherUnits(map);
+	vehicle->detectThisUnit(map, model.getPlayerList());
 
 	//TODO: trigger landing/take off
 
-	cBuilding* mine = model.getMap()->getField(vehicle->getPosition()).getMine();
+	cBuilding* mine = map.getField(vehicle->getPosition()).getMine();
 	if (mine && 
 		vehicle->getStaticUnitData().factorAir == 0  && 
 		mine->getOwner() != vehicle->getOwner() && 
@@ -443,7 +446,11 @@ void cMoveJob::endMove(cModel& model)
 
 	if (vehicle->getStaticUnitData().canSurvey)
 	{
-		vehicle->doSurvey();
+		bool ressourceFound = vehicle->doSurvey(map);
+		if (ressourceFound && stopOnDetectResource)
+		{
+			path.clear();
+		}
 	}
 
 	if (path.empty())
@@ -491,6 +498,7 @@ uint32_t cMoveJob::getChecksum(uint32_t crc) const
 	crc = calcCheckSum(currentSpeed, crc);
 	crc = calcCheckSum(pixelToMove, crc);
 	crc = calcCheckSum(endMoveAction, crc);
+	crc = calcCheckSum(stopOnDetectResource, crc);
 
 	return crc;
 }

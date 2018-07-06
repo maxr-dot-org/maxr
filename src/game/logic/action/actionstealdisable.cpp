@@ -123,6 +123,7 @@ void cActionStealDisable::changeUnitOwner(cUnit& unit, cPlayer& newOwner, cModel
 		auto owningUnitPtr = oldOwner->removeUnit(*static_cast<const cVehicle*>(&unit));
 		owningUnitPtr->setOwner(&newOwner);
 		newOwner.addUnit(owningUnitPtr);
+		owningUnitPtr->setSurveyorAutoMoveActive(false);
 	}
 	else
 	{
@@ -142,7 +143,7 @@ void cActionStealDisable::changeUnitOwner(cUnit& unit, cPlayer& newOwner, cModel
 	// let the unit work for his new owner
 	if (unit.getStaticUnitData().canSurvey && unit.isAVehicle())
 	{
-		static_cast<cVehicle*>(&unit)->doSurvey();
+		static_cast<cVehicle*>(&unit)->doSurvey(*model.getMap());
 	}
 	unit.detectOtherUnits(*model.getMap());
 }

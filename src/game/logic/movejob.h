@@ -90,6 +90,9 @@ public:
 	void setEndMoveAction(const cEndMoveAction& endMoveAction);
 	const cEndMoveAction& getEndMoveAction() const;
 
+	/** used for the surveyor ai, so it can recalculate its steps, when resouces are detected */
+	void setStopOnDetectRessource(bool value) {stopOnDetectResource = value;};
+
 	uint32_t getChecksum(uint32_t crc) const;
 
 	template <typename T>
@@ -105,6 +108,7 @@ public:
 		archive & NVP(currentSpeed);
 		archive & NVP(pixelToMove);
 		archive & NVP(endMoveAction);
+		archive & NVP(stopOnDetectResource);
 
 		if (!archive.isWriter)
 		{
@@ -176,6 +180,9 @@ private:
 	double pixelToMove;
 
 	cEndMoveAction endMoveAction;
+	
+	/** give the surveyor ai the chance to calc a new path, when resources are found. */
+	bool stopOnDetectResource;
 };
 
 #endif // game_logic_movejobsH

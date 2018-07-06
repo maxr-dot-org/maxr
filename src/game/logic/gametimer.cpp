@@ -267,6 +267,7 @@ void cGameTimerClient::run(cClient& client, cModel& model)
 		{
 			
 			model.advanceGameTime();
+			client.runClientJobs(model);
 
 			//check crc
 			localChecksum = model.getChecksum();

@@ -47,6 +47,7 @@
 #include "actionbuyupgrades.h"
 #include "actionupgradevehicle.h"
 #include "actionupgradebuilding.h"
+#include "actionsetautomove.h"
 
 std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 {
@@ -107,6 +108,8 @@ std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 		return std::make_unique<cActionUpgradeVehicle>(archive);
 	case eActiontype::ACTION_UPGRADE_BUILDING:
 		return std::make_unique<cActionUpgradeBuilding>(archive);
+	case eActiontype::ACTION_SET_AUTO_MOVE:
+		return std::make_unique<cActionSetAutoMove>(archive);
 	default:
 		throw std::runtime_error("Unknown action type " + iToStr(static_cast<int>(type)));
 		return nullptr;
@@ -176,6 +179,8 @@ std::string enumToString(cAction::eActiontype value)
 		return "ACTION_UPGRADE_VEHICLE";
 	case cAction::eActiontype::ACTION_UPGRADE_BUILDING:
 		return "ACTION_UPGRADE_BUILDING";
+	case cAction::eActiontype::ACTION_SET_AUTO_MOVE:
+		return "ACTION_SET_AUTO_MOVE";
 	default:
 		assert(false);
 		return toString(static_cast<int>(value));

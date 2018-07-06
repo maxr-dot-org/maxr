@@ -482,14 +482,6 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& messa
 		}
 	}
 }
-//------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_AUTOMOVE_STATUS (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_AUTOMOVE_STATUS);
-
-	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
-	if (Vehicle) Vehicle->hasAutoMoveJob = message.popBool();
-}
 
 //------------------------------------------------------------------------------
 void cServer::handleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (cNetMessage& message)
@@ -529,7 +521,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 		case GAME_EV_ABORT_WAITING: handleNetMessage_GAME_EV_ABORT_WAITING (message); break;
 		case GAME_EV_WANT_BUY_UPGRADES: handleNetMessage_GAME_EV_WANT_BUY_UPGRADES (message); break;
 		case GAME_EV_WANT_BUILDING_UPGRADE: handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (message); break;
-		case GAME_EV_AUTOMOVE_STATUS: handleNetMessage_GAME_EV_AUTOMOVE_STATUS (message); break;
 		case GAME_EV_REQUEST_CASUALTIES_REPORT: handleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (message); break;
 		case GAME_EV_WANT_KICK_PLAYER: handleNetMessage_GAME_EV_WANT_KICK_PLAYER (message); break;
 		default:

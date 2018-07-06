@@ -21,7 +21,6 @@
 #include "game/data/units/vehicle.h"
 
 #include "game/logic/attackjob.h"
-#include "game/logic/automjobs.h"
 #include "game/data/units/building.h"
 #include "game/logic/client.h"
 #include "game/logic/clientevents.h"
@@ -71,7 +70,6 @@ cVehicle::cVehicle (const cStaticUnitData& staticData, const cDynamicUnitData& d
 	layMines (false),
 	clearMines (false),
 	commandoRank (0),
-	autoMoveJob(nullptr),
 	tileMovementOffset(0, 0),
 	buildBigSavedPosition(0, 0),
 	bandPosition(0, 0),
@@ -82,7 +80,7 @@ cVehicle::cVehicle (const cStaticUnitData& staticData, const cDynamicUnitData& d
 	ditherY = 0;
 	flightHeight = 0;
 	WalkFrame = 0;
-	hasAutoMoveJob = false;
+	surveyorAutoMoveActive = false;
 	moving = false;
 	BuildPath = false;
 	bigBetonAlpha = 254;
@@ -463,7 +461,7 @@ string cVehicle::getStatusStr(const cPlayer* player, const cUnitsData& unitsData
 		sText += iToStr (getDisabledTurns()) + ")";
 		return sText;
 	}
-	else if (autoMoveJob)
+	else if (surveyorAutoMoveActive)
 		return lngPack.i18n ("Text~Comp~Surveying");
 	else if (isUnitBuildingABuilding())
 	{
@@ -636,9 +634,10 @@ void cVehicle::calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<i
 //-----------------------------------------------------------------------------
 /** Scans for resources */
 //-----------------------------------------------------------------------------
-void cVehicle::doSurvey()
+bool cVehicle::doSurvey(const cMap& map)
 {
 	const auto& owner = *getOwner();
+	bool ressourceFound = false;
 
 	const int minx = std::max (getPosition().x() - 1, 0);
 	const int maxx = std::min (getPosition().x() + 1, owner.getMapSize().x() - 1);
@@ -650,9 +649,16 @@ void cVehicle::doSurvey()
 		for (int x = minx; x <= maxx; ++x)
 		{
 			const cPosition position (x, y);
-			getOwner()->exploreResource (position);
+			if (!owner.hasResourceExplored(position) && map.getResource(position).typ != eResourceType::None)
+			{
+				ressourceFound = true;
+			}
+
+			getOwner()->exploreResource(position);
 		}
 	}
+
+	return ressourceFound;
 }
 
 //-----------------------------------------------------------------------------
@@ -672,7 +678,7 @@ void cVehicle::makeReport (cSoundManager& soundManager) const
 		{
 			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIAttacking)));
 		}
-		else if (autoMoveJob)
+		else if (surveyorAutoMoveActive)
 		{
 			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOISurveying)));
 		}
@@ -1425,12 +1431,11 @@ cVehicle* cVehicle::getContainerVehicle()
 uint32_t cVehicle::getChecksum(uint32_t crc) const
 {
 	crc = cUnit::getChecksum(crc);
-	crc = calcCheckSum(hasAutoMoveJob, crc);
+	crc = calcCheckSum(surveyorAutoMoveActive, crc);
 	crc = calcCheckSum(bandPosition, crc);
 	crc = calcCheckSum(buildBigSavedPosition, crc);
 	crc = calcCheckSum(BuildPath, crc);
 	crc = calcCheckSum(WalkFrame, crc);
-	//std::shared_ptr<cAutoMJob> autoMoveJob;
 	crc = calcCheckSum(tileMovementOffset, crc);
 	crc = calcCheckSum(loaded, crc);
 	crc = calcCheckSum(moving, crc);
@@ -1460,21 +1465,6 @@ uint32_t cVehicle::getChecksum(uint32_t crc) const
 bool cVehicle::canBeStoppedViaUnitMenu() const
 {
 	return (moveJob != nullptr || (isUnitBuildingABuilding() && getBuildTurns() > 0) || (isUnitClearing() && getClearingTurns() > 0));
-}
-
-//-----------------------------------------------------------------------------
-void cVehicle::executeAutoMoveJobCommand (cClient& client)
-{
-	if (staticData->canSurvey == false)
-		return;
-	if (!autoMoveJob)
-	{
-		startAutoMoveJob (client);
-	}
-	else
-	{
-		stopAutoMoveJob();
-	}
 }
 
 //-----------------------------------------------------------------------------
@@ -1651,6 +1641,14 @@ void cVehicle::setBuildTurnsStart (int value)
 	//if (value != buildTurnsStart) event ();
 }
 
+//------------------------------------------------------------------------------
+void cVehicle::setSurveyorAutoMoveActive(bool value)
+{
+	std::swap(surveyorAutoMoveActive, value);
+
+	if (value != surveyorAutoMoveActive) autoMoveJobChanged();
+}
+
 //-----------------------------------------------------------------------------
 int cVehicle::getFlightHeight() const
 {
@@ -1682,38 +1680,4 @@ void cVehicle::setMoveJob (cMoveJob* moveJob_)
 {
 	std::swap (moveJob, moveJob_);
 	if (moveJob != moveJob_) moveJobChanged();
-}
-
-//-----------------------------------------------------------------------------
-cAutoMJob* cVehicle::getAutoMoveJob()
-{
-	return autoMoveJob.get();
-}
-
-//-----------------------------------------------------------------------------
-const cAutoMJob* cVehicle::getAutoMoveJob() const
-{
-	return autoMoveJob.get();
-}
-
-//-----------------------------------------------------------------------------
-void cVehicle::startAutoMoveJob (cClient& client)
-{
-	if (autoMoveJob) return;
-
-	autoMoveJob = std::make_shared<cAutoMJob> (client, *this);
-	client.addAutoMoveJob (autoMoveJob);
-
-	autoMoveJobChanged();
-}
-
-//-----------------------------------------------------------------------------
-void cVehicle::stopAutoMoveJob()
-{
-	if (autoMoveJob)
-	{
-		autoMoveJob->stop();
-		autoMoveJob = nullptr;
-		autoMoveJobChanged();
-	}
 }

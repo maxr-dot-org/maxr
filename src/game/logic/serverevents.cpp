@@ -267,14 +267,6 @@ void sendUpgradeVehicles (cServer& server, const std::vector<cVehicle*>& upgrade
 }
 
 //------------------------------------------------------------------------------
-void sendSetAutomoving (cServer& server, const cVehicle& vehicle)
-{
-	auto message = std::make_unique<cNetMessage> (GAME_EV_SET_AUTOMOVE);
-	message->pushInt16 (vehicle.iID);
-	server.sendNetMessage (std::move (message), vehicle.getOwner());
-}
-
-//------------------------------------------------------------------------------
 void sendRevealMap (cServer& server, const cPlayer& receiver)
 {
 	auto message = std::make_unique<cNetMessage> (GAME_EV_REVEAL_MAP);
