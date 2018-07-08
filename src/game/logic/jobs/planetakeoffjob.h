@@ -22,17 +22,16 @@
 
 #include "job.h"
 
-#include "utility/language.h"
 #include "utility/serialization/binaryarchive.h"
 #include "utility/serialization/xmlarchive.h"
-#include "game/data/units/unit.h"
+#include "utility/signal/signalconnectionmanager.h"
 
 class cVehicle;
 
 class cPlaneTakeoffJob : public cJob
 {
 public:
-	cPlaneTakeoffJob (cVehicle& vehicle_, bool takeoff_);
+	cPlaneTakeoffJob (cVehicle& vehicle);
 	template <typename T>
 	cPlaneTakeoffJob(T& archive) { serializeThis(archive); }
 
@@ -48,18 +47,20 @@ private:
 	void serializeThis(T& archive)
 	{
 		archive & NVP(unit);
-		archive & NVP(takeoff);
 
 		if (!archive.isWriter)
 		{
-			if (unit != nullptr)
+			if (unit == nullptr)
 			{
-				unit->job = this;
+				finished = true;
+				return;
 			}
+			unit->job = this;
+			connectionManager.connect(unit->destroyed, [&](){finished = true; });
 		}
 	}
 
-	bool takeoff;
+	cSignalConnectionManager connectionManager;
 };
 
 #endif

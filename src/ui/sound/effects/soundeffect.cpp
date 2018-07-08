@@ -179,6 +179,8 @@ unsigned int cSoundEffect::getMaxConcurrentConflictedCount() const
 		case eSoundEffectType::VoiceDisabled:
 		case eSoundEffectType::VoiceStolenByEnemy:
 		case eSoundEffectType::VoiceDetected:
+		case eSoundEffectType::EffectPlaneLand:
+		case eSoundEffectType::EffectPlaneTakeoff:
 			return 0;
 		case eSoundEffectType::VoiceUnitStatus:
 			return 1;
@@ -212,6 +214,8 @@ eSoundConflictHandlingType cSoundEffect::getSoundConflictHandlingType() const
 		case eSoundEffectType::VoiceDisabled:
 		case eSoundEffectType::VoiceStolenByEnemy:
 		case eSoundEffectType::VoiceDetected:
+		case eSoundEffectType::EffectPlaneLand:
+		case eSoundEffectType::EffectPlaneTakeoff:
 			return eSoundConflictHandlingType::DiscardNew;
 		case eSoundEffectType::VoiceUnitStatus:
 		case eSoundEffectType::EffectUnitSound:

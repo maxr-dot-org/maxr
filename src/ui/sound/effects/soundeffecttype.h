@@ -37,6 +37,8 @@ enum class eSoundEffectType
 	EffectAbsorb,
 	EffectAlert,
 	EffectUnitSound,
+	EffectPlaneLand,
+	EffectPlaneTakeoff,
 
 	// Voices
 	VoiceNoPath,

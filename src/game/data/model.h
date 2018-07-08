@@ -139,6 +139,9 @@ public:
 	mutable cSignal<void(const cUnit& source, const cUnit& target)> unitDisabled;
 	mutable cSignal<void(const cUnit& source, const cUnit& target, const cPlayer& previousOwner)> unitStolen;
 
+	mutable cSignal<void(const cVehicle& plane)> planeLanding;
+	mutable cSignal<void(const cVehicle& plane)> planeTakeoff;
+
 
 	template<typename T>
 	void save(T& archive)

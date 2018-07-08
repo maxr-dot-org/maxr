@@ -60,6 +60,8 @@ public:
 	cSoundChunk SNDHitSmall;
 	cSoundChunk SNDHitMed;
 	cSoundChunk SNDHitLarge;
+	cSoundChunk SNDPlaneLand;
+	cSoundChunk SNDPlaneTakeoff;
 
 	// Explosions
 	std::array<cSoundChunk, 4> EXPBig;

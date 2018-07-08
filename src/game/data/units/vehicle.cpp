@@ -48,6 +48,7 @@
 #include "game/logic/jobs/startbuildjob.h"
 #include "game/data/map/mapview.h"
 #include "game/data/map/mapfieldview.h"
+#include "game/logic/jobs/planetakeoffjob.h"
 
 using namespace std;
 
@@ -1473,7 +1474,9 @@ bool cVehicle::canLand (const cMap& map) const
 	// normal vehicles are always "landed"
 	if (staticData->factorAir == 0) return true;
 
-	if (moveJob != nullptr || isAttacking()) return false;      //vehicle busy?
+	//vehicle busy?
+	if ((moveJob && !moveJob->isFinished()) || isAttacking()) return false;
+	if (isUnitMoving()) return false;
 
 	// landing pad there?
 	const std::vector<cBuilding*>& buildings = map.getField (getPosition()).getBuildings();
@@ -1658,7 +1661,7 @@ int cVehicle::getFlightHeight() const
 //-----------------------------------------------------------------------------
 void cVehicle::setFlightHeight (int value)
 {
-	value = std::min (std::max (value, 0), 64);
+	value = std::min (std::max (value, 0), MAX_FLIGHT_HEIGHT);
 	std::swap (flightHeight, value);
 	if (flightHeight != value) flightHeightChanged();
 }
@@ -1680,4 +1683,25 @@ void cVehicle::setMoveJob (cMoveJob* moveJob_)
 {
 	std::swap (moveJob, moveJob_);
 	if (moveJob != moveJob_) moveJobChanged();
+}
+
+//------------------------------------------------------------------------------
+void cVehicle::triggerLandingTakeOff(cModel& model)
+{
+	if (canLand(*model.getMap()))
+	{
+		// height should be 0
+		if (flightHeight > 0)
+		{
+			model.addJob(new cPlaneTakeoffJob(*this));
+		}
+	}
+	else
+	{
+		// height should be MAX
+		if (flightHeight < MAX_FLIGHT_HEIGHT)
+		{
+			model.addJob(new cPlaneTakeoffJob(*this));
+		}
+	}
 }

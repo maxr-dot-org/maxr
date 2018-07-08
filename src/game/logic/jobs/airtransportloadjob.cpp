@@ -40,6 +40,11 @@ void cAirTransportLoadJob::run (cModel& model)
 
 	if (landing)
 	{
+		if (vehicle->getFlightHeight() == MAX_FLIGHT_HEIGHT)
+		{
+			model.planeLanding(*vehicle);
+		}
+
 		vehicle->setFlightHeight(std::max(0, vehicle->getFlightHeight() - 2));
 		if (vehicle->getFlightHeight() <= 0)
 		{
@@ -49,6 +54,7 @@ void cAirTransportLoadJob::run (cModel& model)
 				model.unitStored(*unit, *vehicleToLoad);
 			}
 			landing = false;
+			model.planeTakeoff(*vehicle);
 		}
 	}
 	else

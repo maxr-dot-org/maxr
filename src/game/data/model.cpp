@@ -257,14 +257,17 @@ cVehicle& cModel::addVehicle(const cPosition& position, const sID& id, cPlayer* 
 		addedVehicle.doSurvey(*getMap());
 	}
 
-	//TODO: take off animation?
 	if (addedVehicle.canLand(*map))
 	{
 		addedVehicle.setFlightHeight(0);
 	}
 	else
 	{
-		addedVehicle.setFlightHeight(64);
+		// start with flight height > 0, so that ground attack units
+		// will not be able to attack the plane in the moment it leaves 
+		// the factory
+		addedVehicle.setFlightHeight(1);
+		addedVehicle.triggerLandingTakeOff(*this);
 	}
 
 	addedVehicle.detectOtherUnits(*map);

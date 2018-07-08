@@ -146,6 +146,8 @@ enum class eSupplyType {
 	REPAIR
 };
 
+#define MAX_FLIGHT_HEIGHT 64
+
 //-----------------------------------------------------------------------------
 /** Class for a vehicle-unit of a player */
 //-----------------------------------------------------------------------------
@@ -288,6 +290,8 @@ public:
 	cMoveJob* getMoveJob();
 	const cMoveJob* getMoveJob() const;
 	void setMoveJob (cMoveJob* moveJob);
+
+	void triggerLandingTakeOff(cModel& model);
 
 	/**
 	* return the unit which contains this vehicle

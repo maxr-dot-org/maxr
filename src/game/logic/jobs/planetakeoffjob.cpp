@@ -21,33 +21,43 @@
 
 #include "game/data/units/vehicle.h"
 #include "utility/crc.h"
+#include "game/data/model.h"
 
 
-cPlaneTakeoffJob::cPlaneTakeoffJob (cVehicle& vehicle_, bool takeoff_) :
-	cJob (vehicle_),
-	takeoff (takeoff_)
-{}
+cPlaneTakeoffJob::cPlaneTakeoffJob (cVehicle& vehicle) :
+	cJob (vehicle)
+{
+	connectionManager.connect(vehicle.destroyed, [&](){finished = true; });
+}
 
 //------------------------------------------------------------------------------
 void cPlaneTakeoffJob::run (cModel& model)
 {
-	// TODO add sound #708
-
 	assert(unit->isAVehicle());
 	cVehicle* plane = static_cast<cVehicle*>(unit);
 
-	if (takeoff)
+	if (plane->canLand(*model.getMap()))
 	{
-		plane->setFlightHeight (plane->getFlightHeight() + 2);
-		if (plane->getFlightHeight() >= 64)
+		if (plane->getFlightHeight() == MAX_FLIGHT_HEIGHT)
+		{
+			model.planeLanding(*plane);
+		}
+
+		plane->setFlightHeight (plane->getFlightHeight() - 2);
+		if (plane->getFlightHeight() <= 0)
 		{
 			finished = true;
 		}
 	}
 	else
 	{
-		plane->setFlightHeight (plane->getFlightHeight() - 2);
-		if (plane->getFlightHeight() <= 0)
+		if (plane->getFlightHeight() < 2)
+		{
+			model.planeTakeoff(*plane);
+		}
+
+		plane->setFlightHeight (plane->getFlightHeight() + 2);
+		if (plane->getFlightHeight() >= MAX_FLIGHT_HEIGHT)
 		{
 			finished = true;
 		}
@@ -65,7 +75,6 @@ uint32_t cPlaneTakeoffJob::getChecksum(uint32_t crc) const
 {
 	crc = calcCheckSum(getType(), crc);
 	crc = calcCheckSum(unit ? unit->getId() : 0, crc);
-	crc = calcCheckSum(takeoff, crc);
 
 	return crc;
 }
