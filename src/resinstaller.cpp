@@ -3821,7 +3821,7 @@ void installMaps()
 void installSounds()
 {
 	string path;
-	iTotalFiles = 29;
+	iTotalFiles = 31;
 	iErrors = 0;
 	iInstalledFiles = 0;
 	oggEncode = 1;
@@ -3851,6 +3851,8 @@ void installSounds()
 	copyWAV( sMAXPath + "SMINE17" + waveExtension, path + "sea_mine_place.wav");
 	copyWAV( sMAXPath + "SMINE18" + waveExtension, path + "sea_mine_clear.wav");
 	copyWAV( sMAXPath + "FTRUCK17" + waveExtension, path + "reload.wav");
+	copyWAV( sMAXPath + "PLANLAND" + waveExtension, path + "plane_land.wav");
+	copyWAV( sMAXPath + "PLANOFF" + waveExtension, path + "plane_takeoff.wav");
 	
 	copyWAV( sMAXPath + "BOATEXP1" + waveExtension, path + "exp_small_wet0.wav");
 	copyWAV( sMAXPath + "EPLOWET1" + waveExtension, path + "exp_small_wet1.wav");
