@@ -237,6 +237,8 @@ void cMoveJob::startMove(cModel& model)
 
 	vehicle->setMoving(true);
 	calcNextDir();
+
+	vehicle->triggerLandingTakeOff(model);
 	
 	vehicle->data.setSpeed(vehicle->data.getSpeed() + savedSpeed);
 	savedSpeed = 0;
@@ -417,8 +419,6 @@ void cMoveJob::endMove(cModel& model)
 	vehicle->detectOtherUnits(map);
 	vehicle->detectThisUnit(map, model.getPlayerList());
 
-	//TODO: trigger landing/take off
-
 	cBuilding* mine = map.getField(vehicle->getPosition()).getMine();
 	if (mine && 
 		vehicle->getStaticUnitData().factorAir == 0  && 
@@ -461,6 +461,7 @@ void cMoveJob::endMove(cModel& model)
 
 		endMoveAction.execute(model);
 		vehicle->continuePathBuilding(model);
+		vehicle->triggerLandingTakeOff(model);
 	}
 }
 

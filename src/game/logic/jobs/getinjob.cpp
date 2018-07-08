@@ -40,6 +40,11 @@ void cGetInJob::run (cModel& model)
 	assert(unit->isAVehicle());
 	cVehicle* vehicle = static_cast<cVehicle*>(unit);
 
+	if (vehicle->getFlightHeight() == MAX_FLIGHT_HEIGHT)
+	{
+		model.planeLanding(*vehicle);
+	}
+
 	vehicle->setFlightHeight(std::max(0, vehicle->getFlightHeight() - 2));
 	//Fixme: alphaEffect should be GUI only, and not changed from the model.
 	//       Also the alphaEffect must not have any effect on the model behavior,

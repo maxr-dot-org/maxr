@@ -683,6 +683,8 @@ void cSoundData::load (const char* path)
 	LoadSoundfile (SNDHitSmall, path, "hit_small.ogg");
 	LoadSoundfile (SNDHitMed, path, "hit_med.ogg");
 	LoadSoundfile (SNDHitLarge, path, "hit_large.ogg");
+	LoadSoundfile (SNDPlaneLand, path, "plane_land.ogg");
+	LoadSoundfile (SNDPlaneTakeoff, path, "plane_takeoff.ogg");
 }
 
 void cVoiceData::load (const char* path)

@@ -48,6 +48,7 @@
 #include "game/logic/jobs/startbuildjob.h"
 #include "game/data/map/mapview.h"
 #include "game/data/map/mapfieldview.h"
+#include "game/logic/jobs/planetakeoffjob.h"
 
 using namespace std;
 
@@ -138,7 +139,8 @@ void cVehicle::drawOverlayAnimation (unsigned long long animationTime, SDL_Surfa
 
 void cVehicle::render_BuildingOrBigClearing (const cMapView& map, unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
 {
-	assert ((isUnitBuildingABuilding() || (isUnitClearing() && isBig)) && job == nullptr);
+	assert ((isUnitBuildingABuilding() || (isUnitClearing() && isBig)) && !jobActive);
+
 	// draw beton if necessary
 	SDL_Rect tmp = dest;
 	if (isUnitBuildingABuilding() && getIsBig() && (!map.isWaterOrCoast (getPosition()) || map.getField (getPosition()).getBaseBuilding()))
@@ -170,7 +172,7 @@ void cVehicle::render_BuildingOrBigClearing (const cMapView& map, unsigned long 
 
 void cVehicle::render_smallClearing (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
 {
-	assert (isUnitClearing() && !isBig && job == nullptr);
+	assert (isUnitClearing() && !isBig && !jobActive);
 
 	// draw shadow
 	SDL_Rect tmp = dest;
@@ -270,7 +272,7 @@ void cVehicle::render (const cMapView* map, unsigned long long animationTime, co
 	// make sure to update the caching rules!
 
 	// draw working engineers and bulldozers:
-	if (map && job == nullptr)
+	if (map && !jobActive)
 	{
 		if (isUnitBuildingABuilding() || (isUnitClearing() && isBig))
 		{
@@ -1473,7 +1475,9 @@ bool cVehicle::canLand (const cMap& map) const
 	// normal vehicles are always "landed"
 	if (staticData->factorAir == 0) return true;
 
-	if (moveJob != nullptr || isAttacking()) return false;      //vehicle busy?
+	//vehicle busy?
+	if ((moveJob && !moveJob->isFinished()) || isAttacking()) return false;
+	if (isUnitMoving()) return false;
 
 	// landing pad there?
 	const std::vector<cBuilding*>& buildings = map.getField (getPosition()).getBuildings();
@@ -1658,7 +1662,7 @@ int cVehicle::getFlightHeight() const
 //-----------------------------------------------------------------------------
 void cVehicle::setFlightHeight (int value)
 {
-	value = std::min (std::max (value, 0), 64);
+	value = std::min (std::max (value, 0), MAX_FLIGHT_HEIGHT);
 	std::swap (flightHeight, value);
 	if (flightHeight != value) flightHeightChanged();
 }
@@ -1680,4 +1684,25 @@ void cVehicle::setMoveJob (cMoveJob* moveJob_)
 {
 	std::swap (moveJob, moveJob_);
 	if (moveJob != moveJob_) moveJobChanged();
+}
+
+//------------------------------------------------------------------------------
+void cVehicle::triggerLandingTakeOff(cModel& model)
+{
+	if (canLand(*model.getMap()))
+	{
+		// height should be 0
+		if (flightHeight > 0)
+		{
+			model.addJob(new cPlaneTakeoffJob(*this));
+		}
+	}
+	else
+	{
+		// height should be MAX
+		if (flightHeight < MAX_FLIGHT_HEIGHT)
+		{
+			model.addJob(new cPlaneTakeoffJob(*this));
+		}
+	}
 }

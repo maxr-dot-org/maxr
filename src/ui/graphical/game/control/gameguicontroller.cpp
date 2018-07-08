@@ -1380,6 +1380,20 @@ void cGameGuiController::connectClient (cClient& client)
 		if (unit.data.getId() == client.getModel().getUnitsData()->getSpecialIDLandMine()) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectClearMine, SoundData.SNDLandMineClear, unit));
 		else if (unit.data.getId() == client.getModel().getUnitsData()->getSpecialIDSeaMine()) soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectClearMine, SoundData.SNDSeaMineClear, unit));
 	});
+	clientSignalConnectionManager.connect(model.planeLanding, [&](const cVehicle& plane)
+	{
+		if (mapView->canSeeUnit(plane))
+		{
+			soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectPlaneLand, SoundData.SNDPlaneLand, plane));
+		}
+	});
+	clientSignalConnectionManager.connect(model.planeTakeoff, [&](const cVehicle& plane)
+	{
+		if (mapView->canSeeUnit(plane))
+		{
+			soundManager->playSound(std::make_shared<cSoundEffectUnit>(eSoundEffectType::EffectPlaneTakeoff, SoundData.SNDPlaneTakeoff, plane));
+		}
+	});
 
 }
 //------------------------------------------------------------------------------

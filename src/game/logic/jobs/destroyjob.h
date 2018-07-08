@@ -59,7 +59,7 @@ private:
 		{
 			if (unit != nullptr)
 			{
-				unit->job = this;
+				unit->jobActive = true;
 			}
 		}
 	}

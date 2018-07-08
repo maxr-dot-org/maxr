@@ -44,35 +44,40 @@ void cActionActivate::execute(cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
+	cMap& map = *model.getMap();
+
 	cUnit* containingUnit = model.getUnitFromID(containingUnitId);
 	if (!containingUnit) return;
 
 	cVehicle* activatedVehicle = model.getVehicleFromID(activatedVehicleId);
 	if (!activatedVehicle) return;
 
-	if (!model.getMap()->isValidPosition(position)) return;
+	if (!map.isValidPosition(position)) return;
 	if (!containingUnit->isNextTo(position)) return;
 	if (!Contains(containingUnit->storedUnits, activatedVehicle)) return;
 
 	model.sideStepStealthUnit(position, *activatedVehicle);
-	if (containingUnit->canExitTo(position, *model.getMap(), activatedVehicle->getStaticUnitData()))
+	if (containingUnit->canExitTo(position, map, activatedVehicle->getStaticUnitData()))
 	{
-		activatedVehicle->tryResetOfDetectionStateBeforeMove(*model.getMap(), model.getPlayerList());
-		containingUnit->exitVehicleTo(*activatedVehicle, position, *model.getMap());
+		activatedVehicle->tryResetOfDetectionStateBeforeMove(map, model.getPlayerList());
+		containingUnit->exitVehicleTo(*activatedVehicle, position, map);
 
 		if (activatedVehicle->getStaticUnitData().canSurvey)
 		{
 			activatedVehicle->doSurvey(*model.getMap());
 		}
 
-		//TODO: plane takeoff animation?
-		if (activatedVehicle->canLand(*model.getMap()))
+		if (activatedVehicle->canLand(map))
 		{
 			activatedVehicle->setFlightHeight(0);
 		}
 		else
 		{
-			activatedVehicle->setFlightHeight(64);
+			// start with flight height > 0, so that ground attack units
+			// will not be able to attack the plane in the moment it leaves 
+			// the factory
+			activatedVehicle->setFlightHeight(1);
+			activatedVehicle->triggerLandingTakeOff(model);
 		}
 
 		activatedVehicle->detectOtherUnits(*model.getMap());
