@@ -42,7 +42,7 @@ using namespace std;
 cUnit::cUnit (const cDynamicUnitData* unitData, const cStaticUnitData* staticData, cPlayer* owner, unsigned int ID)
 	: iID (ID)
 	, dir (0)
-	, job (nullptr)
+	, jobActive (false)
 	, alphaEffectValue (0)
 	, owner (owner)
 	, position (0, 0)

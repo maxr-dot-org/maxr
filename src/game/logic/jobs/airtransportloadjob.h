@@ -71,7 +71,7 @@ cAirTransportLoadJob::cAirTransportLoadJob(T& archive)
 		return;
 	}
 	connectionManager.connect(vehicleToLoad->destroyed, [&](){finished = true; });
-	unit->job = this;
+	unit->jobActive = true;
 }
 
 #endif

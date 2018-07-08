@@ -207,6 +207,7 @@ public:
 		archive & NVP(beenAttacked);
 		archive & NVP(isBig);
 		archive & NVP(storageResCur);
+		archive & NVP(jobActive);
 
 		if (!archive.isWriter && data.getId() != sID(0, 0))
 		{
@@ -228,7 +229,7 @@ public: // TODO: make protected/private and make getters/setters
 
 	// little jobs, running on the vehicle.
 	// e.g. rotating to a specific direction
-	cJob* job; //TODO: serialize?
+	bool jobActive;
 
 	mutable int alphaEffectValue;
 

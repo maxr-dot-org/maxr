@@ -408,7 +408,7 @@ bool cDrawingCache::canCache (const cBuilding& building)
 
 bool cDrawingCache::canCache (const cVehicle& vehicle)
 {
-	if ((vehicle.isUnitBuildingABuilding() || vehicle.isUnitClearing()) && vehicle.job)
+	if ((vehicle.isUnitBuildingABuilding() || vehicle.isUnitClearing()) && vehicle.jobActive)
 	{
 		notCached++;
 		return false;

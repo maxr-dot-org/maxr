@@ -34,16 +34,8 @@ cJobContainer::~cJobContainer()
 
 void cJobContainer::addJob (cJob& job)
 {
-	//only one job per unit
-	if (job.unit->job)
-	{
-		Log.write(" cJobContainer: Job canceled. Type " + enumToString(job.unit->job->getType()) + ", unit " + toString(job.unit->getId()), cLog::eLOG_TYPE_NET_WARNING);
-		std::vector<cJob*>::iterator it = std::find (jobs.begin(), jobs.end(), job.unit->job);
-		releaseJob (it);
-	}
-
 	jobs.push_back (&job);
-	job.unit->job = &job;
+	job.unit->jobActive = true;
 }
 
 void cJobContainer::run (cModel& model)
@@ -66,8 +58,7 @@ void cJobContainer::clear()
 		cJob* job = jobs[i];
 		if (job->unit)
 		{
-			assert(job->unit->job == job);
-			job->unit->job = nullptr;
+			job->unit->jobActive = false;
 		}
 		delete job;
 	}
@@ -89,8 +80,13 @@ std::vector<cJob*>::iterator cJobContainer::releaseJob (std::vector<cJob*>::iter
 	cJob* job = *it;
 	if (job->unit)
 	{
-		assert(job->unit->job == job);
-		job->unit->job = nullptr;
+		auto nr = std::count_if(jobs.begin(), jobs.end(), [&](cJob*& x) {
+			return x->unit == job->unit;
+		});
+		if (nr <= 1)
+		{
+			job->unit->jobActive = false;
+		}
 	}
 	it = jobs.erase (it);
 	delete job;

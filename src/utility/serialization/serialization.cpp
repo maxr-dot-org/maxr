@@ -30,12 +30,6 @@ namespace serialization
 		model(model)
 	{}
 
-	void cPointerLoader::get(int id, cJob*& value) const
-	{
-		assert(false);
-		//TODO
-	}
-
 	void cPointerLoader::get(int id, cPlayer*& value) const
 	{
 		value = model.getPlayer(id);

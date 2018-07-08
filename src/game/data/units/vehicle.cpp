@@ -139,7 +139,8 @@ void cVehicle::drawOverlayAnimation (unsigned long long animationTime, SDL_Surfa
 
 void cVehicle::render_BuildingOrBigClearing (const cMapView& map, unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
 {
-	assert ((isUnitBuildingABuilding() || (isUnitClearing() && isBig)) && job == nullptr);
+	assert ((isUnitBuildingABuilding() || (isUnitClearing() && isBig)) && !jobActive);
+
 	// draw beton if necessary
 	SDL_Rect tmp = dest;
 	if (isUnitBuildingABuilding() && getIsBig() && (!map.isWaterOrCoast (getPosition()) || map.getField (getPosition()).getBaseBuilding()))
@@ -171,7 +172,7 @@ void cVehicle::render_BuildingOrBigClearing (const cMapView& map, unsigned long 
 
 void cVehicle::render_smallClearing (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
 {
-	assert (isUnitClearing() && !isBig && job == nullptr);
+	assert (isUnitClearing() && !isBig && !jobActive);
 
 	// draw shadow
 	SDL_Rect tmp = dest;
@@ -271,7 +272,7 @@ void cVehicle::render (const cMapView* map, unsigned long long animationTime, co
 	// make sure to update the caching rules!
 
 	// draw working engineers and bulldozers:
-	if (map && job == nullptr)
+	if (map && !jobActive)
 	{
 		if (isUnitBuildingABuilding() || (isUnitClearing() && isBig))
 		{
