@@ -42,7 +42,6 @@ cPlayer::cPlayer (const cPlayerBasicData& splayer_, const cUnitsData& unitsData)
 	splayer (splayer_),
 	clan (-1),
 	hasFinishedTurn (false),
-	isRemovedFromGame (false),
 	base(*this)
 {
 	// get the default (no clan) unit data
@@ -741,7 +740,7 @@ void cPlayer::makeTurnStart(cModel& model)
 		vehicle->proceedClearing(model);
 	}
 
-	//just to prevent, that an error in scanmap updates have an permanent impact
+	//just to prevent, that an error in scanmap updates have a permanent impact
 	refreshScanMaps();
 	refreshSentryMaps();
 
@@ -789,7 +788,6 @@ uint32_t cPlayer::getChecksum(uint32_t crc) const
 	crc = calcCheckSum(credits, crc);
 	crc = calcCheckSum(currentTurnResearchAreasFinished, crc);
 	crc = calcCheckSum(hasFinishedTurn, crc);
-	crc = calcCheckSum(isRemovedFromGame, crc);
 	crc = calcCheckSum(researchState, crc);
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
 		crc = calcCheckSum(researchCentersWorkingOnArea[i], crc);
@@ -902,17 +900,4 @@ void cPlayer::setHasFinishedTurn (bool value)
 {
 	std::swap (hasFinishedTurn, value);
 	if (hasFinishedTurn != value) hasFinishedTurnChanged();
-}
-
-//------------------------------------------------------------------------------
-bool cPlayer::getIsRemovedFromGame() const
-{
-	return isRemovedFromGame;
-}
-
-//------------------------------------------------------------------------------
-void cPlayer::setIsRemovedFromGame (bool value)
-{
-	std::swap (isRemovedFromGame, value);
-	if (isRemovedFromGame != value) isRemovedFromGameChanged();
 }

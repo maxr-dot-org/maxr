@@ -123,9 +123,6 @@ public:
 
 	void addFx (std::shared_ptr<cFx> fx, bool playSound = true);
 
-
-	void deletePlayer (cPlayer& player);
-
 	const std::shared_ptr<cGameTimerClient>& getGameTimer() const { return gameTimer; }
 
 	void loadModel(int saveGameNumber, int playerNr);

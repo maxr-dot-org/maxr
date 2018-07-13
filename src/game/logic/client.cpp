@@ -726,14 +726,6 @@ cSubBase* cClient::getSubBaseFromID (int iID)
 }
 
 //------------------------------------------------------------------------------
-void cClient::deletePlayer (cPlayer& player)
-{
-	player.setIsRemovedFromGame (true);
-	auto playerList = model.getPlayerList();
-	playerList.erase (std::remove_if (playerList.begin(), playerList.end(), [&player] (const std::shared_ptr<cPlayer>& entry) { return entry.get() == &player; }), playerList.end());
-}
-
-//------------------------------------------------------------------------------
 void cClient::enableFreezeMode(eFreezeMode mode)
 {
 	Log.write(" Client: enabled freeze mode: " + enumToString(mode), cLog::eLOG_TYPE_NET_DEBUG);

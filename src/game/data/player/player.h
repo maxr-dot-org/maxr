@@ -168,9 +168,6 @@ public:
 	bool getHasFinishedTurn() const;
 	void setHasFinishedTurn (bool value);
 
-	bool getIsRemovedFromGame() const;
-	void setIsRemovedFromGame (bool value);
-
 	void exploreResource (const cPosition& pos) { resourceMap.set(getOffset (pos), 1); }
 	bool hasResourceExplored (const cPosition& pos) const { return resourceMap[getOffset (pos)] != 0; }
 	bool hasSentriesAir (const cPosition& pos) const { return sentriesMapAir.get(pos); }
@@ -252,7 +249,6 @@ public:
 		archive & NVP(credits);
 		archive & NVP(currentTurnResearchAreasFinished);
 		archive & NVP(hasFinishedTurn);
-		archive & NVP(isRemovedFromGame);
 		archive & NVP(researchState);
 	}
 	template<typename T>
@@ -301,7 +297,6 @@ public:
 		archive & NVP(credits);
 		archive & NVP(currentTurnResearchAreasFinished);
 		archive & NVP(hasFinishedTurn);
-		archive & NVP(isRemovedFromGame);
 		archive & NVP(researchState);
 
 		hasFinishedTurnChanged(); //FIXME: deserialization does not trigger signals on changed data members. But this signal is needed for the gui after loading a save game...
@@ -343,11 +338,10 @@ private:
 	int clan;
 	int credits;
 
-	std::vector<sTurnstartReport> currentTurnUnitReports; //TODO: remove. Shouldn't be part of the game model
+	std::vector<sTurnstartReport> currentTurnUnitReports; //TODO: move somewhere else. Shouldn't be part of the game model
 	std::vector<int> currentTurnResearchAreasFinished;
 
 	bool hasFinishedTurn;
-	bool isRemovedFromGame;
 
 	cResearch researchState;   ///< stores the current research level of the player
 	int researchCentersWorkingOnArea[cResearch::kNrResearchAreas]; ///< counts the number of research centers that are currently working on each area

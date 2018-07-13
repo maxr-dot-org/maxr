@@ -60,9 +60,8 @@ int cChatBoxPlayerListViewItem::getPlayerNumber() const
 //------------------------------------------------------------------------------
 void cChatBoxPlayerListViewItem::updatePlayerName()
 {
-	// TODO: find better way to show removed/lost/may be waiting/... players
-	// TODO: else at least: translate
-	nameLabel->setText (player->getIsRemovedFromGame() ? player->getName() + " (out)" : player->getName());
+	// TODO: show player status (removed/lost/may be waiting/...)?
+	nameLabel->setText (player->getName());
 }
 
 //------------------------------------------------------------------------------
