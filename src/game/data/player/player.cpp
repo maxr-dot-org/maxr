@@ -38,8 +38,10 @@ using namespace std;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cPlayer::cPlayer (const cPlayerBasicData& splayer_, const cUnitsData& unitsData) :
-	splayer (splayer_),
+cPlayer::cPlayer (const cPlayerBasicData& splayer, const cUnitsData& unitsData) :
+	color(splayer.getColor()),
+	id(splayer.getNr()),
+	name(splayer.getName()),
 	clan (-1),
 	hasFinishedTurn (false),
 	base(*this)
@@ -53,9 +55,6 @@ cPlayer::cPlayer (const cPlayerBasicData& splayer_, const cUnitsData& unitsData)
 	credits = 0;
 
 	isDefeated = false;
-
-	splayer.nameChanged.connect ([this]() { nameChanged(); });
-	splayer.colorChanged.connect ([this]() { colorChanged(); });
 }
 
 //------------------------------------------------------------------------------
@@ -768,7 +767,9 @@ void cPlayer::makeTurnStart(cModel& model)
 //------------------------------------------------------------------------------
 uint32_t cPlayer::getChecksum(uint32_t crc) const
 {
-	crc = calcCheckSum(splayer, crc);
+	crc = calcCheckSum(name, crc);
+	crc = calcCheckSum(id, crc);
+	crc = calcCheckSum(color, crc);
 	crc = calcCheckSum(dynamicUnitsData, crc);
 	crc = calcCheckSum(base, crc);
 	for (const auto& v : vehicles)

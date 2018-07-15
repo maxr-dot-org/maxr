@@ -20,7 +20,7 @@
 #include "ui/graphical/menu/widgets/special/lobbyplayerlistviewitem.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/image.h"
-#include "game/data/player/player.h"
+#include "game/data/player/playerbasicdata.h"
 
 //------------------------------------------------------------------------------
 cLobbyPlayerListViewItem::cLobbyPlayerListViewItem (std::shared_ptr<cPlayerBasicData> player_) :

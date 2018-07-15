@@ -1538,13 +1538,13 @@ void cGameGuiController::connectReportSources(cClient& client)
 	{
 		addSavedReport(std::make_unique<cSavedReportSimple>(eSavedReportType::EnergyIsNeeded), player.getId());
 	});
-	allClientsSignalConnectionManager.connect(model.playerHasLost, [&]()
+	allClientsSignalConnectionManager.connect(model.playerHasLost, [&](const cPlayer& looser)
 	{
-		addSavedReport(std::make_unique<cSavedReportPlayerDefeated>(player), player.getId());
+		addSavedReport(std::make_unique<cSavedReportPlayerDefeated>(looser), player.getId());
 	});
-	allClientsSignalConnectionManager.connect(model.playerHasWon, [&]()
+	allClientsSignalConnectionManager.connect(model.playerHasWon, [&](const cPlayer& winner)
 	{
-		addSavedReport(std::make_unique<cSavedReportPlayerWins>(player), player.getId());
+		addSavedReport(std::make_unique<cSavedReportPlayerWins>(winner), player.getId());
 	});
 	allClientsSignalConnectionManager.connect(model.suddenDeathMode, [&]()
 	{

@@ -39,10 +39,7 @@ cChatBoxPlayerListViewItem::cChatBoxPlayerListViewItem (const cPlayer& player_) 
 
 	fitToChildren();
 
-	signalConnectionManager.connect (player->nameChanged, std::bind (&cChatBoxPlayerListViewItem::updatePlayerName, this));
-	signalConnectionManager.connect (player->colorChanged, std::bind (&cChatBoxPlayerListViewItem::updatePlayerColor, this));
 	signalConnectionManager.connect (player->hasFinishedTurnChanged, std::bind (&cChatBoxPlayerListViewItem::updatePlayerFinishedTurn, this));
-	signalConnectionManager.connect (player->isRemovedFromGameChanged, std::bind (&cChatBoxPlayerListViewItem::updatePlayerName, this));
 }
 
 //------------------------------------------------------------------------------

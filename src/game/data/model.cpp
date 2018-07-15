@@ -34,6 +34,7 @@
 #include "map/mapview.h"
 #include "game/logic/casualtiestracker.h"
 #include <set>
+#include "player/playerbasicdata.h"
 
 //------------------------------------------------------------------------------
 cModel::cModel() :
@@ -225,7 +226,7 @@ void cModel::setPlayerList(const std::vector<cPlayerBasicData>& splayers)
 {
 	assert(playerList.size() == 0);
 
-	for (auto playerInfo : splayers)
+	for (const auto& playerInfo : splayers)
 	{
 		auto player = std::make_shared<cPlayer>(playerInfo, *unitsData);
 		if (map) player->initMaps(*map);

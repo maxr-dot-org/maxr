@@ -35,16 +35,17 @@
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 #include "utility/flatset.h"
-#include "game/data/player/playerbasicdata.h"
 #include "utility/serialization/serialization.h"
 #include "utility/arraycrc.h"
 #include "game/data/rangemap.h"
+#include "playercolor.h"
 
 class cHud;
 class cMapField;
 class cUnit;
 class cPosition;
 struct sTerrain;
+class cPlayerBasicData;
 
 /**
 * Structure for generating the report about finished units at turn start
@@ -71,17 +72,15 @@ class cPlayer
 {
 	cPlayer (const cPlayer&) MAXR_DELETE_FUNCTION;
 public:
-	explicit cPlayer(const cPlayerBasicData& splayer_, const cUnitsData& unitsData);
+	explicit cPlayer(const cPlayerBasicData& splayer, const cUnitsData& unitsData);
 	~cPlayer();
 
-	const std::string& getName() const { return splayer.getName(); }
-	void setName (const std::string& name) { splayer.setName (name); }
+	const std::string& getName() const { return name; }
 
 	bool isHuman() const { return true; } // only human players are implemented yet.
-	const cPlayerColor& getColor() const { return splayer.getColor(); }
-	void setColor (cPlayerColor color) { return splayer.setColor (std::move (color)); }
-
-	int getId() const { return splayer.getNr(); }
+	const cPlayerColor& getColor() const { return color; }
+	
+	int getId() const { return id; }
 
 	int getCredits() const;
 	void setCredits (int credits);
@@ -207,11 +206,8 @@ public:
 
 	uint32_t getChecksum(uint32_t crc) const;
 
-	mutable cSignal<void ()> nameChanged;
-	mutable cSignal<void ()> colorChanged;
 	mutable cSignal<void ()> creditsChanged;
 	mutable cSignal<void ()> hasFinishedTurnChanged;
-	mutable cSignal<void ()> isRemovedFromGameChanged;
 	mutable cSignal<void (cResearch::ResearchArea)> researchCentersWorkingOnAreaChanged;
 	mutable cSignal<void ()> researchCentersWorkingTotalChanged;
 	mutable cSignal<void ()> turnEndMovementsStarted;
@@ -227,7 +223,9 @@ public:
 	template <typename T>
 	void save(T& archive)
 	{
-		archive & NVP(splayer);
+		archive & NVP(name);
+		archive & NVP(id);
+		archive & NVP(color);
 		archive & NVP(dynamicUnitsData);
 		archive & serialization::makeNvp("vehicleNum", (int)vehicles.size());
 		for (auto vehicle : vehicles)
@@ -254,7 +252,9 @@ public:
 	template<typename T>
 	void load(T& archive)
 	{
-		archive & NVP(splayer);
+		archive & NVP(name);
+		archive & NVP(id);
+		archive & NVP(color);
 
 		dynamicUnitsData.clear();
 		archive & NVP(dynamicUnitsData);
@@ -317,7 +317,9 @@ private:
 
 	void refreshScanMaps();
 
-	cPlayerBasicData splayer;
+	std::string name;
+	cPlayerColor color;
+	int id;
 
 	cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>> vehicles;
 	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> buildings;

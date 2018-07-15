@@ -324,7 +324,7 @@ void cMenuControllerMultiplayerHost::checkGameStart()
 		for (size_t i = 0; i < savegamePlayers.size(); ++i)
 		{
 			auto iter = std::find_if (menuPlayers.begin(), menuPlayers.end(), [&] (const std::shared_ptr<cPlayerBasicData>& player) { return player->getName() == savegamePlayers[i].getName(); });
-			if (iter == menuPlayers.end())
+			if (iter == menuPlayers.end() && !savegamePlayers[i].isDefeated())
 			{
 				windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Player_Wrong"));
 				return;
@@ -731,7 +731,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_TCP_WANT_CONNECT(cNetMessa
 	if (!connectionManager || !windowNetworkLobby) return;
 
 	//add player
-	auto newPlayer = std::make_shared<cPlayerBasicData>(message.playerName, cPlayerColor(message.playerColor), nextPlayerNumber++);
+	auto newPlayer = std::make_shared<cPlayerBasicData>(message.playerName, cPlayerColor(message.playerColor), nextPlayerNumber++, false);
 	windowNetworkLobby->addPlayer(newPlayer);
 
 	windowNetworkLobby->addInfoEntry(lngPack.i18n("Text~Multiplayer~Player_Joined", newPlayer->getName()));
