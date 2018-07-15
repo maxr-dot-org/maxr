@@ -450,6 +450,8 @@ bool cPlayer::canSeeUnit(const cUnit& unit, const cMap& map) const
 //------------------------------------------------------------------------------
 bool cPlayer::canSeeUnit(const cUnit& unit, const cMapField& field, const sTerrain& terrain) const
 {
+	if (isDefeated) return true;
+
 	if (unit.isAVehicle() && static_cast<const cVehicle*>(&unit)->isUnitLoaded()) return false;
 
 	if (unit.getOwner() == this) return true;
@@ -886,6 +888,8 @@ int cPlayer::getResearchCentersWorkingOnArea (cResearch::ResearchArea area) cons
 //------------------------------------------------------------------------------
 bool cPlayer::canSeeAt (const cPosition& position) const
 {
+	if (isDefeated) return true;
+
 	return scanMap.get(position);
 }
 
