@@ -324,6 +324,7 @@
 			<CommandoRank_Veteran ENG="Veteran"/>
 			<Dated ENG="dated"/>
 			<Defeated ENG="defeated"/>
+			<Wins ENG="wins"/>
 			<Description ENG="Description"/>
 			<Destroyed ENG="destroyed"/>
 			<Detected ENG="detected"/>

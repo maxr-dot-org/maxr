@@ -33,6 +33,7 @@
 #include "game/logic/jobs/destroyjob.h"
 #include "map/mapview.h"
 #include "game/logic/casualtiestracker.h"
+#include <set>
 
 //------------------------------------------------------------------------------
 cModel::cModel() :
@@ -793,7 +794,6 @@ void cModel::handleTurnEnd()
 
 				if (activeTurnPlayer == playerList.front().get())
 				{
-					//TODO: checkDefeats();
 					turnCounter->increaseTurn();
 				}
 
@@ -801,6 +801,13 @@ void cModel::handleTurnEnd()
 				{
 					// don't execute turn start action in turn 1, because model is already completely initialized for turn 1
 					activeTurnPlayer->makeTurnStart(*this);
+				}
+
+				if (activeTurnPlayer == playerList.front().get())
+				{
+					// check game end conditions, after turn start, so generated points from this turn are also counted
+					// and only check when first player starts the turn. So all players have played the same amount of turns.
+					checkDefeats();
 				}
 			}
 			else
@@ -811,6 +818,9 @@ void cModel::handleTurnEnd()
 				{
 					player->makeTurnStart(*this);
 				}
+
+				// check game end conditions, after turn start, so generated points from this turn are also counted
+				checkDefeats();
 
 			}
 
@@ -951,4 +961,107 @@ void cModel::sideStepStealthUnit(const cPosition& position, const cStaticUnitDat
 
 	// sidestepping failed. Uncover the vehicle.
 	stealthVehicle->setDetectedByPlayer(vehicleOwner);
+}
+
+
+//------------------------------------------------------------------------------
+bool cModel::isVictoryConditionMet() const
+{
+	// if there is only one active player left, the game is over
+	// but only, if there have been other players.
+	int activePlayers = 0;
+	for (const auto& player : playerList)
+	{
+		if (player->isDefeated) continue;
+		activePlayers++;
+	}
+	if (activePlayers == 1 && playerList.size() > 1) return true;
+
+	switch (gameSettings->getVictoryCondition())
+	{
+		case eGameSettingsVictoryCondition::Turns:
+		{
+			return turnCounter->getTurn() > static_cast<int> (gameSettings->getVictoryTurns());
+		}
+		case eGameSettingsVictoryCondition::Points:
+		{
+			for (const auto& player : playerList)
+			{
+				if (player->isDefeated) continue;
+				if (player->getScore() >= static_cast<int> (gameSettings->getVictoryPoints())) return true;
+			}
+			return false;
+		}
+		case eGameSettingsVictoryCondition::Death:
+			// The victory condition for this mode is already checked.
+			return false;
+	}
+
+	return false;
+}
+
+//------------------------------------------------------------------------------
+void cModel::defeatLoserPlayers()
+{
+	for (size_t i = 0; i != playerList.size(); ++i)
+	{
+		cPlayer& player = *playerList[i];
+		if (player.isDefeated) continue;
+		if (player.mayHaveOffensiveUnit()) continue;
+
+		player.isDefeated = true;
+		playerHasLost(player);
+	}
+}
+
+//------------------------------------------------------------------------------
+void cModel::checkDefeats()
+{
+	defeatLoserPlayers();
+	if (!isVictoryConditionMet()) return;
+
+	std::set<cPlayer*> winners;
+	int best_score = -1;
+
+	// find player(s) with highest score
+	for (const auto& player : playerList)
+	{
+		if (player->isDefeated) continue;
+		const int score = player->getScore();
+
+		if (score < best_score) continue;
+
+		if (score > best_score)
+		{
+			winners.clear();
+			best_score = score;
+		}
+		winners.insert(player.get());
+	}
+
+	// Handle the case where there is more than one winner.
+	// Original MAX calls a draw and displays the results screen.
+	// For now we will have sudden death,
+	// i.e. first player to get ahead in score wins.
+	if (winners.size() > 1)
+	{
+		suddenDeathMode();
+	}
+	else
+	{
+		assert(winners.size() == 1);
+		for (const auto& player : playerList)
+		{
+			if (player->isDefeated) continue;
+			if (winners.find(player.get()) != winners.end())
+			{
+				playerHasWon(*player);
+			}
+			else
+			{
+				player->isDefeated = true;
+				playerHasLost(*player);
+			}
+		}
+	}
 }

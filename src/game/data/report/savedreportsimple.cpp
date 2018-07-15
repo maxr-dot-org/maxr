@@ -80,6 +80,9 @@ std::string cSavedReportSimple::getMessage(const cUnitsData& unitsData) const
 			return lngPack.i18n ("Text~Comp~Turn_Wait");
 		case eSavedReportType::TurnAutoMove:
 			return lngPack.i18n ("Text~Comp~Turn_Automove");
+
+		case eSavedReportType::SuddenDeath:
+			return lngPack.i18n("Text~Comp~SuddenDeath");
 		default: break;
 	}
 	return "";
