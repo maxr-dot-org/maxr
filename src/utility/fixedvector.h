@@ -23,6 +23,7 @@
 #include <cassert>
 #include <cmath>
 #include <type_traits>
+#include <algorithm>
 
 /**
  * A simple fixed size vector that provides basic mathematical operations.
