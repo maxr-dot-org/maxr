@@ -1,5 +1,7 @@
 build-linux:
     script:
+        - export PATH=/home/alzi/tools/gcc/8.1.0/bin/:$PATH
+        - export LD_LIBRARY_PATH=/home/alzi/tools/gcc/8.1.0/lib64
         - mkdir build && cd build
-        - cmake ../
+        - cmake ..
         - make -j4
