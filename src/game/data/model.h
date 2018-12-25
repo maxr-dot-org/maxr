@@ -142,6 +142,10 @@ public:
 	mutable cSignal<void(const cVehicle& plane)> planeLanding;
 	mutable cSignal<void(const cVehicle& plane)> planeTakeoff;
 
+	mutable cSignal<void(const cPlayer& player)> playerHasLost;
+	mutable cSignal<void(const cPlayer& player)> playerHasWon;
+	mutable cSignal<void()> suddenDeathMode;
+
 
 	template<typename T>
 	void save(T& archive)
@@ -283,6 +287,10 @@ private:
 	void runAttackJobs();
 	void handleTurnEnd();
 
+	bool isVictoryConditionMet() const;
+	void defeatLoserPlayers();
+	void checkDefeats();
+
 	//------------------------------------------------------------------------------
 	unsigned int gameId; //this id can be used to check, which log files, and save file belong to the same game.
 
@@ -316,9 +324,6 @@ private:
 
 	/** little helper jobs, that do some time dependent actions */
 	cJobContainer helperJobs;
-
-	//casualtiesTracker
-	
 };
 
 #endif

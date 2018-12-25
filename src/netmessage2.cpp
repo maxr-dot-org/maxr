@@ -151,7 +151,7 @@ cNetMessageGameAlreadyRunning::cNetMessageGameAlreadyRunning(const cModel& model
 	cNetMessage2(eNetMessageType::GAME_ALREADY_RUNNING)
 {
 	for (const auto& p : model.getPlayerList())
-		playerList.push_back(cPlayerBasicData(p->getName(), p->getColor(), p->getId()));
+		playerList.push_back(cPlayerBasicData(p->getName(), p->getColor(), p->getId(), p->isDefeated));
 	mapName = model.getMap()->getName();
 	mapCrc = MapDownload::calculateCheckSum(mapName);
 }

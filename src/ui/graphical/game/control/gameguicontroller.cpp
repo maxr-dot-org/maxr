@@ -127,6 +127,8 @@
 #include "game/logic/action/actionupgradevehicle.h"
 #include "game/logic/action/actionupgradebuilding.h"
 #include "game/data/report/unit/savedreportsurveyoraiconfused.h"
+#include "game/data/report/special/savedreportplayerdefeated.h"
+#include "game/data/report/special/savedreportplayerwins.h"
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -1535,6 +1537,18 @@ void cGameGuiController::connectReportSources(cClient& client)
 	allClientsSignalConnectionManager.connect(player.base.energyIsNeeded, [&]()
 	{
 		addSavedReport(std::make_unique<cSavedReportSimple>(eSavedReportType::EnergyIsNeeded), player.getId());
+	});
+	allClientsSignalConnectionManager.connect(model.playerHasLost, [&](const cPlayer& looser)
+	{
+		addSavedReport(std::make_unique<cSavedReportPlayerDefeated>(looser), player.getId());
+	});
+	allClientsSignalConnectionManager.connect(model.playerHasWon, [&](const cPlayer& winner)
+	{
+		addSavedReport(std::make_unique<cSavedReportPlayerWins>(winner), player.getId());
+	});
+	allClientsSignalConnectionManager.connect(model.suddenDeathMode, [&]()
+	{
+		addSavedReport(std::make_unique<cSavedReportSimple>(eSavedReportType::SuddenDeath), player.getId());
 	});
 }
 

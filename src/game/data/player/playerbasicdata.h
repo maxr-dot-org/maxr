@@ -32,7 +32,7 @@ class cPlayerBasicData
 {
 public:
 	cPlayerBasicData();
-	cPlayerBasicData (const std::string& name_, cPlayerColor color, int Nr_);
+	cPlayerBasicData (const std::string& name, cPlayerColor color, int nr, bool defeated);
 	cPlayerBasicData (const cPlayerBasicData& other);
 	cPlayerBasicData& operator= (const cPlayerBasicData& other);
 
@@ -44,27 +44,30 @@ public:
 	void setNr (int index);
 	void setReady (bool ready);
 	bool isReady() const;
-
-	uint32_t getChecksum(uint32_t crc) const;
+	void setDefeated(bool defeated);
+	bool isDefeated() const;
 
 	mutable cSignal<void ()> nameChanged;
 	mutable cSignal<void ()> numberChanged;
 	mutable cSignal<void ()> colorChanged;
 	mutable cSignal<void ()> readyChanged;
+	mutable cSignal<void ()> isDefeatedChanged;
 
 	template <typename T>
 	void serialize(T& archive)
 	{
 		archive & NVP(name);
 		archive & NVP(color);
-		archive & NVP(Nr);
+		archive & NVP(nr);
 		archive & NVP(ready);
+		archive & NVP(defeated);
 	}
 private:
 	std::string name;
 	cPlayerColor color;
-	int Nr;
+	int nr;
 	bool ready;
+	bool defeated;
 };
 
 #endif // game_data_player_playerbasicdataH

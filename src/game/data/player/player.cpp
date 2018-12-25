@@ -38,11 +38,12 @@ using namespace std;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cPlayer::cPlayer (const cPlayerBasicData& splayer_, const cUnitsData& unitsData) :
-	splayer (splayer_),
+cPlayer::cPlayer (const cPlayerBasicData& splayer, const cUnitsData& unitsData) :
+	color(splayer.getColor()),
+	id(splayer.getNr()),
+	name(splayer.getName()),
 	clan (-1),
 	hasFinishedTurn (false),
-	isRemovedFromGame (false),
 	base(*this)
 {
 	// get the default (no clan) unit data
@@ -54,9 +55,6 @@ cPlayer::cPlayer (const cPlayerBasicData& splayer_, const cUnitsData& unitsData)
 	credits = 0;
 
 	isDefeated = false;
-
-	splayer.nameChanged.connect ([this]() { nameChanged(); });
-	splayer.colorChanged.connect ([this]() { colorChanged(); });
 }
 
 //------------------------------------------------------------------------------
@@ -451,6 +449,8 @@ bool cPlayer::canSeeUnit(const cUnit& unit, const cMap& map) const
 //------------------------------------------------------------------------------
 bool cPlayer::canSeeUnit(const cUnit& unit, const cMapField& field, const sTerrain& terrain) const
 {
+	if (isDefeated) return true;
+
 	if (unit.isAVehicle() && static_cast<const cVehicle*>(&unit)->isUnitLoaded()) return false;
 
 	if (unit.getOwner() == this) return true;
@@ -741,7 +741,7 @@ void cPlayer::makeTurnStart(cModel& model)
 		vehicle->proceedClearing(model);
 	}
 
-	//just to prevent, that an error in scanmap updates have an permanent impact
+	//just to prevent, that an error in scanmap updates have a permanent impact
 	refreshScanMaps();
 	refreshSentryMaps();
 
@@ -767,7 +767,9 @@ void cPlayer::makeTurnStart(cModel& model)
 //------------------------------------------------------------------------------
 uint32_t cPlayer::getChecksum(uint32_t crc) const
 {
-	crc = calcCheckSum(splayer, crc);
+	crc = calcCheckSum(name, crc);
+	crc = calcCheckSum(id, crc);
+	crc = calcCheckSum(color, crc);
 	crc = calcCheckSum(dynamicUnitsData, crc);
 	crc = calcCheckSum(base, crc);
 	for (const auto& v : vehicles)
@@ -789,7 +791,6 @@ uint32_t cPlayer::getChecksum(uint32_t crc) const
 	crc = calcCheckSum(credits, crc);
 	crc = calcCheckSum(currentTurnResearchAreasFinished, crc);
 	crc = calcCheckSum(hasFinishedTurn, crc);
-	crc = calcCheckSum(isRemovedFromGame, crc);
 	crc = calcCheckSum(researchState, crc);
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
 		crc = calcCheckSum(researchCentersWorkingOnArea[i], crc);
@@ -888,6 +889,8 @@ int cPlayer::getResearchCentersWorkingOnArea (cResearch::ResearchArea area) cons
 //------------------------------------------------------------------------------
 bool cPlayer::canSeeAt (const cPosition& position) const
 {
+	if (isDefeated) return true;
+
 	return scanMap.get(position);
 }
 
@@ -902,17 +905,4 @@ void cPlayer::setHasFinishedTurn (bool value)
 {
 	std::swap (hasFinishedTurn, value);
 	if (hasFinishedTurn != value) hasFinishedTurnChanged();
-}
-
-//------------------------------------------------------------------------------
-bool cPlayer::getIsRemovedFromGame() const
-{
-	return isRemovedFromGame;
-}
-
-//------------------------------------------------------------------------------
-void cPlayer::setIsRemovedFromGame (bool value)
-{
-	std::swap (isRemovedFromGame, value);
-	if (isRemovedFromGame != value) isRemovedFromGameChanged();
 }

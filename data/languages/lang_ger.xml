@@ -324,6 +324,7 @@
 			<CommandoRank_Veteran ENG="Veteran" localized="Veteran"/>
 			<Dated ENG="dated" localized="veraltet"/>
 			<Defeated ENG="defeated" localized="besiegt"/>
+			<Wins ENG="wins" localized="gewinnt"/>
 			<Description ENG="Description" localized="Beschreibung"/>
 			<Destroyed ENG="destroyed" localized="zerstört"/>
 			<Detected ENG="detected" localized="entdeckt"/>

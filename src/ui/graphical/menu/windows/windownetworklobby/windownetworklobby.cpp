@@ -40,7 +40,7 @@
 cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableIp) :
 	cWindow (LoadPCX (GFXOD_MULT)),
 	saveGameInfo(-1),
-	localPlayer (std::make_shared<cPlayerBasicData> (cSettings::getInstance().getPlayerName(), cPlayerColor (cSettings::getInstance().getPlayerColor()), 1))
+	localPlayer (std::make_shared<cPlayerBasicData> (cSettings::getInstance().getPlayerName(), cPlayerColor (cSettings::getInstance().getPlayerColor()), 1, false))
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 11), getPosition() + cPosition (getArea().getMaxCorner().x(), 11 + 10)), title, FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 

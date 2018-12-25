@@ -29,11 +29,12 @@
 #include "ui/graphical/menu/widgets/listview.h"
 #include "ui/graphical/menu/widgets/special/unitlistviewitembuy.h"
 #include "ui/graphical/menu/widgets/special/unitdetails.h"
+#include "game/data/player/playerbasicdata.h"
 
 //------------------------------------------------------------------------------
 cWindowHangar::cWindowHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, cPlayerColor playerColor, int playerClan) :
 	cWindow (std::move (surface)),
-	temporaryPlayer (new cPlayer (cPlayerBasicData ("unnamed", std::move (playerColor), 0), *unitsData)),
+	temporaryPlayer (new cPlayer (cPlayerBasicData ("unnamed", std::move (playerColor), 0, false), *unitsData)),
 	player (*temporaryPlayer),
 	unitsData (unitsData)
 {

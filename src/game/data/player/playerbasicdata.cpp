@@ -23,24 +23,27 @@
 
 //------------------------------------------------------------------------------
 cPlayerBasicData::cPlayerBasicData() :
-	Nr(0),
-	ready(false)
+	nr(0),
+	ready(false),
+	defeated(false)
 {}
 
 //------------------------------------------------------------------------------
-cPlayerBasicData::cPlayerBasicData (const std::string& name_, cPlayerColor color_, int nr_) :
-	name (name_),
-	color (std::move (color_)),
-	Nr (nr_),
-	ready (false)
+cPlayerBasicData::cPlayerBasicData (const std::string& name, cPlayerColor color, int nr, bool defeated) :
+	name (name),
+	color (std::move (color)),
+	nr (nr),
+	ready (false),
+	defeated(defeated)
 {}
 
 //------------------------------------------------------------------------------
 cPlayerBasicData::cPlayerBasicData (const cPlayerBasicData& other) :
 	name (other.name),
 	color (other.color),
-	Nr (other.Nr),
-	ready (other.ready)
+	nr (other.nr),
+	ready (other.ready),
+	defeated(other.defeated)
 {}
 
 //------------------------------------------------------------------------------
@@ -48,8 +51,9 @@ cPlayerBasicData& cPlayerBasicData::operator= (const cPlayerBasicData& other)
 {
 	name = other.name;
 	color = other.color;
-	Nr = other.Nr;
+	nr = other.nr;
 	ready = other.ready;
+	defeated = other.defeated;
 	return *this;
 }
 
@@ -69,14 +73,14 @@ void cPlayerBasicData::setName (std::string name_)
 //------------------------------------------------------------------------------
 int cPlayerBasicData::getNr() const
 {
-	return Nr;
+	return nr;
 }
 
 //------------------------------------------------------------------------------
-void cPlayerBasicData::setNr (int nr)
+void cPlayerBasicData::setNr (int newNr)
 {
-	std::swap (Nr, nr);
-	if (Nr != nr) numberChanged();
+	std::swap (newNr, nr);
+	if (newNr != nr) numberChanged();
 }
 //------------------------------------------------------------------------------
 void cPlayerBasicData::setColor (cPlayerColor color_)
@@ -99,12 +103,14 @@ bool cPlayerBasicData::isReady() const
 }
 
 //------------------------------------------------------------------------------
-uint32_t cPlayerBasicData::getChecksum(uint32_t crc) const
+void cPlayerBasicData::setDefeated(bool defeated_)
 {
-	crc = calcCheckSum(name, crc);
-	crc = calcCheckSum(color, crc);
-	crc = calcCheckSum(Nr, crc);
-	crc = calcCheckSum(ready, crc);
+	std::swap(defeated_, defeated);
+	if (defeated != defeated_) isDefeatedChanged();
+}
 
-	return crc;
+//------------------------------------------------------------------------------
+bool cPlayerBasicData::isDefeated() const
+{
+	return defeated;
 }

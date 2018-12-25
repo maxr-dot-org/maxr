@@ -166,7 +166,18 @@ cSaveGameInfo cSavegame::loadSaveInfo(int slot)
 		for (int i = 0; i < numPlayers; i++)
 		{
 			archive.enterChild("player");
-			archive >> serialization::makeNvp("splayer", info.players[i]);
+			std::string name;
+			cPlayerColor color;
+			int id;
+			bool isDefeated;
+
+			archive >> NVP(name);
+			archive >> NVP(color);
+			archive >> NVP(id);
+			archive >> NVP(isDefeated);
+
+			info.players[i] = cPlayerBasicData(name, color, id, isDefeated);
+
 			archive.leaveChild(); // player
 		}
 		archive.enterChild("map");

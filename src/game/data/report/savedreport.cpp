@@ -36,6 +36,7 @@
 #include "game/data/report/special/savedreportlostconnection.h"
 #include "game/data/report/special/savedreportplayerendedturn.h"
 #include "game/data/report/special/savedreportplayerdefeated.h"
+#include "game/data/report/special/savedreportplayerwins.h"
 #include "game/data/report/special/savedreportplayerleft.h"
 #include "game/data/report/special/savedreportupgraded.h"
 #include "game/data/report/special/savedreportturnstart.h"
@@ -78,6 +79,8 @@ std::unique_ptr<cSavedReport> cSavedReport::createFromImpl (T& archive)
 		return std::make_unique<cSavedReportLostConnection>(archive);
 	case eSavedReportType::PlayerDefeated:
 		return std::make_unique<cSavedReportPlayerDefeated>(archive);
+	case eSavedReportType::PlayerWins:
+		return std::make_unique<cSavedReportPlayerWins>(archive);
 	case eSavedReportType::PlayerLeft:
 		return std::make_unique<cSavedReportPlayerLeft>(archive);
 	case eSavedReportType::Upgraded:
@@ -103,7 +106,7 @@ std::unique_ptr<cSavedReport> cSavedReport::createFromImpl (T& archive)
 	case eSavedReportType::TurnAutoMove:
 		return std::make_unique<cSavedReportSimple>(type);
 	default:
-		//TODO: throw
+		assert(false);
 		return nullptr;
 	}
 }

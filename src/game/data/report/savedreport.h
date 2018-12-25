@@ -71,6 +71,8 @@ enum class eSavedReportType
 	PlayerLeft           = 21,
 	Upgraded             = 22,
 	TurnStart            = 23,
+	PlayerWins           = 35,
+	SuddenDeath          = 36,
 
 	// Unit reports
 	Attacked             = 24,
