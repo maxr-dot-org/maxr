@@ -26,8 +26,6 @@
 #include "utility/signal/signal.h"
 #include "utility/serialization/serialization.h"
 
-class cNetMessage;
-
 enum class eGameSettingsResourceAmount
 {
 	Limited,

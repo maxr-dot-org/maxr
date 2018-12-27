@@ -19,7 +19,6 @@
 
 #include "game/data/report/savedreportchat.h"
 
-#include "netmessage.h"
 #include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------

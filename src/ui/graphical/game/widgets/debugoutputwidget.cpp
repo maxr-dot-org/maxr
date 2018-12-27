@@ -324,7 +324,7 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 		drawPosition.y() += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		font->showText (drawPosition.x(), drawPosition.y(), "Net MGS Queue: ", FONT_LATIN_SMALL_WHITE);
-		font->showText (drawPosition.x() + 110, drawPosition.y(), iToStr (client->eventQueue.safe_size()), FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPosition.x() + 110, drawPosition.y(), iToStr (client->eventQueue2.safe_size()), FONT_LATIN_SMALL_WHITE);
 		drawPosition.y() += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		font->showText (drawPosition.x(), drawPosition.y(), "EventCounter: ", FONT_LATIN_SMALL_WHITE);

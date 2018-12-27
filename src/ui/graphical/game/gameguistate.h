@@ -28,7 +28,6 @@
 
 class cUnitSelection;
 class cUnitLockList;
-class cNetMessage;
 class cVersion;
 
 class cGameGuiState

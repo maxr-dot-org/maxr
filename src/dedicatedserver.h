@@ -32,6 +32,7 @@ class cTCP;
 class cServer;
 class cServerGame;
 class cNetMessage;
+class cServer2;
 
 //------------------------------------------------------------------------
 /** cDedicatedServer class manages the server resources and handles command line input.
@@ -45,7 +46,7 @@ public:
 	void run();
 	void pushMessage (std::unique_ptr<cNetMessage2> message);
 
-	void doAutoSave (cServer& server);
+	void doAutoSave (cServer2& server);
 
 	//------------------------------------------------------------------------
 protected:
@@ -84,7 +85,7 @@ protected:
 	void loadSaveGame (int saveGameNumber);
 	void saveGame (int saveGameNumber);
 
-	bool handleDedicatedServerEvents (cNetMessage& message);
+	bool handleDedicatedServerEvents (cNetMessage2& message);
 	void sendChatMessage (const std::string& text, int type, int socket = -1);
 
 	std::unique_ptr<cDedicatedServerConfig> configuration;

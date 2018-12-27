@@ -21,13 +21,11 @@
 #include "game/data/gamesettings.h"
 #include "ui/graphical/application.h"
 #include "game/logic/client.h"
-#include "game/logic/server.h"
 #include "game/logic/server2.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/units/landingunit.h"
-#include "game/logic/clientevents.h" //TODO: remove
 #include "game/logic/action/actioninitnewgame.h"
 
 //------------------------------------------------------------------------------

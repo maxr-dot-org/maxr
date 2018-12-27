@@ -18,7 +18,6 @@
  ***************************************************************************/
 
 #include "game/data/report/special/savedreportupgraded.h"
-#include "netmessage.h"
 #include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------

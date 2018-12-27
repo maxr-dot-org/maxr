@@ -19,7 +19,6 @@
 
 #include "main.h"
 #include "game/data/report/special/savedreporthostcommand.h"
-#include "netmessage.h"
 
 //------------------------------------------------------------------------------
 cSavedReportHostCommand::cSavedReportHostCommand (std::string command_) :

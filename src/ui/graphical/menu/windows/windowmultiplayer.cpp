@@ -28,7 +28,6 @@
 #include "ui/graphical/application.h"
 #include "game/startup/local/hotseat/localhotseatgamesaved.h"
 #include "main.h"
-#include "netmessage.h"
 
 //------------------------------------------------------------------------------
 cWindowMultiPlayer::cWindowMultiPlayer() :

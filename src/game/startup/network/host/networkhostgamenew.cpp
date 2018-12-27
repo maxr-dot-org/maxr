@@ -24,7 +24,6 @@
 #include "game/logic/server2.h"
 #include "game/data/player/player.h"
 #include "game/data/units/landingunit.h"
-#include "game/logic/clientevents.h"
 #include "game/logic/action/actioninitnewgame.h"
 
 //------------------------------------------------------------------------------

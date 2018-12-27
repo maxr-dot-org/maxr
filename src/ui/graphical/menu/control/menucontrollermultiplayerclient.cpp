@@ -38,7 +38,6 @@
 #include "game/data/units/landingunit.h"
 #include "utility/log.h"
 #include "menuevents.h"
-#include "game/logic/serverevents.h"
 #include "mapdownload.h"
 #include "utility/files.h"
 #include "utility/string/toString.h"

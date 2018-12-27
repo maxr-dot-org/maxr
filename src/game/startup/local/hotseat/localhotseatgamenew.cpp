@@ -21,12 +21,11 @@
 #include "game/data/gamesettings.h"
 #include "ui/graphical/application.h"
 #include "game/logic/client.h"
-#include "game/logic/server.h"
+#include "game/logic/server2.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/units/landingunit.h"
-#include "game/logic/clientevents.h"
 
 // TODO: remove
 void applyUnitUpgrades (cPlayer& player, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades);
@@ -97,10 +96,10 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 
 	//server->startTurnTimers();
 
-	auto activePlayer = server->getActiveTurnPlayer();
-	assert (activePlayer != nullptr);
+	//auto activePlayer = server->getActivePlayer();
+	//assert (activePlayer != nullptr);
 
-	gameGuiController->setClients (clients, activePlayer->getId());
+	//gameGuiController->setClients (clients, activePlayer->getId());
 
 	gameGuiController->start();
 

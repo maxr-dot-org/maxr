@@ -23,18 +23,14 @@
 
 #include "game/data/units/building.h"
 #include "game/logic/casualtiestracker.h"
-#include "game/logic/clientevents.h"
 #include "utility/listhelpers.h"
 #include "game/logic/fxeffects.h"
 #include "game/logic/gametimer.h"
 #include "utility/log.h"
 #include "main.h"
-#include "netmessage.h"
 #include "netmessage2.h"
 #include "game/data/player/player.h"
-#include "game/logic/server.h"
 #include "game/logic/server2.h"
-#include "game/logic/serverevents.h"
 #include "settings.h"
 #include "game/data/units/vehicle.h"
 #include "video.h"
@@ -67,7 +63,6 @@ using namespace std;
 
 //------------------------------------------------------------------------
 cClient::cClient (std::shared_ptr<cConnectionManager> connectionManager) :
-	server (nullptr),
 	connectionManager(connectionManager),
 	gameTimer (std::make_shared<cGameTimerClient> ()),
 	activePlayer (nullptr)
@@ -120,11 +115,6 @@ void cClient::pushMessage(std::unique_ptr<cNetMessage2> message)
 	eventQueue2.push(std::move(message));
 }
 
-void cClient::sendNetMessage (std::unique_ptr<cNetMessage> message) const
-{
-
-}
-
 void cClient::sendNetMessage(cNetMessage2& message) const
 {
 	message.playerNr = activePlayer->getId();
@@ -142,373 +132,6 @@ void cClient::sendNetMessage(cNetMessage2& message) const
 void cClient::sendNetMessage(cNetMessage2&& message) const
 {
 	sendNetMessage(static_cast<cNetMessage2&>(message));
-}
-
-void cClient::addFx (std::shared_ptr<cFx> fx, bool playSound)
-{
-
-}
-
-void cClient::HandleNetMessage_GAME_EV_DEL_BUILDING (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_DEL_BUILDING);
-
-	cBuilding* Building = getBuildingFromID (message.popInt16());
-
-	if (Building)
-	{
-		//deleteUnit (Building);
-	}
-}
-
-void cClient::HandleNetMessage_GAME_EV_DEL_VEHICLE (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_DEL_VEHICLE);
-
-	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
-
-	//if (Vehicle) deleteUnit (Vehicle);
-}
-
-void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_UNIT_DATA);
-
-/*	cPlayer* Player = getPlayerFromNumber (message.popInt16());
-	(void) Player;  // TODO use me
-	const int iID = message.popInt16();
-	const bool bVehicle = message.popBool();
-	const auto position = message.popPosition();
-
-	Log.write (" Client: Received Unit Data: Vehicle: " + iToStr ((int) bVehicle) + ", ID: " + iToStr (iID) + ", XPos: " + iToStr (position.x()) + ", YPos: " + iToStr (position.y()), cLog::eLOG_TYPE_NET_DEBUG);
-	cVehicle* Vehicle = nullptr;
-	sUnitData* Data = nullptr;
-	// unit is a vehicle
-	if (bVehicle)
-	{
-		bool bBig = message.popBool();
-		Vehicle = getVehicleFromID (iID);
-
-		if (!Vehicle)
-		{
-			Log.write (" Client: Unknown vehicle with ID: " + iToStr (iID), cLog::eLOG_TYPE_NET_WARNING);
-			// TODO: Request sync of vehicle
-			return;
-		}
-		if (Vehicle->getPosition() != position || Vehicle->data.isBig != bBig)
-		{
-			// should never happen
-			cLog::eLogType iLogType = cLog::eLOG_TYPE_NET_WARNING;
-			if (Vehicle->isUnitBuildingABuilding() || Vehicle->isUnitClearing() || Vehicle->isUnitMoving()) iLogType = cLog::eLOG_TYPE_NET_DEBUG;
-			Log.write (" Client: Vehicle identificated by ID (" + iToStr (iID) + ") but has wrong position [IS: X" + iToStr (Vehicle->getPosition().x()) + " Y" + iToStr (Vehicle->getPosition().y()) + "; SHOULD: X" + iToStr (position.x()) + " Y" + iToStr (position.y()) + "]", iLogType);
-
-			// set to server position if vehicle is not moving
-			if (!Vehicle->MoveJobActive)
-			{
-//				getMap()->moveVehicle (*Vehicle, position);
-//				if (bBig) getMap()->moveVehicleBig (*Vehicle, position);
-				Vehicle->getOwner()->doScan();
-			}
-		}
-
-		if (message.popBool()) Vehicle->changeName (message.popString());
-
-		Vehicle->setAttacking (message.popBool());
-		Vehicle->setIsBeeinAttacked (message.popBool());
-
-		const bool bWasDisabled = Vehicle->isDisabled();
-		Vehicle->setDisabledTurns (message.popInt16());
-		Vehicle->setCommandoRank (message.popInt16());
-		Vehicle->setClearing (message.popBool());
-		Vehicle->setBuildingABuilding (message.popBool());
-		Vehicle->setBuildTurns (message.popInt16());
-		Vehicle->setClearingTurns (message.popInt16());
-		Vehicle->setSentryActive (message.popBool());
-		Vehicle->setManualFireActive (message.popBool());
-
-		if (Vehicle->isDisabled() != bWasDisabled && Vehicle->getOwner() == activePlayer)
-		{
-			if (Vehicle->isDisabled())
-			{
-				activePlayer->addSavedReport (std::make_unique<cSavedReportDisabled> (*Vehicle));
-				unitDisabled (*Vehicle);
-			}
-			Vehicle->getOwner()->doScan();
-		}
-		Data = &Vehicle->data;
-	}
-	else
-	{
-		cBuilding* Building = getBuildingFromID (iID);
-		if (!Building)
-		{
-			Log.write (" Client: Unknown building with ID: " + iToStr (iID), cLog::eLOG_TYPE_NET_WARNING);
-			// TODO: Request sync of building
-			return;
-		}
-
-		if (message.popBool()) Building->changeName (message.popString());
-
-		Building->setAttacking (message.popBool());
-		Building->setIsBeeinAttacked (message.popBool());
-
-		const bool bWasDisabled = Building->isDisabled();
-		Building->setDisabledTurns (message.popInt16());
-		Building->setResearchArea ((cResearch::ResearchArea)message.popInt16());
-		Building->setWorking (message.popBool());
-		Building->setSentryActive (message.popBool());
-		Building->setManualFireActive (message.popBool());
-		Building->points = message.popInt16();
-
-		if (Building->isDisabled() != bWasDisabled && Building->getOwner() == activePlayer)
-		{
-			if (Building->isDisabled())
-			{
-				activePlayer->addSavedReport (std::make_unique<cSavedReportDisabled> (*Building));
-				unitDisabled (*Building);
-			}
-			Building->getOwner()->doScan();
-		}
-		Data = &Building->data;
-	}
-
-	Data->buildCosts = message.popInt16();
-	Data->setAmmo (message.popInt16());
-	Data->setAmmoMax (message.popInt16());
-	Data->setStoredResources (message.popInt16());
-	Data->storageResMax = message.popInt16();
-	Data->setStoredUnits (message.popInt16());
-	Data->storageUnitsMax = message.popInt16();
-	Data->setDamage (message.popInt16());
-	Data->setShots (message.popInt16());
-	Data->setShotsMax (message.popInt16());
-	Data->setRange (message.popInt16());
-	Data->setScan (message.popInt16());
-	Data->setArmor (message.popInt16());
-	Data->setHitpoints (message.popInt16());
-	Data->setHitpointsMax (message.popInt16());
-	Data->setVersion (message.popInt16());
-
-	if (bVehicle)
-	{
-		if (Data->canPlaceMines)
-		{
-			if (Data->getStoredResources() <= 0) Vehicle->setLayMines (false);
-			if (Data->getStoredResources() >= Data->storageResMax) Vehicle->setClearMines (false);
-		}
-		Data->setSpeed (message.popInt16());
-		Data->setSpeedMax (message.popInt16());
-
-		Vehicle->setFlightHeight (message.popInt16());
-	}*/
-}
-
-void cClient::HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_SPECIFIC_UNIT_DATA);
-
-	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
-	if (!Vehicle) return;
-	Vehicle->dir = message.popInt16();
-	Vehicle->setBuildingType (message.popID());
-	Vehicle->BuildPath = message.popBool();
-	Vehicle->bandPosition = message.popPosition();
-}
-
-void cClient::HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_RESOURCES);
-
-	const int iCount = message.popInt16();
-	for (int i = 0; i < iCount; i++)
-	{
-		const auto position = message.popPosition();
-
-		activePlayer->exploreResource (position);
-
-//		sResources& res = getMap()->getResource (position);
-//		res.typ = (unsigned char) message.popInt16();
-//		res.value = (unsigned char) message.popInt16();
-	}
-}
-
-void cClient::HandleNetMessage_GAME_EV_MARK_LOG (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_MARK_LOG);
-
-	Log.write ("=============================================================================================", cLog::eLOG_TYPE_NET_DEBUG);
-	Log.write (message.popString(), cLog::eLOG_TYPE_NET_DEBUG);
-	Log.write ("=============================================================================================", cLog::eLOG_TYPE_NET_DEBUG);
-}
-
-void cClient::HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_ADD_RUBBLE);
-
-	const bool big = message.popBool();
-	const int typ = message.popInt16();
-	const int value = message.popInt16();
-	const unsigned int ID = message.popInt16();
-	auto rubble = std::make_shared<cBuilding> (nullptr, nullptr, nullptr, ID);
-
-	rubble->setIsBig(big);
-//	rubble->RubbleTyp = typ;
-//	rubble->RubbleValue = value;
-	const auto position = message.popPosition();
-
-	rubble->setPosition (position);
-
-//	getMap()->addBuilding (*rubble, rubble->getPosition());
-
-//	auto result = neutralBuildings.insert (std::move (rubble));
-//	assert (result.second);
-}
-
-void cClient::HandleNetMessage_GAME_EV_NOFOG (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_NOFOG);
-
-	//activePlayer->revealMap();
-}
-
-void cClient::HandleNetMessage_GAME_EV_DEFEATED (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_DEFEATED);
-
-/*	const int iTmp = message.popInt16();
-	cPlayer* Player = getPlayerFromNumber (iTmp);
-	if (Player == nullptr)
-	{
-		Log.write ("Client: Cannot find defeated player!", cLog::eLOG_TYPE_NET_WARNING);
-		return;
-	}
-	Player->isDefeated = true;
-	activePlayer->addSavedReport (std::make_unique<cSavedReportPlayerDefeated> (*Player));
-#if 0
-	for (unsigned int i = 0; i < getPlayerList()->size(); i++)
-	{
-		if (Player == (*getPlayerList()) [i])
-		{
-			Hud.ExtraPlayers (Player->getName() + " (d)", Player->getColor(), i, Player->bFinishedTurn, false);
-			return;
-		}
-	}
-#endif*/
-}
-void cClient::HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_DEL_PLAYER);
-
-/*	cPlayer* Player = getPlayerFromNumber (message.popInt16());
-	if (Player == activePlayer)
-	{
-		Log.write ("Client: Cannot delete own player!", cLog::eLOG_TYPE_NET_WARNING);
-		return;
-	}
-	if (Player->hasUnits())
-	{
-		Log.write ("Client: Player to be deleted has some units left !", cLog::eLOG_TYPE_NET_ERROR);
-	}
-	activePlayer->addSavedReport (std::make_unique<cSavedReportPlayerLeft> (*Player));
-
-	deletePlayer (*Player);*/
-}
-
-void cClient::HandleNetMessage_GAME_EV_UNIT_UPGRADE_VALUES (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_UNIT_UPGRADE_VALUES);
-
-	const sID ID = message.popID();
-	cDynamicUnitData* Data = activePlayer->getUnitDataCurrentVersion (ID);
-	if (Data == nullptr) return;
-
-	Data->setVersion (message.popInt16());
-	Data->setScan (message.popInt16());
-	Data->setRange (message.popInt16());
-	Data->setDamage (message.popInt16());
-	Data->setBuildCost(message.popInt16());
-	Data->setArmor (message.popInt16());
-	Data->setSpeedMax (message.popInt16());
-	Data->setShotsMax (message.popInt16());
-	Data->setAmmoMax (message.popInt16());
-	Data->setHitpointsMax (message.popInt16());
-}
-
-void cClient::HandleNetMessage_GAME_EV_CREDITS_CHANGED (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_CREDITS_CHANGED);
-
-	activePlayer->setCredits (message.popInt32());
-}
-
-void cClient::HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_UPGRADED_BUILDINGS);
-
-	const int buildingsInMsg = message.popInt16();
-	const int totalCosts = message.popInt16();
-	if (buildingsInMsg <= 0) return;
-
-	const cDynamicUnitData* unitData = nullptr;
-	bool scanNecessary = false;
-	for (int i = 0; i < buildingsInMsg; i++)
-	{
-		const int buildingID = message.popInt32();
-		cBuilding* building = getBuildingFromID (buildingID);
-		if (!building)
-		{
-			Log.write (" Client: Unknown building with ID: " + iToStr (buildingID), cLog::eLOG_TYPE_NET_ERROR);
-			break;
-		}
-		const cDynamicUnitData& upgraded = *activePlayer->getUnitDataCurrentVersion (building->data.getId());
-		if (building->data.getScan() < upgraded.getScan())
-			scanNecessary = true; // Scan range was upgraded. So trigger a scan.
-		building->upgradeToCurrentVersion();
-		if (i == 0)
-		{
-			unitData = &building->data;
-		}
-	}
-	assert (unitData != nullptr);
-	//activePlayer->addSavedReport (std::make_unique<cSavedReportUpgraded> (unitData->ID, buildingsInMsg, totalCosts));
-//	if (scanNecessary)
-//		activePlayer->doScan();
-}
-
-void cClient::HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_UPGRADED_VEHICLES);
-
-	const int vehiclesInMsg = message.popInt16();
-	const int totalCosts = message.popInt16();
-	/*const unsigned int storingBuildingID =*/ message.popInt32();
-	if (vehiclesInMsg <= 0) return;
-
-	const cDynamicUnitData* unitData = nullptr;
-	for (int i = 0; i < vehiclesInMsg; i++)
-	{
-		const int vehicleID = message.popInt32();
-		cVehicle* vehicle = getVehicleFromID (vehicleID);
-		if (!vehicle)
-		{
-			Log.write (" Client: Unknown vehicle with ID: " + iToStr (vehicleID), cLog::eLOG_TYPE_NET_ERROR);
-			break;
-		}
-		vehicle->upgradeToCurrentVersion();
-		if (i == 0)
-		{
-			unitData = &vehicle->data;
-		}
-	}
-	assert (unitData != nullptr);
-	//activePlayer->addSavedReport (std::make_unique<cSavedReportUpgraded> (unitData->ID, vehiclesInMsg, totalCosts));
-}
-
-void cClient::HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_REVEAL_MAP);
-
-//	activePlayer->revealMap();
 }
 
 //------------------------------------------------------------------------------
@@ -640,36 +263,6 @@ void cClient::handleNetMessages()
 
 }
 
-int cClient::handleNetMessage (cNetMessage& message)
-{
-
-
-	switch (message.iType)
-	{
-		case GAME_EV_DEL_BUILDING: HandleNetMessage_GAME_EV_DEL_BUILDING (message); break;
-		case GAME_EV_DEL_VEHICLE: HandleNetMessage_GAME_EV_DEL_VEHICLE (message); break;
-		case GAME_EV_UNIT_DATA: HandleNetMessage_GAME_EV_UNIT_DATA (message); break;
-		case GAME_EV_SPECIFIC_UNIT_DATA: HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (message); break;
-		case GAME_EV_RESOURCES: HandleNetMessage_GAME_EV_RESOURCES (message); break;
-		case GAME_EV_MARK_LOG: HandleNetMessage_GAME_EV_MARK_LOG (message); break;
-		case GAME_EV_ADD_RUBBLE: HandleNetMessage_GAME_EV_ADD_RUBBLE (message); break;
-		case GAME_EV_NOFOG: HandleNetMessage_GAME_EV_NOFOG (message); break;
-		case GAME_EV_DEFEATED: HandleNetMessage_GAME_EV_DEFEATED (message); break;
-		case GAME_EV_DEL_PLAYER: HandleNetMessage_GAME_EV_DEL_PLAYER (message); break;
-		case GAME_EV_UNIT_UPGRADE_VALUES: HandleNetMessage_GAME_EV_UNIT_UPGRADE_VALUES (message); break;
-		case GAME_EV_CREDITS_CHANGED: HandleNetMessage_GAME_EV_CREDITS_CHANGED (message); break;
-		case GAME_EV_UPGRADED_BUILDINGS: HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (message); break;
-		case GAME_EV_UPGRADED_VEHICLES: HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (message); break;
-		case GAME_EV_REVEAL_MAP: HandleNetMessage_GAME_EV_REVEAL_MAP (message); break;
-
-		default:
-			Log.write ("Client: Can not handle message type " + message.getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
-			break;
-	}
-
-	return 0;
-}
-
 //------------------------------------------------------------------------------
 void cClient::handleSurveyorMoveJobs()
 {
@@ -683,46 +276,6 @@ void cClient::handleSurveyorMoveJobs()
 		}
 	}
 	Remove(surveyorAiJobs, nullptr);
-}
-
-cVehicle* cClient::getVehicleFromID (unsigned int id) const
-{
-	for (unsigned int i = 0; i < model.getPlayerList().size(); i++)
-	{
-		cPlayer& player = *model.getPlayerList()[i];
-		auto unit = player.getVehicleFromId (id);
-		if (unit) return unit;
-	}
-	return nullptr;
-}
-
-cBuilding* cClient::getBuildingFromID (unsigned int id) const
-{
-	for (unsigned int i = 0; i < model.getPlayerList().size(); i++)
-	{
-		cPlayer& player = *model.getPlayerList() [i];
-		auto unit = player.getBuildingFromId (id);
-		if (unit) return unit;
-	}
-//	auto iter = neutralBuildings.find (id);
-//	return iter == neutralBuildings.end() ? nullptr : iter->get();
-}
-
-cUnit* cClient::getUnitFromID (unsigned int id) const
-{
-	cUnit* result = getVehicleFromID (id);
-
-	if (result == nullptr)
-		result = getBuildingFromID (id);
-	return result;
-}
-
-cSubBase* cClient::getSubBaseFromID (int iID)
-{
-	cBuilding* building = getBuildingFromID (iID);
-	if (building)
-		return building->subBase;
-	return nullptr;
 }
 
 //------------------------------------------------------------------------------

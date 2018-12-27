@@ -70,13 +70,11 @@
 #include "keys.h"
 #include "game/logic/client.h"
 #include "game/logic/server2.h"
-#include "game/logic/clientevents.h"
 #include "game/logic/turntimeclock.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
 #include "utility/log.h"
-#include "netmessage.h"
 #include "network.h"
 #include "game/logic/attackjob.h"
 #include "game/data/player/player.h"
@@ -618,9 +616,9 @@ void cGameGuiController::initChatCommands()
 		.addArgument<cChatCommandArgumentClient>(activeClient)
 		.setAction([&](const std::string& text, cClient* client)
 		{
-			auto message = std::make_unique<cNetMessage>(GAME_EV_WANT_MARK_LOG);
+			/* auto message = std::make_unique<cNetMessage>(GAME_EV_WANT_MARK_LOG);
 			message->pushString(text);
-			client->sendNetMessage(std::move(message));
+			client->sendNetMessage(std::move(message)); */
 		})
 	);
 	chatCommands.push_back(
@@ -949,11 +947,10 @@ void cGameGuiController::connectClient (cClient& client)
 	{
 		if (unit.isAVehicle())
 		{
-			auto vehicle = client.getVehicleFromID (unit.iID);
-			if (!vehicle) return;
-			if (vehicle->getMoveJob() && !vehicle->isUnitMoving())
+			auto& vehicle = *static_cast<const cVehicle*>(&unit);
+			if (vehicle.getMoveJob() && !vehicle.isUnitMoving())
 			{
-				resumeMoveJobTriggered(*vehicle);
+				resumeMoveJobTriggered(vehicle);
 			}		
 		}
 		doneList.push_back(unit.getId());
@@ -1929,8 +1926,9 @@ void cGameGuiController::handleChatCommand(const std::string& chatString)
 		}
 	}
 	else if(activeClient)
-	{
-		sendChatMessageToServer(*activeClient, chatString, *getActivePlayer());
+	{		
+		cNetMessageReport netMsg(std::make_unique<cSavedReportChat>(*getActivePlayer(), chatString));
+		activeClient->sendNetMessage(netMsg);
 	}
 }
 

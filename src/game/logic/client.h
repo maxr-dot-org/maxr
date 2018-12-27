@@ -33,13 +33,10 @@
 class cBuilding;
 class cCasualtiesTracker;
 class cAttackJob;
-class cClientMoveJob;
-class cAutoMJob;
 class cFx;
 class cFxContainer;
 class cJob;
 class cMap;
-class cNetMessage;
 class cPlayer;
 class cStaticMap;
 class cPlayerBasicData;
@@ -59,7 +56,6 @@ Uint32 TimerCallback (Uint32 interval, void* arg);
 class cClient : public INetMessageReceiver
 {
 	friend class cDebugOutputWidget;
-	friend class cPlayer;
 public:
 	cClient (std::shared_ptr<cConnectionManager> connectionManager);
 	~cClient();
@@ -73,7 +69,7 @@ public:
 	void setMap(std::shared_ptr<cStaticMap> staticMap);
 	void setPlayers(const std::vector<cPlayerBasicData>& splayers, size_t activePlayerNr);
 
-	unsigned int getNetMessageQueueSize() const { return static_cast<unsigned int>(eventQueue.safe_size()); };
+	unsigned int getNetMessageQueueSize() const { return static_cast<unsigned int>(eventQueue2.safe_size()); };
 	virtual void pushMessage(std::unique_ptr<cNetMessage2> message) MAXR_OVERRIDE_FUNCTION;
 
 	//
@@ -88,40 +84,15 @@ public:
 	void recreateSurveyorMoveJobs();
 
 	/**
-	* sends the netMessage to the server.
-	*@author Eiko
-	*@param message The netMessage to be send.
-	*/
-	void sendNetMessage (std::unique_ptr<cNetMessage> message) const;
-	/**
 	* sends a serialized copy of the netmessage to the server.
 	*/
 	void sendNetMessage(cNetMessage2& message) const;
 	void sendNetMessage(cNetMessage2&& message) const;
 
-	/**
-	* gets the vehicle with the ID
-	*@author alzi alias DoctorDeath
-	*@param iID The ID of the vehicle
-	*/
-	cVehicle* getVehicleFromID (unsigned int id) const;
-	cBuilding* getBuildingFromID (unsigned int id) const;
-	cUnit* getUnitFromID (unsigned int id) const;
-
 
 	void handleNetMessages();
 
 	void runClientJobs(const cModel& model);
-
-	/**
-	* processes everything that is need for this netMessage
-	*@author alzi alias DoctorDeath
-	*@param message The netMessage to be handled.
-	*@return 0 for success
-	*/
-	int handleNetMessage (cNetMessage& message);
-
-	void addFx (std::shared_ptr<cFx> fx, bool playSound = true);
 
 	const std::shared_ptr<cGameTimerClient>& getGameTimer() const { return gameTimer; }
 
@@ -139,37 +110,13 @@ public:
 private:
 
 	void handleSurveyorMoveJobs();
-	/**
-	* gets the subbase with the id
-	*@author alzi alias DoctorDeath
-	*@param iID Id of the subbase
-	*/
-	cSubBase* getSubBaseFromID (int iID);
-
-	void HandleNetMessage_GAME_EV_DEL_BUILDING (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_DEL_VEHICLE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_MARK_LOG (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_NOFOG (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_DEFEATED (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_UNIT_UPGRADE_VALUES (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_CREDITS_CHANGED (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message);
-private:
+	
 	cModel model;
 
 	cSignalConnectionManager signalConnectionManager;
 
-	cServer* server;
 	std::shared_ptr<cConnectionManager> connectionManager;
 
-	cConcurrentQueue<std::unique_ptr<cNetMessage>> eventQueue;
 	cConcurrentQueue<std::unique_ptr<cNetMessage2>> eventQueue2;
 
 	std::shared_ptr<cGameTimerClient> gameTimer;

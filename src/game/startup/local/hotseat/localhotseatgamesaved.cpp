@@ -21,10 +21,8 @@
 #include "game/data/gamesettings.h"
 #include "ui/graphical/application.h"
 #include "game/logic/client.h"
-#include "game/logic/server.h"
 #include "game/logic/server2.h"
 #include "game/data/player/player.h"
-#include "game/logic/clientevents.h"
 #include "game/data/savegame.h"
 #include "game/data/report/savedreport.h"
 
@@ -37,18 +35,18 @@ void cLocalHotSeatGameSaved::start (cApplication& application)
 	//cSavegame savegame (saveGameNumber);
 	//if (savegame.load (*server) == false) return;
 
-	auto staticMap = server->Map->staticMap;
+	//auto staticMap = server->Map->staticMap;
 
-	const auto& serverPlayerList = server->playerList;
-	if (serverPlayerList.empty()) return;
+	//const auto& serverPlayerList = server->playerList;
+	//if (serverPlayerList.empty()) return;
 
 	// Following may be simplified according to serverGame::loadGame
 	std::vector<cPlayerBasicData> clientPlayerList;
 
 	// copy players for client
-	for (size_t i = 0; i != serverPlayerList.size(); ++i)
+	//for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
-		const auto& p = *serverPlayerList[i];
+		//const auto& p = *serverPlayerList[i];
 		//clientPlayerList.push_back (cPlayerBasicData (p.getName(), p.getColor(), p.getId(), p.getSocketNum()));
 
 		//serverPlayerList[i]->setLocal();
@@ -59,7 +57,7 @@ void cLocalHotSeatGameSaved::start (cApplication& application)
 	{
 		//clients[i] = std::make_shared<cClient> (server.get(), nullptr); //TODO
 //		clients[i]->setMap (staticMap);
-		clients[i]->setGameSettings (*server->getGameSettings());
+//		clients[i]->setGameSettings (*server->getGameSettings());
 		clients[i]->setPlayers (clientPlayerList, i);
 	}
 
@@ -71,7 +69,7 @@ void cLocalHotSeatGameSaved::start (cApplication& application)
 	}
 
 	// TODO: move that in server
-	for (size_t i = 0; i != serverPlayerList.size(); ++i)
+//	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
 //		sendGameSettings (*server, *serverPlayerList[i]);
 //		sendGameGuiState (*server, server->getPlayerGameGuiState (*serverPlayerList[i]), *serverPlayerList[i]);
@@ -85,17 +83,17 @@ void cLocalHotSeatGameSaved::start (cApplication& application)
 	}
 
 	// start game
-	server->serverState = SERVER_STATE_INGAME;
+	//server->serverState = SERVER_STATE_INGAME;
 
 	// TODO: save/load game time
 	//server->startTurnTimers();
 
-	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
+	//gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
-	auto activePlayer = server->getActiveTurnPlayer();
-	if (activePlayer == nullptr) activePlayer = server->playerList[0].get();
+	//auto activePlayer = server->getActiveTurnPlayer();
+	//if (activePlayer == nullptr) activePlayer = server->playerList[0].get();
 
-	gameGuiController->setClients (clients, activePlayer->getId());
+	//gameGuiController->setClients (clients, activePlayer->getId());
 
 	gameGuiController->start();
 

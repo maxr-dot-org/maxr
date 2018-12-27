@@ -40,10 +40,8 @@
 #include "game/data/units/landingunit.h"
 #include "settings.h"
 #include "game/logic/client.h"
-#include "game/logic/server.h"
 #include "game/logic/server2.h"
-
-#include "game/logic/clientevents.h"
+#include "game/data/savegameinfo.h"
 
 //------------------------------------------------------------------------------
 cWindowSinglePlayer::cWindowSinglePlayer() :

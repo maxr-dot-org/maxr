@@ -19,14 +19,11 @@
 
 #include "dedicatedserver.h"
 
-#include "game/logic/clientevents.h"
 #include "utility/listhelpers.h"
 #include "defines.h"
 #include "utility/files.h"
-#include "netmessage.h"
 #include "netmessage2.h"
 #include "network.h"
-#include "game/logic/serverevents.h"
 #include "game/data/report/savedreportchat.h"
 #include "servergame.h"
 
@@ -396,7 +393,7 @@ void cDedicatedServer::pushMessage (std::unique_ptr<cNetMessage2> message)
 }
 
 //------------------------------------------------------------------------
-bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage& message)
+bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage2& message)
 {
 	switch (message.getType())
 	{
@@ -481,7 +478,7 @@ void cDedicatedServer::sendChatMessage (const string& text, int type, int socket
 }
 
 //------------------------------------------------------------------------
-void cDedicatedServer::doAutoSave (cServer& server)
+void cDedicatedServer::doAutoSave (cServer2& server)
 {
 	//TODO: reimplement
 	//cSavegame Savegame (kAutoSaveSlot);	// dedicated server autosaves are always in slot kAutoSaveSlot

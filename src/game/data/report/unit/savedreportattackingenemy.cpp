@@ -19,7 +19,6 @@
 
 #include "game/data/report/unit/savedreportattackingenemy.h"
 #include "game/data/units/unit.h"
-#include "netmessage.h"
 #include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffectvoice.h"
 #include "sound.h"

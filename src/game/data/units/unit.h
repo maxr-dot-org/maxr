@@ -31,7 +31,6 @@ class cMap;
 class cMapView;
 class cMapField;
 class cPlayer;
-class cServer;
 class cVehicle;
 template<typename> class cBox;
 class cSoundManager;

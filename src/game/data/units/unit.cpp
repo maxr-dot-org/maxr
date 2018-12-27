@@ -23,7 +23,6 @@
 
 #include "game/logic/attackjob.h"
 #include "game/logic/client.h"
-#include "game/logic/clientevents.h"
 #include "game/data/map/map.h"
 #include "game/data/player/player.h"
 #include "game/data/map/mapview.h"

@@ -23,7 +23,6 @@
 #include "game/logic/client.h"
 #include "game/logic/server2.h"
 #include "game/data/player/player.h"
-#include "game/logic/clientevents.h"
 #include "game/data/savegame.h"
 #include "game/data/report/savedreport.h"
 

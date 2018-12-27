@@ -27,10 +27,12 @@
 #include "utility/thread/concurrentqueue.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "game/data/gamesettings.h"
+#include "game/logic/server2.h"
 
 class cNetMessage2;
+class cNetMessage;
 class cPlayer;
-class cServer;
+class cServer2;
 class cTCP;
 class cPlayerBasicData;
 class cStaticMap;
@@ -65,7 +67,7 @@ public:
 protected:
 	cSignalConnectionManager signalConnectionManager;
 
-	std::unique_ptr<cServer> server;
+	std::unique_ptr<cServer2> server;
 	cGameSettings settings;
 	std::shared_ptr<cStaticMap> map;
 	std::shared_ptr<cTCP> network;
@@ -95,7 +97,7 @@ private:
 	void configRessources (std::vector<std::string>& tokens, cPlayerBasicData* senderPlayer);
 
 	//------------------------------------------------------------------------
-	cConcurrentQueue<std::unique_ptr<cNetMessage>> eventQueue;
+	cConcurrentQueue<std::unique_ptr<cNetMessage2>> eventQueue;
 };
 
 #endif

@@ -21,8 +21,6 @@
 #include "ui/graphical/game/unitselection.h"
 #include "ui/graphical/game/unitlocklist.h"
 #include "game/data/units/unit.h"
-#include "netmessage.h"
-#include "game/logic/clientevents.h"
 
 //------------------------------------------------------------------------------
 cGameGuiState::cGameGuiState() :

@@ -33,15 +33,11 @@
 #include "game/data/units/unit.h"
 #include "sound.h"
 
-class cAutoMJob;
 class cBuilding;
-class cClientMoveJob;
 class cMap;
 class cStaticMap;
 class cMapField;
 class cPlayer;
-class cServer;
-class cServerMoveJob;
 class cApplication;
 class cSoundManager;
 class cMoveJob;

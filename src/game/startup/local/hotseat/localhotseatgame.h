@@ -27,7 +27,7 @@
 #include "game/startup/game.h"
 #include "maxrconfig.h"
 #include "ui/graphical/game/control/gameguicontroller.h"
-#include "game/logic/server.h"
+#include "game/logic/server2.h"
 
 class cClient;
 
@@ -40,7 +40,7 @@ public:
 
 protected:
 	std::vector<std::shared_ptr<cClient>> clients;
-	std::unique_ptr<cServer> server;
+	std::unique_ptr<cServer2> server;
 
 	std::unique_ptr<cGameGuiController> gameGuiController;
 };

@@ -19,7 +19,6 @@
 
 #include "game/data/report/savedreportsimple.h"
 
-#include "netmessage.h"
 #include "main.h" //lngPack
 
 //------------------------------------------------------------------------------
