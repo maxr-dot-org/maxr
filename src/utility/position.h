@@ -40,13 +40,22 @@ public:
 	cPosition (const cPosition& other) :
 		cFixedVector<int, 2> (other)
 	{}
-	cPosition (const cFixedVector<int, 2>& other) :
+
+	template<class T>
+	cPosition (const cFixedVector<T, 2>& other) :
 		cFixedVector<int, 2> (other)
 	{}
+
 	cPosition (int x_, int y_)
 	{
 		x() = x_;
 		y() = y_;
+	}
+
+	// Get a position, relative to current position
+	cPosition relative(int x, int y) const
+	{
+		return cPosition(this->x()+x, this->y()+y);
 	}
 
 	uint32_t getChecksum(uint32_t crc) const;
@@ -80,6 +89,74 @@ public:
 		cFixedVector<int, 2>::operator= (value);
 		return *this;
 	}
+};
+
+/**
+ * Fixed vector class for 2-dimensional float vector.
+ */
+class cVector2: public cFixedVector<float, 2>
+{
+public:
+    cVector2()
+    {
+        x() = 0;
+        y() = 0;
+    }
+
+    cVector2 (const cVector2& other) :
+        cFixedVector<float, 2> (other)
+    {}
+
+    template<class T>
+    cVector2 (const cFixedVector<T, 2>& other) :
+        cFixedVector<float, 2> (other)
+    {}
+
+    cVector2 (float x_, float y_)
+    {
+        x() = x_;
+        y() = y_;
+    }
+
+    // Get a position, relative to current position
+    cVector2 relative(float x, float y) const
+    {
+        return cVector2(this->x()+x, this->y()+y);
+    }
+
+    uint32_t getChecksum(uint32_t crc) const;
+
+    template<typename T>
+    void serialize(T& archive)
+    {
+        archive & serialization::makeNvp("X", (*this)[0]);
+        archive & serialization::makeNvp("Y", (*this)[1]);
+    }
+
+    float x() const
+    {
+        return (*this)[0];
+    }
+    float y() const
+    {
+        return (*this)[1];
+    }
+
+    float& x()
+    {
+        return (*this)[0];
+    }
+
+    float& y()
+    {
+        return (*this)[1];
+    }
+
+    cVector2& operator= (const value_type& value)
+    {
+        cFixedVector<float, 2>::operator= (value);
+        return *this;
+    }
 };
 
 #endif // utility_positionH

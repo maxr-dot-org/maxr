@@ -23,7 +23,7 @@
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/protectionglass.h"
 #include "ui/graphical/application.h"
-#include "pcx.h"
+#include "utility/pcx.h"
 #include "main.h"
 #include "game/data/units/unit.h"
 

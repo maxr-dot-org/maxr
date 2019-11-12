@@ -60,6 +60,8 @@ cCheckBox::cCheckBox (const cPosition& position, const std::string& text_, eUnic
 //------------------------------------------------------------------------------
 void cCheckBox::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
+	auto font = cUnicodeFont::font.get();
+
 	auto position = getArea().toSdlRect();
 	int textDestx = -1;
 	int textDesty = -1;
@@ -213,6 +215,7 @@ void cCheckBox::renewSurface()
 {
 	cPosition size;
 	SDL_Rect src = {0, 0, 0, 0};
+	auto font = cUnicodeFont::font.get();
 
 	if (type >= eCheckBoxType::HudIndex_00 && type <= eCheckBoxType::HudIndex_22)
 	{

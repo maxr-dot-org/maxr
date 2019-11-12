@@ -241,8 +241,9 @@ private:
 	const unsigned short* getIsoPage (eUnicodeFontCharset charset);
 	int drawWithBreakLines (SDL_Rect rDest, const std::string& sText,
 							eUnicodeFontType fonttype);
-};
 
-EX cUnicodeFont* font;
+public:
+	static std::unique_ptr<cUnicodeFont> font;
+};
 
 #endif

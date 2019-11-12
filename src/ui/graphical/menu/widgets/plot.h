@@ -440,7 +440,7 @@ int cPlot<T, U>::toPixelY (U y)
 template<typename T, typename U>
 void cPlot<T, U>::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
-
+	auto* font = cUnicodeFont::font.get();
 	const cPosition origin (graphBeginMargin.x(), getSize().y() - graphBeginMargin.y());
 
 	const auto xPixelWidth = getSize().x() - graphBeginMargin.x() - graphEndMargin.x();

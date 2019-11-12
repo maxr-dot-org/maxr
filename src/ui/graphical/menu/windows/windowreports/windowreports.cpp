@@ -31,7 +31,7 @@
 #include "ui/graphical/menu/widgets/special/reportunitlistviewitem.h"
 #include "ui/graphical/menu/widgets/special/reportdisadvantageslistviewitem.h"
 #include "ui/graphical/menu/widgets/special/reportmessagelistviewitem.h"
-#include "pcx.h"
+#include "utility/pcx.h"
 #include "main.h"
 #include "game/data/player/player.h"
 #include "game/data/units/vehicle.h"
@@ -74,6 +74,8 @@ cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> play
 	disadvantagesListDirty (true),
 	reportsListDirty (true)
 {
+	auto* font = cUnicodeFont::font.get();
+
 	auto turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (527, 17), cPosition (527 + 57, 17 + 10))));
 	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
 

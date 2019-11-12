@@ -34,7 +34,6 @@
 #include "main.h"
 #include "settings.h"
 #include "utility/files.h"
-#include "tinyxml2.h"
 #include "utility/string/toupper.h"
 #include "game/data/units/unitdata.h"
 #include "string/toString.h"

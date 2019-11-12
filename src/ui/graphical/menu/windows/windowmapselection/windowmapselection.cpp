@@ -19,7 +19,7 @@
 
 #include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
 #include "main.h"
-#include "pcx.h"
+#include "utility/pcx.h"
 #include "utility/files.h"
 #include "game/data/map/map.h"
 #include "utility/autosurface.h"
@@ -140,6 +140,7 @@ void cWindowMapSelection::updateUpDownLocked()
 //------------------------------------------------------------------------------
 void cWindowMapSelection::updateMaps()
 {
+	auto* font = cUnicodeFont::font.get();
 	for (size_t i = 0; i < mapCount; ++i)
 	{
 		const auto mapIndex = page * mapCount + i;

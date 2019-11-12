@@ -93,7 +93,7 @@ cChatBox<ChatListItemType, PlayerListItemType>::cChatBox (const cBox<cPosition>&
 	chatList->disableSelectable();
 	chatList->setBeginMargin (cPosition (2, 2));
 	chatList->setEndMargin (cPosition (2, 2));
-	chatList->setScrollOffset (font->getFontHeight() + 3);
+	chatList->setScrollOffset (cUnicodeFont::font->getFontHeight() + 3);
 
 	chatLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (cPosition (getPosition().x() + 2, getEndPosition().y() - 12), cPosition (getEndPosition().x() - 164, getEndPosition().y() - 2))));
 	signalConnectionManager.connect (chatLineEdit->returnPressed, std::bind (&cChatBox::sendCommand, this));

@@ -44,6 +44,7 @@ cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& prefix,
 	cAbstractListViewItem (cPosition (50, 0))
 {
 	int prefixTextWidth;
+	auto font = cUnicodeFont::font.get();
 	if (!prefix.empty ())
 	{
 		const auto prefixText = addColon ? prefix + lngPack.i18n ("Text~Punctuation~Colon") : prefix;

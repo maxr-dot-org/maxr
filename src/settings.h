@@ -21,7 +21,7 @@
 
 #include <string>
 #include <SDL.h>
-#include "tinyxml2.h"
+#include "utility/tinyxml2.h"
 #include "utility/thread/mutex.h"
 #include "utility/signal/signal.h"
 #include "utility/color.h"

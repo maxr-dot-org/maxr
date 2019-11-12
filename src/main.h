@@ -331,6 +331,4 @@ int Round (float num);
 std::string getHexValue(unsigned char byte);
 unsigned char getByteValue(const std::string& str, int index);
 
-void Quit();
-
 #endif

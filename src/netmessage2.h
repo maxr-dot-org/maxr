@@ -30,7 +30,6 @@
 #include "game/data/report/savedreport.h"
 #include "ui/graphical/game/gameguistate.h"
 #include "utility/color.h"
-#include "maxrversion.h"
 #include "mapdownload.h"
 #include "game/data/player/playerbasicdata.h"
 #include "main.h"
@@ -364,11 +363,7 @@ private:
 class cNetMessageTcpHello : public cNetMessage2
 {
 public:
-	cNetMessageTcpHello() :
-		cNetMessage2(eNetMessageType::TCP_HELLO),
-		packageVersion(PACKAGE_VERSION),
-		packageRev(PACKAGE_REV)
-	{};
+	cNetMessageTcpHello();
 	cNetMessageTcpHello(cBinaryArchiveOut& archive) :
 		cNetMessage2(eNetMessageType::TCP_HELLO)
 	{
@@ -395,13 +390,7 @@ private:
 class cNetMessageTcpWantConnect : public cNetMessage2
 {
 public:
-	cNetMessageTcpWantConnect() :
-		cNetMessage2(eNetMessageType::TCP_WANT_CONNECT),
-		ready(false),
-		packageVersion(PACKAGE_VERSION),
-		packageRev(PACKAGE_REV),
-		socket(nullptr)
-	{};
+	cNetMessageTcpWantConnect();
 	cNetMessageTcpWantConnect(cBinaryArchiveOut& archive) :
 		cNetMessage2(eNetMessageType::TCP_WANT_CONNECT)
 	{
@@ -436,12 +425,7 @@ private:
 class cNetMessageTcpConnected : public cNetMessage2
 {
 public:
-	cNetMessageTcpConnected(int playerNr) :
-		cNetMessage2(eNetMessageType::TCP_CONNECTED),
-		playerNr(playerNr),
-		packageVersion(PACKAGE_VERSION),
-		packageRev(PACKAGE_REV)
-	{};
+	cNetMessageTcpConnected(int playerNr);
 	cNetMessageTcpConnected(cBinaryArchiveOut& archive) :
 		cNetMessage2(eNetMessageType::TCP_CONNECTED)
 	{

@@ -23,7 +23,7 @@
 #include "ui/graphical/menu/widgets/clickablewidget.h"
 
 #include "utility/autosurface.h"
-#include "unifonts.h"
+#include "utility/unifonts.h"
 #include "sound.h"
 #include "utility/signal/signal.h"
 

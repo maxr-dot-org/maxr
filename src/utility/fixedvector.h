@@ -23,7 +23,7 @@
 #include <cassert>
 #include <cmath>
 #include <type_traits>
-#include <algorithm>
+#include <algorithm> // for std::max
 
 /**
  * A simple fixed size vector that provides basic mathematical operations.

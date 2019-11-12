@@ -25,7 +25,7 @@
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/image.h"
-#include "pcx.h"
+#include "utility/pcx.h"
 #include "defines.h"
 #include "video.h"
 #include "main.h" // lngPack

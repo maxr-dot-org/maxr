@@ -191,7 +191,7 @@ void cWindowLandingPositionSelection::handleActivated (cApplication& application
 //------------------------------------------------------------------------------
 void cWindowLandingPositionSelection::handleDeactivated (cApplication& application, bool removed)
 {
-	application.removeRunnable (*animationTimer);
+	application.removeRunnable (animationTimer);
 	cWindow::handleDeactivated (application, removed);
 	if (removed) closed();
 }

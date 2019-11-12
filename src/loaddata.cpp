@@ -44,11 +44,11 @@
 #include "keys.h"
 #include "utility/log.h"
 #include "main.h"
-#include "pcx.h"
+#include "utility/pcx.h"
 #include "settings.h"
 #include "sound.h"
-#include "tinyxml2.h"
-#include "unifonts.h"
+#include "utility/tinyxml2.h"
+#include "utility/unifonts.h"
 #include "game/data/units/vehicle.h"
 #include "video.h"
 #include "debug.h"
@@ -149,8 +149,8 @@ int LoadData (void* data)
 			return 0;
 		}
 
-		font = new cUnicodeFont; // init ascii fonts
-		font->setTargetSurface (cVideo::buffer);
+		cUnicodeFont::font.reset(new cUnicodeFont()); // init ascii fonts
+		cUnicodeFont::font->setTargetSurface (cVideo::buffer);
 		Log.mark();
 	}
 
@@ -347,6 +347,7 @@ int LoadData (void* data)
 		cout << sTxt << endl;
 		return;
 	}
+	const auto& font = cUnicodeFont::font.get();
 	const SDL_Rect rDest = {22, 152, 228, Uint16 (font->getFontHeight (FONT_LATIN_BIG_GOLD)) };
 	const SDL_Rect rDest2 = {250, 152, 230, Uint16 (font->getFontHeight (FONT_LATIN_BIG_GOLD)) };
 

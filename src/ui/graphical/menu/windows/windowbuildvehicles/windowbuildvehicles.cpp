@@ -28,7 +28,7 @@
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "ui/graphical/application.h"
-#include "pcx.h"
+#include "utility/pcx.h"
 #include "game/data/units/building.h"
 #include "game/data/player/player.h"
 #include "game/data/map/mapview.h"

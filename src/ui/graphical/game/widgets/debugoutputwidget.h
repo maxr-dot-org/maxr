@@ -21,7 +21,7 @@
 #define ui_graphical_game_widgets_debugoutputidgetH
 
 #include "ui/graphical/widget.h"
-#include "unifonts.h"
+#include "utility/unifonts.h"
 
 class cClient;
 class cServer2;

@@ -23,7 +23,7 @@
 
 #include "settings.h"
 #include "video.h"
-#include "unifonts.h"
+#include "utility/unifonts.h"
 #include "main.h"
 #include "input/mouse/mouse.h"
 #include "output/sound/sounddevice.h"
@@ -109,6 +109,7 @@ void cPushButton::draw (SDL_Surface& destination, const cBox<cPosition>& clipRec
 
 	if (!text.empty())
 	{
+		auto font = cUnicodeFont::font.get();
 		if (buttonType >= ePushButtonType::HudNext && buttonType <= ePushButtonType::HudFiles)
 		{
 			if (isPressed || isLocked) font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset(), text, FONT_LATIN_SMALL_GREEN);
@@ -367,7 +368,7 @@ void cPushButton::renewSurface()
 
 	SDL_BlitSurface (srcSurface, &src, surface.get(), nullptr);
 
-	text = font->shortenStringToSize (text, size.x() - getBordersSize(), fontType);
+	text = cUnicodeFont::font->shortenStringToSize (text, size.x() - getBordersSize(), fontType);
 }
 
 //------------------------------------------------------------------------------

@@ -19,7 +19,7 @@
 
 #include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
 #include "main.h"
-#include "pcx.h"
+#include "utility/pcx.h"
 #include "game/data/player/clans.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"

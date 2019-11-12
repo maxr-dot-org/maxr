@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 #include <vector>
+#include "extendedtinyxml.h"
 #include "utility/log.h"
-#include "tinyxml2.h"
 
 using namespace tinyxml2;
 using namespace std;

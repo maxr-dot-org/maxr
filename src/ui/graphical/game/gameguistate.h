@@ -24,7 +24,7 @@
 
 #include "utility/serialization/serialization.h"
 #include "utility/position.h"
-#include "tinyxml2.h"
+#include "utility/tinyxml2.h"
 
 class cUnitSelection;
 class cUnitLockList;

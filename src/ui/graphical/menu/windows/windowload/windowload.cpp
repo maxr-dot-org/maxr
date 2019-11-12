@@ -24,7 +24,7 @@
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
-#include "pcx.h"
+#include "utility/pcx.h"
 #include "main.h"
 #include "utility/log.h"
 #include "utility/files.h"

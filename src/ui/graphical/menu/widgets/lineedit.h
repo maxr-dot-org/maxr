@@ -27,7 +27,7 @@
 #include "maxrconfig.h"
 #include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "ui/graphical/menu/widgets/tools/validatorstate.h"
-#include "unifonts.h"
+#include "utility/unifonts.h"
 #include "utility/autosurface.h"
 #include "utility/signal/signal.h"
 

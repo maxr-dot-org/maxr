@@ -23,7 +23,7 @@
 
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
-#include "pcx.h"
+#include "utility/pcx.h"
 #include "main.h"
 
 //------------------------------------------------------------------------------
@@ -32,6 +32,8 @@ cDialogLicense::cDialogLicense() :
 	currentPage (0),
 	maxPage (3)
 {
+	auto* font = cUnicodeFont::font.get();
+
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 30), getPosition() + cPosition (35 + 232, 30 + font->getFontHeight())), "\"M.A.X.R.\"", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 	headerLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 30 + font->getFontHeight()), getPosition() + cPosition (35 + 232, 30 + font->getFontHeight() * 2)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
