@@ -23,7 +23,7 @@
 #include <assert.h>
 #include <typeinfo>
 
-#include "tinyxml2.h"
+#include "utility/tinyxml2.h"
 #include "serialization.h"
 #include "extendedtinyxml.h"
 

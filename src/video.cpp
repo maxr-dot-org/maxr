@@ -30,8 +30,8 @@
 #include "maxrversion.h"
 #include "defines.h"
 #include "utility/log.h"
-#include "pcx.h"
-#include "unifonts.h"
+#include "utility/pcx.h"
+#include "utility/unifonts.h"
 #include "utility/files.h"
 #include "input/keyboard/keyboard.h"
 
@@ -135,7 +135,8 @@ void cVideo::initializeBuffer (int width, int height)
 	if (buffer) SDL_FreeSurface (buffer);
 	buffer = SDL_CreateRGBSurface (0, width, height, getColDepth(), 0, 0, 0, 0);
 
-	if (font != nullptr) font->setTargetSurface (buffer);
+	if (cUnicodeFont::font != nullptr)
+		cUnicodeFont::font->setTargetSurface (buffer);
 
 	if (sdlTexture) SDL_DestroyTexture (sdlTexture);
 	sdlTexture = SDL_CreateTexture (sdlRenderer,

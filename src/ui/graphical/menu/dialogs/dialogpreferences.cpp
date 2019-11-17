@@ -30,7 +30,7 @@
 #include "ui/graphical/menu/widgets/lineedit.h"
 #include "ui/graphical/menu/widgets/combobox.h"
 #include "ui/graphical/menu/widgets/special/textlistviewitem.h"
-#include "pcx.h"
+#include "utility/pcx.h"
 #include "main.h"
 #include "settings.h"
 #include "video.h"

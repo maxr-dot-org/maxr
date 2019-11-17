@@ -28,6 +28,7 @@
 #include "utility/serialization/serialization.h"
 #include "ui/graphical/menu/control/menuevents.h"
 #include "game/logic/turntimeclock.h"
+#include "maxrversion.h"
 
 std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(const unsigned char* data, int length)
 {
@@ -101,6 +102,30 @@ std::unique_ptr<cNetMessage2> cNetMessage2::clone() const
 
 	return cNetMessage2::createFromBuffer(serialMessage.data(), serialMessage.size());
 }
+
+//------------------------------------------------------------------------------
+cNetMessageTcpHello::cNetMessageTcpHello():
+	cNetMessage2(eNetMessageType::TCP_HELLO),
+	packageVersion(PACKAGE_VERSION),
+	packageRev(PACKAGE_REV)
+{}
+
+//------------------------------------------------------------------------------
+cNetMessageTcpWantConnect::cNetMessageTcpWantConnect():
+	cNetMessage2(eNetMessageType::TCP_WANT_CONNECT),
+	ready(false),
+	packageVersion(PACKAGE_VERSION),
+	packageRev(PACKAGE_REV),
+	socket(nullptr)
+{}
+
+//------------------------------------------------------------------------------
+cNetMessageTcpConnected::cNetMessageTcpConnected(int playerNr) :
+	cNetMessage2(eNetMessageType::TCP_CONNECTED),
+	playerNr(playerNr),
+	packageVersion(PACKAGE_VERSION),
+	packageRev(PACKAGE_REV)
+{}
 
 //------------------------------------------------------------------------------
 std::string enumToString(eNetMessageType value)

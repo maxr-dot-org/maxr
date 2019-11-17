@@ -33,7 +33,7 @@
 #include "defines.h"
 #include "settings.h"
 #include "video.h"
-#include "pcx.h"
+#include "utility/pcx.h"
 #include "main.h"
 #include "game/data/units/unit.h"
 #include "keys.h"

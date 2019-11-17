@@ -20,7 +20,7 @@
 #include <algorithm>
 
 #include "unitdata.h"
-#include "tinyxml2.h"
+#include "utility/tinyxml2.h"
 #include "game/data/player/clans.h"
 #include "utility/log.h"
 #include "utility/language.h"

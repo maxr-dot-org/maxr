@@ -28,12 +28,11 @@
 #include "game/logic/fxeffects.h"
 #include "utility/log.h"
 #include "game/data/map/map.h"
-#include "pcx.h"
 #include "game/data/player/player.h"
 #include "settings.h"
 #include "video.h"
 #include "sound.h"
-#include "unifonts.h"
+#include "utility/unifonts.h"
 #include "input/mouse/mouse.h"
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
@@ -236,7 +235,9 @@ void cVehicle::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float 
 	// draw player color
 	if (owner)
 	{
-		SDL_BlitSurface (owner->getColor().getTexture(), nullptr, GraphicsData.gfx_tmp.get(), nullptr);
+		SDL_Surface* src = owner->getColor().getTexture();
+		SDL_Surface* dst = GraphicsData.gfx_tmp.get();
+		SDL_BlitSurface(src, nullptr, dst, nullptr);
 	}
 
 	// read the size:
@@ -454,6 +455,7 @@ bool cVehicle::refreshData()
 //-----------------------------------------------------------------------------
 string cVehicle::getStatusStr(const cPlayer* player, const cUnitsData& unitsData) const
 {
+	auto font = cUnicodeFont::font.get();
 	if (isDisabled())
 	{
 		string sText;

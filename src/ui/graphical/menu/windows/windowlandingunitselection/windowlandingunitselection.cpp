@@ -19,7 +19,7 @@
 
 #include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
 #include "main.h"
-#include "pcx.h"
+#include "utility/pcx.h"
 #include "game/data/player/player.h"
 #include "game/data/units/landingunit.h"
 #include "ui/graphical/menu/widgets/label.h"

@@ -24,6 +24,8 @@
 #include <stdint.h>
 #include <vector>
 #include <string>
+#include <map>
+#include <memory>
 #include <forward_list>
 
 #include "SDL_endian.h"
@@ -95,6 +97,17 @@ uint32_t calcCheckSum(T* data, uint32_t crc)
 	return calcCheckSum(data ? data->getId() : -1, crc);
 }
 
+template <typename T>
+uint32_t calcCheckSum(std::shared_ptr<T> data, uint32_t crc)
+{
+    //target type of the pointer must have a getId() member
+    if(data)
+    {
+        return calcCheckSum(*data, crc);
+    }
+    return calcCheckSum(-1, crc);
+}
+
 template<typename T>
 uint32_t calcCheckSum(const std::vector<T>& data, uint32_t checksum)
 {
@@ -103,6 +116,19 @@ uint32_t calcCheckSum(const std::vector<T>& data, uint32_t checksum)
 
 	return checksum;
 };
+
+template<typename K, typename T>
+uint32_t calcCheckSum(const std::map<K, T>& data, uint32_t checksum)
+{
+    for (const auto& x : data)
+    {
+        checksum = calcCheckSum(x.first, checksum);
+        checksum = calcCheckSum(x.second, checksum);
+    }
+
+    return checksum;
+};
+
 
 template<typename T>
 uint32_t calcCheckSum(const std::forward_list<T>& data, uint32_t checksum)

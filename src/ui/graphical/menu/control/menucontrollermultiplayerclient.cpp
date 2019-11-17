@@ -32,6 +32,7 @@
 #include "game/startup/network/client/networkclientgamenew.h"
 #include "game/startup/network/client/networkclientgamereconnection.h"
 #include "game/startup/network/client/networkclientgamesaved.h"
+#include "maxrversion.h"
 #include "main.h"
 #include "game/data/map/map.h"
 #include "game/data/player/player.h"
@@ -96,7 +97,7 @@ void cMenuControllerMultiplayerClient::reset()
 	windowLandingPositionSelection = nullptr;
 	playersLandingStatus.clear();
 	newGame = nullptr;
-	application.removeRunnable (*this);
+	application.removeRunnable (shared_from_this());
 }
 
 //------------------------------------------------------------------------------

@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/windows/windowresourcedistribution/windowresourcedistribution.h"
-#include "pcx.h"
+#include "utility/pcx.h"
 #include "main.h"
 #include "game/data/base/base.h"
 #include "ui/graphical/menu/widgets/label.h"

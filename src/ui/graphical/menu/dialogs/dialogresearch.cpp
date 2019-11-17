@@ -22,7 +22,7 @@
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/slider.h"
 #include "ui/graphical/menu/widgets/image.h"
-#include "pcx.h"
+#include "utility/pcx.h"
 #include "main.h"
 #include "game/data/player/player.h"
 #include "video.h"

@@ -22,7 +22,7 @@
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/unitdetails.h"
-#include "pcx.h"
+#include "utility/pcx.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
 

@@ -62,12 +62,15 @@ public:
 	cSignal<void (const cKeyboardEvent&)> keyboardEvent;
 	cSignal<void (const cTextInputEvent&)> textInputEvent;
 
+	bool shouldExit() const;
 private:
 	cEventManager();
 	cEventManager (const cEventManager& other) MAXR_DELETE_FUNCTION;
 	cEventManager& operator= (const cEventManager& other) MAXR_DELETE_FUNCTION;
 
-	void handleSdlEvent (const SDL_Event& event);
+	bool handleSdlEvent (const SDL_Event& event);
+
+	bool isDone = false;
 };
 
 #endif // events_eventmanagerH

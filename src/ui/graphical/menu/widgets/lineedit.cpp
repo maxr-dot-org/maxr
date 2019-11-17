@@ -130,6 +130,8 @@ void cLineEdit::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 		SDL_BlitSurface (surface.get(), nullptr, &destination, &position);
 	}
 
+	auto font = cUnicodeFont::font.get();
+
 	const auto offsetRect = getTextDrawOffset();
 	const auto cursorXOffset = font->getFontSize (fontType) == FONT_SIZE_SMALL ? -1 : 0;
 
@@ -166,6 +168,7 @@ bool cLineEdit::handleGetKeyFocus (cApplication& application)
 
 	if (!hadKeyFocus)
 	{
+		auto font = cUnicodeFont::font.get();
 		cursorPos = (int)text.length();
 		while (cursorPos > endOffset) doPosIncrease (endOffset, endOffset);
 		while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosIncrease (startOffset, startOffset);
@@ -193,6 +196,7 @@ bool cLineEdit::handleClicked (cApplication& application, cMouse& mouse, eMouseB
 
 	if (readOnly) return false;
 
+	auto font = cUnicodeFont::font.get();
 	int x = mouse.getPosition().x() - (getPosition().x() + getTextDrawOffset().x());
 	int cursor = startOffset;
 	while (font->getTextWide (text.substr (startOffset, cursor - startOffset), fontType) < x)
@@ -257,6 +261,8 @@ void cLineEdit::resetTextPosition()
 	startOffset = 0;
 	endOffset = (int)text.length();
 	cursorPos = endOffset;
+	auto font = cUnicodeFont::font.get();
+
 	while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosDecrease (endOffset);
 }
 
@@ -305,6 +311,8 @@ void cLineEdit::scrollLeft (bool changeCursor)
 	// makes the cursor go left
 	if (changeCursor && cursorPos > 0) doPosDecrease (cursorPos);
 
+	auto font = cUnicodeFont::font.get();
+
 	if (cursorPos > 0) while (cursorPos - 1 < startOffset) doPosDecrease (startOffset);
 	else while (cursorPos < startOffset) doPosDecrease (startOffset);
 
@@ -321,6 +329,8 @@ void cLineEdit::scrollRight()
 	// makes the cursor go right
 	if (cursorPos < (int)text.length()) doPosIncrease (cursorPos, cursorPos);
 	assert (cursorPos <= (int)text.length());
+
+	auto font = cUnicodeFont::font.get();
 	while (cursorPos > endOffset) doPosIncrease (endOffset, endOffset);
 	while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosIncrease (startOffset, startOffset);
 }
@@ -369,6 +379,8 @@ void cLineEdit::deleteRight()
 bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key)
 {
 	if (readOnly || !hasKeyFocus) return false;
+
+	auto font = cUnicodeFont::font.get();
 
 	switch (key)
 	{
@@ -457,6 +469,8 @@ void cLineEdit::handleTextEntered (cApplication& application, cKeyboard& keyboar
 	if (readOnly || !hasKeyFocus) return;
 
 	text.insert (cursorPos, inputText);
+
+	auto font = cUnicodeFont::font.get();
 
 	if (validator)
 	{

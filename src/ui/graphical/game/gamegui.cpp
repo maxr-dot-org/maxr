@@ -96,6 +96,7 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 
 	hudPanels = addChild (std::make_unique<cHudPanels> (getPosition(), getSize().y(), animationTimer));
 
+	auto font = cUnicodeFont::font.get();
 	primiaryInfoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235), cPosition (getEndPosition().x() - cHud::panelRightWidth, 235 + font->getFontHeight (FONT_LATIN_BIG))), "", FONT_LATIN_BIG, toEnumFlag (eAlignmentType::CenterHorizontal)  | eAlignmentType::Top));
 	primiaryInfoLabel->disable();
 	primiaryInfoLabel->hide();
@@ -866,6 +867,8 @@ void cGameGui::handleResolutionChange()
 	hud->resizeToResolution();
 
 	resize (hud->getSize());
+
+	auto font = cUnicodeFont::font.get();
 
 	// TODO: remove duplication of widget areas with the ones during initialization
 

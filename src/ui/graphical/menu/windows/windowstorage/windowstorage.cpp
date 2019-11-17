@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/windows/windowstorage/windowstorage.h"
-#include "pcx.h"
+#include "utility/pcx.h"
 #include "main.h"
 #include "video.h"
 #include "game/data/units/unit.h"

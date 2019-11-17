@@ -27,7 +27,7 @@
 
 #include "utility/autosurface.h"
 #include "defines.h"
-#include "t_2.h"
+#include "utility/t_2.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 #include "game/data/gamesettings.h"

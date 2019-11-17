@@ -30,6 +30,8 @@ cComboBox::cComboBox (const cBox<cPosition>& area) :
 	cWidget (area),
 	maxVisibleItems (5)
 {
+	auto font = cUnicodeFont::font.get();
+
 	const cBox<cPosition> listViewArea (cPosition (area.getMinCorner().x(), area.getMaxCorner().y() - 1), cPosition (area.getMaxCorner().x() - 3, area.getMaxCorner().y() + 5));
 	listView = addChild (std::make_unique<cListView<cTextListViewItem>> (listViewArea, eScrollBarStyle::Modern));
 	listView->setBeginMargin (cPosition (2, 2));
@@ -119,7 +121,7 @@ void cComboBox::updateListViewSize()
 {
 	const auto visibleItems = static_cast<int> (std::min (maxVisibleItems, listView->getItemsCount()));
 
-	const auto itemHeight = font->getFontHeight (FONT_LATIN_NORMAL) + 1;
+	const auto itemHeight = cUnicodeFont::font->getFontHeight (FONT_LATIN_NORMAL) + 1;
 
 	const auto requiredSize = listView->getBeginMargin().y() + listView->getEndMargin().y() + itemHeight * visibleItems + (visibleItems > 0 ? (listView->getItemDistance() * (visibleItems - 1)) : 0) + 1;
 

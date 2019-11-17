@@ -23,7 +23,7 @@
 
 #include "game/data/units/unitdata.h"
 #include "utility/log.h"
-#include "tinyxml2.h"
+#include "utility/tinyxml2.h"
 #include "game/data/units/unit.h"
 #include "game/data/player/player.h"
 

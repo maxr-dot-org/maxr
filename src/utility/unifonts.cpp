@@ -17,13 +17,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "unifonts.h"
+#include "utility/unifonts.h"
 
 #include "utility/autosurface.h"
 #include "utility/files.h"
 #include "utility/log.h"
 #include "main.h"
-#include "pcx.h"
+#include "utility/pcx.h"
 #include "settings.h"
 #include "utility/position.h"
 #include "utility/drawing.h"
@@ -959,3 +959,5 @@ int cUnicodeFont::getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFon
 	}
 	return 0;
 }
+
+std::unique_ptr<cUnicodeFont> cUnicodeFont::font;

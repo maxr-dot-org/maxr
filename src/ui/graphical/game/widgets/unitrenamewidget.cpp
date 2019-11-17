@@ -102,6 +102,7 @@ void cUnitRenameWidget::setUnit (const cUnit* unit, const cUnitsData& unitsData)
 
 	selectedUnitNameEdit->enable();
 
+	auto font = cUnicodeFont::font.get();
 	const auto xPosition = selectedUnitNamePrefixLabel->getPosition().x() + font->getTextWide (selectedUnitNamePrefixLabel->getText() + " ", FONT_LATIN_SMALL_GREEN);
 	const cPosition moveOffset (xPosition - selectedUnitNameEdit->getPosition().x(), 0);
 	selectedUnitNameEdit->move (moveOffset);

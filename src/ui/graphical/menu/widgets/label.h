@@ -26,7 +26,7 @@
 #include "maxrconfig.h"
 #include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "ui/graphical/alignment.h"
-#include "unifonts.h"
+#include "utility/unifonts.h"
 
 class cLabel : public cClickableWidget
 {

@@ -38,18 +38,28 @@ cEventManager& cEventManager::getInstance()
 	return instance;
 }
 
+bool cEventManager::shouldExit() const
+{
+	return isDone;
+}
+
 //------------------------------------------------------------------------------
 void cEventManager::run()
 {
 	SDL_Event event;
 	while (SDL_PollEvent (&event))
 	{
-		handleSdlEvent (event);
+		if(!handleSdlEvent (event))
+		{
+			isDone = true;
+			break;
+		}
 	}
+	SDL_Delay(1);
 }
 
 //------------------------------------------------------------------------------
-void cEventManager::handleSdlEvent (const SDL_Event& event)
+bool cEventManager::handleSdlEvent (const SDL_Event& event)
 {
 	switch (event.type)
 	{
@@ -70,7 +80,7 @@ void cEventManager::handleSdlEvent (const SDL_Event& event)
 			mouseWheelEvent (cEventMouseWheel (event.wheel));
 			break;
 		case SDL_QUIT:
-			Quit();
+			return false;
 			break;
 		case SDL_MOUSEMOTION:
 			mouseMotionEvent (cEventMouseMotion (event.motion));
@@ -80,4 +90,6 @@ void cEventManager::handleSdlEvent (const SDL_Event& event)
 			break;
 		default: break;
 	}
+	// Everything is OK, continue the cycle
+	return true;
 }

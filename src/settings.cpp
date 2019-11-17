@@ -36,7 +36,7 @@
 #include "utility/files.h"
 #include "utility/log.h"
 #include "main.h"
-#include "tinyxml2.h"
+#include "utility/tinyxml2.h"
 #include "video.h"
 #include "utility/string/tolower.h"
 #include "game/data/player/playercolor.h"

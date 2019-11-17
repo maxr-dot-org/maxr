@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "tinyxml2.h"
+#include "utility/tinyxml2.h"
 
 #include "keys.h"
 #include "utility/files.h"

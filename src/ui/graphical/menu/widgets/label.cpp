@@ -93,13 +93,14 @@ void cLabel::setWordWrap (bool wordWrap_)
 //------------------------------------------------------------------------------
 void cLabel::resizeToTextHeight()
 {
-	const auto textHeight = drawLines.size() * font->getFontHeight (fontType);
+	const auto textHeight = drawLines.size() * cUnicodeFont::font->getFontHeight (fontType);
 	resize (cPosition (getSize().x(), textHeight));
 }
 
 //------------------------------------------------------------------------------
 void cLabel::breakText (const std::string& text, std::vector<std::string>& lines, int maximalWidth, eUnicodeFontType fontType) const
 {
+	auto font = cUnicodeFont::font.get();
 	// NOTE: better would be not to copy each line into the vector
 	//       but use something like "string_view". We could simulate this by using
 	//       a pair of iterators (like a range) but non of other methods would support such a
@@ -167,8 +168,8 @@ void cLabel::breakText (const std::string& text, std::vector<std::string>& lines
 		}
 
 		int increase;
-		auto unicodeCharacter = font->encodeUTF8Char (& (*it), increase);
-		currentWordLength += font->getUnicodeCharacterWidth (unicodeCharacter, fontType);
+		auto unicodeCharacter = cUnicodeFont::font->encodeUTF8Char (& (*it), increase);
+		currentWordLength += cUnicodeFont::font->getUnicodeCharacterWidth (unicodeCharacter, fontType);
 
 		it += increase;
 	}
@@ -178,6 +179,8 @@ void cLabel::breakText (const std::string& text, std::vector<std::string>& lines
 void cLabel::updateDisplayInformation()
 {
 	if (surface == nullptr) return;
+
+	auto font = cUnicodeFont::font.get();
 
 	drawLines.clear();
 
@@ -192,7 +195,7 @@ void cLabel::updateDisplayInformation()
 
 	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
 
-	const auto height = font->getFontHeight (fontType) * drawLines.size();
+	const auto height = cUnicodeFont::font->getFontHeight (fontType) * drawLines.size();
 
 	int drawPositionY;
 	if (alignment & eAlignmentType::Bottom)
@@ -209,7 +212,8 @@ void cLabel::updateDisplayInformation()
 	}
 
 	auto originalTargetSurface = font->getTargetSurface();
-	auto fontTargetSurfaceResetter = makeScopedOperation ([originalTargetSurface]() { font->setTargetSurface (originalTargetSurface); });
+	auto fontTargetSurfaceResetter = makeScopedOperation(
+				[originalTargetSurface, font]() { font->setTargetSurface (originalTargetSurface); });
 	font->setTargetSurface (surface.get());
 	for (size_t i = 0; i < drawLines.size(); ++i)
 	{

@@ -29,7 +29,7 @@
 #include "ui/graphical/menu/widgets/tools/validatorint.h"
 #include "ui/graphical/menu/dialogs/dialogcolorpicker.h"
 #include "game/data/player/player.h"
-#include "pcx.h"
+#include "utility/pcx.h"
 #include "main.h"
 #include "game/data/map/map.h"
 #include "video.h"
@@ -58,7 +58,7 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	chatList->disableSelectable();
 	chatList->setBeginMargin (cPosition (12, 12));
 	chatList->setEndMargin (cPosition (10, 10));
-	chatList->setScrollOffset (font->getFontHeight() + 3);
+	chatList->setScrollOffset (cUnicodeFont::font->getFontHeight() + 3);
 
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (20, 245), getPosition() + cPosition (20 + 170, 245 + 10)), lngPack.i18n ("Text~Title~IP"), FONT_LATIN_NORMAL, eAlignmentType::Left));
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (228, 245), getPosition() + cPosition (228 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Port"), FONT_LATIN_NORMAL, eAlignmentType::Left));
@@ -206,9 +206,9 @@ void cWindowNetworkLobby::updateMap()
 	auto mapName = staticMap->getName();
 	const auto size = staticMap->getSize();
 
-	if (font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")<") > 140)
+	if (cUnicodeFont::font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")<") > 140)
 	{
-		while (font->getTextWide (">" + mapName + "... (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")<") > 140)
+		while (cUnicodeFont::font->getTextWide (">" + mapName + "... (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")<") > 140)
 		{
 			mapName.erase (mapName.length() - 1, mapName.length());
 		}

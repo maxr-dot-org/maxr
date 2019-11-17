@@ -25,7 +25,7 @@
 #include "game/logic/client.h"
 #include "game/logic/server2.h"
 #include "video.h"
-#include "unifonts.h"
+#include "utility/unifonts.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "utility/string/toString.h"
@@ -142,10 +142,12 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 
 	if (!client) return;
 
+	auto font = cUnicodeFont::font.get();
+
 	const cPlayer& player = client->getActivePlayer();
 
 	setPrintPosition(cPosition(getEndPosition().x() - 200, getPosition().y()));
-	
+
 	if (debugPlayers)
 	{
 		print("Players: " + toString(client->model.getPlayerList().size()));
@@ -363,8 +365,8 @@ void cDebugOutputWidget::setPrintPosition(cPosition position)
 //------------------------------------------------------------------------------
 void cDebugOutputWidget::print(const std::string& text, eUnicodeFontType font_ /*= FONT_LATIN_SMALL_WHITE*/)
 {
-	font->showText(drawPosition.x(), drawPosition.y(), text, font_);
-	drawPosition.y() += font->getFontHeight(font_);
+	cUnicodeFont::font->showText(drawPosition.x(), drawPosition.y(), text, font_);
+	drawPosition.y() += cUnicodeFont::font->getFontHeight(font_);
 }
 
 //------------------------------------------------------------------------------
@@ -407,6 +409,8 @@ void cDebugOutputWidget::trace()
 void cDebugOutputWidget::traceVehicle (const cVehicle& vehicle, cPosition& drawPosition)
 {
 	std::string tmpString;
+
+	auto font = cUnicodeFont::font.get();
 
 	tmpString = "name: \"" + vehicle.getDisplayName() + "\" id: \"" + iToStr (vehicle.iID) + "\" owner: \"" + vehicle.getOwner()->getName() + "\" posX: +" + iToStr (vehicle.getPosition().x()) + " posY: " + iToStr (vehicle.getPosition().y()) + " offX: " + iToStr (vehicle.getMovementOffset().x()) + " offY: " + iToStr (vehicle.getMovementOffset().y());
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
@@ -471,6 +475,8 @@ void cDebugOutputWidget::traceVehicle (const cVehicle& vehicle, cPosition& drawP
 void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& drawPosition)
 {
 	std::string tmpString;
+
+	auto font = cUnicodeFont::font.get();
 
 	tmpString = "name: \"" + building.getDisplayName() + "\" id: \"" + iToStr (building.iID) + "\" owner: \"" + (building.getOwner() ? building.getOwner()->getName() : "<null>") + "\" posX: +" + iToStr (building.getPosition().x()) + " posY: " + iToStr (building.getPosition().y());
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
@@ -540,12 +546,14 @@ void cDebugOutputWidget::drawDetectedByPlayerList()
 	const auto tileDrawingRange = gameMap->computeTileDrawingRange();
 	const auto zoomedStartTilePixelOffset = gameMap->getZoomedStartTilePixelOffset();
 
+	auto font = cUnicodeFont::font.get();
+
 	for (auto i = makeIndexIterator(tileDrawingRange.first, tileDrawingRange.second); i.hasMore(); i.next())
 	{
 		auto& mapField = map.getField(*i);
 		auto building = mapField.getBuilding();
 		if (building == nullptr) continue;
-		
+
 		auto drawDestination = gameMap->computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building->getPosition());
 		drawDestination.x += 4;
 		drawDestination.y += 4;
@@ -598,6 +606,8 @@ void cDebugOutputWidget::drawDetectionMaps()
 	const auto zoomedTileSize = gameMap->getZoomedTileSize();
 	const auto tileDrawingRange = gameMap->computeTileDrawingRange();
 	const auto zoomedStartTilePixelOffset = gameMap->getZoomedStartTilePixelOffset();
+
+	auto font = cUnicodeFont::font.get();
 
 	for (auto i = makeIndexIterator(tileDrawingRange.first, tileDrawingRange.second); i.hasMore(); i.next())
 	{

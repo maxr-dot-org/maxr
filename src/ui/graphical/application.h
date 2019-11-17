@@ -77,7 +77,7 @@ public:
 	bool hasKeyFocus() const;
 
 	void addRunnable (std::shared_ptr<cRunnable> runnable);
-	std::shared_ptr<cRunnable> removeRunnable (const cRunnable& runnable);
+	std::shared_ptr<cRunnable> removeRunnable (std::shared_ptr<cRunnable> runnable);
 
 	cShortcut* addShortcut (std::unique_ptr<cShortcut> shortcut);
 

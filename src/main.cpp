@@ -43,11 +43,9 @@
 #include "game/data/map/map.h"
 #include "mveplayer.h"
 #include "network.h"
-#include "pcx.h"
 #include "game/data/player/player.h"
 #include "settings.h"
 #include "sound.h"
-#include "unifonts.h"
 #include "game/data/units/vehicle.h"
 #include "video.h"
 #include "maxrversion.h"
@@ -64,16 +62,32 @@
 using namespace std;
 
 static int initNet();
-static int initSDL();
+static int initSDL(bool headless);
 static int initSound();
 static void logMAXRVersion();
 static void showIntro();
 
+struct AtExit
+{
+	~AtExit()
+	{
+		//unload files here
+		cSoundDevice::getInstance().close();
+		SDLNet_Quit();
+		Video.clearMemory();
+		SDL_Quit();
+		Log.write ("EOF");;
+	}
+};
+
 int main (int argc, char* argv[])
 {
+	AtExit exitGuard;	// Will clean data global data in its destructor
+
+	bool headless = DEDICATED_SERVER;
+
 	if (!cSettings::getInstance().isInitialized())
 	{
-		Quit();
 		return -1;
 	}
 
@@ -81,14 +95,14 @@ int main (int argc, char* argv[])
 
 
 	// stop on error during init of SDL basics. WARNINGS will be ignored!
-	if (initSDL() == -1) return -1;
+	if (initSDL(headless) == -1) return -1;
 
 	// call it once to initialize
 	is_main_thread();
 
 	logMAXRVersion();
 
-	if (!DEDICATED_SERVER)
+	if (!headless)
 	{
 		Video.init();
 		Video.showSplashScreen(); // show splashscreen
@@ -107,11 +121,11 @@ int main (int argc, char* argv[])
 		{
 			Log.write ("Error while loading data!", cLog::eLOG_TYPE_ERROR);
 			SDL_WaitThread (dataThread, nullptr);
-			Quit();
+			return -1;
 		}
 		while (SDL_PollEvent (&event))
 		{
-			if (!DEDICATED_SERVER
+			if (!headless
 				&& event.type == SDL_WINDOWEVENT
 				&& event.window.event == SDL_WINDOWEVENT_EXPOSED)
 			{
@@ -119,14 +133,14 @@ int main (int argc, char* argv[])
 			}
 		}
 		SDL_Delay (100);
-		if (!DEDICATED_SERVER)
+		if (!headless)
 		{
 			// The draw may be conditionned when screen has changed.
 			Video.draw();
 		}
 	}
 
-	if (!DEDICATED_SERVER)
+	if (!headless)
 	{
 		// play intro if we're supposed to and the file exists
 		if (cSettings::getInstance().shouldShowIntro())
@@ -141,7 +155,7 @@ int main (int argc, char* argv[])
 
 	SDL_WaitThread (dataThread, nullptr);
 
-	if (DEDICATED_SERVER)
+	if (headless)
 	{
 		cDedicatedServer::instance().run();
 	}
@@ -166,7 +180,6 @@ int main (int argc, char* argv[])
 		application.execute();
 	}
 
-	Quit();
 	return 0;
 }
 
@@ -175,10 +188,10 @@ int main (int argc, char* argv[])
  *@author beko
  *@return -1 on error<br>0 on success<br>1 with warnings
  */
-static int initSDL()
+static int initSDL(bool headless)
 {
 	int sdlInitResult = -1;
-	if (DEDICATED_SERVER)
+	if (headless)
 		sdlInitResult = SDL_Init (SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE);  // start SDL basics without video
 	else
 		sdlInitResult = SDL_Init (SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE);  // start SDL basics
@@ -309,23 +322,6 @@ bool is_main_thread()
 {
 	static const SDL_threadID main_thread_id = SDL_ThreadID();
 	return main_thread_id == SDL_ThreadID();
-}
-
-/**
- *Terminates app
- *@author beko
- */
-void Quit()
-{
-	delete font;
-
-	//unload files here
-	cSoundDevice::getInstance().close();
-	SDLNet_Quit();
-	Video.clearMemory();
-	SDL_Quit();
-	Log.write ("EOF");
-	exit (0);
 }
 
 string iToStr (int x)

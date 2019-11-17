@@ -22,7 +22,7 @@
 
 #include <string>
 
-#include "tinyxml2.h"
+#include "utility/tinyxml2.h"
 
 class cModel;
 class cSaveGameInfo;

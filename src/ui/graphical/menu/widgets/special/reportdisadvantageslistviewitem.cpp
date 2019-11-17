@@ -34,6 +34,8 @@ cReportDisadvantagesListViewItem::cReportDisadvantagesListViewItem (const cStati
 	unitId (data.ID),
 	disadvantages (disadvantages_)
 {
+	auto font = cUnicodeFont::font.get();
+
 	const auto totalHeight = std::max (unitImageHeight, (int) (disadvantages.size() / maxItemsInRow + 1) * font->getFontHeight());
 
 	AutoSurface unitSurface (SDL_CreateRGBSurface (0, unitImageWidth, unitImageHeight, Video.getColDepth(), 0, 0, 0, 0));

@@ -24,13 +24,14 @@
 #include "utility/listhelpers.h"
 #include "game/logic/fxeffects.h"
 #include "main.h"
-#include "pcx.h"
+//#include "pcx.h"
+#include "netmessage2.h"
 #include "game/data/player/player.h"
 #include "settings.h"
 #include "game/logic/upgradecalculator.h"
 #include "game/data/units/vehicle.h"
 #include "video.h"
-#include "unifonts.h"
+#include "utility/unifonts.h"
 #include "game/data/report/savedreportsimple.h"
 #include "game/data/report/special/savedreportresourcechanged.h"
 #include "utility/random.h"
@@ -194,6 +195,7 @@ cBuilding::~cBuilding()
 //----------------------------------------------------
 string cBuilding::getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData& unitsData) const
 {
+	auto font = cUnicodeFont::font.get();
 	if (isDisabled())
 	{
 		string sText;
@@ -1283,8 +1285,8 @@ sBuildingUIData& sBuildingUIData::operator= (sBuildingUIData && other)
 	hasOverlay = other.hasOverlay;
 	buildUpGraphic = other.buildUpGraphic;
 	powerOnGraphic = other.powerOnGraphic;
-	isAnimated = isAnimated;
-	isConnectorGraphic = isConnectorGraphic;
+	isAnimated = other.isAnimated;
+	isConnectorGraphic = other.isConnectorGraphic;
 	hasFrames = other.hasFrames;
 
 	return *this;
