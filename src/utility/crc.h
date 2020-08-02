@@ -55,8 +55,8 @@ struct sCrcEnum
 	template <typename T>
 	static uint32_t getChecksum(T data, uint32_t crc)
 	{
-		int value = static_cast<int>(data);
-		SDL_SwapLE32(value);
+		int32_t value = static_cast<int32_t>(data);
+		value = SDL_SwapLE32(value);
 		return calcCheckSum(reinterpret_cast<char*> (&value), sizeof(value), crc);
 	}
 };
