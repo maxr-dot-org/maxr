@@ -79,7 +79,7 @@ void cGameTimer::pushEvent()
 	cLockGuard<cMutex> lock(mutex);
 
 	//increase event counter and let the event handler increase the gametime
-	if (eventCounter < maxEventQueueSize || maxEventQueueSize == -1)
+	if (eventCounter < maxEventQueueSize || maxEventQueueSize == static_cast<unsigned int>(-1))
 	{
 		eventCounter++;
 	}
@@ -189,12 +189,12 @@ void cGameTimerServer::run(cModel& model, cServer2& server)
 
 cGameTimerClient::cGameTimerClient() :
 	cGameTimer(),
-	remoteChecksum (0),
-	localChecksum (0),
 	receivedTime(0),
+	remoteChecksum (0),
 	timeSinceLastSyncMessage (0),
-	debugRemoteChecksum (0),
-	syncMessageReceived (false)
+	syncMessageReceived (false),
+	localChecksum (0),
+	debugRemoteChecksum (0)
 {
 }
 

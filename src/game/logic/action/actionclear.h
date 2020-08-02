@@ -41,7 +41,7 @@ private:
 		archive & vehicleId;
 	}
 
-	int vehicleId;
+	unsigned int vehicleId;
 };
 
 #endif // game_logic_actionClearH

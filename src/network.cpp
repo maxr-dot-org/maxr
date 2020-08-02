@@ -42,8 +42,8 @@ cSocket::cSocket(TCPsocket socket):
 // cDataBuffer implementation
 //------------------------------------------------------------------------
 cDataBuffer::cDataBuffer() :
-	length(0),
 	capacity(0),
+	length(0),
 	data(nullptr)
 {}
 
@@ -83,10 +83,10 @@ void cDataBuffer::deleteFront (uint32_t n)
 
 
 cNetwork::cNetwork(cConnectionManager& connectionManager, cMutex& mutex) :
+	tcpMutex(mutex),
 	exit(false),
-	connectionManager(connectionManager),
 	serverSocket(nullptr),
-	tcpMutex(mutex)
+	connectionManager(connectionManager)
 {
 	socketSet = SDLNet_AllocSocketSet(MAX_TCP_CONNECTIONS);
 	tcpHandleThread = SDL_CreateThread(networkThreadCallback, "network", this);

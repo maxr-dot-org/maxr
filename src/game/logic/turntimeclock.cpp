@@ -76,8 +76,8 @@ uint32_t cTurnTimeDeadline::getChecksum(uint32_t crc) const
 //------------------------------------------------------------------------------
 cTurnTimeClock::cTurnTimeClock (const cModel& model) :
 	model (model),
-	startTurnGameTime (0),
-	nextDeadlineId(1)
+	nextDeadlineId(1),
+	startTurnGameTime (0)
 {
 	std::chrono::seconds lastCheckedSeconds (0);
 	std::chrono::seconds lastTimeTillFirstDeadline (std::numeric_limits<std::chrono::seconds::rep>::max());

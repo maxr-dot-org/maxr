@@ -39,8 +39,8 @@
 //------------------------------------------------------------------------------
 cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableIp) :
 	cWindow (LoadPCX (GFXOD_MULT)),
-	saveGameInfo(-1),
-	localPlayer (std::make_shared<cPlayerBasicData> (cSettings::getInstance().getPlayerName(), cPlayerColor (cSettings::getInstance().getPlayerColor()), 1, false))
+	localPlayer (std::make_shared<cPlayerBasicData> (cSettings::getInstance().getPlayerName(), cPlayerColor (cSettings::getInstance().getPlayerColor()), 1, false)),
+	saveGameInfo(-1)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 11), getPosition() + cPosition (getArea().getMaxCorner().x(), 11 + 10)), title, FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
@@ -248,14 +248,14 @@ void cWindowNetworkLobby::triggerChatMessage (bool keepFocus)
 //------------------------------------------------------------------------------
 void cWindowNetworkLobby::addChatEntry (const std::string& playerName, const std::string& message)
 {
-	auto addedItem = chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (playerName, message), eAddListItemScrollType::IfAtBottom);
+	chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (playerName, message), eAddListItemScrollType::IfAtBottom);
 	cSoundDevice::getInstance().playSoundEffect (SoundData.SNDChat);
 }
 
 //------------------------------------------------------------------------------
 void cWindowNetworkLobby::addInfoEntry (const std::string& message)
 {
-	auto addedItem = chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (message), eAddListItemScrollType::IfAtBottom);
+	chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (message), eAddListItemScrollType::IfAtBottom);
 }
 
 //------------------------------------------------------------------------------

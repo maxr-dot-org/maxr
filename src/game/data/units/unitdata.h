@@ -176,7 +176,7 @@ public:
 	int storageResMax;
 	eResourceType storeResType;
 
-	int storageUnitsMax;
+	std::size_t storageUnitsMax;
 	enum eStorageUnitsImageType
 	{
 		STORE_UNIT_IMG_NONE,

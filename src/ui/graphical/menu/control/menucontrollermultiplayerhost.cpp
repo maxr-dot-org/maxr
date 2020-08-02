@@ -406,7 +406,7 @@ void cMenuControllerMultiplayerHost::startSavedGame()
 	{
 		savedGame->loadGameData();
 	}
-	catch (std::runtime_error e)
+	catch (const std::runtime_error& e)
 	{
 		Log.write((std::string)"cMenuControllerMultiplayerHost: Error loading save game. " + e.what(), cLog::eLOG_TYPE_NET_ERROR);
 		savedGame = nullptr;
@@ -547,7 +547,6 @@ void cMenuControllerMultiplayerHost::startLandingPositionSelection()
 	signalConnectionManager.connect (windowLandingPositionSelection->opened, [this]()
 	{
 		const auto& localPlayer = newGame->getLocalPlayer();
-		const auto& players = newGame->getPlayers();
 
 		playersLandingStatus.push_back (std::make_unique<cPlayerLandingStatus> (localPlayer));
 		windowLandingPositionSelection->getChatBox()->addPlayerEntry (std::make_unique<cChatBoxLandingPlayerListViewItem> (*playersLandingStatus.back()));
@@ -557,7 +556,6 @@ void cMenuControllerMultiplayerHost::startLandingPositionSelection()
 	signalConnectionManager.connect (windowLandingPositionSelection->closed, [this]()
 	{
 		const auto& localPlayer = newGame->getLocalPlayer();
-		const auto& players = newGame->getPlayers();
 
 		windowLandingPositionSelection->getChatBox()->removePlayerEntry (localPlayer.getNr());
 		playersLandingStatus.erase (std::remove_if (playersLandingStatus.begin(), playersLandingStatus.end(), [&] (const std::unique_ptr<cPlayerLandingStatus>& status) { return status->getPlayer().getNr() == localPlayer.getNr(); }), playersLandingStatus.end());

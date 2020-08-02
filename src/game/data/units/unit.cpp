@@ -43,6 +43,7 @@ cUnit::cUnit (const cDynamicUnitData* unitData, const cStaticUnitData* staticDat
 	, dir (0)
 	, jobActive (false)
 	, alphaEffectValue (0)
+	, staticData(staticData)
 	, owner (owner)
 	, position (0, 0)
 	, turnsDisabled (0)
@@ -51,7 +52,6 @@ cUnit::cUnit (const cDynamicUnitData* unitData, const cStaticUnitData* staticDat
 	, attacking (false)
 	, beeingAttacked (false)
 	, beenAttacked (false)
-	, staticData(staticData)
 	, storageResCur(0)
 {
 	if (unitData != nullptr)

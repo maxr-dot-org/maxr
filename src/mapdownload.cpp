@@ -112,9 +112,9 @@ std::string MapDownload::getExistingMapFilePath (const std::string& mapName)
 }
 
 //------------------------------------------------------------------------------
-int32_t MapDownload::calculateCheckSum (const std::string& mapName)
+uint32_t MapDownload::calculateCheckSum (const std::string& mapName)
 {
-	int32_t result = 0;
+	uint32_t result = 0;
 	string filename = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + mapName;
 	ifstream file (filename.c_str(), ios::in | ios::binary | ios::ate);
 	if (!file.is_open() && !getUserMapsDir().empty())

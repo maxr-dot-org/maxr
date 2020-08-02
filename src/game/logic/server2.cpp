@@ -36,9 +36,9 @@
 cServer2::cServer2(std::shared_ptr<cConnectionManager> connectionManager) :
 	model(),
 	gameTimer(),
+	connectionManager(connectionManager),
 	serverThread(nullptr),
-	exit(false),
-	connectionManager(connectionManager)
+	exit(false)
 {
 	model.turnEnded.connect([&]()
 	{

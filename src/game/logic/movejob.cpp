@@ -39,10 +39,10 @@ const int directionDy[8] = { -1, -1, 0, 1, 1, 1, 0, -1 };
 
 
 cMoveJob::cMoveJob(const std::forward_list<cPosition>& path, cVehicle& vehicle, cModel& model) :
-	path(path),
 	vehicle(&vehicle),
-	savedSpeed(0),
+	path(path),
 	state(ACTIVE),
+	savedSpeed(0),
 	nextDir(0),
 	timer100ms(1),
 	timer50ms(1),
@@ -55,8 +55,8 @@ cMoveJob::cMoveJob(const std::forward_list<cPosition>& path, cVehicle& vehicle, 
 
 cMoveJob::cMoveJob() :
 	vehicle(nullptr),
-	savedSpeed(0),
 	state(FINISHED),
+	savedSpeed(0),
 	nextDir(0),
 	timer100ms(1),
 	timer50ms(1),
@@ -106,7 +106,7 @@ void cMoveJob::run(cModel& model)
 	timer50ms++;
 	if (timer50ms == 5) timer50ms = 0;
 
-	if (nextDir != vehicle->dir)
+	if (nextDir != static_cast<unsigned int>(vehicle->dir))
 	{
 		if (timer100ms == 0)
 		{

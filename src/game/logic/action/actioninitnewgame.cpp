@@ -207,7 +207,6 @@ bool cActionInitNewGame::isValidLandingPosition(cPosition position, std::shared_
 //------------------------------------------------------------------------------
 void cActionInitNewGame::makeLanding(cPlayer& player, const std::vector<sLandingUnit>& landingUnits, cModel& model) const
 {
-	cMap& map = *model.getMap();
 	cPosition landingPosition = player.getLandingPos();
 
 	if (model.getGameSettings()->getBridgeheadType() == eGameSettingsBridgeheadType::Definite)

@@ -33,7 +33,6 @@ public:
 	cWindowUnitInfo(const cDynamicUnitData& currentUnitData, const cPlayer& owner, const cUnitsData& unitsData);
 private:
 	cSignalConnectionManager signalConnectionManager;
-	cDynamicUnitData unitData;
 };
 
 #endif // ui_graphical_menu_windows_windowunitinfo_windowunitinfoH

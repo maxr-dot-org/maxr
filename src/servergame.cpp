@@ -133,7 +133,7 @@ void cServerGame::run()
 			}
 		}
 */
-		static unsigned int lastTime = 0;
+//		static unsigned int lastTime = 0;
 //		if (server)
 //			lastTime = server->getModel().getGameTime();
 

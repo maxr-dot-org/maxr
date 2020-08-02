@@ -248,7 +248,7 @@ void cWindowSinglePlayer::loadGameClicked()
 		{
 			game->start(*application);
 		}
-		catch (std::runtime_error e)
+		catch (const std::runtime_error& e)
 		{
 			Log.write("Could not start saved game.", cLog::eLOG_TYPE_ERROR);
 			Log.write(e.what(), cLog::eLOG_TYPE_ERROR);

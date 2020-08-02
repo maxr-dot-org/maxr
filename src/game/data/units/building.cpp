@@ -126,10 +126,10 @@ uint32_t cBuildListItem::getChecksum(uint32_t crc) const
 //--------------------------------------------------------------------------
 cBuilding::cBuilding (const cStaticUnitData* staticData, const cDynamicUnitData* data, cPlayer* owner, unsigned int ID) :
 	cUnit(data, staticData, owner, ID),
-	isWorking (false),
+	effectAlpha(0),
 	wasWorking(false),
-	metalPerRound(0),
-	effectAlpha(0)
+	isWorking (false),
+	metalPerRound(0)
 {
 	setSentryActive (staticData && staticData->canAttack != TERRAIN_NONE);
 
@@ -1093,6 +1093,7 @@ void cBuilding::initMineRessourceProd (const cMap& map)
 
 	switch (res->typ)
 	{
+		case eResourceType::None: break;
 		case eResourceType::Metal: maxMetalProd += res->value; break;
 		case eResourceType::Gold:  maxGoldProd  += res->value; break;
 		case eResourceType::Oil:   maxOilProd   += res->value; break;
@@ -1104,6 +1105,7 @@ void cBuilding::initMineRessourceProd (const cMap& map)
 		res = &map.getResource(position);
 		switch (res->typ)
 		{
+		case eResourceType::None: break;
 		case eResourceType::Metal: maxMetalProd += res->value; break;
 		case eResourceType::Gold:  maxGoldProd += res->value; break;
 		case eResourceType::Oil:   maxOilProd += res->value; break;
@@ -1113,6 +1115,7 @@ void cBuilding::initMineRessourceProd (const cMap& map)
 		res = &map.getResource(position);
 		switch (res->typ)
 		{
+		case eResourceType::None: break;
 		case eResourceType::Metal: maxMetalProd += res->value; break;
 		case eResourceType::Gold:  maxGoldProd += res->value; break;
 		case eResourceType::Oil:   maxOilProd += res->value; break;
@@ -1122,6 +1125,7 @@ void cBuilding::initMineRessourceProd (const cMap& map)
 		res = &map.getResource(position);
 		switch (res->typ)
 		{
+		case eResourceType::None: break;
 		case eResourceType::Metal: maxMetalProd += res->value; break;
 		case eResourceType::Gold:  maxGoldProd += res->value; break;
 		case eResourceType::Oil:   maxOilProd += res->value; break;
@@ -1238,6 +1242,16 @@ sBuildingUIData::sBuildingUIData():
 
 //--------------------------------------------------------------------------
 sBuildingUIData::sBuildingUIData (sBuildingUIData&& other) :
+	hasClanLogos(other.hasClanLogos),
+	hasDamageEffect(other.hasDamageEffect),
+	hasBetonUnderground(other.hasBetonUnderground),
+	hasPlayerColor(other.hasPlayerColor),
+	hasOverlay(other.hasOverlay),
+	buildUpGraphic(other.buildUpGraphic),
+	powerOnGraphic(other.powerOnGraphic),
+	isAnimated(other.isAnimated),
+	isConnectorGraphic(other.isConnectorGraphic),
+	hasFrames(other.hasFrames),
 	img (std::move (other.img)), img_org (std::move (other.img_org)),
 	shw (std::move (other.shw)), shw_org (std::move (other.shw_org)),
 	eff (std::move (other.eff)), eff_org (std::move (other.eff_org)),
@@ -1247,17 +1261,7 @@ sBuildingUIData::sBuildingUIData (sBuildingUIData&& other) :
 	Running (std::move (other.Running)),
 	Stop (std::move (other.Stop)),
 	Attack (std::move (other.Attack)),
-	Wait (std::move (other.Wait)),
-	hasClanLogos(other.hasClanLogos),
-	hasDamageEffect(other.hasDamageEffect),
-	hasBetonUnderground(other.hasBetonUnderground),
-	hasPlayerColor(other.hasPlayerColor),
-	hasOverlay(other.hasOverlay),
-	buildUpGraphic(other.buildUpGraphic),
-	powerOnGraphic(other.powerOnGraphic),
-	isAnimated(isAnimated),
-	isConnectorGraphic(isConnectorGraphic),
-	hasFrames(other.hasFrames)
+	Wait (std::move (other.Wait))
 {}
 
 //--------------------------------------------------------------------------

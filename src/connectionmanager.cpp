@@ -36,8 +36,8 @@ class cHandshakeTimeout
 {
 public:
 	cHandshakeTimeout(const cSocket* socket, cConnectionManager* connectionManager) :
-		socket(socket),
-		connectionManager(connectionManager)
+		connectionManager(connectionManager),
+		socket(socket)
 	{
 		timer = SDL_AddTimer(HANDSHAKE_TIMEOUT_MS, callback, (void*)this);
 	}

@@ -42,7 +42,7 @@ private:
 		archive & autoMoveActive;
 	}
 
-	int vehicleId;
+	unsigned int vehicleId;
 	bool autoMoveActive;
 };
 

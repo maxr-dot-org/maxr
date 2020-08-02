@@ -56,6 +56,10 @@ using namespace std;
 //-----------------------------------------------------------------------------
 cVehicle::cVehicle (const cStaticUnitData& staticData, const cDynamicUnitData& dynamicData, cPlayer* owner, unsigned int ID) :
 	cUnit (&dynamicData, &staticData, owner, ID),
+	bandPosition(0, 0),
+	buildBigSavedPosition(0, 0),
+	tileMovementOffset(0, 0),
+	moveJob(nullptr),
 	loaded (false),
 	isBuilding (false),
 	buildingTyp(),
@@ -67,11 +71,7 @@ cVehicle::cVehicle (const cStaticUnitData& staticData, const cDynamicUnitData& d
 	clearingTurns (0),
 	layMines (false),
 	clearMines (false),
-	commandoRank (0),
-	tileMovementOffset(0, 0),
-	buildBigSavedPosition(0, 0),
-	bandPosition(0, 0),
-	moveJob(nullptr)
+	commandoRank (0)
 {
 	uiData = UnitsUiData.getVehicleUI (staticData.ID);
 	ditherX = 0;
@@ -1270,6 +1270,16 @@ sVehicleUIData::sVehicleUIData() :
 
 //-----------------------------------------------------------------------------
 sVehicleUIData::sVehicleUIData (sVehicleUIData&& other) :
+	hasCorpse(other.hasCorpse),
+	hasDamageEffect(other.hasDamageEffect),
+	hasPlayerColor(other.hasPlayerColor),
+	hasOverlay(other.hasOverlay),
+	buildUpGraphic(other.buildUpGraphic),
+	animationMovement(other.animationMovement),
+	powerOnGraphic(other.powerOnGraphic),
+	isAnimated(other.isAnimated),
+	makeTracks(other.makeTracks),
+	hasFrames(0),
 	build (std::move (other.build)), build_org (std::move (other.build_org)),
 	build_shw (std::move (other.build_shw)), build_shw_org (std::move (other.build_shw_org)),
 	clear_small (std::move (other.clear_small)), clear_small_org (std::move (other.clear_small_org)),
@@ -1286,17 +1296,7 @@ sVehicleUIData::sVehicleUIData (sVehicleUIData&& other) :
 	StopWater (std::move (other.StopWater)),
 	Drive (std::move (other.Drive)),
 	DriveWater (std::move (other.DriveWater)),
-	Attack (std::move (other.Attack)),
-	hasCorpse(other.hasCorpse),
-	hasDamageEffect(other.hasDamageEffect),
-	hasPlayerColor(other.hasPlayerColor),
-	hasOverlay(other.hasOverlay),
-	buildUpGraphic(other.buildUpGraphic),
-	animationMovement(other.animationMovement),
-	powerOnGraphic(other.powerOnGraphic),
-	isAnimated(other.isAnimated),
-	makeTracks(other.makeTracks),
-	hasFrames(0)
+	Attack (std::move (other.Attack))
 {
 	for (size_t i = 0; i < img.size(); ++i) img[i] = std::move (other.img[i]);
 	for (size_t i = 0; i < img_org.size(); ++i) img_org[i] = std::move (other.img_org[i]);

@@ -32,7 +32,6 @@ using namespace std;
 
 cSubBase::cSubBase (cBase& base) :
 	buildings(),
-	base (base),
 	maxMetalStored(),
 	maxOilStored(),
 	maxGoldStored(),
@@ -52,6 +51,7 @@ cSubBase::cSubBase (cBase& base) :
 	metalProd(),
 	oilProd(),
 	goldProd(),
+	base (base),
 	metalStored(),
 	oilStored(),
 	goldStored()
@@ -59,7 +59,6 @@ cSubBase::cSubBase (cBase& base) :
 
 cSubBase::cSubBase (const cSubBase& other) :
 	buildings (other.buildings),
-	base (other.base),
 	maxMetalStored (other.maxMetalStored),
 	maxOilStored (other.maxOilStored),
 	maxGoldStored (other.maxGoldStored),
@@ -79,6 +78,7 @@ cSubBase::cSubBase (const cSubBase& other) :
 	metalProd (other.metalProd),
 	oilProd (other.oilProd),
 	goldProd (other.goldProd),
+	base (other.base),
 	metalStored (other.metalStored),
 	oilStored (other.oilStored),
 	goldStored (other.goldStored)
@@ -600,7 +600,6 @@ void cSubBase::addRessouce (eResourceType storeResType, int value)
 	{
 		cBuilding& b = *buildings[i];
 		if (b.getStaticUnitData().storeResType != storeResType) continue;
-		const int iStartValue = value;
 		if (value < 0)
 		{
 			if (b.getStoredResources() > -value)

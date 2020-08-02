@@ -34,7 +34,7 @@ public:
 	virtual void execute(cModel& model) const override;
 	
 private:
-	int vehicleId;
+	unsigned int vehicleId;
 	bool layMines;
 	bool clearMines;
 

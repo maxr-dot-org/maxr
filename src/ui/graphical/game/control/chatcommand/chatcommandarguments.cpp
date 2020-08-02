@@ -268,9 +268,9 @@ const cChatCommandArgumentServer::ValueType& cChatCommandArgumentServer::getValu
 //------------------------------------------------------------------------------
 cChatCommandArgumentClient::cChatCommandArgumentClient(const std::shared_ptr<cClient>& activeClientPointer_, bool isOptional_, ValueType defaultValue_) :
 	cChatCommandArgument<cChatCommandArgumentClient>(isOptional_),
-	activeClientPointer(activeClientPointer_),
 	value(defaultValue_),
-	defaultValue(defaultValue_)
+	defaultValue(defaultValue_),
+	activeClientPointer(activeClientPointer_)
 {}
 
 //------------------------------------------------------------------------------
@@ -310,9 +310,9 @@ const cChatCommandArgumentClient::ValueType& cChatCommandArgumentClient::getValu
 //------------------------------------------------------------------------------
 cChatCommandArgumentServerPlayer::cChatCommandArgumentServerPlayer(cServer2*& serverPointer_, bool isOptional_, ValueType defaultValue_) :
 	cChatCommandArgument<cChatCommandArgumentServerPlayer>(isOptional_),
-	serverPointer(serverPointer_),
 	value(defaultValue_),
-	defaultValue(defaultValue_)
+	defaultValue(defaultValue_),
+	serverPointer(serverPointer_)
 {}
 
 //------------------------------------------------------------------------------
@@ -404,9 +404,9 @@ const cChatCommandArgumentServerPlayer::ValueType& cChatCommandArgumentServerPla
 //------------------------------------------------------------------------------
 cChatCommandArgumentClientPlayer::cChatCommandArgumentClientPlayer(const std::shared_ptr<cClient>& activeClientPointer_, bool isOptional_, ValueType defaultValue_) :
 	cChatCommandArgument<cChatCommandArgumentClientPlayer>(isOptional_),
-	activeClientPointer(activeClientPointer_),
 	value(defaultValue_),
-	defaultValue(defaultValue_)
+	defaultValue(defaultValue_),
+	activeClientPointer(activeClientPointer_)
 {}
 
 //------------------------------------------------------------------------------

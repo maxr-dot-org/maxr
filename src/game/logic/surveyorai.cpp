@@ -58,11 +58,11 @@ static const int DISTANCE_NEW_OP = 7; //the new OP will be between the surveyor 
 
 //------------------------------------------------------------------------------
 cSurveyorAi::cSurveyorAi (const cVehicle& vehicle) :
-	counter(0),
 	vehicle (vehicle),
 	finished(false),
+	counter(0),
 	operationPoint(vehicle.getPosition())
-{	
+{
 	connectionManager.connect(vehicle.destroyed, [&]() {finished = true; });
 	connectionManager.connect(vehicle.ownerChanged, [&]() {finished = true; });
 }

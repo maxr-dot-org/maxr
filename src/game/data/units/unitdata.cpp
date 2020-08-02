@@ -77,8 +77,8 @@ bool sID::operator == (const sID& ID) const
 
 //------------------------------------------------------------------------------
 cUnitsData::cUnitsData() :
-	crcValid(false),
-	crcCache(0)
+	crcCache(0),
+	crcValid(false)
 {
 	rubbleBig.isBig = true;
 	rubbleSmall.isBig = false;

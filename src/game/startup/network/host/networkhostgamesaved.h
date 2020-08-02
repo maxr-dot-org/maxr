@@ -45,7 +45,7 @@ public:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	size_t localPlayerNr;
+	int localPlayerNr;
 	std::vector<cPlayerBasicData> players;
 
 	int saveGameNumber;

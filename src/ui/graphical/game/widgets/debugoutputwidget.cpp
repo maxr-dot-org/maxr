@@ -602,7 +602,6 @@ void cDebugOutputWidget::drawDetectionMaps()
 {
 	if (!gameMap || !client) return;
 
-	const auto& map = *client->getModel().getMap();
 	const auto zoomedTileSize = gameMap->getZoomedTileSize();
 	const auto tileDrawingRange = gameMap->computeTileDrawingRange();
 	const auto zoomedStartTilePixelOffset = gameMap->getZoomedStartTilePixelOffset();

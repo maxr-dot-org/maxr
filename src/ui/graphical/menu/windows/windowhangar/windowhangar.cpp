@@ -34,9 +34,9 @@
 //------------------------------------------------------------------------------
 cWindowHangar::cWindowHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, cPlayerColor playerColor, int playerClan) :
 	cWindow (std::move (surface)),
+	unitsData (unitsData),
 	temporaryPlayer (new cPlayer (cPlayerBasicData ("unnamed", std::move (playerColor), 0, false), *unitsData)),
-	player (*temporaryPlayer),
-	unitsData (unitsData)
+	player (*temporaryPlayer)
 {
 	if (playerClan != -1) temporaryPlayer->setClan (playerClan, *unitsData);
 
@@ -46,8 +46,8 @@ cWindowHangar::cWindowHangar (AutoSurface surface, std::shared_ptr<const cUnitsD
 //------------------------------------------------------------------------------
 cWindowHangar::cWindowHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, const cPlayer& player_) :
 	cWindow (std::move (surface)),
-	player (player_),
-	unitsData (unitsData)
+	unitsData (unitsData),
+	player (player_)
 {
 	initialize();
 }

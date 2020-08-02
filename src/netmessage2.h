@@ -82,7 +82,7 @@ public:
 	int playerNr;
 
 protected:
-	cNetMessage2(eNetMessageType type) : type(type), playerNr(-1) {};
+	cNetMessage2(eNetMessageType type) : playerNr(-1), type(type) {}
 private:
 	template <typename T>
 	void serializeThis(T& archive)
@@ -255,8 +255,8 @@ class cNetMessageGUISaveInfo : public cNetMessage2
 public:
 	cNetMessageGUISaveInfo(int savingID) :
 		cNetMessage2(eNetMessageType::GUI_SAVE_INFO),
-		savingID(savingID),
-		reports(nullptr)
+		reports(nullptr),
+		savingID(savingID)
 	{};
 	cNetMessageGUISaveInfo(cBinaryArchiveOut& archive) :
 		cNetMessage2(eNetMessageType::GUI_SAVE_INFO)

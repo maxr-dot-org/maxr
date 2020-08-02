@@ -36,12 +36,12 @@ using namespace std;
 
 //------------------------------------------------------------------------------
 cPlayer::cPlayer (const cPlayerBasicData& splayer, const cUnitsData& unitsData) :
+	base(*this),
+	name(splayer.getName()),
 	color(splayer.getColor()),
 	id(splayer.getNr()),
-	name(splayer.getName()),
 	clan (-1),
-	hasFinishedTurn (false),
-	base(*this)
+	hasFinishedTurn (false)
 {
 	// get the default (no clan) unit data
 	dynamicUnitsData = unitsData.getDynamicUnitsData(-1);

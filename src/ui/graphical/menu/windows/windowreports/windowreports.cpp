@@ -68,8 +68,8 @@ cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> play
 	casualties (std::move (casualties_)),
 	turnClock (std::move (turnClock_)),
 	gameSettings (std::move (gameSettings_)),
-	unitsData (std::move(unitsData)),
 	reports (reports_),
+	unitsData (std::move(unitsData)),
 	unitListDirty (true),
 	disadvantagesListDirty (true),
 	reportsListDirty (true)

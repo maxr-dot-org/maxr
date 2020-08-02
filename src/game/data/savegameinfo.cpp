@@ -23,8 +23,8 @@
 
 
 cSaveGameInfo::cSaveGameInfo(int number) :
+	saveVersion("0.0"),
 	type(GAME_TYPE_SINGLE),
-	number(number),
-	saveVersion("0.0")
+	number(number)
 	//turn(0)
 {}

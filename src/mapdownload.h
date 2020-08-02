@@ -43,7 +43,7 @@ bool isMapOriginal (const std::string& mapName, int32_t checksum = 0);
 std::string getExistingMapFilePath (const std::string& mapName);
 
 /** @return a 32 bit checksum of the given map */
-int32_t calculateCheckSum (const std::string& mapName);
+uint32_t calculateCheckSum (const std::string& mapName);
 
 } // namespace MapDownload
 

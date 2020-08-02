@@ -26,10 +26,10 @@
 //------------------------------------------------------------------------------
 cUnitDetails::cUnitDetails (const cPosition& position) :
 	cWidget (position),
+	staticUnitData(nullptr),
 	playerOriginalData (nullptr),
 	playerCurrentData (nullptr),
 	unitObjectCurrentData (nullptr),
-	staticUnitData(nullptr),
 	upgrades (nullptr)
 {
 	for (size_t i = 0; i < maxRows; ++i)

@@ -377,14 +377,14 @@ int Round (float dValueToRound)
 
 //------------------------------------------------------------------------------
 cUnitsUiData::cUnitsUiData() :
+	rubbleBig(new sBuildingUIData()),
+	rubbleSmall(new sBuildingUIData()),
 	ptr_small_beton(0),
 	ptr_small_beton_org(0),
 	ptr_connector(0),
 	ptr_connector_org(0),
 	ptr_connector_shw(0),
-	ptr_connector_shw_org(0),
-	rubbleBig(new sBuildingUIData()),
-	rubbleSmall(new sBuildingUIData())
+	ptr_connector_shw_org(0)
 {}
 
 //------------------------------------------------------------------------------

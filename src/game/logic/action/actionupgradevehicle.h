@@ -43,8 +43,8 @@ private:
 		archive & vehicleId;
 	}
 
-	int buildingId;
-	int vehicleId;
+	unsigned int buildingId;
+	unsigned int vehicleId;
 
 	struct sUpgradeResult
 	{

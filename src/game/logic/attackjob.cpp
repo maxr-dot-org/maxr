@@ -43,17 +43,17 @@
 cAttackJob::cAttackJob() :
 	aggressor(nullptr),
 	fireDir(0),
-	state(S_ROTATING),
-	counter(0)
+	counter(0),
+	state(S_ROTATING)
 {}
 
 //--------------------------------------------------------------------------
 cAttackJob::cAttackJob (cUnit& aggressor, const cPosition& targetPosition, const cModel& model) :
-	targetPosition (targetPosition),
 	aggressor(&aggressor),
+	targetPosition (targetPosition),
 	fireDir (0),
-	state (S_ROTATING),
-	counter(10)
+	counter(10),
+	state (S_ROTATING)
 {
 	Log.write(" cAttackJob: Started attack, aggressor: " + aggressor.getDisplayName() + ", ID: " + iToStr(aggressor.getId()) + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 	assert(!aggressor.isUnitMoving());
@@ -365,7 +365,6 @@ std::unique_ptr<cFx> cAttackJob::createMuzzleFx ()
 
 void cAttackJob::impact(cModel& model)
 {
-	bool destroyed = false;
 	if (aggressor->getStaticUnitData().muzzleType == cStaticUnitData::MUZZLE_TYPE_ROCKET_CLUSTER)
 		impactCluster(model);
 	else

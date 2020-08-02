@@ -42,8 +42,8 @@
 	}                                 
 
 cSavegame::cSavegame() :
-	loadedSlot(-1),
-	saveingID(-1)
+	saveingID(-1),
+	loadedSlot(-1)
 {}
 
 int cSavegame::save(const cModel& model, int slot, const std::string& saveName)
@@ -191,7 +191,7 @@ cSaveGameInfo cSavegame::loadSaveInfo(int slot)
 		//TODO: load turn
 
 	}
-	catch (std::runtime_error e)
+	catch (const std::runtime_error& e)
 	{
 		Log.write("Error loading savegame file " + iToStr(slot) + ": " + e.what(), cLog::eLOG_TYPE_ERROR);
 		info.gameName = "XML Error";

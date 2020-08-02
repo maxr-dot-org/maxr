@@ -24,10 +24,10 @@
 
 //------------------------------------------------------------------------------
 cMapFieldView::cMapFieldView(const cMapField& mapField, const sTerrain& terrain, const cPlayer* player) :
-	mapField(mapField),
-	player(player),
 	unitsChanged(mapField.unitsChanged),
-	terrain(terrain)
+	mapField(mapField),
+	terrain(terrain),
+	player(player)
 {}
 
 //------------------------------------------------------------------------------

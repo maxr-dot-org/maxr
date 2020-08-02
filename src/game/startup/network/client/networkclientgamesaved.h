@@ -60,7 +60,7 @@ public:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	size_t localPlayerNr;
+	int localPlayerNr;
 	std::vector<cPlayerBasicData> players;
 
 	std::shared_ptr<cStaticMap> staticMap;

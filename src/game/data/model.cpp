@@ -38,17 +38,17 @@
 
 //------------------------------------------------------------------------------
 cModel::cModel() :
-	nextUnitId(0),
+	gameId(0),
+	gameTime(0),
 	gameSettings(std::make_shared<cGameSettings>()),
+	activeTurnPlayer(nullptr),
+	nextUnitId(0),
 	unitsData(std::make_shared<cUnitsData>()),
 	turnCounter (std::make_shared<cTurnCounter> (1)),
-	gameTime(0),
-	gameId(0),
-	turnEndState(TURN_ACTIVE),
-	activeTurnPlayer(nullptr),
 	turnEndDeadline(0),
 	turnLimitDeadline(0),
-	casualtiesTracker (std::make_shared<cCasualtiesTracker> ())
+	casualtiesTracker (std::make_shared<cCasualtiesTracker> ()),
+	turnEndState(TURN_ACTIVE)
 {
 	turnTimeClock = std::make_shared<cTurnTimeClock>(*this);
 

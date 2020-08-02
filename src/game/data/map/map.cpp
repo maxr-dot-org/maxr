@@ -234,7 +234,7 @@ void cMapField::removeAll()
 
 // cStaticMap //////////////////////////////////////////////////
 
-cStaticMap::cStaticMap() : size(0), terrains(), crc(0)
+cStaticMap::cStaticMap() : crc(0), size(0), terrains()
 {
 }
 
@@ -687,7 +687,7 @@ cMap::cMap (std::shared_ptr<cStaticMap> staticMap_) :
 
 void cMap::init()
 {
-	const int size = staticMap->getSize().x() * staticMap->getSize().y();
+	const std::size_t size = staticMap->getSize().x() * staticMap->getSize().y();
 	if (Resources.size() != size)
 	{
 		Resources.resize(size, sResources());

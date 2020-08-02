@@ -79,6 +79,7 @@ void cActionTransfer::execute(cModel& model) const
 			bool breakSwitch = false;
 			switch(resourceType)
 			{
+			case eResourceType::None: break;
 			case eResourceType::Metal:
 				{
 					if(sourceBuilding->subBase->getMetalStored() - transferValue > sourceBuilding->subBase->getMaxMetalStored() || sourceBuilding->subBase->getMetalStored() - transferValue < 0) breakSwitch = true;
@@ -118,6 +119,7 @@ void cActionTransfer::execute(cModel& model) const
 			bool breakSwitch = false;
 			switch(resourceType)
 			{
+			case eResourceType::None: break;
 			case eResourceType::Metal:
 				{
 					if(destinationBuilding->subBase->getMetalStored() + transferValue > destinationBuilding->subBase->getMaxMetalStored() || destinationBuilding->subBase->getMetalStored() + transferValue < 0) breakSwitch = true;

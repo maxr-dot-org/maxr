@@ -59,8 +59,8 @@ template<typename T>
 cArrayCrc<T>::cArrayCrc() :
 	data(nullptr),
 	size_(0),
-	crcCache(0),
-	crcValid(false)
+	crcValid(false),
+	crcCache(0)
 {}
 
 template<typename T>
