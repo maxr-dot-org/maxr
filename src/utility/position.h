@@ -84,6 +84,12 @@ public:
 		return (*this)[1];
 	}
 
+	cPosition& operator= (const cPosition& value)
+	{
+		cFixedVector<int, 2>::operator= (value);
+		return *this;
+	}
+
 	cPosition& operator= (const value_type& value)
 	{
 		cFixedVector<int, 2>::operator= (value);
@@ -157,6 +163,13 @@ public:
         cFixedVector<float, 2>::operator= (value);
         return *this;
     }
+
+    cVector2& operator= (const cVector2& value)
+    {
+        cFixedVector<float, 2>::operator= (value);
+        return *this;
+    }
+
 };
 
 #endif // utility_positionH

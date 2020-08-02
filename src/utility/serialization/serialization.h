@@ -249,8 +249,7 @@ namespace serialization
 	template<typename A, typename T>
 	void save(A& archive, const std::forward_list<T>& value)
 	{
-		uint32_t length = 0;
-		for (const auto& x : value) length++;
+		const uint32_t length = std::distance(value.begin(), value.end());
 		archive << NVP(length);
 
 		for (const auto& item : value)
