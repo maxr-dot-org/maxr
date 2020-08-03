@@ -27,7 +27,7 @@ cLocalHotSeatGame::~cLocalHotSeatGame()
 {
 	if (server)
 	{
-		//server->stop();
+		server->stop();
 	}
 }
 
@@ -36,6 +36,6 @@ void cLocalHotSeatGame::run()
 {
 	for (size_t i = 0; i < clients.size(); ++i)
 	{
-	//	clients[i]->getGameTimer()->run();
+		clients[i]->run();
 	}
 }

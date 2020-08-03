@@ -26,6 +26,7 @@
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/units/landingunit.h"
+#include "game/logic/action/actioninitnewgame.h"
 
 // TODO: remove
 void applyUnitUpgrades (cPlayer& player, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades);
@@ -38,11 +39,13 @@ cLocalHotSeatGameNew::cLocalHotSeatGameNew()
 void cLocalHotSeatGameNew::start (cApplication& application)
 {
 	assert (gameSettings != nullptr);
+	auto connectionManager = std::make_shared<cConnectionManager>();
 
-	//server = std::make_unique<cServer> (nullptr);
+	server = std::make_unique<cServer2>(connectionManager);
+
 
 	server->setMap (staticMap);
-
+	server->setUnitsData (unitsData);
 	server->setGameSettings (*gameSettings);
 
 	clients.resize (playersData.size());
@@ -50,64 +53,64 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 	std::vector<cPlayerBasicData> players;
 	for (size_t i = 0; i < playersData.size(); ++i)
 	{
-		//clients[i] = std::make_shared<cClient> (server.get(), nullptr); //TODO: use new server
-//		clients[i]->setMap (staticMap);
+		clients[i] = std::make_shared<cClient> (connectionManager);
+		clients[i]->setMap (staticMap);
+		clients[i]->setUnitsData (unitsData);
 		clients[i]->setGameSettings (*gameSettings);
 
-	/*	players.push_back (playersData[i].basicData);
+		players.push_back (playersData[i].basicData);
 
-		auto serverPlayer = std::make_unique<cPlayer>(playersData[i].basicData);
-		auto& playerRef = *serverPlayer;
+		//auto serverPlayer = std::make_unique<cPlayer>(playersData[i].basicData, unitsData);
+		//auto& playerRef = *serverPlayer;
 
-		serverPlayer->setLocal();
-		server->addPlayer (std::move (serverPlayer));
+		//serverPlayer->setLocal();
+		//server->addPlayer (std::move (serverPlayer));
 
 		if (i == 0)
 		{
-			server->setActiveTurnPlayer (playerRef);
-		}*/
+			//server->setActiveTurnPlayer (playerRef);
+		}
 	}
+	server->setPlayers(players);
+	for (size_t i = 0; i != clients.size(); ++i)
+	{
+		clients[i]->setPlayers (players, i);
+	}
+
+	connectionManager->setLocalServer(server.get());
+	connectionManager->setLocalClient(clients[0].get(), 0); // TODO: JORIS fix it
 
 	server->start();
 
-	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
-
-	for (size_t i = 0; i < playersData.size(); ++i)
+	for (size_t i = 0; i != playersData.size(); ++i)
 	{
-		clients[i]->setPlayers (players, i);
+		cActionInitNewGame action;
+		action.clan = playersData[i].clan;
+		action.landingUnits = playersData[i].landingUnits;
+		action.landingPosition = playersData[i].landingPosition;
+		action.unitUpgrades = playersData[i].unitUpgrades;
+		clients[i]->sendNetMessage(action);
+	}
 
-		auto& clientPlayer = clients[i]->getActivePlayer();
-//		if (gameSettings->getClansEnabled()) clientPlayer.setClan (playersData[i].clan);
+	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
+	gameGuiController->setServer(server.get());
+	gameGuiController->setClients(clients, 0);
 
-//		applyUnitUpgrades (clientPlayer, playersData[i].unitUpgrades);
-
-//		sendClan (*clients[i]);
-//		sendLandingUnits (*clients[i], playersData[i].landingUnits);
-//		sendUnitUpgrades (*clients[i]);
-
-//		sendLandingCoords (*clients[i], playersData[i].landingPosition);
-
-//		sendReadyToStart (*clients[i]);
-
+	for (size_t i = 0; i != playersData.size(); ++i)
+	{
+		const auto& clientPlayer = clients[i]->getActivePlayer();
 		cGameGuiState gameGuiState;
 		gameGuiState.setMapPosition (playersData[i].landingPosition);
 		gameGuiController->addPlayerGameGuiState (clientPlayer.getId(), gameGuiState);
 	}
 
-	//server->startTurnTimers();
-
-	//auto activePlayer = server->getActivePlayer();
-	//assert (activePlayer != nullptr);
-
-	//gameGuiController->setClients (clients, activePlayer->getId());
+	gameGuiController->setClients (clients, 0 /*activePlayer->getId()*/);
 
 	gameGuiController->start();
 
-//	terminate = false;
-
 	application.addRunnable (shared_from_this());
 
-//	signalConnectionManager.connect (gameGuiController->terminated, [&]() { terminate = true; });
+	signalConnectionManager.connect(gameGuiController->terminated, [&]() { exit(); });
 }
 
 //------------------------------------------------------------------------------
