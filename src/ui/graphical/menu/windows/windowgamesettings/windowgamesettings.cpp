@@ -92,7 +92,10 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	//
 	// Game type
 	//
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Game_Type") + ":", FONT_LATIN_NORMAL, eAlignmentType::Left));
+	if (!forHotSeatGame)
+	{
+		addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Game_Type") + ":", FONT_LATIN_NORMAL, eAlignmentType::Left));
+	}
 	auto gameTypeRadioGroup = addChild (std::make_unique<cRadioGroup> ());
 	gameTypeTurnsCheckBox = gameTypeRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (240, currentLine), lngPack.i18n ("Text~Option~Type_Turns"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	gameTypeSimultaneousCheckBox = gameTypeRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (240 + 173, currentLine), lngPack.i18n ("Text~Option~Type_Simu"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
@@ -534,6 +537,8 @@ void cWindowGameSettings::disableTurnEndDeadlineOptions()
 //------------------------------------------------------------------------------
 void cWindowGameSettings::enableTurnEndDeadlineOptions()
 {
+	if (forHotSeatGame) { return; }
+
 	turnEndTurnDeadlineNoLimitCheckBox->enable();
 	turnEndTurnDeadlineNoLimitCheckBox->show();
 	turnEndTurnDeadline0CheckBox->enable();
