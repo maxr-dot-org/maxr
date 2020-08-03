@@ -55,7 +55,7 @@ private:
 	static uint32_t callback(uint32_t intervall, void* arg)
 	{
 		cHandshakeTimeout* thisPtr = reinterpret_cast<cHandshakeTimeout*> (arg);
-		thisPtr->connectionManager->handshakeTimeoutCallback(thisPtr);
+		thisPtr->connectionManager->handshakeTimeoutCallback(*thisPtr);
 
 		return 0;
 	}
@@ -81,8 +81,6 @@ cConnectionManager::cConnectionManager() :
 //------------------------------------------------------------------------------
 cConnectionManager::~cConnectionManager()
 {
-	if (network)
-		delete network;
 }
 
 //------------------------------------------------------------------------------
@@ -95,7 +93,7 @@ int cConnectionManager::openServer(int port)
 	if (serverOpen) return -1;
 
 	if (!network)
-		network = new cNetwork(*this, mutex);
+		network = std::make_unique<cNetwork>(*this, mutex);
 
 	int result = network->openServer(port);
 	if (result == 0)
@@ -190,7 +188,7 @@ void cConnectionManager::connectToServer(const std::string& host, int port, cons
 	cLockGuard<cMutex> tl(mutex);
 
 	if (!network)
-		network = new cNetwork(*this, mutex);
+		network = std::make_unique<cNetwork>(*this, mutex);
 
 	Log.write("ConnectionManager: Connecting to " + host + ":" + toString(port), cLog::eLOG_TYPE_NET_DEBUG);
 
@@ -604,33 +602,31 @@ void cConnectionManager::connectionResult(const cSocket* socket)
 void cConnectionManager::startTimeout(const cSocket* socket)
 {
 #if DISABLE_TIMEOUTS == 0
-	timeouts.push_back(new cHandshakeTimeout(socket, this));
+	timeouts.push_back(std::make_unique<cHandshakeTimeout>(socket, this));
 #endif
 }
 
 //------------------------------------------------------------------------------
 void cConnectionManager::stopTimeout(const cSocket* socket)
 {
-	auto t = std::find_if(timeouts.begin(), timeouts.end(), [&](cHandshakeTimeout* timer) { return timer->getSocket() == socket; });
+	auto t = std::find_if(timeouts.begin(), timeouts.end(), [&](const auto& timer) { return timer->getSocket() == socket; });
 	if (t != timeouts.end())
 	{
-		delete *t;
 		timeouts.erase(t);
 	}
 }
 
 //------------------------------------------------------------------------------
-void cConnectionManager::handshakeTimeoutCallback(cHandshakeTimeout* timer)
+void cConnectionManager::handshakeTimeoutCallback(cHandshakeTimeout& timer)
 {
 	cLockGuard<cMutex> tl(mutex);
 
 	Log.write("ConnectionManager: Handshake timed out", cLog::eLOG_TYPE_NET_WARNING);
 
-	auto t = std::find(timeouts.begin(), timeouts.end(), timer);
-	if (t != timeouts.end())
+	auto it = std::find_if(timeouts.begin(), timeouts.end(), [&](const auto& timeout){ return timeout.get() == &timer;});
+	if (it != timeouts.end())
 	{
-		timeouts.erase(t);
-		network->close(timer->getSocket());
-		delete timer;
+		network->close(timer.getSocket());
+		timeouts.erase(it);
 	}
 }

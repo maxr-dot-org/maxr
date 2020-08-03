@@ -77,14 +77,14 @@ public:
 	void connectionResult(const cSocket* socket);
 
 	//callback from timeout timer
-	void handshakeTimeoutCallback(cHandshakeTimeout* timer);
+	void handshakeTimeoutCallback(cHandshakeTimeout& timer);
 private:
 	void startTimeout(const cSocket* socket);
 	void stopTimeout(const cSocket* socket);
 	int sendMessage(const cSocket* socket, const cNetMessage2& message);
 	bool handeConnectionHandshake(const std::unique_ptr<cNetMessage2> &message, const cSocket* socket, int playerOnSocket);
 
-	cNetwork* network;
+	std::unique_ptr<cNetwork> network;
 	INetMessageReceiver* localClient;
 	INetMessageReceiver* localServer;
 	mutable cMutex mutex;
@@ -93,7 +93,7 @@ private:
 	std::vector<std::pair<const cSocket*, int>> clientSockets;
 	const cSocket* serverSocket;
 
-	std::vector<cHandshakeTimeout*> timeouts;
+	std::vector<std::unique_ptr<cHandshakeTimeout>> timeouts;
 
 	bool serverOpen;
 
