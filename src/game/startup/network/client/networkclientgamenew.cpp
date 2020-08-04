@@ -25,9 +25,6 @@
 #include "game/data/units/landingunit.h"
 #include "game/logic/action/actioninitnewgame.h"
 
-// TODO: remove
-void applyUnitUpgrades (cPlayer& player, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades);
-
 //------------------------------------------------------------------------------
 cNetworkClientGameNew::cNetworkClientGameNew() :
 	localPlayerClan (-1)

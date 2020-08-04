@@ -28,9 +28,6 @@
 #include "game/data/units/landingunit.h"
 #include "game/logic/action/actioninitnewgame.h"
 
-// TODO: remove
-void applyUnitUpgrades (cPlayer& player, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades);
-
 //------------------------------------------------------------------------------
 cLocalHotSeatGameNew::cLocalHotSeatGameNew()
 {}
@@ -42,7 +39,6 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 	auto connectionManager = std::make_shared<cConnectionManager>();
 
 	server = std::make_unique<cServer2>(connectionManager);
-
 
 	server->setMap (staticMap);
 	server->setUnitsData (unitsData);
@@ -59,17 +55,6 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 		clients[i]->setGameSettings (*gameSettings);
 
 		players.push_back (playersData[i].basicData);
-
-		//auto serverPlayer = std::make_unique<cPlayer>(playersData[i].basicData, unitsData);
-		//auto& playerRef = *serverPlayer;
-
-		//serverPlayer->setLocal();
-		//server->addPlayer (std::move (serverPlayer));
-
-		if (i == 0)
-		{
-			//server->setActiveTurnPlayer (playerRef);
-		}
 	}
 	server->setPlayers(players);
 	for (size_t i = 0; i != clients.size(); ++i)

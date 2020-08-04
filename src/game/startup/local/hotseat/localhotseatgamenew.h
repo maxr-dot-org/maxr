@@ -57,17 +57,11 @@ public:
 	void start (cApplication& application);
 
 	void setGameSettings (std::shared_ptr<cGameSettings> gameSettings);
-
 	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
-
 	void setPlayers (const std::vector<cPlayerBasicData>& players);
-
 	void setPlayerClan (size_t playerIndex, int clan);
-
 	void setLandingUnits (size_t playerIndex, std::vector<sLandingUnit> landingUnits);
-
 	void setUnitUpgrades (size_t playerIndex, std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades);
-
 	void setLandingPosition (size_t playerIndex, const cPosition& landingPosition);
 
 	const std::shared_ptr<cStaticMap>& getStaticMap();
