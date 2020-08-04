@@ -1175,33 +1175,29 @@ void cGameGuiController::connectClient (cClient& client)
 
 	clientSignalConnectionManager.connect(model.playerFinishedTurn, [&](const cPlayer& player)
 	{
-		if (player.getId() == getActivePlayer()->getId())
+		if (player.getId() != getActivePlayer()->getId())
 		{
-			gameGui->getHud().lockEndButton();
+			return;
 		}
-	});
-/*	TODO: HotSeat
-	clientSignalConnectionManager.connect (client.playerFinishedTurn, [&] (int currentPlayerNumber, int nextPlayerNumber)
-	{
-		if (currentPlayerNumber != client.getActivePlayer().getId()) return;
-
+		gameGui->getHud().lockEndButton();
 		if (client.getModel().getGameSettings()->getGameType() == eGameSettingsGameType::HotSeat)
 		{
-			gameGui->getHud().unlockEndButton();
+			playerGameGuiStates[player.getId()] = gameGui->getCurrentState();
 
-			auto iter = std::find_if (clients.begin(), clients.end(), [ = ] (const std::shared_ptr<cClient>& client) { return client->getActivePlayer().getId() == nextPlayerNumber; });
-			if (iter != clients.end())
+			auto it = std::find_if (clients.begin(), clients.end(), [&] (const std::shared_ptr<cClient>& client) { return client->getActivePlayer().getId() == player.getId(); });
+			assert (it != clients.end());
+			++it;
+			//TODO: skip defeated player? (maybe show defeat splashscreen once)
+			if (it == clients.end())
 			{
-				playerGameGuiStates[currentPlayerNumber] = gameGui->getCurrentState();
-
-				setActiveClient (*iter);
-
-				showNextPlayerDialog();
+				it = clients.begin();
 			}
-			else setActiveClient (nullptr);
+			setActiveClient (*it);
+			gameGui->getHud().unlockEndButton();
+			showNextPlayerDialog();
 		}
 	});
-*/
+
 	clientSignalConnectionManager.connect(client.connectionToServerLost, [&]()
 	{
 		gameGui->exit();

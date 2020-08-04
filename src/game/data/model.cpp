@@ -233,7 +233,7 @@ void cModel::setPlayerList(const std::vector<cPlayerBasicData>& splayers)
 		playerList.push_back(player);
 
 	}
-	activeTurnPlayer = playerList[0].get();;
+	activeTurnPlayer = playerList[0].get();
 }
 
 //------------------------------------------------------------------------------
@@ -594,7 +594,7 @@ void cModel::handlePlayerFinishedTurn(cPlayer& player)
 {
 	player.setHasFinishedTurn(true);
 
-	if (gameSettings->getGameType() != eGameSettingsGameType::Turns && gameSettings->isTurnEndDeadlineActive() && !turnEndDeadline)
+	if (gameSettings->getGameType() == eGameSettingsGameType::Simultaneous && gameSettings->isTurnEndDeadlineActive() && !turnEndDeadline)
 	{
 		turnEndDeadline = turnTimeClock->startNewDeadlineFromNow(gameSettings->getTurnEndDeadline());
 	}
@@ -727,14 +727,7 @@ void cModel::handleTurnEnd()
 	case TURN_ACTIVE:
 		{
 			bool turnFinished = true;
-			if (gameSettings->getGameType() == eGameSettingsGameType::Turns)
-			{
-				if (!activeTurnPlayer->getHasFinishedTurn())
-				{
-					turnFinished = false;
-				}
-			}
-			else
+			if (gameSettings->getGameType() == eGameSettingsGameType::Simultaneous)
 			{
 				for (const auto& player : playerList)
 				{
@@ -744,11 +737,18 @@ void cModel::handleTurnEnd()
 					}
 				}
 			}
+			else
+			{
+				if (!activeTurnPlayer->getHasFinishedTurn())
+				{
+					turnFinished = false;
+				}
+			}
 			if (turnFinished || turnTimeClock->hasReachedAnyDeadline())
 			{
 				turnEnded();
 
-				const auto player = gameSettings->getGameType() == eGameSettingsGameType::Turns ? activeTurnPlayer : nullptr;
+				const auto player = gameSettings->getGameType() == eGameSettingsGameType::Simultaneous ? nullptr : activeTurnPlayer;
 				const auto resumedMJobOwners = resumeMoveJobs(player);
 				for (const auto& player : resumedMJobOwners)
 				{
@@ -777,41 +777,7 @@ void cModel::handleTurnEnd()
 		break;
 	case EXECUTE_TURN_START:
 		{
-			if (gameSettings->getGameType() == eGameSettingsGameType::Turns)
-			{
-				// select next player
-				//TODO: skip defeated player?
-				auto nextPlayerIter = std::find_if(playerList.begin(), playerList.end(), [this](const std::shared_ptr<cPlayer>& player) {return player.get() == activeTurnPlayer; });
-				assert(nextPlayerIter != playerList.end());
-				++nextPlayerIter;
-				if (nextPlayerIter == playerList.end())
-				{
-					activeTurnPlayer = playerList.front().get();
-				}
-				else
-				{
-					activeTurnPlayer = nextPlayerIter->get();
-				}
-
-				if (activeTurnPlayer == playerList.front().get())
-				{
-					turnCounter->increaseTurn();
-				}
-
-				if (turnCounter->getTurn() > 1)
-				{
-					// don't execute turn start action in turn 1, because model is already completely initialized for turn 1
-					activeTurnPlayer->makeTurnStart(*this);
-				}
-
-				if (activeTurnPlayer == playerList.front().get())
-				{
-					// check game end conditions, after turn start, so generated points from this turn are also counted
-					// and only check when first player starts the turn. So all players have played the same amount of turns.
-					checkDefeats();
-				}
-			}
-			else
+			if (gameSettings->getGameType() == eGameSettingsGameType::Simultaneous)
 			{
 				turnCounter->increaseTurn();
 
@@ -822,7 +788,38 @@ void cModel::handleTurnEnd()
 
 				// check game end conditions, after turn start, so generated points from this turn are also counted
 				checkDefeats();
+			}
+			else
+			{
+				// select next player
+				auto nextPlayerIter = std::find_if(playerList.begin(), playerList.end(), [this](const std::shared_ptr<cPlayer>& player) {return player.get() == activeTurnPlayer; });
+				assert(nextPlayerIter != playerList.end());
+				++nextPlayerIter;
+				//TODO: skip defeated player?
+				bool hasChangedTurn = false;
+				if (nextPlayerIter == playerList.end())
+				{
+					activeTurnPlayer = playerList.front().get();
+					turnCounter->increaseTurn();
+					hasChangedTurn = true;
+				}
+				else
+				{
+					activeTurnPlayer = nextPlayerIter->get();
+				}
 
+				if (turnCounter->getTurn() > 1)
+				{
+					// don't execute turn start action in turn 1, because model is already completely initialized for turn 1
+					activeTurnPlayer->makeTurnStart(*this);
+				}
+
+				if (hasChangedTurn)
+				{
+					// check game end conditions, after turn start, so generated points from this turn are also counted
+					// and only check when first player starts the turn. So all players have played the same amount of turns.
+					checkDefeats();
+				}
 			}
 
 			turnTimeClock->restartFromNow();
