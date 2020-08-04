@@ -247,66 +247,6 @@ eGameSettingsVictoryCondition gameSettingsVictoryConditionFromString (const std:
 }
 
 //------------------------------------------------------------------------------
-cGameSettings::cGameSettings() :
-	metalAmount (eGameSettingsResourceAmount::Normal),
-	oilAmount (eGameSettingsResourceAmount::Normal),
-	goldAmount (eGameSettingsResourceAmount::Normal),
-	resourceDensity (eGameSettingsResourceDensity::Normal),
-	bridgeheadType (eGameSettingsBridgeheadType::Definite),
-	gameType (eGameSettingsGameType::Simultaneous),
-	clansEnabled (true),
-	startCredits (defaultCreditsNormal),
-	victoryConditionType (eGameSettingsVictoryCondition::Death),
-	victoryTurns (defaultVictoryTurnsOption2),
-	victoryPoints (defaultVictoryPointsOption2),
-	turnEndDeadline (defaultEndTurnDeadlineOption5),
-	turnEndDeadlineActive (true),
-	turnLimit (defaultTurnLimitOption5),
-	turnLimitActive (false)
-{}
-
-//------------------------------------------------------------------------------
-cGameSettings::cGameSettings (const cGameSettings& other) :
-	metalAmount (other.metalAmount),
-	oilAmount (other.oilAmount),
-	goldAmount (other.goldAmount),
-	resourceDensity (other.resourceDensity),
-	bridgeheadType (other.bridgeheadType),
-	gameType (other.gameType),
-	clansEnabled (other.clansEnabled),
-	startCredits (other.startCredits),
-	victoryConditionType (other.victoryConditionType),
-	victoryTurns (other.victoryTurns),
-	victoryPoints (other.victoryPoints),
-	turnEndDeadline (other.turnEndDeadline),
-	turnEndDeadlineActive (other.turnEndDeadlineActive),
-	turnLimit (other.turnLimit),
-	turnLimitActive (other.turnLimitActive)
-{}
-
-//------------------------------------------------------------------------------
-cGameSettings& cGameSettings::operator= (const cGameSettings& other)
-{
-	metalAmount = other.metalAmount;
-	oilAmount = other.oilAmount;
-	goldAmount = other.goldAmount;
-	resourceDensity = other.resourceDensity;
-	bridgeheadType = other.bridgeheadType;
-	gameType = other.gameType;
-	clansEnabled = other.clansEnabled;
-	startCredits = other.startCredits;
-	victoryConditionType = other.victoryConditionType;
-	victoryTurns = other.victoryTurns;
-	victoryPoints = other.victoryPoints;
-	turnEndDeadline = other.turnEndDeadline;
-	turnEndDeadlineActive = other.turnEndDeadlineActive;
-	turnLimit = other.turnLimit;
-	turnLimitActive = other.turnLimitActive;
-
-	return *this;
-}
-
-//------------------------------------------------------------------------------
 eGameSettingsResourceAmount cGameSettings::getMetalAmount() const
 {
 	return metalAmount;

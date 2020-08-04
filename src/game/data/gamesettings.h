@@ -109,10 +109,10 @@ public:
 	static const std::chrono::seconds defaultEndTurnDeadlineOption4;
 	static const std::chrono::seconds defaultEndTurnDeadlineOption5;
 
-	cGameSettings();
-	cGameSettings (const cGameSettings& other);
+	cGameSettings() = default;
+	cGameSettings (const cGameSettings&) = default;
 
-	cGameSettings& operator= (const cGameSettings& other);
+	cGameSettings& operator= (const cGameSettings&) = default;
 
 	eGameSettingsResourceAmount getMetalAmount() const;
 	void setMetalAmount (eGameSettingsResourceAmount value);
@@ -206,29 +206,29 @@ public:
 	}
 
 private:
-	eGameSettingsResourceAmount metalAmount;
-	eGameSettingsResourceAmount oilAmount;
-	eGameSettingsResourceAmount goldAmount;
+	eGameSettingsResourceAmount metalAmount = eGameSettingsResourceAmount::Normal;
+	eGameSettingsResourceAmount oilAmount = eGameSettingsResourceAmount::Normal;;
+	eGameSettingsResourceAmount goldAmount = eGameSettingsResourceAmount::Normal;;
 
-	eGameSettingsResourceDensity resourceDensity;
+	eGameSettingsResourceDensity resourceDensity = eGameSettingsResourceDensity::Normal;
 
-	eGameSettingsBridgeheadType bridgeheadType;
+	eGameSettingsBridgeheadType bridgeheadType = eGameSettingsBridgeheadType::Definite;
 
-	eGameSettingsGameType gameType;
+	eGameSettingsGameType gameType = eGameSettingsGameType::Simultaneous;
 
-	bool clansEnabled;
+	bool clansEnabled = true;
 
-	unsigned int startCredits;
+	unsigned int startCredits = defaultCreditsNormal;
 
-	eGameSettingsVictoryCondition victoryConditionType;
-	unsigned int victoryTurns;
-	unsigned int victoryPoints;
+	eGameSettingsVictoryCondition victoryConditionType = eGameSettingsVictoryCondition::Death;
+	unsigned int victoryTurns = defaultVictoryTurnsOption2;
+	unsigned int victoryPoints = defaultVictoryPointsOption2;
 
-	std::chrono::seconds turnEndDeadline;
-	bool turnEndDeadlineActive;
+	std::chrono::seconds turnEndDeadline = defaultEndTurnDeadlineOption5;
+	bool turnEndDeadlineActive = true;
 
-	std::chrono::seconds turnLimit;
-	bool turnLimitActive;
+	std::chrono::seconds turnLimit = defaultTurnLimitOption5;
+	bool turnLimitActive = true;
 };
 
 #endif // ui_graphical_menu_windows_windowgamesettings_gamesettingsH
