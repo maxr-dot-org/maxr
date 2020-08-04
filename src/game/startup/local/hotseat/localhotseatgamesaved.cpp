@@ -29,79 +29,42 @@
 //------------------------------------------------------------------------------
 void cLocalHotSeatGameSaved::start (cApplication& application)
 {
-	//TODO: new server
-	//server = std::make_unique<cServer> (nullptr);
+	auto connectionManager = std::make_shared<cConnectionManager>();
 
-	//cSavegame savegame (saveGameNumber);
-	//if (savegame.load (*server) == false) return;
+	server = std::make_unique<cServer2>(connectionManager);
+	connectionManager->setLocalServer(server.get());
+	server->loadGameState(saveGameNumber);
 
-	//auto staticMap = server->Map->staticMap;
-
-	//const auto& serverPlayerList = server->playerList;
-	//if (serverPlayerList.empty()) return;
-
-	// Following may be simplified according to serverGame::loadGame
-	std::vector<cPlayerBasicData> clientPlayerList;
-
-	// copy players for client
-	//for (size_t i = 0; i != serverPlayerList.size(); ++i)
+	const auto& staticMap = server->getModel().getMap()->staticMap;
+	const std::size_t nbPlayers = server->getModel().getPlayerList().size();
+	clients.resize(nbPlayers);
+	for (std::size_t i = 0; i != nbPlayers; ++i)
 	{
-		//const auto& p = *serverPlayerList[i];
-		//clientPlayerList.push_back (cPlayerBasicData (p.getName(), p.getColor(), p.getId(), p.getSocketNum()));
-
-		//serverPlayerList[i]->setLocal();
+		clients[i] = std::make_shared<cClient> (connectionManager);
+		clients[i]->setMap(staticMap);
+		clients[i]->loadModel(saveGameNumber, i);//TODO: resync model from server
 	}
 
-	clients.resize (clientPlayerList.size());
-	for (size_t i = 0; i < clientPlayerList.size(); ++i)
+	std::vector<INetMessageReceiver*> hotseatClients;
+	for (auto& client : clients)
 	{
-		//clients[i] = std::make_shared<cClient> (server.get(), nullptr); //TODO
-//		clients[i]->setMap (staticMap);
-//		clients[i]->setGameSettings (*server->getGameSettings());
-		clients[i]->setPlayers (clientPlayerList, i);
+		hotseatClients.push_back(client.get());
 	}
+	connectionManager->setLocalClients(std::move(hotseatClients));
 
+	server->sendGuiInfoToClients(saveGameNumber);
 	server->start();
 
-	for (size_t i = 0; i < clients.size(); ++i)
-	{
-		//sendRequestResync (*clients[i], clients[i]->getActivePlayer().getId(), true);
-	}
-
-	// TODO: move that in server
-//	for (size_t i = 0; i != serverPlayerList.size(); ++i)
-	{
-//		sendGameSettings (*server, *serverPlayerList[i]);
-//		sendGameGuiState (*server, server->getPlayerGameGuiState (*serverPlayerList[i]), *serverPlayerList[i]);
-		/*auto& reportList = serverPlayerList[i]->savedReportsList;
-		for (size_t j = 0; j != reportList.size(); ++j)
-		{
-			sendSavedReport (*server, *reportList[j], serverPlayerList[i].get());
-		}
-		reportList.clear();
-		*/
-	}
-
-	// start game
-	//server->serverState = SERVER_STATE_INGAME;
-
-	// TODO: save/load game time
-	//server->startTurnTimers();
-
-	//gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
-
-	//auto activePlayer = server->getActiveTurnPlayer();
-	//if (activePlayer == nullptr) activePlayer = server->playerList[0].get();
-
-	//gameGuiController->setClients (clients, activePlayer->getId());
-
+	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
+	gameGuiController->setClients(clients, server->getModel().getActiveTurnPlayer()->getId());
+	gameGuiController->setServer(server.get());
 	gameGuiController->start();
 
-	//terminate = false;
+	resetTerminating();
 
 	application.addRunnable (shared_from_this());
 
-	//signalConnectionManager.connect (gameGuiController->terminated, [&]() { terminate = true; });
+	signalConnectionManager.connect (gameGuiController->terminated, [&]() { exit(); });
 }
 
 void cLocalHotSeatGameSaved::setSaveGameNumber (int saveGameNumber_)
