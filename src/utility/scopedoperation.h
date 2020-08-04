@@ -47,8 +47,9 @@ public:
 	cScopedOperation<FunctionType>& operator= (cScopedOperation<FunctionType> && other)
 	{
 		function = std::move (other.function);
-		dismissed = false;
+		dismissed = other.dismissed;
 		other.dismissed = true;
+		return *this;
 	}
 
 	~cScopedOperation()
