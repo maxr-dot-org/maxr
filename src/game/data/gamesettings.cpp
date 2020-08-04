@@ -77,16 +77,6 @@ std::string gameSettingsResourceAmountToString (eGameSettingsResourceAmount amou
 }
 
 //------------------------------------------------------------------------------
-eGameSettingsResourceAmount gameSettingsResourceAmountFromString (const std::string& string)
-{
-	if (iequals (string, "limited")) return eGameSettingsResourceAmount::Limited;
-	else if (iequals (string, "normal")) return eGameSettingsResourceAmount::Normal;
-	else if (iequals (string, "high")) return eGameSettingsResourceAmount::High;
-	else if (iequals (string, "toomuch")) return eGameSettingsResourceAmount::TooMuch;
-	else throw std::runtime_error ("Invalid resource amount string '" + string + "'");
-}
-
-//------------------------------------------------------------------------------
 std::string gameSettingsResourceDensityToString (eGameSettingsResourceDensity density, bool translated)
 {
 	if (translated)
@@ -122,16 +112,6 @@ std::string gameSettingsResourceDensityToString (eGameSettingsResourceDensity de
 }
 
 //------------------------------------------------------------------------------
-eGameSettingsResourceDensity gameSettingsResourceDensityFromString (const std::string& string)
-{
-	if (iequals (string, "sparse")) return eGameSettingsResourceDensity::Sparse;
-	else if (iequals (string, "normal")) return eGameSettingsResourceDensity::Normal;
-	else if (iequals (string, "dense")) return eGameSettingsResourceDensity::Dense;
-	else if (iequals (string, "toomuch")) return eGameSettingsResourceDensity::TooMuch;
-	else throw std::runtime_error ("Invalid resource density string '" + string + "'");
-}
-
-//------------------------------------------------------------------------------
 std::string gameSettingsBridgeheadTypeToString (eGameSettingsBridgeheadType type, bool translated)
 {
 	if (translated)
@@ -156,14 +136,6 @@ std::string gameSettingsBridgeheadTypeToString (eGameSettingsBridgeheadType type
 	}
 	assert (false);
 	return "";
-}
-
-//------------------------------------------------------------------------------
-eGameSettingsBridgeheadType gameSettingsBridgeheadTypeFromString (const std::string& string)
-{
-	if (iequals (string, "definite")) return eGameSettingsBridgeheadType::Definite;
-	else if (iequals (string, "mobile")) return eGameSettingsBridgeheadType::Mobile;
-	else throw std::runtime_error ("Invalid bridgehead type string '" + string + "'");
 }
 
 //------------------------------------------------------------------------------
@@ -198,15 +170,6 @@ std::string gameSettingsGameTypeToString (eGameSettingsGameType type, bool trans
 }
 
 //------------------------------------------------------------------------------
-eGameSettingsGameType gameSettingsGameTypeString (const std::string& string)
-{
-	if (iequals (string, "simultaneous")) return eGameSettingsGameType::Simultaneous;
-	else if (iequals (string, "turns")) return eGameSettingsGameType::Turns;
-	else if (iequals (string, "hotseat")) return eGameSettingsGameType::HotSeat;
-	else throw std::runtime_error ("Invalid game type string '" + string + "'");
-}
-
-//------------------------------------------------------------------------------
 std::string gameSettingsVictoryConditionToString (eGameSettingsVictoryCondition condition, bool translated)
 {
 	if (translated)
@@ -235,15 +198,6 @@ std::string gameSettingsVictoryConditionToString (eGameSettingsVictoryCondition 
 	}
 	assert (false);
 	return "";
-}
-
-//------------------------------------------------------------------------------
-eGameSettingsVictoryCondition gameSettingsVictoryConditionFromString (const std::string& string)
-{
-	if (iequals (string, "turns")) return eGameSettingsVictoryCondition::Turns;
-	else if (iequals (string, "points")) return eGameSettingsVictoryCondition::Points;
-	else if (iequals (string, "death")) return eGameSettingsVictoryCondition::Death;
-	else throw std::runtime_error ("Invalid victory condition string '" + string + "'");
 }
 
 //------------------------------------------------------------------------------
