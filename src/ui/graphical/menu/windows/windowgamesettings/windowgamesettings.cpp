@@ -238,11 +238,6 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	turnEndTurnDeadlineLineEdit->setValidator (std::make_unique<cValidatorInt> (0, std::numeric_limits<int>::max()));
 	currentLine += lineHeight;
 
-	if (forHotSeatGame)
-	{
-		disableTurnEndDeadlineOptions();
-	}
-
 	//
 	// Buttons
 	//
@@ -339,16 +334,24 @@ void cWindowGameSettings::applySettings (const cGameSettings& gameSettings)
 			break;
 	}
 
-	switch (gameSettings.getGameType())
-	{
-		case eGameSettingsGameType::Turns:
-			gameTypeTurnsCheckBox->setChecked (true);
-			break;
-		default:
-		case eGameSettingsGameType::Simultaneous:
-			gameTypeSimultaneousCheckBox->setChecked (true);
-			break;
+	if (forHotSeatGame) {
+		gameTypeTurnsCheckBox->setChecked (true);
 	}
+	else
+	{
+		switch (gameSettings.getGameType())
+		{
+			case eGameSettingsGameType::Turns:
+				gameTypeTurnsCheckBox->setChecked (true);
+				break;
+			default:
+			case eGameSettingsGameType::Simultaneous:
+				gameTypeSimultaneousCheckBox->setChecked (true);
+				break;
+		}
+	}
+	if (gameTypeTurnsCheckBox->isChecked()) disableTurnEndDeadlineOptions();
+	else enableTurnEndDeadlineOptions();
 
 	if (gameSettings.getClansEnabled()) clansOnCheckBox->setChecked (true);
 	else clansOffCheckBox->setChecked (true);

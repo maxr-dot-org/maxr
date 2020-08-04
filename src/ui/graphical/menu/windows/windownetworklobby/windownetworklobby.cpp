@@ -180,7 +180,10 @@ void cWindowNetworkLobby::updateSettingsText()
 			text += lngPack.i18n ("Text~Title~Clans") + lngPack.i18n ("Text~Punctuation~Colon") + (gameSettings->getClansEnabled() ? lngPack.i18n ("Text~Option~On") : lngPack.i18n ("Text~Option~Off")) + "\n";
 			text += lngPack.i18n ("Text~Title~Game_Type") + lngPack.i18n ("Text~Punctuation~Colon") + toTranslatedString (gameSettings->getGameType()) + "\n";
 			text += lngPack.i18n ("Text~Title~Turn_limit") + lngPack.i18n ("Text~Punctuation~Colon") + (gameSettings->isTurnLimitActive() ? iToStr (gameSettings->getTurnLimit().count()) + "s" : lngPack.i18n ("Text~Settings~Unlimited_11")) + "\n";
-			text += lngPack.i18n ("Text~Title~Turn_end") + lngPack.i18n ("Text~Punctuation~Colon") + (gameSettings->isTurnEndDeadlineActive() ? iToStr (gameSettings->getTurnEndDeadline().count()) + "s" : lngPack.i18n ("Text~Settings~Unlimited_11")) + "\n";
+			if (gameSettings->getGameType() == eGameSettingsGameType::Simultaneous)
+			{
+				text += lngPack.i18n ("Text~Title~Turn_end") + lngPack.i18n ("Text~Punctuation~Colon") + (gameSettings->isTurnEndDeadlineActive() ? iToStr (gameSettings->getTurnEndDeadline().count()) + "s" : lngPack.i18n ("Text~Settings~Unlimited_11")) + "\n";
+			}
 		}
 		else text += lngPack.i18n ("Text~Multiplayer~Option_NoSet") + "\n";
 	}
