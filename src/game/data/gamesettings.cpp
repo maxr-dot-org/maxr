@@ -42,159 +42,82 @@ const std::chrono::seconds cGameSettings::defaultEndTurnDeadlineOption4 (75);
 const std::chrono::seconds cGameSettings::defaultEndTurnDeadlineOption5 (90);
 
 //------------------------------------------------------------------------------
-std::string gameSettingsResourceAmountToString (eGameSettingsResourceAmount amount, bool translated)
+std::string toTranslatedString (eGameSettingsResourceAmount amount)
 {
-	if (translated)
+	switch (amount)
 	{
-		switch (amount)
-		{
-			case eGameSettingsResourceAmount::Limited:
-				return lngPack.i18n ("Text~Option~Limited");
-			case eGameSettingsResourceAmount::Normal:
-				return lngPack.i18n ("Text~Option~Normal");
-			case eGameSettingsResourceAmount::High:
-				return lngPack.i18n ("Text~Option~High");
-			case eGameSettingsResourceAmount::TooMuch:
-				return lngPack.i18n ("Text~Option~TooMuch");
-		}
-	}
-	else
-	{
-		switch (amount)
-		{
-			case eGameSettingsResourceAmount::Limited:
-				return "limited";
-			case eGameSettingsResourceAmount::Normal:
-				return "normal";
-			case eGameSettingsResourceAmount::High:
-				return "high";
-			case eGameSettingsResourceAmount::TooMuch:
-				return "toomuch";
-		}
+		case eGameSettingsResourceAmount::Limited:
+			return lngPack.i18n ("Text~Option~Limited");
+		case eGameSettingsResourceAmount::Normal:
+			return lngPack.i18n ("Text~Option~Normal");
+		case eGameSettingsResourceAmount::High:
+			return lngPack.i18n ("Text~Option~High");
+		case eGameSettingsResourceAmount::TooMuch:
+			return lngPack.i18n ("Text~Option~TooMuch");
 	}
 	assert (false);
 	return "";
 }
 
 //------------------------------------------------------------------------------
-std::string gameSettingsResourceDensityToString (eGameSettingsResourceDensity density, bool translated)
+std::string toTranslatedString (eGameSettingsResourceDensity density)
 {
-	if (translated)
+	switch (density)
 	{
-		switch (density)
-		{
-			case eGameSettingsResourceDensity::Sparse:
-				return lngPack.i18n ("Text~Option~Sparse");
-			case eGameSettingsResourceDensity::Normal:
-				return lngPack.i18n ("Text~Option~Normal");
-			case eGameSettingsResourceDensity::Dense:
-				return lngPack.i18n ("Text~Option~Dense");
-			case eGameSettingsResourceDensity::TooMuch:
-				return lngPack.i18n ("Text~Option~TooMuch");
-		}
-	}
-	else
-	{
-		switch (density)
-		{
-			case eGameSettingsResourceDensity::Sparse:
-				return "sparse";
-			case eGameSettingsResourceDensity::Normal:
-				return "normal";
-			case eGameSettingsResourceDensity::Dense:
-				return "dense";
-			case eGameSettingsResourceDensity::TooMuch:
-				return "toomuch";
-		}
+		case eGameSettingsResourceDensity::Sparse:
+			return lngPack.i18n ("Text~Option~Sparse");
+		case eGameSettingsResourceDensity::Normal:
+			return lngPack.i18n ("Text~Option~Normal");
+		case eGameSettingsResourceDensity::Dense:
+			return lngPack.i18n ("Text~Option~Dense");
+		case eGameSettingsResourceDensity::TooMuch:
+			return lngPack.i18n ("Text~Option~TooMuch");
 	}
 	assert (false);
 	return "";
 }
 
 //------------------------------------------------------------------------------
-std::string gameSettingsBridgeheadTypeToString (eGameSettingsBridgeheadType type, bool translated)
+std::string toTranslatedString (eGameSettingsBridgeheadType type)
 {
-	if (translated)
+	switch (type)
 	{
-		switch (type)
-		{
-			case eGameSettingsBridgeheadType::Definite:
-				return lngPack.i18n ("Text~Option~Definite");
-			case eGameSettingsBridgeheadType::Mobile:
-				return lngPack.i18n ("Text~Option~Mobile");
-		}
-	}
-	else
-	{
-		switch (type)
-		{
-			case eGameSettingsBridgeheadType::Definite:
-				return "definite";
-			case eGameSettingsBridgeheadType::Mobile:
-				return "mobile";
-		}
+		case eGameSettingsBridgeheadType::Definite:
+			return lngPack.i18n ("Text~Option~Definite");
+		case eGameSettingsBridgeheadType::Mobile:
+			return lngPack.i18n ("Text~Option~Mobile");
 	}
 	assert (false);
 	return "";
 }
 
 //------------------------------------------------------------------------------
-std::string gameSettingsGameTypeToString (eGameSettingsGameType type, bool translated)
+std::string toTranslatedString (eGameSettingsGameType type)
 {
-	if (translated)
+	switch (type)
 	{
-		switch (type)
-		{
-			case eGameSettingsGameType::Simultaneous:
-				return lngPack.i18n ("Text~Option~Type_Simu");
-			case eGameSettingsGameType::Turns:
-				return lngPack.i18n ("Text~Option~Type_Turns");
-			case eGameSettingsGameType::HotSeat:
-				return "Hot Seat"; // TODO: translation?!
-		}
-	}
-	else
-	{
-		switch (type)
-		{
-			case eGameSettingsGameType::Simultaneous:
-				return "simultaneous";
-			case eGameSettingsGameType::Turns:
-				return "turns";
-			case eGameSettingsGameType::HotSeat:
-				return "hotseat";
-		}
+		case eGameSettingsGameType::Simultaneous:
+			return lngPack.i18n ("Text~Option~Type_Simu");
+		case eGameSettingsGameType::Turns:
+			return lngPack.i18n ("Text~Option~Type_Turns");
+		case eGameSettingsGameType::HotSeat:
+			return "Hot Seat"; // TODO: translation?!
 	}
 	assert (false);
 	return "";
 }
 
 //------------------------------------------------------------------------------
-std::string gameSettingsVictoryConditionToString (eGameSettingsVictoryCondition condition, bool translated)
+std::string toTranslatedString (eGameSettingsVictoryCondition condition)
 {
-	if (translated)
+	switch (condition)
 	{
-		switch (condition)
-		{
-			case eGameSettingsVictoryCondition::Turns:
-				return lngPack.i18n ("Text~Comp~Turns");
-			case eGameSettingsVictoryCondition::Points:
-				return lngPack.i18n ("Text~Comp~Points");
-			case eGameSettingsVictoryCondition::Death:
-				return lngPack.i18n ("Text~Comp~NoLimit");
-		}
-	}
-	else
-	{
-		switch (condition)
-		{
-			case eGameSettingsVictoryCondition::Turns:
-				return "turns";
-			case eGameSettingsVictoryCondition::Points:
-				return "points";
-			case eGameSettingsVictoryCondition::Death:
-				return "death";
-		}
+		case eGameSettingsVictoryCondition::Turns:
+			return lngPack.i18n ("Text~Comp~Turns");
+		case eGameSettingsVictoryCondition::Points:
+			return lngPack.i18n ("Text~Comp~Points");
+		case eGameSettingsVictoryCondition::Death:
+			return lngPack.i18n ("Text~Comp~NoLimit");
 	}
 	assert (false);
 	return "";

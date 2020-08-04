@@ -62,11 +62,11 @@ enum class eGameSettingsVictoryCondition
 	Death
 };
 
-std::string gameSettingsResourceAmountToString (eGameSettingsResourceAmount amount, bool translated = false);
-std::string gameSettingsResourceDensityToString (eGameSettingsResourceDensity density, bool translated = false);
-std::string gameSettingsBridgeheadTypeToString (eGameSettingsBridgeheadType type, bool translated = false);
-std::string gameSettingsGameTypeToString (eGameSettingsGameType type, bool translated = false);
-std::string gameSettingsVictoryConditionToString (eGameSettingsVictoryCondition condition, bool translated = false);
+std::string toTranslatedString (eGameSettingsResourceAmount amount);
+std::string toTranslatedString (eGameSettingsResourceDensity density);
+std::string toTranslatedString (eGameSettingsBridgeheadType type);
+std::string toTranslatedString (eGameSettingsGameType type);
+std::string toTranslatedString (eGameSettingsVictoryCondition condition);
 
 class cGameSettings
 {
