@@ -61,10 +61,11 @@ public:
 
 	void setLocalClient(INetMessageReceiver* client, int playerNr);
 	void setLocalServer(INetMessageReceiver* server);
+	void setLocalClients(std::vector<INetMessageReceiver*>&&);
 
 	int sendToServer(const cNetMessage2& message);
-	int sendToPlayer(const cNetMessage2& message, int playerNr);
-	int sendToPlayers(const cNetMessage2& message);
+	void sendToPlayer(const cNetMessage2& message, int playerNr);
+	void sendToPlayers(const cNetMessage2& message);
 
 	void disconnect(int player);
 	void disconnectAll();
@@ -85,6 +86,7 @@ private:
 	bool handeConnectionHandshake(const std::unique_ptr<cNetMessage2> &message, const cSocket* socket, int playerOnSocket);
 
 	std::unique_ptr<cNetwork> network;
+	std::vector<INetMessageReceiver*> localClients; // Hotseat
 	INetMessageReceiver* localClient;
 	INetMessageReceiver* localServer;
 	mutable cMutex mutex;

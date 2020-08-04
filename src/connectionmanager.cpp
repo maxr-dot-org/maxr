@@ -265,6 +265,12 @@ void cConnectionManager::setLocalServer(INetMessageReceiver* server)
 }
 
 //------------------------------------------------------------------------------
+void cConnectionManager::setLocalClients(std::vector<INetMessageReceiver*>&& clients)
+{
+	localClients = std::move(clients);
+}
+
+//------------------------------------------------------------------------------
 int cConnectionManager::sendToServer(const cNetMessage2& message)
 {
 	cLockGuard<cMutex> tl(mutex);
@@ -286,14 +292,18 @@ int cConnectionManager::sendToServer(const cNetMessage2& message)
 }
 
 //------------------------------------------------------------------------------
-int cConnectionManager::sendToPlayer(const cNetMessage2& message, int playerNr)
+void cConnectionManager::sendToPlayer(const cNetMessage2& message, int playerNr)
 {
 	cLockGuard<cMutex> tl(mutex);
 
 	if (playerNr == localPlayer)
 	{
 		localClient->pushMessage(message.clone());
-		return 0;
+		return;
+	}
+	else if (static_cast<std::size_t>(playerNr) < localClients.size())
+	{
+		localClients[playerNr]->pushMessage(message.clone());
 	}
 	else
 	{
@@ -301,15 +311,15 @@ int cConnectionManager::sendToPlayer(const cNetMessage2& message, int playerNr)
 		if (x == clientSockets.end())
 		{
 			Log.write("Connection Manager: Can't send message. No connection to player " + toString(playerNr), cLog::eLOG_TYPE_NET_ERROR);
-			return -1;
+			return;
 		}
 
-		return sendMessage(x->first, message);
+		sendMessage(x->first, message);
 	}
 }
 
 //------------------------------------------------------------------------------
-int cConnectionManager::sendToPlayers(const cNetMessage2& message)
+void cConnectionManager::sendToPlayers(const cNetMessage2& message)
 {
 	cLockGuard<cMutex> tl(mutex);
 
@@ -317,19 +327,20 @@ int cConnectionManager::sendToPlayers(const cNetMessage2& message)
 	{
 		localClient->pushMessage(message.clone());
 	}
+	for (auto& client : localClients)
+	{
+		client->pushMessage(message.clone());
+	}
 
 	// serialize...
 	std::vector<unsigned char> buffer;
 	cBinaryArchiveIn archive(buffer);
 	archive << message;
 
-	int result = 0;
 	for (const auto& client : clientSockets)
 	{
-		result += network->sendMessage(client.first, buffer.size(), buffer.data());
+		network->sendMessage(client.first, buffer.size(), buffer.data());
 	}
-
-	return result;
 }
 
 //------------------------------------------------------------------------------
@@ -569,13 +580,13 @@ bool cConnectionManager::handeConnectionHandshake(const std::unique_ptr<cNetMess
 //------------------------------------------------------------------------------
 bool cConnectionManager::isPlayerConnected(int playerNr) const
 {
-	if (playerNr == localPlayer)
+	if (playerNr == localPlayer || static_cast<std::size_t>(playerNr) < localClients.size())
 	{
 		return true;
 	}
 
-	auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<const cSocket*, int>& x) { return x.second == playerNr; });
-	return x != clientSockets.end();
+	auto it = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<const cSocket*, int>& p) { return p.second == playerNr; });
+	return it != clientSockets.end();
 }
 
 //------------------------------------------------------------------------------

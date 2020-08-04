@@ -78,7 +78,12 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 	}
 
 	connectionManager->setLocalServer(server.get());
-	connectionManager->setLocalClient(clients[0].get(), 0); // TODO: JORIS fix it
+	std::vector<INetMessageReceiver*> hotseatClients;
+	for (auto& client : clients)
+	{
+		hotseatClients.push_back(client.get());
+	}
+	connectionManager->setLocalClients(std::move(hotseatClients));
 
 	server->start();
 
