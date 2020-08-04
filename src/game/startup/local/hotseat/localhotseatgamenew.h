@@ -43,10 +43,9 @@ struct sID;
 
 class cLocalHotSeatGameNew : public cLocalHotSeatGame
 {
-	struct sPlayerData
+	struct sInitPlayerData
 	{
-		cPlayerBasicData basicData;
-		int clan;
+		int clan = -1;
 		std::vector<sLandingUnit> landingUnits;
 		std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades;
 		cPosition landingPosition;
@@ -77,7 +76,8 @@ private:
 	std::shared_ptr<cStaticMap> staticMap;
 	std::shared_ptr<cGameSettings> gameSettings;
 
-	std::vector<sPlayerData> playersData;
+	std::vector<cPlayerBasicData> playersBasicData;
+	std::vector<sInitPlayerData> playersData;
 };
 
 #endif // game_startup_local_hotseat_localhotseatgamenewH

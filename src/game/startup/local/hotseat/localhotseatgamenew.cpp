@@ -46,20 +46,17 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 
 	clients.resize (playersData.size());
 
-	std::vector<cPlayerBasicData> players;
-	for (size_t i = 0; i < playersData.size(); ++i)
+	for (size_t i = 0; i != playersData.size(); ++i)
 	{
 		clients[i] = std::make_shared<cClient> (connectionManager);
 		clients[i]->setMap (staticMap);
 		clients[i]->setUnitsData (unitsData);
 		clients[i]->setGameSettings (*gameSettings);
-
-		players.push_back (playersData[i].basicData);
 	}
-	server->setPlayers(players);
+	server->setPlayers(playersBasicData);
 	for (size_t i = 0; i != clients.size(); ++i)
 	{
-		clients[i]->setPlayers (players, i);
+		clients[i]->setPlayers (playersBasicData, i);
 	}
 
 	connectionManager->setLocalServer(server.get());
@@ -94,8 +91,7 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 		gameGuiController->addPlayerGameGuiState (clientPlayer.getId(), gameGuiState);
 	}
 
-	gameGuiController->setClients (clients, 0 /*activePlayer->getId()*/);
-
+	gameGuiController->setClients (clients, 0);
 	gameGuiController->start();
 
 	application.addRunnable (shared_from_this());
@@ -120,10 +116,7 @@ void cLocalHotSeatGameNew::setPlayers (const std::vector<cPlayerBasicData>& play
 {
 	playersData.clear();
 	playersData.resize (players.size());
-	for (size_t i = 0; i < players.size(); ++i)
-	{
-		playersData[i].basicData = players[i];
-	}
+	playersBasicData = players;
 }
 
 //------------------------------------------------------------------------------
@@ -177,7 +170,7 @@ size_t cLocalHotSeatGameNew::getPlayerCount() const
 //------------------------------------------------------------------------------
 const cPlayerBasicData& cLocalHotSeatGameNew::getPlayer (size_t playerIndex) const
 {
-	return playersData[playerIndex].basicData;
+	return playersBasicData[playerIndex];
 }
 
 //------------------------------------------------------------------------------
