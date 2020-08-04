@@ -51,45 +51,7 @@ cModel::cModel() :
 	turnEndState(TURN_ACTIVE)
 {
 	turnTimeClock = std::make_shared<cTurnTimeClock>(*this);
-
-	gameSettings->turnEndDeadlineChanged.connect([this]()
-	{
-		if (turnEndDeadline)
-		{
-			turnTimeClock->changeDeadline(turnEndDeadline, gameSettings->getTurnEndDeadline());
-		}
-	});
-
-	gameSettings->turnEndDeadlineActiveChanged.connect([this]()
-	{
-		if (!gameSettings->isTurnEndDeadlineActive() && turnEndDeadline)
-		{
-			turnTimeClock->removeDeadline(turnEndDeadline);
-			turnEndDeadline = 0;
-		}
-	});
-
-	gameSettings->turnLimitChanged.connect([this]()
-	{
-		if (turnLimitDeadline)
-		{
-			turnTimeClock->changeDeadline(turnLimitDeadline, gameSettings->getTurnLimit());
-		}
-	});
-
-	gameSettings->turnLimitActiveChanged.connect([this]()
-	{
-		if (!gameSettings->isTurnLimitActive() && turnLimitDeadline)
-		{
-			turnTimeClock->removeDeadline(turnLimitDeadline);
-			turnLimitDeadline = 0;
-		}
-		else if (gameSettings->isTurnLimitActive() && !turnLimitDeadline)
-		{
-			turnLimitDeadline = turnTimeClock->startNewDeadlineFrom(turnTimeClock->getStartGameTime(), gameSettings->getTurnLimit());
-		}
-	});
-};
+}
 
 //------------------------------------------------------------------------------
 cModel::~cModel()

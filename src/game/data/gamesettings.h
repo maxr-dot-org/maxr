@@ -23,7 +23,6 @@
 #include <string>
 #include <chrono>
 
-#include "utility/signal/signal.h"
 #include "utility/serialization/serialization.h"
 
 enum class eGameSettingsResourceAmount
@@ -151,30 +150,6 @@ public:
 	void setTurnLimitActive (bool value);
 
 	uint32_t getChecksum(uint32_t crc) const;
-
-	mutable cSignal<void ()> metalAmountChanged;
-	mutable cSignal<void ()> oilAmountChanged;
-	mutable cSignal<void ()> goldAmountChanged;
-
-	mutable cSignal<void ()> resourceDensityChanged;
-
-	mutable cSignal<void ()> bridgeheadTypeChanged;
-
-	mutable cSignal<void ()> gameTypeChanged;
-
-	mutable cSignal<void ()> clansEnabledChanged;
-
-	mutable cSignal<void ()> startCreditsChanged;
-
-	mutable cSignal<void ()> victoryConditionTypeChanged;
-	mutable cSignal<void ()> victoryTurnsChanged;
-	mutable cSignal<void ()> victoryPointsChanged;
-
-	mutable cSignal<void ()> turnEndDeadlineChanged;
-	mutable cSignal<void ()> turnEndDeadlineActiveChanged;
-
-	mutable cSignal<void ()> turnLimitChanged;
-	mutable cSignal<void ()> turnLimitActiveChanged;
 
 	template<typename T>
 	void serialize(T& archive)

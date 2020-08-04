@@ -71,7 +71,6 @@ public:
 	std::shared_ptr<const cUnitsData> getUnitsData() const { return unitsData; };
 
 	std::shared_ptr<const cGameSettings> getGameSettings() const { return gameSettings; };
-	std::shared_ptr<cGameSettings> getGameSettings() { return gameSettings; };
 	void setGameSettings(const cGameSettings& gameSettings);
 
 	std::shared_ptr<const cMap> getMap() const { return map; };
