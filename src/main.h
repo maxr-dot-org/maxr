@@ -41,7 +41,6 @@
 #include "game/data/units/unitdata.h"
 #include "game/data/player/clans.h"
 
-
 // Predeclarations
 class cPlayer;
 class cLanguage;
@@ -54,17 +53,6 @@ class cClanData;
 // ------------------------
 //
 ///////////////////////////////////////////////////////////////////////////////
-
-enum
-{
-	TERRAIN_NONE = 0,
-	TERRAIN_AIR = 1,
-	TERRAIN_SEA = 2,
-	TERRAIN_GROUND = 4,
-	TERRAIN_COAST = 8,
-	AREA_SUB = 16,
-	AREA_EXP_MINE = 32
-};
 
 enum class ePlayerConnectionState
 {
