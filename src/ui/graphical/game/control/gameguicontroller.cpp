@@ -1180,8 +1180,17 @@ void cGameGuiController::connectClient (cClient& client)
 			return;
 		}
 		gameGui->getHud().lockEndButton();
-		if (client.getModel().getGameSettings()->getGameType() == eGameSettingsGameType::HotSeat)
+	});
+
+	clientSignalConnectionManager.connect(model.turnEnded, [&]()
+	{
+		if (getGameSettings()->getGameType() == eGameSettingsGameType::HotSeat)
 		{
+			auto& player = *model.getActiveTurnPlayer();
+			if (player.getId() != getActivePlayer()->getId())
+			{
+				return;
+			}
 			playerGameGuiStates[player.getId()] = gameGui->getCurrentState();
 
 			auto it = std::find_if (clients.begin(), clients.end(), [&] (const std::shared_ptr<cClient>& client) { return client->getActivePlayer().getId() == player.getId(); });
