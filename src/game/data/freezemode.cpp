@@ -56,16 +56,16 @@ void cFreezeModes::enable (eFreezeMode mode)
 	{
 	case eFreezeMode::WAIT_FOR_TURNEND:
 		waitForTurnEnd = true;
-		break;
+		return;
 	case eFreezeMode::PAUSE:
 		pause = true;
-		break;
+		return;
 	case eFreezeMode::WAIT_FOR_CLIENT:
 		waitForClient = true;
-		break; 
+		return; 
 	case eFreezeMode::WAIT_FOR_SERVER:
 		waitForServer = true;
-		break;
+		return;
 	}
 	assert(false);
 }
@@ -77,16 +77,16 @@ void cFreezeModes::disable (eFreezeMode mode)
 	{
 	case eFreezeMode::WAIT_FOR_TURNEND:
 		waitForTurnEnd = false;
-		break;
+		return;
 	case eFreezeMode::PAUSE:
 		pause = false;
-		break;
+		return;
 	case eFreezeMode::WAIT_FOR_CLIENT:
 		waitForClient = false;
-		break;
+		return;
 	case eFreezeMode::WAIT_FOR_SERVER:
 		waitForServer = false;
-		break;
+		return;
 	}
 	assert(false);
 }
