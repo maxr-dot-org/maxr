@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/widgets/debugoutputwidget.h"
+
 #include "ui/graphical/game/widgets/gamemapwidget.h"
 #include "ui/graphical/game/animations/animation.h"
 #include "game/data/player/player.h"
@@ -28,6 +29,7 @@
 #include "utility/unifonts.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
+#include "utility/mathtools.h"
 #include "utility/string/toString.h"
 #include "utility/indexiterator.h"
 #include "utility/listhelpers.h"

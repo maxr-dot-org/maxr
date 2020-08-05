@@ -21,6 +21,7 @@
 #include <sstream>
 
 #include "ui/graphical/game/control/gameguicontroller.h"
+
 #include "ui/graphical/game/control/chatcommand/chatcommand.h"
 #include "ui/graphical/game/control/chatcommand/chatcommandexecutor.h"
 #include "ui/graphical/game/control/chatcommand/chatcommandparser.h"
@@ -63,6 +64,7 @@
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
 
+#include "utility/mathtools.h"
 #include "utility/random.h"
 #include "utility/position.h"
 #include "utility/listhelpers.h"

@@ -24,6 +24,7 @@
 #include "game/data/units/building.h"
 #include "game/logic/client.h"
 #include "utility/listhelpers.h"
+#include "utility/mathtools.h"
 #include "utility/files.h"
 #include "game/logic/fxeffects.h"
 #include "utility/log.h"

@@ -28,6 +28,7 @@
 #include "video.h"
 #include "input/mouse/mouse.h"
 #include "utility/drawing.h"
+#include "utility/mathtools.h"
 
 //------------------------------------------------------------------------------
 cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOrientationType orientation_, eSliderType sliderType) :

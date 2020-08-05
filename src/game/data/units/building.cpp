@@ -22,6 +22,7 @@
 
 #include "game/logic/client.h"
 #include "utility/listhelpers.h"
+#include "utility/mathtools.h"
 #include "game/logic/fxeffects.h"
 #include "main.h"
 //#include "pcx.h"

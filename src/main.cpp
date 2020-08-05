@@ -354,24 +354,6 @@ std::string bToStr (bool x)
 	return x ? "true" : "false";
 }
 
-// Round //////////////////////////////////////////////////////////////////////
-// Rounds a Number to 'iDecimalPlace' digits after the comma:
-float Round (float dValueToRound, unsigned int iDecimalPlace)
-{
-	dValueToRound *= powf (10.f, (int) iDecimalPlace);
-	if (dValueToRound >= 0)
-		dValueToRound = floorf (dValueToRound + 0.5f);
-	else
-		dValueToRound = ceilf (dValueToRound - 0.5f);
-	dValueToRound /= powf (10.f, (int) iDecimalPlace);
-	return dValueToRound;
-}
-
-int Round (float dValueToRound)
-{
-	return (int) Round (dValueToRound, 0);
-}
-
 //------------------------------------------------------------------------------
 std::string enumToString(ePlayerConnectionState value)
 {

@@ -17,10 +17,11 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
+#include "actionrepairreload.h"
+
 #include "game/data/units/unit.h"
 #include "game/data/model.h"
-
-#include "actionrepairreload.h"
+#include "utility/mathtools.h"
 
 
 //------------------------------------------------------------------------------

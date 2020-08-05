@@ -30,6 +30,7 @@
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 
+#include "utility/mathtools.h"
 #include "utility/position.h"
 #include "utility/box.h"
 #include "utility/crc.h"

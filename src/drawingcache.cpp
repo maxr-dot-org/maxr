@@ -31,6 +31,7 @@
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/graphical/framecounter.h"
 #include "game/data/map/mapfieldview.h"
+#include "utility/mathtools.h"
 
 sDrawingCacheEntry::sDrawingCacheEntry()
 {}

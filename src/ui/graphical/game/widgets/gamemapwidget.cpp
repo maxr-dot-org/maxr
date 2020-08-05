@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/widgets/gamemapwidget.h"
+
 #include "ui/graphical/game/widgets/unitcontextmenuwidget.h"
 #include "ui/graphical/game/control/mousemode/mousemode.h"
 #include "ui/graphical/game/control/mousemode/mousemodedefault.h"
@@ -46,7 +47,7 @@
 #include "game/data/map/map.h"
 #include "settings.h"
 #include "video.h"
-#include "main.h"
+#include "utility/mathtools.h"
 #include "game/data/player/player.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"

@@ -91,37 +91,6 @@ std::string pToStr (const void* x);
 */
 std::string bToStr (bool x);
 
-/**
-* Rounds given param num to specified position after decimal point<br>
-* Example:<br>
-* num := 3,234<br>
-* n := 2<br>
-* >>>>>>> Result = 3,23<br>
-*
-*@author MM
-*@param num number to round up
-*@param n the position after decimal point in dValueToRound,
-*         that will be rounded
-*@return rounded num
-*/
-float Round (float num, unsigned int n);
-
-
-template <typename T>
-T Square (T v) { return v * v; }
-
-/**
-* Rounds given param num without numbers after decimal point<br>
-* Example:<br>
-* num := 3,234<br>
-* >>>>>>> Result = 3<br>
-*
-*@author beko
-*@param num number to round up
-*@return rounded num
-*/
-int Round (float num);
-
 std::string getHexValue(unsigned char byte);
 unsigned char getByteValue(const std::string& str, int index);
 

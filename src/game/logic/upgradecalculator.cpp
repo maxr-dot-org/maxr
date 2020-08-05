@@ -20,8 +20,9 @@
 /* Author: Paul Grathwohl */
 
 #include "game/logic/upgradecalculator.h"
+
 #include "utility/log.h"
-#include "main.h"
+#include "utility/mathtools.h"
 #include "game/data/units/unitdata.h"
 #include <sstream>
 #include "utility/crc.h"

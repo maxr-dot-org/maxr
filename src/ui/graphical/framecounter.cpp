@@ -18,7 +18,8 @@
 ***************************************************************************/
 
 #include "ui/graphical/framecounter.h"
-#include "main.h"
+
+#include "utility/mathtools.h"
 
 cFrameCounter::cFrameCounter() :
 	frames (0),

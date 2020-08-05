@@ -22,6 +22,7 @@
 #include "game/data/units/building.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
+#include "utility/mathtools.h"
 #include "game/data/map/map.h"
 #include "game/data/player/player.h"
 #include "game/data/report/savedreportsimple.h"

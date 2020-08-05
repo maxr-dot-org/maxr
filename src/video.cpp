@@ -29,6 +29,7 @@
 #include "video.h"
 #include "maxrversion.h"
 #include "defines.h"
+#include "utility/mathtools.h"
 #include "utility/log.h"
 #include "utility/pcx.h"
 #include "utility/unifonts.h"

@@ -21,6 +21,7 @@
 
 #include "game/data/units/building.h"
 #include "utility/listhelpers.h"
+#include "utility/mathtools.h"
 #include "utility/files.h"
 #include "utility/crc.h"
 #include "utility/log.h"
