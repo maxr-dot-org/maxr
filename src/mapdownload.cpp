@@ -19,7 +19,6 @@
 
 /* Author: Paul Grathwohl */
 
-#include "main.h"
 #include "mapdownload.h"
 
 #include <iostream>

@@ -27,7 +27,7 @@
 
 #include "defines.h"
 #include "game/data/base/base.h"
-#include "main.h" // for sID
+#include "game/data/units/unitdata.h"
 #include "game/data/units/unit.h" // sUnitLess
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"

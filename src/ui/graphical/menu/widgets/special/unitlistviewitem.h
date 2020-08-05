@@ -21,7 +21,7 @@
 #define ui_graphical_menu_widgets_special_unitlistviewitemH
 
 #include "ui/graphical/menu/widgets/abstractlistviewitem.h"
-#include "main.h"
+#include "game/data/units/unitdata.h"
 
 class cImage;
 class cLabel;

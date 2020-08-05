@@ -18,12 +18,13 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/windows/windownetworklobbyhost/windownetworklobbyhost.h"
+
 #include "ui/graphical/menu/widgets/pushbutton.h"
-#include "main.h"
 #include "game/data/player/player.h"
 #include "game/data/savegame.h"
 #include "game/data/map/map.h"
 #include "mapdownload.h"
+#include "utility/language.h"
 #include "../../../application.h"
 #include "../../dialogs/dialogok.h"
 

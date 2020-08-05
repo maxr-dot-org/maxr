@@ -22,7 +22,7 @@
 
 #include "maxrconfig.h"
 #include "ui/graphical/game/control/mousemode/mousemode.h"
-#include "main.h"
+#include "game/data/units/unitdata.h"
 
 class cMouseModeSelectBuildPosition : public cMouseMode
 {

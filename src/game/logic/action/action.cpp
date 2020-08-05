@@ -20,7 +20,6 @@
 #include "action.h"
 #include "utility/log.h"
 #include "utility/string/toString.h"
-#include "main.h"
 #include "actioninitnewgame.h"
 #include "actionstartwork.h"
 #include "actionstop.h"

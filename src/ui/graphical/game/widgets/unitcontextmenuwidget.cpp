@@ -18,12 +18,13 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/widgets/unitcontextmenuwidget.h"
+
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/radiogroup.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
+#include "utility/language.h"
 #include "game/data/units/unit.h"
 #include "game/data/map/mapview.h"
-#include "main.h"
 #include "game/data/map/mapfieldview.h"
 
 //------------------------------------------------------------------------------

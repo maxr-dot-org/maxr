@@ -18,9 +18,10 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/widgets/special/unitlistviewitemcargo.h"
+
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
-#include "main.h"
+#include "utility/string/toString.h"
 #include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------

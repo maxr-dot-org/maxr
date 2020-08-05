@@ -24,11 +24,11 @@
 #include "ui/graphical/menu/windows/windowmultiplayer.h"
 #include "ui/graphical/menu/dialogs/dialogpreferences.h"
 #include "ui/graphical/menu/dialogs/dialoglicense.h"
-#include "main.h"
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/application.h"
+#include "utility/language.h"
 
 //------------------------------------------------------------------------------
 cWindowStart::cWindowStart() :

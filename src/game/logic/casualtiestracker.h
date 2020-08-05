@@ -20,9 +20,9 @@
 #ifndef game_logic_casualtiestrackerH
 #define game_logic_casualtiestrackerH
 
-#include "main.h"
 #include "utility/signal/signal.h"
 #include <vector>
+#include "game/data/units/unitdata.h"
 
 //-------------------------------------------------------------------------------
 class cCasualtiesTracker

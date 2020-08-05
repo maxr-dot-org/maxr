@@ -23,7 +23,6 @@
 #include "utility/log.h"
 #include "utility/files.h"
 #include "settings.h"
-#include "main.h"
 #include "video.h"
 
 /**

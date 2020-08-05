@@ -22,8 +22,8 @@
 
 #include "maxrconfig.h"
 #include "ui/graphical/game/control/mouseaction/mouseaction.h"
-#include "main.h"
 #include "utility/position.h"
+#include "game/data/units/unitdata.h"
 
 class cMouseActionSelectBuildPosition : public cMouseAction
 {

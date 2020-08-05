@@ -18,7 +18,9 @@
  ***************************************************************************/
 
 #include "game/data/report/special/savedreportplayerleft.h"
+
 #include "game/data/player/player.h"
+#include "utility/language.h"
 
 //------------------------------------------------------------------------------
 cSavedReportPlayerLeft::cSavedReportPlayerLeft (const cPlayer& player) :

@@ -22,6 +22,7 @@
 #include "game/data/model.h"
 
 #include "utility/log.h"
+#include "utility/string/toString.h"
 #include "game/data/map/mapview.h"
 
 //------------------------------------------------------------------------------

@@ -20,13 +20,14 @@
 #include "ui/graphical/game/widgets/unitdetailshud.h"
 
 #include "ui/graphical/menu/widgets/label.h"
-#include "main.h"
+#include "utility/string/toString.h"
 #include "video.h"
 #include "game/data/units/unit.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/data/gamesettings.h"
 #include "utility/drawing.h"
+#include "utility/language.h"
 
 //------------------------------------------------------------------------------
 cUnitDetailsHud::cUnitDetailsHud (const cBox<cPosition>& area, bool drawLines_) :

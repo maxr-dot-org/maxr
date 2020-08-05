@@ -18,7 +18,9 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
-#include "main.h"
+
+#include "utility/language.h"
+#include "utility/string/toString.h"
 #include "utility/pcx.h"
 #include "game/data/player/player.h"
 #include "game/data/units/landingunit.h"

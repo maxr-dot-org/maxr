@@ -21,7 +21,7 @@
 #define ui_graphical_menu_widgets_special_reportdisadvantageslistviewitemH
 
 #include "ui/graphical/menu/widgets/abstractlistviewitem.h"
-#include "main.h" // sID
+#include "game/data/units/unitdata.h" // sID
 
 class cReportDisadvantagesListViewItem : public cAbstractListViewItem
 {

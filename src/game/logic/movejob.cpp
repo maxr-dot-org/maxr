@@ -22,8 +22,8 @@
 #include <SDL_surface.h>
 
 #include "movejob.h"
+
 #include "pathcalculator.h"
-#include "main.h"
 #include "video.h"
 #include "game/data/units/vehicle.h"
 #include "gametimer.h"

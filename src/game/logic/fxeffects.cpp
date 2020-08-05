@@ -22,7 +22,6 @@
 #include "game/logic/fxeffects.h"
 
 #include "game/logic/client.h"
-#include "main.h"
 #include "game/data/player/player.h"
 #include "video.h"
 #include "resources/sound.h"

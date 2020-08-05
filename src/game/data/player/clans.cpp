@@ -18,7 +18,10 @@
  ***************************************************************************/
 
 #include "game/data/player/clans.h"
+
 #include "game/data/units/unitdata.h"
+#include "utility/language.h"
+#include "utility/string/toString.h"
 
 using namespace std;
 

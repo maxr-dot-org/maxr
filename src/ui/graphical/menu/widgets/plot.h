@@ -27,7 +27,7 @@
 #include "ui/graphical/widget.h"
 #include "utility/color.h"
 #include "utility/drawing.h"
-#include "main.h" // iToStr
+#include "utility/string/toString.h"
 
 /**
  *

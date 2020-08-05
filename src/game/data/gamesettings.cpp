@@ -22,10 +22,11 @@
 #include <cassert>
 
 #include "gamesettings.h"
+
+#include "utility/crc.h"
+#include "utility/language.h"
 #include "utility/tounderlyingtype.h"
 #include "utility/string/iequals.h"
-#include "main.h"
-#include "utility/crc.h"
 
 const std::chrono::seconds cGameSettings::defaultTurnLimitOption0 (60);
 const std::chrono::seconds cGameSettings::defaultTurnLimitOption1 (120);

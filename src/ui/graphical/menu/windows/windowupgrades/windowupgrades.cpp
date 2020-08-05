@@ -18,13 +18,15 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/windows/windowupgrades/windowupgrades.h"
+
 #include "ui/graphical/menu/widgets/checkbox.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/resourcebar.h"
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
+#include "utility/language.h"
 #include "utility/pcx.h"
-#include "main.h"
+#include "utility/string/toString.h"
 #include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------

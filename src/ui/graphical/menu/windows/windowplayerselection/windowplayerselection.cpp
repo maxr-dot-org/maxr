@@ -25,10 +25,10 @@
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/image.h"
+#include "utility/language.h"
 #include "utility/pcx.h"
 #include "defines.h"
 #include "video.h"
-#include "main.h" // lngPack
 
 //------------------------------------------------------------------------------
 cWindowPlayerSelection::cWindowPlayerSelection() :

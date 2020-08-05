@@ -18,10 +18,12 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/widgets/special/buildspeedhandlerwidget.h"
+
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
 #include "ui/graphical/menu/widgets/radiogroup.h"
-#include "main.h"
+#include "utility/language.h"
+#include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
 cBuildSpeedHandlerWidget::cBuildSpeedHandlerWidget (const cPosition& position) :

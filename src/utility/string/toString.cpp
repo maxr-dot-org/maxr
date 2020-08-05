@@ -17,37 +17,62 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef utility_string_toStringH
-#define utility_string_toStringH
+#include "toString.h"
 
-#include <sstream>
+#include <string>
 
-template<typename T>
-std::string toString(const T& x)
+std::string iToStr (int x)
 {
-	std::stringstream ss;
-	ss.imbue(std::locale("C"));
-	ss << x;
-	return ss.str();
+	std::stringstream strStream;
+	strStream << x;
+	return strStream.str();
 }
 
-/**Converts integer to string
-*/
-std::string iToStr (int x);
-/**Converts integer to string in hex representation
-*/
-std::string iToHex (unsigned int x);
-/**Converts float to string
-*/
-std::string fToStr (float x);
-/**Converts pointer to string
-*/
-std::string pToStr (const void* x);
-/**Converts bool to string
-*/
-std::string bToStr (bool x);
+std::string iToHex (unsigned int x)
+{
+	std::stringstream strStream;
+	strStream << std::hex << x;
+	return strStream.str();
+}
 
-std::string getHexValue(unsigned char byte);
-unsigned char getByteValue(const std::string& str, int index);
+std::string fToStr (float x)
+{
+	std::stringstream strStream;
+	strStream << x;
+	return strStream.str();
+}
 
-#endif // utility_string_toStringH
+std::string pToStr (const void* x)
+{
+	std::stringstream strStream;
+	strStream << x;
+	return "0x" + strStream.str();
+}
+
+std::string bToStr (bool x)
+{
+	return x ? "true" : "false";
+}
+
+//--------------------------------------------------------------------------
+std::string getHexValue(unsigned char byte)
+{
+	std::string str = "";
+	const char hexChars[] = "0123456789ABCDEF";
+	const unsigned char high = (byte >> 4) & 0x0F;
+	const unsigned char low = byte & 0x0F;
+
+	str += hexChars[high];
+	str += hexChars[low];
+	return str;
+}
+//--------------------------------------------------------------------------
+unsigned char getByteValue(const std::string& str, int index)
+{
+	unsigned char first = str[index + 0] - '0';
+	unsigned char second = str[index + 1] - '0';
+
+	if (first >= 'A' - '0') first -= 'A' - '0' - 10;
+	if (second >= 'A' - '0') second -= 'A' - '0' - 10;
+	return (first * 16 + second);
+}

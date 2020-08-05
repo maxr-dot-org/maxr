@@ -26,8 +26,9 @@
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/lineedit.h"
 #include "ui/graphical/menu/widgets/tools/validatorint.h"
+#include "utility/language.h"
 #include "utility/pcx.h"
-#include "main.h"
+#include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
 cDialogColorPicker::cDialogColorPicker (const cRgbColor& color, eWindowBackgrounds backgroundType) :

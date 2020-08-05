@@ -18,8 +18,10 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/windows/windowstorage/windowstorage.h"
+
+#include "utility/language.h"
 #include "utility/pcx.h"
-#include "main.h"
+#include "utility/string/toString.h"
 #include "video.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/building.h"

@@ -20,7 +20,7 @@
 #include "game/data/report/special/savedreportlostconnection.h"
 
 #include "game/data/player/player.h"
-#include "main.h"
+#include "utility/language.h"
 
 cSavedReportLostConnection::cSavedReportLostConnection(const cPlayer& player) :
 	playerName(player.getName())

@@ -17,8 +17,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "main.h"
 #include "game/data/report/special/savedreporthostcommand.h"
+
+#include "utility/language.h"
 
 //------------------------------------------------------------------------------
 cSavedReportHostCommand::cSavedReportHostCommand (std::string command_) :

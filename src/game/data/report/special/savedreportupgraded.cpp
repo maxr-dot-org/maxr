@@ -18,7 +18,10 @@
  ***************************************************************************/
 
 #include "game/data/report/special/savedreportupgraded.h"
+
 #include "game/data/player/player.h"
+#include "utility/language.h"
+#include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
 cSavedReportUpgraded::cSavedReportUpgraded (const sID& unitId_, int unitsCount_, int costs_) :

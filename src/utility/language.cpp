@@ -31,7 +31,6 @@
 #include "maxrversion.h"
 #include "extendedtinyxml.h"
 #include "utility/log.h"
-#include "main.h"
 #include "settings.h"
 #include "utility/files.h"
 #include "utility/string/toupper.h"

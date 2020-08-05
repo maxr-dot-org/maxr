@@ -22,6 +22,7 @@
 #include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffectvoice.h"
 #include "resources/sound.h"
+#include "utility/language.h"
 #include "utility/random.h"
 
 //------------------------------------------------------------------------------

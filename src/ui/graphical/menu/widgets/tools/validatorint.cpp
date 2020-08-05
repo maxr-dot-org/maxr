@@ -17,13 +17,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "ui/graphical/menu/widgets/tools/validatorint.h"
+
 #include <limits>
 #include <algorithm>
 #include <cctype>
 #include <cstdlib>
 
-#include "ui/graphical/menu/widgets/tools/validatorint.h"
-#include "main.h"
+#include "utility/string/toString.h"
 
 cValidatorInt::cValidatorInt() :
 	minValue (std::numeric_limits<int>::min()),

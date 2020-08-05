@@ -26,7 +26,6 @@
 #include "maxrversion.h"
 #include "utility/string/toString.h"
 #include "ui/graphical/menu/control/menuevents.h"
-#include "main.h"
 
 #define HANDSHAKE_TIMEOUT_MS 3000 
 #define DISABLE_TIMEOUTS 0 // this can be used, when debugging the conection handshake

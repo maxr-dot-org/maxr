@@ -22,9 +22,10 @@
 #include <SDL_mixer.h>
 
 #include "output/sound/soundchannelgroup.h"
+
 #include "output/sound/soundchannel.h"
 #include "utility/log.h"
-#include "main.h" // iToStr
+#include "utility/string/toString.h"
 
 //--------------------------------------------------------------------------
 cSoundChannelGroup::cSoundChannelGroup (int sdlGroupTag_) :

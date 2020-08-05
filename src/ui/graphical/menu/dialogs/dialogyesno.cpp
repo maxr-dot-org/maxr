@@ -21,8 +21,8 @@
 
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
+#include "utility/language.h"
 #include "utility/pcx.h"
-#include "main.h"
 
 //------------------------------------------------------------------------------
 cDialogYesNo::cDialogYesNo (const std::string& text) :

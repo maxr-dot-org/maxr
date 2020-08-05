@@ -18,7 +18,9 @@
  ***************************************************************************/
 
 #include "game/data/report/special/savedreportplayerendedturn.h"
+
 #include "game/data/player/player.h"
+#include "utility/language.h"
 
 //------------------------------------------------------------------------------
 cSavedReportPlayerEndedTurn::cSavedReportPlayerEndedTurn (const cPlayer& player) :

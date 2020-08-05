@@ -21,8 +21,8 @@
 
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
+#include "utility/language.h"
 #include "utility/pcx.h"
-#include "main.h"
 
 //------------------------------------------------------------------------------
 cDialogOk::cDialogOk (const std::string& text, eWindowBackgrounds backgroundType) :

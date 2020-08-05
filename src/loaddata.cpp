@@ -35,15 +35,17 @@
 #endif
 
 #include "loaddata.h"
+
 #include "maxrversion.h"
 #include "utility/autosurface.h"
+#include "utility/files.h"
+#include "utility/language.h"
 #include "game/data/units/building.h"
 #include "game/data/player/clans.h"
 #include "extendedtinyxml.h"
-#include "utility/files.h"
 #include "keys.h"
 #include "utility/log.h"
-#include "main.h"
+#include "utility/string/toString.h"
 #include "utility/pcx.h"
 #include "settings.h"
 #include "resources/sound.h"

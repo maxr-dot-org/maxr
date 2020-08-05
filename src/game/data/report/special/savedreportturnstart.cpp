@@ -18,11 +18,13 @@
  ***************************************************************************/
 
 #include "game/data/report/special/savedreportturnstart.h"
+
 #include "game/data/player/player.h"
 #include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffectvoice.h"
+#include "utility/language.h"
+#include "utility/string/toString.h"
 #include "resources/sound.h"
-
 //------------------------------------------------------------------------------
 cSavedReportTurnStart::cSavedReportTurnStart (const cPlayer& player, int turn_) :
 	turn (turn_),

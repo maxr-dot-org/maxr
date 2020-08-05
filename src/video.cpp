@@ -17,6 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "video.h"
+
 #include <algorithm>
 #include <vector>
 #include <cassert>
@@ -26,12 +28,12 @@
 #include <SDL.h>
 
 #include "resources/uidata.h"
-#include "video.h"
 #include "maxrversion.h"
 #include "defines.h"
 #include "utility/mathtools.h"
 #include "utility/log.h"
 #include "utility/pcx.h"
+#include "utility/string/toString.h"
 #include "utility/unifonts.h"
 #include "utility/files.h"
 #include "input/keyboard/keyboard.h"

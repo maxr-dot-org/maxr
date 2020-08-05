@@ -17,11 +17,11 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-
 #include "serialization.h"
+
 #include "game/data/model.h"
 #include "utility/log.h"
-#include "main.h"
+#include "utility/string/toString.h"
 
 namespace serialization
 {

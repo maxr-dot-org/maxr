@@ -18,7 +18,8 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
-#include "main.h"
+
+#include "utility/language.h"
 #include "utility/pcx.h"
 #include "game/data/player/clans.h"
 #include "resources/uidata.h"

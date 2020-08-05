@@ -25,7 +25,7 @@
 #include "maxrconfig.h"
 #include "utility/autosurface.h"
 #include "utility/position.h"
-#include "main.h"
+#include "game/data/units/unitdata.h"
 
 class cSoundManager;
 class cSoundChunk;

@@ -18,12 +18,14 @@
  ***************************************************************************/
 
 #include "game/data/report/unit/savedreportdetected.h"
+
 #include "game/data/units/unit.h"
 #include "game/data/player/player.h"
 #include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffectvoice.h"
-#include "resources/sound.h"
+#include "utility/language.h"
 #include "utility/random.h"
+#include "resources/sound.h"
 
 //------------------------------------------------------------------------------
 cSavedReportDetected::cSavedReportDetected (const cUnit& unit) :

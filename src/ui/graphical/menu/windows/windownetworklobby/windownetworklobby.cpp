@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/windows/windownetworklobby/windownetworklobby.h"
+
 #include "game/data/gamesettings.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
@@ -29,8 +30,9 @@
 #include "ui/graphical/menu/widgets/tools/validatorint.h"
 #include "ui/graphical/menu/dialogs/dialogcolorpicker.h"
 #include "game/data/player/player.h"
+#include "utility/language.h"
 #include "utility/pcx.h"
-#include "main.h"
+#include "utility/string/toString.h"
 #include "game/data/map/map.h"
 #include "video.h"
 #include "game/data/savegame.h"

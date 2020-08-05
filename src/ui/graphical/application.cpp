@@ -24,7 +24,7 @@
 #include "events/eventmanager.h"
 #include "settings.h"
 #include "video.h"
-#include "main.h"
+#include "utility/string/toString.h"
 #include "utility/unifonts.h"
 #include "netmessage2.h"
 #include "game/startup/game.h"

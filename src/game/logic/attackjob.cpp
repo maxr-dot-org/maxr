@@ -36,6 +36,7 @@
 #include "game/data/model.h"
 #include "utility/listhelpers.h"
 #include "utility/crc.h"
+#include "utility/string/toString.h"
 
 //TODO: test alien attack (ground & air)
 

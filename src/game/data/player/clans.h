@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 
-#include "main.h"
+#include "resources/uidata.h"
 #include "utility/serialization/serialization.h"
 
 //-------------------------------------------------------------------------

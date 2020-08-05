@@ -26,7 +26,7 @@
 
 #include "maxrconfig.h"
 #include "ui/graphical/widget.h"
-#include "main.h"
+#include "game/data/units/unitdata.h"
 
 class cLabel;
 class cUnitUpgrade;

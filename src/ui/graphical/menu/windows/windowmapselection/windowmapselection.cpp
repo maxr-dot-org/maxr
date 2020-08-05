@@ -18,8 +18,10 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
-#include "main.h"
+
+#include "utility/language.h"
 #include "utility/pcx.h"
+#include "utility/string/toString.h"
 #include "utility/files.h"
 #include "game/data/map/map.h"
 #include "resources/uidata.h"

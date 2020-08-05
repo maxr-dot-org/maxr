@@ -22,8 +22,8 @@
 
 #include <memory>
 
+#include "game/data/units/unitdata.h"
 #include "utility/autosurface.h"
-#include "main.h" // for sID
 
 class cPlayer;
 class cVehicle;

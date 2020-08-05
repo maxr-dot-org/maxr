@@ -21,7 +21,6 @@
 #include "game/data/gamesettings.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/lineedit.h"
-#include "main.h"
 #include "network.h"
 #include "utility/log.h"
 #include "game/data/player/player.h"

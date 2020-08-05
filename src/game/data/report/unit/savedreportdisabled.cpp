@@ -18,9 +18,11 @@
  ***************************************************************************/
 
 #include "game/data/report/unit/savedreportdisabled.h"
+
 #include "game/data/units/unit.h"
 #include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffectvoice.h"
+#include "utility/language.h"
 #include "resources/sound.h"
 
 //------------------------------------------------------------------------------

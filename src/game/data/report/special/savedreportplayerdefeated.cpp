@@ -18,7 +18,9 @@
  ***************************************************************************/
 
 #include "game/data/report/special/savedreportplayerdefeated.h"
+
 #include "game/data/player/player.h"
+#include "utility/language.h"
 
 //------------------------------------------------------------------------------
 cSavedReportPlayerDefeated::cSavedReportPlayerDefeated (const cPlayer& player) :

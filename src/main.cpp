@@ -321,39 +321,6 @@ bool is_main_thread()
 	return main_thread_id == SDL_ThreadID();
 }
 
-string iToStr (int x)
-{
-	stringstream strStream;
-	strStream << x;
-	return strStream.str();
-}
-
-string iToHex (unsigned int x)
-{
-	stringstream strStream;
-	strStream << std::hex << x;
-	return strStream.str();
-}
-
-string fToStr (float x)
-{
-	stringstream strStream;
-	strStream << x;
-	return strStream.str();
-}
-
-std::string pToStr (const void* x)
-{
-	stringstream strStream;
-	strStream << x;
-	return "0x" + strStream.str();
-}
-
-std::string bToStr (bool x)
-{
-	return x ? "true" : "false";
-}
-
 //------------------------------------------------------------------------------
 std::string enumToString(ePlayerConnectionState value)
 {
@@ -367,27 +334,4 @@ std::string enumToString(ePlayerConnectionState value)
 		assert(false);
 		return toString(static_cast<int>(value));
 	}
-}
-
-//--------------------------------------------------------------------------
-std::string getHexValue(unsigned char byte)
-{
-	std::string str = "";
-	const char hexChars[] = "0123456789ABCDEF";
-	const unsigned char high = (byte >> 4) & 0x0F;
-	const unsigned char low = byte & 0x0F;
-
-	str += hexChars[high];
-	str += hexChars[low];
-	return str;
-}
-//--------------------------------------------------------------------------
-unsigned char getByteValue(const std::string& str, int index)
-{
-	unsigned char first = str[index + 0] - '0';
-	unsigned char second = str[index + 1] - '0';
-
-	if (first >= 'A' - '0') first -= 'A' - '0' - 10;
-	if (second >= 'A' - '0') second -= 'A' - '0' - 10;
-	return (first * 16 + second);
 }

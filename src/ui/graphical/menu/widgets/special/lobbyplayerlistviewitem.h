@@ -23,7 +23,6 @@
 #include <memory>
 
 #include "ui/graphical/menu/widgets/abstractlistviewitem.h"
-#include "main.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 

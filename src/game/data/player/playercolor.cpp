@@ -20,7 +20,6 @@
 #include <cassert>
 
 #include "defines.h"
-#include "main.h" // OtherData
 #include "game/data/player/playercolor.h"
 #include "utility/random.h"
 #include "utility/comparison.h"

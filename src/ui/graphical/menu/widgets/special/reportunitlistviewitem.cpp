@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/widgets/special/reportunitlistviewitem.h"
+
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/game/widgets/unitdetailshud.h"
@@ -26,6 +27,7 @@
 #include "game/data/units/building.h"
 #include "utility/drawing.h"
 #include "utility/color.h"
+#include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
 cReportUnitListViewItem::cReportUnitListViewItem (cUnit& unit_, const cUnitsData& unitsData) :

@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/windows/windowhangar/windowhangar.h"
-#include "main.h"
+
 #include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
 #include "game/data/player/player.h"
@@ -30,6 +30,7 @@
 #include "ui/graphical/menu/widgets/special/unitlistviewitembuy.h"
 #include "ui/graphical/menu/widgets/special/unitdetails.h"
 #include "game/data/player/playerbasicdata.h"
+#include "utility/language.h"
 
 //------------------------------------------------------------------------------
 cWindowHangar::cWindowHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, cPlayerColor playerColor, int playerClan) :

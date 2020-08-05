@@ -22,7 +22,7 @@
 #include "utility/autosurface.h"
 #include "utility/files.h"
 #include "utility/log.h"
-#include "main.h"
+#include "utility/string/toString.h"
 #include "utility/pcx.h"
 #include "settings.h"
 #include "utility/position.h"

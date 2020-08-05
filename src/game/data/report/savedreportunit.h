@@ -23,7 +23,7 @@
 #include "maxrconfig.h"
 
 #include "game/data/report/savedreport.h"
-#include "main.h" // sID
+#include "game/data/units/unitdata.h" // sID
 #include "utility/position.h"
 
 class cUnit;

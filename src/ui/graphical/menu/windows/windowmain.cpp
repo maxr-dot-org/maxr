@@ -20,8 +20,9 @@
 #include <functional>
 
 #include "ui/graphical/menu/windows/windowmain.h"
+
+#include "utility/language.h"
 #include "utility/pcx.h"
-#include "main.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "utility/random.h"

@@ -19,7 +19,7 @@
 
 #include "game/data/report/savedreportsimple.h"
 
-#include "main.h" //lngPack
+#include "utility/language.h"
 
 //------------------------------------------------------------------------------
 cSavedReportSimple::cSavedReportSimple (eSavedReportType type_) :

@@ -18,8 +18,11 @@
  ***************************************************************************/
 
 #include "game/data/report/special/savedreportresourcechanged.h"
+
 #include "game/data/player/player.h"
 #include "game/data/resourcetype.h"
+#include "utility/language.h"
+#include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
 cSavedReportResourceChanged::cSavedReportResourceChanged (eResourceType resourceType_, int amount_, bool increase_) :

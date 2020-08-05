@@ -34,7 +34,6 @@
 #include "game/startup/local/singleplayer/localsingleplayergamenew.h"
 #include "game/startup/local/singleplayer/localsingleplayergamesaved.h"
 #include "utility/log.h"
-#include "main.h"
 #include "network.h"
 #include "game/data/player/player.h"
 #include "game/data/units/landingunit.h"

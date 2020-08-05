@@ -25,6 +25,7 @@
 #include "units/building.h"
 #include "game/logic/movejob.h"
 #include "utility/crc.h"
+#include "utility/string/toString.h"
 #include "game/logic/pathcalculator.h"
 #include "utility/listhelpers.h"
 #include "game/logic/turncounter.h"

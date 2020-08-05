@@ -19,10 +19,9 @@
 
 #include <memory>
 
-#include "game/logic/action/action.h"
-
-#include "main.h"
 #include "netmessage2.h"
+
+#include "game/logic/action/action.h"
 #include "utility/string/toString.h"
 #include "game/data/model.h"
 #include "utility/serialization/serialization.h"

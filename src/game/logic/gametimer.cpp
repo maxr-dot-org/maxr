@@ -17,12 +17,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <SDL.h>
 #include "game/logic/gametimer.h"
+
+#include <SDL.h>
+
 #include "game/logic/client.h"
 #include "utility/listhelpers.h"
 #include "utility/files.h"
 #include "utility/log.h"
+#include "utility/string/toString.h"
 #include "netmessage2.h"
 #include "game/data/player/player.h"
 #include "game/logic/server2.h"

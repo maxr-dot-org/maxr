@@ -27,7 +27,7 @@
 
 #include "defines.h"
 #include "maxrconfig.h"
-#include "main.h" // for sUnitData, sID
+#include "game/data/units/unitdata.h" // for sUnitData, sID
 #include "game/data/units/unit.h"
 #include "resources/sound.h"
 #include "resources/uidata.h"

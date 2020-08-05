@@ -22,6 +22,7 @@
 #include <SDL_mixer.h>
 
 #include "ui/graphical/menu/dialogs/dialogpreferences.h"
+
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
@@ -30,8 +31,9 @@
 #include "ui/graphical/menu/widgets/lineedit.h"
 #include "ui/graphical/menu/widgets/combobox.h"
 #include "ui/graphical/menu/widgets/special/textlistviewitem.h"
+#include "utility/language.h"
 #include "utility/pcx.h"
-#include "main.h"
+#include "utility/string/toString.h"
 #include "settings.h"
 #include "video.h"
 #include "utility/string/iequals.h"

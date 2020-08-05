@@ -30,12 +30,13 @@
 #include <string>
 
 #include "settings.h"
+
 #include "maxrversion.h"
 
 #include "extendedtinyxml.h"
 #include "utility/files.h"
 #include "utility/log.h"
-#include "main.h"
+#include "utility/string/toString.h"
 #include "utility/tinyxml2.h"
 #include "video.h"
 #include "utility/string/tolower.h"

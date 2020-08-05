@@ -25,6 +25,7 @@
 #include "utility/files.h"
 #include "utility/crc.h"
 #include "utility/log.h"
+#include "utility/string/toString.h"
 #include "game/data/player/player.h"
 #include "settings.h"
 #include "game/data/units/vehicle.h"

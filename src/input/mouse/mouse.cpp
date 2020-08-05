@@ -20,9 +20,9 @@
 #include <algorithm>
 
 #include "input/mouse/mouse.h"
+
 #include "input/mouse/cursor/mousecursorsimple.h"
 
-#include "main.h"
 #include "events/eventmanager.h"
 #include "events/mouseevents.h"
 

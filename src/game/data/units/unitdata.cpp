@@ -17,13 +17,16 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "unitdata.h"
+
 #include <algorithm>
 
-#include "unitdata.h"
 #include "utility/tinyxml2.h"
+
 #include "game/data/player/clans.h"
 #include "utility/log.h"
 #include "utility/language.h"
+#include "utility/string/toString.h"
 #include "utility/crc.h"
 
 

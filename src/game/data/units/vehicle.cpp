@@ -16,9 +16,10 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include <cmath>
 
 #include "game/data/units/vehicle.h"
+
+#include <cmath>
 
 #include "game/logic/attackjob.h"
 #include "game/data/units/building.h"
@@ -26,6 +27,7 @@
 #include "utility/listhelpers.h"
 #include "utility/mathtools.h"
 #include "utility/files.h"
+#include "utility/string/toString.h"
 #include "game/logic/fxeffects.h"
 #include "utility/log.h"
 #include "game/data/map/map.h"

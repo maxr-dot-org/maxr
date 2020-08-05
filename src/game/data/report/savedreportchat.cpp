@@ -20,6 +20,7 @@
 #include "game/data/report/savedreportchat.h"
 
 #include "game/data/player/player.h"
+#include "utility/language.h"
 
 //------------------------------------------------------------------------------
 cSavedReportChat::cSavedReportChat (const cPlayer& player, std::string text_) :

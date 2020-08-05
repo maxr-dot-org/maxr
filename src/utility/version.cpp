@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include "utility/version.h"
-#include "main.h" // iToStr
+#include "utility/string/toString.h"
 
 #ifdef major
 #	undef major

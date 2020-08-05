@@ -30,6 +30,7 @@
 #include "game/data/units/vehicle.h"
 #include "game/data/player/player.h"
 #include "game/data/units/unitdata.h"
+#include "utility/language.h"
 
 //------------------------------------------------------------------------------
 cWindowBuildBuildings::cWindowBuildBuildings (const cVehicle& vehicle_, std::shared_ptr<const cTurnTimeClock> turnTimeClock, std::shared_ptr<const cUnitsData> unitsData) :

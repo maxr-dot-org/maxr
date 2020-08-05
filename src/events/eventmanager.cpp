@@ -24,7 +24,6 @@
 #include "events/eventmanager.h"
 #include "events/mouseevents.h"
 #include "events/keyboardevents.h"
-#include "main.h"
 #include "video.h"
 
 //------------------------------------------------------------------------------
