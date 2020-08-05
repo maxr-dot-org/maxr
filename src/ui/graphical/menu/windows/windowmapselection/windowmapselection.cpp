@@ -22,6 +22,7 @@
 #include "utility/pcx.h"
 #include "utility/files.h"
 #include "game/data/map/map.h"
+#include "resources/uidata.h"
 #include "utility/autosurface.h"
 #include "video.h"
 #include "ui/graphical/menu/widgets/label.h"

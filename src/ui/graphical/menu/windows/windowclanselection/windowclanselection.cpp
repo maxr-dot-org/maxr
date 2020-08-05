@@ -21,9 +21,11 @@
 #include "main.h"
 #include "utility/pcx.h"
 #include "game/data/player/clans.h"
+#include "resources/uidata.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/image.h"
+
 
 //------------------------------------------------------------------------------
 cWindowClanSelection::cWindowClanSelection(std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cClanData> clanData) :

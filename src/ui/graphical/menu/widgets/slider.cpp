@@ -23,9 +23,9 @@
 #include "ui/graphical/menu/widgets/slider.h"
 #include "ui/graphical/menu/widgets/sliderhandle.h"
 
+#include "resources/uidata.h"
 #include "settings.h"
 #include "video.h"
-#include "main.h"
 #include "input/mouse/mouse.h"
 #include "utility/drawing.h"
 

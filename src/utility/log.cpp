@@ -39,6 +39,8 @@
 /**mem error*/
 #define MM "(MM): "
 
+cLog Log;
+
 //------------------------------------------------------------------------------
 void cLog::write(const char* msg)
 {

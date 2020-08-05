@@ -21,10 +21,10 @@
 
 #include "ui/graphical/application.h"
 
+#include "resources/uidata.h"
 #include "settings.h"
 #include "video.h"
 #include "utility/unifonts.h"
-#include "main.h"
 #include "input/mouse/mouse.h"
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"

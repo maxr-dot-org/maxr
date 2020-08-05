@@ -27,6 +27,8 @@
 
 using namespace tinyxml2;
 
+cKeysList KeysList;
+
 const std::string cKeysList::keyExitName = "KeyExit";
 const std::string cKeysList::keyJumpToActionName = "KeyJumpToAction";
 const std::string cKeysList::keyEndTurnName = "KeyEndTurn";

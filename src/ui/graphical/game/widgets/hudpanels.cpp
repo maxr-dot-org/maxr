@@ -20,9 +20,9 @@
 #include <algorithm>
 
 #include "ui/graphical/game/widgets/hudpanels.h"
+#include "resources/uidata.h"
 #include "sound.h"
 #include "video.h"
-#include "main.h"
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
 #include "ui/graphical/game/animations/animationtimer.h"

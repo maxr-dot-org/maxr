@@ -18,6 +18,8 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/windows/windowlandingpositionselection/windowlandingpositionselection.h"
+
+#include "resources/uidata.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"

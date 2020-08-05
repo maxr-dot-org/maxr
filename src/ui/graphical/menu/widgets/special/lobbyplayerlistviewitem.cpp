@@ -18,6 +18,8 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/widgets/special/lobbyplayerlistviewitem.h"
+
+#include "resources/uidata.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "game/data/player/playerbasicdata.h"

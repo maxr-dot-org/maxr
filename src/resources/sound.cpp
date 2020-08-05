@@ -17,60 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef utility_logH
-#define utility_logH
+#include "sound.h"
 
-#include <fstream>
-
-#include "defines.h"
-#include "utility/thread/mutex.h"
-
-class cLog
-{
-public:
-	enum eLogType
-	{
-		eLOG_TYPE_DEBUG,
-		eLOG_TYPE_INFO,
-		eLOG_TYPE_WARNING,
-		eLOG_TYPE_ERROR,
-		eLOG_TYPE_MEM,
-		eLOG_TYPE_NET_DEBUG,
-		eLOG_TYPE_NET_WARNING,
-		eLOG_TYPE_NET_ERROR,
-	};
-
-	/**
-	* Writes message with default type (II) to the logfile
-	*/
-	void write(const char* msg);
-	void write(const std::string& msg);
-
-	/**
-	* Writes message with given type to logfile
-	*
-	* @param str Message for the log
-	* @param type Type for the log
-	*/
-	void write (const char* msg, eLogType type);
-	void write (const std::string& msg, eLogType type);
-
-	/**
-	* Writes a marker into logfile - please use only veeeery few times!
-	*/
-	void mark();
-
-private:
-	std::ofstream logfile;
-	std::ofstream netLogfile;
-	cMutex mutex;
-
-	void checkOpenFile(eLogType type);
-
-	void writeToFile(const std::string &msg, std::ofstream& file);
-
-};
-
-extern cLog Log;
-
-#endif // utility_logH
+std::vector<std::string> MusicFiles;
+cSoundData SoundData;
+cVoiceData VoiceData;

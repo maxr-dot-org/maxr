@@ -25,7 +25,7 @@
 
 #include <SDL.h>
 
-#include "main.h"
+#include "resources/uidata.h"
 #include "video.h"
 #include "maxrversion.h"
 #include "defines.h"

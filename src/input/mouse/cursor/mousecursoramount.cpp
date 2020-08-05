@@ -19,7 +19,7 @@
 
 #include "input/mouse/cursor/mousecursoramount.h"
 
-#include "main.h"
+#include "resources/uidata.h"
 #include "video.h"
 #include "utility/position.h"
 

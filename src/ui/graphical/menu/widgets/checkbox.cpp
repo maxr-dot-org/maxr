@@ -19,9 +19,9 @@
 
 #include "ui/graphical/menu/widgets/checkbox.h"
 
+#include "resources/uidata.h"
 #include "settings.h"
 #include "video.h"
-#include "main.h"
 #include "utility/drawing.h"
 #include "utility/color.h"
 #include "output/sound/sounddevice.h"

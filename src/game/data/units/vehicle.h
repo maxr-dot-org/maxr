@@ -31,6 +31,7 @@
 
 #include "main.h" // for sUnitData
 #include "game/data/units/unit.h"
+#include "resources/uidata.h"
 #include "sound.h"
 
 class cBuilding;

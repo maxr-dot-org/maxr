@@ -29,7 +29,6 @@
 #include <SDL_net.h>
 #include <SDL_mixer.h>
 
-#define __main__
 #include "main.h"
 
 #include "game/data/base/base.h"
@@ -278,8 +277,6 @@ static void logMAXRVersion()
 	Log.write (sBuild, cLog::eLOG_TYPE_NET_DEBUG);
 }
 
-
-
 static void showIntro()
 {
 	const std::string filename = cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE";
@@ -373,47 +370,6 @@ float Round (float dValueToRound, unsigned int iDecimalPlace)
 int Round (float dValueToRound)
 {
 	return (int) Round (dValueToRound, 0);
-}
-
-//------------------------------------------------------------------------------
-cUnitsUiData::cUnitsUiData() :
-	rubbleBig(new sBuildingUIData()),
-	rubbleSmall(new sBuildingUIData()),
-	ptr_small_beton(0),
-	ptr_small_beton_org(0),
-	ptr_connector(0),
-	ptr_connector_org(0),
-	ptr_connector_shw(0),
-	ptr_connector_shw_org(0)
-{}
-
-//------------------------------------------------------------------------------
-cUnitsUiData::~cUnitsUiData()
-{
-	delete rubbleBig;
-	delete rubbleSmall;
-}
-
-//------------------------------------------------------------------------------
-const sBuildingUIData* cUnitsUiData::getBuildingUI(sID id) const
-{
-	for (unsigned int i = 0; i < buildingUIs.size(); ++i)
-	{
-		if (buildingUIs[i].id == id)
-			return &buildingUIs[i];
-	}
-	return nullptr;
-}
-
-//------------------------------------------------------------------------------
-const sVehicleUIData* cUnitsUiData::getVehicleUI(sID id) const
-{
-	for (unsigned int i = 0; i < vehicleUIs.size(); ++i)
-	{
-		if (vehicleUIs[i].id == id)
-			return &vehicleUIs[i];
-	}
-	return nullptr;
 }
 
 //------------------------------------------------------------------------------

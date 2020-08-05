@@ -17,57 +17,59 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <algorithm>
+#include "uidata.h"
 
-#include "ui/graphical/menu/widgets/special/protectionglass.h"
-#include "ui/graphical/game/animations/animationtimer.h"
-#include "resources/uidata.h"
-#include "video.h"
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
 
 //------------------------------------------------------------------------------
-cProtectionGlass::cProtectionGlass (const cPosition& position, std::shared_ptr<cAnimationTimer> animationTimer_, double percentClosed_) :
-	cWidget (position),
-	animationTimer (std::move (animationTimer_)),
-	openStep (100. * 10 / (400)), // open in 400 ms
-	percentClosed (percentClosed_)
+// Globals
+
+cGraphicsData GraphicsData;
+cEffectsData EffectsData;
+cResourceData ResourceData;
+cUnitsData UnitsDataGlobal;
+cClanData  ClanDataGlobal;
+cUnitsUiData UnitsUiData;
+cOtherData OtherData;
+
+//------------------------------------------------------------------------------
+cUnitsUiData::cUnitsUiData() :
+	rubbleBig(new sBuildingUIData()),
+	rubbleSmall(new sBuildingUIData()),
+	ptr_small_beton(0),
+	ptr_small_beton_org(0),
+	ptr_connector(0),
+	ptr_connector_org(0),
+	ptr_connector_shw(0),
+	ptr_connector_shw_org(0)
+{}
+
+//------------------------------------------------------------------------------
+cUnitsUiData::~cUnitsUiData()
 {
-	percentClosed = std::max (0., percentClosed);
-	percentClosed = std::min (100., percentClosed);
-
-	assert (animationTimer != nullptr);
-
-	resize (cPosition (GraphicsData.gfx_destruction_glas->w, GraphicsData.gfx_destruction_glas->h));
+	delete rubbleBig;
+	delete rubbleSmall;
 }
 
 //------------------------------------------------------------------------------
-void cProtectionGlass::open()
+const sBuildingUIData* cUnitsUiData::getBuildingUI(sID id) const
 {
-	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, std::bind (&cProtectionGlass::doOpenStep, this));
-}
-
-//------------------------------------------------------------------------------
-void cProtectionGlass::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
-{
-	const auto offset = (int) (getSize().y() * (100. - percentClosed) / 100);
-
-	SDL_Rect sourceRect = {0, offset, GraphicsData.gfx_destruction_glas->w, GraphicsData.gfx_destruction_glas->h - offset};
-
-	SDL_Rect destinationRect = {getPosition().x(), getPosition().y(), sourceRect.w, sourceRect.h};
-
-	SDL_BlitSurface (GraphicsData.gfx_destruction_glas.get(), &sourceRect, &destination, &destinationRect);
-}
-
-//------------------------------------------------------------------------------
-void cProtectionGlass::doOpenStep()
-{
-	percentClosed -= openStep;
-
-	if (percentClosed <= 0.)
+	for (unsigned int i = 0; i < buildingUIs.size(); ++i)
 	{
-		percentClosed = std::max (0., percentClosed);
-		signalConnectionManager.disconnectAll();
-		disable();
-		hide();
-		opened();
+		if (buildingUIs[i].id == id)
+			return &buildingUIs[i];
 	}
+	return nullptr;
+}
+
+//------------------------------------------------------------------------------
+const sVehicleUIData* cUnitsUiData::getVehicleUI(sID id) const
+{
+	for (unsigned int i = 0; i < vehicleUIs.size(); ++i)
+	{
+		if (vehicleUIs[i].id == id)
+			return &vehicleUIs[i];
+	}
+	return nullptr;
 }

@@ -50,20 +50,10 @@ struct sVehicleUIData;
 class cClanData;
 
 ///////////////////////////////////////////////////////////////////////////////
-// Globals
-// ------------------------
-//
-///////////////////////////////////////////////////////////////////////////////
-
-// Languagepack ////////////////////////////////////////////////////////////////
-EX cLanguage lngPack;
-
-///////////////////////////////////////////////////////////////////////////////
 // Structures
 // ------------------------
 //
 ///////////////////////////////////////////////////////////////////////////////
-
 
 enum
 {
@@ -76,142 +66,6 @@ enum
 	AREA_EXP_MINE = 32
 };
 
-///////////////////////////////////////////////////////////////////////////////
-// Variables-Classes
-// ------------------------
-// This classes are for saving global Variables needed by the game
-///////////////////////////////////////////////////////////////////////////////
-
-// GraphicsData - Class containing all normal graphic surfaces ////////////////
-class cGraphicsData
-{
-public:
-	AutoSurface gfx_Chand;
-	AutoSurface gfx_Cno;
-	AutoSurface gfx_Cselect;
-	AutoSurface gfx_Cmove;
-	AutoSurface gfx_Cmove_draft; // for shift + lmb to set a path but no move
-	AutoSurface gfx_Chelp;
-	AutoSurface gfx_Cattack;
-	AutoSurface gfx_Cattackoor; // attack a unit out of range
-	AutoSurface gfx_Cpfeil1;
-	AutoSurface gfx_Cpfeil2;
-	AutoSurface gfx_Cpfeil3;
-	AutoSurface gfx_Cpfeil4;
-	AutoSurface gfx_Cpfeil6;
-	AutoSurface gfx_Cpfeil7;
-	AutoSurface gfx_Cpfeil8;
-	AutoSurface gfx_Cpfeil9;
-	AutoSurface gfx_hud_stuff;
-	AutoSurface gfx_shadow;
-	AutoSurface gfx_tmp;
-	AutoSurface gfx_context_menu;
-	AutoSurface gfx_destruction;
-	AutoSurface gfx_destruction_glas;
-	AutoSurface gfx_Cband;
-	AutoSurface gfx_band_small;
-	AutoSurface gfx_band_big;
-	AutoSurface gfx_band_small_org;
-	AutoSurface gfx_band_big_org;
-	AutoSurface gfx_big_beton_org;
-	AutoSurface gfx_big_beton;
-	AutoSurface gfx_Ctransf;
-	AutoSurface gfx_Cload;
-	AutoSurface gfx_Cactivate;
-	AutoSurface gfx_storage;
-	AutoSurface gfx_storage_ground;
-	AutoSurface gfx_dialog;
-	AutoSurface gfx_edock;
-	AutoSurface gfx_ehangar;
-	AutoSurface gfx_edepot;
-	AutoSurface gfx_Cmuni;
-	AutoSurface gfx_Crepair;
-	AutoSurface gfx_panel_top;
-	AutoSurface gfx_panel_bottom;
-	AutoSurface gfx_Csteal;
-	AutoSurface gfx_Cdisable;
-	AutoSurface gfx_menu_stuff;
-	AutoSurface gfx_hud_extra_players;
-	AutoSurface gfx_player_pc;
-	AutoSurface gfx_player_human;
-	AutoSurface gfx_player_none;
-	AutoSurface gfx_player_select;
-	AutoSurface gfx_exitpoints_org;
-	AutoSurface gfx_exitpoints;
-	AutoSurface gfx_menu_buttons;
-	AutoSurface gfx_player_ready;
-	AutoSurface gfx_hud_chatbox;
-
-	std::string DialogPath;
-	std::string Dialog2Path;
-	std::string Dialog3Path;
-} EX GraphicsData;
-
-// Effects - Class containing all effect surfaces /////////////////////////////
-class cEffectsData
-{
-public:
-	void load (const char* path);
-public:
-	AutoSurface fx_explo_big[2];
-	AutoSurface fx_explo_small[2];
-	AutoSurface fx_explo_water[2];
-	AutoSurface fx_explo_air[2];
-	AutoSurface fx_muzzle_big[2];
-	AutoSurface fx_muzzle_small[2];
-	AutoSurface fx_muzzle_med[2];
-	AutoSurface fx_hit[2];
-	AutoSurface fx_smoke[2];
-	AutoSurface fx_rocket[2];
-	AutoSurface fx_dark_smoke[2];
-	AutoSurface fx_tracks[2];
-	AutoSurface fx_corpse[2];
-	AutoSurface fx_absorb[2];
-} EX EffectsData;
-
-// ResourceData - Class containing all resource surfaces //////////////////////
-class cResourceData
-{
-public:
-	void load (const char* path);
-public:
-	AutoSurface res_metal_org;
-	AutoSurface res_metal;
-	AutoSurface res_oil_org;
-	AutoSurface res_oil;
-	AutoSurface res_gold_org;
-	AutoSurface res_gold;
-} EX ResourceData;
-
-// UnitsData - Class containing all building/vehicle surfaces & data ///////////////
-EX cUnitsData UnitsDataGlobal;
-EX cClanData  ClanDataGlobal;
-
-class cUnitsUiData
-{
-public:
-	cUnitsUiData();
-	~cUnitsUiData();
-
-	const sBuildingUIData* getBuildingUI(sID id) const;
-	const sVehicleUIData* getVehicleUI(sID id) const;
-
-
-	std::vector<sVehicleUIData> vehicleUIs;
-	std::vector<sBuildingUIData> buildingUIs;
-
-	sBuildingUIData* rubbleBig;
-	sBuildingUIData* rubbleSmall;
-
-	// direct pointer on some of the building graphics
-	SDL_Surface* ptr_small_beton;
-	SDL_Surface* ptr_small_beton_org;
-	SDL_Surface* ptr_connector;
-	SDL_Surface* ptr_connector_org;
-	SDL_Surface* ptr_connector_shw;
-	SDL_Surface* ptr_connector_shw_org;
-} EX UnitsUiData;
-
 enum class ePlayerConnectionState
 {
 	INACTIVE,       // player is not connected, but game can continue (e. g. defeated player)
@@ -220,16 +74,6 @@ enum class ePlayerConnectionState
 	DISCONNECTED    // player has lost connection. Game should be paused.
 };
 std::string enumToString(ePlayerConnectionState value);
-
-// OtherData - Class containing the rest of surfaces //////////////////////////
-class cOtherData
-{
-public:
-	void loadWayPoints();
-public:
-	AutoSurface WayPointPfeile[8][60];
-	AutoSurface WayPointPfeileSpecial[8][60];
-} EX OtherData;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Predeclerations

@@ -32,12 +32,6 @@
 // minimap configuration
 #define MINIMAP_COLOR 0xFFFC0000 // color of the screen borders on the minimap
 
-#ifdef __main__
-# define EX
-#else
-# define EX extern
-#endif
-
 #ifdef _MSC_VER
 # define CHECK_MEMORY //_ASSERTE (_CrtCheckMemory());
 #else

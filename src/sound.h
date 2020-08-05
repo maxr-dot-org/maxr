@@ -28,8 +28,6 @@
 
 #include "output/sound/soundchunk.h"
 
-EX std::vector<std::string> MusicFiles;
-
 // Sounds ////////////////////////////////////////////////////////////////////
 class cSoundData
 {
@@ -71,7 +69,7 @@ public:
 
 	// Dummy
 	cSoundChunk DummySound;
-} EX SoundData;
+};
 
 // Voices ////////////////////////////////////////////////////////////////////
 class cVoiceData
@@ -115,6 +113,9 @@ public:
 	std::array<cSoundChunk, 2> VOIUnitDisabledByEnemy;
 	std::array<cSoundChunk, 2> VOIUnitStolen;
 	cSoundChunk VOIUnitStolenByEnemy;
-} EX VoiceData;
+};
 
+extern std::vector<std::string> MusicFiles;
+extern cSoundData SoundData;
+extern cVoiceData VoiceData;
 #endif // soundH

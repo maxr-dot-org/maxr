@@ -19,7 +19,7 @@
 
 #include "ui/graphical/menu/widgets/special/resourcebar.h"
 
-#include "main.h"
+#include "resources/uidata.h"
 #include "settings.h"
 #include "video.h"
 #include "input/mouse/mouse.h"

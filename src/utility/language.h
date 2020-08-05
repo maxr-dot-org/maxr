@@ -105,4 +105,6 @@ private:
 	bool        m_bErrorMsgTranslationLoaded;
 };
 
+extern cLanguage lngPack;
+
 #endif // utility_languageH

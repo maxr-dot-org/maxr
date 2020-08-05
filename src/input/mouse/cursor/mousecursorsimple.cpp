@@ -19,7 +19,7 @@
 
 #include "input/mouse/cursor/mousecursorsimple.h"
 
-#include "main.h"
+#include "resources/uidata.h"
 #include "utility/position.h"
 
 //------------------------------------------------------------------------------

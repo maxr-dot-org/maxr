@@ -179,6 +179,8 @@ private:
 
 	bool tryLoadSingleKey (const tinyxml2::XMLElement& parentElement, const std::string& elementName, cKeySequence& destination);
 	void saveSingleKey (tinyxml2::XMLElement& parentElement, const std::string& elementName, const cKeySequence& source);
-} EX KeysList;
+};
+
+extern cKeysList KeysList;
 
 #endif // keys_H

@@ -20,7 +20,8 @@
 #include <algorithm>
 
 #include "ui/graphical/menu/widgets/sliderhandle.h"
-#include "main.h"
+
+#include "resources/uidata.h"
 #include "video.h"
 #include "ui/graphical/application.h"
 #include "input/mouse/mouse.h"

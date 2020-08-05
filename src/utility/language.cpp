@@ -40,6 +40,8 @@
 
 using namespace tinyxml2;
 
+cLanguage lngPack;
+
 cLanguage::cLanguage() :
 	m_bLeftToRight (true),
 	m_bErrorMsgTranslationLoaded (false)
