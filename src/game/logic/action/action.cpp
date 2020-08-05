@@ -27,6 +27,7 @@
 #include "actiontransfer.h"
 #include "actionstartmove.h"
 #include "actionresumemove.h"
+#include "actionstartturn.h"
 #include "actionendturn.h"
 #include "actionselfdestroy.h"
 #include "actionattack.h"
@@ -68,8 +69,10 @@ std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 		return std::make_unique<cActionStartMove>(archive); 
 	case eActiontype::ACTION_RESUME_MOVE:
 		return std::make_unique<cActionResumeMove>(archive); 
+	case eActiontype::ACTION_START_TURN:
+		return std::make_unique<cActionStartTurn>(archive);
 	case eActiontype::ACTION_END_TURN:
-		return std::make_unique<cActionEndTurn>(archive);	
+		return std::make_unique<cActionEndTurn>(archive);
 	case eActiontype::ACTION_SELF_DESTROY:
 		return std::make_unique<cActionSelfDestroy>(archive);
 	case eActiontype::ACTION_ATTACK:
@@ -136,9 +139,11 @@ std::string enumToString(cAction::eActiontype value)
 	case cAction::eActiontype::ACTION_TRANSFER:
 		return "ACTION_TRANSFER";
 	case cAction::eActiontype::ACTION_START_MOVE:
-		return "ACTION_START_MOVE";	
+		return "ACTION_START_MOVE";
 	case cAction::eActiontype::ACTION_RESUME_MOVE:
 		return "ACTION_RESUME_MOVE";
+	case cAction::eActiontype::ACTION_START_TURN:
+		return "ACTION_START_TURN";
 	case cAction::eActiontype::ACTION_END_TURN:
 		return "ACTION_END_TURN";
 	case cAction::eActiontype::ACTION_SELF_DESTROY:

@@ -92,6 +92,7 @@
 #include "game/logic/action/actionstartmove.h"
 #include "game/logic/action/actionresumemove.h"
 #include "game/logic/turncounter.h"
+#include "game/logic/action/actionstartturn.h"
 #include "game/logic/action/actionendturn.h"
 #include "game/data/report/special/savedreportplayerendedturn.h"
 #include "game/logic/turncounter.h"
@@ -1562,6 +1563,7 @@ void cGameGuiController::showNextPlayerDialog()
 	signalConnectionManager.connect (dialog->done, [this]()
 	{
 		soundManager->unmute();
+		activeClient->sendNetMessage(cActionStartTurn{});
 	});
 }
 

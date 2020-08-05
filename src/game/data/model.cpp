@@ -552,6 +552,20 @@ void cModel::addAttackJob(cUnit& aggressor, const cPosition& targetPosition)
 }
 
 //------------------------------------------------------------------------------
+void cModel::handlePlayerStartTurn(cPlayer& player)
+{
+	if (gameSettings->getGameType() == eGameSettingsGameType::HotSeat && player.getId() == activeTurnPlayer->getId())
+	{
+		turnTimeClock->restartFromNow();
+
+		if (gameSettings->isTurnLimitActive())
+		{
+			turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow(gameSettings->getTurnLimit());
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
 void cModel::handlePlayerFinishedTurn(cPlayer& player)
 {
 	player.setHasFinishedTurn(true);
@@ -784,13 +798,18 @@ void cModel::handleTurnEnd()
 				}
 			}
 
-			turnTimeClock->restartFromNow();
 			turnTimeClock->clearAllDeadlines();
 			turnEndDeadline = 0;
 			turnLimitDeadline = 0;
-			if (gameSettings->isTurnLimitActive())
+
+			if (gameSettings->getGameType() != eGameSettingsGameType::HotSeat)
 			{
-				turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow(gameSettings->getTurnLimit());
+				turnTimeClock->restartFromNow();
+
+				if (gameSettings->isTurnLimitActive())
+				{
+					turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow(gameSettings->getTurnLimit());
+				}
 			}
 
 			turnEndState = TURN_ACTIVE;

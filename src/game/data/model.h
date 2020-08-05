@@ -109,6 +109,7 @@ public:
 
 	void addAttackJob(cUnit& aggressor, const cPosition& targetPosition);
 
+	void handlePlayerStartTurn(cPlayer& player);
 	void handlePlayerFinishedTurn(cPlayer& player);
 
 	void addFx(std::shared_ptr<cFx> fx);
