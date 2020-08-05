@@ -221,44 +221,6 @@ enum class ePlayerConnectionState
 };
 std::string enumToString(ePlayerConnectionState value);
 
-enum class eFreezeMode
-{
-	WAIT_FOR_TURNEND,   // server is processing the turn end
-	PAUSE,              // pause, because... pause
-	WAIT_FOR_CLIENT,    // waiting for response from client
-	WAIT_FOR_SERVER     // waiting for response from server
-};
-std::string enumToString(eFreezeMode value);
-
-class cFreezeModes
-{
-public:
-	cFreezeModes();
-
-	void disable (eFreezeMode mode);
-	void enable (eFreezeMode mode);
-	bool isEnabled (eFreezeMode mode) const;
-	bool isFreezed() const;
-	bool gameTimePaused() const;
-
-	template<typename T>
-	void serialize(T& archive)
-	{
-		archive & waitForTurnEnd;
-		archive & pause;
-		archive & waitForClient;
-		archive & waitForServer;
-	}
-
-	// These modes are triggered on server (and synchronized to clients):
-	bool waitForTurnEnd;    // server is processing the turn end
-	bool pause;             // pause, because... pause
-	bool waitForClient;      // waiting for response from client
-	
-	// This mode is triggered on client (and not synchronized with server or other clients):
-	bool waitForServer;     // waiting for response from server
-};
-
 // OtherData - Class containing the rest of surfaces //////////////////////////
 class cOtherData
 {
