@@ -74,7 +74,6 @@ cClient::~cClient()
 {
 	connectionManager->setLocalClient(nullptr, -1);
 	gameTimer->stop();
-
 }
 
 void cClient::setMap (std::shared_ptr<cStaticMap> staticMap)
@@ -86,15 +85,6 @@ void cClient::setGameSettings (const cGameSettings& gameSettings)
 {
 	model.setGameSettings(gameSettings);
 }
-
-class LessByNr
-{
-public:
-	bool operator() (const cPlayer* lhs, const cPlayer* rhs) const
-	{
-		return lhs->getId() < rhs->getId();
-	}
-};
 
 void cClient::setPlayers (const std::vector<cPlayerBasicData>& splayers, size_t activePlayerNr)
 {
