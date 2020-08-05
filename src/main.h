@@ -48,27 +48,6 @@ struct sBuildingUIData;
 struct sVehicleUIData;
 class cClanData;
 
-///////////////////////////////////////////////////////////////////////////////
-// Structures
-// ------------------------
-//
-///////////////////////////////////////////////////////////////////////////////
-
-enum class ePlayerConnectionState
-{
-	INACTIVE,       // player is not connected, but game can continue (e. g. defeated player)
-	CONNECTED,      // player is connected. Normal operation.
-	NOT_RESPONDING, // player is connected, but no sync message received for some time. Game should be paused.
-	DISCONNECTED    // player has lost connection. Game should be paused.
-};
-std::string enumToString(ePlayerConnectionState value);
-
-///////////////////////////////////////////////////////////////////////////////
-// Predeclerations
-// ------------------------
-//
-///////////////////////////////////////////////////////////////////////////////
-
 /**
  * Return if it is the main thread.
  * @note: should be called by main once by the main thread to initialize.

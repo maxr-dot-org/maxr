@@ -22,6 +22,15 @@
 
 #include <string>
 
+enum class ePlayerConnectionState
+{
+	INACTIVE,       // player is not connected, but game can continue (e. g. defeated player)
+	CONNECTED,      // player is connected. Normal operation.
+	NOT_RESPONDING, // player is connected, but no sync message received for some time. Game should be paused.
+	DISCONNECTED    // player has lost connection. Game should be paused.
+};
+std::string enumToString(ePlayerConnectionState value);
+
 enum class eFreezeMode
 {
 	WAIT_FOR_TURNEND,   // server is processing the turn end

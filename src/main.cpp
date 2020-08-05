@@ -320,18 +320,3 @@ bool is_main_thread()
 	static const SDL_threadID main_thread_id = SDL_ThreadID();
 	return main_thread_id == SDL_ThreadID();
 }
-
-//------------------------------------------------------------------------------
-std::string enumToString(ePlayerConnectionState value)
-{
-	switch (value)
-	{
-	case ePlayerConnectionState::INACTIVE: return "INACTIVE";
-	case ePlayerConnectionState::CONNECTED: return "CONNECTED";
-	case ePlayerConnectionState::NOT_RESPONDING: return "NOT_RESPONDING";
-	case ePlayerConnectionState::DISCONNECTED: return "DISCONNECTED";
-	default:
-		assert(false);
-		return toString(static_cast<int>(value));
-	}
-}
