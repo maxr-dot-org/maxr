@@ -25,7 +25,7 @@
 #include "ui/graphical/menu/widgets/scrollbar.h"
 #include "settings.h"
 #include "video.h"
-#include "sound.h"
+#include "resources/sound.h"
 #include "input/mouse/mouse.h"
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"

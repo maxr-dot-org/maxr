@@ -46,7 +46,7 @@
 #include "main.h"
 #include "utility/pcx.h"
 #include "settings.h"
-#include "sound.h"
+#include "resources/sound.h"
 #include "utility/tinyxml2.h"
 #include "utility/unifonts.h"
 #include "game/data/units/vehicle.h"

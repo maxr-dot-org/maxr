@@ -44,7 +44,7 @@
 #include "network.h"
 #include "game/data/player/player.h"
 #include "settings.h"
-#include "sound.h"
+#include "resources/sound.h"
 #include "game/data/units/vehicle.h"
 #include "video.h"
 #include "maxrversion.h"

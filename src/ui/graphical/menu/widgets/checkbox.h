@@ -24,7 +24,7 @@
 
 #include "utility/autosurface.h"
 #include "utility/unifonts.h"
-#include "sound.h"
+#include "resources/sound.h"
 #include "utility/signal/signal.h"
 
 enum class eCheckBoxType

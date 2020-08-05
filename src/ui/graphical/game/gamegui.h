@@ -25,7 +25,7 @@
 #include "ui/graphical/window.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "sound.h"
+#include "resources/sound.h"
 #include "game/logic/upgradecalculator.h"
 #include "ui/graphical/game/unitselection.h"
 

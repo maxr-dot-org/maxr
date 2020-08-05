@@ -24,7 +24,7 @@
 #include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "ui/graphical/orientation.h"
 #include "utility/autosurface.h"
-#include "sound.h"
+#include "resources/sound.h"
 #include "utility/signal/signal.h"
 
 enum class eResourceBarType

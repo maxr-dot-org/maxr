@@ -21,7 +21,7 @@
 #include "output/sound/soundchunk.h"
 #include "output/sound/soundchannel.h"
 #include "utility/log.h"
-#include "sound.h"
+#include "resources/sound.h"
 #include "utility/random.h"
 
 const int cSoundDevice::soundEffectGroupTag = 0;

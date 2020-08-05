@@ -22,7 +22,7 @@
 #include "game/data/player/player.h"
 #include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffectvoice.h"
-#include "sound.h"
+#include "resources/sound.h"
 #include "utility/random.h"
 
 //------------------------------------------------------------------------------

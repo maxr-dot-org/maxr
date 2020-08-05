@@ -52,7 +52,7 @@
 #include "game/data/units/building.h"
 #include "keys.h"
 #include "utility/listhelpers.h"
-#include "sound.h"
+#include "resources/sound.h"
 #include "utility/indexiterator.h"
 #include "utility/random.h"
 #include "input/mouse/mouse.h"

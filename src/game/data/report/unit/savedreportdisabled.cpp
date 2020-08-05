@@ -21,7 +21,7 @@
 #include "game/data/units/unit.h"
 #include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffectvoice.h"
-#include "sound.h"
+#include "resources/sound.h"
 
 //------------------------------------------------------------------------------
 cSavedReportDisabled::cSavedReportDisabled (const cUnit& unit) :

@@ -25,7 +25,7 @@
 #include "main.h"
 #include "game/data/player/player.h"
 #include "video.h"
-#include "sound.h"
+#include "resources/sound.h"
 #include "game/data/map/map.h"
 #include "utility/random.h"
 #include "ui/sound/soundmanager.h"

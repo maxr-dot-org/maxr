@@ -27,7 +27,7 @@
 #include "utility/autosurface.h"
 #include "utility/signal/signal.h"
 #include "utility/unifonts.h"
-#include "sound.h"
+#include "resources/sound.h"
 
 enum class ePushButtonType
 {

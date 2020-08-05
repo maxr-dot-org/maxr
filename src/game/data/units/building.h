@@ -29,7 +29,7 @@
 #include "maxrconfig.h"
 #include "main.h" // for sUnitData, sID
 #include "game/data/units/unit.h"
-#include "sound.h"
+#include "resources/sound.h"
 #include "resources/uidata.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"

@@ -22,7 +22,7 @@
 #include "ui/graphical/menu/widgets/lineedit.h"
 #include "ui/graphical/application.h"
 #include "input/mouse/mouse.h"
-#include "sound.h"
+#include "resources/sound.h"
 #include "main.h" // iToStr
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"

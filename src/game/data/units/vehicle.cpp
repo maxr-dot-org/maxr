@@ -31,7 +31,7 @@
 #include "game/data/player/player.h"
 #include "settings.h"
 #include "video.h"
-#include "sound.h"
+#include "resources/sound.h"
 #include "utility/unifonts.h"
 #include "input/mouse/mouse.h"
 #include "output/sound/sounddevice.h"

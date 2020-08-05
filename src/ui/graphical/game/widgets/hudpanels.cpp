@@ -21,7 +21,7 @@
 
 #include "ui/graphical/game/widgets/hudpanels.h"
 #include "resources/uidata.h"
-#include "sound.h"
+#include "resources/sound.h"
 #include "video.h"
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"

@@ -31,7 +31,7 @@
 #include "ui/graphical/application.h"
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/graphical/game/widgets/chatbox.h"
-#include "sound.h"
+#include "resources/sound.h"
 #include "video.h"
 #include "main.h"
 #include "game/data/map/map.h"

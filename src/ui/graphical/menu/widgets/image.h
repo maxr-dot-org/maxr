@@ -23,7 +23,7 @@
 #include "maxrconfig.h"
 #include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "utility/autosurface.h"
-#include "sound.h"
+#include "resources/sound.h"
 #include "utility/signal/signal.h"
 
 class cImage : public cClickableWidget
