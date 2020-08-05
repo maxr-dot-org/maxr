@@ -32,6 +32,7 @@
 #include "utility/mathtools.h"
 #include "utility/string/toString.h"
 #include "utility/indexiterator.h"
+#include "utility/language.h"
 #include "utility/listhelpers.h"
 
 //------------------------------------------------------------------------------

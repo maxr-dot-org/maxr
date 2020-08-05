@@ -29,8 +29,6 @@
 #include <SDL_net.h>
 #include <SDL_mixer.h>
 
-#include "main.h"
-
 #include "game/data/base/base.h"
 #include "game/data/units/building.h"
 #include "game/data/player/clans.h"
@@ -57,6 +55,7 @@
 #include "ui/graphical/menu/windows/windowstart.h"
 #include "debug.h"
 #include "utility/string/toString.h"
+#include "utility/thread/ismainthread.h"
 
 using namespace std;
 
@@ -309,14 +308,4 @@ static void showIntro()
 			Log.write (e.what(), cLog::eLOG_TYPE_DEBUG);
 		}
 	}
-}
-
-/**
- * Return if it is the main thread.
- * @note: should be called by main once by the main thread to initialize.
- */
-bool is_main_thread()
-{
-	static const SDL_threadID main_thread_id = SDL_ThreadID();
-	return main_thread_id == SDL_ThreadID();
 }

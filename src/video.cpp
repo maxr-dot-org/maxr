@@ -34,6 +34,7 @@
 #include "utility/log.h"
 #include "utility/pcx.h"
 #include "utility/string/toString.h"
+#include "utility/thread/ismainthread.h"
 #include "utility/unifonts.h"
 #include "utility/files.h"
 #include "input/keyboard/keyboard.h"

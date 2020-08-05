@@ -64,6 +64,7 @@
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
 
+#include "utility/language.h"
 #include "utility/mathtools.h"
 #include "utility/random.h"
 #include "utility/position.h"

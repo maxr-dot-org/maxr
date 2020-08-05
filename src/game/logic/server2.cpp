@@ -20,7 +20,9 @@
 #include <SDL_thread.h>
 
 #include "server2.h"
+
 #include "game/logic/action/action.h"
+#include "utility/language.h"
 #include "utility/log.h"
 #include "game/data/player/playerbasicdata.h"
 #include <time.h>

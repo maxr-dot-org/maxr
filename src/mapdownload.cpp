@@ -29,6 +29,7 @@
 #include "defines.h"
 #include "utility/crc.h"
 #include "utility/files.h"
+#include "utility/language.h"
 #include "utility/log.h"
 #include "settings.h"
 #include "utility/string/tolower.h"

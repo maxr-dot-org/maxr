@@ -27,6 +27,7 @@
 #include "ui/graphical/menu/control/menucontrollermultiplayerhotseat.h"
 #include "ui/graphical/application.h"
 #include "game/startup/local/hotseat/localhotseatgamesaved.h"
+#include "utility/language.h"
 
 //------------------------------------------------------------------------------
 cWindowMultiPlayer::cWindowMultiPlayer() :

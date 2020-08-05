@@ -51,6 +51,7 @@
 #include "game/data/units/building.h"
 #include "resources/sound.h"
 #include "game/logic/client.h"
+#include "utility/language.h"
 #include "utility/log.h"
 #include "game/startup/game.h"
 #include "input/mouse/mouse.h"

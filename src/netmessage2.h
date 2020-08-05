@@ -33,7 +33,6 @@
 #include "mapdownload.h"
 #include "game/data/player/playerbasicdata.h"
 #include "game/data/freezemode.h"
-#include "main.h"
 
 class cSavedReport;
 class cSocket;

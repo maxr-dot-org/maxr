@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/control/menucontrollermultiplayerhotseat.h"
+
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/windows/windowgamesettings/windowgamesettings.h"
 #include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
@@ -33,6 +34,7 @@
 #include "game/data/units/landingunit.h"
 #include "game/data/map/map.h"
 #include "game/logic/upgradecalculator.h"
+#include "utility/language.h"
 
 // TODO: remove
 std::vector<std::pair<sID, int>> createInitialLandingUnitsList(int clan, const cGameSettings& gameSettings, const cUnitsData& unitsData); // defined in windowsingleplayer.cpp

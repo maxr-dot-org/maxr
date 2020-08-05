@@ -33,6 +33,7 @@
 #include "ui/graphical/game/gamegui.h"
 #include "game/startup/local/singleplayer/localsingleplayergamenew.h"
 #include "game/startup/local/singleplayer/localsingleplayergamesaved.h"
+#include "utility/language.h"
 #include "utility/log.h"
 #include "network.h"
 #include "game/data/player/player.h"

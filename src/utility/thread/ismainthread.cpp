@@ -16,42 +16,27 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-///////////////////////////////////////////////////////////////////////////////
-//
-// Main-declerations, -classes and structures for the game
-// Contains all global varaibles needed for the game
-//
-///////////////////////////////////////////////////////////////////////////////
 
-// Hides some warnings from the eye of VS users ///////////////////////////////
-#ifdef _MSC_VER
-#pragma warning(disable:4996)
-#endif
+#include "ismainthread.h"
 
-#ifndef mainH
-#define mainH
+//#include <ctime>
+//#include <cmath>
+//#include <cstdio>
+//#include <iostream>
+//#include <sstream>
+//#include <algorithm>
 
-// Includes ///////////////////////////////////////////////////////////////////
-
-#include <vector>
-#include <SDL.h>
-#include "utility/autosurface.h"
-#include "defines.h"
-#include "utility/language.h"
-#include "game/data/units/unitdata.h"
-#include "game/data/player/clans.h"
-
-// Predeclarations
-class cPlayer;
-class cLanguage;
-struct sBuildingUIData;
-struct sVehicleUIData;
-class cClanData;
+//#include <SDL.h>
+#include <SDL_thread.h>
+//#include <SDL_net.h>
+//#include <SDL_mixer.h>
 
 /**
  * Return if it is the main thread.
  * @note: should be called by main once by the main thread to initialize.
  */
-bool is_main_thread();
-
-#endif
+bool is_main_thread()
+{
+	static const SDL_threadID main_thread_id = SDL_ThreadID();
+	return main_thread_id == SDL_ThreadID();
+}

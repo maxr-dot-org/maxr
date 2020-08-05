@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/control/menucontrollermultiplayerclient.h"
+
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/windows/windownetworklobbyclient/windownetworklobbyclient.h"
 #include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
@@ -36,6 +37,7 @@
 #include "game/data/map/map.h"
 #include "game/data/player/player.h"
 #include "game/data/units/landingunit.h"
+#include "utility/language.h"
 #include "utility/log.h"
 #include "menuevents.h"
 #include "mapdownload.h"

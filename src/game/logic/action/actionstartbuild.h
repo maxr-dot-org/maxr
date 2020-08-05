@@ -21,6 +21,7 @@
 #define game_logic_actionStartBuildH
 
 #include "action.h"
+#include "game/data/units/unitdata.h"
 
 class cUnit;
 

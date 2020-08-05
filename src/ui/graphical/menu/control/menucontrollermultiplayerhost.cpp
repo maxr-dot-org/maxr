@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/control/menucontrollermultiplayerhost.h"
+
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/windows/windownetworklobbyhost/windownetworklobbyhost.h"
 #include "game/data/gamesettings.h"
@@ -38,6 +39,7 @@
 #include "game/data/map/map.h"
 #include "game/data/player/player.h"
 #include "game/data/units/landingunit.h"
+#include "utility/language.h"
 #include "utility/log.h"
 #include "menuevents.h"
 #include "mapdownload.h"
