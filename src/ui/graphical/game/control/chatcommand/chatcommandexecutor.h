@@ -21,7 +21,8 @@
 #define ui_graphical_game_control_chatcommand_chatcommandexecutorH
 
 #include <string>
-#include <iostream>
+#include <sstream>
+#include <exception>
 
 class cChatCommand;
 
@@ -30,6 +31,7 @@ void skipWhiteSpace(const std::string& command, size_t& position);
 class cChatCommandExecutor
 {
 public:
+	virtual ~cChatCommandExecutor() = default;
 	virtual bool tryExecute(const std::string& command) const = 0;
 	virtual void printArguments(std::ostream& result) const = 0;
 	virtual const cChatCommand& getCommand() const = 0;
@@ -49,6 +51,8 @@ private:
 	cChatCommandParser<Arguments...> argumentParser;
 };
 
+
+#include "utility/invoke.h"
 
 template<typename F, typename... Arguments>
 cChatCommandExecutorImpl<F, Arguments...>::cChatCommandExecutorImpl(F function_, cChatCommandParser<Arguments...> parser_) :

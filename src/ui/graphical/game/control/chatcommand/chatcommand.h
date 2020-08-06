@@ -60,6 +60,10 @@ private:
 	bool isServerOnly;
 };
 
+#include "chatcommandexecutor.h"
+#include "chatcommandparser.h"
+
+
 //------------------------------------------------------------------------------
 template<typename NewArgument, typename... Args>
 cChatCommandParser<NewArgument> cChatCommand::addArgument(Args&&... args)

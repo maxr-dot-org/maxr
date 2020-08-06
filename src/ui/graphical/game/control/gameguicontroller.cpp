@@ -543,7 +543,7 @@ void cGameGuiController::initChatCommands()
 			gameGui->getDebugOutput().setDebugStealth(flag);
 		})
 	);
-
+#if 0 // Not implemented
 	chatCommands.push_back(
 		cChatCommand("kick", "Remove a player from the game")
 		.addArgument<cChatCommandArgumentClientPlayer>(activeClient)
@@ -649,6 +649,7 @@ void cGameGuiController::initChatCommands()
 			//client->getActivePlayer().revealResource();
 		})
 	);
+#endif
 	chatCommands.push_back(
 		cChatCommand("pause", "Pause the game")
 		.setIsServerOnly (true)
@@ -676,6 +677,7 @@ void cGameGuiController::initChatCommands()
 			CR_EMULATE_CRASH();
 		})
 	);
+#if 0
 	chatCommands.push_back(
 		cChatCommand("disconnect", "Disconnect a player")
 		.setIsServerOnly (true)
@@ -738,6 +740,7 @@ void cGameGuiController::initChatCommands()
 			*/
 		})
 	);
+#endif
 }
 
 //------------------------------------------------------------------------------

@@ -52,10 +52,6 @@ public:
 		return static_cast<Impl&>(*this)->toString();
 	}
 
-	//const typename Impl::ValueType& getValue()
-	//{
-	//    return static_cast<Impl&>(*this)->getValue();
-	//}
 protected:
 	bool isOptional;
 };
