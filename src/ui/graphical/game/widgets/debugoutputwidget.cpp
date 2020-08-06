@@ -357,6 +357,11 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 		drawDetectedByPlayerList();
 		drawDetectionMaps();
 	}
+
+	if (debugSentry)
+	{
+		drawSentryMaps();
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -624,6 +629,36 @@ void cDebugOutputWidget::drawDetectionMaps()
 			s += player->hasLandDetection(*i) ? "L" : " ";
 			s += player->hasMineDetection(*i) ? "M" : " ";
 			if (s != "   ")
+			{
+				font->showText(drawDestination.x, drawDestination.y, iToStr(player->getId()) + s, FONT_LATIN_SMALL_YELLOW);
+			}
+			drawDestination.y += font->getFontHeight(FONT_LATIN_SMALL_YELLOW);
+		}
+	}
+}
+//------------------------------------------------------------------------------
+void cDebugOutputWidget::drawSentryMaps()
+{
+	if (!gameMap || !client) return;
+
+	const auto zoomedTileSize = gameMap->getZoomedTileSize();
+	const auto tileDrawingRange = gameMap->computeTileDrawingRange();
+	const auto zoomedStartTilePixelOffset = gameMap->getZoomedStartTilePixelOffset();
+
+	auto font = cUnicodeFont::font.get();
+
+	for (auto i = makeIndexIterator(tileDrawingRange.first, tileDrawingRange.second); i.hasMore(); i.next())
+	{
+		auto drawDestination = gameMap->computeTileDrawingArea(zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
+		drawDestination.x += zoomedTileSize.x() - font->getTextWide("GA");
+		drawDestination.y += 8;
+
+		for (const auto& player : client->getModel().getPlayerList())
+		{
+			std::string s;
+			s += player->hasSentriesGround(*i)  ? "G" : " ";
+			s += player->hasSentriesAir(*i) ? "A" : " ";
+			if (s != "  ")
 			{
 				font->showText(drawDestination.x, drawDestination.y, iToStr(player->getId()) + s, FONT_LATIN_SMALL_YELLOW);
 			}

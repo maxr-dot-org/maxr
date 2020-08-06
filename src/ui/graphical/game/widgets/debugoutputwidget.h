@@ -96,11 +96,13 @@ private:
 	void trace();
 	void traceVehicle (const cVehicle& vehicle, cPosition& drawPosition);
 	void traceBuilding (const cBuilding& Building, cPosition& drawPosition);
-	
-	/** draw the contend of the 'detectedByPlayer' lists over the units */	
+
+	/** draw the contend of the 'detectedByPlayer' lists over the units */
 	void drawDetectedByPlayerList();
 	/** draw the detection maps of all players */
 	void drawDetectionMaps();
+
+	void drawSentryMaps();
 };
 
 #endif // ui_graphical_game_widgets_debugoutputidgetH
