@@ -79,7 +79,7 @@ public:
 
 	bool isHuman() const { return true; } // only human players are implemented yet.
 	const cPlayerColor& getColor() const { return color; }
-	
+
 	int getId() const { return id; }
 
 	int getCredits() const;
@@ -95,7 +95,7 @@ public:
 	void initMaps (cMap& map);
 	const cPosition& getMapSize() const;
 
-	/** 
+	/**
 	* Update the scan and detection maps of the player. These maps control,
 	* where a player can see other units.
 	*/
@@ -108,9 +108,9 @@ public:
 
 	void revealResource();
 	unsigned int getOffset (const cPosition& pos) const { return pos.x() + pos.y() * mapSize.x(); }
-	/** 
-	* Check weather any part of the unit is covered by the scan area. Do not use this to check, weather 
-	* a unit is actually visible. Use canSeeUnit() for this purpose 
+	/**
+	* Check weather any part of the unit is covered by the scan area. Do not use this to check, weather
+	* a unit is actually visible. Use canSeeUnit() for this purpose
 	*/
 	bool canSeeAnyAreaUnder (const cUnit& unit) const;
 	/**
@@ -119,9 +119,9 @@ public:
 	*/
 	bool canSeeUnit(const cUnit& unit, const cMap& map) const;
 	bool canSeeUnit(const cUnit& unit, const cMapField& field, const sTerrain& terrain) const;
-	/** 
-	* Check weather the scan area covers position. Do not use this to check, weather 
-	* a unit on the position is actually visible. Use canSeeUnit() for this purpose 
+	/**
+	* Check weather the scan area covers position. Do not use this to check, weather
+	* a unit on the position is actually visible. Use canSeeUnit() for this purpose
 	*/
 	bool canSeeAt(const cPosition& position) const;
 
@@ -144,9 +144,9 @@ public:
 
 	bool hasUnits() const;
 
-	void addSentry (cUnit& u);
-	void deleteSentry (cUnit& u);
-	void updateSentry (cUnit& u, int newRange);
+	void addToSentryMap (const cUnit& u);
+	void removeFromSentryMap (const cUnit& u);
+	void updateSentry (const cUnit& u, int newRange);
 
 	void upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, const cUnitsData& originalUnitsData);
 

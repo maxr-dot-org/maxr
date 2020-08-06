@@ -22,7 +22,7 @@
 
 //------------------------------------------------------------------------------
 cActionChangeSentry::cActionChangeSentry(const cUnit& unit) :
-	cAction(eActiontype::ACTION_CHANGE_SENTRY), 
+	cAction(eActiontype::ACTION_CHANGE_SENTRY),
 	unitId(unit.getId())
 {};
 
@@ -44,11 +44,13 @@ void cActionChangeSentry::execute(cModel& model) const
 
 	if (unit->isSentryActive())
 	{
-		unit->getOwner()->deleteSentry(*unit);
+		unit->getOwner()->removeFromSentryMap(*unit);
+		unit->setSentryActive(false);
 	}
 	else
 	{
-		unit->getOwner()->addSentry(*unit);
+		unit->setSentryActive(true);
+		unit->getOwner()->addToSentryMap(*unit);
 		unit->setManualFireActive(false);
 	}
 }

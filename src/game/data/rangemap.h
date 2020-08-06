@@ -26,7 +26,7 @@
 
 /**
 * This class is used to track, whether a position is a specific range to any
-* object on the map. 
+* object on the map.
 */
 class cRangeMap
 {
@@ -34,6 +34,7 @@ class cRangeMap
 public:
 	cRangeMap();
 
+	void reset();
 	void resize(const cPosition& size);
 	void subtract(const std::vector<uint16_t>& scanMapCopy);
 

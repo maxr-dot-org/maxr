@@ -64,7 +64,7 @@ cModel::~cModel()
 	for (auto attackjob : attackJobs)
 	{
 		delete attackjob;
-	}	
+	}
 	for (auto movejob : moveJobs)
 	{
 		delete movejob;
@@ -229,7 +229,7 @@ cVehicle& cModel::addVehicle(const cPosition& position, const sID& id, cPlayer* 
 	else
 	{
 		// start with flight height > 0, so that ground attack units
-		// will not be able to attack the plane in the moment it leaves 
+		// will not be able to attack the plane in the moment it leaves
 		// the factory
 		addedVehicle.setFlightHeight(1);
 		addedVehicle.triggerLandingTakeOff(*this);
@@ -247,11 +247,15 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 	nextUnitId++;
 
 	addedBuilding.initMineRessourceProd(*map);
-	
+
 	cBuilding* buildingToBeDeleted = map->getField(position).getTopBuilding();
 
 	map->addBuilding(addedBuilding, position);
 	player->addToScan(addedBuilding);
+	if (addedBuilding.isSentryActive())
+	{
+		player->addToSentryMap(addedBuilding);
+	}
 
 	// integrate the building to the base:
 	player->base.addBuilding(&addedBuilding, *map);
@@ -323,7 +327,7 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 	{
 		addedBuilding.startWork();
 	}
-	
+
 	addedBuilding.detectOtherUnits(*map);
 
 	return addedBuilding;
@@ -463,7 +467,7 @@ void cModel::deleteUnit(cUnit* unit)
 
 	if (owner != nullptr)
 	{
-		owner->deleteSentry(*unit);
+		owner->removeFromSentryMap(*unit);
 		owner->removeFromScan(*unit);
 	}
 }

@@ -26,12 +26,18 @@ cRangeMap::cRangeMap() :
 {}
 
 //------------------------------------------------------------------------------
+void cRangeMap::reset()
+{
+	std::fill(map.begin(), map.end(), 0);
+	crcValid = false;
+}
+
+//------------------------------------------------------------------------------
 void cRangeMap::resize(const cPosition& size_)
 {
 	size = size_;
 	map.resize(size.x() * size.y());
-	std::fill(map.begin(), map.end(), 0);
-	crcValid = false;
+	reset();
 }
 
 //------------------------------------------------------------------------------

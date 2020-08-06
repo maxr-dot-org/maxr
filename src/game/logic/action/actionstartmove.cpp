@@ -59,9 +59,9 @@ void cActionStartMove::execute(cModel& model) const
 		Log.write(" Can't find vehicle with id " + toString(unitId), cLog::eLOG_TYPE_NET_WARNING);
 		return;
 	}
-	
+
 	if (vehicle->getOwner()->getId() != playerNr) return;
-	
+
 	cPosition lastWaypoint = vehicle->getPosition();
 	for (auto& waypoint : path)
 	{
@@ -104,7 +104,7 @@ void cActionStartMove::execute(cModel& model) const
 		Log.write(" Cannot move a vehicle already moving", cLog::eLOG_TYPE_NET_DEBUG);
 		return;
 	}
-	
+
 
 
 	// everything is ok. add the movejob
@@ -112,11 +112,12 @@ void cActionStartMove::execute(cModel& model) const
 	// unset sentry status when moving a vehicle
 	if (vehicle->isSentryActive())
 	{
-		vehicle->getOwner()->deleteSentry(*vehicle);
+		vehicle->getOwner()->removeFromSentryMap(*vehicle);
+		vehicle->setSentryActive(false);
 	}
 
 	cMoveJob* movejob = model.addMoveJob(*vehicle, path);
-	
+
 	if (movejob)
 	{
 		movejob->setEndMoveAction(endMoveAction);

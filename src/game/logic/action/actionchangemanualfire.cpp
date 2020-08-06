@@ -22,7 +22,7 @@
 
 //------------------------------------------------------------------------------
 cActionChangeManualFire::cActionChangeManualFire(const cUnit& unit) :
-	cAction(eActiontype::ACTION_CHANGE_MANUAL_FIRE), 
+	cAction(eActiontype::ACTION_CHANGE_MANUAL_FIRE),
 	unitId(unit.getId())
 {};
 
@@ -45,6 +45,7 @@ void cActionChangeManualFire::execute(cModel& model) const
 	unit->setManualFireActive(!unit->isManualFireActive());
 	if (unit->isManualFireActive() && unit->isSentryActive())
 	{
-		unit->getOwner()->deleteSentry(*unit);
+		unit->getOwner()->removeFromSentryMap(*unit);
+		unit->setSentryActive(false);
 	}
 }

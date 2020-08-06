@@ -110,7 +110,7 @@ void cPlayer::initMaps (cMap& map)
 {
 	mapSize = map.getSize();
 	const int size = mapSize.x() * mapSize.y();
-	
+
 	resourceMap.resize (size, 0);
 	sentriesMapAir.resize (mapSize);
 	sentriesMapGround.resize (mapSize);
@@ -308,70 +308,62 @@ const cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>>& cPlayer::getBu
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::addSentry (cUnit& u)
+void cPlayer::addToSentryMap (const cUnit& u)
 {
-	if (u.isSentryActive()) return;
-
-	u.setSentryActive (true);
+	assert(u.isSentryActive());
 
 	const int size = u.getIsBig() ? 2 : 1;
 	if (u.getStaticUnitData().canAttack & TERRAIN_AIR)
 	{
 		sentriesMapAir.add(u.data.getRange(), u.getPosition(), size);
 	}
-	if ((u.getStaticUnitData().canAttack & TERRAIN_GROUND) || (u.getStaticUnitData().canAttack & TERRAIN_SEA))
+	if (u.getStaticUnitData().canAttack & (TERRAIN_GROUND | TERRAIN_SEA))
 	{
 		sentriesMapGround.add(u.data.getRange(), u.getPosition(), size);
 	}
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::deleteSentry (cUnit& u)
+void cPlayer::removeFromSentryMap (const cUnit& u)
 {
-	if (!u.isSentryActive()) return;
-
-	u.setSentryActive (false);
-
 	const int size = u.getIsBig() ? 2 : 1;
 	if (u.getStaticUnitData().canAttack & TERRAIN_AIR)
 	{
-		sentriesMapGround.remove(u.data.getRange(), u.getPosition(), size);
-	}
-	else if ((u.getStaticUnitData().canAttack & TERRAIN_GROUND) || (u.getStaticUnitData().canAttack & TERRAIN_SEA))
-	{
 		sentriesMapAir.remove(u.data.getRange(), u.getPosition(), size);
+	}
+	else if (u.getStaticUnitData().canAttack & (TERRAIN_GROUND | TERRAIN_SEA))
+	{
+		sentriesMapGround.remove(u.data.getRange(), u.getPosition(), size);
 	}
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::updateSentry(cUnit& u, int newRange)
+void cPlayer::updateSentry(const cUnit& u, int newRange)
 {
 	if (!u.isSentryActive()) return;
 
 	const int size = u.getIsBig() ? 2 : 1;
 	if (u.getStaticUnitData().canAttack & TERRAIN_AIR)
 	{
-		sentriesMapGround.update(u.data.getRange(), newRange, u.getPosition(), size);
-	}
-	else if ((u.getStaticUnitData().canAttack & TERRAIN_GROUND) || (u.getStaticUnitData().canAttack & TERRAIN_SEA))
-	{
 		sentriesMapAir.update(u.data.getRange(), newRange, u.getPosition(), size);
+	}
+	else if (u.getStaticUnitData().canAttack & (TERRAIN_GROUND | TERRAIN_SEA))
+	{
+		sentriesMapGround.update(u.data.getRange(), newRange, u.getPosition(), size);
 	}
 }
 
 //------------------------------------------------------------------------------
 void cPlayer::refreshSentryMaps()
 {
-	//1 save original maps
-	const auto sentriesMapAirCopy = sentriesMapAir.getMap();
-	const auto sentriesMapGroundCopy = sentriesMapGround.getMap();
+	sentriesMapAir.reset();
+	sentriesMapGround.reset();
 
-	//2 add all units (yes they are on the scan maps twice now)
 	for (const auto& unit : vehicles)
 	{
 		if (unit->isSentryActive())
 		{
-			addSentry(*unit);
+			addToSentryMap(*unit);
 		}
 	}
 
@@ -379,13 +371,9 @@ void cPlayer::refreshSentryMaps()
 	{
 		if (unit->isSentryActive())
 		{
-			addSentry(*unit);
+			addToSentryMap(*unit);
 		}
 	}
-
-	//3 subtract values from the saved maps
-	sentriesMapAir.subtract(sentriesMapAirCopy);
-	sentriesMapGround.subtract(sentriesMapGroundCopy);
 }
 
 //------------------------------------------------------------------------------
@@ -401,7 +389,7 @@ void cPlayer::refreshScanMaps()
 	const auto detectLandMapCopy = detectLandMap.getMap();
 	const auto detectSeaMapCopy = detectSeaMap.getMap();
 	const auto detectMinesMapCopy = detectMinesMap.getMap();
-	
+
 	//2 add all units (yes they are on the scan maps twice now)
 	for (const auto& vehicle : vehicles)
 	{
@@ -455,7 +443,7 @@ bool cPlayer::canSeeUnit(const cUnit& unit, const cMapField& field, const sTerra
 	if (unit.getOwner() == this) return true;
 
 	if (!canSeeAnyAreaUnder(unit)) return false;
-	
+
 	if (!unit.isStealthOnCurrentTerrain(field, terrain)) return true;
 
 	return unit.isDetectedByPlayer(this);

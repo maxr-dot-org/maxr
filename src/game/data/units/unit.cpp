@@ -103,7 +103,8 @@ void cUnit::storeVehicle(cVehicle& vehicle, cMap& map)
 
 	if (vehicle.isSentryActive())
 	{
-		vehicle.getOwner()->deleteSentry(vehicle);
+		vehicle.getOwner()->removeFromSentryMap(vehicle);
+		vehicle.setSentryActive(false);
 	}
 
 	if (vehicle.getMoveJob()) vehicle.getMoveJob()->stop();
@@ -292,7 +293,7 @@ uint32_t cUnit::getChecksum(uint32_t crc) const
 	for (const auto& p : detectedByPlayerList)
 		crc = calcCheckSum(p, crc);
 	for (const auto& p : detectedInThisTurnByPlayerList)
-		crc = calcCheckSum(p, crc); 
+		crc = calcCheckSum(p, crc);
 	crc = calcCheckSum(isBig, crc);
 	crc = calcCheckSum(owner, crc);
 	crc = calcCheckSum(position, crc);
