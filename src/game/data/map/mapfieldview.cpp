@@ -209,7 +209,7 @@ const std::vector<cVehicle*> cMapFieldView::getPlanes() const
 {
 	if (!player)
 	{
-		return mapField.getVehicles();
+		return mapField.getPlanes();
 	}
 
 	std::vector<cVehicle*> visibleVehicles;
@@ -232,7 +232,7 @@ const std::vector<cUnit*> cMapFieldView::getUnits() const
 		mapField.getUnits(visibleUnits);
 		return visibleUnits;
 	}
- 
+
 	const auto& vehicles = mapField.getVehicles();
 	visibleUnits.insert(visibleUnits.end(), vehicles.begin(), vehicles.end());
 	const auto& buildings = mapField.getBuildings();
