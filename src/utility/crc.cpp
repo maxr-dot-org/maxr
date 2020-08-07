@@ -109,8 +109,8 @@ uint32_t calcCheckSum(unsigned long long data, uint32_t checksum)
 template<typename T2, typename T1>
 uint32_t calcCheckSumGenericIEEE754(T1 value, uint32_t checksum)
 {
-	assert(sizeof(T1) == 4 || sizeof(T1) == 8); // TODO: make static assert
-	assert(sizeof(T1) == sizeof(T2)); // TODO: make static assert
+	static_assert(sizeof(T1) == 4 || sizeof(T1) == 8);
+	static_assert(sizeof(T1) == sizeof(T2));
 
 	const unsigned int BITS = sizeof(T1)* CHAR_BIT;
 	const unsigned int EXPBITS = sizeof(T1) == 4 ? 8 : 11;
