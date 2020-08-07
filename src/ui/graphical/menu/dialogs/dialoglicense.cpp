@@ -92,9 +92,9 @@ void cDialogLicense::readAuthors()
 {
 	std::string fileName;
 #ifdef WIN32
-	fileName = "AUTHORS.txt";
+	fileName = "AUTHORS";
 #elif __amigaos4
-	fileName = cSettings::getInstance().getDataDir() + PATH_DELIMITER + "AUTHORS.txt";
+	fileName = cSettings::getInstance().getDataDir() + PATH_DELIMITER + "AUTHORS";
 #elif MAC
 	fileName = "AUTHORS";
 #else
@@ -135,7 +135,7 @@ void cDialogLicense::resetTexts()
 		"along with this program; if not, write to the Free Software "
 		"Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 
-	static const char* generalHeader = "(C) 2007-2014 by its authors";
+	static const char* generalHeader = "(C) 2007-2020 by its authors";
 	static const char* authorsHeader = "AUTHORS:";
 
 	switch (currentPage)
