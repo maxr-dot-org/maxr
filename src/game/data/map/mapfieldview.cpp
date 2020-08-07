@@ -209,18 +209,11 @@ std::vector<cVehicle*> cMapFieldView::getPlanes() const
 std::vector<cUnit*> cMapFieldView::getUnits() const
 {
 	std::vector<cUnit*> visibleUnits;
+	mapField.getUnits(visibleUnits);
+
 	if (!player)
 	{
-		mapField.getUnits(visibleUnits);
 		return visibleUnits;
 	}
-
-	const auto& vehicles = mapField.getVehicles();
-	visibleUnits.insert(visibleUnits.end(), vehicles.begin(), vehicles.end());
-	const auto& buildings = mapField.getBuildings();
-	visibleUnits.insert(visibleUnits.end(), buildings.begin(), buildings.end());
-	const auto& planes = mapField.getPlanes();
-	visibleUnits.insert(visibleUnits.end(), planes.begin(), planes.end());
-
-	return visibleUnits;
+	return Filter(visibleUnits, makeFilterUnitSeenByPlayer(*player, mapField, terrain));
 }
