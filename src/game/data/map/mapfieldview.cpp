@@ -17,10 +17,19 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "mapfieldview.h"
+
 #include "map.h"
 #include "game/data/player/player.h"
+#include "utility/listhelpers.h"
 
-#include "mapfieldview.h"
+namespace
+{
+	auto makeFilterUnitSeenByPlayer(const cPlayer& player, const cMapField& mapField, const sTerrain& terrain)
+	{
+		return [&](const cUnit* unit){ return player.canSeeUnit(*unit, mapField, terrain); };
+	}
+}
 
 //------------------------------------------------------------------------------
 cMapFieldView::cMapFieldView(const cMapField& mapField, const sTerrain& terrain, const cPlayer* player) :
@@ -167,64 +176,37 @@ bool cMapFieldView::hasBridgeOrPlattform() const
 }
 
 //------------------------------------------------------------------------------
-const std::vector<cBuilding*> cMapFieldView::getBuildings() const
+std::vector<cBuilding*> cMapFieldView::getBuildings() const
 {
 	if (!player)
 	{
 		return mapField.getBuildings();
 	}
-
-	std::vector<cBuilding*> visibleBuildings;
-	for (const auto& building : mapField.getBuildings())
-	{
-		if (player->canSeeUnit(*building, mapField, terrain))
-		{
-			visibleBuildings.push_back(building);
-		}
-	}
-	return visibleBuildings;
+	return Filter(mapField.getBuildings(), makeFilterUnitSeenByPlayer(*player, mapField, terrain));
 }
 
 //------------------------------------------------------------------------------
-const std::vector<cVehicle*> cMapFieldView::getVehicles() const
+std::vector<cVehicle*> cMapFieldView::getVehicles() const
 {
 	if (!player)
 	{
 		return mapField.getVehicles();
 	}
-
-	std::vector<cVehicle*> visibleVehicles;
-	for (const auto& vehicle : mapField.getVehicles())
-	{
-		if (player->canSeeUnit(*vehicle, mapField, terrain))
-		{
-			visibleVehicles.push_back(vehicle);
-		}
-	}
-	return visibleVehicles;
+	return Filter(mapField.getVehicles(), makeFilterUnitSeenByPlayer(*player, mapField, terrain));
 }
 
 //------------------------------------------------------------------------------
-const std::vector<cVehicle*> cMapFieldView::getPlanes() const
+std::vector<cVehicle*> cMapFieldView::getPlanes() const
 {
 	if (!player)
 	{
 		return mapField.getPlanes();
 	}
-
-	std::vector<cVehicle*> visibleVehicles;
-	for (const auto& vehicle : mapField.getPlanes())
-	{
-		if (player->canSeeUnit(*vehicle, mapField, terrain))
-		{
-			visibleVehicles.push_back(vehicle);
-		}
-	}
-	return visibleVehicles;
+	return Filter(mapField.getPlanes(), makeFilterUnitSeenByPlayer(*player, mapField, terrain));
 }
 
 //------------------------------------------------------------------------------
-const std::vector<cUnit*> cMapFieldView::getUnits() const
+std::vector<cUnit*> cMapFieldView::getUnits() const
 {
 	std::vector<cUnit*> visibleUnits;
 	if (!player)

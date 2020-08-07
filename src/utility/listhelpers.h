@@ -69,4 +69,13 @@ void RemoveDuplicates (std::vector<T>& container)
 	}
 }
 
+template <typename T, typename F>
+[[nodiscard]] std::vector<T> Filter(const std::vector<T>& v, F&& filter)
+{
+	std::vector<T> res(v);
+
+	res.erase(std::remove_if(res.begin(), res.end(), [&](const auto& e){ return !filter(e); }), res.end());
+	return res;
+}
+
 #endif // utility_listhelpersH

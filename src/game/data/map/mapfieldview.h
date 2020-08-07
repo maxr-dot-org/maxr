@@ -55,20 +55,19 @@ public:
 
 	//TODO: maybe use iterators here, to prevent copying the unit vectors
 	/** returns the buildings on this field */
-	const std::vector<cBuilding*> getBuildings() const;
+	std::vector<cBuilding*> getBuildings() const;
 	/** returns the vehicles on this field */
-	const std::vector<cVehicle*> getVehicles() const;
+	std::vector<cVehicle*> getVehicles() const;
 	/** returns the planes on this field */
-	const std::vector<cVehicle*> getPlanes() const;
-	const std::vector<cUnit*> getUnits() const;
+	std::vector<cVehicle*> getPlanes() const;
+	std::vector<cUnit*> getUnits() const;
 
 	cSignal<void ()>& unitsChanged;
 private:
-	
+
 	const cMapField& mapField;
 	const sTerrain& terrain;
 	const cPlayer* player; // may be null
 };
 
 #endif
-
