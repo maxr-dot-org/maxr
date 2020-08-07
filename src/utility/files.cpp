@@ -20,6 +20,7 @@
 #include "utility/files.h"
 
 #include <iostream>
+
 #include <SDL.h>
 #include <SDL_endian.h>
 
@@ -51,9 +52,6 @@ bool FileExists (const char* path)
 
 	if (file == nullptr)
 	{
-		// No need for a warning here. It is just a check.
-		//Log.write (SDL_GetError(), cLog::eLOG_TYPE_WARNING);
-
 		return false;
 	}
 	SDL_RWclose (file);
@@ -73,6 +71,24 @@ bool makeDir (const std::string& path)
 #else
 	return mkdir (path.c_str(), 0755) == 0;
 #endif
+}
+
+//--------------------------------------------------------------
+// std::make_directories is C++17
+void makeDirectories (const std::string& path)
+{
+	std::size_t prev_pos = 0;
+
+	while (prev_pos != std::string::npos)
+	{
+		const auto pos = path.find_first_of("/\\", prev_pos);
+		const auto subPath = path.substr(0, pos);
+		if (!DirExists(subPath))
+		{
+			makeDir(subPath);
+		}
+		prev_pos = pos == std::string::npos ? pos : pos + 1;
+	}
 }
 
 //--------------------------------------------------------------

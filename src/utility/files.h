@@ -21,10 +21,7 @@
 #define utility_filesH
 
 #include <string>
-//#include "defines.h"
 #include <vector>
-
-#include <SDL.h>
 
 /**
 * Checks whether a file exists or not
@@ -49,6 +46,10 @@ bool DirExists (const std::string& path);
 * @return True if the directoy has been created successfully. False on errors.
 */
 bool makeDir (const std::string& path);
+
+// Poor replacement of std::directory
+void makeDirectories (const std::string& path);
+
 
 /**
 * Gets the filenames of all files in the directory
