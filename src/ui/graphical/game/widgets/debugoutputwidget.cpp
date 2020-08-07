@@ -420,7 +420,7 @@ void cDebugOutputWidget::traceVehicle (const cVehicle& vehicle, cPosition& drawP
 
 	auto font = cUnicodeFont::font.get();
 
-	tmpString = "name: \"" + vehicle.getDisplayName() + "\" id: \"" + iToStr (vehicle.iID) + "\" owner: \"" + vehicle.getOwner()->getName() + "\" posX: +" + iToStr (vehicle.getPosition().x()) + " posY: " + iToStr (vehicle.getPosition().y()) + " offX: " + iToStr (vehicle.getMovementOffset().x()) + " offY: " + iToStr (vehicle.getMovementOffset().y());
+	tmpString = "name: \"" + vehicle.getDisplayName() + "\" id: \"" + iToStr (vehicle.iID) + "\" owner: \"" + vehicle.getOwner()->getName() + "\" pos: " + toString (vehicle.getPosition()) + " offset: " + toString (vehicle.getMovementOffset());
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
@@ -436,7 +436,7 @@ void cDebugOutputWidget::traceVehicle (const cVehicle& vehicle, cPosition& drawP
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
-	tmpString = " bandx: " + iToStr (vehicle.bandPosition.x()) + " bandy: +" + iToStr (vehicle.bandPosition.y()) + " build_big_saved_pos: " + iToStr (vehicle.buildBigSavedPosition.x()) + "x" + iToStr (vehicle.buildBigSavedPosition.y()) + " build_path: " + iToStr (vehicle.BuildPath);
+	tmpString = " band: " + toString (vehicle.bandPosition) + " build_big_saved_pos: " + iToStr (vehicle.buildBigSavedPosition.x()) + "x" + iToStr (vehicle.buildBigSavedPosition.y()) + " build_path: " + iToStr (vehicle.BuildPath);
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
@@ -486,7 +486,7 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 
 	auto font = cUnicodeFont::font.get();
 
-	tmpString = "name: \"" + building.getDisplayName() + "\" id: \"" + iToStr (building.iID) + "\" owner: \"" + (building.getOwner() ? building.getOwner()->getName() : "<null>") + "\" posX: +" + iToStr (building.getPosition().x()) + " posY: " + iToStr (building.getPosition().y());
+	tmpString = "name: \"" + building.getDisplayName() + "\" id: \"" + iToStr (building.iID) + "\" owner: \"" + (building.getOwner() ? building.getOwner()->getName() : "<null>") + "\" pos: " + toString (building.getPosition());
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 

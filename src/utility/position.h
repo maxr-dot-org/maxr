@@ -23,6 +23,7 @@
 #include <stdint.h>
 
 #include "utility/fixedvector.h"
+#include "utility/string/toString.h"
 #include "serialization/serialization.h"
 
 /**
@@ -171,5 +172,10 @@ public:
     }
 
 };
+
+inline std::string toString(const cPosition& pos)
+{
+	return "(" + iToStr (pos.x()) + ", " + iToStr(pos.y()) + ")";
+}
 
 #endif // utility_positionH

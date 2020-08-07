@@ -60,7 +60,7 @@ cAttackJob::cAttackJob (cUnit& aggressor, const cPosition& targetPosition, const
 	assert(!aggressor.isUnitMoving());
 
 	fireDir = calcFireDir();
-	
+
 	lockTarget(*model.getMap());
 
 	//lock aggressor
@@ -221,7 +221,7 @@ void cAttackJob::releaseTargets(const cModel& model)
 	for (auto unitId : lockedTargets)
 	{
 		cUnit* unit = model.getUnitFromID(unitId);
-		
+
 		if (unit && unit->data.getHitpoints() > 0)
 		{
 			unit->setIsBeeinAttacked(false);
@@ -246,7 +246,7 @@ void cAttackJob::fire(cModel& model)
 		//set timer for next state
 		const int IMPACT_DELAY = 10;
 		counter = muzzle->getLength() + IMPACT_DELAY;
-	
+
 		//play muzzle flash / fire rocket
 		model.addFx (std::move(muzzle));
 	}
@@ -423,7 +423,7 @@ void cAttackJob::impactSingle (const cPosition& position, int attackPoints, cMod
 		avoidTargets->push_back (target);
 	}
 
-	Log.write(" cAttackJob: Impact at (" + iToStr(position.x()) + ", " + iToStr(position.y()) + ") @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write(" cAttackJob: Impact at " + toString (position) + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 
 	// if target is a stealth unit, make it visible on all clients
 	if (target && target->getStaticUnitData().isStealthOn != TERRAIN_NONE)

@@ -100,7 +100,7 @@ void cMoveJob::run(cModel& model)
 		// suspend movejobs of attacked vehicles
 		return;
 	}
-	
+
 	timer100ms++;
 	if (timer100ms == 10) timer100ms = 0;
 	timer50ms++;
@@ -219,7 +219,7 @@ void cMoveJob::startMove(cModel& model)
 	{
 		return;
 	}
-	
+
 	int nextCosts = cPathCalculator::calcNextCost(vehicle->getPosition(), path.front(), vehicle, &map);
 	if (vehicle->data.getSpeed() < nextCosts)
 	{
@@ -239,21 +239,21 @@ void cMoveJob::startMove(cModel& model)
 	calcNextDir();
 
 	vehicle->triggerLandingTakeOff(model);
-	
+
 	vehicle->data.setSpeed(vehicle->data.getSpeed() + savedSpeed);
 	savedSpeed = 0;
 	vehicle->DecSpeed(nextCosts);
 
 	vehicle->tryResetOfDetectionStateBeforeMove(map, model.getPlayerList());
-	
+
 	vehicle->getOwner()->updateScan(*vehicle, path.front());
 	map.moveVehicle(*vehicle, path.front());
-	
+
 	path.pop_front();
-	
+
 	vehicle->setMovementOffset(cPosition(0, 0));
 	changeVehicleOffset(-64);
-	Log.write(" cMoveJob: Vehicle (ID: " + iToStr (vehicle->getId()) + ") moved to (" + iToStr(vehicle->getPosition().x()) + ", " + iToStr(vehicle->getPosition().y()) + ") @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write(" cMoveJob: Vehicle (ID: " + iToStr (vehicle->getId()) + ") moved to " + toString (vehicle->getPosition()) + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 }
 
 //------------------------------------------------------------------------------
@@ -275,7 +275,7 @@ bool cMoveJob::handleCollision(cModel &model)
 	{
 		return true;
 	}
-		
+
 	if (map.possiblePlace(*vehicle, path.front(), false, true)) // ignore moving units
 	{
 		// if the target field is blocked by a moving unit,
@@ -339,7 +339,7 @@ bool cMoveJob::reachedField() const
 void cMoveJob::moveVehicle(cModel& model)
 {
 	updateSpeed(*model.getMap());
-	
+
 	if (timer50ms == 0)
 	{
 		vehicle->WalkFrame++;
@@ -395,11 +395,11 @@ void cMoveJob::updateSpeed(const cMap &map)
 	{
 		double maxSpeedBreaking = sqrt(2 * MOVE_ACCELERATION * vehicle->getMovementOffset().l2Norm());
 		maxSpeed = std::min(maxSpeed, maxSpeedBreaking);
-		
+
 		//don't break to zero before movejob is stopped
 		maxSpeed = std::max(maxSpeed, 0.1);
 	}
-	
+
 	if (currentSpeed < maxSpeed)
 	{
 		currentSpeed += MOVE_ACCELERATION;
@@ -420,9 +420,9 @@ void cMoveJob::endMove(cModel& model)
 	vehicle->detectThisUnit(map, model.getPlayerList());
 
 	cBuilding* mine = map.getField(vehicle->getPosition()).getMine();
-	if (mine && 
-		vehicle->getStaticUnitData().factorAir == 0  && 
-		mine->getOwner() != vehicle->getOwner() && 
+	if (mine &&
+		vehicle->getStaticUnitData().factorAir == 0  &&
+		mine->getOwner() != vehicle->getOwner() &&
 		mine->isManualFireActive() == false)
 	{
 		model.addAttackJob(*mine, vehicle->getPosition());
@@ -436,7 +436,7 @@ void cMoveJob::endMove(cModel& model)
 	if (vehicle->isUnitLayingMines())
 	{
 		vehicle->layMine(model);
-	} 
+	}
 	else if (vehicle->isUnitClearingMines())
 	{
 		vehicle->clearMine(model);

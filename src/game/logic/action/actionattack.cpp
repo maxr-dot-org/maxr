@@ -65,7 +65,7 @@ void cActionAttack::execute(cModel& model) const
 		{
 			if (targetPosition != target->getPosition())
 			{
-				Log.write(" cActionAttack: Target coords changed to (" + iToStr(target->getPosition().x()) + "," + iToStr(target->getPosition().y()) + ") to match current unit position", cLog::eLOG_TYPE_NET_DEBUG);
+				Log.write(" cActionAttack: Target coords changed to " + toString(target->getPosition()) + " to match current unit position", cLog::eLOG_TYPE_NET_DEBUG);
 			}
 			validatedTargetPosition = target->getPosition();
 
