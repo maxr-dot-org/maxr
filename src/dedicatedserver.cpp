@@ -40,17 +40,10 @@ using namespace std;
 class cDedicatedServerConfig
 {
 public:
-	cDedicatedServerConfig();
+	cDedicatedServerConfig() = default;
 
-	int port;
+	int port = DEFAULTPORT;
 };
-
-//------------------------------------------------------------------------
-cDedicatedServerConfig::cDedicatedServerConfig()
-	: port (DEFAULTPORT)
-{
-}
-
 
 //------------------------------------------------------------------------
 // cDedicatedServer implementation
@@ -67,9 +60,9 @@ cDedicatedServer& cDedicatedServer::instance()
 
 //------------------------------------------------------------------------
 cDedicatedServer::cDedicatedServer() :
-	configuration (std::make_unique<cDedicatedServerConfig>()),
-	network (nullptr)
+	configuration (std::make_unique<cDedicatedServerConfig>())
 {
+	connectionManager->setLocalServer(this);
 }
 
 //------------------------------------------------------------------------
@@ -162,23 +155,18 @@ bool cDedicatedServer::handleInput (const string& command)
 //------------------------------------------------------------------------
 bool cDedicatedServer::startServer (int saveGameNumber)
 {
-	if (network != 0)
+	if (connectionManager->isServerOpen())
 	{
 		cout << "WARNING: Server is already open." << endl;
 		return true;
 	}
-
 	cout << "Starting server on port " << configuration->port << "..." << endl;
 
-	assert (network == 0);
-	/*network = std::make_shared<cTCP>();
-	network->setMessageReceiver (this);
-	if (network->create (configuration->port) == -1)
+	if (connectionManager->openServer(configuration->port))
 	{
 		cout << "ERROR: Initializing network failed." << endl;
 		return false;
 	}
-	*/
 
 	// TODO: muss von Clients ausgeloest werden. Aber, dann muss ganze Infrastruktur angepasst werden,
 	// dass z.B. NetMessages an richtiges Game/cServer gehen und dass die Methoden nicht auf einem globalen
@@ -187,7 +175,6 @@ bool cDedicatedServer::startServer (int saveGameNumber)
 		loadSaveGame (saveGameNumber);
 	else
 		startNewGame();
-
 	return true;
 }
 
@@ -195,7 +182,7 @@ bool cDedicatedServer::startServer (int saveGameNumber)
 void cDedicatedServer::startNewGame()
 {
 	cout << "Setting up new game..." << endl;
-	auto game = make_unique<cServerGame> (network);
+	auto game = make_unique<cServerGame> (connectionManager);
 	game->prepareGameData();
 	games.push_back (std::move (game));
 	games.back()->runInThread();
@@ -205,7 +192,7 @@ void cDedicatedServer::startNewGame()
 void cDedicatedServer::loadSaveGame (int saveGameNumber)
 {
 	cout << "Setting up game from saved game number " << saveGameNumber << " ..." << endl;
-	auto game = std::make_unique<cServerGame> (network);
+	auto game = std::make_unique<cServerGame> (connectionManager);
 	if (game->loadGame (saveGameNumber) == false)
 	{
 		cout << "Loading game failed. Game is not setup." << endl;
@@ -384,103 +371,84 @@ void cDedicatedServer::printHelp (eHelpCommands helpCommand) const
 //------------------------------------------------------------------------
 void cDedicatedServer::pushMessage (std::unique_ptr<cNetMessage2> message)
 {
-	/*if (handleDedicatedServerEvents (*message))
+	if (handleDedicatedServerEvents (*message))
 		return;
 	// TODO: delegate to correct game (and not simply first game)
 	if (games.empty() == false)
-		games[0]->pushEvent (std::move (message));
-	*/
+		games[0]->pushMessage (std::move (message));
+}
+
+//------------------------------------------------------------------------
+std::unique_ptr<cNetMessage2> cDedicatedServer::popMessage()
+{
+	if (games.empty() == false)
+		return games[0]->popMessage();
+	return nullptr;
 }
 
 //------------------------------------------------------------------------
 bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage2& message)
 {
-	switch (message.getType())
+	if (message.getType() != eNetMessageType::MULTIPLAYER_LOBBY) { return false; }
+
+	auto& lobbyMessage = static_cast<cMultiplayerLobbyMessage&>(message);
+
+	if (lobbyMessage.getType() != cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT) { return false; }
+
+	auto& chatMessage = static_cast<cMuMsgChat&>(lobbyMessage);
+
+	const auto& chatText = chatMessage.message;
+
+	size_t serverStringPos = chatText.find ("--server");
+	if (serverStringPos != string::npos && chatText.length() > serverStringPos + 9)
 	{
-	/*	case GAME_EV_CHAT_CLIENT:
-		case MU_MSG_CHAT:
+		std::string command = chatText.substr (serverStringPos + 9);
+		std::vector<string> tokens;
+		std::istringstream iss (command);
+		std::copy (std::istream_iterator<std::string> (iss), std::istream_iterator<std::string>(), std::back_inserter<std::vector<std::string> > (tokens));
+		if (tokens.size() == 1)
 		{
-			if (message.getType() == MU_MSG_CHAT)
-				message.popBool();
-			else
-				message.popChar();
-
-			string chatText = message.popString();
-			message.rewind();
-			int senderSocket = -1;
-			if (games.empty() == false && message.iPlayerNr >= 0)
-				senderSocket = games[0]->getSocketForPlayerNr (message.iPlayerNr);
-			if (senderSocket < 0)
-				return false;
-
-			size_t serverStringPos = chatText.find ("--server");
-			if (serverStringPos != string::npos && chatText.length() > serverStringPos + 9)
+			if (tokens[0].compare ("games") == 0)
 			{
-				string command = chatText.substr (serverStringPos + 9);
-				vector<string> tokens;
-				istringstream iss (command);
-				copy (istream_iterator<string> (iss), istream_iterator<string>(), back_inserter<vector<string> > (tokens));
-				if (tokens.size() == 1)
-				{
-					if (tokens[0].compare ("games") == 0)
-					{
-						sendChatMessage (getGamesString(),
-										 message.getType() == MU_MSG_CHAT ? (int)MU_MSG_CHAT : (int)GAME_EV_SAVED_REPORT,
-										 senderSocket);
-						return true;
-					}
-					else if (tokens[0].compare ("maps") == 0)
-					{
-						sendChatMessage (getAvailableMapsString(), MU_MSG_CHAT, senderSocket);
-						return true;
-					}
-					else if (tokens[0].compare ("help") == 0)
-					{
-						sendChatMessage (getServerHelpString(),
-										 message.getType() == MU_MSG_CHAT ? (int)MU_MSG_CHAT : (int)GAME_EV_SAVED_REPORT,
-										 senderSocket);
-						return true;
-					}
-				}
+				sendChatMessage (getGamesString(), message.playerNr);
+				return true;
 			}
-			break;
-		}*/
-		default: return false;
+			else if (tokens[0].compare ("maps") == 0)
+			{
+				sendChatMessage (getAvailableMapsString(), message.playerNr);
+				return true;
+			}
+			else if (tokens[0].compare ("help") == 0)
+			{
+				sendChatMessage (getServerHelpString(), message.playerNr);
+				return true;
+			}
+		}
 	}
 	return false;
 }
 
 //------------------------------------------------------------------------
-void cDedicatedServer::sendChatMessage (const string& text, int type, int socket)
+void cDedicatedServer::sendChatMessage (const std::string& text, int receiver)
 {
-/*
-	stringstream ss (text);
-	string line;
-	while (getline (ss, line))
+	cMuMsgChat message(text, false, "");
+
+	if (receiver == -1)
 	{
-		cNetMessage msg (type);
-		if (msg.getType() == GAME_EV_SAVED_REPORT)
-		{
-			cSavedReportChat report ("dedicated_server", line);
-			report.pushInto (msg);
-		}
-		else
-		{
-			msg.pushString (line);
-			msg.pushBool (false);
-		}
-		msg.iPlayerNr = -1;
-		if (socket < 0)
-			network->send (msg.iLength, msg.serialize());
-		else
-			network->sendTo (socket, msg.iLength, msg.serialize());
-		}*/
+		connectionManager->sendToPlayers(message);
+	}
+	else
+	{
+		connectionManager->sendToPlayer(message, receiver);
+	}
 }
 
+
+#if 0 //TODO: reimplement
 //------------------------------------------------------------------------
 void cDedicatedServer::doAutoSave (cServer2& server)
 {
-	//TODO: reimplement
-	//cSavegame Savegame (kAutoSaveSlot);	// dedicated server autosaves are always in slot kAutoSaveSlot
-	//Savegame.save (server, "Dedicated Server Autosave");
+	cSavegame Savegame (kAutoSaveSlot);	// dedicated server autosaves are always in slot kAutoSaveSlot
+	Savegame.save (server, "Dedicated Server Autosave");
 }
+#endif

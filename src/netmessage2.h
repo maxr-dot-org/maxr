@@ -70,14 +70,16 @@ class cNetMessage2
 public:
 
 	static std::unique_ptr<cNetMessage2> createFromBuffer(const unsigned char* data, int length);
-	
+
 	virtual ~cNetMessage2() {}
 
 	eNetMessageType getType() const { return type; };
 	std::unique_ptr<cNetMessage2> clone() const;
 
-	virtual void serialize(cBinaryArchiveIn& archive) { serializeThis(archive); } 
+	virtual void serialize(cBinaryArchiveIn& archive) { serializeThis(archive); }
 	virtual void serialize(cTextArchiveIn& archive) { serializeThis(archive); }
+
+	cNetMessage2& From(int player) { playerNr = player; return *this; }
 
 	int playerNr;
 
@@ -95,15 +97,15 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cNetMessageReport : public cNetMessage2 
+class cNetMessageReport : public cNetMessage2
 {
 public:
-	cNetMessageReport(std::unique_ptr<cSavedReport> report) : 
+	cNetMessageReport(std::unique_ptr<cSavedReport> report) :
 		cNetMessage2(eNetMessageType::REPORT),
-		report(std::move(report)) 
+		report(std::move(report))
 	{};
-	cNetMessageReport() : 
-		cNetMessage2(eNetMessageType::REPORT) 
+	cNetMessageReport() :
+		cNetMessage2(eNetMessageType::REPORT)
 	{};
 
 	cNetMessageReport(cBinaryArchiveOut& archive) :
@@ -198,9 +200,9 @@ private:
 class cNetMessageRandomSeed : public cNetMessage2
 {
 public:
-	cNetMessageRandomSeed(uint64_t seed) : 
+	cNetMessageRandomSeed(uint64_t seed) :
 		cNetMessage2(eNetMessageType::RANDOM_SEED),
-		seed(seed) 
+		seed(seed)
 	{};
 	cNetMessageRandomSeed(cBinaryArchiveOut& archive) :
 		cNetMessage2(eNetMessageType::RANDOM_SEED)
@@ -438,7 +440,7 @@ public:
 	int playerNr;
 	std::string packageVersion;
 	std::string packageRev;
-	
+
 private:
 	template<typename T>
 	void serializeThis(T& archive)
@@ -465,7 +467,7 @@ public:
 
 	virtual void serialize(cBinaryArchiveIn& archive) { cNetMessage2::serialize(archive); serializeThis(archive); }
 	virtual void serialize(cTextArchiveIn& archive)   { cNetMessage2::serialize(archive); serializeThis(archive); }
-	
+
 	std::string reason;
 private:
 	template<typename T>

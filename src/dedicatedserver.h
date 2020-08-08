@@ -23,16 +23,11 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "network.h"
+
 #include "connectionmanager.h"
 
-
 class cDedicatedServerConfig;
-class cTCP;
-class cServer;
 class cServerGame;
-class cNetMessage;
-class cServer2;
 
 //------------------------------------------------------------------------
 /** cDedicatedServer class manages the server resources and handles command line input.
@@ -44,9 +39,8 @@ public:
 	static cDedicatedServer& instance();
 
 	void run();
-	void pushMessage (std::unique_ptr<cNetMessage2> message);
-
-	void doAutoSave (cServer2& server);
+	void pushMessage (std::unique_ptr<cNetMessage2> message) override;
+	std::unique_ptr<cNetMessage2> popMessage() override;
 
 	//------------------------------------------------------------------------
 protected:
@@ -86,7 +80,7 @@ protected:
 	void saveGame (int saveGameNumber);
 
 	bool handleDedicatedServerEvents (cNetMessage2& message);
-	void sendChatMessage (const std::string& text, int type, int socket = -1);
+	void sendChatMessage (const std::string& text, int receiver);
 
 	std::unique_ptr<cDedicatedServerConfig> configuration;
 
@@ -96,7 +90,7 @@ protected:
 private:
 	cDedicatedServer();
 	virtual ~cDedicatedServer();
-	std::shared_ptr<cTCP> network;
+	std::shared_ptr<cConnectionManager> connectionManager = std::make_shared<cConnectionManager>();
 };
 
 #endif
