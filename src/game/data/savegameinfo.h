@@ -56,11 +56,11 @@ public:
 	// infos from model
 	std::vector<cPlayerBasicData> players;
 	std::string mapName;
-	uint32_t mapCrc;
+	uint32_t mapCrc = 0;
 	//int turn;
 
 	/** the slot number of the save game */
-	int number;
+	int number = 0;
 
 	template <typename T>
 	void serialize(T& archive)
