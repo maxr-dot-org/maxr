@@ -991,12 +991,16 @@ static int LoadVehicles()
 		Log.write ("Reading values from XML", cLog::eLOG_TYPE_DEBUG);
 		LoadUnitData (staticData, dynamicData, sVehiclePath.c_str(), IDList[i]);
 
+		ui.id = staticData.ID;
 		// load graphics.xml
 		LoadUnitGraphicProperties(ui, sVehiclePath.c_str());
 
-		ui.id = staticData.ID;
-
-		if (DEDICATED_SERVER) continue;
+		if (DEDICATED_SERVER)
+		{
+			UnitsDataGlobal.addData(staticData);
+			UnitsDataGlobal.addData(dynamicData);
+			continue;
+		}
 
 		Log.write ("Loading graphics", cLog::eLOG_TYPE_DEBUG);
 		// load infantery graphics
@@ -1300,7 +1304,7 @@ static int LoadVehicles()
 		UnitsDataGlobal.addData(staticData);
 		UnitsDataGlobal.addData(dynamicData);
 	}
-	
+
 
 	UnitsDataGlobal.initializeIDData();
 
@@ -1430,11 +1434,15 @@ static int LoadBuildings()
 		LoadUnitData (staticData, dynamicData, sBuildingPath.c_str(), IDList[i]);
 
 		ui.id = staticData.ID;
-
 		// load graphics.xml
 		LoadUnitGraphicProperties(ui, sBuildingPath.c_str());
 
-		if (DEDICATED_SERVER) continue;
+		if (DEDICATED_SERVER)
+		{
+			UnitsDataGlobal.addData(staticData);
+			UnitsDataGlobal.addData(dynamicData);
+			continue;
+		}
 
 		// load img
 		sTmpString = sBuildingPath;
