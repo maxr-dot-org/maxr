@@ -42,7 +42,7 @@
 #include "utility/language.h"
 #include "utility/log.h"
 #include "protocol/lobbymessage.h"
-#include "mapdownload.h"
+#include "mapdownloader/mapdownload.h"
 #include "game/data/savegame.h"
 #include "game/logic/client.h"
 #include "game/logic/server2.h"
@@ -110,7 +110,7 @@ void cMenuControllerMultiplayerHost::sendGameData(int playerNr /* = -1 */)
 {
 	cMuMsgOptions message;
 	message.saveInfo = windowNetworkLobby->getSaveGameInfo();
-	
+
 	const cStaticMap* map = windowNetworkLobby->getStaticMap().get();
 	if (map)
 	{
@@ -644,7 +644,7 @@ void cMenuControllerMultiplayerHost::checkReallyWantsToQuit()
 		auto players = windowNetworkLobby->getPlayers();
 		for(const auto& player : players)
 		{
-			player->setReady(false);			
+			player->setReady(false);
 		}
 		sendNetMessage(cMuMsgPlayerAbortedGamePreparations());
 
@@ -694,30 +694,30 @@ void cMenuControllerMultiplayerHost::handleNetMessage (cNetMessage2& message)
 			Log.write("Host Menu Controller: Can not handle message", cLog::eLOG_TYPE_NET_ERROR);
 			return;
 	}
-	
+
 	cMultiplayerLobbyMessage& muMessage = static_cast<cMultiplayerLobbyMessage&>(message);
 
 	switch (muMessage.getType())
 	{
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT: 
-			handleNetMessage_MU_MSG_CHAT (static_cast<cMuMsgChat&>(muMessage)); 
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT:
+			handleNetMessage_MU_MSG_CHAT (static_cast<cMuMsgChat&>(muMessage));
 			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IDENTIFIKATION: 
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IDENTIFIKATION:
 			handleNetMessage_MU_MSG_IDENTIFIKATION(static_cast<cMuMsgIdentification&>(muMessage));
 			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_REQUEST_MAP: 
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_REQUEST_MAP:
 			handleNetMessage_MU_MSG_REQUEST_MAP(static_cast<cMuMsgRequestMap&>(muMessage));
 			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_FINISHED_MAP_DOWNLOAD: 
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_FINISHED_MAP_DOWNLOAD:
 			handleNetMessage_MU_MSG_FINISHED_MAP_DOWNLOAD(static_cast<cMuMsgFinishedMapDownload&>(muMessage));
 			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_POSITION: 
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_POSITION:
 			handleNetMessage_MU_MSG_LANDING_POSITION(static_cast<cMuMsgLandingPosition&>(muMessage));
 			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS: 
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS:
 			handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS(static_cast<cMuMsgInLandingPositionSelectionStatus&>(muMessage));
 			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION: 
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION:
 			handleNetMessage_MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION(static_cast<cMuMsgPlayerAbortedGamePreparations&>(muMessage));
 			break;
 		default:
@@ -735,7 +735,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_TCP_WANT_CONNECT(cNetMessa
 	windowNetworkLobby->addPlayer(newPlayer);
 
 	windowNetworkLobby->addInfoEntry(lngPack.i18n("Text~Multiplayer~Player_Joined", newPlayer->getName()));
-	
+
 	if (message.packageVersion != PACKAGE_VERSION || message.packageRev != PACKAGE_REV)
 	{
 		windowNetworkLobby->addInfoEntry(lngPack.i18n("Text~Multiplayer~Gameversion_Warning_Server", message.packageVersion + " " + message.packageRev));
@@ -757,7 +757,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_TCP_CLOSE(cNetMessageTcpCl
 
 	auto playerToRemove = windowNetworkLobby->getPlayer(message.playerNr);
 	if (playerToRemove == nullptr) return;
-	
+
 	windowNetworkLobby->addInfoEntry(lngPack.i18n("Text~Multiplayer~Player_Left", playerToRemove->getName()));
 	sendNetMessage(cMuMsgChat("Text~Multiplayer~Player_Left", true, playerToRemove->getName()));
 	windowNetworkLobby->removePlayer(*playerToRemove);
@@ -963,11 +963,11 @@ void cMenuControllerMultiplayerHost::sendNetMessage(cNetMessage2& message, int r
 			message.playerNr = localPlayer->getNr();
 		}
 	}
-	
+
 	cTextArchiveIn archive;
 	archive << message;
 	Log.write("Menu: --> " + archive.data() + " to " + toString(receiverPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
-	
+
 	if (receiverPlayerNr == -1)
 		connectionManager->sendToPlayers(message);
 	else

@@ -26,6 +26,7 @@
 #include "game/logic/turncounter.h"
 #include "game/logic/landingpositionmanager.h"
 #include "game/logic/server2.h"
+#include "mapdownloader/mapdownload.h"
 #include "maxrversion.h"
 #include "protocol/lobbymessage.h"
 

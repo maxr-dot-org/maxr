@@ -30,7 +30,6 @@
 #include "game/data/report/savedreport.h"
 #include "ui/graphical/game/gameguistate.h"
 #include "utility/color.h"
-#include "mapdownload.h"
 #include "game/data/player/playerbasicdata.h"
 #include "game/data/freezemode.h"
 

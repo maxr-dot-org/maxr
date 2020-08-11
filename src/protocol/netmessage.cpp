@@ -27,6 +27,7 @@
 #include "utility/serialization/serialization.h"
 #include "protocol/lobbymessage.h"
 #include "game/logic/turntimeclock.h"
+#include "mapdownloader/mapdownload.h"
 #include "maxrversion.h"
 
 std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(const unsigned char* data, int length)

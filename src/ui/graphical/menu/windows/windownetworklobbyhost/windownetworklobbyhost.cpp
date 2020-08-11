@@ -23,7 +23,7 @@
 #include "game/data/player/player.h"
 #include "game/data/savegame.h"
 #include "game/data/map/map.h"
-#include "mapdownload.h"
+#include "mapdownloader/mapdownload.h"
 #include "utility/language.h"
 #include "../../../application.h"
 #include "../../dialogs/dialogok.h"

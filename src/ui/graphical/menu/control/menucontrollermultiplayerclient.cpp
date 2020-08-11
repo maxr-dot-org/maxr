@@ -40,7 +40,7 @@
 #include "utility/language.h"
 #include "utility/log.h"
 #include "protocol/lobbymessage.h"
-#include "mapdownload.h"
+#include "mapdownloader/mapdownload.h"
 #include "utility/files.h"
 #include "utility/string/toString.h"
 #include "game/logic/client.h"
@@ -208,7 +208,7 @@ void cMenuControllerMultiplayerClient::startSavedGame()
 	signalConnectionManager.connect (windowNetworkLobby->terminated, [&]() { windowNetworkLobby = nullptr; });
 
 	savedGame->start (application);
-	
+
 	signalConnectionManager.connect(savedGame->getLocalClient().connectionToServerLost, [&]() { connectionLost = true; });
 	signalConnectionManager.connect(savedGame->terminated, [&]()
 	{
@@ -233,7 +233,7 @@ void cMenuControllerMultiplayerClient::startGamePreparation(cMuMsgStartGamePrepa
 
 	newGame->setUnitsData(message.unitsData);
 	newGame->setClanData(message.clanData);
-	
+
 	newGame->setPlayers (windowNetworkLobby->getPlayersNotShared(), *windowNetworkLobby->getLocalPlayer());
 	newGame->setGameSettings (gameSettings);
 	newGame->setStaticMap (staticMap);
@@ -365,7 +365,7 @@ void cMenuControllerMultiplayerClient::startNewGame()
 	newGame->start (application);
 
 	signalConnectionManager.connect(newGame->getLocalClient().connectionToServerLost, [&]() { connectionLost = true; });
-	signalConnectionManager.connect(newGame->terminated, [&]() 
+	signalConnectionManager.connect(newGame->terminated, [&]()
 	{
 		if (connectionLost)
 		{
@@ -380,7 +380,7 @@ void cMenuControllerMultiplayerClient::startNewGame()
 void cMenuControllerMultiplayerClient::reconnectToGame(const cNetMessageGameAlreadyRunning& message)
 {
 	auto staticMap = std::make_shared<cStaticMap>();
-	
+
 	if (!staticMap->loadMap(message.mapName))
 	{
 		application.show(std::make_shared<cDialogOk>("Map \"" + message.mapName + "\" not found")); //TODO: translate
@@ -393,7 +393,7 @@ void cMenuControllerMultiplayerClient::reconnectToGame(const cNetMessageGameAlre
 		connectionManager->disconnectAll();
 		return;
 	}
-	
+
 	auto reconnectionGame = std::make_shared<cNetworkClientGameReconnection>();
 
 	reconnectionGame->setConnectionManager(connectionManager);
@@ -443,7 +443,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage (cNetMessage2& message)
 	{
 		case eNetMessageType::TCP_CONNECTED:
 			handleNetMessage_TCP_CONNECTED(static_cast<cNetMessageTcpConnected&>(message));
-			return;	
+			return;
 		case eNetMessageType::TCP_CONNECT_FAILED:
 			handleNetMessage_TCP_CONNECT_FAILED(static_cast<cNetMessageTcpConnectFailed&>(message));
 			return;
@@ -465,22 +465,22 @@ void cMenuControllerMultiplayerClient::handleNetMessage (cNetMessage2& message)
 
 	switch (muMessage.getType())
 	{
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT: 
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT:
 			handleNetMessage_MU_MSG_CHAT(static_cast<cMuMsgChat&>(muMessage));
 			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_NUMBER: 
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_NUMBER:
 			handleNetMessage_MU_MSG_PLAYER_NUMBER(static_cast<cMuMsgPlayerNr&>(muMessage));
 			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYERLIST: 
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYERLIST:
 			handleNetMessage_MU_MSG_PLAYERLIST(static_cast<cMuMsgPlayerList&>(muMessage));
 			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_OPTIONS: 
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_OPTIONS:
 			handleNetMessage_MU_MSG_OPTIONS(static_cast<cMuMsgOptions&>(muMessage));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_MAP_DOWNLOAD:
 			initMapDownload(static_cast<cMuMsgStartMapDownload&>(muMessage));
 			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_MAP_DOWNLOAD_DATA: 
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_MAP_DOWNLOAD_DATA:
 			receiveMapData(static_cast<cMuMsgMapDownloadData&>(muMessage));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CANCELED_MAP_DOWNLOAD:
@@ -489,22 +489,22 @@ void cMenuControllerMultiplayerClient::handleNetMessage (cNetMessage2& message)
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_FINISHED_MAP_DOWNLOAD:
 			finishedMapDownload(static_cast<cMuMsgFinishedMapDownload&>(muMessage));
 			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME_PREPARATIONS: 
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME_PREPARATIONS:
 			handleNetMessage_MU_MSG_START_GAME_PREPARATIONS(static_cast<cMuMsgStartGamePreparations&>(muMessage));
 			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_STATE: 
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_STATE:
 			handleNetMessage_MU_MSG_LANDING_STATE(static_cast<cMuMsgLandingState&>(muMessage));
 			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME: 
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME:
 			handleNetMessage_MU_MSG_START_GAME(static_cast<cMuMsgStartGame&>(muMessage));
 			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS: 
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS:
 			handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS(static_cast<cMuMsgInLandingPositionSelectionStatus&>(muMessage));
 			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION: 
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION:
 			handleNetMessage_MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION(static_cast<cMuMsgPlayerHasSelectedLandingPosition&>(muMessage));
 			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION: 
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION:
 			handleNetMessage_MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION(static_cast<cMuMsgPlayerAbortedGamePreparations&>(muMessage));
 			break;
 		default:
@@ -569,7 +569,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage_TCP_CLOSE (cNetMessageTc
 void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_CHAT (cMuMsgChat& message)
 {
 	if (!connectionManager || !windowNetworkLobby) return;
-	
+
 	auto player = windowNetworkLobby->getPlayer(message.playerNr);
 	const auto playerName = player == nullptr ? "unknown" : player->getName();
 
@@ -701,7 +701,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_OPTIONS(cMuMsgOpt
 	{
 		windowNetworkLobby->setStaticMap (nullptr);
 	}
-	
+
 	windowNetworkLobby->setSaveGame (message.saveInfo);
 
 }

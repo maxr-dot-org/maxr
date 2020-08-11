@@ -32,7 +32,7 @@
 #include "video.h"
 #include "utility/position.h"
 #include "game/data/model.h"
-#include "mapdownload.h"
+#include "mapdownloader/mapdownload.h"
 
 #if 1 // TODO: [SDL2]: SDL_SetColors
 inline void SDL_SetColors (SDL_Surface* surface, SDL_Color* colors, int index, int size)
@@ -274,7 +274,7 @@ bool cStaticMap::possiblePlace(const cStaticUnitData& data, const cPosition& pos
 	if (!isValidPosition(position)) return false;
 	if (data.isBig)
 	{
-		if (!isValidPosition(position + cPosition(0, 1)) || 
+		if (!isValidPosition(position + cPosition(0, 1)) ||
 			!isValidPosition(position + cPosition(1, 0)) ||
 			!isValidPosition(position + cPosition(1, 1)) )
 		{
