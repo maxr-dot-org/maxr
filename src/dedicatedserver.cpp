@@ -22,7 +22,7 @@
 #include "utility/listhelpers.h"
 #include "defines.h"
 #include "utility/files.h"
-#include "netmessage2.h"
+#include "protocol/netmessage.h"
 #include "network.h"
 #include "game/data/report/savedreportchat.h"
 #include "servergame.h"

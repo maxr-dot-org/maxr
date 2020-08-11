@@ -31,7 +31,7 @@
 #include "utility/files.h"
 #include "utility/log.h"
 #include "extendedtinyxml.h"
-#include "netmessage2.h"
+#include "protocol/netmessage.h"
 #include "game/logic/server2.h"
 #include "utility/string/toString.h"
 #include "game/logic/turntimeclock.h"

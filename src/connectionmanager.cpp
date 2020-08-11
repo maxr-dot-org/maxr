@@ -22,7 +22,7 @@
 #include "connectionmanager.h"
 #include "game/data/player/playerbasicdata.h"
 #include "utility/log.h"
-#include "netmessage2.h"
+#include "protocol/netmessage.h"
 #include "maxrversion.h"
 #include "utility/string/toString.h"
 #include "ui/graphical/menu/control/menuevents.h"

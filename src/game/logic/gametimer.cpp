@@ -26,7 +26,7 @@
 #include "utility/files.h"
 #include "utility/log.h"
 #include "utility/string/toString.h"
-#include "netmessage2.h"
+#include "protocol/netmessage.h"
 #include "game/data/player/player.h"
 #include "game/logic/server2.h"
 #include "game/data/model.h"

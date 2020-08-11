@@ -21,7 +21,7 @@
 #include "network.h"
 #include "utility/log.h"
 
-#include "netmessage2.h"
+#include "protocol/netmessage.h"
 #include "connectionmanager.h"
 #include "utility/listhelpers.h"
 #include "utility/string/toString.h"

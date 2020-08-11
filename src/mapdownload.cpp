@@ -36,7 +36,7 @@
 #include "ui/graphical/menu/control/menuevents.h"
 #include "utility/string/toString.h"
 #include "connectionmanager.h"
-#include "netmessage2.h"
+#include "protocol/netmessage.h"
 
 using namespace std;
 

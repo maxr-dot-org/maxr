@@ -25,7 +25,7 @@
 #include "SDL_thread.h"
 
 #include "game/data/model.h"
-#include "netmessage2.h"
+#include "protocol/netmessage.h"
 #include "utility/thread/concurrentqueue.h"
 #include "gametimer.h"
 #include "game/data/savegame.h"

@@ -28,7 +28,7 @@
 #include <time.h>
 #include "utility/random.h"
 #include "game/data/savegame.h"
-#include "netmessage2.h"
+#include "protocol/netmessage.h"
 #include "utility/string/toString.h"
 #include "connectionmanager.h"
 #include "game/data/report/special/savedreportlostconnection.h"

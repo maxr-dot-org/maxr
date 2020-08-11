@@ -27,7 +27,7 @@
 #include "game/logic/fxeffects.h"
 #include "game/logic/gametimer.h"
 #include "utility/log.h"
-#include "netmessage2.h"
+#include "protocol/netmessage.h"
 #include "game/data/player/player.h"
 #include "game/logic/server2.h"
 #include "settings.h"

@@ -26,7 +26,7 @@
 #include "utility/mathtools.h"
 #include "game/logic/fxeffects.h"
 #include "utility/string/toString.h"
-#include "netmessage2.h"
+#include "protocol/netmessage.h"
 #include "game/data/player/player.h"
 #include "settings.h"
 #include "game/logic/upgradecalculator.h"

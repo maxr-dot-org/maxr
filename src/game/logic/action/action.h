@@ -20,7 +20,7 @@
 #ifndef game_logic_actionH
 #define game_logic_actionH
 
-#include "netmessage2.h"
+#include "protocol/netmessage.h"
 
 class cAction : public cNetMessage2
 {

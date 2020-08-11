@@ -27,7 +27,7 @@
 #include "utility/thread/concurrentqueue.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "netmessage2.h"
+#include "protocol/netmessage.h"
 #include "game/data/model.h"
 
 class cBuilding;

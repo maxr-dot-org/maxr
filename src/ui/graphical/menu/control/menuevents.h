@@ -20,7 +20,7 @@
 #define menueventsH
 
 
-#include "netmessage2.h"
+#include "protocol/netmessage.h"
 #include "game/data/gamesettings.h"
 #include "game/data/player/playerbasicdata.h"
 #include "game/logic/landingpositionstate.h"
@@ -49,7 +49,7 @@ public:
 		// Game Preparation
 		MU_MSG_START_GAME_PREPARATIONS,  // sent by host: all clients should start game preparation menus
 		MU_MSG_LANDING_STATE,         // sent by host: informs a client about the state of the landing position selection he is currently in
-		MU_MSG_LANDING_POSITION,	  // sent by client: selected landing position 
+		MU_MSG_LANDING_POSITION,	  // sent by client: selected landing position
 		MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS, // sent by host/client: is player in landing selection menu?
 		MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION, // sent by host: inform clients, which player have already selected a position
 		MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION,  // sent by host/client: a player has left. Abort game preparations and return to lobby

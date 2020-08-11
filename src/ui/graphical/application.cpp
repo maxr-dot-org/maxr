@@ -26,7 +26,7 @@
 #include "video.h"
 #include "utility/string/toString.h"
 #include "utility/unifonts.h"
-#include "netmessage2.h"
+#include "protocol/netmessage.h"
 #include "game/startup/game.h"
 #include "utility/runnable.h"
 

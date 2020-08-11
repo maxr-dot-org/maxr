@@ -19,7 +19,7 @@
 
 #include <memory>
 
-#include "netmessage2.h"
+#include "netmessage.h"
 
 #include "game/logic/action/action.h"
 #include "utility/string/toString.h"
@@ -42,11 +42,11 @@ std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(const unsigned char
 	std::unique_ptr<cNetMessage2> message;
 	switch (type)
 	{
-	case eNetMessageType::TCP_HELLO: 
+	case eNetMessageType::TCP_HELLO:
 		message = std::make_unique<cNetMessageTcpHello>(archive); break;
-	case eNetMessageType::TCP_WANT_CONNECT: 
+	case eNetMessageType::TCP_WANT_CONNECT:
 		message = std::make_unique<cNetMessageTcpWantConnect>(archive); break;
-	case eNetMessageType::TCP_CONNECTED: 
+	case eNetMessageType::TCP_CONNECTED:
 		message = std::make_unique<cNetMessageTcpConnected>(archive); break;
 	case eNetMessageType::TCP_CONNECT_FAILED:
 		message = std::make_unique<cNetMessageTcpConnectFailed>(archive); break;
