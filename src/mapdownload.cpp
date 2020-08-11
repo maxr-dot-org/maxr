@@ -33,7 +33,7 @@
 #include "utility/log.h"
 #include "settings.h"
 #include "utility/string/tolower.h"
-#include "ui/graphical/menu/control/menuevents.h"
+#include "protocol/lobbymessage.h"
 #include "utility/string/toString.h"
 #include "connectionmanager.h"
 #include "protocol/netmessage.h"

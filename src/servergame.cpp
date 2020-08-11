@@ -27,7 +27,7 @@
 #include "game/logic/landingpositionmanager.h"
 #include "game/logic/server2.h"
 #include "maxrversion.h"
-#include "ui/graphical/menu/control/menuevents.h"
+#include "protocol/lobbymessage.h"
 
 #include <algorithm>
 #include <iostream>

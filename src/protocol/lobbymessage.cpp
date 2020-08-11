@@ -17,9 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <memory>
+#include "lobbymessage.h"
 
-#include "menuevents.h"
 #include "utility/string/toString.h"
 #include "game/data/units/unitdata.h"
 #include "game/data/player/clans.h"
@@ -82,17 +81,17 @@ cMultiplayerLobbyMessage::eMessageType cMultiplayerLobbyMessage::getType() const
 
 void cMultiplayerLobbyMessage::serialize(cBinaryArchiveIn& archive)
 {
-	cNetMessage2::serialize(archive); 
+	cNetMessage2::serialize(archive);
 	serializeThis(archive);
 }
 
 void cMultiplayerLobbyMessage::serialize(cTextArchiveIn& archive)
 {
-	cNetMessage2::serialize(archive); 
+	cNetMessage2::serialize(archive);
 	serializeThis(archive);
 }
 
-cMultiplayerLobbyMessage::cMultiplayerLobbyMessage(eMessageType type) : 
+cMultiplayerLobbyMessage::cMultiplayerLobbyMessage(eMessageType type) :
 	cNetMessage2(eNetMessageType::MULTIPLAYER_LOBBY), type(type)
 {}
 
@@ -100,7 +99,7 @@ std::string enumToString(cMultiplayerLobbyMessage::eMessageType value)
 {
 	switch (value)
 	{
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT: 
+	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT:
 		return "MU_MSG_CHAT";
 	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IDENTIFIKATION:
 		return "MU_MSG_IDENTIFIKATION";
@@ -156,7 +155,7 @@ cMuMsgChat::cMuMsgChat(cBinaryArchiveOut& archive) :
 
 void cMuMsgChat::serialize(cBinaryArchiveIn& archive)
 {
-	cMultiplayerLobbyMessage::serialize(archive); 
+	cMultiplayerLobbyMessage::serialize(archive);
 	serializeThis(archive);
 }
 
@@ -180,13 +179,13 @@ cMuMsgPlayerNr::cMuMsgPlayerNr(cBinaryArchiveOut& archive) :
 
 void cMuMsgPlayerNr::serialize(cBinaryArchiveIn& archive)
 {
-	cMultiplayerLobbyMessage::serialize(archive); 
+	cMultiplayerLobbyMessage::serialize(archive);
 	serializeThis(archive);
 }
 
 void cMuMsgPlayerNr::serialize(cTextArchiveIn& archive)
 {
-	cMultiplayerLobbyMessage::serialize(archive); 
+	cMultiplayerLobbyMessage::serialize(archive);
 	serializeThis(archive);
 }
 
@@ -207,13 +206,13 @@ cMuMsgOptions::cMuMsgOptions(cBinaryArchiveOut& archive) :
 
 void cMuMsgOptions::serialize(cBinaryArchiveIn& archive)
 {
-	cMultiplayerLobbyMessage::serialize(archive); 
+	cMultiplayerLobbyMessage::serialize(archive);
 	serializeThis(archive);
 }
 
 void cMuMsgOptions::serialize(cTextArchiveIn& archive)
 {
-	cMultiplayerLobbyMessage::serialize(archive); 
+	cMultiplayerLobbyMessage::serialize(archive);
 	serializeThis(archive);
 }
 
@@ -235,13 +234,13 @@ cMuMsgPlayerList::cMuMsgPlayerList(cBinaryArchiveOut& archive) :
 
 void cMuMsgPlayerList::serialize(cBinaryArchiveIn& archive)
 {
-	cMultiplayerLobbyMessage::serialize(archive); 
+	cMultiplayerLobbyMessage::serialize(archive);
 	serializeThis(archive);
 }
 
 void cMuMsgPlayerList::serialize(cTextArchiveIn& archive)
 {
-	cMultiplayerLobbyMessage::serialize(archive); 
+	cMultiplayerLobbyMessage::serialize(archive);
 	serializeThis(archive);
 }
 
@@ -309,13 +308,13 @@ cMuMsgInLandingPositionSelectionStatus::cMuMsgInLandingPositionSelectionStatus(c
 
 void cMuMsgInLandingPositionSelectionStatus::serialize(cBinaryArchiveIn& archive)
 {
-	cMultiplayerLobbyMessage::serialize(archive); 
+	cMultiplayerLobbyMessage::serialize(archive);
 	serializeThis(archive);
 }
 
 void cMuMsgInLandingPositionSelectionStatus::serialize(cTextArchiveIn& archive)
 {
-	cMultiplayerLobbyMessage::serialize(archive); 
+	cMultiplayerLobbyMessage::serialize(archive);
 	serializeThis(archive);
 }
 
@@ -382,7 +381,7 @@ void cMuMsgFinishedMapDownload::serialize(cTextArchiveIn& archive)
 
 void cMuMsgFinishedMapDownload::serialize(cBinaryArchiveIn& archive)
 {
-	cMultiplayerLobbyMessage::serialize(archive); 
+	cMultiplayerLobbyMessage::serialize(archive);
 	serializeThis(archive);
 }
 
@@ -400,7 +399,7 @@ cMuMsgLandingPosition::cMuMsgLandingPosition(const cPosition& position) :
 
 void cMuMsgLandingPosition::serialize(cTextArchiveIn& archive)
 {
-	cMultiplayerLobbyMessage::serialize(archive); 
+	cMultiplayerLobbyMessage::serialize(archive);
 	serializeThis(archive);
 }
 
@@ -448,13 +447,13 @@ cMuMsgStartMapDownload::cMuMsgStartMapDownload(const std::string mapName, int ma
 
 void cMuMsgStartMapDownload::serialize(cTextArchiveIn& archive)
 {
-	cMultiplayerLobbyMessage::serialize(archive); 
+	cMultiplayerLobbyMessage::serialize(archive);
 	serializeThis(archive);
 }
 
 void cMuMsgStartMapDownload::serialize(cBinaryArchiveIn& archive)
 {
-	cMultiplayerLobbyMessage::serialize(archive); 
+	cMultiplayerLobbyMessage::serialize(archive);
 	serializeThis(archive);
 }
 
@@ -471,7 +470,7 @@ cMuMsgMapDownloadData::cMuMsgMapDownloadData() :
 
 void cMuMsgMapDownloadData::serialize(cTextArchiveIn& archive)
 {
-	cMultiplayerLobbyMessage::serialize(archive); 
+	cMultiplayerLobbyMessage::serialize(archive);
 	serializeThis(archive);
 }
 

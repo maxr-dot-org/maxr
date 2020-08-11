@@ -28,7 +28,7 @@
 #include "utility/runnable.h"
 #include "utility/thread/concurrentqueue.h"
 #include "game/logic/landingpositionmanager.h"
-#include "menuevents.h"
+#include "protocol/lobbymessage.h"
 
 class cApplication;
 class cWindowNetworkLobbyHost;

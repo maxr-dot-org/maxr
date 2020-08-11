@@ -28,7 +28,7 @@
 #include "utility/signal/signalconnectionmanager.h"
 #include "game/data/gamesettings.h"
 #include "game/logic/server2.h"
-#include "ui/graphical/menu/control/menuevents.h"
+#include "protocol/lobbymessage.h"
 #include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"
 
 class cNetMessage2;

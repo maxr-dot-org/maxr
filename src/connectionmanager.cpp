@@ -25,9 +25,9 @@
 #include "protocol/netmessage.h"
 #include "maxrversion.h"
 #include "utility/string/toString.h"
-#include "ui/graphical/menu/control/menuevents.h"
+#include "protocol/lobbymessage.h"
 
-#define HANDSHAKE_TIMEOUT_MS 3000 
+#define HANDSHAKE_TIMEOUT_MS 3000
 #define DISABLE_TIMEOUTS 0 // this can be used, when debugging the conection handshake
                            // and timeouts are not wanted
 
@@ -126,7 +126,7 @@ void cConnectionManager::acceptConnection(const cSocket* socket, int playerNr)
 	cLockGuard<cMutex> tl(mutex);
 
 	stopTimeout(socket);
-	
+
 	auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<const cSocket*, int>& x) { return x.first == socket; });
 	if (x == clientSockets.end())
 	{
@@ -397,7 +397,7 @@ void cConnectionManager::connectionClosed(const cSocket* socket)
 		}
 
 		int playerNr = x->second;
-		if (playerNr != -1 && localServer) //is a player associated with the socket? 
+		if (playerNr != -1 && localServer) //is a player associated with the socket?
 		{
 			localServer->pushMessage(std::make_unique<cNetMessageTcpClose>(playerNr));
 		}
@@ -462,7 +462,7 @@ void cConnectionManager::messageReceived(const cSocket* socket, unsigned char* d
 			return;
 		}
 	}
-	
+
 	// handle messages for the connection handshake
 	if (handeConnectionHandshake(message, socket, playerOnSocket))
 	{

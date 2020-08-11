@@ -24,7 +24,7 @@
 #include "network.h"
 #include "utility/log.h"
 #include "game/data/player/player.h"
-#include "ui/graphical/menu/control/menuevents.h"
+#include "protocol/lobbymessage.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------

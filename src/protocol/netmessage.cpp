@@ -25,7 +25,7 @@
 #include "utility/string/toString.h"
 #include "game/data/model.h"
 #include "utility/serialization/serialization.h"
-#include "ui/graphical/menu/control/menuevents.h"
+#include "protocol/lobbymessage.h"
 #include "game/logic/turntimeclock.h"
 #include "maxrversion.h"
 

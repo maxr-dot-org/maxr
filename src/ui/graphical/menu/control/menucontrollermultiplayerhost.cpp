@@ -41,7 +41,7 @@
 #include "game/data/units/landingunit.h"
 #include "utility/language.h"
 #include "utility/log.h"
-#include "menuevents.h"
+#include "protocol/lobbymessage.h"
 #include "mapdownload.h"
 #include "game/data/savegame.h"
 #include "game/logic/client.h"
