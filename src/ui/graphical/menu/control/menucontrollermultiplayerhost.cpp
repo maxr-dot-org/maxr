@@ -43,6 +43,7 @@
 #include "utility/log.h"
 #include "protocol/lobbymessage.h"
 #include "mapdownloader/mapdownload.h"
+#include "mapdownloader/mapuploadmessagehandler.h"
 #include "game/data/savegame.h"
 #include "game/logic/client.h"
 #include "game/logic/server2.h"
@@ -73,6 +74,29 @@ void cMenuControllerMultiplayerHost::start()
 	connectionManager->setLocalServer (this);
 
 	windowNetworkLobby = std::make_shared<cWindowNetworkLobbyHost> ();
+
+	auto mapUploadMessageHandler = std::make_unique<cMapUploadMessageHandler>(connectionManager, [this]()
+	{
+		return windowNetworkLobby ? windowNetworkLobby->getStaticMap().get() : nullptr;
+	});
+
+	signalConnectionManager.connect (mapUploadMessageHandler->onRequested, [this](int playerNr)
+	{
+		if (!windowNetworkLobby) return;
+		const auto player = windowNetworkLobby->getPlayer(playerNr);
+		if (!player) return;
+		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_Upload", player->getName()));
+	});
+
+	signalConnectionManager.connect (mapUploadMessageHandler->onRequested, [this](int playerNr)
+	{
+		if (!windowNetworkLobby) return;
+		const auto player = windowNetworkLobby->getPlayer(playerNr);
+		if (!player) return;
+		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_UploadFinished", player->getName()));
+	});
+
+	lobbyMessageHandlers.push_back (std::move(mapUploadMessageHandler));
 
 	triedLoadMapName = "";
 	nextPlayerNumber = windowNetworkLobby->getLocalPlayer()->getNr() + 1;
@@ -697,6 +721,14 @@ void cMenuControllerMultiplayerHost::handleNetMessage (cNetMessage2& message)
 
 	cMultiplayerLobbyMessage& muMessage = static_cast<cMultiplayerLobbyMessage&>(message);
 
+	for (auto& lobbyMessageHandler : lobbyMessageHandlers)
+	{
+		if (lobbyMessageHandler->handleMessage (muMessage))
+		{
+			return;
+		}
+	}
+
 	switch (muMessage.getType())
 	{
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT:
@@ -704,12 +736,6 @@ void cMenuControllerMultiplayerHost::handleNetMessage (cNetMessage2& message)
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IDENTIFIKATION:
 			handleNetMessage_MU_MSG_IDENTIFIKATION(static_cast<cMuMsgIdentification&>(muMessage));
-			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_REQUEST_MAP:
-			handleNetMessage_MU_MSG_REQUEST_MAP(static_cast<cMuMsgRequestMap&>(muMessage));
-			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_FINISHED_MAP_DOWNLOAD:
-			handleNetMessage_MU_MSG_FINISHED_MAP_DOWNLOAD(static_cast<cMuMsgFinishedMapDownload&>(muMessage));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_POSITION:
 			handleNetMessage_MU_MSG_LANDING_POSITION(static_cast<cMuMsgLandingPosition&>(muMessage));
@@ -837,47 +863,6 @@ void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_IDENTIFIKATION (cMu
 	checkTakenPlayerAttributes (*player);
 
 	sendNetMessage(cMuMsgPlayerList(windowNetworkLobby->getPlayers()));
-}
-
-//------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_REQUEST_MAP (cMuMsgRequestMap& message)
-{
-	if (!connectionManager || !windowNetworkLobby) return;
-
-	auto& map = windowNetworkLobby->getStaticMap();
-
-	if (map == nullptr || MapDownload::isMapOriginal (map->getName())) return;
-
-	auto player = windowNetworkLobby->getPlayer(message.playerNr);
-	if (player == nullptr) return;
-
-	// check, if there is already a map sender,
-	// that uploads to the same player.
-	// If yes, terminate the old map sender.
-	for (auto i = mapSenders.begin(); i != mapSenders.end(); /*erase in loop*/)
-	{
-		auto& sender = *i;
-		if (sender->getToPlayerNr() == player->getNr())
-		{
-			i = mapSenders.erase (i);
-		}
-		else
-		{
-			++i;
-		}
-	}
-	auto mapSender = std::make_unique<cMapSender> (*connectionManager, player->getNr(), map->getName(), player->getName());
-	mapSender->runInThread();
-	mapSenders.push_back (std::move (mapSender));
-	windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_Upload", player->getName()));
-}
-
-//------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_FINISHED_MAP_DOWNLOAD (cMuMsgFinishedMapDownload& message)
-{
-	if (!windowNetworkLobby) return;
-
-	windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_UploadFinished", message.playerName));
 }
 
 //------------------------------------------------------------------------------

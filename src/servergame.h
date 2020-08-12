@@ -72,6 +72,8 @@ protected:
 	cGameSettings settings;
 	std::shared_ptr<cStaticMap> map;
 	std::shared_ptr<cConnectionManager> connectionManager;
+	std::vector<std::unique_ptr<ILobbyMessageHandler>> lobbyMessageHandlers;
+
 	SDL_Thread* thread;
 	bool canceled;
 	bool shouldSave;
@@ -95,9 +97,6 @@ protected:
 
 	void handleNetMessage (cMuMsgIdentification&);
 	void handleNetMessage (cMuMsgChat&);
-
-	void handleNetMessage (cMuMsgRequestMap&);
-	void handleNetMessage (cMuMsgFinishedMapDownload&);
 
 	void handleNetMessage (cMuMsgLandingPosition&);
 	void handleNetMessage (cMuMsgInLandingPositionSelectionStatus&);

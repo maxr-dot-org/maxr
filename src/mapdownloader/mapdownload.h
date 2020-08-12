@@ -70,8 +70,7 @@ class cMapSender
 {
 public:
 	cMapSender (cConnectionManager& connectionManager, int toPlayerNr,
-				const std::string& mapName,
-				const std::string& receivingPlayerName);
+				const std::string& mapName);
 	~cMapSender();
 
 	int getToPlayerNr() const { return toPlayerNr; }
@@ -91,7 +90,6 @@ private:
 private:
 	cConnectionManager& connectionManager;
 	int toPlayerNr;
-	std::string receivingPlayerName;
 	std::string mapName;
 	std::size_t bytesSent;
 	std::vector<char> sendBuffer;

@@ -371,25 +371,11 @@ cMuMsgPlayerAbortedGamePreparations::cMuMsgPlayerAbortedGamePreparations() :
 cMuMsgFinishedMapDownload::cMuMsgFinishedMapDownload(cBinaryArchiveOut& archive) :
 	cMultiplayerLobbyMessage(eMessageType::MU_MSG_FINISHED_MAP_DOWNLOAD)
 {
-	serializeThis(archive);
 }
 
-cMuMsgFinishedMapDownload::cMuMsgFinishedMapDownload(const std::string& playerName) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_FINISHED_MAP_DOWNLOAD),
-	playerName(playerName)
+cMuMsgFinishedMapDownload::cMuMsgFinishedMapDownload() :
+	cMultiplayerLobbyMessage(eMessageType::MU_MSG_FINISHED_MAP_DOWNLOAD)
 {}
-
-void cMuMsgFinishedMapDownload::serialize(cTextArchiveIn& archive)
-{
-	cMultiplayerLobbyMessage::serialize(archive);
-	serializeThis(archive);
-}
-
-void cMuMsgFinishedMapDownload::serialize(cBinaryArchiveIn& archive)
-{
-	cMultiplayerLobbyMessage::serialize(archive);
-	serializeThis(archive);
-}
 
 //------------------------------------------------------------------------------
 cMuMsgLandingPosition::cMuMsgLandingPosition(cBinaryArchiveOut& archive) :

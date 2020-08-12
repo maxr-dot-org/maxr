@@ -214,11 +214,9 @@ int mapSenderThreadFunction (void* data)
 
 //------------------------------------------------------------------------------
 cMapSender::cMapSender(cConnectionManager& connectionManager, int toPlayerNr,
-						const std::string& mapName,
-						const std::string& receivingPlayerName) :
+						const std::string& mapName) :
 	connectionManager (connectionManager),
 	toPlayerNr (toPlayerNr),
-	receivingPlayerName (receivingPlayerName),
 	mapName (mapName),
 	bytesSent (0),
 	sendBuffer(),
@@ -313,22 +311,9 @@ void cMapSender::run()
 	// finished
 	sendBuffer.clear();
 
-	sendMsg (cMuMsgFinishedMapDownload(receivingPlayerName));
+	sendMsg (cMuMsgFinishedMapDownload());
 
-	// Push message also to client, that belongs to the host,
-	// to give feedback about the finished upload state.
-	// The EventHandler mechanism is used,
-	// because this code runs in another thread than the code,
-	// that must display the msg.
-
-	// FIXME: may use a signal here? (and protect it by mutexes?!)
-
-	//if (eventHandling)
-	//{
-	//	cNetMessage* message = new cNetMessage (MU_MSG_FINISHED_MAP_DOWNLOAD);
-	//	message->pushString (receivingPlayerName);
-	//	eventHandling->pushEvent (message);
-	//}
+	connectionManager.sendToServer (cMuMsgFinishedMapDownload().From(toPlayerNr));
 }
 
 //------------------------------------------------------------------------------

@@ -27,6 +27,7 @@
 #include "game/logic/landingpositionmanager.h"
 #include "game/logic/server2.h"
 #include "mapdownloader/mapdownload.h"
+#include "mapdownloader/mapuploadmessagehandler.h"
 #include "maxrversion.h"
 #include "protocol/lobbymessage.h"
 
@@ -54,7 +55,23 @@ cServerGame::cServerGame (std::shared_ptr<cConnectionManager> connectionManager)
 	shouldSave (false),
 	saveGameNumber (-1),
 	nextPlayerNumber (0)
-{}
+{
+	auto mapUploadMessageHandler = std::make_unique<cMapUploadMessageHandler>(connectionManager, [this]()
+	{
+		return map.get();
+	});
+
+	signalConnectionManager.connect (mapUploadMessageHandler->onRequested, [this](int playerNr)
+	{
+		std::cout << playerNr << " request map" << std::endl;
+	});
+	signalConnectionManager.connect (mapUploadMessageHandler->onRequested, [this](int playerNr)
+	{
+		std::cout << playerNr << " finisehd to download map" << std::endl;
+	});
+
+	lobbyMessageHandlers.push_back (std::move(mapUploadMessageHandler));
+}
 
 //------------------------------------------------------------------------------
 cServerGame::~cServerGame()
@@ -257,6 +274,14 @@ void cServerGame::handleNetMessage (cNetMessageTcpClose& message)
 //------------------------------------------------------------------------------
 void cServerGame::handleNetMessage (cMultiplayerLobbyMessage& message)
 {
+	for (auto& lobbyMessageHandler : lobbyMessageHandlers)
+	{
+		if (lobbyMessageHandler->handleMessage (message))
+		{
+			return;
+		}
+	}
+
 	switch (message.getType())
 	{
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IDENTIFIKATION:
@@ -445,19 +470,6 @@ void cServerGame::handleNetMessage (cMuMsgChat& message)
 			 }
 		}
 	}
-}
-
-//------------------------------------------------------------------------------
-void cServerGame::handleNetMessage (cMuMsgRequestMap& message)
-{
-	sendChatMessage ("Not implemented", message.playerNr);
-	// Factorize code with cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_REQUEST_MAP
-}
-
-//------------------------------------------------------------------------------
-void cServerGame::handleNetMessage (cMuMsgFinishedMapDownload& message)
-{
-	sendTranslatedChatMessage ("Text~Multiplayer~MapDL_UploadFinished", message.playerName);
 }
 
 //------------------------------------------------------------------------------

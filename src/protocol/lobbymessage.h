@@ -300,19 +300,8 @@ public:
 class cMuMsgFinishedMapDownload : public cMultiplayerLobbyMessage
 {
 public:
-	cMuMsgFinishedMapDownload(const std::string& playerName);
+	cMuMsgFinishedMapDownload();
 	cMuMsgFinishedMapDownload(cBinaryArchiveOut& archive);
-
-	virtual void serialize(cBinaryArchiveIn& archive);
-	virtual void serialize(cTextArchiveIn& archive);
-
-	std::string playerName;
-private:
-	template<typename T>
-	void serializeThis(T& archive)
-	{
-		archive & playerName;
-	}
 };
 
 //------------------------------------------------------------------------------

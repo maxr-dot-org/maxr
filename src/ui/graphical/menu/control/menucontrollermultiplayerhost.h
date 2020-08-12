@@ -62,25 +62,22 @@ private:
 	cApplication& application;
 
 	std::shared_ptr<cWindowNetworkLobbyHost> windowNetworkLobby;
-
 	std::shared_ptr<cWindowLandingPositionSelection> windowLandingPositionSelection;
-
 	std::shared_ptr<cLandingPositionManager> landingPositionManager;
-
 	std::shared_ptr<cNetworkHostGameNew> newGame;
 
 	int nextPlayerNumber;
 
 	std::string triedLoadMapName;
 
-	std::vector<std::unique_ptr<cMapSender>> mapSenders;
+	std::vector<std::unique_ptr<ILobbyMessageHandler>> lobbyMessageHandlers;
 
 	std::vector<std::unique_ptr<cPlayerLandingStatus>> playersLandingStatus;
 
 	void reset();
 
 	void sendGameData(int playerNr = -1);
-	
+
 	void handleSelectMap (cApplication& application);
 	void handleSelectSettings (cApplication& application);
 	void handleSelectSaveGame (cApplication& application);
@@ -113,8 +110,6 @@ private:
 
 	void handleNetMessage_MU_MSG_CHAT (cMuMsgChat& message);
 	void handleNetMessage_MU_MSG_IDENTIFIKATION(cMuMsgIdentification& message);
-	void handleNetMessage_MU_MSG_REQUEST_MAP(cMuMsgRequestMap& message);
-	void handleNetMessage_MU_MSG_FINISHED_MAP_DOWNLOAD(cMuMsgFinishedMapDownload& message);
 	void handleNetMessage_MU_MSG_LANDING_POSITION(cMuMsgLandingPosition& message);
 	void handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS(cMuMsgInLandingPositionSelectionStatus& message);
 	void handleNetMessage_MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION(cMuMsgPlayerAbortedGamePreparations& message);
