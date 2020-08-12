@@ -91,6 +91,12 @@ void cMultiplayerLobbyMessage::serialize(cTextArchiveIn& archive)
 	serializeThis(archive);
 }
 
+bool ILobbyMessageHandler::handleMessage (const cNetMessage2& message)
+{
+	if (message.getType() != eNetMessageType::MULTIPLAYER_LOBBY) return false;
+	return handleMessage (static_cast<const cMultiplayerLobbyMessage&>(message));
+}
+
 cMultiplayerLobbyMessage::cMultiplayerLobbyMessage(eMessageType type) :
 	cNetMessage2(eNetMessageType::MULTIPLAYER_LOBBY), type(type)
 {}

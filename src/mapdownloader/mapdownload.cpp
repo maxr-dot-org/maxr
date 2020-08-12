@@ -159,7 +159,7 @@ cMapReceiver::cMapReceiver (const std::string& mapName, int mapSize) :
 }
 
 //------------------------------------------------------------------------------
-bool cMapReceiver::receiveData (cMuMsgMapDownloadData& message)
+bool cMapReceiver::receiveData (const cMuMsgMapDownloadData& message)
 {
 	const int bytesInMsg = message.data.size();
 	if (bytesInMsg <= 0 || bytesReceived + bytesInMsg > readBuffer.size())

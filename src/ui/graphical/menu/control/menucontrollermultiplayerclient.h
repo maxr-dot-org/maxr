@@ -35,7 +35,6 @@ class cNetworkClientGameNew;
 class cMapReceiver;
 class cPlayerLandingStatus;
 
-
 class cMenuControllerMultiplayerClient : public INetMessageReceiver, public cRunnable, public std::enable_shared_from_this<cMenuControllerMultiplayerClient>
 {
 public:
@@ -58,12 +57,10 @@ private:
 	cApplication& application;
 
 	std::shared_ptr<cWindowNetworkLobbyClient> windowNetworkLobby;
-
 	std::shared_ptr<cWindowLandingPositionSelection> windowLandingPositionSelection;
-
 	std::shared_ptr<cNetworkClientGameNew> newGame;
 
-	std::unique_ptr<cMapReceiver> mapReceiver;
+	std::vector<std::unique_ptr<ILobbyMessageHandler>> lobbyMessageHandlers;
 
 	std::vector<std::unique_ptr<cPlayerLandingStatus>> playersLandingStatus;
 
@@ -106,11 +103,6 @@ private:
 	void handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS(cMuMsgInLandingPositionSelectionStatus& message);
 	void handleNetMessage_MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION(cMuMsgPlayerHasSelectedLandingPosition& message);
 	void handleNetMessage_MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION(cMuMsgPlayerAbortedGamePreparations& message);
-
-	void initMapDownload(cMuMsgStartMapDownload& message);
-	void receiveMapData(cMuMsgMapDownloadData& message);
-	void canceledMapDownload(cMuMsgCanceledMapDownload& message);
-	void finishedMapDownload(cMuMsgFinishedMapDownload& message);
 
 	void sendNetMessage(cNetMessage2& message);
 	void sendNetMessage(cNetMessage2&& message);

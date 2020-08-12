@@ -53,7 +53,7 @@ class cMapReceiver
 public:
 	cMapReceiver (const std::string& mapName, int mapSize);
 
-	bool receiveData (cMuMsgMapDownloadData& message);
+	bool receiveData (const cMuMsgMapDownloadData& message);
 	bool finished();
 
 	const std::string& getMapName() const { return mapName; }

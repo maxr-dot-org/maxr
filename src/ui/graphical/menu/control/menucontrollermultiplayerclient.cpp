@@ -41,6 +41,7 @@
 #include "utility/log.h"
 #include "protocol/lobbymessage.h"
 #include "mapdownloader/mapdownload.h"
+#include "mapdownloader/mapdownloadmessagehandler.h"
 #include "utility/files.h"
 #include "utility/string/toString.h"
 #include "game/logic/client.h"
@@ -52,7 +53,32 @@ std::vector<std::pair<sID, int>> createInitialLandingUnitsList(int clan, const c
 cMenuControllerMultiplayerClient::cMenuControllerMultiplayerClient (cApplication& application_) :
 	application (application_),
 	windowLandingPositionSelection (nullptr)
-{}
+{
+	auto mapDownloadMessageHandler = std::make_unique <cMapDownloadMessageHandler>();
+
+	signalConnectionManager.connect (mapDownloadMessageHandler->onPercentChanged, [this](std::size_t percent){
+		if (windowNetworkLobby != nullptr)
+		{
+			windowNetworkLobby->setMapDownloadPercent (percent);
+		}
+	});
+	signalConnectionManager.connect (mapDownloadMessageHandler->onCancelled, [this](){
+		if (windowNetworkLobby != nullptr)
+		{
+			windowNetworkLobby->setMapDownloadCanceled();
+		}
+	});
+	signalConnectionManager.connect (mapDownloadMessageHandler->onDownloaded, [this](std::shared_ptr<cStaticMap> staticMap){
+		if (windowNetworkLobby != nullptr)
+		{
+			windowNetworkLobby->setStaticMap (staticMap);
+			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_Finished"));
+		}
+	});
+
+	lobbyMessageHandlers.push_back (std::move (mapDownloadMessageHandler));
+
+}
 
 //------------------------------------------------------------------------------
 cMenuControllerMultiplayerClient::~cMenuControllerMultiplayerClient()
@@ -463,6 +489,14 @@ void cMenuControllerMultiplayerClient::handleNetMessage (cNetMessage2& message)
 
 	cMultiplayerLobbyMessage& muMessage = static_cast<cMultiplayerLobbyMessage&>(message);
 
+	for (auto& lobbyMessageHandler : lobbyMessageHandlers)
+	{
+		if (lobbyMessageHandler->handleMessage (muMessage))
+		{
+			return;
+		}
+	}
+
 	switch (muMessage.getType())
 	{
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT:
@@ -476,18 +510,6 @@ void cMenuControllerMultiplayerClient::handleNetMessage (cNetMessage2& message)
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_OPTIONS:
 			handleNetMessage_MU_MSG_OPTIONS(static_cast<cMuMsgOptions&>(muMessage));
-			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_MAP_DOWNLOAD:
-			initMapDownload(static_cast<cMuMsgStartMapDownload&>(muMessage));
-			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_MAP_DOWNLOAD_DATA:
-			receiveMapData(static_cast<cMuMsgMapDownloadData&>(muMessage));
-			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CANCELED_MAP_DOWNLOAD:
-			canceledMapDownload(static_cast<cMuMsgCanceledMapDownload&>(muMessage));
-			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_FINISHED_MAP_DOWNLOAD:
-			finishedMapDownload(static_cast<cMuMsgFinishedMapDownload&>(muMessage));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME_PREPARATIONS:
 			handleNetMessage_MU_MSG_START_GAME_PREPARATIONS(static_cast<cMuMsgStartGamePreparations&>(muMessage));
@@ -804,61 +826,6 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_PLAYER_HAS_ABORTE
 	{
 		application.closeTill(*windowNetworkLobby);
 	});
-}
-
-//------------------------------------------------------------------------------
-void cMenuControllerMultiplayerClient::initMapDownload(cMuMsgStartMapDownload& message)
-{
-	mapReceiver = std::make_unique<cMapReceiver> (message.mapName, message.mapSize);
-}
-
-//------------------------------------------------------------------------------
-void cMenuControllerMultiplayerClient::receiveMapData(cMuMsgMapDownloadData& message)
-{
-	if (mapReceiver == nullptr) return;
-
-	mapReceiver->receiveData (message);
-
-	if (windowNetworkLobby != nullptr)
-	{
-		const int percent = mapReceiver->getBytesReceivedPercent();
-
-		windowNetworkLobby->setMapDownloadPercent (percent);
-	}
-}
-
-//------------------------------------------------------------------------------
-void cMenuControllerMultiplayerClient::canceledMapDownload(cMuMsgCanceledMapDownload& message)
-{
-	if (mapReceiver == nullptr) return;
-
-	mapReceiver = nullptr;
-
-	if (windowNetworkLobby != nullptr)
-	{
-		windowNetworkLobby->setMapDownloadCanceled();
-	}
-}
-
-//------------------------------------------------------------------------------
-void cMenuControllerMultiplayerClient::finishedMapDownload(cMuMsgFinishedMapDownload& message)
-{
-	if (mapReceiver == nullptr) return;
-
-	mapReceiver->finished();
-
-	auto staticMap = std::make_shared<cStaticMap> ();
-
-	if (!staticMap->loadMap (mapReceiver->getMapName())) staticMap = nullptr;
-
-	if (windowNetworkLobby != nullptr)
-	{
-		windowNetworkLobby->setStaticMap (staticMap);
-
-		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_Finished"));
-	}
-
-	mapReceiver = nullptr;
 }
 
 //------------------------------------------------------------------------------

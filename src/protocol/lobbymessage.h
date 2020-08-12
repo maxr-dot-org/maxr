@@ -77,6 +77,21 @@ private:
 
 std::string enumToString(cMultiplayerLobbyMessage::eMessageType value);
 
+/**
+* Interface called each time a message should be handled.
+*/
+class ILobbyMessageHandler : public INetMessageHandler
+{
+protected:
+	/**
+	 * potentially handle the message
+	 * @return if message is handled
+	 */
+	bool handleMessage (const cNetMessage2&) final;
+public:
+	virtual bool handleMessage (const cMultiplayerLobbyMessage&) = 0;
+};
+
 //------------------------------------------------------------------------------
 class cMuMsgChat : public cMultiplayerLobbyMessage
 {

@@ -95,6 +95,20 @@ private:
 	eNetMessageType type;
 };
 
+/**
+* Interface called each time a message should be handled.
+*/
+class INetMessageHandler
+{
+public:
+	virtual ~INetMessageHandler() = default;
+	/**
+	 * potentially handle the message
+	 * @return if message is handled
+	 */
+	virtual bool handleMessage (const cNetMessage2&) = 0;
+};
+
 //------------------------------------------------------------------------------
 class cNetMessageReport : public cNetMessage2
 {
