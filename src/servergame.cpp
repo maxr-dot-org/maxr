@@ -290,12 +290,6 @@ void cServerGame::handleNetMessage (cMultiplayerLobbyMessage& message)
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT:
 			handleNetMessage (static_cast<cMuMsgChat&>(message));
 			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_REQUEST_MAP:
-			handleNetMessage (static_cast<cMuMsgRequestMap&>(message));
-			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_FINISHED_MAP_DOWNLOAD:
-			handleNetMessage (static_cast<cMuMsgFinishedMapDownload&>(message));
-			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_POSITION:
 			handleNetMessage (static_cast<cMuMsgLandingPosition&>(message));
 			break;
