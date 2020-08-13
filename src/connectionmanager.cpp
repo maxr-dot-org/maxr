@@ -28,7 +28,7 @@
 #include "protocol/lobbymessage.h"
 
 #define HANDSHAKE_TIMEOUT_MS 3000
-#define DISABLE_TIMEOUTS 0 // this can be used, when debugging the conection handshake
+#define DISABLE_TIMEOUTS 0 // this can be used, when debugging the connection handshake
                            // and timeouts are not wanted
 
 class cHandshakeTimeout
@@ -59,28 +59,17 @@ private:
 		return 0;
 	}
 
-	cConnectionManager* connectionManager;
+	cConnectionManager* connectionManager = nullptr;
 	SDL_TimerID timer;
-	const cSocket* socket;
+	const cSocket* socket = nullptr;
 };
 
 
 //------------------------------------------------------------------------------
-cConnectionManager::cConnectionManager() :
-	network(nullptr),
-	localClient(nullptr),
-	localServer(nullptr),
-	localPlayer(-1),
-	serverSocket(nullptr),
-	serverOpen(false),
-	connecting(false),
-	connectingPlayerReady(false)
-{}
+cConnectionManager::cConnectionManager() = default;
 
 //------------------------------------------------------------------------------
-cConnectionManager::~cConnectionManager()
-{
-}
+cConnectionManager::~cConnectionManager() = default;
 
 //------------------------------------------------------------------------------
 int cConnectionManager::openServer(int port)
@@ -193,7 +182,7 @@ void cConnectionManager::connectToServer(const std::string& host, int port, cons
 
 	network->connectToServer(host, port);
 
-	//save credentials, until the conncetion is established
+	//save credentials, until the connection is established
 	connecting = true;
 	connectingPlayerName = player.getName();
 	connectingPlayerColor = player.getColor().getColor();
@@ -270,23 +259,21 @@ void cConnectionManager::setLocalClients(std::vector<INetMessageReceiver*>&& cli
 }
 
 //------------------------------------------------------------------------------
-int cConnectionManager::sendToServer(const cNetMessage2& message)
+void cConnectionManager::sendToServer(const cNetMessage2& message)
 {
 	cLockGuard<cMutex> tl(mutex);
 
 	if (localServer)
 	{
 		localServer->pushMessage(message.clone());
-		return 0;
 	}
 	else if (serverSocket)
 	{
-		return sendMessage(serverSocket, message);
+		sendMessage(serverSocket, message);
 	}
 	else
 	{
 		Log.write("Connection Manager: Can't send message. No local server and no connection to server", cLog::eLOG_TYPE_NET_ERROR);
-		return -1;
 	}
 }
 

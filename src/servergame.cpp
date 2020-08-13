@@ -67,7 +67,7 @@ cServerGame::cServerGame (std::shared_ptr<cConnectionManager> connectionManager)
 	});
 	signalConnectionManager.connect (mapUploadMessageHandler->onRequested, [this](int playerNr)
 	{
-		std::cout << playerNr << " finisehd to download map" << std::endl;
+		std::cout << playerNr << " finished to download map" << std::endl;
 	});
 
 	lobbyMessageHandlers.push_back (std::move(mapUploadMessageHandler));

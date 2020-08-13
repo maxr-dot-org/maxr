@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef mapdownloadH
-#define mapdownloadH
+#ifndef mapdownloader_mapdownloadH
+#define mapdownloader_mapdownloadH
 
 #include <string>
 #include <vector>
@@ -98,4 +98,4 @@ private:
 	bool canceled;
 };
 
-#endif // mapdownloadH
+#endif

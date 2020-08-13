@@ -17,8 +17,8 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef netmessage2H
-#define netmessage2H
+#ifndef protocol_netmessageH
+#define protocol_netmessageH
 
 #include <memory>
 
@@ -573,4 +573,4 @@ public:
 };
 
 
-#endif //netmessage2H
+#endif

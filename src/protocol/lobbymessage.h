@@ -16,9 +16,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef menueventsH
-#define menueventsH
-
+#ifndef protocol_lobbymessageH
+#define protocol_lobbymessageH
 
 #include "protocol/netmessage.h"
 #include "game/data/gamesettings.h"
@@ -413,4 +412,4 @@ private:
 	}
 };
 
-#endif // menueventsH
+#endif

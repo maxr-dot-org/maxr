@@ -63,7 +63,7 @@ public:
 	void setLocalServer(INetMessageReceiver* server);
 	void setLocalClients(std::vector<INetMessageReceiver*>&&);
 
-	int sendToServer(const cNetMessage2& message);
+	void sendToServer(const cNetMessage2& message);
 	void sendToPlayer(const cNetMessage2& message, int playerNr);
 	void sendToPlayers(const cNetMessage2& message);
 
@@ -87,23 +87,23 @@ private:
 
 	std::unique_ptr<cNetwork> network;
 	std::vector<INetMessageReceiver*> localClients; // Hotseat
-	INetMessageReceiver* localClient;
-	INetMessageReceiver* localServer;
+	INetMessageReceiver* localClient = nullptr;
+	INetMessageReceiver* localServer = nullptr;
 	mutable cMutex mutex;
 
-	int localPlayer;
+	int localPlayer = -1;
 	std::vector<std::pair<const cSocket*, int>> clientSockets;
-	const cSocket* serverSocket;
+	const cSocket* serverSocket = nullptr;
 
 	std::vector<std::unique_ptr<cHandshakeTimeout>> timeouts;
 
-	bool serverOpen;
+	bool serverOpen = false;
 
 	// temporary save player credentials (used during non blocking connection attempt)
-	bool connecting;
+	bool connecting = false;
 	std::string connectingPlayerName;
 	cRgbColor connectingPlayerColor;
-	bool connectingPlayerReady;
+	bool connectingPlayerReady = false;
 };
 
 #endif
