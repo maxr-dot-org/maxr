@@ -441,6 +441,23 @@ void cWindowNetworkLobby::enableIpEdit()
 }
 
 //------------------------------------------------------------------------------
+void cWindowNetworkLobby::updatePlayerList (const cPlayerBasicData& local, const std::vector<cPlayerBasicData>& players)
+{
+	// Cannot use *localPlayer = local because of signal.
+	localPlayer->setColor(local.getColor());
+	localPlayer->setName(local.getName());
+	localPlayer->setNr(local.getNr());
+	localPlayer->setReady(local.isReady());
+
+	removePlayers();
+	for (const auto& playerData : players)
+	{
+		addPlayer (playerData.getNr() == localPlayer->getNr() ? localPlayer : std::make_shared<cPlayerBasicData> (playerData));
+	}
+	updatePlayerListView();
+}
+
+//------------------------------------------------------------------------------
 void cWindowNetworkLobby::updatePlayerListView()
 {
 	for (unsigned int i = 0; i < playersList->getItemsCount(); i++)

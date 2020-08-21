@@ -73,6 +73,7 @@ public:
 	void enablePortEdit();
 	void enableIpEdit();
 
+	void updatePlayerList (const cPlayerBasicData&, const std::vector<cPlayerBasicData>&);
 	void updatePlayerListView();
 
 	cSignal<void ()> backClicked;

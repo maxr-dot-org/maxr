@@ -22,20 +22,17 @@
 
 #include <memory>
 
+#include "game/startup/lobbyclient.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/runnable.h"
-#include "utility/thread/concurrentqueue.h"
-#include "connectionmanager.h"
-#include "protocol/lobbymessage.h"
 
 class cApplication;
 class cWindowNetworkLobbyClient;
 class cWindowLandingPositionSelection;
 class cNetworkClientGameNew;
-class cMapReceiver;
 class cPlayerLandingStatus;
 
-class cMenuControllerMultiplayerClient : public INetMessageReceiver, public cRunnable, public std::enable_shared_from_this<cMenuControllerMultiplayerClient>
+class cMenuControllerMultiplayerClient : public cRunnable, public std::enable_shared_from_this<cMenuControllerMultiplayerClient>
 {
 public:
 	cMenuControllerMultiplayerClient (cApplication& application);
@@ -43,16 +40,11 @@ public:
 
 	void start();
 
-	virtual void pushMessage (std::unique_ptr<cNetMessage2> message) MAXR_OVERRIDE_FUNCTION;
-	std::unique_ptr<cNetMessage2> popMessage() MAXR_OVERRIDE_FUNCTION;
-
 	virtual void run() MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	cConcurrentQueue<std::unique_ptr<cNetMessage2>> messageQueue;
-
-	std::shared_ptr<cConnectionManager> connectionManager;
+	cLobbyClient lobbyClient {std::make_shared<cConnectionManager>()};
 
 	cApplication& application;
 
@@ -60,12 +52,7 @@ private:
 	std::shared_ptr<cWindowLandingPositionSelection> windowLandingPositionSelection;
 	std::shared_ptr<cNetworkClientGameNew> newGame;
 
-	std::vector<std::unique_ptr<ILobbyMessageHandler>> lobbyMessageHandlers;
-
 	std::vector<std::unique_ptr<cPlayerLandingStatus>> playersLandingStatus;
-
-	std::string triedLoadMapName;
-	std::string lastRequestedMapName;
 
 	void reset();
 
@@ -75,37 +62,17 @@ private:
 
 	void connect();
 
-	void startSavedGame();
+	void startSavedGame (const cSaveGameInfo&, std::shared_ptr<cStaticMap>, std::shared_ptr<cConnectionManager>, cPlayerBasicData);
 
-	void startGamePreparation(cMuMsgStartGamePreparations& message);
+	void startGamePreparation(const sLobbyPreparationData&, const cPlayerBasicData&, std::shared_ptr<cConnectionManager>);
 
 	void startClanSelection(bool isFirstWindowOnGamePreparation);
 	void startLandingUnitSelection(bool isFirstWindowOnGamePreparation);
 	void startLandingPositionSelection();
 	void startNewGame();
-	void reconnectToGame(const cNetMessageGameAlreadyRunning& message);
+	void reconnectToGame (std::shared_ptr<cStaticMap>, std::shared_ptr<cConnectionManager>, cPlayerBasicData, const std::vector<cPlayerBasicData>&);
 	void checkReallyWantsToQuit();
 
-	void handleNetMessage (cNetMessage2& message);
-
-	void handleNetMessage_TCP_CONNECTED(cNetMessageTcpConnected& message);
-	void handleNetMessage_TCP_CONNECT_FAILED(cNetMessageTcpConnectFailed& message);
-	void handleNetMessage_TCP_CLOSE(cNetMessageTcpClose& message);
-
-	void handleNetMessage_MU_MSG_CHAT(cMuMsgChat& message);
-	void handleNetMessage_MU_MSG_PLAYER_NUMBER(cMuMsgPlayerNr& message);
-	void handleNetMessage_MU_MSG_PLAYERLIST(cMuMsgPlayerList& message);
-	void handleNetMessage_MU_MSG_OPTIONS(cMuMsgOptions& message);
-	void handleNetMessage_MU_MSG_START_GAME_PREPARATIONS(cMuMsgStartGamePreparations& message);
-	void handleNetMessage_MU_MSG_LANDING_STATE(cMuMsgLandingState& message);
-	void handleNetMessage_MU_MSG_START_GAME(cMuMsgStartGame& message);
-	void handleNetMessage_GAME_ALREADY_RUNNING(cNetMessageGameAlreadyRunning& message);
-	void handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS(cMuMsgInLandingPositionSelectionStatus& message);
-	void handleNetMessage_MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION(cMuMsgPlayerHasSelectedLandingPosition& message);
-	void handleNetMessage_MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION(cMuMsgPlayerAbortedGamePreparations& message);
-
-	void sendNetMessage(cNetMessage2& message);
-	void sendNetMessage(cNetMessage2&& message);
 	void saveOptions();
 	bool connectionLost;
 };
