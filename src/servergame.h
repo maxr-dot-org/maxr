@@ -21,13 +21,16 @@
 #define ServerGame_H
 
 #include <SDL.h>
+
 #include <string>
 #include <vector>
 #include <memory>
+
 #include "utility/thread/concurrentqueue.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "game/data/gamesettings.h"
 #include "game/logic/server2.h"
+#include "game/startup/lobbyserver.h"
 #include "protocol/lobbymessage.h"
 #include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"
 
@@ -49,72 +52,43 @@ class cServerGame
 {
 public:
 	explicit cServerGame (std::shared_ptr<cConnectionManager>);
-	virtual ~cServerGame();
+	~cServerGame();
+
+	void runInThread();
+
+	void pushMessage (std::unique_ptr<cNetMessage2>);
+	std::unique_ptr<cNetMessage2> popMessage();
+
 	void prepareGameData();
 	bool loadGame (int saveGameNumber);
 	void saveGame (int saveGameNumber);
 
-	void runInThread();
-
-	void pushMessage (std::unique_ptr<cNetMessage2> message);
-	std::unique_ptr<cNetMessage2> popMessage();
-
 	// retrieve state
 	std::string getGameState() const;
 
-	std::shared_ptr<cPlayerBasicData> getPlayerForNr (int playerNr) const;
+	void handleChatCommand (int fromPlayer, const std::vector<std::string>& tokens);
+private:
 
-	//------------------------------------------------------------------------
-protected:
+	friend int serverGameThreadFunction (void* data);
+	void run();
+	void terminateServer();
+
+	void configRessources (const std::vector<std::string>&, const cPlayerBasicData& senderPlayer);
+
+private:
 	cSignalConnectionManager signalConnectionManager;
+	cLobbyServer lobbyServer;
 
 	std::unique_ptr<cServer2> server;
-	cGameSettings settings;
-	std::shared_ptr<cStaticMap> map;
-	std::shared_ptr<cConnectionManager> connectionManager;
-	std::vector<std::unique_ptr<ILobbyMessageHandler>> lobbyMessageHandlers;
+
+	std::shared_ptr<cLandingPositionManager> landingPositionManager;
+	std::vector<std::unique_ptr<cPlayerLandingStatus>> playersLandingStatus;
+
+	int saveGameNumber;
 
 	SDL_Thread* thread;
 	bool canceled;
 	bool shouldSave;
-	int saveGameNumber;
-
-	friend int serverGameThreadFunction (void* data);
-	void run();
-
-	void forwardMessage (const cNetMessage2&);
-
-	void sendNetMessage (const cNetMessage2&, int receiverPlayerNr = -1);
-	void sendGameData (int playerNr = -1);
-	void sendChatMessage (const std::string&, int receiverPlayerNr = -1, int senderPlayerNr = -1);
-	void sendTranslatedChatMessage (const std::string&, const std::string& insertText, int receiverPlayerNr = -1, int senderPlayerNr = -1);
-
-	void handleNetMessage (cNetMessage2& message);
-
-	void handleNetMessage (cNetMessageTcpWantConnect&);
-	void handleNetMessage (cNetMessageTcpClose&);
-	void handleNetMessage (cMultiplayerLobbyMessage&);
-
-	void handleNetMessage (cMuMsgIdentification&);
-	void handleNetMessage (cMuMsgChat&);
-
-	void handleNetMessage (cMuMsgLandingPosition&);
-	void handleNetMessage (cMuMsgInLandingPositionSelectionStatus&);
-	void handleNetMessage (cMuMsgPlayerAbortedGamePreparations&);
-
-	void terminateServer();
-
-	std::vector<std::shared_ptr<cPlayerBasicData>> menuPlayers;
-	std::shared_ptr<cLandingPositionManager> landingPositionManager;
-	std::vector<std::unique_ptr<cPlayerLandingStatus>> playersLandingStatus;
-
-	int nextPlayerNumber;
-
-private:
-	void configRessources (std::vector<std::string>& tokens, const cPlayerBasicData& senderPlayer);
-
-	//------------------------------------------------------------------------
-	cConcurrentQueue<std::unique_ptr<cNetMessage2>> eventQueue;
 };
 
 #endif

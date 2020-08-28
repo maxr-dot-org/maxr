@@ -47,30 +47,87 @@ int serverGameThreadFunction (void* data)
 	return 0;
 }
 
+namespace
+{
+	//--------------------------------------------------------------------------
+	class cDedicatedServerChatMessageHandler : public ILobbyMessageHandler
+	{
+	public:
+		explicit cDedicatedServerChatMessageHandler (cServerGame& serverGame) : serverGame (&serverGame) {}
+	private:
+		bool handleMessage (const cMultiplayerLobbyMessage&) final;
+
+		void serverCommand (int fromPlayer, const std::vector<std::string>& tokens);
+	private:
+		cServerGame* serverGame;
+	};
+
+	//--------------------------------------------------------------------------
+	bool cDedicatedServerChatMessageHandler::handleMessage (const cMultiplayerLobbyMessage& message)
+	{
+		if (message.getType() != cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT) return false;
+		const auto& chatMessage = static_cast<const cMuMsgChat&>(message);
+
+		const auto& chatText = chatMessage.message;
+		size_t serverStringPos = chatText.find ("--server");
+		if (serverStringPos == string::npos || chatText.length() <= serverStringPos + 9)
+		{
+			return false;
+		}
+		std::string command = chatText.substr (serverStringPos + 9);
+		std::vector<std::string> tokens;
+		std::istringstream iss (command);
+		std::copy (std::istream_iterator<std::string> (iss), std::istream_iterator<std::string> (), std::back_inserter<std::vector<std::string> > (tokens));
+		serverGame->handleChatCommand (message.playerNr, tokens);
+		return true;
+	}
+
+}
+
 //------------------------------------------------------------------------------
 cServerGame::cServerGame (std::shared_ptr<cConnectionManager> connectionManager) :
-	connectionManager (std::move (connectionManager)),
+	lobbyServer (std::move (connectionManager)),
 	thread (nullptr),
 	canceled (false),
 	shouldSave (false),
-	saveGameNumber (-1),
-	nextPlayerNumber (0)
+	saveGameNumber (-1)
 {
-	auto mapUploadMessageHandler = std::make_unique<cMapUploadMessageHandler>(connectionManager, [this]()
+	lobbyServer.addLobbyMessageHandler (std::make_unique<cDedicatedServerChatMessageHandler>(*this));
+
+	signalConnectionManager.connect (lobbyServer.onClientConnected, [this](const cPlayerBasicData& player)
 	{
-		return map.get();
+		lobbyServer.sendChatMessage ("type --server help for dedicated server help", player.getNr());
+	});
+	signalConnectionManager.connect (lobbyServer.onDifferentVersion, [this](const std::string& version, const std::string& revision)
+	{
+		std::cout << "player connects with different version:" << version << " " << revision << std::endl;
 	});
 
-	signalConnectionManager.connect (mapUploadMessageHandler->onRequested, [this](int playerNr)
+	signalConnectionManager.connect (lobbyServer.onMapRequested, [this](int playerNr)
 	{
 		std::cout << playerNr << " request map" << std::endl;
 	});
-	signalConnectionManager.connect (mapUploadMessageHandler->onRequested, [this](int playerNr)
+	signalConnectionManager.connect (lobbyServer.onMapRequested, [this](int playerNr)
 	{
 		std::cout << playerNr << " finished to download map" << std::endl;
 	});
 
-	lobbyMessageHandlers.push_back (std::move(mapUploadMessageHandler));
+	signalConnectionManager.connect (lobbyServer.onStartNewGame, [this](const sLobbyPreparationData& preparationData, std::shared_ptr<cConnectionManager> connectionManager)
+	{
+		server = std::make_unique<cServer2> (connectionManager);
+
+		server->setUnitsData (preparationData.unitsData);
+		//server->setClansData(preparationData.clanData);
+		server->setGameSettings (*preparationData.gameSettings);
+		server->setMap (preparationData.staticMap);
+
+		server->setPlayers(preparationData.players);
+
+		connectionManager->setLocalServer(server.get());
+
+		server->start();
+	});
+
 }
 
 //------------------------------------------------------------------------------
@@ -90,6 +147,17 @@ void cServerGame::runInThread()
 	thread = SDL_CreateThread (serverGameThreadFunction, "servergame", this);
 }
 
+//------------------------------------------------------------------------------
+void cServerGame::pushMessage (std::unique_ptr<cNetMessage2> message)
+{
+ 	lobbyServer.pushMessage (std::move (message));
+}
+
+//------------------------------------------------------------------------------
+std::unique_ptr<cNetMessage2> cServerGame::popMessage()
+{
+	return lobbyServer.popMessage();
+}
 //------------------------------------------------------------------------------
 bool cServerGame::loadGame (int saveGameNumber)
 {
@@ -119,6 +187,7 @@ void cServerGame::saveGame (int saveGameNumber)
 //------------------------------------------------------------------------------
 void cServerGame::prepareGameData()
 {
+	cGameSettings settings;
 	settings.setMetalAmount (eGameSettingsResourceAmount::Normal);
 	settings.setOilAmount (eGameSettingsResourceAmount::Normal);
 	settings.setGoldAmount (eGameSettingsResourceAmount::Normal);
@@ -129,9 +198,13 @@ void cServerGame::prepareGameData()
 	settings.setClansEnabled (true);
 	settings.setGameType (eGameSettingsGameType::Simultaneous);
 	settings.setVictoryCondition (eGameSettingsVictoryCondition::Death);
-	map = std::make_shared<cStaticMap> ();
+
+	auto map = std::make_shared<cStaticMap> ();
 	const std::string mapName = "Mushroom.wrl";
 	map->loadMap (mapName);
+
+	lobbyServer.selectGameSettings (std::make_shared<cGameSettings> (settings));
+	lobbyServer.selectMap (map);
 }
 
 //------------------------------------------------------------------------------
@@ -139,11 +212,7 @@ void cServerGame::run()
 {
 	while (canceled == false)
 	{
-		std::unique_ptr<cNetMessage2> message;
-		while (eventQueue.try_pop(message))
-		{
-			handleNetMessage (*message);
-		}
+		lobbyServer.run();
 		SDL_Delay(10);
 #if 0
 //		static unsigned int lastTime = 0;
@@ -169,262 +238,20 @@ void cServerGame::run()
 	if (server)
 		terminateServer();
 }
-
-//------------------------------------------------------------------------------
-void cServerGame::sendNetMessage (const cNetMessage2& message, int receiverPlayerNr /*= -1*/)
+//--------------------------------------------------------------------------
+void cServerGame::handleChatCommand (int fromPlayer, const std::vector<std::string>& tokens)
 {
-	cTextArchiveIn archive;
-	archive << message;
-	Log.write("ServerGame: --> " + archive.data() + " to " + toString(receiverPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
-
-	if (receiverPlayerNr == -1)
-		connectionManager->sendToPlayers(message);
-	else
-		connectionManager->sendToPlayer(message, receiverPlayerNr);
-}
-
-//------------------------------------------------------------------------------
-void cServerGame::forwardMessage (const cNetMessage2& message)
-{
-	for(auto& player : menuPlayers)
-	{
-		if (message.playerNr == player->getNr()) continue;
-
-		sendNetMessage(message, player->getNr());
-	}
-}
-
-void cServerGame::sendGameData(int playerNr /* = -1 */)
-{
-	cMuMsgOptions message;
-	//message.saveInfo = windowNetworkLobby->getSaveGameInfo();
-
-	if (map)
-	{
-		message.mapName = map->getName();
-		message.mapCrc = MapDownload::calculateCheckSum(map->getName());
-	}
-
-	message.settings = settings;
-	message.settingsValid = true;
-
-	sendNetMessage(message, playerNr);
-}
-
-void cServerGame::sendChatMessage (const std::string& message, int receiverPlayerNr, int senderPlayerNr)
-{
-	cTextArchiveIn archive;
-	archive << message;
-	Log.write("ServerGame: --> " + archive.data() + " to " + toString(receiverPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
-
-	if (receiverPlayerNr == -1)
-		connectionManager->sendToPlayers(cMuMsgChat(message));
-	else
-		connectionManager->sendToPlayer(cMuMsgChat(message).From(senderPlayerNr), receiverPlayerNr);
-}
-
-void cServerGame::sendTranslatedChatMessage (const std::string& message, const std::string& insertText, int receiverPlayerNr, int senderPlayerNr)
-{
-	cTextArchiveIn archive;
-	archive << message;
-	Log.write("ServerGame: --> " + archive.data() + " to " + toString(receiverPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
-
-	if (receiverPlayerNr == -1)
-		connectionManager->sendToPlayers(cMuMsgChat(message, true, insertText));
-	else
-		connectionManager->sendToPlayer(cMuMsgChat(message, true, insertText).From(senderPlayerNr), receiverPlayerNr);
-}
-
-
-//------------------------------------------------------------------------------
-void cServerGame::handleNetMessage (cNetMessageTcpWantConnect& message)
-{
-	if (!connectionManager) return;
-
-	//add player
-	auto newPlayer = std::make_shared<cPlayerBasicData>(message.playerName, cPlayerColor(message.playerColor), nextPlayerNumber++, message.ready);
-	menuPlayers.push_back (newPlayer);
-
-	if (message.packageVersion != PACKAGE_VERSION || message.packageRev != PACKAGE_REV)
-	{
-		sendTranslatedChatMessage ("Text~Multiplayer~Gameversion_Warning_Server", message.packageVersion + " " + message.packageRev, newPlayer->getNr());
-		sendTranslatedChatMessage ("Text~Multiplayer~Gameversion_Own", (std::string)PACKAGE_VERSION + " " + PACKAGE_REV, newPlayer->getNr());
-	}
-
-	//accept the connection and assign the new player number
-	connectionManager->acceptConnection(message.socket, newPlayer->getNr());
-
-	//update playerlist of the clients
-	connectionManager->sendToPlayers(cMuMsgPlayerList(menuPlayers));
-	sendGameData(newPlayer->getNr());
-
-	sendChatMessage ("type --server help for dedicated server help", newPlayer->getNr());
-}
-
-//------------------------------------------------------------------------------
-void cServerGame::handleNetMessage (cNetMessageTcpClose& message)
-{
-	auto it = std::find_if (menuPlayers.begin(), menuPlayers.end(), [&](const auto& player){ return player->getNr() == message.playerNr; });
-	if (it == menuPlayers.end()) return;
-	auto& playerToRemove = **it;
-	sendTranslatedChatMessage("Text~Multiplayer~Player_Left", playerToRemove.getName());
-	menuPlayers.erase (it);
-	sendNetMessage(cMuMsgPlayerList(menuPlayers));
-}
-//------------------------------------------------------------------------------
-void cServerGame::handleNetMessage (cMultiplayerLobbyMessage& message)
-{
-	for (auto& lobbyMessageHandler : lobbyMessageHandlers)
-	{
-		if (lobbyMessageHandler->handleMessage (message))
-		{
-			return;
-		}
-	}
-
-	switch (message.getType())
-	{
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IDENTIFIKATION:
-			handleNetMessage (static_cast<cMuMsgIdentification&>(message));
-			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT:
-			handleNetMessage (static_cast<cMuMsgChat&>(message));
-			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_POSITION:
-			handleNetMessage (static_cast<cMuMsgLandingPosition&>(message));
-			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS:
-			handleNetMessage (static_cast<cMuMsgInLandingPositionSelectionStatus&>(message));
-			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION:
-			handleNetMessage (static_cast<cMuMsgPlayerAbortedGamePreparations&>(message));
-			break;
-		default:
-			Log.write("Host Menu Controller: Can not handle message", cLog::eLOG_TYPE_NET_ERROR);
-			break;
-	}
-}
-
-//------------------------------------------------------------------------------
-void cServerGame::handleNetMessage (cMuMsgIdentification& message)
-{
-	auto player = getPlayerForNr(message.playerNr);
-	if (player == nullptr) return;
-
-	player->setColor (cPlayerColor (message.playerColor));
-	player->setName (message.playerName);
-	player->setReady (message.ready);
-
-	// search double taken name or color
-	//checkTakenPlayerAttributes (player);
-
-	connectionManager->sendToPlayers (cMuMsgPlayerList (menuPlayers));
-
-	//sendGameData (player.getNr());
-}
-
-//------------------------------------------------------------------------------
-void cServerGame::handleNetMessage (cMuMsgChat& message)
-{
-	auto senderPlayer = getPlayerForNr(message.playerNr);
-	if (senderPlayer == nullptr) return;
-
-	const auto& chatText = message.message;
-
-	// temporary workaround. TODO: good solution - player, who opened games must have "host" gui and new commands to send options/go to server
-	// TODO: use cChatCommand
-	size_t serverStringPos = chatText.find ("--server");
-	if (serverStringPos == string::npos || chatText.length() <= serverStringPos + 9)
-	{
-		forwardMessage (message);
-		return;
-	}
-	std::string command = chatText.substr (serverStringPos + 9);
-	std::vector<std::string> tokens;
-	std::istringstream iss (command);
-	std::copy (std::istream_iterator<std::string> (iss), std::istream_iterator<std::string> (), std::back_inserter<std::vector<std::string> > (tokens));
-
+	const auto* senderPlayer = lobbyServer.getConstPlayer (fromPlayer);
 	if (tokens.size() == 1)
 	{
-		if (tokens[0].compare ("go") == 0)
+		if (tokens[0] == "go")
 		{
-			bool allReady = true;
-			for (size_t i = 0; i < menuPlayers.size(); i++)
-			{
-				if (menuPlayers[i]->isReady() == false)
-				{
-					allReady = false;
-					sendChatMessage (menuPlayers[i]->getName() + "is not ready...", message.playerNr);
-
-					break;
-				}
-			}
-			if (allReady)
-			{
-				std::vector<cPlayerBasicData> players;
-				std::transform (menuPlayers.begin(), menuPlayers.end(), std::back_inserter (players), [] (const std::shared_ptr<cPlayerBasicData>& player) { return *player; });
-
-				landingPositionManager = std::make_shared<cLandingPositionManager> (players);
-
-				signalConnectionManager.connect (landingPositionManager->landingPositionSet, [this] (const cPlayerBasicData & player, const cPosition & position)
-				{
-					auto iter = std::find_if (playersLandingStatus.begin(), playersLandingStatus.end(), [&] (const std::unique_ptr<cPlayerLandingStatus>& entry) { return entry->getPlayer().getNr() == player.getNr(); });
-					assert (iter != playersLandingStatus.end());
-
-					auto& entry = **iter;
-
-					const auto hadSelectedPosition = entry.hasSelectedPosition();
-
-					entry.setHasSelectedPosition (true);
-
-					if (entry.hasSelectedPosition() && !hadSelectedPosition)
-					{
-						sendNetMessage (cMuMsgPlayerHasSelectedLandingPosition(entry.getPlayer().getNr()));
-					}
-				});
-
-				signalConnectionManager.connect (landingPositionManager->landingPositionStateChanged, [this] (const cPlayerBasicData& player, eLandingPositionState state)
-				{
-					sendNetMessage(cMuMsgLandingState(state), player.getNr());
-				});
-
-
-				signalConnectionManager.connect (landingPositionManager->allPositionsValid, [this]()
-				{
-					sendNetMessage (cMuMsgStartGame());
-
-					server = std::make_unique<cServer2> (connectionManager);
-
-					server->setMap (map);
-					auto unitsData = std::make_shared<const cUnitsData>(UnitsDataGlobal);
-					auto clanData = std::make_shared<const cClanData>(ClanDataGlobal);
-					server->setUnitsData(unitsData);
-					//server->setClansData(clanData);
-
-					std::vector<cPlayerBasicData> players;
-					std::transform (menuPlayers.begin(), menuPlayers.end(), std::back_inserter (players), [] (const std::shared_ptr<cPlayerBasicData>& player) { return *player; });
-					server->setPlayers(players);
-					server->setGameSettings (settings);
-
-					connectionManager->setLocalServer(server.get());
-
-					server->start();
-				});
-
-				auto unitsData = std::make_shared<const cUnitsData>(UnitsDataGlobal);
-				auto clanData = std::make_shared<const cClanData>(ClanDataGlobal);
-				sendNetMessage (cMuMsgStartGamePreparations(unitsData, clanData));
-			}
-			else
-			{
-				sendChatMessage ("Not all players are ready...", message.playerNr);
-			}
+			lobbyServer.startGamePreparation (fromPlayer);
 		}
-
 	}
 	else if (tokens.size() >= 2)
 	{
-		if (tokens[0].compare ("map") == 0)
+		if (tokens[0] == "map")
 		{
 			std::string mapName = tokens[1];
 			for (size_t i = 2; i < tokens.size(); i++)
@@ -432,33 +259,35 @@ void cServerGame::handleNetMessage (cMuMsgChat& message)
 				mapName += " ";
 				mapName += tokens[i];
 			}
-			if (map != nullptr && map->loadMap (mapName))
+			auto map = std::make_shared<cStaticMap>();
+			if (map->loadMap (mapName))
 			{
-				sendGameData();
-				string reply = senderPlayer->getName();
+				lobbyServer.selectMap (map);
+				std::string reply = senderPlayer->getName();
 				reply += " changed the map.";
-				sendChatMessage (reply);
+				lobbyServer.sendChatMessage (reply);
 			}
 			else
 			{
-				string reply = "Could not load map ";
+				std::string reply = "Could not load map ";
 				reply += mapName;
-				sendChatMessage (reply, senderPlayer->getNr());
+				lobbyServer.sendChatMessage (reply, senderPlayer->getNr());
 			}
 		}
 		if (tokens.size() == 2)
 		{
-			if (tokens[0].compare ("credits") == 0)
+			if (tokens[0] == "credits" == 0)
 			{
+				if (!lobbyServer.getGameSettings()) return;
+				auto settings = std::make_shared<cGameSettings>(*lobbyServer.getGameSettings());
 				int credits = atoi (tokens[1].c_str());
-				settings.setStartCredits (credits);
-				sendGameData();
+				settings->setStartCredits (credits);
+				lobbyServer.selectGameSettings (settings);
 				string reply = senderPlayer->getName();
 				reply += " changed the starting credits.";
-				sendChatMessage (reply);
+				lobbyServer.sendChatMessage (reply);
 			}
-			else if (tokens[0].compare ("oil") == 0 || tokens[0].compare ("gold") == 0 || tokens[0].compare ("metal") == 0
-					 || tokens[0].compare ("res") == 0)
+			else if (tokens[0] == "oil" || tokens[0] == "gold" || tokens[0] == "metal" || tokens[0] == "res")
 			 {
 				configRessources (tokens, *senderPlayer);
 			 }
@@ -467,124 +296,59 @@ void cServerGame::handleNetMessage (cMuMsgChat& message)
 }
 
 //------------------------------------------------------------------------------
-void cServerGame::handleNetMessage (cMuMsgLandingPosition& message)
+void cServerGame::configRessources (const std::vector<std::string>& tokens, const cPlayerBasicData& senderPlayer)
 {
-	if (!landingPositionManager) return;
-
-	Log.write ("Server: received landing coords from Player " + iToStr (message.playerNr), cLog::eLOG_TYPE_NET_DEBUG);
-
-	auto player = getPlayerForNr(message.playerNr);
-	if (player == nullptr) return;
-
-	landingPositionManager->setLandingPosition (*player, message.position);
-}
-
-//------------------------------------------------------------------------------
-void cServerGame::handleNetMessage (cMuMsgInLandingPositionSelectionStatus& message)
-{
-	if (message.isIn)
-	{
-		auto player = getPlayerForNr(message.playerNr);
-		if (player == nullptr) return;
-
-		playersLandingStatus.push_back (std::make_unique<cPlayerLandingStatus> (*player));
-	}
-	else
-	{
-		playersLandingStatus.erase (std::remove_if (playersLandingStatus.begin(), playersLandingStatus.end(), [&message] (const std::unique_ptr<cPlayerLandingStatus>& status) { return status->getPlayer().getNr() == message.playerNr; }), playersLandingStatus.end());
-	}
-
-	sendNetMessage(message);
-}
-
-//------------------------------------------------------------------------------
-void cServerGame::handleNetMessage (cMuMsgPlayerAbortedGamePreparations& message)
-{
-	forwardMessage (message);
-	for(auto& player : menuPlayers)
-	{
-		player->setReady(false);
-	}
-	connectionManager->sendToPlayers(cMuMsgPlayerList(menuPlayers));
-}
-
-void cServerGame::handleNetMessage (cNetMessage2& message)
-{
-	cTextArchiveIn archive;
-	message.serialize(archive);
-
-	std::cout << "Msg received: " << archive.data() << endl;
-
-	switch (message.getType())
-	{
-		case eNetMessageType::TCP_WANT_CONNECT:
-			handleNetMessage (static_cast<cNetMessageTcpWantConnect&>(message));
-			return;
-		case eNetMessageType::TCP_CLOSE:
-			handleNetMessage (static_cast<cNetMessageTcpClose&>(message));
-			return;
-		case eNetMessageType::MULTIPLAYER_LOBBY:
-			handleNetMessage (static_cast<cMultiplayerLobbyMessage&>(message));
-			break;
-
-		default:
-			Log.write("Host Menu Controller: Can not handle message", cLog::eLOG_TYPE_NET_ERROR);
-			return;
-	}
-}
-
-//------------------------------------------------------------------------------
-void cServerGame::configRessources (std::vector<std::string>& tokens, const cPlayerBasicData& senderPlayer)
-{
-	if (tokens[0].compare ("res") == 0)
+	if (!lobbyServer.getGameSettings()) return;
+	auto settings = std::make_shared<cGameSettings>(*lobbyServer.getGameSettings());
+	if (tokens[0] == "res")
 	{
 		bool valid = true;
 		eGameSettingsResourceDensity density;
-		if (tokens[1].compare ("sparse") == 0) density = eGameSettingsResourceDensity::Sparse;
-		else if (tokens[1].compare ("normal") == 0) density = eGameSettingsResourceDensity::Normal;
-		else if (tokens[1].compare ("dense") == 0) density = eGameSettingsResourceDensity::Dense;
-		else if (tokens[1].compare ("most") == 0) density = eGameSettingsResourceDensity::TooMuch;
+		if (tokens[1] == "sparse") density = eGameSettingsResourceDensity::Sparse;
+		else if (tokens[1] == "normal") density = eGameSettingsResourceDensity::Normal;
+		else if (tokens[1] == "dense") density = eGameSettingsResourceDensity::Dense;
+		else if (tokens[1] == "most") density = eGameSettingsResourceDensity::TooMuch;
 		else valid = false;
 
 		if (valid)
 		{
-			settings.setResourceDensity (density);
-			sendGameData ();
-			string reply = senderPlayer.getName();
+			settings->setResourceDensity (density);
+			lobbyServer.selectGameSettings (settings);
+			std::string reply = senderPlayer.getName();
 			reply += " changed the resource frequency to ";
 			reply += tokens[1];
 			reply += ".";
-			sendChatMessage (reply);
+			lobbyServer.sendChatMessage (reply);
 		}
 		else
-			sendChatMessage ("res must be one of: sparse normal dense most", senderPlayer.getNr());
+			lobbyServer.sendChatMessage ("res must be one of: sparse normal dense most", senderPlayer.getNr());
 	}
-	if (tokens[0].compare ("oil") == 0 || tokens[0].compare ("gold") == 0 || tokens[0].compare ("metal") == 0)
+	if (tokens[0] == "oil" || tokens[0] == "gold" || tokens[0] == "metal")
 	{
 		bool valid = true;
 		eGameSettingsResourceAmount amount;
-		if (tokens[1].compare ("low") == 0) amount = eGameSettingsResourceAmount::Limited;
-		else if (tokens[1].compare ("normal") == 0) amount = eGameSettingsResourceAmount::Normal;
-		else if (tokens[1].compare ("much") == 0) amount = eGameSettingsResourceAmount::High;
-		else if (tokens[1].compare ("most") == 0) amount = eGameSettingsResourceAmount::TooMuch;
+		if (tokens[1] == "low") amount = eGameSettingsResourceAmount::Limited;
+		else if (tokens[1] == "normal") amount = eGameSettingsResourceAmount::Normal;
+		else if (tokens[1] == "much") amount = eGameSettingsResourceAmount::High;
+		else if (tokens[1] == "most") amount = eGameSettingsResourceAmount::TooMuch;
 		else valid = false;
 
 		if (valid)
 		{
-			if (tokens[0].compare ("oil") == 0) settings.setOilAmount (amount);
-			else if (tokens[0].compare ("metal") == 0) settings.setMetalAmount (amount);
-			else if (tokens[0].compare ("gold") == 0) settings.setGoldAmount (amount);
-			sendGameData ();
-			string reply = senderPlayer.getName();
+			if (tokens[0] == "oil") settings->setOilAmount (amount);
+			else if (tokens[0] == "metal") settings->setMetalAmount (amount);
+			else if (tokens[0] == "gold") settings->setGoldAmount (amount);
+			lobbyServer.selectGameSettings (settings);
+			std::string reply = senderPlayer.getName();
 			reply += " changed the resource density of ";
 			reply += tokens[0];
 			reply += " to ";
 			reply += tokens[1];
 			reply += ".";
-			sendChatMessage (reply);
+			lobbyServer.sendChatMessage (reply);
 		}
 		else
-			sendChatMessage ("oil|gold|metal must be one of: low normal much most", senderPlayer.getNr());
+			lobbyServer.sendChatMessage ("oil|gold|metal must be one of: low normal much most", senderPlayer.getNr());
 	}
 }
 
@@ -592,22 +356,6 @@ void cServerGame::configRessources (std::vector<std::string>& tokens, const cPla
 void cServerGame::terminateServer()
 {
 	server = nullptr;
-}
-
-//------------------------------------------------------------------------------
-void cServerGame::pushMessage (std::unique_ptr<cNetMessage2> message)
-{
- 	eventQueue.push (std::move (message));
-}
-
-//------------------------------------------------------------------------------
-std::unique_ptr<cNetMessage2> cServerGame::popMessage()
-{
-	std::unique_ptr<cNetMessage2> res;
-	if (eventQueue.try_pop (res)) {
-		return res;
-	}
-	return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -646,11 +394,4 @@ std::string cServerGame::getGameState() const
 #else
 	return "Not yet implemented";
 #endif
-}
-
-//------------------------------------------------------------------------------
-std::shared_ptr<cPlayerBasicData> cServerGame::getPlayerForNr (int playerNr) const
-{
-	auto it = std::find_if (menuPlayers.begin(), menuPlayers.end(), [&](const auto& player){ return player->getNr() == playerNr; });
-	return (it == menuPlayers.end()) ? nullptr : *it;
 }

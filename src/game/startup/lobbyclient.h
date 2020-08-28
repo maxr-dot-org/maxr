@@ -22,18 +22,10 @@
 
 #include "connectionmanager.h"
 #include "game/data/map/map.h"
+#include "game/startup/lobbypreparationdata.h"
 #include "protocol/lobbymessage.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/thread/concurrentqueue.h"
-
-struct sLobbyPreparationData
-{
-	std::shared_ptr<const cUnitsData> unitsData;
-	std::shared_ptr<const cClanData> clanData;
-	std::shared_ptr<cGameSettings> gameSettings;
-	std::shared_ptr<cStaticMap> staticMap;
-	std::vector<cPlayerBasicData> players;
-};
 
 class cLobbyClient : public INetMessageReceiver
 {
