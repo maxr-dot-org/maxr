@@ -280,7 +280,7 @@ void cMenuControllerMultiplayerHost::handleLocalPlayerAttributesChanged()
 	if (!connectionManager || !windowNetworkLobby) return;
 
 	checkTakenPlayerAttributes (*windowNetworkLobby->getLocalPlayer());
-	sendNetMessage (cMuMsgPlayerList(windowNetworkLobby->getPlayers()));
+	sendNetMessage (cMuMsgPlayerList (windowNetworkLobby->getPlayersNotShared()));
 }
 
 void cMenuControllerMultiplayerHost::checkTakenPlayerAttributes (cPlayerBasicData& player)
@@ -772,7 +772,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_TCP_WANT_CONNECT(cNetMessa
 	connectionManager->acceptConnection(message.socket, newPlayer->getNr());
 
 	//update playerlist of the clients
-	sendNetMessage(cMuMsgPlayerList(windowNetworkLobby->getPlayers()));
+	sendNetMessage (cMuMsgPlayerList (windowNetworkLobby->getPlayersNotShared()));
 	sendGameData(newPlayer->getNr());
 }
 
@@ -788,7 +788,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_TCP_CLOSE(cNetMessageTcpCl
 	sendNetMessage(cMuMsgChat("Text~Multiplayer~Player_Left", true, playerToRemove->getName()));
 	windowNetworkLobby->removePlayer(*playerToRemove);
 
-	sendNetMessage(cMuMsgPlayerList(windowNetworkLobby->getPlayers()));
+	sendNetMessage (cMuMsgPlayerList (windowNetworkLobby->getPlayersNotShared()));
 }
 
 void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_CHAT (cMuMsgChat& message)
@@ -862,7 +862,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_IDENTIFIKATION (cMu
 	// search double taken name or color
 	checkTakenPlayerAttributes (*player);
 
-	sendNetMessage(cMuMsgPlayerList(windowNetworkLobby->getPlayers()));
+	sendNetMessage (cMuMsgPlayerList (windowNetworkLobby->getPlayersNotShared()));
 }
 
 //------------------------------------------------------------------------------

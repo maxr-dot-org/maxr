@@ -165,7 +165,8 @@ private:
 class cMuMsgPlayerList : public cMultiplayerLobbyMessage
 {
 public:
-	cMuMsgPlayerList(const std::vector<std::shared_ptr<cPlayerBasicData>>& playerList_);
+	explicit cMuMsgPlayerList(const std::vector<std::shared_ptr<cPlayerBasicData>>&);
+	explicit cMuMsgPlayerList(std::vector<cPlayerBasicData>);
 	cMuMsgPlayerList(cBinaryArchiveOut& archive);
 
 	virtual void serialize(cBinaryArchiveIn& archive);

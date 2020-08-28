@@ -232,6 +232,13 @@ cMuMsgPlayerList::cMuMsgPlayerList(const std::vector<std::shared_ptr<cPlayerBasi
 	}
 }
 
+//------------------------------------------------------------------------------
+cMuMsgPlayerList::cMuMsgPlayerList(std::vector<cPlayerBasicData> playerList_) :
+	cMultiplayerLobbyMessage(eMessageType::MU_MSG_PLAYERLIST),
+	playerList (std::move (playerList_))
+{
+}
+
 cMuMsgPlayerList::cMuMsgPlayerList(cBinaryArchiveOut& archive) :
 	cMultiplayerLobbyMessage(eMessageType::MU_MSG_PLAYERLIST)
 {
