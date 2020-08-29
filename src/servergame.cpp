@@ -103,13 +103,13 @@ cServerGame::cServerGame (std::shared_ptr<cConnectionManager> connectionManager)
 		std::cout << "player connects with different version:" << version << " " << revision << std::endl;
 	});
 
-	signalConnectionManager.connect (lobbyServer.onMapRequested, [this](int playerNr)
+	signalConnectionManager.connect (lobbyServer.onMapRequested, [this](const cPlayerBasicData& player)
 	{
-		std::cout << playerNr << " request map" << std::endl;
+		std::cout << player.getName() << " requests map." << std::endl;
 	});
-	signalConnectionManager.connect (lobbyServer.onMapRequested, [this](int playerNr)
+	signalConnectionManager.connect (lobbyServer.onMapUploaded, [this](const cPlayerBasicData& player)
 	{
-		std::cout << playerNr << " finished to download map" << std::endl;
+		std::cout << player.getName() << " finished to download map." << std::endl;
 	});
 
 	signalConnectionManager.connect (lobbyServer.onStartNewGame, [this](const sLobbyPreparationData& preparationData, std::shared_ptr<cConnectionManager> connectionManager)

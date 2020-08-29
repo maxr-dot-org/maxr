@@ -70,8 +70,8 @@ public:
 	cSignal<void (const cPlayerBasicData&)> onClientConnected;
 	cSignal<void (const std::string& version, const std::string& revision)> onDifferentVersion;
 
-	cSignal<void (int fromPlayer)> onMapRequested;
-	cSignal<void (int fromPlayer)> onMapUploaded;
+	cSignal<void (const cPlayerBasicData& fromPlayer)> onMapRequested;
+	cSignal<void (const cPlayerBasicData& fromPlayer)> onMapUploaded;
 
 	cSignal<void (const sLobbyPreparationData&, std::shared_ptr<cConnectionManager>)> onStartNewGame;
 private:

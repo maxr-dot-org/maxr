@@ -38,12 +38,12 @@ cLobbyServer::cLobbyServer (std::shared_ptr<cConnectionManager> connectionManage
 
 	signalConnectionManager.connect (mapUploadMessageHandler->onRequested, [this](int playerNr)
 	{
-		onMapRequested (playerNr);
+		if (auto player = getPlayer (playerNr)) onMapRequested (*player);
 	});
 
 	signalConnectionManager.connect (mapUploadMessageHandler->onFinished, [this](int playerNr)
 	{
-		onMapUploaded (playerNr);
+		if (auto player = getPlayer (playerNr)) onMapUploaded (*player);
 	});
 	lobbyMessageHandlers.push_back (std::move (mapUploadMessageHandler));
 }
