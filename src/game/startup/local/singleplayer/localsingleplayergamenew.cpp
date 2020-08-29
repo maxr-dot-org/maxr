@@ -126,7 +126,5 @@ void cLocalSingleplayerGameNew::setLandingPosition (const cPosition& landingPosi
 //------------------------------------------------------------------------------
 cPlayerBasicData cLocalSingleplayerGameNew::createPlayer()
 {
-	cPlayerBasicData player (cSettings::getInstance().getPlayerName(), cPlayerColor(), 0, false);
-
-	return player;
+	return cPlayerBasicData::fromSettings();
 }

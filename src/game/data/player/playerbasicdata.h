@@ -31,6 +31,8 @@
 class cPlayerBasicData
 {
 public:
+	static cPlayerBasicData fromSettings();
+
 	cPlayerBasicData();
 	cPlayerBasicData (const std::string& name, cPlayerColor color, int nr, bool defeated);
 	cPlayerBasicData (const cPlayerBasicData& other);

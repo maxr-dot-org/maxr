@@ -18,8 +18,17 @@
  ***************************************************************************/
 
 #include "game/data/player/playerbasicdata.h"
+
 #include "network.h"
+#include "settings.h"
 #include "utility/crc.h"
+
+//------------------------------------------------------------------------------
+/*static*/ cPlayerBasicData cPlayerBasicData::fromSettings()
+{
+	const cSettings& settings = cSettings::getInstance();
+	return { settings.getPlayerName(), cPlayerColor (settings.getPlayerColor()), 0, false };
+}
 
 //------------------------------------------------------------------------------
 cPlayerBasicData::cPlayerBasicData() :
@@ -114,3 +123,4 @@ bool cPlayerBasicData::isDefeated() const
 {
 	return defeated;
 }
+

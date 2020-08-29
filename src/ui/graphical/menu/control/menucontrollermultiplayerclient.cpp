@@ -49,6 +49,7 @@ std::vector<std::pair<sID, int>> createInitialLandingUnitsList(int clan, const c
 //------------------------------------------------------------------------------
 cMenuControllerMultiplayerClient::cMenuControllerMultiplayerClient (cApplication& application_) :
 	application (application_),
+	lobbyClient (std::make_shared<cConnectionManager>(), cPlayerBasicData::fromSettings()),
 	windowLandingPositionSelection (nullptr)
 {
 	signalConnectionManager.connect (lobbyClient.onLocalPlayerConnected, [this](){
@@ -372,13 +373,12 @@ void cMenuControllerMultiplayerClient::connect()
 
 	const auto& ip = windowNetworkLobby->getIp();
 	const auto& port = windowNetworkLobby->getPort();
-	const auto& localPlayer = windowNetworkLobby->getLocalPlayer();
 
 	windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Connecting") + ip + ":" + iToStr (port));    // e.g. Connecting to 127.0.0.1:55800
 	windowNetworkLobby->disablePortEdit();
 	windowNetworkLobby->disableIpEdit();
 
-	lobbyClient.connectToServer (ip, port, *localPlayer);
+	lobbyClient.connectToServer (ip, port);
 }
 
 //------------------------------------------------------------------------------

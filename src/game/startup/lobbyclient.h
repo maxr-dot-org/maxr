@@ -30,14 +30,14 @@
 class cLobbyClient : public INetMessageReceiver
 {
 public:
-	explicit cLobbyClient (std::shared_ptr<cConnectionManager>);
+	cLobbyClient (std::shared_ptr<cConnectionManager>, const cPlayerBasicData&);
 
 	void pushMessage (std::unique_ptr<cNetMessage2>) override;
 	std::unique_ptr<cNetMessage2> popMessage() override;
 	void run();
 
 	bool isConnectedToServer() const;
-	void connectToServer(std::string ip, int port, const cPlayerBasicData&);
+	void connectToServer(std::string ip, int port);
 
 	void sendChatMessage (const std::string&);
 	void changeLocalPlayerProperties (const std::string& name, cPlayerColor, bool ready);

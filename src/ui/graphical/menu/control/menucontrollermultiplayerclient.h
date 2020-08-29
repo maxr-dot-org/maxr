@@ -44,7 +44,7 @@ public:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	cLobbyClient lobbyClient {std::make_shared<cConnectionManager>()};
+	cLobbyClient lobbyClient;
 
 	cApplication& application;
 

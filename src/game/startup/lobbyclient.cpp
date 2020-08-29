@@ -25,8 +25,9 @@
 #include "maxrversion.h"
 
 //------------------------------------------------------------------------------
-cLobbyClient::cLobbyClient (std::shared_ptr<cConnectionManager> connectionManager) :
-	connectionManager (connectionManager)
+cLobbyClient::cLobbyClient (std::shared_ptr<cConnectionManager> connectionManager, const cPlayerBasicData& player) :
+	connectionManager (connectionManager),
+	localPlayer (player)
 {
 	connectionManager->setLocalClient (this, -1);
 
@@ -76,15 +77,14 @@ bool cLobbyClient::isConnectedToServer() const
 }
 
 //------------------------------------------------------------------------------
-void cLobbyClient::connectToServer(std::string ip, int port, const cPlayerBasicData& player)
+void cLobbyClient::connectToServer(std::string ip, int port)
 {
 	// Connect only if there isn't a connection yet
 	if (connectionManager->isConnectedToServer()) return;
 
 	Log.write (("Connecting to " + ip + ":" + iToStr (port)), cLog::eLOG_TYPE_NET_DEBUG);
 
-	localPlayer = player;
-	connectionManager->connectToServer(ip, port, player);
+	connectionManager->connectToServer(ip, port, localPlayer);
 }
 
 //------------------------------------------------------------------------------
