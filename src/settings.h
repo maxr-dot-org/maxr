@@ -21,6 +21,7 @@
 
 #include <string>
 #include <SDL.h>
+
 #include "utility/tinyxml2.h"
 #include "utility/thread/mutex.h"
 #include "utility/signal/signal.h"
@@ -30,12 +31,12 @@
  * cSettings class stores all settings for the game and handles reading
  * and writing them from and to the configuration file.
  * To do this it needs to find out the location of the configuration
- * for the secific platform.
+ * for the specific platform.
  *
  * For each element of the settings that has to be stored
  * in the configuration file there are getters and setters defined.
- * The setters will automaticaly save the changed values to the configuration.
- * If the configuration does not exist or is uncomplete
+ * The setters will automatically save the changed values to the configuration.
+ * If the configuration does not exist or is incomplete
  * it will be generated and the needed node will be added.
  *
  * This is a singleton class.
@@ -227,7 +228,7 @@ private:
 	 * Private copy constructor for singleton design pattern.
 	 * Does not need to be implemented!
 	 */
-	cSettings (cSettings& other);
+	cSettings (const cSettings&) = delete;
 
 	/**
 	 * True if the object has been initialized already.
@@ -235,7 +236,7 @@ private:
 	bool initialized;
 	/**
 	 * True if initialization is running at the moment.
-	 * Used to prevent the class to start multible initializations.
+	 * Used to prevent the class to start multiple initializations.
 	 */
 	bool initializing;
 
@@ -272,7 +273,7 @@ private:
 	bool shadows;
 	/** enable alpha effects */
 	bool alphaEffects;
-	/** enable describtions (e.g. in buildmenues) */
+	/** enable descriptions (e.g. in buildmenues) */
 	bool showDescription;
 	/** enable damage effects (smoke'n stuff) */
 	bool damageEffects;
@@ -317,7 +318,7 @@ private:
 	int voiceVol;
 	/** chunk size */
 	int chunkSize;
-	/** frequenzy */
+	/** frequency */
 	int frequency;
 	/** mute music */
 	bool musicMute;
@@ -332,7 +333,7 @@ private:
 	std::string fontPath;      // Path to the fonts
 	std::string fxPath;        // Path to the effects
 	std::string gfxPath;       // Path to the graphics
-	std::string langPath;      //Path to language files
+	std::string langPath;      // Path to language files
 	std::string mapsPath;      // Path to the maps
 	std::string savesPath;     // Path to the saves
 	std::string soundsPath;    // Path to the sound-files
@@ -351,14 +352,14 @@ private:
 	void initialize();
 
 	/**
-	 * Sets the platform dependend config, log and save paths.
+	 * Sets the platform dependent config, log and save paths.
 	 */
 	void setPaths();
 
 	/**
-	 * Platform dependend implementations.
-	 * On most plattforms just the executable folder is used.
-	 * On linux it tries to verify the path from the configuration file
+	 * Platform dependent implementations.
+	 * On most platforms just the executable folder is used.
+	 * On Linux it tries to verify the path from the configuration file
 	 * @param sDataDirFromConf The data location that has been read
 	 *        from the configuration file.
 	 * @return The really selected data location.
@@ -371,8 +372,6 @@ private:
 	 */
 	bool createConfigFile();
 
-
-
 	/**
 	 * Template function for saving a setting.
 	 * @param path See #getXmlNode() for more information on
@@ -383,7 +382,7 @@ private:
 	template<typename T>
 	void saveSetting (const std::string& path, T value, const char* valueName);
 
-	// Overloadings for the saveSetting template function.
+	// Overloads for the saveSetting template function.
 	// Each type has to call the template saveSetting() method and pass the
 	// corresponding attribute name to it.
 	void saveSetting (const std::string& path, const char* value);
