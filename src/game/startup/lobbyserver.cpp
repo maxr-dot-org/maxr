@@ -25,15 +25,6 @@
 #include "mapdownloader/mapuploadmessagehandler.h"
 #include "resources/uidata.h"
 
-namespace
-{
-	//--------------------------------------------------------------------------
-	auto byPlayerNr(int playerNr)
-	{
-		return [=](const cPlayerBasicData& player){ return player.getNr() == playerNr; };
-	}
-}
-
 //------------------------------------------------------------------------------
 cLobbyServer::cLobbyServer (std::shared_ptr<cConnectionManager> connectionManager) :
 	connectionManager (connectionManager)

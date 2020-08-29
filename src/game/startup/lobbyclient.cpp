@@ -24,15 +24,6 @@
 #include "utility/log.h"
 #include "maxrversion.h"
 
-namespace
-{
-	//--------------------------------------------------------------------------
-	auto byPlayerNr(int playerNr)
-	{
-		return [=](const auto& player){ return player.getNr() == playerNr; };
-	}
-}
-
 //------------------------------------------------------------------------------
 cLobbyClient::cLobbyClient (std::shared_ptr<cConnectionManager> connectionManager) :
 	connectionManager (connectionManager)
@@ -77,7 +68,6 @@ void cLobbyClient::run()
 		handleNetMessage (*message);
 	}
 }
-
 
 //------------------------------------------------------------------------------
 bool cLobbyClient::isConnectedToServer() const

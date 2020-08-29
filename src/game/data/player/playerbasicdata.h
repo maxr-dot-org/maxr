@@ -70,4 +70,10 @@ private:
 	bool defeated;
 };
 
+//--------------------------------------------------------------------------
+inline auto byPlayerNr (int playerNr)
+{
+	return [=](const cPlayerBasicData& player){ return player.getNr() == playerNr; };
+}
+
 #endif // game_data_player_playerbasicdataH
