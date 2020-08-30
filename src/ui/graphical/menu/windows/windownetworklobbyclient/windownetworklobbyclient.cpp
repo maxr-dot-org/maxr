@@ -18,13 +18,10 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/windows/windownetworklobbyclient/windownetworklobbyclient.h"
-#include "game/data/gamesettings.h"
-#include "ui/graphical/menu/widgets/pushbutton.h"
+
+#include "game/startup/lobbyclient.h"
 #include "ui/graphical/menu/widgets/lineedit.h"
-#include "network.h"
-#include "utility/log.h"
-#include "game/data/player/player.h"
-#include "protocol/lobbymessage.h"
+#include "ui/graphical/menu/widgets/pushbutton.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------
@@ -37,6 +34,16 @@ cWindowNetworkLobbyClient::cWindowNetworkLobbyClient() :
 	signalConnectionManager.connect (ipLineEdit->returnPressed, [this]()
 	{
 		triggeredConnect ();
+	});
+}
+
+//------------------------------------------------------------------------------
+void cWindowNetworkLobbyClient::bindConnections (cLobbyClient& lobbyClient)
+{
+	cWindowNetworkLobby::bindConnections (lobbyClient);
+
+	signalConnectionManager.connect (lobbyClient.onOptionsChanged, [this](std::shared_ptr<cGameSettings> settings, std::shared_ptr<cStaticMap> map, const cSaveGameInfo& saveGameInfo){
+		setSaveGame (saveGameInfo);
 	});
 }
 

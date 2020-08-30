@@ -52,110 +52,6 @@ cMenuControllerMultiplayerClient::cMenuControllerMultiplayerClient (cApplication
 	lobbyClient (std::make_shared<cConnectionManager>(), cPlayerBasicData::fromSettings()),
 	windowLandingPositionSelection (nullptr)
 {
-	signalConnectionManager.connect (lobbyClient.onLocalPlayerConnected, [this](){
-		if (windowNetworkLobby != nullptr)
-		{
-			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Connected"));
-		}
-	});
-	signalConnectionManager.connect (lobbyClient.onDifferentVersion, [this](const std::string& version, const std::string& revision){
-		if (windowNetworkLobby != nullptr)
-		{
-			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Gameversion_Warning_Client", version + " " + revision));
-			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Gameversion_Own", (std::string)PACKAGE_VERSION + " " + PACKAGE_REV));
-		}
-	});
-	signalConnectionManager.connect (lobbyClient.onConnectionFailed, [this](const std::string& reason){
-		if (windowNetworkLobby != nullptr)
-		{
-			if (reason.empty())
-			{
-				windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Error_Connect", "server"));
-			}
-			else
-			{
-				windowNetworkLobby->addInfoEntry (lngPack.i18n (reason));
-			}
-			windowNetworkLobby->enablePortEdit();
-			windowNetworkLobby->enableIpEdit();
-		}
-	});
-	signalConnectionManager.connect (lobbyClient.onConnectionClosed, [this](){
-		if (windowNetworkLobby != nullptr)
-		{
-			windowNetworkLobby->removePlayers();
-			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Lost_Connection", "server"));
-
-			windowNetworkLobby->enablePortEdit();
-			windowNetworkLobby->enableIpEdit();
-		}
-	});
-
-	signalConnectionManager.connect (lobbyClient.onNoMapNoReady, [this](const std::string& mapName){
-		if (windowNetworkLobby == nullptr) return;
-
-		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~No_Map_No_Ready", mapName));
-	});
-
-	signalConnectionManager.connect (lobbyClient.onIncompatibleMap, [this](const std::string& mapName, const std::string& localPath){
-		if (windowNetworkLobby == nullptr) return;
-
-		windowNetworkLobby->addInfoEntry ("You have an incompatible version of the");  //TODO: translate
-		windowNetworkLobby->addInfoEntry (std::string ("map \"") + mapName + "\" at");
-		windowNetworkLobby->addInfoEntry (std::string ("\"") + localPath + "\" !");
-		windowNetworkLobby->addInfoEntry ("Move it away or delete it, then reconnect.");
-	});
-	signalConnectionManager.connect (lobbyClient.onMapDownloadRequest, [this](const std::string& mapName){
-		if (windowNetworkLobby == nullptr) return;
-
-		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_DownloadRequest"));
-		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_Download", mapName));
-	});
-
-	signalConnectionManager.connect (lobbyClient.onMissingOriginalMap, [this](const std::string& mapName){
-		if (windowNetworkLobby == nullptr) return;
-
-		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_DownloadRequestInvalid"));
-		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_DownloadInvalid", mapName));
-	});
-
-	signalConnectionManager.connect (lobbyClient.onDownloadMapPercentChanged, [this](std::size_t percent){
-		if (windowNetworkLobby != nullptr)
-		{
-			windowNetworkLobby->setMapDownloadPercent (percent);
-		}
-	});
-	signalConnectionManager.connect (lobbyClient.onDownloadMapCancelled, [this](){
-		if (windowNetworkLobby != nullptr)
-		{
-			windowNetworkLobby->setMapDownloadCanceled();
-		}
-	});
-	signalConnectionManager.connect (lobbyClient.onDownloadMapFinished, [this](std::shared_ptr<cStaticMap> staticMap){
-		if (windowNetworkLobby != nullptr)
-		{
-			windowNetworkLobby->setStaticMap (staticMap);
-			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_Finished"));
-		}
-	});
-
-
-	signalConnectionManager.connect (lobbyClient.onPlayersList, [this](const cPlayerBasicData& localPlayer, const std::vector<cPlayerBasicData>& players){
-		if (windowNetworkLobby != nullptr)
-		{
-			windowNetworkLobby->updatePlayerList (localPlayer, players);
-		}
-	});
-
-	signalConnectionManager.connect (lobbyClient.onOptionsChanged, [this](std::shared_ptr<cGameSettings> settings, std::shared_ptr<cStaticMap> map, const cSaveGameInfo& saveGameInfo){
-		if (windowNetworkLobby != nullptr)
-		{
-			windowNetworkLobby->setGameSettings (std::make_unique<cGameSettings> (*settings));
-			windowNetworkLobby->setStaticMap (std::move (map));
-			windowNetworkLobby->setSaveGame (saveGameInfo);
-		}
-	});
-
 	signalConnectionManager.connect (lobbyClient.onChatMessage, [this](const std::string& playerName, bool translate, const std::string& message, const std::string& insertText){
 		if (windowNetworkLobby != nullptr)
 		{
@@ -279,6 +175,8 @@ void cMenuControllerMultiplayerClient::start()
 	connectionLost = false;
 
 	windowNetworkLobby = std::make_shared<cWindowNetworkLobbyClient> ();
+
+	windowNetworkLobby->bindConnections (lobbyClient);
 
 	application.show (windowNetworkLobby);
 	application.addRunnable (shared_from_this());

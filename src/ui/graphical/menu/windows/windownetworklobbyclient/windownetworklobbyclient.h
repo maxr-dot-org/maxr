@@ -31,6 +31,8 @@ class cWindowNetworkLobbyClient : public cWindowNetworkLobby
 public:
 	cWindowNetworkLobbyClient();
 
+	void bindConnections (cLobbyClient&);
+
 	cSignal<void ()> triggeredConnect;
 
 	void setSaveGame (const cSaveGameInfo& safeInfo);

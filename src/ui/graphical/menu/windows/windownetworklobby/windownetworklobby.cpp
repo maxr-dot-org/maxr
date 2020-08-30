@@ -30,6 +30,7 @@
 #include "ui/graphical/menu/widgets/tools/validatorint.h"
 #include "ui/graphical/menu/dialogs/dialogcolorpicker.h"
 #include "game/data/player/player.h"
+#include "game/startup/lobbyclient.h"
 #include "utility/language.h"
 #include "utility/pcx.h"
 #include "utility/string/toString.h"
@@ -139,6 +140,77 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	localPlayer->colorChanged.connect (std::bind (&cWindowNetworkLobby::updatePlayerColor, this));
 
 	addPlayer (localPlayer);
+}
+
+//------------------------------------------------------------------------------
+void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
+{
+	signalConnectionManager.connect (lobbyClient.onLocalPlayerConnected, [this](){
+		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Connected"));
+	});
+	signalConnectionManager.connect (lobbyClient.onDifferentVersion, [this](const std::string& version, const std::string& revision){
+		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Gameversion_Warning_Client", version + " " + revision));
+		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Gameversion_Own", (std::string)PACKAGE_VERSION + " " + PACKAGE_REV));
+	});
+	signalConnectionManager.connect (lobbyClient.onConnectionFailed, [this](const std::string& reason){
+		if (reason.empty())
+		{
+			addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Error_Connect", "server"));
+		}
+		else
+		{
+			addInfoEntry (lngPack.i18n (reason));
+		}
+		enablePortEdit();
+		enableIpEdit();
+	});
+	signalConnectionManager.connect (lobbyClient.onConnectionClosed, [this](){
+		removePlayers();
+		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Lost_Connection", "server"));
+
+		enablePortEdit();
+		enableIpEdit();
+	});
+
+	signalConnectionManager.connect (lobbyClient.onNoMapNoReady, [this](const std::string& mapName){
+		addInfoEntry (lngPack.i18n ("Text~Multiplayer~No_Map_No_Ready", mapName));
+	});
+
+	signalConnectionManager.connect (lobbyClient.onIncompatibleMap, [this](const std::string& mapName, const std::string& localPath){
+		addInfoEntry ("You have an incompatible version of the");  //TODO: translate
+		addInfoEntry (std::string ("map \"") + mapName + "\" at");
+		addInfoEntry (std::string ("\"") + localPath + "\" !");
+		addInfoEntry ("Move it away or delete it, then reconnect.");
+	});
+	signalConnectionManager.connect (lobbyClient.onMapDownloadRequest, [this](const std::string& mapName){
+		addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_DownloadRequest"));
+		addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_Download", mapName));
+	});
+
+	signalConnectionManager.connect (lobbyClient.onMissingOriginalMap, [this](const std::string& mapName){
+		addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_DownloadRequestInvalid"));
+		addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_DownloadInvalid", mapName));
+	});
+
+	signalConnectionManager.connect (lobbyClient.onDownloadMapPercentChanged, [this](std::size_t percent){
+		setMapDownloadPercent (percent);
+	});
+	signalConnectionManager.connect (lobbyClient.onDownloadMapCancelled, [this](){
+		setMapDownloadCanceled();
+	});
+	signalConnectionManager.connect (lobbyClient.onDownloadMapFinished, [this](std::shared_ptr<cStaticMap> staticMap){
+		setStaticMap (staticMap);
+		addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_Finished"));
+	});
+
+	signalConnectionManager.connect (lobbyClient.onPlayersList, [this](const cPlayerBasicData& localPlayer, const std::vector<cPlayerBasicData>& players){
+		updatePlayerList (localPlayer, players);
+	});
+
+	signalConnectionManager.connect (lobbyClient.onOptionsChanged, [this](std::shared_ptr<cGameSettings> settings, std::shared_ptr<cStaticMap> map, const cSaveGameInfo& saveGameInfo){
+		setGameSettings (std::make_unique<cGameSettings> (*settings));
+		setStaticMap (std::move (map));
+	});
 }
 
 //------------------------------------------------------------------------------

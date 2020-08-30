@@ -32,6 +32,7 @@ class cImage;
 class cLineEdit;
 template<typename T> class cListView;
 class cLobbyChatBoxListViewItem;
+class cLobbyClient;
 class cLobbyPlayerListViewItem;
 class cPlayerBasicData;
 class cStaticMap;
@@ -41,6 +42,8 @@ class cWindowNetworkLobby : public cWindow
 {
 public:
 	explicit cWindowNetworkLobby (const std::string title, bool disableIp);
+
+	void bindConnections (cLobbyClient&);
 
 	void addChatEntry (const std::string& playerName, const std::string& message);
 	void addInfoEntry (const std::string& message);
