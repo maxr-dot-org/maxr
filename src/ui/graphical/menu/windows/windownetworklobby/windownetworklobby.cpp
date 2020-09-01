@@ -208,7 +208,7 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 	});
 
 	signalConnectionManager.connect (lobbyClient.onOptionsChanged, [this](std::shared_ptr<cGameSettings> settings, std::shared_ptr<cStaticMap> map, const cSaveGameInfo& saveGameInfo){
-		setGameSettings (std::make_unique<cGameSettings> (*settings));
+		setGameSettings (settings ? std::make_unique<cGameSettings> (*settings) : nullptr);
 		setStaticMap (std::move (map));
 	});
 }
