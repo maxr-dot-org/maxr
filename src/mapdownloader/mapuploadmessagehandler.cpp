@@ -72,8 +72,8 @@ cMapUploadMessageHandler::cMapUploadMessageHandler (std::shared_ptr<cConnectionM
 	connectionManager (std::move (connectionManager)),
 	mapProvider (std::move (mapProvider))
 {
-	assert (connectionManager);
-	assert (mapProvider);
+	assert (this->connectionManager);
+	assert (this->mapProvider);
 }
 
 //------------------------------------------------------------------------------
