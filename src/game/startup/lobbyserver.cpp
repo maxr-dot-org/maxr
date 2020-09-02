@@ -19,6 +19,7 @@
 
 #include "lobbyserver.h"
 
+#include "game/startup/lobbyclient.h"
 #include "utility/log.h"
 #include "maxrversion.h"
 #include "mapdownloader/mapdownload.h"
@@ -106,6 +107,7 @@ void cLobbyServer::startServer (int port)
 	}
 }
 #endif
+
 //------------------------------------------------------------------------------
 void cLobbyServer::run()
 {
@@ -320,6 +322,20 @@ void cLobbyServer::clientConnects (const cNetMessageTcpWantConnect& message)
 	sendGameData (newPlayer.getNr());
 
 	onClientConnected (newPlayer);
+}
+
+//------------------------------------------------------------------------------
+void cLobbyServer::localClientConnects (cLobbyClient& client, cPlayerBasicData& player)
+{
+	if (!connectionManager) return;
+
+	player.setNr (nextPlayerNumber++);
+	players.push_back(player);
+
+	connectionManager->setLocalClient (&client, player.getNr());
+
+	sendPlayerList();
+	sendGameData (player.getNr());
 }
 
 //------------------------------------------------------------------------------

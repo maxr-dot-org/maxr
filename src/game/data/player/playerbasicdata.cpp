@@ -67,6 +67,16 @@ cPlayerBasicData& cPlayerBasicData::operator= (const cPlayerBasicData& other)
 }
 
 //------------------------------------------------------------------------------
+bool cPlayerBasicData::operator == (const cPlayerBasicData& rhs) const
+{
+	return name == rhs.name
+		&& color == rhs.color
+		&& nr == rhs.nr
+		&& ready == rhs.ready
+		&& defeated == rhs.defeated;
+}
+
+//------------------------------------------------------------------------------
 const std::string& cPlayerBasicData::getName() const
 {
 	return name;

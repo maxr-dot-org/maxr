@@ -27,6 +27,9 @@
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/thread/concurrentqueue.h"
 
+class cLobbyServer;
+
+
 class cLobbyClient : public INetMessageReceiver
 {
 public:
@@ -37,9 +40,11 @@ public:
 	void run();
 
 	bool isConnectedToServer() const;
-	void connectToServer(std::string ip, int port);
+	void connectToServer (std::string ip, int port);
+	void connectToLocalServer (cLobbyServer&);
 
 	void sendChatMessage (const std::string&);
+	void tryToSwitchReadyState();
 	void changeLocalPlayerProperties (const std::string& name, cPlayerColor, bool ready);
 
 	void abortGamePreparation();

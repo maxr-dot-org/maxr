@@ -33,6 +33,8 @@
 #include <set>
 #include <vector>
 
+class cLobbyClient;
+
 class cLobbyServer : public INetMessageReceiver
 {
 public:
@@ -49,6 +51,7 @@ public:
 #if 0
 	void startServer (int port);
 #endif
+	void localClientConnects (cLobbyClient&, cPlayerBasicData&);
 
 	void selectSaveGameInfo (cSaveGameInfo);
 	void selectMap (std::shared_ptr<cStaticMap>);

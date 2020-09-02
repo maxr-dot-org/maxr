@@ -19,6 +19,7 @@
 
 #include "lobbyclient.h"
 
+#include "game/startup/lobbyserver.h"
 #include "mapdownloader/mapdownloadmessagehandler.h"
 #include "protocol/netmessage.h"
 #include "utility/log.h"
@@ -88,6 +89,17 @@ void cLobbyClient::connectToServer(std::string ip, int port)
 }
 
 //------------------------------------------------------------------------------
+void cLobbyClient::connectToLocalServer (cLobbyServer& server)
+{
+	Log.write ("Connecting to local server", cLog::eLOG_TYPE_NET_DEBUG);
+
+	server.localClientConnects (*this, localPlayer);
+	// For network clients, similar to :
+	// sendNetMessage (cNetMessageTcpWantConnect (..))
+	// sendNetMessage (cMuMsgIdentification (localPlayer));
+}
+
+//------------------------------------------------------------------------------
 cPlayerBasicData* cLobbyClient::getPlayer (int playerNr)
 {
 	auto it = std::find_if (players.begin(), players.end(), byPlayerNr(playerNr));
@@ -119,13 +131,28 @@ void cLobbyClient::sendChatMessage (const std::string& message)
 }
 
 //------------------------------------------------------------------------------
+void cLobbyClient::tryToSwitchReadyState()
+{
+	bool ready;
+	if (!staticMap)
+	{
+		const auto& downloadingMapName = getDownloadingMapName();
+		if (!downloadingMapName.empty() && !localPlayer.isReady()) onNoMapNoReady (downloadingMapName);
+		ready = false;
+	}
+	else ready = !localPlayer.isReady();
+	changeLocalPlayerProperties (localPlayer.getName(), localPlayer.getColor(), ready);
+}
+
+//------------------------------------------------------------------------------
 void cLobbyClient::changeLocalPlayerProperties (const std::string& name, cPlayerColor color, bool ready)
 {
+	const auto old = localPlayer;
 	localPlayer.setName (name);
 	localPlayer.setColor (color);
 	localPlayer.setReady (ready);
 
-	if (!connectionManager->isConnectedToServer()) return;
+	if (!connectionManager->isConnectedToServer() || old == localPlayer) return;
 	sendNetMessage (cMuMsgIdentification (localPlayer));
 }
 

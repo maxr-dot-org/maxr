@@ -217,19 +217,7 @@ void cMenuControllerMultiplayerClient::run()
 //------------------------------------------------------------------------------
 void cMenuControllerMultiplayerClient::handleWantLocalPlayerReadyChange()
 {
-	if (!windowNetworkLobby) return;
-
-	auto& localPlayer = windowNetworkLobby->getLocalPlayer();
-
-	if (!localPlayer) return;
-
-	if (!windowNetworkLobby->getStaticMap())
-	{
-		const auto& downloadingMapName = lobbyClient.getDownloadingMapName();
-		if (!downloadingMapName.empty() && !localPlayer->isReady()) windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~No_Map_No_Ready", downloadingMapName));
-		localPlayer->setReady (false);
-	}
-	else localPlayer->setReady (!localPlayer->isReady());
+	lobbyClient.tryToSwitchReadyState();
 }
 
 //------------------------------------------------------------------------------

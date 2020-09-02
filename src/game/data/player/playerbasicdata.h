@@ -49,6 +49,9 @@ public:
 	void setDefeated(bool defeated);
 	bool isDefeated() const;
 
+	bool operator == (const cPlayerBasicData& rhs) const;
+	bool operator != (const cPlayerBasicData& rhs) const { return !(*this == rhs); }
+
 	mutable cSignal<void ()> nameChanged;
 	mutable cSignal<void ()> numberChanged;
 	mutable cSignal<void ()> colorChanged;

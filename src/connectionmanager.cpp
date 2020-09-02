@@ -192,6 +192,7 @@ void cConnectionManager::connectToServer(const std::string& host, int port, cons
 //------------------------------------------------------------------------------
 bool cConnectionManager::isConnectedToServer() const
 {
+	if (localServer) return true;
 	cLockGuard<cMutex> tl(mutex);
 
 	return connecting || serverSocket != nullptr;
