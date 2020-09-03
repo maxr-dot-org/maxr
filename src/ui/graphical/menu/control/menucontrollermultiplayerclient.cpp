@@ -24,7 +24,6 @@
 #include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
 #include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
 #include "ui/graphical/menu/windows/windowlandingpositionselection/windowlandingpositionselection.h"
-#include "game/data/gamesettings.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/dialogs/dialogyesno.h"
 #include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
@@ -33,14 +32,9 @@
 #include "game/startup/network/client/networkclientgamenew.h"
 #include "game/startup/network/client/networkclientgamereconnection.h"
 #include "game/startup/network/client/networkclientgamesaved.h"
-#include "maxrversion.h"
-#include "game/data/map/map.h"
-#include "game/data/player/player.h"
 #include "game/data/units/landingunit.h"
 #include "utility/language.h"
 #include "utility/log.h"
-#include "protocol/lobbymessage.h"
-#include "utility/string/toString.h"
 #include "game/logic/client.h"
 
 // TODO: remove
@@ -187,15 +181,6 @@ void cMenuControllerMultiplayerClient::start()
 		windowNetworkLobby->close();
 		saveOptions();
 	});
-
-	signalConnectionManager.connect (windowNetworkLobby->wantLocalPlayerReadyChange, std::bind (&cMenuControllerMultiplayerClient::handleWantLocalPlayerReadyChange, this));
-	signalConnectionManager.connect (windowNetworkLobby->triggeredChatMessage, std::bind (&cMenuControllerMultiplayerClient::handleChatMessageTriggered, this));
-
-	signalConnectionManager.connect (windowNetworkLobby->triggeredConnect, std::bind (&cMenuControllerMultiplayerClient::connect, this));
-
-	signalConnectionManager.connect (windowNetworkLobby->getLocalPlayer()->nameChanged, std::bind (&cMenuControllerMultiplayerClient::handleLocalPlayerAttributesChanged, this));
-	signalConnectionManager.connect (windowNetworkLobby->getLocalPlayer()->colorChanged, std::bind (&cMenuControllerMultiplayerClient::handleLocalPlayerAttributesChanged, this));
-	signalConnectionManager.connect (windowNetworkLobby->getLocalPlayer()->readyChanged, std::bind (&cMenuControllerMultiplayerClient::handleLocalPlayerAttributesChanged, this));
 }
 
 //------------------------------------------------------------------------------
@@ -212,59 +197,6 @@ void cMenuControllerMultiplayerClient::reset()
 void cMenuControllerMultiplayerClient::run()
 {
 	lobbyClient.run();
-}
-
-//------------------------------------------------------------------------------
-void cMenuControllerMultiplayerClient::handleWantLocalPlayerReadyChange()
-{
-	lobbyClient.tryToSwitchReadyState();
-}
-
-//------------------------------------------------------------------------------
-void cMenuControllerMultiplayerClient::handleChatMessageTriggered()
-{
-	if (!windowNetworkLobby) return;
-
-	const auto& chatMessage = windowNetworkLobby->getChatMessage();
-
-	if (chatMessage.empty()) return;
-
-	lobbyClient.sendChatMessage (chatMessage);
-
-	const auto& localPlayer = windowNetworkLobby->getLocalPlayer();
-
-	if (localPlayer)
-	{
-		windowNetworkLobby->addChatEntry (localPlayer->getName(), chatMessage);
-	}
-}
-
-//------------------------------------------------------------------------------
-void cMenuControllerMultiplayerClient::handleLocalPlayerAttributesChanged()
-{
-	if (!windowNetworkLobby) return;
-
-	const auto& player = windowNetworkLobby->getLocalPlayer();
-
-	lobbyClient.changeLocalPlayerProperties (player->getName(), player->getColor(), player->isReady());
-}
-
-//------------------------------------------------------------------------------
-void cMenuControllerMultiplayerClient::connect()
-{
-	if (!windowNetworkLobby) return;
-
-	// Connect only if there isn't a connection yet
-	if (lobbyClient.isConnectedToServer()) return;
-
-	const auto& ip = windowNetworkLobby->getIp();
-	const auto& port = windowNetworkLobby->getPort();
-
-	windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Connecting") + ip + ":" + iToStr (port));    // e.g. Connecting to 127.0.0.1:55800
-	windowNetworkLobby->disablePortEdit();
-	windowNetworkLobby->disableIpEdit();
-
-	lobbyClient.connectToServer (ip, port);
 }
 
 //------------------------------------------------------------------------------

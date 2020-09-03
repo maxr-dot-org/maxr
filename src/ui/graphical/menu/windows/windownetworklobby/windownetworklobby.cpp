@@ -211,6 +211,32 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 		setGameSettings (settings ? std::make_unique<cGameSettings> (*settings) : nullptr);
 		setStaticMap (std::move (map));
 	});
+
+	signalConnectionManager.connect (triggeredChatMessage, [&lobbyClient, this](){
+		const auto& chatMessage = getChatMessage();
+
+		if (chatMessage.empty()) return;
+
+		lobbyClient.sendChatMessage (chatMessage);
+
+		const auto& localPlayer = getLocalPlayer();
+
+		if (localPlayer)
+		{
+			addChatEntry (localPlayer->getName(), chatMessage);
+		}
+	});
+
+	signalConnectionManager.connect (wantLocalPlayerReadyChange, [&lobbyClient](){ lobbyClient.tryToSwitchReadyState(); });
+
+	auto handleLocalPlayerAttributesChanged = [&lobbyClient, this](){
+		const auto& player = getLocalPlayer();
+
+		lobbyClient.changeLocalPlayerProperties (player->getName(), player->getColor(), player->isReady());
+	};
+	signalConnectionManager.connect (getLocalPlayer()->nameChanged, handleLocalPlayerAttributesChanged);
+	signalConnectionManager.connect (getLocalPlayer()->colorChanged, handleLocalPlayerAttributesChanged);
+	signalConnectionManager.connect (getLocalPlayer()->readyChanged, handleLocalPlayerAttributesChanged);
 }
 
 //------------------------------------------------------------------------------

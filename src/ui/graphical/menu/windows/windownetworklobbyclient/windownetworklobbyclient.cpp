@@ -45,6 +45,19 @@ void cWindowNetworkLobbyClient::bindConnections (cLobbyClient& lobbyClient)
 	signalConnectionManager.connect (lobbyClient.onOptionsChanged, [this](std::shared_ptr<cGameSettings> settings, std::shared_ptr<cStaticMap> map, const cSaveGameInfo& saveGameInfo){
 		setSaveGame (saveGameInfo);
 	});
+	signalConnectionManager.connect (triggeredConnect, [&lobbyClient, this](){
+		// Connect only if there isn't a connection yet
+		if (lobbyClient.isConnectedToServer()) return;
+
+		const auto& ip = getIp();
+		const auto& port = getPort();
+
+		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Connecting") + ip + ":" + iToStr (port)); // e.g. Connecting to 127.0.0.1:55800
+		disablePortEdit();
+		disableIpEdit();
+
+		lobbyClient.connectToServer (ip, port);
+	});
 }
 
 //------------------------------------------------------------------------------

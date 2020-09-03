@@ -56,14 +56,7 @@ private:
 
 	void reset();
 
-	void handleWantLocalPlayerReadyChange();
-	void handleChatMessageTriggered();
-	void handleLocalPlayerAttributesChanged();
-
-	void connect();
-
 	void startSavedGame (const cSaveGameInfo&, std::shared_ptr<cStaticMap>, std::shared_ptr<cConnectionManager>, cPlayerBasicData);
-
 	void startGamePreparation(const sLobbyPreparationData&, const cPlayerBasicData&, std::shared_ptr<cConnectionManager>);
 
 	void startClanSelection(bool isFirstWindowOnGamePreparation);
