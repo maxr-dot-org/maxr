@@ -81,7 +81,7 @@ std::vector<cJob*>::iterator cJobContainer::releaseJob (std::vector<cJob*>::iter
 	cJob* job = *it;
 	if (job->unit)
 	{
-		auto nr = ranges::count_if (jobs, [&](cJob*& x) {
+		auto nr = ranges::count_if (jobs, [&](const cJob* x) {
 			return x->unit == job->unit;
 		});
 		if (nr <= 1)
