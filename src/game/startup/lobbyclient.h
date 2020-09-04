@@ -29,7 +29,6 @@
 
 class cLobbyServer;
 
-
 class cLobbyClient : public INetMessageReceiver
 {
 public:
@@ -72,6 +71,8 @@ public:
 	cSignal<void (std::shared_ptr<cStaticMap> staticMap)> onDownloadMapFinished;
 
 	cSignal<void (const cPlayerBasicData&, const std::vector<cPlayerBasicData>&)> onPlayersList;
+	cSignal<void ()> onDuplicatedPlayerColor;
+	cSignal<void ()> onDuplicatedPlayerName;
 	cSignal<void (std::shared_ptr<cGameSettings>, std::shared_ptr<cStaticMap>, const cSaveGameInfo&)> onOptionsChanged;
 
 	cSignal<void (const std::string& playerName, bool translate, const std::string& message, const std::string& insertText)> onChatMessage;

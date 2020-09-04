@@ -20,6 +20,7 @@
 #include "lobbyclient.h"
 
 #include "game/startup/lobbyserver.h"
+#include "game/startup/lobbyutils.h"
 #include "mapdownloader/mapdownloadmessagehandler.h"
 #include "protocol/netmessage.h"
 #include "utility/log.h"
@@ -152,8 +153,14 @@ void cLobbyClient::changeLocalPlayerProperties (const std::string& name, cPlayer
 	localPlayer.setColor (color);
 	localPlayer.setReady (ready);
 
-	if (!connectionManager->isConnectedToServer() || old == localPlayer) return;
-	sendNetMessage (cMuMsgIdentification (localPlayer));
+	switch (checkTakenPlayerAttributes (players, localPlayer))
+	{
+		case eLobbyPlayerStatus::DuplicatedColor: onDuplicatedPlayerColor(); localPlayer.setReady (false); break;
+		case eLobbyPlayerStatus::DuplicatedName: onDuplicatedPlayerName(); localPlayer.setReady (false); break;
+		case eLobbyPlayerStatus::Ok: break;
+	}
+
+	if (connectionManager->isConnectedToServer() && old != localPlayer) sendNetMessage (cMuMsgIdentification (localPlayer));
 }
 
 //------------------------------------------------------------------------------

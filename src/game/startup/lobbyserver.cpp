@@ -20,6 +20,7 @@
 #include "lobbyserver.h"
 
 #include "game/startup/lobbyclient.h"
+#include "game/startup/lobbyutils.h"
 #include "utility/log.h"
 #include "maxrversion.h"
 #include "mapdownloader/mapdownload.h"
@@ -365,10 +366,14 @@ void cLobbyServer::changePlayerAttributes (const cMuMsgIdentification& message)
 	player->setName (message.playerName);
 	player->setReady (message.ready);
 
-#if 0
-	// search double taken name or color
-	checkTakenPlayerAttributes (*player);
-#endif
+	switch (checkTakenPlayerAttributes(players, *player))
+	{
+		case eLobbyPlayerStatus::Ok: break;
+
+		case eLobbyPlayerStatus::DuplicatedColor:
+		case eLobbyPlayerStatus::DuplicatedName: player->setReady (false); break;
+	}
+
 	sendPlayerList();
 }
 

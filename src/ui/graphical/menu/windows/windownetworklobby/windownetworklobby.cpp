@@ -175,7 +175,6 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 	signalConnectionManager.connect (lobbyClient.onNoMapNoReady, [this](const std::string& mapName){
 		addInfoEntry (lngPack.i18n ("Text~Multiplayer~No_Map_No_Ready", mapName));
 	});
-
 	signalConnectionManager.connect (lobbyClient.onIncompatibleMap, [this](const std::string& mapName, const std::string& localPath){
 		addInfoEntry ("You have an incompatible version of the");  //TODO: translate
 		addInfoEntry (std::string ("map \"") + mapName + "\" at");
@@ -205,6 +204,12 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 
 	signalConnectionManager.connect (lobbyClient.onPlayersList, [this](const cPlayerBasicData& localPlayer, const std::vector<cPlayerBasicData>& players){
 		updatePlayerList (localPlayer, players);
+	});
+	signalConnectionManager.connect (lobbyClient.onDuplicatedPlayerColor, [this](){
+		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Player_Color_Taken"));
+	});
+	signalConnectionManager.connect (lobbyClient.onDuplicatedPlayerName, [this](){
+		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Player_Name_Taken"));
 	});
 
 	signalConnectionManager.connect (lobbyClient.onOptionsChanged, [this](std::shared_ptr<cGameSettings> settings, std::shared_ptr<cStaticMap> map, const cSaveGameInfo& saveGameInfo){
