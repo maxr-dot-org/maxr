@@ -25,6 +25,13 @@
 namespace ranges
 {
 
+template <typename Range, typename Predicate>
+auto count_if(const Range& range, Predicate&& predicate)
+{
+	return std::count_if(std::begin (range), std::end (range), std::forward<Predicate>(predicate));
+}
+
+
 template <typename Range, typename Value>
 auto find(Range&& range, const Value& value)
 {

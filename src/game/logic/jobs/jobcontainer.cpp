@@ -17,15 +17,16 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <algorithm>
-
 #include "jobcontainer.h"
 
-#include "job.h"
 #include "game/data/units/unit.h"
+#include "job.h"
 #include "utility/crc.h"
-#include "utility/string/toString.h"
 #include "utility/log.h"
+#include "utility/string/toString.h"
+#include "utility/ranges.h"
+
+#include <algorithm>
 
 cJobContainer::~cJobContainer()
 {
@@ -80,7 +81,7 @@ std::vector<cJob*>::iterator cJobContainer::releaseJob (std::vector<cJob*>::iter
 	cJob* job = *it;
 	if (job->unit)
 	{
-		auto nr = std::count_if(jobs.begin(), jobs.end(), [&](cJob*& x) {
+		auto nr = ranges::count_if (jobs, [&](cJob*& x) {
 			return x->unit == job->unit;
 		});
 		if (nr <= 1)

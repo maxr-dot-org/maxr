@@ -166,7 +166,7 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 		};
 
 		// count conflicts and erase sounds that are no longer active
-		std::size_t conflicts = std::count_if (playingSounds.begin(), playingSounds.end(), isInConflict);
+		std::size_t conflicts = ranges::count_if (playingSounds, isInConflict);
 
 		if (conflicts > sound->getMaxConcurrentConflictedCount())
 		{
