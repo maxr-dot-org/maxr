@@ -388,13 +388,13 @@ void cLobbyServer::clientLands (const cMuMsgLandingPosition& message)
 	auto player = getPlayer (message.playerNr);
 	if (player == nullptr) return;
 
-	landingPositionManager->setLandingPosition (*player, message.position);
-
 	auto p = landedPlayers.insert (player->getNr());
 	if (p.second)
 	{
 		sendNetMessage (cMuMsgPlayerHasSelectedLandingPosition (player->getNr()));
 	}
+
+	landingPositionManager->setLandingPosition (*player, message.position);
 }
 
 //------------------------------------------------------------------------------
