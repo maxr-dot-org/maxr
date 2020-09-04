@@ -222,7 +222,7 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 
 	clients = std::move (clients_);
 
-	auto iter = std::find_if (clients.begin(), clients.end(), [ = ] (const std::shared_ptr<cClient>& client) { return client->getActivePlayer().getId() == activePlayerNumber; });
+	auto iter = ranges::find_if (clients, [ = ] (const std::shared_ptr<cClient>& client) { return client->getActivePlayer().getId() == activePlayerNumber; });
 	if (iter != clients.end()) setActiveClient (*iter);
 	else setActiveClient (nullptr);
 
@@ -1200,7 +1200,7 @@ void cGameGuiController::connectClient (cClient& client)
 			}
 			playerGameGuiStates[player.getId()] = gameGui->getCurrentState();
 
-			auto it = std::find_if (clients.begin(), clients.end(), [&] (const std::shared_ptr<cClient>& client) { return client->getActivePlayer().getId() == player.getId(); });
+			auto it = ranges::find_if (clients, [&] (const std::shared_ptr<cClient>& client) { return client->getActivePlayer().getId() == player.getId(); });
 			assert (it != clients.end());
 			++it;
 			//TODO: skip defeated player? (maybe show defeat splashscreen once)
@@ -2083,7 +2083,7 @@ std::shared_ptr<const cPlayer> cGameGuiController::getActivePlayer() const
 
 	const auto& clientPlayerList = activeClient->getModel().getPlayerList();
 
-	auto iter = std::find_if (clientPlayerList.begin(), clientPlayerList.end(), [this] (const std::shared_ptr<cPlayer>& player) { return player->getId() == activeClient->getActivePlayer().getId(); });
+	auto iter = ranges::find_if (clientPlayerList, [this] (const std::shared_ptr<cPlayer>& player) { return player->getId() == activeClient->getActivePlayer().getId(); });
 
 	if (iter == clientPlayerList.end()) return nullptr;  // should never happen; just to be on the safe side
 

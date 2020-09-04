@@ -20,6 +20,8 @@
 #ifndef utility_string_trimH
 #define utility_string_trimH
 
+#include "utility/ranges.h"
+
 #include <algorithm>
 #include <functional>
 #include <cctype>
@@ -27,7 +29,7 @@
 
 static inline std::string& trim_left (std::string& s)
 {
-	s.erase (s.begin(), std::find_if (s.begin(), s.end(), std::not1 (std::ptr_fun<int, int> (std::isspace))));
+	s.erase (s.begin(), ranges::find_if (s, std::not1 (std::ptr_fun<int, int> (std::isspace))));
 	return s;
 }
 

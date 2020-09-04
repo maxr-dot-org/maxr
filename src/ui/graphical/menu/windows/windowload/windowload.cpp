@@ -25,9 +25,10 @@
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "utility/language.h"
-#include "utility/pcx.h"
 #include "utility/log.h"
 #include "utility/files.h"
+#include "utility/pcx.h"
+#include "utility/ranges.h"
 #include "game/data/savegameinfo.h"
 #include "game/data/savegame.h"
 
@@ -228,7 +229,7 @@ int cWindowLoad::getSelectedSaveNumber() const
 //------------------------------------------------------------------------------
 cSaveGameInfo* cWindowLoad::getSaveFile (int saveNumber)
 {
-	auto iter = std::find_if (saveGames.begin(), saveGames.end(), [ = ] (const cSaveGameInfo & save) { return save.number == saveNumber; });
+	auto iter = ranges::find_if (saveGames, [ = ] (const cSaveGameInfo & save) { return save.number == saveNumber; });
 	return iter == saveGames.end() ? nullptr : & (*iter);
 }
 
@@ -287,6 +288,6 @@ void cWindowLoad::handleLoadClicked()
 		Log.write("Savegame Version " + saveInfo->gameVersion + " of file " + cSavegame::getFileName(selectedSaveNumber) + " is not compatible", cLog::eLOG_TYPE_NET_WARNING);
 		return;
 	}
-	
+
 	load (*saveInfo);
 }

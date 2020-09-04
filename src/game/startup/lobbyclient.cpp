@@ -22,9 +22,10 @@
 #include "game/startup/lobbyserver.h"
 #include "game/startup/lobbyutils.h"
 #include "mapdownloader/mapdownloadmessagehandler.h"
+#include "maxrversion.h"
 #include "protocol/netmessage.h"
 #include "utility/log.h"
-#include "maxrversion.h"
+#include "utility/ranges.h"
 
 //------------------------------------------------------------------------------
 cLobbyClient::cLobbyClient (std::shared_ptr<cConnectionManager> connectionManager, const cPlayerBasicData& player) :
@@ -103,7 +104,7 @@ void cLobbyClient::connectToLocalServer (cLobbyServer& server)
 //------------------------------------------------------------------------------
 cPlayerBasicData* cLobbyClient::getPlayer (int playerNr)
 {
-	auto it = std::find_if (players.begin(), players.end(), byPlayerNr(playerNr));
+	auto it = ranges::find_if (players, byPlayerNr(playerNr));
 
 	return it == players.end() ? nullptr : &*it;
 }

@@ -17,19 +17,20 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <algorithm>
-
 #include "ui/graphical/game/unitselection.h"
 
+#include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"
+#include "game/data/player/player.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
+#include "game/data/units/unit.h"
 #include "utility/box.h"
 #include "utility/flatset.h"
-#include "game/data/units/unit.h"
-#include "game/data/player/player.h"
 #include "utility/listhelpers.h"
-#include "game/data/map/mapfieldview.h"
+#include "utility/ranges.h"
+
+#include <algorithm>
 
 //------------------------------------------------------------------------------
 bool cUnitSelection::selectUnitAt (const cMapFieldView& field, bool base)
@@ -83,7 +84,7 @@ void cUnitSelection::addSelectedUnitFront (cUnit& unit)
 //------------------------------------------------------------------------------
 void cUnitSelection::removeSelectedUnit (const cUnit& unit)
 {
-	auto iter = std::find_if (selectedUnits.begin(), selectedUnits.end(), [&unit] (const std::pair<cUnit*, cSignalConnection>& entry) { return entry.first == &unit; });
+	auto iter = ranges::find_if (selectedUnits, [&unit] (const std::pair<cUnit*, cSignalConnection>& entry) { return entry.first == &unit; });
 	if (iter == selectedUnits.end()) return;
 
 	selectedUnitsSignalConnectionManager.disconnect (iter->second);
@@ -275,7 +276,7 @@ size_t cUnitSelection::getSelectedBuildingsCount() const
 //------------------------------------------------------------------------------
 bool cUnitSelection::isSelected (const cUnit& unit) const
 {
-	auto iter = std::find_if (selectedUnits.begin(), selectedUnits.end(), [&unit] (const std::pair<cUnit*, cSignalConnection>& entry) { return entry.first == &unit; });
+	auto iter = ranges::find_if (selectedUnits, [&unit] (const std::pair<cUnit*, cSignalConnection>& entry) { return entry.first == &unit; });
 	return iter != selectedUnits.end();
 }
 
@@ -314,11 +315,11 @@ cVehicle* cUnitSelection::getNextVehicle(const cPlayer& player, const std::vecto
 	for (; it != vehicles.end(); ++it)
 	{
 		const cVehicle& v = **it;
-		if ( !Contains(doneList, v.getId()) && 
+		if ( !Contains(doneList, v.getId()) &&
 			(!v.isUnitBuildingABuilding() || v.getBuildTurns() == 0) &&
 			!v.isUnitClearing() &&
-			!v.isSentryActive() && 
-			!v.isUnitLoaded() && 
+			!v.isSentryActive() &&
+			!v.isUnitLoaded() &&
 			(v.data.getSpeed() || v.data.getShots()))
 		{
 			return it->get();
@@ -340,7 +341,7 @@ cBuilding* cUnitSelection::getNextBuilding(const cPlayer& player, const std::vec
 		const cBuilding& b = **it;
 		if (!Contains(doneList, b.getId()) &&
 			!b.isUnitWorking() &&
-			!b.isSentryActive() && 
+			!b.isSentryActive() &&
 			(!b.getStaticUnitData().canBuild.empty() || b.data.getShots()
 			 || b.getStaticUnitData().canMineMaxRes > 0 || b.getStaticUnitData().convertsGold > 0
 			 || b.getStaticUnitData().canResearch))

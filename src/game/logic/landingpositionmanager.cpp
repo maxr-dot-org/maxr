@@ -17,10 +17,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <algorithm>
-
 #include "game/logic/landingpositionmanager.h"
+
 #include "game/data/player/player.h"
+#include "utility/ranges.h"
+
+#include <algorithm>
 
 const double cLandingPositionManager::warningDistance = 28;
 const double cLandingPositionManager::tooCloseDistance = 10;
@@ -224,7 +226,7 @@ cLandingPositionManager::sLandingPositionData& cLandingPositionManager::getLandi
 //------------------------------------------------------------------------------
 const cLandingPositionManager::sLandingPositionData& cLandingPositionManager::getLandingPositionData (const cPlayerBasicData& player) const
 {
-	auto iter = std::find_if (landingPositions.begin(), landingPositions.end(), [&] (const sLandingPositionData & data) { return data.player.getNr() == player.getNr(); });
+	auto iter = ranges::find_if (landingPositions, [&] (const sLandingPositionData & data) { return data.player.getNr() == player.getNr(); });
 	assert (iter != landingPositions.end());
 	return *iter;
 }

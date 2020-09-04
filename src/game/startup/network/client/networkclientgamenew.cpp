@@ -18,12 +18,14 @@
  ***************************************************************************/
 
 #include "game/startup/network/client/networkclientgamenew.h"
+
 #include "game/data/gamesettings.h"
-#include "ui/graphical/application.h"
-#include "game/logic/client.h"
 #include "game/data/player/player.h"
 #include "game/data/units/landingunit.h"
 #include "game/logic/action/actioninitnewgame.h"
+#include "game/logic/client.h"
+#include "ui/graphical/application.h"
+#include "utility/ranges.h"
 
 //------------------------------------------------------------------------------
 cNetworkClientGameNew::cNetworkClientGameNew() :
@@ -136,7 +138,7 @@ const std::vector<sLandingUnit>& cNetworkClientGameNew::getLandingUnits()
 //------------------------------------------------------------------------------
 const cPlayerBasicData& cNetworkClientGameNew::getLocalPlayer()
 {
-	return *std::find_if(players.begin(), players.end(), [&](const cPlayerBasicData& player) { return player.getNr() == localPlayerNr; });
+	return *ranges::find_if (players, [&](const cPlayerBasicData& player) { return player.getNr() == localPlayerNr; });
 }
 
 //------------------------------------------------------------------------------

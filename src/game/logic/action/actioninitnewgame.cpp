@@ -18,13 +18,15 @@
 ***************************************************************************/
 
 #include "actioninitnewgame.h"
-#include "game/data/model.h"
+
 #include "game/data/gamesettings.h"
 #include "game/data/map/map.h"
-#include "utility/log.h"
+#include "game/data/model.h"
+#include "game/data/player/clans.h"
 #include "game/data/player/player.h"
 #include "utility/listhelpers.h"
-#include "game/data/player/clans.h"
+#include "utility/log.h"
+#include "utility/ranges.h"
 #include "utility/string/toString.h"
 
 // TODO: remove
@@ -32,8 +34,8 @@ std::vector<std::pair<sID, int>> createInitialLandingUnitsList(int clan, const c
 
 
 //------------------------------------------------------------------------------
-cActionInitNewGame::cActionInitNewGame() : 
-	cAction(eActiontype::ACTION_INIT_NEW_GAME), 
+cActionInitNewGame::cActionInitNewGame() :
+	cAction(eActiontype::ACTION_INIT_NEW_GAME),
 	clan(-1)
 {};
 
@@ -48,7 +50,7 @@ cActionInitNewGame::cActionInitNewGame(cBinaryArchiveOut& archive)
 void cActionInitNewGame::execute(cModel& model) const
 {
 	//Note: this funktion handels incoming data from network. Make every possible sanity check!
-	
+
 	model.initGameId();
 
 	cPlayer& player = *model.getPlayer(playerNr);
@@ -130,7 +132,7 @@ void cActionInitNewGame::execute(cModel& model) const
 			return;
 		}
 
-		auto it = std::find_if(initialLandingUnits.begin(), initialLandingUnits.end(), [landing](std::pair<sID, int> unit){ return unit.first == landing.unitID; });
+		auto it = ranges::find_if (initialLandingUnits, [landing](std::pair<sID, int> unit){ return unit.first == landing.unitID; });
 		if (it != initialLandingUnits.end())
 		{
 			// landing unit is one of the initial landing units, that the player gets for free
@@ -183,7 +185,7 @@ bool cActionInitNewGame::isValidLandingPosition(cPosition position, std::shared_
 		{
 			landingRadius += 1;
 
-			// prevent, that units are placed far away from the starting position 
+			// prevent, that units are placed far away from the starting position
 			if (landingRadius > 1.5 * sqrt(units.size()) && landingRadius > 3) return false;
 
 			for (int offY = -landingRadius; (offY < landingRadius) && !placed; ++offY)

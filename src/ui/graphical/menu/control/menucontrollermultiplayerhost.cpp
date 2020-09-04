@@ -326,7 +326,7 @@ void cMenuControllerMultiplayerHost::checkGameStart()
 	}
 
 	auto players = windowNetworkLobby->getPlayers();
-	auto notReadyPlayerIter = std::find_if (players.begin(), players.end(), [ ] (const std::shared_ptr<cPlayerBasicData>& player) { return !player->isReady(); });
+	auto notReadyPlayerIter = ranges::find_if (players, [ ] (const std::shared_ptr<cPlayerBasicData>& player) { return !player->isReady(); });
 
 	if (notReadyPlayerIter != players.end())
 	{
@@ -349,7 +349,7 @@ void cMenuControllerMultiplayerHost::checkGameStart()
 		// check whether all necessary players are connected
 		for (size_t i = 0; i < savegamePlayers.size(); ++i)
 		{
-			auto iter = std::find_if (menuPlayers.begin(), menuPlayers.end(), [&] (const std::shared_ptr<cPlayerBasicData>& player) { return player->getName() == savegamePlayers[i].getName(); });
+			auto iter = ranges::find_if (menuPlayers, [&] (const std::shared_ptr<cPlayerBasicData>& player) { return player->getName() == savegamePlayers[i].getName(); });
 			if (iter == menuPlayers.end() && !savegamePlayers[i].isDefeated())
 			{
 				windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Player_Wrong"));
@@ -360,7 +360,7 @@ void cMenuControllerMultiplayerHost::checkGameStart()
 		//check host is part of the game
 		{
 			auto hostPlayer = windowNetworkLobby->getLocalPlayer();
-			auto iter = std::find_if(savegamePlayers.begin(), savegamePlayers.end(), [&](const cPlayerBasicData & player) { return player.getName() == hostPlayer->getName(); });
+			auto iter = ranges::find_if (savegamePlayers, [&](const cPlayerBasicData & player) { return player.getName() == hostPlayer->getName(); });
 			if (iter == savegamePlayers.end())
 			{
 				windowNetworkLobby->addInfoEntry("Unable to start: Host must be part of the saved game"); //TODO: translate
@@ -372,7 +372,7 @@ void cMenuControllerMultiplayerHost::checkGameStart()
 		for (auto i = menuPlayers.begin(); i < menuPlayers.end();)
 		{
 			auto menuPlayer = *i;
-			auto iter = std::find_if (savegamePlayers.begin(), savegamePlayers.end(), [&] (const cPlayerBasicData & player) { return player.getName() == menuPlayer->getName(); });
+			auto iter = ranges::find_if (savegamePlayers, [&] (const cPlayerBasicData & player) { return player.getName() == menuPlayer->getName(); });
 
 			if (iter == savegamePlayers.end())
 			{
@@ -476,7 +476,7 @@ void cMenuControllerMultiplayerHost::startGamePreparation()
 
 	signalConnectionManager.connect (landingPositionManager->landingPositionSet, [this] (const cPlayerBasicData & player, const cPosition & position)
 	{
-		auto iter = std::find_if (playersLandingStatus.begin(), playersLandingStatus.end(), [&] (const std::unique_ptr<cPlayerLandingStatus>& entry) { return entry->getPlayer().getNr() == player.getNr(); });
+		auto iter = ranges::find_if (playersLandingStatus, [&] (const std::unique_ptr<cPlayerLandingStatus>& entry) { return entry->getPlayer().getNr() == player.getNr(); });
 		assert (iter != playersLandingStatus.end());
 
 		auto& entry = **iter;
@@ -798,7 +798,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_CHAT (cMuMsgChat& m
 	if (newGame)
 	{
 		const auto& players = newGame->getPlayers();
-		auto iter = std::find_if (players.begin(), players.end(), [ = ] (const cPlayerBasicData & player) { return player.getNr() == message.playerNr; });
+		auto iter = ranges::find_if (players, [ = ] (const cPlayerBasicData & player) { return player.getNr() == message.playerNr; });
 		if (iter == players.end()) return;
 
 		const auto& player = *iter;

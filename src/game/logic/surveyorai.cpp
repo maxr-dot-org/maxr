@@ -16,22 +16,24 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include <algorithm>
-#include <cmath>
-#include <forward_list>
 
 #include "game/logic/surveyorai.h"
 
-#include "game/logic/client.h"
-#include "utility/listhelpers.h"
-#include "utility/mathtools.h"
-#include "game/data/player/player.h"
-#include "game/data/units/vehicle.h"
-#include "game/data/map/map.h"
-#include "game/data/report/unit/savedreportsurveyoraiconfused.h"
-#include "action/actionstartmove.h"
 #include "action/actionresumemove.h"
 #include "action/actionsetautomove.h"
+#include "action/actionstartmove.h"
+#include "game/logic/client.h"
+#include "game/data/map/map.h"
+#include "game/data/player/player.h"
+#include "game/data/report/unit/savedreportsurveyoraiconfused.h"
+#include "game/data/units/vehicle.h"
+#include "utility/listhelpers.h"
+#include "utility/mathtools.h"
+#include "utility/ranges.h"
+
+#include <algorithm>
+#include <cmath>
+#include <forward_list>
 
 using namespace std;
 
@@ -81,7 +83,7 @@ void cSurveyorAi::run(const cClient& client, const std::vector<std::unique_ptr<c
 	}
 
 	if (vehicle.isBeeingAttacked()) return;
-	
+
 	const cMap& map = *client.getModel().getMap();
 
 	if (vehicle.getMoveJob() == nullptr)
@@ -104,7 +106,7 @@ void cSurveyorAi::run(const cClient& client, const std::vector<std::unique_ptr<c
 		path.pop_front();
 
 		if (!path.empty())
-		{		
+		{
 			client.sendNetMessage(cActionStartMove(vehicle, path, true));
 			counter = ACTION_TIMEOUT;
 		}
@@ -256,7 +258,7 @@ void cSurveyorAi::planLongMove(const std::vector<std::unique_ptr<cSurveyorAi>>& 
 
 	cPosition bestPosition;
 	float minValue = 0;
-	
+
 	for (int x = 0; x < map.getSize().x(); ++x)
 	{
 		for (int y = 0; y < map.getSize().y(); ++y)
@@ -296,8 +298,8 @@ void cSurveyorAi::planLongMove(const std::vector<std::unique_ptr<cSurveyorAi>>& 
 	{
 		//use owners mapview to calc path
 		const auto& playerList = model.getPlayerList();
-		auto iter = std::find_if(playerList.begin(), playerList.end(), [&](const std::shared_ptr<cPlayer>& p) { 
-			return p->getId() == player.getId(); 
+		auto iter = ranges::find_if (playerList, [&](const std::shared_ptr<cPlayer>& p) {
+			return p->getId() == player.getId();
 		});
 		const cMapView mapView(model.getMap(), *iter);
 

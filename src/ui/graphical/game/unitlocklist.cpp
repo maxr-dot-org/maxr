@@ -18,10 +18,12 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/unitlocklist.h"
+
+#include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
-#include "game/data/map/mapfieldview.h"
+#include "utility/ranges.h"
 
 //------------------------------------------------------------------------------
 cUnitLockList::cUnitLockList() :
@@ -56,13 +58,13 @@ void cUnitLockList::toggleLockAt (const cMapFieldView& field)
 	}
 	if (unit == nullptr) return;
 
-	auto iter = std::find_if (lockedUnits.begin(), lockedUnits.end(), [unit] (const std::pair<const cUnit*, cSignalConnectionManager>& entry) { return entry.first == unit; });
+	auto iter = ranges::find_if (lockedUnits, [unit] (const std::pair<const cUnit*, cSignalConnectionManager>& entry) { return entry.first == unit; });
 	if (iter == lockedUnits.end())
 	{
 		lockedUnits.push_back (std::make_pair (unit, cSignalConnectionManager()));
 		lockedUnits.back().second.connect (unit->destroyed, [this, unit]()
 		{
-			auto iter = std::find_if (lockedUnits.begin(), lockedUnits.end(), [unit] (const std::pair<const cUnit*, cSignalConnectionManager>& entry) { return entry.first == unit; });
+			auto iter = ranges::find_if (lockedUnits, [unit] (const std::pair<const cUnit*, cSignalConnectionManager>& entry) { return entry.first == unit; });
 			if (iter != lockedUnits.end())
 			{
 				lockedUnits.erase (iter);
@@ -96,13 +98,13 @@ void cUnitLockList::unlockAll()
 //------------------------------------------------------------------------------
 void cUnitLockList::lockUnit (const cUnit& unit)
 {
-	auto iter = std::find_if (lockedUnits.begin(), lockedUnits.end(), [&unit] (const std::pair<const cUnit*, cSignalConnectionManager>& entry) { return entry.first == &unit; });
+	auto iter = ranges::find_if (lockedUnits, [&unit] (const std::pair<const cUnit*, cSignalConnectionManager>& entry) { return entry.first == &unit; });
 	if (iter == lockedUnits.end())
 	{
 		lockedUnits.push_back (std::make_pair (&unit, cSignalConnectionManager()));
 		lockedUnits.back().second.connect (unit.destroyed, [this, &unit]()
 		{
-			auto iter = std::find_if (lockedUnits.begin(), lockedUnits.end(), [&unit] (const std::pair<const cUnit*, cSignalConnectionManager>& entry) { return entry.first == &unit; });
+			auto iter = ranges::find_if (lockedUnits, [&unit] (const std::pair<const cUnit*, cSignalConnectionManager>& entry) { return entry.first == &unit; });
 			if (iter != lockedUnits.end())
 			{
 				lockedUnits.erase (iter);

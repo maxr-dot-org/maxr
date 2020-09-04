@@ -17,21 +17,21 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "movejob.h"
+
+#include "game/data/player/player.h"
+#include "game/data/units/vehicle.h"
+#include "game/data/map/map.h"
+#include "game/data/map/mapview.h"
+#include "game/data/model.h"
+#include "gametimer.h"
+#include "pathcalculator.h"
+#include "utility/ranges.h"
+#include "utility/string/toString.h"
+#include "video.h"
 
 #include <SDL_rect.h>
 #include <SDL_surface.h>
-
-#include "movejob.h"
-
-#include "pathcalculator.h"
-#include "video.h"
-#include "game/data/units/vehicle.h"
-#include "gametimer.h"
-#include "game/data/player/player.h"
-#include "game/data/map/map.h"
-#include "utility/string/toString.h"
-#include "game/data/model.h"
-#include "game/data/map/mapview.h"
 
 //                           N, NE, E, SE, S, SW, W, NW
 const int directionDx[8] = { 0, 1, 1, 1, 0, -1, -1, -1 };
@@ -300,7 +300,7 @@ bool cMoveJob::recalculatePath(cModel &model)
 {
 	//use owners mapview to calc path
 	const auto& playerList = model.getPlayerList();
-	auto iter = std::find_if(playerList.begin(), playerList.end(), [this](const std::shared_ptr<cPlayer>& player) { return player->getId() == vehicle->getOwner()->getId(); });
+	auto iter = ranges::find_if (playerList, [this](const std::shared_ptr<cPlayer>& player) { return player->getId() == vehicle->getOwner()->getId(); });
 	const cMapView mapView(model.getMap(), *iter);
 
 	cPosition dest;

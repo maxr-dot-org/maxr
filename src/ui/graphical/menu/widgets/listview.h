@@ -32,6 +32,7 @@
 
 #include "ui/graphical/application.h"
 
+#include "utility/ranges.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 class cAbstractListViewItem;
@@ -283,7 +284,7 @@ ItemType* cListView<ItemType>::addItem (std::unique_ptr<ItemType> item, eAddList
 		const auto offset = itemPtr->getSize().y() - oldSize.y();
 		if (offset == 0) return;
 
-		auto iter = std::find_if (items.begin(), items.end(), [ = ] (const std::pair<int, std::unique_ptr<ItemType>>& entry) { return entry.second.get() == itemPtr; });
+		auto iter = ranges::find_if (items, [ = ] (const std::pair<int, std::unique_ptr<ItemType>>& entry) { return entry.second.get() == itemPtr; });
 		if (iter != items.end()) ++iter;
 		for (; iter != items.end(); ++iter)
 		{
@@ -313,7 +314,7 @@ ItemType* cListView<ItemType>::addItem (std::unique_ptr<ItemType> item, eAddList
 template<typename ItemType>
 std::unique_ptr<ItemType> cListView<ItemType>::removeItem (ItemType& item)
 {
-	auto iter = std::find_if (items.begin(), items.end(), [&] (const std::pair<int, std::unique_ptr<ItemType>>& entry) { return entry.second.get() == &item; });
+	auto iter = ranges::find_if (items, [&] (const std::pair<int, std::unique_ptr<ItemType>>& entry) { return entry.second.get() == &item; });
 
 	if (iter != items.end())
 	{
@@ -637,7 +638,7 @@ void cListView<ItemType>::setSelectedItem (const ItemType* item)
 	}
 	else
 	{
-		auto iter = std::find_if (items.begin(), items.end(), [ = ] (const std::pair<int, std::unique_ptr<ItemType>>& entry) { return entry.second.get() == item; });
+		auto iter = ranges::find_if (items, [ = ] (const std::pair<int, std::unique_ptr<ItemType>>& entry) { return entry.second.get() == item; });
 
 		if (iter != items.end())
 		{
@@ -666,7 +667,7 @@ void cListView<ItemType>::deselectAll()
 template<typename ItemType>
 void cListView<ItemType>::scrollToItem (const ItemType* item)
 {
-	auto iter = std::find_if (items.begin(), items.end(), [ = ] (const std::pair<int, std::unique_ptr<ItemType>>& entry) { return entry.second.get() == item; });
+	auto iter = ranges::find_if (items, [ = ] (const std::pair<int, std::unique_ptr<ItemType>>& entry) { return entry.second.get() == item; });
 
 	if (iter != items.end())
 	{

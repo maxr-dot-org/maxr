@@ -19,23 +19,25 @@
 
 #include "model.h"
 
-#include "player/player.h"
-#include "map/map.h"
-#include "units/vehicle.h"
-#include "units/building.h"
-#include "game/logic/movejob.h"
-#include "utility/crc.h"
-#include "utility/string/toString.h"
-#include "game/logic/pathcalculator.h"
-#include "utility/listhelpers.h"
-#include "game/logic/turncounter.h"
-#include "game/logic/turntimeclock.h"
+#include "game/logic/casualtiestracker.h"
 #include "game/logic/fxeffects.h"
 #include "game/logic/jobs/destroyjob.h"
+#include "game/logic/pathcalculator.h"
+#include "game/logic/movejob.h"
+#include "game/logic/turncounter.h"
+#include "game/logic/turntimeclock.h"
+#include "map/map.h"
 #include "map/mapview.h"
-#include "game/logic/casualtiestracker.h"
-#include <set>
+#include "player/player.h"
 #include "player/playerbasicdata.h"
+#include "units/building.h"
+#include "units/vehicle.h"
+#include "utility/crc.h"
+#include "utility/listhelpers.h"
+#include "utility/ranges.h"
+#include "utility/string/toString.h"
+
+#include <set>
 
 //------------------------------------------------------------------------------
 cModel::cModel() :
@@ -773,7 +775,7 @@ void cModel::handleTurnEnd()
 			else
 			{
 				// select next player
-				auto nextPlayerIter = std::find_if(playerList.begin(), playerList.end(), [this](const std::shared_ptr<cPlayer>& player) {return player.get() == activeTurnPlayer; });
+				auto nextPlayerIter = ranges::find_if (playerList, [this](const std::shared_ptr<cPlayer>& player) {return player.get() == activeTurnPlayer; });
 				assert(nextPlayerIter != playerList.end());
 				++nextPlayerIter;
 				//TODO: skip defeated player?

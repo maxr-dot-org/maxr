@@ -18,18 +18,20 @@
  ***************************************************************************/
 
 #include "game/startup/network/host/networkhostgamesaved.h"
+
 #include "game/data/gamesettings.h"
-#include "ui/graphical/application.h"
+#include "game/data/player/player.h"
+#include "game/data/report/savedreport.h"
+#include "game/data/savegame.h"
 #include "game/logic/client.h"
 #include "game/logic/server2.h"
-#include "game/data/player/player.h"
-#include "game/data/savegame.h"
-#include "game/data/report/savedreport.h"
+#include "ui/graphical/application.h"
+#include "utility/ranges.h"
 
 void cNetworkHostGameSaved::loadGameData()
 {
 	// cNetworkHostGameSaved::start() must not throw any errors,
-	// because clients are already started. So try to load 
+	// because clients are already started. So try to load
 	// game data in this function, before initializing gameGui & clients
 
 	server = std::make_unique<cServer2>(connectionManager);
@@ -89,5 +91,5 @@ const std::vector<cPlayerBasicData>& cNetworkHostGameSaved::getPlayers()
 //------------------------------------------------------------------------------
 const cPlayerBasicData& cNetworkHostGameSaved::getLocalPlayer()
 {
-	return *std::find_if(players.begin(), players.end(), [&](const cPlayerBasicData& player) { return player.getNr() == localPlayerNr; });
+	return *ranges::find_if (players, [&](const cPlayerBasicData& player) { return player.getNr() == localPlayerNr; });
 }

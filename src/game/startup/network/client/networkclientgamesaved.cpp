@@ -18,10 +18,12 @@
  ***************************************************************************/
 
 #include "game/startup/network/client/networkclientgamesaved.h"
+
 #include "game/data/gamesettings.h"
-#include "ui/graphical/application.h"
-#include "game/logic/client.h"
 #include "game/data/player/player.h"
+#include "game/logic/client.h"
+#include "ui/graphical/application.h"
+#include "utility/ranges.h"
 
 //------------------------------------------------------------------------------
 cNetworkClientGameSaved::cNetworkClientGameSaved()
@@ -76,5 +78,5 @@ const std::vector<cPlayerBasicData>& cNetworkClientGameSaved::getPlayers()
 //------------------------------------------------------------------------------
 const cPlayerBasicData& cNetworkClientGameSaved::getLocalPlayer()
 {
-	return *std::find_if(players.begin(), players.end(), [&](const cPlayerBasicData& player) { return player.getNr() == localPlayerNr; });
+	return *ranges::find_if (players, [&](const cPlayerBasicData& player) { return player.getNr() == localPlayerNr; });
 }

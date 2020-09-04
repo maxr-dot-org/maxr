@@ -18,10 +18,12 @@
  ***************************************************************************/
 
 #include "game/startup/network/client/networkclientgamereconnection.h"
+
 #include "game/data/gamesettings.h"
-#include "ui/graphical/application.h"
-#include "game/logic/client.h"
 #include "game/data/player/player.h"
+#include "game/logic/client.h"
+#include "ui/graphical/application.h"
+#include "utility/ranges.h"
 
 //------------------------------------------------------------------------------
 cNetworkClientGameReconnection::cNetworkClientGameReconnection()
@@ -78,5 +80,5 @@ const std::vector<cPlayerBasicData>& cNetworkClientGameReconnection::getPlayers(
 //------------------------------------------------------------------------------
 const cPlayerBasicData& cNetworkClientGameReconnection::getLocalPlayer()
 {
-	return *std::find_if(players.begin(), players.end(), [&](const cPlayerBasicData& player) { return player.getNr() == localPlayerNr; });
+	return *ranges::find_if (players, [&](const cPlayerBasicData& player) { return player.getNr() == localPlayerNr; });
 }

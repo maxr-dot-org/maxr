@@ -16,43 +16,44 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include <cmath>
-#include <sstream>
 
 #include "game/logic/client.h"
 
-#include "game/data/units/building.h"
-#include "game/logic/casualtiestracker.h"
-#include "utility/listhelpers.h"
-#include "game/logic/fxeffects.h"
-#include "game/logic/gametimer.h"
-#include "utility/log.h"
-#include "protocol/netmessage.h"
-#include "game/data/player/player.h"
-#include "game/logic/server2.h"
-#include "settings.h"
-#include "game/data/units/vehicle.h"
-#include "video.h"
+#include "action/actionsetautomove.h"
 #include "game/data/gamesettings.h"
-#include "ui/graphical/game/gameguistate.h"
-#include "game/data/report/savedreportchat.h"
-#include "game/data/report/savedreportsimple.h"
-#include "game/data/report/unit/savedreportdisabled.h"
-#include "game/data/report/unit/savedreportpathinterrupted.h"
+#include "game/data/player/player.h"
 #include "game/data/report/unit/savedreportcapturedbyenemy.h"
+#include "game/data/report/unit/savedreportdisabled.h"
 #include "game/data/report/unit/savedreportdetected.h"
 #include "game/data/report/unit/savedreportpathinterrupted.h"
-#include "game/data/report/special/savedreportplayerendedturn.h"
+#include "game/data/report/savedreportchat.h"
+#include "game/data/report/savedreportsimple.h"
 #include "game/data/report/special/savedreportplayerdefeated.h"
+#include "game/data/report/special/savedreportplayerendedturn.h"
 #include "game/data/report/special/savedreportplayerleft.h"
 #include "game/data/report/special/savedreportupgraded.h"
-#include "game/logic/turntimeclock.h"
-#include "game/logic/action/action.h"
 #include "game/data/savegame.h"
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
+#include "game/logic/action/action.h"
+#include "game/logic/turntimeclock.h"
+#include "game/logic/casualtiestracker.h"
+#include "game/logic/fxeffects.h"
+#include "game/logic/gametimer.h"
+#include "game/logic/server2.h"
+#include "protocol/netmessage.h"
+#include "settings.h"
+#include "surveyorai.h"
+#include "ui/graphical/game/gameguistate.h"
+#include "utility/listhelpers.h"
+#include "utility/log.h"
+#include "utility/ranges.h"
 #include "utility/serialization/textarchive.h"
 #include "utility/string/toString.h"
-#include "surveyorai.h"
-#include "action/actionsetautomove.h"
+#include "video.h"
+
+#include <cmath>
+#include <sstream>
 
 using namespace std;
 
@@ -209,18 +210,18 @@ void cClient::handleNetMessages()
 				}
 
 				//FIXME: deserializing model does not trigger signals on changed data members. Use this signal to trigger some gui updates
-				freezeModeChanged(); 
+				freezeModeChanged();
 			}
 			break;
 		case eNetMessageType::FREEZE_MODES:
 			{
 				const cNetMessageFreezeModes* msg = static_cast<cNetMessageFreezeModes*>(message.get());
-				
+
 				// don't overwrite waitForServer flag
 				bool waitForServer = freezeModes.isEnabled(eFreezeMode::WAIT_FOR_SERVER);
 				freezeModes = msg->freezeModes;
 				if (waitForServer) freezeModes.enable(eFreezeMode::WAIT_FOR_SERVER);
-				
+
 				for (auto state : msg->playerStates)
 				{
 					if (model.getPlayer(state.first) == nullptr)
@@ -305,11 +306,11 @@ const std::map<int, ePlayerConnectionState>& cClient::getPlayerConnectionStates(
 void cClient::addSurveyorMoveJob(const cVehicle& vehicle)
 {
 	if (!vehicle.getStaticUnitData().canSurvey) return;
-	
+
 	sendNetMessage(cActionSetAutoMove(vehicle, true));
 
 	//don't add new job, if there is already one for this vehicle
-	auto it = std::find_if(surveyorAiJobs.begin(), surveyorAiJobs.end(), [&](const std::unique_ptr<cSurveyorAi>& job)
+	auto it = ranges::find_if (surveyorAiJobs, [&](const std::unique_ptr<cSurveyorAi>& job)
 	{
 		return job->getVehicle().getId() == vehicle.getId();
 	});
@@ -317,7 +318,7 @@ void cClient::addSurveyorMoveJob(const cVehicle& vehicle)
 	{
 		return;
 	}
-	
+
 	surveyorAiJobs.push_back(std::make_unique<cSurveyorAi>(vehicle));
 }
 
@@ -326,7 +327,7 @@ void cClient::removeSurveyorMoveJob(const cVehicle& vehicle)
 {
 	sendNetMessage(cActionSetAutoMove(vehicle, false));
 
-	auto it = std::find_if(surveyorAiJobs.begin(), surveyorAiJobs.end(), [&](const std::unique_ptr<cSurveyorAi>& job)
+	auto it = ranges::find_if (surveyorAiJobs, [&](const std::unique_ptr<cSurveyorAi>& job)
 	{
 		return job->getVehicle().getId() == vehicle.getId();
 	});

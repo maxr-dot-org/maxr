@@ -18,13 +18,15 @@
  ***************************************************************************/
 
 #include "game/startup/network/host/networkhostgamenew.h"
+
 #include "game/data/gamesettings.h"
-#include "ui/graphical/application.h"
-#include "game/logic/client.h"
-#include "game/logic/server2.h"
 #include "game/data/player/player.h"
 #include "game/data/units/landingunit.h"
 #include "game/logic/action/actioninitnewgame.h"
+#include "game/logic/client.h"
+#include "game/logic/server2.h"
+#include "ui/graphical/application.h"
+#include "utility/ranges.h"
 
 //------------------------------------------------------------------------------
 cNetworkHostGameNew::cNetworkHostGameNew() :
@@ -146,7 +148,7 @@ const std::vector<cPlayerBasicData>& cNetworkHostGameNew::getPlayers()
 //------------------------------------------------------------------------------
 const cPlayerBasicData& cNetworkHostGameNew::getLocalPlayer()
 {
-	return *std::find_if(players.begin(), players.end(), [&](const cPlayerBasicData& player) { return player.getNr() == localPlayerNr; });
+	return *ranges::find_if (players, [&](const cPlayerBasicData& player) { return player.getNr() == localPlayerNr; });
 }
 
 //------------------------------------------------------------------------------

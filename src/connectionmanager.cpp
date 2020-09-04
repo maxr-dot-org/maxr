@@ -17,15 +17,16 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "network.h"
-
 #include "connectionmanager.h"
+
 #include "game/data/player/playerbasicdata.h"
-#include "utility/log.h"
-#include "protocol/netmessage.h"
 #include "maxrversion.h"
-#include "utility/string/toString.h"
+#include "network.h"
 #include "protocol/lobbymessage.h"
+#include "protocol/netmessage.h"
+#include "utility/log.h"
+#include "utility/ranges.h"
+#include "utility/string/toString.h"
 
 #define HANDSHAKE_TIMEOUT_MS 3000
 #define DISABLE_TIMEOUTS 0 // this can be used, when debugging the connection handshake
@@ -116,7 +117,7 @@ void cConnectionManager::acceptConnection(const cSocket* socket, int playerNr)
 
 	stopTimeout(socket);
 
-	auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<const cSocket*, int>& x) { return x.first == socket; });
+	auto x = ranges::find_if (clientSockets, [&](const std::pair<const cSocket*, int>& x) { return x.first == socket; });
 	if (x == clientSockets.end())
 	{
 		//looks like the connection was disconnected during the handshake
@@ -149,7 +150,7 @@ void cConnectionManager::declineConnection(const cSocket* socket, const std::str
 
 	stopTimeout(socket);
 
-	auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<const cSocket*, int>& x) { return x.first == socket; });
+	auto x = ranges::find_if (clientSockets, [&](const std::pair<const cSocket*, int>& x) { return x.first == socket; });
 	if (x == clientSockets.end())
 	{
 		//looks like the connection was disconnected during the handshake
@@ -209,7 +210,7 @@ void cConnectionManager::changePlayerNumber(int currentNr, int newNr)
 		return;
 	}
 
-	auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<const cSocket*, int>& x) { return x.second == currentNr; });
+	auto x = ranges::find_if (clientSockets, [&](const std::pair<const cSocket*, int>& x) { return x.second == currentNr; });
 	if (x == clientSockets.end())
 	{
 		Log.write("Connection Manager: Can't change playerNr. Unknown player " + toString(currentNr), cLog::eLOG_TYPE_NET_ERROR);
@@ -294,7 +295,7 @@ void cConnectionManager::sendToPlayer(const cNetMessage2& message, int playerNr)
 	}
 	else
 	{
-		auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<const cSocket*, int>& x) { return x.second == playerNr; });
+		auto x = ranges::find_if (clientSockets, [&](const std::pair<const cSocket*, int>& x) { return x.second == playerNr; });
 		if (x == clientSockets.end())
 		{
 			Log.write("Connection Manager: Can't send message. No connection to player " + toString(playerNr), cLog::eLOG_TYPE_NET_ERROR);
@@ -335,7 +336,7 @@ void cConnectionManager::disconnect(int player)
 {
 	cLockGuard<cMutex> tl(mutex);
 
-	auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<const cSocket*, int>& x) { return x.second == player; });
+	auto x = ranges::find_if (clientSockets, [&](const std::pair<const cSocket*, int>& x) { return x.second == player; });
 	if (x == clientSockets.end())
 	{
 		Log.write("ConnectionManager: Can't disconnect player. No connection to player " + toString(player), cLog::eLOG_TYPE_NET_ERROR);
@@ -377,7 +378,7 @@ void cConnectionManager::connectionClosed(const cSocket* socket)
 	}
 	else
 	{
-		auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<const cSocket*, int>& x) { return x.first == socket; });
+		auto x = ranges::find_if (clientSockets, [&](const std::pair<const cSocket*, int>& x) { return x.first == socket; });
 		if (x == clientSockets.end())
 		{
 			Log.write("ConnectionManager: An unknown connection was closed", cLog::eLOG_TYPE_NET_ERROR);
@@ -440,7 +441,7 @@ void cConnectionManager::messageReceived(const cSocket* socket, unsigned char* d
 
 	//compare the sender playerNr of the message with the playerNr that is expected behind the socket
 	int playerOnSocket = -1;
-	auto x = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<const cSocket*, int>& x) { return x.first == socket; });
+	auto x = ranges::find_if (clientSockets, [&](const std::pair<const cSocket*, int>& x) { return x.first == socket; });
 	if (x != clientSockets.end())
 	{
 		playerOnSocket = x->second;
@@ -572,7 +573,7 @@ bool cConnectionManager::isPlayerConnected(int playerNr) const
 		return true;
 	}
 
-	auto it = std::find_if(clientSockets.begin(), clientSockets.end(), [&](const std::pair<const cSocket*, int>& p) { return p.second == playerNr; });
+	auto it = ranges::find_if (clientSockets, [&](const std::pair<const cSocket*, int>& p) { return p.second == playerNr; });
 	return it != clientSockets.end();
 }
 
@@ -607,7 +608,7 @@ void cConnectionManager::startTimeout(const cSocket* socket)
 //------------------------------------------------------------------------------
 void cConnectionManager::stopTimeout(const cSocket* socket)
 {
-	auto t = std::find_if(timeouts.begin(), timeouts.end(), [&](const auto& timer) { return timer->getSocket() == socket; });
+	auto t = ranges::find_if (timeouts, [&](const auto& timer) { return timer->getSocket() == socket; });
 	if (t != timeouts.end())
 	{
 		timeouts.erase(t);
@@ -621,7 +622,7 @@ void cConnectionManager::handshakeTimeoutCallback(cHandshakeTimeout& timer)
 
 	Log.write("ConnectionManager: Handshake timed out", cLog::eLOG_TYPE_NET_WARNING);
 
-	auto it = std::find_if(timeouts.begin(), timeouts.end(), [&](const auto& timeout){ return timeout.get() == &timer;});
+	auto it = ranges::find_if (timeouts, [&](const auto& timeout){ return timeout.get() == &timer;});
 	if (it != timeouts.end())
 	{
 		network->close(timer.getSocket());

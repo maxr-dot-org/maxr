@@ -19,16 +19,17 @@
 
 #include "game/data/player/player.h"
 
-#include <cmath>
-
-#include "game/data/units/building.h"
-#include "game/logic/client.h"
-#include "utility/listhelpers.h"
-#include "utility/string/toString.h"
-#include "game/data/units/vehicle.h"
 #include "game/data/report/savedreport.h"
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
+#include "game/logic/client.h"
 #include "game/logic/turncounter.h"
 #include "utility/crc.h"
+#include "utility/listhelpers.h"
+#include "utility/ranges.h"
+#include "utility/string/toString.h"
+
+#include <cmath>
 
 using namespace std;
 
@@ -805,7 +806,7 @@ bool cPlayer::mayHaveOffensiveUnit() const
 //------------------------------------------------------------------------------
 void cPlayer::addTurnReportUnit (const sID& unitTypeId)
 {
-	auto iter = std::find_if (currentTurnUnitReports.begin(), currentTurnUnitReports.end(), [unitTypeId] (const sTurnstartReport & entry) { return entry.type == unitTypeId; });
+	auto iter = ranges::find_if (currentTurnUnitReports, [unitTypeId] (const sTurnstartReport & entry) { return entry.type == unitTypeId; });
 	if (iter != currentTurnUnitReports.end())
 	{
 		++iter->count;

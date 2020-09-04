@@ -20,6 +20,7 @@
 #include "lobbyutils.h"
 
 #include "game/data/player/playerbasicdata.h"
+#include "utility/ranges.h"
 
 #include <algorithm>
 
@@ -39,11 +40,11 @@ eLobbyPlayerStatus checkTakenPlayerAttributes (const std::vector<cPlayerBasicDat
 {
 	if (!player.isReady()) return eLobbyPlayerStatus::Ok;
 
-	if (std::find_if (players.begin(), players.end(), [&](const auto& p){ return player.getNr() != p.getNr() && player.getName() == p.getName(); }) != players.end())
+	if (ranges::find_if (players, [&](const auto& p){ return player.getNr() != p.getNr() && player.getName() == p.getName(); }) != players.end())
 	{
 		return eLobbyPlayerStatus::DuplicatedName;
 	}
-	if (std::find_if (players.begin(), players.end(), [&](const auto& p){ return player.getNr() != p.getNr() && sameColor(player.getColor(), p.getColor()); }) != players.end())
+	if (ranges::find_if (players, [&](const auto& p){ return player.getNr() != p.getNr() && sameColor(player.getColor(), p.getColor()); }) != players.end())
 	{
 		return eLobbyPlayerStatus::DuplicatedColor;
 	}

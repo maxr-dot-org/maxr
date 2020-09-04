@@ -21,11 +21,12 @@
 
 #include "game/startup/lobbyclient.h"
 #include "game/startup/lobbyutils.h"
-#include "utility/log.h"
 #include "maxrversion.h"
 #include "mapdownloader/mapdownload.h"
 #include "mapdownloader/mapuploadmessagehandler.h"
 #include "resources/uidata.h"
+#include "utility/log.h"
+#include "utility/ranges.h"
 
 //------------------------------------------------------------------------------
 cLobbyServer::cLobbyServer (std::shared_ptr<cConnectionManager> connectionManager) :
@@ -74,7 +75,7 @@ std::unique_ptr<cNetMessage2> cLobbyServer::popMessage()
 //------------------------------------------------------------------------------
 const cPlayerBasicData* cLobbyServer::getConstPlayer (int playerNr) const
 {
-	auto it = std::find_if (players.begin(), players.end(), byPlayerNr(playerNr));
+	auto it = ranges::find_if (players, byPlayerNr(playerNr));
 
 	return it == players.end() ? nullptr : &*it;
 }
@@ -82,7 +83,7 @@ const cPlayerBasicData* cLobbyServer::getConstPlayer (int playerNr) const
 //------------------------------------------------------------------------------
 cPlayerBasicData* cLobbyServer::getPlayer (int playerNr)
 {
-	auto it = std::find_if (players.begin(), players.end(), byPlayerNr(playerNr));
+	auto it = ranges::find_if (players, byPlayerNr(playerNr));
 
 	return it == players.end() ? nullptr : &*it;
 }
@@ -240,7 +241,7 @@ void cLobbyServer::startGamePreparation (int fromPlayer)
 //------------------------------------------------------------------------------
 const cPlayerBasicData* cLobbyServer::findNotReadyPlayer() const
 {
-	auto it = std::find_if (players.begin(), players.end(), [](const auto& player){ return !player.isReady(); });
+	auto it = ranges::find_if (players, [](const auto& player){ return !player.isReady(); });
 
 	return it == players.end() ? nullptr : &*it;
 }
@@ -342,7 +343,7 @@ void cLobbyServer::localClientConnects (cLobbyClient& client, cPlayerBasicData& 
 //------------------------------------------------------------------------------
 void cLobbyServer::clientLeaves (const cNetMessageTcpClose& message)
 {
-	auto it = std::find_if (players.begin(), players.end(), byPlayerNr (message.playerNr));
+	auto it = ranges::find_if (players, byPlayerNr (message.playerNr));
 	if (it == players.end()) return;
 	players.erase (it);
 

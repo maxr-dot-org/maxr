@@ -18,13 +18,13 @@
  ***************************************************************************/
 
 #include "ui/sound/soundmanager.h"
-#include "ui/sound/effects/soundeffect.h"
 
+#include "game/data/model.h"
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
-
 #include "settings.h"
-#include "game/data/model.h"
+#include "ui/sound/effects/soundeffect.h"
+#include "utility/ranges.h"
 
 //--------------------------------------------------------------------------
 cSoundManager::sStoredSound::sStoredSound (std::shared_ptr<cSoundEffect> sound_, unsigned int startGameTime_, bool active_) :
@@ -238,7 +238,7 @@ void cSoundManager::finishedSound (cSoundEffect& sound)
 {
 	cLockGuard<cRecursiveMutex> playingSoundsLock (playingSoundsMutex);
 
-	auto iter = std::find_if (playingSounds.begin(), playingSounds.end(), [&sound] (const sStoredSound & entry) { return entry.sound.get() == &sound; });
+	auto iter = ranges::find_if (playingSounds, [&sound] (const sStoredSound & entry) { return entry.sound.get() == &sound; });
 
 	if (iter != playingSounds.end())
 	{
