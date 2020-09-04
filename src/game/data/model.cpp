@@ -697,7 +697,7 @@ void cModel::runAttackJobs()
 		if (attackJob->finished())
 		{
 			delete attackJob;
-			attackJobs.erase(std::find(attackJobs.begin(), attackJobs.end(), attackJob));
+			attackJobs.erase(ranges::find (attackJobs, attackJob));
 		}
 	}
 }

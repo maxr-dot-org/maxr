@@ -19,12 +19,37 @@
 
 #include "ui/graphical/game/widgets/gamemapwidget.h"
 
-#include "ui/graphical/game/widgets/unitcontextmenuwidget.h"
+#include "game/data/map/map.h"
+#include "game/data/player/player.h"
+#include "game/data/units/vehicle.h"
+#include "game/data/units/building.h"
+#include "game/data/map/mapfieldview.h"
+#include "game/data/map/mapview.h"
+#include "game/logic/movejob.h"
+#include "game/logic/pathcalculator.h"
+#include "input/mouse/mouse.h"
+#include "input/mouse/cursor/mousecursorsimple.h"
+#include "input/mouse/cursor/mousecursoramount.h"
+#include "input/mouse/cursor/mousecursorattack.h"
+#include "keys.h"
+#include "output/sound/sounddevice.h"
+#include "output/sound/soundchannel.h"
+#include "resources/sound.h"
+#include "settings.h"
+#include "ui/graphical/application.h"
+#include "ui/graphical/game/animations/animation.h"
+#include "ui/graphical/game/animations/animationdither.h"
+#include "ui/graphical/game/animations/animationstartup.h"
+#include "ui/graphical/game/animations/animationstartupbuildingsite.h"
+#include "ui/graphical/game/animations/animationtimer.h"
+#include "ui/graphical/game/animations/animationwork.h"
+#include "ui/graphical/game/control/mouseaction/mouseaction.h"
 #include "ui/graphical/game/control/mousemode/mousemode.h"
-#include "ui/graphical/game/control/mousemode/mousemodedefault.h"
 #include "ui/graphical/game/control/mousemode/mousemodeactivateloaded.h"
 #include "ui/graphical/game/control/mousemode/mousemodeattack.h"
+#include "ui/graphical/game/control/mousemode/mousemodedefault.h"
 #include "ui/graphical/game/control/mousemode/mousemodedisable.h"
+#include "ui/graphical/game/control/mousemode/mousemodeenter.h"
 #include "ui/graphical/game/control/mousemode/mousemodehelp.h"
 #include "ui/graphical/game/control/mousemode/mousemodeload.h"
 #include "ui/graphical/game/control/mousemode/mousemoderepair.h"
@@ -33,40 +58,16 @@
 #include "ui/graphical/game/control/mousemode/mousemodesteal.h"
 #include "ui/graphical/game/control/mousemode/mousemodesupplyammo.h"
 #include "ui/graphical/game/control/mousemode/mousemodetransfer.h"
-#include "ui/graphical/game/control/mouseaction/mouseaction.h"
-#include "ui/graphical/game/animations/animation.h"
-#include "ui/graphical/game/animations/animationwork.h"
-#include "ui/graphical/game/animations/animationstartup.h"
-#include "ui/graphical/game/animations/animationstartupbuildingsite.h"
-#include "ui/graphical/game/animations/animationdither.h"
-#include "ui/graphical/game/hud.h"
-#include "ui/sound/soundmanager.h"
-#include "ui/graphical/game/animations/animationtimer.h"
-#include "ui/graphical/application.h"
 #include "ui/graphical/game/control/rightmousebuttonscroller.h"
-#include "game/data/map/map.h"
-#include "settings.h"
-#include "video.h"
-#include "utility/mathtools.h"
-#include "game/data/player/player.h"
-#include "game/data/units/vehicle.h"
-#include "game/data/units/building.h"
-#include "keys.h"
-#include "utility/listhelpers.h"
-#include "resources/sound.h"
+#include "ui/graphical/game/hud.h"
+#include "ui/graphical/game/widgets/unitcontextmenuwidget.h"
+#include "ui/sound/soundmanager.h"
 #include "utility/indexiterator.h"
+#include "utility/listhelpers.h"
+#include "utility/mathtools.h"
 #include "utility/random.h"
-#include "input/mouse/mouse.h"
-#include "input/mouse/cursor/mousecursorsimple.h"
-#include "input/mouse/cursor/mousecursoramount.h"
-#include "input/mouse/cursor/mousecursorattack.h"
-#include "output/sound/sounddevice.h"
-#include "output/sound/soundchannel.h"
-#include "game/logic/movejob.h"
-#include "game/data/map/mapview.h"
-#include "game/logic/pathcalculator.h"
-#include "game/data/map/mapfieldview.h"
-#include "ui/graphical/game/control/mousemode/mousemodeenter.h"
+#include "utility/ranges.h"
+#include "video.h"
 
 //------------------------------------------------------------------------------
 cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap_, std::shared_ptr<cAnimationTimer> animationTimer_, std::shared_ptr<cSoundManager> soundManager_, std::shared_ptr<const cFrameCounter> frameCounter) :
@@ -886,7 +887,7 @@ cPosition cGameMapWidget::getMapCenterOffset()
 bool cGameMapWidget::startFindBuildPosition(const sID& buildId)
 {
 	auto mouseMode = std::make_unique<cMouseModeSelectBuildPosition>(mapView.get(), unitSelection, player.get(), buildId);
-	
+
 	// validate if there is any valid position, before setting mouse mode
 	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 	if (selectedVehicle)
@@ -1684,7 +1685,7 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 		ndest.x += mx = nextWp.x() * zoomedTileSize.x() - wp.x() * zoomedTileSize.x();
 		ndest.y += my = nextWp.y() * zoomedTileSize.y() - wp.y() * zoomedTileSize.y();
 
-		
+
 		int costs = cPathCalculator::calcNextCost(wp, nextWp, &vehicle, mapView.get());
 		if (sp < costs)
 		{
@@ -1907,7 +1908,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 
                     auto units = field.getUnits();
 
-                    auto it = std::find(units.begin(), units.end(), selectedUnit);
+                    auto it = ranges::find (units, selectedUnit);
                     if(it != units.end())
                     {
                         it++;
@@ -2047,7 +2048,7 @@ void cGameMapWidget::updateActiveAnimations (const std::pair<cPosition, cPositio
 void cGameMapWidget::addAnimationsForUnit (const cUnit& unit)
 {
 	if (!cSettings::getInstance().isAnimations()) return;
-	
+
 	if (unit.isABuilding())
 	{
 		const cBuilding& building = static_cast<const cBuilding&>(unit);

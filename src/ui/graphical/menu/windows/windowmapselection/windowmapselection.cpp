@@ -19,17 +19,18 @@
 
 #include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
 
-#include "utility/language.h"
-#include "utility/pcx.h"
-#include "utility/string/toString.h"
-#include "utility/files.h"
 #include "game/data/map/map.h"
 #include "resources/uidata.h"
-#include "utility/autosurface.h"
-#include "video.h"
+#include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
-#include "ui/graphical/menu/widgets/image.h"
+#include "utility/autosurface.h"
+#include "utility/files.h"
+#include "utility/language.h"
+#include "utility/pcx.h"
+#include "utility/ranges.h"
+#include "utility/string/toString.h"
+#include "video.h"
 
 //------------------------------------------------------------------------------
 cWindowMapSelection::cWindowMapSelection() :
@@ -212,7 +213,7 @@ void cWindowMapSelection::loadMaps()
 		std::vector<std::string> userMaps (getFilesOfDirectory (getUserMapsDir()));
 		for (size_t i = 0; i != userMaps.size(); ++i)
 		{
-			if (std::find (maps.begin(), maps.end(), userMaps[i]) == maps.end())
+			if (ranges::find (maps, userMaps[i]) == maps.end())
 			{
 				maps.push_back (userMaps[i]);
 			}

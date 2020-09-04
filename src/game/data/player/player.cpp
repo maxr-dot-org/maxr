@@ -847,7 +847,7 @@ void cPlayer::setCurrentTurnResearchAreasFinished (std::vector<int> areas)
 //------------------------------------------------------------------------------
 bool cPlayer::isCurrentTurnResearchAreaFinished (cResearch::ResearchArea area) const
 {
-	return std::find (currentTurnResearchAreasFinished.begin(), currentTurnResearchAreasFinished.end(), area) != currentTurnResearchAreasFinished.end();
+	return ranges::find (currentTurnResearchAreasFinished, area) != currentTurnResearchAreasFinished.end();
 }
 
 //------------------------------------------------------------------------------

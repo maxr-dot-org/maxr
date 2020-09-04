@@ -345,7 +345,7 @@ std::unique_ptr<ItemType> cListView<ItemType>::removeItem (ItemType& item)
 
 		removeTookPlace = true;
 
-		auto iter2 = std::find (selectedItems.begin(), selectedItems.end(), removedItem.get());
+		auto iter2 = ranges::find (selectedItems, removedItem.get());
 		if (iter2 != selectedItems.end())
 		{
 			removedItem->deselect();

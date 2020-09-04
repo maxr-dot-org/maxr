@@ -25,6 +25,12 @@
 namespace ranges
 {
 
+template <typename Range, typename Value>
+auto find(Range&& range, const Value& value)
+{
+	return std::find(std::begin (range), std::end (range), value);
+}
+
 template <typename Range, typename Predicate>
 auto find_if(Range&& range, Predicate&& predicate)
 {

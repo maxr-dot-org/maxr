@@ -20,6 +20,8 @@
 #ifndef utility_listhelpersH
 #define utility_listhelpersH
 
+#include "utility/ranges.h"
+
 #include <algorithm>
 #include <vector>
 
@@ -38,7 +40,7 @@ struct trait_add_const<T*>
 template <typename T>
 bool Contains (const std::vector<T>& container, const typename trait_add_const<T>::type& elem)
 {
-	return std::find (container.begin(), container.end(), elem) != container.end();
+	return ranges::find (container, elem) != container.end();
 }
 
 template <typename T>

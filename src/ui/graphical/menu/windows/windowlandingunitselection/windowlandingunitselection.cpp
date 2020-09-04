@@ -273,7 +273,7 @@ bool cWindowLandingUnitSelection::tryAddSelectedUnit (const cUnitListViewItemBuy
 //------------------------------------------------------------------------------
 bool cWindowLandingUnitSelection::tryRemoveSelectedUnit (const cUnitListViewItemCargo& unitItem) const
 {
-	if (std::find (fixedSelectedUnits.begin(), fixedSelectedUnits.end(), &unitItem) != fixedSelectedUnits.end()) return false;
+	if (ranges::find (fixedSelectedUnits, &unitItem) != fixedSelectedUnits.end()) return false;
 
 	const auto& unitId = unitItem.getUnitId();
 	int buildCosts = unitsData->getDynamicUnitData(unitId, getPlayer().getClan()).getBuildCost();

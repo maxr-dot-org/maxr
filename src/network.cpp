@@ -371,7 +371,7 @@ void cNetwork::pushReadyMessages(cSocket* socket)
 		connectionManager.messageReceived(socket, socket->buffer.data + readPos + HEADER_LENGTH, messageLength);
 
 		//socket died during handling in connectionManager
-		if (std::find(sockets.begin(), sockets.end(), socket) == sockets.end()) return;
+		if (ranges::find (sockets, socket) == sockets.end()) return;
 
 		//save position of next message
 		readPos += messageLength + HEADER_LENGTH;
