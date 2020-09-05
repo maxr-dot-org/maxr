@@ -256,7 +256,7 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 		allClientsSignalConnectionManager.connect (client->guiSaveInfoReceived, [this, client] (const cNetMessageGUISaveInfo & guiInfo)
 		{
 			if (guiInfo.playerNr != client->getActivePlayer().getId()) return;
-			
+
 			const cMap& map = *client->getModel().getMap();
 
 			for (size_t i = 0; i < savedPositions.size(); i++)
@@ -897,7 +897,7 @@ void cGameGuiController::connectClient (cClient& client)
 		if (unit.isAVehicle())
 		{
 			auto& vehicle = static_cast<const cVehicle&>(unit);
-			
+
 			if (!vehicle.isSurveyorAutoMoveActive())
 			{
 				client.addSurveyorMoveJob(vehicle);
@@ -958,7 +958,7 @@ void cGameGuiController::connectClient (cClient& client)
 			if (vehicle.getMoveJob() && !vehicle.isUnitMoving())
 			{
 				resumeMoveJobTriggered(vehicle);
-			}		
+			}
 		}
 		doneList.push_back(unit.getId());
 	});
@@ -1130,7 +1130,7 @@ void cGameGuiController::connectClient (cClient& client)
 		else if (unit.isABuilding())
 		{
 			const auto& building = static_cast<const cBuilding&> (unit);
-			
+
 			cUnit* target = cAttackJob::selectTarget (position, building.getStaticUnitData().canAttack, *mapView, building.getOwner());
 
 			activeClient->sendNetMessage(cActionAttack(building, position, target));
@@ -1596,8 +1596,10 @@ void cGameGuiController::showFilesWindow()
 		try
 		{
 			if (server == nullptr)
+			{
 				application.show (std::make_shared<cDialogOk> (lngPack.i18n("Text~Multiplayer~Save_Only_Host")));
-
+				return;
+			}
 			server->saveGameState(saveNumber, name);
 			cSoundDevice::getInstance().playVoice(VoiceData.VOISaved);
 
@@ -1616,7 +1618,7 @@ void cGameGuiController::showPreferencesDialog()
 {
 	application.show (std::make_shared<cDialogPreferences> ());
 }
- 
+
 //------------------------------------------------------------------------------
 void cGameGuiController::showReportsWindow()
 {
@@ -1939,7 +1941,7 @@ void cGameGuiController::handleChatCommand(const std::string& chatString)
 		}
 	}
 	else if(activeClient)
-	{		
+	{
 		cNetMessageReport netMsg(std::make_unique<cSavedReportChat>(*getActivePlayer(), chatString));
 		activeClient->sendNetMessage(netMsg);
 	}
@@ -2170,7 +2172,7 @@ void cGameGuiController::sendStartGroupMoveAction(std::vector<cVehicle*> group, 
 		RemoveEmpty(paths);
 	}
 
-	// start remaining movements. This is necessary, when there are group members, that have no path 
+	// start remaining movements. This is necessary, when there are group members, that have no path
 	// to destination, or not enough movement points.
 	for (size_t i = 0; i < group.size(); i++)
 	{
@@ -2196,7 +2198,7 @@ void cGameGuiController::updateEndButtonState()
 	const cFreezeModes& freezeModes = activeClient->getFreezeModes();
 	const auto& model = activeClient->getModel();
 
-	if (freezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND) || 
+	if (freezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND) ||
 	   (activeClient->getModel().getActiveTurnPlayer() != getActivePlayer().get() && model.getGameSettings()->getGameType() == eGameSettingsGameType::Turns) ||
 	    getActivePlayer()->getHasFinishedTurn())
 	{
