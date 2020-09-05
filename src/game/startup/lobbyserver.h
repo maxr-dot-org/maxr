@@ -31,6 +31,7 @@
 
 #include <memory>
 #include <set>
+#include <string>
 #include <vector>
 
 class cLobbyClient;
@@ -46,6 +47,7 @@ public:
 	std::unique_ptr<cNetMessage2> popMessage() override;
 	void run();
 
+	std::string getGameState() const;
 	const cPlayerBasicData* getConstPlayer (int) const;
 
 #if 0

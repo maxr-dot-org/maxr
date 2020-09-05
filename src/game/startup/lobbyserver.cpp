@@ -71,6 +71,24 @@ std::unique_ptr<cNetMessage2> cLobbyServer::popMessage()
 	return message;
 }
 
+//------------------------------------------------------------------------------
+std::string cLobbyServer::getGameState() const
+{
+	std::stringstream result;
+	result << "GameState: ";
+
+	if (landingPositionManager == nullptr)
+		result << "Game is open for new players" << std::endl;
+	else
+		result << "Game has started, players are setting up" << std::endl;
+
+	result << "Map: " << (staticMap != nullptr ? staticMap->getName() : "none") << std::endl;
+
+	result << "Players:" << std::endl;
+	for (const auto& player : players)
+		result << " " << player.getName() << std::endl;
+	return result.str();
+}
 
 //------------------------------------------------------------------------------
 const cPlayerBasicData* cLobbyServer::getConstPlayer (int playerNr) const

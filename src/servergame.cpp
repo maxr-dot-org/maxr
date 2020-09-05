@@ -361,37 +361,5 @@ void cServerGame::terminateServer()
 //------------------------------------------------------------------------------
 std::string cServerGame::getGameState() const
 {
-#if 0
-	std::stringstream result;
-	result << "GameState: ";
-
-	if (server == nullptr)
-		result << "Game is open for new players" << endl;
-	else if (server-> serverState == SERVER_STATE_INITGAME)
-		result << "Game has started, players are setting up" << endl;
-	else if (server->serverState == SERVER_STATE_INGAME)
-		result << "Game is active" << endl;
-
-	result << "Map: " << (map != nullptr ? map->getName() : "none") << endl;
-	if (server != nullptr)
-		result << "Turn: " << server->getTurnClock()->getTurn() << endl;
-
-	result << "Players:" << endl;
-	if (server != nullptr && server->playerList.empty() == false)
-	{
-		for (size_t i = 0; i != server->playerList.size(); ++i)
-		{
-			const cPlayer& player = *server->playerList[i];
-			result << " " << player.getName() << (server->isPlayerDisconnected (player) ? " (disconnected)" : " (online)") << endl;
-		}
-	}
-	else if (menuPlayers.empty() == false)
-	{
-		for (size_t i = 0; i < menuPlayers.size(); i++)
-			result << " " << menuPlayers[i]->getName() << endl;
-	}
-	return result.str();
-#else
-	return "Not yet implemented";
-#endif
+	return (server == nullptr) ? lobbyServer.getGameState() : server->getGameState();
 }

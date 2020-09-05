@@ -63,6 +63,23 @@ cServer2::~cServer2()
 }
 
 //------------------------------------------------------------------------------
+std::string cServer2::getGameState() const
+{
+	std::stringstream result;
+	result << "GameState: Game is active" << std::endl;
+
+	result << "Map: " << model.getMap()->getName() << std::endl;
+	result << "Turn: " << model.getTurnCounter()->getTurn() << std::endl;
+
+	result << "Players:" << std::endl;
+	for (auto player : model.getPlayerList())
+	{
+		result << " " << player->getName() << (playerConnectionStates.at (player->getId()) == ePlayerConnectionState::CONNECTED ? " (online)" : " (disconnected)") << std::endl;
+	}
+	return result.str();
+}
+
+//------------------------------------------------------------------------------
 void cServer2::setMap(std::shared_ptr<cStaticMap> staticMap)
 {
 	model.setMap(staticMap);
@@ -121,7 +138,7 @@ void cServer2::loadGameState(int saveGameNumber)
 //------------------------------------------------------------------------------
 void cServer2::sendGuiInfoToClients(int saveGameNumber, int playerNr /*= -1*/)
 {
-	try 
+	try
 	{
 		savegame.loadGuiInfo(this, saveGameNumber);
 	}
@@ -210,7 +227,7 @@ void cServer2::run()
 				Log.write("Server: <-- " + archive.data() + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 			}
 
-			if (model.getPlayer(message->playerNr) == nullptr && 
+			if (model.getPlayer(message->playerNr) == nullptr &&
 				message->getType() != eNetMessageType::TCP_WANT_CONNECT) continue;
 
 			switch (message->getType())
@@ -218,7 +235,7 @@ void cServer2::run()
 			case eNetMessageType::ACTION:
 			{
 				const cAction& action = *static_cast<cAction*>(message.get());
-				
+
 				// filter disallowed actions
 				if (action.getType() != cAction::eActiontype::ACTION_INIT_NEW_GAME)
 				{
@@ -319,7 +336,7 @@ void cServer2::run()
 				Log.write(" Server: Can not handle net message!", cLog::eLOG_TYPE_NET_ERROR);
 				break;
 			}
-			
+
 		}
 
 		//TODO: gameinit: start timer, when all clients are ready
@@ -404,7 +421,7 @@ void cServer2::playerConnected(int playerId)
 {
 	playerConnectionStates[playerId] = ePlayerConnectionState::CONNECTED;
 	Log.write(" Server: Player " + toString(playerId) + " connected", cLog::eLOG_TYPE_NET_DEBUG);
-	updateWaitForClientFlag(); 
+	updateWaitForClientFlag();
 }
 
 //------------------------------------------------------------------------------

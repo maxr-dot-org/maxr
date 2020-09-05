@@ -20,16 +20,17 @@
 #ifndef game_logic_server2H
 #define game_logic_server2H
 
-#include <memory>
+#include "connectionmanager.h"
+#include "game/data/model.h"
+#include "game/data/savegame.h"
+#include "gametimer.h"
+#include "protocol/netmessage.h"
+#include "utility/thread/concurrentqueue.h"
 
 #include "SDL_thread.h"
 
-#include "game/data/model.h"
-#include "protocol/netmessage.h"
-#include "utility/thread/concurrentqueue.h"
-#include "gametimer.h"
-#include "game/data/savegame.h"
-#include "connectionmanager.h"
+#include <memory>
+#include <string>
 
 class cConnectionManager;
 class cPlayerBasicData;
@@ -52,10 +53,13 @@ public:
 	void start();
 	void stop();
 
+	std::string getGameState() const;
+
 	void setGameSettings(const cGameSettings& gameSettings);
 	void setMap(std::shared_ptr<cStaticMap> staticMap);
 	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData);
 	void setPlayers(const std::vector<cPlayerBasicData>& splayers);
+
 
 	const cModel& getModel() const;
 	void saveGameState(int saveGameNumber, const std::string & saveName) const;
@@ -68,7 +72,7 @@ public:
 
 	/**
 	* Set player state to NOT_RESPONDING. Freeze mode WAIT_FOR_CLIENT will
-	* be enabled if necessary. 
+	* be enabled if necessary.
 	*/
 	void setPlayerNotResponding(int playerId);
 
@@ -88,7 +92,7 @@ private:
 
 	std::shared_ptr<cConnectionManager> connectionManager;
 	cConcurrentQueue<std::unique_ptr<cNetMessage2>> eventQueue;
-	
+
 	mutable cSavegame savegame;
 
 	void initRandomGenerator();
@@ -122,7 +126,7 @@ private:
 	void run();
 	mutable SDL_Thread* serverThread;
 	mutable bool exit;
-	
+
 };
 
 #endif
