@@ -17,13 +17,30 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <algorithm>
-
 #include "game/logic/turntimeclock.h"
+
 #include "game/data/model.h"
 #include "game/logic/gametimer.h"
 
+#include <algorithm>
+#include <iomanip>
+
 const std::chrono::seconds cTurnTimeClock::alertRemainingTime (20);
+
+//------------------------------------------------------------------------------
+std::string to_MM_ss(std::chrono::milliseconds time)
+{
+	const auto minutes = std::chrono::duration_cast<std::chrono::minutes> (time);
+	const auto seconds = std::chrono::duration_cast<std::chrono::seconds> (time) - std::chrono::duration_cast<std::chrono::seconds> (minutes);
+
+	std::stringstream text;
+
+	text << std::setw (2) << std::setfill ('0') << minutes.count()
+		 << ":"
+		 << std::setw (2) << std::setfill ('0') << seconds.count();
+
+	return text.str();
+}
 
 //------------------------------------------------------------------------------
 cTurnTimeDeadline::cTurnTimeDeadline (unsigned int startGameTime_, const std::chrono::milliseconds& deadline_, unsigned int id_) :

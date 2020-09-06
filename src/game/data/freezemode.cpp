@@ -20,21 +20,21 @@
 #include "freezemode.h"
 
 #include <cassert>
- 
- //------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 std::string enumToString(ePlayerConnectionState value)
 {
 	switch (value)
 	{
-	case ePlayerConnectionState::INACTIVE: return "INACTIVE";
-	case ePlayerConnectionState::CONNECTED: return "CONNECTED";
-	case ePlayerConnectionState::NOT_RESPONDING: return "NOT_RESPONDING";
-	case ePlayerConnectionState::DISCONNECTED: return "DISCONNECTED";
+	case ePlayerConnectionState::INACTIVE: return "Inactive";
+	case ePlayerConnectionState::CONNECTED: return "Connected";
+	case ePlayerConnectionState::NOT_RESPONDING: return "Not responding";
+	case ePlayerConnectionState::DISCONNECTED: return "Disconnected";
 	}
 	assert(false);
 	return std::to_string(static_cast<int>(value));
 }
- 
+
 //------------------------------------------------------------------------------
 std::string enumToString(eFreezeMode value)
 {
@@ -62,7 +62,7 @@ void cFreezeModes::enable (eFreezeMode mode)
 		return;
 	case eFreezeMode::WAIT_FOR_CLIENT:
 		waitForClient = true;
-		return; 
+		return;
 	case eFreezeMode::WAIT_FOR_SERVER:
 		waitForServer = true;
 		return;

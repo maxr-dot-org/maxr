@@ -98,7 +98,6 @@ void cLobbyClient::connectToLocalServer (cLobbyServer& server)
 	server.localClientConnects (*this, localPlayer);
 	// For network clients, similar to :
 	// sendNetMessage (cNetMessageTcpWantConnect (..))
-	// sendNetMessage (cMuMsgIdentification (localPlayer));
 }
 
 //------------------------------------------------------------------------------
@@ -281,8 +280,6 @@ void cLobbyClient::handleLobbyMessage (const cMultiplayerLobbyMessage& message)
 void cLobbyClient::handleNetMessage_TCP_CONNECTED(const cNetMessageTcpConnected& message)
 {
 	localPlayer.setNr (message.playerNr);
-
-	sendNetMessage (cMuMsgIdentification (localPlayer));
 
 	onLocalPlayerConnected();
 	if (message.packageVersion != PACKAGE_VERSION || message.packageRev != PACKAGE_REV)

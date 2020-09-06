@@ -257,6 +257,12 @@ void cLobbyServer::startGamePreparation (int fromPlayer)
 }
 
 //------------------------------------------------------------------------------
+void cLobbyServer::startLoadGame()
+{
+	onStartLoadGame (saveGameInfo, connectionManager);
+}
+
+//------------------------------------------------------------------------------
 const cPlayerBasicData* cLobbyServer::findNotReadyPlayer() const
 {
 	auto it = ranges::find_if (players, [](const auto& player){ return !player.isReady(); });

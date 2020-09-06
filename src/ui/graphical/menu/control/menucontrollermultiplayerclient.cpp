@@ -139,7 +139,7 @@ cMenuControllerMultiplayerClient::cMenuControllerMultiplayerClient (cApplication
 
 	signalConnectionManager.connect (lobbyClient.onReconnectGame, [this](std::shared_ptr<cStaticMap> staticMap, std::shared_ptr<cConnectionManager> connectionManager, cPlayerBasicData localPlayer, const std::vector<cPlayerBasicData>& playerList){
 		auto yesNoDialog = application.show(std::make_shared<cDialogYesNo>(lngPack.i18n("Text~Multiplayer~Reconnect")));
-		signalConnectionManager.connect(yesNoDialog->yesClicked, [&, this]()
+		signalConnectionManager.connect(yesNoDialog->yesClicked, [=]()
 		{
 			reconnectToGame (staticMap, connectionManager, localPlayer, playerList);
 		});

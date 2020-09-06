@@ -20,8 +20,9 @@
 #ifndef game_logic_turntimeclockH
 #define game_logic_turntimeclockH
 
-#include <memory>
 #include <chrono>
+#include <memory>
+#include <string>
 
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
@@ -107,5 +108,7 @@ private:
 	std::chrono::milliseconds getTimeTillDeadlineReached (const cTurnTimeDeadline& deadline) const;
 
 };
+
+std::string to_MM_ss(std::chrono::milliseconds);
 
 #endif // game_logic_turnclockH

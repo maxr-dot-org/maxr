@@ -17,22 +17,22 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include <SDL_thread.h>
-
 #include "server2.h"
 
+#include "connectionmanager.h"
+#include "debug.h"
+#include "game/data/player/playerbasicdata.h"
+#include "game/data/report/special/savedreportlostconnection.h"
+#include "game/data/savegame.h"
 #include "game/logic/action/action.h"
+#include "game/logic/turntimeclock.h"
+#include "protocol/netmessage.h"
 #include "utility/language.h"
 #include "utility/log.h"
-#include "game/data/player/playerbasicdata.h"
-#include <time.h>
 #include "utility/random.h"
-#include "game/data/savegame.h"
-#include "protocol/netmessage.h"
 #include "utility/string/toString.h"
-#include "connectionmanager.h"
-#include "game/data/report/special/savedreportlostconnection.h"
-#include "debug.h"
+
+#include <SDL_thread.h>
 
 //------------------------------------------------------------------------------
 cServer2::cServer2(std::shared_ptr<cConnectionManager> connectionManager) :
@@ -70,11 +70,14 @@ std::string cServer2::getGameState() const
 
 	result << "Map: " << model.getMap()->getName() << std::endl;
 	result << "Turn: " << model.getTurnCounter()->getTurn() << std::endl;
+	const auto& turnTimeClock = *model.getTurnTimeClock();
+	const auto time = turnTimeClock.hasDeadline() ? turnTimeClock.getTimeTillFirstDeadline() : turnTimeClock.getTimeSinceStart();
+	result << "Time: " << to_MM_ss(time) << (turnTimeClock.hasDeadline() ? " (deadline)" : "") << std::endl;
 
 	result << "Players:" << std::endl;
 	for (auto player : model.getPlayerList())
 	{
-		result << " " << player->getName() << (playerConnectionStates.at (player->getId()) == ePlayerConnectionState::CONNECTED ? " (online)" : " (disconnected)") << std::endl;
+		result << " " << player->getName() << " (" << enumToString (playerConnectionStates.at (player->getId())) << ")" <<  std::endl;
 	}
 	return result.str();
 }
@@ -336,7 +339,6 @@ void cServer2::run()
 				Log.write(" Server: Can not handle net message!", cLog::eLOG_TYPE_NET_ERROR);
 				break;
 			}
-
 		}
 
 		//TODO: gameinit: start timer, when all clients are ready

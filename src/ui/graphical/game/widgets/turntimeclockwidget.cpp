@@ -55,19 +55,9 @@ void cTurnTimeClockWidget::update()
 		textLabel->setFont (FONT_LATIN_NORMAL);
 		return;
 	}
-
 	const auto time = turnTimeClock->hasDeadline() ? turnTimeClock->getTimeTillFirstDeadline() : turnTimeClock->getTimeSinceStart();
 
-	const auto minutes = std::chrono::duration_cast<std::chrono::minutes> (time);
-	const auto seconds = std::chrono::duration_cast<std::chrono::seconds> (time) - std::chrono::duration_cast<std::chrono::seconds> (minutes);
-
-	std::stringstream text;
-
-	text << std::setw (2) << std::setfill ('0') << minutes.count()
-		 << ":"
-		 << std::setw (2) << std::setfill ('0') << seconds.count();
-
-	textLabel->setText (text.str());
+	textLabel->setText (to_MM_ss(time));
 
 	if (turnTimeClock->hasDeadline() && std::chrono::duration_cast<std::chrono::seconds> (time) <= cTurnTimeClock::alertRemainingTime)
 	{

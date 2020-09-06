@@ -128,6 +128,14 @@ cServerGame::cServerGame (std::shared_ptr<cConnectionManager> connectionManager)
 		server->start();
 	});
 
+	signalConnectionManager.connect (lobbyServer.onStartLoadGame, [this](const cSaveGameInfo& saveGameInfo, std::shared_ptr<cConnectionManager> connectionManager)
+	{
+		server = std::make_unique<cServer2> (connectionManager);
+		server->loadGameState (saveGameInfo.number);
+		connectionManager->setLocalServer(server.get());
+		server->start();
+		//server->enableFreezeMode (eFreezeMode::PAUSE);
+	});
 }
 
 //------------------------------------------------------------------------------
@@ -161,13 +169,9 @@ std::unique_ptr<cNetMessage2> cServerGame::popMessage()
 //------------------------------------------------------------------------------
 bool cServerGame::loadGame (int saveGameNumber)
 {
-	/*cSavegame savegame (saveGameNumber);
-	server = std::make_unique<cServer> (network);
-	if (savegame.load (*server) == false)
-		return false;
-	server->markAllPlayersAsDisconnected();
-	server->serverState = SERVER_STATE_INGAME;
-	*/
+	cSaveGameInfo saveGameInfo(saveGameNumber);
+	lobbyServer.selectSaveGameInfo (saveGameInfo);
+	lobbyServer.startLoadGame();
 	return true;
 }
 

@@ -70,6 +70,8 @@ public:
 	// TODO: should be cMessage
 	void startGamePreparation (int fromPlayer);
 
+	void startLoadGame();
+
 	const cPlayerBasicData* findNotReadyPlayer() const;
 
 	cSignal<void (const cPlayerBasicData&)> onClientConnected;
@@ -79,6 +81,8 @@ public:
 	cSignal<void (const cPlayerBasicData& fromPlayer)> onMapUploaded;
 
 	cSignal<void (const sLobbyPreparationData&, std::shared_ptr<cConnectionManager>)> onStartNewGame;
+	cSignal<void (const cSaveGameInfo&, std::shared_ptr<cConnectionManager>)> onStartLoadGame;
+
 private:
 
 	cPlayerBasicData* getPlayer (int);
