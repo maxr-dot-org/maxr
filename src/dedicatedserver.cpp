@@ -34,8 +34,6 @@
 #include <sstream>
 #include <vector>
 
-using namespace std;
-
 //------------------------------------------------------------------------
 class cDedicatedServerConfig
 {
@@ -75,77 +73,77 @@ void cDedicatedServer::run()
 {
 	printHelp (kHelpHelp);
 	printPrompt();
-	bool done = false;
-	while (done == false)
+
+	while (true)
 	{
-		string input;
-		getline (cin, input);  // waits for user input in the terminal
-		if (cin.good() == false)   // happens during debugging
-			cin.clear();
+		std::string input;
+		std::getline (std::cin, input);  // waits for user input in the terminal
+		if (std::cin.good() == false)   // happens during debugging
+			std::cin.clear();
 		if (handleInput (input) == false)
-			done = true;
+			break;
 		printPrompt();
 	}
 }
 
 //------------------------------------------------------------------------
-bool cDedicatedServer::handleInput (const string& command)
+bool cDedicatedServer::handleInput (const std::string& command)
 {
-	vector<string> tokens;
-	istringstream iss (command);
-	copy (istream_iterator<string> (iss), istream_iterator<string>(), back_inserter<vector<string> > (tokens));
+	std::vector<std::string> tokens;
+	std::istringstream iss (command);
+	std::copy (std::istream_iterator<std::string> (iss), std::istream_iterator<std::string>(), std::back_inserter<std::vector<std::string>> (tokens));
 	if (tokens.empty())
 		return true;
-	if (tokens.at (0).compare ("help") == 0)
+	if (tokens.at (0) == "help")
 	{
 		if (tokens.size() == 1) printHelp (kHelpGeneral);
-		else if (tokens.at (1).compare ("newGame") == 0) printHelp (kHelpNewGame);
-		else if (tokens.at (1).compare ("loadGame") == 0) printHelp (kHelpLoadGame);
-		else if (tokens.at (1).compare ("saveGame") == 0) printHelp (kHelpSaveGame);
-		else if (tokens.at (1).compare ("stop") == 0) printHelp (kHelpStop);
-		else if (tokens.at (1).compare ("games") == 0) printHelp (kHelpGames);
-		else if (tokens.at (1).compare ("maps") == 0) printHelp (kHelpMaps);
-		else if (tokens.at (1).compare ("set") == 0) printHelp (kHelpSet);
-		else if (tokens.at (1).compare ("printconfig") == 0) printHelp (kHelpPrintConfig);
-		else if (tokens.at (1).compare ("exit") == 0) printHelp (kHelpExit);
+		else if (tokens.at (1) == "newGame") printHelp (kHelpNewGame);
+		else if (tokens.at (1) == "loadGame") printHelp (kHelpLoadGame);
+		else if (tokens.at (1) == "saveGame") printHelp (kHelpSaveGame);
+		else if (tokens.at (1) == "stop") printHelp (kHelpStop);
+		else if (tokens.at (1) == "games") printHelp (kHelpGames);
+		else if (tokens.at (1) == "maps") printHelp (kHelpMaps);
+		else if (tokens.at (1) == "set") printHelp (kHelpSet);
+		else if (tokens.at (1) == "printconfig") printHelp (kHelpPrintConfig);
+		else if (tokens.at (1) == "exit") printHelp (kHelpExit);
 		// ...
 	}
-	else if (tokens.at (0).compare ("newGame") == 0)
+	else if (tokens.at (0) == "newGame")
 		return startServer();
-	else if (tokens.at (0).compare ("loadGame") == 0)
+	else if (tokens.at (0) == "loadGame")
 	{
 		if (tokens.size() == 2)
 			return startServer (atoi (tokens.at (1).c_str()));
 		else
 		{
-			cout << "No savegame number given. Trying to load auto save (savegame number " << kAutoSaveSlot << ")." << endl;
+			std::cout << "No savegame number given. Trying to load auto save (savegame number " << kAutoSaveSlot << ")." << std::endl;
 			return startServer (kAutoSaveSlot);
 		}
 	}
-	else if (tokens.at (0).compare ("saveGame") == 0)
+	else if (tokens.at (0) == "saveGame")
 	{
 		if (tokens.size() == 2)
 			saveGame (atoi (tokens.at (1).c_str()));
 		else
 			printHelp (kHelpWrongArguments);
 	}
-	else if (tokens.at (0).compare ("set") == 0)
+	else if (tokens.at (0) == "set")
 	{
 		if (tokens.size() == 3)
 			setProperty (tokens.at (1), tokens.at (2));
 		else
 			printHelp (kHelpWrongArguments);
 	}
-	else if (tokens.at (0).compare ("games") == 0)
+	else if (tokens.at (0) == "games")
 		printGames();
-	else if (tokens.at (0).compare ("maps") == 0)
+	else if (tokens.at (0) == "maps")
 		printMaps();
-	else if (tokens.at (0).compare ("printconfig") == 0)
+	else if (tokens.at (0) == "printconfig")
 		printConfiguration();
-	else if (tokens.at (0).compare ("exit") == 0)
+	else if (tokens.at (0) == "exit")
 		return false;
 	// ...
-	else if (tokens.at (0).compare ("stop") == 0)
+	else if (tokens.at (0) == "stop")
 		printHelp (kNotImplementedYet);
 	else
 		printHelp (kHelpUnknownCommand);
@@ -157,14 +155,14 @@ bool cDedicatedServer::startServer (int saveGameNumber)
 {
 	if (connectionManager->isServerOpen())
 	{
-		cout << "WARNING: Server is already open." << endl;
+		std::cout << "WARNING: Server is already open." << std::endl;
 		return true;
 	}
-	cout << "Starting server on port " << configuration->port << "..." << endl;
+	std::cout << "Starting server on port " << configuration->port << "..." << std::endl;
 
 	if (connectionManager->openServer(configuration->port))
 	{
-		cout << "ERROR: Initializing network failed." << endl;
+		std::cout << "ERROR: Initializing network failed." << std::endl;
 		return false;
 	}
 
@@ -181,8 +179,8 @@ bool cDedicatedServer::startServer (int saveGameNumber)
 //------------------------------------------------------------------------
 void cDedicatedServer::startNewGame()
 {
-	cout << "Setting up new game..." << endl;
-	auto game = make_unique<cServerGame> (connectionManager);
+	std::cout << "Setting up new game..." << std::endl;
+	auto game = std::make_unique<cServerGame> (connectionManager);
 	game->prepareGameData();
 	games.push_back (std::move (game));
 	games.back()->runInThread();
@@ -191,11 +189,11 @@ void cDedicatedServer::startNewGame()
 //------------------------------------------------------------------------
 void cDedicatedServer::loadSaveGame (int saveGameNumber)
 {
-	cout << "Setting up game from saved game number " << saveGameNumber << " ..." << endl;
+	std::cout << "Setting up game from saved game number " << saveGameNumber << " ..." << std::endl;
 	auto game = std::make_unique<cServerGame> (connectionManager);
 	if (game->loadGame (saveGameNumber) == false)
 	{
-		cout << "Loading game failed. Game is not setup." << endl;
+		std::cout << "Loading game failed. Game is not setup." << std::endl;
 		return;
 	}
 	games.push_back (std::move (game));
@@ -207,54 +205,54 @@ void cDedicatedServer::saveGame (int saveGameNumber)
 {
 	if (games.empty() == false)
 	{
-		cout << "Save game in slot " << saveGameNumber << endl;
+		std::cout << "Save game in slot " << saveGameNumber << std::endl;
 		games[0]->saveGame (saveGameNumber);
 	}
 	else
-		cout << "No game running. Can't save." << endl;
+		std::cout << "No game running. Can't save." << std::endl;
 }
 
 //------------------------------------------------------------------------
-void cDedicatedServer::setProperty (const string& property, const string& value)
+void cDedicatedServer::setProperty (const std::string& property, const std::string& value)
 {
-	if (property.compare ("port") == 0)
+	if (property == "port")
 	{
 		int newPort = atoi (value.c_str());
 		if (newPort < 0 || newPort >= 65536)
 			newPort = DEFAULTPORT;
 		configuration->port = newPort;
-		cout << "Port set to: " << newPort << endl;
+		std::cout << "Port set to: " << newPort << std::endl;
 	}
 }
 
 //------------------------------------------------------------------------
 void cDedicatedServer::printConfiguration() const
 {
-	cout << "--- Server Configuration ---" << endl;
-	cout << "port: " << configuration->port << endl;
+	std::cout << "--- Server Configuration ---" << std::endl;
+	std::cout << "port: " << configuration->port << std::endl;
 }
 
 //------------------------------------------------------------------------
 void cDedicatedServer::printPrompt() const
 {
-	cout << "> ";
+	std::cout << "> ";
 }
 
 //------------------------------------------------------------------------
 void cDedicatedServer::printGames() const
 {
-	cout << getGamesString();
+	std::cout << getGamesString();
 }
 
 //------------------------------------------------------------------------
-string cDedicatedServer::getGamesString() const
+std::string cDedicatedServer::getGamesString() const
 {
-	stringstream oss;
+	std::stringstream oss;
 	if (games.empty())
-		oss << "No games started" << endl;
+		oss << "No games started" << std::endl;
 	for (size_t i = 0; i < games.size(); i++)
 	{
-		oss << "--------- Game " << i << ": -----------" << endl;
+		oss << "--------- Game " << i << ": -----------" << std::endl;
 		const auto& game = games[i];
 		oss << game->getGameState();
 	}
@@ -264,13 +262,13 @@ string cDedicatedServer::getGamesString() const
 //------------------------------------------------------------------------
 void cDedicatedServer::printMaps() const
 {
-	cout << getAvailableMapsString();
+	std::cout << getAvailableMapsString();
 }
 
 //------------------------------------------------------------------------
-string cDedicatedServer::getAvailableMapsString() const
+std::string cDedicatedServer::getAvailableMapsString() const
 {
-	stringstream oss;
+	std::stringstream oss;
 	std::vector<std::string> maps = getFilesOfDirectory (cSettings::getInstance().getMapsPath());
 	if (getUserMapsDir().empty() == false)
 	{
@@ -281,32 +279,32 @@ string cDedicatedServer::getAvailableMapsString() const
 				maps.push_back (userMaps[i]);
 		}
 	}
-	oss << "----- Available maps: ------" << endl;
+	oss << "----- Available maps: ------" << std::endl;
 	for (size_t i = 0; i != maps.size(); ++i)
 	{
-		string mapFilename = maps[i];
+		std::string mapFilename = maps[i];
 		if (mapFilename.compare (mapFilename.length() - 3, 3, "WRL") == 0
 			|| mapFilename.compare (mapFilename.length() - 3, 3, "wrl") == 0)
 		{
-			oss << mapFilename << endl;
+			oss << mapFilename << std::endl;
 		}
 	}
 	return oss.str();
 }
 
 //------------------------------------------------------------------------
-string cDedicatedServer::getServerHelpString() const
+std::string cDedicatedServer::getServerHelpString() const
 {
-	stringstream oss;
-	oss << "--- Dedicated server help ---" << endl;
-	oss << "Type --server and then one of the following:" << endl;
-	oss << "go : starts the game" << endl;
-	oss << "games : shows the running games and their players" << endl;
-	oss << "maps : shows the available maps" << endl;
-	oss << "map mapname.wrl : changes the map" << endl;
-	oss << "credits 0 | 50 | 100 | 150 | 200 | 250 : changes the starting credits" << endl;
-	oss << "oil | gold | metal  low | normal | much | most : resource density" << endl;
-	oss << "res sparse | normal | dense | most : changes the resource frequency" << endl;
+	std::stringstream oss;
+	oss << "--- Dedicated server help ---" << std::endl;
+	oss << "Type --server and then one of the following:" << std::endl;
+	oss << "go : starts the game" << std::endl;
+	oss << "games : shows the running games and their players" << std::endl;
+	oss << "maps : shows the available maps" << std::endl;
+	oss << "map mapname.wrl : changes the map" << std::endl;
+	oss << "credits 0 | 50 | 100 | 150 | 200 | 250 : changes the starting credits" << std::endl;
+	oss << "oil | gold | metal  low | normal | much | most : resource density" << std::endl;
+	oss << "res sparse | normal | dense | most : changes the resource frequency" << std::endl;
 	return oss.str();
 }
 
@@ -316,54 +314,54 @@ void cDedicatedServer::printHelp (eHelpCommands helpCommand) const
 	switch (helpCommand)
 	{
 		case kHelpUnknownCommand:
-			cout << "Unknown command." << endl;
+			std::cout << "Unknown command." << std::endl;
 			break;
 		case kNotImplementedYet:
-			cout << "Not implemented yet." << endl;
+			std::cout << "Not implemented yet." << std::endl;
 			break;
 		case kHelpHelp:
-			cout << "Type \"help\" for help." << endl;
+			std::cout << "Type \"help\" for help." << std::endl;
 			break;
 		case kHelpWrongArguments:
-			cout << "Wrong number or wrong formated arguments" << endl;
+			std::cout << "Wrong number or wrong formatted arguments" << std::endl;
 			break;
 		case kHelpGeneral:
-			cout << "Available commands: newGame loadGame saveGame stop games maps set printconfig exit" << endl;
-			cout << "Type \"help command\" to see help to a sepecific command" << endl;
+			std::cout << "Available commands: newGame loadGame saveGame stop games maps set printconfig exit" << std::endl;
+			std::cout << "Type \"help command\" to see help to a sepecific command" << std::endl;
 			break;
 		case kHelpNewGame:
-			cout << "Starts the server and allows players to open games and connect to the server." << endl;
+			std::cout << "Starts the server and allows players to open games and connect to the server." << std::endl;
 			break;
 		case kHelpLoadGame:
-			cout << "Starts the server, loads a savegame and allows players to reconnect (resync) to the server." << endl;
-			cout << "Type: \"loadGame x\" to load savegame x (x is the number of the savegame slot; 11 is autosave)." << endl;
+			std::cout << "Starts the server, loads a savegame and allows players to reconnect (resync) to the server." << std::endl;
+			std::cout << "Type: \"loadGame x\" to load savegame x (x is the number of the savegame slot; 11 is autosave)." << std::endl;
 			break;
 		case kHelpSaveGame:
-			cout << "Save the current game to the given savegame slot." << endl;
-			cout << "Type: \"saveGame x\" to save the game to slot x (x is a number >= 0)." << endl;
+			std::cout << "Save the current game to the given savegame slot." << std::endl;
+			std::cout << "Type: \"saveGame x\" to save the game to slot x (x is a number >= 0)." << std::endl;
 			break;
 		case kHelpStop:
-			cout << "Stops the server and all running games." << endl;
+			std::cout << "Stops the server and all running games." << std::endl;
 			break;
 		case kHelpGames:
-			cout << "Prints the list of currently running games." << endl;
+			std::cout << "Prints the list of currently running games." << std::endl;
 			break;
 		case kHelpMaps:
-			cout << "Prints the names of the available maps." << endl;
+			std::cout << "Prints the names of the available maps." << std::endl;
 			break;
 		case kHelpSet:
-			cout << "Sets a configuration property of the server." << endl << "For some properties, the server must not run already." << endl;
-			cout << "Type \"set property-name value\". Available properties:" << endl;
-			cout << " port  - the tcp port, on which the server listens." << endl;
+			std::cout << "Sets a configuration property of the server." << std::endl << "For some properties, the server must not run already." << std::endl;
+			std::cout << "Type \"set property-name value\". Available properties:" << std::endl;
+			std::cout << " port  - the tcp port, on which the server listens." << std::endl;
 			break;
 		case kHelpPrintConfig:
-			cout << "Prints the configuration of the server to the console" << endl;
+			std::cout << "Prints the configuration of the server to the console" << std::endl;
 			break;
 		case kHelpExit:
-			cout << "Quits without bothering to stop a running server before." << endl << "You should call stop before." << endl;
+			std::cout << "Quits without bothering to stop a running server before." << std::endl << "You should call stop before." << std::endl;
 			break;
 		default:
-			cout << "Error in printHelp: no help page implemented. Please contact developers." << endl;
+			std::cout << "Error in printHelp: no help page implemented. Please contact developers." << std::endl;
 			break;
 	}
 }
@@ -400,25 +398,25 @@ bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage2& message)
 	const auto& chatText = chatMessage.message;
 
 	size_t serverStringPos = chatText.find ("--server");
-	if (serverStringPos != string::npos && chatText.length() > serverStringPos + 9)
+	if (serverStringPos != std::string::npos && chatText.length() > serverStringPos + 9)
 	{
 		std::string command = chatText.substr (serverStringPos + 9);
-		std::vector<string> tokens;
+		std::vector<std::string> tokens;
 		std::istringstream iss (command);
 		std::copy (std::istream_iterator<std::string> (iss), std::istream_iterator<std::string>(), std::back_inserter<std::vector<std::string> > (tokens));
 		if (tokens.size() == 1)
 		{
-			if (tokens[0].compare ("games") == 0)
+			if (tokens[0] == "games")
 			{
 				sendChatMessage (getGamesString(), message.playerNr);
 				return true;
 			}
-			else if (tokens[0].compare ("maps") == 0)
+			else if (tokens[0] == "maps")
 			{
 				sendChatMessage (getAvailableMapsString(), message.playerNr);
 				return true;
 			}
-			else if (tokens[0].compare ("help") == 0)
+			else if (tokens[0] == "help")
 			{
 				sendChatMessage (getServerHelpString(), message.playerNr);
 				return true;
@@ -442,13 +440,3 @@ void cDedicatedServer::sendChatMessage (const std::string& text, int receiver)
 		connectionManager->sendToPlayer(message, receiver);
 	}
 }
-
-
-#if 0 //TODO: reimplement
-//------------------------------------------------------------------------
-void cDedicatedServer::doAutoSave (cServer2& server)
-{
-	cSavegame Savegame (kAutoSaveSlot);	// dedicated server autosaves are always in slot kAutoSaveSlot
-	Savegame.save (server, "Dedicated Server Autosave");
-}
-#endif

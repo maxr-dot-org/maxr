@@ -20,26 +20,26 @@
 #ifndef ServerGame_H
 #define ServerGame_H
 
-#include <SDL.h>
-
-#include <string>
-#include <vector>
-#include <memory>
-
-#include "utility/thread/concurrentqueue.h"
-#include "utility/signal/signalconnectionmanager.h"
 #include "game/data/gamesettings.h"
 #include "game/logic/server2.h"
 #include "game/startup/lobbyserver.h"
 #include "protocol/lobbymessage.h"
 #include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"
+#include "utility/signal/signalconnectionmanager.h"
+#include "utility/thread/concurrentqueue.h"
 
+#include <memory>
+#include <string>
+#include <vector>
+
+#include <SDL.h>
+
+class cLandingPositionManager;
 class cNetMessage2;
 class cPlayer;
-class cServer2;
 class cPlayerBasicData;
+class cServer2;
 class cStaticMap;
-class cLandingPositionManager;
 
 int serverGameThreadFunction (void* data);
 
@@ -68,10 +68,8 @@ public:
 
 	void handleChatCommand (int fromPlayer, const std::vector<std::string>& tokens);
 private:
-
 	friend int serverGameThreadFunction (void* data);
 	void run();
-	void terminateServer();
 
 	void configRessources (const std::vector<std::string>&, const cPlayerBasicData& senderPlayer);
 
@@ -81,14 +79,11 @@ private:
 
 	std::unique_ptr<cServer2> server;
 
-	std::shared_ptr<cLandingPositionManager> landingPositionManager;
-	std::vector<std::unique_ptr<cPlayerLandingStatus>> playersLandingStatus;
+	bool shouldSave = false;
+	int saveGameNumber = -1;
 
-	int saveGameNumber;
-
-	SDL_Thread* thread;
-	bool canceled;
-	bool shouldSave;
+	SDL_Thread* thread = nullptr;
+	bool canceled = false;
 };
 
 #endif

@@ -37,8 +37,6 @@
 #include <sstream>
 #include <vector>
 
-using namespace std;
-
 //------------------------------------------------------------------------------
 int serverGameThreadFunction (void* data)
 {
@@ -70,7 +68,7 @@ namespace
 
 		const auto& chatText = chatMessage.message;
 		size_t serverStringPos = chatText.find ("--server");
-		if (serverStringPos == string::npos || chatText.length() <= serverStringPos + 9)
+		if (serverStringPos == std::string::npos || chatText.length() <= serverStringPos + 9)
 		{
 			return false;
 		}
@@ -177,10 +175,10 @@ void cServerGame::saveGame (int saveGameNumber)
 {
 	if (server == nullptr)
 	{
-		cout << "Server not running. Can't save game." << endl;
+		std::cout << "Server not running. Can't save game." << std::endl;
 		return;
 	}
-	cout << "Scheduling save command for server thread..." << endl;
+	std::cout << "Scheduling save command for server thread..." << std::endl;
 	this->saveGameNumber = saveGameNumber;
 	shouldSave = true;
 }
@@ -216,15 +214,9 @@ void cServerGame::run()
 		lobbyServer.run();
 		SDL_Delay(10);
 #if 0
-//		static unsigned int lastTime = 0;
-//		if (server)
-//			lastTime = server->getModel().getGameTime();
-
-		// don't do anything if games hasn't been started yet!
-		if (server && server->serverState == SERVER_STATE_INGAME)
+		// don't do anything if games haven't been started yet!
+		if (server)
 		{
-			server->gameTimer->run (*server);
-
 			if (shouldSave)
 			{
 				/*cSavegame saveGame (saveGameNumber);
@@ -236,9 +228,9 @@ void cServerGame::run()
 		}
 #endif
 	}
-	if (server)
-		terminateServer();
+	server = nullptr;
 }
+
 //--------------------------------------------------------------------------
 void cServerGame::handleChatCommand (int fromPlayer, const std::vector<std::string>& tokens)
 {
@@ -284,7 +276,7 @@ void cServerGame::handleChatCommand (int fromPlayer, const std::vector<std::stri
 				int credits = atoi (tokens[1].c_str());
 				settings->setStartCredits (credits);
 				lobbyServer.selectGameSettings (settings);
-				string reply = senderPlayer->getName();
+				std::string reply = senderPlayer->getName();
 				reply += " changed the starting credits.";
 				lobbyServer.sendChatMessage (reply);
 			}
@@ -351,12 +343,6 @@ void cServerGame::configRessources (const std::vector<std::string>& tokens, cons
 		else
 			lobbyServer.sendChatMessage ("oil|gold|metal must be one of: low normal much most", senderPlayer.getNr());
 	}
-}
-
-//------------------------------------------------------------------------------
-void cServerGame::terminateServer()
-{
-	server = nullptr;
 }
 
 //------------------------------------------------------------------------------
