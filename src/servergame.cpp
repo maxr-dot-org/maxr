@@ -120,7 +120,6 @@ cServerGame::cServerGame (std::shared_ptr<cConnectionManager> connectionManager)
 		//server->setClansData(preparationData.clanData);
 		server->setGameSettings (*preparationData.gameSettings);
 		server->setMap (preparationData.staticMap);
-
 		server->setPlayers(preparationData.players);
 
 		connectionManager->setLocalServer(server.get());
@@ -134,7 +133,6 @@ cServerGame::cServerGame (std::shared_ptr<cConnectionManager> connectionManager)
 		server->loadGameState (saveGameInfo.number);
 		connectionManager->setLocalServer(server.get());
 		server->start();
-		//server->enableFreezeMode (eFreezeMode::PAUSE);
 	});
 }
 
@@ -171,7 +169,6 @@ bool cServerGame::loadGame (int saveGameNumber)
 {
 	cSaveGameInfo saveGameInfo(saveGameNumber);
 	lobbyServer.selectSaveGameInfo (saveGameInfo);
-	lobbyServer.startLoadGame();
 	return true;
 }
 
@@ -250,7 +247,7 @@ void cServerGame::handleChatCommand (int fromPlayer, const std::vector<std::stri
 	{
 		if (tokens[0] == "go")
 		{
-			lobbyServer.startGamePreparation (fromPlayer);
+			lobbyServer.askToFinishLobby (fromPlayer);
 		}
 	}
 	else if (tokens.size() >= 2)

@@ -228,7 +228,7 @@ void cLobbyServer::sendChatMessage (const std::string& message, int receiverPlay
 }
 
 //------------------------------------------------------------------------------
-void cLobbyServer::startGamePreparation (int fromPlayer)
+void cLobbyServer::askToFinishLobby (int fromPlayer)
 {
 	const auto notReadyPlayer = findNotReadyPlayer();
 
@@ -237,6 +237,12 @@ void cLobbyServer::startGamePreparation (int fromPlayer)
 		sendChatMessage ("Not all players are ready...", fromPlayer);
 		return;
 	}
+	if (saveGameInfo.number != -1)
+	{
+		onStartLoadGame (saveGameInfo, connectionManager);
+		return;
+	}
+
 	landingPositionManager = std::make_shared<cLandingPositionManager> (players);
 
 	signalConnectionManager.connect (landingPositionManager->landingPositionStateChanged, [this] (const cPlayerBasicData& player, eLandingPositionState state)
@@ -254,12 +260,6 @@ void cLobbyServer::startGamePreparation (int fromPlayer)
 	auto unitsData = std::make_shared<const cUnitsData>(UnitsDataGlobal);
 	auto clanData = std::make_shared<const cClanData>(ClanDataGlobal);
 	sendNetMessage (cMuMsgStartGamePreparations (unitsData, clanData));
-}
-
-//------------------------------------------------------------------------------
-void cLobbyServer::startLoadGame()
-{
-	onStartLoadGame (saveGameInfo, connectionManager);
 }
 
 //------------------------------------------------------------------------------

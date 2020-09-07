@@ -68,9 +68,7 @@ public:
 	void sendChatMessage (const std::string&, int receiverPlayerNr = -1/*, int senderPlayerNr = -1*/);
 #endif
 	// TODO: should be cMessage
-	void startGamePreparation (int fromPlayer);
-
-	void startLoadGame();
+	void askToFinishLobby (int fromPlayer);
 
 	const cPlayerBasicData* findNotReadyPlayer() const;
 
