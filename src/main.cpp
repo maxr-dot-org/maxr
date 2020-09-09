@@ -36,6 +36,8 @@
 #include <SDL_net.h>
 #include <SDL_mixer.h>
 
+#include <future>
+
 static int initNet();
 static int initSDL(bool headless);
 static int initSound();
@@ -86,18 +88,12 @@ int main (int argc, char* argv[])
 	initNet();
 
 	// load files
-	volatile int loadingState = LOAD_GOING;
-	SDL_Thread* dataThread = SDL_CreateThread (LoadData, "loadingData", const_cast<int*> (&loadingState));
+	std::future<eLoadingState> dataThread = std::async(std::launch::async, &LoadData);
+	using namespace std::literals;
 
 	SDL_Event event;
-	while (loadingState != LOAD_FINISHED)
+	while (dataThread.wait_for(100ms) == std::future_status::timeout)
 	{
-		if (loadingState == LOAD_ERROR)
-		{
-			Log.write ("Error while loading data!", cLog::eLOG_TYPE_ERROR);
-			SDL_WaitThread (dataThread, nullptr);
-			return -1;
-		}
 		while (SDL_PollEvent (&event))
 		{
 			if (!headless
@@ -107,12 +103,21 @@ int main (int argc, char* argv[])
 				Video.draw();
 			}
 		}
-		SDL_Delay (100);
 		if (!headless)
 		{
-			// The draw may be conditionned when screen has changed.
+			// The draw may be conditioned when screen has changed.
 			Video.draw();
 		}
+	}
+	if (!headless)
+	{
+		Video.draw();
+	}
+	std::this_thread::sleep_for(1s); // time to see loading status
+	if (dataThread.get() == eLoadingState::Error)
+	{
+		Log.write ("Error while loading data!", cLog::eLOG_TYPE_ERROR);
+		return -1;
 	}
 
 	if (!headless)
@@ -127,8 +132,6 @@ int main (int argc, char* argv[])
 			Log.write ("Skipped intro movie due settings", cLog::eLOG_TYPE_DEBUG);
 		}
 	}
-
-	SDL_WaitThread (dataThread, nullptr);
 
 	if (headless)
 	{

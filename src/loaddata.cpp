@@ -131,12 +131,9 @@ static void LoadUnitGraphicProperties (sBuildingUIData& data, char const* direct
 
 // LoadData ///////////////////////////////////////////////////////////////////
 // Loads all relevant files and data:
-int LoadData (void* data)
+eLoadingState LoadData()
 {
 	CR_ENABLE_CRASH_RPT_CURRENT_THREAD();
-
-	volatile int& loadingState = *static_cast<volatile int*> (data);
-	loadingState = LOAD_GOING;
 
 	if (!DEDICATED_SERVER)
 	{
@@ -147,8 +144,7 @@ int LoadData (void* data)
 			|| !FileExists ((fontPath + "latin_small.pcx").c_str()))
 		{
 			Log.write ("Missing a file needed for game. Check log and config! ", cLog::eLOG_TYPE_ERROR);
-			loadingState = LOAD_ERROR;
-			return 0;
+			return eLoadingState::Error;
 		}
 
 		cUnicodeFont::font.reset(new cUnicodeFont()); // init ascii fonts
@@ -184,9 +180,7 @@ int LoadData (void* data)
 	if (LoadLanguage() != 1 || !FileExists (sTmpString.c_str()))
 	{
 		MakeLog ("", -1, 2);
-		loadingState = LOAD_ERROR;
-		SDL_Delay (5000);
-		return -1;
+		return eLoadingState::Error;
 	}
 	else
 	{
@@ -207,9 +201,7 @@ int LoadData (void* data)
 	{
 		Log.write (e.what(), cLog::eLOG_TYPE_ERROR);
 		MakeLog ("", -1, 3);
-		SDL_Delay (5000);
-		loadingState = LOAD_ERROR;
-		return -1;
+		return eLoadingState::Error;
 	}
 	Log.mark();
 
@@ -228,9 +220,7 @@ int LoadData (void* data)
 	{
 		MakeLog ("", -1, 5);
 		Log.write ("Error while loading graphics", cLog::eLOG_TYPE_ERROR);
-		SDL_Delay (5000);
-		loadingState = LOAD_ERROR;
-		return -1;
+		return eLoadingState::Error;
 	}
 	else
 	{
@@ -244,9 +234,7 @@ int LoadData (void* data)
 	if (LoadEffects (cSettings::getInstance().getFxPath().c_str()) != 1)
 	{
 		MakeLog ("", -1, 6);
-		SDL_Delay (5000);
-		loadingState = LOAD_ERROR;
-		return -1;
+		return eLoadingState::Error;
 	}
 	else
 	{
@@ -260,9 +248,7 @@ int LoadData (void* data)
 	if (LoadVehicles() != 1)
 	{
 		MakeLog ("", -1, 7);
-		SDL_Delay (5000);
-		loadingState = LOAD_ERROR;
-		return -1;
+		return eLoadingState::Error;
 	}
 	else
 	{
@@ -276,9 +262,7 @@ int LoadData (void* data)
 	if (LoadBuildings() != 1)
 	{
 		MakeLog ("", -1, 8);
-		SDL_Delay (5000);
-		loadingState = LOAD_ERROR;
-		return -1;
+		return eLoadingState::Error;
 	}
 	else
 	{
@@ -291,9 +275,7 @@ int LoadData (void* data)
 	// Load Clan Settings
 	if (LoadClans() != 1)
 	{
-		SDL_Delay (5000);
-		loadingState = LOAD_ERROR;
-		return -1;
+		return eLoadingState::Error;
 	}
 	else
 	{
@@ -310,9 +292,7 @@ int LoadData (void* data)
 		if (LoadMusic (cSettings::getInstance().getMusicPath().c_str()) != 1)
 		{
 			MakeLog ("", -1, 10);
-			SDL_Delay (5000);
-			loadingState = LOAD_ERROR;
-			return -1;
+			return eLoadingState::Error;
 		}
 		else
 		{
@@ -334,10 +314,7 @@ int LoadData (void* data)
 		MakeLog ("", 1, 12);
 		Log.mark();
 	}
-
-	SDL_Delay (1000);
-	loadingState = LOAD_FINISHED;
-	return 1;
+	return eLoadingState::Finished;
 }
 
 // MakeLog ///////////////////////////////////////////////////////////////////
