@@ -32,7 +32,7 @@ size_t getNextWordLength(const std::string& s, size_t position);
 
 class cPlayer;
 class cClient;
-class cServer2;
+class cServer;
 
 template<typename Impl>
 class cChatCommandArgument
@@ -135,9 +135,9 @@ private:
 class cChatCommandArgumentServer : public cChatCommandArgument<cChatCommandArgumentServer>
 {
 public:
-	using ValueType = cServer2*;
+	using ValueType = cServer*;
 
-	explicit cChatCommandArgumentServer(cServer2*& serverPointer, bool isOptional = false, ValueType defaultValue = nullptr);
+	explicit cChatCommandArgumentServer(cServer*& serverPointer, bool isOptional = false, ValueType defaultValue = nullptr);
 
 	size_t parse(const std::string& command, size_t position);
 
@@ -147,7 +147,7 @@ public:
 private:
 	ValueType value;
 	const ValueType defaultValue;
-	cServer2*& serverPointer;
+	cServer*& serverPointer;
 };
 
 class cChatCommandArgumentClient : public cChatCommandArgument<cChatCommandArgumentClient>
@@ -173,7 +173,7 @@ class cChatCommandArgumentServerPlayer : public cChatCommandArgument<cChatComman
 public:
 	using ValueType = const cPlayer*;
 
-	explicit cChatCommandArgumentServerPlayer(cServer2*& serverPointer, bool isOptional = false, ValueType defaultValue = nullptr);
+	explicit cChatCommandArgumentServerPlayer(cServer*& serverPointer, bool isOptional = false, ValueType defaultValue = nullptr);
 
 	size_t parse(const std::string& command, size_t position);
 
@@ -183,7 +183,7 @@ public:
 private:
 	ValueType value;
 	const ValueType defaultValue;
-	cServer2*& serverPointer;
+	cServer*& serverPointer;
 };
 
 class cChatCommandArgumentClientPlayer : public cChatCommandArgument<cChatCommandArgumentClientPlayer>

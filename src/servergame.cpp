@@ -112,7 +112,7 @@ cServerGame::cServerGame (std::shared_ptr<cConnectionManager> connectionManager)
 
 	signalConnectionManager.connect (lobbyServer.onStartNewGame, [this](const sLobbyPreparationData& preparationData, std::shared_ptr<cConnectionManager> connectionManager)
 	{
-		server = std::make_unique<cServer2> (connectionManager);
+		server = std::make_unique<cServer> (connectionManager);
 
 		server->setUnitsData (preparationData.unitsData);
 		//server->setClansData(preparationData.clanData);
@@ -127,7 +127,7 @@ cServerGame::cServerGame (std::shared_ptr<cConnectionManager> connectionManager)
 
 	signalConnectionManager.connect (lobbyServer.onStartLoadGame, [this](const cSaveGameInfo& saveGameInfo, std::shared_ptr<cConnectionManager> connectionManager)
 	{
-		server = std::make_unique<cServer2> (connectionManager);
+		server = std::make_unique<cServer> (connectionManager);
 		server->loadGameState (saveGameInfo.number);
 		connectionManager->setLocalServer(server.get());
 		server->start();

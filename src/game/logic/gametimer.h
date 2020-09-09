@@ -29,7 +29,7 @@
 
 
 class cClient;
-class cServer2;
+class cServer;
 class cNetMessageSyncServer;
 class cNetMessageSyncClient;
 class cModel;
@@ -87,14 +87,14 @@ class cGameTimerServer : public cGameTimer
 {
 	friend class cDebugOutputWidget;
 private:
-	void checkPlayersResponding(const std::vector<std::shared_ptr<cPlayer>>& playerList, cServer2& server);
+	void checkPlayersResponding(const std::vector<std::shared_ptr<cPlayer>>& playerList, cServer& server);
 	std::map<int, sGameTimerClientDebugData> clientDebugData;
 	std::map<int, unsigned int> receivedTime; // time that the client has reported to server in last sync message
 	unsigned int sentGameTime;                // time that has server has reportet to clients in last sync message
 
 public:
 	cGameTimerServer();
-	void run (cModel& model, cServer2& server);
+	void run (cModel& model, cServer& server);
 	void handleSyncMessage (const cNetMessageSyncClient& message, unsigned int gameTime);
 	void setPlayerNumbers(const std::vector<std::shared_ptr<cPlayer>>& playerList);
 

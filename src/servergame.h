@@ -38,7 +38,7 @@ class cLandingPositionManager;
 class cNetMessage2;
 class cPlayer;
 class cPlayerBasicData;
-class cServer2;
+class cServer;
 class cStaticMap;
 
 int serverGameThreadFunction (void* data);
@@ -77,7 +77,7 @@ private:
 	cSignalConnectionManager signalConnectionManager;
 	cLobbyServer lobbyServer;
 
-	std::unique_ptr<cServer2> server;
+	std::unique_ptr<cServer> server;
 
 	bool shouldSave = false;
 	int saveGameNumber = -1;

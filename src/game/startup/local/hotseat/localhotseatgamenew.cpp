@@ -38,7 +38,7 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 	assert (gameSettings != nullptr);
 	auto connectionManager = std::make_shared<cConnectionManager>();
 
-	server = std::make_unique<cServer2>(connectionManager);
+	server = std::make_unique<cServer>(connectionManager);
 
 	server->setMap (staticMap);
 	server->setUnitsData (unitsData);

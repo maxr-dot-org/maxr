@@ -228,7 +228,7 @@ const cChatCommandArgumentString::ValueType& cChatCommandArgumentString::getValu
 }
 
 //------------------------------------------------------------------------------
-cChatCommandArgumentServer::cChatCommandArgumentServer(cServer2*& serverPointer_, bool isOptional_, ValueType defaultValue_) :
+cChatCommandArgumentServer::cChatCommandArgumentServer(cServer*& serverPointer_, bool isOptional_, ValueType defaultValue_) :
 	cChatCommandArgument<cChatCommandArgumentServer>(isOptional_),
 	value(defaultValue_),
 	defaultValue(defaultValue_),
@@ -309,7 +309,7 @@ const cChatCommandArgumentClient::ValueType& cChatCommandArgumentClient::getValu
 }
 
 //------------------------------------------------------------------------------
-cChatCommandArgumentServerPlayer::cChatCommandArgumentServerPlayer(cServer2*& serverPointer_, bool isOptional_, ValueType defaultValue_) :
+cChatCommandArgumentServerPlayer::cChatCommandArgumentServerPlayer(cServer*& serverPointer_, bool isOptional_, ValueType defaultValue_) :
 	cChatCommandArgument<cChatCommandArgumentServerPlayer>(isOptional_),
 	value(defaultValue_),
 	defaultValue(defaultValue_),

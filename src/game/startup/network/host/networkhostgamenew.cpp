@@ -38,7 +38,7 @@ void cNetworkHostGameNew::start (cApplication& application)
 {
 	assert (gameSettings != nullptr);
 
-	server = std::make_unique<cServer2> (connectionManager);
+	server = std::make_unique<cServer> (connectionManager);
 	localClient = std::make_shared<cClient> (connectionManager);
 
 	server->setMap (staticMap);

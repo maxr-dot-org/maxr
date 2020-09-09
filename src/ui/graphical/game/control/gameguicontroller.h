@@ -54,7 +54,7 @@ class cSavedReport;
 class cBuildListItem;
 class cWindowUpgradesFilterState;
 class cUnitsData;
-class cServer2;
+class cServer;
 class cFreezeModes;
 
 class cChatCommandExecutor;
@@ -79,7 +79,7 @@ public:
 
 	void setSingleClient (std::shared_ptr<cClient> clients);
 	void setClients (std::vector<std::shared_ptr<cClient>> clients, int activePlayerNumber);
-	void setServer(cServer2* server);
+	void setServer(cServer* server);
 
 	mutable cSignal<void ()> terminated;
 private:
@@ -98,7 +98,7 @@ private:
 	std::shared_ptr<cClient> activeClient;
 	std::vector<std::shared_ptr<cClient>> clients;
 	std::shared_ptr<const cMapView> mapView;
-	cServer2* server;
+	cServer* server;
 
 	std::vector<std::unique_ptr<cChatCommandExecutor>> chatCommands;
 

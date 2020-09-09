@@ -34,7 +34,7 @@ void cNetworkHostGameSaved::loadGameData()
 	// because clients are already started. So try to load
 	// game data in this function, before initializing gameGui & clients
 
-	server = std::make_unique<cServer2>(connectionManager);
+	server = std::make_unique<cServer>(connectionManager);
 	server->loadGameState(saveGameNumber);
 
 }

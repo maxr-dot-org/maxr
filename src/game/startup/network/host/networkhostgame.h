@@ -28,7 +28,7 @@
 #include "ui/graphical/game/control/gameguicontroller.h"
 
 class cClient;
-class cServer2;
+class cServer;
 class cConnectionManager;
 
 class cNetworkHostGame : public cGame
@@ -43,7 +43,7 @@ protected:
 	std::shared_ptr<cConnectionManager> connectionManager;
 
 	std::shared_ptr<cClient> localClient;
-	std::unique_ptr<cServer2> server;
+	std::unique_ptr<cServer> server;
 
 	std::unique_ptr<cGameGuiController> gameGuiController;
 };

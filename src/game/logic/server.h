@@ -35,13 +35,13 @@
 class cConnectionManager;
 class cPlayerBasicData;
 
-class cServer2 : public INetMessageReceiver
+class cServer : public INetMessageReceiver
 {
 	friend class cDebugOutputWidget;
 public:
 
-	cServer2(std::shared_ptr<cConnectionManager> connectionManager);
-	~cServer2();
+	cServer(std::shared_ptr<cConnectionManager> connectionManager);
+	~cServer();
 
 	void pushMessage(std::unique_ptr<cNetMessage2> message);
 

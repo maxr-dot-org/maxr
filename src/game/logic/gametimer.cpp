@@ -148,7 +148,7 @@ void cGameTimerServer::handleSyncMessage(const cNetMessageSyncClient& message, u
 	debugData.ping          = (1 - filter) * debugData.ping          + filter * 10 * (gameTime - message.gameTime);
 }
 
-void cGameTimerServer::checkPlayersResponding(const std::vector<std::shared_ptr<cPlayer>>& playerList, cServer2& server)
+void cGameTimerServer::checkPlayersResponding(const std::vector<std::shared_ptr<cPlayer>>& playerList, cServer& server)
 {
 	for (auto player : playerList)
 	{
@@ -166,7 +166,7 @@ void cGameTimerServer::checkPlayersResponding(const std::vector<std::shared_ptr<
 	}
 }
 
-void cGameTimerServer::run(cModel& model, cServer2& server)
+void cGameTimerServer::run(cModel& model, cServer& server)
 {
 	checkPlayersResponding(model.getPlayerList(), server);
 	for (unsigned int i = 0; i < maxEventQueueSize; i++)

@@ -40,7 +40,7 @@ public:
 
 protected:
 	std::vector<std::shared_ptr<cClient>> clients;
-	std::unique_ptr<cServer2> server;
+	std::unique_ptr<cServer> server;
 
 	std::unique_ptr<cGameGuiController> gameGuiController;
 };

@@ -285,7 +285,7 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 }
 
 //------------------------------------------------------------------------------
-void cGameGuiController::setServer(cServer2* server_)
+void cGameGuiController::setServer(cServer* server_)
 {
 	server = server_;
 	gameGui->getDebugOutput().setServer(server);
@@ -561,7 +561,7 @@ void cGameGuiController::initChatCommands()
 		.addArgument<cChatCommandArgumentServerPlayer>(server)
 		.addArgument<cChatCommandArgumentInt<int>>("credits")
 		.addArgument<cChatCommandArgumentServer>(server)
-		.setAction([&](const cPlayer* player, int credits, cServer2* server)
+		.setAction([&](const cPlayer* player, int credits, cServer* server)
 		{
 			throw std::runtime_error("Command not implemented");
 			//player->setCredits(credits);
@@ -574,7 +574,7 @@ void cGameGuiController::initChatCommands()
 		.setIsServerOnly (true)
 		.addArgument<cChatCommandArgumentInt<int>>("seconds")
 		.addArgument<cChatCommandArgumentServer>(server)
-		.setAction([&](int seconds, cServer2* server)
+		.setAction([&](int seconds, cServer* server)
 		{
 			throw std::runtime_error("Command not implemented");
 			// FIXME: do not do changes on server data that are not synchronized with the server thread!
@@ -597,7 +597,7 @@ void cGameGuiController::initChatCommands()
 		.setIsServerOnly (true)
 		.addArgument<cChatCommandArgumentInt<int>>("seconds")
 		.addArgument<cChatCommandArgumentServer>(server)
-		.setAction([&](int seconds, cServer2* server)
+		.setAction([&](int seconds, cServer* server)
 		{
 			throw std::runtime_error("Command not implemented");
 			// FIXME: do not do changes on server data that are not synchronized with the server thread!
@@ -642,7 +642,7 @@ void cGameGuiController::initChatCommands()
 		.setIsServerOnly (true)
 		.addArgument<cChatCommandArgumentServer>(server)
 		.addArgument<cChatCommandArgumentClient>(activeClient)
-		.setAction([&](cServer2* server, cClient* client)
+		.setAction([&](cServer* server, cClient* client)
 		{
 			throw std::runtime_error("Command not implemented");
 			//client->getMap()->assignRessources(*server->Map);
@@ -654,7 +654,7 @@ void cGameGuiController::initChatCommands()
 		cChatCommand("pause", "Pause the game")
 		.setIsServerOnly (true)
 		.addArgument<cChatCommandArgumentServer>(server)
-		.setAction([&](cServer2* server)
+		.setAction([&](cServer* server)
 		{
 			// FIXME: do not do changes on server data that are not synchronized with the server thread!
 			server->enableFreezeMode(eFreezeMode::PAUSE);
@@ -664,7 +664,7 @@ void cGameGuiController::initChatCommands()
 		cChatCommand("resume", "Resume a paused game")
 		.setIsServerOnly (true)
 		.addArgument<cChatCommandArgumentServer>(server)
-		.setAction([&](cServer2* server)
+		.setAction([&](cServer* server)
 		{
 			// FIXME: do not do changes on server data that are not synchronized with the server thread!
 			server->disableFreezeMode(eFreezeMode::PAUSE);
@@ -683,7 +683,7 @@ void cGameGuiController::initChatCommands()
 		.setIsServerOnly (true)
 		.addArgument<cChatCommandArgumentServerPlayer>(server)
 		.addArgument<cChatCommandArgumentServer>(server)
-		.setAction([&](const cPlayer* player, cServer2* server)
+		.setAction([&](const cPlayer* player, cServer* server)
 		{
 			throw std::runtime_error("Command not implemented");
 			/*if(player->isLocal())
@@ -703,7 +703,7 @@ void cGameGuiController::initChatCommands()
 		.addArgument<cChatCommandArgumentClientPlayer>(activeClient, true)
 		.addArgument<cChatCommandArgumentClient>(activeClient)
 		.addArgument<cChatCommandArgumentServer>(server, true)
-		.setAction([&](const cPlayer* player, cClient* client, cServer2* server)
+		.setAction([&](const cPlayer* player, cClient* client, cServer* server)
 		{
 			if (!server)
 			{
@@ -727,7 +727,7 @@ void cGameGuiController::initChatCommands()
 		.addArgument<cChatCommandArgumentServerPlayer>(server, true)
 		.addArgument<cChatCommandArgumentClient>(activeClient)
 		.addArgument<cChatCommandArgumentServer>(server)
-		.setAction([&](const cPlayer* player, cClient* client, cServer2* server)
+		.setAction([&](const cPlayer* player, cClient* client, cServer* server)
 		{
 			throw std::runtime_error("Command not implemented");
 			/*if(player == nullptr)

@@ -32,7 +32,7 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 	auto connectionManager = std::make_shared<cConnectionManager>();
 
 	//set up server
-	server = std::make_unique<cServer2>(connectionManager);
+	server = std::make_unique<cServer>(connectionManager);
 	connectionManager->setLocalServer(server.get());
 	server->loadGameState(saveGameNumber);
 

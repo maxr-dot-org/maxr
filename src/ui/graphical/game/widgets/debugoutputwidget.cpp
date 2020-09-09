@@ -61,7 +61,7 @@ void cDebugOutputWidget::setClient (const cClient* client_)
 }
 
 //------------------------------------------------------------------------------
-void cDebugOutputWidget::setServer (const cServer2* server_)
+void cDebugOutputWidget::setServer (const cServer* server_)
 {
 	server = server_;
 }

@@ -35,7 +35,7 @@
 #include <SDL_thread.h>
 
 //------------------------------------------------------------------------------
-cServer2::cServer2(std::shared_ptr<cConnectionManager> connectionManager) :
+cServer::cServer(std::shared_ptr<cConnectionManager> connectionManager) :
 	model(),
 	gameTimer(),
 	connectionManager(connectionManager),
@@ -57,13 +57,13 @@ cServer2::cServer2(std::shared_ptr<cConnectionManager> connectionManager) :
 }
 
 //------------------------------------------------------------------------------
-cServer2::~cServer2()
+cServer::~cServer()
 {
 	stop();
 }
 
 //------------------------------------------------------------------------------
-std::string cServer2::getGameState() const
+std::string cServer::getGameState() const
 {
 	std::stringstream result;
 	result << "GameState: Game is active" << std::endl;
@@ -83,32 +83,32 @@ std::string cServer2::getGameState() const
 }
 
 //------------------------------------------------------------------------------
-void cServer2::setMap(std::shared_ptr<cStaticMap> staticMap)
+void cServer::setMap(std::shared_ptr<cStaticMap> staticMap)
 {
 	model.setMap(staticMap);
 }
 
 //------------------------------------------------------------------------------
-void cServer2::setGameSettings(const cGameSettings& gameSettings)
+void cServer::setGameSettings(const cGameSettings& gameSettings)
 {
 	model.setGameSettings(gameSettings);
 }
 
 //------------------------------------------------------------------------------
-void cServer2::setPlayers(const std::vector<cPlayerBasicData>& splayers)
+void cServer::setPlayers(const std::vector<cPlayerBasicData>& splayers)
 {
 	model.setPlayerList(splayers);
 	gameTimer.setPlayerNumbers(model.getPlayerList());
 }
 
 //------------------------------------------------------------------------------
-const cModel& cServer2::getModel() const
+const cModel& cServer::getModel() const
 {
 	return model;
 }
 
 //------------------------------------------------------------------------------
-void cServer2::saveGameState(int saveGameNumber, const std::string& saveName) const
+void cServer::saveGameState(int saveGameNumber, const std::string& saveName) const
 {
 	if (SDL_ThreadID() != SDL_GetThreadID(serverThread))
 	{
@@ -127,11 +127,11 @@ void cServer2::saveGameState(int saveGameNumber, const std::string& saveName) co
 	if (!serverThread)
 	{
 		exit = false;
-		serverThread = SDL_CreateThread(serverThreadCallback, "server", const_cast<cServer2*>(this));
+		serverThread = SDL_CreateThread(serverThreadCallback, "server", const_cast<cServer*>(this));
 	}
 }
 //------------------------------------------------------------------------------
-void cServer2::loadGameState(int saveGameNumber)
+void cServer::loadGameState(int saveGameNumber)
 {
 	Log.write(" Server: loading game state from save file " + iToStr(saveGameNumber), cLog::eLOG_TYPE_NET_DEBUG);
 	savegame.loadModel(model, saveGameNumber);
@@ -139,7 +139,7 @@ void cServer2::loadGameState(int saveGameNumber)
 	gameTimer.setPlayerNumbers(model.getPlayerList());
 }
 //------------------------------------------------------------------------------
-void cServer2::sendGuiInfoToClients(int saveGameNumber, int playerNr /*= -1*/)
+void cServer::sendGuiInfoToClients(int saveGameNumber, int playerNr /*= -1*/)
 {
 	try
 	{
@@ -152,7 +152,7 @@ void cServer2::sendGuiInfoToClients(int saveGameNumber, int playerNr /*= -1*/)
 }
 
 //------------------------------------------------------------------------------
-void cServer2::resyncClientModel(int playerNr /*= -1*/) const
+void cServer::resyncClientModel(int playerNr /*= -1*/) const
 {
 	assert(SDL_ThreadID() == SDL_GetThreadID(serverThread));
 
@@ -162,14 +162,14 @@ void cServer2::resyncClientModel(int playerNr /*= -1*/) const
 }
 
 //------------------------------------------------------------------------------
-void cServer2::pushMessage(std::unique_ptr<cNetMessage2> message)
+void cServer::pushMessage(std::unique_ptr<cNetMessage2> message)
 {
 	eventQueue.push(std::move(message));
 }
 
 
 //------------------------------------------------------------------------------
-void cServer2::sendMessageToClients(const cNetMessage2& message, int playerNr /* = -1 */) const
+void cServer::sendMessageToClients(const cNetMessage2& message, int playerNr /* = -1 */) const
 {
 	if (message.getType() != eNetMessageType::GAMETIME_SYNC_SERVER && message.getType() != eNetMessageType::RESYNC_MODEL)
 	{
@@ -189,7 +189,7 @@ void cServer2::sendMessageToClients(const cNetMessage2& message, int playerNr /*
 }
 
 //------------------------------------------------------------------------------
-void cServer2::start()
+void cServer::start()
 {
 	if (serverThread) return;
 
@@ -203,7 +203,7 @@ void cServer2::start()
 }
 
 //------------------------------------------------------------------------------
-void cServer2::stop()
+void cServer::stop()
 {
 	exit = true;
 	gameTimer.stop();
@@ -216,7 +216,7 @@ void cServer2::stop()
 }
 
 //------------------------------------------------------------------------------
-void cServer2::run()
+void cServer::run()
 {
 	while (!exit)
 	{
@@ -349,13 +349,13 @@ void cServer2::run()
 }
 
 //------------------------------------------------------------------------------
-void cServer2::setUnitsData(std::shared_ptr<const cUnitsData> unitsData)
+void cServer::setUnitsData(std::shared_ptr<const cUnitsData> unitsData)
 {
 	model.setUnitsData(std::make_shared<cUnitsData>(*unitsData));
 }
 
 //------------------------------------------------------------------------------
-void cServer2::initRandomGenerator()
+void cServer::initRandomGenerator()
 {
 	uint64_t t = random(UINT64_MAX);
 	model.randomGenerator.seed(t);
@@ -364,7 +364,7 @@ void cServer2::initRandomGenerator()
 }
 
 //------------------------------------------------------------------------------
-void cServer2::enableFreezeMode(eFreezeMode mode)
+void cServer::enableFreezeMode(eFreezeMode mode)
 {
 	freezeModes.enable(mode);
 	updateGameTimerstate();
@@ -373,7 +373,7 @@ void cServer2::enableFreezeMode(eFreezeMode mode)
 }
 
 //------------------------------------------------------------------------------
-void cServer2::disableFreezeMode(eFreezeMode mode)
+void cServer::disableFreezeMode(eFreezeMode mode)
 {
 	freezeModes.disable(mode);
 	updateGameTimerstate();
@@ -382,7 +382,7 @@ void cServer2::disableFreezeMode(eFreezeMode mode)
 }
 
 //------------------------------------------------------------------------------
-void cServer2::setPlayerNotResponding(int playerId)
+void cServer::setPlayerNotResponding(int playerId)
 {
 	if (playerConnectionStates[playerId] != ePlayerConnectionState::CONNECTED) return;
 
@@ -392,7 +392,7 @@ void cServer2::setPlayerNotResponding(int playerId)
 }
 
 //------------------------------------------------------------------------------
-void cServer2::clearPlayerNotResponding(int playerId)
+void cServer::clearPlayerNotResponding(int playerId)
 {
 	if (playerConnectionStates[playerId] != ePlayerConnectionState::NOT_RESPONDING) return;
 
@@ -402,7 +402,7 @@ void cServer2::clearPlayerNotResponding(int playerId)
 }
 
 //------------------------------------------------------------------------------
-void cServer2::playerDisconnected(int playerId)
+void cServer::playerDisconnected(int playerId)
 {
 	const auto player = model.getPlayer(playerId);
 	if (player->isDefeated)
@@ -419,7 +419,7 @@ void cServer2::playerDisconnected(int playerId)
 }
 
 //------------------------------------------------------------------------------
-void cServer2::playerConnected(int playerId)
+void cServer::playerConnected(int playerId)
 {
 	playerConnectionStates[playerId] = ePlayerConnectionState::CONNECTED;
 	Log.write(" Server: Player " + toString(playerId) + " connected", cLog::eLOG_TYPE_NET_DEBUG);
@@ -427,7 +427,7 @@ void cServer2::playerConnected(int playerId)
 }
 
 //------------------------------------------------------------------------------
-void cServer2::updateWaitForClientFlag()
+void cServer::updateWaitForClientFlag()
 {
 	bool freeze = false;
 	for (auto state : playerConnectionStates)
@@ -449,7 +449,7 @@ void cServer2::updateWaitForClientFlag()
 }
 
 //------------------------------------------------------------------------------
-void cServer2::updateGameTimerstate()
+void cServer::updateGameTimerstate()
 {
 	if (freezeModes.gameTimePaused())
 	{
@@ -462,7 +462,7 @@ void cServer2::updateGameTimerstate()
 }
 
 //------------------------------------------------------------------------------
-void cServer2::initPlayerConnectionState()
+void cServer::initPlayerConnectionState()
 {
 	for (const auto player : model.getPlayerList())
 	{
@@ -480,11 +480,11 @@ void cServer2::initPlayerConnectionState()
 }
 
 //------------------------------------------------------------------------------
-int cServer2::serverThreadCallback(void* arg)
+int cServer::serverThreadCallback(void* arg)
 {
 	CR_ENABLE_CRASH_RPT_CURRENT_THREAD();
 
-	cServer2* server = reinterpret_cast<cServer2*> (arg);
+	cServer* server = reinterpret_cast<cServer*> (arg);
 	server->run();
 	return 0;
 }

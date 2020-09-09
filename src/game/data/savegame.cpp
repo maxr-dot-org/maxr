@@ -332,7 +332,7 @@ void cSavegame::loadModel(cModel& model, int slot)
 	}
 }
 
-void cSavegame::loadGuiInfo(const cServer2* server, int slot, int playerNr)
+void cSavegame::loadGuiInfo(const cServer* server, int slot, int playerNr)
 {
 	if (!loadDocument(slot))
 	{

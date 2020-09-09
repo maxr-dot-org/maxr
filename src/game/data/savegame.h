@@ -28,7 +28,7 @@ class cModel;
 class cSaveGameInfo;
 class cVersion;
 class cNetMessageGUISaveInfo;
-class cServer2;
+class cServer;
 
 //Versions prior to 1.0 are no longer compatible
 #define SAVE_FORMAT_VERSION		((std::string)"1.0")
@@ -49,7 +49,7 @@ public:
 	cSaveGameInfo loadSaveInfo(int slot);
 
 	void loadModel(cModel& model, int slot);
-	void loadGuiInfo(const cServer2* server, int slot, int playerNr = -1);
+	void loadGuiInfo(const cServer* server, int slot, int playerNr = -1);
 
 	int getLastUsedSaveSlot() const;
 private:
