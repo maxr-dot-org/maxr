@@ -17,47 +17,24 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <ctime>
-#include <cmath>
-#include <cstdio>
-#include <iostream>
-#include <sstream>
-#include <algorithm>
-
-#include <SDL.h>
-#include <SDL_thread.h>
-#include <SDL_net.h>
-#include <SDL_mixer.h>
-
-#include "game/data/base/base.h"
-#include "game/data/units/building.h"
-#include "game/data/player/clans.h"
+#include "debug.h"
 #include "dedicatedserver.h"
-#include "utility/files.h"
-#include "keys.h"
-#include "loaddata.h"
-#include "utility/log.h"
-#include "game/data/map/map.h"
-#include "mveplayer.h"
-#include "network.h"
-#include "game/data/player/player.h"
-#include "settings.h"
-#include "resources/sound.h"
-#include "game/data/units/vehicle.h"
-#include "video.h"
-#include "maxrversion.h"
 #include "input/mouse/mouse.h"
 #include "input/keyboard/keyboard.h"
-
+#include "loaddata.h"
+#include "maxrversion.h"
+#include "mveplayer.h"
 #include "output/sound/sounddevice.h"
-
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/windows/windowstart.h"
-#include "debug.h"
-#include "utility/string/toString.h"
+#include "utility/files.h"
+#include "utility/log.h"
 #include "utility/thread/ismainthread.h"
+#include "video.h"
 
-using namespace std;
+#include <SDL.h>
+#include <SDL_net.h>
+#include <SDL_mixer.h>
 
 static int initNet();
 static int initSDL(bool headless);
