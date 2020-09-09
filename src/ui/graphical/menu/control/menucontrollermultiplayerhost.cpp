@@ -46,7 +46,7 @@
 #include "mapdownloader/mapuploadmessagehandler.h"
 #include "game/data/savegame.h"
 #include "game/logic/client.h"
-#include "game/logic/server2.h"
+#include "game/logic/server.h"
 #include "game/data/savegameinfo.h"
 #include "utility/string/toString.h"
 #include "game/logic/action/action.h"

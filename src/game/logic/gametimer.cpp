@@ -28,7 +28,7 @@
 #include "utility/string/toString.h"
 #include "protocol/netmessage.h"
 #include "game/data/player/player.h"
-#include "game/logic/server2.h"
+#include "game/logic/server.h"
 #include "game/data/model.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"

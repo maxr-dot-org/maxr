@@ -17,7 +17,7 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include "server2.h"
+#include "server.h"
 
 #include "connectionmanager.h"
 #include "debug.h"

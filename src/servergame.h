@@ -21,7 +21,7 @@
 #define ServerGame_H
 
 #include "game/data/gamesettings.h"
-#include "game/logic/server2.h"
+#include "game/logic/server.h"
 #include "game/startup/lobbyserver.h"
 #include "protocol/lobbymessage.h"
 #include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"

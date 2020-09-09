@@ -25,7 +25,7 @@
 #include "game/data/map/map.h"
 #include "game/logic/turncounter.h"
 #include "game/logic/landingpositionmanager.h"
-#include "game/logic/server2.h"
+#include "game/logic/server.h"
 #include "mapdownloader/mapdownload.h"
 #include "mapdownloader/mapuploadmessagehandler.h"
 #include "maxrversion.h"

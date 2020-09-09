@@ -40,7 +40,7 @@
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/fxeffects.h"
 #include "game/logic/gametimer.h"
-#include "game/logic/server2.h"
+#include "game/logic/server.h"
 #include "protocol/netmessage.h"
 #include "settings.h"
 #include "surveyorai.h"

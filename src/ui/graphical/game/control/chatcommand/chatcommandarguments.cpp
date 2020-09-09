@@ -24,7 +24,7 @@
 
 #include "ui/graphical/game/control/chatcommand/chatcommandarguments.h"
 #include "game/logic/client.h"
-#include "game/logic/server2.h"
+#include "game/logic/server.h"
 
 /*static*/ const char* const cChatCommandArgumentBool::trueName = "on";
 /*static*/ const char* const cChatCommandArgumentBool::falseName = "off";

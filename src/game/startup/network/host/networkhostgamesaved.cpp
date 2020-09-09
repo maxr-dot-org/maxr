@@ -24,7 +24,7 @@
 #include "game/data/report/savedreport.h"
 #include "game/data/savegame.h"
 #include "game/logic/client.h"
-#include "game/logic/server2.h"
+#include "game/logic/server.h"
 #include "ui/graphical/application.h"
 #include "utility/ranges.h"
 

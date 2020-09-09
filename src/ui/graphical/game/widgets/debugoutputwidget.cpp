@@ -24,7 +24,7 @@
 #include "game/data/player/player.h"
 #include "input/mouse/mouse.h"
 #include "game/logic/client.h"
-#include "game/logic/server2.h"
+#include "game/logic/server.h"
 #include "video.h"
 #include "utility/unifonts.h"
 #include "game/data/units/building.h"

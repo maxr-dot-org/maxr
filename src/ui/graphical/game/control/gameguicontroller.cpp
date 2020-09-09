@@ -72,7 +72,7 @@
 
 #include "keys.h"
 #include "game/logic/client.h"
-#include "game/logic/server2.h"
+#include "game/logic/server.h"
 #include "game/logic/turntimeclock.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
