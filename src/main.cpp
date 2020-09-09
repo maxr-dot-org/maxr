@@ -53,15 +53,15 @@ struct AtExit
 		SDLNet_Quit();
 		Video.clearMemory();
 		SDL_Quit();
-		Log.write ("EOF");;
+		Log.write ("EOF");
 	}
 };
 
 int main (int argc, char* argv[])
 {
-	AtExit exitGuard;	// Will clean data global data in its destructor
+	AtExit exitGuard; // Will clean data global data in its destructor
 
-	bool headless = DEDICATED_SERVER;
+	constexpr bool headless = DEDICATED_SERVER;
 
 	if (!cSettings::getInstance().isInitialized())
 	{
@@ -69,7 +69,6 @@ int main (int argc, char* argv[])
 	}
 
 	CR_INIT_CRASHREPORTING();
-
 
 	// stop on error during init of SDL basics. WARNINGS will be ignored!
 	if (initSDL(headless) == -1) return -1;
@@ -82,7 +81,7 @@ int main (int argc, char* argv[])
 	if (!headless)
 	{
 		Video.init();
-		Video.showSplashScreen(); // show splashscreen
+		Video.showSplashScreen();
 		initSound(); // now config is loaded and we can init sound and net
 	}
 	initNet();
@@ -112,15 +111,19 @@ int main (int argc, char* argv[])
 	if (!headless)
 	{
 		Video.draw();
+		std::this_thread::sleep_for(1s); // time to see loading status
 	}
-	std::this_thread::sleep_for(1s); // time to see loading status
 	if (dataThread.get() == eLoadingState::Error)
 	{
 		Log.write ("Error while loading data!", cLog::eLOG_TYPE_ERROR);
 		return -1;
 	}
 
-	if (!headless)
+	if (headless)
+	{
+		cDedicatedServer::instance().run();
+	}
+	else
 	{
 		// play intro if we're supposed to and the file exists
 		if (cSettings::getInstance().shouldShowIntro())
@@ -131,14 +134,6 @@ int main (int argc, char* argv[])
 		{
 			Log.write ("Skipped intro movie due settings", cLog::eLOG_TYPE_DEBUG);
 		}
-	}
-
-	if (headless)
-	{
-		cDedicatedServer::instance().run();
-	}
-	else
-	{
 		Video.prepareGameScreen();
 		Video.clearBuffer();
 
@@ -273,7 +268,7 @@ static void showIntro()
 									 !Video.getWindowMode(),
 									 !cSettings::getInstance().isSoundMute());
 	Log.write ("MVEPlayer returned " + iToStr (mvereturn), cLog::eLOG_TYPE_DEBUG);
-	//FIXME: make this case sensitive - my mve is e.g. completly lower cases -- beko
+	//FIXME: make this case sensitive - my mve is e.g. completely lower cases -- beko
 
 	// reinit maxr sound
 	if (cSettings::getInstance().isSoundEnabled())
