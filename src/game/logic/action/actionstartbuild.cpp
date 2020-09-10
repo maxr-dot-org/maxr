@@ -67,7 +67,7 @@ void cActionStartBuild::execute(cModel& model) const
 	if (!map.isValidPosition(buildPosition)) return;
 	if (buildPath && !map.isValidPosition(pathEndPosition)) return;
 	if (buildSpeed > 2 || buildSpeed < 0) return;
-	
+
 	if (vehicle->isUnitBuildingABuilding() || vehicle->BuildPath) return;
 	if (vehicle->isDisabled()) return;
 	if (vehicle->isUnitMoving()) return;
@@ -84,7 +84,7 @@ void cActionStartBuild::execute(cModel& model) const
 	if (turboBuildCosts[buildSpeed] > vehicle->getStoredResources() ||
 		turboBuildRounds[buildSpeed] <= 0)
 	{
-		vehicle->getOwner()->buildErrorInsufficientMaterial;
+		vehicle->getOwner()->buildErrorInsufficientMaterial();
 		return;
 	}
 

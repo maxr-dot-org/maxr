@@ -34,6 +34,7 @@ class cUnitSelection;
 class cMouseAction
 {
 public:
+	virtual ~cMouseAction() = default;
 	/**
 	 * Executes the action on a left click.
 	 *
