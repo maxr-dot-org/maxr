@@ -20,35 +20,36 @@
 #ifndef game_data_modelH
 #define game_data_modelH
 
-#include <vector>
-#include <memory>
-#include <forward_list>
-
-#include "utility/flatset.h"
-#include "units/unit.h"
-#include "utility/crossplattformrandom.h"
-#include "utility/serialization/serialization.h"
 #include "game/data/map/map.h"
 #include "game/data/player/player.h"
-#include "game/logic/pathcalculator.h"
-#include "game/logic/movejob.h"
-#include "game/logic/turncounter.h"
-#include "game/logic/fxeffects.h"
+#include "game/data/player/playerbasicdata.h"
 #include "game/logic/attackjob.h"
-#include "game/logic/jobs/jobcontainer.h"
 #include "game/logic/casualtiestracker.h"
+#include "game/logic/fxeffects.h"
+#include "game/logic/jobs/jobcontainer.h"
+#include "game/logic/movejob.h"
+#include "game/logic/pathcalculator.h"
+#include "game/logic/turncounter.h"
+#include "units/unit.h"
+#include "utility/crossplattformrandom.h"
+#include "utility/flatset.h"
+#include "utility/serialization/serialization.h"
 
-class cPlayerBasicData;
-class cGameSettings;
-class cStaticMap;
+#include <forward_list>
+#include <memory>
+#include <vector>
+
 class cBuilding;
-class cVehicle;
-struct sID;
-class cPosition;
-class cUnit;
+class cGameSettings;
 class cGameTimer;
+class cPosition;
+class cStaticMap;
 class cTurnTimeClock;
 class cTurnTimeDeadline;
+class cUnit;
+class cVehicle;
+
+struct sID;
 
 class cModel
 {
@@ -87,7 +88,7 @@ public:
 	std::vector<std::shared_ptr<cPlayer>>& getPlayerList() { return playerList; };
 	void setPlayerList(const std::vector<cPlayerBasicData>& splayers);
 	const cPlayer* getActiveTurnPlayer() const;
-	
+
 	std::shared_ptr<const cTurnCounter> getTurnCounter() const;
 	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock() const;
 
@@ -126,9 +127,9 @@ public:
 	mutable cSignal<void(const cVehicle& vehicle)> triggeredAddTracks;
 	mutable cSignal<void(const cPlayer& player)> playerFinishedTurn; // triggered when a player wants to end the turn
 	mutable cSignal<void()> turnEnded; // triggered when all players ended the turn or the turn time clock reached a deadline
-	mutable cSignal<void()> newTurnStarted; // triggered when the model has done all calculations for the new turn. 
+	mutable cSignal<void()> newTurnStarted; // triggered when the model has done all calculations for the new turn.
 	mutable cSignal<void (const std::shared_ptr<cFx>& fx)> addedEffect;
-	
+
 	mutable cSignal<void (const cUnit& storingUnit, const cUnit& storedUnit)> unitStored;
 	mutable cSignal<void (const cUnit& storingUnit, const cUnit& storedUnit)> unitActivated;
 
