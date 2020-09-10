@@ -105,7 +105,7 @@ public:
 	bool handleGetKeyFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
 	void handleLooseKeyFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
 	bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key) MAXR_OVERRIDE_FUNCTION;
-	void handleMoved (const cPosition& offset);
+	void handleMoved (const cPosition& offset) override;
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 	void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
 protected:

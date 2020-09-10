@@ -149,8 +149,8 @@ public:
 	cBuilding(const cStaticUnitData* staticData, const cDynamicUnitData* data, cPlayer* Owner, unsigned int ID);
 	virtual ~cBuilding();
 
-	virtual bool isAVehicle() const { return false; }
-	virtual bool isABuilding() const { return true; }
+	bool isAVehicle() const override { return false; }
+	bool isABuilding() const override { return true; }
 	bool isRubble() const { return rubbleValue > 0; }
 
 	const sBuildingUIData* uiData;
@@ -201,11 +201,11 @@ public:
 	void render_simple(SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, unsigned long long animationTime = 0, int alpha = 254) const;
 	static void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sBuildingUIData& uiData, const cPlayer* owner, int frameNr = 0, int alpha = 254);
 
-	virtual bool isUnitWorking() const { return isWorking; }
-	virtual bool factoryHasJustFinishedBuilding() const;
-	virtual bool buildingCanBeStarted() const;
-	virtual bool buildingCanBeUpgraded() const;
-	virtual bool canBeStoppedViaUnitMenu() const { return isUnitWorking(); }
+	bool isUnitWorking() const override { return isWorking; }
+	bool factoryHasJustFinishedBuilding() const override;
+	bool buildingCanBeStarted() const override;
+	bool buildingCanBeUpgraded() const override;
+	bool canBeStoppedViaUnitMenu() const override { return isUnitWorking(); }
 
 	bool isBuildListEmpty() const;
 	size_t getBuildListSize() const;
@@ -232,7 +232,7 @@ public:
 	void setRubbleValue(int value, cCrossPlattformRandom& randomGenerator);
 	int getRubbleValue() const;
 
-	virtual uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum(uint32_t crc) const override;
 
 	cSignal<void ()> buildListChanged;
 	cSignal<void ()> buildListFirstItemDataChanged;

@@ -156,8 +156,8 @@ public:
 	cVehicle (const cStaticUnitData& staticData,  const cDynamicUnitData& data, cPlayer* Owner, unsigned int ID);
 	virtual ~cVehicle();
 
-	virtual bool isAVehicle() const { return true; }
-	virtual bool isABuilding() const { return false; }
+	bool isAVehicle() const override { return true; }
+	bool isABuilding() const override { return false; }
 
 	const cPosition& getMovementOffset() const MAXR_OVERRIDE_FUNCTION { return tileMovementOffset; }
 	void setMovementOffset (const cPosition& newOffset) { tileMovementOffset = newOffset; }
@@ -296,7 +296,7 @@ public:
 	cBuilding* getContainerBuilding();
 	cVehicle* getContainerVehicle();
 
-	virtual uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum(uint32_t crc) const override;
 
 	mutable cSignal<void ()> clearingTurnsChanged;
 	mutable cSignal<void ()> buildingTurnsChanged;

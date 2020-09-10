@@ -214,9 +214,9 @@ private:
 public:
 	cFxRocket (const cPosition& startPosition, const cPosition& endPosition, int dir_, bool bottom, sID id);
 	~cFxRocket();
-	virtual void draw (float zoom, const cPosition& destination) const MAXR_OVERRIDE_FUNCTION;
-	virtual void playSound (cSoundManager& soundManager) const;
-	void run();
+	void draw (float zoom, const cPosition& destination) const MAXR_OVERRIDE_FUNCTION;
+	void playSound (cSoundManager& soundManager) const override;
+	void run() override;
 	// return true, when the last smoke effect is finished.
 	// getLength() returns only the time until
 	// the rocket has reached the destination
