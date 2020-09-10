@@ -35,12 +35,12 @@ public:
 	cMouseCursorAttack (const cUnit& sourceUnit, const cPosition& targetPosition, const cMapView& map);
 	cMouseCursorAttack (int currentHealthPercent_, int newHealthPercent_, bool inRange);
 
-	virtual SDL_Surface* getSurface() const MAXR_OVERRIDE_FUNCTION;
+	SDL_Surface* getSurface() const MAXR_OVERRIDE_FUNCTION;
 
-	virtual cPosition getHotPoint() const MAXR_OVERRIDE_FUNCTION;
+	cPosition getHotPoint() const MAXR_OVERRIDE_FUNCTION;
 
 protected:
-	virtual bool equal (const cMouseCursor& other) const MAXR_OVERRIDE_FUNCTION;
+	bool equal (const cMouseCursor& other) const MAXR_OVERRIDE_FUNCTION;
 
 private:
 	int currentHealthPercent;

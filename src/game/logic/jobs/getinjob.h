@@ -40,13 +40,13 @@ public:
 	template <typename T>
 	cGetInJob(T& archive);
 
-	virtual void run (cModel& model) MAXR_OVERRIDE_FUNCTION;
-	virtual eJobType getType() const MAXR_OVERRIDE_FUNCTION;
+	void run (cModel& model) override;
+	eJobType getType() const override;
 
-	virtual void serialize(cBinaryArchiveIn& archive) { archive << serialization::makeNvp("type", getType()); serializeThis(archive); }
-	virtual void serialize(cXmlArchiveIn& archive) { archive << serialization::makeNvp("type", getType()); serializeThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { archive << serialization::makeNvp("type", getType()); serializeThis(archive); }
+	void serialize(cXmlArchiveIn& archive) override { archive << serialization::makeNvp("type", getType()); serializeThis(archive); }
 
-	virtual uint32_t getChecksum(uint32_t crc) const MAXR_OVERRIDE_FUNCTION;
+	uint32_t getChecksum(uint32_t crc) const override;
 private:
 	template <typename T>
 	void serializeThis(T& archive)

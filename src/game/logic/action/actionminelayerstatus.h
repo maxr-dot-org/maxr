@@ -28,11 +28,11 @@ public:
 	cActionMinelayerStatus(const cVehicle& vehicle, bool layMines, bool clearMines);
 	cActionMinelayerStatus(cBinaryArchiveOut& archive);
 
-	virtual void serialize(cBinaryArchiveIn& archive) { cAction::serialize(archive); serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive)   { cAction::serialize(archive); serializeThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
 
-	virtual void execute(cModel& model) const override;
-	
+	void execute(cModel& model) const override;
+
 private:
 	unsigned int vehicleId;
 	bool layMines;

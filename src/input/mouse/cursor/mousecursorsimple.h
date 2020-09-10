@@ -52,12 +52,12 @@ class cMouseCursorSimple : public cMouseCursor
 public:
 	explicit cMouseCursorSimple (eMouseCursorSimpleType type_);
 
-	virtual SDL_Surface* getSurface() const MAXR_OVERRIDE_FUNCTION;
+	SDL_Surface* getSurface() const MAXR_OVERRIDE_FUNCTION;
 
-	virtual cPosition getHotPoint() const MAXR_OVERRIDE_FUNCTION;
+	cPosition getHotPoint() const MAXR_OVERRIDE_FUNCTION;
 
 protected:
-	virtual bool equal (const cMouseCursor& other) const MAXR_OVERRIDE_FUNCTION;
+	bool equal (const cMouseCursor& other) const MAXR_OVERRIDE_FUNCTION;
 
 private:
 	eMouseCursorSimpleType type;

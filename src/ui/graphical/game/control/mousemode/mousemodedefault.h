@@ -39,15 +39,13 @@ class cMouseModeDefault : public cMouseMode
 public:
 	cMouseModeDefault (const cMapView* map, const cUnitSelection& unitSelection, const cPlayer* player);
 
-	virtual eMouseModeType getType() const MAXR_OVERRIDE_FUNCTION;
-
-	virtual void setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
-
-	virtual std::unique_ptr<cMouseAction> getMouseAction (const cPosition& mapPosition, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
+	eMouseModeType getType() const MAXR_OVERRIDE_FUNCTION;
+	void setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
+	std::unique_ptr<cMouseAction> getMouseAction (const cPosition& mapPosition, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
 
 protected:
-	virtual void establishUnitSelectionConnections() MAXR_OVERRIDE_FUNCTION;
-	virtual void establishMapFieldConnections (const cMapFieldView& field) MAXR_OVERRIDE_FUNCTION;
+	void establishUnitSelectionConnections() MAXR_OVERRIDE_FUNCTION;
+	void establishMapFieldConnections (const cMapFieldView& field) MAXR_OVERRIDE_FUNCTION;
 
 private:
 	cSignalConnectionManager keyboardConnectionManager;

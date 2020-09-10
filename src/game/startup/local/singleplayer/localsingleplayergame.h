@@ -36,14 +36,14 @@ class cLocalSingleplayerGame : public cGame
 public:
 	~cLocalSingleplayerGame();
 
-	virtual void run() MAXR_OVERRIDE_FUNCTION;
+	void run() MAXR_OVERRIDE_FUNCTION;
 
 protected:
 	std::shared_ptr<cClient> client;
 	std::unique_ptr<cServer> server;
 
 	std::unique_ptr<cGameGuiController> gameGuiController;
-	
+
 };
 
 #endif // game_startup_local_singleplayer_localsingleplayergameH

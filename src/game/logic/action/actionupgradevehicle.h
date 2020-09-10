@@ -30,10 +30,10 @@ public:
 	cActionUpgradeVehicle(const cBuilding& containingBuilding, const cVehicle* vehicle = nullptr);
 	cActionUpgradeVehicle(cBinaryArchiveOut& archive);
 
-	virtual void serialize(cBinaryArchiveIn& archive) { cAction::serialize(archive); serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive)   { cAction::serialize(archive); serializeThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
 
-	virtual void execute(cModel& model) const override;
+	void execute(cModel& model) const override;
 
 private:
 	template<typename T>

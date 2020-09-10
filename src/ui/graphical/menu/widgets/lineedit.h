@@ -53,13 +53,11 @@ public:
 
 	void finishEditing();
 
-	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
-
-	virtual bool handleGetKeyFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
-	virtual void handleLooseKeyFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
-
-	virtual bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key) MAXR_OVERRIDE_FUNCTION;
-	virtual void handleTextEntered (cApplication& application, cKeyboard& keyboard, const char* text) MAXR_OVERRIDE_FUNCTION;
+	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
+	bool handleGetKeyFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
+	void handleLooseKeyFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
+	bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key) MAXR_OVERRIDE_FUNCTION;
+	void handleTextEntered (cApplication& application, cKeyboard& keyboard, const char* text) MAXR_OVERRIDE_FUNCTION;
 
 	cSignal<void ()> clicked;
 	cSignal<void ()> textSet;
@@ -68,7 +66,7 @@ public:
 	cSignal<void (eValidatorState)> editingFinished;
 protected:
 
-	virtual bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
+	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 private:
 	const std::chrono::milliseconds cursorVisibleTime;
 	const std::chrono::milliseconds cursorInvisibleTime;

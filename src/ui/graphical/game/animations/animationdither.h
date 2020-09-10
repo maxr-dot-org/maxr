@@ -35,7 +35,7 @@ public:
 	cAnimationDither (cAnimationTimer& animationTimer, const cVehicle& building);
 	~cAnimationDither();
 
-	virtual bool isLocatedIn (const cBox<cPosition>& box) const MAXR_OVERRIDE_FUNCTION;
+	bool isLocatedIn (const cBox<cPosition>& box) const MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager animationTimerConnectionManager;

@@ -59,8 +59,8 @@ public:
 
 	eMessageType getType() const;
 
-	virtual void serialize(cBinaryArchiveIn& archive);
-	virtual void serialize(cTextArchiveIn& archive);
+	void serialize(cBinaryArchiveIn& archive) override;
+	void serialize(cTextArchiveIn& archive) override;
 
 protected:
 	cMultiplayerLobbyMessage(eMessageType type);
@@ -98,8 +98,8 @@ public:
 	cMuMsgChat(const std::string& message, bool translate = false, const std::string& insertText = "");
 	cMuMsgChat(cBinaryArchiveOut& archive);
 
-	virtual void serialize(cBinaryArchiveIn& archive);
-	virtual void serialize(cTextArchiveIn& archive);
+	void serialize(cBinaryArchiveIn& archive) override;
+	void serialize(cTextArchiveIn& archive) override;
 
 	std::string message;
 	bool translate;
@@ -121,8 +121,8 @@ public:
 	cMuMsgPlayerNr(int newPlayerNr);
 	cMuMsgPlayerNr(cBinaryArchiveOut& archive);
 
-	virtual void serialize(cBinaryArchiveIn& archive);
-	virtual void serialize(cTextArchiveIn& archive);
+	void serialize(cBinaryArchiveIn& archive) override;
+	void serialize(cTextArchiveIn& archive) override;
 
 	int newPlayerNr;
 private:
@@ -140,8 +140,8 @@ public:
 	cMuMsgOptions();
 	cMuMsgOptions(cBinaryArchiveOut& archive);
 
-	virtual void serialize(cBinaryArchiveIn& archive);
-	virtual void serialize(cTextArchiveIn& archive);
+	void serialize(cBinaryArchiveIn& archive) override;
+	void serialize(cTextArchiveIn& archive) override;
 
 	cSaveGameInfo saveInfo;
 	std::string mapName;
@@ -169,8 +169,8 @@ public:
 	explicit cMuMsgPlayerList(std::vector<cPlayerBasicData>);
 	cMuMsgPlayerList(cBinaryArchiveOut& archive);
 
-	virtual void serialize(cBinaryArchiveIn& archive);
-	virtual void serialize(cTextArchiveIn& archive);
+	void serialize(cBinaryArchiveIn& archive) override;
+	void serialize(cTextArchiveIn& archive) override;
 
 	std::vector<cPlayerBasicData> playerList;
 private:
@@ -188,8 +188,8 @@ public:
 	cMuMsgStartGamePreparations(std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cClanData> clanData);
 	cMuMsgStartGamePreparations(cBinaryArchiveOut& archive);
 
-	virtual void serialize(cBinaryArchiveIn& archive);
-	virtual void serialize(cTextArchiveIn& archive);
+	void serialize(cBinaryArchiveIn& archive) override;
+	void serialize(cTextArchiveIn& archive) override;
 
 	std::shared_ptr<const cUnitsData> unitsData;
 	std::shared_ptr<const cClanData> clanData;
@@ -220,8 +220,8 @@ public:
 	cMuMsgPlayerHasSelectedLandingPosition(int landedPlayer);
 	cMuMsgPlayerHasSelectedLandingPosition(cBinaryArchiveOut& archive);
 
-	virtual void serialize(cBinaryArchiveIn& archive);
-	virtual void serialize(cTextArchiveIn& archive);
+	void serialize(cBinaryArchiveIn& archive) override;
+	void serialize(cTextArchiveIn& archive) override;
 
 	int landedPlayer;
 private:
@@ -239,8 +239,8 @@ public:
 	cMuMsgInLandingPositionSelectionStatus(int playerNr, bool isIn);
 	cMuMsgInLandingPositionSelectionStatus(cBinaryArchiveOut& archive);
 
-	virtual void serialize(cBinaryArchiveIn& archive);
-	virtual void serialize(cTextArchiveIn& archive);
+	void serialize(cBinaryArchiveIn& archive) override;
+	void serialize(cTextArchiveIn& archive) override;
 
 	int landingPlayer;
 	bool isIn;
@@ -260,8 +260,8 @@ public:
 	cMuMsgLandingState(eLandingPositionState state);
 	cMuMsgLandingState(cBinaryArchiveOut& archive);
 
-	virtual void serialize(cBinaryArchiveIn& archive);
-	virtual void serialize(cTextArchiveIn& archive);
+	void serialize(cBinaryArchiveIn& archive) override;
+	void serialize(cTextArchiveIn& archive) override;
 
 	eLandingPositionState state;
 private:
@@ -311,8 +311,8 @@ public:
 	cMuMsgLandingPosition(const cPosition& position);
 	cMuMsgLandingPosition(cBinaryArchiveOut& archive);
 
-	virtual void serialize(cBinaryArchiveIn& archive);
-	virtual void serialize(cTextArchiveIn& archive);
+	void serialize(cBinaryArchiveIn& archive) override;
+	void serialize(cTextArchiveIn& archive) override;
 
 	cPosition position;
 private:
@@ -330,8 +330,8 @@ public:
 	cMuMsgRequestMap(const std::string& mapName);
 	cMuMsgRequestMap(cBinaryArchiveOut& archive);
 
-	virtual void serialize(cBinaryArchiveIn& archive);
-	virtual void serialize(cTextArchiveIn& archive);
+	void serialize(cBinaryArchiveIn& archive) override;
+	void serialize(cTextArchiveIn& archive) override;
 
 	std::string mapName;
 private:
@@ -349,8 +349,8 @@ public:
 	cMuMsgStartMapDownload(const std::string mapName, int mapSize);
 	cMuMsgStartMapDownload(cBinaryArchiveOut& archive);
 
-	virtual void serialize(cBinaryArchiveIn& archive);
-	virtual void serialize(cTextArchiveIn& archive);
+	void serialize(cBinaryArchiveIn& archive) override;
+	void serialize(cTextArchiveIn& archive) override;
 
 	std::string mapName;
 	int mapSize;
@@ -370,8 +370,8 @@ public:
 	cMuMsgMapDownloadData();
 	cMuMsgMapDownloadData(cBinaryArchiveOut& archive);
 
-	virtual void serialize(cBinaryArchiveIn& archive);
-	virtual void serialize(cTextArchiveIn& archive);
+	void serialize(cBinaryArchiveIn& archive) override;
+	void serialize(cTextArchiveIn& archive) override;
 
 	std::vector<char> data;
 private:
@@ -397,8 +397,8 @@ public:
 	cMuMsgIdentification(const cPlayerBasicData& player);
 	cMuMsgIdentification(cBinaryArchiveOut& archive);
 
-	virtual void serialize(cBinaryArchiveIn& archive);
-	virtual void serialize(cTextArchiveIn& archive);
+	void serialize(cBinaryArchiveIn& archive) override;
+	void serialize(cTextArchiveIn& archive) override;
 
 	std::string playerName;
 	cRgbColor playerColor;

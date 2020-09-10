@@ -164,7 +164,7 @@ public:
 	 * If the connection object does not belong to this signal, or the connection has been
 	 * disconnected already this function will just do nothing.
 	 */
-	virtual void disconnect (const cSignalConnection& connection) MAXR_OVERRIDE_FUNCTION;
+	void disconnect (const cSignalConnection& connection) MAXR_OVERRIDE_FUNCTION;
 
 	/**
 	 * Invokes the signal.

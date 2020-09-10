@@ -42,7 +42,7 @@ class cSliderHandle : public cWidget
 public:
 	cSliderHandle (const cPosition& position, eSliderHandleType sliderHandleType, eOrientationType orientation);
 
-	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
+	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 
 	void setMinMaxPosition (int minPosition, int maxPosition);
 
@@ -59,12 +59,10 @@ private:
 
 	void createSurface (eSliderHandleType sliderHandleType);
 
-	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
-
-	virtual bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
-	virtual bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
-
-	virtual void handleMoved (const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
+	bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
+	bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
+	bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
+	void handleMoved (const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
 };
 
 #endif // ui_graphical_menu_widgets_sliderhandleH

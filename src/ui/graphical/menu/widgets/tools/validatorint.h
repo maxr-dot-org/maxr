@@ -29,9 +29,8 @@ public:
 	cValidatorInt();
 	cValidatorInt (int minValue, int maxValue);
 
-	virtual eValidatorState validate (const std::string& text) const MAXR_OVERRIDE_FUNCTION;
-
-	virtual void fixup (std::string& text) const MAXR_OVERRIDE_FUNCTION;
+	eValidatorState validate (const std::string& text) const MAXR_OVERRIDE_FUNCTION;
+	void fixup (std::string& text) const MAXR_OVERRIDE_FUNCTION;
 
 private:
 	int minValue;

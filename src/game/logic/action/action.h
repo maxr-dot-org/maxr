@@ -60,8 +60,8 @@ public:
 
 	eActiontype getType() const;
 
-	virtual void serialize(cBinaryArchiveIn& archive) { cNetMessage2::serialize(archive); serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive)   { cNetMessage2::serialize(archive); serializeThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
 
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 	virtual void execute(cModel& model) const = 0;

@@ -100,23 +100,17 @@ public:
 
 	cSignal<void (ItemType&)> itemClicked;
 
-	virtual cWidget* getChildAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
-
-	virtual bool handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount) MAXR_OVERRIDE_FUNCTION;
-
-	virtual bool handleGetKeyFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
-	virtual void handleLooseKeyFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
-
-	virtual bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key) MAXR_OVERRIDE_FUNCTION;
-
-	virtual void handleMoved (const cPosition& offset);
-
-	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
-
-	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
+	cWidget* getChildAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
+	bool handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount) MAXR_OVERRIDE_FUNCTION;
+	bool handleGetKeyFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
+	void handleLooseKeyFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
+	bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key) MAXR_OVERRIDE_FUNCTION;
+	void handleMoved (const cPosition& offset);
+	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
+	void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
 protected:
 
-	virtual bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
+	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

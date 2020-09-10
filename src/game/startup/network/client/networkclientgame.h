@@ -35,7 +35,7 @@ class cNetworkClientGame : public cGame
 public:
 	~cNetworkClientGame();
 
-	virtual void run() MAXR_OVERRIDE_FUNCTION;
+	void run() MAXR_OVERRIDE_FUNCTION;
 
 	void setConnectionManager (std::shared_ptr<cConnectionManager> network);
 

@@ -34,7 +34,7 @@ public:
 
 	cCheckBox* addButton (std::unique_ptr<cCheckBox> button);
 
-	virtual void handleMoved (const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
+	void handleMoved (const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

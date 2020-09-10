@@ -55,7 +55,7 @@ public:
 		return connection;
 	}
 
-	virtual void disconnect (const cSignalConnection& connection) MAXR_OVERRIDE_FUNCTION
+	void disconnect (const cSignalConnection& connection) MAXR_OVERRIDE_FUNCTION
 	{
 		cLockGuard<cMutex> lock (mutex);
 

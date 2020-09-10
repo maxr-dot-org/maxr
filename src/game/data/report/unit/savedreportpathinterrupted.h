@@ -35,10 +35,10 @@ public:
 		cSavedReportUnit(archive)
 	{}
 
-	virtual eSavedReportType getType() const MAXR_OVERRIDE_FUNCTION;
+	eSavedReportType getType() const MAXR_OVERRIDE_FUNCTION;
 
 protected:
-	virtual std::string getText() const MAXR_OVERRIDE_FUNCTION;
+	std::string getText() const MAXR_OVERRIDE_FUNCTION;
 };
 
 #endif // game_data_reports_savedreportpathinterruptedH

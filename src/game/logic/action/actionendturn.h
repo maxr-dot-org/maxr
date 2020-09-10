@@ -28,8 +28,8 @@ public:
 	cActionEndTurn();
 	cActionEndTurn(cBinaryArchiveOut& archive);
 
-	virtual void execute(cModel& model) const override;
-	
+	void execute(cModel& model) const override;
+
 private:
 	// no data
 };

@@ -34,7 +34,7 @@ class cAnimationWork : public cAnimation
 public:
 	cAnimationWork (cAnimationTimer& animationTimer, const cBuilding& building);
 
-	virtual bool isLocatedIn (const cBox<cPosition>& box) const MAXR_OVERRIDE_FUNCTION;
+	bool isLocatedIn (const cBox<cPosition>& box) const MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager animationTimerConnectionManager;

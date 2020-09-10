@@ -166,9 +166,9 @@ public:
 	int points;     // accumulated eco-sphere points
 
 	int playStream();
-	virtual std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
+	std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
 
-	virtual void makeReport (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
+	void makeReport (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 
 	/**
 	* refreshes the shotsCur of this building
@@ -184,15 +184,15 @@ public:
 	void stopWork (bool forced = false);
 
 	/** check whether a transfer to a unit on the field is possible */
-	virtual bool canTransferTo (const cPosition& position, const cMapView& map) const MAXR_OVERRIDE_FUNCTION;
-	virtual bool canTransferTo (const cUnit& unit) const MAXR_OVERRIDE_FUNCTION;
+	bool canTransferTo (const cPosition& position, const cMapView& map) const MAXR_OVERRIDE_FUNCTION;
+	bool canTransferTo (const cUnit& unit) const MAXR_OVERRIDE_FUNCTION;
 	void initMineRessourceProd (const cMap& map);
 	void calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array<int, 3>& turboBuildCosts, int vehicleCosts, int remainingMetal = -1) const;
-	virtual bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
-	virtual bool canExitTo (const cPosition& position, const cMapView& map, const cStaticUnitData& vehicleData) const MAXR_OVERRIDE_FUNCTION;
+	bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
+	bool canExitTo (const cPosition& position, const cMapView& map, const cStaticUnitData& vehicleData) const MAXR_OVERRIDE_FUNCTION;
 	bool canLoad(const cPosition& position, const cMapView& map, bool checkPosition = true) const;
-	virtual bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const MAXR_OVERRIDE_FUNCTION;
-	virtual bool canSupply(const cUnit* unit, eSupplyType supplyType) const MAXR_OVERRIDE_FUNCTION;
+	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const MAXR_OVERRIDE_FUNCTION;
+	bool canSupply(const cUnit* unit, eSupplyType supplyType) const MAXR_OVERRIDE_FUNCTION;
 
 	/**
 	* draws the main image of the building onto the given surface
@@ -241,7 +241,7 @@ public:
 	cSignal<void()> buildSpeedChanged;
 	cSignal<void()> metalPerRoundChanged;
 	cSignal<void()> repeatBuildChanged;
-	
+
 	template <typename T>
 	void serialize(T& archive)
 	{

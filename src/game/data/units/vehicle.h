@@ -159,7 +159,7 @@ public:
 	virtual bool isAVehicle() const { return true; }
 	virtual bool isABuilding() const { return false; }
 
-	virtual const cPosition& getMovementOffset() const MAXR_OVERRIDE_FUNCTION { return tileMovementOffset; }
+	const cPosition& getMovementOffset() const MAXR_OVERRIDE_FUNCTION { return tileMovementOffset; }
 	void setMovementOffset (const cPosition& newOffset) { tileMovementOffset = newOffset; }
 
 	const sVehicleUIData* uiData;
@@ -181,20 +181,20 @@ public:
 	void continuePathBuilding(cModel& model);
 	void proceedClearing(cModel& model);
 
-	virtual std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
+	std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
 	void DecSpeed (int value);
 	bool doSurvey(const cMap& map);
-	virtual void makeReport (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
-	virtual bool canTransferTo (const cPosition& position, const cMapView& map) const MAXR_OVERRIDE_FUNCTION;
-	virtual bool canTransferTo (const cUnit& position) const MAXR_OVERRIDE_FUNCTION;
+	void makeReport (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
+	bool canTransferTo (const cPosition& position, const cMapView& map) const MAXR_OVERRIDE_FUNCTION;
+	bool canTransferTo (const cUnit& position) const MAXR_OVERRIDE_FUNCTION;
 	bool inSentryRange (cModel& model);
-	virtual bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
-	virtual bool canExitTo(const cPosition& position, const cMapView& map, const cStaticUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
+	bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
+	bool canExitTo(const cPosition& position, const cMapView& map, const cStaticUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
 	bool canLoad(const cPosition& position, const cMapView& map, bool checkPosition = true) const;
-	virtual bool canLoad(const cVehicle* Vehicle, bool checkPosition = true) const MAXR_OVERRIDE_FUNCTION;
+	bool canLoad(const cVehicle* Vehicle, bool checkPosition = true) const MAXR_OVERRIDE_FUNCTION;
 	bool canSupply (const cMapView& map, const cPosition& position, eSupplyType supplyType) const;
-	virtual bool canSupply (const cUnit* unit, eSupplyType supplyType) const MAXR_OVERRIDE_FUNCTION;
-	
+	bool canSupply (const cUnit* unit, eSupplyType supplyType) const MAXR_OVERRIDE_FUNCTION;
+
 
 	void calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<int, 3>& turboBuildCosts, int buildCosts) const;
 	/**
@@ -247,13 +247,13 @@ public:
 
 	bool isUnitLoaded() const { return loaded; }
 
-	virtual bool isUnitMoving() const MAXR_OVERRIDE_FUNCTION { return moving; } //test if the vehicle is moving right now. Having a waiting movejob doesn't count a moving
-	virtual bool isUnitClearing() const MAXR_OVERRIDE_FUNCTION { return isClearing; }
-	virtual bool isUnitLayingMines() const MAXR_OVERRIDE_FUNCTION { return layMines; }
-	virtual bool isUnitClearingMines() const MAXR_OVERRIDE_FUNCTION { return clearMines; }
-	virtual bool isUnitBuildingABuilding() const MAXR_OVERRIDE_FUNCTION { return isBuilding; }
-	virtual bool canBeStoppedViaUnitMenu() const MAXR_OVERRIDE_FUNCTION;
-	virtual bool isSurveyorAutoMoveActive() const MAXR_OVERRIDE_FUNCTION { return surveyorAutoMoveActive; };
+	bool isUnitMoving() const MAXR_OVERRIDE_FUNCTION { return moving; } //test if the vehicle is moving right now. Having a waiting movejob doesn't count a moving
+	bool isUnitClearing() const MAXR_OVERRIDE_FUNCTION { return isClearing; }
+	bool isUnitLayingMines() const MAXR_OVERRIDE_FUNCTION { return layMines; }
+	bool isUnitClearingMines() const MAXR_OVERRIDE_FUNCTION { return clearMines; }
+	bool isUnitBuildingABuilding() const MAXR_OVERRIDE_FUNCTION { return isBuilding; }
+	bool canBeStoppedViaUnitMenu() const MAXR_OVERRIDE_FUNCTION;
+	bool isSurveyorAutoMoveActive() const MAXR_OVERRIDE_FUNCTION { return surveyorAutoMoveActive; };
 
 	void setMoving (bool value);
 	void setLoaded (bool value);
@@ -279,7 +279,7 @@ public:
 	int getBuildCostsStart() const;
 	void setBuildCostsStart (int value);
 	int getBuildTurnsStart() const;
-	
+
 
 	int getFlightHeight() const;
 	void setFlightHeight (int value);

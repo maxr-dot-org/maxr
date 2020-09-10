@@ -38,19 +38,19 @@ public:
 		serializeThis(archive);
 	}
 
-	virtual std::string getMessage(const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
+	std::string getMessage(const cUnitsData& unitsData) const override;
 
-	virtual bool isAlert() const MAXR_OVERRIDE_FUNCTION;
+	bool isAlert() const override;
 
-	virtual void serialize(cBinaryArchiveIn& archive) { cSavedReport::serialize(archive); serializeThis(archive); }
-	virtual void serialize(cXmlArchiveIn& archive) { cSavedReport::serialize(archive); serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive) { cSavedReport::serialize(archive); serializeThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
+	void serialize(cXmlArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
 
-	virtual bool hasUnitId() const MAXR_OVERRIDE_FUNCTION;
-	virtual const sID& getUnitId() const MAXR_OVERRIDE_FUNCTION;
+	bool hasUnitId() const override;
+	const sID& getUnitId() const override;
 
-	virtual bool hasPosition() const MAXR_OVERRIDE_FUNCTION;
-	virtual const cPosition& getPosition() const MAXR_OVERRIDE_FUNCTION;
+	bool hasPosition() const override;
+	const cPosition& getPosition() const override;
 
 protected:
 	virtual std::string getText() const = 0;

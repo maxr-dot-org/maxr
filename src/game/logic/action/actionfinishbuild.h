@@ -28,10 +28,10 @@ public:
 	cActionFinishBuild(const cUnit& unit, const cPosition& escapePosition);
 	cActionFinishBuild(cBinaryArchiveOut& archive);
 
-	virtual void serialize(cBinaryArchiveIn& archive) { cAction::serialize(archive); serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive)   { cAction::serialize(archive); serializeThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
 
-	virtual void execute(cModel& model) const override;
+	void execute(cModel& model) const override;
 
 private:
 	void finishABuilding(cModel &model, cVehicle& vehicle) const;

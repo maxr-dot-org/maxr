@@ -37,9 +37,8 @@ public:
 
 	void clear();
 
-	virtual bool isAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
-
-	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
+	bool isAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
+	void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
 private:
 	cListView<cGameMessageListViewItem>* listView;
 

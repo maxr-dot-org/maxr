@@ -63,14 +63,14 @@ public:
 	const cModel& getModel() const { return model; };
 
 	const cPlayer& getActivePlayer() const { return *activePlayer; }
-	
+
 	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData);
 	void setGameSettings(const cGameSettings& gameSettings);
 	void setMap(std::shared_ptr<cStaticMap> staticMap);
 	void setPlayers(const std::vector<cPlayerBasicData>& splayers, size_t activePlayerNr);
 
 	unsigned int getNetMessageQueueSize() const { return static_cast<unsigned int>(eventQueue2.safe_size()); };
-	virtual void pushMessage(std::unique_ptr<cNetMessage2> message) MAXR_OVERRIDE_FUNCTION;
+	void pushMessage(std::unique_ptr<cNetMessage2> message) MAXR_OVERRIDE_FUNCTION;
 
 	//
 	void enableFreezeMode (eFreezeMode mode);
@@ -110,7 +110,7 @@ public:
 private:
 
 	void handleSurveyorMoveJobs();
-	
+
 	cModel model;
 
 	cSignalConnectionManager signalConnectionManager;
@@ -120,7 +120,7 @@ private:
 	cConcurrentQueue<std::unique_ptr<cNetMessage2>> eventQueue2;
 
 	std::shared_ptr<cGameTimerClient> gameTimer;
-	
+
 	cPlayer* activePlayer; /** the active Player */
 
 	cFreezeModes freezeModes;

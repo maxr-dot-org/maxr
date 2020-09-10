@@ -52,7 +52,7 @@ public:
 	cSignal<void ()> nameChanged;
 protected:
 
-	virtual bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
+	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 private:
 	cLabel* numberLabel;
 	cLabel* typeLabel;

@@ -43,9 +43,9 @@ class cChatCommandExecutorImpl : public cChatCommandExecutor
 public:
 	cChatCommandExecutorImpl(F function_, cChatCommandParser<Arguments...> parser_);
 
-	virtual bool tryExecute(const std::string& command) const override;
-	virtual void printArguments(std::ostream& result) const override;
-	virtual const cChatCommand& getCommand() const override;
+	bool tryExecute(const std::string& command) const override;
+	void printArguments(std::ostream& result) const override;
+	const cChatCommand& getCommand() const override;
 private:
 	F function;
 	cChatCommandParser<Arguments...> argumentParser;

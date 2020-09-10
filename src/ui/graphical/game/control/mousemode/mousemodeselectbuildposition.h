@@ -29,11 +29,9 @@ class cMouseModeSelectBuildPosition : public cMouseMode
 public:
 	cMouseModeSelectBuildPosition (const cMapView* map, const cUnitSelection& unitSelection, const cPlayer* player, sID buildId);
 
-	virtual eMouseModeType getType() const MAXR_OVERRIDE_FUNCTION;
-
-	virtual void setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
-
-	virtual std::unique_ptr<cMouseAction> getMouseAction(const cPosition& mapPosition, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
+	eMouseModeType getType() const MAXR_OVERRIDE_FUNCTION;
+	void setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
+	std::unique_ptr<cMouseAction> getMouseAction(const cPosition& mapPosition, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
 
 	std::pair<bool, cPosition> findNextBuildPosition(const cPosition& sourcePosition, const cPosition& desiredPosition, const cUnitsData& unitsData) const;
 

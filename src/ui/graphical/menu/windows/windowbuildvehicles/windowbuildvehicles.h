@@ -42,7 +42,7 @@ public:
 	int getSelectedBuildSpeed() const;
 	bool isRepeatActive() const;
 protected:
-	virtual void setActiveUnit (const sID& unitId) MAXR_OVERRIDE_FUNCTION;
+	void setActiveUnit (const sID& unitId) MAXR_OVERRIDE_FUNCTION;
 
 private:
 	cSignalConnectionManager signalConnectionManager;

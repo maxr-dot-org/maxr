@@ -28,10 +28,10 @@ public:
 	cActionChangeUnitName(const cUnit& unit, const std::string& newName);
 	cActionChangeUnitName(cBinaryArchiveOut& archive);
 
-	virtual void serialize(cBinaryArchiveIn& archive) { cAction::serialize(archive); serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive)   { cAction::serialize(archive); serializeThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
 
-	virtual void execute(cModel& model) const override;
+	void execute(cModel& model) const override;
 
 private:
 

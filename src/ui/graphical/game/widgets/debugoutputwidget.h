@@ -60,7 +60,7 @@ public:
 	void setDebugSync (bool value);
 	void setDebugStealth(bool value);
 
-	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
+	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 
 private:
 	const cServer* server;

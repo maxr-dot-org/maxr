@@ -37,16 +37,16 @@ public:
 		serializeThis(archive);
 	}
 
-	virtual void serialize(cBinaryArchiveIn& archive) { cSavedReportUnit::serialize(archive); serializeThis(archive); }
-	virtual void serialize(cXmlArchiveIn& archive) { cSavedReportUnit::serialize(archive); serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive) { cSavedReportUnit::serialize(archive); serializeThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cSavedReportUnit::serialize(archive); serializeThis(archive); }
+	void serialize(cXmlArchiveIn& archive) override { cSavedReportUnit::serialize(archive); serializeThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cSavedReportUnit::serialize(archive); serializeThis(archive); }
 
-	virtual eSavedReportType getType() const MAXR_OVERRIDE_FUNCTION;
+	eSavedReportType getType() const override;
 
-	virtual void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
+	void playSound (cSoundManager& soundManager) const override;
 
 protected:
-	virtual std::string getText() const MAXR_OVERRIDE_FUNCTION;
+	std::string getText() const override;
 
 private:
 	template <typename T>

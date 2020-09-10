@@ -57,8 +57,8 @@ public:
 	 * Checks the time since the last call and emits the
 	 * signals according to this interval.
 	 */
-	virtual void run() MAXR_OVERRIDE_FUNCTION;
-	
+	void run() MAXR_OVERRIDE_FUNCTION;
+
 	/*
 	 * The following signals get called during the run method.
 	 *

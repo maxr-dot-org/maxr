@@ -156,9 +156,8 @@ public:
 	void setActiveUnit (const cUnit* unit);
 	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData);
 
-	virtual bool isAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
-
-	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
+	bool isAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
+	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 protected:
 
 private:

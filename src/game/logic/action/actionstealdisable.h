@@ -35,10 +35,10 @@ public:
 	cActionStealDisable(const cVehicle& infiltrator, const cUnit& target, bool steal);
 	cActionStealDisable(cBinaryArchiveOut& archive);
 
-	virtual void serialize(cBinaryArchiveIn& archive) { cAction::serialize(archive); serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive)   { cAction::serialize(archive); serializeThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
 
-	virtual void execute(cModel& model) const override;
+	void execute(cModel& model) const override;
 private:
 	void changeUnitOwner(cUnit& unit, cPlayer& newOwner, cModel& model) const;
 

@@ -48,10 +48,9 @@ public:
 
 	void start();
 
-	virtual void pushMessage (std::unique_ptr<cNetMessage2> message) MAXR_OVERRIDE_FUNCTION;
-	virtual std::unique_ptr<cNetMessage2> popMessage() MAXR_OVERRIDE_FUNCTION;
-
-	virtual void run() MAXR_OVERRIDE_FUNCTION;
+	void pushMessage (std::unique_ptr<cNetMessage2> message) MAXR_OVERRIDE_FUNCTION;
+	std::unique_ptr<cNetMessage2> popMessage() MAXR_OVERRIDE_FUNCTION;
+	void run() MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
