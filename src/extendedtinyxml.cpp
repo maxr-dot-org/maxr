@@ -229,7 +229,7 @@ bool getXMLAttributeBool (tinyxml2::XMLDocument& document, const char* first, ..
 string printXMLPath(const tinyxml2::XMLElement* element)
 {
 	string path = element->Name();
-	while (element = element->Parent()->ToElement())
+	while ((element = element->Parent()->ToElement()))
 	{
 		path = string(element->Name()) + "~" + path;
 	}
@@ -265,11 +265,10 @@ string getXMLErrorMsg(const tinyxml2::XMLDocument& document)
 		default: msg = "Unknown error";	break;
 	}
 
-	const char* reason;
-	if (reason = document.GetErrorStr1())
+	if (const char* reason = document.GetErrorStr1())
 		msg += (std::string)" " + reason;
 
-	if (reason = document.GetErrorStr2())
+	if (const char* reason = document.GetErrorStr2())
 		msg += (std::string)" " + reason;
 
 	return msg;
