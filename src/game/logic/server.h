@@ -43,12 +43,12 @@ public:
 	cServer(std::shared_ptr<cConnectionManager> connectionManager);
 	~cServer();
 
-	void pushMessage(std::unique_ptr<cNetMessage2> message);
+	void pushMessage(std::unique_ptr<cNetMessage> message);
 
 	/**
 	* Send a serialized copy of the message to the specified player(s).
 	*/
-	void sendMessageToClients(const cNetMessage2& message, int playerNr = -1) const;
+	void sendMessageToClients(const cNetMessage& message, int playerNr = -1) const;
 
 	void start();
 	void stop();
@@ -91,7 +91,7 @@ private:
 	cGameTimerServer gameTimer;
 
 	std::shared_ptr<cConnectionManager> connectionManager;
-	cConcurrentQueue<std::unique_ptr<cNetMessage2>> eventQueue;
+	cConcurrentQueue<std::unique_ptr<cNetMessage>> eventQueue;
 
 	mutable cSavegame savegame;
 

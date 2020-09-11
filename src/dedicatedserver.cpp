@@ -367,7 +367,7 @@ void cDedicatedServer::printHelp (eHelpCommands helpCommand) const
 }
 
 //------------------------------------------------------------------------
-void cDedicatedServer::pushMessage (std::unique_ptr<cNetMessage2> message)
+void cDedicatedServer::pushMessage (std::unique_ptr<cNetMessage> message)
 {
 	if (handleDedicatedServerEvents (*message))
 		return;
@@ -377,7 +377,7 @@ void cDedicatedServer::pushMessage (std::unique_ptr<cNetMessage2> message)
 }
 
 //------------------------------------------------------------------------
-std::unique_ptr<cNetMessage2> cDedicatedServer::popMessage()
+std::unique_ptr<cNetMessage> cDedicatedServer::popMessage()
 {
 	if (games.empty() == false)
 		return games[0]->popMessage();
@@ -385,7 +385,7 @@ std::unique_ptr<cNetMessage2> cDedicatedServer::popMessage()
 }
 
 //------------------------------------------------------------------------
-bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage2& message)
+bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage& message)
 {
 	if (message.getType() != eNetMessageType::MULTIPLAYER_LOBBY) { return false; }
 

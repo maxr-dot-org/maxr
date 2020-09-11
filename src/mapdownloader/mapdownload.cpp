@@ -317,7 +317,7 @@ void cMapSender::run()
 }
 
 //------------------------------------------------------------------------------
-void cMapSender::sendMsg (cNetMessage2& msg)
+void cMapSender::sendMsg (cNetMessage& msg)
 {
 	msg.playerNr = -1;
 
@@ -329,7 +329,7 @@ void cMapSender::sendMsg (cNetMessage2& msg)
 }
 
 //------------------------------------------------------------------------------
-void cMapSender::sendMsg (cNetMessage2&& msg)
+void cMapSender::sendMsg (cNetMessage&& msg)
 {
-	sendMsg(static_cast<cNetMessage2&>(msg));
+	sendMsg(static_cast<cNetMessage&>(msg));
 }

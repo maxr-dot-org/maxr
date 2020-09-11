@@ -70,7 +70,7 @@ public:
 	void setPlayers(const std::vector<cPlayerBasicData>& splayers, size_t activePlayerNr);
 
 	unsigned int getNetMessageQueueSize() const { return static_cast<unsigned int>(eventQueue2.safe_size()); };
-	void pushMessage(std::unique_ptr<cNetMessage2> message) MAXR_OVERRIDE_FUNCTION;
+	void pushMessage(std::unique_ptr<cNetMessage> message) MAXR_OVERRIDE_FUNCTION;
 
 	//
 	void enableFreezeMode (eFreezeMode mode);
@@ -86,8 +86,8 @@ public:
 	/**
 	* sends a serialized copy of the netmessage to the server.
 	*/
-	void sendNetMessage(cNetMessage2& message) const;
-	void sendNetMessage(cNetMessage2&& message) const;
+	void sendNetMessage(cNetMessage& message) const;
+	void sendNetMessage(cNetMessage&& message) const;
 
 
 	void handleNetMessages();
@@ -117,7 +117,7 @@ private:
 
 	std::shared_ptr<cConnectionManager> connectionManager;
 
-	cConcurrentQueue<std::unique_ptr<cNetMessage2>> eventQueue2;
+	cConcurrentQueue<std::unique_ptr<cNetMessage>> eventQueue2;
 
 	std::shared_ptr<cGameTimerClient> gameTimer;
 

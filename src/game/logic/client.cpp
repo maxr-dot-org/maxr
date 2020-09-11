@@ -92,7 +92,7 @@ void cClient::setPlayers (const std::vector<cPlayerBasicData>& splayers, size_t 
 	activePlayer = model.getPlayer(activePlayerNr);
 }
 
-void cClient::pushMessage(std::unique_ptr<cNetMessage2> message)
+void cClient::pushMessage(std::unique_ptr<cNetMessage> message)
 {
 	if (message->getType() == eNetMessageType::GAMETIME_SYNC_SERVER)
 	{
@@ -105,7 +105,7 @@ void cClient::pushMessage(std::unique_ptr<cNetMessage2> message)
 	eventQueue2.push(std::move(message));
 }
 
-void cClient::sendNetMessage(cNetMessage2& message) const
+void cClient::sendNetMessage(cNetMessage& message) const
 {
 	message.playerNr = activePlayer->getId();
 
@@ -119,9 +119,9 @@ void cClient::sendNetMessage(cNetMessage2& message) const
 	connectionManager->sendToServer(message);
 }
 
-void cClient::sendNetMessage(cNetMessage2&& message) const
+void cClient::sendNetMessage(cNetMessage&& message) const
 {
-	sendNetMessage(static_cast<cNetMessage2&>(message));
+	sendNetMessage(static_cast<cNetMessage&>(message));
 }
 
 //------------------------------------------------------------------------------
@@ -139,7 +139,7 @@ void cClient::setUnitsData(std::shared_ptr<const cUnitsData> unitsData)
 
 void cClient::handleNetMessages()
 {
-	std::unique_ptr<cNetMessage2> message;
+	std::unique_ptr<cNetMessage> message;
 	while (eventQueue2.try_pop(message))
 	{
 

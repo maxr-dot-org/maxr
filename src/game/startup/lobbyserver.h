@@ -43,8 +43,8 @@ public:
 
 	void addLobbyMessageHandler (std::unique_ptr<ILobbyMessageHandler>);
 
-	void pushMessage (std::unique_ptr<cNetMessage2> message) override;
-	std::unique_ptr<cNetMessage2> popMessage() override;
+	void pushMessage (std::unique_ptr<cNetMessage> message) override;
+	std::unique_ptr<cNetMessage> popMessage() override;
 	void run();
 
 	std::string getGameState() const;
@@ -85,13 +85,13 @@ private:
 
 	cPlayerBasicData* getPlayer (int);
 
-	void sendNetMessage (const cNetMessage2&, int receiverPlayerNr = -1);
-	void forwardMessage (const cNetMessage2&);
+	void sendNetMessage (const cNetMessage&, int receiverPlayerNr = -1);
+	void forwardMessage (const cNetMessage&);
 
 	void sendPlayerList();
 	void sendGameData (int playerNr = -1);
 
-	void handleNetMessage (const cNetMessage2&);
+	void handleNetMessage (const cNetMessage&);
 	void handleLobbyMessage (const cMultiplayerLobbyMessage&);
 
 	void clientConnects (const cNetMessageTcpWantConnect&);
@@ -106,7 +106,7 @@ private:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	cConcurrentQueue<std::unique_ptr<cNetMessage2>> messageQueue;
+	cConcurrentQueue<std::unique_ptr<cNetMessage>> messageQueue;
 	std::shared_ptr<cConnectionManager> connectionManager;
 
 	std::vector<std::unique_ptr<ILobbyMessageHandler>> lobbyMessageHandlers;

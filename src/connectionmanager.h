@@ -27,7 +27,7 @@
 
 class cNetwork;
 class cSocket;
-class cNetMessage2;
+class cNetMessage;
 class cPlayerBasicData;
 class cHandshakeTimeout;
 
@@ -38,8 +38,8 @@ class INetMessageReceiver
 {
 public:
 	virtual ~INetMessageReceiver() {}
-	virtual void pushMessage(std::unique_ptr<cNetMessage2> message) = 0;
-	virtual std::unique_ptr<cNetMessage2> popMessage() { throw std::runtime_error("Method not implemented"); };
+	virtual void pushMessage(std::unique_ptr<cNetMessage> message) = 0;
+	virtual std::unique_ptr<cNetMessage> popMessage() { throw std::runtime_error("Method not implemented"); };
 };
 
 class cConnectionManager
@@ -63,9 +63,9 @@ public:
 	void setLocalServer(INetMessageReceiver* server);
 	void setLocalClients(std::vector<INetMessageReceiver*>&&);
 
-	void sendToServer(const cNetMessage2& message);
-	void sendToPlayer(const cNetMessage2& message, int playerNr);
-	void sendToPlayers(const cNetMessage2& message);
+	void sendToServer(const cNetMessage& message);
+	void sendToPlayer(const cNetMessage& message, int playerNr);
+	void sendToPlayers(const cNetMessage& message);
 
 	void disconnect(int player);
 	void disconnectAll();
@@ -82,8 +82,8 @@ public:
 private:
 	void startTimeout(const cSocket* socket);
 	void stopTimeout(const cSocket* socket);
-	int sendMessage(const cSocket* socket, const cNetMessage2& message);
-	bool handeConnectionHandshake(const std::unique_ptr<cNetMessage2> &message, const cSocket* socket, int playerOnSocket);
+	int sendMessage(const cSocket* socket, const cNetMessage& message);
+	bool handeConnectionHandshake(const std::unique_ptr<cNetMessage> &message, const cSocket* socket, int playerOnSocket);
 
 	std::unique_ptr<cNetwork> network;
 	std::vector<INetMessageReceiver*> localClients; // Hotseat

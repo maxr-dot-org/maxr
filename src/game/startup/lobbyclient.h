@@ -34,8 +34,8 @@ class cLobbyClient : public INetMessageReceiver
 public:
 	cLobbyClient (std::shared_ptr<cConnectionManager>, const cPlayerBasicData&);
 
-	void pushMessage (std::unique_ptr<cNetMessage2>) override;
-	std::unique_ptr<cNetMessage2> popMessage() override;
+	void pushMessage (std::unique_ptr<cNetMessage>) override;
+	std::unique_ptr<cNetMessage> popMessage() override;
 	void run();
 
 	bool isConnectedToServer() const;
@@ -94,10 +94,10 @@ public:
 private:
 	cPlayerBasicData* getPlayer (int playerNr);
 
-	void sendNetMessage(cNetMessage2&);
-	void sendNetMessage (cNetMessage2&&);
+	void sendNetMessage(cNetMessage&);
+	void sendNetMessage (cNetMessage&&);
 
-	void handleNetMessage (const cNetMessage2&);
+	void handleNetMessage (const cNetMessage&);
 	void handleLobbyMessage (const cMultiplayerLobbyMessage&);
 
 	void handleNetMessage_TCP_CONNECTED (const cNetMessageTcpConnected&);
@@ -120,7 +120,7 @@ private:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	cConcurrentQueue<std::unique_ptr<cNetMessage2>> messageQueue;
+	cConcurrentQueue<std::unique_ptr<cNetMessage>> messageQueue;
 	std::shared_ptr<cConnectionManager> connectionManager;
 
 	std::vector<std::unique_ptr<ILobbyMessageHandler>> lobbyMessageHandlers;

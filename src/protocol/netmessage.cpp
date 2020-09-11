@@ -30,7 +30,7 @@
 #include "mapdownloader/mapdownload.h"
 #include "maxrversion.h"
 
-std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(const unsigned char* data, int length)
+std::unique_ptr<cNetMessage> cNetMessage::createFromBuffer(const unsigned char* data, int length)
 {
 	cBinaryArchiveOut archive(data, length);
 
@@ -40,7 +40,7 @@ std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(const unsigned char
 	int playerNr;
 	archive >> playerNr;
 
-	std::unique_ptr<cNetMessage2> message;
+	std::unique_ptr<cNetMessage> message;
 	switch (type)
 	{
 	case eNetMessageType::TCP_HELLO:
@@ -94,25 +94,25 @@ std::unique_ptr<cNetMessage2> cNetMessage2::createFromBuffer(const unsigned char
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cNetMessage2> cNetMessage2::clone() const
+std::unique_ptr<cNetMessage> cNetMessage::clone() const
 {
 	std::vector<unsigned char> serialMessage;
 	cBinaryArchiveIn archiveIn(serialMessage);
 	archiveIn << *this;
 
-	return cNetMessage2::createFromBuffer(serialMessage.data(), serialMessage.size());
+	return cNetMessage::createFromBuffer(serialMessage.data(), serialMessage.size());
 }
 
 //------------------------------------------------------------------------------
 cNetMessageTcpHello::cNetMessageTcpHello():
-	cNetMessage2(eNetMessageType::TCP_HELLO),
+	cNetMessage(eNetMessageType::TCP_HELLO),
 	packageVersion(PACKAGE_VERSION),
 	packageRev(PACKAGE_REV)
 {}
 
 //------------------------------------------------------------------------------
 cNetMessageTcpWantConnect::cNetMessageTcpWantConnect():
-	cNetMessage2(eNetMessageType::TCP_WANT_CONNECT),
+	cNetMessage(eNetMessageType::TCP_WANT_CONNECT),
 	ready(false),
 	packageVersion(PACKAGE_VERSION),
 	packageRev(PACKAGE_REV),
@@ -121,7 +121,7 @@ cNetMessageTcpWantConnect::cNetMessageTcpWantConnect():
 
 //------------------------------------------------------------------------------
 cNetMessageTcpConnected::cNetMessageTcpConnected(int playerNr) :
-	cNetMessage2(eNetMessageType::TCP_CONNECTED),
+	cNetMessage(eNetMessageType::TCP_CONNECTED),
 	playerNr(playerNr),
 	packageVersion(PACKAGE_VERSION),
 	packageRev(PACKAGE_REV)
@@ -158,7 +158,7 @@ std::string enumToString(eNetMessageType value)
 
 //------------------------------------------------------------------------------
 cNetMessageResyncModel::cNetMessageResyncModel(const cModel& model) :
-	cNetMessage2(eNetMessageType::RESYNC_MODEL)
+	cNetMessage(eNetMessageType::RESYNC_MODEL)
 {
 	cBinaryArchiveIn archive(data);
 	archive << model;
@@ -173,7 +173,7 @@ void cNetMessageResyncModel::apply(cModel& model) const
 
 //------------------------------------------------------------------------------
 cNetMessageGameAlreadyRunning::cNetMessageGameAlreadyRunning(const cModel& model) :
-	cNetMessage2(eNetMessageType::GAME_ALREADY_RUNNING)
+	cNetMessage(eNetMessageType::GAME_ALREADY_RUNNING)
 {
 	for (const auto& p : model.getPlayerList())
 		playerList.push_back(cPlayerBasicData(p->getName(), p->getColor(), p->getId(), p->isDefeated));

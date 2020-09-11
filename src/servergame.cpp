@@ -152,13 +152,13 @@ void cServerGame::runInThread()
 }
 
 //------------------------------------------------------------------------------
-void cServerGame::pushMessage (std::unique_ptr<cNetMessage2> message)
+void cServerGame::pushMessage (std::unique_ptr<cNetMessage> message)
 {
  	lobbyServer.pushMessage (std::move (message));
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cNetMessage2> cServerGame::popMessage()
+std::unique_ptr<cNetMessage> cServerGame::popMessage()
 {
 	return lobbyServer.popMessage();
 }

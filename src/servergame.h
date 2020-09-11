@@ -35,7 +35,7 @@
 #include <SDL.h>
 
 class cLandingPositionManager;
-class cNetMessage2;
+class cNetMessage;
 class cPlayer;
 class cPlayerBasicData;
 class cServer;
@@ -56,8 +56,8 @@ public:
 
 	void runInThread();
 
-	void pushMessage (std::unique_ptr<cNetMessage2>);
-	std::unique_ptr<cNetMessage2> popMessage();
+	void pushMessage (std::unique_ptr<cNetMessage>);
+	std::unique_ptr<cNetMessage> popMessage();
 
 	void prepareGameData();
 	bool loadGame (int saveGameNumber);

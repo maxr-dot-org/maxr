@@ -28,7 +28,7 @@
 class cUnitsData;
 class cClanData;
 
-class cMultiplayerLobbyMessage : public cNetMessage2
+class cMultiplayerLobbyMessage : public cNetMessage
 {
 public:
 	// When changing this enum, also update function enumToString(eActiontype value)!
@@ -86,7 +86,7 @@ protected:
 	 * potentially handle the message
 	 * @return if message is handled
 	 */
-	bool handleMessage (const cNetMessage2&) final;
+	bool handleMessage (const cNetMessage&) final;
 public:
 	virtual bool handleMessage (const cMultiplayerLobbyMessage&) = 0;
 };

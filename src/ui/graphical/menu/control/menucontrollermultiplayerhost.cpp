@@ -162,15 +162,15 @@ void cMenuControllerMultiplayerHost::reset()
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::pushMessage (std::unique_ptr<cNetMessage2> message)
+void cMenuControllerMultiplayerHost::pushMessage (std::unique_ptr<cNetMessage> message)
 {
 	messageQueue.push (std::move (message));
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cNetMessage2> cMenuControllerMultiplayerHost::popMessage()
+std::unique_ptr<cNetMessage> cMenuControllerMultiplayerHost::popMessage()
 {
-	std::unique_ptr<cNetMessage2> message;
+	std::unique_ptr<cNetMessage> message;
 	messageQueue.try_pop(message);
 	return message;
 }
@@ -178,7 +178,7 @@ std::unique_ptr<cNetMessage2> cMenuControllerMultiplayerHost::popMessage()
 //------------------------------------------------------------------------------
 void cMenuControllerMultiplayerHost::run()
 {
-	std::unique_ptr<cNetMessage2> message;
+	std::unique_ptr<cNetMessage> message;
 	while (messageQueue.try_pop (message))
 	{
 		handleNetMessage (*message);
@@ -697,7 +697,7 @@ void cMenuControllerMultiplayerHost::startHost()
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::handleNetMessage (cNetMessage2& message)
+void cMenuControllerMultiplayerHost::handleNetMessage (cNetMessage& message)
 {
 	cTextArchiveIn archive;
 	archive << message;
@@ -938,7 +938,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_PLAYER_HAS_ABORTED_
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::sendNetMessage(cNetMessage2& message, int receiverPlayerNr /*= -1*/, int senderPlayerNr /*= -1*/)
+void cMenuControllerMultiplayerHost::sendNetMessage(cNetMessage& message, int receiverPlayerNr /*= -1*/, int senderPlayerNr /*= -1*/)
 {
 	if (senderPlayerNr == -1 && windowNetworkLobby)
 	{
@@ -960,9 +960,9 @@ void cMenuControllerMultiplayerHost::sendNetMessage(cNetMessage2& message, int r
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::sendNetMessage(cNetMessage2&& message, int receiverPlayerNr /*= -1*/, int senderPlayerNr /*= -1*/)
+void cMenuControllerMultiplayerHost::sendNetMessage(cNetMessage&& message, int receiverPlayerNr /*= -1*/, int senderPlayerNr /*= -1*/)
 {
-	sendNetMessage(static_cast<cNetMessage2&>(message), receiverPlayerNr, senderPlayerNr);
+	sendNetMessage(static_cast<cNetMessage&>(message), receiverPlayerNr, senderPlayerNr);
 }
 
 //------------------------------------------------------------------------------

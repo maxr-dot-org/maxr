@@ -58,15 +58,15 @@ void cLobbyServer::addLobbyMessageHandler (std::unique_ptr<ILobbyMessageHandler>
 }
 
 //------------------------------------------------------------------------------
-void cLobbyServer::pushMessage (std::unique_ptr<cNetMessage2> message)
+void cLobbyServer::pushMessage (std::unique_ptr<cNetMessage> message)
 {
 	messageQueue.push (std::move (message));
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cNetMessage2> cLobbyServer::popMessage()
+std::unique_ptr<cNetMessage> cLobbyServer::popMessage()
 {
-	std::unique_ptr<cNetMessage2> message;
+	std::unique_ptr<cNetMessage> message;
 	messageQueue.try_pop(message);
 	return message;
 }
@@ -131,7 +131,7 @@ void cLobbyServer::startServer (int port)
 //------------------------------------------------------------------------------
 void cLobbyServer::run()
 {
-	std::unique_ptr<cNetMessage2> message;
+	std::unique_ptr<cNetMessage> message;
 
 	while (messageQueue.try_pop (message))
 	{
@@ -140,7 +140,7 @@ void cLobbyServer::run()
 }
 
 //------------------------------------------------------------------------------
-void cLobbyServer::sendNetMessage(const cNetMessage2& message, int receiverPlayerNr /*= -1*/)
+void cLobbyServer::sendNetMessage(const cNetMessage& message, int receiverPlayerNr /*= -1*/)
 {
 	cTextArchiveIn archive;
 	archive << message;
@@ -153,7 +153,7 @@ void cLobbyServer::sendNetMessage(const cNetMessage2& message, int receiverPlaye
 }
 
 //------------------------------------------------------------------------------
-void cLobbyServer::forwardMessage (const cNetMessage2& message)
+void cLobbyServer::forwardMessage (const cNetMessage& message)
 {
 	cTextArchiveIn archive;
 	archive << message;
@@ -272,7 +272,7 @@ const cPlayerBasicData* cLobbyServer::findNotReadyPlayer() const
 
 
 //------------------------------------------------------------------------------
-void cLobbyServer::handleNetMessage (const cNetMessage2& message)
+void cLobbyServer::handleNetMessage (const cNetMessage& message)
 {
 	cTextArchiveIn archive;
 	archive << message;

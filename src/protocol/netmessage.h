@@ -64,26 +64,26 @@ enum class eNetMessageType {
 std::string enumToString(eNetMessageType value);
 
 //------------------------------------------------------------------------------
-class cNetMessage2
+class cNetMessage
 {
 public:
 
-	static std::unique_ptr<cNetMessage2> createFromBuffer(const unsigned char* data, int length);
+	static std::unique_ptr<cNetMessage> createFromBuffer(const unsigned char* data, int length);
 
-	virtual ~cNetMessage2() {}
+	virtual ~cNetMessage() {}
 
 	eNetMessageType getType() const { return type; };
-	std::unique_ptr<cNetMessage2> clone() const;
+	std::unique_ptr<cNetMessage> clone() const;
 
 	virtual void serialize(cBinaryArchiveIn& archive) { serializeThis(archive); }
 	virtual void serialize(cTextArchiveIn& archive) { serializeThis(archive); }
 
-	cNetMessage2& From(int player) { playerNr = player; return *this; }
+	cNetMessage& From(int player) { playerNr = player; return *this; }
 
 	int playerNr;
 
 protected:
-	cNetMessage2(eNetMessageType type) : playerNr(-1), type(type) {}
+	cNetMessage(eNetMessageType type) : playerNr(-1), type(type) {}
 private:
 	template <typename T>
 	void serializeThis(T& archive)
@@ -106,29 +106,29 @@ public:
 	 * potentially handle the message
 	 * @return if message is handled
 	 */
-	virtual bool handleMessage (const cNetMessage2&) = 0;
+	virtual bool handleMessage (const cNetMessage&) = 0;
 };
 
 //------------------------------------------------------------------------------
-class cNetMessageReport : public cNetMessage2
+class cNetMessageReport : public cNetMessage
 {
 public:
 	cNetMessageReport(std::unique_ptr<cSavedReport> report) :
-		cNetMessage2(eNetMessageType::REPORT),
+		cNetMessage(eNetMessageType::REPORT),
 		report(std::move(report))
 	{};
 	cNetMessageReport() :
-		cNetMessage2(eNetMessageType::REPORT)
+		cNetMessage(eNetMessageType::REPORT)
 	{};
 
 	cNetMessageReport(cBinaryArchiveOut& archive) :
-		cNetMessage2(eNetMessageType::REPORT)
+		cNetMessage(eNetMessageType::REPORT)
 	{
 		loadThis(archive);
 	}
 
-	void serialize(cBinaryArchiveIn& archive) override { cNetMessage2::serialize(archive); saveThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cNetMessage2::serialize(archive); saveThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cNetMessage::serialize(archive); saveThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cNetMessage::serialize(archive); saveThis(archive); }
 
 	std::unique_ptr<cSavedReport> report;
 
@@ -146,18 +146,18 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cNetMessageSyncServer : public cNetMessage2
+class cNetMessageSyncServer : public cNetMessage
 {
 public:
-	cNetMessageSyncServer() : cNetMessage2(eNetMessageType::GAMETIME_SYNC_SERVER) {};
+	cNetMessageSyncServer() : cNetMessage(eNetMessageType::GAMETIME_SYNC_SERVER) {};
 	cNetMessageSyncServer(cBinaryArchiveOut& archive) :
-		cNetMessage2(eNetMessageType::GAMETIME_SYNC_SERVER)
+		cNetMessage(eNetMessageType::GAMETIME_SYNC_SERVER)
 	{
 		serializeThis(archive);
 	}
 
-	void serialize(cBinaryArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
 
 	unsigned int gameTime;
 	unsigned int checksum;
@@ -174,18 +174,18 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cNetMessageSyncClient : public cNetMessage2
+class cNetMessageSyncClient : public cNetMessage
 {
 public:
-	cNetMessageSyncClient() : cNetMessage2(eNetMessageType::GAMETIME_SYNC_CLIENT) {};
+	cNetMessageSyncClient() : cNetMessage(eNetMessageType::GAMETIME_SYNC_CLIENT) {};
 	cNetMessageSyncClient(cBinaryArchiveOut& archive) :
-		cNetMessage2(eNetMessageType::GAMETIME_SYNC_CLIENT)
+		cNetMessage(eNetMessageType::GAMETIME_SYNC_CLIENT)
 	{
 		serializeThis(archive);
 	}
 
-	void serialize(cBinaryArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
 
 	unsigned int gameTime;
 
@@ -210,21 +210,21 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cNetMessageRandomSeed : public cNetMessage2
+class cNetMessageRandomSeed : public cNetMessage
 {
 public:
 	cNetMessageRandomSeed(uint64_t seed) :
-		cNetMessage2(eNetMessageType::RANDOM_SEED),
+		cNetMessage(eNetMessageType::RANDOM_SEED),
 		seed(seed)
 	{};
 	cNetMessageRandomSeed(cBinaryArchiveOut& archive) :
-		cNetMessage2(eNetMessageType::RANDOM_SEED)
+		cNetMessage(eNetMessageType::RANDOM_SEED)
 	{
 		serializeThis(archive);
 	}
 
-	void serialize(cBinaryArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
 
 	uint64_t seed;
 private:
@@ -236,22 +236,22 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cNetMessageFreezeModes : public cNetMessage2
+class cNetMessageFreezeModes : public cNetMessage
 {
 public:
 	cNetMessageFreezeModes(const cFreezeModes& freezeModes, std::map<int, ePlayerConnectionState> playerStates) :
-		cNetMessage2(eNetMessageType::FREEZE_MODES),
+		cNetMessage(eNetMessageType::FREEZE_MODES),
 		freezeModes(freezeModes),
 		playerStates(playerStates)
 	{};
 	cNetMessageFreezeModes(cBinaryArchiveOut& archive) :
-		cNetMessage2(eNetMessageType::FREEZE_MODES)
+		cNetMessage(eNetMessageType::FREEZE_MODES)
 	{
 		serializeThis(archive);
 	}
 
-	void serialize(cBinaryArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
 
 	cFreezeModes freezeModes;
 	std::map<int, ePlayerConnectionState> playerStates;
@@ -265,22 +265,22 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cNetMessageGUISaveInfo : public cNetMessage2
+class cNetMessageGUISaveInfo : public cNetMessage
 {
 public:
 	cNetMessageGUISaveInfo(int savingID) :
-		cNetMessage2(eNetMessageType::GUI_SAVE_INFO),
+		cNetMessage(eNetMessageType::GUI_SAVE_INFO),
 		reports(nullptr),
 		savingID(savingID)
 	{};
 	cNetMessageGUISaveInfo(cBinaryArchiveOut& archive) :
-		cNetMessage2(eNetMessageType::GUI_SAVE_INFO)
+		cNetMessage(eNetMessageType::GUI_SAVE_INFO)
 	{
 		loadThis(archive);
 	}
 
-	void serialize(cBinaryArchiveIn& archive) override { cNetMessage2::serialize(archive); saveThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cNetMessage2::serialize(archive); saveThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cNetMessage::serialize(archive); saveThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cNetMessage::serialize(archive); saveThis(archive); }
 
 	std::shared_ptr<std::vector<std::unique_ptr<cSavedReport>>> reports;
 	cGameGuiState guiState;
@@ -325,21 +325,21 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cNetMessageRequestGUISaveInfo : public cNetMessage2
+class cNetMessageRequestGUISaveInfo : public cNetMessage
 {
 public:
 	cNetMessageRequestGUISaveInfo(int savingID) :
-		cNetMessage2(eNetMessageType::REQUEST_GUI_SAVE_INFO),
+		cNetMessage(eNetMessageType::REQUEST_GUI_SAVE_INFO),
 		savingID(savingID)
 	{};
 	cNetMessageRequestGUISaveInfo(cBinaryArchiveOut& archive) :
-		cNetMessage2(eNetMessageType::REQUEST_GUI_SAVE_INFO)
+		cNetMessage(eNetMessageType::REQUEST_GUI_SAVE_INFO)
 	{
 		serializeThis(archive);
 	};
 
-	void serialize(cBinaryArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
 
 	int savingID;
 private:
@@ -351,17 +351,17 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cNetMessageResyncModel : public cNetMessage2
+class cNetMessageResyncModel : public cNetMessage
 {
 public:
 	cNetMessageResyncModel(const cModel& model);
 	cNetMessageResyncModel(cBinaryArchiveOut& archive) :
-		cNetMessage2(eNetMessageType::RESYNC_MODEL)
+		cNetMessage(eNetMessageType::RESYNC_MODEL)
 	{
 		serializeThis(archive);
 	};
-	void serialize(cBinaryArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
 
 	void apply(cModel& model) const;
 private:
@@ -375,18 +375,18 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cNetMessageTcpHello : public cNetMessage2
+class cNetMessageTcpHello : public cNetMessage
 {
 public:
 	cNetMessageTcpHello();
 	cNetMessageTcpHello(cBinaryArchiveOut& archive) :
-		cNetMessage2(eNetMessageType::TCP_HELLO)
+		cNetMessage(eNetMessageType::TCP_HELLO)
 	{
 		serializeThis(archive);
 	};
 
-	void serialize(cBinaryArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
 
 	std::string packageVersion;
 	std::string packageRev;
@@ -402,18 +402,18 @@ private:
 
 
 //------------------------------------------------------------------------------
-class cNetMessageTcpWantConnect : public cNetMessage2
+class cNetMessageTcpWantConnect : public cNetMessage
 {
 public:
 	cNetMessageTcpWantConnect();
 	cNetMessageTcpWantConnect(cBinaryArchiveOut& archive) :
-		cNetMessage2(eNetMessageType::TCP_WANT_CONNECT)
+		cNetMessage(eNetMessageType::TCP_WANT_CONNECT)
 	{
 		serializeThis(archive);
 	};
 
-	void serialize(cBinaryArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
 
 	std::string playerName;
 	cRgbColor playerColor;
@@ -437,18 +437,18 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cNetMessageTcpConnected : public cNetMessage2
+class cNetMessageTcpConnected : public cNetMessage
 {
 public:
 	cNetMessageTcpConnected(int playerNr);
 	cNetMessageTcpConnected(cBinaryArchiveOut& archive) :
-		cNetMessage2(eNetMessageType::TCP_CONNECTED)
+		cNetMessage(eNetMessageType::TCP_CONNECTED)
 	{
 		serializeThis(archive);
 	};
 
-	void serialize(cBinaryArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
 
 	int playerNr;
 	std::string packageVersion;
@@ -465,21 +465,21 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cNetMessageTcpConnectFailed : public cNetMessage2
+class cNetMessageTcpConnectFailed : public cNetMessage
 {
 public:
 	cNetMessageTcpConnectFailed(const std::string& reason = "") :
-		cNetMessage2(eNetMessageType::TCP_CONNECT_FAILED),
+		cNetMessage(eNetMessageType::TCP_CONNECT_FAILED),
 		reason(reason)
 	{};
 	cNetMessageTcpConnectFailed(cBinaryArchiveOut& archive) :
-		cNetMessage2(eNetMessageType::TCP_CONNECT_FAILED)
+		cNetMessage(eNetMessageType::TCP_CONNECT_FAILED)
 	{
 		serializeThis(archive);
 	};
 
-	void serialize(cBinaryArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
 
 	std::string reason;
 private:
@@ -491,33 +491,33 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cNetMessageTcpClose : public cNetMessage2
+class cNetMessageTcpClose : public cNetMessage
 {
 public:
 	cNetMessageTcpClose(int playerNr_) :
-		cNetMessage2(eNetMessageType::TCP_CLOSE)
+		cNetMessage(eNetMessageType::TCP_CLOSE)
 	{
 		playerNr = playerNr_;
 	};
 };
 
 //------------------------------------------------------------------------------
-class cNetMessageRequestResync : public cNetMessage2
+class cNetMessageRequestResync : public cNetMessage
 {
 public:
 	cNetMessageRequestResync(int playerToSync = -1, int saveNumberForGuiInfo = -1) :
-		cNetMessage2(eNetMessageType::REQUEST_RESYNC_MODEL),
+		cNetMessage(eNetMessageType::REQUEST_RESYNC_MODEL),
 		playerToSync(playerToSync),
 		saveNumberForGuiInfo(saveNumberForGuiInfo)
 	{};
 	cNetMessageRequestResync(cBinaryArchiveOut& archive) :
-		cNetMessage2(eNetMessageType::REQUEST_RESYNC_MODEL)
+		cNetMessage(eNetMessageType::REQUEST_RESYNC_MODEL)
 	{
 		serializeThis(archive);
 	};
 
-	void serialize(cBinaryArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
 
 	int playerToSync;         // playerNr who will receive the data. -1 for all connected players
 	int saveNumberForGuiInfo; // number of save game file, from which gui info will be loaded. -1 disables loading gui data
@@ -532,18 +532,18 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cNetMessageGameAlreadyRunning : public cNetMessage2
+class cNetMessageGameAlreadyRunning : public cNetMessage
 {
 public:
 	cNetMessageGameAlreadyRunning(const cModel& model);
 	cNetMessageGameAlreadyRunning(cBinaryArchiveOut& archive) :
-		cNetMessage2(eNetMessageType::GAME_ALREADY_RUNNING)
+		cNetMessage(eNetMessageType::GAME_ALREADY_RUNNING)
 	{
 		serializeThis(archive);
 	};
 
-	void serialize(cBinaryArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
 
 	std::string mapName;
 	uint32_t mapCrc;
@@ -560,14 +560,14 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cNetMessageWantRejoinGame : public cNetMessage2
+class cNetMessageWantRejoinGame : public cNetMessage
 {
 public:
 	cNetMessageWantRejoinGame() :
-		cNetMessage2(eNetMessageType::WANT_REJOIN_GAME)
+		cNetMessage(eNetMessageType::WANT_REJOIN_GAME)
 	{};
 	cNetMessageWantRejoinGame(cBinaryArchiveOut& archive) :
-		cNetMessage2(eNetMessageType::WANT_REJOIN_GAME)
+		cNetMessage(eNetMessageType::WANT_REJOIN_GAME)
 	{};
 
 };

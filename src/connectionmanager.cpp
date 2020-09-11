@@ -261,7 +261,7 @@ void cConnectionManager::setLocalClients(std::vector<INetMessageReceiver*>&& cli
 }
 
 //------------------------------------------------------------------------------
-void cConnectionManager::sendToServer(const cNetMessage2& message)
+void cConnectionManager::sendToServer(const cNetMessage& message)
 {
 	cLockGuard<cMutex> tl(mutex);
 
@@ -280,7 +280,7 @@ void cConnectionManager::sendToServer(const cNetMessage2& message)
 }
 
 //------------------------------------------------------------------------------
-void cConnectionManager::sendToPlayer(const cNetMessage2& message, int playerNr)
+void cConnectionManager::sendToPlayer(const cNetMessage& message, int playerNr)
 {
 	cLockGuard<cMutex> tl(mutex);
 
@@ -307,7 +307,7 @@ void cConnectionManager::sendToPlayer(const cNetMessage2& message, int playerNr)
 }
 
 //------------------------------------------------------------------------------
-void cConnectionManager::sendToPlayers(const cNetMessage2& message)
+void cConnectionManager::sendToPlayers(const cNetMessage& message)
 {
 	cLockGuard<cMutex> tl(mutex);
 
@@ -415,7 +415,7 @@ void cConnectionManager::incomingConnection(const cSocket* socket)
 }
 
 //------------------------------------------------------------------------------
-int cConnectionManager::sendMessage(const cSocket* socket, const cNetMessage2& message)
+int cConnectionManager::sendMessage(const cSocket* socket, const cNetMessage& message)
 {
 	// serialize...
 	std::vector<unsigned char> buffer;
@@ -428,10 +428,10 @@ int cConnectionManager::sendMessage(const cSocket* socket, const cNetMessage2& m
 //------------------------------------------------------------------------------
 void cConnectionManager::messageReceived(const cSocket* socket, unsigned char* data, int length)
 {
-	std::unique_ptr<cNetMessage2> message;
+	std::unique_ptr<cNetMessage> message;
 	try
 	{
-		message = cNetMessage2::createFromBuffer(data, length);
+		message = cNetMessage::createFromBuffer(data, length);
 	}
 	catch (std::runtime_error& e)
 	{
@@ -472,7 +472,7 @@ void cConnectionManager::messageReceived(const cSocket* socket, unsigned char* d
 	}
 }
 
-bool cConnectionManager::handeConnectionHandshake(const std::unique_ptr<cNetMessage2> &message, const cSocket* socket, int playerOnSocket)
+bool cConnectionManager::handeConnectionHandshake(const std::unique_ptr<cNetMessage> &message, const cSocket* socket, int playerOnSocket)
 {
 	switch (message->getType())
 	{

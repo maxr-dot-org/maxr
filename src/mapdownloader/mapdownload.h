@@ -28,7 +28,7 @@
 struct SDL_Thread;
 class cConnectionManager;
 class cMuMsgMapDownloadData;
-class cNetMessage2;
+class cNetMessage;
 
 int mapSenderThreadFunction (void* data);
 
@@ -84,8 +84,8 @@ private:
 	void run();
 
 	bool getMapFileContent();
-	void sendMsg (cNetMessage2& msg);
-	void sendMsg (cNetMessage2&& msg);
+	void sendMsg (cNetMessage& msg);
+	void sendMsg (cNetMessage&& msg);
 
 private:
 	cConnectionManager& connectionManager;

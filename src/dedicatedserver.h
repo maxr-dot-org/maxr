@@ -39,8 +39,8 @@ public:
 	static cDedicatedServer& instance();
 
 	void run();
-	void pushMessage (std::unique_ptr<cNetMessage2> message) override;
-	std::unique_ptr<cNetMessage2> popMessage() override;
+	void pushMessage (std::unique_ptr<cNetMessage> message) override;
+	std::unique_ptr<cNetMessage> popMessage() override;
 
 	//------------------------------------------------------------------------
 protected:
@@ -79,7 +79,7 @@ protected:
 	void loadSaveGame (int saveGameNumber);
 	void saveGame (int saveGameNumber);
 
-	bool handleDedicatedServerEvents (cNetMessage2& message);
+	bool handleDedicatedServerEvents (cNetMessage& message);
 	void sendChatMessage (const std::string& text, int receiver);
 
 	std::unique_ptr<cDedicatedServerConfig> configuration;

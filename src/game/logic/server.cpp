@@ -162,14 +162,14 @@ void cServer::resyncClientModel(int playerNr /*= -1*/) const
 }
 
 //------------------------------------------------------------------------------
-void cServer::pushMessage(std::unique_ptr<cNetMessage2> message)
+void cServer::pushMessage(std::unique_ptr<cNetMessage> message)
 {
 	eventQueue.push(std::move(message));
 }
 
 
 //------------------------------------------------------------------------------
-void cServer::sendMessageToClients(const cNetMessage2& message, int playerNr /* = -1 */) const
+void cServer::sendMessageToClients(const cNetMessage& message, int playerNr /* = -1 */) const
 {
 	if (message.getType() != eNetMessageType::GAMETIME_SYNC_SERVER && message.getType() != eNetMessageType::RESYNC_MODEL)
 	{
@@ -220,7 +220,7 @@ void cServer::run()
 {
 	while (!exit)
 	{
-		std::unique_ptr<cNetMessage2> message;
+		std::unique_ptr<cNetMessage> message;
 		while (eventQueue.try_pop(message))
 		{
 			if (message->getType() != eNetMessageType::GAMETIME_SYNC_CLIENT)

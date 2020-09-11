@@ -50,15 +50,15 @@ cLobbyClient::cLobbyClient (std::shared_ptr<cConnectionManager> connectionManage
 }
 
 //------------------------------------------------------------------------------
-void cLobbyClient::pushMessage (std::unique_ptr<cNetMessage2> message)
+void cLobbyClient::pushMessage (std::unique_ptr<cNetMessage> message)
 {
 	messageQueue.push (std::move (message));
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cNetMessage2> cLobbyClient::popMessage()
+std::unique_ptr<cNetMessage> cLobbyClient::popMessage()
 {
-	std::unique_ptr<cNetMessage2> message;
+	std::unique_ptr<cNetMessage> message;
 	messageQueue.try_pop(message);
 	return message;
 }
@@ -66,7 +66,7 @@ std::unique_ptr<cNetMessage2> cLobbyClient::popMessage()
 //------------------------------------------------------------------------------
 void cLobbyClient::run()
 {
-	std::unique_ptr<cNetMessage2> message;
+	std::unique_ptr<cNetMessage> message;
 	while (messageQueue.try_pop (message))
 	{
 		handleNetMessage (*message);
@@ -109,7 +109,7 @@ cPlayerBasicData* cLobbyClient::getPlayer (int playerNr)
 }
 
 //------------------------------------------------------------------------------
-void cLobbyClient::sendNetMessage (cNetMessage2& message)
+void cLobbyClient::sendNetMessage (cNetMessage& message)
 {
 	message.From (localPlayer.getNr());
 	cTextArchiveIn archive;
@@ -120,7 +120,7 @@ void cLobbyClient::sendNetMessage (cNetMessage2& message)
 }
 
 //------------------------------------------------------------------------------
-void cLobbyClient::sendNetMessage (cNetMessage2&& message)
+void cLobbyClient::sendNetMessage (cNetMessage&& message)
 {
 	sendNetMessage (message); // l-value overload (not const to fix sender)
 }
@@ -198,7 +198,7 @@ void cLobbyClient::disconnect()
 	connectionManager->disconnect (localPlayer.getNr());
 }
 //------------------------------------------------------------------------------
-void cLobbyClient::handleNetMessage (const cNetMessage2& message)
+void cLobbyClient::handleNetMessage (const cNetMessage& message)
 {
 	cTextArchiveIn archive;
 	archive << message;

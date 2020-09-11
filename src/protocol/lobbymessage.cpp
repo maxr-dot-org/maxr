@@ -81,24 +81,24 @@ cMultiplayerLobbyMessage::eMessageType cMultiplayerLobbyMessage::getType() const
 
 void cMultiplayerLobbyMessage::serialize(cBinaryArchiveIn& archive)
 {
-	cNetMessage2::serialize(archive);
+	cNetMessage::serialize(archive);
 	serializeThis(archive);
 }
 
 void cMultiplayerLobbyMessage::serialize(cTextArchiveIn& archive)
 {
-	cNetMessage2::serialize(archive);
+	cNetMessage::serialize(archive);
 	serializeThis(archive);
 }
 
-bool ILobbyMessageHandler::handleMessage (const cNetMessage2& message)
+bool ILobbyMessageHandler::handleMessage (const cNetMessage& message)
 {
 	if (message.getType() != eNetMessageType::MULTIPLAYER_LOBBY) return false;
 	return handleMessage (static_cast<const cMultiplayerLobbyMessage&>(message));
 }
 
 cMultiplayerLobbyMessage::cMultiplayerLobbyMessage(eMessageType type) :
-	cNetMessage2(eNetMessageType::MULTIPLAYER_LOBBY), type(type)
+	cNetMessage(eNetMessageType::MULTIPLAYER_LOBBY), type(type)
 {}
 
 std::string enumToString(cMultiplayerLobbyMessage::eMessageType value)

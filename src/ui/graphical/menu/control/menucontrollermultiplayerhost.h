@@ -48,13 +48,13 @@ public:
 
 	void start();
 
-	void pushMessage (std::unique_ptr<cNetMessage2> message) MAXR_OVERRIDE_FUNCTION;
-	std::unique_ptr<cNetMessage2> popMessage() MAXR_OVERRIDE_FUNCTION;
+	void pushMessage (std::unique_ptr<cNetMessage> message) MAXR_OVERRIDE_FUNCTION;
+	std::unique_ptr<cNetMessage> popMessage() MAXR_OVERRIDE_FUNCTION;
 	void run() MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	cConcurrentQueue<std::unique_ptr<cNetMessage2>> messageQueue;
+	cConcurrentQueue<std::unique_ptr<cNetMessage>> messageQueue;
 
 	std::shared_ptr<cConnectionManager> connectionManager;
 
@@ -102,7 +102,7 @@ private:
 	void startNewGame();
 	void checkReallyWantsToQuit();
 
-	void handleNetMessage (cNetMessage2& message);
+	void handleNetMessage (cNetMessage& message);
 
 	void handleNetMessage_TCP_WANT_CONNECT(cNetMessageTcpWantConnect& message);
 	void handleNetMessage_TCP_CLOSE(cNetMessageTcpClose& message);
@@ -113,8 +113,8 @@ private:
 	void handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS(cMuMsgInLandingPositionSelectionStatus& message);
 	void handleNetMessage_MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION(cMuMsgPlayerAbortedGamePreparations& message);
 
-	void sendNetMessage(cNetMessage2& message, int receiverPlayerNr = -1, int senderPlayerNr = -1);
-	void sendNetMessage(cNetMessage2&& message, int receiverPlayerNr = -1, int senderPlayerNr = -1);
+	void sendNetMessage(cNetMessage& message, int receiverPlayerNr = -1, int senderPlayerNr = -1);
+	void sendNetMessage(cNetMessage&& message, int receiverPlayerNr = -1, int senderPlayerNr = -1);
 
 	void saveOptions();
 };

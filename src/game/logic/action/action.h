@@ -22,7 +22,7 @@
 
 #include "protocol/netmessage.h"
 
-class cAction : public cNetMessage2
+class cAction : public cNetMessage
 {
 public:
 	// When changing this enum, also update function enumToString(eActiontype value)!
@@ -60,13 +60,13 @@ public:
 
 	eActiontype getType() const;
 
-	void serialize(cBinaryArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cNetMessage2::serialize(archive); serializeThis(archive); }
+	void serialize(cBinaryArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cNetMessage::serialize(archive); serializeThis(archive); }
 
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 	virtual void execute(cModel& model) const = 0;
 protected:
-	cAction(eActiontype type) : cNetMessage2(eNetMessageType::ACTION), type(type){};
+	cAction(eActiontype type) : cNetMessage(eNetMessageType::ACTION), type(type){};
 private:
 	template<typename T>
 	void serializeThis(T& archive)
