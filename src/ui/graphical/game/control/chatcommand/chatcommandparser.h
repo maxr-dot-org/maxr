@@ -17,6 +17,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+// Outside of header guards due to circular dependencies
+#include "ui/graphical/game/control/chatcommand/chatcommand.h"
+
 #ifndef ui_graphical_game_control_chatcommand_chatcommandparserH
 #define ui_graphical_game_control_chatcommand_chatcommandparserH
 
@@ -25,8 +28,6 @@
 #include <sstream>
 
 #include "utility/meta/appendtotuple.h"
-
-#include "ui/graphical/game/control/chatcommand/chatcommand.h"
 
 void skipWhiteSpace(const std::string& command, size_t& position);
 
