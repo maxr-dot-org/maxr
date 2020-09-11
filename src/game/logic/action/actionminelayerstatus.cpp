@@ -18,15 +18,16 @@
 ***************************************************************************/
 
 #include "actionminelayerstatus.h"
+
 #include "game/data/model.h"
 
 //------------------------------------------------------------------------------
 cActionMinelayerStatus::cActionMinelayerStatus(const cVehicle& vehicle, bool layMines, bool clearMines) :
-	cAction(eActiontype::ACTION_MINELAYER_STATUS), 
+	cAction(eActiontype::ACTION_MINELAYER_STATUS),
 	vehicleId(vehicle.getId()),
 	layMines(layMines),
 	clearMines(clearMines)
-{};
+{}
 
 //------------------------------------------------------------------------------
 cActionMinelayerStatus::cActionMinelayerStatus(cBinaryArchiveOut& archive)

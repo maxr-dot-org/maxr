@@ -26,7 +26,7 @@
 cActionBuyUpgrades::cActionBuyUpgrades(const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades) :
 	cAction(eActiontype::ACTION_BUY_UPGRADES),
 	unitUpgrades(unitUpgrades)
-{};
+{}
 
 //------------------------------------------------------------------------------
 cActionBuyUpgrades::cActionBuyUpgrades(cBinaryArchiveOut& archive) :

@@ -26,7 +26,7 @@ cActionFinishBuild::cActionFinishBuild(const cUnit& unit, const cPosition& escap
 	cAction(eActiontype::ACTION_FINISH_BUILD),
 	unitId(unit.getId()),
 	escapePosition(escapePosition)
-{};
+{}
 
 //------------------------------------------------------------------------------
 cActionFinishBuild::cActionFinishBuild(cBinaryArchiveOut& archive)
@@ -64,7 +64,7 @@ void cActionFinishBuild::finishABuilding(cModel &model, cVehicle& vehicle) const
 	if (!vehicle.isUnitBuildingABuilding() || vehicle.getBuildTurns() > 0) return;
 	if (!map->isValidPosition(escapePosition)) return;
 	if (!vehicle.isNextTo(escapePosition)) return;
-	
+
 	model.sideStepStealthUnit(escapePosition, vehicle);
 	if (!map->possiblePlace(vehicle, escapePosition, false)) return;
 

@@ -75,13 +75,13 @@ uint32_t calcCheckSum(const T& data, uint32_t crc)
 {
 	typedef typename std::conditional
 		<
-		std::is_enum<T>::value, 
-		sCrcEnum, 
+		std::is_enum<T>::value,
+		sCrcEnum,
 		sCrcClass
 		>::type crcWrapper;
-	
+
 	return crcWrapper::getChecksum(data, crc);
-};
+}
 
 template <typename T>
 uint32_t calcCheckSum(const T* data, uint32_t crc)
@@ -115,7 +115,7 @@ uint32_t calcCheckSum(const std::vector<T>& data, uint32_t checksum)
 		checksum = calcCheckSum(x, checksum);
 
 	return checksum;
-};
+}
 
 template<typename K, typename T>
 uint32_t calcCheckSum(const std::map<K, T>& data, uint32_t checksum)
@@ -127,7 +127,7 @@ uint32_t calcCheckSum(const std::map<K, T>& data, uint32_t checksum)
     }
 
     return checksum;
-};
+}
 
 
 template<typename T>
@@ -137,6 +137,6 @@ uint32_t calcCheckSum(const std::forward_list<T>& data, uint32_t checksum)
 		checksum = calcCheckSum(x, checksum);
 
 	return checksum;
-};
+}
 
 #endif // utility_crcH

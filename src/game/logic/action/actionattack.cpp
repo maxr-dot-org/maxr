@@ -31,7 +31,7 @@ cActionAttack::cActionAttack(const cUnit& aggressor, cPosition targetPosition, c
 	agressorId(aggressor.getId()),
 	targetPosition(targetPosition),
 	targetId(targetUnit? targetUnit->getId() : 0)
-{};
+{}
 
 //------------------------------------------------------------------------------
 cActionAttack::cActionAttack(cBinaryArchiveOut& archive) :

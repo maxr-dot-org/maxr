@@ -23,9 +23,11 @@
 #include "binaryarchive.h"
 
 
+//------------------------------------------------------------------------------
 cBinaryArchiveIn::cBinaryArchiveIn(std::vector<unsigned char>& buffer) :
 	buffer(buffer)
-{};
+{}
+
 //------------------------------------------------------------------------------
 void cBinaryArchiveIn::pushValue(bool value)
 {

@@ -173,8 +173,8 @@ public:
 
 private:
 	eGameSettingsResourceAmount metalAmount = eGameSettingsResourceAmount::Normal;
-	eGameSettingsResourceAmount oilAmount = eGameSettingsResourceAmount::Normal;;
-	eGameSettingsResourceAmount goldAmount = eGameSettingsResourceAmount::Normal;;
+	eGameSettingsResourceAmount oilAmount = eGameSettingsResourceAmount::Normal;
+	eGameSettingsResourceAmount goldAmount = eGameSettingsResourceAmount::Normal;
 
 	eGameSettingsResourceDensity resourceDensity = eGameSettingsResourceDensity::Normal;
 

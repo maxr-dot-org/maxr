@@ -18,14 +18,15 @@
 ***************************************************************************/
 
 #include "actionstartwork.h"
+
 #include "game/data/model.h"
 #include "utility/log.h"
 
 //------------------------------------------------------------------------------
 cActionStartWork::cActionStartWork(const cUnit& unit) :
-	cAction(eActiontype::ACTION_START_WORK), 
+	cAction(eActiontype::ACTION_START_WORK),
 	unitId(unit.getId())
-{};
+{}
 
 //------------------------------------------------------------------------------
 cActionStartWork::cActionStartWork(cBinaryArchiveOut& archive)

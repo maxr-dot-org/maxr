@@ -27,7 +27,7 @@ cActionUpgradeBuilding::cActionUpgradeBuilding(const cBuilding& building, bool a
 	cAction(eActiontype::ACTION_UPGRADE_BUILDING),
 	buildingId(building.getId()),
 	allBuildings(allBuildings)
-{};
+{}
 
 //------------------------------------------------------------------------------
 cActionUpgradeBuilding::cActionUpgradeBuilding(cBinaryArchiveOut& archive) :
@@ -40,7 +40,7 @@ cActionUpgradeBuilding::cActionUpgradeBuilding(cBinaryArchiveOut& archive) :
 void cActionUpgradeBuilding::execute(cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
-	
+
 	cBuilding* building = model.getBuildingFromID(buildingId);
 	if (building == nullptr) return;
 	if (building->getOwner()->getId() != playerNr) return;
@@ -69,7 +69,7 @@ void cActionUpgradeBuilding::execute(cModel& model) const
 			if (b->data.getId() != building->data.getId()) continue;
 			if (b == building) continue;
 
-			// check unit version	
+			// check unit version
 			if (b->data.getVersion() >= upgradedData.getVersion()) continue; // already up to date
 
 			// check upgrade costs

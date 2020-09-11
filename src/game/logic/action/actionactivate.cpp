@@ -30,7 +30,7 @@ cActionActivate::cActionActivate(const cUnit& containingUnit, const cVehicle& ac
 	position(position),
 	containingUnitId(containingUnit.getId()),
 	activatedVehicleId(activatedVehicle.getId())
-{};
+{}
 
 //------------------------------------------------------------------------------
 cActionActivate::cActionActivate(cBinaryArchiveOut& archive) :
@@ -74,14 +74,14 @@ void cActionActivate::execute(cModel& model) const
 		else
 		{
 			// start with flight height > 0, so that ground attack units
-			// will not be able to attack the plane in the moment it leaves 
+			// will not be able to attack the plane in the moment it leaves
 			// the factory
 			activatedVehicle->setFlightHeight(1);
 			activatedVehicle->triggerLandingTakeOff(model);
 		}
 
 		activatedVehicle->detectOtherUnits(*model.getMap());
-		
+
 		model.unitActivated(*containingUnit, *activatedVehicle);
 	}
 }

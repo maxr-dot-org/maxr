@@ -17,16 +17,16 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include "game/data/model.h"
-
 #include "actionupgradevehicle.h"
+
+#include "game/data/model.h"
 
 //------------------------------------------------------------------------------
 cActionUpgradeVehicle::cActionUpgradeVehicle(const cBuilding& containingBuilding, const cVehicle* vehicle) :
 	cAction(eActiontype::ACTION_UPGRADE_VEHICLE),
 	buildingId(containingBuilding.getId()),
 	vehicleId(vehicle ? vehicle->getId() : 0)
-{};
+{}
 
 //------------------------------------------------------------------------------
 cActionUpgradeVehicle::cActionUpgradeVehicle(cBinaryArchiveOut& archive) :
@@ -39,7 +39,7 @@ cActionUpgradeVehicle::cActionUpgradeVehicle(cBinaryArchiveOut& archive) :
 void cActionUpgradeVehicle::execute(cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
-	
+
 	cBuilding* containingBuilding = model.getBuildingFromID(buildingId);
 	if (containingBuilding == nullptr) return;
 	if (containingBuilding->getOwner()->getId() != playerNr) return;

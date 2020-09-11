@@ -22,13 +22,13 @@
 #include "game/data/model.h"
 
 //------------------------------------------------------------------------------
-cActionRessourceDistribution::cActionRessourceDistribution(const cBuilding& building,	int goldProd, int oilProd, int metalProd) :
+cActionRessourceDistribution::cActionRessourceDistribution(const cBuilding& building, int goldProd, int oilProd, int metalProd) :
 	cAction(eActiontype::ACTION_RESSOURCE_DISTRIBUTION),
 	buildingId(building.getId()),
 	goldProd(goldProd),
 	oilProd(oilProd),
 	metalProd(metalProd)
-{};
+{}
 
 //------------------------------------------------------------------------------
 cActionRessourceDistribution::cActionRessourceDistribution(cBinaryArchiveOut& archive) :

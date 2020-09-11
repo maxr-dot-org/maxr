@@ -24,12 +24,12 @@
 //------------------------------------------------------------------------------
 cActionEndTurn::cActionEndTurn() :
 	cAction(eActiontype::ACTION_END_TURN)
-{};
+{}
 
 //------------------------------------------------------------------------------
-cActionEndTurn::cActionEndTurn(cBinaryArchiveOut& archive) : 
+cActionEndTurn::cActionEndTurn(cBinaryArchiveOut& archive) :
 	cAction(eActiontype::ACTION_END_TURN)
-{};
+{}
 
 //------------------------------------------------------------------------------
 void cActionEndTurn::execute(cModel& model) const

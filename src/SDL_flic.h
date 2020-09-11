@@ -83,7 +83,7 @@ Closes the animation, closes the stream and frees all used memory.
 extern void          FLI_Close(FLI_Animation *flic);
 /*
 Renders the next frame of the animation returning an int to indicate if it was
-successfull or not.
+successful or not.
 */
 extern int           FLI_NextFrame(FLI_Animation *flic);
 /*
@@ -96,7 +96,7 @@ Skips the current frame of the animation without rendering it.
 extern int           FLI_Skip(FLI_Animation *flic);
 
 #ifdef __cplusplus
-};
+}
 #endif
 
 #endif

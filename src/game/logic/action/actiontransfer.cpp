@@ -31,7 +31,7 @@ cActionTransfer::cActionTransfer(const cUnit& sourceUnit, const cUnit& destinati
 	destinationUnitId(destinationUnit.getId()),
 	transferValue(transferValue_),
 	resourceType(resourceType_)
-{};
+{}
 
 //------------------------------------------------------------------------------
 cActionTransfer::cActionTransfer(cBinaryArchiveOut& archive) :

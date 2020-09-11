@@ -60,7 +60,7 @@ public:
 		archive & NVP(color);
 		createTexture();
 	}
-	SERIALIZATION_SPLIT_MEMBER();
+	SERIALIZATION_SPLIT_MEMBER()
 private:
 	cRgbColor color;
 	AutoSurface texture;

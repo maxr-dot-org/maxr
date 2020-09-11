@@ -32,7 +32,7 @@ namespace
 		constexpr double colorDeltaETolerance = 10.;
 
 		return lhs.getColor().toLab().deltaE (rhs.getColor().toLab()) < colorDeltaETolerance;
-	};
+	}
 }
 
 //------------------------------------------------------------------------------

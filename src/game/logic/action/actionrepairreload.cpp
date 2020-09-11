@@ -30,7 +30,7 @@ cActionRepairReload::cActionRepairReload(const cUnit& sourceUnit, const cUnit& d
 	sourceUnitId(sourceUnit.getId()),
 	destUnitId(destUnit.getId()),
 	supplyType(supplyType)
-{};
+{}
 
 //------------------------------------------------------------------------------
 cActionRepairReload::cActionRepairReload(cBinaryArchiveOut& archive) :

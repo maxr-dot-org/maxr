@@ -57,7 +57,7 @@ public:
 			job = cJob::createFrom(archive, "job");
 		}
 	}
-	SERIALIZATION_SPLIT_MEMBER();
+	SERIALIZATION_SPLIT_MEMBER()
 
 private:
 	std::vector<cJob*>::iterator releaseJob (std::vector<cJob*>::iterator it);

@@ -17,16 +17,15 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include "game/data/model.h"
-
 #include "actionchangeresearch.h"
 
+#include "game/data/model.h"
 
 //------------------------------------------------------------------------------
 cActionChangeResearch::cActionChangeResearch(const std::array<int, cResearch::kNrResearchAreas>& researchAreas) :
 	cAction(eActiontype::ACTION_CHANGE_RESEARCH),
 	researchAreas(researchAreas)
-{};
+{}
 
 //------------------------------------------------------------------------------
 cActionChangeResearch::cActionChangeResearch(cBinaryArchiveOut& archive) :

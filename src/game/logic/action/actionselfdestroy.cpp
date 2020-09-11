@@ -18,14 +18,15 @@
 ***************************************************************************/
 
 #include "actionselfdestroy.h"
+
 #include "game/data/model.h"
 #include "utility/log.h"
 
 //------------------------------------------------------------------------------
 cActionSelfDestroy::cActionSelfDestroy(const cBuilding& unit) :
-	cAction(eActiontype::ACTION_SELF_DESTROY), 
+	cAction(eActiontype::ACTION_SELF_DESTROY),
 	unitId(unit.getId())
-{};
+{}
 
 //------------------------------------------------------------------------------
 cActionSelfDestroy::cActionSelfDestroy(cBinaryArchiveOut& archive)

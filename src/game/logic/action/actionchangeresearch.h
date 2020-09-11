@@ -21,6 +21,9 @@
 #define game_logic_actionChangeResearchH
 
 #include "action.h"
+#include "game/logic/upgradecalculator.h"
+
+#include <array>
 
 class cActionChangeResearch : public cAction
 {

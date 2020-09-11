@@ -107,7 +107,7 @@ public:
 			stats.push_back(std::make_unique<cClanUnitStat>(stat));
 		}
 	}
-	SERIALIZATION_SPLIT_MEMBER();
+	SERIALIZATION_SPLIT_MEMBER()
 
 	//-------------------------------------------------------------------------
 private:
@@ -148,7 +148,7 @@ public:
 			clans.push_back(std::make_unique<cClan>(clan));
 		}
 	}
-	SERIALIZATION_SPLIT_MEMBER();
+	SERIALIZATION_SPLIT_MEMBER()
 
 	//-------------------------------------------------------------------------
 private:

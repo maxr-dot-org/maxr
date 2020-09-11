@@ -187,7 +187,7 @@ public:
 		archive << NVP(helperJobs);
 		archive << serialization::makeNvp("causaliesTracker", *casualtiesTracker);
 		//TODO: serialize effectList
-	};
+	}
 	template<typename T>
 	void load(T& archive)
 	{
@@ -280,7 +280,7 @@ public:
 			player->refreshBase(*map);
 		}
 	}
-	SERIALIZATION_SPLIT_MEMBER();
+	SERIALIZATION_SPLIT_MEMBER()
 
 private:
 	void refreshMapPointer();

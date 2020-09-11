@@ -18,13 +18,14 @@
 ***************************************************************************/
 
 #include "actionchangemanualfire.h"
+
 #include "game/data/model.h"
 
 //------------------------------------------------------------------------------
 cActionChangeManualFire::cActionChangeManualFire(const cUnit& unit) :
 	cAction(eActiontype::ACTION_CHANGE_MANUAL_FIRE),
 	unitId(unit.getId())
-{};
+{}
 
 //------------------------------------------------------------------------------
 cActionChangeManualFire::cActionChangeManualFire(cBinaryArchiveOut& archive)

@@ -17,9 +17,9 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include "game/data/model.h"
-
 #include "actionchangeunitname.h"
+
+#include "game/data/model.h"
 
 
 //------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ cActionChangeUnitName::cActionChangeUnitName(const cUnit& unit, const std::strin
 	cAction(eActiontype::ACTION_CHANGE_UNIT_NAME),
 	unitId(unit.getId()),
 	newName(newName)
-{};
+{}
 
 //------------------------------------------------------------------------------
 cActionChangeUnitName::cActionChangeUnitName(cBinaryArchiveOut& archive) :

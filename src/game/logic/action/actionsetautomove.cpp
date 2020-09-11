@@ -26,7 +26,7 @@ cActionSetAutoMove::cActionSetAutoMove(const cVehicle& vehicle, bool autoMoveAct
 	cAction(eActiontype::ACTION_SET_AUTO_MOVE),
 	vehicleId(vehicle.getId()),
 	autoMoveActive(autoMoveActive)
-{};
+{}
 
 //------------------------------------------------------------------------------
 cActionSetAutoMove::cActionSetAutoMove(cBinaryArchiveOut& archive) :

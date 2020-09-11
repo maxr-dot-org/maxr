@@ -23,9 +23,9 @@
 
 //------------------------------------------------------------------------------
 cActionStop::cActionStop(const cUnit& unit) :
-	cAction(eActiontype::ACTION_STOP), 
+	cAction(eActiontype::ACTION_STOP),
 	unitId(unit.getId())
-{};
+{}
 
 //------------------------------------------------------------------------------
 cActionStop::cActionStop(cBinaryArchiveOut& archive)
@@ -59,7 +59,7 @@ void cActionStop::execute(cModel& model) const
 		}
 		else if (vehicle->isUnitBuildingABuilding())
 		{
-			if (vehicle->getBuildTurns() == 0) return; 
+			if (vehicle->getBuildTurns() == 0) return;
 
 			vehicle->setBuildingABuilding(false);
 			vehicle->BuildPath = false;

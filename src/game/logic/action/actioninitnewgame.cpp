@@ -37,7 +37,7 @@ std::vector<std::pair<sID, int>> createInitialLandingUnitsList(int clan, const c
 cActionInitNewGame::cActionInitNewGame() :
 	cAction(eActiontype::ACTION_INIT_NEW_GAME),
 	clan(-1)
-{};
+{}
 
 //------------------------------------------------------------------------------
 cActionInitNewGame::cActionInitNewGame(cBinaryArchiveOut& archive)

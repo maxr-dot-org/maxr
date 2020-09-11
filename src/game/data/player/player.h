@@ -304,7 +304,7 @@ public:
 		refreshSentryMaps();
 		refreshResearchCentersWorkingOnArea();
 	}
-	SERIALIZATION_SPLIT_MEMBER();
+	SERIALIZATION_SPLIT_MEMBER()
 public:
 	std::vector<cDynamicUnitData> dynamicUnitsData; // Current version of vehicles.
 	cBase base;               // the base (groups of connected buildings) of the player

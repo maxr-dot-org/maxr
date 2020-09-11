@@ -216,7 +216,7 @@ public:
 		if (crc != crcFromSave && crcFromSave != 0)
 			throw std::runtime_error("CRC error while loading map. The loaded map file is not equal to the one the game was started with.");
 	}
-	SERIALIZATION_SPLIT_MEMBER();
+	SERIALIZATION_SPLIT_MEMBER()
 private:
 	static AutoSurface loadTerrGraph (SDL_RWops* fpMapFile, Sint64 iGraphicsPos, const SDL_Color (&colors)[256], int iNum);
 	void copySrfToTerData (SDL_Surface& surface, int iNum);
@@ -318,7 +318,7 @@ public:
 		archive >> NVP(ressources);
 		setResourcesFromString(ressources);
 	}
-	SERIALIZATION_SPLIT_MEMBER();
+	SERIALIZATION_SPLIT_MEMBER()
 
 private:
 	void init();

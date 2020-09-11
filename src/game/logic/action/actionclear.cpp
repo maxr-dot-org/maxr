@@ -17,16 +17,16 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include "game/data/model.h"
-
 #include "actionclear.h"
+
+#include "game/data/model.h"
 #include "game/logic/jobs/startbuildjob.h"
 
 //------------------------------------------------------------------------------
 cActionClear::cActionClear(const cVehicle& vehicle) :
 	cAction(eActiontype::ACTION_CLEAR),
 	vehicleId(vehicle.getId())
-{};
+{}
 
 //------------------------------------------------------------------------------
 cActionClear::cActionClear(cBinaryArchiveOut& archive) :
@@ -78,7 +78,7 @@ void cActionClear::execute(cModel& model) const
 
 	vehicle->setClearing(true);
 	vehicle->setClearingTurns(rubble->getIsBig() ? 4 : 1);
-	
+
 	model.addJob (new cStartBuildJob (*vehicle, oldPosition, rubble->getIsBig()));
 
 	return;
