@@ -336,10 +336,18 @@ void cGameGuiController::setActiveClient (std::shared_ptr<cClient> client_)
 }
 
 //------------------------------------------------------------------------------
+template <typename Action>
+void cGameGuiController::addShortcut(cKeySequence key, Action action)
+{
+	auto shortcut = std::make_unique<cShortcut>(key);
+	signalConnectionManager.connect (shortcut->triggered, action);
+	gameGui->addShortcut (std::move (shortcut));
+}
+
+//------------------------------------------------------------------------------
 void cGameGuiController::initShortcuts()
 {
-	auto exitShortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keyExit));
-	signalConnectionManager.connect (exitShortcut->triggered, [&]()
+	addShortcut (KeysList.keyExit, [this]()
 	{
 		auto yesNoDialog = application.show (std::make_shared<cDialogYesNo> (lngPack.i18n ("Text~Comp~End_Game")));
 		signalConnectionManager.connect (yesNoDialog->yesClicked, [&]()
@@ -348,8 +356,7 @@ void cGameGuiController::initShortcuts()
 		});
 	});
 
-	auto jumpToActionShortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keyJumpToAction));
-	signalConnectionManager.connect (jumpToActionShortcut->triggered, [&]()
+	addShortcut (KeysList.keyJumpToAction, [this]()
 	{
 		if (savedReportPosition.first)
 		{
@@ -357,44 +364,27 @@ void cGameGuiController::initShortcuts()
 		}
 	});
 
-	auto doneAndNextShortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitDoneAndNext));
-	signalConnectionManager.connect (doneAndNextShortcut->triggered, [&]()
+	addShortcut (KeysList.keyUnitDoneAndNext, [this]()
 	{
 		markSelectedUnitAsDone();
 		selectNextUnit();
 	});
 
-	auto allDoneAndNextShortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keyAllDoneAndNext));
-	signalConnectionManager.connect (allDoneAndNextShortcut->triggered, [&]()
+	addShortcut (KeysList.keyAllDoneAndNext, [this]()
 	{
 		resumeAllMoveJobsTriggered();
 		selectNextUnit();
 	});
 
-	auto savePosition1Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keySavePosition1));
-	signalConnectionManager.connect (savePosition1Shortcut->triggered, std::bind (&cGameGuiController::savePosition, this, 0));
+	addShortcut (KeysList.keySavePosition1, [this]() { savePosition (0); });
+	addShortcut (KeysList.keySavePosition2, [this]() { savePosition (1); });
+	addShortcut (KeysList.keySavePosition3, [this]() { savePosition (2); });
+	addShortcut (KeysList.keySavePosition4, [this]() { savePosition (3); });
 
-	auto savePosition2Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keySavePosition2));
-	signalConnectionManager.connect (savePosition2Shortcut->triggered, std::bind (&cGameGuiController::savePosition, this, 1));
-
-	auto savePosition3Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keySavePosition3));
-	signalConnectionManager.connect (savePosition3Shortcut->triggered, std::bind (&cGameGuiController::savePosition, this, 2));
-
-	auto savePosition4Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keySavePosition4));
-	signalConnectionManager.connect (savePosition4Shortcut->triggered, std::bind (&cGameGuiController::savePosition, this, 3));
-
-	auto loadPosition1Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keyPosition1));
-	signalConnectionManager.connect (loadPosition1Shortcut->triggered, std::bind (&cGameGuiController::jumpToSavedPosition, this, 0));
-
-	auto loadPosition2Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keyPosition2));
-	signalConnectionManager.connect (loadPosition2Shortcut->triggered, std::bind (&cGameGuiController::jumpToSavedPosition, this, 1));
-
-	auto loadPosition3Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keyPosition3));
-	signalConnectionManager.connect (loadPosition3Shortcut->triggered, std::bind (&cGameGuiController::jumpToSavedPosition, this, 2));
-
-	auto loadPosition4Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keyPosition4));
-	signalConnectionManager.connect (loadPosition4Shortcut->triggered, std::bind (&cGameGuiController::jumpToSavedPosition, this, 3));
-
+	addShortcut (KeysList.keyPosition1, [this]() { jumpToSavedPosition (0); });
+	addShortcut (KeysList.keyPosition2, [this]() { jumpToSavedPosition (1); });
+	addShortcut (KeysList.keyPosition3, [this]() { jumpToSavedPosition (2); });
+	addShortcut (KeysList.keyPosition4, [this]() { jumpToSavedPosition (3); });
 }
 
 //------------------------------------------------------------------------------

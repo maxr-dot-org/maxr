@@ -20,47 +20,44 @@
 #ifndef ui_graphical_game_control_gameguicontrollerH
 #define ui_graphical_game_control_gameguicontrollerH
 
+#include "game/logic/upgradecalculator.h"
+#include "ui/graphical/game/gameguistate.h"
+#include "utility/position.h"
+#include "utility/signal/signal.h"
+#include "utility/signal/signalconnectionmanager.h"
+
 #include <memory>
 #include <string>
 #include <vector>
 #include <array>
 
-#include "utility/signal/signal.h"
-#include "utility/signal/signalconnectionmanager.h"
-#include "utility/position.h"
-
-#include "ui/graphical/game/gameguistate.h"
-
-#include "game/logic/upgradecalculator.h"
-
-class cGameGui;
-class cClient;
-class cApplication;
-class cSoundManager;
 class cAnimationTimer;
-
-class cPlayer;
-class cUnit;
-class cVehicle;
-class cBuilding;
-class cStaticMap;
-class cMapView;
-class cGameSettings;
-class cUnitUpgrade;
-class cCasualtiesTracker;
-class cTurnTimeClock;
-class cTurnCounter;
-class cSavedReport;
 class cBuildListItem;
-class cWindowUpgradesFilterState;
-class cUnitsData;
-class cServer;
-class cFreezeModes;
-
+class cBuilding;
+class cApplication;
+class cCasualtiesTracker;
 class cChatCommandExecutor;
+class cClient;
+class cFreezeModes;
+class cGameGui;
+class cGameSettings;
+class cKeySequence;
+class cMapView;
+class cPlayer;
+class cSavedReport;
+class cServer;
+class cSoundManager;
+class cStaticMap;
+class cTurnCounter;
+class cTurnTimeClock;
+class cUnit;
+class cUnitUpgrade;
+class cUnitsData;
+class cVehicle;
+class cWindowUpgradesFilterState;
 
-enum class eResourceType;
 enum class ePlayerConnectionState;
+enum class eResourceType;
 
 struct sID;
 
@@ -73,7 +70,7 @@ public:
 	void start();
 
 	void addPlayerGameGuiState (int playerNr, cGameGuiState playerGameGuiState);
-	
+
 	void addSavedReport(std::unique_ptr<cSavedReport> savedReport, int playerNr);
 	const std::vector<std::unique_ptr<cSavedReport>>& getSavedReports(int playerNr) const;
 
@@ -110,6 +107,7 @@ private:
 	std::array<std::pair<bool, cPosition>, 4> savedPositions;
 	std::vector<unsigned int> doneList;
 
+	template <typename Action> void addShortcut(cKeySequence, Action);
 	void initShortcuts();
 	void initChatCommands();
 
