@@ -818,44 +818,40 @@ void cGameGui::stopSelectedUnitSound()
 }
 
 //------------------------------------------------------------------------------
+template <typename Action>
+void cGameGui::addShortcut (cKeySequence key, Action action)
+{
+	auto shortcut = std::make_unique<cShortcut> (key);
+	signalConnectionManager.connect (shortcut->triggered, action);
+
+	cWidget::addShortcut (std::move (shortcut));
+}
+
+//------------------------------------------------------------------------------
 void cGameGui::initShortcuts()
 {
-	auto scroll1Shortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll1));
-	signalConnectionManager.connect (scroll1Shortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (-cSettings::getInstance().getScrollSpeed(), +cSettings::getInstance().getScrollSpeed())));
+	addShortcut (KeysList.keyScroll1, [this](){ gameMap->scroll (cPosition (-cSettings::getInstance().getScrollSpeed(), +cSettings::getInstance().getScrollSpeed())); });
+	addShortcut (KeysList.keyScroll3, [this](){ gameMap->scroll (cPosition (+cSettings::getInstance().getScrollSpeed(), +cSettings::getInstance().getScrollSpeed())); });
+	addShortcut (KeysList.keyScroll7, [this](){ gameMap->scroll (cPosition (-cSettings::getInstance().getScrollSpeed(), -cSettings::getInstance().getScrollSpeed())); });
+	addShortcut (KeysList.keyScroll9, [this](){ gameMap->scroll (cPosition (+cSettings::getInstance().getScrollSpeed(), -cSettings::getInstance().getScrollSpeed())); });
 
-	auto scroll3Shortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll3));
-	signalConnectionManager.connect (scroll3Shortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (+cSettings::getInstance().getScrollSpeed(), +cSettings::getInstance().getScrollSpeed())));
+	auto scrollDown = [this](){ gameMap->scroll (cPosition (0, +cSettings::getInstance().getScrollSpeed())); };
+	addShortcut (KeysList.keyScroll2a, scrollDown);
+	addShortcut (KeysList.keyScroll2b, scrollDown);
 
-	auto scroll7Shortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll7));
-	signalConnectionManager.connect (scroll7Shortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (-cSettings::getInstance().getScrollSpeed(), -cSettings::getInstance().getScrollSpeed())));
+	auto scrollLeft = [this](){ gameMap->scroll (cPosition (-cSettings::getInstance().getScrollSpeed(), 0)); };
+	addShortcut (KeysList.keyScroll4a, scrollLeft);
+	addShortcut (KeysList.keyScroll4b, scrollLeft);
 
-	auto scroll9Shortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll9));
-	signalConnectionManager.connect (scroll9Shortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (+cSettings::getInstance().getScrollSpeed(), -cSettings::getInstance().getScrollSpeed())));
+	auto scrollRight = [this](){ gameMap->scroll (cPosition (+cSettings::getInstance().getScrollSpeed(), 0)); };
+	addShortcut (KeysList.keyScroll6a, scrollRight);
+	addShortcut (KeysList.keyScroll6b, scrollRight);
 
+	auto scrollUp = [this](){ gameMap->scroll (cPosition (0, -cSettings::getInstance().getScrollSpeed())); };
+	addShortcut (KeysList.keyScroll8b, scrollUp);
+	addShortcut (KeysList.keyScroll8a, scrollUp);
 
-	auto scroll2aShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll2a));
-	signalConnectionManager.connect (scroll2aShortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (0, +cSettings::getInstance().getScrollSpeed())));
-	auto scroll2bShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll2b));
-	signalConnectionManager.connect (scroll2bShortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (0, +cSettings::getInstance().getScrollSpeed())));
-
-	auto scroll4aShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll4a));
-	signalConnectionManager.connect (scroll4aShortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (-cSettings::getInstance().getScrollSpeed(), 0)));
-	auto scroll4bShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll4b));
-	signalConnectionManager.connect (scroll4bShortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (-cSettings::getInstance().getScrollSpeed(), 0)));
-
-	auto scroll6aShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll6a));
-	signalConnectionManager.connect (scroll6aShortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (+cSettings::getInstance().getScrollSpeed(), 0)));
-	auto scroll6bShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll6b));
-	signalConnectionManager.connect (scroll6bShortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (+cSettings::getInstance().getScrollSpeed(), 0)));
-
-	auto scroll8aShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll8a));
-	signalConnectionManager.connect (scroll8aShortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (0, -cSettings::getInstance().getScrollSpeed())));
-	auto scroll8bShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll8b));
-	signalConnectionManager.connect (scroll8bShortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (0, -cSettings::getInstance().getScrollSpeed())));
-
-
-	auto chatShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyChat));
-	signalConnectionManager.connect (chatShortcut->triggered, [&]()
+	addShortcut (KeysList.keyChat, [this]()
 	{
 		hud->setChatActive (true);
 		chatBox->focus();

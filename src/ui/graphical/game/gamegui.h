@@ -144,6 +144,7 @@ private:
 
 	void connectSelectedUnit();
 
+	template <typename Action> void addShortcut (cKeySequence, Action);
 	void initShortcuts();
 
 	void handleResolutionChange();

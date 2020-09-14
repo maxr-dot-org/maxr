@@ -341,7 +341,7 @@ void cGameGuiController::addShortcut(cKeySequence key, Action action)
 {
 	auto shortcut = std::make_unique<cShortcut>(key);
 	signalConnectionManager.connect (shortcut->triggered, action);
-	gameGui->addShortcut (std::move (shortcut));
+	gameGui->cWidget::addShortcut (std::move (shortcut));
 }
 
 //------------------------------------------------------------------------------
