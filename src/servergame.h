@@ -24,7 +24,6 @@
 #include "game/logic/server.h"
 #include "game/startup/lobbyserver.h"
 #include "protocol/lobbymessage.h"
-#include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/thread/concurrentqueue.h"
 
