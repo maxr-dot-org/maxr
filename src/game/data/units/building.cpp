@@ -16,32 +16,30 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include <cmath>
 
 #include "game/data/units/building.h"
 
+#include "game/data/map/mapfieldview.h"
+#include "game/data/map/mapview.h"
+#include "game/data/player/player.h"
+#include "game/data/report/savedreportsimple.h"
+#include "game/data/report/special/savedreportresourcechanged.h"
+#include "game/data/units/vehicle.h"
 #include "game/logic/client.h"
+#include "game/logic/fxeffects.h"
+#include "game/logic/upgradecalculator.h"
+#include "protocol/netmessage.h"
+#include "settings.h"
+#include "utility/crc.h"
 #include "utility/language.h"
 #include "utility/listhelpers.h"
 #include "utility/mathtools.h"
-#include "game/logic/fxeffects.h"
-#include "utility/string/toString.h"
-#include "protocol/netmessage.h"
-#include "game/data/player/player.h"
-#include "settings.h"
-#include "game/logic/upgradecalculator.h"
-#include "game/data/units/vehicle.h"
-#include "video.h"
-#include "utility/unifonts.h"
-#include "game/data/report/savedreportsimple.h"
-#include "game/data/report/special/savedreportresourcechanged.h"
 #include "utility/random.h"
+#include "utility/string/toString.h"
+#include "utility/unifonts.h"
+#include "video.h"
 
-#include "ui/sound/soundmanager.h"
-#include "ui/sound/effects/soundeffectvoice.h"
-#include "utility/crc.h"
-#include "game/data/map/mapview.h"
-#include "game/data/map/mapfieldview.h"
+#include <cmath>
 
 using namespace std;
 
@@ -331,16 +329,6 @@ string cBuilding::getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData&
 
 
 	return lngPack.i18n ("Text~Comp~Waits");
-}
-
-
-//--------------------------------------------------------------------------
-void cBuilding::makeReport (cSoundManager& soundManager) const
-{
-	if (staticData && staticData->canResearch && isUnitWorking() && getOwner() && getOwner()->isCurrentTurnResearchAreaFinished (getResearchArea()))
-	{
-		soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, VoiceData.VOIResearchComplete));
-	}
 }
 
 //--------------------------------------------------------------------------
@@ -773,7 +761,7 @@ void cBuilding::stopWork (bool forced)
 
 	if (!subBase->stopBuilding(this, forced))
 		return;
-	
+
 	if (staticData->canResearch)
 	{
 		getOwner()->stopAResearch (researchArea);

@@ -17,54 +17,52 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <sstream>
-#include <iomanip>
-#include <iostream>
-
 #include "ui/graphical/game/gamegui.h"
-#include "ui/graphical/game/gameguistate.h"
-#include "ui/graphical/game/hud.h"
-#include "ui/graphical/game/widgets/gamemapwidget.h"
-#include "ui/graphical/game/widgets/minimapwidget.h"
-#include "ui/graphical/game/widgets/unitcontextmenuwidget.h"
-#include "ui/graphical/game/widgets/gamemessagelistview.h"
-#include "ui/graphical/game/widgets/hudpanels.h"
-#include "ui/graphical/game/widgets/chatbox.h"
-#include "ui/graphical/game/widgets/debugoutputwidget.h"
-#include "ui/graphical/game/widgets/chatboxplayerlistviewitem.h"
-#include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
 
-#include "ui/graphical/game/animations/animationtimer.h"
-
-#include "ui/sound/soundmanager.h"
-#include "ui/sound/effects/soundeffect.h"
-#include "ui/sound/effects/soundeffectvoice.h"
-#include "ui/sound/effects/soundeffectunit.h"
-
-#include "ui/graphical/application.h"
-#include "ui/graphical/menu/widgets/label.h"
-
-#include "keys.h"
-#include "game/data/player/player.h"
 #include "game/data/map/map.h"
-#include "game/data/units/vehicle.h"
-#include "game/data/units/building.h"
-#include "resources/sound.h"
-#include "game/logic/client.h"
-#include "utility/language.h"
-#include "utility/log.h"
-#include "game/startup/game.h"
-#include "input/mouse/mouse.h"
-#include "input/keyboard/keyboard.h"
-#include "input/mouse/cursor/mousecursorsimple.h"
-#include "game/data/report/savedreportsimple.h"
+#include "game/data/player/player.h"
 #include "game/data/report/savedreportchat.h"
+#include "game/data/report/savedreportsimple.h"
 #include "game/data/report/savedreportunit.h"
 #include "game/data/report/special/savedreporthostcommand.h"
-#include "game/logic/turncounter.h"
-#include "utility/random.h"
-#include "utility/indexiterator.h"
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
+#include "game/logic/client.h"
 #include "game/logic/movejob.h"
+#include "game/logic/turncounter.h"
+#include "game/startup/game.h"
+#include "input/keyboard/keyboard.h"
+#include "input/mouse/cursor/mousecursorsimple.h"
+#include "input/mouse/mouse.h"
+#include "keys.h"
+#include "resources/sound.h"
+#include "ui/graphical/application.h"
+#include "ui/graphical/game/gameguistate.h"
+#include "ui/graphical/game/hud.h"
+#include "ui/graphical/game/animations/animationtimer.h"
+#include "ui/graphical/game/widgets/chatbox.h"
+#include "ui/graphical/game/widgets/chatboxplayerlistviewitem.h"
+#include "ui/graphical/game/widgets/debugoutputwidget.h"
+#include "ui/graphical/game/widgets/gamemapwidget.h"
+#include "ui/graphical/game/widgets/gamemessagelistview.h"
+#include "ui/graphical/game/widgets/hudpanels.h"
+#include "ui/graphical/game/widgets/minimapwidget.h"
+#include "ui/graphical/game/widgets/unitcontextmenuwidget.h"
+#include "ui/graphical/menu/widgets/label.h"
+#include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
+#include "ui/sound/effects/soundeffect.h"
+#include "ui/sound/effects/soundeffectunit.h"
+#include "ui/sound/effects/soundeffectvoice.h"
+#include "ui/sound/soundmanager.h"
+#include "ui/sound/unitreport.h"
+#include "utility/indexiterator.h"
+#include "utility/language.h"
+#include "utility/log.h"
+#include "utility/random.h"
+
+#include <iomanip>
+#include <iostream>
+#include <sstream>
 
 //------------------------------------------------------------------------------
 cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_ptr<cSoundManager> soundManager_, std::shared_ptr<cAnimationTimer> animationTimer_, std::shared_ptr<const cFrameCounter> frameCounter) :
@@ -173,7 +171,7 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 		if (!player) return;
 
 		auto unit = gameMap->getUnitSelection().getSelectedUnit();
-		if (unit && unit->getOwner() == player.get()) unit->makeReport (*soundManager);
+		if (unit && unit->getOwner() == player.get()) makeReport (*soundManager, *unit);
 	});
 	signalConnectionManager.connect (gameMap->getUnitSelection().mainSelectionChanged, [&]()
 	{

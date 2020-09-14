@@ -20,20 +20,20 @@
 #ifndef game_data_units_buildingH
 #define game_data_units_buildingH
 
-#include <vector>
-#include <array>
-
-#include <SDL.h>
-
 #include "defines.h"
 #include "maxrconfig.h"
 #include "game/data/units/unitdata.h" // for sUnitData, sID
 #include "game/data/units/unit.h"
+#include "game/logic/upgradecalculator.h" // cResearch::ResearchArea
 #include "resources/sound.h"
 #include "resources/uidata.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "game/logic/upgradecalculator.h" // cResearch::ResearchArea
+
+#include <SDL.h>
+
+#include <array>
+#include <vector>
 
 class cBase;
 class cPlayer;
@@ -167,8 +167,6 @@ public:
 
 	int playStream();
 	std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
-
-	void makeReport (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 
 	/**
 	* refreshes the shotsCur of this building

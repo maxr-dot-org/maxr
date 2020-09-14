@@ -20,28 +20,26 @@
 #ifndef game_data_units_vehicleH
 #define game_data_units_vehicleH
 
-#include <vector>
-#include <array>
-
-#include <SDL.h>
-
 #include "defines.h"
 #include "maxrconfig.h"
-
 
 #include "game/data/units/unitdata.h" // for sUnitData
 #include "game/data/units/unit.h"
 #include "resources/uidata.h"
 #include "resources/sound.h"
 
+#include <SDL.h>
+
+#include <array>
+#include <vector>
+
+class cApplication;
 class cBuilding;
 class cMap;
-class cStaticMap;
 class cMapField;
-class cPlayer;
-class cApplication;
-class cSoundManager;
 class cMoveJob;
+class cPlayer;
+class cStaticMap;
 
 //-----------------------------------------------------------------------------
 // Enum for the symbols
@@ -184,7 +182,6 @@ public:
 	std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
 	void DecSpeed (int value);
 	bool doSurvey(const cMap& map);
-	void makeReport (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 	bool canTransferTo (const cPosition& position, const cMapView& map) const MAXR_OVERRIDE_FUNCTION;
 	bool canTransferTo (const cUnit& position) const MAXR_OVERRIDE_FUNCTION;
 	bool inSentryRange (cModel& model);

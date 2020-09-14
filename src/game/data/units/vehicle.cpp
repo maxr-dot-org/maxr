@@ -19,36 +19,34 @@
 
 #include "game/data/units/vehicle.h"
 
-#include <cmath>
-
-#include "game/logic/attackjob.h"
-#include "game/data/units/building.h"
-#include "game/logic/client.h"
-#include "utility/listhelpers.h"
-#include "utility/mathtools.h"
-#include "utility/files.h"
-#include "utility/string/toString.h"
-#include "game/logic/fxeffects.h"
-#include "utility/log.h"
 #include "game/data/map/map.h"
+#include "game/data/map/mapfieldview.h"
+#include "game/data/map/mapview.h"
 #include "game/data/player/player.h"
-#include "settings.h"
-#include "video.h"
-#include "resources/sound.h"
-#include "utility/unifonts.h"
+#include "game/data/units/building.h"
+#include "game/logic/attackjob.h"
+#include "game/logic/client.h"
+#include "game/logic/fxeffects.h"
+#include "game/logic/jobs/planetakeoffjob.h"
+#include "game/logic/jobs/startbuildjob.h"
 #include "input/mouse/mouse.h"
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
+#include "resources/sound.h"
+#include "settings.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/windows/windowbuildbuildings/windowbuildbuildings.h"
-#include "ui/sound/soundmanager.h"
-#include "ui/sound/effects/soundeffectvoice.h"
-#include "utility/random.h"
 #include "utility/crc.h"
-#include "game/logic/jobs/startbuildjob.h"
-#include "game/data/map/mapview.h"
-#include "game/data/map/mapfieldview.h"
-#include "game/logic/jobs/planetakeoffjob.h"
+#include "utility/files.h"
+#include "utility/listhelpers.h"
+#include "utility/log.h"
+#include "utility/mathtools.h"
+#include "utility/random.h"
+#include "utility/string/toString.h"
+#include "utility/unifonts.h"
+#include "video.h"
+
+#include <cmath>
 
 using namespace std;
 
@@ -664,86 +662,6 @@ bool cVehicle::doSurvey(const cMap& map)
 	}
 
 	return ressourceFound;
-}
-
-//-----------------------------------------------------------------------------
-/** Makes the report */
-//-----------------------------------------------------------------------------
-void cVehicle::makeReport (cSoundManager& soundManager) const
-{
-	if (isDisabled())
-	{
-		// Disabled:
-		soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIUnitDisabledByEnemy)));
-	}
-	else if (data.getHitpoints() > data.getHitpointsMax() / 2)
-	{
-		// Status green
-		if (moveJob && moveJob->getEndMoveAction().getType() == EMAT_ATTACK)
-		{
-			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIAttacking)));
-		}
-		else if (surveyorAutoMoveActive)
-		{
-			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOISurveying)));
-		}
-		else if (data.getSpeed() == 0)
-		{
-			// no more movement
-			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, VoiceData.VOINoSpeed));
-		}
-		else if (isUnitBuildingABuilding())
-		{
-			// Beim bau:
-			if (!getBuildTurns())
-			{
-				// Bau beendet:
-				soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIBuildDone)));
-			}
-		}
-		else if (isUnitClearing())
-		{
-			// removing dirt
-			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, VoiceData.VOIClearing));
-		}
-		else if (staticData->canAttack && data.getAmmo() <= data.getAmmoMax() / 4 && data.getAmmo() != 0)
-		{
-			// red ammo-status but still ammo left
-			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIAmmoLow)));
-		}
-		else if (staticData->canAttack && data.getAmmo() == 0)
-		{
-			// no ammo left
-			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIAmmoEmpty)));
-		}
-		else if (isSentryActive())
-		{
-			// on sentry:
-			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, VoiceData.VOISentry));
-		}
-		else if (isUnitClearingMines())
-		{
-			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIClearingMines)));
-		}
-		else if (isUnitLayingMines())
-		{
-			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, VoiceData.VOILayingMines));
-		}
-		else
-		{
-			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIOK)));
-		}
-	}
-	else if (data.getHitpoints() > data.getHitpointsMax() / 4)
-	{
-		// Status yellow:
-		soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIStatusYellow)));
-	}
-	else
-	{
-		// Status red:
-		soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIStatusRed)));
-	}
 }
 
 //-----------------------------------------------------------------------------

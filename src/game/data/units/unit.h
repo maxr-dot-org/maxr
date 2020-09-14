@@ -20,21 +20,24 @@
 #ifndef game_data_units_unitH
 #define game_data_units_unitH
 
-#include <string>
 #include "game/data/units/unitdata.h"
-#include "utility/signal/signal.h"
 #include "utility/position.h"
+#include "utility/signal/signal.h"
+
+#include <string>
 
 class cClient;
 class cJob;
 class cMap;
-class cMapView;
 class cMapField;
+class cMapView;
 class cPlayer;
 class cVehicle;
+
 template<typename> class cBox;
-class cSoundManager;
+
 struct sTerrain;
+
 enum class eSupplyType;
 
 enum
@@ -74,8 +77,6 @@ public:
 
 	void storeVehicle(cVehicle& vehicle, cMap& map);
 	void exitVehicleTo(cVehicle& vehicle, const cPosition& position, cMap& map);
-	
-	virtual void makeReport (cSoundManager& soundManager) const = 0;
 
 	virtual const cPosition& getMovementOffset() const { static const cPosition dummy (0, 0); return dummy; }
 
@@ -226,7 +227,7 @@ public:
 		}
 	}
 
-	
+
 public: // TODO: make protected/private and make getters/setters
 	const cStaticUnitData& getStaticUnitData() const;
 	cDynamicUnitData data;		// basic data of the unit
@@ -250,13 +251,13 @@ protected:
 	* Returns true, if the unit is detected by player (no matter if it was detected before.
 	*/
 	bool checkDetectedByPlayer(const cPlayer& player, const cMap& map) const;
-	
-	
-	/** Detection state of stealth units. Use cPlayer::canSeeUnit() to check 
+
+
+	/** Detection state of stealth units. Use cPlayer::canSeeUnit() to check
 	*   if the unit is actually visible at the moment.
 	*   This list is always empty for units without stealth abilities.
 	*/
-	std::vector<int> detectedByPlayerList;		
+	std::vector<int> detectedByPlayerList;
 
 	/** list of players, that detected this vehicle in this turn */
 	std::vector<int> detectedInThisTurnByPlayerList;
