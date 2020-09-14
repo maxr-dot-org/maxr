@@ -79,33 +79,11 @@ public:
 	void addRunnable (std::shared_ptr<cRunnable> runnable);
 	std::shared_ptr<cRunnable> removeRunnable (std::shared_ptr<cRunnable> runnable);
 
-	cShortcut* addShortcut (std::unique_ptr<cShortcut> shortcut);
-
 	cMouse* getActiveMouse();
 	cKeyboard* getActiveKeyboard();
 
-	std::shared_ptr<cFrameCounter> frameCounter;
 private:
-	static const size_t maximalShortcutSequenceLength = 4;
-
-	std::vector<std::shared_ptr<cWindow>> modalWindows;
-
-	cSignalConnectionManager signalConnectionManager;
-
-	cKeySequence currentKeySequence;
-
-	std::vector<std::unique_ptr<cShortcut>> shortcuts;
-
-	cMouse* activeMouse;
-	cKeyboard* activeKeyboard;
-
-	cWidget* keyFocusWidget;
-	cWidget* mouseFocusWidget;
-	//cWidget* underMouseWidget;
-
-	std::list<std::shared_ptr<cRunnable>> runnables;
-
-	bool shouldDrawFramesPerSecond;
+	template <typename Action> void addShortcut (cKeySequence, Action);
 
 	void center (cWindow& window);
 
@@ -129,6 +107,30 @@ private:
 	bool hitShortcuts (const cKeySequence& keySequence);
 
 	void drawFramesPerSecond (unsigned int fps, bool draw = true);
+
+public:
+	std::shared_ptr<cFrameCounter> frameCounter;
+private:
+	static const size_t maximalShortcutSequenceLength = 4;
+
+	std::vector<std::shared_ptr<cWindow>> modalWindows;
+
+	cSignalConnectionManager signalConnectionManager;
+
+	cKeySequence currentKeySequence;
+
+	std::vector<std::unique_ptr<cShortcut>> shortcuts;
+
+	cMouse* activeMouse;
+	cKeyboard* activeKeyboard;
+
+	cWidget* keyFocusWidget;
+	cWidget* mouseFocusWidget;
+	//cWidget* underMouseWidget;
+
+	std::list<std::shared_ptr<cRunnable>> runnables;
+
+	bool shouldDrawFramesPerSecond;
 };
 
 //------------------------------------------------------------------------------

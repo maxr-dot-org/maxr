@@ -55,15 +55,13 @@ cApplication::cApplication() :
 		}
 	});
 
-	const auto fpsShortcut = addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::Ctrl) | eKeyModifierType::Alt, SDLK_f))));
-	signalConnectionManager.connect (fpsShortcut->triggered, [this]()
+	addShortcut (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::Ctrl) | eKeyModifierType::Alt, SDLK_f)), [this]()
 	{
 		shouldDrawFramesPerSecond = !shouldDrawFramesPerSecond;
 		if (!shouldDrawFramesPerSecond) drawFramesPerSecond (0, false); // make sure the last fps will not be visible
 	});
 
-	const auto widgetFramesShortcut = addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::Ctrl) | eKeyModifierType::Alt, SDLK_w))));
-	signalConnectionManager.connect (widgetFramesShortcut->triggered, [this]()
+	addShortcut (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::Ctrl) | eKeyModifierType::Alt, SDLK_w)), [this]()
 	{
 		cWidget::toggleDrawDebugFrames();
 	});
@@ -461,10 +459,12 @@ void cApplication::assignKeyFocus (cWidget* widget)
 }
 
 //------------------------------------------------------------------------------
-cShortcut* cApplication::addShortcut (std::unique_ptr<cShortcut> shortcut)
+template <typename Action>
+void cApplication::addShortcut (cKeySequence key, Action action)
 {
+	auto shortcut = std::make_unique<cShortcut> (key);
+	signalConnectionManager.connect (shortcut->triggered, action);
 	shortcuts.push_back (std::move (shortcut));
-	return shortcuts.back().get();
 }
 
 //------------------------------------------------------------------------------
