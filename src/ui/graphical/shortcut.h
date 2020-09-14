@@ -35,6 +35,8 @@ public:
 
 	bool isActive() const;
 
+	bool hit (const cKeySequence&);
+
 	mutable cSignal<void ()> triggered;
 private:
 	cKeySequence keySequence;

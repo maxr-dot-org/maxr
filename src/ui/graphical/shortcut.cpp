@@ -48,3 +48,22 @@ bool cShortcut::isActive() const
 {
 	return active;
 }
+
+//------------------------------------------------------------------------------
+bool cShortcut::hit (const cKeySequence& currentKeySequence)
+{
+	if (!isActive()) return false;
+
+	if (keySequence.length() > currentKeySequence.length()) return false;
+
+	for (size_t j = 1; j <= keySequence.length(); ++j)
+	{
+		if (!currentKeySequence[currentKeySequence.length() - j].matches (keySequence[keySequence.length() - j]))
+		{
+			return false;
+		}
+	}
+
+	triggered();
+	return true;
+}
