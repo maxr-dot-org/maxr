@@ -20,11 +20,11 @@
 #ifndef ui_graphical_game_widgets_unitvideowidgetH
 #define ui_graphical_game_widgets_unitvideowidgetH
 
+#include <3rd/SDL_flic/SDL_flic.h>
+
 #include <memory>
 
 #include "ui/graphical/widget.h"
-#include "SDL_flic.h"
-
 #include "utility/signal/signalconnectionmanager.h"
 
 class cPosition;
@@ -51,7 +51,7 @@ public:
 	bool hasAnimation () const;
 
 	void setUnit (const cUnit* unit);
-	
+
 	cSignal<void ()> clicked;
 private:
 	cImage* currentFrameImage;
