@@ -17,12 +17,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "3rd/mveplayer/mveplayer.h"
+
 #include "debug.h"
 #include "dedicatedserver.h"
 #include "input/mouse/mouse.h"
 #include "input/keyboard/keyboard.h"
 #include "maxrversion.h"
-#include "mveplayer.h"
 #include "output/sound/sounddevice.h"
 #include "resources/loaddata.h"
 #include "ui/graphical/application.h"
