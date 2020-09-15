@@ -25,7 +25,7 @@
 
 #include "utility/tinyxml2.h"
 #include "serialization.h"
-#include "extendedtinyxml.h"
+#include "utility/extendedtinyxml.h"
 
 
 class cXmlArchiveIn

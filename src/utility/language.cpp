@@ -29,7 +29,7 @@
 
 #include "utility/language.h"
 #include "maxrversion.h"
-#include "extendedtinyxml.h"
+#include "utility/extendedtinyxml.h"
 #include "utility/log.h"
 #include "settings.h"
 #include "utility/files.h"

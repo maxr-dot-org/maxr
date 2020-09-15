@@ -33,7 +33,7 @@
 
 #include "maxrversion.h"
 
-#include "extendedtinyxml.h"
+#include "utility/extendedtinyxml.h"
 #include "utility/files.h"
 #include "utility/log.h"
 #include "utility/string/toString.h"

@@ -17,9 +17,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <vector>
 #include "extendedtinyxml.h"
+
 #include "utility/log.h"
+
+#include <vector>
 
 using namespace tinyxml2;
 using namespace std;

@@ -30,7 +30,7 @@
 #include "utility/serialization/xmlarchive.h"
 #include "utility/files.h"
 #include "utility/log.h"
-#include "extendedtinyxml.h"
+#include "utility/extendedtinyxml.h"
 #include "protocol/netmessage.h"
 #include "game/logic/server.h"
 #include "utility/string/toString.h"

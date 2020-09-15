@@ -17,13 +17,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef EXTENDEDTINYXML_H
-#define EXTENDEDTINYXML_H
+#ifndef utility_extendedtinyxmlH
+#define utility_extendedtinyxmlH
 
 #include "utility/tinyxml2.h"
+
 #include <stdarg.h>
 #include <string>
-
 
 tinyxml2::XMLElement* XmlGetFirstElement (tinyxml2::XMLDocument& xmlDoc, const char* first, ...);
 
@@ -35,7 +35,7 @@ tinyxml2::XMLElement* XmlGetFirstElement (tinyxml2::XMLDocument& xmlDoc, const c
  * @param path The path to the node to get. Nodes should be divided by '~'.
  *             e.g.: "Options~Game~Net~PlayerName"
  * @param configFile The XML file to search in.
- * @return The found or generated node at the specific path or NULL
+ * @return The found or generated node at the specific path or nullptr
  *         if the config file could not be read and generated.
  */
 tinyxml2::XMLElement* getOrCreateXmlElement (tinyxml2::XMLDocument& xmlDoc, const std::string& path);

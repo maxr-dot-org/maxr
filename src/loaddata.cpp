@@ -42,7 +42,7 @@
 #include "utility/language.h"
 #include "game/data/units/building.h"
 #include "game/data/player/clans.h"
-#include "extendedtinyxml.h"
+#include "utility/extendedtinyxml.h"
 #include "ui/keys.h"
 #include "utility/log.h"
 #include "utility/string/toString.h"

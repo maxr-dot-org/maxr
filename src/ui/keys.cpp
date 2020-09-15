@@ -24,7 +24,7 @@
 #include "utility/files.h"
 #include "utility/log.h"
 #include "utility/string/toString.h"
-#include "extendedtinyxml.h"
+#include "utility/extendedtinyxml.h"
 
 using namespace tinyxml2;
 
