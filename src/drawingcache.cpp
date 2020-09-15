@@ -23,7 +23,6 @@
 
 #include "game/data/units/building.h"
 #include "game/logic/client.h"
-#include "loaddata.h"
 #include "game/data/player/player.h"
 #include "settings.h"
 #include "game/data/units/vehicle.h"

@@ -25,9 +25,6 @@
 #ifndef loaddataH
 #define loaddataH
 
-#include <string>
-#include <vector>
-
 enum class eLoadingState
 {
 	Error,
@@ -38,12 +35,5 @@ enum class eLoadingState
 * Loads all relevant files and data
 */
 eLoadingState LoadData();
-
-void createShadowGfx();
-
-/**
-* Splits a string s by "word" according to one of separators seps.
-*/
-void Split (const std::string& s, const char* seps, std::vector<std::string>& words);
 
 #endif

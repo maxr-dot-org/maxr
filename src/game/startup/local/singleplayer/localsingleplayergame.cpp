@@ -18,10 +18,10 @@
  ***************************************************************************/
 
 #include "game/startup/local/singleplayer/localsingleplayergame.h"
+
 #include "game/logic/client.h"
 #include "game/logic/server.h"
 #include "game/data/savegame.h"
-#include "loaddata.h"
 
 //------------------------------------------------------------------------------
 cLocalSingleplayerGame::~cLocalSingleplayerGame()

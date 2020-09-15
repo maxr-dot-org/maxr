@@ -736,6 +736,18 @@ void cVoiceData::load (const char* path)
 	LoadSoundfile (VOIUnitStolenByEnemy, path, "unit_stolen_by_enemy.ogg", true);
 }
 
+
+//------------------------------------------------------------------------------
+static void createShadowGfx()
+{
+	// TODO: reduce size once we use texture.
+	GraphicsData.gfx_shadow = AutoSurface (SDL_CreateRGBSurface (0, Video.getResolutionX(), Video.getResolutionY(),
+										   Video.getColDepth(),
+										   0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
+	SDL_FillRect (GraphicsData.gfx_shadow.get(), nullptr, SDL_MapRGBA (GraphicsData.gfx_shadow->format, 0, 0, 0, 50));
+}
+
+//------------------------------------------------------------------------------
 static int LoadGraphics (const char* path)
 {
 	Log.write ("Loading Graphics", cLog::eLOG_TYPE_INFO);
@@ -1529,6 +1541,23 @@ static int LoadBuildings()
 }
 
 
+
+//------------------------------------------------------------------------------
+static void Split(const std::string& s, const char* seps, std::vector<std::string>& words)
+{
+	if (s.empty()) return;
+	size_t beg = 0;
+	size_t end = s.find_first_of(seps, beg);
+
+	while (end != string::npos)
+	{
+		words.push_back(s.substr(beg, end - beg));
+		beg = end + 1;
+		end = s.find_first_of(seps, beg);
+	}
+	words.push_back(s.substr(beg));
+}
+
 //------------------------------------------------------------------------------
 static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamicData, char const* const directory, int const iID)
 {
@@ -1845,26 +1874,3 @@ static int LoadClans()
 	return 1;
 }
 
-void createShadowGfx()
-{
-	// TODO: reduce size once we use texture.
-	GraphicsData.gfx_shadow = AutoSurface (SDL_CreateRGBSurface (0, Video.getResolutionX(), Video.getResolutionY(),
-										   Video.getColDepth(),
-										   0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
-	SDL_FillRect (GraphicsData.gfx_shadow.get(), nullptr, SDL_MapRGBA (GraphicsData.gfx_shadow->format, 0, 0, 0, 50));
-}
-
-void Split(const std::string& s, const char* seps, std::vector<std::string>& words)
-{
-	if (s.empty()) return;
-	size_t beg = 0;
-	size_t end = s.find_first_of(seps, beg);
-
-	while (end != string::npos)
-	{
-		words.push_back(s.substr(beg, end - beg));
-		beg = end + 1;
-		end = s.find_first_of(seps, beg);
-	}
-	words.push_back(s.substr(beg));
-}
