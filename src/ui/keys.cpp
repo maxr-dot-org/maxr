@@ -19,7 +19,7 @@
 
 #include "keys.h"
 
-#include "utility/tinyxml2.h"
+#include <3rd/tinyxml2/tinyxml2.h>
 
 #include "utility/files.h"
 #include "utility/log.h"

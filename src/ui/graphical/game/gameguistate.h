@@ -20,11 +20,11 @@
 #ifndef ui_graphical_game_gameguistateH
 #define ui_graphical_game_gameguistateH
 
+#include <3rd/tinyxml2/tinyxml2.h>
 #include <vector>
 
 #include "utility/serialization/serialization.h"
 #include "utility/position.h"
-#include "utility/tinyxml2.h"
 
 class cUnitSelection;
 class cUnitLockList;

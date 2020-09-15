@@ -20,7 +20,7 @@
 #ifndef utility_extendedtinyxmlH
 #define utility_extendedtinyxmlH
 
-#include "utility/tinyxml2.h"
+#include <3rd/tinyxml2/tinyxml2.h>
 
 #include <stdarg.h>
 #include <string>

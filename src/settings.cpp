@@ -37,7 +37,7 @@
 #include "utility/files.h"
 #include "utility/log.h"
 #include "utility/string/toString.h"
-#include "utility/tinyxml2.h"
+#include <3rd/tinyxml2/tinyxml2.h>
 #include "video.h"
 #include "utility/string/tolower.h"
 #include "game/data/player/playercolor.h"

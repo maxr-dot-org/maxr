@@ -58,7 +58,7 @@
 #include <string>
 #include <vector>
 #include "defines.h"
-#include "utility/tinyxml2.h"
+#include <3rd/tinyxml2/tinyxml2.h>
 
 struct sID;
 

@@ -21,7 +21,7 @@
 #define ui_keysH
 
 #include "input/keyboard/keysequence.h"
-#include "utility/tinyxml2.h"
+#include <3rd/tinyxml2/tinyxml2.h>
 
 enum class eMouseStyle
 {
