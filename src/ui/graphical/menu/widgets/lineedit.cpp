@@ -28,7 +28,7 @@
 #include "input/mouse/mouse.h"
 #include "input/keyboard/keyboard.h"
 #include "utility/log.h"
-#include "keys.h"
+#include "ui/keys.h"
 
 //------------------------------------------------------------------------------
 cLineEdit::cLineEdit (const cBox<cPosition>& area, eLineEditFrameType frameType_, eUnicodeFontType fontType_) :

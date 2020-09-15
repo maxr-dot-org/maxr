@@ -37,7 +37,7 @@
 #include "utility/language.h"
 #include "utility/string/toString.h"
 #include "game/data/units/unit.h"
-#include "keys.h"
+#include "ui/keys.h"
 #include "game/logic/turncounter.h"
 #include "game/logic/turntimeclock.h"
 

@@ -26,7 +26,7 @@
 #include "ui/graphical/game/control/mouseaction/mouseactionactivatefinished.h"
 #include "ui/graphical/game/unitselection.h"
 #include "game/data/map/mapview.h"
-#include "keys.h"
+#include "ui/keys.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
 #include "input/mouse/mouse.h"

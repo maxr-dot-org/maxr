@@ -70,7 +70,7 @@
 #include "utility/position.h"
 #include "utility/listhelpers.h"
 
-#include "keys.h"
+#include "ui/keys.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
 #include "game/logic/turntimeclock.h"

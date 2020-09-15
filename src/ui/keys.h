@@ -17,11 +17,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef keys_H
-#define keys_H
+#ifndef ui_keysH
+#define ui_keysH
 
-#include "defines.h"
 #include "input/keyboard/keysequence.h"
+#include "utility/tinyxml2.h"
 
 enum class eMouseStyle
 {
@@ -29,7 +29,7 @@ enum class eMouseStyle
 	Modern
 };
 
-// Globale Daten /////////////////////////////////////////////////////////////
+
 class cKeysList
 {
 public:
@@ -183,4 +183,4 @@ private:
 
 extern cKeysList KeysList;
 
-#endif // keys_H
+#endif
