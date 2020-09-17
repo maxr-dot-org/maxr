@@ -20,8 +20,8 @@
 #ifndef ui_graphical_game_widgets_debugoutputidgetH
 #define ui_graphical_game_widgets_debugoutputidgetH
 
+#include "output/video/unifonts.h"
 #include "ui/graphical/widget.h"
-#include "utility/unifonts.h"
 
 class cClient;
 class cServer;

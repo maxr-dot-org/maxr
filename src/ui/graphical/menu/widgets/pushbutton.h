@@ -26,7 +26,7 @@
 #include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "utility/autosurface.h"
 #include "utility/signal/signal.h"
-#include "utility/unifonts.h"
+#include "output/video/unifonts.h"
 #include "resources/sound.h"
 
 enum class ePushButtonType

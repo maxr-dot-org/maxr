@@ -25,7 +25,7 @@
 #include "settings.h"
 #include "output/video/video.h"
 #include "utility/string/toString.h"
-#include "utility/unifonts.h"
+#include "output/video/unifonts.h"
 #include "protocol/netmessage.h"
 #include "game/startup/game.h"
 #include "utility/runnable.h"

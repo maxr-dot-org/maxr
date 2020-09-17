@@ -24,9 +24,9 @@
 #include <vector>
 
 #include "maxrconfig.h"
+#include "output/video/unifonts.h"
 #include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "ui/graphical/alignment.h"
-#include "utility/unifonts.h"
 
 class cLabel : public cClickableWidget
 {

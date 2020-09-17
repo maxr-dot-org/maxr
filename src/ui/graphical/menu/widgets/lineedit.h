@@ -25,9 +25,9 @@
 #include <chrono>
 
 #include "maxrconfig.h"
+#include "output/video/unifonts.h"
 #include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "ui/graphical/menu/widgets/tools/validatorstate.h"
-#include "utility/unifonts.h"
 #include "utility/autosurface.h"
 #include "utility/signal/signal.h"
 

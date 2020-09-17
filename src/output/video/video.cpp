@@ -30,6 +30,7 @@
 #include "defines.h"
 #include "input/keyboard/keyboard.h"
 #include "maxrversion.h"
+#include "output/video/unifonts.h"
 #include "resources/pcx.h"
 #include "resources/uidata.h"
 #include "utility/files.h"
@@ -37,7 +38,6 @@
 #include "utility/log.h"
 #include "utility/string/toString.h"
 #include "utility/thread/ismainthread.h"
-#include "utility/unifonts.h"
 
 cVideo Video;
 

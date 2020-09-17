@@ -24,7 +24,7 @@
 #include "resources/uidata.h"
 #include "settings.h"
 #include "output/video/video.h"
-#include "utility/unifonts.h"
+#include "output/video/unifonts.h"
 #include "input/mouse/mouse.h"
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"

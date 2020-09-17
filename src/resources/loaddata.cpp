@@ -50,7 +50,7 @@
 #include "settings.h"
 #include "resources/sound.h"
 #include <3rd/tinyxml2/tinyxml2.h>
-#include "utility/unifonts.h"
+#include "output/video/unifonts.h"
 #include "game/data/units/vehicle.h"
 #include "output/video/video.h"
 #include "debug.h"
