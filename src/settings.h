@@ -20,9 +20,9 @@
 #define SETTINGS_H
 
 #include <string>
-#include <SDL.h>
 
 #include <3rd/tinyxml2/tinyxml2.h>
+
 #include "utility/thread/mutex.h"
 #include "utility/signal/signal.h"
 #include "utility/color.h"
@@ -126,10 +126,10 @@ public:
 	const cRgbColor& getPlayerColor() const;
 	void setPlayerColor (const cRgbColor& color, bool save = true);
 
+	// Sound
+
 	bool isSoundEnabled() const;
 	void setSoundEnabled (bool soundEnabled, bool save = true);
-
-	// Sound
 
 	int getMusicVol() const;
 	void setMusicVol (int musicVol, bool save = true);

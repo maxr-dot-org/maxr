@@ -32,28 +32,13 @@
 // minimap configuration
 #define MINIMAP_COLOR 0xFFFC0000 // color of the screen borders on the minimap
 
-#ifdef _MSC_VER
-# define CHECK_MEMORY //_ASSERTE (_CrtCheckMemory());
-#else
-# define CHECK_MEMORY
-#endif
-
 // some defines for typical menus
-
 
 #ifndef PATH_DELIMITER
 # ifdef WIN32
 #  define PATH_DELIMITER "\\"
 # else
 #  define PATH_DELIMITER "/"
-# endif
-#endif
-
-#ifndef TEXT_FILE_LF
-# ifdef WIN32
-#  define TEXT_FILE_LF "\r\n"
-# else
-#  define TEXT_FILE_LF "\n"
 # endif
 #endif
 
