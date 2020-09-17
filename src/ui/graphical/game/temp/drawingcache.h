@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef drawingcacheH
-#define drawingcacheH
+#ifndef ui_graphical_game_temp_drawingcacheH
+#define ui_graphical_game_temp_drawingcacheH
 
 #include <memory>
 
