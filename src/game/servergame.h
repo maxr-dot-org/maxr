@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ServerGame_H
-#define ServerGame_H
+#ifndef game_servergameH
+#define game_servergameH
 
 #include "game/data/gamesettings.h"
 #include "game/logic/server.h"

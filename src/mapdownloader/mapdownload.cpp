@@ -35,7 +35,7 @@
 #include "utility/string/tolower.h"
 #include "protocol/lobbymessage.h"
 #include "utility/string/toString.h"
-#include "connectionmanager.h"
+#include "game/connectionmanager.h"
 #include "protocol/netmessage.h"
 
 using namespace std;

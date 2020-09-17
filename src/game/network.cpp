@@ -19,10 +19,11 @@
 
 
 #include "network.h"
+
 #include "utility/log.h"
 
 #include "protocol/netmessage.h"
-#include "connectionmanager.h"
+#include "game/connectionmanager.h"
 #include "utility/listhelpers.h"
 #include "utility/string/toString.h"
 
@@ -114,12 +115,12 @@ cNetwork::~cNetwork()
 int cNetwork::openServer(int port)
 {
 	cLockGuard<cMutex> tl(tcpMutex);
-	
+
 	Log.write("Network: Open server on port: " + toString(port), cLog::eLOG_TYPE_NET_DEBUG);
 
 	IPaddress ipaddr;
-	if (SDLNet_ResolveHost(&ipaddr, nullptr, port) == -1) 
-	{ 
+	if (SDLNet_ResolveHost(&ipaddr, nullptr, port) == -1)
+	{
 		return -1;
 	}
 
@@ -141,7 +142,7 @@ void cNetwork::closeServer()
 	cLockGuard<cMutex> tl(tcpMutex);
 
 	if (serverSocket == nullptr) return;
-	
+
 	closingSockets.push_back(serverSocket);
 	serverSocket = nullptr;
 }
@@ -150,7 +151,7 @@ void cNetwork::closeServer()
 void cNetwork::connectToServer(const std::string& ip, int port)
 {
 	cLockGuard<cMutex> tl(tcpMutex);
-	
+
 	if (!connectToIp.empty())
 	{
 		Log.write("Network: Can only handle one connection attempt at once", cLog::eLOG_TYPE_NET_ERROR);
@@ -227,9 +228,9 @@ void cNetwork::handleNetworkThread()
 	{
 		const int timeoutMilliseconds = 10;
 		int readySockets = SDLNet_CheckSockets(socketSet, timeoutMilliseconds);
-		
+
 		if (exit) break;
-		
+
 		if (readySockets == -1)
 		{
 			//return value of -1 means that most likely the socket set is empty
@@ -276,7 +277,7 @@ void cNetwork::handleNetworkThread()
 						ip += toString((remoteAddress->host >>  8) & 0xFF) + '.';
 						ip += toString((remoteAddress->host >> 16) & 0xFF) + '.';
 						ip += toString((remoteAddress->host >> 24) & 0xFF);
-						
+
 						Log.write("Network: Incoming connection from " + ip, cLog::eLOG_TYPE_NET_DEBUG);
 					}
 
@@ -324,7 +325,7 @@ void cNetwork::handleNetworkThread()
 			}
 
 			cleanupClosedSockets();
-		}		
+		}
 	}
 }
 

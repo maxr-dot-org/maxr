@@ -21,7 +21,7 @@
 
 #include "game/data/player/playerbasicdata.h"
 #include "maxrversion.h"
-#include "network.h"
+#include "game/network.h"
 #include "protocol/lobbymessage.h"
 #include "protocol/netmessage.h"
 #include "utility/log.h"

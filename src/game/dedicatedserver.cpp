@@ -23,9 +23,9 @@
 #include "defines.h"
 #include "utility/files.h"
 #include "protocol/netmessage.h"
-#include "network.h"
+#include "game/network.h"
 #include "game/data/report/savedreportchat.h"
-#include "servergame.h"
+#include "game/servergame.h"
 
 #include <algorithm>
 #include <cassert>

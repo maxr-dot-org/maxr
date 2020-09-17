@@ -22,7 +22,7 @@
 
 #include "mapdownloader/mapdownload.h"
 #include "protocol/lobbymessage.h"
-#include "connectionmanager.h"
+#include "game/connectionmanager.h"
 #include "game/data/map/map.h"
 
 #include <functional>

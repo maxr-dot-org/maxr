@@ -19,7 +19,7 @@
 
 #include "server.h"
 
-#include "connectionmanager.h"
+#include "game/connectionmanager.h"
 #include "debug.h"
 #include "game/data/player/playerbasicdata.h"
 #include "game/data/report/special/savedreportlostconnection.h"

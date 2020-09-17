@@ -16,8 +16,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef networkH
-#define networkH
+#ifndef game_networkH
+#define game_networkH
 
 #include <vector>
 #include <SDL_net.h>
@@ -29,7 +29,7 @@
 
 class cConnectionManager;
 
-//TODO: remove the need for a fixed arbitrary maximum message size. 
+//TODO: remove the need for a fixed arbitrary maximum message size.
 const uint32_t PACKAGE_LENGTH = 1024 * 1024 * 10;
 
 class cDataBuffer
@@ -67,7 +67,7 @@ public:
 	int openServer(int port);
 	void closeServer();
 	void connectToServer (const std::string& ip, int port);
-	
+
 	void close(const cSocket* socket);
 	int sendMessage(const cSocket* socket, unsigned int length, const unsigned char* buffer);
 
@@ -86,12 +86,12 @@ private:
 
 	SDL_Thread* tcpHandleThread;
 	volatile bool exit;
-	
+
 	TCPsocket serverSocket;
 	std::vector<cSocket*> sockets;
 	SDLNet_SocketSet socketSet;
 	std::vector<TCPsocket> closingSockets; //list of sockets to be closed. This needs to be done inside the network thread.
-	
+
 	cConnectionManager& connectionManager;
 
 	// save infos for non blocking connection attempt
@@ -99,4 +99,4 @@ private:
 	int connectToPort;
 };
 
-#endif // networkH
+#endif

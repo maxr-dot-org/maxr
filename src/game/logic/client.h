@@ -23,7 +23,7 @@
 #include <memory>
 
 #include "game/logic/gametimer.h"
-#include "connectionmanager.h"
+#include "game/connectionmanager.h"
 #include "utility/thread/concurrentqueue.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"

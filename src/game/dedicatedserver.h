@@ -17,14 +17,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef dedicatedServer_H
-#define dedicatedServer_H
+#ifndef game_dedicatedServer_H
+#define game_dedicatedServer_H
 
 #include <string>
 #include <vector>
 #include <memory>
 
-#include "connectionmanager.h"
+#include "game/connectionmanager.h"
 
 class cDedicatedServerConfig;
 class cServerGame;

@@ -20,7 +20,7 @@
 #ifndef game_startup_lobbyserverH
 #define game_startup_lobbyserverH
 
-#include "connectionmanager.h"
+#include "game/connectionmanager.h"
 #include "game/data/map/map.h"
 #include "game/logic/landingpositionmanager.h"
 #include "game/startup/lobbypreparationdata.h"

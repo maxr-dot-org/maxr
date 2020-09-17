@@ -20,7 +20,7 @@
 #ifndef game_logic_serverH
 #define game_logic_serverH
 
-#include "connectionmanager.h"
+#include "game/connectionmanager.h"
 #include "game/data/model.h"
 #include "game/data/savegame.h"
 #include "gametimer.h"

@@ -19,7 +19,7 @@
 
 #include "game/data/player/playerbasicdata.h"
 
-#include "network.h"
+#include "game/network.h"
 #include "settings.h"
 #include "utility/crc.h"
 

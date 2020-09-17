@@ -24,7 +24,7 @@
 #include <map>
 
 #include "utility/signal/signalconnectionmanager.h"
-#include "connectionmanager.h"
+#include "game/connectionmanager.h"
 #include "utility/runnable.h"
 #include "utility/thread/concurrentqueue.h"
 #include "game/logic/landingpositionmanager.h"

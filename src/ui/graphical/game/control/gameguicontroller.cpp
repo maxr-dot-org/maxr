@@ -78,7 +78,6 @@
 #include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
 #include "utility/log.h"
-#include "network.h"
 #include "game/logic/attackjob.h"
 #include "game/data/player/player.h"
 #include "game/data/report/savedreportsimple.h"

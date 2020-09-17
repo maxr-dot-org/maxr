@@ -20,7 +20,7 @@
 #include "3rd/mveplayer/mveplayer.h"
 
 #include "debug.h"
-#include "dedicatedserver.h"
+#include "game/dedicatedserver.h"
 #include "input/mouse/mouse.h"
 #include "input/keyboard/keyboard.h"
 #include "maxrversion.h"
