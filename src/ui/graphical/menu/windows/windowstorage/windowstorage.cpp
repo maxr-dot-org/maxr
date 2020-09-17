@@ -20,7 +20,7 @@
 #include "ui/graphical/menu/windows/windowstorage/windowstorage.h"
 
 #include "utility/language.h"
-#include "utility/pcx.h"
+#include "resources/pcx.h"
 #include "utility/string/toString.h"
 #include "output/video/video.h"
 #include "game/data/units/unit.h"

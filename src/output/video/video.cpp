@@ -27,17 +27,17 @@
 
 #include <SDL.h>
 
-#include "resources/uidata.h"
-#include "maxrversion.h"
 #include "defines.h"
+#include "input/keyboard/keyboard.h"
+#include "maxrversion.h"
+#include "resources/pcx.h"
+#include "resources/uidata.h"
+#include "utility/files.h"
 #include "utility/mathtools.h"
 #include "utility/log.h"
-#include "utility/pcx.h"
 #include "utility/string/toString.h"
 #include "utility/thread/ismainthread.h"
 #include "utility/unifonts.h"
-#include "utility/files.h"
-#include "input/keyboard/keyboard.h"
 
 cVideo Video;
 

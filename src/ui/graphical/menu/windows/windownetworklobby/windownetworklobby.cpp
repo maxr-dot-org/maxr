@@ -32,7 +32,7 @@
 #include "game/data/player/player.h"
 #include "game/startup/lobbyclient.h"
 #include "utility/language.h"
-#include "utility/pcx.h"
+#include "resources/pcx.h"
 #include "utility/string/toString.h"
 #include "game/data/map/map.h"
 #include "output/video/video.h"

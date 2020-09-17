@@ -20,7 +20,7 @@
 #include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
 
 #include "utility/language.h"
-#include "utility/pcx.h"
+#include "resources/pcx.h"
 #include "game/data/player/clans.h"
 #include "resources/uidata.h"
 #include "ui/graphical/menu/widgets/label.h"

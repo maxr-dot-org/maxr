@@ -20,7 +20,7 @@
 #include "ui/graphical/menu/windows/windowgamesettings/windowgamesettings.h"
 
 #include "game/data/gamesettings.h"
-#include "utility/pcx.h"
+#include "resources/pcx.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"

@@ -21,12 +21,12 @@
 
 #include "game/data/player/player.h"
 #include "output/video/video.h"
+#include "resources/pcx.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/slider.h"
 #include "utility/language.h"
-#include "utility/pcx.h"
 #include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------

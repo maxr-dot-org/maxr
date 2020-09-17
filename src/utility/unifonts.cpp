@@ -23,7 +23,7 @@
 #include "utility/files.h"
 #include "utility/log.h"
 #include "utility/string/toString.h"
-#include "utility/pcx.h"
+#include "resources/pcx.h"
 #include "settings.h"
 #include "utility/position.h"
 #include "utility/drawing.h"

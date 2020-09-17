@@ -29,7 +29,7 @@
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "ui/graphical/application.h"
 #include "utility/language.h"
-#include "utility/pcx.h"
+#include "resources/pcx.h"
 #include "game/data/units/building.h"
 #include "game/data/player/player.h"
 #include "game/data/map/mapview.h"

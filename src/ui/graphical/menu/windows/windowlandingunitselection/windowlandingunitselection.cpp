@@ -21,7 +21,7 @@
 
 #include "utility/language.h"
 #include "utility/string/toString.h"
-#include "utility/pcx.h"
+#include "resources/pcx.h"
 #include "game/data/player/player.h"
 #include "game/data/units/landingunit.h"
 #include "ui/graphical/menu/widgets/label.h"

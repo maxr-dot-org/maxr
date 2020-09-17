@@ -27,7 +27,7 @@
 #include "utility/language.h"
 #include "utility/log.h"
 #include "utility/files.h"
-#include "utility/pcx.h"
+#include "resources/pcx.h"
 #include "utility/ranges.h"
 #include "game/data/savegameinfo.h"
 #include "game/data/savegame.h"

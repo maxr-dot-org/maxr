@@ -22,7 +22,7 @@
 #include "ui/graphical/menu/windows/windowmain.h"
 
 #include "utility/language.h"
-#include "utility/pcx.h"
+#include "resources/pcx.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "utility/random.h"

@@ -25,7 +25,7 @@
 #include "ui/graphical/menu/widgets/special/resourcebar.h"
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "utility/language.h"
-#include "utility/pcx.h"
+#include "resources/pcx.h"
 #include "utility/string/toString.h"
 #include "game/data/player/player.h"
 

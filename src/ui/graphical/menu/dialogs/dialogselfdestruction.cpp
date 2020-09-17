@@ -19,13 +19,13 @@
 
 #include "ui/graphical/menu/dialogs/dialogselfdestruction.h"
 
+#include "game/data/units/unit.h"
+#include "resources/pcx.h"
+#include "ui/graphical/application.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/protectionglass.h"
-#include "ui/graphical/application.h"
 #include "utility/language.h"
-#include "utility/pcx.h"
-#include "game/data/units/unit.h"
 
 //------------------------------------------------------------------------------
 cDialogSelfDestruction::cDialogSelfDestruction (const cUnit& unit, std::shared_ptr<cAnimationTimer> animationTimer) :

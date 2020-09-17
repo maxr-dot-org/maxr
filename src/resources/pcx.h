@@ -17,12 +17,10 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef pcxH
-#define pcxH
+#ifndef resources_pcxH
+#define resources_pcxH
 
 #include <string>
-
-#include <SDL.h>
 
 #include "utility/autosurface.h"
 

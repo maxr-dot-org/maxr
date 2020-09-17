@@ -19,21 +19,21 @@
 
 #include "ui/graphical/menu/dialogs/dialogtransfer.h"
 
+#include "game/data/base/base.h"
+#include "game/data/map/map.h"
+#include "game/data/units/building.h"
+#include "game/data/units/unit.h"
+#include "game/data/units/vehicle.h"
+#include "output/video/video.h"
+#include "resources/pcx.h"
+#include "ui/graphical/application.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
+#include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
-#include "ui/graphical/menu/widgets/image.h"
-#include "ui/graphical/application.h"
-#include "utility/language.h"
-#include "utility/pcx.h"
 #include "utility/drawing.h"
+#include "utility/language.h"
 #include "utility/string/toString.h"
-#include "game/data/units/unit.h"
-#include "game/data/units/building.h"
-#include "game/data/units/vehicle.h"
-#include "game/data/map/map.h"
-#include "output/video/video.h"
-#include "game/data/base/base.h"
 
 //------------------------------------------------------------------------------
 cNewDialogTransfer::cNewDialogTransfer (const cUnit& sourceUnit, const cUnit& destinationUnit) :

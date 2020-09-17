@@ -46,7 +46,7 @@
 #include "ui/keys.h"
 #include "utility/log.h"
 #include "utility/string/toString.h"
-#include "utility/pcx.h"
+#include "resources/pcx.h"
 #include "settings.h"
 #include "resources/sound.h"
 #include <3rd/tinyxml2/tinyxml2.h>

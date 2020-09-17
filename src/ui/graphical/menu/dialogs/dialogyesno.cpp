@@ -19,10 +19,10 @@
 
 #include "ui/graphical/menu/dialogs/dialogyesno.h"
 
+#include "resources/pcx.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "utility/language.h"
-#include "utility/pcx.h"
 
 //------------------------------------------------------------------------------
 cDialogYesNo::cDialogYesNo (const std::string& text) :
