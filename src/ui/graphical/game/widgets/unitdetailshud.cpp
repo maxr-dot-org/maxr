@@ -21,7 +21,7 @@
 
 #include "ui/graphical/menu/widgets/label.h"
 #include "utility/string/toString.h"
-#include "video.h"
+#include "output/video/video.h"
 #include "game/data/units/unit.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"

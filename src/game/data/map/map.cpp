@@ -29,7 +29,7 @@
 #include "game/data/player/player.h"
 #include "settings.h"
 #include "game/data/units/vehicle.h"
-#include "video.h"
+#include "output/video/video.h"
 #include "utility/position.h"
 #include "game/data/model.h"
 #include "mapdownloader/mapdownload.h"

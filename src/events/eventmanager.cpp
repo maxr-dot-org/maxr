@@ -24,7 +24,7 @@
 #include "events/eventmanager.h"
 #include "events/mouseevents.h"
 #include "events/keyboardevents.h"
-#include "video.h"
+#include "output/video/video.h"
 
 //------------------------------------------------------------------------------
 cEventManager::cEventManager()

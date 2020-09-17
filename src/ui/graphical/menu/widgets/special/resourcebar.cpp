@@ -21,7 +21,7 @@
 
 #include "resources/uidata.h"
 #include "settings.h"
-#include "video.h"
+#include "output/video/video.h"
 #include "input/mouse/mouse.h"
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"

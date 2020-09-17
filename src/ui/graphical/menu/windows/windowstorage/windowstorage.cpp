@@ -22,7 +22,7 @@
 #include "utility/language.h"
 #include "utility/pcx.h"
 #include "utility/string/toString.h"
-#include "video.h"
+#include "output/video/video.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"

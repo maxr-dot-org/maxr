@@ -33,14 +33,15 @@
 
 #include "maxrversion.h"
 
+#include <3rd/tinyxml2/tinyxml2.h>
+
+#include "game/data/player/playercolor.h"
 #include "utility/extendedtinyxml.h"
 #include "utility/files.h"
 #include "utility/log.h"
 #include "utility/string/toString.h"
-#include <3rd/tinyxml2/tinyxml2.h>
-#include "video.h"
 #include "utility/string/tolower.h"
-#include "game/data/player/playercolor.h"
+#include "output/video/video.h"
 
 using namespace tinyxml2;
 

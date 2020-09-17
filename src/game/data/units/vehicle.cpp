@@ -32,6 +32,7 @@
 #include "input/mouse/mouse.h"
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
+#include "output/video/video.h"
 #include "resources/sound.h"
 #include "settings.h"
 #include "ui/graphical/application.h"
@@ -44,7 +45,6 @@
 #include "utility/random.h"
 #include "utility/string/toString.h"
 #include "utility/unifonts.h"
-#include "video.h"
 
 #include <cmath>
 

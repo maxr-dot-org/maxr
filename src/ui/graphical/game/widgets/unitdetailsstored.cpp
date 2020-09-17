@@ -24,7 +24,7 @@
 #include "utility/language.h"
 #include "utility/string/toString.h"
 #include "game/data/units/unit.h"
-#include "video.h"
+#include "output/video/video.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 

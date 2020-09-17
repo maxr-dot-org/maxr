@@ -28,7 +28,7 @@
 #include "utility/language.h"
 #include "utility/pcx.h"
 #include "defines.h"
-#include "video.h"
+#include "output/video/video.h"
 
 //------------------------------------------------------------------------------
 cWindowPlayerSelection::cWindowPlayerSelection() :

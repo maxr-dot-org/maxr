@@ -23,7 +23,7 @@
 #include "input/keyboard/keyboard.h"
 #include "events/eventmanager.h"
 #include "settings.h"
-#include "video.h"
+#include "output/video/video.h"
 #include "utility/string/toString.h"
 #include "utility/unifonts.h"
 #include "protocol/netmessage.h"

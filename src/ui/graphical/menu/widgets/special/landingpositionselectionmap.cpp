@@ -21,7 +21,7 @@
 
 #include "game/data/map/map.h"
 #include "settings.h"
-#include "video.h"
+#include "output/video/video.h"
 #include "input/mouse/mouse.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
 #include "game/data/units/landingunit.h"

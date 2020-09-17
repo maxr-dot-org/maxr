@@ -32,7 +32,7 @@
 
 #include "defines.h"
 #include "settings.h"
-#include "video.h"
+#include "output/video/video.h"
 #include "utility/pcx.h"
 #include "utility/language.h"
 #include "utility/string/toString.h"

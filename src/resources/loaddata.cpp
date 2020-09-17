@@ -52,7 +52,7 @@
 #include <3rd/tinyxml2/tinyxml2.h>
 #include "utility/unifonts.h"
 #include "game/data/units/vehicle.h"
-#include "video.h"
+#include "output/video/video.h"
 #include "debug.h"
 
 #ifdef WIN32

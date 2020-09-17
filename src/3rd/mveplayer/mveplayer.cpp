@@ -28,7 +28,7 @@
 #include "mveplayer.h"
 
 #include "utility/autosurface.h"
-#include "video.h"
+#include "output/video/video.h"
 #include "defines.h"
 
 #include <SDL.h>

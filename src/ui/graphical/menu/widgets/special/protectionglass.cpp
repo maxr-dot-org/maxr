@@ -17,12 +17,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <algorithm>
-
 #include "ui/graphical/menu/widgets/special/protectionglass.h"
-#include "ui/graphical/game/animations/animationtimer.h"
+
+#include "output/video/video.h"
 #include "resources/uidata.h"
-#include "video.h"
+#include "ui/graphical/game/animations/animationtimer.h"
+
+#include <algorithm>
 
 //------------------------------------------------------------------------------
 cProtectionGlass::cProtectionGlass (const cPosition& position, std::shared_ptr<cAnimationTimer> animationTimer_, double percentClosed_) :

@@ -21,7 +21,7 @@
 
 #include "ui/graphical/application.h"
 #include "settings.h"
-#include "video.h"
+#include "output/video/video.h"
 #include "utility/drawing.h"
 #include "utility/color.h"
 

@@ -33,6 +33,7 @@
 #include "input/mouse/cursor/mousecursorattack.h"
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
+#include "output/video/video.h"
 #include "resources/sound.h"
 #include "settings.h"
 #include "ui/graphical/application.h"
@@ -67,7 +68,6 @@
 #include "utility/mathtools.h"
 #include "utility/random.h"
 #include "utility/ranges.h"
-#include "video.h"
 
 //------------------------------------------------------------------------------
 cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap_, std::shared_ptr<cAnimationTimer> animationTimer_, std::shared_ptr<cSoundManager> soundManager_, std::shared_ptr<const cFrameCounter> frameCounter) :

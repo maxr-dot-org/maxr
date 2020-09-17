@@ -23,7 +23,7 @@
 
 #include "game/logic/client.h"
 #include "game/data/player/player.h"
-#include "video.h"
+#include "output/video/video.h"
 #include "resources/sound.h"
 #include "game/data/map/map.h"
 #include "utility/random.h"

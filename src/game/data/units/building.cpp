@@ -28,6 +28,7 @@
 #include "game/logic/client.h"
 #include "game/logic/fxeffects.h"
 #include "game/logic/upgradecalculator.h"
+#include "output/video/video.h"
 #include "protocol/netmessage.h"
 #include "settings.h"
 #include "utility/crc.h"
@@ -37,7 +38,6 @@
 #include "utility/random.h"
 #include "utility/string/toString.h"
 #include "utility/unifonts.h"
-#include "video.h"
 
 #include <cmath>
 

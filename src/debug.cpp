@@ -31,7 +31,7 @@
 #include "maxrversion.h"
 #include "defines.h"
 #include "settings.h"
-#include "video.h"
+#include "output/video/video.h"
 
 #include "debug.h"
 

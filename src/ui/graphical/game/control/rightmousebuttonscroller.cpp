@@ -23,7 +23,7 @@
 #include "ui/graphical/menu/widgets/image.h"
 #include "input/mouse/mouse.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
-#include "video.h"
+#include "output/video/video.h"
 #include "utility/color.h"
 #include "utility/drawing.h"
 

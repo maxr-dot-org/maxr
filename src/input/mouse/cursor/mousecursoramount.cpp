@@ -19,8 +19,8 @@
 
 #include "input/mouse/cursor/mousecursoramount.h"
 
+#include "output/video/video.h"
 #include "resources/uidata.h"
-#include "video.h"
 #include "utility/position.h"
 
 //------------------------------------------------------------------------------

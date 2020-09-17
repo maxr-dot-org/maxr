@@ -23,7 +23,7 @@
 #include "maxrconfig.h"
 #include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "settings.h"
-#include "video.h"
+#include "output/video/video.h"
 #include "utility/signal/signal.h"
 
 #include "ui/graphical/application.h"

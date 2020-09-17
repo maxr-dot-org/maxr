@@ -17,13 +17,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <algorithm>
-
 #include "pcx.h"
-#include "utility/log.h"
+
+#include "output/video/video.h"
 #include "utility/files.h"
+#include "utility/log.h"
 #include "settings.h"
-#include "video.h"
+
+#include <algorithm>
 
 /**
 *  Class that uses a internal buffer to read from file.

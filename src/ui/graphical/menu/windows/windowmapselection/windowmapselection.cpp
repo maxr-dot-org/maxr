@@ -20,6 +20,7 @@
 #include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
 
 #include "game/data/map/map.h"
+#include "output/video/video.h"
 #include "resources/uidata.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
@@ -30,7 +31,6 @@
 #include "utility/pcx.h"
 #include "utility/ranges.h"
 #include "utility/string/toString.h"
-#include "video.h"
 
 //------------------------------------------------------------------------------
 cWindowMapSelection::cWindowMapSelection() :

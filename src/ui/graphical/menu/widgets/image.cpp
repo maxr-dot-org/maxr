@@ -18,10 +18,11 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/widgets/image.h"
-#include "settings.h"
-#include "video.h"
-#include "output/sound/sounddevice.h"
+
 #include "output/sound/soundchannel.h"
+#include "output/sound/sounddevice.h"
+#include "output/video/video.h"
+#include "settings.h"
 #include "utility/drawing.h"
 
 //------------------------------------------------------------------------------

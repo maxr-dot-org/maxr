@@ -35,7 +35,7 @@
 #include "utility/pcx.h"
 #include "utility/string/toString.h"
 #include "game/data/map/map.h"
-#include "video.h"
+#include "output/video/video.h"
 #include "game/data/savegame.h"
 #include "maxrversion.h"
 

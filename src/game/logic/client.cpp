@@ -41,6 +41,7 @@
 #include "game/logic/fxeffects.h"
 #include "game/logic/gametimer.h"
 #include "game/logic/server.h"
+#include "output/video/video.h"
 #include "protocol/netmessage.h"
 #include "settings.h"
 #include "surveyorai.h"
@@ -50,7 +51,6 @@
 #include "utility/ranges.h"
 #include "utility/serialization/textarchive.h"
 #include "utility/string/toString.h"
-#include "video.h"
 
 #include <cmath>
 #include <sstream>

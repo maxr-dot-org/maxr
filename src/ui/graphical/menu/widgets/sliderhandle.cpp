@@ -22,7 +22,7 @@
 #include "ui/graphical/menu/widgets/sliderhandle.h"
 
 #include "resources/uidata.h"
-#include "video.h"
+#include "output/video/video.h"
 #include "ui/graphical/application.h"
 #include "input/mouse/mouse.h"
 

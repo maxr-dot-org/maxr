@@ -25,10 +25,10 @@
 #include "game/data/map/mapview.h"
 #include "game/data/model.h"
 #include "gametimer.h"
+#include "output/video/video.h"
 #include "pathcalculator.h"
 #include "utility/ranges.h"
 #include "utility/string/toString.h"
-#include "video.h"
 
 #include <SDL_rect.h>
 #include <SDL_surface.h>

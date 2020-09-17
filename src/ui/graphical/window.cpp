@@ -18,12 +18,12 @@
  ***************************************************************************/
 
 #include "ui/graphical/window.h"
-#include "ui/graphical/application.h"
 
-#include "input/mouse/mouse.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
+#include "input/mouse/mouse.h"
+#include "output/video/video.h"
 #include "settings.h"
-#include "video.h"
+#include "ui/graphical/application.h"
 
 //------------------------------------------------------------------------------
 cWindow::cWindow (AutoSurface surface_, eWindowBackgrounds backgroundType_) :

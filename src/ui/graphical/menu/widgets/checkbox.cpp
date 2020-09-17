@@ -21,7 +21,7 @@
 
 #include "resources/uidata.h"
 #include "settings.h"
-#include "video.h"
+#include "output/video/video.h"
 #include "utility/drawing.h"
 #include "utility/color.h"
 #include "output/sound/sounddevice.h"

@@ -24,7 +24,7 @@
 #include "ui/graphical/application.h"
 #include "ui/graphical/window.h"
 #include "settings.h"
-#include "video.h"
+#include "output/video/video.h"
 #include "input/mouse/mouse.h"
 #include "input/keyboard/keyboard.h"
 #include "utility/log.h"

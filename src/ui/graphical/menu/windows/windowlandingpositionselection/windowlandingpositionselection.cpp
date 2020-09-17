@@ -32,7 +32,7 @@
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/graphical/game/widgets/chatbox.h"
 #include "resources/sound.h"
-#include "video.h"
+#include "output/video/video.h"
 #include "game/data/map/map.h"
 #include "input/mouse/mouse.h"
 #include "input/mouse/cursor/mousecursorsimple.h"

@@ -25,13 +25,13 @@
 #include "input/keyboard/keyboard.h"
 #include "maxrversion.h"
 #include "output/sound/sounddevice.h"
+#include "output/video/video.h"
 #include "resources/loaddata.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/windows/windowstart.h"
 #include "utility/files.h"
 #include "utility/log.h"
 #include "utility/thread/ismainthread.h"
-#include "video.h"
 
 #include <SDL.h>
 #include <SDL_net.h>

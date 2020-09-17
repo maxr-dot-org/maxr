@@ -35,7 +35,7 @@
 #include "utility/pcx.h"
 #include "utility/string/toString.h"
 #include "settings.h"
-#include "video.h"
+#include "output/video/video.h"
 #include "utility/string/iequals.h"
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"

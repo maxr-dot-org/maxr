@@ -22,7 +22,7 @@
 #include "ui/graphical/game/temp/unitdrawingengine.h"
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/graphical/game/unitselection.h"
-#include "video.h"
+#include "output/video/video.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/player/player.h"
