@@ -78,7 +78,15 @@ std::string cLobbyServer::getGameState() const
 	result << "GameState: ";
 
 	if (landingPositionManager == nullptr)
+	{
 		result << "Game is open for new players" << std::endl;
+		if (saveGameInfo.number != -1)
+		{
+			result << "Waiting players from save game:" << std::endl;
+			for (const auto& player : saveGameInfo.players)
+				result << " " << player.getName() << std::endl;
+		}
+	}
 	else
 		result << "Game has started, players are setting up" << std::endl;
 
@@ -196,6 +204,23 @@ void cLobbyServer::sendGameData(int playerNr /* = -1 */)
 void cLobbyServer::selectSaveGameInfo (cSaveGameInfo gameInfo)
 {
 	saveGameInfo = gameInfo;
+	if (saveGameInfo.number >= 0)
+	{
+		staticMap = std::make_shared<cStaticMap>();
+		if (!staticMap->loadMap(saveGameInfo.mapName))
+		{
+			staticMap = nullptr;
+			//"Map \"" + saveGameInfo_.mapName + "\" not found";
+			return;
+		}
+		else if (MapDownload::calculateCheckSum(saveGameInfo.mapName) != saveGameInfo.mapCrc)
+		{
+			staticMap = nullptr;
+			//"The map \"" + saveGameInfo_.mapName + "\" does not match the map the game was started with"
+			return;
+		}
+	}
+
 	sendGameData();
 }
 
@@ -212,7 +237,6 @@ void cLobbyServer::selectGameSettings (std::shared_ptr<cGameSettings> settings)
 	gameSettings = settings;
 	sendGameData();
 }
-
 
 //------------------------------------------------------------------------------
 void cLobbyServer::sendChatMessage (const std::string& message, int receiverPlayerNr /*= -1*/)
@@ -239,6 +263,7 @@ void cLobbyServer::askToFinishLobby (int fromPlayer)
 	}
 	if (saveGameInfo.number != -1)
 	{
+		sendNetMessage (cMuMsgStartGame());
 		onStartLoadGame (saveGameInfo, connectionManager);
 		return;
 	}

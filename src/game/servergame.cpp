@@ -165,7 +165,7 @@ std::unique_ptr<cNetMessage> cServerGame::popMessage()
 //------------------------------------------------------------------------------
 bool cServerGame::loadGame (int saveGameNumber)
 {
-	cSaveGameInfo saveGameInfo(saveGameNumber);
+	cSaveGameInfo saveGameInfo = cSavegame().loadSaveInfo(saveGameNumber);
 	lobbyServer.selectSaveGameInfo (saveGameInfo);
 	return true;
 }
@@ -213,18 +213,13 @@ void cServerGame::run()
 	{
 		lobbyServer.run();
 		SDL_Delay(10);
-#if 0
+#if 1
 		// don't do anything if games haven't been started yet!
-		if (server)
+		if (server && shouldSave)
 		{
-			if (shouldSave)
-			{
-				/*cSavegame saveGame (saveGameNumber);
-				saveGame.save (*server, "Dedicated Server Savegame");
-				cout << "...saved to slot " << saveGameNumber << endl;
-				shouldSave = false;
-				*/
-			}
+			server->saveGameState(saveGameNumber, "Dedicated Server Savegame");
+			std::cout << "...saved to slot " << saveGameNumber << std::endl;
+			shouldSave = false;
 		}
 #endif
 	}

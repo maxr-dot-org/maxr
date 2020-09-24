@@ -403,6 +403,7 @@ void cLobbyClient::handleNetMessage_MU_MSG_OPTIONS (const cMuMsgOptions& message
 			staticMap = std::move (newStaticMap);
 		}
 	}
+	saveGameInfo = message.saveInfo;
 	onOptionsChanged (gameSettings, staticMap, saveGameInfo);
 }
 
