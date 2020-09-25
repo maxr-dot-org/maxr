@@ -19,7 +19,6 @@
 
 #include "utility/log.h"
 
-#include "defines.h"
 #include "settings.h"
 #include "utility/files.h"
 #include "utility/thread/mutex.h"
@@ -27,32 +26,17 @@
 #include <ctime>
 #include <iostream>
 
-#define LOGFILE cSettings::getInstance().getLogPath().c_str()
-#define NETLOGFILE cSettings::getInstance().getNetLogPath().c_str()
-
-/** errors */
-#define EE "(EE): "
-/** warnings */
-#define WW "(WW): "
-/** informations */
-#define II "(II): "
-/** debuginformations */
-#define DD "(DD): "
-/**mem error*/
-#define MM "(MM): "
-
 cLog Log;
 
 //------------------------------------------------------------------------------
 void cLog::write (const std::string& msg, eLogType type)
 {
-	cLockGuard<cMutex> l (mutex);
-
 	if ((type == eLOG_TYPE_DEBUG || type == eLOG_TYPE_NET_DEBUG) && !cSettings::getInstance().isDebug())
  	{
 		//in case debug is disabled we skip message
  		return;
  	}
+	cLockGuard<cMutex> l (mutex);
 
 	checkOpenFile (type);
 
@@ -60,25 +44,22 @@ void cLog::write (const std::string& msg, eLogType type)
 	std::string tmp;
 	switch (type)
 	{
-		case eLOG_TYPE_NET_WARNING :
-		case eLOG_TYPE_WARNING :
-			tmp = WW + msg;
+		case eLOG_TYPE_NET_WARNING:
+		case eLOG_TYPE_WARNING:
+			tmp = "(WW): " + msg;
 			break;
-		case eLOG_TYPE_NET_ERROR :
-		case eLOG_TYPE_ERROR :
-			tmp = EE + msg;
+		case eLOG_TYPE_NET_ERROR:
+		case eLOG_TYPE_ERROR:
+			tmp = "(EE): " + msg;
 			std::cout << tmp << "\n"; break;
-		case eLOG_TYPE_NET_DEBUG :
-		case eLOG_TYPE_DEBUG :
-			tmp = DD + msg;
+		case eLOG_TYPE_NET_DEBUG:
+		case eLOG_TYPE_DEBUG:
+			tmp = "(DD): " + msg;
 			break;
-		case eLOG_TYPE_INFO :
-			tmp = II + msg;
+		case eLOG_TYPE_INFO:
+		default:
+			tmp = "(II): " + msg;
 			break;
-		case eLOG_TYPE_MEM :
-			tmp = MM + msg; break;
-		default :
-			tmp = II + msg;
 	}
 	tmp += '\n';
 
@@ -127,12 +108,12 @@ void cLog::checkOpenFile (eLogType type)
 		tm* tmTime = localtime (&tTime);
 #endif
 		char timestr[25];
-		strftime (timestr, 21, "%Y-%m-%d-%H%M_", tmTime);
+		strftime (timestr, 21, "%Y-%m-%d-%H%M%S_", tmTime);
 		std::string sTime = timestr;
-		cSettings::getInstance().setNetLogPath ((getUserLogDir() + sTime + MAX_NET_LOG).c_str());
+		cSettings::getInstance().setNetLogPath ((getUserLogDir() + sTime + "net.log").c_str());
 
 		//create + open new log file
-		netLogfile.open (NETLOGFILE, std::fstream::out | std::fstream::trunc);
+		netLogfile.open (cSettings::getInstance().getNetLogPath(), std::fstream::out | std::fstream::trunc);
 		if (!netLogfile.is_open())
 		{
 			std::cerr << "(EE): Couldn't open net.log!\n Please check file/directory permissions\n";
@@ -147,7 +128,7 @@ void cLog::checkOpenFile (eLogType type)
 		}
 
 		//create + open new log file
-		logfile.open (LOGFILE, std::fstream::out | std::fstream::trunc);
+		logfile.open (cSettings::getInstance().getLogPath(), std::fstream::out | std::fstream::trunc);
 		if (!logfile.is_open())
 		{
 			std::cerr << "(EE): Couldn't open maxr.log!\n Please check file/directory permissions\n";

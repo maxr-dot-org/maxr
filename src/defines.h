@@ -79,7 +79,6 @@
 #define DEFAULTPORT 58600
 #define MAX_XML "maxr.xml"
 #define MAX_LOG "maxr.log"
-#define MAX_NET_LOG "net.log"
 #define MAX_LOG_DIR "log_files"
 #define CLANS_XML (cSettings::getInstance().getDataDir() + "clans.xml").c_str()
 #define KEYS_XMLGame (cSettings::getInstance().getDataDir() + "keys.xml").c_str()
