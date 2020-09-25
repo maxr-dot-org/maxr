@@ -21,6 +21,7 @@
 
 #include "utility/log.h"
 
+#include <algorithm>
 #include <vector>
 
 using namespace tinyxml2;

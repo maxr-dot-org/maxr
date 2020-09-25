@@ -21,6 +21,7 @@
 
 #include <3rd/tinyxml2/tinyxml2.h>
 
+#include "defines.h"
 #include "utility/files.h"
 #include "utility/log.h"
 #include "utility/string/toString.h"

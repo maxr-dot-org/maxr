@@ -31,6 +31,7 @@
 
 #include "settings.h"
 
+#include "defines.h"
 #include "maxrversion.h"
 
 #include <3rd/tinyxml2/tinyxml2.h>

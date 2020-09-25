@@ -21,8 +21,8 @@
 #define utility_logH
 
 #include <fstream>
+#include <string>
 
-#include "defines.h"
 #include "utility/thread/mutex.h"
 
 class cLog
@@ -41,34 +41,26 @@ public:
 	};
 
 	/**
-	* Writes message with default type (II) to the logfile
-	*/
-	void write(const char* msg);
-	void write(const std::string& msg);
-
-	/**
 	* Writes message with given type to logfile
 	*
 	* @param str Message for the log
 	* @param type Type for the log
 	*/
-	void write (const char* msg, eLogType type);
-	void write (const std::string& msg, eLogType type);
+	void write (const std::string& msg, eLogType type = eLOG_TYPE_INFO);
 
 	/**
-	* Writes a marker into logfile - please use only veeeery few times!
+	* Writes a marker into logfile - please use only very few times!
 	*/
 	void mark();
+
+private:
+	void checkOpenFile (eLogType type);
+	void writeToFile (const std::string& msg, std::ofstream& file);
 
 private:
 	std::ofstream logfile;
 	std::ofstream netLogfile;
 	cMutex mutex;
-
-	void checkOpenFile(eLogType type);
-
-	void writeToFile(const std::string &msg, std::ofstream& file);
-
 };
 
 extern cLog Log;

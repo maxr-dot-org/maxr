@@ -24,8 +24,9 @@
 #include <SDL.h>
 #include <SDL_endian.h>
 
-#include "utility/log.h"
+#include "defines.h"
 #include "settings.h"
+#include "utility/log.h"
 
 #ifdef _WIN32
 # include <io.h>
