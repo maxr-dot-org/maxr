@@ -70,8 +70,6 @@ private:
 	friend int serverGameThreadFunction (void* data);
 	void run();
 
-	void configRessources (const std::vector<std::string>&, const cPlayerBasicData& senderPlayer);
-
 private:
 	cSignalConnectionManager signalConnectionManager;
 	cLobbyServer lobbyServer;

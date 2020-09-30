@@ -302,9 +302,6 @@ std::string cDedicatedServer::getServerHelpString() const
 	oss << "games : shows the running games and their players" << std::endl;
 	oss << "maps : shows the available maps" << std::endl;
 	oss << "map mapname.wrl : changes the map" << std::endl;
-	oss << "credits 0 | 50 | 100 | 150 | 200 | 250 : changes the starting credits" << std::endl;
-	oss << "oil | gold | metal  low | normal | much | most : resource density" << std::endl;
-	oss << "res sparse | normal | dense | most : changes the resource frequency" << std::endl;
 	return oss.str();
 }
 
