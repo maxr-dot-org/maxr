@@ -295,7 +295,6 @@ const cPlayerBasicData* cLobbyServer::findNotReadyPlayer() const
 	return it == players.end() ? nullptr : &*it;
 }
 
-
 //------------------------------------------------------------------------------
 void cLobbyServer::handleNetMessage (const cNetMessage& message)
 {
@@ -337,10 +336,13 @@ void cLobbyServer::handleLobbyMessage (const cMultiplayerLobbyMessage& message)
 			handleNetMessage_MU_MSG_CHAT (static_cast<const cMuMsgChat&>(message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IDENTIFIKATION:
-			changePlayerAttributes(static_cast<const cMuMsgIdentification&>(message));
+			changePlayerAttributes (static_cast<const cMuMsgIdentification&>(message));
+			break;
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_OPTIONS:
+			changeOptions (static_cast<const cMuMsgOptions&>(message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS:
-			landingRoomStatus(static_cast<const cMuMsgInLandingPositionSelectionStatus&>(message));
+			landingRoomStatus (static_cast<const cMuMsgInLandingPositionSelectionStatus&>(message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_POSITION:
 			clientLands (static_cast<const cMuMsgLandingPosition&>(message));
@@ -425,6 +427,18 @@ void cLobbyServer::changePlayerAttributes (const cMuMsgIdentification& message)
 	}
 
 	sendPlayerList();
+}
+
+//------------------------------------------------------------------------------
+void cLobbyServer::changeOptions (const cMuMsgOptions& message)
+{
+	if (!staticMap || staticMap->getName() != message.mapName)
+	{
+		staticMap = std::make_shared<cStaticMap>();
+		staticMap->loadMap (message.mapName);
+	}
+	gameSettings = message.settingsValid ? std::make_shared<cGameSettings>(message.settings) : nullptr;
+	selectSaveGameInfo (message.saveInfo);
 }
 
 //------------------------------------------------------------------------------

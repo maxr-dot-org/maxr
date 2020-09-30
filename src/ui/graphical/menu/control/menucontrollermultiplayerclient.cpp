@@ -22,8 +22,10 @@
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/windows/windownetworklobbyclient/windownetworklobbyclient.h"
 #include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
+#include "ui/graphical/menu/windows/windowgamesettings/windowgamesettings.h"
 #include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
 #include "ui/graphical/menu/windows/windowlandingpositionselection/windowlandingpositionselection.h"
+#include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/dialogs/dialogyesno.h"
 #include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
@@ -172,6 +174,10 @@ void cMenuControllerMultiplayerClient::start()
 
 	windowNetworkLobby->bindConnections (lobbyClient);
 
+	signalConnectionManager.connect (windowNetworkLobby->triggeredSelectMap, [this](){ handleSelectMap (application);});
+	signalConnectionManager.connect (windowNetworkLobby->triggeredSelectSettings, [this]() { handleSelectSettings (application); });
+	//signalConnectionManager.connect (windowNetworkLobby->triggeredSelectSaveGame, std::bind (&cMenuControllerMultiplayerHost::handleSelectSaveGame, this, std::ref (application)));
+
 	application.show (windowNetworkLobby);
 	application.addRunnable (shared_from_this());
 
@@ -182,6 +188,7 @@ void cMenuControllerMultiplayerClient::start()
 		saveOptions();
 	});
 }
+
 
 //------------------------------------------------------------------------------
 void cMenuControllerMultiplayerClient::reset()
@@ -197,6 +204,36 @@ void cMenuControllerMultiplayerClient::reset()
 void cMenuControllerMultiplayerClient::run()
 {
 	lobbyClient.run();
+}
+
+//------------------------------------------------------------------------------
+void cMenuControllerMultiplayerClient::handleSelectSettings (cApplication& application)
+{
+	if (!windowNetworkLobby) return;
+
+	auto windowGameSettings = application.show (std::make_shared<cWindowGameSettings>());
+
+	if (lobbyClient.getGameSettings()) windowGameSettings->applySettings (*lobbyClient.getGameSettings());
+	else windowGameSettings->applySettings (cGameSettings());
+
+	windowGameSettings->done.connect ([this, windowGameSettings]()
+	{
+		lobbyClient.selectGameSettings (windowGameSettings->getGameSettings());
+		windowGameSettings->close();
+	});
+}
+
+//------------------------------------------------------------------------------
+void cMenuControllerMultiplayerClient::handleSelectMap (cApplication& application)
+{
+	if (!windowNetworkLobby) return;
+
+	auto windowMapSelection = application.show (std::make_shared<cWindowMapSelection>());
+	windowMapSelection->done.connect ([=]()
+	{
+		lobbyClient.selectMapName (windowMapSelection->getSelectedMapName());
+		windowMapSelection->close();
+	});
 }
 
 //------------------------------------------------------------------------------

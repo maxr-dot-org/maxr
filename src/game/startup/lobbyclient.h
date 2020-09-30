@@ -43,6 +43,10 @@ public:
 	void connectToLocalServer (cLobbyServer&);
 
 	void sendChatMessage (const std::string&);
+
+	void selectGameSettings(const cGameSettings&);
+	void selectMapName (const std::string&);
+
 	void tryToSwitchReadyState();
 	void changeLocalPlayerProperties (const std::string& name, cPlayerColor, bool ready);
 
@@ -56,6 +60,8 @@ public:
 	void disconnect();
 
 	const std::string& getDownloadingMapName() const { return triedLoadMapName; }
+	const cStaticMap* getStaticMap() const { return staticMap.get(); }
+	const cGameSettings* getGameSettings() const { return gameSettings.get(); }
 
 	cSignal<void()> onLocalPlayerConnected;
 	cSignal<void (const std::string& version, const std::string& revision)> onDifferentVersion;

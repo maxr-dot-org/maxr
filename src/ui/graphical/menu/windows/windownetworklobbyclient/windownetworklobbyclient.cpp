@@ -28,8 +28,10 @@
 cWindowNetworkLobbyClient::cWindowNetworkLobbyClient() :
 	cWindowNetworkLobby (lngPack.i18n ("Text~Others~TCPIP_Client"), false)
 {
+	setIsHost (false);
+
 	auto connectButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 200), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Connect")));
-	signalConnectionManager.connect (connectButton->clicked, std::bind (&cWindowNetworkLobbyClient::handleConnectClicked, this));
+	signalConnectionManager.connect (connectButton->clicked, [this](){ triggeredConnect(); });
 
 	signalConnectionManager.connect (ipLineEdit->returnPressed, [this]()
 	{
@@ -45,6 +47,10 @@ void cWindowNetworkLobbyClient::bindConnections (cLobbyClient& lobbyClient)
 	signalConnectionManager.connect (lobbyClient.onOptionsChanged, [this](std::shared_ptr<cGameSettings> settings, std::shared_ptr<cStaticMap> map, const cSaveGameInfo& saveGameInfo){
 		setSaveGame (saveGameInfo);
 	});
+	signalConnectionManager.connect (lobbyClient.onPlayersList, [this](const cPlayerBasicData& localPlayer, const std::vector<cPlayerBasicData>& players){
+		setIsHost (!players.empty() && localPlayer.getNr() == players[0].getNr());
+	});
+
 	signalConnectionManager.connect (triggeredConnect, [&lobbyClient, this](){
 		// Connect only if there isn't a connection yet
 		if (lobbyClient.isConnectedToServer()) return;
@@ -61,9 +67,19 @@ void cWindowNetworkLobbyClient::bindConnections (cLobbyClient& lobbyClient)
 }
 
 //------------------------------------------------------------------------------
-void cWindowNetworkLobbyClient::handleConnectClicked()
+void cWindowNetworkLobbyClient::setIsHost (bool isHost)
 {
-	triggeredConnect();
+	if (isHost && saveGameInfo.number == -1)
+	{
+		mapButton->show();
+		settingsButton->show();
+	}
+	else
+	{
+		loadButton->hide();
+		mapButton->hide();
+		settingsButton->hide();
+	}
 }
 
 //------------------------------------------------------------------------------

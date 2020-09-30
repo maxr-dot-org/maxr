@@ -38,7 +38,7 @@ public:
 		MU_MSG_PLAYER_NUMBER,        // sent by host: assign a new id to a player (used to restore player id when loading a save game)
 
 		MU_MSG_PLAYERLIST,			// sent by host: a list with all players and their data
-		MU_MSG_OPTIONS,				// sent by host: all options selected by the host
+		MU_MSG_OPTIONS,               // sent by client/host: all options selected by the host
 		// Map down/up-load
 		MU_MSG_START_MAP_DOWNLOAD,    // sent by host: start a map upload to the client
 		MU_MSG_MAP_DOWNLOAD_DATA,     // sent by host: map data for the running map upload
@@ -53,7 +53,7 @@ public:
 		MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION, // sent by host: inform clients, which player have already selected a position
 		MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION,  // sent by host/client: a player has left. Abort game preparations and return to lobby
 		// Transition to ingame logic
-		MU_MSG_START_GAME,            // sent by host: clients should start the ingame client and swith to game gui
+		MU_MSG_START_GAME,            // sent by host: clients should start the ingame client and switch to game gui
 	};
 	static std::unique_ptr<cMultiplayerLobbyMessage> createFromBuffer(cBinaryArchiveOut& archive);
 

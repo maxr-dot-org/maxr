@@ -96,6 +96,15 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	});
 	signalConnectionManager.connect (nameLineEdit->editingFinished, [&, nameLineEdit] (eValidatorState) {localPlayer->setName (nameLineEdit->getText()); });
 
+	mapButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 42), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Choose_Planet")));
+	signalConnectionManager.connect (mapButton->clicked, [this]() { triggeredSelectMap(); });
+
+	settingsButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 77), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Options")));
+	signalConnectionManager.connect (settingsButton->clicked, [this]() { triggeredSelectSettings(); });
+
+	loadButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 120), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Game_Load")));
+	signalConnectionManager.connect (loadButton->clicked, [this]() { triggeredSelectSaveGame(); });
+
 	playersList = addChild (std::make_unique<cListView<cLobbyPlayerListViewItem>> (cBox<cPosition> (getPosition() + cPosition (465, 284), getPosition() + cPosition (465 + 167, 284 + 124)), eScrollBarStyle::Classic));
 	playersList->disableSelectable();
 	playersList->setBeginMargin (cPosition (12, 12));

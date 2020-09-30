@@ -132,6 +132,34 @@ void cLobbyClient::sendChatMessage (const std::string& message)
 }
 
 //------------------------------------------------------------------------------
+void cLobbyClient::selectGameSettings (const cGameSettings& gameSettings)
+{
+	cMuMsgOptions message;
+
+	message.mapName = staticMap ? staticMap->getName() : "";
+	message.saveInfo = saveGameInfo;
+	message.settingsValid = true;
+	message.settings = gameSettings;
+
+	sendNetMessage (message);
+}
+
+//------------------------------------------------------------------------------
+void cLobbyClient::selectMapName (const std::string& mapName)
+{
+	cMuMsgOptions message;
+
+	message.mapName = mapName;
+	message.saveInfo = saveGameInfo;
+	if (gameSettings)
+	{
+		message.settingsValid = true;
+		message.settings = *gameSettings;
+	}
+	sendNetMessage (message);
+}
+
+//------------------------------------------------------------------------------
 void cLobbyClient::tryToSwitchReadyState()
 {
 	bool ready;

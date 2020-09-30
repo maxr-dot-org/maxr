@@ -27,16 +27,18 @@
 #include "utility/signal/signalconnectionmanager.h"
 #include "game/data/savegameinfo.h"
 
-class cLabel;
 class cImage;
+class cGameSettings;
+class cLabel;
 class cLineEdit;
-template<typename T> class cListView;
 class cLobbyChatBoxListViewItem;
 class cLobbyClient;
 class cLobbyPlayerListViewItem;
 class cPlayerBasicData;
+class cPushButton;
 class cStaticMap;
-class cGameSettings;
+
+template<typename T> class cListView;
 
 class cWindowNetworkLobby : public cWindow
 {
@@ -79,30 +81,38 @@ public:
 	void updatePlayerList (const cPlayerBasicData&, const std::vector<cPlayerBasicData>&);
 	void updatePlayerListView();
 
+	cSignal<void ()> triggeredSelectMap;
+	cSignal<void ()> triggeredSelectSettings;
+	cSignal<void ()> triggeredSelectSaveGame;
 	cSignal<void ()> backClicked;
 	cSignal<void ()> wantLocalPlayerReadyChange;
 	cSignal<void ()> triggeredChatMessage;
+
 	cSignal<void ()> staticMapChanged;
 	cSignal<void ()> gameSettingsChanged;
 	cSignal<void ()> saveGameChanged;
 protected:
 	cSignalConnectionManager signalConnectionManager;
 
-	cImage* mapImage;
-	cLabel* mapNameLabel;
+	cImage* mapImage = nullptr;
+	cLabel* mapNameLabel = nullptr;
 
-	cLabel* settingsTextLabel;
+	cLabel* settingsTextLabel = nullptr;
 
-	cLineEdit* chatLineEdit;
-	cListView<cLobbyChatBoxListViewItem>* chatList;
+	cLineEdit* chatLineEdit = nullptr;
+	cListView<cLobbyChatBoxListViewItem>* chatList = nullptr;
 
-	cListView<cLobbyPlayerListViewItem>* playersList;
+	cPushButton* mapButton = nullptr;
+	cPushButton* settingsButton = nullptr;
+	cPushButton* loadButton = nullptr;
 
-	cLineEdit* ipLineEdit;
-	cLineEdit* portLineEdit;
-	cImage* restoreDefaultPortButton;
+	cListView<cLobbyPlayerListViewItem>* playersList = nullptr;
 
-	cImage* colorImage;
+	cLineEdit* ipLineEdit = nullptr;
+	cLineEdit* portLineEdit = nullptr;
+	cImage* restoreDefaultPortButton = nullptr;
+
+	cImage* colorImage = nullptr;
 protected:
 	std::shared_ptr<cPlayerBasicData> localPlayer;
 	std::shared_ptr<cStaticMap> staticMap;

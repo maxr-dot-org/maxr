@@ -30,22 +30,12 @@ class cWindowNetworkLobbyHost : public cWindowNetworkLobby
 public:
 	cWindowNetworkLobbyHost();
 
-	cSignal<void ()> triggeredSelectMap;
-	cSignal<void ()> triggeredSelectSettings;
-	cSignal<void ()> triggeredSelectSaveGame;
+	bool setSaveGame (const cSaveGameInfo&, cApplication*);
 
 	cSignal<void ()> triggeredStartGame;
 	cSignal<void ()> triggeredStartHost;
-
-	bool setSaveGame (const cSaveGameInfo& saveGameNumber, cApplication* application);
 private:
 	cSignalConnectionManager signalConnectionManager;
-
-	void handleMapClicked();
-	void handleSettingsClicked();
-	void handleLoadClicked();
-	void handleStartClicked();
-	void handleOkClicked();
 };
 
 #endif // ui_graphical_menu_windows_windownetworklobbyhost_windownetworklobbyhostH

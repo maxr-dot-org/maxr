@@ -97,6 +97,7 @@ private:
 	void clientConnects (const cNetMessageTcpWantConnect&);
 	void clientLeaves(const cNetMessageTcpClose&);
 	void handleNetMessage_MU_MSG_CHAT (const cMuMsgChat&);
+	void changeOptions (const cMuMsgOptions&);
 	void changePlayerAttributes (const cMuMsgIdentification&);
 
 	void landingRoomStatus (const cMuMsgInLandingPositionSelectionStatus&);

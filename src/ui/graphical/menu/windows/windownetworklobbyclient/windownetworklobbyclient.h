@@ -36,10 +36,12 @@ public:
 	cSignal<void ()> triggeredConnect;
 
 	void setSaveGame (const cSaveGameInfo& safeInfo);
+
+private:
+	void setIsHost (bool);
+
 private:
 	cSignalConnectionManager signalConnectionManager;
-
-	void handleConnectClicked();
 };
 
 #endif // ui_graphical_menu_windows_windownetworklobbyclient_windownetworklobbyclientH

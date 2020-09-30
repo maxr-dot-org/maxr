@@ -32,59 +32,19 @@
 cWindowNetworkLobbyHost::cWindowNetworkLobbyHost() :
 	cWindowNetworkLobby (lngPack.i18n ("Text~Others~TCPIP_Host"), true)
 {
-	auto mapButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 42), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Choose_Planet")));
-	signalConnectionManager.connect (mapButton->clicked, std::bind (&cWindowNetworkLobbyHost::handleMapClicked, this));
-
-	auto settingsButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 77), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Options")));
-	signalConnectionManager.connect (settingsButton->clicked, std::bind (&cWindowNetworkLobbyHost::handleSettingsClicked, this));
-
-	auto loadButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 120), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Game_Load")));
-	signalConnectionManager.connect (loadButton->clicked, std::bind (&cWindowNetworkLobbyHost::handleLoadClicked, this));
-
 	auto startButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 200), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Host_Start")));
-	signalConnectionManager.connect (startButton->clicked, std::bind (&cWindowNetworkLobbyHost::handleStartClicked, this));
+	signalConnectionManager.connect (startButton->clicked, [this](){ triggeredStartHost(); });
 
 	auto okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 450), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
-	signalConnectionManager.connect (okButton->clicked, std::bind (&cWindowNetworkLobbyHost::handleOkClicked, this));
+	signalConnectionManager.connect (okButton->clicked, [this]() { triggeredStartGame(); });
 
-	signalConnectionManager.connect (staticMapChanged, [this]() {setSaveGame (cSaveGameInfo(-1), nullptr); });
-	signalConnectionManager.connect(gameSettingsChanged, [this]() {setSaveGame(cSaveGameInfo(-1), nullptr); });
-}
-
-//------------------------------------------------------------------------------
-void cWindowNetworkLobbyHost::handleMapClicked()
-{
-	triggeredSelectMap();
-}
-
-//------------------------------------------------------------------------------
-void cWindowNetworkLobbyHost::handleSettingsClicked()
-{
-	triggeredSelectSettings();
-}
-
-//------------------------------------------------------------------------------
-void cWindowNetworkLobbyHost::handleLoadClicked()
-{
-	triggeredSelectSaveGame();
-}
-
-//------------------------------------------------------------------------------
-void cWindowNetworkLobbyHost::handleStartClicked()
-{
-	triggeredStartHost();
-}
-
-//------------------------------------------------------------------------------
-void cWindowNetworkLobbyHost::handleOkClicked()
-{
-	triggeredStartGame();
+	signalConnectionManager.connect (staticMapChanged, [this]() { setSaveGame (cSaveGameInfo(-1), nullptr); });
+	signalConnectionManager.connect (gameSettingsChanged, [this]() { setSaveGame(cSaveGameInfo(-1), nullptr); });
 }
 
 //------------------------------------------------------------------------------
 bool cWindowNetworkLobbyHost::setSaveGame(const cSaveGameInfo& saveGameInfo_, cApplication* application)
 {
-
 	if (saveGameInfo_.number >= 0)
 	{
 		staticMap = std::make_shared<cStaticMap>();
