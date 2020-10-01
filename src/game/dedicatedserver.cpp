@@ -181,6 +181,8 @@ void cDedicatedServer::startNewGame()
 {
 	std::cout << "Setting up new game..." << std::endl;
 	auto game = std::make_unique<cServerGame> (connectionManager);
+	game->getGamesString = [this](){ return getGamesString(); };
+	game->getAvailableMapsString = [this](){ return getAvailableMapsString(); };
 	game->prepareGameData();
 	games.push_back (std::move (game));
 	games.back()->runInThread();
@@ -191,6 +193,9 @@ void cDedicatedServer::loadSaveGame (int saveGameNumber)
 {
 	std::cout << "Setting up game from saved game number " << saveGameNumber << " ..." << std::endl;
 	auto game = std::make_unique<cServerGame> (connectionManager);
+	game->getGamesString = [this](){ return getGamesString(); };
+	game->getAvailableMapsString = [this](){ return getAvailableMapsString(); };
+
 	if (game->loadGame (saveGameNumber) == false)
 	{
 		std::cout << "Loading game failed. Game is not setup." << std::endl;
@@ -293,19 +298,6 @@ std::string cDedicatedServer::getAvailableMapsString() const
 }
 
 //------------------------------------------------------------------------
-std::string cDedicatedServer::getServerHelpString() const
-{
-	std::stringstream oss;
-	oss << "--- Dedicated server help ---" << std::endl;
-	oss << "Type --server and then one of the following:" << std::endl;
-	oss << "go : starts the game" << std::endl;
-	oss << "games : shows the running games and their players" << std::endl;
-	oss << "maps : shows the available maps" << std::endl;
-	oss << "map mapname.wrl : changes the map" << std::endl;
-	return oss.str();
-}
-
-//------------------------------------------------------------------------
 void cDedicatedServer::printHelp (eHelpCommands helpCommand) const
 {
 	switch (helpCommand)
@@ -366,8 +358,6 @@ void cDedicatedServer::printHelp (eHelpCommands helpCommand) const
 //------------------------------------------------------------------------
 void cDedicatedServer::pushMessage (std::unique_ptr<cNetMessage> message)
 {
-	if (handleDedicatedServerEvents (*message))
-		return;
 	// TODO: delegate to correct game (and not simply first game)
 	if (games.empty() == false)
 		games[0]->pushMessage (std::move (message));
@@ -379,61 +369,4 @@ std::unique_ptr<cNetMessage> cDedicatedServer::popMessage()
 	if (games.empty() == false)
 		return games[0]->popMessage();
 	return nullptr;
-}
-
-//------------------------------------------------------------------------
-bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage& message)
-{
-	if (message.getType() != eNetMessageType::MULTIPLAYER_LOBBY) { return false; }
-
-	auto& lobbyMessage = static_cast<cMultiplayerLobbyMessage&>(message);
-
-	if (lobbyMessage.getType() != cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT) { return false; }
-
-	auto& chatMessage = static_cast<cMuMsgChat&>(lobbyMessage);
-
-	const auto& chatText = chatMessage.message;
-
-	size_t serverStringPos = chatText.find ("--server");
-	if (serverStringPos != std::string::npos && chatText.length() > serverStringPos + 9)
-	{
-		std::string command = chatText.substr (serverStringPos + 9);
-		std::vector<std::string> tokens;
-		std::istringstream iss (command);
-		std::copy (std::istream_iterator<std::string> (iss), std::istream_iterator<std::string>(), std::back_inserter<std::vector<std::string> > (tokens));
-		if (tokens.size() == 1)
-		{
-			if (tokens[0] == "games")
-			{
-				sendChatMessage (getGamesString(), message.playerNr);
-				return true;
-			}
-			else if (tokens[0] == "maps")
-			{
-				sendChatMessage (getAvailableMapsString(), message.playerNr);
-				return true;
-			}
-			else if (tokens[0] == "help")
-			{
-				sendChatMessage (getServerHelpString(), message.playerNr);
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-//------------------------------------------------------------------------
-void cDedicatedServer::sendChatMessage (const std::string& text, int receiver)
-{
-	cMuMsgChat message(text, false, "");
-
-	if (receiver == -1)
-	{
-		connectionManager->sendToPlayers(message);
-	}
-	else
-	{
-		connectionManager->sendToPlayer(message, receiver);
-	}
 }

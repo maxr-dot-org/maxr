@@ -69,7 +69,6 @@ protected:
 	std::string getGamesString() const;
 	void printMaps() const;
 	std::string getAvailableMapsString() const;
-	std::string getServerHelpString() const;
 
 	bool handleInput (const std::string& command);
 	void setProperty (const std::string& property, const std::string& value);
@@ -78,9 +77,6 @@ protected:
 	void startNewGame();
 	void loadSaveGame (int saveGameNumber);
 	void saveGame (int saveGameNumber);
-
-	bool handleDedicatedServerEvents (cNetMessage& message);
-	void sendChatMessage (const std::string& text, int receiver);
 
 	std::unique_ptr<cDedicatedServerConfig> configuration;
 

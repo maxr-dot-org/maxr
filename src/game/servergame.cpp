@@ -80,6 +80,19 @@ namespace
 		return true;
 	}
 
+	//--------------------------------------------------------------------------
+	std::string getServerHelpString()
+	{
+		std::stringstream oss;
+		oss << "--- Dedicated server help ---" << std::endl;
+		oss << "Type --server and then one of the following:" << std::endl;
+		oss << "go: starts the game" << std::endl;
+		oss << "games: shows the running games and their players" << std::endl;
+		oss << "maps: shows the available maps" << std::endl;
+		oss << "map mapname.wrl: changes the map" << std::endl;
+		return oss.str();
+	}
+
 }
 
 //------------------------------------------------------------------------------
@@ -235,6 +248,18 @@ void cServerGame::handleChatCommand (int fromPlayer, const std::vector<std::stri
 		if (tokens[0] == "go")
 		{
 			lobbyServer.askToFinishLobby (fromPlayer);
+		}
+		else if (tokens[0] == "help")
+		{
+			lobbyServer.sendChatMessage (getServerHelpString(), fromPlayer);
+		}
+		else if (tokens[0] == "games")
+		{
+			lobbyServer.sendChatMessage (getGamesString(), fromPlayer);
+		}
+		else if (tokens[0] == "maps")
+		{
+			lobbyServer.sendChatMessage (getAvailableMapsString(), fromPlayer);
 		}
 	}
 	else if (tokens.size() >= 2)

@@ -65,6 +65,9 @@ public:
 	// retrieve state
 	std::string getGameState() const;
 
+	std::function<std::string()> getGamesString;
+	std::function<std::string()> getAvailableMapsString;
+
 	void handleChatCommand (int fromPlayer, const std::vector<std::string>& tokens);
 private:
 	friend int serverGameThreadFunction (void* data);
