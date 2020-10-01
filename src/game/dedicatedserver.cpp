@@ -167,9 +167,6 @@ bool cDedicatedServer::startServer (int saveGameNumber)
 		return false;
 	}
 
-	// TODO: muss von Clients ausgeloest werden. Aber, dann muss ganze Infrastruktur angepasst werden,
-	// dass z.B. NetMessages an richtiges Game/cServer gehen und dass die Methoden nicht auf einem globalen
-	// (oder zumindest dem aktuell richtigen) server Objekt arbeiten.
 	if (saveGameNumber >= 0)
 		loadSaveGame (connectionManager, configuration->port, saveGameNumber);
 	else
