@@ -151,7 +151,7 @@ cBinaryArchiveIn& cBinaryArchiveIn::operator&(const T& value)
 template <typename T>
 void cBinaryArchiveIn::writeToBuffer(const T& value)
 {
-	static_assert(CHAR_BIT == 8);
+	static_assert(CHAR_BIT == 8, "!");
 
 	buffer.resize(buffer.size() + sizeof(T));
 
@@ -182,7 +182,7 @@ void cBinaryArchiveIn::writeToBuffer(const T& value)
 		break;
 	}
 	default:
-		static_assert(sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4 || sizeof(T) == 8);
+		static_assert(sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4 || sizeof(T) == 8, "!");
 	}
 }
 
@@ -204,8 +204,8 @@ void cBinaryArchiveIn::pushValue(const serialization::sNameValuePair<T>& nvp)
 template<typename T2, typename T1>
 void cBinaryArchiveIn::pushGenericIEEE754As(T1 value)
 {
-	static_assert(sizeof(T1) == 4 || sizeof(T1) == 8);
-	static_assert(sizeof(T1) == sizeof(T2));
+	static_assert(sizeof(T1) == 4 || sizeof(T1) == 8, "!");
+	static_assert(sizeof(T1) == sizeof(T2), "!");
 
 	const unsigned int BITS = sizeof(T1)* CHAR_BIT;
 	const unsigned int EXPBITS = sizeof(T1) == 4 ? 8 : 11;
@@ -287,7 +287,7 @@ cBinaryArchiveOut& cBinaryArchiveOut::operator&(const serialization::sNameValueP
 template<size_t SIZE, typename T1>
 void cBinaryArchiveOut::readFromBuffer(T1& value)
 {
-	static_assert(CHAR_BIT == 8);
+	static_assert(CHAR_BIT == 8, "!");
 
 	if (length - readPosition < SIZE)
 	{
@@ -321,7 +321,7 @@ void cBinaryArchiveOut::readFromBuffer(T1& value)
 		break;
 	}
 	default:
-		static_assert(SIZE == 1 || SIZE == 2 || SIZE == 4 || SIZE == 8);
+		static_assert(SIZE == 1 || SIZE == 2 || SIZE == 4 || SIZE == 8, "!");
 	}
 
 	readPosition += SIZE;
@@ -337,8 +337,8 @@ void cBinaryArchiveOut::popValue(T& value)
 template<typename T2, typename T1>
 void cBinaryArchiveOut::popGenericIEEE754As(T1& value)
 {
-	static_assert(sizeof(T1) == 4 || sizeof(T1) == 8);
-	static_assert(sizeof(T1) == sizeof(T2));
+	static_assert(sizeof(T1) == 4 || sizeof(T1) == 8, "!");
+	static_assert(sizeof(T1) == sizeof(T2), "!");
 
 	const unsigned int BITS = sizeof(T1)* CHAR_BIT;
 	const unsigned int EXPBITS = sizeof(T1) == 4 ? 8 : 11;
