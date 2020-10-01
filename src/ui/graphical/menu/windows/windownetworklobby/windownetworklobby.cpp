@@ -139,6 +139,9 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 		localPlayer->setColor (cPlayerColor (cPlayerColor::predefinedColors[localPlayerColorIndex]));
 	});
 
+	okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 450), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
+	signalConnectionManager.connect (okButton->clicked, [this]() { triggeredStartGame(); });
+
 	auto backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (50, 450), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
 	signalConnectionManager.connect (backButton->clicked, [&]() { backClicked(); });
 

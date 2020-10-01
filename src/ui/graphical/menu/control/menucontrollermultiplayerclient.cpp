@@ -174,7 +174,7 @@ void cMenuControllerMultiplayerClient::start()
 
 	windowNetworkLobby->bindConnections (lobbyClient);
 
-	signalConnectionManager.connect (windowNetworkLobby->triggeredSelectMap, [this](){ handleSelectMap (application);});
+	signalConnectionManager.connect (windowNetworkLobby->triggeredSelectMap, [this](){ handleSelectMap (application); });
 	signalConnectionManager.connect (windowNetworkLobby->triggeredSelectSettings, [this]() { handleSelectSettings (application); });
 	//signalConnectionManager.connect (windowNetworkLobby->triggeredSelectSaveGame, std::bind (&cMenuControllerMultiplayerHost::handleSelectSaveGame, this, std::ref (application)));
 
@@ -182,6 +182,7 @@ void cMenuControllerMultiplayerClient::start()
 	application.addRunnable (shared_from_this());
 
 	signalConnectionManager.connect (windowNetworkLobby->terminated, std::bind (&cMenuControllerMultiplayerClient::reset, this));
+	signalConnectionManager.connect (windowNetworkLobby->triggeredStartGame, [this](){ handleStartGame(); });
 	signalConnectionManager.connect (windowNetworkLobby->backClicked, [this]()
 	{
 		windowNetworkLobby->close();
@@ -234,6 +235,12 @@ void cMenuControllerMultiplayerClient::handleSelectMap (cApplication& applicatio
 		lobbyClient.selectMapName (windowMapSelection->getSelectedMapName());
 		windowMapSelection->close();
 	});
+}
+
+//------------------------------------------------------------------------------
+void cMenuControllerMultiplayerClient::handleStartGame()
+{
+	lobbyClient.sendChatMessage ("--server go");
 }
 
 //------------------------------------------------------------------------------

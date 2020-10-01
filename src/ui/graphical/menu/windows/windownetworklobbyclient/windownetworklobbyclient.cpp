@@ -72,12 +72,14 @@ void cWindowNetworkLobbyClient::setIsHost (bool isHost)
 	if (isHost && saveGameInfo.number == -1)
 	{
 		mapButton->show();
+		okButton->show();
 		settingsButton->show();
 	}
 	else
 	{
 		loadButton->hide();
 		mapButton->hide();
+		okButton->hide();
 		settingsButton->hide();
 	}
 }

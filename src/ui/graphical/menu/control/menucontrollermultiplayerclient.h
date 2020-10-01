@@ -59,6 +59,8 @@ private:
 	void handleSelectSettings (cApplication&);
 	void handleSelectMap (cApplication&);
 
+	void handleStartGame();
+
 	void startSavedGame (const cSaveGameInfo&, std::shared_ptr<cStaticMap>, std::shared_ptr<cConnectionManager>, cPlayerBasicData);
 	void startGamePreparation(const sLobbyPreparationData&, const cPlayerBasicData&, std::shared_ptr<cConnectionManager>);
 

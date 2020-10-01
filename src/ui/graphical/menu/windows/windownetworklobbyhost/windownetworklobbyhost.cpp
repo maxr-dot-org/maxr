@@ -35,9 +35,6 @@ cWindowNetworkLobbyHost::cWindowNetworkLobbyHost() :
 	auto startButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 200), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Host_Start")));
 	signalConnectionManager.connect (startButton->clicked, [this](){ triggeredStartHost(); });
 
-	auto okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 450), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
-	signalConnectionManager.connect (okButton->clicked, [this]() { triggeredStartGame(); });
-
 	signalConnectionManager.connect (staticMapChanged, [this]() { setSaveGame (cSaveGameInfo(-1), nullptr); });
 	signalConnectionManager.connect (gameSettingsChanged, [this]() { setSaveGame(cSaveGameInfo(-1), nullptr); });
 }

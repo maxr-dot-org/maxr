@@ -84,9 +84,12 @@ public:
 	cSignal<void ()> triggeredSelectMap;
 	cSignal<void ()> triggeredSelectSettings;
 	cSignal<void ()> triggeredSelectSaveGame;
-	cSignal<void ()> backClicked;
+
 	cSignal<void ()> wantLocalPlayerReadyChange;
 	cSignal<void ()> triggeredChatMessage;
+
+	cSignal<void ()> triggeredStartGame;
+	cSignal<void ()> backClicked;
 
 	cSignal<void ()> staticMapChanged;
 	cSignal<void ()> gameSettingsChanged;
@@ -113,6 +116,9 @@ protected:
 	cImage* restoreDefaultPortButton = nullptr;
 
 	cImage* colorImage = nullptr;
+
+	cPushButton* okButton = nullptr;
+
 protected:
 	std::shared_ptr<cPlayerBasicData> localPlayer;
 	std::shared_ptr<cStaticMap> staticMap;

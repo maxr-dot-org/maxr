@@ -32,7 +32,6 @@ public:
 
 	bool setSaveGame (const cSaveGameInfo&, cApplication*);
 
-	cSignal<void ()> triggeredStartGame;
 	cSignal<void ()> triggeredStartHost;
 private:
 	cSignalConnectionManager signalConnectionManager;
