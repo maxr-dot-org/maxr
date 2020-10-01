@@ -33,16 +33,13 @@ class cServerGame;
 /** cDedicatedServer class manages the server resources and handles command line input.
  *  @author Paul Grathwohl
  */
-class cDedicatedServer : public INetMessageReceiver
+class cDedicatedServer
 {
 public:
 	static cDedicatedServer& instance();
 
 	void run();
-	void pushMessage (std::unique_ptr<cNetMessage> message) override;
-	std::unique_ptr<cNetMessage> popMessage() override;
 
-	//------------------------------------------------------------------------
 protected:
 
 	enum eHelpCommands
@@ -74,19 +71,17 @@ protected:
 	void setProperty (const std::string& property, const std::string& value);
 
 	bool startServer (int saveGameNumber = -1);
-	void startNewGame();
-	void loadSaveGame (int saveGameNumber);
+	void startNewGame (std::shared_ptr<cConnectionManager>, int port);
+	void loadSaveGame (std::shared_ptr<cConnectionManager>, int port, int saveGameNumber);
 	void saveGame (int saveGameNumber);
 
 	std::unique_ptr<cDedicatedServerConfig> configuration;
 
 	std::vector<std::unique_ptr<cServerGame>> games;
 
-	//------------------------------------------------------------------------
 private:
 	cDedicatedServer();
-	virtual ~cDedicatedServer();
-	std::shared_ptr<cConnectionManager> connectionManager = std::make_shared<cConnectionManager>();
+	~cDedicatedServer();
 };
 
 #endif

@@ -96,8 +96,9 @@ namespace
 }
 
 //------------------------------------------------------------------------------
-cServerGame::cServerGame (std::shared_ptr<cConnectionManager> connectionManager) :
+cServerGame::cServerGame (std::shared_ptr<cConnectionManager> connectionManager, int port) :
 	lobbyServer (std::move (connectionManager)),
+	port(port),
 	thread (nullptr),
 	canceled (false),
 	shouldSave (false),

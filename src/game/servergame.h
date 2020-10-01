@@ -50,8 +50,10 @@ int serverGameThreadFunction (void* data);
 class cServerGame
 {
 public:
-	explicit cServerGame (std::shared_ptr<cConnectionManager>);
+	cServerGame (std::shared_ptr<cConnectionManager>, int port);
 	~cServerGame();
+
+	int getPort() const { return port; }
 
 	void runInThread();
 
@@ -78,6 +80,8 @@ private:
 	cLobbyServer lobbyServer;
 
 	std::unique_ptr<cServer> server;
+
+	int port;
 
 	bool shouldSave = false;
 	int saveGameNumber = -1;

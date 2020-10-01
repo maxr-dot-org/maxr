@@ -60,7 +60,6 @@ cDedicatedServer& cDedicatedServer::instance()
 cDedicatedServer::cDedicatedServer() :
 	configuration (std::make_unique<cDedicatedServerConfig>())
 {
-	connectionManager->setLocalServer(this);
 }
 
 //------------------------------------------------------------------------
@@ -153,12 +152,14 @@ bool cDedicatedServer::handleInput (const std::string& command)
 //------------------------------------------------------------------------
 bool cDedicatedServer::startServer (int saveGameNumber)
 {
-	if (connectionManager->isServerOpen())
+	if (ranges::find_if(games, [&](const auto& game) { return game->getPort() == configuration->port; }) != games.end())
 	{
 		std::cout << "WARNING: Server is already open." << std::endl;
 		return true;
 	}
 	std::cout << "Starting server on port " << configuration->port << "..." << std::endl;
+
+	std::shared_ptr<cConnectionManager> connectionManager = std::make_shared<cConnectionManager>();
 
 	if (connectionManager->openServer(configuration->port))
 	{
@@ -170,17 +171,17 @@ bool cDedicatedServer::startServer (int saveGameNumber)
 	// dass z.B. NetMessages an richtiges Game/cServer gehen und dass die Methoden nicht auf einem globalen
 	// (oder zumindest dem aktuell richtigen) server Objekt arbeiten.
 	if (saveGameNumber >= 0)
-		loadSaveGame (saveGameNumber);
+		loadSaveGame (connectionManager, configuration->port, saveGameNumber);
 	else
-		startNewGame();
+		startNewGame (connectionManager, configuration->port);
 	return true;
 }
 
 //------------------------------------------------------------------------
-void cDedicatedServer::startNewGame()
+void cDedicatedServer::startNewGame(std::shared_ptr<cConnectionManager> connectionManager, int port)
 {
 	std::cout << "Setting up new game..." << std::endl;
-	auto game = std::make_unique<cServerGame> (connectionManager);
+	auto game = std::make_unique<cServerGame> (connectionManager, port);
 	game->getGamesString = [this](){ return getGamesString(); };
 	game->getAvailableMapsString = [this](){ return getAvailableMapsString(); };
 	game->prepareGameData();
@@ -189,10 +190,10 @@ void cDedicatedServer::startNewGame()
 }
 
 //------------------------------------------------------------------------
-void cDedicatedServer::loadSaveGame (int saveGameNumber)
+void cDedicatedServer::loadSaveGame (std::shared_ptr<cConnectionManager> connectionManager, int port, int saveGameNumber)
 {
 	std::cout << "Setting up game from saved game number " << saveGameNumber << " ..." << std::endl;
-	auto game = std::make_unique<cServerGame> (connectionManager);
+	auto game = std::make_unique<cServerGame> (connectionManager, port);
 	game->getGamesString = [this](){ return getGamesString(); };
 	game->getAvailableMapsString = [this](){ return getAvailableMapsString(); };
 
@@ -353,20 +354,4 @@ void cDedicatedServer::printHelp (eHelpCommands helpCommand) const
 			std::cout << "Error in printHelp: no help page implemented. Please contact developers." << std::endl;
 			break;
 	}
-}
-
-//------------------------------------------------------------------------
-void cDedicatedServer::pushMessage (std::unique_ptr<cNetMessage> message)
-{
-	// TODO: delegate to correct game (and not simply first game)
-	if (games.empty() == false)
-		games[0]->pushMessage (std::move (message));
-}
-
-//------------------------------------------------------------------------
-std::unique_ptr<cNetMessage> cDedicatedServer::popMessage()
-{
-	if (games.empty() == false)
-		return games[0]->popMessage();
-	return nullptr;
 }
