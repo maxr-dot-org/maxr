@@ -145,6 +145,7 @@ cServerGame::cServerGame (std::shared_ptr<cConnectionManager> connectionManager,
 		server->loadGameState (saveGameInfo.number);
 		connectionManager->setLocalServer(server.get());
 		server->start();
+		server->resyncClientModel();
 	});
 }
 
