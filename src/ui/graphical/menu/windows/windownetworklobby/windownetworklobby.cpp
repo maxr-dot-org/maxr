@@ -304,6 +304,9 @@ void cWindowNetworkLobby::updateSettingsText()
 		}
 		else text += lngPack.i18n ("Text~Multiplayer~Option_NoSet") + "\n";
 	}
+	if (saveGameInfo.number >= 0) {
+		text += lngPack.i18n("Text~Comp~Turn_5") + lngPack.i18n ("Text~Punctuation~Colon") + iToStr(saveGameInfo.turn) + "\n";
+	}
 	settingsTextLabel->setText (text);
 }
 

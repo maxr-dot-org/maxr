@@ -191,10 +191,12 @@ cSaveGameInfo cSavegame::loadSaveInfo(int slot)
 		archive >> serialization::makeNvp("crc", info.mapCrc);
 		archive.leaveChild(); // mapFile
 		archive.leaveChild(); // map
+
+		archive.enterChild("turnCounter");
+		archive >> serialization::makeNvp("turn", info.turn);
+		archive.leaveChild(); //turnCounter
+
 		archive.leaveChild(); // model
-
-		//TODO: load turn
-
 	}
 	catch (const std::runtime_error& e)
 	{

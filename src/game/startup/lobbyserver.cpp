@@ -86,6 +86,7 @@ std::string cLobbyServer::getGameState() const
 			result << "Waiting players from save game:" << std::endl;
 			for (const auto& player : saveGameInfo.players)
 				result << " " << player.getName() << std::endl;
+			result << "Turn: " << saveGameInfo.turn << std::endl;
 		}
 	}
 	else

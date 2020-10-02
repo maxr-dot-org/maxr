@@ -58,7 +58,7 @@ public:
 	std::vector<cPlayerBasicData> players;
 	std::string mapName;
 	uint32_t mapCrc = 0;
-	//int turn;
+	uint32_t turn = 0;
 
 	/** the slot number of the save game */
 	int number = 0;
@@ -74,7 +74,7 @@ public:
 		archive & players;
 		archive & mapName;
 		archive & mapCrc;
-		//archive & turn;
+		archive & turn;
 		archive & number;
 	}
 };
