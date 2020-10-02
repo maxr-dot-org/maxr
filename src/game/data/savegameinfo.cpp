@@ -19,8 +19,10 @@
 
 
 #include "savegameinfo.h"
+
 #include "savegame.h"
 
+cSaveGameInfo::cSaveGameInfo() : cSaveGameInfo(-1) {}
 
 cSaveGameInfo::cSaveGameInfo(int number) :
 	saveVersion("0.0"),

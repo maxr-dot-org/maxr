@@ -69,8 +69,9 @@ void cWindowNetworkLobbyClient::bindConnections (cLobbyClient& lobbyClient)
 //------------------------------------------------------------------------------
 void cWindowNetworkLobbyClient::setIsHost (bool isHost)
 {
-	if (isHost && saveGameInfo.number == -1)
+	if (isHost)
 	{
+		loadButton->show();
 		mapButton->show();
 		okButton->show();
 		settingsButton->show();

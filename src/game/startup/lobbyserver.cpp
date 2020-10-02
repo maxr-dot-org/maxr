@@ -19,6 +19,7 @@
 
 #include "lobbyserver.h"
 
+#include "game/data/savegame.h"
 #include "game/startup/lobbyclient.h"
 #include "game/startup/lobbyutils.h"
 #include "maxrversion.h"
@@ -179,6 +180,15 @@ void cLobbyServer::forwardMessage (const cNetMessage& message)
 void cLobbyServer::sendPlayerList()
 {
 	sendNetMessage (cMuMsgPlayerList (players));
+}
+
+//------------------------------------------------------------------------------
+void cLobbyServer::sendSaveSlots(int playerNr)
+{
+	cMuMsgSaveSlots message;
+
+	fillSaveGames(0, 100, message.saveGames);
+	sendNetMessage (message, playerNr);
 }
 
 //------------------------------------------------------------------------------
@@ -373,6 +383,7 @@ void cLobbyServer::clientConnects (const cNetMessageTcpWantConnect& message)
 
 	sendPlayerList();
 	sendGameData (newPlayer.getNr());
+	sendSaveSlots (newPlayer.getNr());
 
 	onClientConnected (newPlayer);
 }

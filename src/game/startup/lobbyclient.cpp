@@ -137,7 +137,6 @@ void cLobbyClient::selectGameSettings (const cGameSettings& gameSettings)
 	cMuMsgOptions message;
 
 	message.mapName = staticMap ? staticMap->getName() : "";
-	message.saveInfo = saveGameInfo;
 	message.settingsValid = true;
 	message.settings = gameSettings;
 
@@ -150,12 +149,21 @@ void cLobbyClient::selectMapName (const std::string& mapName)
 	cMuMsgOptions message;
 
 	message.mapName = mapName;
-	message.saveInfo = saveGameInfo;
 	if (gameSettings)
 	{
 		message.settingsValid = true;
 		message.settings = *gameSettings;
 	}
+	sendNetMessage (message);
+}
+
+//------------------------------------------------------------------------------
+void cLobbyClient::selectLoadGame (const cSaveGameInfo& saveGameInfo)
+{
+	cMuMsgOptions message;
+
+	message.mapName = saveGameInfo.mapName;
+	message.saveInfo = saveGameInfo;
 	sendNetMessage (message);
 }
 
@@ -279,6 +287,9 @@ void cLobbyClient::handleLobbyMessage (const cMultiplayerLobbyMessage& message)
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_OPTIONS:
 			handleNetMessage_MU_MSG_OPTIONS(static_cast<const cMuMsgOptions&>(message));
+			break;
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_SAVESLOTS:
+			handleNetMessage_MU_MSG_SAVESLOTS(static_cast<const cMuMsgSaveSlots&>(message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME_PREPARATIONS:
 			handleNetMessage_MU_MSG_START_GAME_PREPARATIONS(static_cast<const cMuMsgStartGamePreparations&>(message));
@@ -433,6 +444,12 @@ void cLobbyClient::handleNetMessage_MU_MSG_OPTIONS (const cMuMsgOptions& message
 	}
 	saveGameInfo = message.saveInfo;
 	onOptionsChanged (gameSettings, staticMap, saveGameInfo);
+}
+
+//------------------------------------------------------------------------------
+void cLobbyClient::handleNetMessage_MU_MSG_SAVESLOTS (const cMuMsgSaveSlots& message)
+{
+	saveGames = message.saveGames;
 }
 
 //------------------------------------------------------------------------------

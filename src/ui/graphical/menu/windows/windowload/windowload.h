@@ -20,22 +20,23 @@
 #ifndef ui_graphical_menu_windows_windowload_windowloadH
 #define ui_graphical_menu_windows_windowload_windowloadH
 
-#include <vector>
 #include <array>
+#include <functional>
+#include <vector>
 
 #include "ui/graphical/window.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 class cPushButton;
+class cSaveGameInfo;
 class cSaveSlotWidget;
 class cTurnTimeClock;
-class cSaveGameInfo;
 
 class cWindowLoad : public cWindow
 {
 public:
-	explicit cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock = nullptr);
+	explicit cWindowLoad (std::shared_ptr<const cTurnTimeClock> = nullptr, std::function<std::vector<cSaveGameInfo>()> = {});
 	~cWindowLoad();
 
 	void update();
@@ -56,24 +57,6 @@ protected:
 	cSaveSlotWidget& getSaveSlot (size_t slotIndex);
 
 private:
-	cSignalConnectionManager signalConnectionManager;
-
-	cPushButton* loadButton;
-
-	static const size_t rows = 5;
-	static const size_t columns = 2;
-
-	std::array<cSaveSlotWidget*, rows* columns> saveSlots;
-
-	static const size_t maximalDisplayedSaves = 100;
-	int page;
-	const int lastPage;
-
-	int selectedSaveNumber;
-	std::string selectedOriginalName;
-
-	std::vector<cSaveGameInfo> saveGames;
-
 	void loadSaves();
 	void updateSlots();
 
@@ -81,6 +64,26 @@ private:
 	void handleUpClicked();
 
 	void handleLoadClicked();
+
+private:
+	static const size_t rows = 5;
+	static const size_t columns = 2;
+	static const size_t maximalDisplayedSaves = 100;
+
+	cSignalConnectionManager signalConnectionManager;
+
+	cPushButton* loadButton;
+
+	std::array<cSaveSlotWidget*, rows * columns> saveSlots;
+
+	int page;
+	const int lastPage;
+
+	int selectedSaveNumber;
+	std::string selectedOriginalName;
+
+	std::function<std::vector<cSaveGameInfo>()> saveGamesGetter;
+	std::vector<cSaveGameInfo> saveGames;
 };
 
 #endif // ui_graphical_menu_windows_windowload_windowloadH

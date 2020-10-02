@@ -46,6 +46,8 @@ public:
 
 	void selectGameSettings(const cGameSettings&);
 	void selectMapName (const std::string&);
+	const std::vector<cSaveGameInfo>& getSaveGames() const { return saveGames; }
+	void selectLoadGame (const cSaveGameInfo&);
 
 	void tryToSwitchReadyState();
 	void changeLocalPlayerProperties (const std::string& name, cPlayerColor, bool ready);
@@ -114,6 +116,7 @@ private:
 	void handleNetMessage_MU_MSG_PLAYER_NUMBER (const cMuMsgPlayerNr&);
 	void handleNetMessage_MU_MSG_PLAYERLIST (const cMuMsgPlayerList&);
 	void handleNetMessage_MU_MSG_OPTIONS (const cMuMsgOptions&);
+	void handleNetMessage_MU_MSG_SAVESLOTS (const cMuMsgSaveSlots&);
 	void handleNetMessage_MU_MSG_START_GAME_PREPARATIONS (const cMuMsgStartGamePreparations&);
 
 	void handleNetMessage_MU_MSG_LANDING_STATE (const cMuMsgLandingState&);
@@ -136,6 +139,7 @@ private:
 	std::shared_ptr<cStaticMap> staticMap;
 	std::shared_ptr<cGameSettings> gameSettings;
 	cSaveGameInfo saveGameInfo{-1};
+	std::vector<cSaveGameInfo> saveGames;
 
 	std::string triedLoadMapName;
 	std::string lastRequestedMapName;

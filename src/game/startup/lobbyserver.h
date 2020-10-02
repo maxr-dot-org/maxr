@@ -89,6 +89,7 @@ private:
 	void forwardMessage (const cNetMessage&);
 
 	void sendPlayerList();
+	void sendSaveSlots(int playerNr);
 	void sendGameData (int playerNr = -1);
 
 	void handleNetMessage (const cNetMessage&);

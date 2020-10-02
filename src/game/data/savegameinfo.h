@@ -42,6 +42,7 @@ enum eGameTypes
 class cSaveGameInfo
 {
 public:
+	cSaveGameInfo();
 	explicit cSaveGameInfo(int number);
 
 	// header

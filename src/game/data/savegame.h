@@ -21,6 +21,7 @@
 #define game_data_savegameH
 
 #include <string>
+#include <vector>
 
 #include <3rd/tinyxml2/tinyxml2.h>
 
@@ -56,7 +57,7 @@ private:
 
 	/**
 	* Loads header information from old save file with version <1.0.
-	* Only loading of header information is supportet, to be able to display
+	* Only loading of header information is supported, to be able to display
 	* these save files in the multiplayer menu. Loading game state from
 	* savefiles <1.0 is not supported.
 	*/
@@ -70,5 +71,7 @@ private:
 
 	tinyxml2::XMLDocument xmlDocument;
 };
+
+void fillSaveGames (std::size_t minIndex, std::size_t maxIndex, std::vector<cSaveGameInfo>&);
 
 #endif //game_data_savegameH

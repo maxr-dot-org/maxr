@@ -17,24 +17,26 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include <time.h>
-
 #include "savegame.h"
 
-#include "savegameinfo.h"
+#include "gamesettings.h"
+#include "game/logic/server.h"
+#include "game/logic/turntimeclock.h"
+#include "maxrversion.h"
 #include "model.h"
 #include "player/player.h"
-#include "gamesettings.h"
-#include "maxrversion.h"
-#include "utility/serialization/serialization.h"
-#include "utility/serialization/xmlarchive.h"
+#include "protocol/netmessage.h"
+#include "savegameinfo.h"
+#include "utility/extendedtinyxml.h"
 #include "utility/files.h"
 #include "utility/log.h"
-#include "utility/extendedtinyxml.h"
-#include "protocol/netmessage.h"
-#include "game/logic/server.h"
+#include "utility/ranges.h"
+#include "utility/serialization/serialization.h"
+#include "utility/serialization/xmlarchive.h"
 #include "utility/string/toString.h"
-#include "game/logic/turntimeclock.h"
+
+#include <ctime>
+#include <regex>
 
 #define LOAD_ERROR(msg)                        \
 	{                                          \
@@ -411,4 +413,27 @@ bool cSavegame::loadVersion(cVersion& version)
 	version.parseFromString(versionString);
 
 	return true;
+}
+
+//------------------------------------------------------------------------------
+void fillSaveGames (std::size_t minIndex, std::size_t maxIndex, std::vector<cSaveGameInfo>& saveGames)
+{
+	cSavegame savegame;
+	const auto saveFileNames = getFilesOfDirectory (cSettings::getInstance().getSavesPath());
+	const std::regex savename_regex{R"(Save(\d{3})\.xml)"};
+
+	for (const auto& filename : saveFileNames)
+	{
+		std::smatch match;
+		if (!std::regex_match(filename, match, savename_regex)) continue;
+		const std::size_t number = atoi (match[1].str().c_str());
+
+		if (number <= minIndex || number > maxIndex) continue;
+
+		if (ranges::find_if (saveGames, [=](const cSaveGameInfo& save) { return save.number == number; }) != saveGames.end()) continue;
+
+		// read the information and add it to the saves list
+		cSaveGameInfo saveInfo = savegame.loadSaveInfo(number);
+		saveGames.push_back(saveInfo);
+	}
 }

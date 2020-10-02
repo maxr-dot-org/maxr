@@ -18,26 +18,28 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/windows/windowload/windowload.h"
+
+#include "game/data/savegameinfo.h"
+#include "game/data/savegame.h"
+#include "ui/graphical/application.h"
+#include "ui/graphical/game/widgets/turntimeclockwidget.h"
+#include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/saveslotwidget.h"
-#include "ui/graphical/game/widgets/turntimeclockwidget.h"
-#include "ui/graphical/application.h"
-#include "ui/graphical/menu/dialogs/dialogok.h"
+#include "utility/files.h"
 #include "utility/language.h"
 #include "utility/log.h"
-#include "utility/files.h"
-#include "resources/pcx.h"
 #include "utility/ranges.h"
-#include "game/data/savegameinfo.h"
-#include "game/data/savegame.h"
+#include "resources/pcx.h"
 
 //------------------------------------------------------------------------------
-cWindowLoad::cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
+cWindowLoad::cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock, std::function<std::vector<cSaveGameInfo>()> saveGamesGetter) :
 	cWindow (LoadPCX (GFXOD_SAVELOAD)),
 	page (0),
 	lastPage ((int)std::ceil ((double)maximalDisplayedSaves / (rows* columns)) - 1),
-	selectedSaveNumber (-1)
+	selectedSaveNumber (-1),
+	saveGamesGetter (saveGamesGetter)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 12), getPosition() + cPosition (getArea().getMaxCorner().x(), 12 + 10)), lngPack.i18n ("Text~Title~Load"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
@@ -67,8 +69,7 @@ cWindowLoad::cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
 		}
 	}
 
-	loadSaves();
-	updateSlots();
+	update();
 }
 
 //------------------------------------------------------------------------------
@@ -81,45 +82,22 @@ void cWindowLoad::update()
 {
 	saveGames.clear();
 
-	loadSaves();
+	if (saveGamesGetter)
+	{
+		saveGames = saveGamesGetter();
+	}
+	else
+	{
+		loadSaves();
+	}
 	updateSlots();
 }
 
 //------------------------------------------------------------------------------
 void cWindowLoad::loadSaves()
 {
-	cSavegame savegame;
-
-	auto saveFileNames = getFilesOfDirectory (cSettings::getInstance().getSavesPath());
-
-	for (size_t i = 0; i != saveFileNames.size(); ++i)
-	{
-		// only check for xml files and numbers for this offset
-		const auto& file = saveFileNames[i];
-		if (file.length() < 4 || file.compare (file.length() - 3, 3, "xml") != 0)
-		{
-			saveFileNames.erase (saveFileNames.begin() + i);
-			i--;
-			continue;
-		}
-		int number;
-		if (file.length() < 8 || (number = atoi (file.substr (file.length() - 7, 3).c_str())) < page * (int) (columns * rows) || number > page * (int) (columns * rows) + (int) (rows * columns)) continue;
-		// don't add files twice
-		bool found = false;
-		for (unsigned int j = 0; j < saveGames.size(); j++)
-		{
-			if (saveGames[j].number == number)
-			{
-				found = true;
-				break;
-			}
-		}
-		if (found) continue;
-
-		// read the information and add it to the saves list
-		cSaveGameInfo saveInfo = savegame.loadSaveInfo(number);
-		saveGames.push_back(saveInfo);
-	}
+	if (saveGamesGetter) return;
+	fillSaveGames (page * columns * rows, (page + 1) * columns * rows, saveGames);
 }
 
 //------------------------------------------------------------------------------

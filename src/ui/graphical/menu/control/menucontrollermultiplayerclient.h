@@ -56,8 +56,9 @@ private:
 
 	void reset();
 
-	void handleSelectSettings (cApplication&);
-	void handleSelectMap (cApplication&);
+	void handleSelectSettings();
+	void handleSelectMap();
+	void handleSelectSaveGame();
 
 	void handleStartGame();
 

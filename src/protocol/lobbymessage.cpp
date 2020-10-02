@@ -41,6 +41,8 @@ std::unique_ptr<cMultiplayerLobbyMessage> cMultiplayerLobbyMessage::createFromBu
 		message = std::make_unique<cMuMsgPlayerList>(archive); break;
 	case eMessageType::MU_MSG_OPTIONS:
 		message = std::make_unique<cMuMsgOptions>(archive); break;
+	case eMessageType::MU_MSG_SAVESLOTS:
+		message = std::make_unique<cMuMsgSaveSlots>(archive); break;
 	case eMessageType::MU_MSG_START_GAME_PREPARATIONS:
 		message = std::make_unique<cMuMsgStartGamePreparations>(archive); break;
 	case eMessageType::MU_MSG_START_MAP_DOWNLOAD:
@@ -115,6 +117,8 @@ std::string enumToString(cMultiplayerLobbyMessage::eMessageType value)
 		return "MU_MSG_PLAYERLIST";
 	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_OPTIONS:
 		return "MU_MSG_OPTIONS";
+	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_SAVESLOTS:
+		return "MU_MSG_SAVESLOTS";
 	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_MAP_DOWNLOAD:
 		return "MU_MSG_START_MAP_DOWNLOAD";
 	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_MAP_DOWNLOAD_DATA:
@@ -217,6 +221,29 @@ void cMuMsgOptions::serialize(cBinaryArchiveIn& archive)
 }
 
 void cMuMsgOptions::serialize(cTextArchiveIn& archive)
+{
+	cMultiplayerLobbyMessage::serialize(archive);
+	serializeThis(archive);
+}
+
+//------------------------------------------------------------------------------
+cMuMsgSaveSlots::cMuMsgSaveSlots() :
+	cMultiplayerLobbyMessage(eMessageType::MU_MSG_SAVESLOTS)
+{}
+
+cMuMsgSaveSlots::cMuMsgSaveSlots(cBinaryArchiveOut& archive) :
+	cMuMsgSaveSlots()
+{
+	serializeThis(archive);
+}
+
+void cMuMsgSaveSlots::serialize(cBinaryArchiveIn& archive)
+{
+	cMultiplayerLobbyMessage::serialize(archive);
+	serializeThis(archive);
+}
+
+void cMuMsgSaveSlots::serialize(cTextArchiveIn& archive)
 {
 	cMultiplayerLobbyMessage::serialize(archive);
 	serializeThis(archive);
