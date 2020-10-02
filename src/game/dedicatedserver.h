@@ -74,6 +74,7 @@ protected:
 	void startNewGame (std::shared_ptr<cConnectionManager>, int port);
 	void loadSaveGame (std::shared_ptr<cConnectionManager>, int port, int saveGameNumber);
 	void saveGame (int saveGameNumber);
+	void stopGames();
 
 	std::unique_ptr<cDedicatedServerConfig> configuration;
 

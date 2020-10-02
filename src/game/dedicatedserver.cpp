@@ -143,7 +143,7 @@ bool cDedicatedServer::handleInput (const std::string& command)
 		return false;
 	// ...
 	else if (tokens.at (0) == "stop")
-		printHelp (kNotImplementedYet);
+		stopGames();
 	else
 		printHelp (kHelpUnknownCommand);
 	return true;
@@ -213,6 +213,12 @@ void cDedicatedServer::saveGame (int saveGameNumber)
 	}
 	else
 		std::cout << "No game running. Can't save." << std::endl;
+}
+
+//------------------------------------------------------------------------
+void cDedicatedServer::stopGames()
+{
+	games.clear();
 }
 
 //------------------------------------------------------------------------
