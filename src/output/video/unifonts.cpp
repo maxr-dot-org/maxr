@@ -29,6 +29,7 @@
 #include "utility/log.h"
 #include "utility/position.h"
 #include "utility/string/toString.h"
+#include "utility/string/trim.h"
 
 using namespace std;
 
@@ -926,12 +927,6 @@ string cUnicodeFont::shortenStringToSize (const string& str, int size, eUnicodeF
 	return uni;
 }
 
-/*static*/ bool cUnicodeFont::isUtf8Space (const char* pch)
-{
-	if (!pch) return false;
-
-	return *pch == ' ' || *pch == '\f' || *pch == '\n' || *pch == '\r' || *pch == '\t' || *pch == '\v';
-}
 
 int cUnicodeFont::getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFontType fonttype) const
 {
@@ -971,74 +966,40 @@ int cUnicodeFont::getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFon
 //------------------------------------------------------------------------------
 std::vector<std::string> cUnicodeFont::breakText (const std::string& text, int maximalWidth, eUnicodeFontType fontType) const
 {
+	const auto isSpace = [](char c) {
+		return c == ' ' || c == '\f' || c == '\r' || c == '\t' || c == '\v';
+	};
 	std::vector<std::string> lines;
-	int currentLineLength = 0;
-	int currentWordLength = 0;
-
-	lines.push_back ("");
-
 	auto it = text.begin();
-	auto nextWordBegin = it;
-	while (true)
+
+	while (it != text.end())
 	{
-		auto& currentLine = lines.back();
+		const auto nextLine = std::find (it, text.end(), '\n');
+		const auto firstWord = std::find_if_not (it, nextLine, isSpace);
+		auto next = std::find_if (it, nextLine, isSpace);
 
-		if (it == text.end() || isUtf8Space (&(*it)))
+		while (next != nextLine)
 		{
-			if (currentLineLength + currentWordLength >= maximalWidth || (it != text.end() && *it == '\n'))
-			{
-				if (currentLineLength + currentWordLength >= maximalWidth)
-				{
-					// Remove all leading white spaces
-					while (nextWordBegin != it && isUtf8Space (&(*nextWordBegin)))
-					{
-						int increase;
-						auto unicodeCharacter = encodeUTF8Char (&(*nextWordBegin), increase);
-						currentWordLength -= getUnicodeCharacterWidth (unicodeCharacter, fontType);
-						nextWordBegin += increase;
-					}
-
-					// TODO: may break the word when the single word is to long for the line
-					// put the word into the next line
-					lines.push_back (std::string (nextWordBegin, it));
-					currentLineLength = currentWordLength;
-				}
-				else
-				{
-					currentLine.append (nextWordBegin, it);
-					lines.push_back ("");
-					currentLineLength = 0;
-				}
+			auto candidate = std::find_if (next + 1, nextLine, isSpace);
+			auto size = getTextWide ({it, candidate}, fontType);
+			if (size > maximalWidth) {
+				break;
 			}
-			else
-			{
-				if (currentLine.empty())
-				{
-					// Remove all leading white spaces if we are at the beginning of a new line
-					while (nextWordBegin != it && isUtf8Space (&(*nextWordBegin)))
-					{
-						int increase;
-						auto unicodeCharacter = encodeUTF8Char (&(*nextWordBegin), increase);
-						currentWordLength -= getUnicodeCharacterWidth (unicodeCharacter, fontType);
-						nextWordBegin += increase;
-					}
-				}
-				currentLine.append (nextWordBegin, it);
-				currentLineLength += currentWordLength;
-			}
-
-			if (it == text.end()) return lines;
-
-			nextWordBegin = it;
-			currentWordLength = 0;
+			next = candidate;
 		}
-
-		int increase;
-		auto unicodeCharacter = encodeUTF8Char (&(*it), increase);
-		currentWordLength += getUnicodeCharacterWidth (unicodeCharacter, fontType);
-
-		it += increase;
+		if (firstWord <= next) // handle too long leading space sequence
+		{
+			lines.emplace_back (it, next);
+			trim_right (lines.back());
+		}
+		it = std::find_if_not (next, nextLine, isSpace);
+		if (it == nextLine && it != text.end())
+		{
+			++it;
+		}
 	}
+	if (!text.empty() && text.back() == '\n') { lines.emplace_back(); }
+	return lines;
 }
 
 std::unique_ptr<cUnicodeFont> cUnicodeFont::font;

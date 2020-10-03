@@ -196,7 +196,6 @@ private:
 	 * @return unicode position
 	 */
 	static Uint16 encodeUTF8Char (const char* pch, int& increase);
-	static bool isUtf8Space (const char* pch);
 
 	int getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFontType fonttype) const;
 	/**

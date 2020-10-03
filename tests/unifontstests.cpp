@@ -106,13 +106,11 @@ namespace
 	}
 	TEST (BreakText_space_manyspaces)
 	{
-		//TestBreakSpace ("a|bb|cc|dd", "a     bb     cc   dd  ", 2 * charWidth + 1);
-		TestBreakSpace ("a||bb||cc||dd|", "a     bb     cc   dd  ", 2 * charWidth + 1);
+		TestBreakSpace ("a|bb|cc|dd", "a     bb     cc   dd  ", 2 * charWidth + 1);
 	}
 
 	TEST (BreakText_space_eolandspace)
 	{
-		//TestBreakSpace ("a|bb|cc|dd", "a  \nbb\n     cc  dd", 2 * charWidth + 1);
-		TestBreakSpace ("a||bb||cc||dd", "a  \nbb\n     cc  dd", 2 * charWidth + 1);
+		TestBreakSpace ("a|bb|cc|dd", "a  \nbb\n     cc  dd", 2 * charWidth + 1);
 	}
 }
