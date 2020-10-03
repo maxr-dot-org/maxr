@@ -919,7 +919,7 @@ Uint16 cUnicodeFont::encodeUTF8Char (const char* pch, int& increase) const
 	return uni;
 }
 
-bool cUnicodeFont::isUtf8Space (const char* pch) const
+/*static*/ bool cUnicodeFont::isUtf8Space (const char* pch)
 {
 	if (!pch) return false;
 

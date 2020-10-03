@@ -117,14 +117,14 @@ void cLabel::breakText (const std::string& text, std::vector<std::string>& lines
 	{
 		auto& currentLine = lines.back();
 
-		if (it == text.end() || font->isUtf8Space (& (*it)))
+		if (it == text.end() || cUnicodeFont::isUtf8Space (& (*it)))
 		{
 			if (currentLineLength + currentWordLength >= maximalWidth || (it != text.end() && *it == '\n'))
 			{
 				if (currentLineLength + currentWordLength >= maximalWidth)
 				{
 					// Remove all leading white spaces
-					while (nextWordBegin != it && font->isUtf8Space (& (*nextWordBegin)))
+					while (nextWordBegin != it && cUnicodeFont::isUtf8Space (& (*nextWordBegin)))
 					{
 						int increase;
 						auto unicodeCharacter = font->encodeUTF8Char (& (*nextWordBegin), increase);
@@ -149,7 +149,7 @@ void cLabel::breakText (const std::string& text, std::vector<std::string>& lines
 				if (currentLine.empty())
 				{
 					// Remove all leading white spaces if we are at the beginning of a new line
-					while (nextWordBegin != it && font->isUtf8Space (& (*nextWordBegin)))
+					while (nextWordBegin != it && cUnicodeFont::isUtf8Space (&(*nextWordBegin)))
 					{
 						int increase;
 						auto unicodeCharacter = font->encodeUTF8Char (& (*nextWordBegin), increase);

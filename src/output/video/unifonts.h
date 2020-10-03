@@ -188,7 +188,7 @@ public:
 	 */
 	Uint16 encodeUTF8Char (const char* pch, int& increase) const;
 
-	bool isUtf8Space (const char* pch) const;
+	static bool isUtf8Space (const char* pch);
 
 	int getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFontType fonttype) /*const*/;
 private:
