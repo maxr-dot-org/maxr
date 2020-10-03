@@ -81,6 +81,10 @@ class cUnicodeFont
 public:
 	cUnicodeFont();
 
+	// Entry point for UT to works with dummy surface.
+	template <typename ... Args>
+	cUnicodeFont(struct cUnitTestTag, Args...);
+
 	void setTargetSurface (SDL_Surface* surface) { this->surface = surface; }
 	SDL_Surface* getTargetSurface() { return surface; }
 
@@ -244,7 +248,7 @@ private:
 	AutoSurface charsBigGold[0xFFFF];
 
 	// target surface where to draw.
-	SDL_Surface* surface;
+	SDL_Surface* surface = nullptr;
 
 public:
 	static std::unique_ptr<cUnicodeFont> font;
