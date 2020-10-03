@@ -891,7 +891,7 @@ string cUnicodeFont::shortenStringToSize (const string& str, int size, eUnicodeF
 	return res;
 }
 
-Uint16 cUnicodeFont::encodeUTF8Char (const char* pch, int& increase) const
+/*static*/ Uint16 cUnicodeFont::encodeUTF8Char (const char* pch, int& increase)
 {
 	// encode the UTF-8 character to its unicode position
 	Uint16 uni = 0;

@@ -186,7 +186,7 @@ public:
 	 *        how much bytes the character has taken in UTF-8
 	 * @return unicode position
 	 */
-	Uint16 encodeUTF8Char (const char* pch, int& increase) const;
+	static Uint16 encodeUTF8Char (const char* pch, int& increase);
 
 	static bool isUtf8Space (const char* pch);
 
