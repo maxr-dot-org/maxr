@@ -47,8 +47,10 @@ public:
 
 	cSignal<void ()> clicked;
 protected:
-
 	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
+
+private:
+	void updateDisplayInformation();
 private:
 	std::string text;
 	eUnicodeFontType fontType;
@@ -58,11 +60,6 @@ private:
 	std::vector<std::string> drawLines;
 
 	AutoSurface surface;
-
-	void updateDisplayInformation();
-
-	// TODO: may move to some other place
-	void breakText (const std::string& text, std::vector<std::string>& lines, int maximalWidth, eUnicodeFontType fontType) const;
 };
 
 #endif // ui_graphical_menu_widgets_labelH

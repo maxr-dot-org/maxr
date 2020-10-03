@@ -20,8 +20,11 @@
 #define output_video_unifontsH
 
 #include "utility/autosurface.h"
+
 #include <SDL.h>
+
 #include <string>
+#include <vector>
 
 class cPosition;
 
@@ -77,6 +80,9 @@ class cUnicodeFont
 {
 public:
 	cUnicodeFont();
+
+	void setTargetSurface (SDL_Surface* surface) { this->surface = surface; }
+	SDL_Surface* getTargetSurface() { return surface; }
 
 	/**
 	 * Wrapper for showText for easy use of SDL_Rects
@@ -173,9 +179,9 @@ public:
 
 	std::string shortenStringToSize (const std::string& str, int size,
 									 eUnicodeFontType fonttype) const;
-
-	void setTargetSurface (SDL_Surface* surface) { this->surface = surface; }
-	SDL_Surface* getTargetSurface() { return surface; }
+	std::vector<std::string> breakText (const std::string& text, int maximalWidth, eUnicodeFontType) const;
+private:
+	using FontTypeSurfaces = AutoSurface[0xFFFF];
 
 	/**
 	 * encodes a UTF-8 character to its unicode position
@@ -186,27 +192,9 @@ public:
 	 * @return unicode position
 	 */
 	static Uint16 encodeUTF8Char (const char* pch, int& increase);
-
 	static bool isUtf8Space (const char* pch);
 
 	int getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFontType fonttype) const;
-private:
-	using FontTypeSurfaces = AutoSurface[0xFFFF];
-	// character surfaces.
-	// Since SDL maximal gives us the unicodes
-	// from BMP we need 0xFFFF surfaces at maximum
-	AutoSurface charsNormal[0xFFFF];
-	AutoSurface charsNormalRed[0xFFFF];
-	AutoSurface charsSmallWhite[0xFFFF];
-	AutoSurface charsSmallGreen[0xFFFF];
-	AutoSurface charsSmallRed[0xFFFF];
-	AutoSurface charsSmallYellow[0xFFFF];
-	AutoSurface charsBig[0xFFFF];
-	AutoSurface charsBigGold[0xFFFF];
-
-	// target surface where to draw.
-	SDL_Surface* surface;
-
 	/**
 	 * loads all characters of a ISO table and fonttype.
 	 * @author beko
@@ -241,6 +229,22 @@ private:
 	const unsigned short* getIsoPage (eUnicodeFontCharset charset) const;
 	int drawWithBreakLines (SDL_Rect rDest, const std::string& sText,
 							eUnicodeFontType fonttype);
+
+private:
+	// character surfaces.
+	// Since SDL maximal gives us the unicodes
+	// from BMP we need 0xFFFF surfaces at maximum
+	AutoSurface charsNormal[0xFFFF];
+	AutoSurface charsNormalRed[0xFFFF];
+	AutoSurface charsSmallWhite[0xFFFF];
+	AutoSurface charsSmallGreen[0xFFFF];
+	AutoSurface charsSmallRed[0xFFFF];
+	AutoSurface charsSmallYellow[0xFFFF];
+	AutoSurface charsBig[0xFFFF];
+	AutoSurface charsBigGold[0xFFFF];
+
+	// target surface where to draw.
+	SDL_Surface* surface;
 
 public:
 	static std::unique_ptr<cUnicodeFont> font;

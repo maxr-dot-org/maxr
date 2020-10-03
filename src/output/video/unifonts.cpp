@@ -967,4 +967,78 @@ int cUnicodeFont::getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFon
 	return 0;
 }
 
+
+//------------------------------------------------------------------------------
+std::vector<std::string> cUnicodeFont::breakText (const std::string& text, int maximalWidth, eUnicodeFontType fontType) const
+{
+	std::vector<std::string> lines;
+	int currentLineLength = 0;
+	int currentWordLength = 0;
+
+	lines.push_back ("");
+
+	auto it = text.begin();
+	auto nextWordBegin = it;
+	while (true)
+	{
+		auto& currentLine = lines.back();
+
+		if (it == text.end() || isUtf8Space (&(*it)))
+		{
+			if (currentLineLength + currentWordLength >= maximalWidth || (it != text.end() && *it == '\n'))
+			{
+				if (currentLineLength + currentWordLength >= maximalWidth)
+				{
+					// Remove all leading white spaces
+					while (nextWordBegin != it && isUtf8Space (&(*nextWordBegin)))
+					{
+						int increase;
+						auto unicodeCharacter = encodeUTF8Char (&(*nextWordBegin), increase);
+						currentWordLength -= getUnicodeCharacterWidth (unicodeCharacter, fontType);
+						nextWordBegin += increase;
+					}
+
+					// TODO: may break the word when the single word is to long for the line
+					// put the word into the next line
+					lines.push_back (std::string (nextWordBegin, it));
+					currentLineLength = currentWordLength;
+				}
+				else
+				{
+					currentLine.append (nextWordBegin, it);
+					lines.push_back ("");
+					currentLineLength = 0;
+				}
+			}
+			else
+			{
+				if (currentLine.empty())
+				{
+					// Remove all leading white spaces if we are at the beginning of a new line
+					while (nextWordBegin != it && isUtf8Space (&(*nextWordBegin)))
+					{
+						int increase;
+						auto unicodeCharacter = encodeUTF8Char (&(*nextWordBegin), increase);
+						currentWordLength -= getUnicodeCharacterWidth (unicodeCharacter, fontType);
+						nextWordBegin += increase;
+					}
+				}
+				currentLine.append (nextWordBegin, it);
+				currentLineLength += currentWordLength;
+			}
+
+			if (it == text.end()) return lines;
+
+			nextWordBegin = it;
+			currentWordLength = 0;
+		}
+
+		int increase;
+		auto unicodeCharacter = encodeUTF8Char (&(*it), increase);
+		currentWordLength += getUnicodeCharacterWidth (unicodeCharacter, fontType);
+
+		it += increase;
+	}
+}
+
 std::unique_ptr<cUnicodeFont> cUnicodeFont::font;

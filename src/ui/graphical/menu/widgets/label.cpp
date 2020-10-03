@@ -98,84 +98,6 @@ void cLabel::resizeToTextHeight()
 }
 
 //------------------------------------------------------------------------------
-void cLabel::breakText (const std::string& text, std::vector<std::string>& lines, int maximalWidth, eUnicodeFontType fontType) const
-{
-	auto font = cUnicodeFont::font.get();
-	// NOTE: better would be not to copy each line into the vector
-	//       but use something like "string_view". We could simulate this by using
-	//       a pair of iterators (like a range) but non of other methods would support such a
-	//       rand and therefore the construction of a new string object would be necessary anyway.
-
-	int currentLineLength = 0;
-	int currentWordLength = 0;
-
-	lines.push_back ("");
-
-	auto it = text.begin();
-	auto nextWordBegin = it;
-	while (true)
-	{
-		auto& currentLine = lines.back();
-
-		if (it == text.end() || cUnicodeFont::isUtf8Space (&(*it)))
-		{
-			if (currentLineLength + currentWordLength >= maximalWidth || (it != text.end() && *it == '\n'))
-			{
-				if (currentLineLength + currentWordLength >= maximalWidth)
-				{
-					// Remove all leading white spaces
-					while (nextWordBegin != it && cUnicodeFont::isUtf8Space (&(*nextWordBegin)))
-					{
-						int increase;
-						auto unicodeCharacter = cUnicodeFont::encodeUTF8Char (&(*nextWordBegin), increase);
-						currentWordLength -= font->getUnicodeCharacterWidth (unicodeCharacter, fontType);
-						nextWordBegin += increase;
-					}
-
-					// TODO: may break the word when the single word is to long for the line
-					// put the word into the next line
-					lines.push_back (std::string (nextWordBegin, it));
-					currentLineLength = currentWordLength;
-				}
-				else
-				{
-					currentLine.append (nextWordBegin, it);
-					lines.push_back ("");
-					currentLineLength = 0;
-				}
-			}
-			else
-			{
-				if (currentLine.empty())
-				{
-					// Remove all leading white spaces if we are at the beginning of a new line
-					while (nextWordBegin != it && cUnicodeFont::isUtf8Space (&(*nextWordBegin)))
-					{
-						int increase;
-						auto unicodeCharacter = cUnicodeFont::encodeUTF8Char (&(*nextWordBegin), increase);
-						currentWordLength -= font->getUnicodeCharacterWidth (unicodeCharacter, fontType);
-						nextWordBegin += increase;
-					}
-				}
-				currentLine.append (nextWordBegin, it);
-				currentLineLength += currentWordLength;
-			}
-
-			if (it == text.end()) break;
-
-			nextWordBegin = it;
-			currentWordLength = 0;
-		}
-
-		int increase;
-		auto unicodeCharacter = cUnicodeFont::font->encodeUTF8Char (&(*it), increase);
-		currentWordLength += cUnicodeFont::font->getUnicodeCharacterWidth (unicodeCharacter, fontType);
-
-		it += increase;
-	}
-}
-
-//------------------------------------------------------------------------------
 void cLabel::updateDisplayInformation()
 {
 	if (surface == nullptr) return;
@@ -186,7 +108,7 @@ void cLabel::updateDisplayInformation()
 
 	if (wordWrap)
 	{
-		breakText (text, drawLines, getSize().x(), fontType);
+		drawLines = font->breakText (text, getSize().x(), fontType);
 	}
 	else
 	{
