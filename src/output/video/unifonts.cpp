@@ -19,15 +19,16 @@
 
 #include "unifonts.h"
 
-#include "utility/autosurface.h"
-#include "utility/files.h"
-#include "utility/log.h"
-#include "utility/string/toString.h"
+#include "defines.h"
 #include "resources/pcx.h"
 #include "settings.h"
-#include "utility/position.h"
-#include "utility/drawing.h"
+#include "utility/autosurface.h"
 #include "utility/color.h"
+#include "utility/drawing.h"
+#include "utility/files.h"
+#include "utility/log.h"
+#include "utility/position.h"
+#include "utility/string/toString.h"
 
 using namespace std;
 
@@ -479,8 +480,8 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 	}
 }
 
-cUnicodeFont::FontTypeSurfaces*
-cUnicodeFont::getFontTypeSurfaces (eUnicodeFontType const fonttype)
+const cUnicodeFont::FontTypeSurfaces*
+cUnicodeFont::getFontTypeSurfaces (eUnicodeFontType const fonttype) const
 {
 	switch (fonttype)
 	{
@@ -494,6 +495,12 @@ cUnicodeFont::getFontTypeSurfaces (eUnicodeFontType const fonttype)
 		case FONT_LATIN_SMALL_YELLOW: return &charsSmallYellow;
 	}
 	return nullptr;
+}
+
+cUnicodeFont::FontTypeSurfaces*
+cUnicodeFont::getFontTypeSurfaces (eUnicodeFontType fonttype)
+{
+	return const_cast<FontTypeSurfaces*>(const_cast<const cUnicodeFont*>(this)->getFontTypeSurfaces(fonttype));
 }
 
 AutoSurface cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
@@ -534,7 +541,7 @@ AutoSurface cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
 	else return nullptr;
 }
 
-const unsigned short* cUnicodeFont::getIsoPage (eUnicodeFontCharset charset)
+const unsigned short* cUnicodeFont::getIsoPage (eUnicodeFontCharset charset) const
 {
 	switch (charset)
 	{
@@ -777,13 +784,13 @@ void cUnicodeFont::showTextCentered (const cPosition& position, const string& sT
 	showTextCentered (position.x(), position.y(), sText, fonttype);
 }
 
-int cUnicodeFont::getTextWide (const string& sText, eUnicodeFontType fonttype)
+int cUnicodeFont::getTextWide (const string& sText, eUnicodeFontType fonttype) const
 {
 	SDL_Rect rTmp = getTextSize (sText, fonttype);
 	return rTmp.w;
 }
 
-SDL_Rect cUnicodeFont::getTextSize (const string& text, eUnicodeFontType fonttype)
+SDL_Rect cUnicodeFont::getTextSize (const string& text, eUnicodeFontType fonttype) const
 {
 	string sText (text);
 	int iSpace = 0;
@@ -845,7 +852,7 @@ SDL_Rect cUnicodeFont::getTextSize (const string& text, eUnicodeFontType fonttyp
 	return rTmp;
 }
 
-int cUnicodeFont::getFontHeight (eUnicodeFontType fonttype)
+int cUnicodeFont::getFontHeight (eUnicodeFontType fonttype) const
 {
 	const AutoSurface (&chars)[0xFFFF] = *getFontTypeSurfaces (fonttype);
 	// we will return the height of the first character in the list
@@ -856,7 +863,7 @@ int cUnicodeFont::getFontHeight (eUnicodeFontType fonttype)
 	return 0;
 }
 
-eUnicodeFontSize cUnicodeFont::getFontSize (eUnicodeFontType fonttype) const
+/* static */ eUnicodeFontSize cUnicodeFont::getFontSize (eUnicodeFontType fonttype)
 {
 	switch (fonttype)
 	{
@@ -876,7 +883,7 @@ eUnicodeFontSize cUnicodeFont::getFontSize (eUnicodeFontType fonttype) const
 }
 
 
-string cUnicodeFont::shortenStringToSize (const string& str, int size, eUnicodeFontType fonttype)
+string cUnicodeFont::shortenStringToSize (const string& str, int size, eUnicodeFontType fonttype) const
 {
 	string res (str);
 
@@ -926,7 +933,7 @@ string cUnicodeFont::shortenStringToSize (const string& str, int size, eUnicodeF
 	return *pch == ' ' || *pch == '\f' || *pch == '\n' || *pch == '\r' || *pch == '\t' || *pch == '\v';
 }
 
-int cUnicodeFont::getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFontType fonttype) /*const*/
+int cUnicodeFont::getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFontType fonttype) const
 {
 	const AutoSurface (&chars)[0xFFFF] = *getFontTypeSurfaces (fonttype);
 

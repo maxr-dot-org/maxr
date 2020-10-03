@@ -22,7 +22,6 @@
 #include "utility/autosurface.h"
 #include <SDL.h>
 #include <string>
-#include "defines.h"
 
 class cPosition;
 
@@ -147,7 +146,7 @@ public:
 	 * @return needed width for text
 	 */
 	int getTextWide (const std::string& sText,
-					 eUnicodeFontType fonttype = FONT_LATIN_NORMAL);
+					 eUnicodeFontType fonttype = FONT_LATIN_NORMAL) const;
 	/**
 	 * Calculates the needed space for a text in pixels
 	 * @author beko
@@ -156,24 +155,24 @@ public:
 	 * @return SDL_Rect with needed width and height for text
 	 */
 	SDL_Rect getTextSize (const std::string& sText,
-						  eUnicodeFontType fonttype = FONT_LATIN_NORMAL);
+						  eUnicodeFontType fonttype = FONT_LATIN_NORMAL) const;
 	/**
 	 * Holds information of font height
 	 * @author beko
 	 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
 	 * @return Height of fonttype in pixels
 	 */
-	int getFontHeight (eUnicodeFontType fonttype = FONT_LATIN_NORMAL);
+	int getFontHeight (eUnicodeFontType fonttype = FONT_LATIN_NORMAL) const;
 	/**
 	 * Holds information of font size
 	 * @author alzi
 	 * @param eBitmapFontType enum of fonttype.
 	 * @return eUnicodeFontSize enum size of fonttype
 	 */
-	eUnicodeFontSize getFontSize (eUnicodeFontType fonttype) const;
+	static eUnicodeFontSize getFontSize (eUnicodeFontType fonttype);
 
 	std::string shortenStringToSize (const std::string& str, int size,
-									 eUnicodeFontType fonttype);
+									 eUnicodeFontType fonttype) const;
 
 	void setTargetSurface (SDL_Surface* surface) { this->surface = surface; }
 	SDL_Surface* getTargetSurface() { return surface; }
@@ -190,9 +189,9 @@ public:
 
 	static bool isUtf8Space (const char* pch);
 
-	int getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFontType fonttype) /*const*/;
+	int getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFontType fonttype) const;
 private:
-	typedef AutoSurface FontTypeSurfaces[0xFFFF];
+	using FontTypeSurfaces = AutoSurface[0xFFFF];
 	// character surfaces.
 	// Since SDL maximal gives us the unicodes
 	// from BMP we need 0xFFFF surfaces at maximum
@@ -222,6 +221,7 @@ private:
 	 *        array should be returned.
 	 * @return the character array for the fonttype.
 	 */
+	const FontTypeSurfaces* getFontTypeSurfaces (eUnicodeFontType fonttype) const;
 	FontTypeSurfaces* getFontTypeSurfaces (eUnicodeFontType fonttype);
 	/**
 	 * loads the ISO-8859 bitmap font surface
@@ -238,7 +238,7 @@ private:
 	 * @param charset the charset for that the iso page should be returned.
 	 * @return the iso page
 	 */
-	const unsigned short* getIsoPage (eUnicodeFontCharset charset);
+	const unsigned short* getIsoPage (eUnicodeFontCharset charset) const;
 	int drawWithBreakLines (SDL_Rect rDest, const std::string& sText,
 							eUnicodeFontType fonttype);
 

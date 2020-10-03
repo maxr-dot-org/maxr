@@ -130,13 +130,11 @@ void cLineEdit::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 		SDL_BlitSurface (surface.get(), nullptr, &destination, &position);
 	}
 
-	auto font = cUnicodeFont::font.get();
-
 	const auto offsetRect = getTextDrawOffset();
-	const auto cursorXOffset = font->getFontSize (fontType) == FONT_SIZE_SMALL ? -1 : 0;
-
 	const cPosition textPosition = getPosition() + offsetRect;
+	const auto cursorXOffset = cUnicodeFont::getFontSize (fontType) == FONT_SIZE_SMALL ? -1 : 0;
 
+	auto font = cUnicodeFont::font.get();
 	font->showText (textPosition.x(), textPosition.y(), text.substr (startOffset, endOffset - startOffset), fontType);
 	if (hasKeyFocus && !readOnly)
 	{
