@@ -20,13 +20,7 @@
 #include "ui/graphical/menu/windows/windownetworklobbyhost/windownetworklobbyhost.h"
 
 #include "ui/graphical/menu/widgets/pushbutton.h"
-#include "game/data/player/player.h"
-#include "game/data/savegame.h"
-#include "game/data/map/map.h"
-#include "mapdownloader/mapdownload.h"
 #include "utility/language.h"
-#include "../../../application.h"
-#include "../../dialogs/dialogok.h"
 
 //------------------------------------------------------------------------------
 cWindowNetworkLobbyHost::cWindowNetworkLobbyHost() :
@@ -34,36 +28,4 @@ cWindowNetworkLobbyHost::cWindowNetworkLobbyHost() :
 {
 	auto startButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 200), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Host_Start")));
 	signalConnectionManager.connect (startButton->clicked, [this](){ triggeredStartHost(); });
-
-	signalConnectionManager.connect (staticMapChanged, [this]() { setSaveGame (cSaveGameInfo(-1), nullptr); });
-	signalConnectionManager.connect (gameSettingsChanged, [this]() { setSaveGame(cSaveGameInfo(-1), nullptr); });
-}
-
-//------------------------------------------------------------------------------
-bool cWindowNetworkLobbyHost::setSaveGame(const cSaveGameInfo& saveGameInfo_, cApplication* application)
-{
-	if (saveGameInfo_.number >= 0)
-	{
-		staticMap = std::make_shared<cStaticMap>();
-		if (!staticMap->loadMap(saveGameInfo_.mapName))
-		{
-			staticMap = nullptr;
-			application->show(std::make_shared<cDialogOk>("Map \"" + saveGameInfo_.mapName + "\" not found"));
-			return false;
-		}
-		else if (MapDownload::calculateCheckSum(saveGameInfo_.mapName) != saveGameInfo_.mapCrc)
-		{
-			staticMap = nullptr;
-			application->show(std::make_shared<cDialogOk>("The map \"" + saveGameInfo_.mapName + "\" does not match the map the game was started with")); // TODO: translate
-			return false;
-		}
-	}
-
-	saveGameInfo = saveGameInfo_;
-
-	updateMap();
-	updateSettingsText();
-	saveGameChanged();
-
-	return true;
 }

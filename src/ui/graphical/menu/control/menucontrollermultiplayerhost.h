@@ -21,100 +21,64 @@
 #define ui_graphical_menu_control_menucontrollermultiplayerhostH
 
 #include <memory>
-#include <map>
+#include <vector>
 
-#include "utility/signal/signalconnectionmanager.h"
 #include "game/connectionmanager.h"
+#include "game/startup/lobbyclient.h"
+#include "game/startup/lobbyserver.h"
 #include "utility/runnable.h"
-#include "utility/thread/concurrentqueue.h"
-#include "game/logic/landingpositionmanager.h"
-#include "protocol/lobbymessage.h"
+#include "utility/signal/signalconnectionmanager.h"
 
 class cApplication;
-class cWindowNetworkLobbyHost;
-class cWindowLandingPositionSelection;
 class cNetworkHostGameNew;
-class cPlayerBasicData;
-class cMapSender;
 class cPlayerLandingStatus;
-class cActionInitNewGame;
+class cWindowLandingPositionSelection;
+class cWindowNetworkLobbyHost;
 
-
-class cMenuControllerMultiplayerHost : public INetMessageReceiver, public cRunnable, public std::enable_shared_from_this<cMenuControllerMultiplayerHost>
+class cMenuControllerMultiplayerHost : public cRunnable, public std::enable_shared_from_this<cMenuControllerMultiplayerHost>
 {
 public:
-	cMenuControllerMultiplayerHost (cApplication& application);
+	explicit cMenuControllerMultiplayerHost (cApplication& application);
 	~cMenuControllerMultiplayerHost();
 
 	void start();
 
-	void pushMessage (std::unique_ptr<cNetMessage> message) MAXR_OVERRIDE_FUNCTION;
-	std::unique_ptr<cNetMessage> popMessage() MAXR_OVERRIDE_FUNCTION;
-	void run() MAXR_OVERRIDE_FUNCTION;
+	void run() override;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	cConcurrentQueue<std::unique_ptr<cNetMessage>> messageQueue;
-
-	std::shared_ptr<cConnectionManager> connectionManager;
+	std::shared_ptr<cConnectionManager> connectionManager = std::make_shared<cConnectionManager>();
+	cLobbyServer lobbyServer;
+	cLobbyClient lobbyClient;
 
 	cApplication& application;
 
 	std::shared_ptr<cWindowNetworkLobbyHost> windowNetworkLobby;
 	std::shared_ptr<cWindowLandingPositionSelection> windowLandingPositionSelection;
-	std::shared_ptr<cLandingPositionManager> landingPositionManager;
 	std::shared_ptr<cNetworkHostGameNew> newGame;
-
-	int nextPlayerNumber;
-
-	std::string triedLoadMapName;
-
-	std::vector<std::unique_ptr<ILobbyMessageHandler>> lobbyMessageHandlers;
 
 	std::vector<std::unique_ptr<cPlayerLandingStatus>> playersLandingStatus;
 
+private:
 	void reset();
 
-	void sendGameData(int playerNr = -1);
-
-	void handleSelectMap (cApplication& application);
-	void handleSelectSettings (cApplication& application);
-	void handleSelectSaveGame (cApplication& application);
-
-	void handleWantLocalPlayerReadyChange();
-	void handleChatMessageTriggered();
-
-	void handleLocalPlayerAttributesChanged();
+	void handleSelectMap();
+	void handleSelectSettings();
+	void handleSelectSaveGame();
 
 	void startHost();
 
-	void checkTakenPlayerAttributes (cPlayerBasicData& player);
-
 	void checkGameStart();
 
-	void startSavedGame();
+	void startSavedGame (const cSaveGameInfo&, std::shared_ptr<cStaticMap>, std::shared_ptr<cConnectionManager>, cPlayerBasicData);
 
-	void startGamePreparation();
+	void startGamePreparation (const sLobbyPreparationData&, const cPlayerBasicData& localPlayer, std::shared_ptr<cConnectionManager>);
 
 	void startClanSelection(bool isFirstWindowOnGamePreparation);
 	void startLandingUnitSelection(bool isFirstWindowOnGamePreparation);
 	void startLandingPositionSelection();
 	void startNewGame();
 	void checkReallyWantsToQuit();
-
-	void handleNetMessage (cNetMessage& message);
-
-	void handleNetMessage_TCP_WANT_CONNECT(cNetMessageTcpWantConnect& message);
-	void handleNetMessage_TCP_CLOSE(cNetMessageTcpClose& message);
-
-	void handleNetMessage_MU_MSG_CHAT (cMuMsgChat& message);
-	void handleNetMessage_MU_MSG_IDENTIFIKATION(cMuMsgIdentification& message);
-	void handleNetMessage_MU_MSG_LANDING_POSITION(cMuMsgLandingPosition& message);
-	void handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS(cMuMsgInLandingPositionSelectionStatus& message);
-	void handleNetMessage_MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION(cMuMsgPlayerAbortedGamePreparations& message);
-
-	void sendNetMessage(cNetMessage& message, int receiverPlayerNr = -1, int senderPlayerNr = -1);
-	void sendNetMessage(cNetMessage&& message, int receiverPlayerNr = -1, int senderPlayerNr = -1);
 
 	void saveOptions();
 };

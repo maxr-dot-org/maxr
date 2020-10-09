@@ -73,6 +73,7 @@ public:
 	const cPlayerBasicData* findNotReadyPlayer() const;
 
 	cSignal<void (const cPlayerBasicData&)> onClientConnected;
+	cSignal<void (const cPlayerBasicData&)> onClientDisconnected;
 	cSignal<void (const std::string& version, const std::string& revision)> onDifferentVersion;
 
 	cSignal<void (const cPlayerBasicData& fromPlayer)> onMapRequested;

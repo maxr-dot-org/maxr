@@ -81,4 +81,10 @@ inline auto byPlayerNr (int playerNr)
 	return [=](const cPlayerBasicData& player){ return player.getNr() == playerNr; };
 }
 
+//--------------------------------------------------------------------------
+inline auto byPlayerName (const std::string& name)
+{
+	return [=](const cPlayerBasicData& player){ return player.getName() == name; };
+}
+
 #endif // game_data_player_playerbasicdataH

@@ -35,8 +35,6 @@ public:
 
 	cSignal<void ()> triggeredConnect;
 
-	void setSaveGame (const cSaveGameInfo& safeInfo);
-
 private:
 	void setIsHost (bool);
 

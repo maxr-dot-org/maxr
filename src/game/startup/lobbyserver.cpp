@@ -26,6 +26,7 @@
 #include "mapdownloader/mapdownload.h"
 #include "mapdownloader/mapuploadmessagehandler.h"
 #include "resources/uidata.h"
+#include "utility/language.h"
 #include "utility/log.h"
 #include "utility/ranges.h"
 
@@ -267,13 +268,70 @@ void cLobbyServer::askToFinishLobby (int fromPlayer)
 {
 	const auto notReadyPlayer = findNotReadyPlayer();
 
+	if (!staticMap || (!gameSettings && saveGameInfo.number < 0))
+	{
+		sendChatMessage (lngPack.i18n ("Text~Multiplayer~Missing_Settings"), fromPlayer);
+		return;
+	}
+
 	if (notReadyPlayer) {
-		sendChatMessage (notReadyPlayer->getName() + " is not ready...", fromPlayer);
+		sendChatMessage (notReadyPlayer->getName() + " " + lngPack.i18n ("Text~Multiplayer~Not_Ready"), fromPlayer);
 		sendChatMessage ("Not all players are ready...", fromPlayer);
 		return;
 	}
 	if (saveGameInfo.number != -1)
 	{
+		//check host is part of the game
+		{
+			auto hostPlayer = getPlayer (fromPlayer);
+			if (hostPlayer == nullptr) return;
+			auto iter = ranges::find_if (saveGameInfo.players, byPlayerName (hostPlayer->getName()));
+			if (iter == saveGameInfo.players.end())
+			{
+				sendChatMessage ("Unable to start: Host must be part of the saved game"); //TODO: translate
+				return;
+			}
+		}
+		// check whether all necessary players are connected
+		for (const auto& savedPlayer : saveGameInfo.players)
+		{
+			if (savedPlayer.isDefeated()) continue;
+
+			auto it = ranges::find_if (players, byPlayerName (savedPlayer.getName()));
+			if (it == players.end())
+			{
+				sendChatMessage (lngPack.i18n ("Text~Multiplayer~Player_Wrong"));
+				return;
+			}
+		}
+		// disconnect or update menu players
+		for (auto& player : players)
+		{
+			auto it = ranges::find_if (saveGameInfo.players, byPlayerName (player.getName()));
+
+			if (it == saveGameInfo.players.end())
+			{
+				// the player does not belong to the save game: disconnect him
+				sendNetMessage (cMuMsgChat ("Text~Multiplayer~Disconnect_Not_In_Save", true), player.getNr());
+				connectionManager->disconnect (player.getNr());
+
+				player.setNr(-1); // Mark to deletion
+			}
+			else
+			{
+				const auto& savegamePlayer = *it;
+				int newPlayerNr = savegamePlayer.getNr();
+				int oldPlayerNr = player.getNr();
+
+				player.setNr (newPlayerNr);
+				player.setColor (savegamePlayer.getColor());
+
+				sendNetMessage (cMuMsgPlayerNr(newPlayerNr), oldPlayerNr);
+				connectionManager->changePlayerNumber(oldPlayerNr, newPlayerNr);
+			}
+		}
+		players.erase (std::remove_if (players.begin(), players.end(), byPlayerNr (-1)), players.end());
+
 		sendNetMessage (cMuMsgStartGame());
 		onStartLoadGame (saveGameInfo, connectionManager);
 		return;
@@ -408,6 +466,7 @@ void cLobbyServer::clientLeaves (const cNetMessageTcpClose& message)
 {
 	auto it = ranges::find_if (players, byPlayerNr (message.playerNr));
 	if (it == players.end()) return;
+	onClientDisconnected (*it);
 	players.erase (it);
 
 	sendPlayerList();
@@ -501,13 +560,4 @@ void cLobbyServer::clientAbortsPreparation (const cMuMsgPlayerAbortedGamePrepara
 	}
 	forwardMessage (message);
 	sendPlayerList();
-
-#if 0
-	auto okDialog = application.show(std::make_shared<cDialogOk>("Player " + player->getName() + " has quit from game preparation")); // TODO: translate
-
-	signalConnectionManager.connect(okDialog->done, [this]()
-	{
-		application.closeTill(*windowNetworkLobby);
-	});
-#endif
 }

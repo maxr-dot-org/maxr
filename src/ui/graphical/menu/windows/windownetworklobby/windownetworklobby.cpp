@@ -20,24 +20,25 @@
 #include "ui/graphical/menu/windows/windownetworklobby/windownetworklobby.h"
 
 #include "game/data/gamesettings.h"
-#include "ui/graphical/menu/widgets/label.h"
-#include "ui/graphical/menu/widgets/pushbutton.h"
-#include "ui/graphical/menu/widgets/lineedit.h"
+#include "game/data/map/map.h"
+#include "game/data/player/player.h"
+#include "game/data/savegame.h"
+#include "game/startup/lobbyclient.h"
+#include "game/startup/lobbyserver.h"
+#include "maxrversion.h"
+#include "output/video/video.h"
+#include "resources/pcx.h"
+#include "ui/graphical/menu/dialogs/dialogcolorpicker.h"
 #include "ui/graphical/menu/widgets/image.h"
+#include "ui/graphical/menu/widgets/label.h"
+#include "ui/graphical/menu/widgets/lineedit.h"
 #include "ui/graphical/menu/widgets/listview.h"
+#include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
 #include "ui/graphical/menu/widgets/special/lobbyplayerlistviewitem.h"
 #include "ui/graphical/menu/widgets/tools/validatorint.h"
-#include "ui/graphical/menu/dialogs/dialogcolorpicker.h"
-#include "game/data/player/player.h"
-#include "game/startup/lobbyclient.h"
 #include "utility/language.h"
-#include "resources/pcx.h"
 #include "utility/string/toString.h"
-#include "game/data/map/map.h"
-#include "output/video/video.h"
-#include "game/data/savegame.h"
-#include "maxrversion.h"
 
 //------------------------------------------------------------------------------
 cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableIp) :
@@ -227,6 +228,7 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 	signalConnectionManager.connect (lobbyClient.onOptionsChanged, [this](std::shared_ptr<cGameSettings> settings, std::shared_ptr<cStaticMap> map, const cSaveGameInfo& saveGameInfo){
 		setGameSettings (settings ? std::make_unique<cGameSettings> (*settings) : nullptr);
 		setStaticMap (std::move (map));
+		setSaveGame (saveGameInfo);
 	});
 
 	signalConnectionManager.connect (triggeredChatMessage, [&lobbyClient, this](){
@@ -254,6 +256,21 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 	signalConnectionManager.connect (getLocalPlayer()->nameChanged, handleLocalPlayerAttributesChanged);
 	signalConnectionManager.connect (getLocalPlayer()->colorChanged, handleLocalPlayerAttributesChanged);
 	signalConnectionManager.connect (getLocalPlayer()->readyChanged, handleLocalPlayerAttributesChanged);
+}
+
+//------------------------------------------------------------------------------
+void cWindowNetworkLobby::bindConnections (cLobbyServer& lobbyServer)
+{
+	signalConnectionManager.connect (lobbyServer.onClientConnected, [this](const cPlayerBasicData& newPlayer){
+		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Player_Joined", newPlayer.getName()));
+	});
+	signalConnectionManager.connect (lobbyServer.onClientDisconnected, [this](const cPlayerBasicData& oldPlayer){
+		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Player_Left", oldPlayer.getName()));
+	});
+	signalConnectionManager.connect (lobbyServer.onDifferentVersion, [this](const std::string& version, const std::string& revision){
+		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Gameversion_Warning_Server", version + " " + revision));
+		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Gameversion_Own", (std::string)PACKAGE_VERSION + " " + PACKAGE_REV));
+	});
 }
 
 //------------------------------------------------------------------------------
@@ -428,7 +445,6 @@ void cWindowNetworkLobby::setStaticMap (std::shared_ptr<cStaticMap> staticMap_)
 
 	updateMap();
 	updateSettingsText();
-	staticMapChanged();
 }
 
 //------------------------------------------------------------------------------
@@ -437,7 +453,14 @@ void cWindowNetworkLobby::setGameSettings (std::unique_ptr<cGameSettings> gameSe
 	gameSettings = std::move (gameSettings_);
 
 	updateSettingsText();
-	gameSettingsChanged();
+}
+
+//------------------------------------------------------------------------------
+void cWindowNetworkLobby::setSaveGame (const cSaveGameInfo& saveInfo_)
+{
+	saveGameInfo = saveInfo_;
+
+	updateSettingsText();
 }
 
 //------------------------------------------------------------------------------

@@ -253,7 +253,7 @@ void cMenuControllerMultiplayerClient::handleSelectSaveGame()
 //------------------------------------------------------------------------------
 void cMenuControllerMultiplayerClient::handleStartGame()
 {
-	lobbyClient.sendChatMessage ("--server go");
+	lobbyClient.askToFinishLobby();
 }
 
 //------------------------------------------------------------------------------

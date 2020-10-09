@@ -57,8 +57,115 @@ std::vector<std::pair<sID, int>> createInitialLandingUnitsList(int clan, const c
 //------------------------------------------------------------------------------
 cMenuControllerMultiplayerHost::cMenuControllerMultiplayerHost (cApplication& application_) :
 	application (application_),
-	nextPlayerNumber (1)
-{}
+	lobbyServer (connectionManager),
+	lobbyClient (connectionManager, cPlayerBasicData::fromSettings())
+{
+	signalConnectionManager.connect (lobbyServer.onMapRequested, [this](const cPlayerBasicData& player)
+	{
+		if (!windowNetworkLobby) return;
+		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_Upload", player.getName()));
+	});
+
+	signalConnectionManager.connect (lobbyServer.onMapUploaded, [this](const cPlayerBasicData& player)
+	{
+		if (!windowNetworkLobby) return;
+		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_UploadFinished", player.getName()));
+	});
+
+	signalConnectionManager.connect (lobbyClient.onChatMessage, [this](const std::string& playerName, bool translate, const std::string& message, const std::string& insertText){
+		if (windowNetworkLobby != nullptr)
+		{
+			if (windowLandingPositionSelection)
+			{
+				if (translate)
+				{
+					windowLandingPositionSelection->getChatBox()->addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (lngPack.i18n (message, insertText)));
+				}
+				else
+				{
+					windowLandingPositionSelection->getChatBox()->addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (playerName, message));
+					cSoundDevice::getInstance().playSoundEffect (SoundData.SNDChat);
+				}
+			}
+			else
+			{
+				if (translate)
+				{
+					windowNetworkLobby->addInfoEntry (lngPack.i18n (message, insertText));
+				}
+				else
+				{
+					windowNetworkLobby->addChatEntry (playerName, message);
+				}
+			}
+		}
+	});
+
+	signalConnectionManager.connect (lobbyClient.onStartGamePreparation, [this](const sLobbyPreparationData& lobbyData, const cPlayerBasicData& localPlayer, std::shared_ptr<cConnectionManager> connectionManager){
+		windowLandingPositionSelection = nullptr;
+		saveOptions();
+
+		startGamePreparation (lobbyData, localPlayer, connectionManager);
+	});
+
+	signalConnectionManager.connect (lobbyClient.onPlayerAbortGamePreparation, [this](const std::string& playerName){
+		if (windowNetworkLobby != nullptr)
+		{
+			auto okDialog = application.show (std::make_shared<cDialogOk> ("Player " + playerName + " has quit from game preparation")); // TODO: translate
+
+			signalConnectionManager.connect (okDialog->done, [this]()
+			{
+				application.closeTill (*windowNetworkLobby);
+			});
+		}
+	});
+
+	signalConnectionManager.connect (lobbyClient.onPlayerEnterLeaveLandingSelectionRoom, [this](const cPlayerBasicData& player, bool isIn){
+		if (isIn)
+		{
+			playersLandingStatus.push_back (std::make_unique<cPlayerLandingStatus> (player));
+			if (windowLandingPositionSelection) windowLandingPositionSelection->getChatBox()->addPlayerEntry (std::make_unique<cChatBoxLandingPlayerListViewItem> (*playersLandingStatus.back()));
+		}
+		else
+		{
+			if (windowLandingPositionSelection) windowLandingPositionSelection->getChatBox()->removePlayerEntry (player.getNr());
+			playersLandingStatus.erase (std::remove_if (playersLandingStatus.begin(), playersLandingStatus.end(), [&] (const std::unique_ptr<cPlayerLandingStatus>& status) { return status->getPlayer().getNr() == player.getNr(); }), playersLandingStatus.end());
+		}
+	});
+
+	signalConnectionManager.connect (lobbyClient.onPlayerSelectLandingPosition, [this](const cPlayerBasicData& player){
+		auto it = ranges::find_if (playersLandingStatus, [&] (const std::unique_ptr<cPlayerLandingStatus>& entry) { return entry->getPlayer().getNr() == player.getNr(); });
+
+		if (it == playersLandingStatus.end()) return;
+
+		auto& playerLandingStatus = **it;
+
+		playerLandingStatus.setHasSelectedPosition (true);
+	});
+
+	signalConnectionManager.connect (lobbyClient.onLandingDone, [this](eLandingPositionState state){
+		if (!windowLandingPositionSelection) return;
+
+		windowLandingPositionSelection->applyReselectionState (state);
+	});
+
+	signalConnectionManager.connect (lobbyClient.onStartNewGame, [this](){
+		if (!newGame) return;
+
+		startNewGame();
+	});
+
+	signalConnectionManager.connect (lobbyClient.onStartSavedGame, [this](const cSaveGameInfo& saveGameInfo, std::shared_ptr<cStaticMap> staticMap, std::shared_ptr<cConnectionManager> connectionManager, cPlayerBasicData localPlayer){
+		saveOptions();
+		startSavedGame (saveGameInfo, staticMap, connectionManager, localPlayer);
+	});
+	// lobbyClient.onReconnectGame
+	// lobbyClient.onFailToReconnectGameNoMap
+	// lobbyClient.onFailToReconnectGameInvalidMap
+	// Doesn't apply as client is directly connected to server
+
+	lobbyClient.connectToLocalServer (lobbyServer);
+}
 
 //------------------------------------------------------------------------------
 cMenuControllerMultiplayerHost::~cMenuControllerMultiplayerHost()
@@ -68,38 +175,7 @@ cMenuControllerMultiplayerHost::~cMenuControllerMultiplayerHost()
 void cMenuControllerMultiplayerHost::start()
 {
 	assert (windowNetworkLobby == nullptr); // should not be started twice
-
-	connectionManager = std::make_shared<cConnectionManager> ();
-
-	connectionManager->setLocalServer (this);
-
 	windowNetworkLobby = std::make_shared<cWindowNetworkLobbyHost> ();
-
-	auto mapUploadMessageHandler = std::make_unique<cMapUploadMessageHandler>(connectionManager, [this]()
-	{
-		return windowNetworkLobby ? windowNetworkLobby->getStaticMap().get() : nullptr;
-	});
-
-	signalConnectionManager.connect (mapUploadMessageHandler->onRequested, [this](int playerNr)
-	{
-		if (!windowNetworkLobby) return;
-		const auto player = windowNetworkLobby->getPlayer(playerNr);
-		if (!player) return;
-		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_Upload", player->getName()));
-	});
-
-	signalConnectionManager.connect (mapUploadMessageHandler->onRequested, [this](int playerNr)
-	{
-		if (!windowNetworkLobby) return;
-		const auto player = windowNetworkLobby->getPlayer(playerNr);
-		if (!player) return;
-		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_UploadFinished", player->getName()));
-	});
-
-	lobbyMessageHandlers.push_back (std::move(mapUploadMessageHandler));
-
-	triedLoadMapName = "";
-	nextPlayerNumber = windowNetworkLobby->getLocalPlayer()->getNr() + 1;
 
 	application.show (windowNetworkLobby);
 	application.addRunnable (shared_from_this());
@@ -111,50 +187,20 @@ void cMenuControllerMultiplayerHost::start()
 		saveOptions();
 	});
 
-	signalConnectionManager.connect (windowNetworkLobby->wantLocalPlayerReadyChange, std::bind (&cMenuControllerMultiplayerHost::handleWantLocalPlayerReadyChange, this));
-	signalConnectionManager.connect (windowNetworkLobby->triggeredChatMessage, std::bind (&cMenuControllerMultiplayerHost::handleChatMessageTriggered, this));
+	signalConnectionManager.connect (windowNetworkLobby->triggeredSelectMap, [this](){ handleSelectMap(); });
+	signalConnectionManager.connect (windowNetworkLobby->triggeredSelectSettings, [this]() { handleSelectSettings(); });
+	signalConnectionManager.connect (windowNetworkLobby->triggeredSelectSaveGame, [this]() { handleSelectSaveGame(); });
 
-	signalConnectionManager.connect (windowNetworkLobby->getLocalPlayer()->nameChanged, std::bind (&cMenuControllerMultiplayerHost::handleLocalPlayerAttributesChanged, this));
-	signalConnectionManager.connect (windowNetworkLobby->getLocalPlayer()->colorChanged, std::bind (&cMenuControllerMultiplayerHost::handleLocalPlayerAttributesChanged, this));
-	signalConnectionManager.connect (windowNetworkLobby->getLocalPlayer()->readyChanged, std::bind (&cMenuControllerMultiplayerHost::handleLocalPlayerAttributesChanged, this));
+	signalConnectionManager.connect (windowNetworkLobby->triggeredStartHost, [this]() { startHost(); });
+	signalConnectionManager.connect (windowNetworkLobby->triggeredStartGame, [this]() { checkGameStart(); });
 
-	signalConnectionManager.connect (windowNetworkLobby->triggeredSelectMap, std::bind (&cMenuControllerMultiplayerHost::handleSelectMap, this, std::ref (application)));
-	signalConnectionManager.connect (windowNetworkLobby->triggeredSelectSettings, std::bind (&cMenuControllerMultiplayerHost::handleSelectSettings, this, std::ref (application)));
-	signalConnectionManager.connect (windowNetworkLobby->triggeredSelectSaveGame, std::bind (&cMenuControllerMultiplayerHost::handleSelectSaveGame, this, std::ref (application)));
-
-	signalConnectionManager.connect (windowNetworkLobby->triggeredStartHost, std::bind (&cMenuControllerMultiplayerHost::startHost, this));
-	signalConnectionManager.connect (windowNetworkLobby->triggeredStartGame, std::bind (&cMenuControllerMultiplayerHost::checkGameStart, this));
-
-	signalConnectionManager.connect(windowNetworkLobby->staticMapChanged, [this]() {sendGameData(); });
-	signalConnectionManager.connect(windowNetworkLobby->gameSettingsChanged, [this]() {sendGameData(); });
-	signalConnectionManager.connect(windowNetworkLobby->saveGameChanged, [this]() {sendGameData(); });
-}
-
-void cMenuControllerMultiplayerHost::sendGameData(int playerNr /* = -1 */)
-{
-	cMuMsgOptions message;
-	message.saveInfo = windowNetworkLobby->getSaveGameInfo();
-
-	const cStaticMap* map = windowNetworkLobby->getStaticMap().get();
-	if (map)
-	{
-		message.mapName = map->getName();
-		message.mapCrc = MapDownload::calculateCheckSum(map->getName());
-	}
-	const cGameSettings* settings = windowNetworkLobby->getGameSettings().get();
-	if (settings)
-	{
-		message.settings = *settings;
-		message.settingsValid = true;
-	}
-	sendNetMessage(message, playerNr);
+	windowNetworkLobby->bindConnections (lobbyClient);
+	windowNetworkLobby->bindConnections (lobbyServer);
 }
 
 //------------------------------------------------------------------------------
 void cMenuControllerMultiplayerHost::reset()
 {
-	connectionManager->setLocalServer(nullptr);
-	connectionManager = nullptr;
 	windowNetworkLobby = nullptr;
 	windowLandingPositionSelection = nullptr;
 	newGame = nullptr;
@@ -162,270 +208,88 @@ void cMenuControllerMultiplayerHost::reset()
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::pushMessage (std::unique_ptr<cNetMessage> message)
-{
-	messageQueue.push (std::move (message));
-}
-
-//------------------------------------------------------------------------------
-std::unique_ptr<cNetMessage> cMenuControllerMultiplayerHost::popMessage()
-{
-	std::unique_ptr<cNetMessage> message;
-	messageQueue.try_pop(message);
-	return message;
-}
-
-//------------------------------------------------------------------------------
 void cMenuControllerMultiplayerHost::run()
 {
-	std::unique_ptr<cNetMessage> message;
-	while (messageQueue.try_pop (message))
-	{
-		handleNetMessage (*message);
-	}
+	lobbyClient.run();
+	lobbyServer.run();
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::handleSelectMap (cApplication& application)
+void cMenuControllerMultiplayerHost::handleSelectMap()
 {
-	if (!windowNetworkLobby) return;
-
-	auto windowMapSelection = application.show (std::make_shared<cWindowMapSelection> ());
-	windowMapSelection->done.connect ([&, windowMapSelection]()
+	auto windowMapSelection = application.show (std::make_shared<cWindowMapSelection>());
+	windowMapSelection->done.connect ([=]()
 	{
-		auto staticMap = std::make_shared<cStaticMap> ();
-		if (windowMapSelection->loadSelectedMap (*staticMap))
-		{
-			windowNetworkLobby->setStaticMap (std::move (staticMap));
-			windowMapSelection->close();
-		}
-		else
-		{
-			application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Others~ERROR_Map_Loading")));
-		}
-		triedLoadMapName = windowMapSelection->getSelectedMapName();
+		lobbyClient.selectMapName (windowMapSelection->getSelectedMapName());
+		windowMapSelection->close();
 	});
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::handleSelectSettings (cApplication& application)
+void cMenuControllerMultiplayerHost::handleSelectSettings()
 {
 	if (!windowNetworkLobby) return;
 
-	auto windowGameSettings = application.show (std::make_shared<cWindowGameSettings> ());
+	auto windowGameSettings = application.show (std::make_shared<cWindowGameSettings>());
 
-	if (windowNetworkLobby->getGameSettings())	windowGameSettings->applySettings (*windowNetworkLobby->getGameSettings());
+	if (lobbyClient.getGameSettings()) windowGameSettings->applySettings (*lobbyClient.getGameSettings());
 	else windowGameSettings->applySettings (cGameSettings());
 
-	windowGameSettings->done.connect ([&, windowGameSettings]()
+	windowGameSettings->done.connect ([this, windowGameSettings]()
 	{
-		windowNetworkLobby->setGameSettings (std::make_unique<cGameSettings> (windowGameSettings->getGameSettings()));
+		lobbyClient.selectGameSettings (windowGameSettings->getGameSettings());
 		windowGameSettings->close();
 	});
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::handleSelectSaveGame (cApplication& application)
+void cMenuControllerMultiplayerHost::handleSelectSaveGame()
 {
 	if (!windowNetworkLobby) return;
 
-	auto windowLoad = application.show (std::make_shared<cWindowLoad> ());
-	windowLoad->load.connect ([&, windowLoad] (const cSaveGameInfo& saveInfo)
+	auto windowLoad = application.show (std::make_shared<cWindowLoad>());
+	windowLoad->load.connect ([=](const cSaveGameInfo& saveGame)
 	{
-		if (windowNetworkLobby->setSaveGame (saveInfo, &application))
+		if (saveGame.number >= 0)
 		{
-			windowLoad->close();
+			cStaticMap staticMap;
+			if (!staticMap.loadMap (saveGame.mapName))
+			{
+				application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Others~ERROR_Map_Loading")));
+				return;
+			}
+			else if (MapDownload::calculateCheckSum(saveGame.mapName) != saveGame.mapCrc)
+			{
+				application.show (std::make_shared<cDialogOk> ("The map \"" + saveGame.mapName + "\" does not match the map the game was started with")); // TODO: translate
+				return;
+			}
 		}
+		lobbyClient.selectLoadGame (saveGame);
+		windowLoad->close();
 	});
-}
-
-//------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::handleWantLocalPlayerReadyChange()
-{
-	if (!connectionManager || !windowNetworkLobby) return;
-
-	auto& localPlayer = windowNetworkLobby->getLocalPlayer();
-
-	if (!localPlayer) return;
-
-	if (!windowNetworkLobby->getStaticMap() && !triedLoadMapName.empty())
-	{
-		if (!localPlayer->isReady()) windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~No_Map_No_Ready", triedLoadMapName));
-		localPlayer->setReady (false);
-	}
-	else localPlayer->setReady (!localPlayer->isReady());
-}
-
-//------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::handleChatMessageTriggered()
-{
-	if (!connectionManager || !windowNetworkLobby) return;
-
-	const auto& chatMessage = windowNetworkLobby->getChatMessage();
-
-	if (chatMessage.empty()) return;
-
-	auto& localPlayer = windowNetworkLobby->getLocalPlayer();
-
-	if (localPlayer)
-	{
-		windowNetworkLobby->addChatEntry (localPlayer->getName(), chatMessage);
-		sendNetMessage(cMuMsgChat(chatMessage));
-	}
-}
-
-//------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::handleLocalPlayerAttributesChanged()
-{
-	if (!connectionManager || !windowNetworkLobby) return;
-
-	checkTakenPlayerAttributes (*windowNetworkLobby->getLocalPlayer());
-	sendNetMessage (cMuMsgPlayerList (windowNetworkLobby->getPlayersNotShared()));
-}
-
-void cMenuControllerMultiplayerHost::checkTakenPlayerAttributes (cPlayerBasicData& player)
-{
-	if (!connectionManager || !windowNetworkLobby) return;
-
-	if (!player.isReady()) return;
-
-	auto players = windowNetworkLobby->getPlayers();
-	const auto& localPlayer = windowNetworkLobby->getLocalPlayer();
-
-	const double colorDeltaETolerance = 10;
-
-	for (size_t i = 0; i != players.size(); ++i)
-	{
-		if (players[i].get() == &player) continue;
-		if (players[i]->getName() == player.getName())
-		{
-			if (player.getNr() != localPlayer->getNr()) sendNetMessage(cMuMsgChat("Text~Multiplayer~Player_Name_Taken", true), player.getNr());
-			else windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Player_Name_Taken"));
-			player.setReady (false);
-			break;
-		}
-		if (players[i]->getColor().getColor().toLab().deltaE (player.getColor().getColor().toLab()) < colorDeltaETolerance)
-		{
-			if (player.getNr() != localPlayer->getNr()) sendNetMessage (cMuMsgChat("Text~Multiplayer~Player_Color_Taken", true), player.getNr());
-			else windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Player_Color_Taken"));
-			player.setReady (false);
-			break;
-		}
-	}
 }
 
 //------------------------------------------------------------------------------
 void cMenuControllerMultiplayerHost::checkGameStart()
 {
-	if (!connectionManager || !windowNetworkLobby) return;
-
-	if (!windowNetworkLobby->getStaticMap() || (!windowNetworkLobby->getGameSettings() && windowNetworkLobby->getSaveGameInfo().number < 0))
-	{
-		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Missing_Settings"));
-		return;
-	}
-
-	auto players = windowNetworkLobby->getPlayers();
-	auto notReadyPlayerIter = ranges::find_if (players, [ ] (const std::shared_ptr<cPlayerBasicData>& player) { return !player->isReady(); });
-
-	if (notReadyPlayerIter != players.end())
-	{
-		windowNetworkLobby->addInfoEntry ((*notReadyPlayerIter)->getName() + " " + lngPack.i18n ("Text~Multiplayer~Not_Ready"));
-		return;
-	}
-
 	if (!connectionManager->isServerOpen())
 	{
 		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Server_Not_Running"));
 		return;
 	}
-
-	const cSaveGameInfo& saveInfo = windowNetworkLobby->getSaveGameInfo();
-	if (saveInfo.number > -1)
-	{
-		auto savegamePlayers = saveInfo.players;
-		auto menuPlayers = windowNetworkLobby->getPlayers();
-
-		// check whether all necessary players are connected
-		for (size_t i = 0; i < savegamePlayers.size(); ++i)
-		{
-			auto iter = ranges::find_if (menuPlayers, [&] (const std::shared_ptr<cPlayerBasicData>& player) { return player->getName() == savegamePlayers[i].getName(); });
-			if (iter == menuPlayers.end() && !savegamePlayers[i].isDefeated())
-			{
-				windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Player_Wrong"));
-				return;
-			}
-		}
-
-		//check host is part of the game
-		{
-			auto hostPlayer = windowNetworkLobby->getLocalPlayer();
-			auto iter = ranges::find_if (savegamePlayers, [&](const cPlayerBasicData & player) { return player.getName() == hostPlayer->getName(); });
-			if (iter == savegamePlayers.end())
-			{
-				windowNetworkLobby->addInfoEntry("Unable to start: Host must be part of the saved game"); //TODO: translate
-				return;
-			}
-		}
-
-		// disconnect or update menu players
-		for (auto i = menuPlayers.begin(); i < menuPlayers.end();)
-		{
-			auto menuPlayer = *i;
-			auto iter = ranges::find_if (savegamePlayers, [&] (const cPlayerBasicData & player) { return player.getName() == menuPlayer->getName(); });
-
-			if (iter == savegamePlayers.end())
-			{
-				// the player does not belong to the save game: disconnect him
-				sendNetMessage(cMuMsgChat("Text~Multiplayer~Disconnect_Not_In_Save", true), menuPlayer->getNr());
-				connectionManager->disconnect(menuPlayer->getNr());
-
-				i = menuPlayers.erase (i);
-			}
-			else
-			{
-				auto& savegamePlayer = *iter;
-				int newPlayerNr = savegamePlayer.getNr();
-				int oldPlayerNr = menuPlayer->getNr();
-
-				menuPlayer->setNr (newPlayerNr);
-				menuPlayer->setColor (savegamePlayer.getColor());
-				if (windowNetworkLobby->getLocalPlayer()->getNr() != newPlayerNr)
-				{
-					sendNetMessage (cMuMsgPlayerNr(newPlayerNr), oldPlayerNr);
-					connectionManager->changePlayerNumber(oldPlayerNr, newPlayerNr);
-				}
-				++i;
-			}
-		}
-
-		sendNetMessage(cMuMsgPlayerList(menuPlayers));
-
-		sendGameData();
-		saveOptions();
-
-		startSavedGame();
-
-	}
-	else
-	{
-		saveOptions();
-
-
-		startGamePreparation();
-	}
+	lobbyClient.askToFinishLobby (&lobbyServer);
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::startSavedGame()
+void cMenuControllerMultiplayerHost::startSavedGame (const cSaveGameInfo& saveGameInfo, std::shared_ptr<cStaticMap> staticMap, std::shared_ptr<cConnectionManager> connectionManager, cPlayerBasicData localPlayer)
 {
-	if (!windowNetworkLobby || windowNetworkLobby->getSaveGameInfo().number == -1) return;
+	if (!windowNetworkLobby) return;
 	auto savedGame = std::make_shared<cNetworkHostGameSaved> ();
 
 	savedGame->setConnectionManager (connectionManager);
-	savedGame->setSaveGameNumber(windowNetworkLobby->getSaveGameInfo().number);
+	savedGame->setSaveGameNumber(saveGameInfo.number);
 
-	savedGame->setPlayers (windowNetworkLobby->getSaveGameInfo().players, *windowNetworkLobby->getLocalPlayer());
+	savedGame->setPlayers (saveGameInfo.players, localPlayer);
 
 	try
 	{
@@ -439,65 +303,33 @@ void cMenuControllerMultiplayerHost::startSavedGame()
 		return;
 	}
 
-	sendNetMessage(cMuMsgStartGame());
-
 	application.closeTill(*windowNetworkLobby);
 	windowNetworkLobby->close();
 	signalConnectionManager.connect(windowNetworkLobby->terminated, [&]() { windowNetworkLobby = nullptr; });
 
-	savedGame->start(application);
+	savedGame->start (application);
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::startGamePreparation()
+void cMenuControllerMultiplayerHost::startGamePreparation (const sLobbyPreparationData& lobbyData, const cPlayerBasicData& localPlayer, std::shared_ptr<cConnectionManager> connectionManager)
 {
-	const auto& staticMap = windowNetworkLobby->getStaticMap();
-	const auto& gameSettings = windowNetworkLobby->getGameSettings();
+	newGame = std::make_shared<cNetworkHostGameNew>();
 
-	if (!staticMap || !gameSettings || !connectionManager) return;
+	newGame->setUnitsData(lobbyData.unitsData);
+	newGame->setClanData(lobbyData.clanData);
 
-	newGame = std::make_shared<cNetworkHostGameNew> ();
-
-	//initialize copy of unitsData that will be used in game
-	auto unitsData = std::make_shared<const cUnitsData>(UnitsDataGlobal);
-	newGame->setUnitsData(unitsData);
-	auto clanData = std::make_shared<const cClanData>(ClanDataGlobal);
-	newGame->setClanData(clanData);
-
-
-	newGame->setPlayers (windowNetworkLobby->getPlayersNotShared(), *windowNetworkLobby->getLocalPlayer());
-	newGame->setGameSettings (gameSettings);
-	newGame->setStaticMap (staticMap);
+	newGame->setPlayers (lobbyData.players, localPlayer);
+	newGame->setGameSettings (lobbyData.gameSettings);
+	newGame->setStaticMap (lobbyData.staticMap);
 	newGame->setConnectionManager (connectionManager);
-
-	sendNetMessage(cMuMsgStartGamePreparations(unitsData, clanData));
-
-	landingPositionManager = std::make_shared<cLandingPositionManager> (newGame->getPlayers());
-
-	signalConnectionManager.connect (landingPositionManager->landingPositionSet, [this] (const cPlayerBasicData & player, const cPosition & position)
-	{
-		auto iter = ranges::find_if (playersLandingStatus, [&] (const std::unique_ptr<cPlayerLandingStatus>& entry) { return entry->getPlayer().getNr() == player.getNr(); });
-		assert (iter != playersLandingStatus.end());
-
-		auto& entry = **iter;
-
-		const auto hadSelectedPosition = entry.hasSelectedPosition();
-
-		entry.setHasSelectedPosition (true);
-
-		if (entry.hasSelectedPosition() && !hadSelectedPosition)
-		{
-			sendNetMessage (cMuMsgPlayerHasSelectedLandingPosition(entry.getPlayer().getNr()));
-		}
-	});
 
 	if (newGame->getGameSettings()->getClansEnabled())
 	{
-		startClanSelection(true);
+		startClanSelection (true);
 	}
 	else
 	{
-		startLandingUnitSelection(true);
+		startLandingUnitSelection (true);
 	}
 }
 
@@ -510,7 +342,7 @@ void cMenuControllerMultiplayerHost::startClanSelection(bool isFirstWindowOnGame
 
 	signalConnectionManager.connect (windowClanSelection->canceled, [this, windowClanSelection, isFirstWindowOnGamePreparation]()
 	{
-		if(isFirstWindowOnGamePreparation)
+		if (isFirstWindowOnGamePreparation)
 		{
 			checkReallyWantsToQuit();
 		}
@@ -523,7 +355,7 @@ void cMenuControllerMultiplayerHost::startClanSelection(bool isFirstWindowOnGame
 	{
 		newGame->setLocalPlayerClan (windowClanSelection->getSelectedClan());
 
-		startLandingUnitSelection(false);
+		startLandingUnitSelection (false);
 	});
 }
 
@@ -538,7 +370,7 @@ void cMenuControllerMultiplayerHost::startLandingUnitSelection(bool isFirstWindo
 
 	signalConnectionManager.connect (windowLandingUnitSelection->canceled, [this, windowLandingUnitSelection, isFirstWindowOnGamePreparation]()
 	{
-		if(isFirstWindowOnGamePreparation)
+		if (isFirstWindowOnGamePreparation)
 		{
 			checkReallyWantsToQuit();
 		}
@@ -559,90 +391,42 @@ void cMenuControllerMultiplayerHost::startLandingUnitSelection(bool isFirstWindo
 //------------------------------------------------------------------------------
 void cMenuControllerMultiplayerHost::startLandingPositionSelection()
 {
-	if (!newGame || !newGame->getStaticMap() || !connectionManager) return;
-
+	if (!newGame || !newGame->getStaticMap()) return;
 	auto& map = newGame->getStaticMap();
 	bool fixedBridgeHead = newGame->getGameSettings()->getBridgeheadType() == eGameSettingsBridgeheadType::Definite;
 	auto& landingUnits = newGame->getLandingUnits();
 	auto unitsData = newGame->getUnitsData();
-	windowLandingPositionSelection = std::make_shared<cWindowLandingPositionSelection>(map, fixedBridgeHead, landingUnits, unitsData, true);
-
-	application.show (windowLandingPositionSelection);
+	windowLandingPositionSelection = std::make_shared<cWindowLandingPositionSelection> (map, fixedBridgeHead, landingUnits, unitsData, true);
 
 	signalConnectionManager.connect (windowLandingPositionSelection->opened, [this]()
 	{
-		const auto& localPlayer = newGame->getLocalPlayer();
-
-		playersLandingStatus.push_back (std::make_unique<cPlayerLandingStatus> (localPlayer));
-		windowLandingPositionSelection->getChatBox()->addPlayerEntry (std::make_unique<cChatBoxLandingPlayerListViewItem> (*playersLandingStatus.back()));
-
-		sendNetMessage (cMuMsgInLandingPositionSelectionStatus(localPlayer.getNr(), true));
+		lobbyClient.enterLandingSelection();
 	});
 	signalConnectionManager.connect (windowLandingPositionSelection->closed, [this]()
 	{
-		const auto& localPlayer = newGame->getLocalPlayer();
-
-		windowLandingPositionSelection->getChatBox()->removePlayerEntry (localPlayer.getNr());
-		playersLandingStatus.erase (std::remove_if (playersLandingStatus.begin(), playersLandingStatus.end(), [&] (const std::unique_ptr<cPlayerLandingStatus>& status) { return status->getPlayer().getNr() == localPlayer.getNr(); }), playersLandingStatus.end());
-
-		landingPositionManager->deleteLandingPosition (localPlayer);
-
-		sendNetMessage(cMuMsgInLandingPositionSelectionStatus(localPlayer.getNr(), true));
+		lobbyClient.exitLandingSelection();
 	});
-
 	for (const auto& status : playersLandingStatus)
 	{
 		windowLandingPositionSelection->getChatBox()->addPlayerEntry (std::make_unique<cChatBoxLandingPlayerListViewItem> (*status));
 	}
 
+	application.show (windowLandingPositionSelection);
+
 	signalConnectionManager.connect (windowLandingPositionSelection->canceled, [this]() { windowLandingPositionSelection->close(); });
 	signalConnectionManager.connect (windowLandingPositionSelection->selectedPosition, [this] (cPosition landingPosition)
 	{
-		landingPositionManager->setLandingPosition (newGame->getLocalPlayer(), landingPosition);
+		newGame->setLocalPlayerLandingPosition (landingPosition);
+
+		lobbyClient.selectLandingPosition (landingPosition);
 	});
 
-	signalConnectionManager.connect (windowLandingPositionSelection->getChatBox()->commandEntered, [this] (const std::string & command)
+	signalConnectionManager.connect (windowLandingPositionSelection->getChatBox()->commandEntered, [this] (const std::string& text)
 	{
-		if (command == "/details")
-		{
-			const auto& players = newGame->getPlayers();
-			for (const auto& player : players)
-			{
-				const auto entry = windowLandingPositionSelection->getChatBox()->getPlayerEntryFromNumber (player.getNr());
-				if (entry)
-				{
-					entry->setLandingPositionManager (landingPositionManager.get());
-				}
-			}
-		}
-		else
-		{
-			const auto& localPlayer = newGame->getLocalPlayer();
-			windowLandingPositionSelection->getChatBox()->addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (localPlayer.getName(), command));
-			cSoundDevice::getInstance().playSoundEffect (SoundData.SNDChat);
-			sendNetMessage(cMuMsgChat(command));
-		}
-	});
-
-	signalConnectionManager.connect (landingPositionManager->landingPositionStateChanged, [this] (const cPlayerBasicData & player, eLandingPositionState state)
-	{
-		if (player.getNr() == newGame->getLocalPlayer().getNr())
-		{
-			windowLandingPositionSelection->applyReselectionState (state);
-		}
-		else
-		{
-			sendNetMessage(cMuMsgLandingState(state), player.getNr());
-		}
-	});
-
-	signalConnectionManager.connect (landingPositionManager->allPositionsValid, [this]()
-	{
-		sendNetMessage(cMuMsgStartGame());
-
-		newGame->setLocalPlayerLandingPosition (windowLandingPositionSelection->getSelectedPosition());
-
-		startNewGame();
+		const auto& localPlayer = newGame->getLocalPlayer();
+		windowLandingPositionSelection->getChatBox()->addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (localPlayer.getName(), text));
+		cSoundDevice::getInstance().playSoundEffect (SoundData.SNDChat);
+		lobbyClient.sendChatMessage (text);
 	});
 }
 
@@ -661,17 +445,11 @@ void cMenuControllerMultiplayerHost::startNewGame()
 //------------------------------------------------------------------------------
 void cMenuControllerMultiplayerHost::checkReallyWantsToQuit()
 {
-	auto yesNoDialog = application.show(std::make_shared<cDialogYesNo>("Are you sure you want to abort the game preparation?")); // TODO: translate
+	auto yesNoDialog = application.show (std::make_shared<cDialogYesNo> ("Are you sure you want to abort the game preparation?")); // TODO: translate
 
 	signalConnectionManager.connect(yesNoDialog->yesClicked, [this]()
 	{
-		auto players = windowNetworkLobby->getPlayers();
-		for(const auto& player : players)
-		{
-			player->setReady(false);
-		}
-		sendNetMessage(cMuMsgPlayerAbortedGamePreparations());
-
+		lobbyClient.abortGamePreparation();
 		application.closeTill(*windowNetworkLobby);
 	});
 }
@@ -694,275 +472,6 @@ void cMenuControllerMultiplayerHost::startHost()
 		Log.write ("Game open (Port: " + iToStr (windowNetworkLobby->getPort()) + ")", cLog::eLOG_TYPE_INFO);
 		windowNetworkLobby->disablePortEdit();
 	}
-}
-
-//------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::handleNetMessage (cNetMessage& message)
-{
-	cTextArchiveIn archive;
-	archive << message;
-	Log.write("Menu: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
-
-	switch (message.getType())
-	{
-		case eNetMessageType::TCP_WANT_CONNECT:
-			handleNetMessage_TCP_WANT_CONNECT(static_cast<cNetMessageTcpWantConnect&>(message));
-			return;
-		case eNetMessageType::TCP_CLOSE:
-			handleNetMessage_TCP_CLOSE(static_cast<cNetMessageTcpClose&>(message));
-			return;
-		case eNetMessageType::MULTIPLAYER_LOBBY:
-			//will be handled in the next switch statement
-			break;
-		default:
-			Log.write("Host Menu Controller: Can not handle message", cLog::eLOG_TYPE_NET_ERROR);
-			return;
-	}
-
-	cMultiplayerLobbyMessage& muMessage = static_cast<cMultiplayerLobbyMessage&>(message);
-
-	for (auto& lobbyMessageHandler : lobbyMessageHandlers)
-	{
-		if (lobbyMessageHandler->handleMessage (muMessage))
-		{
-			return;
-		}
-	}
-
-	switch (muMessage.getType())
-	{
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT:
-			handleNetMessage_MU_MSG_CHAT (static_cast<cMuMsgChat&>(muMessage));
-			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IDENTIFIKATION:
-			handleNetMessage_MU_MSG_IDENTIFIKATION(static_cast<cMuMsgIdentification&>(muMessage));
-			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_POSITION:
-			handleNetMessage_MU_MSG_LANDING_POSITION(static_cast<cMuMsgLandingPosition&>(muMessage));
-			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS:
-			handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS(static_cast<cMuMsgInLandingPositionSelectionStatus&>(muMessage));
-			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION:
-			handleNetMessage_MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION(static_cast<cMuMsgPlayerAbortedGamePreparations&>(muMessage));
-			break;
-		default:
-			Log.write("Host Menu Controller: Can not handle message", cLog::eLOG_TYPE_NET_ERROR);
-			break;
-	}
-}
-
-void cMenuControllerMultiplayerHost::handleNetMessage_TCP_WANT_CONNECT(cNetMessageTcpWantConnect& message)
-{
-	if (!connectionManager || !windowNetworkLobby) return;
-
-	//add player
-	auto newPlayer = std::make_shared<cPlayerBasicData>(message.playerName, cPlayerColor(message.playerColor), nextPlayerNumber++, false);
-	windowNetworkLobby->addPlayer(newPlayer);
-
-	windowNetworkLobby->addInfoEntry(lngPack.i18n("Text~Multiplayer~Player_Joined", newPlayer->getName()));
-
-	if (message.packageVersion != PACKAGE_VERSION || message.packageRev != PACKAGE_REV)
-	{
-		windowNetworkLobby->addInfoEntry(lngPack.i18n("Text~Multiplayer~Gameversion_Warning_Server", message.packageVersion + " " + message.packageRev));
-		windowNetworkLobby->addInfoEntry(lngPack.i18n("Text~Multiplayer~Gameversion_Own", (std::string)PACKAGE_VERSION + " " + PACKAGE_REV));
-	}
-
-	//accept the connection and assign the new player number
-	connectionManager->acceptConnection(message.socket, newPlayer->getNr());
-
-	//update playerlist of the clients
-	sendNetMessage (cMuMsgPlayerList (windowNetworkLobby->getPlayersNotShared()));
-	sendGameData(newPlayer->getNr());
-}
-
-//------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::handleNetMessage_TCP_CLOSE(cNetMessageTcpClose& message)
-{
-	if (!connectionManager || !windowNetworkLobby) return;
-
-	auto playerToRemove = windowNetworkLobby->getPlayer(message.playerNr);
-	if (playerToRemove == nullptr) return;
-
-	windowNetworkLobby->addInfoEntry(lngPack.i18n("Text~Multiplayer~Player_Left", playerToRemove->getName()));
-	sendNetMessage(cMuMsgChat("Text~Multiplayer~Player_Left", true, playerToRemove->getName()));
-	windowNetworkLobby->removePlayer(*playerToRemove);
-
-	sendNetMessage (cMuMsgPlayerList (windowNetworkLobby->getPlayersNotShared()));
-}
-
-void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_CHAT (cMuMsgChat& message)
-{
-	if (!connectionManager) return;
-
-	if (newGame)
-	{
-		const auto& players = newGame->getPlayers();
-		auto iter = ranges::find_if (players, [ = ] (const cPlayerBasicData & player) { return player.getNr() == message.playerNr; });
-		if (iter == players.end()) return;
-
-		const auto& player = *iter;
-
-		if (windowLandingPositionSelection)
-		{
-			if (message.translate)
-			{
-				windowLandingPositionSelection->getChatBox()->addChatEntry(std::make_unique<cLobbyChatBoxListViewItem>(lngPack.i18n(message.message, message.insertText)));
-			}
-			else
-			{
-				windowLandingPositionSelection->getChatBox()->addChatEntry(std::make_unique<cLobbyChatBoxListViewItem>(player.getName(), message.message));
-				cSoundDevice::getInstance().playSoundEffect (SoundData.SNDChat);
-			}
-		}
-
-		// send to other clients
-		for (size_t i = 0; i != players.size(); ++i)
-		{
-			if (players[i].getNr() == message.playerNr || players[i].getNr() == newGame->getLocalPlayer().getNr()) continue;
-			sendNetMessage(message, players[i].getNr(), message.playerNr);
-		}
-	}
-	else if (windowNetworkLobby)
-	{
-		auto player = windowNetworkLobby->getPlayer(message.playerNr);
-		if (player == nullptr) return;
-
-		if (message.translate)
-		{
-			windowNetworkLobby->addInfoEntry (lngPack.i18n (message.message, message.insertText));
-		}
-		else
-		{
-			windowNetworkLobby->addChatEntry (player->getName(), message.message);
-		}
-
-		// send to other clients
-		auto players = windowNetworkLobby->getPlayers();
-		for (size_t i = 0; i != players.size(); ++i)
-		{
-			if (players[i]->getNr() == message.playerNr || players[i]->getNr() == windowNetworkLobby->getLocalPlayer()->getNr()) continue;
-			sendNetMessage(message, players[i]->getNr(), message.playerNr);
-		}
-	}
-}
-
-//------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_IDENTIFIKATION (cMuMsgIdentification& message)
-{
-	if (!connectionManager || !windowNetworkLobby) return;
-
-	auto player = windowNetworkLobby->getPlayer(message.playerNr);
-	if (player == nullptr) return;
-
-	player->setColor (cPlayerColor (message.playerColor));
-	player->setName (message.playerName);
-	player->setReady (message.ready);
-
-	// search double taken name or color
-	checkTakenPlayerAttributes (*player);
-
-	sendNetMessage (cMuMsgPlayerList (windowNetworkLobby->getPlayersNotShared()));
-}
-
-//------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_LANDING_POSITION(cMuMsgLandingPosition& message)
-{
-	if (!windowNetworkLobby) return;
-
-	assert (landingPositionManager != nullptr);
-
-	Log.write ("Server: received landing coords from Player " + iToStr (message.playerNr), cLog::eLOG_TYPE_NET_DEBUG);
-
-	auto player = windowNetworkLobby->getPlayer(message.playerNr);
-	if (player == nullptr) return;
-
-	landingPositionManager->setLandingPosition (*player, message.position);
-}
-
-//------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS(cMuMsgInLandingPositionSelectionStatus& message)
-{
-	if (!connectionManager || !windowNetworkLobby) return;
-
-	assert (landingPositionManager != nullptr);
-
-	auto player = windowNetworkLobby->getPlayer(message.landingPlayer);
-	if (player == nullptr) return;
-
-	if (message.isIn)
-	{
-		playersLandingStatus.push_back (std::make_unique<cPlayerLandingStatus> (*player));
-		if (windowLandingPositionSelection) windowLandingPositionSelection->getChatBox()->addPlayerEntry (std::make_unique<cChatBoxLandingPlayerListViewItem> (*playersLandingStatus.back()));
-	}
-	else
-	{
-		if (windowLandingPositionSelection) windowLandingPositionSelection->getChatBox()->removePlayerEntry(message.landingPlayer);
-		playersLandingStatus.erase(std::remove_if(playersLandingStatus.begin(), playersLandingStatus.end(), [message](const std::unique_ptr<cPlayerLandingStatus>& status) { return status->getPlayer().getNr() == message.landingPlayer; }), playersLandingStatus.end());
-
-		landingPositionManager->deleteLandingPosition (*player);
-	}
-
-	// send to all other clients
-	auto players = windowNetworkLobby->getPlayers();
-	for (const auto& receiver : players)
-	{
-		if (receiver->getNr() == windowNetworkLobby->getLocalPlayer()->getNr()) continue;
-
-		sendNetMessage(message, receiver->getNr(), message.playerNr);
-	}
-}
-
-//------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION(cMuMsgPlayerAbortedGamePreparations & message)
-{
-	auto players = windowNetworkLobby->getPlayers();
-	auto player = windowNetworkLobby->getPlayer(message.playerNr);
-	if (player == nullptr) return;
-
-	for(const auto& receiver : players)
-	{
-		receiver->setReady(false);
-
-		if(receiver->getNr() == player->getNr() || receiver->getNr() == windowNetworkLobby->getLocalPlayer()->getNr()) continue;
-
-		sendNetMessage(message, receiver->getNr(), message.playerNr);
-	}
-
-	auto yesNoDialog = application.show(std::make_shared<cDialogOk>("Player " + player->getName() + " has quit from game preparation")); // TODO: translate
-
-	signalConnectionManager.connect(yesNoDialog->done, [this]()
-	{
-		application.closeTill(*windowNetworkLobby);
-	});
-}
-
-//------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::sendNetMessage(cNetMessage& message, int receiverPlayerNr /*= -1*/, int senderPlayerNr /*= -1*/)
-{
-	if (senderPlayerNr == -1 && windowNetworkLobby)
-	{
-		auto& localPlayer = windowNetworkLobby->getLocalPlayer();
-		if (localPlayer)
-		{
-			message.playerNr = localPlayer->getNr();
-		}
-	}
-
-	cTextArchiveIn archive;
-	archive << message;
-	Log.write("Menu: --> " + archive.data() + " to " + toString(receiverPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
-
-	if (receiverPlayerNr == -1)
-		connectionManager->sendToPlayers(message);
-	else
-		connectionManager->sendToPlayer(message, receiverPlayerNr);
-}
-
-//------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::sendNetMessage(cNetMessage&& message, int receiverPlayerNr /*= -1*/, int senderPlayerNr /*= -1*/)
-{
-	sendNetMessage(static_cast<cNetMessage&>(message), receiverPlayerNr, senderPlayerNr);
 }
 
 //------------------------------------------------------------------------------

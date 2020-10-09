@@ -44,9 +44,6 @@ void cWindowNetworkLobbyClient::bindConnections (cLobbyClient& lobbyClient)
 {
 	cWindowNetworkLobby::bindConnections (lobbyClient);
 
-	signalConnectionManager.connect (lobbyClient.onOptionsChanged, [this](std::shared_ptr<cGameSettings> settings, std::shared_ptr<cStaticMap> map, const cSaveGameInfo& saveGameInfo){
-		setSaveGame (saveGameInfo);
-	});
 	signalConnectionManager.connect (lobbyClient.onPlayersList, [this](const cPlayerBasicData& localPlayer, const std::vector<cPlayerBasicData>& players){
 		setIsHost (!players.empty() && localPlayer.getNr() == players[0].getNr());
 	});
@@ -83,12 +80,4 @@ void cWindowNetworkLobbyClient::setIsHost (bool isHost)
 		okButton->hide();
 		settingsButton->hide();
 	}
-}
-
-//------------------------------------------------------------------------------
-void cWindowNetworkLobbyClient::setSaveGame (const cSaveGameInfo& saveInfo_)
-{
-	saveGameInfo = saveInfo_;
-
-	updateSettingsText();
 }

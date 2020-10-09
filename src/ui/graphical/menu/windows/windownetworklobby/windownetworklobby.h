@@ -27,17 +27,17 @@
 #include "utility/signal/signalconnectionmanager.h"
 #include "game/data/savegameinfo.h"
 
-class cImage;
 class cGameSettings;
+class cImage;
 class cLabel;
 class cLineEdit;
 class cLobbyChatBoxListViewItem;
 class cLobbyClient;
 class cLobbyPlayerListViewItem;
+class cLobbyServer;
 class cPlayerBasicData;
 class cPushButton;
 class cStaticMap;
-
 template<typename T> class cListView;
 
 class cWindowNetworkLobby : public cWindow
@@ -46,6 +46,7 @@ public:
 	explicit cWindowNetworkLobby (const std::string title, bool disableIp);
 
 	void bindConnections (cLobbyClient&);
+	void bindConnections (cLobbyServer&);
 
 	void addChatEntry (const std::string& playerName, const std::string& message);
 	void addInfoEntry (const std::string& message);
@@ -56,6 +57,7 @@ public:
 
 	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
 	void setGameSettings (std::unique_ptr<cGameSettings> gameSettings);
+	void setSaveGame (const cSaveGameInfo&);
 
 	void setMapDownloadPercent (int percent);
 	void setMapDownloadCanceled();
@@ -90,10 +92,6 @@ public:
 
 	cSignal<void ()> triggeredStartGame;
 	cSignal<void ()> backClicked;
-
-	cSignal<void ()> staticMapChanged;
-	cSignal<void ()> gameSettingsChanged;
-	cSignal<void ()> saveGameChanged;
 protected:
 	cSignalConnectionManager signalConnectionManager;
 

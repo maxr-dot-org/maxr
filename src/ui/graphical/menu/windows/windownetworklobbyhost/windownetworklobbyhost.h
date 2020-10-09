@@ -23,14 +23,11 @@
 #include "ui/graphical/menu/windows/windownetworklobby/windownetworklobby.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "game/data/savegameinfo.h"
 
 class cWindowNetworkLobbyHost : public cWindowNetworkLobby
 {
 public:
 	cWindowNetworkLobbyHost();
-
-	bool setSaveGame (const cSaveGameInfo&, cApplication*);
 
 	cSignal<void ()> triggeredStartHost;
 private:

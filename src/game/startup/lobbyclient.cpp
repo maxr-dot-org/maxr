@@ -200,6 +200,20 @@ void cLobbyClient::changeLocalPlayerProperties (const std::string& name, cPlayer
 }
 
 //------------------------------------------------------------------------------
+void cLobbyClient::askToFinishLobby (cLobbyServer* lobbyServer)
+{
+	// TODO: Should be dedicated message.
+	if (lobbyServer)
+	{
+		lobbyServer->askToFinishLobby (localPlayer.getNr());
+	}
+	else
+	{
+		sendChatMessage ("--server go");
+	}
+}
+
+//------------------------------------------------------------------------------
 void cLobbyClient::abortGamePreparation()
 {
 	sendNetMessage (cMuMsgPlayerAbortedGamePreparations());
