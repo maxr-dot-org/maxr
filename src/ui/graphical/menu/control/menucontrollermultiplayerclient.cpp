@@ -19,6 +19,12 @@
 
 #include "ui/graphical/menu/control/menucontrollermultiplayerclient.h"
 
+#include "game/data/units/landingunit.h"
+#include "game/logic/client.h"
+#include "game/startup/gamepreparation.h"
+#include "game/startup/network/client/networkclientgamenew.h"
+#include "game/startup/network/client/networkclientgamereconnection.h"
+#include "game/startup/network/client/networkclientgamesaved.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/windows/windownetworklobbyclient/windownetworklobbyclient.h"
 #include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
@@ -32,16 +38,8 @@
 #include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
 #include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"
 #include "ui/graphical/game/widgets/chatbox.h"
-#include "game/startup/network/client/networkclientgamenew.h"
-#include "game/startup/network/client/networkclientgamereconnection.h"
-#include "game/startup/network/client/networkclientgamesaved.h"
-#include "game/data/units/landingunit.h"
 #include "utility/language.h"
 #include "utility/log.h"
-#include "game/logic/client.h"
-
-// TODO: remove
-std::vector<std::pair<sID, int>> createInitialLandingUnitsList(int clan, const cGameSettings& gameSettings, const cUnitsData& unitsData); // defined in windowsingleplayer.cpp
 
 //------------------------------------------------------------------------------
 cMenuControllerMultiplayerClient::cMenuControllerMultiplayerClient (cApplication& application_) :
@@ -339,7 +337,7 @@ void cMenuControllerMultiplayerClient::startLandingUnitSelection(bool isFirstWin
 {
 	if (!newGame || !newGame->getGameSettings()) return;
 
-	auto initialLandingUnits = createInitialLandingUnitsList (newGame->getLocalPlayerClan(), *newGame->getGameSettings(), *newGame->getUnitsData());
+	auto initialLandingUnits = computeInitialLandingUnits (newGame->getLocalPlayerClan(), *newGame->getGameSettings(), *newGame->getUnitsData());
 
 	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), newGame->getLocalPlayerClan(), initialLandingUnits, newGame->getGameSettings()->getStartCredits(), newGame->getUnitsData()));
 

@@ -24,14 +24,11 @@
 #include "game/data/model.h"
 #include "game/data/player/clans.h"
 #include "game/data/player/player.h"
+#include "game/startup/gamepreparation.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/ranges.h"
 #include "utility/string/toString.h"
-
-// TODO: remove
-std::vector<std::pair<sID, int>> createInitialLandingUnitsList(int clan, const cGameSettings& gameSettings, const cUnitsData& unitsData); // defined in windowsingleplayer.cpp
-
 
 //------------------------------------------------------------------------------
 cActionInitNewGame::cActionInitNewGame() :
@@ -123,7 +120,7 @@ void cActionInitNewGame::execute(cModel& model) const
 	}
 
 	// land vehicles
-	auto initialLandingUnits = createInitialLandingUnitsList(clan, *model.getGameSettings(), unitsdata);
+	auto initialLandingUnits = computeInitialLandingUnits (clan, *model.getGameSettings(), unitsdata);
 	for (const auto& landing : landingUnits)
 	{
 		if (!unitsdata.isValidId(landing.unitID))

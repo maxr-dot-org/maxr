@@ -17,30 +17,32 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "ui/graphical/menu/windows/windowsingleplayer.h"
+
 #include <functional>
 
-#include "ui/graphical/menu/windows/windowsingleplayer.h"
 #include "game/data/gamesettings.h"
-#include "ui/graphical/menu/dialogs/dialogok.h"
-#include "ui/graphical/menu/windows/windowgamesettings/windowgamesettings.h"
-#include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
-#include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
-#include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
-#include "ui/graphical/menu/windows/windowlandingpositionselection/windowlandingpositionselection.h"
-#include "ui/graphical/menu/windows/windowload/windowload.h"
-#include "ui/graphical/menu/widgets/pushbutton.h"
-#include "ui/graphical/application.h"
-#include "ui/graphical/game/gamegui.h"
-#include "game/startup/local/singleplayer/localsingleplayergamenew.h"
-#include "game/startup/local/singleplayer/localsingleplayergamesaved.h"
-#include "utility/language.h"
-#include "utility/log.h"
 #include "game/data/player/player.h"
+#include "game/data/savegameinfo.h"
 #include "game/data/units/landingunit.h"
-#include "settings.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
-#include "game/data/savegameinfo.h"
+#include "game/startup/gamepreparation.h"
+#include "game/startup/local/singleplayer/localsingleplayergamenew.h"
+#include "game/startup/local/singleplayer/localsingleplayergamesaved.h"
+#include "settings.h"
+#include "ui/graphical/application.h"
+#include "ui/graphical/game/gamegui.h"
+#include "ui/graphical/menu/dialogs/dialogok.h"
+#include "ui/graphical/menu/widgets/pushbutton.h"
+#include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
+#include "ui/graphical/menu/windows/windowgamesettings/windowgamesettings.h"
+#include "ui/graphical/menu/windows/windowlandingpositionselection/windowlandingpositionselection.h"
+#include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
+#include "ui/graphical/menu/windows/windowload/windowload.h"
+#include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
+#include "utility/language.h"
+#include "utility/log.h"
 
 //------------------------------------------------------------------------------
 cWindowSinglePlayer::cWindowSinglePlayer() :
@@ -61,67 +63,6 @@ cWindowSinglePlayer::cWindowSinglePlayer() :
 //------------------------------------------------------------------------------
 cWindowSinglePlayer::~cWindowSinglePlayer()
 {}
-
-// TODO: find nice place
-//------------------------------------------------------------------------------
-std::vector<std::pair<sID, int>> createInitialLandingUnitsList(int clan, const cGameSettings& gameSettings, const cUnitsData& unitsData)
-{
-	std::vector<std::pair<sID, int>> initialLandingUnits;
-
-	if (gameSettings.getBridgeheadType() == eGameSettingsBridgeheadType::Mobile) return initialLandingUnits;
-
-	const auto& constructorID = unitsData.getConstructorData().ID;
-	const auto& engineerID = unitsData.getEngineerData().ID;
-	const auto& surveyorID = unitsData.getSurveyorData().ID;
-
-	initialLandingUnits.push_back (std::make_pair (constructorID, 40));
-	initialLandingUnits.push_back (std::make_pair (engineerID, 20));
-	initialLandingUnits.push_back (std::make_pair (surveyorID, 0));
-
-	if (clan == 7)
-	{
-		const int startCredits = gameSettings.getStartCredits();
-
-		size_t numAddConstructors = 0;
-		size_t numAddEngineers = 0;
-
-		if (startCredits < 100)
-		{
-			numAddEngineers = 1;
-		}
-		else if (startCredits < 150)
-		{
-			numAddEngineers = 1;
-			numAddConstructors = 1;
-		}
-		else if (startCredits < 200)
-		{
-			numAddEngineers = 2;
-			numAddConstructors = 1;
-		}
-		else if (startCredits < 300)
-		{
-			numAddEngineers = 2;
-			numAddConstructors = 2;
-		}
-		else
-		{
-			numAddEngineers = 3;
-			numAddConstructors = 2;
-		}
-
-		for (size_t i = 0; i != numAddConstructors; ++i)
-		{
-			initialLandingUnits.push_back (std::make_pair (constructorID, 0));
-		}
-		for (size_t i = 0; i != numAddEngineers; ++i)
-		{
-			initialLandingUnits.push_back (std::make_pair (engineerID, 0));
-		}
-	}
-
-	return initialLandingUnits;
-}
 
 //------------------------------------------------------------------------------
 void cWindowSinglePlayer::newGameClicked()
@@ -165,7 +106,7 @@ void cWindowSinglePlayer::newGameClicked()
 				{
 					game->setPlayerClan (windowClanSelection->getSelectedClan());
 
-					auto initialLandingUnits = createInitialLandingUnitsList (windowClanSelection->getSelectedClan(), *gameSettings, *game->getUnitsData());
+					auto initialLandingUnits = computeInitialLandingUnits (windowClanSelection->getSelectedClan(), *gameSettings, *game->getUnitsData());
 
 					auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), windowClanSelection->getSelectedClan(), initialLandingUnits, gameSettings->getStartCredits(), game->getUnitsData()));
 
@@ -198,7 +139,7 @@ void cWindowSinglePlayer::newGameClicked()
 			}
 			else
 			{
-				auto initialLandingUnits = createInitialLandingUnitsList (-1, *gameSettings, *game->getUnitsData());
+				auto initialLandingUnits = computeInitialLandingUnits (-1, *gameSettings, *game->getUnitsData());
 
 				auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), -1, initialLandingUnits, gameSettings->getStartCredits(), game->getUnitsData()));
 

@@ -19,25 +19,23 @@
 
 #include "ui/graphical/menu/control/menucontrollermultiplayerhotseat.h"
 
-#include "ui/graphical/application.h"
-#include "ui/graphical/menu/windows/windowgamesettings/windowgamesettings.h"
-#include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
-#include "ui/graphical/menu/windows/windowplayerselection/windowplayerselection.h"
-#include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
-#include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
-#include "ui/graphical/menu/windows/windowlandingpositionselection/windowlandingpositionselection.h"
 #include "game/data/gamesettings.h"
-#include "ui/graphical/menu/dialogs/dialogok.h"
-#include "ui/graphical/menu/dialogs/dialogyesno.h"
-#include "game/startup/local/hotseat/localhotseatgamenew.h"
+#include "game/data/map/map.h"
 #include "game/data/player/playerbasicdata.h"
 #include "game/data/units/landingunit.h"
-#include "game/data/map/map.h"
 #include "game/logic/upgradecalculator.h"
+#include "game/startup/gamepreparation.h"
+#include "game/startup/local/hotseat/localhotseatgamenew.h"
+#include "ui/graphical/application.h"
+#include "ui/graphical/menu/dialogs/dialogok.h"
+#include "ui/graphical/menu/dialogs/dialogyesno.h"
+#include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
+#include "ui/graphical/menu/windows/windowgamesettings/windowgamesettings.h"
+#include "ui/graphical/menu/windows/windowlandingpositionselection/windowlandingpositionselection.h"
+#include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
+#include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
+#include "ui/graphical/menu/windows/windowplayerselection/windowplayerselection.h"
 #include "utility/language.h"
-
-// TODO: remove
-std::vector<std::pair<sID, int>> createInitialLandingUnitsList(int clan, const cGameSettings& gameSettings, const cUnitsData& unitsData); // defined in windowsingleplayer.cpp
 
 //------------------------------------------------------------------------------
 cMenuControllerMultiplayerHotSeat::cMenuControllerMultiplayerHotSeat (cApplication& application_) :
@@ -218,7 +216,7 @@ void cMenuControllerMultiplayerHotSeat::selectLandingUnits (size_t playerIndex, 
 {
 	if (!game) return;
 
-	auto initialLandingUnits = createInitialLandingUnitsList (game->getPlayerClan (playerIndex), *game->getGameSettings(), *game->getUnitsData());
+	auto initialLandingUnits = computeInitialLandingUnits (game->getPlayerClan (playerIndex), *game->getGameSettings(), *game->getUnitsData());
 
 	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (game->getPlayer (playerIndex).getColor(), game->getPlayerClan (playerIndex), initialLandingUnits, game->getGameSettings()->getStartCredits(), game->getUnitsData()));
 

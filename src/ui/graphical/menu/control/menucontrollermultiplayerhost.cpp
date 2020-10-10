@@ -19,40 +19,30 @@
 
 #include "ui/graphical/menu/control/menucontrollermultiplayerhost.h"
 
+#include "game/data/player/player.h"
+#include "game/data/savegameinfo.h"
+#include "game/data/savegame.h"
+#include "game/data/units/landingunit.h"
+#include "game/logic/server.h"
+#include "game/startup/gamepreparation.h"
+#include "game/startup/network/host/networkhostgamenew.h"
+#include "game/startup/network/host/networkhostgamesaved.h"
+#include "mapdownloader/mapuploadmessagehandler.h"
 #include "ui/graphical/application.h"
-#include "ui/graphical/menu/windows/windownetworklobbyhost/windownetworklobbyhost.h"
-#include "game/data/gamesettings.h"
-#include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
-#include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
-#include "ui/graphical/menu/windows/windowlandingpositionselection/windowlandingpositionselection.h"
-#include "ui/graphical/menu/windows/windowgamesettings/windowgamesettings.h"
-#include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
-#include "ui/graphical/menu/windows/windowload/windowload.h"
-#include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
-#include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"
 #include "ui/graphical/game/widgets/chatbox.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/dialogs/dialogyesno.h"
-#include "game/startup/network/host/networkhostgamenew.h"
-#include "game/startup/network/host/networkhostgamesaved.h"
-#include "maxrversion.h"
-#include "game/data/map/map.h"
-#include "game/data/player/player.h"
-#include "game/data/units/landingunit.h"
+#include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"
+#include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
+#include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
+#include "ui/graphical/menu/windows/windowgamesettings/windowgamesettings.h"
+#include "ui/graphical/menu/windows/windowlandingpositionselection/windowlandingpositionselection.h"
+#include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
+#include "ui/graphical/menu/windows/windowload/windowload.h"
+#include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
+#include "ui/graphical/menu/windows/windownetworklobbyhost/windownetworklobbyhost.h"
 #include "utility/language.h"
 #include "utility/log.h"
-#include "protocol/lobbymessage.h"
-#include "mapdownloader/mapdownload.h"
-#include "mapdownloader/mapuploadmessagehandler.h"
-#include "game/data/savegame.h"
-#include "game/logic/client.h"
-#include "game/logic/server.h"
-#include "game/data/savegameinfo.h"
-#include "utility/string/toString.h"
-#include "game/logic/action/action.h"
-
-// TODO: remove
-std::vector<std::pair<sID, int>> createInitialLandingUnitsList(int clan, const cGameSettings& gameSettings, const cUnitsData& unitsData); // defined in windowsingleplayer.cpp
 
 //------------------------------------------------------------------------------
 cMenuControllerMultiplayerHost::cMenuControllerMultiplayerHost (cApplication& application_) :
@@ -364,7 +354,7 @@ void cMenuControllerMultiplayerHost::startLandingUnitSelection(bool isFirstWindo
 {
 	if (!newGame || !newGame->getGameSettings()) return;
 
-	auto initialLandingUnits = createInitialLandingUnitsList (newGame->getLocalPlayerClan(), *newGame->getGameSettings(), *newGame->getUnitsData());
+	auto initialLandingUnits = computeInitialLandingUnits (newGame->getLocalPlayerClan(), *newGame->getGameSettings(), *newGame->getUnitsData());
 
 	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), newGame->getLocalPlayerClan(), initialLandingUnits, newGame->getGameSettings()->getStartCredits(), newGame->getUnitsData()));
 
