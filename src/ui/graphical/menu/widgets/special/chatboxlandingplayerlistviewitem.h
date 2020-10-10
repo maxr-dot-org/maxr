@@ -22,6 +22,7 @@
 
 #include <memory>
 
+#include "game/data/player/playerbasicdata.h"
 #include "ui/graphical/menu/widgets/abstractlistviewitem.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
@@ -43,7 +44,7 @@ public:
 
 	mutable cSignal<void ()> hasSelectedPositionChanged;
 private:
-	const cPlayerBasicData* player;
+	cPlayerBasicData player;
 	bool selectedPosition;
 };
 

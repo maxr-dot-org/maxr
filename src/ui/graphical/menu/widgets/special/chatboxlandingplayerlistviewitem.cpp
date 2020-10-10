@@ -25,15 +25,15 @@
 
 
 //------------------------------------------------------------------------------
-cPlayerLandingStatus::cPlayerLandingStatus (const cPlayerBasicData& player_) :
-	player (&player_),
+cPlayerLandingStatus::cPlayerLandingStatus (const cPlayerBasicData& player) :
+	player (player),
 	selectedPosition (false)
 {}
 
 //------------------------------------------------------------------------------
 const cPlayerBasicData& cPlayerLandingStatus::getPlayer() const
 {
-	return *player;
+	return player;
 }
 
 //------------------------------------------------------------------------------
