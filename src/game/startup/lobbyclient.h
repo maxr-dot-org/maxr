@@ -63,6 +63,7 @@ public:
 	void wantToRejoinGame();
 	void disconnect();
 
+	const std::string& getLocalPlayerName() const { return localPlayer.getName(); }
 	const std::string& getDownloadingMapName() const { return triedLoadMapName; }
 	const cStaticMap* getStaticMap() const { return staticMap.get(); }
 	const cGameSettings* getGameSettings() const { return gameSettings.get(); }

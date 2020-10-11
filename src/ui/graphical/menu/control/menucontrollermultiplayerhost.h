@@ -26,13 +26,12 @@
 #include "game/connectionmanager.h"
 #include "game/startup/lobbyclient.h"
 #include "game/startup/lobbyserver.h"
+#include "ui/graphical/menu/control/initgamepreparation.h"
 #include "utility/runnable.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 class cApplication;
 class cNetworkHostGameNew;
-class cPlayerLandingStatus;
-class cWindowLandingPositionSelection;
 class cWindowNetworkLobbyHost;
 
 class cMenuControllerMultiplayerHost : public cRunnable, public std::enable_shared_from_this<cMenuControllerMultiplayerHost>
@@ -54,10 +53,8 @@ private:
 	cApplication& application;
 
 	std::shared_ptr<cWindowNetworkLobbyHost> windowNetworkLobby;
-	std::shared_ptr<cWindowLandingPositionSelection> windowLandingPositionSelection;
+	std::shared_ptr<cInitGamePreparation> initGamePreparation;
 	std::shared_ptr<cNetworkHostGameNew> newGame;
-
-	std::vector<std::unique_ptr<cPlayerLandingStatus>> playersLandingStatus;
 
 private:
 	void reset();
@@ -71,14 +68,9 @@ private:
 	void checkGameStart();
 
 	void startSavedGame (const cSaveGameInfo&, std::shared_ptr<cStaticMap>, std::shared_ptr<cConnectionManager>, cPlayerBasicData);
-
 	void startGamePreparation (const sLobbyPreparationData&, const cPlayerBasicData& localPlayer, std::shared_ptr<cConnectionManager>);
 
-	void startClanSelection(bool isFirstWindowOnGamePreparation);
-	void startLandingUnitSelection(bool isFirstWindowOnGamePreparation);
-	void startLandingPositionSelection();
 	void startNewGame();
-	void checkReallyWantsToQuit();
 
 	void saveOptions();
 };

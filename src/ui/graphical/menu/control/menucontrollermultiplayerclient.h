@@ -23,14 +23,13 @@
 #include <memory>
 
 #include "game/startup/lobbyclient.h"
+#include "ui/graphical/menu/control/initgamepreparation.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/runnable.h"
 
 class cApplication;
-class cWindowNetworkLobbyClient;
-class cWindowLandingPositionSelection;
 class cNetworkClientGameNew;
-class cPlayerLandingStatus;
+class cWindowNetworkLobbyClient;
 
 class cMenuControllerMultiplayerClient : public cRunnable, public std::enable_shared_from_this<cMenuControllerMultiplayerClient>
 {
@@ -49,10 +48,8 @@ private:
 	cApplication& application;
 
 	std::shared_ptr<cWindowNetworkLobbyClient> windowNetworkLobby;
-	std::shared_ptr<cWindowLandingPositionSelection> windowLandingPositionSelection;
+	std::shared_ptr<cInitGamePreparation> initGamePreparation;
 	std::shared_ptr<cNetworkClientGameNew> newGame;
-
-	std::vector<std::unique_ptr<cPlayerLandingStatus>> playersLandingStatus;
 
 	void reset();
 
@@ -65,12 +62,8 @@ private:
 	void startSavedGame (const cSaveGameInfo&, std::shared_ptr<cStaticMap>, std::shared_ptr<cConnectionManager>, cPlayerBasicData);
 	void startGamePreparation(const sLobbyPreparationData&, const cPlayerBasicData&, std::shared_ptr<cConnectionManager>);
 
-	void startClanSelection(bool isFirstWindowOnGamePreparation);
-	void startLandingUnitSelection(bool isFirstWindowOnGamePreparation);
-	void startLandingPositionSelection();
 	void startNewGame();
 	void reconnectToGame (std::shared_ptr<cStaticMap>, std::shared_ptr<cConnectionManager>, cPlayerBasicData, const std::vector<cPlayerBasicData>&);
-	void checkReallyWantsToQuit();
 
 	void saveOptions();
 	bool connectionLost;
