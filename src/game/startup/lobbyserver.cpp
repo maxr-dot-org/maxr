@@ -20,6 +20,7 @@
 #include "lobbyserver.h"
 
 #include "game/data/savegame.h"
+#include "game/logic/server.h"
 #include "game/startup/lobbyclient.h"
 #include "game/startup/lobbyutils.h"
 #include "maxrversion.h"
@@ -333,7 +334,26 @@ void cLobbyServer::askToFinishLobby (int fromPlayer)
 		players.erase (std::remove_if (players.begin(), players.end(), byPlayerNr (-1)), players.end());
 
 		sendNetMessage (cMuMsgStartGame());
-		onStartLoadGame (saveGameInfo, connectionManager);
+
+		server = std::make_unique<cServer> (connectionManager);
+
+		try
+		{
+			server->loadGameState (saveGameInfo.number);
+		}
+		catch (const std::runtime_error& e)
+		{
+			Log.write((std::string)"Error loading save game: " + e.what(), cLog::eLOG_TYPE_NET_ERROR);
+			server.reset();
+			onErrorLoadSavedGame();
+			return;
+		}
+
+		connectionManager->setLocalServer(server.get());
+		server->start();
+		server->resyncClientModel();
+
+		onStartSavedGame (*server, saveGameInfo);
 		return;
 	}
 
@@ -349,7 +369,17 @@ void cLobbyServer::askToFinishLobby (int fromPlayer)
 		sendNetMessage (cMuMsgStartGame());
 		auto unitsData = std::make_shared<const cUnitsData>(UnitsDataGlobal);
 		auto clanData = std::make_shared<const cClanData>(ClanDataGlobal);
-		onStartNewGame (sLobbyPreparationData{unitsData, clanData, gameSettings, staticMap}, players, connectionManager);
+
+		server = std::make_unique<cServer> (connectionManager);
+
+		server->setPreparationData ({unitsData, clanData, gameSettings, staticMap});
+		server->setPlayers(players);
+
+		connectionManager->setLocalServer(server.get());
+
+		server->start();
+
+		onStartNewGame (*server);
 	});
 	auto unitsData = std::make_shared<const cUnitsData>(UnitsDataGlobal);
 	auto clanData = std::make_shared<const cClanData>(ClanDataGlobal);

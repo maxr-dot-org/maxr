@@ -32,6 +32,7 @@
 
 class cApplication;
 class cNetworkHostGameNew;
+class cNetworkHostGameSaved;
 class cWindowNetworkLobbyHost;
 
 class cMenuControllerMultiplayerHost : public cRunnable, public std::enable_shared_from_this<cMenuControllerMultiplayerHost>
@@ -55,6 +56,7 @@ private:
 	std::shared_ptr<cWindowNetworkLobbyHost> windowNetworkLobby;
 	std::shared_ptr<cInitGamePreparation> initGamePreparation;
 	std::shared_ptr<cNetworkHostGameNew> newGame;
+	std::shared_ptr<cNetworkHostGameSaved> savedGame;
 
 private:
 	void reset();
@@ -70,7 +72,7 @@ private:
 	void startSavedGame (const cSaveGameInfo&, std::shared_ptr<cStaticMap>, std::shared_ptr<cConnectionManager>, cPlayerBasicData);
 	void startGamePreparation (const sLobbyPreparationData&, const std::vector<cPlayerBasicData>&, const cPlayerBasicData& localPlayer, std::shared_ptr<cConnectionManager>);
 
-	void startNewGame();
+	void startNewGame (cServer&);
 
 	void saveOptions();
 };

@@ -124,26 +124,8 @@ cServerGame::cServerGame (std::shared_ptr<cConnectionManager> connectionManager,
 		std::cout << player.getName() << " finished to download map." << std::endl;
 	});
 
-	signalConnectionManager.connect (lobbyServer.onStartNewGame, [this](const sLobbyPreparationData& preparationData, const std::vector<cPlayerBasicData>& players, std::shared_ptr<cConnectionManager> connectionManager)
-	{
-		server = std::make_unique<cServer> (connectionManager);
-
-		server->setPreparationData (preparationData);
-		server->setPlayers(players);
-
-		connectionManager->setLocalServer(server.get());
-
-		server->start();
-	});
-
-	signalConnectionManager.connect (lobbyServer.onStartLoadGame, [this](const cSaveGameInfo& saveGameInfo, std::shared_ptr<cConnectionManager> connectionManager)
-	{
-		server = std::make_unique<cServer> (connectionManager);
-		server->loadGameState (saveGameInfo.number);
-		connectionManager->setLocalServer(server.get());
-		server->start();
-		server->resyncClientModel();
-	});
+	//signalConnectionManager.connect (lobbyServer.onStartNewGame, [this](cServer& server) {});
+	//signalConnectionManager.connect (lobbyServer.onStartSavedGame, [this](cServer& server, const cSaveGameInfo& saveGameInfo) {});
 }
 
 //------------------------------------------------------------------------------

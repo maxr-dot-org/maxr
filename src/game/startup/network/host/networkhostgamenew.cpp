@@ -35,23 +35,18 @@ cNetworkHostGameNew::cNetworkHostGameNew() :
 {}
 
 //------------------------------------------------------------------------------
-void cNetworkHostGameNew::start (cApplication& application)
+void cNetworkHostGameNew::start (cApplication& application, cServer& server)
 {
 	assert (gameSettings != nullptr);
 
-	server = std::make_unique<cServer> (connectionManager);
-	localClient = std::make_shared<cClient> (connectionManager);
+	this->server = &server;
 
-	server->setPreparationData ({unitsData, clanData, gameSettings, staticMap});
-	server->setPlayers(players);
+	localClient = std::make_shared<cClient> (connectionManager);
 
 	localClient->setPreparationData ({unitsData, clanData, gameSettings, staticMap});
 	localClient->setPlayers(players, localPlayerNr);
 
-	connectionManager->setLocalServer(server.get());
 	connectionManager->setLocalClient(localClient.get(), localPlayerNr);
-
-	server->start();
 
 	cActionInitNewGame action;
 	action.clan = localPlayerClan;
@@ -62,7 +57,7 @@ void cNetworkHostGameNew::start (cApplication& application)
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 	gameGuiController->setSingleClient(localClient);
-	gameGuiController->setServer(server.get());
+	gameGuiController->setServer(&server);
 
 	cGameGuiState playerGameGuiState;
 	playerGameGuiState.setMapPosition (localPlayerLandingPosition);

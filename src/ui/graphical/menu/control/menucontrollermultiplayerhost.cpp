@@ -95,21 +95,29 @@ cMenuControllerMultiplayerHost::cMenuControllerMultiplayerHost (cApplication& ap
 			});
 		}
 	});
-
-	signalConnectionManager.connect (lobbyClient.onStartNewGame, [this](){
-		if (!newGame) return;
-
-		startNewGame();
-	});
-
 	signalConnectionManager.connect (lobbyClient.onStartSavedGame, [this](const cSaveGameInfo& saveGameInfo, std::shared_ptr<cStaticMap> staticMap, std::shared_ptr<cConnectionManager> connectionManager, cPlayerBasicData localPlayer){
-		saveOptions();
 		startSavedGame (saveGameInfo, staticMap, connectionManager, localPlayer);
 	});
 	// lobbyClient.onReconnectGame
 	// lobbyClient.onFailToReconnectGameNoMap
 	// lobbyClient.onFailToReconnectGameInvalidMap
 	// Doesn't apply as client is directly connected to server
+
+	signalConnectionManager.connect (lobbyServer.onStartNewGame, [this] (cServer& server){
+		if (!newGame) return;
+
+		startNewGame (server);
+	});
+
+	signalConnectionManager.connect (lobbyServer.onErrorLoadSavedGame, [this](){
+		application.show(std::make_shared<cDialogOk>(lngPack.i18n("Text~Error_Messages~ERROR_Save_Loading")));
+	});
+
+	signalConnectionManager.connect (lobbyServer.onStartSavedGame, [this](cServer& server, const cSaveGameInfo& saveGameInfo){
+		saveOptions();
+		savedGame = std::make_shared<cNetworkHostGameSaved> ();
+		savedGame->setServer (server);
+	});
 
 	lobbyClient.connectToLocalServer (lobbyServer);
 }
@@ -230,24 +238,11 @@ void cMenuControllerMultiplayerHost::checkGameStart()
 void cMenuControllerMultiplayerHost::startSavedGame (const cSaveGameInfo& saveGameInfo, std::shared_ptr<cStaticMap> staticMap, std::shared_ptr<cConnectionManager> connectionManager, cPlayerBasicData localPlayer)
 {
 	if (!windowNetworkLobby) return;
-	auto savedGame = std::make_shared<cNetworkHostGameSaved> ();
 
 	savedGame->setConnectionManager (connectionManager);
 	savedGame->setSaveGameNumber(saveGameInfo.number);
 
 	savedGame->setPlayers (saveGameInfo.players, localPlayer);
-
-	try
-	{
-		savedGame->loadGameData();
-	}
-	catch (const std::runtime_error& e)
-	{
-		Log.write((std::string)"cMenuControllerMultiplayerHost: Error loading save game. " + e.what(), cLog::eLOG_TYPE_NET_ERROR);
-		savedGame = nullptr;
-		application.show(std::make_shared<cDialogOk>(lngPack.i18n("Text~Error_Messages~ERROR_Save_Loading")));
-		return;
-	}
 
 	application.closeTill(*windowNetworkLobby);
 	windowNetworkLobby->close();
@@ -276,7 +271,7 @@ void cMenuControllerMultiplayerHost::startGamePreparation (const sLobbyPreparati
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::startNewGame()
+void cMenuControllerMultiplayerHost::startNewGame (cServer& server)
 {
 	if (!newGame) return;
 
@@ -289,7 +284,7 @@ void cMenuControllerMultiplayerHost::startNewGame()
 	windowNetworkLobby->close();
 	signalConnectionManager.connect (windowNetworkLobby->terminated, [&]() { windowNetworkLobby = nullptr; });
 
-	newGame->start (application);
+	newGame->start (application, server);
 }
 
 //------------------------------------------------------------------------------

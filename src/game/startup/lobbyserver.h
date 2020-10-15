@@ -35,6 +35,7 @@
 #include <vector>
 
 class cLobbyClient;
+class cServer;
 
 class cLobbyServer : public INetMessageReceiver
 {
@@ -79,8 +80,9 @@ public:
 	cSignal<void (const cPlayerBasicData& fromPlayer)> onMapRequested;
 	cSignal<void (const cPlayerBasicData& fromPlayer)> onMapUploaded;
 
-	cSignal<void (const sLobbyPreparationData&, const std::vector<cPlayerBasicData>&, std::shared_ptr<cConnectionManager>)> onStartNewGame;
-	cSignal<void (const cSaveGameInfo&, std::shared_ptr<cConnectionManager>)> onStartLoadGame;
+	cSignal<void (cServer&)> onStartNewGame;
+	cSignal<void()> onErrorLoadSavedGame;
+	cSignal<void (cServer&, const cSaveGameInfo&)> onStartSavedGame;
 
 private:
 
@@ -123,6 +125,8 @@ private:
 
 	std::shared_ptr<cLandingPositionManager> landingPositionManager;
 	std::set<int> landedPlayers;
+
+	std::unique_ptr<cServer> server;
 };
 
 #endif

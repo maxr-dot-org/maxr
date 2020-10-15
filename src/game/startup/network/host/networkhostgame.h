@@ -43,7 +43,7 @@ protected:
 	std::shared_ptr<cConnectionManager> connectionManager;
 
 	std::shared_ptr<cClient> localClient;
-	std::unique_ptr<cServer> server;
+	cServer* server = nullptr;
 
 	std::unique_ptr<cGameGuiController> gameGuiController;
 };

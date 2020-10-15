@@ -33,7 +33,7 @@ class cPlayerBasicData;
 class cNetworkHostGameSaved : public cNetworkHostGame
 {
 public:
-	void loadGameData();
+	void setServer (cServer& server) { this->server = &server; }
 	void start (cApplication& application);
 
 	void setSaveGameNumber (int saveGameNumber);

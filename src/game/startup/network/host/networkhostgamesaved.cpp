@@ -28,23 +28,9 @@
 #include "ui/graphical/application.h"
 #include "utility/ranges.h"
 
-void cNetworkHostGameSaved::loadGameData()
-{
-	// cNetworkHostGameSaved::start() must not throw any errors,
-	// because clients are already started. So try to load
-	// game data in this function, before initializing gameGui & clients
-
-	server = std::make_unique<cServer>(connectionManager);
-	server->loadGameState(saveGameNumber);
-
-}
-
 //------------------------------------------------------------------------------
 void cNetworkHostGameSaved::start (cApplication& application)
 {
-	// setup server
-	connectionManager->setLocalServer(server.get());
-
 	//setup client
 	localClient = std::make_shared<cClient> (connectionManager);
 	connectionManager->setLocalClient(localClient.get(), localPlayerNr);
@@ -53,12 +39,11 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	localClient->setMap (staticMap);
 
 	localClient->sendNetMessage(cNetMessageRequestResync(-1, saveGameNumber));
-	server->start();
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
 	gameGuiController->setSingleClient (localClient);
-	gameGuiController->setServer(server.get());
+	gameGuiController->setServer(server);
 
 	gameGuiController->start();
 

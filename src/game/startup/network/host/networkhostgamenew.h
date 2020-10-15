@@ -46,7 +46,7 @@ class cNetworkHostGameNew : public cNetworkHostGame
 public:
 	cNetworkHostGameNew();
 
-	void start (cApplication& application);
+	void start (cApplication& application, cServer&);
 
 	void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
 
