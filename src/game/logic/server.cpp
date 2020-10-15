@@ -19,13 +19,14 @@
 
 #include "server.h"
 
-#include "game/connectionmanager.h"
 #include "debug.h"
+#include "game/connectionmanager.h"
 #include "game/data/player/playerbasicdata.h"
 #include "game/data/report/special/savedreportlostconnection.h"
 #include "game/data/savegame.h"
 #include "game/logic/action/action.h"
 #include "game/logic/turntimeclock.h"
+#include "game/startup/lobbypreparationdata.h"
 #include "protocol/netmessage.h"
 #include "utility/language.h"
 #include "utility/log.h"
@@ -83,15 +84,11 @@ std::string cServer::getGameState() const
 }
 
 //------------------------------------------------------------------------------
-void cServer::setMap(std::shared_ptr<cStaticMap> staticMap)
+void cServer::setPreparationData (const sLobbyPreparationData& preparationData)
 {
-	model.setMap(staticMap);
-}
-
-//------------------------------------------------------------------------------
-void cServer::setGameSettings(const cGameSettings& gameSettings)
-{
-	model.setGameSettings(gameSettings);
+	model.setUnitsData(std::make_shared<cUnitsData>(*preparationData.unitsData));
+	model.setGameSettings(*preparationData.gameSettings);
+	model.setMap(preparationData.staticMap);
 }
 
 //------------------------------------------------------------------------------
@@ -348,11 +345,6 @@ void cServer::run()
 	}
 }
 
-//------------------------------------------------------------------------------
-void cServer::setUnitsData(std::shared_ptr<const cUnitsData> unitsData)
-{
-	model.setUnitsData(std::make_shared<cUnitsData>(*unitsData));
-}
 
 //------------------------------------------------------------------------------
 void cServer::initRandomGenerator()

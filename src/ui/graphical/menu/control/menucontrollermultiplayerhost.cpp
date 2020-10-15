@@ -77,10 +77,10 @@ cMenuControllerMultiplayerHost::cMenuControllerMultiplayerHost (cApplication& ap
 		}
 	});
 
-	signalConnectionManager.connect (lobbyClient.onStartGamePreparation, [this](const sLobbyPreparationData& lobbyData, const cPlayerBasicData& localPlayer, std::shared_ptr<cConnectionManager> connectionManager){
+	signalConnectionManager.connect (lobbyClient.onStartGamePreparation, [this](const sLobbyPreparationData& lobbyData, const std::vector<cPlayerBasicData>& players, const cPlayerBasicData& localPlayer, std::shared_ptr<cConnectionManager> connectionManager){
 		saveOptions();
 
-		startGamePreparation (lobbyData, localPlayer, connectionManager);
+		startGamePreparation (lobbyData, players, localPlayer, connectionManager);
 	});
 
 	signalConnectionManager.connect (lobbyClient.onPlayerAbortGamePreparation, [this](const std::string& playerName){
@@ -257,14 +257,14 @@ void cMenuControllerMultiplayerHost::startSavedGame (const cSaveGameInfo& saveGa
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::startGamePreparation (const sLobbyPreparationData& lobbyData, const cPlayerBasicData& localPlayer, std::shared_ptr<cConnectionManager> connectionManager)
+void cMenuControllerMultiplayerHost::startGamePreparation (const sLobbyPreparationData& lobbyData, const std::vector<cPlayerBasicData>& players, const cPlayerBasicData& localPlayer, std::shared_ptr<cConnectionManager> connectionManager)
 {
 	newGame = std::make_shared<cNetworkHostGameNew>();
 
 	newGame->setUnitsData(lobbyData.unitsData);
 	newGame->setClanData(lobbyData.clanData);
 
-	newGame->setPlayers (lobbyData.players, localPlayer);
+	newGame->setPlayers (players, localPlayer);
 	newGame->setGameSettings (lobbyData.gameSettings);
 	newGame->setStaticMap (lobbyData.staticMap);
 	newGame->setConnectionManager (connectionManager);

@@ -35,6 +35,8 @@
 class cConnectionManager;
 class cPlayerBasicData;
 
+struct sLobbyPreparationData;
+
 class cServer : public INetMessageReceiver
 {
 	friend class cDebugOutputWidget;
@@ -55,11 +57,8 @@ public:
 
 	std::string getGameState() const;
 
-	void setGameSettings(const cGameSettings& gameSettings);
-	void setMap(std::shared_ptr<cStaticMap> staticMap);
-	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData);
+	void setPreparationData (const sLobbyPreparationData&);
 	void setPlayers(const std::vector<cPlayerBasicData>& splayers);
-
 
 	const cModel& getModel() const;
 	void saveGameState(int saveGameNumber, const std::string & saveName) const;

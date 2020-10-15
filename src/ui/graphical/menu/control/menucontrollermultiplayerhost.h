@@ -68,7 +68,7 @@ private:
 	void checkGameStart();
 
 	void startSavedGame (const cSaveGameInfo&, std::shared_ptr<cStaticMap>, std::shared_ptr<cConnectionManager>, cPlayerBasicData);
-	void startGamePreparation (const sLobbyPreparationData&, const cPlayerBasicData& localPlayer, std::shared_ptr<cConnectionManager>);
+	void startGamePreparation (const sLobbyPreparationData&, const std::vector<cPlayerBasicData>&, const cPlayerBasicData& localPlayer, std::shared_ptr<cConnectionManager>);
 
 	void startNewGame();
 

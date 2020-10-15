@@ -25,6 +25,7 @@
 #include "game/logic/action/actioninitnewgame.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
+#include "game/startup/lobbypreparationdata.h"
 #include "ui/graphical/application.h"
 #include "utility/ranges.h"
 
@@ -41,19 +42,11 @@ void cNetworkHostGameNew::start (cApplication& application)
 	server = std::make_unique<cServer> (connectionManager);
 	localClient = std::make_shared<cClient> (connectionManager);
 
-	server->setMap (staticMap);
-	localClient->setMap(staticMap);
-
-	server->setUnitsData(unitsData);
-	localClient->setUnitsData(unitsData);
-
-	//TODO: set clandata
-
-	localClient->setPlayers(players, localPlayerNr);
+	server->setPreparationData ({unitsData, clanData, gameSettings, staticMap});
 	server->setPlayers(players);
 
-	server->setGameSettings (*gameSettings);
-	localClient->setGameSettings(*gameSettings);
+	localClient->setPreparationData ({unitsData, clanData, gameSettings, staticMap});
+	localClient->setPlayers(players, localPlayerNr);
 
 	connectionManager->setLocalServer(server.get());
 	connectionManager->setLocalClient(localClient.get(), localPlayerNr);

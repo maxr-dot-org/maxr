@@ -18,15 +18,17 @@
  ***************************************************************************/
 
 #include "game/startup/local/singleplayer/localsingleplayergamenew.h"
+
 #include "game/data/gamesettings.h"
-#include "ui/graphical/application.h"
-#include "game/logic/client.h"
-#include "game/logic/server.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
-#include "game/data/units/vehicle.h"
 #include "game/data/units/landingunit.h"
+#include "game/data/units/vehicle.h"
 #include "game/logic/action/actioninitnewgame.h"
+#include "game/logic/client.h"
+#include "game/logic/server.h"
+#include "game/startup/lobbypreparationdata.h"
+#include "ui/graphical/application.h"
 
 //------------------------------------------------------------------------------
 cLocalSingleplayerGameNew::cLocalSingleplayerGameNew() :
@@ -40,16 +42,10 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 	auto connectionManager = std::make_shared<cConnectionManager>();
 
 	server = std::make_unique<cServer>(connectionManager);
+	server->setPreparationData ({unitsData, clanData, gameSettings, staticMap});
+
 	client = std::make_shared<cClient>(connectionManager);
-
-	client->setMap (staticMap);
-	server->setMap (staticMap);
-
-	server->setUnitsData(unitsData); //TODO: don't copy unitsData here, but move cGame::unitsData?
-	client->setUnitsData(unitsData);
-
-	client->setGameSettings (*gameSettings);
-	server->setGameSettings (*gameSettings);
+	client->setPreparationData({unitsData, clanData, gameSettings, staticMap});
 
 	auto player = createPlayer();
 	std::vector<cPlayerBasicData> players;

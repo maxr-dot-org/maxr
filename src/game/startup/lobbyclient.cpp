@@ -471,7 +471,7 @@ void cLobbyClient::handleNetMessage_MU_MSG_START_GAME_PREPARATIONS (const cMuMsg
 {
 	if (saveGameInfo.number != -1) return;
 
-	onStartGamePreparation (sLobbyPreparationData {message.unitsData, message.clanData, gameSettings, staticMap, players}, localPlayer, connectionManager);
+	onStartGamePreparation (sLobbyPreparationData {message.unitsData, message.clanData, gameSettings, staticMap}, players, localPlayer, connectionManager);
 }
 
 //------------------------------------------------------------------------------

@@ -41,6 +41,7 @@
 #include "game/logic/fxeffects.h"
 #include "game/logic/gametimer.h"
 #include "game/logic/server.h"
+#include "game/startup/lobbypreparationdata.h"
 #include "output/video/video.h"
 #include "protocol/netmessage.h"
 #include "settings.h"
@@ -81,9 +82,11 @@ void cClient::setMap (std::shared_ptr<cStaticMap> staticMap)
 	model.setMap(staticMap);
 }
 
-void cClient::setGameSettings (const cGameSettings& gameSettings)
+void cClient::setPreparationData(const sLobbyPreparationData& preparationData)
 {
-	model.setGameSettings(gameSettings);
+	model.setUnitsData(std::make_shared<cUnitsData>(*preparationData.unitsData));
+	model.setGameSettings(*preparationData.gameSettings);
+	model.setMap(preparationData.staticMap);
 }
 
 void cClient::setPlayers (const std::vector<cPlayerBasicData>& splayers, size_t activePlayerNr)
@@ -130,11 +133,6 @@ void cClient::runClientJobs(const cModel& model)
 	// run surveyor AI
 	handleSurveyorMoveJobs();
 
-}
-
-void cClient::setUnitsData(std::shared_ptr<const cUnitsData> unitsData)
-{
-	model.setUnitsData(std::make_shared<cUnitsData>(*unitsData));
 }
 
 void cClient::handleNetMessages()

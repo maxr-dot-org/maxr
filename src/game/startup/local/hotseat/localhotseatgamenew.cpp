@@ -27,6 +27,7 @@
 #include "game/data/units/vehicle.h"
 #include "game/data/units/landingunit.h"
 #include "game/logic/action/actioninitnewgame.h"
+#include "game/startup/lobbypreparationdata.h"
 
 //------------------------------------------------------------------------------
 cLocalHotSeatGameNew::cLocalHotSeatGameNew()
@@ -40,18 +41,14 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 
 	server = std::make_unique<cServer>(connectionManager);
 
-	server->setMap (staticMap);
-	server->setUnitsData (unitsData);
-	server->setGameSettings (*gameSettings);
+	server->setPreparationData ({unitsData, clanData, gameSettings, staticMap});
 
 	clients.resize (playersData.size());
 
 	for (size_t i = 0; i != playersData.size(); ++i)
 	{
 		clients[i] = std::make_shared<cClient> (connectionManager);
-		clients[i]->setMap (staticMap);
-		clients[i]->setUnitsData (unitsData);
-		clients[i]->setGameSettings (*gameSettings);
+		clients[i]->setPreparationData ({unitsData, clanData, gameSettings, staticMap});
 	}
 	server->setPlayers(playersBasicData);
 	for (size_t i = 0; i != clients.size(); ++i)

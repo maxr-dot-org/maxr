@@ -23,7 +23,6 @@
 #include "game/data/gamesettings.h"
 #include "game/data/map/map.h"
 #include "game/data/player/clans.h"
-#include "game/data/player/playerbasicdata.h"
 #include "game/data/units/unitdata.h"
 
 #include <memory>
@@ -35,7 +34,6 @@ struct sLobbyPreparationData
 	std::shared_ptr<const cClanData> clanData;
 	std::shared_ptr<cGameSettings> gameSettings;
 	std::shared_ptr<cStaticMap> staticMap;
-	std::vector<cPlayerBasicData> players;
 };
 
 #endif

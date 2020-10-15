@@ -124,15 +124,12 @@ cServerGame::cServerGame (std::shared_ptr<cConnectionManager> connectionManager,
 		std::cout << player.getName() << " finished to download map." << std::endl;
 	});
 
-	signalConnectionManager.connect (lobbyServer.onStartNewGame, [this](const sLobbyPreparationData& preparationData, std::shared_ptr<cConnectionManager> connectionManager)
+	signalConnectionManager.connect (lobbyServer.onStartNewGame, [this](const sLobbyPreparationData& preparationData, const std::vector<cPlayerBasicData>& players, std::shared_ptr<cConnectionManager> connectionManager)
 	{
 		server = std::make_unique<cServer> (connectionManager);
 
-		server->setUnitsData (preparationData.unitsData);
-		//server->setClansData(preparationData.clanData);
-		server->setGameSettings (*preparationData.gameSettings);
-		server->setMap (preparationData.staticMap);
-		server->setPlayers(preparationData.players);
+		server->setPreparationData (preparationData);
+		server->setPlayers(players);
 
 		connectionManager->setLocalServer(server.get());
 

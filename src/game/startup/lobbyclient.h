@@ -88,7 +88,7 @@ public:
 
 	cSignal<void (const std::string& playerName, bool translate, const std::string& message, const std::string& insertText)> onChatMessage;
 
-	cSignal<void (const sLobbyPreparationData&, cPlayerBasicData, std::shared_ptr<cConnectionManager>)> onStartGamePreparation;
+	cSignal<void (const sLobbyPreparationData&, const std::vector<cPlayerBasicData>&, cPlayerBasicData, std::shared_ptr<cConnectionManager>)> onStartGamePreparation;
 	cSignal<void (const std::string& playerName)> onPlayerAbortGamePreparation;
 
 	cSignal<void (cPlayerBasicData, bool isIn)> onPlayerEnterLeaveLandingSelectionRoom;

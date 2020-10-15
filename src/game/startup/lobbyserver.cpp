@@ -349,7 +349,7 @@ void cLobbyServer::askToFinishLobby (int fromPlayer)
 		sendNetMessage (cMuMsgStartGame());
 		auto unitsData = std::make_shared<const cUnitsData>(UnitsDataGlobal);
 		auto clanData = std::make_shared<const cClanData>(ClanDataGlobal);
-		onStartNewGame (sLobbyPreparationData{unitsData, clanData, gameSettings, staticMap, players}, connectionManager);
+		onStartNewGame (sLobbyPreparationData{unitsData, clanData, gameSettings, staticMap}, players, connectionManager);
 	});
 	auto unitsData = std::make_shared<const cUnitsData>(UnitsDataGlobal);
 	auto clanData = std::make_shared<const cClanData>(ClanDataGlobal);

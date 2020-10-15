@@ -60,7 +60,7 @@ private:
 	void handleStartGame();
 
 	void startSavedGame (const cSaveGameInfo&, std::shared_ptr<cStaticMap>, std::shared_ptr<cConnectionManager>, cPlayerBasicData);
-	void startGamePreparation(const sLobbyPreparationData&, const cPlayerBasicData&, std::shared_ptr<cConnectionManager>);
+	void startGamePreparation(const sLobbyPreparationData&, const std::vector<cPlayerBasicData>&, const cPlayerBasicData&, std::shared_ptr<cConnectionManager>);
 
 	void startNewGame();
 	void reconnectToGame (std::shared_ptr<cStaticMap>, std::shared_ptr<cConnectionManager>, cPlayerBasicData, const std::vector<cPlayerBasicData>&);

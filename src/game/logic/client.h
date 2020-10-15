@@ -50,6 +50,8 @@ class cSubBase;
 class cSavegame;
 class cSurveyorAi;
 
+struct sLobbyPreparationData;
+
 Uint32 TimerCallback (Uint32 interval, void* arg);
 
 
@@ -64,8 +66,7 @@ public:
 
 	const cPlayer& getActivePlayer() const { return *activePlayer; }
 
-	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData);
-	void setGameSettings(const cGameSettings& gameSettings);
+	void setPreparationData (const sLobbyPreparationData&);
 	void setMap(std::shared_ptr<cStaticMap> staticMap);
 	void setPlayers(const std::vector<cPlayerBasicData>& splayers, size_t activePlayerNr);
 

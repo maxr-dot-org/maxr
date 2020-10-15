@@ -79,7 +79,7 @@ public:
 	cSignal<void (const cPlayerBasicData& fromPlayer)> onMapRequested;
 	cSignal<void (const cPlayerBasicData& fromPlayer)> onMapUploaded;
 
-	cSignal<void (const sLobbyPreparationData&, std::shared_ptr<cConnectionManager>)> onStartNewGame;
+	cSignal<void (const sLobbyPreparationData&, const std::vector<cPlayerBasicData>&, std::shared_ptr<cConnectionManager>)> onStartNewGame;
 	cSignal<void (const cSaveGameInfo&, std::shared_ptr<cConnectionManager>)> onStartLoadGame;
 
 private:
