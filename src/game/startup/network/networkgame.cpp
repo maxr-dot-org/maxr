@@ -17,28 +17,29 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "game/startup/network/client/networkclientgame.h"
+#include "networkgame.h"
 
+#include "game/data/savegame.h"
 #include "game/logic/client.h"
+#include "game/logic/server.h"
 
 //------------------------------------------------------------------------------
-cNetworkClientGame::~cNetworkClientGame()
-{}
+cNetworkGame::~cNetworkGame()
+{
+	if (server)
+	{
+		server->stop();
+	}
+}
 
 //------------------------------------------------------------------------------
-void cNetworkClientGame::run()
+void cNetworkGame::run()
 {
 	if (localClient) localClient->run();
 }
 
 //------------------------------------------------------------------------------
-void cNetworkClientGame::setConnectionManager (std::shared_ptr<cConnectionManager> connectionManager_)
+void cNetworkGame::setConnectionManager(std::shared_ptr<cConnectionManager> connectionManager_)
 {
 	connectionManager = connectionManager_;
-}
-
-//------------------------------------------------------------------------------
-const cClient& cNetworkClientGame::getLocalClient() const
-{
-	return *localClient;
 }

@@ -24,7 +24,7 @@
 #include <vector>
 #include <utility>
 
-#include "game/startup/network/client/networkclientgame.h"
+#include "game/startup/network/networkgame.h"
 #include "maxrconfig.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
@@ -34,7 +34,7 @@ class cApplication;
 class cStaticMap;
 class cPlayerBasicData;
 
-class cNetworkClientGameReconnection : public cNetworkClientGame
+class cNetworkClientGameReconnection : public cNetworkGame
 {
 public:
 	cNetworkClientGameReconnection();

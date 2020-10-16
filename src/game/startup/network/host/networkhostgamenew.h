@@ -24,7 +24,7 @@
 #include <vector>
 #include <utility>
 
-#include "game/startup/network/host/networkhostgame.h"
+#include "game/startup/network/networkgame.h"
 #include "maxrconfig.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
@@ -41,7 +41,7 @@ class cUnitUpgrade;
 struct sLandingUnit;
 struct sID;
 
-class cNetworkHostGameNew : public cNetworkHostGame
+class cNetworkHostGameNew : public cNetworkGame
 {
 public:
 	cNetworkHostGameNew();

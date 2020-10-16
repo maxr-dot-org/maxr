@@ -23,14 +23,14 @@
 #include <memory>
 #include <vector>
 
-#include "game/startup/network/host/networkhostgame.h"
+#include "game/startup/network/networkgame.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 class cApplication;
 class cPlayerBasicData;
 
-class cNetworkHostGameSaved : public cNetworkHostGame
+class cNetworkHostGameSaved : public cNetworkGame
 {
 public:
 	void setServer (cServer& server) { this->server = &server; }

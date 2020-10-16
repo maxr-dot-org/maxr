@@ -17,35 +17,36 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_startup_network_client_networkclientgameH
-#define game_startup_network_client_networkclientgameH
+#ifndef game_startup_network_networkgameH
+#define game_startup_network_networkgameH
 
+#include <cassert>
 #include <memory>
-#include <string>
 
 #include "game/startup/game.h"
-#include "maxrconfig.h"
 #include "ui/graphical/game/control/gameguicontroller.h"
 
 class cClient;
+class cServer;
 class cConnectionManager;
 
-class cNetworkClientGame : public cGame
+class cNetworkGame : public cGame
 {
 public:
-	~cNetworkClientGame();
+	~cNetworkGame();
 
-	void run() MAXR_OVERRIDE_FUNCTION;
+	void run() override;
 
-	void setConnectionManager (std::shared_ptr<cConnectionManager> network);
+	void setConnectionManager (std::shared_ptr<cConnectionManager>);
 
-	const cClient& getLocalClient() const;
+	cClient& getLocalClient() { assert (localClient); return *localClient; }
 protected:
 	std::shared_ptr<cConnectionManager> connectionManager;
 
 	std::shared_ptr<cClient> localClient;
+	cServer* server = nullptr;
 
 	std::unique_ptr<cGameGuiController> gameGuiController;
 };
 
-#endif // game_startup_network_client_networkclientgameH
+#endif
