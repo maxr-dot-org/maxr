@@ -8,7 +8,7 @@
 <!--    blank.                                                               -->
 <!-- * Numbers after a keyword like "Active_7" indicate that the word        -->
 <!--    shouldn't be much longer to fit best in the used place               -->
-<MAX_Language_File lang="fra" encoding="utf8" direction="left-to-right">
+<MAX_Language_File lang="fre" encoding="utf8" direction="left-to-right">
 	<Text>
 		<Main>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Remake par DoctorDeath)"/>
