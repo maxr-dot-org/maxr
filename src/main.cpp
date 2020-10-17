@@ -123,7 +123,7 @@ int main (int argc, char* argv[])
 
 	if (headless)
 	{
-		cDedicatedServer::instance().run();
+		cDedicatedServer(DEFAULTPORT).run();
 	}
 	else
 	{

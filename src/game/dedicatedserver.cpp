@@ -104,17 +104,9 @@ namespace
 // cDedicatedServer implementation
 //------------------------------------------------------------------------
 
-
-//--------------------------------------------------
-cDedicatedServer& cDedicatedServer::instance()
-{
-	static cDedicatedServer _instance;
-	return _instance;
-}
-
 //------------------------------------------------------------------------
-cDedicatedServer::cDedicatedServer() :
-	port (DEFAULTPORT)
+cDedicatedServer::cDedicatedServer(int port) :
+	port (port)
 {
 }
 

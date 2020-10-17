@@ -33,33 +33,33 @@ class cServerGame;
 class cDedicatedServer
 {
 public:
-	static cDedicatedServer& instance();
+	explicit cDedicatedServer (int port);
+	~cDedicatedServer();
+
+	cDedicatedServer (cDedicatedServer&&) = default;
+	cDedicatedServer& operator= (cDedicatedServer&&) = default;
 
 	void run();
 
-protected:
-
-	void printPrompt() const;
-	void printConfiguration() const;
-	void printGames() const;
+private:
 	std::string getGamesString() const;
-	void printMaps() const;
 	std::string getAvailableMapsString() const;
 
 	bool handleInput (const std::string& command);
-	void setProperty (const std::string& property, const std::string& value);
 
+	void printPrompt() const;
+
+	void printConfiguration() const;
+	void printGames() const;
+	void printMaps() const;
 	bool startServer (int saveGameNumber = -1);
+	void setProperty (const std::string& property, const std::string& value);
 	void saveGame (int saveGameNumber);
 	void stopGames();
 
 private:
 	int port;
 	std::vector<std::unique_ptr<cServerGame>> games;
-
-private:
-	cDedicatedServer();
-	~cDedicatedServer();
 };
 
 #endif
