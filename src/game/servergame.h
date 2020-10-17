@@ -37,27 +37,25 @@
 class cServerGame
 {
 public:
-	cServerGame();
+	explicit cServerGame(int saveGameNumber);
 	~cServerGame();
 
 	eOpenServerResult startServer(int port);
 	int getPort() const { return port; }
 
-	void prepareGameData();
-	void loadGame (int saveGameNumber);
-
 	// all those methods can be called concurrently
+	std::string getGameState() const;
 	void runInThread();
 	void saveGame (int saveGameNumber);
-	std::string getGameState() const;
 
 public: // external getter
 	std::function<std::string()> getGamesString;
 	std::function<std::string()> getAvailableMapsString;
 
-public: // should be private
-	void handleChatCommand (int fromPlayer, const std::vector<std::string>& tokens);
 private:
+	void handleChatCommand (int fromPlayer, const std::vector<std::string>& tokens);
+	void prepareGameData();
+	void loadGame (int saveGameNumber);
 	void run();
 
 private:

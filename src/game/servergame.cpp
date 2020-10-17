@@ -35,33 +35,33 @@ namespace
 	class cDedicatedServerChatMessageHandler : public ILobbyMessageHandler
 	{
 	public:
-		explicit cDedicatedServerChatMessageHandler (cServerGame& serverGame) : serverGame (&serverGame) {}
-	private:
-		bool handleMessage (const cMultiplayerLobbyMessage&) final;
+		explicit cDedicatedServerChatMessageHandler (std::function<void (int, const std::vector<std::string>&)> handleChatCommand) :
+			handleChatCommand (handleChatCommand)
+		{}
 
 	private:
-		cServerGame* serverGame;
-	};
-
-	//--------------------------------------------------------------------------
-	bool cDedicatedServerChatMessageHandler::handleMessage (const cMultiplayerLobbyMessage& message)
-	{
-		if (message.getType() != cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT) return false;
-		const auto& chatMessage = static_cast<const cMuMsgChat&>(message);
-
-		const auto& chatText = chatMessage.message;
-		size_t serverStringPos = chatText.find ("--server");
-		if (serverStringPos == std::string::npos || chatText.length() <= serverStringPos + 9)
+		bool handleMessage (const cMultiplayerLobbyMessage& message) final
 		{
-			return false;
+			if (message.getType() != cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT) return false;
+			const auto& chatMessage = static_cast<const cMuMsgChat&>(message);
+
+			const auto& chatText = chatMessage.message;
+			size_t serverStringPos = chatText.find ("--server");
+			if (serverStringPos == std::string::npos || chatText.length() <= serverStringPos + 9)
+			{
+				return false;
+			}
+			std::string command = chatText.substr (serverStringPos + 9);
+			std::vector<std::string> tokens;
+			std::istringstream iss (command);
+			std::copy (std::istream_iterator<std::string> (iss), std::istream_iterator<std::string> (), std::back_inserter<std::vector<std::string> > (tokens));
+			handleChatCommand (message.playerNr, tokens);
+			return true;
 		}
-		std::string command = chatText.substr (serverStringPos + 9);
-		std::vector<std::string> tokens;
-		std::istringstream iss (command);
-		std::copy (std::istream_iterator<std::string> (iss), std::istream_iterator<std::string> (), std::back_inserter<std::vector<std::string> > (tokens));
-		serverGame->handleChatCommand (message.playerNr, tokens);
-		return true;
-	}
+
+	private:
+		std::function<void (int, const std::vector<std::string>&)> handleChatCommand;
+	};
 
 	//--------------------------------------------------------------------------
 	std::string getServerHelpString()
@@ -79,10 +79,11 @@ namespace
 }
 
 //------------------------------------------------------------------------------
-cServerGame::cServerGame () :
+cServerGame::cServerGame (int saveGameNumber) :
 	lobbyServer (std::make_shared<cConnectionManager>())
 {
-	lobbyServer.addLobbyMessageHandler (std::make_unique<cDedicatedServerChatMessageHandler>(*this));
+	using namespace std::placeholders;
+	lobbyServer.addLobbyMessageHandler (std::make_unique<cDedicatedServerChatMessageHandler>(std::bind(&cServerGame::handleChatCommand, this, _1, _2)));
 
 	signalConnectionManager.connect (lobbyServer.onClientConnected, [this](const cPlayerBasicData& player)
 	{
@@ -115,6 +116,15 @@ cServerGame::cServerGame () :
 
 	// Nothing for:
 	// lobbyServer.onClientDisconnect
+
+	if (saveGameNumber > 0)
+	{
+		loadGame (saveGameNumber);
+	}
+	else
+	{
+		prepareGameData();
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -131,53 +141,16 @@ eOpenServerResult cServerGame::startServer (int port)
 }
 
 //------------------------------------------------------------------------------
+std::string cServerGame::getGameState() const
+{
+	std::lock_guard<std::mutex> l{mutex};
+	return (server == nullptr) ? lobbyServer.getGameState() : server->getGameState();
+}
+
+//------------------------------------------------------------------------------
 void cServerGame::runInThread()
 {
 	thread = std::thread([this](){ run(); });
-}
-
-//------------------------------------------------------------------------------
-void cServerGame::loadGame (int saveGameNumber)
-{
-	cSaveGameInfo saveGameInfo = cSavegame().loadSaveInfo(saveGameNumber);
-	lobbyServer.selectSaveGameInfo (saveGameInfo);
-}
-
-//------------------------------------------------------------------------------
-void cServerGame::saveGame (int saveGameNumber)
-{
-	std::lock_guard<std::mutex> l{mutex};
-	if (server == nullptr)
-	{
-		std::cout << "Server not running. Can't save game." << std::endl;
-		return;
-	}
-	std::cout << "Scheduling save command for server thread..." << std::endl;
-	this->saveGameNumber = saveGameNumber;
-	shouldSave = true;
-}
-
-//------------------------------------------------------------------------------
-void cServerGame::prepareGameData()
-{
-	cGameSettings settings;
-	settings.setMetalAmount (eGameSettingsResourceAmount::Normal);
-	settings.setOilAmount (eGameSettingsResourceAmount::Normal);
-	settings.setGoldAmount (eGameSettingsResourceAmount::Normal);
-	settings.setResourceDensity (eGameSettingsResourceDensity::Normal);
-	settings.setStartCredits (cGameSettings::defaultCreditsNormal);
-	settings.setBridgeheadType (eGameSettingsBridgeheadType::Definite);
-	//settings.alienTech = SETTING_ALIENTECH_OFF;
-	settings.setClansEnabled (true);
-	settings.setGameType (eGameSettingsGameType::Simultaneous);
-	settings.setVictoryCondition (eGameSettingsVictoryCondition::Death);
-
-	auto map = std::make_shared<cStaticMap> ();
-	const std::string mapName = "Mushroom.wrl";
-	map->loadMap (mapName);
-
-	lobbyServer.selectGameSettings (std::make_shared<cGameSettings> (settings));
-	lobbyServer.selectMap (map);
 }
 
 //------------------------------------------------------------------------------
@@ -199,6 +172,38 @@ void cServerGame::run()
 		}
 	}
 	server = nullptr;
+}
+
+//------------------------------------------------------------------------------
+void cServerGame::saveGame (int saveGameNumber)
+{
+	std::lock_guard<std::mutex> l{mutex};
+	if (server == nullptr)
+	{
+		std::cout << "Server not running. Can't save game." << std::endl;
+		return;
+	}
+	std::cout << "Scheduling save command for server thread..." << std::endl;
+	this->saveGameNumber = saveGameNumber;
+	shouldSave = true;
+}
+
+//------------------------------------------------------------------------------
+void cServerGame::loadGame (int saveGameNumber)
+{
+	cSaveGameInfo saveGameInfo = cSavegame().loadSaveInfo (saveGameNumber);
+	lobbyServer.selectSaveGameInfo (saveGameInfo);
+}
+
+//------------------------------------------------------------------------------
+void cServerGame::prepareGameData()
+{
+	auto map = std::make_shared<cStaticMap>();
+	const std::string mapName = "Mushroom.wrl";
+	map->loadMap (mapName);
+
+	lobbyServer.selectGameSettings (std::make_shared<cGameSettings>());
+	lobbyServer.selectMap (map);
 }
 
 //--------------------------------------------------------------------------
@@ -250,11 +255,4 @@ void cServerGame::handleChatCommand (int fromPlayer, const std::vector<std::stri
 			}
 		}
 	}
-}
-
-//------------------------------------------------------------------------------
-std::string cServerGame::getGameState() const
-{
-	std::lock_guard<std::mutex> l{mutex};
-	return (server == nullptr) ? lobbyServer.getGameState() : server->getGameState();
 }

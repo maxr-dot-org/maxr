@@ -205,9 +205,19 @@ bool cDedicatedServer::startServer (int saveGameNumber)
 		std::cout << "WARNING: Server is already open." << std::endl;
 		return true;
 	}
-	std::cout << "Starting server on port " << port << "..." << std::endl;
+	if (saveGameNumber >= 0)
+	{
+		std::cout << "Setting up game from saved game number " << saveGameNumber << " ..." << std::endl;
+	}
+	else
+	{
+		std::cout << "Setting up new game..." << std::endl;
+	}
+	std::unique_ptr<cServerGame> game = std::make_unique<cServerGame> (saveGameNumber);
+	game->getGamesString = [this](){ return getGamesString(); };
+	game->getAvailableMapsString = [this](){ return getAvailableMapsString(); };
 
-	std::unique_ptr<cServerGame> game = std::make_unique<cServerGame>();
+	std::cout << "Starting server on port " << port << "..." << std::endl;
 	switch (game->startServer(port))
 	{
 		case eOpenServerResult::AlreadyOpened: // should not happen
@@ -217,20 +227,6 @@ bool cDedicatedServer::startServer (int saveGameNumber)
 		case eOpenServerResult::Success: break;
 	}
 
-	game->getGamesString = [this](){ return getGamesString(); };
-	game->getAvailableMapsString = [this](){ return getAvailableMapsString(); };
-
-	if (saveGameNumber >= 0)
-	{
-		std::cout << "Setting up game from saved game number " << saveGameNumber << " ..." << std::endl;
-
-		game->loadGame (saveGameNumber);
-	}
-	else
-	{
-		std::cout << "Setting up new game..." << std::endl;
-		game->prepareGameData();
-	}
 	games.push_back (std::move (game));
 	games.back()->runInThread();
 	return true;
