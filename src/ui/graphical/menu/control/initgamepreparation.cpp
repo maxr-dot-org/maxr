@@ -156,12 +156,16 @@ void cInitGamePreparation::startLandingPositionSelection()
 	{
 		lobbyClient.enterLandingSelection();
 	});
-	signalConnectionManager.connect (windowLandingPositionSelection->closed, [this]()
-	{
-		lobbyClient.exitLandingSelection();
-	});
+	// nothing for windowLandingPositionSelection->closed (see `canceled` below)
 
-	signalConnectionManager.connect (windowLandingPositionSelection->canceled, [=]() { back(); });
+	signalConnectionManager.connect (windowLandingPositionSelection->canceled, [this]()
+	{
+		// Call `exitLandingSelection` only when "back" is clicked.
+		// not in `closed` which is also called when window is auto-closed
+		// once game **starts**.
+		lobbyClient.exitLandingSelection();
+		back();
+	});
 	signalConnectionManager.connect (windowLandingPositionSelection->selectedPosition, [this] (cPosition landingPosition)
 	{
 		this->landingPosition = landingPosition;
