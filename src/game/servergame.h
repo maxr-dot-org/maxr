@@ -26,10 +26,10 @@
 
 #include <atomic>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
-
-#include <SDL.h>
+#include <thread>
 
 //------------------------------------------------------------------------
 /** cServerGame handles all server side tasks of one multiplayer game in a thread.
@@ -43,35 +43,37 @@ public:
 	eOpenServerResult startServer(int port);
 	int getPort() const { return port; }
 
-	void runInThread();
-
 	void prepareGameData();
 	void loadGame (int saveGameNumber);
-	void saveGame (int saveGameNumber);
 
-	// retrieve state
+	// all those methods can be called concurrently
+	void runInThread();
+	void saveGame (int saveGameNumber);
 	std::string getGameState() const;
 
+public: // external getter
 	std::function<std::string()> getGamesString;
 	std::function<std::string()> getAvailableMapsString;
 
+public: // should be private
 	void handleChatCommand (int fromPlayer, const std::vector<std::string>& tokens);
 private:
-	friend int serverGameThreadFunction (void* data);
 	void run();
 
 private:
 	cSignalConnectionManager signalConnectionManager;
-	cLobbyServer lobbyServer;
-	cServer* server = nullptr;
 
 	int port = 0;
 
+	std::atomic<bool> canceled{false};
+	std::thread thread;
+	mutable std::mutex mutex;
+
+	// critical data
+	cLobbyServer lobbyServer;
+	cServer* server = nullptr;
 	bool shouldSave = false;
 	int saveGameNumber = -1;
-
-	SDL_Thread* thread = nullptr;
-	std::atomic<bool> canceled{false};
 };
 
 #endif

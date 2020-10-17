@@ -29,14 +29,6 @@
 #include <sstream>
 #include <vector>
 
-//------------------------------------------------------------------------------
-int serverGameThreadFunction (void* data)
-{
-	cServerGame* serverGame = reinterpret_cast<cServerGame*> (data);
-	serverGame->run();
-	return 0;
-}
-
 namespace
 {
 	//--------------------------------------------------------------------------
@@ -128,11 +120,8 @@ cServerGame::cServerGame () :
 //------------------------------------------------------------------------------
 cServerGame::~cServerGame()
 {
-	if (thread != nullptr)
-	{
-		canceled = true;
-		SDL_WaitThread (thread, nullptr);
-	}
+	canceled = true;
+	thread.join();
 }
 
 //------------------------------------------------------------------------------
@@ -144,7 +133,7 @@ eOpenServerResult cServerGame::startServer (int port)
 //------------------------------------------------------------------------------
 void cServerGame::runInThread()
 {
-	thread = SDL_CreateThread (serverGameThreadFunction, "servergame", this);
+	thread = std::thread([this](){ run(); });
 }
 
 //------------------------------------------------------------------------------
@@ -157,6 +146,7 @@ void cServerGame::loadGame (int saveGameNumber)
 //------------------------------------------------------------------------------
 void cServerGame::saveGame (int saveGameNumber)
 {
+	std::lock_guard<std::mutex> l{mutex};
 	if (server == nullptr)
 	{
 		std::cout << "Server not running. Can't save game." << std::endl;
@@ -193,10 +183,12 @@ void cServerGame::prepareGameData()
 //------------------------------------------------------------------------------
 void cServerGame::run()
 {
+	using namespace std::literals::chrono_literals;
 	while (canceled == false)
 	{
+		std::this_thread::sleep_for(10ms);
+		std::lock_guard<std::mutex> l{mutex};
 		lobbyServer.run();
-		SDL_Delay(10);
 
 		// don't do anything if games haven't been started yet!
 		if (server && shouldSave)
@@ -263,5 +255,6 @@ void cServerGame::handleChatCommand (int fromPlayer, const std::vector<std::stri
 //------------------------------------------------------------------------------
 std::string cServerGame::getGameState() const
 {
+	std::lock_guard<std::mutex> l{mutex};
 	return (server == nullptr) ? lobbyServer.getGameState() : server->getGameState();
 }
