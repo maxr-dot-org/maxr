@@ -118,27 +118,22 @@ cPlayerBasicData* cLobbyServer::getPlayer (int playerNr)
 	return it == players.end() ? nullptr : &*it;
 }
 
-#if 0 // startServer (int port)
 //------------------------------------------------------------------------------
-void cLobbyServer::startServer (int port)
+eOpenServerResult cLobbyServer::startServer (int port)
 {
-	if (!connectionManager) return;
+	if (connectionManager->isServerOpen()) return eOpenServerResult::AlreadyOpened;
 
-	if (connectionManager->isServerOpen()) return;
-
-	if (connectionManager->openServer(port))
+	if (connectionManager->openServer (port))
 	{
-		//windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Error_Socket"));
 		Log.write ("Error opening socket", cLog::eLOG_TYPE_WARNING);
+		return eOpenServerResult::Failed;
 	}
 	else
 	{
 		Log.write ("Game open (Port: " + iToStr (port) + ")", cLog::eLOG_TYPE_INFO);
-		//windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Open") + " (" + lngPack.i18n ("Text~Title~Port") + lngPack.i18n ("Text~Punctuation~Colon")  + iToStr (port) + ")");
-		//windowNetworkLobby->disablePortEdit();
+		return eOpenServerResult::Success;
 	}
 }
-#endif
 
 //------------------------------------------------------------------------------
 void cLobbyServer::run()

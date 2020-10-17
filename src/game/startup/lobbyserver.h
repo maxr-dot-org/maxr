@@ -37,6 +37,13 @@
 class cLobbyClient;
 class cServer;
 
+enum class eOpenServerResult
+{
+	AlreadyOpened,
+	Success,
+	Failed
+};
+
 class cLobbyServer : public INetMessageReceiver
 {
 public:
@@ -51,9 +58,8 @@ public:
 	std::string getGameState() const;
 	const cPlayerBasicData* getConstPlayer (int) const;
 
-#if 0
-	void startServer (int port);
-#endif
+	eOpenServerResult startServer (int port);
+
 	void localClientConnects (cLobbyClient&, cPlayerBasicData&);
 
 	void selectSaveGameInfo (cSaveGameInfo);

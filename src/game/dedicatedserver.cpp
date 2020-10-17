@@ -207,15 +207,16 @@ bool cDedicatedServer::startServer (int saveGameNumber)
 	}
 	std::cout << "Starting server on port " << port << "..." << std::endl;
 
-	std::shared_ptr<cConnectionManager> connectionManager = std::make_shared<cConnectionManager>();
-
-	if (connectionManager->openServer(port))
+	std::unique_ptr<cServerGame> game = std::make_unique<cServerGame>();
+	switch (game->startServer(port))
 	{
-		std::cout << "ERROR: Initializing network failed." << std::endl;
-		return false;
+		case eOpenServerResult::AlreadyOpened: // should not happen
+		case eOpenServerResult::Failed:
+			std::cout << "ERROR: Initializing network failed." << std::endl;
+			return false;
+		case eOpenServerResult::Success: break;
 	}
 
-	auto game = std::make_unique<cServerGame> (connectionManager, port);
 	game->getGamesString = [this](){ return getGamesString(); };
 	game->getAvailableMapsString = [this](){ return getAvailableMapsString(); };
 

@@ -37,9 +37,10 @@
 class cServerGame
 {
 public:
-	cServerGame (std::shared_ptr<cConnectionManager>, int port);
+	cServerGame();
 	~cServerGame();
 
+	eOpenServerResult startServer(int port);
 	int getPort() const { return port; }
 
 	void runInThread();

@@ -290,20 +290,21 @@ void cMenuControllerMultiplayerHost::startNewGame (cServer& server)
 //------------------------------------------------------------------------------
 void cMenuControllerMultiplayerHost::startHost()
 {
-	if (!connectionManager || !windowNetworkLobby) return;
-
-	if (connectionManager->isServerOpen()) return;
-
-	if (connectionManager->openServer(windowNetworkLobby->getPort()))
+	if (!windowNetworkLobby) return;
+	switch (lobbyServer.startServer (windowNetworkLobby->getPort()))
 	{
-		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Error_Socket"));
-		Log.write ("Error opening socket", cLog::eLOG_TYPE_WARNING);
-	}
-	else
-	{
-		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Open") + " (" + lngPack.i18n ("Text~Title~Port") + lngPack.i18n ("Text~Punctuation~Colon")  + iToStr (windowNetworkLobby->getPort()) + ")");
-		Log.write ("Game open (Port: " + iToStr (windowNetworkLobby->getPort()) + ")", cLog::eLOG_TYPE_INFO);
-		windowNetworkLobby->disablePortEdit();
+		case eOpenServerResult::AlreadyOpened: return;
+		case eOpenServerResult::Success:
+		{
+			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Open") + " (" + lngPack.i18n ("Text~Title~Port") + lngPack.i18n ("Text~Punctuation~Colon")  + iToStr (windowNetworkLobby->getPort()) + ")");
+			windowNetworkLobby->disablePortEdit();
+			break;
+		}
+		case eOpenServerResult::Failed:
+		{
+			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Error_Socket"));
+			break;
+		}
 	}
 }
 

@@ -19,17 +19,9 @@
 
 #include "servergame.h"
 
-#include "utility/log.h"
-#include "game/data/player/player.h"
 #include "game/data/savegame.h"
-#include "game/data/map/map.h"
-#include "game/logic/turncounter.h"
-#include "game/logic/landingpositionmanager.h"
-#include "game/logic/server.h"
-#include "mapdownloader/mapdownload.h"
-#include "mapdownloader/mapuploadmessagehandler.h"
-#include "maxrversion.h"
 #include "protocol/lobbymessage.h"
+#include "utility/log.h"
 
 #include <algorithm>
 #include <iostream>
@@ -95,9 +87,8 @@ namespace
 }
 
 //------------------------------------------------------------------------------
-cServerGame::cServerGame (std::shared_ptr<cConnectionManager> connectionManager, int port) :
-	lobbyServer (std::move (connectionManager)),
-	port(port)
+cServerGame::cServerGame () :
+	lobbyServer (std::make_shared<cConnectionManager>())
 {
 	lobbyServer.addLobbyMessageHandler (std::make_unique<cDedicatedServerChatMessageHandler>(*this));
 
@@ -137,6 +128,12 @@ cServerGame::~cServerGame()
 		canceled = true;
 		SDL_WaitThread (thread, nullptr);
 	}
+}
+
+//------------------------------------------------------------------------------
+eOpenServerResult cServerGame::startServer (int port)
+{
+	return lobbyServer.startServer (port);
 }
 
 //------------------------------------------------------------------------------
