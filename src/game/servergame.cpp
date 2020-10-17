@@ -55,7 +55,6 @@ namespace
 	private:
 		bool handleMessage (const cMultiplayerLobbyMessage&) final;
 
-		void serverCommand (int fromPlayer, const std::vector<std::string>& tokens);
 	private:
 		cServerGame* serverGame;
 	};
@@ -98,11 +97,7 @@ namespace
 //------------------------------------------------------------------------------
 cServerGame::cServerGame (std::shared_ptr<cConnectionManager> connectionManager, int port) :
 	lobbyServer (std::move (connectionManager)),
-	port(port),
-	thread (nullptr),
-	canceled (false),
-	shouldSave (false),
-	saveGameNumber (-1)
+	port(port)
 {
 	lobbyServer.addLobbyMessageHandler (std::make_unique<cDedicatedServerChatMessageHandler>(*this));
 
@@ -110,32 +105,37 @@ cServerGame::cServerGame (std::shared_ptr<cConnectionManager> connectionManager,
 	{
 		lobbyServer.sendChatMessage ("type --server help for dedicated server help", player.getNr());
 	});
-	signalConnectionManager.connect (lobbyServer.onDifferentVersion, [this](const std::string& version, const std::string& revision)
+	signalConnectionManager.connect (lobbyServer.onDifferentVersion, [](const std::string& version, const std::string& revision)
 	{
 		std::cout << "player connects with different version:" << version << " " << revision << std::endl;
 	});
 
-	signalConnectionManager.connect (lobbyServer.onMapRequested, [this](const cPlayerBasicData& player)
+	signalConnectionManager.connect (lobbyServer.onMapRequested, [](const cPlayerBasicData& player)
 	{
 		std::cout << player.getName() << " requests map." << std::endl;
 	});
-	signalConnectionManager.connect (lobbyServer.onMapUploaded, [this](const cPlayerBasicData& player)
+	signalConnectionManager.connect (lobbyServer.onMapUploaded, [](const cPlayerBasicData& player)
 	{
 		std::cout << player.getName() << " finished to download map." << std::endl;
 	});
 
-	//signalConnectionManager.connect (lobbyServer.onStartNewGame, [this](cServer& server) {});
-	//signalConnectionManager.connect (lobbyServer.onStartSavedGame, [this](cServer& server, const cSaveGameInfo& saveGameInfo) {});
+	signalConnectionManager.connect (lobbyServer.onErrorLoadSavedGame, [] (int slot){
+		std::cout << "Cannot load savegame " << slot << std::endl;
+	});
+
+	// Nothing for:
+	// lobbyServer.onClientDisconnect
+	// lobbyServer.onStartNewGame
+	// lobbyServer.onStartSavedGame
 }
 
 //------------------------------------------------------------------------------
 cServerGame::~cServerGame()
 {
-	if (thread != 0)
+	if (thread != nullptr)
 	{
 		canceled = true;
 		SDL_WaitThread (thread, nullptr);
-		thread = 0;
 	}
 }
 
@@ -146,22 +146,10 @@ void cServerGame::runInThread()
 }
 
 //------------------------------------------------------------------------------
-void cServerGame::pushMessage (std::unique_ptr<cNetMessage> message)
-{
- 	lobbyServer.pushMessage (std::move (message));
-}
-
-//------------------------------------------------------------------------------
-std::unique_ptr<cNetMessage> cServerGame::popMessage()
-{
-	return lobbyServer.popMessage();
-}
-//------------------------------------------------------------------------------
-bool cServerGame::loadGame (int saveGameNumber)
+void cServerGame::loadGame (int saveGameNumber)
 {
 	cSaveGameInfo saveGameInfo = cSavegame().loadSaveInfo(saveGameNumber);
 	lobbyServer.selectSaveGameInfo (saveGameInfo);
-	return true;
 }
 
 //------------------------------------------------------------------------------
@@ -207,7 +195,7 @@ void cServerGame::run()
 	{
 		lobbyServer.run();
 		SDL_Delay(10);
-#if 1
+
 		// don't do anything if games haven't been started yet!
 		if (server && shouldSave)
 		{
@@ -215,7 +203,6 @@ void cServerGame::run()
 			std::cout << "...saved to slot " << saveGameNumber << std::endl;
 			shouldSave = false;
 		}
-#endif
 	}
 	server = nullptr;
 }

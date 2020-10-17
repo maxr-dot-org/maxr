@@ -345,7 +345,7 @@ void cLobbyServer::askToFinishLobby (int fromPlayer)
 		{
 			Log.write((std::string)"Error loading save game: " + e.what(), cLog::eLOG_TYPE_NET_ERROR);
 			server.reset();
-			onErrorLoadSavedGame();
+			onErrorLoadSavedGame (saveGameInfo.number);
 			return;
 		}
 

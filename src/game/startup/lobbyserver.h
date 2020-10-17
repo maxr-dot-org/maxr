@@ -81,7 +81,7 @@ public:
 	cSignal<void (const cPlayerBasicData& fromPlayer)> onMapUploaded;
 
 	cSignal<void (cServer&)> onStartNewGame;
-	cSignal<void()> onErrorLoadSavedGame;
+	cSignal<void (int slot)> onErrorLoadSavedGame;
 	cSignal<void (cServer&, const cSaveGameInfo&)> onStartSavedGame;
 
 private:

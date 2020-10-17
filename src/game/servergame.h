@@ -20,32 +20,19 @@
 #ifndef game_servergameH
 #define game_servergameH
 
-#include "game/data/gamesettings.h"
 #include "game/logic/server.h"
 #include "game/startup/lobbyserver.h"
-#include "protocol/lobbymessage.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "utility/thread/concurrentqueue.h"
 
+#include <atomic>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include <SDL.h>
 
-class cLandingPositionManager;
-class cNetMessage;
-class cPlayer;
-class cPlayerBasicData;
-class cServer;
-class cStaticMap;
-
-int serverGameThreadFunction (void* data);
-
 //------------------------------------------------------------------------
 /** cServerGame handles all server side tasks of one multiplayer game in a thread.
- *  It is possible (in the future) to run several cServerGames in parallel.
- *  Each cServerGame has (in the future) its own queue of network events.
  */
 class cServerGame
 {
@@ -57,11 +44,8 @@ public:
 
 	void runInThread();
 
-	void pushMessage (std::unique_ptr<cNetMessage>);
-	std::unique_ptr<cNetMessage> popMessage();
-
 	void prepareGameData();
-	bool loadGame (int saveGameNumber);
+	void loadGame (int saveGameNumber);
 	void saveGame (int saveGameNumber);
 
 	// retrieve state
@@ -81,13 +65,13 @@ private:
 
 	std::unique_ptr<cServer> server;
 
-	int port;
+	int port = 0;
 
 	bool shouldSave = false;
 	int saveGameNumber = -1;
 
 	SDL_Thread* thread = nullptr;
-	bool canceled = false;
+	std::atomic<bool> canceled{false};
 };
 
 #endif

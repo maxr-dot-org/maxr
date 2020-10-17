@@ -20,13 +20,10 @@
 #ifndef game_dedicatedServer_H
 #define game_dedicatedServer_H
 
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
-#include "game/connectionmanager.h"
-
-class cDedicatedServerConfig;
 class cServerGame;
 
 //------------------------------------------------------------------------
@@ -42,24 +39,6 @@ public:
 
 protected:
 
-	enum eHelpCommands
-	{
-		kHelpUnknownCommand,
-		kNotImplementedYet,
-		kHelpWrongArguments,
-		kHelpHelp,
-		kHelpGeneral,
-		kHelpNewGame,
-		kHelpLoadGame,
-		kHelpSaveGame,
-		kHelpStop,
-		kHelpGames,
-		kHelpMaps,
-		kHelpSet,
-		kHelpExit,
-		kHelpPrintConfig
-	};
-	void printHelp (eHelpCommands) const;
 	void printPrompt() const;
 	void printConfiguration() const;
 	void printGames() const;
@@ -71,13 +50,11 @@ protected:
 	void setProperty (const std::string& property, const std::string& value);
 
 	bool startServer (int saveGameNumber = -1);
-	void startNewGame (std::shared_ptr<cConnectionManager>, int port);
-	void loadSaveGame (std::shared_ptr<cConnectionManager>, int port, int saveGameNumber);
 	void saveGame (int saveGameNumber);
 	void stopGames();
 
-	std::unique_ptr<cDedicatedServerConfig> configuration;
-
+private:
+	int port;
 	std::vector<std::unique_ptr<cServerGame>> games;
 
 private:

@@ -109,7 +109,7 @@ cMenuControllerMultiplayerHost::cMenuControllerMultiplayerHost (cApplication& ap
 		startNewGame (server);
 	});
 
-	signalConnectionManager.connect (lobbyServer.onErrorLoadSavedGame, [this](){
+	signalConnectionManager.connect (lobbyServer.onErrorLoadSavedGame, [this] (int /*slot*/){
 		application.show(std::make_shared<cDialogOk>(lngPack.i18n("Text~Error_Messages~ERROR_Save_Loading")));
 	});
 
