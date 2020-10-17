@@ -63,8 +63,7 @@ private:
 private:
 	cSignalConnectionManager signalConnectionManager;
 	cLobbyServer lobbyServer;
-
-	std::unique_ptr<cServer> server;
+	cServer* server = nullptr;
 
 	int port = 0;
 

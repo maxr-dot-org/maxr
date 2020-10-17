@@ -114,10 +114,15 @@ cServerGame::cServerGame () :
 		std::cout << "Cannot load savegame " << slot << std::endl;
 	});
 
+	signalConnectionManager.connect (lobbyServer.onStartNewGame, [this] (cServer& server){
+		this->server = &server;
+	});
+	signalConnectionManager.connect (lobbyServer.onStartSavedGame, [this] (cServer& server, const cSaveGameInfo&){
+		this->server = &server;
+	});
+
 	// Nothing for:
 	// lobbyServer.onClientDisconnect
-	// lobbyServer.onStartNewGame
-	// lobbyServer.onStartSavedGame
 }
 
 //------------------------------------------------------------------------------
