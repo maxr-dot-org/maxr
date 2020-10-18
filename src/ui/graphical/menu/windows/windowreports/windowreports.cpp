@@ -90,7 +90,7 @@ cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> play
 	signalConnectionManager.connect (scoreRadioButton->toggled, std::bind (&cWindowReports::updateActiveFrame, this));
 	signalConnectionManager.connect (reportsRadioButton->toggled, std::bind (&cWindowReports::updateActiveFrame, this));
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (497, 207), getPosition() + cPosition (497 + 100, 207 + font->getFontHeight())), lngPack.i18n ("Text~Others~Included") + ":"));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (497, 207), getPosition() + cPosition (497 + 100, 207 + font->getFontHeight())), lngPack.i18n ("Text~Others~Included") + lngPack.i18n("Text~Punctuation~Colon")));
 
 	planesCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 218), lngPack.i18n ("Text~Others~Air_Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
 	groundCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 218 + 18), lngPack.i18n ("Text~Others~Ground_Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
@@ -107,7 +107,7 @@ cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> play
 	signalConnectionManager.connect (seaCheckBox->toggled, std::bind (&cWindowReports::handleFilterChanged, this));
 	signalConnectionManager.connect (stationaryCheckBox->toggled, std::bind (&cWindowReports::handleFilterChanged, this));
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (497, 299), getPosition() + cPosition (497 + 100, 299 + font->getFontHeight())), lngPack.i18n ("Text~Others~Limited_To") + ":"));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (497, 299), getPosition() + cPosition (497 + 100, 299 + font->getFontHeight())), lngPack.i18n ("Text~Others~Limited_To") + lngPack.i18n("Text~Punctuation~Colon")));
 
 	produceCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 312), lngPack.i18n ("Text~Others~Produce_Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
 	fightCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 312 + 18), lngPack.i18n ("Text~Others~Fight_Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
@@ -314,7 +314,7 @@ bool cWindowReports::checkFilter(const cStaticUnitData& data) const
 
 	if (data.canBuild.empty() && produceCheckBox->isChecked()) return false;
 	if (!data.canAttack && fightCheckBox->isChecked()) return false;
-	
+
 	if (!data.isStealthOn && stealthCheckBox->isChecked()) return false;
 
 	if (data.surfacePosition != cStaticUnitData::SURFACE_POS_GROUND) return false;

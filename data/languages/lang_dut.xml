@@ -61,7 +61,7 @@
 			<Load ENG="Load Menu" localized="Menu laden"/>
 			<LoadSave ENG="Load/Save Menu" localized="Menu Laden/Opslaan"/>
 			<MainMenu ENG="Main Menu" localized="Hoofdmenu"/>
-			<Map ENG="Map" localized="Kaart"/>
+			<Map ENG="Map: %s" localized="Kaart: %s"/>
 			<Metal ENG="Raw Materials" localized="Metaal"/>
 			<Mine ENG="Allocation menu" localized="Mijnmanager"/>
 			<Nobody ENG="Nobody" localized="Niemand"/>
@@ -73,7 +73,7 @@
 			<Port ENG="Port" localized="Poort"/>
 			<Resource ENG="Resource density" localized="Bronnen"/>
 			<Resource_Density ENG="Resource frequency" localized="Brondichtheid"/>
-			<Savegame ENG="Saved Games" localized="Bewaarde Spellen"/>
+			<Savegame ENG="Saved Game:" localized="Bewaarde Spellen:"/><!-- Check: should be singular -->
 			<Send ENG="Send" localized="Zenden"/>
 			<Team ENG="Team" localized="Team"/>
 			<Turn_end ENG="Turn end" localized="Einde van de beurt"/>

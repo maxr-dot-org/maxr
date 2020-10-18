@@ -61,7 +61,7 @@
 			<Load ENG="Load Menu" localized="Meni Naloži"/>
 			<LoadSave ENG="Load/Save Menu" localized="Meni Naloži/Shrani"/>
 			<MainMenu ENG="Main Menu" localized="Glavni meni"/>
-			<Map ENG="Map" localized="Pokrajina"/>
+			<Map ENG="Map: %s" localized="Pokrajina: %s"/>
 			<Metal ENG="Raw Materials" localized="Surovine"/>
 			<Mine ENG="Allocation menu" localized="Meni Rudnik"/>
 			<Nobody ENG="Nobody" localized="Nihče"/>
@@ -73,7 +73,7 @@
 			<Port ENG="Port" localized="Vrata"/>
 			<Resource ENG="Resource density" localized="Količina rudnin"/><!-- unused?! -->
 			<Resource_Density ENG="Resource frequency" localized="Pogostost rudnin"/>
-			<Savegame ENG="Saved Games" localized="Shranjene igre"/><!--unused?! -->
+			<Savegame ENG="Saved Game:" localized="Shranjene igre:"/><!-- Check: should be singular -->
 			<Send ENG="Send" localized="Pošlji"/>
 			<Team ENG="Team" localized="Moštvo"/><!-- e.g. Player 1 is called as one team -->
 			<Turn_end ENG="Turn end" localized=""/><!--TODO: translation needed-->

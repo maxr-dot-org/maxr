@@ -61,7 +61,7 @@
 			<Load ENG="Load Menu" localized="Laden-Menü"/>
 			<LoadSave ENG="Load/Save Menu" localized="Laden/Speichern-Menü"/>
 			<MainMenu ENG="Main Menu" localized="Hauptmenü"/>
-			<Map ENG="Map" localized="Karte"/>
+			<Map ENG="Map: %s" localized="Karte: %s"/>
 			<Metal ENG="Raw Materials" localized="Rohstoff"/>
 			<Mine ENG="Allocation menu" localized="Rohstoffverteilung"/>
 			<Nobody ENG="Nobody" localized="Niemand"/>
@@ -73,7 +73,7 @@
 			<Port ENG="Port" localized="Port"/>
 			<Resource ENG="Resource density" localized="Ressourcen"/>
 			<Resource_Density ENG="Resource frequency" localized="Ressourcendichte"/>
-			<Savegame ENG="Saved Games" localized="Gespeicherte Spiele"/>
+			<Savegame ENG="Saved Game:" localized="Gespeicherte Spiele:"/><!-- Check: should be singular -->
 			<Send ENG="Send" localized="Senden"/>
 			<Team ENG="Team" localized="Team"/>
 			<Turn_end ENG="Turn end" localized="Zeitbegenzung Rund"/>

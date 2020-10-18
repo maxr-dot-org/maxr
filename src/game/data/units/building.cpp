@@ -222,7 +222,7 @@ string cBuilding::getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData&
 
 				if (font->getTextWide (sText, FONT_LATIN_SMALL_WHITE) > 126)
 				{
-					sText = lngPack.i18n ("Text~Comp~Producing") + ":\n";
+					sText = lngPack.i18n ("Text~Comp~Producing") + lngPack.i18n("Text~Punctuation~Colon") + "\n";
 					sText += unitName + " (";
 					sText += iToStr (iRound) + ")";
 				}
@@ -237,8 +237,8 @@ string cBuilding::getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData&
 
 				if (font->getTextWide (sText) > 126)
 				{
-					sText = lngPack.i18n ("Text~Comp~Producing_Fin");
-					sText += ":\n";
+					sText = lngPack.i18n ("Text~Comp~Producing_Fin") + lngPack.i18n("Text~Punctuation~Colon");
+					sText += "\n";
 					sText += unitName;
 				}
 				return sText;

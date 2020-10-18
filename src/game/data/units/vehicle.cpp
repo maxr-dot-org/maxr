@@ -483,8 +483,8 @@ string cVehicle::getStatusStr(const cPlayer* player, const cUnitsData& unitsData
 
 				if (font->getTextWide (sText) > 126)
 				{
-					sText = lngPack.i18n ("Text~Comp~Producing");
-					sText += ":\n";
+					sText = lngPack.i18n ("Text~Comp~Producing") + lngPack.i18n("Text~Punctuation~Colon");
+					sText += "\n";
 					sText += unitsData.getStaticUnitData(getBuildingType()).getName() + " (";
 					sText += iToStr (getBuildTurns());
 					sText += ")";
@@ -499,8 +499,8 @@ string cVehicle::getStatusStr(const cPlayer* player, const cUnitsData& unitsData
 
 				if (font->getTextWide (sText) > 126)
 				{
-					sText = lngPack.i18n ("Text~Comp~Producing_Fin");
-					sText += ":\n";
+					sText = lngPack.i18n ("Text~Comp~Producing_Fin") + lngPack.i18n("Text~Punctuation~Colon");
+					sText += "\n";
 					sText += unitsData.getStaticUnitData(getBuildingType()).getName();
 				}
 				return sText;

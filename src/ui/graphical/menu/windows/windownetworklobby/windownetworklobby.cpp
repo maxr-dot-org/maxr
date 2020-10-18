@@ -280,7 +280,7 @@ void cWindowNetworkLobby::updateSettingsText()
 
 	if (saveGameInfo.number >= 0)
 	{
-		text += lngPack.i18n("Text~Title~Savegame") + ":\n  " + saveGameInfo.gameName + "\n\n" + lngPack.i18n("Text~Title~Players") + "\n";
+		text += lngPack.i18n("Text~Title~Savegame") + "\n  " + saveGameInfo.gameName + "\n\n" + lngPack.i18n("Text~Title~Players") + "\n";
 		for (size_t i = 0; i < saveGameInfo.players.size(); ++i)
 		{
 			text += saveGameInfo.players[i].getName() + "\n";
@@ -289,7 +289,7 @@ void cWindowNetworkLobby::updateSettingsText()
 	}
 	if (staticMap != nullptr)
 	{
-		text += lngPack.i18n ("Text~Title~Map") + lngPack.i18n ("Text~Punctuation~Colon") + staticMap->getName();
+		text += lngPack.i18n ("Text~Title~Map", staticMap->getName());
 		text += " (" + iToStr (staticMap->getSize().x()) + "x" + iToStr (staticMap->getSize().y()) + ")\n";
 	}
 	else if (saveGameInfo.number < 0)

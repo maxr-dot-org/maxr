@@ -61,7 +61,7 @@
 			<Load ENG="Load Menu"/>
 			<LoadSave ENG="Load/Save Menu"/>
 			<MainMenu ENG="Main Menu"/>
-			<Map ENG="Map"/>
+			<Map ENG="Map: %s"/>
 			<Metal ENG="Raw Materials"/>
 			<Mine ENG="Allocation menu"/>
 			<Nobody ENG="Nobody"/>
@@ -73,7 +73,7 @@
 			<Port ENG="Port"/>
 			<Resource ENG="Resource density"/><!--unused?! ~~ nonsinn -->
 			<Resource_Density ENG="Resource frequency"/>
-			<Savegame ENG="Saved Games"/><!--unused?! ~~ nonsinn -->
+			<Savegame ENG="Saved Game:"/>
 			<Send ENG="Send"/>
 			<Team ENG="Team"/> <!-- e.g. Player 1 is called as one team -->
 			<Turn_end ENG="Turn end"/>

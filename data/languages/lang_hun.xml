@@ -61,7 +61,7 @@
 			<Load ENG="Load Menu" localized="Betöltés Menü"/>
 			<LoadSave ENG="Load/Save Menu" localized="Betöltés/Mentés Menü"/>
 			<MainMenu ENG="Main Menu" localized="Főmenü"/>
-			<Map ENG="Map" localized="Térkép"/>
+			<Map ENG="Map: %s" localized="Térkép: %s"/>
 			<Metal ENG="Raw Materials" localized="Nyersanyag"/><!--TODO: review needed (english string has been changed)-->
 			<Mine ENG="Allocation menu" localized="Nyersanyagelosztás menü"/>
 			<Nobody ENG="Nobody" localized="Senki"/>
@@ -73,7 +73,7 @@
 			<Port ENG="Port" localized="Port"/>
 			<Resource ENG="Resource density" localized="Nyersanyagsűrűség"/>
 			<Resource_Density ENG="Resource frequency" localized="Nyersanyag gyakoriság"/>
-			<Savegame ENG="Saved Games" localized="Mentés"/><!--TODO: review needed (english string has been changed)-->
+			<Savegame ENG="Saved Game:" localized="Mentés:"/><!-- Check: should be singular -->
 			<Send ENG="Send" localized="Küldés"/>
 			<Team ENG="Team" localized="Csapat"/>
 			<Turn_end ENG="Turn end" localized=""/><!--TODO: translation needed-->

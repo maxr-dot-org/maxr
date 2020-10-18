@@ -61,7 +61,7 @@
 			<Load ENG="Load Menu" localized="Загрузка"/>
 			<LoadSave ENG="Load/Save Menu" localized="Загрузка/Сохранение"/>
 			<MainMenu ENG="Main Menu" localized="Главное меню"/>
-			<Map ENG="Map" localized="Карта"/>
+			<Map ENG="Map: %s" localized="Карта: %s"/>
 			<Metal ENG="Raw Materials" localized="Сырьё"/><!--TODO: review needed (english string has been changed)-->
 			<Mine ENG="Allocation menu" localized="Распределение ресурсов"/>
 			<Nobody ENG="Nobody" localized="Никто"/>
@@ -73,7 +73,7 @@
 			<Port ENG="Port" localized="Порт"/>
 			<Resource ENG="Resource density" localized="Ресурсы"/>
 			<Resource_Density ENG="Resource frequency" localized="Плотность ресурсов"/>
-			<Savegame ENG="Saved Games" localized="Сохранение"/><!--TODO: review needed (english string has been changed)-->
+			<Savegame ENG="Saved Game:" localized="Сохранение"/><!-- Check: should be singular -->
 			<Send ENG="Send" localized="Отправить"/>
 			<Team ENG="Team" localized="Команда"/>
 			<Turn_end ENG="Turn end" localized=""/><!--TODO: translation needed-->
