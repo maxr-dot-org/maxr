@@ -28,18 +28,43 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "utility/language.h"
-#include "maxrversion.h"
-#include "utility/extendedtinyxml.h"
-#include "utility/log.h"
-#include "settings.h"
-#include "utility/files.h"
-#include "utility/string/toupper.h"
+
+#include "defines.h"
 #include "game/data/units/unitdata.h"
+#include "maxrversion.h"
+#include "settings.h"
 #include "string/toString.h"
+#include "utility/extendedtinyxml.h"
+#include "utility/files.h"
+#include "utility/log.h"
+#include "utility/string/toupper.h"
 
 using namespace tinyxml2;
 
 cLanguage lngPack;
+
+////////////////////////////////////////////////////////////////////////////////
+
+#define LANGUAGE_FILE_FOLDER cSettings::getInstance().getLangPath()
+#define LANGUAGE_FILE_NAME   "lang_"
+#define LANGUAGE_FILE_EXT    ".xml"
+
+////////////////////////////////////////////////////////////////////////////////
+// XML-Node paths
+
+// With nullptr as ending sign
+#define XNP_MAX_LANG_FILE "MAX_Language_File", nullptr
+#define XNP_MAX_LANG_FILE_FOOTER_AUTHOR "MAX_Language_File", "Footer", "Author", nullptr
+#define XNP_MAX_LANG_FILE_FOOTER_AUTHOR_EDITOR "MAX_Language_File", "Footer", "Author", "Editor", nullptr
+#define XNP_MAX_LANG_FILE_FOOTER_GAMEVERSION "MAX_Language_File", "Footer", "Game_Version", nullptr
+#define XNP_MAX_LANG_FILE_TEXT "MAX_Language_File", "Text", nullptr
+#define XNP_MAX_LANG_FILE_GRAPHIC "MAX_Language_File", "Graphic", nullptr
+#define XNP_MAX_LANG_FILE_SPEECH "MAX_Language_File", "Speech", nullptr
+
+// Without nullptr as ending sign. Do not forget it in parameter list !
+#define XNP_MAX_LANG_FILE_TEXT_MAIN "MAX_Language_File", "Text", "Main"
+#define XNP_MAX_LANG_FILE_TEXT_ERROR_MSG "MAX_Language_File", "Text", "Error_Messages"
+
 
 cLanguage::cLanguage() :
 	m_bLeftToRight (true),
@@ -85,7 +110,7 @@ int cLanguage::SetCurrentLanguage (const std::string& szLanguageCode)
 	return 0;
 }
 
-std::string cLanguage::i18n (const std::string& szInputText)
+std::string cLanguage::i18n (const std::string& szInputText) const
 {
 	StrStrMap::const_iterator impTranslation;
 	impTranslation = m_mpLanguage.find (szInputText);
@@ -108,7 +133,7 @@ std::string cLanguage::i18n (const std::string& szInputText)
 }
 
 // Translation with replace %s
-std::string cLanguage::i18n (const std::string& szMainText, const std::string& szInsertText)
+std::string cLanguage::i18n (const std::string& szMainText, const std::string& szInsertText) const
 {
 	std::string szMainTextNew;
 	std::size_t iPos;

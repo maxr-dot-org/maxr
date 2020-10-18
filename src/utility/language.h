@@ -30,34 +30,10 @@
 #ifndef utility_languageH
 #define utility_languageH
 
-////////////////////////////////////////////////////////////////////////////////
-
-#define LANGUAGE_FILE_FOLDER cSettings::getInstance().getLangPath()
-#define LANGUAGE_FILE_NAME   "lang_"
-#define LANGUAGE_FILE_EXT    ".xml"
-
-////////////////////////////////////////////////////////////////////////////////
-// XML-Node paths
-
-// With nullptr as ending sign
-#define XNP_MAX_LANG_FILE "MAX_Language_File", nullptr
-#define XNP_MAX_LANG_FILE_FOOTER_AUTHOR "MAX_Language_File", "Footer", "Author", nullptr
-#define XNP_MAX_LANG_FILE_FOOTER_AUTHOR_EDITOR "MAX_Language_File", "Footer", "Author", "Editor", nullptr
-#define XNP_MAX_LANG_FILE_FOOTER_GAMEVERSION "MAX_Language_File", "Footer", "Game_Version", nullptr
-#define XNP_MAX_LANG_FILE_TEXT "MAX_Language_File", "Text", nullptr
-#define XNP_MAX_LANG_FILE_GRAPHIC "MAX_Language_File", "Graphic", nullptr
-#define XNP_MAX_LANG_FILE_SPEECH "MAX_Language_File", "Speech", nullptr
-
-// Without nullptr as ending sign. Do not forget it in parameter list !
-#define XNP_MAX_LANG_FILE_TEXT_MAIN "MAX_Language_File", "Text", "Main"
-#define XNP_MAX_LANG_FILE_TEXT_ERROR_MSG "MAX_Language_File", "Text", "Error_Messages"
-
-////////////////////////////////////////////////////////////////////////////////
-
 #include <map>
 #include <string>
 #include <vector>
-#include "defines.h"
+
 #include <3rd/tinyxml2/tinyxml2.h>
 
 struct sID;
@@ -68,12 +44,15 @@ public:
 	cLanguage();
 
 	const std::string& GetCurrentLanguage() const;
-	int         SetCurrentLanguage (const std::string& szLanguageCode);
-	std::string i18n (const std::string& szInputText);
-	// Translation with replace %s
-	std::string i18n (const std::string& szMainText, const std::string& szInsertText);
-	int         ReadLanguagePack();
+	int SetCurrentLanguage (const std::string& szLanguageCode);
+
+	int ReadLanguagePack();
 	std::vector<std::string> getAvailableLanguages() const;
+
+	std::string i18n (const std::string& szInputText) const;
+	// Translation with replace %s
+	std::string i18n (const std::string& szMainText, const std::string& szInsertText) const;
+
 	std::string getUnitName(const sID& id) const;
 	std::string getUnitDescription(const sID& id) const;
 
@@ -83,14 +62,14 @@ public:
 private:
 	typedef std::map<std::string, std::string> StrStrMap;
 
-	int         ReadSingleTranslation (const char* pszCurrent, ...);
+	int ReadSingleTranslation (const char* pszCurrent, ...);
 	std::string ReadSingleTranslation (const std::string& strInput);
-	int         ReadLanguagePackFooter();
-	int         ReadLanguagePackFooter (const std::string& strLanguageCode);
-	int         ReadLanguageMaster();
-	int         ReadRecursiveLanguagePack (tinyxml2::XMLElement* xmlElement, std::string strNodePath);
+	int ReadLanguagePackFooter();
+	int ReadLanguagePackFooter (const std::string& strLanguageCode);
+	int ReadLanguageMaster();
+	int ReadRecursiveLanguagePack (tinyxml2::XMLElement* xmlElement, std::string strNodePath);
 
-	int         checkTimeStamp (std::string rstrData);
+	int checkTimeStamp (std::string rstrData);
 
 	tinyxml2::XMLDocument m_XmlDoc;
 	// Use ISO 639-2 codes to identify languages
@@ -101,8 +80,8 @@ private:
 	std::string m_szEncoding;
 	std::string m_szLastEditor;
 	StrStrMap   m_mpLanguage;
-	bool        m_bLeftToRight;
-	bool        m_bErrorMsgTranslationLoaded;
+	bool m_bLeftToRight;
+	bool m_bErrorMsgTranslationLoaded;
 };
 
 extern cLanguage lngPack;
