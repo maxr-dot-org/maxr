@@ -11,9 +11,9 @@
 <MAX_Language_File lang="slv" encoding="utf8" direction="left-to-right">
 	<Text>
 		<Main>
-			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Priredbo izdelal DoctorDeath)"/>
-			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Lastnik originala je Interplay)"/>
-			<Credits_Reloaded ENG="M.A.X.R. based on Interplay's Mechanized Assault and eXploration" localized="M.A.X.R. temelji na Interplayevi igri Mechanized Assault and Exploration"/>
+			<Credits_Doc ENG="Michael Mönch&apos;s M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Priredbo izdelal DoctorDeath)"/>
+			<Credits_MM ENG="Michael Mönch&apos;s M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Lastnik originala je Interplay)"/>
+			<Credits_Reloaded ENG="M.A.X.R. based on Interplay&apos;s Mechanized Assault and eXploration" localized="M.A.X.R. temelji na Interplayevi igri Mechanized Assault and Exploration"/>
 			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded" localized="Mechanized Assault and Exploration Reloaded"/>
 			<Game_Title ENG="M.A.X.R." localized="M.A.X.R."/>
 			<Version ENG="version v%s" localized="verzija v%s"/>
@@ -88,6 +88,7 @@
 			<Air_Units ENG="Airunits" localized="Zračne enote"/>
 			<Ammo ENG="Ammunition" localized="Strelivo"/>
 			<Ammo_7 ENG="Ammo" localized="Strelivo"/>
+			<Armor ENG="Armor" localized="Oklep"/>
 			<Armor_7 ENG="Armor" localized="Oklep"/>
 			<Attack ENG="Attack" localized="Napad"/>
 			<Attack_7 ENG="Attack" localized="Napad"/>
@@ -109,6 +110,7 @@
 			<Done ENG="Done" localized="Zapri"/>
 			<Done_7 ENG="Done" localized="Zapri"/>
 			<End ENG="End" localized="Končaj"/>
+			<Enter_7 ENG="Enter"/>
 			<Exit ENG="Exit" localized="Izhod"/>
 			<Fight_Units ENG="Fighting units" localized="Enote v boju"/>
 			<Files ENG="Files" localized="Datoteke"/>
@@ -232,7 +234,11 @@
 			<Connection_Terminated ENG="Connection terminated." localized="Povezava je bila prekinjena."/>
 			<Deadline ENG="This turn will end in %s seconds." localized="Ta poteza se bo končala v %s sekundah."/>
 			<Disconnect_Not_In_Save ENG="You will be disconnected because you are not listed in the savegame." localized="Igralec bo izključen, saj ni prisoten v shranjeni igri."/>
-			<Go ENG="Let's go" localized="Gremo, akcija"/>
+			<Gameversion_Error ENG="Couldn&apos;t connect: Gameversion of server is: %s."/>
+			<Gameversion_Own ENG="Your version is: %s."/>
+			<Gameversion_Warning_Client ENG="Warning: Gameversion of server is: %s."/>
+			<Gameversion_Warning_Server ENG="Warning: Gameversion of player is: %s."/>
+			<Go ENG="Let&apos;s go" localized="Gremo, akcija"/>
 			<Go_Abort ENG="Go aborted" localized="Prekini"/>
 			<Go_Check ENG="Check for go" localized="Preveri pripravljenost"/>
 			<Go_Host ENG="Host wants to go: Ready to go" localized="Strežnik želi da: Potrdiš pripravljenost"/>
@@ -286,9 +292,11 @@
 			<Player_Turn ENG="%s:\nBegin turn." localized="%s:\nZačni potezo."/>
 			<Player_Turn_End ENG="%s ended turn" localized="%s je končal potezo"/>
 			<Player_Twice ENG="Playername exists twice: " localized="Podvojeno ime igralca: "/><!-- not used?! -->
-			<Player_Wrong ENG="Missing a correct player's name" localized="Manjka pravilno ime igralca"/>
+			<Player_Wrong ENG="Missing a correct player&apos;s name" localized="Manjka pravilno ime igralca"/>
 			<Reconnect ENG="This game is running already.\nIf you have lost connection to the game, you can reconnect.\n\nDo you want to reconnect?" localized="Igra je že v teku.\nČe je bila prekinjena povezava, se lahko priključiš znova.\n\nSe želiš priključiti?"/>
+			<Reconnect_Already_Connected ENG="Reconnecting forbidden by server. A player with your name is already connected."/>
 			<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="Ponovna priključitev je onemogočena s strani strežnika."/>
+			<Reconnect_Not_Part_Of_Game ENG="Reconnecting forbidden by server. You are not part of the game."/>
 			<Save_Only_Host ENG="Only the host can save the current games." localized="Zgolj gostitelj lahko shrani tekoče igre."/>
 			<Server_Not_Running ENG="The server is not running." localized="Strežnik ne deluje."/>
 			<Wait_For_Server ENG="Waiting for network response from server" localized="Čakam na mrežni odziv strežnika"/>
@@ -298,9 +306,12 @@
 			<Waiting ENG="Waiting for other players..." localized="Čakam na druge igralce..."/>
 		</Multiplayer>
 		<Comp>
+			<Adjustments_Fuel_Decreased ENG="Adjustments made: fuel mining decreased by "/>
 			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Popravek: črpanje goriva je povečano za "/>
 			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Popravek: izkop zlata je zmanjšan za "/>
+			<Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by "/>
 			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by " localized="Popravek: izkop surovin je zmanjšan za "/>
+			<Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by "/>
 			<Attacked ENG="is under attack" localized="je napadena"/>
 			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s napada sovražnika"/>
 			<AttackingStatusStr ENG="attacking" localized="napada"/>
@@ -353,11 +364,13 @@
 			<Producing ENG="Building" localized="Izgradnja poteka"/>
 			<Producing_Err ENG="Buildposition blocked or insufficient raw materials to build" localized="Blokirana pozicija ali pomanjkanje surovin za izgradnjo"/>
 			<Producing_Fin ENG="finished building" localized="izgradnja je zaključena"/>
+			<Producing_InsufficientMaterial ENG="Insufficient raw materials to build"/>
+			<Producing_PositionBlocked ENG="Buildposition blocked"/>
 			<ReactionFireOff ENG="Reaction Fire Off" localized="Izklop samodejnega ognja"/>
 			<Repeat ENG="Again" localized="Ponovno"/>
 			<Reserve ENG="Reserve" localized="Rezerva"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Opozorilo: nepodprt video način v konfiguraciji"/>
-			<RestartRequired ENG="Please restart 'Mechanized Assault and eXploration Reloaded' to take effect the change." localized=""/><!--TODO: translation needed-->
+			<RestartRequired ENG="Please restart &apos;Mechanized Assault and eXploration Reloaded&apos; to take effect the change." localized=""/><!--TODO: translation needed-->
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Posnetek zaslona je shranjen v %s"/>
 			<Sentry ENG="on sentry" localized="na preži"/>
 			<Stolen ENG="stolen" localized="ukraden"/>
@@ -374,12 +387,16 @@
 			<Upgrades_Done ENG="Upgraded" localized="Nadgrajen"/>
 			<Upgrades_Done2 ENG="unit(s) of type %s" localized="enote tipa %s"/>
 			<Waits ENG="waiting" localized="v mirovanju"/>
+			<Wins ENG="wins"/>
 			<Working ENG="working" localized="v delovanju"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Ne najdem datoteke: %s"/>
 			<ERROR_Map_Loading ENG="Error while loading map" localized="Napaka pri nalaganju pokrajine"/><!--TODO: review needed (english string has been changed)-->
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="manjkajoč prevod: %s"/>
+			<ERROR_Save_Incompatible ENG="Savegames from Maxr versions before %s are not compatible."/>
+			<ERROR_Save_Loading ENG="Error while loading saved game"/>
+			<ERROR_Save_Writing ENG="Error while writing save game file"/>
 			<INFO_Language_initialised ENG="Language is now initialized" localized="Jezik je nastavljen"/>
 			<INFO_Not_Implemented ENG="Not yet implemented" localized="Funkcija še ni implementirana"/>
 		</Error_Messages>

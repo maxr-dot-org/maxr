@@ -55,6 +55,12 @@ std::string cSavedReportTurnStart::getMessage(const cUnitsData& unitsData) const
 			totalUnitsCount += entry.count;
 			message += entry.count > 1 ? (iToStr(entry.count) + " " + unitsData.getStaticUnitData(entry.type).getName()) : (unitsData.getStaticUnitData(entry.type).getName());
 		}
+		// TODO: Plural rules are language dependant
+		// - Russian has 3 forms, Chinese 1 form, ...
+		//          | eng  | fre  | ...
+		// singular | == 1 | <= 1 |
+		// plural   | != 1 | 1 <  |
+		// we should have `i18n (key, n)`
 		if (totalUnitsCount == 1) message += " " + lngPack.i18n ("Text~Comp~Finished") + ".";
 		else if (totalUnitsCount > 1) message += " " + lngPack.i18n ("Text~Comp~Finished2") + ".";
 	}

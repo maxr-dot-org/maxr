@@ -11,9 +11,9 @@
 <MAX_Language_File lang="ger" encoding="utf8" direction="left-to-right">
 	<Text>
 		<Main>
-			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Remake von DoctorDeath)"/>
-			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Original von Interplay)"/>
-			<Credits_Reloaded ENG="M.A.X.R. based on Interplay's Mechanized Assault and eXploration" localized="M.A.X.R. basierend auf Interplays Mechanized Assault and eXploration"/>
+			<Credits_Doc ENG="Michael Mönch&apos;s M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Remake von DoctorDeath)"/>
+			<Credits_MM ENG="Michael Mönch&apos;s M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Original von Interplay)"/>
+			<Credits_Reloaded ENG="M.A.X.R. based on Interplay&apos;s Mechanized Assault and eXploration" localized="M.A.X.R. basierend auf Interplays Mechanized Assault and eXploration"/>
 			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded" localized="Mechanized Assault and eXploration Reloaded"/>
 			<Game_Title ENG="M.A.X.R." localized="M.A.X.R."/>
 			<Version ENG="version v%s" localized="Version V%s"/>
@@ -88,6 +88,7 @@
 			<Air_Units ENG="Airunits" localized="Lufteinheiten"/>
 			<Ammo ENG="Ammunition" localized="Munition"/>
 			<Ammo_7 ENG="Ammo" localized="Munni"/>
+			<Armor ENG="Armor"/>
 			<Armor_7 ENG="Armor" localized="Panzer."/>
 			<Attack ENG="Attack" localized="Angriff"/>
 			<Attack_7 ENG="Attack" localized="Angriff"/>
@@ -233,7 +234,7 @@
 			<Connection_Terminated ENG="Connection terminated." localized="Verbindung getrennt."/>
 			<Deadline ENG="This turn will end in %s seconds." localized="Diese Runde wird in %s Sekunden enden."/>
 			<Disconnect_Not_In_Save ENG="You will be disconnected because you are not listed in the savegame." localized="Sie werden getrennt, da Sie nicht im Spielstand aufgeführt sind."/>
-			<Go ENG="Let's go" localized="Auf gehts!"/>
+			<Go ENG="Let&apos;s go" localized="Auf gehts!"/>
 			<Go_Abort ENG="Go aborted" localized="Abgebrochen"/>
 			<Go_Check ENG="Check for go" localized="Prüfe ob zum Starten bereit"/>
 			<Go_Host ENG="Host wants to go: Ready to go" localized="Host will starten: Machen Sie sich startklar"/>
@@ -264,7 +265,7 @@
 			<Network_Syncing ENG="Synchronizing..." localized="Synchronisieren..."/>
 			<Gameversion_Warning_Client ENG="Warning: Gameversion of server is: %s." localized="Warnung: Spielversion des Servers ist: %s."/>
 			<Gameversion_Warning_Server ENG="Warning: Gameversion of player is: %s." localized="Warnung: Spielversion des Spielers ist: %s."/>
-			<Gameversion_Error ENG="Couldn't connect: Gameversion of server is: %s." localized="Verbindung nicht möglich: Spielversion des Servers ist: %s."/>
+			<Gameversion_Error ENG="Couldn&apos;t connect: Gameversion of server is: %s." localized="Verbindung nicht möglich: Spielversion des Servers ist: %s."/>
 			<Gameversion_Own ENG="Your version is: %s." localized="Eigene Version ist: %s."/>
 			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Die Karte %s konnte nicht geladen werden. Daher können Sie nicht loslegen."/>
 			<No_Response ENG="Waiting for network response from player %s" localized="Warte auf Netzwerkantwort von Spieler %s"/>
@@ -291,7 +292,7 @@
 			<Player_Turn ENG="%s:\nBegin turn." localized="%s:\nStarte Runde."/>
 			<Player_Turn_End ENG="%s ended turn" localized="%s hat den Zug beendet"/>
 			<Player_Twice ENG="Playername exists twice: " localized="Spielername existiert doppelt: "/>
-			<Player_Wrong ENG="Missing a correct player's name" localized="Ein Spieler hat nicht den richtigen Namen!"/>
+			<Player_Wrong ENG="Missing a correct player&apos;s name" localized="Ein Spieler hat nicht den richtigen Namen!"/>
 			<Reconnect ENG="This game is running already.\nIf you have lost connection to the game, you can reconnect.\n\nDo you want to reconnect?" localized="Das Spiel läuft bereits.\nFalls Sie die Verbindung zum Spiel verloren haben, können Sie sich neu verbinden.\n\nMöchten Sie sich neu verbinden?"/>
 			<Reconnect_Not_Part_Of_Game ENG="Reconnecting forbidden by server. You are not part of the game." localized="Wiederverbinden nicht möglich. Sie sind nicht Teil des laufenden Spiels."/>
 			<Reconnect_Already_Connected ENG="Reconnecting forbidden by server. A player with your name is already connected." localized="Wiederverbinden nicht möglich. Ein Spieler mit gleichem Namen ist bereits verbunden."/>
@@ -305,8 +306,11 @@
 		</Multiplayer>
 		<Comp>
 			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Änderungen vorgenommen: Treibstoffproduktion erhöht um "/>
+			<Adjustments_Fuel_Decreased ENG="Adjustments made: fuel mining decreased by "/>
 			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Änderungen vorgenommen: Goldproduktion verringert um "/>
+			<Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by "/>
 			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by " localized="Änderungen vorgenommen: Rohstoffproduktion verringert um "/>
+			<Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by "/>
 			<Attacked ENG="is under attack" localized="wird angegriffen"/>
 			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s greift den Feind an"/>
 			<AttackingStatusStr ENG="attacking" localized="angreifend"/>
@@ -365,7 +369,7 @@
 			<Repeat ENG="Again" localized="Wieder"/>
 			<Reserve ENG="Reserve" localized="Reserve"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Achtung: Nichtunterstützte Bildschirmauflösung in der Konfiguration gefunden"/>
-			<RestartRequired ENG="Please restart 'Mechanized Assault and eXploration Reloaded' to take effect the change." localized="Bitte starte 'Mechanized Assault and eXploration Reloaded' neu, damit die Änderung inkraft tritt."/>
+			<RestartRequired ENG="Please restart &apos;Mechanized Assault and eXploration Reloaded&apos; to take effect the change." localized="Bitte starte &apos;Mechanized Assault and eXploration Reloaded&apos; neu, damit die Änderung inkraft tritt."/>
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Bildschirmfoto gespeichet unter %s "/>
 			<Sentry ENG="on sentry" localized="auf wachposten"/>
 			<Stolen ENG="stolen" localized="gestohlen"/>
@@ -390,9 +394,9 @@
 			<ERROR_Save_Loading ENG="Error while loading saved game" localized="Fehler beim Laden des gespeicherten Spielstands"/>
 			<ERROR_Save_Writing ENG="Error while writing save game file" localized="Fehler beim Schreiben des Spielstands"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="fehlende Übersetzung: %s"/>
+			<ERROR_Save_Incompatible ENG="Savegames from Maxr versions before %s are not compatible." localized="Gespeicherte Spielstände von Maxr Versionen vor %s sind nicht kompatibel."/>
 			<INFO_Language_initialised ENG="Language is now initialized" localized="Sprach ist nun initialisiert"/>
 			<INFO_Not_Implemented ENG="Not yet implemented" localized="Noch nicht umgesetzt"/>
-			<ERROR_Save_Incompatible ENG="Savegames from Maxr versions before %s are not compatible." localized="Gespeicherte Spielstände von Maxr Versionen vor %s sind nicht kompatibel."/>
 		</Error_Messages>
 	</Text>
 	<Units>

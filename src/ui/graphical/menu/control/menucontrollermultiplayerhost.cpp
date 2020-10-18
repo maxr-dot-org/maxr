@@ -209,7 +209,7 @@ void cMenuControllerMultiplayerHost::handleSelectSaveGame()
 			cStaticMap staticMap;
 			if (!staticMap.loadMap (saveGame.mapName))
 			{
-				application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Others~ERROR_Map_Loading")));
+				application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~ERROR_Map_Loading")));
 				return;
 			}
 			else if (MapDownload::calculateCheckSum(saveGame.mapName) != saveGame.mapCrc)

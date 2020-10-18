@@ -11,9 +11,9 @@
 <MAX_Language_File lang="eng" encoding="utf8" direction="left-to-right">
 	<Text>
 		<Main>
-			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)"/>
-			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)"/>
-			<Credits_Reloaded ENG="M.A.X.R. based on Interplay's Mechanized Assault and eXploration"/>
+			<Credits_Doc ENG="Michael Mönch&apos;s M.A.X. (Remake by DoctorDeath)"/>
+			<Credits_MM ENG="Michael Mönch&apos;s M.A.X. (Original by Interplay)"/>
+			<Credits_Reloaded ENG="M.A.X.R. based on Interplay&apos;s Mechanized Assault and eXploration"/>
 			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded"/>
 			<Game_Title ENG="M.A.X.R."/>
 			<Version ENG="version v%s"/>
@@ -88,6 +88,7 @@
 			<Air_Units ENG="Airunits"/>
 			<Ammo ENG="Ammunition"/>
 			<Ammo_7 ENG="Ammo"/>
+			<Armor ENG="Armor"/>
 			<Armor_7 ENG="Armor"/>
 			<Attack ENG="Attack"/>
 			<Attack_7 ENG="Attack"/>
@@ -109,6 +110,7 @@
 			<Done ENG="Done"/>
 			<Done_7 ENG="Done"/>
 			<End ENG="End"/>
+			<Enter_7 ENG="Enter"/>
 			<Exit ENG="Exit"/>
 			<Fight_Units ENG="Fighting units"/>
 			<Files ENG="Files"/>
@@ -129,7 +131,6 @@
 			<Limited_To ENG="Limited to"/> <!-- filter seting-->
 			<Load ENG="Load"/>
 			<Load_7 ENG="Load"/>
-			<Enter_7 ENG="Enter"/>
 			<Log ENG="Log"/>
 			<Mani ENG="Manifestation"/>
 			<ManualFireMode_7 ENG="Manual"/>
@@ -233,7 +234,7 @@
 			<Connection_Terminated ENG="Connection terminated."/>
 			<Deadline ENG="This turn will end in %s seconds."/>
 			<Disconnect_Not_In_Save ENG="You will be disconnected because you are not listed in the savegame."/>
-			<Go ENG="Let's go"/>
+			<Go ENG="Let&apos;s go"/>
 			<Go_Abort ENG="Go aborted"/>
 			<Go_Check ENG="Check for go"/>
 			<Go_Host ENG="Host wants to go: Ready to go"/>
@@ -264,7 +265,7 @@
 			<Network_Syncing ENG="Synchronizing..."/>
 			<Gameversion_Warning_Client ENG="Warning: Gameversion of server is: %s."/>
 			<Gameversion_Warning_Server ENG="Warning: Gameversion of player is: %s."/>
-			<Gameversion_Error ENG="Couldn't connect: Gameversion of server is: %s."/>
+			<Gameversion_Error ENG="Couldn&apos;t connect: Gameversion of server is: %s."/>
 			<Gameversion_Own ENG="Your version is: %s."/>
 			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready."/>
 			<No_Response ENG="Waiting for network response from player %s"/>
@@ -291,7 +292,7 @@
 			<Player_Turn ENG="%s:\nBegin turn."/>
 			<Player_Turn_End ENG="%s ended turn"/>
 			<Player_Twice ENG="Playername exists twice: "/><!-- not used?! ~~ nonsinn -->
-			<Player_Wrong ENG="Missing a correct player's name"/>
+			<Player_Wrong ENG="Missing a correct player&apos;s name"/>
 			<Reconnect ENG="This game is running already.\nIf you have lost connection to the game, you can reconnect.\n\nDo you want to reconnect?"/>
 			<Reconnect_Not_Part_Of_Game ENG="Reconnecting forbidden by server. You are not part of the game."/>
 			<Reconnect_Already_Connected ENG="Reconnecting forbidden by server. A player with your name is already connected."/>
@@ -304,9 +305,12 @@
 			<Waiting ENG="Waiting for other players..."/>
 		</Multiplayer>
 		<Comp>
+			<Adjustments_Fuel_Decreased ENG="Adjustments made: fuel mining decreased by "/>
 			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by "/>
 			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by "/>
+			<Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by "/>
 			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by "/>
+			<Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by "/>
 			<Attacked ENG="is under attack"/>
 			<AttackingEnemy ENG="%s is attacking the enemy"/>
 			<AttackingStatusStr ENG="attacking"/>
@@ -365,7 +369,7 @@
 			<Repeat ENG="Again"/>
 			<Reserve ENG="Reserve"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config"/>
-			<RestartRequired ENG="Please restart 'Mechanized Assault and eXploration Reloaded' to take effect the change."/>
+			<RestartRequired ENG="Please restart &apos;Mechanized Assault and eXploration Reloaded&apos; to take effect the change."/>
 			<Screenshot_Done ENG="Screenshot saved to %s"/>
 			<Sentry ENG="on sentry"/>
 			<Stolen ENG="stolen"/>
@@ -471,7 +475,7 @@
 		<Clan ID="0" ENG="The Chosen">Better Air Units</Clan>
 		<Clan ID="1" ENG="Crimson Path">Better Sea Units</Clan>
 		<Clan ID="2" ENG="Von Griffin">Improved Espionage</Clan>
-		<Clan ID="3" ENG="Ayer's Hand">Better Missile Units</Clan>
+		<Clan ID="3" ENG="Ayer&apos;s Hand">Better Missile Units</Clan>
 		<Clan ID="4" ENG="Musashi">Better Armored Vehicles</Clan>
 		<Clan ID="5" ENG="Sacred Eights">Better Fast Units</Clan>
 		<Clan ID="6" ENG="7 Knights">Better Defense</Clan>

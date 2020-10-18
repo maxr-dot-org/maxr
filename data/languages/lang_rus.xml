@@ -11,9 +11,9 @@
 <MAX_Language_File lang="rus" encoding="utf8" direction="left-to-right">
 	<Text>
 		<Main>
-			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized=""/>
-			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized=""/>
-			<Credits_Reloaded ENG="M.A.X.R. based on Interplay's Mechanized Assault and eXploration" localized="M.A.X.R. основывается на M.A.X. от Interplay"/>
+			<Credits_Doc ENG="Michael Mönch&apos;s M.A.X. (Remake by DoctorDeath)" localized=""/>
+			<Credits_MM ENG="Michael Mönch&apos;s M.A.X. (Original by Interplay)" localized=""/>
+			<Credits_Reloaded ENG="M.A.X.R. based on Interplay&apos;s Mechanized Assault and eXploration" localized="M.A.X.R. основывается на M.A.X. от Interplay"/>
 			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded" localized=""/><!--TODO: translation needed-->
 			<Game_Title ENG="M.A.X.R." localized=""/><!--TODO: translation needed-->
 			<Version ENG="version v%s" localized="версия %s"/>
@@ -88,6 +88,7 @@
 			<Air_Units ENG="Airunits" localized="Воздушные"/>
 			<Ammo ENG="Ammunition" localized="Боезапас"/>
 			<Ammo_7 ENG="Ammo" localized="Боезап."/>
+			<Armor ENG="Armor" localized="Броня"/>
 			<Armor_7 ENG="Armor" localized="Броня"/>
 			<Attack ENG="Attack" localized="Атака"/>
 			<Attack_7 ENG="Attack" localized="Атака"/>
@@ -109,6 +110,7 @@
 			<Done ENG="Done" localized="Готово"/>
 			<Done_7 ENG="Done" localized="Готово"/>
 			<End ENG="End" localized="Кон. хода"/>
+			<Enter_7 ENG="Enter"/>
 			<Exit ENG="Exit" localized="Выход"/>
 			<Fight_Units ENG="Fighting units" localized="Боевые"/>
 			<Files ENG="Files" localized="Файлы"/>
@@ -232,7 +234,11 @@
 			<Connection_Terminated ENG="Connection terminated." localized="Связь разорвана."/>
 			<Deadline ENG="This turn will end in %s seconds." localized="Ход закончится через %s секунд"/>
 			<Disconnect_Not_In_Save ENG="You will be disconnected because you are not listed in the savegame." localized="Вас нет в списке сохранённой игры, Вы будете отключены."/><!--TODO: review needed (english string has been changed)-->
-			<Go ENG="Let's go" localized="Поехали"/>
+			<Gameversion_Error ENG="Couldn&apos;t connect: Gameversion of server is: %s."/>
+			<Gameversion_Own ENG="Your version is: %s."/>
+			<Gameversion_Warning_Client ENG="Warning: Gameversion of server is: %s."/>
+			<Gameversion_Warning_Server ENG="Warning: Gameversion of player is: %s."/>
+			<Go ENG="Let&apos;s go" localized="Поехали"/>
 			<Go_Abort ENG="Go aborted" localized="Отменено"/>
 			<Go_Check ENG="Check for go" localized="Приготовьтесь к началу"/>
 			<Go_Host ENG="Host wants to go: Ready to go" localized="Сервер хочет начать: Приготовьтесь"/>
@@ -286,9 +292,11 @@
 			<Player_Turn ENG="%s:\nBegin turn." localized="%s делает ход"/><!--TODO: review needed (english string has been changed)-->
 			<Player_Turn_End ENG="%s ended turn" localized="%s завершил ход"/>
 			<Player_Twice ENG="Playername exists twice: " localized="Имя игрока уже занято: "/>
-			<Player_Wrong ENG="Missing a correct player's name" localized="У игрока неправильное имя"/>
+			<Player_Wrong ENG="Missing a correct player&apos;s name" localized="У игрока неправильное имя"/>
 			<Reconnect ENG="This game is running already.\nIf you have lost connection to the game, you can reconnect.\n\nDo you want to reconnect?" localized="Игра уже идёт. Если Вы потеряли связь с сервером, Вы можете подключиться заново. Хотите подключиться?"/><!--TODO: review needed (english string has been changed)-->
+			<Reconnect_Already_Connected ENG="Reconnecting forbidden by server. A player with your name is already connected."/>
 			<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="Переподключение запрещено сервером."/>
+			<Reconnect_Not_Part_Of_Game ENG="Reconnecting forbidden by server. You are not part of the game."/>
 			<Save_Only_Host ENG="Only the host can save the current games." localized="Только сервер может сохранять игру."/><!--TODO: review needed (english string has been changed)-->
 			<Server_Not_Running ENG="The server is not running." localized="Сервер не запущен"/>
 			<Wait_For_Server ENG="Waiting for network response from server" localized=""/><!--TODO: translation needed-->
@@ -298,9 +306,12 @@
 			<Waiting ENG="Waiting for other players..." localized="Ждём остальных игроков..."/>
 		</Multiplayer>
 		<Comp>
+			<Adjustments_Fuel_Decreased ENG="Adjustments made: fuel mining decreased by "/>
 			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Добыча топлива увеличена на "/>
 			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Добыча золота уменьшена на "/>
+			<Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by "/>
 			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by " localized="Добыча сырья уменьшена на "/><!--TODO: review needed (english string has been changed)-->
+			<Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by "/>
 			<Attacked ENG="is under attack" localized=" - под огнём противника!"/>
 			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s атакует врага"/>
 			<AttackingStatusStr ENG="attacking" localized=""/><!--TODO: translation needed-->
@@ -353,11 +364,13 @@
 			<Producing ENG="Building" localized="производит"/>
 			<Producing_Err ENG="Buildposition blocked or insufficient raw materials to build" localized="Точка возведения заблокирована или недостаточно ресурсов"/><!--TODO: review needed (english string has been changed)-->
 			<Producing_Fin ENG="finished building" localized="закончил производство"/>
+			<Producing_InsufficientMaterial ENG="Insufficient raw materials to build"/>
+			<Producing_PositionBlocked ENG="Buildposition blocked"/>
 			<ReactionFireOff ENG="Reaction Fire Off" localized="Ответный огонь отключен"/>
 			<Repeat ENG="Again" localized="Ещё раз"/>
 			<Reserve ENG="Reserve" localized="Резерв"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Внимание: неподдерживаемый видеорежим в конфигурации"/>
-			<RestartRequired ENG="Please restart 'Mechanized Assault and eXploration Reloaded' to take effect the change." localized=""/><!--TODO: translation needed-->
+			<RestartRequired ENG="Please restart &apos;Mechanized Assault and eXploration Reloaded&apos; to take effect the change." localized=""/><!--TODO: translation needed-->
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Снимок экрана записан в %s"/>
 			<Sentry ENG="on sentry" localized="на карауле"/>
 			<Stolen ENG="stolen" localized="захвачено"/>
@@ -374,12 +387,16 @@
 			<Upgrades_Done ENG="Upgraded" localized="Улучшенение завершено"/>
 			<Upgrades_Done2 ENG="unit(s) of type %s" localized="(единиц типа %s)"/>
 			<Waits ENG="waiting" localized="бездействует"/>
+			<Wins ENG="wins"/>
 			<Working ENG="working" localized="работает"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Файл не найден: %s"/>
 			<ERROR_Map_Loading ENG="Error while loading map" localized="Ошибка при загрузке карты"/><!--TODO: review needed (english string has been changed)-->
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="нехватает перевода: %s"/>
+			<ERROR_Save_Incompatible ENG="Savegames from Maxr versions before %s are not compatible."/>
+			<ERROR_Save_Loading ENG="Error while loading saved game"/>
+			<ERROR_Save_Writing ENG="Error while writing save game file"/>
 			<INFO_Language_initialised ENG="Language is now initialized" localized="Язык не опознан"/><!--TODO: review needed (english string has been changed)-->
 			<INFO_Not_Implemented ENG="Not yet implemented" localized="Ещё не реализовано"/>
 		</Error_Messages>
@@ -460,7 +477,7 @@
 		<Clan ID="0" ENG="The Chosen" localized="Избранные">Лучшие воздушные юниты</Clan>
 		<Clan ID="1" ENG="Crimson Path" localized="Путь Кримсона">Лучшие морские юниты</Clan>
 		<Clan ID="2" ENG="Von Griffin" localized="Фон Гриффон">Лучшие шпионы</Clan>
-		<Clan ID="3" ENG="Ayer's Hand" localized="Рука Айера">Лучшая ракетная техника</Clan>
+		<Clan ID="3" ENG="Ayer&apos;s Hand" localized="Рука Айера">Лучшая ракетная техника</Clan>
 		<Clan ID="4" ENG="Musashi" localized="Мусаси">Лучшая бронетехника</Clan>
 		<Clan ID="5" ENG="Sacred Eights" localized="Священнная восьмерка">Лучшие быстрые юниты</Clan>
 		<Clan ID="6" ENG="7 Knights" localized="Семь рыцарей">Лучшая защита</Clan>

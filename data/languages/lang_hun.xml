@@ -11,9 +11,9 @@
 <MAX_Language_File lang="hun" encoding="utf8" direction="left-to-right">
 	<Text>
 		<Main>
-			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönch's M.A.X. (Remake DoctorDeath-től)"/>
-			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönch's M.A.X. (Eredeti az Interplay-től)"/>
-			<Credits_Reloaded ENG="M.A.X.R. based on Interplay's Mechanized Assault and eXploration" localized="M.A.X.R. készült az Interplay M.A.X. című játéka alapján"/>
+			<Credits_Doc ENG="Michael Mönch&apos;s M.A.X. (Remake by DoctorDeath)" localized="Michael Mönch&apos;s M.A.X. (Remake DoctorDeath-től)"/>
+			<Credits_MM ENG="Michael Mönch&apos;s M.A.X. (Original by Interplay)" localized="Michael Mönch&apos;s M.A.X. (Eredeti az Interplay-től)"/>
+			<Credits_Reloaded ENG="M.A.X.R. based on Interplay&apos;s Mechanized Assault and eXploration" localized="M.A.X.R. készült az Interplay M.A.X. című játéka alapján"/>
 			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded" localized="Mechanized Assault and eXploration Reloaded"/>
 			<Game_Title ENG="M.A.X.R." localized="M.A.X.R."/>
 			<Version ENG="version v%s" localized="Verzió V%s"/>
@@ -88,6 +88,7 @@
 			<Air_Units ENG="Airunits" localized="Légi egységek"/>
 			<Ammo ENG="Ammunition" localized="Muníció"/>
 			<Ammo_7 ENG="Ammo" localized="Lőszer"/>
+			<Armor ENG="Armor" localized="Páncél"/>
 			<Armor_7 ENG="Armor" localized="Páncél"/>
 			<Attack ENG="Attack" localized="Támadás"/>
 			<Attack_7 ENG="Attack" localized="Támadás"/>
@@ -109,6 +110,7 @@
 			<Done ENG="Done" localized="Kész"/>
 			<Done_7 ENG="Done" localized="Kész"/>
 			<End ENG="End" localized="Vége"/>
+			<Enter_7 ENG="Enter"/>
 			<Exit ENG="Exit" localized="Kilépés"/>
 			<Fight_Units ENG="Fighting units" localized="Harcoló egységek"/>
 			<Files ENG="Files" localized="Fájlok"/>
@@ -232,7 +234,11 @@
 			<Connection_Terminated ENG="Connection terminated." localized="A kapcsolat lezárult."/>
 			<Deadline ENG="This turn will end in %s seconds." localized="A körnek %s másoedpercen belül vége."/>
 			<Disconnect_Not_In_Save ENG="You will be disconnected because you are not listed in the savegame." localized="Le leszel csatlakoztatva, mert nem szerepelsz a mentett játékban."/><!--TODO: review needed (english string has been changed)-->
-			<Go ENG="Let's go" localized="Indítás"/>
+			<Gameversion_Error ENG="Couldn&apos;t connect: Gameversion of server is: %s."/>
+			<Gameversion_Own ENG="Your version is: %s."/>
+			<Gameversion_Warning_Client ENG="Warning: Gameversion of server is: %s."/>
+			<Gameversion_Warning_Server ENG="Warning: Gameversion of player is: %s."/>
+			<Go ENG="Let&apos;s go" localized="Indítás"/>
 			<Go_Abort ENG="Go aborted" localized="Indítás megszakítva"/>
 			<Go_Check ENG="Check for go" localized="Pipáld be az indításhoz"/>
 			<Go_Host ENG="Host wants to go: Ready to go" localized="A Host állapota: Készenáll"/>
@@ -286,9 +292,11 @@
 			<Player_Turn ENG="%s:\nBegin turn." localized="%s köre következik"/><!--TODO: review needed (english string has been changed)-->
 			<Player_Turn_End ENG="%s ended turn" localized="%s befejezte a körét"/>
 			<Player_Twice ENG="Playername exists twice: " localized="Duplán szereplő játékosnév: "/>
-			<Player_Wrong ENG="Missing a correct player's name" localized="Az egyik játékosnak nem megfelelő a neve!"/>
+			<Player_Wrong ENG="Missing a correct player&apos;s name" localized="Az egyik játékosnak nem megfelelő a neve!"/>
 			<Reconnect ENG="This game is running already.\nIf you have lost connection to the game, you can reconnect.\n\nDo you want to reconnect?" localized="Ez a játék már fut. Ha megszakadt a kapcsolatod a játékkal, újracsatlakozhatsz. Szeretnél újra csatlakozni?"/><!--TODO: review needed (english string has been changed)-->
+			<Reconnect_Already_Connected ENG="Reconnecting forbidden by server. A player with your name is already connected."/>
 			<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="A szerver nem engedélyezi az újracsatlakozást."/>
+			<Reconnect_Not_Part_Of_Game ENG="Reconnecting forbidden by server. You are not part of the game."/>
 			<Save_Only_Host ENG="Only the host can save the current games." localized="Csak a kiszolgáló mentheti el a játékot."/><!--TODO: review needed (english string has been changed)-->
 			<Server_Not_Running ENG="The server is not running." localized="Nem fut a szerver"/>
 			<Wait_For_Server ENG="Waiting for network response from server" localized=""/><!--TODO: translation needed-->
@@ -298,9 +306,12 @@
 			<Waiting ENG="Waiting for other players..." localized="Várakozás a többi játékosra..."/>
 		</Multiplayer>
 		<Comp>
+			<Adjustments_Fuel_Decreased ENG="Adjustments made: fuel mining decreased by "/>
 			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Módosítás történt, nőtt az üzemanyag kitermelés: "/>
 			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Módosítás történt, csökkent az aranykitermelés: "/>
+			<Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by "/>
 			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by " localized="Módosítás történt, csökkent a nyersanyag kitermelés: "/><!--TODO: review needed (english string has been changed)-->
+			<Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by "/>
 			<Attacked ENG="is under attack" localized="támadás alatt áll"/>
 			<AttackingEnemy ENG="%s is attacking the enemy" localized=""/><!--TODO: translation needed-->
 			<AttackingStatusStr ENG="attacking" localized=""/><!--TODO: translation needed-->
@@ -353,11 +364,13 @@
 			<Producing ENG="Building" localized="Épít"/>
 			<Producing_Err ENG="Buildposition blocked or insufficient raw materials to build" localized="Az építési terület nem tiszta, vagy nincs elegendő nyersanyag"/><!--TODO: review needed (english string has been changed)-->
 			<Producing_Fin ENG="finished building" localized="Gyártás befejezve"/>
+			<Producing_InsufficientMaterial ENG="Insufficient raw materials to build"/>
+			<Producing_PositionBlocked ENG="Buildposition blocked"/>
 			<ReactionFireOff ENG="Reaction Fire Off" localized=""/><!--TODO: translation needed-->
 			<Repeat ENG="Again" localized="Újra"/>
 			<Reserve ENG="Reserve" localized="Tartalék"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Figyelem: Nem támogatott videó mód a beállításban"/>
-			<RestartRequired ENG="Please restart 'Mechanized Assault and eXploration Reloaded' to take effect the change." localized=""/><!--TODO: translation needed-->
+			<RestartRequired ENG="Please restart &apos;Mechanized Assault and eXploration Reloaded&apos; to take effect the change." localized=""/><!--TODO: translation needed-->
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Pillanatkép elmentve: "/>
 			<Sentry ENG="on sentry" localized="őrtáll"/>
 			<Stolen ENG="stolen" localized="ellopva"/>
@@ -374,6 +387,7 @@
 			<Upgrades_Done ENG="Upgraded" localized="Felfejlesztve"/>
 			<Upgrades_Done2 ENG="unit(s) of type %s" localized="egység %s típusúvá"/>
 			<Waits ENG="waiting" localized="várakozik"/>
+			<Wins ENG="wins"/>
 			<Working ENG="working" localized="működik"/>
 		</Comp>
 		<Error_Messages>
@@ -382,6 +396,9 @@
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="hiányzik a fordítás: %s"/>
 			<INFO_Language_initialised ENG="Language is now initialized" localized="A nyelv inicializálva lett"/><!--TODO: review needed (english string has been changed)-->
 			<INFO_Not_Implemented ENG="Not yet implemented" localized="Még nincs implementálva"/>
+			<ERROR_Save_Incompatible ENG="Savegames from Maxr versions before %s are not compatible."/>
+			<ERROR_Save_Loading ENG="Error while loading saved game"/>
+			<ERROR_Save_Writing ENG="Error while writing save game file"/>
 		</Error_Messages>
 	</Text>
 	<Units>

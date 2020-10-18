@@ -11,9 +11,9 @@
 <MAX_Language_File lang="cat" encoding="utf8" direction="left-to-right">
 	<Text>
 		<Main>
-			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Reedició per DoctorDeath)"/>
-			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Original per Interplay)"/>
-			<Credits_Reloaded ENG="M.A.X.R. based on Interplay's Mechanized Assault and eXploration" localized="M.A.X.R. basat en Mechanized Assault and eXploration de Interplay"/>
+			<Credits_Doc ENG="Michael Mönch&apos;s M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Reedició per DoctorDeath)"/>
+			<Credits_MM ENG="Michael Mönch&apos;s M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Original per Interplay)"/>
+			<Credits_Reloaded ENG="M.A.X.R. based on Interplay&apos;s Mechanized Assault and eXploration" localized="M.A.X.R. basat en Mechanized Assault and eXploration de Interplay"/>
 			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded" localized="Mechanized Assault and eXploration Reloaded"/>
 			<Game_Title ENG="M.A.X.R." localized="M.A.X.R."/>
 			<Version ENG="version v%s" localized="versió v%s"/>
@@ -28,7 +28,7 @@
 			<Fonts ENG="Loading fonts..." localized="Carregant fonts..."/>
 			<GFX ENG="Loading graphics..." localized="Carregant gràfics..."/>
 			<Keys ENG="Loading keys..." localized="Carregant claus..."/>
-			<Lang ENG="Loading language pack..." localized="Carregant paquet d'idioma..."/>
+			<Lang ENG="Loading language pack..." localized="Carregant paquet d&apos;idioma..."/>
 			<Music ENG="Loading music..." localized="Carregant música..."/>
 			<Sounds ENG="Loading sounds..." localized="Carregant sons..."/>
 			<Terrain ENG="Loading terrain..." localized="Carregant terreny..."/>
@@ -78,7 +78,7 @@
 			<Team ENG="Team" localized="Equip"/>
 			<Turn_end ENG="Turn end" localized="Finalitzar torn"/>
 			<Turn_limit ENG="Turn limit" localized="Límit de torns"/>
-			<Unitinfo ENG="Unit status screen" localized="Pantalla de estat d'unitat"/>
+			<Unitinfo ENG="Unit status screen" localized="Pantalla de estat d&apos;unitat"/>
 			<Upgrades_Menu ENG="Upgrades menu" localized="Menú de millores"/>
 		</Title>
 		<Others>
@@ -88,6 +88,7 @@
 			<Air_Units ENG="Airunits" localized="Unidades aèries"/>
 			<Ammo ENG="Ammunition" localized="Munició"/>
 			<Ammo_7 ENG="Ammo" localized="Munic"/>
+			<Armor ENG="Armor" localized="Escut"/>
 			<Armor_7 ENG="Armor" localized="Escut"/>
 			<Attack ENG="Attack" localized="Atacar"/>
 			<Attack_7 ENG="Attack" localized="Atacar"/>
@@ -109,6 +110,7 @@
 			<Done ENG="Done" localized="Fet"/>
 			<Done_7 ENG="Done" localized="Fet"/>
 			<End ENG="End" localized="Finalitzar"/>
+			<Enter_7 ENG="Enter"/>
 			<Exit ENG="Exit" localized="Sortir"/>
 			<Fight_Units ENG="Fighting units" localized="Unitats de combat"/>
 			<Files ENG="Files" localized="Fitxers"/>
@@ -229,11 +231,15 @@
 		</Settings>
 		<Multiplayer>
 			<!--TODO: still in Spanish, WIP to translate to Catalonian-->
-			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Servidor, prem F2 per a deixar d'esperar."/>
+			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Servidor, prem F2 per a deixar d&apos;esperar."/>
 			<Connection_Terminated ENG="Connection terminated." localized="Conexión terminada"/>
 			<Deadline ENG="This turn will end in %s seconds." localized=" este turno terminará en %s segundos"/>
 			<Disconnect_Not_In_Save ENG="You will be disconnected because you are not listed in the savegame." localized="Serás desconectado porque no estás listado en la partida guardada"/>
-			<Go ENG="Let's go" localized="Vamos a ello"/>
+			<Gameversion_Error ENG="Couldn&apos;t connect: Gameversion of server is: %s."/>
+			<Gameversion_Own ENG="Your version is: %s."/>
+			<Gameversion_Warning_Client ENG="Warning: Gameversion of server is: %s."/>
+			<Gameversion_Warning_Server ENG="Warning: Gameversion of player is: %s."/>
+			<Go ENG="Let&apos;s go" localized="Vamos a ello"/>
 			<Go_Abort ENG="Go aborted" localized="Comienzo interrumpido"/>
 			<Go_Check ENG="Check for go" localized="Marca cuando estés listo para empezar"/>
 			<Go_Host ENG="Host wants to go: Ready to go" localized="El servidor quiere empezar: listos para empezar"/>
@@ -287,9 +293,11 @@
 			<Player_Turn ENG="%s:\nBegin turn." localized="El turno de %s"/><!--TODO: review needed (english string has been changed)-->
 			<Player_Turn_End ENG="%s ended turn" localized=" turno finalizado por %s"/>
 			<Player_Twice ENG="Playername exists twice: " localized="El nombre de usuario está repetido: "/>
-			<Player_Wrong ENG="Missing a correct player's name" localized="Se ha perdido un nombre de jugador correcto."/>
+			<Player_Wrong ENG="Missing a correct player&apos;s name" localized="Se ha perdido un nombre de jugador correcto."/>
 			<Reconnect ENG="This game is running already.\nIf you have lost connection to the game, you can reconnect.\n\nDo you want to reconnect?" localized="Esta partida está funcionando. Si has perdido la conexión puedes reconectar. ¿Quieres reconectar?"/><!--TODO: review needed (english string has been changed)-->
+			<Reconnect_Already_Connected ENG="Reconnecting forbidden by server. A player with your name is already connected."/>
 			<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="Reconexión prohibida por el servidor"/>
+			<Reconnect_Not_Part_Of_Game ENG="Reconnecting forbidden by server. You are not part of the game."/>
 			<Save_Only_Host ENG="Only the host can save the current games." localized="Solo el servidor puede guardar partidas"/><!--TODO: review needed (english string has been changed)-->
 			<Server_Not_Running ENG="The server is not running." localized="Els servidor no está funcionando"/>
 			<Wait_For_Server ENG="Waiting for network response from server" localized="Esperando la respuesta de la red del servidor"/>
@@ -299,14 +307,17 @@
 			<Waiting ENG="Waiting for other players..." localized="Esperando a otros jugadores..."/>
 		</Multiplayer>
 		<Comp>
-			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="S'han fet ajusts: Producció de combustible incrementada en "/>
-			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="S'han fet ajusts: Producció d'or incrementada en "/>
-			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by " localized="S'han fet ajusts: Producció de metall incrementada en "/>
+			<Adjustments_Fuel_Decreased ENG="Adjustments made: fuel mining decreased by "/>
+			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="S&apos;han fet ajusts: Producció de combustible incrementada en "/>
+			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="S&apos;han fet ajusts: Producció d&apos;or incrementada en "/>
+			<Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by "/>
+			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by " localized="S&apos;han fet ajusts: Producció de metall incrementada en "/>
+			<Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by "/>
 			<Attacked ENG="is under attack" localized="està sota atac"/>
-			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s està atacant a l'enemic"/>
+			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s està atacant a l&apos;enemic"/>
 			<AttackingStatusStr ENG="attacking" localized="atacant"/>
 			<Building_Disabled ENG="Building turned off" localized="Edifici desactivat"/>
-			<CapturedByEnemy ENG="%s has been captured by the enemy" localized="%s ha sigut capturat per l'enemic"/>
+			<CapturedByEnemy ENG="%s has been captured by the enemy" localized="%s ha sigut capturat per l&apos;enemic"/>
 			<Cheat ENG="used cheat" localized="Se ha utilitzat un truc"/>
 			<Clearing ENG="clearing" localized="Netejant"/>
 			<Clearing_Fin ENG="clearing done" localized="Neteja complerta"/>
@@ -330,8 +341,8 @@
 			<Energy_IsNeeded ENG="Cannot turn off generator, power needed." localized="No es pot engegar, es necessita energía"/>
 			<Energy_Low ENG="Lack of power, energy consumer turned off." localized="Es necessita energía, edifici apagat."/>
 			<Energy_ToLow ENG="More power needed, generator turned on." localized="Es necessita més energía, generador encendido"/>
-			<Finished ENG="is finished" localized="s'ha acabat"/>
-			<Finished2 ENG="are finished" localized="s'han acabat"/>
+			<Finished ENG="is finished" localized="s&apos;ha acabat"/>
+			<Finished2 ENG="are finished" localized="s&apos;han acabat"/>
 			<Fuel_Insufficient ENG="Cannot start, fuel needed." localized="No es pot engegar, es necessita combustible"/>
 			<Fuel_Low ENG="Fuel needed, generator turned off." localized="Es necessita combustible, generador apagat."/>
 			<GameEndsAt ENG="Game ends at" localized="El joc acaba en"/>
@@ -340,8 +351,8 @@
 			<IsBeeingAttacked ENG="Is beeing attacked" localized="Está sent atacat"/>
 			<Labs ENG="Labs" localized="Laboratorios"/>
 			<Landing_Select ENG="Please select starting location." localized="Per favor selecciona lloc de començament."/>
-			<Landing_Too_Close ENG="Landing position is too close to an other player. Please reselect your position." localized="El lloc triat coincideix amb la d'altre jugador. Per favor, escull-ne altra posició"/>
-			<Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle or select another position." localized="La posició triada está massa a prop d'altre jugador. Per favor, confirmala fent clic en el cercle roig o seleccina altra posició"/><!--TODO: review needed (english string has been changed)-->
+			<Landing_Too_Close ENG="Landing position is too close to an other player. Please reselect your position." localized="El lloc triat coincideix amb la d&apos;altre jugador. Per favor, escull-ne altra posició"/>
+			<Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle or select another position." localized="La posició triada está massa a prop d&apos;altre jugador. Per favor, confirmala fent clic en el cercle roig o seleccina altra posició"/><!--TODO: review needed (english string has been changed)-->
 			<Laying ENG="minelaying" localized="colocant mines"/>
 			<Metal_Insufficient ENG="Cannot start, raw materials needed." localized="No es pot engegar, es necessita material"/>
 			<Metal_Low ENG="More raw materials needed, factory turned off." localized="Es necessiten més materials, edifici apagat"/>
@@ -354,11 +365,13 @@
 			<Producing ENG="Building" localized="Edifici"/>
 			<Producing_Err ENG="Buildposition blocked or insufficient raw materials to build" localized="Posició de construcció incorrecta o recursos insuficients"/>
 			<Producing_Fin ENG="finished building" localized="edifici acabat"/>
+			<Producing_InsufficientMaterial ENG="Insufficient raw materials to build"/>
+			<Producing_PositionBlocked ENG="Buildposition blocked"/>
 			<ReactionFireOff ENG="Reaction Fire Off" localized="Dispar de auto-defensa apagat"/>
 			<Repeat ENG="Again" localized="De nou"/>
 			<Reserve ENG="Reserve" localized="Reserva"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Amb compte: Mode de video no suportat en la configuració"/>
-			<RestartRequired ENG="Please restart 'Mechanized Assault and eXploration Reloaded' to take effect the change." localized="Per favor, reinicia 'Mechanized Assault and eXploration Reloaded' per que els canvis surtin efecte"/>
+			<RestartRequired ENG="Please restart &apos;Mechanized Assault and eXploration Reloaded&apos; to take effect the change." localized="Per favor, reinicia &apos;Mechanized Assault and eXploration Reloaded&apos; per que els canvis surtin efecte"/>
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Captura de pantalla guardada a %s"/>
 			<Sentry ENG="on sentry" localized="en alerta"/>
 			<Stolen ENG="stolen" localized="robat"/>
@@ -370,17 +383,21 @@
 			<Turn_5 ENG="Turn" localized="Torn"/>
 			<Turn_Automove ENG="Executing remaining movements" localized="Executant movimients restants"/>
 			<Turn_Start ENG="Start turn" localized="Comença el torn"/>
-			<Turn_Wait ENG="Please wait until all movements are completed" localized="Per favor espera fins que tots els movimients s'hagin completat"/>
+			<Turn_Wait ENG="Please wait until all movements are completed" localized="Per favor espera fins que tots els movimients s&apos;hagin completat"/>
 			<Turns ENG="Turns" localized="Torns"/>
 			<Upgrades_Done ENG="Upgraded" localized="Actualitzat"/>
 			<Upgrades_Done2 ENG="unit(s) of type %s" localized="unitat(s) de tipus %s"/>
 			<Waits ENG="waiting" localized="esperant"/>
+			<Wins ENG="wins"/>
 			<Working ENG="working" localized="treballant"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Fitxer no trobat: %s"/>
 			<ERROR_Map_Loading ENG="Error while loading map" localized="Error carregant mapa"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="Traducció perduda: %s"/>
+			<ERROR_Save_Incompatible ENG="Savegames from Maxr versions before %s are not compatible."/>
+			<ERROR_Save_Loading ENG="Error while loading saved game"/>
+			<ERROR_Save_Writing ENG="Error while writing save game file"/>
 			<INFO_Language_initialised ENG="Language is now initialized" localized="El idioma està ara inicialitzant-se"/>
 			<INFO_Not_Implemented ENG="Not yet implemented" localized="No implementat encara"/>
 		</Error_Messages>
@@ -462,7 +479,7 @@
 		<Clan ID="0" localized="The Chosen">Millors unitats aèries</Clan>
 		<Clan ID="1" localized="Crimson Path">Millors unitats maritimes</Clan>
 		<Clan ID="2" localized="Von Griffin">Espionaje millorat</Clan>
-		<Clan ID="3" localized="Ayer's Hand">Millors unitats llençamissils</Clan>
+		<Clan ID="3" localized="Ayer&apos;s Hand">Millors unitats llençamissils</Clan>
 		<Clan ID="4" localized="Musashi">Millors vehiculos blindats</Clan>
 		<Clan ID="5" localized="Sacred Eights">Millors unitats ràpides</Clan>
 		<Clan ID="6" localized="7 Knights">Millors defenses</Clan>
