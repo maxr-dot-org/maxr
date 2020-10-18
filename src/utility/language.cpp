@@ -37,6 +37,7 @@
 #include "utility/extendedtinyxml.h"
 #include "utility/files.h"
 #include "utility/log.h"
+#include "utility/string/tolower.h"
 #include "utility/string/toupper.h"
 
 using namespace tinyxml2;
@@ -95,18 +96,13 @@ int cLanguage::SetCurrentLanguage (const std::string& szLanguageCode)
 		return -1;
 	}
 
-	m_szLanguage = szLanguageCode;
-	for (int i = 0; i <= 2; i++)
-	{
-		if (m_szLanguage[i] < 'a')
-		{
-			m_szLanguage[i] += 'a' - 'A';
-		}
-	}
+	m_szLanguage = to_lower_copy (szLanguageCode);
 
 	m_szLanguageFile = LANGUAGE_FILE_FOLDER;
 	m_szLanguageFile += PATH_DELIMITER LANGUAGE_FILE_NAME;
 	m_szLanguageFile += m_szLanguage + LANGUAGE_FILE_EXT;
+	Log.write ("Using langfile: " + m_szLanguageFile, cLog::eLOG_TYPE_DEBUG);
+
 	return 0;
 }
 
@@ -570,13 +566,13 @@ int cLanguage::ReadLanguagePackFooter (const std::string& strLanguageCode)
 	const char* value = xmlElement->Attribute ("lang");
 	if (value == nullptr)
 	{
-		strErrorMsg = "Language file (" + szLanguageCode + "): language attribut missing! Language can not be identified";
+		strErrorMsg = "Language file (" + szLanguageCode + "): language attribute is missing! Language can not be identified";
 		Log.write (strErrorMsg, cLog::eLOG_TYPE_ERROR);
 		return -1;
 	}
 	else if (szLanguageCode  != std::string (value))
 	{
-		strErrorMsg = "Language file (" + szLanguageCode + "): language attribut mismatch file name!";
+		strErrorMsg = "Language file (" + szLanguageCode + "): language attribute mismatches file name!";
 		Log.write (strErrorMsg, cLog::eLOG_TYPE_ERROR);
 		return -1;
 	}
@@ -585,7 +581,7 @@ int cLanguage::ReadLanguagePackFooter (const std::string& strLanguageCode)
 	value = xmlElement->Attribute ("direction");
 	if (value == nullptr)
 	{
-		strErrorMsg = "Language file (" + szLanguageCode + "): language attribut 'direction' is missing! Writing direction will be set to 'Left-To-Right'";
+		strErrorMsg = "Language file (" + szLanguageCode + "): language attribute 'direction' is missing! Writing direction will be set to 'Left-To-Right'";
 		Log.write (strErrorMsg, cLog::eLOG_TYPE_WARNING);
 		m_bLeftToRight = true;
 	}
@@ -599,7 +595,7 @@ int cLanguage::ReadLanguagePackFooter (const std::string& strLanguageCode)
 	}
 	else
 	{
-		strErrorMsg = "Language file (" + szLanguageCode + "): language attribut 'direction' can not interpreted! Writing direction will be set to 'Left-To-Right'";
+		strErrorMsg = "Language file (" + szLanguageCode + "): language attribute 'direction' can not interpreted! Writing direction will be set to 'Left-To-Right'";
 		Log.write (strErrorMsg, cLog::eLOG_TYPE_WARNING);
 		m_bLeftToRight = true;
 	}
@@ -716,7 +712,6 @@ int cLanguage::ReadRecursiveLanguagePack (XMLElement* xmlElement, std::string st
 	if (value != nullptr)
 	{
 		m_mpLanguage[strNodePath + xmlElement->Value()] = value;
-		Log.write (strNodePath + xmlElement->Value() + " : " + value, cLog::eLOG_TYPE_DEBUG);
 	}
 
 	XMLElement* xmlElementTMP = xmlElement->FirstChildElement();

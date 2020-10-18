@@ -48,6 +48,7 @@ public:
 
 	int ReadLanguagePack();
 	std::vector<std::string> getAvailableLanguages() const;
+	const std::map<std::string, std::string>& getAllTranslations() const { return m_mpLanguage; }
 
 	std::string i18n (const std::string& szInputText) const;
 	// Translation with replace %s

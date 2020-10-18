@@ -23,8 +23,12 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+#include "loaddata.h"
+
 #include <SDL_mixer.h>
+
 #include <iostream>
+#include <regex>
 #include <sstream>
 
 #ifdef WIN32
@@ -34,7 +38,6 @@
 # include <unistd.h>
 #endif
 
-#include "loaddata.h"
 
 #include "maxrversion.h"
 #include "utility/autosurface.h"
@@ -62,8 +65,6 @@
 
 using namespace std;
 using namespace tinyxml2;
-
-tinyxml2::XMLDocument LanguageFile;
 
 /**
  * Writes a Logmessage on the SplashScreen
@@ -161,30 +162,13 @@ eLoadingState LoadData()
 
 	// Load Languagepack
 	MakeLog ("Loading languagepack...", 0, 2);
-
-	string sLang = cSettings::getInstance().getLanguage();
-	// FIXME: here is the assumption made
-	// that the file always exists with lower cases
-	for (int i = 0; i <= 2; i++)
-	{
-		if (sLang[i] < 'a')
-		{
-			sLang[i] += 'a' - 'A';
-		}
-	}
-	string sTmpString = cSettings::getInstance().getLangPath();
-	sTmpString += PATH_DELIMITER "lang_";
-	sTmpString += sLang;
-	sTmpString += ".xml";
-	Log.write ("Using langfile: " + sTmpString, cLog::eLOG_TYPE_DEBUG);
-	if (LoadLanguage() != 1 || !FileExists (sTmpString.c_str()))
+	if (LoadLanguage() != 1)
 	{
 		MakeLog ("", -1, 2);
 		return eLoadingState::Error;
 	}
 	else
 	{
-		LanguageFile.LoadFile (sTmpString.c_str());
 		MakeLog ("", 1, 2);
 	}
 	Log.mark();
@@ -532,6 +516,25 @@ static int LoadLanguage()
 		// Could not load the language, critical fail!
 		Log.write ("Could not load the language!", cLog::eLOG_TYPE_ERROR);
 		return 0;
+	}
+	if (cSettings::getInstance().isDebug() && !DEDICATED_SERVER)
+	{
+		const auto& font = *cUnicodeFont::font;
+		std::regex reg{".*_([0-9]+)"};
+		for (const auto& p : lngPack.getAllTranslations())
+		{
+			std::smatch res;
+
+			if (std::regex_match (p.first, res, reg)) {
+				std::size_t maxSize = std::stoi(res[1]);
+				const char referenceLetter = 'a';
+
+				if (font.getTextWide (std::string (maxSize, referenceLetter)) < font.getTextWide (p.second))
+				{
+					Log.write ("Maybe too long string for " + p.first + ": " + p.second, cLog::eLOG_TYPE_WARNING);
+				}
+			}
+		}
 	}
 	return 1;
 }
