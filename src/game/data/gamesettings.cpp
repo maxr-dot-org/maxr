@@ -28,6 +28,10 @@
 #include "utility/tounderlyingtype.h"
 #include "utility/string/iequals.h"
 
+// Might be inline in C++17
+/*static constexpr*/ const int cGameSettings::defaultVictoryTurnsOptions[3];
+/*static constexpr*/ const int cGameSettings::defaultVictoryPointsOptions[3];
+
 const std::chrono::seconds cGameSettings::defaultTurnLimitOption0 (60);
 const std::chrono::seconds cGameSettings::defaultTurnLimitOption1 (120);
 const std::chrono::seconds cGameSettings::defaultTurnLimitOption2 (180);

@@ -29,6 +29,13 @@ class cGameSettings;
 class cCheckBox;
 class cLineEdit;
 class cLabel;
+template <typename> class cRadioGroupValue;
+
+enum class eGameSettingsResourceAmount;
+enum class eGameSettingsResourceDensity;
+enum class eGameSettingsBridgeheadType;
+enum class eGameSettingsGameType;
+enum class eGameSettingsVictoryCondition;
 
 class cWindowGameSettings : public cWindow
 {
@@ -39,85 +46,42 @@ public:
 	void applySettings (const cGameSettings& gameSettings);
 	cGameSettings getGameSettings() const;
 
-	cSignal<void ()> done;
+	cSignal<void()> done;
+
 private:
-	cSignalConnectionManager signalConnectionManager;
-
-	bool forHotSeatGame;
-
-	cCheckBox* metalLimitedCheckBox;
-	cCheckBox* metalNormalCheckBox;
-	cCheckBox* metalHighCheckBox;
-	cCheckBox* metalTooMuchCheckBox;
-
-	cCheckBox* oilLimitedCheckBox;
-	cCheckBox* oilNormalCheckBox;
-	cCheckBox* oilHighCheckBox;
-	cCheckBox* oilTooMuchCheckBox;
-
-	cCheckBox* goldLimitedCheckBox;
-	cCheckBox* goldNormalCheckBox;
-	cCheckBox* goldHighCheckBox;
-	cCheckBox* goldTooMuchCheckBox;
-
-	cCheckBox* densitySparseCheckBox;
-	cCheckBox* densityNormalCheckBox;
-	cCheckBox* densityDenseCheckBox;
-	cCheckBox* densityTooMuchCheckBox;
-
-	cCheckBox* bridgeheadMobileCheckBox;
-	cCheckBox* bridgeheadDefiniteCheckBox;
-
-	cCheckBox* gameTypeTurnsCheckBox;
-	cCheckBox* gameTypeSimultaneousCheckBox;
-
-	cCheckBox* clansOnCheckBox;
-	cCheckBox* clansOffCheckBox;
-
-	cCheckBox* creditsNoneCheckBox;
-	cCheckBox* creditsLowCheckBox;
-	cCheckBox* creditsLimitedCheckBox;
-	cCheckBox* creditsNormalCheckBox;
-	cCheckBox* creditsHighCheckBox;
-	cCheckBox* creditsMoreCheckBox;
-
-	cCheckBox* victoryTurns0CheckBox;
-	cCheckBox* victoryTurns1CheckBox;
-	cCheckBox* victoryTurns2CheckBox;
-
-	cCheckBox* victoryPoints0CheckBox;
-	cCheckBox* victoryPoints1CheckBox;
-	cCheckBox* victoryPoints2CheckBox;
-
-	cCheckBox* victoryNoLimitCheckBox;
-
-	cCheckBox* turnLimitNoLimitCheckBox;
-	cCheckBox* turnLimit0CheckBox;
-	cCheckBox* turnLimit1CheckBox;
-	cCheckBox* turnLimit2CheckBox;
-	cCheckBox* turnLimit3CheckBox;
-	cCheckBox* turnLimit4CheckBox;
-	cCheckBox* turnLimit5CheckBox;
-	cCheckBox* turnLimitCustomCheckBox;
-	cLineEdit* turnLimitCustomLineEdit;
-
-	cCheckBox* turnEndTurnDeadlineNoLimitCheckBox;
-	cCheckBox* turnEndTurnDeadline0CheckBox;
-	cCheckBox* turnEndTurnDeadline1CheckBox;
-	cCheckBox* turnEndTurnDeadline2CheckBox;
-	cCheckBox* turnEndTurnDeadline3CheckBox;
-	cCheckBox* turnEndTurnDeadline4CheckBox;
-	cCheckBox* turnEndTurnDeadline5CheckBox;
-	cCheckBox* turnEndTurnDeadlineCustomCheckBox;
-	cLineEdit* turnEndTurnDeadlineLineEdit;
-	cLabel* turnEndDeadlineLabel;
-	cLabel* turnEndDeadlineSecondsLabel;
-
 	void okClicked();
 	void backClicked();
 
 	void disableTurnEndDeadlineOptions();
 	void enableTurnEndDeadlineOptions();
+
+private:
+	cSignalConnectionManager signalConnectionManager;
+
+	bool forHotSeatGame = false;
+
+	cRadioGroupValue<eGameSettingsResourceAmount>* metalGroup = nullptr;
+	cRadioGroupValue<eGameSettingsResourceAmount>* oilGroup = nullptr;
+	cRadioGroupValue<eGameSettingsResourceAmount>* goldGroup = nullptr;
+
+	cRadioGroupValue<eGameSettingsResourceDensity>* densityGroup = nullptr;
+
+	cRadioGroupValue<eGameSettingsBridgeheadType>* bridgeheadGroup = nullptr;
+	cRadioGroupValue<eGameSettingsGameType>* gameTypeGroup = nullptr;
+
+	cRadioGroupValue<bool>* clansGroup = nullptr;
+
+	cRadioGroupValue<int>* creditsGroup = nullptr;
+
+	cRadioGroupValue<std::pair<eGameSettingsVictoryCondition, int>>* victoryGroup = nullptr;
+
+	cRadioGroupValue<int>* turnLimitGroup = nullptr;
+	cLineEdit* turnLimitCustomLineEdit = nullptr;
+
+	cRadioGroupValue<int>* endTurnDeadlineGroup = nullptr;
+	cLineEdit* turnEndTurnDeadlineLineEdit = nullptr;
+	cLabel* turnEndDeadlineLabel = nullptr;
+	cLabel* turnEndDeadlineSecondsLabel = nullptr;
 };
 
 #endif // ui_graphical_menu_windows_windowgamesettings_windowgamesettingsH
