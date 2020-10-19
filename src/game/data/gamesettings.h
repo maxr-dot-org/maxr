@@ -77,8 +77,8 @@ public:
 	static const int defaultCreditsHigh    = 200;
 	static const int defaultCreditsMore    = 250;
 
-	static constexpr const int defaultVictoryTurnsOptions[3]{100, 200, 400};
-	static constexpr const int defaultVictoryPointsOptions[3]{100, 200, 400};
+	static const int defaultVictoryTurnsOptions[3];
+	static const int defaultVictoryPointsOptions[3];
 
 	static const std::chrono::seconds defaultTurnLimitOption0;
 	static const std::chrono::seconds defaultTurnLimitOption1;

@@ -28,9 +28,9 @@
 #include "utility/tounderlyingtype.h"
 #include "utility/string/iequals.h"
 
-// Might be inline in C++17
-/*static constexpr*/ const int cGameSettings::defaultVictoryTurnsOptions[3];
-/*static constexpr*/ const int cGameSettings::defaultVictoryPointsOptions[3];
+// Might be constexpr inline in C++17
+/* static */ const int cGameSettings::defaultVictoryTurnsOptions[3]{100, 200, 400};
+/* static */ const int cGameSettings::defaultVictoryPointsOptions[3]{200, 400, 800};
 
 const std::chrono::seconds cGameSettings::defaultTurnLimitOption0 (60);
 const std::chrono::seconds cGameSettings::defaultTurnLimitOption1 (120);
