@@ -145,6 +145,10 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 		victoryGroup->emplaceCheckBox ({eGameSettingsVictoryCondition::Turns, turn}, getPosition() + cPosition (380, currentLine), iToStr (turn) + " " + lngPack.i18n ("Text~Comp~Turns"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
 		currentLine += lineHeight;
 	}
+	const auto customTurnArea = cBox<cPosition>(getPosition() + cPosition (330, currentLine), getPosition() + cPosition (420, currentLine + 10));
+	customVictoryTurnsCheckBox = victoryGroup->addCheckBox ({eGameSettingsVictoryCondition::Turns, custom}, std::make_unique<cEditableCheckBox>(customTurnArea, lngPack.i18n ("Text~Comp~Turns") + lngPack.i18n ("Text~Punctuation~Colon"), "", FONT_LATIN_NORMAL));
+	customVictoryTurnsCheckBox->setText ("420");
+	customVictoryTurnsCheckBox->setValidator (std::make_unique<cValidatorInt> (0, 9999));
 
 	currentLine = savedLine;
 	for (auto point : cGameSettings::defaultVictoryPointsOptions)
@@ -152,6 +156,11 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 		victoryGroup->emplaceCheckBox ({eGameSettingsVictoryCondition::Points, point}, getPosition() + cPosition (500, currentLine), iToStr (point) + " " + lngPack.i18n ("Text~Comp~Points"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
 		currentLine += lineHeight;
 	}
+	const auto customPointArea = cBox<cPosition>(getPosition() + cPosition (440, currentLine), getPosition() + cPosition (540, currentLine + 10));
+	customVictoryPointsCheckBox = victoryGroup->addCheckBox ({eGameSettingsVictoryCondition::Points, custom}, std::make_unique<cEditableCheckBox>(customPointArea, lngPack.i18n ("Text~Comp~Points") + lngPack.i18n ("Text~Punctuation~Colon"), "", FONT_LATIN_NORMAL));
+	customVictoryPointsCheckBox->setText ("900");
+	customVictoryPointsCheckBox->setValidator (std::make_unique<cValidatorInt> (0, 9999));
+	currentLine += lineHeight;
 
 	victoryGroup->emplaceCheckBox ({eGameSettingsVictoryCondition::Death, 0}, getPosition() + cPosition (440, currentLine), lngPack.i18n ("Text~Comp~NoLimit"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
 	currentLine += lineHeight;
@@ -229,10 +238,18 @@ void cWindowGameSettings::applySettings (const cGameSettings& gameSettings)
 	switch (gameSettings.getVictoryCondition())
 	{
 		case eGameSettingsVictoryCondition::Turns:
-			victoryGroup->selectValue({eGameSettingsVictoryCondition::Turns, gameSettings.getVictoryTurns()});
+			if (!victoryGroup->selectValue({eGameSettingsVictoryCondition::Turns, gameSettings.getVictoryTurns()}))
+			{
+				customVictoryTurnsCheckBox->setText (std::to_string (gameSettings.getVictoryTurns()));
+				victoryGroup->selectValue({eGameSettingsVictoryCondition::Turns, custom});
+			}
 			break;
 		case eGameSettingsVictoryCondition::Points:
-			victoryGroup->selectValue({eGameSettingsVictoryCondition::Points, gameSettings.getVictoryPoints()});
+			if (!victoryGroup->selectValue({eGameSettingsVictoryCondition::Points, gameSettings.getVictoryPoints()}))
+			{
+				customVictoryPointsCheckBox->setText (std::to_string (gameSettings.getVictoryPoints()));
+				victoryGroup->selectValue({eGameSettingsVictoryCondition::Points, custom});
+			}
 			break;
 		case eGameSettingsVictoryCondition::Death:
 			victoryGroup->selectValue({eGameSettingsVictoryCondition::Death, 0});
@@ -291,8 +308,16 @@ cGameSettings cWindowGameSettings::getGameSettings() const
 	gameSettings.setVictoryCondition (victoryType);
 	switch (victoryType)
 	{
-		case eGameSettingsVictoryCondition::Points: gameSettings.setVictoryPoints (victoryCount); break;
-		case eGameSettingsVictoryCondition::Turns: gameSettings.setVictoryTurns (victoryCount); break;
+		case eGameSettingsVictoryCondition::Points:
+		{
+			gameSettings.setVictoryPoints (victoryCount == custom ? stoi (customVictoryPointsCheckBox->getText()): victoryCount);
+			break;
+		}
+		case eGameSettingsVictoryCondition::Turns:
+		{
+			gameSettings.setVictoryTurns (victoryCount == custom ? stoi (customVictoryTurnsCheckBox->getText()) : victoryCount);
+			break;
+		}
 		case eGameSettingsVictoryCondition::Death: break;
 	}
 

@@ -75,6 +75,8 @@ private:
 	cRadioGroupValue<int>* creditsGroup = nullptr;
 
 	cRadioGroupValue<std::pair<eGameSettingsVictoryCondition, int>>* victoryGroup = nullptr;
+	cEditableCheckBox* customVictoryTurnsCheckBox = nullptr;
+	cEditableCheckBox* customVictoryPointsCheckBox = nullptr;
 
 	cRadioGroupValue<int>* turnLimitGroup = nullptr;
 	cEditableCheckBox* customTurnLimitCheckBox = nullptr;
