@@ -27,6 +27,7 @@
 class cGameSettings;
 
 class cCheckBox;
+class cEditableCheckBox;
 class cLineEdit;
 class cLabel;
 template <typename> class cRadioGroupValue;
@@ -76,12 +77,11 @@ private:
 	cRadioGroupValue<std::pair<eGameSettingsVictoryCondition, int>>* victoryGroup = nullptr;
 
 	cRadioGroupValue<int>* turnLimitGroup = nullptr;
-	cLineEdit* turnLimitCustomLineEdit = nullptr;
+	cEditableCheckBox* customTurnLimitCheckBox = nullptr;
 
 	cRadioGroupValue<int>* endTurnDeadlineGroup = nullptr;
-	cLineEdit* turnEndTurnDeadlineLineEdit = nullptr;
+	cEditableCheckBox* customEndTurnDeadlineCheckBox = nullptr;
 	cLabel* turnEndDeadlineLabel = nullptr;
-	cLabel* turnEndDeadlineSecondsLabel = nullptr;
 };
 
 #endif // ui_graphical_menu_windows_windowgamesettings_windowgamesettingsH

@@ -38,7 +38,8 @@ public:
 	template <typename ... Ts>
 	cCheckBox* emplaceCheckBox (T value, Ts&&... args) { return addCheckBox (value, std::make_unique<cCheckBox> (std::forward<Ts> (args)...)); }
 
-	cCheckBox* addCheckBox (T value, std::unique_ptr<cCheckBox> button);
+	template <typename TCheckBox>
+	TCheckBox* addCheckBox (T value, std::unique_ptr<TCheckBox> button);
 
 	bool selectValue (T value);
 
@@ -63,10 +64,12 @@ private:
 
 //------------------------------------------------------------------------------
 template <typename T>
-cCheckBox* cRadioGroupValue<T>::addCheckBox (T value, std::unique_ptr<cCheckBox> newCheckBox)
+template <typename CheckBox>
+CheckBox* cRadioGroupValue<T>::addCheckBox (T value, std::unique_ptr<CheckBox> newCheckBox)
 {
 	const bool hadButtons = hasChildren();
-	auto* checkBox = addChild (std::move (newCheckBox));
+	CheckBox* res = addChild (std::move (newCheckBox));
+	cCheckBox* checkBox = &static_cast<cCheckBox&>(*res);
 
 	if (currentlyCheckedButton == nullptr && !allowUncheckAll && !checkBox->isChecked()) checkBox->setChecked (true);
 
@@ -89,7 +92,7 @@ cCheckBox* cRadioGroupValue<T>::addCheckBox (T value, std::unique_ptr<cCheckBox>
 	}
 	internalMoving = false;
 
-	return checkBox;
+	return res;
 }
 
 //------------------------------------------------------------------------------
