@@ -37,9 +37,7 @@ std::string iToStr (int x);
 /**Converts integer to string in hex representation
 */
 std::string iToHex (unsigned int x);
-/**Converts float to string
-*/
-std::string fToStr (float x);
+
 /**Converts pointer to string
 */
 std::string pToStr (const void* x);

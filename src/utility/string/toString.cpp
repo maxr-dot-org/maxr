@@ -35,13 +35,6 @@ std::string iToHex (unsigned int x)
 	return strStream.str();
 }
 
-std::string fToStr (float x)
-{
-	std::stringstream strStream;
-	strStream << x;
-	return strStream.str();
-}
-
 std::string pToStr (const void* x)
 {
 	std::stringstream strStream;

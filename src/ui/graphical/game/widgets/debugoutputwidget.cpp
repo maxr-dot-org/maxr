@@ -443,7 +443,7 @@ void cDebugOutputWidget::traceVehicle (const cVehicle& vehicle, cPosition& drawP
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
-	tmpString = "commando_rank: " + fToStr (Round (vehicle.getCommandoRank(), 2)) + " disabled: " + iToStr (vehicle.getDisabledTurns());
+	tmpString = "commando_rank: " + std::to_string (Round (vehicle.getCommandoRank(), 2)) + " disabled: " + iToStr (vehicle.getDisabledTurns());
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
