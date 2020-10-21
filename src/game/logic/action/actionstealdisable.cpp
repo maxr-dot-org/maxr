@@ -50,12 +50,12 @@ void cActionStealDisable::execute(cModel& model) const
 	auto target = model.getUnitFromID(targetId);
 	if (target == nullptr) return;
 
-	if (!infiltrator->canDoCommandoAction(target, steal)) return;
+	if (!cCommandoData::canDoAction(*infiltrator, target, steal)) return;
 
 	infiltrator->data.setShots(infiltrator->data.getShots() - 1);
 
 	// check whether the action is successful or not
-	const uint32_t chance = infiltrator->calcCommandoChance(target, steal);
+	const uint32_t chance = infiltrator->getCommandoData().computeChance(target, steal);
 	bool success = model.randomGenerator.get(100) < chance;
 	if (success)
 	{
@@ -72,14 +72,11 @@ void cActionStealDisable::execute(cModel& model) const
 		else
 		{
 			// Only on disabling units the infiltrator gets exp.
-			// The higher his level is the slower he gains exp.
-			// Every 5 rankings he needs one successful disabling more,
-			// to get to the next ranking
-			infiltrator->setCommandoRank(infiltrator->getCommandoRank() + 1.f / (((int)infiltrator->getCommandoRank() + 5) / 5));
+			cCommandoData::increaseXp (*infiltrator);
 
-			const int strength = infiltrator->calcCommandoTurns(target);
+			const int turns = infiltrator->getCommandoData().computeDisabledTurnCount(*target);
 
-			target->setDisabledTurns(strength);
+			target->setDisabledTurns (turns);
 			target->getOwner()->removeFromScan(*target);
 
 			model.unitDisabled(*infiltrator, *target);
@@ -134,12 +131,12 @@ void cActionStealDisable::changeUnitOwner(cUnit& unit, cPlayer& newOwner, cModel
 
 	newOwner.addToScan(unit);
 
-	for (const auto& player : model.getPlayerList()) 
+	for (const auto& player : model.getPlayerList())
 	{
 		unit.resetDetectedByPlayer(player.get());
 	}
 	unit.clearDetectedInThisTurnPlayerList();
-	
+
 	// let the unit work for his new owner
 	if (unit.getStaticUnitData().canSurvey && unit.isAVehicle())
 	{

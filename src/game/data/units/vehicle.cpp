@@ -71,8 +71,7 @@ cVehicle::cVehicle (const cStaticUnitData& staticData, const cDynamicUnitData& d
 	isClearing (false),
 	clearingTurns (0),
 	layMines (false),
-	clearMines (false),
-	commandoRank (0)
+	clearMines (false)
 {
 	uiData = UnitsUiData.getVehicleUI (staticData.ID);
 	ditherX = 0;
@@ -91,7 +90,6 @@ cVehicle::cVehicle (const cStaticUnitData& staticData, const cDynamicUnitData& d
 	clearingTurnsChanged.connect ([&]() { statusChanged(); });
 	buildingTurnsChanged.connect ([&]() { statusChanged(); });
 	buildingTypeChanged.connect ([&]() { statusChanged(); });
-	commandoRankChanged.connect ([&]() { statusChanged(); });
 	moveJobChanged.connect ([&]() { statusChanged(); });
 	autoMoveJobChanged.connect ([&]() { statusChanged(); });
 }
@@ -547,15 +545,7 @@ string cVehicle::getStatusStr(const cPlayer* player, const cUnitsData& unitsData
 		if ((staticData->canCapture || staticData->canDisable) /* && owner == gameGUI.getClient()->getActivePlayer()*/)
 		{
 			sTmp += "\n";
-			if (getCommandoRank() < 1.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Greenhorn");
-			else if (getCommandoRank() < 3.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Average");
-			else if (getCommandoRank() < 6.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Veteran");
-			else if (getCommandoRank() < 11.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Expert");
-			else if (getCommandoRank() < 19.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Elite");
-			else sTmp += lngPack.i18n ("Text~Comp~CommandoRank_GrandMaster");
-			if (getCommandoRank() > 0.f)
-				sTmp += " +" + iToStr ((int)getCommandoRank());
-
+			sTmp += commandoData.getRankString();
 		}
 
 		return sTmp;
@@ -1068,102 +1058,6 @@ void cVehicle::clearMine (cModel& model)
 }
 
 //-----------------------------------------------------------------------------
-/** Checks if the target is on a neighbor field and if it can be stolen or disabled */
-//-----------------------------------------------------------------------------
-bool cVehicle::canDoCommandoAction (const cPosition& position, const cMapView& map, bool steal) const
-{
-	const auto& field = map.getField (position);
-
-	const cUnit* unit = field.getPlane();
-	if (canDoCommandoAction (unit, steal)) return true;
-
-	unit = field.getVehicle();
-	if (canDoCommandoAction (unit, steal)) return true;
-
-	unit = field.getBuilding();
-	if (canDoCommandoAction (unit, steal)) return true;
-
-	return false;
-}
-
-bool cVehicle::canDoCommandoAction (const cUnit* unit, bool steal) const
-{
-	if (unit == nullptr) return false;
-
-	if ((steal && staticData->canCapture == false) || (steal == false && staticData->canDisable == false))
-		return false;
-	if (data.getShots() == 0) return false;
-
-	if (unit->isNextTo (getPosition()) == false)
-		return false;
-
-	if (steal == false && unit->isDisabled()) return false;
-	if (unit->isABuilding() && static_cast<const cBuilding*>(unit)->isRubble()) return false;
-	if (steal && unit->getStaticUnitData().canBeCaptured == false) return false;
-	if (steal == false && unit->getStaticUnitData().canBeDisabled == false) return false;
-	if (steal && unit->storedUnits.empty() == false) return false;
-	if (unit->getOwner() == getOwner()) return false;
-	if (unit->isAVehicle() && unit->getStaticUnitData().factorAir > 0 && static_cast<const cVehicle*> (unit)->getFlightHeight() > 0) return false;
-
-	return true;
-}
-
-//-----------------------------------------------------------------------------
-int cVehicle::calcCommandoChance (const cUnit* destUnit, bool steal) const
-{
-	if (destUnit == 0)
-		return 0;
-
-	// TODO: include cost research and clan modifications ?
-	// Or should always the basic version without clanmods be used ?
-	// TODO: Bug for buildings ? /3? or correctly /2,
-	// because constructing buildings takes two resources per turn ?
-	int destTurn = destUnit->data.getBuildCost() / 3;
-
-	int factor = steal ? 1 : 4;
-	int srcLevel = (int) getCommandoRank() + 7;
-
-	// The chance to disable or steal a unit depends on
-	// the infiltrator ranking and the buildcosts
-	// (or 'turns' in the original game) of the target unit.
-	// The chance rises linearly with a higher ranking of the infiltrator.
-	// The chance of a unexperienced infiltrator will be calculated like
-	// he has the ranking 7.
-	// Disabling has a 4 times higher chance than stealing.
-	int chance = Round ((8.f * srcLevel) / (35 * destTurn) * factor * 100);
-	chance = std::min (90, chance);
-
-	return chance;
-}
-
-//-----------------------------------------------------------------------------
-int cVehicle::calcCommandoTurns (const cUnit* destUnit) const
-{
-	if (destUnit == 0)
-		return 1;
-
-	const int vehiclesTable[13] = { 0, 0, 0, 5, 8, 3, 3, 0, 0, 0, 1, 0, -4 };
-	int destTurn, srcLevel;
-
-	if (destUnit->isAVehicle())
-	{
-		destTurn = destUnit->data.getBuildCost() / 3;
-		srcLevel = (int) getCommandoRank();
-		if (destTurn > 0 && destTurn < 13)
-			srcLevel += vehiclesTable[destTurn];
-	}
-	else
-	{
-		destTurn = destUnit->data.getBuildCost() / 2;
-		srcLevel = (int) getCommandoRank() + 8;
-	}
-
-	int turns = (int) (1.0f / destTurn * srcLevel);
-	turns = std::max (turns, 1);
-	return turns;
-}
-
-//-----------------------------------------------------------------------------
 void cVehicle::tryResetOfDetectionStateBeforeMove (const cMap& map, const std::vector<std::shared_ptr<cPlayer>>& playerList)
 {
 	for (const auto& player : playerList)
@@ -1373,7 +1267,7 @@ uint32_t cVehicle::getChecksum(uint32_t crc) const
 	crc = calcCheckSum(layMines, crc);
 	crc = calcCheckSum(clearMines, crc);
 	crc = calcCheckSum(flightHeight, crc);
-	crc = calcCheckSum(commandoRank, crc);
+	crc = commandoData.calcCheckSum(crc);
 
 	return crc;
 }
@@ -1485,19 +1379,6 @@ void cVehicle::setClearingTurns (int value)
 {
 	std::swap (clearingTurns, value);
 	if (value != clearingTurns) clearingTurnsChanged();
-}
-
-//-----------------------------------------------------------------------------
-float cVehicle::getCommandoRank() const
-{
-	return commandoRank;
-}
-
-//-----------------------------------------------------------------------------
-void cVehicle::setCommandoRank (float value)
-{
-	std::swap (commandoRank, value);
-	if (value != commandoRank) commandoRankChanged();
 }
 
 //-----------------------------------------------------------------------------

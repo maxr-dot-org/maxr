@@ -23,6 +23,7 @@
 #include "defines.h"
 #include "maxrconfig.h"
 
+#include "game/data/units/commandodata.h"
 #include "game/data/units/unitdata.h" // for sUnitData
 #include "game/data/units/unit.h"
 #include "resources/uidata.h"
@@ -202,18 +203,6 @@ public:
 	* clear a mine at the current position of the unit.
 	*/
 	void clearMine (cModel& model);
-	/**
-	* checks whether the commando action can be performed or not
-	*@author alzi alias DoctorDeath
-	*/
-	bool canDoCommandoAction (const cPosition& position, const cMapView& map, bool steal) const;
-	bool canDoCommandoAction (const cUnit* unit, bool steal) const;
-	/**
-	* calculates the chance for disabling or stealing the target unit
-	*@author alzi alias DoctorDeath
-	*/
-	int calcCommandoChance (const cUnit* destUnit, bool steal) const;
-	int calcCommandoTurns (const cUnit* destUnit) const;
 
 	/** When starting a movement, or when unloading a stored unit, the detection state of the unit might be reset,
 	 * if it was not detected in _this_ turn. */
@@ -264,8 +253,8 @@ public:
 	int getClearingTurns() const;
 	void setClearingTurns (int value);
 
-	float getCommandoRank() const;
-	void setCommandoRank (float value);
+	const cCommandoData& getCommandoData() const { return commandoData; }
+	cCommandoData& getCommandoData() { return commandoData; }
 
 	const sID& getBuildingType() const;
 	void setBuildingType (const sID& id);
@@ -299,7 +288,6 @@ public:
 	mutable cSignal<void ()> buildingTurnsChanged;
 	mutable cSignal<void ()> buildingCostsChanged;
 	mutable cSignal<void ()> buildingTypeChanged;
-	mutable cSignal<void ()> commandoRankChanged;
 	mutable cSignal<void ()> flightHeightChanged;
 
 	mutable cSignal<void ()> moveJobChanged;
@@ -330,7 +318,7 @@ public:
 		archive & NVP(layMines);
 		archive & NVP(clearMines);
 		archive & NVP(flightHeight);
-		archive & NVP(commandoRank);
+		commandoData.serialize (archive);
 
 		if (!archive.isWriter)
 		{
@@ -384,7 +372,7 @@ private:
 
 	int flightHeight;
 
-	float commandoRank;
+	cCommandoData commandoData;
 };
 
 #endif // game_data_units_vehicleH

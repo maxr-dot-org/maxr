@@ -53,7 +53,7 @@ void cMouseModeSteal::setCursor(cMouse& mouse, const cPosition& mapPosition, con
 			const auto& field = map->getField (mapPosition);
 			const cUnit* unit = field.getVehicle();
 
-			mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Steal, selectedVehicle->calcCommandoChance (unit, true)));
+			mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Steal, selectedVehicle->getCommandoData().computeChance (unit, true)));
 		}
 		else mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Steal));
 	}
@@ -80,7 +80,7 @@ bool cMouseModeSteal::canExecuteAction (const cPosition& mapPosition) const
 
 	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 
-	return selectedVehicle && selectedVehicle->canDoCommandoAction (mapPosition, *map, true);
+	return selectedVehicle && cCommandoData::canDoAction (*selectedVehicle, mapPosition, *map, true);
 }
 
 //------------------------------------------------------------------------------

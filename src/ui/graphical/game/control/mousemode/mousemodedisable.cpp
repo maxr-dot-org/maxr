@@ -54,7 +54,7 @@ void cMouseModeDisable::setCursor(cMouse& mouse, const cPosition& mapPosition, c
 			const cUnit* unit = field.getVehicle();
 			if (!unit) unit = field.getTopBuilding();
 
-			mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Disable, selectedVehicle->calcCommandoChance (unit, false)));
+			mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Disable, selectedVehicle->getCommandoData().computeChance (unit, false)));
 		}
 		else mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Disable));
 	}
@@ -81,7 +81,7 @@ bool cMouseModeDisable::canExecuteAction (const cPosition& mapPosition) const
 
 	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 
-	return selectedVehicle && selectedVehicle->canDoCommandoAction (mapPosition, *map, false);
+	return selectedVehicle && cCommandoData::canDoAction (*selectedVehicle, mapPosition, *map, false);
 }
 
 //------------------------------------------------------------------------------

@@ -66,7 +66,7 @@ void cMouseModeDefault::setCursor(cMouse& mouse, const cPosition& mapPosition, c
 				const auto& field = map->getField (mapPosition);
 				const cUnit* unit = field.getVehicle();
 
-				mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Steal, selectedVehicle->calcCommandoChance (unit, true)));
+				mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Steal, selectedVehicle->getCommandoData().computeChance (unit, true)));
 			}
 			else mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Steal));
 		}
@@ -80,7 +80,7 @@ void cMouseModeDefault::setCursor(cMouse& mouse, const cPosition& mapPosition, c
 				const cUnit* unit = field.getVehicle();
 				if (!unit) unit = field.getTopBuilding();
 
-				mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Disable, selectedVehicle->calcCommandoChance (unit, false)));
+				mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Disable, selectedVehicle->getCommandoData().computeChance (unit, false)));
 			}
 			else mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Disable));
 		}
@@ -160,12 +160,12 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 	const bool modifierForceMoveActive = cKeyboard::getInstance().isAnyModifierActive(toEnumFlag(eKeyModifierType::Ctrl));
 
 	// Infiltrators: auto selected disable vs. vehicle/building
-	if (selectedVehicle && selectedVehicle->getOwner() == player && selectedVehicle->canDoCommandoAction (mapPosition, *map, false))
+	if (selectedVehicle && selectedVehicle->getOwner() == player && cCommandoData::canDoAction (*selectedVehicle, mapPosition, *map, false))
 	{
 		return eActionType::Disable;
 	}
 	// Infiltrators: auto selected steal vs. vehicle/building
-	else if (selectedVehicle && selectedVehicle->getOwner() == player && selectedVehicle->canDoCommandoAction (mapPosition, *map, true))
+	else if (selectedVehicle && selectedVehicle->getOwner() == player && cCommandoData::canDoAction (*selectedVehicle, mapPosition, *map, true))
 	{
 		return eActionType::Steal;
 	}
