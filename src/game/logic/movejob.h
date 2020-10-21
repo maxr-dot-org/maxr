@@ -171,10 +171,10 @@ private:
 	unsigned int timer100ms = 1;
 	/** 50 ms timer tick */
 	unsigned int timer50ms = 1;
-	/** speed of the vehicle in pixel per game time tick */
-	double currentSpeed = 0;
+	/** speed of the vehicle in 100th pixel per game time tick */
+	int currentSpeed = 0;
 
-	double pixelToMove = 0;
+	int pixelToMove = 0;
 
 	cEndMoveAction endMoveAction;
 

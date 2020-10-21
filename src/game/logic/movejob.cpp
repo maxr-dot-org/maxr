@@ -318,18 +318,18 @@ void cMoveJob::moveVehicle (cModel& model)
 	int x = abs (vehicle->getMovementOffset().x());
 	int y = abs (vehicle->getMovementOffset().y());
 	if (vehicle->uiData->makeTracks && (
-		(x > 32 && x - pixelToMove <= 32) ||
-		(y > 32 && y - pixelToMove <= 32) ||
-		(x == 64 && pixelToMove >= 1) ||
-		(y == 64 && pixelToMove >= 1)))
+		(x > 32 && x - pixelToMove / 100 <= 32) ||
+		(y > 32 && y - pixelToMove / 100 <= 32) ||
+		(x == 64 && pixelToMove / 100 >= 1) ||
+		(y == 64 && pixelToMove / 100 >= 1)))
 	{
 		// this is a bit crude, but I don't know another simple way of notifying the
 		// gui, that is might wants to add a track effect.
 		model.triggeredAddTracks (*vehicle);
 	}
 
-	changeVehicleOffset (static_cast<int> (pixelToMove));
-	pixelToMove -= static_cast<int> (pixelToMove);
+	changeVehicleOffset (pixelToMove / 100);
+	pixelToMove %= 100;
 
 	if (reachedField())
 	{
@@ -341,35 +341,35 @@ void cMoveJob::moveVehicle (cModel& model)
 //------------------------------------------------------------------------------
 void cMoveJob::updateSpeed (const cMap &map)
 {
-	double maxSpeed = MOVE_SPEED;
+	int maxSpeed = 100 * MOVE_SPEED;
 	if (vehicle->uiData->animationMovement)
 	{
-		maxSpeed = MOVE_SPEED / 2;
+		maxSpeed = 100 * MOVE_SPEED / 2;
 	}
 	else if (!(vehicle->getStaticUnitData().factorAir > 0) && !(vehicle->getStaticUnitData().factorSea > 0 && vehicle->getStaticUnitData().factorGround == 0))
 	{
-		maxSpeed = MOVE_SPEED;
-		cBuilding* building = map.getField (vehicle->getPosition()).getBaseBuilding();
+		maxSpeed = 100 * MOVE_SPEED;
+		const cBuilding* building = map.getField (vehicle->getPosition()).getBaseBuilding();
 		if (building && building->getStaticUnitData().modifiesSpeed)
-			maxSpeed = (int)(maxSpeed / building->getStaticUnitData().modifiesSpeed);
+			maxSpeed /= building->getStaticUnitData().modifiesSpeed;
 	}
 	else if (vehicle->getStaticUnitData().factorAir > 0)
 	{
-		maxSpeed = MOVE_SPEED * 2;
+		maxSpeed = 100 * MOVE_SPEED * 2;
 	}
 
 	if (path.empty() || state == STOPPING || cPathCalculator::calcNextCost (vehicle->getPosition(), path.front(), vehicle, &map) > vehicle->data.getSpeed())
 	{
-		double maxSpeedBreaking = sqrt (2 * MOVE_ACCELERATION * vehicle->getMovementOffset().l2Norm());
+		int maxSpeedBreaking = 100 * sqrt (2 * MOVE_ACCELERATION * vehicle->getMovementOffset().l2Norm());
 		maxSpeed = std::min (maxSpeed, maxSpeedBreaking);
 
 		//don't break to zero before movejob is stopped
-		maxSpeed = std::max (maxSpeed, 0.1);
+		maxSpeed = std::max (maxSpeed, 10 * 100);
 	}
 
 	if (currentSpeed < maxSpeed)
 	{
-		currentSpeed += MOVE_ACCELERATION;
+		currentSpeed += 100 * MOVE_ACCELERATION;
 	}
 	if (currentSpeed > maxSpeed)
 	{
