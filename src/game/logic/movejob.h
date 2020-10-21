@@ -21,39 +21,35 @@
 #define game_logic_movejobs2H
 
 #include <forward_list>
-#include <assert.h>
 
-#include "utility/position.h"
-#include "endmoveaction.h"
 #include "game/data/units/vehicle.h"
+#include "game/logic/endmoveaction.h"
+#include "utility/position.h"
 
-#define MOVE_SPEED 4           // maximum speed (pixel per gametime tick) of vehicle movements
-#define MOVE_ACCELERATION 0.08 // change of vehicle speed per tick
+#define MOVE_SPEED 4 // maximum speed (pixel per gametime tick) of vehicle movements
 
-struct SDL_Rect;
-class cVehicle;
 class cMap;
 
 class cMoveJob
 {
 public:
-	cMoveJob(const std::forward_list<cPosition>& path, cVehicle& vehicle, cModel& model);
 	cMoveJob();
+	cMoveJob (const std::forward_list<cPosition>& path, cVehicle&, cModel&);
 	/**
 	* gets the list of position that make up the path. First element is the position,
 	* the unit will drive to when starting the next movement step.
 	*/
-	const std::forward_list<cPosition>& getPath() const;
+	const std::forward_list<cPosition>& getPath() const { return path; }
 	/**
 	* return the moved vehicle
 	*/
-	cVehicle* getVehicle() const;
+	cVehicle* getVehicle() const { return vehicle; }
 	/**
 	* return the amount of saved movement points. These are saved at turn end and added to the
 	* vehicles movement points in the next turn. This is done to prevent that the player looses
 	* movement points due to rounding issues.
 	*/
-	unsigned int getSavedSpeed() const;
+	unsigned int getSavedSpeed() const { return savedSpeed; }
 	/**
 	* returns true, if the move job is finished (reached destination or was stopped)
 	*/
@@ -74,10 +70,11 @@ public:
 	/**
 	* Execute the movement for the next game time tick
 	*/
-	void run(cModel& model);
+	void run (cModel&);
 	/**
 	* Stop the movejob. If the job is not active, it is stopped immediately.
-	* If the job is active, the state of the job is set to STOPPING and the job will be halted when the unit reaches the next field.
+	* If the job is active, the state of the job is set to STOPPING
+	* and the job will be halted when the unit reaches the next field.
 	*/
 	void stop();
 	/**
@@ -87,16 +84,16 @@ public:
 	/**
 	* defines an action to be executed at the end of the path
 	*/
-	void setEndMoveAction(const cEndMoveAction& endMoveAction);
-	const cEndMoveAction& getEndMoveAction() const;
+	void setEndMoveAction (const cEndMoveAction&);
+	const cEndMoveAction& getEndMoveAction() const { return endMoveAction; }
 
-	/** used for the surveyor ai, so it can recalculate its steps, when resouces are detected */
-	void setStopOnDetectRessource(bool value) {stopOnDetectResource = value;};
+	/** used for the surveyor ai, so it can recalculate its steps, when resources are detected */
+	void setStopOnDetectRessource (bool value) { stopOnDetectResource = value; }
 
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 
 	template <typename T>
-	void serialize(T& archive)
+	void serialize (T& archive)
 	{
 		archive & NVP(vehicle);
 		archive & NVP(path);
@@ -114,7 +111,7 @@ public:
 		{
 			if (vehicle != nullptr)
 			{
-				vehicle->setMoveJob(this);
+				vehicle->setMoveJob (this);
 			}
 		}
 	}
@@ -128,19 +125,19 @@ private:
 	/**
 	* moves the vehicle by 'offset' pixel in direction of 'nextDir'
 	*/
-	void changeVehicleOffset(int offset) const;
+	void changeVehicleOffset (int offset) const;
 	/**
 	* triggers all actions, that need to be done before starting a movement step
 	*/
-	void startMove(cModel& model);
+	void startMove (cModel& model);
 
 	/**
 	* check, weather the next field is free and make the necessary actions if it is not.
 	* Return true, if the movement can be continued.
 	*/
-	bool handleCollision(cModel &model);
+	bool handleCollision (cModel& model);
 
-	bool recalculatePath(cModel &model);
+	bool recalculatePath (cModel& model);
 
 	/**
 	* check, if the unit finished the current movement step
@@ -149,40 +146,40 @@ private:
 	/**
 	* actually execute the movement
 	*/
-	void moveVehicle(cModel& model);
+	void moveVehicle (cModel& model);
 	/**
 	* updates the current speed of the vehicle (for accelerating and breaking)
 	*/
-	void updateSpeed(const cMap &map);
+	void updateSpeed (const cMap& map);
 	/**
 	* triggers all actions, that need to be done after finishing a movement step
 	*/
-	void endMove(cModel& model);
+	void endMove (cModel& model);
 
-	//------------------------------------------------------------------------------
+private:
 	/** the vehicle to move */
-	cVehicle* vehicle;
+	cVehicle* vehicle = nullptr;
 	/** list of positions. First element is the next field, that the unit will drive to after the current one. */
 	std::forward_list<cPosition> path;
-	eMoveJobState state;
+	eMoveJobState state = ACTIVE;
 
 	/** movement points, that are taken to the next turn, to prevent that the player looses movement points due to rounding issues */
-	unsigned int savedSpeed;
+	unsigned int savedSpeed = 0;
 	/** direction the vehicle must be rotated to, before moving */
-	unsigned int nextDir;
+	unsigned int nextDir = 0;
 	/** 100 ms timer tick */
-	unsigned int timer100ms;
+	unsigned int timer100ms = 1;
 	/** 50 ms timer tick */
-	unsigned int timer50ms;
+	unsigned int timer50ms = 1;
 	/** speed of the vehicle in pixel per game time tick */
-	double currentSpeed;
+	double currentSpeed = 0;
 
-	double pixelToMove;
+	double pixelToMove = 0;
 
 	cEndMoveAction endMoveAction;
-	
+
 	/** give the surveyor ai the chance to calc a new path, when resources are found. */
-	bool stopOnDetectResource;
+	bool stopOnDetectResource = false;
 };
 
-#endif // game_logic_movejobsH
+#endif

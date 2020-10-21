@@ -20,61 +20,35 @@
 #include "movejob.h"
 
 #include "game/data/player/player.h"
-#include "game/data/units/vehicle.h"
 #include "game/data/map/map.h"
 #include "game/data/map/mapview.h"
 #include "game/data/model.h"
-#include "gametimer.h"
-#include "output/video/video.h"
-#include "pathcalculator.h"
+#include "game/data/units/vehicle.h"
+#include "game/logic/gametimer.h"
+#include "game/logic/pathcalculator.h"
 #include "utility/ranges.h"
 #include "utility/string/toString.h"
 
 #include <SDL_rect.h>
 #include <SDL_surface.h>
 
-//                           N, NE, E, SE, S, SW, W, NW
-const int directionDx[8] = { 0, 1, 1, 1, 0, -1, -1, -1 };
-const int directionDy[8] = { -1, -1, 0, 1, 1, 1, 0, -1 };
+//                                 N, NE, E, SE, S, SW, W, NW
+static const int directionDx[8] = { 0, 1, 1, 1, 0, -1, -1, -1 };
+static const int directionDy[8] = { -1, -1, 0, 1, 1, 1, 0, -1 };
 
+constexpr double MOVE_ACCELERATION = 0.08; // change of vehicle speed per tick
 
-cMoveJob::cMoveJob(const std::forward_list<cPosition>& path, cVehicle& vehicle, cModel& model) :
-	vehicle(&vehicle),
-	path(path),
-	state(ACTIVE),
-	savedSpeed(0),
-	nextDir(0),
-	timer100ms(1),
-	timer50ms(1),
-	currentSpeed(0),
-	pixelToMove(0),
-	stopOnDetectResource(false)
-{
-	startMove(model);
-}
-
+//------------------------------------------------------------------------------
 cMoveJob::cMoveJob() :
-	vehicle(nullptr),
-	state(FINISHED),
-	savedSpeed(0),
-	nextDir(0),
-	timer100ms(1),
-	timer50ms(1),
-	currentSpeed(0),
-	pixelToMove(0),
-	stopOnDetectResource(false)
+	state (FINISHED)
 {}
 
 //------------------------------------------------------------------------------
-const std::forward_list<cPosition>& cMoveJob::getPath() const
+cMoveJob::cMoveJob (const std::forward_list<cPosition>& path, cVehicle& vehicle, cModel& model) :
+	vehicle (&vehicle),
+	path (path)
 {
-	return path;
-}
-
-//------------------------------------------------------------------------------
-unsigned int cMoveJob::getSavedSpeed() const
-{
-	return savedSpeed;
+	startMove (model);
 }
 
 //------------------------------------------------------------------------------
@@ -84,7 +58,7 @@ void cMoveJob::removeVehicle()
 }
 
 //------------------------------------------------------------------------------
-void cMoveJob::run(cModel& model)
+void cMoveJob::run (cModel& model)
 {
 	if (!vehicle || vehicle->getMoveJob() != this)
 	{
@@ -115,11 +89,11 @@ void cMoveJob::run(cModel& model)
 	}
 	else if (!reachedField())
 	{
-		moveVehicle(model);
+		moveVehicle (model);
 	}
 	else
 	{
-		startMove(model);
+		startMove (model);
 	}
 }
 
@@ -151,16 +125,10 @@ void cMoveJob::stop()
 	else
 	{
 		state = FINISHED;
-		vehicle->setMoving(false);
+		vehicle->setMoving (false);
 		vehicle->WalkFrame = 0;
-		vehicle->data.setSpeed(vehicle->data.getSpeed() + savedSpeed);
+		vehicle->data.setSpeed (vehicle->data.getSpeed() + savedSpeed);
 	}
-}
-
-//------------------------------------------------------------------------------
-cVehicle* cMoveJob::getVehicle() const
-{
-	return vehicle;
 }
 
 //------------------------------------------------------------------------------
@@ -180,25 +148,24 @@ void cMoveJob::calcNextDir()
 }
 
 //------------------------------------------------------------------------------
-void cMoveJob::changeVehicleOffset(int offset) const
+void cMoveJob::changeVehicleOffset (int offset) const
 {
 	auto newOffset = vehicle->getMovementOffset();
 	newOffset.x() += directionDx[nextDir] * offset;
 	newOffset.y() += directionDy[nextDir] * offset;
 
-	vehicle->setMovementOffset(newOffset);
+	vehicle->setMovementOffset (newOffset);
 }
 
-
 //------------------------------------------------------------------------------
-void cMoveJob::startMove(cModel& model)
+void cMoveJob::startMove (cModel& model)
 {
 	cMap& map = *model.getMap();
 
 	if (path.empty() || state == STOPPING)
 	{
 		state = FINISHED;
-		vehicle->setMoving(false);
+		vehicle->setMoving (false);
 		vehicle->WalkFrame = 0;
 		return;
 	}
@@ -214,18 +181,18 @@ void cMoveJob::startMove(cModel& model)
 		return;
 	}
 
-	bool nextFieldFree = handleCollision(model);
+	bool nextFieldFree = handleCollision (model);
 	if (!nextFieldFree)
 	{
 		return;
 	}
 
-	int nextCosts = cPathCalculator::calcNextCost(vehicle->getPosition(), path.front(), vehicle, &map);
+	int nextCosts = cPathCalculator::calcNextCost (vehicle->getPosition(), path.front(), vehicle, &map);
 	if (vehicle->data.getSpeed() < nextCosts)
 	{
 		savedSpeed += vehicle->data.getSpeed();
-		vehicle->data.setSpeed(0);
-		vehicle->setMoving(false);
+		vehicle->data.setSpeed (0);
+		vehicle->setMoving (false);
 		vehicle->WalkFrame = 0;
 		state = WAITING;
 		currentSpeed = 0;
@@ -235,48 +202,48 @@ void cMoveJob::startMove(cModel& model)
 	// next step can be executed.
 	// start the move
 
-	vehicle->setMoving(true);
+	vehicle->setMoving (true);
 	calcNextDir();
 
-	vehicle->triggerLandingTakeOff(model);
+	vehicle->triggerLandingTakeOff (model);
 
-	vehicle->data.setSpeed(vehicle->data.getSpeed() + savedSpeed);
+	vehicle->data.setSpeed (vehicle->data.getSpeed() + savedSpeed);
 	savedSpeed = 0;
-	vehicle->DecSpeed(nextCosts);
+	vehicle->DecSpeed (nextCosts);
 
-	vehicle->tryResetOfDetectionStateBeforeMove(map, model.getPlayerList());
+	vehicle->tryResetOfDetectionStateBeforeMove (map, model.getPlayerList());
 
-	vehicle->getOwner()->updateScan(*vehicle, path.front());
-	map.moveVehicle(*vehicle, path.front());
+	vehicle->getOwner()->updateScan (*vehicle, path.front());
+	map.moveVehicle (*vehicle, path.front());
 
 	path.pop_front();
 
-	vehicle->setMovementOffset(cPosition(0, 0));
-	changeVehicleOffset(-64);
+	vehicle->setMovementOffset (cPosition(0, 0));
+	changeVehicleOffset (-64);
 	Log.write(" cMoveJob: Vehicle (ID: " + iToStr (vehicle->getId()) + ") moved to " + toString (vehicle->getPosition()) + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 }
 
 //------------------------------------------------------------------------------
-bool cMoveJob::handleCollision(cModel &model)
+bool cMoveJob::handleCollision (cModel &model)
 {
 	const cMap& map = *model.getMap();
 
 	//do not drive onto detected enemy mines
-	const auto mine = map.getField(path.front()).getMine();
+	const auto mine = map.getField (path.front()).getMine();
 	if (mine &&
 		mine->getOwner() != vehicle->getOwner() &&
-		vehicle->getOwner()->canSeeUnit(*mine, map))
+		vehicle->getOwner()->canSeeUnit (*mine, map))
 	{
-		bool pathFound = recalculatePath(model);
+		bool pathFound = recalculatePath (model);
 		return pathFound;
 	}
 
-	if (map.possiblePlace(*vehicle, path.front(), false))
+	if (map.possiblePlace (*vehicle, path.front(), false))
 	{
 		return true;
 	}
 
-	if (map.possiblePlace(*vehicle, path.front(), false, true)) // ignore moving units
+	if (map.possiblePlace (*vehicle, path.front(), false, true)) // ignore moving units
 	{
 		// if the target field is blocked by a moving unit,
 		// just wait and see if it gets free later
@@ -284,45 +251,45 @@ bool cMoveJob::handleCollision(cModel &model)
 	}
 
 	// enemy stealth units get the chance to get out of the way...
-	model.sideStepStealthUnit(path.front(), *vehicle);
-	if (map.possiblePlace(*vehicle, path.front(), false))
+	model.sideStepStealthUnit (path.front(), *vehicle);
+	if (map.possiblePlace (*vehicle, path.front(), false))
 	{
 		return true;
 	}
 
 	// field is definitely blocked. Try to find another path to destination
-	bool pathFound = recalculatePath(model);
+	bool pathFound = recalculatePath (model);
 	return pathFound;
 }
 
 //------------------------------------------------------------------------------
-bool cMoveJob::recalculatePath(cModel &model)
+bool cMoveJob::recalculatePath (cModel &model)
 {
 	//use owners mapview to calc path
 	const auto& playerList = model.getPlayerList();
 	auto iter = ranges::find_if (playerList, [this](const std::shared_ptr<cPlayer>& player) { return player->getId() == vehicle->getOwner()->getId(); });
-	const cMapView mapView(model.getMap(), *iter);
+	const cMapView mapView (model.getMap(), *iter);
 
 	cPosition dest;
 	for (const auto& pos : path) dest = pos;
 
-	cPathCalculator pc(*vehicle, mapView, dest, false);
+	cPathCalculator pc (*vehicle, mapView, dest, false);
 	auto newPath = pc.calcPath(); //TODO: don't execute path calculation on each model
 	if (!newPath.empty())
 	{
 		const cMap& map = *model.getMap();
-		model.sideStepStealthUnit(newPath.front(), *vehicle);
-		if (map.possiblePlace(*vehicle, newPath.front(), false))
+		model.sideStepStealthUnit (newPath.front(), *vehicle);
+		if (map.possiblePlace (*vehicle, newPath.front(), false))
 		{
 			// new path is ok. Use it to continue movement...
-			path.swap(newPath);
+			path.swap (newPath);
 			return true;
 		}
 	}
 
 	// no path to destination
 	state = FINISHED;
-	vehicle->setMoving(false);
+	vehicle->setMoving (false);
 	vehicle->WalkFrame = 0;
 	vehicle->moveJobBlocked();
 	return false;
@@ -336,9 +303,9 @@ bool cMoveJob::reachedField() const
 }
 
 //------------------------------------------------------------------------------
-void cMoveJob::moveVehicle(cModel& model)
+void cMoveJob::moveVehicle (cModel& model)
 {
-	updateSpeed(*model.getMap());
+	updateSpeed (*model.getMap());
 
 	if (timer50ms == 0)
 	{
@@ -348,9 +315,9 @@ void cMoveJob::moveVehicle(cModel& model)
 
 	pixelToMove += currentSpeed;
 
-	int x = abs(vehicle->getMovementOffset().x());
-	int y = abs(vehicle->getMovementOffset().y());
-	if ( vehicle->uiData->makeTracks && (
+	int x = abs (vehicle->getMovementOffset().x());
+	int y = abs (vehicle->getMovementOffset().y());
+	if (vehicle->uiData->makeTracks && (
 		(x > 32 && x - pixelToMove <= 32) ||
 		(y > 32 && y - pixelToMove <= 32) ||
 		(x == 64 && pixelToMove >= 1) ||
@@ -358,21 +325,21 @@ void cMoveJob::moveVehicle(cModel& model)
 	{
 		// this is a bit crude, but I don't know another simple way of notifying the
 		// gui, that is might wants to add a track effect.
-		model.triggeredAddTracks(*vehicle);
+		model.triggeredAddTracks (*vehicle);
 	}
 
-	changeVehicleOffset(static_cast<int>(pixelToMove));
-	pixelToMove -= static_cast<int>(pixelToMove);
+	changeVehicleOffset (static_cast<int> (pixelToMove));
+	pixelToMove -= static_cast<int> (pixelToMove);
 
 	if (reachedField())
 	{
-		endMove(model);
-		startMove(model);
+		endMove (model);
+		startMove (model);
 	}
 }
 
 //------------------------------------------------------------------------------
-void cMoveJob::updateSpeed(const cMap &map)
+void cMoveJob::updateSpeed (const cMap &map)
 {
 	double maxSpeed = MOVE_SPEED;
 	if (vehicle->uiData->animationMovement)
@@ -382,7 +349,7 @@ void cMoveJob::updateSpeed(const cMap &map)
 	else if (!(vehicle->getStaticUnitData().factorAir > 0) && !(vehicle->getStaticUnitData().factorSea > 0 && vehicle->getStaticUnitData().factorGround == 0))
 	{
 		maxSpeed = MOVE_SPEED;
-		cBuilding* building = map.getField(vehicle->getPosition()).getBaseBuilding();
+		cBuilding* building = map.getField (vehicle->getPosition()).getBaseBuilding();
 		if (building && building->getStaticUnitData().modifiesSpeed)
 			maxSpeed = (int)(maxSpeed / building->getStaticUnitData().modifiesSpeed);
 	}
@@ -391,13 +358,13 @@ void cMoveJob::updateSpeed(const cMap &map)
 		maxSpeed = MOVE_SPEED * 2;
 	}
 
-	if (path.empty() || state == STOPPING || cPathCalculator::calcNextCost(vehicle->getPosition(), path.front(), vehicle, &map) > vehicle->data.getSpeed())
+	if (path.empty() || state == STOPPING || cPathCalculator::calcNextCost (vehicle->getPosition(), path.front(), vehicle, &map) > vehicle->data.getSpeed())
 	{
-		double maxSpeedBreaking = sqrt(2 * MOVE_ACCELERATION * vehicle->getMovementOffset().l2Norm());
-		maxSpeed = std::min(maxSpeed, maxSpeedBreaking);
+		double maxSpeedBreaking = sqrt (2 * MOVE_ACCELERATION * vehicle->getMovementOffset().l2Norm());
+		maxSpeed = std::min (maxSpeed, maxSpeedBreaking);
 
 		//don't break to zero before movejob is stopped
-		maxSpeed = std::max(maxSpeed, 0.1);
+		maxSpeed = std::max (maxSpeed, 0.1);
 	}
 
 	if (currentSpeed < maxSpeed)
@@ -411,23 +378,23 @@ void cMoveJob::updateSpeed(const cMap &map)
 }
 
 //------------------------------------------------------------------------------
-void cMoveJob::endMove(cModel& model)
+void cMoveJob::endMove (cModel& model)
 {
 	const cMap& map = *model.getMap();
 	vehicle->setMovementOffset (cPosition (0, 0));
 
-	vehicle->detectOtherUnits(map);
-	vehicle->detectThisUnit(map, model.getPlayerList());
+	vehicle->detectOtherUnits (map);
+	vehicle->detectThisUnit (map, model.getPlayerList());
 
-	cBuilding* mine = map.getField(vehicle->getPosition()).getMine();
+	cBuilding* mine = map.getField (vehicle->getPosition()).getMine();
 	if (mine &&
 		vehicle->getStaticUnitData().factorAir == 0  &&
 		mine->getOwner() != vehicle->getOwner() &&
 		mine->isManualFireActive() == false)
 	{
-		model.addAttackJob(*mine, vehicle->getPosition());
+		model.addAttackJob (*mine, vehicle->getPosition());
 
-		vehicle->setMoving(false);
+		vehicle->setMoving (false);
 		vehicle->WalkFrame = 0;
 		state = WAITING;
 		currentSpeed = 0;
@@ -435,18 +402,18 @@ void cMoveJob::endMove(cModel& model)
 
 	if (vehicle->isUnitLayingMines())
 	{
-		vehicle->layMine(model);
+		vehicle->layMine (model);
 	}
 	else if (vehicle->isUnitClearingMines())
 	{
-		vehicle->clearMine(model);
+		vehicle->clearMine (model);
 	}
 
-	vehicle->inSentryRange(model);
+	vehicle->inSentryRange (model);
 
 	if (vehicle->getStaticUnitData().canSurvey)
 	{
-		bool ressourceFound = vehicle->doSurvey(map);
+		bool ressourceFound = vehicle->doSurvey (map);
 		if (ressourceFound && stopOnDetectResource)
 		{
 			path.clear();
@@ -456,12 +423,12 @@ void cMoveJob::endMove(cModel& model)
 	if (path.empty())
 	{
 		state = FINISHED;
-		vehicle->setMoving(false);
+		vehicle->setMoving (false);
 		vehicle->WalkFrame = 0;
 
-		endMoveAction.execute(model);
-		vehicle->continuePathBuilding(model);
-		vehicle->triggerLandingTakeOff(model);
+		endMoveAction.execute (model);
+		vehicle->continuePathBuilding (model);
+		vehicle->triggerLandingTakeOff (model);
 	}
 }
 
@@ -475,32 +442,25 @@ void cMoveJob::resume()
 }
 
 //------------------------------------------------------------------------------
-void cMoveJob::setEndMoveAction(const cEndMoveAction& e)
+void cMoveJob::setEndMoveAction (const cEndMoveAction& e)
 {
 	endMoveAction = e;
 }
 
 //------------------------------------------------------------------------------
-const cEndMoveAction& cMoveJob::getEndMoveAction() const
+uint32_t cMoveJob::getChecksum (uint32_t crc) const
 {
-	return endMoveAction;
-}
-
-//------------------------------------------------------------------------------
-uint32_t cMoveJob::getChecksum(uint32_t crc) const
-{
-	crc = calcCheckSum(vehicle, crc);
-	crc = calcCheckSum(path, crc);
-	crc = calcCheckSum(state, crc);
-	crc = calcCheckSum(savedSpeed, crc);
-	crc = calcCheckSum(nextDir, crc);
-	crc = calcCheckSum(timer100ms, crc);
-	crc = calcCheckSum(timer50ms, crc);
-	crc = calcCheckSum(currentSpeed, crc);
-	crc = calcCheckSum(pixelToMove, crc);
-	crc = calcCheckSum(endMoveAction, crc);
-	crc = calcCheckSum(stopOnDetectResource, crc);
+	crc = calcCheckSum (vehicle, crc);
+	crc = calcCheckSum (path, crc);
+	crc = calcCheckSum (state, crc);
+	crc = calcCheckSum (savedSpeed, crc);
+	crc = calcCheckSum (nextDir, crc);
+	crc = calcCheckSum (timer100ms, crc);
+	crc = calcCheckSum (timer50ms, crc);
+	crc = calcCheckSum (currentSpeed, crc);
+	crc = calcCheckSum (pixelToMove, crc);
+	crc = calcCheckSum (endMoveAction, crc);
+	crc = calcCheckSum (stopOnDetectResource, crc);
 
 	return crc;
 }
-
