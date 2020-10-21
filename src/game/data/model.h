@@ -185,7 +185,7 @@ public:
 		archive << NVP(turnEndState);
 		archive << NVP(activeTurnPlayer);
 		archive << NVP(helperJobs);
-		archive << serialization::makeNvp("causaliesTracker", *casualtiesTracker);
+		archive << serialization::makeNvp("casualiesTracker", *casualtiesTracker);
 		//TODO: serialize effectList
 	}
 	template<typename T>
@@ -271,7 +271,7 @@ public:
 		archive >> NVP(turnEndState);
 		archive >> NVP(activeTurnPlayer);
 		archive >> NVP(helperJobs);
-		archive >> serialization::makeNvp("causaliesTracker", *casualtiesTracker);
+		archive >> serialization::makeNvp("casualiesTracker", *casualtiesTracker);
 		//TODO: clear effect list, deserialize effects, call addedEffect()
 
 		refreshMapPointer();

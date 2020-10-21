@@ -967,6 +967,7 @@ void cMap::addVehicle (cVehicle& vehicle, const cPosition& position)
 
 	if (vehicle.getIsBig())
 	{
+		vehicle.setIsBig (false);
 		moveVehicleBig(vehicle, position);
 	}
 	addedUnit (vehicle);
