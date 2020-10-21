@@ -26,8 +26,24 @@
 #include "game/data/units/vehicle.h"
 #include "utility/crc.h"
 #include "utility/language.h"
-#include "utility/mathtools.h"
 #include "utility/position.h"
+
+namespace
+{
+	int getLevel (std::uint32_t numberOfSuccess)
+	{
+		auto rank = 0.f;
+
+		// The higher his level is the slower he gains exp.
+		// Every 5 rankings he needs one successful disabling more,
+		// to get to the next ranking
+		for (std::uint32_t i = 0; i != numberOfSuccess; ++i)
+		{
+			rank = rank + 1.f / (((int)rank + 5) / 5);
+		}
+		return rank;
+	}
+}
 
 //-----------------------------------------------------------------------------
 /** Checks if the target is on a neighbor field and if it can be stolen or disabled */
@@ -84,7 +100,7 @@ int cCommandoData::computeChance (const cUnit* destUnit, bool steal) const
 	const int destTurn = destUnit->data.getBuildCost() / 3;
 
 	const int factor = steal ? 1 : 4;
-	const int srcLevel = (int) rank + 7;
+	const int srcLevel = getLevel (successCount) + 7;
 
 	// The chance to disable or steal a unit depends on
 	// the infiltrator ranking and the buildcosts
@@ -108,14 +124,14 @@ int cCommandoData::computeDisabledTurnCount (const cUnit& destUnit) const
 	{
 		const int vehiclesTable[13] = { 0, 0, 0, 5, 8, 3, 3, 0, 0, 0, 1, 0, -4 };
 		destTurn = destUnit.data.getBuildCost() / 3;
-		srcLevel = rank;
+		srcLevel = getLevel (successCount);
 		if (destTurn > 0 && destTurn < 13)
 			srcLevel += vehiclesTable[destTurn];
 	}
 	else
 	{
 		destTurn = destUnit.data.getBuildCost() / 2;
-		srcLevel = (int) rank + 8;
+		srcLevel = getLevel (successCount) + 8;
 	}
 
 	int turns = srcLevel / destTurn;
@@ -126,35 +142,32 @@ int cCommandoData::computeDisabledTurnCount (const cUnit& destUnit) const
 //------------------------------------------------------------------------------
 std::string cCommandoData::getRankString() const
 {
-	const std::string suffix = (rank > 0.f) ? " +" + iToStr ((int)rank) : "";
+	auto level = getLevel (successCount);
+	const std::string suffix = (level > 0) ? " +" + std::to_string (level) : "";
 
-	if (rank < 1.f) return lngPack.i18n ("Text~Comp~CommandoRank_Greenhorn") + suffix;
-	else if (rank < 3.f) return lngPack.i18n ("Text~Comp~CommandoRank_Average") + suffix;
-	else if (rank < 6.f) return lngPack.i18n ("Text~Comp~CommandoRank_Veteran") + suffix;
-	else if (rank < 11.f) return lngPack.i18n ("Text~Comp~CommandoRank_Expert") + suffix;
-	else if (rank < 19.f) return lngPack.i18n ("Text~Comp~CommandoRank_Elite") + suffix;
+	if (level < 1) return lngPack.i18n ("Text~Comp~CommandoRank_Greenhorn") + suffix;
+	else if (level < 3) return lngPack.i18n ("Text~Comp~CommandoRank_Average") + suffix;
+	else if (level < 6) return lngPack.i18n ("Text~Comp~CommandoRank_Veteran") + suffix;
+	else if (level < 11) return lngPack.i18n ("Text~Comp~CommandoRank_Expert") + suffix;
+	else if (level < 19) return lngPack.i18n ("Text~Comp~CommandoRank_Elite") + suffix;
 	else return lngPack.i18n ("Text~Comp~CommandoRank_GrandMaster") + suffix;
-}
-
-//------------------------------------------------------------------------------
-std::string cCommandoData::getDebugString() const
-{
-	return "commando_rank: " + std::to_string (Round (rank, 2));
-}
-
-//------------------------------------------------------------------------------
-std::uint32_t cCommandoData::calcCheckSum(std::uint32_t crc) const
-{
-	return ::calcCheckSum(rank, crc);
 }
 
 //------------------------------------------------------------------------------
 /*static*/ void cCommandoData::increaseXp (cVehicle& commando)
 {
-	auto& rank = commando.getCommandoData().rank;
-	// The higher his level is the slower he gains exp.
-	// Every 5 rankings he needs one successful disabling more,
-	// to get to the next ranking
-	rank = rank + 1.f / (((int)rank + 5) / 5);
+	++commando.getCommandoData().successCount;
 	commando.statusChanged();
+}
+
+//------------------------------------------------------------------------------
+std::string cCommandoData::getDebugString() const
+{
+	return "commando_success: " + std::to_string (successCount);
+}
+
+//------------------------------------------------------------------------------
+std::uint32_t cCommandoData::calcCheckSum(std::uint32_t crc) const
+{
+	return ::calcCheckSum(successCount, crc);
 }

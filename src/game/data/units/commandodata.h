@@ -54,11 +54,11 @@ public:
 	template <typename T>
 	void serialize(T& archive)
 	{
-		archive & NVP(rank);
+		archive & NVP(successCount);
 	}
 
 private:
-	float rank = 0;
+	std::uint32_t successCount = 0;
 };
 
 #endif
