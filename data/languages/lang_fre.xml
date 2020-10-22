@@ -111,7 +111,7 @@
             <Done ENG="Done" localized="Fini"/>
             <Done_7 ENG="Done" localized="Fini"/>
             <End ENG="End" localized="Fin"/>
-            <Enter_7 ENG="Enter"/>
+            <Enter_7 ENG="Enter" localized="Entrer"/>
             <Exit ENG="Exit" localized="Quitter"/>
             <Fight_Units ENG="Fighting units" localized="Unités d&apos;attaque"/>
             <Files ENG="Files" localized="Fichiers"/>
@@ -392,9 +392,9 @@
             <Upgrades_Done2 ENG="unit(s) of type %s" localized="unité(s) de type %s"/>
             <Waits ENG="waiting" localized="en attente"/>
             <Working ENG="working" localized="en fonctionnement"/>
-            <Producing_InsufficientMaterial ENG="Insufficient raw materials to build"/>
-            <Producing_PositionBlocked ENG="Buildposition blocked"/>
-            <Wins ENG="wins"/>
+            <Producing_InsufficientMaterial ENG="Insufficient raw materials to build" localized="Pas assez de minerai pour la construction"/>
+            <Producing_PositionBlocked ENG="Buildposition blocked" localized="Position de construction bloquée"/>
+            <Wins ENG="wins" localized="a gagné"/>
         </Comp>
         <Error_Messages>
             <ERROR_File_Not_Found ENG="File not found: %s" localized="Fichier introuvable : %s"/>
