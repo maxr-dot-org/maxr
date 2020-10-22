@@ -306,12 +306,12 @@
 			<Waiting ENG="Waiting for other players..." localized="Čakam na druge igralce..."/>
 		</Multiplayer>
 		<Comp>
-			<Adjustments_Fuel_Decreased ENG="Adjustments made: fuel mining decreased by "/>
-			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Popravek: črpanje goriva je povečano za "/>
-			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Popravek: izkop zlata je zmanjšan za "/>
-			<Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by "/>
-			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by " localized="Popravek: izkop surovin je zmanjšan za "/>
-			<Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by "/>
+			<Adjustments_Fuel_Decreased ENG="Adjustments made: fuel mining decreased by %s"/>
+			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by %s" localized="Popravek: črpanje goriva je povečano za %s"/>
+			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by %s" localized="Popravek: izkop zlata je zmanjšan za %s"/>
+			<Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by %s"/>
+			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by %s" localized="Popravek: izkop surovin je zmanjšan za %s"/>
+			<Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by %s"/>
 			<Attacked ENG="is under attack" localized="je napadena"/>
 			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s napada sovražnika"/>
 			<AttackingStatusStr ENG="attacking" localized="napada"/>

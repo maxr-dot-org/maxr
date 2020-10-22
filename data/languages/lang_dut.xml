@@ -306,12 +306,12 @@
 			<Waiting ENG="Waiting for other players..." localized="Wachten op andere spelers..."/>
 		</Multiplayer>
 		<Comp>
-			<Adjustments_Fuel_Decreased ENG="Adjustments made: fuel mining decreased by "/>
-			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Aanpassingen gemaakt: Brandstof mijnen verhoogt met "/>
-			<Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by "/>
-			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Aanpassingen gemaakt: Goud mijnen verlaagt met "/>
-			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by " localized="Aanpassingen gemaakt: Metaal mijnen verlaagt met "/>
-			<Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by "/>
+			<Adjustments_Fuel_Decreased ENG="Adjustments made: fuel mining decreased by %s"/>
+			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by %s" localized="Aanpassingen gemaakt: Brandstof mijnen verhoogt met %s"/>
+			<Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by %s"/>
+			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by %s" localized="Aanpassingen gemaakt: Goud mijnen verlaagt met %s"/>
+			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by %s" localized="Aanpassingen gemaakt: Metaal mijnen verlaagt met %s"/>
+			<Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by %s"/>
 			<Attacked ENG="is under attack" localized="wordt aangevallen"/>
 			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s is de vijand aan het aanvallen"/>
 			<AttackingStatusStr ENG="attacking" localized="valt aan"/>

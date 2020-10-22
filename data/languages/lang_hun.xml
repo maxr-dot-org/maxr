@@ -306,12 +306,12 @@
 			<Waiting ENG="Waiting for other players..." localized="Várakozás a többi játékosra..."/>
 		</Multiplayer>
 		<Comp>
-			<Adjustments_Fuel_Decreased ENG="Adjustments made: fuel mining decreased by "/>
-			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Módosítás történt, nőtt az üzemanyag kitermelés: "/>
-			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Módosítás történt, csökkent az aranykitermelés: "/>
-			<Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by "/>
-			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by " localized="Módosítás történt, csökkent a nyersanyag kitermelés: "/><!--TODO: review needed (english string has been changed)-->
-			<Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by "/>
+			<Adjustments_Fuel_Decreased ENG="Adjustments made: fuel mining decreased by %s"/>
+			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by %s" localized="Módosítás történt, nőtt az üzemanyag kitermelés: %s"/>
+			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by %s" localized="Módosítás történt, csökkent az aranykitermelés: %s"/>
+			<Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by %s"/>
+			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by %s" localized="Módosítás történt, csökkent a nyersanyag kitermelés: %s"/><!--TODO: review needed (english string has been changed)-->
+			<Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by %s"/>
 			<Attacked ENG="is under attack" localized="támadás alatt áll"/>
 			<AttackingEnemy ENG="%s is attacking the enemy" localized=""/><!--TODO: translation needed-->
 			<AttackingStatusStr ENG="attacking" localized=""/><!--TODO: translation needed-->

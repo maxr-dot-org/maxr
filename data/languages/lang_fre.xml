@@ -311,12 +311,12 @@
             <Waiting ENG="Waiting for other players..." localized="En attente de joueurs..."/>
         </Multiplayer>
         <Comp>
-            <Adjustments_Fuel_Decreased ENG="Adjustments made: fuel mining decreased by " localized="Ajustement effectué : production de carburant diminuée de "/>
-            <Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Ajustement effectué : production de carburant augmentée de "/>
-            <Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Ajustement effectué : production d&apos;or augmentée de "/>
-            <Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by " localized="Ajustement effectué : production d&apos;or augmentée de "/>
-            <Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by " localized="Ajustement effectué : production de minerai diminuée de "/>
-            <Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by " localized="Ajustement effectué : production de minerai augmentée de "/>
+            <Adjustments_Fuel_Decreased ENG="Adjustments made: fuel mining decreased by %s" localized="Ajustement effectué : production de carburant diminuée de %s"/>
+            <Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by %s" localized="Ajustement effectué : production de carburant augmentée de %s"/>
+            <Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by %s" localized="Ajustement effectué : production d&apos;or augmentée de %s"/>
+            <Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by %s" localized="Ajustement effectué : production d&apos;or augmentée de %s"/>
+            <Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by %s" localized="Ajustement effectué : production de minerai diminuée de %s"/>
+            <Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by %s" localized="Ajustement effectué : production de minerai augmentée de %s"/>
             <Attacked ENG="is under attack" localized="est attaqué !"/>
             <AttackingEnemy ENG="%s is attacking the enemy" localized="%s attaque l&apos;enemi"/>
             <AttackingStatusStr ENG="attacking" localized=""/>

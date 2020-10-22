@@ -305,12 +305,12 @@
 			<Waiting ENG="Waiting for other players..." localized="Warte auf andere Spieler..."/>
 		</Multiplayer>
 		<Comp>
-			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Änderungen vorgenommen: Treibstoffproduktion erhöht um "/>
-			<Adjustments_Fuel_Decreased ENG="Adjustments made: fuel mining decreased by "/>
-			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Änderungen vorgenommen: Goldproduktion verringert um "/>
-			<Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by "/>
-			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by " localized="Änderungen vorgenommen: Rohstoffproduktion verringert um "/>
-			<Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by "/>
+			<Adjustments_Fuel_Decreased ENG="Adjustments made: fuel mining decreased by %s"/>
+			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by %s" localized="Änderungen vorgenommen: Treibstoffproduktion erhöht um %s"/>
+			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by %s" localized="Änderungen vorgenommen: Goldproduktion verringert um %s"/>
+			<Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by %s"/>
+			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by %s" localized="Änderungen vorgenommen: Rohstoffproduktion verringert um %s"/>
+			<Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by %s"/>
 			<Attacked ENG="is under attack" localized="wird angegriffen"/>
 			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s greift den Feind an"/>
 			<AttackingStatusStr ENG="attacking" localized="angreifend"/>

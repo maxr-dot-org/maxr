@@ -307,12 +307,12 @@
 			<Waiting ENG="Waiting for other players..." localized="Esperando a otros jugadores..."/>
 		</Multiplayer>
 		<Comp>
-			<Adjustments_Fuel_Decreased ENG="Adjustments made: fuel mining decreased by "/>
-			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="S&apos;han fet ajusts: Producció de combustible incrementada en "/>
-			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="S&apos;han fet ajusts: Producció d&apos;or incrementada en "/>
-			<Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by "/>
-			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by " localized="S&apos;han fet ajusts: Producció de metall incrementada en "/>
-			<Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by "/>
+			<Adjustments_Fuel_Decreased ENG="Adjustments made: fuel mining decreased by %s"/>
+			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by %s" localized="S&apos;han fet ajusts: Producció de combustible incrementada en %s"/>
+			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by %s" localized="S&apos;han fet ajusts: Producció d&apos;or incrementada en %s"/>
+			<Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by %s"/>
+			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by %s" localized="S&apos;han fet ajusts: Producció de metall incrementada en %s"/>
+			<Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by %s"/>
 			<Attacked ENG="is under attack" localized="està sota atac"/>
 			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s està atacant a l&apos;enemic"/>
 			<AttackingStatusStr ENG="attacking" localized="atacant"/>

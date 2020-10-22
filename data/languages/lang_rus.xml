@@ -306,12 +306,12 @@
 			<Waiting ENG="Waiting for other players..." localized="Ждём остальных игроков..."/>
 		</Multiplayer>
 		<Comp>
-			<Adjustments_Fuel_Decreased ENG="Adjustments made: fuel mining decreased by "/>
-			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Добыча топлива увеличена на "/>
-			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Добыча золота уменьшена на "/>
-			<Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by "/>
-			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by " localized="Добыча сырья уменьшена на "/><!--TODO: review needed (english string has been changed)-->
-			<Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by "/>
+			<Adjustments_Fuel_Decreased ENG="Adjustments made: fuel mining decreased by %s"/>
+			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by %s" localized="Добыча топлива увеличена на %s"/>
+			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by %s" localized="Добыча золота уменьшена на %s"/>
+			<Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by %s"/>
+			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by %s" localized="Добыча сырья уменьшена на %s"/><!--TODO: review needed (english string has been changed)-->
+			<Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by %s"/>
 			<Attacked ENG="is under attack" localized=" - под огнём противника!"/>
 			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s атакует врага"/>
 			<AttackingStatusStr ENG="attacking" localized=""/><!--TODO: translation needed-->
