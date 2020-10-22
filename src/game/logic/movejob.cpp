@@ -184,6 +184,7 @@ void cMoveJob::startMove (cModel& model)
 	bool nextFieldFree = handleCollision (model);
 	if (!nextFieldFree)
 	{
+		vehicle->setMoving (false);
 		return;
 	}
 
