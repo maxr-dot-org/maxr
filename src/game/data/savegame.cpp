@@ -97,6 +97,17 @@ int cSavegame::save(const cModel& model, int slot, const std::string& saveName)
 	{
 		throw std::runtime_error(getXMLErrorMsg(xmlDocument));
 	}
+	if (cSettings::getInstance().isDebug()) // Check Save/Load consistency
+	{
+		cModel model2;
+
+		loadModel(model2, slot);
+
+		if (model.getChecksum() != model2.getChecksum())
+		{
+			Log.write("Checksum issue when saving", cLog::eLOG_TYPE_ERROR);
+		}
+	}
 	saveingID++;
 	return saveingID;
 }
