@@ -21,10 +21,12 @@
 
 #include "settings.h"
 #include "utility/files.h"
+#include "utility/string/toString.h"
 #include "utility/thread/mutex.h"
 
 #include <ctime>
 #include <iostream>
+#include <thread>
 
 cLog Log;
 
@@ -42,23 +44,24 @@ void cLog::write (const std::string& msg, eLogType type)
 
 	//attach log message type to string
 	std::string tmp;
+	auto threadId = "Thread " + toString (std::this_thread::get_id());
 	switch (type)
 	{
 		case eLOG_TYPE_NET_WARNING:
 		case eLOG_TYPE_WARNING:
-			tmp = "(WW): " + msg;
+			tmp = threadId + ": (WW): " + msg;
 			break;
 		case eLOG_TYPE_NET_ERROR:
 		case eLOG_TYPE_ERROR:
-			tmp = "(EE): " + msg;
+			tmp = threadId + ": (EE): " + msg;
 			std::cout << tmp << "\n"; break;
 		case eLOG_TYPE_NET_DEBUG:
 		case eLOG_TYPE_DEBUG:
-			tmp = "(DD): " + msg;
+			tmp = threadId + ": (DD): " + msg;
 			break;
 		case eLOG_TYPE_INFO:
 		default:
-			tmp = "(II): " + msg;
+			tmp = threadId + ": (II): " + msg;
 			break;
 	}
 	tmp += '\n';
