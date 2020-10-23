@@ -56,7 +56,7 @@ void cActionUpgradeVehicle::execute(cModel& model) const
 			// check upgrade costs
 			cUpgradeCalculator& uc = cUpgradeCalculator::instance();
 			const int upgradeCost = uc.getMaterialCostForUpgrading(upgradedData.getBuildCost());
-			if (upgradeCost > containingBuilding->subBase->getMetalStored()) continue;
+			if (upgradeCost > containingBuilding->subBase->getResourcesStored().metal) continue;
 
 			// ok, execute upgrade
 			vehicle->upgradeToCurrentVersion();

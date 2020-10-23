@@ -737,7 +737,7 @@ void cBuilding::startWork ()
 		return;
 	}
 
-	if (!subBase->startBuilding(this))
+	if (!subBase->startBuilding (*this))
 		return;
 
 	// research building
@@ -759,7 +759,7 @@ void cBuilding::stopWork (bool forced)
 {
 	if (!isUnitWorking()) return;
 
-	if (!subBase->stopBuilding(this, forced))
+	if (!subBase->stopBuilding (*this, forced))
 		return;
 
 	if (staticData->canResearch)
@@ -892,7 +892,7 @@ bool cBuilding::canSupply(const cUnit* unit, eSupplyType supplyType) const
 	if (unit == nullptr || unit->isABuilding())
 		return false;
 
-	if (subBase->getMetalStored() <= 0)
+	if (subBase->getResourcesStored().metal <= 0)
 		return false;
 
 	if (!Contains(storedUnits, static_cast<const cVehicle*>(unit)))
@@ -1316,7 +1316,7 @@ bool cBuilding::buildingCanBeStarted() const
 bool cBuilding::buildingCanBeUpgraded() const
 {
 	const cDynamicUnitData& upgraded = *getOwner()->getUnitDataCurrentVersion (data.getId());
-	return (data.getVersion() != upgraded.getVersion() && subBase && subBase->getMetalStored() >= 2);
+	return data.getVersion() != upgraded.getVersion() && subBase && subBase->getResourcesStored().metal >= 2;
 }
 
 //-----------------------------------------------------------------------------

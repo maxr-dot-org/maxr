@@ -49,10 +49,16 @@ void Remove (std::vector<T>& container, const typename trait_add_const<T>::type&
 	container.erase (std::remove (container.begin(), container.end(), elem), container.end());
 }
 
+template <typename T, typename Predicate>
+void RemoveIf (std::vector<T>& container, Predicate pred)
+{
+	container.erase (std::remove_if (container.begin(), container.end(), pred), container.end());
+}
+
 template <typename T>
 void RemoveEmpty(std::vector<T>& container)
 {
-	container.erase(std::remove_if(container.begin(), container.end(), [](const T& elem){return elem.empty(); }), container.end());
+	RemoveIf (container, [](const T& elem) { return elem.empty(); });
 }
 
 template<typename T>
@@ -78,6 +84,12 @@ template <typename T, typename F>
 
 	res.erase(std::remove_if(res.begin(), res.end(), [&](const auto& e){ return !filter(e); }), res.end());
 	return res;
+}
+
+template <typename T>
+auto ByGetTo (const T* p)
+{
+	return [p](const auto& e) { return e.get() == p; };
 }
 
 #endif // utility_listhelpersH

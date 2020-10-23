@@ -16,73 +16,89 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include <cassert>
+
 #include "game/data/base/base.h"
 
+#include "game/data/map/map.h"
+#include "game/data/player/player.h"
 #include "game/data/units/building.h"
+#include "utility/crc.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/mathtools.h"
-#include "game/data/map/map.h"
-#include "game/data/player/player.h"
-#include "game/data/report/savedreportsimple.h"
-#include "game/data/report/special/savedreportresourcechanged.h"
-#include "utility/crc.h"
 
-using namespace std;
+namespace
+{
 
+	//--------------------------------------------------------------------------
+	uint32_t calcCheckSum (const sRecoltableResources& res, uint32_t crc)
+	{
+		crc = ::calcCheckSum (res.metal, crc);
+		crc = ::calcCheckSum (res.oil, crc);
+		crc = ::calcCheckSum (res.gold, crc);
+		return crc;
+	}
+
+	//--------------------------------------------------------------------------
+	bool isAOnlineStation (const cBuilding* building)
+	{
+		return building->getStaticUnitData().produceEnergy > 1 && building->isUnitWorking();
+	}
+
+	//--------------------------------------------------------------------------
+	bool isAOfflineStation (const cBuilding* building)
+	{
+		return building->getStaticUnitData().produceEnergy > 1 && !building->isUnitWorking();
+	}
+
+	//--------------------------------------------------------------------------
+	bool isAOnlineGenerator (const cBuilding* building)
+	{
+		return building->getStaticUnitData().produceEnergy == 1 && building->isUnitWorking();
+	}
+
+	//--------------------------------------------------------------------------
+	bool isAOfflineGenerator (const cBuilding* building)
+	{
+		return building->getStaticUnitData().produceEnergy == 1 && !building->isUnitWorking();
+	}
+
+	//--------------------------------------------------------------------------
+	int calcMaxProd (const std::vector<cBuilding*>& buildings, eResourceType ressourceType)
+	{
+		int maxProd = 0;
+		for (const cBuilding* building : buildings)
+		{
+			if (building->getStaticUnitData().canMineMaxRes <= 0 || !building->isUnitWorking()) continue;
+
+			maxProd += building->getMaxProd (ressourceType);
+		}
+		return maxProd;
+	}
+
+}
+
+//------------------------------------------------------------------------------
 cSubBase::cSubBase (cBase& base) :
-	buildings(),
-	maxMetalStored(),
-	maxOilStored(),
-	maxGoldStored(),
-	maxEnergyProd(),
-	energyProd(),
-	maxEnergyNeed(),
-	energyNeed(),
-	metalNeed(),
-	oilNeed(),
-	goldNeed(),
-	maxMetalNeed(),
-	maxOilNeed(),
-	maxGoldNeed(),
-	humanProd(),
-	humanNeed(),
-	maxHumanNeed(),
-	metalProd(),
-	oilProd(),
-	goldProd(),
-	base (base),
-	metalStored(),
-	oilStored(),
-	goldStored()
+	base (base)
 {}
 
+//------------------------------------------------------------------------------
 cSubBase::cSubBase (const cSubBase& other) :
 	buildings (other.buildings),
-	maxMetalStored (other.maxMetalStored),
-	maxOilStored (other.maxOilStored),
-	maxGoldStored (other.maxGoldStored),
+	maxStored (other.maxStored),
+	maxNeeded (other.maxNeeded),
+	needed (other.needed),
+	prod (other.prod),
+	stored (other.stored),
 	maxEnergyProd (other.maxEnergyProd),
 	energyProd (other.energyProd),
 	maxEnergyNeed (other.maxEnergyNeed),
 	energyNeed (other.energyNeed),
-	metalNeed (other.metalNeed),
-	oilNeed (other.oilNeed),
-	goldNeed (other.goldNeed),
-	maxMetalNeed (other.maxMetalNeed),
-	maxOilNeed (other.maxOilNeed),
-	maxGoldNeed (other.maxGoldNeed),
 	humanProd (other.humanProd),
 	humanNeed (other.humanNeed),
 	maxHumanNeed (other.maxHumanNeed),
-	metalProd (other.metalProd),
-	oilProd (other.oilProd),
-	goldProd (other.goldProd),
-	base (other.base),
-	metalStored (other.metalStored),
-	oilStored (other.oilStored),
-	goldStored (other.goldStored)
+	base (other.base)
 {}
 
 cSubBase::~cSubBase()
@@ -92,17 +108,17 @@ cSubBase::~cSubBase()
 
 int cSubBase::getMaxMetalProd() const
 {
-	return calcMaxProd (eResourceType::Metal);
+	return calcMaxProd (buildings, eResourceType::Metal);
 }
 
 int cSubBase::getMaxGoldProd() const
 {
-	return calcMaxProd (eResourceType::Gold);
+	return calcMaxProd (buildings, eResourceType::Gold);
 }
 
 int cSubBase::getMaxOilProd() const
 {
-	return calcMaxProd (eResourceType::Oil);
+	return calcMaxProd (buildings, eResourceType::Oil);
 }
 
 int cSubBase::getMaxAllowedMetalProd() const
@@ -122,17 +138,17 @@ int cSubBase::getMaxAllowedOilProd() const
 
 int cSubBase::getMetalProd() const
 {
-	return metalProd;
+	return prod.metal;
 }
 
 int cSubBase::getGoldProd() const
 {
-	return goldProd;
+	return prod.gold;
 }
 
 int cSubBase::getOilProd() const
 {
-	return oilProd;
+	return prod.oil;
 }
 
 void cSubBase::setMetalProd (int value)
@@ -142,7 +158,7 @@ void cSubBase::setMetalProd (int value)
 	value = std::max (0, value);
 	value = std::min (value, max);
 
-	metalProd = value;
+	prod.metal = value;
 }
 
 void cSubBase::setGoldProd (int value)
@@ -152,7 +168,7 @@ void cSubBase::setGoldProd (int value)
 	value = std::max (0, value);
 	value = std::min (value, max);
 
-	goldProd = value;
+	prod.gold = value;
 }
 
 void cSubBase::setOilProd (int value)
@@ -162,34 +178,19 @@ void cSubBase::setOilProd (int value)
 	value = std::max (0, value);
 	value = std::min (value, max);
 
-	oilProd = value;
-}
-
-int cSubBase::getMetalStored() const
-{
-	return metalStored;
+	prod.oil = value;
 }
 
 void cSubBase::setMetal (int value)
 {
-	std::swap (metalStored, value);
-	if (metalStored != value) metalChanged();
-}
-
-int cSubBase::getOilStored() const
-{
-	return oilStored;
+	std::swap (stored.metal, value);
+	if (stored.metal != value) metalChanged();
 }
 
 void cSubBase::setOil (int value)
 {
-	std::swap (oilStored, value);
-	if (oilStored != value) oilChanged();
-}
-
-int cSubBase::getGoldStored() const
-{
-	return goldStored;
+	std::swap (stored.oil, value);
+	if (stored.oil != value) oilChanged();
 }
 
 int cSubBase::getMaxEnergyProd() const
@@ -212,36 +213,6 @@ int cSubBase::getEnergyNeed() const
 	return energyNeed;
 }
 
-int cSubBase::getMetalNeed() const
-{
-	return metalNeed;
-}
-
-int cSubBase::getOilNeed() const
-{
-	return oilNeed;
-}
-
-int cSubBase::getGoldNeed() const
-{
-	return goldNeed;
-}
-
-int cSubBase::getMaxMetalNeed() const
-{
-	return maxMetalNeed;
-}
-
-int cSubBase::getMaxOilNeed() const
-{
-	return maxOilNeed;
-}
-
-int cSubBase::getMaxGoldNeed() const
-{
-	return maxGoldNeed;
-}
-
 int cSubBase::getHumanProd() const
 {
 	return humanProd;
@@ -257,87 +228,25 @@ int cSubBase::getMaxHumanNeed() const
 	return maxHumanNeed;
 }
 
-const std::vector<cBuilding*>& cSubBase::getBuildings() const
-{
-	return buildings;
-}
-
-uint32_t cSubBase::getChecksum(uint32_t crc) const
-{
-	crc = calcCheckSum( maxMetalStored, crc);
-	crc = calcCheckSum( maxOilStored, crc);
-	crc = calcCheckSum( maxGoldStored, crc);
-	crc = calcCheckSum( maxEnergyProd, crc);
-	crc = calcCheckSum( energyProd, crc);
-	crc = calcCheckSum( maxEnergyNeed, crc);
-	crc = calcCheckSum( energyNeed, crc);
-	crc = calcCheckSum( metalNeed, crc);
-	crc = calcCheckSum( oilNeed, crc);
-	crc = calcCheckSum( goldNeed, crc);
-	crc = calcCheckSum( maxMetalNeed, crc);
-	crc = calcCheckSum( maxOilNeed, crc);
-	crc = calcCheckSum( maxGoldNeed, crc);
-	crc = calcCheckSum( humanProd, crc);
-	crc = calcCheckSum( humanNeed, crc);
-	crc = calcCheckSum( maxHumanNeed, crc);
-	crc = calcCheckSum( metalProd, crc);
-	crc = calcCheckSum( oilProd, crc);
-	crc = calcCheckSum( goldProd, crc);
-	crc = calcCheckSum( metalStored, crc);
-	crc = calcCheckSum( oilStored, crc);
-	crc = calcCheckSum( goldStored, crc);
-
-	return crc;
-}
-
 void cSubBase::setGold (int value)
 {
-	std::swap (goldStored, value);
-	if (goldStored != value) goldChanged();
+	std::swap (stored.gold, value);
+	if (stored.gold != value) goldChanged();
 }
 
 void cSubBase::changeMetalProd (int value)
 {
-	setMetalProd (metalProd + value);
+	setMetalProd (prod.metal + value);
 }
 
 void cSubBase::changeOilProd (int value)
 {
-	setOilProd (oilProd + value);
-}
-
-int cSubBase::getMaxMetalStored() const
-{
-	return maxMetalStored;
-}
-
-int cSubBase::getMaxGoldStored() const
-{
-	return maxGoldStored;
-}
-
-int cSubBase::getMaxOilStored() const
-{
-	return maxOilStored;
+	setOilProd (prod.oil + value);
 }
 
 void cSubBase::changeGoldProd (int value)
 {
-	setGoldProd (goldProd + value);
-}
-
-int cSubBase::calcMaxProd (eResourceType ressourceType) const
-{
-	int maxProd = 0;
-	for (size_t i = 0; i != buildings.size(); ++i)
-	{
-		const cBuilding& building = *buildings[i];
-
-		if (building.getStaticUnitData().canMineMaxRes <= 0 || !building.isUnitWorking()) continue;
-
-		maxProd += building.getMaxProd(ressourceType);
-	}
-	return maxProd;
+	setGoldProd (prod.gold + value);
 }
 
 int cSubBase::calcMaxAllowedProd (eResourceType ressourceType) const
@@ -355,22 +264,22 @@ int cSubBase::calcMaxAllowedProd (eResourceType ressourceType) const
 	{
 		case eResourceType::Metal:
 			maxAllowedProd = getMaxMetalProd();
-			ressourceToDistributeB = goldProd;
-			ressourceToDistributeC = oilProd;
+			ressourceToDistributeB = prod.gold;
+			ressourceToDistributeC = prod.oil;
 			ressourceTypeB = eResourceType::Gold;
 			ressourceTypeC = eResourceType::Oil;
 			break;
 		case eResourceType::Oil:
 			maxAllowedProd = getMaxOilProd();
-			ressourceToDistributeB = metalProd;
-			ressourceToDistributeC = goldProd;
+			ressourceToDistributeB = prod.metal;
+			ressourceToDistributeC = prod.gold;
 			ressourceTypeB = eResourceType::Metal;
 			ressourceTypeC = eResourceType::Gold;
 			break;
 		case eResourceType::Gold:
 			maxAllowedProd = getMaxGoldProd();
-			ressourceToDistributeB = metalProd;
-			ressourceToDistributeC = oilProd;
+			ressourceToDistributeB = prod.metal;
+			ressourceToDistributeC = prod.oil;
 			ressourceTypeB = eResourceType::Metal;
 			ressourceTypeC = eResourceType::Oil;
 			break;
@@ -378,14 +287,14 @@ int cSubBase::calcMaxAllowedProd (eResourceType ressourceType) const
 			return 0;
 	}
 
-	// when calculating the maximum allowed production for ressource A,
-	// the algo tries to distribute the ressources B and C
+	// when calculating the maximum allowed production for resource A,
+	// the algo tries to distribute the resources B and C
 	// so that the maximum possible production capacity is left over for A.
 	// the actual production values of each mine are not saved,
 	// because they are not needed.
 
 	// step one:
-	// distribute ressources,
+	// distribute resources,
 	// that do not decrease the possible production of the others
 	for (size_t i = 0; i != buildings.size(); ++i)
 	{
@@ -395,12 +304,12 @@ int cSubBase::calcMaxAllowedProd (eResourceType ressourceType) const
 
 		// how much of B can be produced in this mine,
 		// without decreasing the possible production of A and C?
-		int amount = min (building.getMaxProd(ressourceTypeB), building.getStaticUnitData().canMineMaxRes - building.getMaxProd(ressourceType) - building.getMaxProd(ressourceTypeC));
+		int amount = std::min (building.getMaxProd(ressourceTypeB), building.getStaticUnitData().canMineMaxRes - building.getMaxProd(ressourceType) - building.getMaxProd(ressourceTypeC));
 		if (amount > 0) ressourceToDistributeB -= amount;
 
 		// how much of C can be produced in this mine,
 		// without decreasing the possible production of A and B?
-		amount = min(building.getMaxProd(ressourceTypeC), building.getStaticUnitData().canMineMaxRes - building.getMaxProd(ressourceType) - building.getMaxProd(ressourceTypeB));
+		amount = std::min(building.getMaxProd(ressourceTypeC), building.getStaticUnitData().canMineMaxRes - building.getMaxProd(ressourceType) - building.getMaxProd(ressourceTypeB));
 		if (amount > 0) ressourceToDistributeC -= amount;
 	}
 
@@ -408,29 +317,29 @@ int cSubBase::calcMaxAllowedProd (eResourceType ressourceType) const
 	ressourceToDistributeC = std::max (ressourceToDistributeC, 0);
 
 	// step two:
-	// distribute ressources, that do not decrease the possible production of A
+	// distribute resources, that do not decrease the possible production of A
 	for (size_t i = 0; i != buildings.size(); ++i)
 	{
 		const cBuilding& building = *buildings[i];
 
 		if (building.getStaticUnitData().canMineMaxRes <= 0 || !building.isUnitWorking()) continue;
 
-		int freeB = min(building.getStaticUnitData().canMineMaxRes - building.getMaxProd(ressourceType), building.getMaxProd(ressourceTypeB));
-		int freeC = min(building.getStaticUnitData().canMineMaxRes - building.getMaxProd(ressourceType), building.getMaxProd(ressourceTypeC));
+		int freeB = std::min (building.getStaticUnitData().canMineMaxRes - building.getMaxProd(ressourceType), building.getMaxProd(ressourceTypeB));
+		int freeC = std::min (building.getStaticUnitData().canMineMaxRes - building.getMaxProd(ressourceType), building.getMaxProd(ressourceTypeC));
 
 		// subtract values from step 1
-		freeB -= min(max(building.getStaticUnitData().canMineMaxRes - building.getMaxProd(ressourceType) - building.getMaxProd(ressourceTypeC), 0), building.getMaxProd(ressourceTypeB));
-		freeC -= min(max(building.getStaticUnitData().canMineMaxRes - building.getMaxProd(ressourceType) - building.getMaxProd(ressourceTypeB), 0), building.getMaxProd(ressourceTypeC));
+		freeB -= std::min (std::max (building.getStaticUnitData().canMineMaxRes - building.getMaxProd(ressourceType) - building.getMaxProd(ressourceTypeC), 0), building.getMaxProd(ressourceTypeB));
+		freeC -= std::min (std::max (building.getStaticUnitData().canMineMaxRes - building.getMaxProd(ressourceType) - building.getMaxProd(ressourceTypeB), 0), building.getMaxProd(ressourceTypeC));
 
 		if (ressourceToDistributeB > 0)
 		{
-			const int value = min (freeB, ressourceToDistributeB);
+			const int value = std::min (freeB, ressourceToDistributeB);
 			freeC -= value;
 			ressourceToDistributeB -= value;
 		}
 		if (ressourceToDistributeC > 0)
 		{
-			ressourceToDistributeC -= min (freeC, ressourceToDistributeC);
+			ressourceToDistributeC -= std::min (freeC, ressourceToDistributeC);
 		}
 	}
 
@@ -445,55 +354,23 @@ int cSubBase::calcMaxAllowedProd (eResourceType ressourceType) const
 }
 
 
-static bool isAOnlineStation (const cBuilding& building)
-{
-	return building.getStaticUnitData().produceEnergy > 1 && building.isUnitWorking();
-}
-
-static bool isAOfflineStation (const cBuilding& building)
-{
-	return building.getStaticUnitData().produceEnergy > 1 && !building.isUnitWorking();
-}
-
-static bool isAOnlineGenerator (const cBuilding& building)
-{
-	return building.getStaticUnitData().produceEnergy == 1 && building.isUnitWorking();
-}
-
-static bool isAOfflineGenerator (const cBuilding& building)
-{
-	return building.getStaticUnitData().produceEnergy == 1 && !building.isUnitWorking();
-}
-
-template <typename T>
-static std::vector<cBuilding*> getFilteredBuildings (std::vector<cBuilding*>& buildings, T filter)
-{
-	std::vector<cBuilding*> res;
-	for (size_t i = 0; i != buildings.size(); ++i)
-	{
-		cBuilding& building = *buildings[i];
-
-		if (filter (building)) res.push_back (&building);
-	}
-	return res;
-}
 
 bool cSubBase::increaseEnergyProd (int value)
 {
 	// TODO: the energy production and fuel consumption
 	// of generators and stations are hardcoded in this function
-	std::vector<cBuilding*> onlineStations = getFilteredBuildings (buildings, &isAOnlineStation);
-	std::vector<cBuilding*> onlineGenerators = getFilteredBuildings (buildings, &isAOnlineGenerator);
-	std::vector<cBuilding*> offlineStations = getFilteredBuildings (buildings, &isAOfflineStation);
-	std::vector<cBuilding*> offlineGenerators = getFilteredBuildings (buildings, &isAOfflineGenerator);
+	std::vector<cBuilding*> onlineStations = Filter (buildings, &isAOnlineStation);
+	std::vector<cBuilding*> onlineGenerators = Filter (buildings, &isAOnlineGenerator);
+	std::vector<cBuilding*> offlineStations = Filter (buildings, &isAOfflineStation);
+	std::vector<cBuilding*> offlineGenerators = Filter (buildings, &isAOfflineGenerator);
 	const int availableStations = onlineStations.size() + offlineStations.size();
 	const int availableGenerators = onlineGenerators.size() + offlineGenerators.size();
 
 	// calc the optimum amount of energy stations and generators
 	const int energy = energyProd + value;
 
-	int stations   = min ((energy + 3) / 6, availableStations);
-	int generators = max (energy - stations * 6, 0);
+	int stations   = std::min ((energy + 3) / 6, availableStations);
+	int generators = std::max (energy - stations * 6, 0);
 
 	if (generators > availableGenerators)
 	{
@@ -508,7 +385,7 @@ bool cSubBase::increaseEnergyProd (int value)
 
 	// check available fuel
 	int neededFuel = stations * 6 + generators * 2;
-	if (neededFuel > getOilStored() + getMaxOilProd())
+	if (neededFuel > stored.oil + getMaxOilProd())
 	{
 		// not possible to produce enough fuel
 		base.fuelInsufficient();
@@ -561,11 +438,11 @@ int cSubBase::getResource (eResourceType storeResType) const
 	switch (storeResType)
 	{
 		case eResourceType::Metal:
-			return getMetalStored();
+			return stored.metal;
 		case eResourceType::Oil:
-			return getOilStored();
+			return stored.oil;
 		case eResourceType::Gold:
-			return getGoldStored();
+			return stored.gold;
 		default:
 			assert (0);
 	}
@@ -648,34 +525,32 @@ bool cSubBase::checkHumanConsumer ()
 	return true;
 }
 
-bool cSubBase::checkGoldConsumer ()
+bool cSubBase::checkGoldConsumer()
 {
-	if (goldNeed <= goldProd + getGoldStored()) return false;
+	if (needed.gold <= prod.gold + stored.gold) return false;
 
-	for (size_t i = 0; i != buildings.size(); ++i)
+	for (cBuilding* building : buildings)
 	{
-		cBuilding& building = *buildings[i];
-		if (!building.getStaticUnitData().convertsGold || !building.isUnitWorking()) continue;
+		if (!building->getStaticUnitData().convertsGold || !building->isUnitWorking()) continue;
 
-		building.stopWork (false);
+		building->stopWork (false);
 
-		if (goldNeed <= goldProd + getGoldStored()) break;
+		if (needed.gold <= prod.gold + stored.gold) break;
 	}
 	return true;
 }
 
 bool cSubBase::checkMetalConsumer ()
 {
-	if (metalNeed <= metalProd + getMetalStored()) return false;
+	if (needed.metal <= prod.metal + stored.metal) return false;
 
-	for (size_t i = 0; i != buildings.size(); ++i)
+	for (cBuilding* building : buildings)
 	{
-		cBuilding& building = *buildings[i];
-		if (!building.getStaticUnitData().needsMetal || !building.isUnitWorking()) continue;
+		if (!building->getStaticUnitData().needsMetal || !building->isUnitWorking()) continue;
 
-		building.stopWork (false);
+		building->stopWork (false);
 
-		if (metalNeed <= metalProd + getMetalStored()) break;
+		if (needed.metal <= prod.metal + stored.metal) break;
 	}
 	return true;
 }
@@ -684,16 +559,16 @@ bool cSubBase::checkOil()
 {
 	// TODO: the energy production and fuel consumption of generators and
 	// stations are hardcoded in this function
-	std::vector<cBuilding*> onlineStations = getFilteredBuildings (buildings, &isAOnlineStation);
-	std::vector<cBuilding*> onlineGenerators = getFilteredBuildings (buildings, &isAOnlineGenerator);
-	std::vector<cBuilding*> offlineStations = getFilteredBuildings (buildings, &isAOfflineStation);
-	std::vector<cBuilding*> offlineGenerators = getFilteredBuildings (buildings, &isAOfflineGenerator);
+	std::vector<cBuilding*> onlineStations = Filter (buildings, &isAOnlineStation);
+	std::vector<cBuilding*> onlineGenerators = Filter (buildings, &isAOnlineGenerator);
+	std::vector<cBuilding*> offlineStations = Filter (buildings, &isAOfflineStation);
+	std::vector<cBuilding*> offlineGenerators = Filter (buildings, &isAOfflineGenerator);
 	const int availableStations = onlineStations.size() + offlineStations.size();
 	const int availableGenerators = onlineGenerators.size() + offlineGenerators.size();
 
 	// calc the optimum amount of energy stations and generators
-	int stations   = min ((energyNeed + 3) / 6, availableStations);
-	int generators = max (energyNeed - stations * 6, 0);
+	int stations   = std::min ((energyNeed + 3) / 6, availableStations);
+	int generators = std::max (energyNeed - stations * 6, 0);
 
 	if (generators > availableGenerators)
 	{
@@ -710,25 +585,25 @@ bool cSubBase::checkOil()
 
 	// check needed oil
 	int neededOil = stations * 6 + generators * 2;
-	const int availableOil = getMaxOilProd() + getOilStored();
+	const int availableOil = getMaxOilProd() + stored.oil;
 	bool oilMissing = false;
 	if (neededOil > availableOil)
 	{
 		// reduce energy production to maximum possible value
-		stations = min ((availableOil) / 6, availableStations);
-		generators = min ((availableOil - (stations * 6)) / 2, availableGenerators);
+		stations = std::min ((availableOil) / 6, availableStations);
+		generators = std::min ((availableOil - (stations * 6)) / 2, availableGenerators);
 
 		oilMissing = true;
 	}
 
 	// increase oil production, if necessary
 	neededOil = stations * 6 + generators * 2;
-	if (neededOil > oilProd + getOilStored())
+	if (neededOil > prod.oil + stored.oil)
 	{
 		// temporary decrease gold and metal production
-		const int missingOil = neededOil - oilProd - getOilStored();
-		const int oldGoldProd = goldProd;
-		const int oldMetalProd = metalProd;
+		const int missingOil = neededOil - prod.oil - stored.oil;
+		const int oldGoldProd = prod.gold;
+		const int oldMetalProd = prod.metal;
 		setMetalProd (0);
 		setGoldProd (0);
 
@@ -739,9 +614,9 @@ bool cSubBase::checkOil()
 
 		base.forcedRessouceProductionChance(eResourceType::Oil, missingOil, true);
 		if (getMetalProd() < oldMetalProd)
-			base.forcedRessouceProductionChance(eResourceType::Metal, oldMetalProd - metalProd, false);
+			base.forcedRessouceProductionChance(eResourceType::Metal, oldMetalProd - prod.metal, false);
 		if (getGoldProd() < oldGoldProd)
-			base.forcedRessouceProductionChance(eResourceType::Gold, oldGoldProd - goldProd, false);
+			base.forcedRessouceProductionChance(eResourceType::Gold, oldGoldProd - prod.gold, false);
 	}
 
 	// stop unneeded buildings
@@ -895,7 +770,7 @@ void cSubBase::makeTurnStartRepairs (cBuilding& building)
 {
 	// repair (do not repair buildings that have been attacked in this turn):
 	if (building.data.getHitpoints() >= building.data.getHitpointsMax()
-		|| getMetalStored() <= 0 || building.hasBeenAttacked())
+		|| stored.metal <= 0 || building.hasBeenAttacked())
 	{
 		return;
 	}
@@ -908,7 +783,7 @@ void cSubBase::makeTurnStartRepairs (cBuilding& building)
 void cSubBase::makeTurnStartReload (cBuilding& building)
 {
 	// reload:
-	if (building.getStaticUnitData().canAttack && building.data.getAmmo() == 0 && getMetalStored() > 0)
+	if (building.getStaticUnitData().canAttack && building.data.getAmmo() == 0 && stored.metal > 0)
 	{
 		building.data.setAmmo (building.data.getAmmoMax());
 		addMetal (-1);
@@ -928,15 +803,15 @@ void cSubBase::makeTurnStartBuild (cBuilding& building)
 	{
 		// in this block the metal consumption of the factory
 		// in the next round can change
-		// so we first subtract the old value from MetalNeed and
+		// so we first subtract the old value from needed.metal and
 		// then add the new one, to hold the base up to date
-		metalNeed -= building.getMetalPerRound();
+		needed.metal-= building.getMetalPerRound();
 
 		auto value = buildListItem.getRemainingMetal() - building.getMetalPerRound();
 		value = std::max (value, 0);
 		buildListItem.setRemainingMetal (value);
 
-		metalNeed += building.getMetalPerRound();
+		needed.metal += building.getMetalPerRound();
 	}
 	if (buildListItem.getRemainingMetal() <= 0)
 	{
@@ -948,14 +823,14 @@ void cSubBase::makeTurnStartBuild (cBuilding& building)
 void cSubBase::makeTurnStart ()
 {
 	// produce ressources
-	addOil (oilProd - oilNeed);
-	addMetal (metalProd - metalNeed);
-	addGold (goldProd - goldNeed);
+	addOil (prod.oil - needed.oil);
+	addMetal (prod.metal - needed.metal);
+	addGold (prod.gold - needed.gold);
 
 	// produce credits
-	if (goldNeed)
+	if (needed.gold)
 	{
-		base.owner.setCredits (base.owner.getCredits() + goldNeed);
+		base.owner.setCredits (base.owner.getCredits() + needed.gold);
 	}
 
 	// make repairs/build/reload
@@ -970,9 +845,9 @@ void cSubBase::makeTurnStart ()
 	}
 
 	// check maximum storage limits
-	auto newMetal = std::min (this->maxMetalStored, this->getMetalStored());
-	auto newOil = std::min (this->maxOilStored, this->getOilStored());
-	auto newGold = std::min (this->maxGoldStored, this->getGoldStored());
+	auto newMetal = std::min (maxStored.metal, stored.metal);
+	auto newOil = std::min (maxStored.oil, stored.oil);
+	auto newGold = std::min (maxStored.gold, stored.gold);
 
 	// should not happen, but to be sure:
 	newMetal = std::max (newMetal, 0);
@@ -984,106 +859,103 @@ void cSubBase::makeTurnStart ()
 	setGold (newGold);
 }
 
-void cSubBase::merge (cSubBase* sb)
+void cSubBase::merge (cSubBase& sb)
 {
-	// merge buildings
-	for (size_t i = 0; i != sb->buildings.size(); ++i)
+	for (cBuilding* building : sb.buildings)
 	{
-		cBuilding* building = sb->buildings[i];
-		addBuilding (building);
+		addBuilding (*building);
 	}
-	sb->buildings.clear();
+	sb.buildings.clear();
 
-	// delete the subbase from the subbase list
-	Remove (base.SubBases, sb);
+	RemoveIf (base.SubBases, ByGetTo (&sb));
 }
 
-void cSubBase::addBuilding (cBuilding* b)
+void cSubBase::addBuilding (cBuilding& b)
 {
-	buildings.push_back (b);
-	b->subBase = this;
+	buildings.push_back (&b);
+	b.subBase = this;
 
 	// calculate storage level
-	switch (b->getStaticUnitData().storeResType)
+	switch (b.getStaticUnitData().storeResType)
 	{
 		case eResourceType::Metal:
-			maxMetalStored += b->getStaticUnitData().storageResMax;
-			setMetal (getMetalStored() + b->getStoredResources());
+			maxStored.metal += b.getStaticUnitData().storageResMax;
+			setMetal (stored.metal + b.getStoredResources());
 			break;
 		case eResourceType::Oil:
-			maxOilStored += b->getStaticUnitData().storageResMax;
-			setOil (getOilStored() + b->getStoredResources());
+			maxStored.oil += b.getStaticUnitData().storageResMax;
+			setOil (stored.oil + b.getStoredResources());
 			break;
 		case eResourceType::Gold:
-			maxGoldStored += b->getStaticUnitData().storageResMax;
-			setGold (getGoldStored() + b->getStoredResources());
+			maxStored.gold += b.getStaticUnitData().storageResMax;
+			setGold (stored.gold + b.getStoredResources());
 			break;
 		case eResourceType::None:
 			break;
 	}
 	// calculate energy
-	if (b->getStaticUnitData().produceEnergy)
+	if (b.getStaticUnitData().produceEnergy)
 	{
-		maxEnergyProd += b->getStaticUnitData().produceEnergy;
-		maxOilNeed += b->getStaticUnitData().needsOil;
-		if (b->isUnitWorking())
+		maxEnergyProd += b.getStaticUnitData().produceEnergy;
+		maxNeeded.oil += b.getStaticUnitData().needsOil;
+		if (b.isUnitWorking())
 		{
-			energyProd += b->getStaticUnitData().produceEnergy;
-			oilNeed += b->getStaticUnitData().needsOil;
+			energyProd += b.getStaticUnitData().produceEnergy;
+			needed.oil += b.getStaticUnitData().needsOil;
 		}
 	}
-	else if (b->getStaticUnitData().needsEnergy)
+	else if (b.getStaticUnitData().needsEnergy)
 	{
-		maxEnergyNeed += b->getStaticUnitData().needsEnergy;
-		if (b->isUnitWorking())
+		maxEnergyNeed += b.getStaticUnitData().needsEnergy;
+		if (b.isUnitWorking())
 		{
-			energyNeed += b->getStaticUnitData().needsEnergy;
+			energyNeed += b.getStaticUnitData().needsEnergy;
 		}
 	}
-	// calculate ressource consumption
-	if (b->getStaticUnitData().needsMetal)
+	// calculate resource consumption
+	if (b.getStaticUnitData().needsMetal)
 	{
-		maxMetalNeed += b->getStaticUnitData().needsMetal * 12;
-		if (b->isUnitWorking())
+		maxNeeded.metal += b.getStaticUnitData().needsMetal * 12;
+		if (b.isUnitWorking())
 		{
-			metalNeed += min (b->getMetalPerRound(), b->getBuildListItem (0).getRemainingMetal());
+			needed.metal += std::min (b.getMetalPerRound(), b.getBuildListItem (0).getRemainingMetal());
 		}
 	}
 	// calculate gold
-	if (b->getStaticUnitData().convertsGold)
+	if (b.getStaticUnitData().convertsGold)
 	{
-		maxGoldNeed += b->getStaticUnitData().convertsGold;
-		if (b->isUnitWorking())
+		maxNeeded.gold += b.getStaticUnitData().convertsGold;
+		if (b.isUnitWorking())
 		{
-			goldNeed += b->getStaticUnitData().convertsGold;
+			needed.gold += b.getStaticUnitData().convertsGold;
 		}
 	}
-	// calculate ressource production
-	if (b->getStaticUnitData().canMineMaxRes > 0 && b->isUnitWorking())
+	// calculate resource production
+	if (b.getStaticUnitData().canMineMaxRes > 0 && b.isUnitWorking())
 	{
-		metalProd += b->metalProd;
-		oilProd += b->oilProd;
-		goldProd += b->goldProd;
+		prod.metal += b.metalProd;
+		prod.oil += b.oilProd;
+		prod.gold += b.goldProd;
 	}
 	// calculate humans
-	if (b->getStaticUnitData().produceHumans)
+	if (b.getStaticUnitData().produceHumans)
 	{
-		humanProd += b->getStaticUnitData().produceHumans;
+		humanProd += b.getStaticUnitData().produceHumans;
 	}
-	if (b->getStaticUnitData().needsHumans)
+	if (b.getStaticUnitData().needsHumans)
 	{
-		maxHumanNeed += b->getStaticUnitData().needsHumans;
-		if (b->isUnitWorking())
+		maxHumanNeed += b.getStaticUnitData().needsHumans;
+		if (b.isUnitWorking())
 		{
-			humanNeed += b->getStaticUnitData().needsHumans;
+			humanNeed += b.getStaticUnitData().needsHumans;
 		}
 	}
 }
 
-bool cSubBase::startBuilding(cBuilding* b)
+bool cSubBase::startBuilding(cBuilding& b)
 {
-	const cStaticUnitData& staticData = b->getStaticUnitData();
-	
+	const cStaticUnitData& staticData = b.getStaticUnitData();
+
 	// needs human workers:
 	if (staticData.needsHumans)
 	{
@@ -1097,7 +969,7 @@ bool cSubBase::startBuilding(cBuilding* b)
 	// needs gold:
 	if (staticData.convertsGold)
 	{
-		if (goldNeed + staticData.convertsGold > goldProd + goldStored)
+		if (needed.gold + staticData.convertsGold > prod.gold + stored.gold)
 		{
 			base.goldInsufficient();
 			return false;
@@ -1107,7 +979,7 @@ bool cSubBase::startBuilding(cBuilding* b)
 	// needs raw material:
 	if (staticData.needsMetal)
 	{
-		if (metalNeed + b->getMetalPerRound() > metalProd + metalStored)
+		if (needed.metal + b.getMetalPerRound() > prod.metal + stored.metal)
 		{
 			base.metalInsufficient();
 			return false;
@@ -1119,18 +991,18 @@ bool cSubBase::startBuilding(cBuilding* b)
 	{
 		// check if there is enough Oil for the generators
 		// (current production + reserves)
-		if (staticData.needsOil + oilNeed > oilStored + getMaxOilProd())
+		if (staticData.needsOil + needed.oil > stored.oil + getMaxOilProd())
 		{
 			base.fuelInsufficient();
 			return false;
 		}
-		else if (staticData.needsOil + oilNeed > oilStored + oilProd)
+		else if (staticData.needsOil + needed.oil > stored.oil + prod.oil)
 		{
 			// increase oil production
-			int missingOil = staticData.needsOil + oilNeed - (oilStored + oilProd);
+			int missingOil = staticData.needsOil + needed.oil - (stored.oil + prod.oil);
 
-			int oldMetalProd = metalProd;
-			int oldGoldProd = goldProd;
+			int oldMetalProd = prod.metal;
+			int oldGoldProd = prod.gold;
 
 			// temporay decrease metal and gold production
 			setMetalProd(0);
@@ -1143,10 +1015,10 @@ bool cSubBase::startBuilding(cBuilding* b)
 			setMetalProd(oldMetalProd);
 
 			base.forcedRessouceProductionChance(eResourceType::Oil, missingOil, true);
-			if (metalProd < oldMetalProd)
-				base.forcedRessouceProductionChance(eResourceType::Metal, oldMetalProd - metalProd, false);
-			if (goldProd < oldGoldProd)
-				base.forcedRessouceProductionChance(eResourceType::Gold, oldGoldProd - goldProd, false);
+			if (prod.metal < oldMetalProd)
+				base.forcedRessouceProductionChance(eResourceType::Metal, oldMetalProd - prod.metal, false);
+			if (prod.gold < oldGoldProd)
+				base.forcedRessouceProductionChance(eResourceType::Gold, oldGoldProd - prod.gold, false);
 		}
 	}
 
@@ -1154,14 +1026,14 @@ bool cSubBase::startBuilding(cBuilding* b)
 	// So if an energy generator has to be started,
 	// it can use the fuel production of this building
 	// (when this building is a mine).
-	b->setWorking(true);
+	b.setWorking (true);
 
 	// set mine values. This has to be undone, if the energy is insufficient
 	if (staticData.canMineMaxRes > 0)
 	{
-		changeMetalProd(b->metalProd);
-		changeGoldProd(b->goldProd);
-		changeOilProd(b->oilProd);
+		changeMetalProd (b.metalProd);
+		changeGoldProd (b.goldProd);
+		changeOilProd (b.oilProd);
 	}
 
 	// Energy consumers:
@@ -1172,14 +1044,14 @@ bool cSubBase::startBuilding(cBuilding* b)
 			// try to increase energy production
 			if (!increaseEnergyProd(staticData.needsEnergy + energyNeed - energyProd))
 			{
-				b->setWorking(false);
+				b.setWorking(false);
 
 				// reset mine values
 				if (staticData.canMineMaxRes > 0)
 				{
-					changeMetalProd(- b->metalProd);
-					changeGoldProd(- b->goldProd);
-					changeOilProd(- b->oilProd);
+					changeMetalProd(-b.metalProd);
+					changeGoldProd(-b.goldProd);
+					changeOilProd(-b.oilProd);
 				}
 
 				base.energyInsufficient();
@@ -1197,21 +1069,21 @@ bool cSubBase::startBuilding(cBuilding* b)
 	humanNeed += staticData.needsHumans;
 	humanProd += staticData.produceHumans;
 
-	oilNeed += staticData.needsOil;
+	needed.oil += staticData.needsOil;
 
 	// raw material consumer:
 	if (staticData.needsMetal)
-		metalNeed += b->getMetalPerRound();
+		needed.metal += b.getMetalPerRound();
 
 	// gold consumer:
-	goldNeed += staticData.convertsGold;
+	needed.gold += staticData.convertsGold;
 
 	return true;
 }
 
-bool cSubBase::stopBuilding(cBuilding* b, bool forced /*= false*/)
+bool cSubBase::stopBuilding(cBuilding& b, bool forced /*= false*/)
 {
-	const cStaticUnitData& staticData = b->getStaticUnitData();
+	const cStaticUnitData& staticData = b.getStaticUnitData();
 
 	// energy generators
 	if (staticData.produceEnergy)
@@ -1223,20 +1095,20 @@ bool cSubBase::stopBuilding(cBuilding* b, bool forced /*= false*/)
 		}
 
 		energyProd -= staticData.produceEnergy;
-		oilNeed -= staticData.needsOil;
+		needed.oil -= staticData.needsOil;
 	}
 
-	b->setWorking(false);
+	b.setWorking(false);
 
 	// Energy consumers:
 	energyNeed -= staticData.needsEnergy;
 
 	// raw material consumer:
 	if (staticData.needsMetal)
-		metalNeed -= b->getMetalPerRound();
+		needed.metal -= b.getMetalPerRound();
 
 	// gold consumer
-	goldNeed -= staticData.convertsGold;
+	needed.gold -= staticData.convertsGold;
 
 	// human consumer
 	humanNeed -= staticData.needsHumans;
@@ -1244,24 +1116,40 @@ bool cSubBase::stopBuilding(cBuilding* b, bool forced /*= false*/)
 	// Minen:
 	if (staticData.canMineMaxRes > 0)
 	{
-		metalProd -= b->metalProd;
-		oilProd -= b->oilProd;
-		goldProd -= b->goldProd;
+		prod.metal -= b.metalProd;
+		prod.oil -= b.oilProd;
+		prod.gold -= b.goldProd;
 	}
 
 	return true;
 }
 
-cBase::cBase(cPlayer& owner) : 
+uint32_t cSubBase::getChecksum(uint32_t crc) const
+{
+	crc = calcCheckSum (maxStored, crc);
+	crc = calcCheckSum (maxNeeded, crc);
+	crc = calcCheckSum (needed, crc);
+	crc = calcCheckSum (prod, crc);
+	crc = calcCheckSum (stored, crc);
+
+	crc = calcCheckSum (maxEnergyProd, crc);
+	crc = calcCheckSum (energyProd, crc);
+	crc = calcCheckSum (maxEnergyNeed, crc);
+	crc = calcCheckSum (energyNeed, crc);
+
+	crc = calcCheckSum (humanProd, crc);
+	crc = calcCheckSum (humanNeed, crc);
+	crc = calcCheckSum (maxHumanNeed, crc);
+
+	return crc;
+}
+
+cBase::cBase(cPlayer& owner) :
 	owner(owner)
 {}
 
 cBase::~cBase()
 {
-	for (size_t i = 0; i != SubBases.size(); ++i)
-	{
-		delete SubBases[i];
-	}
 }
 
 cSubBase* cBase::checkNeighbour (const cPosition& position, const cBuilding& building, const cMap& map)
@@ -1285,42 +1173,41 @@ uint32_t cBase::getChecksum(uint32_t crc) const
 	return crc;
 }
 
-void cBase::addBuilding (cBuilding* building, const cMap& map)
+void cBase::addBuilding (cBuilding& building, const cMap& map)
 {
-	if (!building->getStaticUnitData().connectsToBase) return;
+	if (!building.getStaticUnitData().connectsToBase) return;
 	std::vector<cSubBase*> NeighbourList;
 
 	// find all neighbouring subbases
-	if (building->getIsBig())
+	if (building.getIsBig())
 	{
 		// big building
-		if (cSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (0, -1), *building, map)) NeighbourList.push_back (SubBase);
-		if (cSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (1, -1), *building, map)) NeighbourList.push_back (SubBase);
-		if (cSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (2, 0), *building, map)) NeighbourList.push_back (SubBase);
-		if (cSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (2, 1), *building, map)) NeighbourList.push_back (SubBase);
-		if (cSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (0, 2), *building, map)) NeighbourList.push_back (SubBase);
-		if (cSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (1, 2), *building, map)) NeighbourList.push_back (SubBase);
-		if (cSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (-1, 0), *building, map)) NeighbourList.push_back (SubBase);
-		if (cSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (-1, 1), *building, map)) NeighbourList.push_back (SubBase);
+		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (0, -1), building, map)) NeighbourList.push_back (SubBase);
+		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (1, -1), building, map)) NeighbourList.push_back (SubBase);
+		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (2, 0), building, map)) NeighbourList.push_back (SubBase);
+		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (2, 1), building, map)) NeighbourList.push_back (SubBase);
+		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (0, 2), building, map)) NeighbourList.push_back (SubBase);
+		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (1, 2), building, map)) NeighbourList.push_back (SubBase);
+		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (-1, 0), building, map)) NeighbourList.push_back (SubBase);
+		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (-1, 1), building, map)) NeighbourList.push_back (SubBase);
 	}
 	else
 	{
 		// small building
-		if (cSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (0, -1), *building, map)) NeighbourList.push_back (SubBase);
-		if (cSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (1, 0), *building, map)) NeighbourList.push_back (SubBase);
-		if (cSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (0, 1), *building, map)) NeighbourList.push_back (SubBase);
-		if (cSubBase* SubBase = checkNeighbour (building->getPosition() + cPosition (-1, 0), *building, map)) NeighbourList.push_back (SubBase);
+		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (0, -1), building, map)) NeighbourList.push_back (SubBase);
+		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (1, 0), building, map)) NeighbourList.push_back (SubBase);
+		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (0, 1), building, map)) NeighbourList.push_back (SubBase);
+		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (-1, 0), building, map)) NeighbourList.push_back (SubBase);
 	}
-	building->CheckNeighbours (map);
+	building.CheckNeighbours (map);
 
 	RemoveDuplicates (NeighbourList);
 
 	if (NeighbourList.empty())
 	{
 		// no neighbours found, just generate new subbase and add the building
-		cSubBase* NewSubBase = new cSubBase (*this);
-		NewSubBase->addBuilding (building);
-		SubBases.push_back (NewSubBase);
+		SubBases.push_back (std::make_unique<cSubBase> (*this));
+		SubBases.back()->addBuilding (building);
 
 		return;
 	}
@@ -1334,39 +1221,39 @@ void cBase::addBuilding (cBuilding* building, const cMap& map)
 	for (size_t i = 0; i != NeighbourList.size(); ++i)
 	{
 		cSubBase* const SubBase = NeighbourList[i];
-		firstNeighbour->merge (SubBase);
+		firstNeighbour->merge (*SubBase);
 
 		delete SubBase;
 	}
 	NeighbourList.clear();
 }
 
-void cBase::deleteBuilding (cBuilding* building, const cMap& map)
+void cBase::deleteBuilding (cBuilding& building, const cMap& map)
 {
-	if (!building->getStaticUnitData().connectsToBase) return;
-	cSubBase* sb = building->subBase;
+	if (!building.getStaticUnitData().connectsToBase) return;
+	cSubBase* sb = building.subBase;
 
 	// remove the current subbase
 	for (auto b : sb->getBuildings())
 	{
 		b->subBase = nullptr;
 	}
-	Remove (SubBases, sb);
+	RemoveIf (SubBases, ByGetTo (sb));
 
 	// add all the buildings again
 	for (auto b : sb->getBuildings())
 	{
-		if (b == building) continue;
-		addBuilding (b, map);
+		if (b == &building) continue;
+		addBuilding (*b, map);
 	}
 
-	if (building->isUnitWorking() && building->getStaticUnitData().canResearch)
-		building->getOwner()->stopAResearch (building->getResearchArea());
+	if (building.isUnitWorking() && building.getStaticUnitData().canResearch)
+		building.getOwner()->stopAResearch (building.getResearchArea());
 
 	delete sb;
 }
 
-bool cBase::checkTurnEnd ()
+bool cBase::checkTurnEnd()
 {
 	bool changed = false;
 	for (size_t i = 0; i != SubBases.size(); ++i)
@@ -1387,11 +1274,7 @@ void cBase::makeTurnStart ()
 	}
 }
 
-void cBase::reset()
+void cBase::clear()
 {
-	for (cSubBase* sb : SubBases)
-	{
-		delete sb;
-	}
-	SubBases.resize(0);
+	SubBases.clear();
 }

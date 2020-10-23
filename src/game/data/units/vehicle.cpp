@@ -709,13 +709,14 @@ bool cVehicle::canTransferTo (const cUnit& unit) const
 		if (!b->subBase)
 			return false;
 
-		if (staticData->storeResType == eResourceType::Metal && b->subBase->getMaxMetalStored() == 0)
+		const sRecoltableResources& maxStored = b->subBase->getMaxResourcesStored();
+		if (staticData->storeResType == eResourceType::Metal && maxStored.metal == 0)
 			return false;
 
-		if (staticData->storeResType == eResourceType::Oil && b->subBase->getMaxOilStored() == 0)
+		if (staticData->storeResType == eResourceType::Oil && maxStored.oil == 0)
 			return false;
 
-		if (staticData->storeResType == eResourceType::Gold && b->subBase->getMaxGoldStored() == 0)
+		if (staticData->storeResType == eResourceType::Gold && maxStored.oil == 0)
 			return false;
 
 		return true;

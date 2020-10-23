@@ -20,14 +20,23 @@
 #ifndef game_data_base_baseH
 #define game_data_base_baseH
 
-#include <vector>
 #include "game/data/units/unitdata.h"
+
+#include <memory>
+#include <vector>
 
 class cBuilding;
 class cMap;
 class cPlayer;
 class cPosition;
 class cBase;
+
+struct sRecoltableResources
+{
+	int metal = 0;
+	int oil = 0;
+	int gold = 0;
+};
 
 class cSubBase
 {
@@ -40,12 +49,12 @@ public:
 	* integrates all building of the given subbase in the own one
 	* @author eiko
 	*/
-	void merge (cSubBase* sb);
+	void merge (cSubBase& sb);
 
-	void addBuilding (cBuilding* b);
+	void addBuilding (cBuilding& b);
 
-	bool startBuilding(cBuilding* b);
-	bool stopBuilding(cBuilding* b, bool forced = false);
+	bool startBuilding(cBuilding& b);
+	bool stopBuilding(cBuilding& b, bool forced = false);
 
 	/**
 	* transfers a resource to/from the subbase
@@ -59,12 +68,12 @@ public:
 	 * Checks, if there are consumers, that have to be shut down,
 	 * due to a lack of a resources
 	 */
-	bool checkTurnEnd ();
+	bool checkTurnEnd();
 
 	/**
 	 * Produces resources, builds units and repairs/reloads units at turn start.
 	 */
-	void makeTurnStart ();
+	void makeTurnStart();
 
 	//------------------------------------
 	//resource management:
@@ -97,32 +106,22 @@ public:
 	void changeGoldProd(int value);
 	void changeOilProd(int value);
 
-	int getMaxMetalStored() const;
-	int getMaxGoldStored() const;
-	int getMaxOilStored() const;
+	const sRecoltableResources& getResourcesNeeded() const { return needed; }
+	const sRecoltableResources& getMaxResourcesNeeded() const { return maxNeeded; }
 
-	int getMetalStored() const;
-	int getOilStored() const;
-	int getGoldStored() const;
+	const sRecoltableResources& getResourcesStored() const { return stored; }
+	const sRecoltableResources& getMaxResourcesStored() const { return maxStored; }
 
 	int getMaxEnergyProd() const;
 	int getEnergyProd() const;
 	int getMaxEnergyNeed() const;
 	int getEnergyNeed() const;
 
-	int getMetalNeed() const;
-	int getOilNeed() const;
-	int getGoldNeed() const;
-	
-	int getMaxMetalNeed() const;
-	int getMaxOilNeed() const;
-	int getMaxGoldNeed() const;
-
 	int getHumanProd() const;
 	int getHumanNeed() const;
 	int getMaxHumanNeed() const;
 
-	const std::vector<cBuilding*>& getBuildings() const;
+	const std::vector<cBuilding*>& getBuildings() const { return buildings; }
 
 	uint32_t getChecksum(uint32_t crc) const;
 
@@ -134,7 +133,7 @@ public:
 private:
 
 	/**
-	* inreases the energy production of the subbase by
+	* increases the energy production of the subbase by
 	* starting offline generators/stations
 	* @author eiko
 	*/
@@ -148,9 +147,9 @@ private:
 	 * @return returns true, if consumers have been shut down
 	 * @author eiko
 	 */
-	bool checkGoldConsumer ();
-	bool checkHumanConsumer ();
-	bool checkMetalConsumer ();
+	bool checkGoldConsumer();
+	bool checkHumanConsumer();
+	bool checkMetalConsumer();
 	/**
 	 * - switches off unneeded fuel consumers(=energy producers)
 	 * - sets the optimal amount of generators and stations
@@ -161,30 +160,24 @@ private:
 	 *          due to a lack of oil
 	 * @author eiko
 	 */
-	bool checkOil ();
+	bool checkOil();
 	/**
 	 * switches off energy consumers, if necessary
 	 * @return returns true, if a energy consumers have been shut down
 	 * @author eiko
 	 */
-	bool checkEnergy ();
+	bool checkEnergy();
 
 	void makeTurnStartRepairs (cBuilding& building);
 	void makeTurnStartReload (cBuilding& building);
 	void makeTurnStartBuild (cBuilding& building);
 
-
 	/**
-	* calcs the maximum allowed production of a resource,
+	* compute the maximum allowed production of a resource,
 	* without decreasing the production of the other two
 	* @author eiko
 	*/
 	int calcMaxAllowedProd (eResourceType ressourceType) const;
-	/**
-	* calcs the maximum possible production of a resource
-	* @author eiko
-	*/
-	int calcMaxProd (eResourceType ressourceType) const;
 	/**
 	* adds/subtracts resources of the type storeResType to/from the subbase
 	* @author eiko
@@ -201,40 +194,29 @@ private:
 private:
 	std::vector<cBuilding*> buildings;
 
-	int maxMetalStored;
-	int maxOilStored;
-	int maxGoldStored;
+	sRecoltableResources stored;
+	sRecoltableResources maxStored;
+	sRecoltableResources needed;
+	sRecoltableResources maxNeeded;
+	sRecoltableResources prod;
+	//sRecoltableResources maxProd;
 
-	int maxEnergyProd;
-	int energyProd;
-	int maxEnergyNeed;
-	int energyNeed;
-	int metalNeed;
-	int oilNeed;
-	int goldNeed;
-	int maxMetalNeed;
-	int maxOilNeed;
-	int maxGoldNeed;
+	int maxEnergyProd = 0;
+	int energyProd = 0;
+	int maxEnergyNeed = 0;
+	int energyNeed = 0;
 
-	int humanProd;
-	int humanNeed;
-	int maxHumanNeed;
-
-	int metalProd;
-	int oilProd;
-	int goldProd;
+	int humanProd = 0;
+	int humanNeed = 0;
+	int maxHumanNeed = 0;
 
 	cBase& base;
-
-	int metalStored;
-	int oilStored;
-	int goldStored;
 };
 
 class cBase
 {
 public:
-	cBase(cPlayer& owner);
+	explicit cBase(cPlayer& owner);
 	~cBase();
 
 	/**
@@ -242,35 +224,35 @@ public:
 	* @param building the building, that is added to the base
 	* @author eiko
 	*/
-	void addBuilding (cBuilding* building, const cMap& map);
+	void addBuilding (cBuilding& building, const cMap& map);
 	/**
 	* deletes a building from the base and updates the subbase structures
 	* @param building the building, that is deleted to the base
 	* @author eiko
 	*/
-	void deleteBuilding (cBuilding* building, const cMap& map);
+	void deleteBuilding (cBuilding& building, const cMap& map);
 
-	bool checkTurnEnd ();
+	bool checkTurnEnd();
 
 	/**
 	 * Handles the turn start for all sub bases.
 	 *
 	 * This produces resources, builds units and repairs/reloads units.
 	 */
-	void makeTurnStart ();
+	void makeTurnStart();
 
 	/**
 	* recalculates the values of all subbases
 	*@author eiko
 	*/
-	void reset();
+	void clear();
 
 	cSubBase* checkNeighbour (const cPosition& position, const cBuilding& Building, const cMap& map);
 
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 
 	// report sources for the player:
-	mutable cSignal<void(eResourceType resourceType, int amount, bool increase)> forcedRessouceProductionChance;
+	mutable cSignal<void (eResourceType, int amount, bool increase)> forcedRessouceProductionChance;
 	mutable cSignal<void()> teamLow;
 	mutable cSignal<void()> metalLow;
 	mutable cSignal<void()> goldLow;
@@ -287,8 +269,8 @@ public:
 	mutable cSignal<void()> energyIsNeeded;
 
 public:
-	std::vector<cSubBase*> SubBases;
+	std::vector<std::unique_ptr<cSubBase>> SubBases;
 	cPlayer& owner;
 };
 
-#endif // game_data_base_baseH
+#endif

@@ -162,20 +162,23 @@ void cNewDialogTransfer::initCargo (int& cargo, int& maxCargo, const cUnit& unit
 
 		if (unit2.isAVehicle())
 		{
+			const sRecoltableResources& maxStored = building.subBase->getMaxResourcesStored();
+			const sRecoltableResources& stored = building.subBase->getResourcesStored();
+
 			switch (unit2.getStaticUnitData().storeResType)
 			{
 				default:
 				case eResourceType::Metal:
-					maxCargo = building.subBase->getMaxMetalStored();
-					cargo = building.subBase->getMetalStored();
+					maxCargo = maxStored.metal;
+					cargo = stored.metal;
 					break;
 				case eResourceType::Oil:
-					maxCargo = building.subBase->getMaxOilStored();
-					cargo = building.subBase->getOilStored();
+					maxCargo = maxStored.oil;
+					cargo = stored.oil;
 					break;
 				case eResourceType::Gold:
-					maxCargo = building.subBase->getMaxGoldStored();
-					cargo = building.subBase->getGoldStored();
+					maxCargo = maxStored.gold;
+					cargo = stored.gold;
 					break;
 			}
 		}

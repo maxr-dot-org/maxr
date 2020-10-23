@@ -1841,7 +1841,7 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 	storageWindow->reloadAll.connect ([&, storageWindow]()
 	{
 		if (!unit.isABuilding()) return;
-		auto remainingResources = static_cast<const cBuilding&> (unit).subBase->getMetalStored();
+		auto remainingResources = static_cast<const cBuilding&> (unit).subBase->getResourcesStored().metal;
 		for (size_t i = 0; i < unit.storedUnits.size() && remainingResources > 0; ++i)
 		{
 			const auto& storedUnit = *unit.storedUnits[i];
@@ -1856,7 +1856,7 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 	storageWindow->repairAll.connect ([&, storageWindow]()
 	{
 		if (!unit.isABuilding()) return;
-		auto remainingResources = static_cast<const cBuilding&> (unit).subBase->getMetalStored();
+		auto remainingResources = static_cast<const cBuilding&> (unit).subBase->getResourcesStored().metal;
 		for (size_t i = 0; i < unit.storedUnits.size() && remainingResources > 0; ++i)
 		{
 			const auto& storedUnit = *unit.storedUnits[i];

@@ -142,16 +142,19 @@ void cUnitDetailsHud::reset()
 			if (unit->isABuilding())
 			{
 				const auto& building = static_cast<const cBuilding&> (*unit);
+				const sRecoltableResources& stored = building.subBase->getResourcesStored();
+				const sRecoltableResources& maxStored = building.subBase->getMaxResourcesStored();
+
 				switch (staticData.storeResType)
 				{
 					case eResourceType::Metal:
-						drawRow (2, symbolType, building.subBase->getMetalStored(), building.subBase->getMaxMetalStored(), lngPack.i18n ("Text~Others~Total"));
+						drawRow (2, symbolType, stored.metal, maxStored.metal, lngPack.i18n ("Text~Others~Total"));
 						break;
 					case eResourceType::Oil:
-						drawRow (2, symbolType, building.subBase->getOilStored(), building.subBase->getMaxOilStored(), lngPack.i18n ("Text~Others~Total"));
+						drawRow (2, symbolType, stored.oil, maxStored.oil, lngPack.i18n ("Text~Others~Total"));
 						break;
 					case eResourceType::Gold:
-						drawRow (2, symbolType, building.subBase->getGoldStored(), building.subBase->getMaxGoldStored(), lngPack.i18n ("Text~Others~Total"));
+						drawRow (2, symbolType, stored.gold, maxStored.gold, lngPack.i18n ("Text~Others~Total"));
 						break;
 					case eResourceType::None: break;
 				}

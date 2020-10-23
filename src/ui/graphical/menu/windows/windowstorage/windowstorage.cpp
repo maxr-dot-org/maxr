@@ -65,7 +65,7 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
     const int stepImageX = canStorePlanes ? 227 : 156;
     const int startX = canStorePlanes ? 39 : 2;
 	const int nameLabelX = canStorePlanes ? 190 : 118;
-	
+
 
 	for (size_t x = 0; x < columns; x++)
 	{
@@ -101,11 +101,11 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 	{
 		const auto& building = static_cast<const cBuilding&> (unit);
 
-		metalValue = building.subBase->getMetalStored();
+		metalValue = building.subBase->getResourcesStored().metal;
 
 		signalConnectionManager.connect (building.subBase->metalChanged, [&]()
 		{
-			metalBar->setValue (building.subBase->getMetalStored());
+			metalBar->setValue (building.subBase->getResourcesStored().metal);
 		});
 	}
 

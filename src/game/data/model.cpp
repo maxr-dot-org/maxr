@@ -260,7 +260,7 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 	}
 
 	// integrate the building to the base:
-	player->base.addBuilding(&addedBuilding, *map);
+	player->base.addBuilding (addedBuilding, *map);
 
 	// if this is a top building, delete connectors, mines and roads
 	if (addedBuilding.getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_GROUND)
@@ -465,7 +465,7 @@ void cModel::deleteUnit(cUnit* unit)
 		map->deleteVehicle(*static_cast<cVehicle*> (unit));
 
 	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->subBase != nullptr)
-		owner->base.deleteBuilding(static_cast<cBuilding*> (unit), *map);
+		owner->base.deleteBuilding (static_cast<cBuilding&> (*unit), *map);
 
 	if (owner != nullptr)
 	{

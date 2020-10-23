@@ -677,10 +677,10 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 //------------------------------------------------------------------------------
 void cPlayer::refreshBase(const cMap& map)
 {
-	base.reset();
+	base.clear();
 	for (auto& building : buildings)
 	{
-		base.addBuilding(building.get(), map);
+		base.addBuilding (*building, map);
 	}
 }
 

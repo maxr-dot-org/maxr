@@ -77,7 +77,7 @@ void cActionRepairReload::execute(cModel& model) const
 		}
 		else
 		{
-			availableMetal = static_cast<cBuilding*>(sourceUnit)->subBase->getMetalStored();
+			availableMetal = static_cast<cBuilding*>(sourceUnit)->subBase->getResourcesStored().metal;
 		}
 		int newHitpoints = destUnit->data.getHitpoints();
 
@@ -95,10 +95,9 @@ void cActionRepairReload::execute(cModel& model) const
 		else
 		{
 			auto subBase = static_cast<cBuilding*>(sourceUnit)->subBase;
-			subBase->addMetal(availableMetal - subBase->getMetalStored());
+			subBase->addMetal(availableMetal - subBase->getResourcesStored().metal);
 		}
 		destUnit->data.setHitpoints(std::min(newHitpoints, destUnit->data.getHitpointsMax()));
-
 	}
 
 	if (supplyType == eSupplyType::REARM)

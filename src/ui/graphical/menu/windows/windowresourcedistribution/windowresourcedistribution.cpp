@@ -157,48 +157,56 @@ std::string cWindowResourceDistribution::secondBarText (int prod, int need)
 //------------------------------------------------------------------------------
 void cWindowResourceDistribution::setBarLabels()
 {
+	const auto& needed = subBase->getResourcesNeeded();
+	const auto& stored = subBase->getResourcesStored();
+
 	metalLabels[0]->setText (iToStr (subBase->getMetalProd()));
-	metalLabels[1]->setText (secondBarText (subBase->getMetalProd(), subBase->getMetalNeed()));
-	metalLabels[2]->setText (iToStr (subBase->getMetalStored()));
+	metalLabels[1]->setText (secondBarText (subBase->getMetalProd(), needed.metal));
+	metalLabels[2]->setText (iToStr (stored.metal));
 
 	oilLabels[0]->setText (iToStr (subBase->getOilProd()));
-	oilLabels[1]->setText (secondBarText (subBase->getOilProd(), subBase->getOilNeed()));
-	oilLabels[2]->setText (iToStr (subBase->getOilStored()));
+	oilLabels[1]->setText (secondBarText (subBase->getOilProd(), needed.oil));
+	oilLabels[2]->setText (iToStr (stored.oil));
 
 	goldLabels[0]->setText (iToStr (subBase->getGoldProd()));
-	goldLabels[1]->setText (secondBarText (subBase->getGoldProd(), subBase->getGoldNeed()));
-	goldLabels[2]->setText (iToStr (subBase->getGoldStored()));
+	goldLabels[1]->setText (secondBarText (subBase->getGoldProd(), needed.gold));
+	goldLabels[2]->setText (iToStr (stored.gold));
 }
 
 //------------------------------------------------------------------------------
 void cWindowResourceDistribution::setBarValues()
 {
+	const sRecoltableResources& needed = subBase->getResourcesNeeded();
+	const sRecoltableResources& maxNeeded = subBase->getMaxResourcesNeeded();
+	const sRecoltableResources& stored = subBase->getResourcesStored();
+	const sRecoltableResources& maxStored = subBase->getMaxResourcesStored();
+
 	metalBars[0]->setMaxValue (subBase->getMaxMetalProd());
 	metalBars[0]->setValue (subBase->getMetalProd());
-	metalBars[1]->setMaxValue (subBase->getMaxMetalNeed());
-	metalBars[1]->setValue (subBase->getMetalNeed());
-	metalBars[2]->setMaxValue (subBase->getMaxMetalStored());
-	metalBars[2]->setValue (subBase->getMetalStored());
+	metalBars[1]->setMaxValue (maxNeeded.metal);
+	metalBars[1]->setValue (needed.metal);
+	metalBars[2]->setMaxValue (maxStored.metal);
+	metalBars[2]->setValue (stored.metal);
 
 	noneBars[0]->setMaxValue (subBase->getMaxMetalProd());
 	noneBars[0]->setValue (subBase->getMaxMetalProd() - subBase->getMaxAllowedMetalProd());
 
 	oilBars[0]->setMaxValue (subBase->getMaxOilProd());
 	oilBars[0]->setValue (subBase->getOilProd());
-	oilBars[1]->setMaxValue (subBase->getMaxOilNeed());
-	oilBars[1]->setValue (subBase->getOilNeed());
-	oilBars[2]->setMaxValue (subBase->getMaxOilStored());
-	oilBars[2]->setValue (subBase->getOilStored());
+	oilBars[1]->setMaxValue (maxNeeded.oil);
+	oilBars[1]->setValue (needed.oil);
+	oilBars[2]->setMaxValue (maxStored.oil);
+	oilBars[2]->setValue (stored.oil);
 
 	noneBars[1]->setMaxValue (subBase->getMaxOilProd());
 	noneBars[1]->setValue (subBase->getMaxOilProd() - subBase->getMaxAllowedOilProd());
 
 	goldBars[0]->setMaxValue (subBase->getMaxGoldProd());
 	goldBars[0]->setValue (subBase->getGoldProd());
-	goldBars[1]->setMaxValue (subBase->getMaxGoldNeed());
-	goldBars[1]->setValue (subBase->getGoldNeed());
-	goldBars[2]->setMaxValue (subBase->getMaxGoldStored());
-	goldBars[2]->setValue (subBase->getGoldStored());
+	goldBars[1]->setMaxValue (maxNeeded.gold);
+	goldBars[1]->setValue (needed.gold);
+	goldBars[2]->setMaxValue (maxStored.gold);
+	goldBars[2]->setValue (stored.gold);
 
 	noneBars[2]->setMaxValue (subBase->getMaxGoldProd());
 	noneBars[2]->setValue (subBase->getMaxGoldProd() - subBase->getMaxAllowedGoldProd());
