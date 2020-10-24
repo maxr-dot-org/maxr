@@ -60,6 +60,7 @@ enum class ePlayerConnectionState;
 enum class eResourceType;
 
 struct sID;
+struct sRecoltableResources;
 
 class cGameGuiController
 {
@@ -170,7 +171,7 @@ private:
 	mutable cSignal<void (const cUnit&, const cUnit&)> repairTriggered;
 	mutable cSignal<void (const cUnit&, size_t index)> upgradeTriggered;
 	mutable cSignal<void (const cUnit&)> upgradeAllTriggered;
-	mutable cSignal<void (const cBuilding&, int, int, int)> changeResourceDistributionTriggered;
+	mutable cSignal<void (const cBuilding&, const sRecoltableResources&)> changeResourceDistributionTriggered;
 	mutable cSignal<void (const std::array<int, cResearch::kNrResearchAreas>&)> changeResearchSettingsTriggered;
 	mutable cSignal<void (const std::vector<std::pair<sID, cUnitUpgrade>>&)> takeUnitUpgradesTriggered;
 	mutable cSignal<void (const cUnit&)> selfDestructionTriggered;

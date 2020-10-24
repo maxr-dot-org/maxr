@@ -33,6 +33,8 @@ class cBase;
 
 struct sRecoltableResources
 {
+	int get (eResourceType ressourceType) const;
+
 	int metal = 0;
 	int oil = 0;
 	int gold = 0;
@@ -85,26 +87,14 @@ public:
 
 	/** returns the maximum allowed production
 	 * (without decreasing one of the other ones) of a resource */
-	int getMaxAllowedMetalProd() const;
-	int getMaxAllowedGoldProd() const;
-	int getMaxAllowedOilProd() const;
+	sRecoltableResources computeMaxAllowedProd (const sRecoltableResources& prod) const;
 
 	/** returns the current production of a resource */
 	int getMetalProd() const;
 	int getGoldProd() const;
 	int getOilProd() const;
 
-	/** sets the production of a resource.
-	 * If value is bigger then maxAllowed,
-	 * it will be reduced to the maximum allowed value */
-	void setMetalProd (int value);
-	void setGoldProd (int value);
-	void setOilProd (int value);
-
-	/** changes the production of a resource by value. */
-	void changeMetalProd(int value);
-	void changeGoldProd(int value);
-	void changeOilProd(int value);
+	void setProduction (const sRecoltableResources&);
 
 	const sRecoltableResources& getResourcesNeeded() const { return needed; }
 	const sRecoltableResources& getMaxResourcesNeeded() const { return maxNeeded; }
@@ -125,8 +115,6 @@ public:
 
 	uint32_t getChecksum(uint32_t crc) const;
 
-	mutable cSignal<void ()> destroyed;
-
 	mutable cSignal<void ()> metalChanged;
 	mutable cSignal<void ()> oilChanged;
 	mutable cSignal<void ()> goldChanged;
@@ -139,6 +127,7 @@ private:
 	*/
 	bool increaseEnergyProd(int value);
 
+	void increaseOilProd(int value);
 	//-----------------------------------
 	//turn end management:
 
@@ -172,12 +161,6 @@ private:
 	void makeTurnStartReload (cBuilding& building);
 	void makeTurnStartBuild (cBuilding& building);
 
-	/**
-	* compute the maximum allowed production of a resource,
-	* without decreasing the production of the other two
-	* @author eiko
-	*/
-	int calcMaxAllowedProd (eResourceType ressourceType) const;
 	/**
 	* adds/subtracts resources of the type storeResType to/from the subbase
 	* @author eiko
@@ -251,6 +234,8 @@ public:
 
 	uint32_t getChecksum (uint32_t crc) const;
 
+	cSignal<void (const std::vector<cBuilding*>&)> onSubbaseConfigurationChanged;
+
 	// report sources for the player:
 	mutable cSignal<void (eResourceType, int amount, bool increase)> forcedRessouceProductionChance;
 	mutable cSignal<void()> teamLow;
@@ -267,6 +252,9 @@ public:
 
 	mutable cSignal<void()> energyToLow;
 	mutable cSignal<void()> energyIsNeeded;
+
+private:
+	void addBuilding (cBuilding&, const cMap&, bool signalChange);
 
 public:
 	std::vector<std::unique_ptr<cSubBase>> SubBases;

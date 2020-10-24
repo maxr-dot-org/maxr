@@ -19,22 +19,36 @@
 
 #include "ui/graphical/menu/windows/windowresourcedistribution/windowresourcedistribution.h"
 
-#include "utility/language.h"
-#include "resources/pcx.h"
-#include "utility/string/toString.h"
 #include "game/data/base/base.h"
+#include "game/data/player/player.h"
+#include "game/data/units/building.h"
+#include "resources/pcx.h"
+#include "ui/graphical/application.h"
+#include "ui/graphical/game/widgets/turntimeclockwidget.h"
+#include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/resourcebar.h"
-#include "ui/graphical/menu/dialogs/dialogok.h"
-#include "ui/graphical/application.h"
-#include "ui/graphical/game/widgets/turntimeclockwidget.h"
-#include "game/data/units/building.h"
+#include "utility/language.h"
+#include "utility/listhelpers.h"
+#include "utility/string/toString.h"
+
+namespace
+{
+	//------------------------------------------------------------------------------
+	std::string secondBarText (int prod, int need)
+	{
+		int perTurn = prod - need;
+		std::string text = iToStr (need) + " (";
+		if (perTurn > 0) text += "+";
+		text += iToStr (perTurn) + " / " + lngPack.i18n ("Text~Comp~Turn_5") + ")";
+		return text;
+	}
+}
 
 //------------------------------------------------------------------------------
 cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& building_, std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
 	cWindow (LoadPCX (GFXOD_MINEMANAGER)),
-	subBase (std::make_unique<cSubBase>(*building_.subBase)), // TODO: do we really need to copy the whole subBase?
 	building(building_)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 11), getPosition() + cPosition (getArea().getMaxCorner().x(), 11 + 10)), lngPack.i18n ("Text~Title~Mine"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
@@ -54,17 +68,11 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 			oilBars[i]->disable();
 			goldBars[i]->disable();
 		}
-		else
-		{
-			signalConnectionManager.connect (metalBars[i]->valueChanged, std::bind (&cWindowResourceDistribution::handleMetalChanged, this));
-			signalConnectionManager.connect (oilBars[i]->valueChanged, std::bind (&cWindowResourceDistribution::handleOilChanged, this));
-			signalConnectionManager.connect (goldBars[i]->valueChanged, std::bind (&cWindowResourceDistribution::handleGoldChanged, this));
-		}
 
 		noneBars[i] = addChild (std::make_unique<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (174, 70 + 120 * i), getPosition() + cPosition (174 + 240, 70 + 120 * i + 30)), 0, 100, eResourceBarType::Blocked, eOrientationType::Horizontal));
 		noneBars[i]->disable();
 		noneBars[i]->setInverted (true);
-		noneBars[i]->setValue (30);
+		noneBars[i]->setValue (0);
 
 		std::string resourceName;
 		if (i == 0) resourceName = lngPack.i18n ("Text~Title~Metal");
@@ -76,18 +84,18 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 		addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 37 * 2 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 37 * 2 + 121 * i + 10)), lngPack.i18n ("Text~Comp~Reserve"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 		auto decreaseButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (139, 70 + 120 * i), ePushButtonType::ArrowLeftBig));
-		signalConnectionManager.connect (decreaseButton->clicked, [&, i]()
+		signalConnectionManager.connect (decreaseButton->clicked, [this, i]()
 		{
 			if (i == 0) metalBars[0]->decrease (1);
 			else if (i == 1) oilBars[0]->decrease (1);
 			else if (i == 2) goldBars[0]->decrease (1);
 		});
 		auto increaseButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (421, 70 + 120 * i), ePushButtonType::ArrowRightBig));
-		signalConnectionManager.connect (increaseButton->clicked, [&, i]()
+		signalConnectionManager.connect (increaseButton->clicked, [this, i]()
 		{
-			if (i == 0) metalBars[0]->increase (1);
-			else if (i == 1) oilBars[0]->increase (1);
-			else if (i == 2) goldBars[0]->increase (1);
+			if (i == 0 && metalBars[0]->getValue() + noneBars[i]->getValue() < metalBars[0]->getMaxValue()) metalBars[0]->increase (1);
+			else if (i == 1 && oilBars[0]->getValue() + noneBars[i]->getValue() < oilBars[0]->getMaxValue()) oilBars[0]->increase (1);
+			else if (i == 2 && goldBars[0]->getValue() + noneBars[i]->getValue() < goldBars[0]->getMaxValue()) goldBars[0]->increase (1);
 		});
 	}
 
@@ -105,138 +113,153 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 		goldLabels[i]->disable();
 	}
 
+	metalBars[0]->setValue (building.subBase->getMetalProd());
+	oilBars[0]->setValue (building.subBase->getOilProd());
+	goldBars[0]->setValue (building.subBase->getGoldProd());
+
+	setBarValues();
+	setBarLabels();
+
+	signalConnectionManager.connect (metalBars[0]->valueChanged, [this](){ handleMetalChanged(); });
+	signalConnectionManager.connect (oilBars[0]->valueChanged, [this](){ handleOilChanged(); });
+	signalConnectionManager.connect (goldBars[0]->valueChanged, [this](){ handleGoldChanged(); });
+
 	auto doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (514, 430), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Done")));
 	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (doneButton->clicked, [&]() { done(); });
 
-	setBarLabels();
-	setBarValues();
-
 	//close window, when the mine, from which this menu was called, gets destroyed.
 	signalConnectionManager.connect(building.destroyed, std::bind(&cWindowResourceDistribution::closeOnUnitDestruction, this));
 	//update subbase values, when any other building in the subbase gets destroyed
-	signalConnectionManager.connect(building.subBase->destroyed, std::bind(&cWindowResourceDistribution::updateOnSubbaseDestruction, this));
+	signalConnectionManager.connect(building.getOwner()->base.onSubbaseConfigurationChanged, [this](const std::vector<cBuilding*>& buildings){ updateOnSubbaseChanged (buildings); });
 }
 
-void cWindowResourceDistribution::updateOnSubbaseDestruction()
+
+sRecoltableResources cWindowResourceDistribution::getProduction() const
 {
-	signalConnectionManager.connect(building.subBase->destroyed, std::bind(&cWindowResourceDistribution::updateOnSubbaseDestruction, this));
-	subBase = std::make_unique<cSubBase>(*building.subBase);
-	setBarLabels();
-	setBarValues();
+	return { metalBars[0]->getValue(), oilBars[0]->getValue(), goldBars[0]->getValue()};
 }
 
-//------------------------------------------------------------------------------
-int cWindowResourceDistribution::getMetalProduction()
-{
-	return subBase->getMetalProd();
-}
 
-//------------------------------------------------------------------------------
-int cWindowResourceDistribution::getOilProduction()
+void cWindowResourceDistribution::updateOnSubbaseChanged (const std::vector<cBuilding*>& buildings)
 {
-	return subBase->getOilProd();
-}
+	if (building.subBase == nullptr || !Contains (buildings, &building)) return;
 
-//------------------------------------------------------------------------------
-int cWindowResourceDistribution::getGoldProduction()
-{
-	return subBase->getGoldProd();
-}
+	metalBars[0]->setValue (0);
+	oilBars[0]->setValue (0);
+	goldBars[0]->setValue (0);
 
-//------------------------------------------------------------------------------
-std::string cWindowResourceDistribution::secondBarText (int prod, int need)
-{
-	int perTurn = prod - need;
-	std::string text = iToStr (need) + " (";
-	if (perTurn > 0) text += "+";
-	text += iToStr (perTurn) + " / " + lngPack.i18n ("Text~Comp~Turn_5") + ")";
-	return text;
+	metalBars[0]->setValue (building.subBase->getMetalProd());
+	oilBars[0]->setValue (building.subBase->getOilProd());
+	goldBars[0]->setValue (building.subBase->getGoldProd());
 }
 
 //------------------------------------------------------------------------------
 void cWindowResourceDistribution::setBarLabels()
 {
-	const auto& needed = subBase->getResourcesNeeded();
-	const auto& stored = subBase->getResourcesStored();
+	const auto& needed = building.subBase->getResourcesNeeded();
+	const auto& stored = building.subBase->getResourcesStored();
+	const auto& prod = getProduction();
 
-	metalLabels[0]->setText (iToStr (subBase->getMetalProd()));
-	metalLabels[1]->setText (secondBarText (subBase->getMetalProd(), needed.metal));
+	metalLabels[0]->setText (iToStr (prod.metal));
+	metalLabels[1]->setText (secondBarText (prod.metal, needed.metal));
 	metalLabels[2]->setText (iToStr (stored.metal));
 
-	oilLabels[0]->setText (iToStr (subBase->getOilProd()));
-	oilLabels[1]->setText (secondBarText (subBase->getOilProd(), needed.oil));
+	oilLabels[0]->setText (iToStr (prod.oil));
+	oilLabels[1]->setText (secondBarText (prod.oil, needed.oil));
 	oilLabels[2]->setText (iToStr (stored.oil));
 
-	goldLabels[0]->setText (iToStr (subBase->getGoldProd()));
-	goldLabels[1]->setText (secondBarText (subBase->getGoldProd(), needed.gold));
+	goldLabels[0]->setText (iToStr (prod.gold));
+	goldLabels[1]->setText (secondBarText (prod.gold, needed.gold));
 	goldLabels[2]->setText (iToStr (stored.gold));
 }
 
 //------------------------------------------------------------------------------
 void cWindowResourceDistribution::setBarValues()
 {
-	const sRecoltableResources& needed = subBase->getResourcesNeeded();
-	const sRecoltableResources& maxNeeded = subBase->getMaxResourcesNeeded();
-	const sRecoltableResources& stored = subBase->getResourcesStored();
-	const sRecoltableResources& maxStored = subBase->getMaxResourcesStored();
+	const sRecoltableResources& needed = building.subBase->getResourcesNeeded();
+	const sRecoltableResources& maxNeeded = building.subBase->getMaxResourcesNeeded();
+	const sRecoltableResources& stored = building.subBase->getResourcesStored();
+	const sRecoltableResources& maxStored = building.subBase->getMaxResourcesStored();
+	const sRecoltableResources& maxAllowed = building.subBase->computeMaxAllowedProd (getProduction());
+	const sRecoltableResources maxProd{ building.subBase->getMaxMetalProd(), building.subBase->getMaxOilProd(), building.subBase->getMaxGoldProd()};
 
-	metalBars[0]->setMaxValue (subBase->getMaxMetalProd());
-	metalBars[0]->setValue (subBase->getMetalProd());
+	metalBars[0]->setMaxValue (maxProd.metal);
+	metalBars[0]->setFixedMaxValue (maxAllowed.metal);
 	metalBars[1]->setMaxValue (maxNeeded.metal);
 	metalBars[1]->setValue (needed.metal);
 	metalBars[2]->setMaxValue (maxStored.metal);
 	metalBars[2]->setValue (stored.metal);
 
-	noneBars[0]->setMaxValue (subBase->getMaxMetalProd());
-	noneBars[0]->setValue (subBase->getMaxMetalProd() - subBase->getMaxAllowedMetalProd());
+	noneBars[0]->setMaxValue (maxProd.metal);
+	noneBars[0]->setValue (maxProd.metal - maxAllowed.metal);
 
-	oilBars[0]->setMaxValue (subBase->getMaxOilProd());
-	oilBars[0]->setValue (subBase->getOilProd());
+	oilBars[0]->setMaxValue (maxProd.oil);
+	oilBars[0]->setFixedMaxValue (maxAllowed.oil);
 	oilBars[1]->setMaxValue (maxNeeded.oil);
 	oilBars[1]->setValue (needed.oil);
 	oilBars[2]->setMaxValue (maxStored.oil);
 	oilBars[2]->setValue (stored.oil);
 
-	noneBars[1]->setMaxValue (subBase->getMaxOilProd());
-	noneBars[1]->setValue (subBase->getMaxOilProd() - subBase->getMaxAllowedOilProd());
+	noneBars[1]->setMaxValue (maxProd.oil);
+	noneBars[1]->setValue (maxProd.oil - maxAllowed.oil);
 
-	goldBars[0]->setMaxValue (subBase->getMaxGoldProd());
-	goldBars[0]->setValue (subBase->getGoldProd());
+	goldBars[0]->setMaxValue (maxProd.gold);
+	goldBars[0]->setFixedMaxValue (maxAllowed.gold);
 	goldBars[1]->setMaxValue (maxNeeded.gold);
 	goldBars[1]->setValue (needed.gold);
 	goldBars[2]->setMaxValue (maxStored.gold);
 	goldBars[2]->setValue (stored.gold);
 
-	noneBars[2]->setMaxValue (subBase->getMaxGoldProd());
-	noneBars[2]->setValue (subBase->getMaxGoldProd() - subBase->getMaxAllowedGoldProd());
+	noneBars[2]->setMaxValue (maxProd.gold);
+	noneBars[2]->setValue (maxProd.gold - maxAllowed.gold);
 }
 
 //------------------------------------------------------------------------------
 void cWindowResourceDistribution::handleMetalChanged()
 {
-	subBase->setMetalProd (metalBars[0]->getValue());
+	if (inSignal) return;
+	inSignal = true;
 
-	setBarValues();
-	setBarLabels();
+	if (metalBars[0]->getValue() > metalBars[0]->getMaxValue() - noneBars[0]->getValue())
+	{
+		metalBars[0]->setValue (metalBars[0]->getMaxValue() - noneBars[1]->getValue());
+	}
+//	else
+	{
+		setBarValues();
+		setBarLabels();
+	}
+	inSignal = false;
 }
-
 //------------------------------------------------------------------------------
 void cWindowResourceDistribution::handleOilChanged()
 {
-	subBase->setOilProd (oilBars[0]->getValue());
-
-	setBarValues();
-	setBarLabels();
+	if (inSignal) return;
+	inSignal = true;
+	if (oilBars[0]->getValue() > oilBars[0]->getMaxValue() - noneBars[1]->getValue())
+	{
+		oilBars[0]->setValue (oilBars[0]->getMaxValue() - noneBars[1]->getValue());
+	}
+//	else
+	{
+		setBarValues();
+		setBarLabels();
+	}
+	inSignal = false;
 }
-
 //------------------------------------------------------------------------------
 void cWindowResourceDistribution::handleGoldChanged()
 {
-	subBase->setGoldProd (goldBars[0]->getValue());
-
+	if (inSignal) return;
+	inSignal = true;
+	if (goldBars[0]->getValue() > goldBars[0]->getMaxValue() - noneBars[2]->getValue())
+	{
+		goldBars[0]->setValue (goldBars[0]->getMaxValue() - noneBars[2]->getValue());
+	}
 	setBarValues();
 	setBarLabels();
+	inSignal = false;
 }
 
 //------------------------------------------------------------------------------

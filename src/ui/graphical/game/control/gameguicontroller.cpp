@@ -835,9 +835,9 @@ void cGameGuiController::connectClient (cClient& client)
 
 		client.sendNetMessage(cActionUpgradeVehicle(*static_cast<const cBuilding*>(&unit)));
 	});
-	clientSignalConnectionManager.connect (changeResourceDistributionTriggered, [&] (const cBuilding & building, int metalProduction, int oilProduction, int goldProduction)
+	clientSignalConnectionManager.connect (changeResourceDistributionTriggered, [&] (const cBuilding & building, const sRecoltableResources& production)
 	{
-		client.sendNetMessage(cActionRessourceDistribution(building, goldProduction, oilProduction, metalProduction));
+		client.sendNetMessage (cActionRessourceDistribution (building, production.gold, production.oil, production.gold));
 	});
 	clientSignalConnectionManager.connect (changeResearchSettingsTriggered, [&] (const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings)
 	{
@@ -1729,7 +1729,7 @@ void cGameGuiController::showResourceDistributionDialog (const cUnit& unit)
 	auto resourceDistributionWindow = application.show (std::make_shared<cWindowResourceDistribution> (building, getTurnTimeClock()));
 	resourceDistributionWindow->done.connect ([&, resourceDistributionWindow]()
 	{
-		changeResourceDistributionTriggered (building, resourceDistributionWindow->getMetalProduction(), resourceDistributionWindow->getOilProduction(), resourceDistributionWindow->getGoldProduction());
+		changeResourceDistributionTriggered (building, resourceDistributionWindow->getProduction());
 		resourceDistributionWindow->close();
 	});
 }

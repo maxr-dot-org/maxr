@@ -47,13 +47,7 @@ void cActionRessourceDistribution::execute(cModel& model) const
 
 	cSubBase& subBase = *building->subBase;
 
-	subBase.setMetalProd(0);
-	subBase.setOilProd(0);
-	subBase.setGoldProd(0);
-
 	// no need to verify the values.
 	// They will be reduced automatically, if necessary
-	subBase.setMetalProd(metalProd);
-	subBase.setGoldProd(goldProd);
-	subBase.setOilProd(oilProd);
+	subBase.setProduction ({metalProd, oilProd, goldProd});
 }
