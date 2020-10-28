@@ -77,8 +77,8 @@ void cActionTransfer::execute(cModel& model) const
 			if(destinationVehicle->getStoredResources() + transferValue > destinationVehicle->getStaticUnitData().storageResMax || destinationVehicle->getStoredResources() + transferValue < 0) return;
 
 			bool breakSwitch = false;
-			const sRecoltableResources& sourceStored = sourceBuilding->subBase->getResourcesStored();
-			const sRecoltableResources& sourceMaxStored = sourceBuilding->subBase->getMaxResourcesStored();
+			const sMiningResource& sourceStored = sourceBuilding->subBase->getResourcesStored();
+			const sMiningResource& sourceMaxStored = sourceBuilding->subBase->getMaxResourcesStored();
 
 			switch(resourceType)
 			{
@@ -118,8 +118,8 @@ void cActionTransfer::execute(cModel& model) const
 		if(destinationUnit->isABuilding())
 		{
 			const auto destinationBuilding = static_cast<cBuilding*>(destinationUnit);
-			const sRecoltableResources& destinationStored = destinationBuilding->subBase->getResourcesStored();
-			const sRecoltableResources& destinationMaxStored = destinationBuilding->subBase->getMaxResourcesStored();
+			const sMiningResource& destinationStored = destinationBuilding->subBase->getResourcesStored();
+			const sMiningResource& destinationMaxStored = destinationBuilding->subBase->getMaxResourcesStored();
 
 			bool breakSwitch = false;
 			switch(resourceType)

@@ -36,7 +36,7 @@ class cWindowResourceDistribution : public cWindow
 public:
 	cWindowResourceDistribution (const cBuilding& building, std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 
-	sRecoltableResources getProduction() const; // { return {metalBars[0]->}; }
+	sMiningResource getProduction() const;
 
 	cSignal<void ()> done;
 private:

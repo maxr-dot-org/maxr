@@ -22,12 +22,14 @@
 
 #include "action.h"
 
+#include "game/data/miningresource.h"
+
 class cUnit;
 
 class cActionRessourceDistribution : public cAction
 {
 public:
-	cActionRessourceDistribution(const cBuilding& building,	int goldProd, int oilProd, int metalProd);
+	cActionRessourceDistribution(const cBuilding& building,	const sMiningResource&);
 	cActionRessourceDistribution(cBinaryArchiveOut& archive);
 
 	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
@@ -39,15 +41,11 @@ private:
 	void serializeThis(T& archive)
 	{
 		archive & buildingId;
-		archive & goldProd;
-		archive & oilProd;
-		archive & metalProd;
+		prod.serializeThis (archive);
 	}
 
 	int buildingId;
-	int goldProd;
-	int oilProd;
-	int metalProd;
+	sMiningResource prod;
 };
 
 #endif // game_logic_actionRessourceDistributionH

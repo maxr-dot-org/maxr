@@ -148,13 +148,6 @@ cBuilding::cBuilding (const cStaticUnitData* staticData, const cDynamicUnitData*
 	BaseBW = false;
 	repeatBuild = false;
 
-	maxMetalProd = 0;
-	maxGoldProd = 0;
-	maxOilProd = 0;
-	metalProd = 0;
-	goldProd = 0;
-	oilProd = 0;
-
 	subBase = nullptr;
 	buildSpeed = 0;
 
@@ -1075,64 +1068,37 @@ void cBuilding::initMineRessourceProd (const cMap& map)
 
 	auto position = getPosition();
 
-	maxMetalProd = 0;
-	maxGoldProd = 0;
-	maxOilProd = 0;
+	maxProd = {0, 0, 0};
 	const sResources* res = &map.getResource (position);
 
-	switch (res->typ)
-	{
-		case eResourceType::None: break;
-		case eResourceType::Metal: maxMetalProd += res->value; break;
-		case eResourceType::Gold:  maxGoldProd  += res->value; break;
-		case eResourceType::Oil:   maxOilProd   += res->value; break;
-	}
+	if (res->typ != eResourceType::None) maxProd.get (res->typ) += res->value;
 
 	if (isBig)
 	{
 		position.x()++;
 		res = &map.getResource(position);
-		switch (res->typ)
-		{
-		case eResourceType::None: break;
-		case eResourceType::Metal: maxMetalProd += res->value; break;
-		case eResourceType::Gold:  maxGoldProd += res->value; break;
-		case eResourceType::Oil:   maxOilProd += res->value; break;
-		}
+		if (res->typ != eResourceType::None) maxProd.get (res->typ) += res->value;
 
 		position.y()++;
 		res = &map.getResource(position);
-		switch (res->typ)
-		{
-		case eResourceType::None: break;
-		case eResourceType::Metal: maxMetalProd += res->value; break;
-		case eResourceType::Gold:  maxGoldProd += res->value; break;
-		case eResourceType::Oil:   maxOilProd += res->value; break;
-		}
+		if (res->typ != eResourceType::None) maxProd.get (res->typ) += res->value;
 
 		position.x()--;
 		res = &map.getResource(position);
-		switch (res->typ)
-		{
-		case eResourceType::None: break;
-		case eResourceType::Metal: maxMetalProd += res->value; break;
-		case eResourceType::Gold:  maxGoldProd += res->value; break;
-		case eResourceType::Oil:   maxOilProd += res->value; break;
-		}
+		if (res->typ != eResourceType::None) maxProd.get (res->typ) += res->value;
 	}
 
-	maxMetalProd = min (maxMetalProd, staticData->canMineMaxRes);
-	maxGoldProd  = min (maxGoldProd, staticData->canMineMaxRes);
-	maxOilProd   = min (maxOilProd, staticData->canMineMaxRes);
+	maxProd.metal = min (maxProd.metal, staticData->canMineMaxRes);
+	maxProd.oil = min (maxProd.oil, staticData->canMineMaxRes);
+	maxProd.gold = min (maxProd.gold, staticData->canMineMaxRes);
 
 	// set default mine allocation
 	int freeProductionCapacity = staticData->canMineMaxRes;
-	metalProd = maxMetalProd;
-	freeProductionCapacity -= metalProd;
-	goldProd = min(maxGoldProd, freeProductionCapacity);
-	freeProductionCapacity -= goldProd;
-	oilProd = min(maxOilProd, freeProductionCapacity);
-
+	prod.metal = maxProd.metal;
+	freeProductionCapacity -= prod.metal;
+	prod.gold = min(maxProd.gold, freeProductionCapacity);
+	freeProductionCapacity -= prod.gold;
+	prod.oil = min(maxProd.oil, freeProductionCapacity);
 }
 
 //--------------------------------------------------------------------------
@@ -1168,7 +1134,7 @@ void cBuilding::calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array
 		a -= 8 * staticData->needsMetal;
 	}
 
-	// now this is a litle bit tricky ...
+	// now this is a little bit tricky ...
 	// trying to calculate a plausible value,
 	// if we are changing the speed of an already started build-job
 	if (remainingMetal >= 0)
@@ -1422,19 +1388,10 @@ void cBuilding::setRepeatBuild(bool value)
 	if(value != repeatBuild) repeatBuildChanged();
 }
 
-int cBuilding::getMaxProd(eResourceType type) const
+//-----------------------------------------------------------------------------
+const sMiningResource& cBuilding::getMaxProd() const
 {
-	switch (type)
-	{
-	case eResourceType::Metal:
-		return maxMetalProd;
-	case eResourceType::Gold:
-		return maxGoldProd;
-	case eResourceType::Oil:
-		return maxOilProd;
-	default:
-		return 0;
-	}
+	return maxProd;
 }
 
 //-----------------------------------------------------------------------------
@@ -1487,18 +1444,14 @@ uint32_t cBuilding::getChecksum(uint32_t crc) const
 	crc = calcCheckSum(BaseBE, crc);
 	crc = calcCheckSum(BaseBS, crc);
 	crc = calcCheckSum(BaseBW, crc);
-	crc = calcCheckSum(metalProd, crc);
-	crc = calcCheckSum(oilProd, crc);
-	crc = calcCheckSum(goldProd, crc);
+	crc = calcCheckSum(prod, crc);
 	crc = calcCheckSum(wasWorking, crc);
 	crc = calcCheckSum(points, crc);
 	crc = calcCheckSum(isWorking, crc);
 	crc = calcCheckSum(buildSpeed, crc);
 	crc = calcCheckSum(metalPerRound, crc);
 	crc = calcCheckSum(repeatBuild, crc);
-	crc = calcCheckSum(maxMetalProd, crc);
-	crc = calcCheckSum(maxOilProd, crc);
-	crc = calcCheckSum(maxGoldProd, crc);
+	crc = calcCheckSum(maxProd, crc);
 	crc = calcCheckSum(researchArea, crc);
 	crc = calcCheckSum(buildList, crc);
 

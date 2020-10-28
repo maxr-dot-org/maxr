@@ -31,15 +31,6 @@ namespace
 {
 
 	//--------------------------------------------------------------------------
-	uint32_t calcCheckSum (const sRecoltableResources& res, uint32_t crc)
-	{
-		crc = ::calcCheckSum (res.metal, crc);
-		crc = ::calcCheckSum (res.oil, crc);
-		crc = ::calcCheckSum (res.gold, crc);
-		return crc;
-	}
-
-	//--------------------------------------------------------------------------
 	bool isAOnlineStation (const cBuilding* building)
 	{
 		return building->getStaticUnitData().produceEnergy > 1 && building->isUnitWorking();
@@ -64,23 +55,23 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
-	int calcMaxProd (const std::vector<cBuilding*>& buildings, eResourceType ressourceType)
+	sMiningResource calcMaxProd (const std::vector<cBuilding*>& buildings)
 	{
-		int maxProd = 0;
+		sMiningResource maxProd;
 		for (const cBuilding* building : buildings)
 		{
 			if (building->getStaticUnitData().canMineMaxRes <= 0 || !building->isUnitWorking()) continue;
 
-			maxProd += building->getMaxProd (ressourceType);
+			maxProd += building->getMaxProd();
 		}
 		return maxProd;
 	}
 
 	struct sResourcesLimit
 	{
-		sRecoltableResources min; //<! minimal, assuming maximum for others
-		sRecoltableResources extraForOthers; //!< extra amount of resource which can be distribute freely to other resource without impact
-		sRecoltableResources max; //<! total of maxProd
+		sMiningResource min; //<! minimal, assuming maximum for others
+		sMiningResource extraForOthers; //!< extra amount of resource which can be distribute freely to other resource without impact
+		sMiningResource max; //<! total of maxProd
 	};
 
 	//--------------------------------------------------------------------------
@@ -92,9 +83,9 @@ namespace
 		{
 			const auto total = building->getStaticUnitData().canMineMaxRes;
 			if (total <= 0 || !building->isUnitWorking()) continue;
-			const int metal = building->getMaxProd (eResourceType::Metal);
-			const int oil = building->getMaxProd (eResourceType::Oil);
-			const int gold = building->getMaxProd (eResourceType::Gold);
+			const int metal = building->getMaxProd().get (eResourceType::Metal);
+			const int oil = building->getMaxProd().get (eResourceType::Oil);
+			const int gold = building->getMaxProd().get (eResourceType::Gold);
 
 			// resources amount which doesn't decrease impose limit on other resources
 			const int minMetal = std::max (0, std::min (metal, total - oil - gold));
@@ -121,9 +112,9 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
-	sRecoltableResources calcMaxAllowedProd (const sResourcesLimit& limits, const sRecoltableResources& current)
+	sMiningResource calcMaxAllowedProd (const sResourcesLimit& limits, const sMiningResource& current)
 	{
-		sRecoltableResources res;
+		sMiningResource res;
 
 		int metalToDistribute = std::max (0, current.metal - limits.min.metal);
 		int oilToDistribute = std::max (0, current.oil - limits.min.oil);
@@ -136,18 +127,6 @@ namespace
 		return res;
 	}
 
-}
-
-//------------------------------------------------------------------------------
-int sRecoltableResources::get (eResourceType ressourceType) const
-{
-	switch (ressourceType)
-	{
-		case eResourceType::Metal: return metal;
-		case eResourceType::Oil: return oil;
-		case eResourceType::Gold: return gold;
-	}
-	return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -182,42 +161,22 @@ cSubBase::~cSubBase()
 	}
 }
 
-int cSubBase::getMaxMetalProd() const
+sMiningResource cSubBase::getMaxProd() const
 {
-	return calcMaxProd (buildings, eResourceType::Metal);
+	return calcMaxProd (buildings);
 }
 
-int cSubBase::getMaxGoldProd() const
-{
-	return calcMaxProd (buildings, eResourceType::Gold);
-}
-
-int cSubBase::getMaxOilProd() const
-{
-	return calcMaxProd (buildings, eResourceType::Oil);
-}
-
-sRecoltableResources cSubBase::computeMaxAllowedProd (const sRecoltableResources& prod) const
+sMiningResource cSubBase::computeMaxAllowedProd (const sMiningResource& prod) const
 {
 	return calcMaxAllowedProd (computeResourcesLimit (buildings), prod);
 }
 
-int cSubBase::getMetalProd() const
+const sMiningResource& cSubBase::getProd() const
 {
-	return prod.metal;
+	return prod;
 }
 
-int cSubBase::getGoldProd() const
-{
-	return prod.gold;
-}
-
-int cSubBase::getOilProd() const
-{
-	return prod.oil;
-}
-
-void cSubBase::setProduction (const sRecoltableResources& newProd)
+void cSubBase::setProduction (const sMiningResource& newProd)
 {
 	const auto& limits = computeResourcesLimit (buildings);
 	auto allowed = calcMaxAllowedProd (limits, {0, 0, 0});
@@ -315,7 +274,7 @@ bool cSubBase::increaseEnergyProd (int value)
 
 	// check available fuel
 	int neededFuel = stations * 6 + generators * 2;
-	if (neededFuel > stored.oil + getMaxOilProd())
+	if (neededFuel > stored.oil + getMaxProd().oil)
 	{
 		// not possible to produce enough fuel
 		base.fuelInsufficient();
@@ -533,7 +492,7 @@ bool cSubBase::checkOil()
 
 	// check needed oil
 	int neededOil = stations * 6 + generators * 2;
-	const int availableOil = getMaxOilProd() + stored.oil;
+	const int availableOil = getMaxProd().oil + stored.oil;
 	bool oilMissing = false;
 	if (neededOil > availableOil)
 	{
@@ -589,9 +548,9 @@ bool cSubBase::checkEnergy ()
 		if (!building.getStaticUnitData().needsEnergy || !building.isUnitWorking()) continue;
 
 		// do not shut down ressource producers in the first run
-		if (building.getMaxProd(eResourceType::Metal) > 0 ||
-			building.getMaxProd(eResourceType::Gold) > 0 ||
-			building.getMaxProd(eResourceType::Oil) > 0) continue;
+		if (building.getMaxProd().get (eResourceType::Metal) > 0 ||
+			building.getMaxProd().get (eResourceType::Gold) > 0 ||
+			building.getMaxProd().get (eResourceType::Oil) > 0) continue;
 
 		building.stopWork (false);
 
@@ -604,7 +563,7 @@ bool cSubBase::checkEnergy ()
 		if (!building.getStaticUnitData().needsEnergy || !building.isUnitWorking()) continue;
 
 		// do not shut down oil producers in the second run
-		if (building.getMaxProd(eResourceType::Oil) > 0) continue;
+		if (building.getMaxProd().get(eResourceType::Oil) > 0) continue;
 
 		building.stopWork (false);
 
@@ -648,7 +607,7 @@ bool cSubBase::checkTurnEnd ()
 
 	// there is a loop around checkOil/checkEnergy,
 	// because a lack of energy can lead a shutdown of fuel producers,
-	// which can lead again to swiched off energy producers, etc...
+	// which can lead again to switched off energy producers, etc...
 	bool oilMissing = false;
 	bool energyMissing = false;
 	bool changed = true;
@@ -866,9 +825,7 @@ void cSubBase::addBuilding (cBuilding& b)
 	// calculate resource production
 	if (b.getStaticUnitData().canMineMaxRes > 0 && b.isUnitWorking())
 	{
-		prod.metal += b.metalProd;
-		prod.oil += b.oilProd;
-		prod.gold += b.goldProd;
+		prod += b.prod;
 	}
 	// calculate humans
 	if (b.getStaticUnitData().produceHumans)
@@ -924,7 +881,7 @@ bool cSubBase::startBuilding(cBuilding& b)
 	{
 		// check if there is enough Oil for the generators
 		// (current production + reserves)
-		if (staticData.needsOil + needed.oil > stored.oil + getMaxOilProd())
+		if (staticData.needsOil + needed.oil > stored.oil + getMaxProd().oil)
 		{
 			base.fuelInsufficient();
 			return false;
@@ -947,9 +904,7 @@ bool cSubBase::startBuilding(cBuilding& b)
 	// set mine values. This has to be undone, if the energy is insufficient
 	if (staticData.canMineMaxRes > 0)
 	{
-		prod.metal += b.metalProd;
-		prod.oil += b.oilProd;
-		prod.gold += b.goldProd;
+		prod += b.prod;
 	}
 
 	// Energy consumers:
@@ -965,9 +920,7 @@ bool cSubBase::startBuilding(cBuilding& b)
 				// reset mine values
 				if (staticData.canMineMaxRes > 0)
 				{
-					prod.metal -= b.metalProd;
-					prod.oil -= b.oilProd;
-					prod.gold -= b.goldProd;
+					prod -= b.prod;
 				}
 
 				base.energyInsufficient();
@@ -1032,9 +985,7 @@ bool cSubBase::stopBuilding(cBuilding& b, bool forced /*= false*/)
 	// Minen:
 	if (staticData.canMineMaxRes > 0)
 	{
-		prod.metal -= b.metalProd;
-		prod.oil -= b.oilProd;
-		prod.gold -= b.goldProd;
+		prod -= b.prod;
 	}
 
 	return true;

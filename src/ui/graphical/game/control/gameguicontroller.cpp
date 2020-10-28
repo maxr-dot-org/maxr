@@ -835,9 +835,9 @@ void cGameGuiController::connectClient (cClient& client)
 
 		client.sendNetMessage(cActionUpgradeVehicle(*static_cast<const cBuilding*>(&unit)));
 	});
-	clientSignalConnectionManager.connect (changeResourceDistributionTriggered, [&] (const cBuilding & building, const sRecoltableResources& production)
+	clientSignalConnectionManager.connect (changeResourceDistributionTriggered, [&] (const cBuilding& building, const sMiningResource& production)
 	{
-		client.sendNetMessage (cActionRessourceDistribution (building, production.gold, production.oil, production.gold));
+		client.sendNetMessage (cActionRessourceDistribution (building, production));
 	});
 	clientSignalConnectionManager.connect (changeResearchSettingsTriggered, [&] (const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings)
 	{

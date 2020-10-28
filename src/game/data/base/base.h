@@ -21,6 +21,7 @@
 #define game_data_base_baseH
 
 #include "game/data/units/unitdata.h"
+#include "game/data/miningresource.h"
 
 #include <memory>
 #include <vector>
@@ -30,15 +31,6 @@ class cMap;
 class cPlayer;
 class cPosition;
 class cBase;
-
-struct sRecoltableResources
-{
-	int get (eResourceType ressourceType) const;
-
-	int metal = 0;
-	int oil = 0;
-	int gold = 0;
-};
 
 class cSubBase
 {
@@ -80,27 +72,23 @@ public:
 	//------------------------------------
 	//resource management:
 
-	/** returns the maximum production of a resource */
-	int getMaxMetalProd() const;
-	int getMaxGoldProd() const;
-	int getMaxOilProd() const;
+	/** returns the maximum production */
+	sMiningResource getMaxProd() const;
 
 	/** returns the maximum allowed production
-	 * (without decreasing one of the other ones) of a resource */
-	sRecoltableResources computeMaxAllowedProd (const sRecoltableResources& prod) const;
+	 * (without decreasing one of the other ones) of each resource */
+	sMiningResource computeMaxAllowedProd (const sMiningResource& prod) const;
 
-	/** returns the current production of a resource */
-	int getMetalProd() const;
-	int getGoldProd() const;
-	int getOilProd() const;
+	/** returns the current production */
+	const sMiningResource& getProd() const;
 
-	void setProduction (const sRecoltableResources&);
+	void setProduction (const sMiningResource&);
 
-	const sRecoltableResources& getResourcesNeeded() const { return needed; }
-	const sRecoltableResources& getMaxResourcesNeeded() const { return maxNeeded; }
+	const sMiningResource& getResourcesNeeded() const { return needed; }
+	const sMiningResource& getMaxResourcesNeeded() const { return maxNeeded; }
 
-	const sRecoltableResources& getResourcesStored() const { return stored; }
-	const sRecoltableResources& getMaxResourcesStored() const { return maxStored; }
+	const sMiningResource& getResourcesStored() const { return stored; }
+	const sMiningResource& getMaxResourcesStored() const { return maxStored; }
 
 	int getMaxEnergyProd() const;
 	int getEnergyProd() const;
@@ -177,12 +165,12 @@ private:
 private:
 	std::vector<cBuilding*> buildings;
 
-	sRecoltableResources stored;
-	sRecoltableResources maxStored;
-	sRecoltableResources needed;
-	sRecoltableResources maxNeeded;
-	sRecoltableResources prod;
-	//sRecoltableResources maxProd;
+	sMiningResource stored;
+	sMiningResource maxStored;
+	sMiningResource needed;
+	sMiningResource maxNeeded;
+	sMiningResource prod;
+	//sMiningResource maxProd;
 
 	int maxEnergyProd = 0;
 	int energyProd = 0;

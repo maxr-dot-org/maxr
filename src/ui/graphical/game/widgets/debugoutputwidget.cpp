@@ -481,34 +481,34 @@ void cDebugOutputWidget::traceVehicle (const cVehicle& vehicle, cPosition& drawP
 //------------------------------------------------------------------------------
 void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& drawPosition)
 {
-	std::string tmpString;
+	std::string s;
 
 	auto font = cUnicodeFont::font.get();
 
-	tmpString = "name: \"" + building.getDisplayName() + "\" id: \"" + iToStr (building.iID) + "\" owner: \"" + (building.getOwner() ? building.getOwner()->getName() : "<null>") + "\" pos: " + toString (building.getPosition());
-	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
+	s = "name: \"" + building.getDisplayName() + "\" id: \"" + iToStr (building.iID) + "\" owner: \"" + (building.getOwner() ? building.getOwner()->getName() : "<null>") + "\" pos: " + toString (building.getPosition());
+	font->showText (drawPosition, s, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
-	tmpString = "dir: " + iToStr (building.dir) + " on sentry: +" + iToStr (building.isSentryActive()) + " sub_base: " + pToStr (building.subBase);
-	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
+	s= "dir: " + iToStr (building.dir) + " on sentry: +" + iToStr (building.isSentryActive()) + " sub_base: " + pToStr (building.subBase);
+	font->showText (drawPosition, s, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
-	tmpString = "attacking: " + iToStr (building.isAttacking()) + " UnitsData.dirt_typ: " + iToStr (building.rubbleTyp) + " UnitsData.dirt_value: +" + iToStr (building.rubbleValue) + " big_dirt: " + iToStr (building.getIsBig()) + " is_working: " + iToStr (building.isUnitWorking());
-	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
+	s = "attacking: " + iToStr (building.isAttacking()) + " UnitsData.dirt_typ: " + iToStr (building.rubbleTyp) + " UnitsData.dirt_value: +" + iToStr (building.rubbleValue) + " big_dirt: " + iToStr (building.getIsBig()) + " is_working: " + iToStr (building.isUnitWorking());
+	font->showText (drawPosition, s, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
-	tmpString = " max_metal_p: " + iToStr (building.maxMetalProd) +
-				" max_oil_p: " + iToStr (building.maxOilProd) +
-				" max_gold_p: " + iToStr (building.maxGoldProd);
-	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
+	s = " production: {" + iToStr (building.prod.metal) + "/" + iToStr (building.maxProd.metal)
+		+ ", " + iToStr (building.prod.oil) + "/" + iToStr (building.maxProd.oil)
+		+ ", " + iToStr (building.prod.gold) + "/" + iToStr (building.maxProd.gold) + "}";
+	font->showText (drawPosition, s, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
-	tmpString = "disabled: " + iToStr (building.getDisabledTurns());
-	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
+	s = "disabled: " + iToStr (building.getDisabledTurns());
+	font->showText (drawPosition, s, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
-	tmpString = " stored_vehicles_count: " + iToStr ((int)building.storedUnits.size());
-	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
+	s = " stored_vehicles_count: " + iToStr ((int)building.storedUnits.size());
+	font->showText (drawPosition, s, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
 	for (size_t i = 0; i != building.storedUnits.size(); ++i)
@@ -519,11 +519,10 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 	}
 
 	const size_t buildingBuildListSize = building.getBuildListSize();
-	tmpString =
-		"build_speed: "        + iToStr (building.getBuildSpeed()) +
+	s = "build_speed: "        + iToStr (building.getBuildSpeed()) +
 		" repeat_build: "      + iToStr (building.getRepeatBuild()) +
 		" build_list_count: +" + iToStr ((int)buildingBuildListSize);
-	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
+	font->showText (drawPosition, s, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
 	for (size_t i = 0; i != buildingBuildListSize; ++i)
@@ -535,12 +534,12 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 
 	if (debugTraceServer)
 	{
-		tmpString = "seen by players: owner";
+		s = "seen by players: owner";
 		for (size_t i = 0; i != building.seenByPlayerList.size(); ++i)
 		{
-			tmpString += ", \"" + building.seenByPlayerList[i]->getName() + "\"";
+			s += ", \"" + building.seenByPlayerList[i]->getName() + "\"";
 		}
-		font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPosition, s, FONT_LATIN_SMALL_WHITE);
 		drawPosition.y() += 8;
 	}
 }

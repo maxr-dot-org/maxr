@@ -22,6 +22,7 @@
 
 #include "defines.h"
 #include "maxrconfig.h"
+#include "game/data/miningresource.h"
 #include "game/data/units/unitdata.h" // for sUnitData, sID
 #include "game/data/units/unit.h"
 #include "game/logic/upgradecalculator.h" // cResearch::ResearchArea
@@ -131,14 +132,6 @@ private:
 };
 
 //--------------------------------------------------------------------------
-enum ResourceKind
-{
-	TYPE_METAL = 0,
-	TYPE_OIL   = 1,
-	TYPE_GOLD  = 2
-};
-
-//--------------------------------------------------------------------------
 /** Class cBuilding for one building. */
 //--------------------------------------------------------------------------
 class cBuilding : public cUnit
@@ -153,17 +146,6 @@ public:
 	bool isABuilding() const override { return true; }
 	bool isRubble() const { return rubbleValue > 0; }
 
-	const sBuildingUIData* uiData;
-	mutable int effectAlpha; // alpha value for the effect
-	bool BaseN, BaseE, BaseS, BaseW; // is the building connected in this direction?
-	bool BaseBN, BaseBE, BaseBS, BaseBW; // is the building connected in this direction (only for big buildings)
-	cSubBase* subBase;     // the subbase to which this building belongs
-	int metalProd, oilProd, goldProd;          // production settings (from mine allocation menu)
-
-	int DamageFXPointX, DamageFXPointY, DamageFXPointX2, DamageFXPointY2; // the points, where smoke will be generated when the building is damaged
-	/** true if the building was has been working before it was disabled */
-	bool wasWorking;
-	int points;     // accumulated eco-sphere points
 
 	int playStream();
 	std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
@@ -222,7 +204,7 @@ public:
 	void setMetalPerRound(int value);
 	void setRepeatBuild(bool value);
 
-	int getMaxProd(eResourceType type) const;
+	const sMiningResource& getMaxProd() const;
 
 	void setResearchArea (cResearch::ResearchArea area);
 	cResearch::ResearchArea getResearchArea() const;
@@ -255,12 +237,12 @@ public:
 		archive & NVP(BaseBE);
 		archive & NVP(BaseBS);
 		archive & NVP(BaseBW);
-		archive & NVP(maxMetalProd);
-		archive & NVP(maxOilProd);
-		archive & NVP(maxGoldProd);
-		archive & NVP(metalProd);
-		archive & NVP(oilProd);
-		archive & NVP(goldProd);
+		archive & serialization::makeNvp("maxMetalProd", maxProd.metal);
+		archive & serialization::makeNvp("maxOilProd", maxProd.oil);
+		archive & serialization::makeNvp("maxGoldProd", maxProd.gold);
+		archive & serialization::makeNvp("metalProd", prod.metal);
+		archive & serialization::makeNvp("oilProd", prod.oil);
+		archive & serialization::makeNvp("goldProd", prod.gold);
 		archive & NVP(buildSpeed);
 		archive & NVP(metalPerRound);
 		archive & NVP(repeatBuild);
@@ -307,13 +289,28 @@ private:
 	void render_beton (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const;
 	void connectFirstBuildListItem();
 
+	void registerOwnerEvents();
+
+public:
+	const sBuildingUIData* uiData = nullptr;
+	mutable int effectAlpha; // alpha value for the effect
+	bool BaseN, BaseE, BaseS, BaseW; // is the building connected in this direction?
+	bool BaseBN, BaseBE, BaseBS, BaseBW; // is the building connected in this direction (only for big buildings)
+	cSubBase* subBase = nullptr;     // the subbase to which this building belongs
+	sMiningResource prod;          // production settings (from mine allocation menu)
+
+	int DamageFXPointX, DamageFXPointY, DamageFXPointX2, DamageFXPointY2; // the points, where smoke will be generated when the building is damaged
+	/** true if the building was has been working before it was disabled */
+	bool wasWorking;
+	int points;     // accumulated eco-sphere points
+private:
 	bool isWorking;  // is the building currently working?
 
 	int buildSpeed;
 	int metalPerRound;
 	bool repeatBuild;
 
-	int maxMetalProd, maxOilProd, maxGoldProd; // the maximum possible production of the building (ressources under the building)
+	sMiningResource maxProd; // the maximum possible production of the building (resources under the building)
 
 	int rubbleTyp;     // type of the rubble graphic (when unit is rubble)
 	int rubbleValue;   // number of resources in the rubble field
@@ -321,8 +318,6 @@ private:
 	cResearch::ResearchArea researchArea; ///< if the building can research, this is the area the building last researched or is researching
 
 	std::vector<cBuildListItem> buildList; // list with the units to be build by this factory
-
-	void registerOwnerEvents();
 };
 
 #endif // game_data_units_buildingH

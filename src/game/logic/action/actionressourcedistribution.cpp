@@ -22,12 +22,10 @@
 #include "game/data/model.h"
 
 //------------------------------------------------------------------------------
-cActionRessourceDistribution::cActionRessourceDistribution(const cBuilding& building, int goldProd, int oilProd, int metalProd) :
+cActionRessourceDistribution::cActionRessourceDistribution (const cBuilding& building, const sMiningResource& prod) :
 	cAction(eActiontype::ACTION_RESSOURCE_DISTRIBUTION),
 	buildingId(building.getId()),
-	goldProd(goldProd),
-	oilProd(oilProd),
-	metalProd(metalProd)
+	prod (prod)
 {}
 
 //------------------------------------------------------------------------------
@@ -49,5 +47,5 @@ void cActionRessourceDistribution::execute(cModel& model) const
 
 	// no need to verify the values.
 	// They will be reduced automatically, if necessary
-	subBase.setProduction ({metalProd, oilProd, goldProd});
+	subBase.setProduction (prod);
 }

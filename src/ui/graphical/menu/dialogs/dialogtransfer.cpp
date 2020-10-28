@@ -162,8 +162,8 @@ void cNewDialogTransfer::initCargo (int& cargo, int& maxCargo, const cUnit& unit
 
 		if (unit2.isAVehicle())
 		{
-			const sRecoltableResources& maxStored = building.subBase->getMaxResourcesStored();
-			const sRecoltableResources& stored = building.subBase->getResourcesStored();
+			const sMiningResource& maxStored = building.subBase->getMaxResourcesStored();
+			const sMiningResource& stored = building.subBase->getResourcesStored();
 
 			switch (unit2.getStaticUnitData().storeResType)
 			{

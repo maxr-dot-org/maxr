@@ -142,8 +142,8 @@ void cUnitDetailsHud::reset()
 			if (unit->isABuilding())
 			{
 				const auto& building = static_cast<const cBuilding&> (*unit);
-				const sRecoltableResources& stored = building.subBase->getResourcesStored();
-				const sRecoltableResources& maxStored = building.subBase->getMaxResourcesStored();
+				const sMiningResource& stored = building.subBase->getResourcesStored();
+				const sMiningResource& maxStored = building.subBase->getMaxResourcesStored();
 
 				switch (staticData.storeResType)
 				{

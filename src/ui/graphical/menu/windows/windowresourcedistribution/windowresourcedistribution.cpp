@@ -113,9 +113,10 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 		goldLabels[i]->disable();
 	}
 
-	metalBars[0]->setValue (building.subBase->getMetalProd());
-	oilBars[0]->setValue (building.subBase->getOilProd());
-	goldBars[0]->setValue (building.subBase->getGoldProd());
+	const sMiningResource& prod = building.subBase->getProd();
+	metalBars[0]->setValue (prod.metal);
+	oilBars[0]->setValue (prod.oil);
+	goldBars[0]->setValue (prod.oil);
 
 	setBarValues();
 	setBarLabels();
@@ -135,7 +136,7 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 }
 
 
-sRecoltableResources cWindowResourceDistribution::getProduction() const
+sMiningResource cWindowResourceDistribution::getProduction() const
 {
 	return { metalBars[0]->getValue(), oilBars[0]->getValue(), goldBars[0]->getValue()};
 }
@@ -145,13 +146,15 @@ void cWindowResourceDistribution::updateOnSubbaseChanged (const std::vector<cBui
 {
 	if (building.subBase == nullptr || !Contains (buildings, &building)) return;
 
+	// reset to zero first as 'FixedMax' depends on other bars
 	metalBars[0]->setValue (0);
 	oilBars[0]->setValue (0);
 	goldBars[0]->setValue (0);
 
-	metalBars[0]->setValue (building.subBase->getMetalProd());
-	oilBars[0]->setValue (building.subBase->getOilProd());
-	goldBars[0]->setValue (building.subBase->getGoldProd());
+	const sMiningResource& prod = building.subBase->getProd();
+	metalBars[0]->setValue (prod.metal);
+	oilBars[0]->setValue (prod.oil);
+	goldBars[0]->setValue (prod.oil);
 }
 
 //------------------------------------------------------------------------------
@@ -177,12 +180,12 @@ void cWindowResourceDistribution::setBarLabels()
 //------------------------------------------------------------------------------
 void cWindowResourceDistribution::setBarValues()
 {
-	const sRecoltableResources& needed = building.subBase->getResourcesNeeded();
-	const sRecoltableResources& maxNeeded = building.subBase->getMaxResourcesNeeded();
-	const sRecoltableResources& stored = building.subBase->getResourcesStored();
-	const sRecoltableResources& maxStored = building.subBase->getMaxResourcesStored();
-	const sRecoltableResources& maxAllowed = building.subBase->computeMaxAllowedProd (getProduction());
-	const sRecoltableResources maxProd{ building.subBase->getMaxMetalProd(), building.subBase->getMaxOilProd(), building.subBase->getMaxGoldProd()};
+	const sMiningResource& needed = building.subBase->getResourcesNeeded();
+	const sMiningResource& maxNeeded = building.subBase->getMaxResourcesNeeded();
+	const sMiningResource& stored = building.subBase->getResourcesStored();
+	const sMiningResource& maxStored = building.subBase->getMaxResourcesStored();
+	const sMiningResource& maxAllowed = building.subBase->computeMaxAllowedProd (getProduction());
+	const sMiningResource maxProd = building.subBase->getMaxProd();
 
 	metalBars[0]->setMaxValue (maxProd.metal);
 	metalBars[0]->setFixedMaxValue (maxAllowed.metal);

@@ -709,7 +709,7 @@ bool cVehicle::canTransferTo (const cUnit& unit) const
 		if (!b->subBase)
 			return false;
 
-		const sRecoltableResources& maxStored = b->subBase->getMaxResourcesStored();
+		const sMiningResource& maxStored = b->subBase->getMaxResourcesStored();
 		if (staticData->storeResType == eResourceType::Metal && maxStored.metal == 0)
 			return false;
 
