@@ -22,6 +22,7 @@
 #include "game/data/base/base.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
+#include "game/logic/subbaseresourcedistribution.h"
 #include "resources/pcx.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
@@ -113,6 +114,14 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 		goldLabels[i]->disable();
 	}
 
+	// reset to zero first as 'FixedMax' depends on other bars
+	metalBars[0]->setValue (0);
+	oilBars[0]->setValue (0);
+	goldBars[0]->setValue (0);
+
+	setBarValues();
+	setBarLabels();
+
 	const sMiningResource& prod = building.subBase->getProd();
 	metalBars[0]->setValue (prod.metal);
 	oilBars[0]->setValue (prod.oil);
@@ -184,7 +193,7 @@ void cWindowResourceDistribution::setBarValues()
 	const sMiningResource& maxNeeded = building.subBase->getMaxResourcesNeeded();
 	const sMiningResource& stored = building.subBase->getResourcesStored();
 	const sMiningResource& maxStored = building.subBase->getMaxResourcesStored();
-	const sMiningResource& maxAllowed = building.subBase->computeMaxAllowedProd (getProduction());
+	const sMiningResource& maxAllowed = computeMaxAllowedProduction (*building.subBase, getProduction());
 	const sMiningResource maxProd = building.subBase->getMaxProd();
 
 	metalBars[0]->setMaxValue (maxProd.metal);

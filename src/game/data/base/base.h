@@ -75,10 +75,6 @@ public:
 	/** returns the maximum production */
 	sMiningResource getMaxProd() const;
 
-	/** returns the maximum allowed production
-	 * (without decreasing one of the other ones) of each resource */
-	sMiningResource computeMaxAllowedProd (const sMiningResource& prod) const;
-
 	/** returns the current production */
 	const sMiningResource& getProd() const;
 

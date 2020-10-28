@@ -17,44 +17,24 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef utility_rangesH
-#define utility_rangesH
+#ifndef game_logic_subbaseresourcedistributionH
+#define game_logic_subbaseresourcedistributionH
 
-#include <algorithm>
 #include <vector>
 
-namespace ranges
-{
+class cBuilding;
+class cSubBase;
+struct sMiningResource;
 
-template <typename Range, typename Predicate>
-auto count_if(const Range& range, Predicate&& predicate)
-{
-	return std::count_if(std::begin (range), std::end (range), std::forward<Predicate>(predicate));
-}
+/** returns the maximum allowed production
+ * (without decreasing one of the other ones) of each resource */
+sMiningResource computeMaxAllowedProduction (const cSubBase&, const sMiningResource& prod);
 
+sMiningResource computeProduction (const std::vector<cBuilding*>&);
 
-template <typename Range, typename Value>
-auto find(Range&& range, const Value& value)
-{
-	return std::find(std::begin (range), std::end (range), value);
-}
+sMiningResource setBuildingsProduction (std::vector<cBuilding*>&, sMiningResource);
 
-template <typename Range, typename Predicate>
-auto find_if(Range&& range, Predicate&& predicate)
-{
-	return std::find_if(std::begin (range), std::end (range), std::forward<Predicate>(predicate));
-}
+sMiningResource increaseOilProduction (std::vector<cBuilding*>&, int missingOil);
 
-template <typename Range, typename Projection>
-auto Transform(Range&& range, Projection&& proj)
--> std::vector<std::decay_t<decltype (proj (*std::begin (range)))>>
-{
-	std::vector<std::decay_t<decltype (proj (*std::begin (range)))>> res;
-	res.reserve (range.size());
-	std::transform (std::begin (range), std::end (range), std::back_inserter(res), proj);
-	return res;
-}
-
-}
 
 #endif

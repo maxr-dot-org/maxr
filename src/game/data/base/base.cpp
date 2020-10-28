@@ -22,6 +22,7 @@
 #include "game/data/map/map.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
+#include "game/logic/subbaseresourcedistribution.h"
 #include "utility/crc.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
@@ -67,66 +68,6 @@ namespace
 		return maxProd;
 	}
 
-	struct sResourcesLimit
-	{
-		sMiningResource min; //<! minimal, assuming maximum for others
-		sMiningResource extraForOthers; //!< extra amount of resource which can be distribute freely to other resource without impact
-		sMiningResource max; //<! total of maxProd
-	};
-
-	//--------------------------------------------------------------------------
-	sResourcesLimit computeResourcesLimit (const std::vector<cBuilding*>& buildings)
-	{
-		sResourcesLimit res;
-
-		for (const cBuilding* building : buildings)
-		{
-			const auto total = building->getStaticUnitData().canMineMaxRes;
-			if (total <= 0 || !building->isUnitWorking()) continue;
-			const int metal = building->getMaxProd().get (eResourceType::Metal);
-			const int oil = building->getMaxProd().get (eResourceType::Oil);
-			const int gold = building->getMaxProd().get (eResourceType::Gold);
-
-			// resources amount which doesn't decrease impose limit on other resources
-			const int minMetal = std::max (0, std::min (metal, total - oil - gold));
-			const int minOil = std::max (0, std::min (oil, total - metal - gold));
-			const int minGold = std::max (0, std::min (gold, total - metal - oil));
-
-			// extra resource amount (above above minimal) which can be distribute to other resources without impact on current resource
-			const int freeNoMetal = std::min ({total - metal - minOil, oil - minOil, total - metal - minGold, gold - minGold});
-			const int freeNoOil = std::min ({total - oil - minMetal, metal - minMetal, total - oil - minGold, gold - minGold});
-			const int freeNoGold = std::min ({total - gold - minOil, oil - minOil, total - gold - minMetal, metal - minMetal});
-
-			res.min.metal += minMetal;
-			res.min.oil += minOil;
-			res.min.gold += minGold;
-			res.extraForOthers.metal += freeNoMetal;
-			res.extraForOthers.oil += freeNoOil;
-			res.extraForOthers.gold += freeNoGold;
-			res.max.metal += metal;
-			res.max.oil += oil;
-			res.max.gold += gold;
-		}
-
-		return res;
-	}
-
-	//--------------------------------------------------------------------------
-	sMiningResource calcMaxAllowedProd (const sResourcesLimit& limits, const sMiningResource& current)
-	{
-		sMiningResource res;
-
-		int metalToDistribute = std::max (0, current.metal - limits.min.metal);
-		int oilToDistribute = std::max (0, current.oil - limits.min.oil);
-		int goldToDistribute = std::max (0, current.gold - limits.min.gold);
-
-		res.metal = limits.max.metal - std::max (0, oilToDistribute + goldToDistribute - limits.extraForOthers.metal);
-		res.oil = limits.max.oil - std::max (0, metalToDistribute + goldToDistribute - limits.extraForOthers.oil);
-		res.gold = limits.max.gold - std::max (0, oilToDistribute + metalToDistribute - limits.extraForOthers.gold);
-
-		return res;
-	}
-
 }
 
 //------------------------------------------------------------------------------
@@ -166,11 +107,6 @@ sMiningResource cSubBase::getMaxProd() const
 	return calcMaxProd (buildings);
 }
 
-sMiningResource cSubBase::computeMaxAllowedProd (const sMiningResource& prod) const
-{
-	return calcMaxAllowedProd (computeResourcesLimit (buildings), prod);
-}
-
 const sMiningResource& cSubBase::getProd() const
 {
 	return prod;
@@ -178,17 +114,7 @@ const sMiningResource& cSubBase::getProd() const
 
 void cSubBase::setProduction (const sMiningResource& newProd)
 {
-	const auto& limits = computeResourcesLimit (buildings);
-	auto allowed = calcMaxAllowedProd (limits, {0, 0, 0});
-	prod.metal = std::min (newProd.metal, allowed.metal);
-
-	allowed = calcMaxAllowedProd (limits, {prod.metal, 0, 0});
-	this->prod.oil = std::min (newProd.oil, allowed.oil);
-
-	allowed = calcMaxAllowedProd (limits, {prod.metal, prod.oil, 0});
-	prod.gold = std::min (newProd.gold, allowed.gold);
-
-	// TODO: update buildings
+	prod = setBuildingsProduction (buildings, newProd);
 }
 
 void cSubBase::setMetal (int value)
@@ -446,17 +372,13 @@ bool cSubBase::checkMetalConsumer ()
 
 void cSubBase::increaseOilProd (int missingOil)
 {
-	const auto limits = computeResourcesLimit (buildings);
-	auto allowed = calcMaxAllowedProd (limits, {0, prod.oil + missingOil, 0});
-	const int gold = std::min (prod.gold, allowed.gold);
-	const int goldDecrease = prod.gold - gold;
-	allowed = calcMaxAllowedProd (limits, {0, prod.oil + missingOil, gold});
-	const int metal = std::min(prod.metal, allowed.metal);
-	const int metalDecrease = prod.metal - metal;
-	setProduction ({metal, prod.oil + missingOil, gold});
+	const auto oldProd = prod;
+	prod = increaseOilProduction (buildings, missingOil);
+	const int goldDecrease = oldProd.gold - prod.gold;
+	const int metalDecrease = oldProd.metal - prod.metal;
 
 	base.forcedRessouceProductionChance(eResourceType::Oil, missingOil, true);
-	if (metalDecrease)
+	if (metalDecrease > 0)
 		base.forcedRessouceProductionChance(eResourceType::Metal, metalDecrease, false);
 	if (goldDecrease > 0)
 		base.forcedRessouceProductionChance(eResourceType::Gold, goldDecrease, false);
