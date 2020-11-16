@@ -361,23 +361,23 @@ void cGameGui::exit()
 cGameGuiState cGameGui::getCurrentState() const
 {
 	cGameGuiState state;
-	state.setMapPosition (gameMap->getMapCenterOffset());
+	state.mapPosition = gameMap->getMapCenterOffset();
 
-	state.setMapZoomFactor (hud->getZoomFactor());
-	state.setSurveyActive (hud->getSurveyActive());
-	state.setHitsActive (hud->getHitsActive());
-	state.setScanActive (hud->getScanActive());
-	state.setStatusActive (hud->getStatusActive());
-	state.setAmmoActive (hud->getAmmoActive());
-	state.setGridActive (hud->getGridActive());
-	state.setColorActive (hud->getColorActive());
-	state.setRangeActive (hud->getRangeActive());
-	state.setFogActive (hud->getFogActive());
-	state.setLockActive (hud->getLockActive());
-	state.setMiniMapZoomFactorActive (hud->getMiniMapZoomFactorActive());
-	state.setMiniMapAttackUnitsOnly (hud->getMiniMapAttackUnitsOnly());
-	state.setUnitVideoPlaying (hud->isUnitVideoPlaying());
-	state.setChatActive (hud->getChatActive());
+	state.mapZoomFactor = hud->getZoomFactor();
+	state.surveyActive = hud->getSurveyActive();
+	state.hitsActive = hud->getHitsActive();
+	state.scanActive = hud->getScanActive();
+	state.statusActive = hud->getStatusActive();
+	state.ammoActive = hud->getAmmoActive();
+	state.gridActive = hud->getGridActive();
+	state.colorActive = hud->getColorActive();
+	state.rangeActive = hud->getRangeActive();
+	state.fogActive = hud->getFogActive();
+	state.lockActive = hud->getLockActive();
+	state.miniMapZoomFactorActive = hud->getMiniMapZoomFactorActive();
+	state.miniMapAttackUnitsOnly = hud->getMiniMapAttackUnitsOnly();
+	state.unitVideoPlaying = hud->isUnitVideoPlaying();
+	state.chatActive = hud->getChatActive();
 
 	state.setSelectedUnits (gameMap->getUnitSelection());
 	state.setLockedUnits (gameMap->getUnitLockList());
@@ -388,23 +388,23 @@ cGameGuiState cGameGui::getCurrentState() const
 //------------------------------------------------------------------------------
 void cGameGui::restoreState (const cGameGuiState& state)
 {
-	gameMap->centerAt (state.getMapPosition());
+	gameMap->centerAt (state.mapPosition);
 
-	hud->setZoomFactor (state.getMapZoomFactor());
-	hud->setSurveyActive (state.getSurveyActive());
-	hud->setHitsActive (state.getHitsActive());
-	hud->setScanActive (state.getScanActive());
-	hud->setStatusActive (state.getStatusActive());
-	hud->setAmmoActive (state.getAmmoActive());
-	hud->setGridActive (state.getGridActive());
-	hud->setColorActive (state.getColorActive());
-	hud->setRangeActive (state.getRangeActive());
-	hud->setFogActive (state.getFogActive());
-	hud->setLockActive (state.getLockActive());
-	hud->setMiniMapZoomFactorActive (state.getMiniMapZoomFactorActive());
-	hud->setMiniMapAttackUnitsOnly (state.getMiniMapAttackUnitsOnly());
-	hud->setChatActive (state.getChatActive());
-	if (state.getUnitVideoPlaying()) hud->startUnitVideo();
+	hud->setZoomFactor (state.mapZoomFactor);
+	hud->setSurveyActive (state.surveyActive);
+	hud->setHitsActive (state.hitsActive);
+	hud->setScanActive (state.scanActive);
+	hud->setStatusActive (state.statusActive);
+	hud->setAmmoActive (state.ammoActive);
+	hud->setGridActive (state.gridActive);
+	hud->setColorActive (state.colorActive);
+	hud->setRangeActive (state.rangeActive);
+	hud->setFogActive (state.fogActive);
+	hud->setLockActive (state.lockActive);
+	hud->setMiniMapZoomFactorActive (state.miniMapZoomFactorActive);
+	hud->setMiniMapAttackUnitsOnly (state.miniMapAttackUnitsOnly);
+	hud->setChatActive (state.chatActive);
+	if (state.unitVideoPlaying) hud->startUnitVideo();
 	else hud->stopUnitVideo();
 
 	gameMap->getUnitSelection().deselectUnits();

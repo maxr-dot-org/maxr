@@ -265,7 +265,7 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 			savedPositions = guiInfo.savedPositions;
 			doneList = guiInfo.doneList;
 
-			const cPosition& mapPosition = guiInfo.guiState.getMapPosition();
+			const cPosition& mapPosition = guiInfo.guiState.mapPosition;
 			if (!map.isValidPosition(mapPosition)) return;
 
 			playerGameGuiStates[guiInfo.playerNr] = guiInfo.guiState;

@@ -60,7 +60,7 @@ void cNetworkHostGameNew::start (cApplication& application, cServer& server)
 	gameGuiController->setServer(&server);
 
 	cGameGuiState playerGameGuiState;
-	playerGameGuiState.setMapPosition (localPlayerLandingPosition);
+	playerGameGuiState.mapPosition = localPlayerLandingPosition;
 	gameGuiController->addPlayerGameGuiState (localPlayerNr, std::move (playerGameGuiState));
 
 	gameGuiController->start();

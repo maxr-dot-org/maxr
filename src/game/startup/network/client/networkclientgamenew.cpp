@@ -56,7 +56,7 @@ void cNetworkClientGameNew::start (cApplication& application)
 	gameGuiController->setSingleClient (localClient);
 
 	cGameGuiState playerGameGuiState;
-	playerGameGuiState.setMapPosition (localPlayerLandingPosition);
+	playerGameGuiState.mapPosition = localPlayerLandingPosition;
 	gameGuiController->addPlayerGameGuiState (localPlayerNr, std::move (playerGameGuiState));
 
 	gameGuiController->start();

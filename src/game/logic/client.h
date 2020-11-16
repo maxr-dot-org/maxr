@@ -45,7 +45,6 @@ class cPosition;
 class cTurnCounter;
 class cTurnTimeClock;
 class cTurnTimeDeadline;
-class cGameGuiState;
 class cSubBase;
 class cSavegame;
 class cSurveyorAi;

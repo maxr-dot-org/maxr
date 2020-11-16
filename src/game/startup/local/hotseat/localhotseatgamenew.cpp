@@ -84,7 +84,7 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 	{
 		const auto& clientPlayer = clients[i]->getActivePlayer();
 		cGameGuiState gameGuiState;
-		gameGuiState.setMapPosition (playersData[i].landingPosition);
+		gameGuiState.mapPosition = playersData[i].landingPosition;
 		gameGuiController->addPlayerGameGuiState (clientPlayer.getId(), gameGuiState);
 	}
 

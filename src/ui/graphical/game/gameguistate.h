@@ -20,7 +20,6 @@
 #ifndef ui_graphical_game_gameguistateH
 #define ui_graphical_game_gameguistateH
 
-#include <3rd/tinyxml2/tinyxml2.h>
 #include <vector>
 
 #include "utility/serialization/serialization.h"
@@ -28,61 +27,10 @@
 
 class cUnitSelection;
 class cUnitLockList;
-class cVersion;
 
 class cGameGuiState
 {
 public:
-	cGameGuiState();
-
-	void setMapPosition (const cPosition& position);
-	const cPosition& getMapPosition() const;
-
-	void setMapZoomFactor (float zoomFactor);
-	float getMapZoomFactor() const;
-
-	void setSurveyActive (bool value);
-	bool getSurveyActive() const;
-
-	void setHitsActive (bool value);
-	bool getHitsActive() const;
-
-	void setScanActive (bool value);
-	bool getScanActive() const;
-
-	void setStatusActive (bool value);
-	bool getStatusActive() const;
-
-	void setAmmoActive (bool value);
-	bool getAmmoActive() const;
-
-	void setGridActive (bool value);
-	bool getGridActive() const;
-
-	void setColorActive (bool value);
-	bool getColorActive() const;
-
-	void setRangeActive (bool value);
-	bool getRangeActive() const;
-
-	void setFogActive (bool value);
-	bool getFogActive() const;
-
-	void setLockActive (bool value);
-	bool getLockActive() const;
-
-	void setMiniMapZoomFactorActive (bool value);
-	bool getMiniMapZoomFactorActive() const;
-
-	void setMiniMapAttackUnitsOnly (bool value);
-	bool getMiniMapAttackUnitsOnly() const;
-
-	void setUnitVideoPlaying (bool value);
-	bool getUnitVideoPlaying() const;
-
-	void setChatActive (bool value);
-	bool getChatActive() const;
-
 	void setSelectedUnits (const cUnitSelection& unitSelection);
 	const std::vector<unsigned int>& getSelectedUnitIds() const;
 
@@ -111,27 +59,27 @@ public:
 		archive & NVP(selectedUnitIds);
 		archive & NVP(lockedUnitIds);
 	}
-private:
+public:
 	cPosition mapPosition;
-	float mapZoomFactor;
+	float mapZoomFactor = 1.f;
 
-	bool surveyActive;
-	bool hitsActive;
-	bool scanActive;
-	bool statusActive;
-	bool ammoActive;
-	bool gridActive;
-	bool colorActive;
-	bool rangeActive;
-	bool fogActive;
-	bool lockActive;
-	bool miniMapZoomFactorActive;
-	bool miniMapAttackUnitsOnly;
-	bool unitVideoPlaying;
-	bool chatActive;
-
+	bool surveyActive = false;
+	bool hitsActive = false;
+	bool scanActive = false;
+	bool statusActive = false;
+	bool ammoActive = false;
+	bool gridActive = false;
+	bool colorActive = false;
+	bool rangeActive = false;
+	bool fogActive = false;
+	bool lockActive = false;
+	bool miniMapZoomFactorActive = false;
+	bool miniMapAttackUnitsOnly = false;
+	bool unitVideoPlaying = true;
+	bool chatActive = true;
+private:
 	std::vector<unsigned int> selectedUnitIds;
 	std::vector<unsigned int> lockedUnitIds;
 };
 
-#endif // ui_graphical_game_gameguistateH
+#endif

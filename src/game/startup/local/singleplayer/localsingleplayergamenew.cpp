@@ -71,7 +71,7 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 	gameGuiController->setServer(server.get());
 
 	cGameGuiState playerGameGuiState;
-	playerGameGuiState.setMapPosition (landingPosition);
+	playerGameGuiState.mapPosition = landingPosition;
 	gameGuiController->addPlayerGameGuiState (0, std::move (playerGameGuiState));
 
 	gameGuiController->start();
