@@ -24,6 +24,7 @@
 
 #include "game/data/report/savedreport.h"
 #include "game/data/player/player.h"
+#include "game/logic/upgradecalculator.h"
 
 class cSavedReportTurnStart : public cSavedReport
 {
@@ -58,7 +59,7 @@ private:
 
 	int turn;
 	std::vector<sTurnstartReport> unitReports;
-	std::vector<int> researchAreas;
+	std::vector<cResearch::ResearchArea> researchAreas;
 };
 
 #endif // game_data_reports_special_savedreportturnstartH

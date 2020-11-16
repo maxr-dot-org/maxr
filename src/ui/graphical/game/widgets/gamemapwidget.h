@@ -23,15 +23,15 @@
 #include <map>
 #include <set>
 
+#include "game/logic/fxeffects.h"
+#include "game/logic/upgradecalculator.h"
 #include "ui/graphical/game/control/mousemode/mousemodetype.h"
+#include "ui/graphical/game/temp/unitdrawingengine.h"
 #include "ui/graphical/game/unitselection.h"
 #include "ui/graphical/game/unitselectionbox.h"
 #include "ui/graphical/game/unitlocklist.h"
-#include "ui/graphical/game/temp/unitdrawingengine.h"
 #include "ui/graphical/menu/widgets/clickablewidget.h"
-#include "maxrconfig.h"
 #include "utility/signal/signal.h"
-#include "game/logic/fxeffects.h"
 
 struct SDL_Surface;
 
@@ -173,10 +173,84 @@ public:
 protected:
 	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 	bool acceptButton (eMouseButtonType button) const MAXR_OVERRIDE_FUNCTION;
+
+	//
+	// draw methods
+	//
+	void drawTerrain();
+	void drawGrid();
+	void drawEffects (bool bottom);
+
+	void drawBaseUnits();
+	void drawTopBuildings();
+	void drawShips();
+	void drawAboveSeaBaseUnits();
+	void drawVehicles();
+	void drawConnectors();
+	void drawPlanes();
+
+	void drawResources();
+
+	void drawPath (const cVehicle& vehicle);
+	void drawPathArrow(SDL_Rect dest, const SDL_Rect& lastDest, bool spezialColor) const;
+	void drawBuildPath (const cVehicle& vehicle);
+
+	void drawSelectionBox();
+
+	void drawUnitCircles();
+	void drawLockList ();
+
+	void drawExitPoints();
+	void drawExitPoint (const cPosition& position);
+	void drawExitPointsIf (const cUnit& unit, const std::function<bool (const cPosition&)>& predicate);
+	void drawBuildBand();
+
+	bool shouldDrawUnit (const cUnit& unit, const cPosition& visitingPosition, const std::pair<cPosition, cPosition>& tileDrawingRange);
+
+	void addEffect();
+	//
+	// position handling methods
+	//
+	cPosition computeMaximalPixelOffset() const;
+
+	//
+	// drawing helper methods
+	//
+	cPosition zoomSize (const cPosition& size, float zoomFactor) const;
+	cPosition getZoomedTileSize() const;
+	cPosition getZoomedStartTilePixelOffset() const;
+	std::pair<cPosition, cPosition> computeTileDrawingRange() const;
+
+	SDL_Rect computeTileDrawingArea (const cPosition& zoomedTileSize, const cPosition& zoomedStartTilePixelOffset, const cPosition& tileStartIndex, const cPosition& tileIndex) const;
+
+	cPosition getMapTilePosition (const cPosition& pixelPosition) const;
+	cPosition getScreenPosition (const cUnit& unit, bool movementOffset = true) const;
+
+	void updateActiveAnimations();
+	void updateActiveAnimations (const std::pair<cPosition, cPosition>& oldTileDrawingRange);
+	void addAnimationsForUnit (const cUnit& unit);
+
+	void updateUnitMenuPosition();
+
+	void toggleUnitContextMenu (const cUnit* unit);
+
+	void setMouseInputMode (std::unique_ptr<cMouseMode> newMouseMode);
+	void toggleMouseInputMode (eMouseModeType mouseInputMode);
+
+	void runOwnedEffects();
+
+	void renewDamageEffects();
+	void renewDamageEffect (const cBuilding& building);
+	void renewDamageEffect (const cVehicle& vehicle);
+
+	void setWindDirection (int direction);
+	void changeWindDirection();
+
+	void buildCollidingShortcutsMap();
+	void activateShortcutConditional (cShortcut& shortcut, std::set<const cShortcut*>& blockedShortcuts, const std::set<const cShortcut*>& collidingShortcuts);
+public:
+	std::vector<cResearch::ResearchArea> currentTurnResearchAreasFinished;
 private:
-	//
-	// data
-	//
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager mapViewSignalConnectionManager;
 	cSignalConnectionManager mouseModeSignalConnectionManager;
@@ -254,81 +328,6 @@ private:
 	float windDirection;
 
 	cRightMouseButtonScrollerWidget* rightMouseButtonScrollerWidget;
-
-	//
-	// draw methods
-	//
-	void drawTerrain();
-	void drawGrid();
-	void drawEffects (bool bottom);
-
-	void drawBaseUnits();
-	void drawTopBuildings();
-	void drawShips();
-	void drawAboveSeaBaseUnits();
-	void drawVehicles();
-	void drawConnectors();
-	void drawPlanes();
-
-	void drawResources();
-
-	void drawPath (const cVehicle& vehicle);
-	void drawPathArrow(SDL_Rect dest, const SDL_Rect& lastDest, bool spezialColor) const;
-	void drawBuildPath (const cVehicle& vehicle);
-
-	void drawSelectionBox();
-
-	void drawUnitCircles();
-	void drawLockList ();
-
-	void drawExitPoints();
-	void drawExitPoint (const cPosition& position);
-	void drawExitPointsIf (const cUnit& unit, const std::function<bool (const cPosition&)>& predicate);
-	void drawBuildBand();
-
-	bool shouldDrawUnit (const cUnit& unit, const cPosition& visitingPosition, const std::pair<cPosition, cPosition>& tileDrawingRange);
-
-	void addEffect();
-	//
-	// position handling methods
-	//
-	cPosition computeMaximalPixelOffset() const;
-
-	//
-	// drawing helper methods
-	//
-	cPosition zoomSize (const cPosition& size, float zoomFactor) const;
-	cPosition getZoomedTileSize() const;
-	cPosition getZoomedStartTilePixelOffset() const;
-	std::pair<cPosition, cPosition> computeTileDrawingRange() const;
-
-	SDL_Rect computeTileDrawingArea (const cPosition& zoomedTileSize, const cPosition& zoomedStartTilePixelOffset, const cPosition& tileStartIndex, const cPosition& tileIndex) const;
-
-	cPosition getMapTilePosition (const cPosition& pixelPosition) const;
-	cPosition getScreenPosition (const cUnit& unit, bool movementOffset = true) const;
-
-	void updateActiveAnimations();
-	void updateActiveAnimations (const std::pair<cPosition, cPosition>& oldTileDrawingRange);
-	void addAnimationsForUnit (const cUnit& unit);
-
-	void updateUnitMenuPosition();
-
-	void toggleUnitContextMenu (const cUnit* unit);
-
-	void setMouseInputMode (std::unique_ptr<cMouseMode> newMouseMode);
-	void toggleMouseInputMode (eMouseModeType mouseInputMode);
-
-	void runOwnedEffects();
-
-	void renewDamageEffects();
-	void renewDamageEffect (const cBuilding& building);
-	void renewDamageEffect (const cVehicle& vehicle);
-
-	void setWindDirection (int direction);
-	void changeWindDirection();
-
-	void buildCollidingShortcutsMap();
-	void activateShortcutConditional (cShortcut& shortcut, std::set<const cShortcut*>& blockedShortcuts, const std::set<const cShortcut*>& collidingShortcuts);
 };
 
 #endif // ui_graphical_game_widgets_gamemapwidgetH

@@ -1455,6 +1455,7 @@ void cGameGuiController::connectReportSources(cClient& client)
 	{
 		if (model.getActiveTurnPlayer() == getActivePlayer().get() || model.getGameSettings()->getGameType() == eGameSettingsGameType::Simultaneous)
 		{
+			gameGui->getGameMap().currentTurnResearchAreasFinished = player.getCurrentTurnResearchAreasFinished();
 			addSavedReport(std::make_unique<cSavedReportTurnStart>(player, model.getTurnCounter()->getTurn()), player.getId());
 		}
 	});
@@ -1741,9 +1742,7 @@ void cGameGuiController::showResearchDialog (const cUnit& unit)
 	if (unit.getOwner() != player.get()) return;
 	if (!player) return;
 
-	// clear list with research areas finished this turn.
-	// NOTE: do we really want to do this here?
-	unit.getOwner()->setCurrentTurnResearchAreasFinished (std::vector<int> ());
+	gameGui->getGameMap().currentTurnResearchAreasFinished.clear();
 
 	auto researchDialog = application.show (std::make_shared<cDialogResearch> (*player));
 	researchDialog->done.connect ([&, researchDialog]()

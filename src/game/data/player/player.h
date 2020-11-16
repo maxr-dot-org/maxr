@@ -185,10 +185,7 @@ public:
 	void resetTurnReportData();
 	const std::vector<sTurnstartReport>& getCurrentTurnUnitReports() const;
 
-	const std::vector<int>& getCurrentTurnResearchAreasFinished() const;
-	void setCurrentTurnResearchAreasFinished (std::vector<int> areas);
-
-	bool isCurrentTurnResearchAreaFinished (cResearch::ResearchArea area) const;
+	const std::vector<cResearch::ResearchArea>& getCurrentTurnResearchAreasFinished() const;
 
 	const cResearch& getResearchState() const;
 	cResearch& getResearchState();
@@ -341,7 +338,7 @@ private:
 	int credits;
 
 	std::vector<sTurnstartReport> currentTurnUnitReports; //TODO: move somewhere else. Shouldn't be part of the game model
-	std::vector<int> currentTurnResearchAreasFinished;
+	std::vector<cResearch::ResearchArea> currentTurnResearchAreasFinished;
 
 	bool hasFinishedTurn;
 

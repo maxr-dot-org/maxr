@@ -22,6 +22,7 @@
 
 #include <vector>
 
+#include "game/logic/upgradecalculator.h"
 #include "utility/serialization/serialization.h"
 #include "utility/position.h"
 
@@ -56,6 +57,7 @@ public:
 		archive & NVP(miniMapAttackUnitsOnly);
 		archive & NVP(unitVideoPlaying);
 		archive & NVP(chatActive);
+		archive & NVP (currentTurnResearchAreasFinished);
 		archive & NVP(selectedUnitIds);
 		archive & NVP(lockedUnitIds);
 	}
@@ -77,6 +79,7 @@ public:
 	bool miniMapAttackUnitsOnly = false;
 	bool unitVideoPlaying = true;
 	bool chatActive = true;
+	std::vector<cResearch::ResearchArea> currentTurnResearchAreasFinished;
 private:
 	std::vector<unsigned int> selectedUnitIds;
 	std::vector<unsigned int> lockedUnitIds;

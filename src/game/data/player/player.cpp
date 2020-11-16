@@ -524,7 +524,7 @@ void cPlayer::doResearch (const cUnitsData& unitsData)
 		{
 			// next level reached
 			areasReachingNextLevel.push_back (area);
-			currentTurnResearchAreasFinished.push_back (area);
+			currentTurnResearchAreasFinished.push_back (cResearch::ResearchArea (area));
 			researchFinished = true;
 		}
 	}
@@ -833,21 +833,9 @@ const std::vector<sTurnstartReport>& cPlayer::getCurrentTurnUnitReports() const
 }
 
 //------------------------------------------------------------------------------
-const std::vector<int>& cPlayer::getCurrentTurnResearchAreasFinished() const
+const std::vector<cResearch::ResearchArea>& cPlayer::getCurrentTurnResearchAreasFinished() const
 {
 	return currentTurnResearchAreasFinished;
-}
-
-//------------------------------------------------------------------------------
-void cPlayer::setCurrentTurnResearchAreasFinished (std::vector<int> areas)
-{
-	currentTurnResearchAreasFinished = std::move (areas);
-}
-
-//------------------------------------------------------------------------------
-bool cPlayer::isCurrentTurnResearchAreaFinished (cResearch::ResearchArea area) const
-{
-	return ranges::find (currentTurnResearchAreasFinished, area) != currentTurnResearchAreasFinished.end();
 }
 
 //------------------------------------------------------------------------------

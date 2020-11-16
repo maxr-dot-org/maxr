@@ -22,9 +22,10 @@
 
 #include <memory>
 
+#include "game/logic/upgradecalculator.h"
 #include "ui/graphical/game/temp/drawingcache.h"
-#include "utility/signal/signalconnectionmanager.h"
 #include "utility/color.h"
+#include "utility/signal/signalconnectionmanager.h"
 
 class cBuilding;
 class cVehicle;
@@ -42,8 +43,8 @@ class cUnitDrawingEngine
 public:
 	cUnitDrawingEngine (std::shared_ptr<cAnimationTimer> animationTimer, std::shared_ptr<const cFrameCounter> frameCounter);
 
-	void drawUnit (const cBuilding& building, SDL_Rect destination, float zoomFactor, const cUnitSelection* unitSelection = nullptr, const cPlayer* player = nullptr);
-	void drawUnit (const cVehicle& vehicle, SDL_Rect destination, float zoomFactor, const cMapView& map, const cUnitSelection* unitSelection = nullptr, const cPlayer* player = nullptr);
+	void drawUnit (const cBuilding& building, SDL_Rect destination, float zoomFactor, const cUnitSelection* unitSelection, const cPlayer* player, const std::vector<cResearch::ResearchArea>&);
+	void drawUnit (const cVehicle& vehicle, SDL_Rect destination, float zoomFactor, const cMapView& map, const cUnitSelection* unitSelection, const cPlayer* player);
 
 	void setDrawHits (bool drawHits);
 	void setDrawStatus (bool drawStatus);

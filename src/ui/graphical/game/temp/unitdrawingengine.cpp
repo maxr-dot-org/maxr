@@ -17,19 +17,20 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <algorithm>
-
 #include "ui/graphical/game/temp/unitdrawingengine.h"
-#include "ui/graphical/game/animations/animationtimer.h"
-#include "ui/graphical/game/unitselection.h"
-#include "output/video/video.h"
+
+#include "game/data/map/map.h"
+#include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
-#include "game/data/player/player.h"
-#include "game/data/map/map.h"
-#include "utility/random.h"
-#include "utility/drawing.h"
+#include "output/video/video.h"
+#include "ui/graphical/game/animations/animationtimer.h"
+#include "ui/graphical/game/gameguistate.h"
+#include "ui/graphical/game/unitselection.h"
 #include "utility/box.h"
+#include "utility/drawing.h"
+#include "utility/listhelpers.h"
+#include "utility/random.h"
 
 //--------------------------------------------------------------------------
 cUnitDrawingEngine::cUnitDrawingEngine (std::shared_ptr<cAnimationTimer> animationTimer_, std::shared_ptr<const cFrameCounter> frameCounter) :
@@ -69,7 +70,7 @@ void cUnitDrawingEngine::setDrawColor (bool drawColor)
 }
 
 //--------------------------------------------------------------------------
-void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destination, float zoomFactor, const cUnitSelection* unitSelection, const cPlayer* player)
+void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destination, float zoomFactor, const cUnitSelection* unitSelection, const cPlayer* player, const std::vector<cResearch::ResearchArea>& currentTurnResearchAreasFinished)
 {
 	unsigned long long animationTime = animationTimer->getAnimationTime(); //call getAnimationTime only once in this method and save the result,
 	//to avoid a changing time within this method
@@ -120,7 +121,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 
 	// draw the mark, when a build order is finished
 	if (building.getOwner() == player && ((!building.isBuildListEmpty() && !building.isUnitWorking() && building.getBuildListItem (0).getRemainingMetal() <= 0) ||
-		(building.getStaticUnitData().canResearch && building.getOwner()->isCurrentTurnResearchAreaFinished(building.getResearchArea()))))
+		(building.getStaticUnitData().canResearch && Contains (currentTurnResearchAreasFinished, building.getResearchArea()))))
 	{
 		const cRgbColor finishedMarkColor = cRgbColor::green();
 		const cBox<cPosition> d (cPosition (dest.x + 2, dest.y + 2), cPosition (dest.x + 2 + (building.getIsBig() ? 2 * destination.w - 3 : destination.w - 3), dest.y + 2 + (building.getIsBig() ? 2 * destination.h - 3 : destination.h - 3)));
@@ -131,7 +132,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 #if 0
 	// disabled color-frame for buildings
 	//   => now it's original game behavior - see ticket #542 (GER) = FIXED
-	// but maybe as setting interresting
+	// but maybe as setting interesting
 	//   => ticket #784 (ENG) (so I just commented it) = TODO
 
 	// draw a colored frame if necessary
@@ -143,7 +144,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 		DrawRectangle (cVideo::buffer, d, color, 1);
 	}
 #endif
-	// draw the seleted-unit-flash-frame for bulidings
+	// draw the selected-unit-flash-frame for buildings
 	if (unitSelection && &building == unitSelection->getSelectedBuilding())
 	{
 		Uint16 maxX = building.getIsBig() ? destination.w  * 2 : destination.w;

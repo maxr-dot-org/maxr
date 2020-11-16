@@ -23,24 +23,26 @@
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/movejob.h"
+#include "ui/graphical/game/gameguistate.h"
 #include "ui/sound/effects/soundeffect.h"
 #include "ui/sound/effects/soundeffectvoice.h"
 #include "ui/sound/soundmanager.h"
+#include "utility/listhelpers.h"
 #include "utility/random.h"
 
 namespace
 {
 //------------------------------------------------------------------------------
-void makeReport (cSoundManager& soundManager, const cBuilding& building)
+void makeReport (cSoundManager& soundManager, const cGameGuiState& gameGuiState, const cBuilding& building)
 {
-	if (building.getStaticUnitData().canResearch && building.isUnitWorking() && building.getOwner() && building.getOwner()->isCurrentTurnResearchAreaFinished (building.getResearchArea()))
+	if (building.getStaticUnitData().canResearch && building.isUnitWorking() && building.getOwner() && Contains (gameGuiState.currentTurnResearchAreasFinished, building.getResearchArea()))
 	{
 		soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, VoiceData.VOIResearchComplete));
 	}
 }
 
 //------------------------------------------------------------------------------
-void makeReport (cSoundManager& soundManager, const cVehicle& vehicle)
+void makeReport (cSoundManager& soundManager, const cGameGuiState&, const cVehicle& vehicle)
 {
 	if (vehicle.isDisabled())
 	{
@@ -120,9 +122,9 @@ void makeReport (cSoundManager& soundManager, const cVehicle& vehicle)
 }
 
 //------------------------------------------------------------------------------
-void makeReport (cSoundManager& soundManager, const cUnit& unit)
+void makeReport (cSoundManager& soundManager, const cGameGuiState& gameGuiState, const cUnit& unit)
 {
-	if (auto* vehicle = dynamic_cast<const cVehicle*> (&unit)) makeReport (soundManager, *vehicle);
-	if (auto* building = dynamic_cast<const cBuilding*> (&unit)) makeReport (soundManager, *building);
+	if (auto* vehicle = dynamic_cast<const cVehicle*> (&unit)) makeReport (soundManager, gameGuiState, *vehicle);
+	if (auto* building = dynamic_cast<const cBuilding*> (&unit)) makeReport (soundManager, gameGuiState, *building);
 }
 

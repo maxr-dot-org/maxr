@@ -171,7 +171,7 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 		if (!player) return;
 
 		auto unit = gameMap->getUnitSelection().getSelectedUnit();
-		if (unit && unit->getOwner() == player.get()) makeReport (*soundManager, *unit);
+		if (unit && unit->getOwner() == player.get()) makeReport (*soundManager, getCurrentState(), *unit);
 	});
 	signalConnectionManager.connect (gameMap->getUnitSelection().mainSelectionChanged, [&]()
 	{
@@ -382,6 +382,8 @@ cGameGuiState cGameGui::getCurrentState() const
 	state.setSelectedUnits (gameMap->getUnitSelection());
 	state.setLockedUnits (gameMap->getUnitLockList());
 
+	state.currentTurnResearchAreasFinished = gameMap->currentTurnResearchAreasFinished;
+
 	return state;
 }
 
@@ -406,6 +408,8 @@ void cGameGui::restoreState (const cGameGuiState& state)
 	hud->setChatActive (state.chatActive);
 	if (state.unitVideoPlaying) hud->startUnitVideo();
 	else hud->stopUnitVideo();
+
+	gameMap->currentTurnResearchAreasFinished = state.currentTurnResearchAreasFinished;
 
 	gameMap->getUnitSelection().deselectUnits();
 	gameMap->getUnitLockList().unlockAll();

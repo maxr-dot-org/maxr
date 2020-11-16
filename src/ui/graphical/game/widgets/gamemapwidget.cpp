@@ -1106,7 +1106,7 @@ void cGameMapWidget::drawBaseUnits()
 			if (shouldDrawUnit (building, *i, tileDrawingRange))
 			{
 				const auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building.getPosition());
-				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), &unitSelection, player.get());
+				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), &unitSelection, player.get(), currentTurnResearchAreasFinished);
 			}
 		}
 	}
@@ -1130,7 +1130,7 @@ void cGameMapWidget::drawTopBuildings()
 		if (!shouldDrawUnit (*building, *i, tileDrawingRange)) continue;
 
 		auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building->getPosition());
-		unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor(), &unitSelection, player.get());
+		unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor(), &unitSelection, player.get(), currentTurnResearchAreasFinished);
 
 		//if (debugOutput.debugBaseClient && building->SubBase)
 		//	drawTopBuildings_DebugBaseClient (*building, drawDestination);
@@ -1181,7 +1181,7 @@ void cGameMapWidget::drawAboveSeaBaseUnits()
 			if (building.getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA)
 			{
 				const auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building.getPosition());
-				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), &unitSelection, player.get());
+				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), &unitSelection, player.get(), currentTurnResearchAreasFinished);
 			}
 		}
 		for (auto it = buildings.begin(); it != buildings.end(); ++it)
@@ -1190,7 +1190,7 @@ void cGameMapWidget::drawAboveSeaBaseUnits()
 			if ((*it)->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE)
 			{
 				const auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building.getPosition());
-				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), &unitSelection, player.get());
+				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), &unitSelection, player.get(), currentTurnResearchAreasFinished);
 			}
 		}
 
@@ -1267,7 +1267,7 @@ void cGameMapWidget::drawConnectors()
 		if (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE)
 		{
 			auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-			unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor(), &unitSelection, player.get());
+			unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor(), &unitSelection, player.get(), currentTurnResearchAreasFinished);
 		}
 	}
 }

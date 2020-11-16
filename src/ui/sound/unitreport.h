@@ -20,9 +20,10 @@
 #ifndef ui_sound_unitreportH
 #define ui_sound_unitreportH
 
+class cGameGuiState;
 class cSoundManager;
 class cUnit;
 
-void makeReport (cSoundManager&, const cUnit&);
+void makeReport (cSoundManager&, const cGameGuiState&, const cUnit&);
 
 #endif
