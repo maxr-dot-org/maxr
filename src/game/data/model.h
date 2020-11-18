@@ -51,6 +51,11 @@ class cVehicle;
 
 struct sID;
 
+struct sNewTurnReport
+{
+	std::map<int, sNewTurnPlayerReport> reports;
+};
+
 class cModel
 {
 	friend class cDebugOutputWidget;
@@ -127,7 +132,7 @@ public:
 	mutable cSignal<void(const cVehicle& vehicle)> triggeredAddTracks;
 	mutable cSignal<void(const cPlayer& player)> playerFinishedTurn; // triggered when a player wants to end the turn
 	mutable cSignal<void()> turnEnded; // triggered when all players ended the turn or the turn time clock reached a deadline
-	mutable cSignal<void()> newTurnStarted; // triggered when the model has done all calculations for the new turn.
+	mutable cSignal<void (const sNewTurnReport&)> newTurnStarted; // triggered when the model has done all calculations for the new turn.
 	mutable cSignal<void (const std::shared_ptr<cFx>& fx)> addedEffect;
 
 	mutable cSignal<void (const cUnit& storingUnit, const cUnit& storedUnit)> unitStored;

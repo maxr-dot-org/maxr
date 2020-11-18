@@ -65,6 +65,11 @@ struct sTurnstartReport
 	int count;
 };
 
+struct sNewTurnPlayerReport
+{
+	std::vector<cResearch::ResearchArea> finishedResearchs;
+};
+
 class cSavedReport;
 
 // the Player class //////////////////////////////
@@ -148,7 +153,6 @@ public:
 	void removeFromSentryMap (const cUnit& u);
 	void updateSentry (const cUnit& u, int newRange);
 
-	void upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, const cUnitsData& originalUnitsData);
 
 	/** return the number of running ecospheres */
 	int getNumEcoSpheres() const;
@@ -175,7 +179,7 @@ public:
 	bool hasMineDetection (const cPosition& pos) const { return detectMinesMap.get(pos); }
 	bool hasSeaDetection (const cPosition& pos) const { return detectSeaMap.get(pos); }
 
-	void doResearch(const cUnitsData& unitsData);  // proceed with the research at turn end
+	std::vector<cResearch::ResearchArea> doResearch(const cUnitsData& unitsData);  // proceed with the research at turn end
 
 	void refreshSentryMaps();
 
@@ -184,8 +188,6 @@ public:
 	void addTurnReportUnit (const sID& unitId);
 	void resetTurnReportData();
 	const std::vector<sTurnstartReport>& getCurrentTurnUnitReports() const;
-
-	const std::vector<cResearch::ResearchArea>& getCurrentTurnResearchAreasFinished() const;
 
 	const cResearch& getResearchState() const;
 	cResearch& getResearchState();
@@ -199,7 +201,7 @@ public:
 	void refreshResearchCentersWorkingOnArea();
 	void refreshBase(const cMap& map);
 
-	void makeTurnStart(cModel& model);
+	sNewTurnPlayerReport makeTurnStart(cModel& model);
 
 	uint32_t getChecksum(uint32_t crc) const;
 
@@ -242,7 +244,6 @@ public:
 		archive & NVP(isDefeated);
 		archive & NVP(clan);
 		archive & NVP(credits);
-		archive & NVP(currentTurnResearchAreasFinished);
 		archive & NVP(hasFinishedTurn);
 		archive & NVP(researchState);
 	}
@@ -292,7 +293,6 @@ public:
 		archive & NVP(isDefeated);
 		archive & NVP(clan);
 		archive & NVP(credits);
-		archive & NVP(currentTurnResearchAreasFinished);
 		archive & NVP(hasFinishedTurn);
 		archive & NVP(researchState);
 
@@ -302,6 +302,14 @@ public:
 		refreshResearchCentersWorkingOnArea();
 	}
 	SERIALIZATION_SPLIT_MEMBER()
+private:
+	void upgradeUnitTypes (const std::vector<cResearch::ResearchArea>&, const cUnitsData& originalUnitsData);
+
+	std::string resourceMapToString() const;
+	void setResourceMapFromString(const std::string& str);
+
+	void refreshScanMaps();
+
 public:
 	std::vector<cDynamicUnitData> dynamicUnitsData; // Current version of vehicles.
 	cBase base;               // the base (groups of connected buildings) of the player
@@ -309,11 +317,6 @@ public:
 	int numEcos;            // number of ecospheres. call countEcoSpheres to update.
 
 private:
-	std::string resourceMapToString() const;
-	void setResourceMapFromString(const std::string& str);
-
-	void refreshScanMaps();
-
 	std::string name;
 	cPlayerColor color;
 	int id;
@@ -338,7 +341,6 @@ private:
 	int credits;
 
 	std::vector<sTurnstartReport> currentTurnUnitReports; //TODO: move somewhere else. Shouldn't be part of the game model
-	std::vector<cResearch::ResearchArea> currentTurnResearchAreasFinished;
 
 	bool hasFinishedTurn;
 

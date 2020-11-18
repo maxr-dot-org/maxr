@@ -47,7 +47,7 @@ cServer::cServer(std::shared_ptr<cConnectionManager> connectionManager) :
 	{
 		enableFreezeMode(eFreezeMode::WAIT_FOR_TURNEND);
 	});
-	model.newTurnStarted.connect([&]()
+	model.newTurnStarted.connect([&](const auto&)
 	{
 		if (cSettings::getInstance().shouldAutosave())
 		{

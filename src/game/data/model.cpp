@@ -760,13 +760,14 @@ void cModel::handleTurnEnd()
 		break;
 	case EXECUTE_TURN_START:
 		{
+			sNewTurnReport newTurnReport;
 			if (gameSettings->getGameType() == eGameSettingsGameType::Simultaneous)
 			{
 				turnCounter->increaseTurn();
 
 				for (auto& player : playerList)
 				{
-					player->makeTurnStart(*this);
+					newTurnReport.reports.emplace(player->getId(), player->makeTurnStart(*this));
 				}
 
 				// check game end conditions, after turn start, so generated points from this turn are also counted
@@ -794,7 +795,7 @@ void cModel::handleTurnEnd()
 				if (turnCounter->getTurn() > 1)
 				{
 					// don't execute turn start action in turn 1, because model is already completely initialized for turn 1
-					activeTurnPlayer->makeTurnStart(*this);
+					newTurnReport.reports.emplace(activeTurnPlayer->getId(), activeTurnPlayer->makeTurnStart(*this));
 				}
 
 				if (hasChangedTurn)
@@ -820,7 +821,7 @@ void cModel::handleTurnEnd()
 			}
 
 			turnEndState = TURN_ACTIVE;
-			newTurnStarted();
+			newTurnStarted (newTurnReport);
 		}
 		break;
 	}

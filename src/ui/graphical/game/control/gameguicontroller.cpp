@@ -1215,7 +1215,7 @@ void cGameGuiController::connectClient (cClient& client)
 		updateChangeAllowed();
 	});
 
-	clientSignalConnectionManager.connect(model.newTurnStarted, [&]()
+	clientSignalConnectionManager.connect(model.newTurnStarted, [&](const sNewTurnReport&)
 	{
 		if (activeClient->getModel().getActiveTurnPlayer() == getActivePlayer().get())
 		{
@@ -1451,16 +1451,18 @@ void cGameGuiController::connectReportSources(cClient& client)
 	{
 		addSavedReport(std::make_unique<cSavedReportSimple>(eSavedReportType::TurnAutoMove), player.getId());
 	});
-	clientSignalConnectionManager.connect(model.newTurnStarted, [&]()
+	clientSignalConnectionManager.connect(model.newTurnStarted, [&](const sNewTurnReport& newTurnReport)
 	{
 		if (model.getActiveTurnPlayer() == getActivePlayer().get() || model.getGameSettings()->getGameType() == eGameSettingsGameType::Simultaneous)
 		{
-			const auto& researchs = player.getCurrentTurnResearchAreasFinished();
+			const auto& report = newTurnReport.reports.at (player.getId());
+			const auto& researchs = report.finishedResearchs;
 			const auto& unitReport = player.getCurrentTurnUnitReports();
 			gameGui->getGameMap().currentTurnResearchAreasFinished = researchs;
 			addSavedReport(std::make_unique<cSavedReportTurnStart>(model.getTurnCounter()->getTurn(), unitReport, researchs), player.getId());
 		}
 	});
+
 	clientSignalConnectionManager.connect(player.unitDestroyed, [&](const cUnit& unit)
 	{
 		addSavedReport(std::make_unique<cSavedReportDestroyed>(unit), player.getId());

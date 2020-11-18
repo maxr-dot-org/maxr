@@ -512,26 +512,24 @@ void cPlayer::stopAResearch (cResearch::ResearchArea researchArea)
 //------------------------------------------------------------------------------
 /** At turn end update the research level */
 //------------------------------------------------------------------------------
-void cPlayer::doResearch (const cUnitsData& unitsData)
+std::vector<cResearch::ResearchArea> cPlayer::doResearch (const cUnitsData& unitsData)
 {
-	bool researchFinished = false;
-	std::vector<int> areasReachingNextLevel;
-	currentTurnResearchAreasFinished.clear();
+	std::vector<cResearch::ResearchArea> areasReachingNextLevel;
+
 	for (int area = 0; area < cResearch::kNrResearchAreas; ++area)
 	{
 		if (researchCentersWorkingOnArea[area] > 0 &&
 			researchState.doResearch (researchCentersWorkingOnArea[area], area))
 		{
 			// next level reached
-			areasReachingNextLevel.push_back (area);
-			currentTurnResearchAreasFinished.push_back (cResearch::ResearchArea (area));
-			researchFinished = true;
+			areasReachingNextLevel.push_back (cResearch::ResearchArea (area));
 		}
 	}
-	if (researchFinished)
+	if (!areasReachingNextLevel.empty())
 	{
 		upgradeUnitTypes (areasReachingNextLevel, unitsData);
 	}
+	return areasReachingNextLevel;
 }
 
 //------------------------------------------------------------------------------
@@ -586,7 +584,7 @@ int cPlayer::getScore() const
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, const cUnitsData& originalUnitsData)
+void cPlayer::upgradeUnitTypes (const std::vector<cResearch::ResearchArea>& areasReachingNextLevel, const cUnitsData& originalUnitsData)
 {
 	for (auto& unitData : dynamicUnitsData)
 	{
@@ -685,7 +683,7 @@ void cPlayer::refreshBase(const cMap& map)
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::makeTurnStart(cModel& model)
+sNewTurnPlayerReport cPlayer::makeTurnStart(cModel& model)
 {
 	setHasFinishedTurn(false);
 	resetTurnReportData();
@@ -740,7 +738,7 @@ void cPlayer::makeTurnStart(cModel& model)
 	}
 
 	// do research:
-	doResearch(*model.getUnitsData());
+	auto finishedResearchs = doResearch(*model.getUnitsData());
 
 	// eco-spheres:
 	accumulateScore();
@@ -750,6 +748,7 @@ void cPlayer::makeTurnStart(cModel& model)
 	{
 		vehicle->inSentryRange(model);
 	}
+	return {finishedResearchs};
 }
 
 //------------------------------------------------------------------------------
@@ -777,7 +776,6 @@ uint32_t cPlayer::getChecksum(uint32_t crc) const
 	crc = calcCheckSum(isDefeated, crc);
 	crc = calcCheckSum(clan, crc);
 	crc = calcCheckSum(credits, crc);
-	crc = calcCheckSum(currentTurnResearchAreasFinished, crc);
 	crc = calcCheckSum(hasFinishedTurn, crc);
 	crc = calcCheckSum(researchState, crc);
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
@@ -830,12 +828,6 @@ void cPlayer::resetTurnReportData()
 const std::vector<sTurnstartReport>& cPlayer::getCurrentTurnUnitReports() const
 {
 	return currentTurnUnitReports;
-}
-
-//------------------------------------------------------------------------------
-const std::vector<cResearch::ResearchArea>& cPlayer::getCurrentTurnResearchAreasFinished() const
-{
-	return currentTurnResearchAreasFinished;
 }
 
 //------------------------------------------------------------------------------
