@@ -20,16 +20,15 @@
 #ifndef game_data_reports_special_savedreportturnstartH
 #define game_data_reports_special_savedreportturnstartH
 
-#include "maxrconfig.h"
-
-#include "game/data/report/savedreport.h"
 #include "game/data/player/player.h"
+#include "game/data/report/savedreport.h"
 #include "game/logic/upgradecalculator.h"
 
 class cSavedReportTurnStart : public cSavedReport
 {
 public:
-	cSavedReportTurnStart (const cPlayer& player, int turn);
+	cSavedReportTurnStart (int turn, const std::vector<sTurnstartReport>&, const std::vector<cResearch::ResearchArea>&);
+
 	template <typename T, ENABLE_ARCHIVE_OUT>
 	explicit cSavedReportTurnStart(T& archive)
 	{

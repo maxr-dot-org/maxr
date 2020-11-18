@@ -1455,8 +1455,10 @@ void cGameGuiController::connectReportSources(cClient& client)
 	{
 		if (model.getActiveTurnPlayer() == getActivePlayer().get() || model.getGameSettings()->getGameType() == eGameSettingsGameType::Simultaneous)
 		{
-			gameGui->getGameMap().currentTurnResearchAreasFinished = player.getCurrentTurnResearchAreasFinished();
-			addSavedReport(std::make_unique<cSavedReportTurnStart>(player, model.getTurnCounter()->getTurn()), player.getId());
+			const auto& researchs = player.getCurrentTurnResearchAreasFinished();
+			const auto& unitReport = player.getCurrentTurnUnitReports();
+			gameGui->getGameMap().currentTurnResearchAreasFinished = researchs;
+			addSavedReport(std::make_unique<cSavedReportTurnStart>(model.getTurnCounter()->getTurn(), unitReport, researchs), player.getId());
 		}
 	});
 	clientSignalConnectionManager.connect(player.unitDestroyed, [&](const cUnit& unit)

@@ -17,19 +17,19 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "game/data/report/special/savedreportturnstart.h"
+#include "savedreportturnstart.h"
 
-#include "game/data/player/player.h"
+#include "resources/sound.h"
 #include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffectvoice.h"
 #include "utility/language.h"
 #include "utility/string/toString.h"
-#include "resources/sound.h"
+
 //------------------------------------------------------------------------------
-cSavedReportTurnStart::cSavedReportTurnStart (const cPlayer& player, int turn_) :
-	turn (turn_),
-	unitReports (player.getCurrentTurnUnitReports()),
-	researchAreas (player.getCurrentTurnResearchAreasFinished())
+cSavedReportTurnStart::cSavedReportTurnStart (int turn, const std::vector<sTurnstartReport>& unitReports, const std::vector<cResearch::ResearchArea>& researchAreas) :
+	turn (turn),
+	unitReports (unitReports),
+	researchAreas (researchAreas)
 {}
 
 //------------------------------------------------------------------------------
