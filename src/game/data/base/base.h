@@ -32,6 +32,8 @@ class cPlayer;
 class cPosition;
 class cBase;
 
+struct sNewTurnPlayerReport;
+
 class cSubBase
 {
 public:
@@ -67,7 +69,7 @@ public:
 	/**
 	 * Produces resources, builds units and repairs/reloads units at turn start.
 	 */
-	void makeTurnStart();
+	void makeTurnStart (sNewTurnPlayerReport&);
 
 	//------------------------------------
 	//resource management:
@@ -143,7 +145,7 @@ private:
 
 	void makeTurnStartRepairs (cBuilding& building);
 	void makeTurnStartReload (cBuilding& building);
-	void makeTurnStartBuild (cBuilding& building);
+	void makeTurnStartBuild (cBuilding& building, sNewTurnPlayerReport&);
 
 	/**
 	* adds/subtracts resources of the type storeResType to/from the subbase
@@ -206,7 +208,7 @@ public:
 	 *
 	 * This produces resources, builds units and repairs/reloads units.
 	 */
-	void makeTurnStart();
+	void makeTurnStart (sNewTurnPlayerReport&);
 
 	/**
 	* recalculates the values of all subbases

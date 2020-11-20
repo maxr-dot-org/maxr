@@ -1457,7 +1457,7 @@ void cGameGuiController::connectReportSources(cClient& client)
 		{
 			const auto& report = newTurnReport.reports.at (player.getId());
 			const auto& researchs = report.finishedResearchs;
-			const auto& unitReport = player.getCurrentTurnUnitReports();
+			const auto& unitReport = report.unitsBuilt;
 			gameGui->getGameMap().currentTurnResearchAreasFinished = researchs;
 			addSavedReport(std::make_unique<cSavedReportTurnStart>(model.getTurnCounter()->getTurn(), unitReport, researchs), player.getId());
 		}

@@ -67,7 +67,11 @@ struct sTurnstartReport
 
 struct sNewTurnPlayerReport
 {
+public:
+	void addUnitBuilt (const sID& unitTypeId);
+public:
 	std::vector<cResearch::ResearchArea> finishedResearchs;
+	std::vector<sTurnstartReport> unitsBuilt;
 };
 
 class cSavedReport;
@@ -184,10 +188,6 @@ public:
 	void refreshSentryMaps();
 
 	bool mayHaveOffensiveUnit() const;
-
-	void addTurnReportUnit (const sID& unitId);
-	void resetTurnReportData();
-	const std::vector<sTurnstartReport>& getCurrentTurnUnitReports() const;
 
 	const cResearch& getResearchState() const;
 	cResearch& getResearchState();
@@ -340,7 +340,6 @@ private:
 	int clan;
 	int credits;
 
-	std::vector<sTurnstartReport> currentTurnUnitReports; //TODO: move somewhere else. Shouldn't be part of the game model
 
 	bool hasFinishedTurn;
 

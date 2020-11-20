@@ -34,6 +34,23 @@
 using namespace std;
 
 //------------------------------------------------------------------------------
+void sNewTurnPlayerReport::addUnitBuilt (const sID& unitTypeId)
+{
+	auto iter = ranges::find_if (unitsBuilt, [unitTypeId] (const sTurnstartReport & entry) { return entry.type == unitTypeId; });
+	if (iter != unitsBuilt.end())
+	{
+		++iter->count;
+	}
+	else
+	{
+		sTurnstartReport entry;
+		entry.type = unitTypeId;
+		entry.count = 1;
+		unitsBuilt.push_back (entry);
+	}
+}
+
+//------------------------------------------------------------------------------
 // Implementation cPlayer class
 //------------------------------------------------------------------------------
 
@@ -686,11 +703,11 @@ void cPlayer::refreshBase(const cMap& map)
 sNewTurnPlayerReport cPlayer::makeTurnStart(cModel& model)
 {
 	setHasFinishedTurn(false);
-	resetTurnReportData();
 
 	base.checkTurnEnd();
 
-	base.makeTurnStart();
+	sNewTurnPlayerReport report;
+	base.makeTurnStart (report);
 
 	// reload all buildings
 	for (auto& building : buildings)
@@ -723,7 +740,7 @@ sNewTurnPlayerReport cPlayer::makeTurnStart(cModel& model)
 			}
 		}
 		vehicle->refreshData();
-		vehicle->proceedBuilding(model);
+		vehicle->proceedBuilding (model, report);
 		vehicle->proceedClearing(model);
 	}
 
@@ -738,7 +755,7 @@ sNewTurnPlayerReport cPlayer::makeTurnStart(cModel& model)
 	}
 
 	// do research:
-	auto finishedResearchs = doResearch(*model.getUnitsData());
+	report.finishedResearchs = doResearch(*model.getUnitsData());
 
 	// eco-spheres:
 	accumulateScore();
@@ -748,7 +765,7 @@ sNewTurnPlayerReport cPlayer::makeTurnStart(cModel& model)
 	{
 		vehicle->inSentryRange(model);
 	}
-	return {finishedResearchs};
+	return report;
 }
 
 //------------------------------------------------------------------------------
@@ -799,35 +816,6 @@ bool cPlayer::mayHaveOffensiveUnit() const
 		if (building->getStaticUnitData().canAttack || !building->getStaticUnitData().canBuild.empty()) return true;
 	}
 	return false;
-}
-
-//------------------------------------------------------------------------------
-void cPlayer::addTurnReportUnit (const sID& unitTypeId)
-{
-	auto iter = ranges::find_if (currentTurnUnitReports, [unitTypeId] (const sTurnstartReport & entry) { return entry.type == unitTypeId; });
-	if (iter != currentTurnUnitReports.end())
-	{
-		++iter->count;
-	}
-	else
-	{
-		sTurnstartReport entry;
-		entry.type = unitTypeId;
-		entry.count = 1;
-		currentTurnUnitReports.push_back (entry);
-	}
-}
-
-//------------------------------------------------------------------------------
-void cPlayer::resetTurnReportData()
-{
-	currentTurnUnitReports.clear();
-}
-
-//------------------------------------------------------------------------------
-const std::vector<sTurnstartReport>& cPlayer::getCurrentTurnUnitReports() const
-{
-	return currentTurnUnitReports;
 }
 
 //------------------------------------------------------------------------------

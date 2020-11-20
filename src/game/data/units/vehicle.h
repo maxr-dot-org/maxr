@@ -42,6 +42,8 @@ class cMoveJob;
 class cPlayer;
 class cStaticMap;
 
+struct sNewTurnPlayerReport;
+
 //-----------------------------------------------------------------------------
 // Enum for the symbols
 //-----------------------------------------------------------------------------
@@ -176,7 +178,7 @@ public:
 	*@return true if there has been refreshed something else false.
 	*/
 	bool refreshData();
-	void proceedBuilding (cModel& model);
+	void proceedBuilding (cModel& model, sNewTurnPlayerReport&);
 	void continuePathBuilding(cModel& model);
 	void proceedClearing(cModel& model);
 

@@ -312,7 +312,7 @@ void cVehicle::render (const cMapView* map, unsigned long long animationTime, co
 	render_simple (surface, dest, zoomFactor, alpha);
 }
 
-void cVehicle::proceedBuilding (cModel& model)
+void cVehicle::proceedBuilding (cModel& model, sNewTurnPlayerReport& report)
 {
 	if (isUnitBuildingABuilding() == false || getBuildTurns() == 0) return;
 
@@ -323,7 +323,7 @@ void cVehicle::proceedBuilding (cModel& model)
 	if (getBuildTurns() != 0) return;
 
 	const cMap& map = *model.getMap();
-	getOwner()->addTurnReportUnit (getBuildingType());
+	report.addUnitBuilt (getBuildingType());
 
 	// handle pathbuilding
 	// here the new building is added (if possible) and

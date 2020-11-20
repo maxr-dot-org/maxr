@@ -604,7 +604,7 @@ void cSubBase::makeTurnStartReload (cBuilding& building)
 	}
 }
 
-void cSubBase::makeTurnStartBuild (cBuilding& building)
+void cSubBase::makeTurnStartBuild (cBuilding& building, sNewTurnPlayerReport& report)
 {
 	// build:
 	if (!building.isUnitWorking() || building.getStaticUnitData().canBuild.empty() || building.isBuildListEmpty())
@@ -629,14 +629,14 @@ void cSubBase::makeTurnStartBuild (cBuilding& building)
 	}
 	if (buildListItem.getRemainingMetal() <= 0)
 	{
-		base.owner.addTurnReportUnit (buildListItem.getType());
+		report.addUnitBuilt (buildListItem.getType());
 		building.stopWork (false);
 	}
 }
 
-void cSubBase::makeTurnStart ()
+void cSubBase::makeTurnStart (sNewTurnPlayerReport& report)
 {
-	// produce ressources
+	// produce resources
 	addOil (prod.oil - needed.oil);
 	addMetal (prod.metal - needed.metal);
 	addGold (prod.gold - needed.gold);
@@ -655,7 +655,7 @@ void cSubBase::makeTurnStart ()
 		makeTurnStartRepairs (building);
 		building.setHasBeenAttacked (false);
 		makeTurnStartReload (building);
-		makeTurnStartBuild (building);
+		makeTurnStartBuild (building, report);
 	}
 
 	// check maximum storage limits
@@ -1053,11 +1053,11 @@ bool cBase::checkTurnEnd()
 	return changed;
 }
 
-void cBase::makeTurnStart ()
+void cBase::makeTurnStart (sNewTurnPlayerReport& report)
 {
 	for (size_t i = 0; i != SubBases.size(); ++i)
 	{
-		SubBases[i]->makeTurnStart ();
+		SubBases[i]->makeTurnStart (report);
 	}
 }
 
