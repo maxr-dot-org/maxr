@@ -893,7 +893,7 @@ void cMap::placeRessources(cModel& model)
 {
 	const cStaticUnitData& data = building.getStaticUnitData();
 
-	if (!building.isRubble()) return 4;  // rubble
+	if (building.isRubble()) return 4;  // rubble
 
 	if (data.surfacePosition == cStaticUnitData::SURFACE_POS_BENEATH_SEA) return 9; // seamine
 	if (data.surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA) return 7; // bridge
