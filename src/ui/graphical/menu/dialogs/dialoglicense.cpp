@@ -26,6 +26,16 @@
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "utility/language.h"
 
+namespace
+{
+	//--------------------------------------------------------------------------
+	std::string getCompileTimeYear()
+	{
+		// __DATE__ format is Mmm dd yyyy
+		return __DATE__ + 7;
+	}
+}
+
 //------------------------------------------------------------------------------
 cDialogLicense::cDialogLicense() :
 	cWindow (LoadPCX (GFXOD_DIALOG4), eWindowBackgrounds::Alpha),
@@ -135,7 +145,7 @@ void cDialogLicense::resetTexts()
 		"along with this program; if not, write to the Free Software "
 		"Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 
-	static const char* generalHeader = "(C) 2007-2020 by its authors";
+	static const std::string generalHeader = "(C) 2007-" + getCompileTimeYear() + " by its authors";
 	static const char* authorsHeader = "AUTHORS:";
 
 	switch (currentPage)
