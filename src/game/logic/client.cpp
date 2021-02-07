@@ -256,14 +256,9 @@ void cClient::handleSurveyorMoveJobs()
 {
 	for (auto& job : surveyorAiJobs)
 	{
-		job->run(*this, surveyorAiJobs);
-
-		if (job->isFinished())
-		{
-			job = nullptr;
-		}
+		job->run (*this, surveyorAiJobs);
 	}
-	Remove(surveyorAiJobs, nullptr);
+	RemoveIf (surveyorAiJobs, [](auto& job){ return job->isFinished(); });
 }
 
 //------------------------------------------------------------------------------
