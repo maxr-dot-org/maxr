@@ -20,20 +20,20 @@
 #ifndef ui_graphical_menu_windows_windowlandingunitselection_windowlandingunitselectionH
 #define ui_graphical_menu_windows_windowlandingunitselection_windowlandingunitselectionH
 
-#include <map>
 #include <array>
+#include <map>
 
 #include "ui/graphical/menu/windows/windowadvancedhangar/windowadvancedhangar.h"
 
 class cCheckBox;
-class cResourceBar;
 class cLabel;
 class cPushButton;
+class cResourceBar;
+class cUnitsData;
 class cUnitUpgrade;
 class cUnitListViewItemCargo;
 struct sID;
 struct sLandingUnit;
-class cUnitsData;
 
 class cWindowLandingUnitSelection : public cWindowAdvancedHangar<cUnitListViewItemCargo>
 {
@@ -49,6 +49,25 @@ protected:
 	bool tryAddSelectedUnit (const cUnitListViewItemBuy& unitItem) const MAXR_OVERRIDE_FUNCTION;
 	bool tryRemoveSelectedUnit (const cUnitListViewItemCargo& unitItem) const MAXR_OVERRIDE_FUNCTION;
 	void setActiveUnit (const sID& unitId) MAXR_OVERRIDE_FUNCTION;
+private:
+
+	void generateSelectionList (bool select);
+
+	void metalChanged();
+	void goldChanged();
+
+	void metalUpButtonClicked();
+	void metalDownButtonClicked();
+
+	void handleSelectedUnitSelectionChanged (cUnitListViewItemCargo* unitItem);
+
+	std::pair<int, int> testBuyCargo (const cUnitListViewItemCargo&, int cargo) const;
+
+	void upgradeIncreaseClicked (size_t index);
+	void upgradeDecreaseClicked (size_t index);
+
+	void updateUpgradeButtons();
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 
@@ -76,7 +95,7 @@ private:
 
 	cUnitListViewItemCargo* selectedCargoUnit;
 
-	std::vector<const cUnitListViewItemCargo*> fixedSelectedUnits;
+	std::map<const cUnitListViewItemCargo*, int> fixedSelectedUnits;
 
 	static const size_t maxUpgradeButtons = 8;
 
@@ -85,23 +104,6 @@ private:
 	std::array<cLabel*, maxUpgradeButtons> upgradeCostLabel;
 
 	std::map<sID, cUnitUpgrade> unitUpgrades;
-
-	void generateSelectionList (bool select);
-
-	void metalChanged();
-	void goldChanged();
-
-	void metalUpButtonClicked();
-	void metalDownButtonClicked();
-
-	void handleSelectedUnitSelectionChanged (cUnitListViewItemCargo* unitItem);
-
-	std::pair<int, int> testBuyCargo (int cargo);
-
-	void upgradeIncreaseClicked (size_t index);
-	void upgradeDecreaseClicked (size_t index);
-
-	void updateUpgradeButtons();
 };
 
 #endif // ui_graphical_menu_windows_windowlandingunitselection_windowlandingunitselectionH

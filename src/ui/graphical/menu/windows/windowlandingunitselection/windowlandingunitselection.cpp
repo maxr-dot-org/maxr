@@ -19,19 +19,31 @@
 
 #include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
 
-#include "utility/language.h"
-#include "utility/string/toString.h"
-#include "resources/pcx.h"
 #include "game/data/player/player.h"
 #include "game/data/units/landingunit.h"
-#include "ui/graphical/menu/widgets/label.h"
-#include "ui/graphical/menu/widgets/pushbutton.h"
+#include "resources/pcx.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
-#include "ui/graphical/menu/widgets/radiogroup.h"
+#include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/listview.h"
+#include "ui/graphical/menu/widgets/pushbutton.h"
+#include "ui/graphical/menu/widgets/radiogroup.h"
 #include "ui/graphical/menu/widgets/special/resourcebar.h"
 #include "ui/graphical/menu/widgets/special/unitlistviewitembuy.h"
 #include "ui/graphical/menu/widgets/special/unitlistviewitemcargo.h"
+#include "utility/language.h"
+#include "utility/string/toString.h"
+
+#include <algorithm>
+
+namespace
+{
+	// TODO: replace by std::clamp in C++17
+	template <typename T>
+	const T& clamp(const T& value, const T& min, const T& max)
+	{
+		return std::max (min, std::min (value, max));
+	}
+}
 
 //------------------------------------------------------------------------------
 cWindowLandingUnitSelection::cWindowLandingUnitSelection (cPlayerColor playerColor, int playerClan, const std::vector<std::pair<sID, int>>& initialUnits, unsigned int initialGold, std::shared_ptr<const cUnitsData> unitsData) :
@@ -112,12 +124,11 @@ cWindowLandingUnitSelection::cWindowLandingUnitSelection (cPlayerColor playerCol
 	//
 	// Initialization
 	//
-
 	for (size_t i = 0; i < initialUnits.size(); ++i)
 	{
 		auto& addedItem = addSelectedUnit (initialUnits[i].first);
 		addedItem.setCargo (initialUnits[i].second);
-		fixedSelectedUnits.push_back (&addedItem);
+		fixedSelectedUnits.emplace (&addedItem, initialUnits[i].second);
 	}
 
 	generateSelectionList (true);
@@ -273,7 +284,7 @@ bool cWindowLandingUnitSelection::tryAddSelectedUnit (const cUnitListViewItemBuy
 //------------------------------------------------------------------------------
 bool cWindowLandingUnitSelection::tryRemoveSelectedUnit (const cUnitListViewItemCargo& unitItem) const
 {
-	if (ranges::find (fixedSelectedUnits, &unitItem) != fixedSelectedUnits.end()) return false;
+	if (fixedSelectedUnits.find (&unitItem) != fixedSelectedUnits.end()) return false;
 
 	const auto& unitId = unitItem.getUnitId();
 	int buildCosts = unitsData->getDynamicUnitData(unitId, getPlayer().getClan()).getBuildCost();
@@ -321,8 +332,12 @@ void cWindowLandingUnitSelection::generateSelectionList (bool select)
 }
 
 //------------------------------------------------------------------------------
-std::pair<int, int> cWindowLandingUnitSelection::testBuyCargo (int amount)
+std::pair<int, int> cWindowLandingUnitSelection::testBuyCargo (const cUnitListViewItemCargo& unit, int amount) const
 {
+	auto it = fixedSelectedUnits.find (&unit);
+	const int min_cargo = (it != fixedSelectedUnits.end() ? it->second : 0);
+
+	amount = clamp (amount, min_cargo - unit.getCargo(), metalBar->getMaxValue() - unit.getCargo());
 	auto price = amount / singleCreditResourceAmount; // may be negative (if we are selling)
 
 	if (goldBar->getValue() - price < goldBar->getMinValue())
@@ -347,7 +362,7 @@ void cWindowLandingUnitSelection::metalChanged()
 		const auto oldCargo = selectedCargoUnit->getCargo();
 		const auto desiredCargo = metalBar->getValue();
 		const auto desiredBuy = desiredCargo - oldCargo;
-		const auto buyResult = testBuyCargo (desiredBuy);
+		const auto buyResult = testBuyCargo (*selectedCargoUnit, desiredBuy);
 
 		if (buyResult.second != desiredBuy)
 		{
