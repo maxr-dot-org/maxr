@@ -46,7 +46,7 @@ void cActionChangeResearch::execute(cModel& model) const
 	int newUsedResearch = 0;
 	for (int nrCenters : researchAreas)
 	{
-		if (nrCenters < 0 || nrCenters >= cResearch::kNrResearchAreas) return;
+		if (nrCenters < 0) return;
 		newUsedResearch += nrCenters;
 	}
 	if (newUsedResearch > player->getResearchCentersWorkingTotal())
