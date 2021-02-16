@@ -29,7 +29,7 @@ public:
 	cWindowStart();
 	~cWindowStart();
 
-	void handleActivated (cApplication& application, bool firstTime) MAXR_OVERRIDE_FUNCTION;
+	void handleActivated (cApplication& application, bool firstTime) override;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

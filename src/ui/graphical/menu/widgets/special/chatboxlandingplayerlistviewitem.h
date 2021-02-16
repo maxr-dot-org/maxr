@@ -57,7 +57,7 @@ public:
 
 	void setLandingPositionManager (const cLandingPositionManager* landingPositionManager);
 
-	void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
+	void handleResized (const cPosition& oldSize) override;
 private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager managerSignalConnectionManager;

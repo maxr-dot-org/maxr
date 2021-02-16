@@ -148,7 +148,7 @@ public:
 
 
 	int playStream();
-	std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
+	std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const override;
 
 	/**
 	* refreshes the shotsCur of this building
@@ -164,15 +164,15 @@ public:
 	void stopWork (bool forced = false);
 
 	/** check whether a transfer to a unit on the field is possible */
-	bool canTransferTo (const cPosition& position, const cMapView& map) const MAXR_OVERRIDE_FUNCTION;
-	bool canTransferTo (const cUnit& unit) const MAXR_OVERRIDE_FUNCTION;
+	bool canTransferTo (const cPosition& position, const cMapView& map) const override;
+	bool canTransferTo (const cUnit& unit) const override;
 	void initMineRessourceProd (const cMap& map);
 	void calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array<int, 3>& turboBuildCosts, int vehicleCosts, int remainingMetal = -1) const;
-	bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
-	bool canExitTo (const cPosition& position, const cMapView& map, const cStaticUnitData& vehicleData) const MAXR_OVERRIDE_FUNCTION;
+	bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const override;
+	bool canExitTo (const cPosition& position, const cMapView& map, const cStaticUnitData& vehicleData) const override;
 	bool canLoad(const cPosition& position, const cMapView& map, bool checkPosition = true) const;
-	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const MAXR_OVERRIDE_FUNCTION;
-	bool canSupply(const cUnit* unit, eSupplyType supplyType) const MAXR_OVERRIDE_FUNCTION;
+	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const override;
+	bool canSupply(const cUnit* unit, eSupplyType supplyType) const override;
 
 	/**
 	* draws the main image of the building onto the given surface

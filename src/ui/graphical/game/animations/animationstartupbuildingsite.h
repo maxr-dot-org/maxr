@@ -35,7 +35,7 @@ public:
 	cAnimationStartUpBuildingSite (cAnimationTimer& animationTimer, const cVehicle& vehicle);
 	~cAnimationStartUpBuildingSite();
 
-	bool isLocatedIn (const cBox<cPosition>& box) const MAXR_OVERRIDE_FUNCTION;
+	bool isLocatedIn (const cBox<cPosition>& box) const override;
 private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager animationTimerConnectionManager;

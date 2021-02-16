@@ -45,18 +45,18 @@ public:
 
 	void setZoomFactor (int zoomFactor);
 
-	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
-	bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
-	bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
-	bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
-	void handleLooseMouseFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
+	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
+	bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) override;
+	bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
+	bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
+	void handleLooseMouseFocus (cApplication& application) override;
 
 	cSignal<void (const cPosition&)> focus;
 	cSignal<void (const cPosition&)> triggeredMove;
 
 protected:
-	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
-	bool acceptButton (eMouseButtonType button) const MAXR_OVERRIDE_FUNCTION;
+	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
+	bool acceptButton (eMouseButtonType button) const override;
 
 private:
 	cSignalConnectionManager dynamicMapSignalConnectionManager;

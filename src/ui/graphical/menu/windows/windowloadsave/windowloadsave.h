@@ -34,8 +34,8 @@ public:
 	cSignal<void ()> exit;
 
 protected:
-	void handleSlotClicked (size_t index) MAXR_OVERRIDE_FUNCTION;
-	void handleSlotDoubleClicked (size_t index) MAXR_OVERRIDE_FUNCTION;
+	void handleSlotClicked (size_t index) override;
+	void handleSlotDoubleClicked (size_t index) override;
 
 private:
 	cSignalConnectionManager signalConnectionManager;

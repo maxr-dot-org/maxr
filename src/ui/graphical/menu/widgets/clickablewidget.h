@@ -38,10 +38,10 @@ public:
 
 	cShortcut& addClickShortcut (cKeySequence keySequence, eMouseButtonType button = eMouseButtonType::Left);
 
-	bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
-	bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
-	bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
-	void handleLooseMouseFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
+	bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) override;
+	bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
+	bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
+	void handleLooseMouseFocus (cApplication& application) override;
 
 	void setConsumeClick (bool consumeClick);
 protected:

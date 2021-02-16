@@ -81,17 +81,17 @@ public:
 	cPushButton (const cPosition& position, ePushButtonType buttonType, const std::string& text, eUnicodeFontType fontType = FONT_LATIN_BIG);
 	cPushButton (const cPosition& position, ePushButtonType buttonType, cSoundChunk* clickSound, const std::string& text, eUnicodeFontType fontType = FONT_LATIN_BIG);
 
-	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
-	bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
-	bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
+	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
+	bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
+	bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
 
 	void lock();
 	void unlock();
 
 	cSignal<void ()> clicked;
 protected:
-	void setPressed (bool pressed) MAXR_OVERRIDE_FUNCTION;
-	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
+	void setPressed (bool pressed) override;
+	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
 
 private:
 	AutoSurface surface;

@@ -46,9 +46,9 @@ public:
 	std::vector<std::pair<sID, cUnitUpgrade>> getUnitUpgrades() const;
 
 protected:
-	bool tryAddSelectedUnit (const cUnitListViewItemBuy& unitItem) const MAXR_OVERRIDE_FUNCTION;
-	bool tryRemoveSelectedUnit (const cUnitListViewItemCargo& unitItem) const MAXR_OVERRIDE_FUNCTION;
-	void setActiveUnit (const sID& unitId) MAXR_OVERRIDE_FUNCTION;
+	bool tryAddSelectedUnit (const cUnitListViewItemBuy& unitItem) const override;
+	bool tryRemoveSelectedUnit (const cUnitListViewItemCargo& unitItem) const override;
+	void setActiveUnit (const sID& unitId) override;
 private:
 
 	void generateSelectionList (bool select);

@@ -33,8 +33,8 @@ public:
 
 	void setImage (SDL_Surface* image);
 
-	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
-	bool isAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
+	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
+	bool isAt (const cPosition& position) const override;
 
 	cSignal<void ()> clicked;
 
@@ -42,7 +42,7 @@ public:
 	void enableAtTransparent();
 
 protected:
-	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
+	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
 
 private:
 	AutoSurface image;

@@ -53,11 +53,11 @@ public:
 
 	void finishEditing();
 
-	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
-	bool handleGetKeyFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
-	void handleLooseKeyFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
-	bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key) MAXR_OVERRIDE_FUNCTION;
-	void handleTextEntered (cApplication& application, cKeyboard& keyboard, const char* text) MAXR_OVERRIDE_FUNCTION;
+	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
+	bool handleGetKeyFocus (cApplication& application) override;
+	void handleLooseKeyFocus (cApplication& application) override;
+	bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key) override;
+	void handleTextEntered (cApplication& application, cKeyboard& keyboard, const char* text) override;
 
 	cSignal<void ()> clicked;
 	cSignal<void ()> textSet;
@@ -66,7 +66,7 @@ public:
 	cSignal<void (eValidatorState)> editingFinished;
 protected:
 
-	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
+	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
 private:
 	const std::chrono::milliseconds cursorVisibleTime;
 	const std::chrono::milliseconds cursorInvisibleTime;

@@ -39,7 +39,7 @@ public:
 
 	void start();
 
-	void run() MAXR_OVERRIDE_FUNCTION;
+	void run() override;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

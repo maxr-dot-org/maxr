@@ -40,7 +40,7 @@ public:
 
 	cSignal<void ()> readyClicked;
 
-	void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
+	void handleResized (const cPosition& oldSize) override;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

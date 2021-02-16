@@ -29,11 +29,11 @@ class cSavedReportSimple : public cSavedReport
 public:
 	explicit cSavedReportSimple (eSavedReportType type);
 
-	eSavedReportType getType() const MAXR_OVERRIDE_FUNCTION;
+	eSavedReportType getType() const override;
 
-	std::string getMessage(const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
+	std::string getMessage(const cUnitsData& unitsData) const override;
 
-	bool isAlert() const MAXR_OVERRIDE_FUNCTION;
+	bool isAlert() const override;
 private:
 	eSavedReportType type;
 };

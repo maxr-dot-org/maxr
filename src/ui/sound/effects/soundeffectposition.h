@@ -29,8 +29,8 @@ class cSoundEffectPosition : public cSoundEffect
 public:
 	cSoundEffectPosition (eSoundEffectType type, const cSoundChunk& sound, const cPosition& position);
 
-	bool hasPosition() const MAXR_OVERRIDE_FUNCTION;
-	const cPosition& getPosition() const MAXR_OVERRIDE_FUNCTION;
+	bool hasPosition() const override;
+	const cPosition& getPosition() const override;
 private:
 	cPosition position;
 };

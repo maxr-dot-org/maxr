@@ -38,7 +38,7 @@ public:
 	int getPrefixLabelWidth () const;
 	void setDesiredPrefixLabelWidth (int width);
 
-	void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
+	void handleResized (const cPosition& oldSize) override;
 
 private:
 	cLabel* messageLabel;

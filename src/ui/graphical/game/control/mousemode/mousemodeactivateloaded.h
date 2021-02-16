@@ -29,15 +29,15 @@ class cMouseModeActivateLoaded : public cMouseMode
 public:
 	cMouseModeActivateLoaded (const cMapView* map, const cUnitSelection& unitSelection, const cPlayer* player, int vehicleToActivateIndex);
 
-	eMouseModeType getType() const MAXR_OVERRIDE_FUNCTION;
-	void setCursor (cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
-	std::unique_ptr<cMouseAction> getMouseAction(const cPosition& mapPosition, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
+	eMouseModeType getType() const override;
+	void setCursor (cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const override;
+	std::unique_ptr<cMouseAction> getMouseAction(const cPosition& mapPosition, const cUnitsData& unitsData) const override;
 
 	size_t getVehicleToActivateIndex() const;
 
 protected:
-	void establishUnitSelectionConnections() MAXR_OVERRIDE_FUNCTION;
-	void establishMapFieldConnections (const cMapFieldView& field) MAXR_OVERRIDE_FUNCTION;
+	void establishUnitSelectionConnections() override;
+	void establishMapFieldConnections (const cMapFieldView& field) override;
 
 private:
 	int vehicleToActivateIndex;

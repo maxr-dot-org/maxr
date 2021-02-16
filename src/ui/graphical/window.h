@@ -86,7 +86,7 @@ public:
 	 *
 	 * @see cWidget::draw
 	 */
-	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
+	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 
 	/**
 	 * Gets called when the window is activated.
@@ -140,7 +140,7 @@ protected:
 	 *         not the active one in any application or the application
 	 *         does not have a mouse registered to it.
 	 */
-	cMouse* getActiveMouse() const MAXR_OVERRIDE_FUNCTION;
+	cMouse* getActiveMouse() const override;
 
 	/**
 	 * Gets the keyboard of the of the application the current window is the
@@ -150,7 +150,7 @@ protected:
 	 *         not the active one in any application or the application
 	 *         does not have a keyboard registered to it.
 	 */
-	cKeyboard* getActiveKeyboard() const MAXR_OVERRIDE_FUNCTION;
+	cKeyboard* getActiveKeyboard() const override;
 
 	/**
 	 * Gets the application where the current window is the
@@ -159,7 +159,7 @@ protected:
 	 * @return The application or null if the current window is
 	 *         not the active one in any application.
 	 */
-	cApplication* getActiveApplication() const MAXR_OVERRIDE_FUNCTION;
+	cApplication* getActiveApplication() const override;
 
 	/**
 	 * Returns the default cursor for this window.

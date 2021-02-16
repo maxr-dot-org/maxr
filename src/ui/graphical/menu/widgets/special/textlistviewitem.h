@@ -31,7 +31,7 @@ public:
 
 	const std::string& getText() const;
 
-	void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
+	void handleResized (const cPosition& oldSize) override;
 protected:
 	cLabel* label;
 };

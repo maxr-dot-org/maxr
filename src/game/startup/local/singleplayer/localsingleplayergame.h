@@ -36,7 +36,7 @@ class cLocalSingleplayerGame : public cGame
 public:
 	~cLocalSingleplayerGame();
 
-	void run() MAXR_OVERRIDE_FUNCTION;
+	void run() override;
 
 protected:
 	std::shared_ptr<cClient> client;

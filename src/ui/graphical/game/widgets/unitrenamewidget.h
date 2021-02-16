@@ -51,7 +51,7 @@ public:
 
 	const std::string& getUnitName() const;
 
-	bool isAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
+	bool isAt (const cPosition& position) const override;
 
 	cSignal<void ()> unitRenameTriggered;
 private:

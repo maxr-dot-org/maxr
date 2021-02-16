@@ -306,7 +306,7 @@ public:
 	XMarkerType& addXMarker (T value);
 	YMarkerType& addYMarker (U value);
 
-	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
+	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 private:
 	const cPosition graphBeginMargin;
 	const cPosition graphEndMargin;

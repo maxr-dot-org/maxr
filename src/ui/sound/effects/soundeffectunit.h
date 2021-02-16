@@ -30,8 +30,8 @@ class cSoundEffectUnit : public cSoundEffect
 public:
 	cSoundEffectUnit (eSoundEffectType type, const cSoundChunk& sound, const cUnit& unit);
 
-	bool hasPosition() const MAXR_OVERRIDE_FUNCTION;
-	const cPosition& getPosition() const MAXR_OVERRIDE_FUNCTION;
+	bool hasPosition() const override;
+	const cPosition& getPosition() const override;
 private:
 	const cUnit& unit;
 };

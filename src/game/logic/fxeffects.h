@@ -70,7 +70,7 @@ class cFxMuzzle : public cFx
 
 protected:
 	cFxMuzzle (const cPosition& position, int dir_, sID id);
-	void draw (float zoom, const cPosition& destination) const MAXR_OVERRIDE_FUNCTION;
+	void draw (float zoom, const cPosition& destination) const override;
 	void playSound (cSoundManager& soundManager) const override;
 
 	AutoSurface (*pImages) [2];
@@ -106,7 +106,7 @@ class cFxExplo : public cFx
 {
 protected:
 	cFxExplo (const cPosition& position, int frames_);
-	void draw (float zoom, const cPosition& destination) const MAXR_OVERRIDE_FUNCTION;
+	void draw (float zoom, const cPosition& destination) const override;
 
 protected:
 	AutoSurface (*pImages) [2];
@@ -120,14 +120,14 @@ class cFxExploSmall : public cFxExplo
 {
 public:
 	cFxExploSmall (const cPosition& position); // x, y is the center of the explosion
-	void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
+	void playSound (cSoundManager& soundManager) const override;
 };
 
 class cFxExploBig : public cFxExplo
 {
 public:
 	cFxExploBig (const cPosition& position, bool onWater);
-	void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
+	void playSound (cSoundManager& soundManager) const override;
 
 private:
 	bool onWater;
@@ -137,14 +137,14 @@ class cFxExploAir : public cFxExplo
 {
 public:
 	cFxExploAir (const cPosition& position);
-	void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
+	void playSound (cSoundManager& soundManager) const override;
 };
 
 class cFxExploWater : public cFxExplo
 {
 public:
 	cFxExploWater (const cPosition& position);
-	void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
+	void playSound (cSoundManager& soundManager) const override;
 };
 
 class cFxHit : public cFxExplo
@@ -154,21 +154,21 @@ private:
 	bool big;
 public:
 	cFxHit (const cPosition& position, bool targetHit, bool big);
-	void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
+	void playSound (cSoundManager& soundManager) const override;
 };
 
 class cFxAbsorb : public cFxExplo
 {
 public:
 	cFxAbsorb (const cPosition& position);
-	void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
+	void playSound (cSoundManager& soundManager) const override;
 };
 
 class cFxFade : public cFx
 {
 protected:
 	cFxFade (const cPosition& position, bool bottom, int start, int end);
-	void draw (float zoom, const cPosition& destination) const MAXR_OVERRIDE_FUNCTION;
+	void draw (float zoom, const cPosition& destination) const override;
 
 	AutoSurface (*pImages) [2];
 	const int alphaStart;
@@ -196,7 +196,7 @@ private:
 	const int dir;
 public:
 	cFxTracks (const cPosition& position, int dir_);
-	void draw (float zoom, const cPosition& destination) const MAXR_OVERRIDE_FUNCTION;
+	void draw (float zoom, const cPosition& destination) const override;
 };
 
 
@@ -214,13 +214,13 @@ private:
 public:
 	cFxRocket (const cPosition& startPosition, const cPosition& endPosition, int dir_, bool bottom, sID id);
 	~cFxRocket();
-	void draw (float zoom, const cPosition& destination) const MAXR_OVERRIDE_FUNCTION;
+	void draw (float zoom, const cPosition& destination) const override;
 	void playSound (cSoundManager& soundManager) const override;
 	void run() override;
 	// return true, when the last smoke effect is finished.
 	// getLength() returns only the time until
 	// the rocket has reached the destination
-	bool isFinished() const MAXR_OVERRIDE_FUNCTION;
+	bool isFinished() const override;
 };
 
 class cFxDarkSmoke : public cFx
@@ -234,7 +234,7 @@ private:
 	AutoSurface (*pImages) [2];
 public:
 	cFxDarkSmoke (const cPosition& position, int alpha, float windDir);
-	void draw (float zoom, const cPosition& destination) const MAXR_OVERRIDE_FUNCTION;
+	void draw (float zoom, const cPosition& destination) const override;
 };
 
 #endif // game_logic_fxeffectsH

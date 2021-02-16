@@ -43,8 +43,8 @@ public:
 	cSlider (const cBox<cPosition>& area, int minValue, int maxValue, eOrientationType orientation, eSliderType sliderType = eSliderType::Default);
 	cSlider (const cBox<cPosition>& area, int minValue, int maxValue, eOrientationType orientation, eSliderHandleType handleType, eSliderType sliderType = eSliderType::Default);
 
-	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
-	void handleMoved (const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
+	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
+	void handleMoved (const cPosition& offset) override;
 
 	int getMinValue() const;
 	void setMinValue (int minValue);
@@ -60,7 +60,7 @@ public:
 
 	cSignal<void ()> valueChanged;
 protected:
-	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
+	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
 
 private:
 	cSignalConnectionManager signalConnectionManager;

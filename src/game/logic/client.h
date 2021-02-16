@@ -70,7 +70,7 @@ public:
 	void setPlayers(const std::vector<cPlayerBasicData>& splayers, size_t activePlayerNr);
 
 	unsigned int getNetMessageQueueSize() const { return static_cast<unsigned int>(eventQueue2.safe_size()); };
-	void pushMessage(std::unique_ptr<cNetMessage> message) MAXR_OVERRIDE_FUNCTION;
+	void pushMessage(std::unique_ptr<cNetMessage> message) override;
 
 	//
 	void enableFreezeMode (eFreezeMode mode);

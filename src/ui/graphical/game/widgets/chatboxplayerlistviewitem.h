@@ -39,7 +39,7 @@ public:
 
 	int getPlayerNumber() const;
 
-	void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
+	void handleResized (const cPosition& oldSize) override;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

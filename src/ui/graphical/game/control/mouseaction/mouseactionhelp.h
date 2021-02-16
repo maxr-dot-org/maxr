@@ -26,9 +26,9 @@
 class cMouseActionHelp : public cMouseAction
 {
 public:
-	bool executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const MAXR_OVERRIDE_FUNCTION;
-	bool doesChangeState() const MAXR_OVERRIDE_FUNCTION;
-	bool isSingleAction() const MAXR_OVERRIDE_FUNCTION;
+	bool executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const override;
+	bool doesChangeState() const override;
+	bool isSingleAction() const override;
 };
 
 #endif // ui_graphical_game_control_mouseaction_mouseactionhelpH

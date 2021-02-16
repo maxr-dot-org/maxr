@@ -100,17 +100,17 @@ public:
 
 	cSignal<void (ItemType&)> itemClicked;
 
-	cWidget* getChildAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
-	bool handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount) MAXR_OVERRIDE_FUNCTION;
-	bool handleGetKeyFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
-	void handleLooseKeyFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
-	bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key) MAXR_OVERRIDE_FUNCTION;
+	cWidget* getChildAt (const cPosition& position) const override;
+	bool handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount) override;
+	bool handleGetKeyFocus (cApplication& application) override;
+	void handleLooseKeyFocus (cApplication& application) override;
+	bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key) override;
 	void handleMoved (const cPosition& offset) override;
-	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
-	void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
+	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
+	void handleResized (const cPosition& oldSize) override;
 protected:
 
-	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
+	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

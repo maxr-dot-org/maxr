@@ -41,8 +41,8 @@ public:
 
 	std::chrono::steady_clock::time_point getCreationTime() const;
 
-	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
-	void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
+	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
+	void handleResized (const cPosition& oldSize) override;
 private:
 	cLabel* messageLabel;
 

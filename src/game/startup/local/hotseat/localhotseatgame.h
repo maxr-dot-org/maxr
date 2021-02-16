@@ -36,7 +36,7 @@ class cLocalHotSeatGame : public cGame
 public:
 	~cLocalHotSeatGame();
 
-	void run() MAXR_OVERRIDE_FUNCTION;
+	void run() override;
 
 protected:
 	std::vector<std::shared_ptr<cClient>> clients;

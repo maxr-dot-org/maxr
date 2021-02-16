@@ -37,7 +37,7 @@ public:
 
 	cSignal<void ()> donePath;
 protected:
-	void setActiveUnit (const sID& unitId) MAXR_OVERRIDE_FUNCTION;
+	void setActiveUnit (const sID& unitId) override;
 
 private:
 	cSignalConnectionManager signalConnectionManager;

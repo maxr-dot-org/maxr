@@ -39,7 +39,7 @@ public:
 
 	cSignal<void (const cPosition&)> resized;
 
-	void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
+	void handleResized (const cPosition& oldSize) override;
 protected:
 	void select();
 	void deselect();

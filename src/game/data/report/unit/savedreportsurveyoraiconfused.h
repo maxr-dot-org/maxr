@@ -35,10 +35,10 @@ public:
 		cSavedReportUnit(archive)
 	{}
 
-	eSavedReportType getType() const MAXR_OVERRIDE_FUNCTION;
+	eSavedReportType getType() const override;
 
 protected:
-	std::string getText() const MAXR_OVERRIDE_FUNCTION;
+	std::string getText() const override;
 };
 
 #endif // game_data_reports_savedreportsurveyoraiconfusedH

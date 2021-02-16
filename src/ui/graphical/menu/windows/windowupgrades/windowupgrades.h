@@ -58,7 +58,7 @@ public:
 	std::vector<std::pair<sID, cUnitUpgrade>> getUnitUpgrades() const;
 
 protected:
-	void setActiveUnit (const sID& unitId) MAXR_OVERRIDE_FUNCTION;
+	void setActiveUnit (const sID& unitId) override;
 
 private:
 	cSignalConnectionManager signalConnectionManager;

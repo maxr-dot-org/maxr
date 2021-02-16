@@ -160,7 +160,7 @@ public:
 	bool isAVehicle() const override { return true; }
 	bool isABuilding() const override { return false; }
 
-	const cPosition& getMovementOffset() const MAXR_OVERRIDE_FUNCTION { return tileMovementOffset; }
+	const cPosition& getMovementOffset() const override { return tileMovementOffset; }
 	void setMovementOffset (const cPosition& newOffset) { tileMovementOffset = newOffset; }
 
 	const sVehicleUIData* uiData;
@@ -182,18 +182,18 @@ public:
 	void continuePathBuilding(cModel& model);
 	void proceedClearing(cModel& model);
 
-	std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const MAXR_OVERRIDE_FUNCTION;
+	std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const override;
 	void DecSpeed (int value);
 	bool doSurvey(const cMap& map);
-	bool canTransferTo (const cPosition& position, const cMapView& map) const MAXR_OVERRIDE_FUNCTION;
-	bool canTransferTo (const cUnit& position) const MAXR_OVERRIDE_FUNCTION;
+	bool canTransferTo (const cPosition& position, const cMapView& map) const override;
+	bool canTransferTo (const cUnit& position) const override;
 	bool inSentryRange (cModel& model);
-	bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
-	bool canExitTo(const cPosition& position, const cMapView& map, const cStaticUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
+	bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const override;
+	bool canExitTo(const cPosition& position, const cMapView& map, const cStaticUnitData& unitData) const override;
 	bool canLoad(const cPosition& position, const cMapView& map, bool checkPosition = true) const;
-	bool canLoad(const cVehicle* Vehicle, bool checkPosition = true) const MAXR_OVERRIDE_FUNCTION;
+	bool canLoad(const cVehicle* Vehicle, bool checkPosition = true) const override;
 	bool canSupply (const cMapView& map, const cPosition& position, eSupplyType supplyType) const;
-	bool canSupply (const cUnit* unit, eSupplyType supplyType) const MAXR_OVERRIDE_FUNCTION;
+	bool canSupply (const cUnit* unit, eSupplyType supplyType) const override;
 
 
 	void calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<int, 3>& turboBuildCosts, int buildCosts) const;
@@ -235,13 +235,13 @@ public:
 
 	bool isUnitLoaded() const { return loaded; }
 
-	bool isUnitMoving() const MAXR_OVERRIDE_FUNCTION { return moving; } //test if the vehicle is moving right now. Having a waiting movejob doesn't count a moving
-	bool isUnitClearing() const MAXR_OVERRIDE_FUNCTION { return isClearing; }
-	bool isUnitLayingMines() const MAXR_OVERRIDE_FUNCTION { return layMines; }
-	bool isUnitClearingMines() const MAXR_OVERRIDE_FUNCTION { return clearMines; }
-	bool isUnitBuildingABuilding() const MAXR_OVERRIDE_FUNCTION { return isBuilding; }
-	bool canBeStoppedViaUnitMenu() const MAXR_OVERRIDE_FUNCTION;
-	bool isSurveyorAutoMoveActive() const MAXR_OVERRIDE_FUNCTION { return surveyorAutoMoveActive; };
+	bool isUnitMoving() const override { return moving; } //test if the vehicle is moving right now. Having a waiting movejob doesn't count a moving
+	bool isUnitClearing() const override { return isClearing; }
+	bool isUnitLayingMines() const override { return layMines; }
+	bool isUnitClearingMines() const override { return clearMines; }
+	bool isUnitBuildingABuilding() const override { return isBuilding; }
+	bool canBeStoppedViaUnitMenu() const override;
+	bool isSurveyorAutoMoveActive() const override { return surveyorAutoMoveActive; };
 
 	void setMoving (bool value);
 	void setLoaded (bool value);

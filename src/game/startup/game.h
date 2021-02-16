@@ -36,7 +36,7 @@ public:
 	{}
 	virtual ~cGame() {}
 
-	bool wantsToTerminate() const MAXR_OVERRIDE_FUNCTION
+	bool wantsToTerminate() const override
 	{
 		return terminate;
 	}

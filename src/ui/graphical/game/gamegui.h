@@ -97,14 +97,14 @@ public:
 	cGameGuiState getCurrentState() const;
 	void restoreState (const cGameGuiState& state);
 
-	bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
-	bool handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount) MAXR_OVERRIDE_FUNCTION;
-	void handleActivated (cApplication& application, bool firstTime) MAXR_OVERRIDE_FUNCTION;
-	void handleDeactivated (cApplication& application, bool removed) MAXR_OVERRIDE_FUNCTION;
-	bool wantsCentered() const MAXR_OVERRIDE_FUNCTION;
+	bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) override;
+	bool handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount) override;
+	void handleActivated (cApplication& application, bool firstTime) override;
+	void handleDeactivated (cApplication& application, bool removed) override;
+	bool wantsCentered() const override;
 protected:
 
-	std::unique_ptr<cMouseCursor> getDefaultCursor() const MAXR_OVERRIDE_FUNCTION;
+	std::unique_ptr<cMouseCursor> getDefaultCursor() const override;
 private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager panelSignalConnectionManager;

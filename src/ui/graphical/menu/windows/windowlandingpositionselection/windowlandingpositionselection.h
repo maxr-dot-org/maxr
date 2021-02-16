@@ -65,9 +65,9 @@ public:
 	cSignal<void (const cPosition&)> selectedPosition;
 	cSignal<void ()> canceled;
 
-	void handleActivated (cApplication& application, bool firstTime) MAXR_OVERRIDE_FUNCTION;
-	void handleDeactivated (cApplication& application, bool removed) MAXR_OVERRIDE_FUNCTION;
-	bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
+	void handleActivated (cApplication& application, bool firstTime) override;
+	void handleDeactivated (cApplication& application, bool removed) override;
+	bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) override;
 
 	mutable cSignal<void ()> opened;
 	mutable cSignal<void ()> closed;
