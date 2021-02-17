@@ -63,8 +63,8 @@ private:
 		cSignalConnectionManager signalConnectionManager;
 
 	private:
-		sStoredSound (const sStoredSound& other) MAXR_DELETE_FUNCTION;
-		sStoredSound& operator= (const sStoredSound& other) MAXR_DELETE_FUNCTION;
+		sStoredSound (const sStoredSound& other) = delete;
+		sStoredSound& operator= (const sStoredSound& other) = delete;
 	};
 	cSignalConnectionManager signalConnectionManager;
 

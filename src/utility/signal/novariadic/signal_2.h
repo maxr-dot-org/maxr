@@ -84,8 +84,8 @@ public:
 		return ResultCombinerType() (begin, end);
 	}
 private:
-	cSignal (const cSignal& other) MAXR_DELETE_FUNCTION;
-	cSignal& operator= (const cSignal& other) MAXR_DELETE_FUNCTION;
+	cSignal (const cSignal& other) = delete;
+	cSignal& operator= (const cSignal& other) = delete;
 
 	SlotsContainerType slots;
 

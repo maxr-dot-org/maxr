@@ -43,6 +43,6 @@ typedef std::unique_ptr<SDL_Surface, detail::SdlSurfaceDeleter> SurfaceUPtr;
 typedef std::shared_ptr<SDL_Surface> SurfacePtr;
 
 /* Prevent accidentally freeing the SDL_Surface owned by an AutoSurface */
-void SDL_FreeSurface (const AutoSurface&) MAXR_DELETE_FUNCTION;
+void SDL_FreeSurface (const AutoSurface&) = delete;
 
 #endif // utility_autosurfaceH

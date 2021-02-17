@@ -74,8 +74,8 @@ private:
 		archive & type;
 	}
 
-	cAction(const cAction&) MAXR_DELETE_FUNCTION;
-	cAction& operator=(const cAction&)MAXR_DELETE_FUNCTION;
+	cAction(const cAction&) = delete;
+	cAction& operator=(const cAction&) = delete;
 
 	eActiontype type;
 };

@@ -109,7 +109,7 @@ inline typename enable_if < !is_array<T>::value, unique_ptr<T >>::type make_uniq
 }
 
 template<class T, class... Args>
-typename enable_if < extent<T>::value != 0, void >::type make_unique (Args&& ...) MAXR_DELETE_FUNCTION;
+typename enable_if < extent<T>::value != 0, void >::type make_unique (Args&& ...) = delete;
 
 #endif // MAXR_NO_VARIADIC_TEMPLATES
 

@@ -84,8 +84,8 @@ public:
 	mutable cSignal<void ()> scanAreaChanged;
 	
 private:
-	cMapView(const cMapView& other) MAXR_DELETE_FUNCTION;
-	cMapView& operator= (const cMapView& other) MAXR_DELETE_FUNCTION;
+	cMapView(const cMapView& other) = delete;
+	cMapView& operator= (const cMapView& other) = delete;
 
 	std::shared_ptr<const cMap> map;
 	std::shared_ptr<const cPlayer> player; // may be null

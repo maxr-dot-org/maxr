@@ -142,8 +142,8 @@ public:
 	 */
 	void hide();
 private:
-	cMouse (const cMouse& other) MAXR_DELETE_FUNCTION;
-	cMouse& operator= (const cMouse& other) MAXR_DELETE_FUNCTION;
+	cMouse (const cMouse& other) = delete;
+	cMouse& operator= (const cMouse& other) = delete;
 
 	typedef std::unique_ptr<SDL_Cursor, void (*) (SDL_Cursor*)> SdlCursorPtrType;
 

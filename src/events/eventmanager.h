@@ -65,8 +65,8 @@ public:
 	bool shouldExit() const;
 private:
 	cEventManager();
-	cEventManager (const cEventManager& other) MAXR_DELETE_FUNCTION;
-	cEventManager& operator= (const cEventManager& other) MAXR_DELETE_FUNCTION;
+	cEventManager (const cEventManager& other) = delete;
+	cEventManager& operator= (const cEventManager& other) = delete;
 
 	bool handleSdlEvent (const SDL_Event& event);
 

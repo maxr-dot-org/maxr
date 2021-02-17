@@ -123,8 +123,8 @@ public:
 	mutable cSignal<void ()> unitsChanged;
 
 private:
-	cMapField (const cMapField& other) MAXR_DELETE_FUNCTION;
-	cMapField& operator= (const cMapField& other) MAXR_DELETE_FUNCTION;
+	cMapField (const cMapField& other) = delete;
+	cMapField& operator= (const cMapField& other) = delete;
 
 	/**the list with all buildings on this field
 	* the top building is always stored at first position */
@@ -152,8 +152,8 @@ struct sTerrain
 	bool blocked;        /** is this terrain blocked? */
 
 private:
-	sTerrain(const sTerrain& other) MAXR_DELETE_FUNCTION;
-	sTerrain& operator=(const sTerrain& other) MAXR_DELETE_FUNCTION;
+	sTerrain(const sTerrain& other) = delete;
+	sTerrain& operator=(const sTerrain& other) = delete;
 };
 
 class cStaticMap

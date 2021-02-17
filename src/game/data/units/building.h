@@ -84,8 +84,8 @@ struct sBuildingUIData
 	void scaleSurfaces (float faktor);
 
 private:
-	sBuildingUIData (const sBuildingUIData& other) MAXR_DELETE_FUNCTION;
-	sBuildingUIData& operator= (const sBuildingUIData& other) MAXR_DELETE_FUNCTION;
+	sBuildingUIData (const sBuildingUIData& other) = delete;
+	sBuildingUIData& operator= (const sBuildingUIData& other) = delete;
 };
 
 // enum for the upgrade symbols

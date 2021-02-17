@@ -79,7 +79,7 @@ class cSavedReport;
 // the Player class //////////////////////////////
 class cPlayer
 {
-	cPlayer (const cPlayer&) MAXR_DELETE_FUNCTION;
+	cPlayer (const cPlayer&) = delete;
 public:
 	explicit cPlayer(const cPlayerBasicData& splayer, const cUnitsData& unitsData);
 	~cPlayer();

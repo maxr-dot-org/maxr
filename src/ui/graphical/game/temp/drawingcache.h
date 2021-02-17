@@ -78,8 +78,8 @@ struct sDrawingCacheEntry
 	void init (const cBuilding& building, double zoom, unsigned long long frameNr);
 
 private:
-	sDrawingCacheEntry(const sDrawingCacheEntry& other) MAXR_DELETE_FUNCTION;
-	sDrawingCacheEntry& operator=(const sDrawingCacheEntry& other) MAXR_DELETE_FUNCTION;
+	sDrawingCacheEntry(const sDrawingCacheEntry& other) = delete;
+	sDrawingCacheEntry& operator=(const sDrawingCacheEntry& other) = delete;
 };
 
 class cDrawingCache

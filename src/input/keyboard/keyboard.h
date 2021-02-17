@@ -85,8 +85,8 @@ public:
 	 */
 	bool isAllModifiersActive (KeyModifierFlags flags) const;
 private:
-	cKeyboard (const cKeyboard& other) MAXR_DELETE_FUNCTION;
-	cKeyboard& operator= (const cKeyboard& other) MAXR_DELETE_FUNCTION;
+	cKeyboard (const cKeyboard& other) = delete;
+	cKeyboard& operator= (const cKeyboard& other) = delete;
 
 	cSignalConnectionManager signalConnectionManager;
 

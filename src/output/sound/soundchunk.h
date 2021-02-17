@@ -45,8 +45,8 @@ public:
 
 	Mix_Chunk* getSdlSound() const;
 private:
-	cSoundChunk (const cSoundChunk& other) MAXR_DELETE_FUNCTION;
-	cSoundChunk& operator= (const cSoundChunk& other) MAXR_DELETE_FUNCTION;
+	cSoundChunk (const cSoundChunk& other) = delete;
+	cSoundChunk& operator= (const cSoundChunk& other) = delete;
 
 	struct SdlMixChunkDeleter
 	{

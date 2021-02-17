@@ -135,8 +135,8 @@ struct sVehicleUIData
 	void scaleSurfaces (float faktor);
 
 private:
-	sVehicleUIData (const sVehicleUIData& other) MAXR_DELETE_FUNCTION;
-	sVehicleUIData& operator= (const sVehicleUIData& other) MAXR_DELETE_FUNCTION;
+	sVehicleUIData (const sVehicleUIData& other) = delete;
+	sVehicleUIData& operator= (const sVehicleUIData& other) = delete;
 };
 
 enum class eSupplyType {

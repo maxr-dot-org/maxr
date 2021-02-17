@@ -66,8 +66,8 @@ public:
 		dismissed = true;
 	}
 private:
-	cScopedOperation (const cScopedOperation<FunctionType>&) MAXR_DELETE_FUNCTION;
-	cScopedOperation& operator= (const cScopedOperation<FunctionType>&) MAXR_DELETE_FUNCTION;
+	cScopedOperation (const cScopedOperation<FunctionType>&) = delete;
+	cScopedOperation& operator= (const cScopedOperation<FunctionType>&) = delete;
 
 	FunctionType function;
 	bool dismissed;

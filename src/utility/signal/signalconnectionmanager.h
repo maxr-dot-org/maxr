@@ -78,8 +78,8 @@ public:
 	 */
 	void clear();
 private:
-	cSignalConnectionManager (const cSignalConnectionManager& other) MAXR_DELETE_FUNCTION;
-	cSignalConnectionManager& operator= (const cSignalConnectionManager& other) MAXR_DELETE_FUNCTION;
+	cSignalConnectionManager (const cSignalConnectionManager& other) = delete;
+	cSignalConnectionManager& operator= (const cSignalConnectionManager& other) = delete;
 
 	std::vector<cSignalConnection> connections;
 };

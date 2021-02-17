@@ -415,8 +415,8 @@ private:
 	static bool drawDebugFrames;
 	static cSignal<void ()> drawDebugFramesChanged;
 
-	cWidget (const cWidget& other) MAXR_DELETE_FUNCTION;
-	cWidget& operator= (const cWidget& other) MAXR_DELETE_FUNCTION;
+	cWidget (const cWidget& other) = delete;
+	cWidget& operator= (const cWidget& other) = delete;
 
 	cSignalConnectionManager signalConnectionManager;
 

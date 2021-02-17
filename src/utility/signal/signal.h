@@ -176,8 +176,8 @@ public:
 	template<typename... Args2>
 	result_type operator() (Args2&& ... args);
 private:
-	cSignal (const cSignal& other) MAXR_DELETE_FUNCTION;
-	cSignal& operator= (const cSignal& other) MAXR_DELETE_FUNCTION;
+	cSignal (const cSignal& other) = delete;
+	cSignal& operator= (const cSignal& other) = delete;
 
 	SlotsContainerType slots;
 
