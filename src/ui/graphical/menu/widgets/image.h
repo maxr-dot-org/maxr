@@ -20,7 +20,6 @@
 #ifndef ui_graphical_menu_widgets_imageH
 #define ui_graphical_menu_widgets_imageH
 
-#include "maxrconfig.h"
 #include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "utility/autosurface.h"
 #include "resources/sound.h"

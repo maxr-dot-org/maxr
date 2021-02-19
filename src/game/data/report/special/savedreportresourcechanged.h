@@ -20,8 +20,6 @@
 #ifndef game_data_reports_special_savedreportresourcechangedH
 #define game_data_reports_special_savedreportresourcechangedH
 
-#include "maxrconfig.h"
-
 #include "game/data/report/savedreport.h"
 #include "game/data/resourcetype.h"
 

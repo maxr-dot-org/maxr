@@ -22,7 +22,6 @@
 
 #include <array>
 
-#include "maxrconfig.h"
 #include "ui/graphical/widget.h"
 
 class cLabel;

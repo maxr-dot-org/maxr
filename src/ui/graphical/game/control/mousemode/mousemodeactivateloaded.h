@@ -20,7 +20,6 @@
 #ifndef ui_graphical_game_control_mousemode_mousemodeactivateloadedH
 #define ui_graphical_game_control_mousemode_mousemodeactivateloadedH
 
-#include "maxrconfig.h"
 #include "ui/graphical/game/control/mousemode/mousemode.h"
 #include "utility/signal/signalconnectionmanager.h"
 

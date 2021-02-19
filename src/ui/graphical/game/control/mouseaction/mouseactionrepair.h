@@ -20,7 +20,6 @@
 #ifndef ui_graphical_game_control_mouseaction_mouseactionrepairH
 #define ui_graphical_game_control_mouseaction_mouseactionrepairH
 
-#include "maxrconfig.h"
 #include "ui/graphical/game/control/mouseaction/mouseaction.h"
 
 class cMouseActionRepair : public cMouseAction

@@ -20,7 +20,6 @@
 #ifndef ui_sound_effects_soundeffectpositionH
 #define ui_sound_effects_soundeffectpositionH
 
-#include "maxrconfig.h"
 #include "ui/sound/effects/soundeffect.h"
 #include "utility/position.h"
 

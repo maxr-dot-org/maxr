@@ -24,7 +24,6 @@
 #include <string>
 
 #include "game/startup/game.h"
-#include "maxrconfig.h"
 #include "ui/graphical/game/control/gameguicontroller.h"
 
 class cClient;

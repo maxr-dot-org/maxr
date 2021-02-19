@@ -20,8 +20,6 @@
 #ifndef game_data_reports_savedreportsimpleH
 #define game_data_reports_savedreportsimpleH
 
-#include "maxrconfig.h"
-
 #include "game/data/report/savedreport.h"
 
 class cSavedReportSimple : public cSavedReport

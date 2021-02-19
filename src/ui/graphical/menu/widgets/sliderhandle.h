@@ -20,7 +20,6 @@
 #ifndef ui_graphical_menu_widgets_sliderhandleH
 #define ui_graphical_menu_widgets_sliderhandleH
 
-#include "maxrconfig.h"
 #include "ui/graphical/widget.h"
 #include "ui/graphical/orientation.h"
 #include "utility/autosurface.h"

@@ -26,8 +26,6 @@
 
 #include <SDL_mixer.h>
 
-#include "maxrconfig.h"
-
 class cSoundChunk
 {
 public:

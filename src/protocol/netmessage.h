@@ -22,7 +22,6 @@
 
 #include <memory>
 
-#include "maxrconfig.h"
 #include "utility/serialization/serialization.h"
 #include "utility/serialization/textarchive.h"
 #include "utility/serialization/binaryarchive.h"

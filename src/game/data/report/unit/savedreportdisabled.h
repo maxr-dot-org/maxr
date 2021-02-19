@@ -20,8 +20,6 @@
 #ifndef game_data_reports_savedreportdisabledH
 #define game_data_reports_savedreportdisabledH
 
-#include "maxrconfig.h"
-
 #include "game/data/report/savedreportunit.h"
 
 class cUnit;

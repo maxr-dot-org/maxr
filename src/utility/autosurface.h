@@ -23,8 +23,6 @@
 #include <memory>
 #include <SDL.h>
 
-#include "maxrconfig.h"
-
 namespace detail
 {
 

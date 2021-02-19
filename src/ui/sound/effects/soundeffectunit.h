@@ -20,7 +20,6 @@
 #ifndef ui_sound_effects_soundeffectunitH
 #define ui_sound_effects_soundeffectunitH
 
-#include "maxrconfig.h"
 #include "ui/sound/effects/soundeffect.h"
 
 class cUnit;

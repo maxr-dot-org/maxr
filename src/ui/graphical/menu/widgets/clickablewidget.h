@@ -22,7 +22,6 @@
 
 #include <map>
 
-#include "maxrconfig.h"
 #include "ui/graphical/widget.h"
 #include "utility/signal/signalconnectionmanager.h"
 

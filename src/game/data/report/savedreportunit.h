@@ -20,8 +20,6 @@
 #ifndef game_data_reports_savedreportunitH
 #define game_data_reports_savedreportunitH
 
-#include "maxrconfig.h"
-
 #include "game/data/report/savedreport.h"
 #include "game/data/units/unitdata.h" // sID
 #include "utility/position.h"

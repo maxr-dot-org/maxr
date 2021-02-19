@@ -20,7 +20,6 @@
 #ifndef ui_graphical_game_control_mousemode_mousemoderepairH
 #define ui_graphical_game_control_mousemode_mousemoderepairH
 
-#include "maxrconfig.h"
 #include "ui/graphical/game/control/mousemode/mousemode.h"
 
 class cMouseModeRepair : public cMouseMode

@@ -20,7 +20,6 @@
 #ifndef ui_graphical_game_control_mouseaction_mouseactionmoveH
 #define ui_graphical_game_control_mouseaction_mouseactionmoveH
 
-#include "maxrconfig.h"
 #include "ui/graphical/game/control/mouseaction/mouseaction.h"
 
 class cMouseActionMove : public cMouseAction

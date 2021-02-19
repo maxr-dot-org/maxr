@@ -20,7 +20,6 @@
 #ifndef ui_graphical_game_control_mouseaction_mouseactionselectbuildpositionH
 #define ui_graphical_game_control_mouseaction_mouseactionselectbuildpositionH
 
-#include "maxrconfig.h"
 #include "ui/graphical/game/control/mouseaction/mouseaction.h"
 #include "utility/position.h"
 #include "game/data/units/unitdata.h"

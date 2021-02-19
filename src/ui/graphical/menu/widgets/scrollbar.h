@@ -20,7 +20,6 @@
 #ifndef ui_graphical_menu_widgets_scrollbarH
 #define ui_graphical_menu_widgets_scrollbarH
 
-#include "maxrconfig.h"
 #include "ui/graphical/widget.h"
 #include "ui/graphical/orientation.h"
 #include "utility/signal/signalconnectionmanager.h"

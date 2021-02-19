@@ -20,7 +20,6 @@
 #ifndef ui_graphical_menu_widgets_listviewH
 #define ui_graphical_menu_widgets_listviewH
 
-#include "maxrconfig.h"
 #include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "ui/graphical/menu/widgets/scrollbar.h"
 #include "settings.h"

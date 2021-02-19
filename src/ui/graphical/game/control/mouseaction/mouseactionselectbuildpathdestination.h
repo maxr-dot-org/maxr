@@ -20,7 +20,6 @@
 #ifndef ui_graphical_game_control_mouseaction_mouseactionselectbuildpathdestinationH
 #define ui_graphical_game_control_mouseaction_mouseactionselectbuildpathdestinationH
 
-#include "maxrconfig.h"
 #include "ui/graphical/game/control/mouseaction/mouseaction.h"
 
 class cMouseActionSelectBuildPathDestination : public cMouseAction

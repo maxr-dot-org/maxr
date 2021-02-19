@@ -20,7 +20,6 @@
 #ifndef ui_graphical_widgets_tools_validatorintH
 #define ui_graphical_widgets_tools_validatorintH
 
-#include "maxrconfig.h"
 #include "ui/graphical/menu/widgets/tools/validator.h"
 
 class cValidatorInt : public cValidator

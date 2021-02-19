@@ -20,7 +20,6 @@
 #ifndef ui_graphical_game_control_mousemode_mousemodeselectbuildpositionH
 #define ui_graphical_game_control_mousemode_mousemodeselectbuildpositionH
 
-#include "maxrconfig.h"
 #include "ui/graphical/game/control/mousemode/mousemode.h"
 #include "game/data/units/unitdata.h"
 

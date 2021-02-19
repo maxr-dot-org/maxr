@@ -22,7 +22,6 @@
 
 #include <vector>
 
-#include "maxrconfig.h"
 #include "utility/signal/signalconnection.h"
 
 /**

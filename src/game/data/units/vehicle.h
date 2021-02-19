@@ -21,7 +21,6 @@
 #define game_data_units_vehicleH
 
 #include "defines.h"
-#include "maxrconfig.h"
 
 #include "game/data/units/commandodata.h"
 #include "game/data/units/unitdata.h" // for sUnitData

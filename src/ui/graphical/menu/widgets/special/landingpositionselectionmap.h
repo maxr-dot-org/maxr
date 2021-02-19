@@ -20,7 +20,6 @@
 #ifndef ui_graphical_menu_widgets_special_landingpositionselectionmapH
 #define ui_graphical_menu_widgets_special_landingpositionselectionmapH
 
-#include "maxrconfig.h"
 #include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "utility/autosurface.h"
 #include "utility/signal/signal.h"

@@ -23,7 +23,6 @@
 #include <utility>
 
 #include "ui/graphical/widget.h"
-#include "maxrconfig.h"
 #include "utility/autosurface.h"
 #include "utility/signal/signal.h"
 

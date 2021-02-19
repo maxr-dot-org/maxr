@@ -21,7 +21,6 @@
 #define input_mouse_cursor_mousecursorsimpleH
 
 #include "input/mouse/cursor/mousecursor.h"
-#include "maxrconfig.h"
 
 enum eMouseCursorSimpleType
 {

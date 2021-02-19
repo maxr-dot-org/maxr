@@ -25,7 +25,6 @@
 #include <utility>
 
 #include "game/startup/local/singleplayer/localsingleplayergame.h"
-#include "maxrconfig.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/position.h"
 

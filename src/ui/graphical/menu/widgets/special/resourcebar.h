@@ -20,7 +20,6 @@
 #ifndef ui_graphical_menu_widgets_special_resourcebarH
 #define ui_graphical_menu_widgets_special_resourcebarH
 
-#include "maxrconfig.h"
 #include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "ui/graphical/orientation.h"
 #include "utility/autosurface.h"

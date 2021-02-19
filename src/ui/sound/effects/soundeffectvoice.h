@@ -20,7 +20,6 @@
 #ifndef ui_sound_effects_soundeffectvoiceH
 #define ui_sound_effects_soundeffectvoiceH
 
-#include "maxrconfig.h"
 #include "ui/sound/effects/soundeffect.h"
 
 class cSoundEffectVoice : public cSoundEffect

@@ -20,8 +20,6 @@
 #ifndef game_data_reports_special_savedreportplayerleftH
 #define game_data_reports_special_savedreportplayerleftH
 
-#include "maxrconfig.h"
-
 #include "game/data/report/savedreport.h"
 
 class cPlayer;

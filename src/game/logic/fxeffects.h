@@ -22,7 +22,7 @@
 
 #include <vector>
 #include <memory>
-#include "maxrconfig.h"
+
 #include "utility/autosurface.h"
 #include "utility/position.h"
 #include "game/data/units/unitdata.h"

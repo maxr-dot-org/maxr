@@ -25,7 +25,6 @@
 #include <utility>
 
 #include "game/startup/network/networkgame.h"
-#include "maxrconfig.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/position.h"

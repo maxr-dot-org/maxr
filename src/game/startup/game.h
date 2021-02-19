@@ -22,7 +22,6 @@
 
 #include <memory>
 #include "utility/runnable.h"
-#include "maxrconfig.h"
 #include "utility/signal/signal.h"
 
 class cUnitsData;

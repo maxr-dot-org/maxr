@@ -21,7 +21,6 @@
 #define ui_graphical_game_hudH
 
 #include "ui/graphical/widget.h"
-#include "maxrconfig.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 

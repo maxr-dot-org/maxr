@@ -26,7 +26,6 @@
 
 #include "game/startup/local/hotseat/localhotseatgame.h"
 #include "game/data/player/playerbasicdata.h"
-#include "maxrconfig.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"

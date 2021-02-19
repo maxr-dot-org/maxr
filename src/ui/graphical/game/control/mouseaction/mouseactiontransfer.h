@@ -20,7 +20,6 @@
 #ifndef ui_graphical_game_control_mouseaction_mouseactiontransferH
 #define ui_graphical_game_control_mouseaction_mouseactiontransferH
 
-#include "maxrconfig.h"
 #include "ui/graphical/game/control/mouseaction/mouseaction.h"
 
 class cMouseActionTransfer : public cMouseAction

@@ -24,7 +24,6 @@
 #include <memory>
 #include <chrono>
 
-#include "maxrconfig.h"
 #include "output/video/unifonts.h"
 #include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "ui/graphical/menu/widgets/tools/validatorstate.h"

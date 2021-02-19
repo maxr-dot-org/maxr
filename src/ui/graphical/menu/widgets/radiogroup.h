@@ -20,7 +20,6 @@
 #ifndef ui_graphical_menu_widgets_radiogroupH
 #define ui_graphical_menu_widgets_radiogroupH
 
-#include "maxrconfig.h"
 #include "ui/graphical/widget.h"
 #include "utility/signal/signalconnectionmanager.h"
 

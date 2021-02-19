@@ -20,7 +20,6 @@
 #ifndef ui_graphical_game_control_mousemode_mousemodestealH
 #define ui_graphical_game_control_mousemode_mousemodestealH
 
-#include "maxrconfig.h"
 #include "ui/graphical/game/control/mousemode/mousemode.h"
 
 class cMouseModeSteal : public cMouseMode

@@ -24,7 +24,6 @@
 
 #include "ui/graphical/menu/widgets/special/unitdatasymboltype.h"
 
-#include "maxrconfig.h"
 #include "ui/graphical/widget.h"
 #include "game/data/units/unitdata.h"
 

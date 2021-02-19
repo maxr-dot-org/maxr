@@ -21,7 +21,6 @@
 #define input_mouse_cursor_mousecursorattackH
 
 #include "input/mouse/cursor/mousecursor.h"
-#include "maxrconfig.h"
 #include "utility/autosurface.h"
 
 class cUnit;

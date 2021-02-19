@@ -30,7 +30,6 @@
 #include "utility/box.h"
 #include "utility/position.h"
 #include "utility/autosurface.h"
-#include "maxrconfig.h"
 #include "ui/graphical/shortcut.h"
 #include "utility/signal/signalconnectionmanager.h"
 

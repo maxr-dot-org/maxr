@@ -20,7 +20,6 @@
 #ifndef ui_graphical_game_control_mouseaction_mouseactionactivateloadedH
 #define ui_graphical_game_control_mouseaction_mouseactionactivateloadedH
 
-#include "maxrconfig.h"
 #include "ui/graphical/game/control/mouseaction/mouseaction.h"
 
 class cMouseActionActivateLoaded : public cMouseAction

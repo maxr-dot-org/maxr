@@ -22,8 +22,6 @@
 
 #include <functional>
 
-#include "maxrconfig.h"
-
 /**
  * Generic RAII-class that calls a function object on its destruction.
  *

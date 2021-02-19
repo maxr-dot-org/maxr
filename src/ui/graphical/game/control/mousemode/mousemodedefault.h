@@ -20,7 +20,6 @@
 #ifndef ui_graphical_game_control_mousemode_mousemodedefaultH
 #define ui_graphical_game_control_mousemode_mousemodedefaultH
 
-#include "maxrconfig.h"
 #include "ui/graphical/game/control/mousemode/mousemode.h"
 
 class cMouseModeDefault : public cMouseMode

@@ -23,7 +23,6 @@
 #include <functional>
 #include <list>
 
-#include "maxrconfig.h"
 #include "ui/graphical/widget.h"
 #include "utility/color.h"
 #include "utility/drawing.h"

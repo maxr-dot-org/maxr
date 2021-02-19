@@ -20,7 +20,6 @@
 #ifndef ui_graphical_game_control_mousemode_mousemodesupplyammoH
 #define ui_graphical_game_control_mousemode_mousemodesupplyammoH
 
-#include "maxrconfig.h"
 #include "ui/graphical/game/control/mousemode/mousemode.h"
 
 class cMouseModeSupplyAmmo : public cMouseMode
