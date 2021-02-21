@@ -116,7 +116,7 @@
 #include "game/logic/action/actionactivate.h"
 #include "game/data/report/unit/savedreportdetected.h"
 #include "game/logic/action/actionrepairreload.h"
-#include "game/logic/action/actionressourcedistribution.h"
+#include "game/logic/action/actionresourcedistribution.h"
 #include "game/logic/action/actionclear.h"
 #include "game/data/report/unit/savedreportdisabled.h"
 #include "game/data/report/unit/savedreportcapturedbyenemy.h"
@@ -837,7 +837,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (changeResourceDistributionTriggered, [&] (const cBuilding& building, const sMiningResource& production)
 	{
-		client.sendNetMessage (cActionRessourceDistribution (building, production));
+		client.sendNetMessage (cActionResourceDistribution (building, production));
 	});
 	clientSignalConnectionManager.connect (changeResearchSettingsTriggered, [&] (const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings)
 	{

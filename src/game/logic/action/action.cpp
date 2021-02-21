@@ -39,7 +39,7 @@
 #include "actionload.h"
 #include "actionactivate.h"
 #include "actionrepairreload.h"
-#include "actionressourcedistribution.h"
+#include "actionresourcedistribution.h"
 #include "actionclear.h"
 #include "actionstealdisable.h"
 #include "actionchangeresearch.h"
@@ -94,8 +94,8 @@ std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 		return std::make_unique<cActionActivate>(archive);
 	case eActiontype::ACTION_REPAIR_RELOAD:
 		return std::make_unique<cActionRepairReload>(archive);
-	case eActiontype::ACTION_RESSOURCE_DISTRIBUTION:
-		return std::make_unique<cActionRessourceDistribution>(archive);
+	case eActiontype::ACTION_RESOURCE_DISTRIBUTION:
+		return std::make_unique<cActionResourceDistribution>(archive);
 	case eActiontype::ACTION_CLEAR:
 		return std::make_unique<cActionClear>(archive);
 	case eActiontype::ACTION_STEAL_DISABLE:
@@ -167,8 +167,8 @@ std::string enumToString(cAction::eActiontype value)
 		return "ACTION_ACTIVATE";
 	case cAction::eActiontype::ACTION_REPAIR_RELOAD:
 		return "ACTION_REPAIR_RELOAD";
-	case cAction::eActiontype::ACTION_RESSOURCE_DISTRIBUTION:
-		return "ACTION_RESSOURCE_DISTRIBUTION";
+	case cAction::eActiontype::ACTION_RESOURCE_DISTRIBUTION:
+		return "ACTION_RESOURCE_DISTRIBUTION";
 	case cAction::eActiontype::ACTION_CLEAR:
 		return "ACTION_CLEAR";
 	case cAction::eActiontype::ACTION_STEAL_DISABLE:

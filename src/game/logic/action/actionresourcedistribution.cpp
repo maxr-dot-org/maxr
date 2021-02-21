@@ -17,35 +17,35 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef game_logic_actionRessourceDistributionH
-#define game_logic_actionRessourceDistributionH
+#include "actionresourcedistribution.h"
 
-#include "action.h"
+#include "game/data/model.h"
 
-#include "game/data/miningresource.h"
+//------------------------------------------------------------------------------
+cActionResourceDistribution::cActionResourceDistribution (const cBuilding& building, const sMiningResource& prod) :
+	cAction(eActiontype::ACTION_RESOURCE_DISTRIBUTION),
+	buildingId(building.getId()),
+	prod (prod)
+{}
 
-class cUnit;
-
-class cActionRessourceDistribution : public cAction
+//------------------------------------------------------------------------------
+cActionResourceDistribution::cActionResourceDistribution(cBinaryArchiveOut& archive) :
+	cAction(eActiontype::ACTION_RESOURCE_DISTRIBUTION)
 {
-public:
-	cActionRessourceDistribution(const cBuilding& building,	const sMiningResource&);
-	cActionRessourceDistribution(cBinaryArchiveOut& archive);
+	serializeThis(archive);
+}
 
-	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+//------------------------------------------------------------------------------
+void cActionResourceDistribution::execute(cModel& model) const
+{
+	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	void execute(cModel& model) const override;
-private:
-	template<typename T>
-	void serializeThis(T& archive)
-	{
-		archive & buildingId;
-		prod.serializeThis (archive);
-	}
+	auto building = model.getBuildingFromID(buildingId);
+	if (building == nullptr) return;
 
-	int buildingId;
-	sMiningResource prod;
-};
+	cSubBase& subBase = *building->subBase;
 
-#endif // game_logic_actionRessourceDistributionH
+	// no need to verify the values.
+	// They will be reduced automatically, if necessary
+	subBase.setProduction (prod);
+}

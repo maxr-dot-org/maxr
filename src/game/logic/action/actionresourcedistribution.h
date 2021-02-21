@@ -17,35 +17,35 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include "actionressourcedistribution.h"
+#ifndef game_logic_actionResourceDistributionH
+#define game_logic_actionResourceDistributionH
 
-#include "game/data/model.h"
+#include "action.h"
 
-//------------------------------------------------------------------------------
-cActionRessourceDistribution::cActionRessourceDistribution (const cBuilding& building, const sMiningResource& prod) :
-	cAction(eActiontype::ACTION_RESSOURCE_DISTRIBUTION),
-	buildingId(building.getId()),
-	prod (prod)
-{}
+#include "game/data/miningresource.h"
 
-//------------------------------------------------------------------------------
-cActionRessourceDistribution::cActionRessourceDistribution(cBinaryArchiveOut& archive) :
-	cAction(eActiontype::ACTION_RESSOURCE_DISTRIBUTION)
+class cUnit;
+
+class cActionResourceDistribution : public cAction
 {
-	serializeThis(archive);
-}
+public:
+	cActionResourceDistribution(const cBuilding& building,	const sMiningResource&);
+	cActionResourceDistribution(cBinaryArchiveOut& archive);
 
-//------------------------------------------------------------------------------
-void cActionRessourceDistribution::execute(cModel& model) const
-{
-	//Note: this function handles incoming data from network. Make every possible sanity check!
+	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
 
-	auto building = model.getBuildingFromID(buildingId);
-	if (building == nullptr) return;
+	void execute(cModel& model) const override;
+private:
+	template<typename T>
+	void serializeThis(T& archive)
+	{
+		archive & buildingId;
+		prod.serializeThis (archive);
+	}
 
-	cSubBase& subBase = *building->subBase;
+	int buildingId;
+	sMiningResource prod;
+};
 
-	// no need to verify the values.
-	// They will be reduced automatically, if necessary
-	subBase.setProduction (prod);
-}
+#endif // game_logic_actionResourceDistributionH
