@@ -27,6 +27,7 @@
 #include "game/startup/lobbyserver.h"
 #include "maxrversion.h"
 #include "output/video/video.h"
+#include "resources/map/mappreview.h"
 #include "resources/pcx.h"
 #include "ui/graphical/menu/dialogs/dialogcolorpicker.h"
 #include "ui/graphical/menu/widgets/image.h"
@@ -337,10 +338,10 @@ void cWindowNetworkLobby::updateMap()
 		return;
 	}
 
-	AutoSurface surface (cStaticMap::loadMapPreview (staticMap->getName()));
-	if (surface != nullptr)
+	auto preview = loadMapPreview (staticMap->getName());
+	if (preview.surface != nullptr)
 	{
-		mapImage->setImage (surface.get());
+		mapImage->setImage (preview.surface.get());
 	}
 
 	auto mapName = staticMap->getName();

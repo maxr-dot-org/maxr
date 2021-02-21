@@ -21,8 +21,9 @@
 
 #include "game/data/map/map.h"
 #include "output/video/video.h"
-#include "resources/uidata.h"
+#include "resources/map/mappreview.h"
 #include "resources/pcx.h"
+#include "resources/uidata.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
@@ -152,11 +153,11 @@ void cWindowMapSelection::updateMaps()
 		{
 			auto mapName = maps[mapIndex];
 
-			int size;
-			AutoSurface mapSurface (cStaticMap::loadMapPreview (mapName, &size));
+			auto preview = loadMapPreview (mapName);
 
-			if (mapSurface == nullptr) continue;
+			if (preview.surface == nullptr) continue;
 
+			const auto size = preview.size;
 			const int mapWinSize = 112;
 			const int selectedColor = 0x00C000;
 			const int unselectedColor = 0x000000;
@@ -166,32 +167,32 @@ void cWindowMapSelection::updateMaps()
 			{
 				SDL_FillRect (imageSurface.get(), nullptr, selectedColor);
 
-				if (font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
+				if (font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")<") > 140)
 				{
-					while (font->getTextWide (">" + mapName + "... (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
+					while (font->getTextWide (">" + mapName + "... (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")<") > 140)
 					{
 						mapName.erase (mapName.length() - 1, mapName.length());
 					}
-					mapName = ">" + mapName + "... (" + iToStr (size) + "x" + iToStr (size) + ")<";
+					mapName = ">" + mapName + "... (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")<";
 				}
-				else mapName = ">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")<";
+				else mapName = ">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")<";
 			}
 			else
 			{
 				SDL_FillRect (imageSurface.get(), nullptr, unselectedColor);
 
-				if (font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
+				if (font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")<") > 140)
 				{
-					while (font->getTextWide (">" + mapName + "... (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
+					while (font->getTextWide (">" + mapName + "... (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")<") > 140)
 					{
 						mapName.erase (mapName.length() - 1, mapName.length());
 					}
-					mapName = mapName + "... (" + iToStr (size) + "x" + iToStr (size) + ")";
+					mapName = mapName + "... (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")";
 				}
-				else mapName = mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")";
+				else mapName = mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")";
 			}
 			SDL_Rect dest = {4, 4, mapWinSize, mapWinSize};
-			SDL_BlitSurface (mapSurface.get(), nullptr, imageSurface.get(), &dest);
+			SDL_BlitSurface (preview.surface.get(), nullptr, imageSurface.get(), &dest);
 
 			mapImages[i]->setImage (imageSurface.get());
 			mapTitles[i]->setText (mapName);

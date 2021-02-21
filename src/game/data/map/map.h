@@ -187,7 +187,6 @@ public:
 	AutoSurface createBigSurface (int sizex, int sizey) const;
 	void generateNextAnimationFrame();
 	void scaleSurfaces (int pixelSize);
-	static AutoSurface loadMapPreview (const std::string& mapPath, int* mapSize = nullptr);
 
 	uint32_t getChecksum(uint32_t crc);
 
