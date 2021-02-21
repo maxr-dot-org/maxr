@@ -288,8 +288,6 @@ uint32_t cUnit::getChecksum(uint32_t crc) const
 	crc = calcCheckSum(dir, crc);
 	for (const auto& u : storedUnits)
 		crc = calcCheckSum(u, crc);
-	for (const auto& p : seenByPlayerList)
-		crc = calcCheckSum(p, crc);
 	for (const auto& p : detectedByPlayerList)
 		crc = calcCheckSum(p, crc);
 	for (const auto& p : detectedInThisTurnByPlayerList)

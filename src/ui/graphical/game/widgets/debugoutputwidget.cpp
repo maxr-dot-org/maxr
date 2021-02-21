@@ -462,17 +462,6 @@ void cDebugOutputWidget::traceVehicle (const cVehicle& vehicle, cPosition& drawP
 		drawPosition.y() += 8;
 	}
 
-	if (debugTraceServer)
-	{
-		tmpString = "seen by players: owner";
-		for (size_t i = 0; i != vehicle.seenByPlayerList.size(); ++i)
-		{
-			tmpString += ", \"" + vehicle.seenByPlayerList[i]->getName() + "\"";
-		}
-		font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
-		drawPosition.y() += 8;
-	}
-
 	tmpString = "flight height: " + iToStr (vehicle.getFlightHeight());
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
@@ -529,17 +518,6 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 	{
 		const auto& item = building.getBuildListItem (i);
 		font->showText (drawPosition, "  build " + iToStr (i) + lngPack.i18n ("Text~Punctuation~Colon") + item.getType().getText() + " \"" + client->getModel().getUnitsData()->getStaticUnitData(item.getType()).getName() + "\"", FONT_LATIN_SMALL_WHITE);
-		drawPosition.y() += 8;
-	}
-
-	if (debugTraceServer)
-	{
-		s = "seen by players: owner";
-		for (size_t i = 0; i != building.seenByPlayerList.size(); ++i)
-		{
-			s += ", \"" + building.seenByPlayerList[i]->getName() + "\"";
-		}
-		font->showText (drawPosition, s, FONT_LATIN_SMALL_WHITE);
 		drawPosition.y() += 8;
 	}
 }

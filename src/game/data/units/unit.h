@@ -236,8 +236,6 @@ public: // TODO: make protected/private and make getters/setters
 
 	std::vector<cVehicle*> storedUnits;		// list with the vehicles, that are stored in this unit
 
-	std::vector<cPlayer*> seenByPlayerList; // a list of all players who can see this unit //TODO: remove
-
 	// little jobs, running on the vehicle.
 	// e.g. rotating to a specific direction
 	bool jobActive;
