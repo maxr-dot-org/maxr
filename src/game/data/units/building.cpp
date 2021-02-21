@@ -1062,7 +1062,7 @@ void cBuilding::DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int valu
 /** checks the resources that are available under the mining station */
 //--------------------------------------------------------------------------
 
-void cBuilding::initMineRessourceProd (const cMap& map)
+void cBuilding::initMineResourceProd (const cMap& map)
 {
 	if (!staticData->canMineMaxRes) return;
 

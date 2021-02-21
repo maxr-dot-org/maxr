@@ -165,7 +165,7 @@ public:
 	/** check whether a transfer to a unit on the field is possible */
 	bool canTransferTo (const cPosition& position, const cMapView& map) const override;
 	bool canTransferTo (const cUnit& unit) const override;
-	void initMineRessourceProd (const cMap& map);
+	void initMineResourceProd (const cMap& map);
 	void calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array<int, 3>& turboBuildCosts, int vehicleCosts, int remainingMetal = -1) const;
 	bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const override;
 	bool canExitTo (const cPosition& position, const cMapView& map, const cStaticUnitData& vehicleData) const override;

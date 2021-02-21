@@ -248,7 +248,7 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 	cBuilding& addedBuilding = player->addNewBuilding(position, unitsData->getStaticUnitData(id), nextUnitId);
 	nextUnitId++;
 
-	addedBuilding.initMineRessourceProd(*map);
+	addedBuilding.initMineResourceProd(*map);
 
 	cBuilding* buildingToBeDeleted = map->getField(position).getTopBuilding();
 

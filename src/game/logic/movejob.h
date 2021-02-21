@@ -88,7 +88,7 @@ public:
 	const cEndMoveAction& getEndMoveAction() const { return endMoveAction; }
 
 	/** used for the surveyor ai, so it can recalculate its steps, when resources are detected */
-	void setStopOnDetectRessource (bool value) { stopOnDetectResource = value; }
+	void setStopOnDetectResource (bool value) { stopOnDetectResource = value; }
 
 	uint32_t getChecksum (uint32_t crc) const;
 

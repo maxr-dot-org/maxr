@@ -28,7 +28,7 @@ class cActionStartMove : public cAction
 {
 public:
 	cActionStartMove(const cVehicle& vehicle, const std::forward_list<cPosition>& path, cEndMoveAction emat);
-	cActionStartMove(const cVehicle& vehicle, const std::forward_list<cPosition>& path, bool stopOnDetectRessource = false);
+	cActionStartMove(const cVehicle& vehicle, const std::forward_list<cPosition>& path, bool stopOnDetectResource = false);
 	cActionStartMove(cBinaryArchiveOut& archive);
 
 	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }

@@ -65,9 +65,9 @@ std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 	case eActiontype::ACTION_TRANSFER:
 		return std::make_unique<cActionTransfer>(archive);
 	case eActiontype::ACTION_START_MOVE:
-		return std::make_unique<cActionStartMove>(archive); 
+		return std::make_unique<cActionStartMove>(archive);
 	case eActiontype::ACTION_RESUME_MOVE:
-		return std::make_unique<cActionResumeMove>(archive); 
+		return std::make_unique<cActionResumeMove>(archive);
 	case eActiontype::ACTION_START_TURN:
 		return std::make_unique<cActionStartTurn>(archive);
 	case eActiontype::ACTION_END_TURN:
@@ -89,7 +89,7 @@ std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 	case eActiontype::ACTION_CHANGE_BUILDLIST:
 		return std::make_unique<cActionChangeBuildList>(archive);
 	case eActiontype::ACTION_LOAD:
-		return std::make_unique<cActionLoad>(archive);	
+		return std::make_unique<cActionLoad>(archive);
 	case eActiontype::ACTION_ACTIVATE:
 		return std::make_unique<cActionActivate>(archive);
 	case eActiontype::ACTION_REPAIR_RELOAD:
@@ -105,7 +105,7 @@ std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 	case eActiontype::ACTION_CHANGE_UNIT_NAME:
 		return std::make_unique<cActionChangeUnitName>(archive);
 	case eActiontype::ACTION_BUY_UPGRADES:
-		return std::make_unique<cActionBuyUpgrades>(archive); 
+		return std::make_unique<cActionBuyUpgrades>(archive);
 	case eActiontype::ACTION_UPGRADE_VEHICLE:
 		return std::make_unique<cActionUpgradeVehicle>(archive);
 	case eActiontype::ACTION_UPGRADE_BUILDING:
@@ -160,7 +160,7 @@ std::string enumToString(cAction::eActiontype value)
 	case cAction::eActiontype::ACTION_FINISH_BUILD:
 		return "ACTION_FINISH_BUILD";
 	case cAction::eActiontype::ACTION_CHANGE_BUILDLIST:
-		return "ACTION_CHANGE_BUILDLIST";	
+		return "ACTION_CHANGE_BUILDLIST";
 	case cAction::eActiontype::ACTION_LOAD:
 		return "ACTION_LOAD";
 	case cAction::eActiontype::ACTION_ACTIVATE:

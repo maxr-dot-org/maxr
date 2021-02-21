@@ -284,10 +284,10 @@ void cSubBase::setResource (eResourceType storeResType, int value)
 
 void cSubBase::addRessouce (eResourceType storeResType, int value)
 {
-	int storedRessources = getResource (storeResType);
-	value = std::max (value, -storedRessources);
+	int storedResources = getResource (storeResType);
+	value = std::max (value, -storedResources);
 	if (value == 0) return;
-	setResource (storeResType, storedRessources + value);
+	setResource (storeResType, storedResources + value);
 
 	for (size_t i = 0; i != buildings.size(); ++i)
 	{
@@ -469,7 +469,7 @@ bool cSubBase::checkEnergy ()
 		cBuilding& building = *buildings[i];
 		if (!building.getStaticUnitData().needsEnergy || !building.isUnitWorking()) continue;
 
-		// do not shut down ressource producers in the first run
+		// do not shut down resource producers in the first run
 		if (building.getMaxProd().get (eResourceType::Metal) > 0 ||
 			building.getMaxProd().get (eResourceType::Gold) > 0 ||
 			building.getMaxProd().get (eResourceType::Oil) > 0) continue;

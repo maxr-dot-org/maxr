@@ -217,7 +217,7 @@ float cSurveyorAi::calcFactor(const cPosition& position, const std::forward_list
 			if (!owner.hasResourceExplored (position))  //&& !map.isBlocked(position))
 			{
 				nrSurvFields++;
-				if (hasAdjacentRessources(position, map))
+				if (hasAdjacentResources(position, map))
 				{
 					// spots with adjacent revealed resources have a high probability
 					// for more resources
@@ -346,7 +346,7 @@ bool cSurveyorAi::positionHasBeenSurveyedByPath(const cPosition position, const 
 }
 
 //------------------------------------------------------------------------------
-bool cSurveyorAi::hasAdjacentRessources(const cPosition& position, const cMap& map) const
+bool cSurveyorAi::hasAdjacentResources(const cPosition& position, const cMap& map) const
 {
 	const cPlayer& owner = *vehicle.getOwner();
 

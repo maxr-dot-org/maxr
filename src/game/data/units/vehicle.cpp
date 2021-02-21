@@ -630,7 +630,7 @@ void cVehicle::calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<i
 bool cVehicle::doSurvey(const cMap& map)
 {
 	const auto& owner = *getOwner();
-	bool ressourceFound = false;
+	bool resourceFound = false;
 
 	const int minx = std::max (getPosition().x() - 1, 0);
 	const int maxx = std::min (getPosition().x() + 1, owner.getMapSize().x() - 1);
@@ -644,14 +644,14 @@ bool cVehicle::doSurvey(const cMap& map)
 			const cPosition position (x, y);
 			if (!owner.hasResourceExplored(position) && map.getResource(position).typ != eResourceType::None)
 			{
-				ressourceFound = true;
+				resourceFound = true;
 			}
 
 			getOwner()->exploreResource(position);
 		}
 	}
 
-	return ressourceFound;
+	return resourceFound;
 }
 
 //-----------------------------------------------------------------------------

@@ -276,7 +276,7 @@ private:
 	bool attacking;  ///< is the unit currently attacking?
 	bool beeingAttacked; ///< true when an attack on this unit is running
 	bool beenAttacked; //the unit was attacked in this turn
-	int storageResCur; //amount of stored ressources
+	int storageResCur; //amount of stored resources
 
 };
 

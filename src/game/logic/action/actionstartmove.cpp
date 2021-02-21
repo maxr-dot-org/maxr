@@ -121,6 +121,6 @@ void cActionStartMove::execute(cModel& model) const
 	if (movejob)
 	{
 		movejob->setEndMoveAction(endMoveAction);
-		movejob->setStopOnDetectRessource(stopOnDetectResource);
+		movejob->setStopOnDetectResource(stopOnDetectResource);
 	}
 }

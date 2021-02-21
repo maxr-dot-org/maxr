@@ -84,7 +84,7 @@ public:
 
 	// Main
 	sID ID;
-	
+
 	// Attack
 	enum eMuzzleType
 	{
@@ -477,8 +477,8 @@ private:
 	cStaticUnitData rubbleSmall;
 	cStaticUnitData rubbleBig;
 
-	// unitdata does not change during the game. 
-	// So caching the checksum saves a lot cpu ressources.
+	// unitdata does not change during the game.
+	// So caching the checksum saves a lot cpu resources.
 	mutable uint32_t crcCache;
 	mutable bool crcValid;
 };

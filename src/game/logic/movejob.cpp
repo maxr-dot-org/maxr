@@ -414,8 +414,8 @@ void cMoveJob::endMove (cModel& model)
 
 	if (vehicle->getStaticUnitData().canSurvey)
 	{
-		bool ressourceFound = vehicle->doSurvey (map);
-		if (ressourceFound && stopOnDetectResource)
+		bool resourceFound = vehicle->doSurvey (map);
+		if (resourceFound && stopOnDetectResource)
 		{
 			path.clear();
 		}

@@ -48,7 +48,7 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	const int lineHeight = 16;
 
 	// Resources
-	auto addRessourceRadioGroup = [&] (const std::string& resourceName) {
+	auto addResourceRadioGroup = [&] (const std::string& resourceName) {
 		addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), resourceName + lngPack.i18n("Text~Punctuation~Colon"), FONT_LATIN_NORMAL, eAlignmentType::Left));
 		auto* radioGroup = addChild (std::make_unique<cRadioGroupValue<eGameSettingsResourceAmount>>());
 		radioGroup->emplaceCheckBox (eGameSettingsResourceAmount::Limited, getPosition() + cPosition (240, currentLine), lngPack.i18n ("Text~Option~Limited"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
@@ -59,9 +59,9 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 		return radioGroup;
 	};
 
-	metalGroup = addRessourceRadioGroup (lngPack.i18n ("Text~Title~Metal"));
-	oilGroup = addRessourceRadioGroup (lngPack.i18n ("Text~Title~Oil"));
-	goldGroup = addRessourceRadioGroup (lngPack.i18n ("Text~Title~Gold"));
+	metalGroup = addResourceRadioGroup (lngPack.i18n ("Text~Title~Metal"));
+	oilGroup = addResourceRadioGroup (lngPack.i18n ("Text~Title~Oil"));
+	goldGroup = addResourceRadioGroup (lngPack.i18n ("Text~Title~Gold"));
 
 	// Density
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Resource_Density") + lngPack.i18n("Text~Punctuation~Colon"), FONT_LATIN_NORMAL, eAlignmentType::Left));

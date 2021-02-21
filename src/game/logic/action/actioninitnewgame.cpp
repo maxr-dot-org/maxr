@@ -89,8 +89,8 @@ void cActionInitNewGame::execute(cModel& model) const
 	}
 	player.setLandingPos(updatedLandingPosition);
 
-	// place new ressources
-	model.getMap()->placeRessources(model);
+	// place new resources
+	model.getMap()->placeResources(model);
 
 	// apply upgrades
 	int credits = model.getGameSettings()->getStartCredits();

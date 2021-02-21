@@ -22,9 +22,9 @@
 #include "utility/crc.h"
 
 //------------------------------------------------------------------------------
-int sMiningResource::get (eResourceType ressourceType) const
+int sMiningResource::get (eResourceType resourceType) const
 {
-	switch (ressourceType)
+	switch (resourceType)
 	{
 		case eResourceType::Metal: return metal;
 		case eResourceType::Oil: return oil;
@@ -34,9 +34,9 @@ int sMiningResource::get (eResourceType ressourceType) const
 }
 
 //------------------------------------------------------------------------------
-int& sMiningResource::get (eResourceType ressourceType)
+int& sMiningResource::get (eResourceType resourceType)
 {
-	switch (ressourceType)
+	switch (resourceType)
 	{
 		case eResourceType::Metal: return metal;
 		case eResourceType::Oil: return oil;

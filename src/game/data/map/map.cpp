@@ -750,7 +750,7 @@ void cMap::setResourcesFromString (const std::string& str)
 	}
 }
 
-void cMap::placeRessources(cModel& model)
+void cMap::placeResources(cModel& model)
 {
 	const auto& playerList = model.getPlayerList();
 	const auto& gameSettings = *model.getGameSettings();

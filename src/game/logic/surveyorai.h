@@ -44,9 +44,9 @@ private:
 
 	float calcFactor(const cPosition& position, const std::forward_list<cPosition>& path, const std::vector<std::unique_ptr<cSurveyorAi>>& jobs, const cMap& map) const;
 	float calcScoreDistToOtherSurveyor (const std::vector<std::unique_ptr<cSurveyorAi>>& jobs, const cPosition& position, float e) const;
-	
+
 	bool positionHasBeenSurveyedByPath(const cPosition position, const std::forward_list<cPosition>& path) const;
-	bool hasAdjacentRessources(const cPosition& position, const cMap& map) const;
+	bool hasAdjacentResources(const cPosition& position, const cMap& map) const;
 
 	void changeOP();
 

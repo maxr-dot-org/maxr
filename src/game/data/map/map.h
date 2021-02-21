@@ -92,7 +92,7 @@ public:
 	cBuilding* getRubble() const;
 	/** returns a pointer to an expl. mine, if there is one */
 	cBuilding* getMine() const;
-	
+
 	/** checks if there is a building that allows gorund units on water fields */
 	bool hasBridgeOrPlattform() const;
 
@@ -212,7 +212,7 @@ public:
 		}
 		if (!loadMap(fileToLoad))
 			throw std::runtime_error("Loading map failed.");
-		
+
 		if (crc != crcFromSave && crcFromSave != 0)
 			throw std::runtime_error("CRC error while loading map. The loaded map file is not equal to the one the game was started with.");
 	}
@@ -250,7 +250,7 @@ public:
 
 	const sResources& getResource (const cPosition& position) const { return Resources[getOffset (position)]; }
 
-	void placeRessources(cModel& model);
+	void placeResources(cModel& model);
 	/**
 	* Access to a map field
 	* @param the offset of the map field
@@ -304,8 +304,8 @@ public:
 	void save(T& archive)
 	{
 		archive << serialization::makeNvp("mapFile", *staticMap);
-		const std::string ressources = resourcesToString();
-		archive << NVP(ressources);
+		const std::string resources = resourcesToString();
+		archive << NVP(resources);
 	}
 	template<typename T>
 	void load(T& archive)
@@ -314,9 +314,9 @@ public:
 		archive >> serialization::makeNvp("mapFile", *staticMap);
 		init();
 
-		std::string ressources;
-		archive >> NVP(ressources);
-		setResourcesFromString(ressources);
+		std::string resources;
+		archive >> NVP(resources);
+		setResourcesFromString(resources);
 	}
 	SERIALIZATION_SPLIT_MEMBER()
 
@@ -341,7 +341,7 @@ private:
 	* the information about the fields
 	*/
 	cMapField* fields;
-	cArrayCrc<sResources> Resources; // field with the ressource data
+	cArrayCrc<sResources> Resources; // field with the resource data
 };
 
 #endif // game_data_map_mapH

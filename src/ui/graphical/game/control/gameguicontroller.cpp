@@ -634,7 +634,7 @@ void cGameGuiController::initChatCommands()
 		.setAction([&](cServer* server, cClient* client)
 		{
 			throw std::runtime_error("Command not implemented");
-			//client->getMap()->assignRessources(*server->Map);
+			//client->getMap()->assignResources(*server->Map);
 			//client->getActivePlayer().revealResource();
 		})
 	);
