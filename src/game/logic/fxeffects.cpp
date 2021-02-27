@@ -123,9 +123,9 @@ void cFxMuzzle::draw (float zoom, const cPosition& destination) const
 void cFxMuzzle::playSound (cSoundManager& soundManager) const
 {
 	if (id.isABuilding())
-		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, UnitsUiData.getBuildingUI (id)->Attack, cPosition (position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, UnitsUiData.getBuildingUI (id)->Attack, cPosition (position.x() / sGraphicTile::tilePixelWidth, position.y() / sGraphicTile::tilePixelHeight)));
 	else
-		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, UnitsUiData.getVehicleUI (id)->Attack, cPosition (position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, UnitsUiData.getVehicleUI (id)->Attack, cPosition (position.x() / sGraphicTile::tilePixelWidth, position.y() / sGraphicTile::tilePixelHeight)));
 }
 
 //------------------------------------------------------------------------------
@@ -195,7 +195,7 @@ cFxExploSmall::cFxExploSmall (const cPosition& position_) :
 
 void cFxExploSmall::playSound (cSoundManager& soundManager) const
 {
-	soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPSmall), cPosition (position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+	soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPSmall), cPosition (position.x() / sGraphicTile::tilePixelWidth, position.y() / sGraphicTile::tilePixelHeight)));
 }
 
 //------------------------------------------------------------------------------
@@ -212,11 +212,11 @@ void cFxExploBig::playSound (cSoundManager& soundManager) const
 {
 	if (onWater)
 	{
-		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPBigWet), cPosition (position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPBigWet), cPosition (position.x() / sGraphicTile::tilePixelWidth, position.y() / sGraphicTile::tilePixelHeight)));
 	}
 	else
 	{
-		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPBig), cPosition (position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPBig), cPosition (position.x() / sGraphicTile::tilePixelWidth, position.y() / sGraphicTile::tilePixelHeight)));
 	}
 }
 
@@ -230,7 +230,7 @@ cFxExploAir::cFxExploAir (const cPosition& position_) :
 
 void cFxExploAir::playSound (cSoundManager& soundManager) const
 {
-	soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPSmall), cPosition (position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+	soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPSmall), cPosition (position.x() / sGraphicTile::tilePixelWidth, position.y() / sGraphicTile::tilePixelHeight)));
 }
 
 //------------------------------------------------------------------------------
@@ -243,7 +243,7 @@ cFxExploWater::cFxExploWater (const cPosition& position_) :
 
 void cFxExploWater::playSound (cSoundManager& soundManager) const
 {
-	soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPSmallWet), cPosition (position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+	soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPSmallWet), cPosition (position.x() / sGraphicTile::tilePixelWidth, position.y() / sGraphicTile::tilePixelHeight)));
 }
 
 //------------------------------------------------------------------------------
@@ -261,13 +261,13 @@ void cFxHit::playSound (cSoundManager& soundManager) const
 	if (targetHit)
 	{
 		if (big)
-			soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, SoundData.SNDHitLarge, cPosition (position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+			soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, SoundData.SNDHitLarge, cPosition (position.x() / sGraphicTile::tilePixelWidth, position.y() / sGraphicTile::tilePixelHeight)));
 		else
-			soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, SoundData.SNDHitMed, cPosition (position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+			soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, SoundData.SNDHitMed, cPosition (position.x() / sGraphicTile::tilePixelWidth, position.y() / sGraphicTile::tilePixelHeight)));
 	}
 	else
 	{
-		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, SoundData.SNDHitSmall, cPosition (position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, SoundData.SNDHitSmall, cPosition (position.x() / sGraphicTile::tilePixelWidth, position.y() / sGraphicTile::tilePixelHeight)));
 	}
 }
 
@@ -281,7 +281,7 @@ cFxAbsorb::cFxAbsorb (const cPosition& position_) :
 
 void cFxAbsorb::playSound (cSoundManager& soundManager) const
 {
-	soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, SoundData.SNDAbsorb, cPosition (position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+	soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, SoundData.SNDAbsorb, cPosition (position.x() / sGraphicTile::tilePixelWidth, position.y() / sGraphicTile::tilePixelHeight)));
 }
 
 //------------------------------------------------------------------------------
@@ -370,9 +370,9 @@ cFxRocket::cFxRocket (const cPosition& startPosition_, const cPosition& endPosit
 void cFxRocket::playSound (cSoundManager& soundManager) const
 {
 	if (id.isABuilding())
-		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, UnitsUiData.getBuildingUI (id)->Attack, cPosition (position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, UnitsUiData.getBuildingUI (id)->Attack, cPosition (position.x() / sGraphicTile::tilePixelWidth, position.y() / sGraphicTile::tilePixelHeight)));
 	else
-		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, UnitsUiData.getVehicleUI (id)->Attack, cPosition (position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, UnitsUiData.getVehicleUI (id)->Attack, cPosition (position.x() / sGraphicTile::tilePixelWidth, position.y() / sGraphicTile::tilePixelHeight)));
 }
 
 cFxRocket::~cFxRocket()

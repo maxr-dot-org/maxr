@@ -686,7 +686,7 @@ cBox<cPosition> cGameMapWidget::getDisplayedMapArea() const
 //------------------------------------------------------------------------------
 float cGameMapWidget::getZoomFactor() const
 {
-	return (float)getZoomedTileSize().x() / cStaticMap::tilePixelWidth;   // should make no difference if we use y instead
+	return (float)getZoomedTileSize().x() / sGraphicTile::tilePixelWidth;   // should make no difference if we use y instead
 }
 
 //------------------------------------------------------------------------------
@@ -865,8 +865,8 @@ void cGameMapWidget::centerAt (const cPosition& position)
 	const auto zoomedTileSize = getZoomedTileSize();
 
 	cPosition newPixelOffset;
-	newPixelOffset.x() = position.x() * cStaticMap::tilePixelWidth - ((int) (((float)getSize().x() / (2 * zoomedTileSize.x())) * cStaticMap::tilePixelWidth)) + cStaticMap::tilePixelWidth / 2;
-	newPixelOffset.y() = position.y() * cStaticMap::tilePixelHeight - ((int) (((float)getSize().y() / (2 * zoomedTileSize.y())) * cStaticMap::tilePixelHeight)) + cStaticMap::tilePixelHeight / 2;
+	newPixelOffset.x() = position.x() * sGraphicTile::tilePixelWidth - (sGraphicTile::tilePixelWidth * getSize().x() / (2 * zoomedTileSize.x())) + sGraphicTile::tilePixelWidth / 2;
+	newPixelOffset.y() = position.y() * sGraphicTile::tilePixelHeight - (sGraphicTile::tilePixelHeight * getSize().y() / (2 * zoomedTileSize.y())) + sGraphicTile::tilePixelHeight / 2;
 
 	scroll (newPixelOffset - pixelOffset);
 }
@@ -877,8 +877,8 @@ cPosition cGameMapWidget::getMapCenterOffset()
 	const auto zoomedTileSize = getZoomedTileSize();
 
 	cPosition center;
-	center.x() = pixelOffset.x() / cStaticMap::tilePixelWidth + (getSize().x() / (2 * zoomedTileSize.x()));
-	center.y() = pixelOffset.y() / cStaticMap::tilePixelHeight + (getSize().y() / (2 * zoomedTileSize.y()));
+	center.x() = pixelOffset.x() / sGraphicTile::tilePixelWidth + (getSize().x() / (2 * zoomedTileSize.x()));
+	center.y() = pixelOffset.y() / sGraphicTile::tilePixelHeight + (getSize().y() / (2 * zoomedTileSize.y()));
 
 	return center;
 }
@@ -936,13 +936,13 @@ float cGameMapWidget::computeMinimalZoomFactor() const
 	//
 	//   zoom = size_x / (map_x * tile_x)
 
-	auto xZoom = (float)getSize().x() / (staticMap->getSize().x() * cStaticMap::tilePixelWidth);
-	auto yZoom = (float)getSize().y() / (staticMap->getSize().y() * cStaticMap::tilePixelHeight);
+	auto xZoom = (float)getSize().x() / (staticMap->getSize().x() * sGraphicTile::tilePixelWidth);
+	auto yZoom = (float)getSize().y() / (staticMap->getSize().y() * sGraphicTile::tilePixelHeight);
 
 	// then we try to fix if round would have rounded up:
 
-	xZoom = std::max (xZoom, (float) ((int) (cStaticMap::tilePixelWidth * xZoom) + (xZoom >= 1.0f ? 0 : 1)) / cStaticMap::tilePixelWidth);
-	yZoom = std::max (yZoom, (float) ((int) (cStaticMap::tilePixelHeight * yZoom) + (yZoom >= 1.0f ? 0 : 1)) / cStaticMap::tilePixelHeight);
+	xZoom = std::max (xZoom, (float) ((int) (sGraphicTile::tilePixelWidth * xZoom) + (xZoom >= 1.0f ? 0 : 1)) / sGraphicTile::tilePixelWidth);
+	yZoom = std::max (yZoom, (float) ((int) (sGraphicTile::tilePixelHeight * yZoom) + (yZoom >= 1.0f ? 0 : 1)) / sGraphicTile::tilePixelHeight);
 
 	return std::max (xZoom, yZoom);
 }
@@ -950,8 +950,8 @@ float cGameMapWidget::computeMinimalZoomFactor() const
 //------------------------------------------------------------------------------
 cPosition cGameMapWidget::computeMaximalPixelOffset() const
 {
-	const auto x = staticMap->getSize(). x() * cStaticMap::tilePixelWidth - (int) (getSize().x() / getZoomFactor());
-	const auto y = staticMap->getSize(). y() * cStaticMap::tilePixelHeight - (int) (getSize().y() / getZoomFactor());
+	const auto x = staticMap->getSize(). x() * sGraphicTile::tilePixelWidth - (int) (getSize().x() / getZoomFactor());
+	const auto y = staticMap->getSize(). y() * sGraphicTile::tilePixelHeight - (int) (getSize().y() / getZoomFactor());
 
 	return cPosition (x, y);
 }
@@ -966,13 +966,13 @@ cPosition cGameMapWidget::zoomSize (const cPosition& size, float zoomFactor) con
 cPosition cGameMapWidget::getZoomedTileSize() const
 {
 	// this should be the only place where the internalZoomFactor is used directly
-	return zoomSize (cPosition (cStaticMap::tilePixelHeight, cStaticMap::tilePixelWidth), internalZoomFactor);
+	return zoomSize (cPosition (sGraphicTile::tilePixelWidth, sGraphicTile::tilePixelHeight), internalZoomFactor);
 }
 
 //------------------------------------------------------------------------------
 cPosition cGameMapWidget::getZoomedStartTilePixelOffset() const
 {
-	return zoomSize (cPosition (pixelOffset.x() % cStaticMap::tilePixelWidth, pixelOffset.y() % cStaticMap::tilePixelHeight), getZoomFactor());
+	return zoomSize (cPosition (pixelOffset.x() % sGraphicTile::tilePixelWidth, pixelOffset.y() % sGraphicTile::tilePixelHeight), getZoomFactor());
 }
 
 //------------------------------------------------------------------------------
@@ -984,7 +984,7 @@ std::pair<cPosition, cPosition> cGameMapWidget::computeTileDrawingRange() const
 
 	const cPosition tilesSize ((int)std::ceil (drawingPixelRange.x() / zoomedTileSize.x()), (int)std::ceil (drawingPixelRange.y() / zoomedTileSize.y()));
 
-	cPosition startTile ((int)std::floor (pixelOffset.x() / cStaticMap::tilePixelWidth), (int)std::floor (pixelOffset.y() / cStaticMap::tilePixelHeight));
+	cPosition startTile ((int)std::floor (pixelOffset.x() / sGraphicTile::tilePixelWidth), (int)std::floor (pixelOffset.y() / sGraphicTile::tilePixelHeight));
 	cPosition endTile (startTile + tilesSize + 1);
 
 	startTile.x() = std::max (0, startTile.x());
@@ -1005,7 +1005,7 @@ void cGameMapWidget::drawTerrain()
 
 	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore(); i.next())
 	{
-		const auto& terrain = staticMap->getTerrain (*i);
+		const auto& terrain = staticMap->getGraphicTile (*i);
 
 		auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
 		if (shouldDrawFog && (!player || !player->canSeeAt (*i)))
@@ -1052,7 +1052,7 @@ void cGameMapWidget::drawEffects (bool bottom)
 	SDL_Rect clipRect = getArea().toSdlRect();
 	SDL_SetClipRect (cVideo::buffer, &clipRect);
 
-	const cPosition originalTileSize (cStaticMap::tilePixelWidth, cStaticMap::tilePixelHeight);
+	const cPosition originalTileSize (sGraphicTile::tilePixelWidth, sGraphicTile::tilePixelHeight);
 
 	for (auto it = effects.begin(); it != effects.end();)   // ATTENTION: erase in loop. do not use continue;
 	{

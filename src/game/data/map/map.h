@@ -137,30 +137,29 @@ private:
 	std::vector<cVehicle*> planes;
 };
 
-struct sTerrain
+struct sGraphicTile
 {
-	sTerrain();
-	sTerrain(sTerrain&& other);
-	sTerrain& operator=(sTerrain&& other);
+	static const int tilePixelHeight = 64;
+	static const int tilePixelWidth = 64;
+
+	void copySrfToTerData (SDL_Surface&, const SDL_Color (&palette_shw)[256]);
 
 	AutoSurface sf;      /** the scaled surface of the terrain */
 	AutoSurface sf_org;  /** the original surface of the terrain */
 	AutoSurface shw;     /** the scaled surface of the terrain in the fog */
 	AutoSurface shw_org; /** the original surface of the terrain in the fog */
-	bool water;          /** is this terrain water? */
-	bool coast;          /** is this terrain a coast? */
-	bool blocked;        /** is this terrain blocked? */
+};
 
-private:
-	sTerrain(const sTerrain& other) = delete;
-	sTerrain& operator=(const sTerrain& other) = delete;
+struct sTerrain
+{
+	bool water = false;          /** is this terrain water? */
+	bool coast = false;          /** is this terrain a coast? */
+	bool blocked = false;        /** is this terrain blocked? */
 };
 
 class cStaticMap
 {
 public:
-	static const int tilePixelHeight = 64;
-	static const int tilePixelWidth = 64;
 
 	cStaticMap();
 	~cStaticMap();
@@ -182,8 +181,11 @@ public:
 
 	bool possiblePlace(const cStaticUnitData& data, const cPosition& position) const;
 
-	const sTerrain& getTerrain (const cPosition& position) const;
+	std::size_t getTileIndex (const cPosition&) const;
+	const sTerrain& getTerrain (const cPosition&) const;
 
+	// TODO: Move it in UI part
+	const sGraphicTile& getGraphicTile (const cPosition&) const;
 	AutoSurface createBigSurface (int sizex, int sizey) const;
 	void generateNextAnimationFrame();
 	void scaleSurfaces (int pixelSize);
@@ -215,16 +217,18 @@ public:
 		if (crc != crcFromSave && crcFromSave != 0)
 			throw std::runtime_error("CRC error while loading map. The loaded map file is not equal to the one the game was started with.");
 	}
+
 	SERIALIZATION_SPLIT_MEMBER()
 private:
 	static AutoSurface loadTerrGraph (SDL_RWops* fpMapFile, Sint64 iGraphicsPos, const SDL_Color (&colors)[256], int iNum);
-	void copySrfToTerData (SDL_Surface& surface, int iNum);
 
 	std::string filename;   // Name of the current map
 	uint32_t crc;
 	int size;
-	std::vector<sTerrain> terrains; // The different terrain type.
 	std::vector<int> Kacheln; // Terrain numbers of the map fields
+	std::vector<sTerrain> terrains; // The different terrain type.
+	// TODO: Move grahpic stuff inside ui
+	std::vector<sGraphicTile> graphics; // The different terrain graphics.
 	SDL_Color palette[256];   // Palette with all Colors for the terrain graphics
 	SDL_Color palette_shw[256];
 };

@@ -1350,7 +1350,7 @@ void cGameGuiController::connectClient (cClient& client)
 	clientSignalConnectionManager.connect (client.getModel().addedEffect, [&] (const std::shared_ptr<cFx>& effect)
 	{
 		cPosition fxPos = effect->getPosition();
-		cPosition mapPos = cPosition (fxPos.x() / cStaticMap::tilePixelWidth, fxPos.y() / cStaticMap::tilePixelHeight);
+		cPosition mapPos = cPosition (fxPos.x() / sGraphicTile::tilePixelWidth, fxPos.y() / sGraphicTile::tilePixelHeight);
 		gameGui->getGameMap().addEffect (effect, getActivePlayer()->canSeeAt(mapPos));
 	});
 

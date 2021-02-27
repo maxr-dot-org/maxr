@@ -131,7 +131,7 @@ void cNewDialogTransfer::initUnitImage (cImage& image, const cUnit& unit)
 	const int unitImageWidth = 64;
 	const int unitImageHeight = 64;
 
-	const auto zoom = (float)unitImageWidth / (unit.getIsBig() ? cStaticMap::tilePixelWidth * 2 : cStaticMap::tilePixelWidth);
+	const auto zoom = (float)unitImageWidth / (unit.getIsBig() ? sGraphicTile::tilePixelWidth * 2 : sGraphicTile::tilePixelWidth);
 
 	AutoSurface unitImageSurface (SDL_CreateRGBSurface (0, unitImageWidth, unitImageHeight, Video.getColDepth(), 0, 0, 0, 0));
 	SDL_FillRect (unitImageSurface.get(), nullptr, 0xFF00FF);
