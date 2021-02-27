@@ -543,15 +543,6 @@ uint32_t cStaticMap::getChecksum(uint32_t crc)
 	return calcCheckSum(this->crc, crc);
 }
 
-void cStaticMap::scaleSurfaces (int pixelSize)
-{
-	for (auto& t : graphics)
-	{
-		scaleSurface (t.sf_org.get(), t.sf.get(), pixelSize, pixelSize);
-		scaleSurface (t.shw_org.get(), t.shw.get(), pixelSize, pixelSize);
-	}
-}
-
 void cStaticMap::generateNextAnimationFrame()
 {
 	//change palettes to display next frame

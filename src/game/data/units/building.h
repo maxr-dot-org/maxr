@@ -80,7 +80,6 @@ struct sBuildingUIData
 	sBuildingUIData();
 	sBuildingUIData (sBuildingUIData&& other);
 	sBuildingUIData& operator= (sBuildingUIData && other);
-	void scaleSurfaces (float faktor);
 
 private:
 	sBuildingUIData (const sBuildingUIData& other) = delete;

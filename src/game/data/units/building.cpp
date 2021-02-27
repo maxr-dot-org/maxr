@@ -1251,14 +1251,6 @@ sBuildingUIData& sBuildingUIData::operator= (sBuildingUIData && other)
 	return *this;
 }
 
-//--------------------------------------------------------------------------
-void sBuildingUIData::scaleSurfaces (float factor)
-{
-	scaleSurface (img_org.get(), img.get(), (int) (img_org->w * factor), (int) (img_org->h * factor));
-	scaleSurface (shw_org.get(), shw.get(), (int) (shw_org->w * factor), (int) (shw_org->h * factor));
-	if (eff_org) scaleSurface (eff_org.get(), eff.get(), (int) (eff_org->w * factor), (int) (eff_org->h * factor));
-}
-
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-- methods, that already have been extracted as part of cUnit refactoring

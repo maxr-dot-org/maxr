@@ -1163,45 +1163,6 @@ sVehicleUIData& sVehicleUIData::operator= (sVehicleUIData && other)
 }
 
 //-----------------------------------------------------------------------------
-void sVehicleUIData::scaleSurfaces (float factor)
-{
-	int width, height;
-	for (int i = 0; i < 8; ++i)
-	{
-		width = (int) (img_org[i]->w * factor);
-		height = (int) (img_org[i]->h * factor);
-		scaleSurface (img_org[i].get(), img[i].get(), width, height);
-		width = (int) (shw_org[i]->w * factor);
-		height = (int) (shw_org[i]->h * factor);
-		scaleSurface (shw_org[i].get(), shw[i].get(), width, height);
-	}
-	if (build_org)
-	{
-		height = (int) (build_org->h * factor);
-		width = height * 4;
-		scaleSurface (build_org.get(), build.get(), width, height);
-		width = (int) (build_shw_org->w * factor);
-		height = (int) (build_shw_org->h * factor);
-		scaleSurface (build_shw_org.get(), build_shw.get(), width, height);
-	}
-	if (clear_small_org)
-	{
-		height = (int) (clear_small_org->h * factor);
-		width = height * 4;
-		scaleSurface (clear_small_org.get(), clear_small.get(), width, height);
-		width = (int) (clear_small_shw_org->w * factor);
-		height = (int) (clear_small_shw_org->h * factor);
-		scaleSurface (clear_small_shw_org.get(), clear_small_shw.get(), width, height);
-	}
-	if (overlay_org)
-	{
-		height = (int) (overlay_org->h * factor);
-		width = (int) (overlay_org->w * factor);
-		scaleSurface (overlay_org.get(), overlay.get(), width, height);
-	}
-}
-
-//-----------------------------------------------------------------------------
 void cVehicle::blitWithPreScale (SDL_Surface* org_src, SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dest, SDL_Rect* destrect, float factor, int frames)
 {
 	if (!cSettings::getInstance().shouldDoPrescale())

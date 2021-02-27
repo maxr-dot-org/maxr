@@ -131,7 +131,6 @@ struct sVehicleUIData
 	sVehicleUIData();
 	sVehicleUIData (sVehicleUIData&& other);
 	sVehicleUIData& operator= (sVehicleUIData && other);
-	void scaleSurfaces (float faktor);
 
 private:
 	sVehicleUIData (const sVehicleUIData& other) = delete;
