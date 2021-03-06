@@ -150,6 +150,33 @@ struct sGraphicTile
 	AutoSurface shw_org; /** the original surface of the terrain in the fog */
 };
 
+class cStaticMap;
+class cGraphicStaticMap
+{
+public:
+	cGraphicStaticMap (const cStaticMap* map) : map (map) {}
+
+	cGraphicStaticMap (const cGraphicStaticMap&) = delete;
+	cGraphicStaticMap& operator= (const cGraphicStaticMap&) = delete;
+
+	void loadPalette (SDL_RWops* fpMapFile, std::size_t paletteOffset, std::size_t numberOfTerrains);
+	bool loadTile (SDL_RWops* fpMapFile, std::size_t graphicOffset, std::size_t index);
+
+	const sGraphicTile& getTile (std::size_t index) const { return tiles[index]; }
+
+	AutoSurface createBigSurface (int sizex, int sizey) const;
+	void generateNextAnimationFrame();
+
+private:
+	static AutoSurface loadTerrGraph (SDL_RWops* fpMapFile, Sint64 iGraphicsPos, const SDL_Color (&colors)[256], int iNum);
+
+private:
+	const cStaticMap* map = nullptr;
+	std::vector<sGraphicTile> tiles; // The different terrain graphics.
+	SDL_Color palette[256];   // Palette with all Colors for the terrain graphics
+	SDL_Color palette_shw[256];
+};
+
 struct sTerrain
 {
 	bool water = false;          /** is this terrain water? */
@@ -184,10 +211,8 @@ public:
 	std::size_t getTileIndex (const cPosition&) const;
 	const sTerrain& getTerrain (const cPosition&) const;
 
-	// TODO: Move it in UI part
+	cGraphicStaticMap& getGraphic() const { return graphic; }
 	const sGraphicTile& getGraphicTile (const cPosition&) const;
-	AutoSurface createBigSurface (int sizex, int sizey) const;
-	void generateNextAnimationFrame();
 
 	uint32_t getChecksum(uint32_t crc);
 
@@ -219,17 +244,12 @@ public:
 
 	SERIALIZATION_SPLIT_MEMBER()
 private:
-	static AutoSurface loadTerrGraph (SDL_RWops* fpMapFile, Sint64 iGraphicsPos, const SDL_Color (&colors)[256], int iNum);
-
 	std::string filename;   // Name of the current map
 	uint32_t crc;
 	int size;
 	std::vector<int> Kacheln; // Terrain numbers of the map fields
 	std::vector<sTerrain> terrains; // The different terrain type.
-	// TODO: Move grahpic stuff inside ui
-	std::vector<sGraphicTile> graphics; // The different terrain graphics.
-	SDL_Color palette[256];   // Palette with all Colors for the terrain graphics
-	SDL_Color palette_shw[256];
+	mutable cGraphicStaticMap graphic;
 };
 
 class cMap

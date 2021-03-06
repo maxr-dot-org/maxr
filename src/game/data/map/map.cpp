@@ -71,6 +71,119 @@ void sGraphicTile::copySrfToTerData (SDL_Surface& surface, const SDL_Color (&pal
 }
 
 //------------------------------------------------------------------------------
+void cGraphicStaticMap::loadPalette (SDL_RWops* fpMapFile, std::size_t paletteOffset, std::size_t numberOfTerrains)
+{
+	tiles.resize (numberOfTerrains);
+	// Load Color Palette
+	SDL_RWseek (fpMapFile, paletteOffset, SEEK_SET);
+	for (int i = 0; i < 256; i++)
+	{
+		SDL_RWread (fpMapFile, palette + i, 3, 1);
+	}
+	//generate palette for terrains with fog
+	for (int i = 0; i < 256; i++)
+	{
+		palette_shw[i].r = (unsigned char) (palette[i].r * 0.6f);
+		palette_shw[i].g = (unsigned char) (palette[i].g * 0.6f);
+		palette_shw[i].b = (unsigned char) (palette[i].b * 0.6f);
+		palette[i].a = 255;
+		palette_shw[i].a = 255;
+	}
+}
+
+//------------------------------------------------------------------------------
+/*static*/AutoSurface cGraphicStaticMap::loadTerrGraph (SDL_RWops* fpMapFile, Sint64 iGraphicsPos, const SDL_Color (&colors)[256], int iNum)
+{
+	// Create new surface and copy palette
+	AutoSurface surface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
+	surface->pitch = surface->w;
+
+	SDL_SetPaletteColors (surface->format->palette, colors, 0, 256);
+
+	// Go to position of filedata
+	SDL_RWseek (fpMapFile, iGraphicsPos + 64 * 64 * (iNum), SEEK_SET);
+
+	// Read pixel data and write to surface
+	if (SDL_RWread (fpMapFile, surface->pixels, 1, 64 * 64) != 64 * 64) return 0;
+	return surface;
+}
+
+//------------------------------------------------------------------------------
+bool cGraphicStaticMap::loadTile (SDL_RWops* fpMapFile, std::size_t graphicOffset, std::size_t index)
+{
+	AutoSurface surface (loadTerrGraph (fpMapFile, graphicOffset, palette, index));
+	if (surface == nullptr)
+	{
+		Log.write ("EOF while loading terrain number " + iToStr (index), cLog::eLOG_TYPE_WARNING);
+		SDL_RWclose (fpMapFile);
+		tiles.clear();
+		return false;
+	}
+	tiles[index].copySrfToTerData (*surface, palette_shw);
+	return true;
+}
+
+//------------------------------------------------------------------------------
+void cGraphicStaticMap::generateNextAnimationFrame()
+{
+	//change palettes to display next frame
+	SDL_Color temp = palette[127];
+	memmove (palette + 97, palette + 96, 32 * sizeof (SDL_Color));
+	palette[96]  = palette[103];
+	palette[103] = palette[110];
+	palette[110] = palette[117];
+	palette[117] = palette[123];
+	palette[123] = temp;
+
+	temp = palette_shw[127];
+	memmove (palette_shw + 97, palette_shw + 96, 32 * sizeof (SDL_Color));
+	palette_shw[96]  = palette_shw[103];
+	palette_shw[103] = palette_shw[110];
+	palette_shw[110] = palette_shw[117];
+	palette_shw[117] = palette_shw[123];
+	palette_shw[123] = temp;
+
+	//set the new palette for all terrain surfaces
+	for (auto& terrain : tiles)
+	{
+		SDL_SetColors (terrain.sf.get(), palette + 96, 96, 127);
+		//SDL_SetColors (TerrainInUse[i]->sf_org, palette + 96, 96, 127);
+		SDL_SetColors (terrain.shw.get(), palette_shw + 96, 96, 127);
+		//SDL_SetColors (TerrainInUse[i]->shw_org, palette_shw + 96, 96, 127);
+	}
+}
+
+//------------------------------------------------------------------------------
+AutoSurface cGraphicStaticMap::createBigSurface (int sizex, int sizey) const
+{
+	AutoSurface mapSurface (SDL_CreateRGBSurface (0, sizex, sizey, Video.getColDepth(), 0, 0, 0, 0));
+
+	const auto size = map->getSize().x();
+	if (SDL_MUSTLOCK (mapSurface.get())) SDL_LockSurface (mapSurface.get());
+	for (int x = 0; x < mapSurface->w; ++x)
+	{
+		const int terrainx = std::min ((x * size) / mapSurface->w, size - 1);
+		const int offsetx = ((x * size) % mapSurface->w) * 64 / mapSurface->w;
+
+		for (int y = 0; y < mapSurface->h; y++)
+		{
+			const int terrainy = std::min ((y * size) / mapSurface->h, size - 1);
+			const int offsety = ((y * size) % mapSurface->h) * 64 / mapSurface->h;
+
+			const sGraphicTile& t = getTile (map->getTileIndex (cPosition (terrainx, terrainy)));
+			unsigned int ColorNr = * (static_cast<const unsigned char*> (t.sf_org->pixels) + (offsetx + offsety * 64));
+
+			unsigned char* pixel = reinterpret_cast<unsigned char*> (&static_cast<Uint32*> (mapSurface->pixels) [x + y * mapSurface->w]);
+			pixel[0] = palette[ColorNr].b;
+			pixel[1] = palette[ColorNr].g;
+			pixel[2] = palette[ColorNr].r;
+		}
+	}
+	if (SDL_MUSTLOCK (mapSurface.get())) SDL_UnlockSurface (mapSurface.get());
+	return mapSurface;
+}
+
+//------------------------------------------------------------------------------
 cMapField::cMapField()
 {}
 
@@ -236,7 +349,7 @@ void cMapField::removeAll()
 
 // cStaticMap //////////////////////////////////////////////////
 
-cStaticMap::cStaticMap() : crc(0), size(0), terrains()
+cStaticMap::cStaticMap() : crc(0), size(0), terrains(), graphic (this)
 {
 }
 
@@ -251,9 +364,8 @@ std::size_t cStaticMap::getTileIndex (const cPosition& position) const
 
 const sGraphicTile& cStaticMap::getGraphicTile (const cPosition& position) const
 {
-	return graphics[getTileIndex (position)];
+	return graphic.getTile (getTileIndex (position));
 }
-
 
 const sTerrain& cStaticMap::getTerrain (const cPosition& position) const
 {
@@ -441,22 +553,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	Kacheln.resize (size * size, 0);
 	terrains.resize(iNumberOfTerrains);
 
-	// Load Color Palette
-	SDL_RWseek (fpMapFile, iPalettePos, SEEK_SET);
-	for (int i = 0; i < 256; i++)
-	{
-		SDL_RWread (fpMapFile, palette + i, 3, 1);
-	}
-	//generate palette for terrains with fog
-	for (int i = 0; i < 256; i++)
-	{
-		palette_shw[i].r = (unsigned char) (palette[i].r * 0.6f);
-		palette_shw[i].g = (unsigned char) (palette[i].g * 0.6f);
-		palette_shw[i].b = (unsigned char) (palette[i].b * 0.6f);
-		palette[i].a = 255;
-		palette_shw[i].a = 255;
-	}
-
+	graphic.loadPalette (fpMapFile, iPalettePos, iNumberOfTerrains);
 	// Load necessary Terrain Graphics
 	for (int iNum = 0; iNum < iNumberOfTerrains; iNum++)
 	{
@@ -485,17 +582,11 @@ bool cStaticMap::loadMap (const std::string& filename_)
 				//SDL_RWclose (fpMapFile);
 				//return false;
 		}
-
-		//load terrain graphic
-		AutoSurface surface (cStaticMap::loadTerrGraph (fpMapFile, iGraphicsPos, palette, iNum));
-		if (surface == nullptr)
+		if (!graphic.loadTile (fpMapFile, iGraphicsPos, iNum))
 		{
-			Log.write ("EOF while loading terrain number " + iToStr (iNum), cLog::eLOG_TYPE_WARNING);
-			SDL_RWclose (fpMapFile);
 			clear();
 			return false;
 		}
-		graphics[iNum].copySrfToTerData (*surface, palette_shw);
 	}
 
 	// Load map data
@@ -522,82 +613,9 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	return true;
 }
 
-/*static*/AutoSurface cStaticMap::loadTerrGraph (SDL_RWops* fpMapFile, Sint64 iGraphicsPos, const SDL_Color (&colors)[256], int iNum)
-{
-	// Create new surface and copy palette
-	AutoSurface surface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
-	surface->pitch = surface->w;
-
-	SDL_SetPaletteColors (surface->format->palette, colors, 0, 256);
-
-	// Go to position of filedata
-	SDL_RWseek (fpMapFile, iGraphicsPos + 64 * 64 * (iNum), SEEK_SET);
-
-	// Read pixel data and write to surface
-	if (SDL_RWread (fpMapFile, surface->pixels, 1, 64 * 64) != 64 * 64) return 0;
-	return surface;
-}
-
 uint32_t cStaticMap::getChecksum(uint32_t crc)
 {
 	return calcCheckSum(this->crc, crc);
-}
-
-void cStaticMap::generateNextAnimationFrame()
-{
-	//change palettes to display next frame
-	SDL_Color temp = palette[127];
-	memmove (palette + 97, palette + 96, 32 * sizeof (SDL_Color));
-	palette[96]  = palette[103];
-	palette[103] = palette[110];
-	palette[110] = palette[117];
-	palette[117] = palette[123];
-	palette[123] = temp;
-
-	temp = palette_shw[127];
-	memmove (palette_shw + 97, palette_shw + 96, 32 * sizeof (SDL_Color));
-	palette_shw[96]  = palette_shw[103];
-	palette_shw[103] = palette_shw[110];
-	palette_shw[110] = palette_shw[117];
-	palette_shw[117] = palette_shw[123];
-	palette_shw[123] = temp;
-
-	//set the new palette for all terrain surfaces
-	for (auto& terrain : graphics)
-	{
-		SDL_SetColors (terrain.sf.get(), palette + 96, 96, 127);
-		//SDL_SetColors (TerrainInUse[i]->sf_org, palette + 96, 96, 127);
-		SDL_SetColors (terrain.shw.get(), palette_shw + 96, 96, 127);
-		//SDL_SetColors (TerrainInUse[i]->shw_org, palette_shw + 96, 96, 127);
-	}
-}
-
-AutoSurface cStaticMap::createBigSurface (int sizex, int sizey) const
-{
-	AutoSurface mapSurface (SDL_CreateRGBSurface (0, sizex, sizey, Video.getColDepth(), 0, 0, 0, 0));
-
-	if (SDL_MUSTLOCK (mapSurface.get())) SDL_LockSurface (mapSurface.get());
-	for (int x = 0; x < mapSurface->w; ++x)
-	{
-		const int terrainx = std::min ((x * size) / mapSurface->w, size - 1);
-		const int offsetx = ((x * size) % mapSurface->w) * 64 / mapSurface->w;
-
-		for (int y = 0; y < mapSurface->h; y++)
-		{
-			const int terrainy = std::min ((y * size) / mapSurface->h, size - 1);
-			const int offsety = ((y * size) % mapSurface->h) * 64 / mapSurface->h;
-
-			const sGraphicTile& t = getGraphicTile (cPosition (terrainx, terrainy));
-			unsigned int ColorNr = * (static_cast<const unsigned char*> (t.sf_org->pixels) + (offsetx + offsety * 64));
-
-			unsigned char* pixel = reinterpret_cast<unsigned char*> (&static_cast<Uint32*> (mapSurface->pixels) [x + y * mapSurface->w]);
-			pixel[0] = palette[ColorNr].b;
-			pixel[1] = palette[ColorNr].g;
-			pixel[2] = palette[ColorNr].r;
-		}
-	}
-	if (SDL_MUSTLOCK (mapSurface.get())) SDL_UnlockSurface (mapSurface.get());
-	return mapSurface;
 }
 
 // Funktionen der Map-Klasse /////////////////////////////////////////////////

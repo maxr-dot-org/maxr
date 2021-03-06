@@ -110,7 +110,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	// TODO: should this really be done here?
 	signalConnectionManager.connect (animationTimer->triggered400ms, [&]()
 	{
-		const_cast<cStaticMap&> (*staticMap).generateNextAnimationFrame();
+		staticMap->getGraphic().generateNextAnimationFrame();
 	});
 
 	setWindDirection (random (360));

@@ -36,7 +36,7 @@ cLandingPositionSelectionMap::cLandingPositionSelectionMap(const cBox<cPosition>
 	landingUnits(landingUnits),
 	unitsData(unitsData)
 {
-	mapSurface = map->createBigSurface (getSize().x(), getSize().y());
+	mapSurface = map->getGraphic().createBigSurface (getSize().x(), getSize().y());
 }
 
 //------------------------------------------------------------------------------
@@ -73,9 +73,9 @@ bool cLandingPositionSelectionMap::handleMouseMoved (cApplication& application, 
 
 	if (isValidLandingLocation(mapPosition))
 		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Move));
-	else 
+	else
 		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::No));
-	
+
 	return true;
 }
 
