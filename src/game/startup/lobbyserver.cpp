@@ -27,7 +27,7 @@
 #include "mapdownloader/mapdownload.h"
 #include "mapdownloader/mapuploadmessagehandler.h"
 #include "resources/uidata.h"
-#include "utility/language.h"
+#include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/ranges.h"
 
@@ -260,14 +260,6 @@ void cLobbyServer::sendChatMessage (const std::string& message, int receiverPlay
 }
 
 //------------------------------------------------------------------------------
-const cPlayerBasicData* cLobbyServer::findNotReadyPlayer() const
-{
-	auto it = ranges::find_if (players, [](const auto& player){ return !player.isReady(); });
-
-	return it == players.end() ? nullptr : &*it;
-}
-
-//------------------------------------------------------------------------------
 void cLobbyServer::handleNetMessage (const cNetMessage& message)
 {
 	cTextArchiveIn archive;
@@ -418,48 +410,46 @@ void cLobbyServer::changeOptions (const cMuMsgOptions& message)
 	selectSaveGameInfo (message.saveInfo);
 }
 
+namespace
+{
+
+	//--------------------------------------------------------------------------
+	bool isInSaveGame (const cSaveGameInfo& saveGameInfo, const cPlayerBasicData* player)
+	{
+		if (player == nullptr) return false;
+
+		const auto it = ranges::find_if (saveGameInfo.players, byPlayerName (player->getName()));
+		return it != saveGameInfo.players.end();
+	}
+
+	//--------------------------------------------------------------------------
+	std::vector<cPlayerBasicData> getMissingPlayers(const cSaveGameInfo& saveGameInfo, const std::vector<cPlayerBasicData>& players)
+	{
+		auto isMissingPlayer = [&](const auto& player){ return !player.isDefeated() && ranges::find_if (players, byPlayerName (player.getName())) == players.end();};
+		return Filter(saveGameInfo.players, isMissingPlayer);
+	}
+
+}
+
 //------------------------------------------------------------------------------
 void cLobbyServer::handleAskToFinishLobby (const cMuMsgAskToFinishLobby& message)
 {
 	const int fromPlayer = message.playerNr;
-	const auto notReadyPlayer = findNotReadyPlayer();
+	cMuMsgCannotEndLobby errorMessage;
 
-	if (!staticMap || (!gameSettings && saveGameInfo.number < 0))
+	errorMessage.missingSettings = (!staticMap || (!gameSettings && saveGameInfo.number < 0));
+	errorMessage.notReadyPlayers = Filter (players, [](const auto& player){ return !player.isReady(); });
+	if (saveGameInfo.number != -1)
 	{
-		sendChatMessage (lngPack.i18n ("Text~Multiplayer~Missing_Settings"), fromPlayer);
-		return;
+		errorMessage.hostNotInSavegame = isInSaveGame (saveGameInfo, getPlayer (fromPlayer));
+		errorMessage.missingPlayers = getMissingPlayers(saveGameInfo, players);
 	}
-
-	if (notReadyPlayer) {
-		sendChatMessage (notReadyPlayer->getName() + " " + lngPack.i18n ("Text~Multiplayer~Not_Ready"), fromPlayer);
-		sendChatMessage ("Not all players are ready...", fromPlayer);
+	if (errorMessage.missingSettings || errorMessage.hostNotInSavegame || !errorMessage.notReadyPlayers.empty() || !errorMessage.missingPlayers.empty()) {
+		sendNetMessage (errorMessage, fromPlayer);
 		return;
 	}
 	if (saveGameInfo.number != -1)
 	{
-		//check host is part of the game
-		{
-			auto hostPlayer = getPlayer (fromPlayer);
-			if (hostPlayer == nullptr) return;
-			auto iter = ranges::find_if (saveGameInfo.players, byPlayerName (hostPlayer->getName()));
-			if (iter == saveGameInfo.players.end())
-			{
-				sendChatMessage ("Unable to start: Host must be part of the saved game"); //TODO: translate
-				return;
-			}
-		}
-		// check whether all necessary players are connected
-		for (const auto& savedPlayer : saveGameInfo.players)
-		{
-			if (savedPlayer.isDefeated()) continue;
-
-			auto it = ranges::find_if (players, byPlayerName (savedPlayer.getName()));
-			if (it == players.end())
-			{
-				sendChatMessage (lngPack.i18n ("Text~Multiplayer~Player_Wrong"));
-				return;
-			}
-		}
 		// disconnect or update menu players
 		for (auto& player : players)
 		{

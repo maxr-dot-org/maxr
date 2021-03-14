@@ -48,6 +48,7 @@ public:
 		MU_MSG_REQUEST_MAP,           // sent by client: a client is missing the selected map and requests a download
 		// Game Preparation
 		MU_MSG_ASK_TO_FINISH_LOBBY,      // sent by client: ask to start game preparation
+		MU_MSG_CANNOT_END_LOBBY,         // sent by server: inform client why game preparation cannot start
 		MU_MSG_START_GAME_PREPARATIONS,  // sent by host: all clients should start game preparation menus
 		MU_MSG_LANDING_STATE,            // sent by host: informs a client about the state of the landing position selection he is currently in
 		MU_MSG_LANDING_POSITION,         // sent by client: selected landing position
@@ -210,6 +211,31 @@ class cMuMsgAskToFinishLobby : public cMultiplayerLobbyMessage
 public:
 	cMuMsgAskToFinishLobby();
 	cMuMsgAskToFinishLobby (cBinaryArchiveOut& archive);
+};
+
+//------------------------------------------------------------------------------
+class cMuMsgCannotEndLobby : public cMultiplayerLobbyMessage
+{
+public:
+	cMuMsgCannotEndLobby();
+	cMuMsgCannotEndLobby (cBinaryArchiveOut& archive);
+
+	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cTextArchiveIn& archive) override;
+
+	bool missingSettings = false;
+	std::vector<cPlayerBasicData> notReadyPlayers;
+	bool hostNotInSavegame = false;
+	std::vector<cPlayerBasicData> missingPlayers;
+private:
+	template<typename T>
+	void serializeThis (T& archive)
+	{
+		archive & missingSettings;
+		archive & notReadyPlayers;
+		archive & hostNotInSavegame;
+		archive & missingPlayers;
+	}
 };
 
 //------------------------------------------------------------------------------

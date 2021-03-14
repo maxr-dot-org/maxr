@@ -232,6 +232,23 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 		setSaveGame (saveGameInfo);
 	});
 
+	signalConnectionManager.connect (lobbyClient.onCannotEndLobby, [this](bool missingSettings, const std::vector<cPlayerBasicData>& notReadyPlayers, bool hostNotInSavegame, const std::vector<cPlayerBasicData>&missingPlayers){
+		if (missingSettings) addInfoEntry (lngPack.i18n ("Text~Multiplayer~Missing_Settings"));
+		for (const auto& player : notReadyPlayers)
+		{
+			// TODO: use insertText
+			addInfoEntry (player.getName() + " " + lngPack.i18n ("Text~Multiplayer~Not_Ready"));
+		}
+		// TODO: missing translations
+		if (!notReadyPlayers.empty()) addInfoEntry ("Not all players are ready...");
+		if (hostNotInSavegame) addInfoEntry ("Unable to start: Host must be part of the saved game");
+		for (const auto& player : missingPlayers)
+		{
+			addInfoEntry ("Missing player: " + player.getName());
+		}
+		if (!missingPlayers.empty()) addInfoEntry (lngPack.i18n ("Text~Multiplayer~Player_Wrong"));
+	});
+
 	signalConnectionManager.connect (triggeredChatMessage, [&lobbyClient, this](){
 		const auto& chatMessage = getChatMessage();
 

@@ -75,8 +75,6 @@ public:
 	void sendChatMessage (const std::string&, int receiverPlayerNr = -1/*, int senderPlayerNr = -1*/);
 #endif
 
-	const cPlayerBasicData* findNotReadyPlayer() const;
-
 	cSignal<void (const cPlayerBasicData&)> onClientConnected;
 	cSignal<void (const cPlayerBasicData&)> onClientDisconnected;
 	cSignal<void (const std::string& version, const std::string& revision)> onDifferentVersion;

@@ -44,7 +44,9 @@ std::unique_ptr<cMultiplayerLobbyMessage> cMultiplayerLobbyMessage::createFromBu
 	case eMessageType::MU_MSG_SAVESLOTS:
 		message = std::make_unique<cMuMsgSaveSlots>(archive); break;
 	case eMessageType::MU_MSG_ASK_TO_FINISH_LOBBY:
-		message = std::make_unique<cMuMsgAskToFinishLobby> (archive); break;
+		message = std::make_unique<cMuMsgAskToFinishLobby>(archive); break;
+	case eMessageType::MU_MSG_CANNOT_END_LOBBY:
+		message = std::make_unique<cMuMsgCannotEndLobby>(archive); break;
 	case eMessageType::MU_MSG_START_GAME_PREPARATIONS:
 		message = std::make_unique<cMuMsgStartGamePreparations>(archive); break;
 	case eMessageType::MU_MSG_START_MAP_DOWNLOAD:
@@ -133,6 +135,8 @@ std::string enumToString(cMultiplayerLobbyMessage::eMessageType value)
 		return "MU_MSG_REQUEST_MAP";
 	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_ASK_TO_FINISH_LOBBY:
 		return "MU_MSG_ASK_TO_FINISH_LOBBY";
+	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CANNOT_END_LOBBY:
+		return "MU_MSG_CANNOT_END_LOBBY";
 	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME_PREPARATIONS:
 		return "MU_MSG_START_GAME_PREPARATIONS";
 	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_STATE:
@@ -296,6 +300,29 @@ cMuMsgAskToFinishLobby::cMuMsgAskToFinishLobby() :
 cMuMsgAskToFinishLobby::cMuMsgAskToFinishLobby (cBinaryArchiveOut& archive) :
 	cMultiplayerLobbyMessage (eMessageType::MU_MSG_ASK_TO_FINISH_LOBBY)
 {}
+
+//------------------------------------------------------------------------------
+cMuMsgCannotEndLobby::cMuMsgCannotEndLobby() :
+	cMultiplayerLobbyMessage (eMessageType::MU_MSG_CANNOT_END_LOBBY)
+{}
+
+cMuMsgCannotEndLobby::cMuMsgCannotEndLobby (cBinaryArchiveOut& archive) :
+	cMultiplayerLobbyMessage (eMessageType::MU_MSG_CANNOT_END_LOBBY)
+{
+	serializeThis (archive);
+}
+
+void cMuMsgCannotEndLobby::serialize (cBinaryArchiveIn& archive)
+{
+	cMultiplayerLobbyMessage::serialize (archive);
+	serializeThis (archive);
+}
+
+void cMuMsgCannotEndLobby::serialize (cTextArchiveIn& archive)
+{
+	cMultiplayerLobbyMessage::serialize (archive);
+	serializeThis (archive);
+}
 
 //------------------------------------------------------------------------------
 cMuMsgStartGamePreparations::cMuMsgStartGamePreparations(std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cClanData> clanData) :
