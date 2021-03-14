@@ -49,6 +49,7 @@ public:
 		// Game Preparation
 		MU_MSG_ASK_TO_FINISH_LOBBY,      // sent by client: ask to start game preparation
 		MU_MSG_CANNOT_END_LOBBY,         // sent by server: inform client why game preparation cannot start
+		MU_MSG_DISCONNECT_NOT_IN_SAVED_GAME, // sent by host: client is not part of saved game
 		MU_MSG_START_GAME_PREPARATIONS,  // sent by host: all clients should start game preparation menus
 		MU_MSG_LANDING_STATE,            // sent by host: informs a client about the state of the landing position selection he is currently in
 		MU_MSG_LANDING_POSITION,         // sent by client: selected landing position
@@ -236,6 +237,14 @@ private:
 		archive & hostNotInSavegame;
 		archive & missingPlayers;
 	}
+};
+
+//------------------------------------------------------------------------------
+class cMuMsgDisconnectNotInSavedGame : public cMultiplayerLobbyMessage
+{
+public:
+	cMuMsgDisconnectNotInSavedGame();
+	cMuMsgDisconnectNotInSavedGame (cBinaryArchiveOut& archive);
 };
 
 //------------------------------------------------------------------------------

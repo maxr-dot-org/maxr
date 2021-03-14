@@ -249,6 +249,10 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 		if (!missingPlayers.empty()) addInfoEntry (lngPack.i18n ("Text~Multiplayer~Player_Wrong"));
 	});
 
+	signalConnectionManager.connect (lobbyClient.onDisconnectNotInSavedGame, [this](){
+		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Disconnect_Not_In_Save"));
+	});
+
 	signalConnectionManager.connect (triggeredChatMessage, [&lobbyClient, this](){
 		const auto& chatMessage = getChatMessage();
 

@@ -46,7 +46,9 @@ std::unique_ptr<cMultiplayerLobbyMessage> cMultiplayerLobbyMessage::createFromBu
 	case eMessageType::MU_MSG_ASK_TO_FINISH_LOBBY:
 		message = std::make_unique<cMuMsgAskToFinishLobby>(archive); break;
 	case eMessageType::MU_MSG_CANNOT_END_LOBBY:
-		message = std::make_unique<cMuMsgCannotEndLobby>(archive); break;
+		message = std::make_unique<cMuMsgCannotEndLobby> (archive); break;
+	case eMessageType::MU_MSG_DISCONNECT_NOT_IN_SAVED_GAME:
+		message = std::make_unique<cMuMsgDisconnectNotInSavedGame> (archive); break;
 	case eMessageType::MU_MSG_START_GAME_PREPARATIONS:
 		message = std::make_unique<cMuMsgStartGamePreparations>(archive); break;
 	case eMessageType::MU_MSG_START_MAP_DOWNLOAD:
@@ -137,6 +139,8 @@ std::string enumToString(cMultiplayerLobbyMessage::eMessageType value)
 		return "MU_MSG_ASK_TO_FINISH_LOBBY";
 	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CANNOT_END_LOBBY:
 		return "MU_MSG_CANNOT_END_LOBBY";
+	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_DISCONNECT_NOT_IN_SAVED_GAME:
+		return "MU_MSG_DISCONNECT_NOT_IN_SAVED_GAME";
 	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME_PREPARATIONS:
 		return "MU_MSG_START_GAME_PREPARATIONS";
 	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_STATE:
@@ -323,6 +327,14 @@ void cMuMsgCannotEndLobby::serialize (cTextArchiveIn& archive)
 	cMultiplayerLobbyMessage::serialize (archive);
 	serializeThis (archive);
 }
+
+//------------------------------------------------------------------------------
+cMuMsgDisconnectNotInSavedGame::cMuMsgDisconnectNotInSavedGame() :
+	cMultiplayerLobbyMessage (eMessageType::MU_MSG_DISCONNECT_NOT_IN_SAVED_GAME)
+{}
+cMuMsgDisconnectNotInSavedGame::cMuMsgDisconnectNotInSavedGame (cBinaryArchiveOut& archive) :
+	cMultiplayerLobbyMessage (eMessageType::MU_MSG_DISCONNECT_NOT_IN_SAVED_GAME)
+{}
 
 //------------------------------------------------------------------------------
 cMuMsgStartGamePreparations::cMuMsgStartGamePreparations(std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cClanData> clanData) :

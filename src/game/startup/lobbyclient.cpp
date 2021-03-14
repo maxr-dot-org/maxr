@@ -298,7 +298,10 @@ void cLobbyClient::handleLobbyMessage (const cMultiplayerLobbyMessage& message)
 			handleNetMessage_MU_MSG_SAVESLOTS(static_cast<const cMuMsgSaveSlots&>(message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CANNOT_END_LOBBY:
-			handleLobbyMessage_MU_MSG_CANNOT_END_LOBBY (static_cast<const cMuMsgCannotEndLobby&>(message));
+			handleLobbyMessage_MU_MSG_CANNOT_END_LOBBY (static_cast<const cMuMsgCannotEndLobby&> (message));
+			break;
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_DISCONNECT_NOT_IN_SAVED_GAME:
+			handleNetMessage_MU_MSG_DISCONNECT_NOT_IN_SAVED_GAME (static_cast<const cMuMsgDisconnectNotInSavedGame&> (message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME_PREPARATIONS:
 			handleNetMessage_MU_MSG_START_GAME_PREPARATIONS(static_cast<const cMuMsgStartGamePreparations&>(message));
@@ -465,6 +468,12 @@ void cLobbyClient::handleNetMessage_MU_MSG_SAVESLOTS (const cMuMsgSaveSlots& mes
 void cLobbyClient::handleLobbyMessage_MU_MSG_CANNOT_END_LOBBY (const cMuMsgCannotEndLobby& message)
 {
 	onCannotEndLobby (message.missingSettings, message.notReadyPlayers, message.hostNotInSavegame, message.missingPlayers);
+}
+
+//------------------------------------------------------------------------------
+void cLobbyClient::handleNetMessage_MU_MSG_DISCONNECT_NOT_IN_SAVED_GAME(const cMuMsgDisconnectNotInSavedGame&)
+{
+	onDisconnectNotInSavedGame();
 }
 
 //------------------------------------------------------------------------------

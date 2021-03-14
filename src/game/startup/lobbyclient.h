@@ -89,6 +89,7 @@ public:
 	cSignal<void (const std::string& playerName, bool translate, const std::string& message, const std::string& insertText)> onChatMessage;
 
 	cSignal<void (bool missingSettings, const std::vector<cPlayerBasicData>& notReadyPlayers, bool hostNotInSavegame, const std::vector<cPlayerBasicData>&missingPlayers)> onCannotEndLobby;
+	cSignal<void()> onDisconnectNotInSavedGame;
 	cSignal<void (const sLobbyPreparationData&, const std::vector<cPlayerBasicData>&, cPlayerBasicData, std::shared_ptr<cConnectionManager>)> onStartGamePreparation;
 	cSignal<void (const std::string& playerName)> onPlayerAbortGamePreparation;
 
@@ -123,6 +124,7 @@ private:
 	void handleNetMessage_MU_MSG_SAVESLOTS (const cMuMsgSaveSlots&);
 	void handleLobbyMessage_MU_MSG_CANNOT_END_LOBBY (const cMuMsgCannotEndLobby&);
 	void handleNetMessage_MU_MSG_START_GAME_PREPARATIONS (const cMuMsgStartGamePreparations&);
+	void handleNetMessage_MU_MSG_DISCONNECT_NOT_IN_SAVED_GAME (const cMuMsgDisconnectNotInSavedGame&);
 
 	void handleNetMessage_MU_MSG_LANDING_STATE (const cMuMsgLandingState&);
 	void handleNetMessage_MU_MSG_START_GAME (const cMuMsgStartGame&);

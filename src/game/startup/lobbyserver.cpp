@@ -458,7 +458,7 @@ void cLobbyServer::handleAskToFinishLobby (const cMuMsgAskToFinishLobby& message
 			if (it == saveGameInfo.players.end())
 			{
 				// the player does not belong to the save game: disconnect him
-				sendNetMessage (cMuMsgChat ("Text~Multiplayer~Disconnect_Not_In_Save", true), player.getNr());
+				sendNetMessage (cMuMsgDisconnectNotInSavedGame(), player.getNr());
 				connectionManager->disconnect (player.getNr());
 
 				player.setNr(-1); // Mark to deletion
