@@ -47,6 +47,7 @@ public:
 		MU_MSG_FINISHED_MAP_DOWNLOAD, // sent by host: finished uploading the map
 		MU_MSG_REQUEST_MAP,           // sent by client: a client is missing the selected map and requests a download
 		// Game Preparation
+		MU_MSG_ASK_TO_FINISH_LOBBY,      // sent by client: ask to start game preparation
 		MU_MSG_START_GAME_PREPARATIONS,  // sent by host: all clients should start game preparation menus
 		MU_MSG_LANDING_STATE,            // sent by host: informs a client about the state of the landing position selection he is currently in
 		MU_MSG_LANDING_POSITION,         // sent by client: selected landing position
@@ -201,6 +202,14 @@ private:
 	{
 		archive & playerList;
 	}
+};
+
+//------------------------------------------------------------------------------
+class cMuMsgAskToFinishLobby : public cMultiplayerLobbyMessage
+{
+public:
+	cMuMsgAskToFinishLobby();
+	cMuMsgAskToFinishLobby (cBinaryArchiveOut& archive);
 };
 
 //------------------------------------------------------------------------------

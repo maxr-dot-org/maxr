@@ -214,7 +214,9 @@ void cServerGame::handleChatCommand (int fromPlayer, const std::vector<std::stri
 	{
 		if (tokens[0] == "go")
 		{
-			lobbyServer.askToFinishLobby (fromPlayer);
+			auto message = std::make_unique<cMuMsgAskToFinishLobby>();
+			message->playerNr = fromPlayer;
+			lobbyServer.pushMessage (std::move (message));
 		}
 		else if (tokens[0] == "help")
 		{

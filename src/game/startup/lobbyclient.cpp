@@ -200,17 +200,9 @@ void cLobbyClient::changeLocalPlayerProperties (const std::string& name, cPlayer
 }
 
 //------------------------------------------------------------------------------
-void cLobbyClient::askToFinishLobby (cLobbyServer* lobbyServer)
+void cLobbyClient::askToFinishLobby()
 {
-	// TODO: Should be dedicated message.
-	if (lobbyServer)
-	{
-		lobbyServer->askToFinishLobby (localPlayer.getNr());
-	}
-	else
-	{
-		sendChatMessage ("--server go");
-	}
+	sendNetMessage (cMuMsgAskToFinishLobby());
 }
 
 //------------------------------------------------------------------------------

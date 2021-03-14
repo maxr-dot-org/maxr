@@ -52,7 +52,7 @@ public:
 	void tryToSwitchReadyState();
 	void changeLocalPlayerProperties (const std::string& name, cPlayerColor, bool ready);
 
-	void askToFinishLobby (cLobbyServer* = nullptr);
+	void askToFinishLobby();
 
 	void abortGamePreparation();
 

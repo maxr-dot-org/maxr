@@ -231,7 +231,7 @@ void cMenuControllerMultiplayerHost::checkGameStart()
 		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Server_Not_Running"));
 		return;
 	}
-	lobbyClient.askToFinishLobby (&lobbyServer);
+	lobbyClient.askToFinishLobby();
 }
 
 //------------------------------------------------------------------------------

@@ -74,8 +74,6 @@ public:
 	// - mostly workaround for missing cMessage
 	void sendChatMessage (const std::string&, int receiverPlayerNr = -1/*, int senderPlayerNr = -1*/);
 #endif
-	// TODO: should be cMessage
-	void askToFinishLobby (int fromPlayer);
 
 	const cPlayerBasicData* findNotReadyPlayer() const;
 
@@ -109,6 +107,7 @@ private:
 	void handleNetMessage_MU_MSG_CHAT (const cMuMsgChat&);
 	void changeOptions (const cMuMsgOptions&);
 	void changePlayerAttributes (const cMuMsgIdentification&);
+	void handleAskToFinishLobby (const cMuMsgAskToFinishLobby&);
 
 	void landingRoomStatus (const cMuMsgInLandingPositionSelectionStatus&);
 	void clientLands (const cMuMsgLandingPosition&);

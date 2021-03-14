@@ -260,8 +260,168 @@ void cLobbyServer::sendChatMessage (const std::string& message, int receiverPlay
 }
 
 //------------------------------------------------------------------------------
-void cLobbyServer::askToFinishLobby (int fromPlayer)
+const cPlayerBasicData* cLobbyServer::findNotReadyPlayer() const
 {
+	auto it = ranges::find_if (players, [](const auto& player){ return !player.isReady(); });
+
+	return it == players.end() ? nullptr : &*it;
+}
+
+//------------------------------------------------------------------------------
+void cLobbyServer::handleNetMessage (const cNetMessage& message)
+{
+	cTextArchiveIn archive;
+	archive << message;
+	Log.write("lobbyServer: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
+
+	switch (message.getType())
+	{
+		case eNetMessageType::TCP_WANT_CONNECT:
+			clientConnects(static_cast<const cNetMessageTcpWantConnect&>(message));
+			return;
+		case eNetMessageType::TCP_CLOSE:
+			clientLeaves(static_cast<const cNetMessageTcpClose&>(message));
+			return;
+		case eNetMessageType::MULTIPLAYER_LOBBY:
+			handleLobbyMessage (static_cast<const cMultiplayerLobbyMessage&>(message));
+			return;
+		default:
+			Log.write("Lobby Server: Can not handle message", cLog::eLOG_TYPE_NET_ERROR);
+			return;
+	}
+}
+
+//------------------------------------------------------------------------------
+void cLobbyServer::handleLobbyMessage (const cMultiplayerLobbyMessage& message)
+{
+	for (auto& lobbyMessageHandler : lobbyMessageHandlers)
+	{
+		if (lobbyMessageHandler->handleMessage (message))
+		{
+			return;
+		}
+	}
+
+	switch (message.getType())
+	{
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT:
+			handleNetMessage_MU_MSG_CHAT (static_cast<const cMuMsgChat&>(message));
+			break;
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IDENTIFIKATION:
+			changePlayerAttributes (static_cast<const cMuMsgIdentification&>(message));
+			break;
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_OPTIONS:
+			changeOptions (static_cast<const cMuMsgOptions&>(message));
+			break;
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_ASK_TO_FINISH_LOBBY:
+			handleAskToFinishLobby (static_cast<const cMuMsgAskToFinishLobby&>(message));
+			break;
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS:
+			landingRoomStatus (static_cast<const cMuMsgInLandingPositionSelectionStatus&>(message));
+			break;
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_POSITION:
+			clientLands (static_cast<const cMuMsgLandingPosition&>(message));
+			break;
+		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION:
+			clientAbortsPreparation (static_cast<const cMuMsgPlayerAbortedGamePreparations&>(message));
+			break;
+		default:
+			Log.write("LobbyServer: Can not handle message", cLog::eLOG_TYPE_NET_ERROR);
+			break;
+	}
+}
+
+//------------------------------------------------------------------------------
+void cLobbyServer::clientConnects (const cNetMessageTcpWantConnect& message)
+{
+	if (!connectionManager) return;
+
+	if (message.packageVersion != PACKAGE_VERSION || message.packageRev != PACKAGE_REV)
+	{
+		onDifferentVersion (message.packageVersion, message.packageRev);
+	}
+
+	players.emplace_back(message.playerName, cPlayerColor(message.playerColor), nextPlayerNumber++, false);
+	const auto& newPlayer = players.back();
+
+	connectionManager->acceptConnection (message.socket, newPlayer.getNr());
+
+	sendPlayerList();
+	sendGameData (newPlayer.getNr());
+	sendSaveSlots (newPlayer.getNr());
+
+	onClientConnected (newPlayer);
+}
+
+//------------------------------------------------------------------------------
+void cLobbyServer::localClientConnects (cLobbyClient& client, cPlayerBasicData& player)
+{
+	if (!connectionManager) return;
+
+	player.setNr (nextPlayerNumber++);
+	players.push_back(player);
+
+	connectionManager->setLocalClient (&client, player.getNr());
+
+	sendPlayerList();
+	sendGameData (player.getNr());
+}
+
+//------------------------------------------------------------------------------
+void cLobbyServer::clientLeaves (const cNetMessageTcpClose& message)
+{
+	auto it = ranges::find_if (players, byPlayerNr (message.playerNr));
+	if (it == players.end()) return;
+	onClientDisconnected (*it);
+	players.erase (it);
+
+	sendPlayerList();
+}
+
+//------------------------------------------------------------------------------
+void cLobbyServer::handleNetMessage_MU_MSG_CHAT (const cMuMsgChat& message)
+{
+	// to handle special server command, you might use addLobbyMessageHandler
+	forwardMessage (message);
+}
+
+//------------------------------------------------------------------------------
+void cLobbyServer::changePlayerAttributes (const cMuMsgIdentification& message)
+{
+	auto player = getPlayer(message.playerNr);
+	if (player == nullptr) return;
+
+	player->setColor (cPlayerColor (message.playerColor));
+	player->setName (message.playerName);
+	player->setReady (message.ready);
+
+	switch (checkTakenPlayerAttributes(players, *player))
+	{
+		case eLobbyPlayerStatus::Ok: break;
+
+		case eLobbyPlayerStatus::DuplicatedColor:
+		case eLobbyPlayerStatus::DuplicatedName: player->setReady (false); break;
+	}
+
+	sendPlayerList();
+}
+
+//------------------------------------------------------------------------------
+void cLobbyServer::changeOptions (const cMuMsgOptions& message)
+{
+	if (!staticMap || staticMap->getName() != message.mapName)
+	{
+		staticMap = std::make_shared<cStaticMap>();
+		staticMap->loadMap (message.mapName);
+	}
+	gameSettings = message.settingsValid ? std::make_shared<cGameSettings>(message.settings) : nullptr;
+	selectSaveGameInfo (message.saveInfo);
+}
+
+//------------------------------------------------------------------------------
+void cLobbyServer::handleAskToFinishLobby (const cMuMsgAskToFinishLobby& message)
+{
+	const int fromPlayer = message.playerNr;
 	const auto notReadyPlayer = findNotReadyPlayer();
 
 	if (!staticMap || (!gameSettings && saveGameInfo.number < 0))
@@ -379,162 +539,6 @@ void cLobbyServer::askToFinishLobby (int fromPlayer)
 	auto unitsData = std::make_shared<const cUnitsData>(UnitsDataGlobal);
 	auto clanData = std::make_shared<const cClanData>(ClanDataGlobal);
 	sendNetMessage (cMuMsgStartGamePreparations (unitsData, clanData));
-}
-
-//------------------------------------------------------------------------------
-const cPlayerBasicData* cLobbyServer::findNotReadyPlayer() const
-{
-	auto it = ranges::find_if (players, [](const auto& player){ return !player.isReady(); });
-
-	return it == players.end() ? nullptr : &*it;
-}
-
-//------------------------------------------------------------------------------
-void cLobbyServer::handleNetMessage (const cNetMessage& message)
-{
-	cTextArchiveIn archive;
-	archive << message;
-	Log.write("lobbyServer: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
-
-	switch (message.getType())
-	{
-		case eNetMessageType::TCP_WANT_CONNECT:
-			clientConnects(static_cast<const cNetMessageTcpWantConnect&>(message));
-			return;
-		case eNetMessageType::TCP_CLOSE:
-			clientLeaves(static_cast<const cNetMessageTcpClose&>(message));
-			return;
-		case eNetMessageType::MULTIPLAYER_LOBBY:
-			handleLobbyMessage (static_cast<const cMultiplayerLobbyMessage&>(message));
-			return;
-		default:
-			Log.write("Lobby Server: Can not handle message", cLog::eLOG_TYPE_NET_ERROR);
-			return;
-	}
-}
-
-//------------------------------------------------------------------------------
-void cLobbyServer::handleLobbyMessage (const cMultiplayerLobbyMessage& message)
-{
-	for (auto& lobbyMessageHandler : lobbyMessageHandlers)
-	{
-		if (lobbyMessageHandler->handleMessage (message))
-		{
-			return;
-		}
-	}
-
-	switch (message.getType())
-	{
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT:
-			handleNetMessage_MU_MSG_CHAT (static_cast<const cMuMsgChat&>(message));
-			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IDENTIFIKATION:
-			changePlayerAttributes (static_cast<const cMuMsgIdentification&>(message));
-			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_OPTIONS:
-			changeOptions (static_cast<const cMuMsgOptions&>(message));
-			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS:
-			landingRoomStatus (static_cast<const cMuMsgInLandingPositionSelectionStatus&>(message));
-			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_POSITION:
-			clientLands (static_cast<const cMuMsgLandingPosition&>(message));
-			break;
-		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION:
-			clientAbortsPreparation (static_cast<const cMuMsgPlayerAbortedGamePreparations&>(message));
-			break;
-		default:
-			Log.write("LobbyServer: Can not handle message", cLog::eLOG_TYPE_NET_ERROR);
-			break;
-	}
-}
-
-//------------------------------------------------------------------------------
-void cLobbyServer::clientConnects (const cNetMessageTcpWantConnect& message)
-{
-	if (!connectionManager) return;
-
-	if (message.packageVersion != PACKAGE_VERSION || message.packageRev != PACKAGE_REV)
-	{
-		onDifferentVersion (message.packageVersion, message.packageRev);
-	}
-
-	players.emplace_back(message.playerName, cPlayerColor(message.playerColor), nextPlayerNumber++, false);
-	const auto& newPlayer = players.back();
-
-	connectionManager->acceptConnection (message.socket, newPlayer.getNr());
-
-	sendPlayerList();
-	sendGameData (newPlayer.getNr());
-	sendSaveSlots (newPlayer.getNr());
-
-	onClientConnected (newPlayer);
-}
-
-//------------------------------------------------------------------------------
-void cLobbyServer::localClientConnects (cLobbyClient& client, cPlayerBasicData& player)
-{
-	if (!connectionManager) return;
-
-	player.setNr (nextPlayerNumber++);
-	players.push_back(player);
-
-	connectionManager->setLocalClient (&client, player.getNr());
-
-	sendPlayerList();
-	sendGameData (player.getNr());
-}
-
-//------------------------------------------------------------------------------
-void cLobbyServer::clientLeaves (const cNetMessageTcpClose& message)
-{
-	auto it = ranges::find_if (players, byPlayerNr (message.playerNr));
-	if (it == players.end()) return;
-	onClientDisconnected (*it);
-	players.erase (it);
-
-	sendPlayerList();
-}
-
-//------------------------------------------------------------------------------
-void cLobbyServer::handleNetMessage_MU_MSG_CHAT (const cMuMsgChat& message)
-{
-	// to handle special server command, you might use addLobbyMessageHandler
-	forwardMessage (message);
-}
-
-//------------------------------------------------------------------------------
-void cLobbyServer::changePlayerAttributes (const cMuMsgIdentification& message)
-{
-	auto player = getPlayer(message.playerNr);
-	if (player == nullptr) return;
-
-	player->setColor (cPlayerColor (message.playerColor));
-	player->setName (message.playerName);
-	player->setReady (message.ready);
-
-	switch (checkTakenPlayerAttributes(players, *player))
-	{
-		case eLobbyPlayerStatus::Ok: break;
-
-		case eLobbyPlayerStatus::DuplicatedColor:
-		case eLobbyPlayerStatus::DuplicatedName: player->setReady (false); break;
-	}
-
-	sendPlayerList();
-}
-
-//------------------------------------------------------------------------------
-void cLobbyServer::changeOptions (const cMuMsgOptions& message)
-{
-	if (!staticMap || staticMap->getName() != message.mapName)
-	{
-		staticMap = std::make_shared<cStaticMap>();
-		staticMap->loadMap (message.mapName);
-	}
-	gameSettings = message.settingsValid ? std::make_shared<cGameSettings>(message.settings) : nullptr;
-	selectSaveGameInfo (message.saveInfo);
 }
 
 //------------------------------------------------------------------------------
