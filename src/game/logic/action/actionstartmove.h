@@ -24,7 +24,7 @@
 #include <forward_list>
 #include "game/logic/endmoveaction.h"
 
-class cActionStartMove : public cAction
+class cActionStartMove : public cActionT<cAction::eActiontype::ACTION_START_MOVE>
 {
 public:
 	cActionStartMove(const cVehicle& vehicle, const std::forward_list<cPosition>& path, cEndMoveAction emat);

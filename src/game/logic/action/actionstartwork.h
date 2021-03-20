@@ -22,7 +22,7 @@
 
 #include "action.h"
 
-class cActionStartWork : public cAction
+class cActionStartWork : public cActionT<cAction::eActiontype::ACTION_START_WORK>
 {
 public:
 	cActionStartWork(const cUnit& unit);

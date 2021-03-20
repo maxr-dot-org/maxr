@@ -22,11 +22,11 @@
 
 #include "action.h"
 
-class cActionResumeMove : public cAction
+class cActionResumeMove : public cActionT<cAction::eActiontype::ACTION_RESUME_MOVE>
 {
 public:
-	cActionResumeMove(const cVehicle& vehicle);
 	cActionResumeMove();
+	cActionResumeMove(const cVehicle& vehicle);
 	cActionResumeMove(cBinaryArchiveOut& archive);
 
 	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }

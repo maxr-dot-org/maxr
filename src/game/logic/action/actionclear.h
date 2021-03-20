@@ -22,7 +22,7 @@
 
 #include "action.h"
 
-class cActionClear : public cAction
+class cActionClear : public cActionT<cAction::eActiontype::ACTION_CLEAR>
 {
 public:
 	cActionClear(const cVehicle& vehicle);

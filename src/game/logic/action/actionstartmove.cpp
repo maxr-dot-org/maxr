@@ -23,17 +23,8 @@
 #include "utility/string/toString.h"
 #include "../pathcalculator.h"
 
-
-//------------------------------------------------------------------------------
-cActionStartMove::cActionStartMove(cBinaryArchiveOut& archive) :
-	cAction(eActiontype::ACTION_START_MOVE)
-{
-	serializeThis(archive);
-}
-
 //------------------------------------------------------------------------------
 cActionStartMove::cActionStartMove(const cVehicle& vehicle, const std::forward_list<cPosition>& path, cEndMoveAction emat) :
-	cAction(eActiontype::ACTION_START_MOVE),
 	path(path),
 	unitId(vehicle.getId()),
 	endMoveAction(emat),
@@ -42,11 +33,16 @@ cActionStartMove::cActionStartMove(const cVehicle& vehicle, const std::forward_l
 
 //------------------------------------------------------------------------------
 cActionStartMove::cActionStartMove(const cVehicle& vehicle, const std::forward_list<cPosition>& path, bool stopOnDetectResource) :
-	cAction(eActiontype::ACTION_START_MOVE),
 	path(path),
 	unitId(vehicle.getId()),
 	stopOnDetectResource(stopOnDetectResource)
 {}
+
+//------------------------------------------------------------------------------
+cActionStartMove::cActionStartMove(cBinaryArchiveOut& archive)
+{
+	serializeThis(archive);
+}
 
 //------------------------------------------------------------------------------
 void cActionStartMove::execute(cModel& model) const

@@ -27,14 +27,12 @@
 
 //------------------------------------------------------------------------------
 cActionLoad::cActionLoad(const cUnit& loadingUnit, const cVehicle& loadedVehicle) :
-	cAction(eActiontype::ACTION_LOAD),
 	loadingUnitId(loadingUnit.getId()),
 	loadedVehicleId(loadedVehicle.getId())
 {}
 
 //------------------------------------------------------------------------------
-cActionLoad::cActionLoad(cBinaryArchiveOut& archive) :
-	cAction(eActiontype::ACTION_LOAD)
+cActionLoad::cActionLoad(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }

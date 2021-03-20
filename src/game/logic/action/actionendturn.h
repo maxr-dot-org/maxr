@@ -22,7 +22,7 @@
 
 #include "action.h"
 
-class cActionEndTurn : public cAction
+class cActionEndTurn : public cActionT<cAction::eActiontype::ACTION_END_TURN>
 {
 public:
 	cActionEndTurn();

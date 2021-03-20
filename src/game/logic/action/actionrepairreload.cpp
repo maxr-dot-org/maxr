@@ -26,15 +26,13 @@
 
 //------------------------------------------------------------------------------
 cActionRepairReload::cActionRepairReload(const cUnit& sourceUnit, const cUnit& destUnit, eSupplyType supplyType) :
-	cAction(eActiontype::ACTION_REPAIR_RELOAD),
 	sourceUnitId(sourceUnit.getId()),
 	destUnitId(destUnit.getId()),
 	supplyType(supplyType)
 {}
 
 //------------------------------------------------------------------------------
-cActionRepairReload::cActionRepairReload(cBinaryArchiveOut& archive) :
-	cAction(eActiontype::ACTION_REPAIR_RELOAD)
+cActionRepairReload::cActionRepairReload(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }

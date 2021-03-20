@@ -22,7 +22,7 @@
 
 #include "action.h"
 
-class cActionStop : public cAction
+class cActionStop : public cActionT<cAction::eActiontype::ACTION_STOP>
 {
 public:
 	cActionStop(const cUnit& unit);

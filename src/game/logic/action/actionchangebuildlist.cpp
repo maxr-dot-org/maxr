@@ -22,7 +22,6 @@
 #include "game/data/model.h"
 
 cActionChangeBuildList::cActionChangeBuildList(const cBuilding& building, const std::vector<sID>& buildList, int buildSpeed, bool repeat) :
-	cAction(eActiontype::ACTION_CHANGE_BUILDLIST),
 	buildingId(building.getId()),
 	buildList(buildList),
 	buildSpeed(buildSpeed),
@@ -31,8 +30,7 @@ cActionChangeBuildList::cActionChangeBuildList(const cBuilding& building, const 
 
 
 //------------------------------------------------------------------------------
-cActionChangeBuildList::cActionChangeBuildList(cBinaryArchiveOut& archive) :
-	cAction(eActiontype::ACTION_CHANGE_BUILDLIST)
+cActionChangeBuildList::cActionChangeBuildList(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }

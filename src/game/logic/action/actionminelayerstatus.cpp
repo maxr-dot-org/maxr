@@ -23,7 +23,6 @@
 
 //------------------------------------------------------------------------------
 cActionMinelayerStatus::cActionMinelayerStatus(const cVehicle& vehicle, bool layMines, bool clearMines) :
-	cAction(eActiontype::ACTION_MINELAYER_STATUS),
 	vehicleId(vehicle.getId()),
 	layMines(layMines),
 	clearMines(clearMines)
@@ -31,7 +30,6 @@ cActionMinelayerStatus::cActionMinelayerStatus(const cVehicle& vehicle, bool lay
 
 //------------------------------------------------------------------------------
 cActionMinelayerStatus::cActionMinelayerStatus(cBinaryArchiveOut& archive)
-	: cAction(eActiontype::ACTION_MINELAYER_STATUS)
 {
 	serializeThis(archive);
 }

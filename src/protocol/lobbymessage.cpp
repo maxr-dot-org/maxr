@@ -105,9 +105,6 @@ bool ILobbyMessageHandler::handleMessage (const cNetMessage& message)
 	return handleMessage (static_cast<const cMultiplayerLobbyMessage&>(message));
 }
 
-cMultiplayerLobbyMessage::cMultiplayerLobbyMessage(eMessageType type) :
-	cNetMessage(eNetMessageType::MULTIPLAYER_LOBBY), type(type)
-{}
 
 std::string enumToString(cMultiplayerLobbyMessage::eMessageType value)
 {
@@ -163,14 +160,12 @@ std::string enumToString(cMultiplayerLobbyMessage::eMessageType value)
 
 //------------------------------------------------------------------------------
 cMuMsgChat::cMuMsgChat(const std::string& message, bool translate /*= false*/, const std::string& insertText /*= ""*/) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_CHAT),
 	message(message),
 	translate(translate),
 	insertText(insertText)
 {}
 
-cMuMsgChat::cMuMsgChat(cBinaryArchiveOut& archive) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_CHAT)
+cMuMsgChat::cMuMsgChat(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }
@@ -189,12 +184,10 @@ void cMuMsgChat::serialize(cTextArchiveIn& archive)
 
 //------------------------------------------------------------------------------
 cMuMsgPlayerNr::cMuMsgPlayerNr(int newPlayerNr) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_PLAYER_NUMBER),
 	newPlayerNr(newPlayerNr)
 {}
 
-cMuMsgPlayerNr::cMuMsgPlayerNr(cBinaryArchiveOut& archive) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_PLAYER_NUMBER)
+cMuMsgPlayerNr::cMuMsgPlayerNr(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }
@@ -213,14 +206,12 @@ void cMuMsgPlayerNr::serialize(cTextArchiveIn& archive)
 
 //------------------------------------------------------------------------------
 cMuMsgOptions::cMuMsgOptions() :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_OPTIONS),
 	saveInfo(-1),
 	mapCrc(0),
 	settingsValid(false)
 {}
 
 cMuMsgOptions::cMuMsgOptions(cBinaryArchiveOut& archive) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_OPTIONS),
 	saveInfo(-1)
 {
 	serializeThis(archive);
@@ -239,12 +230,9 @@ void cMuMsgOptions::serialize(cTextArchiveIn& archive)
 }
 
 //------------------------------------------------------------------------------
-cMuMsgSaveSlots::cMuMsgSaveSlots() :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_SAVESLOTS)
-{}
+cMuMsgSaveSlots::cMuMsgSaveSlots(){}
 
-cMuMsgSaveSlots::cMuMsgSaveSlots(cBinaryArchiveOut& archive) :
-	cMuMsgSaveSlots()
+cMuMsgSaveSlots::cMuMsgSaveSlots(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }
@@ -262,8 +250,7 @@ void cMuMsgSaveSlots::serialize(cTextArchiveIn& archive)
 }
 
 //------------------------------------------------------------------------------
-cMuMsgPlayerList::cMuMsgPlayerList(const std::vector<std::shared_ptr<cPlayerBasicData>>& playerList_) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_PLAYERLIST)
+cMuMsgPlayerList::cMuMsgPlayerList(const std::vector<std::shared_ptr<cPlayerBasicData>>& playerList_)
 {
 	for (const auto& p : playerList_)
 	{
@@ -273,13 +260,11 @@ cMuMsgPlayerList::cMuMsgPlayerList(const std::vector<std::shared_ptr<cPlayerBasi
 
 //------------------------------------------------------------------------------
 cMuMsgPlayerList::cMuMsgPlayerList(std::vector<cPlayerBasicData> playerList_) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_PLAYERLIST),
 	playerList (std::move (playerList_))
 {
 }
 
-cMuMsgPlayerList::cMuMsgPlayerList(cBinaryArchiveOut& archive) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_PLAYERLIST)
+cMuMsgPlayerList::cMuMsgPlayerList(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }
@@ -297,21 +282,15 @@ void cMuMsgPlayerList::serialize(cTextArchiveIn& archive)
 }
 
 //------------------------------------------------------------------------------
-cMuMsgAskToFinishLobby::cMuMsgAskToFinishLobby() :
-	cMultiplayerLobbyMessage (eMessageType::MU_MSG_ASK_TO_FINISH_LOBBY)
-{}
+cMuMsgAskToFinishLobby::cMuMsgAskToFinishLobby() {}
 
-cMuMsgAskToFinishLobby::cMuMsgAskToFinishLobby (cBinaryArchiveOut& archive) :
-	cMultiplayerLobbyMessage (eMessageType::MU_MSG_ASK_TO_FINISH_LOBBY)
-{}
+cMuMsgAskToFinishLobby::cMuMsgAskToFinishLobby (cBinaryArchiveOut& archive) {}
 
 //------------------------------------------------------------------------------
-cMuMsgCannotEndLobby::cMuMsgCannotEndLobby() :
-	cMultiplayerLobbyMessage (eMessageType::MU_MSG_CANNOT_END_LOBBY)
+cMuMsgCannotEndLobby::cMuMsgCannotEndLobby()
 {}
 
-cMuMsgCannotEndLobby::cMuMsgCannotEndLobby (cBinaryArchiveOut& archive) :
-	cMultiplayerLobbyMessage (eMessageType::MU_MSG_CANNOT_END_LOBBY)
+cMuMsgCannotEndLobby::cMuMsgCannotEndLobby (cBinaryArchiveOut& archive)
 {
 	serializeThis (archive);
 }
@@ -329,22 +308,16 @@ void cMuMsgCannotEndLobby::serialize (cTextArchiveIn& archive)
 }
 
 //------------------------------------------------------------------------------
-cMuMsgDisconnectNotInSavedGame::cMuMsgDisconnectNotInSavedGame() :
-	cMultiplayerLobbyMessage (eMessageType::MU_MSG_DISCONNECT_NOT_IN_SAVED_GAME)
-{}
-cMuMsgDisconnectNotInSavedGame::cMuMsgDisconnectNotInSavedGame (cBinaryArchiveOut& archive) :
-	cMultiplayerLobbyMessage (eMessageType::MU_MSG_DISCONNECT_NOT_IN_SAVED_GAME)
-{}
+cMuMsgDisconnectNotInSavedGame::cMuMsgDisconnectNotInSavedGame() {}
+cMuMsgDisconnectNotInSavedGame::cMuMsgDisconnectNotInSavedGame (cBinaryArchiveOut& archive) {}
 
 //------------------------------------------------------------------------------
 cMuMsgStartGamePreparations::cMuMsgStartGamePreparations(std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cClanData> clanData) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_START_GAME_PREPARATIONS),
 	unitsData(unitsData),
 	clanData(clanData)
 {}
 
-cMuMsgStartGamePreparations::cMuMsgStartGamePreparations(cBinaryArchiveOut& archive) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_START_GAME_PREPARATIONS)
+cMuMsgStartGamePreparations::cMuMsgStartGamePreparations(cBinaryArchiveOut& archive)
 {
 	loadThis(archive);
 }
@@ -363,12 +336,10 @@ void cMuMsgStartGamePreparations::serialize(cTextArchiveIn& archive)
 
 //------------------------------------------------------------------------------
 cMuMsgPlayerHasSelectedLandingPosition::cMuMsgPlayerHasSelectedLandingPosition(int landedPlayer) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION),
 	landedPlayer(landedPlayer)
 {}
 
-cMuMsgPlayerHasSelectedLandingPosition::cMuMsgPlayerHasSelectedLandingPosition(cBinaryArchiveOut& archive) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION)
+cMuMsgPlayerHasSelectedLandingPosition::cMuMsgPlayerHasSelectedLandingPosition(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }
@@ -387,13 +358,11 @@ void cMuMsgPlayerHasSelectedLandingPosition::serialize(cTextArchiveIn& archive)
 
 //------------------------------------------------------------------------------
 cMuMsgInLandingPositionSelectionStatus::cMuMsgInLandingPositionSelectionStatus(int playerNr, bool isIn) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS),
 	landingPlayer(playerNr),
 	isIn(isIn)
 {}
 
-cMuMsgInLandingPositionSelectionStatus::cMuMsgInLandingPositionSelectionStatus(cBinaryArchiveOut& archive) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS)
+cMuMsgInLandingPositionSelectionStatus::cMuMsgInLandingPositionSelectionStatus(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }
@@ -412,12 +381,10 @@ void cMuMsgInLandingPositionSelectionStatus::serialize(cTextArchiveIn& archive)
 
 //------------------------------------------------------------------------------
 cMuMsgLandingState::cMuMsgLandingState(eLandingPositionState state) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_LANDING_STATE),
 	state(state)
 {}
 
-cMuMsgLandingState::cMuMsgLandingState(cBinaryArchiveOut& archive) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_LANDING_STATE)
+cMuMsgLandingState::cMuMsgLandingState(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }
@@ -435,45 +402,26 @@ void cMuMsgLandingState::serialize(cTextArchiveIn& archive)
 }
 
 //------------------------------------------------------------------------------
-cMuMsgStartGame::cMuMsgStartGame(cBinaryArchiveOut& archive) :
-cMultiplayerLobbyMessage(eMessageType::MU_MSG_START_GAME)
-{}
-
-cMuMsgStartGame::cMuMsgStartGame() :
-cMultiplayerLobbyMessage(eMessageType::MU_MSG_START_GAME)
-{}
+cMuMsgStartGame::cMuMsgStartGame() {}
+cMuMsgStartGame::cMuMsgStartGame(cBinaryArchiveOut& archive) {}
 
 //------------------------------------------------------------------------------
-cMuMsgPlayerAbortedGamePreparations::cMuMsgPlayerAbortedGamePreparations(cBinaryArchiveOut& archive) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION)
-{}
-
-cMuMsgPlayerAbortedGamePreparations::cMuMsgPlayerAbortedGamePreparations() :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION)
-{}
-
+cMuMsgPlayerAbortedGamePreparations::cMuMsgPlayerAbortedGamePreparations() {}
+cMuMsgPlayerAbortedGamePreparations::cMuMsgPlayerAbortedGamePreparations(cBinaryArchiveOut& archive) {}
 
 //------------------------------------------------------------------------------
-cMuMsgFinishedMapDownload::cMuMsgFinishedMapDownload(cBinaryArchiveOut& archive) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_FINISHED_MAP_DOWNLOAD)
-{
-}
-
-cMuMsgFinishedMapDownload::cMuMsgFinishedMapDownload() :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_FINISHED_MAP_DOWNLOAD)
-{}
+cMuMsgFinishedMapDownload::cMuMsgFinishedMapDownload() {}
+cMuMsgFinishedMapDownload::cMuMsgFinishedMapDownload(cBinaryArchiveOut& archive) {}
 
 //------------------------------------------------------------------------------
-cMuMsgLandingPosition::cMuMsgLandingPosition(cBinaryArchiveOut& archive) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_LANDING_POSITION)
+cMuMsgLandingPosition::cMuMsgLandingPosition(const cPosition& position) :
+	position(position)
+{}
+
+cMuMsgLandingPosition::cMuMsgLandingPosition(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }
-
-cMuMsgLandingPosition::cMuMsgLandingPosition(const cPosition& position) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_LANDING_POSITION),
-	position(position)
-{}
 
 void cMuMsgLandingPosition::serialize(cTextArchiveIn& archive)
 {
@@ -488,15 +436,14 @@ void cMuMsgLandingPosition::serialize(cBinaryArchiveIn& archive)
 }
 
 //------------------------------------------------------------------------------
-cMuMsgRequestMap::cMuMsgRequestMap(cBinaryArchiveOut& archive) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_REQUEST_MAP)
+cMuMsgRequestMap::cMuMsgRequestMap(const std::string& mapName) :
+	mapName (mapName)
+{}
+
+cMuMsgRequestMap::cMuMsgRequestMap(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }
-
-cMuMsgRequestMap::cMuMsgRequestMap(const std::string& mapName) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_REQUEST_MAP)
-{}
 
 void cMuMsgRequestMap::serialize(cTextArchiveIn& archive)
 {
@@ -511,14 +458,12 @@ void cMuMsgRequestMap::serialize(cBinaryArchiveIn& archive)
 }
 
 //------------------------------------------------------------------------------
-cMuMsgStartMapDownload::cMuMsgStartMapDownload(cBinaryArchiveOut& archive) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_START_MAP_DOWNLOAD)
+cMuMsgStartMapDownload::cMuMsgStartMapDownload(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }
 
 cMuMsgStartMapDownload::cMuMsgStartMapDownload(const std::string mapName, int mapSize) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_START_MAP_DOWNLOAD),
 	mapName(mapName),
 	mapSize(mapSize)
 {}
@@ -536,15 +481,13 @@ void cMuMsgStartMapDownload::serialize(cBinaryArchiveIn& archive)
 }
 
 //------------------------------------------------------------------------------
-cMuMsgMapDownloadData::cMuMsgMapDownloadData(cBinaryArchiveOut& archive) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_MAP_DOWNLOAD_DATA)
+cMuMsgMapDownloadData::cMuMsgMapDownloadData()
+{}
+
+cMuMsgMapDownloadData::cMuMsgMapDownloadData(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }
-
-cMuMsgMapDownloadData::cMuMsgMapDownloadData() :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_MAP_DOWNLOAD_DATA)
-{}
 
 void cMuMsgMapDownloadData::serialize(cTextArchiveIn& archive)
 {
@@ -559,27 +502,20 @@ void cMuMsgMapDownloadData::serialize(cBinaryArchiveIn& archive)
 }
 
 //------------------------------------------------------------------------------
-cMuMsgCanceledMapDownload::cMuMsgCanceledMapDownload(cBinaryArchiveOut& archive) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_CANCELED_MAP_DOWNLOAD)
-{}
-
-cMuMsgCanceledMapDownload::cMuMsgCanceledMapDownload() :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_CANCELED_MAP_DOWNLOAD)
-{}
+cMuMsgCanceledMapDownload::cMuMsgCanceledMapDownload() {}
+cMuMsgCanceledMapDownload::cMuMsgCanceledMapDownload(cBinaryArchiveOut& archive) {}
 
 //------------------------------------------------------------------------------
-cMuMsgIdentification::cMuMsgIdentification(cBinaryArchiveOut& archive) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_IDENTIFIKATION)
-{
-	serializeThis(archive);
-}
-
 cMuMsgIdentification::cMuMsgIdentification(const cPlayerBasicData& player) :
-	cMultiplayerLobbyMessage(eMessageType::MU_MSG_IDENTIFIKATION),
 	playerName(player.getName()),
 	playerColor(player.getColor().getColor()),
 	ready(player.isReady())
 {}
+
+cMuMsgIdentification::cMuMsgIdentification(cBinaryArchiveOut& archive)
+{
+	serializeThis(archive);
+}
 
 void cMuMsgIdentification::serialize(cTextArchiveIn& archive)
 {

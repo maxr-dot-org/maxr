@@ -32,13 +32,11 @@
 
 //------------------------------------------------------------------------------
 cActionInitNewGame::cActionInitNewGame() :
-	cAction(eActiontype::ACTION_INIT_NEW_GAME),
 	clan(-1)
 {}
 
 //------------------------------------------------------------------------------
 cActionInitNewGame::cActionInitNewGame(cBinaryArchiveOut& archive)
-	: cAction(eActiontype::ACTION_INIT_NEW_GAME)
 {
 	serializeThis(archive);
 }
@@ -46,7 +44,7 @@ cActionInitNewGame::cActionInitNewGame(cBinaryArchiveOut& archive)
 //------------------------------------------------------------------------------
 void cActionInitNewGame::execute(cModel& model) const
 {
-	//Note: this funktion handels incoming data from network. Make every possible sanity check!
+	//Note: this function handles incoming data from network. Make every possible sanity check!
 
 	model.initGameId();
 

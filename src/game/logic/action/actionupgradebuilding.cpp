@@ -24,14 +24,12 @@
 
 //------------------------------------------------------------------------------
 cActionUpgradeBuilding::cActionUpgradeBuilding(const cBuilding& building, bool allBuildings) :
-	cAction(eActiontype::ACTION_UPGRADE_BUILDING),
 	buildingId(building.getId()),
 	allBuildings(allBuildings)
 {}
 
 //------------------------------------------------------------------------------
-cActionUpgradeBuilding::cActionUpgradeBuilding(cBinaryArchiveOut& archive) :
-	cAction(eActiontype::ACTION_UPGRADE_BUILDING)
+cActionUpgradeBuilding::cActionUpgradeBuilding(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }

@@ -22,7 +22,7 @@
 
 #include "action.h"
 
-class cActionFinishBuild : public cAction
+class cActionFinishBuild : public cActionT<cAction::eActiontype::ACTION_FINISH_BUILD>
 {
 public:
 	cActionFinishBuild(const cUnit& unit, const cPosition& escapePosition);

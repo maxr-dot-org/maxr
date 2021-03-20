@@ -23,13 +23,11 @@
 
 //------------------------------------------------------------------------------
 cActionChangeManualFire::cActionChangeManualFire(const cUnit& unit) :
-	cAction(eActiontype::ACTION_CHANGE_MANUAL_FIRE),
 	unitId(unit.getId())
 {}
 
 //------------------------------------------------------------------------------
 cActionChangeManualFire::cActionChangeManualFire(cBinaryArchiveOut& archive)
-	: cAction(eActiontype::ACTION_CHANGE_MANUAL_FIRE)
 {
 	serializeThis(archive);
 }

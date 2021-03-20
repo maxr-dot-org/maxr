@@ -22,12 +22,10 @@
 #include "game/data/model.h"
 
 //------------------------------------------------------------------------------
-cActionStartTurn::cActionStartTurn() :
-	cAction(eActiontype::ACTION_START_TURN)
-{}
+cActionStartTurn::cActionStartTurn(){}
 
 //------------------------------------------------------------------------------
-cActionStartTurn::cActionStartTurn(cBinaryArchiveOut&) : cActionStartTurn()
+cActionStartTurn::cActionStartTurn(cBinaryArchiveOut&)
 {}
 
 //------------------------------------------------------------------------------

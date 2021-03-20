@@ -29,7 +29,7 @@ class cVehicle;
 class cBuilding;
 class cStaticMap;
 
-class cActionInitNewGame : public cAction
+class cActionInitNewGame : public cActionT<cAction::eActiontype::ACTION_INIT_NEW_GAME>
 {
 public:
 	cActionInitNewGame();

@@ -24,7 +24,7 @@
 
 class cUnit;
 
-class cActionActivate : public cAction
+class cActionActivate : public cActionT<cAction::eActiontype::ACTION_ACTIVATE>
 {
 public:
 	cActionActivate(const cUnit& containingUnit, const cVehicle& activatedVehicle, const cPosition& position);

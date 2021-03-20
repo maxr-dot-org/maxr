@@ -26,15 +26,13 @@
 
 //------------------------------------------------------------------------------
 cActionActivate::cActionActivate(const cUnit& containingUnit, const cVehicle& activatedVehicle, const cPosition& position) :
-	cAction(eActiontype::ACTION_ACTIVATE),
 	position(position),
 	containingUnitId(containingUnit.getId()),
 	activatedVehicleId(activatedVehicle.getId())
 {}
 
 //------------------------------------------------------------------------------
-cActionActivate::cActionActivate(cBinaryArchiveOut& archive) :
-	cAction(eActiontype::ACTION_ACTIVATE)
+cActionActivate::cActionActivate(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }

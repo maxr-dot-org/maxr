@@ -24,13 +24,11 @@
 
 //------------------------------------------------------------------------------
 cActionClear::cActionClear(const cVehicle& vehicle) :
-	cAction(eActiontype::ACTION_CLEAR),
 	vehicleId(vehicle.getId())
 {}
 
 //------------------------------------------------------------------------------
-cActionClear::cActionClear(cBinaryArchiveOut& archive) :
-	cAction(eActiontype::ACTION_CLEAR)
+cActionClear::cActionClear(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }

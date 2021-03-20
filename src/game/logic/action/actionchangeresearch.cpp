@@ -23,13 +23,11 @@
 
 //------------------------------------------------------------------------------
 cActionChangeResearch::cActionChangeResearch(const std::array<int, cResearch::kNrResearchAreas>& researchAreas) :
-	cAction(eActiontype::ACTION_CHANGE_RESEARCH),
 	researchAreas(researchAreas)
 {}
 
 //------------------------------------------------------------------------------
-cActionChangeResearch::cActionChangeResearch(cBinaryArchiveOut& archive) :
-	cAction(eActiontype::ACTION_CHANGE_RESEARCH)
+cActionChangeResearch::cActionChangeResearch(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }

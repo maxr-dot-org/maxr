@@ -24,23 +24,20 @@
 #include "game/logic/movejob.h"
 
 //------------------------------------------------------------------------------
-cActionResumeMove::cActionResumeMove (cBinaryArchiveOut& archive) :
-	cAction (eActiontype::ACTION_RESUME_MOVE)
-{
-	serializeThis (archive);
-}
+cActionResumeMove::cActionResumeMove () :
+	unitId (0)
+{}
 
 //------------------------------------------------------------------------------
 cActionResumeMove::cActionResumeMove (const cVehicle& vehicle) :
-	cAction (eActiontype::ACTION_RESUME_MOVE),
 	unitId (vehicle.getId())
 {}
 
 //------------------------------------------------------------------------------
-cActionResumeMove::cActionResumeMove () :
-	cAction (eActiontype::ACTION_RESUME_MOVE),
-	unitId (0)
-{}
+cActionResumeMove::cActionResumeMove (cBinaryArchiveOut& archive)
+{
+	serializeThis (archive);
+}
 
 //------------------------------------------------------------------------------
 void cActionResumeMove::execute (cModel& model) const
@@ -51,7 +48,7 @@ void cActionResumeMove::execute (cModel& model) const
 	{
 		const cPlayer* player = model.getPlayer(playerNr);
 		if (player == nullptr) return;
-	
+
 		model.resumeMoveJobs(player);
 	}
 	else

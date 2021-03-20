@@ -26,7 +26,6 @@
 
 //------------------------------------------------------------------------------
 cActionTransfer::cActionTransfer(const cUnit& sourceUnit, const cUnit& destinationUnit, int transferValue_, eResourceType resourceType_) :
-	cAction(eActiontype::ACTION_TRANSFER),
 	sourceUnitId(sourceUnit.getId()),
 	destinationUnitId(destinationUnit.getId()),
 	transferValue(transferValue_),
@@ -34,8 +33,7 @@ cActionTransfer::cActionTransfer(const cUnit& sourceUnit, const cUnit& destinati
 {}
 
 //------------------------------------------------------------------------------
-cActionTransfer::cActionTransfer(cBinaryArchiveOut& archive) :
-	cAction(eActiontype::ACTION_TRANSFER)
+cActionTransfer::cActionTransfer(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }

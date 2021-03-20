@@ -23,14 +23,12 @@
 
 //------------------------------------------------------------------------------
 cActionResourceDistribution::cActionResourceDistribution (const cBuilding& building, const sMiningResource& prod) :
-	cAction(eActiontype::ACTION_RESOURCE_DISTRIBUTION),
 	buildingId(building.getId()),
 	prod (prod)
 {}
 
 //------------------------------------------------------------------------------
-cActionResourceDistribution::cActionResourceDistribution(cBinaryArchiveOut& archive) :
-	cAction(eActiontype::ACTION_RESOURCE_DISTRIBUTION)
+cActionResourceDistribution::cActionResourceDistribution(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }

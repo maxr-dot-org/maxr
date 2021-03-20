@@ -24,7 +24,7 @@ struct sUnitUpgrade;
 
 #include "action.h"
 
-class cActionBuyUpgrades : public cAction
+class cActionBuyUpgrades : public cActionT<cAction::eActiontype::ACTION_BUY_UPGRADES>
 {
 public:
 	cActionBuyUpgrades(const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades);

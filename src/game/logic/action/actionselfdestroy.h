@@ -22,7 +22,7 @@
 
 #include "action.h"
 
-class cActionSelfDestroy : public cAction
+class cActionSelfDestroy : public cActionT<cAction::eActiontype::ACTION_SELF_DESTROY>
 {
 public:
 	cActionSelfDestroy(const cBuilding& unit);

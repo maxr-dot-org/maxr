@@ -23,14 +23,12 @@
 
 //------------------------------------------------------------------------------
 cActionSetAutoMove::cActionSetAutoMove(const cVehicle& vehicle, bool autoMoveActive) :
-	cAction(eActiontype::ACTION_SET_AUTO_MOVE),
 	vehicleId(vehicle.getId()),
 	autoMoveActive(autoMoveActive)
 {}
 
 //------------------------------------------------------------------------------
-cActionSetAutoMove::cActionSetAutoMove(cBinaryArchiveOut& archive) :
-	cAction(eActiontype::ACTION_SET_AUTO_MOVE)
+cActionSetAutoMove::cActionSetAutoMove(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }

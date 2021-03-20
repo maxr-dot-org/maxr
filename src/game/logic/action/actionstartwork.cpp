@@ -24,13 +24,11 @@
 
 //------------------------------------------------------------------------------
 cActionStartWork::cActionStartWork(const cUnit& unit) :
-	cAction(eActiontype::ACTION_START_WORK),
 	unitId(unit.getId())
 {}
 
 //------------------------------------------------------------------------------
 cActionStartWork::cActionStartWork(cBinaryArchiveOut& archive)
-	: cAction(eActiontype::ACTION_START_WORK)
 {
 	serializeThis(archive);
 }

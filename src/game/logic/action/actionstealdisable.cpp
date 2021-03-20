@@ -25,15 +25,13 @@
 #include "game/logic/casualtiestracker.h"
 
 cActionStealDisable::cActionStealDisable(const cVehicle& infiltrator, const cUnit& target, bool steal) :
-	cAction(eActiontype::ACTION_STEAL_DISABLE),
 	infiltratorId(infiltrator.getId()),
 	targetId(target.getId()),
 	steal(steal)
 {}
 
 //------------------------------------------------------------------------------
-cActionStealDisable::cActionStealDisable(cBinaryArchiveOut& archive) :
-	cAction(eActiontype::ACTION_STEAL_DISABLE)
+cActionStealDisable::cActionStealDisable(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }

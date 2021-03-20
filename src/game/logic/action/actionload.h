@@ -24,7 +24,7 @@
 
 class cUnit;
 
-class cActionLoad : public cAction
+class cActionLoad : public cActionT<cAction::eActiontype::ACTION_LOAD>
 {
 public:
 	cActionLoad(const cUnit& loadingUnit, const cVehicle& loadedVehicle);

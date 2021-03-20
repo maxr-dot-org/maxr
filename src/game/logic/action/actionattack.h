@@ -24,7 +24,7 @@
 
 class cUnit;
 
-class cActionAttack : public cAction
+class cActionAttack : public cActionT<cAction::eActiontype::ACTION_ATTACK>
 {
 public:
 	cActionAttack(const cUnit& aggressor, cPosition targetPosition, const cUnit* targetUnit);

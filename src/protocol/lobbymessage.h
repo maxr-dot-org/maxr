@@ -28,10 +28,10 @@
 class cUnitsData;
 class cClanData;
 
-class cMultiplayerLobbyMessage : public cNetMessage
+class cMultiplayerLobbyMessage : public cNetMessageT<eNetMessageType::MULTIPLAYER_LOBBY>
 {
 public:
-	// When changing this enum, also update function enumToString (eActiontype value)!
+	// When changing this enum, also update function enumToString (eMessageType value)!
 	enum class eMessageType {
 		MU_MSG_CHAT,                 // sent by host/client: simple text message
 		MU_MSG_IDENTIFIKATION,       // sent by client: player send his properties (name, color, ready)
@@ -67,7 +67,8 @@ public:
 	void serialize(cTextArchiveIn& archive) override;
 
 protected:
-	cMultiplayerLobbyMessage(eMessageType type);
+	cMultiplayerLobbyMessage(eMessageType type) : type(type) {}
+
 private:
 	template<typename T>
 	void serializeThis(T& archive)
@@ -76,6 +77,14 @@ private:
 	}
 
 	eMessageType type;
+};
+
+//------------------------------------------------------------------------------
+template <cMultiplayerLobbyMessage::eMessageType MsgType>
+class cMultiplayerLobbyMessageT : public cMultiplayerLobbyMessage
+{
+public:
+	cMultiplayerLobbyMessageT() : cMultiplayerLobbyMessage (MsgType) {}
 };
 
 std::string enumToString(cMultiplayerLobbyMessage::eMessageType value);
@@ -96,7 +105,7 @@ public:
 };
 
 //------------------------------------------------------------------------------
-class cMuMsgChat : public cMultiplayerLobbyMessage
+class cMuMsgChat : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT>
 {
 public:
 	cMuMsgChat(const std::string& message, bool translate = false, const std::string& insertText = "");
@@ -119,7 +128,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cMuMsgPlayerNr : public cMultiplayerLobbyMessage
+class cMuMsgPlayerNr : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_NUMBER>
 {
 public:
 	cMuMsgPlayerNr(int newPlayerNr);
@@ -138,7 +147,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cMuMsgOptions : public cMultiplayerLobbyMessage
+class cMuMsgOptions : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_OPTIONS>
 {
 public:
 	cMuMsgOptions();
@@ -166,7 +175,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cMuMsgSaveSlots : public cMultiplayerLobbyMessage
+class cMuMsgSaveSlots : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_SAVESLOTS>
 {
 public:
 	cMuMsgSaveSlots();
@@ -187,7 +196,7 @@ private:
 
 
 //------------------------------------------------------------------------------
-class cMuMsgPlayerList : public cMultiplayerLobbyMessage
+class cMuMsgPlayerList : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYERLIST>
 {
 public:
 	explicit cMuMsgPlayerList(const std::vector<std::shared_ptr<cPlayerBasicData>>&);
@@ -207,7 +216,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cMuMsgAskToFinishLobby : public cMultiplayerLobbyMessage
+class cMuMsgAskToFinishLobby : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_ASK_TO_FINISH_LOBBY>
 {
 public:
 	cMuMsgAskToFinishLobby();
@@ -215,7 +224,7 @@ public:
 };
 
 //------------------------------------------------------------------------------
-class cMuMsgCannotEndLobby : public cMultiplayerLobbyMessage
+class cMuMsgCannotEndLobby : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_CANNOT_END_LOBBY>
 {
 public:
 	cMuMsgCannotEndLobby();
@@ -240,7 +249,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cMuMsgDisconnectNotInSavedGame : public cMultiplayerLobbyMessage
+class cMuMsgDisconnectNotInSavedGame : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_DISCONNECT_NOT_IN_SAVED_GAME>
 {
 public:
 	cMuMsgDisconnectNotInSavedGame();
@@ -248,7 +257,7 @@ public:
 };
 
 //------------------------------------------------------------------------------
-class cMuMsgStartGamePreparations : public cMultiplayerLobbyMessage
+class cMuMsgStartGamePreparations : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME_PREPARATIONS>
 {
 public:
 	cMuMsgStartGamePreparations(std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cClanData> clanData);
@@ -280,7 +289,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cMuMsgPlayerHasSelectedLandingPosition : public cMultiplayerLobbyMessage
+class cMuMsgPlayerHasSelectedLandingPosition : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION>
 {
 public:
 	cMuMsgPlayerHasSelectedLandingPosition(int landedPlayer);
@@ -299,7 +308,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cMuMsgInLandingPositionSelectionStatus : public cMultiplayerLobbyMessage
+class cMuMsgInLandingPositionSelectionStatus : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS>
 {
 public:
 	cMuMsgInLandingPositionSelectionStatus(int playerNr, bool isIn);
@@ -320,7 +329,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cMuMsgLandingState : public cMultiplayerLobbyMessage
+class cMuMsgLandingState : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_STATE>
 {
 public:
 	cMuMsgLandingState(eLandingPositionState state);
@@ -339,7 +348,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cMuMsgStartGame : public cMultiplayerLobbyMessage
+class cMuMsgStartGame : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME>
 {
 public:
 	cMuMsgStartGame();
@@ -347,15 +356,7 @@ public:
 };
 
 //------------------------------------------------------------------------------
-class cMuMsgGameStarted : public cMultiplayerLobbyMessage
-{
-public:
-	cMuMsgGameStarted();
-	cMuMsgGameStarted(cBinaryArchiveOut& archive);
-};
-
-//------------------------------------------------------------------------------
-class cMuMsgPlayerAbortedGamePreparations : public cMultiplayerLobbyMessage
+class cMuMsgPlayerAbortedGamePreparations : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION>
 {
 public:
 	cMuMsgPlayerAbortedGamePreparations();
@@ -363,7 +364,7 @@ public:
 };
 
 //------------------------------------------------------------------------------
-class cMuMsgFinishedMapDownload : public cMultiplayerLobbyMessage
+class cMuMsgFinishedMapDownload : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_FINISHED_MAP_DOWNLOAD>
 {
 public:
 	cMuMsgFinishedMapDownload();
@@ -371,7 +372,7 @@ public:
 };
 
 //------------------------------------------------------------------------------
-class cMuMsgLandingPosition : public cMultiplayerLobbyMessage
+class cMuMsgLandingPosition : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_POSITION>
 {
 public:
 	cMuMsgLandingPosition(const cPosition& position);
@@ -390,7 +391,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cMuMsgRequestMap : public cMultiplayerLobbyMessage
+class cMuMsgRequestMap : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_REQUEST_MAP>
 {
 public:
 	cMuMsgRequestMap(const std::string& mapName);
@@ -409,7 +410,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cMuMsgStartMapDownload : public cMultiplayerLobbyMessage
+class cMuMsgStartMapDownload : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_MAP_DOWNLOAD>
 {
 public:
 	cMuMsgStartMapDownload(const std::string mapName, int mapSize);
@@ -430,7 +431,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cMuMsgMapDownloadData : public cMultiplayerLobbyMessage
+class cMuMsgMapDownloadData : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_MAP_DOWNLOAD_DATA>
 {
 public:
 	cMuMsgMapDownloadData();
@@ -449,7 +450,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class cMuMsgCanceledMapDownload : public cMultiplayerLobbyMessage
+class cMuMsgCanceledMapDownload : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_CANCELED_MAP_DOWNLOAD>
 {
 public:
 	cMuMsgCanceledMapDownload();
@@ -457,7 +458,7 @@ public:
 };
 
 //------------------------------------------------------------------------------
-class cMuMsgIdentification : public cMultiplayerLobbyMessage
+class cMuMsgIdentification : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_IDENTIFIKATION>
 {
 public:
 	cMuMsgIdentification(const cPlayerBasicData& player);

@@ -27,15 +27,13 @@
 
 //------------------------------------------------------------------------------
 cActionAttack::cActionAttack(const cUnit& aggressor, cPosition targetPosition, const cUnit* targetUnit) :
-	cAction(eActiontype::ACTION_ATTACK),
 	agressorId(aggressor.getId()),
 	targetPosition(targetPosition),
 	targetId(targetUnit? targetUnit->getId() : 0)
 {}
 
 //------------------------------------------------------------------------------
-cActionAttack::cActionAttack(cBinaryArchiveOut& archive) :
-	cAction(eActiontype::ACTION_ATTACK)
+cActionAttack::cActionAttack(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }

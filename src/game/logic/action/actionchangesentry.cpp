@@ -22,13 +22,11 @@
 
 //------------------------------------------------------------------------------
 cActionChangeSentry::cActionChangeSentry(const cUnit& unit) :
-	cAction(eActiontype::ACTION_CHANGE_SENTRY),
 	unitId(unit.getId())
 {}
 
 //------------------------------------------------------------------------------
 cActionChangeSentry::cActionChangeSentry(cBinaryArchiveOut& archive)
-	: cAction(eActiontype::ACTION_CHANGE_SENTRY)
 {
 	serializeThis(archive);
 }

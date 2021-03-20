@@ -134,15 +134,13 @@ std::unique_ptr<cNetMessage> cNetMessage::clone() const
 }
 
 //------------------------------------------------------------------------------
-cNetMessageTcpHello::cNetMessageTcpHello():
-	cNetMessage (eNetMessageType::TCP_HELLO),
+cNetMessageTcpHello::cNetMessageTcpHello() :
 	packageVersion (PACKAGE_VERSION),
 	packageRev (PACKAGE_REV)
 {}
 
 //------------------------------------------------------------------------------
-cNetMessageTcpWantConnect::cNetMessageTcpWantConnect():
-	cNetMessage (eNetMessageType::TCP_WANT_CONNECT),
+cNetMessageTcpWantConnect::cNetMessageTcpWantConnect() :
 	ready (false),
 	packageVersion (PACKAGE_VERSION),
 	packageRev (PACKAGE_REV),
@@ -151,15 +149,13 @@ cNetMessageTcpWantConnect::cNetMessageTcpWantConnect():
 
 //------------------------------------------------------------------------------
 cNetMessageTcpConnected::cNetMessageTcpConnected (int playerNr) :
-	cNetMessage (eNetMessageType::TCP_CONNECTED),
 	playerNr (playerNr),
 	packageVersion (PACKAGE_VERSION),
 	packageRev (PACKAGE_REV)
 {}
 
 //------------------------------------------------------------------------------
-cNetMessageResyncModel::cNetMessageResyncModel (const cModel& model) :
-	cNetMessage (eNetMessageType::RESYNC_MODEL)
+cNetMessageResyncModel::cNetMessageResyncModel (const cModel& model)
 {
 	cBinaryArchiveIn archive (data);
 	archive << model;
@@ -173,8 +169,7 @@ void cNetMessageResyncModel::apply (cModel& model) const
 }
 
 //------------------------------------------------------------------------------
-cNetMessageGameAlreadyRunning::cNetMessageGameAlreadyRunning (const cModel& model) :
-	cNetMessage (eNetMessageType::GAME_ALREADY_RUNNING)
+cNetMessageGameAlreadyRunning::cNetMessageGameAlreadyRunning (const cModel& model)
 {
 	for (const auto& p : model.getPlayerList())
 		playerList.push_back (cPlayerBasicData (p->getName(), p->getColor(), p->getId(), p->isDefeated));

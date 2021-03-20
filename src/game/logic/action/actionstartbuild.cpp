@@ -24,7 +24,6 @@
 
 
 cActionStartBuild::cActionStartBuild(const cVehicle& vehicle, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition) :
-	cAction(eActiontype::ACTION_START_BUILD),
 	vehicleID(vehicle.getId()),
 	buildingTypeID(buildingTypeID),
 	buildSpeed(buildSpeed),
@@ -34,7 +33,6 @@ cActionStartBuild::cActionStartBuild(const cVehicle& vehicle, sID buildingTypeID
 
 //------------------------------------------------------------------------------
 cActionStartBuild::cActionStartBuild(const cVehicle& vehicle, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition, const cPosition& pathEndPosition) :
-	cAction(eActiontype::ACTION_START_BUILD),
 	vehicleID(vehicle.getId()),
 	buildingTypeID(buildingTypeID),
 	buildSpeed(buildSpeed),
@@ -45,8 +43,7 @@ cActionStartBuild::cActionStartBuild(const cVehicle& vehicle, sID buildingTypeID
 
 
 //------------------------------------------------------------------------------
-cActionStartBuild::cActionStartBuild(cBinaryArchiveOut& archive) :
-	cAction(eActiontype::ACTION_START_BUILD)
+cActionStartBuild::cActionStartBuild(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }

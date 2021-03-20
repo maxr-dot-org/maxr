@@ -23,13 +23,11 @@
 
 //------------------------------------------------------------------------------
 cActionStop::cActionStop(const cUnit& unit) :
-	cAction(eActiontype::ACTION_STOP),
 	unitId(unit.getId())
 {}
 
 //------------------------------------------------------------------------------
 cActionStop::cActionStop(cBinaryArchiveOut& archive)
-	: cAction(eActiontype::ACTION_STOP)
 {
 	serializeThis(archive);
 }

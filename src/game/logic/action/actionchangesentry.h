@@ -22,7 +22,7 @@
 
 #include "action.h"
 
-class cActionChangeSentry : public cAction
+class cActionChangeSentry : public cActionT<cAction::eActiontype::ACTION_CHANGE_SENTRY>
 {
 public:
 	cActionChangeSentry(const cUnit& unit);

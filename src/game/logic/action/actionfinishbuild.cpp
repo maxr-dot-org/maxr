@@ -23,14 +23,12 @@
 
 //------------------------------------------------------------------------------
 cActionFinishBuild::cActionFinishBuild(const cUnit& unit, const cPosition& escapePosition) :
-	cAction(eActiontype::ACTION_FINISH_BUILD),
 	unitId(unit.getId()),
 	escapePosition(escapePosition)
 {}
 
 //------------------------------------------------------------------------------
 cActionFinishBuild::cActionFinishBuild(cBinaryArchiveOut& archive)
-	: cAction(eActiontype::ACTION_FINISH_BUILD)
 {
 	serializeThis(archive);
 }

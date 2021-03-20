@@ -24,14 +24,12 @@
 
 //------------------------------------------------------------------------------
 cActionChangeUnitName::cActionChangeUnitName(const cUnit& unit, const std::string& newName) :
-	cAction(eActiontype::ACTION_CHANGE_UNIT_NAME),
 	unitId(unit.getId()),
 	newName(newName)
 {}
 
 //------------------------------------------------------------------------------
-cActionChangeUnitName::cActionChangeUnitName(cBinaryArchiveOut& archive) :
-	cAction(eActiontype::ACTION_CHANGE_UNIT_NAME)
+cActionChangeUnitName::cActionChangeUnitName(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }

@@ -22,7 +22,7 @@
 
 #include "protocol/netmessage.h"
 
-class cAction : public cNetMessage
+class cAction : public cNetMessageT<eNetMessageType::ACTION>
 {
 public:
 	// When changing this enum, also update function enumToString(eActiontype value)!
@@ -66,7 +66,7 @@ public:
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 	virtual void execute(cModel& model) const = 0;
 protected:
-	cAction(eActiontype type) : cNetMessage(eNetMessageType::ACTION), type(type){};
+	cAction (eActiontype type) : type(type){}
 private:
 	template<typename T>
 	void serializeThis(T& archive)
@@ -82,5 +82,12 @@ private:
 
 std::string enumToString(cAction::eActiontype value);
 
+//------------------------------------------------------------------------------
+template <cAction::eActiontype ActionType>
+class cActionT : public cAction
+{
+public:
+	cActionT() : cAction (ActionType) {}
+};
 
 #endif

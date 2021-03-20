@@ -23,14 +23,12 @@
 
 //------------------------------------------------------------------------------
 cActionUpgradeVehicle::cActionUpgradeVehicle(const cBuilding& containingBuilding, const cVehicle* vehicle) :
-	cAction(eActiontype::ACTION_UPGRADE_VEHICLE),
 	buildingId(containingBuilding.getId()),
 	vehicleId(vehicle ? vehicle->getId() : 0)
 {}
 
 //------------------------------------------------------------------------------
-cActionUpgradeVehicle::cActionUpgradeVehicle(cBinaryArchiveOut& archive) :
-	cAction(eActiontype::ACTION_UPGRADE_VEHICLE)
+cActionUpgradeVehicle::cActionUpgradeVehicle(cBinaryArchiveOut& archive)
 {
 	serializeThis(archive);
 }
