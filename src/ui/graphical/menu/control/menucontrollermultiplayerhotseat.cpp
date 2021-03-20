@@ -120,16 +120,16 @@ void cMenuControllerMultiplayerHotSeat::selectPlayers()
 	{
 		const auto& playerTypes = windowPlayerSelection->getPlayerTypes();
 
-		const char* const playerNames[] =
+		const std::string playerNames[] =
 		{
-			"Text~Multiplayer~Player1",
-			"Text~Multiplayer~Player2",
-			"Text~Multiplayer~Player3",
-			"Text~Multiplayer~Player4",
-			"Text~Multiplayer~Player5",
-			"Text~Multiplayer~Player6",
-			"Text~Multiplayer~Player7",
-			"Text~Multiplayer~Player8"
+			lngPack.i18n ("Text~Multiplayer~Player1"),
+			lngPack.i18n ("Text~Multiplayer~Player2"),
+			lngPack.i18n ("Text~Multiplayer~Player3"),
+			lngPack.i18n ("Text~Multiplayer~Player4"),
+			lngPack.i18n ("Text~Multiplayer~Player5"),
+			lngPack.i18n ("Text~Multiplayer~Player6"),
+			lngPack.i18n ("Text~Multiplayer~Player7"),
+			lngPack.i18n ("Text~Multiplayer~Player8")
 		};
 
 		std::vector<cPlayerBasicData> players;
@@ -138,7 +138,7 @@ void cMenuControllerMultiplayerHotSeat::selectPlayers()
 		{
 			if (playerTypes[i] == ePlayerType::Human)
 			{
-				cPlayerBasicData player (lngPack.i18n (playerNames[i]), cPlayerColor (cPlayerColor::predefinedColors[i]), playerNum++, false);
+				cPlayerBasicData player (playerNames[i], cPlayerColor (cPlayerColor::predefinedColors[i]), playerNum++, false);
 				players.push_back (player);
 			}
 		}

@@ -40,20 +40,25 @@ eSavedReportType cSavedReportResourceChanged::getType() const
 //------------------------------------------------------------------------------
 std::string cSavedReportResourceChanged::getMessage(const cUnitsData& unitsData) const
 {
-	std::string text;
 	if (increase)
 	{
-		if (resourceType == eResourceType::Gold) text = "Text~Comp~Adjustments_Gold_Increased";
-		else if (resourceType == eResourceType::Oil) text = "Text~Comp~Adjustments_Fuel_Increased";
-		else text = "Text~Comp~Adjustments_Metal_Increased";
+		switch (resourceType)
+		{
+			case eResourceType::Gold: return lngPack.i18n ("Text~Comp~Adjustments_Gold_Increased", iToStr (amount));
+			case eResourceType::Oil: return lngPack.i18n ("Text~Comp~Adjustments_Fuel_Increased", iToStr (amount));
+			case eResourceType::Metal: return lngPack.i18n ("Text~Comp~Adjustments_Metal_Increased", iToStr (amount));
+		}
 	}
 	else
 	{
-		if (resourceType == eResourceType::Gold) text = "Text~Comp~Adjustments_Gold_Decreased";
-		else if (resourceType == eResourceType::Oil) text = "Text~Comp~Adjustments_Fuel_Decreased";
-		else text = "Text~Comp~Adjustments_Metal_Decreased";
+		switch (resourceType)
+		{
+			case eResourceType::Gold: return lngPack.i18n ("Text~Comp~Adjustments_Gold_Decreased", iToStr (amount));
+			case eResourceType::Oil: return lngPack.i18n ("Text~Comp~Adjustments_Fuel_Decreased", iToStr (amount));
+			case eResourceType::Metal: return lngPack.i18n ("Text~Comp~Adjustments_Metal_Decreased", iToStr (amount));
+		}
 	}
-	return lngPack.i18n (text, iToStr (amount));
+	throw std::runtime_error("Unknown resourceType " + toString (static_cast<int> (resourceType)));
 }
 
 //------------------------------------------------------------------------------

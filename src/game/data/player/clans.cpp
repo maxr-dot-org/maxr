@@ -73,24 +73,24 @@ string cClanUnitStat::getClanStatsDescription(const cUnitsData& originalData) co
 	struct
 	{
 		const char* type;
-		const char* textToTranslate;
+		std::string text;
 		int originalValue;
 	} t[] =
 	{
 		// ToDo / Fixme if #756 fixed, use the non "_7" version of the text files
-		{"Damage", "Text~Others~Attack_7", data->getDamage()},
-		{"Range", "Text~Others~Range", data->getRange()},
-		{"Armor", "Text~Others~Armor_7", data->getArmor()},
-		{"Hitpoints", "Text~Others~Hitpoints_7", data->getHitpointsMax()},
-		{"Scan", "Text~Others~Scan_7", data->getScan()},
-		{"Speed", "Text~Others~Speed_7", data->getSpeedMax() / 4},
+		{"Damage", lngPack.i18n ("Text~Others~Attack_7"), data->getDamage()},
+		{"Range", lngPack.i18n ("Text~Others~Range"), data->getRange()},
+		{"Armor", lngPack.i18n ("Text~Others~Armor_7"), data->getArmor()},
+		{"Hitpoints", lngPack.i18n ("Text~Others~Hitpoints_7"), data->getHitpointsMax()},
+		{"Scan", lngPack.i18n ("Text~Others~Scan_7"), data->getScan()},
+		{"Speed", lngPack.i18n ("Text~Others~Speed_7"), data->getSpeedMax() / 4},
 	};
 
 	for (int i = 0; i != sizeof (t) / sizeof (*t); ++i)
 	{
 		if (hasModification (t[i].type) == false) continue;
 		result += sep;
-		result += lngPack.i18n (t[i].textToTranslate);
+		result += t[i].text;
 		result += GetModificatorString (t[i].originalValue, getModificationValue (t[i].type));
 		sep = commaSep;
 	}
