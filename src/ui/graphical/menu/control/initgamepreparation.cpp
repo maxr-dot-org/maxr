@@ -72,20 +72,13 @@ void cInitGamePreparation::bindConnections (cLobbyClient& lobbyClient)
 }
 
 //------------------------------------------------------------------------------
-void cInitGamePreparation::onChatMessage(const std::string& playerName, bool translate, const std::string& message, const std::string& insertText)
+void cInitGamePreparation::onChatMessage (const std::string& playerName, const std::string& message)
 {
 	if (!windowLandingPositionSelection) return;
 
 	auto* chatBox = windowLandingPositionSelection->getChatBox();
-	if (translate)
-	{
-		chatBox->addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (lngPack.i18n (message, insertText)));
-	}
-	else
-	{
-		chatBox->addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (playerName, message));
-		cSoundDevice::getInstance().playSoundEffect (SoundData.SNDChat);
-	}
+	chatBox->addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (playerName, message));
+	cSoundDevice::getInstance().playSoundEffect (SoundData.SNDChat);
 }
 
 //------------------------------------------------------------------------------

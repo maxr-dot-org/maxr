@@ -87,7 +87,7 @@ void cLobbyClient::connectToServer(std::string ip, int port)
 
 	Log.write (("Connecting to " + ip + ":" + iToStr (port)), cLog::eLOG_TYPE_NET_DEBUG);
 
-	connectionManager->connectToServer(ip, port, localPlayer);
+	connectionManager->connectToServer (ip, port);
 }
 
 //------------------------------------------------------------------------------
@@ -248,6 +248,9 @@ void cLobbyClient::handleNetMessage (const cNetMessage& message)
 
 	switch (message.getType())
 	{
+		case eNetMessageType::TCP_HELLO:
+			handleNetMessage_TCP_HELLO (static_cast<const cNetMessageTcpHello&> (message));
+			return;
 		case eNetMessageType::TCP_CONNECTED:
 			handleNetMessage_TCP_CONNECTED(static_cast<const cNetMessageTcpConnected&>(message));
 			return;
@@ -328,6 +331,22 @@ void cLobbyClient::handleLobbyMessage (const cMultiplayerLobbyMessage& message)
 }
 
 //------------------------------------------------------------------------------
+void cLobbyClient::handleNetMessage_TCP_HELLO (const cNetMessageTcpHello& message)
+{
+	if (message.packageVersion != PACKAGE_VERSION || message.packageRev != PACKAGE_REV)
+	{
+		onDifferentVersion (message.packageVersion, message.packageRev);
+		if (message.packageVersion != PACKAGE_VERSION) return;
+	}
+
+	cNetMessageTcpWantConnect response;
+	response.playerName = localPlayer.getName();
+	response.playerColor = localPlayer.getColor().getColor();
+	response.ready = localPlayer.isReady();
+	sendNetMessage (response);
+}
+
+//------------------------------------------------------------------------------
 void cLobbyClient::handleNetMessage_TCP_CONNECTED(const cNetMessageTcpConnected& message)
 {
 	localPlayer.setNr (message.playerNr);
@@ -362,7 +381,7 @@ void cLobbyClient::handleNetMessage_MU_MSG_CHAT (const cMuMsgChat& message)
 	auto player = getPlayer (message.playerNr);
 	const auto playerName = player == nullptr ? "unknown" : player->getName();
 
-	onChatMessage(playerName, message.translate, message.message, message.insertText);
+	onChatMessage (playerName, message.message);
 }
 
 //------------------------------------------------------------------------------

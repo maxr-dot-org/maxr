@@ -108,22 +108,18 @@ public:
 class cMuMsgChat : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT>
 {
 public:
-	cMuMsgChat(const std::string& message, bool translate = false, const std::string& insertText = "");
+	cMuMsgChat (const std::string& message);
 	cMuMsgChat(cBinaryArchiveOut& archive);
 
 	void serialize(cBinaryArchiveIn& archive) override;
 	void serialize(cTextArchiveIn& archive) override;
 
 	std::string message;
-	bool translate;
-	std::string insertText;
 private:
 	template<typename T>
 	void serializeThis(T& archive)
 	{
 		archive & message;
-		archive & translate;
-		archive & insertText;
 	}
 };
 

@@ -27,7 +27,7 @@
 /*static*/ cPlayerBasicData cPlayerBasicData::fromSettings()
 {
 	const cSettings& settings = cSettings::getInstance();
-	return { settings.getPlayerName(), cPlayerColor (settings.getPlayerColor()), 0, false };
+	return { settings.getPlayerName(), cPlayerColor (settings.getPlayerColor()), -1, false };
 }
 
 //------------------------------------------------------------------------------

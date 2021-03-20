@@ -19,7 +19,6 @@
 
 #include "connectionmanager.h"
 
-#include "game/data/player/playerbasicdata.h"
 #include "maxrversion.h"
 #include "game/network.h"
 #include "protocol/lobbymessage.h"
@@ -170,7 +169,7 @@ void cConnectionManager::declineConnection(const cSocket* socket, const std::str
 }
 
 //------------------------------------------------------------------------------
-void cConnectionManager::connectToServer(const std::string& host, int port, const cPlayerBasicData& player)
+void cConnectionManager::connectToServer (const std::string& host, int port)
 {
 	assert(localClient != nullptr);
 
@@ -183,11 +182,7 @@ void cConnectionManager::connectToServer(const std::string& host, int port, cons
 
 	network->connectToServer(host, port);
 
-	//save credentials, until the connection is established
 	connecting = true;
-	connectingPlayerName = player.getName();
-	connectingPlayerColor = player.getColor().getColor();
-	connectingPlayerReady = player.isReady();
 }
 
 //------------------------------------------------------------------------------
@@ -492,24 +487,9 @@ bool cConnectionManager::handeConnectionHandshake(const std::unique_ptr<cNetMess
 		const auto& msgTcpHello = static_cast<cNetMessageTcpHello&>(*message);
 		if (msgTcpHello.packageVersion != PACKAGE_VERSION)
 		{
-			localClient->pushMessage(std::make_unique<cMuMsgChat>("Text~Multiplayer~Gameversion_Error", true, msgTcpHello.packageVersion));
-			localClient->pushMessage(std::make_unique<cMuMsgChat>("Text~Multiplayer~Gameversion_Own", true, PACKAGE_VERSION));
 			network->close(socket);
-			return true;
 		}
-
-
-		cNetMessageTcpWantConnect response;
-		response.playerName = connectingPlayerName;
-		response.playerColor = connectingPlayerColor;
-		response.ready = connectingPlayerReady;
-
-		cTextArchiveIn archiveResponse;
-		archiveResponse << response;
-		Log.write("ConnectionManager: --> " + archiveResponse.data(), cLog::eLOG_TYPE_NET_DEBUG);
-
-		sendMessage(socket, response);
-		return true;
+		return false;
 	}
 	case eNetMessageType::TCP_WANT_CONNECT:
 	{
@@ -525,7 +505,7 @@ bool cConnectionManager::handeConnectionHandshake(const std::unique_ptr<cNetMess
 
 		if (playerOnSocket != -1)
 		{
-			Log.write("ConnectionManager: Received TCP_WANT_CONNECT from alreay connected player", cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ("ConnectionManager: Received TCP_WANT_CONNECT from already connected player", cLog::eLOG_TYPE_NET_ERROR);
 			return true;
 		}
 
@@ -535,8 +515,6 @@ bool cConnectionManager::handeConnectionHandshake(const std::unique_ptr<cNetMess
 		//check compatible game version
 		if (msgTcpWantConnect.packageVersion != PACKAGE_VERSION)
 		{
-			sendMessage(socket, cMuMsgChat("Text~Multiplayer~Gameversion_Error", true, PACKAGE_VERSION));
-			sendMessage(socket, cMuMsgChat("Text~Multiplayer~Gameversion_Own", true, msgTcpWantConnect.packageVersion));
 			network->close(socket);
 			return true;
 		}

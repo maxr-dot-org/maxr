@@ -59,21 +59,14 @@ cMenuControllerMultiplayerHost::cMenuControllerMultiplayerHost (cApplication& ap
 		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_UploadFinished", player.getName()));
 	});
 
-	signalConnectionManager.connect (lobbyClient.onChatMessage, [this](const std::string& playerName, bool translate, const std::string& message, const std::string& insertText){
+	signalConnectionManager.connect (lobbyClient.onChatMessage, [this](const std::string& playerName, const std::string& message){
 		if (initGamePreparation)
 		{
-			initGamePreparation->onChatMessage (playerName, translate, message, insertText);
+			initGamePreparation->onChatMessage (playerName, message);
 		}
 		else if (windowNetworkLobby != nullptr)
 		{
-			if (translate)
-			{
-				windowNetworkLobby->addInfoEntry (lngPack.i18n (message, insertText));
-			}
-			else
-			{
-				windowNetworkLobby->addChatEntry (playerName, message);
-			}
+			windowNetworkLobby->addChatEntry (playerName, message);
 		}
 	});
 

@@ -163,6 +163,12 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Connected"));
 	});
 	signalConnectionManager.connect (lobbyClient.onDifferentVersion, [this](const std::string& version, const std::string& revision){
+		if (version != PACKAGE_VERSION)
+		{
+			addInfoEntry (lngPack.i18n ("Text~Multiplayer~Gameversion_Error", version));
+			addInfoEntry (lngPack.i18n ("Text~Multiplayer~Gameversion_Own", PACKAGE_VERSION));
+			return;
+		}
 		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Gameversion_Warning_Client", version + " " + revision));
 		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Gameversion_Own", (std::string)PACKAGE_VERSION + " " + PACKAGE_REV));
 	});

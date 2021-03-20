@@ -86,7 +86,7 @@ public:
 	cSignal<void ()> onDuplicatedPlayerName;
 	cSignal<void (std::shared_ptr<cGameSettings>, std::shared_ptr<cStaticMap>, const cSaveGameInfo&)> onOptionsChanged;
 
-	cSignal<void (const std::string& playerName, bool translate, const std::string& message, const std::string& insertText)> onChatMessage;
+	cSignal<void (const std::string& playerName, const std::string& message)> onChatMessage;
 
 	cSignal<void (bool missingSettings, const std::vector<cPlayerBasicData>& notReadyPlayers, bool hostNotInSavegame, const std::vector<cPlayerBasicData>&missingPlayers)> onCannotEndLobby;
 	cSignal<void()> onDisconnectNotInSavedGame;
@@ -113,6 +113,7 @@ private:
 	void handleNetMessage (const cNetMessage&);
 	void handleLobbyMessage (const cMultiplayerLobbyMessage&);
 
+	void handleNetMessage_TCP_HELLO (const cNetMessageTcpHello&);
 	void handleNetMessage_TCP_CONNECTED (const cNetMessageTcpConnected&);
 	void handleNetMessage_TCP_CONNECT_FAILED (const cNetMessageTcpConnectFailed&);
 	void handleNetMessage_TCP_CLOSE (const cNetMessageTcpClose&);

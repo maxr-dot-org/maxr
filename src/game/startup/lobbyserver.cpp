@@ -331,6 +331,7 @@ void cLobbyServer::clientConnects (const cNetMessageTcpWantConnect& message)
 	if (message.packageVersion != PACKAGE_VERSION || message.packageRev != PACKAGE_REV)
 	{
 		onDifferentVersion (message.packageVersion, message.packageRev);
+		if (message.packageVersion != PACKAGE_VERSION) return;
 	}
 
 	players.emplace_back(message.playerName, cPlayerColor(message.playerColor), nextPlayerNumber++, false);

@@ -28,7 +28,6 @@
 class cNetwork;
 class cSocket;
 class cNetMessage;
-class cPlayerBasicData;
 class cHandshakeTimeout;
 
 /**
@@ -54,7 +53,7 @@ public:
 
 	void acceptConnection(const cSocket* socket, int playerNr);
 	void declineConnection(const cSocket* socket, const std::string& reason);
-	void connectToServer(const std::string& host, int port, const cPlayerBasicData& player);
+	void connectToServer (const std::string& host, int port);
 	bool isConnectedToServer() const;
 	void changePlayerNumber(int currentNr, int newNr);
 	bool isPlayerConnected(int playerNr) const;
@@ -99,11 +98,7 @@ private:
 
 	bool serverOpen = false;
 
-	// temporary save player credentials (used during non blocking connection attempt)
 	bool connecting = false;
-	std::string connectingPlayerName;
-	cRgbColor connectingPlayerColor;
-	bool connectingPlayerReady = false;
 };
 
 #endif

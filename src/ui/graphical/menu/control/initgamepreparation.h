@@ -43,7 +43,7 @@ public:
 
 	void bindConnections (cLobbyClient&);
 
-	void onChatMessage(const std::string& playerName, bool translate, const std::string& message, const std::string& insertText);
+	void onChatMessage (const std::string& playerName, const std::string& message);
 
 	void startGamePreparation (const sLobbyPreparationData&);
 
