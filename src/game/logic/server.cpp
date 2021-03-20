@@ -290,13 +290,13 @@ void cServer::run()
 				if (player == nullptr)
 				{
 					Log.write(" Server: Connecting player " + connectMessage.playerName + " is not part of the game", cLog::eLOG_TYPE_NET_WARNING);
-					connectionManager->declineConnection(connectMessage.socket, "Text~Multiplayer~Reconnect_Not_Part_Of_Game");
+					connectionManager->declineConnection (connectMessage.socket, eDeclineConnectionReason::NotPartOfTheGame);
 					break;
 				}
 				if (connectionManager->isPlayerConnected(player->getId()))
 				{
 					Log.write(" Server: Connecting player " + connectMessage.playerName + " is already connected", cLog::eLOG_TYPE_NET_WARNING);
-					connectionManager->declineConnection(connectMessage.socket, "Text~Multiplayer~Reconnect_Already_Connected");
+					connectionManager->declineConnection (connectMessage.socket, eDeclineConnectionReason::AlreadyConnected);
 					break;
 				}
 

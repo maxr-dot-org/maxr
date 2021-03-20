@@ -172,14 +172,18 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Gameversion_Warning_Client", version + " " + revision));
 		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Gameversion_Own", (std::string)PACKAGE_VERSION + " " + PACKAGE_REV));
 	});
-	signalConnectionManager.connect (lobbyClient.onConnectionFailed, [this](const std::string& reason){
-		if (reason.empty())
+	signalConnectionManager.connect (lobbyClient.onConnectionFailed, [this](eDeclineConnectionReason reason){
+		switch (reason)
 		{
+		case eDeclineConnectionReason::NotPartOfTheGame:
+			addInfoEntry (lngPack.i18n ("Text~Multiplayer~Reconnect_Not_Part_Of_Game"));
+			break;
+		case eDeclineConnectionReason::AlreadyConnected:
+			addInfoEntry (lngPack.i18n ("Text~Multiplayer~Reconnect_Already_Connected"));
+			break;
+		default:
 			addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Error_Connect", "server"));
-		}
-		else
-		{
-			addInfoEntry (lngPack.i18n (reason));
+			break;
 		}
 		enablePortEdit();
 		enableIpEdit();

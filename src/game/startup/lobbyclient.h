@@ -70,7 +70,7 @@ public:
 
 	cSignal<void()> onLocalPlayerConnected;
 	cSignal<void (const std::string& version, const std::string& revision)> onDifferentVersion;
-	cSignal<void (const std::string& reason)> onConnectionFailed;
+	cSignal<void (eDeclineConnectionReason)> onConnectionFailed;
 	cSignal<void()> onConnectionClosed;
 
 	cSignal<void (const std::string&)> onNoMapNoReady;

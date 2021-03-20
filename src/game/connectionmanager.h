@@ -41,6 +41,14 @@ public:
 	virtual std::unique_ptr<cNetMessage> popMessage() { throw std::runtime_error("Method not implemented"); };
 };
 
+//------------------------------------------------------------------------------
+enum class eDeclineConnectionReason
+{
+	NotPartOfTheGame,
+	AlreadyConnected,
+	Other
+};
+
 class cConnectionManager
 {
 public:
@@ -52,7 +60,7 @@ public:
 	bool isServerOpen() const;
 
 	void acceptConnection(const cSocket* socket, int playerNr);
-	void declineConnection(const cSocket* socket, const std::string& reason);
+	void declineConnection (const cSocket*, eDeclineConnectionReason);
 	void connectToServer (const std::string& host, int port);
 	bool isConnectedToServer() const;
 	void changePlayerNumber(int currentNr, int newNr);

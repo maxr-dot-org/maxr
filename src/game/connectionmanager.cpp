@@ -141,7 +141,7 @@ void cConnectionManager::acceptConnection(const cSocket* socket, int playerNr)
 }
 
 //------------------------------------------------------------------------------
-void cConnectionManager::declineConnection(const cSocket* socket, const std::string& reason)
+void cConnectionManager::declineConnection (const cSocket* socket, eDeclineConnectionReason reason)
 {
 	assert(localServer != nullptr);
 
@@ -570,7 +570,7 @@ void cConnectionManager::connectionResult(const cSocket* socket)
 	if (socket == nullptr)
 	{
 		Log.write("ConnectionManager: Connect to server failed", cLog::eLOG_TYPE_NET_WARNING);
-		auto message = std::make_unique<cNetMessageTcpConnectFailed>();
+		auto message = std::make_unique<cNetMessageTcpConnectFailed> (eDeclineConnectionReason::Other);
 		localClient->pushMessage(std::move(message));
 	}
 }

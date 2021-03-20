@@ -203,10 +203,13 @@ private:
 };
 
 //------------------------------------------------------------------------------
+enum class eDeclineConnectionReason;
+
+//------------------------------------------------------------------------------
 class cNetMessageTcpConnectFailed : public cNetMessageT<eNetMessageType::TCP_CONNECT_FAILED>
 {
 public:
-	cNetMessageTcpConnectFailed (const std::string& reason = "") :
+	cNetMessageTcpConnectFailed (eDeclineConnectionReason reason) :
 		reason (reason)
 	{}
 	cNetMessageTcpConnectFailed (cBinaryArchiveOut& archive)
@@ -217,7 +220,7 @@ public:
 	void serialize (cBinaryArchiveIn& archive) override { cNetMessage::serialize (archive); serializeThis (archive); }
 	void serialize (cTextArchiveIn& archive) override { cNetMessage::serialize (archive); serializeThis (archive); }
 
-	std::string reason;
+	eDeclineConnectionReason reason;
 private:
 	template <typename T>
 	void serializeThis (T& archive)
