@@ -131,7 +131,7 @@ cServerGame::cServerGame (int saveGameNumber) :
 cServerGame::~cServerGame()
 {
 	canceled = true;
-	thread.join();
+	if (thread.joinable()) { thread.join();}
 }
 
 //------------------------------------------------------------------------------

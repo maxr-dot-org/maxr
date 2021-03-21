@@ -156,15 +156,17 @@ bool cDedicatedServer::handleInput (const std::string& command)
 		// ...
 	}
 	else if (tokens.at (0) == "newGame")
-		return startServer();
+	{
+		startServer();
+	}
 	else if (tokens.at (0) == "loadGame")
 	{
 		if (tokens.size() == 2)
-			return startServer (atoi (tokens.at (1).c_str()));
+			startServer (atoi (tokens.at (1).c_str()));
 		else
 		{
 			std::cout << "No savegame number given. Trying to load auto save (savegame number " << kAutoSaveSlot << ")." << std::endl;
-			return startServer (kAutoSaveSlot);
+			startServer (kAutoSaveSlot);
 		}
 	}
 	else if (tokens.at (0) == "saveGame")
