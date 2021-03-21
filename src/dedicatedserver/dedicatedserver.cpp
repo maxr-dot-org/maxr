@@ -19,7 +19,7 @@
 
 #include "dedicatedserver.h"
 
-#include "game/servergame.h"
+#include "dedicatedserver/dedicatedservergame.h"
 #include "utility/listhelpers.h"
 #include "utility/files.h"
 
@@ -215,7 +215,7 @@ bool cDedicatedServer::startServer (int saveGameNumber)
 	{
 		std::cout << "Setting up new game..." << std::endl;
 	}
-	std::unique_ptr<cServerGame> game = std::make_unique<cServerGame> (saveGameNumber);
+	auto game = std::make_unique<cDedicatedServerGame> (saveGameNumber);
 	game->getGamesString = [this](){ return getGamesString(); };
 	game->getAvailableMapsString = [this](){ return getAvailableMapsString(); };
 

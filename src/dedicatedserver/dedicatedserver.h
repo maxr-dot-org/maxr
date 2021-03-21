@@ -17,61 +17,49 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_servergameH
-#define game_servergameH
+#ifndef dedicatedserver_dedicatedserver_H
+#define dedicatedserver_dedicatedserver_H
 
-#include "game/logic/server.h"
-#include "game/startup/lobbyserver.h"
-#include "utility/signal/signalconnectionmanager.h"
-
-#include <atomic>
 #include <memory>
-#include <mutex>
 #include <string>
 #include <vector>
-#include <thread>
+
+class cDedicatedServerGame;
 
 //------------------------------------------------------------------------
-/** cServerGame handles all server side tasks of one multiplayer game in a thread.
+/** cDedicatedServer class manages the server resources and handles command line input.
+ *  @author Paul Grathwohl
  */
-class cServerGame
+class cDedicatedServer
 {
 public:
-	explicit cServerGame(int saveGameNumber);
-	~cServerGame();
+	explicit cDedicatedServer (int port);
+	~cDedicatedServer();
 
-	eOpenServerResult startServer(int port);
-	int getPort() const { return port; }
+	cDedicatedServer (cDedicatedServer&&) = default;
+	cDedicatedServer& operator= (cDedicatedServer&&) = default;
 
-	// all those methods can be called concurrently
-	std::string getGameState() const;
-	void runInThread();
-	void saveGame (int saveGameNumber);
-
-public: // external getter
-	std::function<std::string()> getGamesString;
-	std::function<std::string()> getAvailableMapsString;
-
-private:
-	void handleChatCommand (int fromPlayer, const std::vector<std::string>& tokens);
-	void prepareGameData();
-	void loadGame (int saveGameNumber);
 	void run();
 
 private:
-	cSignalConnectionManager signalConnectionManager;
+	std::string getGamesString() const;
+	std::string getAvailableMapsString() const;
 
-	int port = 0;
+	bool handleInput (const std::string& command);
 
-	std::atomic<bool> canceled{false};
-	std::thread thread;
-	mutable std::recursive_mutex mutex;
+	void printPrompt() const;
 
-	// critical data
-	cLobbyServer lobbyServer;
-	cServer* server = nullptr;
-	bool shouldSave = false;
-	int saveGameNumber = -1;
+	void printConfiguration() const;
+	void printGames() const;
+	void printMaps() const;
+	bool startServer (int saveGameNumber = -1);
+	void setProperty (const std::string& property, const std::string& value);
+	void saveGame (int saveGameNumber);
+	void stopGames();
+
+private:
+	int port;
+	std::vector<std::unique_ptr<cDedicatedServerGame>> games;
 };
 
 #endif

@@ -21,7 +21,7 @@
 
 #include "debug.h"
 #include "defines.h"
-#include "game/dedicatedserver.h"
+#include "dedicatedserver/dedicatedserver.h"
 #include "input/mouse/mouse.h"
 #include "input/keyboard/keyboard.h"
 #include "maxrversion.h"

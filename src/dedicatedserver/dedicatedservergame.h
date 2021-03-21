@@ -17,49 +17,61 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_dedicatedServer_H
-#define game_dedicatedServer_H
+#ifndef dedicatedserver_dedicatedservergameH
+#define dedicatedserver_dedicatedservergameH
 
+#include "game/logic/server.h"
+#include "game/startup/lobbyserver.h"
+#include "utility/signal/signalconnectionmanager.h"
+
+#include <atomic>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
-
-class cServerGame;
+#include <thread>
 
 //------------------------------------------------------------------------
-/** cDedicatedServer class manages the server resources and handles command line input.
- *  @author Paul Grathwohl
+/** cDedicatedServerGame handles all server side tasks of one multiplayer game in a thread.
  */
-class cDedicatedServer
+class cDedicatedServerGame
 {
 public:
-	explicit cDedicatedServer (int port);
-	~cDedicatedServer();
+	explicit cDedicatedServerGame(int saveGameNumber);
+	~cDedicatedServerGame();
 
-	cDedicatedServer (cDedicatedServer&&) = default;
-	cDedicatedServer& operator= (cDedicatedServer&&) = default;
+	eOpenServerResult startServer(int port);
+	int getPort() const { return port; }
 
+	// all those methods can be called concurrently
+	std::string getGameState() const;
+	void runInThread();
+	void saveGame (int saveGameNumber);
+
+public: // external getter
+	std::function<std::string()> getGamesString;
+	std::function<std::string()> getAvailableMapsString;
+
+private:
+	void handleChatCommand (int fromPlayer, const std::vector<std::string>& tokens);
+	void prepareGameData();
+	void loadGame (int saveGameNumber);
 	void run();
 
 private:
-	std::string getGamesString() const;
-	std::string getAvailableMapsString() const;
+	cSignalConnectionManager signalConnectionManager;
 
-	bool handleInput (const std::string& command);
+	int port = 0;
 
-	void printPrompt() const;
+	std::atomic<bool> canceled{false};
+	std::thread thread;
+	mutable std::recursive_mutex mutex;
 
-	void printConfiguration() const;
-	void printGames() const;
-	void printMaps() const;
-	bool startServer (int saveGameNumber = -1);
-	void setProperty (const std::string& property, const std::string& value);
-	void saveGame (int saveGameNumber);
-	void stopGames();
-
-private:
-	int port;
-	std::vector<std::unique_ptr<cServerGame>> games;
+	// critical data
+	cLobbyServer lobbyServer;
+	cServer* server = nullptr;
+	bool shouldSave = false;
+	int saveGameNumber = -1;
 };
 
 #endif
