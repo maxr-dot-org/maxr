@@ -533,7 +533,7 @@ bool cConnectionManager::handeConnectionHandshake(const std::unique_ptr<cNetMess
 
 		stopTimeout(socket);
 
-		//TODO: set localPlayerNr?
+		localPlayer = message->playerNr;
 		break;
 	}
 	default:

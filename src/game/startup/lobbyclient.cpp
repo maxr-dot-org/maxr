@@ -238,6 +238,7 @@ void cLobbyClient::wantToRejoinGame()
 void cLobbyClient::disconnect()
 {
 	connectionManager->disconnect (localPlayer.getNr());
+	localPlayer.setNr (-1);
 }
 //------------------------------------------------------------------------------
 void cLobbyClient::handleNetMessage (const cNetMessage& message)
@@ -364,6 +365,7 @@ void cLobbyClient::handleNetMessage_TCP_CONNECT_FAILED(const cNetMessageTcpConne
 {
 	Log.write("Error on connecting to server", cLog::eLOG_TYPE_WARNING);
 
+	localPlayer.setNr (-1);
 	onConnectionFailed (message.reason);
 }
 
@@ -371,6 +373,7 @@ void cLobbyClient::handleNetMessage_TCP_CONNECT_FAILED(const cNetMessageTcpConne
 void cLobbyClient::handleNetMessage_TCP_CLOSE (const cNetMessageTcpClose& message)
 {
 	localPlayer.setReady (false);
+	localPlayer.setNr (-1);
 
 	onConnectionClosed();
 }
