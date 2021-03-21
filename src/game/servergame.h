@@ -65,7 +65,7 @@ private:
 
 	std::atomic<bool> canceled{false};
 	std::thread thread;
-	mutable std::mutex mutex;
+	mutable std::recursive_mutex mutex;
 
 	// critical data
 	cLobbyServer lobbyServer;

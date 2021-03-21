@@ -143,7 +143,7 @@ eOpenServerResult cServerGame::startServer (int port)
 //------------------------------------------------------------------------------
 std::string cServerGame::getGameState() const
 {
-	std::lock_guard<std::mutex> l{mutex};
+	std::lock_guard<std::recursive_mutex> l{mutex};
 	return (server == nullptr) ? lobbyServer.getGameState() : server->getGameState();
 }
 
@@ -160,7 +160,7 @@ void cServerGame::run()
 	while (canceled == false)
 	{
 		std::this_thread::sleep_for(10ms);
-		std::lock_guard<std::mutex> l{mutex};
+		std::lock_guard<std::recursive_mutex> l{mutex};
 		lobbyServer.run();
 
 		// don't do anything if games haven't been started yet!
@@ -177,7 +177,7 @@ void cServerGame::run()
 //------------------------------------------------------------------------------
 void cServerGame::saveGame (int saveGameNumber)
 {
-	std::lock_guard<std::mutex> l{mutex};
+	std::lock_guard<std::recursive_mutex> l{mutex};
 	if (server == nullptr)
 	{
 		std::cout << "Server not running. Can't save game." << std::endl;
