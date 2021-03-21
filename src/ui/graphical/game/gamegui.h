@@ -48,7 +48,6 @@ class cBuilding;
 class cAnimationTimer;
 class cClient;
 class cHudPanels;
-class cSavedReport;
 class cTurnCounter;
 class cTurnTimeClock;
 class cGameSettings;

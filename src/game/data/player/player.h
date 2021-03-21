@@ -74,8 +74,6 @@ public:
 	std::vector<sTurnstartReport> unitsBuilt;
 };
 
-class cSavedReport;
-
 // the Player class //////////////////////////////
 class cPlayer
 {
