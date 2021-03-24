@@ -17,18 +17,18 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "defines.h"
-#include "dedicatedserver/dedicatedservermain.h"
-#include "ui/uimain.h"
+#ifndef SDLutility_sdlnetcomponentH
+#define SDLutility_sdlnetcomponentH
 
-int main (int argc, char* argv[])
+//------------------------------------------------------------------------------
+struct SDLNetComponent
 {
-	if (DEDICATED_SERVER)
-	{
-		return dedicaterservermain (argc, argv);
-	}
-	else
-	{
-		return uimain (argc, argv);
-	}
-}
+	SDLNetComponent();
+
+	SDLNetComponent(const SDLNetComponent&) = delete;
+	SDLNetComponent& operator= (const SDLNetComponent&) = delete;
+
+	~SDLNetComponent();
+};
+
+#endif

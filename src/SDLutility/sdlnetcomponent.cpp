@@ -17,18 +17,28 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "defines.h"
-#include "dedicatedserver/dedicatedservermain.h"
-#include "ui/uimain.h"
+#include "sdlnetcomponent.h"
 
-int main (int argc, char* argv[])
+#include <SDL_net.h>
+
+#include "utility/log.h"
+
+//------------------------------------------------------------------------------
+SDLNetComponent::SDLNetComponent()
 {
-	if (DEDICATED_SERVER)
+	if (SDLNet_Init() == -1)
 	{
-		return dedicaterservermain (argc, argv);
+		Log.write ("Could not init SDLNet_Init\nNetwork games won't be available!", cLog::eLOG_TYPE_WARNING);
+		Log.write (SDL_GetError(), cLog::eLOG_TYPE_WARNING);
 	}
 	else
 	{
-		return uimain (argc, argv);
+		Log.write ("Net started", cLog::eLOG_TYPE_INFO);
 	}
+}
+
+//------------------------------------------------------------------------------
+SDLNetComponent::~SDLNetComponent()
+{
+	SDLNet_Quit();
 }

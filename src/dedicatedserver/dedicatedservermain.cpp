@@ -17,18 +17,41 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "defines.h"
-#include "dedicatedserver/dedicatedservermain.h"
-#include "ui/uimain.h"
+#include "dedicatedservermain.h"
 
-int main (int argc, char* argv[])
+#include "debug.h"
+#include "dedicatedserver/dedicatedserver.h"
+#include "defines.h"
+#include "maxrversion.h"
+#include "resources/loaddata.h"
+#include "SDLutility/sdlcomponent.h"
+#include "SDLutility/sdlnetcomponent.h"
+#include "utility/log.h"
+
+//------------------------------------------------------------------------------
+int dedicaterservermain(int, char**)
+try
 {
-	if (DEDICATED_SERVER)
+	if (!cSettings::getInstance().isInitialized())
 	{
-		return dedicaterservermain (argc, argv);
+		return -1;
 	}
-	else
+	CR_INIT_CRASHREPORTING();
+	logMAXRVersion();
+
+	SDLComponent sdlComponent (false);
+	SDLNetComponent sdlNetComponent;
+
+	if (LoadData() == eLoadingState::Error)
 	{
-		return uimain (argc, argv);
+		Log.write ("Error while loading data!", cLog::eLOG_TYPE_ERROR);
+		return -1;
 	}
+	cDedicatedServer(DEFAULTPORT).run();
+	Log.write ("EOF");
+	return 0;
+}
+catch (const std::exception&)
+{
+	return -1;
 }

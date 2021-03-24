@@ -17,18 +17,28 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "defines.h"
-#include "dedicatedserver/dedicatedservermain.h"
-#include "ui/uimain.h"
+#include "sdlcomponent.h"
 
-int main (int argc, char* argv[])
+#include <SDL.h>
+
+#include "utility/log.h"
+
+//------------------------------------------------------------------------------
+SDLComponent::SDLComponent (bool withVideo)
 {
-	if (DEDICATED_SERVER)
+	auto flags = SDL_INIT_TIMER;
+	if (SDL_Init (withVideo ? SDL_INIT_VIDEO | flags : flags) == -1)
 	{
-		return dedicaterservermain (argc, argv);
+		Log.write ("Could not init SDL", cLog::eLOG_TYPE_ERROR);
+		Log.write (SDL_GetError(), cLog::eLOG_TYPE_ERROR);
+		throw std::runtime_error ("Could not init SDL");
 	}
-	else
-	{
-		return uimain (argc, argv);
-	}
+	Log.write ("Initialized SDL basics - looks good!", cLog::eLOG_TYPE_INFO);
+	Log.mark();
+}
+
+//------------------------------------------------------------------------------
+SDLComponent::~SDLComponent()
+{
+	SDL_Quit();
 }

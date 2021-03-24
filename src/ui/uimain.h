@@ -17,18 +17,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "defines.h"
-#include "dedicatedserver/dedicatedservermain.h"
-#include "ui/uimain.h"
+#ifndef ui_uimainH
+#define ui_uimainH
 
-int main (int argc, char* argv[])
-{
-	if (DEDICATED_SERVER)
-	{
-		return dedicaterservermain (argc, argv);
-	}
-	else
-	{
-		return uimain (argc, argv);
-	}
-}
+int uimain (int argc, char** argv);
+
+#endif

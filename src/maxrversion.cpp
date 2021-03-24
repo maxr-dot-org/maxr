@@ -17,18 +17,20 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "defines.h"
-#include "dedicatedserver/dedicatedservermain.h"
-#include "ui/uimain.h"
+ #include "maxrversion.h"
 
-int main (int argc, char* argv[])
+#include "utility/log.h"
+
+//------------------------------------------------------------------------------
+void logMAXRVersion()
 {
-	if (DEDICATED_SERVER)
-	{
-		return dedicaterservermain (argc, argv);
-	}
-	else
-	{
-		return uimain (argc, argv);
-	}
+	std::string sVersion = PACKAGE_NAME; sVersion += " ";
+	sVersion += PACKAGE_VERSION; sVersion += " ";
+	sVersion += PACKAGE_REV; sVersion += " ";
+	Log.write (sVersion, cLog::eLOG_TYPE_INFO);
+	std::string sBuild = "Build: "; sBuild += MAX_BUILD_DATE;
+	Log.write (sBuild, cLog::eLOG_TYPE_INFO);
+	Log.mark();
+	Log.write (sVersion, cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (sBuild, cLog::eLOG_TYPE_NET_DEBUG);
 }
