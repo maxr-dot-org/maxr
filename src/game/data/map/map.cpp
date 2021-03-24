@@ -620,11 +620,9 @@ uint32_t cStaticMap::getChecksum(uint32_t crc)
 
 // Funktionen der Map-Klasse /////////////////////////////////////////////////
 cMap::cMap (std::shared_ptr<cStaticMap> staticMap_) :
-	staticMap (std::move (staticMap_)),
-	fields(nullptr)
+	staticMap (std::move (staticMap_))
 {
 	init();
-
 }
 
 void cMap::init()
@@ -633,19 +631,12 @@ void cMap::init()
 	if (Resources.size() != size)
 	{
 		Resources.resize(size, sResources());
-		delete[] fields;
-		fields = new cMapField[size];
+		fields = std::vector<cMapField> (size);
 	}
 }
 
 cMap::~cMap()
 {
-	delete [] fields;
-}
-
-cMapField& cMap::operator[] (unsigned int offset) const
-{
-	return fields[offset];
 }
 
 cMapField& cMap::getField (const cPosition& position)

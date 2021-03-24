@@ -273,12 +273,6 @@ public:
 	const sResources& getResource (const cPosition& position) const { return Resources[getOffset (position)]; }
 
 	void placeResources(cModel& model);
-	/**
-	* Access to a map field
-	* @param the offset of the map field
-	* @return an instance of cMapField, which has several methods to access the objects on the field
-	*/
-	cMapField& operator[] (unsigned int offset) const;
 
 	cMapField& getField (const cPosition& position);
 	const cMapField& getField (const cPosition& position) const;
@@ -362,7 +356,7 @@ private:
 	/**
 	* the information about the fields
 	*/
-	cMapField* fields;
+	std::vector<cMapField> fields;
 	cArrayCrc<sResources> Resources; // field with the resource data
 };
 
