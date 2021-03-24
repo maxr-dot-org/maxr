@@ -25,7 +25,7 @@
 #include <vector>
 #include <utility>
 
-#include "utility/autosurface.h"
+#include "SDLutility/autosurface.h"
 #include "defines.h"
 #include "utility/t_2.h"
 #include "utility/position.h"

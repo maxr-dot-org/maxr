@@ -23,7 +23,7 @@
 #include <utility>
 
 #include "ui/graphical/widget.h"
-#include "utility/autosurface.h"
+#include "SDLutility/autosurface.h"
 #include "utility/signal/signal.h"
 
 class cMouseCursor;

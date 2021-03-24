@@ -23,7 +23,7 @@
 #include <vector>
 #include <SDL.h>
 
-#include "utility/autosurface.h"
+#include "SDLutility/autosurface.h"
 #include "defines.h"
 #include "game/data/units/unitdata.h"
 #include "game/data/player/clans.h"

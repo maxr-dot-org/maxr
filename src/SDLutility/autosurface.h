@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef utility_autosurfaceH
-#define utility_autosurfaceH
+#ifndef SDLutility_autosurfaceH
+#define SDLutility_autosurfaceH
 
 #include <memory>
 #include <SDL.h>
@@ -28,7 +28,7 @@ namespace detail
 
 struct SdlSurfaceDeleter
 {
-	void operator() (SDL_Surface* surface)
+	void operator() (SDL_Surface* surface) const
 	{
 		SDL_FreeSurface (surface);
 	}
@@ -36,11 +36,9 @@ struct SdlSurfaceDeleter
 
 }
 
-typedef std::unique_ptr<SDL_Surface, detail::SdlSurfaceDeleter> AutoSurface;
-typedef std::unique_ptr<SDL_Surface, detail::SdlSurfaceDeleter> SurfaceUPtr;
-typedef std::shared_ptr<SDL_Surface> SurfacePtr;
+using AutoSurface = std::unique_ptr<SDL_Surface, detail::SdlSurfaceDeleter>;
 
 /* Prevent accidentally freeing the SDL_Surface owned by an AutoSurface */
 void SDL_FreeSurface (const AutoSurface&) = delete;
 
-#endif // utility_autosurfaceH
+#endif

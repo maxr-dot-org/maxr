@@ -22,7 +22,7 @@
 
 #include <string>
 
-#include "utility/autosurface.h"
+#include "SDLutility/autosurface.h"
 #include "utility/position.h"
 
 struct sMapPreview

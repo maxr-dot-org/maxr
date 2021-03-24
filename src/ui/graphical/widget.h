@@ -29,7 +29,7 @@
 #include "input/mouse/mousebuttontype.h"
 #include "utility/box.h"
 #include "utility/position.h"
-#include "utility/autosurface.h"
+#include "SDLutility/autosurface.h"
 #include "ui/graphical/shortcut.h"
 #include "utility/signal/signalconnectionmanager.h"
 

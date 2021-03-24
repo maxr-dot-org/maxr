@@ -22,7 +22,7 @@
 #include "defines.h"
 #include "resources/pcx.h"
 #include "settings.h"
-#include "utility/autosurface.h"
+#include "SDLutility/autosurface.h"
 #include "utility/color.h"
 #include "utility/drawing.h"
 #include "utility/files.h"

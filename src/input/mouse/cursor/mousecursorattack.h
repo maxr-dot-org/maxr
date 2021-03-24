@@ -21,7 +21,7 @@
 #define input_mouse_cursor_mousecursorattackH
 
 #include "input/mouse/cursor/mousecursor.h"
-#include "utility/autosurface.h"
+#include "SDLutility/autosurface.h"
 
 class cUnit;
 class cPosition;

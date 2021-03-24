@@ -25,7 +25,7 @@
 #include "ui/graphical/window.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "utility/autosurface.h"
+#include "SDLutility/autosurface.h"
 
 class cImage;
 class cPushButton;

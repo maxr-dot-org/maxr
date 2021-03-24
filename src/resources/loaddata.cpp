@@ -40,7 +40,7 @@
 
 
 #include "maxrversion.h"
-#include "utility/autosurface.h"
+#include "SDLutility/autosurface.h"
 #include "utility/files.h"
 #include "utility/language.h"
 #include "game/data/units/building.h"

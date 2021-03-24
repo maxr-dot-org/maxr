@@ -23,7 +23,7 @@
 #include <memory>
 
 #include "game/data/units/unitdata.h"
-#include "utility/autosurface.h"
+#include "SDLutility/autosurface.h"
 
 class cPlayer;
 class cVehicle;

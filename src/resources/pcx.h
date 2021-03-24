@@ -22,7 +22,7 @@
 
 #include <string>
 
-#include "utility/autosurface.h"
+#include "SDLutility/autosurface.h"
 
 /** Loads an image to a surface
  * @param name path to img

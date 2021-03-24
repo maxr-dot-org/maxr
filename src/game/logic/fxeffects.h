@@ -23,7 +23,7 @@
 #include <vector>
 #include <memory>
 
-#include "utility/autosurface.h"
+#include "SDLutility/autosurface.h"
 #include "utility/position.h"
 #include "game/data/units/unitdata.h"
 

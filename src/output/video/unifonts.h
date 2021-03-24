@@ -19,7 +19,7 @@
 #ifndef output_video_unifontsH
 #define output_video_unifontsH
 
-#include "utility/autosurface.h"
+#include "SDLutility/autosurface.h"
 
 #include <SDL.h>
 

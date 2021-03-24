@@ -21,7 +21,7 @@
 #include "utility/color.h"
 #include "utility/position.h"
 #include "utility/box.h"
-#include "utility/autosurface.h"
+#include "SDLutility/autosurface.h"
 
 //------------------------------------------------------------------------------
 void drawPoint (SDL_Surface* surface, const cPosition& position, const cRgbColor& color)

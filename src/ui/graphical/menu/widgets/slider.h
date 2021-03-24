@@ -22,7 +22,7 @@
 
 #include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "ui/graphical/menu/widgets/sliderhandle.h"
-#include "utility/autosurface.h"
+#include "SDLutility/autosurface.h"
 #include "ui/graphical/orientation.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
