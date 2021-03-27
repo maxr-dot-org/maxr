@@ -21,41 +21,28 @@
 #define game_startup_local_singleplayer_localsingleplayergamenewH
 
 #include <memory>
-#include <vector>
-#include <utility>
 
+#include "game/startup/initplayerdata.h"
 #include "game/startup/local/singleplayer/localsingleplayergame.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "utility/position.h"
 
 class cApplication;
 class cStaticMap;
 class cGameSettings;
 class cPlayerBasicData;
-class cPlayer;
-class cPosition;
-class cUnitUpgrade;
-
-struct sLandingUnit;
-struct sID;
 
 class cLocalSingleplayerGameNew : public cLocalSingleplayerGame
 {
 public:
-	cLocalSingleplayerGameNew();
+	cLocalSingleplayerGameNew() = default;
 
 	void start (cApplication& application);
-
 	void setGameSettings (std::shared_ptr<cGameSettings> gameSettings);
-
 	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
 
 	void setPlayerClan (int clan);
-
 	void setLandingUnits (std::vector<sLandingUnit> landingUnits);
-
 	void setUnitUpgrades (std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades);
-
 	void setLandingPosition (const cPosition& landingPosition);
 
 	cPlayerBasicData createPlayer();
@@ -65,10 +52,7 @@ private:
 	std::shared_ptr<cStaticMap> staticMap;
 	std::shared_ptr<cGameSettings> gameSettings;
 
-	int playerClan;
-	std::vector<sLandingUnit> landingUnits;
-	std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades;
-	cPosition landingPosition;
+	sInitPlayerData initPlayerData;
 };
 
-#endif // game_startup_local_singleplayer_localsingleplayergamenewH
+#endif

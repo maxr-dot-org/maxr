@@ -251,10 +251,7 @@ void cMenuControllerMultiplayerClient::startNewGame()
 {
 	if (!newGame) return;
 
-	newGame->setLocalPlayerClan (initGamePreparation->getClan());
-	newGame->setLocalPlayerLandingUnits (initGamePreparation->getLandingUnits());
-	newGame->setLocalPlayerUnitUpgrades (initGamePreparation->getUnitUpgrades());
-	newGame->setLocalPlayerLandingPosition (initGamePreparation->getLandingPosition());
+	newGame->setInitPlayerData (initGamePreparation->getInitPlayerData());
 
 	application.closeTill (*windowNetworkLobby);
 	windowNetworkLobby->close();

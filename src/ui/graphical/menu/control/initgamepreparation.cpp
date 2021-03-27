@@ -104,7 +104,7 @@ void cInitGamePreparation::startClanSelection (bool isFirstWindowOnGamePreparati
 	signalConnectionManager.connect (windowClanSelection->canceled, [this]() { back(); });
 	signalConnectionManager.connect (windowClanSelection->done, [this, windowClanSelection]()
 	{
-		clan = windowClanSelection->getSelectedClan();
+		initPlayerData.clan = windowClanSelection->getSelectedClan();
 
 		startLandingUnitSelection (false);
 	});
@@ -115,15 +115,15 @@ void cInitGamePreparation::startLandingUnitSelection (bool isFirstWindowOnGamePr
 {
 	const auto& gameSettings = *lobbyPreparationData.gameSettings;
 	const auto unitsData = lobbyPreparationData.unitsData;
-	const auto initialLandingUnits = computeInitialLandingUnits (clan, gameSettings, *unitsData);
-	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), clan, initialLandingUnits, gameSettings.getStartCredits(), unitsData));
+	const auto initialLandingUnits = computeInitialLandingUnits (initPlayerData.clan, gameSettings, *unitsData);
+	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), initPlayerData.clan, initialLandingUnits, gameSettings.getStartCredits(), unitsData));
 	windows.push_back (windowLandingUnitSelection);
 
 	signalConnectionManager.connect (windowLandingUnitSelection->canceled, [this]() { back(); });
 	signalConnectionManager.connect (windowLandingUnitSelection->done, [this, windowLandingUnitSelection]()
 	{
-		landingUnits = windowLandingUnitSelection->getLandingUnits();
-		unitUpgrades = windowLandingUnitSelection->getUnitUpgrades();
+		initPlayerData.landingUnits = windowLandingUnitSelection->getLandingUnits();
+		initPlayerData.unitUpgrades = windowLandingUnitSelection->getUnitUpgrades();
 
 		startLandingPositionSelection();
 	});
@@ -137,7 +137,7 @@ void cInitGamePreparation::startLandingPositionSelection()
 	const bool fixedBridgeHead = lobbyPreparationData.gameSettings->getBridgeheadType() == eGameSettingsBridgeheadType::Definite;
 	const auto& unitsData = lobbyPreparationData.unitsData;
 
-	windowLandingPositionSelection = std::make_shared<cWindowLandingPositionSelection> (map, fixedBridgeHead, landingUnits, unitsData, true);
+	windowLandingPositionSelection = std::make_shared<cWindowLandingPositionSelection> (map, fixedBridgeHead, initPlayerData.landingUnits, unitsData, true);
 	application.show (windowLandingPositionSelection);
 	windows.push_back (windowLandingPositionSelection.get());
 
@@ -161,7 +161,7 @@ void cInitGamePreparation::startLandingPositionSelection()
 	});
 	signalConnectionManager.connect (windowLandingPositionSelection->selectedPosition, [this] (cPosition landingPosition)
 	{
-		this->landingPosition = landingPosition;
+		initPlayerData.landingPosition = landingPosition;
 		lobbyClient.selectLandingPosition (landingPosition);
 	});
 

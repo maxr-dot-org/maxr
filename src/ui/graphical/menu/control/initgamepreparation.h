@@ -27,6 +27,7 @@
 #include "game/data/units/landingunit.h"
 #include "game/data/units/unitdata.h"
 #include "game/logic/upgradecalculator.h"
+#include "game/startup/initplayerdata.h"
 #include "game/startup/lobbypreparationdata.h"
 #include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"
 #include "utility/signal/signalconnectionmanager.h"
@@ -47,10 +48,7 @@ public:
 
 	void startGamePreparation (const sLobbyPreparationData&);
 
-	int getClan() const { return clan; }
-	const std::vector<sLandingUnit>& getLandingUnits() const { return landingUnits; }
-	const std::vector<std::pair<sID, cUnitUpgrade>>& getUnitUpgrades() const { return unitUpgrades; }
-	const cPosition& getLandingPosition() const { return landingPosition; }
+	const sInitPlayerData& getInitPlayerData() const { return initPlayerData; }
 
 private:
 	void startClanSelection (bool isFirstWindowOnGamePreparation);
@@ -70,10 +68,7 @@ private:
 
 	cSignalConnectionManager signalConnectionManager;
 
-	int clan = -1;
-	std::vector<sLandingUnit> landingUnits;
-	std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades;
-	cPosition landingPosition;
+	sInitPlayerData initPlayerData;
 };
 
 #endif

@@ -31,8 +31,8 @@
 #include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
-cActionInitNewGame::cActionInitNewGame() :
-	clan(-1)
+cActionInitNewGame::cActionInitNewGame (sInitPlayerData initPlayerData) :
+	initPlayerData (std::move (initPlayerData))
 {}
 
 //------------------------------------------------------------------------------
@@ -57,12 +57,12 @@ void cActionInitNewGame::execute(cModel& model) const
 	// init clan
 	if (model.getGameSettings()->getClansEnabled())
 	{
-		if (clan < 0 || static_cast<size_t>(clan) >= unitsdata.getNrOfClans())
+		if (initPlayerData.clan < 0 || static_cast<size_t>(initPlayerData.clan) >= unitsdata.getNrOfClans())
 		{
 			Log.write(" Landing failed. Invalid clan number.", cLog::eLOG_TYPE_NET_ERROR);
 			return;
 		}
-		player.setClan(clan, unitsdata);
+		player.setClan(initPlayerData.clan, unitsdata);
 	}
 	else
 	{
@@ -70,12 +70,12 @@ void cActionInitNewGame::execute(cModel& model) const
 	}
 
 	// init landing position
-	if (!model.getMap()->isValidPosition(landingPosition))
+	if (!model.getMap()->isValidPosition(initPlayerData.landingPosition))
 	{
 		Log.write(" Received invalid landing position", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
-	cPosition updatedLandingPosition = landingPosition;
+	cPosition updatedLandingPosition = initPlayerData.landingPosition;
 	if (model.getGameSettings()->getBridgeheadType() == eGameSettingsBridgeheadType::Definite)
 	{
 		// Find place for mine if bridgehead is fixed
@@ -92,7 +92,7 @@ void cActionInitNewGame::execute(cModel& model) const
 
 	// apply upgrades
 	int credits = model.getGameSettings()->getStartCredits();
-	for (const auto& upgrade : unitUpgrades)
+	for (const auto& upgrade : initPlayerData.unitUpgrades)
 	{
 		const sID& unitId = upgrade.first;
 		const cUnitUpgrade& upgradeValues = upgrade.second;
@@ -118,8 +118,8 @@ void cActionInitNewGame::execute(cModel& model) const
 	}
 
 	// land vehicles
-	auto initialLandingUnits = computeInitialLandingUnits (clan, *model.getGameSettings(), unitsdata);
-	for (const auto& landing : landingUnits)
+	auto initialLandingUnits = computeInitialLandingUnits (initPlayerData.clan, *model.getGameSettings(), unitsdata);
+	for (const auto& landing : initPlayerData.landingUnits)
 	{
 		if (!unitsdata.isValidId(landing.unitID))
 		{
@@ -138,7 +138,7 @@ void cActionInitNewGame::execute(cModel& model) const
 		else
 		{
 			credits -= landing.cargo / 5;
-			credits -= unitsdata.getDynamicUnitData(landing.unitID, clan).getBuildCost();
+			credits -= unitsdata.getDynamicUnitData(landing.unitID, initPlayerData.clan).getBuildCost();
 		}
 	}
 	if (credits < 0)
@@ -146,7 +146,7 @@ void cActionInitNewGame::execute(cModel& model) const
 		Log.write(" Landing failed. Used more than the available credits", cLog::eLOG_TYPE_ERROR);
 		return;
 	}
-	makeLanding(player, landingUnits, model);
+	makeLanding(player, initPlayerData.landingUnits, model);
 
 	//transfer remaining credits to player
 	player.setCredits(credits);

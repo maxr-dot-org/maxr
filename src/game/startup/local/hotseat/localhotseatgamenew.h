@@ -24,6 +24,7 @@
 #include <vector>
 #include <utility>
 
+#include "game/startup/initplayerdata.h"
 #include "game/startup/local/hotseat/localhotseatgame.h"
 #include "game/data/player/playerbasicdata.h"
 #include "utility/position.h"
@@ -42,15 +43,8 @@ struct sID;
 
 class cLocalHotSeatGameNew : public cLocalHotSeatGame
 {
-	struct sInitPlayerData
-	{
-		int clan = -1;
-		std::vector<sLandingUnit> landingUnits;
-		std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades;
-		cPosition landingPosition;
-	};
 public:
-	cLocalHotSeatGameNew();
+	cLocalHotSeatGameNew() = default;
 
 	void start (cApplication& application);
 

@@ -37,9 +37,6 @@ class cPlayer;
 class cPosition;
 class cUnitUpgrade;
 
-struct sLandingUnit;
-struct sID;
-
 class cNetworkClientGameSaved : public cNetworkGame
 {
 public:

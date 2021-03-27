@@ -21,9 +21,7 @@
 #define game_logic_actionInitNewGameH
 
 #include "action.h"
-#include "game/data/units/landingunit.h"
-#include "game/logic/upgradecalculator.h"
-#include "utility/position.h"
+#include "game/startup/initplayerdata.h"
 
 class cVehicle;
 class cBuilding;
@@ -32,7 +30,7 @@ class cStaticMap;
 class cActionInitNewGame : public cActionT<cAction::eActiontype::ACTION_INIT_NEW_GAME>
 {
 public:
-	cActionInitNewGame();
+	cActionInitNewGame (sInitPlayerData);
 	cActionInitNewGame(cBinaryArchiveOut& archive);
 
 	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
@@ -42,18 +40,15 @@ public:
 
 	static bool isValidLandingPosition(cPosition position, std::shared_ptr<cStaticMap> map, bool fixedBridgeHead, const std::vector<sLandingUnit>& units, std::shared_ptr<const cUnitsData> unitsData);
 
-	std::vector<sLandingUnit> landingUnits;
-	int clan;
-	std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades;
-	cPosition landingPosition;
+	sInitPlayerData initPlayerData;
 private:
 	template<typename T>
 	void serializeThis(T& archive)
 	{
-		archive & landingUnits;
-		archive & clan;
-		archive & unitUpgrades;
-		archive & landingPosition;
+		archive & initPlayerData.landingUnits;
+		archive & initPlayerData.clan;
+		archive & initPlayerData.unitUpgrades;
+		archive & initPlayerData.landingPosition;
 	}
 	void makeLanding(cPlayer& player, const std::vector<sLandingUnit>& landingUnits, cModel& model) const;
 	cVehicle* landVehicle(const cPosition& landingPosition, int radius, const sID& id, cPlayer& player, cModel& model) const;

@@ -18,20 +18,16 @@
  ***************************************************************************/
 
 #include "game/startup/local/hotseat/localhotseatgamenew.h"
+
 #include "game/data/gamesettings.h"
-#include "ui/graphical/application.h"
-#include "game/logic/client.h"
-#include "game/logic/server.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
-#include "game/data/units/landingunit.h"
 #include "game/logic/action/actioninitnewgame.h"
+#include "game/logic/client.h"
+#include "game/logic/server.h"
 #include "game/startup/lobbypreparationdata.h"
-
-//------------------------------------------------------------------------------
-cLocalHotSeatGameNew::cLocalHotSeatGameNew()
-{}
+#include "ui/graphical/application.h"
 
 //------------------------------------------------------------------------------
 void cLocalHotSeatGameNew::start (cApplication& application)
@@ -68,12 +64,7 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 
 	for (size_t i = 0; i != playersData.size(); ++i)
 	{
-		cActionInitNewGame action;
-		action.clan = playersData[i].clan;
-		action.landingUnits = playersData[i].landingUnits;
-		action.landingPosition = playersData[i].landingPosition;
-		action.unitUpgrades = playersData[i].unitUpgrades;
-		clients[i]->sendNetMessage(action);
+		clients[i]->sendNetMessage (cActionInitNewGame (playersData[i]));
 	}
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);

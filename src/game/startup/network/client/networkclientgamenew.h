@@ -24,6 +24,7 @@
 #include <vector>
 #include <utility>
 
+#include "game/startup/initplayerdata.h"
 #include "game/startup/network/networkgame.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
@@ -34,40 +35,25 @@ class cStaticMap;
 class cGameSettings;
 class cPlayerBasicData;
 class cPlayer;
-class cPosition;
-class cUnitUpgrade;
-
-struct sLandingUnit;
-struct sID;
 
 class cNetworkClientGameNew : public cNetworkGame
 {
 public:
-	cNetworkClientGameNew();
+	cNetworkClientGameNew() = default;
 
 	void start (cApplication& application);
 
 	void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
-
 	void setGameSettings (std::shared_ptr<cGameSettings> gameSettings);
-
 	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
 
-	void setLocalPlayerClan (int clan);
-
-	void setLocalPlayerLandingUnits (std::vector<sLandingUnit> landingUnits);
-
-	void setLocalPlayerUnitUpgrades (std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades);
-
-	void setLocalPlayerLandingPosition (const cPosition& landingPosition);
+	void setInitPlayerData (sInitPlayerData);
 
 	const std::shared_ptr<cGameSettings>& getGameSettings();
 	const std::shared_ptr<cStaticMap>& getStaticMap();
 	const std::vector<cPlayerBasicData>& getPlayers();
-	const std::vector<sLandingUnit>& getLandingUnits();
 	const cPlayerBasicData& getLocalPlayer();
 
-	int getLocalPlayerClan() const;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
@@ -77,11 +63,7 @@ private:
 	std::shared_ptr<cStaticMap> staticMap;
 	std::shared_ptr<cGameSettings> gameSettings;
 
-	int localPlayerClan;
-
-	std::vector<sLandingUnit> localPlayerLandingUnits;
-	std::vector<std::pair<sID, cUnitUpgrade>> localPlayerUnitUpgrades;
-	cPosition localPlayerLandingPosition;
+	sInitPlayerData initPlayerData;
 };
 
-#endif // game_startup_network_client_networkclientgamenewH
+#endif

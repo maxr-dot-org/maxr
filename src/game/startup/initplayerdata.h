@@ -17,53 +17,22 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_startup_network_host_networkhostgamenewH
-#define game_startup_network_host_networkhostgamenewH
+#ifndef game_startup_initplayerdataH
+#define game_startup_initplayerdataH
 
-#include <memory>
 #include <vector>
-#include <utility>
 
-#include "game/startup/initplayerdata.h"
-#include "game/startup/network/networkgame.h"
-#include "utility/signal/signal.h"
-#include "utility/signal/signalconnectionmanager.h"
+#include "game/data/units/landingunit.h"
+#include "game/data/units/unitdata.h"
+#include "game/logic/upgradecalculator.h"
 #include "utility/position.h"
 
-class cApplication;
-class cStaticMap;
-class cGameSettings;
-class cPlayerBasicData;
-class cPlayer;
-
-class cNetworkHostGameNew : public cNetworkGame
+struct sInitPlayerData
 {
-public:
-	cNetworkHostGameNew() = default;
-
-	void start (cApplication& application, cServer&);
-
-	void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
-	void setGameSettings (std::shared_ptr<cGameSettings> gameSettings);
-	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
-
-	void setInitPlayerData (sInitPlayerData);
-
-	const std::shared_ptr<cGameSettings>& getGameSettings();
-	const std::shared_ptr<cStaticMap>& getStaticMap();
-	const std::vector<cPlayerBasicData>& getPlayers();
-	const cPlayerBasicData& getLocalPlayer();
-
-private:
-	cSignalConnectionManager signalConnectionManager;
-
-	int localPlayerNr;
-	std::vector<cPlayerBasicData> players;
-
-	std::shared_ptr<cStaticMap> staticMap;
-	std::shared_ptr<cGameSettings> gameSettings;
-
-	sInitPlayerData initPlayerData;
+	int clan = -1;
+	std::vector<sLandingUnit> landingUnits;
+	std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades;
+	cPosition landingPosition;
 };
 
-#endif // game_startup_network_host_networkhostgamenewH
+#endif

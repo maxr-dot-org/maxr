@@ -22,18 +22,12 @@
 #include "game/data/gamesettings.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
-#include "game/data/units/landingunit.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/action/actioninitnewgame.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
 #include "game/startup/lobbypreparationdata.h"
 #include "ui/graphical/application.h"
-
-//------------------------------------------------------------------------------
-cLocalSingleplayerGameNew::cLocalSingleplayerGameNew() :
-	playerClan (-1)
-{}
 
 //------------------------------------------------------------------------------
 void cLocalSingleplayerGameNew::start (cApplication& application)
@@ -58,12 +52,7 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 
 	server->start();
 
-	cActionInitNewGame action;
-	action.clan = playerClan;
-	action.landingUnits = landingUnits;
-	action.landingPosition = landingPosition;
-	action.unitUpgrades = unitUpgrades;
-	client->sendNetMessage(action);
+	client->sendNetMessage (cActionInitNewGame (initPlayerData));
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
@@ -71,7 +60,7 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 	gameGuiController->setServer(server.get());
 
 	cGameGuiState playerGameGuiState;
-	playerGameGuiState.mapPosition = landingPosition;
+	playerGameGuiState.mapPosition = initPlayerData.landingPosition;
 	gameGuiController->addPlayerGameGuiState (0, std::move (playerGameGuiState));
 
 	gameGuiController->start();
@@ -98,25 +87,25 @@ void cLocalSingleplayerGameNew::setStaticMap (std::shared_ptr<cStaticMap> static
 //------------------------------------------------------------------------------
 void cLocalSingleplayerGameNew::setPlayerClan (int clan)
 {
-	playerClan = clan;
+	initPlayerData.clan = clan;
 }
 
 //------------------------------------------------------------------------------
 void cLocalSingleplayerGameNew::setLandingUnits (std::vector<sLandingUnit> landingUnits_)
 {
-	landingUnits = std::move (landingUnits_);
+	initPlayerData.landingUnits = std::move (landingUnits_);
 }
 
 //------------------------------------------------------------------------------
 void cLocalSingleplayerGameNew::setUnitUpgrades (std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades_)
 {
-	unitUpgrades = std::move (unitUpgrades_);
+	initPlayerData.unitUpgrades = std::move (unitUpgrades_);
 }
 
 //------------------------------------------------------------------------------
 void cLocalSingleplayerGameNew::setLandingPosition (const cPosition& landingPosition_)
 {
-	landingPosition = landingPosition_;
+	initPlayerData.landingPosition = landingPosition_;
 }
 
 //------------------------------------------------------------------------------
