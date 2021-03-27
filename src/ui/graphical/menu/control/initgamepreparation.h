@@ -51,8 +51,8 @@ public:
 	const sInitPlayerData& getInitPlayerData() const { return initPlayerData; }
 
 private:
-	void startClanSelection (bool isFirstWindowOnGamePreparation);
-	void startLandingUnitSelection (bool isFirstWindowOnGamePreparation);
+	void startClanSelection();
+	void startLandingUnitSelection();
 	void startLandingPositionSelection();
 	void back();
 	void checkReallyWantsToQuit();

@@ -87,16 +87,16 @@ void cInitGamePreparation::startGamePreparation (const sLobbyPreparationData& lo
 	lobbyPreparationData = lobbyData;
 	if (lobbyData.gameSettings->getClansEnabled())
 	{
-		startClanSelection (true);
+		startClanSelection();
 	}
 	else
 	{
-		startLandingUnitSelection (true);
+		startLandingUnitSelection();
 	}
 }
 
 //------------------------------------------------------------------------------
-void cInitGamePreparation::startClanSelection (bool isFirstWindowOnGamePreparation)
+void cInitGamePreparation::startClanSelection()
 {
 	auto windowClanSelection = application.show (std::make_shared<cWindowClanSelection> (lobbyPreparationData.unitsData, lobbyPreparationData.clanData));
 	windows.push_back (windowClanSelection);
@@ -106,12 +106,12 @@ void cInitGamePreparation::startClanSelection (bool isFirstWindowOnGamePreparati
 	{
 		initPlayerData.clan = windowClanSelection->getSelectedClan();
 
-		startLandingUnitSelection (false);
+		startLandingUnitSelection();
 	});
 }
 
 //------------------------------------------------------------------------------
-void cInitGamePreparation::startLandingUnitSelection (bool isFirstWindowOnGamePreparation)
+void cInitGamePreparation::startLandingUnitSelection()
 {
 	const auto& gameSettings = *lobbyPreparationData.gameSettings;
 	const auto unitsData = lobbyPreparationData.unitsData;
