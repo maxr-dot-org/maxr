@@ -17,32 +17,23 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_startup_local_singleplayer_localsingleplayergameH
-#define game_startup_local_singleplayer_localsingleplayergameH
+#include "localsingleplayergame.h"
 
-#include <memory>
-#include <string>
+#include "game/logic/client.h"
+#include "game/logic/server.h"
+#include "game/data/savegame.h"
 
-#include "game/startup/game.h"
-#include "ui/graphical/game/control/gameguicontroller.h"
-
-class cClient;
-class cServer;
-class cGameGuiController;
-
-class cLocalSingleplayerGame : public cGame
+//------------------------------------------------------------------------------
+cLocalSingleplayerGame::~cLocalSingleplayerGame()
 {
-public:
-	~cLocalSingleplayerGame();
+	if (server)
+	{
+		server->stop();
+	}
+}
 
-	void run() override;
-
-protected:
-	std::shared_ptr<cClient> client;
-	std::unique_ptr<cServer> server;
-
-	std::unique_ptr<cGameGuiController> gameGuiController;
-
-};
-
-#endif // game_startup_local_singleplayer_localsingleplayergameH
+//------------------------------------------------------------------------------
+void cLocalSingleplayerGame::run()
+{
+	if (client) client->run();
+}

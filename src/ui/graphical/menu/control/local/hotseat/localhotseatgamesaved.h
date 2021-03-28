@@ -17,10 +17,10 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef game_startup_local_hotseat_localhotseatgamesavedH
-#define game_startup_local_hotseat_localhotseatgamesavedH
+#ifndef ui_graphical_menu_control_local_hotseat_localhotseatgamesavedH
+#define ui_graphical_menu_control_local_hotseat_localhotseatgamesavedH
 
-#include "game/startup/local/hotseat/localhotseatgame.h"
+#include "ui/graphical/menu/control/local/hotseat/localhotseatgame.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 class cLocalHotSeatGameSaved : public cLocalHotSeatGame
@@ -36,4 +36,4 @@ private:
 	int saveGameNumber;
 };
 
-#endif // game_startup_local_hotseat_localhotseatgamesavedH
+#endif

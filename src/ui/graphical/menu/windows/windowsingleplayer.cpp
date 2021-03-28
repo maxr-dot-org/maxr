@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/windows/windowsingleplayer.h"
+#include "windowsingleplayer.h"
 
 #include <functional>
 
@@ -28,11 +28,11 @@
 #include "game/logic/client.h"
 #include "game/logic/server.h"
 #include "game/startup/gamepreparation.h"
-#include "game/startup/local/singleplayer/localsingleplayergamenew.h"
-#include "game/startup/local/singleplayer/localsingleplayergamesaved.h"
 #include "settings.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/game/gamegui.h"
+#include "ui/graphical/menu/control/local/singleplayer/localsingleplayergamenew.h"
+#include "ui/graphical/menu/control/local/singleplayer/localsingleplayergamesaved.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"

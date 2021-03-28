@@ -17,36 +17,33 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "game/startup/network/client/networkclientgamenew.h"
+#include "networkhostgamesaved.h"
 
 #include "game/data/gamesettings.h"
 #include "game/data/player/player.h"
-#include "game/logic/action/actioninitnewgame.h"
+#include "game/data/report/savedreport.h"
+#include "game/data/savegame.h"
 #include "game/logic/client.h"
-#include "game/startup/lobbypreparationdata.h"
+#include "game/logic/server.h"
 #include "ui/graphical/application.h"
 #include "utility/ranges.h"
 
 //------------------------------------------------------------------------------
-void cNetworkClientGameNew::start (cApplication& application)
+void cNetworkHostGameSaved::start (cApplication& application)
 {
-	assert (gameSettings != nullptr);
-
-	localClient = std::make_shared<cClient>(connectionManager);
+	//setup client
+	localClient = std::make_shared<cClient> (connectionManager);
 	connectionManager->setLocalClient(localClient.get(), localPlayerNr);
+	localClient->setPlayers(players, localPlayerNr);
+	auto staticMap = server->getModel().getMap()->staticMap;
+	localClient->setMap (staticMap);
 
-	localClient->setPreparationData({unitsData, clanData, gameSettings, staticMap});
-	localClient->setPlayers (players, localPlayerNr);
-
-	localClient->sendNetMessage (cActionInitNewGame (initPlayerData));
+	localClient->sendNetMessage(cNetMessageRequestResync(-1, saveGameNumber));
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
 	gameGuiController->setSingleClient (localClient);
-
-	cGameGuiState playerGameGuiState;
-	playerGameGuiState.mapPosition = initPlayerData.landingPosition;
-	gameGuiController->addPlayerGameGuiState (localPlayerNr, std::move (playerGameGuiState));
+	gameGuiController->setServer(server);
 
 	gameGuiController->start();
 
@@ -58,50 +55,26 @@ void cNetworkClientGameNew::start (cApplication& application)
 }
 
 //------------------------------------------------------------------------------
-void cNetworkClientGameNew::setPlayers (std::vector<cPlayerBasicData> players_, const cPlayerBasicData& localPlayer)
+void cNetworkHostGameSaved::setSaveGameNumber (int saveGameNumber_)
+{
+	saveGameNumber = saveGameNumber_;
+}
+
+//------------------------------------------------------------------------------
+void cNetworkHostGameSaved::setPlayers (std::vector<cPlayerBasicData> players_, const cPlayerBasicData& localPlayer)
 {
 	players = players_;
 	localPlayerNr = localPlayer.getNr();
 }
 
 //------------------------------------------------------------------------------
-void cNetworkClientGameNew::setGameSettings (std::shared_ptr<cGameSettings> gameSettings_)
-{
-	gameSettings = gameSettings_;
-}
-
-//------------------------------------------------------------------------------
-void cNetworkClientGameNew::setStaticMap (std::shared_ptr<cStaticMap> staticMap_)
-{
-	staticMap = staticMap_;
-}
-
-//------------------------------------------------------------------------------
-void cNetworkClientGameNew::setInitPlayerData (sInitPlayerData initPlayerData)
-{
-	this->initPlayerData = std::move (initPlayerData);
-}
-
-//------------------------------------------------------------------------------
-const std::shared_ptr<cGameSettings>& cNetworkClientGameNew::getGameSettings()
-{
-	return gameSettings;
-}
-
-//------------------------------------------------------------------------------
-const std::shared_ptr<cStaticMap>& cNetworkClientGameNew::getStaticMap()
-{
-	return staticMap;
-}
-
-//------------------------------------------------------------------------------
-const std::vector<cPlayerBasicData>& cNetworkClientGameNew::getPlayers()
+const std::vector<cPlayerBasicData>& cNetworkHostGameSaved::getPlayers()
 {
 	return players;
 }
 
 //------------------------------------------------------------------------------
-const cPlayerBasicData& cNetworkClientGameNew::getLocalPlayer()
+const cPlayerBasicData& cNetworkHostGameSaved::getLocalPlayer()
 {
 	return *ranges::find_if (players, [&](const cPlayerBasicData& player) { return player.getNr() == localPlayerNr; });
 }

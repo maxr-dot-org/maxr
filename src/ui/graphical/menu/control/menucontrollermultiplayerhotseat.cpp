@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/control/menucontrollermultiplayerhotseat.h"
+#include "menucontrollermultiplayerhotseat.h"
 
 #include "game/data/gamesettings.h"
 #include "game/data/map/map.h"
@@ -25,8 +25,8 @@
 #include "game/data/units/landingunit.h"
 #include "game/logic/upgradecalculator.h"
 #include "game/startup/gamepreparation.h"
-#include "game/startup/local/hotseat/localhotseatgamenew.h"
 #include "ui/graphical/application.h"
+#include "ui/graphical/menu/control/local/hotseat/localhotseatgamenew.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/dialogs/dialogyesno.h"
 #include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"

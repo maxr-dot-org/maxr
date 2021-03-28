@@ -17,49 +17,30 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_startup_gameH
-#define game_startup_gameH
+#ifndef ui_graphical_menu_control_local_singleplayer_localsingleplayergamesavedH
+#define ui_graphical_menu_control_local_singleplayer_localsingleplayergamesavedH
 
 #include <memory>
-#include "utility/runnable.h"
-#include "utility/signal/signal.h"
+#include <vector>
+#include <utility>
 
-class cUnitsData;
-class cClanData;
+#include "ui/graphical/menu/control/local/singleplayer/localsingleplayergame.h"
+#include "utility/position.h"
+#include "utility/signal/signalconnectionmanager.h"
 
-class cGame : public cRunnable, public std::enable_shared_from_this<cGame>
+class cApplication;
+
+class cLocalSingleplayerGameSaved : public cLocalSingleplayerGame
 {
 public:
-	cGame() :
-		terminate (false)
-	{}
-	virtual ~cGame() {}
+	void start (cApplication& application);
 
-	bool wantsToTerminate() const override
-	{
-		return terminate;
-	}
-	void exit()
-	{
-		terminate = true;
-		terminated();
-	}
-	void resetTerminating()
-	{
-		terminate = false;
-	}
+	void setSaveGameNumber (int saveGameNumber);
 
-	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData_) { unitsData = std::move(unitsData_); }
-	std::shared_ptr<const cUnitsData> getUnitsData() const { return unitsData; }
-	void setClanData(std::shared_ptr<const cClanData> clanData_) { clanData = std::move(clanData_); }
-	std::shared_ptr<const cClanData> getClanData() const { return clanData; }
-
-	mutable cSignal<void()> terminated;
-protected:
-	std::shared_ptr<const cUnitsData> unitsData;
-	std::shared_ptr<const cClanData> clanData;
 private:
-	bool terminate;
+	cSignalConnectionManager signalConnectionManager;
+
+	int saveGameNumber;
 };
 
-#endif // game_startup_gameH
+#endif

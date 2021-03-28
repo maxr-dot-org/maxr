@@ -17,49 +17,25 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "game/startup/local/singleplayer/localsingleplayergamesaved.h"
-#include "game/data/gamesettings.h"
-#include "ui/graphical/application.h"
+#include "localhotseatgame.h"
+
 #include "game/logic/client.h"
-#include "game/logic/server.h"
-#include "game/data/player/player.h"
 #include "game/data/savegame.h"
-#include "game/data/report/savedreport.h"
 
 //------------------------------------------------------------------------------
-void cLocalSingleplayerGameSaved::start (cApplication& application)
+cLocalHotSeatGame::~cLocalHotSeatGame()
 {
-	auto connectionManager = std::make_shared<cConnectionManager>();
-
-	//set up server
-	server = std::make_unique<cServer>(connectionManager);
-	connectionManager->setLocalServer(server.get());
-	server->loadGameState(saveGameNumber);
-
-	//setup client
-	client = std::make_shared<cClient> (connectionManager);
-	auto staticMap = server->getModel().getMap()->staticMap;
-	client->setMap(staticMap);
-	//use player 0 as local player
-	client->loadModel(saveGameNumber, 0); //TODO: resync model from server
-	connectionManager->setLocalClient(client.get(), 0);
-
-	server->sendGuiInfoToClients(saveGameNumber);
-	server->start();
-
-	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
-	gameGuiController->setSingleClient (client);
-	gameGuiController->setServer(server.get());
-	gameGuiController->start();
-
-	resetTerminating();
-
-	application.addRunnable (shared_from_this());
-
-	signalConnectionManager.connect (gameGuiController->terminated, [&]() { exit(); });
+	if (server)
+	{
+		server->stop();
+	}
 }
 
-void cLocalSingleplayerGameSaved::setSaveGameNumber (int saveGameNumber_)
+//------------------------------------------------------------------------------
+void cLocalHotSeatGame::run()
 {
-	saveGameNumber = saveGameNumber_;
+	for (size_t i = 0; i < clients.size(); ++i)
+	{
+		clients[i]->run();
+	}
 }

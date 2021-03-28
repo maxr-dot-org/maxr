@@ -17,36 +17,53 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_startup_network_networkgameH
-#define game_startup_network_networkgameH
+#ifndef ui_graphical_menu_control_network_client_networkclientgamenewH
+#define ui_graphical_menu_control_network_client_networkclientgamenewH
 
-#include <cassert>
 #include <memory>
+#include <vector>
+#include <utility>
 
-#include "game/startup/game.h"
-#include "ui/graphical/game/control/gameguicontroller.h"
+#include "game/startup/initplayerdata.h"
+#include "ui/graphical/menu/control/network/networkgame.h"
+#include "utility/signal/signal.h"
+#include "utility/signal/signalconnectionmanager.h"
+#include "utility/position.h"
 
-class cClient;
-class cServer;
-class cConnectionManager;
+class cApplication;
+class cStaticMap;
+class cGameSettings;
+class cPlayerBasicData;
+class cPlayer;
 
-class cNetworkGame : public cGame
+class cNetworkClientGameNew : public cNetworkGame
 {
 public:
-	~cNetworkGame();
+	cNetworkClientGameNew() = default;
 
-	void run() override;
+	void start (cApplication& application);
 
-	void setConnectionManager (std::shared_ptr<cConnectionManager>);
+	void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
+	void setGameSettings (std::shared_ptr<cGameSettings> gameSettings);
+	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
 
-	cClient& getLocalClient() { assert (localClient); return *localClient; }
-protected:
-	std::shared_ptr<cConnectionManager> connectionManager;
+	void setInitPlayerData (sInitPlayerData);
 
-	std::shared_ptr<cClient> localClient;
-	cServer* server = nullptr;
+	const std::shared_ptr<cGameSettings>& getGameSettings();
+	const std::shared_ptr<cStaticMap>& getStaticMap();
+	const std::vector<cPlayerBasicData>& getPlayers();
+	const cPlayerBasicData& getLocalPlayer();
 
-	std::unique_ptr<cGameGuiController> gameGuiController;
+private:
+	cSignalConnectionManager signalConnectionManager;
+
+	int localPlayerNr;
+	std::vector<cPlayerBasicData> players;
+
+	std::shared_ptr<cStaticMap> staticMap;
+	std::shared_ptr<cGameSettings> gameSettings;
+
+	sInitPlayerData initPlayerData;
 };
 
 #endif

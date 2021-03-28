@@ -17,31 +17,49 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_startup_local_hotseat_localhotseatgameH
-#define game_startup_local_hotseat_localhotseatgameH
+#ifndef ui_graphical_menu_control_network_client_networkclientgamesavedH
+#define ui_graphical_menu_control_network_client_networkclientgamesavedH
 
 #include <memory>
-#include <string>
 #include <vector>
+#include <utility>
 
-#include "game/startup/game.h"
-#include "ui/graphical/game/control/gameguicontroller.h"
-#include "game/logic/server.h"
+#include "ui/graphical/menu/control/network/networkgame.h"
+#include "utility/signal/signal.h"
+#include "utility/signal/signalconnectionmanager.h"
+#include "utility/position.h"
 
-class cClient;
+class cApplication;
+class cStaticMap;
+class cGameSettings;
+class cPlayerBasicData;
+class cPlayer;
+class cPosition;
+class cUnitUpgrade;
 
-class cLocalHotSeatGame : public cGame
+class cNetworkClientGameSaved : public cNetworkGame
 {
 public:
-	~cLocalHotSeatGame();
+	cNetworkClientGameSaved();
 
-	void run() override;
+	void start (cApplication& application);
 
-protected:
-	std::vector<std::shared_ptr<cClient>> clients;
-	std::unique_ptr<cServer> server;
+	void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
 
-	std::unique_ptr<cGameGuiController> gameGuiController;
+	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
+
+	const std::shared_ptr<cStaticMap>& getStaticMap();
+	const std::vector<cPlayerBasicData>& getPlayers();
+	const cPlayerBasicData& getLocalPlayer();
+
+	int getLocalPlayerClan() const;
+private:
+	cSignalConnectionManager signalConnectionManager;
+
+	int localPlayerNr;
+	std::vector<cPlayerBasicData> players;
+
+	std::shared_ptr<cStaticMap> staticMap;
 };
 
-#endif // game_startup_local_hotseat_localhotseatgameH
+#endif

@@ -30,7 +30,6 @@
 #include "game/logic/client.h"
 #include "game/logic/movejob.h"
 #include "game/logic/turncounter.h"
-#include "game/startup/game.h"
 #include "input/keyboard/keyboard.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
 #include "input/mouse/mouse.h"

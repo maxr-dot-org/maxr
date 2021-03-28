@@ -17,15 +17,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/control/menucontrollermultiplayerclient.h"
+#include "menucontrollermultiplayerclient.h"
 
 #include "game/data/units/landingunit.h"
 #include "game/logic/client.h"
 #include "game/startup/gamepreparation.h"
-#include "game/startup/network/client/networkclientgamenew.h"
-#include "game/startup/network/client/networkclientgamereconnection.h"
-#include "game/startup/network/client/networkclientgamesaved.h"
 #include "ui/graphical/application.h"
+#include "ui/graphical/menu/control/network/client/networkclientgamenew.h"
+#include "ui/graphical/menu/control/network/client/networkclientgamereconnection.h"
+#include "ui/graphical/menu/control/network/client/networkclientgamesaved.h"
 #include "ui/graphical/menu/windows/windownetworklobbyclient/windownetworklobbyclient.h"
 #include "ui/graphical/menu/windows/windowgamesettings/windowgamesettings.h"
 #include "ui/graphical/menu/windows/windowload/windowload.h"

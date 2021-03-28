@@ -17,30 +17,31 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_startup_local_singleplayer_localsingleplayergamesavedH
-#define game_startup_local_singleplayer_localsingleplayergamesavedH
+#ifndef ui_graphical_menu_control_local_hotseat_localhotseatgameH
+#define ui_graphical_menu_control_local_hotseat_localhotseatgameH
 
 #include <memory>
+#include <string>
 #include <vector>
-#include <utility>
 
-#include "game/startup/local/singleplayer/localsingleplayergame.h"
-#include "utility/signal/signalconnectionmanager.h"
-#include "utility/position.h"
+#include "game/logic/server.h"
+#include "ui/graphical/game/control/gameguicontroller.h"
+#include "ui/graphical/menu/control/game.h"
 
-class cApplication;
+class cClient;
 
-class cLocalSingleplayerGameSaved : public cLocalSingleplayerGame
+class cLocalHotSeatGame : public cGame
 {
 public:
-	void start (cApplication& application);
+	~cLocalHotSeatGame();
 
-	void setSaveGameNumber (int saveGameNumber);
+	void run() override;
 
-private:
-	cSignalConnectionManager signalConnectionManager;
+protected:
+	std::vector<std::shared_ptr<cClient>> clients;
+	std::unique_ptr<cServer> server;
 
-	int saveGameNumber;
+	std::unique_ptr<cGameGuiController> gameGuiController;
 };
 
-#endif // game_startup_local_singleplayer_localsingleplayergamesavedH
+#endif

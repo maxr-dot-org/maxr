@@ -17,22 +17,21 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/application.h"
+#include "application.h"
 
-#include "input/mouse/mouse.h"
 #include "input/keyboard/keyboard.h"
+#include "input/mouse/mouse.h"
 #include "events/eventmanager.h"
-#include "settings.h"
-#include "output/video/video.h"
-#include "utility/string/toString.h"
 #include "output/video/unifonts.h"
+#include "output/video/video.h"
 #include "protocol/netmessage.h"
-#include "game/startup/game.h"
+#include "settings.h"
 #include "utility/runnable.h"
+#include "utility/string/toString.h"
 
+#include "ui/graphical/framecounter.h"
 #include "ui/graphical/widget.h"
 #include "ui/graphical/window.h"
-#include "ui/graphical/framecounter.h"
 
 //------------------------------------------------------------------------------
 cApplication::cApplication() :

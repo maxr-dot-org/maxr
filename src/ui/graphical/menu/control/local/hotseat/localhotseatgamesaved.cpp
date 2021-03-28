@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "game/startup/network/host/networkhostgamesaved.h"
+#include "localhotseatgamesaved.h"
 
 #include "game/data/gamesettings.h"
 #include "game/data/player/player.h"
@@ -26,25 +26,39 @@
 #include "game/logic/client.h"
 #include "game/logic/server.h"
 #include "ui/graphical/application.h"
-#include "utility/ranges.h"
 
 //------------------------------------------------------------------------------
-void cNetworkHostGameSaved::start (cApplication& application)
+void cLocalHotSeatGameSaved::start (cApplication& application)
 {
-	//setup client
-	localClient = std::make_shared<cClient> (connectionManager);
-	connectionManager->setLocalClient(localClient.get(), localPlayerNr);
-	localClient->setPlayers(players, localPlayerNr);
-	auto staticMap = server->getModel().getMap()->staticMap;
-	localClient->setMap (staticMap);
+	auto connectionManager = std::make_shared<cConnectionManager>();
 
-	localClient->sendNetMessage(cNetMessageRequestResync(-1, saveGameNumber));
+	server = std::make_unique<cServer>(connectionManager);
+	connectionManager->setLocalServer(server.get());
+	server->loadGameState(saveGameNumber);
+
+	const auto& staticMap = server->getModel().getMap()->staticMap;
+	const std::size_t nbPlayers = server->getModel().getPlayerList().size();
+	clients.resize(nbPlayers);
+	for (std::size_t i = 0; i != nbPlayers; ++i)
+	{
+		clients[i] = std::make_shared<cClient> (connectionManager);
+		clients[i]->setMap(staticMap);
+		clients[i]->loadModel(saveGameNumber, i);//TODO: resync model from server
+	}
+
+	std::vector<INetMessageReceiver*> hotseatClients;
+	for (auto& client : clients)
+	{
+		hotseatClients.push_back(client.get());
+	}
+	connectionManager->setLocalClients(std::move(hotseatClients));
+
+	server->sendGuiInfoToClients(saveGameNumber);
+	server->start();
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
-
-	gameGuiController->setSingleClient (localClient);
-	gameGuiController->setServer(server);
-
+	gameGuiController->setClients(clients, server->getModel().getActiveTurnPlayer()->getId());
+	gameGuiController->setServer(server.get());
 	gameGuiController->start();
 
 	resetTerminating();
@@ -54,27 +68,7 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	signalConnectionManager.connect (gameGuiController->terminated, [&]() { exit(); });
 }
 
-//------------------------------------------------------------------------------
-void cNetworkHostGameSaved::setSaveGameNumber (int saveGameNumber_)
+void cLocalHotSeatGameSaved::setSaveGameNumber (int saveGameNumber_)
 {
 	saveGameNumber = saveGameNumber_;
-}
-
-//------------------------------------------------------------------------------
-void cNetworkHostGameSaved::setPlayers (std::vector<cPlayerBasicData> players_, const cPlayerBasicData& localPlayer)
-{
-	players = players_;
-	localPlayerNr = localPlayer.getNr();
-}
-
-//------------------------------------------------------------------------------
-const std::vector<cPlayerBasicData>& cNetworkHostGameSaved::getPlayers()
-{
-	return players;
-}
-
-//------------------------------------------------------------------------------
-const cPlayerBasicData& cNetworkHostGameSaved::getLocalPlayer()
-{
-	return *ranges::find_if (players, [&](const cPlayerBasicData& player) { return player.getNr() == localPlayerNr; });
 }

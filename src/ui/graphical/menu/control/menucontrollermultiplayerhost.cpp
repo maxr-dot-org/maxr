@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/control/menucontrollermultiplayerhost.h"
+#include "menucontrollermultiplayerhost.h"
 
 #include "game/data/player/player.h"
 #include "game/data/savegameinfo.h"
@@ -25,11 +25,11 @@
 #include "game/data/units/landingunit.h"
 #include "game/logic/server.h"
 #include "game/startup/gamepreparation.h"
-#include "game/startup/network/host/networkhostgamenew.h"
-#include "game/startup/network/host/networkhostgamesaved.h"
 #include "mapdownloader/mapuploadmessagehandler.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/game/widgets/chatbox.h"
+#include "ui/graphical/menu/control/network/host/networkhostgamenew.h"
+#include "ui/graphical/menu/control/network/host/networkhostgamesaved.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/dialogs/dialogyesno.h"
 #include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"

@@ -17,48 +17,37 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_startup_network_client_networkclientgamenewH
-#define game_startup_network_client_networkclientgamenewH
+#ifndef ui_graphical_menu_control_local_singleplayer_localsingleplayergamenewH
+#define ui_graphical_menu_control_local_singleplayer_localsingleplayergamenewH
 
 #include <memory>
-#include <vector>
-#include <utility>
 
 #include "game/startup/initplayerdata.h"
-#include "game/startup/network/networkgame.h"
-#include "utility/signal/signal.h"
+#include "ui/graphical/menu/control/local/singleplayer/localsingleplayergame.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "utility/position.h"
 
 class cApplication;
 class cStaticMap;
 class cGameSettings;
 class cPlayerBasicData;
-class cPlayer;
 
-class cNetworkClientGameNew : public cNetworkGame
+class cLocalSingleplayerGameNew : public cLocalSingleplayerGame
 {
 public:
-	cNetworkClientGameNew() = default;
+	cLocalSingleplayerGameNew() = default;
 
 	void start (cApplication& application);
-
-	void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
 	void setGameSettings (std::shared_ptr<cGameSettings> gameSettings);
 	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
 
-	void setInitPlayerData (sInitPlayerData);
+	void setPlayerClan (int clan);
+	void setLandingUnits (std::vector<sLandingUnit> landingUnits);
+	void setUnitUpgrades (std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades);
+	void setLandingPosition (const cPosition& landingPosition);
 
-	const std::shared_ptr<cGameSettings>& getGameSettings();
-	const std::shared_ptr<cStaticMap>& getStaticMap();
-	const std::vector<cPlayerBasicData>& getPlayers();
-	const cPlayerBasicData& getLocalPlayer();
-
+	cPlayerBasicData createPlayer();
 private:
 	cSignalConnectionManager signalConnectionManager;
-
-	int localPlayerNr;
-	std::vector<cPlayerBasicData> players;
 
 	std::shared_ptr<cStaticMap> staticMap;
 	std::shared_ptr<cGameSettings> gameSettings;

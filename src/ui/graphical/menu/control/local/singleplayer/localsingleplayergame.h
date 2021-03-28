@@ -17,38 +17,32 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_startup_network_host_networkhostgamesavedH
-#define game_startup_network_host_networkhostgamesavedH
+#ifndef ui_graphical_menu_control_local_singleplayer_localsingleplayergameH
+#define ui_graphical_menu_control_local_singleplayer_localsingleplayergameH
 
 #include <memory>
-#include <vector>
+#include <string>
 
-#include "game/startup/network/networkgame.h"
-#include "utility/signal/signal.h"
-#include "utility/signal/signalconnectionmanager.h"
+#include "ui/graphical/menu/control/game.h"
+#include "ui/graphical/game/control/gameguicontroller.h"
 
-class cApplication;
-class cPlayerBasicData;
+class cClient;
+class cServer;
+class cGameGuiController;
 
-class cNetworkHostGameSaved : public cNetworkGame
+class cLocalSingleplayerGame : public cGame
 {
 public:
-	void setServer (cServer& server) { this->server = &server; }
-	void start (cApplication& application);
+	~cLocalSingleplayerGame();
 
-	void setSaveGameNumber (int saveGameNumber);
+	void run() override;
 
-	void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
+protected:
+	std::shared_ptr<cClient> client;
+	std::unique_ptr<cServer> server;
 
-	const std::vector<cPlayerBasicData>& getPlayers();
-	const cPlayerBasicData& getLocalPlayer();
-private:
-	cSignalConnectionManager signalConnectionManager;
+	std::unique_ptr<cGameGuiController> gameGuiController;
 
-	int localPlayerNr;
-	std::vector<cPlayerBasicData> players;
-
-	int saveGameNumber;
 };
 
-#endif // game_startup_network_host_networkhostgamesavedH
+#endif

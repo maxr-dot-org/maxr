@@ -17,25 +17,38 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "game/startup/local/hotseat/localhotseatgame.h"
+#ifndef ui_graphical_menu_control_network_host_networkhostgamesavedH
+#define ui_graphical_menu_control_network_host_networkhostgamesavedH
 
-#include "game/logic/client.h"
-#include "game/data/savegame.h"
+#include <memory>
+#include <vector>
 
-//------------------------------------------------------------------------------
-cLocalHotSeatGame::~cLocalHotSeatGame()
+#include "ui/graphical/menu/control/network/networkgame.h"
+#include "utility/signal/signal.h"
+#include "utility/signal/signalconnectionmanager.h"
+
+class cApplication;
+class cPlayerBasicData;
+
+class cNetworkHostGameSaved : public cNetworkGame
 {
-	if (server)
-	{
-		server->stop();
-	}
-}
+public:
+	void setServer (cServer& server) { this->server = &server; }
+	void start (cApplication& application);
 
-//------------------------------------------------------------------------------
-void cLocalHotSeatGame::run()
-{
-	for (size_t i = 0; i < clients.size(); ++i)
-	{
-		clients[i]->run();
-	}
-}
+	void setSaveGameNumber (int saveGameNumber);
+
+	void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
+
+	const std::vector<cPlayerBasicData>& getPlayers();
+	const cPlayerBasicData& getLocalPlayer();
+private:
+	cSignalConnectionManager signalConnectionManager;
+
+	int localPlayerNr;
+	std::vector<cPlayerBasicData> players;
+
+	int saveGameNumber;
+};
+
+#endif

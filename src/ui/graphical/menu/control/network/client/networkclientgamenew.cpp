@@ -17,51 +17,36 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "game/startup/local/singleplayer/localsingleplayergamenew.h"
+#include "networkclientgamenew.h"
 
 #include "game/data/gamesettings.h"
 #include "game/data/player/player.h"
-#include "game/data/units/building.h"
-#include "game/data/units/vehicle.h"
 #include "game/logic/action/actioninitnewgame.h"
 #include "game/logic/client.h"
-#include "game/logic/server.h"
 #include "game/startup/lobbypreparationdata.h"
 #include "ui/graphical/application.h"
+#include "utility/ranges.h"
 
 //------------------------------------------------------------------------------
-void cLocalSingleplayerGameNew::start (cApplication& application)
+void cNetworkClientGameNew::start (cApplication& application)
 {
 	assert (gameSettings != nullptr);
-	auto connectionManager = std::make_shared<cConnectionManager>();
 
-	server = std::make_unique<cServer>(connectionManager);
-	server->setPreparationData ({unitsData, clanData, gameSettings, staticMap});
+	localClient = std::make_shared<cClient>(connectionManager);
+	connectionManager->setLocalClient(localClient.get(), localPlayerNr);
 
-	client = std::make_shared<cClient>(connectionManager);
-	client->setPreparationData({unitsData, clanData, gameSettings, staticMap});
+	localClient->setPreparationData({unitsData, clanData, gameSettings, staticMap});
+	localClient->setPlayers (players, localPlayerNr);
 
-	auto player = createPlayer();
-	std::vector<cPlayerBasicData> players;
-	players.push_back (player);
-	client->setPlayers (players, 0);
-	server->setPlayers(players);
-
-	connectionManager->setLocalServer(server.get());
-	connectionManager->setLocalClient(client.get(), 0);
-
-	server->start();
-
-	client->sendNetMessage (cActionInitNewGame (initPlayerData));
+	localClient->sendNetMessage (cActionInitNewGame (initPlayerData));
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
-	gameGuiController->setSingleClient (client);
-	gameGuiController->setServer(server.get());
+	gameGuiController->setSingleClient (localClient);
 
 	cGameGuiState playerGameGuiState;
 	playerGameGuiState.mapPosition = initPlayerData.landingPosition;
-	gameGuiController->addPlayerGameGuiState (0, std::move (playerGameGuiState));
+	gameGuiController->addPlayerGameGuiState (localPlayerNr, std::move (playerGameGuiState));
 
 	gameGuiController->start();
 
@@ -69,50 +54,54 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 
 	application.addRunnable (shared_from_this());
 
-	signalConnectionManager.connect(gameGuiController->terminated, [&]() { exit(); });
+	signalConnectionManager.connect (gameGuiController->terminated, [&]() { exit(); });
 }
 
 //------------------------------------------------------------------------------
-void cLocalSingleplayerGameNew::setGameSettings (std::shared_ptr<cGameSettings> gameSettings_)
+void cNetworkClientGameNew::setPlayers (std::vector<cPlayerBasicData> players_, const cPlayerBasicData& localPlayer)
+{
+	players = players_;
+	localPlayerNr = localPlayer.getNr();
+}
+
+//------------------------------------------------------------------------------
+void cNetworkClientGameNew::setGameSettings (std::shared_ptr<cGameSettings> gameSettings_)
 {
 	gameSettings = gameSettings_;
 }
 
 //------------------------------------------------------------------------------
-void cLocalSingleplayerGameNew::setStaticMap (std::shared_ptr<cStaticMap> staticMap_)
+void cNetworkClientGameNew::setStaticMap (std::shared_ptr<cStaticMap> staticMap_)
 {
 	staticMap = staticMap_;
 }
 
 //------------------------------------------------------------------------------
-void cLocalSingleplayerGameNew::setPlayerClan (int clan)
+void cNetworkClientGameNew::setInitPlayerData (sInitPlayerData initPlayerData)
 {
-	initPlayerData.clan = clan;
+	this->initPlayerData = std::move (initPlayerData);
 }
 
 //------------------------------------------------------------------------------
-void cLocalSingleplayerGameNew::setLandingUnits (std::vector<sLandingUnit> landingUnits_)
+const std::shared_ptr<cGameSettings>& cNetworkClientGameNew::getGameSettings()
 {
-	initPlayerData.landingUnits = std::move (landingUnits_);
+	return gameSettings;
 }
 
 //------------------------------------------------------------------------------
-void cLocalSingleplayerGameNew::setUnitUpgrades (std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades_)
+const std::shared_ptr<cStaticMap>& cNetworkClientGameNew::getStaticMap()
 {
-	initPlayerData.unitUpgrades = std::move (unitUpgrades_);
+	return staticMap;
 }
 
 //------------------------------------------------------------------------------
-void cLocalSingleplayerGameNew::setLandingPosition (const cPosition& landingPosition_)
+const std::vector<cPlayerBasicData>& cNetworkClientGameNew::getPlayers()
 {
-	initPlayerData.landingPosition = landingPosition_;
+	return players;
 }
 
 //------------------------------------------------------------------------------
-cPlayerBasicData cLocalSingleplayerGameNew::createPlayer()
+const cPlayerBasicData& cNetworkClientGameNew::getLocalPlayer()
 {
-	auto player = cPlayerBasicData::fromSettings();
-
-	player.setNr (0);
-	return player;
+	return *ranges::find_if (players, [&](const cPlayerBasicData& player) { return player.getNr() == localPlayerNr; });
 }

@@ -17,16 +17,16 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_startup_local_hotseat_localhotseatgamenewH
-#define game_startup_local_hotseat_localhotseatgamenewH
+#ifndef ui_graphical_menu_control_local_hotseat_localhotseatgamenewH
+#define ui_graphical_menu_control_local_hotseat_localhotseatgamenewH
 
 #include <memory>
 #include <vector>
 #include <utility>
 
 #include "game/startup/initplayerdata.h"
-#include "game/startup/local/hotseat/localhotseatgame.h"
 #include "game/data/player/playerbasicdata.h"
+#include "ui/graphical/menu/control/local/hotseat/localhotseatgame.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
@@ -73,4 +73,4 @@ private:
 	std::vector<sInitPlayerData> playersData;
 };
 
-#endif // game_startup_local_hotseat_localhotseatgamenewH
+#endif

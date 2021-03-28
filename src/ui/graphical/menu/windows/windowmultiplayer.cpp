@@ -26,7 +26,7 @@
 #include "ui/graphical/menu/control/menucontrollermultiplayerclient.h"
 #include "ui/graphical/menu/control/menucontrollermultiplayerhotseat.h"
 #include "ui/graphical/application.h"
-#include "game/startup/local/hotseat/localhotseatgamesaved.h"
+#include "ui/graphical/menu/control/local/hotseat/localhotseatgamesaved.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------

@@ -17,53 +17,36 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_startup_network_host_networkhostgamenewH
-#define game_startup_network_host_networkhostgamenewH
+#ifndef ui_graphical_menu_control_network_networkgameH
+#define ui_graphical_menu_control_network_networkgameH
 
+#include <cassert>
 #include <memory>
-#include <vector>
-#include <utility>
 
-#include "game/startup/initplayerdata.h"
-#include "game/startup/network/networkgame.h"
-#include "utility/signal/signal.h"
-#include "utility/signal/signalconnectionmanager.h"
-#include "utility/position.h"
+#include "ui/graphical/game/control/gameguicontroller.h"
+#include "ui/graphical/menu/control/game.h"
 
-class cApplication;
-class cStaticMap;
-class cGameSettings;
-class cPlayerBasicData;
-class cPlayer;
+class cClient;
+class cServer;
+class cConnectionManager;
 
-class cNetworkHostGameNew : public cNetworkGame
+class cNetworkGame : public cGame
 {
 public:
-	cNetworkHostGameNew() = default;
+	~cNetworkGame();
 
-	void start (cApplication& application, cServer&);
+	void run() override;
 
-	void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
-	void setGameSettings (std::shared_ptr<cGameSettings> gameSettings);
-	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
+	void setConnectionManager (std::shared_ptr<cConnectionManager>);
 
-	void setInitPlayerData (sInitPlayerData);
+	cClient& getLocalClient() { assert (localClient); return *localClient; }
+protected:
+	std::shared_ptr<cConnectionManager> connectionManager;
 
-	const std::shared_ptr<cGameSettings>& getGameSettings();
-	const std::shared_ptr<cStaticMap>& getStaticMap();
-	const std::vector<cPlayerBasicData>& getPlayers();
-	const cPlayerBasicData& getLocalPlayer();
+	std::shared_ptr<cClient> localClient;
+	cServer* server = nullptr;
 
-private:
-	cSignalConnectionManager signalConnectionManager;
-
-	int localPlayerNr;
-	std::vector<cPlayerBasicData> players;
-
-	std::shared_ptr<cStaticMap> staticMap;
-	std::shared_ptr<cGameSettings> gameSettings;
-
-	sInitPlayerData initPlayerData;
+	std::unique_ptr<cGameGuiController> gameGuiController;
 };
 
-#endif // game_startup_network_host_networkhostgamenewH
+#endif

@@ -17,42 +17,49 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_startup_local_singleplayer_localsingleplayergamenewH
-#define game_startup_local_singleplayer_localsingleplayergamenewH
+#ifndef ui_graphical_menu_control_gameH
+#define ui_graphical_menu_control_gameH
 
 #include <memory>
+#include "utility/runnable.h"
+#include "utility/signal/signal.h"
 
-#include "game/startup/initplayerdata.h"
-#include "game/startup/local/singleplayer/localsingleplayergame.h"
-#include "utility/signal/signalconnectionmanager.h"
+class cUnitsData;
+class cClanData;
 
-class cApplication;
-class cStaticMap;
-class cGameSettings;
-class cPlayerBasicData;
-
-class cLocalSingleplayerGameNew : public cLocalSingleplayerGame
+class cGame : public cRunnable, public std::enable_shared_from_this<cGame>
 {
 public:
-	cLocalSingleplayerGameNew() = default;
+	cGame() :
+		terminate (false)
+	{}
+	virtual ~cGame() {}
 
-	void start (cApplication& application);
-	void setGameSettings (std::shared_ptr<cGameSettings> gameSettings);
-	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
+	bool wantsToTerminate() const override
+	{
+		return terminate;
+	}
+	void exit()
+	{
+		terminate = true;
+		terminated();
+	}
+	void resetTerminating()
+	{
+		terminate = false;
+	}
 
-	void setPlayerClan (int clan);
-	void setLandingUnits (std::vector<sLandingUnit> landingUnits);
-	void setUnitUpgrades (std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades);
-	void setLandingPosition (const cPosition& landingPosition);
+	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData_) { unitsData = std::move(unitsData_); }
+	std::shared_ptr<const cUnitsData> getUnitsData() const { return unitsData; }
+	void setClanData(std::shared_ptr<const cClanData> clanData_) { clanData = std::move(clanData_); }
+	std::shared_ptr<const cClanData> getClanData() const { return clanData; }
 
-	cPlayerBasicData createPlayer();
+	mutable cSignal<void()> terminated;
+protected:
+	std::shared_ptr<const cUnitsData> unitsData;
+	std::shared_ptr<const cClanData> clanData;
 private:
-	cSignalConnectionManager signalConnectionManager;
-
-	std::shared_ptr<cStaticMap> staticMap;
-	std::shared_ptr<cGameSettings> gameSettings;
-
-	sInitPlayerData initPlayerData;
+	bool terminate;
 };
 
 #endif

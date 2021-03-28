@@ -17,36 +17,43 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_startup_network_client_networkclientgamereconnectionH
-#define game_startup_network_client_networkclientgamereconnectionH
+#ifndef ui_graphical_menu_control_network_host_networkhostgamenewH
+#define ui_graphical_menu_control_network_host_networkhostgamenewH
 
 #include <memory>
 #include <vector>
 #include <utility>
 
-#include "game/startup/network/networkgame.h"
+#include "game/startup/initplayerdata.h"
+#include "ui/graphical/menu/control/network/networkgame.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/position.h"
 
 class cApplication;
 class cStaticMap;
+class cGameSettings;
 class cPlayerBasicData;
+class cPlayer;
 
-class cNetworkClientGameReconnection : public cNetworkGame
+class cNetworkHostGameNew : public cNetworkGame
 {
 public:
-	cNetworkClientGameReconnection();
+	cNetworkHostGameNew() = default;
 
-	void start (cApplication& application);
+	void start (cApplication& application, cServer&);
 
 	void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
-
+	void setGameSettings (std::shared_ptr<cGameSettings> gameSettings);
 	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
 
+	void setInitPlayerData (sInitPlayerData);
+
+	const std::shared_ptr<cGameSettings>& getGameSettings();
 	const std::shared_ptr<cStaticMap>& getStaticMap();
 	const std::vector<cPlayerBasicData>& getPlayers();
 	const cPlayerBasicData& getLocalPlayer();
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 
@@ -54,6 +61,9 @@ private:
 	std::vector<cPlayerBasicData> players;
 
 	std::shared_ptr<cStaticMap> staticMap;
+	std::shared_ptr<cGameSettings> gameSettings;
+
+	sInitPlayerData initPlayerData;
 };
 
-#endif // game_startup_network_client_networkclientgamereconnectionH
+#endif

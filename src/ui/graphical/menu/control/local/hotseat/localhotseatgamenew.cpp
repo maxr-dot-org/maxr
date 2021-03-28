@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "game/startup/local/hotseat/localhotseatgamenew.h"
+#include "localhotseatgamenew.h"
 
 #include "game/data/gamesettings.h"
 #include "game/data/player/player.h"
