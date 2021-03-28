@@ -48,6 +48,8 @@ public:
 
 	void startGamePreparation();
 
+	void close();
+
 	const sInitPlayerData& getInitPlayerData() const { return initPlayerData; }
 
 private:

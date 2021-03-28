@@ -84,92 +84,16 @@ void cWindowSinglePlayer::newGameClicked()
 
 	windowGameSettings->done.connect ([ = ]()
 	{
-		auto gameSettings = std::make_shared<cGameSettings> (windowGameSettings->getGameSettings());
-		game->setGameSettings (gameSettings);
+		game->setGameSettings (windowGameSettings->getGameSettings());
 
 		auto windowMapSelection = application->show (std::make_shared<cWindowMapSelection> ());
 
-		windowMapSelection->done.connect ([ = ]()
+		windowMapSelection->done.connect ([=]()
 		{
-			auto staticMap = std::make_shared<cStaticMap>();
-			if (!windowMapSelection->loadSelectedMap (*staticMap))
-			{
-				// TODO: error dialog: could not load selected map!
-				return;
-			}
-			game->setStaticMap (staticMap);
-
-			if (gameSettings->clansEnabled)
-			{
-				auto windowClanSelection = application->show (std::make_shared<cWindowClanSelection> (game->getUnitsData(), game->getClanData()));
-
-				signalConnectionManager.connect (windowClanSelection->canceled, [windowClanSelection]() { windowClanSelection->close(); });
-				windowClanSelection->done.connect ([ = ]()
-				{
-					game->setPlayerClan (windowClanSelection->getSelectedClan());
-
-					auto initialLandingUnits = computeInitialLandingUnits (windowClanSelection->getSelectedClan(), *gameSettings, *game->getUnitsData());
-					// TODO: use player color
-					auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cRgbColor(), windowClanSelection->getSelectedClan(), initialLandingUnits, gameSettings->startCredits, game->getUnitsData()));
-
-					signalConnectionManager.connect (windowLandingUnitSelection->canceled, [windowLandingUnitSelection]() { windowLandingUnitSelection->close(); });
-					windowLandingUnitSelection->done.connect ([ = ]()
-					{
-						game->setLandingUnits (windowLandingUnitSelection->getLandingUnits());
-						game->setUnitUpgrades (windowLandingUnitSelection->getUnitUpgrades());
-
-						bool fixedBridgeHead = gameSettings->bridgeheadType == eGameSettingsBridgeheadType::Definite;
-						auto landingUnits = windowLandingUnitSelection->getLandingUnits();
-						auto unitsdata = game->getUnitsData();
-						auto windowLandingPositionSelection = application->show (std::make_shared<cWindowLandingPositionSelection> (staticMap, fixedBridgeHead, landingUnits, unitsdata, false));
-
-						signalConnectionManager.connect (windowLandingPositionSelection->canceled, [windowLandingPositionSelection]() { windowLandingPositionSelection->close(); });
-						windowLandingPositionSelection->selectedPosition.connect ([ = ] (cPosition landingPosition)
-						{
-							game->setLandingPosition (landingPosition);
-
-							game->start (*application);
-
-							windowLandingPositionSelection->close();
-							windowLandingUnitSelection->close();
-							windowClanSelection->close();
-							windowMapSelection->close();
-							windowGameSettings->close();
-						});
-					});
-				});
-			}
-			else
-			{
-				auto initialLandingUnits = computeInitialLandingUnits (-1, *gameSettings, *game->getUnitsData());
-				// TODO: use player color
-				auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cRgbColor(), -1, initialLandingUnits, gameSettings->startCredits, game->getUnitsData()));
-
-				signalConnectionManager.connect (windowLandingUnitSelection->canceled, [windowLandingUnitSelection]() { windowLandingUnitSelection->close(); });
-				windowLandingUnitSelection->done.connect ([ = ]()
-				{
-					game->setLandingUnits (windowLandingUnitSelection->getLandingUnits());
-					game->setUnitUpgrades (windowLandingUnitSelection->getUnitUpgrades());
-
-					bool fixedBridgeHead = gameSettings->bridgeheadType == eGameSettingsBridgeheadType::Definite;
-					auto landingUnits = windowLandingUnitSelection->getLandingUnits();
-					auto unitsdata = game->getUnitsData();
-					auto windowLandingPositionSelection = application->show(std::make_shared<cWindowLandingPositionSelection>(staticMap, fixedBridgeHead, landingUnits, unitsdata, false));
-
-					signalConnectionManager.connect (windowLandingPositionSelection->canceled, [windowLandingPositionSelection]() { windowLandingPositionSelection->close(); });
-					windowLandingPositionSelection->selectedPosition.connect ([ = ] (cPosition landingPosition)
-					{
-						game->setLandingPosition (landingPosition);
-
-						game->start (*application);
-
-						windowLandingPositionSelection->close();
-						windowLandingUnitSelection->close();
-						windowMapSelection->close();
-						windowGameSettings->close();
-					});
-				});
-			}
+			game->selectMapName (windowMapSelection->getSelectedMapName());
+			game->runGamePreparation (*application);
+			windowMapSelection->close();
+			windowGameSettings->close();
 		});
 	});
 }

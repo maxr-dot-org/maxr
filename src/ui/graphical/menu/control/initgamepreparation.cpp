@@ -197,11 +197,17 @@ void cInitGamePreparation::checkReallyWantsToQuit()
 	signalConnectionManager.connect(yesNoDialog->yesClicked, [this]()
 	{
 		lobbyClient.abortGamePreparation();
-		for (auto window : windows)
-		{
-			window->close();
-		}
-		windows.clear();
+		close();
 		windowLandingPositionSelection.reset();
 	});
+}
+
+//------------------------------------------------------------------------------
+void cInitGamePreparation::close()
+{
+	for (auto window : windows)
+	{
+		window->close();
+	}
+	windows.clear();
 }

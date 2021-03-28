@@ -30,34 +30,82 @@
 #include "ui/graphical/application.h"
 
 //------------------------------------------------------------------------------
-void cLocalSingleplayerGameNew::start (cApplication& application)
+cLocalSingleplayerGameNew::cLocalSingleplayerGameNew() :
+	lobbyServer (connectionManager),
+	lobbyClient (connectionManager, cPlayerBasicData::fromSettings())
 {
-	assert (gameSettings != nullptr);
-	auto connectionManager = std::make_shared<cConnectionManager>();
+	lobbyClient.connectToLocalServer (lobbyServer);
+	run();
+}
 
-	server = std::make_unique<cServer>(connectionManager);
-	server->setPreparationData ({unitsData, clanData, gameSettings, staticMap});
+//------------------------------------------------------------------------------
+void cLocalSingleplayerGameNew::run()
+{
+	if (client)
+	{
+		client->run();
+	}
+	else
+	{
+		// communication is async as for network
+		// but network game "succeeds" as there are delay to click
+		// between "consecutive" messages.
 
-	client = std::make_shared<cClient>(connectionManager);
-	client->setPreparationData({unitsData, clanData, gameSettings, staticMap});
+		// TODO: Simplify async communication:
+		// remove the need of `run()` used before/after sending message
+		lobbyClient.run();
+		lobbyServer.run();
+		lobbyClient.run();
+		lobbyServer.run();
+		lobbyClient.run();
+		lobbyServer.run();
+		lobbyClient.run();
+		lobbyServer.run();
+	}
+}
+
+//------------------------------------------------------------------------------
+void cLocalSingleplayerGameNew::runGamePreparation (cApplication& application)
+{
+	run(); lobbyClient.tryToSwitchReadyState(); run();
+	lobbyClient.askToFinishLobby(); run();
+
+	initGamePreparation = std::make_unique<cInitGamePreparation> (application, lobbyClient);
+
+	signalConnectionManager.connect (lobbyServer.onStartNewGame, [&, this] (cServer& server){
+		initGamePreparation->close();
+		start (application, server);
+	});
+
+	initGamePreparation->bindConnections (lobbyClient);
+
+	application.addRunnable (shared_from_this());
+
+	initGamePreparation->startGamePreparation();
+}
+
+//------------------------------------------------------------------------------
+void cLocalSingleplayerGameNew::start (cApplication& application, cServer& server)
+{
+	client = std::make_shared<cClient> (connectionManager);
+	const auto& lobbyPreparation = lobbyClient.getLobbyPreparationData();
+	client->setPreparationData (lobbyPreparation);
 
 	auto player = createPlayer();
 	std::vector<cPlayerBasicData> players;
 	players.push_back (player);
 	client->setPlayers (players, 0);
-	server->setPlayers(players);
 
-	connectionManager->setLocalServer(server.get());
-	connectionManager->setLocalClient(client.get(), 0);
+	connectionManager->setLocalClient (client.get(), 0);
 
-	server->start();
-
+	server.start();
+	auto initPlayerData = initGamePreparation->getInitPlayerData();
 	client->sendNetMessage (cActionInitNewGame (initPlayerData));
 
-	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
+	gameGuiController = std::make_unique<cGameGuiController> (application, lobbyPreparation.staticMap);
 
 	gameGuiController->setSingleClient (client);
-	gameGuiController->setServer(server.get());
+	gameGuiController->setServer (&server);
 
 	cGameGuiState playerGameGuiState;
 	playerGameGuiState.mapPosition = initPlayerData.landingPosition;
@@ -69,43 +117,21 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 
 	application.addRunnable (shared_from_this());
 
-	signalConnectionManager.connect(gameGuiController->terminated, [&]() { exit(); });
+	signalConnectionManager.connect (gameGuiController->terminated, [&]() { exit(); });
 }
 
 //------------------------------------------------------------------------------
-void cLocalSingleplayerGameNew::setGameSettings (std::shared_ptr<cGameSettings> gameSettings_)
+void cLocalSingleplayerGameNew::setGameSettings (const cGameSettings& gameSettings)
 {
-	gameSettings = gameSettings_;
+	lobbyClient.selectGameSettings (gameSettings);
+	run();
 }
 
 //------------------------------------------------------------------------------
-void cLocalSingleplayerGameNew::setStaticMap (std::shared_ptr<cStaticMap> staticMap_)
+void cLocalSingleplayerGameNew::selectMapName (const std::string& mapName)
 {
-	staticMap = staticMap_;
-}
-
-//------------------------------------------------------------------------------
-void cLocalSingleplayerGameNew::setPlayerClan (int clan)
-{
-	initPlayerData.clan = clan;
-}
-
-//------------------------------------------------------------------------------
-void cLocalSingleplayerGameNew::setLandingUnits (std::vector<sLandingUnit> landingUnits_)
-{
-	initPlayerData.landingUnits = std::move (landingUnits_);
-}
-
-//------------------------------------------------------------------------------
-void cLocalSingleplayerGameNew::setUnitUpgrades (std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades_)
-{
-	initPlayerData.unitUpgrades = std::move (unitUpgrades_);
-}
-
-//------------------------------------------------------------------------------
-void cLocalSingleplayerGameNew::setLandingPosition (const cPosition& landingPosition_)
-{
-	initPlayerData.landingPosition = landingPosition_;
+	lobbyClient.selectMapName (mapName);
+	run();
 }
 
 //------------------------------------------------------------------------------

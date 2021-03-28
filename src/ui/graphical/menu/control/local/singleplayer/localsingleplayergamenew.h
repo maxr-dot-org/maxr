@@ -22,7 +22,11 @@
 
 #include <memory>
 
+#include "game/connectionmanager.h"
 #include "game/startup/initplayerdata.h"
+#include "game/startup/lobbyclient.h"
+#include "game/startup/lobbyserver.h"
+#include "ui/graphical/menu/control/initgamepreparation.h"
 #include "ui/graphical/menu/control/local/singleplayer/localsingleplayergame.h"
 #include "utility/signal/signalconnectionmanager.h"
 
@@ -34,25 +38,24 @@ class cPlayerBasicData;
 class cLocalSingleplayerGameNew : public cLocalSingleplayerGame
 {
 public:
-	cLocalSingleplayerGameNew() = default;
+	cLocalSingleplayerGameNew();
 
-	void start (cApplication& application);
-	void setGameSettings (std::shared_ptr<cGameSettings> gameSettings);
-	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
+	void run() override;
 
-	void setPlayerClan (int clan);
-	void setLandingUnits (std::vector<sLandingUnit> landingUnits);
-	void setUnitUpgrades (std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades);
-	void setLandingPosition (const cPosition& landingPosition);
+	void runGamePreparation (cApplication&);
+	void start (cApplication&, cServer&);
 
-	cPlayerBasicData createPlayer();
+	void setGameSettings (const cGameSettings&);
+	void selectMapName (const std::string&);
+
+	static cPlayerBasicData createPlayer();
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	std::shared_ptr<cStaticMap> staticMap;
-	std::shared_ptr<cGameSettings> gameSettings;
-
-	sInitPlayerData initPlayerData;
+	std::shared_ptr<cConnectionManager> connectionManager = std::make_shared<cConnectionManager>();
+	cLobbyServer lobbyServer;
+	cLobbyClient lobbyClient;
+	std::shared_ptr<cInitGamePreparation> initGamePreparation;
 };
 
 #endif
