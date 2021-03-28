@@ -23,15 +23,10 @@
 #include "ui/graphical/menu/windows/windowmain.h"
 #include "utility/signal/signalconnectionmanager.h"
 
-class cMenuControllerMultiplayerHost;
-class cMenuControllerMultiplayerClient;
-class cMenuControllerMultiplayerHotSeat;
-
 class cWindowMultiPlayer : public cWindowMain
 {
 public:
 	cWindowMultiPlayer();
-	~cWindowMultiPlayer();
 
 private:
 	cSignalConnectionManager signalConnectionManager;
@@ -41,10 +36,6 @@ private:
 	void newHotSeatClicked();
 	void loadHotSeatClicked();
 	void backClicked();
-
-	std::shared_ptr<cMenuControllerMultiplayerHost> multiplayerHostController;
-	std::shared_ptr<cMenuControllerMultiplayerClient> multiplayerClientController;
-	std::shared_ptr<cMenuControllerMultiplayerHotSeat> multiplayerHotSeatController;
 };
 
-#endif // ui_graphical_menu_windows_windowmultiplayerH
+#endif

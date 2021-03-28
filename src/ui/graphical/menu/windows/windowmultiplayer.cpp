@@ -52,17 +52,13 @@ cWindowMultiPlayer::cWindowMultiPlayer() :
 }
 
 //------------------------------------------------------------------------------
-cWindowMultiPlayer::~cWindowMultiPlayer()
-{}
-
-//------------------------------------------------------------------------------
 void cWindowMultiPlayer::tcpHostClicked()
 {
 	auto application = getActiveApplication();
 
 	if (!application) return;
 
-	multiplayerHostController = std::make_shared<cMenuControllerMultiplayerHost> (*application);
+	auto multiplayerHostController = std::make_shared<cMenuControllerMultiplayerHost> (*application);
 	multiplayerHostController->start();
 }
 
@@ -73,7 +69,7 @@ void cWindowMultiPlayer::tcpClientClicked()
 
 	if (!application) return;
 
-	multiplayerClientController = std::make_shared<cMenuControllerMultiplayerClient> (*application);
+	auto multiplayerClientController = std::make_shared<cMenuControllerMultiplayerClient> (*application);
 	multiplayerClientController->start();
 }
 
@@ -84,7 +80,7 @@ void cWindowMultiPlayer::newHotSeatClicked()
 
 	if (!application) return;
 
-	multiplayerHotSeatController = std::make_shared<cMenuControllerMultiplayerHotSeat> (*application);
+	auto multiplayerHotSeatController = std::make_shared<cMenuControllerMultiplayerHotSeat> (*application);
 	multiplayerHotSeatController->start();
 }
 
