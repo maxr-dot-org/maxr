@@ -19,17 +19,7 @@
 
 #include "ismainthread.h"
 
-//#include <ctime>
-//#include <cmath>
-//#include <cstdio>
-//#include <iostream>
-//#include <sstream>
-//#include <algorithm>
-
-//#include <SDL.h>
 #include <SDL_thread.h>
-//#include <SDL_net.h>
-//#include <SDL_mixer.h>
 
 /**
  * Return if it is the main thread.
