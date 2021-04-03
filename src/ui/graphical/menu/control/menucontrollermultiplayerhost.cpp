@@ -70,10 +70,10 @@ cMenuControllerMultiplayerHost::cMenuControllerMultiplayerHost (cApplication& ap
 		}
 	});
 
-	signalConnectionManager.connect (lobbyClient.onStartGamePreparation, [this](const sLobbyPreparationData& lobbyData, const std::vector<cPlayerBasicData>& players, const cPlayerBasicData& localPlayer, std::shared_ptr<cConnectionManager> connectionManager){
+	signalConnectionManager.connect (lobbyClient.onStartGamePreparation, [this](const std::vector<cPlayerBasicData>& players, const cPlayerBasicData& localPlayer, std::shared_ptr<cConnectionManager> connectionManager){
 		saveOptions();
 
-		startGamePreparation (lobbyData, players, localPlayer, connectionManager);
+		startGamePreparation (players, localPlayer, connectionManager);
 	});
 
 	signalConnectionManager.connect (lobbyClient.onPlayerAbortGamePreparation, [this](const std::string& playerName){
@@ -245,10 +245,11 @@ void cMenuControllerMultiplayerHost::startSavedGame (const cSaveGameInfo& saveGa
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::startGamePreparation (const sLobbyPreparationData& lobbyData, const std::vector<cPlayerBasicData>& players, const cPlayerBasicData& localPlayer, std::shared_ptr<cConnectionManager> connectionManager)
+void cMenuControllerMultiplayerHost::startGamePreparation (const std::vector<cPlayerBasicData>& players, const cPlayerBasicData& localPlayer, std::shared_ptr<cConnectionManager> connectionManager)
 {
 	newGame = std::make_shared<cNetworkHostGameNew>();
 
+	const auto& lobbyData = lobbyClient.getLobbyPreparationData();
 	newGame->setUnitsData(lobbyData.unitsData);
 	newGame->setClanData(lobbyData.clanData);
 
@@ -260,7 +261,7 @@ void cMenuControllerMultiplayerHost::startGamePreparation (const sLobbyPreparati
 	initGamePreparation = std::make_unique<cInitGamePreparation> (application, lobbyClient);
 
 	initGamePreparation->bindConnections (lobbyClient);
-	initGamePreparation->startGamePreparation (lobbyData);
+	initGamePreparation->startGamePreparation();
 }
 
 //------------------------------------------------------------------------------

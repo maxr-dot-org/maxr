@@ -52,12 +52,12 @@ cMenuControllerMultiplayerClient::cMenuControllerMultiplayerClient (cApplication
 		}
 	});
 
-	signalConnectionManager.connect (lobbyClient.onStartGamePreparation, [this](const sLobbyPreparationData& lobbyData, const std::vector<cPlayerBasicData>& players, const cPlayerBasicData& localPlayer, std::shared_ptr<cConnectionManager> connectionManager){
+	signalConnectionManager.connect (lobbyClient.onStartGamePreparation, [this](const std::vector<cPlayerBasicData>& players, const cPlayerBasicData& localPlayer, std::shared_ptr<cConnectionManager> connectionManager){
 		if (windowNetworkLobby != nullptr)
 		{
 			saveOptions();
 
-			startGamePreparation (lobbyData, players, localPlayer, connectionManager);
+			startGamePreparation (players, localPlayer, connectionManager);
 		}
 	});
 
@@ -229,10 +229,11 @@ void cMenuControllerMultiplayerClient::startSavedGame (const cSaveGameInfo& save
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerClient::startGamePreparation(const sLobbyPreparationData& lobbyData, const std::vector<cPlayerBasicData>& players, const cPlayerBasicData& localPlayer, std::shared_ptr<cConnectionManager> connectionManager)
+void cMenuControllerMultiplayerClient::startGamePreparation(const std::vector<cPlayerBasicData>& players, const cPlayerBasicData& localPlayer, std::shared_ptr<cConnectionManager> connectionManager)
 {
 	newGame = std::make_shared<cNetworkClientGameNew>();
 
+	const auto& lobbyData = lobbyClient.getLobbyPreparationData();
 	newGame->setUnitsData(lobbyData.unitsData);
 	newGame->setClanData(lobbyData.clanData);
 
@@ -243,7 +244,7 @@ void cMenuControllerMultiplayerClient::startGamePreparation(const sLobbyPreparat
 
 	initGamePreparation = std::make_unique<cInitGamePreparation> (application, lobbyClient);
 	initGamePreparation->bindConnections (lobbyClient);
-	initGamePreparation->startGamePreparation (lobbyData);
+	initGamePreparation->startGamePreparation();
 }
 
 //------------------------------------------------------------------------------

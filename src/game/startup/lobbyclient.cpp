@@ -136,7 +136,7 @@ void cLobbyClient::selectGameSettings (const cGameSettings& gameSettings)
 {
 	cMuMsgOptions message;
 
-	message.mapName = staticMap ? staticMap->getName() : "";
+	message.mapName = lobbyPreparationData.staticMap ? lobbyPreparationData.staticMap->getName() : "";
 	message.settingsValid = true;
 	message.settings = gameSettings;
 
@@ -149,10 +149,10 @@ void cLobbyClient::selectMapName (const std::string& mapName)
 	cMuMsgOptions message;
 
 	message.mapName = mapName;
-	if (gameSettings)
+	if (lobbyPreparationData.gameSettings)
 	{
 		message.settingsValid = true;
-		message.settings = *gameSettings;
+		message.settings = *lobbyPreparationData.gameSettings;
 	}
 	sendNetMessage (message);
 }
@@ -171,7 +171,7 @@ void cLobbyClient::selectLoadGame (const cSaveGameInfo& saveGameInfo)
 void cLobbyClient::tryToSwitchReadyState()
 {
 	bool ready;
-	if (!staticMap)
+	if (!lobbyPreparationData.staticMap)
 	{
 		const auto& downloadingMapName = getDownloadingMapName();
 		if (!downloadingMapName.empty() && !localPlayer.isReady()) onNoMapNoReady (downloadingMapName);
@@ -419,20 +419,20 @@ void cLobbyClient::handleNetMessage_MU_MSG_OPTIONS (const cMuMsgOptions& message
 {
 	if (message.settingsValid)
 	{
-		gameSettings = std::make_unique<cGameSettings> (message.settings);
+		lobbyPreparationData.gameSettings = std::make_unique<cGameSettings> (message.settings);
 	}
 	else
 	{
-		gameSettings = nullptr;
+		lobbyPreparationData.gameSettings = nullptr;
 	}
 
 	if (message.mapName.empty())
 	{
-		staticMap = nullptr;
+		lobbyPreparationData.staticMap = nullptr;
 	}
 	else
 	{
-		if (!staticMap || staticMap->getName() != message.mapName)
+		if (!lobbyPreparationData.staticMap || lobbyPreparationData.staticMap->getName() != message.mapName)
 		{
 			bool mapCheckSumsEqual = (MapDownload::calculateCheckSum (message.mapName) == message.mapCrc);
 			auto newStaticMap = std::make_shared<cStaticMap>();
@@ -473,11 +473,11 @@ void cLobbyClient::handleNetMessage_MU_MSG_OPTIONS (const cMuMsgOptions& message
 					}
 				}
 			}
-			staticMap = std::move (newStaticMap);
+			lobbyPreparationData.staticMap = std::move (newStaticMap);
 		}
 	}
 	saveGameInfo = message.saveInfo;
-	onOptionsChanged (gameSettings, staticMap, saveGameInfo);
+	onOptionsChanged (lobbyPreparationData.gameSettings, lobbyPreparationData.staticMap, saveGameInfo);
 }
 
 //------------------------------------------------------------------------------
@@ -503,7 +503,9 @@ void cLobbyClient::handleNetMessage_MU_MSG_START_GAME_PREPARATIONS (const cMuMsg
 {
 	if (saveGameInfo.number != -1) return;
 
-	onStartGamePreparation (sLobbyPreparationData {message.unitsData, message.clanData, gameSettings, staticMap}, players, localPlayer, connectionManager);
+	lobbyPreparationData.unitsData = message.unitsData;
+	lobbyPreparationData.clanData = message.clanData;
+	onStartGamePreparation (players, localPlayer, connectionManager);
 }
 
 //------------------------------------------------------------------------------
@@ -517,7 +519,7 @@ void cLobbyClient::handleNetMessage_MU_MSG_START_GAME (const cMuMsgStartGame& me
 {
 	if (saveGameInfo.number != -1)
 	{
-		onStartSavedGame (saveGameInfo, staticMap, connectionManager, localPlayer);
+		onStartSavedGame (saveGameInfo, lobbyPreparationData.staticMap, connectionManager, localPlayer);
 	}
 	else
 	{
@@ -528,9 +530,9 @@ void cLobbyClient::handleNetMessage_MU_MSG_START_GAME (const cMuMsgStartGame& me
 //------------------------------------------------------------------------------
 void cLobbyClient::handleNetMessage_GAME_ALREADY_RUNNING(const cNetMessageGameAlreadyRunning& message)
 {
-	staticMap = std::make_shared<cStaticMap>();
+	lobbyPreparationData.staticMap = std::make_shared<cStaticMap>();
 
-	if (!staticMap->loadMap(message.mapName))
+	if (!lobbyPreparationData.staticMap->loadMap (message.mapName))
 	{
 		onFailToReconnectGameNoMap (message.mapName);
 		disconnect();
@@ -542,7 +544,7 @@ void cLobbyClient::handleNetMessage_GAME_ALREADY_RUNNING(const cNetMessageGameAl
 		disconnect();
 		return;
 	}
-	onReconnectGame (staticMap, connectionManager, localPlayer, message.playerList);
+	onReconnectGame (lobbyPreparationData.staticMap, connectionManager, localPlayer, message.playerList);
 }
 
 //------------------------------------------------------------------------------

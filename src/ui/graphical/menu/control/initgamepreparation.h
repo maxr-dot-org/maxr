@@ -46,7 +46,7 @@ public:
 
 	void onChatMessage (const std::string& playerName, const std::string& message);
 
-	void startGamePreparation (const sLobbyPreparationData&);
+	void startGamePreparation();
 
 	const sInitPlayerData& getInitPlayerData() const { return initPlayerData; }
 

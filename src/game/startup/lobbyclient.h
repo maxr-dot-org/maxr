@@ -65,8 +65,8 @@ public:
 
 	const std::string& getLocalPlayerName() const { return localPlayer.getName(); }
 	const std::string& getDownloadingMapName() const { return triedLoadMapName; }
-	const cStaticMap* getStaticMap() const { return staticMap.get(); }
-	const cGameSettings* getGameSettings() const { return gameSettings.get(); }
+	const cGameSettings* getGameSettings() const { return lobbyPreparationData.gameSettings.get(); }
+	const sLobbyPreparationData& getLobbyPreparationData() const { return lobbyPreparationData; }
 
 	cSignal<void()> onLocalPlayerConnected;
 	cSignal<void (const std::string& version, const std::string& revision)> onDifferentVersion;
@@ -90,7 +90,7 @@ public:
 
 	cSignal<void (bool missingSettings, const std::vector<cPlayerBasicData>& notReadyPlayers, bool hostNotInSavegame, const std::vector<cPlayerBasicData>&missingPlayers)> onCannotEndLobby;
 	cSignal<void()> onDisconnectNotInSavedGame;
-	cSignal<void (const sLobbyPreparationData&, const std::vector<cPlayerBasicData>&, cPlayerBasicData, std::shared_ptr<cConnectionManager>)> onStartGamePreparation;
+	cSignal<void (const std::vector<cPlayerBasicData>&, cPlayerBasicData, std::shared_ptr<cConnectionManager>)> onStartGamePreparation;
 	cSignal<void (const std::string& playerName)> onPlayerAbortGamePreparation;
 
 	cSignal<void (cPlayerBasicData, bool isIn)> onPlayerEnterLeaveLandingSelectionRoom;
@@ -144,8 +144,7 @@ private:
 
 	cPlayerBasicData localPlayer;
 	std::vector<cPlayerBasicData> players;
-	std::shared_ptr<cStaticMap> staticMap;
-	std::shared_ptr<cGameSettings> gameSettings;
+	sLobbyPreparationData lobbyPreparationData;
 	cSaveGameInfo saveGameInfo{-1};
 	std::vector<cSaveGameInfo> saveGames;
 

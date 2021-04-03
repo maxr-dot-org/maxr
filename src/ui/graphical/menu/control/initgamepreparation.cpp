@@ -82,10 +82,10 @@ void cInitGamePreparation::onChatMessage (const std::string& playerName, const s
 }
 
 //------------------------------------------------------------------------------
-void cInitGamePreparation::startGamePreparation (const sLobbyPreparationData& lobbyData)
+void cInitGamePreparation::startGamePreparation()
 {
-	lobbyPreparationData = lobbyData;
-	if (lobbyData.gameSettings->getClansEnabled())
+	lobbyPreparationData = lobbyClient.getLobbyPreparationData();
+	if (lobbyPreparationData.gameSettings->getClansEnabled())
 	{
 		startClanSelection();
 	}
