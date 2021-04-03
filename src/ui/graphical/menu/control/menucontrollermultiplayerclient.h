@@ -28,7 +28,6 @@
 #include "utility/runnable.h"
 
 class cApplication;
-class cNetworkClientGameNew;
 class cWindowNetworkLobbyClient;
 
 class cMenuControllerMultiplayerClient : public cRunnable, public std::enable_shared_from_this<cMenuControllerMultiplayerClient>
@@ -49,7 +48,6 @@ private:
 
 	std::shared_ptr<cWindowNetworkLobbyClient> windowNetworkLobby;
 	std::shared_ptr<cInitGamePreparation> initGamePreparation;
-	std::shared_ptr<cNetworkClientGameNew> newGame;
 
 	void reset();
 

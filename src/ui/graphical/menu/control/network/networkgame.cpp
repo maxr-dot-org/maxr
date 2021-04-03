@@ -19,6 +19,10 @@
 
 #include "networkgame.h"
 
+#include "game/logic/action/actioninitnewgame.h"
+#include "game/logic/client.h"
+#include "ui/graphical/application.h"
+
 //------------------------------------------------------------------------------
 cNetworkGame::~cNetworkGame()
 {
@@ -31,4 +35,41 @@ cNetworkGame::~cNetworkGame()
 //------------------------------------------------------------------------------
 void cNetworkGame::run()
 {
+}
+
+//------------------------------------------------------------------------------
+void cNetworkGame::startNewGame (cApplication& application, std::shared_ptr<cStaticMap> staticMap, std::shared_ptr<cClient> client, const sInitPlayerData& initPlayerData, cServer* server)
+{
+	client->sendNetMessage (cActionInitNewGame (initPlayerData));
+
+	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
+	gameGuiController->setSingleClient(client);
+	gameGuiController->setServer(server);
+
+	cGameGuiState playerGameGuiState;
+	playerGameGuiState.mapPosition = initPlayerData.landingPosition;
+	gameGuiController->addPlayerGameGuiState (client->getActivePlayer().getId(), std::move (playerGameGuiState));
+
+	gameGuiController->start();
+
+	resetTerminating();
+
+	application.addRunnable (shared_from_this());
+
+	signalConnectionManager.connect (gameGuiController->terminated, [&]() { exit(); });
+}
+
+//------------------------------------------------------------------------------
+void cNetworkGame::start (cApplication& application, std::shared_ptr<cStaticMap> staticMap, std::shared_ptr<cClient> client, cServer* server)
+{
+	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
+	gameGuiController->setSingleClient (client);
+	gameGuiController->setServer(server);
+	gameGuiController->start();
+
+	resetTerminating();
+
+	application.addRunnable (shared_from_this());
+
+	signalConnectionManager.connect (gameGuiController->terminated, [&]() { exit(); });
 }

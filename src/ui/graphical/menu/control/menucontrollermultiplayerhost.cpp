@@ -28,8 +28,7 @@
 #include "mapdownloader/mapuploadmessagehandler.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/game/widgets/chatbox.h"
-#include "ui/graphical/menu/control/network/host/networkhostgamenew.h"
-#include "ui/graphical/menu/control/network/host/networkhostgamesaved.h"
+#include "ui/graphical/menu/control/network/networkgame.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/dialogs/dialogyesno.h"
 #include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"
@@ -145,7 +144,6 @@ void cMenuControllerMultiplayerHost::start()
 void cMenuControllerMultiplayerHost::reset()
 {
 	windowNetworkLobby = nullptr;
-	newGame = nullptr;
 	application.removeRunnable (shared_from_this());
 }
 
@@ -225,11 +223,9 @@ void cMenuControllerMultiplayerHost::startSavedGame (std::shared_ptr<cClient> cl
 
 	auto* server = lobbyServer.getServer();
 	assert (server);
-	if (server)
-	{
-		savedGame = std::make_shared<cNetworkHostGameSaved>();
-		savedGame->start (application, lobbyClient.getLobbyPreparationData().staticMap, client, *server);
-	}
+
+	auto savedGame = std::make_shared<cNetworkGame>();
+	savedGame->start (application, lobbyClient.getLobbyPreparationData().staticMap, client, server);
 }
 
 //------------------------------------------------------------------------------
@@ -252,11 +248,8 @@ void cMenuControllerMultiplayerHost::startNewGame (std::shared_ptr<cClient> clie
 
 	auto* server = lobbyServer.getServer();
 	assert (server);
-	if (server)
-	{
-		newGame = std::make_shared<cNetworkHostGameNew>();
-		newGame->start (application, lobbyClient.getLobbyPreparationData().staticMap, client, initPlayerData, *server);
-	}
+	auto newGame = std::make_shared<cNetworkGame>();
+	newGame->startNewGame (application, lobbyClient.getLobbyPreparationData().staticMap, client, initPlayerData, server);
 }
 
 //------------------------------------------------------------------------------

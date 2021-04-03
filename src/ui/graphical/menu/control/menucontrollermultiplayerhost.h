@@ -31,8 +31,6 @@
 #include "utility/signal/signalconnectionmanager.h"
 
 class cApplication;
-class cNetworkHostGameNew;
-class cNetworkHostGameSaved;
 class cWindowNetworkLobbyHost;
 
 class cMenuControllerMultiplayerHost : public cRunnable, public std::enable_shared_from_this<cMenuControllerMultiplayerHost>
@@ -55,8 +53,6 @@ private:
 
 	std::shared_ptr<cWindowNetworkLobbyHost> windowNetworkLobby;
 	std::shared_ptr<cInitGamePreparation> initGamePreparation;
-	std::shared_ptr<cNetworkHostGameNew> newGame;
-	std::shared_ptr<cNetworkHostGameSaved> savedGame;
 
 private:
 	void reset();
