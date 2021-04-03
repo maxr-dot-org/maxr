@@ -28,8 +28,9 @@ class cGameSettings;
 
 class cCheckBox;
 class cEditableCheckBox;
-class cLineEdit;
 class cLabel;
+class cLineEdit;
+class cLobbyClient;
 template <typename> class cRadioGroupValue;
 
 enum class eGameSettingsResourceAmount;
@@ -43,6 +44,8 @@ class cWindowGameSettings : public cWindow
 public:
 	explicit cWindowGameSettings (bool forHotSeatGame = false);
 	~cWindowGameSettings();
+
+	void initFor (cLobbyClient&);
 
 	void applySettings (const cGameSettings& gameSettings);
 	cGameSettings getGameSettings() const;

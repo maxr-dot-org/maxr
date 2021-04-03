@@ -65,7 +65,6 @@ public:
 
 	const std::string& getLocalPlayerName() const { return localPlayer.getName(); }
 	const std::string& getDownloadingMapName() const { return triedLoadMapName; }
-	const cGameSettings* getGameSettings() const { return lobbyPreparationData.gameSettings.get(); }
 	const sLobbyPreparationData& getLobbyPreparationData() const { return lobbyPreparationData; }
 
 	cSignal<void()> onLocalPlayerConnected;

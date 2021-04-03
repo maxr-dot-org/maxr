@@ -157,15 +157,7 @@ void cMenuControllerMultiplayerClient::handleSelectSettings()
 	if (!windowNetworkLobby) return;
 
 	auto windowGameSettings = application.show (std::make_shared<cWindowGameSettings>());
-
-	if (lobbyClient.getGameSettings()) windowGameSettings->applySettings (*lobbyClient.getGameSettings());
-	else windowGameSettings->applySettings (cGameSettings());
-
-	windowGameSettings->done.connect ([this, windowGameSettings]()
-	{
-		lobbyClient.selectGameSettings (windowGameSettings->getGameSettings());
-		windowGameSettings->close();
-	});
+	windowGameSettings->initFor (lobbyClient);
 }
 
 //------------------------------------------------------------------------------

@@ -20,6 +20,7 @@
 #include "ui/graphical/menu/windows/windowgamesettings/windowgamesettings.h"
 
 #include "game/data/gamesettings.h"
+#include "game/startup/lobbyclient.h"
 #include "resources/pcx.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
@@ -215,6 +216,20 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 //------------------------------------------------------------------------------
 cWindowGameSettings::~cWindowGameSettings()
 {}
+
+//------------------------------------------------------------------------------
+void cWindowGameSettings::initFor (cLobbyClient& lobbyClient)
+{
+	const auto* gameSettings = lobbyClient.getLobbyPreparationData().gameSettings.get();
+	if (gameSettings) applySettings (*gameSettings);
+	else applySettings (cGameSettings());
+
+	signalConnectionManager.connect (done, [this, &lobbyClient]()
+	{
+		lobbyClient.selectGameSettings (getGameSettings());
+		close();
+	});
+}
 
 //------------------------------------------------------------------------------
 void cWindowGameSettings::applySettings (const cGameSettings& gameSettings)
