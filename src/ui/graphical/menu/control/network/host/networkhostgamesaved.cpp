@@ -19,32 +19,14 @@
 
 #include "networkhostgamesaved.h"
 
-#include "game/data/gamesettings.h"
-#include "game/data/player/player.h"
-#include "game/data/report/savedreport.h"
-#include "game/data/savegame.h"
-#include "game/logic/client.h"
-#include "game/logic/server.h"
 #include "ui/graphical/application.h"
-#include "utility/ranges.h"
 
 //------------------------------------------------------------------------------
-void cNetworkHostGameSaved::start (cApplication& application)
+void cNetworkHostGameSaved::start (cApplication& application, std::shared_ptr<cStaticMap> staticMap, std::shared_ptr<cClient> client, cServer& server)
 {
-	//setup client
-	localClient = std::make_shared<cClient> (connectionManager);
-	connectionManager->setLocalClient(localClient.get(), localPlayerNr);
-	localClient->setPlayers(players, localPlayerNr);
-	auto staticMap = server->getModel().getMap()->staticMap;
-	localClient->setMap (staticMap);
-
-	localClient->sendNetMessage(cNetMessageRequestResync(-1, saveGameNumber));
-
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
-
-	gameGuiController->setSingleClient (localClient);
-	gameGuiController->setServer(server);
-
+	gameGuiController->setSingleClient (client);
+	gameGuiController->setServer(&server);
 	gameGuiController->start();
 
 	resetTerminating();
@@ -52,29 +34,4 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	application.addRunnable (shared_from_this());
 
 	signalConnectionManager.connect (gameGuiController->terminated, [&]() { exit(); });
-}
-
-//------------------------------------------------------------------------------
-void cNetworkHostGameSaved::setSaveGameNumber (int saveGameNumber_)
-{
-	saveGameNumber = saveGameNumber_;
-}
-
-//------------------------------------------------------------------------------
-void cNetworkHostGameSaved::setPlayers (std::vector<cPlayerBasicData> players_, const cPlayerBasicData& localPlayer)
-{
-	players = players_;
-	localPlayerNr = localPlayer.getNr();
-}
-
-//------------------------------------------------------------------------------
-const std::vector<cPlayerBasicData>& cNetworkHostGameSaved::getPlayers()
-{
-	return players;
-}
-
-//------------------------------------------------------------------------------
-const cPlayerBasicData& cNetworkHostGameSaved::getLocalPlayer()
-{
-	return *ranges::find_if (players, [&](const cPlayerBasicData& player) { return player.getNr() == localPlayerNr; });
 }

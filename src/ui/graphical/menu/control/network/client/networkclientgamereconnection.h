@@ -21,39 +21,22 @@
 #define ui_graphical_menu_control_network_client_networkclientgamereconnectionH
 
 #include <memory>
-#include <vector>
-#include <utility>
 
 #include "ui/graphical/menu/control/network/networkgame.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "utility/position.h"
 
 class cApplication;
+class cClient;
 class cStaticMap;
-class cPlayerBasicData;
 
 class cNetworkClientGameReconnection : public cNetworkGame
 {
 public:
-	cNetworkClientGameReconnection();
+	void start (cApplication&, std::shared_ptr<cStaticMap>, std::shared_ptr<cClient>);
 
-	void start (cApplication& application);
-
-	void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
-
-	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
-
-	const std::shared_ptr<cStaticMap>& getStaticMap();
-	const std::vector<cPlayerBasicData>& getPlayers();
-	const cPlayerBasicData& getLocalPlayer();
 private:
 	cSignalConnectionManager signalConnectionManager;
-
-	int localPlayerNr;
-	std::vector<cPlayerBasicData> players;
-
-	std::shared_ptr<cStaticMap> staticMap;
 };
 
 #endif

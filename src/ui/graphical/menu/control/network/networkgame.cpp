@@ -19,27 +19,16 @@
 
 #include "networkgame.h"
 
-#include "game/data/savegame.h"
-#include "game/logic/client.h"
-#include "game/logic/server.h"
-
 //------------------------------------------------------------------------------
 cNetworkGame::~cNetworkGame()
 {
-	if (server)
-	{
-		server->stop();
-	}
+//	if (server)
+//	{
+//		server->stop();
+//	}
 }
 
 //------------------------------------------------------------------------------
 void cNetworkGame::run()
 {
-	if (localClient) localClient->run();
-}
-
-//------------------------------------------------------------------------------
-void cNetworkGame::setConnectionManager(std::shared_ptr<cConnectionManager> connectionManager_)
-{
-	connectionManager = connectionManager_;
 }

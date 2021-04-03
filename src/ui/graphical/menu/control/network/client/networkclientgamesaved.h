@@ -30,36 +30,16 @@
 #include "utility/position.h"
 
 class cApplication;
+class cClient;
 class cStaticMap;
-class cGameSettings;
-class cPlayerBasicData;
-class cPlayer;
-class cPosition;
-class cUnitUpgrade;
 
 class cNetworkClientGameSaved : public cNetworkGame
 {
 public:
-	cNetworkClientGameSaved();
+	void start (cApplication&, std::shared_ptr<cStaticMap>, std::shared_ptr<cClient>);
 
-	void start (cApplication& application);
-
-	void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
-
-	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
-
-	const std::shared_ptr<cStaticMap>& getStaticMap();
-	const std::vector<cPlayerBasicData>& getPlayers();
-	const cPlayerBasicData& getLocalPlayer();
-
-	int getLocalPlayerClan() const;
 private:
 	cSignalConnectionManager signalConnectionManager;
-
-	int localPlayerNr;
-	std::vector<cPlayerBasicData> players;
-
-	std::shared_ptr<cStaticMap> staticMap;
 };
 
 #endif

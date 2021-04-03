@@ -19,38 +19,22 @@
 
 #include "networkhostgamenew.h"
 
-#include "game/data/gamesettings.h"
-#include "game/data/player/player.h"
 #include "game/logic/action/actioninitnewgame.h"
 #include "game/logic/client.h"
-#include "game/logic/server.h"
-#include "game/startup/lobbypreparationdata.h"
 #include "ui/graphical/application.h"
-#include "utility/ranges.h"
 
 //------------------------------------------------------------------------------
-void cNetworkHostGameNew::start (cApplication& application, cServer& server)
+void cNetworkHostGameNew::start (cApplication& application, std::shared_ptr<cStaticMap> staticMap, std::shared_ptr<cClient> client, const sInitPlayerData& initPlayerData, cServer& server)
 {
-	assert (gameSettings != nullptr);
-
-	this->server = &server;
-
-	localClient = std::make_shared<cClient> (connectionManager);
-
-	localClient->setPreparationData ({unitsData, clanData, gameSettings, staticMap});
-	localClient->setPlayers(players, localPlayerNr);
-
-	connectionManager->setLocalClient(localClient.get(), localPlayerNr);
-
-	localClient->sendNetMessage (cActionInitNewGame (initPlayerData));
+	client->sendNetMessage (cActionInitNewGame (initPlayerData));
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
-	gameGuiController->setSingleClient(localClient);
+	gameGuiController->setSingleClient(client);
 	gameGuiController->setServer(&server);
 
 	cGameGuiState playerGameGuiState;
 	playerGameGuiState.mapPosition = initPlayerData.landingPosition;
-	gameGuiController->addPlayerGameGuiState (localPlayerNr, std::move (playerGameGuiState));
+	gameGuiController->addPlayerGameGuiState (client->getActivePlayer().getId(), std::move (playerGameGuiState));
 
 	gameGuiController->start();
 
@@ -59,53 +43,4 @@ void cNetworkHostGameNew::start (cApplication& application, cServer& server)
 	application.addRunnable (shared_from_this());
 
 	signalConnectionManager.connect (gameGuiController->terminated, [&]() { exit(); });
-}
-
-//------------------------------------------------------------------------------
-void cNetworkHostGameNew::setPlayers (std::vector<cPlayerBasicData> players_, const cPlayerBasicData& localPlayer)
-{
-	players = players_;
-	localPlayerNr = localPlayer.getNr();
-}
-
-//------------------------------------------------------------------------------
-void cNetworkHostGameNew::setGameSettings (std::shared_ptr<cGameSettings> gameSettings_)
-{
-	gameSettings = gameSettings_;
-}
-
-//------------------------------------------------------------------------------
-void cNetworkHostGameNew::setStaticMap (std::shared_ptr<cStaticMap> staticMap_)
-{
-	staticMap = staticMap_;
-}
-
-//------------------------------------------------------------------------------
-void cNetworkHostGameNew::setInitPlayerData (sInitPlayerData initPlayerData)
-{
-	this->initPlayerData = std::move (initPlayerData);
-}
-
-//------------------------------------------------------------------------------
-const std::shared_ptr<cGameSettings>& cNetworkHostGameNew::getGameSettings()
-{
-	return gameSettings;
-}
-
-//------------------------------------------------------------------------------
-const std::shared_ptr<cStaticMap>& cNetworkHostGameNew::getStaticMap()
-{
-	return staticMap;
-}
-
-//------------------------------------------------------------------------------
-const std::vector<cPlayerBasicData>& cNetworkHostGameNew::getPlayers()
-{
-	return players;
-}
-
-//------------------------------------------------------------------------------
-const cPlayerBasicData& cNetworkHostGameNew::getLocalPlayer()
-{
-	return *ranges::find_if (players, [&](const cPlayerBasicData& player) { return player.getNr() == localPlayerNr; });
 }

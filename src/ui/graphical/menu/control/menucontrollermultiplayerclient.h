@@ -59,11 +59,11 @@ private:
 
 	void handleStartGame();
 
-	void startSavedGame (const cSaveGameInfo&, std::shared_ptr<cStaticMap>, std::shared_ptr<cConnectionManager>, cPlayerBasicData);
-	void startGamePreparation(const std::vector<cPlayerBasicData>&, const cPlayerBasicData&, std::shared_ptr<cConnectionManager>);
+	void startSavedGame (std::shared_ptr<cClient>);
+	void startGamePreparation();
 
-	void startNewGame();
-	void reconnectToGame (std::shared_ptr<cStaticMap>, std::shared_ptr<cConnectionManager>, cPlayerBasicData, const std::vector<cPlayerBasicData>&);
+	void startNewGame (std::shared_ptr<cClient>);
+	void reconnectToGame (std::shared_ptr<cClient>);
 
 	void saveOptions();
 	bool connectionLost;

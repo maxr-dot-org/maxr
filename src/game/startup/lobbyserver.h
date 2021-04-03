@@ -68,6 +68,8 @@ public:
 
 	const cGameSettings* getGameSettings() const { return gameSettings.get(); }
 
+	cServer* getServer() { return server.get(); }
+
 #if 1
 	// Avoid that:
 	// - (no translations (which should be client side anyway))

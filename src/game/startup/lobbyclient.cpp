@@ -19,6 +19,7 @@
 
 #include "lobbyclient.h"
 
+#include "game/logic/client.h"
 #include "game/startup/lobbyserver.h"
 #include "game/startup/lobbyutils.h"
 #include "mapdownloader/mapdownloadmessagehandler.h"
@@ -66,6 +67,11 @@ std::unique_ptr<cNetMessage> cLobbyClient::popMessage()
 //------------------------------------------------------------------------------
 void cLobbyClient::run()
 {
+	if (client)
+	{
+		client->run();
+		return;
+	}
 	std::unique_ptr<cNetMessage> message;
 	while (messageQueue.try_pop (message))
 	{
@@ -505,7 +511,7 @@ void cLobbyClient::handleNetMessage_MU_MSG_START_GAME_PREPARATIONS (const cMuMsg
 
 	lobbyPreparationData.unitsData = message.unitsData;
 	lobbyPreparationData.clanData = message.clanData;
-	onStartGamePreparation (players, localPlayer, connectionManager);
+	onStartGamePreparation();
 }
 
 //------------------------------------------------------------------------------
@@ -517,13 +523,20 @@ void cLobbyClient::handleNetMessage_MU_MSG_LANDING_STATE (const cMuMsgLandingSta
 //------------------------------------------------------------------------------
 void cLobbyClient::handleNetMessage_MU_MSG_START_GAME (const cMuMsgStartGame& message)
 {
+	client = std::make_shared<cClient> (connectionManager);
+	client->setPlayers (players, localPlayer.getNr());
+
+	connectionManager->setLocalClient (client.get(), localPlayer.getNr());
 	if (saveGameInfo.number != -1)
 	{
-		onStartSavedGame (saveGameInfo, lobbyPreparationData.staticMap, connectionManager, localPlayer);
+		client->setMap (lobbyPreparationData.staticMap);
+		onStartSavedGame (client);
 	}
 	else
 	{
-		onStartNewGame();
+		client->setPreparationData (lobbyPreparationData);
+		//client->sendNetMessage (cActionInitNewGame (initPlayerData));
+		onStartNewGame (client);
 	}
 }
 
@@ -531,6 +544,7 @@ void cLobbyClient::handleNetMessage_MU_MSG_START_GAME (const cMuMsgStartGame& me
 void cLobbyClient::handleNetMessage_GAME_ALREADY_RUNNING(const cNetMessageGameAlreadyRunning& message)
 {
 	lobbyPreparationData.staticMap = std::make_shared<cStaticMap>();
+	players = message.playerList;
 
 	if (!lobbyPreparationData.staticMap->loadMap (message.mapName))
 	{
@@ -544,7 +558,17 @@ void cLobbyClient::handleNetMessage_GAME_ALREADY_RUNNING(const cNetMessageGameAl
 		disconnect();
 		return;
 	}
-	onReconnectGame (lobbyPreparationData.staticMap, connectionManager, localPlayer, message.playerList);
+
+	wantToRejoinGame();
+
+	client = std::make_shared<cClient> (connectionManager);
+	connectionManager->setLocalClient (client.get(), localPlayer.getNr());
+
+	//client->setPreparationData (lobbyPreparationData);
+	client->setMap (lobbyPreparationData.staticMap);
+	client->setPlayers (players, localPlayer.getNr());
+
+	onReconnectGame (client);
 }
 
 //------------------------------------------------------------------------------

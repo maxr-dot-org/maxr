@@ -19,30 +19,13 @@
 
 #include "networkclientgamereconnection.h"
 
-#include "game/data/gamesettings.h"
-#include "game/data/player/player.h"
-#include "game/logic/client.h"
 #include "ui/graphical/application.h"
-#include "utility/ranges.h"
 
 //------------------------------------------------------------------------------
-cNetworkClientGameReconnection::cNetworkClientGameReconnection()
-{}
-
-//------------------------------------------------------------------------------
-void cNetworkClientGameReconnection::start (cApplication& application)
+void cNetworkClientGameReconnection::start (cApplication& application, std::shared_ptr<cStaticMap> staticMap, std::shared_ptr<cClient> client)
 {
-	// set up client
-	localClient = std::make_shared<cClient>(connectionManager);
-	connectionManager->setLocalClient(localClient.get(), localPlayerNr);
-	localClient->setPlayers(players, localPlayerNr);
-	localClient->setMap(staticMap);
-
-	// set up game gui
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
-
-	gameGuiController->setSingleClient (localClient);
-
+	gameGuiController->setSingleClient (client);
 	gameGuiController->start();
 
 	resetTerminating();
@@ -50,35 +33,4 @@ void cNetworkClientGameReconnection::start (cApplication& application)
 	application.addRunnable (shared_from_this());
 
 	signalConnectionManager.connect (gameGuiController->terminated, [&]() { exit(); });
-}
-
-//------------------------------------------------------------------------------
-void cNetworkClientGameReconnection::setPlayers (std::vector<cPlayerBasicData> players_, const cPlayerBasicData& localPlayer)
-{
-	players = players_;
-	localPlayerNr = localPlayer.getNr();
-}
-
-//------------------------------------------------------------------------------
-void cNetworkClientGameReconnection::setStaticMap (std::shared_ptr<cStaticMap> staticMap_)
-{
-	staticMap = staticMap_;
-}
-
-//------------------------------------------------------------------------------
-const std::shared_ptr<cStaticMap>& cNetworkClientGameReconnection::getStaticMap()
-{
-	return staticMap;
-}
-
-//------------------------------------------------------------------------------
-const std::vector<cPlayerBasicData>& cNetworkClientGameReconnection::getPlayers()
-{
-	return players;
-}
-
-//------------------------------------------------------------------------------
-const cPlayerBasicData& cNetworkClientGameReconnection::getLocalPlayer()
-{
-	return *ranges::find_if (players, [&](const cPlayerBasicData& player) { return player.getNr() == localPlayerNr; });
 }

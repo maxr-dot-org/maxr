@@ -27,6 +27,7 @@
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/thread/concurrentqueue.h"
 
+class cClient;
 class cLobbyServer;
 
 class cLobbyClient : public INetMessageReceiver
@@ -60,7 +61,6 @@ public:
 	void exitLandingSelection();
 	void selectLandingPosition (cPosition);
 
-	void wantToRejoinGame();
 	void disconnect();
 
 	const std::string& getLocalPlayerName() const { return localPlayer.getName(); }
@@ -89,22 +89,23 @@ public:
 
 	cSignal<void (bool missingSettings, const std::vector<cPlayerBasicData>& notReadyPlayers, bool hostNotInSavegame, const std::vector<cPlayerBasicData>&missingPlayers)> onCannotEndLobby;
 	cSignal<void()> onDisconnectNotInSavedGame;
-	cSignal<void (const std::vector<cPlayerBasicData>&, cPlayerBasicData, std::shared_ptr<cConnectionManager>)> onStartGamePreparation;
+	cSignal<void()> onStartGamePreparation;
 	cSignal<void (const std::string& playerName)> onPlayerAbortGamePreparation;
 
 	cSignal<void (cPlayerBasicData, bool isIn)> onPlayerEnterLeaveLandingSelectionRoom;
 	cSignal<void (cPlayerBasicData)> onPlayerSelectLandingPosition;
 	cSignal<void (eLandingPositionState)> onLandingDone;
 
-	cSignal<void()> onStartNewGame;
-	cSignal<void (const cSaveGameInfo&, std::shared_ptr<cStaticMap>, std::shared_ptr<cConnectionManager>, cPlayerBasicData)> onStartSavedGame;
-	cSignal<void (std::shared_ptr<cStaticMap>, std::shared_ptr<cConnectionManager>, cPlayerBasicData, const std::vector<cPlayerBasicData>&)> onReconnectGame;
+	cSignal<void (std::shared_ptr<cClient>)> onStartNewGame;
+	cSignal<void (std::shared_ptr<cClient>)> onStartSavedGame;
+	cSignal<void (std::shared_ptr<cClient>)> onReconnectGame;
 
 	cSignal<void (const std::string& mapName)> onFailToReconnectGameNoMap;
 	cSignal<void (const std::string& mapName)> onFailToReconnectGameInvalidMap;
 
 private:
 	cPlayerBasicData* getPlayer (int playerNr);
+	void wantToRejoinGame();
 
 	void sendNetMessage(cNetMessage&);
 	void sendNetMessage (cNetMessage&&);
@@ -149,6 +150,8 @@ private:
 
 	std::string triedLoadMapName;
 	std::string lastRequestedMapName;
+
+	std::shared_ptr<cClient> client;
 };
 
 #endif

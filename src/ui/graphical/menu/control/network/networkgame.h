@@ -20,14 +20,11 @@
 #ifndef ui_graphical_menu_control_network_networkgameH
 #define ui_graphical_menu_control_network_networkgameH
 
-#include <cassert>
 #include <memory>
 
 #include "ui/graphical/game/control/gameguicontroller.h"
 #include "ui/graphical/menu/control/game.h"
 
-class cClient;
-class cServer;
 class cConnectionManager;
 
 class cNetworkGame : public cGame
@@ -35,17 +32,11 @@ class cNetworkGame : public cGame
 public:
 	~cNetworkGame();
 
+#if 1 // To remove
 	void run() override;
+#endif
 
-	void setConnectionManager (std::shared_ptr<cConnectionManager>);
-
-	cClient& getLocalClient() { assert (localClient); return *localClient; }
 protected:
-	std::shared_ptr<cConnectionManager> connectionManager;
-
-	std::shared_ptr<cClient> localClient;
-	cServer* server = nullptr;
-
 	std::unique_ptr<cGameGuiController> gameGuiController;
 };
 

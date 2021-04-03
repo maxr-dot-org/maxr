@@ -70,10 +70,10 @@ cMenuControllerMultiplayerHost::cMenuControllerMultiplayerHost (cApplication& ap
 		}
 	});
 
-	signalConnectionManager.connect (lobbyClient.onStartGamePreparation, [this](const std::vector<cPlayerBasicData>& players, const cPlayerBasicData& localPlayer, std::shared_ptr<cConnectionManager> connectionManager){
+	signalConnectionManager.connect (lobbyClient.onStartGamePreparation, [this](){
 		saveOptions();
 
-		startGamePreparation (players, localPlayer, connectionManager);
+		startGamePreparation();
 	});
 
 	signalConnectionManager.connect (lobbyClient.onPlayerAbortGamePreparation, [this](const std::string& playerName){
@@ -88,30 +88,25 @@ cMenuControllerMultiplayerHost::cMenuControllerMultiplayerHost (cApplication& ap
 			});
 		}
 	});
-	signalConnectionManager.connect (lobbyClient.onStartSavedGame, [this](const cSaveGameInfo& saveGameInfo, std::shared_ptr<cStaticMap> staticMap, std::shared_ptr<cConnectionManager> connectionManager, cPlayerBasicData localPlayer){
-		startSavedGame (saveGameInfo, staticMap, connectionManager, localPlayer);
+	signalConnectionManager.connect (lobbyClient.onStartNewGame, [this] (std::shared_ptr<cClient> client){
+		startNewGame (client);
+	});
+	signalConnectionManager.connect (lobbyClient.onStartSavedGame, [this](std::shared_ptr<cClient> client){
+		saveOptions();
+		startSavedGame (client);
 	});
 	// lobbyClient.onReconnectGame
 	// lobbyClient.onFailToReconnectGameNoMap
 	// lobbyClient.onFailToReconnectGameInvalidMap
 	// Doesn't apply as client is directly connected to server
 
-	signalConnectionManager.connect (lobbyServer.onStartNewGame, [this] (cServer& server){
-		if (!newGame) return;
-
-		startNewGame (server);
-	});
+	// lobbyServer.onStartNewGame
+	// lobbyServer.onStartSavedGame
+	// Handled client side.
 
 	signalConnectionManager.connect (lobbyServer.onErrorLoadSavedGame, [this] (int /*slot*/){
 		application.show(std::make_shared<cDialogOk>(lngPack.i18n("Text~Error_Messages~ERROR_Save_Loading")));
 	});
-
-	signalConnectionManager.connect (lobbyServer.onStartSavedGame, [this](cServer& server, const cSaveGameInfo& saveGameInfo){
-		saveOptions();
-		savedGame = std::make_shared<cNetworkHostGameSaved> ();
-		savedGame->setServer (server);
-	});
-
 	lobbyClient.connectToLocalServer (lobbyServer);
 }
 
@@ -220,36 +215,26 @@ void cMenuControllerMultiplayerHost::checkGameStart()
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::startSavedGame (const cSaveGameInfo& saveGameInfo, std::shared_ptr<cStaticMap> staticMap, std::shared_ptr<cConnectionManager> connectionManager, cPlayerBasicData localPlayer)
+void cMenuControllerMultiplayerHost::startSavedGame (std::shared_ptr<cClient> client)
 {
 	if (!windowNetworkLobby) return;
-
-	savedGame->setConnectionManager (connectionManager);
-	savedGame->setSaveGameNumber(saveGameInfo.number);
-
-	savedGame->setPlayers (saveGameInfo.players, localPlayer);
 
 	application.closeTill(*windowNetworkLobby);
 	windowNetworkLobby->close();
 	signalConnectionManager.connect(windowNetworkLobby->terminated, [&]() { windowNetworkLobby = nullptr; });
 
-	savedGame->start (application);
+	auto* server = lobbyServer.getServer();
+	assert (server);
+	if (server)
+	{
+		savedGame = std::make_shared<cNetworkHostGameSaved>();
+		savedGame->start (application, lobbyClient.getLobbyPreparationData().staticMap, client, *server);
+	}
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::startGamePreparation (const std::vector<cPlayerBasicData>& players, const cPlayerBasicData& localPlayer, std::shared_ptr<cConnectionManager> connectionManager)
+void cMenuControllerMultiplayerHost::startGamePreparation()
 {
-	newGame = std::make_shared<cNetworkHostGameNew>();
-
-	const auto& lobbyData = lobbyClient.getLobbyPreparationData();
-	newGame->setUnitsData(lobbyData.unitsData);
-	newGame->setClanData(lobbyData.clanData);
-
-	newGame->setPlayers (players, localPlayer);
-	newGame->setGameSettings (lobbyData.gameSettings);
-	newGame->setStaticMap (lobbyData.staticMap);
-	newGame->setConnectionManager (connectionManager);
-
 	initGamePreparation = std::make_unique<cInitGamePreparation> (application, lobbyClient);
 
 	initGamePreparation->bindConnections (lobbyClient);
@@ -257,17 +242,21 @@ void cMenuControllerMultiplayerHost::startGamePreparation (const std::vector<cPl
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::startNewGame (cServer& server)
+void cMenuControllerMultiplayerHost::startNewGame (std::shared_ptr<cClient> client)
 {
-	if (!newGame) return;
-
-	newGame->setInitPlayerData (initGamePreparation->getInitPlayerData());
-
 	application.closeTill (*windowNetworkLobby);
 	windowNetworkLobby->close();
 	signalConnectionManager.connect (windowNetworkLobby->terminated, [&]() { windowNetworkLobby = nullptr; });
 
-	newGame->start (application, server);
+	const auto& initPlayerData = initGamePreparation->getInitPlayerData();
+
+	auto* server = lobbyServer.getServer();
+	assert (server);
+	if (server)
+	{
+		newGame = std::make_shared<cNetworkHostGameNew>();
+		newGame->start (application, lobbyClient.getLobbyPreparationData().staticMap, client, initPlayerData, *server);
+	}
 }
 
 //------------------------------------------------------------------------------

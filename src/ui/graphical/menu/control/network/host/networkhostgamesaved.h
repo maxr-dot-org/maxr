@@ -21,34 +21,20 @@
 #define ui_graphical_menu_control_network_host_networkhostgamesavedH
 
 #include <memory>
-#include <vector>
 
 #include "ui/graphical/menu/control/network/networkgame.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 class cApplication;
-class cPlayerBasicData;
 
 class cNetworkHostGameSaved : public cNetworkGame
 {
 public:
-	void setServer (cServer& server) { this->server = &server; }
-	void start (cApplication& application);
+	void start (cApplication&, std::shared_ptr<cStaticMap>, std::shared_ptr<cClient>, cServer&);
 
-	void setSaveGameNumber (int saveGameNumber);
-
-	void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
-
-	const std::vector<cPlayerBasicData>& getPlayers();
-	const cPlayerBasicData& getLocalPlayer();
 private:
 	cSignalConnectionManager signalConnectionManager;
-
-	int localPlayerNr;
-	std::vector<cPlayerBasicData> players;
-
-	int saveGameNumber;
 };
 
 #endif

@@ -21,49 +21,26 @@
 #define ui_graphical_menu_control_network_host_networkhostgamenewH
 
 #include <memory>
-#include <vector>
-#include <utility>
 
-#include "game/startup/initplayerdata.h"
 #include "ui/graphical/menu/control/network/networkgame.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "utility/position.h"
 
 class cApplication;
 class cStaticMap;
-class cGameSettings;
-class cPlayerBasicData;
-class cPlayer;
+class cClient;
+class cServer;
+struct sInitPlayerData;
 
 class cNetworkHostGameNew : public cNetworkGame
 {
 public:
 	cNetworkHostGameNew() = default;
 
-	void start (cApplication& application, cServer&);
-
-	void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
-	void setGameSettings (std::shared_ptr<cGameSettings> gameSettings);
-	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
-
-	void setInitPlayerData (sInitPlayerData);
-
-	const std::shared_ptr<cGameSettings>& getGameSettings();
-	const std::shared_ptr<cStaticMap>& getStaticMap();
-	const std::vector<cPlayerBasicData>& getPlayers();
-	const cPlayerBasicData& getLocalPlayer();
+	void start (cApplication&, std::shared_ptr<cStaticMap>, std::shared_ptr<cClient>, const sInitPlayerData&, cServer&);
 
 private:
 	cSignalConnectionManager signalConnectionManager;
-
-	int localPlayerNr;
-	std::vector<cPlayerBasicData> players;
-
-	std::shared_ptr<cStaticMap> staticMap;
-	std::shared_ptr<cGameSettings> gameSettings;
-
-	sInitPlayerData initPlayerData;
 };
 
 #endif
