@@ -442,7 +442,7 @@ void cLobbyServer::handleAskToFinishLobby (const cMuMsgAskToFinishLobby& message
 	errorMessage.notReadyPlayers = Filter (players, [](const auto& player){ return !player.isReady(); });
 	if (saveGameInfo.number != -1)
 	{
-		errorMessage.hostNotInSavegame = isInSaveGame (saveGameInfo, getPlayer (fromPlayer));
+		errorMessage.hostNotInSavegame = !isInSaveGame (saveGameInfo, getPlayer (fromPlayer));
 		errorMessage.missingPlayers = getMissingPlayers(saveGameInfo, players);
 	}
 	if (errorMessage.missingSettings || errorMessage.hostNotInSavegame || !errorMessage.notReadyPlayers.empty() || !errorMessage.missingPlayers.empty()) {
