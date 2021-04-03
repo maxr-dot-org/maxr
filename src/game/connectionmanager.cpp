@@ -197,6 +197,8 @@ bool cConnectionManager::isConnectedToServer() const
 //------------------------------------------------------------------------------
 void cConnectionManager::changePlayerNumber(int currentNr, int newNr)
 {
+	if (currentNr == newNr) return;
+	Log.write("Connection Manager: ChangePlayerNumber " + std::to_string(currentNr) + " to " + std::to_string(newNr), cLog::eLOG_TYPE_NET_DEBUG);
 	cLockGuard<cMutex> tl(mutex);
 
 	if (localPlayer == currentNr)
@@ -209,6 +211,11 @@ void cConnectionManager::changePlayerNumber(int currentNr, int newNr)
 	if (x == clientSockets.end())
 	{
 		Log.write("Connection Manager: Can't change playerNr. Unknown player " + toString(currentNr), cLog::eLOG_TYPE_NET_ERROR);
+		Log.write("Connection Manager: Known players are:", cLog::eLOG_TYPE_NET_DEBUG);
+		for (const auto& p : clientSockets)
+		{
+			Log.write("player " + toString(p.second), cLog::eLOG_TYPE_NET_DEBUG);
+		}
 		return;
 	}
 	x->second = newNr;
