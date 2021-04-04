@@ -19,38 +19,28 @@
 
 #include "ui/graphical/game/widgets/debugoutputwidget.h"
 
-#include "ui/graphical/game/widgets/gamemapwidget.h"
-#include "ui/graphical/game/animations/animation.h"
 #include "game/data/player/player.h"
-#include "input/mouse/mouse.h"
-#include "game/logic/client.h"
-#include "game/logic/server.h"
-#include "output/video/video.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
-#include "utility/mathtools.h"
-#include "utility/string/toString.h"
+#include "game/logic/client.h"
+#include "game/logic/server.h"
+#include "input/mouse/mouse.h"
+#include "output/video/video.h"
+#include "ui/graphical/game/control/chatcommand/chatcommand.h"
+#include "ui/graphical/game/control/chatcommand/chatcommandexecutor.h"
+#include "ui/graphical/game/control/chatcommand/chatcommandparser.h"
+#include "ui/graphical/game/control/chatcommand/chatcommandarguments.h"
+#include "ui/graphical/game/widgets/gamemapwidget.h"
+#include "ui/graphical/game/animations/animation.h"
 #include "utility/indexiterator.h"
 #include "utility/language.h"
 #include "utility/listhelpers.h"
+#include "utility/mathtools.h"
+#include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
 cDebugOutputWidget::cDebugOutputWidget (const cBox<cPosition>& area) :
-	cWidget (area),
-	server (nullptr),
-	client (nullptr),
-	gameMap (nullptr),
-	debugAjobs (false),
-	debugBaseServer (false),
-	debugBaseClient (false),
-	debugSentry (false),
-	debugFX (false),
-	debugTraceServer (false),
-	debugTraceClient (false),
-	debugPlayers (false),
-	debugCache (false),
-	debugSync (false),
-	debugStealth (false)
+	cWidget (area)
 {}
 
 //------------------------------------------------------------------------------
@@ -72,69 +62,108 @@ void cDebugOutputWidget::setGameMap (const cGameMapWidget* gameMap_)
 }
 
 //------------------------------------------------------------------------------
-void cDebugOutputWidget::setDebugAjobs (bool value)
+void cDebugOutputWidget::initChatCommand (std::vector<std::unique_ptr<cChatCommandExecutor>>& chatCommands)
 {
-	debugAjobs = value;
-}
-
-//------------------------------------------------------------------------------
-void cDebugOutputWidget::setDebugBaseServer (bool value)
-{
-	debugBaseServer = value;
-}
-
-//------------------------------------------------------------------------------
-void cDebugOutputWidget::setDebugBaseClient (bool value)
-{
-	debugBaseClient = value;
-}
-
-//------------------------------------------------------------------------------
-void cDebugOutputWidget::setDebugSentry (bool value)
-{
-	debugSentry = value;
-}
-
-//------------------------------------------------------------------------------
-void cDebugOutputWidget::setDebugFX (bool value)
-{
-	debugFX = value;
-}
-
-//------------------------------------------------------------------------------
-void cDebugOutputWidget::setDebugTraceServer (bool value)
-{
-	debugTraceServer = value;
-}
-
-//------------------------------------------------------------------------------
-void cDebugOutputWidget::setDebugTraceClient (bool value)
-{
-	debugTraceClient = value;
-}
-
-//------------------------------------------------------------------------------
-void cDebugOutputWidget::setDebugPlayers (bool value)
-{
-	debugPlayers = value;
-}
-
-//------------------------------------------------------------------------------
-void cDebugOutputWidget::setDebugCache (bool value)
-{
-	debugCache = value;
-}
-
-//------------------------------------------------------------------------------
-void cDebugOutputWidget::setDebugSync (bool value)
-{
-	debugSync = value;
-}
-
-//------------------------------------------------------------------------------
-void cDebugOutputWidget::setDebugStealth(bool value)
-{
-	debugStealth = value;
+	chatCommands.push_back (
+		cChatCommand ("base", "Enable/disable debug information about bases")
+		.addArgument<cChatCommandArgumentChoice> (std::vector<std::string>{"client", "server", "off"})
+		.setAction ([this](const std::string& value)
+		{
+			if (value == "server")
+			{
+				debugBaseServer = true;
+				debugBaseClient = false;
+			}
+			else if (value == "client")
+			{
+				debugBaseServer = false;
+				debugBaseClient = true;
+			}
+			else
+			{
+				debugBaseServer = false;
+				debugBaseClient = false;
+			}
+		})
+	);
+	chatCommands.push_back (
+		cChatCommand ("sentry", "Enable/disable debug information about the sentry status")
+		.addArgument<cChatCommandArgumentChoice> (std::vector<std::string>{"server", "off"})
+		.setAction ([this](const std::string& value)
+		{
+			debugSentry = (value == "server");
+		})
+	);
+	chatCommands.push_back (
+		cChatCommand ("fx", "Enable/disable debug information about effects")
+		.addArgument<cChatCommandArgumentBool>()
+		.setAction ([this](bool flag)
+		{
+			debugFX = flag;
+		})
+	);
+	chatCommands.push_back (
+		cChatCommand ("trace", "Enable/disable debug information about the unit currently under the cursor")
+		.addArgument<cChatCommandArgumentChoice> (std::vector<std::string>{"client", "server", "off"})
+		.setAction ([this](const std::string& value)
+		{
+			if (value == "server")
+			{
+				debugTraceServer = true;
+				debugTraceClient = false;
+			}
+			else if (value == "client")
+			{
+				debugTraceServer = false;
+				debugTraceClient = true;
+			}
+			else
+			{
+				debugTraceServer = false;
+				debugTraceClient = false;
+			}
+		})
+	);
+	chatCommands.push_back (
+		cChatCommand ("ajobs", "Enable/disable debug information about attack jobs")
+		.addArgument<cChatCommandArgumentBool>()
+		.setAction ([this](bool flag)
+		{
+			debugAjobs = flag;
+		})
+	);
+	chatCommands.push_back (
+		cChatCommand ("players", "Enable/disable debug information about players")
+		.addArgument<cChatCommandArgumentBool>()
+		.setAction ([this](bool flag)
+		{
+			debugPlayers = flag;
+		})
+	);
+	chatCommands.push_back (
+		cChatCommand ("cache debug", "Enable/disable debug information about the drawing cache")
+		.addArgument<cChatCommandArgumentBool>()
+		.setAction ([this](bool flag)
+		{
+			debugCache = flag;
+		})
+	);
+	chatCommands.push_back (
+		cChatCommand ("sync debug", "Enable/disable debug information about the sync state of the game data")
+		.addArgument<cChatCommandArgumentBool>()
+		.setAction ([this](bool flag)
+		{
+			debugSync = flag;
+		})
+	);
+	chatCommands.push_back (
+		cChatCommand ("debug stealth", "Enable/disable debug information about the stealth state of units")
+		.addArgument<cChatCommandArgumentBool>()
+		.setAction ([this](bool flag)
+		{
+			debugStealth = flag;
+		})
+	);
 }
 
 //------------------------------------------------------------------------------

@@ -23,12 +23,13 @@
 #include "output/video/unifonts.h"
 #include "ui/graphical/widget.h"
 
-class cClient;
-class cServer;
-class cPosition;
-class cVehicle;
 class cBuilding;
+class cChatCommandExecutor;
+class cClient;
 class cGameMapWidget;
+class cPosition;
+class cServer;
+class cVehicle;
 
 /**
  * This class draws all the debug output on the screen.
@@ -48,61 +49,52 @@ public:
 	void setServer (const cServer* server);
 	void setGameMap (const cGameMapWidget* gameMap);
 
-	void setDebugAjobs (bool value);
-	void setDebugBaseServer (bool value);
-	void setDebugBaseClient (bool value);
-	void setDebugSentry (bool value);
-	void setDebugFX (bool value);
-	void setDebugTraceServer (bool value);
-	void setDebugTraceClient (bool value);
-	void setDebugPlayers (bool value);
-	void setDebugCache (bool value);
-	void setDebugSync (bool value);
-	void setDebugStealth(bool value);
+	void initChatCommand (std::vector<std::unique_ptr<cChatCommandExecutor>>&);
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 
 private:
-	const cServer* server;
-	const cClient* client;
-	const cGameMapWidget* gameMap;
-
-	/** show infos about the running attackjobs */
-	bool debugAjobs;
-	/** show infos about the bases of the server. Only works on the host */
-	bool debugBaseServer;
-	/** show infos about the bases of the client */
-	bool debugBaseClient;
-	/** show infos about the sentries */
-	bool debugSentry;
-	/** show FX-infos */
-	bool debugFX;
-	/** show infos from the server about the unit under the mouse */
-	bool debugTraceServer;
-	/** show infos from the client about the unit under the mouse */
-	bool debugTraceClient;
-	/** show infos from the client about the unit under the mouse */
-	bool debugPlayers;
-	/** show drawing cache debug information */
-	bool debugCache;
-	bool debugSync;
-	bool debugStealth;
-
-	cPosition drawPosition;
-
-	void setPrintPosition(cPosition position);
-	void print(const std::string& text, eUnicodeFontType font = FONT_LATIN_SMALL_WHITE);
+	void setPrintPosition(cPosition);
+	void print(const std::string&, eUnicodeFontType = FONT_LATIN_SMALL_WHITE);
 
 	void trace();
-	void traceVehicle (const cVehicle& vehicle, cPosition& drawPosition);
-	void traceBuilding (const cBuilding& Building, cPosition& drawPosition);
+	void traceVehicle (const cVehicle&, cPosition& drawPosition);
+	void traceBuilding (const cBuilding&, cPosition& drawPosition);
 
-	/** draw the contend of the 'detectedByPlayer' lists over the units */
+	/** draw the content of the 'detectedByPlayer' lists over the units */
 	void drawDetectedByPlayerList();
 	/** draw the detection maps of all players */
 	void drawDetectionMaps();
 
 	void drawSentryMaps();
+
+private:
+	const cServer* server = nullptr;
+	const cClient* client = nullptr;
+	const cGameMapWidget* gameMap = nullptr;
+
+	/** show infos about the running attackjobs */
+	bool debugAjobs = false;
+	/** show infos about the bases of the server. Only works on the host */
+	bool debugBaseServer = false;
+	/** show infos about the bases of the client */
+	bool debugBaseClient = false;
+	/** show infos about the sentries */
+	bool debugSentry = false;
+	/** show FX-infos */
+	bool debugFX = false;
+	/** show infos from the server about the unit under the mouse */
+	bool debugTraceServer = false;
+	/** show infos from the client about the unit under the mouse */
+	bool debugTraceClient = false;
+	/** show infos from the client about the unit under the mouse */
+	bool debugPlayers = false;
+	/** show drawing cache debug information */
+	bool debugCache = false;
+	bool debugSync = false;
+	bool debugStealth = false;
+
+	cPosition drawPosition;
 };
 
-#endif // ui_graphical_game_widgets_debugoutputidgetH
+#endif

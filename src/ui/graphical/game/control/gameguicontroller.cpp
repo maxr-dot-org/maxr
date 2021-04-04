@@ -417,82 +417,7 @@ void cGameGuiController::initChatCommands()
 			}
 		})
 	);
-	chatCommands.push_back(
-		cChatCommand("base", "Enable/disable debug information about bases")
-		.addArgument<cChatCommandArgumentChoice>(std::vector<std::string>{"client", "server", "off"})
-		.setAction([&](const std::string& value)
-		{
-			if(value == "server")
-			{
-				gameGui->getDebugOutput().setDebugBaseServer(true);
-				gameGui->getDebugOutput().setDebugBaseClient(false);
-			}
-			else if(value == "client")
-			{
-				gameGui->getDebugOutput().setDebugBaseServer(false);
-				gameGui->getDebugOutput().setDebugBaseClient(true);
-			}
-			else
-			{
-				gameGui->getDebugOutput().setDebugBaseServer(false);
-				gameGui->getDebugOutput().setDebugBaseClient(false);
-			}
-		})
-	);
-	chatCommands.push_back(
-		cChatCommand("sentry", "Enable/disable debug information about the sentry status")
-		.addArgument<cChatCommandArgumentChoice>(std::vector<std::string>{"server", "off"})
-		.setAction([&](const std::string& value)
-		{
-			gameGui->getDebugOutput().setDebugSentry(value == "server");
-		})
-	);
-	chatCommands.push_back(
-		cChatCommand("fx", "Enable/disable debug information about effects")
-		.addArgument<cChatCommandArgumentBool>()
-		.setAction([&](bool flag)
-		{
-			gameGui->getDebugOutput().setDebugFX(flag);
-		})
-	);
-	chatCommands.push_back(
-		cChatCommand("trace", "Enable/disable debug information about the unit currently under the cursor")
-		.addArgument<cChatCommandArgumentChoice>(std::vector<std::string>{"client", "server", "off"})
-		.setAction([&](const std::string& value)
-		{
-			if(value == "server")
-			{
-				gameGui->getDebugOutput().setDebugTraceServer(true);
-				gameGui->getDebugOutput().setDebugTraceClient(false);
-			}
-			else if(value == "client")
-			{
-				gameGui->getDebugOutput().setDebugTraceServer(false);
-				gameGui->getDebugOutput().setDebugTraceClient(true);
-			}
-			else
-			{
-				gameGui->getDebugOutput().setDebugTraceServer(false);
-				gameGui->getDebugOutput().setDebugTraceClient(false);
-			}
-		})
-	);
-	chatCommands.push_back(
-		cChatCommand("ajobs", "Enable/disable debug information about attack jobs")
-		.addArgument<cChatCommandArgumentBool>()
-		.setAction([&](bool flag)
-		{
-			gameGui->getDebugOutput().setDebugAjobs(flag);
-		})
-	);
-	chatCommands.push_back(
-		cChatCommand("players", "Enable/disable debug information about players")
-		.addArgument<cChatCommandArgumentBool>()
-		.setAction([&](bool flag)
-		{
-			gameGui->getDebugOutput().setDebugPlayers(flag);
-		})
-	);
+	gameGui->getDebugOutput().initChatCommand (chatCommands);
 	chatCommands.push_back(
 		cChatCommand("cache size", "Set the drawing cache size")
 		.addArgument<cChatCommandArgumentInt<unsigned int>>("size")
@@ -506,30 +431,6 @@ void cGameGuiController::initChatCommands()
 		.setAction([&]()
 		{
 			gameGui->getGameMap().getDrawingCache().flush();
-		})
-	);
-	chatCommands.push_back(
-		cChatCommand("cache debug", "Enable/disable debug information about the drawing cache")
-		.addArgument<cChatCommandArgumentBool>()
-		.setAction([&](bool flag)
-		{
-			gameGui->getDebugOutput().setDebugCache(flag);
-		})
-	);
-	chatCommands.push_back(
-		cChatCommand("sync debug", "Enable/disable debug information about the sync state of the game data")
-		.addArgument<cChatCommandArgumentBool>()
-		.setAction([&](bool flag)
-		{
-			gameGui->getDebugOutput().setDebugSync(flag);
-		})
-	);
-	chatCommands.push_back(
-		cChatCommand("debug stealth", "Enable/disable debug information about the stealth state of units")
-		.addArgument<cChatCommandArgumentBool>()
-		.setAction([&](bool flag)
-		{
-			gameGui->getDebugOutput().setDebugStealth(flag);
 		})
 	);
 #if 0 // Not implemented
