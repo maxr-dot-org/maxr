@@ -16,12 +16,8 @@
 *   Free Software Foundation, Inc.,                                       *
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
-#include <cassert>
-
-#include <SDL.h>
 
 #include "binaryarchive.h"
-
 
 //------------------------------------------------------------------------------
 cBinaryArchiveIn::cBinaryArchiveIn(std::vector<unsigned char>& buffer) :
