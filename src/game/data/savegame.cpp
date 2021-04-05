@@ -443,7 +443,7 @@ void fillSaveGames (std::size_t minIndex, std::size_t maxIndex, std::vector<cSav
 
 		if (number <= minIndex || number > maxIndex) continue;
 
-		if (ranges::find_if (saveGames, [=](const cSaveGameInfo& save) { return save.number == number; }) != saveGames.end()) continue;
+		if (ranges::find_if (saveGames, [=](const cSaveGameInfo& save) { return std::size_t(save.number) == number; }) != saveGames.end()) continue;
 
 		// read the information and add it to the saves list
 		cSaveGameInfo saveInfo = savegame.loadSaveInfo(number);

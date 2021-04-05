@@ -78,11 +78,11 @@ cSubBase::cSubBase (cBase& base) :
 //------------------------------------------------------------------------------
 cSubBase::cSubBase (const cSubBase& other) :
 	buildings (other.buildings),
-	maxStored (other.maxStored),
-	maxNeeded (other.maxNeeded),
-	needed (other.needed),
-	prod (other.prod),
 	stored (other.stored),
+	maxStored (other.maxStored),
+	needed (other.needed),
+	maxNeeded (other.maxNeeded),
+	prod (other.prod),
 	maxEnergyProd (other.maxEnergyProd),
 	energyProd (other.energyProd),
 	maxEnergyNeed (other.maxEnergyNeed),

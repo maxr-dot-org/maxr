@@ -38,11 +38,6 @@ namespace
 	{
 		std::cout << "Unknown command." << std::endl;
 	}
-
-	void printHelpNotImplementedYet()
-	{
-			std::cout << "Not implemented yet." << std::endl;
-	}
 	void printHelpHelp()
 	{
 		std::cout << "Type \"help\" for help." << std::endl;

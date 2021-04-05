@@ -83,7 +83,7 @@ void cMapDownloadMessageHandler::receivedData (const cMuMsgMapDownloadData& mess
 
 	mapReceiver->receiveData (message);
 
-	const int percent = mapReceiver->getBytesReceivedPercent();
+	const auto percent = mapReceiver->getBytesReceivedPercent();
 	if (lastPercent != percent) onPercentChanged (percent);
 	lastPercent = percent;
 }

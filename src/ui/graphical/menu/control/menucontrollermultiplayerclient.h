@@ -42,9 +42,9 @@ public:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	cLobbyClient lobbyClient;
-
 	cApplication& application;
+
+	cLobbyClient lobbyClient;
 
 	std::shared_ptr<cWindowNetworkLobbyClient> windowNetworkLobby;
 	std::shared_ptr<cInitGamePreparation> initGamePreparation;

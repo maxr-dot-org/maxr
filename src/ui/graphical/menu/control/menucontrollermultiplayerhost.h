@@ -45,11 +45,11 @@ public:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
+	cApplication& application;
+
 	std::shared_ptr<cConnectionManager> connectionManager = std::make_shared<cConnectionManager>();
 	cLobbyServer lobbyServer;
 	cLobbyClient lobbyClient;
-
-	cApplication& application;
 
 	std::shared_ptr<cWindowNetworkLobbyHost> windowNetworkLobby;
 	std::shared_ptr<cInitGamePreparation> initGamePreparation;
