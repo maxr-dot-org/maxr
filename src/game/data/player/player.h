@@ -20,25 +20,24 @@
 #ifndef game_data_player_playerH
 #define game_data_player_playerH
 
-#include <SDL.h>
 #include <cassert>
 #include <string>
 #include <vector>
 
 #include "defines.h"
 #include "game/data/base/base.h"
+#include "game/data/rangemap.h"
 #include "game/data/units/unitdata.h"
 #include "game/data/units/unit.h" // sUnitLess
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/upgradecalculator.h"
+#include "playercolor.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 #include "utility/flatset.h"
 #include "utility/serialization/serialization.h"
 #include "utility/arraycrc.h"
-#include "game/data/rangemap.h"
-#include "playercolor.h"
 
 class cHud;
 class cMapField;
