@@ -19,10 +19,12 @@
 
 #include "ui/graphical/menu/widgets/special/reportdisadvantageslistviewitem.h"
 
-#include "ui/graphical/menu/widgets/image.h"
-#include "ui/graphical/menu/widgets/label.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
+#include "resources/buildinguidata.h"
+#include "resources/vehicleuidata.h"
+#include "ui/graphical/menu/widgets/image.h"
+#include "ui/graphical/menu/widgets/label.h"
 #include "utility/string/toString.h"
 
 const int cReportDisadvantagesListViewItem::unitImageWidth = 32;
@@ -49,14 +51,14 @@ cReportDisadvantagesListViewItem::cReportDisadvantagesListViewItem (const cStati
 	{
 		const float zoomFactor = unitImageWidth / 64.0f;
 		const auto& uiData = *UnitsUiData.getVehicleUI (unitId);
-		cVehicle::render_simple (unitSurface.get(), dest, zoomFactor, uiData, nullptr);
-		cVehicle::drawOverlayAnimation (unitSurface.get(), dest, zoomFactor, uiData);
+		uiData.render_simple (*unitSurface, dest, zoomFactor, nullptr);
+		uiData.drawOverlayAnimation (*unitSurface, dest, zoomFactor);
 	}
 	else if (unitId.isABuilding())
 	{
 		const float zoomFactor = unitImageWidth / (data.isBig ? 128.0f : 64.0f);
 		const auto& uiData = *UnitsUiData.getBuildingUI (unitId);
-		cBuilding::render_simple (unitSurface.get(), dest, zoomFactor, uiData, nullptr);
+		uiData.render_simple (*unitSurface, dest, zoomFactor, nullptr);
 	}
 	auto unitImage = addChild (std::make_unique<cImage> (cPosition (0, (totalHeight - unitImageHeight) / 2), unitSurface.get()));
 

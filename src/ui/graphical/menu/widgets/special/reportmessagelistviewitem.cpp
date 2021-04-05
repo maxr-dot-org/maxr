@@ -23,6 +23,8 @@
 #include "game/data/units/vehicle.h"
 #include "game/data/report/savedreport.h"
 #include "game/data/report/savedreportunit.h"
+#include "resources/buildinguidata.h"
+#include "resources/vehicleuidata.h"
 #include "SDLutility/drawing.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
@@ -55,14 +57,14 @@ cReportMessageListViewItem::cReportMessageListViewItem (const cSavedReport& repo
 		{
 			const float zoomFactor = unitImageSize / 64.0f;
 			const auto& uiData = *UnitsUiData.getVehicleUI (unitId);
-			cVehicle::render_simple (unitSurface.get(), dest, zoomFactor, uiData, nullptr);
-			cVehicle::drawOverlayAnimation (unitSurface.get(), dest, zoomFactor, uiData);
+			uiData.render_simple (*unitSurface, dest, zoomFactor, nullptr);
+			uiData.drawOverlayAnimation (*unitSurface, dest, zoomFactor);
 		}
 		else if (unitId.isABuilding())
 		{
 			const float zoomFactor = unitImageSize / (data.isBig ? 128.0f : 64.0f);
 			const auto& uiData = *UnitsUiData.getBuildingUI (unitId);
-			cBuilding::render_simple (unitSurface.get(), dest, zoomFactor, uiData, nullptr);
+			uiData.render_simple (*unitSurface, dest, zoomFactor, nullptr);
 		}
 		addChild (std::make_unique<cImage> (cPosition (0, (totalHeight - unitImageSize) / 2), unitSurface.get()));
 	}

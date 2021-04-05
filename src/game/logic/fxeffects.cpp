@@ -17,20 +17,20 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <SDL.h>
-
 #include "game/logic/fxeffects.h"
 
-#include "game/logic/client.h"
-#include "game/data/player/player.h"
-#include "output/video/video.h"
-#include "resources/sound.h"
 #include "game/data/map/map.h"
-#include "utility/random.h"
-#include "ui/sound/soundmanager.h"
-#include "ui/sound/effects/soundeffectposition.h"
-#include "game/data/units/vehicle.h"
+#include "game/data/player/player.h"
 #include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
+#include "game/logic/client.h"
+#include "output/video/video.h"
+#include "resources/buildinguidata.h"
+#include "resources/sound.h"
+#include "resources/vehicleuidata.h"
+#include "ui/sound/effects/soundeffectposition.h"
+#include "ui/sound/soundmanager.h"
+#include "utility/random.h"
 
 cFx::cFx (bool bottom_, const cPosition& position_) :
 	position (position_),

@@ -17,20 +17,22 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <algorithm>
-
 #include "drawingcache.h"
 
-#include "game/data/units/building.h"
-#include "game/logic/client.h"
-#include "game/data/player/player.h"
-#include "settings.h"
-#include "game/data/units/vehicle.h"
+#include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"
+#include "game/data/player/player.h"
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
+#include "game/logic/client.h"
+#include "resources/buildinguidata.h"
+#include "resources/vehicleuidata.h"
+#include "settings.h"
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/graphical/framecounter.h"
-#include "game/data/map/mapfieldview.h"
 #include "utility/mathtools.h"
+
+#include <algorithm>
 
 sDrawingCacheEntry::sDrawingCacheEntry()
 {}

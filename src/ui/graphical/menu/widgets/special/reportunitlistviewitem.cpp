@@ -19,13 +19,15 @@
 
 #include "ui/graphical/menu/widgets/special/reportunitlistviewitem.h"
 
-#include "ui/graphical/game/widgets/unitdetailshud.h"
-#include "ui/graphical/menu/widgets/image.h"
-#include "ui/graphical/menu/widgets/label.h"
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
+#include "resources/buildinguidata.h"
+#include "resources/vehicleuidata.h"
 #include "SDLutility/drawing.h"
+#include "ui/graphical/game/widgets/unitdetailshud.h"
+#include "ui/graphical/menu/widgets/image.h"
+#include "ui/graphical/menu/widgets/label.h"
 #include "utility/color.h"
 #include "utility/string/toString.h"
 
@@ -44,14 +46,14 @@ cReportUnitListViewItem::cReportUnitListViewItem (cUnit& unit_, const cUnitsData
 	{
 		const auto& vehicle = static_cast<const cVehicle&> (unit);
 		const float zoomFactor = unitImageSize / 64.0f;
-		vehicle.render_simple (surface.get(), dest, zoomFactor);
-		vehicle.drawOverlayAnimation (surface.get(), dest, zoomFactor, 0);
+		render_simple (vehicle, *surface, dest, zoomFactor);
+		drawOverlayAnimation (vehicle, *surface, dest, zoomFactor, 0);
 	}
 	else if (unit.data.getId().isABuilding())
 	{
 		const auto& building = static_cast<const cBuilding&> (unit);
 		const float zoomFactor = unitImageSize / (building.getIsBig() ? 128.0f : 64.0f);
-		building.render_simple (surface.get(), dest, zoomFactor, 0);
+		render_simple (building, *surface, dest, zoomFactor, 0);
 	}
 	else surface = nullptr;
 

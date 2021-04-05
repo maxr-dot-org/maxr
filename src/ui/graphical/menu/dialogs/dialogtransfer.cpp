@@ -25,7 +25,9 @@
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
 #include "output/video/video.h"
+#include "resources/buildinguidata.h"
 #include "resources/pcx.h"
+#include "resources/vehicleuidata.h"
 #include "SDLutility/drawing.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
@@ -142,12 +144,12 @@ void cNewDialogTransfer::initUnitImage (cImage& image, const cUnit& unit)
 	if (unit.isABuilding())
 	{
 		const auto& building = static_cast<const cBuilding&> (unit);
-		building.render (0, unitImageSurface.get(), dest, zoom, false, false);
+		render (building, 0, *unitImageSurface, dest, zoom, false, false);
 	}
 	else if (unit.isAVehicle())
 	{
 		const auto& vehicle = static_cast<const cVehicle&> (unit);
-		vehicle.render (nullptr, 0, nullptr, unitImageSurface.get(), dest, zoom, false);
+		render (vehicle, nullptr, 0, nullptr, *unitImageSurface, dest, zoom, false);
 	}
 
 	image.setImage (unitImageSurface.get());

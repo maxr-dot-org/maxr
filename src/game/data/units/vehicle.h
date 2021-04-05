@@ -26,14 +26,10 @@
 #include "game/data/units/unitdata.h" // for sUnitData
 #include "game/data/units/unit.h"
 #include "resources/uidata.h"
-#include "resources/sound.h"
-
-#include <SDL.h>
 
 #include <array>
 #include <vector>
 
-class cApplication;
 class cBuilding;
 class cMap;
 class cMapField;
@@ -84,58 +80,6 @@ enum eSymbolsBig
 };
 
 #endif
-
-//-----------------------------------------------------------------------------
-// Struct for the pictures and sounds
-//-----------------------------------------------------------------------------
-struct sVehicleUIData
-{
-	sID id;
-
-	bool hasCorpse;
-	bool hasDamageEffect;
-	bool hasPlayerColor;
-	bool hasOverlay;
-
-	bool buildUpGraphic;
-	bool animationMovement;
-	bool powerOnGraphic;
-	bool isAnimated;
-	bool makeTracks;
-
-	int hasFrames;
-
-
-	std::array<AutoSurface, 8> img, img_org; // 8 Surfaces of the vehicle
-	std::array<AutoSurface, 8> shw, shw_org; // 8 Surfaces of shadows
-	AutoSurface build, build_org;        // Surfaces when building
-	AutoSurface build_shw, build_shw_org; // Surfaces of shadows when building
-	AutoSurface clear_small, clear_small_org;        // Surfaces when clearing
-	AutoSurface clear_small_shw, clear_small_shw_org; // Surfaces when clearing
-	AutoSurface overlay, overlay_org;    // Overlays
-	AutoSurface storage; // image of the vehicle in storage
-	std::string FLCFile;       // FLC-Video
-	AutoSurface info;   // info image
-
-	// Sounds:
-	cSoundChunk Wait;
-	cSoundChunk WaitWater;
-	cSoundChunk Start;
-	cSoundChunk StartWater;
-	cSoundChunk Stop;
-	cSoundChunk StopWater;
-	cSoundChunk Drive;
-	cSoundChunk DriveWater;
-	cSoundChunk Attack;
-
-	sVehicleUIData();
-	sVehicleUIData (sVehicleUIData&& other);
-	sVehicleUIData& operator= (sVehicleUIData && other);
-
-private:
-	sVehicleUIData (const sVehicleUIData& other) = delete;
-	sVehicleUIData& operator= (const sVehicleUIData& other) = delete;
-};
 
 enum class eSupplyType {
 	REARM,
@@ -208,28 +152,12 @@ public:
 	 * if it was not detected in _this_ turn. */
 	void tryResetOfDetectionStateBeforeMove (const cMap& map, const std::vector<std::shared_ptr<cPlayer>>& playerList);
 
-	static void blitWithPreScale (SDL_Surface* org_src, SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dest, SDL_Rect* destrect, float factor, int frames = 1);
-
 	/**
 	* Is this a plane and is there a landing platform beneath it,
 	* that can be used to land on?
 	* @author: eiko
 	*/
 	bool canLand (const cMap& map) const;
-
-	/**
-	* draws the main image of the vehicle onto the passed surface
-	*/
-	void render (const cMapView* map, unsigned long long animationTime, const cPlayer* activePlayer, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
-	void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int alpha = 254) const;
-	static void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sVehicleUIData& uiData, const cPlayer* owner, int dir = 0, int walkFrame = 0, int alpha = 254);
-	/**
-	* draws the overlay animation of the vehicle on the given surface
-	*@author: eiko
-	*/
-	void drawOverlayAnimation (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const;
-	void drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha = 254) const;
-	static void drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sVehicleUIData& uiData, int frameNr = 0, int alpha = 254);
 
 	bool isUnitLoaded() const { return loaded; }
 
@@ -326,10 +254,6 @@ public:
 		}
 	}
 private:
-
-	void render_BuildingOrBigClearing (const cMapView& map, unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
-	void render_smallClearing (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
-	void render_shadow (const cMapView& map, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const;
 
 	//---- sentry and reaction fire helpers ------------------------------------
 	/**

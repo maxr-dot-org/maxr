@@ -24,6 +24,8 @@
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "output/video/video.h"
+#include "resources/buildinguidata.h"
+#include "resources/vehicleuidata.h"
 #include "SDLutility/drawing.h"
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/graphical/game/gameguistate.h"
@@ -94,7 +96,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 
 	if (bDraw)
 	{
-		building.render (animationTime, drawingSurface, dest, zoomFactor, cSettings::getInstance().isShadows(), true);
+		render (building, animationTime, *drawingSurface, dest, zoomFactor, cSettings::getInstance().isShadows(), true);
 	}
 
 	// now check, whether the image has to be blitted to screen buffer
@@ -215,7 +217,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 
 	if (bDraw)
 	{
-		vehicle.render (&map, animationTime, player, drawingSurface, dest, zoomFactor, cSettings::getInstance().isShadows());
+		render (vehicle, &map, animationTime, player, *drawingSurface, dest, zoomFactor, cSettings::getInstance().isShadows());
 	}
 
 	// now check, whether the image has to be blitted to screen buffer
@@ -226,7 +228,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	}
 
 	// draw overlay if necessary:
-	vehicle.drawOverlayAnimation (animationTime, cVideo::buffer, destination, zoomFactor);
+	drawOverlayAnimation (vehicle, animationTime, *cVideo::buffer, destination, zoomFactor);
 
 	// remove the dithering for the following operations
 	if (vehicle.getFlightHeight() > 0)

@@ -22,6 +22,8 @@
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
+#include "resources/buildinguidata.h"
+#include "resources/vehicleuidata.h"
 #include "SDLutility/drawing.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
@@ -41,14 +43,14 @@ cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, co
 	{
 		const float zoomFactor = unitImageSize / 64.0f;
 		const auto& uiData = *UnitsUiData.getVehicleUI (unitId);
-		cVehicle::render_simple (surface.get(), dest, zoomFactor, uiData, &owner);
-		cVehicle::drawOverlayAnimation (surface.get(), dest, zoomFactor, uiData);
+		uiData.render_simple (*surface, dest, zoomFactor, &owner);
+		uiData.drawOverlayAnimation (*surface, dest, zoomFactor);
 	}
 	else if (unitId.isABuilding())
 	{
 		const float zoomFactor = unitImageSize / (data.isBig ? 128.0f : 64.0f);
 		const auto& uiData = *UnitsUiData.getBuildingUI (unitId);
-		cBuilding::render_simple (surface.get(), dest, zoomFactor, uiData, &owner);
+		uiData.render_simple (*surface, dest, zoomFactor, &owner);
 	}
 	else surface = nullptr;
 

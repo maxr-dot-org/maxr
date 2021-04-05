@@ -1,0 +1,106 @@
+/***************************************************************************
+ *      Mechanized Assault and Exploration Reloaded Projectfile            *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
+#ifndef resources_vehicleuidataH
+#define resources_vehicleuidataH
+
+#include "game/data/units/unitdata.h" // for sID
+#include "resources/sound.h"
+#include "resources/uidata.h"
+
+#include <array>
+#include <string>
+
+class cMapView;
+
+//-----------------------------------------------------------------------------
+// Struct for the pictures and sounds
+//-----------------------------------------------------------------------------
+struct sVehicleUIData
+{
+	friend void render (const cVehicle&, const cMapView*, unsigned long long animationTime, const cPlayer*, SDL_Surface&, const SDL_Rect& dest, float zoomFactor, bool drawShadow);
+
+public:
+	sVehicleUIData() = default;
+	sVehicleUIData (const sVehicleUIData& other) = delete;
+	sVehicleUIData (sVehicleUIData&&) = default;
+	sVehicleUIData& operator= (const sVehicleUIData& other) = delete;
+	sVehicleUIData& operator= (sVehicleUIData && other) = default;
+
+	void render_simple (SDL_Surface&, const SDL_Rect& dest, float zoomFactor, const cPlayer* owner, int dir = 0, int walkFrame = 0, int alpha = 254) const;
+	void drawOverlayAnimation (SDL_Surface&, const SDL_Rect& dest, float zoomFactor, int frameNr = 0, int alpha = 254) const;
+
+private:
+	void render_shadow (const cVehicle&, const cMapView&, SDL_Surface&, const SDL_Rect& dest, float zoomFactor) const;
+	void render_BuildingOrBigClearing (const cVehicle&, const cMapView&, unsigned long long animationTime, SDL_Surface&, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
+	void render_smallClearing (const cVehicle&, unsigned long long animationTime, SDL_Surface&, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
+
+public:
+	sID id;
+
+	bool hasCorpse = false;
+	bool hasDamageEffect = false;
+	bool hasPlayerColor = false;
+	bool hasOverlay = false;
+
+	bool buildUpGraphic = false;
+	bool animationMovement = false;
+	bool powerOnGraphic = false;
+	bool isAnimated = false;
+	bool makeTracks = false;
+
+	int hasFrames = 0;
+
+	std::array<AutoSurface, 8> img, img_org; // 8 Surfaces of the vehicle
+	std::array<AutoSurface, 8> shw, shw_org; // 8 Surfaces of shadows
+	AutoSurface build, build_org;         // Surfaces when building
+	AutoSurface build_shw, build_shw_org; // Surfaces of shadows when building
+	AutoSurface clear_small, clear_small_org;         // Surfaces when clearing
+	AutoSurface clear_small_shw, clear_small_shw_org; // Surfaces when clearing
+	AutoSurface overlay, overlay_org;    // Overlays
+	AutoSurface storage; // image of the vehicle in storage
+	std::string FLCFile; // FLC-Video
+	AutoSurface info; // info image
+
+	// Sounds:
+	cSoundChunk Wait;
+	cSoundChunk WaitWater;
+	cSoundChunk Start;
+	cSoundChunk StartWater;
+	cSoundChunk Stop;
+	cSoundChunk StopWater;
+	cSoundChunk Drive;
+	cSoundChunk DriveWater;
+	cSoundChunk Attack;
+};
+
+/**
+* draws the main image of the vehicle onto the passed surface
+*/
+void render (const cVehicle&, const cMapView*, unsigned long long animationTime, const cPlayer*, SDL_Surface&, const SDL_Rect& dest, float zoomFactor, bool drawShadow);
+void render_simple (const cVehicle&, SDL_Surface&, const SDL_Rect& dest, float zoomFactor, int alpha = 254);
+
+/**
+* draws the overlay animation of the vehicle on the given surface
+*@author: eiko
+*/
+void drawOverlayAnimation (const cVehicle&, unsigned long long animationTime, SDL_Surface&, const SDL_Rect& dest, float zoomFactor);
+void drawOverlayAnimation (const cVehicle&, SDL_Surface&, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha = 254);
+
+#endif

@@ -17,18 +17,20 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <functional>
-
 #include "ui/graphical/menu/windows/windowmain.h"
 
-#include "utility/language.h"
-#include "resources/pcx.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
-#include "utility/random.h"
-#include "ui/graphical/menu/widgets/label.h"
-#include "ui/graphical/menu/widgets/image.h"
 #include "maxrversion.h"
+#include "resources/buildinguidata.h"
+#include "resources/pcx.h"
+#include "resources/vehicleuidata.h"
+#include "ui/graphical/menu/widgets/image.h"
+#include "ui/graphical/menu/widgets/label.h"
+#include "utility/language.h"
+#include "utility/random.h"
+
+#include <functional>
 
 //------------------------------------------------------------------------------
 cWindowMain::cWindowMain (const std::string& title) :

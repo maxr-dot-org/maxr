@@ -38,25 +38,27 @@
 # include <unistd.h>
 #endif
 
-
+#include "debug.h"
+#include "game/data/player/clans.h"
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
 #include "maxrversion.h"
+#include "output/video/unifonts.h"
+#include "output/video/video.h"
+#include "resources/buildinguidata.h"
+#include "resources/vehicleuidata.h"
 #include "SDLutility/autosurface.h"
+#include "ui/keys.h"
+#include "utility/extendedtinyxml.h"
 #include "utility/files.h"
 #include "utility/language.h"
-#include "game/data/units/building.h"
-#include "game/data/player/clans.h"
-#include "utility/extendedtinyxml.h"
-#include "ui/keys.h"
 #include "utility/log.h"
 #include "utility/string/toString.h"
 #include "resources/pcx.h"
-#include "settings.h"
 #include "resources/sound.h"
+#include "settings.h"
+
 #include <3rd/tinyxml2/tinyxml2.h>
-#include "output/video/unifonts.h"
-#include "game/data/units/vehicle.h"
-#include "output/video/video.h"
-#include "debug.h"
 
 #ifdef WIN32
 # include <shlobj.h>

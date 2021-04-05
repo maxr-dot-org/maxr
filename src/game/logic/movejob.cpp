@@ -26,11 +26,9 @@
 #include "game/data/units/vehicle.h"
 #include "game/logic/gametimer.h"
 #include "game/logic/pathcalculator.h"
+#include "resources/vehicleuidata.h"
 #include "utility/ranges.h"
 #include "utility/string/toString.h"
-
-#include <SDL_rect.h>
-#include <SDL_surface.h>
 
 //                                 N, NE, E, SE, S, SW, W, NW
 static const int directionDx[8] = { 0, 1, 1, 1, 0, -1, -1, -1 };

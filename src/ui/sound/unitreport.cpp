@@ -23,6 +23,7 @@
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/movejob.h"
+#include "resources/sound.h"
 #include "ui/graphical/game/gameguistate.h"
 #include "ui/sound/effects/soundeffect.h"
 #include "ui/sound/effects/soundeffectvoice.h"

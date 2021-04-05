@@ -25,12 +25,9 @@
 #include "game/data/units/unitdata.h" // for sUnitData, sID
 #include "game/data/units/unit.h"
 #include "game/logic/upgradecalculator.h" // cResearch::ResearchArea
-#include "resources/sound.h"
 #include "resources/uidata.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
-
-#include <SDL.h>
 
 #include <array>
 #include <vector>
@@ -42,56 +39,6 @@ class cMap;
 class cMapField;
 class cSubBase;
 class cCrossPlattformRandom;
-
-//--------------------------------------------------------------------------
-/** struct for the images and sounds */
-//--------------------------------------------------------------------------
-struct sBuildingUIData
-{
-	sID id;
-
-	bool hasClanLogos;
-	bool hasDamageEffect;
-	bool hasBetonUnderground;
-	bool hasPlayerColor;
-	bool hasOverlay;
-
-	bool buildUpGraphic;
-	bool powerOnGraphic;
-	bool isAnimated;
-
-	bool isConnectorGraphic;
-	int hasFrames;
-
-
-	AutoSurface img, img_org; // Surface of the building
-	AutoSurface shw, shw_org; // Surfaces of the shadow
-	AutoSurface eff, eff_org; // Surfaces of the effects
-	AutoSurface video;  // video
-	AutoSurface info;   // info image
-
-	// Die Sounds:
-	cSoundChunk Start;
-	cSoundChunk Running;
-	cSoundChunk Stop;
-	cSoundChunk Attack;
-	cSoundChunk Wait;
-
-	sBuildingUIData();
-	sBuildingUIData (sBuildingUIData&& other);
-	sBuildingUIData& operator= (sBuildingUIData && other);
-
-private:
-	sBuildingUIData (const sBuildingUIData& other) = delete;
-	sBuildingUIData& operator= (const sBuildingUIData& other) = delete;
-};
-
-// enum for the upgrade symbols
-#ifndef D_eSymbols
-#define D_eSymbols
-enum eSymbols {SSpeed, SHits, SAmmo, SMetal, SEnergy, SShots, SOil, SGold, STrans, SHuman, SAir};
-enum eSymbolsBig {SBSpeed, SBHits, SBAmmo, SBAttack, SBShots, SBRange, SBArmor, SBScan, SBMetal, SBOil, SBGold, SBEnergy, SBHuman};
-#endif
 
 //--------------------------------------------------------------------------
 /** struct for the building order list */
@@ -154,7 +101,6 @@ public:
 	*@return 1 if there has been refreshed something, else 0.
 	*/
 	bool refreshData();
-	void DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int value, int orgvalue, SDL_Surface* sf);
 	void updateNeighbours (const cMap& map);
 	void CheckNeighbours (const cMap& Map);
 
@@ -171,13 +117,6 @@ public:
 	bool canLoad(const cPosition& position, const cMapView& map, bool checkPosition = true) const;
 	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const override;
 	bool canSupply(const cUnit* unit, eSupplyType supplyType) const override;
-
-	/**
-	* draws the main image of the building onto the given surface
-	*/
-	void render (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow, bool drawConcrete) const;
-	void render_simple(SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, unsigned long long animationTime = 0, int alpha = 254) const;
-	static void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sBuildingUIData& uiData, const cPlayer* owner, int frameNr = 0, int alpha = 254);
 
 	bool isUnitWorking() const override { return isWorking; }
 	bool factoryHasJustFinishedBuilding() const override;
@@ -278,20 +217,15 @@ private:
 	cSignalConnectionManager buildListFirstItemSignalConnectionManager;
 	cSignalConnectionManager ownerSignalConnectionManager;
 
-	/**
-	* draws the connectors onto the given surface
-	*/
-	void drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomFactor, bool drawShadow) const;
-
-	void render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
-	void render_beton (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const;
 	void connectFirstBuildListItem();
 
 	void registerOwnerEvents();
 
 public:
-	const sBuildingUIData* uiData = nullptr;
 	mutable int effectAlpha; // alpha value for the effect
+	int rubbleTyp;     // type of the rubble graphic (when unit is rubble)
+
+	const sBuildingUIData* uiData = nullptr;
 	bool BaseN, BaseE, BaseS, BaseW; // is the building connected in this direction?
 	bool BaseBN, BaseBE, BaseBS, BaseBW; // is the building connected in this direction (only for big buildings)
 	cSubBase* subBase = nullptr;     // the subbase to which this building belongs
@@ -310,7 +244,6 @@ private:
 
 	sMiningResource maxProd; // the maximum possible production of the building (resources under the building)
 
-	int rubbleTyp;     // type of the rubble graphic (when unit is rubble)
 	int rubbleValue;   // number of resources in the rubble field
 
 	cResearch::ResearchArea researchArea; ///< if the building can research, this is the area the building last researched or is researching

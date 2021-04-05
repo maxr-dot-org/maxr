@@ -21,6 +21,8 @@
 
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
+#include "resources/buildinguidata.h"
+#include "resources/vehicleuidata.h"
 
 //------------------------------------------------------------------------------
 // Globals
