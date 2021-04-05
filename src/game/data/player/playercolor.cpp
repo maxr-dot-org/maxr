@@ -17,13 +17,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <cassert>
+#include "game/data/player/playercolor.h"
 
 #include "defines.h"
-#include "game/data/player/playercolor.h"
-#include "utility/random.h"
+#include "SDLutility/tosdl.h"
 #include "utility/comparison.h"
 #include "utility/crc.h"
+#include "utility/random.h"
 
 const cRgbColor cPlayerColor::predefinedColors[predefinedColorsCount] =
 {
@@ -124,7 +124,7 @@ void cPlayerColor::createTexture()
 {
 	texture = AutoSurface (SDL_CreateRGBSurface (0, 128, 128, 32, 0, 0, 0, 0));
 
-	SDL_FillRect (texture.get(), nullptr, color.toMappedSdlRGBAColor (texture->format));
+	SDL_FillRect (texture.get(), nullptr, toMappedSdlRGBAColor (color, texture->format));
 
 	auto hsvColor = color.toHsv();
 
@@ -178,7 +178,7 @@ void cPlayerColor::createTexture()
 		}
 		SDL_Rect dest = {xPos, yPos, width, height};
 
-		SDL_FillRect (texture.get(), &dest, getRandom (randomColors).toMappedSdlRGBAColor (texture->format));
+		SDL_FillRect (texture.get(), &dest, toMappedSdlRGBAColor (getRandom (randomColors), texture->format));
 	}
 }
 

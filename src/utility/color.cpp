@@ -18,8 +18,12 @@
  ***************************************************************************/
 
 #include "utility/color.h"
-#include "utility/comparison.h"
+
 #include "crc.h"
+#include "utility/comparison.h"
+
+#include <algorithm>
+#include <cassert>
 
 //------------------------------------------------------------------------------
 cRgbColor::cRgbColor() :
@@ -47,24 +51,6 @@ bool cRgbColor::operator== (const cRgbColor& other) const
 bool cRgbColor::operator!= (const cRgbColor& other) const
 {
 	return ! (*this == other);
-}
-
-//------------------------------------------------------------------------------
-SDL_Color cRgbColor::toSdlColor() const
-{
-	return SDL_Color {r, g, b, a};
-}
-
-//------------------------------------------------------------------------------
-Uint32 cRgbColor::toMappedSdlRGBColor (const SDL_PixelFormat* format) const
-{
-	return SDL_MapRGB (format, r, g, b);
-}
-
-//------------------------------------------------------------------------------
-Uint32 cRgbColor::toMappedSdlRGBAColor (const SDL_PixelFormat* format) const
-{
-	return SDL_MapRGBA (format, r, g, b, a);
 }
 
 //------------------------------------------------------------------------------

@@ -21,6 +21,7 @@
 
 #include "input/mouse/mouse.h"
 #include "SDLutility/drawing.h"
+#include "SDLutility/tosdl.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/widgets/image.h"
 
@@ -96,7 +97,7 @@ AutoSurface cRgbColorPicker::createColorsSurface()
 			color.s = x * 100 / (size.x() - 1);
 			color.v = 100 - (y * 100 / (size.y() - 1));
 
-			putPixel (*surface, cPosition (x, y), color.toRgb().toMappedSdlRGBAColor (surface->format));
+			putPixel (*surface, cPosition (x, y), toMappedSdlRGBAColor (color.toRgb(), surface->format));
 		}
 	}
 
@@ -117,7 +118,7 @@ AutoSurface cRgbColorPicker::createColorBarSurface()
 		{
 			const cPosition position (x, y);
 
-			putPixel (*surface, position, color.toRgb().toMappedSdlRGBAColor (surface->format));
+			putPixel (*surface, position, toMappedSdlRGBAColor (color.toRgb(), surface->format));
 		}
 	}
 
@@ -129,7 +130,7 @@ AutoSurface cRgbColorPicker::createColorMarkerSurface()
 {
 	AutoSurface surface (SDL_CreateRGBSurface (0, 3, 3, 32, 0, 0, 0, 0));
 
-	SDL_FillRect (surface.get(), nullptr, cRgbColor::white().toMappedSdlRGBColor (surface->format));
+	SDL_FillRect (surface.get(), nullptr, toMappedSdlRGBColor (cRgbColor::white(), surface->format));
 	drawPoint (*surface, cPosition (1, 1), cRgbColor (0xFF, 0, 0xFF));
 
 	return surface;
@@ -140,7 +141,7 @@ AutoSurface cRgbColorPicker::createColorHueMarkerSurface()
 {
 	AutoSurface surface (SDL_CreateRGBSurface (0, 15 + 2, 3, 32, 0, 0, 0, 0));
 
-	SDL_FillRect (surface.get(), nullptr, cRgbColor::white().toMappedSdlRGBColor (surface->format));
+	SDL_FillRect (surface.get(), nullptr, toMappedSdlRGBColor (cRgbColor::white(), surface->format));
 
 	drawLine (*surface, cPosition (1, 1), cPosition (16, 1), cRgbColor (0xFF, 0, 0xFF));
 

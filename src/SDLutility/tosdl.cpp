@@ -20,6 +20,7 @@
 #include "tosdl.h"
 
 #include "utility/box.h"
+#include "utility/color.h"
 #include "utility/position.h"
 
 //------------------------------------------------------------------------------
@@ -28,4 +29,16 @@ SDL_Rect toSdlRect (const cBox<cPosition>& box)
 	const auto& diff = box.getSize();
 
 	return {box.getMinCorner()[0], box.getMinCorner()[1], diff[0], diff[1]};
+}
+
+//------------------------------------------------------------------------------
+Uint32 toMappedSdlRGBColor (const cRgbColor& color, const SDL_PixelFormat* format)
+{
+	return SDL_MapRGB (format, color.r, color.g, color.b);
+}
+
+//------------------------------------------------------------------------------
+Uint32 toMappedSdlRGBAColor (const cRgbColor& color, const SDL_PixelFormat* format)
+{
+	return SDL_MapRGBA (format, color.r, color.g, color.b, color.a);
 }

@@ -22,9 +22,13 @@
 
 #include <SDL.h>
 
+class cRgbColor;
 class cPosition;
 template <typename> class cBox;
 
 SDL_Rect toSdlRect (const cBox<cPosition>&);
+
+Uint32 toMappedSdlRGBColor (const cRgbColor&, const SDL_PixelFormat*);
+Uint32 toMappedSdlRGBAColor (const cRgbColor&, const SDL_PixelFormat*);
 
 #endif

@@ -20,12 +20,13 @@
 #include "ui/graphical/menu/dialogs/dialogcolorpicker.h"
 
 #include "resources/pcx.h"
+#include "SDLutility/tosdl.h"
 #include "ui/graphical/application.h"
-#include "ui/graphical/menu/widgets/label.h"
-#include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/colorpicker.h"
 #include "ui/graphical/menu/widgets/image.h"
+#include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/lineedit.h"
+#include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/tools/validatorint.h"
 #include "utility/language.h"
 #include "utility/string/toString.h"
@@ -143,7 +144,7 @@ AutoSurface cDialogColorPicker::createSelectedColorSurface()
 {
 	AutoSurface surface (SDL_CreateRGBSurface (0, 50, 50, 32, 0, 0, 0, 0));
 
-	SDL_FillRect (surface.get(), nullptr, colorPicker->getSelectedColor().toMappedSdlRGBAColor (surface->format));
+	SDL_FillRect (surface.get(), nullptr, toMappedSdlRGBAColor (colorPicker->getSelectedColor(), surface->format));
 
 	return surface;
 }

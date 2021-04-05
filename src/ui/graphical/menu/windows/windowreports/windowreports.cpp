@@ -17,30 +17,32 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <sstream>
-
 #include "ui/graphical/menu/windows/windowreports/windowreports.h"
-#include "ui/graphical/menu/widgets/label.h"
-#include "ui/graphical/menu/widgets/pushbutton.h"
+
+#include "game/data/gamesettings.h"
+#include "game/data/player/player.h"
+#include "game/data/report/savedreport.h"
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
+#include "game/logic/casualtiestracker.h"
+#include "game/logic/turncounter.h"
+#include "resources/pcx.h"
+#include "SDLutility/tosdl.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
-#include "ui/graphical/menu/widgets/radiogroup.h"
-#include "ui/graphical/menu/widgets/listview.h"
 #include "ui/graphical/menu/widgets/frame.h"
 #include "ui/graphical/menu/widgets/image.h"
+#include "ui/graphical/menu/widgets/label.h"
+#include "ui/graphical/menu/widgets/listview.h"
 #include "ui/graphical/menu/widgets/plot.h"
-#include "ui/graphical/menu/widgets/special/reportunitlistviewitem.h"
+#include "ui/graphical/menu/widgets/pushbutton.h"
+#include "ui/graphical/menu/widgets/radiogroup.h"
 #include "ui/graphical/menu/widgets/special/reportdisadvantageslistviewitem.h"
 #include "ui/graphical/menu/widgets/special/reportmessagelistviewitem.h"
-#include "utility/language.h"
-#include "resources/pcx.h"
-#include "game/data/player/player.h"
-#include "game/data/units/vehicle.h"
-#include "game/data/units/building.h"
-#include "game/logic/casualtiestracker.h"
-#include "game/data/report/savedreport.h"
-#include "game/logic/turncounter.h"
-#include "game/data/gamesettings.h"
+#include "ui/graphical/menu/widgets/special/reportunitlistviewitem.h"
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
+#include "utility/language.h"
+
+#include <sstream>
 
 namespace
 {
@@ -183,8 +185,7 @@ cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> play
 		std::string playerText = player->getName() + lngPack.i18n ("Text~Punctuation~Colon") + plural (player->getScore (turnClock->getTurn()), "Text~Comp~Point", "Text~Comp~Points") + ", " + plural (player->getNumEcoSpheres(), "Text~Comp~EcoSphere", "Text~Comp~EcoSpheres");
 
 		AutoSurface colorSurface (SDL_CreateRGBSurface (0, 8, 8, Video.getColDepth(), 0, 0, 0, 0));
-		player->getColor().getColor().toMappedSdlRGBAColor (colorSurface->format);
-		SDL_FillRect (colorSurface.get(), nullptr, player->getColor().getColor().toMappedSdlRGBAColor (colorSurface->format));
+		SDL_FillRect (colorSurface.get(), nullptr, toMappedSdlRGBAColor (player->getColor().getColor(), colorSurface->format));
 		scoreFrame->addChild (std::make_unique<cImage> (scoreFrame->getPosition() + cPosition (5, 20 + font->getFontHeight() * i), colorSurface.get()));
 
 		scoreFrame->addChild (std::make_unique<cLabel> (cBox<cPosition> (scoreFrame->getPosition() + cPosition (16, 20 + font->getFontHeight() * i), scoreFrame->getPosition() + cPosition (16 + 435, 20 + font->getFontHeight() * (i + 1))), playerText));

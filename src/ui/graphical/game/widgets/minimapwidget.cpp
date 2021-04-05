@@ -321,7 +321,7 @@ void cMiniMapWidget::drawUnits()
 			{
 				if (!attackUnitsOnly || building->getStaticUnitData().canAttack)
 				{
-					SDL_FillRect (surface.get(), &rect, building->getOwner()->getColor().getColor().toMappedSdlRGBAColor (surface->format));
+					SDL_FillRect (surface.get(), &rect, toMappedSdlRGBAColor (building->getOwner()->getColor().getColor(), surface->format));
 				}
 			}
 
@@ -331,7 +331,7 @@ void cMiniMapWidget::drawUnits()
 			{
 				if (!attackUnitsOnly || vehicle->getStaticUnitData().canAttack)
 				{
-					SDL_FillRect (surface.get(), &rect, vehicle->getOwner()->getColor().getColor().toMappedSdlRGBAColor (surface->format));
+					SDL_FillRect (surface.get(), &rect, toMappedSdlRGBAColor (vehicle->getOwner()->getColor().getColor(), surface->format));
 				}
 			}
 
@@ -341,7 +341,7 @@ void cMiniMapWidget::drawUnits()
 			{
 				if (!attackUnitsOnly || vehicle->getStaticUnitData().canAttack)
 				{
-					SDL_FillRect (surface.get(), &rect, vehicle->getOwner()->getColor().getColor().toMappedSdlRGBAColor (surface->format));
+					SDL_FillRect (surface.get(), &rect, toMappedSdlRGBAColor (vehicle->getOwner()->getColor().getColor(), surface->format));
 				}
 			}
 		}

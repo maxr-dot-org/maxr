@@ -29,7 +29,7 @@
 void drawPoint (SDL_Surface& surface, const cPosition& position, const cRgbColor& color)
 {
 	SDL_Rect rect = {Sint16 (position.x()), Sint16 (position.y()), 1, 1};
-	SDL_FillRect (&surface, &rect, color.toMappedSdlRGBAColor (surface.format));
+	SDL_FillRect (&surface, &rect, toMappedSdlRGBAColor (color, surface.format));
 }
 
 //------------------------------------------------------------------------------
@@ -78,7 +78,7 @@ void drawRectangle (SDL_Surface& surface, const cBox<cPosition>& rectangle, cons
 
 	SDL_Rect line_h = {rectangle.getMinCorner().x(), rectangle.getMinCorner().y(), size.x(), thickness};
 
-	const auto sdlColor = color.toMappedSdlRGBAColor (surface.format);
+	const auto sdlColor = toMappedSdlRGBAColor (color, surface.format);
 
 	SDL_FillRect (&surface, &line_h, sdlColor);
 	line_h.y += size.y() - thickness;
@@ -96,7 +96,7 @@ void drawSelectionCorner (SDL_Surface& surface, const cBox<cPosition>& rectangle
 
 	SDL_Rect line_h = {rectangle.getMinCorner().x(), rectangle.getMinCorner().y(), cornerSize, 1};
 
-	const auto sdlColor = color.toMappedSdlRGBAColor (surface.format);
+	const auto sdlColor = toMappedSdlRGBAColor (color, surface.format);
 
 	SDL_FillRect (&surface, &line_h, sdlColor);
 	line_h.x += size.x() - cornerSize;
@@ -207,8 +207,8 @@ void putPixel (SDL_Surface& surface, const cPosition& position, Uint32 pixel)
 //------------------------------------------------------------------------------
 void replaceColor (SDL_Surface& surface, const cRgbColor& sourceColor, const cRgbColor& destinationColor)
 {
-	const auto srcMapped = sourceColor.toMappedSdlRGBAColor (surface.format);
-	const auto destMapped = destinationColor.toMappedSdlRGBAColor (surface.format);
+	const auto srcMapped = toMappedSdlRGBAColor (sourceColor, surface.format);
+	const auto destMapped = toMappedSdlRGBAColor (destinationColor, surface.format);
 
 	Uint32 key;
 	const auto hadKey = SDL_GetColorKey (&surface, &key) == 0;

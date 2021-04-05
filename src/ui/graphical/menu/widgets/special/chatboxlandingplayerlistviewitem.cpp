@@ -18,11 +18,12 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"
-#include "ui/graphical/menu/widgets/label.h"
-#include "ui/graphical/menu/widgets/image.h"
+
 #include "game/data/player/player.h"
 #include "game/logic/landingpositionmanager.h"
-
+#include "SDLutility/tosdl.h"
+#include "ui/graphical/menu/widgets/image.h"
+#include "ui/graphical/menu/widgets/label.h"
 
 //------------------------------------------------------------------------------
 cPlayerLandingStatus::cPlayerLandingStatus (const cPlayerBasicData& player) :
@@ -147,7 +148,7 @@ void cChatBoxLandingPlayerListViewItem::updatePlayerHasSelectedPosition()
 	SDL_Rect src = {playerLandingStatus.hasSelectedPosition() ? 10 : 0, 0, 10, 10};
 
 	AutoSurface readySurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
-	SDL_SetColorKey (readySurface.get(), SDL_TRUE, cRgbColor (0, 1, 0).toMappedSdlRGBAColor (readySurface->format));
+	SDL_SetColorKey (readySurface.get(), SDL_TRUE, toMappedSdlRGBAColor (cRgbColor (0, 1, 0), readySurface->format));
 	SDL_BlitSurface (GraphicsData.gfx_player_ready.get(), &src, readySurface.get(), nullptr);
 
 	readyImage->setImage (readySurface.get());

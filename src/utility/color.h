@@ -21,10 +21,6 @@
 #define utility_colorH
 
 #include <random>
-#include <algorithm>
-#include <cassert>
-
-#include <SDL.h>
 
 #include "serialization/nvp.h"
 
@@ -42,10 +38,6 @@ public:
 
 	bool operator== (const cRgbColor& other) const;
 	bool operator!= (const cRgbColor& other) const;
-
-	SDL_Color toSdlColor() const;
-	Uint32 toMappedSdlRGBColor (const SDL_PixelFormat* format) const;
-	Uint32 toMappedSdlRGBAColor (const SDL_PixelFormat* format) const;
 
 	cHsvColor toHsv() const;
 	cLabColor toLab() const;

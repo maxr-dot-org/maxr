@@ -18,9 +18,11 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/widgets/chatboxplayerlistviewitem.h"
-#include "ui/graphical/menu/widgets/label.h"
-#include "ui/graphical/menu/widgets/image.h"
+
 #include "game/data/player/player.h"
+#include "SDLutility/tosdl.h"
+#include "ui/graphical/menu/widgets/image.h"
+#include "ui/graphical/menu/widgets/label.h"
 
 //------------------------------------------------------------------------------
 cChatBoxPlayerListViewItem::cChatBoxPlayerListViewItem (const cPlayer& player_) :
@@ -78,7 +80,7 @@ void cChatBoxPlayerListViewItem::updatePlayerFinishedTurn()
 	SDL_Rect src = {player->getHasFinishedTurn() ? 10 : 0, 0, 10, 10};
 
 	AutoSurface readySurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
-	SDL_SetColorKey (readySurface.get(), SDL_TRUE, cRgbColor (0, 1, 0).toMappedSdlRGBAColor (readySurface->format));
+	SDL_SetColorKey (readySurface.get(), SDL_TRUE, toMappedSdlRGBAColor (cRgbColor (0, 1, 0), readySurface->format));
 	SDL_BlitSurface (GraphicsData.gfx_player_ready.get(), &src, readySurface.get(), nullptr);
 
 	readyImage->setImage (readySurface.get());
