@@ -25,14 +25,14 @@
 #include "utility/position.h"
 
 //------------------------------------------------------------------------------
-void drawPoint (SDL_Surface* surface, const cPosition& position, const cRgbColor& color)
+void drawPoint (SDL_Surface& surface, const cPosition& position, const cRgbColor& color)
 {
 	SDL_Rect rect = {Sint16 (position.x()), Sint16 (position.y()), 1, 1};
-	SDL_FillRect (surface, &rect, color.toMappedSdlRGBAColor (surface->format));
+	SDL_FillRect (&surface, &rect, color.toMappedSdlRGBAColor (surface.format));
 }
 
 //------------------------------------------------------------------------------
-void drawLine (SDL_Surface* s, const cPosition& start, const cPosition& end, const cRgbColor& color)
+void drawLine (SDL_Surface& surface, const cPosition& start, const cPosition& end, const cRgbColor& color)
 {
 	auto x0 = start.x();
 	auto x1 = end.x();
@@ -59,8 +59,8 @@ void drawLine (SDL_Surface* s, const cPosition& start, const cPosition& end, con
 
 	for (int x = x0; x < x1; x++)
 	{
-		if (steep) drawPoint (s, cPosition (y, x), color);
-		else drawPoint (s, cPosition (x, y), color);
+		if (steep) drawPoint (surface, cPosition (y, x), color);
+		else drawPoint (surface, cPosition (x, y), color);
 		er -= dy;
 		if (er < 0)
 		{

@@ -231,8 +231,8 @@ void cSlider::createSurface (eSliderType sliderType)
 		surface = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
 		SDL_FillRect (surface.get(), nullptr, cRgbColor::black().toMappedSdlRGBAColor (surface->format));
 
-		drawLine (surface.get(), cPosition (0, 0), cPosition (0, size.y()), cRgbColor (140, 102, 61));
-		drawLine (surface.get(), cPosition (size.x() - 1, 0), cPosition (size.x() - 1, size.y()), cRgbColor (140, 102, 61));
+		drawLine (*surface, cPosition (0, 0), cPosition (0, size.y()), cRgbColor (140, 102, 61));
+		drawLine (*surface, cPosition (size.x() - 1, 0), cPosition (size.x() - 1, size.y()), cRgbColor (140, 102, 61));
 	}
 }
 

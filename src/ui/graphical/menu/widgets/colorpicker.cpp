@@ -130,7 +130,7 @@ AutoSurface cRgbColorPicker::createColorMarkerSurface()
 	AutoSurface surface (SDL_CreateRGBSurface (0, 3, 3, 32, 0, 0, 0, 0));
 
 	SDL_FillRect (surface.get(), nullptr, cRgbColor::white().toMappedSdlRGBColor (surface->format));
-	drawPoint (surface.get(), cPosition (1, 1), cRgbColor (0xFF, 0, 0xFF));
+	drawPoint (*surface, cPosition (1, 1), cRgbColor (0xFF, 0, 0xFF));
 
 	return surface;
 }
@@ -142,7 +142,7 @@ AutoSurface cRgbColorPicker::createColorHueMarkerSurface()
 
 	SDL_FillRect (surface.get(), nullptr, cRgbColor::white().toMappedSdlRGBColor (surface->format));
 
-	drawLine (surface.get(), cPosition (1, 1), cPosition (16, 1), cRgbColor (0xFF, 0, 0xFF));
+	drawLine (*surface, cPosition (1, 1), cPosition (16, 1), cRgbColor (0xFF, 0, 0xFF));
 
 	return surface;
 }

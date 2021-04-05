@@ -56,7 +56,7 @@ cRightMouseButtonScrollerWidget::cRightMouseButtonScrollerWidget (std::shared_pt
 			if (distance < (9 * 9) && distance > (3 * 3))
 			{
 				const auto colorValue = 30 + std::abs (distance - (6 * 6));
-				drawPoint (image.get(), p, cRgbColor (colorValue, colorValue, colorValue));
+				drawPoint (*image, p, cRgbColor (colorValue, colorValue, colorValue));
 			}
 		}
 	}
