@@ -18,11 +18,12 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/widgets/combobox.h"
-#include "ui/graphical/menu/widgets/listview.h"
+
+#include "SDLutility/drawing.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
 #include "ui/graphical/menu/widgets/lineedit.h"
+#include "ui/graphical/menu/widgets/listview.h"
 #include "ui/graphical/menu/widgets/special/textlistviewitem.h"
-#include "utility/drawing.h"
 #include "utility/color.h"
 
 //------------------------------------------------------------------------------

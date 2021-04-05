@@ -26,12 +26,12 @@
 #include "game/data/units/vehicle.h"
 #include "output/video/video.h"
 #include "resources/pcx.h"
+#include "SDLutility/drawing.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
-#include "utility/drawing.h"
 #include "utility/language.h"
 #include "utility/string/toString.h"
 

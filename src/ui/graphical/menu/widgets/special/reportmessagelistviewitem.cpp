@@ -18,13 +18,14 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/widgets/special/reportmessagelistviewitem.h"
-#include "ui/graphical/menu/widgets/image.h"
-#include "ui/graphical/menu/widgets/label.h"
+
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/report/savedreport.h"
 #include "game/data/report/savedreportunit.h"
-#include "utility/drawing.h"
+#include "SDLutility/drawing.h"
+#include "ui/graphical/menu/widgets/image.h"
+#include "ui/graphical/menu/widgets/label.h"
 #include "utility/color.h"
 
 //------------------------------------------------------------------------------

@@ -23,9 +23,9 @@
 #include <functional>
 #include <list>
 
+#include "SDLutility/drawing.h"
 #include "ui/graphical/widget.h"
 #include "utility/color.h"
-#include "utility/drawing.h"
 #include "utility/string/toString.h"
 
 /**

@@ -22,8 +22,8 @@
 #include "output/sound/soundchannel.h"
 #include "output/sound/sounddevice.h"
 #include "output/video/video.h"
+#include "SDLutility/drawing.h"
 #include "settings.h"
-#include "utility/drawing.h"
 
 //------------------------------------------------------------------------------
 cImage::cImage (const cPosition& position, SDL_Surface* image_, cSoundChunk* clickSound_) :

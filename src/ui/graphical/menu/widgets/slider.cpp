@@ -17,18 +17,18 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "ui/graphical/menu/widgets/slider.h"
+
+#include "input/mouse/mouse.h"
+#include "output/video/video.h"
+#include "resources/uidata.h"
+#include "SDLutility/drawing.h"
+#include "settings.h"
+#include "ui/graphical/menu/widgets/sliderhandle.h"
+#include "utility/mathtools.h"
+
 #include <algorithm>
 #include <functional>
-
-#include "ui/graphical/menu/widgets/slider.h"
-#include "ui/graphical/menu/widgets/sliderhandle.h"
-
-#include "resources/uidata.h"
-#include "settings.h"
-#include "output/video/video.h"
-#include "input/mouse/mouse.h"
-#include "utility/drawing.h"
-#include "utility/mathtools.h"
 
 //------------------------------------------------------------------------------
 cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOrientationType orientation_, eSliderType sliderType) :

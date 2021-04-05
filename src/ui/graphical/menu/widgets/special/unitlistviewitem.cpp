@@ -19,12 +19,12 @@
 
 #include "ui/graphical/menu/widgets/special/unitlistviewitem.h"
 
-#include "ui/graphical/menu/widgets/image.h"
-#include "ui/graphical/menu/widgets/label.h"
+#include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
-#include "game/data/player/player.h"
-#include "utility/drawing.h"
+#include "SDLutility/drawing.h"
+#include "ui/graphical/menu/widgets/image.h"
+#include "ui/graphical/menu/widgets/label.h"
 
 //------------------------------------------------------------------------------
 cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, const cPlayer& owner, const cUnitsData& unitsData) :

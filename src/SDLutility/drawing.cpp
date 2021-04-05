@@ -17,11 +17,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "utility/drawing.h"
+#include "drawing.h"
+
+#include "SDLutility/autosurface.h"
+#include "utility/box.h"
 #include "utility/color.h"
 #include "utility/position.h"
-#include "utility/box.h"
-#include "SDLutility/autosurface.h"
 
 //------------------------------------------------------------------------------
 void drawPoint (SDL_Surface* surface, const cPosition& position, const cRgbColor& color)

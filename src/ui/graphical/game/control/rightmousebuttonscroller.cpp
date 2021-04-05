@@ -18,14 +18,15 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/control/rightmousebuttonscroller.h"
+
+#include "input/mouse/cursor/mousecursorsimple.h"
+#include "input/mouse/mouse.h"
+#include "output/video/video.h"
+#include "SDLutility/drawing.h"
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/widgets/image.h"
-#include "input/mouse/mouse.h"
-#include "input/mouse/cursor/mousecursorsimple.h"
-#include "output/video/video.h"
 #include "utility/color.h"
-#include "utility/drawing.h"
 
 const double cRightMouseButtonScrollerWidget::factor = 0.05;
 const double cRightMouseButtonScrollerWidget::minDistanceSquared = 15 * 15;

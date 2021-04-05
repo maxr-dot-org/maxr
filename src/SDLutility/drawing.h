@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef utility_drawingH
-#define utility_drawingH
+#ifndef SDLutility_drawingH
+#define SDLutility_drawingH
 
 #include <SDL.h>
 
@@ -26,21 +26,17 @@ class cRgbColor;
 class cPosition;
 template<typename> class cBox;
 
-void drawPoint (SDL_Surface* surface, const cPosition& position, const cRgbColor& color);
+void drawPoint (SDL_Surface*, const cPosition&, const cRgbColor&);
+void drawLine (SDL_Surface*, const cPosition& start, const cPosition& end, const cRgbColor&);
+void drawRectangle (SDL_Surface&, const cBox<cPosition>&, const cRgbColor&, int thickness = 1);
 
-void drawLine (SDL_Surface* surface, const cPosition& start, const cPosition& end, const cRgbColor& color);
+void drawSelectionCorner (SDL_Surface&, const cBox<cPosition>&, const cRgbColor&, int cornerSize);
+void drawSelectionCorner (SDL_Surface&, const cBox<cPosition>&, const cRgbColor&, int cornerSize, const cBox<cPosition>& clipRect);
 
-void drawRectangle (SDL_Surface& surface, const cBox<cPosition>& rectangle, const cRgbColor& color, int thickness = 1);
+Uint32 getPixel (const SDL_Surface&, const cPosition&);
+void putPixel (SDL_Surface&, const cPosition&, Uint32 pixel);
 
-void drawSelectionCorner (SDL_Surface& surface, const cBox<cPosition>& rectangle, const cRgbColor& color, int cornerSize);
-
-void drawSelectionCorner (SDL_Surface& surface, const cBox<cPosition>& rectangle, const cRgbColor& color, int cornerSize, const cBox<cPosition>& clipRect);
-
-Uint32 getPixel (const SDL_Surface& surface, const cPosition& position);
-
-void putPixel (SDL_Surface& surface, const cPosition& position, Uint32 pixel);
-
-void replaceColor (SDL_Surface& surface, const cRgbColor& sourceColor, const cRgbColor& destinationColor);
+void replaceColor (SDL_Surface&, const cRgbColor& sourceColor, const cRgbColor& destinationColor);
 
 /**
  * Blits a surface onto an other one at a given destination area.
@@ -54,4 +50,4 @@ void replaceColor (SDL_Surface& surface, const cRgbColor& sourceColor, const cRg
  */
 void blitClipped (SDL_Surface& source, const cBox<cPosition>& area, SDL_Surface& destination, const cBox<cPosition>& clipRect);
 
-#endif // utility_drawingH
+#endif

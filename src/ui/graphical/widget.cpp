@@ -19,10 +19,10 @@
 
 #include "ui/graphical/widget.h"
 
-#include "ui/graphical/application.h"
-#include "settings.h"
 #include "output/video/video.h"
-#include "utility/drawing.h"
+#include "SDLutility/drawing.h"
+#include "settings.h"
+#include "ui/graphical/application.h"
 #include "utility/color.h"
 
 /*static*/ bool cWidget::drawDebugFrames = false;

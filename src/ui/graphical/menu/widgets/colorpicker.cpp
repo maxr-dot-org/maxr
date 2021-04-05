@@ -18,10 +18,11 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/widgets/colorpicker.h"
-#include "ui/graphical/menu/widgets/image.h"
-#include "ui/graphical/application.h"
+
 #include "input/mouse/mouse.h"
-#include "utility/drawing.h"
+#include "SDLutility/drawing.h"
+#include "ui/graphical/application.h"
+#include "ui/graphical/menu/widgets/image.h"
 
 //------------------------------------------------------------------------------
 cRgbColorPicker::cRgbColorPicker (const cBox<cPosition>& area, const cRgbColor& color) :

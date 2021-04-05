@@ -19,13 +19,13 @@
 
 #include "ui/graphical/menu/widgets/checkbox.h"
 
-#include "resources/uidata.h"
-#include "settings.h"
-#include "output/video/video.h"
-#include "utility/drawing.h"
-#include "utility/color.h"
-#include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
+#include "output/sound/sounddevice.h"
+#include "output/video/video.h"
+#include "resources/uidata.h"
+#include "SDLutility/drawing.h"
+#include "settings.h"
+#include "utility/color.h"
 
 //------------------------------------------------------------------------------
 cCheckBox::cCheckBox (const cPosition& position, eCheckBoxType type_, bool centered, cSoundChunk* clickSound_) :

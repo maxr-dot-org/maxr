@@ -24,11 +24,11 @@
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "output/video/video.h"
+#include "SDLutility/drawing.h"
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/graphical/game/gameguistate.h"
 #include "ui/graphical/game/unitselection.h"
 #include "utility/box.h"
-#include "utility/drawing.h"
 #include "utility/listhelpers.h"
 #include "utility/random.h"
 

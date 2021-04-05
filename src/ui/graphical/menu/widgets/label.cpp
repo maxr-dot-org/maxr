@@ -18,7 +18,8 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/widgets/label.h"
-#include "utility/drawing.h"
+
+#include "SDLutility/drawing.h"
 
 //------------------------------------------------------------------------------
 cLabel::cLabel (const cBox<cPosition>& area, const std::string& text_, eUnicodeFontType fontType_, AlignmentFlags alignment_) :
