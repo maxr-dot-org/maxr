@@ -19,10 +19,7 @@
 
 #include "crc.h"
 
-#include <SDL.h>
-#include <assert.h>
-#include <limits.h>
-
+#include <SDL_endian.h>
 
 uint32_t calcCheckSum (const char* data, size_t dataSize, uint32_t checksum)
 {

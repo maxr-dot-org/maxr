@@ -20,16 +20,15 @@
 #ifndef utility_crcH
 #define utility_crcH
 
-#include <stddef.h>
-#include <stdint.h>
-#include <vector>
-#include <string>
+#include <cstddef>
+#include <cstdint>
+#include <forward_list>
 #include <map>
 #include <memory>
-#include <forward_list>
+#include <string>
+#include <vector>
 
-#include "SDL_endian.h"
-
+#include <SDL_endian.h>
 
 uint32_t calcCheckSum(const char* data, size_t dataSize, uint32_t checksum);
 
