@@ -19,14 +19,15 @@
 
 #include "ui/graphical/game/widgets/unitdetailsstored.h"
 
+#include "game/data/player/player.h"
+#include "game/data/units/building.h"
+#include "game/data/units/unit.h"
+#include "output/video/video.h"
+#include "SDLutility/tosdl.h"
 #include "ui/graphical/game/widgets/unitdetailshud.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "utility/language.h"
 #include "utility/string/toString.h"
-#include "game/data/units/unit.h"
-#include "output/video/video.h"
-#include "game/data/player/player.h"
-#include "game/data/units/building.h"
 
 //------------------------------------------------------------------------------
 cUnitDetailsStored::cUnitDetailsStored (const cBox<cPosition>& area) :
@@ -71,7 +72,7 @@ void cUnitDetailsStored::draw (SDL_Surface& destination, const cBox<cPosition>& 
 {
 	if (surface != nullptr)
 	{
-		SDL_Rect position = getArea().toSdlRect();
+		SDL_Rect position = toSdlRect (getArea());
 		SDL_BlitSurface (surface.get(), nullptr, &destination, &position);
 	}
 

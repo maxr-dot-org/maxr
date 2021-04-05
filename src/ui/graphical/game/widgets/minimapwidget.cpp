@@ -18,15 +18,17 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/widgets/minimapwidget.h"
-#include "ui/graphical/application.h"
+
 #include "game/data/map/map.h"
+#include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"
-#include "output/video/video.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "input/mouse/mouse.h"
-#include "game/data/map/mapfieldview.h"
+#include "output/video/video.h"
+#include "SDLutility/tosdl.h"
+#include "ui/graphical/application.h"
 
 //------------------------------------------------------------------------------
 cMiniMapWidget::cMiniMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap) :
@@ -146,12 +148,12 @@ void cMiniMapWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clip
 
 	if (surface != nullptr)
 	{
-		auto position = getArea().toSdlRect();
+		auto position = toSdlRect (getArea());
 		SDL_BlitSurface (surface.get(), nullptr, &destination, &position);
 	}
 	if (viewWindowSurface != nullptr)
 	{
-		auto position = getArea().toSdlRect();
+		auto position = toSdlRect (getArea());
 		SDL_BlitSurface (viewWindowSurface.get(), nullptr, &destination, &position);
 	}
 	cWidget::draw (destination, clipRect);

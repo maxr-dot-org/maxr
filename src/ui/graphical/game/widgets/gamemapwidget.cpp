@@ -35,6 +35,7 @@
 #include "output/sound/soundchannel.h"
 #include "output/video/video.h"
 #include "resources/sound.h"
+#include "SDLutility/tosdl.h"
 #include "settings.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/game/animations/animation.h"
@@ -1049,7 +1050,7 @@ void cGameMapWidget::drawGrid()
 //------------------------------------------------------------------------------
 void cGameMapWidget::drawEffects (bool bottom)
 {
-	SDL_Rect clipRect = getArea().toSdlRect();
+	SDL_Rect clipRect = toSdlRect (getArea());
 	SDL_SetClipRect (cVideo::buffer, &clipRect);
 
 	const cPosition originalTileSize (sGraphicTile::tilePixelWidth, sGraphicTile::tilePixelHeight);
@@ -1388,7 +1389,7 @@ void cGameMapWidget::drawSelectionBox()
 //------------------------------------------------------------------------------
 void cGameMapWidget::drawUnitCircles()
 {
-	auto clipRect = getArea().toSdlRect();
+	auto clipRect = toSdlRect (getArea());
 	SDL_SetClipRect (cVideo::buffer, &clipRect);
 
 	auto selectedVehicle = unitSelection.getSelectedVehicle();

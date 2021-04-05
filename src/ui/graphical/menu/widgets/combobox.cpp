@@ -20,6 +20,7 @@
 #include "ui/graphical/menu/widgets/combobox.h"
 
 #include "SDLutility/drawing.h"
+#include "SDLutility/tosdl.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
 #include "ui/graphical/menu/widgets/lineedit.h"
 #include "ui/graphical/menu/widgets/listview.h"
@@ -96,12 +97,12 @@ void cComboBox::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (!listView->isHidden() && listViewBackground != nullptr)
 	{
-		SDL_Rect position = listView->getArea().toSdlRect();
+		SDL_Rect position = toSdlRect (listView->getArea());
 		SDL_BlitSurface (listViewBackground.get(), nullptr, &destination, &position);
 	}
 	if (lineEditBackground != nullptr)
 	{
-		SDL_Rect position = getArea().toSdlRect();
+		SDL_Rect position = toSdlRect (getArea());
 		position.w = lineEditBackground->w;
 		position.h = lineEditBackground->h;
 		SDL_BlitSurface (lineEditBackground.get(), nullptr, &destination, &position);

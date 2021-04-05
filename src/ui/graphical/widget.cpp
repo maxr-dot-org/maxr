@@ -21,6 +21,7 @@
 
 #include "output/video/video.h"
 #include "SDLutility/drawing.h"
+#include "SDLutility/tosdl.h"
 #include "settings.h"
 #include "ui/graphical/application.h"
 #include "utility/color.h"
@@ -266,12 +267,12 @@ void cWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 	{
 		auto clipedArea = getArea().intersection (clipRect);
 
-		SDL_Rect position = clipedArea.toSdlRect();
+		SDL_Rect position = toSdlRect (clipedArea);
 
 		clipedArea.getMinCorner() -= getPosition();
 		clipedArea.getMaxCorner() -= getPosition();
 
-		SDL_Rect source = clipedArea.toSdlRect();
+		SDL_Rect source = toSdlRect (clipedArea);
 
 		SDL_BlitSurface (frameSurface.get(), &source, &destination, &position);
 	}

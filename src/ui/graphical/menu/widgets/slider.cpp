@@ -23,6 +23,7 @@
 #include "output/video/video.h"
 #include "resources/uidata.h"
 #include "SDLutility/drawing.h"
+#include "SDLutility/tosdl.h"
 #include "settings.h"
 #include "ui/graphical/menu/widgets/sliderhandle.h"
 #include "utility/mathtools.h"
@@ -73,7 +74,7 @@ void cSlider::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (surface != nullptr)
 	{
-		auto positionRect = getArea().toSdlRect();
+		auto positionRect = toSdlRect (getArea());
 		SDL_BlitSurface (surface.get(), nullptr, &destination, &positionRect);
 	}
 	cClickableWidget::draw (destination, clipRect);

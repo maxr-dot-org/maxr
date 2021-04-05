@@ -17,14 +17,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <algorithm>
-
 #include "ui/graphical/menu/widgets/sliderhandle.h"
 
-#include "resources/uidata.h"
-#include "output/video/video.h"
-#include "ui/graphical/application.h"
 #include "input/mouse/mouse.h"
+#include "output/video/video.h"
+#include "resources/uidata.h"
+#include "SDLutility/tosdl.h"
+#include "ui/graphical/application.h"
+
+#include <algorithm>
 
 //------------------------------------------------------------------------------
 cSliderHandle::cSliderHandle (const cPosition& position, eSliderHandleType sliderHandleType, eOrientationType orientation_) :
@@ -42,7 +43,7 @@ void cSliderHandle::draw (SDL_Surface& destination, const cBox<cPosition>& clipR
 {
 	if (surface != nullptr)
 	{
-		auto positionRect = getArea().toSdlRect();
+		auto positionRect = toSdlRect (getArea());
 		SDL_BlitSurface (surface.get(), nullptr, &destination, &positionRect);
 	}
 
@@ -85,7 +86,7 @@ void cSliderHandle::createSurface (eSliderHandleType sliderHandleType)
 			break;
 	}
 	const cBox<cPosition> src (srcPoint, srcPoint + size);
-	auto srcRect = src.toSdlRect();
+	auto srcRect = toSdlRect (src);
 
 	surface = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
 	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);

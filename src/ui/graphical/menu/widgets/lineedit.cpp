@@ -17,18 +17,20 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <algorithm>
-
 #include "ui/graphical/menu/widgets/lineedit.h"
-#include "ui/graphical/menu/widgets/tools/validator.h"
-#include "ui/graphical/application.h"
-#include "ui/graphical/window.h"
-#include "settings.h"
-#include "output/video/video.h"
-#include "input/mouse/mouse.h"
+
 #include "input/keyboard/keyboard.h"
-#include "utility/log.h"
+#include "input/mouse/mouse.h"
+#include "output/video/video.h"
+#include "SDLutility/tosdl.h"
+#include "settings.h"
+#include "ui/graphical/application.h"
+#include "ui/graphical/menu/widgets/tools/validator.h"
+#include "ui/graphical/window.h"
 #include "ui/keys.h"
+#include "utility/log.h"
+
+#include <algorithm>
 
 //------------------------------------------------------------------------------
 cLineEdit::cLineEdit (const cBox<cPosition>& area, eLineEditFrameType frameType_, eUnicodeFontType fontType_) :
@@ -126,7 +128,7 @@ void cLineEdit::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (surface != nullptr)
 	{
-		SDL_Rect position = getArea().toSdlRect();
+		SDL_Rect position = toSdlRect (getArea());
 		SDL_BlitSurface (surface.get(), nullptr, &destination, &position);
 	}
 

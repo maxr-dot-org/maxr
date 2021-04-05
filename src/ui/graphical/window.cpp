@@ -22,6 +22,7 @@
 #include "input/mouse/cursor/mousecursorsimple.h"
 #include "input/mouse/mouse.h"
 #include "output/video/video.h"
+#include "SDLutility/tosdl.h"
 #include "settings.h"
 #include "ui/graphical/application.h"
 
@@ -74,7 +75,7 @@ void cWindow::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 		}
 	}
 
-	SDL_Rect position = getArea().toSdlRect();
+	SDL_Rect position = toSdlRect (getArea());
 	if (surface != nullptr) SDL_BlitSurface (surface.get(), nullptr, &destination, &position);
 
 	hasBeenDrawnOnce = true;

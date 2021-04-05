@@ -25,6 +25,7 @@
 #include "game/data/units/unit.h"
 #include "output/video/video.h"
 #include "SDLutility/drawing.h"
+#include "SDLutility/tosdl.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "utility/language.h"
 #include "utility/string/toString.h"
@@ -287,7 +288,7 @@ void cUnitDetailsHud::drawSmallSymbols (SDL_Surface* destination, int rowHeight,
 			src.getMaxCorner().x() = oriSrcMaxX + srcSize.x();
 		}
 
-		auto srcRect = src.toSdlRect();
+		auto srcRect = toSdlRect (src);
 		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &srcRect, destination, &dest);
 
 		dest.x += offX;

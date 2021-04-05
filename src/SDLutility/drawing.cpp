@@ -20,6 +20,7 @@
 #include "drawing.h"
 
 #include "SDLutility/autosurface.h"
+#include "SDLutility/tosdl.h"
 #include "utility/box.h"
 #include "utility/color.h"
 #include "utility/position.h"
@@ -242,12 +243,12 @@ void blitClipped (SDL_Surface& source, const cBox<cPosition>& area, SDL_Surface&
 {
 	auto clipedArea = area.intersection (clipRect);
 
-	SDL_Rect position = clipedArea.toSdlRect();
+	SDL_Rect position = toSdlRect (clipedArea);
 
 	clipedArea.getMinCorner() -= area.getMinCorner();
 	clipedArea.getMaxCorner() -= area.getMinCorner();
 
-	SDL_Rect sourceRect = clipedArea.toSdlRect();
+	SDL_Rect sourceRect = toSdlRect (clipedArea);
 
 	SDL_BlitSurface (&source, &sourceRect, &destination, &position);
 }

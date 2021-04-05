@@ -19,10 +19,11 @@
 
 #include "ui/graphical/menu/widgets/special/unitdetails.h"
 
-#include "ui/graphical/menu/widgets/label.h"
-#include "output/video/video.h"
-#include "game/logic/upgradecalculator.h"
 #include "game/data/player/player.h"
+#include "game/logic/upgradecalculator.h"
+#include "output/video/video.h"
+#include "SDLutility/tosdl.h"
+#include "ui/graphical/menu/widgets/label.h"
 #include "utility/language.h"
 #include "utility/string/toString.h"
 
@@ -57,7 +58,7 @@ void cUnitDetails::draw (SDL_Surface& destination, const cBox<cPosition>& clipRe
 	{
 		reset();
 
-		SDL_Rect position = getArea().toSdlRect();
+		SDL_Rect position = toSdlRect (getArea());
 		SDL_BlitSurface (surface.get(), nullptr, &destination, &position);
 	}
 
@@ -155,7 +156,7 @@ void cUnitDetails::reset()
 	}
 
 	eResourceType transport = staticUnitData->storeResType;
-	
+
 	if (transport != eResourceType::None)
 	{
 		eUnitDataSymbolType symbolType;
@@ -274,7 +275,7 @@ void cUnitDetails::drawBigSymbols (eUnitDataSymbolType symbolType, const cPositi
 
 	for (int i = 0; i != value1; ++i)
 	{
-		auto srcRect = src.toSdlRect();
+		auto srcRect = toSdlRect (src);
 		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &srcRect, surface.get(), &dest);
 
 		dest.x += offX;
@@ -292,7 +293,7 @@ void cUnitDetails::drawBigSymbols (eUnitDataSymbolType symbolType, const cPositi
 	}
 	for (int i = value1; i != value2; ++i)
 	{
-		auto srcRect = src.toSdlRect();
+		auto srcRect = toSdlRect (src);
 		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &srcRect, surface.get(), &dest);
 
 		dest.x += offX;

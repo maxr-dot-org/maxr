@@ -23,8 +23,6 @@
 #include <algorithm>
 #include <cassert>
 
-#include <SDL.h>
-
 /**
  * An axis aligned bounding box (AABB).
  *
@@ -87,9 +85,6 @@ public:
 
 	cBox<PointType> intersection (const cBox<PointType>& other) const;
 
-	SDL_Rect toSdlRect() const;
-
-	void fromSdlRect (const SDL_Rect& rect);
 private:
 	PointType minCorner;
 	PointType maxCorner;
@@ -235,30 +230,6 @@ cBox<PointType> cBox<PointType>::intersection (const cBox<PointType>& other) con
 		result.getMaxCorner()[d] = std::min (maxCorner[d], other.getMaxCorner()[d]);
 	}
 	return result;
-}
-
-//------------------------------------------------------------------------------
-template<typename PointType>
-SDL_Rect cBox<PointType>::toSdlRect() const
-{
-	static_assert (PointType::const_size::value == 2, "Converting to SDL_Rect not support in dimension other than 2.");
-	static_assert (std::is_same<typename PointType::value_type, int>::value, "Converting to SDL_Rect not support if point scalar value is other than int."); // NOTE: we may could allow all non-narrowing casts here (e.g. short to int).
-
-	const auto diff = getSize();
-
-	SDL_Rect result = {minCorner[0], minCorner[1], diff[0], diff[1]};
-	return result;
-}
-
-//------------------------------------------------------------------------------
-template<typename PointType>
-void cBox<PointType>::fromSdlRect (const SDL_Rect& rect)
-{
-	minCorner[0] = rect.x;
-	minCorner[1] = rect.y;
-
-	maxCorner[0] = rect.x + rect.w - 1;
-	maxCorner[1] = rect.y + rect.h - 1;
 }
 
 template<typename PointType>

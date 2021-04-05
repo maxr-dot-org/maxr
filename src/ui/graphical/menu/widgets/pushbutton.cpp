@@ -26,6 +26,7 @@
 #include "output/video/video.h"
 #include "resources/uidata.h"
 #include "SDLutility/drawing.h"
+#include "SDLutility/tosdl.h"
 #include "settings.h"
 #include "ui/graphical/application.h"
 
@@ -103,7 +104,7 @@ cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_
 //------------------------------------------------------------------------------
 void cPushButton::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
-	SDL_Rect position = getArea().toSdlRect();
+	SDL_Rect position = toSdlRect (getArea());
 	if (surface != nullptr) SDL_BlitSurface (surface.get(), nullptr, &destination, &position);
 
 	if (!text.empty())

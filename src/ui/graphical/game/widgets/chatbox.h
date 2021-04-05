@@ -24,9 +24,9 @@
 
 #include "ui/graphical/widget.h"
 
+#include "SDLutility/tosdl.h"
 #include "ui/graphical/menu/widgets/lineedit.h"
 #include "ui/graphical/menu/widgets/listview.h"
-
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
@@ -120,7 +120,7 @@ void cChatBox<ChatListItemType, PlayerListItemType>::draw (SDL_Surface& destinat
 
 	if (background != nullptr)
 	{
-		auto positionRect = getArea().toSdlRect();
+		auto positionRect = toSdlRect (getArea());
 		SDL_BlitSurface (background, nullptr, &destination, &positionRect);
 	}
 

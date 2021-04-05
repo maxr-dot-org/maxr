@@ -24,6 +24,7 @@
 #include "output/video/video.h"
 #include "resources/uidata.h"
 #include "SDLutility/drawing.h"
+#include "SDLutility/tosdl.h"
 #include "settings.h"
 #include "utility/color.h"
 
@@ -62,7 +63,7 @@ void cCheckBox::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	auto font = cUnicodeFont::font.get();
 
-	auto position = getArea().toSdlRect();
+	auto position = toSdlRect (getArea());
 	int textDestx = -1;
 	int textDesty = -1;
 	if (surface != nullptr)

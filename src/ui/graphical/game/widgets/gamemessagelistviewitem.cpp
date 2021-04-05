@@ -19,6 +19,7 @@
 
 #include "ui/graphical/game/widgets/gamemessagelistviewitem.h"
 
+#include "SDLutility/tosdl.h"
 #include "ui/graphical/menu/widgets/label.h"
 
 //------------------------------------------------------------------------------
@@ -52,7 +53,7 @@ void cGameMessageListViewItem::draw (SDL_Surface& destination, const cBox<cPosit
 {
 	if (cSettings::getInstance().isAlphaEffects())
 	{
-		auto rect = getArea().toSdlRect();
+		auto rect = toSdlRect (getArea());
 
 		if (background != nullptr) SDL_BlitSurface (background.get(), nullptr, &destination, &rect);
 		else Video.applyShadow (&rect, destination);

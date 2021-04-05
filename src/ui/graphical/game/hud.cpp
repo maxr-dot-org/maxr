@@ -19,27 +19,26 @@
 
 #include "ui/graphical/game/hud.h"
 
-#include "ui/graphical/game/widgets/unitvideowidget.h"
+#include "defines.h"
+#include "game/data/units/unit.h"
+#include "game/logic/turncounter.h"
+#include "game/logic/turntimeclock.h"
+#include "output/video/video.h"
+#include "resources/pcx.h"
+#include "SDLutility/tosdl.h"
+#include "settings.h"
+#include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "ui/graphical/game/widgets/unitdetailshud.h"
 #include "ui/graphical/game/widgets/unitrenamewidget.h"
-#include "ui/graphical/game/widgets/turntimeclockwidget.h"
-
-#include "ui/graphical/menu/widgets/pushbutton.h"
+#include "ui/graphical/game/widgets/unitvideowidget.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/lineedit.h"
+#include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/slider.h"
-
-#include "defines.h"
-#include "settings.h"
-#include "output/video/video.h"
-#include "resources/pcx.h"
+#include "ui/keys.h"
 #include "utility/language.h"
 #include "utility/string/toString.h"
-#include "game/data/units/unit.h"
-#include "ui/keys.h"
-#include "game/logic/turncounter.h"
-#include "game/logic/turntimeclock.h"
 
 //------------------------------------------------------------------------------
 cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
@@ -214,8 +213,7 @@ void cHud::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (surface != nullptr)
 	{
-		auto position = getArea().toSdlRect();
-		//SDL_Rect rect = {0, getEndPosition ().y () - panelBottomHeight * 2, getSize ().x (), panelBottomHeight * 2};
+		auto position = toSdlRect (getArea());
 		SDL_BlitSurface (surface.get(), nullptr, &destination, &position);
 	}
 
