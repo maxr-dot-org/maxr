@@ -24,14 +24,11 @@
 
 class cSignalConnection;
 
-template<typename F>
+template<typename Signature>
 class cSlot
 {
 public:
-	template<typename F2, typename M, typename C>
-	friend class cSignal;
-
-	typedef std::function<F> function_type;
+	using function_type = std::function<Signature>;
 
 	cSlot (cSignalConnection connection_, function_type function_) :
 		connection (std::move (connection_)),
@@ -44,4 +41,4 @@ public:
 	bool disconnected;
 };
 
-#endif // utility_signal_slotH
+#endif

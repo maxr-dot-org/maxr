@@ -31,7 +31,7 @@ class cSignalReference;
 class cSignalConnection
 {
 public:
-	template<typename F, typename M, typename C>
+	template<typename F, typename M>
 	friend class cSignal;
 
 	/**
