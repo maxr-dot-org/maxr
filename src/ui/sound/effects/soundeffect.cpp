@@ -36,7 +36,7 @@ cSoundEffect::~cSoundEffect()
 	// do not let an exception escape the destructor
 	try
 	{
-		cLockGuard<cRecursiveMutex> lock (channelMutex);
+		std::unique_lock<cRecursiveMutex> lock (channelMutex);
 		if (channel)
 		{
 			channel->stop();
@@ -62,7 +62,7 @@ void cSoundEffect::play (cSoundChannel& channel_, bool loop)
 	stop();
 
 	{
-		cLockGuard<cRecursiveMutex> lock (channelMutex);
+		std::unique_lock<cRecursiveMutex> lock (channelMutex);
 
 		channel = &channel_;
 
@@ -72,7 +72,7 @@ void cSoundEffect::play (cSoundChannel& channel_, bool loop)
 		{
 			bool hadChannel = false;
 			{
-				cLockGuard<cRecursiveMutex> lock (channelMutex);
+				std::unique_lock<cRecursiveMutex> lock (channelMutex);
 				if (channel)
 				{
 					signalConnectionManager.disconnectAll();
@@ -93,7 +93,7 @@ void cSoundEffect::stop()
 {
 	bool hadChannel = false;
 	{
-		cLockGuard<cRecursiveMutex> lock (channelMutex);
+		std::unique_lock<cRecursiveMutex> lock (channelMutex);
 		if (channel)
 		{
 			signalConnectionManager.disconnectAll();
@@ -111,7 +111,7 @@ void cSoundEffect::stop()
 //--------------------------------------------------------------------------
 void cSoundEffect::pause()
 {
-	cLockGuard<cRecursiveMutex> lock (channelMutex);
+	std::unique_lock<cRecursiveMutex> lock (channelMutex);
 	if (channel)
 	{
 		channel->pause();
@@ -121,7 +121,7 @@ void cSoundEffect::pause()
 //--------------------------------------------------------------------------
 void cSoundEffect::resume()
 {
-	cLockGuard<cRecursiveMutex> lock (channelMutex);
+	std::unique_lock<cRecursiveMutex> lock (channelMutex);
 	if (channel)
 	{
 		channel->resume();
@@ -131,7 +131,7 @@ void cSoundEffect::resume()
 //--------------------------------------------------------------------------
 cSoundChannel* cSoundEffect::getChannel() const
 {
-	cLockGuard<cRecursiveMutex> lock (channelMutex);
+	std::unique_lock<cRecursiveMutex> lock (channelMutex);
 	return channel;
 }
 

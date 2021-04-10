@@ -27,6 +27,8 @@
 #include "utility/ranges.h"
 #include "utility/string/toString.h"
 
+#include <mutex>
+
 #define HANDSHAKE_TIMEOUT_MS 3000
 #define DISABLE_TIMEOUTS 0 // this can be used, when debugging the connection handshake
                            // and timeouts are not wanted
@@ -76,7 +78,7 @@ int cConnectionManager::openServer(int port)
 {
 	assert(localServer != nullptr);
 
-	cLockGuard<cMutex> tl(mutex);
+	std::unique_lock<cMutex> tl(mutex);
 
 	if (serverOpen) return -1;
 
@@ -93,7 +95,7 @@ int cConnectionManager::openServer(int port)
 //------------------------------------------------------------------------------
 void cConnectionManager::closeServer()
 {
-	cLockGuard<cMutex> tl(mutex);
+	std::unique_lock<cMutex> tl(mutex);
 
 	if (!network || !serverOpen) return;
 
@@ -112,7 +114,7 @@ void cConnectionManager::acceptConnection(const cSocket* socket, int playerNr)
 {
 	assert(localServer != nullptr);
 
-	cLockGuard<cMutex> tl(mutex);
+	std::unique_lock<cMutex> tl(mutex);
 
 	stopTimeout(socket);
 
@@ -145,7 +147,7 @@ void cConnectionManager::declineConnection (const cSocket* socket, eDeclineConne
 {
 	assert(localServer != nullptr);
 
-	cLockGuard<cMutex> tl(mutex);
+	std::unique_lock<cMutex> tl(mutex);
 
 	stopTimeout(socket);
 
@@ -173,7 +175,7 @@ void cConnectionManager::connectToServer (const std::string& host, int port)
 {
 	assert(localClient != nullptr);
 
-	cLockGuard<cMutex> tl(mutex);
+	std::unique_lock<cMutex> tl(mutex);
 
 	if (!network)
 		network = std::make_unique<cNetwork>(*this, mutex);
@@ -189,7 +191,7 @@ void cConnectionManager::connectToServer (const std::string& host, int port)
 bool cConnectionManager::isConnectedToServer() const
 {
 	if (localServer) return true;
-	cLockGuard<cMutex> tl(mutex);
+	std::unique_lock<cMutex> tl(mutex);
 
 	return connecting || serverSocket != nullptr;
 }
@@ -199,7 +201,7 @@ void cConnectionManager::changePlayerNumber(int currentNr, int newNr)
 {
 	if (currentNr == newNr) return;
 	Log.write("Connection Manager: ChangePlayerNumber " + std::to_string(currentNr) + " to " + std::to_string(newNr), cLog::eLOG_TYPE_NET_DEBUG);
-	cLockGuard<cMutex> tl(mutex);
+	std::unique_lock<cMutex> tl(mutex);
 
 	if (localPlayer == currentNr)
 	{
@@ -224,7 +226,7 @@ void cConnectionManager::changePlayerNumber(int currentNr, int newNr)
 //------------------------------------------------------------------------------
 void cConnectionManager::setLocalClient(INetMessageReceiver* client, int playerNr)
 {
-	cLockGuard<cMutex> tl(mutex);
+	std::unique_lock<cMutex> tl(mutex);
 
 	//move pending messages in the event queue to new receiver
 	if (localClient && client)
@@ -242,7 +244,7 @@ void cConnectionManager::setLocalClient(INetMessageReceiver* client, int playerN
 //------------------------------------------------------------------------------
 void cConnectionManager::setLocalServer(INetMessageReceiver* server)
 {
-	cLockGuard<cMutex> tl(mutex);
+	std::unique_lock<cMutex> tl(mutex);
 
 	//move pending messages in the event queue to new receiver
 	if (localServer && server)
@@ -265,7 +267,7 @@ void cConnectionManager::setLocalClients(std::vector<INetMessageReceiver*>&& cli
 //------------------------------------------------------------------------------
 void cConnectionManager::sendToServer(const cNetMessage& message)
 {
-	cLockGuard<cMutex> tl(mutex);
+	std::unique_lock<cMutex> tl(mutex);
 
 	if (localServer)
 	{
@@ -284,7 +286,7 @@ void cConnectionManager::sendToServer(const cNetMessage& message)
 //------------------------------------------------------------------------------
 void cConnectionManager::sendToPlayer(const cNetMessage& message, int playerNr)
 {
-	cLockGuard<cMutex> tl(mutex);
+	std::unique_lock<cMutex> tl(mutex);
 
 	if (playerNr == localPlayer)
 	{
@@ -311,7 +313,7 @@ void cConnectionManager::sendToPlayer(const cNetMessage& message, int playerNr)
 //------------------------------------------------------------------------------
 void cConnectionManager::sendToPlayers(const cNetMessage& message)
 {
-	cLockGuard<cMutex> tl(mutex);
+	std::unique_lock<cMutex> tl(mutex);
 
 	if (localPlayer != -1)
 	{
@@ -336,7 +338,7 @@ void cConnectionManager::sendToPlayers(const cNetMessage& message)
 //------------------------------------------------------------------------------
 void cConnectionManager::disconnect(int player)
 {
-	cLockGuard<cMutex> tl(mutex);
+	std::unique_lock<cMutex> tl(mutex);
 
 	auto x = ranges::find_if (clientSockets, [&](const std::pair<const cSocket*, int>& x) { return x.second == player; });
 	if (x == clientSockets.end())
@@ -351,7 +353,7 @@ void cConnectionManager::disconnect(int player)
 //------------------------------------------------------------------------------
 void cConnectionManager::disconnectAll()
 {
-	cLockGuard<cMutex> tl(mutex);
+	std::unique_lock<cMutex> tl(mutex);
 
 	if (serverSocket)
 	{
@@ -603,7 +605,7 @@ void cConnectionManager::stopTimeout(const cSocket* socket)
 //------------------------------------------------------------------------------
 void cConnectionManager::handshakeTimeoutCallback(cHandshakeTimeout& timer)
 {
-	cLockGuard<cMutex> tl(mutex);
+	std::unique_lock<cMutex> tl(mutex);
 
 	Log.write("ConnectionManager: Handshake timed out", cLog::eLOG_TYPE_NET_WARNING);
 

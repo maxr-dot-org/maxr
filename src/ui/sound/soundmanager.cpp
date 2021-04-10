@@ -69,7 +69,7 @@ cSoundManager::cSoundManager() :
 cSoundManager::~cSoundManager()
 {
 	signalConnectionManager.disconnectAll();
-	cLockGuard<cMutex> playingSoundsLock (playingSoundsMutex);
+	std::unique_lock<cMutex> playingSoundsLock (playingSoundsMutex);
 	for (auto i = playingSounds.begin(); i != playingSounds.end(); ++i)
 	{
 		i->sound->stop();
@@ -87,7 +87,7 @@ void cSoundManager::mute()
 {
 	muted = true;
 
-	cLockGuard<cMutex> playingSoundsLock (playingSoundsMutex);
+	std::unique_lock<cMutex> playingSoundsLock (playingSoundsMutex);
 	for (auto i = playingSounds.begin(); i != playingSounds.end(); ++i)
 	{
 		if (!i->active) continue;
@@ -115,7 +115,7 @@ void cSoundManager::unmute()
 {
 	muted = false;
 
-	cLockGuard<cMutex> playingSoundsLock (playingSoundsMutex);
+	std::unique_lock<cMutex> playingSoundsLock (playingSoundsMutex);
 	for (auto i = playingSounds.begin(); i != playingSounds.end(); ++i)
 	{
 		if (!i->active) continue;
@@ -149,7 +149,7 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 
 	if (muted && !loop) return;
 
-	cLockGuard<cRecursiveMutex> playingSoundsLock (playingSoundsMutex);
+	std::unique_lock<cRecursiveMutex> playingSoundsLock (playingSoundsMutex);
 
 	playingSounds.erase (std::remove_if (playingSounds.begin(), playingSounds.end(),
 	[] (const sStoredSound & storedSound) { return !storedSound.active; }), playingSounds.end());
@@ -213,7 +213,7 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 //--------------------------------------------------------------------------
 void cSoundManager::stopAllSounds()
 {
-	cLockGuard<cRecursiveMutex> playingSoundsLock (playingSoundsMutex);
+	std::unique_lock<cRecursiveMutex> playingSoundsLock (playingSoundsMutex);
 	for (auto i = playingSounds.begin(); i != playingSounds.end(); ++i)
 	{
 		i->sound->stop();
@@ -236,7 +236,7 @@ cSoundChannel* cSoundManager::getChannelForSound (cSoundEffect& sound)
 //--------------------------------------------------------------------------
 void cSoundManager::finishedSound (cSoundEffect& sound)
 {
-	cLockGuard<cRecursiveMutex> playingSoundsLock (playingSoundsMutex);
+	std::unique_lock<cRecursiveMutex> playingSoundsLock (playingSoundsMutex);
 
 	auto iter = ranges::find_if (playingSounds, [&sound] (const sStoredSound & entry) { return entry.sound.get() == &sound; });
 

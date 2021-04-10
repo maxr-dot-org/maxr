@@ -79,7 +79,7 @@ void cGameTimer::timerCallback()
 
 void cGameTimer::pushEvent()
 {
-	cLockGuard<cMutex> lock(mutex);
+	std::unique_lock<cMutex> lock(mutex);
 
 	//increase event counter and let the event handler increase the gametime
 	if (eventCounter < maxEventQueueSize || maxEventQueueSize == static_cast<unsigned int>(-1))
@@ -90,7 +90,7 @@ void cGameTimer::pushEvent()
 
 bool cGameTimer::popEvent()
 {
-	cLockGuard<cMutex> lock (mutex);
+	std::unique_lock<cMutex> lock (mutex);
 
 	if (eventCounter > 0)
 	{
@@ -172,7 +172,7 @@ void cGameTimerServer::run(cModel& model, cServer& server)
 	for (unsigned int i = 0; i < maxEventQueueSize; i++)
 	{
 		if (!popEvent()) break;
-		
+
 		model.advanceGameTime();
 
 		uint32_t checksum = model.getChecksum();
@@ -203,13 +203,13 @@ cGameTimerClient::cGameTimerClient() :
 
 void cGameTimerClient::setReceivedTime(unsigned int time)
 {
-	cLockGuard<cMutex> lock(mutex);
+	std::unique_lock<cMutex> lock(mutex);
 	receivedTime = time;
 }
 
 unsigned int cGameTimerClient::getReceivedTime()
 {
-	cLockGuard<cMutex> lock(mutex);
+	std::unique_lock<cMutex> lock(mutex);
 
 	return receivedTime;
 }
@@ -268,7 +268,7 @@ void cGameTimerClient::run(cClient& client, cModel& model)
 
 		if (syncMessageReceived)
 		{
-			
+
 			model.advanceGameTime();
 			client.runClientJobs(model);
 

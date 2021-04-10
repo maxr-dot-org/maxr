@@ -114,7 +114,7 @@ cNetwork::~cNetwork()
 //------------------------------------------------------------------------
 int cNetwork::openServer(int port)
 {
-	cLockGuard<cMutex> tl(tcpMutex);
+	std::unique_lock<cMutex> tl(tcpMutex);
 
 	Log.write("Network: Open server on port: " + toString(port), cLog::eLOG_TYPE_NET_DEBUG);
 
@@ -139,7 +139,7 @@ int cNetwork::openServer(int port)
 //------------------------------------------------------------------------
 void cNetwork::closeServer()
 {
-	cLockGuard<cMutex> tl(tcpMutex);
+	std::unique_lock<cMutex> tl(tcpMutex);
 
 	if (serverSocket == nullptr) return;
 
@@ -150,7 +150,7 @@ void cNetwork::closeServer()
 //------------------------------------------------------------------------
 void cNetwork::connectToServer(const std::string& ip, int port)
 {
-	cLockGuard<cMutex> tl(tcpMutex);
+	std::unique_lock<cMutex> tl(tcpMutex);
 
 	if (!connectToIp.empty())
 	{
@@ -166,7 +166,7 @@ void cNetwork::connectToServer(const std::string& ip, int port)
 //------------------------------------------------------------------------
 void cNetwork::close(const cSocket* socket)
 {
-	cLockGuard<cMutex> tl(tcpMutex);
+	std::unique_lock<cMutex> tl(tcpMutex);
 
 	if (!Contains(sockets, socket))
 	{
@@ -185,7 +185,7 @@ void cNetwork::close(const cSocket* socket)
 //------------------------------------------------------------------------
 int cNetwork::sendMessage(const cSocket* socket, unsigned int length, const unsigned char* buffer)
 {
-	cLockGuard<cMutex> tl(tcpMutex);
+	std::unique_lock<cMutex> tl(tcpMutex);
 
 	if (!Contains(sockets, socket))
 	{
@@ -239,7 +239,7 @@ void cNetwork::handleNetworkThread()
 
 		if (readySockets > 0 || closingSockets.size() > 0 || !connectToIp.empty())
 		{
-			cLockGuard<cMutex> tl(tcpMutex);
+			std::unique_lock<cMutex> tl(tcpMutex);
 
 			//handle incoming data
 			for (size_t i = 0; i < sockets.size();) // erease in loop

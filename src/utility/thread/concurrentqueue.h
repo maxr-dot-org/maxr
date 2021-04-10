@@ -21,9 +21,9 @@
 #define utility_concurrentqueueH
 
 #include <deque>
+#include <mutex>
 
 #include "utility/thread/mutex.h"
-#include "utility/thread/lockguard.h"
 
 template<typename T>
 class cConcurrentQueue
@@ -64,7 +64,7 @@ private:
 template<typename T>
 void cConcurrentQueue<T>::push (const T& value)
 {
-	cLockGuard<cMutex> lock (mutex);
+	std::unique_lock<cMutex> lock (mutex);
 
 	internalQueue.push_back (value);
 }
@@ -73,7 +73,7 @@ void cConcurrentQueue<T>::push (const T& value)
 template<typename T>
 void cConcurrentQueue<T>::push (T&& value)
 {
-	cLockGuard<cMutex> lock (mutex);
+	std::unique_lock<cMutex> lock (mutex);
 
 	internalQueue.push_back (std::forward<T> (value));
 }
@@ -82,7 +82,7 @@ void cConcurrentQueue<T>::push (T&& value)
 template<typename T>
 bool cConcurrentQueue<T>::try_pop (T& destination)
 {
-	cLockGuard<cMutex> lock (mutex);
+	std::unique_lock<cMutex> lock (mutex);
 
 	if (unsafe_empty()) return false;
 
@@ -96,7 +96,7 @@ bool cConcurrentQueue<T>::try_pop (T& destination)
 template<typename T>
 void cConcurrentQueue<T>::clear()
 {
-	cLockGuard<cMutex> lock (mutex);
+	std::unique_lock<cMutex> lock (mutex);
 
 	internalQueue.clear();
 }
@@ -105,7 +105,7 @@ void cConcurrentQueue<T>::clear()
 template<typename T>
 typename cConcurrentQueue<T>::size_type cConcurrentQueue<T>::safe_size() const
 {
-	cLockGuard<cMutex> lock (mutex);
+	std::unique_lock<cMutex> lock (mutex);
 	return unsafe_size();
 }
 
@@ -113,7 +113,7 @@ typename cConcurrentQueue<T>::size_type cConcurrentQueue<T>::safe_size() const
 template<typename T>
 bool cConcurrentQueue<T>::safe_empty() const
 {
-	cLockGuard<cMutex> lock (mutex);
+	std::unique_lock<cMutex> lock (mutex);
 	return unsafe_empty();
 }
 

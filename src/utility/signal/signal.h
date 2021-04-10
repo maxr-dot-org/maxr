@@ -20,17 +20,17 @@
 #ifndef utility_signal_signalH
 #define utility_signal_signalH
 
+#include <cassert>
 #include <list>
+#include <mutex>
 #include <tuple>
 #include <utility>
-#include <cassert>
 
 #include "maxrconfig.h"
 #include "utility/dependentfalse.h"
 #include "utility/deref.h"
 #include "utility/scopedoperation.h"
 #include "utility/functiontraits.h"
-#include "utility/thread/lockguard.h"
 #include "utility/thread/dummymutex.h"
 
 #include "utility/signal/signalconnection.h"
@@ -210,7 +210,7 @@ template<typename R, typename... Args, typename MutexType, typename ResultCombin
 template<typename F>
 cSignalConnection cSignal<R (Args...), MutexType, ResultCombinerType>::connect (F&& f)
 {
-	cLockGuard<MutexType> lock (mutex);
+	std::unique_lock<MutexType> lock (mutex);
 
 	std::weak_ptr<cSignalReference> weakSignalRef (thisReference);
 	cSignalConnection connection (nextIdentifer++, weakSignalRef);
@@ -243,7 +243,7 @@ void cSignal<R (Args...), MutexType, ResultCombinerType>::disconnect (const F& f
 		std::false_type
 		>::type should_deref;
 
-	cLockGuard<MutexType> lock (mutex);
+	std::unique_lock<MutexType> lock (mutex);
 
 	for (auto& slot : slots)
 	{
@@ -270,7 +270,7 @@ void cSignal<R (Args...), MutexType, ResultCombinerType>::disconnect (const F& f
 template<typename R, typename... Args, typename MutexType, typename ResultCombinerType>
 void cSignal<R (Args...), MutexType, ResultCombinerType>::disconnect (const cSignalConnection& connection)
 {
-	cLockGuard<MutexType> lock (mutex);
+	std::unique_lock<MutexType> lock (mutex);
 
 	for (auto& slot : slots)
 	{
@@ -291,7 +291,7 @@ typename cSignal<R (Args...), MutexType, ResultCombinerType>::result_type cSigna
 	typedef std::tuple<Args2...> ArgumentsContainerType;
 	typedef sSignalCallIterator<R, ArgumentsContainerType, typename SlotsContainerType::const_iterator> CallIteratorType;
 
-	cLockGuard<MutexType> lock (mutex);
+	std::unique_lock<MutexType> lock (mutex);
 
 	auto arguments = ArgumentsContainerType (std::forward<Args2> (args)...);
 

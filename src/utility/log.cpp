@@ -38,7 +38,7 @@ void cLog::write (const std::string& msg, eLogType type)
 		//in case debug is disabled we skip message
  		return;
  	}
-	cLockGuard<cMutex> l (mutex);
+	std::unique_lock<cMutex> l (mutex);
 
 	checkOpenFile (type);
 
@@ -79,7 +79,7 @@ void cLog::write (const std::string& msg, eLogType type)
 //------------------------------------------------------------------------------
 void cLog::mark()
 {
-	cLockGuard<cMutex> l (mutex);
+	std::unique_lock<cMutex> l (mutex);
 
 	checkOpenFile (eLOG_TYPE_INFO);
 
