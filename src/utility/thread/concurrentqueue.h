@@ -23,21 +23,17 @@
 #include <deque>
 #include <mutex>
 
-#include "utility/thread/mutex.h"
-
 template<typename T>
 class cConcurrentQueue
 {
 public:
-	typedef T value_type;
-	typedef T& reference;
-	typedef const T& const_reference;
-	typedef std::ptrdiff_t size_type;
-	typedef std::ptrdiff_t difference_type;
+	using value_type = T;
+	using reference = T&;
+	using const_reference = const T&;
+	using size_type = std::ptrdiff_t;
+	using difference_type = std::ptrdiff_t;
 
-	typedef typename std::deque<T>::iterator iterator;
-	typedef typename std::deque<T>::const_iterator const_iterator;
-
+public:
 	void push (const T& value);
 	void push (T&& value);
 	bool try_pop (T& destination);
@@ -46,25 +42,16 @@ public:
 	size_type safe_size() const;
 	bool safe_empty() const;
 
-	size_type unsafe_size() const;
-	bool unsafe_empty() const;
-
-	iterator unsafe_begin();
-	iterator unsafe_end();
-	const_iterator unsafe_begin() const;
-	const_iterator unsafe_end() const;
-
 private:
+	mutable std::mutex mutex;
 	std::deque<T> internalQueue;
-
-	mutable cMutex mutex;
 };
 
 //------------------------------------------------------------------------------
 template<typename T>
 void cConcurrentQueue<T>::push (const T& value)
 {
-	std::unique_lock<cMutex> lock (mutex);
+	std::unique_lock<std::mutex> lock (mutex);
 
 	internalQueue.push_back (value);
 }
@@ -73,7 +60,7 @@ void cConcurrentQueue<T>::push (const T& value)
 template<typename T>
 void cConcurrentQueue<T>::push (T&& value)
 {
-	std::unique_lock<cMutex> lock (mutex);
+	std::unique_lock<std::mutex> lock (mutex);
 
 	internalQueue.push_back (std::forward<T> (value));
 }
@@ -82,9 +69,9 @@ void cConcurrentQueue<T>::push (T&& value)
 template<typename T>
 bool cConcurrentQueue<T>::try_pop (T& destination)
 {
-	std::unique_lock<cMutex> lock (mutex);
+	std::unique_lock<std::mutex> lock (mutex);
 
-	if (unsafe_empty()) return false;
+	if (internalQueue.empty()) return false;
 
 	destination = std::move (internalQueue.front());
 	internalQueue.pop_front();
@@ -96,7 +83,7 @@ bool cConcurrentQueue<T>::try_pop (T& destination)
 template<typename T>
 void cConcurrentQueue<T>::clear()
 {
-	std::unique_lock<cMutex> lock (mutex);
+	std::unique_lock<std::mutex> lock (mutex);
 
 	internalQueue.clear();
 }
@@ -105,58 +92,16 @@ void cConcurrentQueue<T>::clear()
 template<typename T>
 typename cConcurrentQueue<T>::size_type cConcurrentQueue<T>::safe_size() const
 {
-	std::unique_lock<cMutex> lock (mutex);
-	return unsafe_size();
+	std::unique_lock<std::mutex> lock (mutex);
+	return internalQueue.size();
 }
 
 //------------------------------------------------------------------------------
 template<typename T>
 bool cConcurrentQueue<T>::safe_empty() const
 {
-	std::unique_lock<cMutex> lock (mutex);
-	return unsafe_empty();
-}
-
-//------------------------------------------------------------------------------
-template<typename T>
-typename cConcurrentQueue<T>::size_type cConcurrentQueue<T>::unsafe_size() const
-{
-	return internalQueue.size();
-}
-
-//------------------------------------------------------------------------------
-template<typename T>
-bool cConcurrentQueue<T>::unsafe_empty() const
-{
+	std::unique_lock<std::mutex> lock (mutex);
 	return internalQueue.empty();
 }
 
-//------------------------------------------------------------------------------
-template<typename T>
-typename cConcurrentQueue<T>::iterator cConcurrentQueue<T>::unsafe_begin()
-{
-	return internalQueue.begin();
-}
-
-//------------------------------------------------------------------------------
-template<typename T>
-typename cConcurrentQueue<T>::iterator cConcurrentQueue<T>::unsafe_end()
-{
-	return internalQueue.end();
-}
-
-//------------------------------------------------------------------------------
-template<typename T>
-typename cConcurrentQueue<T>::const_iterator cConcurrentQueue<T>::unsafe_begin() const
-{
-	return internalQueue.begin();
-}
-
-//------------------------------------------------------------------------------
-template<typename T>
-typename cConcurrentQueue<T>::const_iterator cConcurrentQueue<T>::unsafe_end() const
-{
-	return internalQueue.end();
-}
-
-#endif // utility_concurrentqueueH
+#endif
