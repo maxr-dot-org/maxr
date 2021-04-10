@@ -24,6 +24,8 @@
 #include <sstream>
 #include <exception>
 
+#include "config/workaround/c++17.h" // std::apply
+
 class cChatCommand;
 
 void skipWhiteSpace(const std::string& command, size_t& position);
@@ -50,9 +52,6 @@ private:
 	F function;
 	cChatCommandParser<Arguments...> argumentParser;
 };
-
-
-#include "utility/invoke.h"
 
 template<typename F, typename... Arguments>
 cChatCommandExecutorImpl<F, Arguments...>::cChatCommandExecutorImpl(F function_, cChatCommandParser<Arguments...> parser_) :
@@ -89,7 +88,7 @@ bool cChatCommandExecutorImpl<F, Arguments...>::tryExecute(const std::string& co
 			throw std::runtime_error(errorString.str());
 		}
 
-		invoke(function, argumentParser.getArgumentValues());
+		std::apply (function, argumentParser.getArgumentValues());
 
 		return true;
 	}
