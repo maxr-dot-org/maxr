@@ -69,7 +69,7 @@ cSoundManager::cSoundManager() :
 cSoundManager::~cSoundManager()
 {
 	signalConnectionManager.disconnectAll();
-	std::unique_lock<cMutex> playingSoundsLock (playingSoundsMutex);
+	std::unique_lock<cRecursiveMutex> playingSoundsLock (playingSoundsMutex);
 	for (auto i = playingSounds.begin(); i != playingSounds.end(); ++i)
 	{
 		i->sound->stop();
@@ -87,7 +87,7 @@ void cSoundManager::mute()
 {
 	muted = true;
 
-	std::unique_lock<cMutex> playingSoundsLock (playingSoundsMutex);
+	std::unique_lock<cRecursiveMutex> playingSoundsLock (playingSoundsMutex);
 	for (auto i = playingSounds.begin(); i != playingSounds.end(); ++i)
 	{
 		if (!i->active) continue;
@@ -115,7 +115,7 @@ void cSoundManager::unmute()
 {
 	muted = false;
 
-	std::unique_lock<cMutex> playingSoundsLock (playingSoundsMutex);
+	std::unique_lock<cRecursiveMutex> playingSoundsLock (playingSoundsMutex);
 	for (auto i = playingSounds.begin(); i != playingSounds.end(); ++i)
 	{
 		if (!i->active) continue;

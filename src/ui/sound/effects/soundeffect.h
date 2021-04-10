@@ -84,7 +84,7 @@ public:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	mutable cMutex channelMutex;
+	mutable cRecursiveMutex channelMutex;
 
 	eSoundEffectType type;
 	const cSoundChunk* sound;
@@ -92,4 +92,4 @@ private:
 	cSoundChannel* channel;
 };
 
-#endif // ui_sound_effects_soundeffectH
+#endif

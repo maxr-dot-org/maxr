@@ -42,7 +42,7 @@ public:
 	template<typename F>
 	cSignalConnection connect (F&& f)
 	{
-		std::unique_lock<cMutex> lock (mutex);
+		std::unique_lock<MutexType> lock (mutex);
 
 		cSignalConnection connection (nextIdentifer++, std::weak_ptr<cSignalReference> (thisReference));
 		assert (nextIdentifer < std::numeric_limits<unsigned int>::max());
@@ -57,7 +57,7 @@ public:
 
 	void disconnect (const cSignalConnection& connection) override
 	{
-		std::unique_lock<cMutex> lock (mutex);
+		std::unique_lock<MutexType> lock (mutex);
 
 		for (auto& slot : slots)
 		{
@@ -70,7 +70,7 @@ public:
 
 	result_type operator()()
 	{
-		std::unique_lock<cMutex> lock (mutex);
+		std::unique_lock<MutexType> lock (mutex);
 
 		auto arguments = ArgumentsContainerType();
 
