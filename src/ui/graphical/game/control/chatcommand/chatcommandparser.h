@@ -27,8 +27,6 @@
 #include <tuple>
 #include <sstream>
 
-#include "utility/meta/appendtotuple.h"
-
 void skipWhiteSpace(const std::string& command, size_t& position);
 
 template<typename... Arguments>
@@ -56,7 +54,7 @@ template<typename Argument, typename... LastArguments>
 class cChatCommandParser<Argument, LastArguments...>
 {
 public:
-	using ArgumentValueTypes = typename append_to_tuple<typename Argument::ValueType, typename cChatCommandParser<LastArguments...>::ArgumentValueTypes>::type;
+	using ArgumentValueTypes = std::tuple<typename LastArguments::ValueTypes..., typename Argument::ValueType>;
 
 	cChatCommandParser(cChatCommandParser<LastArguments...> lastParser_, Argument argument_);
 	size_t parse(const std::string& command, size_t position) const;
