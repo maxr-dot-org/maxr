@@ -21,9 +21,8 @@
 #define utility_logH
 
 #include <fstream>
+#include <mutex>
 #include <string>
-
-#include "utility/thread/mutex.h"
 
 class cLog
 {
@@ -57,9 +56,9 @@ private:
 	void writeToFile (const std::string& msg, std::ofstream& file);
 
 private:
+	std::mutex mutex;
 	std::ofstream logfile;
 	std::ofstream netLogfile;
-	cMutex mutex;
 };
 
 extern cLog Log;
