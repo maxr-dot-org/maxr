@@ -20,16 +20,14 @@
 #ifndef ui_sound_effects_soundeffectH
 #define ui_sound_effects_soundeffectH
 
-#include "ui/sound/effects/soundeffecttype.h"
+#include "output/sound/soundchunk.h"
 #include "ui/sound/effects/soundchanneltype.h"
 #include "ui/sound/effects/soundconflicthandlingtype.h"
-
-#include "output/sound/soundchunk.h"
-
+#include "ui/sound/effects/soundeffecttype.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "utility/thread/recursivemutex.h"
-#include "utility/thread/mutex.h"
+
+#include <mutex>
 
 class cSoundChannel;
 class cPosition;
@@ -75,16 +73,16 @@ public:
 	const cSoundChunk* getSound() const;
 
 	cSignal<void ()> started;
-	cSignal<void (), cRecursiveMutex> stopped;
+	cSignal<void (), std::recursive_mutex> stopped;
 
-	cSignal<void (), cRecursiveMutex> paused;
-	cSignal<void (), cRecursiveMutex> resumed;
+	cSignal<void (), std::recursive_mutex> paused;
+	cSignal<void (), std::recursive_mutex> resumed;
 
 	cSignal<void ()> positionChanged;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	mutable cRecursiveMutex channelMutex;
+	mutable std::recursive_mutex channelMutex;
 
 	eSoundEffectType type;
 	const cSoundChunk* sound;

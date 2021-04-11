@@ -17,13 +17,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <SDL_mixer.h>
-
 #include "output/sound/soundchannel.h"
+
 #include "output/sound/soundchunk.h"
 #include "utility/log.h"
 
-cSignal<void (int), cRecursiveMutex> cSoundChannel::channelFinished;
+#include <SDL_mixer.h>
+
+cSignal<void (int), std::recursive_mutex> cSoundChannel::channelFinished;
 
 //--------------------------------------------------------------------------
 void cSoundChannel::channelFinishedCallback (int channel)
