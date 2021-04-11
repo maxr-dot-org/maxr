@@ -19,13 +19,13 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include <string>
+#include "utility/color.h"
+#include "utility/signal/signal.h"
 
 #include <3rd/tinyxml2/tinyxml2.h>
 
-#include "utility/thread/mutex.h"
-#include "utility/signal/signal.h"
-#include "utility/color.h"
+#include <mutex>
+#include <string>
 
 /**
  * cSettings class stores all settings for the game and handles reading
@@ -241,7 +241,7 @@ private:
 	bool initializing;
 
 	tinyxml2::XMLDocument configFile;
-	cMutex xmlDocMutex;
+	std::mutex xmlDocMutex;
 
 	/**
 	 * The static instance of this object.

@@ -17,6 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "settings.h"
+
 #ifdef WIN32
 # include <shlobj.h>
 # include <direct.h>
@@ -29,14 +31,11 @@
 #include <locale>
 #include <string>
 
-#include "settings.h"
-
-#include "defines.h"
-#include "maxrversion.h"
-
 #include <3rd/tinyxml2/tinyxml2.h>
 
+#include "defines.h"
 #include "game/data/player/playercolor.h"
+#include "maxrversion.h"
 #include "utility/extendedtinyxml.h"
 #include "utility/files.h"
 #include "utility/log.h"
@@ -410,7 +409,7 @@ bool cSettings::createConfigFile()
 //------------------------------------------------------------------------------
 void cSettings::initialize()
 {
-	std::unique_lock<cMutex> lock (xmlDocMutex);
+	std::unique_lock<std::mutex> lock (xmlDocMutex);
 	initializing = true;
 
 	if (initialized) return;
@@ -1106,7 +1105,7 @@ void cSettings::saveSetting (const std::string& path, bool value)
 template<typename T>
 void cSettings::saveSetting (const std::string& path, T value, const char* valueName)
 {
-	std::unique_lock<cMutex> lock (xmlDocMutex);
+	std::unique_lock<std::mutex> lock (xmlDocMutex);
 
 	XMLElement* xmlElement = getOrCreateXmlElement (configFile, path);
 	if (xmlElement == nullptr) return;
