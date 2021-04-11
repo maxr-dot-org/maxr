@@ -182,7 +182,8 @@ void render (const cVehicle& vehicle, const cMapView* map, unsigned long long an
 	// Note: when changing something in this function,
 	// make sure to update the caching rules!
 
-	const auto& uiData = *vehicle.uiData;
+	const auto& uiData = *UnitsUiData.getVehicleUI (vehicle.getStaticUnitData().ID);
+
 	// draw working engineers and bulldozers:
 	if (map && !vehicle.jobActive)
 	{
@@ -248,19 +249,22 @@ void sVehicleUIData::drawOverlayAnimation (SDL_Surface& surface, const SDL_Rect&
 //------------------------------------------------------------------------------
 void render_simple (const cVehicle& vehicle, SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor, int alpha)
 {
-	vehicle.uiData->render_simple (surface, dest, zoomFactor, vehicle.getOwner(), vehicle.dir, vehicle.WalkFrame, alpha);
+	auto* uiData = UnitsUiData.getVehicleUI (vehicle.getStaticUnitData().ID);
+	uiData->render_simple (surface, dest, zoomFactor, vehicle.getOwner(), vehicle.dir, vehicle.WalkFrame, alpha);
 }
 
 //------------------------------------------------------------------------------
 void drawOverlayAnimation (const cVehicle& vehicle, SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha)
 {
-	vehicle.uiData->drawOverlayAnimation (surface, dest, zoomFactor, frameNr, alpha);
+	auto* uiData = UnitsUiData.getVehicleUI (vehicle.getStaticUnitData().ID);
+	uiData->drawOverlayAnimation (surface, dest, zoomFactor, frameNr, alpha);
 }
 
 //------------------------------------------------------------------------------
 void drawOverlayAnimation (const cVehicle& vehicle, unsigned long long animationTime, SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor)
 {
-	const auto& uiData = *vehicle.uiData;
+	const auto& uiData = *UnitsUiData.getVehicleUI (vehicle.getStaticUnitData().ID);
+
 	if (uiData.hasOverlay == false || cSettings::getInstance().isAnimations() == false) return;
 	int frameNr = 0;
 	if (vehicle.isDisabled() == false)

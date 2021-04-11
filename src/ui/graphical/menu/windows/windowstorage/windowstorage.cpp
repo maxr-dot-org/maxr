@@ -188,9 +188,10 @@ void cWindowStorage::updateUnitsWidgets()
 			if (unitIndex < unit.storedUnits.size())
 			{
 				const auto& storedUnit = *unit.storedUnits[unitIndex];
+				auto* uiData = UnitsUiData.getVehicleUI (storedUnit.getStaticUnitData().ID);
 
-				AutoSurface surface (SDL_CreateRGBSurface (0, storedUnit.uiData->storage->w, storedUnit.uiData->storage->h, Video.getColDepth(), 0, 0, 0, 0));
-				SDL_BlitSurface (storedUnit.uiData->storage.get(), nullptr, surface.get(), nullptr);
+				AutoSurface surface (SDL_CreateRGBSurface (0, uiData->storage->w, uiData->storage->h, Video.getColDepth(), 0, 0, 0, 0));
+				SDL_BlitSurface (uiData->storage.get(), nullptr, surface.get(), nullptr);
 				unitImages[positionIndex]->setImage (surface.get());
 
 				unitDetails[positionIndex]->setUnit (&storedUnit);

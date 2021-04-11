@@ -24,6 +24,7 @@
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "output/video/video.h"
+#include "resources/uidata.h"
 #include "SDLutility/drawing.h"
 #include "SDLutility/tosdl.h"
 #include "ui/graphical/menu/widgets/label.h"

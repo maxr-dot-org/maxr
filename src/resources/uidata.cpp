@@ -66,6 +66,16 @@ const sBuildingUIData* cUnitsUiData::getBuildingUI(sID id) const
 }
 
 //------------------------------------------------------------------------------
+const sBuildingUIData& cUnitsUiData::getBuildingUI(const cBuilding& building) const
+{
+	if (building.isRubble())
+	{
+		return building.getIsBig() ? *UnitsUiData.rubbleBig : *UnitsUiData.rubbleSmall;
+	}
+	return *getBuildingUI (building.getStaticUnitData().ID);
+}
+
+//------------------------------------------------------------------------------
 const sVehicleUIData* cUnitsUiData::getVehicleUI(sID id) const
 {
 	for (unsigned int i = 0; i < vehicleUIs.size(); ++i)

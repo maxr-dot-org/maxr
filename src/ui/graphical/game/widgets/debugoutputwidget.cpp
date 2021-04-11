@@ -26,6 +26,7 @@
 #include "game/logic/server.h"
 #include "input/mouse/mouse.h"
 #include "output/video/video.h"
+#include "resources/uidata.h"
 #include "ui/graphical/game/control/chatcommand/chatcommand.h"
 #include "ui/graphical/game/control/chatcommand/chatcommandexecutor.h"
 #include "ui/graphical/game/control/chatcommand/chatcommandparser.h"

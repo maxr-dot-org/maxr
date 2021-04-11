@@ -25,7 +25,6 @@
 #include "game/data/units/commandodata.h"
 #include "game/data/units/unitdata.h" // for sUnitData
 #include "game/data/units/unit.h"
-#include "resources/uidata.h"
 
 #include <array>
 #include <vector>
@@ -105,7 +104,6 @@ public:
 	const cPosition& getMovementOffset() const override { return tileMovementOffset; }
 	void setMovementOffset (const cPosition& newOffset) { tileMovementOffset = newOffset; }
 
-	const sVehicleUIData* uiData;
 	mutable int ditherX, ditherY;
 	mutable int bigBetonAlpha;
 	cPosition bandPosition; // X,Y Position für das Band
@@ -247,11 +245,6 @@ public:
 		archive & NVP(clearMines);
 		archive & NVP(flightHeight);
 		commandoData.serialize (archive);
-
-		if (!archive.isWriter)
-		{
-			uiData = UnitsUiData.getVehicleUI(data.getId());
-		}
 	}
 private:
 

@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 
-#include "resources/uidata.h"
+#include "game/data/units/unitdata.h"
 #include "utility/serialization/serialization.h"
 
 //-------------------------------------------------------------------------
@@ -61,7 +61,7 @@ class cClan
 public:
 	cClan (int num) : num(num) {};
 	cClan () : num(-1) {};
-	
+
 	cClan (const cClan& other);
 
 	void setDescription (const std::string& newDescription);

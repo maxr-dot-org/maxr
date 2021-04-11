@@ -65,7 +65,6 @@ cVehicle::cVehicle (const cStaticUnitData& staticData, const cDynamicUnitData& d
 	layMines (false),
 	clearMines (false)
 {
-	uiData = UnitsUiData.getVehicleUI (staticData.ID);
 	ditherX = 0;
 	ditherY = 0;
 	flightHeight = 0;

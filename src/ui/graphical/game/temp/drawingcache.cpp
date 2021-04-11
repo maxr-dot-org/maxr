@@ -102,7 +102,9 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMapView& map, con
 	flightHigh = vehicle.getFlightHeight();
 	big = vehicle.getIsBig();
 	id = vehicle.data.getId();
-	if (vehicle.uiData->animationMovement)
+	auto* uiData = UnitsUiData.getVehicleUI (vehicle.getStaticUnitData().ID);
+
+	if (uiData->animationMovement)
 		frame = vehicle.WalkFrame;
 	else
 		frame = animationTime % 4;
@@ -129,11 +131,11 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMapView& map, con
 	lastUsed = frameNr;
 
 	//determine needed size of the surface
-	int height = (int) std::max (vehicle.uiData->img_org[vehicle.dir]->h * zoom, vehicle.uiData->shw_org[vehicle.dir]->h * zoom);
-	int width  = (int) std::max (vehicle.uiData->img_org[vehicle.dir]->w * zoom, vehicle.uiData->shw_org[vehicle.dir]->w * zoom);
+	int height = (int) std::max (uiData->img_org[vehicle.dir]->h * zoom, uiData->shw_org[vehicle.dir]->h * zoom);
+	int width  = (int) std::max (uiData->img_org[vehicle.dir]->w * zoom, uiData->shw_org[vehicle.dir]->w * zoom);
 	if (vehicle.getFlightHeight() > 0)
 	{
-		int shwOff = ((int) (Round (vehicle.uiData->img_org[vehicle.dir]->w * zoom) * (vehicle.getFlightHeight() / 64.0f)));
+		int shwOff = ((int) (Round (uiData->img_org[vehicle.dir]->w * zoom) * (vehicle.getFlightHeight() / 64.0f)));
 		height += shwOff;
 		width  += shwOff;
 	}
@@ -166,9 +168,10 @@ void sDrawingCacheEntry::init (const cBuilding& building, double zoom_, unsigned
 	lastUsed = frameNr;
 
 	//determine needed size of the surface
-	int height = (int) std::max (building.uiData->img_org->h * zoom, building.uiData->shw_org->h * zoom);
-	int width  = (int) std::max (building.uiData->img_org->w * zoom, building.uiData->shw_org->w * zoom);
-	if (building.uiData->hasFrames) width = (int)(building.uiData->shw_org->w * zoom);
+	auto& uiData = UnitsUiData.getBuildingUI (building);
+	int height = (int) std::max (uiData.img_org->h * zoom, uiData.shw_org->h * zoom);
+	int width  = (int) std::max (uiData.img_org->w * zoom, uiData.shw_org->w * zoom);
+	if (uiData.hasFrames) width = (int)(uiData.shw_org->w * zoom);
 
 	surface = AutoSurface (SDL_CreateRGBSurface (0, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
 
@@ -221,13 +224,14 @@ SDL_Surface* cDrawingCache::getCachedImage (const cBuilding& building, double zo
 			}
 
 		}
-		if (building.uiData->hasFrames && !building.uiData->isAnimated)
+		auto& uiData = UnitsUiData.getBuildingUI (building);
+		if (uiData.hasFrames && !uiData.isAnimated)
 		{
 			if (entry.dir != building.dir) continue;
 		}
 		if (entry.zoom != zoom) continue;
 
-		if (building.uiData->hasClanLogos && building.getOwner()->getClan() != entry.clan) continue;
+		if (uiData.hasClanLogos && building.getOwner()->getClan() != entry.clan) continue;
 
 		//cache hit!
 		cacheHits++;
@@ -243,6 +247,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cBuilding& building, double zo
 SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom, const cMapView& map, unsigned long long animationTime)
 {
 	if (!canCache (vehicle)) return nullptr;
+	auto* uiData = UnitsUiData.getVehicleUI (vehicle.getStaticUnitData().ID);
 
 	for (unsigned int i = 0; i < cacheSize; i++)
 	{
@@ -258,7 +263,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 		if (entry.flightHigh != vehicle.getFlightHeight()) continue;
 		if (entry.dir != vehicle.dir) continue;
 
-		if (vehicle.uiData->animationMovement)
+		if (uiData->animationMovement)
 		{
 			if (entry.frame != vehicle.WalkFrame) continue;
 		}
@@ -398,9 +403,11 @@ void cDrawingCache::flush()
 
 bool cDrawingCache::canCache (const cBuilding& building)
 {
+	auto& uiData = UnitsUiData.getBuildingUI (building);
+
 	if (!building.getOwner() ||
 		building.alphaEffectValue ||
-		building.uiData->isAnimated)
+		uiData.isAnimated)
 	{
 		notCached++;
 		return false;

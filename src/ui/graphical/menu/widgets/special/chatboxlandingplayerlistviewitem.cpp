@@ -21,6 +21,7 @@
 
 #include "game/data/player/player.h"
 #include "game/logic/landingpositionmanager.h"
+#include "resources/uidata.h"
 #include "SDLutility/tosdl.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"

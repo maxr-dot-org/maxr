@@ -133,7 +133,7 @@ cBuilding::cBuilding (const cStaticUnitData* staticData, const cDynamicUnitData*
 	rubbleTyp = 0;
 	rubbleValue = 0;
 	researchArea = cResearch::kAttackResearch;
-	uiData = staticData ? UnitsUiData.getBuildingUI(staticData->ID) : nullptr;
+
 	points = 0;
 
 	BaseN = false;
@@ -883,12 +883,10 @@ void cBuilding::setRubbleValue(int value, cCrossPlattformRandom& randomGenerator
 	if (isBig)
 	{
 		rubbleTyp = randomGenerator.get(2);
-		uiData = UnitsUiData.rubbleBig;
 	}
 	else
 	{
 		rubbleTyp = randomGenerator.get(5);
-		uiData = UnitsUiData.rubbleSmall;
 	}
 }
 

@@ -92,7 +92,8 @@ void cDestroyJob::createDestroyFx(cModel& model)
 		counter = fx->getLength() / 2;
 		model.addFx(fx);
 
-		if (vehicle.uiData->hasCorpse)
+		auto* uiData = UnitsUiData.getVehicleUI (vehicle.getStaticUnitData().ID);
+		if (uiData->hasCorpse)
 		{
 			// add corpse
 			model.addFx(std::make_shared<cFxCorpse>(vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));

@@ -344,10 +344,12 @@ void sBuildingUIData::drawConnectors (SDL_Surface& surface, SDL_Rect dest, float
 
 void render (const cBuilding& building, unsigned long long animationTime, SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow, bool drawConcrete)
 {
-	building.uiData->render (animationTime, surface, dest, zoomFactor, building, drawShadow, drawConcrete);
+	auto& uiData = UnitsUiData.getBuildingUI (building);
+	uiData.render (animationTime, surface, dest, zoomFactor, building, drawShadow, drawConcrete);
 }
 
 void render_simple (const cBuilding& building, SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor, unsigned long long animationTime, int alpha)
 {
-	building.uiData->render_simple (surface, dest, zoomFactor, building, animationTime, alpha);
+	auto& uiData = UnitsUiData.getBuildingUI (building);
+	uiData.render_simple (surface, dest, zoomFactor, building, animationTime, alpha);
 }

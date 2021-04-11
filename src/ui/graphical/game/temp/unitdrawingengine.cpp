@@ -111,14 +111,15 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 
 	if (building.isRubble()) return;
 
+	auto& uiData = UnitsUiData.getBuildingUI (building);
 	// draw the effect if necessary
-	if (building.uiData->powerOnGraphic && cSettings::getInstance().isAnimations() && (building.isUnitWorking() || !building.getStaticUnitData().canWork))
+	if (uiData.powerOnGraphic && cSettings::getInstance().isAnimations() && (building.isUnitWorking() || !building.getStaticUnitData().canWork))
 	{
 		SDL_Rect tmp = dest;
-		SDL_SetSurfaceAlphaMod (building.uiData->eff.get(), building.effectAlpha);
+		SDL_SetSurfaceAlphaMod (uiData.eff.get(), building.effectAlpha);
 
-		CHECK_SCALING (*building.uiData->eff, *building.uiData->eff_org, zoomFactor);
-		SDL_BlitSurface (building.uiData->eff.get(), nullptr, cVideo::buffer, &tmp);
+		CHECK_SCALING (*uiData.eff, *uiData.eff_org, zoomFactor);
+		SDL_BlitSurface (uiData.eff.get(), nullptr, cVideo::buffer, &tmp);
 	}
 
 	// draw the mark, when a build order is finished

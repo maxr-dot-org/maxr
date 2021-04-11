@@ -143,6 +143,7 @@ public:
 	~cUnitsUiData();
 
 	const sBuildingUIData* getBuildingUI(sID id) const;
+	const sBuildingUIData& getBuildingUI(const cBuilding&) const;
 	const sVehicleUIData* getVehicleUI(sID id) const;
 
 

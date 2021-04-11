@@ -29,6 +29,7 @@
 #include "output/video/video.h"
 #include "resources/map/mappreview.h"
 #include "resources/pcx.h"
+#include "resources/uidata.h"
 #include "ui/graphical/menu/dialogs/dialogcolorpicker.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"

@@ -25,7 +25,6 @@
 #include "game/data/units/unitdata.h" // for sUnitData, sID
 #include "game/data/units/unit.h"
 #include "game/logic/upgradecalculator.h" // cResearch::ResearchArea
-#include "resources/uidata.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
@@ -33,12 +32,12 @@
 #include <vector>
 
 class cBase;
-class cPlayer;
-class cVehicle;
+class cCrossPlattformRandom;
 class cMap;
 class cMapField;
+class cPlayer;
 class cSubBase;
-class cCrossPlattformRandom;
+class cVehicle;
 
 //--------------------------------------------------------------------------
 /** struct for the building order list */
@@ -195,18 +194,12 @@ public:
 			{
 				if (isBig)
 				{
-					uiData = UnitsUiData.rubbleBig;
 					staticData = archive.getPointerLoader()->getBigRubbleData();
 				}
 				else
 				{
-					uiData = UnitsUiData.rubbleSmall;
 					staticData = archive.getPointerLoader()->getSmallRubbleData();
 				}
-			}
-			else
-			{
-				uiData = UnitsUiData.getBuildingUI(data.getId());
 			}
 			registerOwnerEvents();
 			connectFirstBuildListItem();
@@ -225,7 +218,6 @@ public:
 	mutable int effectAlpha; // alpha value for the effect
 	int rubbleTyp;     // type of the rubble graphic (when unit is rubble)
 
-	const sBuildingUIData* uiData = nullptr;
 	bool BaseN, BaseE, BaseS, BaseW; // is the building connected in this direction?
 	bool BaseBN, BaseBE, BaseBS, BaseBW; // is the building connected in this direction (only for big buildings)
 	cSubBase* subBase = nullptr;     // the subbase to which this building belongs

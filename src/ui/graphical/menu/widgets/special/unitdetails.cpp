@@ -22,6 +22,7 @@
 #include "game/data/player/player.h"
 #include "game/logic/upgradecalculator.h"
 #include "output/video/video.h"
+#include "resources/uidata.h"
 #include "SDLutility/tosdl.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "utility/language.h"
