@@ -21,6 +21,8 @@
 
 #include <SDL_endian.h>
 
+#include <climits>
+
 uint32_t calcCheckSum (const char* data, size_t dataSize, uint32_t checksum)
 {
 	for (const char* i = data; i != data + dataSize; ++i)
