@@ -22,7 +22,6 @@
 #include "settings.h"
 #include "utility/files.h"
 #include "utility/string/toString.h"
-#include "utility/thread/mutex.h"
 
 #include <ctime>
 #include <iostream>
