@@ -22,11 +22,11 @@
 
 #include <vector>
 #include <map>
+#include <mutex>
+
 #include <SDL.h>
 
-#include "utility/thread/mutex.h"
 #include "utility/signal/signal.h"
-
 
 class cClient;
 class cServer;
@@ -36,11 +36,11 @@ class cModel;
 class cPlayer;
 
 #define GAME_TICK_TIME 10				/** Number of milliseconds of one game time tick */
-#define MAX_CLIENT_LAG 15				/** Maximum ticks, the clients time is allowed to be behind 
+#define MAX_CLIENT_LAG 15				/** Maximum ticks, the clients time is allowed to be behind
 										    the server time */
 #define PAUSE_GAME_TIMEOUT 200			/** Number of ticks, after which the server pauses the game,
 										    when no sync message from a client is received */
-#define MAX_SERVER_EVENT_COUNTER 15		/** When the server is under heavy load, ticks are discarded, 
+#define MAX_SERVER_EVENT_COUNTER 15		/** When the server is under heavy load, ticks are discarded,
 											when there are more than MAX_SERVER_EVENT_COUNTER timer events pending */
 #define MAX_WAITING_FOR_SERVER 50		/** The client will display the "Waiting for Server message" when no sync messages are
 											received for MAX_WAITING_FOR_SERVER ticks */
@@ -65,7 +65,7 @@ protected:
 
 	/** SDL_Timer that controls the game time */
 	SDL_TimerID timerID;
-	cMutex mutex;
+	std::mutex mutex;
 	unsigned int eventCounter;
 
 	void timerCallback();
@@ -76,11 +76,9 @@ public:
 	~cGameTimer();
 
 	unsigned int maxEventQueueSize;
-	
+
 	void start();
 	void stop();
-
-	
 };
 
 class cGameTimerServer : public cGameTimer
@@ -97,7 +95,6 @@ public:
 	void run (cModel& model, cServer& server);
 	void handleSyncMessage (const cNetMessageSyncClient& message, unsigned int gameTime);
 	void setPlayerNumbers(const std::vector<std::shared_ptr<cPlayer>>& playerList);
-
 };
 
 class cGameTimerClient : public cGameTimer
@@ -106,7 +103,7 @@ class cGameTimerClient : public cGameTimer
 private:
 	unsigned int receivedTime;			//gametime of the latest sync message in the netmessage queue
 	unsigned int remoteChecksum;		//received checksum from server. After running the jobs for the next gametime, the clientmodel should have the same checksum!
-	unsigned int timeSinceLastSyncMessage; //when no sync message is received for a certain time, user gets message "waiting for server" 
+	unsigned int timeSinceLastSyncMessage; //when no sync message is received for a certain time, user gets message "waiting for server"
 
 	bool syncMessageReceived; // The gametime can only be increased, after the sync message for the next gametime from the server has been received.
 							  // After the sync message has been received, all following netmessages belong to the next gametime step. So handling of

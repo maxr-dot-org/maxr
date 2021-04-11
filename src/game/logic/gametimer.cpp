@@ -19,19 +19,19 @@
 
 #include "game/logic/gametimer.h"
 
-#include <SDL.h>
-
-#include "game/logic/client.h"
-#include "utility/listhelpers.h"
-#include "utility/files.h"
-#include "utility/log.h"
-#include "utility/string/toString.h"
-#include "protocol/netmessage.h"
-#include "game/data/player/player.h"
-#include "game/logic/server.h"
 #include "game/data/model.h"
+#include "game/data/player/player.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
+#include "game/logic/client.h"
+#include "game/logic/server.h"
+#include "protocol/netmessage.h"
+#include "utility/files.h"
+#include "utility/listhelpers.h"
+#include "utility/log.h"
+#include "utility/string/toString.h"
+
+#include <SDL.h>
 
 Uint32 cGameTimer::gameTimerCallback (Uint32 interval, void* arg)
 {
@@ -79,7 +79,7 @@ void cGameTimer::timerCallback()
 
 void cGameTimer::pushEvent()
 {
-	std::unique_lock<cMutex> lock(mutex);
+	std::unique_lock<std::mutex> lock (mutex);
 
 	//increase event counter and let the event handler increase the gametime
 	if (eventCounter < maxEventQueueSize || maxEventQueueSize == static_cast<unsigned int>(-1))
@@ -90,7 +90,7 @@ void cGameTimer::pushEvent()
 
 bool cGameTimer::popEvent()
 {
-	std::unique_lock<cMutex> lock (mutex);
+	std::unique_lock<std::mutex> lock (mutex);
 
 	if (eventCounter > 0)
 	{
@@ -203,13 +203,13 @@ cGameTimerClient::cGameTimerClient() :
 
 void cGameTimerClient::setReceivedTime(unsigned int time)
 {
-	std::unique_lock<cMutex> lock(mutex);
+	std::unique_lock<std::mutex> lock (mutex);
 	receivedTime = time;
 }
 
 unsigned int cGameTimerClient::getReceivedTime()
 {
-	std::unique_lock<cMutex> lock(mutex);
+	std::unique_lock<std::mutex> lock (mutex);
 
 	return receivedTime;
 }
