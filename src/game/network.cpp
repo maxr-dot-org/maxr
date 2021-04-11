@@ -82,20 +82,19 @@ void cDataBuffer::deleteFront (uint32_t n)
 
 
 cNetwork::cNetwork (cConnectionManager& connectionManager, std::mutex& mutex) :
-	tcpMutex(mutex),
-	exit(false),
-	serverSocket(nullptr),
-	connectionManager(connectionManager)
+	tcpMutex (mutex),
+	serverSocket (nullptr),
+	socketSet (SDLNet_AllocSocketSet (MAX_TCP_CONNECTIONS)),
+	connectionManager (connectionManager),
+	tcpHandleThread ([this](){handleNetworkThread();})
 {
-	socketSet = SDLNet_AllocSocketSet(MAX_TCP_CONNECTIONS);
-	tcpHandleThread = SDL_CreateThread(networkThreadCallback, "network", this);
 }
 
 //------------------------------------------------------------------------
 cNetwork::~cNetwork()
 {
 	exit = true;
-	SDL_WaitThread(tcpHandleThread, nullptr);
+	tcpHandleThread.join();
 	SDLNet_FreeSocketSet(socketSet);
 	if (serverSocket)
 	{
@@ -325,14 +324,6 @@ void cNetwork::handleNetworkThread()
 			cleanupClosedSockets();
 		}
 	}
-}
-
-//------------------------------------------------------------------------
-int cNetwork::networkThreadCallback(void* arg)
-{
-	cNetwork* network = static_cast<cNetwork*>(arg);
-	network->handleNetworkThread();
-	return 0;
 }
 
 //------------------------------------------------------------------------

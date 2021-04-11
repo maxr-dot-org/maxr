@@ -21,7 +21,9 @@
 
 #include <SDL_net.h>
 
+#include <atomic>
 #include <mutex>
+#include <thread>
 #include <vector>
 
 //this is probably the maximum of the underlying os 'select' call
@@ -73,7 +75,6 @@ public:
 
 private:
 	void handleNetworkThread();
-	static int networkThreadCallback(void* arg);
 
 	void pushReadyMessages(cSocket* socket);
 	int send(const cSocket* socket, const unsigned char* buffer, unsigned int length);
@@ -83,9 +84,6 @@ private:
 
 private:
 	std::mutex& tcpMutex;
-
-	SDL_Thread* tcpHandleThread;
-	volatile bool exit;
 
 	TCPsocket serverSocket;
 	std::vector<cSocket*> sockets;
@@ -97,6 +95,9 @@ private:
 	// save infos for non blocking connection attempt
 	std::string connectToIp;
 	int connectToPort;
+
+	std::atomic<bool> exit{false};
+	std::thread tcpHandleThread;
 };
 
 #endif
