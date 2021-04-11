@@ -20,17 +20,14 @@
 #ifndef mapdownloader_mapdownloadH
 #define mapdownloader_mapdownloadH
 
+#include <atomic>
 #include <string>
+#include <thread>
 #include <vector>
 
-#include <SDL.h>
-
-struct SDL_Thread;
 class cConnectionManager;
 class cMuMsgMapDownloadData;
 class cNetMessage;
-
-int mapSenderThreadFunction (void* data);
 
 namespace MapDownload
 {
@@ -78,9 +75,6 @@ public:
 	void runInThread();
 
 private:
-	friend int mapSenderThreadFunction (void* data);
-
-private:
 	void run();
 
 	bool getMapFileContent();
@@ -91,11 +85,11 @@ private:
 	cConnectionManager& connectionManager;
 	int toPlayerNr;
 	std::string mapName;
-	std::size_t bytesSent;
+	std::size_t bytesSent = 0;
 	std::vector<char> sendBuffer;
 
-	SDL_Thread* thread;
-	bool canceled;
+	std::thread thread;
+	std::atomic<bool> canceled{false};
 };
 
 #endif

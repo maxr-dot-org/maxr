@@ -21,22 +21,22 @@
 
 #include "mapdownload.h"
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <cassert>
-
 #include "defines.h"
+#include "game/connectionmanager.h"
+#include "protocol/lobbymessage.h"
+#include "protocol/netmessage.h"
+#include "settings.h"
 #include "utility/crc.h"
 #include "utility/files.h"
 #include "utility/language.h"
 #include "utility/log.h"
-#include "settings.h"
 #include "utility/string/tolower.h"
-#include "protocol/lobbymessage.h"
 #include "utility/string/toString.h"
-#include "game/connectionmanager.h"
-#include "protocol/netmessage.h"
+
+#include <cassert>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -205,34 +205,21 @@ bool cMapReceiver::finished()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-int mapSenderThreadFunction (void* data)
-{
-	cMapSender* mapSender = reinterpret_cast<cMapSender*> (data);
-	mapSender->run();
-	return 0;
-}
-
-//------------------------------------------------------------------------------
 cMapSender::cMapSender(cConnectionManager& connectionManager, int toPlayerNr,
 						const std::string& mapName) :
 	connectionManager (connectionManager),
 	toPlayerNr (toPlayerNr),
-	mapName (mapName),
-	bytesSent (0),
-	sendBuffer(),
-	thread (nullptr),
-	canceled (false)
+	mapName (mapName)
 {
 }
 
 //------------------------------------------------------------------------------
 cMapSender::~cMapSender()
 {
-	if (thread != nullptr)
+	if (thread.joinable())
 	{
 		canceled = true;
-		SDL_WaitThread (thread, nullptr);
-		thread = nullptr;
+		thread.join();
 	}
 	if (!sendBuffer.empty())
 	{
@@ -248,7 +235,7 @@ cMapSender::~cMapSender()
 void cMapSender::runInThread()
 {
 	// the thread will quit, when it finished uploading the map
-	thread = SDL_CreateThread (mapSenderThreadFunction, "mapSender", this);
+	thread = std::thread ([this]() { run(); });
 }
 
 //------------------------------------------------------------------------------
