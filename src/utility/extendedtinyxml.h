@@ -22,10 +22,10 @@
 
 #include <3rd/tinyxml2/tinyxml2.h>
 
-#include <stdarg.h>
+#include <initializer_list>
 #include <string>
 
-tinyxml2::XMLElement* XmlGetFirstElement (tinyxml2::XMLDocument& xmlDoc, const char* first, ...);
+tinyxml2::XMLElement* XmlGetFirstElement (tinyxml2::XMLDocument&, const char* root, std::initializer_list<const char*>);
 
 /**
  * Tries to find a element from a path in a xml file.
@@ -40,13 +40,13 @@ tinyxml2::XMLElement* XmlGetFirstElement (tinyxml2::XMLDocument& xmlDoc, const c
  */
 tinyxml2::XMLElement* getOrCreateXmlElement (tinyxml2::XMLDocument& xmlDoc, const std::string& path);
 
-int         getXMLAttributeInt (tinyxml2::XMLDocument& document, const char* first, ...);
-float       getXMLAttributeFloat (tinyxml2::XMLDocument& document, const char* first, ...);
-std::string getXMLAttributeString (tinyxml2::XMLDocument& document, const char* attribut, const char* first, ...);
-bool        getXMLAttributeBoolFromElement(const tinyxml2::XMLElement* element, const char* name);
-bool        getXMLAttributeBool(tinyxml2::XMLDocument& document, const char* first, ...);
+int         getXMLAttributeInt (tinyxml2::XMLDocument&, const char* root, std::initializer_list<const char*>);
+float       getXMLAttributeFloat (tinyxml2::XMLDocument&, const char* root, std::initializer_list<const char*>);
+std::string getXMLAttributeString (tinyxml2::XMLDocument&, const char* attribut, const char* root, std::initializer_list<const char*>);
+bool        getXMLAttributeBoolFromElement (const tinyxml2::XMLElement*, const char* name);
+bool        getXMLAttributeBool (tinyxml2::XMLDocument&, const char* root, std::initializer_list<const char*>);
 
-std::string printXMLPath(const tinyxml2::XMLElement* element);
-std::string getXMLErrorMsg(const tinyxml2::XMLDocument& document);
+std::string printXMLPath (const tinyxml2::XMLElement*);
+std::string getXMLErrorMsg (const tinyxml2::XMLDocument&);
 
 #endif

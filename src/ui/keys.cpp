@@ -197,7 +197,7 @@ void cKeysList::loadFromFile()
 		return;
 	}
 
-	const XMLElement* keysElement = XmlGetFirstElement (keysXml, "Controles", "Keys", nullptr);
+	const XMLElement* keysElement = XmlGetFirstElement (keysXml, "Controles", {"Keys"});
 
 	if (!keysElement)
 	{
@@ -206,7 +206,7 @@ void cKeysList::loadFromFile()
 		return;
 	}
 
-	const XMLElement* mouseElement = XmlGetFirstElement (keysXml, "Controles", "Mouse", nullptr);
+	const XMLElement* mouseElement = XmlGetFirstElement (keysXml, "Controles", {"Mouse"});
 
 	if (!mouseElement)
 	{

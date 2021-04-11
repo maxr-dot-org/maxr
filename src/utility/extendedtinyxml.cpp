@@ -25,45 +25,39 @@
 #include <vector>
 
 using namespace tinyxml2;
-using namespace std;
 
-XMLElement* XmlGetFirstElementVa (XMLDocument& xmlDoc, const char* first, va_list vaList)
+namespace
 {
-	XMLElement* xmlElement;
-
-	xmlElement = xmlDoc.RootElement();
-	if (xmlElement == NULL)
+	//--------------------------------------------------------------------------
+	void LogWarning (const char* attribute, const char* root, std::initializer_list<const char*> elementNames)
 	{
-		return NULL;
-	}
+		std::string pathText = root;
+		for (const auto* elementName : elementNames)
+		{
+			pathText += std::string ("~") + elementName;
+		}
 
-	if (strcmp (xmlElement->Value(), first) != 0)
-	{
-		return NULL;
+		Log.write (std::string ("Can't read \"") + attribute + "\" from \"" + pathText + "\"", cLog::eLOG_TYPE_WARNING);
 	}
+}
 
-	char* elementName;
-	while ((elementName = va_arg (vaList, char*)) != NULL)
+//------------------------------------------------------------------------------
+XMLElement* XmlGetFirstElement (XMLDocument& xmlDoc, const char* root, std::initializer_list<const char*> elementNames)
+{
+	XMLElement* xmlElement = xmlDoc.RootElement();
+
+	if (xmlElement == nullptr) return nullptr;
+	if (strcmp (xmlElement->Value(), root) != 0) return nullptr;
+
+	for (const char* elementName : elementNames)
 	{
 		xmlElement = xmlElement->FirstChildElement (elementName);
-		if (xmlElement == NULL)
+		if (xmlElement == nullptr)
 		{
-			return NULL;
+			return nullptr;
 		}
 	}
-
 	return xmlElement;
-}
-//-------------------------------------------------------------------------------
-XMLElement* XmlGetFirstElement (XMLDocument& xmlDoc, const char* first, ...)
-{
-	va_list list;
-	va_start (list, first);
-
-	XMLElement* element = XmlGetFirstElementVa (xmlDoc, first, list);
-	va_end (list);
-
-	return element;
 }
 
 //------------------------------------------------------------------------------
@@ -98,93 +92,65 @@ XMLElement* getOrCreateXmlElement (XMLDocument& xmlDoc, const std::string& path)
 
 
 //------------------------------------------------------------------------------
-int getXMLAttributeInt (tinyxml2::XMLDocument& document, const char* first, ...)
+int getXMLAttributeInt (tinyxml2::XMLDocument& document, const char* root, std::initializer_list<const char*> elementNames)
 {
-	va_list list;
-	va_start (list, first);
-	XMLElement* element = XmlGetFirstElementVa (document, first, list);
-	va_end (list);
+	XMLElement* element = XmlGetFirstElement (document, root, elementNames);
 
-	if (element == NULL) return 0;
+	if (element == nullptr) return 0;
 
-
-	if (element->Attribute ("Num"))
+	const char* attribut = "Num";
+	if (element->Attribute (attribut))
 	{
-		return element->IntAttribute ("Num");
+		return element->IntAttribute (attribut);
 	}
 	else
 	{
-		va_start (list, first);
-		string pathText = string (first);
-		char* elementName;
-		while ((elementName = va_arg (list, char*)) != NULL)
-			pathText += string ("~") + elementName;
-		va_end (list);
-
-		Log.write (((string) "Can't read \"Num\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING);
+		LogWarning (attribut, root, elementNames);
 		return 0;
 	}
 }
 
 //------------------------------------------------------------------------------
-float getXMLAttributeFloat (tinyxml2::XMLDocument& document, const char* first, ...)
+float getXMLAttributeFloat (tinyxml2::XMLDocument& document, const char* root, std::initializer_list<const char*> elementNames)
 {
-	va_list list;
-	va_start (list, first);
-	XMLElement* element = XmlGetFirstElementVa (document, first, list);
-	va_end (list);
+	XMLElement* element = XmlGetFirstElement (document, root, elementNames);
 
-	if (element == NULL) return 0;
+	if (element == nullptr) return 0;
 
-	if (element->Attribute ("Num"))
+	const char* attribut = "Num";
+	if (element->Attribute (attribut))
 	{
-		return element->FloatAttribute ("Num");
+		return element->FloatAttribute (attribut);
 	}
 	else
 	{
-		va_start (list, first);
-		string pathText = string (first);
-		char* elementName;
-		while ((elementName = va_arg (list, char*)) != NULL)
-			pathText += string ("~") + elementName;
-		va_end (list);
-
-		Log.write (((string) "Can't read \"Num\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING);
+		LogWarning (attribut, root, elementNames);
 		return 0;
 	}
 }
 
 //------------------------------------------------------------------------------
-string getXMLAttributeString (tinyxml2::XMLDocument& document, const char* attribut, const char* first, ...)
+std::string getXMLAttributeString (tinyxml2::XMLDocument& document, const char* attribut, const char* root, std::initializer_list<const char*> elementNames)
 {
-	va_list list;
-	va_start (list, first);
-	XMLElement* element = XmlGetFirstElementVa (document, first, list);
-	va_end (list);
+	XMLElement* element = XmlGetFirstElement (document, root, elementNames);
 
-	if (element == NULL) return "";
+	if (element == nullptr) return {};
 
-	const char* text = element->Attribute (attribut);
-	if (text == NULL)
+	if (const char* text = element->Attribute (attribut))
 	{
-		va_start (list, first);
-		string pathText = string (first);
-		char* elementName;
-		while ((elementName = va_arg (list, char*)) != NULL)
-			pathText += string ("~") + elementName;
-		va_end (list);
-
-		Log.write (((string) "Can't read \"") + attribut + "\" from \"" + pathText + "\"", cLog::eLOG_TYPE_WARNING);
+		return text;
+	}
+	else
+	{
+		LogWarning (attribut, root, elementNames);
 		return "";
 	}
-
-	return text;
 }
 
 //------------------------------------------------------------------------------
 bool getXMLAttributeBoolFromElement(const tinyxml2::XMLElement* element, const char* name)
 {
-	string value = element->Attribute(name);
+	std::string value = element->Attribute(name);
 	std::transform(value.begin(), value.end(), value.begin(), ::tolower);
 	if (value == "true" ||
 		value == "y" ||
@@ -198,51 +164,42 @@ bool getXMLAttributeBoolFromElement(const tinyxml2::XMLElement* element, const c
 	{
 		return false;
 	}
-	Log.write((string)"Error reading boolen attribute of element \"" + element->Name() + "\": Illegal value \"" + value + "\"", cLog::eLOG_TYPE_WARNING);
+	Log.write(std::string("Error reading boolean attribute of element \"") + element->Name() + "\": Illegal value \"" + value + "\"", cLog::eLOG_TYPE_WARNING);
 	return false;
 }
 //------------------------------------------------------------------------------
-bool getXMLAttributeBool (tinyxml2::XMLDocument& document, const char* first, ...)
+bool getXMLAttributeBool (tinyxml2::XMLDocument& document, const char* root, std::initializer_list<const char*> elementNames)
 {
-	va_list list;
-	va_start (list, first);
-	XMLElement* element = XmlGetFirstElementVa (document, first, list);
-	va_end (list);
+	XMLElement* element = XmlGetFirstElement (document, root, elementNames);
 
-	if (element == NULL) return false;
+	if (element == nullptr) return false;
 
-	if (element->Attribute("YN"))
+	const char* attribut = "YN";
+	if (element->Attribute (attribut))
 	{
-		return getXMLAttributeBoolFromElement(element,"YN");
+		return getXMLAttributeBoolFromElement (element, attribut);
 	}
 	else
 	{
-		va_start (list, first);
-		string pathText = string (first);
-		char* elementName;
-		while ((elementName = va_arg (list, char*)) != NULL)
-			pathText += string ("~") + elementName;
-		va_end (list);
-
-		Log.write (((string) "Can't read \"YN\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING);
+		LogWarning (attribut, root, elementNames);
 		return false;
 	}
 }
 
-string printXMLPath(const tinyxml2::XMLElement* element)
+std::string printXMLPath(const tinyxml2::XMLElement* element)
 {
-	string path = element->Name();
+	std::string path = element->Name();
 	while ((element = element->Parent()->ToElement()))
 	{
-		path = string(element->Name()) + "~" + path;
+		path = std::string(element->Name()) + "~" + path;
 	}
 
 	return path;
 }
 
-string getXMLErrorMsg(const tinyxml2::XMLDocument& document)
+std::string getXMLErrorMsg(const tinyxml2::XMLDocument& document)
 {
-	string msg;
+	std::string msg;
 	switch (document.ErrorID())
 	{
 		case XML_NO_ERROR: msg = "XML_NO_ERROR"; break;
@@ -269,10 +226,10 @@ string getXMLErrorMsg(const tinyxml2::XMLDocument& document)
 	}
 
 	if (const char* reason = document.GetErrorStr1())
-		msg += (std::string)" " + reason;
+		msg += std::string(" ") + reason;
 
 	if (const char* reason = document.GetErrorStr2())
-		msg += (std::string)" " + reason;
+		msg += std::string(" ") + reason;
 
 	return msg;
 }

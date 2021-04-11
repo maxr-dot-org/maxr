@@ -588,7 +588,7 @@ static int LoadMusic (const char* path)
 	}
 	XMLElement* xmlElement;
 #if 0 // unused
-	xmlElement = XmlGetFirstElement (MusicXml, "Music", "Menus", "main", nullptr);
+	xmlElement = XmlGetFirstElement (MusicXml, "Music", {"Menus", "main"});
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't find \"main\" in music.xml ", cLog::eLOG_TYPE_ERROR);
@@ -596,7 +596,7 @@ static int LoadMusic (const char* path)
 	}
 	MainMusicFile = xmlElement->Attribute ("Text");
 
-	xmlElement = XmlGetFirstElement (MusicXml, "Music", "Menus", "credits", nullptr);
+	xmlElement = XmlGetFirstElement (MusicXml, "Music", {"Menus", "credits"});
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't find \"credits\" in music.xml ", cLog::eLOG_TYPE_ERROR);
@@ -604,7 +604,7 @@ static int LoadMusic (const char* path)
 	}
 	CreditsMusicFile = xmlElement->Attribute ("Text");
 #endif
-	xmlElement = XmlGetFirstElement (MusicXml, "Music", "Game", "bkgcount", nullptr);
+	xmlElement = XmlGetFirstElement (MusicXml, "Music", {"Game", "bkgcount"});
 	if (!xmlElement || !xmlElement->Attribute ("Num"))
 	{
 		Log.write ("Can't find \"bkgcount\" in music.xml ", cLog::eLOG_TYPE_ERROR);
@@ -614,7 +614,7 @@ static int LoadMusic (const char* path)
 	for (int i = 1; i <= MusicAnz; i++)
 	{
 		std::string name = "bkg" + iToStr (i);
-		XMLElement* xmlElement = XmlGetFirstElement (MusicXml, "Music", "Game", name.c_str(), nullptr);
+		XMLElement* xmlElement = XmlGetFirstElement (MusicXml, "Music", {"Game", name.c_str()});
 		if (xmlElement && xmlElement->Attribute ("Text"))
 		{
 			name = string (path) + PATH_DELIMITER + xmlElement->Attribute ("Text");
@@ -914,7 +914,7 @@ static int LoadVehicles()
 		Log.write ("Can't load vehicles.xml!", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
-	XMLElement* xmlElement = XmlGetFirstElement (VehiclesXml, "VehicleData", "Vehicles", nullptr);
+	XMLElement* xmlElement = XmlGetFirstElement (VehiclesXml, "VehicleData", {"Vehicles"});
 	if (xmlElement == nullptr)
 	{
 		Log.write ("Can't read \"VehicleData->Vehicles\" node!", cLog::eLOG_TYPE_ERROR);
@@ -1323,7 +1323,7 @@ static int LoadBuildings()
 		Log.write ("Can't load buildings.xml!", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
-	XMLElement* xmlElement = XmlGetFirstElement (BuildingsXml, "BuildingsData", "Buildings", nullptr);
+	XMLElement* xmlElement = XmlGetFirstElement (BuildingsXml, "BuildingsData", {"Buildings"});
 	if (xmlElement == nullptr)
 	{
 		Log.write ("Can't read \"BuildingData->Building\" node!", cLog::eLOG_TYPE_ERROR);
@@ -1578,12 +1578,12 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 		return ;
 	}
 	// Read minimal game version
-	string gameVersion = getXMLAttributeString (unitDataXml, "text", "Unit", "Header", "Game_Version", nullptr);
+	string gameVersion = getXMLAttributeString (unitDataXml, "text", "Unit", {"Header", "Game_Version"});
 
 	//TODO check game version
 
 	//read id
-	string idString = getXMLAttributeString (unitDataXml, "ID", "Unit", nullptr);
+	string idString = getXMLAttributeString (unitDataXml, "ID", "Unit", {});
 	char szTmp[100];
 	// check whether the id exists twice
 	sID id;
@@ -1615,9 +1615,9 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 		Log.write (szTmp, cLog::eLOG_TYPE_DEBUG);
 	}
 	//read name
-	staticData.setName(getXMLAttributeString (unitDataXml, "name", "Unit", nullptr));
+	staticData.setName (getXMLAttributeString (unitDataXml, "name", "Unit", {}));
 	//read description
-	if (XMLElement* const XMLElement = XmlGetFirstElement (unitDataXml, "Unit", "Description", nullptr))
+	if (XMLElement* const XMLElement = XmlGetFirstElement (unitDataXml, "Unit", {"Description"}))
 	{
 		std::string description(XMLElement->GetText());
 		size_t pos;
@@ -1629,7 +1629,7 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	}
 
 	// Weapon
-	string muzzleType = getXMLAttributeString (unitDataXml, "Const", "Unit", "Weapon", "Muzzle_Type", nullptr);
+	string muzzleType = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Weapon", "Muzzle_Type"});
 	if (muzzleType.compare ("Big") == 0) staticData.muzzleType = cStaticUnitData::MUZZLE_TYPE_BIG;
 	else if (muzzleType.compare("Rocket") == 0) staticData.muzzleType = cStaticUnitData::MUZZLE_TYPE_ROCKET;
 	else if (muzzleType.compare("Small") == 0) staticData.muzzleType = cStaticUnitData::MUZZLE_TYPE_SMALL;
@@ -1640,65 +1640,65 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	else if (muzzleType.compare("Sniper") == 0) staticData.muzzleType = cStaticUnitData::MUZZLE_TYPE_SNIPER;
 	else staticData.muzzleType = cStaticUnitData::MUZZLE_TYPE_NONE;
 
-	dynamicData.setAmmoMax(getXMLAttributeInt(unitDataXml, "Unit", "Weapon", "Ammo_Quantity", nullptr));
-	dynamicData.setShotsMax(getXMLAttributeInt(unitDataXml, "Unit", "Weapon", "Shots", nullptr));
-	dynamicData.setRange(getXMLAttributeInt(unitDataXml, "Unit", "Weapon", "Range", nullptr));
-	dynamicData.setDamage(getXMLAttributeInt(unitDataXml, "Unit", "Weapon", "Damage", nullptr));
-	staticData.canAttack = getXMLAttributeInt(unitDataXml, "Unit", "Weapon", "Can_Attack", nullptr);
+	dynamicData.setAmmoMax(getXMLAttributeInt(unitDataXml, "Unit", {"Weapon", "Ammo_Quantity"}));
+	dynamicData.setShotsMax(getXMLAttributeInt(unitDataXml, "Unit", {"Weapon", "Shots"}));
+	dynamicData.setRange(getXMLAttributeInt(unitDataXml, "Unit", {"Weapon", "Range"}));
+	dynamicData.setDamage(getXMLAttributeInt(unitDataXml, "Unit", {"Weapon", "Damage"}));
+	staticData.canAttack = getXMLAttributeInt(unitDataXml, "Unit", {"Weapon", "Can_Attack"});
 
 	// TODO: make the code differ between attacking sea units and land units.
 	// until this is done being able to attack sea units means being able to attack ground units.
 	if (staticData.canAttack & TERRAIN_SEA) staticData.canAttack |= TERRAIN_GROUND;
 
-	staticData.canDriveAndFire = getXMLAttributeBool(unitDataXml, "Unit", "Weapon", "Can_Drive_And_Fire", nullptr);
+	staticData.canDriveAndFire = getXMLAttributeBool(unitDataXml, "Unit", {"Weapon", "Can_Drive_And_Fire"});
 
 	// Production
-	dynamicData.setBuildCost(getXMLAttributeInt (unitDataXml, "Unit", "Production", "Built_Costs", nullptr));
+	dynamicData.setBuildCost(getXMLAttributeInt (unitDataXml, "Unit", {"Production", "Built_Costs"}));
 
-	staticData.canBuild = getXMLAttributeString (unitDataXml, "String", "Unit", "Production", "Can_Build", nullptr);
-	staticData.buildAs = getXMLAttributeString(unitDataXml, "String", "Unit", "Production", "Build_As", nullptr);
+	staticData.canBuild = getXMLAttributeString (unitDataXml, "String", "Unit", {"Production", "Can_Build"});
+	staticData.buildAs = getXMLAttributeString(unitDataXml, "String", "Unit", {"Production", "Build_As"});
 
-	staticData.maxBuildFactor = getXMLAttributeInt(unitDataXml, "Unit", "Production", "Max_Build_Factor", nullptr);
+	staticData.maxBuildFactor = getXMLAttributeInt(unitDataXml, "Unit", {"Production", "Max_Build_Factor"});
 
-	staticData.canBuildPath = getXMLAttributeBool(unitDataXml, "Unit", "Production", "Can_Build_Path", nullptr);
-	staticData.canBuildRepeat = getXMLAttributeBool(unitDataXml, "Unit", "Production", "Can_Build_Repeat", nullptr);
+	staticData.canBuildPath = getXMLAttributeBool(unitDataXml, "Unit", {"Production", "Can_Build_Path"});
+	staticData.canBuildRepeat = getXMLAttributeBool(unitDataXml, "Unit", {"Production", "Can_Build_Repeat"});
 
 	// Movement
-	dynamicData.setSpeedMax (getXMLAttributeInt (unitDataXml, "Unit", "Movement", "Movement_Sum", nullptr) * 4);
+	dynamicData.setSpeedMax (getXMLAttributeInt (unitDataXml, "Unit", {"Movement", "Movement_Sum"}) * 4);
 
-	staticData.factorGround = getXMLAttributeFloat (unitDataXml, "Unit", "Movement", "Factor_Ground", nullptr);
-	staticData.factorSea = getXMLAttributeFloat(unitDataXml, "Unit", "Movement", "Factor_Sea", nullptr);
-	staticData.factorAir = getXMLAttributeFloat(unitDataXml, "Unit", "Movement", "Factor_Air", nullptr);
-	staticData.factorCoast = getXMLAttributeFloat(unitDataXml, "Unit", "Movement", "Factor_Coast", nullptr);
+	staticData.factorGround = getXMLAttributeFloat (unitDataXml, "Unit", {"Movement", "Factor_Ground"});
+	staticData.factorSea = getXMLAttributeFloat(unitDataXml, "Unit", {"Movement", "Factor_Sea"});
+	staticData.factorAir = getXMLAttributeFloat(unitDataXml, "Unit", {"Movement", "Factor_Air"});
+	staticData.factorCoast = getXMLAttributeFloat(unitDataXml, "Unit", {"Movement", "Factor_Coast"});
 
 	// Abilities
-	staticData.isBig = getXMLAttributeBool(unitDataXml, "Unit", "Abilities", "Is_Big", nullptr);
-	staticData.connectsToBase = getXMLAttributeBool(unitDataXml, "Unit", "Abilities", "Connects_To_Base", nullptr);
-	dynamicData.setArmor(getXMLAttributeInt(unitDataXml, "Unit", "Abilities", "Armor", nullptr));
-	dynamicData.setHitpointsMax(getXMLAttributeInt(unitDataXml, "Unit", "Abilities", "Hitpoints", nullptr));
-	dynamicData.setScan(getXMLAttributeInt(unitDataXml, "Unit", "Abilities", "Scan_Range", nullptr));
-	staticData.modifiesSpeed = getXMLAttributeFloat (unitDataXml, "Unit", "Abilities", "Modifies_Speed", nullptr);
-	staticData.canClearArea = getXMLAttributeBool(unitDataXml, "Unit", "Abilities", "Can_Clear_Area", nullptr);
-	staticData.canBeCaptured = getXMLAttributeBool(unitDataXml, "Unit", "Abilities", "Can_Be_Captured", nullptr);
-	staticData.canBeDisabled = getXMLAttributeBool(unitDataXml, "Unit", "Abilities", "Can_Be_Disabled", nullptr);
-	staticData.canCapture = getXMLAttributeBool(unitDataXml, "Unit", "Abilities", "Can_Capture", nullptr);
-	staticData.canDisable = getXMLAttributeBool(unitDataXml, "Unit", "Abilities", "Can_Disable", nullptr);
-	staticData.canRepair = getXMLAttributeBool(unitDataXml, "Unit", "Abilities", "Can_Repair", nullptr);
-	staticData.canRearm = getXMLAttributeBool(unitDataXml, "Unit", "Abilities", "Can_Rearm", nullptr);
-	staticData.canResearch = getXMLAttributeBool(unitDataXml, "Unit", "Abilities", "Can_Research", nullptr);
-	staticData.canPlaceMines = getXMLAttributeBool(unitDataXml, "Unit", "Abilities", "Can_Place_Mines", nullptr);
-	staticData.canSurvey = getXMLAttributeBool(unitDataXml, "Unit", "Abilities", "Can_Survey", nullptr);
-	staticData.doesSelfRepair = getXMLAttributeBool(unitDataXml, "Unit", "Abilities", "Does_Self_Repair", nullptr);
-	staticData.convertsGold = getXMLAttributeInt(unitDataXml, "Unit", "Abilities", "Converts_Gold", nullptr);
-	staticData.canSelfDestroy = getXMLAttributeBool(unitDataXml, "Unit", "Abilities", "Can_Self_Destroy", nullptr);
-	staticData.canScore = getXMLAttributeBool(unitDataXml, "Unit", "Abilities", "Can_Score", nullptr);
+	staticData.isBig = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Is_Big"});
+	staticData.connectsToBase = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Connects_To_Base"});
+	dynamicData.setArmor(getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Armor"}));
+	dynamicData.setHitpointsMax(getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Hitpoints"}));
+	dynamicData.setScan(getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Scan_Range"}));
+	staticData.modifiesSpeed = getXMLAttributeFloat (unitDataXml, "Unit", {"Abilities", "Modifies_Speed"});
+	staticData.canClearArea = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Clear_Area"});
+	staticData.canBeCaptured = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Be_Captured"});
+	staticData.canBeDisabled = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Be_Disabled"});
+	staticData.canCapture = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Capture"});
+	staticData.canDisable = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Disable"});
+	staticData.canRepair = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Repair"});
+	staticData.canRearm = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Rearm"});
+	staticData.canResearch = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Research"});
+	staticData.canPlaceMines = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Place_Mines"});
+	staticData.canSurvey = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Survey"});
+	staticData.doesSelfRepair = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Does_Self_Repair"});
+	staticData.convertsGold = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Converts_Gold"});
+	staticData.canSelfDestroy = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Self_Destroy"});
+	staticData.canScore = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Score"});
 
-	staticData.canMineMaxRes = getXMLAttributeInt(unitDataXml, "Unit", "Abilities", "Can_Mine_Max_Resource", nullptr);
+	staticData.canMineMaxRes = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Can_Mine_Max_Resource"});
 
-	staticData.needsMetal = getXMLAttributeInt(unitDataXml, "Unit", "Abilities", "Needs_Metal", nullptr);
-	staticData.needsOil = getXMLAttributeInt(unitDataXml, "Unit", "Abilities", "Needs_Oil", nullptr);
-	staticData.needsEnergy = getXMLAttributeInt(unitDataXml, "Unit", "Abilities", "Needs_Energy", nullptr);
-	staticData.needsHumans = getXMLAttributeInt(unitDataXml, "Unit", "Abilities", "Needs_Humans", nullptr);
+	staticData.needsMetal = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Needs_Metal"});
+	staticData.needsOil = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Needs_Oil"});
+	staticData.needsEnergy = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Needs_Energy"});
+	staticData.needsHumans = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Needs_Humans"});
 	if (staticData.needsEnergy < 0)
 	{
 		staticData.produceEnergy = abs(staticData.needsEnergy);
@@ -1712,10 +1712,10 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	}
 	else staticData.produceHumans = 0;
 
-	staticData.isStealthOn = getXMLAttributeInt(unitDataXml, "Unit", "Abilities", "Is_Stealth_On", nullptr);
-	staticData.canDetectStealthOn = getXMLAttributeInt(unitDataXml, "Unit", "Abilities", "Can_Detect_Stealth_On", nullptr);
+	staticData.isStealthOn = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Is_Stealth_On"});
+	staticData.canDetectStealthOn = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Can_Detect_Stealth_On"});
 
-	string surfacePosString = getXMLAttributeString (unitDataXml, "Const", "Unit", "Abilities", "Surface_Position", nullptr);
+	string surfacePosString = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Abilities", "Surface_Position"});
 	if (surfacePosString.compare("BeneathSea") == 0)staticData.surfacePosition = cStaticUnitData::SURFACE_POS_BENEATH_SEA;
 	else if (surfacePosString.compare("AboveSea") == 0) staticData.surfacePosition = cStaticUnitData::SURFACE_POS_ABOVE_SEA;
 	else if (surfacePosString.compare("Base") == 0) staticData.surfacePosition = cStaticUnitData::SURFACE_POS_BASE;
@@ -1723,38 +1723,38 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	else if (surfacePosString.compare("Above") == 0) staticData.surfacePosition = cStaticUnitData::SURFACE_POS_ABOVE;
 	else staticData.surfacePosition = cStaticUnitData::SURFACE_POS_GROUND;
 
-	string overbuildString = getXMLAttributeString (unitDataXml, "Const", "Unit", "Abilities", "Can_Be_Overbuild", nullptr);
+	string overbuildString = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Abilities", "Can_Be_Overbuild"});
 	if (overbuildString.compare ("Yes") == 0) staticData.canBeOverbuild = cStaticUnitData::OVERBUILD_TYPE_YES;
 	else if (overbuildString.compare ("YesNRemove") == 0) staticData.canBeOverbuild = cStaticUnitData::OVERBUILD_TYPE_YESNREMOVE;
 	else staticData.canBeOverbuild = cStaticUnitData::OVERBUILD_TYPE_NO;
 
-	staticData.canBeLandedOn = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Can_Be_Landed_On", nullptr);
-	staticData.canWork = getXMLAttributeBool(unitDataXml, "Unit", "Abilities", "Is_Activatable", nullptr);
-	staticData.explodesOnContact = getXMLAttributeBool(unitDataXml, "Unit", "Abilities", "Explodes_On_Contact", nullptr);
-	staticData.isHuman = getXMLAttributeBool(unitDataXml, "Unit", "Abilities", "Is_Human", nullptr);
+	staticData.canBeLandedOn = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Can_Be_Landed_On"});
+	staticData.canWork = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Is_Activatable"});
+	staticData.explodesOnContact = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Explodes_On_Contact"});
+	staticData.isHuman = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Is_Human"});
 
 	// Storage
-	staticData.storageResMax = getXMLAttributeInt(unitDataXml, "Unit", "Storage", "Capacity_Resources", nullptr);
+	staticData.storageResMax = getXMLAttributeInt(unitDataXml, "Unit", {"Storage", "Capacity_Resources"});
 
-	string storeResString = getXMLAttributeString (unitDataXml, "Const", "Unit", "Storage", "Capacity_Res_Type", nullptr);
+	string storeResString = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Storage", "Capacity_Res_Type"});
 	if (storeResString.compare("Metal") == 0) staticData.storeResType = eResourceType::Metal;
 	else if (storeResString.compare("Oil") == 0) staticData.storeResType = eResourceType::Oil;
 	else if (storeResString.compare("Gold") == 0) staticData.storeResType = eResourceType::Gold;
 	else staticData.storeResType = eResourceType::None;
 
-	staticData.storageUnitsMax = getXMLAttributeInt(unitDataXml, "Unit", "Storage", "Capacity_Units", nullptr);
+	staticData.storageUnitsMax = getXMLAttributeInt(unitDataXml, "Unit", {"Storage", "Capacity_Units"});
 
-	string storeUnitImgString = getXMLAttributeString (unitDataXml, "Const", "Unit", "Storage", "Capacity_Units_Image_Type", nullptr);
+	string storeUnitImgString = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Storage", "Capacity_Units_Image_Type"});
 	if (storeUnitImgString.compare("Plane") == 0) staticData.storeUnitsImageType = cStaticUnitData::STORE_UNIT_IMG_PLANE;
 	else if (storeUnitImgString.compare("Human") == 0) staticData.storeUnitsImageType = cStaticUnitData::STORE_UNIT_IMG_HUMAN;
 	else if (storeUnitImgString.compare("Tank") == 0) staticData.storeUnitsImageType = cStaticUnitData::STORE_UNIT_IMG_TANK;
 	else if (storeUnitImgString.compare("Ship") == 0) staticData.storeUnitsImageType = cStaticUnitData::STORE_UNIT_IMG_SHIP;
 	else staticData.storeUnitsImageType = cStaticUnitData::STORE_UNIT_IMG_TANK;
 
-	string storeUnitsString = getXMLAttributeString (unitDataXml, "String", "Unit", "Storage", "Capacity_Units_Type", nullptr);
+	string storeUnitsString = getXMLAttributeString (unitDataXml, "String", "Unit", {"Storage", "Capacity_Units_Type"});
 	Split(storeUnitsString, "+", staticData.storeUnitsTypes);
 
-	staticData.isStorageType = getXMLAttributeString(unitDataXml, "String", "Unit", "Storage", "Is_Storage_Type", nullptr);
+	staticData.isStorageType = getXMLAttributeString(unitDataXml, "String", "Unit", {"Storage", "Is_Storage_Type"});
 
 	// finish
 	Log.write ("Unitdata read", cLog::eLOG_TYPE_DEBUG);
@@ -1777,16 +1777,16 @@ static void LoadUnitGraphicProperties(sVehicleUIData& data, char const* director
 		return;
 	}
 
-	data.hasCorpse = getXMLAttributeBool(unitGraphicsXml, "Unit", "Graphic", "Has_Corpse", nullptr);
-	data.hasDamageEffect = getXMLAttributeBool(unitGraphicsXml, "Unit", "Graphic", "Has_Damage_Effect", nullptr);
-	data.hasPlayerColor = getXMLAttributeBool(unitGraphicsXml, "Unit", "Graphic", "Has_Player_Color", nullptr);
-	data.hasOverlay = getXMLAttributeBool(unitGraphicsXml, "Unit", "Graphic", "Has_Overlay", nullptr);
+	data.hasCorpse = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Corpse"});
+	data.hasDamageEffect = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Damage_Effect"});
+	data.hasPlayerColor = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Player_Color"});
+	data.hasOverlay = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Overlay"});
 
-	data.buildUpGraphic = getXMLAttributeBool(unitGraphicsXml, "Unit", "Graphic", "Animations", "Build_Up", nullptr);
-	data.animationMovement = getXMLAttributeBool(unitGraphicsXml, "Unit", "Graphic", "Animations", "Movement", nullptr);
-	data.powerOnGraphic = getXMLAttributeBool(unitGraphicsXml, "Unit", "Graphic", "Animations", "Power_On", nullptr);
-	data.isAnimated = getXMLAttributeBool(unitGraphicsXml, "Unit", "Graphic", "Animations", "Is_Animated", nullptr);
-	data.makeTracks = getXMLAttributeBool(unitGraphicsXml, "Unit", "Graphic", "Animations", "Makes_Tracks", nullptr);
+	data.buildUpGraphic = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Build_Up"});
+	data.animationMovement = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Movement"});
+	data.powerOnGraphic = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Power_On"});
+	data.isAnimated = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Is_Animated"});
+	data.makeTracks = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Makes_Tracks"});
 }
 
 //------------------------------------------------------------------------------
@@ -1804,15 +1804,15 @@ static void LoadUnitGraphicProperties(sBuildingUIData& data, char const* directo
 		return;
 	}
 
-	data.hasClanLogos = getXMLAttributeBool(unitGraphicsXml, "Unit", "Graphic", "Has_Clan_Logos", nullptr);
-	data.hasDamageEffect = getXMLAttributeBool(unitGraphicsXml, "Unit", "Graphic", "Has_Damage_Effect", nullptr);
-	data.hasBetonUnderground = getXMLAttributeBool(unitGraphicsXml, "Unit", "Graphic", "Has_Beton_Underground", nullptr);
-	data.hasPlayerColor = getXMLAttributeBool(unitGraphicsXml, "Unit", "Graphic", "Has_Player_Color", nullptr);
-	data.hasOverlay = getXMLAttributeBool(unitGraphicsXml, "Unit", "Graphic", "Has_Overlay", nullptr);
+	data.hasClanLogos = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Clan_Logos"});
+	data.hasDamageEffect = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Damage_Effect"});
+	data.hasBetonUnderground = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Beton_Underground"});
+	data.hasPlayerColor = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Player_Color"});
+	data.hasOverlay = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Overlay"});
 
-	data.buildUpGraphic = getXMLAttributeBool(unitGraphicsXml, "Unit", "Graphic", "Animations", "Build_Up", nullptr);
-	data.powerOnGraphic = getXMLAttributeBool(unitGraphicsXml, "Unit", "Graphic", "Animations", "Power_On", nullptr);
-	data.isAnimated = getXMLAttributeBool(unitGraphicsXml, "Unit", "Graphic", "Animations", "Is_Animated", nullptr);
+	data.buildUpGraphic = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Build_Up"});
+	data.powerOnGraphic = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Power_On"});
+	data.isAnimated = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Is_Animated"});
 }
 
 //------------------------------------------------------------------------------

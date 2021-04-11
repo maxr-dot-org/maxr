@@ -53,14 +53,13 @@ cLanguage lngPack;
 ////////////////////////////////////////////////////////////////////////////////
 // XML-Node paths
 
-// With nullptr as ending sign
-#define XNP_MAX_LANG_FILE "MAX_Language_File", nullptr
-#define XNP_MAX_LANG_FILE_FOOTER_AUTHOR "MAX_Language_File", "Footer", "Author", nullptr
-#define XNP_MAX_LANG_FILE_FOOTER_AUTHOR_EDITOR "MAX_Language_File", "Footer", "Author", "Editor", nullptr
-#define XNP_MAX_LANG_FILE_FOOTER_GAMEVERSION "MAX_Language_File", "Footer", "Game_Version", nullptr
-#define XNP_MAX_LANG_FILE_TEXT "MAX_Language_File", "Text", nullptr
-#define XNP_MAX_LANG_FILE_GRAPHIC "MAX_Language_File", "Graphic", nullptr
-#define XNP_MAX_LANG_FILE_SPEECH "MAX_Language_File", "Speech", nullptr
+#define XNP_MAX_LANG_FILE "MAX_Language_File", {}
+#define XNP_MAX_LANG_FILE_FOOTER_AUTHOR "MAX_Language_File", {"Footer", "Author"}
+#define XNP_MAX_LANG_FILE_FOOTER_AUTHOR_EDITOR "MAX_Language_File", {"Footer", "Author", "Editor"}
+#define XNP_MAX_LANG_FILE_FOOTER_GAMEVERSION "MAX_Language_File", {"Footer", "Game_Version"}
+#define XNP_MAX_LANG_FILE_TEXT "MAX_Language_File", {"Text"}
+#define XNP_MAX_LANG_FILE_GRAPHIC "MAX_Language_File", {"Graphic"}
+#define XNP_MAX_LANG_FILE_SPEECH "MAX_Language_File", {"Speech"}
 
 // Without nullptr as ending sign. Do not forget it in parameter list !
 #define XNP_MAX_LANG_FILE_TEXT_MAIN "MAX_Language_File", "Text", "Main"
