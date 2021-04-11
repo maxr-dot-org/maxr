@@ -20,10 +20,11 @@
 #ifndef game_connectionmanagerH
 #define game_connectionmanagerH
 
-#include <memory>
-#include <vector>
 #include "utility/color.h"
-#include "utility/thread/mutex.h"
+
+#include <memory>
+#include <mutex>
+#include <vector>
 
 class cNetwork;
 class cSocket;
@@ -92,11 +93,12 @@ private:
 	int sendMessage(const cSocket* socket, const cNetMessage& message);
 	bool handeConnectionHandshake(const std::unique_ptr<cNetMessage> &message, const cSocket* socket, int playerOnSocket);
 
+private:
 	std::unique_ptr<cNetwork> network;
 	std::vector<INetMessageReceiver*> localClients; // Hotseat
 	INetMessageReceiver* localClient = nullptr;
 	INetMessageReceiver* localServer = nullptr;
-	mutable cMutex mutex;
+	mutable std::mutex mutex;
 
 	int localPlayer = -1;
 	std::vector<std::pair<const cSocket*, int>> clientSockets;

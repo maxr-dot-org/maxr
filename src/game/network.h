@@ -19,10 +19,10 @@
 #ifndef game_networkH
 #define game_networkH
 
-#include <vector>
 #include <SDL_net.h>
 
-#include "utility/thread/mutex.h"
+#include <mutex>
+#include <vector>
 
 //this is probably the maximum of the underlying os 'select' call
 #define MAX_TCP_CONNECTIONS 64
@@ -61,7 +61,7 @@ public:
 class cNetwork
 {
 public:
-	cNetwork(cConnectionManager& connectionManager, cMutex& mutex);
+	cNetwork (cConnectionManager&, std::mutex&);
 	~cNetwork();
 
 	int openServer(int port);
@@ -82,7 +82,7 @@ private:
 	void cleanupClosedSockets();
 
 private:
-	cMutex &tcpMutex;
+	std::mutex& tcpMutex;
 
 	SDL_Thread* tcpHandleThread;
 	volatile bool exit;
