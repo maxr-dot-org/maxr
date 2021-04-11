@@ -20,11 +20,11 @@
 #ifndef ui_sound_soundmanagerH
 #define ui_sound_soundmanagerH
 
-#include <set>
-
 #include "utility/position.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "utility/thread/mutex.h"
+
+#include <mutex>
+#include <set>
 
 class cSoundEffect;
 class cSoundChannel;
@@ -70,7 +70,7 @@ private:
 
 	const cModel* model;
 
-	cRecursiveMutex playingSoundsMutex;
+	std::recursive_mutex playingSoundsMutex;
 	std::vector<sStoredSound> playingSounds;
 
 	cPosition listenerPosition;
