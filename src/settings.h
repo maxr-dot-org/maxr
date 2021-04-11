@@ -241,7 +241,7 @@ private:
 	bool initializing;
 
 	tinyxml2::XMLDocument configFile;
-	std::mutex xmlDocMutex;
+	std::recursive_mutex xmlDocMutex;
 
 	/**
 	 * The static instance of this object.

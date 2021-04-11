@@ -409,7 +409,7 @@ bool cSettings::createConfigFile()
 //------------------------------------------------------------------------------
 void cSettings::initialize()
 {
-	std::unique_lock<std::mutex> lock (xmlDocMutex);
+	std::unique_lock<std::recursive_mutex> lock (xmlDocMutex);
 	initializing = true;
 
 	if (initialized) return;
@@ -1105,7 +1105,7 @@ void cSettings::saveSetting (const std::string& path, bool value)
 template<typename T>
 void cSettings::saveSetting (const std::string& path, T value, const char* valueName)
 {
-	std::unique_lock<std::mutex> lock (xmlDocMutex);
+	std::unique_lock<std::recursive_mutex> lock (xmlDocMutex);
 
 	XMLElement* xmlElement = getOrCreateXmlElement (configFile, path);
 	if (xmlElement == nullptr) return;
