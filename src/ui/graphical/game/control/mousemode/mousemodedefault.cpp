@@ -211,7 +211,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 								 (
 									 field.getTopBuilding() &&
 									 field.getTopBuilding()->getStaticUnitData().surfacePosition != eSurfacePosition::Above &&
-									 !field.getTopBuilding()->getStaticUnitData().canBeLandedOn
+									 !field.getTopBuilding()->getStaticData().canBeLandedOn
 								 )
 							 )
 						 )

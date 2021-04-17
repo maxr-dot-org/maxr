@@ -60,7 +60,7 @@ cUnit::cUnit (const cDynamicUnitData* unitData, const cStaticUnitData* staticDat
 
 	data.setMaximumCurrentValues();
 
-	isBig = (staticData && staticData->isBig);
+	isBig = (staticData && staticData->ID.isABuilding() && staticData->buildingData.isBig);
 
 	disabledChanged.connect ([&]() { statusChanged(); });
 	sentryChanged.connect ([&]() { statusChanged(); });

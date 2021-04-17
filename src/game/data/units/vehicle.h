@@ -101,6 +101,8 @@ public:
 	bool isAVehicle() const override { return true; }
 	bool isABuilding() const override { return false; }
 
+	const sStaticVehicleData& getStaticData() const { return getStaticUnitData().vehicleData; }
+
 	const cPosition& getMovementOffset() const override { return tileMovementOffset; }
 	void setMovementOffset (const cPosition& newOffset) { tileMovementOffset = newOffset; }
 
@@ -160,7 +162,7 @@ public:
 	bool isUnitLoaded() const { return loaded; }
 
 	bool isUnitMoving() const override { return moving; } //test if the vehicle is moving right now. Having a waiting movejob doesn't count a moving
-	bool isUnitClearing() const override { return isClearing; }
+	bool isUnitClearing() const { return isClearing; }
 	bool isUnitLayingMines() const override { return layMines; }
 	bool isUnitClearingMines() const override { return clearMines; }
 	bool isUnitBuildingABuilding() const override { return isBuilding; }

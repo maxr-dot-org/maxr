@@ -44,7 +44,7 @@ void cActionMinelayerStatus::execute(cModel& model) const
 	if (vehicle->getOwner()->getId() != playerNr) return;
 
 	if (layMines && clearMines) return;
-	if (!vehicle->getStaticUnitData().canPlaceMines) return;
+	if (!vehicle->getStaticData().canPlaceMines) return;
 
 	vehicle->setClearMines(clearMines);
 	vehicle->setLayMines(layMines);

@@ -237,7 +237,7 @@ void cAttackJob::fire(cModel& model)
 	//update data
 	aggressor->data.setShots (aggressor->data.getShots() - 1);
 	aggressor->data.setAmmo (aggressor->data.getAmmo() - 1);
-	if (aggressor->isAVehicle() && aggressor->getStaticUnitData().canDriveAndFire == false)
+	if (aggressor->isAVehicle() && aggressor->getStaticUnitData().vehicleData.canDriveAndFire == false)
 		aggressor->data.setSpeed (aggressor->data.getSpeed() - (int) (((float) aggressor->data.getSpeedMax()) / aggressor->data.getShotsMax()));
 
 	auto muzzle = createMuzzleFx ();

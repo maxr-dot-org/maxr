@@ -320,7 +320,7 @@ string cVehicle::getStatusStr(const cPlayer* player, const cUnitsData& unitsData
 		// extra info only for infiltrators
 		// TODO should it be original behavior (as it is now) or
 		// don't display CommandRank for enemy (could also be a bug in original...?)
-		if ((staticData->canCapture || staticData->canDisable) /* && owner == gameGUI.getClient()->getActivePlayer()*/)
+		if ((getStaticData().canCapture || getStaticData().canDisable) /* && owner == gameGUI.getClient()->getActivePlayer()*/)
 		{
 			sTmp += "\n";
 			sTmp += commandoData.getRankString();
@@ -339,7 +339,7 @@ void cVehicle::DecSpeed (int value)
 {
 	data.setSpeed (data.getSpeed() - value);
 
-	if (staticData->canAttack == false || staticData->canDriveAndFire) return;
+	if (staticData->canAttack == false || getStaticData().canDriveAndFire) return;
 
 	const int s = data.getSpeed() * data.getShotsMax() / data.getSpeedMax();
 	data.setShots (std::min (data.getShots(), s));
@@ -723,7 +723,7 @@ bool cVehicle::canLoad (const cVehicle* vehicle, bool checkPosition) const
 
 	if (checkPosition && staticData->factorAir > 0 && (vehicle->getPosition() != getPosition())) return false;
 
-	if (!Contains (staticData->storeUnitsTypes, vehicle->getStaticUnitData().isStorageType)) return false;
+	if (!Contains (staticData->storeUnitsTypes, vehicle->getStaticData().isStorageType)) return false;
 
 	if (vehicle->moving || vehicle->isAttacking()) return false;
 
@@ -931,7 +931,7 @@ bool cVehicle::canLand (const cMap& map) const
 	std::vector<cBuilding*>::const_iterator b_it = buildings.begin();
 	for (; b_it != buildings.end(); ++b_it)
 	{
-		if ((*b_it)->getStaticUnitData().canBeLandedOn)
+		if ((*b_it)->getStaticData().canBeLandedOn)
 			break;
 	}
 	if (b_it == buildings.end()) return false;

@@ -147,7 +147,7 @@ void cDestroyJob::deleteUnit(cModel& model)
 
 	//delete unit
 	int rubbleValue = 0;
-	if (!unit->getStaticUnitData().isHuman)
+	if (!unit->getStaticUnitData().vehicleData.isHuman)
 	{
 		rubbleValue += unit->data.getBuildCost();
 		// stored material is always added completely to the rubble

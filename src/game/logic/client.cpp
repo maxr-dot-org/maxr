@@ -298,7 +298,7 @@ const std::map<int, ePlayerConnectionState>& cClient::getPlayerConnectionStates(
 //------------------------------------------------------------------------------
 void cClient::addSurveyorMoveJob(const cVehicle& vehicle)
 {
-	if (!vehicle.getStaticUnitData().canSurvey) return;
+	if (!vehicle.getStaticData().canSurvey) return;
 
 	sendNetMessage(cActionSetAutoMove(vehicle, true));
 

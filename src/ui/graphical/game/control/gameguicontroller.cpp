@@ -748,10 +748,9 @@ void cGameGuiController::connectClient (cClient& client)
 	{
 		client.sendNetMessage(cActionBuyUpgrades(unitUpgrades));
 	});
-	clientSignalConnectionManager.connect (selfDestructionTriggered, [&] (const cUnit & unit)
+	clientSignalConnectionManager.connect (selfDestructionTriggered, [&] (const cBuilding& building)
 	{
-		if (unit.isAVehicle()) return;
-		client.sendNetMessage(cActionSelfDestroy(*static_cast<const cBuilding*>(&unit)));
+		client.sendNetMessage (cActionSelfDestroy (building));
 	});
 	clientSignalConnectionManager.connect (resumeMoveJobTriggered, [&] (const cVehicle & vehicle)
 	{
@@ -1566,7 +1565,7 @@ void cGameGuiController::showBuildBuildingsWindow (const cVehicle& vehicle)
 			const sID buildingId = *buildWindow->getSelectedUnitId();
 			const auto& model = activeClient->getModel();
 			const auto& buildingData = model.getUnitsData()->getStaticUnitData(buildingId);
-			if (buildingData.isBig)
+			if (buildingData.buildingData.isBig)
 			{
 				const auto& map = model.getMap();
 				if (!gameGui->getGameMap().startFindBuildPosition(buildingId))
@@ -1785,14 +1784,14 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 }
 
 //------------------------------------------------------------------------------
-void cGameGuiController::showSelfDestroyDialog (const cUnit& unit)
+void cGameGuiController::showSelfDestroyDialog (const cBuilding& building)
 {
-	if (unit.getStaticUnitData().canSelfDestroy)
+	if (building.getStaticData().canSelfDestroy)
 	{
-		auto selfDestroyDialog = application.show (std::make_shared<cDialogSelfDestruction> (unit, animationTimer));
-		signalConnectionManager.connect (selfDestroyDialog->triggeredDestruction, [this, selfDestroyDialog, &unit]()
+		auto selfDestroyDialog = application.show (std::make_shared<cDialogSelfDestruction> (building, animationTimer));
+		signalConnectionManager.connect (selfDestroyDialog->triggeredDestruction, [this, selfDestroyDialog, &building]()
 		{
-			selfDestructionTriggered (unit);
+			selfDestructionTriggered (building);
 			selfDestroyDialog->close();
 		});
 	}

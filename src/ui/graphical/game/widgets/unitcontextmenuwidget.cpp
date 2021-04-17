@@ -19,13 +19,15 @@
 
 #include "ui/graphical/game/widgets/unitcontextmenuwidget.h"
 
+#include "game/data/map/mapfieldview.h"
+#include "game/data/map/mapview.h"
+#include "game/data/units/building.h"
+#include "game/data/units/unit.h"
+#include "game/data/units/vehicle.h"
+#include "ui/graphical/menu/widgets/checkbox.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/radiogroup.h"
-#include "ui/graphical/menu/widgets/checkbox.h"
 #include "utility/language.h"
-#include "game/data/units/unit.h"
-#include "game/data/map/mapview.h"
-#include "game/data/map/mapfieldview.h"
 
 //------------------------------------------------------------------------------
 cUnitContextMenuWidget::cUnitContextMenuWidget() :
@@ -315,25 +317,28 @@ const cUnit* cUnitContextMenuWidget::getUnit()
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasDistributeEntry(const cUnit* unit, const cPlayer* player)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canMineMaxRes > 0 && unit->isUnitWorking();
+	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->isABuilding() && unit->getStaticUnitData().buildingData.canMineMaxRes > 0 && unit->isUnitWorking();
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasTransferEntry(const cUnit* unit, const cPlayer* player)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().storeResType != eResourceType::None && !unit->isUnitBuildingABuilding() && !unit->isUnitClearing();
+	const auto* vehicle = dynamic_cast<const cVehicle*> (unit);
+	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().storeResType != eResourceType::None && !unit->isUnitBuildingABuilding() && (!vehicle || !vehicle->isUnitClearing());
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasStartEntry(const cUnit* unit, const cPlayer* player)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canWork && unit->buildingCanBeStarted();
+	const auto* building = dynamic_cast<const cBuilding*> (unit);
+	return building && !building->isDisabled() && building->getOwner() == player && building->buildingCanBeStarted();
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasAutoEntry(const cUnit* unit, const cPlayer* player)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canSurvey;
+	const auto* vehicle = dynamic_cast<const cVehicle*> (unit);
+	return vehicle&& !vehicle->isDisabled() && vehicle->getOwner() == player && vehicle->getStaticData().canSurvey;
 }
 
 //------------------------------------------------------------------------------
@@ -345,7 +350,8 @@ const cUnit* cUnitContextMenuWidget::getUnit()
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasRemoveEntry (const cUnit* unit, const cPlayer* player, const cMapView* map)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canClearArea && map && map->getField(unit->getPosition()).getRubble() && !unit->isUnitClearing();
+	const auto* vehicle = dynamic_cast<const cVehicle*> (unit);
+	return vehicle && !vehicle->isDisabled() && vehicle->getOwner() == player && vehicle->getStaticData().canClearArea && map && map->getField(vehicle->getPosition()).getRubble() && !vehicle->isUnitClearing();
 }
 
 //------------------------------------------------------------------------------
@@ -375,20 +381,22 @@ const cUnit* cUnitContextMenuWidget::getUnit()
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasEnterEntry(const cUnit* unit, const cPlayer* player)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && !unit->isABuilding() && !unit->isUnitClearing() && !unit->isUnitBuildingABuilding();
+	const auto* vehicle = dynamic_cast<const cVehicle*> (unit);
+	return vehicle && !vehicle->isDisabled() && vehicle->getOwner() == player && !vehicle->isUnitClearing() && !vehicle->isUnitBuildingABuilding();
 }
-
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasResearchEntry(const cUnit* unit, const cPlayer* player)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canResearch && unit->isUnitWorking();
+	const auto* building = dynamic_cast<const cBuilding*> (unit);
+	return building && !building->isDisabled() && building->getOwner() == player && building->getStaticData().canResearch && building->isUnitWorking();
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasBuyEntry(const cUnit* unit, const cPlayer* player)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().convertsGold;
+	const auto* building = dynamic_cast<const cBuilding*> (unit);
+	return building && !building->isDisabled() && building->getOwner() == player && building->getStaticData().convertsGold;
 }
 
 //------------------------------------------------------------------------------
@@ -406,43 +414,50 @@ const cUnit* cUnitContextMenuWidget::getUnit()
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasSelfDestroyEntry(const cUnit* unit, const cPlayer* player)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canSelfDestroy;
+	const auto* building = dynamic_cast<const cBuilding*> (unit);
+	return building && !building->isDisabled() && building->getOwner() == player && building->getStaticData().canSelfDestroy;
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasSupplyEntry(const cUnit* unit, const cPlayer* player)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canRearm && unit->getStoredResources() >= 1;
+	const auto* vehicle = dynamic_cast<const cVehicle*> (unit);
+	return vehicle && !vehicle->isDisabled() && vehicle->getOwner() == player && vehicle->getStaticUnitData().canRearm && vehicle->getStoredResources() >= 1;
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasRepairEntry(const cUnit* unit, const cPlayer* player)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canRepair && unit->getStoredResources() >= 1;
+	const auto* vehicle = dynamic_cast<const cVehicle*> (unit);
+	return vehicle && !vehicle->isDisabled() && vehicle->getOwner() == player && vehicle->getStaticUnitData().canRepair && unit->getStoredResources() >= 1;
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasLayMinesEntry(const cUnit* unit, const cPlayer* player)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canPlaceMines && unit->getStoredResources() > 0;
+	const auto* vehicle = dynamic_cast<const cVehicle*> (unit);
+	return vehicle && !vehicle->isDisabled() && vehicle->getOwner() == player && vehicle->getStaticData().canPlaceMines && vehicle->getStoredResources() > 0;
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasCollectMinesEntry(const cUnit* unit, const cPlayer* player)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canPlaceMines && unit->getStoredResources() < unit->getStaticUnitData().storageResMax;
+	const auto* vehicle = dynamic_cast<const cVehicle*> (unit);
+	return vehicle && !vehicle->isDisabled() && vehicle->getOwner() == player && vehicle->getStaticData().canPlaceMines && vehicle->getStoredResources() < vehicle->getStaticUnitData().storageResMax;
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasSabotageEntry(const cUnit* unit, const cPlayer* player)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canDisable && unit->data.getShots();
+	const auto* vehicle = dynamic_cast<const cVehicle*> (unit);
+	return vehicle && !vehicle->isDisabled() && vehicle->getOwner() == player && vehicle->getStaticData().canDisable && vehicle->data.getShots();
 }
 
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasStealEntry(const cUnit* unit, const cPlayer* player)
 {
-	return unit && !unit->isDisabled() && unit->getOwner() == player && unit->getStaticUnitData().canCapture && unit->data.getShots();
+	const auto* vehicle = dynamic_cast<const cVehicle*> (unit);
+	return vehicle && !vehicle->isDisabled() && vehicle->getOwner() == player && vehicle->getStaticData().canCapture && vehicle->data.getShots();
 }
 
 //------------------------------------------------------------------------------

@@ -77,12 +77,12 @@ namespace
 	if (steal)
 	{
 		if (!unit->storedUnits.empty()) return false;
-		return commando.getStaticUnitData().canCapture && unit->getStaticUnitData().canBeCaptured;
+		return commando.getStaticData().canCapture && unit->getStaticUnitData().canBeCaptured;
 	}
 	else
 	{
 		if (unit->isDisabled()) return false;
-		return commando.getStaticUnitData().canDisable && unit->getStaticUnitData().canBeDisabled;
+		return commando.getStaticData().canDisable && unit->getStaticUnitData().canBeDisabled;
 	}
 	return true;
 }

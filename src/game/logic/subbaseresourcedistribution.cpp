@@ -30,7 +30,7 @@ namespace
 
 	[[nodiscard]]std::vector<cBuilding*> ExtractOnLineMiningStations (std::vector<cBuilding*> buildings)
 	{
-		return Filter (buildings, [](const cBuilding* building){ return building->getStaticUnitData().canMineMaxRes > 0 && building->isUnitWorking(); });
+		return Filter (buildings, [](const cBuilding* building){ return building->getStaticData().canMineMaxRes > 0 && building->isUnitWorking(); });
 	}
 
 	struct sResourcesLimit
@@ -47,7 +47,7 @@ namespace
 
 		for (const cBuilding* building : buildings)
 		{
-			const auto total = building->getStaticUnitData().canMineMaxRes;
+			const auto total = building->getStaticData().canMineMaxRes;
 			if (total <= 0 || !building->isUnitWorking()) continue;
 			const int metal = building->getMaxProd().get (eResourceType::Metal);
 			const int oil = building->getMaxProd().get (eResourceType::Oil);
@@ -113,7 +113,7 @@ namespace
 	//--------------------------------------------------------------------------
 	bool canIncreaseProd (const cBuilding* b)
 	{
-		return b->prod.total() < b->getStaticUnitData().canMineMaxRes;
+		return b->prod.total() < b->getStaticData().canMineMaxRes;
 	}
 
 	//--------------------------------------------------------------------------
@@ -189,7 +189,7 @@ namespace
 		// First pass, fulfil building to max (up to requirement), metal then oil, then gold
 		for (cBuilding* mine : mines)
 		{
-			auto free = mine->getStaticUnitData().canMineMaxRes;
+			auto free = mine->getStaticData().canMineMaxRes;
 			const auto& maxProd = mine->getMaxProd();
 			mine->prod.metal = std::min (prod.metal, maxProd.metal);
 			free -= mine->prod.metal;
@@ -230,7 +230,7 @@ sMiningResource computeProduction (const std::vector<cBuilding*>& buildings)
 
 	for (const cBuilding* building : buildings)
 	{
-		const auto total = building->getStaticUnitData().canMineMaxRes;
+		const auto total = building->getStaticData().canMineMaxRes;
 		if (total <= 0 || !building->isUnitWorking()) continue;
 		res += building->prod;
 	}

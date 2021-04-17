@@ -36,7 +36,7 @@ namespace
 //------------------------------------------------------------------------------
 void makeReport (cSoundManager& soundManager, const cGameGuiState& gameGuiState, const cBuilding& building)
 {
-	if (building.getStaticUnitData().canResearch && building.isUnitWorking() && building.getOwner() && Contains (gameGuiState.currentTurnResearchAreasFinished, building.getResearchArea()))
+	if (building.getStaticData().canResearch && building.isUnitWorking() && building.getOwner() && Contains (gameGuiState.currentTurnResearchAreasFinished, building.getResearchArea()))
 	{
 		soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, VoiceData.VOIResearchComplete));
 	}

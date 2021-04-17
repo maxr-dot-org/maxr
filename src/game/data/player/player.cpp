@@ -556,7 +556,7 @@ void cPlayer::accumulateScore ()
 
 	for (const auto& b : buildings)
 	{
-		if (b->getStaticUnitData().canScore && b->isUnitWorking())
+		if (b->getStaticData().canScore && b->isUnitWorking())
 		{
 			b->points++;
 			deltaScore++;
@@ -572,7 +572,7 @@ int cPlayer::getNumEcoSpheres() const
 
 	for (const auto& building : buildings)
 	{
-		if (building->getStaticUnitData().canScore && building->isUnitWorking())
+		if (building->getStaticData().canScore && building->isUnitWorking())
 			++numEcos;
 	}
 	return numEcos;
@@ -627,7 +627,7 @@ void cPlayer::upgradeUnitTypes (const std::vector<cResearch::ResearchArea>& area
 
 			cUpgradeCalculator::UnitTypes unitType = cUpgradeCalculator::kStandardUnit;
 			if (unitData.getId().isABuilding()) unitType = cUpgradeCalculator::kBuilding;
-			if (originalUnitsData.getStaticUnitData(unitData.getId()).isHuman) unitType = cUpgradeCalculator::kInfantry;
+			if (originalUnitsData.getStaticUnitData(unitData.getId()).vehicleData.isHuman) unitType = cUpgradeCalculator::kInfantry;
 
 			int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch (startValue, newResearchLevel - 10,
 								   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1, unitType);
@@ -671,7 +671,7 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 	for (auto i = buildings.begin(); i != buildings.end(); ++i)
 	{
 		const auto& building = *i;
-		if (building->getStaticUnitData().canResearch && building->isUnitWorking())
+		if (building->getStaticData().canResearch && building->isUnitWorking())
 		{
 			researchCentersWorkingOnArea[building->getResearchArea()] += 1;
 			newResearchCount++;

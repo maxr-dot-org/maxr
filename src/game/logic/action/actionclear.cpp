@@ -44,7 +44,7 @@ void cActionClear::execute(cModel& model) const
 	if (!vehicle->getOwner()) return;
 	if (vehicle->getOwner()->getId() != playerNr) return;
 
-	if (!vehicle->getStaticUnitData().canClearArea) return;
+	if (!vehicle->getStaticData().canClearArea) return;
 	if (vehicle->isUnitMoving()) return;
 
 	auto map = model.getMap();

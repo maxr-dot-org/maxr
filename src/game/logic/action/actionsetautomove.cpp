@@ -42,7 +42,7 @@ void cActionSetAutoMove::execute(cModel& model) const
 	if (!surveyor) return;
 
 	if (surveyor->getOwner()->getId() != playerNr) return;
-	if (!surveyor->getStaticUnitData().canSurvey) return;
+	if (!surveyor->getStaticData().canSurvey) return;
 
 	surveyor->setSurveyorAutoMoveActive(autoMoveActive);
 }

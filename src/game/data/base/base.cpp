@@ -61,7 +61,7 @@ namespace
 		sMiningResource maxProd;
 		for (const cBuilding* building : buildings)
 		{
-			if (building->getStaticUnitData().canMineMaxRes <= 0 || !building->isUnitWorking()) continue;
+			if (building->getStaticData().canMineMaxRes <= 0 || !building->isUnitWorking()) continue;
 
 			maxProd += building->getMaxProd();
 		}
@@ -346,7 +346,7 @@ bool cSubBase::checkGoldConsumer()
 
 	for (cBuilding* building : buildings)
 	{
-		if (!building->getStaticUnitData().convertsGold || !building->isUnitWorking()) continue;
+		if (!building->getStaticData().convertsGold || !building->isUnitWorking()) continue;
 
 		building->stopWork (false);
 
@@ -736,16 +736,16 @@ void cSubBase::addBuilding (cBuilding& b)
 		}
 	}
 	// calculate gold
-	if (b.getStaticUnitData().convertsGold)
+	if (b.getStaticData().convertsGold)
 	{
-		maxNeeded.gold += b.getStaticUnitData().convertsGold;
+		maxNeeded.gold += b.getStaticData().convertsGold;
 		if (b.isUnitWorking())
 		{
-			needed.gold += b.getStaticUnitData().convertsGold;
+			needed.gold += b.getStaticData().convertsGold;
 		}
 	}
 	// calculate resource production
-	if (b.getStaticUnitData().canMineMaxRes > 0 && b.isUnitWorking())
+	if (b.getStaticData().canMineMaxRes > 0 && b.isUnitWorking())
 	{
 		prod += b.prod;
 	}
@@ -779,9 +779,9 @@ bool cSubBase::startBuilding(cBuilding& b)
 	}
 
 	// needs gold:
-	if (staticData.convertsGold)
+	if (staticData.buildingData.convertsGold)
 	{
-		if (needed.gold + staticData.convertsGold > prod.gold + stored.gold)
+		if (needed.gold + staticData.buildingData.convertsGold > prod.gold + stored.gold)
 		{
 			base.goldInsufficient();
 			return false;
@@ -824,7 +824,7 @@ bool cSubBase::startBuilding(cBuilding& b)
 	b.setWorking (true);
 
 	// set mine values. This has to be undone, if the energy is insufficient
-	if (staticData.canMineMaxRes > 0)
+	if (staticData.buildingData.canMineMaxRes > 0)
 	{
 		prod += b.prod;
 	}
@@ -840,7 +840,7 @@ bool cSubBase::startBuilding(cBuilding& b)
 				b.setWorking(false);
 
 				// reset mine values
-				if (staticData.canMineMaxRes > 0)
+				if (staticData.buildingData.canMineMaxRes > 0)
 				{
 					prod -= b.prod;
 				}
@@ -867,7 +867,7 @@ bool cSubBase::startBuilding(cBuilding& b)
 		needed.metal += b.getMetalPerRound();
 
 	// gold consumer:
-	needed.gold += staticData.convertsGold;
+	needed.gold += staticData.buildingData.convertsGold;
 
 	return true;
 }
@@ -899,13 +899,13 @@ bool cSubBase::stopBuilding(cBuilding& b, bool forced /*= false*/)
 		needed.metal -= b.getMetalPerRound();
 
 	// gold consumer
-	needed.gold -= staticData.convertsGold;
+	needed.gold -= staticData.buildingData.convertsGold;
 
 	// human consumer
 	humanNeed -= staticData.needsHumans;
 
 	// Minen:
-	if (staticData.canMineMaxRes > 0)
+	if (staticData.buildingData.canMineMaxRes > 0)
 	{
 		prod -= b.prod;
 	}
@@ -969,7 +969,7 @@ void cBase::addBuilding (cBuilding& building, const cMap& map)
 
 void cBase::addBuilding (cBuilding& building, const cMap& map, bool signalChange)
 {
-	if (!building.getStaticUnitData().connectsToBase) return;
+	if (!building.getStaticData().connectsToBase) return;
 	std::vector<cSubBase*> NeighbourList;
 
 	// find all neighbouring subbases
@@ -1023,7 +1023,7 @@ void cBase::addBuilding (cBuilding& building, const cMap& map, bool signalChange
 
 void cBase::deleteBuilding (cBuilding& building, const cMap& map)
 {
-	if (!building.getStaticUnitData().connectsToBase) return;
+	if (!building.getStaticData().connectsToBase) return;
 
 	auto buildings = building.subBase->getBuildings();
 	RemoveIf (SubBases, ByGetTo (building.subBase));
@@ -1035,7 +1035,7 @@ void cBase::deleteBuilding (cBuilding& building, const cMap& map)
 		addBuilding (*b, map, false);
 	}
 
-	if (building.isUnitWorking() && building.getStaticUnitData().canResearch)
+	if (building.isUnitWorking() && building.getStaticData().canResearch)
 		building.getOwner()->stopAResearch (building.getResearchArea());
 	onSubbaseConfigurationChanged (buildings);
 }

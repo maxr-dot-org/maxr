@@ -48,7 +48,7 @@ cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, co
 	}
 	else if (unitId.isABuilding())
 	{
-		const float zoomFactor = unitImageSize / (data.isBig ? 128.0f : 64.0f);
+		const float zoomFactor = unitImageSize / (data.buildingData.isBig ? 128.0f : 64.0f);
 		const auto& uiData = *UnitsUiData.getBuildingUI (unitId);
 		uiData.render_simple (*surface, dest, zoomFactor, &owner);
 	}

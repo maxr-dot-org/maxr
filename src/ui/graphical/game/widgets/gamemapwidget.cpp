@@ -205,7 +205,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	unitMenu->buyUpgradesClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredUpgradesMenu (*unitMenu->getUnit()); });
 	unitMenu->upgradeThisClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredUpgradeThis (*unitMenu->getUnit()); });
 	unitMenu->upgradeAllClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredUpgradeAll (*unitMenu->getUnit()); });
-	unitMenu->selfDestroyClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredSelfDestruction (*unitMenu->getUnit()); });
+	unitMenu->selfDestroyClicked.connect ([&]() { const auto* building = dynamic_cast<const cBuilding*> (unitMenu->getUnit()); if (building) triggeredSelfDestruction (*building); });
 	unitMenu->layMinesToggled.connect ([&]() { if (unitMenu->getUnit()) triggeredLayMines (*unitMenu->getUnit()); });
 	unitMenu->collectMinesToggled.connect ([&]() { if (unitMenu->getUnit()) triggeredCollectMines (*unitMenu->getUnit()); });
 	unitMenu->infoClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredUnitHelp (*unitMenu->getUnit()); });
@@ -439,9 +439,10 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	destroyShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuDestroy));
 	destroyShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasSelfDestroyEntry (unitSelection.getSelectedUnit(), player.get()))
+		auto* building = dynamic_cast<cBuilding*> (unitSelection.getSelectedUnit());
+		if (cUnitContextMenuWidget::unitHasSelfDestroyEntry (building, player.get()))
 		{
-			triggeredSelfDestruction (*unitSelection.getSelectedUnit());
+			triggeredSelfDestruction (*building);
 		}
 	});
 
@@ -547,7 +548,7 @@ void cGameMapWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clip
 	drawPlanes();
 
 	auto selectedVehicle = unitSelection.getSelectedVehicle();
-	if (shouldDrawSurvey || (selectedVehicle && selectedVehicle->getOwner() == player.get() && selectedVehicle->getStaticUnitData().canSurvey))
+	if (shouldDrawSurvey || (selectedVehicle && selectedVehicle->getOwner() == player.get() && selectedVehicle->getStaticData().canSurvey))
 	{
 		drawResources();
 	}
@@ -2057,11 +2058,8 @@ void cGameMapWidget::addAnimationsForUnit (const cUnit& unit)
 		if (building.isRubble()) return;
 		auto& uiData = UnitsUiData.getBuildingUI (building);
 
-		if (uiData.powerOnGraphic || unit.getStaticUnitData().canWork)
+		if (uiData.powerOnGraphic || building.getStaticData().canWork)
 		{
-			assert(unit.isABuilding());
-			auto& building = static_cast<const cBuilding&> (unit);
-
 			animations.push_back(std::make_unique<cAnimationWork>(*animationTimer, building));
 		}
 	}

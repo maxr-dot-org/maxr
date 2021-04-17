@@ -237,7 +237,7 @@ string cBuilding::getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData&
 		}
 
 		// Research Center
-		if (staticData->canResearch && getOwner() == whoWantsToKnow)
+		if (getStaticData().canResearch && getOwner() == whoWantsToKnow)
 		{
 			string sText = lngPack.i18n ("Text~Comp~Working") + "\n";
 			for (int area = 0; area < cResearch::kNrResearchAreas; area++)
@@ -262,7 +262,7 @@ string cBuilding::getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData&
 		}
 
 		// Goldraffinerie:
-		if (staticData->convertsGold && getOwner() == whoWantsToKnow)
+		if (getStaticData().convertsGold && getOwner() == whoWantsToKnow)
 		{
 			string sText;
 			sText = lngPack.i18n ("Text~Comp~Working") + "\n";
@@ -283,7 +283,7 @@ string cBuilding::getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData&
 		return lngPack.i18n ("Text~Comp~ReactionFireOff");
 
 	//GoldRaf idle + gold-amount
-	if (staticData->convertsGold && getOwner() == whoWantsToKnow && !isUnitWorking())
+	if (getStaticData().convertsGold && getOwner() == whoWantsToKnow && !isUnitWorking())
 	{
 		string sText;
 		sText = lngPack.i18n("Text~Comp~Waits") + "\n";
@@ -294,7 +294,7 @@ string cBuilding::getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData&
 
 	//Research centre idle + projects
 	// Research Center
-	if (staticData->canResearch && getOwner() == whoWantsToKnow && !isUnitWorking())
+	if (getStaticData().canResearch && getOwner() == whoWantsToKnow && !isUnitWorking())
 	{
 		string sText = lngPack.i18n("Text~Comp~Waits") + "\n";
 		for (int area = 0; area < cResearch::kNrResearchAreas; area++)
@@ -381,7 +381,7 @@ void cBuilding::CheckNeighbours (const cMap& map)
 	if (map.isValidPosition (cPosition(x, y))) \
 	{ \
 		const cBuilding* b = map.getField(cPosition(x, y)).getTopBuilding(); \
-		if (b && b->getOwner() == getOwner() && b->staticData->connectsToBase) \
+		if (b && b->getOwner() == getOwner() && b->getStaticData().connectsToBase) \
 		{m = true;}else{m = false;} \
 	}
 
@@ -426,12 +426,12 @@ void cBuilding::startWork ()
 		return;
 
 	// research building
-	if (staticData->canResearch)
+	if (getStaticData().canResearch)
 	{
 		getOwner()->startAResearch (researchArea);
 	}
 
-	if (staticData->canScore)
+	if (getStaticData().canScore)
 	{
 		//sendNumEcos (server, *getOwner());
 	}
@@ -447,12 +447,12 @@ void cBuilding::stopWork (bool forced)
 	if (!subBase->stopBuilding (*this, forced))
 		return;
 
-	if (staticData->canResearch)
+	if (getStaticData().canResearch)
 	{
 		getOwner()->stopAResearch (researchArea);
 	}
 
-	if (staticData->canScore)
+	if (getStaticData().canScore)
 	{
 		//sendNumEcos (server, *getOwner());
 	}
@@ -560,7 +560,7 @@ bool cBuilding::canLoad (const cVehicle* vehicle, bool checkPosition) const
 
 	if (checkPosition && !isNextTo (vehicle->getPosition())) return false;
 
-	if (!Contains(staticData->storeUnitsTypes, vehicle->getStaticUnitData().isStorageType)) return false;
+	if (!Contains(staticData->storeUnitsTypes, vehicle->getStaticData().isStorageType)) return false;
 
 	if (vehicle->isUnitMoving() || vehicle->isAttacking()) return false;
 
@@ -610,7 +610,7 @@ bool cBuilding::canSupply(const cUnit* unit, eSupplyType supplyType) const
 
 void cBuilding::initMineResourceProd (const cMap& map)
 {
-	if (!staticData->canMineMaxRes) return;
+	if (!getStaticData().canMineMaxRes) return;
 
 	auto position = getPosition();
 
@@ -634,12 +634,12 @@ void cBuilding::initMineResourceProd (const cMap& map)
 		if (res->typ != eResourceType::None) maxProd.get (res->typ) += res->value;
 	}
 
-	maxProd.metal = min (maxProd.metal, staticData->canMineMaxRes);
-	maxProd.oil = min (maxProd.oil, staticData->canMineMaxRes);
-	maxProd.gold = min (maxProd.gold, staticData->canMineMaxRes);
+	maxProd.metal = min (maxProd.metal, getStaticData().canMineMaxRes);
+	maxProd.oil = min (maxProd.oil, getStaticData().canMineMaxRes);
+	maxProd.gold = min (maxProd.gold, getStaticData().canMineMaxRes);
 
 	// set default mine allocation
-	int freeProductionCapacity = staticData->canMineMaxRes;
+	int freeProductionCapacity = getStaticData().canMineMaxRes;
 	prod.metal = maxProd.metal;
 	freeProductionCapacity -= prod.metal;
 	prod.gold = min(maxProd.gold, freeProductionCapacity);
@@ -715,7 +715,7 @@ void cBuilding::calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array
 	// calc needed turns
 	turboBuildRounds[0] = (int) ceilf (turboBuildCosts[0] / (1.f * staticData->needsMetal));
 
-	if (staticData->maxBuildFactor > 1)
+	if (getStaticData().maxBuildFactor > 1)
 	{
 		turboBuildRounds[1] = (int) ceilf (turboBuildCosts[1] / (4.f * staticData->needsMetal));
 		turboBuildRounds[2] = (int) ceilf (turboBuildCosts[2] / (12.f * staticData->needsMetal));
@@ -742,7 +742,7 @@ bool cBuilding::factoryHasJustFinishedBuilding() const
 //-----------------------------------------------------------------------------
 bool cBuilding::buildingCanBeStarted() const
 {
-	return (staticData->canWork && isUnitWorking() == false
+	return (getStaticData().canWork && isUnitWorking() == false
 		&& (!buildList.empty() || staticData->canBuild.empty()));
 }
 
@@ -931,12 +931,12 @@ void cBuilding::registerOwnerEvents()
 
 	if (getOwner() == nullptr || staticData == nullptr) return;
 
-	if (staticData->convertsGold)
+	if (getStaticData().convertsGold)
 	{
 		ownerSignalConnectionManager.connect (getOwner()->creditsChanged, [&]() { statusChanged(); });
 	}
 
-	if (staticData->canResearch)
+	if (getStaticData().canResearch)
 	{
 		ownerSignalConnectionManager.connect (getOwner()->researchCentersWorkingOnAreaChanged, [&] (cResearch::ResearchArea) { statusChanged(); });
 		ownerSignalConnectionManager.connect (getOwner()->getResearchState().neededResearchPointsChanged, [&] (cResearch::ResearchArea) { statusChanged(); });

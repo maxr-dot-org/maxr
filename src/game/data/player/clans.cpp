@@ -98,7 +98,7 @@ string cClanUnitStat::getClanStatsDescription(const cUnitsData& originalData) co
 	{
 		result += sep;
 		int nrTurns = getModificationValue ("Built_Costs");
-		if (originalData.getStaticUnitData(data->getId()).isHuman == false) nrTurns /= unitId.isAVehicle() == 0 ? 2 : 3;
+		if (originalData.getStaticUnitData(data->getId()).vehicleData.isHuman == false) nrTurns /= unitId.isAVehicle() == 0 ? 2 : 3;
 
 		result += iToStr (nrTurns) + " " + lngPack.i18n ("Text~Comp~Turns");
 	}

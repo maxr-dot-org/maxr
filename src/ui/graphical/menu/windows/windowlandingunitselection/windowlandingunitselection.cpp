@@ -269,9 +269,9 @@ bool cWindowLandingUnitSelection::tryAddSelectedUnit (const cUnitListViewItemBuy
 	const auto unitData = unitsData->getStaticUnitData(unitId);
 
 	// is this unit type allowed to be bought for landing?
-	if (!unitId.isAVehicle()) return false;
+	if (unitId.isABuilding()) return false;
 	if (unitData.factorGround == 0) return false;
-	if (unitData.isHuman) return false;
+	if (unitData.vehicleData.isHuman) return false;
 
 	int buildCosts = unitsData->getDynamicUnitData(unitId, getPlayer().getClan()).getBuildCost();
 	if (buildCosts > goldBar->getValue()) return false;
@@ -313,7 +313,7 @@ void cWindowLandingUnitSelection::generateSelectionList (bool select)
 	for (const auto& data : unitsData->getStaticUnitsData())
 	{
 		if (data.ID.isABuilding() && !build) continue;
-		if (data.isHuman && buy) continue;
+		if (data.vehicleData.isHuman && buy) continue;
 		if (!data.canAttack && tnt) continue;
 		if (!data.ID.isABuilding())
 		{

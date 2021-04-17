@@ -71,6 +71,70 @@ enum class eStorageUnitsImageType
 	Human
 };
 
+
+struct sStaticBuildingData
+{
+	bool canBeLandedOn = false;
+	int canMineMaxRes = 0;
+	bool canResearch = false;
+	bool canSelfDestroy = false;
+	bool canScore = false;
+	bool canWork = false;
+	bool connectsToBase = false;
+	int convertsGold = 0;
+	bool isBig = false;
+	int maxBuildFactor = 0;
+	float modifiesSpeed = 0.f;
+
+	uint32_t computeChecksum (uint32_t crc) const;
+
+	template <typename T>
+	void serialize (T& archive)
+	{
+		archive & NVP (canBeLandedOn);
+		archive & NVP (canMineMaxRes);
+		archive & NVP (canResearch);
+		archive & NVP (canScore);
+		archive & NVP (canSelfDestroy);
+		archive & NVP (canWork);
+		archive & NVP (connectsToBase);
+		archive & NVP (convertsGold);
+		archive & NVP (isBig);
+		archive & NVP (maxBuildFactor);
+		archive & NVP (modifiesSpeed);
+	}
+
+};
+
+struct sStaticVehicleData
+{
+	bool canBuildPath = false;
+	bool canClearArea = false;
+	bool canCapture = false;
+	bool canDisable = false;
+	bool canDriveAndFire = false;
+	bool canPlaceMines = false;
+	bool canSurvey = false;
+	bool isHuman = false;
+	std::string isStorageType;
+
+	uint32_t computeChecksum (uint32_t crc) const;
+
+	template <typename T>
+	void serialize (T& archive)
+	{
+		archive & NVP (canBuildPath);
+		archive & NVP (canClearArea);
+		archive & NVP (canCapture);
+		archive & NVP (canDisable);
+		archive & NVP (canDriveAndFire);
+		archive & NVP (canPlaceMines);
+		archive & NVP (canSurvey);
+		archive & NVP (isHuman);
+		archive & NVP (isStorageType);
+	}
+};
+
 // class for vehicle properties, that are constant and equal for all instances of a unit type
 class cStaticUnitData
 {
@@ -91,15 +155,8 @@ public:
 
 	char canAttack = 0;
 
-	bool canDriveAndFire = false;
-
 	std::string canBuild;
 	std::string buildAs;
-
-	int maxBuildFactor = 0;
-
-	bool canBuildPath = false;
-	bool canBuildRepeat = false;
 
 	float factorGround = 0.f;
 	float factorSea = 0.f;
@@ -107,24 +164,11 @@ public:
 	float factorCoast = 0.f;
 
 	// Abilities
-	bool connectsToBase = false;
-	float modifiesSpeed = 0.f;
-	bool canClearArea = false;
 	bool canBeCaptured = false;
 	bool canBeDisabled = false;
-	bool canCapture = false;
-	bool canDisable = false;
-	bool canRepair = false;
 	bool canRearm = false;
-	bool canResearch = false;
-	bool canPlaceMines = false;
-	bool canSurvey = false;
+	bool canRepair = false;
 	bool doesSelfRepair = false;
-	int convertsGold = 0;
-	bool canSelfDestroy = false;
-	bool canScore = false;
-
-	int canMineMaxRes = 0;
 
 	int needsMetal = 0;
 	int needsOil = 0;
@@ -140,11 +184,7 @@ public:
 
 	eOverbuildType canBeOverbuild = eOverbuildType::No;
 
-	bool canBeLandedOn = false;
-	bool canWork = false;
 	bool explodesOnContact = false;
-	bool isHuman = false;
-	bool isBig = false;
 
 	// Storage
 	int storageResMax = 0;
@@ -154,64 +194,48 @@ public:
 
 	eStorageUnitsImageType storeUnitsImageType = eStorageUnitsImageType::None;
 	std::vector<std::string> storeUnitsTypes;
-	std::string isStorageType;
+
+	sStaticVehicleData vehicleData;
+	sStaticBuildingData buildingData;
 
 	template<typename T>
-	void serialize(T& archive)
+	void serialize (T& archive)
 	{
-		archive & NVP(ID);
-		archive & NVP(muzzleType);
-		archive & NVP(canAttack);
-		archive & NVP(canDriveAndFire);
-		archive & NVP(canBuild);
-		archive & NVP(buildAs);
-		archive & NVP(maxBuildFactor);
-		archive & NVP(canBuildPath);
-		archive & NVP(canBuildRepeat);
-		archive & NVP(factorGround);
-		archive & NVP(factorSea);
-		archive & NVP(factorAir);
-		archive & NVP(factorCoast);
-		archive & NVP(connectsToBase);
-		archive & NVP(modifiesSpeed);
-		archive & NVP(canClearArea);
-		archive & NVP(canBeCaptured);
-		archive & NVP(canBeDisabled);
-		archive & NVP(canCapture);
-		archive & NVP(canDisable);
-		archive & NVP(canRepair);
-		archive & NVP(canRearm);
-		archive & NVP(canResearch);
-		archive & NVP(canPlaceMines);
-		archive & NVP(canSurvey);
-		archive & NVP(doesSelfRepair);
-		archive & NVP(convertsGold);
-		archive & NVP(canSelfDestroy);
-		archive & NVP(canScore);
-		archive & NVP(canMineMaxRes);
-		archive & NVP(needsMetal);
-		archive & NVP(needsOil);
-		archive & NVP(needsEnergy);
-		archive & NVP(needsHumans);
-		archive & NVP(produceEnergy);
-		archive & NVP(produceHumans);
-		archive & NVP(isStealthOn);
-		archive & NVP(canDetectStealthOn);
-		archive & NVP(surfacePosition);
-		archive & NVP(canBeOverbuild);
-		archive & NVP(canBeLandedOn);
-		archive & NVP(canWork);
-		archive & NVP(explodesOnContact);
-		archive & NVP(isHuman);
-		archive & NVP(isBig);
-		archive & NVP(storageResMax);
-		archive & NVP(storeResType);
-		archive & NVP(storageUnitsMax);
-		archive & NVP(storeUnitsImageType);
-		archive & NVP(storeUnitsTypes);
-		archive & NVP(isStorageType);
-		archive & NVP(description);
-		archive & NVP(name);
+		archive & NVP (ID);
+		archive & NVP (muzzleType);
+		archive & NVP (canAttack);
+		archive & NVP (canBuild);
+		archive & NVP (canRearm);
+		archive & NVP (canRepair);
+		archive & NVP (buildAs);
+		archive & NVP (factorGround);
+		archive & NVP (factorSea);
+		archive & NVP (factorAir);
+		archive & NVP (factorCoast);
+		archive & NVP (canBeCaptured);
+		archive & NVP (canBeDisabled);
+		archive & NVP (doesSelfRepair);
+		archive & NVP (needsMetal);
+		archive & NVP (needsOil);
+		archive & NVP (needsEnergy);
+		archive & NVP (needsHumans);
+		archive & NVP (produceEnergy);
+		archive & NVP (produceHumans);
+		archive & NVP (isStealthOn);
+		archive & NVP (canDetectStealthOn);
+		archive & NVP (surfacePosition);
+		archive & NVP (canBeOverbuild);
+		archive & NVP (explodesOnContact);
+		archive & NVP (storageResMax);
+		archive & NVP (storeResType);
+		archive & NVP (storageUnitsMax);
+		archive & NVP (storeUnitsImageType);
+		archive & NVP (storeUnitsTypes);
+		archive & NVP (description);
+		archive & NVP (name);
+
+		buildingData.serialize (archive);
+		vehicleData.serialize (archive);
 	}
 
 private:

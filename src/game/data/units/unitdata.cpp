@@ -30,12 +30,46 @@
 #include <algorithm>
 
 //------------------------------------------------------------------------------
+uint32_t sStaticBuildingData::computeChecksum (uint32_t crc) const
+{
+	crc = calcCheckSum (canBeLandedOn, crc);
+	crc = calcCheckSum (canMineMaxRes, crc);
+	crc = calcCheckSum (canResearch, crc);
+	crc = calcCheckSum (canScore, crc);
+	crc = calcCheckSum (canSelfDestroy, crc);
+	crc = calcCheckSum (canWork, crc);
+	crc = calcCheckSum (connectsToBase, crc);
+	crc = calcCheckSum (convertsGold, crc);
+	crc = calcCheckSum (isBig, crc);
+	crc = calcCheckSum (maxBuildFactor, crc);
+	crc = calcCheckSum (modifiesSpeed, crc);
+
+	return crc;
+}
+
+//------------------------------------------------------------------------------
+uint32_t sStaticVehicleData::computeChecksum (uint32_t crc) const
+{
+	crc = calcCheckSum (canBuildPath, crc);
+	crc = calcCheckSum (canCapture, crc);
+	crc = calcCheckSum (canClearArea, crc);
+	crc = calcCheckSum (canDriveAndFire, crc);
+	crc = calcCheckSum (canDisable, crc);
+	crc = calcCheckSum (canPlaceMines, crc);
+	crc = calcCheckSum (canSurvey, crc);
+	crc = calcCheckSum (isHuman, crc);
+	crc = calcCheckSum (isStorageType, crc);
+
+	return crc;
+}
+
+//------------------------------------------------------------------------------
 cUnitsData::cUnitsData() :
 	crcCache(0),
 	crcValid(false)
 {
-	rubbleBig.isBig = true;
-	rubbleSmall.isBig = false;
+	rubbleBig.buildingData.isBig = true;
+	rubbleSmall.buildingData.isBig = false;
 }
 
 //------------------------------------------------------------------------------
@@ -58,7 +92,7 @@ void cUnitsData::initializeIDData()
 			constructorID = data.ID;
 		if (data.canBuild == "SmallBuilding")
 			engineerID = data.ID;
-		if (data.canSurvey)
+		if (data.vehicleData.canSurvey)
 			surveyorID = data.ID;
 	}
 	if (constructorID == sID(0, 0)) Log.write("Constructor index not found. Constructor needs to have the property \"Can_Build = BigBuilding\"", cLog::eLOG_TYPE_ERROR);
@@ -172,7 +206,6 @@ const std::vector<cStaticUnitData>& cUnitsData::getStaticUnitsData() const
 }
 
 //------------------------------------------------------------------------------
-
 uint32_t cUnitsData::getChecksum(uint32_t crc) const
 {
 	if (!crcValid)
@@ -218,61 +251,43 @@ std::string cStaticUnitData::getDescripton() const
 }
 
 //------------------------------------------------------------------------------
-uint32_t cStaticUnitData::getChecksum(uint32_t crc) const
+uint32_t cStaticUnitData::getChecksum (uint32_t crc) const
 {
-	crc = calcCheckSum(ID, crc);
-	crc = calcCheckSum(muzzleType, crc);
-	crc = calcCheckSum(canAttack, crc);
-	crc = calcCheckSum(canDriveAndFire, crc);
-	crc = calcCheckSum(canBuild, crc);
-	crc = calcCheckSum(buildAs, crc);
-	crc = calcCheckSum(maxBuildFactor, crc);
-	crc = calcCheckSum(canBuildPath, crc);
-	crc = calcCheckSum(canBuildRepeat, crc);
-	crc = calcCheckSum(factorGround, crc);
-	crc = calcCheckSum(factorSea, crc);
-	crc = calcCheckSum(factorAir, crc);
-	crc = calcCheckSum(factorCoast, crc);
-	crc = calcCheckSum(connectsToBase, crc);
-	crc = calcCheckSum(modifiesSpeed, crc);
-	crc = calcCheckSum(canClearArea, crc);
-	crc = calcCheckSum(canBeCaptured, crc);
-	crc = calcCheckSum(canBeDisabled, crc);
-	crc = calcCheckSum(canCapture, crc);
-	crc = calcCheckSum(canDisable, crc);
-	crc = calcCheckSum(canRepair, crc);
-	crc = calcCheckSum(canRearm, crc);
-	crc = calcCheckSum(canResearch, crc);
-	crc = calcCheckSum(canPlaceMines, crc);
-	crc = calcCheckSum(canSurvey, crc);
-	crc = calcCheckSum(doesSelfRepair, crc);
-	crc = calcCheckSum(convertsGold, crc);
-	crc = calcCheckSum(canSelfDestroy, crc);
-	crc = calcCheckSum(canScore, crc);
-	crc = calcCheckSum(canMineMaxRes, crc);
-	crc = calcCheckSum(needsMetal, crc);
-	crc = calcCheckSum(needsOil, crc);
-	crc = calcCheckSum(needsEnergy, crc);
-	crc = calcCheckSum(needsHumans, crc);
-	crc = calcCheckSum(produceEnergy, crc);
-	crc = calcCheckSum(produceHumans, crc);
-	crc = calcCheckSum(isStealthOn, crc);
-	crc = calcCheckSum(canDetectStealthOn, crc);
-	crc = calcCheckSum(surfacePosition, crc);
-	crc = calcCheckSum(canBeOverbuild, crc);
-	crc = calcCheckSum(canBeLandedOn, crc);
-	crc = calcCheckSum(canWork, crc);
-	crc = calcCheckSum(explodesOnContact, crc);
-	crc = calcCheckSum(isHuman, crc);
-	crc = calcCheckSum(isBig, crc);
-	crc = calcCheckSum(storageResMax, crc);
-	crc = calcCheckSum(storeResType, crc);
-	crc = calcCheckSum(storageUnitsMax, crc);
-	crc = calcCheckSum(storeUnitsImageType, crc);
-	crc = calcCheckSum(storeUnitsTypes, crc);
-	crc = calcCheckSum(isStorageType, crc);
-	crc = calcCheckSum(description, crc);
-	crc = calcCheckSum(name, crc);
+	crc = calcCheckSum (ID, crc);
+	crc = calcCheckSum (buildAs, crc);
+	crc = calcCheckSum (canAttack, crc);
+	crc = calcCheckSum (canBeCaptured, crc);
+	crc = calcCheckSum (canBeDisabled, crc);
+	crc = calcCheckSum (canBeOverbuild, crc);
+	crc = calcCheckSum (canBuild, crc);
+	crc = calcCheckSum (canDetectStealthOn, crc);
+	crc = calcCheckSum (canRearm, crc);
+	crc = calcCheckSum (canRepair, crc);
+	crc = calcCheckSum (description, crc);
+	crc = calcCheckSum (doesSelfRepair, crc);
+	crc = calcCheckSum (explodesOnContact, crc);
+	crc = calcCheckSum (factorGround, crc);
+	crc = calcCheckSum (factorSea, crc);
+	crc = calcCheckSum (factorAir, crc);
+	crc = calcCheckSum (factorCoast, crc);
+	crc = calcCheckSum (isStealthOn, crc);
+	crc = calcCheckSum (muzzleType, crc);
+	crc = calcCheckSum (name, crc);
+	crc = calcCheckSum (needsMetal, crc);
+	crc = calcCheckSum (needsEnergy, crc);
+	crc = calcCheckSum (needsHumans, crc);
+	crc = calcCheckSum (needsOil, crc);
+	crc = calcCheckSum (produceEnergy, crc);
+	crc = calcCheckSum (produceHumans, crc);
+	crc = calcCheckSum (storageResMax, crc);
+	crc = calcCheckSum (storageUnitsMax, crc);
+	crc = calcCheckSum (storeResType, crc);
+	crc = calcCheckSum (storeUnitsImageType, crc);
+	crc = calcCheckSum (storeUnitsTypes, crc);
+	crc = calcCheckSum (surfacePosition, crc);
+
+	crc = buildingData.computeChecksum (crc);
+	crc = vehicleData.computeChecksum (crc);
 
 	return crc;
 }

@@ -66,7 +66,7 @@ void cActionChangeResearch::execute(cModel& model) const
 		for (; currentBuildingIter != buildings.end() && centersToAssign > 0; ++currentBuildingIter)
 		{
 			auto& building = *currentBuildingIter;
-			if (building->getStaticUnitData().canResearch && building->isUnitWorking())
+			if (building->getStaticData().canResearch && building->isUnitWorking())
 			{
 				researchCentersToChangeArea.push_back(building.get());
 				newAreasForResearchCenters.push_back((cResearch::ResearchArea)newArea);
@@ -83,7 +83,7 @@ void cActionChangeResearch::execute(cModel& model) const
 	for (; currentBuildingIter != buildings.end(); ++currentBuildingIter)
 	{
 		auto& building = *currentBuildingIter;
-		if (building->getStaticUnitData().canResearch && building->isUnitWorking())
+		if (building->getStaticData().canResearch && building->isUnitWorking())
 			researchCentersToStop.push_back(building.get());
 	}
 	if (error)

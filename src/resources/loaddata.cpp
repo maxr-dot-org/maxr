@@ -404,7 +404,7 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	// until this is done being able to attack sea units means being able to attack ground units.
 	if (staticData.canAttack & TERRAIN_SEA) staticData.canAttack |= TERRAIN_GROUND;
 
-	staticData.canDriveAndFire = getXMLAttributeBool(unitDataXml, "Unit", {"Weapon", "Can_Drive_And_Fire"});
+	staticData.vehicleData.canDriveAndFire = getXMLAttributeBool(unitDataXml, "Unit", {"Weapon", "Can_Drive_And_Fire"});
 
 	// Production
 	dynamicData.setBuildCost(getXMLAttributeInt (unitDataXml, "Unit", {"Production", "Built_Costs"}));
@@ -412,10 +412,10 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	staticData.canBuild = getXMLAttributeString (unitDataXml, "String", "Unit", {"Production", "Can_Build"});
 	staticData.buildAs = getXMLAttributeString(unitDataXml, "String", "Unit", {"Production", "Build_As"});
 
-	staticData.maxBuildFactor = getXMLAttributeInt(unitDataXml, "Unit", {"Production", "Max_Build_Factor"});
+	staticData.buildingData.maxBuildFactor = getXMLAttributeInt(unitDataXml, "Unit", {"Production", "Max_Build_Factor"});
 
-	staticData.canBuildPath = getXMLAttributeBool(unitDataXml, "Unit", {"Production", "Can_Build_Path"});
-	staticData.canBuildRepeat = getXMLAttributeBool(unitDataXml, "Unit", {"Production", "Can_Build_Repeat"});
+	staticData.vehicleData.canBuildPath = getXMLAttributeBool(unitDataXml, "Unit", {"Production", "Can_Build_Path"});
+	//staticData.canBuildRepeat = getXMLAttributeBool(unitDataXml, "Unit", {"Production", "Can_Build_Repeat"});
 
 	// Movement
 	dynamicData.setSpeedMax (getXMLAttributeInt (unitDataXml, "Unit", {"Movement", "Movement_Sum"}) * 4);
@@ -426,28 +426,28 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	staticData.factorCoast = getXMLAttributeFloat(unitDataXml, "Unit", {"Movement", "Factor_Coast"});
 
 	// Abilities
-	staticData.isBig = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Is_Big"});
-	staticData.connectsToBase = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Connects_To_Base"});
+	staticData.buildingData.isBig = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Is_Big"});
+	staticData.buildingData.connectsToBase = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Connects_To_Base"});
 	dynamicData.setArmor(getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Armor"}));
 	dynamicData.setHitpointsMax(getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Hitpoints"}));
 	dynamicData.setScan(getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Scan_Range"}));
-	staticData.modifiesSpeed = getXMLAttributeFloat (unitDataXml, "Unit", {"Abilities", "Modifies_Speed"});
-	staticData.canClearArea = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Clear_Area"});
+	staticData.buildingData.modifiesSpeed = getXMLAttributeFloat (unitDataXml, "Unit", {"Abilities", "Modifies_Speed"});
+	staticData.vehicleData.canClearArea = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Clear_Area"});
 	staticData.canBeCaptured = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Be_Captured"});
 	staticData.canBeDisabled = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Be_Disabled"});
-	staticData.canCapture = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Capture"});
-	staticData.canDisable = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Disable"});
+	staticData.vehicleData.canCapture = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Capture"});
+	staticData.vehicleData.canDisable = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Disable"});
 	staticData.canRepair = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Repair"});
 	staticData.canRearm = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Rearm"});
-	staticData.canResearch = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Research"});
-	staticData.canPlaceMines = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Place_Mines"});
-	staticData.canSurvey = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Survey"});
+	staticData.buildingData.canResearch = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Research"});
+	staticData.vehicleData.canPlaceMines = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Place_Mines"});
+	staticData.vehicleData.canSurvey = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Survey"});
 	staticData.doesSelfRepair = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Does_Self_Repair"});
-	staticData.convertsGold = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Converts_Gold"});
-	staticData.canSelfDestroy = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Self_Destroy"});
-	staticData.canScore = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Score"});
+	staticData.buildingData.convertsGold = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Converts_Gold"});
+	staticData.buildingData.canSelfDestroy = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Self_Destroy"});
+	staticData.buildingData.canScore = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Score"});
 
-	staticData.canMineMaxRes = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Can_Mine_Max_Resource"});
+	staticData.buildingData.canMineMaxRes = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Can_Mine_Max_Resource"});
 
 	staticData.needsMetal = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Needs_Metal"});
 	staticData.needsOil = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Needs_Oil"});
@@ -482,10 +482,10 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	else if (overbuildString.compare ("YesNRemove") == 0) staticData.canBeOverbuild = eOverbuildType::YesNRemove;
 	else staticData.canBeOverbuild = eOverbuildType::No;
 
-	staticData.canBeLandedOn = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Can_Be_Landed_On"});
-	staticData.canWork = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Is_Activatable"});
+	staticData.buildingData.canBeLandedOn = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Can_Be_Landed_On"});
+	staticData.buildingData.canWork = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Is_Activatable"});
 	staticData.explodesOnContact = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Explodes_On_Contact"});
-	staticData.isHuman = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Is_Human"});
+	staticData.vehicleData.isHuman = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Is_Human"});
 
 	// Storage
 	staticData.storageResMax = getXMLAttributeInt(unitDataXml, "Unit", {"Storage", "Capacity_Resources"});
@@ -508,7 +508,7 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	std::string storeUnitsString = getXMLAttributeString (unitDataXml, "String", "Unit", {"Storage", "Capacity_Units_Type"});
 	Split(storeUnitsString, "+", staticData.storeUnitsTypes);
 
-	staticData.isStorageType = getXMLAttributeString(unitDataXml, "String", "Unit", {"Storage", "Is_Storage_Type"});
+	staticData.vehicleData.isStorageType = getXMLAttributeString(unitDataXml, "String", "Unit", {"Storage", "Is_Storage_Type"});
 
 	// finish
 	Log.write ("Unitdata read", cLog::eLOG_TYPE_DEBUG);
@@ -1140,7 +1140,7 @@ static int LoadVehicles()
 		}
 		// load cleargraphics if necessary
 		Log.write ("Loading cleargraphics", cLog::eLOG_TYPE_DEBUG);
-		if (staticData.canClearArea)
+		if (staticData.vehicleData.canClearArea)
 		{
 			// load image (small)
 			sTmpString = sVehiclePath;
@@ -1157,7 +1157,7 @@ static int LoadVehicles()
 				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
 				ui.clear_small_org      = nullptr;
 				ui.clear_small          = nullptr;
-				staticData.canClearArea = false;
+				staticData.vehicleData.canClearArea = false;
 			}
 			// load shadow (small)
 			sTmpString = sVehiclePath;
@@ -1173,7 +1173,7 @@ static int LoadVehicles()
 				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
 				ui.clear_small_shw_org  = nullptr;
 				ui.clear_small_shw      = nullptr;
-				staticData.canClearArea = false;
+				staticData.vehicleData.canClearArea = false;
 			}
 			// load image (big)
 			sTmpString = sVehiclePath;
@@ -1190,7 +1190,7 @@ static int LoadVehicles()
 				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
 				ui.build_org            = nullptr;
 				ui.build                = nullptr;
-				staticData.canClearArea = false;
+				staticData.vehicleData.canClearArea = false;
 			}
 			// load shadow (big)
 			sTmpString = sVehiclePath;
@@ -1206,7 +1206,7 @@ static int LoadVehicles()
 				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
 				ui.build_shw_org        = nullptr;
 				ui.build_shw            = nullptr;
-				staticData.canClearArea = false;
+				staticData.vehicleData.canClearArea = false;
 			}
 		}
 		else

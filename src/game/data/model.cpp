@@ -219,7 +219,7 @@ cVehicle& cModel::addVehicle(const cPosition& position, const sID& id, cPlayer* 
 	player->addToScan(addedVehicle);
 
 	// scan with surveyor:
-	if (addedVehicle.getStaticUnitData().canSurvey)
+	if (addedVehicle.getStaticData().canSurvey)
 	{
 		addedVehicle.doSurvey(*getMap());
 	}
@@ -325,7 +325,7 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 		}
 	}
 
-	if (addedBuilding.getStaticUnitData().canMineMaxRes > 0)
+	if (addedBuilding.getStaticData().canMineMaxRes > 0)
 	{
 		addedBuilding.startWork();
 	}

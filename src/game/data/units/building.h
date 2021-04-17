@@ -90,6 +90,7 @@ public:
 	bool isABuilding() const override { return true; }
 	bool isRubble() const { return rubbleValue > 0; }
 
+	const sStaticBuildingData& getStaticData() const { return getStaticUnitData().buildingData; }
 
 	int playStream();
 	std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const override;
@@ -119,7 +120,7 @@ public:
 
 	bool isUnitWorking() const override { return isWorking; }
 	bool factoryHasJustFinishedBuilding() const override;
-	bool buildingCanBeStarted() const override;
+	bool buildingCanBeStarted() const;
 	bool buildingCanBeUpgraded() const override;
 	bool canBeStoppedViaUnitMenu() const override { return isUnitWorking(); }
 

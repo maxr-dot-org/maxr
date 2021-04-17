@@ -395,7 +395,7 @@ bool cStaticMap::isGround(const cPosition& position) const
 bool cStaticMap::possiblePlace(const cStaticUnitData& data, const cPosition& position) const
 {
 	if (!isValidPosition(position)) return false;
-	if (data.isBig)
+	if (data.ID.isABuilding() && data.buildingData.isBig)
 	{
 		if (!isValidPosition(position + cPosition(0, 1)) ||
 			!isValidPosition(position + cPosition(1, 0)) ||
@@ -408,7 +408,7 @@ bool cStaticMap::possiblePlace(const cStaticUnitData& data, const cPosition& pos
 	if (data.factorAir > 0) return true;
 
 	if (isBlocked(position)) return false;
-	if (data.isBig)
+	if (data.ID.isABuilding() && data.buildingData.isBig)
 	{
 		if (isBlocked(position + cPosition(0, 1)) ||
 			isBlocked(position + cPosition(1, 0)) ||
@@ -421,7 +421,7 @@ bool cStaticMap::possiblePlace(const cStaticUnitData& data, const cPosition& pos
 	if (data.factorSea == 0)
 	{
 		if (isWater(position)) return false;
-		if (data.isBig)
+		if (data.ID.isABuilding() && data.buildingData.isBig)
 		{
 			if (isWater(position + cPosition(0, 1)) ||
 				isWater(position + cPosition(1, 0)) ||
@@ -435,7 +435,7 @@ bool cStaticMap::possiblePlace(const cStaticUnitData& data, const cPosition& pos
 	if (data.factorCoast == 0)
 	{
 		if (isCoast(position)) return false;
-		if (data.isBig)
+		if (data.ID.isABuilding() && data.buildingData.isBig)
 		{
 			if (isCoast(position + cPosition(0, 1)) ||
 				isCoast(position + cPosition(1, 0)) ||
@@ -449,7 +449,7 @@ bool cStaticMap::possiblePlace(const cStaticUnitData& data, const cPosition& pos
 	if (data.factorGround == 0)
 	{
 		if (isGround(position)) return false;
-		if (data.isBig)
+		if (data.ID.isABuilding() && data.buildingData.isBig)
 		{
 			if (isGround(position + cPosition(0, 1)) ||
 				isGround(position + cPosition(1, 0)) ||

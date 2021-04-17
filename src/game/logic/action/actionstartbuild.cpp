@@ -86,7 +86,7 @@ void cActionStartBuild::execute(cModel& model) const
 	}
 
 	cPosition oldPosition = vehicle->getPosition();
-	if (data.isBig)
+	if (data.buildingData.isBig)
 	{
  		model.sideStepStealthUnit(buildPosition, *vehicle, buildPosition);
  		model.sideStepStealthUnit(buildPosition + cPosition(1, 0), *vehicle, buildPosition);
@@ -129,7 +129,7 @@ void cActionStartBuild::execute(cModel& model) const
 	vehicle->setBuildingABuilding(true);
 	vehicle->BuildPath = buildPath;
 
-	model.addJob (new cStartBuildJob (*vehicle, oldPosition, data.isBig));
+	model.addJob (new cStartBuildJob (*vehicle, oldPosition, data.buildingData.isBig));
 
 	if (vehicle->getMoveJob()) vehicle->getMoveJob()->stop();
 }

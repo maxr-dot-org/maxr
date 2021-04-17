@@ -352,8 +352,8 @@ void cMoveJob::updateSpeed (const cMap &map)
 	{
 		maxSpeed = 100 * MOVE_SPEED;
 		const cBuilding* building = map.getField (vehicle->getPosition()).getBaseBuilding();
-		if (building && building->getStaticUnitData().modifiesSpeed)
-			maxSpeed /= building->getStaticUnitData().modifiesSpeed;
+		if (building && building->getStaticData().modifiesSpeed)
+			maxSpeed /= building->getStaticData().modifiesSpeed;
 	}
 	else if (vehicle->getStaticUnitData().factorAir > 0)
 	{
@@ -413,7 +413,7 @@ void cMoveJob::endMove (cModel& model)
 
 	vehicle->inSentryRange (model);
 
-	if (vehicle->getStaticUnitData().canSurvey)
+	if (vehicle->getStaticData().canSurvey)
 	{
 		bool resourceFound = vehicle->doSurvey (map);
 		if (resourceFound && stopOnDetectResource)

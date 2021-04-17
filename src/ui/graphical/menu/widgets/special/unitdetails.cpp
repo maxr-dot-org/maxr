@@ -233,9 +233,9 @@ void cUnitDetails::reset()
 	}
 
 	// gold consumption:
-	if (staticUnitData->convertsGold)
+	if (staticUnitData->buildingData.convertsGold)
 	{
-		drawRow (rowIndex++, eUnitDataSymbolType::Gold, staticUnitData->convertsGold, lngPack.i18n ("Text~Others~Usage_7"), staticUnitData->convertsGold, staticUnitData->convertsGold);
+		drawRow (rowIndex++, eUnitDataSymbolType::Gold, staticUnitData->buildingData.convertsGold, lngPack.i18n ("Text~Others~Usage_7"), staticUnitData->buildingData.convertsGold, staticUnitData->buildingData.convertsGold);
 	}
 
 	// Costs:

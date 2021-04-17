@@ -47,7 +47,7 @@ bool cUnitSelection::selectUnitAt (const cMapFieldView& field, bool base)
 	}
 	cBuilding* topBuilding = field.getTopBuilding();
 	const cVehicle* selectedVehicle = getSelectedVehicle();
-	if (topBuilding && (base || ((topBuilding->getStaticUnitData().surfacePosition != eSurfacePosition::Above || !selectedVehicle) && (!field.getTopBuilding()->getStaticUnitData().canBeLandedOn || (!selectedVehicle || selectedVehicle->getStaticUnitData().factorAir == 0)))))
+	if (topBuilding && (base || ((topBuilding->getStaticUnitData().surfacePosition != eSurfacePosition::Above || !selectedVehicle) && (!field.getTopBuilding()->getStaticData().canBeLandedOn || (!selectedVehicle || selectedVehicle->getStaticUnitData().factorAir == 0)))))
 	{
 		return selectUnit (*topBuilding);
 	}
@@ -343,8 +343,8 @@ cBuilding* cUnitSelection::getNextBuilding(const cPlayer& player, const std::vec
 			!b.isUnitWorking() &&
 			!b.isSentryActive() &&
 			(!b.getStaticUnitData().canBuild.empty() || b.data.getShots()
-			 || b.getStaticUnitData().canMineMaxRes > 0 || b.getStaticUnitData().convertsGold > 0
-			 || b.getStaticUnitData().canResearch))
+			 || b.getStaticData().canMineMaxRes > 0 || b.getStaticData().convertsGold > 0
+			 || b.getStaticData().canResearch))
 		{
 			return it->get();
 		}
@@ -362,7 +362,7 @@ cBuilding* cUnitSelection::getNextMiningStation(const cPlayer& player, const cBu
 	if (start != nullptr && it != buildings.end()) ++it;
 	for (; it != buildings.end(); ++it)
 	{
-		if ((*it)->getStaticUnitData().canMineMaxRes > 0)
+		if ((*it)->getStaticData().canMineMaxRes > 0)
 		{
 			return it->get();
 		}
@@ -447,8 +447,8 @@ cBuilding* cUnitSelection::getPrevBuilding(const cPlayer& player, const std::vec
 			!b.isUnitWorking() &&
 			!b.isSentryActive() &&
 			(!b.getStaticUnitData().canBuild.empty() || b.data.getShots()
-			 || b.getStaticUnitData().canMineMaxRes > 0 || b.getStaticUnitData().convertsGold > 0
-			 || b.getStaticUnitData().canResearch))
+			 || b.getStaticData().canMineMaxRes > 0 || b.getStaticData().convertsGold > 0
+			 || b.getStaticData().canResearch))
 		{
 			return it->get();
 		}
@@ -466,7 +466,7 @@ cBuilding* cUnitSelection::getPrevMiningStation(const cPlayer& player, const cBu
 	auto it = (start == nullptr) ? buildings.end() - 1 : buildings.find(*start);
 	for (; it != buildings.end(); --it)
 	{
-		if ((*it)->getStaticUnitData().canMineMaxRes > 0)
+		if ((*it)->getStaticData().canMineMaxRes > 0)
 		{
 			return it->get();
 		}

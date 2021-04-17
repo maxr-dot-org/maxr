@@ -133,7 +133,7 @@ private:
 	void showResearchDialog (const cUnit& unit);
 	void showUpgradesWindow (const cUnit& unit);
 	void showStorageWindow (const cUnit& unit);
-	void showSelfDestroyDialog (const cUnit& unit);
+	void showSelfDestroyDialog (const cBuilding&);
 
 	void handleChatCommand (const std::string& command);
 
@@ -174,7 +174,7 @@ private:
 	mutable cSignal<void (const cBuilding&, const sMiningResource&)> changeResourceDistributionTriggered;
 	mutable cSignal<void (const std::array<int, cResearch::kNrResearchAreas>&)> changeResearchSettingsTriggered;
 	mutable cSignal<void (const std::vector<std::pair<sID, cUnitUpgrade>>&)> takeUnitUpgradesTriggered;
-	mutable cSignal<void (const cUnit&)> selfDestructionTriggered;
+	mutable cSignal<void (const cBuilding&)> selfDestructionTriggered;
 	mutable cSignal<void (const cVehicle& vehicle)> resumeMoveJobTriggered;
 	mutable cSignal<void ()> resumeAllMoveJobsTriggered;
 };

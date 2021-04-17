@@ -136,9 +136,10 @@ void cActionStealDisable::changeUnitOwner(cUnit& unit, cPlayer& newOwner, cModel
 	unit.clearDetectedInThisTurnPlayerList();
 
 	// let the unit work for his new owner
-	if (unit.getStaticUnitData().canSurvey && unit.isAVehicle())
+	auto* vehicle = static_cast<cVehicle*>(&unit);
+	if (vehicle && vehicle->getStaticData().canSurvey)
 	{
-		static_cast<cVehicle*>(&unit)->doSurvey(*model.getMap());
+		vehicle->doSurvey(*model.getMap());
 	}
 	unit.detectOtherUnits(*model.getMap());
 }

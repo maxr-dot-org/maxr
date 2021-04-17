@@ -167,10 +167,10 @@ int cPathCalculator::calcNextCost(const cPosition& source, const cPosition& dest
 	// assuming, only speed of ground units can be modified
 	const cBuilding* building = map->getField(destination).getBaseBuilding();
 	if (building &&
-		building->getStaticUnitData().modifiesSpeed != 0 &&
+		building->getStaticData().modifiesSpeed != 0 &&
 		vehicle->getStaticUnitData().factorGround > 0)
 	{
-		costs = (int)(costs * building->getStaticUnitData().modifiesSpeed);
+		costs = (int)(costs * building->getStaticData().modifiesSpeed);
 	}
 
 	// multiply with the factor 1.5 for diagonal movements

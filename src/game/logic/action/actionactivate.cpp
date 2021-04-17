@@ -60,7 +60,7 @@ void cActionActivate::execute(cModel& model) const
 		activatedVehicle->tryResetOfDetectionStateBeforeMove(map, model.getPlayerList());
 		containingUnit->exitVehicleTo(*activatedVehicle, position, map);
 
-		if (activatedVehicle->getStaticUnitData().canSurvey)
+		if (activatedVehicle->getStaticData().canSurvey)
 		{
 			activatedVehicle->doSurvey(*model.getMap());
 		}
