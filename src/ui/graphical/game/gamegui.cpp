@@ -510,8 +510,8 @@ void cGameGui::connectSelectedUnit()
 			const auto& building = static_cast<const cBuilding&> (*selectedUnit);
 			auto& uiData = UnitsUiData.getBuildingUI (building);
 
-			if (selectedUnit->isUnitWorking()) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStartWork, uiData.Start, *selectedUnit));
-			else soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStopWork, uiData.Stop, *selectedUnit));
+			if (building.isUnitWorking()) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStartWork, uiData.Start, building));
+			else soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStopWork, uiData.Stop, building));
 		}
 		updateSelectedUnitIdleSound();
 	});
@@ -723,7 +723,7 @@ void cGameGui::resetMiniMapViewWindow()
 //------------------------------------------------------------------------------
 void cGameGui::updateSelectedUnitSound()
 {
-	auto selectedUnit = gameMap->getUnitSelection().getSelectedUnit();
+	auto selectedUnit = dynamic_cast<const cVehicle*> (gameMap->getUnitSelection().getSelectedUnit());
 	if (selectedUnit && selectedUnit->isUnitMoving())
 	{
 		updateSelectedUnitMoveSound(false);

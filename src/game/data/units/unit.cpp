@@ -426,7 +426,7 @@ bool cUnit::canAttackObjectAt (const cPosition& position, const cMapView& map, b
 	if (data.getShots() <= 0) return false;
 	if (data.getAmmo() <= 0) return false;
 	if (attacking) return false;
-	if (isUnitMoving()) return false;
+	if (isAVehicle() && static_cast<const cVehicle*> (this)->isUnitMoving()) return false;
 	if (isBeeingAttacked()) return false;
 	if (isAVehicle() && static_cast<const cVehicle*> (this)->isUnitLoaded()) return false;
 	if (map.isValidPosition (position) == false) return false;

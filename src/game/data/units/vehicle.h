@@ -161,13 +161,13 @@ public:
 
 	bool isUnitLoaded() const { return loaded; }
 
-	bool isUnitMoving() const override { return moving; } //test if the vehicle is moving right now. Having a waiting movejob doesn't count a moving
+	bool isUnitMoving() const { return moving; } //test if the vehicle is moving right now. Having a waiting movejob doesn't count a moving
 	bool isUnitClearing() const { return isClearing; }
-	bool isUnitLayingMines() const override { return layMines; }
-	bool isUnitClearingMines() const override { return clearMines; }
-	bool isUnitBuildingABuilding() const override { return isBuilding; }
+	bool isUnitLayingMines() const { return layMines; }
+	bool isUnitClearingMines() const { return clearMines; }
+	bool isUnitBuildingABuilding() const { return isBuilding; }
 	bool canBeStoppedViaUnitMenu() const override;
-	bool isSurveyorAutoMoveActive() const override { return surveyorAutoMoveActive; };
+	bool isSurveyorAutoMoveActive() const { return surveyorAutoMoveActive; };
 
 	void setMoving (bool value);
 	void setLoaded (bool value);

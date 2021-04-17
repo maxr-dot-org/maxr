@@ -57,7 +57,7 @@ cAttackJob::cAttackJob (cUnit& aggressor, const cPosition& targetPosition, const
 	state (S_ROTATING)
 {
 	Log.write(" cAttackJob: Started attack, aggressor: " + aggressor.getDisplayName() + ", ID: " + iToStr(aggressor.getId()) + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
-	assert(!aggressor.isUnitMoving());
+	assert(!aggressor.isAVehicle() || !static_cast<cVehicle&> (aggressor).isUnitMoving());
 
 	fireDir = calcFireDir();
 

@@ -268,9 +268,10 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	automoveShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuAutomove));
 	automoveShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasAutoEntry (unitSelection.getSelectedUnit(), player.get()))
+		cVehicle* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
+		if (cUnitContextMenuWidget::unitHasAutoEntry (vehicle, player.get()))
 		{
-			triggeredAutoMoveJob (*unitSelection.getSelectedUnit());
+			triggeredAutoMoveJob (*vehicle);
 		}
 	});
 
@@ -367,18 +368,20 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	layMineShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuLayMine));
 	layMineShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasLayMinesEntry (unitSelection.getSelectedUnit(), player.get()))
+		cVehicle* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
+		if (cUnitContextMenuWidget::unitHasLayMinesEntry (vehicle, player.get()))
 		{
-			triggeredLayMines (*unitSelection.getSelectedUnit());
+			triggeredLayMines (*vehicle);
 		}
 	});
 
 	clearMineShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuClearMine));
 	clearMineShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasCollectMinesEntry (unitSelection.getSelectedUnit(), player.get()))
+		cVehicle* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
+		if (cUnitContextMenuWidget::unitHasCollectMinesEntry (vehicle, player.get()))
 		{
-			triggeredCollectMines (*unitSelection.getSelectedUnit());
+			triggeredCollectMines (*vehicle);
 		}
 	});
 
@@ -2232,6 +2235,7 @@ void cGameMapWidget::updateActiveUnitCommandShortcuts()
 
 	std::set<const cShortcut*> blockedShortcuts;
 
+	auto* selectedVehicle = dynamic_cast<cVehicle*> (selectedUnit);
 	// NOTE: the order in which we activate the shortcuts here marks the priority in which
 	//       colliding shortcuts will be executed.
 	if (cUnitContextMenuWidget::unitHasBuildEntry (selectedUnit, player.get())) activateShortcutConditional (*buildShortcut, blockedShortcuts, collidingUnitCommandShortcuts[buildShortcut]);
@@ -2241,8 +2245,8 @@ void cGameMapWidget::updateActiveUnitCommandShortcuts()
 	if (cUnitContextMenuWidget::unitHasSentryEntry (selectedUnit, player.get())) activateShortcutConditional (*sentryShortcut, blockedShortcuts, collidingUnitCommandShortcuts[sentryShortcut]);
 	if (cUnitContextMenuWidget::unitHasManualFireEntry (selectedUnit, player.get())) activateShortcutConditional (*manualFireShortcut, blockedShortcuts, collidingUnitCommandShortcuts[manualFireShortcut]);
 	if (cUnitContextMenuWidget::unitHasAttackEntry (selectedUnit, player.get())) activateShortcutConditional (*attackShortcut, blockedShortcuts, collidingUnitCommandShortcuts[attackShortcut]);
-	if (cUnitContextMenuWidget::unitHasLayMinesEntry (selectedUnit, player.get())) activateShortcutConditional (*layMineShortcut, blockedShortcuts, collidingUnitCommandShortcuts[layMineShortcut]);
-	if (cUnitContextMenuWidget::unitHasCollectMinesEntry (selectedUnit, player.get())) activateShortcutConditional (*clearMineShortcut, blockedShortcuts, collidingUnitCommandShortcuts[clearMineShortcut]);
+	if (cUnitContextMenuWidget::unitHasLayMinesEntry (selectedVehicle, player.get())) activateShortcutConditional (*layMineShortcut, blockedShortcuts, collidingUnitCommandShortcuts[layMineShortcut]);
+	if (cUnitContextMenuWidget::unitHasCollectMinesEntry (selectedVehicle, player.get())) activateShortcutConditional (*clearMineShortcut, blockedShortcuts, collidingUnitCommandShortcuts[clearMineShortcut]);
 	if (cUnitContextMenuWidget::unitHasLoadEntry(selectedUnit, player.get())) activateShortcutConditional(*loadShortcut, blockedShortcuts, collidingUnitCommandShortcuts[loadShortcut]);
 	if (cUnitContextMenuWidget::unitHasEnterEntry (selectedUnit, player.get())) activateShortcutConditional (*enterShortcut, blockedShortcuts, collidingUnitCommandShortcuts[enterShortcut]);
 	if (cUnitContextMenuWidget::unitHasActivateEntry (selectedUnit, player.get())) activateShortcutConditional (*activateShortcut, blockedShortcuts, collidingUnitCommandShortcuts[activateShortcut]);
@@ -2250,7 +2254,7 @@ void cGameMapWidget::updateActiveUnitCommandShortcuts()
 	if (cUnitContextMenuWidget::unitHasResearchEntry (selectedUnit, player.get())) activateShortcutConditional (*researchShortcut, blockedShortcuts, collidingUnitCommandShortcuts[researchShortcut]);
 	if (cUnitContextMenuWidget::unitHasSabotageEntry (selectedUnit, player.get())) activateShortcutConditional (*disableShortcut, blockedShortcuts, collidingUnitCommandShortcuts[disableShortcut]);
 	if (cUnitContextMenuWidget::unitHasStealEntry (selectedUnit, player.get())) activateShortcutConditional (*stealShortcut, blockedShortcuts, collidingUnitCommandShortcuts[stealShortcut]);
-	if (cUnitContextMenuWidget::unitHasAutoEntry (selectedUnit, player.get())) activateShortcutConditional (*automoveShortcut, blockedShortcuts, collidingUnitCommandShortcuts[automoveShortcut]);
+	if (cUnitContextMenuWidget::unitHasAutoEntry (selectedVehicle, player.get())) activateShortcutConditional (*automoveShortcut, blockedShortcuts, collidingUnitCommandShortcuts[automoveShortcut]);
 	if (cUnitContextMenuWidget::unitHasRemoveEntry (selectedUnit, player.get(), mapView.get())) activateShortcutConditional (*clearShortcut, blockedShortcuts, collidingUnitCommandShortcuts[clearShortcut]);
 	if (cUnitContextMenuWidget::unitHasSupplyEntry (selectedUnit, player.get())) activateShortcutConditional (*relaodShortcut, blockedShortcuts, collidingUnitCommandShortcuts[relaodShortcut]);
 	if (cUnitContextMenuWidget::unitHasRepairEntry (selectedUnit, player.get())) activateShortcutConditional (*repairShortcut, blockedShortcuts, collidingUnitCommandShortcuts[repairShortcut]);

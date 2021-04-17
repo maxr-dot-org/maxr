@@ -41,7 +41,7 @@ public:
 	static bool unitHasDistributeEntry (const cUnit* unit, const cPlayer* player);
 	static bool unitHasTransferEntry (const cUnit* unit, const cPlayer* player);
 	static bool unitHasStartEntry (const cUnit* unit, const cPlayer* player);
-	static bool unitHasAutoEntry (const cUnit* unit, const cPlayer* player);
+	static bool unitHasAutoEntry (const cVehicle*, const cPlayer*);
 	static bool unitHasStopEntry (const cUnit* unit, const cPlayer* player);
 	static bool unitHasRemoveEntry (const cUnit* unit, const cPlayer* player, const cMapView* map);
 	static bool unitHasManualFireEntry (const cUnit* unit, const cPlayer* player);
@@ -56,8 +56,8 @@ public:
 	static bool unitHasSelfDestroyEntry (const cUnit* unit, const cPlayer* player);
 	static bool unitHasSupplyEntry (const cUnit* unit, const cPlayer* player);
 	static bool unitHasRepairEntry (const cUnit* unit, const cPlayer* player);
-	static bool unitHasLayMinesEntry (const cUnit* unit, const cPlayer* player);
-	static bool unitHasCollectMinesEntry (const cUnit* unit, const cPlayer* player);
+	static bool unitHasLayMinesEntry (const cVehicle*, const cPlayer*);
+	static bool unitHasCollectMinesEntry (const cVehicle*, const cPlayer*);
 	static bool unitHasSabotageEntry (const cUnit* unit, const cPlayer* player);
 	static bool unitHasStealEntry (const cUnit* unit, const cPlayer* player);
 	static bool unitHasInfoEntry (const cUnit* unit, const cPlayer* player);

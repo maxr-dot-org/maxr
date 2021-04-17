@@ -118,10 +118,10 @@ public:
 	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const override;
 	bool canSupply(const cUnit* unit, eSupplyType supplyType) const override;
 
-	bool isUnitWorking() const override { return isWorking; }
-	bool factoryHasJustFinishedBuilding() const override;
+	bool isUnitWorking() const { return isWorking; }
+	bool factoryHasJustFinishedBuilding() const;
 	bool buildingCanBeStarted() const;
-	bool buildingCanBeUpgraded() const override;
+	bool buildingCanBeUpgraded() const;
 	bool canBeStoppedViaUnitMenu() const override { return isUnitWorking(); }
 
 	bool isBuildListEmpty() const;
