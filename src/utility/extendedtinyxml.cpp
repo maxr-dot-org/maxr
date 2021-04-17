@@ -90,6 +90,47 @@ XMLElement* getOrCreateXmlElement (XMLDocument& xmlDoc, const std::string& path)
 	return xmlElement;
 }
 
+//------------------------------------------------------------------------------
+std::optional<int> queryIntAttribute (const tinyxml2::XMLElement& element, const char* attributeName)
+{
+	int result;
+	if (element.QueryIntAttribute (attributeName, &result) == XMLError::XML_NO_ERROR)
+	{
+		return result;
+	}
+	return std::nullopt;
+}
+
+//------------------------------------------------------------------------------
+std::optional<float> queryFloatAttribute (const tinyxml2::XMLElement& element, const char* attributeName)
+{
+	float result;
+	if (element.QueryFloatAttribute (attributeName, &result) == XMLError::XML_NO_ERROR)
+	{
+		return result;
+	}
+	return std::nullopt;
+}
+
+//------------------------------------------------------------------------------
+std::optional<std::string> queryStringAttribute (const tinyxml2::XMLElement& element, const char* attributeName)
+{
+	if (const char* text = element.Attribute (attributeName))
+	{
+		return std::string (text);
+	}
+	return std::nullopt;
+}
+//------------------------------------------------------------------------------
+std::optional<bool> queryBoolAttribute (const tinyxml2::XMLElement& element, const char* attributeName)
+{
+	bool result;
+	if (element.QueryBoolAttribute (attributeName, &result) == XMLError::XML_NO_ERROR)
+	{
+		return result;
+	}
+	return std::nullopt;
+}
 
 //------------------------------------------------------------------------------
 int getXMLAttributeInt (tinyxml2::XMLDocument& document, const char* root, std::initializer_list<const char*> elementNames)

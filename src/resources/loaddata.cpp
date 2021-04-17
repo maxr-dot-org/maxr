@@ -29,6 +29,7 @@
 
 #include <iostream>
 #include <regex>
+#include <set>
 #include <sstream>
 
 #ifdef WIN32
@@ -67,6 +68,15 @@
 
 using namespace tinyxml2;
 
+std::string getBuildVersion()
+{
+	std::string sVersion = PACKAGE_NAME;
+	sVersion += " BUILD: ";
+	sVersion += MAX_BUILD_DATE; sVersion += " ";
+	sVersion += PACKAGE_REV;
+	return sVersion;
+}
+
 /**
  * Writes a Logmessage on the SplashScreen
  * @param sTxt Text to write
@@ -80,22 +90,22 @@ static void MakeLog (const std::string& sTxt, int ok, int pos)
 		std::cout << sTxt << std::endl;
 		return;
 	}
-	const auto& font = cUnicodeFont::font.get();
-	const SDL_Rect rDest = {22, 152, 228, Uint16 (font->getFontHeight (FONT_LATIN_BIG_GOLD)) };
-	const SDL_Rect rDest2 = {250, 152, 230, Uint16 (font->getFontHeight (FONT_LATIN_BIG_GOLD)) };
+	auto& font = *cUnicodeFont::font;
+	const SDL_Rect rDest = {22, 152, 228, Uint16 (font.getFontHeight (FONT_LATIN_BIG_GOLD)) };
+	const SDL_Rect rDest2 = {250, 152, 230, Uint16 (font.getFontHeight (FONT_LATIN_BIG_GOLD)) };
 
 	switch (ok)
 	{
 		case 0:
-			font->showText (rDest.x, rDest.y + rDest.h * pos, sTxt, FONT_LATIN_NORMAL);
+			font.showText (rDest.x, rDest.y + rDest.h * pos, sTxt, FONT_LATIN_NORMAL);
 			break;
 
 		case 1:
-			font->showText (rDest2.x, rDest2.y + rDest2.h * pos, "OK", FONT_LATIN_BIG_GOLD);
+			font.showText (rDest2.x, rDest2.y + rDest2.h * pos, "OK", FONT_LATIN_BIG_GOLD);
 			break;
 
 		default:
-			font->showText (rDest2.x, rDest2.y + rDest2.h * pos, "ERROR ..check maxr.log!", FONT_LATIN_BIG_GOLD);
+			font.showText (rDest2.x, rDest2.y + rDest2.h * pos, "ERROR ..check maxr.log!", FONT_LATIN_BIG_GOLD);
 			break;
 	}
 	// TODO: Warn that screen has been changed
@@ -111,7 +121,7 @@ void debugTranslationSize (const cLanguage& language, const cUnicodeFont& font)
 		std::smatch res;
 
 		if (std::regex_match (p.first, res, reg)) {
-			std::size_t maxSize = std::stoi(res[1]);
+			std::size_t maxSize = std::stoi (res[1]);
 			const char referenceLetter = 'a';
 
 			if (font.getTextWide (std::string (maxSize, referenceLetter)) < font.getTextWide (p.second))
@@ -202,7 +212,6 @@ static void createShadowGfx()
 static int LoadGraphics (const char* path)
 {
 	Log.write ("Loading Graphics", cLog::eLOG_TYPE_INFO);
-	if (DEDICATED_SERVER) return 1;
 
 	Log.write ("Gamegraphics...", cLog::eLOG_TYPE_DEBUG);
 	if (!LoadGraphicToSurface (GraphicsData.gfx_Chand, path, "hand.pcx") ||
@@ -264,17 +273,11 @@ static int LoadGraphics (const char* path)
 	GraphicsData.DialogPath = cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "dialog.pcx";
 	GraphicsData.Dialog2Path = cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "dialog2.pcx";
 	GraphicsData.Dialog3Path = cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "dialog3.pcx";
-	FileExists (GraphicsData.DialogPath.c_str());
-	FileExists (GraphicsData.Dialog2Path.c_str());
-	FileExists (GraphicsData.Dialog3Path.c_str());
 
 	Log.write ("Shadowgraphics...", cLog::eLOG_TYPE_DEBUG);
 	// Shadow:
 	createShadowGfx();
-	Video.resolutionChanged.connect ([]()
-	{
-		createShadowGfx();
-	});
+	Video.resolutionChanged.connect (&createShadowGfx);
 
 	GraphicsData.gfx_tmp = AutoSurface (SDL_CreateRGBSurface (0, 128, 128, Video.getColDepth(), 0, 0, 0, 0));
 	SDL_SetSurfaceBlendMode(GraphicsData.gfx_tmp.get(), SDL_BLENDMODE_BLEND);
@@ -292,21 +295,6 @@ static int LoadGraphics (const char* path)
 	// Resources:
 	Log.write ("Resourcegraphics...", cLog::eLOG_TYPE_DEBUG);
 	ResourceData.load (path);
-	return 1;
-}
-
-/**
- * Loads the Effects
- * @param path Directory of the Effects
- * @return 1 on success
- */
-static int LoadEffects (const char* path)
-{
-	Log.write ("Loading Effects", cLog::eLOG_TYPE_INFO);
-
-	if (DEDICATED_SERVER) return 1;
-
-	EffectsData.load (path);
 	return 1;
 }
 
@@ -661,106 +649,68 @@ static int LoadBuildings()
 		Log.write ("Can't read \"BuildingData->Building\" node!", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
-	std::vector<std::string> BuildingList;
-	std::vector<int> IDList;
-	xmlElement = xmlElement->FirstChildElement();
 	if (xmlElement == nullptr)
 	{
 		Log.write ("There are no buildings in the buildings.xml defined", cLog::eLOG_TYPE_ERROR);
 		return 1;
 	}
-
-	const char* directory = xmlElement->Attribute ("directory");
-	if (directory != nullptr)
-		BuildingList.push_back (directory);
-	else
+	std::vector<std::pair<std::string, int>> directoriesWithId;
+	std::set<int> ids{0};
+	for (xmlElement = xmlElement->FirstChildElement(); xmlElement != nullptr; xmlElement = xmlElement->NextSiblingElement())
 	{
-		std::string msg = std::string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
-		Log.write (msg, cLog::eLOG_TYPE_WARNING);
-	}
+		auto directory = queryStringAttribute (*xmlElement, "directory");
+		auto id = queryIntAttribute (*xmlElement, "num");
+		auto special = queryStringAttribute (*xmlElement, "special");
 
-	if (xmlElement->Attribute ("num"))
-		IDList.push_back (xmlElement->IntAttribute ("num"));
-	else
-	{
-		std::string msg = std::string ("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node";
-		Log.write (msg, cLog::eLOG_TYPE_WARNING);
-	}
-
-	const char* spezial = xmlElement->Attribute ("special");
-	if (spezial != nullptr)
-	{
-		std::string specialString = spezial;
-		if (specialString == "mine")            UnitsDataGlobal.setSpecialIDMine(sID(1, IDList.back()));
-		else if (specialString == "energy")     UnitsDataGlobal.setSpecialIDSmallGen(sID(1, IDList.back()));
-		else if (specialString == "connector")  UnitsDataGlobal.setSpecialIDConnector(sID(1, IDList.back()));
-		else if (specialString == "landmine")   UnitsDataGlobal.setSpecialIDLandMine(sID(1, IDList.back()));
-		else if (specialString == "seamine")    UnitsDataGlobal.setSpecialIDSeaMine(sID(1, IDList.back()));
-		else if (specialString == "smallBeton") UnitsDataGlobal.setSpecialIDSmallBeton(sID(1, IDList.back()));
-		else Log.write ("Unknown spacial in buildings.xml \"" + specialString + "\"", cLog::eLOG_TYPE_WARNING);
-	}
-
-	while (xmlElement != nullptr)
-	{
-		xmlElement = xmlElement->NextSiblingElement();
-		if (xmlElement == nullptr)
-			break;
-
-		const char* directory = xmlElement->Attribute ("directory");
-		if (directory != nullptr)
-			BuildingList.push_back (directory);
-		else
+		if (!directory || !id)
 		{
-			std::string msg = std::string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
+			std::string msg = std::string ("Missing directory or num-attribute from \"") + xmlElement->Value() + "\" - node. skipping unit.";
 			Log.write (msg, cLog::eLOG_TYPE_WARNING);
+			continue;
 		}
-
-		if (xmlElement->Attribute ("num"))
-			IDList.push_back (xmlElement->IntAttribute ("num"));
-		else
-		{
-			std::string msg = std::string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
-			Log.write (msg, cLog::eLOG_TYPE_WARNING);
+		if (!ids.insert (*id).second) {
+			Log.write ("duplicated id " + std::to_string (*id) + ", skipping unit.", cLog::eLOG_TYPE_WARNING);
+			continue;
 		}
+		directoriesWithId.emplace_back (*directory, *id);
 
-		const char* spezial = xmlElement->Attribute ("special");
-		if (spezial != nullptr)
+		if (special)
 		{
-			std::string specialString = spezial;
-			if      (specialString == "mine")       UnitsDataGlobal.setSpecialIDMine(sID(1, IDList.back()));
-			else if (specialString == "energy")     UnitsDataGlobal.setSpecialIDSmallGen(sID(1, IDList.back()));
-			else if (specialString == "connector")  UnitsDataGlobal.setSpecialIDConnector(sID(1, IDList.back()));
-			else if (specialString == "landmine")   UnitsDataGlobal.setSpecialIDLandMine(sID(1, IDList.back()));
-			else if (specialString == "seamine")    UnitsDataGlobal.setSpecialIDSeaMine(sID(1, IDList.back()));
-			else if (specialString == "smallBeton") UnitsDataGlobal.setSpecialIDSmallBeton(sID(1, IDList.back()));
-			else Log.write ("Unknown spacial in buildings.xml \"" + specialString + "\"", cLog::eLOG_TYPE_WARNING);
+			if      (*special == "mine")       UnitsDataGlobal.setSpecialIDMine (sID (1, *id));
+			else if (*special == "energy")     UnitsDataGlobal.setSpecialIDSmallGen (sID (1, *id));
+			else if (*special == "connector")  UnitsDataGlobal.setSpecialIDConnector (sID (1, *id));
+			else if (*special == "landmine")   UnitsDataGlobal.setSpecialIDLandMine (sID (1, *id));
+			else if (*special == "seamine")    UnitsDataGlobal.setSpecialIDSeaMine (sID (1, *id));
+			else if (*special == "smallBeton") UnitsDataGlobal.setSpecialIDSmallBeton (sID (1, *id));
+			else Log.write ("Unknown special in buildings.xml \"" + *special + "\"", cLog::eLOG_TYPE_WARNING);
 		}
 	}
 
 	if (UnitsDataGlobal.getSpecialIDMine().secondPart       == 0) Log.write ("special \"mine\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
-	if (UnitsDataGlobal.getSpecialIDSmallGen().secondPart   == 0) Log.write("special \"energy\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
-	if (UnitsDataGlobal.getSpecialIDConnector().secondPart  == 0) Log.write("special \"connector\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
-	if (UnitsDataGlobal.getSpecialIDLandMine().secondPart   == 0) Log.write("special \"landmine\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
-	if (UnitsDataGlobal.getSpecialIDSeaMine().secondPart    == 0) Log.write("special \"seamine\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
-	if (UnitsDataGlobal.getSpecialIDSmallBeton().secondPart == 0) Log.write("special \"smallBeton\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
+	if (UnitsDataGlobal.getSpecialIDSmallGen().secondPart   == 0) Log.write ("special \"energy\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
+	if (UnitsDataGlobal.getSpecialIDConnector().secondPart  == 0) Log.write ("special \"connector\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
+	if (UnitsDataGlobal.getSpecialIDLandMine().secondPart   == 0) Log.write ("special \"landmine\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
+	if (UnitsDataGlobal.getSpecialIDSeaMine().secondPart    == 0) Log.write ("special \"seamine\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
+	if (UnitsDataGlobal.getSpecialIDSmallBeton().secondPart == 0) Log.write ("special \"smallBeton\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
 
 	// load found units
-	UnitsUiData.buildingUIs.resize(BuildingList.size());
-	for (size_t i = 0; i != BuildingList.size(); ++i)
+	UnitsUiData.buildingUIs.reserve (directoriesWithId.size());
+	for (const auto& p : directoriesWithId)
 	{
 		std::string sBuildingPath = cSettings::getInstance().getBuildingsPath();
 		sBuildingPath += PATH_DELIMITER;
-		sBuildingPath += BuildingList[i];
+		sBuildingPath += p.first;
 		sBuildingPath += PATH_DELIMITER;
 
 		cStaticUnitData staticData;
 		cDynamicUnitData dynamicData;
-		sBuildingUIData& ui = UnitsUiData.buildingUIs[i];
 
-		LoadUnitData (staticData, dynamicData, sBuildingPath.c_str(), IDList[i]);
+		LoadUnitData (staticData, dynamicData, sBuildingPath.c_str(), p.second);
 
-		ui.id = staticData.ID;
 		// load graphics.xml
+		UnitsUiData.buildingUIs.emplace_back();
+		sBuildingUIData& ui = UnitsUiData.buildingUIs.back();
+		ui.id = staticData.ID;
 		LoadUnitGraphicProperties(ui, sBuildingPath.c_str());
 
 		if (DEDICATED_SERVER)
@@ -932,71 +882,43 @@ static int LoadVehicles()
 		Log.write ("Can't read \"VehicleData->Vehicles\" node!", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
-	// read vehicles.xml
-	std::vector<std::string> VehicleList;
-	std::vector<int> IDList;
-	xmlElement = xmlElement->FirstChildElement();
-	if (xmlElement)
+	std::vector<std::pair<std::string, int>> directoriesWithId;
+	std::set<int> ids{0};
+	for (xmlElement = xmlElement->FirstChildElement(); xmlElement != nullptr; xmlElement = xmlElement->NextSiblingElement())
 	{
-		const char* directory = xmlElement->Attribute ("directory");
-		if (directory != nullptr)
-			VehicleList.push_back (directory);
-		else
-		{
-			std::string msg = std::string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
-			Log.write (msg, cLog::eLOG_TYPE_WARNING);
-		}
+		auto directory = queryStringAttribute (*xmlElement, "directory");
+		auto id = queryIntAttribute (*xmlElement, "num");
 
-		if (xmlElement->Attribute ("num"))
-			IDList.push_back (xmlElement->IntAttribute ("num"));
-		else
+		if (!directory || !id)
 		{
-			std::string msg = std::string ("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node";
+			std::string msg = std::string ("Missing directory or num-attribute from \"") + xmlElement->Value() + "\" - node. skipping unit.";
 			Log.write (msg, cLog::eLOG_TYPE_WARNING);
+			continue;
 		}
-	}
-	else
-		Log.write ("No vehicles defined in vehicles.xml!", cLog::eLOG_TYPE_WARNING);
-	while (xmlElement != nullptr)
-	{
-		xmlElement = xmlElement->NextSiblingElement();
-		if (xmlElement == nullptr)
-			break;
-
-		const char* directory = xmlElement->Attribute ("directory");
-		if (directory != nullptr)
-			VehicleList.push_back (directory);
-		else
-		{
-			std::string msg = std::string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
-			Log.write (msg, cLog::eLOG_TYPE_WARNING);
+		if (!ids.insert (*id).second) {
+			Log.write ("duplicated id " + std::to_string (*id) + ", skipping unit.", cLog::eLOG_TYPE_WARNING);
+			continue;
 		}
-
-		if (xmlElement->Attribute ("num"))
-			IDList.push_back (xmlElement->IntAttribute ("num"));
-		else
-		{
-			std::string msg = std::string ("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node";
-			Log.write (msg, cLog::eLOG_TYPE_WARNING);
-		}
+		directoriesWithId.emplace_back (*directory, *id);
 	}
 	// load found units
 	std::string sVehiclePath;
-	UnitsUiData.vehicleUIs.resize(VehicleList.size());
-	for (size_t i = 0; i != VehicleList.size(); ++i)
+	UnitsUiData.vehicleUIs.reserve (directoriesWithId.size());
+	for (const auto& p : directoriesWithId)
 	{
 		sVehiclePath = cSettings::getInstance().getVehiclesPath();
 		sVehiclePath += PATH_DELIMITER;
-		sVehiclePath += VehicleList[i];
+		sVehiclePath += p.first;
 		sVehiclePath += PATH_DELIMITER;
 
 		cStaticUnitData staticData;
 		cDynamicUnitData dynamicData;
-		sVehicleUIData& ui = UnitsUiData.vehicleUIs[i];
 
 		Log.write ("Reading values from XML", cLog::eLOG_TYPE_DEBUG);
-		LoadUnitData (staticData, dynamicData, sVehiclePath.c_str(), IDList[i]);
+		LoadUnitData (staticData, dynamicData, sVehiclePath.c_str(), p.second);
 
+		UnitsUiData.vehicleUIs.emplace_back();
+		sVehicleUIData& ui = UnitsUiData.vehicleUIs.back();
 		ui.id = staticData.ID;
 		// load graphics.xml
 		LoadUnitGraphicProperties(ui, sVehiclePath.c_str());
@@ -1450,6 +1372,25 @@ static int LoadMusic (const char* path)
 	return 1;
 }
 
+
+//------------------------------------------------------------------------------
+bool loadFonts()
+{
+	const std::string& fontPath = cSettings::getInstance().getFontPath() + PATH_DELIMITER;
+	if (!FileExists ((fontPath + "latin_normal.pcx").c_str())
+		|| !FileExists ((fontPath + "latin_big.pcx").c_str())
+		|| !FileExists ((fontPath + "latin_big_gold.pcx").c_str())
+		|| !FileExists ((fontPath + "latin_small.pcx").c_str()))
+	{
+		Log.write ("Missing a file needed for game. Check log and config! ", cLog::eLOG_TYPE_ERROR);
+		return false;
+	}
+
+	cUnicodeFont::font = std::make_unique<cUnicodeFont>(); // init ascii fonts
+	cUnicodeFont::font->setTargetSurface (cVideo::buffer);
+	return true;
+}
+
 // LoadData ///////////////////////////////////////////////////////////////////
 // Loads all relevant files and data:
 eLoadingState LoadData()
@@ -1458,27 +1399,14 @@ eLoadingState LoadData()
 
 	if (!DEDICATED_SERVER)
 	{
-		const std::string& fontPath = cSettings::getInstance().getFontPath() + PATH_DELIMITER;
-		if (!FileExists ((fontPath + "latin_normal.pcx").c_str())
-			|| !FileExists ((fontPath + "latin_big.pcx").c_str())
-			|| !FileExists ((fontPath + "latin_big_gold.pcx").c_str())
-			|| !FileExists ((fontPath + "latin_small.pcx").c_str()))
+		if (!loadFonts())
 		{
-			Log.write ("Missing a file needed for game. Check log and config! ", cLog::eLOG_TYPE_ERROR);
 			return eLoadingState::Error;
 		}
-
-		cUnicodeFont::font.reset(new cUnicodeFont()); // init ascii fonts
-		cUnicodeFont::font->setTargetSurface (cVideo::buffer);
 		Log.mark();
 	}
 
-	std::string sVersion = PACKAGE_NAME;
-	sVersion += " BUILD: ";
-	sVersion += MAX_BUILD_DATE; sVersion += " ";
-	sVersion += PACKAGE_REV;
-
-	MakeLog (sVersion, 0, 0);
+	MakeLog (getBuildVersion(), 0, 0);
 
 	// Load Languagepack
 	MakeLog ("Loading languagepack...", 0, 2);
@@ -1493,58 +1421,54 @@ eLoadingState LoadData()
 	}
 	Log.mark();
 
-	// Load Keys
-	MakeLog (lngPack.i18n ("Text~Init~Keys"), 0, 3);
-
-	try
+	if (!DEDICATED_SERVER)
 	{
-		KeysList.loadFromFile();
-		MakeLog ("", 1, 3);
-	}
-	catch (std::runtime_error& e)
-	{
-		Log.write (e.what(), cLog::eLOG_TYPE_ERROR);
-		MakeLog ("", -1, 3);
-		return eLoadingState::Error;
-	}
-	Log.mark();
+		// Load Keys
+		MakeLog (lngPack.i18n ("Text~Init~Keys"), 0, 3);
 
-	// Load Fonts
-	MakeLog (lngPack.i18n ("Text~Init~Fonts"), 0, 4);
-	// -- little bit crude but fonts are already loaded.
-	// what to do with this now? -- beko
-	// Really loaded with new cUnicodeFont
-	MakeLog ("", 1, 4);
-	Log.mark();
+		try
+		{
+			KeysList.loadFromFile();
+			MakeLog ("", 1, 3);
+		}
+		catch (std::runtime_error& e)
+		{
+			Log.write (e.what(), cLog::eLOG_TYPE_ERROR);
+			MakeLog ("", -1, 3);
+			return eLoadingState::Error;
+		}
+		Log.mark();
 
-	// Load Graphics
-	MakeLog (lngPack.i18n ("Text~Init~GFX"), 0, 5);
+		// Load Fonts
+		MakeLog (lngPack.i18n ("Text~Init~Fonts"), 0, 4);
+		// -- little bit crude but fonts are already loaded.
+		// what to do with this now? -- beko
+		// Really loaded with new cUnicodeFont
+		MakeLog ("", 1, 4);
+		Log.mark();
 
-	if (LoadGraphics (cSettings::getInstance().getGfxPath().c_str()) != 1)
-	{
-		MakeLog ("", -1, 5);
-		Log.write ("Error while loading graphics", cLog::eLOG_TYPE_ERROR);
-		return eLoadingState::Error;
-	}
-	else
-	{
-		MakeLog ("", 1, 5);
-	}
-	Log.mark();
+		// Load Graphics
+		MakeLog (lngPack.i18n ("Text~Init~GFX"), 0, 5);
 
-	// Load Effects
-	MakeLog (lngPack.i18n ("Text~Init~Effects"), 0, 6);
+		if (LoadGraphics (cSettings::getInstance().getGfxPath().c_str()) != 1)
+		{
+			MakeLog ("", -1, 5);
+			Log.write ("Error while loading graphics", cLog::eLOG_TYPE_ERROR);
+			return eLoadingState::Error;
+		}
+		else
+		{
+			MakeLog ("", 1, 5);
+		}
+		Log.mark();
 
-	if (LoadEffects (cSettings::getInstance().getFxPath().c_str()) != 1)
-	{
-		MakeLog ("", -1, 6);
-		return eLoadingState::Error;
-	}
-	else
-	{
+		// Load Effects
+		MakeLog (lngPack.i18n ("Text~Init~Effects"), 0, 6);
+		Log.write ("Loading Effects", cLog::eLOG_TYPE_INFO);
+		EffectsData.load (cSettings::getInstance().getFxPath().c_str());
 		MakeLog ("", 1, 6);
+		Log.mark();
 	}
-	Log.mark();
 
 	// Load Vehicles
 	MakeLog (lngPack.i18n ("Text~Init~Vehicles"), 0, 7);
@@ -1586,7 +1510,6 @@ eLoadingState LoadData()
 		MakeLog ("", 1, 9);
 	}
 	Log.mark();
-
 
 	if (!DEDICATED_SERVER)
 	{

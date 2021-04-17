@@ -25,6 +25,8 @@
 #include <initializer_list>
 #include <string>
 
+#include "config/workaround/cpp17/optional.h"
+
 tinyxml2::XMLElement* XmlGetFirstElement (tinyxml2::XMLDocument&, const char* root, std::initializer_list<const char*>);
 
 /**
@@ -48,5 +50,10 @@ bool        getXMLAttributeBool (tinyxml2::XMLDocument&, const char* root, std::
 
 std::string printXMLPath (const tinyxml2::XMLElement*);
 std::string getXMLErrorMsg (const tinyxml2::XMLDocument&);
+
+std::optional<int> queryIntAttribute (const tinyxml2::XMLElement&, const char* attributeName);
+std::optional<float> queryFloatAttribute (const tinyxml2::XMLElement&, const char* attributeName);
+std::optional<std::string> queryStringAttribute (const tinyxml2::XMLElement&, const char* attributeName);
+std::optional<bool> queryBoolAttribute (const tinyxml2::XMLElement&, const char* attributeName);
 
 #endif
