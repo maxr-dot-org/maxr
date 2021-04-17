@@ -384,15 +384,15 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 
 	// Weapon
 	std::string muzzleType = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Weapon", "Muzzle_Type"});
-	if (muzzleType.compare ("Big") == 0) staticData.muzzleType = cStaticUnitData::MUZZLE_TYPE_BIG;
-	else if (muzzleType.compare("Rocket") == 0) staticData.muzzleType = cStaticUnitData::MUZZLE_TYPE_ROCKET;
-	else if (muzzleType.compare("Small") == 0) staticData.muzzleType = cStaticUnitData::MUZZLE_TYPE_SMALL;
-	else if (muzzleType.compare("Med") == 0) staticData.muzzleType = cStaticUnitData::MUZZLE_TYPE_MED;
-	else if (muzzleType.compare("Med_Long") == 0) staticData.muzzleType = cStaticUnitData::MUZZLE_TYPE_MED_LONG;
-	else if (muzzleType.compare("Rocket_Cluster") == 0) staticData.muzzleType = cStaticUnitData::MUZZLE_TYPE_ROCKET_CLUSTER;
-	else if (muzzleType.compare("Torpedo") == 0) staticData.muzzleType = cStaticUnitData::MUZZLE_TYPE_TORPEDO;
-	else if (muzzleType.compare("Sniper") == 0) staticData.muzzleType = cStaticUnitData::MUZZLE_TYPE_SNIPER;
-	else staticData.muzzleType = cStaticUnitData::MUZZLE_TYPE_NONE;
+	if (muzzleType.compare ("Big") == 0) staticData.muzzleType = eMuzzleType::Big;
+	else if (muzzleType.compare("Rocket") == 0) staticData.muzzleType = eMuzzleType::Rocket;
+	else if (muzzleType.compare("Small") == 0) staticData.muzzleType = eMuzzleType::Small;
+	else if (muzzleType.compare("Med") == 0) staticData.muzzleType = eMuzzleType::Med;
+	else if (muzzleType.compare("Med_Long") == 0) staticData.muzzleType = eMuzzleType::MedLong;
+	else if (muzzleType.compare("Rocket_Cluster") == 0) staticData.muzzleType = eMuzzleType::RocketCluster;
+	else if (muzzleType.compare("Torpedo") == 0) staticData.muzzleType = eMuzzleType::Torpedo;
+	else if (muzzleType.compare("Sniper") == 0) staticData.muzzleType = eMuzzleType::Sniper;
+	else staticData.muzzleType = eMuzzleType::None;
 
 	dynamicData.setAmmoMax(getXMLAttributeInt(unitDataXml, "Unit", {"Weapon", "Ammo_Quantity"}));
 	dynamicData.setShotsMax(getXMLAttributeInt(unitDataXml, "Unit", {"Weapon", "Shots"}));
@@ -470,17 +470,17 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	staticData.canDetectStealthOn = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Can_Detect_Stealth_On"});
 
 	std::string surfacePosString = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Abilities", "Surface_Position"});
-	if (surfacePosString.compare("BeneathSea") == 0)staticData.surfacePosition = cStaticUnitData::SURFACE_POS_BENEATH_SEA;
-	else if (surfacePosString.compare("AboveSea") == 0) staticData.surfacePosition = cStaticUnitData::SURFACE_POS_ABOVE_SEA;
-	else if (surfacePosString.compare("Base") == 0) staticData.surfacePosition = cStaticUnitData::SURFACE_POS_BASE;
-	else if (surfacePosString.compare("AboveBase") == 0) staticData.surfacePosition = cStaticUnitData::SURFACE_POS_ABOVE_BASE;
-	else if (surfacePosString.compare("Above") == 0) staticData.surfacePosition = cStaticUnitData::SURFACE_POS_ABOVE;
-	else staticData.surfacePosition = cStaticUnitData::SURFACE_POS_GROUND;
+	if (surfacePosString.compare ("BeneathSea") == 0) staticData.surfacePosition = eSurfacePosition::BeneathSea;
+	else if (surfacePosString.compare ("AboveSea") == 0) staticData.surfacePosition = eSurfacePosition::AboveSea;
+	else if (surfacePosString.compare ("Base") == 0) staticData.surfacePosition = eSurfacePosition::Base;
+	else if (surfacePosString.compare ("AboveBase") == 0) staticData.surfacePosition = eSurfacePosition::AboveBase;
+	else if (surfacePosString.compare ("Above") == 0) staticData.surfacePosition = eSurfacePosition::Above;
+	else staticData.surfacePosition = eSurfacePosition::Ground;
 
 	std::string overbuildString = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Abilities", "Can_Be_Overbuild"});
-	if (overbuildString.compare ("Yes") == 0) staticData.canBeOverbuild = cStaticUnitData::OVERBUILD_TYPE_YES;
-	else if (overbuildString.compare ("YesNRemove") == 0) staticData.canBeOverbuild = cStaticUnitData::OVERBUILD_TYPE_YESNREMOVE;
-	else staticData.canBeOverbuild = cStaticUnitData::OVERBUILD_TYPE_NO;
+	if (overbuildString.compare ("Yes") == 0) staticData.canBeOverbuild = eOverbuildType::Yes;
+	else if (overbuildString.compare ("YesNRemove") == 0) staticData.canBeOverbuild = eOverbuildType::YesNRemove;
+	else staticData.canBeOverbuild = eOverbuildType::No;
 
 	staticData.canBeLandedOn = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Can_Be_Landed_On"});
 	staticData.canWork = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Is_Activatable"});
@@ -499,11 +499,11 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	staticData.storageUnitsMax = getXMLAttributeInt(unitDataXml, "Unit", {"Storage", "Capacity_Units"});
 
 	std::string storeUnitImgString = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Storage", "Capacity_Units_Image_Type"});
-	if (storeUnitImgString.compare("Plane") == 0) staticData.storeUnitsImageType = cStaticUnitData::STORE_UNIT_IMG_PLANE;
-	else if (storeUnitImgString.compare("Human") == 0) staticData.storeUnitsImageType = cStaticUnitData::STORE_UNIT_IMG_HUMAN;
-	else if (storeUnitImgString.compare("Tank") == 0) staticData.storeUnitsImageType = cStaticUnitData::STORE_UNIT_IMG_TANK;
-	else if (storeUnitImgString.compare("Ship") == 0) staticData.storeUnitsImageType = cStaticUnitData::STORE_UNIT_IMG_SHIP;
-	else staticData.storeUnitsImageType = cStaticUnitData::STORE_UNIT_IMG_TANK;
+	if (storeUnitImgString.compare("Plane") == 0) staticData.storeUnitsImageType = eStorageUnitsImageType::Plane;
+	else if (storeUnitImgString.compare("Human") == 0) staticData.storeUnitsImageType = eStorageUnitsImageType::Human;
+	else if (storeUnitImgString.compare("Tank") == 0) staticData.storeUnitsImageType = eStorageUnitsImageType::Tank;
+	else if (storeUnitImgString.compare("Ship") == 0) staticData.storeUnitsImageType = eStorageUnitsImageType::Ship;
+	else staticData.storeUnitsImageType = eStorageUnitsImageType::Tank;
 
 	std::string storeUnitsString = getXMLAttributeString (unitDataXml, "String", "Unit", {"Storage", "Capacity_Units_Type"});
 	Split(storeUnitsString, "+", staticData.storeUnitsTypes);

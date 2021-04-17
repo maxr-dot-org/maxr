@@ -43,8 +43,8 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 	cWindow (nullptr),
 	unit (unit_),
 	canRepairReloadUpgrade (unit_.isABuilding()),
-	canStorePlanes (unit_.getStaticUnitData().storeUnitsImageType == cStaticUnitData::STORE_UNIT_IMG_PLANE),
-	canStoreShips (unit_.getStaticUnitData().storeUnitsImageType == cStaticUnitData::STORE_UNIT_IMG_SHIP),
+	canStorePlanes (unit_.getStaticUnitData().storeUnitsImageType == eStorageUnitsImageType::Plane),
+	canStoreShips (unit_.getStaticUnitData().storeUnitsImageType == eStorageUnitsImageType::Ship),
 	columns (canStorePlanes ? 2 : 3),
 	page (0)
 {

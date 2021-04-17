@@ -149,7 +149,7 @@ void cVehicle::proceedBuilding (cModel& model, sNewTurnPlayerReport& report)
 		}
 		else
 		{
-			if (model.getUnitsData()->getStaticUnitData(getBuildingType()).surfacePosition != cStaticUnitData::SURFACE_POS_GROUND)
+			if (model.getUnitsData()->getStaticUnitData(getBuildingType()).surfacePosition != eSurfacePosition::Ground)
 			{
 				// add building immediately
 				// if it doesn't require the engineer to drive away

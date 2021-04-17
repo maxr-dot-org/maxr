@@ -432,7 +432,7 @@ bool cUnit::canAttackObjectAt (const cPosition& position, const cMapView& map, b
 	if (map.isValidPosition (position) == false) return false;
 	if (checkRange && isInRange (position) == false) return false;
 
-	if (staticData->muzzleType == cStaticUnitData::MUZZLE_TYPE_TORPEDO && map.isWaterOrCoast(position) == false)
+	if (staticData->muzzleType == eMuzzleType::Torpedo && map.isWaterOrCoast(position) == false)
 		return false;
 
 	const cUnit* target = cAttackJob::selectTarget(position, staticData->canAttack, map, owner);

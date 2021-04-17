@@ -70,16 +70,16 @@ void cActionChangeBuildList::execute(cModel& model) const
 		const auto& buildings = map.getField(cPosition(x, y)).getBuildings();
 		auto b_it = buildings.begin();
 		auto b_end = buildings.end();
-		while (b_it != b_end && ((*b_it)->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE || (*b_it)->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE))
+		while (b_it != b_end && ((*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::Above || (*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase))
 		{
 			++b_it;
 		}
 
-		if (!map.isWaterOrCoast(cPosition(x, y)) || (b_it != b_end && (*b_it)->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE))
+		if (!map.isWaterOrCoast(cPosition(x, y)) || (b_it != b_end && (*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::Base))
 		{
 			land = true;
 		}
-		else if (map.isWaterOrCoast(cPosition(x, y)) && b_it != b_end && (*b_it)->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA)
+		else if (map.isWaterOrCoast(cPosition(x, y)) && b_it != b_end && (*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea)
 		{
 			land = true;
 			water = true;

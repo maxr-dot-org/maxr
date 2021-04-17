@@ -1101,8 +1101,8 @@ void cGameMapWidget::drawBaseUnits()
 			const auto& building = * (*it);
 
 			if (!building.isRubble() && (
-				building.getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_BENEATH_SEA &&
-				building.getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_BASE))
+				building.getStaticUnitData().surfacePosition != eSurfacePosition::BeneathSea &&
+				building.getStaticUnitData().surfacePosition != eSurfacePosition::Base))
 				break;
 
 			if (shouldDrawUnit (building, *i, tileDrawingRange))
@@ -1128,7 +1128,7 @@ void cGameMapWidget::drawTopBuildings()
 		auto& mapField = mapView->getField (*i);
 		auto building = mapField.getTopBuilding();
 		if (building == nullptr) continue;
-		if (building->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_GROUND) continue;
+		if (building->getStaticUnitData().surfacePosition != eSurfacePosition::Ground) continue;
 		if (!shouldDrawUnit (*building, *i, tileDrawingRange)) continue;
 
 		auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building->getPosition());
@@ -1180,7 +1180,7 @@ void cGameMapWidget::drawAboveSeaBaseUnits()
 		for (auto it = buildings.begin(); it != buildings.end(); ++it)
 		{
 			const auto& building = * (*it);
-			if (building.getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA)
+			if (building.getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea)
 			{
 				const auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building.getPosition());
 				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), &unitSelection, player.get(), currentTurnResearchAreasFinished);
@@ -1189,7 +1189,7 @@ void cGameMapWidget::drawAboveSeaBaseUnits()
 		for (auto it = buildings.begin(); it != buildings.end(); ++it)
 		{
 			const auto& building = * (*it);
-			if ((*it)->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE)
+			if ((*it)->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase)
 			{
 				const auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building.getPosition());
 				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), &unitSelection, player.get(), currentTurnResearchAreasFinished);
@@ -1266,7 +1266,7 @@ void cGameMapWidget::drawConnectors()
 		auto& mapField = mapView->getField (*i);
 		auto building = mapField.getTopBuilding();
 		if (building == nullptr) continue;
-		if (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE)
+		if (building->getStaticUnitData().surfacePosition == eSurfacePosition::Above)
 		{
 			auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
 			unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor(), &unitSelection, player.get(), currentTurnResearchAreasFinished);

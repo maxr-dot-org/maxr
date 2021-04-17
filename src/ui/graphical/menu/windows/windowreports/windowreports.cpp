@@ -324,7 +324,7 @@ bool cWindowReports::checkFilter(const cStaticUnitData& data) const
 
 	if (!data.isStealthOn && stealthCheckBox->isChecked()) return false;
 
-	if (data.surfacePosition != cStaticUnitData::SURFACE_POS_GROUND) return false;
+	if (data.surfacePosition != eSurfacePosition::Ground) return false;
 
 	return true;
 }

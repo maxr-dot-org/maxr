@@ -221,7 +221,7 @@ void render (const cVehicle& vehicle, const cMapView* map, unsigned long long an
 		// whether there is a bridge, platform, etc.
 		// because the vehicle will drive on the bridge
 		const cBuilding* building = map->getField (vehicle.getPosition()).getBaseBuilding();
-		if (building && vehicle.getStaticUnitData().factorGround > 0 && (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE)) water = false;
+		if (building && vehicle.getStaticUnitData().factorGround > 0 && (building->getStaticUnitData().surfacePosition == eSurfacePosition::Base || building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea || building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase)) water = false;
 
 		if (water && (vehicle.getStaticUnitData().isStealthOn & TERRAIN_SEA) && !vehicle.isDetectedByAnyPlayer() && vehicle.getOwner() == activePlayer) alpha = std::min (alpha, 100);
 	}

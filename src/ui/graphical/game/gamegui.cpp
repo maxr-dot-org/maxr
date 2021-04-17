@@ -544,7 +544,7 @@ void cGameGui::connectSelectedUnit()
 					{
 						const auto building = mapView->getField(selectedVehicle->getPosition()).getBaseBuilding();
 						bool water = mapView->isWater(selectedVehicle->getPosition());
-						if (selectedVehicle->getStaticUnitData().factorGround > 0 && building && (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
+						if (selectedVehicle->getStaticUnitData().factorGround > 0 && building && (building->getStaticUnitData().surfacePosition == eSurfacePosition::Base || building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase || building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea)) water = false;
 
 						stopSelectedUnitSound();
 						auto* uiData = UnitsUiData.getVehicleUI (selectedVehicle->getStaticUnitData().ID);
@@ -565,7 +565,7 @@ void cGameGui::connectSelectedUnit()
 
 				const auto building = mapView->getField(selectedVehicle->getPosition()).getBaseBuilding();
 				bool water = mapView->isWater(selectedVehicle->getPosition());
-				if (selectedVehicle->getStaticUnitData().factorGround > 0 && building && (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA))
+				if (selectedVehicle->getStaticUnitData().factorGround > 0 && building && (building->getStaticUnitData().surfacePosition == eSurfacePosition::Base || building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase || building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea))
 				{
 					water = false;
 				}
@@ -763,7 +763,7 @@ void cGameGui::updateSelectedUnitIdleSound()
 
 		const cBuilding* building = mapView ? mapView->getField (vehicle.getPosition()).getBaseBuilding() : nullptr;
 		bool water = staticMap->isWater (vehicle.getPosition());
-		if (vehicle.getStaticUnitData().factorGround > 0 && building && (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
+		if (vehicle.getStaticUnitData().factorGround > 0 && building && (building->getStaticUnitData().surfacePosition == eSurfacePosition::Base || building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase || building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea)) water = false;
 
 		if (vehicle.isUnitBuildingABuilding() && (vehicle.getBuildTurns() || player.get() != vehicle.getOwner()))
 		{
@@ -796,7 +796,7 @@ void cGameGui::updateSelectedUnitMoveSound (bool startedNew)
 
 	const auto building = mapView->getField (vehicle.getPosition()).getBaseBuilding();
 	bool water = mapView->isWater (vehicle.getPosition());
-	if (vehicle.getStaticUnitData().factorGround > 0 && building && (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE || building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
+	if (vehicle.getStaticUnitData().factorGround > 0 && building && (building->getStaticUnitData().surfacePosition == eSurfacePosition::Base || building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase || building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea)) water = false;
 	stopSelectedUnitSound();
 
 	if (startedNew)

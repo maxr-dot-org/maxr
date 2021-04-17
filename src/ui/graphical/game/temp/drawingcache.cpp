@@ -116,9 +116,9 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMapView& map, con
 	//because the vehicle will drive on the bridge
 	cBuilding* building = map.getField (vehicle.getPosition()).getBaseBuilding();
 	if (vehicle.getStaticUnitData().factorGround > 0 && building
-		&& (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA
-			|| building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE
-			|| building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE))
+		&& (building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea
+			|| building->getStaticUnitData().surfacePosition == eSurfacePosition::Base
+			|| building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase))
 	{
 		isOnWaterAndNotCoast = false;
 	}
@@ -287,9 +287,9 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 		bool isOnWaterAndNotCoast = map.isWater (vehicle.getPosition());
 		const cBuilding* building = map.getField (vehicle.getPosition()).getBaseBuilding();
 		if (vehicle.getStaticUnitData().factorGround > 0 && building
-			&& (building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA
-				|| building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE
-				|| building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE))
+			&& (building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea
+				|| building->getStaticUnitData().surfacePosition == eSurfacePosition::Base
+				|| building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase))
 		{
 			isOnWaterAndNotCoast = false;
 		}

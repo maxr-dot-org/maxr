@@ -19,16 +19,15 @@
 
 #include "unitdata.h"
 
-#include <algorithm>
-
-#include <3rd/tinyxml2/tinyxml2.h>
-
 #include "game/data/player/clans.h"
 #include "utility/log.h"
 #include "utility/language.h"
 #include "utility/string/toString.h"
 #include "utility/crc.h"
 
+#include <3rd/tinyxml2/tinyxml2.h>
+
+#include <algorithm>
 
 //------------------------------------------------------------------------------
 // ----------- sID Implementation ----------------------------------------------
@@ -103,11 +102,11 @@ void cUnitsData::initializeIDData()
 {
 	for (const auto& data : staticUnitData)
 	{
-		if (data.canBuild == "BigBuilding")	  
+		if (data.canBuild == "BigBuilding")
 			constructorID = data.ID;
-		if (data.canBuild == "SmallBuilding") 
+		if (data.canBuild == "SmallBuilding")
 			engineerID = data.ID;
-		if (data.canSurvey)                   
+		if (data.canSurvey)
 			surveyorID = data.ID;
 	}
 	if (constructorID == sID(0, 0)) Log.write("Constructor index not found. Constructor needs to have the property \"Can_Build = BigBuilding\"", cLog::eLOG_TYPE_ERROR);
@@ -121,7 +120,7 @@ void cUnitsData::initializeIDData()
 void cUnitsData::initializeClanUnitData(const cClanData& clanData)
 {
 	crcValid = false;
- 
+
 	clanDynamicUnitData.resize(clanData.getNrClans());
 
 	for (int i = 0; i != clanData.getNrClans(); ++i)
@@ -139,7 +138,7 @@ void cUnitsData::initializeClanUnitData(const cClanData& clanData)
 			cDynamicUnitData& clanVehicle = clanListVehicles[j];
 			const cClanUnitStat* changedStat = clan->getUnitStat(clanVehicle.getId());
 			if (changedStat == nullptr) continue;
-			
+
 			if (changedStat->hasModification("Damage"))
 				clanVehicle.setDamage(changedStat->getModificationValue("Damage"));
 			if (changedStat->hasModification("Range"))
@@ -244,70 +243,6 @@ uint32_t cUnitsData::getChecksum(uint32_t crc) const
 	}
 
 	return calcCheckSum(crcCache, crc);
-}
-
-//------------------------------------------------------------------------------
-cStaticUnitData::cStaticUnitData()
-{
-	muzzleType = MUZZLE_TYPE_NONE;
-
-	canAttack = 0;
-	canDriveAndFire = false;
-
-	maxBuildFactor = 0;
-
-	canBuildPath = false;
-	canBuildRepeat = false;
-
-	// Movement
-	factorGround = 0.0f;
-	factorSea = 0.0f;
-	factorAir = 0.0f;
-	factorCoast = 0.0f;
-
-	// Abilities
-	connectsToBase = false;
-	modifiesSpeed = 0.0f;
-	canClearArea = false;
-	canBeCaptured = false;
-	canBeDisabled = false;
-	canCapture = false;
-	canDisable = false;
-	canRepair = false;
-	canRearm = false;
-	canResearch = false;
-	canPlaceMines = false;
-	canSurvey = false;
-	doesSelfRepair = false;
-	convertsGold = 0;
-	canSelfDestroy = false;
-	canScore = false;
-
-	canMineMaxRes = 0;
-	needsMetal = 0;
-	needsOil = 0;
-	needsEnergy = 0;
-	needsHumans = 0;
-	produceEnergy = 0;
-	produceHumans = 0;
-
-	isStealthOn = 0;
-	canDetectStealthOn = 0;
-
-	surfacePosition = SURFACE_POS_BENEATH_SEA;
-	canBeOverbuild = OVERBUILD_TYPE_NO;
-
-	canBeLandedOn = false;
-	canWork = false;
-	explodesOnContact = false;
-	isHuman = false;
-	isBig = false;
-
-	// Storage
-	storageResMax = 0;
-	storeResType = eResourceType::None;
-	storageUnitsMax = 0;
-	storeUnitsImageType = STORE_UNIT_IMG_NONE;
 }
 
 //------------------------------------------------------------------------------

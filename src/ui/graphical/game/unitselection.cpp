@@ -47,7 +47,7 @@ bool cUnitSelection::selectUnitAt (const cMapFieldView& field, bool base)
 	}
 	cBuilding* topBuilding = field.getTopBuilding();
 	const cVehicle* selectedVehicle = getSelectedVehicle();
-	if (topBuilding && (base || ((topBuilding->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE || !selectedVehicle) && (!field.getTopBuilding()->getStaticUnitData().canBeLandedOn || (!selectedVehicle || selectedVehicle->getStaticUnitData().factorAir == 0)))))
+	if (topBuilding && (base || ((topBuilding->getStaticUnitData().surfacePosition != eSurfacePosition::Above || !selectedVehicle) && (!field.getTopBuilding()->getStaticUnitData().canBeLandedOn || (!selectedVehicle || selectedVehicle->getStaticUnitData().factorAir == 0)))))
 	{
 		return selectUnit (*topBuilding);
 	}

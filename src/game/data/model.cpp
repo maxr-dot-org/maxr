@@ -263,7 +263,7 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 	player->base.addBuilding (addedBuilding, *map);
 
 	// if this is a top building, delete connectors, mines and roads
-	if (addedBuilding.getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_GROUND)
+	if (addedBuilding.getStaticUnitData().surfacePosition == eSurfacePosition::Ground)
 	{
 		if (addedBuilding.getIsBig())
 		{
@@ -272,7 +272,7 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if ((*buildings)[i]->getStaticUnitData().canBeOverbuild == cStaticUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if ((*buildings)[i]->getStaticUnitData().canBeOverbuild == eOverbuildType::YesNRemove)
 				{
 					deleteUnit((*buildings)[i]);
 					--i;
@@ -282,7 +282,7 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 			buildings = &map->getField(bigPosition).getBuildings();
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if ((*buildings)[i]->getStaticUnitData().canBeOverbuild == cStaticUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if ((*buildings)[i]->getStaticUnitData().canBeOverbuild == eOverbuildType::YesNRemove)
 				{
 					deleteUnit((*buildings)[i]);
 					--i;
@@ -292,7 +292,7 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 			buildings = &map->getField(bigPosition).getBuildings();
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if ((*buildings)[i]->getStaticUnitData().canBeOverbuild == cStaticUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if ((*buildings)[i]->getStaticUnitData().canBeOverbuild == eOverbuildType::YesNRemove)
 				{
 					deleteUnit((*buildings)[i]);
 					--i;
@@ -302,7 +302,7 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 			buildings = &map->getField(bigPosition).getBuildings();
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if ((*buildings)[i]->getStaticUnitData().canBeOverbuild == cStaticUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if ((*buildings)[i]->getStaticUnitData().canBeOverbuild == eOverbuildType::YesNRemove)
 				{
 					deleteUnit((*buildings)[i]);
 					--i;
@@ -316,7 +316,7 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 			const auto& buildings = map->getField(position).getBuildings();
 			for (size_t i = 0; i != buildings.size(); ++i)
 			{
-				if (buildings[i]->getStaticUnitData().canBeOverbuild == cStaticUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if (buildings[i]->getStaticUnitData().canBeOverbuild == eOverbuildType::YesNRemove)
 				{
 					deleteUnit(buildings[i]);
 					--i;

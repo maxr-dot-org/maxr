@@ -70,122 +70,127 @@ public:
 	int secondPart;
 };
 
+enum class eMuzzleType
+{
+	None,
+	Big,
+	Rocket,
+	Small,
+	Med,
+	MedLong,
+	RocketCluster,
+	Torpedo,
+	Sniper
+};
+
+enum class eSurfacePosition
+{
+	BeneathSea,
+	AboveSea,
+	Base,
+	AboveBase,
+	Ground,
+	Above
+};
+
+enum class eOverbuildType
+{
+	No,
+	Yes,
+	YesNRemove
+};
+
+enum class eStorageUnitsImageType
+{
+	None,
+	Tank,
+	Plane,
+	Ship,
+	Human
+};
+
 // class for vehicle properties, that are constant and equal for all instances of a unit type
 class cStaticUnitData
 {
 public:
-	cStaticUnitData();
+	cStaticUnitData() = default;
 	std::string getName() const;
 	std::string getDescripton() const;
 	void setName(std::string name_){ name = name_; }
 	void setDescription(std::string text) { description = text; }
 
 	uint32_t getChecksum(uint32_t crc) const;
-
+public:
 	// Main
 	sID ID;
 
 	// Attack
-	enum eMuzzleType
-	{
-		MUZZLE_TYPE_NONE,
-		MUZZLE_TYPE_BIG,
-		MUZZLE_TYPE_ROCKET,
-		MUZZLE_TYPE_SMALL,
-		MUZZLE_TYPE_MED,
-		MUZZLE_TYPE_MED_LONG,
-		MUZZLE_TYPE_ROCKET_CLUSTER,
-		MUZZLE_TYPE_TORPEDO,
-		MUZZLE_TYPE_SNIPER
-	};
-	eMuzzleType muzzleType;
+	eMuzzleType muzzleType = eMuzzleType::None;
 
-	char canAttack;
+	char canAttack = 0;
 
-	bool canDriveAndFire;
+	bool canDriveAndFire = false;
 
 	std::string canBuild;
 	std::string buildAs;
 
-	int maxBuildFactor;
+	int maxBuildFactor = 0;
 
-	bool canBuildPath;
-	bool canBuildRepeat;
+	bool canBuildPath = false;
+	bool canBuildRepeat = false;
 
-	float factorGround;
-	float factorSea;
-	float factorAir;
-	float factorCoast;
+	float factorGround = 0.f;
+	float factorSea = 0.f;
+	float factorAir = 0.f;
+	float factorCoast = 0.f;
 
 	// Abilities
-	bool connectsToBase;
-	float modifiesSpeed;
-	bool canClearArea;
-	bool canBeCaptured;
-	bool canBeDisabled;
-	bool canCapture;
-	bool canDisable;
-	bool canRepair;
-	bool canRearm;
-	bool canResearch;
-	bool canPlaceMines;
-	bool canSurvey;
-	bool doesSelfRepair;
-	int convertsGold;
-	bool canSelfDestroy;
-	bool canScore;
+	bool connectsToBase = false;
+	float modifiesSpeed = 0.f;
+	bool canClearArea = false;
+	bool canBeCaptured = false;
+	bool canBeDisabled = false;
+	bool canCapture = false;
+	bool canDisable = false;
+	bool canRepair = false;
+	bool canRearm = false;
+	bool canResearch = false;
+	bool canPlaceMines = false;
+	bool canSurvey = false;
+	bool doesSelfRepair = false;
+	int convertsGold = 0;
+	bool canSelfDestroy = false;
+	bool canScore = false;
 
-	int canMineMaxRes;
+	int canMineMaxRes = 0;
 
-	int needsMetal;
-	int needsOil;
-	int needsEnergy;
-	int needsHumans;
-	int produceEnergy;
-	int produceHumans;
+	int needsMetal = 0;
+	int needsOil = 0;
+	int needsEnergy = 0;
+	int needsHumans = 0;
+	int produceEnergy = 0;
+	int produceHumans = 0;
 
-	char isStealthOn;
-	char canDetectStealthOn;
+	char isStealthOn = 0;
+	char canDetectStealthOn = 0;
 
-	enum eSurfacePosition
-	{
-		SURFACE_POS_BENEATH_SEA,
-		SURFACE_POS_ABOVE_SEA,
-		SURFACE_POS_BASE,
-		SURFACE_POS_ABOVE_BASE,
-		SURFACE_POS_GROUND,
-		SURFACE_POS_ABOVE
-	};
-	eSurfacePosition surfacePosition;
+	eSurfacePosition surfacePosition = eSurfacePosition::BeneathSea;
 
-	enum eOverbuildType
-	{
-		OVERBUILD_TYPE_NO,
-		OVERBUILD_TYPE_YES,
-		OVERBUILD_TYPE_YESNREMOVE
-	};
-	eOverbuildType canBeOverbuild;
+	eOverbuildType canBeOverbuild = eOverbuildType::No;
 
-	bool canBeLandedOn;
-	bool canWork;
-	bool explodesOnContact;
-	bool isHuman;
-	bool isBig;
+	bool canBeLandedOn = false;
+	bool canWork = false;
+	bool explodesOnContact = false;
+	bool isHuman = false;
+	bool isBig = false;
 
 	// Storage
-	int storageResMax;
-	eResourceType storeResType;
+	int storageResMax = 0;
+	eResourceType storeResType = eResourceType::None;
 
-	std::size_t storageUnitsMax;
-	enum eStorageUnitsImageType
-	{
-		STORE_UNIT_IMG_NONE,
-		STORE_UNIT_IMG_TANK,
-		STORE_UNIT_IMG_PLANE,
-		STORE_UNIT_IMG_SHIP,
-		STORE_UNIT_IMG_HUMAN
-	};
-	eStorageUnitsImageType storeUnitsImageType;
+	std::size_t storageUnitsMax = 0;
+
+	eStorageUnitsImageType storeUnitsImageType = eStorageUnitsImageType::None;
 	std::vector<std::string> storeUnitsTypes;
 	std::string isStorageType;
 
@@ -388,7 +393,6 @@ public:
 
 	bool isValidId(const sID& id) const;
 	size_t getNrOfClans() const;
-
 
 	// clan = -1: without clans
 	const cDynamicUnitData& getDynamicUnitData(const sID& id, int clan = -1) const;

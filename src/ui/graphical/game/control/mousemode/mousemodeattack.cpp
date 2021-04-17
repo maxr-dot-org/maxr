@@ -81,7 +81,7 @@ bool cMouseModeAttack::canExecuteAction (const cPosition& mapPosition) const
 	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 	const auto selectedBuilding = unitSelection.getSelectedBuilding();
 
-	return (selectedVehicle && (selectedVehicle->getStaticUnitData().muzzleType != cStaticUnitData::MUZZLE_TYPE_TORPEDO || map->isWaterOrCoast (mapPosition))) ||
+	return (selectedVehicle && (selectedVehicle->getStaticUnitData().muzzleType != eMuzzleType::Torpedo || map->isWaterOrCoast (mapPosition))) ||
 		   (selectedBuilding && selectedBuilding->isInRange (mapPosition));
 }
 

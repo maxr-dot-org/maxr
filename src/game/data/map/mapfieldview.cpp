@@ -88,8 +88,8 @@ cBuilding* cMapFieldView::getTopBuilding() const
 	{
 		if (!player || player->canSeeUnit(*building, mapField, terrain))
 		{
-			if ((building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_GROUND ||
-				 building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE) &&
+			if ((building->getStaticUnitData().surfacePosition == eSurfacePosition::Ground ||
+				 building->getStaticUnitData().surfacePosition == eSurfacePosition::Above) &&
 				!building->isRubble())
 			{
 				return building;
@@ -111,8 +111,8 @@ cBuilding* cMapFieldView::getBaseBuilding() const
 	{
 		if (!player || player->canSeeUnit(*building, mapField, terrain))
 		{
-			if (building->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_GROUND &&
-				building->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE &&
+			if (building->getStaticUnitData().surfacePosition != eSurfacePosition::Ground &&
+				building->getStaticUnitData().surfacePosition != eSurfacePosition::Above &&
 				!building->isRubble())
 			{
 				return building;
@@ -164,8 +164,8 @@ bool cMapFieldView::hasBridgeOrPlattform() const
 	{
 		if (!player || player->canSeeUnit(*building, mapField, terrain))
 		{
-			if ((building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA ||
-				building->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE) &&
+			if ((building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea ||
+				building->getStaticUnitData().surfacePosition == eSurfacePosition::Base) &&
 				!building->isRubble())
 			{
 				return true;

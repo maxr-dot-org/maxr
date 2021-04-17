@@ -162,22 +162,22 @@ void cUnitDetailsHud::reset()
 				}
 			}
 		}
-		else if (staticData.storeUnitsImageType != cStaticUnitData::STORE_UNIT_IMG_NONE)
+		else if (staticData.storeUnitsImageType != eStorageUnitsImageType::None)
 		{
 			eUnitDataSymbolType symbolType;
 			switch (staticData.storeUnitsImageType)
 			{
-				case cStaticUnitData::STORE_UNIT_IMG_TANK:
-				case cStaticUnitData::STORE_UNIT_IMG_SHIP:
+				case eStorageUnitsImageType::Tank:
+				case eStorageUnitsImageType::Ship:
 					symbolType = eUnitDataSymbolType::TransportTank;
 					break;
-				case cStaticUnitData::STORE_UNIT_IMG_PLANE:
+				case eStorageUnitsImageType::Plane:
 					symbolType = eUnitDataSymbolType::TransportAir;
 					break;
-				case cStaticUnitData::STORE_UNIT_IMG_HUMAN:
+				case eStorageUnitsImageType::Human:
 					symbolType = eUnitDataSymbolType::Human;
 					break;
-				case cStaticUnitData::STORE_UNIT_IMG_NONE: break;
+				case eStorageUnitsImageType::None: break;
 			}
 
 			drawRow (1, symbolType, unit->storedUnits.size(), staticData.storageUnitsMax, lngPack.i18n ("Text~Others~Cargo_7"));

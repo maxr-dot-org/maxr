@@ -145,10 +145,10 @@ void cWindowBuildVehicles::generateSelectionList (const cBuilding& building, con
 			auto b_it = buildings.begin();
 			auto b_end = buildings.end();
 
-			while (b_it != b_end && ((*b_it)->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE || (*b_it)->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_BASE)) ++b_it;
+			while (b_it != b_end && ((*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::Above || (*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase)) ++b_it;
 
-			if (!map.isWaterOrCoast (cPosition (x, y)) || (b_it != b_end && (*b_it)->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_BASE)) land = true;
-			else if (map.isWaterOrCoast (cPosition (x, y)) && b_it != b_end && (*b_it)->getStaticUnitData().surfacePosition == cStaticUnitData::SURFACE_POS_ABOVE_SEA)
+			if (!map.isWaterOrCoast (cPosition (x, y)) || (b_it != b_end && (*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::Base)) land = true;
+			else if (map.isWaterOrCoast (cPosition (x, y)) && b_it != b_end && (*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea)
 			{
 				land = true;
 				water = true;

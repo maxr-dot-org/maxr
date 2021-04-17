@@ -194,7 +194,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 						 field.getVehicle() ||
 						 (
 							 field.getTopBuilding() &&
-							 field.getTopBuilding()->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE
+							 field.getTopBuilding()->getStaticUnitData().surfacePosition != eSurfacePosition::Above
 						 ) ||
 						 (
 							 (KeysList.getMouseStyle() == eMouseStyle::OldSchool || !modifierForceMoveActive) &&
@@ -210,7 +210,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 								 field.getVehicle() ||
 								 (
 									 field.getTopBuilding() &&
-									 field.getTopBuilding()->getStaticUnitData().surfacePosition != cStaticUnitData::SURFACE_POS_ABOVE &&
+									 field.getTopBuilding()->getStaticUnitData().surfacePosition != eSurfacePosition::Above &&
 									 !field.getTopBuilding()->getStaticUnitData().canBeLandedOn
 								 )
 							 )

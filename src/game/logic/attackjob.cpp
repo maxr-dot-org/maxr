@@ -193,7 +193,7 @@ int cAttackJob::calcFireDir()
 void cAttackJob::lockTarget(const cMap& map)
 {
 	int range = 0;
-	if (aggressor->getStaticUnitData().muzzleType == cStaticUnitData::MUZZLE_TYPE_ROCKET_CLUSTER)
+	if (aggressor->getStaticUnitData().muzzleType == eMuzzleType::RocketCluster)
 		range = 2;
 
 	for (int x = -range; x <= range; x++)
@@ -276,7 +276,7 @@ std::unique_ptr<cFx> cAttackJob::createMuzzleFx ()
 	cPosition offset (0, 0);
 	switch (aggressor->getStaticUnitData().muzzleType)
 	{
-		case cStaticUnitData::MUZZLE_TYPE_BIG:
+		case eMuzzleType::Big:
 			switch (fireDir)
 			{
 				case 0:
@@ -310,15 +310,15 @@ std::unique_ptr<cFx> cAttackJob::createMuzzleFx ()
 			}
 			return std::make_unique<cFxMuzzleBig> (aggressorPosition * 64 + offset, fireDir, id);
 
-		case cStaticUnitData::MUZZLE_TYPE_SMALL:
+		case eMuzzleType::Small:
 			return std::make_unique<cFxMuzzleSmall> (aggressorPosition * 64, fireDir, id);
 
-		case cStaticUnitData::MUZZLE_TYPE_ROCKET:
-		case cStaticUnitData::MUZZLE_TYPE_ROCKET_CLUSTER:
+		case eMuzzleType::Rocket:
+		case eMuzzleType::RocketCluster:
 			return std::make_unique<cFxRocket> (aggressorPosition * 64 + cPosition (32, 32), targetPosition * 64 + cPosition (32, 32), fireDir, false, id);
 
-		case cStaticUnitData::MUZZLE_TYPE_MED:
-		case cStaticUnitData::MUZZLE_TYPE_MED_LONG:
+		case eMuzzleType::Med:
+		case eMuzzleType::MedLong:
 			switch (fireDir)
 			{
 				case 0:
@@ -350,14 +350,14 @@ std::unique_ptr<cFx> cAttackJob::createMuzzleFx ()
 					offset.y() = -12;
 					break;
 			}
-			if (aggressor->getStaticUnitData().muzzleType == cStaticUnitData::MUZZLE_TYPE_MED)
+			if (aggressor->getStaticUnitData().muzzleType == eMuzzleType::Med)
 				return std::make_unique<cFxMuzzleMed> (aggressorPosition * 64 + offset, fireDir, id);
 			else
 				return std::make_unique<cFxMuzzleMedLong> (aggressorPosition * 64 + offset, fireDir, id);
 
-		case cStaticUnitData::MUZZLE_TYPE_TORPEDO:
+		case eMuzzleType::Torpedo:
 			return std::make_unique<cFxRocket> (aggressorPosition * 64 + cPosition (32, 32), targetPosition * 64 + cPosition (32, 32), fireDir, true, id);
-		case cStaticUnitData::MUZZLE_TYPE_SNIPER:
+		case eMuzzleType::Sniper:
 		//TODO: sniper has no animation?!?
 		default:
 			return nullptr;
@@ -366,7 +366,7 @@ std::unique_ptr<cFx> cAttackJob::createMuzzleFx ()
 
 void cAttackJob::impact(cModel& model)
 {
-	if (aggressor->getStaticUnitData().muzzleType == cStaticUnitData::MUZZLE_TYPE_ROCKET_CLUSTER)
+	if (aggressor->getStaticUnitData().muzzleType == eMuzzleType::RocketCluster)
 		impactCluster(model);
 	else
 		impactSingle (targetPosition, aggressor->data.getDamage(), model);
