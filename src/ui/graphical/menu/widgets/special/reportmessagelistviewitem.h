@@ -21,7 +21,7 @@
 #define ui_graphical_menu_widgets_special_reportmessagelistviewitemH
 
 #include "ui/graphical/menu/widgets/abstractlistviewitem.h"
-#include "game/data/units/unitdata.h" // sID
+#include "game/data/units/unitdata.h"
 
 class cImage;
 class cSavedReport;

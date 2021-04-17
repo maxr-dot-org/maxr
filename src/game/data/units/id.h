@@ -17,26 +17,41 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_menu_widgets_special_reportdisadvantageslistviewitemH
-#define ui_graphical_menu_widgets_special_reportdisadvantageslistviewitemH
+#ifndef game_data_units_idH
+#define game_data_units_idH
 
-#include "ui/graphical/menu/widgets/abstractlistviewitem.h"
-#include "game/data/units/id.h"
+#include "utility/serialization/serialization.h"
 
-class cReportDisadvantagesListViewItem : public cAbstractListViewItem
+#include <string>
+
+struct sID
 {
+	sID() : firstPart(0), secondPart(0) {}
+	sID(int first, int second) : firstPart(first), secondPart(second) {}
+
+	std::string getText() const;
+
+	bool isAVehicle() const { return firstPart == 0; }
+	bool isABuilding() const { return firstPart == 1; }
+
+	bool operator== (const sID& ID) const;
+	bool operator!= (const sID& rhs) const { return !(*this == rhs); }
+	bool operator< (const sID& rhs) const { return less_vehicleFirst(rhs); }
+	bool less_vehicleFirst(const sID& ID) const;
+	bool less_buildingFirst(const sID& ID) const;
+
+	uint32_t getChecksum(uint32_t crc) const;
+
+	template<typename T>
+	void serialize(T& archive)
+	{
+		archive & NVP(firstPart);
+		archive & NVP(secondPart);
+	}
+
 public:
-	static const int unitImageWidth;
-	static const int unitImageHeight;
-	static const int unitNameWidth;
-	static const int casualityLabelWidth;
-	static const int maxItemsInRow;
-
-	cReportDisadvantagesListViewItem (const cStaticUnitData& data, std::vector<int> disadvantages);
-
-protected:
-	sID unitId;
-	std::vector<int> disadvantages;
+	int firstPart;
+	int secondPart;
 };
 
-#endif // ui_graphical_menu_widgets_special_reportdisadvantageslistviewitemH
+#endif

@@ -21,7 +21,7 @@
 #define game_data_reports_special_savedreportupgradedH
 
 #include "game/data/report/savedreport.h"
-#include "game/data/units/unitdata.h" // sID
+#include "game/data/units/id.h"
 
 class cSavedReportUpgraded : public cSavedReport
 {

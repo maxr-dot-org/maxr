@@ -17,26 +17,43 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_menu_widgets_special_reportdisadvantageslistviewitemH
-#define ui_graphical_menu_widgets_special_reportdisadvantageslistviewitemH
+#include "id.h"
 
-#include "ui/graphical/menu/widgets/abstractlistviewitem.h"
-#include "game/data/units/id.h"
+#include "utility/crc.h"
 
-class cReportDisadvantagesListViewItem : public cAbstractListViewItem
+#include <3rd/tinyxml2/tinyxml2.h>
+
+//------------------------------------------------------------------------------
+std::string sID::getText() const
 {
-public:
-	static const int unitImageWidth;
-	static const int unitImageHeight;
-	static const int unitNameWidth;
-	static const int casualityLabelWidth;
-	static const int maxItemsInRow;
+	char tmp[6];
+	TIXML_SNPRINTF(tmp, sizeof(tmp), "%.2d %.2d", firstPart, secondPart);
+	return tmp;
+}
 
-	cReportDisadvantagesListViewItem (const cStaticUnitData& data, std::vector<int> disadvantages);
+//------------------------------------------------------------------------------
+bool sID::less_buildingFirst(const sID& ID) const
+{
+	return firstPart == ID.firstPart ? secondPart < ID.secondPart : firstPart > ID.firstPart;
+}
 
-protected:
-	sID unitId;
-	std::vector<int> disadvantages;
-};
+//------------------------------------------------------------------------------
+uint32_t sID::getChecksum(uint32_t crc) const
+{
+	crc = calcCheckSum(firstPart, crc);
+	crc = calcCheckSum(secondPart, crc);
 
-#endif // ui_graphical_menu_widgets_special_reportdisadvantageslistviewitemH
+	return crc;
+}
+
+//------------------------------------------------------------------------------
+bool sID::less_vehicleFirst(const sID& ID) const
+{
+	return firstPart == ID.firstPart ? secondPart < ID.secondPart : firstPart < ID.firstPart;
+}
+
+//------------------------------------------------------------------------------
+bool sID::operator == (const sID& ID) const
+{
+	return firstPart == ID.firstPart && secondPart == ID.secondPart;
+}

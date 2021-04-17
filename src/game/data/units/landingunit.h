@@ -20,7 +20,7 @@
 #ifndef game_data_units_landingunitH
 #define game_data_units_landingunitH
 
-#include "game/data/units/unitdata.h" // sID
+#include "game/data/units/id.h"
 
 struct sLandingUnit
 {

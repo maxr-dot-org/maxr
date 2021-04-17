@@ -30,54 +30,6 @@
 #include <algorithm>
 
 //------------------------------------------------------------------------------
-// ----------- sID Implementation ----------------------------------------------
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-std::string sID::getText() const
-{
-	char tmp[6];
-	TIXML_SNPRINTF(tmp, sizeof(tmp), "%.2d %.2d", firstPart, secondPart);
-	return tmp;
-}
-
-//------------------------------------------------------------------------------
-void sID::generate(const std::string& text)
-{
-	const std::string::size_type spacePos = text.find(" ", 0);
-	firstPart = atoi(text.substr(0, spacePos).c_str());
-	secondPart = atoi(text.substr(spacePos, text.length()).c_str());
-}
-
-//------------------------------------------------------------------------------
-bool sID::less_buildingFirst(const sID& ID) const
-{
-	return firstPart == ID.firstPart ? secondPart < ID.secondPart : firstPart > ID.firstPart;
-}
-
-//------------------------------------------------------------------------------
-uint32_t sID::getChecksum(uint32_t crc) const
-{
-	crc = calcCheckSum(firstPart, crc);
-	crc = calcCheckSum(secondPart, crc);
-
-	return crc;
-}
-
-//------------------------------------------------------------------------------
-bool sID::less_vehicleFirst(const sID& ID) const
-{
-	return firstPart == ID.firstPart ? secondPart < ID.secondPart : firstPart < ID.firstPart;
-}
-
-//------------------------------------------------------------------------------
-bool sID::operator == (const sID& ID) const
-{
-	if (firstPart == ID.firstPart && secondPart == ID.secondPart) return true;
-	return false;
-}
-
-//------------------------------------------------------------------------------
 cUnitsData::cUnitsData() :
 	crcCache(0),
 	crcValid(false)

@@ -24,51 +24,13 @@
 #include <utility>
 #include <vector>
 
+#include "game/data/units/id.h"
 #include "game/data/resourcetype.h"
 
 #include "utility/signal/signal.h"
 #include "utility/serialization/serialization.h"
 
 class cClanData;
-
-
-struct sID
-{
-	sID() : firstPart(0), secondPart(0) {}
-	sID(int first, int second) : firstPart(first), secondPart(second) {}
-
-	std::string getText() const;
-	void generate(const std::string& text);
-
-	bool isAVehicle() const { return firstPart == 0; }
-	bool isABuilding() const { return firstPart == 1; }
-
-	/** Get the basic version of a unit.
-	* @param Owner If Owner is given, his clan will be taken
-	*        into consideration for modifications of the unit's values.
-	* @return the sUnitData of the owner without upgrades
-	*         (but with the owner's clan modifications) */
-	//const sUnitData* getUnitDataOriginalVersion (const cPlayer* Owner = nullptr) const;
-
-	bool operator== (const sID& ID) const;
-	bool operator!= (const sID& rhs) const { return !(*this == rhs); }
-	bool operator< (const sID& rhs) const { return less_vehicleFirst(rhs); }
-	bool less_vehicleFirst(const sID& ID) const;
-	bool less_buildingFirst(const sID& ID) const;
-
-	uint32_t getChecksum(uint32_t crc) const;
-
-	template<typename T>
-	void serialize(T& archive)
-	{
-		archive & NVP(firstPart);
-		archive & NVP(secondPart);
-	}
-
-public:
-	int firstPart;
-	int secondPart;
-};
 
 enum class eMuzzleType
 {

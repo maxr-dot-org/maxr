@@ -65,6 +65,17 @@ cLanguage lngPack;
 #define XNP_MAX_LANG_FILE_TEXT_MAIN "MAX_Language_File", "Text", "Main"
 #define XNP_MAX_LANG_FILE_TEXT_ERROR_MSG "MAX_Language_File", "Text", "Error_Messages"
 
+namespace
+{
+	//--------------------------------------------------------------------------
+	sID generateID(const std::string& text)
+	{
+		const std::string::size_type spacePos = text.find(" ", 0);
+		auto firstPart = atoi(text.substr(0, spacePos).c_str());
+		auto secondPart = atoi(text.substr(spacePos, text.length()).c_str());
+		return {firstPart, secondPart};
+	}
+}
 
 cLanguage::cLanguage() :
 	m_bLeftToRight (true),
@@ -292,8 +303,7 @@ std::string cLanguage::getUnitName(const sID& id) const
 		const char* value = xmlElement->Attribute("ID");
 		if (value == nullptr) continue;
 
-		sID elementID;
-		elementID.generate(value);
+		sID elementID = generateID (value);
 
 		if (elementID == id)
 		{
@@ -322,8 +332,7 @@ std::string cLanguage::getUnitDescription(const sID& id) const
 		const char* value = xmlElement->Attribute("ID");
 		if (value == nullptr) continue;
 
-		sID elementID;
-		elementID.generate(value);
+		sID elementID = generateID (value);
 
 		if (elementID == id)
 		{
