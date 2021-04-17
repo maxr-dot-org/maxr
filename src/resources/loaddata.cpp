@@ -65,7 +65,6 @@
 # include <shlobj.h>
 #endif
 
-using namespace std;
 using namespace tinyxml2;
 
 /**
@@ -78,7 +77,7 @@ static void MakeLog (const std::string& sTxt, int ok, int pos)
 {
 	if (DEDICATED_SERVER)
 	{
-		cout << sTxt << endl;
+		std::cout << sTxt << std::endl;
 		return;
 	}
 	const auto& font = cUnicodeFont::font.get();
@@ -103,6 +102,26 @@ static void MakeLog (const std::string& sTxt, int ok, int pos)
 	// so that Video.draw() can be called in main thread.
 }
 
+//------------------------------------------------------------------------------
+void debugTranslationSize (const cLanguage& language, const cUnicodeFont& font)
+{
+	std::regex reg{".*_([0-9]+)"};
+	for (const auto& p : language.getAllTranslations())
+	{
+		std::smatch res;
+
+		if (std::regex_match (p.first, res, reg)) {
+			std::size_t maxSize = std::stoi(res[1]);
+			const char referenceLetter = 'a';
+
+			if (font.getTextWide (std::string (maxSize, referenceLetter)) < font.getTextWide (p.second))
+			{
+				Log.write ("Maybe too long string for " + p.first + ": " + p.second, cLog::eLOG_TYPE_WARNING);
+			}
+		}
+	}
+}
+
 /**
  * Loads the selected languagepack
  * @return 1 on success
@@ -124,22 +143,7 @@ static int LoadLanguage()
 	}
 	if (cSettings::getInstance().isDebug() && !DEDICATED_SERVER)
 	{
-		const auto& font = *cUnicodeFont::font;
-		std::regex reg{".*_([0-9]+)"};
-		for (const auto& p : lngPack.getAllTranslations())
-		{
-			std::smatch res;
-
-			if (std::regex_match (p.first, res, reg)) {
-				std::size_t maxSize = std::stoi(res[1]);
-				const char referenceLetter = 'a';
-
-				if (font.getTextWide (std::string (maxSize, referenceLetter)) < font.getTextWide (p.second))
-				{
-					Log.write ("Maybe too long string for " + p.first + ": " + p.second, cLog::eLOG_TYPE_WARNING);
-				}
-			}
-		}
+		debugTranslationSize (lngPack, *cUnicodeFont::font);
 	}
 	return 1;
 }
@@ -153,7 +157,7 @@ static int LoadLanguage()
  */
 static int LoadGraphicToSurface (AutoSurface& dest, const char* directory, const char* filename)
 {
-	string filepath;
+	std::string filepath;
 	if (strcmp (directory, ""))
 	{
 		filepath = directory;
@@ -313,7 +317,7 @@ static void Split(const std::string& s, const char* seps, std::vector<std::strin
 	size_t beg = 0;
 	size_t end = s.find_first_of(seps, beg);
 
-	while (end != string::npos)
+	while (end != std::string::npos)
 	{
 		words.push_back(s.substr(beg, end - beg));
 		beg = end + 1;
@@ -330,7 +334,7 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 {
 	tinyxml2::XMLDocument unitDataXml;
 
-	string path = directory;
+	std::string path = directory;
 	path += "data.xml";
 	if (!FileExists (path.c_str())) return ;
 
@@ -340,12 +344,12 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 		return ;
 	}
 	// Read minimal game version
-	string gameVersion = getXMLAttributeString (unitDataXml, "text", "Unit", {"Header", "Game_Version"});
+	std::string gameVersion = getXMLAttributeString (unitDataXml, "text", "Unit", {"Header", "Game_Version"});
 
 	//TODO check game version
 
 	//read id
-	string idString = getXMLAttributeString (unitDataXml, "ID", "Unit", {});
+	std::string idString = getXMLAttributeString (unitDataXml, "ID", "Unit", {});
 	char szTmp[100];
 	// check whether the id exists twice
 	sID id;
@@ -383,7 +387,7 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	{
 		std::string description(XMLElement->GetText());
 		size_t pos;
-		while ((pos = description.find("\\n")) != string::npos)
+		while ((pos = description.find("\\n")) != std::string::npos)
 		{
 			description.replace(pos, 2, "\n");
 		}
@@ -391,7 +395,7 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	}
 
 	// Weapon
-	string muzzleType = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Weapon", "Muzzle_Type"});
+	std::string muzzleType = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Weapon", "Muzzle_Type"});
 	if (muzzleType.compare ("Big") == 0) staticData.muzzleType = cStaticUnitData::MUZZLE_TYPE_BIG;
 	else if (muzzleType.compare("Rocket") == 0) staticData.muzzleType = cStaticUnitData::MUZZLE_TYPE_ROCKET;
 	else if (muzzleType.compare("Small") == 0) staticData.muzzleType = cStaticUnitData::MUZZLE_TYPE_SMALL;
@@ -477,7 +481,7 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	staticData.isStealthOn = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Is_Stealth_On"});
 	staticData.canDetectStealthOn = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Can_Detect_Stealth_On"});
 
-	string surfacePosString = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Abilities", "Surface_Position"});
+	std::string surfacePosString = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Abilities", "Surface_Position"});
 	if (surfacePosString.compare("BeneathSea") == 0)staticData.surfacePosition = cStaticUnitData::SURFACE_POS_BENEATH_SEA;
 	else if (surfacePosString.compare("AboveSea") == 0) staticData.surfacePosition = cStaticUnitData::SURFACE_POS_ABOVE_SEA;
 	else if (surfacePosString.compare("Base") == 0) staticData.surfacePosition = cStaticUnitData::SURFACE_POS_BASE;
@@ -485,7 +489,7 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	else if (surfacePosString.compare("Above") == 0) staticData.surfacePosition = cStaticUnitData::SURFACE_POS_ABOVE;
 	else staticData.surfacePosition = cStaticUnitData::SURFACE_POS_GROUND;
 
-	string overbuildString = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Abilities", "Can_Be_Overbuild"});
+	std::string overbuildString = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Abilities", "Can_Be_Overbuild"});
 	if (overbuildString.compare ("Yes") == 0) staticData.canBeOverbuild = cStaticUnitData::OVERBUILD_TYPE_YES;
 	else if (overbuildString.compare ("YesNRemove") == 0) staticData.canBeOverbuild = cStaticUnitData::OVERBUILD_TYPE_YESNREMOVE;
 	else staticData.canBeOverbuild = cStaticUnitData::OVERBUILD_TYPE_NO;
@@ -498,7 +502,7 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	// Storage
 	staticData.storageResMax = getXMLAttributeInt(unitDataXml, "Unit", {"Storage", "Capacity_Resources"});
 
-	string storeResString = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Storage", "Capacity_Res_Type"});
+	std::string storeResString = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Storage", "Capacity_Res_Type"});
 	if (storeResString.compare("Metal") == 0) staticData.storeResType = eResourceType::Metal;
 	else if (storeResString.compare("Oil") == 0) staticData.storeResType = eResourceType::Oil;
 	else if (storeResString.compare("Gold") == 0) staticData.storeResType = eResourceType::Gold;
@@ -506,14 +510,14 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 
 	staticData.storageUnitsMax = getXMLAttributeInt(unitDataXml, "Unit", {"Storage", "Capacity_Units"});
 
-	string storeUnitImgString = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Storage", "Capacity_Units_Image_Type"});
+	std::string storeUnitImgString = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Storage", "Capacity_Units_Image_Type"});
 	if (storeUnitImgString.compare("Plane") == 0) staticData.storeUnitsImageType = cStaticUnitData::STORE_UNIT_IMG_PLANE;
 	else if (storeUnitImgString.compare("Human") == 0) staticData.storeUnitsImageType = cStaticUnitData::STORE_UNIT_IMG_HUMAN;
 	else if (storeUnitImgString.compare("Tank") == 0) staticData.storeUnitsImageType = cStaticUnitData::STORE_UNIT_IMG_TANK;
 	else if (storeUnitImgString.compare("Ship") == 0) staticData.storeUnitsImageType = cStaticUnitData::STORE_UNIT_IMG_SHIP;
 	else staticData.storeUnitsImageType = cStaticUnitData::STORE_UNIT_IMG_TANK;
 
-	string storeUnitsString = getXMLAttributeString (unitDataXml, "String", "Unit", {"Storage", "Capacity_Units_Type"});
+	std::string storeUnitsString = getXMLAttributeString (unitDataXml, "String", "Unit", {"Storage", "Capacity_Units_Type"});
 	Split(storeUnitsString, "+", staticData.storeUnitsTypes);
 
 	staticData.isStorageType = getXMLAttributeString(unitDataXml, "String", "Unit", {"Storage", "Is_Storage_Type"});
@@ -533,8 +537,8 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
  */
 static int LoadSoundfile (cSoundChunk& dest, const char* directory, const char* filename, bool localize = false)
 {
-	string filepath;
-	string fullPath;
+	std::string filepath;
+	std::string fullPath;
 	if (strcmp (directory, ""))
 	{
 		filepath = directory;
@@ -570,13 +574,13 @@ static int LoadSoundfile (cSoundChunk& dest, const char* directory, const char* 
  */
 static void LoadUnitSoundfile (cSoundChunk& dest, const char* directory, const char* filename)
 {
-	string filepath;
+	std::string filepath;
 	if (strcmp (directory, ""))
 		filepath += directory;
 	filepath += filename;
 	if (SoundData.DummySound.empty())
 	{
-		string sTmpString;
+		std::string sTmpString;
 		sTmpString = cSettings::getInstance().getSoundsPath() + PATH_DELIMITER + "dummy.ogg";
 		if (FileExists (sTmpString.c_str()))
 		{
@@ -607,7 +611,7 @@ static void LoadUnitGraphicProperties (sBuildingUIData& data, char const* direct
 {
 	tinyxml2::XMLDocument unitGraphicsXml;
 
-	string path = directory;
+	std::string path = directory;
 	path += "graphics.xml";
 	if (!FileExists(path.c_str())) return;
 
@@ -638,7 +642,7 @@ static int LoadBuildings()
 	Log.write ("Loading Buildings", cLog::eLOG_TYPE_INFO);
 
 	// read buildings.xml
-	string sTmpString = cSettings::getInstance().getBuildingsPath();
+	std::string sTmpString = cSettings::getInstance().getBuildingsPath();
 	sTmpString += PATH_DELIMITER "buildings.xml";
 	if (!FileExists (sTmpString.c_str()))
 	{
@@ -671,7 +675,7 @@ static int LoadBuildings()
 		BuildingList.push_back (directory);
 	else
 	{
-		string msg = string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
+		std::string msg = std::string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
 		Log.write (msg, cLog::eLOG_TYPE_WARNING);
 	}
 
@@ -679,14 +683,14 @@ static int LoadBuildings()
 		IDList.push_back (xmlElement->IntAttribute ("num"));
 	else
 	{
-		string msg = string ("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node";
+		std::string msg = std::string ("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node";
 		Log.write (msg, cLog::eLOG_TYPE_WARNING);
 	}
 
 	const char* spezial = xmlElement->Attribute ("special");
 	if (spezial != nullptr)
 	{
-		string specialString = spezial;
+		std::string specialString = spezial;
 		if (specialString == "mine")            UnitsDataGlobal.setSpecialIDMine(sID(1, IDList.back()));
 		else if (specialString == "energy")     UnitsDataGlobal.setSpecialIDSmallGen(sID(1, IDList.back()));
 		else if (specialString == "connector")  UnitsDataGlobal.setSpecialIDConnector(sID(1, IDList.back()));
@@ -707,7 +711,7 @@ static int LoadBuildings()
 			BuildingList.push_back (directory);
 		else
 		{
-			string msg = string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
+			std::string msg = std::string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
 			Log.write (msg, cLog::eLOG_TYPE_WARNING);
 		}
 
@@ -715,14 +719,14 @@ static int LoadBuildings()
 			IDList.push_back (xmlElement->IntAttribute ("num"));
 		else
 		{
-			string msg = string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
+			std::string msg = std::string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
 			Log.write (msg, cLog::eLOG_TYPE_WARNING);
 		}
 
 		const char* spezial = xmlElement->Attribute ("special");
 		if (spezial != nullptr)
 		{
-			string specialString = spezial;
+			std::string specialString = spezial;
 			if      (specialString == "mine")       UnitsDataGlobal.setSpecialIDMine(sID(1, IDList.back()));
 			else if (specialString == "energy")     UnitsDataGlobal.setSpecialIDSmallGen(sID(1, IDList.back()));
 			else if (specialString == "connector")  UnitsDataGlobal.setSpecialIDConnector(sID(1, IDList.back()));
@@ -744,7 +748,7 @@ static int LoadBuildings()
 	UnitsUiData.buildingUIs.resize(BuildingList.size());
 	for (size_t i = 0; i != BuildingList.size(); ++i)
 	{
-		string sBuildingPath = cSettings::getInstance().getBuildingsPath();
+		std::string sBuildingPath = cSettings::getInstance().getBuildingsPath();
 		sBuildingPath += PATH_DELIMITER;
 		sBuildingPath += BuildingList[i];
 		sBuildingPath += PATH_DELIMITER;
@@ -878,7 +882,7 @@ static void LoadUnitGraphicProperties (sVehicleUIData& data, char const* directo
 {
 	tinyxml2::XMLDocument unitGraphicsXml;
 
-	string path = directory;
+	std::string path = directory;
 	path += "graphics.xml";
 	if (!FileExists(path.c_str())) return;
 
@@ -911,7 +915,7 @@ static int LoadVehicles()
 
 	tinyxml2::XMLDocument VehiclesXml;
 
-	string sTmpString = cSettings::getInstance().getVehiclesPath();
+	std::string sTmpString = cSettings::getInstance().getVehiclesPath();
 	sTmpString += PATH_DELIMITER "vehicles.xml";
 	if (!FileExists (sTmpString.c_str()))
 	{
@@ -939,7 +943,7 @@ static int LoadVehicles()
 			VehicleList.push_back (directory);
 		else
 		{
-			string msg = string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
+			std::string msg = std::string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
 			Log.write (msg, cLog::eLOG_TYPE_WARNING);
 		}
 
@@ -947,7 +951,7 @@ static int LoadVehicles()
 			IDList.push_back (xmlElement->IntAttribute ("num"));
 		else
 		{
-			string msg = string ("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node";
+			std::string msg = std::string ("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node";
 			Log.write (msg, cLog::eLOG_TYPE_WARNING);
 		}
 	}
@@ -964,7 +968,7 @@ static int LoadVehicles()
 			VehicleList.push_back (directory);
 		else
 		{
-			string msg = string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
+			std::string msg = std::string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
 			Log.write (msg, cLog::eLOG_TYPE_WARNING);
 		}
 
@@ -972,12 +976,12 @@ static int LoadVehicles()
 			IDList.push_back (xmlElement->IntAttribute ("num"));
 		else
 		{
-			string msg = string ("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node";
+			std::string msg = std::string ("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node";
 			Log.write (msg, cLog::eLOG_TYPE_WARNING);
 		}
 	}
 	// load found units
-	string sVehiclePath;
+	std::string sVehiclePath;
 	UnitsUiData.vehicleUIs.resize(VehicleList.size());
 	for (size_t i = 0; i != VehicleList.size(); ++i)
 	{
@@ -1320,7 +1324,7 @@ static int LoadClans()
 {
 	tinyxml2::XMLDocument clansXml;
 
-	string clansXMLPath = CLANS_XML;
+	std::string clansXMLPath = CLANS_XML;
 	if (!FileExists (clansXMLPath.c_str()))
 		return 0;
 	if (clansXml.LoadFile (clansXMLPath.c_str()) != XML_NO_ERROR)
@@ -1339,13 +1343,13 @@ static int LoadClans()
 	for (XMLElement* clanElement = xmlElement->FirstChildElement ("Clan"); clanElement; clanElement = clanElement->NextSiblingElement ("Clan"))
 	{
 		cClan* newClan = ClanDataGlobal.addClan();
-		string nameAttr = clanElement->Attribute ("Name");
+		std::string nameAttr = clanElement->Attribute ("Name");
 		newClan->setName (nameAttr);
 
 		const XMLElement* descriptionNode = clanElement->FirstChildElement ("Description");
 		if (descriptionNode)
 		{
-			string descriptionString = descriptionNode->GetText();
+			std::string descriptionString = descriptionNode->GetText();
 			newClan->setDescription (descriptionString);
 		}
 
@@ -1357,7 +1361,7 @@ static int LoadClans()
 				Log.write ("Couldn't read UnitID for ChangedUnitStat for clans", cLog::eLOG_TYPE_ERROR);
 				continue;
 			}
-			string idAttrStr (idAttr);
+			std::string idAttrStr (idAttr);
 			sID id;
 			id.firstPart = atoi (idAttrStr.substr (0, idAttrStr.find (" ", 0)).c_str());
 			id.secondPart = atoi (idAttrStr.substr (idAttrStr.find (" ", 0), idAttrStr.length()).c_str());
@@ -1366,7 +1370,7 @@ static int LoadClans()
 
 			for (XMLElement* modificationElement = statsElement->FirstChildElement(); modificationElement; modificationElement = modificationElement->NextSiblingElement())
 			{
-				string modName = modificationElement->Value();
+				std::string modName = modificationElement->Value();
 				if (modificationElement->Attribute ("Num"))
 				{
 					newStat->addModification (modName, modificationElement->IntAttribute ("Num"));
@@ -1390,7 +1394,7 @@ static int LoadMusic (const char* path)
 
 	// Prepare music.xml for reading
 	tinyxml2::XMLDocument MusicXml;
-	string sTmpString = path;
+	std::string sTmpString = path;
 	sTmpString += PATH_DELIMITER "music.xml";
 	if (!FileExists (sTmpString.c_str()))
 	{
@@ -1432,7 +1436,7 @@ static int LoadMusic (const char* path)
 		XMLElement* xmlElement = XmlGetFirstElement (MusicXml, "Music", {"Game", name.c_str()});
 		if (xmlElement && xmlElement->Attribute ("Text"))
 		{
-			name = string (path) + PATH_DELIMITER + xmlElement->Attribute ("Text");
+			name = std::string (path) + PATH_DELIMITER + xmlElement->Attribute ("Text");
 		}
 		else
 		{
@@ -1469,7 +1473,7 @@ eLoadingState LoadData()
 		Log.mark();
 	}
 
-	string sVersion = PACKAGE_NAME;
+	std::string sVersion = PACKAGE_NAME;
 	sVersion += " BUILD: ";
 	sVersion += MAX_BUILD_DATE; sVersion += " ";
 	sVersion += PACKAGE_REV;
@@ -1626,7 +1630,7 @@ eLoadingState LoadData()
  */
 static int LoadEffectGraphicToSurface (AutoSurface (&dest) [2], const char* directory, const char* filename)
 {
-	string filepath;
+	std::string filepath;
 	if (strcmp (directory, ""))
 	{
 		filepath = directory;
@@ -1652,7 +1656,7 @@ static int LoadEffectGraphicToSurface (AutoSurface (&dest) [2], const char* dire
 // Loads a effectgraphic as aplha to the surface:
 static int LoadEffectAlphaToSurface (AutoSurface (&dest) [2], const char* directory, const char* filename, int alpha)
 {
-	string filepath;
+	std::string filepath;
 	if (strcmp (directory, ""))
 	{
 		filepath = directory;
