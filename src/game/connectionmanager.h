@@ -98,7 +98,7 @@ private:
 	std::vector<INetMessageReceiver*> localClients; // Hotseat
 	INetMessageReceiver* localClient = nullptr;
 	INetMessageReceiver* localServer = nullptr;
-	mutable std::mutex mutex;
+	mutable std::recursive_mutex mutex;
 
 	int localPlayer = -1;
 	std::vector<std::pair<const cSocket*, int>> clientSockets;

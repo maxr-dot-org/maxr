@@ -78,7 +78,7 @@ int cConnectionManager::openServer(int port)
 {
 	assert(localServer != nullptr);
 
-	std::unique_lock<std::mutex> tl(mutex);
+	std::unique_lock<std::recursive_mutex> tl(mutex);
 
 	if (serverOpen) return -1;
 
@@ -95,7 +95,7 @@ int cConnectionManager::openServer(int port)
 //------------------------------------------------------------------------------
 void cConnectionManager::closeServer()
 {
-	std::unique_lock<std::mutex> tl(mutex);
+	std::unique_lock<std::recursive_mutex> tl(mutex);
 
 	if (!network || !serverOpen) return;
 
@@ -114,7 +114,7 @@ void cConnectionManager::acceptConnection(const cSocket* socket, int playerNr)
 {
 	assert(localServer != nullptr);
 
-	std::unique_lock<std::mutex> tl(mutex);
+	std::unique_lock<std::recursive_mutex> tl(mutex);
 
 	stopTimeout(socket);
 
@@ -147,7 +147,7 @@ void cConnectionManager::declineConnection (const cSocket* socket, eDeclineConne
 {
 	assert(localServer != nullptr);
 
-	std::unique_lock<std::mutex> tl(mutex);
+	std::unique_lock<std::recursive_mutex> tl(mutex);
 
 	stopTimeout(socket);
 
@@ -175,7 +175,7 @@ void cConnectionManager::connectToServer (const std::string& host, int port)
 {
 	assert(localClient != nullptr);
 
-	std::unique_lock<std::mutex> tl(mutex);
+	std::unique_lock<std::recursive_mutex> tl(mutex);
 
 	if (!network)
 		network = std::make_unique<cNetwork>(*this, mutex);
@@ -191,7 +191,7 @@ void cConnectionManager::connectToServer (const std::string& host, int port)
 bool cConnectionManager::isConnectedToServer() const
 {
 	if (localServer) return true;
-	std::unique_lock<std::mutex> tl(mutex);
+	std::unique_lock<std::recursive_mutex> tl(mutex);
 
 	return connecting || serverSocket != nullptr;
 }
@@ -201,7 +201,7 @@ void cConnectionManager::changePlayerNumber(int currentNr, int newNr)
 {
 	if (currentNr == newNr) return;
 	Log.write("Connection Manager: ChangePlayerNumber " + std::to_string(currentNr) + " to " + std::to_string(newNr), cLog::eLOG_TYPE_NET_DEBUG);
-	std::unique_lock<std::mutex> tl(mutex);
+	std::unique_lock<std::recursive_mutex> tl(mutex);
 
 	if (localPlayer == currentNr)
 	{
@@ -226,7 +226,7 @@ void cConnectionManager::changePlayerNumber(int currentNr, int newNr)
 //------------------------------------------------------------------------------
 void cConnectionManager::setLocalClient(INetMessageReceiver* client, int playerNr)
 {
-	std::unique_lock<std::mutex> tl(mutex);
+	std::unique_lock<std::recursive_mutex> tl(mutex);
 
 	//move pending messages in the event queue to new receiver
 	if (localClient && client)
@@ -244,7 +244,7 @@ void cConnectionManager::setLocalClient(INetMessageReceiver* client, int playerN
 //------------------------------------------------------------------------------
 void cConnectionManager::setLocalServer(INetMessageReceiver* server)
 {
-	std::unique_lock<std::mutex> tl(mutex);
+	std::unique_lock<std::recursive_mutex> tl(mutex);
 
 	//move pending messages in the event queue to new receiver
 	if (localServer && server)
@@ -267,7 +267,7 @@ void cConnectionManager::setLocalClients(std::vector<INetMessageReceiver*>&& cli
 //------------------------------------------------------------------------------
 void cConnectionManager::sendToServer(const cNetMessage& message)
 {
-	std::unique_lock<std::mutex> tl(mutex);
+	std::unique_lock<std::recursive_mutex> tl(mutex);
 
 	if (localServer)
 	{
@@ -286,7 +286,7 @@ void cConnectionManager::sendToServer(const cNetMessage& message)
 //------------------------------------------------------------------------------
 void cConnectionManager::sendToPlayer(const cNetMessage& message, int playerNr)
 {
-	std::unique_lock<std::mutex> tl(mutex);
+	std::unique_lock<std::recursive_mutex> tl(mutex);
 
 	if (playerNr == localPlayer)
 	{
@@ -313,7 +313,7 @@ void cConnectionManager::sendToPlayer(const cNetMessage& message, int playerNr)
 //------------------------------------------------------------------------------
 void cConnectionManager::sendToPlayers(const cNetMessage& message)
 {
-	std::unique_lock<std::mutex> tl(mutex);
+	std::unique_lock<std::recursive_mutex> tl(mutex);
 
 	if (localPlayer != -1)
 	{
@@ -338,7 +338,7 @@ void cConnectionManager::sendToPlayers(const cNetMessage& message)
 //------------------------------------------------------------------------------
 void cConnectionManager::disconnect(int player)
 {
-	std::unique_lock<std::mutex> tl(mutex);
+	std::unique_lock<std::recursive_mutex> tl(mutex);
 
 	auto x = ranges::find_if (clientSockets, [&](const std::pair<const cSocket*, int>& x) { return x.second == player; });
 	if (x == clientSockets.end())
@@ -353,7 +353,7 @@ void cConnectionManager::disconnect(int player)
 //------------------------------------------------------------------------------
 void cConnectionManager::disconnectAll()
 {
-	std::unique_lock<std::mutex> tl(mutex);
+	std::unique_lock<std::recursive_mutex> tl(mutex);
 
 	if (serverSocket)
 	{
@@ -605,7 +605,7 @@ void cConnectionManager::stopTimeout(const cSocket* socket)
 //------------------------------------------------------------------------------
 void cConnectionManager::handshakeTimeoutCallback(cHandshakeTimeout& timer)
 {
-	std::unique_lock<std::mutex> tl(mutex);
+	std::unique_lock<std::recursive_mutex> tl(mutex);
 
 	Log.write("ConnectionManager: Handshake timed out", cLog::eLOG_TYPE_NET_WARNING);
 

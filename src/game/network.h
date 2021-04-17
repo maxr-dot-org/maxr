@@ -63,7 +63,7 @@ public:
 class cNetwork
 {
 public:
-	cNetwork (cConnectionManager&, std::mutex&);
+	cNetwork (cConnectionManager&, std::recursive_mutex&);
 	~cNetwork();
 
 	int openServer(int port);
@@ -83,7 +83,7 @@ private:
 	void cleanupClosedSockets();
 
 private:
-	std::mutex& tcpMutex;
+	std::recursive_mutex& tcpMutex;
 
 	TCPsocket serverSocket;
 	std::vector<cSocket*> sockets;

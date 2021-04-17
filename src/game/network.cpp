@@ -81,7 +81,7 @@ void cDataBuffer::deleteFront (uint32_t n)
 //------------------------------------------------------------------------
 
 
-cNetwork::cNetwork (cConnectionManager& connectionManager, std::mutex& mutex) :
+cNetwork::cNetwork (cConnectionManager& connectionManager, std::recursive_mutex& mutex) :
 	tcpMutex (mutex),
 	serverSocket (nullptr),
 	socketSet (SDLNet_AllocSocketSet (MAX_TCP_CONNECTIONS)),
@@ -111,7 +111,7 @@ cNetwork::~cNetwork()
 //------------------------------------------------------------------------
 int cNetwork::openServer(int port)
 {
-	std::unique_lock<std::mutex> tl(tcpMutex);
+	std::unique_lock<std::recursive_mutex> tl(tcpMutex);
 
 	Log.write("Network: Open server on port: " + toString(port), cLog::eLOG_TYPE_NET_DEBUG);
 
@@ -136,7 +136,7 @@ int cNetwork::openServer(int port)
 //------------------------------------------------------------------------
 void cNetwork::closeServer()
 {
-	std::unique_lock<std::mutex> tl(tcpMutex);
+	std::unique_lock<std::recursive_mutex> tl(tcpMutex);
 
 	if (serverSocket == nullptr) return;
 
@@ -147,7 +147,7 @@ void cNetwork::closeServer()
 //------------------------------------------------------------------------
 void cNetwork::connectToServer(const std::string& ip, int port)
 {
-	std::unique_lock<std::mutex> tl(tcpMutex);
+	std::unique_lock<std::recursive_mutex> tl(tcpMutex);
 
 	if (!connectToIp.empty())
 	{
@@ -163,7 +163,7 @@ void cNetwork::connectToServer(const std::string& ip, int port)
 //------------------------------------------------------------------------
 void cNetwork::close(const cSocket* socket)
 {
-	std::unique_lock<std::mutex> tl(tcpMutex);
+	std::unique_lock<std::recursive_mutex> tl(tcpMutex);
 
 	if (!Contains(sockets, socket))
 	{
@@ -182,7 +182,7 @@ void cNetwork::close(const cSocket* socket)
 //------------------------------------------------------------------------
 int cNetwork::sendMessage(const cSocket* socket, unsigned int length, const unsigned char* buffer)
 {
-	std::unique_lock<std::mutex> tl(tcpMutex);
+	std::unique_lock<std::recursive_mutex> tl(tcpMutex);
 
 	if (!Contains(sockets, socket))
 	{
@@ -236,7 +236,7 @@ void cNetwork::handleNetworkThread()
 
 		if (readySockets > 0 || closingSockets.size() > 0 || !connectToIp.empty())
 		{
-			std::unique_lock<std::mutex> tl(tcpMutex);
+			std::unique_lock<std::recursive_mutex> tl(tcpMutex);
 
 			//handle incoming data
 			for (size_t i = 0; i < sockets.size();) // erease in loop
