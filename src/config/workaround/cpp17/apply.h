@@ -17,6 +17,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#ifndef config_workaround_cpp17_applyH
+#define config_workaround_cpp17_applyH
+
 #if __cplusplus < 201700
 
 #include <tuple>
@@ -41,8 +44,10 @@ namespace std
 			using Seq = std::make_index_sequence<std::tuple_size<std::decay_t<Tuple>>::value>;
 			return details::apply (func, std::forward<Tuple>(tuple), Seq{});
 		}
+
 	}
 
 }
 
+#endif
 #endif

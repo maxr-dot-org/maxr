@@ -20,11 +20,12 @@
 #ifndef ui_graphical_game_control_chatcommand_chatcommandexecutorH
 #define ui_graphical_game_control_chatcommand_chatcommandexecutorH
 
+#include <exception>
 #include <string>
 #include <sstream>
-#include <exception>
+#include <tuple>
 
-#include "config/workaround/c++17.h" // std::apply
+#include "config/workaround/cpp17/apply.h"
 
 class cChatCommand;
 
