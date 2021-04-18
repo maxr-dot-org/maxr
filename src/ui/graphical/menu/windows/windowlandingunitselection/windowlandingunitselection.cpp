@@ -34,16 +34,7 @@
 #include "utility/string/toString.h"
 
 #include <algorithm>
-
-namespace
-{
-	// TODO: replace by std::clamp in C++17
-	template <typename T>
-	const T& clamp(const T& value, const T& min, const T& max)
-	{
-		return std::max (min, std::min (value, max));
-	}
-}
+#include "config/workaround/cpp17/clamp.h"
 
 //------------------------------------------------------------------------------
 cWindowLandingUnitSelection::cWindowLandingUnitSelection (cRgbColor playerColor, int playerClan, const std::vector<std::pair<sID, int>>& initialUnits, unsigned int initialGold, std::shared_ptr<const cUnitsData> unitsData) :
@@ -337,7 +328,7 @@ std::pair<int, int> cWindowLandingUnitSelection::testBuyCargo (const cUnitListVi
 	auto it = fixedSelectedUnits.find (&unit);
 	const int min_cargo = (it != fixedSelectedUnits.end() ? it->second : 0);
 
-	amount = clamp (amount, min_cargo - unit.getCargo(), metalBar->getMaxValue() - unit.getCargo());
+	amount = std::clamp (amount, min_cargo - unit.getCargo(), metalBar->getMaxValue() - unit.getCargo());
 	auto price = amount / singleCreditResourceAmount; // may be negative (if we are selling)
 
 	if (goldBar->getValue() - price < goldBar->getMinValue())
