@@ -33,6 +33,7 @@
 #include "ui/graphical/game/control/chatcommand/chatcommandarguments.h"
 #include "ui/graphical/game/widgets/gamemapwidget.h"
 #include "ui/graphical/game/animations/animation.h"
+#include "ui/graphical/playercolor.h"
 #include "utility/indexiterator.h"
 #include "utility/language.h"
 #include "utility/listhelpers.h"
@@ -210,7 +211,7 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 				SDL_BlitSurface (GraphicsData.gfx_player_ready.get(), &rDot, &destination, &rDotDest);
 			}
 
-			SDL_BlitSurface (playerList[i]->getColor().getTexture(), &rSrc, &destination, &rDest);
+			SDL_BlitSurface (cPlayerColor::getTexture (playerList[i]->getColor()), &rSrc, &destination, &rDest);
 			if (playerList[i].get() == &player)
 			{
 				std::string sTmpLine = " " + playerList[i]->getName() + ", nr: " + iToStr (playerList[i]->getId()) + " << you! ";

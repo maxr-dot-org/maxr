@@ -21,29 +21,29 @@
 #define ui_graphical_menu_windows_windowhangar_windowhangarH
 
 #include "ui/graphical/window.h"
+#include "utility/color.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/signal/signal.h"
 
+class cCheckBox;
 class cImage;
 class cLabel;
 class cPlayer;
-class cPlayerColor;
-class cCheckBox;
 class cPushButton;
 class cUnitDetails;
-template<typename T>
-class cListView;
 class cUnitListViewItemBuy;
 class cUnitsData;
-
 class cUnitUpgrade;
+
 struct sID;
+
+template<typename T> class cListView;
 
 class cWindowHangar : public cWindow
 {
 public:
-	cWindowHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, cPlayerColor playerColor, int playerClan);
-	cWindowHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, const cPlayer& player);
+	cWindowHangar (AutoSurface, std::shared_ptr<const cUnitsData>, cRgbColor playerColor, int playerClan);
+	cWindowHangar (AutoSurface, std::shared_ptr<const cUnitsData>, const cPlayer&);
 	~cWindowHangar();
 
 	cSignal<void ()> done;

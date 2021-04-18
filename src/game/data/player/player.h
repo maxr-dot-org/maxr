@@ -32,7 +32,7 @@
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/upgradecalculator.h"
-#include "playercolor.h"
+#include "utility/color.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 #include "utility/flatset.h"
@@ -84,7 +84,7 @@ public:
 	const std::string& getName() const { return name; }
 
 	bool isHuman() const { return true; } // only human players are implemented yet.
-	const cPlayerColor& getColor() const { return color; }
+	const cRgbColor& getColor() const { return color; }
 
 	int getId() const { return id; }
 
@@ -315,7 +315,7 @@ public:
 
 private:
 	std::string name;
-	cPlayerColor color;
+	cRgbColor color;
 	int id;
 
 	cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>> vehicles;

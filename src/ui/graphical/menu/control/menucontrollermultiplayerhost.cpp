@@ -280,5 +280,5 @@ void cMenuControllerMultiplayerHost::saveOptions()
 
 	cSettings::getInstance().setPlayerName (windowNetworkLobby->getLocalPlayer()->getName().c_str());
 	cSettings::getInstance().setPort (windowNetworkLobby->getPort());
-	cSettings::getInstance().setPlayerColor (windowNetworkLobby->getLocalPlayer()->getColor().getColor());
+	cSettings::getInstance().setPlayerColor (windowNetworkLobby->getLocalPlayer()->getColor());
 }

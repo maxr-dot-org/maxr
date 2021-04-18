@@ -23,15 +23,14 @@
 #include "ui/graphical/menu/windows/windowhangar/windowhangar.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/unitlistviewitembuy.h"
-
-#include "game/data/player/playercolor.h"
+#include "utility/color.h"
 
 template<typename SelectedUnitItemType>
 class cWindowAdvancedHangar : public cWindowHangar
 {
 public:
-	cWindowAdvancedHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, cPlayerColor playerColor, int playerClan);
-	cWindowAdvancedHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, const cPlayer& player);
+	cWindowAdvancedHangar (AutoSurface, std::shared_ptr<const cUnitsData>, cRgbColor playerColor, int playerClan);
+	cWindowAdvancedHangar (AutoSurface, std::shared_ptr<const cUnitsData>, const cPlayer&);
 	~cWindowAdvancedHangar();
 
 protected:
@@ -65,7 +64,7 @@ private:
 
 //------------------------------------------------------------------------------
 template<typename SelectedUnitItemType>
-cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, cPlayerColor playerColor, int playerClan) :
+cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, cRgbColor playerColor, int playerClan) :
 	cWindowHangar (std::move (surface), unitsData, playerColor, playerClan)
 {
 	initialize();

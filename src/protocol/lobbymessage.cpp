@@ -504,10 +504,10 @@ cMuMsgCanceledMapDownload::cMuMsgCanceledMapDownload() {}
 cMuMsgCanceledMapDownload::cMuMsgCanceledMapDownload(cBinaryArchiveOut& archive) {}
 
 //------------------------------------------------------------------------------
-cMuMsgIdentification::cMuMsgIdentification(const cPlayerBasicData& player) :
-	playerName(player.getName()),
-	playerColor(player.getColor().getColor()),
-	ready(player.isReady())
+cMuMsgIdentification::cMuMsgIdentification (const cPlayerBasicData& player) :
+	playerName (player.getName()),
+	playerColor (player.getColor()),
+	ready (player.isReady())
 {}
 
 cMuMsgIdentification::cMuMsgIdentification(cBinaryArchiveOut& archive)

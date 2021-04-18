@@ -259,7 +259,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	{
 		const cBox<cPosition> d (cPosition (destination.x + 1, destination.y + 1), cPosition (destination.x + 1 + (vehicle.getIsBig() ? 2 * destination.w - 1 : destination.w - 1), destination.y + 1 + (vehicle.getIsBig() ? 2 * destination.h - 1 : destination.h - 1)));
 
-		drawRectangle (*cVideo::buffer, d, vehicle.getOwner()->getColor().getColor());
+		drawRectangle (*cVideo::buffer, d, vehicle.getOwner()->getColor());
 	}
 
 	// draw the group selected frame if necessary

@@ -22,6 +22,7 @@
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "output/video/video.h"
+#include "ui/graphical/playercolor.h"
 #include "utility/mathtools.h"
 
 namespace
@@ -127,7 +128,7 @@ void sBuildingUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest,
 	}
 
 	// blit the players color and building graphic
-	if (hasPlayerColor && owner) SDL_BlitSurface(owner->getColor().getTexture(), nullptr, GraphicsData.gfx_tmp.get(), nullptr);
+	if (hasPlayerColor && owner) SDL_BlitSurface (cPlayerColor::getTexture (owner->getColor()), nullptr, GraphicsData.gfx_tmp.get(), nullptr);
 	else SDL_FillRect (GraphicsData.gfx_tmp.get(), nullptr, 0x00FF00FF);
 
 	if (hasFrames)

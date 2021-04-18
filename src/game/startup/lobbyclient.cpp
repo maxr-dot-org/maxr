@@ -188,7 +188,7 @@ void cLobbyClient::tryToSwitchReadyState()
 }
 
 //------------------------------------------------------------------------------
-void cLobbyClient::changeLocalPlayerProperties (const std::string& name, cPlayerColor color, bool ready)
+void cLobbyClient::changeLocalPlayerProperties (const std::string& name, cRgbColor color, bool ready)
 {
 	const auto old = localPlayer;
 	localPlayer.setName (name);
@@ -348,7 +348,7 @@ void cLobbyClient::handleNetMessage_TCP_HELLO (const cNetMessageTcpHello& messag
 
 	cNetMessageTcpWantConnect response;
 	response.playerName = localPlayer.getName();
-	response.playerColor = localPlayer.getColor().getColor();
+	response.playerColor = localPlayer.getColor();
 	response.ready = localPlayer.isReady();
 	sendNetMessage (response);
 }

@@ -36,6 +36,7 @@
 #include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
 #include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
 #include "ui/graphical/menu/windows/windowplayerselection/windowplayerselection.h"
+#include "ui/graphical/playercolor.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------
@@ -139,7 +140,7 @@ void cMenuControllerMultiplayerHotSeat::selectPlayers()
 		{
 			if (playerTypes[i] == ePlayerType::Human)
 			{
-				cPlayerBasicData player (playerNames[i], cPlayerColor (cPlayerColor::predefinedColors[i]), playerNum++, false);
+				cPlayerBasicData player (playerNames[i], cPlayerColor::predefinedColors[i], playerNum++, false);
 				players.push_back (player);
 			}
 		}

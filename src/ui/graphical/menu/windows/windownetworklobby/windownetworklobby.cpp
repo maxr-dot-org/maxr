@@ -39,6 +39,7 @@
 #include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
 #include "ui/graphical/menu/widgets/special/lobbyplayerlistviewitem.h"
 #include "ui/graphical/menu/widgets/tools/validatorint.h"
+#include "ui/graphical/playercolor.h"
 #include "utility/language.h"
 #include "utility/string/toString.h"
 
@@ -121,10 +122,10 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 
 		if (!application) return;
 
-		auto dialog = application->show (std::make_shared<cDialogColorPicker> (localPlayer->getColor().getColor()));
+		auto dialog = application->show (std::make_shared<cDialogColorPicker> (localPlayer->getColor()));
 		dialog->done.connect ([this, dialog]()
 		{
-			localPlayer->setColor (cPlayerColor (dialog->getSelectedColor()));
+			localPlayer->setColor (dialog->getSelectedColor());
 			dialog->close();
 		});
 		dialog->canceled.connect ([dialog]() { dialog->close(); });
@@ -132,14 +133,14 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	auto nextColorButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (596, 256), ePushButtonType::ArrowRightSmall, &SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (nextColorButton->clicked, [this]()
 	{
-		const auto localPlayerColorIndex = (cPlayerColor::findClosestPredefinedColor (localPlayer->getColor().getColor()) + 1) % cPlayerColor::predefinedColorsCount;
-		localPlayer->setColor (cPlayerColor (cPlayerColor::predefinedColors[localPlayerColorIndex]));
+		const auto localPlayerColorIndex = (cPlayerColor::findClosestPredefinedColor (localPlayer->getColor()) + 1) % cPlayerColor::predefinedColorsCount;
+		localPlayer->setColor (cPlayerColor::predefinedColors[localPlayerColorIndex]);
 	});
 	auto prevColorButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (478, 256), ePushButtonType::ArrowLeftSmall, &SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (prevColorButton->clicked, [this]()
 	{
-		const auto localPlayerColorIndex = (cPlayerColor::findClosestPredefinedColor (localPlayer->getColor().getColor()) + cPlayerColor::predefinedColorsCount - 1) % cPlayerColor::predefinedColorsCount;
-		localPlayer->setColor (cPlayerColor (cPlayerColor::predefinedColors[localPlayerColorIndex]));
+		const auto localPlayerColorIndex = (cPlayerColor::findClosestPredefinedColor (localPlayer->getColor()) + cPlayerColor::predefinedColorsCount - 1) % cPlayerColor::predefinedColorsCount;
+		localPlayer->setColor (cPlayerColor::predefinedColors[localPlayerColorIndex]);
 	});
 
 	okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 450), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
@@ -397,7 +398,7 @@ void cWindowNetworkLobby::updatePlayerColor()
 {
 	SDL_Rect src = {0, 0, 83, 10};
 	AutoSurface colorSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
-	SDL_BlitSurface (localPlayer->getColor().getTexture(), &src, colorSurface.get(), nullptr);
+	SDL_BlitSurface (cPlayerColor::getTexture (localPlayer->getColor()), &src, colorSurface.get(), nullptr);
 	colorImage->setImage (colorSurface.get());
 }
 //------------------------------------------------------------------------------

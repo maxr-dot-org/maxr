@@ -22,6 +22,7 @@
 #include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
 #include "game/data/player/player.h"
+#include "game/data/player/playerbasicdata.h"
 #include "resources/buildinguidata.h"
 #include "resources/vehicleuidata.h"
 #include "ui/graphical/menu/widgets/label.h"
@@ -31,14 +32,13 @@
 #include "ui/graphical/menu/widgets/listview.h"
 #include "ui/graphical/menu/widgets/special/unitlistviewitembuy.h"
 #include "ui/graphical/menu/widgets/special/unitdetails.h"
-#include "game/data/player/playerbasicdata.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------
-cWindowHangar::cWindowHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, cPlayerColor playerColor, int playerClan) :
+cWindowHangar::cWindowHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, cRgbColor playerColor, int playerClan) :
 	cWindow (std::move (surface)),
 	unitsData (unitsData),
-	temporaryPlayer (new cPlayer (cPlayerBasicData ("unnamed", std::move (playerColor), 0, false), *unitsData)),
+	temporaryPlayer (new cPlayer (cPlayerBasicData ("unnamed", playerColor, 0, false), *unitsData)),
 	player (*temporaryPlayer)
 {
 	if (playerClan != -1) temporaryPlayer->setClan (playerClan, *unitsData);

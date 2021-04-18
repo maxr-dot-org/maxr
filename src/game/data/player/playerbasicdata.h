@@ -22,7 +22,7 @@
 
 #include <string>
 
-#include "game/data/player/playercolor.h"
+#include "utility/color.h"
 #include "utility/signal/signal.h"
 
 /**
@@ -34,14 +34,14 @@ public:
 	static cPlayerBasicData fromSettings();
 
 	cPlayerBasicData();
-	cPlayerBasicData (const std::string& name, cPlayerColor color, int nr, bool defeated);
-	cPlayerBasicData (const cPlayerBasicData& other);
-	cPlayerBasicData& operator= (const cPlayerBasicData& other);
+	cPlayerBasicData (const std::string& name, const cRgbColor& color, int nr, bool defeated);
+	cPlayerBasicData (const cPlayerBasicData&);
+	cPlayerBasicData& operator= (const cPlayerBasicData&);
 
 	const std::string& getName() const;
 	void setName (std::string name);
-	const cPlayerColor& getColor() const { return color; }
-	void setColor (cPlayerColor color);
+	const cRgbColor& getColor() const { return color; }
+	void setColor (cRgbColor color);
 	int getNr() const;
 	void setNr (int index);
 	void setReady (bool ready);
@@ -59,17 +59,17 @@ public:
 	mutable cSignal<void ()> isDefeatedChanged;
 
 	template <typename T>
-	void serialize(T& archive)
+	void serialize (T& archive)
 	{
-		archive & NVP(name);
-		archive & NVP(color);
-		archive & NVP(nr);
-		archive & NVP(ready);
-		archive & NVP(defeated);
+		archive & NVP (name);
+		archive & NVP (color);
+		archive & NVP (nr);
+		archive & NVP (ready);
+		archive & NVP (defeated);
 	}
 private:
 	std::string name;
-	cPlayerColor color;
+	cRgbColor color;
 	int nr;
 	bool ready;
 	bool defeated;

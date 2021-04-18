@@ -181,18 +181,18 @@ cSaveGameInfo cSavegame::loadSaveInfo(int slot)
 		info.players.resize(numPlayers);
 		for (int i = 0; i < numPlayers; i++)
 		{
-			archive.enterChild("player");
+			archive.enterChild ("player");
 			std::string name;
-			cPlayerColor color;
+			cRgbColor color;
 			int id;
 			bool isDefeated;
 
-			archive >> NVP(name);
-			archive >> NVP(color);
-			archive >> NVP(id);
-			archive >> NVP(isDefeated);
+			archive >> NVP (name);
+			archive >> NVP (color);
+			archive >> NVP (id);
+			archive >> NVP (isDefeated);
 
-			info.players[i] = cPlayerBasicData(name, color, id, isDefeated);
+			info.players[i] = cPlayerBasicData (name, color, id, isDefeated);
 
 			archive.leaveChild(); // player
 		}

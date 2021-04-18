@@ -24,6 +24,7 @@
 #include "game/data/player/player.h"
 #include "game/data/units/vehicle.h"
 #include "output/video/video.h"
+#include "ui/graphical/playercolor.h"
 #include "utility/mathtools.h"
 
 #include <cassert>
@@ -95,7 +96,7 @@ void sVehicleUIData::render_smallClearing (const cVehicle& vehicle, unsigned lon
 	src.y = 0;
 	src.h = src.w = (int) (clear_small_org->h * zoomFactor);
 	src.x = (animationTime % 4) * src.w;
-	SDL_BlitSurface (vehicle.getOwner()->getColor().getTexture(), nullptr, GraphicsData.gfx_tmp.get(), nullptr);
+	SDL_BlitSurface (cPlayerColor::getTexture (vehicle.getOwner()->getColor()), nullptr, GraphicsData.gfx_tmp.get(), nullptr);
 	blitWithPreScale (*clear_small_org, *clear_small, &src, *GraphicsData.gfx_tmp, nullptr, zoomFactor, 4);
 
 	// draw vehicle
@@ -129,7 +130,7 @@ void sVehicleUIData::render_BuildingOrBigClearing (const cVehicle& vehicle, cons
 	src.y = 0;
 	src.h = src.w = (int) (build_org->h * zoomFactor);
 	src.x = (animationTime % 4) * src.w;
-	SDL_BlitSurface (vehicle.getOwner()->getColor().getTexture(), nullptr, GraphicsData.gfx_tmp.get(), nullptr);
+	SDL_BlitSurface (cPlayerColor::getTexture (vehicle.getOwner()->getColor()), nullptr, GraphicsData.gfx_tmp.get(), nullptr);
 	blitWithPreScale (*build_org, *build, &src, *GraphicsData.gfx_tmp, nullptr, zoomFactor, 4);
 
 	// draw vehicle
@@ -146,7 +147,7 @@ void sVehicleUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest, 
 	// draw player color
 	if (owner)
 	{
-		SDL_Surface* src = owner->getColor().getTexture();
+		SDL_Surface* src = cPlayerColor::getTexture (owner->getColor());
 		SDL_Surface* dst = GraphicsData.gfx_tmp.get();
 		SDL_BlitSurface(src, nullptr, dst, nullptr);
 	}

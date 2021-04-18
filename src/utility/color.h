@@ -21,6 +21,7 @@
 #define utility_colorH
 
 #include <random>
+#include <tuple>
 
 #include "serialization/nvp.h"
 
@@ -80,6 +81,16 @@ public:
 	}
 };
 
+//------------------------------------------------------------------------------
+struct sLessRgbColor
+{
+	bool operator() (const cRgbColor& lhs, const cRgbColor& rhs) const
+	{
+		return std::tie (lhs.r, lhs.g, lhs.b, lhs.a) < std::tie (rhs.r, rhs.g, rhs.b, rhs.a);
+	}
+};
+
+//------------------------------------------------------------------------------
 class cHsvColor
 {
 public:
@@ -96,6 +107,7 @@ public:
 	unsigned char a;
 };
 
+//------------------------------------------------------------------------------
 class cLabColor
 {
 public:

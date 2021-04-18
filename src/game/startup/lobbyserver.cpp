@@ -335,7 +335,7 @@ void cLobbyServer::clientConnects (const cNetMessageTcpWantConnect& message)
 		if (message.packageVersion != PACKAGE_VERSION) return;
 	}
 
-	players.emplace_back(message.playerName, cPlayerColor(message.playerColor), nextPlayerNumber++, false);
+	players.emplace_back (message.playerName, message.playerColor, nextPlayerNumber++, false);
 	const auto& newPlayer = players.back();
 
 	connectionManager->acceptConnection (message.socket, newPlayer.getNr());
@@ -385,7 +385,7 @@ void cLobbyServer::changePlayerAttributes (const cMuMsgIdentification& message)
 	auto player = getPlayer(message.playerNr);
 	if (player == nullptr) return;
 
-	player->setColor (cPlayerColor (message.playerColor));
+	player->setColor (message.playerColor);
 	player->setName (message.playerName);
 	player->setReady (message.ready);
 

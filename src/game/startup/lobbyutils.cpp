@@ -27,11 +27,11 @@
 namespace
 {
 	//--------------------------------------------------------------------------
-	bool sameColor (const cPlayerColor& lhs, const cPlayerColor& rhs)
+	bool sameColor (const cRgbColor& lhs, const cRgbColor& rhs)
 	{
 		constexpr double colorDeltaETolerance = 10.;
 
-		return lhs.getColor().toLab().deltaE (rhs.getColor().toLab()) < colorDeltaETolerance;
+		return lhs.toLab().deltaE (rhs.toLab()) < colorDeltaETolerance;
 	}
 }
 

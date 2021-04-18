@@ -185,7 +185,7 @@ cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> play
 		std::string playerText = player->getName() + lngPack.i18n ("Text~Punctuation~Colon") + plural (player->getScore (turnClock->getTurn()), "Text~Comp~Point", "Text~Comp~Points") + ", " + plural (player->getNumEcoSpheres(), "Text~Comp~EcoSphere", "Text~Comp~EcoSpheres");
 
 		AutoSurface colorSurface (SDL_CreateRGBSurface (0, 8, 8, Video.getColDepth(), 0, 0, 0, 0));
-		SDL_FillRect (colorSurface.get(), nullptr, toMappedSdlRGBAColor (player->getColor().getColor(), colorSurface->format));
+		SDL_FillRect (colorSurface.get(), nullptr, toMappedSdlRGBAColor (player->getColor(), colorSurface->format));
 		scoreFrame->addChild (std::make_unique<cImage> (scoreFrame->getPosition() + cPosition (5, 20 + font->getFontHeight() * i), colorSurface.get()));
 
 		scoreFrame->addChild (std::make_unique<cLabel> (cBox<cPosition> (scoreFrame->getPosition() + cPosition (16, 20 + font->getFontHeight() * i), scoreFrame->getPosition() + cPosition (16 + 435, 20 + font->getFontHeight() * (i + 1))), playerText));
@@ -498,7 +498,7 @@ void cWindowReports::initializeScorePlot()
 	for (size_t i = 0; i < players.size(); ++i)
 	{
 		auto& graph = scorePlot->addGraph ([ = ] (int x) { return extrapolate (*players[i], turnClock->getTurn(), x); });
-		graph.setColor (players[i]->getColor().getColor());
+		graph.setColor (players[i]->getColor());
 	}
 
 	{

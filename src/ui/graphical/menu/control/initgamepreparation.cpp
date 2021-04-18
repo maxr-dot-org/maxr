@@ -116,7 +116,8 @@ void cInitGamePreparation::startLandingUnitSelection()
 	const auto& gameSettings = *lobbyPreparationData.gameSettings;
 	const auto unitsData = lobbyPreparationData.unitsData;
 	const auto initialLandingUnits = computeInitialLandingUnits (initPlayerData.clan, gameSettings, *unitsData);
-	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), initPlayerData.clan, initialLandingUnits, gameSettings.getStartCredits(), unitsData));
+	// TODO: use player color
+	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (cRgbColor(), initPlayerData.clan, initialLandingUnits, gameSettings.getStartCredits(), unitsData));
 	windows.push_back (windowLandingUnitSelection);
 
 	signalConnectionManager.connect (windowLandingUnitSelection->canceled, [this]() { back(); });

@@ -51,7 +51,7 @@ public:
 	void selectLoadGame (const cSaveGameInfo&);
 
 	void tryToSwitchReadyState();
-	void changeLocalPlayerProperties (const std::string& name, cPlayerColor, bool ready);
+	void changeLocalPlayerProperties (const std::string& name, cRgbColor, bool ready);
 
 	void askToFinishLobby();
 

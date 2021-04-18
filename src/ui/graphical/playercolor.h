@@ -17,55 +17,27 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_data_player_playercolorH
-#define game_data_player_playercolorH
+#ifndef ui_graphical_playercolorH
+#define ui_graphical_playercolorH
 
-#include <SDL.h>
 #include "utility/color.h"
 #include "SDLutility/autosurface.h"
-#include "utility/serialization/serialization.h"
+
+#include <SDL.h>
+
+#include <map>
 
 class cPlayerColor
 {
 public:
 	static const size_t predefinedColorsCount = 8;
 	static const cRgbColor predefinedColors[predefinedColorsCount];
-
 	static size_t findClosestPredefinedColor (const cRgbColor& color);
 
-	cPlayerColor();
-	explicit cPlayerColor (const cRgbColor& color);
-	cPlayerColor (const cPlayerColor& other);
-	cPlayerColor (cPlayerColor&& other);
+	static SDL_Surface* getTexture (const cRgbColor&);
 
-	cPlayerColor& operator= (const cPlayerColor& other);
-	cPlayerColor& operator= (cPlayerColor && other);
-
-	const cRgbColor& getColor() const;
-	SDL_Surface* getTexture() const;
-
-	bool operator== (const cPlayerColor& other) const;
-	bool operator!= (const cPlayerColor& other) const;
-
-	uint32_t getChecksum(uint32_t crc) const;
-
-	template<typename T>
-	void save(T& archive)
-	{
-		archive & NVP(color);
-	}
-	template<typename T>
-	void load(T& archive)
-	{
-		archive & NVP(color);
-		createTexture();
-	}
-	SERIALIZATION_SPLIT_MEMBER()
 private:
-	cRgbColor color;
-	AutoSurface texture;
-
-	void createTexture();
+	static std::map<cRgbColor, AutoSurface, sLessRgbColor> textures;
 };
 
-#endif // game_data_player_playercolorH
+#endif

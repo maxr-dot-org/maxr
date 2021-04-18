@@ -109,8 +109,8 @@ void cWindowSinglePlayer::newGameClicked()
 					game->setPlayerClan (windowClanSelection->getSelectedClan());
 
 					auto initialLandingUnits = computeInitialLandingUnits (windowClanSelection->getSelectedClan(), *gameSettings, *game->getUnitsData());
-
-					auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), windowClanSelection->getSelectedClan(), initialLandingUnits, gameSettings->getStartCredits(), game->getUnitsData()));
+					// TODO: use player color
+					auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cRgbColor(), windowClanSelection->getSelectedClan(), initialLandingUnits, gameSettings->getStartCredits(), game->getUnitsData()));
 
 					signalConnectionManager.connect (windowLandingUnitSelection->canceled, [windowLandingUnitSelection]() { windowLandingUnitSelection->close(); });
 					windowLandingUnitSelection->done.connect ([ = ]()
@@ -142,8 +142,8 @@ void cWindowSinglePlayer::newGameClicked()
 			else
 			{
 				auto initialLandingUnits = computeInitialLandingUnits (-1, *gameSettings, *game->getUnitsData());
-
-				auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), -1, initialLandingUnits, gameSettings->getStartCredits(), game->getUnitsData()));
+				// TODO: use player color
+				auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cRgbColor(), -1, initialLandingUnits, gameSettings->getStartCredits(), game->getUnitsData()));
 
 				signalConnectionManager.connect (windowLandingUnitSelection->canceled, [windowLandingUnitSelection]() { windowLandingUnitSelection->close(); });
 				windowLandingUnitSelection->done.connect ([ = ]()

@@ -25,6 +25,7 @@
 #include "SDLutility/tosdl.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
+#include "ui/graphical/playercolor.h"
 
 //------------------------------------------------------------------------------
 cPlayerLandingStatus::cPlayerLandingStatus (const cPlayerBasicData& player) :
@@ -138,7 +139,7 @@ void cChatBoxLandingPlayerListViewItem::updatePlayerColor()
 	SDL_Rect src = {0, 0, 10, 10};
 
 	AutoSurface colorSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
-	SDL_BlitSurface (playerLandingStatus.getPlayer().getColor().getTexture(), &src, colorSurface.get(), nullptr);
+	SDL_BlitSurface (cPlayerColor::getTexture (playerLandingStatus.getPlayer().getColor()), &src, colorSurface.get(), nullptr);
 
 	colorImage->setImage (colorSurface.get());
 }

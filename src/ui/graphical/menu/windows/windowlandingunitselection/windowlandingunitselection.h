@@ -38,7 +38,7 @@ struct sLandingUnit;
 class cWindowLandingUnitSelection : public cWindowAdvancedHangar<cUnitListViewItemCargo>
 {
 public:
-	cWindowLandingUnitSelection (cPlayerColor playerColor, int playerClan, const std::vector<std::pair<sID, int>>& initialUnits, unsigned int initialGold, std::shared_ptr<const cUnitsData> unitsData);
+	cWindowLandingUnitSelection (cRgbColor playerColor, int playerClan, const std::vector<std::pair<sID, int>>& initialUnits, unsigned int initialGold, std::shared_ptr<const cUnitsData> unitsData);
 	~cWindowLandingUnitSelection();
 
 	std::vector<sLandingUnit> getLandingUnits() const;

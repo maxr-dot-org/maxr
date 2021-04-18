@@ -34,8 +34,8 @@
 #include <3rd/tinyxml2/tinyxml2.h>
 
 #include "defines.h"
-#include "game/data/player/playercolor.h"
 #include "maxrversion.h"
+#include "ui/graphical/playercolor.h"
 #include "utility/extendedtinyxml.h"
 #include "utility/files.h"
 #include "utility/log.h"
@@ -1059,7 +1059,7 @@ void cSettings::initialize()
 		if (playerXmlElement && playerXmlElement->Attribute ("Num"))
 		{
 			const auto colorIndex = playerXmlElement->IntAttribute ("Num") % cPlayerColor::predefinedColorsCount;
-			playerColor = cRgbColor (cPlayerColor::predefinedColors[colorIndex]);
+			playerColor = cPlayerColor::predefinedColors[colorIndex];
 		}
 		else
 		{

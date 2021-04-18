@@ -27,23 +27,23 @@
 /*static*/ cPlayerBasicData cPlayerBasicData::fromSettings()
 {
 	const cSettings& settings = cSettings::getInstance();
-	return { settings.getPlayerName(), cPlayerColor (settings.getPlayerColor()), -1, false };
+	return { settings.getPlayerName(), settings.getPlayerColor(), -1, false };
 }
 
 //------------------------------------------------------------------------------
 cPlayerBasicData::cPlayerBasicData() :
-	nr(0),
-	ready(false),
-	defeated(false)
+	nr (0),
+	ready (false),
+	defeated (false)
 {}
 
 //------------------------------------------------------------------------------
-cPlayerBasicData::cPlayerBasicData (const std::string& name, cPlayerColor color, int nr, bool defeated) :
+cPlayerBasicData::cPlayerBasicData (const std::string& name, const cRgbColor& color, int nr, bool defeated) :
 	name (name),
-	color (std::move (color)),
+	color (color),
 	nr (nr),
 	ready (false),
-	defeated(defeated)
+	defeated (defeated)
 {}
 
 //------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ cPlayerBasicData::cPlayerBasicData (const cPlayerBasicData& other) :
 	color (other.color),
 	nr (other.nr),
 	ready (other.ready),
-	defeated(other.defeated)
+	defeated (other.defeated)
 {}
 
 //------------------------------------------------------------------------------
@@ -102,7 +102,7 @@ void cPlayerBasicData::setNr (int newNr)
 	if (newNr != nr) numberChanged();
 }
 //------------------------------------------------------------------------------
-void cPlayerBasicData::setColor (cPlayerColor color_)
+void cPlayerBasicData::setColor (cRgbColor color_)
 {
 	std::swap (color, color_);
 	if (color != color_) colorChanged();
@@ -122,9 +122,9 @@ bool cPlayerBasicData::isReady() const
 }
 
 //------------------------------------------------------------------------------
-void cPlayerBasicData::setDefeated(bool defeated_)
+void cPlayerBasicData::setDefeated (bool defeated_)
 {
-	std::swap(defeated_, defeated);
+	std::swap (defeated_, defeated);
 	if (defeated != defeated_) isDefeatedChanged();
 }
 
@@ -133,4 +133,3 @@ bool cPlayerBasicData::isDefeated() const
 {
 	return defeated;
 }
-
