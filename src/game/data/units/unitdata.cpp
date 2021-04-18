@@ -64,9 +64,7 @@ uint32_t sStaticVehicleData::computeChecksum (uint32_t crc) const
 }
 
 //------------------------------------------------------------------------------
-cUnitsData::cUnitsData() :
-	crcCache(0),
-	crcValid(false)
+cUnitsData::cUnitsData()
 {
 	rubbleBig.buildingData.isBig = true;
 	rubbleSmall.buildingData.isBig = false;
@@ -99,13 +97,13 @@ void cUnitsData::initializeIDData()
 	if (engineerID    == sID(0, 0)) Log.write("Engineer index not found. Engineer needs to have the property \"Can_Build = SmallBuilding\"", cLog::eLOG_TYPE_ERROR);
 	if (surveyorID    == sID(0, 0)) Log.write("Surveyor index not found. Surveyor needs to have the property \"Can_Survey = Yes\"", cLog::eLOG_TYPE_ERROR);
 
-	crcValid = false;
+	crcCache = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
 void cUnitsData::initializeClanUnitData(const cClanData& clanData)
 {
-	crcValid = false;
+	crcCache = std::nullopt;
 
 	clanDynamicUnitData.resize(clanData.getNrClans());
 
@@ -208,26 +206,24 @@ const std::vector<cStaticUnitData>& cUnitsData::getStaticUnitsData() const
 //------------------------------------------------------------------------------
 uint32_t cUnitsData::getChecksum(uint32_t crc) const
 {
-	if (!crcValid)
+	if (!crcCache)
 	{
 		crcCache = 0;
-		crcCache = calcCheckSum(constructorID, crcCache);
-		crcCache = calcCheckSum(engineerID, crcCache);
-		crcCache = calcCheckSum(surveyorID, crcCache);
-		crcCache = calcCheckSum(specialIDLandMine, crcCache);
-		crcCache = calcCheckSum(specialIDSeaMine, crcCache);
-		crcCache = calcCheckSum(specialIDMine, crcCache);
-		crcCache = calcCheckSum(specialIDSmallGen, crcCache);
-		crcCache = calcCheckSum(specialIDConnector, crcCache);
-		crcCache = calcCheckSum(specialIDSmallBeton, crcCache);
-		crcCache = calcCheckSum(staticUnitData, crcCache);
-		crcCache = calcCheckSum(dynamicUnitData, crcCache);
-		crcCache = calcCheckSum(clanDynamicUnitData, crcCache);
-
-		crcValid = true;
+		*crcCache = calcCheckSum (constructorID, *crcCache);
+		*crcCache = calcCheckSum (engineerID, *crcCache);
+		*crcCache = calcCheckSum (surveyorID, *crcCache);
+		*crcCache = calcCheckSum (specialIDLandMine, *crcCache);
+		*crcCache = calcCheckSum (specialIDSeaMine, *crcCache);
+		*crcCache = calcCheckSum (specialIDMine, *crcCache);
+		*crcCache = calcCheckSum (specialIDSmallGen, *crcCache);
+		*crcCache = calcCheckSum (specialIDConnector, *crcCache);
+		*crcCache = calcCheckSum (specialIDSmallBeton, *crcCache);
+		*crcCache = calcCheckSum (staticUnitData, *crcCache);
+		*crcCache = calcCheckSum (dynamicUnitData, *crcCache);
+		*crcCache = calcCheckSum (clanDynamicUnitData, *crcCache);
 	}
 
-	return calcCheckSum(crcCache, crc);
+	return calcCheckSum (*crcCache, crc);
 }
 
 //------------------------------------------------------------------------------

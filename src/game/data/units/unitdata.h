@@ -20,15 +20,16 @@
 #ifndef game_data_units_unitdataH
 #define game_data_units_unitdataH
 
-#include <string>
-#include <utility>
-#include <vector>
-
 #include "game/data/units/id.h"
 #include "game/data/resourcetype.h"
 
 #include "utility/signal/signal.h"
 #include "utility/serialization/serialization.h"
+
+#include "config/workaround/cpp17/optional.h"
+#include <string>
+#include <utility>
+#include <vector>
 
 class cClanData;
 
@@ -374,8 +375,8 @@ public:
 	void initializeIDData();
 	void initializeClanUnitData(const cClanData& clanData);
 
-	void addData(const cDynamicUnitData& data) { crcValid = false; dynamicUnitData.push_back(data); }
-	void addData(const cStaticUnitData& data)  { crcValid = false; staticUnitData.push_back(data); }
+	void addData (const cDynamicUnitData& data) { crcCache = std::nullopt; dynamicUnitData.push_back(data); }
+	void addData (const cStaticUnitData& data)  { crcCache = std::nullopt; staticUnitData.push_back(data); }
 
 	bool isValidId(const sID& id) const;
 	size_t getNrOfClans() const;
@@ -410,22 +411,22 @@ public:
 	sID getSpecialIDConnector() const { return specialIDConnector; };
 	sID getSpecialIDSmallBeton() const { return specialIDSmallBeton; };
 
-	void setSpecialIDLandMine(sID id) { specialIDLandMine = id; crcValid = false; };
-	void setSpecialIDSeaMine(sID id)  { specialIDSeaMine = id; crcValid = false; };
-	void setSpecialIDMine(sID id) { specialIDMine = id; crcValid = false; };
-	void setSpecialIDSmallGen(sID id) { specialIDSmallGen = id; crcValid = false; };
-	void setSpecialIDConnector(sID id) { specialIDConnector = id; crcValid = false; };
-	void setSpecialIDSmallBeton(sID id) { specialIDSmallBeton = id; crcValid = false; };
+	void setSpecialIDLandMine (sID id) { specialIDLandMine = id; crcCache = std::nullopt; };
+	void setSpecialIDSeaMine (sID id)  { specialIDSeaMine = id; crcCache = std::nullopt; };
+	void setSpecialIDMine (sID id) { specialIDMine = id; crcCache = std::nullopt; };
+	void setSpecialIDSmallGen (sID id) { specialIDSmallGen = id; crcCache = std::nullopt; };
+	void setSpecialIDConnector (sID id) { specialIDConnector = id; crcCache = std::nullopt; };
+	void setSpecialIDSmallBeton (sID id) { specialIDSmallBeton = id; crcCache = std::nullopt; };
 
 	template <typename T>
-	void serialize(T& archive)
+	void serialize (T& archive)
 	{
 		if (!archive.isWriter)
 		{
 			staticUnitData.clear();
 			dynamicUnitData.clear();
 			clanDynamicUnitData.clear();
-			crcValid = false;
+			crcCache = std::nullopt;
 		}
 
 		archive & NVP(constructorID);
@@ -469,8 +470,7 @@ private:
 
 	// unitdata does not change during the game.
 	// So caching the checksum saves a lot cpu resources.
-	mutable uint32_t crcCache;
-	mutable bool crcValid;
+	mutable std::optional<uint32_t> crcCache;
 };
 
 #endif // game_data_units_unitdataH
