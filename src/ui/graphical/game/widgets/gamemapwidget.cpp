@@ -278,9 +278,10 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	startShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuStart));
 	startShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasStartEntry (unitSelection.getSelectedUnit(), player.get()))
+		auto* building = dynamic_cast<cBuilding*> (unitSelection.getSelectedUnit());
+		if (cUnitContextMenuWidget::unitHasStartEntry (building, player.get()))
 		{
-			triggeredStartWork (*unitSelection.getSelectedUnit());
+			triggeredStartWork (*building);
 		}
 	});
 
@@ -296,9 +297,10 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	clearShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuClear));
 	clearShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasRemoveEntry (unitSelection.getSelectedUnit(), player.get(), mapView.get()))
+		auto* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
+		if (cUnitContextMenuWidget::unitHasRemoveEntry (vehicle, player.get(), mapView.get()))
 		{
-			triggeredStartClear (*unitSelection.getSelectedUnit());
+			triggeredStartClear (*vehicle);
 		}
 	});
 
@@ -341,7 +343,8 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	relaodShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuReload));
 	relaodShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasSupplyEntry (unitSelection.getSelectedUnit(), player.get()))
+		const auto* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
+		if (cUnitContextMenuWidget::unitHasSupplyEntry (vehicle, player.get()))
 		{
 			toggleMouseInputMode (eMouseModeType::SupplyAmmo);
 		}
@@ -350,7 +353,8 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	enterShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuEnter));
 	enterShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasEnterEntry (unitSelection.getSelectedUnit(), player.get()))
+		const auto* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
+		if (cUnitContextMenuWidget::unitHasEnterEntry (vehicle, player.get()))
 		{
 			toggleMouseInputMode (eMouseModeType::Enter);
 		}
@@ -359,7 +363,8 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	repairShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuRepair));
 	repairShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasRepairEntry (unitSelection.getSelectedUnit(), player.get()))
+		const auto* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
+		if (cUnitContextMenuWidget::unitHasRepairEntry (vehicle, player.get()))
 		{
 			toggleMouseInputMode (eMouseModeType::Repair);
 		}
@@ -388,7 +393,9 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	disableShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuDisable));
 	disableShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasSabotageEntry (unitSelection.getSelectedUnit(), player.get()))
+		const auto* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
+
+		if (cUnitContextMenuWidget::unitHasSabotageEntry (vehicle, player.get()))
 		{
 			toggleMouseInputMode (eMouseModeType::Disable);
 		}
@@ -397,7 +404,8 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	stealShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuSteal));
 	stealShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasStealEntry (unitSelection.getSelectedUnit(), player.get()))
+		const auto* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
+		if (cUnitContextMenuWidget::unitHasStealEntry (vehicle, player.get()))
 		{
 			toggleMouseInputMode (eMouseModeType::Steal);
 		}
@@ -415,27 +423,30 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	distributeShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuDistribute));
 	distributeShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasDistributeEntry (unitSelection.getSelectedUnit(), player.get()))
+		auto* building = dynamic_cast<cBuilding*> (unitSelection.getSelectedUnit());
+		if (cUnitContextMenuWidget::unitHasDistributeEntry (building, player.get()))
 		{
-			triggeredResourceDistribution (*unitSelection.getSelectedUnit());
+			triggeredResourceDistribution (*building);
 		}
 	});
 
 	researchShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuResearch));
 	researchShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasResearchEntry (unitSelection.getSelectedUnit(), player.get()))
+		auto* building = dynamic_cast<cBuilding*> (unitSelection.getSelectedUnit());
+		if (cUnitContextMenuWidget::unitHasResearchEntry (building, player.get()))
 		{
-			triggeredResearchMenu (*unitSelection.getSelectedUnit());
+			triggeredResearchMenu (*building);
 		}
 	});
 
 	upgradeShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuUpgrade));
 	upgradeShortcut->triggered.connect ([this]()
 	{
-		if (cUnitContextMenuWidget::unitHasBuyEntry (unitSelection.getSelectedUnit(), player.get()))
+		auto* building = dynamic_cast<cBuilding*> (unitSelection.getSelectedUnit());
+		if (cUnitContextMenuWidget::unitHasBuyEntry (building, player.get()))
 		{
-			triggeredUpgradesMenu (*unitSelection.getSelectedUnit());
+			triggeredUpgradesMenu (*building);
 		}
 	});
 
@@ -2236,11 +2247,12 @@ void cGameMapWidget::updateActiveUnitCommandShortcuts()
 	std::set<const cShortcut*> blockedShortcuts;
 
 	auto* selectedVehicle = dynamic_cast<cVehicle*> (selectedUnit);
+	auto* selectedBuilding = dynamic_cast<cBuilding*> (selectedUnit);
 	// NOTE: the order in which we activate the shortcuts here marks the priority in which
 	//       colliding shortcuts will be executed.
 	if (cUnitContextMenuWidget::unitHasBuildEntry (selectedUnit, player.get())) activateShortcutConditional (*buildShortcut, blockedShortcuts, collidingUnitCommandShortcuts[buildShortcut]);
 	if (cUnitContextMenuWidget::unitHasTransferEntry (selectedUnit, player.get())) activateShortcutConditional (*transferShortcut, blockedShortcuts, collidingUnitCommandShortcuts[transferShortcut]);
-	if (cUnitContextMenuWidget::unitHasStartEntry (selectedUnit, player.get())) activateShortcutConditional (*startShortcut, blockedShortcuts, collidingUnitCommandShortcuts[startShortcut]);
+	if (cUnitContextMenuWidget::unitHasStartEntry (selectedBuilding, player.get())) activateShortcutConditional (*startShortcut, blockedShortcuts, collidingUnitCommandShortcuts[startShortcut]);
 	if (cUnitContextMenuWidget::unitHasStopEntry (selectedUnit, player.get())) activateShortcutConditional (*stopShortcut, blockedShortcuts, collidingUnitCommandShortcuts[stopShortcut]);
 	if (cUnitContextMenuWidget::unitHasSentryEntry (selectedUnit, player.get())) activateShortcutConditional (*sentryShortcut, blockedShortcuts, collidingUnitCommandShortcuts[sentryShortcut]);
 	if (cUnitContextMenuWidget::unitHasManualFireEntry (selectedUnit, player.get())) activateShortcutConditional (*manualFireShortcut, blockedShortcuts, collidingUnitCommandShortcuts[manualFireShortcut]);
@@ -2248,20 +2260,20 @@ void cGameMapWidget::updateActiveUnitCommandShortcuts()
 	if (cUnitContextMenuWidget::unitHasLayMinesEntry (selectedVehicle, player.get())) activateShortcutConditional (*layMineShortcut, blockedShortcuts, collidingUnitCommandShortcuts[layMineShortcut]);
 	if (cUnitContextMenuWidget::unitHasCollectMinesEntry (selectedVehicle, player.get())) activateShortcutConditional (*clearMineShortcut, blockedShortcuts, collidingUnitCommandShortcuts[clearMineShortcut]);
 	if (cUnitContextMenuWidget::unitHasLoadEntry(selectedUnit, player.get())) activateShortcutConditional(*loadShortcut, blockedShortcuts, collidingUnitCommandShortcuts[loadShortcut]);
-	if (cUnitContextMenuWidget::unitHasEnterEntry (selectedUnit, player.get())) activateShortcutConditional (*enterShortcut, blockedShortcuts, collidingUnitCommandShortcuts[enterShortcut]);
+	if (cUnitContextMenuWidget::unitHasEnterEntry (selectedVehicle, player.get())) activateShortcutConditional (*enterShortcut, blockedShortcuts, collidingUnitCommandShortcuts[enterShortcut]);
 	if (cUnitContextMenuWidget::unitHasActivateEntry (selectedUnit, player.get())) activateShortcutConditional (*activateShortcut, blockedShortcuts, collidingUnitCommandShortcuts[activateShortcut]);
-	if (cUnitContextMenuWidget::unitHasBuyEntry (selectedUnit, player.get())) activateShortcutConditional (*upgradeShortcut, blockedShortcuts, collidingUnitCommandShortcuts[upgradeShortcut]);
-	if (cUnitContextMenuWidget::unitHasResearchEntry (selectedUnit, player.get())) activateShortcutConditional (*researchShortcut, blockedShortcuts, collidingUnitCommandShortcuts[researchShortcut]);
-	if (cUnitContextMenuWidget::unitHasSabotageEntry (selectedUnit, player.get())) activateShortcutConditional (*disableShortcut, blockedShortcuts, collidingUnitCommandShortcuts[disableShortcut]);
-	if (cUnitContextMenuWidget::unitHasStealEntry (selectedUnit, player.get())) activateShortcutConditional (*stealShortcut, blockedShortcuts, collidingUnitCommandShortcuts[stealShortcut]);
+	if (cUnitContextMenuWidget::unitHasBuyEntry (selectedBuilding, player.get())) activateShortcutConditional (*upgradeShortcut, blockedShortcuts, collidingUnitCommandShortcuts[upgradeShortcut]);
+	if (cUnitContextMenuWidget::unitHasResearchEntry (selectedBuilding, player.get())) activateShortcutConditional (*researchShortcut, blockedShortcuts, collidingUnitCommandShortcuts[researchShortcut]);
+	if (cUnitContextMenuWidget::unitHasSabotageEntry (selectedVehicle, player.get())) activateShortcutConditional (*disableShortcut, blockedShortcuts, collidingUnitCommandShortcuts[disableShortcut]);
+	if (cUnitContextMenuWidget::unitHasStealEntry (selectedVehicle, player.get())) activateShortcutConditional (*stealShortcut, blockedShortcuts, collidingUnitCommandShortcuts[stealShortcut]);
 	if (cUnitContextMenuWidget::unitHasAutoEntry (selectedVehicle, player.get())) activateShortcutConditional (*automoveShortcut, blockedShortcuts, collidingUnitCommandShortcuts[automoveShortcut]);
-	if (cUnitContextMenuWidget::unitHasRemoveEntry (selectedUnit, player.get(), mapView.get())) activateShortcutConditional (*clearShortcut, blockedShortcuts, collidingUnitCommandShortcuts[clearShortcut]);
-	if (cUnitContextMenuWidget::unitHasSupplyEntry (selectedUnit, player.get())) activateShortcutConditional (*relaodShortcut, blockedShortcuts, collidingUnitCommandShortcuts[relaodShortcut]);
-	if (cUnitContextMenuWidget::unitHasRepairEntry (selectedUnit, player.get())) activateShortcutConditional (*repairShortcut, blockedShortcuts, collidingUnitCommandShortcuts[repairShortcut]);
-	if (cUnitContextMenuWidget::unitHasDistributeEntry (selectedUnit, player.get())) activateShortcutConditional (*distributeShortcut, blockedShortcuts, collidingUnitCommandShortcuts[distributeShortcut]);
-	//if (cUnitContextMenuWidget::unitHasUpgradeThisEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*shortcut, blockedShortcuts, collidingUnitCommandShortcuts[shortcut]);
-	//if (cUnitContextMenuWidget::unitHasUpgradeAllEntry (selectedUnit, player.get (), dynamicMap.get ())) activateShortcutConditional (*shortcut, blockedShortcuts, collidingUnitCommandShortcuts[shortcut]);
-	if (cUnitContextMenuWidget::unitHasSelfDestroyEntry (selectedUnit, player.get())) activateShortcutConditional (*destroyShortcut, blockedShortcuts, collidingUnitCommandShortcuts[destroyShortcut]);
+	if (cUnitContextMenuWidget::unitHasRemoveEntry (selectedVehicle, player.get(), mapView.get())) activateShortcutConditional (*clearShortcut, blockedShortcuts, collidingUnitCommandShortcuts[clearShortcut]);
+	if (cUnitContextMenuWidget::unitHasSupplyEntry (selectedVehicle, player.get())) activateShortcutConditional (*relaodShortcut, blockedShortcuts, collidingUnitCommandShortcuts[relaodShortcut]);
+	if (cUnitContextMenuWidget::unitHasRepairEntry (selectedVehicle, player.get())) activateShortcutConditional (*repairShortcut, blockedShortcuts, collidingUnitCommandShortcuts[repairShortcut]);
+	if (cUnitContextMenuWidget::unitHasDistributeEntry (selectedBuilding, player.get())) activateShortcutConditional (*distributeShortcut, blockedShortcuts, collidingUnitCommandShortcuts[distributeShortcut]);
+	//if (cUnitContextMenuWidget::unitHasUpgradeThisEntry (selectedBuilding, player.get (), dynamicMap.get ())) activateShortcutConditional (*shortcut, blockedShortcuts, collidingUnitCommandShortcuts[shortcut]);
+	//if (cUnitContextMenuWidget::unitHasUpgradeAllEntry (selectedBuilding, player.get (), dynamicMap.get ())) activateShortcutConditional (*shortcut, blockedShortcuts, collidingUnitCommandShortcuts[shortcut]);
+	if (cUnitContextMenuWidget::unitHasSelfDestroyEntry (selectedBuilding, player.get())) activateShortcutConditional (*destroyShortcut, blockedShortcuts, collidingUnitCommandShortcuts[destroyShortcut]);
 	if (cUnitContextMenuWidget::unitHasInfoEntry (selectedUnit, player.get())) activateShortcutConditional (*infoShortcut, blockedShortcuts, collidingUnitCommandShortcuts[infoShortcut]);
 }
 
