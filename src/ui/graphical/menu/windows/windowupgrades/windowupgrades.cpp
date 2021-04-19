@@ -206,6 +206,7 @@ void cWindowUpgrades::generateSelectionList (bool select)
 
 	for (const auto& data : unitsData->getStaticUnitsData())
 	{
+		if (data.isAlien) continue;
 		if (data.ID.isABuilding() && !build) continue;
 		if (!data.canAttack && tnt) continue;
 		if (!data.ID.isABuilding())

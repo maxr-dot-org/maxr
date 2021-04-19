@@ -96,12 +96,7 @@ public:
 	int playStream();
 	std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const override;
 
-	/**
-	* refreshes the shotsCur of this building
-	*@author alzi alias DoctorDeath
-	*@return 1 if there has been refreshed something, else 0.
-	*/
-	bool refreshData();
+	void refreshData();
 	void updateNeighbours (const cMap& map);
 	void CheckNeighbours (const cMap& Map);
 

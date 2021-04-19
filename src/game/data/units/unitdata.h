@@ -170,6 +170,7 @@ public:
 	bool canRearm = false;
 	bool canRepair = false;
 	bool doesSelfRepair = false;
+	bool isAlien = false;
 
 	int needsMetal = 0;
 	int needsOil = 0;
@@ -216,6 +217,7 @@ public:
 		archive & NVP (canBeCaptured);
 		archive & NVP (canBeDisabled);
 		archive & NVP (doesSelfRepair);
+		archive & NVP (isAlien);
 		archive & NVP (needsMetal);
 		archive & NVP (needsOil);
 		archive & NVP (needsEnergy);

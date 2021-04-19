@@ -30,6 +30,112 @@
 #include "utility/ranges.h"
 #include "utility/string/toString.h"
 
+
+namespace
+{
+	// TODO: Hard coded alien units
+	const sID alienAssaultId {0, 2};
+	const sID alienPlaneId {0, 3};
+	const sID alienShipId {0, 4};
+	const sID alienTankId {0, 5};
+	const sID alienFactoryId {1, 10};
+
+	//--------------------------------------------------------------------------
+	cPosition getRandomAlienPosition (cModel& model)
+	{
+		// alien factory is big,
+		// surrounded by alien units
+		return {
+			static_cast<int> (2 + model.randomGenerator.get (model.getMap()->getSize().x() - 3)),
+			static_cast<int> (2 + model.randomGenerator.get (model.getMap()->getSize().y() - 3))
+		};
+	}
+
+	//--------------------------------------------------------------------------
+	std::vector<cPosition> toPositions (const std::vector<std::shared_ptr<cPlayer>>& players)
+	{
+		return ranges::Transform (players, [](const auto& player) { return player->getLandingPos(); });
+	}
+
+	//--------------------------------------------------------------------------
+	std::size_t minSquaredDistance (const std::vector<cPosition>& positions, const cPosition& ref)
+	{
+		auto res = (positions[0] - ref).l2NormSquared();
+
+		for (const auto& position : positions)
+		{
+			res = std::min (res, (position - ref).l2NormSquared());
+		}
+		return res;
+	}
+
+	//--------------------------------------------------------------------------
+	std::vector<cPosition> computeAlienLandingPosition (cModel& model)
+	{
+		const std::size_t threshold = 5 * 5; // square distance between alien factory and existing buildings
+		const std::size_t expectedAlienPositionCount = 2 * model.getPlayerList().size();
+		auto& map = *model.getMap()->staticMap;
+		const auto mapSize = map.getSize();
+		const cStaticUnitData& alienFactoryData = model.getUnitsData()->getStaticUnitData (alienFactoryId);
+		std::vector<cPosition> alienPositions;
+
+		std::size_t maxTryCount = 3 * expectedAlienPositionCount; // ensure the loop is finite
+		while (alienPositions.size() != expectedAlienPositionCount && --maxTryCount)
+		{
+			cPosition candidate = getRandomAlienPosition (model);
+
+			if (!map.possiblePlace (alienFactoryData, candidate)) continue;
+			if (!alienPositions.empty() && minSquaredDistance (alienPositions, candidate) < threshold) continue;
+			if (minSquaredDistance (toPositions (model.getPlayerList()), candidate) < threshold) continue;
+
+			alienPositions.push_back (candidate);
+		}
+		return alienPositions;
+	}
+
+	//--------------------------------------------------------------------------
+	void landAlien (cModel& model, const cPosition& landingPos)
+	{
+		model.addBuilding (landingPos, alienFactoryId, nullptr);
+		const auto& map = *model.getMap()->staticMap;
+
+		cPosition offsets[] = {cPosition (0, -1), cPosition (1, -1), cPosition (0, 2), cPosition (1, 2)};
+
+		for (const auto& offset : offsets)
+		{
+			const auto position = landingPos + offset;
+
+			if (map.isWater (position))
+			{
+				model.addVehicle (position, alienShipId, nullptr);
+			}
+			else if (!map.isBlocked (position))
+			{
+				sID alienUnitId = alienTankId;
+				switch (model.randomGenerator.get (6))
+				{
+					case 0: alienUnitId = alienPlaneId; break;
+					case 1:
+					case 2: alienUnitId = alienAssaultId; break;
+					default: alienUnitId = alienTankId; break;
+				}
+				model.addVehicle (position, alienUnitId, nullptr);
+			}
+		}
+	}
+
+	//--------------------------------------------------------------------------
+	void addAliens (cModel& model)
+	{
+		std::vector<cPosition> alienPositions = computeAlienLandingPosition (model);
+
+		for (const auto& position : alienPositions)
+		{
+			landAlien (model, position);
+		}
+	}
+}
+
 //------------------------------------------------------------------------------
 cActionInitNewGame::cActionInitNewGame (sInitPlayerData initPlayerData) :
 	initPlayerData (std::move (initPlayerData))
@@ -48,7 +154,7 @@ void cActionInitNewGame::execute (cModel& model) const
 
 	model.initGameId();
 
-	cPlayer& player = *model.getPlayer(playerNr);
+	cPlayer& player = *model.getPlayer (playerNr);
 	const cUnitsData& unitsdata = *model.getUnitsData();
 
 	player.removeAllUnits();
@@ -89,8 +195,12 @@ void cActionInitNewGame::execute (cModel& model) const
 
 	const bool allPlayerReady = ranges::find_if (model.getPlayerList(), [](const auto& player){ return player->getLandingPos() == cPosition {-1, -1}; }) == model.getPlayerList().end();
 
-	// place new resources
-	if (allPlayerReady) model.getMap()->placeResources (model);
+	if (allPlayerReady)
+	{
+		// place new resources
+		model.getMap()->placeResources (model);
+		if (model.getGameSettings()->alienEnabled) addAliens (model);
+	}
 
 	// apply upgrades
 	int credits = model.getGameSettings()->getStartCredits();

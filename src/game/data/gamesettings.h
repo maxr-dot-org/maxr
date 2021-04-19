@@ -149,24 +149,25 @@ public:
 	template<typename T>
 	void serialize(T& archive)
 	{
-		archive & NVP(metalAmount);
-		archive & NVP(oilAmount);
-		archive & NVP(goldAmount);
-		archive & NVP(resourceDensity);
-		archive & NVP(bridgeheadType);
-		archive & NVP(gameType);
-		archive & NVP(clansEnabled);
-		archive & NVP(startCredits);
-		archive & NVP(victoryConditionType);
-		archive & NVP(victoryTurns);
-		archive & NVP(victoryPoints);
-		archive & NVP(turnEndDeadline);
-		archive & NVP(turnEndDeadlineActive);
-		archive & NVP(turnLimit);
-		archive & NVP(turnLimitActive);
+		archive & NVP (alienEnabled);
+		archive & NVP (bridgeheadType);
+		archive & NVP (clansEnabled);
+		archive & NVP (gameType);
+		archive & NVP (goldAmount);
+		archive & NVP (metalAmount);
+		archive & NVP (oilAmount);
+		archive & NVP (resourceDensity);
+		archive & NVP (startCredits);
+		archive & NVP (turnEndDeadline);
+		archive & NVP (turnEndDeadlineActive);
+		archive & NVP (turnLimit);
+		archive & NVP (turnLimitActive);
+		archive & NVP (victoryConditionType);
+		archive & NVP (victoryPoints);
+		archive & NVP (victoryTurns);
 	}
 
-private:
+public:
 	eGameSettingsResourceAmount metalAmount = eGameSettingsResourceAmount::Normal;
 	eGameSettingsResourceAmount oilAmount = eGameSettingsResourceAmount::Normal;
 	eGameSettingsResourceAmount goldAmount = eGameSettingsResourceAmount::Normal;
@@ -179,6 +180,7 @@ private:
 
 	bool clansEnabled = true;
 
+	bool alienEnabled = true;
 	unsigned int startCredits = defaultCreditsNormal;
 
 	eGameSettingsVictoryCondition victoryConditionType = eGameSettingsVictoryCondition::Death;

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="1 10" name="fac_alien">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2021-04-19 13:05:00"/>
+    </Author>
+    <Game_Version text="3.0.0"/>
+  </Header>
+  <Graphic>
+    <Has_Overlay YN="No"/>
+    <Animations>
+      <Build_Up YN="No"/>
+      <Movement YN="No"/>
+      <Power_On YN="Yes"/>
+    </Animations>
+  </Graphic>
+</Unit>

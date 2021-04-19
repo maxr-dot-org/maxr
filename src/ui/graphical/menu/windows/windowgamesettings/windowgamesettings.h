@@ -71,6 +71,7 @@ private:
 	cRadioGroupValue<eGameSettingsResourceDensity>* densityGroup = nullptr;
 
 	cRadioGroupValue<eGameSettingsBridgeheadType>* bridgeheadGroup = nullptr;
+	cRadioGroupValue<bool>* alienGroup = nullptr;
 	cRadioGroupValue<eGameSettingsGameType>* gameTypeGroup = nullptr;
 
 	cRadioGroupValue<bool>* clansGroup = nullptr;

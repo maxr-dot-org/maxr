@@ -106,12 +106,7 @@ public:
 	const cPosition& getMovementOffset() const override { return tileMovementOffset; }
 	void setMovementOffset (const cPosition& newOffset) { tileMovementOffset = newOffset; }
 
-	/**
-	* refreshes speedCur and shotsCur and continues building or clearing
-	*@author alzi alias DoctorDeath
-	*@return true if there has been refreshed something else false.
-	*/
-	bool refreshData();
+	void refreshData();
 	void proceedBuilding (cModel&, sNewTurnPlayerReport&);
 	void continuePathBuilding (cModel&);
 	void proceedClearing (cModel&);

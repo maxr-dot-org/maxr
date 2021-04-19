@@ -1199,7 +1199,7 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (model.unitStolen, [&] (const cUnit& source, const cUnit&, const cPlayer&)
+	clientSignalConnectionManager.connect (model.unitStolen, [&] (const cUnit& source, const cUnit&, const cPlayer*)
 	{
 		if (source.getOwner() && source.getOwner()->getId() == getActivePlayer()->getId())
 		{
@@ -1340,9 +1340,9 @@ void cGameGuiController::connectReportSources(cClient& client)
 			addSavedReport(std::make_unique<cSavedReportDisabled>(target), player.getId());
 		}
 	});
-	allClientsSignalConnectionManager.connect(model.unitStolen, [&](const cUnit&, const cUnit& target, const cPlayer& previousOwner)
+	allClientsSignalConnectionManager.connect(model.unitStolen, [&](const cUnit&, const cUnit& target, const cPlayer* previousOwner)
 	{
-		if (previousOwner.getId() == player.getId())
+		if (previousOwner && previousOwner->getId() == player.getId())
 		{
 			addSavedReport(std::make_unique<cSavedReportCapturedByEnemy>(target), player.getId());
 		}

@@ -189,20 +189,20 @@ void cVehicle::proceedClearing(cModel& model)
 }
 
 //-----------------------------------------------------------------------------
-/** Initializes all unit data to its maxiumum values */
+/** Initializes all unit data to its maximum values */
 //-----------------------------------------------------------------------------
 
-bool cVehicle::refreshData()
+void cVehicle::refreshData()
 {
-	// NOTE: according to MAX 1.04 units get their shots/movepoints back even if they are disabled
-
-	if (data.getSpeed() < data.getSpeedMax() || data.getShots() < data.getShotsMax())
+	if (staticData && staticData->doesSelfRepair)
 	{
-		data.setSpeed (data.getSpeedMax());
-		data.setShots (std::min (data.getAmmo(), data.getShotsMax()));
-		return true;
+		const auto newHitPoints = data.getHitpoints() + (4 * data.getHitpointsMax() / data.getBuildCost());
+		data.setHitpoints (std::min (data.getHitpointsMax(), newHitPoints));
 	}
-	return false;
+
+	// NOTE: according to MAX 1.04 units get their shots/movepoints back even if they are disabled
+	data.setSpeed (data.getSpeedMax());
+	data.setShots (std::min (data.getAmmo(), data.getShotsMax()));
 }
 
 //-----------------------------------------------------------------------------

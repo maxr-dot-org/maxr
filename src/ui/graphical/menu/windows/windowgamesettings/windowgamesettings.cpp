@@ -81,6 +81,13 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	bridgeheadGroup->emplaceCheckBox (eGameSettingsBridgeheadType::Definite, getPosition() + cPosition (240 + 173, currentLine), lngPack.i18n ("Text~Option~Definite"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
 	currentLine += lineHeight;
 
+	// alien
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Alien_Tech") + lngPack.i18n("Text~Punctuation~Colon"), FONT_LATIN_NORMAL, eAlignmentType::Left));
+	alienGroup = addChild (std::make_unique<cRadioGroupValue<bool>>());
+	alienGroup->emplaceCheckBox (false, getPosition() + cPosition (240, currentLine), lngPack.i18n ("Text~Option~Off"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
+	alienGroup->emplaceCheckBox (true, getPosition() + cPosition (240 + 173, currentLine), lngPack.i18n ("Text~Option~On"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
+	currentLine += lineHeight;
+
 	//
 	// Game type
 	//
@@ -241,7 +248,7 @@ void cWindowGameSettings::applySettings (const cGameSettings& gameSettings)
 	densityGroup->selectValue (gameSettings.getResourceDensity());
 
 	bridgeheadGroup->selectValue (gameSettings.getBridgeheadType());
-
+	alienGroup->selectValue (gameSettings.alienEnabled);
 	gameTypeGroup->selectValue (forHotSeatGame ? eGameSettingsGameType::Turns : gameSettings.getGameType());
 	if (gameTypeGroup->getSelectedValue().second == eGameSettingsGameType::Simultaneous) enableTurnEndDeadlineOptions();
 	else disableTurnEndDeadlineOptions();
@@ -309,6 +316,7 @@ cGameSettings cWindowGameSettings::getGameSettings() const
 	gameSettings.setResourceDensity (densityGroup->getSelectedValue().second);
 
 	gameSettings.setBridgeheadType (bridgeheadGroup->getSelectedValue().second);
+	gameSettings.alienEnabled = alienGroup->getSelectedValue().second;
 
 	if (forHotSeatGame) gameSettings.setGameType (eGameSettingsGameType::HotSeat);
 	else gameSettings.setGameType (gameTypeGroup->getSelectedValue().second);

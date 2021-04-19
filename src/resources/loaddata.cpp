@@ -448,6 +448,7 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	staticData.vehicleData.canPlaceMines = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Place_Mines"});
 	staticData.vehicleData.canSurvey = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Survey"});
 	staticData.doesSelfRepair = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Does_Self_Repair"});
+	staticData.isAlien = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Is_Alien"});
 	staticData.buildingData.convertsGold = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Converts_Gold"});
 	staticData.buildingData.canSelfDestroy = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Self_Destroy"});
 	staticData.buildingData.canScore = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Score"});

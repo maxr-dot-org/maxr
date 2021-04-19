@@ -303,6 +303,7 @@ void cWindowLandingUnitSelection::generateSelectionList (bool select)
 
 	for (const auto& data : unitsData->getStaticUnitsData())
 	{
+		if (data.isAlien) continue;
 		if (data.ID.isABuilding() && !build) continue;
 		if (data.vehicleData.isHuman && buy) continue;
 		if (!data.canAttack && tnt) continue;

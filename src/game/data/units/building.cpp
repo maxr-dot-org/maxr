@@ -303,16 +303,16 @@ string cBuilding::getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData&
 //--------------------------------------------------------------------------
 /** Refreshs all data to the maximum values */
 //--------------------------------------------------------------------------
-bool cBuilding::refreshData()
+void cBuilding::refreshData()
 {
-	// NOTE: according to MAX 1.04 units get their shots/movepoints back even if they are disabled
-
-	if (data.getShots() < data.getShotsMax())
+	if (staticData && staticData->doesSelfRepair)
 	{
-		data.setShots (std::min (this->data.getShotsMax(), this->data.getAmmo()));
-		return true;
+		const auto newHitPoints = data.getHitpoints() + (4 * data.getHitpointsMax() / data.getBuildCost());
+		data.setHitpoints (std::min (data.getHitpointsMax(), newHitPoints));
 	}
-	return false;
+
+	// NOTE: according to MAX 1.04 units get their shots/movepoints back even if they are disabled
+	data.setShots (std::min (data.getAmmo(), data.getShotsMax()));
 }
 
 //------------------------------------------------------------------------------

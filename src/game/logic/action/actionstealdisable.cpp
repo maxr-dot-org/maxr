@@ -24,122 +24,124 @@
 #include "actionstop.h"
 #include "game/logic/casualtiestracker.h"
 
-cActionStealDisable::cActionStealDisable(const cVehicle& infiltrator, const cUnit& target, bool steal) :
-	infiltratorId(infiltrator.getId()),
-	targetId(target.getId()),
-	steal(steal)
+
+//------------------------------------------------------------------------------
+cActionStealDisable::cActionStealDisable (const cVehicle& infiltrator, const cUnit& target, bool steal) :
+	infiltratorId (infiltrator.getId()),
+	targetId (target.getId()),
+	steal (steal)
 {}
 
 //------------------------------------------------------------------------------
-cActionStealDisable::cActionStealDisable(cBinaryArchiveOut& archive)
+cActionStealDisable::cActionStealDisable (cBinaryArchiveOut& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionStealDisable::execute(cModel& model) const
+void cActionStealDisable::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	auto infiltrator = model.getVehicleFromID(infiltratorId);
+	auto infiltrator = model.getVehicleFromID (infiltratorId);
 	if (infiltrator == nullptr || !infiltrator->getOwner()) return;
 	if (infiltrator->getOwner()->getId() != playerNr) return;
 
-	auto target = model.getUnitFromID(targetId);
+	auto target = model.getUnitFromID (targetId);
 	if (target == nullptr) return;
 
-	if (!cCommandoData::canDoAction(*infiltrator, target, steal)) return;
+	if (!cCommandoData::canDoAction (*infiltrator, target, steal)) return;
 
-	infiltrator->data.setShots(infiltrator->data.getShots() - 1);
+	infiltrator->data.setShots (infiltrator->data.getShots() - 1);
 
 	// check whether the action is successful or not
-	const uint32_t chance = infiltrator->getCommandoData().computeChance(target, steal);
-	bool success = model.randomGenerator.get(100) < chance;
+	const uint32_t chance = infiltrator->getCommandoData().computeChance (target, steal);
+	bool success = model.randomGenerator.get (100) < chance;
 	if (success)
 	{
 
 		// stop running movejobs, build orders, etc.
-		cActionStop(*target).execute(model);
+		cActionStop (*target).execute (model);
 
 		if (steal)
 		{
-			const auto& previousOwner = *target->getOwner();
-			changeUnitOwner(*target, *infiltrator->getOwner(), model);
-			model.unitStolen(*infiltrator, *target, previousOwner);
+			const auto* previousOwner = target->getOwner();
+			changeUnitOwner (*target, *infiltrator->getOwner(), model);
+			model.unitStolen (*infiltrator, *target, previousOwner);
 		}
 		else
 		{
 			// Only on disabling units the infiltrator gets exp.
 			cCommandoData::increaseXp (*infiltrator);
 
-			const int turns = infiltrator->getCommandoData().computeDisabledTurnCount(*target);
+			const int turns = infiltrator->getCommandoData().computeDisabledTurnCount (*target);
 
 			target->setDisabledTurns (turns);
-			if (target->getOwner()) target->getOwner()->removeFromScan(*target);
+			if (target->getOwner()) target->getOwner()->removeFromScan (*target);
 
-			model.unitDisabled(*infiltrator, *target);
+			model.unitDisabled (*infiltrator, *target);
 		}
 	}
 	else
 	{
-		model.unitStealDisableFailed(*infiltrator, *target);
+		model.unitStealDisableFailed (*infiltrator, *target);
 
 		// disabled units fail to detect infiltrator even if he screws up
 		if (!target->isDisabled())
 		{
 			// detect the infiltrator on failed action
 			// and let enemy units fire on him
-			if (target->getOwner() && target->getOwner()->canSeeAnyAreaUnder(*infiltrator))
+			if (target->getOwner() && target->getOwner()->canSeeAnyAreaUnder (*infiltrator))
 			{
-				infiltrator->setDetectedByPlayer(target->getOwner());
+				infiltrator->setDetectedByPlayer (target->getOwner());
 			}
 
-			infiltrator->inSentryRange(model);
+			infiltrator->inSentryRange (model);
 		}
 	}
 }
 
-void cActionStealDisable::changeUnitOwner(cUnit& unit, cPlayer& newOwner, cModel& model) const
+void cActionStealDisable::changeUnitOwner (cUnit& unit, cPlayer& newOwner, cModel& model) const
 {
-
-	model.getCasualtiesTracker()->logCasualty(unit);
+	model.getCasualtiesTracker()->logCasualty (unit);
 
 	cPlayer* oldOwner = unit.getOwner();
-	if (!unit.isDisabled())
+	if (oldOwner && !unit.isDisabled())
 	{
-		oldOwner->removeFromScan(unit);
+		oldOwner->removeFromScan (unit);
 	}
 
 	// unit is fully operational for new owner
-	unit.setDisabledTurns(0);
+	unit.setDisabledTurns (0);
 
-	if (unit.isAVehicle())
+	auto* vehicle = dynamic_cast<cVehicle*> (&unit);
+	if (vehicle)
 	{
-		auto owningUnitPtr = oldOwner->removeUnit(*static_cast<const cVehicle*>(&unit));
-		owningUnitPtr->setOwner(&newOwner);
-		newOwner.addUnit(owningUnitPtr);
-		owningUnitPtr->setSurveyorAutoMoveActive(false);
+		vehicle->setSurveyorAutoMoveActive (false);
+		auto owningUnitPtr = (oldOwner ? oldOwner->removeUnit (*vehicle) : model.extractNeutralUnit (*vehicle));
+		newOwner.addUnit (owningUnitPtr);
 	}
 	else
 	{
-		auto owningUnitPtr = oldOwner->removeUnit(*static_cast<const cBuilding*>(&unit));
-		owningUnitPtr->setOwner(&newOwner);
-		newOwner.addUnit(owningUnitPtr);
+		auto& building = dynamic_cast<cBuilding&> (unit);
+		auto owningUnitPtr = (oldOwner ? oldOwner->removeUnit (building) : model.extractNeutralUnit (building));
+		owningUnitPtr->setOwner (&newOwner);
+		newOwner.addUnit (owningUnitPtr);
 	}
+	unit.setOwner (&newOwner);
 
-	newOwner.addToScan(unit);
+	newOwner.addToScan (unit);
 
 	for (const auto& player : model.getPlayerList())
 	{
-		unit.resetDetectedByPlayer(player.get());
+		unit.resetDetectedByPlayer (player.get());
 	}
 	unit.clearDetectedInThisTurnPlayerList();
 
-	// let the unit work for his new owner
-	auto* vehicle = static_cast<cVehicle*>(&unit);
+	// let the unit work for its new owner
 	if (vehicle && vehicle->getStaticData().canSurvey)
 	{
-		vehicle->doSurvey(*model.getMap());
+		vehicle->doSurvey (*model.getMap());
 	}
-	unit.detectOtherUnits(*model.getMap());
+	unit.detectOtherUnits (*model.getMap());
 }

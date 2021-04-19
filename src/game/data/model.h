@@ -109,6 +109,9 @@ public:
 	void deleteUnit (cUnit*);
 	void deleteRubble (cBuilding& rubble);
 
+	std::shared_ptr<cBuilding> extractNeutralUnit (const cBuilding& building) { return neutralBuildings.extract (building); }
+	std::shared_ptr<cVehicle> extractNeutralUnit (const cVehicle& vehicle) { return neutralVehicles.extract (vehicle); }
+
 	cMoveJob* addMoveJob (cVehicle&, const std::forward_list<cPosition>& path);
 	cMoveJob* addMoveJob (cVehicle&, const cPosition& destination);
 	std::vector<const cPlayer*> resumeMoveJobs(const cPlayer* player = nullptr);
@@ -142,7 +145,7 @@ public:
 
 	mutable cSignal<void(const cUnit& source, const cUnit& target)> unitStealDisableFailed;
 	mutable cSignal<void(const cUnit& source, const cUnit& target)> unitDisabled;
-	mutable cSignal<void(const cUnit& source, const cUnit& target, const cPlayer& previousOwner)> unitStolen;
+	mutable cSignal<void(const cUnit& source, const cUnit& target, const cPlayer* previousOwner)> unitStolen;
 
 	mutable cSignal<void(const cVehicle& plane)> planeLanding;
 	mutable cSignal<void(const cVehicle& plane)> planeTakeoff;
