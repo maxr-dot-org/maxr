@@ -207,7 +207,7 @@ void cVehicle::proceedClearing(cModel& model)
 	}
 
 	setStoredResources (getStoredResources() + rubble->getRubbleValue());
-	model.deleteRubble(rubble);
+	model.deleteRubble(*rubble);
 }
 
 //-----------------------------------------------------------------------------

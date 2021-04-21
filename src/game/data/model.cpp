@@ -39,30 +39,28 @@
 
 #include <set>
 
+namespace
+{
+	//--------------------------------------------------------------------------
+	auto byPlayerId (int playerId)
+	{
+		return [=](const std::shared_ptr<cPlayer>& player){ return player->getId() == playerId; };
+	}
+}
+
 //------------------------------------------------------------------------------
 cModel::cModel() :
-	gameId(0),
-	gameTime(0),
-	gameSettings(std::make_shared<cGameSettings>()),
-	activeTurnPlayer(nullptr),
-	nextUnitId(0),
-	unitsData(std::make_shared<cUnitsData>()),
+	gameSettings (std::make_shared<cGameSettings>()),
+	unitsData (std::make_shared<cUnitsData>()),
 	turnCounter (std::make_shared<cTurnCounter> (1)),
-	turnEndDeadline(0),
-	turnLimitDeadline(0),
-	casualtiesTracker (std::make_shared<cCasualtiesTracker> ()),
-	turnEndState(TURN_ACTIVE)
+	casualtiesTracker (std::make_shared<cCasualtiesTracker> ())
 {
-	turnTimeClock = std::make_shared<cTurnTimeClock>(*this);
+	turnTimeClock = std::make_shared<cTurnTimeClock> (*this);
 }
 
 //------------------------------------------------------------------------------
 cModel::~cModel()
 {
-	if (map != nullptr)
-	{
-		map->reset();
-	}
 	for (auto attackjob : attackJobs)
 	{
 		delete attackjob;
@@ -92,7 +90,7 @@ void cModel::advanceGameTime()
 	runAttackJobs();
 	effectsList.run();
 	handleTurnEnd();
-	helperJobs.run(*this);
+	helperJobs.run (*this);
 }
 
 //------------------------------------------------------------------------------
@@ -106,76 +104,67 @@ uint32_t cModel::getChecksum() const
 {
 	uint32_t crc = 0;
 	//crc = calcCheckSum(gameTime, crc);
-	crc = calcCheckSum(gameId, crc);
-	crc = calcCheckSum(*gameSettings, crc);
-	crc = calcCheckSum(*map, crc);
+	crc = calcCheckSum (gameId, crc);
+	crc = calcCheckSum (*gameSettings, crc);
+	crc = calcCheckSum (*map, crc);
 	for (const auto& player : playerList)
-		crc = calcCheckSum(*player, crc);
+		crc = calcCheckSum (*player, crc);
 	for (const auto& building : neutralBuildings)
-		crc = calcCheckSum(*building, crc);
-	crc = calcCheckSum(nextUnitId, crc);
-	crc = calcCheckSum(*unitsData, crc);
+		crc = calcCheckSum (*building, crc);
+	crc = calcCheckSum (nextUnitId, crc);
+	crc = calcCheckSum (*unitsData, crc);
 	for (const auto& movejob : moveJobs)
-		crc = calcCheckSum(*movejob, crc);
+		crc = calcCheckSum (*movejob, crc);
 	for (const auto& attackJob : attackJobs)
-		crc = calcCheckSum(*attackJob, crc);
-	crc = calcCheckSum(*turnCounter, crc);
-	crc = calcCheckSum(turnEndState, crc);
-	crc = calcCheckSum(activeTurnPlayer->getId(), crc);
-	crc = calcCheckSum(turnEndDeadline, crc);
-	crc = calcCheckSum(turnLimitDeadline, crc);
-	crc = calcCheckSum(*turnTimeClock, crc);
-	crc = calcCheckSum(helperJobs, crc);
-	crc = calcCheckSum(*casualtiesTracker, crc);
+		crc = calcCheckSum (*attackJob, crc);
+	crc = calcCheckSum (*turnCounter, crc);
+	crc = calcCheckSum (turnEndState, crc);
+	crc = calcCheckSum (activeTurnPlayer->getId(), crc);
+	crc = calcCheckSum (turnEndDeadline, crc);
+	crc = calcCheckSum (turnLimitDeadline, crc);
+	crc = calcCheckSum (*turnTimeClock, crc);
+	crc = calcCheckSum (helperJobs, crc);
+	crc = calcCheckSum (*casualtiesTracker, crc);
 
 	return crc;
 }
 //------------------------------------------------------------------------------
-void cModel::setGameSettings(const cGameSettings& gameSettings_)
+void cModel::setGameSettings (const cGameSettings& gameSettings_)
 {
 	*gameSettings = gameSettings_;
 
 	if (gameSettings->isTurnLimitActive())
 	{
-		turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow(gameSettings->getTurnLimit());
+		turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnLimit());
 	}
 }
 //------------------------------------------------------------------------------
-void cModel::setMap(std::shared_ptr<cStaticMap> map_)
+void cModel::setMap (std::shared_ptr<cStaticMap> map_)
 {
 	map = std::make_shared<cMap>(map_);
 	for (auto player : playerList)
-		player->initMaps(*map);
+		player->initMaps (*map);
 }
 //------------------------------------------------------------------------------
-cPlayer* cModel::getPlayer(int playerNr)
+cPlayer* cModel::getPlayer (int playerNr)
 {
-	for (auto player : playerList)
-	{
-		if (player->getId() == playerNr)
-			return player.get();
-	}
-	return nullptr;
+	auto it = ranges::find_if (playerList, byPlayerId (playerNr));
+	return it == playerList.end() ? nullptr : it->get();
 }
 //------------------------------------------------------------------------------
-const cPlayer* cModel::getPlayer(int playerNr) const
+const cPlayer* cModel::getPlayer (int playerNr) const
 {
-	//TODO: remove code duplication
-	for (auto player : playerList)
-	{
-		if (player->getId() == playerNr)
-			return player.get();
-	}
-	return nullptr;
+	auto it = ranges::find_if (playerList, byPlayerId (playerNr));
+	return it == playerList.end() ? nullptr : it->get();
 }
 //------------------------------------------------------------------------------
-const cPlayer* cModel::getPlayer(std::string player) const
+const cPlayer* cModel::getPlayer (std::string player) const
 {
 	// first try to find player by number
-	const int playerNr = atoi(player.c_str());
+	const int playerNr = atoi (player.c_str());
 	if (playerNr != 0 || player[0] == '0')
 	{
-		return getPlayer(playerNr);
+		return getPlayer (playerNr);
 	}
 
 	// try to find player by name
@@ -187,16 +176,15 @@ const cPlayer* cModel::getPlayer(std::string player) const
 	return nullptr;
 }
 //------------------------------------------------------------------------------
-void cModel::setPlayerList(const std::vector<cPlayerBasicData>& splayers)
+void cModel::setPlayerList (const std::vector<cPlayerBasicData>& splayers)
 {
 	assert(playerList.size() == 0);
 
 	for (const auto& playerInfo : splayers)
 	{
-		auto player = std::make_shared<cPlayer>(playerInfo, *unitsData);
-		if (map) player->initMaps(*map);
-		playerList.push_back(player);
-
+		auto player = std::make_shared<cPlayer> (playerInfo, *unitsData);
+		if (map) player->initMaps (*map);
+		playerList.push_back (player);
 	}
 	activeTurnPlayer = playerList[0].get();
 }
@@ -208,55 +196,54 @@ const cPlayer* cModel::getActiveTurnPlayer() const
 }
 
 //------------------------------------------------------------------------------
-cVehicle& cModel::addVehicle(const cPosition& position, const sID& id, cPlayer* player)
+cVehicle& cModel::addVehicle (const cPosition& position, const sID& id, cPlayer* player)
 {
 	// generate the vehicle:
-	cVehicle& addedVehicle = player->addNewVehicle(position, unitsData->getStaticUnitData(id), nextUnitId);
+	cVehicle& addedVehicle = player->addNewVehicle (position, unitsData->getStaticUnitData(id), nextUnitId);
 	nextUnitId++;
 
 	// place the vehicle:
-	map->addVehicle(addedVehicle, position);
-	player->addToScan(addedVehicle);
+	map->addVehicle (addedVehicle, position);
+	player->addToScan (addedVehicle);
 
 	// scan with surveyor:
 	if (addedVehicle.getStaticData().canSurvey)
 	{
-		addedVehicle.doSurvey(*getMap());
+		addedVehicle.doSurvey (*getMap());
 	}
 
-	if (addedVehicle.canLand(*map))
+	if (addedVehicle.canLand (*map))
 	{
-		addedVehicle.setFlightHeight(0);
+		addedVehicle.setFlightHeight (0);
 	}
 	else
 	{
 		// start with flight height > 0, so that ground attack units
 		// will not be able to attack the plane in the moment it leaves
 		// the factory
-		addedVehicle.setFlightHeight(1);
-		addedVehicle.triggerLandingTakeOff(*this);
+		addedVehicle.setFlightHeight (1);
+		addedVehicle.triggerLandingTakeOff (*this);
 	}
-
-	addedVehicle.detectOtherUnits(*map);
+	addedVehicle.detectOtherUnits (*map);
 
 	return addedVehicle;
 }
 //------------------------------------------------------------------------------
-cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer* player)
+cBuilding& cModel::addBuilding (const cPosition& position, const sID& id, cPlayer* player)
 {
 	// generate the building:
-	cBuilding& addedBuilding = player->addNewBuilding(position, unitsData->getStaticUnitData(id), nextUnitId);
+	cBuilding& addedBuilding = player->addNewBuilding (position, unitsData->getStaticUnitData(id), nextUnitId);
 	nextUnitId++;
 
-	addedBuilding.initMineResourceProd(*map);
+	addedBuilding.initMineResourceProd (*map);
 
-	cBuilding* buildingToBeDeleted = map->getField(position).getTopBuilding();
+	cBuilding* buildingToBeDeleted = map->getField (position).getTopBuilding();
 
-	map->addBuilding(addedBuilding, position);
-	player->addToScan(addedBuilding);
+	map->addBuilding (addedBuilding, position);
+	player->addToScan (addedBuilding);
 	if (addedBuilding.isSentryActive())
 	{
-		player->addToSentryMap(addedBuilding);
+		player->addToSentryMap (addedBuilding);
 	}
 
 	// integrate the building to the base:
@@ -268,57 +255,57 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 		if (addedBuilding.getIsBig())
 		{
 			auto bigPosition = position;
-			auto buildings = &map->getField(bigPosition).getBuildings();
+			auto buildings = &map->getField (bigPosition).getBuildings();
 
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
 				if ((*buildings)[i]->getStaticUnitData().canBeOverbuild == eOverbuildType::YesNRemove)
 				{
-					deleteUnit((*buildings)[i]);
+					deleteUnit ((*buildings)[i]);
 					--i;
 				}
 			}
 			bigPosition.x()++;
-			buildings = &map->getField(bigPosition).getBuildings();
+			buildings = &map->getField (bigPosition).getBuildings();
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
 				if ((*buildings)[i]->getStaticUnitData().canBeOverbuild == eOverbuildType::YesNRemove)
 				{
-					deleteUnit((*buildings)[i]);
+					deleteUnit ((*buildings)[i]);
 					--i;
 				}
 			}
 			bigPosition.y()++;
-			buildings = &map->getField(bigPosition).getBuildings();
+			buildings = &map->getField (bigPosition).getBuildings();
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
 				if ((*buildings)[i]->getStaticUnitData().canBeOverbuild == eOverbuildType::YesNRemove)
 				{
-					deleteUnit((*buildings)[i]);
+					deleteUnit ((*buildings)[i]);
 					--i;
 				}
 			}
 			bigPosition.x()--;
-			buildings = &map->getField(bigPosition).getBuildings();
+			buildings = &map->getField (bigPosition).getBuildings();
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
 				if ((*buildings)[i]->getStaticUnitData().canBeOverbuild == eOverbuildType::YesNRemove)
 				{
-					deleteUnit((*buildings)[i]);
+					deleteUnit ((*buildings)[i]);
 					--i;
 				}
 			}
 		}
 		else
 		{
-			deleteUnit(buildingToBeDeleted);
+			deleteUnit (buildingToBeDeleted);
 
-			const auto& buildings = map->getField(position).getBuildings();
+			const auto& buildings = map->getField (position).getBuildings();
 			for (size_t i = 0; i != buildings.size(); ++i)
 			{
 				if (buildings[i]->getStaticUnitData().canBeOverbuild == eOverbuildType::YesNRemove)
 				{
-					deleteUnit(buildings[i]);
+					deleteUnit (buildings[i]);
 					--i;
 				}
 			}
@@ -330,110 +317,107 @@ cBuilding& cModel::addBuilding(const cPosition& position, const sID& id, cPlayer
 		addedBuilding.startWork();
 	}
 
-	addedBuilding.detectOtherUnits(*map);
+	addedBuilding.detectOtherUnits (*map);
 
 	return addedBuilding;
 }
 
 //------------------------------------------------------------------------------
-void cModel::destroyUnit(cUnit& unit)
+void cModel::destroyUnit (cUnit& unit)
 {
-	addJob(new cDestroyJob(unit, *this));
+	addJob (new cDestroyJob (unit, *this));
 }
 
 //------------------------------------------------------------------------------
-void cModel::addRubble(const cPosition& position, int value, bool big)
+void cModel::addRubble (const cPosition& position, int value, bool big)
 {
-	value = std::max(1, value);
+	value = std::max (1, value);
 
-	if (map->isWaterOrCoast(position))
+	if (map->isWaterOrCoast (position))
 	{
 		if (big)
 		{
-			addRubble(position + cPosition(1, 0), value / 4, false);
-			addRubble(position + cPosition(0, 1), value / 4, false);
-			addRubble(position + cPosition(1, 1), value / 4, false);
+			addRubble (position + cPosition(1, 0), value / 4, false);
+			addRubble (position + cPosition(0, 1), value / 4, false);
+			addRubble (position + cPosition(1, 1), value / 4, false);
 		}
 		return;
 	}
 
-	if (big && map->isWaterOrCoast(position + cPosition(1, 0)))
+	if (big && map->isWaterOrCoast (position + cPosition (1, 0)))
 	{
-		addRubble(position, value / 4, false);
-		addRubble(position + cPosition(0, 1), value / 4, false);
-		addRubble(position + cPosition(1, 1), value / 4, false);
+		addRubble (position, value / 4, false);
+		addRubble (position + cPosition (0, 1), value / 4, false);
+		addRubble (position + cPosition (1, 1), value / 4, false);
 		return;
 	}
 
-	if (big && map->isWaterOrCoast(position + cPosition(0, 1)))
+	if (big && map->isWaterOrCoast (position + cPosition (0, 1)))
 	{
-		addRubble(position, value / 4, false);
-		addRubble(position + cPosition(1, 0), value / 4, false);
-		addRubble(position + cPosition(1, 1), value / 4, false);
+		addRubble (position, value / 4, false);
+		addRubble (position + cPosition (1, 0), value / 4, false);
+		addRubble (position + cPosition (1, 1), value / 4, false);
 		return;
 	}
 
-	if (big && map->isWaterOrCoast(position + cPosition(1, 1)))
+	if (big && map->isWaterOrCoast (position + cPosition (1, 1)))
 	{
-		addRubble(position, value / 4, false);
-		addRubble(position + cPosition(1, 0), value / 4, false);
-		addRubble(position + cPosition(0, 1), value / 4, false);
+		addRubble (position, value / 4, false);
+		addRubble (position + cPosition (1, 0), value / 4, false);
+		addRubble (position + cPosition (0, 1), value / 4, false);
 		return;
 	}
 
 	std::shared_ptr<cBuilding> rubble;
 	if (big)
 	{
-		rubble = std::make_shared<cBuilding>(&unitsData->getRubbleBigData(), nullptr, nullptr, nextUnitId);
+		rubble = std::make_shared<cBuilding> (&unitsData->getRubbleBigData(), nullptr, nullptr, nextUnitId);
 	}
 	else
 	{
-		rubble = std::make_shared<cBuilding>(&unitsData->getRubbleSmallData(), nullptr, nullptr, nextUnitId);
+		rubble = std::make_shared<cBuilding> (&unitsData->getRubbleSmallData(), nullptr, nullptr, nextUnitId);
 	}
 
 	nextUnitId++;
 
-	rubble->setPosition(position);
+	rubble->setPosition (position);
+	rubble->setRubbleValue (value, randomGenerator);
 
-	rubble->setRubbleValue(value, randomGenerator);
+	map->addBuilding (*rubble, position);
 
-	map->addBuilding(*rubble, position);
-
-
-	neutralBuildings.insert(std::move(rubble));
+	neutralBuildings.insert (std::move (rubble));
 }
 
 //------------------------------------------------------------------------------
-void cModel::deleteUnit(cUnit* unit)
+void cModel::deleteUnit (cUnit* unit)
 {
-	if (unit == 0)
+	if (unit == nullptr)
 		return;
 
-	Log.write(" cModel: delete unit, id: " + iToStr(unit->getId()) + " @" + iToStr(getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" cModel: delete unit, id: " + iToStr(unit->getId()) + " @" + iToStr(getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 
-	if (unit->isABuilding() && static_cast<cBuilding*>(unit)->isRubble())
+	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->isRubble())
 	{
-		deleteRubble(static_cast<cBuilding*> (unit));
+		deleteRubble (*static_cast<cBuilding*> (unit));
 		return;
 	}
-
 	cPlayer* owner = unit->getOwner();
 
-	casualtiesTracker->logCasualty(*unit);
+	casualtiesTracker->logCasualty (*unit);
 
 	std::shared_ptr<cUnit> owningPtr; // keep owning ptr to make sure that unit instance will outlive the following method.
 	if (unit->isABuilding())
 	{
 		cBuilding* building = static_cast<cBuilding*> (unit);
-		owningPtr = owner->removeUnit(*building);
+		owningPtr = owner->removeUnit (*building);
 	}
 	else
 	{
 		cVehicle* vehicle = static_cast<cVehicle*> (unit);
-		owningPtr = owner->removeUnit(*vehicle);
+		owningPtr = owner->removeUnit (*vehicle);
 	}
 
-	helperJobs.onRemoveUnit(unit);
+	helperJobs.onRemoveUnit (unit);
 
 	// detach from move job
 	if (unit->isAVehicle())
@@ -441,7 +425,7 @@ void cModel::deleteUnit(cUnit* unit)
 		cVehicle* vehicle = static_cast<cVehicle*> (unit);
 		if (vehicle->getMoveJob())
 		{
-			assert(vehicle->getMoveJob()->getVehicle() == vehicle);
+			assert (vehicle->getMoveJob()->getVehicle() == vehicle);
 			vehicle->getMoveJob()->removeVehicle();
 		}
 	}
@@ -449,62 +433,62 @@ void cModel::deleteUnit(cUnit* unit)
 	{
 		for (auto attackJob : attackJobs)
 		{
-			attackJob->onRemoveUnit(*unit);
+			attackJob->onRemoveUnit (*unit);
 		}
 	}
 
 	// lose eco points
 	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->points != 0)
 	{
-		unit->getOwner()->changeScore(- static_cast<cBuilding*> (unit)->points);
+		unit->getOwner()->changeScore (-static_cast<cBuilding*> (unit)->points);
 	}
 
 	if (unit->isABuilding())
-		map->deleteBuilding(*static_cast<cBuilding*> (unit));
+		map->deleteBuilding (*static_cast<cBuilding*> (unit));
 	else
-		map->deleteVehicle(*static_cast<cVehicle*> (unit));
+		map->deleteVehicle (*static_cast<cVehicle*> (unit));
 
 	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->subBase != nullptr)
 		owner->base.deleteBuilding (static_cast<cBuilding&> (*unit), *map);
 
 	if (owner != nullptr)
 	{
-		owner->removeFromSentryMap(*unit);
-		owner->removeFromScan(*unit);
+		owner->removeFromSentryMap (*unit);
+		owner->removeFromScan (*unit);
 	}
 }
 //------------------------------------------------------------------------------
-void cModel::deleteRubble(cBuilding* rubble)
+void cModel::deleteRubble (cBuilding& rubble)
 {
-	assert(rubble->isRubble());
+	assert (rubble.isRubble());
 
-	map->deleteBuilding(*rubble);
+	map->deleteBuilding (rubble);
 
-	auto iter = neutralBuildings.find(*rubble);
-	assert(iter != neutralBuildings.end());
+	auto iter = neutralBuildings.find (rubble);
+	assert (iter != neutralBuildings.end());
 
 	if (iter != neutralBuildings.end())
 	{
-		neutralBuildings.erase(iter);
+		neutralBuildings.erase (iter);
 	}
 }
 
 //------------------------------------------------------------------------------
-cMoveJob* cModel::addMoveJob(cVehicle& vehicle, const cPosition& destination)
+cMoveJob* cModel::addMoveJob (cVehicle& vehicle, const cPosition& destination)
 {
-	cMapView mapView(map, nullptr);
-	cPathCalculator pc(vehicle, mapView, destination, false);
+	cMapView mapView (map, nullptr);
+	cPathCalculator pc (vehicle, mapView, destination, false);
 	auto path = pc.calcPath();
 	if (path.empty())
 	{
 		return nullptr;
 	}
 
-	return addMoveJob(vehicle, path);
+	return addMoveJob (vehicle, path);
 }
 
 //------------------------------------------------------------------------------
-cMoveJob* cModel::addMoveJob(cVehicle& vehicle, const std::forward_list<cPosition>& path)
+cMoveJob* cModel::addMoveJob (cVehicle& vehicle, const std::forward_list<cPosition>& path)
 {
 	cMoveJob* currentMoveJob = vehicle.getMoveJob();
 	if (currentMoveJob)
@@ -521,17 +505,16 @@ cMoveJob* cModel::addMoveJob(cVehicle& vehicle, const std::forward_list<cPositio
 			currentMoveJob->removeVehicle();
 		}
 	}
+	cMoveJob* moveJob = new cMoveJob (path, vehicle, *this);
+	vehicle.setMoveJob (moveJob);
 
-	cMoveJob* moveJob = new cMoveJob(path, vehicle, *this);
-	vehicle.setMoveJob(moveJob);
-
-	moveJobs.push_back(moveJob);
+	moveJobs.push_back (moveJob);
 
 	return moveJob;
 }
 
 //------------------------------------------------------------------------------
-std::vector<const cPlayer*> cModel::resumeMoveJobs(const cPlayer* player /*= nullptr*/)
+std::vector<const cPlayer*> cModel::resumeMoveJobs (const cPlayer* player /*= nullptr*/)
 {
 	std::vector<const cPlayer*> players;
 	for (const auto& moveJob : moveJobs)
@@ -543,23 +526,23 @@ std::vector<const cPlayer*> cModel::resumeMoveJobs(const cPlayer* player /*= nul
 		if (moveJob->isWaiting() && moveJob->getVehicle() && moveJob->getVehicle()->data.getSpeed() > 0)
 		{
 			moveJob->resume();
-			players.push_back(moveJob->getVehicle()->getOwner());
+			players.push_back (moveJob->getVehicle()->getOwner());
 		}
 	}
-	RemoveDuplicates(players);
+	RemoveDuplicates (players);
 
 	return players;
 }
 
 //------------------------------------------------------------------------------
-void cModel::addAttackJob(cUnit& aggressor, const cPosition& targetPosition)
+void cModel::addAttackJob (cUnit& aggressor, const cPosition& targetPosition)
 {
-	cAttackJob* attackJob = new cAttackJob(aggressor, targetPosition, *this);
-	attackJobs.push_back(attackJob);
+	cAttackJob* attackJob = new cAttackJob (aggressor, targetPosition, *this);
+	attackJobs.push_back (attackJob);
 }
 
 //------------------------------------------------------------------------------
-void cModel::handlePlayerStartTurn(cPlayer& player)
+void cModel::handlePlayerStartTurn (cPlayer& player)
 {
 	if (gameSettings->getGameType() == eGameSettingsGameType::HotSeat && player.getId() == activeTurnPlayer->getId())
 	{
@@ -567,35 +550,35 @@ void cModel::handlePlayerStartTurn(cPlayer& player)
 
 		if (gameSettings->isTurnLimitActive())
 		{
-			turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow(gameSettings->getTurnLimit());
+			turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnLimit());
 		}
 	}
 }
 
 //------------------------------------------------------------------------------
-void cModel::handlePlayerFinishedTurn(cPlayer& player)
+void cModel::handlePlayerFinishedTurn (cPlayer& player)
 {
-	player.setHasFinishedTurn(true);
+	player.setHasFinishedTurn (true);
 
 	if (gameSettings->getGameType() == eGameSettingsGameType::Simultaneous && gameSettings->isTurnEndDeadlineActive() && !turnEndDeadline)
 	{
-		turnEndDeadline = turnTimeClock->startNewDeadlineFromNow(gameSettings->getTurnEndDeadline());
+		turnEndDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnEndDeadline());
 	}
 
-	playerFinishedTurn(player);
+	playerFinishedTurn (player);
 }
 
 //------------------------------------------------------------------------------
-void cModel::addFx(std::shared_ptr<cFx> fx)
+void cModel::addFx (std::shared_ptr<cFx> fx)
 {
-	effectsList.push_back(fx);
-	addedEffect(fx);
+	effectsList.push_back (fx);
+	addedEffect (fx);
 }
 
 //------------------------------------------------------------------------------
-void cModel::addJob(cJob* job)
+void cModel::addJob (cJob* job)
 {
-	helperJobs.addJob(*job);
+	helperJobs.addJob (*job);
 }
 
 //------------------------------------------------------------------------------
@@ -611,35 +594,35 @@ std::shared_ptr<const cTurnCounter> cModel::getTurnCounter() const
 }
 
 //------------------------------------------------------------------------------
-cUnit* cModel::getUnitFromID(unsigned int id) const
+cUnit* cModel::getUnitFromID (unsigned int id) const
 {
-	cUnit* result = getVehicleFromID(id);
+	cUnit* result = getVehicleFromID (id);
 	if (result == nullptr)
-		result = getBuildingFromID(id);
+		result = getBuildingFromID (id);
 	return result;
 }
 
 //------------------------------------------------------------------------------
-cVehicle* cModel::getVehicleFromID(unsigned int id) const
+cVehicle* cModel::getVehicleFromID (unsigned int id) const
 {
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
-		auto unit = playerList[i]->getVehicleFromId(id);
+		auto unit = playerList[i]->getVehicleFromId (id);
 		if (unit) return unit;
 	}
-	return 0;
+	return nullptr;
 }
 
 //------------------------------------------------------------------------------
-cBuilding* cModel::getBuildingFromID(unsigned int id) const
+cBuilding* cModel::getBuildingFromID (unsigned int id) const
 {
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
-		auto unit = playerList[i]->getBuildingFromId(id);
+		auto unit = playerList[i]->getBuildingFromId (id);
 		if (unit) return unit;
 	}
 
-	auto iter = neutralBuildings.find(id);
+	auto iter = neutralBuildings.find (id);
 	return iter == neutralBuildings.end() ? nullptr : iter->get();
 }
 
@@ -652,16 +635,16 @@ void cModel::refreshMapPointer()
 		for (const auto& vehicle : player->getVehicles())
 		{
 			if (!vehicle->isUnitLoaded())
-				map->addVehicle(*vehicle, vehicle->getPosition());
+				map->addVehicle (*vehicle, vehicle->getPosition());
 		}
 		for (const auto& building : player->getBuildings())
 		{
-			map->addBuilding(*building, building->getPosition());
+			map->addBuilding (*building, building->getPosition());
 		}
 	}
 	for (const auto& building : neutralBuildings)
 	{
-		map->addBuilding(*building, building->getPosition());
+		map->addBuilding (*building, building->getPosition());
 	}
 }
 
@@ -672,19 +655,19 @@ void cModel::runMoveJobs()
 	for (int i = 0; i < max; i++)
 	{
 		auto moveJob = moveJobs[i];
-		moveJob->run(*this); //this can add new items to 'moveJobs'
+		moveJob->run (*this); //this can add new items to 'moveJobs'
 		if (moveJob->isFinished())
 		{
 			cVehicle* vehicle = moveJob->getVehicle();
 			if (vehicle != nullptr && vehicle->getMoveJob() == moveJob)
 			{
-				vehicle->setMoveJob(nullptr);
+				vehicle->setMoveJob (nullptr);
 			}
 			delete moveJob;
 			moveJobs[i] = nullptr;
 		}
 	}
-	Remove(moveJobs, nullptr);
+	Remove (moveJobs, nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -693,11 +676,11 @@ void cModel::runAttackJobs()
 	auto attackJobsTemp = attackJobs;
 	for (auto attackJob : attackJobsTemp)
 	{
-		attackJob->run(*this); //this can add new items to 'attackjobs'
+		attackJob->run (*this); //this can add new items to 'attackjobs'
 		if (attackJob->finished())
 		{
 			delete attackJob;
-			attackJobs.erase(ranges::find (attackJobs, attackJob));
+			attackJobs.erase (ranges::find (attackJobs, attackJob));
 		}
 	}
 }
@@ -732,7 +715,7 @@ void cModel::handleTurnEnd()
 				turnEnded();
 
 				const auto player = gameSettings->getGameType() == eGameSettingsGameType::Simultaneous ? nullptr : activeTurnPlayer;
-				const auto resumedMJobOwners = resumeMoveJobs(player);
+				const auto resumedMJobOwners = resumeMoveJobs (player);
 				for (const auto& player : resumedMJobOwners)
 				{
 					player->turnEndMovementsStarted();
@@ -767,7 +750,7 @@ void cModel::handleTurnEnd()
 
 				for (auto& player : playerList)
 				{
-					newTurnReport.reports.emplace(player->getId(), player->makeTurnStart(*this));
+					newTurnReport.reports.emplace (player->getId(), player->makeTurnStart (*this));
 				}
 
 				// check game end conditions, after turn start, so generated points from this turn are also counted
@@ -777,7 +760,7 @@ void cModel::handleTurnEnd()
 			{
 				// select next player
 				auto nextPlayerIter = ranges::find_if (playerList, [this](const std::shared_ptr<cPlayer>& player) {return player.get() == activeTurnPlayer; });
-				assert(nextPlayerIter != playerList.end());
+				assert (nextPlayerIter != playerList.end());
 				++nextPlayerIter;
 				//TODO: skip defeated player?
 				bool hasChangedTurn = false;
@@ -795,7 +778,7 @@ void cModel::handleTurnEnd()
 				if (turnCounter->getTurn() > 1)
 				{
 					// don't execute turn start action in turn 1, because model is already completely initialized for turn 1
-					newTurnReport.reports.emplace(activeTurnPlayer->getId(), activeTurnPlayer->makeTurnStart(*this));
+					newTurnReport.reports.emplace (activeTurnPlayer->getId(), activeTurnPlayer->makeTurnStart (*this));
 				}
 
 				if (hasChangedTurn)
@@ -816,7 +799,7 @@ void cModel::handleTurnEnd()
 
 				if (gameSettings->isTurnLimitActive())
 				{
-					turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow(gameSettings->getTurnLimit());
+					turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnLimit());
 				}
 			}
 
@@ -828,21 +811,21 @@ void cModel::handleTurnEnd()
 }
 
 //------------------------------------------------------------------------------
-void cModel::setUnitsData(std::shared_ptr<cUnitsData> unitsData_)
+void cModel::setUnitsData (std::shared_ptr<cUnitsData> unitsData_)
 {
 	unitsData = unitsData_;
 }
 
 //------------------------------------------------------------------------------
-void cModel::sideStepStealthUnit(const cPosition& position, const cVehicle& vehicle, const cPosition& bigOffset)
+void cModel::sideStepStealthUnit (const cPosition& position, const cVehicle& vehicle, const cPosition& bigOffset)
 {
-	sideStepStealthUnit(position, vehicle.getStaticUnitData(), vehicle.getOwner(), bigOffset);
+	sideStepStealthUnit (position, vehicle.getStaticUnitData(), vehicle.getOwner(), bigOffset);
 }
 
 //------------------------------------------------------------------------------
-void cModel::sideStepStealthUnit(const cPosition& position, const cStaticUnitData& vehicleData, cPlayer* vehicleOwner, const cPosition& bigOffset)
+void cModel::sideStepStealthUnit (const cPosition& position, const cStaticUnitData& vehicleData, cPlayer* vehicleOwner, const cPosition& bigOffset)
 {
-	if (map->possiblePlaceVehicle(vehicleData, position, nullptr))
+	if (map->possiblePlaceVehicle (vehicleData, position, nullptr))
 	{
 		return;
 	}
@@ -850,15 +833,15 @@ void cModel::sideStepStealthUnit(const cPosition& position, const cStaticUnitDat
 	if (vehicleData.factorAir > 0) return;
 
 	// first look for an undetected stealth unit
-	cVehicle* stealthVehicle = map->getField(position).getVehicle();
+	cVehicle* stealthVehicle = map->getField (position).getVehicle();
 	if (!stealthVehicle) return;
 	if (stealthVehicle->getOwner() == vehicleOwner) return;
 	if (stealthVehicle->getStaticUnitData().isStealthOn == TERRAIN_NONE) return;
-	if (stealthVehicle->isDetectedByPlayer(vehicleOwner)) return;
+	if (stealthVehicle->isDetectedByPlayer (vehicleOwner)) return;
 
 	if (stealthVehicle->isUnitMoving())
 	{
-		stealthVehicle->setDetectedByPlayer(vehicleOwner);
+		stealthVehicle->setDetectedByPlayer (vehicleOwner);
 		return;
 	}
 
@@ -866,15 +849,15 @@ void cModel::sideStepStealthUnit(const cPosition& position, const cStaticUnitDat
 	bool placeFound = false;
 	int minCosts = 99;
 	cPosition bestPosition;
-	const int minx = std::max(position.x() - 1, 0);
-	const int maxx = std::min(position.x() + 1, map->getSize().x() - 1);
-	const int miny = std::max(position.y() - 1, 0);
-	const int maxy = std::min(position.y() + 1, map->getSize().y() - 1);
+	const int minx = std::max (position.x() - 1, 0);
+	const int maxx = std::min (position.x() + 1, map->getSize().x() - 1);
+	const int miny = std::max (position.y() - 1, 0);
+	const int maxy = std::min (position.y() + 1, map->getSize().y() - 1);
 	for (int x = minx; x <= maxx; ++x)
 	{
 		for (int y = miny; y <= maxy; ++y)
 		{
-			const cPosition currentPosition(x, y);
+			const cPosition currentPosition (x, y);
 			if (currentPosition == position) continue;
 
 			// when a bigOffet was passed,
@@ -883,16 +866,16 @@ void cModel::sideStepStealthUnit(const cPosition& position, const cStaticUnitDat
 			if (bigOffset != -1)
 			{
 				if (currentPosition == bigOffset ||
-					currentPosition == bigOffset + cPosition(1, 0) ||
-					currentPosition == bigOffset + cPosition(0, 1) ||
-					currentPosition == bigOffset + cPosition(1, 1)) continue;
+					currentPosition == bigOffset + cPosition (1, 0) ||
+					currentPosition == bigOffset + cPosition (0, 1) ||
+					currentPosition == bigOffset + cPosition (1, 1)) continue;
 			}
 
 			// check whether this field is a possible destination
-			if (!map->possiblePlace(*stealthVehicle, currentPosition, false)) continue;
+			if (!map->possiblePlace (*stealthVehicle, currentPosition, false)) continue;
 
 			// check costs of the move
-			int costs = cPathCalculator::calcNextCost(position, currentPosition, stealthVehicle, map.get());
+			int costs = cPathCalculator::calcNextCost (position, currentPosition, stealthVehicle, map.get());
 			if (costs > stealthVehicle->data.getSpeed()) continue;
 
 			// check whether the vehicle would be detected
@@ -903,22 +886,22 @@ void cModel::sideStepStealthUnit(const cPosition& position, const cStaticUnitDat
 				for (size_t i = 0; i != playerList.size(); ++i)
 				{
 					if (playerList[i].get() == stealthVehicle->getOwner()) continue;
-					if (playerList[i]->hasLandDetection(currentPosition)) detectOnDest = true;
+					if (playerList[i]->hasLandDetection (currentPosition)) detectOnDest = true;
 				}
-				if (map->isWater(currentPosition)) detectOnDest = true;
+				if (map->isWater (currentPosition)) detectOnDest = true;
 			}
 			if (stealthVehicle->getStaticUnitData().isStealthOn & TERRAIN_SEA)
 			{
 				for (size_t i = 0; i != playerList.size(); ++i)
 				{
 					if (playerList[i].get() == stealthVehicle->getOwner()) continue;
-					if (playerList[i]->hasSeaDetection(currentPosition)) detectOnDest = true;
+					if (playerList[i]->hasSeaDetection (currentPosition)) detectOnDest = true;
 				}
-				if (!map->isWater(currentPosition)) detectOnDest = true;
+				if (!map->isWater (currentPosition)) detectOnDest = true;
 
 				if (stealthVehicle->getStaticUnitData().factorGround > 0)
 				{
-					if (map->getField(currentPosition).hasBridgeOrPlattform())
+					if (map->getField (currentPosition).hasBridgeOrPlattform())
 					{
 						detectOnDest = true;
 					}
@@ -941,15 +924,14 @@ void cModel::sideStepStealthUnit(const cPosition& position, const cStaticUnitDat
 	if (placeFound)
 	{
 		std::forward_list<cPosition> path;
-		path.push_front(bestPosition);
+		path.push_front (bestPosition);
 		addMoveJob (*stealthVehicle, path);
 		return;
 	}
 
 	// sidestepping failed. Uncover the vehicle.
-	stealthVehicle->setDetectedByPlayer(vehicleOwner);
+	stealthVehicle->setDetectedByPlayer (vehicleOwner);
 }
-
 
 //------------------------------------------------------------------------------
 bool cModel::isVictoryConditionMet() const
@@ -1047,7 +1029,7 @@ void cModel::checkDefeats()
 			else
 			{
 				player->isDefeated = true;
-				playerHasLost(*player);
+				playerHasLost (*player);
 			}
 		}
 	}
