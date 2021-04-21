@@ -40,7 +40,7 @@ void cActionUpgradeBuilding::execute(cModel& model) const
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
 	cBuilding* building = model.getBuildingFromID(buildingId);
-	if (building == nullptr) return;
+	if (building == nullptr || !building->getOwner()) return;
 	if (building->getOwner()->getId() != playerNr) return;
 
 	std::vector<cBuilding*> upgradedBuildings;
@@ -83,11 +83,11 @@ void cActionUpgradeBuilding::execute(cModel& model) const
 	for (auto b : upgradedBuildings)
 	{
 		// update scan & sentry
-		if (b->data.getScan() < upgradedData.getScan())
+		if (b->getOwner() && b->data.getScan() < upgradedData.getScan())
 		{
 			b->getOwner()->updateScan(*b, upgradedData.getScan());
 		}
-		if (b->isSentryActive() && b->data.getRange() < upgradedData.getRange())
+		if (b->getOwner() && b->isSentryActive() && b->data.getRange() < upgradedData.getRange())
 		{
 			b->getOwner()->updateSentry(*b, upgradedData.getRange());
 		}

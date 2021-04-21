@@ -157,7 +157,7 @@ void cVehicle::proceedBuilding (cModel& model, sNewTurnPlayerReport& report)
 				model.addBuilding (getPosition(), getBuildingType(), getOwner());
 			}
 			BuildPath = false;
-			getOwner()->buildPathInterrupted(*this);
+			if (getOwner()) getOwner()->buildPathInterrupted (*this);
  		}
 	}
 	else if (model.getUnitsData()->getStaticUnitData(getBuildingType()).surfacePosition != staticData->surfacePosition)
@@ -183,7 +183,7 @@ void cVehicle::continuePathBuilding(cModel& model)
 	else
 	{
 		BuildPath = false;
-		getOwner()->buildPathInterrupted(*this);
+		if (getOwner()) getOwner()->buildPathInterrupted (*this);
 	}
 }
 
@@ -202,7 +202,7 @@ void cVehicle::proceedClearing(cModel& model)
 	cBuilding* rubble = map.getField (getPosition()).getRubble();
 	if (isBig)
 	{
-		getOwner()->updateScan(*this, buildBigSavedPosition);
+		if (getOwner()) getOwner()->updateScan(*this, buildBigSavedPosition);
 		map.moveVehicle(*this, buildBigSavedPosition);
 	}
 
@@ -407,7 +407,8 @@ void cVehicle::calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<i
 //-----------------------------------------------------------------------------
 bool cVehicle::doSurvey(const cMap& map)
 {
-	const auto& owner = *getOwner();
+	if (!getOwner()) return false;
+	auto& owner = *getOwner();
 	bool resourceFound = false;
 
 	const int minx = std::max (getPosition().x() - 1, 0);
@@ -425,7 +426,7 @@ bool cVehicle::doSurvey(const cMap& map)
 				resourceFound = true;
 			}
 
-			getOwner()->exploreResource(position);
+			owner.exploreResource(position);
 		}
 	}
 
@@ -848,10 +849,10 @@ void cVehicle::tryResetOfDetectionStateBeforeMove (const cMap& map, const std::v
 	}
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cBuilding* cVehicle::getContainerBuilding()
 {
-	if (!isUnitLoaded()) return nullptr;
+	if (!isUnitLoaded() || !getOwner()) return nullptr;
 
 	const auto& buildings = getOwner()->getBuildings();
 	for (auto i = buildings.begin(); i != buildings.end(); ++i)
@@ -863,9 +864,10 @@ cBuilding* cVehicle::getContainerBuilding()
 	return nullptr;
 }
 
+//------------------------------------------------------------------------------
 cVehicle* cVehicle::getContainerVehicle()
 {
-	if (!isUnitLoaded()) return nullptr;
+	if (!isUnitLoaded() || !getOwner()) return nullptr;
 
 	const auto& vehicles = getOwner()->getVehicles();
 	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)

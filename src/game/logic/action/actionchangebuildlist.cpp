@@ -43,7 +43,7 @@ void cActionChangeBuildList::execute(cModel& model) const
 	cMap& map = *model.getMap();
 
 	cBuilding* building = model.getBuildingFromID(buildingId);
-	if (building == nullptr) return;
+	if (building == nullptr || !building->getOwner()) return;
 	if (building->getOwner()->getId() != playerNr) return;
 
 	if (buildSpeed < 0 || buildSpeed > 2) return;

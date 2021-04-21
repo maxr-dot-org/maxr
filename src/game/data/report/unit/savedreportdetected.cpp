@@ -31,7 +31,7 @@
 cSavedReportDetected::cSavedReportDetected (const cUnit& unit) :
 	cSavedReportUnit (unit),
 	unitName (unit.getDisplayName()),
-	playerName (unit.getOwner()->getName()),
+	playerName (unit.getOwner() ? unit.getOwner()->getName() : ""),
 	submarine(unit.getStaticUnitData().isStealthOn & TERRAIN_SEA && unit.getStaticUnitData().canAttack)
 {}
 

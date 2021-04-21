@@ -103,6 +103,7 @@ bool cWindowBuildVehicles::isRepeatActive() const
 void cWindowBuildVehicles::setActiveUnit (const sID& unitId)
 {
 	cWindowAdvancedHangar::setActiveUnit (unitId);
+	if (!building.getOwner()) return;
 
 	const auto& vehicleData = *building.getOwner()->getUnitDataCurrentVersion (unitId);
 	auto selectedUnit = selectedUnitList->getSelectedItem();

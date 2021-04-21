@@ -46,11 +46,11 @@ void cEndMoveAction::execute (cModel& model)
 {
 	switch (type)
 	{
-		case EMAT_LOAD: 
-			executeLoadAction (model); 
+		case EMAT_LOAD:
+			executeLoadAction (model);
 			break;
-		case EMAT_ATTACK: 
-			executeAttackAction (model); 
+		case EMAT_ATTACK:
+			executeAttackAction (model);
 			break;
 		default:
 			break;
@@ -101,7 +101,7 @@ void cEndMoveAction::executeAttackAction (cModel& model)
 {
 	// get the vehicle
 	cUnit* vehicle = model.getUnitFromID(vehicleID);
-	if (vehicle == nullptr) return;
+	if (vehicle == nullptr || !vehicle->getOwner()) return;
 
 	// get the target unit
 	const cUnit* destUnit = model.getUnitFromID (destID);

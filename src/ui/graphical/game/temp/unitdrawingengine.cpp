@@ -255,7 +255,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	}
 
 	// Draw the colored frame if necessary
-	if (shouldDrawColor)
+	if (shouldDrawColor && vehicle.getOwner())
 	{
 		const cBox<cPosition> d (cPosition (destination.x + 1, destination.y + 1), cPosition (destination.x + 1 + (vehicle.getIsBig() ? 2 * destination.w - 1 : destination.w - 1), destination.y + 1 + (vehicle.getIsBig() ? 2 * destination.h - 1 : destination.h - 1)));
 

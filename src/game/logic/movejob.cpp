@@ -212,7 +212,7 @@ void cMoveJob::startMove (cModel& model)
 
 	vehicle->tryResetOfDetectionStateBeforeMove (map, model.getPlayerList());
 
-	vehicle->getOwner()->updateScan (*vehicle, path.front());
+	if (vehicle->getOwner()) vehicle->getOwner()->updateScan (*vehicle, path.front());
 	map.moveVehicle (*vehicle, path.front());
 
 	path.pop_front();
@@ -231,6 +231,7 @@ bool cMoveJob::handleCollision (cModel &model)
 	const auto mine = map.getField (path.front()).getMine();
 	if (mine &&
 		mine->getOwner() != vehicle->getOwner() &&
+		vehicle->getOwner() &&
 		vehicle->getOwner()->canSeeUnit (*mine, map))
 	{
 		bool pathFound = recalculatePath (model);
@@ -264,6 +265,7 @@ bool cMoveJob::handleCollision (cModel &model)
 //------------------------------------------------------------------------------
 bool cMoveJob::recalculatePath (cModel &model)
 {
+	if (!vehicle->getOwner()) return false;
 	//use owners mapview to calc path
 	const auto& playerList = model.getPlayerList();
 	auto iter = ranges::find_if (playerList, [this](const std::shared_ptr<cPlayer>& player) { return player->getId() == vehicle->getOwner()->getId(); });

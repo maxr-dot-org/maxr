@@ -141,7 +141,7 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 	//close window, when the mine, from which this menu was called, gets destroyed.
 	signalConnectionManager.connect(building.destroyed, std::bind(&cWindowResourceDistribution::closeOnUnitDestruction, this));
 	//update subbase values, when any other building in the subbase gets destroyed
-	signalConnectionManager.connect(building.getOwner()->base.onSubbaseConfigurationChanged, [this](const std::vector<cBuilding*>& buildings){ updateOnSubbaseChanged (buildings); });
+	if (building.getOwner()) signalConnectionManager.connect(building.getOwner()->base.onSubbaseConfigurationChanged, [this](const std::vector<cBuilding*>& buildings){ updateOnSubbaseChanged (buildings); });
 }
 
 

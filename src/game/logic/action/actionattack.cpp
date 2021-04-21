@@ -45,7 +45,7 @@ void cActionAttack::execute(cModel& model) const
 
 	//validate aggressor
 	cUnit* aggressor = model.getUnitFromID(agressorId);
-	if (aggressor == nullptr) return;
+	if (aggressor == nullptr || !aggressor->getOwner()) return;
 
 	if (aggressor->getOwner()->getId() != playerNr) return;
 	if (aggressor->isBeeingAttacked()) return;

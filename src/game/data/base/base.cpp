@@ -1035,7 +1035,7 @@ void cBase::deleteBuilding (cBuilding& building, const cMap& map)
 		addBuilding (*b, map, false);
 	}
 
-	if (building.isUnitWorking() && building.getStaticData().canResearch)
+	if (building.isUnitWorking() && building.getStaticData().canResearch && building.getOwner())
 		building.getOwner()->stopAResearch (building.getResearchArea());
 	onSubbaseConfigurationChanged (buildings);
 }

@@ -83,6 +83,7 @@ void cWindowBuildBuildings::setActiveUnit (const sID& unitId)
 {
 	cWindowHangar::setActiveUnit (unitId);
 
+	if (!vehicle.getOwner()) return;
 	const auto& buildingData = *vehicle.getOwner()->getUnitDataCurrentVersion (unitId);
 	std::array<int, 3> turns;
 	std::array<int, 3> costs;
@@ -110,7 +111,7 @@ void cWindowBuildBuildings::generateSelectionList (const cVehicle& vehicle, cons
 			select = false;
 		}
 
-		if (vehicle.getStoredResources() < vehicle.getOwner()->getUnitDataCurrentVersion(data.ID)->getBuildCost()) item.markAsInsufficient();
+		if (vehicle.getOwner() && vehicle.getStoredResources() < vehicle.getOwner()->getUnitDataCurrentVersion (data.ID)->getBuildCost()) item.markAsInsufficient();
 	}
 }
 

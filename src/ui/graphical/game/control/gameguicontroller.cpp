@@ -1201,7 +1201,7 @@ void cGameGuiController::connectClient (cClient& client)
 
 	clientSignalConnectionManager.connect (model.unitStolen, [&] (const cUnit& source, const cUnit&, const cPlayer&)
 	{
-		if (source.getOwner()->getId() == getActivePlayer()->getId())
+		if (source.getOwner() && source.getOwner()->getId() == getActivePlayer()->getId())
 		{
 			soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceCommandoAction, getRandom (VoiceData.VOIUnitStolen)));
 		}
@@ -1209,7 +1209,7 @@ void cGameGuiController::connectClient (cClient& client)
 
 	clientSignalConnectionManager.connect (model.unitDisabled, [&] (const cUnit& source, const cUnit&)
 	{
-		if (source.getOwner()->getId() == getActivePlayer()->getId())
+		if (source.getOwner() && source.getOwner()->getId() == getActivePlayer()->getId())
 		{
 			soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceCommandoAction, VoiceData.VOIUnitDisabled));
 		}
@@ -1217,7 +1217,7 @@ void cGameGuiController::connectClient (cClient& client)
 
 	clientSignalConnectionManager.connect (model.unitStealDisableFailed, [&] (const cUnit& source, const cUnit&)
 	{
-		if (source.getOwner()->getId() == getActivePlayer()->getId())
+		if (source.getOwner() && source.getOwner()->getId() == getActivePlayer()->getId())
 		{
 			soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceCommandoAction, getRandom (VoiceData.VOICommandoFailed)));
 		}
@@ -1229,7 +1229,7 @@ void cGameGuiController::connectClient (cClient& client)
 		{
 			soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectReload, SoundData.SNDReload, unit));
 		}
-		if (unit.getOwner()->getId() == getActivePlayer()->getId())
+		if (unit.getOwner() && unit.getOwner()->getId() == getActivePlayer()->getId())
 		{
 			soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceReload, VoiceData.VOIReammo));
 		}
@@ -1241,7 +1241,7 @@ void cGameGuiController::connectClient (cClient& client)
 		{
 			soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectRepair, SoundData.SNDRepair, unit));
 		}
-		if (unit.getOwner()->getId() == getActivePlayer()->getId())
+		if (unit.getOwner() && unit.getOwner()->getId() == getActivePlayer()->getId())
 		{
 			soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceRepair, getRandom (VoiceData.VOIRepaired)));
 		}
@@ -1335,7 +1335,7 @@ void cGameGuiController::connectReportSources(cClient& client)
 	});
 	allClientsSignalConnectionManager.connect(model.unitDisabled, [&](const cUnit&, const cUnit& target)
 	{
-		if (target.getOwner()->getId() == player.getId())
+		if (target.getOwner() && target.getOwner()->getId() == player.getId())
 		{
 			addSavedReport(std::make_unique<cSavedReportDisabled>(target), player.getId());
 		}

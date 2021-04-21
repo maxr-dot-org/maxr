@@ -327,7 +327,7 @@ void cMiniMapWidget::drawUnits()
 
 			// draw vehicle
 			const cVehicle* vehicle = field.getVehicle();
-			if (vehicle)
+			if (vehicle && vehicle->getOwner())
 			{
 				if (!attackUnitsOnly || vehicle->getStaticUnitData().canAttack)
 				{
@@ -337,7 +337,7 @@ void cMiniMapWidget::drawUnits()
 
 			// draw plane
 			vehicle = field.getPlane();
-			if (vehicle)
+			if (vehicle && vehicle->getOwner())
 			{
 				if (!attackUnitsOnly || vehicle->getStaticUnitData().canAttack)
 				{

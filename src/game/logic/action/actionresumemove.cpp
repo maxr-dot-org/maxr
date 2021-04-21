@@ -59,7 +59,7 @@ void cActionResumeMove::execute (cModel& model) const
 			Log.write(" Can't find vehicle with id " + toString(unitId), cLog::eLOG_TYPE_NET_WARNING);
 			return;
 		}
-
+		if (!vehicle->getOwner()) return;
 		if (vehicle->getOwner()->getId() != playerNr) return;
 
 		if (vehicle->getMoveJob())

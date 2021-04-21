@@ -38,7 +38,7 @@ void cActionChangeManualFire::execute(cModel& model) const
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
 	cUnit* unit = model.getUnitFromID(unitId);
-	if (unit == nullptr) return;
+	if (unit == nullptr || !unit->getOwner()) return;
 	if (unit->getOwner()->getId() != playerNr) return;
 
 	unit->setManualFireActive(!unit->isManualFireActive());

@@ -406,17 +406,19 @@ void cModel::deleteUnit (cUnit* unit)
 	casualtiesTracker->logCasualty (*unit);
 
 	std::shared_ptr<cUnit> owningPtr; // keep owning ptr to make sure that unit instance will outlive the following method.
-	if (unit->isABuilding())
+	if (owner)
 	{
-		cBuilding* building = static_cast<cBuilding*> (unit);
-		owningPtr = owner->removeUnit (*building);
+		if (unit->isABuilding())
+		{
+			cBuilding* building = static_cast<cBuilding*> (unit);
+			owningPtr = owner->removeUnit (*building);
+		}
+		else
+		{
+			cVehicle* vehicle = static_cast<cVehicle*> (unit);
+			owningPtr = owner->removeUnit (*vehicle);
+		}
 	}
-	else
-	{
-		cVehicle* vehicle = static_cast<cVehicle*> (unit);
-		owningPtr = owner->removeUnit (*vehicle);
-	}
-
 	helperJobs.onRemoveUnit (unit);
 
 	// detach from move job
@@ -438,9 +440,9 @@ void cModel::deleteUnit (cUnit* unit)
 	}
 
 	// lose eco points
-	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->points != 0)
+	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->points != 0 && owner)
 	{
-		unit->getOwner()->changeScore (-static_cast<cBuilding*> (unit)->points);
+		owner->changeScore (-static_cast<cBuilding*> (unit)->points);
 	}
 
 	if (unit->isABuilding())
@@ -448,7 +450,7 @@ void cModel::deleteUnit (cUnit* unit)
 	else
 		map->deleteVehicle (*static_cast<cVehicle*> (unit));
 
-	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->subBase != nullptr)
+	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->subBase != nullptr && owner)
 		owner->base.deleteBuilding (static_cast<cBuilding&> (*unit), *map);
 
 	if (owner != nullptr)

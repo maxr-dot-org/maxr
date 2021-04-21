@@ -162,7 +162,7 @@ void sDrawingCacheEntry::init (const cBuilding& building, double zoom_, unsigned
 	dir = building.dir;
 	owner = building.getOwner();
 	id = building.data.getId();
-	clan = building.getOwner()->getClan();
+	clan = owner ? owner->getClan() : -1;
 
 	zoom = zoom_;
 	lastUsed = frameNr;
@@ -231,8 +231,11 @@ SDL_Surface* cDrawingCache::getCachedImage (const cBuilding& building, double zo
 		}
 		if (entry.zoom != zoom) continue;
 
-		if (uiData.hasClanLogos && building.getOwner()->getClan() != entry.clan) continue;
-
+		if (uiData.hasClanLogos)
+		{
+			if (building.getOwner() && building.getOwner()->getClan() != entry.clan) continue;
+			if (!building.getOwner() && entry.clan != -1) continue;
+		}
 		//cache hit!
 		cacheHits++;
 		entry.lastUsed = frameCounter->getFrame();

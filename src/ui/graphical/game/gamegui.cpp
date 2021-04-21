@@ -484,7 +484,7 @@ void cGameGui::updateHudUnitName (const cPosition& tilePosition)
 		else if (field.getTopBuilding() != nullptr) unit = field.getTopBuilding();
 		else if (field.getBaseBuilding() != nullptr && !field.getBaseBuilding()->isRubble()) unit = field.getBaseBuilding();
 
-		if (unit != nullptr)
+		if (unit != nullptr && unit->getOwner())
 		{
 			// FIXME: string may be to long.
 			unitNameString = unit->getDisplayName() + " (" + unit->getOwner()->getName() + ")";

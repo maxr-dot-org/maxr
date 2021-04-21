@@ -110,7 +110,7 @@ void cUnitDetailsHud::reset()
 
 	if (data.getSpeedMax() > 0) drawRow (2, eUnitDataSymbolType::Speed, data.getSpeed() / 4, data.getSpeedMax() / 4, lngPack.i18n ("Text~Others~Speed_7"));
 
-	if (staticData.buildingData.canScore)
+	if (staticData.buildingData.canScore && unit->getOwner())
 	{
 		assert (unit->isABuilding());  // currently only buildings can score
 		const auto unitScore = static_cast<const cBuilding*> (unit)->points;

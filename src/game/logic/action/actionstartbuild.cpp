@@ -56,7 +56,7 @@ void cActionStartBuild::execute(cModel& model) const
 	cMap& map = *model.getMap();
 
 	cVehicle* vehicle = model.getVehicleFromID(vehicleID);
-	if (vehicle == nullptr) return;
+	if (vehicle == nullptr || !vehicle->getOwner()) return;
 	if (vehicle->getOwner()->getId() != playerNr) return;
 
 	if (!model.getUnitsData()->isValidId(buildingTypeID)) return;

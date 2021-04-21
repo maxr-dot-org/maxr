@@ -450,7 +450,7 @@ void cDebugOutputWidget::traceVehicle (const cVehicle& vehicle, cPosition& drawP
 
 	auto font = cUnicodeFont::font.get();
 
-	tmpString = "name: \"" + vehicle.getDisplayName() + "\" id: \"" + iToStr (vehicle.iID) + "\" owner: \"" + vehicle.getOwner()->getName() + "\" pos: " + toString (vehicle.getPosition()) + " offset: " + toString (vehicle.getMovementOffset());
+	tmpString = "name: \"" + vehicle.getDisplayName() + "\" id: \"" + iToStr (vehicle.iID) + "\" owner: \"" + (vehicle.getOwner() ? vehicle.getOwner()->getName() : "<null>") + "\" pos: " + toString (vehicle.getPosition()) + " offset: " + toString (vehicle.getMovementOffset());
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 

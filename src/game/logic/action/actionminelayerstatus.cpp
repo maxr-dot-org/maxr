@@ -40,7 +40,7 @@ void cActionMinelayerStatus::execute(cModel& model) const
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
 	cVehicle* vehicle = model.getVehicleFromID(vehicleId);
-	if (vehicle == nullptr) return;
+	if (vehicle == nullptr || !vehicle->getOwner()) return;
 	if (vehicle->getOwner()->getId() != playerNr) return;
 
 	if (layMines && clearMines) return;

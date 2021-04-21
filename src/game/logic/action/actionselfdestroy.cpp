@@ -39,7 +39,7 @@ void cActionSelfDestroy::execute(cModel& model) const
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
 	cBuilding* b = model.getBuildingFromID(unitId);
-	if (b == nullptr) return;
+	if (b == nullptr || !b->getOwner()) return;
 	if (b->getOwner()->getId() != playerNr) return;
 
 	if (b->isBeeingAttacked()) return;

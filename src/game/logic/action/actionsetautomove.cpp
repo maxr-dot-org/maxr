@@ -39,7 +39,7 @@ void cActionSetAutoMove::execute(cModel& model) const
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
 	cVehicle* surveyor = model.getVehicleFromID(vehicleId);
-	if (!surveyor) return;
+	if (!surveyor || !surveyor->getOwner()) return;
 
 	if (surveyor->getOwner()->getId() != playerNr) return;
 	if (!surveyor->getStaticData().canSurvey) return;

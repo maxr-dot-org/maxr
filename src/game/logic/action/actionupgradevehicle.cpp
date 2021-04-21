@@ -39,12 +39,13 @@ void cActionUpgradeVehicle::execute(cModel& model) const
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
 	cBuilding* containingBuilding = model.getBuildingFromID(buildingId);
-	if (containingBuilding == nullptr) return;
+	if (containingBuilding == nullptr || !containingBuilding->getOwner()) return;
 	if (containingBuilding->getOwner()->getId() != playerNr) return;
 
 	std::map<sID, sUpgradeResult> result;
 	for (auto vehicle : containingBuilding->storedUnits)
 	{
+		if (!vehicle->getOwner()) continue;
 		if (vehicle->getId() == vehicleId || vehicleId == 0)
 		{
 			// check unit version

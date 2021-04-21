@@ -99,11 +99,11 @@ void cUnit::setOwner (cPlayer* owner_)
 void cUnit::storeVehicle(cVehicle& vehicle, cMap& map)
 {
 	map.deleteVehicle(vehicle);
-	vehicle.getOwner()->removeFromScan(vehicle);
+	if (vehicle.getOwner()) vehicle.getOwner()->removeFromScan(vehicle);
 
 	if (vehicle.isSentryActive())
 	{
-		vehicle.getOwner()->removeFromSentryMap(vehicle);
+		if (vehicle.getOwner()) vehicle.getOwner()->removeFromSentryMap(vehicle);
 		vehicle.setSentryActive(false);
 	}
 
@@ -127,7 +127,7 @@ void cUnit::exitVehicleTo(cVehicle& vehicle, const cPosition& position, cMap& ma
 	vehicle.setPosition(position);
 	map.addVehicle(vehicle, position);
 
-	vehicle.getOwner()->addToScan(vehicle);
+	if (vehicle.getOwner()) vehicle.getOwner()->addToScan(vehicle);
 }
 
 //------------------------------------------------------------------------------

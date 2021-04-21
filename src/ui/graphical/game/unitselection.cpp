@@ -373,7 +373,7 @@ cBuilding* cUnitSelection::getNextMiningStation(const cPlayer& player, const cBu
 //------------------------------------------------------------------------------
 cUnit* cUnitSelection::getNextUnit(const cPlayer& player, const std::vector<unsigned int>& doneList, cUnit* start) const
 {
-	if (start == nullptr || start->getOwner()->getId() != player.getId())
+	if (start == nullptr || !start->getOwner() || start->getOwner()->getId() != player.getId())
 	{
 		cVehicle* nextVehicle = getNextVehicle(player, doneList, nullptr);
 		if (nextVehicle) return nextVehicle;
@@ -478,7 +478,7 @@ cBuilding* cUnitSelection::getPrevMiningStation(const cPlayer& player, const cBu
 //------------------------------------------------------------------------------
 cUnit* cUnitSelection::getPrevUnit(const cPlayer& player, const std::vector<unsigned int>& doneList, cUnit* start) const
 {
-	if (start == nullptr || start->getOwner()->getId() != player.getId())
+	if (start == nullptr || !start->getOwner() || start->getOwner()->getId() != player.getId())
 	{
 		cVehicle* prevVehicle = getPrevVehicle(player, doneList, nullptr);
 		if (prevVehicle) return prevVehicle;

@@ -237,7 +237,7 @@ string cBuilding::getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData&
 		}
 
 		// Research Center
-		if (getStaticData().canResearch && getOwner() == whoWantsToKnow)
+		if (getStaticData().canResearch && getOwner() == whoWantsToKnow && getOwner())
 		{
 			string sText = lngPack.i18n ("Text~Comp~Working") + "\n";
 			for (int area = 0; area < cResearch::kNrResearchAreas; area++)
@@ -262,7 +262,7 @@ string cBuilding::getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData&
 		}
 
 		// Goldraffinerie:
-		if (getStaticData().convertsGold && getOwner() == whoWantsToKnow)
+		if (getStaticData().convertsGold && getOwner() == whoWantsToKnow && getOwner())
 		{
 			string sText;
 			sText = lngPack.i18n ("Text~Comp~Working") + "\n";
@@ -283,7 +283,7 @@ string cBuilding::getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData&
 		return lngPack.i18n ("Text~Comp~ReactionFireOff");
 
 	//GoldRaf idle + gold-amount
-	if (getStaticData().convertsGold && getOwner() == whoWantsToKnow && !isUnitWorking())
+	if (getStaticData().convertsGold && getOwner() == whoWantsToKnow && getOwner() && !isUnitWorking())
 	{
 		string sText;
 		sText = lngPack.i18n("Text~Comp~Waits") + "\n";
@@ -294,7 +294,7 @@ string cBuilding::getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData&
 
 	//Research centre idle + projects
 	// Research Center
-	if (getStaticData().canResearch && getOwner() == whoWantsToKnow && !isUnitWorking())
+	if (getStaticData().canResearch && getOwner() == whoWantsToKnow && getOwner() && !isUnitWorking())
 	{
 		string sText = lngPack.i18n("Text~Comp~Waits") + "\n";
 		for (int area = 0; area < cResearch::kNrResearchAreas; area++)
@@ -351,6 +351,7 @@ void cBuilding::connectFirstBuildListItem()
 //--------------------------------------------------------------------------
 void cBuilding::updateNeighbours (const cMap& map)
 {
+	if (!getOwner()) return;
 	if (!isBig)
 	{
 		getOwner()->base.checkNeighbour (getPosition() + cPosition ( 0, -1), *this, map);
@@ -377,11 +378,12 @@ void cBuilding::updateNeighbours (const cMap& map)
 //--------------------------------------------------------------------------
 void cBuilding::CheckNeighbours (const cMap& map)
 {
+	if (!getOwner()) return;
 #define CHECK_NEIGHBOUR(x, y, m) \
 	if (map.isValidPosition (cPosition(x, y))) \
 	{ \
 		const cBuilding* b = map.getField(cPosition(x, y)).getTopBuilding(); \
-		if (b && b->getOwner() == getOwner() && b->getStaticData().connectsToBase) \
+		if (b && b->getOwner() && b->getOwner() == getOwner() && b->getStaticData().connectsToBase) \
 		{m = true;}else{m = false;} \
 	}
 
@@ -426,7 +428,7 @@ void cBuilding::startWork ()
 		return;
 
 	// research building
-	if (getStaticData().canResearch)
+	if (getStaticData().canResearch && getOwner())
 	{
 		getOwner()->startAResearch (researchArea);
 	}
@@ -447,7 +449,7 @@ void cBuilding::stopWork (bool forced)
 	if (!subBase->stopBuilding (*this, forced))
 		return;
 
-	if (getStaticData().canResearch)
+	if (getStaticData().canResearch && getOwner())
 	{
 		getOwner()->stopAResearch (researchArea);
 	}
@@ -749,6 +751,7 @@ bool cBuilding::buildingCanBeStarted() const
 //-----------------------------------------------------------------------------
 bool cBuilding::buildingCanBeUpgraded() const
 {
+	if (!getOwner()) return false;
 	const cDynamicUnitData& upgraded = *getOwner()->getUnitDataCurrentVersion (data.getId());
 	return data.getVersion() != upgraded.getVersion() && subBase && subBase->getResourcesStored().metal >= 2;
 }

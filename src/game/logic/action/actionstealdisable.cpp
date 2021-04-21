@@ -42,7 +42,7 @@ void cActionStealDisable::execute(cModel& model) const
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
 	auto infiltrator = model.getVehicleFromID(infiltratorId);
-	if (infiltrator == nullptr) return;
+	if (infiltrator == nullptr || !infiltrator->getOwner()) return;
 	if (infiltrator->getOwner()->getId() != playerNr) return;
 
 	auto target = model.getUnitFromID(targetId);
@@ -75,7 +75,7 @@ void cActionStealDisable::execute(cModel& model) const
 			const int turns = infiltrator->getCommandoData().computeDisabledTurnCount(*target);
 
 			target->setDisabledTurns (turns);
-			target->getOwner()->removeFromScan(*target);
+			if (target->getOwner()) target->getOwner()->removeFromScan(*target);
 
 			model.unitDisabled(*infiltrator, *target);
 		}
@@ -89,7 +89,7 @@ void cActionStealDisable::execute(cModel& model) const
 		{
 			// detect the infiltrator on failed action
 			// and let enemy units fire on him
-			if (target->getOwner()->canSeeAnyAreaUnder(*infiltrator))
+			if (target->getOwner() && target->getOwner()->canSeeAnyAreaUnder(*infiltrator))
 			{
 				infiltrator->setDetectedByPlayer(target->getOwner());
 			}

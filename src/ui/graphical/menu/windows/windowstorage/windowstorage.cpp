@@ -149,6 +149,7 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 //------------------------------------------------------------------------------
 void cWindowStorage::updateUnitButtons (const cVehicle& storedUnit, size_t positionIndex)
 {
+	if (!storedUnit.getOwner()) return;
 	const auto& upgraded = *storedUnit.getOwner()->getUnitDataCurrentVersion (storedUnit.data.getId());
 
 	activateButtons[positionIndex]->unlock();
@@ -163,6 +164,7 @@ void cWindowStorage::updateUnitButtons (const cVehicle& storedUnit, size_t posit
 //------------------------------------------------------------------------------
 void cWindowStorage::updateUnitName (const cVehicle& storedUnit, size_t positionIndex)
 {
+	if (!storedUnit.getOwner()) return;
 	auto name = storedUnit.getDisplayName();
 
 	const auto& upgraded = *storedUnit.getOwner()->getUnitDataCurrentVersion (storedUnit.data.getId());
@@ -251,10 +253,12 @@ void cWindowStorage::updateGlobalButtons()
 		for (size_t i = 0; i != unit.storedUnits.size(); ++i)
 		{
 			const auto& vehicle = *unit.storedUnits[i];
-			const auto& upgraded = *vehicle.getOwner()->getUnitDataCurrentVersion (vehicle.data.getId());
 
 			if (vehicle.data.getAmmo() != vehicle.data.getAmmoMax()) reloadAllButton->unlock();
 			if (vehicle.data.getHitpoints() != vehicle.data.getHitpointsMax()) repairAllButton->unlock();
+
+			if (!vehicle.getOwner()) continue;
+			const auto& upgraded = *vehicle.getOwner()->getUnitDataCurrentVersion (vehicle.data.getId());
 			if (vehicle.data.getVersion() != upgraded.getVersion()) upgradeAllButton->unlock();
 		}
 	}

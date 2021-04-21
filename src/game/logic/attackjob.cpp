@@ -470,7 +470,7 @@ void cAttackJob::impactSingle (const cPosition& position, int attackPoints, cMod
 	aggressor->setAttacking (false);
 
 	//make message
-	if (target)
+	if (target && target->getOwner())
 	{
 		if (destroyed)
 		{

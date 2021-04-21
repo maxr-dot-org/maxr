@@ -96,9 +96,11 @@ void sVehicleUIData::render_smallClearing (const cVehicle& vehicle, unsigned lon
 	src.y = 0;
 	src.h = src.w = (int) (clear_small_org->h * zoomFactor);
 	src.x = (animationTime % 4) * src.w;
-	SDL_BlitSurface (cPlayerColor::getTexture (vehicle.getOwner()->getColor()), nullptr, GraphicsData.gfx_tmp.get(), nullptr);
-	blitWithPreScale (*clear_small_org, *clear_small, &src, *GraphicsData.gfx_tmp, nullptr, zoomFactor, 4);
-
+	if (vehicle.getOwner())
+	{
+		SDL_BlitSurface (cPlayerColor::getTexture (vehicle.getOwner()->getColor()), nullptr, GraphicsData.gfx_tmp.get(), nullptr);
+		blitWithPreScale (*clear_small_org, *clear_small, &src, *GraphicsData.gfx_tmp, nullptr, zoomFactor, 4);
+	}
 	// draw vehicle
 	src.x = 0;
 	src.y = 0;
