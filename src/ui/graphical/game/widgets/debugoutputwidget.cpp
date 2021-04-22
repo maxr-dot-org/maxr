@@ -458,7 +458,7 @@ void cDebugOutputWidget::traceVehicle (const cVehicle& vehicle, cPosition& drawP
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
-	tmpString = " attacking: " + iToStr (vehicle.isAttacking()) + " on sentry: +" + iToStr (vehicle.isSentryActive()) + " ditherx: " + iToStr (vehicle.ditherX) + " dithery: " + iToStr (vehicle.ditherY);
+	tmpString = " attacking: " + iToStr (vehicle.isAttacking()) + " on sentry: +" + iToStr (vehicle.isSentryActive()) + " dither: (" + iToStr (vehicle.dither.x()) + ", " + iToStr (vehicle.dither.y()) + ")";
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 

@@ -2378,7 +2378,7 @@ void cGameMapWidget::renewDamageEffect (const cVehicle& vehicle)
 		(vehicle.getOwner() == player.get() || (!player || mapView->canSeeUnit (vehicle))))
 	{
 		int intense = (int) (100 - 100 * ((float)vehicle.data.getHitpoints() / vehicle.data.getHitpointsMax()));
-		addEffect (std::make_shared<cFxDarkSmoke> (cPosition (vehicle.getPosition().x() * 64 + vehicle.DamageFXPointX + vehicle.getMovementOffset().x(), vehicle.getPosition().y() * 64 + vehicle.DamageFXPointY + vehicle.getMovementOffset().y()), intense, windDirection));
+		addEffect (std::make_shared<cFxDarkSmoke> (cPosition (vehicle.getPosition().x() * 64 + vehicle.DamageFXPoint.x() + vehicle.getMovementOffset().x(), vehicle.getPosition().y() * 64 + vehicle.DamageFXPoint.y() + vehicle.getMovementOffset().y()), intense, windDirection));
 	}
 }
 

@@ -194,8 +194,8 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 
 	if (vehicle.getFlightHeight() > 0)
 	{
-		destination.x += vehicle.ditherX;
-		destination.y += vehicle.ditherY;
+		destination.x += vehicle.dither.x();
+		destination.y += vehicle.dither.y();
 	}
 
 	SDL_Rect dest;
@@ -234,8 +234,8 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	// remove the dithering for the following operations
 	if (vehicle.getFlightHeight() > 0)
 	{
-		destination.x -= vehicle.ditherX;
-		destination.y -= vehicle.ditherY;
+		destination.x -= vehicle.dither.x();
+		destination.y -= vehicle.dither.y();
 	}
 
 	// remove movement offset for working units

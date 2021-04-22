@@ -51,38 +51,16 @@ cVehicle::cVehicle (const cStaticUnitData& staticData, const cDynamicUnitData& d
 	cUnit (&dynamicData, &staticData, owner, ID),
 	bandPosition(0, 0),
 	buildBigSavedPosition(0, 0),
-	tileMovementOffset(0, 0),
-	moveJob(nullptr),
-	loaded (false),
-	isBuilding (false),
-	buildingTyp(),
-	buildCosts (0),
-	buildTurns (0),
-	buildTurnsStart (0),
-	buildCostsStart (0),
-	isClearing (false),
-	clearingTurns (0),
-	layMines (false),
-	clearMines (false)
+	tileMovementOffset(0, 0)
 {
-	ditherX = 0;
-	ditherY = 0;
-	flightHeight = 0;
-	WalkFrame = 0;
-	surveyorAutoMoveActive = false;
-	moving = false;
-	BuildPath = false;
-	bigBetonAlpha = 254;
-
-	DamageFXPointX = random (7) + 26 - 3;
-	DamageFXPointY = random (7) + 26 - 3;
+	DamageFXPoint = { random (7) + 26 - 3, random (7) + 26 - 3};
 	refreshData();
 
-	clearingTurnsChanged.connect ([&]() { statusChanged(); });
-	buildingTurnsChanged.connect ([&]() { statusChanged(); });
-	buildingTypeChanged.connect ([&]() { statusChanged(); });
-	moveJobChanged.connect ([&]() { statusChanged(); });
-	autoMoveJobChanged.connect ([&]() { statusChanged(); });
+	clearingTurnsChanged.connect ([this]() { statusChanged(); });
+	buildingTurnsChanged.connect ([this]() { statusChanged(); });
+	buildingTypeChanged.connect ([this]() { statusChanged(); });
+	moveJobChanged.connect ([this]() { statusChanged(); });
+	autoMoveJobChanged.connect ([this]() { statusChanged(); });
 }
 
 //-----------------------------------------------------------------------------

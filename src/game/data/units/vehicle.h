@@ -106,25 +106,17 @@ public:
 	const cPosition& getMovementOffset() const override { return tileMovementOffset; }
 	void setMovementOffset (const cPosition& newOffset) { tileMovementOffset = newOffset; }
 
-	mutable int ditherX, ditherY;
-	mutable int bigBetonAlpha;
-	cPosition bandPosition; // X,Y Position für das Band
-	cPosition buildBigSavedPosition; // last position before building has started
-	bool BuildPath;   // Gibt an, ob ein Pfad gebaut werden soll
-	int DamageFXPointX, DamageFXPointY; // Die Punkte, an denen Rauch bei beschädigung aufsteigen wird
-	unsigned int WalkFrame; // Frame der Geh-Annimation
-
 	/**
 	* refreshes speedCur and shotsCur and continues building or clearing
 	*@author alzi alias DoctorDeath
 	*@return true if there has been refreshed something else false.
 	*/
 	bool refreshData();
-	void proceedBuilding (cModel& model, sNewTurnPlayerReport&);
-	void continuePathBuilding(cModel& model);
-	void proceedClearing(cModel& model);
+	void proceedBuilding (cModel&, sNewTurnPlayerReport&);
+	void continuePathBuilding (cModel&);
+	void proceedClearing (cModel&);
 
-	std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const override;
+	std::string getStatusStr (const cPlayer*, const cUnitsData&) const override;
 	void DecSpeed (int value);
 	bool doSurvey(const cMap& map);
 	bool canTransferTo (const cPosition& position, const cMapView& map) const override;
@@ -268,28 +260,37 @@ private:
 	bool doReactionFire (cModel& model, cPlayer* player) const;
 	bool doReactionFireForUnit (cModel& model, cUnit* opponentUnit) const;
 
+public:
+	mutable cPosition dither;
+	mutable int bigBetonAlpha = 254;
+	cPosition bandPosition; // X,Y Position für das Band
+	cPosition buildBigSavedPosition; // last position before building has started
+	bool BuildPath = false;   // Gibt an, ob ein Pfad gebaut werden soll
+	cPosition DamageFXPoint; // Die Punkte, an denen Rauch bei beschädigung aufsteigen wird
+	unsigned int WalkFrame = 0; // Frame der Geh-Annimation
+private:
 	cPosition tileMovementOffset;  // offset within tile during movement
 
-	bool moving;
-	cMoveJob* moveJob;
-	bool surveyorAutoMoveActive;
+	bool moving = false;
+	cMoveJob* moveJob = nullptr;
+	bool surveyorAutoMoveActive = false;
 
-	bool loaded;
+	bool loaded = false;
 
-	bool isBuilding;
+	bool isBuilding = false;
 	sID buildingTyp;
-	int buildCosts;
-	int buildTurns;
-	int buildTurnsStart;
-	int buildCostsStart;
+	int buildCosts = 0;
+	int buildTurns = 0;
+	int buildTurnsStart = 0;
+	int buildCostsStart = 0;
 
-	bool isClearing;
-	int clearingTurns;
+	bool isClearing = false;
+	int clearingTurns = 0;
 
-	bool layMines;
-	bool clearMines;
+	bool layMines = false;
+	bool clearMines = false;
 
-	int flightHeight;
+	int flightHeight = 0;
 
 	cCommandoData commandoData;
 };
