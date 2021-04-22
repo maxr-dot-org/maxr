@@ -262,7 +262,7 @@ public:
 		{
 			unsigned int buildingID;
 			archive >> NVP (buildingID);
-			auto building = std::make_shared<cBuilding> (nullptr, nullptr, nullptr, buildingID);
+			auto building = std::make_shared<cBuilding> (buildingID);
 			archive >> serialization::makeNvp ("building", *building);
 			neutralBuildings.insert (std::move (building));
 		}

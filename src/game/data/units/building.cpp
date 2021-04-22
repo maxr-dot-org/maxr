@@ -121,47 +121,25 @@ uint32_t cBuildListItem::getChecksum(uint32_t crc) const
 //--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
+cBuilding::cBuilding (unsigned int ID) : cBuilding (nullptr, nullptr, nullptr, ID)
+{
+}
+
+//--------------------------------------------------------------------------
 cBuilding::cBuilding (const cStaticUnitData* staticData, const cDynamicUnitData* data, cPlayer* owner, unsigned int ID) :
-	cUnit(data, staticData, owner, ID),
-	effectAlpha(0),
-	wasWorking(false),
-	isWorking (false),
-	metalPerRound(0)
+	cUnit (data, staticData, owner, ID)
 {
 	setSentryActive (staticData && staticData->canAttack != TERRAIN_NONE);
 
-	rubbleTyp = 0;
-	rubbleValue = 0;
-	researchArea = cResearch::kAttackResearch;
-
-	points = 0;
-
-	BaseN = false;
-	BaseBN = false;
-	BaseE = false;
-	BaseBE = false;
-	BaseS = false;
-	BaseBS = false;
-	BaseW = false;
-	BaseBW = false;
-	repeatBuild = false;
-
-	subBase = nullptr;
-	buildSpeed = 0;
-
 	if (isBig)
 	{
-		DamageFXPointX  = random (64) + 32;
-		DamageFXPointY  = random (64) + 32;
-		DamageFXPointX2 = random (64) + 32;
-		DamageFXPointY2 = random (64) + 32;
+		DamageFXPoint  = { random (64) + 32, random (64) + 32 };
+		DamageFXPoint2 = { random (64) + 32, random (64) + 32 };
 	}
 	else
 	{
-		DamageFXPointX = random (64 - 24);
-		DamageFXPointY = random (64 - 24);
-		DamageFXPointX2 = 0;
-		DamageFXPointY2 = 0;
+		DamageFXPoint = { random (64 - 24), random (64 - 24) };
+		DamageFXPoint2 = { 0, 0 };
 	}
 
 	refreshData();

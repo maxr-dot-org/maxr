@@ -2361,12 +2361,12 @@ void cGameMapWidget::renewDamageEffect (const cBuilding& building)
 		(building.getOwner() == player.get() || (!player || mapView->canSeeUnit (building))))
 	{
 		int intense = (int) (200 - 200 * ((float)building.data.getHitpoints() / building.data.getHitpointsMax()));
-		addEffect (std::make_shared<cFxDarkSmoke> (cPosition (building.getPosition().x() * 64 + building.DamageFXPointX, building.getPosition().y() * 64 + building.DamageFXPointY), intense, windDirection));
+		addEffect (std::make_shared<cFxDarkSmoke> (cPosition (building.getPosition().x() * 64 + building.DamageFXPoint.x(), building.getPosition().y() * 64 + building.DamageFXPoint.y()), intense, windDirection));
 
 		if (building.getIsBig() && intense > 50)
 		{
 			intense -= 50;
-			addEffect (std::make_shared<cFxDarkSmoke> (cPosition (building.getPosition().x() * 64 + building.DamageFXPointX2, building.getPosition().y() * 64 + building.DamageFXPointY2), intense, windDirection));
+			addEffect (std::make_shared<cFxDarkSmoke> (cPosition (building.getPosition().x() * 64 + building.DamageFXPoint2.x(), building.getPosition().y() * 64 + building.DamageFXPoint2.y()), intense, windDirection));
 		}
 	}
 }

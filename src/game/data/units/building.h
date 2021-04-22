@@ -83,6 +83,7 @@ class cBuilding : public cUnit
 public:
 	friend class cDebugOutputWidget;
 
+	explicit cBuilding (unsigned int ID); // used by serialization
 	cBuilding(const cStaticUnitData* staticData, const cDynamicUnitData* data, cPlayer* Owner, unsigned int ID);
 	virtual ~cBuilding();
 
@@ -208,38 +209,38 @@ public:
 	}
 
 private:
+	void connectFirstBuildListItem();
+	void registerOwnerEvents();
+
+private:
 	cSignalConnectionManager buildListFirstItemSignalConnectionManager;
 	cSignalConnectionManager ownerSignalConnectionManager;
 
-	void connectFirstBuildListItem();
-
-	void registerOwnerEvents();
-
 public:
-	mutable int effectAlpha; // alpha value for the effect
-	int rubbleTyp;     // type of the rubble graphic (when unit is rubble)
+	mutable int effectAlpha = 0; // alpha value for the effect
+	int rubbleTyp = 0;     // type of the rubble graphic (when unit is rubble)
 
-	bool BaseN, BaseE, BaseS, BaseW; // is the building connected in this direction?
-	bool BaseBN, BaseBE, BaseBS, BaseBW; // is the building connected in this direction (only for big buildings)
+	bool BaseN = false, BaseE = false, BaseS = false, BaseW = false; // is the building connected in this direction?
+	bool BaseBN = false, BaseBE = false, BaseBS = false, BaseBW = false; // is the building connected in this direction (only for big buildings)
 	cSubBase* subBase = nullptr;     // the subbase to which this building belongs
 	sMiningResource prod;          // production settings (from mine allocation menu)
 
-	int DamageFXPointX, DamageFXPointY, DamageFXPointX2, DamageFXPointY2; // the points, where smoke will be generated when the building is damaged
+	cPosition DamageFXPoint, DamageFXPoint2; // the points, where smoke will be generated when the building is damaged
 	/** true if the building was has been working before it was disabled */
-	bool wasWorking;
-	int points;     // accumulated eco-sphere points
+	bool wasWorking = false;
+	int points = 0;     // accumulated eco-sphere points
 private:
-	bool isWorking;  // is the building currently working?
+	bool isWorking = false;  // is the building currently working?
 
-	int buildSpeed;
-	int metalPerRound;
-	bool repeatBuild;
+	int buildSpeed = 0;
+	int metalPerRound = 0;
+	bool repeatBuild = false;
 
 	sMiningResource maxProd; // the maximum possible production of the building (resources under the building)
 
-	int rubbleValue;   // number of resources in the rubble field
+	int rubbleValue = 0;   // number of resources in the rubble field
 
-	cResearch::ResearchArea researchArea; ///< if the building can research, this is the area the building last researched or is researching
+	cResearch::ResearchArea researchArea = cResearch::kAttackResearch; ///< if the building can research, this is the area the building last researched or is researching
 
 	std::vector<cBuildListItem> buildList; // list with the units to be build by this factory
 };
