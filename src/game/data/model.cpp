@@ -111,6 +111,8 @@ uint32_t cModel::getChecksum() const
 		crc = calcCheckSum (*player, crc);
 	for (const auto& building : neutralBuildings)
 		crc = calcCheckSum (*building, crc);
+	for (const auto& vehicle : neutralVehicles)
+		crc = calcCheckSum (*vehicle, crc);
 	crc = calcCheckSum (nextUnitId, crc);
 	crc = calcCheckSum (*unitsData, crc);
 	for (const auto& movejob : moveJobs)
@@ -311,6 +313,10 @@ cVehicle& cModel::addVehicle (const cPosition& position, const sID& id, cPlayer*
 			addedVehicle->doSurvey (*getMap());
 		}
 		addedVehicle->detectOtherUnits (*map);
+	}
+	else
+	{
+		neutralVehicles.insert (addedVehicle);
 	}
 
 	if (addedVehicle->canLand (*map))
@@ -618,6 +624,8 @@ cVehicle* cModel::getVehicleFromID (unsigned int id) const
 		auto unit = playerList[i]->getVehicleFromId (id);
 		if (unit) return unit;
 	}
+	auto iter = neutralVehicles.find (id);
+	return iter == neutralVehicles.end() ? nullptr : iter->get();
 	return nullptr;
 }
 
@@ -653,6 +661,10 @@ void cModel::refreshMapPointer()
 	for (const auto& building : neutralBuildings)
 	{
 		map->addBuilding (*building, building->getPosition());
+	}
+	for (const auto& vehicle : neutralVehicles)
+	{
+		map->addVehicle (*vehicle, vehicle->getPosition());
 	}
 }
 

@@ -180,6 +180,14 @@ public:
 			archive << serialization::makeNvp ("buildingID", building->getId());
 			archive << serialization::makeNvp ("building", *building);
 		}
+
+		archive << serialization::makeNvp ("neutralVehicleNum", (int)neutralVehicles.size());
+		for (auto vehicle : neutralVehicles)
+		{
+			archive << serialization::makeNvp ("vehicleID", vehicle->getId());
+			archive << serialization::makeNvp ("vehicle", *vehicle);
+		}
+
 		archive << NVP (nextUnitId);
 		archive << serialization::makeNvp ("turnCounter", *turnCounter);
 		archive << serialization::makeNvp ("turnTimeClock", *turnTimeClock);
@@ -266,6 +274,21 @@ public:
 			archive >> serialization::makeNvp ("building", *building);
 			neutralBuildings.insert (std::move (building));
 		}
+
+		neutralVehicles.clear();
+		int neutralVehicleNum;
+		archive >> NVP (neutralVehicleNum);
+		for (int i = 0; i < neutralVehicleNum; ++i)
+		{
+			unsigned int vehicleID;
+			archive >> NVP (vehicleID);
+			cStaticUnitData dummy1;
+			cDynamicUnitData dummy2;
+			auto vehicle = std::make_shared<cVehicle>(dummy1, dummy2, nullptr, vehicleID);
+			archive >> serialization::makeNvp ("vehicle", *vehicle);
+			neutralVehicles.insert (std::move (vehicle));
+		}
+
 		archive >> NVP (nextUnitId);
 		archive >> serialization::makeNvp ("turnCounter", *turnCounter);
 		archive >> serialization::makeNvp ("turnTimeClock", *turnTimeClock);
@@ -306,6 +329,7 @@ private:
 	cPlayer* activeTurnPlayer = nullptr;
 
 	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> neutralBuildings;
+	cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>> neutralVehicles;
 
 	int nextUnitId = 0;
 
