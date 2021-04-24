@@ -236,29 +236,6 @@ const cRangeMap& cPlayer::getScanMap() const
 }
 
 //------------------------------------------------------------------------------
-cVehicle& cPlayer::addNewVehicle (const cPosition& position, const cStaticUnitData& unitData, unsigned int uid)
-{
-	auto vehicle = std::make_shared<cVehicle> (unitData, *getUnitDataCurrentVersion(unitData.ID), this, uid);
-	vehicle->setPosition (position);
-
-	auto result = vehicles.insert (std::move (vehicle));
-	assert (result.second);
-
-	return * (*result.first);
-}
-
-//------------------------------------------------------------------------------
-cBuilding& cPlayer::addNewBuilding (const cPosition& position, const cStaticUnitData& unitData, unsigned int uid)
-{
-	auto building = std::make_shared<cBuilding>(&unitData, getUnitDataCurrentVersion(unitData.ID), this, uid);
-	building->setPosition (position);
-
-	auto result = buildings.insert (std::move (building));
-	assert (result.second);
-	return * (*result.first);
-}
-
-//------------------------------------------------------------------------------
 void cPlayer::addUnit (std::shared_ptr<cVehicle> vehicle)
 {
 	vehicles.insert (std::move (vehicle));

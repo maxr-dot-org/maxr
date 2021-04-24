@@ -101,8 +101,8 @@ public:
 	cVehicle* getVehicleFromID (unsigned int id) const;
 	cBuilding* getBuildingFromID (unsigned int id) const;
 
-	cVehicle& addVehicle (const cPosition&, const sID&, cPlayer*);
 	cBuilding& addBuilding (const cPosition&, const sID&, cPlayer*);
+	cVehicle& addVehicle (const cPosition&, const sID&, cPlayer*);
 	void destroyUnit (cUnit&);
 
 	void addRubble (const cPosition&, int value, bool big);

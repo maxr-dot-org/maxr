@@ -628,7 +628,7 @@ void cUnit::detectThisUnit(const cMap& map, const std::vector<std::shared_ptr<cP
 //------------------------------------------------------------------------------
 void cUnit::detectOtherUnits(const cMap& map) const
 {
-	if (staticData->canDetectStealthOn == TERRAIN_NONE) return;
+	if (!owner || staticData->canDetectStealthOn == TERRAIN_NONE) return;
 
 	const int minx = std::max(getPosition().x() - data.getScan(), 0);
 	const int maxx = std::min(getPosition().x() + data.getScan(), map.getSize().x() - 1);

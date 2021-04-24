@@ -131,9 +131,6 @@ public:
 	*/
 	bool canSeeAt(const cPosition& position) const;
 
-	cVehicle& addNewVehicle (const cPosition& position, const cStaticUnitData& unitData, unsigned int uid);
-	cBuilding& addNewBuilding (const cPosition& position, const cStaticUnitData& unitData, unsigned int uid);
-
 	void addUnit (std::shared_ptr<cVehicle> vehicle);
 	void addUnit (std::shared_ptr<cBuilding> building);
 

@@ -196,63 +196,35 @@ const cPlayer* cModel::getActiveTurnPlayer() const
 }
 
 //------------------------------------------------------------------------------
-cVehicle& cModel::addVehicle (const cPosition& position, const sID& id, cPlayer* player)
+cBuilding& cModel::addBuilding (const cPosition& position, const sID& id, cPlayer* player)
 {
-	// generate the vehicle:
-	cVehicle& addedVehicle = player->addNewVehicle (position, unitsData->getStaticUnitData(id), nextUnitId);
-	nextUnitId++;
+	const auto& staticUnitData = unitsData->getStaticUnitData (id);
+	const auto& dynamicUnitData = player ? *player->getUnitDataCurrentVersion (id) : unitsData->getDynamicUnitData (id);
+	auto addedBuilding = std::make_shared<cBuilding> (&staticUnitData, &dynamicUnitData, player, nextUnitId++);
 
-	// place the vehicle:
-	map->addVehicle (addedVehicle, position);
-	player->addToScan (addedVehicle);
-
-	// scan with surveyor:
-	if (addedVehicle.getStaticData().canSurvey)
+	addedBuilding->setPosition (position);
+	map->addBuilding (*addedBuilding, position);
+	if (player)
 	{
-		addedVehicle.doSurvey (*getMap());
-	}
-
-	if (addedVehicle.canLand (*map))
-	{
-		addedVehicle.setFlightHeight (0);
+		player->addUnit (addedBuilding);
+		player->base.addBuilding (*addedBuilding, *map);
+		player->addToScan (*addedBuilding);
+		if (addedBuilding->isSentryActive())
+		{
+			player->addToSentryMap (*addedBuilding);
+		}
 	}
 	else
 	{
-		// start with flight height > 0, so that ground attack units
-		// will not be able to attack the plane in the moment it leaves
-		// the factory
-		addedVehicle.setFlightHeight (1);
-		addedVehicle.triggerLandingTakeOff (*this);
+		neutralBuildings.insert (addedBuilding);
 	}
-	addedVehicle.detectOtherUnits (*map);
+	addedBuilding->initMineResourceProd (*map);
 
-	return addedVehicle;
-}
-//------------------------------------------------------------------------------
-cBuilding& cModel::addBuilding (const cPosition& position, const sID& id, cPlayer* player)
-{
-	// generate the building:
-	cBuilding& addedBuilding = player->addNewBuilding (position, unitsData->getStaticUnitData(id), nextUnitId);
-	nextUnitId++;
-
-	addedBuilding.initMineResourceProd (*map);
-
-	cBuilding* buildingToBeDeleted = map->getField (position).getTopBuilding();
-
-	map->addBuilding (addedBuilding, position);
-	player->addToScan (addedBuilding);
-	if (addedBuilding.isSentryActive())
-	{
-		player->addToSentryMap (addedBuilding);
-	}
-
-	// integrate the building to the base:
-	player->base.addBuilding (addedBuilding, *map);
 
 	// if this is a top building, delete connectors, mines and roads
-	if (addedBuilding.getStaticUnitData().surfacePosition == eSurfacePosition::Ground)
+	if (addedBuilding->getStaticUnitData().surfacePosition == eSurfacePosition::Ground)
 	{
-		if (addedBuilding.getIsBig())
+		if (addedBuilding->getIsBig())
 		{
 			auto bigPosition = position;
 			auto buildings = &map->getField (bigPosition).getBuildings();
@@ -298,8 +270,6 @@ cBuilding& cModel::addBuilding (const cPosition& position, const sID& id, cPlaye
 		}
 		else
 		{
-			deleteUnit (buildingToBeDeleted);
-
 			const auto& buildings = map->getField (position).getBuildings();
 			for (size_t i = 0; i != buildings.size(); ++i)
 			{
@@ -312,14 +282,50 @@ cBuilding& cModel::addBuilding (const cPosition& position, const sID& id, cPlaye
 		}
 	}
 
-	if (addedBuilding.getStaticData().canMineMaxRes > 0)
+	if (addedBuilding->getStaticData().canMineMaxRes > 0)
 	{
-		addedBuilding.startWork();
+		addedBuilding->startWork();
+	}
+	addedBuilding->detectOtherUnits (*map);
+
+	return *addedBuilding;
+}
+
+//------------------------------------------------------------------------------
+cVehicle& cModel::addVehicle (const cPosition& position, const sID& id, cPlayer* player)
+{
+	const auto& staticUnitData = unitsData->getStaticUnitData (id);
+	const auto& dynamicUnitData = player ? *player->getUnitDataCurrentVersion (id) : unitsData->getDynamicUnitData (id);
+	auto addedVehicle = std::make_shared<cVehicle> (staticUnitData, dynamicUnitData, player, nextUnitId++);
+	addedVehicle->setPosition (position);
+
+	map->addVehicle (*addedVehicle, position);
+	if (player)
+	{
+		player->addUnit (addedVehicle);
+		player->addToScan (*addedVehicle);
+
+		// scan with surveyor:
+		if (addedVehicle->getStaticData().canSurvey)
+		{
+			addedVehicle->doSurvey (*getMap());
+		}
+		addedVehicle->detectOtherUnits (*map);
 	}
 
-	addedBuilding.detectOtherUnits (*map);
-
-	return addedBuilding;
+	if (addedVehicle->canLand (*map))
+	{
+		addedVehicle->setFlightHeight (0);
+	}
+	else
+	{
+		// start with flight height > 0, so that ground attack units
+		// will not be able to attack the plane in the moment it leaves
+		// the factory
+		addedVehicle->setFlightHeight (1);
+		addedVehicle->triggerLandingTakeOff (*this);
+	}
+	return *addedVehicle;
 }
 
 //------------------------------------------------------------------------------
