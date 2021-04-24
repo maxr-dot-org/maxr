@@ -426,6 +426,10 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	staticData.factorAir = getXMLAttributeFloat(unitDataXml, "Unit", {"Movement", "Factor_Air"});
 	staticData.factorCoast = getXMLAttributeFloat(unitDataXml, "Unit", {"Movement", "Factor_Coast"});
 
+	if (staticData.ID.isAVehicle() && staticData.factorGround == 0 && staticData.factorSea == 0 && staticData.factorAir == 0 && staticData.factorCoast == 0)
+	{
+		Log.write ("Unit cannot move", cLog::eLOG_TYPE_WARNING);
+	}
 	// Abilities
 	staticData.buildingData.isBig = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Is_Big"});
 	staticData.buildingData.connectsToBase = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Connects_To_Base"});
