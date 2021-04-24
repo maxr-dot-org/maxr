@@ -31,7 +31,7 @@
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------
-cWindowUnitInfo::cWindowUnitInfo (const cDynamicUnitData& currentUnitData, const cPlayer& owner, const cUnitsData& unitsData) :
+cWindowUnitInfo::cWindowUnitInfo (const cDynamicUnitData& currentUnitData, const cPlayer* owner, const cUnitsData& unitsData) :
 	cWindow (LoadPCX (GFXOD_HELP), eWindowBackgrounds::Black)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Unitinfo"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
@@ -62,5 +62,5 @@ cWindowUnitInfo::cWindowUnitInfo (const cDynamicUnitData& currentUnitData, const
 
 	infoLabel->setText (unitsData.getStaticUnitData(currentUnitData.getId()).getDescripton());
 
-	unitDetails->setUnit(currentUnitData.getId(), owner, unitsData, &currentUnitData);
+	unitDetails->setUnit (currentUnitData.getId(), owner, unitsData, &currentUnitData);
 }

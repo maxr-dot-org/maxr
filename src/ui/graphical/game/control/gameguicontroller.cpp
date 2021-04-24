@@ -1538,7 +1538,7 @@ void cGameGuiController::showReportsWindow()
 //------------------------------------------------------------------------------
 void cGameGuiController::showUnitHelpWindow (const cUnit& unit)
 {
-	application.show (std::make_shared<cWindowUnitInfo> (unit.data, *unit.getOwner(), *getUnitsData()));
+	application.show (std::make_shared<cWindowUnitInfo> (unit.data, unit.getOwner(), *getUnitsData()));
 }
 
 //------------------------------------------------------------------------------

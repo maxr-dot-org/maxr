@@ -30,7 +30,7 @@ class cUnitsData;
 class cWindowUnitInfo : public cWindow
 {
 public:
-	cWindowUnitInfo(const cDynamicUnitData& currentUnitData, const cPlayer& owner, const cUnitsData& unitsData);
+	cWindowUnitInfo (const cDynamicUnitData&, const cPlayer* owner, const cUnitsData&);
 private:
 	cSignalConnectionManager signalConnectionManager;
 };

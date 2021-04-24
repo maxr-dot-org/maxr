@@ -77,13 +77,13 @@ const sID* cUnitDetails::getCurrentUnitId()
 }
 
 //------------------------------------------------------------------------------
-void cUnitDetails::setUnit (const sID& unitId_, const cPlayer& owner, const cUnitsData& unitsData, const cDynamicUnitData* unitObjectCurrentData_, const cUnitUpgrade* upgrades_)
+void cUnitDetails::setUnit (const sID& unitId_, const cPlayer* owner, const cUnitsData& unitsData, const cDynamicUnitData* unitObjectCurrentData_, const cUnitUpgrade* upgrades_)
 {
 	unitId = unitId_;
 
-	staticUnitData = &unitsData.getStaticUnitData(unitId);
-	playerOriginalData = &unitsData.getDynamicUnitData(unitId, owner.getClan());
-	playerCurrentData = owner.getUnitDataCurrentVersion (unitId);
+	staticUnitData = &unitsData.getStaticUnitData (unitId);
+	playerOriginalData = &unitsData.getDynamicUnitData (unitId, owner ? owner->getClan() : -1);
+	playerCurrentData = owner ? owner->getUnitDataCurrentVersion (unitId) : playerOriginalData;
 
 	if (unitObjectCurrentData_ == nullptr)
 	{

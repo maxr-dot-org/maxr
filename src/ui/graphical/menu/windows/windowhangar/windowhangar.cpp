@@ -133,7 +133,7 @@ void cWindowHangar::setActiveUnit (const sID& unitId)
 
 	infoLabel->setText (unitsData->getStaticUnitData(unitId).getDescripton());
 
-	unitDetails->setUnit (unitId, getPlayer(), *unitsData);
+	unitDetails->setUnit (unitId, &getPlayer(), *unitsData);
 }
 
 //------------------------------------------------------------------------------

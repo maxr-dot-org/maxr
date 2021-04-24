@@ -40,31 +40,29 @@ public:
 
 	const sID* getCurrentUnitId();
 
-	void setUnit(const sID& unitId_, const cPlayer& owner, const cUnitsData& unitsData, const cDynamicUnitData* unitObjectCurrentData_ = nullptr, const cUnitUpgrade* upgrades_ = nullptr);
+	void setUnit (const sID&, const cPlayer* owner, const cUnitsData&, const cDynamicUnitData* = nullptr, const cUnitUpgrade* = nullptr);
 	void setUpgrades (const cUnitUpgrade* upgrades);
 private:
-	AutoSurface surface;
 
 	void reset();
 
 	void drawRow (size_t index, eUnitDataSymbolType symbolType, int amount, const std::string& name, int value1, int value2);
-
 	void drawBigSymbols (eUnitDataSymbolType symbolType, const cPosition& position, int value1, int value2);
-
 	cBox<cPosition> getBigSymbolPosition (eUnitDataSymbolType symbolType);
 
 	static const size_t maxRows = 9;
 	static const int rowHeight = 19;
 
+	AutoSurface surface;
 	std::array<cLabel*, maxRows> amountLabels;
 	std::array<cLabel*, maxRows> nameLabels;
 
 	sID unitId;
 	const cStaticUnitData* staticUnitData;
-	const cDynamicUnitData* playerOriginalData;
-	const cDynamicUnitData* playerCurrentData;
-	const cDynamicUnitData* unitObjectCurrentData;
-	const cUnitUpgrade* upgrades;
+	const cDynamicUnitData* playerOriginalData = nullptr;
+	const cDynamicUnitData* playerCurrentData = nullptr;
+	const cDynamicUnitData* unitObjectCurrentData = nullptr;
+	const cUnitUpgrade* upgrades = nullptr;
 };
 
 #endif // ui_graphical_menu_widgets_special_unitdetailsH
