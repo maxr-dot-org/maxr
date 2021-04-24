@@ -402,7 +402,7 @@ void cBuilding::startWork ()
 		return;
 	}
 
-	if (!subBase->startBuilding (*this))
+	if (!subBase || !subBase->startBuilding (*this))
 		return;
 
 	// research building
@@ -424,7 +424,7 @@ void cBuilding::stopWork (bool forced)
 {
 	if (!isUnitWorking()) return;
 
-	if (!subBase->stopBuilding (*this, forced))
+	if (!subBase || !subBase->stopBuilding (*this, forced))
 		return;
 
 	if (getStaticData().canResearch && getOwner())
@@ -557,7 +557,7 @@ bool cBuilding::canSupply(const cUnit* unit, eSupplyType supplyType) const
 	if (unit == nullptr || unit->isABuilding())
 		return false;
 
-	if (subBase->getResourcesStored().metal <= 0)
+	if (subBase && subBase->getResourcesStored().metal <= 0)
 		return false;
 
 	if (!Contains(storedUnits, static_cast<const cVehicle*>(unit)))

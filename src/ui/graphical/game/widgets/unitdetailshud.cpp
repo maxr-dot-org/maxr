@@ -144,6 +144,7 @@ void cUnitDetailsHud::reset()
 			if (unit->isABuilding())
 			{
 				const auto& building = static_cast<const cBuilding&> (*unit);
+				if (!building.subBase) return;
 				const sMiningResource& stored = building.subBase->getResourcesStored();
 				const sMiningResource& maxStored = building.subBase->getMaxResourcesStored();
 
