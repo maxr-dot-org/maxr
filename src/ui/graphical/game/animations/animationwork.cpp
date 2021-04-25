@@ -21,6 +21,7 @@
 
 #include "game/data/units/building.h"
 #include "resources/buildinguidata.h"
+#include "resources/uidata.h"
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "utility/box.h"
 #include "utility/random.h"

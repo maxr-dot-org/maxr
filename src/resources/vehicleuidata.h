@@ -20,12 +20,14 @@
 #ifndef resources_vehicleuidataH
 #define resources_vehicleuidataH
 
-#include "game/data/units/unitdata.h" // for sID
+#include "game/data/units/id.h"
 #include "resources/sound.h"
-#include "resources/uidata.h"
 
 #include <array>
 #include <string>
+
+#include "SDLutility/autosurface.h"
+#include <SDL.h>
 
 class cMapView;
 

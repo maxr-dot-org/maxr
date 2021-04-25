@@ -49,6 +49,7 @@
 #include "resources/buildinguidata.h"
 #include "resources/pcx.h"
 #include "resources/sound.h"
+#include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
 #include "SDLutility/autosurface.h"
 #include "ui/keys.h"

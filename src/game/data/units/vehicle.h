@@ -23,7 +23,7 @@
 #include "defines.h"
 
 #include "game/data/units/commandodata.h"
-#include "game/data/units/unitdata.h" // for sUnitData
+#include "game/data/units/unitdata.h"
 #include "game/data/units/unit.h"
 
 #include <array>

@@ -27,6 +27,7 @@
 #include "output/video/video.h"
 #include "resources/buildinguidata.h"
 #include "resources/sound.h"
+#include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
 #include "ui/sound/effects/soundeffectposition.h"
 #include "ui/sound/soundmanager.h"

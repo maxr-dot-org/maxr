@@ -22,6 +22,7 @@
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "resources/buildinguidata.h"
+#include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/graphical/menu/widgets/image.h"

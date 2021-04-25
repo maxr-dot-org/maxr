@@ -22,6 +22,7 @@
 #include "game/data/model.h"
 #include "game/data/units/unit.h"
 #include "game/logic/fxeffects.h"
+#include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
 #include "utility/crc.h"
 

@@ -24,6 +24,7 @@
 #include "maxrversion.h"
 #include "resources/buildinguidata.h"
 #include "resources/pcx.h"
+#include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"

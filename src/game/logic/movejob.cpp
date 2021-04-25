@@ -26,6 +26,7 @@
 #include "game/data/units/vehicle.h"
 #include "game/logic/gametimer.h"
 #include "game/logic/pathcalculator.h"
+#include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
 #include "utility/ranges.h"
 #include "utility/string/toString.h"

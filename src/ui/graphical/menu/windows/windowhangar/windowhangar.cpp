@@ -24,6 +24,7 @@
 #include "game/data/player/player.h"
 #include "game/data/player/playerbasicdata.h"
 #include "resources/buildinguidata.h"
+#include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"

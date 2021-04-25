@@ -35,6 +35,7 @@
 #include "output/sound/soundchannel.h"
 #include "output/video/video.h"
 #include "resources/buildinguidata.h"
+#include "resources/uidata.h"
 #include "resources/sound.h"
 #include "SDLutility/tosdl.h"
 #include "settings.h"

@@ -20,9 +20,11 @@
 #ifndef resources_buildinguidataH
 #define resources_buildinguidataH
 
-#include "game/data/units/unitdata.h" // for sID
+#include "game/data/units/id.h"
 #include "resources/sound.h"
-#include "resources/uidata.h"
+
+#include "SDLutility/autosurface.h"
+#include <SDL.h>
 
 //--------------------------------------------------------------------------
 /** struct for the images and sounds */

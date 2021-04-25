@@ -22,7 +22,7 @@
 
 #include "defines.h"
 #include "game/data/miningresource.h"
-#include "game/data/units/unitdata.h" // for sUnitData, sID
+#include "game/data/units/unitdata.h"
 #include "game/data/units/unit.h"
 #include "game/logic/upgradecalculator.h" // cResearch::ResearchArea
 #include "utility/signal/signal.h"

@@ -24,6 +24,7 @@
 #include "game/data/player/player.h"
 #include "game/data/units/vehicle.h"
 #include "output/video/video.h"
+#include "resources/uidata.h"
 #include "ui/graphical/playercolor.h"
 #include "utility/mathtools.h"
 

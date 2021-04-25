@@ -25,6 +25,7 @@
 #include "game/data/units/vehicle.h"
 #include "output/video/video.h"
 #include "resources/buildinguidata.h"
+#include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
 #include "SDLutility/drawing.h"
 #include "ui/graphical/game/animations/animationtimer.h"

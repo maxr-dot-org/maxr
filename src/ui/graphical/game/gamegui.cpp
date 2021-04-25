@@ -35,6 +35,7 @@
 #include "input/mouse/mouse.h"
 #include "resources/buildinguidata.h"
 #include "resources/sound.h"
+#include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/game/gameguistate.h"

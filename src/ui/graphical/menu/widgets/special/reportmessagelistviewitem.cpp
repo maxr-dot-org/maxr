@@ -24,6 +24,7 @@
 #include "game/data/report/savedreport.h"
 #include "game/data/report/savedreportunit.h"
 #include "resources/buildinguidata.h"
+#include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
 #include "SDLutility/drawing.h"
 #include "ui/graphical/menu/widgets/image.h"
