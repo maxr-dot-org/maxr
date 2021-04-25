@@ -19,24 +19,19 @@
 
 #include "crossplattformrandom.h"
 
-cCrossPlattformRandom::cCrossPlattformRandom() : 
-	stateW(0),
-	stateZ(0)
-{}
-
-void cCrossPlattformRandom::seed(uint64_t seed)
+//------------------------------------------------------------------------------
+void cCrossPlattformRandom::seed (uint64_t seed)
 {
-
-	stateW = static_cast<uint32_t>(seed); /* must not be zero, nor 0x464fffff */
+	stateW = static_cast<uint32_t> (seed); /* must not be zero, nor 0x464fffff */
 	if (stateW == 0 || stateW == 0x464fffff)
 		stateW++;
 
-	stateZ = static_cast<uint32_t>(seed >> 32); /* must not be zero, nor 0x9068ffff */
+	stateZ = static_cast<uint32_t> (seed >> 32); /* must not be zero, nor 0x9068ffff */
 	if (stateZ == 0 || stateZ == 0x9068ffff)
 		stateZ++;
-
 }
 
+//------------------------------------------------------------------------------
 uint32_t cCrossPlattformRandom::get()
 {
 	stateZ = 36969 * (stateZ & 65535) + (stateZ >> 16);
@@ -44,17 +39,19 @@ uint32_t cCrossPlattformRandom::get()
 	return (stateZ << 16) + stateW;
 }
 
-uint32_t cCrossPlattformRandom::get(uint32_t interval)
+//------------------------------------------------------------------------------
+uint32_t cCrossPlattformRandom::get (uint32_t interval)
 {
 	uint32_t r;
 	const unsigned int buckets = UINT32_MAX / interval;
 	const unsigned int limit = buckets * interval;
 
-	//create random numbers, with a uniform distribution in the specified interval
+	// create random numbers,
+	// with a uniform distribution in the specified interval
 	do
 	{
 		r = get();
-	} 
+	}
 	while (r >= limit);
 
 	return r / buckets;

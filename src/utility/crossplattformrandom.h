@@ -20,15 +20,18 @@
 #ifndef utility_crossplatformrandomH
 #define utility_crossplatformrandomH
 
-#include <stdint.h>
+#include <cstdint>
+
+#include "utility/crc.h"
+#include "utility/serialization/serialization.h"
 
 class cCrossPlattformRandom
 {
 private:
-	uint32_t stateW;
-	uint32_t stateZ;
+	uint32_t stateW = 0;
+	uint32_t stateZ = 0;
 public:
-	cCrossPlattformRandom();
+	cCrossPlattformRandom() = default;
 
 	void seed(uint64_t seed);
 
@@ -37,6 +40,20 @@ public:
 
 	/** returns a random number in the interval [0..interval) */
 	uint32_t get(uint32_t interval);
+
+	template <typename T>
+	void serialize (T& archive)
+	{
+		archive & NVP (stateW);
+		archive & NVP (stateZ);
+	}
+
+	[[nodiscard]]friend std::uint32_t calcCheckSum (const cCrossPlattformRandom& self, std::uint32_t crc)
+	{
+		crc = calcCheckSum (self.stateW, crc);
+		crc = calcCheckSum (self.stateZ, crc);
+		return crc;
+	}
 };
 
 #endif

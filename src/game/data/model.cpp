@@ -104,6 +104,7 @@ uint32_t cModel::getChecksum() const
 {
 	uint32_t crc = 0;
 	//crc = calcCheckSum(gameTime, crc);
+	crc = calcCheckSum (randomGenerator, crc);
 	crc = calcCheckSum (gameId, crc);
 	crc = calcCheckSum (*gameSettings, crc);
 	crc = calcCheckSum (*map, crc);

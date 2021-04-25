@@ -156,6 +156,7 @@ public:
 	{
 		archive << NVP (gameId);
 		archive << NVP (gameTime);
+		archive << NVP (randomGenerator);
 		archive << serialization::makeNvp ("gameSettings", *gameSettings);
 		archive << serialization::makeNvp ("map", *map);
 		archive << serialization::makeNvp ("unitsData", *unitsData);
@@ -205,6 +206,7 @@ public:
 		archive >> NVP (gameId);
 		archive >> NVP (gameTime);
 
+		archive >> NVP (randomGenerator);
 		assert (gameSettings != nullptr);
 		archive >> serialization::makeNvp ("gameSettings", *gameSettings);
 
