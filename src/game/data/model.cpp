@@ -319,19 +319,6 @@ cVehicle& cModel::addVehicle (const cPosition& position, const sID& id, cPlayer*
 	{
 		neutralVehicles.insert (addedVehicle);
 	}
-
-	if (addedVehicle->canLand (*map))
-	{
-		addedVehicle->setFlightHeight (0);
-	}
-	else
-	{
-		// start with flight height > 0, so that ground attack units
-		// will not be able to attack the plane in the moment it leaves
-		// the factory
-		addedVehicle->setFlightHeight (1);
-		addedVehicle->triggerLandingTakeOff (*this);
-	}
 	return *addedVehicle;
 }
 

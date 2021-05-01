@@ -105,7 +105,15 @@ void cActionFinishBuild::finishAVehicle(cModel &model, cBuilding& building) cons
 	model.sideStepStealthUnit(escapePosition, unitData, building.getOwner());
 	if (!map->possiblePlaceVehicle(unitData, escapePosition, building.getOwner())) return;
 
-	model.addVehicle (escapePosition, buildingListItem.getType(), building.getOwner());
+	auto& vehicle = model.addVehicle (escapePosition, buildingListItem.getType(), building.getOwner());
+	if (!vehicle.canLand (*map))
+	{
+		// start with flight height > 0, so that ground attack units
+		// will not be able to attack the plane in the moment it leaves
+		// the factory
+		vehicle.setFlightHeight (1);
+		vehicle.triggerLandingTakeOff (model);
+	}
 
 	// start new buildjob
 	if (building.getRepeatBuild())
