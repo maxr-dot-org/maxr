@@ -318,7 +318,7 @@ private:
 	cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>> vehicles;
 	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> buildings;
 
-	cPosition landingPos;
+	cPosition landingPos {-1, -1};
 	cPosition mapSize; // Width and Height of the map.
 
 	// using a special array with cached checksum. This speeds up the calculation of the model checksum.

@@ -30,30 +30,29 @@ class cStaticMap;
 class cActionInitNewGame : public cActionT<cAction::eActiontype::ACTION_INIT_NEW_GAME>
 {
 public:
-	cActionInitNewGame (sInitPlayerData);
-	cActionInitNewGame(cBinaryArchiveOut& archive);
+	explicit cActionInitNewGame (sInitPlayerData);
+	explicit cActionInitNewGame (cBinaryArchiveOut&);
 
-	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
 
-	void execute(cModel& model) const override;
+	void execute (cModel&) const override;
 
-	static bool isValidLandingPosition(cPosition position, std::shared_ptr<cStaticMap> map, bool fixedBridgeHead, const std::vector<sLandingUnit>& units, std::shared_ptr<const cUnitsData> unitsData);
+	static bool isValidLandingPosition (cPosition, const cStaticMap&, bool fixedBridgeHead, const std::vector<sLandingUnit>&, const cUnitsData&);
 
 	sInitPlayerData initPlayerData;
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & initPlayerData.landingUnits;
 		archive & initPlayerData.clan;
 		archive & initPlayerData.unitUpgrades;
 		archive & initPlayerData.landingPosition;
 	}
-	void makeLanding(cPlayer& player, const std::vector<sLandingUnit>& landingUnits, cModel& model) const;
-	cVehicle* landVehicle(const cPosition& landingPosition, int radius, const sID& id, cPlayer& player, cModel& model) const;
-	static bool findPositionForStartMine(cPosition& position, std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cStaticMap> map);
+	void makeLanding (cPlayer&, const std::vector<sLandingUnit>&, cModel&) const;
+	cVehicle* landVehicle (const cPosition&, int radius, const sID&, cPlayer&, cModel&) const;
+	static bool findPositionForStartMine (cPosition&, const cUnitsData&, const cStaticMap&);
 };
-
 
 #endif

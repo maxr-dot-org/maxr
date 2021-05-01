@@ -83,5 +83,5 @@ bool cLandingPositionSelectionMap::handleMouseMoved (cApplication& application, 
 //------------------------------------------------------------------------------
 bool cLandingPositionSelectionMap::isValidLandingLocation(const cPosition& position)
 {
-	return cActionInitNewGame::isValidLandingPosition(position, map, fixedBridgeHead, landingUnits, unitsData);
+	return cActionInitNewGame::isValidLandingPosition(position, *map, fixedBridgeHead, landingUnits, *unitsData);
 }
