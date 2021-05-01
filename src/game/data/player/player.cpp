@@ -250,23 +250,13 @@ void cPlayer::addUnit (std::shared_ptr<cBuilding> building)
 //------------------------------------------------------------------------------
 std::shared_ptr<cBuilding> cPlayer::removeUnit (const cBuilding& building)
 {
-	auto iter = buildings.find (building);
-	if (iter == buildings.end()) return nullptr;
-
-	auto removed = *iter;
-	buildings.erase (iter);
-	return removed;
+	return buildings.extract (building);
 }
 
 //------------------------------------------------------------------------------
 std::shared_ptr<cVehicle> cPlayer::removeUnit (const cVehicle& vehicle)
 {
-	auto iter = vehicles.find (vehicle);
-	if (iter == vehicles.end()) return nullptr;
-
-	auto removed = *iter;
-	vehicles.erase (iter);
-	return removed;
+	return vehicles.extract (vehicle);
 }
 
 //------------------------------------------------------------------------------

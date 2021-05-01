@@ -190,6 +190,19 @@ public:
 	}
 	iterator erase (const_iterator first, const_iterator last) { return data.erase (first, last); }
 
+	//--------------------------------------------------------------------------
+	template <typename K>
+	key_type extract (const K& elem)
+	{
+		auto iter = find (elem);
+		if (iter == end()) return {};
+
+		auto removed = *iter;
+		erase (iter);
+		return removed;
+	}
+
+	//--------------------------------------------------------------------------
 	void swap (cFlatSet& other)
 	{
 		std::swap (data, other.data);
