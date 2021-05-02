@@ -32,12 +32,13 @@
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/upgradecalculator.h"
-#include "utility/color.h"
-#include "utility/position.h"
-#include "utility/signal/signal.h"
-#include "utility/flatset.h"
-#include "utility/serialization/serialization.h"
 #include "utility/arraycrc.h"
+#include "utility/color.h"
+#include "utility/flatset.h"
+#include "utility/position.h"
+#include "utility/ranges.h"
+#include "utility/serialization/serialization.h"
+#include "utility/signal/signal.h"
 
 class cHud;
 class cMapField;
@@ -221,10 +222,30 @@ public:
 		archive & NVP(color);
 		archive & NVP(dynamicUnitsData);
 		archive & serialization::makeNvp("vehicleNum", (int)vehicles.size());
-		for (auto vehicle : vehicles)
+		// should be saved in "correct order"
+		// references first to allow to restore pointers.
+		//
+		// More complex case to handle:
+		// commando in car, which is in air transport which is in hangar.
+		// topological sort might be applied.
+		// but 3 passes on vehicles should be enough.
+		const auto hasStoredUnits = [](const auto& vehicle){ return !vehicle->storedUnits.empty(); };
+		const std::function<bool (const std::shared_ptr<cVehicle>&)> filters[] =
 		{
-			archive & serialization::makeNvp("vehicleID", vehicle->getId());
-			archive & serialization::makeNvp("vehicle", *vehicle);
+			[&](const auto& vehicle){ return !hasStoredUnits (vehicle); },
+			[&](const auto& vehicle){ return hasStoredUnits(vehicle) && ranges::none_of (vehicle->storedUnits, hasStoredUnits);},
+			[&](const auto& vehicle){ return hasStoredUnits(vehicle) && ranges::any_of (vehicle->storedUnits, hasStoredUnits);}
+		};
+		for (auto filter : filters)
+		{
+			for (auto vehicle : vehicles)
+			{
+				if (filter (vehicle))
+				{
+					archive & serialization::makeNvp("vehicleID", vehicle->getId());
+					archive & serialization::makeNvp("vehicle", *vehicle);
+				}
+			}
 		}
 		archive & serialization::makeNvp("buildingNum", (int)buildings.size());
 		for (auto building : buildings)

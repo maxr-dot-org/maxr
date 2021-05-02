@@ -196,12 +196,6 @@ public:
 
 	void triggerLandingTakeOff(cModel& model);
 
-	/**
-	* return the unit which contains this vehicle
-	*/
-	cBuilding* getContainerBuilding();
-	cVehicle* getContainerVehicle();
-
 	uint32_t getChecksum(uint32_t crc) const override;
 
 	mutable cSignal<void ()> clearingTurnsChanged;

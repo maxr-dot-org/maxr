@@ -828,35 +828,6 @@ void cVehicle::tryResetOfDetectionStateBeforeMove (const cMap& map, const std::v
 }
 
 //------------------------------------------------------------------------------
-cBuilding* cVehicle::getContainerBuilding()
-{
-	if (!isUnitLoaded() || !getOwner()) return nullptr;
-
-	const auto& buildings = getOwner()->getBuildings();
-	for (auto i = buildings.begin(); i != buildings.end(); ++i)
-	{
-		const auto& building = *i;
-		if (Contains (building->storedUnits, this)) return building.get();
-	}
-
-	return nullptr;
-}
-
-//------------------------------------------------------------------------------
-cVehicle* cVehicle::getContainerVehicle()
-{
-	if (!isUnitLoaded() || !getOwner()) return nullptr;
-
-	const auto& vehicles = getOwner()->getVehicles();
-	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
-	{
-		const auto& vehicle = *i;
-		if (Contains (vehicle->storedUnits, this)) return vehicle.get();
-	}
-
-	return nullptr;
-}
-
 uint32_t cVehicle::getChecksum(uint32_t crc) const
 {
 	crc = cUnit::getChecksum(crc);

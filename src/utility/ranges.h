@@ -25,28 +25,49 @@
 
 namespace ranges
 {
-
+//------------------------------------------------------------------------------
 template <typename Range, typename Predicate>
-auto count_if(const Range& range, Predicate&& predicate)
+auto all_of (const Range& range, Predicate&& predicate)
 {
-	return std::count_if(std::begin (range), std::end (range), std::forward<Predicate>(predicate));
+	return std::all_of (std::begin (range), std::end (range), std::forward<Predicate> (predicate));
+}
+//------------------------------------------------------------------------------
+template <typename Range, typename Predicate>
+auto any_of (const Range& range, Predicate&& predicate)
+{
+	return std::any_of (std::begin (range), std::end (range), std::forward<Predicate> (predicate));
+}
+//------------------------------------------------------------------------------
+template <typename Range, typename Predicate>
+auto none_of (const Range& range, Predicate&& predicate)
+{
+	return std::none_of (std::begin (range), std::end (range), std::forward<Predicate> (predicate));
 }
 
+//------------------------------------------------------------------------------
+template <typename Range, typename Predicate>
+auto count_if (const Range& range, Predicate&& predicate)
+{
+	return std::count_if (std::begin (range), std::end (range), std::forward<Predicate> (predicate));
+}
 
+//------------------------------------------------------------------------------
 template <typename Range, typename Value>
-auto find(Range&& range, const Value& value)
+auto find (Range&& range, const Value& value)
 {
-	return std::find(std::begin (range), std::end (range), value);
+	return std::find (std::begin (range), std::end (range), value);
 }
 
+//------------------------------------------------------------------------------
 template <typename Range, typename Predicate>
-auto find_if(Range&& range, Predicate&& predicate)
+auto find_if (Range&& range, Predicate&& predicate)
 {
-	return std::find_if(std::begin (range), std::end (range), std::forward<Predicate>(predicate));
+	return std::find_if (std::begin (range), std::end (range), std::forward<Predicate> (predicate));
 }
 
+//------------------------------------------------------------------------------
 template <typename Range, typename Projection>
-auto Transform(Range&& range, Projection&& proj)
+auto Transform (Range&& range, Projection&& proj)
 -> std::vector<std::decay_t<decltype (proj (*std::begin (range)))>>
 {
 	std::vector<std::decay_t<decltype (proj (*std::begin (range)))>> res;
