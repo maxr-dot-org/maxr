@@ -241,49 +241,49 @@ void cWindowGameSettings::initFor (cLobbyClient& lobbyClient)
 //------------------------------------------------------------------------------
 void cWindowGameSettings::applySettings (const cGameSettings& gameSettings)
 {
-	metalGroup->selectValue (gameSettings.getMetalAmount());
-	oilGroup->selectValue (gameSettings.getOilAmount());
-	goldGroup->selectValue (gameSettings.getGoldAmount());
+	metalGroup->selectValue (gameSettings.metalAmount);
+	oilGroup->selectValue (gameSettings.oilAmount);
+	goldGroup->selectValue (gameSettings.goldAmount);
 
-	densityGroup->selectValue (gameSettings.getResourceDensity());
+	densityGroup->selectValue (gameSettings.resourceDensity);
 
-	bridgeheadGroup->selectValue (gameSettings.getBridgeheadType());
+	bridgeheadGroup->selectValue (gameSettings.bridgeheadType);
 	alienGroup->selectValue (gameSettings.alienEnabled);
-	gameTypeGroup->selectValue (forHotSeatGame ? eGameSettingsGameType::Turns : gameSettings.getGameType());
+	gameTypeGroup->selectValue (forHotSeatGame ? eGameSettingsGameType::Turns : gameSettings.gameType);
 	if (gameTypeGroup->getSelectedValue().second == eGameSettingsGameType::Simultaneous) enableTurnEndDeadlineOptions();
 	else disableTurnEndDeadlineOptions();
 
-	clansGroup->selectValue (gameSettings.getClansEnabled());
+	clansGroup->selectValue (gameSettings.clansEnabled);
 
-	creditsGroup->selectValue (gameSettings.getStartCredits());
+	creditsGroup->selectValue (gameSettings.startCredits);
 
-	switch (gameSettings.getVictoryCondition())
+	switch (gameSettings.victoryConditionType)
 	{
 		case eGameSettingsVictoryCondition::Turns:
-			if (!victoryGroup->selectValue({eGameSettingsVictoryCondition::Turns, gameSettings.getVictoryTurns()}))
+			if (!victoryGroup->selectValue ({eGameSettingsVictoryCondition::Turns, gameSettings.victoryTurns}))
 			{
-				customVictoryTurnsCheckBox->setText (std::to_string (gameSettings.getVictoryTurns()));
-				victoryGroup->selectValue({eGameSettingsVictoryCondition::Turns, custom});
+				customVictoryTurnsCheckBox->setText (std::to_string (gameSettings.victoryTurns));
+				victoryGroup->selectValue ({eGameSettingsVictoryCondition::Turns, custom});
 			}
 			break;
 		case eGameSettingsVictoryCondition::Points:
-			if (!victoryGroup->selectValue({eGameSettingsVictoryCondition::Points, gameSettings.getVictoryPoints()}))
+			if (!victoryGroup->selectValue ({eGameSettingsVictoryCondition::Points, gameSettings.victoryPoints}))
 			{
-				customVictoryPointsCheckBox->setText (std::to_string (gameSettings.getVictoryPoints()));
-				victoryGroup->selectValue({eGameSettingsVictoryCondition::Points, custom});
+				customVictoryPointsCheckBox->setText (std::to_string (gameSettings.victoryPoints));
+				victoryGroup->selectValue ({eGameSettingsVictoryCondition::Points, custom});
 			}
 			break;
 		case eGameSettingsVictoryCondition::Death:
-			victoryGroup->selectValue({eGameSettingsVictoryCondition::Death, 0});
+			victoryGroup->selectValue ({eGameSettingsVictoryCondition::Death, 0});
 			break;
 	}
 
-	if (gameSettings.isTurnLimitActive())
+	if (gameSettings.turnLimitActive)
 	{
-		if (!turnLimitGroup->selectValue (gameSettings.getTurnLimit().count()))
+		if (!turnLimitGroup->selectValue (gameSettings.turnLimit.count()))
 		{
 			turnLimitGroup->selectValue (custom);
-			customTurnLimitCheckBox->setText (toString (gameSettings.getTurnLimit().count()));
+			customTurnLimitCheckBox->setText (toString (gameSettings.turnLimit.count()));
 		}
 	}
 	else
@@ -291,12 +291,12 @@ void cWindowGameSettings::applySettings (const cGameSettings& gameSettings)
 		turnLimitGroup->selectValue (unlimited);
 	}
 
-	if (gameSettings.isTurnEndDeadlineActive())
+	if (gameSettings.turnEndDeadlineActive)
 	{
-		if (!endTurnDeadlineGroup->selectValue (gameSettings.getTurnEndDeadline().count()))
+		if (!endTurnDeadlineGroup->selectValue (gameSettings.turnEndDeadline.count()))
 		{
 			endTurnDeadlineGroup->selectValue (custom);
-			customEndTurnDeadlineCheckBox->setText (toString (gameSettings.getTurnEndDeadline().count()));
+			customEndTurnDeadlineCheckBox->setText (toString (gameSettings.turnEndDeadline.count()));
 		}
 	}
 	else
@@ -310,54 +310,53 @@ cGameSettings cWindowGameSettings::getGameSettings() const
 {
 	cGameSettings gameSettings;
 
-	gameSettings.setMetalAmount (metalGroup->getSelectedValue().second);
-	gameSettings.setOilAmount (oilGroup->getSelectedValue().second);
-	gameSettings.setGoldAmount (goldGroup->getSelectedValue().second);
-	gameSettings.setResourceDensity (densityGroup->getSelectedValue().second);
+	gameSettings.metalAmount = metalGroup->getSelectedValue().second;
+	gameSettings.oilAmount = oilGroup->getSelectedValue().second;
+	gameSettings.goldAmount = goldGroup->getSelectedValue().second;
+	gameSettings.resourceDensity = densityGroup->getSelectedValue().second;
 
-	gameSettings.setBridgeheadType (bridgeheadGroup->getSelectedValue().second);
+	gameSettings.bridgeheadType = bridgeheadGroup->getSelectedValue().second;
 	gameSettings.alienEnabled = alienGroup->getSelectedValue().second;
 
-	if (forHotSeatGame) gameSettings.setGameType (eGameSettingsGameType::HotSeat);
-	else gameSettings.setGameType (gameTypeGroup->getSelectedValue().second);
+	gameSettings.gameType = forHotSeatGame ? eGameSettingsGameType::HotSeat : gameTypeGroup->getSelectedValue().second;
 
-	gameSettings.setClansEnabled (clansGroup->getSelectedValue().second);
+	gameSettings.clansEnabled = clansGroup->getSelectedValue().second;
 
-	gameSettings.setStartCredits (creditsGroup->getSelectedValue().second);
+	gameSettings.startCredits = creditsGroup->getSelectedValue().second;
 
 	const auto victoryCondition = victoryGroup->getSelectedValue().second;
 	const auto victoryType = victoryCondition.first;
 	const auto victoryCount = victoryCondition.second;
-	gameSettings.setVictoryCondition (victoryType);
+	gameSettings.victoryConditionType = victoryType;
 	switch (victoryType)
 	{
 		case eGameSettingsVictoryCondition::Points:
 		{
-			gameSettings.setVictoryPoints (victoryCount == custom ? stoi (customVictoryPointsCheckBox->getText()): victoryCount);
+			gameSettings.victoryPoints = (victoryCount == custom ? stoi (customVictoryPointsCheckBox->getText()): victoryCount);
 			break;
 		}
 		case eGameSettingsVictoryCondition::Turns:
 		{
-			gameSettings.setVictoryTurns (victoryCount == custom ? stoi (customVictoryTurnsCheckBox->getText()) : victoryCount);
+			gameSettings.victoryTurns = (victoryCount == custom ? stoi (customVictoryTurnsCheckBox->getText()) : victoryCount);
 			break;
 		}
 		case eGameSettingsVictoryCondition::Death: break;
 	}
 
-	gameSettings.setTurnLimitActive (true);
+	gameSettings.turnLimitActive = true;
 	switch (turnLimitGroup->getSelectedValue().second)
 	{
-		case custom: gameSettings.setTurnLimit (std::chrono::seconds (atoi (customTurnLimitCheckBox->getText().c_str()))); break;
-		case unlimited: gameSettings.setTurnLimitActive (false); break;
-		default: gameSettings.setTurnLimit (std::chrono::seconds (turnLimitGroup->getSelectedValue().second)); break;
+		case custom: gameSettings.turnLimit = std::chrono::seconds (atoi (customTurnLimitCheckBox->getText().c_str())); break;
+		case unlimited: gameSettings.turnLimitActive = false; break;
+		default: gameSettings.turnLimit = std::chrono::seconds (turnLimitGroup->getSelectedValue().second); break;
 	}
 
-	gameSettings.setTurnEndDeadlineActive (true);
+	gameSettings.turnEndDeadlineActive = true;
 	switch (endTurnDeadlineGroup->getSelectedValue().second)
 	{
-		case custom: gameSettings.setTurnEndDeadline (std::chrono::seconds (atoi (customEndTurnDeadlineCheckBox->getText().c_str()))); break;
-		case unlimited: gameSettings.setTurnEndDeadlineActive (false); break;
-		default: gameSettings.setTurnEndDeadline (std::chrono::seconds (endTurnDeadlineGroup->getSelectedValue().second)); break;
+		case custom: gameSettings.turnEndDeadline = std::chrono::seconds (atoi (customEndTurnDeadlineCheckBox->getText().c_str())); break;
+		case unlimited: gameSettings.turnEndDeadlineActive = false; break;
+		default: gameSettings.turnEndDeadline = std::chrono::seconds (endTurnDeadlineGroup->getSelectedValue().second); break;
 	}
 
 	return gameSettings;

@@ -696,12 +696,12 @@ void cMap::placeResources(cModel& model)
 		resSpots.push_back(T_2<int> ((position.x() & ~1) + 1, position.y() & ~1));
 	}
 
-	const eGameSettingsResourceDensity density = gameSettings.getResourceDensity();
+	const eGameSettingsResourceDensity density = gameSettings.resourceDensity;
 	std::map<eResourceType, eGameSettingsResourceAmount> frequencies;
 
-	frequencies[eResourceType::Metal] = gameSettings.getMetalAmount();
-	frequencies[eResourceType::Oil] = gameSettings.getOilAmount();
-	frequencies[eResourceType::Gold] = gameSettings.getGoldAmount();
+	frequencies[eResourceType::Metal] = gameSettings.metalAmount;
+	frequencies[eResourceType::Oil] = gameSettings.oilAmount;
+	frequencies[eResourceType::Gold] = gameSettings.goldAmount;
 
 	const std::size_t resSpotCount = (std::size_t) (getSize().x() * getSize().y() * 0.003f * (1.5f + getResourceDensityFactor (density)));
 	const std::size_t playerCount = playerList.size();

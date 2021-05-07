@@ -175,7 +175,7 @@ void cMenuControllerMultiplayerHotSeat::startNextPlayerGamePreperation (size_t p
 	auto dialog = application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Multiplayer~Player_Turn", game->getPlayer (playerIndex).getName()), eWindowBackgrounds::Black));
 	dialog->done.connect ([this, playerIndex]()
 	{
-		if (game->getGameSettings()->getClansEnabled())
+		if (game->getGameSettings()->clansEnabled)
 		{
 			selectClan (playerIndex, true);
 		}
@@ -220,7 +220,7 @@ void cMenuControllerMultiplayerHotSeat::selectLandingUnits (size_t playerIndex, 
 
 	auto initialLandingUnits = computeInitialLandingUnits (game->getPlayerClan (playerIndex), *game->getGameSettings(), *game->getUnitsData());
 
-	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (game->getPlayer (playerIndex).getColor(), game->getPlayerClan (playerIndex), initialLandingUnits, game->getGameSettings()->getStartCredits(), game->getUnitsData()));
+	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (game->getPlayer (playerIndex).getColor(), game->getPlayerClan (playerIndex), initialLandingUnits, game->getGameSettings()->startCredits, game->getUnitsData()));
 
 	windowLandingUnitSelection->done.connect ([ = ]()
 	{
@@ -248,9 +248,8 @@ void cMenuControllerMultiplayerHotSeat::selectLandingPosition (size_t playerInde
 {
 	if (!game) return;
 
-
 	auto& map = game->getStaticMap();
-	bool fixedBridgeHead = game->getGameSettings()->getBridgeheadType() == eGameSettingsBridgeheadType::Definite;
+	bool fixedBridgeHead = game->getGameSettings()->bridgeheadType == eGameSettingsBridgeheadType::Definite;
 	auto& landingUnits = game->getLandingUnits(playerIndex);
 	auto unitsData = game->getUnitsData();
 	playerLandingSelectionWindows[playerIndex] = std::make_shared<cWindowLandingPositionSelection>(map, fixedBridgeHead, landingUnits, unitsData, true);

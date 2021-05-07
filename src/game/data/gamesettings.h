@@ -99,51 +99,6 @@ public:
 
 	cGameSettings& operator= (const cGameSettings&) = default;
 
-	eGameSettingsResourceAmount getMetalAmount() const;
-	void setMetalAmount (eGameSettingsResourceAmount value);
-
-	eGameSettingsResourceAmount getOilAmount() const;
-	void setOilAmount (eGameSettingsResourceAmount value);
-
-	eGameSettingsResourceAmount getGoldAmount() const;
-	void setGoldAmount (eGameSettingsResourceAmount value);
-
-	eGameSettingsResourceDensity getResourceDensity() const;
-	void setResourceDensity (eGameSettingsResourceDensity value);
-
-	eGameSettingsBridgeheadType getBridgeheadType() const;
-	void setBridgeheadType (eGameSettingsBridgeheadType value);
-
-	eGameSettingsGameType getGameType() const;
-	void setGameType (eGameSettingsGameType value);
-
-	bool getClansEnabled() const;
-	void setClansEnabled (bool value);
-
-	unsigned int getStartCredits() const;
-	void setStartCredits (unsigned int value);
-
-	eGameSettingsVictoryCondition getVictoryCondition() const;
-	void setVictoryCondition (eGameSettingsVictoryCondition value);
-
-	unsigned int getVictoryTurns() const;
-	void setVictoryTurns (unsigned int value);
-
-	unsigned int getVictoryPoints() const;
-	void setVictoryPoints (unsigned int value);
-
-	const std::chrono::seconds& getTurnEndDeadline() const;
-	void setTurnEndDeadline (const std::chrono::seconds& value);
-
-	bool isTurnEndDeadlineActive() const;
-	void setTurnEndDeadlineActive (bool value);
-
-	const std::chrono::seconds& getTurnLimit() const;
-	void setTurnLimit (const std::chrono::seconds& value);
-
-	bool isTurnLimitActive() const;
-	void setTurnLimitActive (bool value);
-
 	uint32_t getChecksum(uint32_t crc) const;
 
 	template<typename T>

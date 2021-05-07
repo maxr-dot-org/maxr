@@ -171,7 +171,7 @@ void cGameGuiController::start()
 			gameGui->restoreState (iter->second);
 		}
 
-		if (activeClient->getModel().getGameSettings()->getGameType() == eGameSettingsGameType::HotSeat)
+		if (activeClient->getModel().getGameSettings()->gameType == eGameSettingsGameType::HotSeat)
 		{
 			showNextPlayerDialog();
 		}
@@ -1080,7 +1080,7 @@ void cGameGuiController::connectClient (cClient& client)
 
 	clientSignalConnectionManager.connect(model.turnEnded, [&]()
 	{
-		if (getGameSettings()->getGameType() == eGameSettingsGameType::HotSeat)
+		if (getGameSettings()->gameType == eGameSettingsGameType::HotSeat)
 		{
 			auto& player = *model.getActiveTurnPlayer();
 			if (player.getId() != getActivePlayer()->getId())
@@ -1353,7 +1353,7 @@ void cGameGuiController::connectReportSources(cClient& client)
 	});
 	clientSignalConnectionManager.connect(model.newTurnStarted, [&](const sNewTurnReport& newTurnReport)
 	{
-		if (model.getActiveTurnPlayer() == getActivePlayer().get() || model.getGameSettings()->getGameType() == eGameSettingsGameType::Simultaneous)
+		if (model.getActiveTurnPlayer() == getActivePlayer().get() || model.getGameSettings()->gameType == eGameSettingsGameType::Simultaneous)
 		{
 			const auto& report = newTurnReport.reports.at (player.getId());
 			const auto& researchs = report.finishedResearchs;
@@ -2080,7 +2080,7 @@ void cGameGuiController::updateChangeAllowed()
 	const cFreezeModes& freezeModes = activeClient->getFreezeModes();
 	const auto& model = activeClient->getModel();
 
-	bool changeAllowed = !freezeModes.isFreezed() && (activeClient->getModel().getActiveTurnPlayer() == getActivePlayer().get() || model.getGameSettings()->getGameType() == eGameSettingsGameType::Simultaneous);
+	bool changeAllowed = !freezeModes.isFreezed() && (activeClient->getModel().getActiveTurnPlayer() == getActivePlayer().get() || model.getGameSettings()->gameType == eGameSettingsGameType::Simultaneous);
 	gameGui->getGameMap().setChangeAllowed (changeAllowed);
 }
 
@@ -2091,7 +2091,7 @@ void cGameGuiController::updateEndButtonState()
 	const auto& model = activeClient->getModel();
 
 	if (freezeModes.isEnabled(eFreezeMode::WAIT_FOR_TURNEND) ||
-	   (activeClient->getModel().getActiveTurnPlayer() != getActivePlayer().get() && model.getGameSettings()->getGameType() == eGameSettingsGameType::Turns) ||
+	   (activeClient->getModel().getActiveTurnPlayer() != getActivePlayer().get() && model.getGameSettings()->gameType == eGameSettingsGameType::Turns) ||
 	    getActivePlayer()->getHasFinishedTurn())
 	{
 		gameGui->getHud().lockEndButton();
@@ -2156,7 +2156,7 @@ void cGameGuiController::updateGuiInfoTexts()
 	{
 		gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_For_Server"), "");
 	}
-	else if (activeClient->getModel().getActiveTurnPlayer() != getActivePlayer().get() && model.getGameSettings()->getGameType() == eGameSettingsGameType::Turns)
+	else if (activeClient->getModel().getActiveTurnPlayer() != getActivePlayer().get() && model.getGameSettings()->gameType == eGameSettingsGameType::Turns)
 	{
 		const std::string& name = activeClient->getModel().getActiveTurnPlayer()->getName();
 		gameGui->setInfoTexts(lngPack.i18n("Text~Multiplayer~Wait_Until", name), "");

@@ -164,13 +164,13 @@ cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> play
 	if (gameSettings)
 	{
 		std::string gameEndString;
-		switch (gameSettings->getVictoryCondition())
+		switch (gameSettings->victoryConditionType)
 		{
 			case eGameSettingsVictoryCondition::Turns:
-				gameEndString = lngPack.i18n ("Text~Comp~GameEndsAt") + " " + plural (gameSettings->getVictoryTurns(), "Text~Comp~Turn_5", "Text~Comp~Turns");
+				gameEndString = lngPack.i18n ("Text~Comp~GameEndsAt") + " " + plural (gameSettings->victoryTurns, "Text~Comp~Turn_5", "Text~Comp~Turns");
 				break;
 			case eGameSettingsVictoryCondition::Points:
-				gameEndString = lngPack.i18n ("Text~Comp~GameEndsAt") + " " + plural (gameSettings->getVictoryPoints(), "Text~Comp~Point", "Text~Comp~Points");
+				gameEndString = lngPack.i18n ("Text~Comp~GameEndsAt") + " " + plural (gameSettings->victoryPoints, "Text~Comp~Point", "Text~Comp~Points");
 				break;
 			case eGameSettingsVictoryCondition::Death:
 				gameEndString = lngPack.i18n ("Text~Comp~NoLimit");
@@ -508,15 +508,21 @@ void cWindowReports::initializeScorePlot()
 
 	if (gameSettings)
 	{
-		if (gameSettings->getVictoryCondition() == eGameSettingsVictoryCondition::Turns)
+		switch (gameSettings->victoryConditionType)
 		{
-			auto& marker = scorePlot->addXMarker (gameSettings->getVictoryTurns());
-			marker.setColor (limitColor);
-		}
-		else if (gameSettings->getVictoryCondition() == eGameSettingsVictoryCondition::Points)
-		{
-			auto& marker = scorePlot->addYMarker (gameSettings->getVictoryPoints());
-			marker.setColor (limitColor);
+			case eGameSettingsVictoryCondition::Turns:
+			{
+				auto& marker = scorePlot->addXMarker (gameSettings->victoryTurns);
+				marker.setColor (limitColor);
+				break;
+			}
+			case eGameSettingsVictoryCondition::Points:
+			{
+				auto& marker = scorePlot->addYMarker (gameSettings->victoryPoints);
+				marker.setColor (limitColor);
+				break;
+			}
+			default: break;
 		}
 	}
 }

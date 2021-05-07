@@ -244,7 +244,7 @@ void cServer::run()
 						Log.write(" Server: Discarding action, because game is freezed.", cLog::eLOG_TYPE_NET_WARNING);
 						break;
 					}
-					if (model.getGameSettings()->getGameType() == eGameSettingsGameType::Turns && message->playerNr != model.getActiveTurnPlayer()->getId())
+					if (model.getGameSettings()->gameType == eGameSettingsGameType::Turns && message->playerNr != model.getActiveTurnPlayer()->getId())
 					{
 						Log.write(" Server: Discarding action, because it's another players turn.", cLog::eLOG_TYPE_NET_WARNING);
 						break;

@@ -85,7 +85,7 @@ void cInitGamePreparation::onChatMessage (const std::string& playerName, const s
 void cInitGamePreparation::startGamePreparation()
 {
 	lobbyPreparationData = lobbyClient.getLobbyPreparationData();
-	if (lobbyPreparationData.gameSettings->getClansEnabled())
+	if (lobbyPreparationData.gameSettings->clansEnabled)
 	{
 		startClanSelection();
 	}
@@ -117,7 +117,7 @@ void cInitGamePreparation::startLandingUnitSelection()
 	const auto unitsData = lobbyPreparationData.unitsData;
 	const auto initialLandingUnits = computeInitialLandingUnits (initPlayerData.clan, gameSettings, *unitsData);
 	// TODO: use player color
-	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (cRgbColor(), initPlayerData.clan, initialLandingUnits, gameSettings.getStartCredits(), unitsData));
+	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (cRgbColor(), initPlayerData.clan, initialLandingUnits, gameSettings.startCredits, unitsData));
 	windows.push_back (windowLandingUnitSelection);
 
 	signalConnectionManager.connect (windowLandingUnitSelection->canceled, [this]() { back(); });
@@ -135,7 +135,7 @@ void cInitGamePreparation::startLandingPositionSelection()
 {
 	if (!lobbyPreparationData.staticMap) return;
 	const auto& map = lobbyPreparationData.staticMap;
-	const bool fixedBridgeHead = lobbyPreparationData.gameSettings->getBridgeheadType() == eGameSettingsBridgeheadType::Definite;
+	const bool fixedBridgeHead = lobbyPreparationData.gameSettings->bridgeheadType == eGameSettingsBridgeheadType::Definite;
 	const auto& unitsData = lobbyPreparationData.unitsData;
 
 	windowLandingPositionSelection = std::make_shared<cWindowLandingPositionSelection> (map, fixedBridgeHead, initPlayerData.landingUnits, unitsData, true);

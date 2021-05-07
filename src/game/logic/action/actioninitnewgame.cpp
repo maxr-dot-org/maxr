@@ -161,7 +161,7 @@ void cActionInitNewGame::execute (cModel& model) const
 	Log.write(" GameId: " + toString (model.getGameId()), cLog::eLOG_TYPE_NET_DEBUG);
 
 	// init clan
-	if (model.getGameSettings()->getClansEnabled())
+	if (model.getGameSettings()->clansEnabled)
 	{
 		if (initPlayerData.clan < 0 || static_cast<size_t> (initPlayerData.clan) >= unitsdata.getNrOfClans())
 		{
@@ -182,7 +182,7 @@ void cActionInitNewGame::execute (cModel& model) const
 		return;
 	}
 	cPosition updatedLandingPosition = initPlayerData.landingPosition;
-	if (model.getGameSettings()->getBridgeheadType() == eGameSettingsBridgeheadType::Definite)
+	if (model.getGameSettings()->bridgeheadType == eGameSettingsBridgeheadType::Definite)
 	{
 		// Find place for mine if bridgehead is fixed
 		if (!findPositionForStartMine (updatedLandingPosition, *model.getUnitsData(), *model.getMap()->staticMap))
@@ -203,7 +203,7 @@ void cActionInitNewGame::execute (cModel& model) const
 	}
 
 	// apply upgrades
-	int credits = model.getGameSettings()->getStartCredits();
+	int credits = model.getGameSettings()->startCredits;
 	for (const auto& upgrade : initPlayerData.unitUpgrades)
 	{
 		const sID& unitId = upgrade.first;
@@ -319,7 +319,7 @@ void cActionInitNewGame::makeLanding (cPlayer& player, const std::vector<sLandin
 {
 	cPosition landingPosition = player.getLandingPos();
 
-	if (model.getGameSettings()->getBridgeheadType() == eGameSettingsBridgeheadType::Definite)
+	if (model.getGameSettings()->bridgeheadType == eGameSettingsBridgeheadType::Definite)
 	{
 		// place buildings:
 		model.addBuilding (landingPosition + cPosition (-1, 0), model.getUnitsData()->getSpecialIDSmallGen(), &player);

@@ -251,7 +251,7 @@ void cSavegame::writeHeader(int slot, const std::string& saveName, const cModel 
 	}
 	if (humanPlayers > 1)
 		type = GAME_TYPE_TCPIP;
-	if (model.getGameSettings()->getGameType() == eGameSettingsGameType::HotSeat)
+	if (model.getGameSettings()->gameType == eGameSettingsGameType::HotSeat)
 		type = GAME_TYPE_HOTSEAT;
 
 	cXmlArchiveIn archive(*xmlDocument.RootElement());

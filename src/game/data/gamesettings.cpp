@@ -129,203 +129,24 @@ std::string toTranslatedString (eGameSettingsVictoryCondition condition)
 }
 
 //------------------------------------------------------------------------------
-eGameSettingsResourceAmount cGameSettings::getMetalAmount() const
-{
-	return metalAmount;
-}
-
-//------------------------------------------------------------------------------
-void cGameSettings::setMetalAmount (eGameSettingsResourceAmount value)
-{
-	metalAmount = value;
-}
-
-//------------------------------------------------------------------------------
-eGameSettingsResourceAmount cGameSettings::getOilAmount() const
-{
-	return oilAmount;
-}
-
-//------------------------------------------------------------------------------
-void cGameSettings::setOilAmount (eGameSettingsResourceAmount value)
-{
-	oilAmount = value;
-}
-
-//------------------------------------------------------------------------------
-eGameSettingsResourceAmount cGameSettings::getGoldAmount() const
-{
-	return goldAmount;
-}
-
-//------------------------------------------------------------------------------
-void cGameSettings::setGoldAmount (eGameSettingsResourceAmount value)
-{
-	goldAmount = value;
-}
-
-//------------------------------------------------------------------------------
-eGameSettingsResourceDensity cGameSettings::getResourceDensity() const
-{
-	return resourceDensity;
-}
-
-//------------------------------------------------------------------------------
-void cGameSettings::setResourceDensity (eGameSettingsResourceDensity value)
-{
-	resourceDensity = value;
-}
-
-//------------------------------------------------------------------------------
-eGameSettingsBridgeheadType cGameSettings::getBridgeheadType() const
-{
-	return bridgeheadType;
-}
-
-//------------------------------------------------------------------------------
-void cGameSettings::setBridgeheadType (eGameSettingsBridgeheadType value)
-{
-	bridgeheadType = value;
-}
-
-//------------------------------------------------------------------------------
-eGameSettingsGameType cGameSettings::getGameType() const
-{
-	return gameType;
-}
-
-//------------------------------------------------------------------------------
-void cGameSettings::setGameType (eGameSettingsGameType value)
-{
-	gameType = value;
-}
-
-//------------------------------------------------------------------------------
-bool cGameSettings::getClansEnabled() const
-{
-	return clansEnabled;
-}
-
-//------------------------------------------------------------------------------
-void cGameSettings::setClansEnabled (bool value)
-{
-	clansEnabled = value;
-}
-
-//------------------------------------------------------------------------------
-unsigned int cGameSettings::getStartCredits() const
-{
-	return startCredits;
-}
-
-//------------------------------------------------------------------------------
-void cGameSettings::setStartCredits (unsigned int value)
-{
-	startCredits = value;
-}
-
-//------------------------------------------------------------------------------
-eGameSettingsVictoryCondition cGameSettings::getVictoryCondition() const
-{
-	return victoryConditionType;
-}
-
-//------------------------------------------------------------------------------
-void cGameSettings::setVictoryCondition (eGameSettingsVictoryCondition value)
-{
-	victoryConditionType = value;
-}
-
-//------------------------------------------------------------------------------
-unsigned int cGameSettings::getVictoryTurns() const
-{
-	return victoryTurns;
-}
-
-//------------------------------------------------------------------------------
-void cGameSettings::setVictoryTurns (unsigned int value)
-{
-	victoryTurns = value;
-}
-
-//------------------------------------------------------------------------------
-unsigned int cGameSettings::getVictoryPoints() const
-{
-	return victoryPoints;
-}
-
-//------------------------------------------------------------------------------
-void cGameSettings::setVictoryPoints (unsigned int value)
-{
-	victoryPoints = value;
-}
-
-//------------------------------------------------------------------------------
-const std::chrono::seconds& cGameSettings::getTurnEndDeadline() const
-{
-	return turnEndDeadline;
-}
-
-//------------------------------------------------------------------------------
-void cGameSettings::setTurnEndDeadline (const std::chrono::seconds& value)
-{
-	turnEndDeadline = value;
-}
-
-//------------------------------------------------------------------------------
-bool cGameSettings::isTurnEndDeadlineActive() const
-{
-	return turnEndDeadlineActive;
-}
-
-//------------------------------------------------------------------------------
-void cGameSettings::setTurnEndDeadlineActive (bool value)
-{
-	turnEndDeadlineActive = value;
-}
-
-//------------------------------------------------------------------------------
-const std::chrono::seconds& cGameSettings::getTurnLimit() const
-{
-	return turnLimit;
-}
-
-//------------------------------------------------------------------------------
-void cGameSettings::setTurnLimit (const std::chrono::seconds& value)
-{
-	turnLimit = value;
-}
-
-//------------------------------------------------------------------------------
-bool cGameSettings::isTurnLimitActive() const
-{
-	return turnLimitActive;
-}
-
-//------------------------------------------------------------------------------
-void cGameSettings::setTurnLimitActive (bool value)
-{
-	turnLimitActive = value;
-}
-
-//------------------------------------------------------------------------------
 uint32_t cGameSettings::getChecksum(uint32_t crc) const
 {
+	crc = calcCheckSum(alienEnabled, crc);
+	crc = calcCheckSum(bridgeheadType, crc);
+	crc = calcCheckSum(clansEnabled, crc);
+	crc = calcCheckSum(gameType, crc);
+	crc = calcCheckSum(goldAmount, crc);
 	crc = calcCheckSum(metalAmount, crc);
 	crc = calcCheckSum(oilAmount, crc);
-	crc = calcCheckSum(goldAmount, crc);
 	crc = calcCheckSum(resourceDensity, crc);
-	crc = calcCheckSum(bridgeheadType, crc);
-	crc = calcCheckSum(gameType, crc);
-	crc = calcCheckSum(clansEnabled, crc);
 	crc = calcCheckSum(startCredits, crc);
-	crc = calcCheckSum(victoryConditionType, crc);
-	crc = calcCheckSum(victoryTurns, crc);
-	crc = calcCheckSum(victoryPoints, crc);
 	crc = calcCheckSum(turnEndDeadline.count(), crc);
 	crc = calcCheckSum(turnEndDeadlineActive, crc);
 	crc = calcCheckSum(turnLimit.count(), crc);
 	crc = calcCheckSum(turnLimitActive, crc);
+	crc = calcCheckSum(victoryConditionType, crc);
+	crc = calcCheckSum(victoryPoints, crc);
+	crc = calcCheckSum(victoryTurns, crc);
 
 	return crc;
 }

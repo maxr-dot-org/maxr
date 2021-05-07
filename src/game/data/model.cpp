@@ -136,9 +136,9 @@ void cModel::setGameSettings (const cGameSettings& gameSettings_)
 {
 	*gameSettings = gameSettings_;
 
-	if (gameSettings->isTurnLimitActive())
+	if (gameSettings->turnLimitActive)
 	{
-		turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnLimit());
+		turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->turnLimit);
 	}
 }
 //------------------------------------------------------------------------------
@@ -546,13 +546,13 @@ void cModel::addAttackJob (cUnit& aggressor, const cPosition& targetPosition)
 //------------------------------------------------------------------------------
 void cModel::handlePlayerStartTurn (cPlayer& player)
 {
-	if (gameSettings->getGameType() == eGameSettingsGameType::HotSeat && player.getId() == activeTurnPlayer->getId())
+	if (gameSettings->gameType == eGameSettingsGameType::HotSeat && player.getId() == activeTurnPlayer->getId())
 	{
 		turnTimeClock->restartFromNow();
 
-		if (gameSettings->isTurnLimitActive())
+		if (gameSettings->turnLimitActive)
 		{
-			turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnLimit());
+			turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->turnLimit);
 		}
 	}
 }
@@ -562,9 +562,9 @@ void cModel::handlePlayerFinishedTurn (cPlayer& player)
 {
 	player.setHasFinishedTurn (true);
 
-	if (gameSettings->getGameType() == eGameSettingsGameType::Simultaneous && gameSettings->isTurnEndDeadlineActive() && !turnEndDeadline)
+	if (gameSettings->gameType == eGameSettingsGameType::Simultaneous && gameSettings->turnEndDeadlineActive && !turnEndDeadline)
 	{
-		turnEndDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnEndDeadline());
+		turnEndDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->turnEndDeadline);
 	}
 
 	playerFinishedTurn (player);
@@ -701,7 +701,7 @@ void cModel::handleTurnEnd()
 	case TURN_ACTIVE:
 		{
 			bool turnFinished = true;
-			if (gameSettings->getGameType() == eGameSettingsGameType::Simultaneous)
+			if (gameSettings->gameType == eGameSettingsGameType::Simultaneous)
 			{
 				for (const auto& player : playerList)
 				{
@@ -722,7 +722,7 @@ void cModel::handleTurnEnd()
 			{
 				turnEnded();
 
-				const auto player = gameSettings->getGameType() == eGameSettingsGameType::Simultaneous ? nullptr : activeTurnPlayer;
+				const auto player = gameSettings->gameType == eGameSettingsGameType::Simultaneous ? nullptr : activeTurnPlayer;
 				const auto resumedMJobOwners = resumeMoveJobs (player);
 				for (const auto& player : resumedMJobOwners)
 				{
@@ -752,7 +752,7 @@ void cModel::handleTurnEnd()
 	case EXECUTE_TURN_START:
 		{
 			sNewTurnReport newTurnReport;
-			if (gameSettings->getGameType() == eGameSettingsGameType::Simultaneous)
+			if (gameSettings->gameType == eGameSettingsGameType::Simultaneous)
 			{
 				turnCounter->increaseTurn();
 
@@ -801,13 +801,13 @@ void cModel::handleTurnEnd()
 			turnEndDeadline = 0;
 			turnLimitDeadline = 0;
 
-			if (gameSettings->getGameType() != eGameSettingsGameType::HotSeat)
+			if (gameSettings->gameType != eGameSettingsGameType::HotSeat)
 			{
 				turnTimeClock->restartFromNow();
 
-				if (gameSettings->isTurnLimitActive())
+				if (gameSettings->turnLimitActive)
 				{
-					turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnLimit());
+					turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->turnLimit);
 				}
 			}
 
@@ -954,18 +954,18 @@ bool cModel::isVictoryConditionMet() const
 	}
 	if (activePlayers == 1 && playerList.size() > 1) return true;
 
-	switch (gameSettings->getVictoryCondition())
+	switch (gameSettings->victoryConditionType)
 	{
 		case eGameSettingsVictoryCondition::Turns:
 		{
-			return turnCounter->getTurn() > static_cast<int> (gameSettings->getVictoryTurns());
+			return turnCounter->getTurn() > static_cast<int> (gameSettings->victoryTurns);
 		}
 		case eGameSettingsVictoryCondition::Points:
 		{
 			for (const auto& player : playerList)
 			{
 				if (player->isDefeated) continue;
-				if (player->getScore() >= static_cast<int> (gameSettings->getVictoryPoints())) return true;
+				if (player->getScore() >= static_cast<int> (gameSettings->victoryPoints)) return true;
 			}
 			return false;
 		}

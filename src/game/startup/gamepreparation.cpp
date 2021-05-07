@@ -24,7 +24,7 @@
 //------------------------------------------------------------------------------
 std::vector<std::pair<sID, int>> computeInitialLandingUnits(int clan, const cGameSettings& gameSettings, const cUnitsData& unitsData)
 {
-	if (gameSettings.getBridgeheadType() == eGameSettingsBridgeheadType::Mobile) return {};
+	if (gameSettings.bridgeheadType == eGameSettingsBridgeheadType::Mobile) return {};
 
 	const auto constructorID = unitsData.getConstructorData().ID;
 	const auto engineerID = unitsData.getEngineerData().ID;
@@ -38,7 +38,7 @@ std::vector<std::pair<sID, int>> computeInitialLandingUnits(int clan, const cGam
 
 	if (clan == 7)
 	{
-		const int startCredits = gameSettings.getStartCredits();
+		const int startCredits = gameSettings.startCredits;
 
 		size_t numAddConstructors = 0;
 		size_t numAddEngineers = 0;

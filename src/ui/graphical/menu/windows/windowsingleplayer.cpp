@@ -99,7 +99,7 @@ void cWindowSinglePlayer::newGameClicked()
 			}
 			game->setStaticMap (staticMap);
 
-			if (gameSettings->getClansEnabled())
+			if (gameSettings->clansEnabled)
 			{
 				auto windowClanSelection = application->show (std::make_shared<cWindowClanSelection> (game->getUnitsData(), game->getClanData()));
 
@@ -110,7 +110,7 @@ void cWindowSinglePlayer::newGameClicked()
 
 					auto initialLandingUnits = computeInitialLandingUnits (windowClanSelection->getSelectedClan(), *gameSettings, *game->getUnitsData());
 					// TODO: use player color
-					auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cRgbColor(), windowClanSelection->getSelectedClan(), initialLandingUnits, gameSettings->getStartCredits(), game->getUnitsData()));
+					auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cRgbColor(), windowClanSelection->getSelectedClan(), initialLandingUnits, gameSettings->startCredits, game->getUnitsData()));
 
 					signalConnectionManager.connect (windowLandingUnitSelection->canceled, [windowLandingUnitSelection]() { windowLandingUnitSelection->close(); });
 					windowLandingUnitSelection->done.connect ([ = ]()
@@ -118,7 +118,7 @@ void cWindowSinglePlayer::newGameClicked()
 						game->setLandingUnits (windowLandingUnitSelection->getLandingUnits());
 						game->setUnitUpgrades (windowLandingUnitSelection->getUnitUpgrades());
 
-						bool fixedBridgeHead = gameSettings->getBridgeheadType() == eGameSettingsBridgeheadType::Definite;
+						bool fixedBridgeHead = gameSettings->bridgeheadType == eGameSettingsBridgeheadType::Definite;
 						auto landingUnits = windowLandingUnitSelection->getLandingUnits();
 						auto unitsdata = game->getUnitsData();
 						auto windowLandingPositionSelection = application->show (std::make_shared<cWindowLandingPositionSelection> (staticMap, fixedBridgeHead, landingUnits, unitsdata, false));
@@ -143,7 +143,7 @@ void cWindowSinglePlayer::newGameClicked()
 			{
 				auto initialLandingUnits = computeInitialLandingUnits (-1, *gameSettings, *game->getUnitsData());
 				// TODO: use player color
-				auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cRgbColor(), -1, initialLandingUnits, gameSettings->getStartCredits(), game->getUnitsData()));
+				auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cRgbColor(), -1, initialLandingUnits, gameSettings->startCredits, game->getUnitsData()));
 
 				signalConnectionManager.connect (windowLandingUnitSelection->canceled, [windowLandingUnitSelection]() { windowLandingUnitSelection->close(); });
 				windowLandingUnitSelection->done.connect ([ = ]()
@@ -151,7 +151,7 @@ void cWindowSinglePlayer::newGameClicked()
 					game->setLandingUnits (windowLandingUnitSelection->getLandingUnits());
 					game->setUnitUpgrades (windowLandingUnitSelection->getUnitUpgrades());
 
-					bool fixedBridgeHead = gameSettings->getBridgeheadType() == eGameSettingsBridgeheadType::Definite;
+					bool fixedBridgeHead = gameSettings->bridgeheadType == eGameSettingsBridgeheadType::Definite;
 					auto landingUnits = windowLandingUnitSelection->getLandingUnits();
 					auto unitsdata = game->getUnitsData();
 					auto windowLandingPositionSelection = application->show(std::make_shared<cWindowLandingPositionSelection>(staticMap, fixedBridgeHead, landingUnits, unitsdata, false));

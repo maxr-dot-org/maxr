@@ -115,7 +115,7 @@ void cUnitDetailsHud::reset()
 		assert (unit->isABuilding());  // currently only buildings can score
 		const auto unitScore = static_cast<const cBuilding*> (unit)->points;
 		const auto totalScore = unit->getOwner()->getScore();
-		const auto goalScore = (gameSettings && gameSettings->getVictoryCondition() == eGameSettingsVictoryCondition::Points) ? gameSettings->getVictoryPoints() : totalScore;
+		const auto goalScore = (gameSettings && gameSettings->victoryConditionType == eGameSettingsVictoryCondition::Points) ? gameSettings->victoryPoints : totalScore;
 
 		drawRow (1, eUnitDataSymbolType::Human, unitScore, unitScore, lngPack.i18n ("Text~Others~Score"));
 		drawRow (2, eUnitDataSymbolType::Human, totalScore, goalScore, lngPack.i18n ("Text~Others~Total"));

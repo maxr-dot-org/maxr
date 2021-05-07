@@ -564,7 +564,7 @@ bool cVehicle::isOtherUnitOffendedByThis(const cModel& model, const cUnit& other
 //-----------------------------------------------------------------------------
 bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire(const cModel& model, const cPlayer* player) const
 {
-	if (model.getGameSettings()->getGameType() == eGameSettingsGameType::Turns)
+	if (model.getGameSettings()->gameType == eGameSettingsGameType::Turns)
 	{
 		// In the turn based game style,
 		// the opponent always fires on the unit if he can,
