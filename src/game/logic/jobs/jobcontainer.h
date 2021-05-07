@@ -23,6 +23,8 @@
 #include "utility/serialization/serialization.h"
 #include "job.h"
 
+#include <memory>
+
 class cJob;
 class cUnit;
 class cModel;
@@ -31,17 +33,17 @@ class cJobContainer
 {
 public:
 	~cJobContainer();
-	void addJob (cJob& job);
-	void onRemoveUnit (cUnit* unit);
-	void run (cModel& model);
+	void addJob (std::unique_ptr<cJob>);
+	void onRemoveUnit (cUnit*);
+	void run (cModel&);
 	void clear();
 	uint32_t getChecksum(uint32_t crc) const;
 
 	template<typename T>
-	void save(T& archive)
+	void save(T& archive) const
 	{
 		archive << serialization::makeNvp("numJobs", (int)jobs.size());
-		for (auto job : jobs)
+		for (const auto& job : jobs)
 		{
 			archive << serialization::makeNvp("job", *job);
 		}
@@ -54,15 +56,15 @@ public:
 		jobs.resize(numJobs);
 		for (auto& job : jobs)
 		{
-			job = cJob::createFrom(archive, "job");
+			job = cJob::createFrom (archive, "job");
 		}
 	}
 	SERIALIZATION_SPLIT_MEMBER()
 
 private:
-	std::vector<cJob*>::iterator releaseJob (std::vector<cJob*>::iterator it);
+	std::vector<std::unique_ptr<cJob>>::iterator releaseJob (std::vector<std::unique_ptr<cJob>>::iterator it);
 private:
-	std::vector<cJob*> jobs;
+	std::vector<std::unique_ptr<cJob>> jobs;
 };
 
 #endif

@@ -121,8 +121,8 @@ public:
 	void handlePlayerStartTurn(cPlayer&);
 	void handlePlayerFinishedTurn(cPlayer&);
 
-	void addFx(std::shared_ptr<cFx>);
-	void addJob(cJob*);
+	void addFx (std::shared_ptr<cFx>);
+	void addJob (std::unique_ptr<cJob>);
 
 	/**
 	* Try to move an undetected enemy stealth unit out of the way, if necessary to free position.
@@ -155,7 +155,7 @@ public:
 	mutable cSignal<void()> suddenDeathMode;
 
 	template<typename T>
-	void save(T& archive)
+	void save(T& archive) const
 	{
 		archive << NVP (gameId);
 		archive << NVP (gameTime);
@@ -169,7 +169,7 @@ public:
 			archive << serialization::makeNvp ("player", *player);
 		}
 		archive << serialization::makeNvp ("numMoveJobs", (int)moveJobs.size());
-		for (auto moveJob : moveJobs)
+		for (const auto& moveJob : moveJobs)
 		{
 			archive << serialization::makeNvp ("moveJob", *moveJob);
 		}
@@ -243,15 +243,11 @@ public:
 		}
 		int numMoveJobs;
 		archive >> NVP (numMoveJobs);
-		for (auto moveJob : moveJobs)
-		{
-			delete moveJob;
-		}
 		moveJobs.clear();
 		moveJobs.resize (numMoveJobs);
 		for (auto& moveJob : moveJobs)
 		{
-			moveJob = new cMoveJob();
+			moveJob = std::make_unique<cMoveJob>();
 			archive >> serialization::makeNvp ("moveJob", *moveJob);
 		}
 		int numAttackJobs;
@@ -340,7 +336,7 @@ private:
 
 	std::shared_ptr<cUnitsData> unitsData;
 
-	std::vector<cMoveJob*> moveJobs;
+	std::vector<std::unique_ptr<cMoveJob>> moveJobs;
 	std::vector<cAttackJob*> attackJobs;
 
 	std::shared_ptr<cTurnCounter> turnCounter;

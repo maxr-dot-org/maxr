@@ -65,10 +65,6 @@ cModel::~cModel()
 	{
 		delete attackjob;
 	}
-	for (auto movejob : moveJobs)
-	{
-		delete movejob;
-	}
 }
 
 //------------------------------------------------------------------------------
@@ -325,7 +321,7 @@ cVehicle& cModel::addVehicle (const cPosition& position, const sID& id, cPlayer*
 //------------------------------------------------------------------------------
 void cModel::destroyUnit (cUnit& unit)
 {
-	addJob (new cDestroyJob (unit, *this));
+	addJob (std::make_unique<cDestroyJob> (unit, *this));
 }
 
 //------------------------------------------------------------------------------
@@ -507,12 +503,12 @@ cMoveJob* cModel::addMoveJob (cVehicle& vehicle, const std::forward_list<cPositi
 			currentMoveJob->removeVehicle();
 		}
 	}
-	cMoveJob* moveJob = new cMoveJob (path, vehicle, *this);
-	vehicle.setMoveJob (moveJob);
+	auto moveJob = std::make_unique<cMoveJob> (path, vehicle, *this);
+	vehicle.setMoveJob (moveJob.get());
 
-	moveJobs.push_back (moveJob);
+	moveJobs.push_back (std::move (moveJob));
 
-	return moveJob;
+	return moveJobs.back().get();
 }
 
 //------------------------------------------------------------------------------
@@ -578,9 +574,9 @@ void cModel::addFx (std::shared_ptr<cFx> fx)
 }
 
 //------------------------------------------------------------------------------
-void cModel::addJob (cJob* job)
+void cModel::addJob (std::unique_ptr<cJob> job)
 {
-	helperJobs.addJob (*job);
+	helperJobs.addJob (std::move (job));
 }
 
 //------------------------------------------------------------------------------
@@ -659,20 +655,17 @@ void cModel::refreshMapPointer()
 //------------------------------------------------------------------------------
 void cModel::runMoveJobs()
 {
-	const int max = moveJobs.size();
-	for (int i = 0; i < max; i++)
+	for (auto& moveJob : moveJobs)
 	{
-		auto moveJob = moveJobs[i];
 		moveJob->run (*this); //this can add new items to 'moveJobs'
 		if (moveJob->isFinished())
 		{
 			cVehicle* vehicle = moveJob->getVehicle();
-			if (vehicle != nullptr && vehicle->getMoveJob() == moveJob)
+			if (vehicle != nullptr && vehicle->getMoveJob() == moveJob.get())
 			{
 				vehicle->setMoveJob (nullptr);
 			}
-			delete moveJob;
-			moveJobs[i] = nullptr;
+			moveJob.reset();
 		}
 	}
 	Remove (moveJobs, nullptr);

@@ -74,19 +74,19 @@ int cPathDestHandler::heuristicCost (const cPosition& source) const
 
 cPathCalculator::cPathCalculator(const cVehicle& Vehicle, const cMapView& Map, const cPosition& destPosition, const std::vector<cVehicle*>* group)
 {
-	destHandler = new cPathDestHandler (PATH_DEST_TYPE_POS, destPosition, nullptr, nullptr);
+	destHandler = std::make_unique<cPathDestHandler> (PATH_DEST_TYPE_POS, destPosition, nullptr, nullptr);
 	init (Vehicle.getPosition(), Map, Vehicle, group);
 }
 
 cPathCalculator::cPathCalculator(const cVehicle& Vehicle, const cMapView& Map, const cUnit& destUnit, bool load)
 {
-	destHandler = new cPathDestHandler (load ? PATH_DEST_TYPE_LOAD : PATH_DEST_TYPE_ATTACK, cPosition (0, 0), &Vehicle, &destUnit);
+	destHandler = std::make_unique<cPathDestHandler> (load ? PATH_DEST_TYPE_LOAD : PATH_DEST_TYPE_ATTACK, cPosition (0, 0), &Vehicle, &destUnit);
 	init (Vehicle.getPosition(), Map, Vehicle, nullptr);
 }
 
 cPathCalculator::cPathCalculator(const cVehicle& Vehicle, const cMapView& Map, const cPosition& destPosition, bool attack)
 {
-	destHandler = new cPathDestHandler (attack ? PATH_DEST_TYPE_ATTACK : PATH_DEST_TYPE_POS, destPosition, &Vehicle, nullptr);
+	destHandler = std::make_unique<cPathDestHandler> (attack ? PATH_DEST_TYPE_ATTACK : PATH_DEST_TYPE_POS, destPosition, &Vehicle, nullptr);
 	init (Vehicle.getPosition(), Map, Vehicle, nullptr);
 }
 
@@ -99,7 +99,7 @@ void cPathCalculator::init (const cPosition& source, const cMapView& Map, const 
 	bPlane = Vehicle.getStaticUnitData().factorAir > 0;
 	bShip = Vehicle.getStaticUnitData().factorSea > 0 && Vehicle.getStaticUnitData().factorGround == 0;
 
-	MemBlocks = nullptr;
+	MemBlocks.clear();
 
 	blocknum = 0;
 	blocksize = 0;
@@ -108,15 +108,6 @@ void cPathCalculator::init (const cPosition& source, const cMapView& Map, const 
 
 cPathCalculator::~cPathCalculator()
 {
-	delete destHandler;
-	if (MemBlocks != nullptr)
-	{
-		for (int i = 0; i < blocknum; i++)
-		{
-			delete[] MemBlocks[i];
-		}
-		free (MemBlocks);
-	}
 }
 
 std::forward_list<cPosition> cPathCalculator::calcPath()
@@ -154,7 +145,7 @@ std::forward_list<cPosition> cPathCalculator::calcPath()
 		{
 
 			sPathNode* pathNode = CurrentNode;
-			
+
 			cPosition waypoint;
 			while (pathNode->prev != nullptr)
 			{
@@ -241,11 +232,10 @@ void cPathCalculator::expandNodes (sPathNode* ParentNode)
 
 sPathNode* cPathCalculator::allocNode()
 {
-	// alloced new memory block if necessary
+	// allocate new memory block if necessary
 	if (blocksize <= 0)
 	{
-		MemBlocks = static_cast<sPathNode**> (realloc (MemBlocks, (blocknum + 1) * sizeof (sPathNode*)));
-		MemBlocks[blocknum] = new sPathNode[10];
+		MemBlocks.emplace_back (std::vector<sPathNode> (10));
 		blocksize = MEM_BLOCK_SIZE;
 		blocknum++;
 	}

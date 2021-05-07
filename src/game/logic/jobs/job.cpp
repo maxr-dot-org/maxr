@@ -31,50 +31,47 @@
 #include "utility/string/toString.h"
 #include "airtransportloadjob.h"
 
+//------------------------------------------------------------------------------
 cJob::cJob (cUnit& unit) :
-	finished (false),
 	unit (&unit)
 {}
 
-cJob::cJob() :
-	finished(false),
-	unit(nullptr)
-{}
-
-
-cJob* cJob::createFrom(cBinaryArchiveOut& archive, const std::string& name)
+//------------------------------------------------------------------------------
+std::unique_ptr<cJob> cJob::createFrom (cBinaryArchiveOut& archive, const std::string& name)
 {
-	return createFromImpl(archive);
+	return createFromImpl (archive);
 }
 
-cJob* cJob::createFrom(cXmlArchiveOut& archive, const std::string& name)
+//------------------------------------------------------------------------------
+std::unique_ptr<cJob> cJob::createFrom (cXmlArchiveOut& archive, const std::string& name)
 {
-	archive.enterChild(name);
-	auto job = createFromImpl(archive);
+	archive.enterChild (name);
+	auto job = createFromImpl (archive);
 	archive.leaveChild();
 	return job;
 }
 
+//------------------------------------------------------------------------------
 template <typename T>
-cJob* cJob::createFromImpl(T& archive)
+std::unique_ptr<cJob> cJob::createFromImpl (T& archive)
 {
 	eJobType type;
-	archive >> NVP(type);
+	archive >> NVP (type);
 
 	switch (type)
 	{
 	case eJobType::START_BUILD:
-		return new cStartBuildJob(archive);
+		return std::make_unique<cStartBuildJob> (archive);
 	case eJobType::PLANE_TAKEOFF:
-		return new cPlaneTakeoffJob(archive);
+		return std::make_unique<cPlaneTakeoffJob> (archive);
 	case eJobType::DESTROY:
-		return new cDestroyJob(archive);
+		return std::make_unique<cDestroyJob> (archive);
 	case eJobType::GET_IN:
-		return new cGetInJob(archive);
+		return std::make_unique<cGetInJob> (archive);
 	case eJobType::AIR_TRANSPORT_LOAD:
-		return new cAirTransportLoadJob(archive);
+		return std::make_unique<cAirTransportLoadJob> (archive);
 	default:
-		throw std::runtime_error("Unknown job type " + toString(static_cast<int>(type)));
+		throw std::runtime_error ("Unknown job type " + toString (static_cast<int> (type)));
 		break;
 	}
 }

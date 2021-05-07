@@ -20,8 +20,9 @@
 #ifndef game_logic_jobs_jobH
 #define game_logic_jobs_jobH
 
+#include <cstdint>
+#include <memory>
 #include <string>
-#include <stdint.h>
 
 class cJobContainer;
 class cUnit;
@@ -48,26 +49,26 @@ class cJob
 {
 	friend class cJobContainer;
 protected:
-	explicit cJob (cUnit& unit);
-	cJob();
+	cJob() = default;
+	explicit cJob (cUnit&);
 public:
-	virtual ~cJob() {}
-	virtual void run (cModel& model) = 0;
+	virtual ~cJob() = default;
+	virtual void run (cModel&) = 0;
 	virtual eJobType getType() const = 0;
 
-	static cJob* createFrom(cBinaryArchiveOut& archive,  const std::string& name);
-	static cJob* createFrom(cXmlArchiveOut& archive, const std::string& name);
+	static std::unique_ptr<cJob> createFrom (cBinaryArchiveOut&, const std::string& name);
+	static std::unique_ptr<cJob> createFrom (cXmlArchiveOut&, const std::string& name);
 
-	virtual void serialize(cBinaryArchiveIn& archive) = 0;
-	virtual void serialize(cXmlArchiveIn& archive) = 0;
+	virtual void serialize (cBinaryArchiveIn&) = 0;
+	virtual void serialize (cXmlArchiveIn&) = 0;
 
-	virtual uint32_t getChecksum(uint32_t crc) const = 0;
+	virtual uint32_t getChecksum (uint32_t crc) const = 0;
 protected:
-	bool finished;
-	cUnit* unit;
+	bool finished = false;
+	cUnit* unit = nullptr;
 private:
 	template <typename T>
-	static cJob* createFromImpl(T& archive);
+	static std::unique_ptr<cJob> createFromImpl (T& archive);
 };
 
 #endif // game_logic_jobsH

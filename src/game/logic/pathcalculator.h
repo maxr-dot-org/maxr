@@ -98,12 +98,12 @@ public:
 	/* source and destination coords */
 	cPosition source;
 	bool bPlane, bShip;
-	cPathDestHandler* destHandler;
+	std::unique_ptr<cPathDestHandler> destHandler;
 
 
 private:
 	/* memoryblocks for the nodes */
-	sPathNode** MemBlocks;
+	std::vector<std::vector<sPathNode>> MemBlocks;
 	/* number of blocks */
 	int blocknum;
 	/* restsize of the last block */
@@ -123,7 +123,7 @@ private:
 	*/
 	void expandNodes (sPathNode* Node);
 	/**
-	* returns a pointer to allocated memory and allocets a new block in memory if necessary
+	* returns a pointer to allocated memory and allocates a new block in memory if necessary
 	*@author alzi alias DoctorDeath
 	*/
 	sPathNode* allocNode();

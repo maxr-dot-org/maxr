@@ -52,10 +52,10 @@ void cActionLoad::execute(cModel& model) const
 
 	if (loadingUnit->getStaticUnitData().factorAir > 0)
 	{
-		model.addJob(new cAirTransportLoadJob(*loadedVehicle, *loadingUnit));
+		model.addJob (std::make_unique<cAirTransportLoadJob> (*loadedVehicle, *loadingUnit));
 	}
 	else
 	{
-		model.addJob(new cGetInJob(*loadedVehicle, *loadingUnit));
+		model.addJob (std::make_unique<cGetInJob> (*loadedVehicle, *loadingUnit));
 	}
 }

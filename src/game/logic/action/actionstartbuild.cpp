@@ -129,7 +129,7 @@ void cActionStartBuild::execute(cModel& model) const
 	vehicle->setBuildingABuilding(true);
 	vehicle->BuildPath = buildPath;
 
-	model.addJob (new cStartBuildJob (*vehicle, oldPosition, data.buildingData.isBig));
+	model.addJob (std::make_unique<cStartBuildJob> (*vehicle, oldPosition, data.buildingData.isBig));
 
 	if (vehicle->getMoveJob()) vehicle->getMoveJob()->stop();
 }

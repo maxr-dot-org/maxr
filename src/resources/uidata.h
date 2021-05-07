@@ -146,20 +146,19 @@ public:
 	const sBuildingUIData& getBuildingUI(const cBuilding&) const;
 	const sVehicleUIData* getVehicleUI(sID id) const;
 
-
 	std::vector<sVehicleUIData> vehicleUIs;
 	std::vector<sBuildingUIData> buildingUIs;
 
-	sBuildingUIData* rubbleBig;
-	sBuildingUIData* rubbleSmall;
+	std::unique_ptr<sBuildingUIData> rubbleBig;
+	std::unique_ptr<sBuildingUIData> rubbleSmall;
 
 	// direct pointer on some of the building graphics
-	SDL_Surface* ptr_small_beton;
-	SDL_Surface* ptr_small_beton_org;
-	SDL_Surface* ptr_connector;
-	SDL_Surface* ptr_connector_org;
-	SDL_Surface* ptr_connector_shw;
-	SDL_Surface* ptr_connector_shw_org;
+	SDL_Surface* ptr_small_beton = nullptr;
+	SDL_Surface* ptr_small_beton_org = nullptr;
+	SDL_Surface* ptr_connector = nullptr;
+	SDL_Surface* ptr_connector_org = nullptr;
+	SDL_Surface* ptr_connector_shw = nullptr;
+	SDL_Surface* ptr_connector_shw_org = nullptr;
 };
 
 // OtherData - Class containing the rest of surfaces //////////////////////////

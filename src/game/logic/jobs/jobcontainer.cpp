@@ -28,82 +28,83 @@
 
 #include <algorithm>
 
+//------------------------------------------------------------------------------
 cJobContainer::~cJobContainer()
 {
 	clear();
 }
 
-void cJobContainer::addJob (cJob& job)
+//------------------------------------------------------------------------------
+void cJobContainer::addJob (std::unique_ptr<cJob> job)
 {
-	jobs.push_back (&job);
-	job.unit->jobActive = true;
+	job->unit->jobActive = true;
+	jobs.push_back (std::move (job));
 }
 
+//------------------------------------------------------------------------------
 void cJobContainer::run (cModel& model)
 {
-	for (std::vector<cJob*>::iterator it = jobs.begin(); it != jobs.end();)
+	for (auto it = jobs.begin(); it != jobs.end();)
 	{
-		cJob* job = *it;
+		cJob& job = **it;
 
-		if (!job->finished) job->run (model);
+		if (!job.finished) job.run (model);
 
-		if (job->finished) it = releaseJob (it);
+		if (job.finished) it = releaseJob (it);
 		else ++it;
 	}
 }
 
+//------------------------------------------------------------------------------
 void cJobContainer::clear()
 {
-	for (unsigned int i = 0; i < jobs.size(); i++)
+	for (auto& job : jobs)
 	{
-		cJob* job = jobs[i];
 		if (job->unit)
 		{
 			job->unit->jobActive = false;
 		}
-		delete job;
 	}
 	jobs.clear();
 }
 
-uint32_t cJobContainer::getChecksum(uint32_t crc) const
+//------------------------------------------------------------------------------
+uint32_t cJobContainer::getChecksum (uint32_t crc) const
 {
-	for (const auto job : jobs)
+	for (const auto& job : jobs)
 	{
-		crc = calcCheckSum(*job, crc);
+		crc = calcCheckSum (*job, crc);
 	}
 	return crc;
 }
 
-std::vector<cJob*>::iterator cJobContainer::releaseJob (std::vector<cJob*>::iterator it)
+//------------------------------------------------------------------------------
+std::vector<std::unique_ptr<cJob>>::iterator cJobContainer::releaseJob (std::vector<std::unique_ptr<cJob>>::iterator it)
 {
 	if (it == jobs.end()) return jobs.end();
-	cJob* job = *it;
-	if (job->unit)
+	cJob& job = **it;
+	if (job.unit)
 	{
-		auto nr = ranges::count_if (jobs, [&](const cJob* x) {
-			return x->unit == job->unit;
+		auto nr = ranges::count_if (jobs, [&](const auto& x) {
+			return x->unit == job.unit;
 		});
 		if (nr <= 1)
 		{
-			job->unit->jobActive = false;
+			job.unit->jobActive = false;
 		}
 	}
-	it = jobs.erase (it);
-	delete job;
-	return it;
+	return jobs.erase (it);
 }
 
+//------------------------------------------------------------------------------
 void cJobContainer::onRemoveUnit (cUnit* unit)
 {
-	for (std::vector<cJob*>::iterator it = jobs.begin(); it != jobs.end();)
+	for (auto& job : jobs)
 	{
-		cJob* job = *it;
 		if (job->unit == unit)
 		{
 			job->unit = nullptr;
 			job->finished = true;
 		}
-		else ++it;
 	}
 }

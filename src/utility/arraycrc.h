@@ -20,109 +20,81 @@
 #ifndef utility_arraycrcH
 #define utility_arraycrcH
 
-#include <stdint.h>
-
 #include "crc.h"
 
+#include <cstdint>
+
+#include "config/workaround/cpp17/optional.h"
+
 /**
-* This is a wrapper class around a dynamically allocated array. The purpose 
-* of this wrapper is to cache the crc value of the array, and only recalculate 
-* it, when the array was modified after the last call to getChecksum(). 
+* This is a wrapper class around a dynamically allocated array.
+* The purpose of this wrapper is to cache the crc value of the array,
+* and only recalculate it,
+* when the array was modified after the last call to getChecksum().
 */
 template<typename T>
 class cArrayCrc
 {
 public:
-	cArrayCrc();
-	~cArrayCrc();
+	cArrayCrc() = default;
 
-	void resize(size_t size, T initialValue);
-	void fill(T value);
+	void resize (size_t size, T initialValue);
+	void fill (T value);
 
-	const T& operator[](size_t x) const;
-	size_t size() const;
+	const T& operator[] (size_t x) const { return data[x]; }
+	size_t size() const { return data.size(); }
 
-	void set(size_t pos, T value);
+	void set (size_t pos, T value);
 
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 
 private:
-	T* data;
-	size_t size_;
+	std::vector<T> data;
 
-	mutable bool crcValid;
-	mutable uint32_t crcCache;
+	mutable std::optional<uint32_t> crcCache;
 };
 
-
-template<typename T>
-cArrayCrc<T>::cArrayCrc() :
-	data(nullptr),
-	size_(0),
-	crcValid(false),
-	crcCache(0)
-{}
-
-template<typename T>
-cArrayCrc<T>::~cArrayCrc()
-{
-	delete[] data;
-}
-
+//------------------------------------------------------------------------------
 template<typename T>
 void cArrayCrc<T>::resize(size_t newSize, T initialValue)
 {
-	size_ = newSize;
-	crcValid = false;
+	data.clear();
+	data.resize (newSize, initialValue);
 
-	delete[] data;
-	data = new T[size_];
-	for (size_t i = 0; i < size_; i++)
-		data[i] = initialValue;
+	crcCache = std::nullopt;
 }
 
+//------------------------------------------------------------------------------
 template<typename T>
 void cArrayCrc<T>::fill(T value)
 {
-	crcValid = false;
+	crcCache = std::nullopt;
 
-	for (size_t i = 0; i < size_; i++)
-		data[i] = value;
+	for (auto& e : data)
+		e = value;
 }
 
-template<typename T>
-const T& cArrayCrc<T>::operator[](size_t x) const
-{
-	return data[x];
-}
-
-template<typename T>
-size_t cArrayCrc<T>::size() const
-{
-	return size_;
-}
-
+//------------------------------------------------------------------------------
 template<typename T>
 void cArrayCrc<T>::set(size_t pos, T value)
 {
 	data[pos] = value;
 
-	crcValid = false;
+	crcCache = std::nullopt;
 }
 
+//------------------------------------------------------------------------------
 template<typename T>
 uint32_t cArrayCrc<T>::getChecksum(uint32_t crc) const
 {
-	if (!crcValid)
+	if (!crcCache)
 	{
 		crcCache = 0;
-		for (size_t i = 0; i < size_; i++)
-			crcCache = calcCheckSum(data[i], crcCache);
-
-		crcValid = true;
+		for (const auto& e : data)
+			*crcCache = calcCheckSum(e, *crcCache);
 	}
 
-	return calcCheckSum(crcCache, crc);
+	return calcCheckSum (*crcCache, crc);
 }
 
 #endif

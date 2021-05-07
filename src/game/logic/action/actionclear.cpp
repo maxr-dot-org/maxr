@@ -77,7 +77,7 @@ void cActionClear::execute(cModel& model) const
 	vehicle->setClearing(true);
 	vehicle->setClearingTurns(rubble->getIsBig() ? 4 : 1);
 
-	model.addJob (new cStartBuildJob (*vehicle, oldPosition, rubble->getIsBig()));
+	model.addJob (std::make_unique<cStartBuildJob> (*vehicle, oldPosition, rubble->getIsBig()));
 
 	return;
 }

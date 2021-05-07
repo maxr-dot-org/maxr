@@ -147,16 +147,16 @@ void cVehicle::proceedBuilding (cModel& model, sNewTurnPlayerReport& report)
 	}
 }
 
-void cVehicle::continuePathBuilding(cModel& model)
+void cVehicle::continuePathBuilding (cModel& model)
 {
 	if (!BuildPath) return;
 
-	if (getStoredResources() >= getBuildCostsStart() && model.getMap()->possiblePlaceBuilding(model.getUnitsData()->getStaticUnitData(getBuildingType()), getPosition(), nullptr, this))
+	if (getStoredResources() >= getBuildCostsStart() && model.getMap()->possiblePlaceBuilding (model.getUnitsData()->getStaticUnitData (getBuildingType()), getPosition(), nullptr, this))
 	{
-		model.addJob(new cStartBuildJob(*this, getPosition(), getIsBig()));
-		setBuildingABuilding(true);
-		setBuildCosts(getBuildCostsStart());
-		setBuildTurns(getBuildTurnsStart());
+		model.addJob (std::make_unique<cStartBuildJob> (*this, getPosition(), getIsBig()));
+		setBuildingABuilding (true);
+		setBuildCosts (getBuildCostsStart());
+		setBuildTurns (getBuildTurnsStart());
 	}
 	else
 	{
@@ -1072,14 +1072,14 @@ void cVehicle::setMoveJob (cMoveJob* moveJob_)
 }
 
 //------------------------------------------------------------------------------
-void cVehicle::triggerLandingTakeOff(cModel& model)
+void cVehicle::triggerLandingTakeOff (cModel& model)
 {
 	if (canLand(*model.getMap()))
 	{
 		// height should be 0
 		if (flightHeight > 0)
 		{
-			model.addJob(new cPlaneTakeoffJob(*this));
+			model.addJob (std::make_unique<cPlaneTakeoffJob> (*this));
 		}
 	}
 	else
@@ -1087,7 +1087,7 @@ void cVehicle::triggerLandingTakeOff(cModel& model)
 		// height should be MAX
 		if (flightHeight < MAX_FLIGHT_HEIGHT)
 		{
-			model.addJob(new cPlaneTakeoffJob(*this));
+			model.addJob (std::make_unique<cPlaneTakeoffJob> (*this));
 		}
 	}
 }
