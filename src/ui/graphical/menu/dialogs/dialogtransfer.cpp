@@ -34,6 +34,7 @@
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
+#include "ui/translations.h"
 #include "utility/language.h"
 #include "utility/string/toString.h"
 
@@ -46,8 +47,8 @@ cNewDialogTransfer::cNewDialogTransfer (const cUnit& sourceUnit, const cUnit& de
 
 	arrowImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (140, 77)));
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (20, 105), getPosition() + cPosition (40 + 80, 105 + 10)), sourceUnit.getName(), FONT_LATIN_SMALL_WHITE, eAlignmentType::CenterHorizontal));
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (190, 105), getPosition() + cPosition (210 + 80, 105 + 10)), destinationUnit.getName(), FONT_LATIN_SMALL_WHITE, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (20, 105), getPosition() + cPosition (40 + 80, 105 + 10)), getName (sourceUnit), FONT_LATIN_SMALL_WHITE, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (190, 105), getPosition() + cPosition (210 + 80, 105 + 10)), getName (destinationUnit), FONT_LATIN_SMALL_WHITE, eAlignmentType::CenterHorizontal));
 
 	sourceUnitCargoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (18, 60), getPosition() + cPosition (18 + 20, 60 + 10)), "", FONT_LATIN_SMALL_WHITE, eAlignmentType::CenterHorizontal));
 	destinationUnitCargoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (272, 60), getPosition() + cPosition (272 + 20, 60 + 10)), "", FONT_LATIN_SMALL_WHITE, eAlignmentType::CenterHorizontal));

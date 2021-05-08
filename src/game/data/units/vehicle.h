@@ -111,7 +111,6 @@ public:
 	void continuePathBuilding (cModel&);
 	void proceedClearing (cModel&);
 
-	std::string getStatusStr (const cPlayer*, const cUnitsData&) const override;
 	void DecSpeed (int value);
 	bool doSurvey(const cMap& map);
 	bool canTransferTo (const cPosition& position, const cMapView& map) const override;

@@ -141,10 +141,10 @@ class cStaticUnitData
 {
 public:
 	cStaticUnitData() = default;
-	std::string getName() const;
-	std::string getDescripton() const;
-	void setName(std::string name_){ name = name_; }
-	void setDescription(std::string text) { description = text; }
+	const std::string& getDefaultName() const;
+	const std::string& getDefaultDescription() const;
+	void setDefaultName (std::string name_){ name = name_; }
+	void setDefaultDescription (std::string text) { description = text; }
 
 	uint32_t getChecksum(uint32_t crc) const;
 public:

@@ -28,6 +28,7 @@
 #include "SDLutility/drawing.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
+#include "ui/translations.h"
 
 //------------------------------------------------------------------------------
 cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, const cPlayer& owner, const cUnitsData& unitsData) :
@@ -58,7 +59,7 @@ cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, co
 	unitImage = addChild (std::make_unique<cImage> (cPosition (0, 0), surface.get()));
 	unitImage->setConsumeClick (false);
 
-	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImage->getEndPosition().x() + 3, 0), cPosition (width, unitImage->getEndPosition().y())), data.getName(), FONT_LATIN_SMALL_WHITE, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
+	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImage->getEndPosition().x() + 3, 0), cPosition (width, unitImage->getEndPosition().y())), getStaticUnitName (data), FONT_LATIN_SMALL_WHITE, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
 	nameLabel->setWordWrap (true);
 	nameLabel->setConsumeClick (false);
 

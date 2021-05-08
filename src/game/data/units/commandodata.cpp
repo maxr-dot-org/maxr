@@ -25,25 +25,7 @@
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
 #include "utility/crc.h"
-#include "utility/language.h"
 #include "utility/position.h"
-
-namespace
-{
-	int getLevel (std::uint32_t numberOfSuccess)
-	{
-		auto rank = 0.f;
-
-		// The higher his level is the slower he gains exp.
-		// Every 5 rankings he needs one successful disabling more,
-		// to get to the next ranking
-		for (std::uint32_t i = 0; i != numberOfSuccess; ++i)
-		{
-			rank = rank + 1.f / (((int)rank + 5) / 5);
-		}
-		return rank;
-	}
-}
 
 //-----------------------------------------------------------------------------
 /** Checks if the target is on a neighbor field and if it can be stolen or disabled */
@@ -85,6 +67,29 @@ namespace
 		return commando.getStaticData().canDisable && unit->getStaticUnitData().canBeDisabled;
 	}
 	return true;
+}
+
+//------------------------------------------------------------------------------
+/*static*/ void cCommandoData::increaseXp (cVehicle& commando)
+{
+	++commando.getCommandoData().successCount;
+	commando.statusChanged();
+}
+
+
+//------------------------------------------------------------------------------
+/*static*/ int cCommandoData::getLevel (std::uint32_t numberOfSuccess)
+{
+	auto rank = 0.f;
+
+	// The higher his level is the slower he gains exp.
+	// Every 5 rankings he needs one successful disabling more,
+	// to get to the next ranking
+	for (std::uint32_t i = 0; i != numberOfSuccess; ++i)
+	{
+		rank = rank + 1.f / (((int)rank + 5) / 5);
+	}
+	return rank;
 }
 
 //------------------------------------------------------------------------------
@@ -140,34 +145,13 @@ int cCommandoData::computeDisabledTurnCount (const cUnit& destUnit) const
 }
 
 //------------------------------------------------------------------------------
-std::string cCommandoData::getRankString() const
-{
-	auto level = getLevel (successCount);
-	const std::string suffix = (level > 0) ? " +" + std::to_string (level) : "";
-
-	if (level < 1) return lngPack.i18n ("Text~Comp~CommandoRank_Greenhorn") + suffix;
-	else if (level < 3) return lngPack.i18n ("Text~Comp~CommandoRank_Average") + suffix;
-	else if (level < 6) return lngPack.i18n ("Text~Comp~CommandoRank_Veteran") + suffix;
-	else if (level < 11) return lngPack.i18n ("Text~Comp~CommandoRank_Expert") + suffix;
-	else if (level < 19) return lngPack.i18n ("Text~Comp~CommandoRank_Elite") + suffix;
-	else return lngPack.i18n ("Text~Comp~CommandoRank_GrandMaster") + suffix;
-}
-
-//------------------------------------------------------------------------------
-/*static*/ void cCommandoData::increaseXp (cVehicle& commando)
-{
-	++commando.getCommandoData().successCount;
-	commando.statusChanged();
-}
-
-//------------------------------------------------------------------------------
 std::string cCommandoData::getDebugString() const
 {
 	return "commando_success: " + std::to_string (successCount);
 }
 
 //------------------------------------------------------------------------------
-std::uint32_t cCommandoData::calcCheckSum(std::uint32_t crc) const
+std::uint32_t cCommandoData::calcCheckSum (std::uint32_t crc) const
 {
-	return ::calcCheckSum(successCount, crc);
+	return ::calcCheckSum (successCount, crc);
 }

@@ -19,6 +19,7 @@
 
 #include "savedreportturnstart.h"
 
+#include "ui/translations.h"
 #include "utility/language.h"
 #include "utility/string/toString.h"
 
@@ -50,7 +51,8 @@ std::string cSavedReportTurnStart::getMessage(const cUnitsData& unitsData) const
 
 			if (i > 0) message += ", ";
 			totalUnitsCount += entry.count;
-			message += entry.count > 1 ? (iToStr(entry.count) + " " + unitsData.getStaticUnitData(entry.type).getName()) : (unitsData.getStaticUnitData(entry.type).getName());
+			auto name = getStaticUnitName (unitsData.getStaticUnitData (entry.type));
+			message += entry.count > 1 ? iToStr(entry.count) + " " + name : name;
 		}
 		// TODO: Plural rules are language dependant
 		// - Russian has 3 forms, Chinese 1 form, ...

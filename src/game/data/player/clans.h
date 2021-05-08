@@ -31,8 +31,8 @@
 class cClanUnitStat
 {
 public:
-	cClanUnitStat (sID unitId_) : unitId (unitId_) {};
-	cClanUnitStat () {};
+	cClanUnitStat (sID unitId_) : unitId (unitId_) {}
+	cClanUnitStat () {}
 
 	void addModification (const std::string& area, int value);
 
@@ -41,9 +41,8 @@ public:
 	int getModificationValue (const std::string& key) const;
 	bool hasModification (const std::string& key) const;
 
-	std::string getClanStatsDescription(const cUnitsData& originalData) const;
 	template<typename T>
-	void serialize(T& archive)
+	void serialize (T& archive)
 	{
 		archive & unitId;
 		archive & modifications;
@@ -59,18 +58,16 @@ private:
 class cClan
 {
 public:
-	cClan (int num) : num(num) {};
-	cClan () : num(-1) {};
+	cClan (int num) : num(num) {}
+	cClan () : num(-1) {}
 
 	cClan (const cClan& other);
 
-	void setDescription (const std::string& newDescription);
-	const std::string getDescription() const;
+	void setDefaultDescription (const std::string& newDescription);
+	const std::string& getDefaultDescription() const;
 
-	std::vector<std::string> getClanStatsDescription(const cUnitsData& originalData) const;
-
-	void setName (const std::string& newName);
-	const std::string getName() const;
+	void setDefaultName (const std::string& newName);
+	const std::string& getDefaultName() const;
 
 	int getClanID() const { return num; }
 
@@ -80,7 +77,7 @@ public:
 	int getNrUnitStats() const { return static_cast<int> (stats.size()); }
 
 	template <typename T>
-	void save(T& archive)
+	void save (T& archive) const
 	{
 		archive << num;
 		archive << description;
@@ -91,7 +88,7 @@ public:
 			archive << *stat;
 	}
 	template <typename T>
-	void load(T& archive)
+	void load (T& archive)
 	{
 		archive >> num;
 		archive >> description;

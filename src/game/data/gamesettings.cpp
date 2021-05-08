@@ -24,7 +24,6 @@
 #include "gamesettings.h"
 
 #include "utility/crc.h"
-#include "utility/language.h"
 #include "utility/tounderlyingtype.h"
 #include "utility/string/iequals.h"
 
@@ -45,88 +44,6 @@ const std::chrono::seconds cGameSettings::defaultEndTurnDeadlineOption2 (45);
 const std::chrono::seconds cGameSettings::defaultEndTurnDeadlineOption3 (60);
 const std::chrono::seconds cGameSettings::defaultEndTurnDeadlineOption4 (75);
 const std::chrono::seconds cGameSettings::defaultEndTurnDeadlineOption5 (90);
-
-//------------------------------------------------------------------------------
-std::string toTranslatedString (eGameSettingsResourceAmount amount)
-{
-	switch (amount)
-	{
-		case eGameSettingsResourceAmount::Limited:
-			return lngPack.i18n ("Text~Option~Limited");
-		case eGameSettingsResourceAmount::Normal:
-			return lngPack.i18n ("Text~Option~Normal");
-		case eGameSettingsResourceAmount::High:
-			return lngPack.i18n ("Text~Option~High");
-		case eGameSettingsResourceAmount::TooMuch:
-			return lngPack.i18n ("Text~Option~TooMuch");
-	}
-	assert (false);
-	return "";
-}
-
-//------------------------------------------------------------------------------
-std::string toTranslatedString (eGameSettingsResourceDensity density)
-{
-	switch (density)
-	{
-		case eGameSettingsResourceDensity::Sparse:
-			return lngPack.i18n ("Text~Option~Sparse");
-		case eGameSettingsResourceDensity::Normal:
-			return lngPack.i18n ("Text~Option~Normal");
-		case eGameSettingsResourceDensity::Dense:
-			return lngPack.i18n ("Text~Option~Dense");
-		case eGameSettingsResourceDensity::TooMuch:
-			return lngPack.i18n ("Text~Option~TooMuch");
-	}
-	assert (false);
-	return "";
-}
-
-//------------------------------------------------------------------------------
-std::string toTranslatedString (eGameSettingsBridgeheadType type)
-{
-	switch (type)
-	{
-		case eGameSettingsBridgeheadType::Definite:
-			return lngPack.i18n ("Text~Option~Definite");
-		case eGameSettingsBridgeheadType::Mobile:
-			return lngPack.i18n ("Text~Option~Mobile");
-	}
-	assert (false);
-	return "";
-}
-
-//------------------------------------------------------------------------------
-std::string toTranslatedString (eGameSettingsGameType type)
-{
-	switch (type)
-	{
-		case eGameSettingsGameType::Simultaneous:
-			return lngPack.i18n ("Text~Option~Type_Simu");
-		case eGameSettingsGameType::Turns:
-			return lngPack.i18n ("Text~Option~Type_Turns");
-		case eGameSettingsGameType::HotSeat:
-			return "Hot Seat"; // TODO: translation?!
-	}
-	assert (false);
-	return "";
-}
-
-//------------------------------------------------------------------------------
-std::string toTranslatedString (eGameSettingsVictoryCondition condition)
-{
-	switch (condition)
-	{
-		case eGameSettingsVictoryCondition::Turns:
-			return lngPack.i18n ("Text~Comp~Turns");
-		case eGameSettingsVictoryCondition::Points:
-			return lngPack.i18n ("Text~Comp~Points");
-		case eGameSettingsVictoryCondition::Death:
-			return lngPack.i18n ("Text~Comp~NoLimit");
-	}
-	assert (false);
-	return "";
-}
 
 //------------------------------------------------------------------------------
 uint32_t cGameSettings::getChecksum(uint32_t crc) const

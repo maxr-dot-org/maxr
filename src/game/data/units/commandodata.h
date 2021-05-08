@@ -39,6 +39,8 @@ public:
 
 	static void increaseXp (cVehicle& commando);
 
+	static int getLevel (std::uint32_t numberOfSuccess);
+
 	/**
 	* calculates the chance for disabling or stealing the target unit
 	*@author alzi alias DoctorDeath
@@ -46,7 +48,8 @@ public:
 	int computeChance (const cUnit*, bool steal) const;
 	int computeDisabledTurnCount (const cUnit&) const;
 
-	std::string getRankString() const;
+	std::uint32_t getSuccessCount() const { return successCount; }
+
 	std::string getDebugString() const;
 
 	[[nodiscard]] std::uint32_t calcCheckSum(std::uint32_t crc) const;

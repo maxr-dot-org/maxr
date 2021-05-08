@@ -26,6 +26,7 @@
 #include "resources/vehicleuidata.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
+#include "ui/translations.h"
 #include "utility/string/toString.h"
 
 const int cReportDisadvantagesListViewItem::unitImageWidth = 32;
@@ -63,7 +64,7 @@ cReportDisadvantagesListViewItem::cReportDisadvantagesListViewItem (const cStati
 	}
 	auto unitImage = addChild (std::make_unique<cImage> (cPosition (0, (totalHeight - unitImageHeight) / 2), unitSurface.get()));
 
-	auto nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImage->getEndPosition().x(), 0), cPosition (unitImage->getEndPosition().x() + unitNameWidth, totalHeight)), data.getName(), FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
+	auto nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImage->getEndPosition().x(), 0), cPosition (unitImage->getEndPosition().x() + unitNameWidth, totalHeight)), getStaticUnitName (data), FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
 	nameLabel->setWordWrap (true);
 	nameLabel->setConsumeClick (false);
 

@@ -21,7 +21,6 @@
 
 #include "game/data/player/clans.h"
 #include "utility/log.h"
-#include "utility/language.h"
 #include "utility/string/toString.h"
 #include "utility/crc.h"
 
@@ -227,22 +226,14 @@ uint32_t cUnitsData::getChecksum(uint32_t crc) const
 }
 
 //------------------------------------------------------------------------------
-std::string cStaticUnitData::getName() const
+const std::string& cStaticUnitData::getDefaultName() const
 {
-	std::string translatedName = lngPack.getUnitName(ID);
-	if (!translatedName.empty())
-		return translatedName;
-
 	return name;
 }
 
 //------------------------------------------------------------------------------
-std::string cStaticUnitData::getDescripton() const
+const std::string& cStaticUnitData::getDefaultDescription() const
 {
-	std::string translatedDescription = lngPack.getUnitDescription(ID);
-	if (!translatedDescription.empty())
-		return translatedDescription;
-
 	return description;
 }
 

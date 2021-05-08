@@ -34,6 +34,7 @@
 #include "ui/graphical/game/widgets/gamemapwidget.h"
 #include "ui/graphical/game/animations/animation.h"
 #include "ui/graphical/playercolor.h"
+#include "ui/translations.h"
 #include "utility/indexiterator.h"
 #include "utility/language.h"
 #include "utility/listhelpers.h"
@@ -450,7 +451,7 @@ void cDebugOutputWidget::traceVehicle (const cVehicle& vehicle, cPosition& drawP
 
 	auto font = cUnicodeFont::font.get();
 
-	tmpString = "name: \"" + vehicle.getDisplayName() + "\" id: \"" + iToStr (vehicle.iID) + "\" owner: \"" + (vehicle.getOwner() ? vehicle.getOwner()->getName() : "<null>") + "\" pos: " + toString (vehicle.getPosition()) + " offset: " + toString (vehicle.getMovementOffset());
+	tmpString = "name: \"" + getDisplayName (vehicle) + "\" id: \"" + iToStr (vehicle.iID) + "\" owner: \"" + (vehicle.getOwner() ? vehicle.getOwner()->getName() : "<null>") + "\" pos: " + toString (vehicle.getPosition()) + " offset: " + toString (vehicle.getMovementOffset());
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
@@ -489,7 +490,7 @@ void cDebugOutputWidget::traceVehicle (const cVehicle& vehicle, cPosition& drawP
 	for (size_t i = 0; i != vehicle.storedUnits.size(); ++i)
 	{
 		const cVehicle* storedVehicle = vehicle.storedUnits[i];
-		font->showText (drawPosition, " store " + iToStr (i) + ": \"" + storedVehicle->getDisplayName() + "\"", FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPosition, " store " + iToStr (i) + ": \"" + getDisplayName (*storedVehicle) + "\"", FONT_LATIN_SMALL_WHITE);
 		drawPosition.y() += 8;
 	}
 
@@ -505,7 +506,7 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 
 	auto font = cUnicodeFont::font.get();
 
-	s = "name: \"" + building.getDisplayName() + "\" id: \"" + iToStr (building.iID) + "\" owner: \"" + (building.getOwner() ? building.getOwner()->getName() : "<null>") + "\" pos: " + toString (building.getPosition());
+	s = "name: \"" + getDisplayName (building) + "\" id: \"" + iToStr (building.iID) + "\" owner: \"" + (building.getOwner() ? building.getOwner()->getName() : "<null>") + "\" pos: " + toString (building.getPosition());
 	font->showText (drawPosition, s, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
@@ -534,7 +535,7 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 	for (size_t i = 0; i != building.storedUnits.size(); ++i)
 	{
 		const cVehicle* storedVehicle = building.storedUnits[i];
-		font->showText (drawPosition, " store " + iToStr (i) + ": \"" + storedVehicle->getDisplayName() + "\"", FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPosition, " store " + iToStr (i) + ": \"" + getDisplayName (*storedVehicle) + "\"", FONT_LATIN_SMALL_WHITE);
 		drawPosition.y() += 8;
 	}
 
@@ -548,7 +549,8 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 	for (size_t i = 0; i != buildingBuildListSize; ++i)
 	{
 		const auto& item = building.getBuildListItem (i);
-		font->showText (drawPosition, "  build " + iToStr (i) + lngPack.i18n ("Text~Punctuation~Colon") + item.getType().getText() + " \"" + client->getModel().getUnitsData()->getStaticUnitData(item.getType()).getName() + "\"", FONT_LATIN_SMALL_WHITE);
+		auto itemName = getStaticUnitName (client->getModel().getUnitsData()->getStaticUnitData (item.getType()));
+		font->showText (drawPosition, "  build " + iToStr (i) + lngPack.i18n ("Text~Punctuation~Colon") + item.getType().getText() + " \"" + itemName + "\"", FONT_LATIN_SMALL_WHITE);
 		drawPosition.y() += 8;
 	}
 }

@@ -94,7 +94,6 @@ public:
 	const sStaticBuildingData& getStaticData() const { return getStaticUnitData().buildingData; }
 
 	int playStream();
-	std::string getStatusStr (const cPlayer* player, const cUnitsData& unitsData) const override;
 
 	void refreshData();
 	void updateNeighbours (const cMap& map);

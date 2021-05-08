@@ -19,11 +19,11 @@
 
 #include "ui/graphical/game/widgets/unitrenamewidget.h"
 
+#include "game/data/units/unit.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/lineedit.h"
-
-#include "game/data/units/unit.h"
+#include "ui/translations.h"
 
 //------------------------------------------------------------------------------
 cUnitRenameWidget::cUnitRenameWidget (const cPosition& position, int width) :
@@ -46,7 +46,7 @@ cUnitRenameWidget::cUnitRenameWidget (const cPosition& position, int width) :
 	{
 		if (activeUnit)
 		{
-			selectedUnitNameEdit->setText (activeUnit->getName());
+			selectedUnitNameEdit->setText (getName (*activeUnit));
 		}
 	});
 	signalConnectionManager.connect (selectedUnitNameEdit->textSet, [&]()
@@ -73,21 +73,21 @@ void cUnitRenameWidget::setUnit (const cUnit* unit, const cUnitsData& unitsData)
 	if (unit)
 	{
 		selectedUnitNamePrefixLabel->setText (unit->getNamePrefix());
-		selectedUnitNameEdit->setText (unit->getName());
-		selectedUnitStatusLabel->setText (unit->getStatusStr (player, unitsData));
+		selectedUnitNameEdit->setText (getName (*unit));
+		selectedUnitStatusLabel->setText (getStatusStr (*unit, player, unitsData));
 
 		unitSignalConnectionManager.connect (unit->renamed, [&]()
 		{
 			if (activeUnit)
 			{
-				selectedUnitNameEdit->setText (activeUnit->getName());
+				selectedUnitNameEdit->setText (getName (*activeUnit));
 			}
 		});
 		unitSignalConnectionManager.connect (unit->statusChanged, [&]()
 		{
 			if (activeUnit)
 			{
-				selectedUnitStatusLabel->setText (activeUnit->getStatusStr (player, unitsData));
+				selectedUnitStatusLabel->setText (getStatusStr (*activeUnit, player, unitsData));
 			}
 		});
 	}
@@ -121,7 +121,7 @@ void cUnitRenameWidget::setPlayer (const cPlayer* player_, const cUnitsData& uni
 	player = player_;
 	if (activeUnit)
 	{
-		selectedUnitStatusLabel->setText (activeUnit->getStatusStr (player, unitsData));
+		selectedUnitStatusLabel->setText (getStatusStr (*activeUnit, player, unitsData));
 	}
 }
 

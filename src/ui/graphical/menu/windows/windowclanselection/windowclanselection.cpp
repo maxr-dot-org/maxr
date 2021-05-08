@@ -19,20 +19,20 @@
 
 #include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
 
-#include "utility/language.h"
-#include "resources/pcx.h"
 #include "game/data/player/clans.h"
+#include "resources/pcx.h"
 #include "resources/uidata.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/image.h"
-
+#include "ui/translations.h"
+#include "utility/language.h"
 
 //------------------------------------------------------------------------------
-cWindowClanSelection::cWindowClanSelection(std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cClanData> clanData) :
+cWindowClanSelection::cWindowClanSelection (std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cClanData> clanData) :
 	cWindow (LoadPCX (GFXOD_CLAN_SELECT)),
-	unitsData(unitsData),
-	clanData(clanData),
+	unitsData (unitsData),
+	clanData (clanData),
 	selectedClan (0)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Title~Choose_Clan"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
@@ -62,10 +62,10 @@ cWindowClanSelection::cWindowClanSelection(std::shared_ptr<const cUnitsData> uni
 			clanImages[index] = addChild (std::make_unique<cImage> (getPosition() + cPosition (88 + 154 * column - (image ? (image->w / 2) : 0), 48 + 150 * row), image.get(), &SoundData.SNDHudButton));
 			signalConnectionManager.connect (clanImages[index]->clicked, std::bind (&cWindowClanSelection::clanClicked, this, clanImages[index]));
 
-			clanTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (37 + 155 * column, 144 + 150 * row), getPosition() + cPosition (135 + 155 * column, 144 + 10 + 150 * row)), clanData->getClan (index)->getName(), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+			clanTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (37 + 155 * column, 144 + 150 * row), getPosition() + cPosition (135 + 155 * column, 144 + 10 + 150 * row)), getClanName (*clanData->getClan (index)), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 		}
 	}
-	clanTitles[selectedClan]->setText (">" + clanData->getClan (selectedClan)->getName() + "<");
+	clanTitles[selectedClan]->setText (">" + getClanName (*clanData->getClan (selectedClan)) + "<");
 
 	//
 	// Clan Description
@@ -105,9 +105,11 @@ void cWindowClanSelection::clanClicked (const cImage* clanImage)
 		{
 			if (i != selectedClan)
 			{
-				clanTitles[selectedClan]->setText (clanData->getClan (selectedClan)->getName());
+				const std::string name = getClanName (*clanData->getClan (selectedClan));
+
+				clanTitles[selectedClan]->setText (name);
 				selectedClan = i;
-				clanTitles[selectedClan]->setText (">" + clanData->getClan (selectedClan)->getName() + "<");
+				clanTitles[selectedClan]->setText (">" + name + "<");
 				updateClanDescription();
 			}
 			break;
@@ -133,7 +135,7 @@ void cWindowClanSelection::updateClanDescription()
 	auto clanInfo = clanData->getClan(selectedClan);
 	if (clanInfo)
 	{
-		auto strings = clanInfo->getClanStatsDescription(*unitsData);
+		auto strings = getClanStatsDescription(*clanInfo, *unitsData);
 
 		std::string desc1;
 		for (size_t i = 0; i < 4 && i < strings.size(); ++i)
@@ -151,11 +153,11 @@ void cWindowClanSelection::updateClanDescription()
 		}
 		clanDescription2->setText (desc2);
 
-		clanShortDescription->setText (clanInfo->getDescription());
+		clanShortDescription->setText (getClanDescription (*clanInfo));
 	}
 	else
 	{
 		clanDescription1->setText ("Unknown");
-		clanDescription1->setText ("");
+		clanDescription2->setText ("");
 	}
 }

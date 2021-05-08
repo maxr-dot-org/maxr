@@ -73,7 +73,6 @@ public:
 	virtual bool canExitTo (const cPosition& position, const cMapView& map, const cStaticUnitData& unitData) const = 0;
 	virtual bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const = 0;
 	virtual bool canSupply(const cUnit* unit, eSupplyType supplyType) const = 0;
-	virtual std::string getStatusStr (const cPlayer* whoWantsToKnow, const cUnitsData& unitsData) const = 0;
 
 	void storeVehicle(cVehicle& vehicle, cMap& map);
 	void exitVehicleTo(cVehicle& vehicle, const cPosition& position, cMap& map);
@@ -95,9 +94,9 @@ public:
 	bool isAbove (const cPosition& position) const;
 
 
-	std::string getName() const;
+	std::optional<std::string> getCustomName() const;
 	std::string getNamePrefix() const;
-	std::string getDisplayName() const;
+	std::string getDisplayName (const std::string& defaultName) const;
 	void changeName (const std::string& newName);
 
 	void rotateTo (int newDir);

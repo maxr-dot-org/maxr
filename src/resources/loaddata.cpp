@@ -370,7 +370,7 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 		Log.write (szTmp, cLog::eLOG_TYPE_DEBUG);
 	}
 	//read name
-	staticData.setName (getXMLAttributeString (unitDataXml, "name", "Unit", {}));
+	staticData.setDefaultName (getXMLAttributeString (unitDataXml, "name", "Unit", {}));
 	//read description
 	if (XMLElement* const XMLElement = XmlGetFirstElement (unitDataXml, "Unit", {"Description"}))
 	{
@@ -380,7 +380,7 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 		{
 			description.replace(pos, 2, "\n");
 		}
-		staticData.setDescription(description);
+		staticData.setDefaultDescription (description);
 	}
 
 	// Weapon
@@ -1272,13 +1272,13 @@ static int LoadClans()
 	{
 		cClan* newClan = ClanDataGlobal.addClan();
 		std::string nameAttr = clanElement->Attribute ("Name");
-		newClan->setName (nameAttr);
+		newClan->setDefaultName (nameAttr);
 
 		const XMLElement* descriptionNode = clanElement->FirstChildElement ("Description");
 		if (descriptionNode)
 		{
 			std::string descriptionString = descriptionNode->GetText();
-			newClan->setDescription (descriptionString);
+			newClan->setDefaultDescription (descriptionString);
 		}
 
 		for (XMLElement* statsElement = clanElement->FirstChildElement ("ChangedUnitStat"); statsElement; statsElement = statsElement->NextSiblingElement ("ChangedUnitStat"))

@@ -21,12 +21,13 @@
 
 #include "game/data/units/unit.h"
 #include "game/data/player/player.h"
+#include "ui/translations.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------
 cSavedReportDetected::cSavedReportDetected (const cUnit& unit) :
 	cSavedReportUnit (unit),
-	unitName (unit.getDisplayName()),
+	unitName (getDisplayName (unit)),
 	playerName (unit.getOwner() ? unit.getOwner()->getName() : ""),
 	submarine(unit.getStaticUnitData().isStealthOn & TERRAIN_SEA && unit.getStaticUnitData().canAttack)
 {}

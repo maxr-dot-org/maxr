@@ -36,6 +36,7 @@
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/resourcebar.h"
+#include "ui/translations.h"
 #include "utility/language.h"
 #include "utility/string/toString.h"
 
@@ -166,7 +167,7 @@ void cWindowStorage::updateUnitButtons (const cVehicle& storedUnit, size_t posit
 void cWindowStorage::updateUnitName (const cVehicle& storedUnit, size_t positionIndex)
 {
 	if (!storedUnit.getOwner()) return;
-	auto name = storedUnit.getDisplayName();
+	auto name = getDisplayName (storedUnit);
 
 	const auto& upgraded = *storedUnit.getOwner()->getUnitDataCurrentVersion (storedUnit.data.getId());
 	if (storedUnit.data.getVersion() != upgraded.getVersion())

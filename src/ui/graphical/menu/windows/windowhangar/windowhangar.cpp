@@ -33,6 +33,7 @@
 #include "ui/graphical/menu/widgets/listview.h"
 #include "ui/graphical/menu/widgets/special/unitlistviewitembuy.h"
 #include "ui/graphical/menu/widgets/special/unitdetails.h"
+#include "ui/translations.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------
@@ -132,7 +133,7 @@ void cWindowHangar::setActiveUnit (const sID& unitId)
 		infoImage->setImage (uiData.info.get());
 	}
 
-	infoLabel->setText (unitsData->getStaticUnitData(unitId).getDescripton());
+	infoLabel->setText (getStaticUnitDescription (unitsData->getStaticUnitData (unitId)));
 
 	unitDetails->setUnit (unitId, &getPlayer(), *unitsData);
 }

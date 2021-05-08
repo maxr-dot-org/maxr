@@ -342,16 +342,14 @@ static std::string to_roman (unsigned int value)
 }
 
 //------------------------------------------------------------------------------
-std::string cUnit::getName() const
+std::optional<std::string> cUnit::getCustomName() const
 {
-	if (!customName.empty())
-		return customName;
-	else
-		return staticData->getName();
+	if (!customName.empty()) return customName;
+	return std::nullopt;
 }
 
 //------------------------------------------------------------------------------
-/** generates the name for the unit depending on the versionnumber */
+/** generates the name for the unit depending on the version number */
 //------------------------------------------------------------------------------
 string cUnit::getNamePrefix() const
 {
@@ -363,11 +361,11 @@ string cUnit::getNamePrefix() const
 }
 
 //------------------------------------------------------------------------------
-/** Returns the name of the vehicle how it should be displayed */
+/** Returns the displayed name of the unit */
 //------------------------------------------------------------------------------
-string cUnit::getDisplayName() const
+string cUnit::getDisplayName (const std::string& defaultName) const
 {
-	return getNamePrefix() + " " + getName();
+	return getNamePrefix() + " " + getCustomName().value_or (defaultName);
 }
 
 //------------------------------------------------------------------------------

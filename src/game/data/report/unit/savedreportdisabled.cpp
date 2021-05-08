@@ -20,12 +20,13 @@
 #include "game/data/report/unit/savedreportdisabled.h"
 
 #include "game/data/units/unit.h"
+#include "ui/translations.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------
 cSavedReportDisabled::cSavedReportDisabled (const cUnit& unit) :
 	cSavedReportUnit (unit),
-	unitName (unit.getDisplayName())
+	unitName (getDisplayName (unit))
 {}
 
 //------------------------------------------------------------------------------

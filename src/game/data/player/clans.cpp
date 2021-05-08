@@ -20,89 +20,26 @@
 #include "game/data/player/clans.h"
 
 #include "game/data/units/unitdata.h"
-#include "utility/language.h"
-#include "utility/string/toString.h"
-
-using namespace std;
-
 
 //--------------------------------------------------
-void cClanUnitStat::addModification (const string& area, int value)
+void cClanUnitStat::addModification (const std::string& area, int value)
 {
 	modifications[area] = value;
 }
 
 //--------------------------------------------------
-bool cClanUnitStat::hasModification (const string& key) const
+bool cClanUnitStat::hasModification (const std::string& key) const
 {
 	return modifications.find (key) != modifications.end();
 }
 
 //--------------------------------------------------
-int cClanUnitStat::getModificationValue (const string& key) const
+int cClanUnitStat::getModificationValue (const std::string& key) const
 {
-	map<string, int>::const_iterator it = modifications.find (key);
+	auto it = modifications.find (key);
 	if (it != modifications.end())
 		return it->second;
 	return 0;
-}
-
-//--------------------------------------------------
-static string GetModificatorString (int original, int modified)
-{
-	const int diff = modified - original;
-	if (diff > 0)
-		return " +" + iToStr (diff);
-	else if (diff < 0)
-		return " -" + iToStr (-diff);
-	else // diff == 0
-		return " =" + iToStr (modified);
-}
-
-//--------------------------------------------------
-string cClanUnitStat::getClanStatsDescription(const cUnitsData& originalData) const
-{
-	const cDynamicUnitData* data = &originalData.getDynamicUnitData(unitId);
-
-	if (data == nullptr) return "Unknown";
-
-	string result = originalData.getStaticUnitData(unitId).getName() + lngPack.i18n ("Text~Punctuation~Colon");
-	const char* const commaSep = ", ";
-	const char* sep = "";
-
-	struct
-	{
-		const char* type;
-		std::string text;
-		int originalValue;
-	} t[] =
-	{
-		// ToDo / Fixme if #756 fixed, use the non "_7" version of the text files
-		{"Damage", lngPack.i18n ("Text~Others~Attack_7"), data->getDamage()},
-		{"Range", lngPack.i18n ("Text~Others~Range"), data->getRange()},
-		{"Armor", lngPack.i18n ("Text~Others~Armor_7"), data->getArmor()},
-		{"Hitpoints", lngPack.i18n ("Text~Others~Hitpoints_7"), data->getHitpointsMax()},
-		{"Scan", lngPack.i18n ("Text~Others~Scan_7"), data->getScan()},
-		{"Speed", lngPack.i18n ("Text~Others~Speed_7"), data->getSpeedMax() / 4},
-	};
-
-	for (int i = 0; i != sizeof (t) / sizeof (*t); ++i)
-	{
-		if (hasModification (t[i].type) == false) continue;
-		result += sep;
-		result += t[i].text;
-		result += GetModificatorString (t[i].originalValue, getModificationValue (t[i].type));
-		sep = commaSep;
-	}
-	if (hasModification ("Built_Costs"))
-	{
-		result += sep;
-		int nrTurns = getModificationValue ("Built_Costs");
-		if (originalData.getStaticUnitData(data->getId()).vehicleData.isHuman == false) nrTurns /= unitId.isAVehicle() == 0 ? 2 : 3;
-
-		result += iToStr (nrTurns) + " " + lngPack.i18n ("Text~Comp~Turns");
-	}
-	return result;
 }
 
 //--------------------------------------------------
@@ -142,47 +79,27 @@ cClan::cClan(const cClan& other) :
 }
 
 //--------------------------------------------------
-void cClan::setDescription (const string& newDescription)
+void cClan::setDefaultDescription (const std::string& newDescription)
 {
 	description = newDescription;
 }
 
 //---------------------------------------------------
-const std::string cClan::getDescription() const
+const std::string& cClan::getDefaultDescription() const
 {
-	std::string translatedDescription = lngPack.getClanDescription(num);
-	if (!translatedDescription.empty())
-		return translatedDescription;
-
 	return description;
 }
 
 //--------------------------------------------------
-void cClan::setName (const string& newName)
+void cClan::setDefaultName (const std::string& newName)
 {
 	name = newName;
 }
 
 //--------------------------------------------------
-const std::string cClan::getName() const
+const std::string& cClan::getDefaultName() const
 {
-	std::string translatedName = lngPack.getClanName(num);
-	if (!translatedName.empty())
-		return translatedName;
-
 	return name;
-}
-
-//--------------------------------------------------
-vector<string> cClan::getClanStatsDescription(const cUnitsData& originalData) const
-{
-	vector<string> result;
-	for (int i = 0; i != getNrUnitStats(); ++i)
-	{
-		cClanUnitStat* stat = getUnitStat (i);
-		result.push_back (stat->getClanStatsDescription(originalData));
-	}
-	return result;
 }
 
 //---------------------------------------------------

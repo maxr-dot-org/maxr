@@ -20,12 +20,13 @@
 #include "game/data/report/unit/savedreportcapturedbyenemy.h"
 
 #include "game/data/units/unit.h"
+#include "ui/translations.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------
 cSavedReportCapturedByEnemy::cSavedReportCapturedByEnemy(const cUnit& unit) :
-cSavedReportUnit(unit),
-unitName(unit.getDisplayName())
+	cSavedReportUnit (unit),
+	unitName (getDisplayName (unit))
 {}
 
 //------------------------------------------------------------------------------

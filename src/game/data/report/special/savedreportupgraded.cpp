@@ -20,6 +20,7 @@
 #include "game/data/report/special/savedreportupgraded.h"
 
 #include "game/data/player/player.h"
+#include "ui/translations.h"
 #include "utility/language.h"
 #include "utility/string/toString.h"
 
@@ -37,9 +38,9 @@ eSavedReportType cSavedReportUpgraded::getType() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportUpgraded::getMessage(const cUnitsData& unitsData) const
+std::string cSavedReportUpgraded::getMessage (const cUnitsData& unitsData) const
 {
-	const auto& unitName = unitsData.getStaticUnitData(unitId).getName();
+	const auto& unitName = getStaticUnitName (unitsData.getStaticUnitData (unitId));
 	return lngPack.i18n ("Text~Comp~Upgrades_Done") + " " + iToStr (unitsCount) + " " + lngPack.i18n ("Text~Comp~Upgrades_Done2", unitName) + " (" + lngPack.i18n ("Text~Others~Costs") + lngPack.i18n ("Text~Punctuation~Colon") + iToStr (costs) + ")";
 }
 

@@ -57,6 +57,7 @@
 #include "ui/sound/effects/soundeffectvoice.h"
 #include "ui/sound/game/unitreport.h"
 #include "ui/sound/soundmanager.h"
+#include "ui/translations.h"
 #include "utility/indexiterator.h"
 #include "utility/language.h"
 #include "utility/log.h"
@@ -487,8 +488,8 @@ void cGameGui::updateHudUnitName (const cPosition& tilePosition)
 
 		if (unit != nullptr && unit->getOwner())
 		{
-			// FIXME: string may be to long.
-			unitNameString = unit->getDisplayName() + " (" + unit->getOwner()->getName() + ")";
+			// FIXME: string may be too long.
+			unitNameString = getDisplayName (*unit) + " (" + unit->getOwner()->getName() + ")";
 		}
 	}
 	hud->setUnitNameText (unitNameString);

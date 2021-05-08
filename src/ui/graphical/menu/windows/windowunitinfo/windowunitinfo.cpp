@@ -29,6 +29,7 @@
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/unitdetails.h"
+#include "ui/translations.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------
@@ -61,7 +62,7 @@ cWindowUnitInfo::cWindowUnitInfo (const cDynamicUnitData& currentUnitData, const
 		infoImage->setImage (uiData.info.get());
 	}
 
-	infoLabel->setText (unitsData.getStaticUnitData(currentUnitData.getId()).getDescripton());
+	infoLabel->setText (getStaticUnitDescription (unitsData.getStaticUnitData (currentUnitData.getId())));
 
 	unitDetails->setUnit (currentUnitData.getId(), owner, unitsData, &currentUnitData);
 }
