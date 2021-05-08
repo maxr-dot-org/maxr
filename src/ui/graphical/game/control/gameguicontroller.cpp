@@ -139,7 +139,6 @@ cGameGuiController::cGameGuiController (cApplication& application_, std::shared_
 	animationTimer (std::make_shared<cAnimationTimer> ()),
 	gameGui (std::make_shared<cGameGui> (std::move (staticMap), soundManager, animationTimer, application_.frameCounter)),
 	server (nullptr),
-	savedReportPosition (false, cPosition()),
 	upgradesFilterState (std::make_shared<cWindowUpgradesFilterState> ())
 {
 	connectGuiStaticCommands();
@@ -358,9 +357,9 @@ void cGameGuiController::initShortcuts()
 
 	addShortcut (KeysList.keyJumpToAction, [this]()
 	{
-		if (savedReportPosition.first)
+		if (savedReportPosition)
 		{
-			gameGui->getGameMap().centerAt (savedReportPosition.second);
+			gameGui->getGameMap().centerAt (*savedReportPosition);
 		}
 	});
 
@@ -1528,9 +1527,9 @@ void cGameGuiController::showReportsWindow()
 
 	signalConnectionManager.connect (reportsWindow->reportClickedSecondTime, [this, reportsWindow] (const cSavedReport & report)
 	{
-		if (report.hasPosition())
+		if (auto position = report.getPosition())
 		{
-			gameGui->getGameMap().centerAt (report.getPosition());
+			gameGui->getGameMap().centerAt (*position);
 			reportsWindow->close();
 		}
 	});
@@ -1858,10 +1857,9 @@ void cGameGuiController::handleReportForActivePlayer (const cSavedReport& report
 			gameGui->getChatBox().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (savedChatReport.getPlayerName(), savedChatReport.getText()));
 		}
 	}
-	else if (report.hasPosition())
+	else if (auto position = report.getPosition())
 	{
-		savedReportPosition.first = true;
-		savedReportPosition.second = report.getPosition();
+		savedReportPosition = *position;
 
 		gameGui->getGameMessageList().addMessage (report.getMessage(*getUnitsData()) + " (" + KeysList.keyJumpToAction.toString() + ")", eGameMessageListViewItemBackgroundColor::LightGray);
 	}

@@ -123,29 +123,3 @@ std::unique_ptr<cSavedReport> cSavedReport::createFrom(cXmlArchiveOut& archive, 
 	archive.leaveChild();
 	return report;
 }
-
-//------------------------------------------------------------------------------
-bool cSavedReport::hasUnitId() const
-{
-	return false;
-}
-
-//------------------------------------------------------------------------------
-const sID& cSavedReport::getUnitId() const
-{
-	static sID dummy;
-	return dummy;
-}
-
-//------------------------------------------------------------------------------
-bool cSavedReport::hasPosition() const
-{
-	return false;
-}
-
-//------------------------------------------------------------------------------
-const cPosition& cSavedReport::getPosition() const
-{
-	static cPosition dummy;
-	return dummy;
-}

@@ -20,14 +20,16 @@
 #ifndef game_data_reports_savedreportH
 #define game_data_reports_savedreportH
 
-#include <string>
 #include <memory>
+#include <string>
 
+#include "config/workaround/cpp17/optional.h"
+
+#include "utility/position.h"
 #include "utility/serialization/binaryarchive.h"
 #include "utility/serialization/textarchive.h"
 #include "utility/serialization/xmlarchive.h"
 
-class cPosition;
 struct sID;
 class cUnitsData;
 
@@ -98,11 +100,7 @@ public:
 
 	virtual bool isAlert() const = 0;
 
-	virtual bool hasUnitId() const;
-	virtual const sID& getUnitId() const;
-
-	virtual bool hasPosition() const;
-	virtual const cPosition& getPosition() const;
+	virtual std::optional<cPosition> getPosition() const { return std::nullopt; }
 
 	static std::unique_ptr<cSavedReport> createFrom (cBinaryArchiveOut&);
 	static std::unique_ptr<cSavedReport> createFrom (cXmlArchiveOut&, const std::string& name);

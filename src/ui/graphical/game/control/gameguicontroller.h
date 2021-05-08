@@ -26,10 +26,12 @@
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
+#include <array>
 #include <memory>
 #include <string>
 #include <vector>
-#include <array>
+
+#include "config/workaround/cpp17/optional.h"
 
 class cAnimationTimer;
 class cBuildListItem;
@@ -103,7 +105,7 @@ private:
 	std::map<int, cGameGuiState> playerGameGuiStates;
 	std::map<int, std::shared_ptr<std::vector<std::unique_ptr<cSavedReport>>>> playerReports;
 
-	std::pair<bool, cPosition> savedReportPosition;
+	std::optional<cPosition> savedReportPosition;
 	std::shared_ptr<cWindowUpgradesFilterState> upgradesFilterState;
 	std::array<std::pair<bool, cPosition>, 4> savedPositions;
 	std::vector<unsigned int> doneList;

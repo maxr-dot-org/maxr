@@ -44,11 +44,9 @@ public:
 	void serialize(cXmlArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
 	void serialize(cTextArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
 
-	bool hasUnitId() const override;
-	const sID& getUnitId() const override;
+	const sID& getUnitId() const;
 
-	bool hasPosition() const override;
-	const cPosition& getPosition() const override;
+	std::optional<cPosition> getPosition() const override;
 
 protected:
 	virtual std::string getText() const = 0;

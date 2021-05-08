@@ -29,25 +29,13 @@ cSavedReportUnit::cSavedReportUnit (const cUnit& unit) :
 {}
 
 //------------------------------------------------------------------------------
-bool cSavedReportUnit::hasUnitId() const
-{
-	return true;
-}
-
-//------------------------------------------------------------------------------
 const sID& cSavedReportUnit::getUnitId() const
 {
 	return unitId;
 }
 
 //------------------------------------------------------------------------------
-bool cSavedReportUnit::hasPosition() const
-{
-	return true;
-}
-
-//------------------------------------------------------------------------------
-const cPosition& cSavedReportUnit::getPosition() const
+std::optional<cPosition> cSavedReportUnit::getPosition() const
 {
 	return position;
 }

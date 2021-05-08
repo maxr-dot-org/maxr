@@ -42,9 +42,9 @@ cReportMessageListViewItem::cReportMessageListViewItem (const cSavedReport& repo
 	textLabel->resizeToTextHeight();
 	textLabel->setConsumeClick (false);
 
-	if (report.hasUnitId())
+	if (const auto* unitReport = dynamic_cast<const cSavedReportUnit*>(&report))
 	{
-		const auto& unitId = report.getUnitId();
+		const auto& unitId = unitReport->getUnitId();
 
 		const auto totalHeight = std::max (unitImageSize, textLabel->getSize().y());
 
