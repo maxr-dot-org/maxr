@@ -45,9 +45,6 @@
 //--------------------------------------------------------------------------
 // Workarounds for missing features
 
-#include "config/workaround/language.h"
-
-#include "config/workaround/makeunique.h"
 #include "config/workaround/underlyingtype.h"
 
 #endif // maxrconfigH
