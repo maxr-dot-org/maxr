@@ -30,31 +30,29 @@ public:
 	explicit cSavedReportDetected (const cUnit& unit);
 	template <typename T, ENABLE_ARCHIVE_OUT>
 	cSavedReportDetected (T& archive) :
-		cSavedReportUnit(archive)
+		cSavedReportUnit (archive)
 	{
-		serializeThis(archive);
+		serializeThis (archive);
 	}
 
-	void serialize(cBinaryArchiveIn& archive) override { cSavedReportUnit::serialize(archive); serializeThis(archive); }
-	void serialize(cXmlArchiveIn& archive) override { cSavedReportUnit::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cSavedReportUnit::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cSavedReportUnit::serialize (archive); serializeThis (archive); }
+	void serialize (cXmlArchiveIn& archive) override { cSavedReportUnit::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cSavedReportUnit::serialize (archive); serializeThis (archive); }
 
 	eSavedReportType getType() const override;
-
-	void playSound (cSoundManager& soundManager) const override;
 
 protected:
 	std::string getText() const override;
 
 private:
 	template <typename T>
-	void serializeThis(T& archive)
+	void serializeThis (T& archive)
 	{
-		archive & NVP(unitName);
-		archive & NVP(playerName);
-		archive & NVP(submarine);
+		archive & NVP (unitName);
+		archive & NVP (playerName);
+		archive & NVP (submarine);
 	}
-
+public:
 	std::string unitName;
 	std::string playerName;
 	bool submarine;

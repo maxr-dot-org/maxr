@@ -57,6 +57,7 @@
 #include "ui/sound/effects/soundeffect.h"
 #include "ui/sound/effects/soundeffectvoice.h"
 #include "ui/sound/effects/soundeffectunit.h"
+#include "ui/sound/game/savedreportssound.h"
 
 #include "input/keyboard/keyboard.h"
 
@@ -1870,7 +1871,7 @@ void cGameGuiController::handleReportForActivePlayer (const cSavedReport& report
 		if (report.isAlert()) soundManager->playSound (std::make_shared<cSoundEffect> (eSoundEffectType::EffectAlert, SoundData.SNDQuitsch));
 	}
 
-	report.playSound (*soundManager);
+	playSound (*soundManager, report);
 
 	if (cSettings::getInstance().isDebug()) Log.write (report.getMessage(*getUnitsData()), cLog::eLOG_TYPE_DEBUG);
 }

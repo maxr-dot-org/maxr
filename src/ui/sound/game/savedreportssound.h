@@ -17,28 +17,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "game/data/report/unit/savedreportdetected.h"
+#ifndef ui_sound_game_savedreportssoundH
+#define ui_sound_game_savedreportssoundH
 
-#include "game/data/units/unit.h"
-#include "game/data/player/player.h"
-#include "utility/language.h"
+class cSavedReport;
+class cSoundManager;
 
-//------------------------------------------------------------------------------
-cSavedReportDetected::cSavedReportDetected (const cUnit& unit) :
-	cSavedReportUnit (unit),
-	unitName (unit.getDisplayName()),
-	playerName (unit.getOwner() ? unit.getOwner()->getName() : ""),
-	submarine(unit.getStaticUnitData().isStealthOn & TERRAIN_SEA && unit.getStaticUnitData().canAttack)
-{}
+void playSound (cSoundManager&, const cSavedReport&);
 
-//------------------------------------------------------------------------------
-eSavedReportType cSavedReportDetected::getType() const
-{
-	return eSavedReportType::Detected;
-}
-
-//------------------------------------------------------------------------------
-std::string cSavedReportDetected::getText() const
-{
-	return unitName + " (" + playerName + ") " + lngPack.i18n ("Text~Comp~Detected");
-}
+#endif

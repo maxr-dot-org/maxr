@@ -41,8 +41,6 @@ public:
 
 	eSavedReportType getType() const override;
 
-	void playSound (cSoundManager& soundManager) const override;
-
 protected:
 	std::string getText() const override;
 

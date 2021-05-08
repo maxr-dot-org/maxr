@@ -20,11 +20,7 @@
 #include "game/data/report/unit/savedreportattackingenemy.h"
 
 #include "game/data/units/unit.h"
-#include "ui/sound/soundmanager.h"
-#include "ui/sound/effects/soundeffectvoice.h"
-#include "resources/sound.h"
 #include "utility/language.h"
-#include "utility/random.h"
 
 //------------------------------------------------------------------------------
 cSavedReportAttackingEnemy::cSavedReportAttackingEnemy (const cUnit& unit) :
@@ -42,10 +38,4 @@ eSavedReportType cSavedReportAttackingEnemy::getType() const
 std::string cSavedReportAttackingEnemy::getText() const
 {
 	return lngPack.i18n ("Text~Comp~AttackingEnemy", unitName);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportAttackingEnemy::playSound (cSoundManager& soundManager) const
-{
-	soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceAttacking, getRandom (VoiceData.VOIAttackingEnemy)));
 }

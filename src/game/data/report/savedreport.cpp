@@ -149,7 +149,3 @@ const cPosition& cSavedReport::getPosition() const
 	static cPosition dummy;
 	return dummy;
 }
-
-//------------------------------------------------------------------------------
-void cSavedReport::playSound (cSoundManager& soundManager) const
-{}

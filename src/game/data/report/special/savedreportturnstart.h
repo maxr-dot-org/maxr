@@ -30,32 +30,30 @@ public:
 	cSavedReportTurnStart (int turn, const std::vector<sTurnstartReport>&, const std::vector<cResearch::ResearchArea>&);
 
 	template <typename T, ENABLE_ARCHIVE_OUT>
-	explicit cSavedReportTurnStart(T& archive)
+	explicit cSavedReportTurnStart (T& archive)
 	{
-		serializeThis(archive);
+		serializeThis (archive);
 	}
 
-	void serialize(cBinaryArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
-	void serialize(cXmlArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
+	void serialize (cXmlArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
 
 	eSavedReportType getType() const override;
 
-	std::string getMessage(const cUnitsData& unitsData) const override;
+	std::string getMessage (const cUnitsData&) const override;
 
 	bool isAlert() const override;
 
-	void playSound (cSoundManager& soundManager) const override;
-
 private:
 	template <typename T>
-	void serializeThis(T& archive)
+	void serializeThis (T& archive)
 	{
-		archive & NVP(turn);
-		archive & NVP(unitReports);
-		archive & NVP(researchAreas);
+		archive & NVP (turn);
+		archive & NVP (unitReports);
+		archive & NVP (researchAreas);
 	}
-
+public:
 	int turn;
 	std::vector<sTurnstartReport> unitReports;
 	std::vector<cResearch::ResearchArea> researchAreas;

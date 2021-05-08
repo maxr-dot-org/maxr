@@ -18,12 +18,9 @@
  ***************************************************************************/
 
 #include "game/data/report/unit/savedreportdestroyed.h"
+
 #include "game/data/units/unit.h"
-#include "ui/sound/soundmanager.h"
-#include "ui/sound/effects/soundeffectvoice.h"
-#include "resources/sound.h"
 #include "utility/language.h"
-#include "utility/random.h"
 
 //------------------------------------------------------------------------------
 cSavedReportDestroyed::cSavedReportDestroyed (const cUnit& unit) :
@@ -41,10 +38,4 @@ eSavedReportType cSavedReportDestroyed::getType() const
 std::string cSavedReportDestroyed::getText() const
 {
 	return unitName + " " + lngPack.i18n ("Text~Comp~Destroyed");
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportDestroyed::playSound (cSoundManager& soundManager) const
-{
-	soundManager.playSound (std::make_unique<cSoundEffectVoice> (eSoundEffectType::VoiceDestroyed, getRandom (VoiceData.VOIDestroyedUs)));
 }

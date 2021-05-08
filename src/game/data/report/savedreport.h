@@ -27,7 +27,6 @@
 #include "utility/serialization/textarchive.h"
 #include "utility/serialization/xmlarchive.h"
 
-class cSoundManager;
 class cPosition;
 struct sID;
 class cUnitsData;
@@ -91,11 +90,11 @@ enum class eSavedReportType
 class cSavedReport
 {
 public:
-	virtual ~cSavedReport() {}
+	virtual ~cSavedReport() = default;
 
 	virtual eSavedReportType getType() const = 0;
 
-	virtual std::string getMessage(const cUnitsData& unitsData) const = 0;
+	virtual std::string getMessage(const cUnitsData&) const = 0;
 
 	virtual bool isAlert() const = 0;
 
@@ -105,17 +104,16 @@ public:
 	virtual bool hasPosition() const;
 	virtual const cPosition& getPosition() const;
 
-	virtual void playSound (cSoundManager& soundManager) const;
+	static std::unique_ptr<cSavedReport> createFrom (cBinaryArchiveOut&);
+	static std::unique_ptr<cSavedReport> createFrom (cXmlArchiveOut&, const std::string& name);
 
-	static std::unique_ptr<cSavedReport> createFrom(cBinaryArchiveOut& archive);
-	static std::unique_ptr<cSavedReport> createFrom(cXmlArchiveOut& archive, const std::string& name);
-
-	virtual void serialize(cBinaryArchiveIn& archive) { serializeThis(archive); }
-	virtual void serialize(cTextArchiveIn& archive) { serializeThis(archive); }
-	virtual void serialize(cXmlArchiveIn& archive) { serializeThis(archive); }
+	virtual void serialize (cBinaryArchiveIn& archive) { serializeThis(archive); }
+	virtual void serialize (cTextArchiveIn& archive) { serializeThis(archive); }
+	virtual void serialize (cXmlArchiveIn& archive) { serializeThis(archive); }
 private:
 	template <typename T>
-	static std::unique_ptr<cSavedReport> createFromImpl(T& archive);
+	static std::unique_ptr<cSavedReport> createFromImpl (T& archive);
+
 	template <typename T>
 	void serializeThis(T& archive)
 	{
@@ -123,4 +121,4 @@ private:
 	}
 };
 
-#endif // game_data_reports_savedreportH
+#endif

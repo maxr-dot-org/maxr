@@ -20,9 +20,6 @@
 #include "game/data/report/unit/savedreportcapturedbyenemy.h"
 
 #include "game/data/units/unit.h"
-#include "ui/sound/soundmanager.h"
-#include "ui/sound/effects/soundeffectvoice.h"
-#include "resources/sound.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------
@@ -43,8 +40,3 @@ std::string cSavedReportCapturedByEnemy::getText() const
 	return lngPack.i18n ("Text~Comp~CapturedByEnemy", unitName);
 }
 
-//------------------------------------------------------------------------------
-void cSavedReportCapturedByEnemy::playSound (cSoundManager& soundManager) const
-{
-	soundManager.playSound (std::make_unique<cSoundEffectVoice> (eSoundEffectType::VoiceStolenByEnemy, VoiceData.VOIUnitStolenByEnemy));
-}

@@ -20,10 +20,7 @@
 #include "game/data/report/unit/savedreportdisabled.h"
 
 #include "game/data/units/unit.h"
-#include "ui/sound/soundmanager.h"
-#include "ui/sound/effects/soundeffectvoice.h"
 #include "utility/language.h"
-#include "resources/sound.h"
 
 //------------------------------------------------------------------------------
 cSavedReportDisabled::cSavedReportDisabled (const cUnit& unit) :
@@ -41,10 +38,4 @@ eSavedReportType cSavedReportDisabled::getType() const
 std::string cSavedReportDisabled::getText() const
 {
 	return unitName + " " + lngPack.i18n ("Text~Comp~Disabled");
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportDisabled::playSound (cSoundManager& soundManager) const
-{
-	soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceDisabled, VoiceData.VOIUnitDisabled));
 }

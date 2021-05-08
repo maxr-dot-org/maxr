@@ -19,9 +19,6 @@
 
 #include "savedreportturnstart.h"
 
-#include "resources/sound.h"
-#include "ui/sound/soundmanager.h"
-#include "ui/sound/effects/soundeffectvoice.h"
 #include "utility/language.h"
 #include "utility/string/toString.h"
 
@@ -100,35 +97,4 @@ std::string cSavedReportTurnStart::getMessage(const cUnitsData& unitsData) const
 bool cSavedReportTurnStart::isAlert() const
 {
 	return false;
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportTurnStart::playSound (cSoundManager& soundManager) const
-{
-	if (!researchAreas.empty())
-	{
-		soundManager.playSound (std::make_unique<cSoundEffectVoice> (eSoundEffectType::VoiceTurnStartReport, VoiceData.VOIResearchComplete));
-	}
-	else
-	{
-		int relevantCount = 0;
-		for (size_t i = 0; i < unitReports.size(); ++i)
-		{
-			relevantCount += unitReports[i].count;
-			if (relevantCount > 1) break;
-		}
-
-		if (relevantCount == 0)
-		{
-			soundManager.playSound (std::make_unique<cSoundEffectVoice> (eSoundEffectType::VoiceTurnStartReport, VoiceData.VOIStartNone));
-		}
-		else if (relevantCount == 1)
-		{
-			soundManager.playSound (std::make_unique<cSoundEffectVoice> (eSoundEffectType::VoiceTurnStartReport, VoiceData.VOIStartOne));
-		}
-		else if (relevantCount > 1)
-		{
-			soundManager.playSound (std::make_unique<cSoundEffectVoice> (eSoundEffectType::VoiceTurnStartReport, VoiceData.VOIStartMore));
-		}
-	}
 }
