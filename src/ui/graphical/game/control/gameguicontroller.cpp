@@ -145,11 +145,6 @@ cGameGuiController::cGameGuiController (cApplication& application_, std::shared_
 	initShortcuts();
 	initChatCommands();
 	application.addRunnable (animationTimer);
-
-	for (size_t i = 0; i < savedPositions.size(); ++i)
-	{
-		savedPositions[i] = std::make_pair (false, cPosition());
-	}
 }
 
 //------------------------------------------------------------------------------
@@ -260,7 +255,7 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 
 			for (size_t i = 0; i < savedPositions.size(); i++)
 			{
-				if (savedPositions[i].first && !map.isValidPosition(guiInfo.savedPositions[i].second)) return;
+				if (savedPositions[i] && !map.isValidPosition (*guiInfo.savedPositions[i])) return;
 			}
 			savedPositions = guiInfo.savedPositions;
 			doneList = guiInfo.doneList;
@@ -1941,7 +1936,7 @@ void cGameGuiController::savePosition (size_t index)
 {
 	if (index > savedPositions.size()) return;
 
-	savedPositions[index] = std::make_pair (true, gameGui->getGameMap().getMapCenterOffset());
+	savedPositions[index] = gameGui->getGameMap().getMapCenterOffset();
 }
 
 //------------------------------------------------------------------------------
@@ -1949,9 +1944,9 @@ void cGameGuiController::jumpToSavedPosition (size_t index)
 {
 	if (index > savedPositions.size()) return;
 
-	if (!savedPositions[index].first) return;
+	if (!savedPositions[index]) return;
 
-	gameGui->getGameMap().centerAt (savedPositions[index].second);
+	gameGui->getGameMap().centerAt (*savedPositions[index]);
 }
 
 //------------------------------------------------------------------------------

@@ -20,22 +20,24 @@
 #ifndef ui_graphical_game_control_mousemode_mousemodeselectbuildpositionH
 #define ui_graphical_game_control_mousemode_mousemodeselectbuildpositionH
 
-#include "ui/graphical/game/control/mousemode/mousemode.h"
 #include "game/data/units/unitdata.h"
+#include "ui/graphical/game/control/mousemode/mousemode.h"
+
+#include "config/workaround/cpp17/optional.h"
 
 class cMouseModeSelectBuildPosition : public cMouseMode
 {
 public:
-	cMouseModeSelectBuildPosition (const cMapView* map, const cUnitSelection& unitSelection, const cPlayer* player, sID buildId);
+	cMouseModeSelectBuildPosition (const cMapView*, const cUnitSelection&, const cPlayer*, sID buildId);
 
 	eMouseModeType getType() const override;
-	void setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const override;
-	std::unique_ptr<cMouseAction> getMouseAction(const cPosition& mapPosition, const cUnitsData& unitsData) const override;
+	void setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData&) const override;
+	std::unique_ptr<cMouseAction> getMouseAction(const cPosition& mapPosition, const cUnitsData&) const override;
 
-	std::pair<bool, cPosition> findNextBuildPosition(const cPosition& sourcePosition, const cPosition& desiredPosition, const cUnitsData& unitsData) const;
+	std::optional<cPosition> findNextBuildPosition(const cPosition& sourcePosition, const cPosition& desiredPosition, const cUnitsData&) const;
 
 private:
 	sID buildId;
 };
 
-#endif // ui_graphical_game_control_mousemode_mousemodeselectbuildpositionH
+#endif

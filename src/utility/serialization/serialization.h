@@ -20,14 +20,15 @@
 #ifndef serialization_serializationH
 #define serialization_serializationH
 
+#include <array>
+#include <cassert>
+#include <chrono>
+#include <forward_list>
+#include <map>
+#include <sstream>
 #include <string>
 #include <vector>
-#include <chrono>
-#include <array>
-#include <map>
-#include <assert.h>
-#include <sstream>
-#include <forward_list>
+#include "config/workaround/cpp17/optional.h"
 
 #include "nvp.h"
 
@@ -74,7 +75,7 @@ std::string enumToString(T value)
 
 namespace serialization
 {
-	namespace detail 
+	namespace detail
 	{
 		struct sSerializeEnum;
 		struct sSerializeMember;
@@ -274,6 +275,35 @@ namespace serialization
 	{
 		serialization::detail::splitFree(archive, value);
 	}
+	//-------------------------------------------------------------------------
+	template<typename A, typename T>
+	void save(A& archive, const std::optional<T>& value)
+	{
+		archive << makeNvp("valid", static_cast<bool>(value));
+		if (value)
+		{
+			archive << makeNvp("data", *value);
+		}
+	}
+	template<typename A, typename T>
+	void load(A& archive, std::optional<T>& value)
+	{
+		bool valid = false;
+		archive >> makeNvp("valid", valid);
+		if (valid) {
+			value = T{};
+			archive >> makeNvp("data", *value);
+		}
+		else
+		{
+			value = std::nullopt;
+		}
+	}
+	template<typename A, typename T>
+	void serialize(A& archive, std::optional<T>& value)
+	{
+		serialization::detail::splitFree(archive, value);
+	}
 
 	//-------------------------------------------------------------------------
 	/**
@@ -344,7 +374,7 @@ namespace serialization
 	void load(A& archive, sNameValuePair<T*>& nvp)
 	{
 		assert(archive.getPointerLoader() != nullptr);
-		
+
 		int id;
 		archive >> makeNvp(nvp.name, id);
 		if (id == -1)

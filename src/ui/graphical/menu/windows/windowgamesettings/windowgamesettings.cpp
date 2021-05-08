@@ -250,7 +250,7 @@ void cWindowGameSettings::applySettings (const cGameSettings& gameSettings)
 	bridgeheadGroup->selectValue (gameSettings.bridgeheadType);
 	alienGroup->selectValue (gameSettings.alienEnabled);
 	gameTypeGroup->selectValue (forHotSeatGame ? eGameSettingsGameType::Turns : gameSettings.gameType);
-	if (gameTypeGroup->getSelectedValue().second == eGameSettingsGameType::Simultaneous) enableTurnEndDeadlineOptions();
+	if (*gameTypeGroup->getSelectedValue() == eGameSettingsGameType::Simultaneous) enableTurnEndDeadlineOptions();
 	else disableTurnEndDeadlineOptions();
 
 	clansGroup->selectValue (gameSettings.clansEnabled);
@@ -310,21 +310,21 @@ cGameSettings cWindowGameSettings::getGameSettings() const
 {
 	cGameSettings gameSettings;
 
-	gameSettings.metalAmount = metalGroup->getSelectedValue().second;
-	gameSettings.oilAmount = oilGroup->getSelectedValue().second;
-	gameSettings.goldAmount = goldGroup->getSelectedValue().second;
-	gameSettings.resourceDensity = densityGroup->getSelectedValue().second;
+	gameSettings.metalAmount = *metalGroup->getSelectedValue();
+	gameSettings.oilAmount = *oilGroup->getSelectedValue();
+	gameSettings.goldAmount = *goldGroup->getSelectedValue();
+	gameSettings.resourceDensity = *densityGroup->getSelectedValue();
 
-	gameSettings.bridgeheadType = bridgeheadGroup->getSelectedValue().second;
-	gameSettings.alienEnabled = alienGroup->getSelectedValue().second;
+	gameSettings.bridgeheadType = *bridgeheadGroup->getSelectedValue();
+	gameSettings.alienEnabled = *alienGroup->getSelectedValue();
 
-	gameSettings.gameType = forHotSeatGame ? eGameSettingsGameType::HotSeat : gameTypeGroup->getSelectedValue().second;
+	gameSettings.gameType = forHotSeatGame ? eGameSettingsGameType::HotSeat : *gameTypeGroup->getSelectedValue();
 
-	gameSettings.clansEnabled = clansGroup->getSelectedValue().second;
+	gameSettings.clansEnabled = *clansGroup->getSelectedValue();
 
-	gameSettings.startCredits = creditsGroup->getSelectedValue().second;
+	gameSettings.startCredits = *creditsGroup->getSelectedValue();
 
-	const auto victoryCondition = victoryGroup->getSelectedValue().second;
+	const auto victoryCondition = *victoryGroup->getSelectedValue();
 	const auto victoryType = victoryCondition.first;
 	const auto victoryCount = victoryCondition.second;
 	gameSettings.victoryConditionType = victoryType;
@@ -344,19 +344,19 @@ cGameSettings cWindowGameSettings::getGameSettings() const
 	}
 
 	gameSettings.turnLimitActive = true;
-	switch (turnLimitGroup->getSelectedValue().second)
+	switch (*turnLimitGroup->getSelectedValue())
 	{
 		case custom: gameSettings.turnLimit = std::chrono::seconds (atoi (customTurnLimitCheckBox->getText().c_str())); break;
 		case unlimited: gameSettings.turnLimitActive = false; break;
-		default: gameSettings.turnLimit = std::chrono::seconds (turnLimitGroup->getSelectedValue().second); break;
+		default: gameSettings.turnLimit = std::chrono::seconds (*turnLimitGroup->getSelectedValue()); break;
 	}
 
 	gameSettings.turnEndDeadlineActive = true;
-	switch (endTurnDeadlineGroup->getSelectedValue().second)
+	switch (*endTurnDeadlineGroup->getSelectedValue())
 	{
 		case custom: gameSettings.turnEndDeadline = std::chrono::seconds (atoi (customEndTurnDeadlineCheckBox->getText().c_str())); break;
 		case unlimited: gameSettings.turnEndDeadlineActive = false; break;
-		default: gameSettings.turnEndDeadline = std::chrono::seconds (endTurnDeadlineGroup->getSelectedValue().second); break;
+		default: gameSettings.turnEndDeadline = std::chrono::seconds (*endTurnDeadlineGroup->getSelectedValue()); break;
 	}
 
 	return gameSettings;

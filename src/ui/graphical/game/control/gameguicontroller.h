@@ -107,7 +107,7 @@ private:
 
 	std::optional<cPosition> savedReportPosition;
 	std::shared_ptr<cWindowUpgradesFilterState> upgradesFilterState;
-	std::array<std::pair<bool, cPosition>, 4> savedPositions;
+	std::array<std::optional<cPosition>, 4> savedPositions;
 	std::vector<unsigned int> doneList;
 
 	template <typename Action> void addShortcut(cKeySequence, Action);

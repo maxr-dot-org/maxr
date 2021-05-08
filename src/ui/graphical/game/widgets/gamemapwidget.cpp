@@ -911,7 +911,7 @@ bool cGameMapWidget::startFindBuildPosition(const sID& buildId)
 	if (selectedVehicle)
 	{
 		auto buildPos = mouseMode->findNextBuildPosition(selectedVehicle->getPosition(), selectedVehicle->getPosition(), *unitsData);
-		if (!buildPos.first)
+		if (!buildPos)
 		{
 			return false;
 		}
@@ -1566,14 +1566,12 @@ void cGameMapWidget::drawBuildBand()
 			if (!mapView) return;
 
 			auto selectBuildPositionMode = static_cast<const cMouseModeSelectBuildPosition*> (mouseMode.get());
-			bool validPosition;
-			cPosition destination;
-			std::tie (validPosition, destination) = selectBuildPositionMode->findNextBuildPosition (selectedVehicle->getPosition(), getMapTilePosition (mouse->getPosition()), *unitsData);
-			if (!validPosition) return;
+			const auto destination = selectBuildPositionMode->findNextBuildPosition (selectedVehicle->getPosition(), getMapTilePosition (mouse->getPosition()), *unitsData);
+			if (!destination) return;
 
 			SDL_Rect dest;
-			dest.x = getPosition().x() - (int) (pixelOffset.x() * getZoomFactor()) + zoomedTileSize.x() * destination.x();
-			dest.y = getPosition().y() - (int) (pixelOffset.y() * getZoomFactor()) + zoomedTileSize.y() * destination.y();
+			dest.x = getPosition().x() - (int) (pixelOffset.x() * getZoomFactor()) + zoomedTileSize.x() * destination->x();
+			dest.y = getPosition().y() - (int) (pixelOffset.y() * getZoomFactor()) + zoomedTileSize.y() * destination->y();
 			CHECK_SCALING (*GraphicsData.gfx_band_big, *GraphicsData.gfx_band_big_org, getZoomFactor());
 			SDL_BlitSurface (GraphicsData.gfx_band_big.get(), nullptr, cVideo::buffer, &dest);
 		}

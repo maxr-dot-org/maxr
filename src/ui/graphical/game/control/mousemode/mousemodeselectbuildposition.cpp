@@ -50,18 +50,16 @@ std::unique_ptr<cMouseAction> cMouseModeSelectBuildPosition::getMouseAction(cons
 
 	if (!selectedUnit) return nullptr;
 
-	bool validPosition;
-	cPosition destination;
-	std::tie (validPosition, destination) = findNextBuildPosition (selectedUnit->getPosition(), mapPosition, unitsData);
-	if (!validPosition) return nullptr;
+	auto destination = findNextBuildPosition (selectedUnit->getPosition(), mapPosition, unitsData);
+	if (!destination) return nullptr;
 
-	return std::make_unique<cMouseActionSelectBuildPosition> (buildId, destination);
+	return std::make_unique<cMouseActionSelectBuildPosition> (buildId, *destination);
 }
 
 //------------------------------------------------------------------------------
-std::pair<bool, cPosition> cMouseModeSelectBuildPosition::findNextBuildPosition(const cPosition& sourcePosition, const cPosition& desiredPosition, const cUnitsData& unitsData) const
+std::optional<cPosition> cMouseModeSelectBuildPosition::findNextBuildPosition(const cPosition& sourcePosition, const cPosition& desiredPosition, const cUnitsData& unitsData) const
 {
-	if (!map) return std::make_pair (false, cPosition());
+	if (!map) return std::nullopt;
 
 	bool pos[4] = {false, false, false, false};
 
@@ -98,44 +96,44 @@ std::pair<bool, cPosition> cMouseModeSelectBuildPosition::findNextBuildPosition(
 	// chose the position, which matches the cursor position, if available
 	if (desiredPosition.x() <= sourcePosition.x() && desiredPosition.y() <= sourcePosition.y() && pos[0])
 	{
-		return std::make_pair (true, cPosition (sourcePosition.x() - 1, sourcePosition.y() - 1));
+		return cPosition (sourcePosition.x() - 1, sourcePosition.y() - 1);
 	}
 
 	if (desiredPosition.x() >= sourcePosition.x() && desiredPosition.y() <= sourcePosition.y() && pos[1])
 	{
-		return std::make_pair (true, cPosition (sourcePosition.x(), sourcePosition.y() - 1));
+		return cPosition (sourcePosition.x(), sourcePosition.y() - 1);
 	}
 
 	if (desiredPosition.x() >= sourcePosition.x() && desiredPosition.y() >= sourcePosition.y() && pos[2])
 	{
-		return std::make_pair (true, cPosition (sourcePosition.x(), sourcePosition.y()));
+		return sourcePosition;
 	}
 
 	if (desiredPosition.x() <= sourcePosition.x() && desiredPosition.y() >= sourcePosition.y() && pos[3])
 	{
-		return std::make_pair (true, cPosition (sourcePosition.x() - 1, sourcePosition.y()));
+		return cPosition (sourcePosition.x() - 1, sourcePosition.y());
 	}
 
 	// if the best position is not available, chose the next free one
 	if (pos[0])
 	{
-		return std::make_pair (true, cPosition (sourcePosition.x() - 1, sourcePosition.y() - 1));
+		return cPosition (sourcePosition.x() - 1, sourcePosition.y() - 1);
 	}
 
 	if (pos[1])
 	{
-		return std::make_pair (true, cPosition (sourcePosition.x(), sourcePosition.y() - 1));
+		return cPosition (sourcePosition.x(), sourcePosition.y() - 1);
 	}
 
 	if (pos[2])
 	{
-		return std::make_pair (true, cPosition (sourcePosition.x(), sourcePosition.y()));
+		return sourcePosition;
 	}
 
 	if (pos[3])
 	{
-		return std::make_pair (true, cPosition (sourcePosition.x() - 1, sourcePosition.y()));
+		return cPosition (sourcePosition.x() - 1, sourcePosition.y());
 	}
 
-	return std::make_pair (false, cPosition());
+	return std::nullopt;
 }

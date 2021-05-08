@@ -24,6 +24,8 @@
 #include "ui/graphical/widget.h"
 #include "utility/signal/signalconnectionmanager.h"
 
+#include "config/workaround/cpp17/optional.h"
+
 /*
 ** Similar to regular radioGroup, but handles natively an association
 ** between checkbox and value.
@@ -43,8 +45,7 @@ public:
 
 	bool selectValue (T value);
 
-	// should be optional<E>
-	std::pair<bool, T> getSelectedValue() const { if (currentlyCheckedButton) return {true, value}; return {false, T{}};}
+	std::optional<T> getSelectedValue() const { if (currentlyCheckedButton) return value; return std::nullopt;}
 
 	void handleMoved (const cPosition& offset);
 

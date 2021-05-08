@@ -401,7 +401,7 @@ public:
 
 	std::shared_ptr<std::vector<std::unique_ptr<cSavedReport>>> reports;
 	cGameGuiState guiState;
-	std::array<std::pair<bool, cPosition>, 4> savedPositions;
+	std::array<std::optional<cPosition>, 4> savedPositions;
 	std::vector<unsigned int> doneList;
 	int savingID;
 private:
