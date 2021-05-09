@@ -19,10 +19,6 @@
 
 #include "game/data/report/unit/savedreportdisabled.h"
 
-#include "game/data/units/unit.h"
-#include "ui/translations.h"
-#include "utility/language.h"
-
 //------------------------------------------------------------------------------
 cSavedReportDisabled::cSavedReportDisabled (const cUnit& unit) :
 	cSavedReportUnit (unit)
@@ -32,10 +28,4 @@ cSavedReportDisabled::cSavedReportDisabled (const cUnit& unit) :
 eSavedReportType cSavedReportDisabled::getType() const
 {
 	return eSavedReportType::Disabled;
-}
-
-//------------------------------------------------------------------------------
-std::string cSavedReportDisabled::getText (const cUnit& unit) const
-{
-	return getDisplayName (unit) + " " + lngPack.i18n ("Text~Comp~Disabled");
 }

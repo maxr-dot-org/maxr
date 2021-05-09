@@ -20,9 +20,6 @@
 #include "game/data/report/unit/savedreportdetected.h"
 
 #include "game/data/units/unit.h"
-#include "game/data/player/player.h"
-#include "ui/translations.h"
-#include "utility/language.h"
 
 //------------------------------------------------------------------------------
 cSavedReportDetected::cSavedReportDetected (const cUnit& unit) :
@@ -34,11 +31,4 @@ cSavedReportDetected::cSavedReportDetected (const cUnit& unit) :
 eSavedReportType cSavedReportDetected::getType() const
 {
 	return eSavedReportType::Detected;
-}
-
-//------------------------------------------------------------------------------
-std::string cSavedReportDetected::getText (const cUnit& unit) const
-{
-	const auto playerName = unit.getOwner() ? unit.getOwner()->getName() : "";
-	return getDisplayName (unit) + " (" + playerName + ") " + lngPack.i18n ("Text~Comp~Detected");
 }

@@ -29,8 +29,6 @@ public:
 
 	eSavedReportType getType() const override;
 
-	std::string getMessage (const cModel&) const override;
-
 	bool isAlert() const override;
 private:
 	eSavedReportType type;

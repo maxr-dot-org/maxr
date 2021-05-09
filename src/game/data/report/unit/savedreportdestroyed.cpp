@@ -19,10 +19,6 @@
 
 #include "game/data/report/unit/savedreportdestroyed.h"
 
-#include "game/data/units/unit.h"
-#include "ui/translations.h"
-#include "utility/language.h"
-
 //------------------------------------------------------------------------------
 cSavedReportDestroyed::cSavedReportDestroyed (const cUnit& unit) :
 	cSavedReportUnit (unit)
@@ -32,10 +28,4 @@ cSavedReportDestroyed::cSavedReportDestroyed (const cUnit& unit) :
 eSavedReportType cSavedReportDestroyed::getType() const
 {
 	return eSavedReportType::Destroyed;
-}
-
-//------------------------------------------------------------------------------
-std::string cSavedReportDestroyed::getText (const cUnit& unit) const
-{
-	return getDisplayName (unit) + " " + lngPack.i18n ("Text~Comp~Destroyed");
 }

@@ -20,7 +20,6 @@
 #include "game/data/report/savedreportchat.h"
 
 #include "game/data/player/player.h"
-#include "utility/language.h"
 
 //------------------------------------------------------------------------------
 cSavedReportChat::cSavedReportChat (const cPlayer& player, std::string text_) :
@@ -40,12 +39,6 @@ cSavedReportChat::cSavedReportChat (std::string playerName_, std::string text_) 
 eSavedReportType cSavedReportChat::getType() const
 {
 	return eSavedReportType::Chat;
-}
-
-//------------------------------------------------------------------------------
-std::string cSavedReportChat::getMessage (const cModel&) const
-{
-	return playerName + lngPack.i18n ("Text~Punctuation~Colon") + text;
 }
 
 //------------------------------------------------------------------------------

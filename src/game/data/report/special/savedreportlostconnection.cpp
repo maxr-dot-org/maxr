@@ -20,7 +20,6 @@
 #include "game/data/report/special/savedreportlostconnection.h"
 
 #include "game/data/player/player.h"
-#include "utility/language.h"
 
 cSavedReportLostConnection::cSavedReportLostConnection(const cPlayer& player) :
 	playerName(player.getName())
@@ -30,12 +29,6 @@ cSavedReportLostConnection::cSavedReportLostConnection(const cPlayer& player) :
 eSavedReportType cSavedReportLostConnection::getType() const
 {
 	return eSavedReportType::LostConnection;
-}
-
-//------------------------------------------------------------------------------
-std::string cSavedReportLostConnection::getMessage (const cModel&) const
-{
-	return lngPack.i18n ("Text~Multiplayer~Lost_Connection", playerName);
 }
 
 //------------------------------------------------------------------------------

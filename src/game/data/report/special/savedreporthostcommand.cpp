@@ -19,8 +19,6 @@
 
 #include "game/data/report/special/savedreporthostcommand.h"
 
-#include "utility/language.h"
-
 //------------------------------------------------------------------------------
 cSavedReportHostCommand::cSavedReportHostCommand (std::string command_) :
 	command (std::move (command_))
@@ -30,12 +28,6 @@ cSavedReportHostCommand::cSavedReportHostCommand (std::string command_) :
 eSavedReportType cSavedReportHostCommand::getType() const
 {
 	return eSavedReportType::HostCommand;
-}
-
-//------------------------------------------------------------------------------
-std::string cSavedReportHostCommand::getMessage (const cModel&) const
-{
-	return lngPack.i18n ("Text~Multiplayer~Host_command") + " '" + command + "'";
 }
 
 //------------------------------------------------------------------------------

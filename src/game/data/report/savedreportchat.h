@@ -37,8 +37,6 @@ public:
 
 	eSavedReportType getType() const override;
 
-	std::string getMessage (const cModel&) const override;
-
 	bool isAlert() const override;
 
 	void serialize(cBinaryArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }

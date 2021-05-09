@@ -30,6 +30,7 @@
 #include "SDLutility/drawing.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
+#include "ui/translations.h"
 #include "utility/color.h"
 
 //------------------------------------------------------------------------------
@@ -38,14 +39,14 @@ cReportMessageListViewItem::cReportMessageListViewItem (const cSavedReport& repo
 {
 	const int unitImageSize = 32;
 
-	auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImageSize, 0), cPosition (450, 0)), report.getMessage (model), FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
+	auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImageSize, 0), cPosition (450, 0)), getMessage (report, model), FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
 	textLabel->setWordWrap (true);
 	textLabel->resizeToTextHeight();
 	textLabel->setConsumeClick (false);
 
 	if (const auto* unitReport = dynamic_cast<const cSavedReportUnit*>(&report))
 	{
-		const auto& unitId = unitReport->getUnitId();
+		const auto& unitId = unitReport->getUnitTypeId();
 
 		const auto totalHeight = std::max (unitImageSize, textLabel->getSize().y());
 

@@ -29,9 +29,3 @@ eSavedReportType cSavedReportSurveyorAiConfused::getType() const
 {
 	return eSavedReportType::SurveyorAiConfused;
 }
-
-//------------------------------------------------------------------------------
-std::string cSavedReportSurveyorAiConfused::getText (const cUnit&) const
-{
-	return "Surveyor AI: I'm totally confused. Don't know what to do...";
-}

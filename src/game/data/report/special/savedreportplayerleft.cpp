@@ -19,9 +19,7 @@
 
 #include "game/data/report/special/savedreportplayerleft.h"
 
-#include "game/data/model.h"
 #include "game/data/player/player.h"
-#include "utility/language.h"
 
 //------------------------------------------------------------------------------
 cSavedReportPlayerLeft::cSavedReportPlayerLeft (const cPlayer& player) :
@@ -32,13 +30,6 @@ cSavedReportPlayerLeft::cSavedReportPlayerLeft (const cPlayer& player) :
 eSavedReportType cSavedReportPlayerLeft::getType() const
 {
 	return eSavedReportType::PlayerLeft;
-}
-
-//------------------------------------------------------------------------------
-std::string cSavedReportPlayerLeft::getMessage (const cModel& model) const
-{
-	const auto* player = model.getPlayer (playerId);
-	return lngPack.i18n ("Text~Multiplayer~Player_Left", player->getName());
 }
 
 //------------------------------------------------------------------------------

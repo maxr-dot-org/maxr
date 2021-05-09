@@ -19,10 +19,6 @@
 
 #include "game/data/report/unit/savedreportattackingenemy.h"
 
-#include "game/data/units/unit.h"
-#include "ui/translations.h"
-#include "utility/language.h"
-
 //------------------------------------------------------------------------------
 cSavedReportAttackingEnemy::cSavedReportAttackingEnemy (const cUnit& unit) :
 	cSavedReportUnit (unit)
@@ -32,10 +28,4 @@ cSavedReportAttackingEnemy::cSavedReportAttackingEnemy (const cUnit& unit) :
 eSavedReportType cSavedReportAttackingEnemy::getType() const
 {
 	return eSavedReportType::AttackingEnemy;
-}
-
-//------------------------------------------------------------------------------
-std::string cSavedReportAttackingEnemy::getText (const cUnit& unit) const
-{
-	return lngPack.i18n ("Text~Comp~AttackingEnemy", getDisplayName (unit));
 }

@@ -19,10 +19,6 @@
 
 #include "game/data/report/unit/savedreportcapturedbyenemy.h"
 
-#include "game/data/units/unit.h"
-#include "ui/translations.h"
-#include "utility/language.h"
-
 //------------------------------------------------------------------------------
 cSavedReportCapturedByEnemy::cSavedReportCapturedByEnemy(const cUnit& unit) :
 	cSavedReportUnit (unit)
@@ -33,10 +29,3 @@ eSavedReportType cSavedReportCapturedByEnemy::getType() const
 {
 	return eSavedReportType::CapturedByEnemy;
 }
-
-//------------------------------------------------------------------------------
-std::string cSavedReportCapturedByEnemy::getText (const cUnit& unit) const
-{
-	return lngPack.i18n ("Text~Comp~CapturedByEnemy", getDisplayName (unit));
-}
-

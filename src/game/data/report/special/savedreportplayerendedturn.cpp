@@ -19,9 +19,7 @@
 
 #include "game/data/report/special/savedreportplayerendedturn.h"
 
-#include "game/data/model.h"
 #include "game/data/player/player.h"
-#include "utility/language.h"
 
 //------------------------------------------------------------------------------
 cSavedReportPlayerEndedTurn::cSavedReportPlayerEndedTurn (const cPlayer& player) :
@@ -32,13 +30,6 @@ cSavedReportPlayerEndedTurn::cSavedReportPlayerEndedTurn (const cPlayer& player)
 eSavedReportType cSavedReportPlayerEndedTurn::getType() const
 {
 	return eSavedReportType::PlayerEndedTurn;
-}
-
-//------------------------------------------------------------------------------
-std::string cSavedReportPlayerEndedTurn::getMessage (const cModel& model) const
-{
-	const auto* player = model.getPlayer (playerId);
-	return lngPack.i18n ("Text~Multiplayer~Player_Turn_End", player->getName());
 }
 
 //------------------------------------------------------------------------------

@@ -36,20 +36,16 @@ public:
 		serializeThis(archive);
 	}
 
-	std::string getMessage (const cModel&) const override;
-
 	bool isAlert() const override;
 
 	void serialize(cBinaryArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
 	void serialize(cXmlArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
 	void serialize(cTextArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
 
-	const sID& getUnitId() const;
+	int getUnitId() const { return unitId; }
+	const sID& getUnitTypeId() const { return unitTypeId; }
 
 	std::optional<cPosition> getPosition() const override;
-
-protected:
-	virtual std::string getText (const cUnit&) const = 0;
 
 private:
 	template <typename T>

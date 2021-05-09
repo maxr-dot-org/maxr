@@ -34,16 +34,14 @@
 #include "ui/graphical/game/widgets/chatbox.h"
 #include "ui/graphical/game/widgets/debugoutputwidget.h"
 #include "ui/graphical/game/widgets/chatboxplayerlistviewitem.h"
-#include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
-
 #include "ui/graphical/game/animations/animationtimer.h"
-
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/dialogs/dialogyesno.h"
 #include "ui/graphical/menu/dialogs/dialogpreferences.h"
 #include "ui/graphical/menu/dialogs/dialogtransfer.h"
 #include "ui/graphical/menu/dialogs/dialogresearch.h"
 #include "ui/graphical/menu/dialogs/dialogselfdestruction.h"
+#include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
 #include "ui/graphical/menu/windows/windowunitinfo/windowunitinfo.h"
 #include "ui/graphical/menu/windows/windowbuildbuildings/windowbuildbuildings.h"
 #include "ui/graphical/menu/windows/windowbuildvehicles/windowbuildvehicles.h"
@@ -58,6 +56,8 @@
 #include "ui/sound/effects/soundeffectvoice.h"
 #include "ui/sound/effects/soundeffectunit.h"
 #include "ui/sound/game/savedreportssound.h"
+
+#include "ui/translations.h"
 
 #include "input/keyboard/keyboard.h"
 
@@ -1859,18 +1859,18 @@ void cGameGuiController::handleReportForActivePlayer (const cSavedReport& report
 		savedReportPosition = *position;
 
 		if (activeClient)
-			gameGui->getGameMessageList().addMessage (report.getMessage (activeClient->getModel()) + " (" + KeysList.keyJumpToAction.toString() + ")", eGameMessageListViewItemBackgroundColor::LightGray);
+			gameGui->getGameMessageList().addMessage (getMessage (report, activeClient->getModel()) + " (" + KeysList.keyJumpToAction.toString() + ")", eGameMessageListViewItemBackgroundColor::LightGray);
 	}
 	else
 	{
 		if (activeClient)
-			gameGui->getGameMessageList().addMessage (report.getMessage (activeClient->getModel()), report.isAlert() ? eGameMessageListViewItemBackgroundColor::Red : eGameMessageListViewItemBackgroundColor::DarkGray);
+			gameGui->getGameMessageList().addMessage (getMessage (report, activeClient->getModel()), report.isAlert() ? eGameMessageListViewItemBackgroundColor::Red : eGameMessageListViewItemBackgroundColor::DarkGray);
 		if (report.isAlert()) soundManager->playSound (std::make_shared<cSoundEffect> (eSoundEffectType::EffectAlert, SoundData.SNDQuitsch));
 	}
 
 	playSound (*soundManager, report);
 
-	if (cSettings::getInstance().isDebug() && activeClient) Log.write (report.getMessage (activeClient->getModel()), cLog::eLOG_TYPE_DEBUG);
+	if (cSettings::getInstance().isDebug() && activeClient) Log.write (getMessage (report, activeClient->getModel()), cLog::eLOG_TYPE_DEBUG);
 }
 
 //------------------------------------------------------------------------------

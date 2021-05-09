@@ -39,9 +39,11 @@ public:
 
 	eSavedReportType getType() const override;
 
-	std::string getMessage (const cModel&) const override;
-
 	bool isAlert() const override;
+
+	sID getUnitId() const { return unitId; }
+	int getUnitsCount() const { return unitsCount; }
+	int getCosts() const { return costs; }
 
 private:
 	template <typename T>

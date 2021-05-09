@@ -96,8 +96,6 @@ public:
 
 	virtual eSavedReportType getType() const = 0;
 
-	virtual std::string getMessage (const cModel&) const = 0;
-
 	virtual bool isAlert() const = 0;
 
 	virtual std::optional<cPosition> getPosition() const { return std::nullopt; }

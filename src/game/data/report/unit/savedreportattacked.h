@@ -33,9 +33,6 @@ public:
 	}
 
 	eSavedReportType getType() const override;
-
-protected:
-	std::string getText (const cUnit&) const override;
 };
 
 #endif // game_data_reports_savedreportattackedH

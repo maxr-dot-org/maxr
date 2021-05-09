@@ -20,11 +20,32 @@
 #include "translations.h"
 
 #include "game/data/gamesettings.h"
+#include "game/data/model.h"
 #include "game/data/player/clans.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/data/units/commandodata.h"
 #include "game/data/units/vehicle.h"
+#include "game/data/report/savedreport.h"
+#include "game/data/report/savedreportchat.h"
+#include "game/data/report/savedreportsimple.h"
+#include "game/data/report/unit/savedreportattacked.h"
+#include "game/data/report/unit/savedreportattackingenemy.h"
+#include "game/data/report/unit/savedreportcapturedbyenemy.h"
+#include "game/data/report/unit/savedreportdestroyed.h"
+#include "game/data/report/unit/savedreportdetected.h"
+#include "game/data/report/unit/savedreportdisabled.h"
+#include "game/data/report/unit/savedreportpathinterrupted.h"
+#include "game/data/report/unit/savedreportsurveyoraiconfused.h"
+#include "game/data/report/special/savedreporthostcommand.h"
+#include "game/data/report/special/savedreportresourcechanged.h"
+#include "game/data/report/special/savedreportlostconnection.h"
+#include "game/data/report/special/savedreportplayerendedturn.h"
+#include "game/data/report/special/savedreportplayerdefeated.h"
+#include "game/data/report/special/savedreportplayerwins.h"
+#include "game/data/report/special/savedreportplayerleft.h"
+#include "game/data/report/special/savedreportupgraded.h"
+#include "game/data/report/special/savedreportturnstart.h"
 #include "game/logic/endmoveaction.h"
 #include "game/logic/movejob.h"
 #include "output/video/unifonts.h"
@@ -498,3 +519,252 @@ std::string getStatusStr (const cUnit& unit, const cPlayer* whoWantsToKnow, cons
 	if (const auto* building = dynamic_cast<const cBuilding*> (&unit)) return getStatusStr (*building, whoWantsToKnow, unitData);
 	return {};
 }
+
+namespace
+{
+	//--------------------------------------------------------------------------
+	std::string getText (const cUnit& unit, const cSavedReportDetected&)
+	{
+		const auto playerName = unit.getOwner() ? unit.getOwner()->getName() : "";
+		return getDisplayName (unit) + " (" + playerName + ") " + lngPack.i18n ("Text~Comp~Detected");
+	}
+
+	//--------------------------------------------------------------------------
+	std::string getText (const cUnit& unit, const cSavedReportUnit& report)
+	{
+		switch (report.getType())
+		{
+			case eSavedReportType::Attacked:
+				return getDisplayName (unit) + " " + lngPack.i18n ("Text~Comp~Attacked");
+			case eSavedReportType::AttackingEnemy:
+				return lngPack.i18n ("Text~Comp~AttackingEnemy", getDisplayName (unit));
+			case eSavedReportType::CapturedByEnemy:
+				return lngPack.i18n ("Text~Comp~CapturedByEnemy", getDisplayName (unit));
+			case eSavedReportType::Destroyed:
+				return getDisplayName (unit) + " " + lngPack.i18n ("Text~Comp~Destroyed");
+			case eSavedReportType::Detected:
+				return getText (unit, static_cast<const cSavedReportDetected&> (report));
+			case eSavedReportType::Disabled:
+				return getDisplayName (unit) + " " + lngPack.i18n ("Text~Comp~Disabled");
+			case eSavedReportType::PathInterrupted:
+				return lngPack.i18n ("Text~Comp~Path_interrupted");
+			case eSavedReportType::SurveyorAiConfused:
+				return "Surveyor AI: I'm totally confused. Don't know what to do...";
+		}
+		return "";
+	}
+
+	//--------------------------------------------------------------------------
+	std::string getMessage (const cModel&, const cSavedReportChat& report)
+	{
+		return report.getPlayerName() + lngPack.i18n ("Text~Punctuation~Colon") + report.getText();
+	}
+
+	//------------------------------------------------------------------------------
+	std::string getMessage (const cModel&, const cSavedReportHostCommand& report)
+	{
+		return lngPack.i18n ("Text~Multiplayer~Host_command") + " '" + report.getCommand() + "'";
+	}
+
+	//------------------------------------------------------------------------------
+	std::string getMessage (const cModel&, const cSavedReportLostConnection& report)
+	{
+		return lngPack.i18n ("Text~Multiplayer~Lost_Connection", report.getPlayerName());
+	}
+
+	//------------------------------------------------------------------------------
+	std::string getMessage (const cModel& model, const cSavedReportPlayerDefeated& report)
+	{
+		const auto* player = model.getPlayer (report.getPlayerId());
+		return lngPack.i18n ("Text~Multiplayer~Player") + " " + player->getName() + " " + lngPack.i18n ("Text~Comp~Defeated");
+	}
+
+	//------------------------------------------------------------------------------
+	std::string getMessage (const cModel& model, const cSavedReportPlayerLeft& report)
+	{
+		const auto* player = model.getPlayer (report.getPlayerId());
+		return lngPack.i18n ("Text~Multiplayer~Player_Left", player->getName());
+	}
+
+	//------------------------------------------------------------------------------
+	std::string getMessage (const cModel& model, const cSavedReportPlayerEndedTurn& report)
+	{
+		const auto* player = model.getPlayer (report.getPlayerId());
+		return lngPack.i18n ("Text~Multiplayer~Player_Turn_End", player->getName());
+	}
+
+	//------------------------------------------------------------------------------
+	std::string getMessage (const cModel& model, const cSavedReportPlayerWins& report)
+	{
+		const auto* player = model.getPlayer (report.getPlayerId());
+		return lngPack.i18n ("Text~Multiplayer~Player") + " " + player->getName() + " " + lngPack.i18n ("Text~Comp~Wins");
+	}
+
+	//------------------------------------------------------------------------------
+	std::string getMessage (const cModel&, const cSavedReportResourceChanged& report)
+	{
+		int amount = report.getAmount();
+		if (report.isIncrease())
+		{
+			switch (report.getResourceType())
+			{
+				case eResourceType::Gold: return lngPack.i18n ("Text~Comp~Adjustments_Gold_Increased", iToStr (amount));
+				case eResourceType::Oil: return lngPack.i18n ("Text~Comp~Adjustments_Fuel_Increased", iToStr (amount));
+				case eResourceType::Metal: return lngPack.i18n ("Text~Comp~Adjustments_Metal_Increased", iToStr (amount));
+			}
+		}
+		else
+		{
+			switch (report.getResourceType())
+			{
+				case eResourceType::Gold: return lngPack.i18n ("Text~Comp~Adjustments_Gold_Decreased", iToStr (amount));
+				case eResourceType::Oil: return lngPack.i18n ("Text~Comp~Adjustments_Fuel_Decreased", iToStr (amount));
+				case eResourceType::Metal: return lngPack.i18n ("Text~Comp~Adjustments_Metal_Decreased", iToStr (amount));
+			}
+		}
+		throw std::runtime_error("Unknown resourceType " + toString (static_cast<int> (report.getResourceType())));
+	}
+
+	//------------------------------------------------------------------------------
+	std::string getMessage (const cModel& model, const cSavedReportUpgraded& report)
+	{
+		const auto& unitName = getStaticUnitName (model.getUnitsData()->getStaticUnitData (report.getUnitId()));
+		return lngPack.i18n ("Text~Comp~Upgrades_Done") + " " + iToStr (report.getUnitsCount()) + " " + lngPack.i18n ("Text~Comp~Upgrades_Done2", unitName) + " (" + lngPack.i18n ("Text~Others~Costs") + lngPack.i18n ("Text~Punctuation~Colon") + iToStr (report.getCosts()) + ")";
+	}
+
+	//------------------------------------------------------------------------------
+	std::string getMessage (const cModel& model, const cSavedReportTurnStart& report)
+	{
+		std::string message = lngPack.i18n ("Text~Comp~Turn_Start") + " " + iToStr (report.turn);
+
+		if (!report.unitReports.empty())
+		{
+			int totalUnitsCount = 0;
+			message += "\n";
+			const char* sep = "";
+			for (const auto& entry : report.unitReports)
+			{
+				message += sep;
+				sep = ", ";
+				totalUnitsCount += entry.count;
+				auto name = getStaticUnitName (model.getUnitsData()->getStaticUnitData (entry.type));
+				message += entry.count > 1 ? iToStr(entry.count) + " " + name : name;
+			}
+			// TODO: Plural rules are language dependant
+			// - Russian has 3 forms, Chinese 1 form, ...
+			//          | eng  | fre  | ...
+			// singular | == 1 | <= 1 |
+			// plural   | != 1 | 1 <  |
+			// we should have `i18n (key, n)`
+			if (totalUnitsCount == 1) message += " " + lngPack.i18n ("Text~Comp~Finished") + ".";
+			else if (totalUnitsCount > 1) message += " " + lngPack.i18n ("Text~Comp~Finished2") + ".";
+		}
+
+		if (!report.researchAreas.empty())
+		{
+			message += "\n";
+			message += lngPack.i18n ("Text~Others~Research") + " " + lngPack.i18n ("Text~Comp~Finished") + lngPack.i18n ("Text~Punctuation~Colon");
+
+			const std::string themeNames[8] =
+			{
+				lngPack.i18n ("Text~Others~Attack"),
+				lngPack.i18n ("Text~Others~Shots"),
+				lngPack.i18n ("Text~Others~Range"),
+				lngPack.i18n ("Text~Others~Armor"),
+				lngPack.i18n ("Text~Others~Hitpoints"),
+				lngPack.i18n ("Text~Others~Speed"),
+				lngPack.i18n ("Text~Others~Scan"),
+				lngPack.i18n ("Text~Others~Costs")
+			};
+
+			const char* sep = "";
+			for (const auto researchArea : report.researchAreas)
+			{
+				if (researchArea >= 0 && researchArea < 8)
+				{
+					message += sep;
+					sep = ", ";
+					message += themeNames[researchArea];
+				}
+			}
+		}
+
+		return message;
+	}
+
+}
+
+//------------------------------------------------------------------------------
+std::string getMessage (const cSavedReport& report, const cModel& model)
+{
+	if (auto* savedReportUnit = dynamic_cast<const cSavedReportUnit*>(&report))
+	{
+		auto pos = *savedReportUnit->getPosition();
+		const auto* unit = model.getUnitFromID (savedReportUnit->getUnitId());
+
+		return "[" + iToStr (pos.x()) + ", " + iToStr (pos.y()) + "] " + getText (*unit, *savedReportUnit);
+	}
+
+	switch (report.getType())
+	{
+		case eSavedReportType::MetalInsufficient:
+			return lngPack.i18n ("Text~Comp~Metal_Insufficient");
+		case eSavedReportType::FuelInsufficient:
+			return lngPack.i18n ("Text~Comp~Fuel_Insufficient");
+		case eSavedReportType::GoldInsufficient:
+			return lngPack.i18n ("Text~Comp~Gold_Insufficient");
+		case eSavedReportType::EnergyInsufficient:
+			return lngPack.i18n ("Text~Comp~Energy_Insufficient");
+		case eSavedReportType::TeamInsufficient:
+			return lngPack.i18n ("Text~Comp~Team_Insufficient");
+		case eSavedReportType::MetalLow:
+			return lngPack.i18n ("Text~Comp~Metal_Low");
+		case eSavedReportType::FuelLow:
+			return lngPack.i18n ("Text~Comp~Fuel_Low");
+		case eSavedReportType::GoldLow:
+			return lngPack.i18n ("Text~Comp~Gold_Low");
+		case eSavedReportType::EnergyLow:
+			return lngPack.i18n ("Text~Comp~Energy_Low");
+		case eSavedReportType::TeamLow:
+			return lngPack.i18n ("Text~Comp~Team_Low");
+		case eSavedReportType::EnergyToLow:
+			return lngPack.i18n ("Text~Comp~Energy_ToLow");
+		case eSavedReportType::EnergyIsNeeded:
+			return lngPack.i18n ("Text~Comp~Energy_IsNeeded");
+		case eSavedReportType::BuildingDisabled:
+			return lngPack.i18n ("Text~Comp~Building_Disabled");
+		case eSavedReportType::Producing_InsufficientMaterial:
+			return lngPack.i18n ("Text~Comp~Producing_InsufficientMaterial");
+		case eSavedReportType::Producing_PositionBlocked:
+			return lngPack.i18n("Text~Comp~Producing_PositionBlocked");
+		case eSavedReportType::TurnWait:
+			return lngPack.i18n ("Text~Comp~Turn_Wait");
+		case eSavedReportType::TurnAutoMove:
+			return lngPack.i18n ("Text~Comp~Turn_Automove");
+		case eSavedReportType::SuddenDeath:
+			return lngPack.i18n("Text~Comp~SuddenDeath");
+
+		case eSavedReportType::Chat:
+			return getMessage (model, static_cast<const cSavedReportChat&> (report));
+		case eSavedReportType::TurnStart:
+			return getMessage (model, static_cast<const cSavedReportTurnStart&> (report));
+		case eSavedReportType::HostCommand:
+			return getMessage (model, static_cast<const cSavedReportHostCommand&> (report));
+		case eSavedReportType::ResourceChanged:
+			return getMessage (model, static_cast<const cSavedReportResourceChanged&> (report));
+		case eSavedReportType::PlayerEndedTurn:
+			return getMessage (model, static_cast<const cSavedReportPlayerEndedTurn&> (report));
+		case eSavedReportType::LostConnection:
+			return getMessage (model, static_cast<const cSavedReportLostConnection&> (report));
+		case eSavedReportType::PlayerDefeated:
+			return getMessage (model, static_cast<const cSavedReportPlayerDefeated&> (report));
+		case eSavedReportType::PlayerWins:
+			return getMessage (model, static_cast<const cSavedReportPlayerWins&> (report));
+		case eSavedReportType::PlayerLeft:
+			return getMessage (model, static_cast<const cSavedReportPlayerLeft&> (report));
+		case eSavedReportType::Upgraded:
+			return getMessage (model, static_cast<const cSavedReportUpgraded&> (report));
+	}
+	return "";
+}
+

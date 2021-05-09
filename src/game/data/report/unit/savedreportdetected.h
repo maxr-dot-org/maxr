@@ -39,9 +39,6 @@ public:
 
 	eSavedReportType getType() const override;
 
-protected:
-	std::string getText (const cUnit&) const override;
-
 private:
 	template <typename T>
 	void serializeThis (T& archive)

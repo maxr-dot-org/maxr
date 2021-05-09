@@ -37,13 +37,15 @@ public:
 
 	eSavedReportType getType() const override;
 
-	std::string getMessage (const cModel&) const override;
-
 	bool isAlert() const override;
 
 	void serialize(cBinaryArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
 	void serialize(cXmlArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
 	void serialize(cTextArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
+
+	eResourceType getResourceType() const { return resourceType;}
+	int getAmount() const { return amount;}
+	bool isIncrease() const { return increase;}
 
 private:
 	template <typename T>

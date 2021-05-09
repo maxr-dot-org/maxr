@@ -19,9 +19,6 @@
 
 #include "game/data/report/unit/savedreportpathinterrupted.h"
 
-#include "game/data/units/unit.h"
-#include "utility/language.h"
-
 //------------------------------------------------------------------------------
 cSavedReportPathInterrupted::cSavedReportPathInterrupted (const cUnit& unit) :
 	cSavedReportUnit (unit)
@@ -31,10 +28,4 @@ cSavedReportPathInterrupted::cSavedReportPathInterrupted (const cUnit& unit) :
 eSavedReportType cSavedReportPathInterrupted::getType() const
 {
 	return eSavedReportType::PathInterrupted;
-}
-
-//------------------------------------------------------------------------------
-std::string cSavedReportPathInterrupted::getText (const cUnit&) const
-{
-	return lngPack.i18n ("Text~Comp~Path_interrupted");
 }

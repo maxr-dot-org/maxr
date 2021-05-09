@@ -19,11 +19,6 @@
 
 #include "game/data/report/special/savedreportresourcechanged.h"
 
-#include "game/data/player/player.h"
-#include "game/data/resourcetype.h"
-#include "utility/language.h"
-#include "utility/string/toString.h"
-
 //------------------------------------------------------------------------------
 cSavedReportResourceChanged::cSavedReportResourceChanged (eResourceType resourceType_, int amount_, bool increase_) :
 	resourceType (resourceType_),
@@ -35,30 +30,6 @@ cSavedReportResourceChanged::cSavedReportResourceChanged (eResourceType resource
 eSavedReportType cSavedReportResourceChanged::getType() const
 {
 	return eSavedReportType::ResourceChanged;
-}
-
-//------------------------------------------------------------------------------
-std::string cSavedReportResourceChanged::getMessage (const cModel&) const
-{
-	if (increase)
-	{
-		switch (resourceType)
-		{
-			case eResourceType::Gold: return lngPack.i18n ("Text~Comp~Adjustments_Gold_Increased", iToStr (amount));
-			case eResourceType::Oil: return lngPack.i18n ("Text~Comp~Adjustments_Fuel_Increased", iToStr (amount));
-			case eResourceType::Metal: return lngPack.i18n ("Text~Comp~Adjustments_Metal_Increased", iToStr (amount));
-		}
-	}
-	else
-	{
-		switch (resourceType)
-		{
-			case eResourceType::Gold: return lngPack.i18n ("Text~Comp~Adjustments_Gold_Decreased", iToStr (amount));
-			case eResourceType::Oil: return lngPack.i18n ("Text~Comp~Adjustments_Fuel_Decreased", iToStr (amount));
-			case eResourceType::Metal: return lngPack.i18n ("Text~Comp~Adjustments_Metal_Decreased", iToStr (amount));
-		}
-	}
-	throw std::runtime_error("Unknown resourceType " + toString (static_cast<int> (resourceType)));
 }
 
 //------------------------------------------------------------------------------
