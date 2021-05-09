@@ -24,87 +24,34 @@
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
-class cCheckBox;
-class cPushButton;
-class cFrame;
-class cReportUnitListViewItem;
-class cReportDisadvantagesListViewItem;
-class cReportMessageListViewItem;
-template<typename> class cListView;
-template<typename, typename> class cPlot;
-
-class cPlayer;
 class cCasualtiesTracker;
-class cUnit;
+class cCheckBox;
+class cFrame;
+class cModel;
+class cPlayer;
+class cPushButton;
+class cReportDisadvantagesListViewItem;
+class cReportUnitListViewItem;
+class cReportMessageListViewItem;
 class cSavedReport;
+class cStaticUnitData;
 class cTurnCounter;
 class cTurnTimeClock;
-class cGameSettings;
-class cUnitsData;
-class cStaticUnitData;
+class cUnit;
+
+template<typename> class cListView;
+template<typename, typename> class cPlot;
 
 class cWindowReports : public cWindow
 {
 public:
-	//TODO: pass model, instead of individual members of the model
-	cWindowReports (std::vector<std::shared_ptr<const cPlayer>> players,
+	cWindowReports (const cModel&,
 					std::shared_ptr<const cPlayer> localPlayer,
-					std::shared_ptr<const cCasualtiesTracker> casualties,
-					std::shared_ptr<const cTurnCounter> turnClock,
-					std::shared_ptr<const cTurnTimeClock> turnTimeClock,
-					std::shared_ptr<const cGameSettings> gameSettings,
-					const std::vector<std::unique_ptr<cSavedReport>>& reports,
-					std::shared_ptr<const cUnitsData> unitsData);
+					const std::vector<std::unique_ptr<cSavedReport>>& reports);
 
 	cSignal<void (cUnit&)> unitClickedSecondTime;
 	cSignal<void (const cSavedReport&)> reportClickedSecondTime;
 private:
-	cSignalConnectionManager signalConnectionManager;
-
-	cCheckBox* unitsRadioButton;
-	cCheckBox* disadvantagesRadioButton;
-	cCheckBox* scoreRadioButton;
-	cCheckBox* reportsRadioButton;
-
-	cCheckBox* planesCheckBox;
-	cCheckBox* groundCheckBox;
-	cCheckBox* seaCheckBox;
-	cCheckBox* stationaryCheckBox;
-
-	cCheckBox* produceCheckBox;
-	cCheckBox* fightCheckBox;
-	cCheckBox* damagedCheckBox;
-	cCheckBox* stealthCheckBox;
-
-	cPushButton* upButton;
-	cPushButton* downButton;
-
-	cFrame* unitsFrame;
-	cListView<cReportUnitListViewItem>* unitsList;
-
-	cFrame* disadvantagesFrame;
-	cListView<cReportDisadvantagesListViewItem>* disadvantagesList;
-
-	cFrame* scoreFrame;
-	cPlot<int, int>* scorePlot;
-
-	cFrame* reportsFrame;
-	cListView<cReportMessageListViewItem>* reportsList;
-
-	std::vector<std::shared_ptr<const cPlayer>> players;
-
-	std::shared_ptr<const cPlayer> localPlayer;
-
-	std::shared_ptr<const cCasualtiesTracker> casualties;
-	std::shared_ptr<const cTurnCounter> turnClock;
-	std::shared_ptr<const cGameSettings> gameSettings;
-	const std::vector<std::unique_ptr<cSavedReport>>& reports;
-	std::shared_ptr<const cUnitsData> unitsData;
-
-	bool unitListDirty;
-	bool disadvantagesListDirty;
-	bool reportsListDirty;
-
 	bool checkFilter (const cUnit& unit) const;
 	bool checkFilter (const cStaticUnitData& data) const;
 
@@ -122,6 +69,50 @@ private:
 
 	void handleUnitClicked (cReportUnitListViewItem& item);
 	void handleReportClicked (cReportMessageListViewItem& item);
+
+private:
+	cSignalConnectionManager signalConnectionManager;
+
+	cCheckBox* unitsRadioButton = nullptr;
+	cCheckBox* disadvantagesRadioButton = nullptr;
+	cCheckBox* scoreRadioButton = nullptr;
+	cCheckBox* reportsRadioButton = nullptr;
+
+	cCheckBox* planesCheckBox = nullptr;
+	cCheckBox* groundCheckBox = nullptr;
+	cCheckBox* seaCheckBox = nullptr;
+	cCheckBox* stationaryCheckBox = nullptr;
+
+	cCheckBox* produceCheckBox = nullptr;
+	cCheckBox* fightCheckBox = nullptr;
+	cCheckBox* damagedCheckBox = nullptr;
+	cCheckBox* stealthCheckBox = nullptr;
+
+	cPushButton* upButton = nullptr;
+	cPushButton* downButton = nullptr;
+
+	cFrame* unitsFrame = nullptr;
+	cListView<cReportUnitListViewItem>* unitsList;
+
+	cFrame* disadvantagesFrame = nullptr;
+	cListView<cReportDisadvantagesListViewItem>* disadvantagesList = nullptr;
+
+	cFrame* scoreFrame = nullptr;
+	cPlot<int, int>* scorePlot;
+
+	cFrame* reportsFrame = nullptr;
+	cListView<cReportMessageListViewItem>* reportsList = nullptr;
+
+	const cModel& model;
+
+	std::shared_ptr<const cPlayer> localPlayer;
+
+	//std::shared_ptr<const cTurnCounter> turnClock;
+	const std::vector<std::unique_ptr<cSavedReport>>& reports;
+
+	bool unitListDirty = true;
+	bool disadvantagesListDirty = true;
+	bool reportsListDirty = true;
 };
 
-#endif // ui_graphical_menu_windows_windowreports_windowreportsH
+#endif

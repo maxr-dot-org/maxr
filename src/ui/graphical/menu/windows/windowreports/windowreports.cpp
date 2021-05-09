@@ -20,6 +20,7 @@
 #include "ui/graphical/menu/windows/windowreports/windowreports.h"
 
 #include "game/data/gamesettings.h"
+#include "game/data/model.h"
 #include "game/data/player/player.h"
 #include "game/data/report/savedreport.h"
 #include "game/data/units/building.h"
@@ -62,32 +63,20 @@ std::string plural (int n, const std::string& sing, const std::string& plu)
 }
 
 //------------------------------------------------------------------------------
-cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> players_,
+cWindowReports::cWindowReports (const cModel& model,
 								std::shared_ptr<const cPlayer> localPlayer_,
-								std::shared_ptr<const cCasualtiesTracker> casualties_,
-								std::shared_ptr<const cTurnCounter> turnClock_,
-								std::shared_ptr<const cTurnTimeClock> turnTimeClock,
-								std::shared_ptr<const cGameSettings> gameSettings_,
-								const std::vector<std::unique_ptr<cSavedReport>>& reports_,
-								std::shared_ptr<const cUnitsData> unitsData) :
+								const std::vector<std::unique_ptr<cSavedReport>>& reports_) :
 	cWindow (LoadPCX (GFXOD_REPORTS)),
-	players (std::move (players_)),
+	model (model),
 	localPlayer (localPlayer_),
-	casualties (std::move (casualties_)),
-	turnClock (std::move (turnClock_)),
-	gameSettings (std::move (gameSettings_)),
-	reports (reports_),
-	unitsData (std::move(unitsData)),
-	unitListDirty (true),
-	disadvantagesListDirty (true),
-	reportsListDirty (true)
+	reports (reports_)
 {
 	auto* font = cUnicodeFont::font.get();
 
 	auto turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (527, 17), cPosition (527 + 57, 17 + 10))));
-	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
+	turnTimeClockWidget->setTurnTimeClock (model.getTurnTimeClock());
 
-	auto typeButtonGroup = addChild (std::make_unique<cRadioGroup> ());
+	auto typeButtonGroup = addChild (std::make_unique<cRadioGroup>());
 	unitsRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (524, 71), lngPack.i18n ("Text~Others~Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
 	disadvantagesRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (524, 71 + 29), lngPack.i18n ("Text~Others~Disadvantages_8cut"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
 	scoreRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (524, 71 + 29 * 2), lngPack.i18n ("Text~Others~Score"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
@@ -146,6 +135,7 @@ cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> play
 	unitsList->setItemDistance (6);
 	signalConnectionManager.connect (unitsList->itemClicked, std::bind (&cWindowReports::handleUnitClicked, this, _1));
 
+	const auto players = model.getPlayerList();
 	disadvantagesFrame = addChild (std::make_unique<cFrame> (frameArea));
 	disadvantagesList = disadvantagesFrame->addChild (std::make_unique<cListView<cReportDisadvantagesListViewItem>> (cBox<cPosition> (frameArea.getMinCorner() + cPosition (0, (players.size() / cReportDisadvantagesListViewItem::maxItemsInRow) + 1) * font->getFontHeight(), frameArea.getMaxCorner())));
 	const auto playerNameStartXPos = cReportDisadvantagesListViewItem::unitImageWidth + cReportDisadvantagesListViewItem::unitNameWidth;
@@ -161,6 +151,7 @@ cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> play
 
 	scoreFrame = addChild (std::make_unique<cFrame> (frameArea));
 
+	const auto gameSettings = model.getGameSettings();
 	if (gameSettings)
 	{
 		std::string gameEndString;
@@ -178,6 +169,7 @@ cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> play
 		}
 		scoreFrame->addChild (std::make_unique<cLabel> (cBox<cPosition> (scoreFrame->getPosition() + cPosition (5, 5), scoreFrame->getPosition() + cPosition (5 + 450, 5 + font->getFontHeight())), gameEndString));
 	}
+	const auto turnClock = model.getTurnCounter();
 	for (size_t i = 0; i < players.size(); ++i)
 	{
 		const auto& player = players[i];
@@ -357,6 +349,7 @@ void cWindowReports::rebuildUnitList()
 
 	if (localPlayer != nullptr)
 	{
+		const auto unitsData = model.getUnitsData();
 		const auto& vehicles = localPlayer->getVehicles();
 		for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
 		{
@@ -391,10 +384,12 @@ void cWindowReports::rebuildDisadvantagesList()
 
 	disadvantagesList->clearItems();
 
+	const auto casualties = model.getCasualtiesTracker();
 	if (!casualties) return;
 
 	const auto unitTypesWithLosses = casualties->getUnitTypesWithLosses();
-
+	const auto unitsData = model.getUnitsData();
+	const auto players = model.getPlayerList();
 	for (size_t i = 0; i < unitTypesWithLosses.size(); ++i)
 	{
 		const auto& unitId = unitTypesWithLosses[i];
@@ -430,6 +425,7 @@ void cWindowReports::rebuildReportsList()
 
 	reportsList->clearItems();
 
+	const auto unitsData = model.getUnitsData();
 	cReportMessageListViewItem* lastItem = nullptr;
 	for (size_t i = 0; i < reports.size(); ++i)
 	{
@@ -450,6 +446,8 @@ void cWindowReports::rebuildReportsList()
 //------------------------------------------------------------------------------
 void cWindowReports::initializeScorePlot()
 {
+	const auto turnClock = model.getTurnCounter();
+
 	if (!turnClock) return;
 
 	auto extrapolate = [ ] (const cPlayer & p, int c, int t)
@@ -470,6 +468,7 @@ void cWindowReports::initializeScorePlot()
 		minTurns += over;
 	}
 
+	const auto players = model.getPlayerList();
 	int maxScore = 0;
 	int minScore = std::numeric_limits<int>::max();
 	for (int turn = minTurns; turn <= maxTurns; ++turn)
@@ -506,6 +505,7 @@ void cWindowReports::initializeScorePlot()
 		marker.setColor (limitColor);
 	}
 
+	const auto gameSettings = model.getGameSettings();
 	if (gameSettings)
 	{
 		switch (gameSettings->victoryConditionType)

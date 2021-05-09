@@ -1511,7 +1511,9 @@ void cGameGuiController::showPreferencesDialog()
 //------------------------------------------------------------------------------
 void cGameGuiController::showReportsWindow()
 {
-	auto reportsWindow = application.show(std::make_shared<cWindowReports>(getPlayers(), getActivePlayer(), getCasualtiesTracker(), getTurnCounter(), getTurnTimeClock(), getGameSettings(), getSavedReports(getActivePlayer()->getId()), getUnitsData()));
+	if (!activeClient) return;
+
+	auto reportsWindow = application.show (std::make_shared<cWindowReports> (activeClient->getModel(), getActivePlayer(), getSavedReports (getActivePlayer()->getId())));
 
 	signalConnectionManager.connect (reportsWindow->unitClickedSecondTime, [this, reportsWindow] (cUnit & unit)
 	{
