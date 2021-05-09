@@ -25,8 +25,7 @@
 
 //------------------------------------------------------------------------------
 cSavedReportDisabled::cSavedReportDisabled (const cUnit& unit) :
-	cSavedReportUnit (unit),
-	unitName (getDisplayName (unit))
+	cSavedReportUnit (unit)
 {}
 
 //------------------------------------------------------------------------------
@@ -36,7 +35,7 @@ eSavedReportType cSavedReportDisabled::getType() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportDisabled::getText() const
+std::string cSavedReportDisabled::getText (const cUnit& unit) const
 {
-	return unitName + " " + lngPack.i18n ("Text~Comp~Disabled");
+	return getDisplayName (unit) + " " + lngPack.i18n ("Text~Comp~Disabled");
 }

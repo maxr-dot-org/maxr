@@ -25,8 +25,7 @@
 
 //------------------------------------------------------------------------------
 cSavedReportCapturedByEnemy::cSavedReportCapturedByEnemy(const cUnit& unit) :
-	cSavedReportUnit (unit),
-	unitName (getDisplayName (unit))
+	cSavedReportUnit (unit)
 {}
 
 //------------------------------------------------------------------------------
@@ -36,8 +35,8 @@ eSavedReportType cSavedReportCapturedByEnemy::getType() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportCapturedByEnemy::getText() const
+std::string cSavedReportCapturedByEnemy::getText (const cUnit& unit) const
 {
-	return lngPack.i18n ("Text~Comp~CapturedByEnemy", unitName);
+	return lngPack.i18n ("Text~Comp~CapturedByEnemy", getDisplayName (unit));
 }
 

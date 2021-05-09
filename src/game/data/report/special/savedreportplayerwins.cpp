@@ -19,12 +19,13 @@
 
 #include "game/data/report/special/savedreportplayerwins.h"
 
+#include "game/data/model.h"
 #include "game/data/player/player.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------
 cSavedReportPlayerWins::cSavedReportPlayerWins (const cPlayer& player) :
-	playerName (player.getName())
+	playerId (player.getId())
 {}
 
 //------------------------------------------------------------------------------
@@ -34,9 +35,10 @@ eSavedReportType cSavedReportPlayerWins::getType() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportPlayerWins::getMessage(const cUnitsData& unitsData) const
+std::string cSavedReportPlayerWins::getMessage (const cModel& model) const
 {
-	return lngPack.i18n ("Text~Multiplayer~Player") + " " + playerName + " " + lngPack.i18n ("Text~Comp~Wins");
+	const auto* player = model.getPlayer (playerId);
+	return lngPack.i18n ("Text~Multiplayer~Player") + " " + player->getName() + " " + lngPack.i18n ("Text~Comp~Wins");
 }
 
 //------------------------------------------------------------------------------

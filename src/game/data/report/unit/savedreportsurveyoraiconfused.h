@@ -22,8 +22,6 @@
 
 #include "game/data/report/savedreportunit.h"
 
-class cUnit;
-
 class cSavedReportSurveyorAiConfused : public cSavedReportUnit
 {
 public:
@@ -36,7 +34,7 @@ public:
 	eSavedReportType getType() const override;
 
 protected:
-	std::string getText() const override;
+	std::string getText (const cUnit&) const override;
 };
 
 #endif // game_data_reports_savedreportsurveyoraiconfusedH

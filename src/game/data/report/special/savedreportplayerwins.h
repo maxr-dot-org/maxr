@@ -40,18 +40,18 @@ public:
 
 	eSavedReportType getType() const override;
 
-	std::string getMessage(const cUnitsData& unitsData) const override;
+	std::string getMessage (const cModel&) const override;
 
 	bool isAlert() const override;
 
 private:
 	template <typename T>
-	void serializeThis(T& archive)
+	void serializeThis (T& archive)
 	{
-		archive & NVP(playerName);
+		archive & NVP (playerId);
 	}
 
-	std::string playerName;
+	int playerId;
 };
 
 #endif // game_data_reports_special_savedreportplayerwinsH

@@ -27,8 +27,6 @@
 //------------------------------------------------------------------------------
 cSavedReportDetected::cSavedReportDetected (const cUnit& unit) :
 	cSavedReportUnit (unit),
-	unitName (getDisplayName (unit)),
-	playerName (unit.getOwner() ? unit.getOwner()->getName() : ""),
 	submarine(unit.getStaticUnitData().isStealthOn & TERRAIN_SEA && unit.getStaticUnitData().canAttack)
 {}
 
@@ -39,7 +37,8 @@ eSavedReportType cSavedReportDetected::getType() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportDetected::getText() const
+std::string cSavedReportDetected::getText (const cUnit& unit) const
 {
-	return unitName + " (" + playerName + ") " + lngPack.i18n ("Text~Comp~Detected");
+	const auto playerName = unit.getOwner() ? unit.getOwner()->getName() : "";
+	return getDisplayName (unit) + " (" + playerName + ") " + lngPack.i18n ("Text~Comp~Detected");
 }

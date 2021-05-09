@@ -31,7 +31,7 @@
 #include "utility/serialization/xmlarchive.h"
 
 struct sID;
-class cUnitsData;
+class cModel;
 
 enum class eSavedReportType
 {
@@ -96,7 +96,7 @@ public:
 
 	virtual eSavedReportType getType() const = 0;
 
-	virtual std::string getMessage(const cUnitsData&) const = 0;
+	virtual std::string getMessage (const cModel&) const = 0;
 
 	virtual bool isAlert() const = 0;
 

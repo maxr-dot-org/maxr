@@ -19,6 +19,7 @@
 
 #include "ui/graphical/menu/widgets/special/reportmessagelistviewitem.h"
 
+#include "game/data/model.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/report/savedreport.h"
@@ -32,12 +33,12 @@
 #include "utility/color.h"
 
 //------------------------------------------------------------------------------
-cReportMessageListViewItem::cReportMessageListViewItem (const cSavedReport& report_, const cUnitsData& unitsData) :
+cReportMessageListViewItem::cReportMessageListViewItem (const cSavedReport& report_, const cModel& model) :
 	report (report_)
 {
 	const int unitImageSize = 32;
 
-	auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImageSize, 0), cPosition (450, 0)), report.getMessage(unitsData), FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
+	auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImageSize, 0), cPosition (450, 0)), report.getMessage (model), FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
 	textLabel->setWordWrap (true);
 	textLabel->resizeToTextHeight();
 	textLabel->setConsumeClick (false);
@@ -53,7 +54,7 @@ cReportMessageListViewItem::cReportMessageListViewItem (const cSavedReport& repo
 		SDL_FillRect (unitSurface.get(), nullptr, 0x00FF00FF);
 		SDL_Rect dest = {0, 0, 0, 0};
 
-		const cStaticUnitData& data = unitsData.getStaticUnitData(unitId);
+		const cStaticUnitData& data = model.getUnitsData()->getStaticUnitData (unitId);
 		if (unitId.isAVehicle())
 		{
 			const float zoomFactor = unitImageSize / 64.0f;

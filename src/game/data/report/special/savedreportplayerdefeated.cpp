@@ -34,7 +34,7 @@ eSavedReportType cSavedReportPlayerDefeated::getType() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportPlayerDefeated::getMessage(const cUnitsData& unitsData) const
+std::string cSavedReportPlayerDefeated::getMessage (const cModel&) const
 {
 	return lngPack.i18n ("Text~Multiplayer~Player") + " " + playerName + " " + lngPack.i18n ("Text~Comp~Defeated");
 }

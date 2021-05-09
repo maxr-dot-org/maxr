@@ -22,8 +22,6 @@
 
 #include "game/data/report/savedreportunit.h"
 
-class cUnit;
-
 class cSavedReportAttacked : public cSavedReportUnit
 {
 public:
@@ -32,26 +30,12 @@ public:
 	explicit cSavedReportAttacked(T& archive) :
 		cSavedReportUnit(archive)
 	{
-		serializeThis(archive);
 	}
-
-	void serialize(cBinaryArchiveIn& archive) override { cSavedReportUnit::serialize(archive); serializeThis(archive); }
-	void serialize(cXmlArchiveIn& archive) override { cSavedReportUnit::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cSavedReportUnit::serialize(archive); serializeThis(archive); }
 
 	eSavedReportType getType() const override;
 
 protected:
-	std::string getText() const override;
-
-private:
-	template <typename T>
-	void serializeThis(T& archive)
-	{
-		archive & NVP(unitName);
-	}
-
-	std::string unitName;
+	std::string getText (const cUnit&) const override;
 };
 
 #endif // game_data_reports_savedreportattackedH

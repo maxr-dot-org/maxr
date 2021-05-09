@@ -36,7 +36,7 @@ public:
 		serializeThis(archive);
 	}
 
-	std::string getMessage(const cUnitsData& unitsData) const override;
+	std::string getMessage (const cModel&) const override;
 
 	bool isAlert() const override;
 
@@ -49,17 +49,19 @@ public:
 	std::optional<cPosition> getPosition() const override;
 
 protected:
-	virtual std::string getText() const = 0;
+	virtual std::string getText (const cUnit&) const = 0;
 
 private:
 	template <typename T>
 	void serializeThis(T& archive)
 	{
-		archive & NVP(unitId);
-		archive & NVP(position);
+		archive & NVP (unitId);
+		archive & NVP (unitTypeId);
+		archive & NVP (position);
 	}
 
-	sID unitId;
+	int unitId;
+	sID unitTypeId;
 	cPosition position;
 };
 

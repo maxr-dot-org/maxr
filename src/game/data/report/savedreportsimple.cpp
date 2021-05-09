@@ -35,7 +35,7 @@ eSavedReportType cSavedReportSimple::getType() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportSimple::getMessage(const cUnitsData& unitsData) const
+std::string cSavedReportSimple::getMessage (const cModel&) const
 {
 	switch (type)
 	{

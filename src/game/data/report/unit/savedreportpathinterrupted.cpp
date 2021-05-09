@@ -34,7 +34,7 @@ eSavedReportType cSavedReportPathInterrupted::getType() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportPathInterrupted::getText() const
+std::string cSavedReportPathInterrupted::getText (const cUnit&) const
 {
 	return lngPack.i18n ("Text~Comp~Path_interrupted");
 }

@@ -1858,17 +1858,19 @@ void cGameGuiController::handleReportForActivePlayer (const cSavedReport& report
 	{
 		savedReportPosition = *position;
 
-		gameGui->getGameMessageList().addMessage (report.getMessage(*getUnitsData()) + " (" + KeysList.keyJumpToAction.toString() + ")", eGameMessageListViewItemBackgroundColor::LightGray);
+		if (activeClient)
+			gameGui->getGameMessageList().addMessage (report.getMessage (activeClient->getModel()) + " (" + KeysList.keyJumpToAction.toString() + ")", eGameMessageListViewItemBackgroundColor::LightGray);
 	}
 	else
 	{
-		gameGui->getGameMessageList().addMessage(report.getMessage(*getUnitsData()), report.isAlert() ? eGameMessageListViewItemBackgroundColor::Red : eGameMessageListViewItemBackgroundColor::DarkGray);
+		if (activeClient)
+			gameGui->getGameMessageList().addMessage (report.getMessage (activeClient->getModel()), report.isAlert() ? eGameMessageListViewItemBackgroundColor::Red : eGameMessageListViewItemBackgroundColor::DarkGray);
 		if (report.isAlert()) soundManager->playSound (std::make_shared<cSoundEffect> (eSoundEffectType::EffectAlert, SoundData.SNDQuitsch));
 	}
 
 	playSound (*soundManager, report);
 
-	if (cSettings::getInstance().isDebug()) Log.write (report.getMessage(*getUnitsData()), cLog::eLOG_TYPE_DEBUG);
+	if (cSettings::getInstance().isDebug() && activeClient) Log.write (report.getMessage (activeClient->getModel()), cLog::eLOG_TYPE_DEBUG);
 }
 
 //------------------------------------------------------------------------------

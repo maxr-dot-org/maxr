@@ -425,7 +425,6 @@ void cWindowReports::rebuildReportsList()
 
 	reportsList->clearItems();
 
-	const auto unitsData = model.getUnitsData();
 	cReportMessageListViewItem* lastItem = nullptr;
 	for (size_t i = 0; i < reports.size(); ++i)
 	{
@@ -435,7 +434,7 @@ void cWindowReports::rebuildReportsList()
 		{
 			if (savedReport->getType() == eSavedReportType::Chat) continue;
 
-			lastItem = reportsList->addItem (std::make_unique<cReportMessageListViewItem> (*savedReport, *unitsData));
+			lastItem = reportsList->addItem (std::make_unique<cReportMessageListViewItem> (*savedReport, model));
 		}
 	}
 	if (lastItem) reportsList->scrollToItem (lastItem);

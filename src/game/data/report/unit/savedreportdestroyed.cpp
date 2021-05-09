@@ -25,8 +25,7 @@
 
 //------------------------------------------------------------------------------
 cSavedReportDestroyed::cSavedReportDestroyed (const cUnit& unit) :
-	cSavedReportUnit (unit),
-	unitName (getDisplayName (unit))
+	cSavedReportUnit (unit)
 {}
 
 //------------------------------------------------------------------------------
@@ -36,7 +35,7 @@ eSavedReportType cSavedReportDestroyed::getType() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportDestroyed::getText() const
+std::string cSavedReportDestroyed::getText (const cUnit& unit) const
 {
-	return unitName + " " + lngPack.i18n ("Text~Comp~Destroyed");
+	return getDisplayName (unit) + " " + lngPack.i18n ("Text~Comp~Destroyed");
 }

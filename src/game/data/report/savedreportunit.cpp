@@ -19,19 +19,21 @@
 
 #include "game/data/report/savedreportunit.h"
 
+#include "game/data/model.h"
 #include "game/data/units/unit.h"
 #include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
 cSavedReportUnit::cSavedReportUnit (const cUnit& unit) :
-	unitId (unit.data.getId()),
+	unitId (unit.getId()),
+	unitTypeId (unit.data.getId()),
 	position (unit.getPosition())
 {}
 
 //------------------------------------------------------------------------------
 const sID& cSavedReportUnit::getUnitId() const
 {
-	return unitId;
+	return unitTypeId;
 }
 
 //------------------------------------------------------------------------------
@@ -41,9 +43,10 @@ std::optional<cPosition> cSavedReportUnit::getPosition() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportUnit::getMessage(const cUnitsData& unitsData) const
+std::string cSavedReportUnit::getMessage (const cModel& model) const
 {
-	return "[" + iToStr (position.x()) + ", " + iToStr (position.y()) + "] " + getText();
+	const auto* unit = model.getUnitFromID (unitId);
+	return "[" + iToStr (position.x()) + ", " + iToStr (position.y()) + "] " + getText (*unit);
 }
 
 //------------------------------------------------------------------------------

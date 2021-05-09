@@ -22,8 +22,6 @@
 
 #include "game/data/report/savedreportunit.h"
 
-class cUnit;
-
 class cSavedReportDetected : public cSavedReportUnit
 {
 public:
@@ -42,19 +40,15 @@ public:
 	eSavedReportType getType() const override;
 
 protected:
-	std::string getText() const override;
+	std::string getText (const cUnit&) const override;
 
 private:
 	template <typename T>
 	void serializeThis (T& archive)
 	{
-		archive & NVP (unitName);
-		archive & NVP (playerName);
 		archive & NVP (submarine);
 	}
 public:
-	std::string unitName;
-	std::string playerName;
 	bool submarine;
 };
 

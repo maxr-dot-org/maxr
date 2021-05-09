@@ -19,6 +19,7 @@
 
 #include "savedreportturnstart.h"
 
+#include "game/data/model.h"
 #include "ui/translations.h"
 #include "utility/language.h"
 #include "utility/string/toString.h"
@@ -37,7 +38,7 @@ eSavedReportType cSavedReportTurnStart::getType() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportTurnStart::getMessage(const cUnitsData& unitsData) const
+std::string cSavedReportTurnStart::getMessage (const cModel& model) const
 {
 	std::string message = lngPack.i18n ("Text~Comp~Turn_Start") + " " + iToStr (turn);
 
@@ -51,7 +52,7 @@ std::string cSavedReportTurnStart::getMessage(const cUnitsData& unitsData) const
 
 			if (i > 0) message += ", ";
 			totalUnitsCount += entry.count;
-			auto name = getStaticUnitName (unitsData.getStaticUnitData (entry.type));
+			auto name = getStaticUnitName (model.getUnitsData()->getStaticUnitData (entry.type));
 			message += entry.count > 1 ? iToStr(entry.count) + " " + name : name;
 		}
 		// TODO: Plural rules are language dependant

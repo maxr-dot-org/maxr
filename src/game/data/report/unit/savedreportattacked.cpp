@@ -25,8 +25,7 @@
 
 //------------------------------------------------------------------------------
 cSavedReportAttacked::cSavedReportAttacked (const cUnit& unit) :
-	cSavedReportUnit (unit),
-	unitName (getDisplayName (unit))
+	cSavedReportUnit (unit)
 {}
 
 //------------------------------------------------------------------------------
@@ -36,7 +35,7 @@ eSavedReportType cSavedReportAttacked::getType() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSavedReportAttacked::getText() const
+std::string cSavedReportAttacked::getText (const cUnit& unit) const
 {
-	return unitName + " " + lngPack.i18n ("Text~Comp~Attacked");
+	return getDisplayName (unit) + " " + lngPack.i18n ("Text~Comp~Attacked");
 }

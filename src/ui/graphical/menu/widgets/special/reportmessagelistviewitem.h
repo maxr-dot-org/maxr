@@ -21,15 +21,15 @@
 #define ui_graphical_menu_widgets_special_reportmessagelistviewitemH
 
 #include "ui/graphical/menu/widgets/abstractlistviewitem.h"
-#include "game/data/units/unitdata.h"
 
 class cImage;
+class cModel;
 class cSavedReport;
 
 class cReportMessageListViewItem : public cAbstractListViewItem
 {
 public:
-	explicit cReportMessageListViewItem (const cSavedReport& report, const cUnitsData& unitsData);
+	explicit cReportMessageListViewItem (const cSavedReport&, const cModel&);
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 
