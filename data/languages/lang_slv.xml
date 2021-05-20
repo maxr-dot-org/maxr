@@ -126,9 +126,9 @@
 			<Hot ENG="Hot" localized="Oboroži"/>
 			<HotSeat_Load ENG="Load Hot Seat" localized="Naloži Vroči stol"/>
 			<HotSeat_New ENG="New Hot Seat" localized="Začni Vroči stol"/>
-			<Included ENG="Included" localized="Vključeno"/>
+			<Included ENG="Included:" localized="Vključeno:"/>
 			<Info_7 ENG="Info" localized="Info"/>
-			<Limited_To ENG="Limited to" localized="Omejeno na"/>
+			<Limited_To ENG="Limited to:" localized="Omejeno na:"/>
 			<Load ENG="Load" localized="Naloži"/>
 			<Load_7 ENG="Load" localized="Naloži"/>
 			<Log ENG="Log" localized="Dnevnik"/>
@@ -245,7 +245,7 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="Strežnik želi da: Ne potrdiš pripravljenosti"/>
 			<Go_Ready ENG="Ready to go" localized="Pripravljen"/>
 			<Go_Ready_No ENG="not ready to go" localized="nisem pripravljen"/>
-			<Host_command ENG="Host entered following command" localized=""/><!--TODO: translation needed-->
+			<Host_command ENG="Host entered following command '%s'" localized=""/><!--TODO: translation needed-->
 			<Lost_Connection ENG="Lost connection to %s." localized="Povezava z %s je bila prekinjena."/>
 			<Map_NoSet ENG="--no map selected--" localized="--brez nastavitev pokrajine--"/>
 			<MapDL_Cancel ENG="Aborted" localized="Prekinjeno"/>
@@ -261,18 +261,17 @@
 			<Network_Closed ENG="Connection closed" localized="Povezava zaključena"/>
 			<Network_Connected ENG="Connected" localized="Povezan"/>
 			<Network_Connected_Not ENG="Not connected" localized="Brez povezave"/>
-			<Network_Connecting ENG="Connecting to " localized="Povezovanje na "/>
-			<Network_Error_Connect ENG="Could not connect to " localized="Ne morem se povezati na "/>
+			<Network_Connecting ENG="Connecting to %s" localized="Povezovanje na %s"/>
+			<Network_Error_Connect ENG="Could not connect to server" localized="Ne morem se povezati na strežnika"/>
 			<Network_Error_Socket ENG="Error opening socket" localized="Napaka pri odpiranju"/>
 			<Network_New ENG="New connection" localized="Nova povezava"/>
-			<Network_Open ENG="Game open" localized="Igra odprta"/>
+			<Network_Open ENG="Game open (Port: %s)" localized="Igra odprta (Vrata: %s)"/>
 			<Network_Syncing ENG="Synchronizing..." localized="Sinhronizacija..."/>
 			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Ne morem naložiti pokrajine %s. Nisi pripravljen."/>
 			<No_Response ENG="Waiting for network response from player %s" localized="Čakam na mrežni odziv igralca %s"/>
 			<Not_Ready ENG="is not ready" localized="ni pripravljen"/>
 			<Option_NoSet ENG="--no options set--" localized="--možnosti niso nastavljene--"/>
 			<Pause ENG="Game has been paused." localized="Igra je bila ustavljena."/>
-			<Player ENG="Player" localized="Igralec"/>
 			<Player1 ENG="Player 1" localized="Igralec 1"/>
 			<Player2 ENG="Player 2" localized="Igralec 2"/>
 			<Player3 ENG="Player 3" localized="Igralec 3"/>
@@ -291,7 +290,6 @@
 			<Player_Name_Taken ENG="Playername already in use, please select an other name to be unique" localized="Ime igralca je že oddano. Izberite drugačno ime."/>
 			<Player_Turn ENG="%s:\nBegin turn." localized="%s:\nZačni potezo."/>
 			<Player_Turn_End ENG="%s ended turn" localized="%s je končal potezo"/>
-			<Player_Twice ENG="Playername exists twice: " localized="Podvojeno ime igralca: "/><!-- not used?! -->
 			<Player_Wrong ENG="Missing a correct player&apos;s name" localized="Manjka pravilno ime igralca"/>
 			<Reconnect ENG="This game is running already.\nIf you have lost connection to the game, you can reconnect.\n\nDo you want to reconnect?" localized="Igra je že v teku.\nČe je bila prekinjena povezava, se lahko priključiš znova.\n\nSe želiš priključiti?"/>
 			<Reconnect_Already_Connected ENG="Reconnecting forbidden by server. A player with your name is already connected."/>
@@ -312,13 +310,13 @@
 			<Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by %s"/>
 			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by %s" localized="Popravek: izkop surovin je zmanjšan za %s"/>
 			<Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by %s"/>
-			<Attacked ENG="is under attack" localized="je napadena"/>
+			<Attacked ENG="%s is under attack" localized="%s je napadena"/>
 			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s napada sovražnika"/>
 			<AttackingStatusStr ENG="attacking" localized="napada"/>
 			<Building_Disabled ENG="Building turned off" localized="Zgradba je izključena"/>
 			<CapturedByEnemy ENG="%s has been captured by the enemy" localized="%s je sovražnik zajel"/>
 			<Cheat ENG="used cheat" localized="uporaba goljufije"/>
-			<Clearing ENG="clearing" localized="Čiščenje"/><!--TODO: review needed (english string has been changed)-->
+			<Clearing ENG="clearing (%s) " localized="Čiščenje (%s)"/><!--TODO: review needed (english string has been changed)-->
 			<Clearing_Fin ENG="clearing done" localized="Čiščenje končano"/>
 			<Clearing_Mine ENG="clearing mines" localized="Čisti mine"/>
 			<CommandoRank_Average ENG="Average" localized="Povprečen"/>
@@ -328,9 +326,9 @@
 			<CommandoRank_Greenhorn ENG="Greenhorn" localized="Zelenec"/>
 			<CommandoRank_Veteran ENG="Veteran" localized="Veteran"/>
 			<Dated ENG="dated" localized="datiran"/>
-			<Defeated ENG="defeated" localized="poražen"/>
+			<Defeated ENG="Player %s defeated" localized="Igralec %s poražen"/>
 			<Description ENG="Description" localized="Opis"/>
-			<Destroyed ENG="destroyed" localized="uničen"/>
+			<Destroyed ENG="%s destroyed" localized="%s uničen"/>
 			<Detected ENG="detected" localized="zaznan"/>
 			<Disabled ENG="disabled" localized="onemogočeno delovanje"/>
 			<EcoSphere ENG="Eco-sphere" localized="Eko-sfera"/>
@@ -381,13 +379,13 @@
 			<Themes ENG="Themes" localized="Teme"/>
 			<Turn_5 ENG="Turn" localized="Potezo"/>
 			<Turn_Automove ENG="Executing remaining movements" localized="Izvajanje preostalih premikov"/>
-			<Turn_Start ENG="Start turn" localized="Začni potezo"/>
+			<Turn_Start ENG="Start turn %s" localized="Začni potezo %s"/>
 			<Turn_Wait ENG="Please wait until all movements are completed" localized="Prosim počakaj, da se zaključijo vsi premiki"/>
 			<Turns ENG="Turns" localized="Potez"/>
 			<Upgrades_Done ENG="Upgraded" localized="Nadgrajen"/>
 			<Upgrades_Done2 ENG="unit(s) of type %s" localized="enote tipa %s"/>
 			<Waits ENG="waiting" localized="v mirovanju"/>
-			<Wins ENG="wins"/>
+			<Wins ENG="Player %s wins" localized=""/>
 			<Working ENG="working" localized="v delovanju"/>
 		</Comp>
 		<Error_Messages>

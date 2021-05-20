@@ -55,7 +55,7 @@ void cWindowNetworkLobbyClient::bindConnections (cLobbyClient& lobbyClient)
 		const auto& ip = getIp();
 		const auto& port = getPort();
 
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Connecting") + ip + ":" + iToStr (port)); // e.g. Connecting to 127.0.0.1:55800
+		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Connecting", ip + ":" + iToStr (port))); // e.g. Connecting to 127.0.0.1:55800
 		disablePortEdit();
 		disableIpEdit();
 

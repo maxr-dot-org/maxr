@@ -185,7 +185,7 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 			addInfoEntry (lngPack.i18n ("Text~Multiplayer~Reconnect_Already_Connected"));
 			break;
 		default:
-			addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Error_Connect", "server"));
+			addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Error_Connect"));
 			break;
 		}
 		enablePortEdit();

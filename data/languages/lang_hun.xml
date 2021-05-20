@@ -126,9 +126,9 @@
 			<Hot ENG="Hot" localized="Hot"/>
 			<HotSeat_Load ENG="Load Hot Seat" localized="Hot Seat Betöltése"/>
 			<HotSeat_New ENG="New Hot Seat" localized="Új Hot Seat"/>
-			<Included ENG="Included" localized="Belevesz"/>
+			<Included ENG="Included:" localized="Belevesz:"/>
 			<Info_7 ENG="Info" localized="Infó"/>
-			<Limited_To ENG="Limited to" localized="Korlátoz"/>
+			<Limited_To ENG="Limited to:" localized="Korlátoz:"/>
 			<Load ENG="Load" localized="Behívás"/>
 			<Load_7 ENG="Load" localized="Betöltés"/>
 			<Log ENG="Log" localized="Log"/>
@@ -245,7 +245,7 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="A Host állapota: Nem áll készen"/>
 			<Go_Ready ENG="Ready to go" localized="Indulhat a játék"/>
 			<Go_Ready_No ENG="not ready to go" localized="nem indulhat a játék"/>
-			<Host_command ENG="Host entered following command" localized=""/><!--TODO: translation needed-->
+			<Host_command ENG="Host entered following command '%s'" localized=""/><!--TODO: translation needed-->
 			<Lost_Connection ENG="Lost connection to %s." localized="A kapcsolat megszakadt %s gépével."/>
 			<Map_NoSet ENG="--no map selected--" localized="--nincs Térkép kiválasztva--"/><!--TODO: review needed (english string has been changed)-->
 			<MapDL_Cancel ENG="Aborted" localized="Visszavonva"/>
@@ -261,26 +261,25 @@
 			<Network_Closed ENG="Connection closed" localized="A kapcsolat bezárult"/>
 			<Network_Connected ENG="Connected" localized="Csatlakozva"/>
 			<Network_Connected_Not ENG="Not connected" localized="Nincs kapcsolat"/>
-			<Network_Connecting ENG="Connecting to " localized="Csatlakozás: "/>
-			<Network_Error_Connect ENG="Could not connect to " localized="Nem lehet hozzá csatlakozni: "/>
+			<Network_Connecting ENG="Connecting to %s" localized="Csatlakozás: %s"/>
+			<Network_Error_Connect ENG="Could not connect to server" localized="Nem lehet hozzá csatlakozni: szerver"/>
 			<Network_Error_Socket ENG="Error opening socket" localized="Hiba - a socket nem megnyitható"/>
 			<Network_New ENG="New connection" localized="Új csatlakozás"/>
-			<Network_Open ENG="Game open" localized="Játék megnyitva"/>
+			<Network_Open ENG="Game open (Port: %s)" localized="Játék megnyitva (Port: %s)"/>
 			<Network_Syncing ENG="Synchronizing..." localized="Szinkronizálás..."/>
 			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="A %s térkép nem tölthető be. Így nem indíthatod a játékot."/>
 			<No_Response ENG="Waiting for network response from player %s" localized=""/><!--TODO: translation needed-->
 			<Not_Ready ENG="is not ready" localized="nem készült el"/>
 			<Option_NoSet ENG="--no options set--" localized="--nincsenek paraméterek beállítva--"/>
 			<Pause ENG="Game has been paused." localized=""/><!--TODO: translation needed-->
-			<Player ENG="Player" localized="Játékos"/>
-			<Player1 ENG="Player 1" localized=""/><!--TODO: translation needed-->
-			<Player2 ENG="Player 2" localized=""/><!--TODO: translation needed-->
-			<Player3 ENG="Player 3" localized=""/><!--TODO: translation needed-->
-			<Player4 ENG="Player 4" localized=""/><!--TODO: translation needed-->
-			<Player5 ENG="Player 5" localized=""/><!--TODO: translation needed-->
-			<Player6 ENG="Player 6" localized=""/><!--TODO: translation needed-->
-			<Player7 ENG="Player 7" localized=""/><!--TODO: translation needed-->
-			<Player8 ENG="Player 8" localized=""/><!--TODO: translation needed-->
+			<Player1 ENG="Player 1" localized="Játékos 1"/><!--TODO: translation needed-->
+			<Player2 ENG="Player 2" localized="Játékos 2"/><!--TODO: translation needed-->
+			<Player3 ENG="Player 3" localized="Játékos 3"/><!--TODO: translation needed-->
+			<Player4 ENG="Player 4" localized="Játékos 4"/><!--TODO: translation needed-->
+			<Player5 ENG="Player 5" localized="Játékos 5"/><!--TODO: translation needed-->
+			<Player6 ENG="Player 6" localized="Játékos 6"/><!--TODO: translation needed-->
+			<Player7 ENG="Player 7" localized="Játékos 7"/><!--TODO: translation needed-->
+			<Player8 ENG="Player 8" localized="Játékos 8"/><!--TODO: translation needed-->
 			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum." localized="Kérlek állítsd be a játékosok számát. HotSeat játék esetén legalább két emberi játékos kell. Maximum 8 játékos lehet."/>
 			<Player_Color_Taken ENG="Playercolor already in use, please select an other color to be unique" localized=""/><!--TODO: translation needed-->
 			<Player_Few ENG="Not enough players!" localized="Nincs elég játékos!"/>
@@ -291,7 +290,6 @@
 			<Player_Name_Taken ENG="Playername already in use, please select an other name to be unique" localized=""/><!--TODO: translation needed-->
 			<Player_Turn ENG="%s:\nBegin turn." localized="%s köre következik"/><!--TODO: review needed (english string has been changed)-->
 			<Player_Turn_End ENG="%s ended turn" localized="%s befejezte a körét"/>
-			<Player_Twice ENG="Playername exists twice: " localized="Duplán szereplő játékosnév: "/>
 			<Player_Wrong ENG="Missing a correct player&apos;s name" localized="Az egyik játékosnak nem megfelelő a neve!"/>
 			<Reconnect ENG="This game is running already.\nIf you have lost connection to the game, you can reconnect.\n\nDo you want to reconnect?" localized="Ez a játék már fut. Ha megszakadt a kapcsolatod a játékkal, újracsatlakozhatsz. Szeretnél újra csatlakozni?"/><!--TODO: review needed (english string has been changed)-->
 			<Reconnect_Already_Connected ENG="Reconnecting forbidden by server. A player with your name is already connected."/>
@@ -312,13 +310,13 @@
 			<Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by %s"/>
 			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by %s" localized="Módosítás történt, csökkent a nyersanyag kitermelés: %s"/><!--TODO: review needed (english string has been changed)-->
 			<Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by %s"/>
-			<Attacked ENG="is under attack" localized="támadás alatt áll"/>
+			<Attacked ENG="%s is under attack" localized="%s támadás alatt áll"/>
 			<AttackingEnemy ENG="%s is attacking the enemy" localized=""/><!--TODO: translation needed-->
 			<AttackingStatusStr ENG="attacking" localized=""/><!--TODO: translation needed-->
 			<Building_Disabled ENG="Building turned off" localized="Épület működésképtelen"/><!--TODO: review needed (english string has been changed)-->
 			<CapturedByEnemy ENG="%s has been captured by the enemy" localized=""/><!--TODO: translation needed-->
 			<Cheat ENG="used cheat" localized="csaláskód:"/>
-			<Clearing ENG="clearing" localized="Takarít"/><!--TODO: review needed (english string has been changed)-->
+			<Clearing ENG="clearing (%s)" localized="Takarít (%s)"/><!--TODO: review needed (english string has been changed)-->
 			<Clearing_Fin ENG="clearing done" localized="elkészült a takarítás"/>
 			<Clearing_Mine ENG="clearing mines" localized="aknát szed fel"/>
 			<CommandoRank_Average ENG="Average" localized="Középszerű"/>
@@ -328,9 +326,9 @@
 			<CommandoRank_Greenhorn ENG="Greenhorn" localized="Zöldfülű"/>
 			<CommandoRank_Veteran ENG="Veteran" localized="Veterán"/>
 			<Dated ENG="dated" localized="elavult"/>
-			<Defeated ENG="defeated" localized="vereséget szenvedett"/>
+			<Defeated ENG="Player %s defeated" localized="Játékos %s vereséget szenvedett"/>
 			<Description ENG="Description" localized="Leírás"/>
-			<Destroyed ENG="destroyed" localized="megsemmisült"/>
+			<Destroyed ENG="%s destroyed" localized="%s megsemmisült"/>
 			<Detected ENG="detected" localized="észlelve"/>
 			<Disabled ENG="disabled" localized="kikapcsolva"/>
 			<EcoSphere ENG="Eco-sphere" localized="ökoszféra"/><!--TODO: review needed (english string has been changed)-->
@@ -381,13 +379,13 @@
 			<Themes ENG="Themes" localized="Határ"/>
 			<Turn_5 ENG="Turn" localized="Kör"/>
 			<Turn_Automove ENG="Executing remaining movements" localized="Fennmaradó lépések végrehajtása"/>
-			<Turn_Start ENG="Start turn" localized="Kör kezdése"/>
+			<Turn_Start ENG="Start turn %s" localized="Kör kezdése %s"/>
 			<Turn_Wait ENG="Please wait until all movements are completed" localized="Kérlek várd meg, míg az összes lépés végrehajtódik"/>
 			<Turns ENG="Turns" localized="Kör"/>
 			<Upgrades_Done ENG="Upgraded" localized="Felfejlesztve"/>
 			<Upgrades_Done2 ENG="unit(s) of type %s" localized="egység %s típusúvá"/>
 			<Waits ENG="waiting" localized="várakozik"/>
-			<Wins ENG="wins"/>
+			<Wins ENG="Player %s wins" localized=""/>
 			<Working ENG="working" localized="működik"/>
 		</Comp>
 		<Error_Messages>

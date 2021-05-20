@@ -472,10 +472,7 @@ std::string getStatusStr (const cVehicle& vehicle, const cPlayer* player, const 
 	{
 		if (vehicle.getClearingTurns())
 		{
-			std::string sText;
-			sText = lngPack.i18n ("Text~Comp~Clearing") + " (";
-			sText += iToStr (vehicle.getClearingTurns()) + ")";
-			return sText;
+			return lngPack.i18n ("Text~Comp~Clearing", iToStr (vehicle.getClearingTurns()));
 		}
 		else
 			return lngPack.i18n ("Text~Comp~Clearing_Fin");
@@ -535,13 +532,13 @@ namespace
 		switch (report.getType())
 		{
 			case eSavedReportType::Attacked:
-				return getDisplayName (unit) + " " + lngPack.i18n ("Text~Comp~Attacked");
+				return lngPack.i18n ("Text~Comp~Attacked", getDisplayName (unit));
 			case eSavedReportType::AttackingEnemy:
 				return lngPack.i18n ("Text~Comp~AttackingEnemy", getDisplayName (unit));
 			case eSavedReportType::CapturedByEnemy:
 				return lngPack.i18n ("Text~Comp~CapturedByEnemy", getDisplayName (unit));
 			case eSavedReportType::Destroyed:
-				return getDisplayName (unit) + " " + lngPack.i18n ("Text~Comp~Destroyed");
+				return lngPack.i18n ("Text~Comp~Destroyed", getDisplayName (unit));
 			case eSavedReportType::Detected:
 				return getText (unit, static_cast<const cSavedReportDetected&> (report));
 			case eSavedReportType::Disabled:
@@ -563,7 +560,7 @@ namespace
 	//------------------------------------------------------------------------------
 	std::string getMessage (const cModel&, const cSavedReportHostCommand& report)
 	{
-		return lngPack.i18n ("Text~Multiplayer~Host_command") + " '" + report.getCommand() + "'";
+		return lngPack.i18n ("Text~Multiplayer~Host_command", report.getCommand());
 	}
 
 	//------------------------------------------------------------------------------
@@ -576,7 +573,7 @@ namespace
 	std::string getMessage (const cModel& model, const cSavedReportPlayerDefeated& report)
 	{
 		const auto* player = model.getPlayer (report.getPlayerId());
-		return lngPack.i18n ("Text~Multiplayer~Player") + " " + player->getName() + " " + lngPack.i18n ("Text~Comp~Defeated");
+		return lngPack.i18n ("Text~Comp~Defeated", player->getName());
 	}
 
 	//------------------------------------------------------------------------------
@@ -597,7 +594,7 @@ namespace
 	std::string getMessage (const cModel& model, const cSavedReportPlayerWins& report)
 	{
 		const auto* player = model.getPlayer (report.getPlayerId());
-		return lngPack.i18n ("Text~Multiplayer~Player") + " " + player->getName() + " " + lngPack.i18n ("Text~Comp~Wins");
+		return lngPack.i18n ("Text~Comp~Wins", player->getName());
 	}
 
 	//------------------------------------------------------------------------------
@@ -635,7 +632,7 @@ namespace
 	//------------------------------------------------------------------------------
 	std::string getMessage (const cModel& model, const cSavedReportTurnStart& report)
 	{
-		std::string message = lngPack.i18n ("Text~Comp~Turn_Start") + " " + iToStr (report.turn);
+		std::string message = lngPack.i18n ("Text~Comp~Turn_Start", iToStr (report.turn));
 
 		if (!report.unitReports.empty())
 		{

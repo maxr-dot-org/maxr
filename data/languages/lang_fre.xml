@@ -127,9 +127,9 @@
             <Hot ENG="Hot" localized="Attention"/>
             <HotSeat_Load ENG="Load Hot Seat" localized="Charger jeu en direct"/>
             <HotSeat_New ENG="New Hot Seat" localized="Jeu en direct"/>
-            <Included ENG="Included" localized="Inclus"/>
+            <Included ENG="Included:" localized="Inclus :"/>
             <Info_7 ENG="Info" localized="Info"/>
-            <Limited_To ENG="Limited to" localized="Limité à"/>
+            <Limited_To ENG="Limited to:" localized="Limité à :"/>
             <Load ENG="Load" localized="Charger"/>
             <Load_7 ENG="Load" localized="Charger"/>
             <Log ENG="Log" localized="Log"/>
@@ -247,7 +247,7 @@
             <Go_Host_No ENG="Host wants to go: No go" localized="Hôte : pas encore prêt"/>
             <Go_Ready ENG="Ready to go" localized="Prêt"/>
             <Go_Ready_No ENG="not ready to go" localized="Pas prêt"/>
-            <Host_command ENG="Host entered following command" localized="L&apos;hôte a entré la commande suivante"/>
+            <Host_command ENG="Host entered following command '%s'" localized="L&apos;hôte a entré la commande suivante '%s'"/>
             <Lost_Connection ENG="Lost connection to %s." localized="%s perd la connexion."/>
             <Map_NoSet ENG="--no map selected--" localized="--pas de carte sélectionnée--"/>
             <MapDL_Cancel ENG="Aborted" localized="Téléchargement de la carte annulé"/>
@@ -266,18 +266,17 @@
             <Network_Closed ENG="Connection closed" localized="Connexion fermée"/>
             <Network_Connected ENG="Connected" localized="Connecté"/>
             <Network_Connected_Not ENG="Not connected" localized="Pas connecté"/>
-            <Network_Connecting ENG="Connecting to " localized="Connexion à "/>
-            <Network_Error_Connect ENG="Could not connect to " localized="Impossible de se connecter à "/>
+            <Network_Connecting ENG="Connecting to %s" localized="Connexion à %s"/>
+            <Network_Error_Connect ENG="Could not connect to server" localized="Impossible de se connecter au serveur"/>
             <Network_Error_Socket ENG="Error opening socket" localized="Erreur ouverture socket"/>
             <Network_New ENG="New connection" localized="Nouvelle connexion"/>
-            <Network_Open ENG="Game open" localized="Ouvrir jeu"/>
+            <Network_Open ENG="Game open (Port: %s)" localized="Ouvrir jeu (Port : %s)"/>
             <Network_Syncing ENG="Synchronizing..." localized="Synchronisation..."/>
             <No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Impossible de charger la carte %s. Lancement jeu impossible."/>
             <No_Response ENG="Waiting for network response from player %s" localized="En attente de réponse réseau du joueur %s"/>
             <Not_Ready ENG="is not ready" localized="n&apos;est pas prêt"/>
             <Option_NoSet ENG="--no options set--" localized="--pas d&apos;options choisies--"/>
             <Pause ENG="Game has been paused." localized="Jeu mis en pause."/>
-            <Player ENG="Player" localized="Joueur"/>
             <Player1 ENG="Player 1" localized="Joueur 1"/>
             <Player2 ENG="Player 2" localized="Joueur 2"/>
             <Player3 ENG="Player 3" localized="Joueur 3"/>
@@ -296,7 +295,6 @@
             <Player_Name_Taken ENG="Playername already in use, please select an other name to be unique" localized="Les noms des joueurs doivent être uniques, merci d&apos;en sélectionner un autre"/>
             <Player_Turn ENG="%s:\nBegin turn." localized="%s:\nNouveau tour."/>
             <Player_Turn_End ENG="%s ended turn" localized="%s a terminé son tour"/>
-            <Player_Twice ENG="Playername exists twice: " localized="Nom de joueur déjà utilisé : "/>
             <Player_Wrong ENG="Missing a correct player&apos;s name" localized="Nom de joueur incorrect !"/>
             <Reconnect ENG="This game is running already.\nIf you have lost connection to the game, you can reconnect.\n\nDo you want to reconnect?" localized="Jeu déjà en cours. Si vous avez perdu la connexion au jeu, vous pouvez vous reconnecter. Voulez-vous vous reconnecter ?"/>
             <Reconnect_Already_Connected ENG="Reconnecting forbidden by server. A player with your name is already connected." localized="Reconnection interdite. Un joueur avec votre nom est déjà connecté."/>
@@ -317,14 +315,14 @@
             <Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by %s" localized="Ajustement effectué : production d&apos;or augmentée de %s"/>
             <Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by %s" localized="Ajustement effectué : production de minerai diminuée de %s"/>
             <Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by %s" localized="Ajustement effectué : production de minerai augmentée de %s"/>
-            <Attacked ENG="is under attack" localized="est attaqué !"/>
+            <Attacked ENG="%s is under attack" localized="%s est attaqué !"/>
             <AttackingEnemy ENG="%s is attacking the enemy" localized="%s attaque l&apos;enemi"/>
             <AttackingStatusStr ENG="attacking" localized=""/>
             <!--TODO: translation needed-->
             <Building_Disabled ENG="Building turned off" localized="Bâtiment désactivé"/>
             <CapturedByEnemy ENG="%s has been captured by the enemy" localized="%s a été capturé par l&apos;enemi"/>
             <Cheat ENG="used cheat" localized="a triché :"/>
-            <Clearing ENG="clearing" localized="Nettoyage"/>
+            <Clearing ENG="clearing (%s)" localized="Nettoyage (%s)"/>
             <Clearing_Fin ENG="clearing done" localized="nettoyage terminé"/>
             <Clearing_Mine ENG="clearing mines" localized="en déminage"/>
             <CommandoRank_Average ENG="Average" localized="Moyen"/>
@@ -334,9 +332,9 @@
             <CommandoRank_Greenhorn ENG="Greenhorn" localized="Débutant"/>
             <CommandoRank_Veteran ENG="Veteran" localized="Habile"/>
             <Dated ENG="dated" localized="datés"/>
-            <Defeated ENG="defeated" localized="a perdu"/>
+            <Defeated ENG="Player %s defeated" localized="Joueur %s a perdu"/>
             <Description ENG="Description" localized="Description"/>
-            <Destroyed ENG="destroyed" localized="détruit"/>
+            <Destroyed ENG="%s destroyed" localized="%s détruit"/>
             <Detected ENG="detected" localized="détecté"/>
             <Disabled ENG="disabled" localized="désactivé"/>
             <EcoSphere ENG="Eco-sphere" localized="éco-sphère"/>
@@ -385,7 +383,7 @@
             <Themes ENG="Themes" localized="Thèmes"/>
             <Turn_5 ENG="Turn" localized="Tour"/>
             <Turn_Automove ENG="Executing remaining movements" localized="Exécution des mouvements restants"/>
-            <Turn_Start ENG="Start turn" localized="Nouveau tour"/>
+            <Turn_Start ENG="Start turn %s" localized="Début du tour %s"/>
             <Turn_Wait ENG="Please wait until all movements are completed" localized="Veuillez attendre que tous les mouvements soient terminés"/>
             <Turns ENG="Turns" localized="Tours"/>
             <Upgrades_Done ENG="Upgraded" localized="Mis à jour"/>
@@ -394,7 +392,7 @@
             <Working ENG="working" localized="en fonctionnement"/>
             <Producing_InsufficientMaterial ENG="Insufficient raw materials to build" localized="Pas assez de minerai pour la construction"/>
             <Producing_PositionBlocked ENG="Buildposition blocked" localized="Position de construction bloquée"/>
-            <Wins ENG="wins" localized="a gagné"/>
+            <Wins ENG="Player %s wins" localized="Joueur %s a gagné"/>
         </Comp>
         <Error_Messages>
             <ERROR_File_Not_Found ENG="File not found: %s" localized="Fichier introuvable : %s"/>

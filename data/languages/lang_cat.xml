@@ -126,9 +126,9 @@
 			<Hot ENG="Hot" localized="Calent"/>
 			<HotSeat_Load ENG="Load Hot Seat" localized="Carregar Hot Seat"/>
 			<HotSeat_New ENG="New Hot Seat" localized="Nuevo Hot Seat"/>
-			<Included ENG="Included" localized="Inclos"/>
+			<Included ENG="Included:" localized="Inclos:"/>
 			<Info_7 ENG="Info" localized="Info"/>
-			<Limited_To ENG="Limited to" localized="Limitat a"/>
+			<Limited_To ENG="Limited to:" localized="Limitat a:"/>
 			<Load ENG="Load" localized="Carregar"/>
 			<Load_7 ENG="Load" localized="Carregar"/>
 			<Log ENG="Log" localized="Log"/>
@@ -246,7 +246,7 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="El servidor quiere empezar: no empezamos"/>
 			<Go_Ready ENG="Ready to go" localized="Listos para empezar"/>
 			<Go_Ready_No ENG="not ready to go" localized="No estamos listos para empezar"/>
-			<Host_command ENG="Host entered following command" localized=""/><!--TODO: translation needed-->
+			<Host_command ENG="Host entered following command '%s'" localized=""/><!--TODO: translation needed-->
 			<Lost_Connection ENG="Lost connection to %s." localized="Conexión a %s perdida"/>
 			<Map_NoSet ENG="--no map selected--" localized="--mapa no seleccionado--"/>
 			<MapDL_Cancel ENG="Aborted" localized="Anulado"/>
@@ -262,18 +262,17 @@
 			<Network_Closed ENG="Connection closed" localized="Conexión cerrada"/>
 			<Network_Connected ENG="Connected" localized="Conectado"/>
 			<Network_Connected_Not ENG="Not connected" localized="No conectado"/>
-			<Network_Connecting ENG="Connecting to " localized="Conectando a "/>
-			<Network_Error_Connect ENG="Could not connect to " localized="No puedo conectar a "/>
+			<Network_Connecting ENG="Connecting to %s" localized="Conectando a %s"/>
+			<Network_Error_Connect ENG="Could not connect to server" localized="No puedo conectar a servidor"/>
 			<Network_Error_Socket ENG="Error opening socket" localized="Error abriendo socket"/>
 			<Network_New ENG="New connection" localized="Nueva conexión"/>
-			<Network_Open ENG="Game open" localized="Partida abierta"/>
+			<Network_Open ENG="Game open (Port: %s)" localized="Partida abierta (Port: %s)"/>
 			<Network_Syncing ENG="Synchronizing..." localized="Sincronizando..."/>
 			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="No se puede cargar el mapa %s. No estás listo."/>
 			<No_Response ENG="Waiting for network response from player %s" localized="Esperando respuesta de la red del jugador %s"/>
 			<Not_Ready ENG="is not ready" localized="no esta listo"/>
 			<Option_NoSet ENG="--no options set--" localized="--opciones no seleccionadas--"/>
 			<Pause ENG="Game has been paused." localized="La partida se ha pausado"/>
-			<Player ENG="Player" localized="Jugador"/>
 			<Player1 ENG="Player 1" localized="Jugador 1"/>
 			<Player2 ENG="Player 2" localized="Jugador 2"/>
 			<Player3 ENG="Player 3" localized="Jugador 3"/>
@@ -292,7 +291,6 @@
 			<Player_Name_Taken ENG="Playername already in use, please select an other name to be unique" localized="Nombre de jugador ya utilizado, por favor, elige otro de forma que sea único"/>
 			<Player_Turn ENG="%s:\nBegin turn." localized="El turno de %s"/><!--TODO: review needed (english string has been changed)-->
 			<Player_Turn_End ENG="%s ended turn" localized=" turno finalizado por %s"/>
-			<Player_Twice ENG="Playername exists twice: " localized="El nombre de usuario está repetido: "/>
 			<Player_Wrong ENG="Missing a correct player&apos;s name" localized="Se ha perdido un nombre de jugador correcto."/>
 			<Reconnect ENG="This game is running already.\nIf you have lost connection to the game, you can reconnect.\n\nDo you want to reconnect?" localized="Esta partida está funcionando. Si has perdido la conexión puedes reconectar. ¿Quieres reconectar?"/><!--TODO: review needed (english string has been changed)-->
 			<Reconnect_Already_Connected ENG="Reconnecting forbidden by server. A player with your name is already connected."/>
@@ -313,13 +311,13 @@
 			<Adjustments_Gold_Increased ENG="Adjustments made: gold mining increased by %s"/>
 			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by %s" localized="S&apos;han fet ajusts: Producció de metall incrementada en %s"/>
 			<Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by %s"/>
-			<Attacked ENG="is under attack" localized="està sota atac"/>
+			<Attacked ENG="%s is under attack" localized="%s està sota atac"/>
 			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s està atacant a l&apos;enemic"/>
 			<AttackingStatusStr ENG="attacking" localized="atacant"/>
 			<Building_Disabled ENG="Building turned off" localized="Edifici desactivat"/>
 			<CapturedByEnemy ENG="%s has been captured by the enemy" localized="%s ha sigut capturat per l&apos;enemic"/>
 			<Cheat ENG="used cheat" localized="Se ha utilitzat un truc"/>
-			<Clearing ENG="clearing" localized="Netejant"/>
+			<Clearing ENG="clearing (%s)" localized="Netejant (%s)"/>
 			<Clearing_Fin ENG="clearing done" localized="Neteja complerta"/>
 			<Clearing_Mine ENG="clearing mines" localized="Traient mines"/>
 			<CommandoRank_Average ENG="Average" localized="Intermig"/>
@@ -329,9 +327,9 @@
 			<CommandoRank_Greenhorn ENG="Greenhorn" localized="Novel"/>
 			<CommandoRank_Veteran ENG="Veteran" localized="Veterà"/>
 			<Dated ENG="dated" localized="a data de"/>
-			<Defeated ENG="defeated" localized="derrotat"/>
+			<Defeated ENG="%s defeated" localized="derrotat"/>
 			<Description ENG="Description" localized="Descripció"/>
-			<Destroyed ENG="destroyed" localized="destruït"/>
+			<Destroyed ENG="Player %s destroyed" localized="Jugador %s destruït"/>
 			<Detected ENG="detected" localized="detectat"/>
 			<Disabled ENG="disabled" localized="desactivat"/>
 			<EcoSphere ENG="Eco-sphere" localized="Hivernacle"/>
@@ -382,13 +380,13 @@
 			<Themes ENG="Themes" localized="Temes"/>
 			<Turn_5 ENG="Turn" localized="Torn"/>
 			<Turn_Automove ENG="Executing remaining movements" localized="Executant movimients restants"/>
-			<Turn_Start ENG="Start turn" localized="Comença el torn"/>
+			<Turn_Start ENG="Start turn %s" localized="Comença el torn %s"/>
 			<Turn_Wait ENG="Please wait until all movements are completed" localized="Per favor espera fins que tots els movimients s&apos;hagin completat"/>
 			<Turns ENG="Turns" localized="Torns"/>
 			<Upgrades_Done ENG="Upgraded" localized="Actualitzat"/>
 			<Upgrades_Done2 ENG="unit(s) of type %s" localized="unitat(s) de tipus %s"/>
 			<Waits ENG="waiting" localized="esperant"/>
-			<Wins ENG="wins"/>
+			<Wins ENG="Player %s wins" localized=""/>
 			<Working ENG="working" localized="treballant"/>
 		</Comp>
 		<Error_Messages>

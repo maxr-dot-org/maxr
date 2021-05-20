@@ -126,9 +126,9 @@
 			<Hot ENG="Hot" localized="Scherp"/>
 			<HotSeat_Load ENG="Load Hot Seat" localized="Hot Seat laden"/>
 			<HotSeat_New ENG="New Hot Seat" localized="Hot Seat starten"/>
-			<Included ENG="Included" localized="Bijgevoegd"/>
+			<Included ENG="Included:" localized="Bijgevoegd:"/>
 			<Info_7 ENG="Info" localized="Info"/>
-			<Limited_To ENG="Limited to" localized="Gelimiteerd tot"/>
+			<Limited_To ENG="Limited to:" localized="Gelimiteerd tot:"/>
 			<Load ENG="Load" localized="Laden"/>
 			<Load_7 ENG="Load" localized="Laden"/>
 			<Log ENG="Log" localized="Log"/>
@@ -245,7 +245,7 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="Host wil starten: Niet klaar"/>
 			<Go_Ready ENG="Ready to go" localized="Klaar om te starten"/>
 			<Go_Ready_No ENG="not ready to go" localized="Niet klaar om te starten"/>
-			<Host_command ENG="Host entered following command" localized="Host heeft de volgende commando&apos;s ingegeven"/>
+			<Host_command ENG="Host entered following command '%s'" localized="Host heeft de volgende commando&apos;s ingegeven '%s'"/>
 			<Lost_Connection ENG="Lost connection to %s." localized="Verbinding verbroken tot %s"/>
 			<Map_NoSet ENG="--no map selected--" localized="--Geen kaart ingesteld--"/>
 			<MapDL_Cancel ENG="Aborted" localized="Afgebroken"/>
@@ -261,18 +261,17 @@
 			<Network_Closed ENG="Connection closed" localized="Verbinding gesloten"/>
 			<Network_Connected ENG="Connected" localized="Verbinding"/>
 			<Network_Connected_Not ENG="Not connected" localized="Niet verbonden"/>
-			<Network_Connecting ENG="Connecting to " localized="Verbinden met "/>
-			<Network_Error_Connect ENG="Could not connect to " localized="Kon niet verbinden met "/>
+			<Network_Connecting ENG="Connecting to %s" localized="Verbinden met %s"/>
+			<Network_Error_Connect ENG="Could not connect to server" localized="Kon niet verbinden met server"/>
 			<Network_Error_Socket ENG="Error opening socket" localized="Fout bij openen socket"/>
 			<Network_New ENG="New connection" localized="Nieuwe verbinding"/>
-			<Network_Open ENG="Game open" localized="Spel open"/>
+			<Network_Open ENG="Game open (Port: %s)" localized="Spel open (Poort: %s)"/>
 			<Network_Syncing ENG="Synchronizing..." localized="Synchronizeren..."/>
 			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Kan map %s niet laden. Je kan niet starten."/>
 			<No_Response ENG="Waiting for network response from player %s" localized="Wachten op netwerk reactie speler %s"/>
 			<Not_Ready ENG="is not ready" localized="is niet gereed"/>
 			<Option_NoSet ENG="--no options set--" localized="--Geen opties ingesteld--"/>
 			<Pause ENG="Game has been paused." localized="Het spel is gepauzeerd"/>
-			<Player ENG="Player" localized="Speler"/>
 			<Player1 ENG="Player 1" localized="Speler 1"/>
 			<Player2 ENG="Player 2" localized="Speler 2"/>
 			<Player3 ENG="Player 3" localized="Speler 3"/>
@@ -291,7 +290,6 @@
 			<Player_Name_Taken ENG="Playername already in use, please select an other name to be unique" localized="Spelernaam is reeds in gebruik, geef aub een andere naam in"/>
 			<Player_Turn ENG="%s:\nBegin turn." localized="&apos;s beurt"/>
 			<Player_Turn_End ENG="%s ended turn" localized=" beeindigde de beurt "/>
-			<Player_Twice ENG="Playername exists twice: " localized="Dubbele spelernaam: "/>
 			<Player_Wrong ENG="Missing a correct player&apos;s name" localized="Mis een correcte speler naam"/>
 			<Reconnect ENG="This game is running already.\nIf you have lost connection to the game, you can reconnect.\n\nDo you want to reconnect?" localized="Dit spel is al gaande. Indien u de verbinding van het spel kwijt bent geraakt, kunt u zich opnieuw verbinden. Wilt u opnieuw verbinden?"/>
 			<Reconnect_Already_Connected ENG="Reconnecting forbidden by server. A player with your name is already connected."/>
@@ -312,13 +310,13 @@
 			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by %s" localized="Aanpassingen gemaakt: Goud mijnen verlaagt met %s"/>
 			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by %s" localized="Aanpassingen gemaakt: Metaal mijnen verlaagt met %s"/>
 			<Adjustments_Metal_Increased ENG="Adjustments made: raw materials mining increased by %s"/>
-			<Attacked ENG="is under attack" localized="wordt aangevallen"/>
+			<Attacked ENG="%s is under attack" localized="%s wordt aangevallen"/>
 			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s is de vijand aan het aanvallen"/>
 			<AttackingStatusStr ENG="attacking" localized="valt aan"/>
 			<Building_Disabled ENG="Building turned off" localized="Gebouw uitgeschakeld"/>
 			<CapturedByEnemy ENG="%s has been captured by the enemy" localized="%s is buitgemaakt door de vijand"/>
 			<Cheat ENG="used cheat" localized="valsspelen gebruikt"/>
-			<Clearing ENG="clearing" localized="Opruimen"/>
+			<Clearing ENG="clearing (%s)" localized="Opruimen (%s)"/>
 			<Clearing_Fin ENG="clearing done" localized="opruimen klaar"/>
 			<Clearing_Mine ENG="clearing mines" localized="opruimen mijnen"/>
 			<CommandoRank_Average ENG="Average" localized="Normaal"/>
@@ -328,9 +326,9 @@
 			<CommandoRank_Greenhorn ENG="Greenhorn" localized="Groentje"/>
 			<CommandoRank_Veteran ENG="Veteran" localized="Veteraan"/>
 			<Dated ENG="dated" localized="verouderd"/>
-			<Defeated ENG="defeated" localized="verslagen"/>
+			<Defeated ENG="Player %s defeated" localized="Speler %s verslagen"/>
 			<Description ENG="Description" localized="Omschrijving"/>
-			<Destroyed ENG="destroyed" localized="vernietigd"/>
+			<Destroyed ENG="%s destroyed" localized="%s vernietigd"/>
 			<Detected ENG="detected" localized="ontdekt"/>
 			<Disabled ENG="disabled" localized="uitgeschakeld"/>
 			<EcoSphere ENG="Eco-sphere" localized="Eco-sfeer"/>
@@ -381,13 +379,13 @@
 			<Themes ENG="Themes" localized="Themas"/>
 			<Turn_5 ENG="Turn" localized="Beurt"/>
 			<Turn_Automove ENG="Executing remaining movements" localized="Uitvoeren van de overgebleven verplaatsingen"/>
-			<Turn_Start ENG="Start turn" localized="Start beurt"/>
+			<Turn_Start ENG="Start turn %s" localized="Start beurt %s"/>
 			<Turn_Wait ENG="Please wait until all movements are completed" localized="Wacht tot alle verplaatsingen klaar zijn"/>
 			<Turns ENG="Turns" localized="Beurten"/>
 			<Upgrades_Done ENG="Upgraded" localized="Opwaarderen uitgevoerd"/>
 			<Upgrades_Done2 ENG="unit(s) of type %s" localized="Eenheid/heden van het type %s"/>
 			<Waits ENG="waiting" localized="wacht"/>
-			<Wins ENG="wins"/>
+			<Wins ENG="Player %s wins" localized=""/>
 			<Working ENG="working" localized="werkt"/>
 		</Comp>
 		<Error_Messages>

@@ -261,7 +261,7 @@ void cMenuControllerMultiplayerHost::startHost()
 		case eOpenServerResult::AlreadyOpened: return;
 		case eOpenServerResult::Success:
 		{
-			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Open") + " (" + lngPack.i18n ("Text~Title~Port") + lngPack.i18n ("Text~Punctuation~Colon")  + iToStr (windowNetworkLobby->getPort()) + ")");
+			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Open", iToStr (windowNetworkLobby->getPort())));
 			windowNetworkLobby->disablePortEdit();
 			break;
 		}
