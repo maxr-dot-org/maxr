@@ -23,7 +23,7 @@
 
 //------------------------------------------------------------------------------
 cSavedReportPlayerDefeated::cSavedReportPlayerDefeated (const cPlayer& player) :
-	playerId (player.getId())
+	player (&player)
 {}
 
 //------------------------------------------------------------------------------

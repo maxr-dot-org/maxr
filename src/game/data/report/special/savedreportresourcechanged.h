@@ -28,20 +28,21 @@ class cUnit;
 class cSavedReportResourceChanged : public cSavedReport
 {
 public:
-	cSavedReportResourceChanged (eResourceType resourceType, int amount, bool increase);
+	cSavedReportResourceChanged (eResourceType, int amount, bool increase);
+
 	template <typename T, ENABLE_ARCHIVE_OUT>
-	explicit cSavedReportResourceChanged(T& archive)
+	explicit cSavedReportResourceChanged (T& archive)
 	{
-		serializeThis(archive);
+		serializeThis (archive);
 	}
 
 	eSavedReportType getType() const override;
 
 	bool isAlert() const override;
 
-	void serialize(cBinaryArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
-	void serialize(cXmlArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
+	void serialize (cXmlArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
 
 	eResourceType getResourceType() const { return resourceType;}
 	int getAmount() const { return amount;}
@@ -49,11 +50,11 @@ public:
 
 private:
 	template <typename T>
-	void serializeThis(T& archive)
+	void serializeThis (T& archive)
 	{
-		archive & NVP(resourceType);
-		archive & NVP(amount);
-		archive & NVP(increase);
+		archive & NVP (resourceType);
+		archive & NVP (amount);
+		archive & NVP (increase);
 	}
 
 	eResourceType resourceType;
@@ -61,4 +62,4 @@ private:
 	bool increase;
 };
 
-#endif // game_data_reports_special_savedreportresourcechangedH
+#endif

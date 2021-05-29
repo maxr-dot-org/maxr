@@ -552,53 +552,49 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
-	std::string getMessage (const cModel&, const cSavedReportChat& report)
+	std::string getMessage (const cSavedReportChat& report)
 	{
 		return report.getPlayerName() + lngPack.i18n ("Text~Punctuation~Colon") + report.getText();
 	}
 
 	//------------------------------------------------------------------------------
-	std::string getMessage (const cModel&, const cSavedReportHostCommand& report)
+	std::string getMessage (const cSavedReportHostCommand& report)
 	{
 		return lngPack.i18n ("Text~Multiplayer~Host_command", report.getCommand());
 	}
 
 	//------------------------------------------------------------------------------
-	std::string getMessage (const cModel&, const cSavedReportLostConnection& report)
+	std::string getMessage (const cSavedReportLostConnection& report)
 	{
 		return lngPack.i18n ("Text~Multiplayer~Lost_Connection", report.getPlayerName());
 	}
 
 	//------------------------------------------------------------------------------
-	std::string getMessage (const cModel& model, const cSavedReportPlayerDefeated& report)
+	std::string getMessage (const cSavedReportPlayerDefeated& report)
 	{
-		const auto* player = model.getPlayer (report.getPlayerId());
-		return lngPack.i18n ("Text~Comp~Defeated", player->getName());
+		return lngPack.i18n ("Text~Comp~Defeated", report.getPlayer().getName());
 	}
 
 	//------------------------------------------------------------------------------
-	std::string getMessage (const cModel& model, const cSavedReportPlayerLeft& report)
+	std::string getMessage (const cSavedReportPlayerLeft& report)
 	{
-		const auto* player = model.getPlayer (report.getPlayerId());
-		return lngPack.i18n ("Text~Multiplayer~Player_Left", player->getName());
+		return lngPack.i18n ("Text~Multiplayer~Player_Left", report.getPlayer().getName());
 	}
 
 	//------------------------------------------------------------------------------
-	std::string getMessage (const cModel& model, const cSavedReportPlayerEndedTurn& report)
+	std::string getMessage (const cSavedReportPlayerEndedTurn& report)
 	{
-		const auto* player = model.getPlayer (report.getPlayerId());
-		return lngPack.i18n ("Text~Multiplayer~Player_Turn_End", player->getName());
+		return lngPack.i18n ("Text~Multiplayer~Player_Turn_End", report.getPlayer().getName());
 	}
 
 	//------------------------------------------------------------------------------
-	std::string getMessage (const cModel& model, const cSavedReportPlayerWins& report)
+	std::string getMessage (const cSavedReportPlayerWins& report)
 	{
-		const auto* player = model.getPlayer (report.getPlayerId());
-		return lngPack.i18n ("Text~Comp~Wins", player->getName());
+		return lngPack.i18n ("Text~Comp~Wins", report.getPlayer().getName());
 	}
 
 	//------------------------------------------------------------------------------
-	std::string getMessage (const cModel&, const cSavedReportResourceChanged& report)
+	std::string getMessage (const cSavedReportResourceChanged& report)
 	{
 		int amount = report.getAmount();
 		if (report.isIncrease())
@@ -697,9 +693,9 @@ std::string getMessage (const cSavedReport& report, const cModel& model)
 	if (auto* savedReportUnit = dynamic_cast<const cSavedReportUnit*>(&report))
 	{
 		auto pos = *savedReportUnit->getPosition();
-		const auto* unit = model.getUnitFromID (savedReportUnit->getUnitId());
+		const auto& unit = savedReportUnit->getUnit();
 
-		return "[" + iToStr (pos.x()) + ", " + iToStr (pos.y()) + "] " + getText (*unit, *savedReportUnit);
+		return "[" + iToStr (pos.x()) + ", " + iToStr (pos.y()) + "] " + getText (unit, *savedReportUnit);
 	}
 
 	switch (report.getType())
@@ -742,23 +738,23 @@ std::string getMessage (const cSavedReport& report, const cModel& model)
 			return lngPack.i18n("Text~Comp~SuddenDeath");
 
 		case eSavedReportType::Chat:
-			return getMessage (model, static_cast<const cSavedReportChat&> (report));
+			return getMessage (static_cast<const cSavedReportChat&> (report));
 		case eSavedReportType::TurnStart:
 			return getMessage (model, static_cast<const cSavedReportTurnStart&> (report));
 		case eSavedReportType::HostCommand:
-			return getMessage (model, static_cast<const cSavedReportHostCommand&> (report));
+			return getMessage (static_cast<const cSavedReportHostCommand&> (report));
 		case eSavedReportType::ResourceChanged:
-			return getMessage (model, static_cast<const cSavedReportResourceChanged&> (report));
+			return getMessage (static_cast<const cSavedReportResourceChanged&> (report));
 		case eSavedReportType::PlayerEndedTurn:
-			return getMessage (model, static_cast<const cSavedReportPlayerEndedTurn&> (report));
+			return getMessage (static_cast<const cSavedReportPlayerEndedTurn&> (report));
 		case eSavedReportType::LostConnection:
-			return getMessage (model, static_cast<const cSavedReportLostConnection&> (report));
+			return getMessage (static_cast<const cSavedReportLostConnection&> (report));
 		case eSavedReportType::PlayerDefeated:
-			return getMessage (model, static_cast<const cSavedReportPlayerDefeated&> (report));
+			return getMessage (static_cast<const cSavedReportPlayerDefeated&> (report));
 		case eSavedReportType::PlayerWins:
-			return getMessage (model, static_cast<const cSavedReportPlayerWins&> (report));
+			return getMessage (static_cast<const cSavedReportPlayerWins&> (report));
 		case eSavedReportType::PlayerLeft:
-			return getMessage (model, static_cast<const cSavedReportPlayerLeft&> (report));
+			return getMessage (static_cast<const cSavedReportPlayerLeft&> (report));
 		case eSavedReportType::Upgraded:
 			return getMessage (model, static_cast<const cSavedReportUpgraded&> (report));
 	}

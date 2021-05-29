@@ -65,6 +65,13 @@ namespace serialization
 			Log.write("Unit with id " + iToStr(id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
 	}
 
+	void cPointerLoader::get(int id, const cUnit*& value) const
+	{
+		value = model.getUnitFromID(id);
+		if (value == nullptr && id != -1)
+			Log.write("Unit with id " + iToStr(id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
+	}
+
 	void cPointerLoader::get(sID id, const cStaticUnitData*& value) const
 	{
 		if (!model.getUnitsData()->isValidId(id))

@@ -71,7 +71,7 @@ namespace
 	//--------------------------------------------------------------------------
 	void playReportSound (cSoundManager& soundManager, const cSavedReportDetected& report)
 	{
-		if (report.submarine)
+		if (report.isSubmarine())
 		{
 			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceDetected, VoiceData.VOISubDetected));
 		}

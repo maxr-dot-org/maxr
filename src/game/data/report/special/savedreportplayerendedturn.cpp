@@ -23,7 +23,7 @@
 
 //------------------------------------------------------------------------------
 cSavedReportPlayerEndedTurn::cSavedReportPlayerEndedTurn (const cPlayer& player) :
-	playerId (player.getId())
+	player (&player)
 {}
 
 //------------------------------------------------------------------------------

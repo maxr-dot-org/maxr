@@ -325,6 +325,7 @@ namespace serialization
 		void get(int id, cBuilding*& value) const;
 		void get(int id, cVehicle*& value) const;
 		void get(int id, cUnit*& value) const;
+		void get(int id, const cUnit*& value) const;
 		void get(sID id, const cStaticUnitData*& value) const;
 
 		const cStaticUnitData* getBigRubbleData() const;

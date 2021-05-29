@@ -23,7 +23,7 @@
 
 //------------------------------------------------------------------------------
 cSavedReportPlayerLeft::cSavedReportPlayerLeft (const cPlayer& player) :
-	playerId (player.getId())
+	player (&player)
 {}
 
 //------------------------------------------------------------------------------

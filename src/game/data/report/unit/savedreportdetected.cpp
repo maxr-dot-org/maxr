@@ -23,12 +23,17 @@
 
 //------------------------------------------------------------------------------
 cSavedReportDetected::cSavedReportDetected (const cUnit& unit) :
-	cSavedReportUnit (unit),
-	submarine(unit.getStaticUnitData().isStealthOn & TERRAIN_SEA && unit.getStaticUnitData().canAttack)
+	cSavedReportUnit (unit)
 {}
 
 //------------------------------------------------------------------------------
 eSavedReportType cSavedReportDetected::getType() const
 {
 	return eSavedReportType::Detected;
+}
+
+//------------------------------------------------------------------------------
+bool cSavedReportDetected::isSubmarine() const
+{
+	return getUnit().getStaticUnitData().isStealthOn & TERRAIN_SEA && getUnit().getStaticUnitData().canAttack;
 }

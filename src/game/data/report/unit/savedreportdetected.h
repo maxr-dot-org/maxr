@@ -25,28 +25,16 @@
 class cSavedReportDetected : public cSavedReportUnit
 {
 public:
-	explicit cSavedReportDetected (const cUnit& unit);
+	explicit cSavedReportDetected (const cUnit&);
+
 	template <typename T, ENABLE_ARCHIVE_OUT>
 	cSavedReportDetected (T& archive) :
 		cSavedReportUnit (archive)
 	{
-		serializeThis (archive);
 	}
-
-	void serialize (cBinaryArchiveIn& archive) override { cSavedReportUnit::serialize (archive); serializeThis (archive); }
-	void serialize (cXmlArchiveIn& archive) override { cSavedReportUnit::serialize (archive); serializeThis (archive); }
-	void serialize (cTextArchiveIn& archive) override { cSavedReportUnit::serialize (archive); serializeThis (archive); }
 
 	eSavedReportType getType() const override;
-
-private:
-	template <typename T>
-	void serializeThis (T& archive)
-	{
-		archive & NVP (submarine);
-	}
-public:
-	bool submarine;
+	bool isSubmarine() const;
 };
 
-#endif // game_data_reports_savedreportdetectedH
+#endif

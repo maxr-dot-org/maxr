@@ -27,31 +27,32 @@ class cPlayer;
 class cSavedReportPlayerEndedTurn : public cSavedReport
 {
 public:
-	cSavedReportPlayerEndedTurn (const cPlayer& player);
+	cSavedReportPlayerEndedTurn (const cPlayer&);
+
 	template <typename T, ENABLE_ARCHIVE_OUT>
-	explicit cSavedReportPlayerEndedTurn(T& archive)
+	explicit cSavedReportPlayerEndedTurn (T& archive)
 	{
-		serializeThis(archive);
+		serializeThis (archive);
 	}
 
-	void serialize(cBinaryArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
-	void serialize(cXmlArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
+	void serialize (cXmlArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
 
 	eSavedReportType getType() const override;
 
 	bool isAlert() const override;
 
-	int getPlayerId() const { return playerId; }
+	const cPlayer& getPlayer() const { return *player; }
 
 private:
 	template <typename T>
 	void serializeThis (T& archive)
 	{
-		archive & NVP (playerId);
+		archive & NVP (player);
 	}
 
-	int playerId;
+	const cPlayer* player;
 };
 
 #endif

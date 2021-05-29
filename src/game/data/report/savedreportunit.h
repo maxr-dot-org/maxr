@@ -22,6 +22,7 @@
 
 #include "game/data/report/savedreport.h"
 #include "game/data/units/id.h"
+#include "game/data/units/unit.h"
 #include "utility/position.h"
 
 class cUnit;
@@ -29,21 +30,22 @@ class cUnit;
 class cSavedReportUnit : public cSavedReport
 {
 public:
-	explicit cSavedReportUnit (const cUnit& unit);
+	explicit cSavedReportUnit (const cUnit&);
+
 	template <typename T, ENABLE_ARCHIVE_OUT>
-	explicit cSavedReportUnit(T& archive)
+	explicit cSavedReportUnit (T& archive)
 	{
-		serializeThis(archive);
+		serializeThis (archive);
 	}
 
 	bool isAlert() const override;
 
-	void serialize(cBinaryArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
-	void serialize(cXmlArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
+	void serialize (cXmlArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
 
-	int getUnitId() const { return unitId; }
-	const sID& getUnitTypeId() const { return unitTypeId; }
+	const cUnit& getUnit() const { return *unit; }
+	sID getUnitTypeId() const { return unit->data.getId(); }
 
 	std::optional<cPosition> getPosition() const override;
 
@@ -51,14 +53,12 @@ private:
 	template <typename T>
 	void serializeThis(T& archive)
 	{
-		archive & NVP (unitId);
-		archive & NVP (unitTypeId);
+		archive & NVP (unit);
 		archive & NVP (position);
 	}
 
-	int unitId;
-	sID unitTypeId;
+	const cUnit* unit;
 	cPosition position;
 };
 
-#endif // game_data_reports_savedreportunitH
+#endif
