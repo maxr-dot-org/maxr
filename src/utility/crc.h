@@ -30,47 +30,47 @@
 
 #include <SDL_endian.h>
 
-uint32_t calcCheckSum(const char* data, size_t dataSize, uint32_t checksum);
+[[nodiscard]] uint32_t calcCheckSum (const char* data, size_t dataSize, uint32_t checksum);
 
-uint32_t calcCheckSum(bool data, uint32_t checksum);
-uint32_t calcCheckSum(char data, uint32_t checksum);
-uint32_t calcCheckSum(signed char data, uint32_t checksum);
-uint32_t calcCheckSum(unsigned char data, uint32_t checksum);
-uint32_t calcCheckSum(signed short data, uint32_t checksum);
-uint32_t calcCheckSum(unsigned short data, uint32_t checksum);
-uint32_t calcCheckSum(signed int data, uint32_t checksum);
-uint32_t calcCheckSum(unsigned int data, uint32_t checksum);
-uint32_t calcCheckSum(signed long data, uint32_t checksum);
-uint32_t calcCheckSum(unsigned long data, uint32_t checksum);
-uint32_t calcCheckSum(signed long long data, uint32_t checksum);
-uint32_t calcCheckSum(unsigned long long data, uint32_t checksum);
-uint32_t calcCheckSum(float data, uint32_t checksum);
-uint32_t calcCheckSum(double data, uint32_t checksum);
+[[nodiscard]] uint32_t calcCheckSum (bool data, uint32_t checksum);
+[[nodiscard]] uint32_t calcCheckSum (char data, uint32_t checksum);
+[[nodiscard]] uint32_t calcCheckSum (signed char data, uint32_t checksum);
+[[nodiscard]] uint32_t calcCheckSum (unsigned char data, uint32_t checksum);
+[[nodiscard]] uint32_t calcCheckSum (signed short data, uint32_t checksum);
+[[nodiscard]] uint32_t calcCheckSum (unsigned short data, uint32_t checksum);
+[[nodiscard]] uint32_t calcCheckSum (signed int data, uint32_t checksum);
+[[nodiscard]] uint32_t calcCheckSum (unsigned int data, uint32_t checksum);
+[[nodiscard]] uint32_t calcCheckSum (signed long data, uint32_t checksum);
+[[nodiscard]] uint32_t calcCheckSum (unsigned long data, uint32_t checksum);
+[[nodiscard]] uint32_t calcCheckSum (signed long long data, uint32_t checksum);
+[[nodiscard]] uint32_t calcCheckSum (unsigned long long data, uint32_t checksum);
+[[nodiscard]] uint32_t calcCheckSum (float data, uint32_t checksum);
+[[nodiscard]] uint32_t calcCheckSum (double data, uint32_t checksum);
 
-uint32_t calcCheckSum(const std::string& data, uint32_t checksum);
+[[nodiscard]] uint32_t calcCheckSum (const std::string& data, uint32_t checksum);
 
 struct sCrcEnum
 {
 	template <typename T>
-	static uint32_t getChecksum(T data, uint32_t crc)
+	[[nodiscard]] static uint32_t getChecksum (T data, uint32_t crc)
 	{
-		int32_t value = static_cast<int32_t>(data);
-		value = SDL_SwapLE32(value);
-		return calcCheckSum(reinterpret_cast<char*> (&value), sizeof(value), crc);
+		int32_t value = static_cast<int32_t> (data);
+		value = SDL_SwapLE32 (value);
+		return calcCheckSum (reinterpret_cast<char*> (&value), sizeof (value), crc);
 	}
 };
 
 struct sCrcClass
 {
 	template <typename T>
-	static uint32_t getChecksum(const T& data, uint32_t crc)
+	[[nodiscard]] static uint32_t getChecksum (const T& data, uint32_t crc)
 	{
-		return data.getChecksum(crc);
+		return data.getChecksum (crc);
 	}
 };
 
-template<typename T>
-uint32_t calcCheckSum(const T& data, uint32_t crc)
+template <typename T>
+[[nodiscard]] uint32_t calcCheckSum (const T& data, uint32_t crc)
 {
 	typedef typename std::conditional
 		<
@@ -79,61 +79,59 @@ uint32_t calcCheckSum(const T& data, uint32_t crc)
 		sCrcClass
 		>::type crcWrapper;
 
-	return crcWrapper::getChecksum(data, crc);
+	return crcWrapper::getChecksum (data, crc);
 }
 
 template <typename T>
-uint32_t calcCheckSum(const T* data, uint32_t crc)
+[[nodiscard]] uint32_t calcCheckSum (const T* data, uint32_t crc)
 {
 	//target type of the pointer must have a getId() member
-	return calcCheckSum(data ? data->getId() : -1, crc);
+	return calcCheckSum (data ? data->getId() : -1, crc);
 }
 
 template <typename T>
-uint32_t calcCheckSum(T* data, uint32_t crc)
+[[nodiscard]] uint32_t calcCheckSum (T* data, uint32_t crc)
 {
 	//target type of the pointer must have a getId() member
-	return calcCheckSum(data ? data->getId() : -1, crc);
+	return calcCheckSum (data ? data->getId() : -1, crc);
 }
 
 template <typename T>
-uint32_t calcCheckSum(std::shared_ptr<T> data, uint32_t crc)
+[[nodiscard]] uint32_t calcCheckSum (std::shared_ptr<T> data, uint32_t crc)
 {
     //target type of the pointer must have a getId() member
-    if(data)
+    if (data)
     {
-        return calcCheckSum(*data, crc);
+        return calcCheckSum (*data, crc);
     }
-    return calcCheckSum(-1, crc);
+    return calcCheckSum (-1, crc);
 }
 
-template<typename T>
-uint32_t calcCheckSum(const std::vector<T>& data, uint32_t checksum)
+template <typename T>
+[[nodiscard]] uint32_t calcCheckSum (const std::vector<T>& data, uint32_t checksum)
 {
 	for (const auto& x : data)
-		checksum = calcCheckSum(x, checksum);
+		checksum = calcCheckSum (x, checksum);
 
 	return checksum;
 }
 
-template<typename K, typename T>
-uint32_t calcCheckSum(const std::map<K, T>& data, uint32_t checksum)
+template <typename K, typename T>
+[[nodiscard]] uint32_t calcCheckSum (const std::map<K, T>& data, uint32_t checksum)
 {
     for (const auto& x : data)
     {
-        checksum = calcCheckSum(x.first, checksum);
-        checksum = calcCheckSum(x.second, checksum);
+        checksum = calcCheckSum (x.first, checksum);
+        checksum = calcCheckSum (x.second, checksum);
     }
-
     return checksum;
 }
 
-
-template<typename T>
-uint32_t calcCheckSum(const std::forward_list<T>& data, uint32_t checksum)
+template <typename T>
+[[nodiscard]] uint32_t calcCheckSum (const std::forward_list<T>& data, uint32_t checksum)
 {
 	for (const auto& x : data)
-		checksum = calcCheckSum(x, checksum);
+		checksum = calcCheckSum (x, checksum);
 
 	return checksum;
 }
