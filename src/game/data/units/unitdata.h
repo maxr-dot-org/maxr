@@ -22,9 +22,9 @@
 
 #include "game/data/units/id.h"
 #include "game/data/resourcetype.h"
+#include "game/serialization/serialization.h"
 
 #include "utility/signal/signal.h"
-#include "utility/serialization/serialization.h"
 
 #include "config/workaround/cpp17/optional.h"
 #include <string>

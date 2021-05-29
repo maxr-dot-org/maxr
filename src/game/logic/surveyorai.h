@@ -20,6 +20,7 @@
 #ifndef game_logic_surveyoraiH
 #define game_logic_surveyoraiH
 
+#include <forward_list>
 #include <memory>
 
 #include "utility/position.h"

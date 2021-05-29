@@ -24,9 +24,11 @@
 #include "ui/graphical/widget.h"
 #include "utility/signal/signal.h"
 
-class cUnit;
+class cBuilding;
 class cPlayer;
 class cMapView;
+class cUnit;
+class cVehicle;
 
 class cUnitContextMenuWidget : public cWidget
 {

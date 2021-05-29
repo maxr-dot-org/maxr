@@ -25,7 +25,7 @@
 #include <vector>
 
 #include "game/data/units/unitdata.h"
-#include "utility/serialization/serialization.h"
+#include "game/serialization/serialization.h"
 
 //-------------------------------------------------------------------------
 class cClanUnitStat

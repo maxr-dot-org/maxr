@@ -22,6 +22,7 @@
 
 #include <string>
 
+#include "game/serialization/serialization.h"
 #include "utility/color.h"
 #include "utility/signal/signal.h"
 

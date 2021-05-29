@@ -22,10 +22,10 @@
 
 #include "job.h"
 
-#include "utility/serialization/binaryarchive.h"
-#include "utility/serialization/xmlarchive.h"
-#include "utility/signal/signalconnectionmanager.h"
 #include "game/data/units/unit.h"
+#include "game/serialization/binaryarchive.h"
+#include "game/serialization/xmlarchive.h"
+#include "utility/signal/signalconnectionmanager.h"
 
 class cVehicle;
 

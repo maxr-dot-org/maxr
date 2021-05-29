@@ -20,7 +20,7 @@
 #ifndef game_data_units_idH
 #define game_data_units_idH
 
-#include "utility/serialization/serialization.h"
+#include "game/serialization/serialization.h"
 
 #include <string>
 

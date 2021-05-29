@@ -24,7 +24,6 @@
 
 #include "utility/fixedvector.h"
 #include "utility/string/toString.h"
-#include "serialization/serialization.h"
 
 /**
  * Fixed vector class for 2-dimensional integer positions.
@@ -54,19 +53,13 @@ public:
 	}
 
 	// Get a position, relative to current position
-	cPosition relative(int x, int y) const
+	cPosition relative (int x, int y) const
 	{
-		return cPosition(this->x()+x, this->y()+y);
+		return cPosition (this->x() + x, this->y() + y);
 	}
 
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 
-	template<typename T>
-	void serialize(T& archive)
-	{
-		archive & serialization::makeNvp("X", (*this)[0]);
-		archive & serialization::makeNvp("Y", (*this)[1]);
-	}
 	int x() const
 	{
 		return (*this)[0];
@@ -104,78 +97,70 @@ public:
 class cVector2: public cFixedVector<float, 2>
 {
 public:
-    cVector2()
-    {
-        x() = 0;
-        y() = 0;
-    }
+	cVector2()
+	{
+		x() = 0;
+		y() = 0;
+	}
 
-    cVector2 (const cVector2& other) :
-        cFixedVector<float, 2> (other)
-    {}
+	cVector2 (const cVector2& other) :
+		cFixedVector<float, 2> (other)
+	{}
 
-    template<class T>
-    cVector2 (const cFixedVector<T, 2>& other) :
-        cFixedVector<float, 2> (other)
-    {}
+	template<class T>
+	cVector2 (const cFixedVector<T, 2>& other) :
+		cFixedVector<float, 2> (other)
+	{}
 
-    cVector2 (float x_, float y_)
-    {
-        x() = x_;
-        y() = y_;
-    }
+	cVector2 (float x_, float y_)
+	{
+		x() = x_;
+		y() = y_;
+	}
 
-    // Get a position, relative to current position
-    cVector2 relative(float x, float y) const
-    {
-        return cVector2(this->x()+x, this->y()+y);
-    }
+	// Get a position, relative to current position
+	cVector2 relative (float x, float y) const
+	{
+		return cVector2 (this->x() + x, this->y() + y);
+	}
 
-    uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 
-    template<typename T>
-    void serialize(T& archive)
-    {
-        archive & serialization::makeNvp("X", (*this)[0]);
-        archive & serialization::makeNvp("Y", (*this)[1]);
-    }
+	float x() const
+	{
+		return (*this)[0];
+	}
+	float y() const
+	{
+		return (*this)[1];
+	}
 
-    float x() const
-    {
-        return (*this)[0];
-    }
-    float y() const
-    {
-        return (*this)[1];
-    }
+	float& x()
+	{
+		return (*this)[0];
+	}
 
-    float& x()
-    {
-        return (*this)[0];
-    }
+	float& y()
+	{
+		return (*this)[1];
+	}
 
-    float& y()
-    {
-        return (*this)[1];
-    }
+	cVector2& operator= (const value_type& value)
+	{
+		cFixedVector<float, 2>::operator= (value);
+		return *this;
+	}
 
-    cVector2& operator= (const value_type& value)
-    {
-        cFixedVector<float, 2>::operator= (value);
-        return *this;
-    }
-
-    cVector2& operator= (const cVector2& value)
-    {
-        cFixedVector<float, 2>::operator= (value);
-        return *this;
-    }
-
+	cVector2& operator= (const cVector2& value)
+	{
+		cFixedVector<float, 2>::operator= (value);
+		return *this;
+	}
 };
 
-inline std::string toString(const cPosition& pos)
+inline std::string toString (const cPosition& pos)
 {
-	return "(" + iToStr (pos.x()) + ", " + iToStr(pos.y()) + ")";
+	return "(" + iToStr (pos.x()) + ", " + iToStr (pos.y()) + ")";
 }
 
 #endif // utility_positionH

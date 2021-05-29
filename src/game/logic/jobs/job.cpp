@@ -22,8 +22,8 @@
 
 #include "job.h"
 
-#include "utility/serialization/binaryarchive.h"
-#include "utility/serialization/xmlarchive.h"
+#include "game/serialization/binaryarchive.h"
+#include "game/serialization/xmlarchive.h"
 #include "startbuildjob.h"
 #include "planetakeoffjob.h"
 #include "destroyjob.h"

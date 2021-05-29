@@ -41,6 +41,7 @@
 #include "game/logic/fxeffects.h"
 #include "game/logic/gametimer.h"
 #include "game/logic/server.h"
+#include "game/serialization/textarchive.h"
 #include "game/startup/lobbypreparationdata.h"
 #include "output/video/video.h"
 #include "protocol/netmessage.h"
@@ -50,7 +51,6 @@
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/ranges.h"
-#include "utility/serialization/textarchive.h"
 #include "utility/string/toString.h"
 
 #include <cmath>

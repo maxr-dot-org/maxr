@@ -23,7 +23,7 @@
 #include <vector>
 
 #include "game/logic/upgradecalculator.h"
-#include "utility/serialization/serialization.h"
+#include "game/serialization/serialization.h"
 #include "utility/position.h"
 
 class cUnitSelection;

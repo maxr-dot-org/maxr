@@ -23,7 +23,7 @@
 #include <cstdint>
 
 #include "utility/crc.h"
-#include "utility/serialization/serialization.h"
+#include "game/serialization/serialization.h"
 
 class cCrossPlattformRandom
 {

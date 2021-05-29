@@ -20,8 +20,8 @@
 #ifndef game_logic_turncounterH
 #define game_logic_turncounterH
 
+#include "game/serialization/nvp.h"
 #include "utility/signal/signal.h"
-#include "utility/serialization/nvp.h"
 
 class cTurnCounter
 {

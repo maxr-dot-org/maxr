@@ -30,10 +30,10 @@
 #include "game/logic/movejob.h"
 #include "game/logic/pathcalculator.h"
 #include "game/logic/turncounter.h"
+#include "game/serialization/serialization.h"
 #include "units/unit.h"
 #include "utility/crossplattformrandom.h"
 #include "utility/flatset.h"
-#include "utility/serialization/serialization.h"
 
 #include <forward_list>
 #include <memory>

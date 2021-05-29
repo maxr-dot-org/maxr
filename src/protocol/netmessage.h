@@ -26,11 +26,11 @@
 #include "game/data/player/playerbasicdata.h"
 #include "game/data/report/savedreport.h"
 #include "game/logic/gametimer.h"
+#include "game/serialization/binaryarchive.h"
+#include "game/serialization/serialization.h"
+#include "game/serialization/textarchive.h"
 #include "ui/graphical/game/gameguistate.h"
 #include "utility/color.h"
-#include "utility/serialization/serialization.h"
-#include "utility/serialization/textarchive.h"
-#include "utility/serialization/binaryarchive.h"
 
 class cSavedReport;
 class cSocket;

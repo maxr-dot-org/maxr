@@ -22,8 +22,8 @@
 #include <string>
 #include <vector>
 
+#include "game/serialization/serialization.h"
 #include "utility/version.h"
-#include "utility/serialization/serialization.h"
 #include "player/playerbasicdata.h"
 
 /**

@@ -25,10 +25,10 @@
 
 #include "config/workaround/cpp17/optional.h"
 
+#include "game/serialization/binaryarchive.h"
+#include "game/serialization/textarchive.h"
+#include "game/serialization/xmlarchive.h"
 #include "utility/position.h"
-#include "utility/serialization/binaryarchive.h"
-#include "utility/serialization/textarchive.h"
-#include "utility/serialization/xmlarchive.h"
 
 struct sID;
 class cModel;

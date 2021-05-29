@@ -22,7 +22,7 @@
 
 #include<stdint.h>
 
-#include "utility/serialization/nvp.h"
+#include "game/serialization/nvp.h"
 
 class cVehicle;
 class cModel;

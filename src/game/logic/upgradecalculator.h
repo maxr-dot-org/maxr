@@ -22,8 +22,8 @@
 
 #include <map>
 
+#include "game/serialization/nvp.h"
 #include "utility/signal/signal.h"
-#include "utility/serialization/nvp.h"
 
 class cResearch;
 class cUnitUpgrade;

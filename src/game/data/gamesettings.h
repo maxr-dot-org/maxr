@@ -23,7 +23,7 @@
 #include <string>
 #include <chrono>
 
-#include "utility/serialization/serialization.h"
+#include "game/serialization/serialization.h"
 
 enum class eGameSettingsResourceAmount
 {

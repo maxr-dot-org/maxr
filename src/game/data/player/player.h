@@ -32,12 +32,12 @@
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/upgradecalculator.h"
+#include "game/serialization/serialization.h"
 #include "utility/arraycrc.h"
 #include "utility/color.h"
 #include "utility/flatset.h"
 #include "utility/position.h"
 #include "utility/ranges.h"
-#include "utility/serialization/serialization.h"
 #include "utility/signal/signal.h"
 
 class cHud;

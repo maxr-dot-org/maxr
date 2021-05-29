@@ -31,15 +31,17 @@
 #include "config/workaround/cpp17/optional.h"
 
 #include "nvp.h"
+#include "utility/color.h"
+#include "utility/position.h"
 
+class cBuilding;
+class cJob;
 class cModel;
 class cPlayer;
-class cBuilding;
-class cVehicle;
-class cUnit;
 class cStaticUnitData;
+class cUnit;
+class cVehicle;
 struct sID;
-class cJob;
 
 //used to constrain a template definition to use with out-archive types only
 #define ENABLE_ARCHIVE_OUT                       \
@@ -119,6 +121,30 @@ namespace serialization
 		archive & makeNvp("first", value.first);
 		archive & makeNvp("second", value.second);
 	}
+	//-------------------------------------------------------------------------
+	template <typename A>
+	void serialize (A& archive, cRgbColor& color)
+	{
+		archive & makeNvp ("r", color.r);
+		archive & makeNvp ("g", color.g);
+		archive & makeNvp ("b", color.b);
+		archive & makeNvp ("a", color.a);
+	}
+
+	template <typename A>
+	void serialize (A& archive, cPosition& position)
+	{
+		archive & serialization::makeNvp ("X", position[0]);
+		archive & serialization::makeNvp ("Y", position[1]);
+	}
+
+	template <typename A>
+	void serialize (A& archive, cVector2& vec)
+	{
+		archive & serialization::makeNvp ("X", vec[0]);
+		archive & serialization::makeNvp ("Y", vec[1]);
+	}
+
 	//-------------------------------------------------------------------------
 	template<typename A, typename T>
 	void save(A& archive, const std::vector<T>& value)
@@ -394,7 +420,6 @@ namespace serialization
 	{
 		serialization::detail::splitFree(archive, nvp);
 	}
-
 
 	//-------------------------------------------------------------------------
 	namespace detail

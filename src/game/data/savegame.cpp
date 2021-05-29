@@ -22,6 +22,8 @@
 #include "gamesettings.h"
 #include "game/logic/server.h"
 #include "game/logic/turntimeclock.h"
+#include "game/serialization/serialization.h"
+#include "game/serialization/xmlarchive.h"
 #include "maxrversion.h"
 #include "model.h"
 #include "player/player.h"
@@ -31,8 +33,6 @@
 #include "utility/files.h"
 #include "utility/log.h"
 #include "utility/ranges.h"
-#include "utility/serialization/serialization.h"
-#include "utility/serialization/xmlarchive.h"
 #include "utility/string/toString.h"
 
 #include <ctime>
