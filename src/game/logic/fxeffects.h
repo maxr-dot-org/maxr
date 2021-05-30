@@ -48,21 +48,21 @@ class IFxVisitor
 public:
 	virtual ~IFxVisitor() = default;
 
-	virtual void visit (const cFxMuzzleBig&);
-	virtual void visit (const cFxMuzzleMed&);
-	virtual void visit (const cFxMuzzleMedLong&);
-	virtual void visit (const cFxMuzzleSmall&);
-	virtual void visit (const cFxExploAir&);
-	virtual void visit (const cFxExploBig&);
-	virtual void visit (const cFxExploSmall&);
-	virtual void visit (const cFxExploWater&);
-	virtual void visit (const cFxAbsorb&);
-	virtual void visit (const cFxRocket&);
-	virtual void visit (const cFxSmoke&);
-	virtual void visit (const cFxCorpse&);
-	virtual void visit (const cFxDarkSmoke&);
-	virtual void visit (const cFxHit&);
-	virtual void visit (const cFxTracks&);
+	virtual void visit (const cFxMuzzleBig&) = 0;
+	virtual void visit (const cFxMuzzleMed&) = 0;
+	virtual void visit (const cFxMuzzleMedLong&) = 0;
+	virtual void visit (const cFxMuzzleSmall&) = 0;
+	virtual void visit (const cFxExploAir&) = 0;
+	virtual void visit (const cFxExploBig&) = 0;
+	virtual void visit (const cFxExploSmall&) = 0;
+	virtual void visit (const cFxExploWater&) = 0;
+	virtual void visit (const cFxAbsorb&) = 0;
+	virtual void visit (const cFxRocket&) = 0;
+	virtual void visit (const cFxSmoke&) = 0;
+	virtual void visit (const cFxCorpse&) = 0;
+	virtual void visit (const cFxDarkSmoke&) = 0;
+	virtual void visit (const cFxHit&) = 0;
+	virtual void visit (const cFxTracks&) = 0;
 };
 
 class cFx
