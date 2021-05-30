@@ -103,9 +103,8 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMapView& map, con
 	flightHigh = vehicle.getFlightHeight();
 	big = vehicle.getIsBig();
 	id = vehicle.data.getId();
-	auto* uiData = UnitsUiData.getVehicleUI (vehicle.getStaticUnitData().ID);
 
-	if (uiData->animationMovement)
+	if (vehicle.getStaticData().animationMovement)
 		frame = vehicle.WalkFrame;
 	else
 		frame = animationTime % 4;
@@ -113,7 +112,7 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMapView& map, con
 	water = map.isWaterOrCoast (vehicle.getPosition()) && !map.getField (vehicle.getPosition()).getBaseBuilding();
 
 	bool isOnWaterAndNotCoast = map.isWater (vehicle.getPosition());
-	//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
+	//if the vehicle can also drive on land, we have to check, whether there is a bridge, platform, etc.
 	//because the vehicle will drive on the bridge
 	cBuilding* building = map.getField (vehicle.getPosition()).getBaseBuilding();
 	if (vehicle.getStaticUnitData().factorGround > 0 && building
@@ -132,6 +131,7 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMapView& map, con
 	lastUsed = frameNr;
 
 	//determine needed size of the surface
+	auto* uiData = UnitsUiData.getVehicleUI (vehicle.getStaticUnitData().ID);
 	int height = (int) std::max (uiData->img_org[vehicle.dir]->h * zoom, uiData->shw_org[vehicle.dir]->h * zoom);
 	int width  = (int) std::max (uiData->img_org[vehicle.dir]->w * zoom, uiData->shw_org[vehicle.dir]->w * zoom);
 	if (vehicle.getFlightHeight() > 0)
@@ -251,7 +251,6 @@ SDL_Surface* cDrawingCache::getCachedImage (const cBuilding& building, double zo
 SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom, const cMapView& map, unsigned long long animationTime)
 {
 	if (!canCache (vehicle)) return nullptr;
-	auto* uiData = UnitsUiData.getVehicleUI (vehicle.getStaticUnitData().ID);
 
 	for (unsigned int i = 0; i < cacheSize; i++)
 	{
@@ -267,7 +266,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 		if (entry.flightHigh != vehicle.getFlightHeight()) continue;
 		if (entry.dir != vehicle.dir) continue;
 
-		if (uiData->animationMovement)
+		if (vehicle.getStaticData().animationMovement)
 		{
 			if (entry.frame != vehicle.WalkFrame) continue;
 		}

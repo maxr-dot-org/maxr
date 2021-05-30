@@ -834,7 +834,7 @@ static int LoadBuildings()
 }
 
 //------------------------------------------------------------------------------
-static void LoadUnitGraphicProperties (sVehicleUIData& data, char const* directory)
+static void LoadUnitGraphicProperties (cStaticUnitData& staticData,  sVehicleUIData& data, char const* directory)
 {
 	tinyxml2::XMLDocument unitGraphicsXml;
 
@@ -848,16 +848,16 @@ static void LoadUnitGraphicProperties (sVehicleUIData& data, char const* directo
 		return;
 	}
 
-	data.hasCorpse = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Corpse"});
+	staticData.vehicleData.hasCorpse = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Corpse"});
 	data.hasDamageEffect = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Damage_Effect"});
 	data.hasPlayerColor = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Player_Color"});
 	data.hasOverlay = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Overlay"});
 
 	data.buildUpGraphic = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Build_Up"});
-	data.animationMovement = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Movement"});
+	staticData.vehicleData.animationMovement = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Movement"});
 	data.powerOnGraphic = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Power_On"});
 	data.isAnimated = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Is_Animated"});
-	data.makeTracks = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Makes_Tracks"});
+	staticData.vehicleData.makeTracks = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Makes_Tracks"});
 }
 
 /**
@@ -927,7 +927,7 @@ static int LoadVehicles()
 		sVehicleUIData& ui = UnitsUiData.vehicleUIs.back();
 		ui.id = staticData.ID;
 		// load graphics.xml
-		LoadUnitGraphicProperties(ui, sVehiclePath.c_str());
+		LoadUnitGraphicProperties(staticData, ui, sVehiclePath.c_str());
 
 		if (DEDICATED_SERVER)
 		{
@@ -937,8 +937,8 @@ static int LoadVehicles()
 		}
 
 		Log.write ("Loading graphics", cLog::eLOG_TYPE_DEBUG);
-		// load infantery graphics
-		if (ui.animationMovement)
+		// load infantry graphics
+		if (staticData.vehicleData.animationMovement)
 		{
 			SDL_Rect rcDest;
 			for (int n = 0; n < 8; n++)

@@ -117,6 +117,10 @@ struct sStaticVehicleData
 	bool canPlaceMines = false;
 	bool canSurvey = false;
 	bool isHuman = false;
+	bool hasCorpse = false;
+	bool makeTracks = false;
+	bool animationMovement = false;
+
 	std::string isStorageType;
 
 	uint32_t computeChecksum (uint32_t crc) const;

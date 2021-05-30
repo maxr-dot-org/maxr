@@ -30,6 +30,7 @@
 #include <SDL.h>
 
 class cMapView;
+struct sStaticVehicleData;
 
 //-----------------------------------------------------------------------------
 // Struct for the pictures and sounds
@@ -45,7 +46,7 @@ public:
 	sVehicleUIData& operator= (const sVehicleUIData& other) = delete;
 	sVehicleUIData& operator= (sVehicleUIData && other) = default;
 
-	void render_simple (SDL_Surface&, const SDL_Rect& dest, float zoomFactor, const cPlayer* owner, int dir = 0, int walkFrame = 0, int alpha = 254) const;
+	void render_simple (SDL_Surface&, const SDL_Rect& dest, float zoomFactor, const sStaticVehicleData&, const cPlayer* owner, int dir = 0, int walkFrame = 0, int alpha = 254) const;
 	void drawOverlayAnimation (SDL_Surface&, const SDL_Rect& dest, float zoomFactor, int frameNr = 0, int alpha = 254) const;
 
 private:
@@ -56,16 +57,13 @@ private:
 public:
 	sID id;
 
-	bool hasCorpse = false;
 	bool hasDamageEffect = false;
 	bool hasPlayerColor = false;
 	bool hasOverlay = false;
 
 	bool buildUpGraphic = false;
-	bool animationMovement = false;
 	bool powerOnGraphic = false;
 	bool isAnimated = false;
-	bool makeTracks = false;
 
 	int hasFrames = 0;
 

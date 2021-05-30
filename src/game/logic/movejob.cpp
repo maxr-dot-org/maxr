@@ -26,8 +26,6 @@
 #include "game/data/units/vehicle.h"
 #include "game/logic/gametimer.h"
 #include "game/logic/pathcalculator.h"
-#include "resources/uidata.h"
-#include "resources/vehicleuidata.h"
 #include "utility/ranges.h"
 #include "utility/string/toString.h"
 
@@ -317,10 +315,9 @@ void cMoveJob::moveVehicle (cModel& model)
 
 	pixelToMove += currentSpeed;
 
-	auto* uiData = UnitsUiData.getVehicleUI (vehicle->getStaticUnitData().ID);
 	int x = abs (vehicle->getMovementOffset().x());
 	int y = abs (vehicle->getMovementOffset().y());
-	if (uiData->makeTracks && (
+	if (vehicle->getStaticData().makeTracks && (
 		(x > 32 && x - pixelToMove / 100 <= 32) ||
 		(y > 32 && y - pixelToMove / 100 <= 32) ||
 		(x == 64 && pixelToMove / 100 >= 1) ||
@@ -345,9 +342,8 @@ void cMoveJob::moveVehicle (cModel& model)
 void cMoveJob::updateSpeed (const cMap &map)
 {
 	int maxSpeed = 100 * MOVE_SPEED;
-	auto* uiData = UnitsUiData.getVehicleUI (vehicle->getStaticUnitData().ID);
 
-	if (uiData->animationMovement)
+	if (vehicle->getStaticData().animationMovement)
 	{
 		maxSpeed = 100 * MOVE_SPEED / 2;
 	}

@@ -22,6 +22,7 @@
 #include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"
 #include "game/data/player/player.h"
+#include "game/data/units/unitdata.h"
 #include "game/data/units/vehicle.h"
 #include "output/video/video.h"
 #include "resources/uidata.h"
@@ -73,7 +74,7 @@ void sVehicleUIData::render_shadow (const cVehicle& vehicle, const cMapView& map
 
 		blitWithPreScale (*shw_org[vehicle.dir], *shw[vehicle.dir], nullptr, surface, &tmp, zoomFactor);
 	}
-	else if (animationMovement)
+	else if (vehicle.getStaticData().animationMovement)
 	{
 		const Uint16 size = (int) (img_org[vehicle.dir]->h * zoomFactor);
 		SDL_Rect r = {Sint16 (vehicle.WalkFrame * size), 0, size, size};
@@ -145,7 +146,7 @@ void sVehicleUIData::render_BuildingOrBigClearing (const cVehicle& vehicle, cons
 }
 
 //------------------------------------------------------------------------------
-void sVehicleUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor, const cPlayer* owner, int dir, int walkFrame, int alpha) const
+void sVehicleUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor, const sStaticVehicleData& vehicleData, const cPlayer* owner, int dir, int walkFrame, int alpha) const
 {
 	// draw player color
 	if (owner)
@@ -160,7 +161,7 @@ void sVehicleUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest, 
 	src.w = (int) (img_org[dir]->w * zoomFactor);
 	src.h = (int) (img_org[dir]->h * zoomFactor);
 
-	if (animationMovement)
+	if (vehicleData.animationMovement)
 	{
 		SDL_Rect tmp;
 		src.w = src.h = tmp.h = tmp.w = (int) (img_org[dir]->h * zoomFactor);
@@ -254,7 +255,7 @@ void sVehicleUIData::drawOverlayAnimation (SDL_Surface& surface, const SDL_Rect&
 void render_simple (const cVehicle& vehicle, SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor, int alpha)
 {
 	auto* uiData = UnitsUiData.getVehicleUI (vehicle.getStaticUnitData().ID);
-	uiData->render_simple (surface, dest, zoomFactor, vehicle.getOwner(), vehicle.dir, vehicle.WalkFrame, alpha);
+	uiData->render_simple (surface, dest, zoomFactor, vehicle.getStaticData(), vehicle.getOwner(), vehicle.dir, vehicle.WalkFrame, alpha);
 }
 
 //------------------------------------------------------------------------------

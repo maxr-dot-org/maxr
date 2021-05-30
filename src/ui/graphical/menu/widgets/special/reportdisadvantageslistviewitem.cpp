@@ -53,7 +53,7 @@ cReportDisadvantagesListViewItem::cReportDisadvantagesListViewItem (const cStati
 	{
 		const float zoomFactor = unitImageWidth / 64.0f;
 		const auto& uiData = *UnitsUiData.getVehicleUI (unitId);
-		uiData.render_simple (*unitSurface, dest, zoomFactor, nullptr);
+		uiData.render_simple (*unitSurface, dest, zoomFactor, data.vehicleData, nullptr);
 		uiData.drawOverlayAnimation (*unitSurface, dest, zoomFactor);
 	}
 	else if (unitId.isABuilding())

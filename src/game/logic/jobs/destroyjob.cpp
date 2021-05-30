@@ -22,8 +22,6 @@
 #include "game/data/model.h"
 #include "game/data/units/unit.h"
 #include "game/logic/fxeffects.h"
-#include "resources/uidata.h"
-#include "resources/vehicleuidata.h"
 #include "utility/crc.h"
 
 //------------------------------------------------------------------------------
@@ -93,8 +91,7 @@ void cDestroyJob::createDestroyFx(cModel& model)
 		counter = fx->getLength() / 2;
 		model.addFx(fx);
 
-		auto* uiData = UnitsUiData.getVehicleUI (vehicle.getStaticUnitData().ID);
-		if (uiData->hasCorpse)
+		if (vehicle.getStaticData().hasCorpse)
 		{
 			// add corpse
 			model.addFx(std::make_shared<cFxCorpse>(vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
