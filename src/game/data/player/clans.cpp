@@ -21,6 +21,8 @@
 
 #include "game/data/units/unitdata.h"
 
+cClanData ClanDataGlobal;
+
 //--------------------------------------------------
 void cClanUnitStat::addModification (const std::string& area, int value)
 {

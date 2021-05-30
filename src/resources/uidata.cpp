@@ -30,8 +30,6 @@
 cGraphicsData GraphicsData;
 cEffectsData EffectsData;
 cResourceData ResourceData;
-cUnitsData UnitsDataGlobal;
-cClanData  ClanDataGlobal;
 cUnitsUiData UnitsUiData;
 cOtherData OtherData;
 

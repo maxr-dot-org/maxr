@@ -174,8 +174,6 @@ public:
 extern cGraphicsData GraphicsData;
 extern cEffectsData EffectsData;
 extern cResourceData ResourceData;
-extern cUnitsData UnitsDataGlobal;
-extern cClanData  ClanDataGlobal;
 extern cUnitsUiData UnitsUiData;
 extern cOtherData OtherData;
 

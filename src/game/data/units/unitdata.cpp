@@ -28,6 +28,8 @@
 
 #include <algorithm>
 
+cUnitsData UnitsDataGlobal;
+
 //------------------------------------------------------------------------------
 uint32_t sStaticBuildingData::computeChecksum (uint32_t crc) const
 {

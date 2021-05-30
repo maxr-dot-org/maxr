@@ -27,7 +27,6 @@
 #include "maxrversion.h"
 #include "mapdownloader/mapdownload.h"
 #include "mapdownloader/mapuploadmessagehandler.h"
-#include "resources/uidata.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/ranges.h"

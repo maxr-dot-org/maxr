@@ -475,4 +475,6 @@ private:
 	mutable std::optional<uint32_t> crcCache;
 };
 
+extern cUnitsData UnitsDataGlobal;
+
 #endif // game_data_units_unitdataH

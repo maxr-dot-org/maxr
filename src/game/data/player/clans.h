@@ -153,4 +153,6 @@ private:
 	std::vector<std::unique_ptr<cClan>> clans;
 };
 
+extern cClanData ClanDataGlobal;
+
 #endif // game_data_player_clansH
