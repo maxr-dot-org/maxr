@@ -62,9 +62,11 @@
 #include "ui/graphical/game/control/mousemode/mousemodesupplyammo.h"
 #include "ui/graphical/game/control/mousemode/mousemodetransfer.h"
 #include "ui/graphical/game/control/rightmousebuttonscroller.h"
+#include "ui/graphical/game/drawfxeffect.h"
 #include "ui/graphical/game/hud.h"
 #include "ui/graphical/game/widgets/unitcontextmenuwidget.h"
 #include "ui/keys.h"
+#include "ui/sound/game/fxsound.h"
 #include "ui/sound/soundmanager.h"
 #include "utility/indexiterator.h"
 #include "utility/listhelpers.h"
@@ -938,7 +940,7 @@ void cGameMapWidget::addEffect (std::shared_ptr<cFx> effect, bool playSound)
 {
 	if (effect != nullptr)
 	{
-		if (playSound) effect->playSound (*soundManager);
+		if (playSound) playEffectSound (*soundManager, *effect);
 		effects.push_back (std::move (effect));
 	}
 }
@@ -1083,12 +1085,12 @@ void cGameMapWidget::drawEffects (bool bottom)
 		else
 		{
 			if (effect->bottom == bottom &&
-				(!player || player->canSeeAt (effect->getPosition() / originalTileSize)))
+				(!player || player->canSeeAt (effect->getPixelPosition() / originalTileSize)))
 			{
 				cPosition screenDestination;
-				screenDestination.x() = getPosition().x() + static_cast<int> ((effect->getPosition().x() - pixelOffset.x()) * getZoomFactor());
-				screenDestination.y() = getPosition().y() + static_cast<int> ((effect->getPosition().y() - pixelOffset.y()) * getZoomFactor());
-				effect->draw (getZoomFactor(), screenDestination);
+				screenDestination.x() = getPosition().x() + static_cast<int> ((effect->getPixelPosition().x() - pixelOffset.x()) * getZoomFactor());
+				screenDestination.y() = getPosition().y() + static_cast<int> ((effect->getPixelPosition().y() - pixelOffset.y()) * getZoomFactor());
+				drawFx (*effect, getZoomFactor(), screenDestination);
 			}
 
 			++it;

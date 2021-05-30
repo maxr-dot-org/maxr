@@ -23,35 +23,71 @@
 #include <vector>
 #include <memory>
 
-#include "SDLutility/autosurface.h"
 #include "utility/position.h"
 #include "game/data/units/unitdata.h"
 
-class cSoundManager;
-class cSoundChunk;
+class cFxMuzzleBig;
+class cFxMuzzleMed;
+class cFxMuzzleMedLong;
+class cFxMuzzleSmall;
+class cFxExploAir;
+class cFxExploBig;
+class cFxExploSmall;
+class cFxExploWater;
+class cFxAbsorb;
+class cFxRocket;
+class cFxFade;
+class cFxDarkSmoke;
+class cFxCorpse;
+class cFxSmoke;
+class cFxHit;
+class cFxTracks;
+
+class IFxVisitor
+{
+public:
+	virtual ~IFxVisitor() = default;
+
+	virtual void visit (const cFxMuzzleBig&);
+	virtual void visit (const cFxMuzzleMed&);
+	virtual void visit (const cFxMuzzleMedLong&);
+	virtual void visit (const cFxMuzzleSmall&);
+	virtual void visit (const cFxExploAir&);
+	virtual void visit (const cFxExploBig&);
+	virtual void visit (const cFxExploSmall&);
+	virtual void visit (const cFxExploWater&);
+	virtual void visit (const cFxAbsorb&);
+	virtual void visit (const cFxRocket&);
+	virtual void visit (const cFxSmoke&);
+	virtual void visit (const cFxCorpse&);
+	virtual void visit (const cFxDarkSmoke&);
+	virtual void visit (const cFxHit&);
+	virtual void visit (const cFxTracks&);
+};
 
 class cFx
 {
 protected:
-	cFx (bool bottom_, const cPosition& position);
+	cFx (bool bottom_, const cPosition& pixelPosition);
 
 	cPosition position;
-	int tick;
-	int length;
+	int tick = 0;
+	int length = -1;
 
 public:
-	virtual ~cFx();
+	virtual ~cFx() = default;
+
+	virtual void accept (IFxVisitor&) const = 0;
+	virtual bool isFinished() const;
+	virtual void run();
+
+	// TODO: Should not be pixel related
+	const cPosition& getPixelPosition() const { return position; }
+
+	int getTick() const { return tick; }
+	int getLength() const { return length; }
 
 	const bool bottom;
-
-	const cPosition& getPosition();
-
-	virtual bool isFinished() const;
-	int getLength() const;
-
-	virtual void draw (float zoom, const cPosition& destination) const = 0;
-	virtual void playSound (cSoundManager& soundManager) const;
-	virtual void run();
 };
 
 class cFxContainer
@@ -67,13 +103,12 @@ private:
 
 class cFxMuzzle : public cFx
 {
-
+public:
+	int getDir() const { return dir; }
+	const sID& getId() const { return id; }
 protected:
 	cFxMuzzle (const cPosition& position, int dir_, sID id);
-	void draw (float zoom, const cPosition& destination) const override;
-	void playSound (cSoundManager& soundManager) const override;
 
-	AutoSurface (*pImages) [2];
 	int dir;
 	const sID id;
 };
@@ -82,36 +117,40 @@ class cFxMuzzleBig : public cFxMuzzle
 {
 public:
 	cFxMuzzleBig (const cPosition& position, int dir, sID id);
+	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
 };
 
 class cFxMuzzleMed : public cFxMuzzle
 {
 public:
 	cFxMuzzleMed (const cPosition& position, int dir, sID id);
+	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
 };
 
 class cFxMuzzleMedLong : public cFxMuzzle
 {
 public:
 	cFxMuzzleMedLong (const cPosition& position, int dir, sID id);
+	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
 };
 
 class cFxMuzzleSmall : public cFxMuzzle
 {
 public:
 	cFxMuzzleSmall (const cPosition& position, int dir, sID id);
+	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
 };
 
 class cFxExplo : public cFx
 {
 protected:
 	cFxExplo (const cPosition& position, int frames_);
-	void draw (float zoom, const cPosition& destination) const override;
 
+public:
+	int getFrames() const { return frames; }
 protected:
-	AutoSurface (*pImages) [2];
 	// TODO: frames could be calculated (frames = w / h),
-	// if the width and height of the grapics for one frame would be equal
+	// if the width and height of the graphics for one frame would be equal
 	// (which they aren't yet).
 	const int frames;
 };
@@ -120,15 +159,16 @@ class cFxExploSmall : public cFxExplo
 {
 public:
 	cFxExploSmall (const cPosition& position); // x, y is the center of the explosion
-	void playSound (cSoundManager& soundManager) const override;
+	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
 };
 
 class cFxExploBig : public cFxExplo
 {
 public:
 	cFxExploBig (const cPosition& position, bool onWater);
-	void playSound (cSoundManager& soundManager) const override;
+	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
 
+	bool isOnWater() const { return onWater; }
 private:
 	bool onWater;
 };
@@ -137,14 +177,14 @@ class cFxExploAir : public cFxExplo
 {
 public:
 	cFxExploAir (const cPosition& position);
-	void playSound (cSoundManager& soundManager) const override;
+	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
 };
 
 class cFxExploWater : public cFxExplo
 {
 public:
 	cFxExploWater (const cPosition& position);
-	void playSound (cSoundManager& soundManager) const override;
+	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
 };
 
 class cFxHit : public cFxExplo
@@ -154,23 +194,25 @@ private:
 	bool big;
 public:
 	cFxHit (const cPosition& position, bool targetHit, bool big);
-	void playSound (cSoundManager& soundManager) const override;
+	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
+
+	bool isBig() const { return big; }
+	bool isTargetHit() const { return targetHit; }
 };
 
 class cFxAbsorb : public cFxExplo
 {
 public:
 	cFxAbsorb (const cPosition& position);
-	void playSound (cSoundManager& soundManager) const override;
+	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
 };
 
 class cFxFade : public cFx
 {
 protected:
 	cFxFade (const cPosition& position, bool bottom, int start, int end);
-	void draw (float zoom, const cPosition& destination) const override;
 
-	AutoSurface (*pImages) [2];
+public:
 	const int alphaStart;
 	const int alphaEnd;
 };
@@ -179,24 +221,25 @@ class cFxSmoke : public cFxFade
 {
 public:
 	cFxSmoke (const cPosition& position, bool bottom); // x, y is the center of the effect
+	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
 };
 
 class cFxCorpse : public cFxFade
 {
 public:
 	cFxCorpse (const cPosition& position);
+	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
 };
 
 class cFxTracks : public cFx
 {
-private:
-	AutoSurface (*pImages) [2];
+public:
 	const int alphaStart;
 	const int alphaEnd;
 	const int dir;
 public:
 	cFxTracks (const cPosition& position, int dir_);
-	void draw (float zoom, const cPosition& destination) const override;
+	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
 };
 
 
@@ -205,7 +248,6 @@ class cFxRocket : public cFx
 private:
 	const int speed;
 	std::vector<std::unique_ptr<cFx>> subEffects;
-	AutoSurface (*pImages) [2];
 	int dir;
 	int distance;
 	const cPosition startPosition;
@@ -213,14 +255,15 @@ private:
 	const sID id;
 public:
 	cFxRocket (const cPosition& startPosition, const cPosition& endPosition, int dir_, bool bottom, sID id);
-	~cFxRocket();
-	void draw (float zoom, const cPosition& destination) const override;
-	void playSound (cSoundManager& soundManager) const override;
+	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
 	void run() override;
 	// return true, when the last smoke effect is finished.
 	// getLength() returns only the time until
 	// the rocket has reached the destination
 	bool isFinished() const override;
+	const sID getId() const { return id; }
+	int getDir() const { return dir; }
+	const std::vector<std::unique_ptr<cFx>>& getSubEffects() const { return subEffects; }
 };
 
 class cFxDarkSmoke : public cFx
@@ -228,13 +271,16 @@ class cFxDarkSmoke : public cFx
 private:
 	float dx;
 	float dy;
+public:
 	const int alphaStart;
 	const int alphaEnd;
 	const int frames;
-	AutoSurface (*pImages) [2];
 public:
 	cFxDarkSmoke (const cPosition& position, int alpha, float windDir);
-	void draw (float zoom, const cPosition& destination) const override;
+	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
+
+	float getDx() const { return dx; }
+	float getDy() const { return dy; }
 };
 
 #endif // game_logic_fxeffectsH

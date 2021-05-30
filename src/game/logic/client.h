@@ -33,8 +33,6 @@
 class cBuilding;
 class cCasualtiesTracker;
 class cAttackJob;
-class cFx;
-class cFxContainer;
 class cJob;
 class cMap;
 class cPlayer;
