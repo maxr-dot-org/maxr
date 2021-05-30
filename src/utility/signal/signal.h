@@ -26,7 +26,6 @@
 #include <mutex>
 #include <utility>
 
-#include "utility/dependentfalse.h"
 #include "utility/deref.h"
 #include "utility/scopedoperation.h"
 #include "utility/thread/dummymutex.h"
@@ -46,10 +45,7 @@
  *                   deadlocks arise when a slot functions tries to access the signal recursively.
  */
 template<typename FunctionSignatureType, typename MutexType = cDummyMutex>
-class cSignal
-{
-	static_assert (sDependentFalse<FunctionSignatureType>::value, "cSignal not allowed with this template arguments!");
-};
+class cSignal;
 
 /**
  * Base class interface of signals used for type erasure and adds
