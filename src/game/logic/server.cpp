@@ -28,6 +28,7 @@
 #include "game/logic/turntimeclock.h"
 #include "game/protocol/netmessage.h"
 #include "game/startup/lobbypreparationdata.h"
+#include "settings.h"
 #include "utility/language.h"
 #include "utility/log.h"
 #include "utility/random.h"

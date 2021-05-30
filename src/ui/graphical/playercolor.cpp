@@ -19,7 +19,6 @@
 
 #include "playercolor.h"
 
-#include "defines.h"
 #include "SDLutility/tosdl.h"
 #include "utility/comparison.h"
 #include "utility/random.h"

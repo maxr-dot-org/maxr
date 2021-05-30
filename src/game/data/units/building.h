@@ -20,7 +20,6 @@
 #ifndef game_data_units_buildingH
 #define game_data_units_buildingH
 
-#include "defines.h"
 #include "game/data/miningresource.h"
 #include "game/data/units/unitdata.h"
 #include "game/data/units/unit.h"

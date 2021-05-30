@@ -20,6 +20,7 @@
 #include "dedicatedserver.h"
 
 #include "dedicatedserver/dedicatedservergame.h"
+#include "defines.h"
 #include "utility/listhelpers.h"
 #include "utility/files.h"
 

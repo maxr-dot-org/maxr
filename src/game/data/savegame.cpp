@@ -19,6 +19,7 @@
 
 #include "savegame.h"
 
+#include "defines.h"
 #include "game/data/gamesettings.h"
 #include "game/data/model.h"
 #include "game/data/player/player.h"

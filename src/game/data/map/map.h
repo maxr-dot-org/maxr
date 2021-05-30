@@ -25,15 +25,14 @@
 #include <vector>
 #include <utility>
 
+#include "game/data/gamesettings.h"
+#include "game/data/resourcetype.h"
 #include "SDLutility/autosurface.h"
-#include "defines.h"
 #include "utility/t_2.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
-#include "game/data/gamesettings.h"
 #include "utility/log.h"
 #include "utility/arraycrc.h"
-#include "game/data/resourcetype.h"
 
 class cUnit;
 class cVehicle;

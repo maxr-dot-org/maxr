@@ -19,6 +19,7 @@
 
 #include "ui/graphical/game/widgets/minimapwidget.h"
 
+#include "defines.h"
 #include "game/data/map/map.h"
 #include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"

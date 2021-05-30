@@ -29,7 +29,6 @@
 
 #include "utility/log.h"
 #include "maxrversion.h"
-#include "defines.h"
 #include "settings.h"
 #include "output/video/video.h"
 

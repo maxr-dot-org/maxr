@@ -20,8 +20,6 @@
 #ifndef game_data_units_vehicleH
 #define game_data_units_vehicleH
 
-#include "defines.h"
-
 #include "game/data/units/commandodata.h"
 #include "game/data/units/unitdata.h"
 #include "game/data/units/unit.h"

@@ -17,22 +17,25 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "game/data/map/map.h"
+#include "map.h"
 
-#include "game/data/units/building.h"
-#include "utility/listhelpers.h"
-#include "utility/mathtools.h"
-#include "utility/files.h"
-#include "utility/crc.h"
-#include "utility/log.h"
-#include "utility/string/toString.h"
-#include "game/data/player/player.h"
-#include "settings.h"
-#include "game/data/units/vehicle.h"
-#include "output/video/video.h"
-#include "utility/position.h"
+#include "defines.h"
 #include "game/data/model.h"
+#include "game/data/player/player.h"
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
 #include "mapdownloader/mapdownload.h"
+#include "output/video/video.h"
+#include "settings.h"
+#include "utility/crc.h"
+#include "utility/files.h"
+#include "utility/listhelpers.h"
+#include "utility/log.h"
+#include "utility/mathtools.h"
+#include "utility/position.h"
+#include "utility/string/toString.h"
+
+static constexpr int MAX_PLANES_PER_FIELD = 5;
 
 #if 1 // TODO: [SDL2]: SDL_SetColors
 inline void SDL_SetColors (SDL_Surface* surface, const SDL_Color* colors, int index, int size)

@@ -27,8 +27,6 @@
 #define PFEIL_COLOR        0xFF0000FF // color of a waypointarrow
 #define PFEILS_COLOR       0xFF00FF00 // color of a special waypointarrow
 
-#define MAX_PLANES_PER_FIELD 5
-
 // minimap configuration
 #define MINIMAP_COLOR 0xFFFC0000 // color of the screen borders on the minimap
 

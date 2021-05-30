@@ -24,7 +24,6 @@
 #include <string>
 #include <vector>
 
-#include "defines.h"
 #include "game/data/base/base.h"
 #include "game/data/rangemap.h"
 #include "game/data/units/unitdata.h"
