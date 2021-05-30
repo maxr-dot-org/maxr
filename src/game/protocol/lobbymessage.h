@@ -19,11 +19,11 @@
 #ifndef protocol_lobbymessageH
 #define protocol_lobbymessageH
 
-#include "protocol/netmessage.h"
 #include "game/data/gamesettings.h"
 #include "game/data/player/playerbasicdata.h"
-#include "game/logic/landingpositionstate.h"
 #include "game/data/savegameinfo.h"
+#include "game/logic/landingpositionstate.h"
+#include "game/protocol/netmessage.h"
 
 class cUnitsData;
 class cClanData;

@@ -20,11 +20,11 @@
 #include "lobbyclient.h"
 
 #include "game/logic/client.h"
+#include "game/protocol/netmessage.h"
 #include "game/startup/lobbyserver.h"
 #include "game/startup/lobbyutils.h"
 #include "mapdownloader/mapdownloadmessagehandler.h"
 #include "maxrversion.h"
-#include "protocol/netmessage.h"
 #include "utility/log.h"
 #include "utility/ranges.h"
 

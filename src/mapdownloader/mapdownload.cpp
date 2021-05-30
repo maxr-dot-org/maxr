@@ -23,8 +23,8 @@
 
 #include "defines.h"
 #include "game/connectionmanager.h"
-#include "protocol/lobbymessage.h"
-#include "protocol/netmessage.h"
+#include "game/protocol/lobbymessage.h"
+#include "game/protocol/netmessage.h"
 #include "settings.h"
 #include "utility/crc.h"
 #include "utility/files.h"

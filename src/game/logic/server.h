@@ -23,8 +23,8 @@
 #include "game/connectionmanager.h"
 #include "game/data/model.h"
 #include "game/data/savegame.h"
-#include "gametimer.h"
-#include "protocol/netmessage.h"
+#include "game/logic/gametimer.h"
+#include "game/protocol/netmessage.h"
 #include "utility/thread/concurrentqueue.h"
 
 #include "SDL_thread.h"

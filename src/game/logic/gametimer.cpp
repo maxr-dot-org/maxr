@@ -25,7 +25,7 @@
 #include "game/data/units/building.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
-#include "protocol/netmessage.h"
+#include "game/protocol/netmessage.h"
 #include "utility/files.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"

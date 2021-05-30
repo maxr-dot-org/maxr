@@ -20,7 +20,7 @@
 #ifndef game_logic_actionH
 #define game_logic_actionH
 
-#include "protocol/netmessage.h"
+#include "game/protocol/netmessage.h"
 
 class cAction : public cNetMessageT<eNetMessageType::ACTION>
 {

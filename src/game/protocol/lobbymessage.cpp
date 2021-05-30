@@ -19,9 +19,9 @@
 
 #include "lobbymessage.h"
 
-#include "utility/string/toString.h"
 #include "game/data/units/unitdata.h"
 #include "game/data/player/clans.h"
+#include "utility/string/toString.h"
 
 std::unique_ptr<cMultiplayerLobbyMessage> cMultiplayerLobbyMessage::createFromBuffer(cBinaryArchiveOut& archive)
 {

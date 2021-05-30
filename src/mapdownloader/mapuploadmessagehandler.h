@@ -20,10 +20,10 @@
 #ifndef mapdownloader_mapuploadmessagehandlerH
 #define mapdownloader_mapuploadmessagehandlerH
 
-#include "mapdownloader/mapdownload.h"
-#include "protocol/lobbymessage.h"
-#include "game/connectionmanager.h"
 #include "game/data/map/map.h"
+#include "game/connectionmanager.h"
+#include "game/protocol/lobbymessage.h"
+#include "mapdownloader/mapdownload.h"
 
 #include <functional>
 

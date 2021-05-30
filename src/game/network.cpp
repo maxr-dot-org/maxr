@@ -20,7 +20,7 @@
 #include "network.h"
 
 #include "game/connectionmanager.h"
-#include "protocol/netmessage.h"
+#include "game/protocol/netmessage.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/string/toString.h"

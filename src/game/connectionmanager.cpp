@@ -21,8 +21,8 @@
 
 #include "maxrversion.h"
 #include "game/network.h"
-#include "protocol/lobbymessage.h"
-#include "protocol/netmessage.h"
+#include "game/protocol/lobbymessage.h"
+#include "game/protocol/netmessage.h"
 #include "utility/log.h"
 #include "utility/ranges.h"
 #include "utility/string/toString.h"

@@ -20,7 +20,7 @@
 #include "dedicatedservergame.h"
 
 #include "game/data/savegame.h"
-#include "protocol/lobbymessage.h"
+#include "game/protocol/lobbymessage.h"
 #include "utility/log.h"
 
 #include <algorithm>

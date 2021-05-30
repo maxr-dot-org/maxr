@@ -19,19 +19,18 @@
 
 #include "application.h"
 
+#include "game/protocol/netmessage.h"
+#include "events/eventmanager.h"
 #include "input/keyboard/keyboard.h"
 #include "input/mouse/mouse.h"
-#include "events/eventmanager.h"
 #include "output/video/unifonts.h"
 #include "output/video/video.h"
-#include "protocol/netmessage.h"
 #include "settings.h"
-#include "utility/runnable.h"
-#include "utility/string/toString.h"
-
 #include "ui/graphical/framecounter.h"
 #include "ui/graphical/widget.h"
 #include "ui/graphical/window.h"
+#include "utility/runnable.h"
+#include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
 cApplication::cApplication() :

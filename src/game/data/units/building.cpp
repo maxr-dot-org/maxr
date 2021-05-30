@@ -28,7 +28,7 @@
 #include "game/logic/client.h"
 #include "game/logic/fxeffects.h"
 #include "game/logic/upgradecalculator.h"
-#include "protocol/netmessage.h"
+#include "game/protocol/netmessage.h"
 #include "settings.h"
 #include "utility/crc.h"
 #include "utility/listhelpers.h"

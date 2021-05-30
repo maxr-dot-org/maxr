@@ -24,10 +24,10 @@
 #include "game/data/model.h"
 #include "game/logic/action/action.h"
 #include "game/logic/turntimeclock.h"
+#include "game/protocol/lobbymessage.h"
 #include "game/serialization/serialization.h"
 #include "mapdownloader/mapdownload.h"
 #include "maxrversion.h"
-#include "protocol/lobbymessage.h"
 #include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
