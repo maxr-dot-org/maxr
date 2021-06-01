@@ -112,12 +112,6 @@ public:
 	/** Removed all units from the field */
 	void removeAll();
 
-	/** Triggered when a building has been added or removed to/from the field */
-	mutable cSignal<void ()> buildingsChanged;
-	/** Triggered when a vehicle has been added or removed to/from the field */
-	mutable cSignal<void ()> vehiclesChanged;
-	/** Triggered when a plane has been added or removed to/from the field */
-	mutable cSignal<void ()> planesChanged;
 	/** Triggered when any unit (building, vehicle or plane) has been added or removed to/from the field */
 	mutable cSignal<void ()> unitsChanged;
 

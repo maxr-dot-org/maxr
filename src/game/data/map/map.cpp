@@ -293,7 +293,6 @@ void cMapField::addBuilding (cBuilding& building, size_t index)
 	assert (index <= buildings.size());
 	buildings.insert (buildings.begin() + index, &building);
 
-	buildingsChanged();
 	unitsChanged();
 }
 void cMapField::addVehicle (cVehicle& vehicle, size_t index)
@@ -301,7 +300,6 @@ void cMapField::addVehicle (cVehicle& vehicle, size_t index)
 	assert (index <= vehicles.size());
 	vehicles.insert (vehicles.begin() + index, &vehicle);
 
-	vehiclesChanged();
 	unitsChanged();
 }
 
@@ -310,7 +308,6 @@ void cMapField::addPlane (cVehicle& plane, size_t index)
 	assert (index <= planes.size());
 	planes.insert (planes.begin() + index, &plane);
 
-	planesChanged();
 	unitsChanged();
 }
 
@@ -318,7 +315,6 @@ void cMapField::removeBuilding (const cBuilding& building)
 {
 	Remove (buildings, &building);
 
-	buildingsChanged();
 	unitsChanged();
 }
 
@@ -326,7 +322,6 @@ void cMapField::removeVehicle (const cVehicle& vehicle)
 {
 	Remove (vehicles, &vehicle);
 
-	vehiclesChanged();
 	unitsChanged();
 }
 
@@ -334,7 +329,6 @@ void cMapField::removePlane (const cVehicle& plane)
 {
 	Remove (planes, &plane);
 
-	planesChanged();
 	unitsChanged();
 }
 
@@ -344,9 +338,6 @@ void cMapField::removeAll()
 	vehicles.clear();
 	planes.clear();
 
-	buildingsChanged();
-	vehiclesChanged();
-	planesChanged();
 	unitsChanged();
 }
 
