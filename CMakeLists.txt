@@ -1,5 +1,5 @@
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.1)
 
 project(maxr)
 
@@ -40,63 +40,13 @@ endif()
 # === Checks
 # ============================================
 
+set (CMAKE_CXX_STANDARD 14)
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
+set (CMAKE_CXX_EXTENSIONS OFF)
+
 # ---------------------------------------
-# Check C++11/C++14 compatible compiler
-if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-
-  execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION_STRING)
-
-  if (NOT (GCC_VERSION_STRING VERSION_GREATER 5.4.0 OR GCC_VERSION_STRING VERSION_EQUAL 5.4.0))
-    message(FATAL_ERROR "${PROJECT_NAME} requires g++ 5.4.0 or greater (is ${GCC_VERSION_STRING}).")
-  endif ()
-  
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y")
-  
-elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-
-  execute_process(COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE CLANG_FULL_VERSION_STRING)
-
-  if("${CLANG_FULL_VERSION_STRING}" MATCHES "Apple")
-  
-    string(REGEX REPLACE ".*Apple LLVM version ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION_STRING ${CLANG_FULL_VERSION_STRING})
-    
-    if (NOT (CLANG_VERSION_STRING VERSION_GREATER 3.1 OR CLANG_VERSION_STRING VERSION_EQUAL 3.1))
-      message(FATAL_ERROR "${PROJECT_NAME} requires AppleClang 3.1 or greater (is ${CLANG_VERSION_STRING}).")
-    endif ()
-  
-    if (CLANG_VERSION_STRING VERSION_GREATER 5.1 OR CLANG_VERSION_STRING VERSION_EQUAL 5.1)
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -stdlib=libc++")
-    else()
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -stdlib=libc++")
-    endif()
-  else()
-    string(REGEX REPLACE ".*clang version ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION_STRING ${CLANG_FULL_VERSION_STRING})
-    
-    if (NOT (CLANG_VERSION_STRING VERSION_GREATER 3.1 OR CLANG_VERSION_STRING VERSION_EQUAL 3.1))
-      message(FATAL_ERROR "${PROJECT_NAME} requires clang 3.1 or greater (is ${CLANG_VERSION_STRING}).")
-    endif ()
-  
-    if (CLANG_VERSION_STRING VERSION_GREATER 3.4 OR CLANG_VERSION_STRING VERSION_EQUAL 3.4)
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -stdlib=libc++")
-    else()
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -stdlib=libc++")
-    endif()
-  endif()
- 
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-
-  if (NOT (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 12.1 OR CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 12.1))
-    message(FATAL_ERROR "${PROJECT_NAME} requires ICC 12.1 or greater (is ${CMAKE_CXX_COMPILER_VERSION}).")
-  endif ()
-    
-  if(NOT WIN32)
-    if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 15.0 OR CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 15.0)
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y")
-    else()
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-    endif()
-  endif()
-  
+if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /bigobj")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /ZI /bigobj")
@@ -111,9 +61,6 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     set(CMAKE_GENERATOR_TOOLSET "v140_xp" CACHE STRING "CMAKE_GENERATOR_TOOLSET" FORCE)
     set(CMAKE_VS_PLATFORM_TOOLSET "v140_xp" CACHE STRING "CMAKE_VS_PLATFORM_TOOLSET" FORCE)
   endif()
-
-else()
-  message(FATAL_ERROR "You are using an unsupported C++ compiler.")
 endif()
 
 # ============================================
@@ -208,5 +155,3 @@ if(CRASH_RPT_INCLUDE_DIR)
   include_directories(${CRASH_RPT_INCLUDE_DIR})
   target_link_libraries(maxr ${CRASH_RPT_LIB})
 endif()
-
-
