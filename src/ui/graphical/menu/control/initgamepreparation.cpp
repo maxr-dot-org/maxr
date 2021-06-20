@@ -44,11 +44,11 @@ void cInitGamePreparation::bindConnections (cLobbyClient& lobbyClient)
 		if (isIn)
 		{
 			playersLandingStatus.push_back (std::make_unique<cPlayerLandingStatus> (player));
-			if (windowLandingPositionSelection) windowLandingPositionSelection->getChatBox()->addPlayerEntry (std::make_unique<cChatBoxLandingPlayerListViewItem> (*playersLandingStatus.back()));
+			if (windowLandingPositionSelection) windowLandingPositionSelection->addChatPlayerEntry (*playersLandingStatus.back());
 		}
 		else
 		{
-			if (windowLandingPositionSelection) windowLandingPositionSelection->getChatBox()->removePlayerEntry (player.getNr());
+			if (windowLandingPositionSelection) windowLandingPositionSelection->removeChatPlayerEntry (player.getNr());
 			playersLandingStatus.erase (std::remove_if (playersLandingStatus.begin(), playersLandingStatus.end(), [&] (const std::unique_ptr<cPlayerLandingStatus>& status) { return status->getPlayer().getNr() == player.getNr(); }), playersLandingStatus.end());
 		}
 	});
@@ -76,9 +76,7 @@ void cInitGamePreparation::onChatMessage (const std::string& playerName, const s
 {
 	if (!windowLandingPositionSelection) return;
 
-	auto* chatBox = windowLandingPositionSelection->getChatBox();
-	chatBox->addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (playerName, message));
-	cSoundDevice::getInstance().playSoundEffect (SoundData.SNDChat);
+	windowLandingPositionSelection->addChatEntry (playerName, message);
 }
 
 //------------------------------------------------------------------------------
@@ -144,7 +142,7 @@ void cInitGamePreparation::startLandingPositionSelection()
 
 	for (const auto& status : playersLandingStatus)
 	{
-		windowLandingPositionSelection->getChatBox()->addPlayerEntry (std::make_unique<cChatBoxLandingPlayerListViewItem> (*status));
+		windowLandingPositionSelection->addChatPlayerEntry (*status);
 	}
 	signalConnectionManager.connect (windowLandingPositionSelection->opened, [this]()
 	{
@@ -166,10 +164,10 @@ void cInitGamePreparation::startLandingPositionSelection()
 		lobbyClient.selectLandingPosition (landingPosition);
 	});
 
-	signalConnectionManager.connect (windowLandingPositionSelection->getChatBox()->commandEntered, [=] (const std::string& text)
+	signalConnectionManager.connect (windowLandingPositionSelection->onCommandEntered, [=] (const std::string& text)
 	{
 		const std::string& playerName = lobbyClient.getLocalPlayerName();
-		windowLandingPositionSelection->getChatBox()->addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (playerName, text));
+		windowLandingPositionSelection->addChatEntry (playerName, text);
 		cSoundDevice::getInstance().playSoundEffect (SoundData.SNDChat);
 		lobbyClient.sendChatMessage (text);
 	});

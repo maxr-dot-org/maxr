@@ -27,34 +27,38 @@
 #include "utility/signal/signal.h"
 #include "game/logic/landingpositionstate.h"
 
-class cPushButton;
+class cAnimationTimer;
+class cChatBoxLandingPlayerListViewItem;
 class cImage;
 class cLabel;
-class cPosition;
 class cLandingPositionSelectionMap;
-class cStaticMap;
-class cAnimationTimer;
-template<typename, typename> class cChatBox;
-class cChatBoxLandingPlayerListViewItem;
 class cLobbyChatBoxListViewItem;
+class cPlayerLandingStatus;
+class cPosition;
+class cPushButton;
+class cStaticMap;
+class cUnitsData;
 
 struct sTerrain;
 struct sLandingUnit;
-class cUnitsData;
+
+template<typename, typename> class cChatBox;
 
 class cWindowLandingPositionSelection : public cWindow
 {
 public:
-	cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> staticMap, bool fixedBridgeHead, const std::vector<sLandingUnit>& landingUnits, std::shared_ptr<const cUnitsData> unitsdata, bool withChatBox);
+	cWindowLandingPositionSelection (std::shared_ptr<cStaticMap>, bool fixedBridgeHead, const std::vector<sLandingUnit>&, std::shared_ptr<const cUnitsData>, bool withChatBox);
 	~cWindowLandingPositionSelection();
 
 	const cPosition& getSelectedPosition() const;
 
-	void applyReselectionState (eLandingPositionState state);
+	void applyReselectionState (eLandingPositionState);
 
-	void setInfoMessage (const std::string& message);
+	void setInfoMessage (const std::string&);
 
-	cChatBox<cLobbyChatBoxListViewItem, cChatBoxLandingPlayerListViewItem>* getChatBox();
+	void addChatPlayerEntry (const cPlayerLandingStatus&);
+	void removeChatPlayerEntry (int playerId);
+	void addChatEntry (const std::string& playerName, const std::string& message);
 
 	void allowSelection();
 	void disallowSelection();
@@ -62,38 +66,17 @@ public:
 	void lockBack();
 	void unlockBack();
 
+	void handleActivated (cApplication&, bool firstTime) override;
+	void handleDeactivated (cApplication&, bool removed) override;
+	bool handleMouseMoved (cApplication&, cMouse&, const cPosition& offset) override;
+
+	cSignal<void (const std::string&)> onCommandEntered;
 	cSignal<void (const cPosition&)> selectedPosition;
-	cSignal<void ()> canceled;
+	cSignal<void()> canceled;
 
-	void handleActivated (cApplication& application, bool firstTime) override;
-	void handleDeactivated (cApplication& application, bool removed) override;
-	bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) override;
-
-	mutable cSignal<void ()> opened;
-	mutable cSignal<void ()> closed;
+	cSignal<void()> opened;
+	cSignal<void()> closed;
 private:
-	cSignalConnectionManager signalConnectionManager;
-	cSignalConnectionManager circleAnimationConnectionManager;
-
-	std::shared_ptr<cStaticMap> staticMap;
-
-	std::shared_ptr<cAnimationTimer> animationTimer;
-
-	bool selectionAllowed;
-
-	eLandingPositionState reselectionState;
-
-	cPushButton* backButton;
-	cLabel* infoLabel;
-	cImage* circlesImage;
-	cChatBox<cLobbyChatBoxListViewItem, cChatBoxLandingPlayerListViewItem>* chatBox;
-
-	float circleAnimationState;
-
-	cLandingPositionSelectionMap* mapWidget;
-
-	cPosition lastSelectedPosition;
-
 	AutoSurface createHudSurface();
 
 	void backClicked();
@@ -102,6 +85,25 @@ private:
 
 	void startCircleAnimation (const cPosition& tilePosition);
 	void runCircleAnimation (const cPosition& tilePosition);
+	cSignalConnectionManager signalConnectionManager;
+	cSignalConnectionManager circleAnimationConnectionManager;
+
+private:
+	std::shared_ptr<cStaticMap> staticMap;
+	std::shared_ptr<cAnimationTimer> animationTimer;
+	bool selectionAllowed = true;
+	eLandingPositionState reselectionState = eLandingPositionState::Unknown;
+
+	cPushButton* backButton = nullptr;
+	cLabel* infoLabel = nullptr;
+	cImage* circlesImage = nullptr;
+	cChatBox<cLobbyChatBoxListViewItem, cChatBoxLandingPlayerListViewItem>* chatBox = nullptr;
+
+	float circleAnimationState = 0.f;
+
+	cLandingPositionSelectionMap* mapWidget = nullptr;
+
+	cPosition lastSelectedPosition;
 };
 
 #endif // ui_graphical_menu_windows_windowlandingpositionselection_windowlandingpositionselectionH

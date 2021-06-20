@@ -49,8 +49,6 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection(std::shared_ptr
 	cWindow (nullptr),
 	staticMap (std::move (staticMap_)),
 	animationTimer (std::make_shared<cAnimationTimer> ()),
-	selectionAllowed (true),
-	reselectionState (eLandingPositionState::Unknown),
 	lastSelectedPosition (0, 0)
 {
 	using namespace std::placeholders;
@@ -76,6 +74,11 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection(std::shared_ptr
 	if (withChatBox)
 	{
 		chatBox = addChild (std::make_unique<cChatBox<cLobbyChatBoxListViewItem, cChatBoxLandingPlayerListViewItem>> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, hudImage->getEndPosition().y() - cHud::panelBottomHeight - 12 - 100), hudImage->getEndPosition() - cPosition (cHud::panelRightWidth + 4, cHud::panelBottomHeight + 12))));
+
+		signalConnectionManager.connect (chatBox->commandEntered, [this](const std::string& message)
+		{
+			onCommandEntered (message);
+		});
 
 		auto toggleChatBoxButton = addChild (std::make_unique<cCheckBox> (cPosition (35, hudImage->getEndPosition().y() - 65), lngPack.i18n ("Text~Others~Chat"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
 		toggleChatBoxButton->setChecked (true);
@@ -136,9 +139,23 @@ void cWindowLandingPositionSelection::setInfoMessage (const std::string& message
 }
 
 //------------------------------------------------------------------------------
-cChatBox<cLobbyChatBoxListViewItem, cChatBoxLandingPlayerListViewItem>* cWindowLandingPositionSelection::getChatBox()
+void cWindowLandingPositionSelection::addChatPlayerEntry (const cPlayerLandingStatus& playerLandingStatus)
 {
-	return chatBox;
+	if (chatBox) chatBox->addPlayerEntry (std::make_unique<cChatBoxLandingPlayerListViewItem> (playerLandingStatus));
+}
+
+//------------------------------------------------------------------------------
+void cWindowLandingPositionSelection::removeChatPlayerEntry (int playerId)
+{
+	if (chatBox) chatBox->removePlayerEntry (playerId);
+}
+
+//------------------------------------------------------------------------------
+void cWindowLandingPositionSelection::addChatEntry (const std::string& playerName, const std::string& message)
+{
+	if (!chatBox) return;
+	chatBox->addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (playerName, message));
+	cSoundDevice::getInstance().playSoundEffect (SoundData.SNDChat);
 }
 
 //------------------------------------------------------------------------------
