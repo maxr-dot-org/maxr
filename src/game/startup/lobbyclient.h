@@ -55,6 +55,7 @@ public:
 
 	void askToFinishLobby();
 
+	bool isUniquePlayer() const { return players.size() == 1; }
 	void abortGamePreparation();
 
 	void enterLandingSelection();

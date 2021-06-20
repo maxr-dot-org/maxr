@@ -136,7 +136,7 @@ void cInitGamePreparation::startLandingPositionSelection()
 	const bool fixedBridgeHead = lobbyPreparationData.gameSettings->bridgeheadType == eGameSettingsBridgeheadType::Definite;
 	const auto& unitsData = lobbyPreparationData.unitsData;
 
-	windowLandingPositionSelection = std::make_shared<cWindowLandingPositionSelection> (map, fixedBridgeHead, initPlayerData.landingUnits, unitsData, true);
+	windowLandingPositionSelection = std::make_shared<cWindowLandingPositionSelection> (map, fixedBridgeHead, initPlayerData.landingUnits, unitsData, !lobbyClient.isUniquePlayer());
 	application.show (windowLandingPositionSelection);
 	windows.push_back (windowLandingPositionSelection.get());
 
