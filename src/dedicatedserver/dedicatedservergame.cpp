@@ -209,14 +209,11 @@ void cDedicatedServerGame::prepareGameData()
 //--------------------------------------------------------------------------
 void cDedicatedServerGame::handleChatCommand (int fromPlayer, const std::vector<std::string>& tokens)
 {
-	const auto* senderPlayer = lobbyServer.getConstPlayer (fromPlayer);
 	if (tokens.size() == 1)
 	{
 		if (tokens[0] == "go")
 		{
-			auto message = std::make_unique<cMuMsgAskToFinishLobby>();
-			message->playerNr = fromPlayer;
-			lobbyServer.pushMessage (std::move (message));
+			lobbyServer.askedToFinishLobby (fromPlayer);
 		}
 		else if (tokens[0] == "help")
 		{
@@ -242,6 +239,7 @@ void cDedicatedServerGame::handleChatCommand (int fromPlayer, const std::vector<
 				mapName += tokens[i];
 			}
 			auto map = std::make_shared<cStaticMap>();
+			const auto* senderPlayer = lobbyServer.getConstPlayer (fromPlayer);
 			if (map->loadMap (mapName))
 			{
 				lobbyServer.selectMap (map);

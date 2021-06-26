@@ -65,6 +65,7 @@ public:
 	void selectSaveGameInfo (cSaveGameInfo);
 	void selectMap (std::shared_ptr<cStaticMap>);
 	void selectGameSettings (std::shared_ptr<cGameSettings>);
+	void askedToFinishLobby (int fromPlayer);
 
 	const cGameSettings* getGameSettings() const { return gameSettings.get(); }
 

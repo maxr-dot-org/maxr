@@ -247,6 +247,14 @@ void cLobbyServer::selectGameSettings (std::shared_ptr<cGameSettings> settings)
 }
 
 //------------------------------------------------------------------------------
+void cLobbyServer::askedToFinishLobby (int fromPlayer)
+{
+	auto message = std::make_unique<cMuMsgAskToFinishLobby>();
+	message->playerNr = fromPlayer;
+	pushMessage (std::move (message));
+}
+
+//------------------------------------------------------------------------------
 void cLobbyServer::sendChatMessage (const std::string& message, int receiverPlayerNr /*= -1*/)
 {
 	cTextArchiveIn archive;
