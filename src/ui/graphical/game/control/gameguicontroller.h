@@ -161,7 +161,6 @@ private:
 	std::shared_ptr<const cTurnCounter> getTurnCounter() const;
 	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock() const;
 	std::shared_ptr<const cGameSettings> getGameSettings() const;
-	std::shared_ptr<const cCasualtiesTracker> getCasualtiesTracker() const;
 	std::shared_ptr<const cUnitsData> getUnitsData() const;
 
 	mutable cSignal<void (const cUnit&, const cUnit&, int, eResourceType)> transferTriggered;

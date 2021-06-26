@@ -2000,12 +2000,6 @@ std::shared_ptr<const cGameSettings> cGameGuiController::getGameSettings() const
 	return activeClient ? activeClient->getModel().getGameSettings() : nullptr;
 }
 
-//------------------------------------------------------------------------------
-std::shared_ptr<const cCasualtiesTracker> cGameGuiController::getCasualtiesTracker() const
-{
-	return activeClient ? activeClient->getModel().getCasualtiesTracker() : nullptr;
-}
-
 //-----------------------------------------------------------------------------
 std::shared_ptr<const cUnitsData> cGameGuiController::getUnitsData() const
 {
