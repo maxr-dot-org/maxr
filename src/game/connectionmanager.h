@@ -20,8 +20,6 @@
 #ifndef game_connectionmanagerH
 #define game_connectionmanagerH
 
-#include "utility/color.h"
-
 #include <memory>
 #include <mutex>
 #include <vector>
@@ -38,8 +36,8 @@ class INetMessageReceiver
 {
 public:
 	virtual ~INetMessageReceiver() {}
-	virtual void pushMessage(std::unique_ptr<cNetMessage> message) = 0;
-	virtual std::unique_ptr<cNetMessage> popMessage() { throw std::runtime_error("Method not implemented"); };
+	virtual void pushMessage (std::unique_ptr<cNetMessage> message) = 0;
+	virtual std::unique_ptr<cNetMessage> popMessage() { throw std::runtime_error ("Method not implemented"); };
 };
 
 //------------------------------------------------------------------------------
@@ -56,42 +54,41 @@ public:
 	cConnectionManager();
 	~cConnectionManager();
 
-	int openServer(int port);
+	int openServer (int port);
 	void closeServer();
 	bool isServerOpen() const;
 
-	void acceptConnection(const cSocket* socket, int playerNr);
+	void acceptConnection (const cSocket*, int playerNr);
 	void declineConnection (const cSocket*, eDeclineConnectionReason);
 	void connectToServer (const std::string& host, int port);
 	bool isConnectedToServer() const;
-	void changePlayerNumber(int currentNr, int newNr);
-	bool isPlayerConnected(int playerNr) const;
+	void changePlayerNumber (int currentNr, int newNr);
+	bool isPlayerConnected (int playerNr) const;
 
-	void setLocalClient(INetMessageReceiver* client, int playerNr);
-	void setLocalServer(INetMessageReceiver* server);
-	void setLocalClients(std::vector<INetMessageReceiver*>&&);
+	void setLocalClient (INetMessageReceiver* client, int playerNr);
+	void setLocalServer (INetMessageReceiver* server);
+	void setLocalClients (std::vector<INetMessageReceiver*>&&);
 
-	void sendToServer(const cNetMessage& message);
-	void sendToPlayer(const cNetMessage& message, int playerNr);
-	void sendToPlayers(const cNetMessage& message);
+	void sendToServer (const cNetMessage&);
+	void sendToPlayer (const cNetMessage&, int playerNr);
+	void sendToPlayers (const cNetMessage&);
 
-	void disconnect(int player);
+	void disconnect (int player);
 	void disconnectAll();
 
-
 	//callbacks from network thread
-	void connectionClosed(const cSocket* socket);
-	void incomingConnection(const cSocket* socket);
-	void messageReceived(const cSocket* socket, unsigned char* data, int length);
-	void connectionResult(const cSocket* socket);
+	void connectionClosed (const cSocket*);
+	void incomingConnection (const cSocket*);
+	void messageReceived (const cSocket*, unsigned char* data, int length);
+	void connectionResult (const cSocket*);
 
 	//callback from timeout timer
-	void handshakeTimeoutCallback(cHandshakeTimeout& timer);
+	void handshakeTimeoutCallback (cHandshakeTimeout&);
 private:
-	void startTimeout(const cSocket* socket);
-	void stopTimeout(const cSocket* socket);
-	int sendMessage(const cSocket* socket, const cNetMessage& message);
-	bool handeConnectionHandshake(const std::unique_ptr<cNetMessage> &message, const cSocket* socket, int playerOnSocket);
+	void startTimeout (const cSocket*);
+	void stopTimeout (const cSocket*);
+	int sendMessage (const cSocket*, const cNetMessage&);
+	bool handeConnectionHandshake (const std::unique_ptr<cNetMessage>&, const cSocket*, int playerOnSocket);
 
 private:
 	std::unique_ptr<cNetwork> network;
