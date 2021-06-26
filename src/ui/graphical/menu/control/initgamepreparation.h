@@ -40,7 +40,7 @@ class cWindowLandingPositionSelection;
 class cInitGamePreparation
 {
 public:
-	cInitGamePreparation (cApplication& application, cLobbyClient& lobbyClient);
+	cInitGamePreparation (cApplication&, cLobbyClient&);
 
 	void bindConnections (cLobbyClient&);
 

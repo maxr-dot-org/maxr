@@ -64,7 +64,7 @@ public:
 
 	void disconnect();
 
-	const std::string& getLocalPlayerName() const { return localPlayer.getName(); }
+	const cPlayerBasicData& getLocalPlayer() const { return localPlayer; }
 	const std::string& getDownloadingMapName() const { return triedLoadMapName; }
 	const sLobbyPreparationData& getLobbyPreparationData() const { return lobbyPreparationData; }
 

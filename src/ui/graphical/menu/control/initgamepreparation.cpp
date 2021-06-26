@@ -114,8 +114,8 @@ void cInitGamePreparation::startLandingUnitSelection()
 	const auto& gameSettings = *lobbyPreparationData.gameSettings;
 	const auto unitsData = lobbyPreparationData.unitsData;
 	const auto initialLandingUnits = computeInitialLandingUnits (initPlayerData.clan, gameSettings, *unitsData);
-	// TODO: use player color
-	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (cRgbColor(), initPlayerData.clan, initialLandingUnits, gameSettings.startCredits, unitsData));
+	const auto& playerColor = lobbyClient.getLocalPlayer().getColor();
+	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (playerColor, initPlayerData.clan, initialLandingUnits, gameSettings.startCredits, unitsData));
 	windows.push_back (windowLandingUnitSelection);
 
 	signalConnectionManager.connect (windowLandingUnitSelection->canceled, [this]() { back(); });
@@ -166,7 +166,7 @@ void cInitGamePreparation::startLandingPositionSelection()
 
 	signalConnectionManager.connect (windowLandingPositionSelection->onCommandEntered, [=] (const std::string& text)
 	{
-		const std::string& playerName = lobbyClient.getLocalPlayerName();
+		const std::string& playerName = lobbyClient.getLocalPlayer().getName();
 		windowLandingPositionSelection->addChatEntry (playerName, text);
 		cSoundDevice::getInstance().playSoundEffect (SoundData.SNDChat);
 		lobbyClient.sendChatMessage (text);
