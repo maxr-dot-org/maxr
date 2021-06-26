@@ -41,6 +41,26 @@
 #include "utility/mathtools.h"
 #include "utility/string/toString.h"
 
+namespace
+{
+	//--------------------------------------------------------------------------
+	std::string iToHex (unsigned int x)
+	{
+		std::stringstream strStream;
+		strStream << std::hex << x;
+		return strStream.str();
+	}
+
+	//--------------------------------------------------------------------------
+	std::string pToStr (const void* x)
+	{
+		std::stringstream strStream;
+		strStream << x;
+		return "0x" + strStream.str();
+	}
+}
+
+
 //------------------------------------------------------------------------------
 cDebugOutputWidget::cDebugOutputWidget (const cBox<cPosition>& area) :
 	cWidget (area)

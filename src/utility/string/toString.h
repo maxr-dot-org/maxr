@@ -31,14 +31,6 @@ std::string toString(const T& x)
 	return ss.str();
 }
 
-/**Converts integer to string in hex representation
-*/
-std::string iToHex (unsigned int x);
-
-/**Converts pointer to string
-*/
-std::string pToStr (const void* x);
-
 std::string getHexValue(unsigned char byte);
 unsigned char getByteValue(const std::string& str, int index);
 

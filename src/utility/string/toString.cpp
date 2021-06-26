@@ -21,20 +21,6 @@
 
 #include <string>
 
-std::string iToHex (unsigned int x)
-{
-	std::stringstream strStream;
-	strStream << std::hex << x;
-	return strStream.str();
-}
-
-std::string pToStr (const void* x)
-{
-	std::stringstream strStream;
-	strStream << x;
-	return "0x" + strStream.str();
-}
-
 //--------------------------------------------------------------------------
 std::string getHexValue(unsigned char byte)
 {
