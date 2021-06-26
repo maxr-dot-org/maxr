@@ -38,9 +38,6 @@ std::string iToHex (unsigned int x);
 /**Converts pointer to string
 */
 std::string pToStr (const void* x);
-/**Converts bool to string
-*/
-std::string bToStr (bool x);
 
 std::string getHexValue(unsigned char byte);
 unsigned char getByteValue(const std::string& str, int index);

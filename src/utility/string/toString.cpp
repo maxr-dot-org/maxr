@@ -35,11 +35,6 @@ std::string pToStr (const void* x)
 	return "0x" + strStream.str();
 }
 
-std::string bToStr (bool x)
-{
-	return x ? "true" : "false";
-}
-
 //--------------------------------------------------------------------------
 std::string getHexValue(unsigned char byte)
 {
