@@ -25,7 +25,6 @@
 
 #include "output/sound/soundchannel.h"
 #include "utility/log.h"
-#include "utility/string/toString.h"
 
 //--------------------------------------------------------------------------
 cSoundChannelGroup::cSoundChannelGroup (int sdlGroupTag_) :

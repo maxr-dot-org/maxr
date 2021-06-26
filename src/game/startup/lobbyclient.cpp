@@ -363,7 +363,7 @@ void cLobbyClient::handleNetMessage_TCP_CONNECTED(const cNetMessageTcpConnected&
 	{
 		onDifferentVersion (message.packageVersion, message.packageRev);
 	}
-	Log.write("Connected and assigned playerNr: " + toString(message.playerNr), cLog::eLOG_TYPE_INFO);
+	Log.write ("Connected and assigned playerNr: " + std::to_string (message.playerNr), cLog::eLOG_TYPE_INFO);
 }
 
 //------------------------------------------------------------------------------

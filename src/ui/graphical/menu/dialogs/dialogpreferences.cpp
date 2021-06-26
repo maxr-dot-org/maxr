@@ -35,7 +35,6 @@
 #include "ui/graphical/menu/widgets/tools/validatorint.h"
 #include "utility/language.h"
 #include "utility/string/iequals.h"
-#include "utility/string/toString.h"
 
 #include <functional>
 

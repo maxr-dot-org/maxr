@@ -30,7 +30,6 @@
 #include "utility/files.h"
 #include "utility/log.h"
 #include "utility/string/tolower.h"
-#include "utility/string/toString.h"
 
 #include <cassert>
 #include <iostream>
@@ -309,7 +308,7 @@ void cMapSender::sendMsg (cNetMessage& msg)
 
 	cTextArchiveIn archive;
 	archive << msg;
-	Log.write ("MapSender: --> " + archive.data() + " to " + toString(toPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("MapSender: --> " + archive.data() + " to " + std::to_string (toPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
 
 	connectionManager.sendToPlayer(msg, toPlayerNr);
 }

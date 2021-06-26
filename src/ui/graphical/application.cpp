@@ -30,7 +30,6 @@
 #include "ui/graphical/widget.h"
 #include "ui/graphical/window.h"
 #include "utility/runnable.h"
-#include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
 cApplication::cApplication() :

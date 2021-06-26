@@ -19,15 +19,14 @@
 
 #include "ui/graphical/menu/widgets/special/saveslotwidget.h"
 
+#include "game/data/savegameinfo.h"
+#include "input/mouse/mouse.h"
+#include "output/sound/soundchannel.h"
+#include "output/sound/sounddevice.h"
+#include "resources/sound.h"
+#include "ui/graphical/application.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/lineedit.h"
-#include "ui/graphical/application.h"
-#include "input/mouse/mouse.h"
-#include "resources/sound.h"
-#include "utility/string/toString.h"
-#include "output/sound/sounddevice.h"
-#include "output/sound/soundchannel.h"
-#include "game/data/savegameinfo.h"
 
 //------------------------------------------------------------------------------
 cSaveSlotWidget::cSaveSlotWidget (const cPosition& position) :

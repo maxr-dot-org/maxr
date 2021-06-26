@@ -24,8 +24,6 @@
 #include <cctype>
 #include <cstdlib>
 
-#include "utility/string/toString.h"
-
 cValidatorInt::cValidatorInt() :
 	minValue (std::numeric_limits<int>::min()),
 	maxValue (std::numeric_limits<int>::max())

@@ -32,7 +32,6 @@
 #include "utility/language.h"
 #include "utility/log.h"
 #include "utility/random.h"
-#include "utility/string/toString.h"
 
 #include <SDL_thread.h>
 
@@ -52,7 +51,7 @@ cServer::cServer(std::shared_ptr<cConnectionManager> connectionManager) :
 	{
 		if (cSettings::getInstance().shouldAutosave())
 		{
-			saveGameState(10, lngPack.i18n("Text~Comp~Turn_5") + " " + toString(model.getTurnCounter()->getTurn()) + " - " + lngPack.i18n("Text~Settings~Autosave"));
+			saveGameState (10, lngPack.i18n ("Text~Comp~Turn_5") + " " + std::to_string (model.getTurnCounter()->getTurn()) + " - " + lngPack.i18n ("Text~Settings~Autosave"));
 		}
 		disableFreezeMode(eFreezeMode::WAIT_FOR_TURNEND);
 	});
@@ -116,7 +115,7 @@ void cServer::saveGameState(int saveGameNumber, const std::string& saveName) con
 		serverThread = nullptr;
 	}
 
-	Log.write(" Server: writing gamestate to save file " + toString(saveGameNumber) + ", Modelcrc: " + toString(model.getChecksum()), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Server: writing gamestate to save file " + std::to_string (saveGameNumber) + ", Modelcrc: " + std::to_string (model.getChecksum()), cLog::eLOG_TYPE_NET_DEBUG);
 
 	int saveingID = savegame.save(model, saveGameNumber, saveName);
 	cNetMessageRequestGUISaveInfo message(saveingID);
@@ -320,7 +319,7 @@ void cServer::run()
 				const auto player = model.getPlayer(msg.playerNr);
 				if (player == nullptr)
 				{
-					Log.write(" Server: Invalid player id: " + toString(msg.playerNr), cLog::eLOG_TYPE_NET_ERROR);
+					Log.write (" Server: Invalid player id: " + std::to_string (msg.playerNr), cLog::eLOG_TYPE_NET_ERROR);
 					break;
 				}
 
@@ -380,7 +379,7 @@ void cServer::setPlayerNotResponding(int playerId)
 	if (playerConnectionStates[playerId] != ePlayerConnectionState::CONNECTED) return;
 
 	playerConnectionStates[playerId] = ePlayerConnectionState::NOT_RESPONDING;
-	Log.write(" Server: Player " + toString(playerId) + " not responding", cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Server: Player " + std::to_string (playerId) + " not responding", cLog::eLOG_TYPE_NET_DEBUG);
 	updateWaitForClientFlag();
 }
 
@@ -390,7 +389,7 @@ void cServer::clearPlayerNotResponding(int playerId)
 	if (playerConnectionStates[playerId] != ePlayerConnectionState::NOT_RESPONDING) return;
 
 	playerConnectionStates[playerId] = ePlayerConnectionState::CONNECTED;
-	Log.write(" Server: Player " + toString(playerId) + " responding again", cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Server: Player " + std::to_string (playerId) + " responding again", cLog::eLOG_TYPE_NET_DEBUG);
 	updateWaitForClientFlag();
 }
 
@@ -407,7 +406,7 @@ void cServer::playerDisconnected(int playerId)
 		//TODO: set to INACTIVE when running in dedicated mode
 		playerConnectionStates[playerId] = ePlayerConnectionState::DISCONNECTED;
 	}
-	Log.write(" Server: Player " + toString(playerId) + " disconnected", cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Server: Player " + std::to_string (playerId) + " disconnected", cLog::eLOG_TYPE_NET_DEBUG);
 	updateWaitForClientFlag();
 }
 
@@ -415,7 +414,7 @@ void cServer::playerDisconnected(int playerId)
 void cServer::playerConnected(int playerId)
 {
 	playerConnectionStates[playerId] = ePlayerConnectionState::CONNECTED;
-	Log.write(" Server: Player " + toString(playerId) + " connected", cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Server: Player " + std::to_string (playerId) + " connected", cLog::eLOG_TYPE_NET_DEBUG);
 	updateWaitForClientFlag();
 }
 

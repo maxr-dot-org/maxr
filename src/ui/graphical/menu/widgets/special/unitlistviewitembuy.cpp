@@ -19,10 +19,9 @@
 
 #include "ui/graphical/menu/widgets/special/unitlistviewitembuy.h"
 
+#include "game/data/player/player.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
-#include "utility/string/toString.h"
-#include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------
 cUnitListViewItemBuy::cUnitListViewItemBuy (unsigned int width, const sID& unitId, const cPlayer& owner, const cUnitsData& unitsData) :

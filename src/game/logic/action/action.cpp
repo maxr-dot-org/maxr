@@ -18,36 +18,36 @@
 ***************************************************************************/
 
 #include "action.h"
-#include "utility/log.h"
-#include "utility/string/toString.h"
-#include "actioninitnewgame.h"
-#include "actionstartwork.h"
-#include "actionstop.h"
-#include "actiontransfer.h"
-#include "actionstartmove.h"
-#include "actionresumemove.h"
-#include "actionstartturn.h"
-#include "actionendturn.h"
-#include "actionselfdestroy.h"
-#include "actionattack.h"
-#include "actionchangesentry.h"
-#include "actionchangemanualfire.h"
-#include "actionminelayerstatus.h"
-#include "actionstartbuild.h"
-#include "actionfinishbuild.h"
-#include "actionchangebuildlist.h"
-#include "actionload.h"
+
 #include "actionactivate.h"
+#include "actionattack.h"
+#include "actionbuyupgrades.h"
+#include "actionchangebuildlist.h"
+#include "actionchangemanualfire.h"
+#include "actionchangeresearch.h"
+#include "actionchangesentry.h"
+#include "actionchangeunitname.h"
+#include "actionclear.h"
+#include "actionendturn.h"
+#include "actionfinishbuild.h"
+#include "actionload.h"
+#include "actionminelayerstatus.h"
+#include "actioninitnewgame.h"
 #include "actionrepairreload.h"
 #include "actionresourcedistribution.h"
-#include "actionclear.h"
-#include "actionstealdisable.h"
-#include "actionchangeresearch.h"
-#include "actionchangeunitname.h"
-#include "actionbuyupgrades.h"
-#include "actionupgradevehicle.h"
-#include "actionupgradebuilding.h"
+#include "actionresumemove.h"
+#include "actionselfdestroy.h"
 #include "actionsetautomove.h"
+#include "actionstartbuild.h"
+#include "actionstartmove.h"
+#include "actionstartturn.h"
+#include "actionstartwork.h"
+#include "actionstealdisable.h"
+#include "actionstop.h"
+#include "actiontransfer.h"
+#include "actionupgradebuilding.h"
+#include "actionupgradevehicle.h"
+#include "utility/log.h"
 
 std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 {
@@ -186,8 +186,7 @@ std::string enumToString(cAction::eActiontype value)
 	case cAction::eActiontype::ACTION_SET_AUTO_MOVE:
 		return "ACTION_SET_AUTO_MOVE";
 	default:
-		assert(false);
-		return toString(static_cast<int>(value));
-		break;
+		assert (false);
+		return std::to_string (static_cast<int> (value));
 	}
 }

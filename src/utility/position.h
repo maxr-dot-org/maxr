@@ -21,9 +21,9 @@
 #define utility_positionH
 
 #include <stdint.h>
+#include <string>
 
 #include "utility/fixedvector.h"
-#include "utility/string/toString.h"
 
 /**
  * Fixed vector class for 2-dimensional integer positions.

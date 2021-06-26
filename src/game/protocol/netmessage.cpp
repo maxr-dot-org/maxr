@@ -28,7 +28,6 @@
 #include "game/serialization/serialization.h"
 #include "mapdownloader/mapdownload.h"
 #include "maxrversion.h"
-#include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
 std::string enumToString (eNetMessageType value)
@@ -55,7 +54,7 @@ std::string enumToString (eNetMessageType value)
 	case eNetMessageType::WANT_REJOIN_GAME: return "WANT_REJOIN_GAME";
 	default:
 		assert (false);
-		return toString (static_cast<int> (value));
+		return std::to_string (static_cast<int> (value));
 	}
 }
 

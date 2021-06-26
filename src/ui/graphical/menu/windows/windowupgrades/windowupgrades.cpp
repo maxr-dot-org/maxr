@@ -26,7 +26,6 @@
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "utility/language.h"
 #include "resources/pcx.h"
-#include "utility/string/toString.h"
 #include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------

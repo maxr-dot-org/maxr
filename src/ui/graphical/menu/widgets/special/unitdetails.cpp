@@ -26,7 +26,6 @@
 #include "SDLutility/tosdl.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "utility/language.h"
-#include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
 cUnitDetails::cUnitDetails (const cPosition& position) :

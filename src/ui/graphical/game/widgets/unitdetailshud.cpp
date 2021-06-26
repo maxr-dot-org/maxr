@@ -29,7 +29,6 @@
 #include "SDLutility/tosdl.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "utility/language.h"
-#include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
 cUnitDetailsHud::cUnitDetailsHud (const cBox<cPosition>& area, bool drawLines_) :

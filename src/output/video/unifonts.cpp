@@ -28,7 +28,6 @@
 #include "utility/files.h"
 #include "utility/log.h"
 #include "utility/position.h"
-#include "utility/string/toString.h"
 #include "utility/string/trim.h"
 
 using namespace std;

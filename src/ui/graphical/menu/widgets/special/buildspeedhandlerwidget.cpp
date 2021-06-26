@@ -23,7 +23,6 @@
 #include "ui/graphical/menu/widgets/checkbox.h"
 #include "ui/graphical/menu/widgets/radiogroup.h"
 #include "utility/language.h"
-#include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
 cBuildSpeedHandlerWidget::cBuildSpeedHandlerWidget (const cPosition& position) :

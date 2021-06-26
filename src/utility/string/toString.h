@@ -20,16 +20,7 @@
 #ifndef utility_string_toStringH
 #define utility_string_toStringH
 
-#include <sstream>
-
-template<typename T>
-std::string toString(const T& x)
-{
-	std::stringstream ss;
-	ss.imbue(std::locale("C"));
-	ss << x;
-	return ss.str();
-}
+#include <string>
 
 std::string getHexValue(unsigned char byte);
 unsigned char getByteValue(const std::string& str, int index);

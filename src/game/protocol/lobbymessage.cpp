@@ -21,7 +21,6 @@
 
 #include "game/data/units/unitdata.h"
 #include "game/data/player/clans.h"
-#include "utility/string/toString.h"
 
 std::unique_ptr<cMultiplayerLobbyMessage> cMultiplayerLobbyMessage::createFromBuffer(cBinaryArchiveOut& archive)
 {
@@ -75,8 +74,7 @@ std::unique_ptr<cMultiplayerLobbyMessage> cMultiplayerLobbyMessage::createFromBu
 		message = std::make_unique<cMuMsgPlayerAbortedGamePreparations>(archive); break;
 
 	default:
-		throw std::runtime_error("Unknown multiplayer lobby message: " + toString(static_cast<int>(type)));
-		break;
+		throw std::runtime_error ("Unknown multiplayer lobby message: " + std::to_string (static_cast<int> (type)));
 	}
 
 	return message;
@@ -154,7 +152,7 @@ std::string enumToString(cMultiplayerLobbyMessage::eMessageType value)
 		return "MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION";
 	default:
 		assert(false);
-		return toString(static_cast<int>(value));
+		return std::to_string (static_cast<int> (value));
 	}
 }
 

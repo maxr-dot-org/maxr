@@ -17,10 +17,10 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include "utility/extendedtinyxml.h"
 #include "xmlarchive.h"
+
+#include "utility/extendedtinyxml.h"
 #include "utility/listhelpers.h"
-#include "utility/string/toString.h"
 
 
 cXmlArchiveIn::cXmlArchiveIn(tinyxml2::XMLElement& rootElement) :
@@ -43,7 +43,7 @@ void cXmlArchiveIn::addToCurrentElement(const std::string& name, const std::stri
 {
 	// This method tries to add a value as attribute. If there is more then one value
 	// with the same name (e. g. a vector), the value needs to be stored as child.
-	
+
 	if (currentElement->Attribute(name.c_str()))
 	{
 		convertAttributeToChild(name);
@@ -75,72 +75,72 @@ void cXmlArchiveIn::closeChild()
 //------------------------------------------------------------------------------
 void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<bool>& nvp)
 {
-	addToCurrentElement(nvp.name, toString(nvp.value));
+	addToCurrentElement (nvp.name, std::to_string (nvp.value));
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<char>& nvp)
 {
-	addToCurrentElement(nvp.name, toString(static_cast<int>(nvp.value)));
+	addToCurrentElement (nvp.name, std::to_string (static_cast<int> (nvp.value)));
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<signed char>& nvp)
 {
-	addToCurrentElement(nvp.name, toString(static_cast<int>(nvp.value)));
+	addToCurrentElement (nvp.name, std::to_string (static_cast<int> (nvp.value)));
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<unsigned char>& nvp)
 {
-	addToCurrentElement(nvp.name, toString(static_cast<int>(nvp.value)));
+	addToCurrentElement (nvp.name, std::to_string (static_cast<int> (nvp.value)));
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<signed short>& nvp)
 {
-	addToCurrentElement(nvp.name, toString(nvp.value));
+	addToCurrentElement (nvp.name, std::to_string (nvp.value));
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<unsigned short>& nvp)
 {
-	addToCurrentElement(nvp.name, toString(nvp.value));
+	addToCurrentElement (nvp.name, std::to_string (nvp.value));
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<signed int>& nvp)
 {
-	addToCurrentElement(nvp.name, toString(nvp.value));
+	addToCurrentElement (nvp.name, std::to_string (nvp.value));
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<unsigned int>& nvp)
 {
-	addToCurrentElement(nvp.name, toString(nvp.value));
+	addToCurrentElement (nvp.name, std::to_string (nvp.value));
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<signed long>& nvp)
 {
-	addToCurrentElement(nvp.name, toString(nvp.value));
+	addToCurrentElement (nvp.name, std::to_string (nvp.value));
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<unsigned long>& nvp)
 {
-	addToCurrentElement(nvp.name, toString(nvp.value));
+	addToCurrentElement (nvp.name, std::to_string (nvp.value));
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<signed long long>& nvp)
 {
-	addToCurrentElement(nvp.name, toString(nvp.value));
+	addToCurrentElement (nvp.name, std::to_string (nvp.value));
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<unsigned long long>& nvp)
 {
-	addToCurrentElement(nvp.name, toString(nvp.value));
+	addToCurrentElement (nvp.name, std::to_string (nvp.value));
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<float>& nvp)
 {
-	addToCurrentElement(nvp.name, toString(nvp.value));
+	addToCurrentElement (nvp.name, std::to_string (nvp.value));
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<double>& nvp)
 {
-	addToCurrentElement(nvp.name, toString(nvp.value));
+	addToCurrentElement (nvp.name, std::to_string (nvp.value));
 }
 //------------------------------------------------------------------------------
 void cXmlArchiveIn::pushValue(const serialization::sNameValuePair<std::string>& nvp)

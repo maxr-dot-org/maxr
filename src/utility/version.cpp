@@ -18,7 +18,6 @@
  ***************************************************************************/
 
 #include "utility/version.h"
-#include "utility/string/toString.h"
 
 #ifdef major
 #	undef major

@@ -27,7 +27,6 @@
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/translations.h"
-#include "utility/string/toString.h"
 
 const int cReportDisadvantagesListViewItem::unitImageWidth = 32;
 const int cReportDisadvantagesListViewItem::unitImageHeight = 32;

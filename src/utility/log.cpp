@@ -21,13 +21,24 @@
 
 #include "settings.h"
 #include "utility/files.h"
-#include "utility/string/toString.h"
 
 #include <ctime>
 #include <iostream>
+#include <sstream>
 #include <thread>
 
 cLog Log;
+
+namespace
+{
+	std::string toString (const std::thread::id& id)
+	{
+		std::stringstream ss;
+		ss.imbue(std::locale("C"));
+		ss << id;
+		return ss.str();
+	}
+}
 
 //------------------------------------------------------------------------------
 void cLog::write (const std::string& msg, eLogType type)

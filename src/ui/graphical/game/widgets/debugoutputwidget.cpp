@@ -39,7 +39,6 @@
 #include "utility/language.h"
 #include "utility/listhelpers.h"
 #include "utility/mathtools.h"
-#include "utility/string/toString.h"
 
 namespace
 {
@@ -204,7 +203,7 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 
 	if (debugPlayers)
 	{
-		print("Players: " + toString(client->model.getPlayerList().size()));
+		print ("Players: " + std::to_string (client->model.getPlayerList().size()));
 
 		SDL_Rect rDest = {drawPosition.x(), drawPosition.y(), 20, 10};
 		SDL_Rect rSrc = {0, 0, 20, 10};
@@ -257,22 +256,22 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 
 	if (debugAjobs)
 	{
-		print("ClientAttackJobs: " + toString(client->getModel().attackJobs.size()));
+		print ("ClientAttackJobs: " + std::to_string (client->getModel().attackJobs.size()));
 		if (server)
 		{
-			print("ServerAttackJobs: " + toString(server->getModel().attackJobs.size()));
+			print ("ServerAttackJobs: " + std::to_string (server->getModel().attackJobs.size()));
 		}
 	}
 
 	if (debugBaseClient)
 	{
-		print("subbases: " + toString(player.base.SubBases.size()));
+		print ("subbases: " + std::to_string (player.base.SubBases.size()));
 	}
 
 	if (debugBaseServer && server)
 	{
 		const auto serverPlayer = server->model.getPlayer (player.getId());
-		print("subbases: " + toString(serverPlayer->base.SubBases.size()));
+		print ("subbases: " + std::to_string (serverPlayer->base.SubBases.size()));
 	}
 
 	if (debugFX)

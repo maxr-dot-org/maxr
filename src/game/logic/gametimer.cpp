@@ -29,7 +29,6 @@
 #include "utility/files.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
-#include "utility/string/toString.h"
 
 #include <SDL.h>
 

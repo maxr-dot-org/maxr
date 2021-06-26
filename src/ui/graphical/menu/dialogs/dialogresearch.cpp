@@ -28,7 +28,6 @@
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/slider.h"
 #include "utility/language.h"
-#include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
 cDialogResearch::cDialogResearch (const cPlayer& player_) :

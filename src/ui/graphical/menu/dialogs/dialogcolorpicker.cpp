@@ -29,7 +29,6 @@
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/tools/validatorint.h"
 #include "utility/language.h"
-#include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
 cDialogColorPicker::cDialogColorPicker (const cRgbColor& color, eWindowBackgrounds backgroundType) :

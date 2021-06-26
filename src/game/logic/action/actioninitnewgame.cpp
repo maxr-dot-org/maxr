@@ -28,8 +28,6 @@
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/ranges.h"
-#include "utility/string/toString.h"
-
 
 namespace
 {
@@ -158,7 +156,7 @@ void cActionInitNewGame::execute (cModel& model) const
 	const cUnitsData& unitsdata = *model.getUnitsData();
 
 	player.removeAllUnits();
-	Log.write(" GameId: " + toString (model.getGameId()), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" GameId: " + std::to_string (model.getGameId()), cLog::eLOG_TYPE_NET_DEBUG);
 
 	// init clan
 	if (model.getGameSettings()->clansEnabled)

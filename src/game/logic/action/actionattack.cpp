@@ -19,11 +19,9 @@
 
 #include "actionattack.h"
 
-#include "game/data/model.h"
-
-#include "utility/log.h"
-#include "utility/string/toString.h"
 #include "game/data/map/mapview.h"
+#include "game/data/model.h"
+#include "utility/log.h"
 
 //------------------------------------------------------------------------------
 cActionAttack::cActionAttack(const cUnit& aggressor, cPosition targetPosition, const cUnit* targetUnit) :

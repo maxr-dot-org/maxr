@@ -50,7 +50,6 @@
 #include "game/logic/movejob.h"
 #include "output/video/unifonts.h"
 #include "utility/language.h"
-#include "utility/string/toString.h"
 
 namespace
 {
@@ -615,7 +614,7 @@ namespace
 				case eResourceType::Metal: return lngPack.i18n ("Text~Comp~Adjustments_Metal_Decreased", std::to_string (amount));
 			}
 		}
-		throw std::runtime_error("Unknown resourceType " + toString (static_cast<int> (report.getResourceType())));
+		throw std::runtime_error ("Unknown resourceType " + std::to_string (static_cast<int> (report.getResourceType())));
 	}
 
 	//------------------------------------------------------------------------------

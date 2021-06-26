@@ -38,7 +38,6 @@
 #include "ui/graphical/menu/widgets/slider.h"
 #include "ui/keys.h"
 #include "utility/language.h"
-#include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
 cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :

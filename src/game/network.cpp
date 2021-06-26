@@ -23,7 +23,6 @@
 #include "game/protocol/netmessage.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
-#include "utility/string/toString.h"
 
 #define START_WORD 0x4D415852
 #define HEADER_LENGTH 8
@@ -113,7 +112,7 @@ int cNetwork::openServer(int port)
 {
 	std::unique_lock<std::recursive_mutex> tl(tcpMutex);
 
-	Log.write("Network: Open server on port: " + toString(port), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("Network: Open server on port: " + std::to_string (port), cLog::eLOG_TYPE_NET_DEBUG);
 
 	IPaddress ipaddr;
 	if (SDLNet_ResolveHost(&ipaddr, nullptr, port) == -1)
@@ -270,10 +269,10 @@ void cNetwork::handleNetworkThread()
 					{
 						// log
 						IPaddress* remoteAddress = SDLNet_TCP_GetPeerAddress(sdlSocket);
-						std::string ip = toString(remoteAddress->host & 0xFF) + '.';
-						ip += toString((remoteAddress->host >>  8) & 0xFF) + '.';
-						ip += toString((remoteAddress->host >> 16) & 0xFF) + '.';
-						ip += toString((remoteAddress->host >> 24) & 0xFF);
+						std::string ip = std::to_string (remoteAddress->host & 0xFF) + '.';
+						ip += std::to_string ((remoteAddress->host >>  8) & 0xFF) + '.';
+						ip += std::to_string ((remoteAddress->host >> 16) & 0xFF) + '.';
+						ip += std::to_string ((remoteAddress->host >> 24) & 0xFF);
 
 						Log.write("Network: Incoming connection from " + ip, cLog::eLOG_TYPE_NET_DEBUG);
 					}

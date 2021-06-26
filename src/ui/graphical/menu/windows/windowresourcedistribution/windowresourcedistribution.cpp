@@ -32,7 +32,6 @@
 #include "ui/graphical/menu/widgets/special/resourcebar.h"
 #include "utility/language.h"
 #include "utility/listhelpers.h"
-#include "utility/string/toString.h"
 
 namespace
 {

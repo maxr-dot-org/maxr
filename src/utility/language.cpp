@@ -33,7 +33,6 @@
 #include "game/data/units/unitdata.h"
 #include "maxrversion.h"
 #include "settings.h"
-#include "string/toString.h"
 #include "utility/extendedtinyxml.h"
 #include "utility/files.h"
 #include "utility/log.h"
@@ -381,7 +380,7 @@ std::string cLanguage::getClanName(int num) const
 		}
 	}
 
-	Log.write("Can't find clan translation for clan " + toString(num), cLog::eLOG_TYPE_WARNING);
+	Log.write ("Can't find clan translation for clan " + std::to_string (num), cLog::eLOG_TYPE_WARNING);
 	return "";
 }
 
@@ -405,7 +404,7 @@ std::string cLanguage::getClanDescription(int num) const
 			return std::string(description);
 	}
 
-	Log.write("Can't find clan translation for clan " + toString(num), cLog::eLOG_TYPE_WARNING);
+	Log.write ("Can't find clan translation for clan " + std::to_string (num), cLog::eLOG_TYPE_WARNING);
 	return "";
 }
 

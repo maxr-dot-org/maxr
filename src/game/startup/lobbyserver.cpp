@@ -151,7 +151,7 @@ void cLobbyServer::sendNetMessage(const cNetMessage& message, int receiverPlayer
 {
 	cTextArchiveIn archive;
 	archive << message;
-	Log.write ("LobbyServer: --> " + archive.data() + " to " + toString (receiverPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("LobbyServer: --> " + archive.data() + " to " + std::to_string (receiverPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
 
 	if (receiverPlayerNr == -1)
 		connectionManager->sendToPlayers (message);
@@ -164,7 +164,7 @@ void cLobbyServer::forwardMessage (const cNetMessage& message)
 {
 	cTextArchiveIn archive;
 	archive << message;
-	Log.write ("LobbyServer: forward --> " + archive.data() + " from " + toString (message.playerNr), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("LobbyServer: forward --> " + archive.data() + " from " + std::to_string (message.playerNr), cLog::eLOG_TYPE_NET_DEBUG);
 
 	for (auto& player : players)
 	{
@@ -259,7 +259,7 @@ void cLobbyServer::sendChatMessage (const std::string& message, int receiverPlay
 {
 	cTextArchiveIn archive;
 	archive << message;
-	Log.write("LobbyServer: --> " + archive.data() + " to " + toString(receiverPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("LobbyServer: --> " + archive.data() + " to " + std::to_string (receiverPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
 
 	if (receiverPlayerNr == -1)
 		connectionManager->sendToPlayers (cMuMsgChat (message));

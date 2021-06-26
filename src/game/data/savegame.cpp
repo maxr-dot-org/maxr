@@ -34,7 +34,6 @@
 #include "utility/files.h"
 #include "utility/log.h"
 #include "utility/ranges.h"
-#include "utility/string/toString.h"
 
 #include <ctime>
 #include <regex>
@@ -335,11 +334,11 @@ void cSavegame::loadModel(cModel& model, int slot)
 	archive.enterChild("model");
 	archive >> serialization::makeNvp("modelcrc", crcFromSave);
 	archive.leaveChild();
-	Log.write(" Checksum from save file: " + toString(crcFromSave), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Checksum from save file: " + std::to_string (crcFromSave), cLog::eLOG_TYPE_NET_DEBUG);
 
 	uint32_t modelCrc = model.getChecksum();
-	Log.write(" Checksum after loading model: " + toString(modelCrc), cLog::eLOG_TYPE_NET_DEBUG);
-	Log.write(" GameId: " + toString(model.getGameId()), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Checksum after loading model: " + std::to_string (modelCrc), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" GameId: " + std::to_string (model.getGameId()), cLog::eLOG_TYPE_NET_DEBUG);
 
 	if (crcFromSave != modelCrc)
 	{

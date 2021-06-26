@@ -49,7 +49,6 @@
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/ranges.h"
-#include "utility/string/toString.h"
 
 #include <cmath>
 #include <sstream>
@@ -222,13 +221,13 @@ void cClient::handleNetMessages()
 				{
 					if (model.getPlayer(state.first) == nullptr)
 					{
-						Log.write(" Client: Invalid player id: " + toString(state.first), cLog::eLOG_TYPE_NET_ERROR);
+						Log.write (" Client: Invalid player id: " + std::to_string (state.first), cLog::eLOG_TYPE_NET_ERROR);
 						break;
 					}
 				}
 				if (msg->playerStates.size() != model.getPlayerList().size())
 				{
-					Log.write(" Client: Wrong size of playerState map " + toString(msg->playerStates.size()), cLog::eLOG_TYPE_NET_ERROR);
+					Log.write (" Client: Wrong size of playerState map " + std::to_string (msg->playerStates.size()), cLog::eLOG_TYPE_NET_ERROR);
 					break;
 				}
 				playerConnectionStates = msg->playerStates;
@@ -352,7 +351,7 @@ void cClient::loadModel(int saveGameNumber, int playerNr)
 
 	recreateSurveyorMoveJobs();
 
-	Log.write(" Client: loaded model. GameId: " + toString(model.getGameId()), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Client: loaded model. GameId: " + std::to_string (model.getGameId()), cLog::eLOG_TYPE_NET_DEBUG);
 }
 //------------------------------------------------------------------------------
 void cClient::run()

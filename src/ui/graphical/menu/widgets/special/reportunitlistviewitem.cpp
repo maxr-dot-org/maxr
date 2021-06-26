@@ -30,7 +30,6 @@
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/translations.h"
 #include "utility/color.h"
-#include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
 cReportUnitListViewItem::cReportUnitListViewItem (cUnit& unit_, const cUnitsData& unitsData) :

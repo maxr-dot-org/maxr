@@ -31,7 +31,6 @@
 #include "utility/files.h"
 #include "utility/language.h"
 #include "utility/ranges.h"
-#include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
 cWindowMapSelection::cWindowMapSelection() :

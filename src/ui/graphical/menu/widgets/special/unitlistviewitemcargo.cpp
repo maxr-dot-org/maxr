@@ -21,7 +21,6 @@
 
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
-#include "utility/string/toString.h"
 #include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------

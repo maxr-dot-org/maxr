@@ -38,7 +38,6 @@
 #include "ui/graphical/menu/widgets/special/resourcebar.h"
 #include "ui/translations.h"
 #include "utility/language.h"
-#include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
 cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnTimeClock> turnTimeClock) :

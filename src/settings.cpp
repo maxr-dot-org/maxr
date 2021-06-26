@@ -39,7 +39,6 @@
 #include "utility/extendedtinyxml.h"
 #include "utility/files.h"
 #include "utility/log.h"
-#include "utility/string/toString.h"
 #include "utility/string/tolower.h"
 #include "output/video/video.h"
 

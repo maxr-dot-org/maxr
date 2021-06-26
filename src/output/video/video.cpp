@@ -36,7 +36,6 @@
 #include "utility/files.h"
 #include "utility/mathtools.h"
 #include "utility/log.h"
-#include "utility/string/toString.h"
 #include "utility/thread/ismainthread.h"
 
 cVideo Video;

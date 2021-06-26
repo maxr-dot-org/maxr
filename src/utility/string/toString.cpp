@@ -19,8 +19,6 @@
 
 #include "toString.h"
 
-#include <string>
-
 //--------------------------------------------------------------------------
 std::string getHexValue(unsigned char byte)
 {

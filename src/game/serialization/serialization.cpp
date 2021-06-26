@@ -21,7 +21,6 @@
 
 #include "game/data/model.h"
 #include "utility/log.h"
-#include "utility/string/toString.h"
 
 namespace serialization
 {

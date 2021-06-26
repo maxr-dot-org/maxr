@@ -25,9 +25,9 @@
 #include "game/protocol/netmessage.h"
 #include "utility/log.h"
 #include "utility/ranges.h"
-#include "utility/string/toString.h"
 
 #include <mutex>
+#include <string>
 
 #define HANDSHAKE_TIMEOUT_MS 3000
 #define DISABLE_TIMEOUTS 0 // this can be used, when debugging the connection handshake
@@ -125,7 +125,7 @@ void cConnectionManager::acceptConnection (const cSocket* socket, int playerNr)
 		return;
 	}
 
-	Log.write ("ConnectionManager: Accepted connection and assigned playerNr: " + toString (playerNr), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("ConnectionManager: Accepted connection and assigned playerNr: " + std::to_string (playerNr), cLog::eLOG_TYPE_NET_DEBUG);
 
 	//assign playerNr to the socket
 	x->second = playerNr;
@@ -177,7 +177,7 @@ void cConnectionManager::connectToServer (const std::string& host, int port)
 	if (!network)
 		network = std::make_unique<cNetwork> (*this, mutex);
 
-	Log.write ("ConnectionManager: Connecting to " + host + ":" + toString (port), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("ConnectionManager: Connecting to " + host + ":" + std::to_string (port), cLog::eLOG_TYPE_NET_DEBUG);
 
 	network->connectToServer (host, port);
 
@@ -209,11 +209,11 @@ void cConnectionManager::changePlayerNumber (int currentNr, int newNr)
 	auto x = ranges::find_if (clientSockets, [&](const std::pair<const cSocket*, int>& x) { return x.second == currentNr; });
 	if (x == clientSockets.end())
 	{
-		Log.write ("Connection Manager: Can't change playerNr. Unknown player " + toString (currentNr), cLog::eLOG_TYPE_NET_ERROR);
+		Log.write ("Connection Manager: Can't change playerNr. Unknown player " + std::to_string (currentNr), cLog::eLOG_TYPE_NET_ERROR);
 		Log.write ("Connection Manager: Known players are:", cLog::eLOG_TYPE_NET_DEBUG);
 		for (const auto& p : clientSockets)
 		{
-			Log.write ("player " + toString (p.second), cLog::eLOG_TYPE_NET_DEBUG);
+			Log.write ("player " + std::to_string (p.second), cLog::eLOG_TYPE_NET_DEBUG);
 		}
 		return;
 	}
@@ -299,7 +299,7 @@ void cConnectionManager::sendToPlayer (const cNetMessage& message, int playerNr)
 		auto x = ranges::find_if (clientSockets, [&](const std::pair<const cSocket*, int>& x) { return x.second == playerNr; });
 		if (x == clientSockets.end())
 		{
-			Log.write ("Connection Manager: Can't send message. No connection to player " + toString (playerNr), cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ("Connection Manager: Can't send message. No connection to player " + std::to_string (playerNr), cLog::eLOG_TYPE_NET_ERROR);
 			return;
 		}
 
@@ -340,7 +340,7 @@ void cConnectionManager::disconnect (int player)
 	auto x = ranges::find_if (clientSockets, [&](const std::pair<const cSocket*, int>& x) { return x.second == player; });
 	if (x == clientSockets.end())
 	{
-		Log.write ("ConnectionManager: Can't disconnect player. No connection to player " + toString (player), cLog::eLOG_TYPE_NET_ERROR);
+		Log.write ("ConnectionManager: Can't disconnect player. No connection to player " + std::to_string (player), cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
 

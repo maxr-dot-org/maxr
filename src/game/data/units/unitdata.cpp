@@ -20,9 +20,8 @@
 #include "unitdata.h"
 
 #include "game/data/player/clans.h"
-#include "utility/log.h"
-#include "utility/string/toString.h"
 #include "utility/crc.h"
+#include "utility/log.h"
 
 #include <3rd/tinyxml2/tinyxml2.h>
 

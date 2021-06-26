@@ -22,14 +22,13 @@
 
 #include "job.h"
 
+#include "game/logic/jobs/airtransportloadjob.h"
+#include "game/logic/jobs/destroyjob.h"
+#include "game/logic/jobs/getinjob.h"
+#include "game/logic/jobs/planetakeoffjob.h"
+#include "game/logic/jobs/startbuildjob.h"
 #include "game/serialization/binaryarchive.h"
 #include "game/serialization/xmlarchive.h"
-#include "startbuildjob.h"
-#include "planetakeoffjob.h"
-#include "destroyjob.h"
-#include "getinjob.h"
-#include "utility/string/toString.h"
-#include "airtransportloadjob.h"
 
 //------------------------------------------------------------------------------
 cJob::cJob (cUnit& unit) :
@@ -71,7 +70,6 @@ std::unique_ptr<cJob> cJob::createFromImpl (T& archive)
 	case eJobType::AIR_TRANSPORT_LOAD:
 		return std::make_unique<cAirTransportLoadJob> (archive);
 	default:
-		throw std::runtime_error ("Unknown job type " + toString (static_cast<int> (type)));
-		break;
+		throw std::runtime_error ("Unknown job type " + std::to_string (static_cast<int> (type)));
 	}
 }

@@ -36,7 +36,6 @@
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/translations.h"
 #include "utility/language.h"
-#include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
 cNewDialogTransfer::cNewDialogTransfer (const cUnit& sourceUnit, const cUnit& destinationUnit) :

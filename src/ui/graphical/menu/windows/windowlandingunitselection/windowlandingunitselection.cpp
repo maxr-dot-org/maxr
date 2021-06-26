@@ -31,7 +31,6 @@
 #include "ui/graphical/menu/widgets/special/unitlistviewitembuy.h"
 #include "ui/graphical/menu/widgets/special/unitlistviewitemcargo.h"
 #include "utility/language.h"
-#include "utility/string/toString.h"
 
 #include <algorithm>
 #include "config/workaround/cpp17/clamp.h"

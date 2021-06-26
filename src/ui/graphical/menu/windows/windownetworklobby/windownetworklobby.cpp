@@ -42,7 +42,6 @@
 #include "ui/graphical/playercolor.h"
 #include "ui/translations.h"
 #include "utility/language.h"
-#include "utility/string/toString.h"
 
 //------------------------------------------------------------------------------
 cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableIp) :

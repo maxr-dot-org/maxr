@@ -20,13 +20,13 @@
 #ifndef ui_graphical_menu_widgets_plotH
 #define ui_graphical_menu_widgets_plotH
 
-#include <functional>
-#include <list>
-
 #include "SDLutility/drawing.h"
 #include "ui/graphical/widget.h"
 #include "utility/color.h"
-#include "utility/string/toString.h"
+
+#include <functional>
+#include <list>
+#include <string>
 
 /**
  *

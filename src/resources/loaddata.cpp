@@ -57,7 +57,6 @@
 #include "utility/files.h"
 #include "utility/language.h"
 #include "utility/log.h"
-#include "utility/string/toString.h"
 #include "settings.h"
 
 #include <3rd/tinyxml2/tinyxml2.h>
