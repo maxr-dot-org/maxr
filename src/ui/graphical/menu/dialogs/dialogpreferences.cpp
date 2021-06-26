@@ -159,7 +159,7 @@ void cDialogPreferences::loadValues()
 	const auto& resolutions = Video.getDetectedResolutions();
 	for (const auto& resolution : resolutions)
 	{
-		resolutionsComboBox->addItem (iToStr (resolution.first) + "x" + iToStr (resolution.second));
+		resolutionsComboBox->addItem (std::to_string (resolution.first) + "x" + std::to_string (resolution.second));
 	}
 	const auto currentResolutionIndex = Video.validateResolution (Video.getResolutionX(), Video.getResolutionY());
 	if (currentResolutionIndex != -1) resolutionsComboBox->setSelectedIndex (currentResolutionIndex);

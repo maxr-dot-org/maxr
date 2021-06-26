@@ -91,7 +91,7 @@ void cLobbyClient::connectToServer(std::string ip, int port)
 	// Connect only if there isn't a connection yet
 	if (connectionManager->isConnectedToServer()) return;
 
-	Log.write (("Connecting to " + ip + ":" + iToStr (port)), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (("Connecting to " + ip + ":" + std::to_string (port)), cLog::eLOG_TYPE_NET_DEBUG);
 
 	connectionManager->connectToServer (ip, port);
 }

@@ -33,7 +33,7 @@ cUnitListViewItemCargo::cUnitListViewItemCargo (unsigned int width, const sID& u
 
 	if (unitData->storeResType == eResourceType::Metal || unitData->storeResType == eResourceType::Oil)
 	{
-		cargoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (nameLabel->getPosition().x() + 15, nameLabel->getEndPosition().y() - 13), nameLabel->getEndPosition() - cPosition (0, 3)), iToStr (owner.getUnitDataCurrentVersion (unitId)->getBuildCost()), FONT_LATIN_SMALL_YELLOW, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
+		cargoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (nameLabel->getPosition().x() + 15, nameLabel->getEndPosition().y() - 13), nameLabel->getEndPosition() - cPosition (0, 3)), std::to_string (owner.getUnitDataCurrentVersion (unitId)->getBuildCost()), FONT_LATIN_SMALL_YELLOW, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
 		cargoLabel->setConsumeClick (false);
 
 		nameLabel->resize (nameLabel->getSize() - cPosition (0, 13));
@@ -66,7 +66,7 @@ void cUnitListViewItemCargo::updateCargoLabel()
 	if (cargoLabel)
 	{
 		if (cargo == 0) cargoLabel->setText ("(empty)");
-		else cargoLabel->setText ("(" + iToStr (cargo) + "/" + iToStr (unitData->storageResMax) + ")");
+		else cargoLabel->setText ("(" + std::to_string (cargo) + "/" + std::to_string (unitData->storageResMax) + ")");
 
 		if (cargo <= unitData->storageResMax / 4) cargoLabel->setFont (FONT_LATIN_SMALL_RED);
 		else if (cargo <= unitData->storageResMax / 2) cargoLabel->setFont (FONT_LATIN_SMALL_YELLOW);

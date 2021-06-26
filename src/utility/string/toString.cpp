@@ -21,13 +21,6 @@
 
 #include <string>
 
-std::string iToStr (int x)
-{
-	std::stringstream strStream;
-	strStream << x;
-	return strStream.str();
-}
-
 std::string iToHex (unsigned int x)
 {
 	std::stringstream strStream;

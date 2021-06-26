@@ -119,7 +119,7 @@ void cVersion::parseFromString (const std::string& string)
 //------------------------------------------------------------------------------
 std::string cVersion::toString() const
 {
-	return iToStr (major) + "."  + iToStr (minor) + "." + iToStr (revision);
+	return std::to_string (major) + "."  + std::to_string (minor) + "." + std::to_string (revision);
 }
 
 //------------------------------------------------------------------------------

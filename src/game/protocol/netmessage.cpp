@@ -108,7 +108,7 @@ std::unique_ptr<cNetMessage> cNetMessage::createFromBuffer (const unsigned char*
 	case eNetMessageType::WANT_REJOIN_GAME:
 		message = std::make_unique<cNetMessageWantRejoinGame> (archive); break;
 	default:
-		throw std::runtime_error ("Unknown net message type " + iToStr (static_cast<int> (type)));
+		throw std::runtime_error ("Unknown net message type " + std::to_string (static_cast<int> (type)));
 		break;
 	}
 

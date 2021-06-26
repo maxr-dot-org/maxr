@@ -37,7 +37,7 @@ cBuildSpeedHandlerWidget::cBuildSpeedHandlerWidget (const cPosition& position) :
 		if (i == 2) factor = 4;
 		turnLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (80, 5 + 25 * i), getPosition() + cPosition (80 + 35, 5 + 25 * i + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 		costLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (120, 5 + 25 * i), getPosition() + cPosition (120 + 35, 5 + 25 * i + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
-		buttons[i] = speedGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (0, 25 * i), lngPack.i18n ("Text~Others~Build_7") + " x" + iToStr (factor), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
+		buttons[i] = speedGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (0, 25 * i), lngPack.i18n ("Text~Others~Build_7") + " x" + std::to_string (factor), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
 
 		area.add (turnLabels[i]->getArea());
 		area.add (costLabels[i]->getArea());
@@ -54,8 +54,8 @@ void cBuildSpeedHandlerWidget::setValues (const std::array<int, elementsCount>& 
 	{
 		if (turns[i] > 0)
 		{
-			turnLabels[i]->setText (iToStr (turns[i]));
-			costLabels[i]->setText (iToStr (costs[i]));
+			turnLabels[i]->setText (std::to_string (turns[i]));
+			costLabels[i]->setText (std::to_string (costs[i]));
 			buttons[i]->unlock();
 		}
 		else

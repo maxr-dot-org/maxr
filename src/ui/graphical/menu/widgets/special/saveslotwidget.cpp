@@ -70,7 +70,7 @@ void cSaveSlotWidget::setRenameable (bool renameable_)
 //------------------------------------------------------------------------------
 void cSaveSlotWidget::setSaveData(const cSaveGameInfo& saveFile)
 {
-	numberLabel->setText(iToStr(saveFile.number));
+	numberLabel->setText(std::to_string(saveFile.number));
 	timeLabel->setText(saveFile.date);
 	switch (saveFile.type)
 	{
@@ -93,7 +93,7 @@ void cSaveSlotWidget::setSaveData(const cSaveGameInfo& saveFile)
 //------------------------------------------------------------------------------
 void cSaveSlotWidget::reset (int number)
 {
-	numberLabel->setText (iToStr (number));
+	numberLabel->setText (std::to_string (number));
 	timeLabel->setText ("");
 	typeLabel->setText ("");
 	nameLineEdit->setText ("");

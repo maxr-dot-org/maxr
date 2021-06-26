@@ -31,9 +31,6 @@ std::string toString(const T& x)
 	return ss.str();
 }
 
-/**Converts integer to string
-*/
-std::string iToStr (int x);
 /**Converts integer to string in hex representation
 */
 std::string iToHex (unsigned int x);

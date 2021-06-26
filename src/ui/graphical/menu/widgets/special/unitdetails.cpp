@@ -117,7 +117,7 @@ void cUnitDetails::drawRow (size_t index, eUnitDataSymbolType symbolType, int am
 	amountLabels[index]->show();
 	nameLabels[index]->show();
 
-	amountLabels[index]->setText (iToStr (amount));
+	amountLabels[index]->setText (std::to_string (amount));
 	nameLabels[index]->setText (name);
 	drawBigSymbols (symbolType, cPosition (95, rowHeight * index), value1, value2);
 }

@@ -1360,7 +1360,7 @@ static int LoadMusic (const char* path)
 	int const MusicAnz = xmlElement->IntAttribute ("Num");
 	for (int i = 1; i <= MusicAnz; i++)
 	{
-		std::string name = "bkg" + iToStr (i);
+		std::string name = "bkg" + std::to_string (i);
 		XMLElement* xmlElement = XmlGetFirstElement (MusicXml, "Music", {"Game", name.c_str()});
 		if (xmlElement && xmlElement->Attribute ("Text"))
 		{
@@ -1368,7 +1368,7 @@ static int LoadMusic (const char* path)
 		}
 		else
 		{
-			Log.write ("Can't find \"bkg" + iToStr (i) + "\" in music.xml", cLog::eLOG_TYPE_WARNING);
+			Log.write ("Can't find \"bkg" + std::to_string (i) + "\" in music.xml", cLog::eLOG_TYPE_WARNING);
 			continue;
 		}
 		if (!FileExists (name.c_str()))

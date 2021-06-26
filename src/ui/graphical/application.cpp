@@ -483,5 +483,5 @@ void cApplication::drawFramesPerSecond (unsigned int fps, bool draw)
 	SDL_Rect dest = {0, 0, 55, 10};
 	SDL_FillRect (cVideo::buffer, &dest, 0);
 	if (draw)
-		cUnicodeFont::font->showText (0, 0, "FPS: " + iToStr (fps));
+		cUnicodeFont::font->showText (0, 0, "FPS: " + std::to_string (fps));
 }

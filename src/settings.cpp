@@ -1122,7 +1122,7 @@ void cSettings::saveSetting (const std::string& path, T value, const char* value
 //------------------------------------------------------------------------------
 void cSettings::saveResolution()
 {
-	saveSetting ("Options~Start~Resolution", (iToStr (Video.getResolutionX()) + "." + iToStr (Video.getResolutionY())).c_str());
+	saveSetting ("Options~Start~Resolution", (std::to_string (Video.getResolutionX()) + "." + std::to_string (Video.getResolutionY())).c_str());
 }
 
 //------------------------------------------------------------------------------

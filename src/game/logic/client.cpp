@@ -114,7 +114,7 @@ void cClient::sendNetMessage(cNetMessage& message) const
 	{
 		cTextArchiveIn archive;
 		archive << message;
-		Log.write(getActivePlayer().getName() + ": --> " + archive.data() + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write(getActivePlayer().getName() + ": --> " + archive.data() + " @" + std::to_string(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
 	connectionManager->sendToServer(message);
@@ -143,7 +143,7 @@ void cClient::handleNetMessages()
 		{
 			cTextArchiveIn archive;
 			archive << *message;
-			Log.write(getActivePlayer().getName() + ": <-- " + archive.data() + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+			Log.write(getActivePlayer().getName() + ": <-- " + archive.data() + " @" + std::to_string(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 		}
 
 		switch (message->getType())

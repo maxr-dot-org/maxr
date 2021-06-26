@@ -212,7 +212,7 @@ cSaveGameInfo cSavegame::loadSaveInfo(int slot)
 	}
 	catch (const std::runtime_error& e)
 	{
-		Log.write("Error loading savegame file " + iToStr(slot) + ": " + e.what(), cLog::eLOG_TYPE_ERROR);
+		Log.write("Error loading savegame file " + std::to_string(slot) + ": " + e.what(), cLog::eLOG_TYPE_ERROR);
 		info.gameName = "XML Error";
 		return info;
 	}
@@ -269,24 +269,24 @@ void cSavegame::loadLegacyHeader(cSaveGameInfo& info)
 {
 	const tinyxml2::XMLElement* headerNode = xmlDocument.RootElement()->FirstChildElement("Header");
 	if (headerNode == nullptr)
-		LOAD_ERROR("Error loading savegame file " + iToStr(loadedSlot) + ": Node \"Header\" not found");
+		LOAD_ERROR("Error loading savegame file " + std::to_string(loadedSlot) + ": Node \"Header\" not found");
 
 	//load name
 	const tinyxml2::XMLElement* nameNode = headerNode->FirstChildElement("Name");
 	if (nameNode == nullptr)
-		LOAD_ERROR("Error loading savegame file " + iToStr(loadedSlot) + ": Subnode \"Name\" of Node \"Header\" not found");
+		LOAD_ERROR("Error loading savegame file " + std::to_string(loadedSlot) + ": Subnode \"Name\" of Node \"Header\" not found");
 	const char* str = nameNode->Attribute("string");
 	if (str == nullptr)
-		LOAD_ERROR("Error loading savegame file " + iToStr(loadedSlot) + ": Attribute \"String\" of Node \"Name\" not found");
+		LOAD_ERROR("Error loading savegame file " + std::to_string(loadedSlot) + ": Attribute \"String\" of Node \"Name\" not found");
 	info.gameName = str;
 
 	//load game type
 	const tinyxml2::XMLElement* typeNode = headerNode->FirstChildElement("Type");
 	if (typeNode == nullptr)
-		LOAD_ERROR("Error loading savegame file " + iToStr(loadedSlot) + ": Subnode \"Type\" of Node \"Header\" not found");
+		LOAD_ERROR("Error loading savegame file " + std::to_string(loadedSlot) + ": Subnode \"Type\" of Node \"Header\" not found");
 	str = typeNode->Attribute("string");
 	if (str == nullptr)
-		LOAD_ERROR("Error loading savegame file " + iToStr(loadedSlot) + ": Attribute \"String\" of Node \"Type\" not found");
+		LOAD_ERROR("Error loading savegame file " + std::to_string(loadedSlot) + ": Attribute \"String\" of Node \"Type\" not found");
 	std::string gameType = str;
 	if (gameType == "IND")
 		info.type = GAME_TYPE_SINGLE;
@@ -295,15 +295,15 @@ void cSavegame::loadLegacyHeader(cSaveGameInfo& info)
 	else if (gameType == "NET")
 		info.type = GAME_TYPE_TCPIP;
 	else
-		LOAD_ERROR("Error loading savegame file " + iToStr(loadedSlot) + ": unknown game type");
+		LOAD_ERROR("Error loading savegame file " + std::to_string(loadedSlot) + ": unknown game type");
 
 	//load time
 	const tinyxml2::XMLElement* timeNode = headerNode->FirstChildElement("Time");
 	if (timeNode == nullptr)
-		LOAD_ERROR("Error loading savegame file " + iToStr(loadedSlot) + ": Subnode \"Time\" of Node \"Header\" not found");
+		LOAD_ERROR("Error loading savegame file " + std::to_string(loadedSlot) + ": Subnode \"Time\" of Node \"Header\" not found");
 	str = timeNode->Attribute("string");
 	if (str == nullptr)
-		LOAD_ERROR("Error loading savegame file " + iToStr(loadedSlot) + ": Attribute \"String\" of Node \"Time\" not found");
+		LOAD_ERROR("Error loading savegame file " + std::to_string(loadedSlot) + ": Attribute \"String\" of Node \"Time\" not found");
 
 	info.date = str;
 }
@@ -312,13 +312,13 @@ void cSavegame::loadModel(cModel& model, int slot)
 {
 	if (!loadDocument(slot))
 	{
-		throw std::runtime_error("Could not load savegame file " + iToStr(slot));
+		throw std::runtime_error("Could not load savegame file " + std::to_string(slot));
 	}
 
 	cVersion saveVersion;
 	if (!loadVersion(saveVersion))
 	{
-		throw std::runtime_error("Could not load version info from savegame file " + iToStr(slot));
+		throw std::runtime_error("Could not load version info from savegame file " + std::to_string(slot));
 	}
 
 	if (saveVersion < cVersion(1, 0))
@@ -352,7 +352,7 @@ void cSavegame::loadGuiInfo(const cServer* server, int slot, int playerNr)
 {
 	if (!loadDocument(slot))
 	{
-		throw std::runtime_error("Could not load savegame file " + iToStr(slot));
+		throw std::runtime_error("Could not load savegame file " + std::to_string(slot));
 	}
 
 	tinyxml2::XMLElement* guiInfoElement = xmlDocument.RootElement()->FirstChildElement("GuiInfo");
@@ -420,7 +420,7 @@ bool cSavegame::loadVersion(cVersion& version)
 	const char* versionString = xmlDocument.RootElement()->Attribute("version");
 	if (versionString == nullptr)
 	{
-		Log.write("Error loading savegame file " + iToStr(loadedSlot) + ": \"version\" attribute of node \"MAXR_SAVE_FILE\" not found.", cLog::eLOG_TYPE_ERROR);
+		Log.write("Error loading savegame file " + std::to_string(loadedSlot) + ": \"version\" attribute of node \"MAXR_SAVE_FILE\" not found.", cLog::eLOG_TYPE_ERROR);
 		return false;
 	}
 

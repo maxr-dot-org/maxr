@@ -413,7 +413,7 @@ void cKeysList::saveToFile()
 	const auto errorCode = keysXml.SaveFile (KEYS_XMLUsers);
 	if (errorCode != XML_NO_ERROR)
 	{
-		throw std::runtime_error (std::string ("Could not save key controls to '") + KEYS_XMLUsers + "'. Error code is " + iToStr ((int)errorCode) + "."); // TODO: transform error code to text.
+		throw std::runtime_error (std::string ("Could not save key controls to '") + KEYS_XMLUsers + "'. Error code is " + std::to_string ((int)errorCode) + "."); // TODO: transform error code to text.
 	}
 }
 

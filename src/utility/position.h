@@ -160,7 +160,7 @@ public:
 
 inline std::string toString (const cPosition& pos)
 {
-	return "(" + iToStr (pos.x()) + ", " + iToStr (pos.y()) + ")";
+	return "(" + std::to_string (pos.x()) + ", " + std::to_string (pos.y()) + ")";
 }
 
 #endif // utility_positionH

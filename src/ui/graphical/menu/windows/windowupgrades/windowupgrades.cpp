@@ -69,7 +69,7 @@ cWindowUpgrades::cWindowUpgrades (const cPlayer& player, std::shared_ptr<const c
 	goldBar = addChild (std::make_unique<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (372, 301), getPosition() + cPosition (372 + 20, 301 + 115)), 0, player.getCredits(), eResourceBarType::Gold, eOrientationType::Vertical));
 	signalConnectionManager.connect (goldBar->valueChanged, std::bind (&cWindowUpgrades::goldChanged, this));
 	goldBar->disable();
-	goldBarAmountLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (362, 275), getPosition() + cPosition (362 + 40, 275 + 10)), iToStr (player.getCredits()), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	goldBarAmountLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (362, 275), getPosition() + cPosition (362 + 40, 275 + 10)), std::to_string (player.getCredits()), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 	//
 	// Upgrade Buttons
@@ -158,7 +158,7 @@ void cWindowUpgrades::updateUpgradeButtons()
 
 		if (upgrade.getNextPrice() != cUpgradeCalculator::kNoPriceAvailable)
 		{
-			upgradeCostLabel[i]->setText (iToStr (upgrade.getNextPrice()));
+			upgradeCostLabel[i]->setText (std::to_string (upgrade.getNextPrice()));
 			upgradeCostLabel[i]->show();
 		}
 		else
@@ -228,7 +228,7 @@ void cWindowUpgrades::generateSelectionList (bool select)
 //------------------------------------------------------------------------------
 void cWindowUpgrades::goldChanged()
 {
-	goldBarAmountLabel->setText (iToStr (goldBar->getValue()));
+	goldBarAmountLabel->setText (std::to_string (goldBar->getValue()));
 }
 
 //------------------------------------------------------------------------------

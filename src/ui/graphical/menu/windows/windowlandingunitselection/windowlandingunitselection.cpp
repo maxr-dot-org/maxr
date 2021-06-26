@@ -96,7 +96,7 @@ cWindowLandingUnitSelection::cWindowLandingUnitSelection (cRgbColor playerColor,
 	goldBar = addChild (std::make_unique<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (372, 301), getPosition() + cPosition (372 + 20, 301 + 115)), 0, initialGold, eResourceBarType::Gold, eOrientationType::Vertical));
 	signalConnectionManager.connect (goldBar->valueChanged, std::bind (&cWindowLandingUnitSelection::goldChanged, this));
 	goldBar->disable();
-	goldBarAmountLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (362, 275), getPosition() + cPosition (362 + 40, 275 + 10)), iToStr (initialGold), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	goldBarAmountLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (362, 275), getPosition() + cPosition (362 + 40, 275 + 10)), std::to_string (initialGold), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 	//
 	// Upgrade Buttons
@@ -223,7 +223,7 @@ void cWindowLandingUnitSelection::updateUpgradeButtons()
 
 		if (upgrade.getNextPrice() != cUpgradeCalculator::kNoPriceAvailable)
 		{
-			upgradeCostLabel[i]->setText (iToStr (upgrade.getNextPrice()));
+			upgradeCostLabel[i]->setText (std::to_string (upgrade.getNextPrice()));
 			upgradeCostLabel[i]->show();
 		}
 		else
@@ -367,13 +367,13 @@ void cWindowLandingUnitSelection::metalChanged()
 			selectedCargoUnit->setCargo (metalBar->getValue());
 		}
 	}
-	metalBarAmountLabel->setText (iToStr (metalBar->getValue()));
+	metalBarAmountLabel->setText (std::to_string (metalBar->getValue()));
 }
 
 //------------------------------------------------------------------------------
 void cWindowLandingUnitSelection::goldChanged()
 {
-	goldBarAmountLabel->setText (iToStr (goldBar->getValue()));
+	goldBarAmountLabel->setText (std::to_string (goldBar->getValue()));
 }
 
 //------------------------------------------------------------------------------
@@ -448,7 +448,7 @@ void cWindowLandingUnitSelection::handleSelectedUnitSelectionChanged (cUnitListV
 		metalBar->setValue (unitItem->getCargo());
 		metalBar->enable();
 		metalBarAmountLabel->show();
-		metalBarAmountLabel->setText (iToStr (metalBar->getValue()));
+		metalBarAmountLabel->setText (std::to_string (metalBar->getValue()));
 		metalBarUpButton->unlock();
 		metalBarDownButton->unlock();
 		selectedCargoUnit = unitItem;

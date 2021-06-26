@@ -117,7 +117,7 @@ bool cGraphicStaticMap::loadTile (SDL_RWops* fpMapFile, std::size_t graphicOffse
 	AutoSurface surface (loadTerrGraph (fpMapFile, graphicOffset, palette, index));
 	if (surface == nullptr)
 	{
-		Log.write ("EOF while loading terrain number " + iToStr (index), cLog::eLOG_TYPE_WARNING);
+		Log.write ("EOF while loading terrain number " + std::to_string (index), cLog::eLOG_TYPE_WARNING);
 		SDL_RWclose (fpMapFile);
 		tiles.clear();
 		return false;
@@ -522,14 +522,14 @@ bool cStaticMap::loadMap (const std::string& filename_)
 
 	// Read informations and get positions from the map-file
 	const short sWidth = SDL_ReadLE16 (fpMapFile);
-	Log.write ("SizeX: " + iToStr (sWidth), cLog::eLOG_TYPE_DEBUG);
+	Log.write ("SizeX: " + std::to_string (sWidth), cLog::eLOG_TYPE_DEBUG);
 	const short sHeight = SDL_ReadLE16 (fpMapFile);
-	Log.write ("SizeY: " + iToStr (sHeight), cLog::eLOG_TYPE_DEBUG);
+	Log.write ("SizeY: " + std::to_string (sHeight), cLog::eLOG_TYPE_DEBUG);
 	SDL_RWseek (fpMapFile, sWidth * sHeight, SEEK_CUR); // Ignore Mini-Map
 	const Sint64 iDataPos = SDL_RWtell (fpMapFile); // Map-Data
 	SDL_RWseek (fpMapFile, sWidth * sHeight * 2, SEEK_CUR);
 	const int iNumberOfTerrains = SDL_ReadLE16 (fpMapFile); // Read PicCount
-	Log.write ("Number of terrains: " + iToStr (iNumberOfTerrains), cLog::eLOG_TYPE_DEBUG);
+	Log.write ("Number of terrains: " + std::to_string (iNumberOfTerrains), cLog::eLOG_TYPE_DEBUG);
 	const Sint64 iGraphicsPos = SDL_RWtell (fpMapFile); // Terrain Graphics
 	const Sint64 iPalettePos = iGraphicsPos + iNumberOfTerrains * 64 * 64; // Palette
 	const Sint64 iInfoPos = iPalettePos + 256 * 3; // Special informations
@@ -571,7 +571,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 				terrains[iNum].blocked = true;
 				break;
 			default:
-				Log.write ("unknown terrain type " + iToStr (cByte) + " on tile " + iToStr (iNum) + " found. Handled as blocked!", cLog::eLOG_TYPE_WARNING);
+				Log.write ("unknown terrain type " + std::to_string (cByte) + " on tile " + std::to_string (iNum) + " found. Handled as blocked!", cLog::eLOG_TYPE_WARNING);
 				terrains[iNum].blocked = true;
 				//SDL_RWclose (fpMapFile);
 				//return false;
@@ -592,7 +592,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 			int Kachel = SDL_ReadLE16 (fpMapFile);
 			if (Kachel >= iNumberOfTerrains)
 			{
-				Log.write ("a map field referred to a nonexisting terrain: " + iToStr (Kachel), cLog::eLOG_TYPE_WARNING);
+				Log.write ("a map field referred to a nonexisting terrain: " + std::to_string (Kachel), cLog::eLOG_TYPE_WARNING);
 				SDL_RWclose (fpMapFile);
 				clear();
 				return false;

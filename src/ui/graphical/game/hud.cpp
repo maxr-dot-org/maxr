@@ -175,10 +175,10 @@ void cHud::setTurnClock (std::shared_ptr<const cTurnCounter> turnClock_)
 	turnClockSignalConnectionManager.disconnectAll();
 	if (turnClock != nullptr)
 	{
-		turnLabel->setText (iToStr (turnClock->getTurn()));
+		turnLabel->setText (std::to_string (turnClock->getTurn()));
 		turnClockSignalConnectionManager.connect (turnClock->turnChanged, [&]()
 		{
-			turnLabel->setText (iToStr (turnClock->getTurn()));
+			turnLabel->setText (std::to_string (turnClock->getTurn()));
 		});
 	}
 }

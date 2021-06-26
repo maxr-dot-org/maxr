@@ -236,10 +236,10 @@ eResourceType cNewDialogTransfer::getResourceType() const
 void cNewDialogTransfer::transferValueChanged()
 {
 	const auto transferValue = getTransferValue();
-	transferLabel->setText (iToStr (std::abs (transferValue)));
+	transferLabel->setText (std::to_string (std::abs (transferValue)));
 
-	sourceUnitCargoLabel->setText (iToStr (sourceCargo - transferValue));
-	destinationUnitCargoLabel->setText (iToStr (destinationCargo + transferValue));
+	sourceUnitCargoLabel->setText (std::to_string (sourceCargo - transferValue));
+	destinationUnitCargoLabel->setText (std::to_string (destinationCargo + transferValue));
 
 	if (transferValue >= 0) arrowImage->hide();
 	else

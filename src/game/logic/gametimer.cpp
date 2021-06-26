@@ -277,7 +277,7 @@ void cGameTimerClient::run(cClient& client, cModel& model)
 			debugRemoteChecksum = remoteChecksum;
 			if (localChecksum != remoteChecksum)
 			{
-				Log.write("OUT OF SYNC @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_ERROR);
+				Log.write("OUT OF SYNC @" + std::to_string(model.getGameTime()), cLog::eLOG_TYPE_NET_ERROR);
 			}
 
 			syncMessageReceived = false;

@@ -131,7 +131,7 @@ void cServer::saveGameState(int saveGameNumber, const std::string& saveName) con
 //------------------------------------------------------------------------------
 void cServer::loadGameState(int saveGameNumber)
 {
-	Log.write(" Server: loading game state from save file " + iToStr(saveGameNumber), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write(" Server: loading game state from save file " + std::to_string(saveGameNumber), cLog::eLOG_TYPE_NET_DEBUG);
 	savegame.loadModel(model, saveGameNumber);
 
 	gameTimer.setPlayerNumbers(model.getPlayerList());
@@ -154,7 +154,7 @@ void cServer::resyncClientModel(int playerNr /*= -1*/) const
 {
 	assert(SDL_ThreadID() == SDL_GetThreadID(serverThread));
 
-	Log.write(" Server: Resynchronize client model " + iToStr(playerNr), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write(" Server: Resynchronize client model " + std::to_string(playerNr), cLog::eLOG_TYPE_NET_DEBUG);
 	cNetMessageResyncModel msg(model);
 	sendMessageToClients(msg, playerNr);
 }
@@ -173,7 +173,7 @@ void cServer::sendMessageToClients(const cNetMessage& message, int playerNr /* =
 	{
 		cTextArchiveIn archive;
 		archive << message;
-		Log.write("Server: --> " + archive.data() + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write("Server: --> " + archive.data() + " @" + std::to_string(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
 	if (playerNr == -1)
@@ -225,7 +225,7 @@ void cServer::run()
 			{
 				cTextArchiveIn archive;
 				archive << *message;
-				Log.write("Server: <-- " + archive.data() + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+				Log.write("Server: <-- " + archive.data() + " @" + std::to_string(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 			}
 
 			if (model.getPlayer(message->playerNr) == nullptr &&

@@ -533,7 +533,7 @@ AutoSurface cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
 		filename += "_iso-8559-";
 		// it's important that the enum-numbers are the same
 		// as theire iso-numbers!
-		filename += iToStr (charset);
+		filename += std::to_string (charset);
 	}
 	filename += ".pcx";
 

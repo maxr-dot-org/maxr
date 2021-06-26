@@ -96,7 +96,7 @@ static void showIntro()
 									 Video.getResolutionX(), Video.getResolutionY(),
 									 !Video.getWindowMode(),
 									 !cSettings::getInstance().isSoundMute());
-	Log.write ("MVEPlayer returned " + iToStr (mvereturn), cLog::eLOG_TYPE_DEBUG);
+	Log.write ("MVEPlayer returned " + std::to_string (mvereturn), cLog::eLOG_TYPE_DEBUG);
 	//FIXME: make this case sensitive - my mve is e.g. completely lower cases -- beko
 
 	// reinit maxr sound
@@ -108,7 +108,7 @@ static void showIntro()
 		}
 		catch (std::runtime_error& e)
 		{
-			Log.write ("Can't reinit sound after playing intro" + iToStr (mvereturn), cLog::eLOG_TYPE_DEBUG);
+			Log.write ("Can't reinit sound after playing intro" + std::to_string (mvereturn), cLog::eLOG_TYPE_DEBUG);
 			Log.write (e.what(), cLog::eLOG_TYPE_DEBUG);
 		}
 	}

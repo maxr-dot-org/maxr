@@ -124,17 +124,17 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	currentLine += lineHeight;
 	creditsGroup = addChild (std::make_unique<cRadioGroupValue<int>>());
 
-	creditsGroup->emplaceCheckBox (cGameSettings::defaultCreditsNone, getPosition() + cPosition (140, currentLine), lngPack.i18n ("Text~Option~None") + " (" + iToStr (cGameSettings::defaultCreditsNone) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
+	creditsGroup->emplaceCheckBox (cGameSettings::defaultCreditsNone, getPosition() + cPosition (140, currentLine), lngPack.i18n ("Text~Option~None") + " (" + std::to_string (cGameSettings::defaultCreditsNone) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
 	currentLine += lineHeight;
-	creditsGroup->emplaceCheckBox (cGameSettings::defaultCreditsLow, getPosition() + cPosition (140, currentLine), lngPack.i18n ("Text~Option~Low") + " (" + iToStr (cGameSettings::defaultCreditsLow) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
+	creditsGroup->emplaceCheckBox (cGameSettings::defaultCreditsLow, getPosition() + cPosition (140, currentLine), lngPack.i18n ("Text~Option~Low") + " (" + std::to_string (cGameSettings::defaultCreditsLow) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
 	currentLine += lineHeight;
-	creditsGroup->emplaceCheckBox (cGameSettings::defaultCreditsLimited, getPosition() + cPosition (140, currentLine), lngPack.i18n ("Text~Option~Limited") + " (" + iToStr (cGameSettings::defaultCreditsLimited) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
+	creditsGroup->emplaceCheckBox (cGameSettings::defaultCreditsLimited, getPosition() + cPosition (140, currentLine), lngPack.i18n ("Text~Option~Limited") + " (" + std::to_string (cGameSettings::defaultCreditsLimited) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
 	currentLine += lineHeight;
-	creditsGroup->emplaceCheckBox (cGameSettings::defaultCreditsNormal, getPosition() + cPosition (140, currentLine), lngPack.i18n ("Text~Option~Normal") + " (" + iToStr (cGameSettings::defaultCreditsNormal) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
+	creditsGroup->emplaceCheckBox (cGameSettings::defaultCreditsNormal, getPosition() + cPosition (140, currentLine), lngPack.i18n ("Text~Option~Normal") + " (" + std::to_string (cGameSettings::defaultCreditsNormal) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
 	currentLine += lineHeight;
-	creditsGroup->emplaceCheckBox (cGameSettings::defaultCreditsHigh, getPosition() + cPosition (140, currentLine), lngPack.i18n ("Text~Option~High") + " (" + iToStr (cGameSettings::defaultCreditsHigh) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
+	creditsGroup->emplaceCheckBox (cGameSettings::defaultCreditsHigh, getPosition() + cPosition (140, currentLine), lngPack.i18n ("Text~Option~High") + " (" + std::to_string (cGameSettings::defaultCreditsHigh) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
 	currentLine += lineHeight;
-	creditsGroup->emplaceCheckBox (cGameSettings::defaultCreditsMore, getPosition() + cPosition (140, currentLine), lngPack.i18n ("Text~Option~More") + " (" + iToStr (cGameSettings::defaultCreditsMore) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
+	creditsGroup->emplaceCheckBox (cGameSettings::defaultCreditsMore, getPosition() + cPosition (140, currentLine), lngPack.i18n ("Text~Option~More") + " (" + std::to_string (cGameSettings::defaultCreditsMore) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
 	currentLine += lineHeight * 2;
 
 	auto savedLine2 = currentLine;
@@ -150,7 +150,7 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	savedLine = currentLine;
 	for (auto turn : cGameSettings::defaultVictoryTurnsOptions)
 	{
-		victoryGroup->emplaceCheckBox ({eGameSettingsVictoryCondition::Turns, turn}, getPosition() + cPosition (380, currentLine), iToStr (turn) + " " + lngPack.i18n ("Text~Comp~Turns"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
+		victoryGroup->emplaceCheckBox ({eGameSettingsVictoryCondition::Turns, turn}, getPosition() + cPosition (380, currentLine), std::to_string (turn) + " " + lngPack.i18n ("Text~Comp~Turns"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
 		currentLine += lineHeight;
 	}
 	const auto customTurnArea = cBox<cPosition>(getPosition() + cPosition (330, currentLine), getPosition() + cPosition (420, currentLine + 10));
@@ -161,7 +161,7 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	currentLine = savedLine;
 	for (auto point : cGameSettings::defaultVictoryPointsOptions)
 	{
-		victoryGroup->emplaceCheckBox ({eGameSettingsVictoryCondition::Points, point}, getPosition() + cPosition (500, currentLine), iToStr (point) + " " + lngPack.i18n ("Text~Comp~Points"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
+		victoryGroup->emplaceCheckBox ({eGameSettingsVictoryCondition::Points, point}, getPosition() + cPosition (500, currentLine), std::to_string (point) + " " + lngPack.i18n ("Text~Comp~Points"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
 		currentLine += lineHeight;
 	}
 	const auto customPointArea = cBox<cPosition>(getPosition() + cPosition (440, currentLine), getPosition() + cPosition (540, currentLine + 10));

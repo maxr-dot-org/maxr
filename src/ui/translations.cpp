@@ -59,11 +59,11 @@ namespace
 	{
 		const int diff = modified - original;
 		if (diff > 0)
-			return " +" + iToStr (diff);
+			return " +" + std::to_string (diff);
 		else if (diff < 0)
-			return " -" + iToStr (-diff);
+			return " -" + std::to_string (-diff);
 		else // diff == 0
-			return " =" + iToStr (modified);
+			return " =" + std::to_string (modified);
 	}
 
 	//--------------------------------------------------------------------------
@@ -205,7 +205,7 @@ std::string getClanStatsDescription (const cClanUnitStat& clanUnitStat, const cU
 		int nrTurns = clanUnitStat.getModificationValue ("Built_Costs");
 		if (originalData.getStaticUnitData(data->getId()).vehicleData.isHuman == false) nrTurns /= clanUnitStat.getUnitId().isAVehicle() == 0 ? 2 : 3;
 
-		result += iToStr (nrTurns) + " " + lngPack.i18n ("Text~Comp~Turns");
+		result += std::to_string (nrTurns) + " " + lngPack.i18n ("Text~Comp~Turns");
 	}
 	return result;
 }
@@ -277,7 +277,7 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 	{
 		std::string sText;
 		sText = lngPack.i18n ("Text~Comp~Disabled") + " (";
-		sText += iToStr (building.getDisabledTurns()) + ")";
+		sText += std::to_string (building.getDisabledTurns()) + ")";
 		return sText;
 	}
 	if (building.isUnitWorking() || building.factoryHasJustFinishedBuilding())
@@ -296,13 +296,13 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 				iRound = (int) ceilf (buildListItem.getRemainingMetal() / (float)building.getMetalPerRound());
 				sText = lngPack.i18n ("Text~Comp~Producing") + lngPack.i18n ("Text~Punctuation~Colon");
 				sText += unitName + " (";
-				sText += iToStr (iRound) + ")";
+				sText += std::to_string (iRound) + ")";
 
 				if (font->getTextWide (sText, FONT_LATIN_SMALL_WHITE) > 126)
 				{
 					sText = lngPack.i18n ("Text~Comp~Producing") + lngPack.i18n("Text~Punctuation~Colon") + "\n";
 					sText += unitName + " (";
-					sText += iToStr (iRound) + ")";
+					sText += std::to_string (iRound) + ")";
 				}
 
 				return sText;
@@ -342,7 +342,7 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 						case cResearch::kScanResearch: sText += lngPack.i18n ("Text~Others~Scan"); break;
 						case cResearch::kCostResearch: sText += lngPack.i18n ("Text~Others~Costs"); break;
 					}
-					sText += lngPack.i18n ("Text~Punctuation~Colon") + iToStr (building.getOwner()->getResearchState().getRemainingTurns (area, building.getOwner()->getResearchCentersWorkingOnArea ((cResearch::ResearchArea)area))) + "\n";
+					sText += lngPack.i18n ("Text~Punctuation~Colon") + std::to_string (building.getOwner()->getResearchState().getRemainingTurns (area, building.getOwner()->getResearchCentersWorkingOnArea ((cResearch::ResearchArea)area))) + "\n";
 				}
 			}
 			return sText;
@@ -354,7 +354,7 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 			std::string sText;
 			sText = lngPack.i18n ("Text~Comp~Working") + "\n";
 			sText += lngPack.i18n ("Text~Title~Credits") + lngPack.i18n ("Text~Punctuation~Colon");
-			sText += iToStr (building.getOwner()->getCredits());
+			sText += std::to_string (building.getOwner()->getCredits());
 			return sText;
 		}
 		return lngPack.i18n ("Text~Comp~Working");
@@ -375,7 +375,7 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 		std::string sText;
 		sText = lngPack.i18n("Text~Comp~Waits") + "\n";
 		sText += lngPack.i18n("Text~Title~Credits") + lngPack.i18n("Text~Punctuation~Colon");
-		sText += iToStr (building.getOwner()->getCredits());
+		sText += std::to_string (building.getOwner()->getCredits());
 		return sText;
 	}
 
@@ -399,7 +399,7 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 				case cResearch::kScanResearch: sText += lngPack.i18n("Text~Others~Scan"); break;
 				case cResearch::kCostResearch: sText += lngPack.i18n("Text~Others~Costs"); break;
 				}
-				sText += lngPack.i18n ("Text~Punctuation~Colon") + iToStr (building.getOwner()->getResearchState().getRemainingTurns (area, building.getOwner()->getResearchCentersWorkingOnArea ((cResearch::ResearchArea)area))) + "\n";
+				sText += lngPack.i18n ("Text~Punctuation~Colon") + std::to_string (building.getOwner()->getResearchState().getRemainingTurns (area, building.getOwner()->getResearchCentersWorkingOnArea ((cResearch::ResearchArea)area))) + "\n";
 			}
 		}
 		return sText;
@@ -418,7 +418,7 @@ std::string getStatusStr (const cVehicle& vehicle, const cPlayer* player, const 
 	{
 		std::string sText;
 		sText = lngPack.i18n ("Text~Comp~Disabled") + " (";
-		sText += iToStr (vehicle.getDisabledTurns()) + ")";
+		sText += std::to_string (vehicle.getDisabledTurns()) + ")";
 		return sText;
 	}
 	else if (vehicle.isSurveyorAutoMoveActive())
@@ -435,7 +435,7 @@ std::string getStatusStr (const cVehicle& vehicle, const cPlayer* player, const 
 				sText = lngPack.i18n ("Text~Comp~Producing");
 				sText += lngPack.i18n ("Text~Punctuation~Colon");
 				sText += getStaticUnitName (unitsData.getStaticUnitData (vehicle.getBuildingType())) + " (";
-				sText += iToStr (vehicle.getBuildTurns());
+				sText += std::to_string (vehicle.getBuildTurns());
 				sText += ")";
 
 				if (font->getTextWide (sText) > 126)
@@ -443,7 +443,7 @@ std::string getStatusStr (const cVehicle& vehicle, const cPlayer* player, const 
 					sText = lngPack.i18n ("Text~Comp~Producing") + lngPack.i18n("Text~Punctuation~Colon");
 					sText += "\n";
 					sText += getStaticUnitName (unitsData.getStaticUnitData (vehicle.getBuildingType())) + " (";
-					sText += iToStr (vehicle.getBuildTurns());
+					sText += std::to_string (vehicle.getBuildTurns());
 					sText += ")";
 				}
 				return sText;
@@ -472,7 +472,7 @@ std::string getStatusStr (const cVehicle& vehicle, const cPlayer* player, const 
 	{
 		if (vehicle.getClearingTurns())
 		{
-			return lngPack.i18n ("Text~Comp~Clearing", iToStr (vehicle.getClearingTurns()));
+			return lngPack.i18n ("Text~Comp~Clearing", std::to_string (vehicle.getClearingTurns()));
 		}
 		else
 			return lngPack.i18n ("Text~Comp~Clearing_Fin");
@@ -601,18 +601,18 @@ namespace
 		{
 			switch (report.getResourceType())
 			{
-				case eResourceType::Gold: return lngPack.i18n ("Text~Comp~Adjustments_Gold_Increased", iToStr (amount));
-				case eResourceType::Oil: return lngPack.i18n ("Text~Comp~Adjustments_Fuel_Increased", iToStr (amount));
-				case eResourceType::Metal: return lngPack.i18n ("Text~Comp~Adjustments_Metal_Increased", iToStr (amount));
+				case eResourceType::Gold: return lngPack.i18n ("Text~Comp~Adjustments_Gold_Increased", std::to_string (amount));
+				case eResourceType::Oil: return lngPack.i18n ("Text~Comp~Adjustments_Fuel_Increased", std::to_string (amount));
+				case eResourceType::Metal: return lngPack.i18n ("Text~Comp~Adjustments_Metal_Increased", std::to_string (amount));
 			}
 		}
 		else
 		{
 			switch (report.getResourceType())
 			{
-				case eResourceType::Gold: return lngPack.i18n ("Text~Comp~Adjustments_Gold_Decreased", iToStr (amount));
-				case eResourceType::Oil: return lngPack.i18n ("Text~Comp~Adjustments_Fuel_Decreased", iToStr (amount));
-				case eResourceType::Metal: return lngPack.i18n ("Text~Comp~Adjustments_Metal_Decreased", iToStr (amount));
+				case eResourceType::Gold: return lngPack.i18n ("Text~Comp~Adjustments_Gold_Decreased", std::to_string (amount));
+				case eResourceType::Oil: return lngPack.i18n ("Text~Comp~Adjustments_Fuel_Decreased", std::to_string (amount));
+				case eResourceType::Metal: return lngPack.i18n ("Text~Comp~Adjustments_Metal_Decreased", std::to_string (amount));
 			}
 		}
 		throw std::runtime_error("Unknown resourceType " + toString (static_cast<int> (report.getResourceType())));
@@ -622,13 +622,13 @@ namespace
 	std::string getMessage (const cModel& model, const cSavedReportUpgraded& report)
 	{
 		const auto& unitName = getStaticUnitName (model.getUnitsData()->getStaticUnitData (report.getUnitId()));
-		return lngPack.i18n ("Text~Comp~Upgrades_Done") + " " + iToStr (report.getUnitsCount()) + " " + lngPack.i18n ("Text~Comp~Upgrades_Done2", unitName) + " (" + lngPack.i18n ("Text~Others~Costs") + lngPack.i18n ("Text~Punctuation~Colon") + iToStr (report.getCosts()) + ")";
+		return lngPack.i18n ("Text~Comp~Upgrades_Done") + " " + std::to_string (report.getUnitsCount()) + " " + lngPack.i18n ("Text~Comp~Upgrades_Done2", unitName) + " (" + lngPack.i18n ("Text~Others~Costs") + lngPack.i18n ("Text~Punctuation~Colon") + std::to_string (report.getCosts()) + ")";
 	}
 
 	//------------------------------------------------------------------------------
 	std::string getMessage (const cModel& model, const cSavedReportTurnStart& report)
 	{
-		std::string message = lngPack.i18n ("Text~Comp~Turn_Start", iToStr (report.turn));
+		std::string message = lngPack.i18n ("Text~Comp~Turn_Start", std::to_string (report.turn));
 
 		if (!report.unitReports.empty())
 		{
@@ -641,7 +641,7 @@ namespace
 				sep = ", ";
 				totalUnitsCount += entry.count;
 				auto name = getStaticUnitName (model.getUnitsData()->getStaticUnitData (entry.type));
-				message += entry.count > 1 ? iToStr(entry.count) + " " + name : name;
+				message += entry.count > 1 ? std::to_string(entry.count) + " " + name : name;
 			}
 			// TODO: Plural rules are language dependant
 			// - Russian has 3 forms, Chinese 1 form, ...
@@ -695,7 +695,7 @@ std::string getMessage (const cSavedReport& report, const cModel& model)
 		auto pos = *savedReportUnit->getPosition();
 		const auto& unit = savedReportUnit->getUnit();
 
-		return "[" + iToStr (pos.x()) + ", " + iToStr (pos.y()) + "] " + getText (unit, *savedReportUnit);
+		return "[" + std::to_string (pos.x()) + ", " + std::to_string (pos.y()) + "] " + getText (unit, *savedReportUnit);
 	}
 
 	switch (report.getType())

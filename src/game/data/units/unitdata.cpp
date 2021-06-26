@@ -78,7 +78,7 @@ int cUnitsData::getUnitIndexBy(sID id) const
 	{
 		if (staticUnitData[i].ID == id) return i;
 	}
-	Log.write("Unitdata with id (" + iToStr(id.firstPart) + ", " + iToStr(id.secondPart) + ") not found", cLog::eLOG_TYPE_ERROR);
+	Log.write("Unitdata with id (" + std::to_string(id.firstPart) + ", " + std::to_string(id.secondPart) + ") not found", cLog::eLOG_TYPE_ERROR);
 	return -1;
 }
 

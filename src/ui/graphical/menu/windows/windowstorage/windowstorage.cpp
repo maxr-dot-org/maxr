@@ -112,9 +112,9 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 		});
 	}
 
-	metalBarAmountLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (536, 85), getPosition() + cPosition (536 + 40, 85 + 10)), iToStr (metalValue), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	metalBarAmountLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (536, 85), getPosition() + cPosition (536 + 40, 85 + 10)), std::to_string (metalValue), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 	metalBar = addChild (std::make_unique<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (546, 106), getPosition() + cPosition (546 + 20, 106 + 115)), 0, metalValue, eResourceBarType::Metal, eOrientationType::Vertical));
-	signalConnectionManager.connect (metalBar->valueChanged, [&]() { metalBarAmountLabel->setText (iToStr (metalBar->getValue())); });
+	signalConnectionManager.connect (metalBar->valueChanged, [&]() { metalBarAmountLabel->setText (std::to_string (metalBar->getValue())); });
 	metalBar->disable();
 
 	//

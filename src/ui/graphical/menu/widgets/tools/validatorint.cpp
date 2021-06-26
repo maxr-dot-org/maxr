@@ -60,7 +60,7 @@ void cValidatorInt::fixup (std::string& text) const
 
 	if (text.empty())
 	{
-		text = iToStr (std::max (std::min (0, maxValue), minValue));
+		text = std::to_string (std::max (std::min (0, maxValue), minValue));
 	}
 	else
 	{
@@ -68,11 +68,11 @@ void cValidatorInt::fixup (std::string& text) const
 
 		if (value < minValue)
 		{
-			text = iToStr (minValue);
+			text = std::to_string (minValue);
 		}
 		else if (value > maxValue)
 		{
-			text = iToStr (maxValue);
+			text = std::to_string (maxValue);
 		}
 	}
 }

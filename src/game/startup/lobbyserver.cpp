@@ -130,7 +130,7 @@ eOpenServerResult cLobbyServer::startServer (int port)
 	}
 	else
 	{
-		Log.write ("Game open (Port: " + iToStr (port) + ")", cLog::eLOG_TYPE_INFO);
+		Log.write ("Game open (Port: " + std::to_string (port) + ")", cLog::eLOG_TYPE_INFO);
 		return eOpenServerResult::Success;
 	}
 }
@@ -545,7 +545,7 @@ void cLobbyServer::clientLands (const cMuMsgLandingPosition& message)
 {
 	if (!landingPositionManager) return;
 
-	Log.write ("LobbyServer: received landing position from Player " + iToStr (message.playerNr), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("LobbyServer: received landing position from Player " + std::to_string (message.playerNr), cLog::eLOG_TYPE_NET_DEBUG);
 
 	auto player = getPlayer (message.playerNr);
 	if (player == nullptr) return;

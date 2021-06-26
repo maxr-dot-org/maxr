@@ -40,9 +40,9 @@ namespace
 	std::string secondBarText (int prod, int need)
 	{
 		int perTurn = prod - need;
-		std::string text = iToStr (need) + " (";
+		std::string text = std::to_string (need) + " (";
 		if (perTurn > 0) text += "+";
-		text += iToStr (perTurn) + " / " + lngPack.i18n ("Text~Comp~Turn_5") + ")";
+		text += std::to_string (perTurn) + " / " + lngPack.i18n ("Text~Comp~Turn_5") + ")";
 		return text;
 	}
 }
@@ -173,17 +173,17 @@ void cWindowResourceDistribution::setBarLabels()
 	const auto& stored = building.subBase->getResourcesStored();
 	const auto& prod = getProduction();
 
-	metalLabels[0]->setText (iToStr (prod.metal));
+	metalLabels[0]->setText (std::to_string (prod.metal));
 	metalLabels[1]->setText (secondBarText (prod.metal, needed.metal));
-	metalLabels[2]->setText (iToStr (stored.metal));
+	metalLabels[2]->setText (std::to_string (stored.metal));
 
-	oilLabels[0]->setText (iToStr (prod.oil));
+	oilLabels[0]->setText (std::to_string (prod.oil));
 	oilLabels[1]->setText (secondBarText (prod.oil, needed.oil));
-	oilLabels[2]->setText (iToStr (stored.oil));
+	oilLabels[2]->setText (std::to_string (stored.oil));
 
-	goldLabels[0]->setText (iToStr (prod.gold));
+	goldLabels[0]->setText (std::to_string (prod.gold));
 	goldLabels[1]->setText (secondBarText (prod.gold, needed.gold));
-	goldLabels[2]->setText (iToStr (stored.gold));
+	goldLabels[2]->setText (std::to_string (stored.gold));
 }
 
 //------------------------------------------------------------------------------

@@ -167,29 +167,29 @@ void cWindowMapSelection::updateMaps()
 			{
 				SDL_FillRect (imageSurface.get(), nullptr, selectedColor);
 
-				if (font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")<") > 140)
+				if (font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<") > 140)
 				{
-					while (font->getTextWide (">" + mapName + "... (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")<") > 140)
+					while (font->getTextWide (">" + mapName + "... (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<") > 140)
 					{
 						mapName.erase (mapName.length() - 1, mapName.length());
 					}
-					mapName = ">" + mapName + "... (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")<";
+					mapName = ">" + mapName + "... (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<";
 				}
-				else mapName = ">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")<";
+				else mapName = ">" + mapName.substr (0, mapName.length() - 4) + " (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<";
 			}
 			else
 			{
 				SDL_FillRect (imageSurface.get(), nullptr, unselectedColor);
 
-				if (font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")<") > 140)
+				if (font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<") > 140)
 				{
-					while (font->getTextWide (">" + mapName + "... (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")<") > 140)
+					while (font->getTextWide (">" + mapName + "... (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<") > 140)
 					{
 						mapName.erase (mapName.length() - 1, mapName.length());
 					}
-					mapName = mapName + "... (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")";
+					mapName = mapName + "... (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")";
 				}
-				else mapName = mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")";
+				else mapName = mapName.substr (0, mapName.length() - 4) + " (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")";
 			}
 			SDL_Rect dest = {4, 4, mapWinSize, mapWinSize};
 			SDL_BlitSurface (preview.surface.get(), nullptr, imageSurface.get(), &dest);

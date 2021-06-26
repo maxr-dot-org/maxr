@@ -114,7 +114,7 @@ void cUnitDetailsStored::drawRow (size_t index, eUnitDataSymbolType symbolType, 
 	else fontType = FONT_LATIN_SMALL_RED;
 
 	amountLabels[index]->setFont (fontType);
-	amountLabels[index]->setText (iToStr (amount) + "/" + iToStr (maximalAmount));
+	amountLabels[index]->setText (std::to_string (amount) + "/" + std::to_string (maximalAmount));
 
 	nameLabels[index]->setText (name);
 	cUnitDetailsHud::drawSmallSymbols (surface.get(), rowHeight, symbolType, cPosition (65, 4 + rowHeight * index), amount, maximalAmount);

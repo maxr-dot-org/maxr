@@ -54,7 +54,7 @@ cAttackJob::cAttackJob (cUnit& aggressor, const cPosition& targetPosition, const
 	counter(10),
 	state (S_ROTATING)
 {
-	Log.write (" cAttackJob: Started attack, aggressor: " + aggressor.getDisplayName (aggressor.getStaticUnitData().getDefaultName()) + ", ID: " + iToStr (aggressor.getId()) + " @" + iToStr (model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" cAttackJob: Started attack, aggressor: " + aggressor.getDisplayName (aggressor.getStaticUnitData().getDefaultName()) + ", ID: " + std::to_string (aggressor.getId()) + " @" + std::to_string (model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 	assert(!aggressor.isAVehicle() || !static_cast<cVehicle&> (aggressor).isUnitMoving());
 
 	fireDir = calcFireDir();
@@ -205,7 +205,7 @@ void cAttackJob::lockTarget(const cMap& map)
 				{
 					target->setIsBeeinAttacked (true);
 					lockedTargets.push_back (target->iID);
-					Log.write (" cAttackJob: locked target " + target->getDisplayName (target->getStaticUnitData().getDefaultName()) + " (ID: " + iToStr (target->iID) + ") at (" + iToStr (targetPosition.x() + x) + "," + iToStr (targetPosition.y() + y) + ")", cLog::eLOG_TYPE_NET_DEBUG);
+					Log.write (" cAttackJob: locked target " + target->getDisplayName (target->getStaticUnitData().getDefaultName()) + " (ID: " + std::to_string (target->iID) + ") at (" + std::to_string (targetPosition.x() + x) + "," + std::to_string (targetPosition.y() + y) + ")", cLog::eLOG_TYPE_NET_DEBUG);
 				}
 			}
 		}
@@ -421,7 +421,7 @@ void cAttackJob::impactSingle (const cPosition& position, int attackPoints, cMod
 		avoidTargets->push_back (target);
 	}
 
-	Log.write(" cAttackJob: Impact at " + toString (position) + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write(" cAttackJob: Impact at " + toString (position) + " @" + std::to_string(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 
 	// if target is a stealth unit, make it visible on all clients
 	if (target && target->getStaticUnitData().isStealthOn != TERRAIN_NONE)
@@ -444,7 +444,7 @@ void cAttackJob::impactSingle (const cPosition& position, int attackPoints, cMod
 		target->setHasBeenAttacked (true);
 
 		std::string name = target->getDisplayName (target->getStaticUnitData().getDefaultName());
-		Log.write(" cAttackJob: target hit: " + name + ", ID: " + iToStr(target->getId()) + ", remaining hp: " + iToStr(remainingHp) + " @" + iToStr(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write(" cAttackJob: target hit: " + name + ", ID: " + std::to_string(target->getId()) + ", remaining hp: " + std::to_string(remainingHp) + " @" + std::to_string(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 
 		if (remainingHp <= 0)
 		{

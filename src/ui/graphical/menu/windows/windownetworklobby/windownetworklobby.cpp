@@ -84,12 +84,12 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 		ipLineEdit->setText(cSettings::getInstance().getIP());
 	}
 	portLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (230, 260), getPosition() + cPosition (230 + 95, 260 + 10))));
-	portLineEdit->setText (iToStr (cSettings::getInstance().getPort()));
+	portLineEdit->setText (std::to_string (cSettings::getInstance().getPort()));
 	portLineEdit->setValidator (std::make_unique<cValidatorInt> (0, 65535));
 	restoreDefaultPortButton = addChild(std::make_unique<cImage>(getPosition() + cPosition(230 + 82, 254), GraphicsData.gfx_Cpfeil2.get()));
 	signalConnectionManager.connect(restoreDefaultPortButton->clicked, [this]()
 	{
-		portLineEdit->setText(iToStr(DEFAULTPORT));
+		portLineEdit->setText(std::to_string(DEFAULTPORT));
 	});
 
 	auto nameLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (353, 260), getPosition() + cPosition (353 + 95, 260 + 10))));
@@ -325,7 +325,7 @@ void cWindowNetworkLobby::updateSettingsText()
 	if (staticMap != nullptr)
 	{
 		text += lngPack.i18n ("Text~Title~Map", staticMap->getName());
-		text += " (" + iToStr (staticMap->getSize().x()) + "x" + iToStr (staticMap->getSize().y()) + ")\n";
+		text += " (" + std::to_string (staticMap->getSize().x()) + "x" + std::to_string (staticMap->getSize().y()) + ")\n";
 	}
 	else if (saveGameInfo.number < 0)
 	{
@@ -338,26 +338,26 @@ void cWindowNetworkLobby::updateSettingsText()
 	{
 		if (gameSettings)
 		{
-			auto additionalGameEndString = gameSettings->victoryConditionType == eGameSettingsVictoryCondition::Turns ? (" " + iToStr (gameSettings->victoryTurns) + " ") : (gameSettings->victoryConditionType == eGameSettingsVictoryCondition::Points ? (" " + iToStr (gameSettings->victoryPoints) + " ") : " ");
+			auto additionalGameEndString = gameSettings->victoryConditionType == eGameSettingsVictoryCondition::Turns ? (" " + std::to_string (gameSettings->victoryTurns) + " ") : (gameSettings->victoryConditionType == eGameSettingsVictoryCondition::Points ? (" " + std::to_string (gameSettings->victoryPoints) + " ") : " ");
 			text += lngPack.i18n ("Text~Comp~GameEndsAt") + additionalGameEndString + toTranslatedString (gameSettings->victoryConditionType) + "\n";
 			text += lngPack.i18n ("Text~Title~Metal") + lngPack.i18n ("Text~Punctuation~Colon") + toTranslatedString (gameSettings->metalAmount) + "\n";
 			text += lngPack.i18n ("Text~Title~Oil") + lngPack.i18n ("Text~Punctuation~Colon") + toTranslatedString (gameSettings->oilAmount) + "\n";
 			text += lngPack.i18n ("Text~Title~Gold") + lngPack.i18n ("Text~Punctuation~Colon") + toTranslatedString (gameSettings->goldAmount) + "\n";
 			text += lngPack.i18n ("Text~Title~Resource_Density") + lngPack.i18n ("Text~Punctuation~Colon") + toTranslatedString (gameSettings->resourceDensity) + "\n";
-			text += lngPack.i18n ("Text~Title~Credits")  + lngPack.i18n ("Text~Punctuation~Colon") + iToStr (gameSettings->startCredits) + "\n";
+			text += lngPack.i18n ("Text~Title~Credits")  + lngPack.i18n ("Text~Punctuation~Colon") + std::to_string (gameSettings->startCredits) + "\n";
 			text += lngPack.i18n ("Text~Title~BridgeHead") + lngPack.i18n ("Text~Punctuation~Colon") + toTranslatedString (gameSettings->bridgeheadType) + "\n";
 			text += lngPack.i18n ("Text~Title~Clans") + lngPack.i18n ("Text~Punctuation~Colon") + (gameSettings->clansEnabled ? lngPack.i18n ("Text~Option~On") : lngPack.i18n ("Text~Option~Off")) + "\n";
 			text += lngPack.i18n ("Text~Title~Game_Type") + lngPack.i18n ("Text~Punctuation~Colon") + toTranslatedString (gameSettings->gameType) + "\n";
-			text += lngPack.i18n ("Text~Title~Turn_limit") + lngPack.i18n ("Text~Punctuation~Colon") + (gameSettings->turnLimitActive ? iToStr (gameSettings->turnLimit.count()) + "s" : lngPack.i18n ("Text~Settings~Unlimited_11")) + "\n";
+			text += lngPack.i18n ("Text~Title~Turn_limit") + lngPack.i18n ("Text~Punctuation~Colon") + (gameSettings->turnLimitActive ? std::to_string (gameSettings->turnLimit.count()) + "s" : lngPack.i18n ("Text~Settings~Unlimited_11")) + "\n";
 			if (gameSettings->gameType == eGameSettingsGameType::Simultaneous)
 			{
-				text += lngPack.i18n ("Text~Title~Turn_end") + lngPack.i18n ("Text~Punctuation~Colon") + (gameSettings->turnEndDeadlineActive ? iToStr (gameSettings->turnEndDeadline.count()) + "s" : lngPack.i18n ("Text~Settings~Unlimited_11")) + "\n";
+				text += lngPack.i18n ("Text~Title~Turn_end") + lngPack.i18n ("Text~Punctuation~Colon") + (gameSettings->turnEndDeadlineActive ? std::to_string (gameSettings->turnEndDeadline.count()) + "s" : lngPack.i18n ("Text~Settings~Unlimited_11")) + "\n";
 			}
 		}
 		else text += lngPack.i18n ("Text~Multiplayer~Option_NoSet") + "\n";
 	}
 	if (saveGameInfo.number >= 0) {
-		text += lngPack.i18n("Text~Comp~Turn_5") + lngPack.i18n ("Text~Punctuation~Colon") + iToStr(saveGameInfo.turn) + "\n";
+		text += lngPack.i18n("Text~Comp~Turn_5") + lngPack.i18n ("Text~Punctuation~Colon") + std::to_string(saveGameInfo.turn) + "\n";
 	}
 	settingsTextLabel->setText (text);
 }
@@ -381,15 +381,15 @@ void cWindowNetworkLobby::updateMap()
 	auto mapName = staticMap->getName();
 	const auto size = staticMap->getSize();
 
-	if (cUnicodeFont::font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")<") > 140)
+	if (cUnicodeFont::font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<") > 140)
 	{
-		while (cUnicodeFont::font->getTextWide (">" + mapName + "... (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")<") > 140)
+		while (cUnicodeFont::font->getTextWide (">" + mapName + "... (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<") > 140)
 		{
 			mapName.erase (mapName.length() - 1, mapName.length());
 		}
-		mapName = mapName + "... (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")";
+		mapName = mapName + "... (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")";
 	}
-	else mapName = mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size.x()) + "x" + iToStr (size.y()) + ")";
+	else mapName = mapName.substr (0, mapName.length() - 4) + " (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")";
 
 	mapNameLabel->setText (mapName);
 }
@@ -501,7 +501,7 @@ void cWindowNetworkLobby::setSaveGame (const cSaveGameInfo& saveInfo_)
 //------------------------------------------------------------------------------
 void cWindowNetworkLobby::setMapDownloadPercent (int percent)
 {
-	mapNameLabel->setText (lngPack.i18n ("Text~Multiplayer~MapDL_Percent", iToStr (percent)));
+	mapNameLabel->setText (lngPack.i18n ("Text~Multiplayer~MapDL_Percent", std::to_string (percent)));
 }
 
 //------------------------------------------------------------------------------

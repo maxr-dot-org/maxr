@@ -47,9 +47,9 @@ cDialogColorPicker::cDialogColorPicker (const cRgbColor& color, eWindowBackgroun
 		selectedColorImage->setImage (createSelectedColorSurface().get());
 
 		const auto color = colorPicker->getSelectedColor();
-		redValueLineEdit->setText (iToStr (color.r));
-		greenValueLineEdit->setText (iToStr (color.g));
-		blueValueLineEdit->setText (iToStr (color.b));
+		redValueLineEdit->setText (std::to_string (color.r));
+		greenValueLineEdit->setText (std::to_string (color.g));
+		blueValueLineEdit->setText (std::to_string (color.b));
 	});
 
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (210, 100), getPosition() + cPosition (210 + 20, 100 + font->getFontHeight())), "R:"));
@@ -63,9 +63,9 @@ cDialogColorPicker::cDialogColorPicker (const cRgbColor& color, eWindowBackgroun
 	blueValueLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (230, 140), getPosition() + cPosition (230 + 25, 140 + font->getFontHeight()))));
 	blueValueLineEdit->setValidator (std::make_unique<cValidatorInt> (0, 255));
 
-	redValueLineEdit->setText (iToStr (color.r));
-	greenValueLineEdit->setText (iToStr (color.g));
-	blueValueLineEdit->setText (iToStr (color.b));
+	redValueLineEdit->setText (std::to_string (color.r));
+	greenValueLineEdit->setText (std::to_string (color.g));
+	blueValueLineEdit->setText (std::to_string (color.b));
 
 	signalConnectionManager.connect (redValueLineEdit->returnPressed, [this]()
 	{
