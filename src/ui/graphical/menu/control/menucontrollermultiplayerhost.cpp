@@ -225,7 +225,7 @@ void cMenuControllerMultiplayerHost::startSavedGame (std::shared_ptr<cClient> cl
 	assert (server);
 
 	auto savedGame = std::make_shared<cNetworkGame>();
-	savedGame->start (application, lobbyClient.getLobbyPreparationData().staticMap, client, server);
+	savedGame->start (application, client, server);
 }
 
 //------------------------------------------------------------------------------
@@ -249,7 +249,7 @@ void cMenuControllerMultiplayerHost::startNewGame (std::shared_ptr<cClient> clie
 	auto* server = lobbyServer.getServer();
 	assert (server);
 	auto newGame = std::make_shared<cNetworkGame>();
-	newGame->startNewGame (application, lobbyClient.getLobbyPreparationData().staticMap, client, initPlayerData, server);
+	newGame->startNewGame (application, client, initPlayerData, server);
 }
 
 //------------------------------------------------------------------------------

@@ -30,7 +30,6 @@ class cApplication;
 class cClient;
 class cConnectionManager;
 class cServer;
-class cStaticMap;
 struct sInitPlayerData;
 
 class cNetworkGame : public cGame
@@ -38,8 +37,8 @@ class cNetworkGame : public cGame
 public:
 	~cNetworkGame();
 
-	void startNewGame (cApplication&, std::shared_ptr<cStaticMap>, std::shared_ptr<cClient>, const sInitPlayerData&, cServer*);
-	void start (cApplication&, std::shared_ptr<cStaticMap>, std::shared_ptr<cClient>, cServer*);
+	void startNewGame (cApplication&, std::shared_ptr<cClient>, const sInitPlayerData&, cServer*);
+	void start (cApplication&, std::shared_ptr<cClient>, cServer*);
 
 #if 1 // To remove
 	void run() override;

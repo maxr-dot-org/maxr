@@ -38,11 +38,11 @@ void cNetworkGame::run()
 }
 
 //------------------------------------------------------------------------------
-void cNetworkGame::startNewGame (cApplication& application, std::shared_ptr<cStaticMap> staticMap, std::shared_ptr<cClient> client, const sInitPlayerData& initPlayerData, cServer* server)
+void cNetworkGame::startNewGame (cApplication& application, std::shared_ptr<cClient> client, const sInitPlayerData& initPlayerData, cServer* server)
 {
 	client->sendNetMessage (cActionInitNewGame (initPlayerData));
 
-	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
+	gameGuiController = std::make_unique<cGameGuiController> (application, client->getModel().getMap()->staticMap);
 	gameGuiController->setSingleClient(client);
 	gameGuiController->setServer(server);
 
@@ -60,9 +60,9 @@ void cNetworkGame::startNewGame (cApplication& application, std::shared_ptr<cSta
 }
 
 //------------------------------------------------------------------------------
-void cNetworkGame::start (cApplication& application, std::shared_ptr<cStaticMap> staticMap, std::shared_ptr<cClient> client, cServer* server)
+void cNetworkGame::start (cApplication& application, std::shared_ptr<cClient> client, cServer* server)
 {
-	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
+	gameGuiController = std::make_unique<cGameGuiController> (application, client->getModel().getMap()->staticMap);
 	gameGuiController->setSingleClient (client);
 	gameGuiController->setServer(server);
 	gameGuiController->start();
