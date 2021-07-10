@@ -26,8 +26,8 @@
 
 struct sID
 {
-	sID() : firstPart(0), secondPart(0) {}
-	sID(int first, int second) : firstPart(first), secondPart(second) {}
+	sID() : firstPart (0), secondPart (0) {}
+	sID (int first, int second) : firstPart (first), secondPart (second) {}
 
 	std::string getText() const;
 
@@ -36,17 +36,17 @@ struct sID
 
 	bool operator== (const sID& ID) const;
 	bool operator!= (const sID& rhs) const { return !(*this == rhs); }
-	bool operator< (const sID& rhs) const { return less_vehicleFirst(rhs); }
-	bool less_vehicleFirst(const sID& ID) const;
-	bool less_buildingFirst(const sID& ID) const;
+	bool operator< (const sID& rhs) const { return less_vehicleFirst (rhs); }
+	bool less_vehicleFirst (const sID& ID) const;
+	bool less_buildingFirst (const sID& ID) const;
 
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 
-	template<typename T>
-	void serialize(T& archive)
+	template <typename T>
+	void serialize (T& archive)
 	{
-		archive & NVP(firstPart);
-		archive & NVP(secondPart);
+		archive & NVP (firstPart);
+		archive & NVP (secondPart);
 	}
 
 public:

@@ -70,7 +70,7 @@ CheckBox* cRadioGroupValue<T>::addCheckBox (T value, std::unique_ptr<CheckBox> n
 {
 	const bool hadButtons = hasChildren();
 	CheckBox* res = addChild (std::move (newCheckBox));
-	cCheckBox* checkBox = &static_cast<cCheckBox&>(*res);
+	cCheckBox* checkBox = &static_cast<cCheckBox&> (*res);
 
 	if (currentlyCheckedButton == nullptr && !allowUncheckAll && !checkBox->isChecked()) checkBox->setChecked (true);
 

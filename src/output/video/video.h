@@ -167,7 +167,7 @@ public:
 
 	mutable cSignal<void (const std::string&)> screenShotTaken;
 
-	mutable cSignal<void ()> resolutionChanged;
+	mutable cSignal<void()> resolutionChanged;
 
 	// Screenbuffers ///////////////////////////////////
 	static SDL_Surface* buffer; // Der Bildschirm-Buffer

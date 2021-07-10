@@ -27,17 +27,17 @@ class cSubBase;
 class cActionUpgradeBuilding : public cActionT<cAction::eActiontype::ACTION_UPGRADE_BUILDING>
 {
 public:
-	cActionUpgradeBuilding(const cBuilding& building, bool allBuildings);
-	cActionUpgradeBuilding(cBinaryArchiveOut& archive);
+	cActionUpgradeBuilding (const cBuilding& building, bool allBuildings);
+	cActionUpgradeBuilding (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
 
-	void execute(cModel& model) const override;
+	void execute (cModel& model) const override;
 
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & buildingId;
 		archive & allBuildings;

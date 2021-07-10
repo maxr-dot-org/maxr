@@ -25,18 +25,18 @@
 
 namespace
 {
-	auto makeFilterUnitSeenByPlayer(const cPlayer& player, const cMapField& mapField, const sTerrain& terrain)
+	auto makeFilterUnitSeenByPlayer (const cPlayer& player, const cMapField& mapField, const sTerrain& terrain)
 	{
-		return [&](const cUnit* unit){ return player.canSeeUnit(*unit, mapField, terrain); };
+		return [&](const cUnit* unit){ return player.canSeeUnit (*unit, mapField, terrain); };
 	}
 }
 
 //------------------------------------------------------------------------------
-cMapFieldView::cMapFieldView(const cMapField& mapField, const sTerrain& terrain, const cPlayer* player) :
-	unitsChanged(mapField.unitsChanged),
-	mapField(mapField),
-	terrain(terrain),
-	player(player)
+cMapFieldView::cMapFieldView (const cMapField& mapField, const sTerrain& terrain, const cPlayer* player) :
+	unitsChanged (mapField.unitsChanged),
+	mapField (mapField),
+	terrain (terrain),
+	player (player)
 {}
 
 //------------------------------------------------------------------------------
@@ -44,12 +44,11 @@ cVehicle* cMapFieldView::getVehicle() const
 {
 	for (const auto& vehicle : mapField.getVehicles())
 	{
-		if (!player || player->canSeeUnit(*vehicle, mapField, terrain))
+		if (!player || player->canSeeUnit (*vehicle, mapField, terrain))
 		{
 			return vehicle;
 		}
 	}
-
 	return nullptr;
 }
 
@@ -58,12 +57,11 @@ cVehicle* cMapFieldView::getPlane() const
 {
 	for (const auto& vehicle : mapField.getPlanes())
 	{
-		if (!player || player->canSeeUnit(*vehicle, mapField, terrain))
+		if (!player || player->canSeeUnit (*vehicle, mapField, terrain))
 		{
 			return vehicle;
 		}
 	}
-
 	return nullptr;
 }
 
@@ -72,12 +70,11 @@ cBuilding* cMapFieldView::getBuilding() const
 {
 	for (const auto& building : mapField.getBuildings())
 	{
-		if (!player || player->canSeeUnit(*building, mapField, terrain))
+		if (!player || player->canSeeUnit (*building, mapField, terrain))
 		{
 			return building;
 		}
 	}
-
 	return nullptr;
 }
 
@@ -86,7 +83,7 @@ cBuilding* cMapFieldView::getTopBuilding() const
 {
 	for (const auto& building : mapField.getBuildings())
 	{
-		if (!player || player->canSeeUnit(*building, mapField, terrain))
+		if (!player || player->canSeeUnit (*building, mapField, terrain))
 		{
 			if ((building->getStaticUnitData().surfacePosition == eSurfacePosition::Ground ||
 				 building->getStaticUnitData().surfacePosition == eSurfacePosition::Above) &&
@@ -100,7 +97,6 @@ cBuilding* cMapFieldView::getTopBuilding() const
 			}
 		}
 	}
-
 	return nullptr;
 }
 
@@ -109,7 +105,7 @@ cBuilding* cMapFieldView::getBaseBuilding() const
 {
 	for (const auto& building : mapField.getBuildings())
 	{
-		if (!player || player->canSeeUnit(*building, mapField, terrain))
+		if (!player || player->canSeeUnit (*building, mapField, terrain))
 		{
 			if (building->getStaticUnitData().surfacePosition != eSurfacePosition::Ground &&
 				building->getStaticUnitData().surfacePosition != eSurfacePosition::Above &&
@@ -119,7 +115,6 @@ cBuilding* cMapFieldView::getBaseBuilding() const
 			}
 		}
 	}
-
 	return nullptr;
 }
 
@@ -128,7 +123,7 @@ cBuilding* cMapFieldView::getRubble() const
 {
 	for (const auto& building : mapField.getBuildings())
 	{
-		if (!player || player->canSeeUnit(*building, mapField, terrain))
+		if (!player || player->canSeeUnit (*building, mapField, terrain))
 		{
 			if (building->isRubble())
 			{
@@ -136,7 +131,6 @@ cBuilding* cMapFieldView::getRubble() const
 			}
 		}
 	}
-
 	return nullptr;
 }
 
@@ -145,7 +139,7 @@ cBuilding* cMapFieldView::getMine() const
 {
 	for (const auto& building : mapField.getBuildings())
 	{
-		if (!player || player->canSeeUnit(*building, mapField, terrain))
+		if (!player || player->canSeeUnit (*building, mapField, terrain))
 		{
 			if (building->getStaticUnitData().explodesOnContact)
 			{
@@ -153,7 +147,6 @@ cBuilding* cMapFieldView::getMine() const
 			}
 		}
 	}
-
 	return nullptr;
 }
 
@@ -162,7 +155,7 @@ bool cMapFieldView::hasBridgeOrPlattform() const
 {
 	for (const auto& building : mapField.getBuildings())
 	{
-		if (!player || player->canSeeUnit(*building, mapField, terrain))
+		if (!player || player->canSeeUnit (*building, mapField, terrain))
 		{
 			if ((building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea ||
 				building->getStaticUnitData().surfacePosition == eSurfacePosition::Base) &&
@@ -182,7 +175,7 @@ std::vector<cBuilding*> cMapFieldView::getBuildings() const
 	{
 		return mapField.getBuildings();
 	}
-	return Filter(mapField.getBuildings(), makeFilterUnitSeenByPlayer(*player, mapField, terrain));
+	return Filter (mapField.getBuildings(), makeFilterUnitSeenByPlayer (*player, mapField, terrain));
 }
 
 //------------------------------------------------------------------------------
@@ -192,7 +185,7 @@ std::vector<cVehicle*> cMapFieldView::getVehicles() const
 	{
 		return mapField.getVehicles();
 	}
-	return Filter(mapField.getVehicles(), makeFilterUnitSeenByPlayer(*player, mapField, terrain));
+	return Filter (mapField.getVehicles(), makeFilterUnitSeenByPlayer (*player, mapField, terrain));
 }
 
 //------------------------------------------------------------------------------
@@ -202,18 +195,18 @@ std::vector<cVehicle*> cMapFieldView::getPlanes() const
 	{
 		return mapField.getPlanes();
 	}
-	return Filter(mapField.getPlanes(), makeFilterUnitSeenByPlayer(*player, mapField, terrain));
+	return Filter (mapField.getPlanes(), makeFilterUnitSeenByPlayer (*player, mapField, terrain));
 }
 
 //------------------------------------------------------------------------------
 std::vector<cUnit*> cMapFieldView::getUnits() const
 {
 	std::vector<cUnit*> visibleUnits;
-	mapField.getUnits(visibleUnits);
+	mapField.getUnits (visibleUnits);
 
 	if (!player)
 	{
 		return visibleUnits;
 	}
-	return Filter(visibleUnits, makeFilterUnitSeenByPlayer(*player, mapField, terrain));
+	return Filter (visibleUnits, makeFilterUnitSeenByPlayer (*player, mapField, terrain));
 }

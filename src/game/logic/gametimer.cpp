@@ -70,10 +70,9 @@ void cGameTimer::timerCallback()
 {
 	// Obviously this is the only way, to increase the timer thread priority in SDL.
 	// This is needed, because the timer loose events otherwise, when the CPU usage is too high.
-	SDL_SetThreadPriority(SDL_THREAD_PRIORITY_HIGH);
+	SDL_SetThreadPriority (SDL_THREAD_PRIORITY_HIGH);
 
 	pushEvent();
-
 }
 
 void cGameTimer::pushEvent()
@@ -81,7 +80,7 @@ void cGameTimer::pushEvent()
 	std::unique_lock<std::mutex> lock (mutex);
 
 	//increase event counter and let the event handler increase the gametime
-	if (eventCounter < maxEventQueueSize || maxEventQueueSize == static_cast<unsigned int>(-1))
+	if (eventCounter < maxEventQueueSize || maxEventQueueSize == static_cast<unsigned int> (-1))
 	{
 		eventCounter++;
 	}
@@ -104,10 +103,10 @@ bool cGameTimer::popEvent()
 
 cGameTimerServer::cGameTimerServer() :
 	cGameTimer(),
-	sentGameTime(0)
+	sentGameTime (0)
 {}
 
-void cGameTimerServer::setPlayerNumbers(const std::vector<std::shared_ptr<cPlayer>>& playerList)
+void cGameTimerServer::setPlayerNumbers (const std::vector<std::shared_ptr<cPlayer>>& playerList)
 {
 	for (const auto& p : playerList)
 	{
@@ -116,21 +115,21 @@ void cGameTimerServer::setPlayerNumbers(const std::vector<std::shared_ptr<cPlaye
 	}
 }
 
-void cGameTimerServer::handleSyncMessage(const cNetMessageSyncClient& message, unsigned int gameTime)
+void cGameTimerServer::handleSyncMessage (const cNetMessageSyncClient& message, unsigned int gameTime)
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
 	int playerNr = message.playerNr;
-	if (receivedTime.find(playerNr) == receivedTime.end()) return;
+	if (receivedTime.find (playerNr) == receivedTime.end()) return;
 
 	if (message.gameTime > gameTime)
 	{
-		Log.write(" Server: the received game time from client is in the future", cLog::eLOG_TYPE_NET_ERROR);
+		Log.write (" Server: the received game time from client is in the future", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
 	if (message.gameTime < receivedTime[playerNr])
 	{
-		Log.write(" Server: the received game time from client is older than the last one", cLog::eLOG_TYPE_NET_ERROR);
+		Log.write (" Server: the received game time from client is older than the last one", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
 	receivedTime[playerNr] = message.gameTime;
@@ -147,7 +146,7 @@ void cGameTimerServer::handleSyncMessage(const cNetMessageSyncClient& message, u
 	debugData.ping          = (1 - filter) * debugData.ping          + filter * 10 * (gameTime - message.gameTime);
 }
 
-void cGameTimerServer::checkPlayersResponding(const std::vector<std::shared_ptr<cPlayer>>& playerList, cServer& server)
+void cGameTimerServer::checkPlayersResponding (const std::vector<std::shared_ptr<cPlayer>>& playerList, cServer& server)
 {
 	for (auto player : playerList)
 	{
@@ -155,19 +154,19 @@ void cGameTimerServer::checkPlayersResponding(const std::vector<std::shared_ptr<
 
 		if (playersTime + PAUSE_GAME_TIMEOUT < sentGameTime)
 		{
-			server.setPlayerNotResponding(player->getId());
+			server.setPlayerNotResponding (player->getId());
 		}
 		else if (playersTime == sentGameTime)
 		{
 			//if player is not in state NOT_RESPONDING, following call does nothing
-			server.clearPlayerNotResponding(player->getId());
+			server.clearPlayerNotResponding (player->getId());
 		}
 	}
 }
 
-void cGameTimerServer::run(cModel& model, cServer& server)
+void cGameTimerServer::run (cModel& model, cServer& server)
 {
-	checkPlayersResponding(model.getPlayerList(), server);
+	checkPlayersResponding (model.getPlayerList(), server);
 	for (unsigned int i = 0; i < maxEventQueueSize; i++)
 	{
 		if (!popEvent()) break;
@@ -179,9 +178,9 @@ void cGameTimerServer::run(cModel& model, cServer& server)
 		{
 			cNetMessageSyncServer message;
 			message.checksum = checksum;
-			message.ping = static_cast<int>(clientDebugData[player->getId()].ping);
+			message.ping = static_cast<int> (clientDebugData[player->getId()].ping);
 			message.gameTime = model.getGameTime();
-			server.sendMessageToClients(message, player->getId());
+			server.sendMessageToClients (message, player->getId());
 
 			sentGameTime = model.getGameTime();
 		}
@@ -191,7 +190,7 @@ void cGameTimerServer::run(cModel& model, cServer& server)
 
 cGameTimerClient::cGameTimerClient() :
 	cGameTimer(),
-	receivedTime(0),
+	receivedTime (0),
 	remoteChecksum (0),
 	timeSinceLastSyncMessage (0),
 	syncMessageReceived (false),
@@ -200,7 +199,7 @@ cGameTimerClient::cGameTimerClient() :
 {
 }
 
-void cGameTimerClient::setReceivedTime(unsigned int time)
+void cGameTimerClient::setReceivedTime (unsigned int time)
 {
 	std::unique_lock<std::mutex> lock (mutex);
 	receivedTime = time;
@@ -213,9 +212,8 @@ unsigned int cGameTimerClient::getReceivedTime()
 	return receivedTime;
 }
 
-void cGameTimerClient::handleSyncMessage(const cNetMessageSyncServer& message, unsigned int gameTime)
+void cGameTimerClient::handleSyncMessage (const cNetMessageSyncServer& message, unsigned int gameTime)
 {
-
 	remoteChecksum = message.checksum;
 	ping = message.ping;
 
@@ -225,28 +223,28 @@ void cGameTimerClient::handleSyncMessage(const cNetMessageSyncServer& message, u
 	syncMessageReceived = true;
 }
 
-void cGameTimerClient::checkServerResponding(cClient& client)
+void cGameTimerClient::checkServerResponding (cClient& client)
 {
 	const auto& freezeModes = client.getFreezeModes();
 	if (syncMessageReceived)
 	{
 		timeSinceLastSyncMessage = 0;
-		if (freezeModes.isEnabled(eFreezeMode::WAIT_FOR_SERVER))
+		if (freezeModes.isEnabled (eFreezeMode::WAIT_FOR_SERVER))
 		{
-			client.disableFreezeMode(eFreezeMode::WAIT_FOR_SERVER);
+			client.disableFreezeMode (eFreezeMode::WAIT_FOR_SERVER);
 		}
 	}
 	else if (!freezeModes.gameTimePaused())
 	{
 		timeSinceLastSyncMessage++;
-		if (timeSinceLastSyncMessage > MAX_WAITING_FOR_SERVER && !freezeModes.isEnabled(eFreezeMode::WAIT_FOR_SERVER))
+		if (timeSinceLastSyncMessage > MAX_WAITING_FOR_SERVER && !freezeModes.isEnabled (eFreezeMode::WAIT_FOR_SERVER))
 		{
-			client.enableFreezeMode(eFreezeMode::WAIT_FOR_SERVER);
+			client.enableFreezeMode (eFreezeMode::WAIT_FOR_SERVER);
 		}
 	}
 }
 
-void cGameTimerClient::run(cClient& client, cModel& model)
+void cGameTimerClient::run (cClient& client, cModel& model)
 {
 	// maximum time before GUI update
 	const unsigned int maxWorkingTime = 500; // milliseconds
@@ -254,7 +252,7 @@ void cGameTimerClient::run(cClient& client, cModel& model)
 
 	//collect some debug data
 	const unsigned int timeBuffer = getReceivedTime() - model.getGameTime();
-	const unsigned int tickPerFrame = std::min(timeBuffer, eventCounter);	//assumes, that this function is called once per frame
+	const unsigned int tickPerFrame = std::min (timeBuffer, eventCounter);	//assumes, that this function is called once per frame
 																			//and we are not running in the maxWorkingTime limit
 
 	while (popEvent())
@@ -263,25 +261,25 @@ void cGameTimerClient::run(cClient& client, cModel& model)
 		{
 			client.handleNetMessages();
 		}
-		checkServerResponding(client);
+		checkServerResponding (client);
 
 		if (syncMessageReceived)
 		{
 
 			model.advanceGameTime();
-			client.runClientJobs(model);
+			client.runClientJobs (model);
 
 			//check crc
 			localChecksum = model.getChecksum();
 			debugRemoteChecksum = remoteChecksum;
 			if (localChecksum != remoteChecksum)
 			{
-				Log.write("OUT OF SYNC @" + std::to_string(model.getGameTime()), cLog::eLOG_TYPE_NET_ERROR);
+				Log.write ("OUT OF SYNC @" + std::to_string (model.getGameTime()), cLog::eLOG_TYPE_NET_ERROR);
 			}
 
 			syncMessageReceived = false;
 
-			sendSyncMessage(client, model.getGameTime(), tickPerFrame, timeBuffer);
+			sendSyncMessage (client, model.getGameTime(), tickPerFrame, timeBuffer);
 
 			if (SDL_GetTicks() - startGameTime >= maxWorkingTime)
 				break;
@@ -297,7 +295,7 @@ void cGameTimerClient::run(cClient& client, cModel& model)
 	}
 }
 
-void cGameTimerClient::sendSyncMessage(const cClient &client, unsigned int gameTime, unsigned int tickPerFrame, unsigned int timeBuffer)
+void cGameTimerClient::sendSyncMessage (const cClient &client, unsigned int gameTime, unsigned int tickPerFrame, unsigned int timeBuffer)
 {
 	cNetMessageSyncClient message;
 	message.gameTime = gameTime;
@@ -308,5 +306,5 @@ void cGameTimerClient::sendSyncMessage(const cClient &client, unsigned int gameT
 	message.ticksPerFrame = tickPerFrame;
 	message.timeBuffer = timeBuffer;
 
-	client.sendNetMessage(message);
+	client.sendNetMessage (message);
 }

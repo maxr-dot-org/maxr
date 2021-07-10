@@ -29,16 +29,16 @@
 
 
 cEndMoveAction::cEndMoveAction (const cVehicle& vehicle, const cUnit& destUnit, eEndMoveActionType type) :
-	vehicleID(vehicle.getId()),
-	type(type),
-	destID(destUnit.getId())
+	vehicleID (vehicle.getId()),
+	type (type),
+	destID (destUnit.getId())
 {}
 
 //------------------------------------------------------------------------------
-cEndMoveAction::cEndMoveAction  () :
-	vehicleID(-1),
-	type(EMAT_NONE),
-	destID(-1)
+cEndMoveAction::cEndMoveAction () :
+	vehicleID (-1),
+	type (EMAT_NONE),
+	destID (-1)
 {}
 
 //------------------------------------------------------------------------------
@@ -64,11 +64,11 @@ eEndMoveActionType cEndMoveAction::getType() const
 }
 
 //------------------------------------------------------------------------------
-uint32_t cEndMoveAction::getChecksum(uint32_t crc) const
+uint32_t cEndMoveAction::getChecksum (uint32_t crc) const
 {
-	crc = calcCheckSum(vehicleID, crc);
-	crc = calcCheckSum(type, crc);
-	crc = calcCheckSum(destID, crc);
+	crc = calcCheckSum (vehicleID, crc);
+	crc = calcCheckSum (type, crc);
+	crc = calcCheckSum (destID, crc);
 
 	return crc;
 }
@@ -77,14 +77,14 @@ uint32_t cEndMoveAction::getChecksum(uint32_t crc) const
 void cEndMoveAction::executeLoadAction (cModel& model)
 {
 	// get the vehicle
-	cVehicle* loadedVehicle = model.getVehicleFromID(vehicleID);
+	cVehicle* loadedVehicle = model.getVehicleFromID (vehicleID);
 	if (loadedVehicle == nullptr) return;
 
 	// get the target unit
-	cUnit* loadingUnit = model.getUnitFromID(destID);
+	cUnit* loadingUnit = model.getUnitFromID (destID);
 	if (loadingUnit == nullptr) return;
 
-	if (!loadingUnit->canLoad(loadedVehicle)) return;
+	if (!loadingUnit->canLoad (loadedVehicle)) return;
 
 	if (loadingUnit->getStaticUnitData().factorAir > 0)
 	{
@@ -100,7 +100,7 @@ void cEndMoveAction::executeLoadAction (cModel& model)
 void cEndMoveAction::executeAttackAction (cModel& model)
 {
 	// get the vehicle
-	cUnit* vehicle = model.getUnitFromID(vehicleID);
+	cUnit* vehicle = model.getUnitFromID (vehicleID);
 	if (vehicle == nullptr || !vehicle->getOwner()) return;
 
 	// get the target unit
@@ -108,7 +108,7 @@ void cEndMoveAction::executeAttackAction (cModel& model)
 	if (destUnit == nullptr) return;
 
 	const auto& position = destUnit->getPosition();
-	cMapView mapView(model.getMap(), nullptr);
+	cMapView mapView (model.getMap(), nullptr);
 
 	// check, whether the attack is now possible
 	if (!vehicle->canAttackObjectAt (position, mapView, true, true)) return;

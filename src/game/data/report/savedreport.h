@@ -103,17 +103,17 @@ public:
 	static std::unique_ptr<cSavedReport> createFrom (cBinaryArchiveOut&);
 	static std::unique_ptr<cSavedReport> createFrom (cXmlArchiveOut&, const std::string& name);
 
-	virtual void serialize (cBinaryArchiveIn& archive) { serializeThis(archive); }
-	virtual void serialize (cTextArchiveIn& archive) { serializeThis(archive); }
-	virtual void serialize (cXmlArchiveIn& archive) { serializeThis(archive); }
+	virtual void serialize (cBinaryArchiveIn& archive) { serializeThis (archive); }
+	virtual void serialize (cTextArchiveIn& archive) { serializeThis (archive); }
+	virtual void serialize (cXmlArchiveIn& archive) { serializeThis (archive); }
 private:
 	template <typename T>
 	static std::unique_ptr<cSavedReport> createFromImpl (T& archive);
 
 	template <typename T>
-	void serializeThis(T& archive)
+	void serializeThis (T& archive)
 	{
-		archive & serialization::makeNvp("type", getType());
+		archive & serialization::makeNvp ("type", getType());
 	}
 };
 

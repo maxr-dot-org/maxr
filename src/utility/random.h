@@ -36,7 +36,7 @@
  * @param max Upper bound of the interval.
  * @return Randomly selected value.
  */
-template<typename T>
+template <typename T>
 T random (const T min, const T max)
 {
 	assert (max > min);
@@ -67,7 +67,7 @@ T random (const T min, const T max)
  * @param max Upper bound of the interval.
  * @return Randomly selected value.
  */
-template<typename T>
+template <typename T>
 T random (const T max)
 {
 	return random (T (0), max);
@@ -81,7 +81,7 @@ inline bool randomBernoulli()
 /**
  * Select a random element from a std::array
  */
-template<typename T, size_t N>
+template <typename T, size_t N>
 typename std::array<T, N>::reference getRandom (std::array<T, N>& data)
 {
 	static_assert (N > 0, "Getting random element from empty array is not allowed");
@@ -91,7 +91,7 @@ typename std::array<T, N>::reference getRandom (std::array<T, N>& data)
 /**
  * Select a random element from a std::array
  */
-template<typename T, size_t N>
+template <typename T, size_t N>
 typename std::array<T, N>::const_reference getRandom (const std::array<T, N>& data)
 {
 	static_assert (N > 0, "Getting random element from empty array is not allowed");

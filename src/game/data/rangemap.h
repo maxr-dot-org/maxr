@@ -35,31 +35,31 @@ public:
 	cRangeMap();
 
 	void reset();
-	void resize(const cPosition& size);
-	void subtract(const std::vector<uint16_t>& scanMapCopy);
+	void resize (const cPosition& size);
+	void subtract (const std::vector<uint16_t>& scanMapCopy);
 
-	void add(int range, const cPosition& position, int unitSize, bool square = false);
-	void update(int range, const cPosition& oldPosition, const cPosition& newPosition, int oldUnitSize, int newUnitSize, bool square = false);
-	void update(int oldRange, int newRange, const cPosition& position, int unitSize, bool square = false);
+	void add (int range, const cPosition& position, int unitSize, bool square = false);
+	void update (int range, const cPosition& oldPosition, const cPosition& newPosition, int oldUnitSize, int newUnitSize, bool square = false);
+	void update (int oldRange, int newRange, const cPosition& position, int unitSize, bool square = false);
 	void remove (int range, const cPosition& position, int unitSize, bool square = false);
 
 	/** returns true, when position is in range of any of the objects in the map */
-	bool get(const cPosition& position) const;
+	bool get (const cPosition& position) const;
 
 	/** returns access to the full map */
 	std::vector<uint16_t> getMap() const;
 
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 
 	/** Triggered, when a position comes in range or goes out of range, by an add/update/remove */
-	mutable cSignal<void(const std::vector<cPosition>& positions)> positionsInRange;
-	mutable cSignal<void(const std::vector<cPosition>& positions)> positionsOutOfRange;
+	mutable cSignal<void (const std::vector<cPosition>& positions)> positionsInRange;
+	mutable cSignal<void (const std::vector<cPosition>& positions)> positionsOutOfRange;
 	/** Triggered after an operation changed at least the status of one position */
 	mutable cSignal<void()> changed;
 
 private:
-	bool isInRange(int x, int y, const cPosition& position, int range, int unitSize, bool square) const;
-	int getOffset(int x, int y) const;
+	bool isInRange (int x, int y, const cPosition& position, int range, int unitSize, bool square) const;
+	int getOffset (int x, int y) const;
 
 	cPosition size;
 	std::vector<uint16_t> map;

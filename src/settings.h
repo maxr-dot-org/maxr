@@ -216,7 +216,7 @@ public:
 	const std::string& getMvePath() const;
 	void setMvePath (const char* mvePath, bool save = true);
 
-	mutable cSignal<void ()> animationsChanged;
+	mutable cSignal<void()> animationsChanged;
 	// TODO: add signals for other settings
 private:
 
@@ -379,7 +379,7 @@ private:
 	 * @param value The value to set as attribute to the setting node.
 	 * @param valueName The name of the attribute to set to the setting node.
 	 */
-	template<typename T>
+	template <typename T>
 	void saveSetting (const std::string& path, T value, const char* valueName);
 
 	// Overloads for the saveSetting template function.

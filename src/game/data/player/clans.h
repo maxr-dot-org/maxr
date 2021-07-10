@@ -32,7 +32,7 @@ class cClanUnitStat
 {
 public:
 	cClanUnitStat (sID unitId_) : unitId (unitId_) {}
-	cClanUnitStat () {}
+	cClanUnitStat() {}
 
 	void addModification (const std::string& area, int value);
 
@@ -41,7 +41,7 @@ public:
 	int getModificationValue (const std::string& key) const;
 	bool hasModification (const std::string& key) const;
 
-	template<typename T>
+	template <typename T>
 	void serialize (T& archive)
 	{
 		archive & unitId;
@@ -58,8 +58,8 @@ private:
 class cClan
 {
 public:
-	cClan (int num) : num(num) {}
-	cClan () : num(-1) {}
+	cClan (int num) : num (num) {}
+	cClan() : num (-1) {}
 
 	cClan (const cClan& other);
 
@@ -83,7 +83,7 @@ public:
 		archive << description;
 		archive << name;
 
-		archive << static_cast<uint32_t>(stats.size());
+		archive << static_cast<uint32_t> (stats.size());
 		for (const auto& stat : stats)
 			archive << *stat;
 	}
@@ -101,7 +101,7 @@ public:
 		{
 			cClanUnitStat stat;
 			archive >> stat;
-			stats.push_back(std::make_unique<cClanUnitStat>(stat));
+			stats.push_back (std::make_unique<cClanUnitStat> (stat));
 		}
 	}
 	SERIALIZATION_SPLIT_MEMBER()
@@ -119,21 +119,21 @@ class cClanData
 {
 public:
 	cClanData() {};
-	cClanData(const cClanData& other);
+	cClanData (const cClanData&);
 
 	cClan* addClan();
 	cClan* getClan (unsigned int num) const;
 	int getNrClans() const { return static_cast<int> (clans.size()); }
 
 	template <typename T>
-	void save(T& archive)
+	void save (T& archive)
 	{
-		archive << static_cast<uint32_t>(clans.size());
+		archive << static_cast<uint32_t> (clans.size());
 		for (const auto& clan : clans)
 			archive << *clan;
 	}
 	template <typename T>
-	void load(T& archive)
+	void load (T& archive)
 	{
 		uint32_t length;
 		archive >> length;
@@ -142,7 +142,7 @@ public:
 		{
 			cClan clan;
 			archive >> clan;
-			clans.push_back(std::make_unique<cClan>(clan));
+			clans.push_back (std::make_unique<cClan> (clan));
 		}
 	}
 	SERIALIZATION_SPLIT_MEMBER()

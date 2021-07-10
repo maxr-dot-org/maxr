@@ -35,7 +35,7 @@ public:
 	const sID* getSelectedUnitId() const;
 	int getSelectedBuildSpeed() const;
 
-	cSignal<void ()> donePath;
+	cSignal<void()> donePath;
 protected:
 	void setActiveUnit (const sID& unitId) override;
 

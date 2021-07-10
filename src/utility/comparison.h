@@ -48,31 +48,31 @@ struct select_most_precise
 
 struct compare_strategy_direct
 {
-	template<typename T1, typename T2>
+	template <typename T1, typename T2>
 	static inline bool equal (const T1& t1, const T2& t2)
 	{
 		return t1 == t2;
 	}
 
-	template<typename T1, typename T2>
+	template <typename T1, typename T2>
 	static inline bool less (const T1& t1, const T2& t2)
 	{
 		return t1 < t2;
 	}
 
-	template<typename T1, typename T2>
+	template <typename T1, typename T2>
 	static inline bool less_equal (const T1& t1, const T2& t2)
 	{
 		return t1 <= t2;
 	}
 
-	template<typename T1, typename T2>
+	template <typename T1, typename T2>
 	static inline bool greater (const T1& t1, const T2& t2)
 	{
 		return t1 > t2;
 	}
 
-	template<typename T1, typename T2>
+	template <typename T1, typename T2>
 	static inline bool greater_equal (const T1& t1, const T2& t2)
 	{
 		return t1 >= t2;
@@ -81,13 +81,13 @@ struct compare_strategy_direct
 
 struct compare_strategy_tolerance
 {
-	template<typename T1, typename T2>
+	template <typename T1, typename T2>
 	static inline bool equal (const T1& t1, const T2& t2)
 	{
 		return (!less (t1, t2) && !greater (t1, t2));
 	}
 
-	template<typename T1, typename T2>
+	template <typename T1, typename T2>
 	static inline bool less (const T1& t1, const T2& t2)
 	{
 		typedef typename select_most_precise<T1, T2>::type most_precise_type;
@@ -98,39 +98,39 @@ struct compare_strategy_tolerance
 		return ((1e3 * std::numeric_limits<most_precise_type>::epsilon()) * weight < (static_cast<most_precise_type> (t2) - static_cast<most_precise_type> (t1)));
 	}
 
-	template<typename T1, typename T2>
+	template <typename T1, typename T2>
 	static inline bool less_equal (const T1& t1, const T2& t2)
 	{
 		return !greater (t1, t2);
 	}
 
-	template<typename T1, typename T2>
+	template <typename T1, typename T2>
 	static inline bool greater (const T1& t1, const T2& t2)
 	{
 		return less (t2, t1);
 	}
 
-	template<typename T1, typename T2>
+	template <typename T1, typename T2>
 	static inline bool greater_equal (const T1& t1, const T2& t2)
 	{
 		return !less (t1, t2);
 	}
 };
 
-template<typename E>
+template <typename E>
 struct compare_strategy_epsilon
 {
 	compare_strategy_epsilon (const E& epsilon_) :
 		epsilon (epsilon_)
 	{}
 
-	template<typename T1, typename T2>
+	template <typename T1, typename T2>
 	inline bool equal (const T1& t1, const T2& t2) const
 	{
 		return (!less (t1, t2) && !greater (t1, t2));
 	}
 
-	template<typename T1, typename T2>
+	template <typename T1, typename T2>
 	inline bool less (const T1& t1, const T2& t2) const
 	{
 		typedef typename select_most_precise<T1, T2>::type most_precise_type;
@@ -138,19 +138,19 @@ struct compare_strategy_epsilon
 		return (static_cast<most_precise_type> (epsilon) < (static_cast<most_precise_type> (t2) - static_cast<most_precise_type> (t1)));
 	}
 
-	template<typename T1, typename T2>
+	template <typename T1, typename T2>
 	inline bool less_equal (const T1& t1, const T2& t2) const
 	{
 		return !greater (t1, t2);
 	}
 
-	template<typename T1, typename T2>
+	template <typename T1, typename T2>
 	inline bool greater (const T1& t1, const T2& t2) const
 	{
 		return less (t2, t1);
 	}
 
-	template<typename T1, typename T2>
+	template <typename T1, typename T2>
 	inline bool greater_equal (const T1& t1, const T2& t2) const
 	{
 		return !less (t1, t2);
@@ -160,11 +160,11 @@ private:
 	E epsilon;
 };
 
-template<typename T1, typename T2>
+template <typename T1, typename T2>
 struct compare_strategy_default_selector
 {
 private:
-	template<typename ET>
+	template <typename ET>
 	struct ErrorType
 	{
 		static_assert (sizeof (ET) == 0, "compare_strategy_default works only on arithmetic types!");
@@ -183,74 +183,74 @@ public:
 		>::type type;
 };
 
-template<typename T1, typename T2>
+template <typename T1, typename T2>
 struct compare_strategy_default : public compare_strategy_default_selector<T1, T2>::type {};
 
 } // detail namespace
 
 
-template<typename Lhs, typename Rhs, typename CompareStrategy>
+template <typename Lhs, typename Rhs, typename CompareStrategy>
 inline bool equals (const Lhs& lhs, const Rhs& rhs, CompareStrategy strategy)
 {
 	return strategy.equal (lhs, rhs);
 }
 
-template<typename Lhs, typename Rhs>
+template <typename Lhs, typename Rhs>
 inline bool equals (const Lhs& lhs, const Rhs& rhs)
 {
-	return equals (lhs, rhs, detail::compare_strategy_default<Lhs, Rhs> ());
+	return equals (lhs, rhs, detail::compare_strategy_default<Lhs, Rhs>());
 }
 
 
-template<typename Lhs, typename Rhs, typename CompareStrategy>
+template <typename Lhs, typename Rhs, typename CompareStrategy>
 inline bool less_than (const Lhs& lhs, const Rhs& rhs, CompareStrategy strategy)
 {
 	return strategy.less (lhs, rhs);
 }
 
-template<typename Lhs, typename Rhs>
+template <typename Lhs, typename Rhs>
 inline bool less_than (const Lhs& lhs, const Rhs& rhs)
 {
-	return less_than (lhs, rhs, detail::compare_strategy_default<Lhs, Rhs> ());
+	return less_than (lhs, rhs, detail::compare_strategy_default<Lhs, Rhs>());
 }
 
 
-template<typename Lhs, typename Rhs, typename CompareStrategy>
+template <typename Lhs, typename Rhs, typename CompareStrategy>
 inline bool less_equal (const Lhs& lhs, const Rhs& rhs, CompareStrategy strategy)
 {
 	return strategy.less_equal (lhs, rhs);
 }
 
-template<typename Lhs, typename Rhs>
+template <typename Lhs, typename Rhs>
 inline bool less_equal (const Lhs& lhs, const Rhs& rhs)
 {
-	return less_equal (lhs, rhs, detail::compare_strategy_default<Lhs, Rhs> ());
+	return less_equal (lhs, rhs, detail::compare_strategy_default<Lhs, Rhs>());
 }
 
 
-template<typename Lhs, typename Rhs, typename CompareStrategy>
+template <typename Lhs, typename Rhs, typename CompareStrategy>
 inline bool greater_than (const Lhs& lhs, const Rhs& rhs, CompareStrategy strategy)
 {
 	return strategy.greater (lhs, rhs);
 }
 
-template<typename Lhs, typename Rhs>
+template <typename Lhs, typename Rhs>
 inline bool greater_than (const Lhs& lhs, const Rhs& rhs)
 {
-	return greater_than (lhs, rhs, detail::compare_strategy_default<Lhs, Rhs> ());
+	return greater_than (lhs, rhs, detail::compare_strategy_default<Lhs, Rhs>());
 }
 
 
-template<typename Lhs, typename Rhs, typename CompareStrategy>
+template <typename Lhs, typename Rhs, typename CompareStrategy>
 inline bool greater_equal (const Lhs& lhs, const Rhs& rhs, CompareStrategy strategy)
 {
 	return strategy.greater_equal (lhs, rhs);
 }
 
-template<typename Lhs, typename Rhs>
+template <typename Lhs, typename Rhs>
 inline bool greater_equal (const Lhs& lhs, const Rhs& rhs)
 {
-	return greater_equal (lhs, rhs, detail::compare_strategy_default<Lhs, Rhs> ());
+	return greater_equal (lhs, rhs, detail::compare_strategy_default<Lhs, Rhs>());
 }
 
 #endif // utility_comparisonH

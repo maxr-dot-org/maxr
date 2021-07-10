@@ -38,7 +38,7 @@ public:
 
 	sMiningResource getProduction() const;
 
-	cSignal<void ()> done;
+	cSignal<void()> done;
 private:
 	void setBarLabels();
 	void setBarValues();

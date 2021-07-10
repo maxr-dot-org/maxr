@@ -39,7 +39,7 @@ struct sMiningResource
 	sMiningResource& operator += (const sMiningResource&);
 	sMiningResource& operator -= (const sMiningResource&);
 
-	template<typename T>
+	template <typename T>
 	void serializeThis (T& archive)
 	{
 		archive & metal;

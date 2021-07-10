@@ -38,8 +38,8 @@ public:
 
 	cRgbColor getSelectedColor() const;
 
-	cSignal<void ()> done;
-	cSignal<void ()> canceled;
+	cSignal<void()> done;
+	cSignal<void()> canceled;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

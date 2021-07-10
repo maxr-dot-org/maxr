@@ -49,9 +49,9 @@ public:
 		terminate = false;
 	}
 
-	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData_) { unitsData = std::move(unitsData_); }
+	void setUnitsData (std::shared_ptr<const cUnitsData> unitsData_) { unitsData = std::move (unitsData_); }
 	std::shared_ptr<const cUnitsData> getUnitsData() const { return unitsData; }
-	void setClanData(std::shared_ptr<const cClanData> clanData_) { clanData = std::move(clanData_); }
+	void setClanData (std::shared_ptr<const cClanData> clanData_) { clanData = std::move (clanData_); }
 	std::shared_ptr<const cClanData> getClanData() const { return clanData; }
 
 	mutable cSignal<void()> terminated;

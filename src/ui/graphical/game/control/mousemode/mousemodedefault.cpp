@@ -42,7 +42,7 @@ cMouseModeDefault::cMouseModeDefault (const cMapView* map_, const cUnitSelection
 {
 	establishUnitSelectionConnections();
 	cKeyboard& keyboard = cKeyboard::getInstance();
-	keyboardConnectionManager.connect(keyboard.modifierChanged, [this]() {needRefresh(); });
+	keyboardConnectionManager.connect (keyboard.modifierChanged, [this]() {needRefresh(); });
 }
 
 //------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ eMouseModeType cMouseModeDefault::getType() const
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeDefault::setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
+void cMouseModeDefault::setCursor (cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	const auto mouseClickAction = selectAction (mapPosition, unitsData);
 
@@ -121,22 +121,22 @@ std::unique_ptr<cMouseAction> cMouseModeDefault::getMouseAction (const cPosition
 	switch (mouseClickAction)
 	{
 		case eActionType::Steal:
-			return std::make_unique<cMouseActionSteal> ();
+			return std::make_unique<cMouseActionSteal>();
 			break;
 		case eActionType::Disable:
-			return std::make_unique<cMouseActionDisable> ();
+			return std::make_unique<cMouseActionDisable>();
 			break;
 		case eActionType::Attack:
-			return std::make_unique<cMouseActionAttack> ();
+			return std::make_unique<cMouseActionAttack>();
 			break;
 		case eActionType::Select:
-			return std::make_unique<cMouseActionSelect> ();
+			return std::make_unique<cMouseActionSelect>();
 			break;
 		case eActionType::ActivateFinished:
-			return std::make_unique<cMouseActionActivateFinished> ();
+			return std::make_unique<cMouseActionActivateFinished>();
 			break;
 		case eActionType::Move:
-			return std::make_unique<cMouseActionMove> ();
+			return std::make_unique<cMouseActionMove>();
 			break;
 		default:
 			return nullptr;
@@ -157,7 +157,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 	const auto selectedBuilding = unitSelection.getSelectedBuilding();
 
-	const bool modifierForceMoveActive = cKeyboard::getInstance().isAnyModifierActive(toEnumFlag(eKeyModifierType::Ctrl));
+	const bool modifierForceMoveActive = cKeyboard::getInstance().isAnyModifierActive (toEnumFlag (eKeyModifierType::Ctrl));
 
 	// Infiltrators: auto selected disable vs. vehicle/building
 	if (selectedVehicle && selectedVehicle->getOwner() == player && cCommandoData::canDoAction (*selectedVehicle, mapPosition, *map, false))
@@ -269,7 +269,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 			 !selectedBuilding->isUnitWorking() &&
 			 selectedBuilding->getBuildListItem (0).getRemainingMetal() <= 0)
 	{
-		if (selectedBuilding->canExitTo (mapPosition, *map, unitsData.getStaticUnitData(selectedBuilding->getBuildListItem (0).getType())) && selectedUnit->isDisabled() == false)
+		if (selectedBuilding->canExitTo (mapPosition, *map, unitsData.getStaticUnitData (selectedBuilding->getBuildListItem (0).getType())) && selectedUnit->isDisabled() == false)
 		{
 			return eActionType::ActivateFinished;
 		}

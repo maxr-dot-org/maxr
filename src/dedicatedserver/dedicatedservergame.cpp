@@ -43,7 +43,7 @@ namespace
 		bool handleMessage (const cMultiplayerLobbyMessage& message) final
 		{
 			if (message.getType() != cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT) return false;
-			const auto& chatMessage = static_cast<const cMuMsgChat&>(message);
+			const auto& chatMessage = static_cast<const cMuMsgChat&> (message);
 
 			const auto& chatText = chatMessage.message;
 			size_t serverStringPos = chatText.find ("--server");
@@ -54,7 +54,7 @@ namespace
 			std::string command = chatText.substr (serverStringPos + 9);
 			std::vector<std::string> tokens;
 			std::istringstream iss (command);
-			std::copy (std::istream_iterator<std::string> (iss), std::istream_iterator<std::string> (), std::back_inserter<std::vector<std::string> > (tokens));
+			std::copy (std::istream_iterator<std::string> (iss), std::istream_iterator<std::string>(), std::back_inserter<std::vector<std::string> > (tokens));
 			handleChatCommand (message.playerNr, tokens);
 			return true;
 		}
@@ -83,7 +83,7 @@ cDedicatedServerGame::cDedicatedServerGame (int saveGameNumber) :
 	lobbyServer (std::make_shared<cConnectionManager>())
 {
 	using namespace std::placeholders;
-	lobbyServer.addLobbyMessageHandler (std::make_unique<cDedicatedServerChatMessageHandler>(std::bind(&cDedicatedServerGame::handleChatCommand, this, _1, _2)));
+	lobbyServer.addLobbyMessageHandler (std::make_unique<cDedicatedServerChatMessageHandler> (std::bind (&cDedicatedServerGame::handleChatCommand, this, _1, _2)));
 
 	signalConnectionManager.connect (lobbyServer.onClientConnected, [this](const cPlayerBasicData& player)
 	{
@@ -150,7 +150,7 @@ std::string cDedicatedServerGame::getGameState() const
 //------------------------------------------------------------------------------
 void cDedicatedServerGame::runInThread()
 {
-	thread = std::thread([this](){ run(); });
+	thread = std::thread ([this](){ run(); });
 }
 
 //------------------------------------------------------------------------------
@@ -159,14 +159,14 @@ void cDedicatedServerGame::run()
 	using namespace std::literals::chrono_literals;
 	while (canceled == false)
 	{
-		std::this_thread::sleep_for(10ms);
+		std::this_thread::sleep_for (10ms);
 		std::lock_guard<std::recursive_mutex> l{mutex};
 		lobbyServer.run();
 
 		// don't do anything if games haven't been started yet!
 		if (server && shouldSave)
 		{
-			server->saveGameState(saveGameNumber, "Dedicated Server Savegame");
+			server->saveGameState (saveGameNumber, "Dedicated Server Savegame");
 			std::cout << "...saved to slot " << saveGameNumber << std::endl;
 			shouldSave = false;
 		}

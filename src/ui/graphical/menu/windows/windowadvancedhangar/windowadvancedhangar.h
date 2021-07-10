@@ -25,7 +25,7 @@
 #include "ui/graphical/menu/widgets/special/unitlistviewitembuy.h"
 #include "utility/color.h"
 
-template<typename SelectedUnitItemType>
+template <typename SelectedUnitItemType>
 class cWindowAdvancedHangar : public cWindowHangar
 {
 public:
@@ -63,7 +63,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-template<typename SelectedUnitItemType>
+template <typename SelectedUnitItemType>
 cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, cRgbColor playerColor, int playerClan) :
 	cWindowHangar (std::move (surface), unitsData, playerColor, playerClan)
 {
@@ -71,7 +71,7 @@ cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (AutoSurface 
 }
 
 //------------------------------------------------------------------------------
-template<typename SelectedUnitItemType>
+template <typename SelectedUnitItemType>
 cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, const cPlayer& player) :
 	cWindowHangar (std::move (surface), unitsData, player)
 {
@@ -79,7 +79,7 @@ cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (AutoSurface 
 }
 
 //------------------------------------------------------------------------------
-template<typename SelectedUnitItemType>
+template <typename SelectedUnitItemType>
 void cWindowAdvancedHangar<SelectedUnitItemType>::initialize()
 {
 	using namespace std::placeholders;
@@ -101,26 +101,26 @@ void cWindowAdvancedHangar<SelectedUnitItemType>::initialize()
 }
 
 //------------------------------------------------------------------------------
-template<typename SelectedUnitItemType>
+template <typename SelectedUnitItemType>
 cWindowAdvancedHangar<SelectedUnitItemType>::~cWindowAdvancedHangar()
 {}
 
 //------------------------------------------------------------------------------
-template<typename SelectedUnitItemType>
+template <typename SelectedUnitItemType>
 bool cWindowAdvancedHangar<SelectedUnitItemType>::tryAddSelectedUnit (const cUnitListViewItemBuy& unitItem) const
 {
 	return true;
 }
 
 //------------------------------------------------------------------------------
-template<typename SelectedUnitItemType>
+template <typename SelectedUnitItemType>
 bool cWindowAdvancedHangar<SelectedUnitItemType>::tryRemoveSelectedUnit (const SelectedUnitItemType& unitItem) const
 {
 	return true;
 }
 
 //------------------------------------------------------------------------------
-template<typename SelectedUnitItemType>
+template <typename SelectedUnitItemType>
 SelectedUnitItemType& cWindowAdvancedHangar<SelectedUnitItemType>::addSelectedUnit (const sID& unitId)
 {
 	auto addedItem = selectedUnitList->addItem (std::make_unique<SelectedUnitItemType> (selectedUnitList->getSize().x() - 9, unitId, getPlayer(), *unitsData));
@@ -128,28 +128,28 @@ SelectedUnitItemType& cWindowAdvancedHangar<SelectedUnitItemType>::addSelectedUn
 }
 
 //------------------------------------------------------------------------------
-template<typename SelectedUnitItemType>
+template <typename SelectedUnitItemType>
 size_t cWindowAdvancedHangar<SelectedUnitItemType>::getSelectedUnitsCount() const
 {
 	return selectedUnitList->getItemsCount();
 }
 
 //------------------------------------------------------------------------------
-template<typename SelectedUnitItemType>
+template <typename SelectedUnitItemType>
 SelectedUnitItemType& cWindowAdvancedHangar<SelectedUnitItemType>::getSelectedUnit (size_t index)
 {
 	return selectedUnitList->getItem (index);
 }
 
 //------------------------------------------------------------------------------
-template<typename SelectedUnitItemType>
+template <typename SelectedUnitItemType>
 const SelectedUnitItemType& cWindowAdvancedHangar<SelectedUnitItemType>::getSelectedUnit (size_t index) const
 {
 	return selectedUnitList->getItem (index);
 }
 
 //------------------------------------------------------------------------------
-template<typename SelectedUnitItemType>
+template <typename SelectedUnitItemType>
 void cWindowAdvancedHangar<SelectedUnitItemType>::handleSelectionChanged()
 {
 	auto selectedItem = selectedUnitList->getSelectedItem();
@@ -161,7 +161,7 @@ void cWindowAdvancedHangar<SelectedUnitItemType>::handleSelectionChanged()
 }
 
 //------------------------------------------------------------------------------
-template<typename SelectedUnitItemType>
+template <typename SelectedUnitItemType>
 void cWindowAdvancedHangar<SelectedUnitItemType>::handleSelectionUnitClickedSecondTime (const cUnitListViewItemBuy& unitItem)
 {
 	if (tryAddSelectedUnit (unitItem))
@@ -173,7 +173,7 @@ void cWindowAdvancedHangar<SelectedUnitItemType>::handleSelectionUnitClickedSeco
 }
 
 //------------------------------------------------------------------------------
-template<typename SelectedUnitItemType>
+template <typename SelectedUnitItemType>
 void cWindowAdvancedHangar<SelectedUnitItemType>::selectedUnitClicked (SelectedUnitItemType& unitItem)
 {
 	if (&unitItem == selectedUnitList->getSelectedItem() && tryRemoveSelectedUnit (unitItem))

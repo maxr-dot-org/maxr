@@ -114,12 +114,12 @@ public:
 
 	cMoveJob* addMoveJob (cVehicle&, const std::forward_list<cPosition>& path);
 	cMoveJob* addMoveJob (cVehicle&, const cPosition& destination);
-	std::vector<const cPlayer*> resumeMoveJobs(const cPlayer* player = nullptr);
+	std::vector<const cPlayer*> resumeMoveJobs (const cPlayer* = nullptr);
 
-	void addAttackJob(cUnit& aggressor, const cPosition& targetPosition);
+	void addAttackJob (cUnit& aggressor, const cPosition& targetPosition);
 
-	void handlePlayerStartTurn(cPlayer&);
-	void handlePlayerFinishedTurn(cPlayer&);
+	void handlePlayerStartTurn (cPlayer&);
+	void handlePlayerFinishedTurn (cPlayer&);
 
 	void addFx (std::shared_ptr<cFx>);
 	void addJob (std::unique_ptr<cJob>);
@@ -127,8 +127,8 @@ public:
 	/**
 	* Try to move an undetected enemy stealth unit out of the way, if necessary to free position.
 	*/
-	void sideStepStealthUnit(const cPosition&, const cVehicle&, const cPosition& bigOffset = cPosition(-1, -1));
-	void sideStepStealthUnit(const cPosition&, const cStaticUnitData& vehicleData, cPlayer* vehicleOwner, const cPosition& bigOffset = cPosition(-1, -1));
+	void sideStepStealthUnit (const cPosition&, const cVehicle&, const cPosition& bigOffset = cPosition (-1, -1));
+	void sideStepStealthUnit (const cPosition&, const cStaticUnitData& vehicleData, cPlayer* vehicleOwner, const cPosition& bigOffset = cPosition (-1, -1));
 
 	mutable cSignal<void()> gameTimeChanged;
 	mutable cSignal<void (const cVehicle&)> triggeredAddTracks;
@@ -140,22 +140,22 @@ public:
 	mutable cSignal<void (const cUnit& storingUnit, const cUnit& storedUnit)> unitStored;
 	mutable cSignal<void (const cUnit& storingUnit, const cUnit& storedUnit)> unitActivated;
 
-	mutable cSignal<void(const cUnit&)> unitSuppliedWithAmmo;
-	mutable cSignal<void(const cUnit&)> unitRepaired;
+	mutable cSignal<void (const cUnit&)> unitSuppliedWithAmmo;
+	mutable cSignal<void (const cUnit&)> unitRepaired;
 
-	mutable cSignal<void(const cUnit& source, const cUnit& target)> unitStealDisableFailed;
-	mutable cSignal<void(const cUnit& source, const cUnit& target)> unitDisabled;
-	mutable cSignal<void(const cUnit& source, const cUnit& target, const cPlayer* previousOwner)> unitStolen;
+	mutable cSignal<void (const cUnit& source, const cUnit& target)> unitStealDisableFailed;
+	mutable cSignal<void (const cUnit& source, const cUnit& target)> unitDisabled;
+	mutable cSignal<void (const cUnit& source, const cUnit& target, const cPlayer* previousOwner)> unitStolen;
 
-	mutable cSignal<void(const cVehicle& plane)> planeLanding;
-	mutable cSignal<void(const cVehicle& plane)> planeTakeoff;
+	mutable cSignal<void (const cVehicle& plane)> planeLanding;
+	mutable cSignal<void (const cVehicle& plane)> planeTakeoff;
 
-	mutable cSignal<void(const cPlayer&)> playerHasLost;
-	mutable cSignal<void(const cPlayer&)> playerHasWon;
+	mutable cSignal<void (const cPlayer&)> playerHasLost;
+	mutable cSignal<void (const cPlayer&)> playerHasWon;
 	mutable cSignal<void()> suddenDeathMode;
 
-	template<typename T>
-	void save(T& archive) const
+	template <typename T>
+	void save (T& archive) const
 	{
 		archive << NVP (gameId);
 		archive << NVP (gameTime);
@@ -203,8 +203,8 @@ public:
 		archive << serialization::makeNvp ("casualiesTracker", *casualtiesTracker);
 		//TODO: serialize effectList
 	}
-	template<typename T>
-	void load(T& archive)
+	template <typename T>
+	void load (T& archive)
 	{
 		archive >> NVP (gameId);
 		archive >> NVP (gameTime);
@@ -285,7 +285,7 @@ public:
 			archive >> NVP (vehicleID);
 			cStaticUnitData dummy1;
 			cDynamicUnitData dummy2;
-			auto vehicle = std::make_shared<cVehicle>(dummy1, dummy2, nullptr, vehicleID);
+			auto vehicle = std::make_shared<cVehicle> (dummy1, dummy2, nullptr, vehicleID);
 			archive >> serialization::makeNvp ("vehicle", *vehicle);
 			neutralVehicles.insert (std::move (vehicle));
 		}

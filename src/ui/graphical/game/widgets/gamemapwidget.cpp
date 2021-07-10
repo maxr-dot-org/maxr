@@ -124,7 +124,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	signalConnectionManager.connect (animationTimer->triggered50ms, std::bind (&cGameMapWidget::runOwnedEffects, this));
 	signalConnectionManager.connect (animationTimer->triggered100ms, std::bind (&cGameMapWidget::renewDamageEffects, this));
 
-	unitMenu = addChild (std::make_unique<cUnitContextMenuWidget> ());
+	unitMenu = addChild (std::make_unique<cUnitContextMenuWidget>());
 	unitMenu->disable();
 	unitMenu->hide();
 
@@ -141,7 +141,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	{
 		soundManager->setListenerPosition (getMapCenterOffset());
 	});
-	tileUnderMouseChanged.connect ([this] (const cPosition & tilePosition)
+	tileUnderMouseChanged.connect ([this] (const cPosition& tilePosition)
 	{
 		if (mouseMode)
 		{
@@ -472,7 +472,7 @@ cGameMapWidget::~cGameMapWidget()
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::setMapView(std::shared_ptr<const cMapView> mapView_)
+void cGameMapWidget::setMapView (std::shared_ptr<const cMapView> mapView_)
 {
 	std::swap (mapView, mapView_);
 
@@ -480,14 +480,14 @@ void cGameMapWidget::setMapView(std::shared_ptr<const cMapView> mapView_)
 
 	if (mapView != nullptr)
 	{
-		mapViewSignalConnectionManager.connect (mapView->unitDissappeared, [&](const cUnit & unit)
+		mapViewSignalConnectionManager.connect (mapView->unitDissappeared, [&](const cUnit& unit)
 		{
 			if (unitSelection.isSelected (unit))
 			{
 				unitSelection.deselectUnit (unit);
 			}
 		});
-		mapViewSignalConnectionManager.connect (mapView->unitAppeared, [&](const cUnit & unit)
+		mapViewSignalConnectionManager.connect (mapView->unitAppeared, [&](const cUnit& unit)
 		{
 			if (!cSettings::getInstance().isAnimations()) return;
 
@@ -500,23 +500,23 @@ void cGameMapWidget::setMapView(std::shared_ptr<const cMapView> mapView_)
 				animations.push_back (std::make_unique<cAnimationStartUp> (*animationTimer, unit));
 			}
 		});
-		mapViewSignalConnectionManager.connect (mapView->unitMoved, [&](const cUnit & unit, const cPosition & oldPosition)
+		mapViewSignalConnectionManager.connect (mapView->unitMoved, [&](const cUnit& unit, const cPosition& oldPosition)
 		{
 			if (!cSettings::getInstance().isAnimations()) return;
 
 			const auto tileDrawingRange = computeTileDrawingRange();
-			const auto tileDrawingArea = cBox<cPosition>(tileDrawingRange.first, tileDrawingRange.second - cPosition(1, 1));
+			const auto tileDrawingArea = cBox<cPosition> (tileDrawingRange.first, tileDrawingRange.second - cPosition (1, 1));
 
-			if (tileDrawingArea.intersects(unit.getArea()) && !tileDrawingArea.intersects(cBox<cPosition>(oldPosition, oldPosition + unit.getArea().getSize() - cPosition(1, 1))))
+			if (tileDrawingArea.intersects (unit.getArea()) && !tileDrawingArea.intersects (cBox<cPosition> (oldPosition, oldPosition + unit.getArea().getSize() - cPosition (1, 1))))
 			{
-				addAnimationsForUnit(unit);
+				addAnimationsForUnit (unit);
 			}
 		});
 	}
 
 	if (mouseMode != nullptr)
 	{
-		mouseMode->setMap(mapView.get());
+		mouseMode->setMap (mapView.get());
 	}
 
 	if (mapView != mapView_)
@@ -540,7 +540,7 @@ void cGameMapWidget::setPlayer (std::shared_ptr<const cPlayer> player_)
 	}
 }
 
-void cGameMapWidget::setUnitsData(std::shared_ptr<const cUnitsData> unitsData_)
+void cGameMapWidget::setUnitsData (std::shared_ptr<const cUnitsData> unitsData_)
 {
 	unitsData = unitsData_;
 }
@@ -583,11 +583,11 @@ void cGameMapWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clip
 	drawExitPoints();
 	drawBuildBand();
 
-	if (lockActive) drawLockList ();
+	if (lockActive) drawLockList();
 
 	drawEffects (false);
 
-	//displayMessages ();
+	//displayMessages();
 
 	cWidget::draw (destination, clipRect);
 }
@@ -812,7 +812,7 @@ void cGameMapWidget::toggleMouseInputMode (eMouseModeType mouseModeType)
 				setMouseInputMode (std::make_unique<cMouseModeLoad> (mapView.get(), unitSelection, player.get()));
 				break;
 			case eMouseModeType::Enter:
-				setMouseInputMode(std::make_unique<cMouseModeEnter>(mapView.get(), unitSelection, player.get()));
+				setMouseInputMode (std::make_unique<cMouseModeEnter> (mapView.get(), unitSelection, player.get()));
 				break;
 			case eMouseModeType::SupplyAmmo:
 				setMouseInputMode (std::make_unique<cMouseModeSupplyAmmo> (mapView.get(), unitSelection, player.get()));
@@ -904,21 +904,21 @@ cPosition cGameMapWidget::getMapCenterOffset()
 }
 
 //------------------------------------------------------------------------------
-bool cGameMapWidget::startFindBuildPosition(const sID& buildId)
+bool cGameMapWidget::startFindBuildPosition (const sID& buildId)
 {
-	auto mouseMode = std::make_unique<cMouseModeSelectBuildPosition>(mapView.get(), unitSelection, player.get(), buildId);
+	auto mouseMode = std::make_unique<cMouseModeSelectBuildPosition> (mapView.get(), unitSelection, player.get(), buildId);
 
 	// validate if there is any valid position, before setting mouse mode
 	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 	if (selectedVehicle)
 	{
-		auto buildPos = mouseMode->findNextBuildPosition(selectedVehicle->getPosition(), selectedVehicle->getPosition(), *unitsData);
+		auto buildPos = mouseMode->findNextBuildPosition (selectedVehicle->getPosition(), selectedVehicle->getPosition(), *unitsData);
 		if (!buildPos)
 		{
 			return false;
 		}
 	}
-	setMouseInputMode (std::move(mouseMode));
+	setMouseInputMode (std::move (mouseMode));
 
 	return true;
 }
@@ -950,7 +950,7 @@ float cGameMapWidget::computeMinimalZoomFactor() const
 {
 	// inequality to be fulfilled:
 	//
-	//   round(tile_x * zoom) * map_x <= size_x
+	//   round (tile_x * zoom) * map_x <= size_x
 	//
 	// we first discard the 'round' and solve for zoom:
 	//
@@ -1433,7 +1433,7 @@ void cGameMapWidget::drawUnitCircles()
 		}
 		if (shouldDrawRange)
 		{
-			if (selectedVehicle->getStaticUnitData().canAttack & TERRAIN_AIR) drawCircle(screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2, selectedVehicle->data.getRange() * zoomedTileSize.x() + 2, RANGE_AIR_COLOR, *cVideo::buffer);
+			if (selectedVehicle->getStaticUnitData().canAttack & TERRAIN_AIR) drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2, selectedVehicle->data.getRange() * zoomedTileSize.x() + 2, RANGE_AIR_COLOR, *cVideo::buffer);
 			else drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2, selectedVehicle->data.getRange() * zoomedTileSize.x() + 1, RANGE_GROUND_COLOR, *cVideo::buffer);
 		}
 	}
@@ -1486,13 +1486,13 @@ void cGameMapWidget::drawExitPoints()
 				(selectedVehicle->isUnitClearing() && selectedVehicle->getClearingTurns() == 0)
 			) && !selectedVehicle->BuildPath)
 		{
-			drawExitPointsIf (*selectedVehicle, [&] (const cPosition & position) { return mapView->possiblePlace (*selectedVehicle, position); });
+			drawExitPointsIf (*selectedVehicle, [&] (const cPosition& position) { return mapView->possiblePlace (*selectedVehicle, position); });
 		}
 		if (mouseMode->getType() == eMouseModeType::Activate && selectedVehicle->getOwner() == player.get())
 		{
 			auto activateMouseMode = static_cast<cMouseModeActivateLoaded*> (mouseMode.get());
 			auto unitToExit = selectedVehicle->storedUnits[activateMouseMode->getVehicleToActivateIndex()]->getStaticUnitData();
-			drawExitPointsIf (*selectedVehicle, [&] (const cPosition & position) { return selectedVehicle->canExitTo (position, *mapView, unitToExit); });
+			drawExitPointsIf (*selectedVehicle, [&] (const cPosition& position) { return selectedVehicle->canExitTo (position, *mapView, unitToExit); });
 		}
 	}
 	else if (selectedBuilding && selectedBuilding->isDisabled() == false)
@@ -1502,14 +1502,14 @@ void cGameMapWidget::drawExitPoints()
 			selectedBuilding->getBuildListItem (0).getRemainingMetal() <= 0 &&
 			selectedBuilding->getOwner() == player.get())
 		{
-			auto unitToExit = unitsData->getStaticUnitData(selectedBuilding->getBuildListItem (0).getType());
-			drawExitPointsIf (*selectedBuilding, [&] (const cPosition & position) { return selectedBuilding->canExitTo (position, *mapView, unitToExit); });
+			auto unitToExit = unitsData->getStaticUnitData (selectedBuilding->getBuildListItem (0).getType());
+			drawExitPointsIf (*selectedBuilding, [&] (const cPosition& position) { return selectedBuilding->canExitTo (position, *mapView, unitToExit); });
 		}
 		if (mouseMode->getType() == eMouseModeType::Activate && selectedBuilding->getOwner() == player.get())
 		{
 			auto activateMouseMode = static_cast<cMouseModeActivateLoaded*> (mouseMode.get());
-			auto unitToExit = selectedBuilding->storedUnits[activateMouseMode->getVehicleToActivateIndex ()]->getStaticUnitData ();
-			drawExitPointsIf (*selectedBuilding, [&] (const cPosition & position) { return selectedBuilding->canExitTo (position, *mapView, unitToExit); });
+			auto unitToExit = selectedBuilding->storedUnits[activateMouseMode->getVehicleToActivateIndex()]->getStaticUnitData();
+			drawExitPointsIf (*selectedBuilding, [&] (const cPosition& position) { return selectedBuilding->canExitTo (position, *mapView, unitToExit); });
 		}
 	}
 }
@@ -1593,7 +1593,7 @@ void cGameMapWidget::drawBuildBand()
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::drawLockList ()
+void cGameMapWidget::drawLockList()
 {
 	const auto zoomedTileSize = getZoomedTileSize();
 
@@ -1621,9 +1621,9 @@ void cGameMapWidget::drawLockList ()
 		if (shouldDrawRange && (unit->getIsBig() & TERRAIN_AIR))
 			drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2,
 						unit->data.getRange() * zoomedTileSize.x() + 2, RANGE_AIR_COLOR, *cVideo::buffer);
-		//if (ammoChecked () && unit->data.canAttack)
+		//if (ammoChecked() && unit->data.canAttack)
 		//	drawMunBar (*unit, screenPos);
-		//if (hitsChecked ())
+		//if (hitsChecked())
 		//	drawHealthBar (*unit, screenPos);
 	}
 }
@@ -1704,7 +1704,7 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 		ndest.y += my = nextWp.y() * zoomedTileSize.y() - wp.y() * zoomedTileSize.y();
 
 
-		int costs = cPathCalculator::calcNextCost(wp, nextWp, &vehicle, mapView.get());
+		int costs = cPathCalculator::calcNextCost (wp, nextWp, &vehicle, mapView.get());
 		if (sp < costs)
 		{
 			drawPathArrow (dest, ndest, true);
@@ -1727,7 +1727,7 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::drawPathArrow(SDL_Rect dest, const SDL_Rect& lastDest, bool spezialColor) const
+void cGameMapWidget::drawPathArrow (SDL_Rect dest, const SDL_Rect& lastDest, bool spezialColor) const
 {
 	int index;
 	if      (dest.x >  lastDest.x && dest.y <  lastDest.y) index = 0;
@@ -1742,11 +1742,11 @@ void cGameMapWidget::drawPathArrow(SDL_Rect dest, const SDL_Rect& lastDest, bool
 
 	if (spezialColor)
 	{
-		SDL_BlitSurface(OtherData.WayPointPfeileSpecial[index][64 - dest.w].get(), nullptr, cVideo::buffer, &dest);
+		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[index][64 - dest.w].get(), nullptr, cVideo::buffer, &dest);
 	}
 	else
 	{
-		SDL_BlitSurface(OtherData.WayPointPfeile[index][64 - dest.w].get(), nullptr, cVideo::buffer, &dest);
+		SDL_BlitSurface (OtherData.WayPointPfeile[index][64 - dest.w].get(), nullptr, cVideo::buffer, &dest);
 	}
 }
 
@@ -1911,7 +1911,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 				unitSelection.selectUnitAt (field, true);
 			}
 		}
-		else if ((!mouse.isButtonPressed (eMouseButtonType::Left) /*&& rightMouseBox.isTooSmall ()*/) ||
+		else if ((!mouse.isButtonPressed (eMouseButtonType::Left) /*&& rightMouseBox.isTooSmall()*/) ||
 				 (KeysList.getMouseStyle() == eMouseStyle::OldSchool && mouse.isButtonPressed (eMouseButtonType::Left)))
 		{
 			if (mouseMode->getType() == eMouseModeType::Help)
@@ -1927,10 +1927,10 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
                     auto units = field.getUnits();
 
                     auto it = ranges::find (units, selectedUnit);
-                    if(it != units.end())
+                    if (it != units.end())
                     {
                         it++;
-                        if(it == units.end()) it = units.begin();
+                        if (it == units.end()) it = units.begin();
                         next = *it;
                     }
 
@@ -2069,13 +2069,13 @@ void cGameMapWidget::addAnimationsForUnit (const cUnit& unit)
 
 	if (unit.isABuilding())
 	{
-		const cBuilding& building = static_cast<const cBuilding&>(unit);
+		const cBuilding& building = static_cast<const cBuilding&> (unit);
 		if (building.isRubble()) return;
 		auto& uiData = UnitsUiData.getBuildingUI (building);
 
 		if (uiData.powerOnGraphic || building.getStaticData().canWork)
 		{
-			animations.push_back(std::make_unique<cAnimationWork>(*animationTimer, building));
+			animations.push_back (std::make_unique<cAnimationWork> (*animationTimer, building));
 		}
 	}
 	if (unit.getStaticUnitData().factorAir > 0)
@@ -2085,7 +2085,7 @@ void cGameMapWidget::addAnimationsForUnit (const cUnit& unit)
 
 		animations.push_back (std::make_unique<cAnimationDither> (*animationTimer, vehicle));
 	}
-	if (unit.getStaticUnitData().canBuild.compare("BigBuilding") == 0)
+	if (unit.getStaticUnitData().canBuild.compare ("BigBuilding") == 0)
 	{
 		assert (unit.isAVehicle());
 		auto& vehicle = static_cast<const cVehicle&> (unit);
@@ -2188,29 +2188,29 @@ void cGameMapWidget::buildCollidingShortcutsMap()
 {
 	collidingUnitCommandShortcuts.clear();
 
-	collidingUnitCommandShortcuts.insert (std::make_pair (attackShortcut, std::set<const cShortcut*> ()));
-	collidingUnitCommandShortcuts.insert (std::make_pair (buildShortcut, std::set<const cShortcut*> ()));
-	collidingUnitCommandShortcuts.insert (std::make_pair (transferShortcut, std::set<const cShortcut*> ()));
-	collidingUnitCommandShortcuts.insert (std::make_pair (enterShortcut, std::set<const cShortcut*> ()));
-	collidingUnitCommandShortcuts.insert (std::make_pair (automoveShortcut, std::set<const cShortcut*> ()));
-	collidingUnitCommandShortcuts.insert (std::make_pair (startShortcut, std::set<const cShortcut*> ()));
-	collidingUnitCommandShortcuts.insert (std::make_pair (stopShortcut, std::set<const cShortcut*> ()));
-	collidingUnitCommandShortcuts.insert (std::make_pair (clearShortcut, std::set<const cShortcut*> ()));
-	collidingUnitCommandShortcuts.insert (std::make_pair (sentryShortcut, std::set<const cShortcut*> ()));
-	collidingUnitCommandShortcuts.insert (std::make_pair (manualFireShortcut, std::set<const cShortcut*> ()));
-	collidingUnitCommandShortcuts.insert (std::make_pair (activateShortcut, std::set<const cShortcut*> ()));
-	collidingUnitCommandShortcuts.insert (std::make_pair (loadShortcut, std::set<const cShortcut*> ()));
-	collidingUnitCommandShortcuts.insert (std::make_pair (relaodShortcut, std::set<const cShortcut*> ()));
-	collidingUnitCommandShortcuts.insert (std::make_pair (repairShortcut, std::set<const cShortcut*> ()));
-	collidingUnitCommandShortcuts.insert (std::make_pair (layMineShortcut, std::set<const cShortcut*> ()));
-	collidingUnitCommandShortcuts.insert (std::make_pair (clearMineShortcut, std::set<const cShortcut*> ()));
-	collidingUnitCommandShortcuts.insert (std::make_pair (disableShortcut, std::set<const cShortcut*> ()));
-	collidingUnitCommandShortcuts.insert (std::make_pair (stealShortcut, std::set<const cShortcut*> ()));
-	collidingUnitCommandShortcuts.insert (std::make_pair (infoShortcut, std::set<const cShortcut*> ()));
-	collidingUnitCommandShortcuts.insert (std::make_pair (distributeShortcut, std::set<const cShortcut*> ()));
-	collidingUnitCommandShortcuts.insert (std::make_pair (researchShortcut, std::set<const cShortcut*> ()));
-	collidingUnitCommandShortcuts.insert (std::make_pair (upgradeShortcut, std::set<const cShortcut*> ()));
-	collidingUnitCommandShortcuts.insert (std::make_pair (destroyShortcut, std::set<const cShortcut*> ()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (attackShortcut, std::set<const cShortcut*>()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (buildShortcut, std::set<const cShortcut*>()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (transferShortcut, std::set<const cShortcut*>()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (enterShortcut, std::set<const cShortcut*>()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (automoveShortcut, std::set<const cShortcut*>()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (startShortcut, std::set<const cShortcut*>()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (stopShortcut, std::set<const cShortcut*>()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (clearShortcut, std::set<const cShortcut*>()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (sentryShortcut, std::set<const cShortcut*>()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (manualFireShortcut, std::set<const cShortcut*>()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (activateShortcut, std::set<const cShortcut*>()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (loadShortcut, std::set<const cShortcut*>()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (relaodShortcut, std::set<const cShortcut*>()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (repairShortcut, std::set<const cShortcut*>()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (layMineShortcut, std::set<const cShortcut*>()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (clearMineShortcut, std::set<const cShortcut*>()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (disableShortcut, std::set<const cShortcut*>()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (stealShortcut, std::set<const cShortcut*>()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (infoShortcut, std::set<const cShortcut*>()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (distributeShortcut, std::set<const cShortcut*>()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (researchShortcut, std::set<const cShortcut*>()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (upgradeShortcut, std::set<const cShortcut*>()));
+	collidingUnitCommandShortcuts.insert (std::make_pair (destroyShortcut, std::set<const cShortcut*>()));
 
 	for (auto i = collidingUnitCommandShortcuts.begin(); i != collidingUnitCommandShortcuts.end(); ++i)
 	{
@@ -2260,7 +2260,7 @@ void cGameMapWidget::updateActiveUnitCommandShortcuts()
 	if (cUnitContextMenuWidget::unitHasAttackEntry (selectedUnit, player.get())) activateShortcutConditional (*attackShortcut, blockedShortcuts, collidingUnitCommandShortcuts[attackShortcut]);
 	if (cUnitContextMenuWidget::unitHasLayMinesEntry (selectedVehicle, player.get())) activateShortcutConditional (*layMineShortcut, blockedShortcuts, collidingUnitCommandShortcuts[layMineShortcut]);
 	if (cUnitContextMenuWidget::unitHasCollectMinesEntry (selectedVehicle, player.get())) activateShortcutConditional (*clearMineShortcut, blockedShortcuts, collidingUnitCommandShortcuts[clearMineShortcut]);
-	if (cUnitContextMenuWidget::unitHasLoadEntry(selectedUnit, player.get())) activateShortcutConditional(*loadShortcut, blockedShortcuts, collidingUnitCommandShortcuts[loadShortcut]);
+	if (cUnitContextMenuWidget::unitHasLoadEntry (selectedUnit, player.get())) activateShortcutConditional (*loadShortcut, blockedShortcuts, collidingUnitCommandShortcuts[loadShortcut]);
 	if (cUnitContextMenuWidget::unitHasEnterEntry (selectedVehicle, player.get())) activateShortcutConditional (*enterShortcut, blockedShortcuts, collidingUnitCommandShortcuts[enterShortcut]);
 	if (cUnitContextMenuWidget::unitHasActivateEntry (selectedUnit, player.get())) activateShortcutConditional (*activateShortcut, blockedShortcuts, collidingUnitCommandShortcuts[activateShortcut]);
 	if (cUnitContextMenuWidget::unitHasBuyEntry (selectedBuilding, player.get())) activateShortcutConditional (*upgradeShortcut, blockedShortcuts, collidingUnitCommandShortcuts[upgradeShortcut]);
@@ -2272,8 +2272,8 @@ void cGameMapWidget::updateActiveUnitCommandShortcuts()
 	if (cUnitContextMenuWidget::unitHasSupplyEntry (selectedVehicle, player.get())) activateShortcutConditional (*relaodShortcut, blockedShortcuts, collidingUnitCommandShortcuts[relaodShortcut]);
 	if (cUnitContextMenuWidget::unitHasRepairEntry (selectedVehicle, player.get())) activateShortcutConditional (*repairShortcut, blockedShortcuts, collidingUnitCommandShortcuts[repairShortcut]);
 	if (cUnitContextMenuWidget::unitHasDistributeEntry (selectedBuilding, player.get())) activateShortcutConditional (*distributeShortcut, blockedShortcuts, collidingUnitCommandShortcuts[distributeShortcut]);
-	//if (cUnitContextMenuWidget::unitHasUpgradeThisEntry (selectedBuilding, player.get (), dynamicMap.get ())) activateShortcutConditional (*shortcut, blockedShortcuts, collidingUnitCommandShortcuts[shortcut]);
-	//if (cUnitContextMenuWidget::unitHasUpgradeAllEntry (selectedBuilding, player.get (), dynamicMap.get ())) activateShortcutConditional (*shortcut, blockedShortcuts, collidingUnitCommandShortcuts[shortcut]);
+	//if (cUnitContextMenuWidget::unitHasUpgradeThisEntry (selectedBuilding, player.get(), dynamicMap.get())) activateShortcutConditional (*shortcut, blockedShortcuts, collidingUnitCommandShortcuts[shortcut]);
+	//if (cUnitContextMenuWidget::unitHasUpgradeAllEntry (selectedBuilding, player.get(), dynamicMap.get())) activateShortcutConditional (*shortcut, blockedShortcuts, collidingUnitCommandShortcuts[shortcut]);
 	if (cUnitContextMenuWidget::unitHasSelfDestroyEntry (selectedBuilding, player.get())) activateShortcutConditional (*destroyShortcut, blockedShortcuts, collidingUnitCommandShortcuts[destroyShortcut]);
 	if (cUnitContextMenuWidget::unitHasInfoEntry (selectedUnit, player.get())) activateShortcutConditional (*infoShortcut, blockedShortcuts, collidingUnitCommandShortcuts[infoShortcut]);
 }

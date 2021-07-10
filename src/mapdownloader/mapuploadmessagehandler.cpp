@@ -36,9 +36,9 @@ bool IMapUploadMessageHandler::handleMessage (const cMultiplayerLobbyMessage& me
 			if (state == eState::None)
 			{
 				// Can upload only one map at a time (by player)
-				//cancellation (cMuMsgCanceledMapDownload{}.From(message.playerNr));
+				//cancellation (cMuMsgCanceledMapDownload{}.From (message.playerNr));
 			}
-			requested (static_cast<const cMuMsgRequestMap&>(message));
+			requested (static_cast<const cMuMsgRequestMap&> (message));
 			state = eState::Requested;
 			return true;
 		}
@@ -47,7 +47,7 @@ bool IMapUploadMessageHandler::handleMessage (const cMultiplayerLobbyMessage& me
 		{
 			if (state == eState::Requested)
 			{
-				cancellation (static_cast<const cMuMsgCanceledMapDownload&>(message));
+				cancellation (static_cast<const cMuMsgCanceledMapDownload&> (message));
 			}
 			state = eState::None;
 			return true;
@@ -57,7 +57,7 @@ bool IMapUploadMessageHandler::handleMessage (const cMultiplayerLobbyMessage& me
 		{
 			if (state == eState::Requested)
 			{
-				finished (static_cast<const cMuMsgFinishedMapDownload&>(message));
+				finished (static_cast<const cMuMsgFinishedMapDownload&> (message));
 			}
 			state = eState::None;
 			return true;

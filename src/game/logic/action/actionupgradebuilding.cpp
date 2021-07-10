@@ -23,23 +23,23 @@
 #include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------
-cActionUpgradeBuilding::cActionUpgradeBuilding(const cBuilding& building, bool allBuildings) :
-	buildingId(building.getId()),
-	allBuildings(allBuildings)
+cActionUpgradeBuilding::cActionUpgradeBuilding (const cBuilding& building, bool allBuildings) :
+	buildingId (building.getId()),
+	allBuildings (allBuildings)
 {}
 
 //------------------------------------------------------------------------------
-cActionUpgradeBuilding::cActionUpgradeBuilding(cBinaryArchiveOut& archive)
+cActionUpgradeBuilding::cActionUpgradeBuilding (cBinaryArchiveOut& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionUpgradeBuilding::execute(cModel& model) const
+void cActionUpgradeBuilding::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	cBuilding* building = model.getBuildingFromID(buildingId);
+	cBuilding* building = model.getBuildingFromID (buildingId);
 	if (building == nullptr || !building->getOwner()) return;
 	if (building->getOwner()->getId() != playerNr) return;
 
@@ -47,15 +47,15 @@ void cActionUpgradeBuilding::execute(cModel& model) const
 	int totalCosts = 0;
 	cSubBase& subbase = *building->subBase;
 	int availableMetal = subbase.getResourcesStored().metal;
-	const cDynamicUnitData& upgradedData = *building->getOwner()->getUnitDataCurrentVersion(building->data.getId());
+	const cDynamicUnitData& upgradedData = *building->getOwner()->getUnitDataCurrentVersion (building->data.getId());
 	cUpgradeCalculator& uc = cUpgradeCalculator::instance();
-	const int upgradeCost = uc.getMaterialCostForUpgrading(upgradedData.getBuildCost());
+	const int upgradeCost = uc.getMaterialCostForUpgrading (upgradedData.getBuildCost());
 
 	// first update the selected building
 	if (availableMetal >= upgradeCost &&
 		building->data.getVersion() < upgradedData.getVersion())
 	{
-		upgradedBuildings.push_back(building);
+		upgradedBuildings.push_back (building);
 		totalCosts += upgradeCost;
 		availableMetal -= upgradeCost;
 	}
@@ -73,7 +73,7 @@ void cActionUpgradeBuilding::execute(cModel& model) const
 			// check upgrade costs
 			if (upgradeCost > availableMetal) break;
 
-			upgradedBuildings.push_back(b);
+			upgradedBuildings.push_back (b);
 			totalCosts += upgradeCost;
 			availableMetal -= upgradeCost;
 		}
@@ -85,16 +85,16 @@ void cActionUpgradeBuilding::execute(cModel& model) const
 		// update scan & sentry
 		if (b->getOwner() && b->data.getScan() < upgradedData.getScan())
 		{
-			b->getOwner()->updateScan(*b, upgradedData.getScan());
+			b->getOwner()->updateScan (*b, upgradedData.getScan());
 		}
 		if (b->getOwner() && b->isSentryActive() && b->data.getRange() < upgradedData.getRange())
 		{
-			b->getOwner()->updateSentry(*b, upgradedData.getRange());
+			b->getOwner()->updateSentry (*b, upgradedData.getRange());
 		}
 
 		b->upgradeToCurrentVersion();
 	}
-	subbase.addMetal(-totalCosts);
+	subbase.addMetal (-totalCosts);
 
-	building->getOwner()->unitsUpgraded(building->data.getId(), upgradedBuildings.size(), totalCosts);
+	building->getOwner()->unitsUpgraded (building->data.getId(), upgradedBuildings.size(), totalCosts);
 }

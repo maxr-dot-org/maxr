@@ -51,7 +51,7 @@ namespace
 	{
 		cSoundManager& soundManager;
 	public:
-		explicit cFxSoundVisitor (cSoundManager& soundManager) : soundManager(soundManager) {}
+		explicit cFxSoundVisitor (cSoundManager& soundManager) : soundManager (soundManager) {}
 
 		//----------------------------------------------------------------------
 		void visit (const cFxMuzzleBig& fx) override { playSoundMuzzle (soundManager, fx); }
@@ -137,7 +137,7 @@ namespace
 }
 
 //------------------------------------------------------------------------------
-void playEffectSound(cSoundManager& soundManager, const cFx& fx)
+void playEffectSound (cSoundManager& soundManager, const cFx& fx)
 {
 	cFxSoundVisitor visitor{soundManager};
 	fx.accept (visitor);

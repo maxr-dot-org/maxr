@@ -42,7 +42,7 @@ eMouseModeType cMouseModeSteal::getType() const
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeSteal::setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
+void cMouseModeSteal::setCursor (cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	if (canExecuteAction (mapPosition))
 	{
@@ -64,11 +64,11 @@ void cMouseModeSteal::setCursor(cMouse& mouse, const cPosition& mapPosition, con
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeSteal::getMouseAction(const cPosition& mapPosition, const cUnitsData& unitsData) const
+std::unique_ptr<cMouseAction> cMouseModeSteal::getMouseAction (const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	if (canExecuteAction (mapPosition))
 	{
-		return std::make_unique<cMouseActionSteal> ();
+		return std::make_unique<cMouseActionSteal>();
 	}
 	else return nullptr;
 }

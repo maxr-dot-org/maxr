@@ -48,7 +48,7 @@ public:
 
 	void execute();
 
-	template<typename WindowType>
+	template <typename WindowType>
 	WindowType* show (std::shared_ptr<WindowType> window);
 
 	/**
@@ -134,7 +134,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-template<typename WindowType>
+template <typename WindowType>
 WindowType* cApplication::show (std::shared_ptr<WindowType> window)
 {
 	if (window == nullptr) return nullptr;

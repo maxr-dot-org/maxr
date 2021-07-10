@@ -28,18 +28,18 @@
 class cActionChangeResearch : public cActionT<cAction::eActiontype::ACTION_CHANGE_RESEARCH>
 {
 public:
-	cActionChangeResearch(const std::array<int, cResearch::kNrResearchAreas>& researchAreas);
-	cActionChangeResearch(cBinaryArchiveOut& archive);
+	cActionChangeResearch (const std::array<int, cResearch::kNrResearchAreas>& researchAreas);
+	cActionChangeResearch (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
 
-	void execute(cModel& model) const override;
+	void execute (cModel& model) const override;
 
 private:
 
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & researchAreas;
 	}

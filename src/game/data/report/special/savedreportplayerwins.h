@@ -32,7 +32,7 @@ public:
 	template <typename T, ENABLE_ARCHIVE_OUT>
 	explicit cSavedReportPlayerWins (T& archive)
 	{
-		serializeThis(archive);
+		serializeThis (archive);
 	}
 
 	void serialize (cBinaryArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }

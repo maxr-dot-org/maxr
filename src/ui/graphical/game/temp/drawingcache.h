@@ -39,8 +39,8 @@ class cFrameCounter;
 struct sDrawingCacheEntry
 {
 	sDrawingCacheEntry();
-	sDrawingCacheEntry(sDrawingCacheEntry&& other);
-	sDrawingCacheEntry& operator=(sDrawingCacheEntry&& other);
+	sDrawingCacheEntry (sDrawingCacheEntry&& other);
+	sDrawingCacheEntry& operator= (sDrawingCacheEntry&& other);
 
 	//building properties
 	bool BaseN;
@@ -78,8 +78,8 @@ struct sDrawingCacheEntry
 	void init (const cBuilding& building, double zoom, unsigned long long frameNr);
 
 private:
-	sDrawingCacheEntry(const sDrawingCacheEntry& other) = delete;
-	sDrawingCacheEntry& operator=(const sDrawingCacheEntry& other) = delete;
+	sDrawingCacheEntry (const sDrawingCacheEntry& other) = delete;
+	sDrawingCacheEntry& operator= (const sDrawingCacheEntry& other) = delete;
 };
 
 class cDrawingCache

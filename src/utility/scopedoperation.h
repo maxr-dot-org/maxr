@@ -28,7 +28,7 @@
  * @tparam FunctionType The type of the function to be executed.
  *                      Can be any callable object (including lambdas).
  */
-template<typename FunctionType = std::function<void()>>
+template <typename FunctionType = std::function<void()>>
 class cScopedOperation
 {
 public:
@@ -78,7 +78,7 @@ private:
  * @param function The callable object to bind to the scoped operation.
  * @return The scoped operation that will call the passed function object on its destruction.
  */
-template<typename FunctionType>
+template <typename FunctionType>
 cScopedOperation<FunctionType> makeScopedOperation (const FunctionType& function)
 {
 	return cScopedOperation<FunctionType> (function);

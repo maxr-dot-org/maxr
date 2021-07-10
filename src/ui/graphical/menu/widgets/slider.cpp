@@ -196,9 +196,9 @@ void cSlider::createSurface (eSliderType sliderType)
 
 		auto size = getSize();
 
-		//if (size.x () < 6)
+		//if (size.x() < 6)
 		//{
-		//	size.x () = 6;
+		//	size.x() = 6;
 		//}
 
 		surface = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));

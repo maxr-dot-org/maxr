@@ -41,28 +41,28 @@ struct sResources;
 class cMapView
 {
 public:
-	cMapView(std::shared_ptr<const cMap> map, std::shared_ptr<const cPlayer> player);
+	cMapView (std::shared_ptr<const cMap>, std::shared_ptr<const cPlayer>);
 
-	bool isValidPosition(const cPosition& position) const;
-	bool isPositionVisible(const cPosition& position) const;
-	bool isWaterOrCoast(const cPosition& position) const;
-	bool isWater(const cPosition& position) const;
-	bool isCoast(const cPosition& position) const;
-	bool isBlocked(const cPosition& position) const;
+	bool isValidPosition (const cPosition&) const;
+	bool isPositionVisible (const cPosition&) const;
+	bool isWaterOrCoast (const cPosition&) const;
+	bool isWater (const cPosition&) const;
+	bool isCoast (const cPosition&) const;
+	bool isBlocked (const cPosition&) const;
 
-	bool canSeeUnit(const cUnit& unit) const;
-	
+	bool canSeeUnit (const cUnit&) const;
+
 	cPosition getSize() const;
-	int getOffset(const cPosition& position) const;
+	int getOffset (const cPosition&) const;
 
-	const cMapFieldView getField(const cPosition& position) const;
-	const sResources& getResource(const cPosition& position) const;
+	const cMapFieldView getField (const cPosition&) const;
+	const sResources& getResource (const cPosition&) const;
 
-	bool possiblePlace (const cVehicle& vehicle, const cPosition& position, bool ignoreMovingVehicles = false) const;
+	bool possiblePlace (const cVehicle&, const cPosition&, bool ignoreMovingVehicles = false) const;
 	bool possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosition& position) const;
 	bool possiblePlaceBuilding (const cStaticUnitData& buildingData, const cPosition& position, const cVehicle* vehicle = nullptr) const;
 
-	/** 
+	/**
 	* Triggered when a unit appeared in sight
 	* - Scan area of player changed
 	* - unit moved into scan area
@@ -81,11 +81,11 @@ public:
 	*/
 	mutable cSignal<void (const cUnit& unit)> unitDissappeared;
 	mutable cSignal<void (const cUnit& unit, const cPosition& oldPosition)> unitMoved;
-	mutable cSignal<void ()> scanAreaChanged;
-	
+	mutable cSignal<void()> scanAreaChanged;
+
 private:
-	cMapView(const cMapView& other) = delete;
-	cMapView& operator= (const cMapView& other) = delete;
+	cMapView (const cMapView&) = delete;
+	cMapView& operator= (const cMapView&) = delete;
 
 	std::shared_ptr<const cMap> map;
 	std::shared_ptr<const cPlayer> player; // may be null

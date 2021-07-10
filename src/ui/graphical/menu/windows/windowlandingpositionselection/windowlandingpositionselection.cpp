@@ -45,10 +45,10 @@
 
 
 //------------------------------------------------------------------------------
-cWindowLandingPositionSelection::cWindowLandingPositionSelection(std::shared_ptr<cStaticMap> staticMap_, bool fixedBridgeHead, const std::vector<sLandingUnit>& landingUnits, std::shared_ptr<const cUnitsData> unitsData, bool withChatBox) :
+cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> staticMap_, bool fixedBridgeHead, const std::vector<sLandingUnit>& landingUnits, std::shared_ptr<const cUnitsData> unitsData, bool withChatBox) :
 	cWindow (nullptr),
 	staticMap (std::move (staticMap_)),
-	animationTimer (std::make_shared<cAnimationTimer> ()),
+	animationTimer (std::make_shared<cAnimationTimer>()),
 	lastSelectedPosition (0, 0)
 {
 	using namespace std::placeholders;
@@ -101,7 +101,7 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection(std::shared_ptr
 		chatBox = nullptr;
 	}
 
-	signalConnectionManager.connect (selectedPosition, [&] (const cPosition & position) { lastSelectedPosition = position; });
+	signalConnectionManager.connect (selectedPosition, [&] (const cPosition& position) { lastSelectedPosition = position; });
 
 	resize (hudImage->getSize());
 }

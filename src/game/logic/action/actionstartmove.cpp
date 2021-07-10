@@ -24,32 +24,32 @@
 #include "../pathcalculator.h"
 
 //------------------------------------------------------------------------------
-cActionStartMove::cActionStartMove(const cVehicle& vehicle, const std::forward_list<cPosition>& path, cEndMoveAction emat) :
-	path(path),
-	unitId(vehicle.getId()),
-	endMoveAction(emat),
-	stopOnDetectResource(false)
+cActionStartMove::cActionStartMove (const cVehicle& vehicle, const std::forward_list<cPosition>& path, cEndMoveAction emat) :
+	path (path),
+	unitId (vehicle.getId()),
+	endMoveAction (emat),
+	stopOnDetectResource (false)
 {}
 
 //------------------------------------------------------------------------------
-cActionStartMove::cActionStartMove(const cVehicle& vehicle, const std::forward_list<cPosition>& path, bool stopOnDetectResource) :
-	path(path),
-	unitId(vehicle.getId()),
-	stopOnDetectResource(stopOnDetectResource)
+cActionStartMove::cActionStartMove (const cVehicle& vehicle, const std::forward_list<cPosition>& path, bool stopOnDetectResource) :
+	path (path),
+	unitId (vehicle.getId()),
+	stopOnDetectResource (stopOnDetectResource)
 {}
 
 //------------------------------------------------------------------------------
-cActionStartMove::cActionStartMove(cBinaryArchiveOut& archive)
+cActionStartMove::cActionStartMove (cBinaryArchiveOut& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionStartMove::execute(cModel& model) const
+void cActionStartMove::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	cVehicle* vehicle = model.getVehicleFromID(unitId);
+	cVehicle* vehicle = model.getVehicleFromID (unitId);
 	if (vehicle == nullptr)
 	{
 		Log.write (" Can't find vehicle with id " + std::to_string (unitId), cLog::eLOG_TYPE_NET_WARNING);
@@ -72,51 +72,49 @@ void cActionStartMove::execute(cModel& model) const
 	// TODO: is this check really needed?
 	if (vehicle->isBeeingAttacked())
 	{
-		Log.write(" Cannot move a vehicle currently under attack", cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write (" Cannot move a vehicle currently under attack", cLog::eLOG_TYPE_NET_DEBUG);
 		return;
 	}
 	if (vehicle->isAttacking())
 	{
-		Log.write(" Cannot move a vehicle currently attacking", cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write (" Cannot move a vehicle currently attacking", cLog::eLOG_TYPE_NET_DEBUG);
 		return;
 	}
 	if (vehicle->isUnitBuildingABuilding() || vehicle->BuildPath)
 	{
-		Log.write(" Cannot move a vehicle currently building", cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write (" Cannot move a vehicle currently building", cLog::eLOG_TYPE_NET_DEBUG);
 		return;
 	}
 	if (vehicle->isUnitClearing())
 	{
-		Log.write(" Cannot move a vehicle currently building", cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write (" Cannot move a vehicle currently building", cLog::eLOG_TYPE_NET_DEBUG);
 		return;
 	}
 	if (vehicle->isDisabled())
 	{
-		Log.write(" Cannot move a vehicle currently disabled", cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write (" Cannot move a vehicle currently disabled", cLog::eLOG_TYPE_NET_DEBUG);
 		return;
 	}
 	if (vehicle->isUnitMoving())
 	{
-		Log.write(" Cannot move a vehicle already moving", cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write (" Cannot move a vehicle already moving", cLog::eLOG_TYPE_NET_DEBUG);
 		return;
 	}
-
-
 
 	// everything is ok. add the movejob
 
 	// unset sentry status when moving a vehicle
 	if (vehicle->isSentryActive())
 	{
-		vehicle->getOwner()->removeFromSentryMap(*vehicle);
-		vehicle->setSentryActive(false);
+		vehicle->getOwner()->removeFromSentryMap (*vehicle);
+		vehicle->setSentryActive (false);
 	}
 
-	cMoveJob* movejob = model.addMoveJob(*vehicle, path);
+	cMoveJob* movejob = model.addMoveJob (*vehicle, path);
 
 	if (movejob)
 	{
-		movejob->setEndMoveAction(endMoveAction);
-		movejob->setStopOnDetectResource(stopOnDetectResource);
+		movejob->setEndMoveAction (endMoveAction);
+		movejob->setStopOnDetectResource (stopOnDetectResource);
 	}
 }

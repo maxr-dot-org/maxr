@@ -38,23 +38,23 @@ class cGetInJob : public cJob
 public:
 	cGetInJob (cVehicle& loadedVehicle, cUnit& loadingUnit);
 	template <typename T>
-	cGetInJob(T& archive);
+	cGetInJob (T& archive);
 
 	void run (cModel& model) override;
 	eJobType getType() const override;
 
-	void serialize(cBinaryArchiveIn& archive) override { archive << serialization::makeNvp("type", getType()); serializeThis(archive); }
-	void serialize(cXmlArchiveIn& archive) override { archive << serialization::makeNvp("type", getType()); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { archive << serialization::makeNvp ("type", getType()); serializeThis (archive); }
+	void serialize (cXmlArchiveIn& archive) override { archive << serialization::makeNvp ("type", getType()); serializeThis (archive); }
 
-	uint32_t getChecksum(uint32_t crc) const override;
+	uint32_t getChecksum (uint32_t crc) const override;
 private:
 	template <typename T>
-	void serializeThis(T& archive)
+	void serializeThis (T& archive)
 	{
-		archive & NVP(unit);
-		archive & NVP(loadingUnit);
-		archive & NVP(counter);
-		archive & NVP(startFlightHeight);
+		archive & NVP (unit);
+		archive & NVP (loadingUnit);
+		archive & NVP (counter);
+		archive & NVP (startFlightHeight);
 	}
 
 	cUnit* loadingUnit;
@@ -64,15 +64,15 @@ private:
 };
 
 template <typename T>
-cGetInJob::cGetInJob(T& archive)
+cGetInJob::cGetInJob (T& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 	if (!unit || !loadingUnit)
 	{
 		finished = true;
 		return;
 	}
-	connectionManager.connect(loadingUnit->destroyed, [&](){finished = true; });
+	connectionManager.connect (loadingUnit->destroyed, [&](){finished = true; });
 	unit->jobActive = true;
 }
 

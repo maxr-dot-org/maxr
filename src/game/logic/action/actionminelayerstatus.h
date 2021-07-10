@@ -25,21 +25,21 @@
 class cActionMinelayerStatus : public cActionT<cAction::eActiontype::ACTION_MINELAYER_STATUS>
 {
 public:
-	cActionMinelayerStatus(const cVehicle& vehicle, bool layMines, bool clearMines);
-	cActionMinelayerStatus(cBinaryArchiveOut& archive);
+	cActionMinelayerStatus (const cVehicle& vehicle, bool layMines, bool clearMines);
+	cActionMinelayerStatus (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
 
-	void execute(cModel& model) const override;
+	void execute (cModel& model) const override;
 
 private:
 	unsigned int vehicleId;
 	bool layMines;
 	bool clearMines;
 
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & vehicleId;
 		archive & layMines;

@@ -33,7 +33,7 @@ public:
 
 	void bindConnections (cLobbyClient&);
 
-	cSignal<void ()> triggeredConnect;
+	cSignal<void()> triggeredConnect;
 
 private:
 	void setIsHost (bool);

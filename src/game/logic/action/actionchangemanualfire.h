@@ -25,19 +25,19 @@
 class cActionChangeManualFire : public cActionT<cAction::eActiontype::ACTION_CHANGE_MANUAL_FIRE>
 {
 public:
-	cActionChangeManualFire(const cUnit& unit);
-	cActionChangeManualFire(cBinaryArchiveOut& archive);
+	cActionChangeManualFire (const cUnit& unit);
+	cActionChangeManualFire (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
 
-	void execute(cModel& model) const override;
+	void execute (cModel& model) const override;
 
 private:
 	int unitId;
 
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & unitId;
 	}

@@ -148,11 +148,11 @@ try
 	initSound(); // now config is loaded and we can init sound and net
 
 	// load files
-	std::future<eLoadingState> dataThread = std::async(std::launch::async, &LoadData);
+	std::future<eLoadingState> dataThread = std::async (std::launch::async, &LoadData);
 	using namespace std::literals;
 
 	SDL_Event event;
-	while (dataThread.wait_for(100ms) == std::future_status::timeout)
+	while (dataThread.wait_for (100ms) == std::future_status::timeout)
 	{
 		while (SDL_PollEvent (&event))
 		{
@@ -166,7 +166,7 @@ try
 		Video.draw();
 	}
 	Video.draw();
-	std::this_thread::sleep_for(1s); // time to see loading status
+	std::this_thread::sleep_for (1s); // time to see loading status
 
 	if (dataThread.get() == eLoadingState::Error)
 	{

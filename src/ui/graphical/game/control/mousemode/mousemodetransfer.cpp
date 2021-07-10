@@ -43,7 +43,7 @@ eMouseModeType cMouseModeTransfer::getType() const
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeTransfer::setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
+void cMouseModeTransfer::setCursor (cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	if (canExecuteAction (mapPosition))
 	{
@@ -56,11 +56,11 @@ void cMouseModeTransfer::setCursor(cMouse& mouse, const cPosition& mapPosition, 
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeTransfer::getMouseAction(const cPosition& mapPosition, const cUnitsData& unitsData) const
+std::unique_ptr<cMouseAction> cMouseModeTransfer::getMouseAction (const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	if (canExecuteAction (mapPosition))
 	{
-		return std::make_unique<cMouseActionTransfer> ();
+		return std::make_unique<cMouseActionTransfer>();
 	}
 	else return nullptr;
 }
@@ -90,7 +90,7 @@ void cMouseModeTransfer::establishUnitSelectionConnections()
 		// TODO: react on:
 		//  - sub base change
 		assert (selectedBuilding == selectedUnit);
-		//selectedUnitSignalConnectionManager.connect (selectedBuilding->xyz, [this](){ needRefresh (); });
+		//selectedUnitSignalConnectionManager.connect (selectedBuilding->xyz, [this](){ needRefresh(); });
 	}
 }
 
@@ -118,6 +118,6 @@ void cMouseModeTransfer::updateFieldUnitConnections (const cMapFieldView& field)
 	{
 		// TODO: react on:
 		//  - sub base change
-		//mapFieldUnitsSignalConnectionManager.connect (building->xyz, [this](){ needRefresh (); });
+		//mapFieldUnitsSignalConnectionManager.connect (building->xyz, [this](){ needRefresh(); });
 	}
 }

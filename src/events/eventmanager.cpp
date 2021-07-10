@@ -48,13 +48,13 @@ void cEventManager::run()
 	SDL_Event event;
 	while (SDL_PollEvent (&event))
 	{
-		if(!handleSdlEvent (event))
+		if (!handleSdlEvent (event))
 		{
 			isDone = true;
 			break;
 		}
 	}
-	SDL_Delay(1);
+	SDL_Delay (1);
 }
 
 //------------------------------------------------------------------------------

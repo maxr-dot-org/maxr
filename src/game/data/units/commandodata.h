@@ -52,12 +52,12 @@ public:
 
 	std::string getDebugString() const;
 
-	[[nodiscard]] std::uint32_t calcCheckSum(std::uint32_t crc) const;
+	[[nodiscard]] std::uint32_t calcCheckSum (std::uint32_t crc) const;
 
 	template <typename T>
-	void serialize(T& archive)
+	void serialize (T& archive)
 	{
-		archive & NVP(successCount);
+		archive & NVP (successCount);
 	}
 
 private:

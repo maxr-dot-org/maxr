@@ -106,10 +106,10 @@ void cBuildListItem::setRemainingMetal (int value)
 }
 
 //--------------------------------------------------------------------------
-uint32_t cBuildListItem::getChecksum(uint32_t crc) const
+uint32_t cBuildListItem::getChecksum (uint32_t crc) const
 {
-	crc = calcCheckSum(type, crc);
-	crc = calcCheckSum(remainingMetal, crc);
+	crc = calcCheckSum (type, crc);
+	crc = calcCheckSum (remainingMetal, crc);
 
 	return crc;
 }
@@ -145,7 +145,7 @@ cBuilding::cBuilding (const cStaticUnitData* staticData, const cDynamicUnitData*
 	buildListChanged.connect ([&]() { statusChanged(); });
 	buildListFirstItemDataChanged.connect ([&]() { statusChanged(); });
 	researchAreaChanged.connect ([&]() { statusChanged(); });
-	metalPerRoundChanged.connect([&]() { statusChanged(); });
+	metalPerRoundChanged.connect ([&]() { statusChanged(); });
 	ownerChanged.connect ([&]() { registerOwnerEvents(); });
 
 	registerOwnerEvents();
@@ -177,8 +177,8 @@ void cBuilding::connectFirstBuildListItem()
 	buildListFirstItemSignalConnectionManager.disconnectAll();
 	if (!buildList.empty())
 	{
-		buildListFirstItemSignalConnectionManager.connect(buildList[0].remainingMetalChanged, [this]() { buildListFirstItemDataChanged(); });
-		buildListFirstItemSignalConnectionManager.connect(buildList[0].typeChanged, [this]() { buildListFirstItemDataChanged(); });
+		buildListFirstItemSignalConnectionManager.connect (buildList[0].remainingMetalChanged, [this]() { buildListFirstItemDataChanged(); });
+		buildListFirstItemSignalConnectionManager.connect (buildList[0].typeChanged, [this]() { buildListFirstItemDataChanged(); });
 	}
 }
 
@@ -214,9 +214,9 @@ void cBuilding::CheckNeighbours (const cMap& map)
 {
 	if (!getOwner()) return;
 #define CHECK_NEIGHBOUR(x, y, m) \
-	if (map.isValidPosition (cPosition(x, y))) \
+	if (map.isValidPosition (cPosition (x, y))) \
 	{ \
-		const cBuilding* b = map.getField(cPosition(x, y)).getTopBuilding(); \
+		const cBuilding* b = map.getField (cPosition (x, y)).getTopBuilding(); \
 		if (b && b->getOwner() && b->getOwner() == getOwner() && b->getStaticData().connectsToBase) \
 		{m = true;}else{m = false;} \
 	}
@@ -244,7 +244,7 @@ void cBuilding::CheckNeighbours (const cMap& map)
 //--------------------------------------------------------------------------
 /** starts the building for the server thread */
 //--------------------------------------------------------------------------
-void cBuilding::startWork ()
+void cBuilding::startWork()
 {
 	if (isUnitWorking())
 	{
@@ -294,20 +294,20 @@ void cBuilding::stopWork (bool forced)
 	}
 }
 
-bool cBuilding::canTransferTo(const cPosition& position, const cMapView& map) const
+bool cBuilding::canTransferTo (const cPosition& position, const cMapView& map) const
 {
-	const auto& field = map.getField(position);
+	const auto& field = map.getField (position);
 
 	const cUnit* unit = field.getVehicle();
 	if (unit)
 	{
-		return canTransferTo(*unit);
+		return canTransferTo (*unit);
 	}
 
 	unit = field.getTopBuilding();
 	if (unit)
 	{
-		return canTransferTo(*unit);
+		return canTransferTo (*unit);
 	}
 
 	return false;
@@ -325,8 +325,7 @@ bool cBuilding::canTransferTo (const cUnit& unit) const
 
 	if (unit.isAVehicle())
 	{
-		const cVehicle* v = static_cast<const cVehicle*>(&unit);
-
+		const cVehicle* v = static_cast<const cVehicle*> (&unit);
 
 		if (v->getStaticUnitData().storeResType != staticData->storeResType)
 			return false;
@@ -343,7 +342,7 @@ bool cBuilding::canTransferTo (const cUnit& unit) const
 	}
 	else if (unit.isABuilding())
 	{
-		const cBuilding* b = static_cast<const cBuilding*>(&unit);
+		const cBuilding* b = static_cast<const cBuilding*> (&unit);
 		if (b->subBase != subBase)
 			return false;
 
@@ -357,19 +356,19 @@ bool cBuilding::canTransferTo (const cUnit& unit) const
 }
 
 //--------------------------------------------------------------------------
-bool cBuilding::canExitTo(const cPosition& position, const cMap& map, const cStaticUnitData& vehicleData) const
+bool cBuilding::canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& vehicleData) const
 {
-	if (!map.possiblePlaceVehicle(vehicleData, position, getOwner())) return false;
-	if (!isNextTo(position)) return false;
+	if (!map.possiblePlaceVehicle (vehicleData, position, getOwner())) return false;
+	if (!isNextTo (position)) return false;
 
 	return true;
 }
 
 //--------------------------------------------------------------------------
-bool cBuilding::canExitTo(const cPosition& position, const cMapView& map, const cStaticUnitData& vehicleData) const
+bool cBuilding::canExitTo (const cPosition& position, const cMapView& map, const cStaticUnitData& vehicleData) const
 {
-	if (!map.possiblePlaceVehicle(vehicleData, position)) return false;
-	if (!isNextTo(position)) return false;
+	if (!map.possiblePlaceVehicle (vehicleData, position)) return false;
+	if (!isNextTo (position)) return false;
 
 	return true;
 }
@@ -396,7 +395,7 @@ bool cBuilding::canLoad (const cVehicle* vehicle, bool checkPosition) const
 
 	if (checkPosition && !isNextTo (vehicle->getPosition())) return false;
 
-	if (!Contains(staticData->storeUnitsTypes, vehicle->getStaticData().isStorageType)) return false;
+	if (!Contains (staticData->storeUnitsTypes, vehicle->getStaticData().isStorageType)) return false;
 
 	if (vehicle->isUnitMoving() || vehicle->isAttacking()) return false;
 
@@ -408,7 +407,7 @@ bool cBuilding::canLoad (const cVehicle* vehicle, bool checkPosition) const
 }
 
 //------------------------------------------------------------------------------
-bool cBuilding::canSupply(const cUnit* unit, eSupplyType supplyType) const
+bool cBuilding::canSupply (const cUnit* unit, eSupplyType supplyType) const
 {
 	if (unit == nullptr || unit->isABuilding())
 		return false;
@@ -416,7 +415,7 @@ bool cBuilding::canSupply(const cUnit* unit, eSupplyType supplyType) const
 	if (subBase && subBase->getResourcesStored().metal <= 0)
 		return false;
 
-	if (!Contains(storedUnits, static_cast<const cVehicle*>(unit)))
+	if (!Contains (storedUnits, static_cast<const cVehicle*> (unit)))
 		return false;
 
 	switch (supplyType)
@@ -458,15 +457,15 @@ void cBuilding::initMineResourceProd (const cMap& map)
 	if (isBig)
 	{
 		position.x()++;
-		res = &map.getResource(position);
+		res = &map.getResource (position);
 		if (res->typ != eResourceType::None) maxProd.get (res->typ) += res->value;
 
 		position.y()++;
-		res = &map.getResource(position);
+		res = &map.getResource (position);
 		if (res->typ != eResourceType::None) maxProd.get (res->typ) += res->value;
 
 		position.x()--;
-		res = &map.getResource(position);
+		res = &map.getResource (position);
 		if (res->typ != eResourceType::None) maxProd.get (res->typ) += res->value;
 	}
 
@@ -478,9 +477,9 @@ void cBuilding::initMineResourceProd (const cMap& map)
 	int freeProductionCapacity = getStaticData().canMineMaxRes;
 	prod.metal = maxProd.metal;
 	freeProductionCapacity -= prod.metal;
-	prod.gold = min(maxProd.gold, freeProductionCapacity);
+	prod.gold = min (maxProd.gold, freeProductionCapacity);
 	freeProductionCapacity -= prod.gold;
-	prod.oil = min(maxProd.oil, freeProductionCapacity);
+	prod.oil = min (maxProd.oil, freeProductionCapacity);
 }
 
 //--------------------------------------------------------------------------
@@ -512,7 +511,7 @@ void cBuilding::calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array
 
 	while (a >= 15)
 	{
-		turboBuildCosts[2] += (12 * staticData->needsMetal - min(a, 8 * staticData->needsMetal));
+		turboBuildCosts[2] += (12 * staticData->needsMetal - min (a, 8 * staticData->needsMetal));
 		a -= 8 * staticData->needsMetal;
 	}
 
@@ -654,7 +653,7 @@ int cBuilding::getBuildSpeed() const
 int cBuilding::getMetalPerRound() const
 {
 	if (buildList.size() > 0)
-		return min(metalPerRound, buildList[0].getRemainingMetal());
+		return min (metalPerRound, buildList[0].getRemainingMetal());
 	else
 		return 0;
 }
@@ -673,24 +672,24 @@ void cBuilding::setWorking (bool value)
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::setBuildSpeed(int value)
+void cBuilding::setBuildSpeed (int value)
 {
-	std::swap(buildSpeed, value);
-	if(value != buildSpeed) buildSpeedChanged();
+	std::swap (buildSpeed, value);
+	if (value != buildSpeed) buildSpeedChanged();
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::setMetalPerRound(int value)
+void cBuilding::setMetalPerRound (int value)
 {
-	std::swap(metalPerRound, value);
-	if(value != metalPerRound) metalPerRoundChanged();
+	std::swap (metalPerRound, value);
+	if (value != metalPerRound) metalPerRoundChanged();
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::setRepeatBuild(bool value)
+void cBuilding::setRepeatBuild (bool value)
 {
-	std::swap(repeatBuild, value);
-	if(value != repeatBuild) repeatBuildChanged();
+	std::swap (repeatBuild, value);
+	if (value != repeatBuild) repeatBuildChanged();
 }
 
 //-----------------------------------------------------------------------------
@@ -713,17 +712,17 @@ cResearch::ResearchArea cBuilding::getResearchArea() const
 }
 
 //------------------------------------------------------------------------------
-void cBuilding::setRubbleValue(int value, cCrossPlattformRandom& randomGenerator)
+void cBuilding::setRubbleValue (int value, cCrossPlattformRandom& randomGenerator)
 {
 	rubbleValue = value;
 
 	if (isBig)
 	{
-		rubbleTyp = randomGenerator.get(2);
+		rubbleTyp = randomGenerator.get (2);
 	}
 	else
 	{
-		rubbleTyp = randomGenerator.get(5);
+		rubbleTyp = randomGenerator.get (5);
 	}
 }
 
@@ -734,29 +733,29 @@ int cBuilding::getRubbleValue() const
 }
 
 //------------------------------------------------------------------------------
-uint32_t cBuilding::getChecksum(uint32_t crc) const
+uint32_t cBuilding::getChecksum (uint32_t crc) const
 {
-	crc = cUnit::getChecksum(crc);
-	crc = calcCheckSum(rubbleTyp, crc);
-	crc = calcCheckSum(rubbleValue, crc);
-	crc = calcCheckSum(BaseN, crc);
-	crc = calcCheckSum(BaseE, crc);
-	crc = calcCheckSum(BaseS, crc);
-	crc = calcCheckSum(BaseW, crc);
-	crc = calcCheckSum(BaseBN, crc);
-	crc = calcCheckSum(BaseBE, crc);
-	crc = calcCheckSum(BaseBS, crc);
-	crc = calcCheckSum(BaseBW, crc);
-	crc = calcCheckSum(prod, crc);
-	crc = calcCheckSum(wasWorking, crc);
-	crc = calcCheckSum(points, crc);
-	crc = calcCheckSum(isWorking, crc);
-	crc = calcCheckSum(buildSpeed, crc);
-	crc = calcCheckSum(metalPerRound, crc);
-	crc = calcCheckSum(repeatBuild, crc);
-	crc = calcCheckSum(maxProd, crc);
-	crc = calcCheckSum(researchArea, crc);
-	crc = calcCheckSum(buildList, crc);
+	crc = cUnit::getChecksum (crc);
+	crc = calcCheckSum (rubbleTyp, crc);
+	crc = calcCheckSum (rubbleValue, crc);
+	crc = calcCheckSum (BaseN, crc);
+	crc = calcCheckSum (BaseE, crc);
+	crc = calcCheckSum (BaseS, crc);
+	crc = calcCheckSum (BaseW, crc);
+	crc = calcCheckSum (BaseBN, crc);
+	crc = calcCheckSum (BaseBE, crc);
+	crc = calcCheckSum (BaseBS, crc);
+	crc = calcCheckSum (BaseBW, crc);
+	crc = calcCheckSum (prod, crc);
+	crc = calcCheckSum (wasWorking, crc);
+	crc = calcCheckSum (points, crc);
+	crc = calcCheckSum (isWorking, crc);
+	crc = calcCheckSum (buildSpeed, crc);
+	crc = calcCheckSum (metalPerRound, crc);
+	crc = calcCheckSum (repeatBuild, crc);
+	crc = calcCheckSum (maxProd, crc);
+	crc = calcCheckSum (researchArea, crc);
+	crc = calcCheckSum (buildList, crc);
 
 	return crc;
 }

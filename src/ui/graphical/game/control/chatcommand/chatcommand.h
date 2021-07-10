@@ -23,20 +23,20 @@
 #include <string>
 #include <memory>
 
-template<typename... Arguments>
+template <typename... Arguments>
 class cChatCommandParser;
 
 class cChatCommandExecutor;
 
-template<typename F, typename... Arguments>
+template <typename F, typename... Arguments>
 class cChatCommandExecutorImpl;
 
 class cChatCommand
 {
 public:
-	static bool isCommand(const std::string& command);
+	static bool isCommand (const std::string& command);
 
-	cChatCommand(const std::string name, const std::string description);
+	cChatCommand (const std::string name, const std::string description);
 
 	const std::string& getName() const;
 	const std::string& getDescription() const;
@@ -45,13 +45,13 @@ public:
 	bool getShouldBeReported() const;
 
 	cChatCommand& setIsServerOnly (bool value);
-	bool getIsServerOnly () const;
+	bool getIsServerOnly() const;
 
-	template<typename NewArgument, typename... Args>
-	cChatCommandParser<NewArgument> addArgument(Args&&... args);
+	template <typename NewArgument, typename... Args>
+	cChatCommandParser<NewArgument> addArgument (Args&&... args);
 
-	template<typename F>
-	std::unique_ptr<cChatCommandExecutor> setAction(F function);
+	template <typename F>
+	std::unique_ptr<cChatCommandExecutor> setAction (F function);
 
 private:
 	std::string name;
@@ -65,17 +65,17 @@ private:
 
 
 //------------------------------------------------------------------------------
-template<typename NewArgument, typename... Args>
-cChatCommandParser<NewArgument> cChatCommand::addArgument(Args&&... args)
+template <typename NewArgument, typename... Args>
+cChatCommandParser<NewArgument> cChatCommand::addArgument (Args&&... args)
 {
-	return cChatCommandParser<NewArgument>(cChatCommandParser<>(std::move(*this)), NewArgument(std::forward<Args>(args)...));
+	return cChatCommandParser<NewArgument> (cChatCommandParser<> (std::move (*this)), NewArgument (std::forward<Args> (args)...));
 }
 
 //------------------------------------------------------------------------------
-template<typename F>
-std::unique_ptr<cChatCommandExecutor> cChatCommand::setAction(F function)
+template <typename F>
+std::unique_ptr<cChatCommandExecutor> cChatCommand::setAction (F function)
 {
-	return std::make_unique<cChatCommandExecutorImpl<F>>(std::move(function), cChatCommandParser<>(std::move(*this)));
+	return std::make_unique<cChatCommandExecutorImpl<F>> (std::move (function), cChatCommandParser<> (std::move (*this)));
 }
 
 #endif // ui_graphical_game_control_chatcommand_chatcommandH

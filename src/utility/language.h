@@ -54,11 +54,11 @@ public:
 	// Translation with replace %s
 	std::string i18n (const std::string& szMainText, const std::string& szInsertText) const;
 
-	std::string getUnitName(const sID& id) const;
-	std::string getUnitDescription(const sID& id) const;
+	std::string getUnitName (const sID&) const;
+	std::string getUnitDescription (const sID&) const;
 
-	std::string getClanName(int num) const;
-	std::string getClanDescription(int num) const;
+	std::string getClanName (int num) const;
+	std::string getClanDescription (int num) const;
 
 private:
 	typedef std::map<std::string, std::string> StrStrMap;

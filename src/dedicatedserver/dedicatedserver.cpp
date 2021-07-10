@@ -101,7 +101,7 @@ namespace
 //------------------------------------------------------------------------
 
 //------------------------------------------------------------------------
-cDedicatedServer::cDedicatedServer(int port) :
+cDedicatedServer::cDedicatedServer (int port) :
 	port (port)
 {
 }
@@ -198,7 +198,7 @@ bool cDedicatedServer::handleInput (const std::string& command)
 //------------------------------------------------------------------------
 bool cDedicatedServer::startServer (int saveGameNumber)
 {
-	if (ranges::find_if(games, [=](const auto& game) { return game->getPort() == port; }) != games.end())
+	if (ranges::find_if (games, [=](const auto& game) { return game->getPort() == port; }) != games.end())
 	{
 		std::cout << "WARNING: Server is already open." << std::endl;
 		return true;
@@ -216,7 +216,7 @@ bool cDedicatedServer::startServer (int saveGameNumber)
 	game->getAvailableMapsString = [this](){ return getAvailableMapsString(); };
 
 	std::cout << "Starting server on port " << port << "..." << std::endl;
-	switch (game->startServer(port))
+	switch (game->startServer (port))
 	{
 		case eOpenServerResult::AlreadyOpened: // should not happen
 		case eOpenServerResult::Failed:

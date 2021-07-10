@@ -26,9 +26,9 @@ class cSavedReportCapturedByEnemy : public cSavedReportUnit
 {
 public:
 	explicit cSavedReportCapturedByEnemy (const cUnit& unit);
-	template<typename T, ENABLE_ARCHIVE_OUT>
-	cSavedReportCapturedByEnemy(T& archive) :
-		cSavedReportUnit(archive)
+	template <typename T, ENABLE_ARCHIVE_OUT>
+	cSavedReportCapturedByEnemy (T& archive) :
+		cSavedReportUnit (archive)
 	{
 	}
 

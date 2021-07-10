@@ -44,7 +44,7 @@ cReportMessageListViewItem::cReportMessageListViewItem (const cSavedReport& repo
 	textLabel->resizeToTextHeight();
 	textLabel->setConsumeClick (false);
 
-	if (const auto* unitReport = dynamic_cast<const cSavedReportUnit*>(&report))
+	if (const auto* unitReport = dynamic_cast<const cSavedReportUnit*> (&report))
 	{
 		const auto& unitId = unitReport->getUnitTypeId();
 

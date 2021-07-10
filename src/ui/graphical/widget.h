@@ -110,13 +110,13 @@ public:
 	 *
 	 * @param newPosition The new position (upper left corner) to move the widget to.
 	 */
-	void moveTo(const cPosition& newPosition);
+	void moveTo (const cPosition& newPosition);
 	/**
 	 * Moves the widget and all its children by a given offset.
 	 *
 	 * @param offset The offset by which to move the widget. Can have negative values.
 	 */
-	void move(const cPosition& offset);
+	void move (const cPosition& offset);
 
 	/**
 	 * Returns the size of the widget.
@@ -125,7 +125,7 @@ public:
 	/**
 	 * Resizes the widget.
 	 */
-	void resize(const cPosition& newSize);
+	void resize (const cPosition& newSize);
 
 	/**
 	 * Adjusts the size and position of the widget to fit exactly all its children.
@@ -146,7 +146,7 @@ public:
 	 *
 	 * @param area The new area to set.
 	 */
-	void setArea(const cBox<cPosition>& area);
+	void setArea (const cBox<cPosition>& area);
 
 	/**
 	 * Adds a shortcut to the widget.
@@ -156,7 +156,7 @@ public:
 	 * @param shortcut The shortcut to add.
 	 * @return A non-owning pointer to the shortcut that has been added.
 	 */
-	cShortcut* addShortcut(std::unique_ptr<cShortcut> shortcut);
+	cShortcut* addShortcut (std::unique_ptr<cShortcut> shortcut);
 
 	/**
 	 * Returns all shortcuts that have been added to this widget.
@@ -174,7 +174,7 @@ public:
 	 *
 	 * @param position The position in absolute screen coordinates to test for.
 	 */
-	virtual cWidget* getChildAt(const cPosition& position) const;
+	virtual cWidget* getChildAt (const cPosition& position) const;
 
 	/**
 	 * Returns whether the widget is at the given position.
@@ -185,7 +185,7 @@ public:
 	 *
 	 * @param position The position in absolute screen coordinates to test for.
 	 */
-	virtual bool isAt(const cPosition& position) const;
+	virtual bool isAt (const cPosition& position) const;
 
 	/**
 	 * Draws the widget and all its children to the destination surface.
@@ -197,7 +197,7 @@ public:
 	 * @param clipRect An area with which all area to be drawn will be clipped before the drawing is performed.
 	 *                 This means all drawing takes place only within this area.
 	 */
-	virtual void draw(SDL_Surface& destination, const cBox<cPosition>& clipRect);
+	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect);
 
 	/**
 	 * Will be called when ever the mouse has been moved above the widget.
@@ -211,7 +211,7 @@ public:
 	 * @return True if the widget wants to consume the mouse moved event.
 	 *         This means this method will not be called for any other widget after this one.
 	 */
-	virtual bool handleMouseMoved(cApplication& application, cMouse& mouse, const cPosition& offset);
+	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset);
 	/**
 	 * Will be called when ever a mouse button has been pressed above the widget.
 	 *
@@ -224,7 +224,7 @@ public:
 	 * @return True if the widget wants to consume the mouse pressed event.
 	 *         This means this method will not be called for any other widget after this one.
 	 */
-	virtual bool handleMousePressed(cApplication& application, cMouse& mouse, eMouseButtonType button);
+	virtual bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button);
 	/**
 	 * Will be called when ever a mouse button has been released above the widget.
 	 *
@@ -237,7 +237,7 @@ public:
 	 * @return True if the widget wants to consume the mouse release event.
 	 *         This means this method will not be called for any other widget after this one.
 	 */
-	virtual bool handleMouseReleased(cApplication& application, cMouse& mouse, eMouseButtonType button);
+	virtual bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button);
 	/**
 	 * Will be called when ever the mouse wheel has been moved above the widget.
 	 *
@@ -250,7 +250,7 @@ public:
 	 * @return True if the widget wants to consume the mouse wheel moved event.
 	 *         This means this method will not be called for any other widget after this one.
 	 */
-	virtual bool handleMouseWheelMoved(cApplication& application, cMouse& mouse, const cPosition& amount);
+	virtual bool handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount);
 
 	/**
 	 * Will be called when a keyboard key has been pressed.
@@ -265,7 +265,7 @@ public:
 	 *         This means this method will not be called for any other widget after this one.
 	 *         Additionally returning true here prohibits any shortcuts to be executed for this key press.
 	 */
-	virtual bool handleKeyPressed(cApplication& application, cKeyboard& keyboard, SDL_Keycode key);
+	virtual bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key);
 	/**
 	 * Will be called when a keyboard key has been released.
 	 *
@@ -278,7 +278,7 @@ public:
 	 * @return True if the widget wants to consume the key release event.
 	 *         This means this method will not be called for any other widget after this one.
 	 */
-	virtual bool handleKeyReleased(cApplication& application, cKeyboard& keyboard, SDL_Keycode key);
+	virtual bool handleKeyReleased (cApplication& application, cKeyboard& keyboard, SDL_Keycode key);
 	/**
 	 * Will be called when this widget has key focus and text has been entered via the keyboard.
 	 *
@@ -286,7 +286,7 @@ public:
 	 * @param keyboard The keyboard on that the text has been entered.
 	 * @param text The text that has been entered (UTF-8 encoded).
 	 */
-	virtual void handleTextEntered(cApplication& application, cKeyboard& keyboard, const char* text);
+	virtual void handleTextEntered (cApplication& application, cKeyboard& keyboard, const char* text);
 
 	//virtual void handleHoveredOn (cApplication& application, cMouse& mouse);
 	//virtual void handleHoveredAway (cApplication& application, cMouse& mouse);
@@ -301,7 +301,7 @@ public:
 	 *                False if the widget does not accept the key focus. In this case the key focus will be assigned
 	 *                to the parent widget if there is any and if the parent accepts the focus.
 	 */
-	virtual bool handleGetKeyFocus(cApplication& application);
+	virtual bool handleGetKeyFocus (cApplication& application);
 
 	/**
 	 * Will be called when ever the widget is losing the key focus.
@@ -310,7 +310,7 @@ public:
 	 *
 	 * @param application The application associated with the keyboard that has triggered the event.
 	 */
-	virtual void handleLooseKeyFocus(cApplication& application);
+	virtual void handleLooseKeyFocus (cApplication& application);
 
 	/**
 	 * Will be called when ever the widget is getting the mouse focus.
@@ -319,7 +319,7 @@ public:
 	 *
 	 * @param application The application associated with the mouse that has triggered the event.
 	 */
-	virtual void handleGetMouseFocus(cApplication& application);
+	virtual void handleGetMouseFocus (cApplication& application);
 	/**
 	 * Will be called when ever the widget is loosing the mouse focus.
 	 *
@@ -327,7 +327,7 @@ public:
 	 *
 	 * @param application The application associated with the mouse that has triggered the event.
 	 */
-	virtual void handleLooseMouseFocus(cApplication& application);
+	virtual void handleLooseMouseFocus (cApplication& application);
 
 	/**
 	 * Will be called when ever the widget has been moved.
@@ -336,7 +336,7 @@ public:
 	 *
 	 * @param offset The offset by which the widget has been moved.
 	 */
-	virtual void handleMoved(const cPosition& offset);
+	virtual void handleMoved (const cPosition& offset);
 
 	/**
 	 * Will be called when ever the widget has been resized.
@@ -345,7 +345,7 @@ public:
 	 *
 	 * @param oldSize The size of the widget before the resize took place
 	 */
-	virtual void handleResized(const cPosition& oldSize);
+	virtual void handleResized (const cPosition& oldSize);
 
 	/**
 	 * Triggers all active shortcuts that match the end of the given key sequence.
@@ -371,7 +371,7 @@ protected:
 	 * @param child The child to add.
 	 * @return A non owning pointer to the added child.
 	 */
-	template<typename WidgetType>
+	template <typename WidgetType>
 	WidgetType* addChild (std::unique_ptr<WidgetType> child);
 
 	void setParent (cWidget* parent);
@@ -412,10 +412,10 @@ protected:
 	virtual cApplication* getActiveApplication() const;
 private:
 	static bool drawDebugFrames;
-	static cSignal<void ()> drawDebugFramesChanged;
+	static cSignal<void()> drawDebugFramesChanged;
 
-	cWidget (const cWidget& other) = delete;
-	cWidget& operator= (const cWidget& other) = delete;
+	cWidget (const cWidget&) = delete;
+	cWidget& operator= (const cWidget&) = delete;
 
 	cSignalConnectionManager signalConnectionManager;
 
@@ -438,7 +438,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-template<typename WidgetType>
+template <typename WidgetType>
 WidgetType* cWidget::addChild (std::unique_ptr<WidgetType> child)
 {
 	static_assert (std::is_base_of<cWidget, WidgetType>::value, "Only widgets can be added as children of widgets");

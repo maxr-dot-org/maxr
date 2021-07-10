@@ -52,7 +52,7 @@ public:
 	 * @param signal The signal to connect the function to.
 	 * @param function The callable object to connect to the signal.
 	 */
-	template<typename SignalType, typename FunctionType>
+	template <typename SignalType, typename FunctionType>
 	cSignalConnection connect (SignalType& signal, FunctionType&& function);
 
 	/**
@@ -84,7 +84,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-template<typename SignalType, typename FunctionType>
+template <typename SignalType, typename FunctionType>
 cSignalConnection cSignalConnectionManager::connect (SignalType& signal, FunctionType&& function)
 {
 	connections.push_back (signal.connect (std::forward<FunctionType> (function)));

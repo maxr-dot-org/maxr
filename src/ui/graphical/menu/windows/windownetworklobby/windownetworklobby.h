@@ -38,7 +38,7 @@ class cLobbyServer;
 class cPlayerBasicData;
 class cPushButton;
 class cStaticMap;
-template<typename T> class cListView;
+template <typename T> class cListView;
 
 class cWindowNetworkLobby : public cWindow
 {
@@ -68,7 +68,7 @@ public:
 	const std::shared_ptr<cPlayerBasicData>& getLocalPlayer() const;
 	std::vector<std::shared_ptr<cPlayerBasicData>> getPlayers() const;
 	std::vector<cPlayerBasicData> getPlayersNotShared() const;
-	std::shared_ptr<cPlayerBasicData> getPlayer(int i) const;
+	std::shared_ptr<cPlayerBasicData> getPlayer (int i) const;
 
 	unsigned short getPort() const;
 	const std::string& getIp() const;
@@ -83,15 +83,15 @@ public:
 	void updatePlayerList (const cPlayerBasicData&, const std::vector<cPlayerBasicData>&);
 	void updatePlayerListView();
 
-	cSignal<void ()> triggeredSelectMap;
-	cSignal<void ()> triggeredSelectSettings;
-	cSignal<void ()> triggeredSelectSaveGame;
+	cSignal<void()> triggeredSelectMap;
+	cSignal<void()> triggeredSelectSettings;
+	cSignal<void()> triggeredSelectSaveGame;
 
-	cSignal<void ()> wantLocalPlayerReadyChange;
-	cSignal<void ()> triggeredChatMessage;
+	cSignal<void()> wantLocalPlayerReadyChange;
+	cSignal<void()> triggeredChatMessage;
 
-	cSignal<void ()> triggeredStartGame;
-	cSignal<void ()> backClicked;
+	cSignal<void()> triggeredStartGame;
+	cSignal<void()> backClicked;
 protected:
 	cSignalConnectionManager signalConnectionManager;
 

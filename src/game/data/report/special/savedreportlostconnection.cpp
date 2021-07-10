@@ -20,7 +20,7 @@
 #include "game/data/report/special/savedreportlostconnection.h"
 
 //------------------------------------------------------------------------------
-cSavedReportLostConnection::cSavedReportLostConnection(const cPlayer& player) :
+cSavedReportLostConnection::cSavedReportLostConnection (const cPlayer& player) :
 	player (&player)
 {}
 

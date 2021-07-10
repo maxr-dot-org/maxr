@@ -27,40 +27,40 @@
 cGetInJob::cGetInJob (cVehicle& loadedVehicle, cUnit& loadingUnit) :
 	cJob (loadedVehicle),
 	loadingUnit (&loadingUnit),
-	counter(32),
-	startFlightHeight(loadedVehicle.getFlightHeight())
+	counter (32),
+	startFlightHeight (loadedVehicle.getFlightHeight())
 {
-	connectionManager.connect(loadingUnit.destroyed, [&](){finished = true; });
+	connectionManager.connect (loadingUnit.destroyed, [&](){finished = true; });
 	unit->alphaEffectValue = 254;
 }
 
 //------------------------------------------------------------------------------
 void cGetInJob::run (cModel& model)
 {
-	assert(unit->isAVehicle());
-	cVehicle* vehicle = static_cast<cVehicle*>(unit);
+	assert (unit->isAVehicle());
+	cVehicle* vehicle = static_cast<cVehicle*> (unit);
 
 	if (vehicle->getFlightHeight() == MAX_FLIGHT_HEIGHT)
 	{
-		model.planeLanding(*vehicle);
+		model.planeLanding (*vehicle);
 	}
 
-	vehicle->setFlightHeight(std::max(0, vehicle->getFlightHeight() - 2));
+	vehicle->setFlightHeight (std::max (0, vehicle->getFlightHeight() - 2));
 	//Fixme: alphaEffect should be GUI only, and not changed from the model.
 	//       Also the alphaEffect must not have any effect on the model behavior,
 	//       so using a fixed counter for the delay.
-	vehicle->alphaEffectValue = std::max(1, vehicle->alphaEffectValue - 8);
+	vehicle->alphaEffectValue = std::max (1, vehicle->alphaEffectValue - 8);
 	counter--;
 
 	if (counter <= 0 && vehicle->getFlightHeight() == 0)
 	{
-		if (loadingUnit->canLoad(vehicle))
+		if (loadingUnit->canLoad (vehicle))
 		{
-			loadingUnit->storeVehicle(*vehicle, *model.getMap());
-			model.unitStored(*loadingUnit, *vehicle);
+			loadingUnit->storeVehicle (*vehicle, *model.getMap());
+			model.unitStored (*loadingUnit, *vehicle);
 		}
 
-		vehicle->setFlightHeight(startFlightHeight);
+		vehicle->setFlightHeight (startFlightHeight);
 		vehicle->alphaEffectValue = 0;
 
 		finished = true;
@@ -74,13 +74,13 @@ eJobType cGetInJob::getType() const
 }
 
 //------------------------------------------------------------------------------
-uint32_t cGetInJob::getChecksum(uint32_t crc) const
+uint32_t cGetInJob::getChecksum (uint32_t crc) const
 {
-	crc = calcCheckSum(getType(), crc);
-	crc = calcCheckSum(unit, crc);
-	crc = calcCheckSum(loadingUnit, crc);
-	crc = calcCheckSum(counter, crc);
-	crc = calcCheckSum(startFlightHeight, crc);
+	crc = calcCheckSum (getType(), crc);
+	crc = calcCheckSum (unit, crc);
+	crc = calcCheckSum (loadingUnit, crc);
+	crc = calcCheckSum (counter, crc);
+	crc = calcCheckSum (startFlightHeight, crc);
 
 	return crc;
 }

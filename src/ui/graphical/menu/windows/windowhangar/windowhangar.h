@@ -37,7 +37,7 @@ class cUnitUpgrade;
 
 struct sID;
 
-template<typename T> class cListView;
+template <typename T> class cListView;
 
 class cWindowHangar : public cWindow
 {
@@ -46,8 +46,8 @@ public:
 	cWindowHangar (AutoSurface, std::shared_ptr<const cUnitsData>, const cPlayer&);
 	~cWindowHangar();
 
-	cSignal<void ()> done;
-	cSignal<void ()> canceled;
+	cSignal<void()> done;
+	cSignal<void()> canceled;
 protected:
 	cUnitListViewItemBuy& addSelectionUnit (const sID& unitId);
 	void setSelectedSelectionItem (const cUnitListViewItemBuy& item);

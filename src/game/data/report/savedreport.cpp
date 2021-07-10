@@ -45,46 +45,46 @@ template <typename T>
 std::unique_ptr<cSavedReport> cSavedReport::createFromImpl (T& archive)
 {
 	eSavedReportType type;
-	archive >> NVP(type);
+	archive >> NVP (type);
 
 	switch (type)
 	{
 	case eSavedReportType::Chat:
-		return std::make_unique<cSavedReportChat>(archive);
+		return std::make_unique<cSavedReportChat> (archive);
 	case eSavedReportType::Attacked:
-		return std::make_unique<cSavedReportAttacked>(archive);
+		return std::make_unique<cSavedReportAttacked> (archive);
 	case eSavedReportType::AttackingEnemy:
-		return std::make_unique<cSavedReportAttackingEnemy>(archive);
+		return std::make_unique<cSavedReportAttackingEnemy> (archive);
 	case eSavedReportType::CapturedByEnemy:
-		return std::make_unique<cSavedReportCapturedByEnemy>(archive);
+		return std::make_unique<cSavedReportCapturedByEnemy> (archive);
 	case eSavedReportType::Destroyed:
-		return std::make_unique<cSavedReportDestroyed>(archive);
+		return std::make_unique<cSavedReportDestroyed> (archive);
 	case eSavedReportType::Detected:
-		return std::make_unique<cSavedReportDetected>(archive);
+		return std::make_unique<cSavedReportDetected> (archive);
 	case eSavedReportType::Disabled:
-		return std::make_unique<cSavedReportDisabled>(archive);
+		return std::make_unique<cSavedReportDisabled> (archive);
 	case eSavedReportType::PathInterrupted:
-		return std::make_unique<cSavedReportPathInterrupted>(archive);
+		return std::make_unique<cSavedReportPathInterrupted> (archive);
 	case eSavedReportType::SurveyorAiConfused:
-		return std::make_unique<cSavedReportSurveyorAiConfused>(archive);
+		return std::make_unique<cSavedReportSurveyorAiConfused> (archive);
 	case eSavedReportType::HostCommand:
-		return std::make_unique<cSavedReportHostCommand>(archive);
+		return std::make_unique<cSavedReportHostCommand> (archive);
 	case eSavedReportType::ResourceChanged:
-		return std::make_unique<cSavedReportResourceChanged>(archive);
+		return std::make_unique<cSavedReportResourceChanged> (archive);
 	case eSavedReportType::PlayerEndedTurn:
-		return std::make_unique<cSavedReportPlayerEndedTurn>(archive);
+		return std::make_unique<cSavedReportPlayerEndedTurn> (archive);
 	case eSavedReportType::LostConnection:
-		return std::make_unique<cSavedReportLostConnection>(archive);
+		return std::make_unique<cSavedReportLostConnection> (archive);
 	case eSavedReportType::PlayerDefeated:
-		return std::make_unique<cSavedReportPlayerDefeated>(archive);
+		return std::make_unique<cSavedReportPlayerDefeated> (archive);
 	case eSavedReportType::PlayerWins:
-		return std::make_unique<cSavedReportPlayerWins>(archive);
+		return std::make_unique<cSavedReportPlayerWins> (archive);
 	case eSavedReportType::PlayerLeft:
-		return std::make_unique<cSavedReportPlayerLeft>(archive);
+		return std::make_unique<cSavedReportPlayerLeft> (archive);
 	case eSavedReportType::Upgraded:
-		return std::make_unique<cSavedReportUpgraded>(archive);
+		return std::make_unique<cSavedReportUpgraded> (archive);
 	case eSavedReportType::TurnStart:
-		return std::make_unique<cSavedReportTurnStart>(archive);
+		return std::make_unique<cSavedReportTurnStart> (archive);
 	case eSavedReportType::MetalInsufficient:
 	case eSavedReportType::FuelInsufficient:
 	case eSavedReportType::GoldInsufficient:
@@ -102,24 +102,24 @@ std::unique_ptr<cSavedReport> cSavedReport::createFromImpl (T& archive)
 	case eSavedReportType::Producing_PositionBlocked:
 	case eSavedReportType::TurnWait:
 	case eSavedReportType::TurnAutoMove:
-		return std::make_unique<cSavedReportSimple>(type);
+		return std::make_unique<cSavedReportSimple> (type);
 	default:
-		assert(false);
+		assert (false);
 		return nullptr;
 	}
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cSavedReport> cSavedReport::createFrom(cBinaryArchiveOut& archive)
+std::unique_ptr<cSavedReport> cSavedReport::createFrom (cBinaryArchiveOut& archive)
 {
-	return createFromImpl(archive);
+	return createFromImpl (archive);
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cSavedReport> cSavedReport::createFrom(cXmlArchiveOut& archive, const std::string& name)
+std::unique_ptr<cSavedReport> cSavedReport::createFrom (cXmlArchiveOut& archive, const std::string& name)
 {
-	archive.enterChild(name);
-	auto report = createFromImpl(archive);
+	archive.enterChild (name);
+	auto report = createFromImpl (archive);
 	archive.leaveChild();
 	return report;
 }

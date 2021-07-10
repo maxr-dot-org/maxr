@@ -580,7 +580,7 @@ void blittAlphaSurface (SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, S
  * @param destWidth Directory width of the line how it should be drawn
  *        to the destination surface.
  */
-template<typename Type>
+template <typename Type>
 static void drawStetchedLine (Type* srcPixelData, int srcWidth, Type* destPixelData, int destWidth)
 {
 	int i = 0;

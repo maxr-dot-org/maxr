@@ -28,6 +28,6 @@
 class cGameSettings;
 class cUnitsData;
 
-std::vector<std::pair<sID, int>> computeInitialLandingUnits(int clan, const cGameSettings&, const cUnitsData&);
+std::vector<std::pair<sID, int>> computeInitialLandingUnits (int clan, const cGameSettings&, const cUnitsData&);
 
 #endif

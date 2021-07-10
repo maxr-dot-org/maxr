@@ -35,7 +35,7 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 	assert (gameSettings != nullptr);
 	auto connectionManager = std::make_shared<cConnectionManager>();
 
-	server = std::make_unique<cServer>(connectionManager);
+	server = std::make_unique<cServer> (connectionManager);
 
 	server->setPreparationData ({unitsData, clanData, gameSettings, staticMap});
 
@@ -46,19 +46,19 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 		clients[i] = std::make_shared<cClient> (connectionManager);
 		clients[i]->setPreparationData ({unitsData, clanData, gameSettings, staticMap});
 	}
-	server->setPlayers(playersBasicData);
+	server->setPlayers (playersBasicData);
 	for (size_t i = 0; i != clients.size(); ++i)
 	{
 		clients[i]->setPlayers (playersBasicData, i);
 	}
 
-	connectionManager->setLocalServer(server.get());
+	connectionManager->setLocalServer (server.get());
 	std::vector<INetMessageReceiver*> hotseatClients;
 	for (auto& client : clients)
 	{
-		hotseatClients.push_back(client.get());
+		hotseatClients.push_back (client.get());
 	}
-	connectionManager->setLocalClients(std::move(hotseatClients));
+	connectionManager->setLocalClients (std::move (hotseatClients));
 
 	server->start();
 
@@ -68,8 +68,8 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 	}
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
-	gameGuiController->setServer(server.get());
-	gameGuiController->setClients(clients, 0);
+	gameGuiController->setServer (server.get());
+	gameGuiController->setClients (clients, 0);
 
 	for (size_t i = 0; i != playersData.size(); ++i)
 	{
@@ -84,7 +84,7 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 
 	application.addRunnable (shared_from_this());
 
-	signalConnectionManager.connect(gameGuiController->terminated, [&]() { exit(); });
+	signalConnectionManager.connect (gameGuiController->terminated, [&]() { exit(); });
 }
 
 //------------------------------------------------------------------------------
@@ -144,7 +144,7 @@ const std::shared_ptr<cGameSettings>& cLocalHotSeatGameNew::getGameSettings()
 }
 
 //------------------------------------------------------------------------------
-const std::vector<sLandingUnit>& cLocalHotSeatGameNew::getLandingUnits(size_t playerIndex)
+const std::vector<sLandingUnit>& cLocalHotSeatGameNew::getLandingUnits (size_t playerIndex)
 {
 	return playersData[playerIndex].landingUnits;
 }

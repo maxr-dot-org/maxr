@@ -25,23 +25,23 @@
 class cActionFinishBuild : public cActionT<cAction::eActiontype::ACTION_FINISH_BUILD>
 {
 public:
-	cActionFinishBuild(const cUnit& unit, const cPosition& escapePosition);
-	cActionFinishBuild(cBinaryArchiveOut& archive);
+	cActionFinishBuild (const cUnit& unit, const cPosition& escapePosition);
+	cActionFinishBuild (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
 
-	void execute(cModel& model) const override;
+	void execute (cModel& model) const override;
 
 private:
-	void finishABuilding(cModel &model, cVehicle& vehicle) const;
-	void finishAVehicle(cModel &model, cBuilding& building) const;
+	void finishABuilding (cModel &model, cVehicle& vehicle) const;
+	void finishAVehicle (cModel &model, cBuilding& building) const;
 
 	int unitId;
 	cPosition escapePosition;
 
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & unitId;
 		archive & escapePosition;

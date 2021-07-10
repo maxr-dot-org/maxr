@@ -93,10 +93,10 @@ public:
 
 	cGameSettings& operator= (const cGameSettings&) = default;
 
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 
-	template<typename T>
-	void serialize(T& archive)
+	template <typename T>
+	void serialize (T& archive)
 	{
 		archive & NVP (alienEnabled);
 		archive & NVP (bridgeheadType);

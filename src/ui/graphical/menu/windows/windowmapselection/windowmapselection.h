@@ -39,7 +39,7 @@ public:
 	cWindowMapSelection();
 	~cWindowMapSelection();
 
-	cSignal<void ()> done;
+	cSignal<void()> done;
 
 	std::string getSelectedMapName() const;
 

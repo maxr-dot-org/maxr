@@ -76,7 +76,7 @@ void cMoveJob::run (cModel& model)
 	timer50ms++;
 	if (timer50ms == 5) timer50ms = 0;
 
-	if (nextDir != static_cast<unsigned int>(vehicle->dir))
+	if (nextDir != static_cast<unsigned int> (vehicle->dir))
 	{
 		if (timer100ms == 0)
 		{
@@ -215,9 +215,9 @@ void cMoveJob::startMove (cModel& model)
 
 	path.pop_front();
 
-	vehicle->setMovementOffset (cPosition(0, 0));
+	vehicle->setMovementOffset (cPosition (0, 0));
 	changeVehicleOffset (-64);
-	Log.write(" cMoveJob: Vehicle (ID: " + std::to_string (vehicle->getId()) + ") moved to " + toString (vehicle->getPosition()) + " @" + std::to_string(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" cMoveJob: Vehicle (ID: " + std::to_string (vehicle->getId()) + ") moved to " + toString (vehicle->getPosition()) + " @" + std::to_string (model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 }
 
 //------------------------------------------------------------------------------

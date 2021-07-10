@@ -25,46 +25,46 @@
 
 
 //------------------------------------------------------------------------------
-cActionRepairReload::cActionRepairReload(const cUnit& sourceUnit, const cUnit& destUnit, eSupplyType supplyType) :
-	sourceUnitId(sourceUnit.getId()),
-	destUnitId(destUnit.getId()),
-	supplyType(supplyType)
+cActionRepairReload::cActionRepairReload (const cUnit& sourceUnit, const cUnit& destUnit, eSupplyType supplyType) :
+	sourceUnitId (sourceUnit.getId()),
+	destUnitId (destUnit.getId()),
+	supplyType (supplyType)
 {}
 
 //------------------------------------------------------------------------------
-cActionRepairReload::cActionRepairReload(cBinaryArchiveOut& archive)
+cActionRepairReload::cActionRepairReload (cBinaryArchiveOut& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionRepairReload::execute(cModel& model) const
+void cActionRepairReload::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	auto sourceUnit = model.getUnitFromID(sourceUnitId);
+	auto sourceUnit = model.getUnitFromID (sourceUnitId);
 	if (sourceUnit == nullptr) return;
 
-	auto destUnit = model.getUnitFromID(destUnitId);
+	auto destUnit = model.getUnitFromID (destUnitId);
 	if (destUnit == nullptr) return;
 
-	if (!sourceUnit->canSupply(destUnit, supplyType)) return;
+	if (!sourceUnit->canSupply (destUnit, supplyType)) return;
 
 	if (supplyType == eSupplyType::REARM)
 	{
 		// reduce cargo
 		if (sourceUnit->isAVehicle())
 		{
-			sourceUnit->setStoredResources(sourceUnit->getStoredResources() - 1);
+			sourceUnit->setStoredResources (sourceUnit->getStoredResources() - 1);
 		}
 		else
 		{
-			auto sourceBuilding = static_cast<cBuilding*>(sourceUnit);
-			sourceBuilding->subBase->addMetal(-1);
+			auto sourceBuilding = static_cast<cBuilding*> (sourceUnit);
+			sourceBuilding->subBase->addMetal (-1);
 		}
 
 		// refill ammo
-		destUnit->data.setAmmo(destUnit->data.getAmmoMax());
+		destUnit->data.setAmmo (destUnit->data.getAmmoMax());
 	}
 	else if (supplyType == eSupplyType::REPAIR)
 	{
@@ -75,11 +75,11 @@ void cActionRepairReload::execute(cModel& model) const
 		}
 		else
 		{
-			availableMetal = static_cast<cBuilding*>(sourceUnit)->subBase->getResourcesStored().metal;
+			availableMetal = static_cast<cBuilding*> (sourceUnit)->subBase->getResourcesStored().metal;
 		}
 		int newHitpoints = destUnit->data.getHitpoints();
 
-		int hitpointsPerMetal = Round(((float)destUnit->data.getHitpointsMax() / destUnit->data.getBuildCost()) * 4);
+		int hitpointsPerMetal = Round (((float)destUnit->data.getHitpointsMax() / destUnit->data.getBuildCost()) * 4);
 		while (availableMetal > 0 && newHitpoints < destUnit->data.getHitpointsMax())
 		{
 			newHitpoints += hitpointsPerMetal;
@@ -88,22 +88,22 @@ void cActionRepairReload::execute(cModel& model) const
 
 		if (sourceUnit->isAVehicle())
 		{
-			sourceUnit->setStoredResources(availableMetal);
+			sourceUnit->setStoredResources (availableMetal);
 		}
 		else
 		{
-			auto subBase = static_cast<cBuilding*>(sourceUnit)->subBase;
-			subBase->addMetal(availableMetal - subBase->getResourcesStored().metal);
+			auto subBase = static_cast<cBuilding*> (sourceUnit)->subBase;
+			subBase->addMetal (availableMetal - subBase->getResourcesStored().metal);
 		}
-		destUnit->data.setHitpoints(std::min(newHitpoints, destUnit->data.getHitpointsMax()));
+		destUnit->data.setHitpoints (std::min (newHitpoints, destUnit->data.getHitpointsMax()));
 	}
 
 	if (supplyType == eSupplyType::REARM)
 	{
-		model.unitSuppliedWithAmmo(*destUnit);
+		model.unitSuppliedWithAmmo (*destUnit);
 	}
 	else if (supplyType == eSupplyType::REPAIR)
 	{
-		model.unitRepaired(*destUnit);
+		model.unitRepaired (*destUnit);
 	}
 }

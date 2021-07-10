@@ -20,6 +20,6 @@
 #ifndef dedicaterserver_dedicaterservermainH
 #define dedicaterserver_dedicaterservermainH
 
-int dedicaterservermain(int argc, char** argv);
+int dedicaterservermain (int argc, char** argv);
 
 #endif

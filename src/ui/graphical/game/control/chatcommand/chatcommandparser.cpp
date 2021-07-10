@@ -23,27 +23,27 @@
 #include "ui/graphical/game/control/chatcommand/chatcommandparser.h"
 
  //------------------------------------------------------------------------------
-void skipWhiteSpace(const std::string& command, size_t& position)
+void skipWhiteSpace (const std::string& command, size_t& position)
 {
-	while(position < command.size() && std::isspace(command[position]))
+	while (position < command.size() && std::isspace (command[position]))
 	{
 		++position;
 	}
 }
 
 //------------------------------------------------------------------------------
-cChatCommandParser<>::cChatCommandParser(cChatCommand command_) :
-	command(std::move(command_))
+cChatCommandParser<>::cChatCommandParser (cChatCommand command_) :
+	command (std::move (command_))
 {}
 
 //------------------------------------------------------------------------------
-size_t cChatCommandParser<>::parse(const std::string& command, size_t position) const
+size_t cChatCommandParser<>::parse (const std::string& command, size_t position) const
 {
 	return position;
 }
 
 //------------------------------------------------------------------------------
-void cChatCommandParser<>::printArguments(std::ostream& result) const
+void cChatCommandParser<>::printArguments (std::ostream& result) const
 {}
 
 //------------------------------------------------------------------------------

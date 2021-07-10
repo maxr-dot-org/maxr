@@ -41,7 +41,7 @@ cKeyboard& cKeyboard::getInstance()
 }
 
 //------------------------------------------------------------------------------
-void cKeyboard::updateModifiersFromKeyPress(const cKeyboardEvent& event)
+void cKeyboard::updateModifiersFromKeyPress (const cKeyboardEvent& event)
 {
 	if (event.getType() != cKeyboardEvent::Down) return;
 
@@ -69,7 +69,7 @@ void cKeyboard::updateModifiersFromKeyPress(const cKeyboardEvent& event)
 		currentModifiers |= eKeyModifierType::Caps;
 	else if (key == SDLK_MODE)
 		currentModifiers |= eKeyModifierType::Mode;
-	
+
 }
 
 //------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ void cKeyboard::handleKeyboardEvent (const cKeyboardEvent& event)
 
 	//set modifier in case the key event was a modifier key itself
 	//this is needed when a mouse object will querry the current modifier state later
-	updateModifiersFromKeyPress(event);
+	updateModifiersFromKeyPress (event);
 
 	if (currentModifiers != oldModifiers)
 		modifierChanged();

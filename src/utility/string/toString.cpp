@@ -20,7 +20,7 @@
 #include "toString.h"
 
 //--------------------------------------------------------------------------
-std::string getHexValue(unsigned char byte)
+std::string getHexValue (unsigned char byte)
 {
 	std::string str = "";
 	const char hexChars[] = "0123456789ABCDEF";
@@ -32,7 +32,7 @@ std::string getHexValue(unsigned char byte)
 	return str;
 }
 //--------------------------------------------------------------------------
-unsigned char getByteValue(const std::string& str, int index)
+unsigned char getByteValue (const std::string& str, int index)
 {
 	unsigned char first = str[index + 0] - '0';
 	unsigned char second = str[index + 1] - '0';

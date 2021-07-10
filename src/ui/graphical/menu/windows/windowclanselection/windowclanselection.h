@@ -34,11 +34,11 @@ class cClanData;
 class cWindowClanSelection : public cWindow
 {
 public:
-	cWindowClanSelection(std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cClanData> clanData);
+	cWindowClanSelection (std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cClanData> clanData);
 	~cWindowClanSelection();
 
-	cSignal<void ()> done;
-	cSignal<void ()> canceled;
+	cSignal<void()> done;
+	cSignal<void()> canceled;
 
 	unsigned int getSelectedClan() const;
 private:

@@ -42,7 +42,7 @@ class cUnitsData;
 struct sTerrain;
 struct sLandingUnit;
 
-template<typename, typename> class cChatBox;
+template <typename, typename> class cChatBox;
 
 class cWindowLandingPositionSelection : public cWindow
 {

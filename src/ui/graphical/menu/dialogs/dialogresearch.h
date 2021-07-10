@@ -39,7 +39,7 @@ public:
 
 	const std::array<int, cResearch::kNrResearchAreas>& getResearchSettings() const;
 
-	cSignal<void ()> done;
+	cSignal<void()> done;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

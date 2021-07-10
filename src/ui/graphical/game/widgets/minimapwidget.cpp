@@ -56,10 +56,10 @@ void cMiniMapWidget::setMapView (std::shared_ptr<const cMapView> mapView_)
 	dynamicMapSignalConnectionManager.disconnectAll();
 	if (mapView != nullptr)
 	{
-		dynamicMapSignalConnectionManager.connect(mapView->unitAppeared, [&](const cUnit&) { surfaceOutdated = true; });
-		dynamicMapSignalConnectionManager.connect(mapView->unitDissappeared, [&](const cUnit&) { surfaceOutdated = true; });
-		dynamicMapSignalConnectionManager.connect(mapView->unitMoved, [&](const cUnit&, const cPosition&) { surfaceOutdated = true; });
-		dynamicMapSignalConnectionManager.connect(mapView->scanAreaChanged, [&]() { surfaceOutdated = true; });
+		dynamicMapSignalConnectionManager.connect (mapView->unitAppeared, [&](const cUnit&) { surfaceOutdated = true; });
+		dynamicMapSignalConnectionManager.connect (mapView->unitDissappeared, [&](const cUnit&) { surfaceOutdated = true; });
+		dynamicMapSignalConnectionManager.connect (mapView->unitMoved, [&](const cUnit&, const cPosition&) { surfaceOutdated = true; });
+		dynamicMapSignalConnectionManager.connect (mapView->scanAreaChanged, [&]() { surfaceOutdated = true; });
 		//TODO: update on ownerChanged?
 	}
 

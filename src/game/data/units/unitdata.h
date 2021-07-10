@@ -150,7 +150,7 @@ public:
 	void setDefaultName (std::string name_){ name = name_; }
 	void setDefaultDescription (std::string text) { description = text; }
 
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 public:
 	// Main
 	sID ID;
@@ -204,7 +204,7 @@ public:
 	sStaticVehicleData vehicleData;
 	sStaticBuildingData buildingData;
 
-	template<typename T>
+	template <typename T>
 	void serialize (T& archive)
 	{
 		archive & NVP (ID);
@@ -255,57 +255,57 @@ class cDynamicUnitData
 {
 public:
 	cDynamicUnitData();
-	cDynamicUnitData(const cDynamicUnitData& other);
-	cDynamicUnitData& operator= (const cDynamicUnitData& other);
+	cDynamicUnitData (const cDynamicUnitData&);
+	cDynamicUnitData& operator= (const cDynamicUnitData&);
 
 	void setMaximumCurrentValues();
 
 	sID getId() const;
-	void setId(const sID& value);
+	void setId (const sID& value);
 
 	int getBuildCost() const;
-	void setBuildCost(int value);
+	void setBuildCost (int value);
 
 	int getVersion() const;
-	void setVersion(int value);
+	void setVersion (int value);
 
 	int getSpeed() const;
-	void setSpeed(int value);
+	void setSpeed (int value);
 
 	int getSpeedMax() const;
-	void setSpeedMax(int value);
+	void setSpeedMax (int value);
 
 	int getHitpoints() const;
-	void setHitpoints(int value);
+	void setHitpoints (int value);
 
 	int getHitpointsMax() const;
-	void setHitpointsMax(int value);
+	void setHitpointsMax (int value);
 
 	int getScan() const;
-	void setScan(int value);
+	void setScan (int value);
 
 	int getRange() const;
-	void setRange(int value);
+	void setRange (int value);
 
 	int getShots() const;
-	void setShots(int value);
+	void setShots (int value);
 
 	int getShotsMax() const;
-	void setShotsMax(int value);
+	void setShotsMax (int value);
 
 	int getAmmo() const;
-	void setAmmo(int value);
+	void setAmmo (int value);
 
 	int getAmmoMax() const;
-	void setAmmoMax(int value);
+	void setAmmoMax (int value);
 
 	int getDamage() const;
-	void setDamage(int value);
+	void setDamage (int value);
 
 	int getArmor() const;
-	void setArmor(int value);
+	void setArmor (int value);
 
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 
 	mutable cSignal<void()> buildCostsChanged;
 	mutable cSignal<void()> versionChanged;
@@ -323,23 +323,23 @@ public:
 	mutable cSignal<void()> armorChanged;
 
 	template <typename T>
-	void serialize(T& archive)
+	void serialize (T& archive)
 	{
-		archive & NVP(id);
-		archive & NVP(buildCosts);
-		archive & NVP(version);
-		archive & NVP(speedCur);
-		archive & NVP(speedMax);
-		archive & NVP(hitpointsCur);
-		archive & NVP(hitpointsMax);
-		archive & NVP(shotsCur);
-		archive & NVP(shotsMax);
-		archive & NVP(ammoCur);
-		archive & NVP(ammoMax);
-		archive & NVP(range);
-		archive & NVP(scan);
-		archive & NVP(damage);
-		archive & NVP(armor);
+		archive & NVP (id);
+		archive & NVP (buildCosts);
+		archive & NVP (version);
+		archive & NVP (speedCur);
+		archive & NVP (speedMax);
+		archive & NVP (hitpointsCur);
+		archive & NVP (hitpointsMax);
+		archive & NVP (shotsCur);
+		archive & NVP (shotsMax);
+		archive & NVP (ammoCur);
+		archive & NVP (ammoMax);
+		archive & NVP (range);
+		archive & NVP (scan);
+		archive & NVP (damage);
+		archive & NVP (armor);
 
 		if (!archive.isWriter)
 			crcValid = false;
@@ -379,31 +379,31 @@ public:
 	cUnitsData();
 
 	void initializeIDData();
-	void initializeClanUnitData(const cClanData& clanData);
+	void initializeClanUnitData (const cClanData& clanData);
 
-	void addData (const cDynamicUnitData& data) { crcCache = std::nullopt; dynamicUnitData.push_back(data); }
-	void addData (const cStaticUnitData& data)  { crcCache = std::nullopt; staticUnitData.push_back(data); }
+	void addData (const cDynamicUnitData& data) { crcCache = std::nullopt; dynamicUnitData.push_back (data); }
+	void addData (const cStaticUnitData& data)  { crcCache = std::nullopt; staticUnitData.push_back (data); }
 
-	bool isValidId(const sID& id) const;
+	bool isValidId (const sID& id) const;
 	size_t getNrOfClans() const;
 
 	// clan = -1: without clans
-	const cDynamicUnitData& getDynamicUnitData(const sID& id, int clan = -1) const;
-	const cStaticUnitData& getStaticUnitData(const sID& id) const;
+	const cDynamicUnitData& getDynamicUnitData (const sID& id, int clan = -1) const;
+	const cStaticUnitData& getStaticUnitData (const sID& id) const;
 
 	// clan = -1: without clans
-	const std::vector<cDynamicUnitData>& getDynamicUnitsData(int clan = -1) const;
+	const std::vector<cDynamicUnitData>& getDynamicUnitsData (int clan = -1) const;
 	const std::vector<cStaticUnitData>& getStaticUnitsData() const;
 
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 
-	const cStaticUnitData& getConstructorData() const { return getStaticUnitData(constructorID); }
-	const cStaticUnitData& getEngineerData() const { return getStaticUnitData(engineerID); }
-	const cStaticUnitData& getSurveyorData() const { return getStaticUnitData(surveyorID); }
-	const cStaticUnitData& getMineData() const { return getStaticUnitData(specialIDMine); }
-	const cStaticUnitData& getSmallGeneratorData() const { return getStaticUnitData(specialIDSmallGen); }
-	const cStaticUnitData& getLandMineData() const { return getStaticUnitData(specialIDLandMine); }
-	const cStaticUnitData& getSeaMineData() const { return getStaticUnitData(specialIDSeaMine); }
+	const cStaticUnitData& getConstructorData() const { return getStaticUnitData (constructorID); }
+	const cStaticUnitData& getEngineerData() const { return getStaticUnitData (engineerID); }
+	const cStaticUnitData& getSurveyorData() const { return getStaticUnitData (surveyorID); }
+	const cStaticUnitData& getMineData() const { return getStaticUnitData (specialIDMine); }
+	const cStaticUnitData& getSmallGeneratorData() const { return getStaticUnitData (specialIDSmallGen); }
+	const cStaticUnitData& getLandMineData() const { return getStaticUnitData (specialIDLandMine); }
+	const cStaticUnitData& getSeaMineData() const { return getStaticUnitData (specialIDSeaMine); }
 	const cStaticUnitData& getRubbleSmallData() const { return rubbleSmall; }
 	const cStaticUnitData& getRubbleBigData() const { return rubbleBig; }
 
@@ -435,22 +435,22 @@ public:
 			crcCache = std::nullopt;
 		}
 
-		archive & NVP(constructorID);
-		archive & NVP(engineerID);
-		archive & NVP(surveyorID);
-		archive & NVP(specialIDLandMine);
-		archive & NVP(specialIDSeaMine);
-		archive & NVP(specialIDMine);
-		archive & NVP(specialIDSmallGen);
-		archive & NVP(specialIDConnector);
-		archive & NVP(specialIDSmallBeton);
-		archive & NVP(staticUnitData);
-		archive & NVP(dynamicUnitData);
-		archive & NVP(clanDynamicUnitData);
+		archive & NVP (constructorID);
+		archive & NVP (engineerID);
+		archive & NVP (surveyorID);
+		archive & NVP (specialIDLandMine);
+		archive & NVP (specialIDSeaMine);
+		archive & NVP (specialIDMine);
+		archive & NVP (specialIDSmallGen);
+		archive & NVP (specialIDConnector);
+		archive & NVP (specialIDSmallBeton);
+		archive & NVP (staticUnitData);
+		archive & NVP (dynamicUnitData);
+		archive & NVP (clanDynamicUnitData);
 	}
 
 private:
-	int getUnitIndexBy(sID id) const;
+	int getUnitIndexBy (sID id) const;
 
 	sID constructorID;
 	sID engineerID;

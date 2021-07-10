@@ -66,13 +66,13 @@ public:
 	void setMap (std::shared_ptr<cStaticMap>);
 	void setPlayers (const std::vector<cPlayerBasicData>&, size_t activePlayerNr);
 
-	unsigned int getNetMessageQueueSize() const { return static_cast<unsigned int>(eventQueue.safe_size()); };
+	unsigned int getNetMessageQueueSize() const { return static_cast<unsigned int> (eventQueue.safe_size()); };
 	void pushMessage (std::unique_ptr<cNetMessage>) override;
 
 	//
 	void enableFreezeMode (eFreezeMode);
 	void disableFreezeMode (eFreezeMode);
-	const cFreezeModes& getFreezeModes () const;
+	const cFreezeModes& getFreezeModes() const;
 	const std::map<int, ePlayerConnectionState>& getPlayerConnectionStates() const;
 	//
 

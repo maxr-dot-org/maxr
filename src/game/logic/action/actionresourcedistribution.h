@@ -29,16 +29,16 @@ class cUnit;
 class cActionResourceDistribution : public cActionT<cAction::eActiontype::ACTION_RESOURCE_DISTRIBUTION>
 {
 public:
-	cActionResourceDistribution(const cBuilding& building,	const sMiningResource&);
-	cActionResourceDistribution(cBinaryArchiveOut& archive);
+	cActionResourceDistribution (const cBuilding& building,	const sMiningResource&);
+	cActionResourceDistribution (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
 
-	void execute(cModel& model) const override;
+	void execute (cModel& model) const override;
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & buildingId;
 		prod.serializeThis (archive);

@@ -27,7 +27,7 @@ namespace std
 	inline namespace compatibility_cpp17
 	{
 		template <typename T>
-		const T& clamp(const T& value, const T& min, const T& max)
+		const T& clamp (const T& value, const T& min, const T& max)
 		{
 			return std::max (min, std::min (value, max));
 		}

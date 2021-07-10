@@ -283,39 +283,39 @@ bool cUnitSelection::isSelected (const cUnit& unit) const
 //------------------------------------------------------------------------------
 bool cUnitSelection::canSelect (const cUnit* unit) const
 {
-	return unit && !(unit->isABuilding() && static_cast<const cBuilding*>(unit)->isRubble());
+	return unit && !(unit->isABuilding() && static_cast<const cBuilding*> (unit)->isRubble());
 }
 
 //------------------------------------------------------------------------------
-bool cUnitSelection::selectNextUnit(const cPlayer& player, const std::vector<unsigned int>& doneList)
+bool cUnitSelection::selectNextUnit (const cPlayer& player, const std::vector<unsigned int>& doneList)
 {
-	const auto unit = getNextUnit(player, doneList, getSelectedUnit());
+	const auto unit = getNextUnit (player, doneList, getSelectedUnit());
 	if (unit == nullptr) return false;
 
-	return selectUnit(*unit);
+	return selectUnit (*unit);
 }
 
 //------------------------------------------------------------------------------
-bool cUnitSelection::selectPrevUnit(const cPlayer& player, const std::vector<unsigned int>& doneList)
+bool cUnitSelection::selectPrevUnit (const cPlayer& player, const std::vector<unsigned int>& doneList)
 {
-	const auto unit = getPrevUnit(player, doneList, getSelectedUnit());
+	const auto unit = getPrevUnit (player, doneList, getSelectedUnit());
 	if (unit == nullptr) return false;
 
-	return selectUnit(*unit);
+	return selectUnit (*unit);
 }
 
 //------------------------------------------------------------------------------
-cVehicle* cUnitSelection::getNextVehicle(const cPlayer& player, const std::vector<unsigned int>& doneList, const cVehicle* start) const
+cVehicle* cUnitSelection::getNextVehicle (const cPlayer& player, const std::vector<unsigned int>& doneList, const cVehicle* start) const
 {
 	const auto& vehicles = player.getVehicles();
 	if (vehicles.empty()) return nullptr;
 
-	auto it = (start == nullptr) ? vehicles.begin() : vehicles.find(*start);
+	auto it = (start == nullptr) ? vehicles.begin() : vehicles.find (*start);
 	if (start != nullptr && it != vehicles.end()) ++it;
 	for (; it != vehicles.end(); ++it)
 	{
 		const cVehicle& v = **it;
-		if ( !Contains(doneList, v.getId()) &&
+		if (!Contains (doneList, v.getId()) &&
 			(!v.isUnitBuildingABuilding() || v.getBuildTurns() == 0) &&
 			!v.isUnitClearing() &&
 			!v.isSentryActive() &&
@@ -329,17 +329,17 @@ cVehicle* cUnitSelection::getNextVehicle(const cPlayer& player, const std::vecto
 }
 
 //------------------------------------------------------------------------------
-cBuilding* cUnitSelection::getNextBuilding(const cPlayer& player, const std::vector<unsigned int>& doneList, const cBuilding* start) const
+cBuilding* cUnitSelection::getNextBuilding (const cPlayer& player, const std::vector<unsigned int>& doneList, const cBuilding* start) const
 {
 	const auto& buildings = player.getBuildings();
 	if (buildings.empty()) return nullptr;
 
-	auto it = (start == nullptr) ? buildings.begin() : buildings.find(*start);
+	auto it = (start == nullptr) ? buildings.begin() : buildings.find (*start);
 	if (start != nullptr && it != buildings.end()) ++it;
 	for (; it != buildings.end(); ++it)
 	{
 		const cBuilding& b = **it;
-		if (!Contains(doneList, b.getId()) &&
+		if (!Contains (doneList, b.getId()) &&
 			!b.isUnitWorking() &&
 			!b.isSentryActive() &&
 			(!b.getStaticUnitData().canBuild.empty() || b.data.getShots()
@@ -353,12 +353,12 @@ cBuilding* cUnitSelection::getNextBuilding(const cPlayer& player, const std::vec
 }
 
 //------------------------------------------------------------------------------
-cBuilding* cUnitSelection::getNextMiningStation(const cPlayer& player, const cBuilding* start) const
+cBuilding* cUnitSelection::getNextMiningStation (const cPlayer& player, const cBuilding* start) const
 {
 	const auto& buildings = player.getBuildings();
 	if (buildings.empty()) return nullptr;
 
-	auto it = (start == nullptr) ? buildings.begin() : buildings.find(*start);
+	auto it = (start == nullptr) ? buildings.begin() : buildings.find (*start);
 	if (start != nullptr && it != buildings.end()) ++it;
 	for (; it != buildings.end(); ++it)
 	{
@@ -371,53 +371,53 @@ cBuilding* cUnitSelection::getNextMiningStation(const cPlayer& player, const cBu
 }
 
 //------------------------------------------------------------------------------
-cUnit* cUnitSelection::getNextUnit(const cPlayer& player, const std::vector<unsigned int>& doneList, cUnit* start) const
+cUnit* cUnitSelection::getNextUnit (const cPlayer& player, const std::vector<unsigned int>& doneList, cUnit* start) const
 {
 	if (start == nullptr || !start->getOwner() || start->getOwner()->getId() != player.getId())
 	{
-		cVehicle* nextVehicle = getNextVehicle(player, doneList, nullptr);
+		cVehicle* nextVehicle = getNextVehicle (player, doneList, nullptr);
 		if (nextVehicle) return nextVehicle;
-		cBuilding* nextBuilding = getNextBuilding(player, doneList, nullptr);
+		cBuilding* nextBuilding = getNextBuilding (player, doneList, nullptr);
 		if (nextBuilding) return nextBuilding;
 	}
 	else if (start->isAVehicle())
 	{
-		cVehicle* nextVehicle = getNextVehicle(player, doneList, static_cast<cVehicle*> (start));
+		cVehicle* nextVehicle = getNextVehicle (player, doneList, static_cast<cVehicle*> (start));
 		if (nextVehicle) return nextVehicle;
-		cBuilding* nextBuilding = getNextBuilding(player, doneList, nullptr);
+		cBuilding* nextBuilding = getNextBuilding (player, doneList, nullptr);
 		if (nextBuilding) return nextBuilding;
-		nextVehicle = getNextVehicle(player, doneList, nullptr);
+		nextVehicle = getNextVehicle (player, doneList, nullptr);
 		if (nextVehicle) return nextVehicle;
 	}
 	else
 	{
-		assert(start->isABuilding());
+		assert (start->isABuilding());
 		cBuilding* building = static_cast<cBuilding*> (start);
-		cBuilding* nextBuilding = getNextBuilding(player, doneList, building);
+		cBuilding* nextBuilding = getNextBuilding (player, doneList, building);
 		if (nextBuilding) return nextBuilding;
-		cVehicle* nextVehicle = getNextVehicle(player, doneList, nullptr);
+		cVehicle* nextVehicle = getNextVehicle (player, doneList, nullptr);
 		if (nextVehicle) return nextVehicle;
-		nextBuilding = getNextBuilding(player, doneList, nullptr);
+		nextBuilding = getNextBuilding (player, doneList, nullptr);
 		if (nextBuilding) return nextBuilding;
 	}
 	// finally, return the more recent built Mining station.
 	// since list order is by increasing age, take the first in list.
-	return getNextMiningStation(player, nullptr);
+	return getNextMiningStation (player, nullptr);
 }
 
 //------------------------------------------------------------------------------
-cVehicle* cUnitSelection::getPrevVehicle(const cPlayer& player, const std::vector<unsigned int>& doneList, const cVehicle* start) const
+cVehicle* cUnitSelection::getPrevVehicle (const cPlayer& player, const std::vector<unsigned int>& doneList, const cVehicle* start) const
 {
 	const auto& vehicles = player.getVehicles();
 	if (vehicles.empty()) return nullptr;
 
-	auto it = (start == nullptr) ? vehicles.end() - 1 : vehicles.find(*start);
+	auto it = (start == nullptr) ? vehicles.end() - 1 : vehicles.find (*start);
 	if (start != nullptr && it == vehicles.begin()) return nullptr;
 	if (start != nullptr && it != vehicles.begin() && it != vehicles.end()) --it;
 	for (; it != vehicles.end(); --it)
 	{
 		const cVehicle& v = **it;
-		if (!Contains(doneList, v.getId()) &&
+		if (!Contains (doneList, v.getId()) &&
 			(!v.isUnitBuildingABuilding() || v.getBuildTurns() == 0) &&
 			!v.isUnitClearing() &&
 			!v.isSentryActive() &&
@@ -432,18 +432,18 @@ cVehicle* cUnitSelection::getPrevVehicle(const cPlayer& player, const std::vecto
 }
 
 //------------------------------------------------------------------------------
-cBuilding* cUnitSelection::getPrevBuilding(const cPlayer& player, const std::vector<unsigned int>& doneList, const cBuilding* start) const
+cBuilding* cUnitSelection::getPrevBuilding (const cPlayer& player, const std::vector<unsigned int>& doneList, const cBuilding* start) const
 {
 	const auto& buildings = player.getBuildings();
 	if (buildings.empty()) return nullptr;
 
-	auto it = (start == nullptr) ? buildings.end() - 1 : buildings.find(*start);
+	auto it = (start == nullptr) ? buildings.end() - 1 : buildings.find (*start);
 	if (start != nullptr && it == buildings.begin()) return nullptr;
 	if (start != nullptr && it != buildings.begin() && it != buildings.end()) --it;
 	for (; it != buildings.end(); --it)
 	{
 		const cBuilding& b = **it;
-		if (!Contains(doneList, b.getId()) &&
+		if (!Contains (doneList, b.getId()) &&
 			!b.isUnitWorking() &&
 			!b.isSentryActive() &&
 			(!b.getStaticUnitData().canBuild.empty() || b.data.getShots()
@@ -458,12 +458,12 @@ cBuilding* cUnitSelection::getPrevBuilding(const cPlayer& player, const std::vec
 }
 
 //------------------------------------------------------------------------------
-cBuilding* cUnitSelection::getPrevMiningStation(const cPlayer& player, const cBuilding* start) const
+cBuilding* cUnitSelection::getPrevMiningStation (const cPlayer& player, const cBuilding* start) const
 {
 	const auto& buildings = player.getBuildings();
 	if (buildings.empty()) return nullptr;
 
-	auto it = (start == nullptr) ? buildings.end() - 1 : buildings.find(*start);
+	auto it = (start == nullptr) ? buildings.end() - 1 : buildings.find (*start);
 	for (; it != buildings.end(); --it)
 	{
 		if ((*it)->getStaticData().canMineMaxRes > 0)
@@ -476,36 +476,36 @@ cBuilding* cUnitSelection::getPrevMiningStation(const cPlayer& player, const cBu
 }
 
 //------------------------------------------------------------------------------
-cUnit* cUnitSelection::getPrevUnit(const cPlayer& player, const std::vector<unsigned int>& doneList, cUnit* start) const
+cUnit* cUnitSelection::getPrevUnit (const cPlayer& player, const std::vector<unsigned int>& doneList, cUnit* start) const
 {
 	if (start == nullptr || !start->getOwner() || start->getOwner()->getId() != player.getId())
 	{
-		cVehicle* prevVehicle = getPrevVehicle(player, doneList, nullptr);
+		cVehicle* prevVehicle = getPrevVehicle (player, doneList, nullptr);
 		if (prevVehicle) return prevVehicle;
-		cBuilding* prevBuilding = getPrevBuilding(player, doneList, nullptr);
+		cBuilding* prevBuilding = getPrevBuilding (player, doneList, nullptr);
 		if (prevBuilding) return prevBuilding;
 	}
 	else if (start->isAVehicle())
 	{
-		cVehicle* prevVehicle = getPrevVehicle(player, doneList, static_cast<cVehicle*> (start));
+		cVehicle* prevVehicle = getPrevVehicle (player, doneList, static_cast<cVehicle*> (start));
 		if (prevVehicle) return prevVehicle;
-		cBuilding* prevBuilding = getPrevBuilding(player, doneList, nullptr);
+		cBuilding* prevBuilding = getPrevBuilding (player, doneList, nullptr);
 		if (prevBuilding) return prevBuilding;
-		prevVehicle = getPrevVehicle(player, doneList, nullptr);
+		prevVehicle = getPrevVehicle (player, doneList, nullptr);
 		if (prevVehicle) return prevVehicle;
 	}
 	else
 	{
-		assert(start->isABuilding());
+		assert (start->isABuilding());
 		cBuilding* building = static_cast<cBuilding*> (start);
-		cBuilding* prevBuilding = getPrevBuilding(player, doneList, building);
+		cBuilding* prevBuilding = getPrevBuilding (player, doneList, building);
 		if (prevBuilding) return prevBuilding;
-		cVehicle* prevVehicle = getPrevVehicle(player, doneList, nullptr);
+		cVehicle* prevVehicle = getPrevVehicle (player, doneList, nullptr);
 		if (prevVehicle) return prevVehicle;
-		prevBuilding = getPrevBuilding(player, doneList, nullptr);
+		prevBuilding = getPrevBuilding (player, doneList, nullptr);
 		if (prevBuilding) return prevBuilding;
 	}
 	// finally, return the more recent built Mining station.
 	// since list order is by increasing age, take the first in list.
-	return getNextMiningStation(player, nullptr);
+	return getNextMiningStation (player, nullptr);
 }

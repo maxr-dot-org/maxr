@@ -45,7 +45,7 @@
  * @tparam Compare The less-compare function to use for the sorting.
  * @tparam Allocator The allocator to use.
  */
-template<typename Key, class Compare = std::less<Key>, class Allocator = std::allocator<Key>>
+template <typename Key, class Compare = std::less<Key>, class Allocator = std::allocator<Key>>
 class cFlatSet
 {
 	typedef std::vector<Key, Allocator> DataType;
@@ -74,7 +74,7 @@ public:
 		compare (comp),
 		data (alloc)
 	{}
-	template<typename InputIterator>
+	template <typename InputIterator>
 	cFlatSet (InputIterator first, InputIterator last, const Compare& comp = Compare(), const allocator_type& alloc = allocator_type()) :
 		compare (comp),
 		data (first, last, alloc)
@@ -91,7 +91,7 @@ public:
 	{}
 	//cFlatSet (const cFlatSet& other, const allocator_type& alloc);
 	//cFlatSet (cFlatSet&& other, const allocator_type& alloc);
-	//cFlatSet (std::initializer_list<value_type> init, const Compare& comp = Compare (), const allocator_type& alloc = allocator_type ());
+	//cFlatSet (std::initializer_list<value_type> init, const Compare& comp = Compare(), const allocator_type& alloc = allocator_type());
 
 	cFlatSet& operator= (const cFlatSet& other)
 	{
@@ -171,7 +171,7 @@ public:
 		}
 		return insert (std::move (value)).first;
 	}
-	template<typename InputIterator>
+	template <typename InputIterator>
 	void insert (InputIterator first, InputIterator last)
 	{
 		for (; first != last; ++first) insert (*first);
@@ -235,7 +235,7 @@ public:
 		}
 		return i;
 	}
-	template<typename K>
+	template <typename K>
 	iterator find (const K& k)
 	{
 		auto i = lower_bound (k);
@@ -245,7 +245,7 @@ public:
 		}
 		return i;
 	}
-	template<typename K>
+	template <typename K>
 	const_iterator find (const K& k) const
 	{
 		auto i = lower_bound (k);
@@ -260,7 +260,7 @@ public:
 	{
 		return find (k) != end() ? 1 : 0;
 	}
-	template<typename K>
+	template <typename K>
 	size_type count (const K& k) const
 	{
 		return find (k) != end() ? 1 : 0;
@@ -274,12 +274,12 @@ public:
 	{
 		return std::lower_bound (begin(), end(), k, compare);
 	}
-	template<typename K>
+	template <typename K>
 	iterator lower_bound (const K& k)
 	{
 		return std::lower_bound (begin(), end(), k, compare);
 	}
-	template<typename K>
+	template <typename K>
 	const_iterator lower_bound (const K& k) const
 	{
 		return std::lower_bound (begin(), end(), k, compare);
@@ -293,12 +293,12 @@ public:
 	{
 		return std::upper_bound (begin(), end(), k, compare);
 	}
-	template<typename K>
+	template <typename K>
 	iterator upper_bound (const K& k)
 	{
 		return std::upper_bound (begin(), end(), k, compare);
 	}
-	template<typename K>
+	template <typename K>
 	const_iterator upper_bound (const K& k) const
 	{
 		return std::upper_bound (begin(), end(), k, compare);

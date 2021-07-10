@@ -58,10 +58,10 @@ public:
 	bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key) override;
 	void handleTextEntered (cApplication& application, cKeyboard& keyboard, const char* text) override;
 
-	cSignal<void ()> clicked;
-	cSignal<void ()> textSet;
-	cSignal<void ()> escapePressed;
-	cSignal<void ()> returnPressed;
+	cSignal<void()> clicked;
+	cSignal<void()> textSet;
+	cSignal<void()> escapePressed;
+	cSignal<void()> returnPressed;
 	cSignal<void (eValidatorState)> editingFinished;
 protected:
 

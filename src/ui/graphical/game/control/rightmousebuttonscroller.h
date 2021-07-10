@@ -40,10 +40,10 @@ public:
 
 	mutable cSignal<void (const cPosition&)> scroll;
 
-	mutable cSignal<void ()> mouseFocusReleased;
+	mutable cSignal<void()> mouseFocusReleased;
 
-	mutable cSignal<void ()> startedScrolling;
-	mutable cSignal<void ()> stoppedScrolling;
+	mutable cSignal<void()> startedScrolling;
+	mutable cSignal<void()> stoppedScrolling;
 
 	bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) override;
 	bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) override;

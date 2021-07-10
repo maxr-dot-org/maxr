@@ -98,7 +98,7 @@ public:
 		R.y -= P.y;
 		return R;
 	}
-	T_2<Type> operator - () const
+	T_2<Type> operator -() const
 	{
 		T_2<Type>
 		R;
@@ -122,14 +122,6 @@ public:
 		R (Type (x * f), Type (y * f));
 		return R;
 	}
-	/*
-		T_2 operator * (const T_2<Type> &P2)const{
-			T_2
-				R;
-			R(Type(x * P2.x),Type(y * P2.y));
-			return R;
-			}
-	*/
 	T_2<Type> operator / (Type f)
 	{
 		Type f_ = Type (1 / f);
@@ -138,13 +130,6 @@ public:
 		R (Type (x * f_), Type (y * f_));
 		return R;
 	}
-	/*
-		T_2 operator / (const T_2<Type> &P2){
-			T_2
-				R;
-			R(Type(x / P2.x),Type(y / P2.y));
-			return R;
-		}*/
 	Type operator * (const T_2<Type>& P) const
 	{
 		return Type (x * P.x + y * P.y);
@@ -225,12 +210,6 @@ public:
 		R (Type (-y), Type (x));
 		return R;
 	}
-	/*	T_2<Type> GetOrthogonal()const{
-			T_2<Type>
-				R;
-			R(Type(-y),Type(x));
-			return R;
-		}*/
 	void setOrthogonal (const T_2<Type>& A, const T_2<Type>& B)
 	{
 		x = A.y - B.y;

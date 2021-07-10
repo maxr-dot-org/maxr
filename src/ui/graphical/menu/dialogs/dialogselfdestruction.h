@@ -35,7 +35,7 @@ public:
 	cDialogSelfDestruction (const cUnit& unit, std::shared_ptr<cAnimationTimer> animationTimer);
 	~cDialogSelfDestruction();
 
-	cSignal<void ()> triggeredDestruction;
+	cSignal<void()> triggeredDestruction;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

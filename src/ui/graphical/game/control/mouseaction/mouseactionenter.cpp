@@ -28,23 +28,23 @@
 #include "game/data/units/vehicle.h"
 
 //------------------------------------------------------------------------------
-bool cMouseActionEnter::executeLeftClick(cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
+bool cMouseActionEnter::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
 {
 	const auto selectedUnit = unitSelection.getSelectedUnit();
 
 	if (!selectedUnit) return false;
 
-	const auto& field = map.getField(mapPosition);
+	const auto& field = map.getField (mapPosition);
 	const auto overBuilding = field.getBuilding();
 	const auto overVehicle = field.getVehicle();
 
 	if (overBuilding)
 	{
-		gameMapWidget.triggeredLoadAt(*overBuilding, selectedUnit->getPosition());
+		gameMapWidget.triggeredLoadAt (*overBuilding, selectedUnit->getPosition());
 	}
 	else if (overVehicle)
 	{
-		gameMapWidget.triggeredLoadAt(*overVehicle, selectedUnit->getPosition());
+		gameMapWidget.triggeredLoadAt (*overVehicle, selectedUnit->getPosition());
 	}
 
 	return true;

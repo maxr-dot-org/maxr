@@ -66,7 +66,7 @@ public:
 	void increase (int offset);
 	void decrease (int offset);
 
-	cSignal<void ()> valueChanged;
+	cSignal<void()> valueChanged;
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 

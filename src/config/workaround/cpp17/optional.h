@@ -35,7 +35,7 @@ namespace std
 		{
 			enum class Construct { Token };
 
-			explicit constexpr nullopt_t(Construct) { }
+			explicit constexpr nullopt_t (Construct) { }
 		};
 
 		extern const nullopt_t nullopt;
@@ -69,7 +69,7 @@ namespace std
 			const T& value() const { return u.data; }
 			T& value() { return u.data; }
 
-			template<typename U>
+			template <typename U>
 			T value_or (U&& u) const { return valid ? value() : T (std::forward<U> (u)); }
 
 		private:
@@ -79,7 +79,7 @@ namespace std
 			union U {
 				char dummy;
 				T data;
-				U() : dummy(0) {}
+				U() : dummy (0) {}
 				~U() {}
 			} u;
 		};

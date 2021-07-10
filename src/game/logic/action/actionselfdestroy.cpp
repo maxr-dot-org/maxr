@@ -23,22 +23,22 @@
 #include "utility/log.h"
 
 //------------------------------------------------------------------------------
-cActionSelfDestroy::cActionSelfDestroy(const cBuilding& unit) :
-	unitId(unit.getId())
+cActionSelfDestroy::cActionSelfDestroy (const cBuilding& unit) :
+	unitId (unit.getId())
 {}
 
 //------------------------------------------------------------------------------
-cActionSelfDestroy::cActionSelfDestroy(cBinaryArchiveOut& archive)
+cActionSelfDestroy::cActionSelfDestroy (cBinaryArchiveOut& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionSelfDestroy::execute(cModel& model) const
+void cActionSelfDestroy::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	cBuilding* b = model.getBuildingFromID(unitId);
+	cBuilding* b = model.getBuildingFromID (unitId);
 	if (b == nullptr || !b->getOwner()) return;
 	if (b->getOwner()->getId() != playerNr) return;
 
@@ -48,10 +48,10 @@ void cActionSelfDestroy::execute(cModel& model) const
 	// its attack points. So start an attack job instead of just destoying it.
 	if (b->getStaticUnitData().explodesOnContact)
 	{
-		model.addAttackJob(*b, b->getPosition());
+		model.addAttackJob (*b, b->getPosition());
 	}
 	else
 	{
-		model.destroyUnit(*b);
+		model.destroyUnit (*b);
 	}
 }

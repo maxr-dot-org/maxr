@@ -65,7 +65,7 @@ cWindowLandingUnitSelection::cWindowLandingUnitSelection (cRgbColor playerColor,
 	tntCheckBox->setChecked (false);
 	signalConnectionManager.connect (tntCheckBox->toggled, std::bind (&cWindowLandingUnitSelection::generateSelectionList, this, false));
 
-	auto updateBuyGroup = addChild (std::make_unique<cRadioGroup> ());
+	auto updateBuyGroup = addChild (std::make_unique<cRadioGroup>());
 
 	buyCheckBox = updateBuyGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (542, 445), lngPack.i18n ("Text~Others~Buy"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Round));
 	buyCheckBox->setChecked (true);
@@ -179,7 +179,7 @@ void cWindowLandingUnitSelection::setActiveUnit (const sID& unitId)
 	{
 		unitUpgrade = &unitUpgrades[unitId];
 
-		unitUpgrade->init(unitsData->getDynamicUnitData(unitId, getPlayer().getClan()), *getPlayer().getUnitDataCurrentVersion(unitId), unitsData->getStaticUnitData(unitId), getPlayer().getResearchState());
+		unitUpgrade->init (unitsData->getDynamicUnitData (unitId, getPlayer().getClan()), *getPlayer().getUnitDataCurrentVersion (unitId), unitsData->getStaticUnitData (unitId), getPlayer().getResearchState());
 	}
 	else
 	{
@@ -254,16 +254,16 @@ void cWindowLandingUnitSelection::updateUpgradeButtons()
 bool cWindowLandingUnitSelection::tryAddSelectedUnit (const cUnitListViewItemBuy& unitItem) const
 {
 	const auto& unitId = unitItem.getUnitId();
-	if (!unitsData->isValidId(unitId)) return false;
+	if (!unitsData->isValidId (unitId)) return false;
 
-	const auto unitData = unitsData->getStaticUnitData(unitId);
+	const auto unitData = unitsData->getStaticUnitData (unitId);
 
 	// is this unit type allowed to be bought for landing?
 	if (unitId.isABuilding()) return false;
 	if (unitData.factorGround == 0) return false;
 	if (unitData.vehicleData.isHuman) return false;
 
-	int buildCosts = unitsData->getDynamicUnitData(unitId, getPlayer().getClan()).getBuildCost();
+	int buildCosts = unitsData->getDynamicUnitData (unitId, getPlayer().getClan()).getBuildCost();
 	if (buildCosts > goldBar->getValue()) return false;
 
 	goldBar->decrease (buildCosts);
@@ -277,7 +277,7 @@ bool cWindowLandingUnitSelection::tryRemoveSelectedUnit (const cUnitListViewItem
 	if (fixedSelectedUnits.find (&unitItem) != fixedSelectedUnits.end()) return false;
 
 	const auto& unitId = unitItem.getUnitId();
-	int buildCosts = unitsData->getDynamicUnitData(unitId, getPlayer().getClan()).getBuildCost();
+	int buildCosts = unitsData->getDynamicUnitData (unitId, getPlayer().getClan()).getBuildCost();
 
 	const auto value = buildCosts + (unitItem.getCargo() / singleCreditResourceAmount);
 
@@ -313,10 +313,10 @@ void cWindowLandingUnitSelection::generateSelectionList (bool select)
 			if (data.factorGround > 0 && !tank) continue;
 		}
 
-		const auto& item = addSelectionUnit(data.ID);
+		const auto& item = addSelectionUnit (data.ID);
 		if (select)
 		{
-			setSelectedSelectionItem(item);
+			setSelectedSelectionItem (item);
 			select = false;
 		}
 	}
@@ -420,8 +420,8 @@ void cWindowLandingUnitSelection::upgradeDecreaseClicked (size_t index)
 //------------------------------------------------------------------------------
 void cWindowLandingUnitSelection::handleSelectedUnitSelectionChanged (cUnitListViewItemCargo* unitItem)
 {
-	if (unitItem == nullptr || ! (unitsData->getStaticUnitData(unitItem->getUnitId()).storeResType == eResourceType::Metal ||
-								  unitsData->getStaticUnitData(unitItem->getUnitId()).storeResType == eResourceType::Oil))
+	if (unitItem == nullptr || ! (unitsData->getStaticUnitData (unitItem->getUnitId()).storeResType == eResourceType::Metal ||
+								  unitsData->getStaticUnitData (unitItem->getUnitId()).storeResType == eResourceType::Oil))
 	{
 		selectedCargoUnit = nullptr;
 		metalBar->setValue (0);
@@ -433,7 +433,7 @@ void cWindowLandingUnitSelection::handleSelectedUnitSelectionChanged (cUnitListV
 	else
 	{
 		selectedCargoUnit = nullptr;
-		const auto& data = unitsData->getStaticUnitData(unitItem->getUnitId());
+		const auto& data = unitsData->getStaticUnitData (unitItem->getUnitId());
 		if (data.storeResType == eResourceType::Oil)
 		{
 			metalBar->setType (eResourceBarType::Oil);

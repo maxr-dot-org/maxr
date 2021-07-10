@@ -32,33 +32,33 @@ void cLocalHotSeatGameSaved::start (cApplication& application)
 {
 	auto connectionManager = std::make_shared<cConnectionManager>();
 
-	server = std::make_unique<cServer>(connectionManager);
-	connectionManager->setLocalServer(server.get());
-	server->loadGameState(saveGameNumber);
+	server = std::make_unique<cServer> (connectionManager);
+	connectionManager->setLocalServer (server.get());
+	server->loadGameState (saveGameNumber);
 
 	const auto& staticMap = server->getModel().getMap()->staticMap;
 	const std::size_t nbPlayers = server->getModel().getPlayerList().size();
-	clients.resize(nbPlayers);
+	clients.resize (nbPlayers);
 	for (std::size_t i = 0; i != nbPlayers; ++i)
 	{
 		clients[i] = std::make_shared<cClient> (connectionManager);
-		clients[i]->setMap(staticMap);
-		clients[i]->loadModel(saveGameNumber, i);//TODO: resync model from server
+		clients[i]->setMap (staticMap);
+		clients[i]->loadModel (saveGameNumber, i);//TODO: resync model from server
 	}
 
 	std::vector<INetMessageReceiver*> hotseatClients;
 	for (auto& client : clients)
 	{
-		hotseatClients.push_back(client.get());
+		hotseatClients.push_back (client.get());
 	}
-	connectionManager->setLocalClients(std::move(hotseatClients));
+	connectionManager->setLocalClients (std::move (hotseatClients));
 
-	server->sendGuiInfoToClients(saveGameNumber);
+	server->sendGuiInfoToClients (saveGameNumber);
 	server->start();
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
-	gameGuiController->setClients(clients, server->getModel().getActiveTurnPlayer()->getId());
-	gameGuiController->setServer(server.get());
+	gameGuiController->setClients (clients, server->getModel().getActiveTurnPlayer()->getId());
+	gameGuiController->setServer (server.get());
 	gameGuiController->start();
 
 	resetTerminating();

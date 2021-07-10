@@ -73,7 +73,7 @@ cConnectionManager::~cConnectionManager() = default;
 //------------------------------------------------------------------------------
 int cConnectionManager::openServer (int port)
 {
-	assert(localServer != nullptr);
+	assert (localServer != nullptr);
 
 	std::unique_lock<std::recursive_mutex> tl (mutex);
 
@@ -197,7 +197,7 @@ bool cConnectionManager::isConnectedToServer() const
 void cConnectionManager::changePlayerNumber (int currentNr, int newNr)
 {
 	if (currentNr == newNr) return;
-	Log.write("Connection Manager: ChangePlayerNumber " + std::to_string (currentNr) + " to " + std::to_string (newNr), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("Connection Manager: ChangePlayerNumber " + std::to_string (currentNr) + " to " + std::to_string (newNr), cLog::eLOG_TYPE_NET_DEBUG);
 	std::unique_lock<std::recursive_mutex> tl (mutex);
 
 	if (localPlayer == currentNr)
@@ -401,7 +401,7 @@ void cConnectionManager::incomingConnection (const cSocket* socket)
 {
 	startTimeout (socket);
 
-	clientSockets.emplace_back(socket, -1);
+	clientSockets.emplace_back (socket, -1);
 
 	cNetMessageTcpHello message;
 	cTextArchiveIn archive;
@@ -432,7 +432,7 @@ void cConnectionManager::messageReceived (const cSocket* socket, unsigned char* 
 	}
 	catch (std::runtime_error& e)
 	{
-		Log.write(std::string{"ConnectionManager: Can't deserialize net message: "} + e.what(), cLog::eLOG_TYPE_NET_ERROR);
+		Log.write (std::string{"ConnectionManager: Can't deserialize net message: "} + e.what(), cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
 

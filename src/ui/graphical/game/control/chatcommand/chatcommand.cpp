@@ -20,20 +20,20 @@
 #include "ui/graphical/game/control/chatcommand/chatcommand.h"
 
  //------------------------------------------------------------------------------
-/*static*/ bool cChatCommand::isCommand(const std::string& command)
+/*static*/ bool cChatCommand::isCommand (const std::string& command)
 {
-	if(command.empty()) return false;
-	if(command[0] != '/') return false;
+	if (command.empty()) return false;
+	if (command[0] != '/') return false;
 
 	return true;
 }
 
 //------------------------------------------------------------------------------
-cChatCommand::cChatCommand(const std::string name_, const std::string description_) :
-	name(std::move(name_)),
-	description(std::move(description_)),
-	shouldBeReported(false),
-	isServerOnly(false)
+cChatCommand::cChatCommand (const std::string name_, const std::string description_) :
+	name (std::move (name_)),
+	description (std::move (description_)),
+	shouldBeReported (false),
+	isServerOnly (false)
 {}
 
 //------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ cChatCommand& cChatCommand::setIsServerOnly (bool value)
 }
 
 //------------------------------------------------------------------------------
-bool cChatCommand::getIsServerOnly () const
+bool cChatCommand::getIsServerOnly() const
 {
 	return isServerOnly;
 }

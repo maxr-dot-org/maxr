@@ -40,7 +40,7 @@ eMouseModeType cMouseModeSupplyAmmo::getType() const
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeSupplyAmmo::setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
+void cMouseModeSupplyAmmo::setCursor (cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	if (canExecuteAction (mapPosition))
 	{
@@ -53,11 +53,11 @@ void cMouseModeSupplyAmmo::setCursor(cMouse& mouse, const cPosition& mapPosition
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeSupplyAmmo::getMouseAction(const cPosition& mapPosition, const cUnitsData& unitsData) const
+std::unique_ptr<cMouseAction> cMouseModeSupplyAmmo::getMouseAction (const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	if (canExecuteAction (mapPosition))
 	{
-		return std::make_unique<cMouseActionSupplyAmmo> ();
+		return std::make_unique<cMouseActionSupplyAmmo>();
 	}
 	else return nullptr;
 }

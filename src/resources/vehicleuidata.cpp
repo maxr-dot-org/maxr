@@ -57,11 +57,11 @@ void sVehicleUIData::render_shadow (const cVehicle& vehicle, const cMapView& map
 
 	if (vehicle.alphaEffectValue && cSettings::getInstance().isAlphaEffects())
 	{
-		SDL_SetSurfaceAlphaMod(shw[vehicle.dir].get(), vehicle.alphaEffectValue / 5);
+		SDL_SetSurfaceAlphaMod (shw[vehicle.dir].get(), vehicle.alphaEffectValue / 5);
 	}
 	else
 	{
-		SDL_SetSurfaceAlphaMod(shw[vehicle.dir].get(), 50);
+		SDL_SetSurfaceAlphaMod (shw[vehicle.dir].get(), 50);
 	}
 	SDL_Rect tmp = dest;
 
@@ -153,7 +153,7 @@ void sVehicleUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest, 
 	{
 		SDL_Surface* src = cPlayerColor::getTexture (owner->getColor());
 		SDL_Surface* dst = GraphicsData.gfx_tmp.get();
-		SDL_BlitSurface(src, nullptr, dst, nullptr);
+		SDL_BlitSurface (src, nullptr, dst, nullptr);
 	}
 
 	// read the size:
@@ -239,7 +239,7 @@ void sVehicleUIData::drawOverlayAnimation (SDL_Surface& surface, const SDL_Rect&
 	if (hasOverlay == false || cSettings::getInstance().isAnimations() == false) return;
 
 	const Uint16 size = (Uint16) (overlay_org->h * zoomFactor);
-	const Uint16 srcX = Round((overlay_org->h * frameNr) * zoomFactor);
+	const Uint16 srcX = Round ((overlay_org->h * frameNr) * zoomFactor);
 	SDL_Rect src = {srcX, 0, size, size};
 
 	SDL_Rect tmp = dest;
@@ -277,5 +277,5 @@ void drawOverlayAnimation (const cVehicle& vehicle, unsigned long long animation
 		frameNr = animationTime % (uiData.overlay_org->w / uiData.overlay_org->h);
 	}
 
-	uiData.drawOverlayAnimation(surface, dest, zoomFactor, frameNr, vehicle.alphaEffectValue && cSettings::getInstance().isAlphaEffects() ? vehicle.alphaEffectValue : 254);
+	uiData.drawOverlayAnimation (surface, dest, zoomFactor, frameNr, vehicle.alphaEffectValue && cSettings::getInstance().isAlphaEffects() ? vehicle.alphaEffectValue : 254);
 }

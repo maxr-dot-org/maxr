@@ -34,7 +34,7 @@ namespace
 	std::string toString (const std::thread::id& id)
 	{
 		std::stringstream ss;
-		ss.imbue(std::locale("C"));
+		ss.imbue (std::locale ("C"));
 		ss << id;
 		return ss.str();
 	}

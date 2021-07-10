@@ -39,8 +39,8 @@ class cTurnCounter;
 class cTurnTimeClock;
 class cUnit;
 
-template<typename> class cListView;
-template<typename, typename> class cPlot;
+template <typename> class cListView;
+template <typename, typename> class cPlot;
 
 class cWindowReports : public cWindow
 {

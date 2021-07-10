@@ -22,23 +22,23 @@
 #include "game/data/model.h"
 
 //------------------------------------------------------------------------------
-cActionChangeResearch::cActionChangeResearch(const std::array<int, cResearch::kNrResearchAreas>& researchAreas) :
-	researchAreas(researchAreas)
+cActionChangeResearch::cActionChangeResearch (const std::array<int, cResearch::kNrResearchAreas>& researchAreas) :
+	researchAreas (researchAreas)
 {}
 
 //------------------------------------------------------------------------------
-cActionChangeResearch::cActionChangeResearch(cBinaryArchiveOut& archive)
+cActionChangeResearch::cActionChangeResearch (cBinaryArchiveOut& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionChangeResearch::execute(cModel& model) const
+void cActionChangeResearch::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
 
-	auto player = model.getPlayer(playerNr);
+	auto player = model.getPlayer (playerNr);
 	if (player == nullptr) return;
 
 	int newUsedResearch = 0;
@@ -68,8 +68,8 @@ void cActionChangeResearch::execute(cModel& model) const
 			auto& building = *currentBuildingIter;
 			if (building->getStaticData().canResearch && building->isUnitWorking())
 			{
-				researchCentersToChangeArea.push_back(building.get());
-				newAreasForResearchCenters.push_back((cResearch::ResearchArea)newArea);
+				researchCentersToChangeArea.push_back (building.get());
+				newAreasForResearchCenters.push_back ((cResearch::ResearchArea)newArea);
 				--centersToAssign;
 			}
 		}
@@ -84,15 +84,15 @@ void cActionChangeResearch::execute(cModel& model) const
 	{
 		auto& building = *currentBuildingIter;
 		if (building->getStaticData().canResearch && building->isUnitWorking())
-			researchCentersToStop.push_back(building.get());
+			researchCentersToStop.push_back (building.get());
 	}
 	if (error)
 		return;
 
 	for (size_t i = 0; i != researchCentersToStop.size(); ++i)
-		researchCentersToStop[i]->stopWork(false);
+		researchCentersToStop[i]->stopWork (false);
 
 	for (size_t i = 0; i != researchCentersToChangeArea.size(); ++i)
-		researchCentersToChangeArea[i]->setResearchArea(newAreasForResearchCenters[i]);
+		researchCentersToChangeArea[i]->setResearchArea (newAreasForResearchCenters[i]);
 	player->refreshResearchCentersWorkingOnArea();
 }

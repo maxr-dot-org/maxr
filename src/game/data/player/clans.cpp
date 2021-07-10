@@ -69,14 +69,14 @@ cClanUnitStat* cClan::addUnitStat (sID id)
 }
 
 //---------------------------------------------------
-cClan::cClan(const cClan& other) :
-	num(other.num),
-	description(other.description),
-	name(other.name)
+cClan::cClan (const cClan& other) :
+	num (other.num),
+	description (other.description),
+	name (other.name)
 {
 	for (const auto& stat : other.stats)
 	{
-		stats.push_back(std::make_unique<cClanUnitStat>(*stat));
+		stats.push_back (std::make_unique<cClanUnitStat> (*stat));
 	}
 }
 
@@ -105,11 +105,11 @@ const std::string& cClan::getDefaultName() const
 }
 
 //---------------------------------------------------
-cClanData::cClanData(const cClanData& other)
+cClanData::cClanData (const cClanData& other)
 {
 	for (const auto& clan : other.clans)
 	{
-		clans.push_back(std::make_unique<cClan>(*clan));
+		clans.push_back (std::make_unique<cClan> (*clan));
 	}
 }
 

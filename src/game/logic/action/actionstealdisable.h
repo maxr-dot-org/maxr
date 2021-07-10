@@ -32,18 +32,18 @@ enum class eInfiltratorAction {
 class cActionStealDisable : public cActionT<cAction::eActiontype::ACTION_STEAL_DISABLE>
 {
 public:
-	cActionStealDisable(const cVehicle& infiltrator, const cUnit& target, bool steal);
-	cActionStealDisable(cBinaryArchiveOut& archive);
+	cActionStealDisable (const cVehicle& infiltrator, const cUnit& target, bool steal);
+	cActionStealDisable (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
 
-	void execute(cModel& model) const override;
+	void execute (cModel& model) const override;
 private:
-	void changeUnitOwner(cUnit& unit, cPlayer& newOwner, cModel& model) const;
+	void changeUnitOwner (cUnit& unit, cPlayer& newOwner, cModel& model) const;
 
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & infiltratorId;
 		archive & targetId;

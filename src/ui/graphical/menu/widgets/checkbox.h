@@ -83,7 +83,7 @@ public:
 	void lock();
 	void unlock();
 
-	cSignal<void ()> toggled;
+	cSignal<void()> toggled;
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 	bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) override;

@@ -33,7 +33,7 @@ public:
 
 	void open();
 
-	cSignal<void ()> opened;
+	cSignal<void()> opened;
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 

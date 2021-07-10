@@ -25,61 +25,61 @@
 #include "utility/listhelpers.h"
 
 //------------------------------------------------------------------------------
-cActionActivate::cActionActivate(const cUnit& containingUnit, const cVehicle& activatedVehicle, const cPosition& position) :
-	position(position),
-	containingUnitId(containingUnit.getId()),
-	activatedVehicleId(activatedVehicle.getId())
+cActionActivate::cActionActivate (const cUnit& containingUnit, const cVehicle& activatedVehicle, const cPosition& position) :
+	position (position),
+	containingUnitId (containingUnit.getId()),
+	activatedVehicleId (activatedVehicle.getId())
 {}
 
 //------------------------------------------------------------------------------
-cActionActivate::cActionActivate(cBinaryArchiveOut& archive)
+cActionActivate::cActionActivate (cBinaryArchiveOut& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionActivate::execute(cModel& model) const
+void cActionActivate::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
 	cMap& map = *model.getMap();
 
-	cUnit* containingUnit = model.getUnitFromID(containingUnitId);
+	cUnit* containingUnit = model.getUnitFromID (containingUnitId);
 	if (!containingUnit) return;
 
-	cVehicle* activatedVehicle = model.getVehicleFromID(activatedVehicleId);
+	cVehicle* activatedVehicle = model.getVehicleFromID (activatedVehicleId);
 	if (!activatedVehicle) return;
 
-	if (!map.isValidPosition(position)) return;
-	if (!containingUnit->isNextTo(position)) return;
-	if (!Contains(containingUnit->storedUnits, activatedVehicle)) return;
+	if (!map.isValidPosition (position)) return;
+	if (!containingUnit->isNextTo (position)) return;
+	if (!Contains (containingUnit->storedUnits, activatedVehicle)) return;
 
-	model.sideStepStealthUnit(position, *activatedVehicle);
-	if (containingUnit->canExitTo(position, map, activatedVehicle->getStaticUnitData()))
+	model.sideStepStealthUnit (position, *activatedVehicle);
+	if (containingUnit->canExitTo (position, map, activatedVehicle->getStaticUnitData()))
 	{
-		activatedVehicle->tryResetOfDetectionStateBeforeMove(map, model.getPlayerList());
-		containingUnit->exitVehicleTo(*activatedVehicle, position, map);
+		activatedVehicle->tryResetOfDetectionStateBeforeMove (map, model.getPlayerList());
+		containingUnit->exitVehicleTo (*activatedVehicle, position, map);
 
 		if (activatedVehicle->getStaticData().canSurvey)
 		{
-			activatedVehicle->doSurvey(*model.getMap());
+			activatedVehicle->doSurvey (*model.getMap());
 		}
 
-		if (activatedVehicle->canLand(map))
+		if (activatedVehicle->canLand (map))
 		{
-			activatedVehicle->setFlightHeight(0);
+			activatedVehicle->setFlightHeight (0);
 		}
 		else
 		{
 			// start with flight height > 0, so that ground attack units
 			// will not be able to attack the plane in the moment it leaves
 			// the factory
-			activatedVehicle->setFlightHeight(1);
-			activatedVehicle->triggerLandingTakeOff(model);
+			activatedVehicle->setFlightHeight (1);
+			activatedVehicle->triggerLandingTakeOff (model);
 		}
 
-		activatedVehicle->detectOtherUnits(*model.getMap());
+		activatedVehicle->detectOtherUnits (*model.getMap());
 
-		model.unitActivated(*containingUnit, *activatedVehicle);
+		model.unitActivated (*containingUnit, *activatedVehicle);
 	}
 }

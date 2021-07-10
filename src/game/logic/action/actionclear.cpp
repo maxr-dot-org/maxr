@@ -23,22 +23,22 @@
 #include "game/logic/jobs/startbuildjob.h"
 
 //------------------------------------------------------------------------------
-cActionClear::cActionClear(const cVehicle& vehicle) :
-	vehicleId(vehicle.getId())
+cActionClear::cActionClear (const cVehicle& vehicle) :
+	vehicleId (vehicle.getId())
 {}
 
 //------------------------------------------------------------------------------
-cActionClear::cActionClear(cBinaryArchiveOut& archive)
+cActionClear::cActionClear (cBinaryArchiveOut& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionClear::execute(cModel& model) const
+void cActionClear::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	auto vehicle = model.getVehicleFromID(vehicleId);
+	auto vehicle = model.getVehicleFromID (vehicleId);
 	if (vehicle == nullptr) return;
 
 	if (!vehicle->getOwner()) return;
@@ -48,7 +48,7 @@ void cActionClear::execute(cModel& model) const
 	if (vehicle->isUnitMoving()) return;
 
 	auto map = model.getMap();
-	auto rubble = model.getMap()->getField(vehicle->getPosition()).getRubble();
+	auto rubble = model.getMap()->getField (vehicle->getPosition()).getRubble();
 	if (!rubble) return;
 
 	cPosition oldPosition = vehicle->getPosition();
@@ -56,28 +56,26 @@ void cActionClear::execute(cModel& model) const
 	{
 		auto rubblePosition = rubble->getPosition();
 
-		model.sideStepStealthUnit(rubblePosition,                   *vehicle, rubblePosition);
-		model.sideStepStealthUnit(rubblePosition + cPosition(1, 0), *vehicle, rubblePosition);
-		model.sideStepStealthUnit(rubblePosition + cPosition(0, 1), *vehicle, rubblePosition);
-		model.sideStepStealthUnit(rubblePosition + cPosition(1, 1), *vehicle, rubblePosition);
+		model.sideStepStealthUnit (rubblePosition,                    *vehicle, rubblePosition);
+		model.sideStepStealthUnit (rubblePosition + cPosition (1, 0), *vehicle, rubblePosition);
+		model.sideStepStealthUnit (rubblePosition + cPosition (0, 1), *vehicle, rubblePosition);
+		model.sideStepStealthUnit (rubblePosition + cPosition (1, 1), *vehicle, rubblePosition);
 
-		if ((!map->possiblePlace(*vehicle, rubblePosition,                   false) && rubblePosition                   != vehicle->getPosition()) ||
-			(!map->possiblePlace(*vehicle, rubblePosition + cPosition(1, 0), false) && rubblePosition + cPosition(1, 0) != vehicle->getPosition()) ||
-			(!map->possiblePlace(*vehicle, rubblePosition + cPosition(0, 1), false) && rubblePosition + cPosition(0, 1) != vehicle->getPosition()) ||
-			(!map->possiblePlace(*vehicle, rubblePosition + cPosition(1, 1), false) && rubblePosition + cPosition(1, 1) != vehicle->getPosition()))
+		if ((!map->possiblePlace (*vehicle, rubblePosition,                    false) && rubblePosition                    != vehicle->getPosition()) ||
+			(!map->possiblePlace (*vehicle, rubblePosition + cPosition (1, 0), false) && rubblePosition + cPosition (1, 0) != vehicle->getPosition()) ||
+			(!map->possiblePlace (*vehicle, rubblePosition + cPosition (0, 1), false) && rubblePosition + cPosition (0, 1) != vehicle->getPosition()) ||
+			(!map->possiblePlace (*vehicle, rubblePosition + cPosition (1, 1), false) && rubblePosition + cPosition (1, 1) != vehicle->getPosition()))
 		{
 			return;
 		}
 
 		vehicle->buildBigSavedPosition = vehicle->getPosition();
-		vehicle->getOwner()->updateScan(*vehicle, rubblePosition, true);
-		map->moveVehicleBig(*vehicle, rubblePosition);
+		vehicle->getOwner()->updateScan (*vehicle, rubblePosition, true);
+		map->moveVehicleBig (*vehicle, rubblePosition);
 	}
 
-	vehicle->setClearing(true);
-	vehicle->setClearingTurns(rubble->getIsBig() ? 4 : 1);
+	vehicle->setClearing (true);
+	vehicle->setClearingTurns (rubble->getIsBig() ? 4 : 1);
 
 	model.addJob (std::make_unique<cStartBuildJob> (*vehicle, oldPosition, rubble->getIsBig()));
-
-	return;
 }

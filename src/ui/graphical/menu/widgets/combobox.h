@@ -30,7 +30,7 @@
 class cCheckBox;
 class cLineEdit;
 class cTextListViewItem;
-template<typename> class cListView;
+template <typename> class cListView;
 
 class cComboBox : public cWidget
 {

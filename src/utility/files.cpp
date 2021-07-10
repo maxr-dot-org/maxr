@@ -61,7 +61,7 @@ bool FileExists (const char* path)
 
 bool FileExists (const std::string& path)
 {
-	return FileExists(path.c_str());
+	return FileExists (path.c_str());
 }
 
 //--------------------------------------------------------------
@@ -82,11 +82,11 @@ void makeDirectories (const std::string& path)
 
 	while (prev_pos != std::string::npos)
 	{
-		const auto pos = path.find_first_of("/\\", prev_pos);
-		const auto subPath = path.substr(0, pos);
-		if (!DirExists(subPath))
+		const auto pos = path.find_first_of ("/\\", prev_pos);
+		const auto subPath = path.substr (0, pos);
+		if (!DirExists (subPath))
 		{
-			makeDir(subPath);
+			makeDir (subPath);
 		}
 		prev_pos = pos == std::string::npos ? pos : pos + 1;
 	}
@@ -166,7 +166,7 @@ std::string getUserScreenshotsDir()
 {
 #ifdef __amigaos4__
 	return "";
-#elif defined(MAC)
+#elif defined (MAC)
 	char* cHome = getenv ("HOME");  //get $HOME on mac
 	if (cHome == nullptr)
 		return "";
@@ -194,7 +194,7 @@ std::string getUserLogDir()
 {
 #ifdef __amigaos4__
 	return "";
-#elif defined(MAC)
+#elif defined (MAC)
 	char* cHome = getenv ("HOME");  //get $HOME on mac
 	if (cHome == nullptr)
 		return "";

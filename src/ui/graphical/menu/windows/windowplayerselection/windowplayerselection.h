@@ -45,7 +45,7 @@ public:
 
 	const std::array<ePlayerType, maxPlayers>& getPlayerTypes() const;
 
-	cSignal<void ()> done;
+	cSignal<void()> done;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

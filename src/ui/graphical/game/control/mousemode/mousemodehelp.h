@@ -28,8 +28,8 @@ public:
 	cMouseModeHelp (const cMapView* map, const cUnitSelection& unitSelection, const cPlayer* player);
 
 	eMouseModeType getType() const override;
-	void setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const override;
-	std::unique_ptr<cMouseAction> getMouseAction(const cPosition& mapPosition, const cUnitsData& unitsData) const override;
+	void setCursor (cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const override;
+	std::unique_ptr<cMouseAction> getMouseAction (const cPosition& mapPosition, const cUnitsData& unitsData) const override;
 };
 
 #endif // ui_graphical_game_control_mousemode_mousemodehelpH

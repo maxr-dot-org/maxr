@@ -28,16 +28,16 @@ enum class eSupplyType;
 class cActionRepairReload : public cActionT<cAction::eActiontype::ACTION_REPAIR_RELOAD>
 {
 public:
-	cActionRepairReload(const cUnit& sourceUnit, const cUnit& destUnit, eSupplyType supplyType);
-	cActionRepairReload(cBinaryArchiveOut& archive);
+	cActionRepairReload (const cUnit& sourceUnit, const cUnit& destUnit, eSupplyType supplyType);
+	cActionRepairReload (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
 
-	void execute(cModel& model) const override;
+	void execute (cModel& model) const override;
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & sourceUnitId;
 		archive & destUnitId;

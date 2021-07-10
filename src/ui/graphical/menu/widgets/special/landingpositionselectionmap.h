@@ -31,7 +31,7 @@ class cUnitsData;
 class cLandingPositionSelectionMap : public cClickableWidget
 {
 public:
-	cLandingPositionSelectionMap(const cBox<cPosition>& area, std::shared_ptr<cStaticMap> map, bool fixedBridgeHead, const std::vector<sLandingUnit>& landingUnits, std::shared_ptr<const cUnitsData> unitsData);
+	cLandingPositionSelectionMap (const cBox<cPosition>& area, std::shared_ptr<cStaticMap> map, bool fixedBridgeHead, const std::vector<sLandingUnit>& landingUnits, std::shared_ptr<const cUnitsData> unitsData);
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 	bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) override;
@@ -48,7 +48,7 @@ private:
 	const std::vector<sLandingUnit> landingUnits;
 	std::shared_ptr<const cUnitsData> unitsData;
 
-	bool isValidLandingLocation(const cPosition& position);
+	bool isValidLandingLocation (const cPosition& position);
 };
 
 #endif // ui_graphical_menu_widgets_special_landingpositionselectionmapH

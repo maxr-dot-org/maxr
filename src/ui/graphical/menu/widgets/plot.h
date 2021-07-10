@@ -32,7 +32,7 @@
  *
  * @tparam T
  */
-template<typename T>
+template <typename T>
 class cMarker
 {
 public:
@@ -55,48 +55,48 @@ private:
 };
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 cMarker<T>::cMarker (T value_) :
 	value (value_)
 {}
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 void cMarker<T>::setLabel (std::string label_)
 {
 	label = std::move (label_);
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 const std::string& cMarker<T>::getLabel() const
 {
 	return label;
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 void cMarker<T>::setValue (T value_)
 {
 	value = value_;
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 T cMarker<T>::getValue() const
 {
 	return value;
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 void cMarker<T>::setColor (cRgbColor color_)
 {
 	color = std::move (color_);
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 const cRgbColor& cMarker<T>::getColor() const
 {
 	return color;
@@ -106,7 +106,7 @@ const cRgbColor& cMarker<T>::getColor() const
  *
  * @tparam T
  */
-template<typename T>
+template <typename T>
 class cAxis
 {
 public:
@@ -135,42 +135,42 @@ private:
 };
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 cAxis<T>::cAxis() :
 	minValue (0),
 	maxValue (0)
 {}
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 void cAxis<T>::setLabel (std::string label_)
 {
 	label = std::move (label_);
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 const std::string& cAxis<T>::getLabel() const
 {
 	return label;
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 void cAxis<T>::setColor (cRgbColor color_)
 {
 	color = std::move (color_);
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 const cRgbColor& cAxis<T>::getColor() const
 {
 	return color;
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 void cAxis<T>::setInterval (T min, T max)
 {
 	minValue = min;
@@ -179,28 +179,28 @@ void cAxis<T>::setInterval (T min, T max)
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 void cAxis<T>::setMinValue (T value)
 {
 	minValue = value;
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 T cAxis<T>::getMinValue() const
 {
 	return minValue;
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 void cAxis<T>::setMaxValue (T value)
 {
 	maxValue = value;
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 T cAxis<T>::getMaxValue() const
 {
 	return maxValue;
@@ -211,7 +211,7 @@ T cAxis<T>::getMaxValue() const
  * @tparam T
  * @tparam U
  */
-template<typename T, typename U>
+template <typename T, typename U>
 class cGraph
 {
 public:
@@ -233,41 +233,41 @@ private:
 };
 
 //------------------------------------------------------------------------------
-template<typename T, typename U>
+template <typename T, typename U>
 cGraph<T, U>::cGraph (std::function<U (T)> function_) :
 	function (function_)
 {}
 
 //------------------------------------------------------------------------------
-template<typename T, typename U>
+template <typename T, typename U>
 void cGraph<T, U>::setLabel (std::string label_)
 {
 	label = std::move (label_);
 }
 
 //------------------------------------------------------------------------------
-template<typename T, typename U>
+template <typename T, typename U>
 const std::string& cGraph<T, U>::getLabel() const
 {
 	return label;
 }
 
 //------------------------------------------------------------------------------
-template<typename T, typename U>
+template <typename T, typename U>
 void cGraph<T, U>::setColor (cRgbColor color_)
 {
 	color = std::move (color_);
 }
 
 //------------------------------------------------------------------------------
-template<typename T, typename U>
+template <typename T, typename U>
 const cRgbColor& cGraph<T, U>::getColor() const
 {
 	return color;
 }
 
 //------------------------------------------------------------------------------
-template<typename T, typename U>
+template <typename T, typename U>
 U cGraph<T, U>::evaluate (T x) const
 {
 	return function (x);
@@ -278,7 +278,7 @@ U cGraph<T, U>::evaluate (T x) const
  * @tparam T
  * @tparam U
  */
-template<typename T, typename U>
+template <typename T, typename U>
 class cPlot : public cWidget
 {
 public:
@@ -296,10 +296,10 @@ public:
 	YAxisType& getYAxis();
 	const YAxisType& getYAxis() const;
 
-	template<typename F>
+	template <typename F>
 	GraphType& addGraph (F function);
 
-	template<typename F>
+	template <typename F>
 	GraphType& addGraph (std::string label, F function);
 
 	XMarkerType& addXMarker (T value);
@@ -326,7 +326,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-template<typename T, typename U>
+template <typename T, typename U>
 cPlot<T, U>::cPlot (const cBox<cPosition>& area) :
 	cWidget (area),
 	graphBeginMargin (20, 15),
@@ -335,36 +335,36 @@ cPlot<T, U>::cPlot (const cBox<cPosition>& area) :
 }
 
 //------------------------------------------------------------------------------
-template<typename T, typename U>
+template <typename T, typename U>
 typename cPlot<T, U>::XAxisType& cPlot<T, U>::getXAxis()
 {
 	return xAxis;
 }
 
 //------------------------------------------------------------------------------
-template<typename T, typename U>
+template <typename T, typename U>
 const typename cPlot<T, U>::XAxisType& cPlot<T, U>::getXAxis() const
 {
 	return xAxis;
 }
 
 //------------------------------------------------------------------------------
-template<typename T, typename U>
+template <typename T, typename U>
 typename cPlot<T, U>::YAxisType& cPlot<T, U>::getYAxis()
 {
 	return yAxis;
 }
 
 //------------------------------------------------------------------------------
-template<typename T, typename U>
+template <typename T, typename U>
 const typename cPlot<T, U>::YAxisType& cPlot<T, U>::getYAxis() const
 {
 	return yAxis;
 }
 
 //------------------------------------------------------------------------------
-template<typename T, typename U>
-template<typename F>
+template <typename T, typename U>
+template <typename F>
 typename cPlot<T, U>::GraphType& cPlot<T, U>::addGraph (F function)
 {
 	graphs.push_back (GraphType (function));
@@ -373,8 +373,8 @@ typename cPlot<T, U>::GraphType& cPlot<T, U>::addGraph (F function)
 }
 
 //------------------------------------------------------------------------------
-template<typename T, typename U>
-template<typename F>
+template <typename T, typename U>
+template <typename F>
 typename cPlot<T, U>::GraphType& cPlot<T, U>::addGraph (std::string label, F function)
 {
 	graphs.push_back (GraphType (function));
@@ -384,7 +384,7 @@ typename cPlot<T, U>::GraphType& cPlot<T, U>::addGraph (std::string label, F fun
 }
 
 //------------------------------------------------------------------------------
-template<typename T, typename U>
+template <typename T, typename U>
 typename cPlot<T, U>::XMarkerType&  cPlot<T, U>::addXMarker (T value)
 {
 	xMarkers.push_back (XMarkerType (value));
@@ -392,7 +392,7 @@ typename cPlot<T, U>::XMarkerType&  cPlot<T, U>::addXMarker (T value)
 }
 
 //------------------------------------------------------------------------------
-template<typename T, typename U>
+template <typename T, typename U>
 typename cPlot<T, U>::YMarkerType&  cPlot<T, U>::addYMarker (U value)
 {
 	yMarkers.push_back (YMarkerType (value));
@@ -400,7 +400,7 @@ typename cPlot<T, U>::YMarkerType&  cPlot<T, U>::addYMarker (U value)
 }
 
 //------------------------------------------------------------------------------
-template<typename T, typename U>
+template <typename T, typename U>
 T cPlot<T, U>::fromPixelX (int pixelX)
 {
 	const auto xPixelWidth = getSize().x() - graphBeginMargin.x() - graphEndMargin.x();
@@ -409,7 +409,7 @@ T cPlot<T, U>::fromPixelX (int pixelX)
 }
 
 //------------------------------------------------------------------------------
-template<typename T, typename U>
+template <typename T, typename U>
 U cPlot<T, U>::fromPixelY (int pixelY)
 {
 	const auto yPixelWidth = getSize().y() - graphBeginMargin.y() - graphEndMargin.y();
@@ -418,7 +418,7 @@ U cPlot<T, U>::fromPixelY (int pixelY)
 }
 
 //------------------------------------------------------------------------------
-template<typename T, typename U>
+template <typename T, typename U>
 int cPlot<T, U>::toPixelX (T x)
 {
 	const auto xPixelWidth = getSize().x() - graphBeginMargin.x() - graphEndMargin.x();
@@ -427,7 +427,7 @@ int cPlot<T, U>::toPixelX (T x)
 }
 
 //------------------------------------------------------------------------------
-template<typename T, typename U>
+template <typename T, typename U>
 int cPlot<T, U>::toPixelY (U y)
 {
 	const auto yPixelWidth = getSize().y() - graphBeginMargin.y() - graphEndMargin.y();
@@ -436,7 +436,7 @@ int cPlot<T, U>::toPixelY (U y)
 }
 
 //------------------------------------------------------------------------------
-template<typename T, typename U>
+template <typename T, typename U>
 void cPlot<T, U>::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	auto* font = cUnicodeFont::font.get();

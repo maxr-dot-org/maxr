@@ -35,8 +35,8 @@ cStartBuildJob::cStartBuildJob (cVehicle& vehicle_, const cPosition& org_, bool 
 //------------------------------------------------------------------------------
 void cStartBuildJob::run (cModel& model)
 {
-	assert(unit->isAVehicle());
-	cVehicle* vehicle = static_cast<cVehicle*>(unit);
+	assert (unit->isAVehicle());
+	cVehicle* vehicle = static_cast<cVehicle*> (unit);
 
 	if (!vehicle->isUnitBuildingABuilding() && !vehicle->isUnitClearing())
 	{
@@ -101,12 +101,12 @@ eJobType cStartBuildJob::getType() const
 }
 
 //------------------------------------------------------------------------------
-uint32_t cStartBuildJob::getChecksum(uint32_t crc) const
+uint32_t cStartBuildJob::getChecksum (uint32_t crc) const
 {
-	crc = calcCheckSum(getType(), crc);
-	crc = calcCheckSum(unit ? unit->getId() : 0, crc);
-	crc = calcCheckSum(org, crc);
-	crc = calcCheckSum(big, crc);
+	crc = calcCheckSum (getType(), crc);
+	crc = calcCheckSum (unit ? unit->getId() : 0, crc);
+	crc = calcCheckSum (org, crc);
+	crc = calcCheckSum (big, crc);
 
 	return crc;
 }

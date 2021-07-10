@@ -34,7 +34,7 @@ struct sTerrain;
 class cMapFieldView
 {
 public:
-	cMapFieldView(const cMapField& mapField, const sTerrain& terrain, const cPlayer* player);
+	cMapFieldView (const cMapField&, const sTerrain&, const cPlayer*);
 
 	/** returns the top vehicle on this field */
 	cVehicle* getVehicle() const;
@@ -62,7 +62,7 @@ public:
 	std::vector<cVehicle*> getPlanes() const;
 	std::vector<cUnit*> getUnits() const;
 
-	cSignal<void ()>& unitsChanged;
+	cSignal<void()>& unitsChanged;
 private:
 
 	const cMapField& mapField;

@@ -64,7 +64,7 @@ public:
 	 *
 	 * It gets called each time run() is executed, which means each time a frame has been drawn.
 	 */
-	cSignal<void ()> triggeredFrame;
+	cSignal<void()> triggeredFrame;
 
 	/*
 	 * The following signals get called during the run method.
@@ -76,10 +76,10 @@ public:
 	 * have been passed since the last call. But not one call if only 5ms
 	 * have passed.
 	 */
-	cSignal<void ()> triggered10ms;
-	cSignal<void ()> triggered50ms;
-	cSignal<void ()> triggered100ms;
-	cSignal<void ()> triggered400ms;
+	cSignal<void()> triggered10ms;
+	cSignal<void()> triggered50ms;
+	cSignal<void()> triggered100ms;
+	cSignal<void()> triggered400ms;
 
 	/*
 	 * The following signals get called during the run method.
@@ -94,10 +94,10 @@ public:
 	 * the signal will be called 9 times in a row. But not one call if only 5ms
 	 * have passed.
 	 */
-	cSignal<void ()> triggered10msCatchUp;
-	cSignal<void ()> triggered50msCatchUp;
-	cSignal<void ()> triggered100msCatchUp;
-	cSignal<void ()> triggered400msCatchUp;
+	cSignal<void()> triggered10msCatchUp;
+	cSignal<void()> triggered50msCatchUp;
+	cSignal<void()> triggered100msCatchUp;
+	cSignal<void()> triggered400msCatchUp;
 private:
 	const Uint32 sdlTimerInterval;
 	SDL_TimerID timerId;

@@ -40,7 +40,7 @@ public:
 
 	eResourceType getResourceType() const;
 
-	cSignal<void ()> done;
+	cSignal<void()> done;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

@@ -30,7 +30,7 @@ public:
 
 	eMouseModeType getType() const override;
 	void setCursor (cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const override;
-	std::unique_ptr<cMouseAction> getMouseAction(const cPosition& mapPosition, const cUnitsData& unitsData) const override;
+	std::unique_ptr<cMouseAction> getMouseAction (const cPosition& mapPosition, const cUnitsData& unitsData) const override;
 
 	size_t getVehicleToActivateIndex() const;
 

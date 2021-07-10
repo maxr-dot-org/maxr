@@ -35,7 +35,7 @@ public:
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 	bool isAt (const cPosition& position) const override;
 
-	cSignal<void ()> clicked;
+	cSignal<void()> clicked;
 
 	void disableAtTransparent();
 	void enableAtTransparent();

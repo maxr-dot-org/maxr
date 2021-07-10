@@ -29,7 +29,7 @@
 
 class cPosition;
 
-template<typename>
+template <typename>
 class cBox;
 
 class cUnit;
@@ -53,7 +53,7 @@ public:
 
 	bool isAt (const cPosition& position) const override;
 
-	cSignal<void ()> unitRenameTriggered;
+	cSignal<void()> unitRenameTriggered;
 private:
 	cLabel* selectedUnitStatusLabel;
 	cLabel* selectedUnitNamePrefixLabel;

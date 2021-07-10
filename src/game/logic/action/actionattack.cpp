@@ -24,56 +24,55 @@
 #include "utility/log.h"
 
 //------------------------------------------------------------------------------
-cActionAttack::cActionAttack(const cUnit& aggressor, cPosition targetPosition, const cUnit* targetUnit) :
-	agressorId(aggressor.getId()),
-	targetPosition(targetPosition),
-	targetId(targetUnit? targetUnit->getId() : 0)
+cActionAttack::cActionAttack (const cUnit& aggressor, cPosition targetPosition, const cUnit* targetUnit) :
+	agressorId (aggressor.getId()),
+	targetPosition (targetPosition),
+	targetId (targetUnit? targetUnit->getId() : 0)
 {}
 
 //------------------------------------------------------------------------------
-cActionAttack::cActionAttack(cBinaryArchiveOut& archive)
+cActionAttack::cActionAttack (cBinaryArchiveOut& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionAttack::execute(cModel& model) const
+void cActionAttack::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
 	//validate aggressor
-	cUnit* aggressor = model.getUnitFromID(agressorId);
+	cUnit* aggressor = model.getUnitFromID (agressorId);
 	if (aggressor == nullptr || !aggressor->getOwner()) return;
 
 	if (aggressor->getOwner()->getId() != playerNr) return;
 	if (aggressor->isBeeingAttacked()) return;
 
 	//validate target
-	if (!model.getMap()->isValidPosition(targetPosition)) return;
+	if (!model.getMap()->isValidPosition (targetPosition)) return;
 
 	cPosition validatedTargetPosition = targetPosition;
 	if (targetId != 0)
 	{
-		cUnit* target = model.getUnitFromID(targetId);
+		cUnit* target = model.getUnitFromID (targetId);
 		if (target == nullptr) return;
 
 		if (!target->isABuilding() && !target->getIsBig())
 		{
 			if (targetPosition != target->getPosition())
 			{
-				Log.write(" cActionAttack: Target coords changed to " + toString(target->getPosition()) + " to match current unit position", cLog::eLOG_TYPE_NET_DEBUG);
+				Log.write (" cActionAttack: Target coords changed to " + toString (target->getPosition()) + " to match current unit position", cLog::eLOG_TYPE_NET_DEBUG);
 			}
 			validatedTargetPosition = target->getPosition();
-
 		}
 	}
 
 	// check if attack is possible
-	cMapView mapView(model.getMap(), nullptr);
-	if (aggressor->canAttackObjectAt(validatedTargetPosition, mapView, true) == false)
+	cMapView mapView (model.getMap(), nullptr);
+	if (aggressor->canAttackObjectAt (validatedTargetPosition, mapView, true) == false)
 	{
-		Log.write(" cActionAttack: Attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
+		Log.write (" cActionAttack: Attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
 		return;
 	}
-	model.addAttackJob(*aggressor, validatedTargetPosition);
+	model.addAttackJob (*aggressor, validatedTargetPosition);
 }

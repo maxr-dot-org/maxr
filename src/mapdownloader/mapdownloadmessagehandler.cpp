@@ -32,7 +32,7 @@ bool IMapDownloadMessageHandler::handleMessage (const cMultiplayerLobbyMessage& 
 				cancelMessage.playerNr = message.playerNr;
 				cancellation (cancelMessage);
 			}
-			init (static_cast<const cMuMsgStartMapDownload&>(message));
+			init (static_cast<const cMuMsgStartMapDownload&> (message));
 			state = eState::Initialized;
 			return true;
 		}
@@ -40,7 +40,7 @@ bool IMapDownloadMessageHandler::handleMessage (const cMultiplayerLobbyMessage& 
 		{
 			if (state == eState::Initialized)
 			{
-				receivedData (static_cast<const cMuMsgMapDownloadData&>(message));
+				receivedData (static_cast<const cMuMsgMapDownloadData&> (message));
 			}
 			return true;
 		}
@@ -48,7 +48,7 @@ bool IMapDownloadMessageHandler::handleMessage (const cMultiplayerLobbyMessage& 
 		{
 			if (state == eState::Initialized)
 			{
-				cancellation (static_cast<const cMuMsgCanceledMapDownload&>(message));
+				cancellation (static_cast<const cMuMsgCanceledMapDownload&> (message));
 			}
 			state = eState::None;
 			return true;
@@ -57,7 +57,7 @@ bool IMapDownloadMessageHandler::handleMessage (const cMultiplayerLobbyMessage& 
 		{
 			if (state == eState::Initialized)
 			{
-				finished (static_cast<const cMuMsgFinishedMapDownload&>(message));
+				finished (static_cast<const cMuMsgFinishedMapDownload&> (message));
 			}
 			state = eState::None;
 			return true;

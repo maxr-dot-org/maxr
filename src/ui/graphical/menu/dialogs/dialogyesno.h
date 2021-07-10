@@ -30,8 +30,8 @@ public:
 	cDialogYesNo (const std::string& text);
 	~cDialogYesNo();
 
-	cSignal<void ()> yesClicked;
-	cSignal<void ()> noClicked;
+	cSignal<void()> yesClicked;
+	cSignal<void()> noClicked;
 private:
 	cSignalConnectionManager signalConnectionManager;
 };

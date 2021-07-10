@@ -74,12 +74,12 @@ cRgbColor cRgbColor::exchangeAlpha (unsigned char alpha_) const
 	return cRgbColor (r, g, b, alpha_);
 }
 
-uint32_t cRgbColor::getChecksum(uint32_t crc) const
+uint32_t cRgbColor::getChecksum (uint32_t crc) const
 {
-	crc = calcCheckSum(r, crc);
-	crc = calcCheckSum(g, crc);
-	crc = calcCheckSum(b, crc);
-	crc = calcCheckSum(a, crc);
+	crc = calcCheckSum (r, crc);
+	crc = calcCheckSum (g, crc);
+	crc = calcCheckSum (b, crc);
+	crc = calcCheckSum (a, crc);
 
 	return crc;
 }

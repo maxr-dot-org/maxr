@@ -28,17 +28,17 @@ class cUnit;
 class cActionStartBuild : public cActionT<cAction::eActiontype::ACTION_START_BUILD>
 {
 public:
-	cActionStartBuild(const cVehicle& vehicle, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition);
-	cActionStartBuild(const cVehicle& vehicle, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition, const cPosition& pathEndPosition);
-	cActionStartBuild(cBinaryArchiveOut& archive);
+	cActionStartBuild (const cVehicle& vehicle, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition);
+	cActionStartBuild (const cVehicle& vehicle, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition, const cPosition& pathEndPosition);
+	cActionStartBuild (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
 
-	void execute(cModel& model) const override;
+	void execute (cModel& model) const override;
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & vehicleID;
 		archive & buildingTypeID;

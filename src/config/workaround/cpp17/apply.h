@@ -34,7 +34,7 @@ namespace std
 			template <typename F, typename Tuple, std::size_t ... Is>
 			auto apply (F func, Tuple&& tuple, std::index_sequence<Is...>)
 			{
-				return func (std::get<Is> (std::forward<Tuple>(tuple))...);
+				return func (std::get<Is> (std::forward<Tuple> (tuple))...);
 			}
 		}
 
@@ -42,7 +42,7 @@ namespace std
 		auto apply (F func, Tuple&& tuple)
 		{
 			using Seq = std::make_index_sequence<std::tuple_size<std::decay_t<Tuple>>::value>;
-			return details::apply (func, std::forward<Tuple>(tuple), Seq{});
+			return details::apply (func, std::forward<Tuple> (tuple), Seq{});
 		}
 
 	}

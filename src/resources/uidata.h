@@ -142,9 +142,9 @@ public:
 	cUnitsUiData();
 	~cUnitsUiData();
 
-	const sBuildingUIData* getBuildingUI(sID id) const;
-	const sBuildingUIData& getBuildingUI(const cBuilding&) const;
-	const sVehicleUIData* getVehicleUI(sID id) const;
+	const sBuildingUIData* getBuildingUI (sID) const;
+	const sBuildingUIData& getBuildingUI (const cBuilding&) const;
+	const sVehicleUIData* getVehicleUI (sID) const;
 
 	std::vector<sVehicleUIData> vehicleUIs;
 	std::vector<sBuildingUIData> buildingUIs;

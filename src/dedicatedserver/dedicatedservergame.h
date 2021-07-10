@@ -37,10 +37,10 @@
 class cDedicatedServerGame
 {
 public:
-	explicit cDedicatedServerGame(int saveGameNumber);
+	explicit cDedicatedServerGame (int saveGameNumber);
 	~cDedicatedServerGame();
 
-	eOpenServerResult startServer(int port);
+	eOpenServerResult startServer (int port);
 	int getPort() const { return port; }
 
 	// all those methods can be called concurrently

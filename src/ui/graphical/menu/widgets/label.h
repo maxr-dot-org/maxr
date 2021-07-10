@@ -44,7 +44,7 @@ public:
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 	void handleResized (const cPosition& oldSize) override;
 
-	cSignal<void ()> clicked;
+	cSignal<void()> clicked;
 protected:
 	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
 

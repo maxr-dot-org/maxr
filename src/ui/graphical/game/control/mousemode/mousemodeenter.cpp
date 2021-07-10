@@ -29,8 +29,8 @@
 #include "ui/graphical/game/control/mouseaction/mouseactionenter.h"
 
 //------------------------------------------------------------------------------
-cMouseModeEnter::cMouseModeEnter(const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
-	cMouseMode(map_, unitSelection_, player_)
+cMouseModeEnter::cMouseModeEnter (const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
+	cMouseMode (map_, unitSelection_, player_)
 {
 	establishUnitSelectionConnections();
 }
@@ -42,22 +42,22 @@ eMouseModeType cMouseModeEnter::getType() const
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeEnter::setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData&) const
+void cMouseModeEnter::setCursor (cMouse& mouse, const cPosition& mapPosition, const cUnitsData&) const
 {
-	if (canExecuteAction(mapPosition))
+	if (canExecuteAction (mapPosition))
 	{
-		mouse.setCursor(std::make_unique<cMouseCursorSimple>(eMouseCursorSimpleType::Load));
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Load));
 	}
 	else
 	{
-		mouse.setCursor(std::make_unique<cMouseCursorSimple>(eMouseCursorSimpleType::No));
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::No));
 	}
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeEnter::getMouseAction(const cPosition& mapPosition, const cUnitsData&) const
+std::unique_ptr<cMouseAction> cMouseModeEnter::getMouseAction (const cPosition& mapPosition, const cUnitsData&) const
 {
-	if (canExecuteAction(mapPosition))
+	if (canExecuteAction (mapPosition))
 	{
 		return std::make_unique<cMouseActionEnter>();
 	}
@@ -65,23 +65,23 @@ std::unique_ptr<cMouseAction> cMouseModeEnter::getMouseAction(const cPosition& m
 }
 
 //------------------------------------------------------------------------------
-bool cMouseModeEnter::canExecuteAction(const cPosition& mapPosition) const
+bool cMouseModeEnter::canExecuteAction (const cPosition& mapPosition) const
 {
 	if (!map) return false;
 
 	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 	if (!selectedVehicle) return false;
 
-	const auto overBuilding = map->getField(mapPosition).getBuilding();
-	const auto overVehicle = map->getField(mapPosition).getVehicle();
+	const auto overBuilding = map->getField (mapPosition).getBuilding();
+	const auto overVehicle = map->getField (mapPosition).getVehicle();
 
 	if (overBuilding)
 	{
-		return overBuilding->canLoad(selectedVehicle, false);
+		return overBuilding->canLoad (selectedVehicle, false);
 	}
 	else if (overVehicle)
 	{
-		return overVehicle->canLoad(selectedVehicle, false);
+		return overVehicle->canLoad (selectedVehicle, false);
 	}
 
 	return false;
@@ -94,42 +94,42 @@ void cMouseModeEnter::establishUnitSelectionConnections()
 
 	if (selectedUnit)
 	{
-		selectedUnitSignalConnectionManager.connect(selectedUnit->movingChanged, [this]() { needRefresh(); });
-		selectedUnitSignalConnectionManager.connect(selectedUnit->clearingChanged, [this]() { needRefresh(); });
-		selectedUnitSignalConnectionManager.connect(selectedUnit->disabledChanged, [this]() { needRefresh(); });
-		selectedUnitSignalConnectionManager.connect(selectedUnit->ownerChanged, [this]() { needRefresh(); });
-		selectedUnitSignalConnectionManager.connect(selectedUnit->buildingChanged, [this]() { needRefresh(); });
-		selectedUnitSignalConnectionManager.connect(selectedUnit->positionChanged, [this]() { needRefresh(); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->movingChanged, [this]() { needRefresh(); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->clearingChanged, [this]() { needRefresh(); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->disabledChanged, [this]() { needRefresh(); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->ownerChanged, [this]() { needRefresh(); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->buildingChanged, [this]() { needRefresh(); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, [this]() { needRefresh(); });
 	}
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeEnter::establishMapFieldConnections(const cMapFieldView& field)
+void cMouseModeEnter::establishMapFieldConnections (const cMapFieldView& field)
 {
-	mapFieldSignalConnectionManager.connect(field.unitsChanged, [this, &field]() { updateFieldUnitConnections(field); needRefresh(); });
+	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this, &field]() { updateFieldUnitConnections (field); needRefresh(); });
 
-	updateFieldUnitConnections(field);
+	updateFieldUnitConnections (field);
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeEnter::updateFieldUnitConnections(const cMapFieldView& field)
+void cMouseModeEnter::updateFieldUnitConnections (const cMapFieldView& field)
 {
 	mapFieldUnitsSignalConnectionManager.disconnectAll();
 
 	auto building = field.getBuilding();
 	if (building)
 	{
-		mapFieldUnitsSignalConnectionManager.connect(building->storedUnitsChanged, [this]() { needRefresh(); });
-		mapFieldUnitsSignalConnectionManager.connect(building->disabledChanged, [this]() { needRefresh(); });
+		mapFieldUnitsSignalConnectionManager.connect (building->storedUnitsChanged, [this]() { needRefresh(); });
+		mapFieldUnitsSignalConnectionManager.connect (building->disabledChanged, [this]() { needRefresh(); });
 	}
 	auto vehicle = field.getVehicle();
 	if (vehicle)
 	{
-		mapFieldUnitsSignalConnectionManager.connect(vehicle->moveJobChanged, [this]() { needRefresh(); });
-		mapFieldUnitsSignalConnectionManager.connect(vehicle->disabledChanged, [this]() { needRefresh(); });
-		mapFieldUnitsSignalConnectionManager.connect(vehicle->beeingAttackedChanged, [this]() { needRefresh(); });
-		mapFieldUnitsSignalConnectionManager.connect(vehicle->attackingChanged, [this]() { needRefresh(); });
-		mapFieldUnitsSignalConnectionManager.connect(vehicle->buildingChanged, [this]() { needRefresh(); });
-		mapFieldUnitsSignalConnectionManager.connect(vehicle->movingChanged, [this]() { needRefresh(); });
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->moveJobChanged, [this]() { needRefresh(); });
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->disabledChanged, [this]() { needRefresh(); });
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->beeingAttackedChanged, [this]() { needRefresh(); });
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->attackingChanged, [this]() { needRefresh(); });
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->buildingChanged, [this]() { needRefresh(); });
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->movingChanged, [this]() { needRefresh(); });
 	}
 }

@@ -30,37 +30,37 @@
 /*static*/ const char* const cChatCommandArgumentBool::falseName = "off";
 
 //------------------------------------------------------------------------------
-size_t getNextWordLength(const std::string& s, size_t position)
+size_t getNextWordLength (const std::string& s, size_t position)
 {
 	const auto begin = s.begin() + position;
-	const auto end = std::find_if(begin, s.end(), std::ptr_fun<int, int>(std::isspace));
+	const auto end = std::find_if (begin, s.end(), std::ptr_fun<int, int> (std::isspace));
 	return end - begin;
 }
 
 //------------------------------------------------------------------------------
-cChatCommandArgumentBool::cChatCommandArgumentBool(bool isOptional_, ValueType defaultValue_) :
-	cChatCommandArgument<cChatCommandArgumentBool>(isOptional_),
-	value(defaultValue_),
-	defaultValue(defaultValue_)
+cChatCommandArgumentBool::cChatCommandArgumentBool (bool isOptional_, ValueType defaultValue_) :
+	cChatCommandArgument<cChatCommandArgumentBool> (isOptional_),
+	value (defaultValue_),
+	defaultValue (defaultValue_)
 {}
 
 //------------------------------------------------------------------------------
-size_t cChatCommandArgumentBool::parse(const std::string& command, size_t position)
+size_t cChatCommandArgumentBool::parse (const std::string& command, size_t position)
 {
-	const auto nextWordLength = getNextWordLength(command, position);
-	if(command.compare(position, nextWordLength, trueName) == 0)
+	const auto nextWordLength = getNextWordLength (command, position);
+	if (command.compare (position, nextWordLength, trueName) == 0)
 	{
 		value = true;
 		return position + nextWordLength;
 	}
-	else if(command.compare(position, nextWordLength, falseName) == 0)
+	else if (command.compare (position, nextWordLength, falseName) == 0)
 	{
 		value = false;
 		return position + nextWordLength;
 	}
 	else
 	{
-		if(this->isOptional)
+		if (this->isOptional)
 		{
 			value = defaultValue;
 			return position;
@@ -69,15 +69,15 @@ size_t cChatCommandArgumentBool::parse(const std::string& command, size_t positi
 		{
 			std::stringstream errorString;
 			// TODO: translate
-			if(nextWordLength == 0)
+			if (nextWordLength == 0)
 			{
 				errorString << "Missing boolean argument (" << trueName << "/" << falseName << ")";
 			}
 			else
 			{
-				errorString << "'" << command.substr(position, nextWordLength) << "' could not be recognized as boolean argument (" << trueName << "/" << falseName << ")";
+				errorString << "'" << command.substr (position, nextWordLength) << "' could not be recognized as boolean argument (" << trueName << "/" << falseName << ")";
 			}
-			throw std::runtime_error(errorString.str());
+			throw std::runtime_error (errorString.str());
 		}
 	}
 }
@@ -86,9 +86,9 @@ size_t cChatCommandArgumentBool::parse(const std::string& command, size_t positi
 std::string cChatCommandArgumentBool::toString() const
 {
 	std::stringstream result;
-	if(this->isOptional) result << "[";
+	if (this->isOptional) result << "[";
 	result << "{" << trueName << "/" << falseName << "}";
-	if(this->isOptional) result << "]";
+	if (this->isOptional) result << "]";
 	return result.str();
 }
 
@@ -99,24 +99,24 @@ const cChatCommandArgumentBool::ValueType& cChatCommandArgumentBool::getValue() 
 }
 
 //------------------------------------------------------------------------------
-cChatCommandArgumentChoice::cChatCommandArgumentChoice(std::vector<std::string> choices_, bool isOptional_, size_t defaultSelection_) :
-	cChatCommandArgument<cChatCommandArgumentChoice>(isOptional_),
-	choices(std::move(choices_)),
-	currentSelection(defaultSelection_),
-	defaultSelection(defaultSelection_)
+cChatCommandArgumentChoice::cChatCommandArgumentChoice (std::vector<std::string> choices_, bool isOptional_, size_t defaultSelection_) :
+	cChatCommandArgument<cChatCommandArgumentChoice> (isOptional_),
+	choices (std::move (choices_)),
+	currentSelection (defaultSelection_),
+	defaultSelection (defaultSelection_)
 {
-	assert(defaultSelection < choices.size());
+	assert (defaultSelection < choices.size());
 }
 
 //------------------------------------------------------------------------------
-size_t cChatCommandArgumentChoice::parse(const std::string& command, size_t position)
+size_t cChatCommandArgumentChoice::parse (const std::string& command, size_t position)
 {
-	const auto nextWordLength = getNextWordLength(command, position);
+	const auto nextWordLength = getNextWordLength (command, position);
 	bool success = false;
-	for(size_t i = 0; i < choices.size(); ++i)
+	for (size_t i = 0; i < choices.size(); ++i)
 	{
-		if(nextWordLength != choices[i].size()) continue;
-		if(command.compare(position, nextWordLength, choices[i]) == 0)
+		if (nextWordLength != choices[i].size()) continue;
+		if (command.compare (position, nextWordLength, choices[i]) == 0)
 		{
 			currentSelection = i;
 			success = true;
@@ -124,9 +124,9 @@ size_t cChatCommandArgumentChoice::parse(const std::string& command, size_t posi
 		}
 	}
 
-	if(!success)
+	if (!success)
 	{
-		if(this->isOptional)
+		if (this->isOptional)
 		{
 			currentSelection = defaultSelection;
 			return position;
@@ -134,25 +134,25 @@ size_t cChatCommandArgumentChoice::parse(const std::string& command, size_t posi
 		else
 		{
 			std::stringstream errorString;
-			if(nextWordLength == 0)
+			if (nextWordLength == 0)
 			{
 				errorString << "Missing argument (";
 			}
 			else
 			{
 				// TODO: translate
-				errorString << "'" << command.substr(position, nextWordLength) << "' does not match any of the allowed values (";
+				errorString << "'" << command.substr (position, nextWordLength) << "' does not match any of the allowed values (";
 			}
-			if(!choices.empty())
+			if (!choices.empty())
 			{
 				errorString << choices.front();
-				for(size_t i = 1; i < choices.size(); ++i)
+				for (size_t i = 1; i < choices.size(); ++i)
 				{
 					errorString << ", " << choices[i];
 				}
 			}
 			errorString << ")";
-			throw std::runtime_error(errorString.str());
+			throw std::runtime_error (errorString.str());
 		}
 	}
 	return position + nextWordLength;
@@ -162,18 +162,18 @@ size_t cChatCommandArgumentChoice::parse(const std::string& command, size_t posi
 std::string cChatCommandArgumentChoice::toString() const
 {
 	std::stringstream result;
-	if(this->isOptional) result << "[";
+	if (this->isOptional) result << "[";
 	result << "{";
-	if(!choices.empty())
+	if (!choices.empty())
 	{
 		result << choices.front();
-		for(size_t i = 1; i < choices.size(); ++i)
+		for (size_t i = 1; i < choices.size(); ++i)
 		{
 			result << "/" << choices[i];
 		}
 	}
 	result << "}";
-	if(this->isOptional) result << "]";
+	if (this->isOptional) result << "]";
 	return result.str();
 }
 
@@ -184,27 +184,27 @@ const cChatCommandArgumentChoice::ValueType& cChatCommandArgumentChoice::getValu
 }
 
 //------------------------------------------------------------------------------
-cChatCommandArgumentString::cChatCommandArgumentString(std::string name_, bool isOptional_, ValueType defaultValue_) :
-	cChatCommandArgument<cChatCommandArgumentString>(isOptional_),
-	name(std::move(name_)),
-	defaultValue(std::move(defaultValue_))
+cChatCommandArgumentString::cChatCommandArgumentString (std::string name_, bool isOptional_, ValueType defaultValue_) :
+	cChatCommandArgument<cChatCommandArgumentString> (isOptional_),
+	name (std::move (name_)),
+	defaultValue (std::move (defaultValue_))
 {}
 
 //------------------------------------------------------------------------------
-size_t cChatCommandArgumentString::parse(const std::string& command, size_t position)
+size_t cChatCommandArgumentString::parse (const std::string& command, size_t position)
 {
-	value = command.substr(position);
+	value = command.substr (position);
 
-	if(value.empty())
+	if (value.empty())
 	{
-		if(this->isOptional)
+		if (this->isOptional)
 		{
 			value = defaultValue;
 		}
 		else
 		{
 			// TODO: translate
-			throw std::runtime_error("Missing string argument <" + name + ">");
+			throw std::runtime_error ("Missing string argument <" + name + ">");
 		}
 	}
 
@@ -215,9 +215,9 @@ size_t cChatCommandArgumentString::parse(const std::string& command, size_t posi
 std::string cChatCommandArgumentString::toString() const
 {
 	std::stringstream result;
-	if(this->isOptional) result << "[";
+	if (this->isOptional) result << "[";
 	result << "<" << name << ">";
-	if(this->isOptional) result << "]";
+	if (this->isOptional) result << "]";
 	return result.str();
 }
 
@@ -228,27 +228,27 @@ const cChatCommandArgumentString::ValueType& cChatCommandArgumentString::getValu
 }
 
 //------------------------------------------------------------------------------
-cChatCommandArgumentServer::cChatCommandArgumentServer(cServer*& serverPointer_, bool isOptional_, ValueType defaultValue_) :
-	cChatCommandArgument<cChatCommandArgumentServer>(isOptional_),
-	value(defaultValue_),
-	defaultValue(defaultValue_),
-	serverPointer(serverPointer_)
+cChatCommandArgumentServer::cChatCommandArgumentServer (cServer*& serverPointer_, bool isOptional_, ValueType defaultValue_) :
+	cChatCommandArgument<cChatCommandArgumentServer> (isOptional_),
+	value (defaultValue_),
+	defaultValue (defaultValue_),
+	serverPointer (serverPointer_)
 {}
 
 //------------------------------------------------------------------------------
-size_t cChatCommandArgumentServer::parse(const std::string& command, size_t position)
+size_t cChatCommandArgumentServer::parse (const std::string& command, size_t position)
 {
 	value = serverPointer;
-	if(value == nullptr)
+	if (value == nullptr)
 	{
-		if(this->isOptional)
+		if (this->isOptional)
 		{
 			value = defaultValue;
 		}
 		else
 		{
 			// TODO: translate
-			throw std::runtime_error("Command can only be executed on server");
+			throw std::runtime_error ("Command can only be executed on server");
 		}
 	}
 	return position;
@@ -267,26 +267,26 @@ const cChatCommandArgumentServer::ValueType& cChatCommandArgumentServer::getValu
 }
 
 //------------------------------------------------------------------------------
-cChatCommandArgumentClient::cChatCommandArgumentClient(const std::shared_ptr<cClient>& activeClientPointer_, bool isOptional_, ValueType defaultValue_) :
-	cChatCommandArgument<cChatCommandArgumentClient>(isOptional_),
-	value(defaultValue_),
-	defaultValue(defaultValue_),
-	activeClientPointer(activeClientPointer_)
+cChatCommandArgumentClient::cChatCommandArgumentClient (const std::shared_ptr<cClient>& activeClientPointer_, bool isOptional_, ValueType defaultValue_) :
+	cChatCommandArgument<cChatCommandArgumentClient> (isOptional_),
+	value (defaultValue_),
+	defaultValue (defaultValue_),
+	activeClientPointer (activeClientPointer_)
 {}
 
 //------------------------------------------------------------------------------
-size_t cChatCommandArgumentClient::parse(const std::string& command, size_t position)
+size_t cChatCommandArgumentClient::parse (const std::string& command, size_t position)
 {
-	if(activeClientPointer == nullptr)
+	if (activeClientPointer == nullptr)
 	{
-		if(this->isOptional)
+		if (this->isOptional)
 		{
 			value = defaultValue;
 		}
 		else
 		{
 			// TODO: translate
-			throw std::runtime_error("Command can not be executed when there is no active client");
+			throw std::runtime_error ("Command can not be executed when there is no active client");
 		}
 	}
 	else
@@ -309,68 +309,68 @@ const cChatCommandArgumentClient::ValueType& cChatCommandArgumentClient::getValu
 }
 
 //------------------------------------------------------------------------------
-cChatCommandArgumentServerPlayer::cChatCommandArgumentServerPlayer(cServer*& serverPointer_, bool isOptional_, ValueType defaultValue_) :
-	cChatCommandArgument<cChatCommandArgumentServerPlayer>(isOptional_),
-	value(defaultValue_),
-	defaultValue(defaultValue_),
-	serverPointer(serverPointer_)
+cChatCommandArgumentServerPlayer::cChatCommandArgumentServerPlayer (cServer*& serverPointer_, bool isOptional_, ValueType defaultValue_) :
+	cChatCommandArgument<cChatCommandArgumentServerPlayer> (isOptional_),
+	value (defaultValue_),
+	defaultValue (defaultValue_),
+	serverPointer (serverPointer_)
 {}
 
 //------------------------------------------------------------------------------
-size_t cChatCommandArgumentServerPlayer::parse(const std::string& command, size_t position)
+size_t cChatCommandArgumentServerPlayer::parse (const std::string& command, size_t position)
 {
 	const auto server = serverPointer;
-	if(server == nullptr)
+	if (server == nullptr)
 	{
 		// TODO: translate
-		throw std::runtime_error("Command can only be executed on server");
+		throw std::runtime_error ("Command can only be executed on server");
 	}
 
-	const auto nextWordLength = getNextWordLength(command, position);
+	const auto nextWordLength = getNextWordLength (command, position);
 
 	bool isNumber = true;
 	size_t pos;
 	int playerNumber;
 	try
 	{
-		playerNumber = std::stoi(command.substr(position, nextWordLength), &pos);
+		playerNumber = std::stoi (command.substr (position, nextWordLength), &pos);
 	}
-	catch(const std::invalid_argument&)
+	catch (const std::invalid_argument&)
 	{
 		isNumber = false;
 	}
-	catch(const std::out_of_range&)
+	catch (const std::out_of_range&)
 	{
 		// TODO: translate
-		throw std::runtime_error("Invalid player number");
+		throw std::runtime_error ("Invalid player number");
 	}
 
-	if(pos != nextWordLength)
+	if (pos != nextWordLength)
 	{
 		isNumber = false;
 	}
 
-	if(isNumber)
+	if (isNumber)
 	{
 		try
 		{
-			value = server->getModel().getPlayer(playerNumber);
+			value = server->getModel().getPlayer (playerNumber);
 		}
-		catch(std::exception&)
+		catch (std::exception&)
 		{
 			// TODO: translate
-			throw std::runtime_error("Could not find player with number " + std::to_string(playerNumber));
+			throw std::runtime_error ("Could not find player with number " + std::to_string (playerNumber));
 		}
 	}
 	else
 	{
-		const auto& playerName = command.substr(position, nextWordLength);
+		const auto& playerName = command.substr (position, nextWordLength);
 
-		value = server->getModel().getPlayer(playerName);
+		value = server->getModel().getPlayer (playerName);
 
-		if(value == nullptr)
+		if (value == nullptr)
 		{
-			if(nextWordLength == 0 && this->isOptional)
+			if (nextWordLength == 0 && this->isOptional)
 			{
 				value = defaultValue;
 				return position;
@@ -378,7 +378,7 @@ size_t cChatCommandArgumentServerPlayer::parse(const std::string& command, size_
 			else
 			{
 				// TODO: translate
-				throw std::runtime_error("Could not find player with name '" + playerName + "'");
+				throw std::runtime_error ("Could not find player with name '" + playerName + "'");
 			}
 		}
 	}
@@ -390,9 +390,9 @@ size_t cChatCommandArgumentServerPlayer::parse(const std::string& command, size_
 std::string cChatCommandArgumentServerPlayer::toString() const
 {
 	std::stringstream result;
-	if(this->isOptional) result << "[";
+	if (this->isOptional) result << "[";
 	result << "<playerID>";
-	if(this->isOptional) result << "]";
+	if (this->isOptional) result << "]";
 	return result.str();
 }
 
@@ -403,65 +403,65 @@ const cChatCommandArgumentServerPlayer::ValueType& cChatCommandArgumentServerPla
 }
 
 //------------------------------------------------------------------------------
-cChatCommandArgumentClientPlayer::cChatCommandArgumentClientPlayer(const std::shared_ptr<cClient>& activeClientPointer_, bool isOptional_, ValueType defaultValue_) :
-	cChatCommandArgument<cChatCommandArgumentClientPlayer>(isOptional_),
-	value(defaultValue_),
-	defaultValue(defaultValue_),
-	activeClientPointer(activeClientPointer_)
+cChatCommandArgumentClientPlayer::cChatCommandArgumentClientPlayer (const std::shared_ptr<cClient>& activeClientPointer_, bool isOptional_, ValueType defaultValue_) :
+	cChatCommandArgument<cChatCommandArgumentClientPlayer> (isOptional_),
+	value (defaultValue_),
+	defaultValue (defaultValue_),
+	activeClientPointer (activeClientPointer_)
 {}
 
 //------------------------------------------------------------------------------
-size_t cChatCommandArgumentClientPlayer::parse(const std::string& command, size_t position)
+size_t cChatCommandArgumentClientPlayer::parse (const std::string& command, size_t position)
 {
-	if(activeClientPointer == nullptr)
+	if (activeClientPointer == nullptr)
 	{
 		// TODO: translate
-		throw std::runtime_error("Command can not be executed when there is no active client");
+		throw std::runtime_error ("Command can not be executed when there is no active client");
 	}
 
-	const auto nextWordLength = getNextWordLength(command, position);
+	const auto nextWordLength = getNextWordLength (command, position);
 
 	bool isNumber = true;
 	size_t pos;
 	int playerNumber;
 	try
 	{
-		playerNumber = std::stoi(command.substr(position, nextWordLength), &pos);
+		playerNumber = std::stoi (command.substr (position, nextWordLength), &pos);
 	}
-	catch(const std::invalid_argument&)
+	catch (const std::invalid_argument&)
 	{
 		isNumber = false;
 	}
-	catch(const std::out_of_range&)
+	catch (const std::out_of_range&)
 	{
 		// TODO: translate
-		throw std::runtime_error("Invalid player number");
+		throw std::runtime_error ("Invalid player number");
 	}
 
-	if(pos != nextWordLength)
+	if (pos != nextWordLength)
 	{
 		isNumber = false;
 	}
 
-	if(isNumber)
+	if (isNumber)
 	{
-		value = activeClientPointer->getModel().getPlayer(playerNumber);
+		value = activeClientPointer->getModel().getPlayer (playerNumber);
 
-		if(value == nullptr)
+		if (value == nullptr)
 		{
 			// TODO: translate
-			throw std::runtime_error("Could not find player with number " + std::to_string(playerNumber));
+			throw std::runtime_error ("Could not find player with number " + std::to_string (playerNumber));
 		}
 	}
 	else
 	{
-		const auto& playerName = command.substr(position, nextWordLength);
+		const auto& playerName = command.substr (position, nextWordLength);
 
-		value = activeClientPointer->getModel().getPlayer(playerName);
+		value = activeClientPointer->getModel().getPlayer (playerName);
 
-		if(value == nullptr)
+		if (value == nullptr)
 		{
-			if(nextWordLength == 0 && this->isOptional)
+			if (nextWordLength == 0 && this->isOptional)
 			{
 				value = defaultValue;
 				return position;
@@ -469,7 +469,7 @@ size_t cChatCommandArgumentClientPlayer::parse(const std::string& command, size_
 			else
 			{
 				// TODO: translate
-				throw std::runtime_error("Could not find player with name '" + playerName + "'");
+				throw std::runtime_error ("Could not find player with name '" + playerName + "'");
 			}
 		}
 	}
@@ -481,9 +481,9 @@ size_t cChatCommandArgumentClientPlayer::parse(const std::string& command, size_
 std::string cChatCommandArgumentClientPlayer::toString() const
 {
 	std::stringstream result;
-	if(this->isOptional) result << "[";
+	if (this->isOptional) result << "[";
 	result << "<playerID>";
-	if(this->isOptional) result << "]";
+	if (this->isOptional) result << "]";
 	return result.str();
 }
 

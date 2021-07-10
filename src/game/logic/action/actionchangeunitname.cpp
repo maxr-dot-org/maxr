@@ -23,27 +23,27 @@
 
 
 //------------------------------------------------------------------------------
-cActionChangeUnitName::cActionChangeUnitName(const cUnit& unit, const std::string& newName) :
-	unitId(unit.getId()),
-	newName(newName)
+cActionChangeUnitName::cActionChangeUnitName (const cUnit& unit, const std::string& newName) :
+	unitId (unit.getId()),
+	newName (newName)
 {}
 
 //------------------------------------------------------------------------------
-cActionChangeUnitName::cActionChangeUnitName(cBinaryArchiveOut& archive)
+cActionChangeUnitName::cActionChangeUnitName (cBinaryArchiveOut& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionChangeUnitName::execute(cModel& model) const
+void cActionChangeUnitName::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	auto unit = model.getVehicleFromID(unitId);
+	auto unit = model.getVehicleFromID (unitId);
 	if (unit == nullptr) return;
 
 	if (!unit->getOwner()) return;
 	if (unit->getOwner()->getId() != playerNr) return;
 
-	unit->changeName(newName);
+	unit->changeName (newName);
 }

@@ -27,21 +27,21 @@
 #include <tuple>
 #include <sstream>
 
-void skipWhiteSpace(const std::string& command, size_t& position);
+void skipWhiteSpace (const std::string& command, size_t& position);
 
-template<typename... Arguments>
+template <typename... Arguments>
 class cChatCommandParser;
 
-template<>
+template <>
 class cChatCommandParser<>
 {
 public:
 	using ArgumentValueTypes = std::tuple<>;
 
-	cChatCommandParser(cChatCommand command_);
+	cChatCommandParser (cChatCommand command_);
 
-	size_t parse(const std::string& command, size_t position) const;
-	void printArguments(std::ostream& result) const;
+	size_t parse (const std::string& command, size_t position) const;
+	void printArguments (std::ostream& result) const;
 
 	const cChatCommand& getCommand() const;
 
@@ -50,21 +50,21 @@ private:
 	cChatCommand command;
 };
 
-template<typename Argument, typename... LastArguments>
+template <typename Argument, typename... LastArguments>
 class cChatCommandParser<Argument, LastArguments...>
 {
 public:
 	using ArgumentValueTypes = std::tuple<typename LastArguments::ValueTypes..., typename Argument::ValueType>;
 
-	cChatCommandParser(cChatCommandParser<LastArguments...> lastParser_, Argument argument_);
-	size_t parse(const std::string& command, size_t position) const;
+	cChatCommandParser (cChatCommandParser<LastArguments...> lastParser_, Argument argument_);
+	size_t parse (const std::string& command, size_t position) const;
 
-	template<typename NewArgument, typename... Args>
-	cChatCommandParser<NewArgument, Argument, LastArguments...> addArgument(Args&&... args);
-	template<typename F>
-	std::unique_ptr<cChatCommandExecutor> setAction(F function);
+	template <typename NewArgument, typename... Args>
+	cChatCommandParser<NewArgument, Argument, LastArguments...> addArgument (Args&&... args);
+	template <typename F>
+	std::unique_ptr<cChatCommandExecutor> setAction (F function);
 
-	void printArguments(std::ostream& result) const;
+	void printArguments (std::ostream& result) const;
 
 	const cChatCommand& getCommand() const;
 	ArgumentValueTypes getArgumentValues() const;
@@ -74,73 +74,73 @@ private:
 };
 
 //------------------------------------------------------------------------------
-template<typename Argument, typename... LastArguments>
-cChatCommandParser<Argument, LastArguments...>::cChatCommandParser(cChatCommandParser<LastArguments...> lastParser_, Argument argument_) :
-	lastParser(std::move(lastParser_)),
-	argument(std::move(argument_))
+template <typename Argument, typename... LastArguments>
+cChatCommandParser<Argument, LastArguments...>::cChatCommandParser (cChatCommandParser<LastArguments...> lastParser_, Argument argument_) :
+	lastParser (std::move (lastParser_)),
+	argument (std::move (argument_))
 {}
 
 //------------------------------------------------------------------------------
-template<typename Argument, typename... LastArguments>
-size_t cChatCommandParser<Argument, LastArguments...>::parse(const std::string& command, size_t position) const
+template <typename Argument, typename... LastArguments>
+size_t cChatCommandParser<Argument, LastArguments...>::parse (const std::string& command, size_t position) const
 {
-	position = lastParser.parse(command, position);
+	position = lastParser.parse (command, position);
 	try
 	{
-		position = argument.parse(command, position);
+		position = argument.parse (command, position);
 	}
-	catch(const std::runtime_error& e)
+	catch (const std::runtime_error& e)
 	{
 		std::stringstream errorString;
 		// TODO: translate
-		errorString << std::string("Invalid value for argument: ") << e.what();
-		throw std::runtime_error(errorString.str());
+		errorString << std::string ("Invalid value for argument: ") << e.what();
+		throw std::runtime_error (errorString.str());
 	}
-	skipWhiteSpace(command, position);
+	skipWhiteSpace (command, position);
 
 	return position;
 }
 
 //------------------------------------------------------------------------------
-template<typename Argument, typename... LastArguments>
-template<typename NewArgument, typename... Args>
-cChatCommandParser<NewArgument, Argument, LastArguments...> cChatCommandParser<Argument, LastArguments...>::addArgument(Args&&... args)
+template <typename Argument, typename... LastArguments>
+template <typename NewArgument, typename... Args>
+cChatCommandParser<NewArgument, Argument, LastArguments...> cChatCommandParser<Argument, LastArguments...>::addArgument (Args&&... args)
 {
-	return cChatCommandParser<NewArgument, Argument, LastArguments...>(std::move(*this), NewArgument(std::forward<Args>(args)...));
+	return cChatCommandParser<NewArgument, Argument, LastArguments...> (std::move (*this), NewArgument (std::forward<Args> (args)...));
 }
 
 //------------------------------------------------------------------------------
-template<typename Argument, typename... LastArguments>
-template<typename F>
-std::unique_ptr<cChatCommandExecutor> cChatCommandParser<Argument, LastArguments...>::setAction(F function)
+template <typename Argument, typename... LastArguments>
+template <typename F>
+std::unique_ptr<cChatCommandExecutor> cChatCommandParser<Argument, LastArguments...>::setAction (F function)
 {
-	return std::make_unique<cChatCommandExecutorImpl<F, Argument, LastArguments...>>(std::move(function), std::move(*this));
+	return std::make_unique<cChatCommandExecutorImpl<F, Argument, LastArguments...>> (std::move (function), std::move (*this));
 }
 
 //------------------------------------------------------------------------------
-template<typename Argument, typename... LastArguments>
-void cChatCommandParser<Argument, LastArguments...>::printArguments(std::ostream& result) const
+template <typename Argument, typename... LastArguments>
+void cChatCommandParser<Argument, LastArguments...>::printArguments (std::ostream& result) const
 {
-	lastParser.printArguments(result);
+	lastParser.printArguments (result);
 	const auto argumentString = argument.toString();
-	if(!argumentString.empty())
+	if (!argumentString.empty())
 	{
 		result << " " << argumentString;
 	}
 }
 
 //------------------------------------------------------------------------------
-template<typename Argument, typename... LastArguments>
+template <typename Argument, typename... LastArguments>
 const cChatCommand& cChatCommandParser<Argument, LastArguments...>::getCommand() const
 {
 	return lastParser.getCommand();
 }
 
 //------------------------------------------------------------------------------
-template<typename Argument, typename... LastArguments>
+template <typename Argument, typename... LastArguments>
 typename cChatCommandParser<Argument, LastArguments...>::ArgumentValueTypes cChatCommandParser<Argument, LastArguments...>::getArgumentValues() const
 {
-	return std::tuple_cat(lastParser.getArgumentValues(), std::tuple<typename Argument::ValueType>(argument.getValue()));
+	return std::tuple_cat (lastParser.getArgumentValues(), std::tuple<typename Argument::ValueType> (argument.getValue()));
 }
 
 #endif // ui_graphical_game_control_chatcommand_chatcommandparserH

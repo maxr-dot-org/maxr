@@ -20,7 +20,7 @@
 #include "game/data/report/unit/savedreportcapturedbyenemy.h"
 
 //------------------------------------------------------------------------------
-cSavedReportCapturedByEnemy::cSavedReportCapturedByEnemy(const cUnit& unit) :
+cSavedReportCapturedByEnemy::cSavedReportCapturedByEnemy (const cUnit& unit) :
 	cSavedReportUnit (unit)
 {}
 

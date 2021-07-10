@@ -28,14 +28,14 @@ class cSavedReportUpgraded : public cSavedReport
 public:
 	cSavedReportUpgraded (const sID& unitId, int unitsCount, int costs);
 	template <typename T, ENABLE_ARCHIVE_OUT>
-	explicit cSavedReportUpgraded(T& archive)
+	explicit cSavedReportUpgraded (T& archive)
 	{
-		serializeThis(archive);
+		serializeThis (archive);
 	}
 
-	void serialize(cBinaryArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
-	void serialize(cXmlArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
+	void serialize (cXmlArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
 
 	eSavedReportType getType() const override;
 
@@ -47,11 +47,11 @@ public:
 
 private:
 	template <typename T>
-	void serializeThis(T& archive)
+	void serializeThis (T& archive)
 	{
-		archive & NVP(unitId);
-		archive & NVP(unitsCount);
-		archive & NVP(costs);
+		archive & NVP (unitId);
+		archive & NVP (unitsCount);
+		archive & NVP (costs);
 	}
 
 	sID unitId;

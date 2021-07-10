@@ -35,7 +35,7 @@ cWindowNetworkLobbyClient::cWindowNetworkLobbyClient() :
 
 	signalConnectionManager.connect (ipLineEdit->returnPressed, [this]()
 	{
-		triggeredConnect ();
+		triggeredConnect();
 	});
 }
 

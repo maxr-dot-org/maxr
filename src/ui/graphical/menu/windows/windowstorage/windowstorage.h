@@ -40,10 +40,10 @@ class cWindowStorage : public cWindow
 public:
 	cWindowStorage (const cUnit& unit, std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 
-	cSignal<void ()> activateAll;
-	cSignal<void ()> reloadAll;
-	cSignal<void ()> repairAll;
-	cSignal<void ()> upgradeAll;
+	cSignal<void()> activateAll;
+	cSignal<void()> reloadAll;
+	cSignal<void()> repairAll;
+	cSignal<void()> upgradeAll;
 
 	cSignal<void (size_t index)> activate;
 	cSignal<void (size_t index)> reload;

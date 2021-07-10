@@ -32,9 +32,9 @@ public:
 
 	static const bool isWriter = true;
 
-	template<typename T>
+	template <typename T>
 	cTextArchiveIn& operator<<(const T& value);
-	template<typename T>
+	template <typename T>
 	cTextArchiveIn& operator&(const T& value);
 
 	const std::string data() const;
@@ -46,77 +46,76 @@ private:
 	void closeBracket();
 	void addComma();
 
-	template<typename T, typename = std::enable_if_t <!std::is_enum<T>::value>>
-	void pushValue(const T& value);
-	template<typename T>
-	void pushValue(const serialization::sNameValuePair<T>& nvp);
+	template <typename T, typename = std::enable_if_t <!std::is_enum<T>::value>>
+	void pushValue (const T& value);
+	template <typename T>
+	void pushValue (const serialization::sNameValuePair<T>& nvp);
 
 
 	//
 	// push fundamental types
 	//
-	void pushValue(bool value);
-	void pushValue(char value);
-	void pushValue(signed char value);
-	void pushValue(unsigned char value);
-	void pushValue(signed short value);
-	void pushValue(unsigned short value);
-	void pushValue(signed int value);
-	void pushValue(unsigned int value);
-	void pushValue(signed long value);
-	void pushValue(unsigned long value);
-	void pushValue(signed long long value);
-	void pushValue(unsigned long long value);
-	void pushValue(float value);
-	void pushValue(double value);
+	void pushValue (bool value);
+	void pushValue (char value);
+	void pushValue (signed char value);
+	void pushValue (unsigned char value);
+	void pushValue (signed short value);
+	void pushValue (unsigned short value);
+	void pushValue (signed int value);
+	void pushValue (unsigned int value);
+	void pushValue (signed long value);
+	void pushValue (unsigned long value);
+	void pushValue (signed long long value);
+	void pushValue (unsigned long long value);
+	void pushValue (float value);
+	void pushValue (double value);
 
 	//
 	// push types that need a special handling in text archives
 	//
-	void pushValue(const std::string& value);
+	void pushValue (const std::string& value);
 	template <typename T, typename = std::enable_if_t <std::is_enum<T>::value>>
-	void pushValue(T value);
+	void pushValue (T value);
 };
 //------------------------------------------------------------------------------
-template<typename T>
-cTextArchiveIn& cTextArchiveIn::operator<<(const T& value)
+template <typename T>
+cTextArchiveIn& cTextArchiveIn::operator<< (const T& value)
 {
-	pushValue(value);
+	pushValue (value);
 	return *this;
 }
 //------------------------------------------------------------------------------
-template<typename T>
-cTextArchiveIn& cTextArchiveIn::operator&(const T& value)
+template <typename T>
+cTextArchiveIn& cTextArchiveIn::operator& (const T& value)
 {
-	pushValue(value);
+	pushValue (value);
 	return *this;
 }
 //------------------------------------------------------------------------------
-template<typename T, typename>
-void cTextArchiveIn::pushValue(const T& value)
+template <typename T, typename>
+void cTextArchiveIn::pushValue (const T& value)
 {
 	openBracket();
 
-	T& valueNonConst = const_cast<T&>(value);
-	serialization::serialize(*this, valueNonConst);
+	T& valueNonConst = const_cast<T&> (value);
+	serialization::serialize (*this, valueNonConst);
 
 	closeBracket();
 }
 //------------------------------------------------------------------------------
-template<typename T>
-void cTextArchiveIn::pushValue(const serialization::sNameValuePair<T>& nvp)
+template <typename T>
+void cTextArchiveIn::pushValue (const serialization::sNameValuePair<T>& nvp)
 {
-	pushValue(nvp.value);
+	pushValue (nvp.value);
 }
-
 
 //------------------------------------------------------------------------------
 template <typename T, typename /*= std::enable_if_t <std::is_enum<T>::value>*/>
-void cTextArchiveIn::pushValue(T value)
+void cTextArchiveIn::pushValue (T value)
 {
 	addComma();
-	buffer << enumToString(value);
+	buffer << enumToString (value);
 	nextCommaNeeded = true;
 }
- 
+
 #endif //serialization_binaryarchiveH

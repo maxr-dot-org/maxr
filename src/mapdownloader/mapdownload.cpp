@@ -203,7 +203,7 @@ bool cMapReceiver::finished()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cMapSender::cMapSender(cConnectionManager& connectionManager, int toPlayerNr,
+cMapSender::cMapSender (cConnectionManager& connectionManager, int toPlayerNr,
 						const std::string& mapName) :
 	connectionManager (connectionManager),
 	toPlayerNr (toPlayerNr),
@@ -270,7 +270,7 @@ void cMapSender::run()
 	if (canceled) return;
 
 	{
-		sendMsg(cMuMsgStartMapDownload(mapName, sendBuffer.size()));
+		sendMsg (cMuMsgStartMapDownload (mapName, sendBuffer.size()));
 	}
 	int msgCount = 0;
 	const int MAX_MESSAGE_SIZE = 10 * 1024;
@@ -284,7 +284,7 @@ void cMapSender::run()
 		if (bytesToSend  > MAX_MESSAGE_SIZE)
 			bytesToSend = MAX_MESSAGE_SIZE;
 		for (int i = 0; i < bytesToSend; i++)
-			msg.data.push_back(sendBuffer[bytesSent + i]);
+			msg.data.push_back (sendBuffer[bytesSent + i]);
 		bytesSent += bytesToSend;
 		sendMsg (msg);
 
@@ -298,7 +298,7 @@ void cMapSender::run()
 
 	sendMsg (cMuMsgFinishedMapDownload());
 
-	connectionManager.sendToServer (cMuMsgFinishedMapDownload().From(toPlayerNr));
+	connectionManager.sendToServer (cMuMsgFinishedMapDownload().From (toPlayerNr));
 }
 
 //------------------------------------------------------------------------------
@@ -310,11 +310,11 @@ void cMapSender::sendMsg (cNetMessage& msg)
 	archive << msg;
 	Log.write ("MapSender: --> " + archive.data() + " to " + std::to_string (toPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
 
-	connectionManager.sendToPlayer(msg, toPlayerNr);
+	connectionManager.sendToPlayer (msg, toPlayerNr);
 }
 
 //------------------------------------------------------------------------------
 void cMapSender::sendMsg (cNetMessage&& msg)
 {
-	sendMsg(static_cast<cNetMessage&>(msg));
+	sendMsg (static_cast<cNetMessage&> (msg));
 }

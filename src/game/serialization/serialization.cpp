@@ -25,60 +25,60 @@
 namespace serialization
 {
 
-	cPointerLoader::cPointerLoader(cModel& model) :
-		model(model)
+	cPointerLoader::cPointerLoader (cModel& model) :
+		model (model)
 	{}
 
-	void cPointerLoader::get(int id, cPlayer*& value) const
+	void cPointerLoader::get (int id, cPlayer*& value) const
 	{
-		value = model.getPlayer(id);
+		value = model.getPlayer (id);
 		if (value == nullptr && id != -1)
-			Log.write("Player with id " + std::to_string(id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ("Player with id " + std::to_string (id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
 	}
 
-	void cPointerLoader::get(int id, const cPlayer*& value) const
+	void cPointerLoader::get (int id, const cPlayer*& value) const
 	{
-		value = model.getPlayer(id);
+		value = model.getPlayer (id);
 		if (value == nullptr && id != -1)
-			Log.write("Player with id " + std::to_string(id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ("Player with id " + std::to_string (id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
 	}
 
-	void cPointerLoader::get(int id, cBuilding*& value) const
+	void cPointerLoader::get (int id, cBuilding*& value) const
 	{
-		value = model.getBuildingFromID(id);
+		value = model.getBuildingFromID (id);
 		if (value == nullptr && id != -1)
-			Log.write("Building with id " + std::to_string(id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ("Building with id " + std::to_string (id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
 	}
 
-	void cPointerLoader::get(int id, cVehicle*& value) const
+	void cPointerLoader::get (int id, cVehicle*& value) const
 	{
-		value = model.getVehicleFromID(id);
+		value = model.getVehicleFromID (id);
 		if (value == nullptr && id != -1)
-			Log.write("Vehicle with id " + std::to_string(id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ("Vehicle with id " + std::to_string (id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
 	}
 
-	void cPointerLoader::get(int id, cUnit*& value) const
+	void cPointerLoader::get (int id, cUnit*& value) const
 	{
-		value = model.getUnitFromID(id);
+		value = model.getUnitFromID (id);
 		if (value == nullptr && id != -1)
-			Log.write("Unit with id " + std::to_string(id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ("Unit with id " + std::to_string (id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
 	}
 
-	void cPointerLoader::get(int id, const cUnit*& value) const
+	void cPointerLoader::get (int id, const cUnit*& value) const
 	{
-		value = model.getUnitFromID(id);
+		value = model.getUnitFromID (id);
 		if (value == nullptr && id != -1)
-			Log.write("Unit with id " + std::to_string(id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ("Unit with id " + std::to_string (id) + " not found.", cLog::eLOG_TYPE_NET_ERROR);
 	}
 
-	void cPointerLoader::get(sID id, const cStaticUnitData*& value) const
+	void cPointerLoader::get (sID id, const cStaticUnitData*& value) const
 	{
-		if (!model.getUnitsData()->isValidId(id))
+		if (!model.getUnitsData()->isValidId (id))
 		{
-			Log.write("Static unit data for sID " + id.getText() + " not found.", cLog::eLOG_TYPE_NET_ERROR);
-			throw std::runtime_error("Error restoring pointer to static unitdata");
+			Log.write ("Static unit data for sID " + id.getText() + " not found.", cLog::eLOG_TYPE_NET_ERROR);
+			throw std::runtime_error ("Error restoring pointer to static unitdata");
 		}
-		value = &model.getUnitsData()->getStaticUnitData(id);
+		value = &model.getUnitsData()->getStaticUnitData (id);
 	}
 
 	const cStaticUnitData* cPointerLoader::getBigRubbleData() const

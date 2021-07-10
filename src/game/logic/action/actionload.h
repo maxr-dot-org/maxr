@@ -27,16 +27,16 @@ class cUnit;
 class cActionLoad : public cActionT<cAction::eActiontype::ACTION_LOAD>
 {
 public:
-	cActionLoad(const cUnit& loadingUnit, const cVehicle& loadedVehicle);
-	cActionLoad(cBinaryArchiveOut& archive);
+	cActionLoad (const cUnit& loadingUnit, const cVehicle& loadedVehicle);
+	cActionLoad (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
 
-	void execute(cModel& model) const override;
+	void execute (cModel& model) const override;
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & loadingUnitId;
 		archive & loadedVehicleId;

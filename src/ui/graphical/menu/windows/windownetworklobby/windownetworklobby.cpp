@@ -47,7 +47,7 @@
 cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableIp) :
 	cWindow (LoadPCX (GFXOD_MULT)),
 	localPlayer (std::make_shared<cPlayerBasicData> (cPlayerBasicData::fromSettings())),
-	saveGameInfo(-1)
+	saveGameInfo (-1)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 11), getPosition() + cPosition (getArea().getMaxCorner().x(), 11 + 10)), title, FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
@@ -80,15 +80,15 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	}
 	else
 	{
-		ipLineEdit->setText(cSettings::getInstance().getIP());
+		ipLineEdit->setText (cSettings::getInstance().getIP());
 	}
 	portLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (230, 260), getPosition() + cPosition (230 + 95, 260 + 10))));
 	portLineEdit->setText (std::to_string (cSettings::getInstance().getPort()));
 	portLineEdit->setValidator (std::make_unique<cValidatorInt> (0, 65535));
-	restoreDefaultPortButton = addChild(std::make_unique<cImage>(getPosition() + cPosition(230 + 82, 254), GraphicsData.gfx_Cpfeil2.get()));
-	signalConnectionManager.connect(restoreDefaultPortButton->clicked, [this]()
+	restoreDefaultPortButton = addChild (std::make_unique<cImage> (getPosition() + cPosition (230 + 82, 254), GraphicsData.gfx_Cpfeil2.get()));
+	signalConnectionManager.connect (restoreDefaultPortButton->clicked, [this]()
 	{
-		portLineEdit->setText(std::to_string(DEFAULTPORT));
+		portLineEdit->setText (std::to_string (DEFAULTPORT));
 	});
 
 	auto nameLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (353, 260), getPosition() + cPosition (353 + 95, 260 + 10))));
@@ -314,7 +314,7 @@ void cWindowNetworkLobby::updateSettingsText()
 
 	if (saveGameInfo.number >= 0)
 	{
-		text += lngPack.i18n("Text~Title~Savegame") + "\n  " + saveGameInfo.gameName + "\n\n" + lngPack.i18n("Text~Title~Players") + "\n";
+		text += lngPack.i18n ("Text~Title~Savegame") + "\n  " + saveGameInfo.gameName + "\n\n" + lngPack.i18n ("Text~Title~Players") + "\n";
 		for (size_t i = 0; i < saveGameInfo.players.size(); ++i)
 		{
 			text += saveGameInfo.players[i].getName() + "\n";
@@ -356,7 +356,7 @@ void cWindowNetworkLobby::updateSettingsText()
 		else text += lngPack.i18n ("Text~Multiplayer~Option_NoSet") + "\n";
 	}
 	if (saveGameInfo.number >= 0) {
-		text += lngPack.i18n("Text~Comp~Turn_5") + lngPack.i18n ("Text~Punctuation~Colon") + std::to_string(saveGameInfo.turn) + "\n";
+		text += lngPack.i18n ("Text~Comp~Turn_5") + lngPack.i18n ("Text~Punctuation~Colon") + std::to_string (saveGameInfo.turn) + "\n";
 	}
 	settingsTextLabel->setText (text);
 }
@@ -467,7 +467,7 @@ void cWindowNetworkLobby::removePlayers()
 {
 	for (size_t i = 0; i < playersList->getItemsCount();)
 	{
-		auto& item = playersList->getItem(i);
+		auto& item = playersList->getItem (i);
 		playersList->removeItem (item);
 	}
 }
@@ -558,11 +558,11 @@ std::vector<cPlayerBasicData> cWindowNetworkLobby::getPlayersNotShared() const
 }
 
 //------------------------------------------------------------------------------
-std::shared_ptr<cPlayerBasicData> cWindowNetworkLobby::getPlayer(int playerNr) const
+std::shared_ptr<cPlayerBasicData> cWindowNetworkLobby::getPlayer (int playerNr) const
 {
 	for (size_t i = 0; i < playersList->getItemsCount(); ++i)
 	{
-		const auto& item = playersList->getItem(i);
+		const auto& item = playersList->getItem (i);
 		if (item.getPlayer()->getNr() == playerNr)
 		{
 			return item.getPlayer();
@@ -619,10 +619,10 @@ void cWindowNetworkLobby::enableIpEdit()
 void cWindowNetworkLobby::updatePlayerList (const cPlayerBasicData& local, const std::vector<cPlayerBasicData>& players)
 {
 	// Cannot use *localPlayer = local because of signal.
-	localPlayer->setColor(local.getColor());
-	localPlayer->setName(local.getName());
-	localPlayer->setNr(local.getNr());
-	localPlayer->setReady(local.isReady());
+	localPlayer->setColor (local.getColor());
+	localPlayer->setName (local.getName());
+	localPlayer->setNr (local.getNr());
+	localPlayer->setReady (local.isReady());
 
 	removePlayers();
 	for (const auto& playerData : players)
@@ -637,6 +637,6 @@ void cWindowNetworkLobby::updatePlayerListView()
 {
 	for (unsigned int i = 0; i < playersList->getItemsCount(); i++)
 	{
-		playersList->getItem(i).update();
+		playersList->getItem (i).update();
 	}
 }

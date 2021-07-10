@@ -42,7 +42,7 @@
 //------------------------------------------------------------------------------
 cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	player (nullptr),
-	unitsData(nullptr)
+	unitsData (nullptr)
 {
 	surface = generateSurface();
 	resize (cPosition (surface->w, surface->h));
@@ -136,9 +136,9 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	unitVideo = addChild (std::make_unique<cUnitVideoWidget> (cBox<cPosition> (cPosition (10, 29), cPosition (10 + 125, 29 + 125)), animationTimer));
 	signalConnectionManager.connect (unitVideo->clicked, [this]()
 	{
-		if (unitVideo->hasAnimation ())
+		if (unitVideo->hasAnimation())
 		{
-			unitVideo->toggle ();
+			unitVideo->toggle();
 		}
 	});
 	auto playButton = addChild (std::make_unique<cPushButton> (cPosition (146, 123), ePushButtonType::HudPlay));
@@ -577,7 +577,7 @@ void cHud::handleZoomMinusClicked()
 	zoomSlider->increase ((zoomSlider->getMaxValue() - zoomSlider->getMinValue()) / 6);
 }
 
-void cHud::setUnitsData(std::shared_ptr<const cUnitsData> unitsData_)
+void cHud::setUnitsData (std::shared_ptr<const cUnitsData> unitsData_)
 {
 	unitsData = unitsData_;
 }

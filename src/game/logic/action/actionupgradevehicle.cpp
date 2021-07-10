@@ -22,23 +22,23 @@
 #include "game/data/model.h"
 
 //------------------------------------------------------------------------------
-cActionUpgradeVehicle::cActionUpgradeVehicle(const cBuilding& containingBuilding, const cVehicle* vehicle) :
-	buildingId(containingBuilding.getId()),
-	vehicleId(vehicle ? vehicle->getId() : 0)
+cActionUpgradeVehicle::cActionUpgradeVehicle (const cBuilding& containingBuilding, const cVehicle* vehicle) :
+	buildingId (containingBuilding.getId()),
+	vehicleId (vehicle ? vehicle->getId() : 0)
 {}
 
 //------------------------------------------------------------------------------
-cActionUpgradeVehicle::cActionUpgradeVehicle(cBinaryArchiveOut& archive)
+cActionUpgradeVehicle::cActionUpgradeVehicle (cBinaryArchiveOut& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionUpgradeVehicle::execute(cModel& model) const
+void cActionUpgradeVehicle::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	cBuilding* containingBuilding = model.getBuildingFromID(buildingId);
+	cBuilding* containingBuilding = model.getBuildingFromID (buildingId);
 	if (containingBuilding == nullptr || !containingBuilding->getOwner()) return;
 	if (containingBuilding->getOwner()->getId() != playerNr) return;
 
@@ -49,17 +49,17 @@ void cActionUpgradeVehicle::execute(cModel& model) const
 		if (vehicle->getId() == vehicleId || vehicleId == 0)
 		{
 			// check unit version
-			const cDynamicUnitData& upgradedData = *vehicle->getOwner()->getUnitDataCurrentVersion(vehicle->data.getId());
+			const cDynamicUnitData& upgradedData = *vehicle->getOwner()->getUnitDataCurrentVersion (vehicle->data.getId());
 			if (vehicle->data.getVersion() >= upgradedData.getVersion()) continue; // already up to date
 
 			// check upgrade costs
 			cUpgradeCalculator& uc = cUpgradeCalculator::instance();
-			const int upgradeCost = uc.getMaterialCostForUpgrading(upgradedData.getBuildCost());
+			const int upgradeCost = uc.getMaterialCostForUpgrading (upgradedData.getBuildCost());
 			if (upgradeCost > containingBuilding->subBase->getResourcesStored().metal) continue;
 
 			// ok, execute upgrade
 			vehicle->upgradeToCurrentVersion();
-			containingBuilding->subBase->addMetal(-upgradeCost);
+			containingBuilding->subBase->addMetal (-upgradeCost);
 			result[vehicle->data.getId()].costs += upgradeCost;
 			result[vehicle->data.getId()].nr++;
 		}
@@ -67,6 +67,6 @@ void cActionUpgradeVehicle::execute(cModel& model) const
 
 	for (const auto x : result)
 	{
-		containingBuilding->getOwner()->unitsUpgraded(x.first, x.second.nr, x.second.costs);
+		containingBuilding->getOwner()->unitsUpgraded (x.first, x.second.nr, x.second.costs);
 	}
 }

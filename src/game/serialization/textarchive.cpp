@@ -22,9 +22,9 @@
 
 
 cTextArchiveIn::cTextArchiveIn() :
-	nextCommaNeeded(false)
+	nextCommaNeeded (false)
 {
-	buffer.imbue(std::locale("C"));
+	buffer.imbue (std::locale ("C"));
 }
 //------------------------------------------------------------------------------
 const std::string cTextArchiveIn::data() const
@@ -53,113 +53,113 @@ void cTextArchiveIn::addComma()
 	nextCommaNeeded = false;
 }
 //------------------------------------------------------------------------------
-void cTextArchiveIn::pushValue(bool value)
+void cTextArchiveIn::pushValue (bool value)
 {
 	addComma();
 	buffer << value;
 	nextCommaNeeded = true;
 }
 //------------------------------------------------------------------------------
-void cTextArchiveIn::pushValue(char value)
+void cTextArchiveIn::pushValue (char value)
 {
 	addComma();
-	buffer << static_cast<int>(value);
+	buffer << static_cast<int> (value);
 	nextCommaNeeded = true;
 }
 //------------------------------------------------------------------------------
-void cTextArchiveIn::pushValue(signed char value)
+void cTextArchiveIn::pushValue (signed char value)
 {
 	addComma();
-	buffer << static_cast<int>(value);
+	buffer << static_cast<int> (value);
 	nextCommaNeeded = true;
 }
 //------------------------------------------------------------------------------
-void cTextArchiveIn::pushValue(unsigned char value)
+void cTextArchiveIn::pushValue (unsigned char value)
 {
 	addComma();
-	buffer << static_cast<int>(value);
+	buffer << static_cast<int> (value);
 	nextCommaNeeded = true;
 }
 //------------------------------------------------------------------------------
-void cTextArchiveIn::pushValue(signed short value)
-{
-	addComma();
-	buffer << value;
-	nextCommaNeeded = true;
-}
-//------------------------------------------------------------------------------
-void cTextArchiveIn::pushValue(unsigned short value)
+void cTextArchiveIn::pushValue (signed short value)
 {
 	addComma();
 	buffer << value;
 	nextCommaNeeded = true;
 }
 //------------------------------------------------------------------------------
-void cTextArchiveIn::pushValue(signed int value)
+void cTextArchiveIn::pushValue (unsigned short value)
 {
 	addComma();
 	buffer << value;
 	nextCommaNeeded = true;
 }
 //------------------------------------------------------------------------------
-void cTextArchiveIn::pushValue(unsigned int value)
+void cTextArchiveIn::pushValue (signed int value)
 {
 	addComma();
 	buffer << value;
 	nextCommaNeeded = true;
 }
 //------------------------------------------------------------------------------
-void cTextArchiveIn::pushValue(signed long value)
+void cTextArchiveIn::pushValue (unsigned int value)
 {
 	addComma();
 	buffer << value;
 	nextCommaNeeded = true;
 }
 //------------------------------------------------------------------------------
-void cTextArchiveIn::pushValue(unsigned long value)
+void cTextArchiveIn::pushValue (signed long value)
 {
 	addComma();
 	buffer << value;
 	nextCommaNeeded = true;
 }
 //------------------------------------------------------------------------------
-void cTextArchiveIn::pushValue(signed long long value)
+void cTextArchiveIn::pushValue (unsigned long value)
 {
 	addComma();
 	buffer << value;
 	nextCommaNeeded = true;
 }
 //------------------------------------------------------------------------------
-void cTextArchiveIn::pushValue(unsigned long long value)
+void cTextArchiveIn::pushValue (signed long long value)
 {
 	addComma();
 	buffer << value;
 	nextCommaNeeded = true;
 }
 //------------------------------------------------------------------------------
-void cTextArchiveIn::pushValue(float value)
+void cTextArchiveIn::pushValue (unsigned long long value)
 {
 	addComma();
 	buffer << value;
 	nextCommaNeeded = true;
 }
 //------------------------------------------------------------------------------
-void cTextArchiveIn::pushValue(double value)
+void cTextArchiveIn::pushValue (float value)
 {
 	addComma();
 	buffer << value;
 	nextCommaNeeded = true;
 }
 //------------------------------------------------------------------------------
-void cTextArchiveIn::pushValue(const std::string& value)
+void cTextArchiveIn::pushValue (double value)
+{
+	addComma();
+	buffer << value;
+	nextCommaNeeded = true;
+}
+//------------------------------------------------------------------------------
+void cTextArchiveIn::pushValue (const std::string& value)
 {
 	std::string s = value;
 
 	//replace line breaks in string by "\n"
 	size_t pos = 0;
-	while ((pos = s.find('\n', pos)) != std::string::npos)
+	while ((pos = s.find ('\n', pos)) != std::string::npos)
 	{
-		s.replace(pos, 1, "\\n");
+		s.replace (pos, 1, "\\n");
 		pos += 2;
 	}
 

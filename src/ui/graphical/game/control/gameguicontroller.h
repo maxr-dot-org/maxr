@@ -74,14 +74,14 @@ public:
 
 	void addPlayerGameGuiState (int playerNr, cGameGuiState playerGameGuiState);
 
-	void addSavedReport(std::unique_ptr<cSavedReport> savedReport, int playerNr);
-	const std::vector<std::unique_ptr<cSavedReport>>& getSavedReports(int playerNr) const;
+	void addSavedReport (std::unique_ptr<cSavedReport> savedReport, int playerNr);
+	const std::vector<std::unique_ptr<cSavedReport>>& getSavedReports (int playerNr) const;
 
-	void setSingleClient (std::shared_ptr<cClient> clients);
-	void setClients (std::vector<std::shared_ptr<cClient>> clients, int activePlayerNumber);
-	void setServer(cServer* server);
+	void setSingleClient (std::shared_ptr<cClient>);
+	void setClients (std::vector<std::shared_ptr<cClient>>, int activePlayerNumber);
+	void setServer (cServer*);
 
-	mutable cSignal<void ()> terminated;
+	mutable cSignal<void()> terminated;
 private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager guiSignalConnectionManager;
@@ -110,7 +110,7 @@ private:
 	std::array<std::optional<cPosition>, 4> savedPositions;
 	std::vector<unsigned int> doneList;
 
-	template <typename Action> void addShortcut(cKeySequence, Action);
+	template <typename Action> void addShortcut (cKeySequence, Action);
 	void initShortcuts();
 	void initChatCommands();
 
@@ -118,8 +118,8 @@ private:
 
 	void setActiveClient (std::shared_ptr<cClient> client);
 
-	void connectClient (cClient& client);
-	void connectReportSources(cClient& client);
+	void connectClient (cClient&);
+	void connectReportSources (cClient&);
 
 	void showNextPlayerDialog();
 
@@ -150,7 +150,7 @@ private:
 	void savePosition (size_t index);
 	void jumpToSavedPosition (size_t index);
 
-	void sendStartGroupMoveAction(std::vector<cVehicle*> group, const cPosition& destination);
+	void sendStartGroupMoveAction (std::vector<cVehicle*> group, const cPosition& destination);
 
 	void updateChangeAllowed();
 	void updateEndButtonState();
@@ -177,7 +177,7 @@ private:
 	mutable cSignal<void (const std::vector<std::pair<sID, cUnitUpgrade>>&)> takeUnitUpgradesTriggered;
 	mutable cSignal<void (const cBuilding&)> selfDestructionTriggered;
 	mutable cSignal<void (const cVehicle& vehicle)> resumeMoveJobTriggered;
-	mutable cSignal<void ()> resumeAllMoveJobsTriggered;
+	mutable cSignal<void()> resumeAllMoveJobsTriggered;
 };
 
 #endif // ui_graphical_game_control_gameguicontrollerH

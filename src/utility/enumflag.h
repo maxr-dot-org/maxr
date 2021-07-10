@@ -31,7 +31,7 @@
  *           NOTE: all the values in the flag must be different powers of 2!
  *           HINT: 0 is not a power of 2 ;)
  */
-template<typename E>
+template <typename E>
 class cEnumFlag
 {
 	static_assert (std::is_enum<E>::value, "Template parameter has to be an enumerator type!");
@@ -68,32 +68,32 @@ private:
 };
 
 //------------------------------------------------------------------------------
-template<typename E>
+template <typename E>
 cEnumFlag<E> toEnumFlag (E value)
 {
 	return cEnumFlag<E> (value);
 }
 
 //------------------------------------------------------------------------------
-template<typename E>
+template <typename E>
 cEnumFlag<E>::cEnumFlag() :
 	data_ (0)
 {}
 
 //------------------------------------------------------------------------------
-template<typename E>
+template <typename E>
 cEnumFlag<E>::cEnumFlag (E value) :
 	data_ (toUnderlyingType (value))
 {}
 
 //------------------------------------------------------------------------------
-template<typename E>
+template <typename E>
 cEnumFlag<E>::cEnumFlag (typename std::underlying_type<E>::type value) :
 	data_ (value)
 {}
 
 //------------------------------------------------------------------------------
-template<typename E>
+template <typename E>
 cEnumFlag<E>& cEnumFlag<E>::operator= (E other)
 {
 	data_ = toUnderlyingType (other);
@@ -101,7 +101,7 @@ cEnumFlag<E>& cEnumFlag<E>::operator= (E other)
 }
 
 //------------------------------------------------------------------------------
-template<typename E>
+template <typename E>
 cEnumFlag<E>& cEnumFlag<E>::operator= (cEnumFlag<E> other)
 {
 	data_ = other.data_;
@@ -109,48 +109,48 @@ cEnumFlag<E>& cEnumFlag<E>::operator= (cEnumFlag<E> other)
 }
 
 //------------------------------------------------------------------------------
-template<typename E>
+template <typename E>
 cEnumFlag<E>::cEnumFlag (const cEnumFlag<E>& other) :
 	data_ (other.data_)
 {}
 
 //------------------------------------------------------------------------------
-template<typename E>
+template <typename E>
 cEnumFlag<E>::operator bool() const
 {
 	return data_ != (typename std::underlying_type<E>::type) (0);
 }
 
 //------------------------------------------------------------------------------
-template<typename E>
+template <typename E>
 bool cEnumFlag<E>::operator== (cEnumFlag<E> other) const
 {
 	return data_ == other.data_;
 }
 
 //------------------------------------------------------------------------------
-template<typename E>
+template <typename E>
 bool cEnumFlag<E>::operator!= (cEnumFlag<E> other) const
 {
 	return data_ != other.data_;
 }
 
 //------------------------------------------------------------------------------
-template<typename E>
+template <typename E>
 cEnumFlag<E> cEnumFlag<E>::operator| (E other) const
 {
 	return cEnumFlag<E> (data_ | toUnderlyingType (other));
 }
 
 //------------------------------------------------------------------------------
-template<typename E>
+template <typename E>
 cEnumFlag<E> cEnumFlag<E>::operator| (cEnumFlag<E> other) const
 {
 	return cEnumFlag<E> (data_ | other.data_);
 }
 
 //------------------------------------------------------------------------------
-template<typename E>
+template <typename E>
 cEnumFlag<E>& cEnumFlag<E>::operator|= (E other)
 {
 	data_ |= toUnderlyingType (other);
@@ -158,7 +158,7 @@ cEnumFlag<E>& cEnumFlag<E>::operator|= (E other)
 }
 
 //------------------------------------------------------------------------------
-template<typename E>
+template <typename E>
 cEnumFlag<E>& cEnumFlag<E>::operator|= (cEnumFlag<E> other)
 {
 	data_ |= other.data_;
@@ -166,21 +166,21 @@ cEnumFlag<E>& cEnumFlag<E>::operator|= (cEnumFlag<E> other)
 }
 
 //------------------------------------------------------------------------------
-template<typename E>
+template <typename E>
 cEnumFlag<E> cEnumFlag<E>::operator& (E other) const
 {
 	return cEnumFlag<E> (data_ & toUnderlyingType (other));
 }
 
 //------------------------------------------------------------------------------
-template<typename E>
+template <typename E>
 cEnumFlag<E> cEnumFlag<E>::operator& (cEnumFlag<E> other) const
 {
 	return cEnumFlag<E> (data_ & other.data_);
 }
 
 //------------------------------------------------------------------------------
-template<typename E>
+template <typename E>
 cEnumFlag<E>& cEnumFlag<E>::operator&= (E other)
 {
 	data_ &= toUnderlyingType (other);
@@ -188,7 +188,7 @@ cEnumFlag<E>& cEnumFlag<E>::operator&= (E other)
 }
 
 //------------------------------------------------------------------------------
-template<typename E>
+template <typename E>
 cEnumFlag<E>& cEnumFlag<E>::operator&= (cEnumFlag<E> other)
 {
 	data_ &= other.data_;
@@ -196,7 +196,7 @@ cEnumFlag<E>& cEnumFlag<E>::operator&= (cEnumFlag<E> other)
 }
 
 //------------------------------------------------------------------------------
-template<typename E>
+template <typename E>
 typename std::underlying_type<E>::type cEnumFlag<E>::data() const
 {
 	return data_;

@@ -29,7 +29,7 @@
 #include "utility/log.h"
 
 //------------------------------------------------------------------------------
-int dedicaterservermain(int, char**)
+int dedicaterservermain (int, char**)
 try
 {
 	if (!cSettings::getInstance().isInitialized())
@@ -47,7 +47,7 @@ try
 		Log.write ("Error while loading data!", cLog::eLOG_TYPE_ERROR);
 		return -1;
 	}
-	cDedicatedServer(DEFAULTPORT).run();
+	cDedicatedServer (DEFAULTPORT).run();
 	Log.write ("EOF");
 	return 0;
 }

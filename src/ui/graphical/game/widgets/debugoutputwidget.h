@@ -54,8 +54,8 @@ public:
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 
 private:
-	void setPrintPosition(cPosition);
-	void print(const std::string&, eUnicodeFontType = FONT_LATIN_SMALL_WHITE);
+	void setPrintPosition (cPosition);
+	void print (const std::string&, eUnicodeFontType = FONT_LATIN_SMALL_WHITE);
 
 	void trace();
 	void traceVehicle (const cVehicle&, cPosition& drawPosition);

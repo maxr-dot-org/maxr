@@ -110,14 +110,14 @@ public:
 	void proceedClearing (cModel&);
 
 	void DecSpeed (int value);
-	bool doSurvey(const cMap& map);
+	bool doSurvey (const cMap& map);
 	bool canTransferTo (const cPosition& position, const cMapView& map) const override;
 	bool canTransferTo (const cUnit& position) const override;
 	bool inSentryRange (cModel& model);
 	bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const override;
-	bool canExitTo(const cPosition& position, const cMapView& map, const cStaticUnitData& unitData) const override;
-	bool canLoad(const cPosition& position, const cMapView& map, bool checkPosition = true) const;
-	bool canLoad(const cVehicle* Vehicle, bool checkPosition = true) const override;
+	bool canExitTo (const cPosition& position, const cMapView& map, const cStaticUnitData& unitData) const override;
+	bool canLoad (const cPosition& position, const cMapView& map, bool checkPosition = true) const;
+	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const override;
 	bool canSupply (const cMapView& map, const cPosition& position, eSupplyType supplyType) const;
 	bool canSupply (const cUnit* unit, eSupplyType supplyType) const override;
 
@@ -160,7 +160,7 @@ public:
 	void setLayMines (bool value);
 	void setClearMines (bool value);
 	void setBuildTurnsStart (int value);
-	void setSurveyorAutoMoveActive(bool value);
+	void setSurveyorAutoMoveActive (bool value);
 
 	int getClearingTurns() const;
 	void setClearingTurns (int value);
@@ -186,44 +186,44 @@ public:
 	const cMoveJob* getMoveJob() const;
 	void setMoveJob (cMoveJob* moveJob);
 
-	void triggerLandingTakeOff(cModel& model);
+	void triggerLandingTakeOff (cModel& model);
 
-	uint32_t getChecksum(uint32_t crc) const override;
+	uint32_t getChecksum (uint32_t crc) const override;
 
-	mutable cSignal<void ()> clearingTurnsChanged;
-	mutable cSignal<void ()> buildingTurnsChanged;
-	mutable cSignal<void ()> buildingCostsChanged;
-	mutable cSignal<void ()> buildingTypeChanged;
-	mutable cSignal<void ()> flightHeightChanged;
+	mutable cSignal<void()> clearingTurnsChanged;
+	mutable cSignal<void()> buildingTurnsChanged;
+	mutable cSignal<void()> buildingCostsChanged;
+	mutable cSignal<void()> buildingTypeChanged;
+	mutable cSignal<void()> flightHeightChanged;
 
-	mutable cSignal<void ()> moveJobChanged;
-	mutable cSignal<void ()> autoMoveJobChanged;
-	mutable cSignal<void ()> moveJobBlocked;
+	mutable cSignal<void()> moveJobChanged;
+	mutable cSignal<void()> autoMoveJobChanged;
+	mutable cSignal<void()> moveJobBlocked;
 
 	template <typename T>
-	void serialize(T& archive)
+	void serialize (T& archive)
 	{
 		cUnit::serializeThis (archive); //serialize cUnit members
 
-		archive & NVP(surveyorAutoMoveActive);
-		archive & NVP(bandPosition);
-		archive & NVP(buildBigSavedPosition);
-		archive & NVP(BuildPath);
-		archive & NVP(WalkFrame);
-		archive & NVP(tileMovementOffset);
-		archive & NVP(loaded);
-		archive & NVP(moving);
-		archive & NVP(isBuilding);
-		archive & NVP(buildingTyp);
-		archive & NVP(buildCosts);
-		archive & NVP(buildTurns);
-		archive & NVP(buildTurnsStart);
-		archive & NVP(buildCostsStart);
-		archive & NVP(isClearing);
-		archive & NVP(clearingTurns);
-		archive & NVP(layMines);
-		archive & NVP(clearMines);
-		archive & NVP(flightHeight);
+		archive & NVP (surveyorAutoMoveActive);
+		archive & NVP (bandPosition);
+		archive & NVP (buildBigSavedPosition);
+		archive & NVP (BuildPath);
+		archive & NVP (WalkFrame);
+		archive & NVP (tileMovementOffset);
+		archive & NVP (loaded);
+		archive & NVP (moving);
+		archive & NVP (isBuilding);
+		archive & NVP (buildingTyp);
+		archive & NVP (buildCosts);
+		archive & NVP (buildTurns);
+		archive & NVP (buildTurnsStart);
+		archive & NVP (buildCostsStart);
+		archive & NVP (isClearing);
+		archive & NVP (clearingTurns);
+		archive & NVP (layMines);
+		archive & NVP (clearMines);
+		archive & NVP (flightHeight);
 		commandoData.serialize (archive);
 	}
 private:

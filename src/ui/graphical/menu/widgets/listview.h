@@ -43,7 +43,7 @@ enum class eAddListItemScrollType
 	IfAtBottom
 };
 
-template<typename ItemType>
+template <typename ItemType>
 class cListView : public cClickableWidget
 {
 	static_assert (std::is_base_of<cAbstractListViewItem, ItemType>::value, "Items in list view have to inherit from cAbstractListViewItem");
@@ -89,13 +89,13 @@ public:
 	void pageDown();
 	void pageUp();
 
-	bool isAtMinScroll () const;
-	bool isAtMaxScroll () const;
+	bool isAtMinScroll() const;
+	bool isAtMaxScroll() const;
 
-	cSignal<void ()> itemRemoved;
-	cSignal<void ()> itemAdded;
+	cSignal<void()> itemRemoved;
+	cSignal<void()> itemAdded;
 
-	cSignal<void ()> selectionChanged;
+	cSignal<void()> selectionChanged;
 
 	cSignal<void (ItemType&)> itemClicked;
 
@@ -142,7 +142,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 cListView<ItemType>::cListView (const cBox<cPosition>& area, bool allowMultiSelection, cSoundChunk* clickSound_) :
 	cClickableWidget (area),
 	scrollBar (nullptr),
@@ -162,7 +162,7 @@ cListView<ItemType>::cListView (const cBox<cPosition>& area, bool allowMultiSele
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 cListView<ItemType>::cListView (const cBox<cPosition>& area, eScrollBarStyle scrollBarStyle, bool allowMultiSelection, cSoundChunk* clickSound_) :
 	cListView<ItemType> (area, allowMultiSelection, clickSound_)
 {
@@ -182,7 +182,7 @@ cListView<ItemType>::cListView (const cBox<cPosition>& area, eScrollBarStyle scr
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 void cListView<ItemType>::disableSelectable()
 {
 	selectable = false;
@@ -191,7 +191,7 @@ void cListView<ItemType>::disableSelectable()
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 void cListView<ItemType>::enableSelectable()
 {
 	selectable = true;
@@ -199,28 +199,28 @@ void cListView<ItemType>::enableSelectable()
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 void cListView<ItemType>::setBeginMargin (const cPosition& margin)
 {
 	beginMargin = margin;
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 void cListView<ItemType>::setEndMargin (const cPosition& margin)
 {
 	endMargin = margin;
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 void cListView<ItemType>::setItemDistance (int distance)
 {
 	itemDistance = distance;
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 void cListView<ItemType>::setScrollOffset (int offset)
 {
 	pixelScrollOffset = offset;
@@ -228,33 +228,33 @@ void cListView<ItemType>::setScrollOffset (int offset)
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 const cPosition& cListView<ItemType>::getBeginMargin() const
 {
 	return beginMargin;
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 const cPosition& cListView<ItemType>::getEndMargin() const
 {
 	return endMargin;
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 int cListView<ItemType>::getItemDistance() const
 {
 	return itemDistance;
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 ItemType* cListView<ItemType>::addItem (std::unique_ptr<ItemType> item, eAddListItemScrollType scrollType)
 {
 	if (item == nullptr) return nullptr;
 
-	const auto wasAtMaxScroll = isAtMaxScroll ();
+	const auto wasAtMaxScroll = isAtMaxScroll();
 
 	auto newItemPos = items.empty() ? 0 : items.back().first + items.back().second->getSize().y() + getItemDistance();
 	items.emplace_back (newItemPos, std::move (item));
@@ -272,7 +272,7 @@ ItemType* cListView<ItemType>::addItem (std::unique_ptr<ItemType> item, eAddList
 	addedItem.setParent (this);
 
 	const auto itemPtr = &addedItem;
-	signalConnectionManager.connect (addedItem.resized, [this, itemPtr] (const cPosition & oldSize)
+	signalConnectionManager.connect (addedItem.resized, [this, itemPtr] (const cPosition& oldSize)
 	{
 		const auto offset = itemPtr->getSize().y() - oldSize.y();
 		if (offset == 0) return;
@@ -304,7 +304,7 @@ ItemType* cListView<ItemType>::addItem (std::unique_ptr<ItemType> item, eAddList
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 std::unique_ptr<ItemType> cListView<ItemType>::removeItem (ItemType& item)
 {
 	auto iter = ranges::find_if (items, [&] (const std::pair<int, std::unique_ptr<ItemType>>& entry) { return entry.second.get() == &item; });
@@ -366,28 +366,28 @@ std::unique_ptr<ItemType> cListView<ItemType>::removeItem (ItemType& item)
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 size_t cListView<ItemType>::getItemsCount() const
 {
 	return items.size();
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 ItemType& cListView<ItemType>::getItem (size_t index)
 {
 	return *items[index].second;
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 const ItemType& cListView<ItemType>::getItem (size_t index) const
 {
 	return *items[index].second;
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 void cListView<ItemType>::clearItems()
 {
 	const auto hadSelection = !selectedItems.empty();
@@ -410,7 +410,7 @@ void cListView<ItemType>::clearItems()
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 cWidget* cListView<ItemType>::getChildAt (const cPosition& position) const
 {
 	for (auto i = beginDisplayItem; i < endDisplayItem; ++i)
@@ -426,7 +426,7 @@ cWidget* cListView<ItemType>::getChildAt (const cPosition& position) const
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 bool cListView<ItemType>::handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount)
 {
 	if (amount.y() > 0)
@@ -443,7 +443,7 @@ bool cListView<ItemType>::handleMouseWheelMoved (cApplication& application, cMou
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 bool cListView<ItemType>::handleGetKeyFocus (cApplication& application)
 {
 	if (!isEnabled()) return false;
@@ -454,14 +454,14 @@ bool cListView<ItemType>::handleGetKeyFocus (cApplication& application)
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 void cListView<ItemType>::handleLooseKeyFocus (cApplication& application)
 {
 	hasKeyFocus = false;
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 bool cListView<ItemType>::handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key)
 {
 	if (!hasKeyFocus) return false;
@@ -511,7 +511,7 @@ bool cListView<ItemType>::handleKeyPressed (cApplication& application, cKeyboard
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 void cListView<ItemType>::handleMoved (const cPosition& offset)
 {
 	for (auto i = items.begin(); i != items.end(); ++i)
@@ -523,7 +523,7 @@ void cListView<ItemType>::handleMoved (const cPosition& offset)
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 void cListView<ItemType>::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	cBox<cPosition> itemBox;
@@ -548,7 +548,7 @@ void cListView<ItemType>::draw (SDL_Surface& destination, const cBox<cPosition>&
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 void cListView<ItemType>::handleResized (const cPosition& oldSize)
 {
 	if (scrollBar)
@@ -574,7 +574,7 @@ void cListView<ItemType>::handleResized (const cPosition& oldSize)
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 bool cListView<ItemType>::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
 	if (!selectable) return false;
@@ -611,14 +611,14 @@ bool cListView<ItemType>::handleClicked (cApplication& application, cMouse& mous
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 ItemType* cListView<ItemType>::getSelectedItem()
 {
 	return selectedItems.empty() ? nullptr : selectedItems[0];
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 void cListView<ItemType>::setSelectedItem (const ItemType* item)
 {
 	if (!selectable) return;
@@ -646,7 +646,7 @@ void cListView<ItemType>::setSelectedItem (const ItemType* item)
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 void cListView<ItemType>::deselectAll()
 {
 	for (size_t j = 0; j != selectedItems.size(); ++j)
@@ -657,7 +657,7 @@ void cListView<ItemType>::deselectAll()
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 void cListView<ItemType>::scrollToItem (const ItemType* item)
 {
 	auto iter = ranges::find_if (items, [ = ] (const std::pair<int, std::unique_ptr<ItemType>>& entry) { return entry.second.get() == item; });
@@ -681,17 +681,17 @@ void cListView<ItemType>::scrollToItem (const ItemType* item)
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 const std::vector<ItemType*>& cListView<ItemType>::getSelectedItems()
 {
 	return selectedItems;
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 void cListView<ItemType>::scrollDown()
 {
-	//if (endDisplayItem >= items.size ()) return;
+	//if (endDisplayItem >= items.size()) return;
 
 	pixelOffset += pixelScrollOffset;
 
@@ -699,7 +699,7 @@ void cListView<ItemType>::scrollDown()
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 void cListView<ItemType>::scrollUp()
 {
 	if (pixelOffset <= 0) return;
@@ -710,10 +710,10 @@ void cListView<ItemType>::scrollUp()
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 void cListView<ItemType>::pageDown()
 {
-	//if (endDisplayItem >= items.size ()) return;
+	//if (endDisplayItem >= items.size()) return;
 
 	const auto pixelSize = getSize().y() - getBeginMargin().y() - getEndMargin().y();
 
@@ -723,7 +723,7 @@ void cListView<ItemType>::pageDown()
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 void cListView<ItemType>::pageUp()
 {
 	if (pixelOffset <= 0) return;
@@ -736,25 +736,25 @@ void cListView<ItemType>::pageUp()
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
-bool cListView<ItemType>::isAtMinScroll () const
+template <typename ItemType>
+bool cListView<ItemType>::isAtMinScroll() const
 {
 	return pixelOffset <= 0;
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
-bool cListView<ItemType>::isAtMaxScroll () const
+template <typename ItemType>
+bool cListView<ItemType>::isAtMaxScroll() const
 {
-	if (items.empty ()) return true;
+	if (items.empty()) return true;
 
-	const auto pixelSize = getSize ().y () - getBeginMargin ().y () - getEndMargin ().y ();
+	const auto pixelSize = getSize().y() - getBeginMargin().y() - getEndMargin().y();
 
-	return pixelOffset >= items.back ().first + items.back ().second->getSize ().y () - pixelSize;
+	return pixelOffset >= items.back().first + items.back().second->getSize().y() - pixelSize;
 }
 
 //------------------------------------------------------------------------------
-template<typename ItemType>
+template <typename ItemType>
 void cListView<ItemType>::updateDisplayItems()
 {
 	if (items.empty())

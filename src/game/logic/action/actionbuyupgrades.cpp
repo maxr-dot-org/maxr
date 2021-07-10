@@ -23,22 +23,22 @@
 
 
 //------------------------------------------------------------------------------
-cActionBuyUpgrades::cActionBuyUpgrades(const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades) :
-	unitUpgrades(unitUpgrades)
+cActionBuyUpgrades::cActionBuyUpgrades (const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades) :
+	unitUpgrades (unitUpgrades)
 {}
 
 //------------------------------------------------------------------------------
-cActionBuyUpgrades::cActionBuyUpgrades(cBinaryArchiveOut& archive)
+cActionBuyUpgrades::cActionBuyUpgrades (cBinaryArchiveOut& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionBuyUpgrades::execute(cModel& model) const
+void cActionBuyUpgrades::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	auto player = model.getPlayer(playerNr);
+	auto player = model.getPlayer (playerNr);
 	if (player == nullptr) return;
 
 	const cUnitsData& unitsdata = *model.getUnitsData();
@@ -48,18 +48,18 @@ void cActionBuyUpgrades::execute(cModel& model) const
 		const auto& unitType = unitUpgrades[i].first;
 		const auto& upgradesForUnit = unitUpgrades[i].second;
 
-		if (!unitsdata.isValidId(unitType)) return;;
+		if (!unitsdata.isValidId (unitType)) return;;
 
 		// check costs for upgrading this unit
-		const auto& originalUnitData = unitsdata.getDynamicUnitData(unitType, player->getClan());
-		auto& currentUnitData = *player->getUnitDataCurrentVersion(unitType);
-		int costs = upgradesForUnit.calcTotalCosts(originalUnitData, currentUnitData, player->getResearchState());
+		const auto& originalUnitData = unitsdata.getDynamicUnitData (unitType, player->getClan());
+		auto& currentUnitData = *player->getUnitDataCurrentVersion (unitType);
+		int costs = upgradesForUnit.calcTotalCosts (originalUnitData, currentUnitData, player->getResearchState());
 		if (costs <= 0) continue;
 		if (costs > player->getCredits()) continue;
 
 		// everything ok, upgrade the unit
-		player->setCredits(player->getCredits() - costs);
-		upgradesForUnit.updateUnitData(currentUnitData);
-		currentUnitData.setVersion(currentUnitData.getVersion() + 1);
+		player->setCredits (player->getCredits() - costs);
+		upgradesForUnit.updateUnitData (currentUnitData);
+		currentUnitData.setVersion (currentUnitData.getVersion() + 1);
 	}
 }

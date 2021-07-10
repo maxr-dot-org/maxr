@@ -22,7 +22,7 @@
 #include "game/data/gamesettings.h"
 
 //------------------------------------------------------------------------------
-std::vector<std::pair<sID, int>> computeInitialLandingUnits(int clan, const cGameSettings& gameSettings, const cUnitsData& unitsData)
+std::vector<std::pair<sID, int>> computeInitialLandingUnits (int clan, const cGameSettings& gameSettings, const cUnitsData& unitsData)
 {
 	if (gameSettings.bridgeheadType == eGameSettingsBridgeheadType::Mobile) return {};
 

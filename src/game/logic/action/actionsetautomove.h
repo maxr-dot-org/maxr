@@ -27,16 +27,16 @@ class cUnit;
 class cActionSetAutoMove : public cActionT<cAction::eActiontype::ACTION_SET_AUTO_MOVE>
 {
 public:
-	cActionSetAutoMove(const cVehicle& vehicle, bool autoMoveActive);
-	cActionSetAutoMove(cBinaryArchiveOut& archive);
+	cActionSetAutoMove (const cVehicle& vehicle, bool autoMoveActive);
+	cActionSetAutoMove (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
 
-	void execute(cModel& model) const override;
+	void execute (cModel& model) const override;
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & vehicleId;
 		archive & autoMoveActive;

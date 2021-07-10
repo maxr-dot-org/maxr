@@ -36,11 +36,11 @@ class cWindowUpgradesFilterState
 {
 public:
 	cWindowUpgradesFilterState():
-		TankChecked(true),
-		PlaneChecked(true),
-		ShipChecked(true),
-		BuildingChecked(true),
-		TNTChecked(false)
+		TankChecked (true),
+		PlaneChecked (true),
+		ShipChecked (true),
+		BuildingChecked (true),
+		TNTChecked (false)
 	{};
 	bool TankChecked;
 	bool PlaneChecked;

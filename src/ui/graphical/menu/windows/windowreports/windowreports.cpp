@@ -290,15 +290,15 @@ void cWindowReports::downPressed()
 }
 
 //------------------------------------------------------------------------------
-bool cWindowReports::checkFilter(const cUnit& unit) const
+bool cWindowReports::checkFilter (const cUnit& unit) const
 {
 	if (unit.data.getHitpoints() >= unit.data.getHitpointsMax() && damagedCheckBox->isChecked()) return false;
 
-	return checkFilter(unit.getStaticUnitData());
+	return checkFilter (unit.getStaticUnitData());
 }
 
 //-----------------------------------------------------------------------------
-bool cWindowReports::checkFilter(const cStaticUnitData& data) const
+bool cWindowReports::checkFilter (const cStaticUnitData& data) const
 {
 	if (data.ID.isAVehicle())
 	{

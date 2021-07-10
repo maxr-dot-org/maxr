@@ -70,7 +70,7 @@ void cLobbyServer::pushMessage (std::unique_ptr<cNetMessage> message)
 std::unique_ptr<cNetMessage> cLobbyServer::popMessage()
 {
 	std::unique_ptr<cNetMessage> message;
-	messageQueue.try_pop(message);
+	messageQueue.try_pop (message);
 	return message;
 }
 
@@ -105,7 +105,7 @@ std::string cLobbyServer::getGameState() const
 //------------------------------------------------------------------------------
 const cPlayerBasicData* cLobbyServer::getConstPlayer (int playerNr) const
 {
-	auto it = ranges::find_if (players, byPlayerNr(playerNr));
+	auto it = ranges::find_if (players, byPlayerNr (playerNr));
 
 	return it == players.end() ? nullptr : &*it;
 }
@@ -113,7 +113,7 @@ const cPlayerBasicData* cLobbyServer::getConstPlayer (int playerNr) const
 //------------------------------------------------------------------------------
 cPlayerBasicData* cLobbyServer::getPlayer (int playerNr)
 {
-	auto it = ranges::find_if (players, byPlayerNr(playerNr));
+	auto it = ranges::find_if (players, byPlayerNr (playerNr));
 
 	return it == players.end() ? nullptr : &*it;
 }
@@ -147,7 +147,7 @@ void cLobbyServer::run()
 }
 
 //------------------------------------------------------------------------------
-void cLobbyServer::sendNetMessage(const cNetMessage& message, int receiverPlayerNr /*= -1*/)
+void cLobbyServer::sendNetMessage (const cNetMessage& message, int receiverPlayerNr /*= -1*/)
 {
 	cTextArchiveIn archive;
 	archive << message;
@@ -181,16 +181,16 @@ void cLobbyServer::sendPlayerList()
 }
 
 //------------------------------------------------------------------------------
-void cLobbyServer::sendSaveSlots(int playerNr)
+void cLobbyServer::sendSaveSlots (int playerNr)
 {
 	cMuMsgSaveSlots message;
 
-	fillSaveGames(0, 100, message.saveGames);
+	fillSaveGames (0, 100, message.saveGames);
 	sendNetMessage (message, playerNr);
 }
 
 //------------------------------------------------------------------------------
-void cLobbyServer::sendGameData(int playerNr /* = -1 */)
+void cLobbyServer::sendGameData (int playerNr /* = -1 */)
 {
 	cMuMsgOptions message;
 
@@ -215,13 +215,13 @@ void cLobbyServer::selectSaveGameInfo (cSaveGameInfo gameInfo)
 	if (saveGameInfo.number >= 0)
 	{
 		staticMap = std::make_shared<cStaticMap>();
-		if (!staticMap->loadMap(saveGameInfo.mapName))
+		if (!staticMap->loadMap (saveGameInfo.mapName))
 		{
 			staticMap = nullptr;
 			//"Map \"" + saveGameInfo_.mapName + "\" not found";
 			return;
 		}
-		else if (MapDownload::calculateCheckSum(saveGameInfo.mapName) != saveGameInfo.mapCrc)
+		else if (MapDownload::calculateCheckSum (saveGameInfo.mapName) != saveGameInfo.mapCrc)
 		{
 			staticMap = nullptr;
 			//"The map \"" + saveGameInfo_.mapName + "\" does not match the map the game was started with"
@@ -272,21 +272,21 @@ void cLobbyServer::handleNetMessage (const cNetMessage& message)
 {
 	cTextArchiveIn archive;
 	archive << message;
-	Log.write("lobbyServer: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("lobbyServer: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
 
 	switch (message.getType())
 	{
 		case eNetMessageType::TCP_WANT_CONNECT:
-			clientConnects(static_cast<const cNetMessageTcpWantConnect&>(message));
+			clientConnects (static_cast<const cNetMessageTcpWantConnect&> (message));
 			return;
 		case eNetMessageType::TCP_CLOSE:
-			clientLeaves(static_cast<const cNetMessageTcpClose&>(message));
+			clientLeaves (static_cast<const cNetMessageTcpClose&> (message));
 			return;
 		case eNetMessageType::MULTIPLAYER_LOBBY:
-			handleLobbyMessage (static_cast<const cMultiplayerLobbyMessage&>(message));
+			handleLobbyMessage (static_cast<const cMultiplayerLobbyMessage&> (message));
 			return;
 		default:
-			Log.write("Lobby Server: Can not handle message", cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ("Lobby Server: Can not handle message", cLog::eLOG_TYPE_NET_ERROR);
 			return;
 	}
 }
@@ -305,28 +305,28 @@ void cLobbyServer::handleLobbyMessage (const cMultiplayerLobbyMessage& message)
 	switch (message.getType())
 	{
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT:
-			handleNetMessage_MU_MSG_CHAT (static_cast<const cMuMsgChat&>(message));
+			handleNetMessage_MU_MSG_CHAT (static_cast<const cMuMsgChat&> (message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IDENTIFIKATION:
-			changePlayerAttributes (static_cast<const cMuMsgIdentification&>(message));
+			changePlayerAttributes (static_cast<const cMuMsgIdentification&> (message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_OPTIONS:
-			changeOptions (static_cast<const cMuMsgOptions&>(message));
+			changeOptions (static_cast<const cMuMsgOptions&> (message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_ASK_TO_FINISH_LOBBY:
-			handleAskToFinishLobby (static_cast<const cMuMsgAskToFinishLobby&>(message));
+			handleAskToFinishLobby (static_cast<const cMuMsgAskToFinishLobby&> (message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS:
-			landingRoomStatus (static_cast<const cMuMsgInLandingPositionSelectionStatus&>(message));
+			landingRoomStatus (static_cast<const cMuMsgInLandingPositionSelectionStatus&> (message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_POSITION:
-			clientLands (static_cast<const cMuMsgLandingPosition&>(message));
+			clientLands (static_cast<const cMuMsgLandingPosition&> (message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION:
-			clientAbortsPreparation (static_cast<const cMuMsgPlayerAbortedGamePreparations&>(message));
+			clientAbortsPreparation (static_cast<const cMuMsgPlayerAbortedGamePreparations&> (message));
 			break;
 		default:
-			Log.write("LobbyServer: Can not handle message", cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ("LobbyServer: Can not handle message", cLog::eLOG_TYPE_NET_ERROR);
 			break;
 	}
 }
@@ -360,7 +360,7 @@ void cLobbyServer::localClientConnects (cLobbyClient& client, cPlayerBasicData& 
 	if (!connectionManager) return;
 
 	player.setNr (nextPlayerNumber++);
-	players.push_back(player);
+	players.push_back (player);
 
 	connectionManager->setLocalClient (&client, player.getNr());
 
@@ -389,14 +389,14 @@ void cLobbyServer::handleNetMessage_MU_MSG_CHAT (const cMuMsgChat& message)
 //------------------------------------------------------------------------------
 void cLobbyServer::changePlayerAttributes (const cMuMsgIdentification& message)
 {
-	auto player = getPlayer(message.playerNr);
+	auto player = getPlayer (message.playerNr);
 	if (player == nullptr) return;
 
 	player->setColor (message.playerColor);
 	player->setName (message.playerName);
 	player->setReady (message.ready);
 
-	switch (checkTakenPlayerAttributes(players, *player))
+	switch (checkTakenPlayerAttributes (players, *player))
 	{
 		case eLobbyPlayerStatus::Ok: break;
 
@@ -415,7 +415,7 @@ void cLobbyServer::changeOptions (const cMuMsgOptions& message)
 		staticMap = std::make_shared<cStaticMap>();
 		staticMap->loadMap (message.mapName);
 	}
-	gameSettings = message.settingsValid ? std::make_shared<cGameSettings>(message.settings) : nullptr;
+	gameSettings = message.settingsValid ? std::make_shared<cGameSettings> (message.settings) : nullptr;
 	selectSaveGameInfo (message.saveInfo);
 }
 
@@ -432,10 +432,10 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
-	std::vector<cPlayerBasicData> getMissingPlayers(const cSaveGameInfo& saveGameInfo, const std::vector<cPlayerBasicData>& players)
+	std::vector<cPlayerBasicData> getMissingPlayers (const cSaveGameInfo& saveGameInfo, const std::vector<cPlayerBasicData>& players)
 	{
 		auto isMissingPlayer = [&](const auto& player){ return !player.isDefeated() && ranges::find_if (players, byPlayerName (player.getName())) == players.end();};
-		return Filter(saveGameInfo.players, isMissingPlayer);
+		return Filter (saveGameInfo.players, isMissingPlayer);
 	}
 
 }
@@ -451,7 +451,7 @@ void cLobbyServer::handleAskToFinishLobby (const cMuMsgAskToFinishLobby& message
 	if (saveGameInfo.number != -1)
 	{
 		errorMessage.hostNotInSavegame = !isInSaveGame (saveGameInfo, getPlayer (fromPlayer));
-		errorMessage.missingPlayers = getMissingPlayers(saveGameInfo, players);
+		errorMessage.missingPlayers = getMissingPlayers (saveGameInfo, players);
 	}
 	if (errorMessage.missingSettings || errorMessage.hostNotInSavegame || !errorMessage.notReadyPlayers.empty() || !errorMessage.missingPlayers.empty()) {
 		sendNetMessage (errorMessage, fromPlayer);
@@ -470,7 +470,7 @@ void cLobbyServer::handleAskToFinishLobby (const cMuMsgAskToFinishLobby& message
 				sendNetMessage (cMuMsgDisconnectNotInSavedGame(), player.getNr());
 				connectionManager->disconnect (player.getNr());
 
-				player.setNr(-1); // Mark to deletion
+				player.setNr (-1); // Mark to deletion
 			}
 			else
 			{
@@ -481,8 +481,8 @@ void cLobbyServer::handleAskToFinishLobby (const cMuMsgAskToFinishLobby& message
 				player.setNr (newPlayerNr);
 				player.setColor (savegamePlayer.getColor());
 
-				sendNetMessage (cMuMsgPlayerNr(newPlayerNr), oldPlayerNr);
-				connectionManager->changePlayerNumber(oldPlayerNr, newPlayerNr);
+				sendNetMessage (cMuMsgPlayerNr (newPlayerNr), oldPlayerNr);
+				connectionManager->changePlayerNumber (oldPlayerNr, newPlayerNr);
 			}
 		}
 		players.erase (std::remove_if (players.begin(), players.end(), byPlayerNr (-1)), players.end());
@@ -497,13 +497,13 @@ void cLobbyServer::handleAskToFinishLobby (const cMuMsgAskToFinishLobby& message
 		}
 		catch (const std::runtime_error& e)
 		{
-			Log.write((std::string)"Error loading save game: " + e.what(), cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ((std::string)"Error loading save game: " + e.what(), cLog::eLOG_TYPE_NET_ERROR);
 			server.reset();
 			onErrorLoadSavedGame (saveGameInfo.number);
 			return;
 		}
 
-		connectionManager->setLocalServer(server.get());
+		connectionManager->setLocalServer (server.get());
 		server->start();
 		server->resyncClientModel();
 
@@ -515,28 +515,28 @@ void cLobbyServer::handleAskToFinishLobby (const cMuMsgAskToFinishLobby& message
 
 	signalConnectionManager.connect (landingPositionManager->landingPositionStateChanged, [this] (const cPlayerBasicData& player, eLandingPositionState state)
 	{
-		sendNetMessage (cMuMsgLandingState(state), player.getNr());
+		sendNetMessage (cMuMsgLandingState (state), player.getNr());
 	});
 
 	signalConnectionManager.connect (landingPositionManager->allPositionsValid, [this]()
 	{
 		sendNetMessage (cMuMsgStartGame());
-		auto unitsData = std::make_shared<const cUnitsData>(UnitsDataGlobal);
-		auto clanData = std::make_shared<const cClanData>(ClanDataGlobal);
+		auto unitsData = std::make_shared<const cUnitsData> (UnitsDataGlobal);
+		auto clanData = std::make_shared<const cClanData> (ClanDataGlobal);
 
 		server = std::make_unique<cServer> (connectionManager);
 
 		server->setPreparationData ({unitsData, clanData, gameSettings, staticMap});
-		server->setPlayers(players);
+		server->setPlayers (players);
 
-		connectionManager->setLocalServer(server.get());
+		connectionManager->setLocalServer (server.get());
 
 		server->start();
 
 		onStartNewGame (*server);
 	});
-	auto unitsData = std::make_shared<const cUnitsData>(UnitsDataGlobal);
-	auto clanData = std::make_shared<const cClanData>(ClanDataGlobal);
+	auto unitsData = std::make_shared<const cUnitsData> (UnitsDataGlobal);
+	auto clanData = std::make_shared<const cClanData> (ClanDataGlobal);
 	sendNetMessage (cMuMsgStartGamePreparations (unitsData, clanData));
 }
 
@@ -565,7 +565,7 @@ void cLobbyServer::landingRoomStatus (const cMuMsgInLandingPositionSelectionStat
 	if (!connectionManager) return;
 	assert (landingPositionManager != nullptr);
 
-	auto player = getPlayer(message.landingPlayer);
+	auto player = getPlayer (message.landingPlayer);
 	if (player == nullptr) return;
 
 	if (!message.isIn)
@@ -579,12 +579,12 @@ void cLobbyServer::landingRoomStatus (const cMuMsgInLandingPositionSelectionStat
 //------------------------------------------------------------------------------
 void cLobbyServer::clientAbortsPreparation (const cMuMsgPlayerAbortedGamePreparations& message)
 {
-	auto player = getPlayer(message.playerNr);
+	auto player = getPlayer (message.playerNr);
 	if (player == nullptr) return;
 
 	for (auto& receiver : players)
 	{
-		receiver.setReady(false);
+		receiver.setReady (false);
 	}
 	forwardMessage (message);
 	sendPlayerList();

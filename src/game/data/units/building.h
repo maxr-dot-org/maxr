@@ -58,16 +58,16 @@ public:
 	int getRemainingMetal() const;
 	void setRemainingMetal (int value);
 
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 
-	cSignal<void ()> typeChanged;
-	cSignal<void ()> remainingMetalChanged;
+	cSignal<void()> typeChanged;
+	cSignal<void()> remainingMetalChanged;
 
-	template<typename T>
-	void serialize(T& archive)
+	template <typename T>
+	void serialize (T& archive)
 	{
-		archive & NVP(type);
-		archive & NVP(remainingMetal);
+		archive & NVP (type);
+		archive & NVP (remainingMetal);
 	}
 private:
 	sID type;
@@ -83,7 +83,7 @@ public:
 	friend class cDebugOutputWidget;
 
 	explicit cBuilding (unsigned int ID); // used by serialization
-	cBuilding(const cStaticUnitData* staticData, const cDynamicUnitData* data, cPlayer* Owner, unsigned int ID);
+	cBuilding (const cStaticUnitData* staticData, const cDynamicUnitData* data, cPlayer* Owner, unsigned int ID);
 	virtual ~cBuilding();
 
 	bool isAVehicle() const override { return false; }
@@ -98,7 +98,7 @@ public:
 	void updateNeighbours (const cMap& map);
 	void CheckNeighbours (const cMap& Map);
 
-	void startWork ();
+	void startWork();
 	void stopWork (bool forced = false);
 
 	/** check whether a transfer to a unit on the field is possible */
@@ -108,9 +108,9 @@ public:
 	void calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array<int, 3>& turboBuildCosts, int vehicleCosts, int remainingMetal = -1) const;
 	bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const override;
 	bool canExitTo (const cPosition& position, const cMapView& map, const cStaticUnitData& vehicleData) const override;
-	bool canLoad(const cPosition& position, const cMapView& map, bool checkPosition = true) const;
+	bool canLoad (const cPosition& position, const cMapView& map, bool checkPosition = true) const;
 	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const override;
-	bool canSupply(const cUnit* unit, eSupplyType supplyType) const override;
+	bool canSupply (const cUnit* unit, eSupplyType supplyType) const override;
 
 	bool isUnitWorking() const { return isWorking; }
 	bool factoryHasJustFinishedBuilding() const;
@@ -131,57 +131,57 @@ public:
 	bool getRepeatBuild() const;
 
 	void setWorking (bool value);
-	void setBuildSpeed(int value);
-	void setMetalPerRound(int value);
-	void setRepeatBuild(bool value);
+	void setBuildSpeed (int value);
+	void setMetalPerRound (int value);
+	void setRepeatBuild (bool value);
 
 	const sMiningResource& getMaxProd() const;
 
 	void setResearchArea (cResearch::ResearchArea area);
 	cResearch::ResearchArea getResearchArea() const;
 
-	void setRubbleValue(int value, cCrossPlattformRandom& randomGenerator);
+	void setRubbleValue (int value, cCrossPlattformRandom& randomGenerator);
 	int getRubbleValue() const;
 
-	uint32_t getChecksum(uint32_t crc) const override;
+	uint32_t getChecksum (uint32_t crc) const override;
 
-	cSignal<void ()> buildListChanged;
-	cSignal<void ()> buildListFirstItemDataChanged;
-	cSignal<void ()> researchAreaChanged;
+	cSignal<void()> buildListChanged;
+	cSignal<void()> buildListFirstItemDataChanged;
+	cSignal<void()> researchAreaChanged;
 
 	cSignal<void()> buildSpeedChanged;
 	cSignal<void()> metalPerRoundChanged;
 	cSignal<void()> repeatBuildChanged;
 
 	template <typename T>
-	void serialize(T& archive)
+	void serialize (T& archive)
 	{
-		cUnit::serializeThis(archive); //serialize cUnit members
+		cUnit::serializeThis (archive); //serialize cUnit members
 
-		archive & NVP(rubbleTyp);
-		archive & NVP(rubbleValue);
-		archive & NVP(BaseN);
-		archive & NVP(BaseE);
-		archive & NVP(BaseS);
-		archive & NVP(BaseW);
-		archive & NVP(BaseBN);
-		archive & NVP(BaseBE);
-		archive & NVP(BaseBS);
-		archive & NVP(BaseBW);
-		archive & serialization::makeNvp("maxMetalProd", maxProd.metal);
-		archive & serialization::makeNvp("maxOilProd", maxProd.oil);
-		archive & serialization::makeNvp("maxGoldProd", maxProd.gold);
-		archive & serialization::makeNvp("metalProd", prod.metal);
-		archive & serialization::makeNvp("oilProd", prod.oil);
-		archive & serialization::makeNvp("goldProd", prod.gold);
-		archive & NVP(buildSpeed);
-		archive & NVP(metalPerRound);
-		archive & NVP(repeatBuild);
-		archive & NVP(wasWorking);
-		archive & NVP(points);
-		archive & NVP(isWorking);
-		archive & NVP(researchArea);
-		archive & NVP(buildList);
+		archive & NVP (rubbleTyp);
+		archive & NVP (rubbleValue);
+		archive & NVP (BaseN);
+		archive & NVP (BaseE);
+		archive & NVP (BaseS);
+		archive & NVP (BaseW);
+		archive & NVP (BaseBN);
+		archive & NVP (BaseBE);
+		archive & NVP (BaseBS);
+		archive & NVP (BaseBW);
+		archive & serialization::makeNvp ("maxMetalProd", maxProd.metal);
+		archive & serialization::makeNvp ("maxOilProd", maxProd.oil);
+		archive & serialization::makeNvp ("maxGoldProd", maxProd.gold);
+		archive & serialization::makeNvp ("metalProd", prod.metal);
+		archive & serialization::makeNvp ("oilProd", prod.oil);
+		archive & serialization::makeNvp ("goldProd", prod.gold);
+		archive & NVP (buildSpeed);
+		archive & NVP (metalPerRound);
+		archive & NVP (repeatBuild);
+		archive & NVP (wasWorking);
+		archive & NVP (points);
+		archive & NVP (isWorking);
+		archive & NVP (researchArea);
+		archive & NVP (buildList);
 
 		if (!archive.isWriter)
 		{

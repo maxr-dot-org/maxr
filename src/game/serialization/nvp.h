@@ -27,30 +27,30 @@ namespace serialization
 	template <typename T>
 	struct sNameValuePair
 	{
-		sNameValuePair(const std::string& name, T& value) :
-			name(name),
-			value(value)
+		sNameValuePair (const std::string& name, T& value) :
+			name (name),
+			value (value)
 		{}
 
 		const std::string& name;
 		T& value;
 	};
 
-	template<typename T>
-	sNameValuePair<T> makeNvp(const std::string& name, T& value)
+	template <typename T>
+	sNameValuePair<T> makeNvp (const std::string& name, T& value)
 	{
-		return sNameValuePair<T>(name, value);
+		return sNameValuePair<T> (name, value);
 	}
-	template<typename T>
-	const sNameValuePair<T> makeNvp(const std::string& name, const T& value)
+	template <typename T>
+	const sNameValuePair<T> makeNvp (const std::string& name, const T& value)
 	{
-		T& value_nonconst = const_cast<T&>(value);
-		return sNameValuePair<T>(name, value_nonconst);
+		T& value_nonconst = const_cast<T&> (value);
+		return sNameValuePair<T> (name, value_nonconst);
 	}
 
 	#define NVP_QUOTE(x) #x
-	#define NVP(value) serialization::makeNvp(NVP_QUOTE(value), value)
-	#define NVP_MEMBER(obj, value) serialization::makeNvp(NVP_QUOTE(value), obj.value)
+	#define NVP(value) serialization::makeNvp (NVP_QUOTE (value), value)
+	#define NVP_MEMBER(obj, value) serialization::makeNvp (NVP_QUOTE (value), obj.value)
 }
 
 #endif

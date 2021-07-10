@@ -39,27 +39,27 @@ public:
 	const std::vector<unsigned int>& getLockedUnitIds() const;
 
 	template <typename T>
-	void serialize(T& archive)
+	void serialize (T& archive)
 	{
-		archive & NVP(mapPosition);
-		archive & NVP(mapZoomFactor);
-		archive & NVP(surveyActive);
-		archive & NVP(hitsActive);
-		archive & NVP(scanActive);
-		archive & NVP(statusActive);
-		archive & NVP(ammoActive);
-		archive & NVP(gridActive);
-		archive & NVP(colorActive);
-		archive & NVP(rangeActive);
-		archive & NVP(fogActive);
-		archive & NVP(lockActive);
-		archive & NVP(miniMapZoomFactorActive);
-		archive & NVP(miniMapAttackUnitsOnly);
-		archive & NVP(unitVideoPlaying);
-		archive & NVP(chatActive);
+		archive & NVP (mapPosition);
+		archive & NVP (mapZoomFactor);
+		archive & NVP (surveyActive);
+		archive & NVP (hitsActive);
+		archive & NVP (scanActive);
+		archive & NVP (statusActive);
+		archive & NVP (ammoActive);
+		archive & NVP (gridActive);
+		archive & NVP (colorActive);
+		archive & NVP (rangeActive);
+		archive & NVP (fogActive);
+		archive & NVP (lockActive);
+		archive & NVP (miniMapZoomFactorActive);
+		archive & NVP (miniMapAttackUnitsOnly);
+		archive & NVP (unitVideoPlaying);
+		archive & NVP (chatActive);
 		archive & NVP (currentTurnResearchAreasFinished);
-		archive & NVP(selectedUnitIds);
-		archive & NVP(lockedUnitIds);
+		archive & NVP (selectedUnitIds);
+		archive & NVP (lockedUnitIds);
 	}
 public:
 	cPosition mapPosition;

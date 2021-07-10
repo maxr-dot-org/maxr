@@ -41,16 +41,16 @@ class cSavegame
 public:
 	cSavegame();
 
-	static std::string getFileName(int slot);
+	static std::string getFileName (int slot);
 
 	/* saves the current gamestate to a file */
-	int save(const cModel& model, int slot, const std::string& saveName);
-	void saveGuiInfo(const cNetMessageGUISaveInfo& guiInfo);
+	int save (const cModel& model, int slot, const std::string& saveName);
+	void saveGuiInfo (const cNetMessageGUISaveInfo& guiInfo);
 
-	cSaveGameInfo loadSaveInfo(int slot);
+	cSaveGameInfo loadSaveInfo (int slot);
 
-	void loadModel(cModel& model, int slot);
-	void loadGuiInfo(const cServer* server, int slot, int playerNr = -1);
+	void loadModel (cModel& model, int slot);
+	void loadGuiInfo (const cServer* server, int slot, int playerNr = -1);
 
 	int getLastUsedSaveSlot() const;
 private:
@@ -61,10 +61,10 @@ private:
 	* these save files in the multiplayer menu. Loading game state from
 	* savefiles <1.0 is not supported.
 	*/
-	void loadLegacyHeader(cSaveGameInfo& info);
-	void writeHeader(int slot, const std::string& saveName, const cModel &model);
-	bool loadDocument(int slot);
-	bool loadVersion(cVersion& version);
+	void loadLegacyHeader (cSaveGameInfo& info);
+	void writeHeader (int slot, const std::string& saveName, const cModel &model);
+	bool loadDocument (int slot);
+	bool loadVersion (cVersion& version);
 
 	int saveingID; //identifier number, to make sure the gui info from clients are written to the correct save file
 	int loadedSlot;

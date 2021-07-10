@@ -25,7 +25,7 @@ struct SDLComponent
 {
 	explicit SDLComponent (bool withVideo);
 
-	SDLComponent(const SDLComponent&) = delete;
+	SDLComponent (const SDLComponent&) = delete;
 	SDLComponent& operator= (const SDLComponent&) = delete;
 
 	~SDLComponent();

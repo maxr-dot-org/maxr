@@ -27,20 +27,20 @@
 cPlaneTakeoffJob::cPlaneTakeoffJob (cVehicle& vehicle) :
 	cJob (vehicle)
 {
-	connectionManager.connect(vehicle.destroyed, [&](){finished = true; });
+	connectionManager.connect (vehicle.destroyed, [&](){finished = true; });
 }
 
 //------------------------------------------------------------------------------
 void cPlaneTakeoffJob::run (cModel& model)
 {
-	assert(unit->isAVehicle());
-	cVehicle* plane = static_cast<cVehicle*>(unit);
+	assert (unit->isAVehicle());
+	cVehicle* plane = static_cast<cVehicle*> (unit);
 
-	if (plane->canLand(*model.getMap()))
+	if (plane->canLand (*model.getMap()))
 	{
 		if (plane->getFlightHeight() == MAX_FLIGHT_HEIGHT)
 		{
-			model.planeLanding(*plane);
+			model.planeLanding (*plane);
 		}
 
 		plane->setFlightHeight (plane->getFlightHeight() - 2);
@@ -53,7 +53,7 @@ void cPlaneTakeoffJob::run (cModel& model)
 	{
 		if (plane->getFlightHeight() < 2)
 		{
-			model.planeTakeoff(*plane);
+			model.planeTakeoff (*plane);
 		}
 
 		plane->setFlightHeight (plane->getFlightHeight() + 2);
@@ -71,10 +71,10 @@ eJobType cPlaneTakeoffJob::getType() const
 }
 
 //------------------------------------------------------------------------------
-uint32_t cPlaneTakeoffJob::getChecksum(uint32_t crc) const
+uint32_t cPlaneTakeoffJob::getChecksum (uint32_t crc) const
 {
-	crc = calcCheckSum(getType(), crc);
-	crc = calcCheckSum(unit ? unit->getId() : 0, crc);
+	crc = calcCheckSum (getType(), crc);
+	crc = calcCheckSum (unit ? unit->getId() : 0, crc);
 
 	return crc;
 }

@@ -44,7 +44,7 @@ cUnit::cUnit (const cDynamicUnitData* unitData, const cStaticUnitData* staticDat
 	, dir (0)
 	, jobActive (false)
 	, alphaEffectValue (0)
-	, staticData(staticData)
+	, staticData (staticData)
 	, owner (owner)
 	, position (0, 0)
 	, turnsDisabled (0)
@@ -53,7 +53,7 @@ cUnit::cUnit (const cDynamicUnitData* unitData, const cStaticUnitData* staticDat
 	, attacking (false)
 	, beeingAttacked (false)
 	, beenAttacked (false)
-	, storageResCur(0)
+	, storageResCur (0)
 {
 	if (unitData != nullptr)
 		data = *unitData;
@@ -96,74 +96,73 @@ void cUnit::setOwner (cPlayer* owner_)
 }
 
 //--------------------------------------------------------------------------
-void cUnit::storeVehicle(cVehicle& vehicle, cMap& map)
+void cUnit::storeVehicle (cVehicle& vehicle, cMap& map)
 {
-	map.deleteVehicle(vehicle);
-	if (vehicle.getOwner()) vehicle.getOwner()->removeFromScan(vehicle);
+	map.deleteVehicle (vehicle);
+	if (vehicle.getOwner()) vehicle.getOwner()->removeFromScan (vehicle);
 
 	if (vehicle.isSentryActive())
 	{
-		if (vehicle.getOwner()) vehicle.getOwner()->removeFromSentryMap(vehicle);
-		vehicle.setSentryActive(false);
+		if (vehicle.getOwner()) vehicle.getOwner()->removeFromSentryMap (vehicle);
+		vehicle.setSentryActive (false);
 	}
 
 	if (vehicle.getMoveJob()) vehicle.getMoveJob()->stop();
-	vehicle.setManualFireActive(false);
+	vehicle.setManualFireActive (false);
 
-	vehicle.setLoaded(true);
-	vehicle.setIsBeeinAttacked(false);
+	vehicle.setLoaded (true);
+	vehicle.setIsBeeinAttacked (false);
 
-	storedUnits.push_back(&vehicle);
+	storedUnits.push_back (&vehicle);
 	storedUnitsChanged();
 }
 
 //------------------------------------------------------------------------------
-void cUnit::exitVehicleTo(cVehicle& vehicle, const cPosition& position, cMap& map)
+void cUnit::exitVehicleTo (cVehicle& vehicle, const cPosition& position, cMap& map)
 {
-	Remove(storedUnits, &vehicle);
+	Remove (storedUnits, &vehicle);
 	storedUnitsChanged();
-	vehicle.setLoaded(false);
+	vehicle.setLoaded (false);
 
-	vehicle.setPosition(position);
-	map.addVehicle(vehicle, position);
+	vehicle.setPosition (position);
+	map.addVehicle (vehicle, position);
 
-	if (vehicle.getOwner()) vehicle.getOwner()->addToScan(vehicle);
+	if (vehicle.getOwner()) vehicle.getOwner()->addToScan (vehicle);
 }
 
 //------------------------------------------------------------------------------
-void cUnit::setDetectedByPlayer(const cPlayer* player)
+void cUnit::setDetectedByPlayer (const cPlayer* player)
 {
 	int playerId = player->getId();
 
-	if (!Contains(detectedByPlayerList, playerId))
+	if (!Contains (detectedByPlayerList, playerId))
 	{
-		detectedByPlayerList.push_back(playerId);
-		player->detectedStealthUnit(*this);
+		detectedByPlayerList.push_back (playerId);
+		player->detectedStealthUnit (*this);
 	}
 
-	if (!Contains(detectedInThisTurnByPlayerList, playerId))
-		detectedInThisTurnByPlayerList.push_back(playerId);
-
+	if (!Contains (detectedInThisTurnByPlayerList, playerId))
+		detectedInThisTurnByPlayerList.push_back (playerId);
 }
 
 //------------------------------------------------------------------------------
-void cUnit::resetDetectedByPlayer(const cPlayer* player)
+void cUnit::resetDetectedByPlayer (const cPlayer* player)
 {
-	if (Contains(detectedByPlayerList, player->getId()))
+	if (Contains (detectedByPlayerList, player->getId()))
 	{
-		Remove(detectedByPlayerList, player->getId());
-		if (!isAVehicle() || !static_cast<const cVehicle*>(this)->isUnitLoaded())
+		Remove (detectedByPlayerList, player->getId());
+		if (!isAVehicle() || !static_cast<const cVehicle*> (this)->isUnitLoaded())
 		{
-			player->stealthUnitDissappeared(*this);
+			player->stealthUnitDissappeared (*this);
 		}
 	}
-	Remove(detectedInThisTurnByPlayerList, player->getId());
+	Remove (detectedInThisTurnByPlayerList, player->getId());
 }
 
 //------------------------------------------------------------------------------
-bool cUnit::isDetectedByPlayer(const cPlayer* player) const
+bool cUnit::isDetectedByPlayer (const cPlayer* player) const
 {
-	return Contains(detectedByPlayerList, player->getId());
+	return Contains (detectedByPlayerList, player->getId());
 }
 
 //------------------------------------------------------------------------------
@@ -275,34 +274,34 @@ bool cUnit::getIsBig() const
 }
 
 //------------------------------------------------------------------------------
-void cUnit::setIsBig(bool value)
+void cUnit::setIsBig (bool value)
 {
-	std::swap(isBig, value);
+	std::swap (isBig, value);
 	if (isBig != value) isBigChanged();
 }
 
-uint32_t cUnit::getChecksum(uint32_t crc) const
+uint32_t cUnit::getChecksum (uint32_t crc) const
 {
-	crc = calcCheckSum(data, crc);
-	crc = calcCheckSum(iID, crc);
-	crc = calcCheckSum(dir, crc);
+	crc = calcCheckSum (data, crc);
+	crc = calcCheckSum (iID, crc);
+	crc = calcCheckSum (dir, crc);
 	for (const auto& u : storedUnits)
-		crc = calcCheckSum(u, crc);
+		crc = calcCheckSum (u, crc);
 	for (const auto& p : detectedByPlayerList)
-		crc = calcCheckSum(p, crc);
+		crc = calcCheckSum (p, crc);
 	for (const auto& p : detectedInThisTurnByPlayerList)
-		crc = calcCheckSum(p, crc);
-	crc = calcCheckSum(isBig, crc);
-	crc = calcCheckSum(owner, crc);
-	crc = calcCheckSum(position, crc);
-	crc = calcCheckSum(customName, crc);
-	crc = calcCheckSum(turnsDisabled, crc);
-	crc = calcCheckSum(sentryActive, crc);
-	crc = calcCheckSum(manualFireActive, crc);
-	crc = calcCheckSum(attacking, crc);
-	crc = calcCheckSum(beeingAttacked, crc);
-	crc = calcCheckSum(beenAttacked, crc);
-	crc = calcCheckSum(storageResCur, crc);
+		crc = calcCheckSum (p, crc);
+	crc = calcCheckSum (isBig, crc);
+	crc = calcCheckSum (owner, crc);
+	crc = calcCheckSum (position, crc);
+	crc = calcCheckSum (customName, crc);
+	crc = calcCheckSum (turnsDisabled, crc);
+	crc = calcCheckSum (sentryActive, crc);
+	crc = calcCheckSum (manualFireActive, crc);
+	crc = calcCheckSum (attacking, crc);
+	crc = calcCheckSum (beeingAttacked, crc);
+	crc = calcCheckSum (beenAttacked, crc);
+	crc = calcCheckSum (storageResCur, crc);
 
 	return crc;
 }
@@ -430,10 +429,10 @@ bool cUnit::canAttackObjectAt (const cPosition& position, const cMapView& map, b
 	if (map.isValidPosition (position) == false) return false;
 	if (checkRange && isInRange (position) == false) return false;
 
-	if (staticData->muzzleType == eMuzzleType::Torpedo && map.isWaterOrCoast(position) == false)
+	if (staticData->muzzleType == eMuzzleType::Torpedo && map.isWaterOrCoast (position) == false)
 		return false;
 
-	const cUnit* target = cAttackJob::selectTarget(position, staticData->canAttack, map, owner);
+	const cUnit* target = cAttackJob::selectTarget (position, staticData->canAttack, map, owner);
 
 	if (target && target->iID == iID)  // a unit cannot fire on itself
 		return false;
@@ -485,7 +484,7 @@ void cUnit::upgradeToCurrentVersion()
 	// don't change the current shot-amount!
 	data.setShotsMax (upgradeVersion->getShotsMax());
 	data.setDamage (upgradeVersion->getDamage());
-	data.setBuildCost(upgradeVersion->getBuildCost());
+	data.setBuildCost (upgradeVersion->getBuildCost());
 }
 
 //------------------------------------------------------------------------------
@@ -572,15 +571,15 @@ int cUnit::getStoredResources() const
 }
 
 //------------------------------------------------------------------------------
-void cUnit::setStoredResources(int value)
+void cUnit::setStoredResources (int value)
 {
-	value = std::max(std::min(value, staticData->storageResMax), 0);
-	std::swap(storageResCur, value);
+	value = std::max (std::min (value, staticData->storageResMax), 0);
+	std::swap (storageResCur, value);
 	if (storageResCur != value) storedResourcesChanged();
 }
 
 //------------------------------------------------------------------------------
-bool cUnit::isStealthOnCurrentTerrain(const cMapField& field, const sTerrain& terrain) const
+bool cUnit::isStealthOnCurrentTerrain (const cMapField& field, const sTerrain& terrain) const
 {
 	if (staticData->isStealthOn & AREA_EXP_MINE)
 	{
@@ -588,7 +587,7 @@ bool cUnit::isStealthOnCurrentTerrain(const cMapField& field, const sTerrain& te
 	}
 	else if (staticData->factorAir > 0 &&
 		isAVehicle() &&
-		static_cast<const cVehicle*>(this)->getFlightHeight() > 0)
+		static_cast<const cVehicle*> (this)->getFlightHeight() > 0)
 	{
 		return (staticData->isStealthOn & TERRAIN_AIR) != 0;
 	}
@@ -610,52 +609,51 @@ bool cUnit::isStealthOnCurrentTerrain(const cMapField& field, const sTerrain& te
 }
 
 //------------------------------------------------------------------------------
-void cUnit::detectThisUnit(const cMap& map, const std::vector<std::shared_ptr<cPlayer>>& playerList)
+void cUnit::detectThisUnit (const cMap& map, const std::vector<std::shared_ptr<cPlayer>>& playerList)
 {
 	if (staticData->isStealthOn == TERRAIN_NONE) return;
 
 	for (const auto& player : playerList)
 	{
-		if (checkDetectedByPlayer(*player, map))
+		if (checkDetectedByPlayer (*player, map))
 		{
-			setDetectedByPlayer(player.get());
+			setDetectedByPlayer (player.get());
 		}
 	}
 }
 
 //------------------------------------------------------------------------------
-void cUnit::detectOtherUnits(const cMap& map) const
+void cUnit::detectOtherUnits (const cMap& map) const
 {
 	if (!owner || staticData->canDetectStealthOn == TERRAIN_NONE) return;
 
-	const int minx = std::max(getPosition().x() - data.getScan(), 0);
-	const int maxx = std::min(getPosition().x() + data.getScan(), map.getSize().x() - 1);
-	const int miny = std::max(getPosition().y() - data.getScan(), 0);
-	const int maxy = std::min(getPosition().y() + data.getScan(), map.getSize().y() - 1);
+	const int minx = std::max (getPosition().x() - data.getScan(), 0);
+	const int maxx = std::min (getPosition().x() + data.getScan(), map.getSize().x() - 1);
+	const int miny = std::max (getPosition().y() - data.getScan(), 0);
+	const int maxy = std::min (getPosition().y() + data.getScan(), map.getSize().y() - 1);
 
 	for (int x = minx; x <= maxx; ++x)
 	{
 		for (int y = miny; y <= maxy; ++y)
 		{
-			const cPosition checkAtPos(x, y);
-			int scanSquared = data.getScan()*data.getScan();
+			const cPosition checkAtPos (x, y);
+			int scanSquared = data.getScan() * data.getScan();
 			if ((getPosition() - checkAtPos).l2NormSquared() > scanSquared) continue;
 
-			const auto& vehicles = map.getField(checkAtPos).getVehicles();
+			const auto& vehicles = map.getField (checkAtPos).getVehicles();
 			for (const auto& vehicle : vehicles)
 			{
-				if (vehicle->checkDetectedByPlayer(*owner, map))
+				if (vehicle->checkDetectedByPlayer (*owner, map))
 				{
-					vehicle->setDetectedByPlayer(owner);
-
+					vehicle->setDetectedByPlayer (owner);
 				}
 			}
-			const auto& buildings = map.getField(checkAtPos).getBuildings();
+			const auto& buildings = map.getField (checkAtPos).getBuildings();
 			for (const auto& building : buildings)
 			{
-				if (building->checkDetectedByPlayer(*owner, map))
+				if (building->checkDetectedByPlayer (*owner, map))
 				{
-					building->setDetectedByPlayer(owner);
+					building->setDetectedByPlayer (owner);
 				}
 			}
 		}
@@ -669,7 +667,7 @@ const cStaticUnitData& cUnit::getStaticUnitData() const
 }
 
 //------------------------------------------------------------------------------
-bool cUnit::checkDetectedByPlayer(const cPlayer& player, const cMap& map) const
+bool cUnit::checkDetectedByPlayer (const cPlayer& player, const cMap& map) const
 {
 	//big stealth units not implemented yet
 	if (isBig)
@@ -681,41 +679,41 @@ bool cUnit::checkDetectedByPlayer(const cPlayer& player, const cMap& map) const
 	if (staticData->isStealthOn == TERRAIN_NONE)
 		return false;
 
-	if (isAVehicle() && static_cast<const cVehicle*>(this)->isUnitLoaded())
+	if (isAVehicle() && static_cast<const cVehicle*> (this)->isUnitLoaded())
 		return false;
 
 	// get current terrain
-	bool isOnWater = map.isWater(position);
-	bool isOnCoast = map.isCoast(position);
+	bool isOnWater = map.isWater (position);
+	bool isOnCoast = map.isCoast (position);
 
-	if (staticData->factorGround > 0 && map.getField(position).hasBridgeOrPlattform())
+	if (staticData->factorGround > 0 && map.getField (position).hasBridgeOrPlattform())
 	{
 		isOnWater = false;
 		isOnCoast = false;
 	}
 
 	// check stealth status
-	if (!isStealthOnCurrentTerrain(map.getField(position), map.staticMap->getTerrain(position)) && player.canSeeAnyAreaUnder(*this))
+	if (!isStealthOnCurrentTerrain (map.getField (position), map.staticMap->getTerrain (position)) && player.canSeeAnyAreaUnder (*this))
 	{
 		return true;
 	}
-	else if ((staticData->isStealthOn & TERRAIN_GROUND) && player.hasLandDetection(position) && !isOnCoast && !isOnWater)
+	else if ((staticData->isStealthOn & TERRAIN_GROUND) && player.hasLandDetection (position) && !isOnCoast && !isOnWater)
 	{
 		return true;
 	}
-	else if ((staticData->isStealthOn & TERRAIN_SEA) && player.hasSeaDetection(position) && isOnWater)
+	else if ((staticData->isStealthOn & TERRAIN_SEA) && player.hasSeaDetection (position) && isOnWater)
 	{
 		return true;
 	}
-	else if ((staticData->isStealthOn & TERRAIN_COAST) && player.hasLandDetection(position) && isOnCoast && staticData->factorGround > 0)
+	else if ((staticData->isStealthOn & TERRAIN_COAST) && player.hasLandDetection (position) && isOnCoast && staticData->factorGround > 0)
 	{
 		return true;
 	}
-	else if ((staticData->isStealthOn & TERRAIN_COAST) && player.hasSeaDetection(position) && isOnCoast && staticData->factorSea > 0)
+	else if ((staticData->isStealthOn & TERRAIN_COAST) && player.hasSeaDetection (position) && isOnCoast && staticData->factorSea > 0)
 	{
 		return true;
 	}
-	else if ((staticData->isStealthOn & AREA_EXP_MINE) && player.hasMineDetection(position))
+	else if ((staticData->isStealthOn & AREA_EXP_MINE) && player.hasMineDetection (position))
 	{
 		return true;
 	}

@@ -33,7 +33,7 @@ class cUnit;
 class cVehicle;
 class cBuilding;
 class cMapFieldView;
-template<typename T> class cBox;
+template <typename T> class cBox;
 
 class cUnitSelection
 {
@@ -41,8 +41,8 @@ public:
 	bool selectUnitAt (const cMapFieldView& field, bool base);
 	bool selectVehiclesAt (const cBox<cPosition>& box, const cMapView& map, const cPlayer& player);
 	bool selectUnit (cUnit& unit, bool add = false);
-	bool selectNextUnit(const cPlayer& player, const std::vector<unsigned int>& doneList);
-	bool selectPrevUnit(const cPlayer& player, const std::vector<unsigned int>& doneList);
+	bool selectNextUnit (const cPlayer& player, const std::vector<unsigned int>& doneList);
+	bool selectPrevUnit (const cPlayer& player, const std::vector<unsigned int>& doneList);
 
 	void deselectUnit (const cUnit& unit);
 	void deselectUnits();
@@ -63,9 +63,9 @@ public:
 
 	bool canSelect (const cUnit* unit) const;
 
-	mutable cSignal<void ()> selectionChanged;
-	mutable cSignal<void ()> mainSelectionChanged;
-	mutable cSignal<void ()> groupSelectionChanged;
+	mutable cSignal<void()> selectionChanged;
+	mutable cSignal<void()> mainSelectionChanged;
+	mutable cSignal<void()> groupSelectionChanged;
 private:
 	cSignalConnectionManager selectedUnitsSignalConnectionManager;
 

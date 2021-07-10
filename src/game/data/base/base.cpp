@@ -222,12 +222,12 @@ bool cSubBase::increaseEnergyProd (int value)
 	// start needed buildings
 	for (int i = stations - (int) onlineStations.size(); i > 0; --i)
 	{
-		offlineStations[0]->startWork ();
+		offlineStations[0]->startWork();
 		offlineStations.erase (offlineStations.begin());
 	}
 	for (int i = generators - (int) onlineGenerators.size(); i > 0; --i)
 	{
-		offlineGenerators[0]->startWork ();
+		offlineGenerators[0]->startWork();
 		offlineGenerators.erase (offlineGenerators.begin());
 	}
 	return true;
@@ -324,7 +324,7 @@ void cSubBase::addRessouce (eResourceType storeResType, int value)
 	}
 }
 
-bool cSubBase::checkHumanConsumer ()
+bool cSubBase::checkHumanConsumer()
 {
 	if (humanNeed <= humanProd) return false;
 
@@ -355,7 +355,7 @@ bool cSubBase::checkGoldConsumer()
 	return true;
 }
 
-bool cSubBase::checkMetalConsumer ()
+bool cSubBase::checkMetalConsumer()
 {
 	if (needed.metal <= prod.metal + stored.metal) return false;
 
@@ -377,11 +377,11 @@ void cSubBase::increaseOilProd (int missingOil)
 	const int goldDecrease = oldProd.gold - prod.gold;
 	const int metalDecrease = oldProd.metal - prod.metal;
 
-	base.forcedRessouceProductionChance(eResourceType::Oil, missingOil, true);
+	base.forcedRessouceProductionChance (eResourceType::Oil, missingOil, true);
 	if (metalDecrease > 0)
-		base.forcedRessouceProductionChance(eResourceType::Metal, metalDecrease, false);
+		base.forcedRessouceProductionChance (eResourceType::Metal, metalDecrease, false);
 	if (goldDecrease > 0)
-		base.forcedRessouceProductionChance(eResourceType::Gold, goldDecrease, false);
+		base.forcedRessouceProductionChance (eResourceType::Gold, goldDecrease, false);
 }
 
 bool cSubBase::checkOil()
@@ -448,19 +448,19 @@ bool cSubBase::checkOil()
 	// start needed buildings
 	for (int i = stations - (int) onlineStations.size(); i > 0; i--)
 	{
-		offlineStations[0]->startWork ();
+		offlineStations[0]->startWork();
 		offlineStations.erase (offlineStations.begin());
 	}
 	for (int i = generators - (int) onlineGenerators.size(); i > 0; i--)
 	{
-		offlineGenerators[0]->startWork ();
+		offlineGenerators[0]->startWork();
 		offlineGenerators.erase (offlineGenerators.begin());
 	}
 
 	return oilMissing;
 }
 
-bool cSubBase::checkEnergy ()
+bool cSubBase::checkEnergy()
 {
 	if (energyNeed <= energyProd) return false;
 
@@ -485,7 +485,7 @@ bool cSubBase::checkEnergy ()
 		if (!building.getStaticUnitData().needsEnergy || !building.isUnitWorking()) continue;
 
 		// do not shut down oil producers in the second run
-		if (building.getMaxProd().get(eResourceType::Oil) > 0) continue;
+		if (building.getMaxProd().get (eResourceType::Oil) > 0) continue;
 
 		building.stopWork (false);
 
@@ -505,23 +505,23 @@ bool cSubBase::checkEnergy ()
 	return true;
 }
 
-bool cSubBase::checkTurnEnd ()
+bool cSubBase::checkTurnEnd()
 {
 	bool changedSomething = false;
 
-	if (checkMetalConsumer ())
+	if (checkMetalConsumer())
 	{
 		base.metalLow();
 		changedSomething = true;
 	}
 
-	if (checkHumanConsumer ())
+	if (checkHumanConsumer())
 	{
 		base.teamLow();
 		changedSomething = true;
 	}
 
-	if (checkGoldConsumer ())
+	if (checkGoldConsumer())
 	{
 		base.goldLow();
 		changedSomething = true;
@@ -536,14 +536,14 @@ bool cSubBase::checkTurnEnd ()
 	while (changed)
 	{
 		changed = false;
-		if (checkOil ())
+		if (checkOil())
 		{
 			changed = true;
 			oilMissing = true;
 			changedSomething = true;
 		}
 
-		if (checkEnergy ())
+		if (checkEnergy())
 		{
 			changed = true;
 			energyMissing = true;
@@ -565,13 +565,13 @@ bool cSubBase::checkTurnEnd ()
 	// recheck metal and gold,
 	// because metal and gold producers could have been shut down,
 	// due to a lack of energy
-	if (checkMetalConsumer ())
+	if (checkMetalConsumer())
 	{
 		base.metalLow();
 		changedSomething = true;
 	}
 
-	if (checkGoldConsumer ())
+	if (checkGoldConsumer())
 	{
 		base.goldLow();
 		changedSomething = true;
@@ -764,7 +764,7 @@ void cSubBase::addBuilding (cBuilding& b)
 	}
 }
 
-bool cSubBase::startBuilding(cBuilding& b)
+bool cSubBase::startBuilding (cBuilding& b)
 {
 	const cStaticUnitData& staticData = b.getStaticUnitData();
 
@@ -835,9 +835,9 @@ bool cSubBase::startBuilding(cBuilding& b)
 		if (staticData.needsEnergy + energyNeed > energyProd)
 		{
 			// try to increase energy production
-			if (!increaseEnergyProd(staticData.needsEnergy + energyNeed - energyProd))
+			if (!increaseEnergyProd (staticData.needsEnergy + energyNeed - energyProd))
 			{
-				b.setWorking(false);
+				b.setWorking (false);
 
 				// reset mine values
 				if (staticData.buildingData.canMineMaxRes > 0)
@@ -872,7 +872,7 @@ bool cSubBase::startBuilding(cBuilding& b)
 	return true;
 }
 
-bool cSubBase::stopBuilding(cBuilding& b, bool forced /*= false*/)
+bool cSubBase::stopBuilding (cBuilding& b, bool forced /*= false*/)
 {
 	const cStaticUnitData& staticData = b.getStaticUnitData();
 
@@ -889,7 +889,7 @@ bool cSubBase::stopBuilding(cBuilding& b, bool forced /*= false*/)
 		needed.oil -= staticData.needsOil;
 	}
 
-	b.setWorking(false);
+	b.setWorking (false);
 
 	// Energy consumers:
 	energyNeed -= staticData.needsEnergy;
@@ -913,7 +913,7 @@ bool cSubBase::stopBuilding(cBuilding& b, bool forced /*= false*/)
 	return true;
 }
 
-uint32_t cSubBase::getChecksum(uint32_t crc) const
+uint32_t cSubBase::getChecksum (uint32_t crc) const
 {
 	crc = calcCheckSum (maxStored, crc);
 	crc = calcCheckSum (maxNeeded, crc);
@@ -933,8 +933,8 @@ uint32_t cSubBase::getChecksum(uint32_t crc) const
 	return crc;
 }
 
-cBase::cBase(cPlayer& owner) :
-	owner(owner)
+cBase::cBase (cPlayer& owner) :
+	owner (owner)
 {}
 
 cBase::~cBase()
@@ -954,10 +954,10 @@ cSubBase* cBase::checkNeighbour (const cPosition& position, const cBuilding& bui
 	return nullptr;
 }
 
-uint32_t cBase::getChecksum(uint32_t crc) const
+uint32_t cBase::getChecksum (uint32_t crc) const
 {
 	for (const auto& sb : SubBases)
-		crc = calcCheckSum(*sb, crc);
+		crc = calcCheckSum (*sb, crc);
 
 	return crc;
 }
@@ -1045,7 +1045,7 @@ bool cBase::checkTurnEnd()
 	bool changed = false;
 	for (size_t i = 0; i != SubBases.size(); ++i)
 	{
-		if (SubBases[i]->checkTurnEnd ())
+		if (SubBases[i]->checkTurnEnd())
 		{
 			changed = true;
 		}

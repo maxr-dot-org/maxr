@@ -22,11 +22,11 @@
 
 #include "savegame.h"
 
-cSaveGameInfo::cSaveGameInfo() : cSaveGameInfo(-1) {}
+cSaveGameInfo::cSaveGameInfo() : cSaveGameInfo (-1) {}
 
-cSaveGameInfo::cSaveGameInfo(int number) :
-	saveVersion("0.0"),
-	type(GAME_TYPE_SINGLE),
-	number(number)
-	//turn(0)
+cSaveGameInfo::cSaveGameInfo (int number) :
+	saveVersion ("0.0"),
+	type (GAME_TYPE_SINGLE),
+	number (number)
+	//turn (0)
 {}

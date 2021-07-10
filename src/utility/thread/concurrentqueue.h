@@ -23,7 +23,7 @@
 #include <deque>
 #include <mutex>
 
-template<typename T>
+template <typename T>
 class cConcurrentQueue
 {
 public:
@@ -48,7 +48,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 void cConcurrentQueue<T>::push (const T& value)
 {
 	std::unique_lock<std::mutex> lock (mutex);
@@ -57,7 +57,7 @@ void cConcurrentQueue<T>::push (const T& value)
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 void cConcurrentQueue<T>::push (T&& value)
 {
 	std::unique_lock<std::mutex> lock (mutex);
@@ -66,7 +66,7 @@ void cConcurrentQueue<T>::push (T&& value)
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 bool cConcurrentQueue<T>::try_pop (T& destination)
 {
 	std::unique_lock<std::mutex> lock (mutex);
@@ -80,7 +80,7 @@ bool cConcurrentQueue<T>::try_pop (T& destination)
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 void cConcurrentQueue<T>::clear()
 {
 	std::unique_lock<std::mutex> lock (mutex);
@@ -89,7 +89,7 @@ void cConcurrentQueue<T>::clear()
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 typename cConcurrentQueue<T>::size_type cConcurrentQueue<T>::safe_size() const
 {
 	std::unique_lock<std::mutex> lock (mutex);
@@ -97,7 +97,7 @@ typename cConcurrentQueue<T>::size_type cConcurrentQueue<T>::safe_size() const
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 bool cConcurrentQueue<T>::safe_empty() const
 {
 	std::unique_lock<std::mutex> lock (mutex);

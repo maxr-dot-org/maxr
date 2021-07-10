@@ -25,19 +25,19 @@
 cActionStartTurn::cActionStartTurn(){}
 
 //------------------------------------------------------------------------------
-cActionStartTurn::cActionStartTurn(cBinaryArchiveOut&)
+cActionStartTurn::cActionStartTurn (cBinaryArchiveOut&)
 {}
 
 //------------------------------------------------------------------------------
-void cActionStartTurn::execute(cModel& model) const
+void cActionStartTurn::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	cPlayer* player = model.getPlayer(playerNr);
+	cPlayer* player = model.getPlayer (playerNr);
 	if (player == nullptr) return;
 
 	// defeated players are ignored
 	if (player->isDefeated) return;
 
-	model.handlePlayerStartTurn(*player);
+	model.handlePlayerStartTurn (*player);
 }

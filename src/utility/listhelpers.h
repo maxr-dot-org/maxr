@@ -56,12 +56,12 @@ void RemoveIf (std::vector<T>& container, Predicate pred)
 }
 
 template <typename T>
-void RemoveEmpty(std::vector<T>& container)
+void RemoveEmpty (std::vector<T>& container)
 {
 	RemoveIf (container, [](const T& elem) { return elem.empty(); });
 }
 
-template<typename T>
+template <typename T>
 void RemoveDuplicates (std::vector<T>& container)
 {
 	for (unsigned int i = 0; i < container.size(); i++)
@@ -78,11 +78,11 @@ void RemoveDuplicates (std::vector<T>& container)
 }
 
 template <typename T, typename F>
-[[nodiscard]] std::vector<T> Filter(const std::vector<T>& v, F&& filter)
+[[nodiscard]] std::vector<T> Filter (const std::vector<T>& v, F&& filter)
 {
-	std::vector<T> res(v);
+	std::vector<T> res (v);
 
-	res.erase(std::remove_if(res.begin(), res.end(), [&](const auto& e){ return !filter(e); }), res.end());
+	res.erase (std::remove_if (res.begin(), res.end(), [&](const auto& e){ return !filter (e); }), res.end());
 	return res;
 }
 

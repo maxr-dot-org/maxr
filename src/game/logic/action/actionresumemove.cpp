@@ -24,7 +24,7 @@
 #include "game/logic/movejob.h"
 
 //------------------------------------------------------------------------------
-cActionResumeMove::cActionResumeMove () :
+cActionResumeMove::cActionResumeMove() :
 	unitId (0)
 {}
 
@@ -46,14 +46,14 @@ void cActionResumeMove::execute (cModel& model) const
 
 	if (unitId == 0) // All vehicles
 	{
-		const cPlayer* player = model.getPlayer(playerNr);
+		const cPlayer* player = model.getPlayer (playerNr);
 		if (player == nullptr) return;
 
-		model.resumeMoveJobs(player);
+		model.resumeMoveJobs (player);
 	}
 	else
 	{
-		cVehicle* vehicle = model.getVehicleFromID(unitId);
+		cVehicle* vehicle = model.getVehicleFromID (unitId);
 		if (vehicle == nullptr)
 		{
 			Log.write (" Can't find vehicle with id " + std::to_string (unitId), cLog::eLOG_TYPE_NET_WARNING);

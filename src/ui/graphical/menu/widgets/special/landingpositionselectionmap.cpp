@@ -30,12 +30,12 @@
 #include "settings.h"
 
 //------------------------------------------------------------------------------
-cLandingPositionSelectionMap::cLandingPositionSelectionMap(const cBox<cPosition>& area, std::shared_ptr<cStaticMap> map_, bool fixedBridgeHead, const std::vector<sLandingUnit>& landingUnits, std::shared_ptr<const cUnitsData> unitsData) :
+cLandingPositionSelectionMap::cLandingPositionSelectionMap (const cBox<cPosition>& area, std::shared_ptr<cStaticMap> map_, bool fixedBridgeHead, const std::vector<sLandingUnit>& landingUnits, std::shared_ptr<const cUnitsData> unitsData) :
 	cClickableWidget (area),
 	map (std::move (map_)),
-	fixedBridgeHead(fixedBridgeHead),
-	landingUnits(landingUnits),
-	unitsData(unitsData)
+	fixedBridgeHead (fixedBridgeHead),
+	landingUnits (landingUnits),
+	unitsData (unitsData)
 {
 	mapSurface = map->getGraphic().createBigSurface (getSize().x(), getSize().y());
 }
@@ -57,7 +57,7 @@ bool cLandingPositionSelectionMap::handleClicked (cApplication& application, cMo
 {
 	cPosition mapPosition = (mouse.getPosition() - getPosition()) * map->getSize() / getSize();
 
-	if (isValidLandingLocation(mapPosition))
+	if (isValidLandingLocation (mapPosition))
 	{
 		clickedTile (mapPosition);
 		return true;
@@ -72,7 +72,7 @@ bool cLandingPositionSelectionMap::handleMouseMoved (cApplication& application, 
 
 	cPosition mapPosition = (mouse.getPosition() - getPosition()) * map->getSize() / getSize();
 
-	if (isValidLandingLocation(mapPosition))
+	if (isValidLandingLocation (mapPosition))
 		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Move));
 	else
 		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::No));
@@ -81,7 +81,7 @@ bool cLandingPositionSelectionMap::handleMouseMoved (cApplication& application, 
 }
 
 //------------------------------------------------------------------------------
-bool cLandingPositionSelectionMap::isValidLandingLocation(const cPosition& position)
+bool cLandingPositionSelectionMap::isValidLandingLocation (const cPosition& position)
 {
-	return cActionInitNewGame::isValidLandingPosition(position, *map, fixedBridgeHead, landingUnits, *unitsData);
+	return cActionInitNewGame::isValidLandingPosition (position, *map, fixedBridgeHead, landingUnits, *unitsData);
 }

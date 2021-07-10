@@ -37,7 +37,7 @@ OStream& operator << (OStream& os, const sMiningResource& res)
 //------------------------------------------------------------------------------
 bool operator < (eResourceType lhs, eResourceType rhs)
 {
-	return int(lhs) < int(rhs);
+	return int (lhs) < int (rhs);
 }
 
 namespace
@@ -46,7 +46,7 @@ namespace
 	struct sMine
 	{
 		sMine (int metal, int oil, int gold) : sMine{{metal, oil, gold}} {}
-		sMine (sMiningResource maxProd, int total = 16) : maxProd(maxProd)
+		sMine (sMiningResource maxProd, int total = 16) : maxProd (maxProd)
 		{
 			staticData.canMineMaxRes = total;
 		}
@@ -59,7 +59,7 @@ namespace
 
 //------------------------------------------------------------------------------
 template <>
-void cBuilding::serialize(const sMine& mine)
+void cBuilding::serialize (const sMine& mine)
 {
 	isWorking = true;
 	maxProd = mine.maxProd;
@@ -71,7 +71,7 @@ namespace
 	std::unique_ptr<cBuilding> MakeBuilding (const sMine& mine)
 	{
 		auto ptr = std::make_unique<cBuilding> (&mine.staticData, nullptr, nullptr, 0);
-		ptr->serialize(mine);
+		ptr->serialize (mine);
 		return ptr;
 	}
 
@@ -152,8 +152,8 @@ namespace
 
 		do
 		{
-			const sMiningResource orderedExpected = makeOrdered(indexes, expected);
-			std::vector<sMine> orderedMines = makeOrdered(indexes, mines);
+			const sMiningResource orderedExpected = makeOrdered (indexes, expected);
+			std::vector<sMine> orderedMines = makeOrdered (indexes, mines);
 
 			auto buildingPtrs = MakeBuildings (orderedMines);
 			auto buildings = ExtractPtrs (buildingPtrs);
@@ -162,7 +162,7 @@ namespace
 
 			check (buildings);
 			CHECK_EQUAL (orderedExpected, computeProduction (buildings));
-		} while (std::next_permutation(std::begin (indexes), std::end (indexes)));
+		} while (std::next_permutation (std::begin (indexes), std::end (indexes)));
 	}
 
 	//--------------------------------------------------------------------------

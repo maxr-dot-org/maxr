@@ -32,27 +32,27 @@ class cModel;
 class cDestroyJob : public cJob
 {
 public:
-	cDestroyJob(cUnit& unit, cModel& model);
+	cDestroyJob (cUnit& unit, cModel& model);
 	template <typename T>
-	cDestroyJob(T& archive) { serializeThis(archive); }
+	cDestroyJob (T& archive) { serializeThis (archive); }
 
-	void run(cModel& model) override;
+	void run (cModel& model) override;
 	eJobType getType() const override;
 
-	void serialize(cBinaryArchiveIn& archive) override { archive << serialization::makeNvp("type", getType()); serializeThis(archive); }
-	void serialize(cXmlArchiveIn& archive) override { archive << serialization::makeNvp("type", getType()); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { archive << serialization::makeNvp ("type", getType()); serializeThis (archive); }
+	void serialize (cXmlArchiveIn& archive) override { archive << serialization::makeNvp ("type", getType()); serializeThis (archive); }
 
-	uint32_t getChecksum(uint32_t crc) const override;
+	uint32_t getChecksum (uint32_t crc) const override;
 private:
-	void createDestroyFx(cModel& model);
-	void deleteUnit(cModel& model);
-	int deleteAllBuildingsOnField(cMapField& field, bool deleteConnector, cModel& model);
+	void createDestroyFx (cModel& model);
+	void deleteUnit (cModel& model);
+	int deleteAllBuildingsOnField (cMapField& field, bool deleteConnector, cModel& model);
 
 	template <typename T>
-	void serializeThis(T& archive)
+	void serializeThis (T& archive)
 	{
-		archive & NVP(unit);
-		archive & NVP(counter);
+		archive & NVP (unit);
+		archive & NVP (counter);
 
 		if (!archive.isWriter)
 		{

@@ -26,29 +26,29 @@
 #include "game/logic/jobs/airtransportloadjob.h"
 
 //------------------------------------------------------------------------------
-cActionLoad::cActionLoad(const cUnit& loadingUnit, const cVehicle& loadedVehicle) :
-	loadingUnitId(loadingUnit.getId()),
-	loadedVehicleId(loadedVehicle.getId())
+cActionLoad::cActionLoad (const cUnit& loadingUnit, const cVehicle& loadedVehicle) :
+	loadingUnitId (loadingUnit.getId()),
+	loadedVehicleId (loadedVehicle.getId())
 {}
 
 //------------------------------------------------------------------------------
-cActionLoad::cActionLoad(cBinaryArchiveOut& archive)
+cActionLoad::cActionLoad (cBinaryArchiveOut& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionLoad::execute(cModel& model) const
+void cActionLoad::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	auto loadingUnit = model.getUnitFromID(loadingUnitId);
+	auto loadingUnit = model.getUnitFromID (loadingUnitId);
 	if (loadingUnit == nullptr) return;
 
-	auto loadedVehicle = model.getVehicleFromID(loadedVehicleId);
+	auto loadedVehicle = model.getVehicleFromID (loadedVehicleId);
 	if (loadedVehicle == nullptr) return;
 
-	if (!loadingUnit->canLoad(loadedVehicle)) return;
+	if (!loadingUnit->canLoad (loadedVehicle)) return;
 
 	if (loadingUnit->getStaticUnitData().factorAir > 0)
 	{

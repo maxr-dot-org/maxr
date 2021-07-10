@@ -31,7 +31,7 @@
 //------------------------------------------------------------------------------
 cWindowUpgrades::cWindowUpgrades (const cPlayer& player, std::shared_ptr<const cTurnTimeClock> turnTimeClock, std::shared_ptr<cWindowUpgradesFilterState> filterState_, std::shared_ptr<const cUnitsData> unitsData) :
 	cWindowHangar (LoadPCX (GFXOD_UPGRADE), unitsData, player),
-	filterState(filterState_)
+	filterState (filterState_)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Upgrades_Menu"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
@@ -114,7 +114,7 @@ void cWindowUpgrades::setActiveUnit (const sID& unitId)
 	if (iter == unitUpgrades.end())
 	{
 		unitUpgrade = &unitUpgrades[unitId];
-		unitUpgrade->init(unitsData->getDynamicUnitData(unitId, getPlayer().getClan()), *getPlayer().getUnitDataCurrentVersion(unitId), unitsData->getStaticUnitData(unitId), getPlayer().getResearchState());
+		unitUpgrade->init (unitsData->getDynamicUnitData (unitId, getPlayer().getClan()), *getPlayer().getUnitDataCurrentVersion (unitId), unitsData->getStaticUnitData (unitId), getPlayer().getResearchState());
 	}
 	else
 	{
@@ -215,10 +215,10 @@ void cWindowUpgrades::generateSelectionList (bool select)
 			if (data.factorGround > 0 && !tank) continue;
 		}
 
-		const auto& item = addSelectionUnit(data.ID);
+		const auto& item = addSelectionUnit (data.ID);
 		if (select)
 		{
-			setSelectedSelectionItem(item);
+			setSelectedSelectionItem (item);
 			select = false;
 		}
 	}

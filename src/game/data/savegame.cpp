@@ -38,27 +38,27 @@
 #include <ctime>
 #include <regex>
 
-#define LOAD_ERROR(msg)                        \
-	{                                          \
-		Log.write(msg, cLog::eLOG_TYPE_ERROR); \
-		info.gameName = "XML Error";           \
-		return;                                \
+#define LOAD_ERROR(msg)                         \
+	{                                           \
+		Log.write (msg, cLog::eLOG_TYPE_ERROR); \
+		info.gameName = "XML Error";            \
+		return;                                 \
 	}
 
 cSavegame::cSavegame() :
-	saveingID(-1),
-	loadedSlot(-1)
+	saveingID (-1),
+	loadedSlot (-1)
 {}
 
-int cSavegame::save(const cModel& model, int slot, const std::string& saveName)
+int cSavegame::save (const cModel& model, int slot, const std::string& saveName)
 {
 #if 0 //---serialization test code---
 	//write 1st xml archive
 	tinyxml2::XMLDocument document1;
-	document1.LinkEndChild(document1.NewElement("MAXR_SAVE_FILE"));
-	cXmlArchiveIn archive1(*document1.RootElement());
-	archive1 << NVP(model);
-	document1.SaveFile("test1.xml");
+	document1.LinkEndChild (document1.NewElement ("MAXR_SAVE_FILE"));
+	cXmlArchiveIn archive1 (*document1.RootElement());
+	archive1 << NVP (model);
+	document1.SaveFile ("test1.xml");
 
 	//write binary
 	cBinaryArchiveIn archiveb = cBinaryArchiveIn();
@@ -66,119 +66,118 @@ int cSavegame::save(const cModel& model, int slot, const std::string& saveName)
 
 	//load binary
 	cModel modelb;
-	serialization::cPointerLoader pointerLoaderb(modelb);
-	cBinaryArchiveOut archiveb2(archiveb.data(), archiveb.length(), &pointerLoaderb);
+	serialization::cPointerLoader pointerLoaderb (modelb);
+	cBinaryArchiveOut archiveb2 (archiveb.data(), archiveb.length(), &pointerLoaderb);
 	archiveb2 >> modelb;
 
 	//write 2nd xml archive
 	tinyxml2::XMLDocument document2;
-	document2.LinkEndChild(document2.NewElement("MAXR_SAVE_FILE"));
-	cXmlArchiveIn archive2(*document2.RootElement());
-	archive2 << serialization::makeNvp("model", modelb);
-	document2.SaveFile("test2.xml");
+	document2.LinkEndChild (document2.NewElement ("MAXR_SAVE_FILE"));
+	cXmlArchiveIn archive2 (*document2.RootElement());
+	archive2 << serialization::makeNvp ("model", modelb);
+	document2.SaveFile ("test2.xml");
 	//both files should now be identical
 #endif
 	loadedSlot = -1;
 
-	writeHeader(slot, saveName, model);
+	writeHeader (slot, saveName, model);
 
-	cXmlArchiveIn archive(*xmlDocument.RootElement());
-	archive << NVP(model);
+	cXmlArchiveIn archive (*xmlDocument.RootElement());
+	archive << NVP (model);
 
 	// add model crc
-	archive.openNewChild("model");
-	archive << serialization::makeNvp("modelcrc", model.getChecksum());
+	archive.openNewChild ("model");
+	archive << serialization::makeNvp ("modelcrc", model.getChecksum());
 	archive.closeChild();
 
 	loadedSlot = slot;
-	makeDirectories(cSettings::getInstance().getSavesPath());
-	tinyxml2::XMLError result = xmlDocument.SaveFile(getFileName(slot).c_str());
+	makeDirectories (cSettings::getInstance().getSavesPath());
+	tinyxml2::XMLError result = xmlDocument.SaveFile (getFileName (slot).c_str());
 	if (result != tinyxml2::XML_NO_ERROR)
 	{
-		throw std::runtime_error(getXMLErrorMsg(xmlDocument));
+		throw std::runtime_error (getXMLErrorMsg (xmlDocument));
 	}
 	if (cSettings::getInstance().isDebug()) // Check Save/Load consistency
 	{
 		cModel model2;
 
-		loadModel(model2, slot);
+		loadModel (model2, slot);
 
 		if (model.getChecksum() != model2.getChecksum())
 		{
-			Log.write("Checksum issue when saving", cLog::eLOG_TYPE_ERROR);
+			Log.write ("Checksum issue when saving", cLog::eLOG_TYPE_ERROR);
 		}
 	}
 	saveingID++;
 	return saveingID;
 }
 
-void cSavegame::saveGuiInfo(const cNetMessageGUISaveInfo& guiInfo)
+void cSavegame::saveGuiInfo (const cNetMessageGUISaveInfo& guiInfo)
 {
 	if (saveingID != guiInfo.savingID)
 	{
-		Log.write("Received GuiSaveInfo with wrong savingID", cLog::eLOG_TYPE_NET_WARNING);
+		Log.write ("Received GuiSaveInfo with wrong savingID", cLog::eLOG_TYPE_NET_WARNING);
 		return;
 	}
 
-	cXmlArchiveIn archive(*xmlDocument.RootElement());
-	archive.openNewChild("GuiInfo");
+	cXmlArchiveIn archive (*xmlDocument.RootElement());
+	archive.openNewChild ("GuiInfo");
 
-	archive << serialization::makeNvp("playerNr", guiInfo.playerNr);
-	archive << serialization::makeNvp("guiState", guiInfo.guiState);
-	archive << serialization::makeNvp("reportsNr", (int)guiInfo.reports->size());
+	archive << serialization::makeNvp ("playerNr", guiInfo.playerNr);
+	archive << serialization::makeNvp ("guiState", guiInfo.guiState);
+	archive << serialization::makeNvp ("reportsNr", (int)guiInfo.reports->size());
 	for (const auto &report : *guiInfo.reports)
 	{
-		archive << serialization::makeNvp("report", *report);
+		archive << serialization::makeNvp ("report", *report);
 	}
-	archive << serialization::makeNvp("savedPositions", guiInfo.savedPositions);
-	archive << serialization::makeNvp("doneList", guiInfo.doneList);
+	archive << serialization::makeNvp ("savedPositions", guiInfo.savedPositions);
+	archive << serialization::makeNvp ("doneList", guiInfo.doneList);
 	archive.closeChild();
 
 	makeDirectories (cSettings::getInstance().getSavesPath());
-	tinyxml2::XMLError result = xmlDocument.SaveFile(getFileName(loadedSlot).c_str());
+	tinyxml2::XMLError result = xmlDocument.SaveFile (getFileName (loadedSlot).c_str());
 	if (result != tinyxml2::XML_NO_ERROR)
 	{
-		Log.write("Writing savegame file failed: " + getXMLErrorMsg(xmlDocument), cLog::eLOG_TYPE_NET_WARNING);
+		Log.write ("Writing savegame file failed: " + getXMLErrorMsg (xmlDocument), cLog::eLOG_TYPE_NET_WARNING);
 	}
 }
 
-cSaveGameInfo cSavegame::loadSaveInfo(int slot)
+cSaveGameInfo cSavegame::loadSaveInfo (int slot)
 {
-	cSaveGameInfo info(slot);
+	cSaveGameInfo info (slot);
 
-	if (!loadDocument(slot))
+	if (!loadDocument (slot))
 	{
 		info.gameName = "XML Error";
 		return info;
 	}
 
-	if (!loadVersion(info.saveVersion))
+	if (!loadVersion (info.saveVersion))
 	{
 		info.gameName = "XML Error";
 		return info;
 	}
 
-
-	if (info.saveVersion < cVersion("1.0"))
+	if (info.saveVersion < cVersion ("1.0"))
 	{
-		loadLegacyHeader(info);
+		loadLegacyHeader (info);
 		return info;
 	}
 
 	try
 	{
-		cXmlArchiveOut archive(*xmlDocument.RootElement());
-		archive.enterChild("header");
-		archive >> serialization::makeNvp("gameVersion", info.gameVersion);
-		archive >> serialization::makeNvp("gameName", info.gameName);
-		archive >> serialization::makeNvp("type", info.type);
-		archive >> serialization::makeNvp("date", info.date);
+		cXmlArchiveOut archive (*xmlDocument.RootElement());
+		archive.enterChild ("header");
+		archive >> serialization::makeNvp ("gameVersion", info.gameVersion);
+		archive >> serialization::makeNvp ("gameName", info.gameName);
+		archive >> serialization::makeNvp ("type", info.type);
+		archive >> serialization::makeNvp ("date", info.date);
 		archive.leaveChild(); // header
 
-		archive.enterChild("model");
+		archive.enterChild ("model");
 		int numPlayers;
-		archive >> NVP(numPlayers);
-		info.players.resize(numPlayers);
+		archive >> NVP (numPlayers);
+		info.players.resize (numPlayers);
 		for (int i = 0; i < numPlayers; i++)
 		{
 			archive.enterChild ("player");
@@ -196,51 +195,50 @@ cSaveGameInfo cSavegame::loadSaveInfo(int slot)
 
 			archive.leaveChild(); // player
 		}
-		archive.enterChild("map");
-		archive.enterChild("mapFile");
-		archive >> serialization::makeNvp("filename", info.mapName);
-		archive >> serialization::makeNvp("crc", info.mapCrc);
+		archive.enterChild ("map");
+		archive.enterChild ("mapFile");
+		archive >> serialization::makeNvp ("filename", info.mapName);
+		archive >> serialization::makeNvp ("crc", info.mapCrc);
 		archive.leaveChild(); // mapFile
 		archive.leaveChild(); // map
 
-		archive.enterChild("turnCounter");
-		archive >> serialization::makeNvp("turn", info.turn);
+		archive.enterChild ("turnCounter");
+		archive >> serialization::makeNvp ("turn", info.turn);
 		archive.leaveChild(); //turnCounter
 
 		archive.leaveChild(); // model
 	}
 	catch (const std::runtime_error& e)
 	{
-		Log.write("Error loading savegame file " + std::to_string(slot) + ": " + e.what(), cLog::eLOG_TYPE_ERROR);
+		Log.write ("Error loading savegame file " + std::to_string (slot) + ": " + e.what(), cLog::eLOG_TYPE_ERROR);
 		info.gameName = "XML Error";
 		return info;
 	}
-
 	return info;
 }
 
-std::string cSavegame::getFileName(int slot)
+std::string cSavegame::getFileName (int slot)
 {
 	char numberstr[4];
-	TIXML_SNPRINTF(numberstr, sizeof(numberstr), "%.3d", slot);
+	TIXML_SNPRINTF (numberstr, sizeof (numberstr), "%.3d", slot);
 	return cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml";
 }
 
-void cSavegame::writeHeader(int slot, const std::string& saveName, const cModel &model)
+void cSavegame::writeHeader (int slot, const std::string& saveName, const cModel &model)
 {
 	//init document
 	loadedSlot = -1;
 	xmlDocument.Clear();
-	xmlDocument.LinkEndChild(xmlDocument.NewDeclaration());
-	tinyxml2::XMLElement* rootnode = xmlDocument.NewElement("MAXR_SAVE_FILE");
-	rootnode->SetAttribute("version", (SAVE_FORMAT_VERSION).c_str());
-	xmlDocument.LinkEndChild(rootnode);
+	xmlDocument.LinkEndChild (xmlDocument.NewDeclaration());
+	tinyxml2::XMLElement* rootnode = xmlDocument.NewElement ("MAXR_SAVE_FILE");
+	rootnode->SetAttribute ("version", (SAVE_FORMAT_VERSION).c_str());
+	xmlDocument.LinkEndChild (rootnode);
 
 	//write header
 	char timestr[21];
-	time_t tTime = time(nullptr);
-	tm* tmTime = localtime(&tTime);
-	strftime(timestr, 21, "%d.%m.%y %H:%M", tmTime);
+	time_t tTime = time (nullptr);
+	tm* tmTime = localtime (&tTime);
+	strftime (timestr, 21, "%d.%m.%y %H:%M", tmTime);
 
 	eGameTypes type = GAME_TYPE_SINGLE;
 	int humanPlayers = 0;
@@ -254,38 +252,38 @@ void cSavegame::writeHeader(int slot, const std::string& saveName, const cModel 
 	if (model.getGameSettings()->gameType == eGameSettingsGameType::HotSeat)
 		type = GAME_TYPE_HOTSEAT;
 
-	cXmlArchiveIn archive(*xmlDocument.RootElement());
-	archive.openNewChild("header");
-	archive << serialization::makeNvp("gameVersion", std::string(PACKAGE_VERSION  " "  PACKAGE_REV));
-	archive << serialization::makeNvp("gameName", saveName);
-	archive << serialization::makeNvp("type", type);
-	archive << serialization::makeNvp("date", std::string(timestr));
+	cXmlArchiveIn archive (*xmlDocument.RootElement());
+	archive.openNewChild ("header");
+	archive << serialization::makeNvp ("gameVersion", std::string (PACKAGE_VERSION  " "  PACKAGE_REV));
+	archive << serialization::makeNvp ("gameName", saveName);
+	archive << serialization::makeNvp ("type", type);
+	archive << serialization::makeNvp ("date", std::string (timestr));
 	archive.closeChild();
 }
 
 
-void cSavegame::loadLegacyHeader(cSaveGameInfo& info)
+void cSavegame::loadLegacyHeader (cSaveGameInfo& info)
 {
-	const tinyxml2::XMLElement* headerNode = xmlDocument.RootElement()->FirstChildElement("Header");
+	const tinyxml2::XMLElement* headerNode = xmlDocument.RootElement()->FirstChildElement ("Header");
 	if (headerNode == nullptr)
-		LOAD_ERROR("Error loading savegame file " + std::to_string(loadedSlot) + ": Node \"Header\" not found");
+		LOAD_ERROR ("Error loading savegame file " + std::to_string (loadedSlot) + ": Node \"Header\" not found");
 
 	//load name
-	const tinyxml2::XMLElement* nameNode = headerNode->FirstChildElement("Name");
+	const tinyxml2::XMLElement* nameNode = headerNode->FirstChildElement ("Name");
 	if (nameNode == nullptr)
-		LOAD_ERROR("Error loading savegame file " + std::to_string(loadedSlot) + ": Subnode \"Name\" of Node \"Header\" not found");
-	const char* str = nameNode->Attribute("string");
+		LOAD_ERROR ("Error loading savegame file " + std::to_string (loadedSlot) + ": Subnode \"Name\" of Node \"Header\" not found");
+	const char* str = nameNode->Attribute ("string");
 	if (str == nullptr)
-		LOAD_ERROR("Error loading savegame file " + std::to_string(loadedSlot) + ": Attribute \"String\" of Node \"Name\" not found");
+		LOAD_ERROR ("Error loading savegame file " + std::to_string (loadedSlot) + ": Attribute \"String\" of Node \"Name\" not found");
 	info.gameName = str;
 
 	//load game type
-	const tinyxml2::XMLElement* typeNode = headerNode->FirstChildElement("Type");
+	const tinyxml2::XMLElement* typeNode = headerNode->FirstChildElement ("Type");
 	if (typeNode == nullptr)
-		LOAD_ERROR("Error loading savegame file " + std::to_string(loadedSlot) + ": Subnode \"Type\" of Node \"Header\" not found");
-	str = typeNode->Attribute("string");
+		LOAD_ERROR ("Error loading savegame file " + std::to_string (loadedSlot) + ": Subnode \"Type\" of Node \"Header\" not found");
+	str = typeNode->Attribute ("string");
 	if (str == nullptr)
-		LOAD_ERROR("Error loading savegame file " + std::to_string(loadedSlot) + ": Attribute \"String\" of Node \"Type\" not found");
+		LOAD_ERROR ("Error loading savegame file " + std::to_string (loadedSlot) + ": Attribute \"String\" of Node \"Type\" not found");
 	std::string gameType = str;
 	if (gameType == "IND")
 		info.type = GAME_TYPE_SINGLE;
@@ -294,45 +292,45 @@ void cSavegame::loadLegacyHeader(cSaveGameInfo& info)
 	else if (gameType == "NET")
 		info.type = GAME_TYPE_TCPIP;
 	else
-		LOAD_ERROR("Error loading savegame file " + std::to_string(loadedSlot) + ": unknown game type");
+		LOAD_ERROR ("Error loading savegame file " + std::to_string (loadedSlot) + ": unknown game type");
 
 	//load time
-	const tinyxml2::XMLElement* timeNode = headerNode->FirstChildElement("Time");
+	const tinyxml2::XMLElement* timeNode = headerNode->FirstChildElement ("Time");
 	if (timeNode == nullptr)
-		LOAD_ERROR("Error loading savegame file " + std::to_string(loadedSlot) + ": Subnode \"Time\" of Node \"Header\" not found");
-	str = timeNode->Attribute("string");
+		LOAD_ERROR ("Error loading savegame file " + std::to_string (loadedSlot) + ": Subnode \"Time\" of Node \"Header\" not found");
+	str = timeNode->Attribute ("string");
 	if (str == nullptr)
-		LOAD_ERROR("Error loading savegame file " + std::to_string(loadedSlot) + ": Attribute \"String\" of Node \"Time\" not found");
+		LOAD_ERROR ("Error loading savegame file " + std::to_string (loadedSlot) + ": Attribute \"String\" of Node \"Time\" not found");
 
 	info.date = str;
 }
 
-void cSavegame::loadModel(cModel& model, int slot)
+void cSavegame::loadModel (cModel& model, int slot)
 {
-	if (!loadDocument(slot))
+	if (!loadDocument (slot))
 	{
-		throw std::runtime_error("Could not load savegame file " + std::to_string(slot));
+		throw std::runtime_error ("Could not load savegame file " + std::to_string (slot));
 	}
 
 	cVersion saveVersion;
-	if (!loadVersion(saveVersion))
+	if (!loadVersion (saveVersion))
 	{
-		throw std::runtime_error("Could not load version info from savegame file " + std::to_string(slot));
+		throw std::runtime_error ("Could not load version info from savegame file " + std::to_string (slot));
 	}
 
-	if (saveVersion < cVersion(1, 0))
+	if (saveVersion < cVersion (1, 0))
 	{
-		throw std::runtime_error("Savegame version is not compatible. Versions < 1.0 are not supported.");
+		throw std::runtime_error ("Savegame version is not compatible. Versions < 1.0 are not supported.");
 	}
 
-	serialization::cPointerLoader loader(model);
-	cXmlArchiveOut archive(*xmlDocument.RootElement(), &loader);
-	archive >> NVP(model);
+	serialization::cPointerLoader loader (model);
+	cXmlArchiveOut archive (*xmlDocument.RootElement(), &loader);
+	archive >> NVP (model);
 
 	// check crc
 	uint32_t crcFromSave;
-	archive.enterChild("model");
-	archive >> serialization::makeNvp("modelcrc", crcFromSave);
+	archive.enterChild ("model");
+	archive >> serialization::makeNvp ("modelcrc", crcFromSave);
 	archive.leaveChild();
 	Log.write (" Checksum from save file: " + std::to_string (crcFromSave), cLog::eLOG_TYPE_NET_DEBUG);
 
@@ -342,44 +340,44 @@ void cSavegame::loadModel(cModel& model, int slot)
 
 	if (crcFromSave != modelCrc)
 	{
-		Log.write(" Crc of loaded model does not match the saved crc!", cLog::eLOG_TYPE_NET_ERROR);
+		Log.write (" Crc of loaded model does not match the saved crc!", cLog::eLOG_TYPE_NET_ERROR);
 		//TODO: what to do in this case?
 	}
 }
 
-void cSavegame::loadGuiInfo(const cServer* server, int slot, int playerNr)
+void cSavegame::loadGuiInfo (const cServer* server, int slot, int playerNr)
 {
-	if (!loadDocument(slot))
+	if (!loadDocument (slot))
 	{
-		throw std::runtime_error("Could not load savegame file " + std::to_string(slot));
+		throw std::runtime_error ("Could not load savegame file " + std::to_string (slot));
 	}
 
-	tinyxml2::XMLElement* guiInfoElement = xmlDocument.RootElement()->FirstChildElement("GuiInfo");
+	tinyxml2::XMLElement* guiInfoElement = xmlDocument.RootElement()->FirstChildElement ("GuiInfo");
 	while (guiInfoElement)
 	{
-		cXmlArchiveOut archive(*guiInfoElement);
-		cNetMessageGUISaveInfo guiInfo(slot);
+		cXmlArchiveOut archive (*guiInfoElement);
+		cNetMessageGUISaveInfo guiInfo (slot);
 
 		guiInfo.reports = std::make_shared<std::vector<std::unique_ptr<cSavedReport>>>();
 
-		archive >> serialization::makeNvp("playerNr", guiInfo.playerNr);
-		archive >> serialization::makeNvp("guiState", guiInfo.guiState);
+		archive >> serialization::makeNvp ("playerNr", guiInfo.playerNr);
+		archive >> serialization::makeNvp ("guiState", guiInfo.guiState);
 		int size;
-		archive >> serialization::makeNvp("reportsNr", size);
-		guiInfo.reports->resize(size);
+		archive >> serialization::makeNvp ("reportsNr", size);
+		guiInfo.reports->resize (size);
 		for (auto &report : *guiInfo.reports)
 		{
-			report = cSavedReport::createFrom(archive, "report");
+			report = cSavedReport::createFrom (archive, "report");
 		}
-		archive >> serialization::makeNvp("savedPositions", guiInfo.savedPositions);
-		archive >> serialization::makeNvp("doneList", guiInfo.doneList);
+		archive >> serialization::makeNvp ("savedPositions", guiInfo.savedPositions);
+		archive >> serialization::makeNvp ("doneList", guiInfo.doneList);
 
 		if (guiInfo.playerNr == playerNr || playerNr == -1)
 		{
-			server->sendMessageToClients(guiInfo, guiInfo.playerNr);
+			server->sendMessageToClients (guiInfo, guiInfo.playerNr);
 		}
 
-		guiInfoElement = guiInfoElement->NextSiblingElement("GuiInfo");
+		guiInfoElement = guiInfoElement->NextSiblingElement ("GuiInfo");
 	}
 }
 
@@ -388,43 +386,39 @@ int cSavegame::getLastUsedSaveSlot() const
 	return loadedSlot;
 }
 
-bool cSavegame::loadDocument(int slot)
+bool cSavegame::loadDocument (int slot)
 {
-
 	if (slot != loadedSlot)
 	{
 		xmlDocument.Clear();
 		loadedSlot = -1;
 
-		const std::string fileName = getFileName(slot);
-		if (xmlDocument.LoadFile(fileName.c_str()) != tinyxml2::XML_NO_ERROR)
+		const std::string fileName = getFileName (slot);
+		if (xmlDocument.LoadFile (fileName.c_str()) != tinyxml2::XML_NO_ERROR)
 		{
-			Log.write("Error loading savegame file: " + fileName + ". Reason: " + getXMLErrorMsg(xmlDocument), cLog::eLOG_TYPE_ERROR);
+			Log.write ("Error loading savegame file: " + fileName + ". Reason: " + getXMLErrorMsg (xmlDocument), cLog::eLOG_TYPE_ERROR);
 			return false;
 		}
 
-		if (!xmlDocument.RootElement() || std::string("MAXR_SAVE_FILE") != xmlDocument.RootElement()->Name())
+		if (!xmlDocument.RootElement() || std::string ("MAXR_SAVE_FILE") != xmlDocument.RootElement()->Name())
 		{
-			Log.write("Error loading savegame file: " + fileName + ": Rootnode \"MAXR_SAVE_FILE\" not found.", cLog::eLOG_TYPE_ERROR);
+			Log.write ("Error loading savegame file: " + fileName + ": Rootnode \"MAXR_SAVE_FILE\" not found.", cLog::eLOG_TYPE_ERROR);
 			return false;
 		}
 		loadedSlot = slot;
 	}
-
 	return true;
 }
 
-bool cSavegame::loadVersion(cVersion& version)
+bool cSavegame::loadVersion (cVersion& version)
 {
-	const char* versionString = xmlDocument.RootElement()->Attribute("version");
+	const char* versionString = xmlDocument.RootElement()->Attribute ("version");
 	if (versionString == nullptr)
 	{
-		Log.write("Error loading savegame file " + std::to_string(loadedSlot) + ": \"version\" attribute of node \"MAXR_SAVE_FILE\" not found.", cLog::eLOG_TYPE_ERROR);
+		Log.write ("Error loading savegame file " + std::to_string (loadedSlot) + ": \"version\" attribute of node \"MAXR_SAVE_FILE\" not found.", cLog::eLOG_TYPE_ERROR);
 		return false;
 	}
-
-	version.parseFromString(versionString);
-
+	version.parseFromString (versionString);
 	return true;
 }
 
@@ -438,15 +432,15 @@ void fillSaveGames (std::size_t minIndex, std::size_t maxIndex, std::vector<cSav
 	for (const auto& filename : saveFileNames)
 	{
 		std::smatch match;
-		if (!std::regex_match(filename, match, savename_regex)) continue;
+		if (!std::regex_match (filename, match, savename_regex)) continue;
 		const std::size_t number = atoi (match[1].str().c_str());
 
 		if (number <= minIndex || number > maxIndex) continue;
 
-		if (ranges::find_if (saveGames, [=](const cSaveGameInfo& save) { return std::size_t(save.number) == number; }) != saveGames.end()) continue;
+		if (ranges::find_if (saveGames, [=](const cSaveGameInfo& save) { return std::size_t (save.number) == number; }) != saveGames.end()) continue;
 
 		// read the information and add it to the saves list
-		cSaveGameInfo saveInfo = savegame.loadSaveInfo(number);
-		saveGames.push_back(saveInfo);
+		cSaveGameInfo saveInfo = savegame.loadSaveInfo (number);
+		saveGames.push_back (saveInfo);
 	}
 }

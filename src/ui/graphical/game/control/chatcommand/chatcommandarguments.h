@@ -28,28 +28,28 @@
 #include <vector>
 #include <memory>
 
-size_t getNextWordLength(const std::string& s, size_t position);
+size_t getNextWordLength (const std::string& s, size_t position);
 
 class cPlayer;
 class cClient;
 class cServer;
 
-template<typename Impl>
+template <typename Impl>
 class cChatCommandArgument
 {
 public:
-	explicit cChatCommandArgument(bool isOptional_) :
-		isOptional(isOptional_)
+	explicit cChatCommandArgument (bool isOptional_) :
+		isOptional (isOptional_)
 	{}
 
-	size_t parse(const std::string& command, size_t position)
+	size_t parse (const std::string& command, size_t position)
 	{
-		return static_cast<Impl&>(*this)->parse(command, position);
+		return static_cast<Impl&> (*this)->parse (command, position);
 	}
 
 	std::string& toString() const
 	{
-		return static_cast<Impl&>(*this)->toString();
+		return static_cast<Impl&> (*this)->toString();
 	}
 
 protected:
@@ -64,9 +64,9 @@ public:
 	static const char* const trueName;
 	static const char* const falseName;
 
-	explicit cChatCommandArgumentBool(bool isOptional = false, ValueType defaultValue = false);
+	explicit cChatCommandArgumentBool (bool isOptional = false, ValueType defaultValue = false);
 
-	size_t parse(const std::string& command, size_t position);
+	size_t parse (const std::string& command, size_t position);
 
 	std::string toString() const;
 
@@ -77,15 +77,15 @@ private:
 };
 
 
-template<typename T>
+template <typename T>
 class cChatCommandArgumentInt : public cChatCommandArgument<cChatCommandArgumentInt<T>>
 {
 public:
 	using ValueType = T;
 
-	explicit cChatCommandArgumentInt(std::string name, bool isOptional = false, ValueType defaultValue = 0);
+	explicit cChatCommandArgumentInt (std::string name, bool isOptional = false, ValueType defaultValue = 0);
 
-	size_t parse(const std::string& command, size_t position);
+	size_t parse (const std::string& command, size_t position);
 
 	std::string toString() const;
 
@@ -101,9 +101,9 @@ class cChatCommandArgumentChoice : public cChatCommandArgument<cChatCommandArgum
 public:
 	using ValueType = std::string;
 
-	explicit cChatCommandArgumentChoice(std::vector<std::string> choices, bool isOptional = false, size_t defaultSelection = 0);
+	explicit cChatCommandArgumentChoice (std::vector<std::string> choices, bool isOptional = false, size_t defaultSelection = 0);
 
-	size_t parse(const std::string& command, size_t position);
+	size_t parse (const std::string& command, size_t position);
 
 	std::string toString() const;
 
@@ -119,9 +119,9 @@ class cChatCommandArgumentString : public cChatCommandArgument<cChatCommandArgum
 public:
 	using ValueType = std::string;
 
-	explicit cChatCommandArgumentString(std::string name, bool isOptional = false, ValueType defaultValue = "");
+	explicit cChatCommandArgumentString (std::string name, bool isOptional = false, ValueType defaultValue = "");
 
-	size_t parse(const std::string& command, size_t position);
+	size_t parse (const std::string& command, size_t position);
 
 	std::string toString() const;
 
@@ -137,9 +137,9 @@ class cChatCommandArgumentServer : public cChatCommandArgument<cChatCommandArgum
 public:
 	using ValueType = cServer*;
 
-	explicit cChatCommandArgumentServer(cServer*& serverPointer, bool isOptional = false, ValueType defaultValue = nullptr);
+	explicit cChatCommandArgumentServer (cServer*& serverPointer, bool isOptional = false, ValueType defaultValue = nullptr);
 
-	size_t parse(const std::string& command, size_t position);
+	size_t parse (const std::string& command, size_t position);
 
 	std::string toString() const;
 
@@ -155,9 +155,9 @@ class cChatCommandArgumentClient : public cChatCommandArgument<cChatCommandArgum
 public:
 	using ValueType = cClient*;
 
-	explicit cChatCommandArgumentClient(const std::shared_ptr<cClient>& activeClientPointer, bool isOptional = false, ValueType defaultValue = nullptr);
+	explicit cChatCommandArgumentClient (const std::shared_ptr<cClient>& activeClientPointer, bool isOptional = false, ValueType defaultValue = nullptr);
 
-	size_t parse(const std::string& command, size_t position);
+	size_t parse (const std::string& command, size_t position);
 
 	std::string toString() const;
 
@@ -173,9 +173,9 @@ class cChatCommandArgumentServerPlayer : public cChatCommandArgument<cChatComman
 public:
 	using ValueType = const cPlayer*;
 
-	explicit cChatCommandArgumentServerPlayer(cServer*& serverPointer, bool isOptional = false, ValueType defaultValue = nullptr);
+	explicit cChatCommandArgumentServerPlayer (cServer*& serverPointer, bool isOptional = false, ValueType defaultValue = nullptr);
 
-	size_t parse(const std::string& command, size_t position);
+	size_t parse (const std::string& command, size_t position);
 
 	std::string toString() const;
 
@@ -191,9 +191,9 @@ class cChatCommandArgumentClientPlayer : public cChatCommandArgument<cChatComman
 public:
 	using ValueType = const cPlayer*;
 
-	explicit cChatCommandArgumentClientPlayer(const std::shared_ptr<cClient>& activeClientPointer, bool isOptional = false, ValueType defaultValue = nullptr);
+	explicit cChatCommandArgumentClientPlayer (const std::shared_ptr<cClient>& activeClientPointer, bool isOptional = false, ValueType defaultValue = nullptr);
 
-	size_t parse(const std::string& command, size_t position);
+	size_t parse (const std::string& command, size_t position);
 
 	std::string toString() const;
 
@@ -205,44 +205,44 @@ private:
 };
 
 //------------------------------------------------------------------------------
-template<typename T>
-cChatCommandArgumentInt<T>::cChatCommandArgumentInt(std::string name_, bool isOptional_, ValueType defaultValue_) :
-	cChatCommandArgument<cChatCommandArgumentInt>(isOptional_),
-	name(std::move(name_)),
-	defaultValue(std::move(defaultValue_))
+template <typename T>
+cChatCommandArgumentInt<T>::cChatCommandArgumentInt (std::string name_, bool isOptional_, ValueType defaultValue_) :
+	cChatCommandArgument<cChatCommandArgumentInt> (isOptional_),
+	name (std::move (name_)),
+	defaultValue (std::move (defaultValue_))
 {}
 
 //------------------------------------------------------------------------------
-template<typename T>
-size_t cChatCommandArgumentInt<T>::parse(const std::string& command, size_t position)
+template <typename T>
+size_t cChatCommandArgumentInt<T>::parse (const std::string& command, size_t position)
 {
-	const auto nextWordLength = getNextWordLength(command, position);
+	const auto nextWordLength = getNextWordLength (command, position);
 
 	bool success = true;
 	size_t pos;
 	long long longValue;
 	try
 	{
-		longValue = std::stoll(command.substr(position, nextWordLength), &pos);
+		longValue = std::stoll (command.substr (position, nextWordLength), &pos);
 	}
-	catch(const std::exception&)
+	catch (const std::exception&)
 	{
 		success = false;
 	}
 
-	if(pos != nextWordLength)
+	if (pos != nextWordLength)
 	{
 		success = false;
 	}
 
-	if(success && (longValue < static_cast<long long>(std::numeric_limits<ValueType>::min()) || longValue > static_cast<long long>(std::numeric_limits<ValueType>::max())))
+	if (success && (longValue < static_cast<long long> (std::numeric_limits<ValueType>::min()) || longValue > static_cast<long long> (std::numeric_limits<ValueType>::max())))
 	{
 		success = false;
 	}
 
-	if(!success)
+	if (!success)
 	{
-		if(this->isOptional)
+		if (this->isOptional)
 		{
 			value = defaultValue;
 			return position;
@@ -250,38 +250,38 @@ size_t cChatCommandArgumentInt<T>::parse(const std::string& command, size_t posi
 		else
 		{
 			std::stringstream errorString;
-			if(nextWordLength == 0)
+			if (nextWordLength == 0)
 			{
-				throw std::runtime_error("Missing integer argument <" + name + ">");
+				throw std::runtime_error ("Missing integer argument <" + name + ">");
 			}
 			else
 			{
 				// TODO: translate
-				errorString << "'" << command.substr(position, nextWordLength) << "' is not a valid integer";
+				errorString << "'" << command.substr (position, nextWordLength) << "' is not a valid integer";
 			}
-			throw std::runtime_error(errorString.str());
+			throw std::runtime_error (errorString.str());
 		}
 	}
 	else
 	{
-		value = static_cast<ValueType>(longValue);
+		value = static_cast<ValueType> (longValue);
 	}
 	return position + nextWordLength;
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 std::string cChatCommandArgumentInt<T>::toString() const
 {
 	std::stringstream result;
-	if(this->isOptional) result << "[";
+	if (this->isOptional) result << "[";
 	result << "<" << name << ">";
-	if(this->isOptional) result << "]";
+	if (this->isOptional) result << "]";
 	return result.str();
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 const typename cChatCommandArgumentInt<T>::ValueType& cChatCommandArgumentInt<T>::getValue() const
 {
 	return value;

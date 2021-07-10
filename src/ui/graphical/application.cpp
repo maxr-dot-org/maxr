@@ -71,7 +71,7 @@ cApplication::~cApplication()
 	// It allows to break all shared_ptr cross-references broken before
 	// cApplication is destroyed
 	{
-		auto runnables_tmp = std::move(runnables);
+		auto runnables_tmp = std::move (runnables);
 	}
 }
 
@@ -241,7 +241,7 @@ void cApplication::addRunnable (std::shared_ptr<cRunnable> runnable)
 }
 
 //------------------------------------------------------------------------------
-std::shared_ptr<cRunnable> cApplication::removeRunnable(std::shared_ptr<cRunnable> runnable)
+std::shared_ptr<cRunnable> cApplication::removeRunnable (std::shared_ptr<cRunnable> runnable)
 {
 	std::shared_ptr<cRunnable> result;
 	for (auto i = runnables.begin(); i != runnables.end();)
@@ -386,7 +386,7 @@ void cApplication::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 	bool eventHandled = false;
 	if (isShortcutKey)
 	{
-		currentKeySequence.addKeyCombination (cKeyCombination (keyboard.getCurrentModifiers (), key));
+		currentKeySequence.addKeyCombination (cKeyCombination (keyboard.getCurrentModifiers(), key));
 
 		eventHandled = hitShortcuts (currentKeySequence);
 	}

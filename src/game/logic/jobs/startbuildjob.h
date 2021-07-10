@@ -32,22 +32,22 @@ class cStartBuildJob : public cJob
 public:
 	cStartBuildJob (cVehicle& vehicle, const cPosition& org, bool big);
 	template <typename T>
-	cStartBuildJob(T& archive) { serializeThis(archive); }
+	cStartBuildJob (T& archive) { serializeThis (archive); }
 
 	void run (cModel& model) override;
 	eJobType getType() const override;
 
-	void serialize(cBinaryArchiveIn& archive) override { archive << serialization::makeNvp("type", getType()); serializeThis(archive); }
-	void serialize(cXmlArchiveIn& archive) override { archive << serialization::makeNvp("type", getType()); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { archive << serialization::makeNvp ("type", getType()); serializeThis (archive); }
+	void serialize (cXmlArchiveIn& archive) override { archive << serialization::makeNvp ("type", getType()); serializeThis (archive); }
 
-	uint32_t getChecksum(uint32_t crc) const override;
+	uint32_t getChecksum (uint32_t crc) const override;
 private:
 	template <typename T>
-	void serializeThis(T& archive)
+	void serializeThis (T& archive)
 	{
-		archive & NVP(unit);
-		archive & NVP(org);
-		archive & NVP(big);
+		archive & NVP (unit);
+		archive & NVP (org);
+		archive & NVP (big);
 
 		if (!archive.isWriter)
 		{

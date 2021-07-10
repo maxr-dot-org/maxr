@@ -57,7 +57,7 @@ public:
 	void increase (int offset);
 	void decrease (int offset);
 
-	cSignal<void ()> valueChanged;
+	cSignal<void()> valueChanged;
 protected:
 	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
 

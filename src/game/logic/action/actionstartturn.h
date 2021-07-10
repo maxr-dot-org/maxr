@@ -26,9 +26,9 @@ class cActionStartTurn : public cActionT<cAction::eActiontype::ACTION_START_TURN
 {
 public:
 	cActionStartTurn();
-	explicit cActionStartTurn(cBinaryArchiveOut&);
+	explicit cActionStartTurn (cBinaryArchiveOut&);
 
-	void execute(cModel& model) const override;
+	void execute (cModel& model) const override;
 };
 
 #endif

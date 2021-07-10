@@ -41,7 +41,7 @@ cLobbyClient::cLobbyClient (std::shared_ptr<cConnectionManager> connectionManage
 		onDownloadMapPercentChanged (percent);
 	});
 	signalConnectionManager.connect (mapDownloadMessageHandler->onCancelled, [this](){
-		onDownloadMapCancelled ();
+		onDownloadMapCancelled();
 	});
 	signalConnectionManager.connect (mapDownloadMessageHandler->onDownloaded, [this](std::shared_ptr<cStaticMap> staticMap){
 		onDownloadMapFinished (staticMap);
@@ -60,7 +60,7 @@ void cLobbyClient::pushMessage (std::unique_ptr<cNetMessage> message)
 std::unique_ptr<cNetMessage> cLobbyClient::popMessage()
 {
 	std::unique_ptr<cNetMessage> message;
-	messageQueue.try_pop(message);
+	messageQueue.try_pop (message);
 	return message;
 }
 
@@ -86,7 +86,7 @@ bool cLobbyClient::isConnectedToServer() const
 }
 
 //------------------------------------------------------------------------------
-void cLobbyClient::connectToServer(std::string ip, int port)
+void cLobbyClient::connectToServer (std::string ip, int port)
 {
 	// Connect only if there isn't a connection yet
 	if (connectionManager->isConnectedToServer()) return;
@@ -109,7 +109,7 @@ void cLobbyClient::connectToLocalServer (cLobbyServer& server)
 //------------------------------------------------------------------------------
 cPlayerBasicData* cLobbyClient::getPlayer (int playerNr)
 {
-	auto it = ranges::find_if (players, byPlayerNr(playerNr));
+	auto it = ranges::find_if (players, byPlayerNr (playerNr));
 
 	return it == players.end() ? nullptr : &*it;
 }
@@ -120,7 +120,7 @@ void cLobbyClient::sendNetMessage (cNetMessage& message)
 	message.From (localPlayer.getNr());
 	cTextArchiveIn archive;
 	archive << message;
-	Log.write("LobbyClient: --> " + archive.data() + " to host", cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("LobbyClient: --> " + archive.data() + " to host", cLog::eLOG_TYPE_NET_DEBUG);
 
 	connectionManager->sendToServer (message);
 }
@@ -251,7 +251,7 @@ void cLobbyClient::handleNetMessage (const cNetMessage& message)
 {
 	cTextArchiveIn archive;
 	archive << message;
-	Log.write("LobbyClient: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("LobbyClient: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
 
 	switch (message.getType())
 	{
@@ -259,22 +259,22 @@ void cLobbyClient::handleNetMessage (const cNetMessage& message)
 			handleNetMessage_TCP_HELLO (static_cast<const cNetMessageTcpHello&> (message));
 			return;
 		case eNetMessageType::TCP_CONNECTED:
-			handleNetMessage_TCP_CONNECTED(static_cast<const cNetMessageTcpConnected&>(message));
+			handleNetMessage_TCP_CONNECTED (static_cast<const cNetMessageTcpConnected&> (message));
 			return;
 		case eNetMessageType::TCP_CONNECT_FAILED:
-			handleNetMessage_TCP_CONNECT_FAILED(static_cast<const cNetMessageTcpConnectFailed&>(message));
+			handleNetMessage_TCP_CONNECT_FAILED (static_cast<const cNetMessageTcpConnectFailed&> (message));
 			return;
 		case eNetMessageType::TCP_CLOSE:
-			handleNetMessage_TCP_CLOSE(static_cast<const cNetMessageTcpClose&>(message));
+			handleNetMessage_TCP_CLOSE (static_cast<const cNetMessageTcpClose&> (message));
 			return;
 		case eNetMessageType::MULTIPLAYER_LOBBY:
-			handleLobbyMessage (static_cast<const cMultiplayerLobbyMessage&>(message));
+			handleLobbyMessage (static_cast<const cMultiplayerLobbyMessage&> (message));
 			return;
 		case eNetMessageType::GAME_ALREADY_RUNNING:
-			handleNetMessage_GAME_ALREADY_RUNNING(static_cast<const cNetMessageGameAlreadyRunning&>(message));
+			handleNetMessage_GAME_ALREADY_RUNNING (static_cast<const cNetMessageGameAlreadyRunning&> (message));
 			return;
 		default:
-			Log.write("LobbyClient: Can not handle message", cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ("LobbyClient: Can not handle message", cLog::eLOG_TYPE_NET_ERROR);
 			return;
 	}
 }
@@ -293,19 +293,19 @@ void cLobbyClient::handleLobbyMessage (const cMultiplayerLobbyMessage& message)
 	switch (message.getType())
 	{
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT:
-			handleNetMessage_MU_MSG_CHAT(static_cast<const cMuMsgChat&>(message));
+			handleNetMessage_MU_MSG_CHAT (static_cast<const cMuMsgChat&> (message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_NUMBER:
-			handleNetMessage_MU_MSG_PLAYER_NUMBER(static_cast<const cMuMsgPlayerNr&>(message));
+			handleNetMessage_MU_MSG_PLAYER_NUMBER (static_cast<const cMuMsgPlayerNr&> (message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYERLIST:
-			handleNetMessage_MU_MSG_PLAYERLIST(static_cast<const cMuMsgPlayerList&>(message));
+			handleNetMessage_MU_MSG_PLAYERLIST (static_cast<const cMuMsgPlayerList&> (message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_OPTIONS:
-			handleNetMessage_MU_MSG_OPTIONS(static_cast<const cMuMsgOptions&>(message));
+			handleNetMessage_MU_MSG_OPTIONS (static_cast<const cMuMsgOptions&> (message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_SAVESLOTS:
-			handleNetMessage_MU_MSG_SAVESLOTS(static_cast<const cMuMsgSaveSlots&>(message));
+			handleNetMessage_MU_MSG_SAVESLOTS (static_cast<const cMuMsgSaveSlots&> (message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CANNOT_END_LOBBY:
 			handleLobbyMessage_MU_MSG_CANNOT_END_LOBBY (static_cast<const cMuMsgCannotEndLobby&> (message));
@@ -314,22 +314,22 @@ void cLobbyClient::handleLobbyMessage (const cMultiplayerLobbyMessage& message)
 			handleNetMessage_MU_MSG_DISCONNECT_NOT_IN_SAVED_GAME (static_cast<const cMuMsgDisconnectNotInSavedGame&> (message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME_PREPARATIONS:
-			handleNetMessage_MU_MSG_START_GAME_PREPARATIONS(static_cast<const cMuMsgStartGamePreparations&>(message));
+			handleNetMessage_MU_MSG_START_GAME_PREPARATIONS (static_cast<const cMuMsgStartGamePreparations&> (message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_STATE:
-			handleNetMessage_MU_MSG_LANDING_STATE(static_cast<const cMuMsgLandingState&>(message));
+			handleNetMessage_MU_MSG_LANDING_STATE (static_cast<const cMuMsgLandingState&> (message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME:
-			handleNetMessage_MU_MSG_START_GAME(static_cast<const cMuMsgStartGame&>(message));
+			handleNetMessage_MU_MSG_START_GAME (static_cast<const cMuMsgStartGame&> (message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS:
-			handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS(static_cast<const cMuMsgInLandingPositionSelectionStatus&>(message));
+			handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS (static_cast<const cMuMsgInLandingPositionSelectionStatus&> (message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION:
-			handleNetMessage_MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION(static_cast<const cMuMsgPlayerHasSelectedLandingPosition&>(message));
+			handleNetMessage_MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION (static_cast<const cMuMsgPlayerHasSelectedLandingPosition&> (message));
 			break;
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION:
-			handleNetMessage_MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION(static_cast<const cMuMsgPlayerAbortedGamePreparations&>(message));
+			handleNetMessage_MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION (static_cast<const cMuMsgPlayerAbortedGamePreparations&> (message));
 			break;
 		default:
 			Log.write ("LobbyClient: Can not handle message", cLog::eLOG_TYPE_NET_ERROR);
@@ -354,7 +354,7 @@ void cLobbyClient::handleNetMessage_TCP_HELLO (const cNetMessageTcpHello& messag
 }
 
 //------------------------------------------------------------------------------
-void cLobbyClient::handleNetMessage_TCP_CONNECTED(const cNetMessageTcpConnected& message)
+void cLobbyClient::handleNetMessage_TCP_CONNECTED (const cNetMessageTcpConnected& message)
 {
 	localPlayer.setNr (message.playerNr);
 
@@ -367,9 +367,9 @@ void cLobbyClient::handleNetMessage_TCP_CONNECTED(const cNetMessageTcpConnected&
 }
 
 //------------------------------------------------------------------------------
-void cLobbyClient::handleNetMessage_TCP_CONNECT_FAILED(const cNetMessageTcpConnectFailed& message)
+void cLobbyClient::handleNetMessage_TCP_CONNECT_FAILED (const cNetMessageTcpConnectFailed& message)
 {
-	Log.write("Error on connecting to server", cLog::eLOG_TYPE_WARNING);
+	Log.write ("Error on connecting to server", cLog::eLOG_TYPE_WARNING);
 
 	localPlayer.setNr (-1);
 	onConnectionFailed (message.reason);
@@ -460,7 +460,7 @@ void cLobbyClient::handleNetMessage_MU_MSG_OPTIONS (const cMuMsgOptions& message
 				bool existsMap = !existingMapFilePath.empty();
 				if (!mapCheckSumsEqual && existsMap)
 				{
-					onIncompatibleMap(message.mapName, existingMapFilePath);
+					onIncompatibleMap (message.mapName, existingMapFilePath);
 				}
 				else
 				{
@@ -499,7 +499,7 @@ void cLobbyClient::handleLobbyMessage_MU_MSG_CANNOT_END_LOBBY (const cMuMsgCanno
 }
 
 //------------------------------------------------------------------------------
-void cLobbyClient::handleNetMessage_MU_MSG_DISCONNECT_NOT_IN_SAVED_GAME(const cMuMsgDisconnectNotInSavedGame&)
+void cLobbyClient::handleNetMessage_MU_MSG_DISCONNECT_NOT_IN_SAVED_GAME (const cMuMsgDisconnectNotInSavedGame&)
 {
 	onDisconnectNotInSavedGame();
 }
@@ -541,7 +541,7 @@ void cLobbyClient::handleNetMessage_MU_MSG_START_GAME (const cMuMsgStartGame& me
 }
 
 //------------------------------------------------------------------------------
-void cLobbyClient::handleNetMessage_GAME_ALREADY_RUNNING(const cNetMessageGameAlreadyRunning& message)
+void cLobbyClient::handleNetMessage_GAME_ALREADY_RUNNING (const cNetMessageGameAlreadyRunning& message)
 {
 	lobbyPreparationData.staticMap = std::make_shared<cStaticMap>();
 	players = message.playerList;
@@ -552,7 +552,7 @@ void cLobbyClient::handleNetMessage_GAME_ALREADY_RUNNING(const cNetMessageGameAl
 		disconnect();
 		return;
 	}
-	else if (MapDownload::calculateCheckSum(message.mapName) != message.mapCrc)
+	else if (MapDownload::calculateCheckSum (message.mapName) != message.mapCrc)
 	{
 		onFailToReconnectGameInvalidMap (message.mapName);
 		disconnect();

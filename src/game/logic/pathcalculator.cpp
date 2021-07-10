@@ -72,19 +72,19 @@ int cPathDestHandler::heuristicCost (const cPosition& source) const
 	}
 }
 
-cPathCalculator::cPathCalculator(const cVehicle& Vehicle, const cMapView& Map, const cPosition& destPosition, const std::vector<cVehicle*>* group)
+cPathCalculator::cPathCalculator (const cVehicle& Vehicle, const cMapView& Map, const cPosition& destPosition, const std::vector<cVehicle*>* group)
 {
 	destHandler = std::make_unique<cPathDestHandler> (PATH_DEST_TYPE_POS, destPosition, nullptr, nullptr);
 	init (Vehicle.getPosition(), Map, Vehicle, group);
 }
 
-cPathCalculator::cPathCalculator(const cVehicle& Vehicle, const cMapView& Map, const cUnit& destUnit, bool load)
+cPathCalculator::cPathCalculator (const cVehicle& Vehicle, const cMapView& Map, const cUnit& destUnit, bool load)
 {
 	destHandler = std::make_unique<cPathDestHandler> (load ? PATH_DEST_TYPE_LOAD : PATH_DEST_TYPE_ATTACK, cPosition (0, 0), &Vehicle, &destUnit);
 	init (Vehicle.getPosition(), Map, Vehicle, nullptr);
 }
 
-cPathCalculator::cPathCalculator(const cVehicle& Vehicle, const cMapView& Map, const cPosition& destPosition, bool attack)
+cPathCalculator::cPathCalculator (const cVehicle& Vehicle, const cMapView& Map, const cPosition& destPosition, bool attack)
 {
 	destHandler = std::make_unique<cPathDestHandler> (attack ? PATH_DEST_TYPE_ATTACK : PATH_DEST_TYPE_POS, destPosition, &Vehicle, nullptr);
 	init (Vehicle.getPosition(), Map, Vehicle, nullptr);
@@ -150,7 +150,7 @@ std::forward_list<cPosition> cPathCalculator::calcPath()
 			while (pathNode->prev != nullptr)
 			{
 				waypoint = pathNode->position;
-				path.push_front(waypoint);
+				path.push_front (waypoint);
 
 				pathNode = pathNode->prev;
 			}
@@ -188,7 +188,7 @@ void cPathCalculator::expandNodes (sPathNode* ParentNode)
 				{
 					// get the blocking unit
 					cVehicle* blockingUnit;
-					if (Vehicle->getStaticUnitData().factorAir > 0) blockingUnit = Map->getField(currentPosition).getPlane();
+					if (Vehicle->getStaticUnitData().factorAir > 0) blockingUnit = Map->getField (currentPosition).getPlane();
 					else blockingUnit = Map->getField (currentPosition).getVehicle();
 					// check whether the blocking unit is the group
 					bool isInGroup = Contains (*group, blockingUnit);

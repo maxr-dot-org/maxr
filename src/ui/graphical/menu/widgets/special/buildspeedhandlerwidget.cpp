@@ -29,7 +29,7 @@ cBuildSpeedHandlerWidget::cBuildSpeedHandlerWidget (const cPosition& position) :
 	cWidget (position)
 {
 	cBox<cPosition> area (position, position);
-	auto speedGroup = addChild (std::make_unique<cRadioGroup> ());
+	auto speedGroup = addChild (std::make_unique<cRadioGroup>());
 	for (size_t i = 0; i < elementsCount; ++i)
 	{
 		int factor = i + 1;

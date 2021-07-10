@@ -21,191 +21,191 @@
 #include "rangemap.h"
 
 cRangeMap::cRangeMap() :
-	crcValid(false),
-	crcCache(0)
+	crcValid (false),
+	crcCache (0)
 {}
 
 //------------------------------------------------------------------------------
 void cRangeMap::reset()
 {
-	std::fill(map.begin(), map.end(), 0);
+	std::fill (map.begin(), map.end(), 0);
 	crcValid = false;
 }
 
 //------------------------------------------------------------------------------
-void cRangeMap::resize(const cPosition& size_)
+void cRangeMap::resize (const cPosition& size_)
 {
 	size = size_;
-	map.resize(size.x() * size.y());
+	map.resize (size.x() * size.y());
 	reset();
 }
 
 //------------------------------------------------------------------------------
-void cRangeMap::add(int range, const cPosition& position, int unitSize, bool square /*= false*/)
+void cRangeMap::add (int range, const cPosition& position, int unitSize, bool square /*= false*/)
 {
 	std::vector<cPosition> positions;
 
-	const int minx = std::max(position.x() - range, 0);
-	const int maxx = std::min(position.x() + range, size.x() - 1);
-	const int miny = std::max(position.y() - range, 0);
-	const int maxy = std::min(position.y() + range, size.y() - 1);
+	const int minx = std::max (position.x() - range, 0);
+	const int maxx = std::min (position.x() + range, size.x() - 1);
+	const int miny = std::max (position.y() - range, 0);
+	const int maxy = std::min (position.y() + range, size.y() - 1);
 
 	for (int x = minx; x <= maxx; ++x)
 	{
 		for (int y = miny; y <= maxy; ++y)
 		{
-			if (isInRange(x, y, position, range, unitSize, square))
+			if (isInRange (x, y, position, range, unitSize, square))
 			{
-				auto& value = map[getOffset(x, y)];
+				auto& value = map[getOffset (x, y)];
 				value++;
 				if (value == 1)
 				{
-					positions.push_back(cPosition(x, y));
+					positions.push_back (cPosition (x, y));
 				}
 			}
 		}
 	}
 
-	positionsInRange(positions);
+	positionsInRange (positions);
 	crcValid = false;
 	changed();
 }
 
 //------------------------------------------------------------------------------
-void cRangeMap::update(int range, const cPosition& oldPosition, const cPosition& newPosition, int oldUnitSize, int newUnitSize, bool square /*= false*/)
+void cRangeMap::update (int range, const cPosition& oldPosition, const cPosition& newPosition, int oldUnitSize, int newUnitSize, bool square /*= false*/)
 {
 	std::vector<cPosition> inPositions;
 	std::vector<cPosition> outPositions;
 
-	const int minx = std::max(std::min(oldPosition.x(), newPosition.x()) - range, 0);
-	const int maxx = std::min(std::max(oldPosition.x(), newPosition.x()) + range, size.x() - 1);
-	const int miny = std::max(std::min(oldPosition.y(), newPosition.y()) - range, 0);
-	const int maxy = std::min(std::max(oldPosition.y(), newPosition.y()) + range, size.y() - 1);
+	const int minx = std::max (std::min (oldPosition.x(), newPosition.x()) - range, 0);
+	const int maxx = std::min (std::max (oldPosition.x(), newPosition.x()) + range, size.x() - 1);
+	const int miny = std::max (std::min (oldPosition.y(), newPosition.y()) - range, 0);
+	const int maxy = std::min (std::max (oldPosition.y(), newPosition.y()) + range, size.y() - 1);
 
 	for (int x = minx; x <= maxx; ++x)
 	{
 		for (int y = miny; y <= maxy; ++y)
 		{
-			bool newInRange = isInRange(x, y, newPosition, range, newUnitSize, square);
-			bool oldInRange = isInRange(x, y, oldPosition, range, oldUnitSize, square);
+			bool newInRange = isInRange (x, y, newPosition, range, newUnitSize, square);
+			bool oldInRange = isInRange (x, y, oldPosition, range, oldUnitSize, square);
 
 			if (newInRange && !oldInRange)
 			{
-				auto& value = map[getOffset(x, y)];
+				auto& value = map[getOffset (x, y)];
 				++value;
 				if (value == 1)
 				{
-					inPositions.push_back(cPosition(x, y));
+					inPositions.push_back (cPosition (x, y));
 				}
 			}
 			else if (!newInRange && oldInRange)
 			{
-				auto& value = map[getOffset(x, y)];
-				assert(value > 0);
+				auto& value = map[getOffset (x, y)];
+				assert (value > 0);
 				--value;
 				if (value == 0)
 				{
-					outPositions.push_back(cPosition(x, y));
+					outPositions.push_back (cPosition (x, y));
 				}
 			}
 		}
 	}
 
-	positionsInRange(inPositions);
-	positionsOutOfRange(outPositions);
+	positionsInRange (inPositions);
+	positionsOutOfRange (outPositions);
 	crcValid = false;
 	changed();
 }
 
 //------------------------------------------------------------------------------
-void cRangeMap::update(int oldRange, int newRange, const cPosition& position, int unitSize, bool square /*= false*/)
+void cRangeMap::update (int oldRange, int newRange, const cPosition& position, int unitSize, bool square /*= false*/)
 {
 	std::vector<cPosition> inPositions;
 	std::vector<cPosition> outPositions;
 
-	const int maxRange = std::max(oldRange, newRange);
-	const int minx = std::max(position.x() - maxRange, 0);
-	const int maxx = std::min(position.x() + maxRange, size.x() - 1);
-	const int miny = std::max(position.y() - maxRange, 0);
-	const int maxy = std::min(position.y() + maxRange, size.y() - 1);
+	const int maxRange = std::max (oldRange, newRange);
+	const int minx = std::max (position.x() - maxRange, 0);
+	const int maxx = std::min (position.x() + maxRange, size.x() - 1);
+	const int miny = std::max (position.y() - maxRange, 0);
+	const int maxy = std::min (position.y() + maxRange, size.y() - 1);
 
 	for (int x = minx; x <= maxx; ++x)
 	{
 		for (int y = miny; y <= maxy; ++y)
 		{
-			bool newInRange = isInRange(x, y, position, newRange, unitSize, square);
-			bool oldInRange = isInRange(x, y, position, oldRange, unitSize, square);
+			bool newInRange = isInRange (x, y, position, newRange, unitSize, square);
+			bool oldInRange = isInRange (x, y, position, oldRange, unitSize, square);
 
 			if (newInRange && !oldInRange)
 			{
-				auto& value = map[getOffset(x, y)];
+				auto& value = map[getOffset (x, y)];
 				++value;
 				if (value == 1)
 				{
-					inPositions.push_back(cPosition(x, y));
+					inPositions.push_back (cPosition (x, y));
 				}
 			}
 			else if (!newInRange && oldInRange)
 			{
-				auto& value = map[getOffset(x, y)];
-				assert(value > 0);
+				auto& value = map[getOffset (x, y)];
+				assert (value > 0);
 				--value;
 				if (value == 0)
 				{
-					outPositions.push_back(cPosition(x, y));
+					outPositions.push_back (cPosition (x, y));
 				}
 			}
 		}
 	}
 
-	positionsInRange(inPositions);
-	positionsOutOfRange(outPositions);
+	positionsInRange (inPositions);
+	positionsOutOfRange (outPositions);
 	crcValid = false;
 	changed();
 }
 
 //------------------------------------------------------------------------------
-void cRangeMap::remove(int range, const cPosition& position, int unitSize, bool square /*= false*/)
+void cRangeMap::remove (int range, const cPosition& position, int unitSize, bool square /*= false*/)
 {
 	std::vector<cPosition> positions;
 
-	const int minx = std::max(position.x() - range, 0);
-	const int maxx = std::min(position.x() + range, size.x() - 1);
-	const int miny = std::max(position.y() - range, 0);
-	const int maxy = std::min(position.y() + range, size.y() - 1);
+	const int minx = std::max (position.x() - range, 0);
+	const int maxx = std::min (position.x() + range, size.x() - 1);
+	const int miny = std::max (position.y() - range, 0);
+	const int maxy = std::min (position.y() + range, size.y() - 1);
 
 	for (int x = minx; x <= maxx; ++x)
 	{
 		for (int y = miny; y <= maxy; ++y)
 		{
-			if (isInRange(x, y, position, range, unitSize, square))
+			if (isInRange (x, y, position, range, unitSize, square))
 			{
-				auto& value = map[getOffset(x, y)];
+				auto& value = map[getOffset (x, y)];
 				--value;
 				if (value == 0)
 				{
-					positions.push_back(cPosition(x, y));
+					positions.push_back (cPosition (x, y));
 				}
 			}
 		}
 	}
 
-	positionsOutOfRange(positions);
+	positionsOutOfRange (positions);
 	crcValid = false;
 	changed();
 }
 
 //------------------------------------------------------------------------------
-bool cRangeMap::get(const cPosition& position) const
+bool cRangeMap::get (const cPosition& position) const
 {
 	if (position.x() < 0 || position.x() >= size.x()) return false;
 	if (position.y() < 0 || position.y() >= size.y()) return false;
 
-	return map[getOffset(position.x(), position.y())] > 0;
+	return map[getOffset (position.x(), position.y())] > 0;
 }
 
 //------------------------------------------------------------------------------
-uint32_t cRangeMap::getChecksum(uint32_t crc) const
+uint32_t cRangeMap::getChecksum (uint32_t crc) const
 {
 	if (!crcValid)
 	{
@@ -213,43 +213,43 @@ uint32_t cRangeMap::getChecksum(uint32_t crc) const
 		size_t vecSize = map.size();
 		for (size_t i = 0; i < vecSize; ++i)
 		{
-			crcCache = calcCheckSum(map[i], crcCache);
+			crcCache = calcCheckSum (map[i], crcCache);
 		}
 
 		crcValid = true;
 	}
 
-	return calcCheckSum(crcCache, crc);
+	return calcCheckSum (crcCache, crc);
 }
 
 //------------------------------------------------------------------------------
-void cRangeMap::subtract(const std::vector<uint16_t>& data)
+void cRangeMap::subtract (const std::vector<uint16_t>& data)
 {
-	assert(map.size() == data.size());
+	assert (map.size() == data.size());
 
 	std::vector<cPosition> positions;
 
 	for (size_t i = 0; i < data.size(); i++)
 	{
 		auto oldValue = map[i];
-		map[i] = std::max(oldValue - data[i], 0);
+		map[i] = std::max (oldValue - data[i], 0);
 		if (map[i] == 0 && oldValue > 0)
 		{
-			positions.push_back(cPosition(i % size.x(), i / size.x()));
+			positions.push_back (cPosition (i % size.x(), i / size.x()));
 		}
 	}
 
-	positionsOutOfRange(positions);
+	positionsOutOfRange (positions);
 	crcValid = false;
 	changed();
 }
 
 //------------------------------------------------------------------------------
-bool cRangeMap::isInRange(int x, int y, const cPosition& position, int range, int unitSize, bool square) const
+bool cRangeMap::isInRange (int x, int y, const cPosition& position, int range, int unitSize, bool square) const
 {
 	// calc distance from center of unit.
 	// to prevent fractional numbers, store the double distance
-	cPosition delta2x = (cPosition(x, y) - position) * 2 - unitSize + 1;
+	cPosition delta2x = (cPosition (x, y) - position) * 2 - unitSize + 1;
 
 	if (square)
 	{
@@ -262,7 +262,7 @@ bool cRangeMap::isInRange(int x, int y, const cPosition& position, int range, in
 }
 
 //------------------------------------------------------------------------------
-int cRangeMap::getOffset(int x, int y) const
+int cRangeMap::getOffset (int x, int y) const
 {
 	return x + y * size.x();
 }

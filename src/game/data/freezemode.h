@@ -29,7 +29,7 @@ enum class ePlayerConnectionState
 	NOT_RESPONDING, // player is connected, but no sync message received for some time. Game should be paused.
 	DISCONNECTED    // player has lost connection. Game should be paused.
 };
-std::string enumToString(ePlayerConnectionState value);
+std::string enumToString (ePlayerConnectionState value);
 
 enum class eFreezeMode
 {
@@ -38,7 +38,7 @@ enum class eFreezeMode
 	WAIT_FOR_CLIENT,    // waiting for response from client
 	WAIT_FOR_SERVER     // waiting for response from server
 };
-std::string enumToString(eFreezeMode value);
+std::string enumToString (eFreezeMode value);
 
 class cFreezeModes
 {
@@ -52,8 +52,8 @@ public:
 	bool isFreezed() const;
 	bool gameTimePaused() const;
 
-	template<typename T>
-	void serialize(T& archive)
+	template <typename T>
+	void serialize (T& archive)
 	{
 		archive & waitForTurnEnd;
 		archive & pause;

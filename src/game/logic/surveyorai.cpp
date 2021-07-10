@@ -62,12 +62,12 @@ static const int DISTANCE_NEW_OP = 7; //the new OP will be between the surveyor 
 //------------------------------------------------------------------------------
 cSurveyorAi::cSurveyorAi (const cVehicle& vehicle) :
 	vehicle (vehicle),
-	finished(false),
-	counter(0),
-	operationPoint(vehicle.getPosition())
+	finished (false),
+	counter (0),
+	operationPoint (vehicle.getPosition())
 {
-	connectionManager.connect(vehicle.destroyed, [&]() {finished = true; });
-	connectionManager.connect(vehicle.ownerChanged, [&]() {finished = true; });
+	connectionManager.connect (vehicle.destroyed, [&]() {finished = true; });
+	connectionManager.connect (vehicle.ownerChanged, [&]() {finished = true; });
 }
 
 //------------------------------------------------------------------------------
@@ -91,14 +91,14 @@ void cSurveyorAi::run (cClient& client, const std::vector<std::unique_ptr<cSurve
 		changeOP();
 		std::forward_list<cPosition> path;
 		//push the starting point for planing
-		path.push_front(vehicle.getPosition());
+		path.push_front (vehicle.getPosition());
 
 		int movePoints = vehicle.data.getSpeed();
 		if (movePoints < vehicle.data.getSpeedMax())
 		{
 			movePoints += vehicle.data.getSpeedMax();
 		}
-		planMove(path, movePoints, jobs, map);
+		planMove (path, movePoints, jobs, map);
 
 		// planMove gives the path with the last way point at the front. So reverse it.
 		path.reverse();
@@ -107,12 +107,12 @@ void cSurveyorAi::run (cClient& client, const std::vector<std::unique_ptr<cSurve
 
 		if (!path.empty())
 		{
-			client.sendNetMessage(cActionStartMove(vehicle, path, true));
+			client.sendNetMessage (cActionStartMove (vehicle, path, true));
 			counter = ACTION_TIMEOUT;
 		}
 		else
 		{
-			planLongMove(jobs, client);
+			planLongMove (jobs, client);
 		}
 	}
 	else
@@ -120,10 +120,10 @@ void cSurveyorAi::run (cClient& client, const std::vector<std::unique_ptr<cSurve
 		const auto& moveJob = *vehicle.getMoveJob();
 		if (moveJob.isWaiting() && !moveJob.getPath().empty())
 		{
-			int nextCosts = cPathCalculator::calcNextCost(vehicle.getPosition(), moveJob.getPath().front(), &vehicle, &map);
+			int nextCosts = cPathCalculator::calcNextCost (vehicle.getPosition(), moveJob.getPath().front(), &vehicle, &map);
 			if (nextCosts <= vehicle.data.getSpeed())
 			{
-				client.sendNetMessage(cActionResumeMove(vehicle));
+				client.sendNetMessage (cActionResumeMove (vehicle));
 				counter = ACTION_TIMEOUT;
 			}
 		}
@@ -131,7 +131,7 @@ void cSurveyorAi::run (cClient& client, const std::vector<std::unique_ptr<cSurve
 }
 
 //------------------------------------------------------------------------------
- void cSurveyorAi::planMove(std::forward_list<cPosition>& path, int remainingMovePoints, const std::vector<std::unique_ptr<cSurveyorAi>>& jobs, const cMap& map) const
+ void cSurveyorAi::planMove (std::forward_list<cPosition>& path, int remainingMovePoints, const std::vector<std::unique_ptr<cSurveyorAi>>& jobs, const cMap& map) const
 {
 	cPosition position = path.front();
 
@@ -139,24 +139,24 @@ void cSurveyorAi::run (cClient& client, const std::vector<std::unique_ptr<cSurve
 	float bestNextFactor = FIELD_BLOCKED;
 	int bestNextMoveCosts;
 
-	const int minx = std::max(position.x() - 1, 0);
-	const int maxx = std::min(position.x() + 1, map.getSize().x() - 1);
-	const int miny = std::max(position.y() - 1, 0);
-	const int maxy = std::min(position.y() + 1, map.getSize().y() - 1);
+	const int minx = std::max (position.x() - 1, 0);
+	const int maxx = std::min (position.x() + 1, map.getSize().x() - 1);
+	const int miny = std::max (position.y() - 1, 0);
+	const int maxy = std::min (position.y() + 1, map.getSize().y() - 1);
 	for (int x = minx; x <= maxx; ++x)
 	{
 		for (int y = miny; y <= maxy; ++y)
 		{
-			const cPosition nextPosition(x, y);
+			const cPosition nextPosition (x, y);
 
 			// skip the surveyor's current position
 			if (position == nextPosition) continue;
 
 			// check out of move points
-			int nextMoveCosts = cPathCalculator::calcNextCost(position, nextPosition, &vehicle, &map);
+			int nextMoveCosts = cPathCalculator::calcNextCost (position, nextPosition, &vehicle, &map);
 			if (nextMoveCosts > remainingMovePoints) continue;
 
-			const float nextFactor = calcFactor(nextPosition, path, jobs, map);
+			const float nextFactor = calcFactor (nextPosition, path, jobs, map);
 			if (nextFactor > bestNextFactor)
 			{
 				bestNextFactor = nextFactor;
@@ -168,8 +168,8 @@ void cSurveyorAi::run (cClient& client, const std::vector<std::unique_ptr<cSurve
 
 	if (bestNextFactor > FIELD_BLOCKED)
 	{
-		path.push_front(bestNextPosition);
-		planMove(path, remainingMovePoints - bestNextMoveCosts, jobs, map);
+		path.push_front (bestNextPosition);
+		planMove (path, remainingMovePoints - bestNextMoveCosts, jobs, map);
 	}
  }
 
@@ -183,7 +183,7 @@ float cSurveyorAi::calcScoreDistToOtherSurveyor (const std::vector<std::unique_p
 		if (jobs[i].get() == this) continue;
 		const auto& otherVehicle = jobs[i]->vehicle;
 		if (otherVehicle.getOwner() != vehicle.getOwner()) continue;
-		const auto dist = static_cast<float>((position - otherVehicle.getPosition()).l2Norm());
+		const auto dist = static_cast<float> ((position - otherVehicle.getPosition()).l2Norm());
 		res += powf (dist, e);
 	}
 	return res;
@@ -191,7 +191,7 @@ float cSurveyorAi::calcScoreDistToOtherSurveyor (const std::vector<std::unique_p
 
 //------------------------------------------------------------------------------
 // calculates an "importance-factor" for a given field
-float cSurveyorAi::calcFactor(const cPosition& position, const std::forward_list<cPosition>& path, const std::vector<std::unique_ptr<cSurveyorAi>>& jobs, const cMap& map) const
+float cSurveyorAi::calcFactor (const cPosition& position, const std::forward_list<cPosition>& path, const std::vector<std::unique_ptr<cSurveyorAi>>& jobs, const cMap& map) const
 {
 	if (!map.possiblePlace (vehicle, position, true)) return FIELD_BLOCKED;
 
@@ -212,12 +212,12 @@ float cSurveyorAi::calcFactor(const cPosition& position, const std::forward_list
 		for (int y = miny; y <= maxy; ++y)
 		{
 			const cPosition position (x, y);
-			if (positionHasBeenSurveyedByPath(position, path)) continue;
+			if (positionHasBeenSurveyedByPath (position, path)) continue;
 
-			if (!owner.hasResourceExplored (position))  //&& !map.isBlocked(position))
+			if (!owner.hasResourceExplored (position))  //&& !map.isBlocked (position))
 			{
 				nrSurvFields++;
-				if (hasAdjacentResources(position, map))
+				if (hasAdjacentResources (position, map))
 				{
 					// spots with adjacent revealed resources have a high probability
 					// for more resources
@@ -234,7 +234,7 @@ float cSurveyorAi::calcFactor(const cPosition& position, const std::forward_list
 	}
 
 	// the distance to the OP
-	const float newDistanceOP = static_cast<float>((position - operationPoint).l2Norm());
+	const float newDistanceOP = static_cast<float> ((position - operationPoint).l2Norm());
 
 	// the distance to other surveyors
 	const float newDistancesSurv = calcScoreDistToOtherSurveyor (jobs, position, EXP);
@@ -250,7 +250,7 @@ float cSurveyorAi::calcFactor(const cPosition& position, const std::forward_list
 
 //------------------------------------------------------------------------------
 // searches the map for a location where the surveyor can resume
-void cSurveyorAi::planLongMove(const std::vector<std::unique_ptr<cSurveyorAi>>& jobs, cClient& client)
+void cSurveyorAi::planLongMove (const std::vector<std::unique_ptr<cSurveyorAi>>& jobs, cClient& client)
 {
 	const cModel& model = client.getModel();
 	const cMap& map = *model.getMap();
@@ -272,8 +272,8 @@ void cSurveyorAi::planLongMove(const std::vector<std::unique_ptr<cSurveyorAi>>& 
 
 			// calculate the distance to other surveyors
 			const float distancesSurv = calcScoreDistToOtherSurveyor (jobs, currentPosition, EXP2);
-			const float distanceOP   = static_cast<float>((currentPosition - operationPoint).l2Norm());
-			const float distanceSurv = static_cast<float>((currentPosition - vehicle.getPosition()).l2Norm());
+			const float distanceOP   = static_cast<float> ((currentPosition - operationPoint).l2Norm());
+			const float distanceSurv = static_cast<float> ((currentPosition - vehicle.getPosition()).l2Norm());
 			// TODO: take into account the length of the path to
 			// the coordinates too
 			// (I seen a case, when a surveyor took 7 additional senseless steps
@@ -290,8 +290,8 @@ void cSurveyorAi::planLongMove(const std::vector<std::unique_ptr<cSurveyorAi>>& 
 	}
 	if (minValue == 0)
 	{
-		client.surveyorAiConfused(vehicle);
-		client.sendNetMessage(cActionSetAutoMove(vehicle, false));
+		client.surveyorAiConfused (vehicle);
+		client.sendNetMessage (cActionSetAutoMove (vehicle, false));
 		finished = true;
 	}
 	else
@@ -301,19 +301,19 @@ void cSurveyorAi::planLongMove(const std::vector<std::unique_ptr<cSurveyorAi>>& 
 		auto iter = ranges::find_if (playerList, [&](const std::shared_ptr<cPlayer>& p) {
 			return p->getId() == player.getId();
 		});
-		const cMapView mapView(model.getMap(), *iter);
+		const cMapView mapView (model.getMap(), *iter);
 
-		cPathCalculator pc(vehicle, mapView, bestPosition, false);
+		cPathCalculator pc (vehicle, mapView, bestPosition, false);
 		const auto path = pc.calcPath();
 		if (!path.empty())
 		{
-			client.sendNetMessage(cActionStartMove(vehicle, path, true));
+			client.sendNetMessage (cActionStartMove (vehicle, path, true));
 			counter = ACTION_TIMEOUT;
 		}
 		else
 		{
-			client.surveyorAiConfused(vehicle);
-			client.sendNetMessage(cActionSetAutoMove(vehicle, false));
+			client.surveyorAiConfused (vehicle);
+			client.sendNetMessage (cActionSetAutoMove (vehicle, false));
 			finished = true;
 		}
 	}
@@ -335,37 +335,35 @@ void cSurveyorAi::changeOP()
 }
 
 //------------------------------------------------------------------------------
-bool cSurveyorAi::positionHasBeenSurveyedByPath(const cPosition position, const std::forward_list<cPosition>& path) const
+bool cSurveyorAi::positionHasBeenSurveyedByPath (const cPosition position, const std::forward_list<cPosition>& path) const
 {
 	for (const auto& pathPos : path)
 	{
 		if ((pathPos - position).l2NormSquared() <= 2) return true;
 	}
-
 	return false;
 }
 
 //------------------------------------------------------------------------------
-bool cSurveyorAi::hasAdjacentResources(const cPosition& position, const cMap& map) const
+bool cSurveyorAi::hasAdjacentResources (const cPosition& position, const cMap& map) const
 {
 	const cPlayer& owner = *vehicle.getOwner();
 
-	const int minx = std::max(position.x() - 1, 0);
-	const int maxx = std::min(position.x() + 1, map.getSize().x() - 1);
-	const int miny = std::max(position.y() - 1, 0);
-	const int maxy = std::min(position.y() + 1, map.getSize().y() - 1);
+	const int minx = std::max (position.x() - 1, 0);
+	const int maxx = std::min (position.x() + 1, map.getSize().x() - 1);
+	const int miny = std::max (position.y() - 1, 0);
+	const int maxy = std::min (position.y() + 1, map.getSize().y() - 1);
 	for (int x = minx; x <= maxx; ++x)
 	{
 		for (int y = miny; y <= maxy; ++y)
 		{
-			const cPosition position(x, y);
+			const cPosition position (x, y);
 
-			if (owner.hasResourceExplored(position) && map.getResource(position).typ != eResourceType::None)
+			if (owner.hasResourceExplored (position) && map.getResource (position).typ != eResourceType::None)
 			{
 				return true;
 			}
 		}
 	}
-
 	return false;
 }

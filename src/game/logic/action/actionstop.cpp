@@ -22,34 +22,34 @@
 #include "game/data/model.h"
 
 //------------------------------------------------------------------------------
-cActionStop::cActionStop(const cUnit& unit) :
-	unitId(unit.getId())
+cActionStop::cActionStop (const cUnit& unit) :
+	unitId (unit.getId())
 {}
 
 //------------------------------------------------------------------------------
-cActionStop::cActionStop(cBinaryArchiveOut& archive)
+cActionStop::cActionStop (cBinaryArchiveOut& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionStop::execute(cModel& model) const
+void cActionStop::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	cUnit* unit = model.getUnitFromID(unitId);
+	cUnit* unit = model.getUnitFromID (unitId);
 	if (unit == nullptr || !unit->getOwner()) return;
 	if (unit->getOwner()->getId() != playerNr) return;
 
 	if (unit->isABuilding())
 	{
-		auto b = static_cast<cBuilding*>(unit);
+		auto b = static_cast<cBuilding*> (unit);
 
 		b->stopWork();
 	}
 	else
 	{
-		auto vehicle = static_cast<cVehicle*>(unit);
+		auto vehicle = static_cast<cVehicle*> (unit);
 
 		if (vehicle->getMoveJob())
 		{
@@ -59,24 +59,24 @@ void cActionStop::execute(cModel& model) const
 		{
 			if (vehicle->getBuildTurns() == 0) return;
 
-			vehicle->setBuildingABuilding(false);
+			vehicle->setBuildingABuilding (false);
 			vehicle->BuildPath = false;
 
 			if (vehicle->getIsBig())
 			{
-				vehicle->getOwner()->updateScan(*vehicle, vehicle->buildBigSavedPosition);
-				model.getMap()->moveVehicle(*vehicle, vehicle->buildBigSavedPosition);
+				vehicle->getOwner()->updateScan (*vehicle, vehicle->buildBigSavedPosition);
+				model.getMap()->moveVehicle (*vehicle, vehicle->buildBigSavedPosition);
 			}
 		}
 		else if (vehicle->isUnitClearing())
 		{
-			vehicle->setClearing(false);
-			vehicle->setClearingTurns(0);
+			vehicle->setClearing (false);
+			vehicle->setClearingTurns (0);
 
 			if (vehicle->getIsBig())
 			{
-				vehicle->getOwner()->updateScan(*vehicle, vehicle->buildBigSavedPosition);
-				model.getMap()->moveVehicle(*vehicle, vehicle->buildBigSavedPosition);
+				vehicle->getOwner()->updateScan (*vehicle, vehicle->buildBigSavedPosition);
+				model.getMap()->moveVehicle (*vehicle, vehicle->buildBigSavedPosition);
 			}
 		}
 	}

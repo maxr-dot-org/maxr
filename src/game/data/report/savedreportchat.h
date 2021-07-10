@@ -30,18 +30,18 @@ public:
 	cSavedReportChat (const cPlayer& player, std::string text);
 	cSavedReportChat (std::string playerName, std::string text);
 	template <typename T, ENABLE_ARCHIVE_OUT>
-	explicit cSavedReportChat(T& archive)
+	explicit cSavedReportChat (T& archive)
 	{
-		serializeThis(archive);
+		serializeThis (archive);
 	}
 
 	eSavedReportType getType() const override;
 
 	bool isAlert() const override;
 
-	void serialize(cBinaryArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
-	void serialize(cXmlArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override{ cSavedReport::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
+	void serialize (cXmlArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override{ cSavedReport::serialize (archive); serializeThis (archive); }
 
 	int getPlayerNumber() const;
 	const std::string& getText() const;
@@ -49,11 +49,11 @@ public:
 
 private:
 	template <typename T>
-	void serializeThis(T& archive)
+	void serializeThis (T& archive)
 	{
-		archive & NVP(playerName);
-		archive & NVP(playerNumber);
-		archive & NVP(text);
+		archive & NVP (playerName);
+		archive & NVP (playerNumber);
+		archive & NVP (text);
 	}
 
 	std::string playerName;

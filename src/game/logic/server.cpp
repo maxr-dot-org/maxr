@@ -36,24 +36,24 @@
 #include <SDL_thread.h>
 
 //------------------------------------------------------------------------------
-cServer::cServer(std::shared_ptr<cConnectionManager> connectionManager) :
+cServer::cServer (std::shared_ptr<cConnectionManager> connectionManager) :
 	model(),
 	gameTimer(),
-	connectionManager(connectionManager),
-	serverThread(nullptr),
-	exit(false)
+	connectionManager (connectionManager),
+	serverThread (nullptr),
+	exit (false)
 {
-	model.turnEnded.connect([&]()
+	model.turnEnded.connect ([&]()
 	{
-		enableFreezeMode(eFreezeMode::WAIT_FOR_TURNEND);
+		enableFreezeMode (eFreezeMode::WAIT_FOR_TURNEND);
 	});
-	model.newTurnStarted.connect([this](const sNewTurnReport&)
+	model.newTurnStarted.connect ([this](const sNewTurnReport&)
 	{
 		if (cSettings::getInstance().shouldAutosave())
 		{
 			saveGameState (10, lngPack.i18n ("Text~Comp~Turn_5") + " " + std::to_string (model.getTurnCounter()->getTurn()) + " - " + lngPack.i18n ("Text~Settings~Autosave"));
 		}
-		disableFreezeMode(eFreezeMode::WAIT_FOR_TURNEND);
+		disableFreezeMode (eFreezeMode::WAIT_FOR_TURNEND);
 	});
 }
 
@@ -73,7 +73,7 @@ std::string cServer::getGameState() const
 	result << "Turn: " << model.getTurnCounter()->getTurn() << std::endl;
 	const auto& turnTimeClock = *model.getTurnTimeClock();
 	const auto time = turnTimeClock.hasDeadline() ? turnTimeClock.getTimeTillFirstDeadline() : turnTimeClock.getTimeSinceStart();
-	result << "Time: " << to_MM_ss(time) << (turnTimeClock.hasDeadline() ? " (deadline)" : "") << std::endl;
+	result << "Time: " << to_MM_ss (time) << (turnTimeClock.hasDeadline() ? " (deadline)" : "") << std::endl;
 
 	result << "Players:" << std::endl;
 	for (auto player : model.getPlayerList())
@@ -86,16 +86,16 @@ std::string cServer::getGameState() const
 //------------------------------------------------------------------------------
 void cServer::setPreparationData (const sLobbyPreparationData& preparationData)
 {
-	model.setUnitsData(std::make_shared<cUnitsData>(*preparationData.unitsData));
-	model.setGameSettings(*preparationData.gameSettings);
-	model.setMap(preparationData.staticMap);
+	model.setUnitsData (std::make_shared<cUnitsData> (*preparationData.unitsData));
+	model.setGameSettings (*preparationData.gameSettings);
+	model.setMap (preparationData.staticMap);
 }
 
 //------------------------------------------------------------------------------
-void cServer::setPlayers(const std::vector<cPlayerBasicData>& splayers)
+void cServer::setPlayers (const std::vector<cPlayerBasicData>& splayers)
 {
-	model.setPlayerList(splayers);
-	gameTimer.setPlayerNumbers(model.getPlayerList());
+	model.setPlayerList (splayers);
+	gameTimer.setPlayerNumbers (model.getPlayerList());
 }
 
 //------------------------------------------------------------------------------
@@ -105,83 +105,82 @@ const cModel& cServer::getModel() const
 }
 
 //------------------------------------------------------------------------------
-void cServer::saveGameState(int saveGameNumber, const std::string& saveName) const
+void cServer::saveGameState (int saveGameNumber, const std::string& saveName) const
 {
-	if (SDL_ThreadID() != SDL_GetThreadID(serverThread))
+	if (SDL_ThreadID() != SDL_GetThreadID (serverThread))
 	{
 		//allow save writing of the server model from the main thread
 		exit = true;
-		SDL_WaitThread(serverThread, nullptr);
+		SDL_WaitThread (serverThread, nullptr);
 		serverThread = nullptr;
 	}
 
 	Log.write (" Server: writing gamestate to save file " + std::to_string (saveGameNumber) + ", Modelcrc: " + std::to_string (model.getChecksum()), cLog::eLOG_TYPE_NET_DEBUG);
 
-	int saveingID = savegame.save(model, saveGameNumber, saveName);
-	cNetMessageRequestGUISaveInfo message(saveingID);
-	sendMessageToClients(message);
+	int saveingID = savegame.save (model, saveGameNumber, saveName);
+	cNetMessageRequestGUISaveInfo message (saveingID);
+	sendMessageToClients (message);
 
 	if (!serverThread)
 	{
 		exit = false;
-		serverThread = SDL_CreateThread(serverThreadCallback, "server", const_cast<cServer*>(this));
+		serverThread = SDL_CreateThread (serverThreadCallback, "server", const_cast<cServer*> (this));
 	}
 }
 //------------------------------------------------------------------------------
-void cServer::loadGameState(int saveGameNumber)
+void cServer::loadGameState (int saveGameNumber)
 {
-	Log.write(" Server: loading game state from save file " + std::to_string(saveGameNumber), cLog::eLOG_TYPE_NET_DEBUG);
-	savegame.loadModel(model, saveGameNumber);
+	Log.write (" Server: loading game state from save file " + std::to_string (saveGameNumber), cLog::eLOG_TYPE_NET_DEBUG);
+	savegame.loadModel (model, saveGameNumber);
 
-	gameTimer.setPlayerNumbers(model.getPlayerList());
+	gameTimer.setPlayerNumbers (model.getPlayerList());
 }
 //------------------------------------------------------------------------------
-void cServer::sendGuiInfoToClients(int saveGameNumber, int playerNr /*= -1*/)
+void cServer::sendGuiInfoToClients (int saveGameNumber, int playerNr /*= -1*/)
 {
 	try
 	{
-		savegame.loadGuiInfo(this, saveGameNumber);
+		savegame.loadGuiInfo (this, saveGameNumber);
 	}
 	catch (std::runtime_error& e)
 	{
-		Log.write((std::string) " Server: Loading GuiInfo from savegame failed: " + e.what(), cLog::eLOG_TYPE_NET_ERROR);
+		Log.write ((std::string) " Server: Loading GuiInfo from savegame failed: " + e.what(), cLog::eLOG_TYPE_NET_ERROR);
 	}
 }
 
 //------------------------------------------------------------------------------
-void cServer::resyncClientModel(int playerNr /*= -1*/) const
+void cServer::resyncClientModel (int playerNr /*= -1*/) const
 {
-	assert(SDL_ThreadID() == SDL_GetThreadID(serverThread));
+	assert (SDL_ThreadID() == SDL_GetThreadID (serverThread));
 
-	Log.write(" Server: Resynchronize client model " + std::to_string(playerNr), cLog::eLOG_TYPE_NET_DEBUG);
-	cNetMessageResyncModel msg(model);
-	sendMessageToClients(msg, playerNr);
+	Log.write (" Server: Resynchronize client model " + std::to_string (playerNr), cLog::eLOG_TYPE_NET_DEBUG);
+	cNetMessageResyncModel msg (model);
+	sendMessageToClients (msg, playerNr);
 }
 
 //------------------------------------------------------------------------------
-void cServer::pushMessage(std::unique_ptr<cNetMessage> message)
+void cServer::pushMessage (std::unique_ptr<cNetMessage> message)
 {
-	eventQueue.push(std::move(message));
+	eventQueue.push (std::move (message));
 }
 
-
 //------------------------------------------------------------------------------
-void cServer::sendMessageToClients(const cNetMessage& message, int playerNr /* = -1 */) const
+void cServer::sendMessageToClients (const cNetMessage& message, int playerNr /* = -1 */) const
 {
 	if (message.getType() != eNetMessageType::GAMETIME_SYNC_SERVER && message.getType() != eNetMessageType::RESYNC_MODEL)
 	{
 		cTextArchiveIn archive;
 		archive << message;
-		Log.write("Server: --> " + archive.data() + " @" + std::to_string(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write ("Server: --> " + archive.data() + " @" + std::to_string (model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
 	if (playerNr == -1)
 	{
-		connectionManager->sendToPlayers(message);
+		connectionManager->sendToPlayers (message);
 	}
-	else if (connectionManager->isPlayerConnected(playerNr))
+	else if (connectionManager->isPlayerConnected (playerNr))
 	{
-		connectionManager->sendToPlayer(message, playerNr);
+		connectionManager->sendToPlayer (message, playerNr);
 	}
 }
 
@@ -194,7 +193,7 @@ void cServer::start()
 	initPlayerConnectionState();
 	updateWaitForClientFlag();
 
-	serverThread = SDL_CreateThread(serverThreadCallback, "server", this);
+	serverThread = SDL_CreateThread (serverThreadCallback, "server", this);
 	gameTimer.maxEventQueueSize = MAX_SERVER_EVENT_COUNTER;
 	gameTimer.start();
 }
@@ -207,7 +206,7 @@ void cServer::stop()
 
 	if (serverThread)
 	{
-		SDL_WaitThread(serverThread, nullptr);
+		SDL_WaitThread (serverThread, nullptr);
 		serverThread = nullptr;
 	}
 }
@@ -218,130 +217,130 @@ void cServer::run()
 	while (!exit)
 	{
 		std::unique_ptr<cNetMessage> message;
-		while (eventQueue.try_pop(message))
+		while (eventQueue.try_pop (message))
 		{
 			if (message->getType() != eNetMessageType::GAMETIME_SYNC_CLIENT)
 			{
 				cTextArchiveIn archive;
 				archive << *message;
-				Log.write("Server: <-- " + archive.data() + " @" + std::to_string(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+				Log.write ("Server: <-- " + archive.data() + " @" + std::to_string (model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 			}
 
-			if (model.getPlayer(message->playerNr) == nullptr &&
+			if (model.getPlayer (message->playerNr) == nullptr &&
 				message->getType() != eNetMessageType::TCP_WANT_CONNECT) continue;
 
 			switch (message->getType())
 			{
 			case eNetMessageType::ACTION:
 			{
-				const cAction& action = *static_cast<cAction*>(message.get());
+				const cAction& action = *static_cast<cAction*> (message.get());
 
 				// filter disallowed actions
 				if (action.getType() != cAction::eActiontype::ACTION_INIT_NEW_GAME)
 				{
 					if (freezeModes.isFreezed())
 					{
-						Log.write(" Server: Discarding action, because game is freezed.", cLog::eLOG_TYPE_NET_WARNING);
+						Log.write (" Server: Discarding action, because game is freezed.", cLog::eLOG_TYPE_NET_WARNING);
 						break;
 					}
 					if (model.getGameSettings()->gameType == eGameSettingsGameType::Turns && message->playerNr != model.getActiveTurnPlayer()->getId())
 					{
-						Log.write(" Server: Discarding action, because it's another players turn.", cLog::eLOG_TYPE_NET_WARNING);
+						Log.write (" Server: Discarding action, because it's another players turn.", cLog::eLOG_TYPE_NET_WARNING);
 						break;
 					}
 				}
 
-				action.execute(model);
+				action.execute (model);
 
-				sendMessageToClients(*message);
+				sendMessageToClients (*message);
 				break;
 			}
 			case eNetMessageType::GAMETIME_SYNC_CLIENT:
 			{
-				const cNetMessageSyncClient& syncMessage = *static_cast<cNetMessageSyncClient*>(message.get());
-				gameTimer.handleSyncMessage(syncMessage, model.getGameTime());
+				const cNetMessageSyncClient& syncMessage = *static_cast<cNetMessageSyncClient*> (message.get());
+				gameTimer.handleSyncMessage (syncMessage, model.getGameTime());
 				break;
 			}
 			case eNetMessageType::REPORT:
 			{
-				sendMessageToClients(*message);
+				sendMessageToClients (*message);
 				break;
 			}
 			case eNetMessageType::GUI_SAVE_INFO:
 			{
-				const cNetMessageGUISaveInfo& saveInfo = *static_cast<cNetMessageGUISaveInfo*>(message.get());
-				savegame.saveGuiInfo(saveInfo);
+				const cNetMessageGUISaveInfo& saveInfo = *static_cast<cNetMessageGUISaveInfo*> (message.get());
+				savegame.saveGuiInfo (saveInfo);
 				break;
 			}
 			case eNetMessageType::REQUEST_RESYNC_MODEL:
 			{
-				const cNetMessageRequestResync& requestMessage = *static_cast<cNetMessageRequestResync*>(message.get());
-				resyncClientModel(requestMessage.playerToSync);
+				const cNetMessageRequestResync& requestMessage = *static_cast<cNetMessageRequestResync*> (message.get());
+				resyncClientModel (requestMessage.playerToSync);
 				if (requestMessage.saveNumberForGuiInfo != -1)
 				{
-					sendGuiInfoToClients(requestMessage.saveNumberForGuiInfo, requestMessage.playerToSync);
+					sendGuiInfoToClients (requestMessage.saveNumberForGuiInfo, requestMessage.playerToSync);
 				}
 				break;
 			}
 			case eNetMessageType::TCP_WANT_CONNECT:
 			{
-				const cNetMessageTcpWantConnect& connectMessage = *static_cast<cNetMessageTcpWantConnect*>(message.get());
-				const cPlayer* player = model.getPlayer(connectMessage.playerName);
+				const cNetMessageTcpWantConnect& connectMessage = *static_cast<cNetMessageTcpWantConnect*> (message.get());
+				const cPlayer* player = model.getPlayer (connectMessage.playerName);
 				if (player == nullptr)
 				{
-					Log.write(" Server: Connecting player " + connectMessage.playerName + " is not part of the game", cLog::eLOG_TYPE_NET_WARNING);
+					Log.write (" Server: Connecting player " + connectMessage.playerName + " is not part of the game", cLog::eLOG_TYPE_NET_WARNING);
 					connectionManager->declineConnection (connectMessage.socket, eDeclineConnectionReason::NotPartOfTheGame);
 					break;
 				}
-				if (connectionManager->isPlayerConnected(player->getId()))
+				if (connectionManager->isPlayerConnected (player->getId()))
 				{
-					Log.write(" Server: Connecting player " + connectMessage.playerName + " is already connected", cLog::eLOG_TYPE_NET_WARNING);
+					Log.write (" Server: Connecting player " + connectMessage.playerName + " is already connected", cLog::eLOG_TYPE_NET_WARNING);
 					connectionManager->declineConnection (connectMessage.socket, eDeclineConnectionReason::AlreadyConnected);
 					break;
 				}
 
-				connectionManager->acceptConnection(connectMessage.socket, player->getId());
+				connectionManager->acceptConnection (connectMessage.socket, player->getId());
 
-				sendMessageToClients(cNetMessageGameAlreadyRunning(model), player->getId());
+				sendMessageToClients (cNetMessageGameAlreadyRunning (model), player->getId());
 				break;
 			}
 			case eNetMessageType::TCP_CLOSE:
 			{
-				const cNetMessageTcpClose&  msg = *static_cast<cNetMessageTcpClose*>(message.get());
-				sendMessageToClients(cNetMessageReport(std::make_unique<cSavedReportLostConnection>(*model.getPlayer(msg.playerNr))));
-				playerDisconnected(msg.playerNr);
+				const cNetMessageTcpClose& msg = *static_cast<cNetMessageTcpClose*> (message.get());
+				sendMessageToClients (cNetMessageReport (std::make_unique<cSavedReportLostConnection> (*model.getPlayer (msg.playerNr))));
+				playerDisconnected (msg.playerNr);
 				break;
 			}
 			case eNetMessageType::WANT_REJOIN_GAME:
 			{
-				const cNetMessageWantRejoinGame&  msg = *static_cast<cNetMessageWantRejoinGame*>(message.get());
+				const cNetMessageWantRejoinGame&  msg = *static_cast<cNetMessageWantRejoinGame*> (message.get());
 
-				const auto player = model.getPlayer(msg.playerNr);
+				const auto player = model.getPlayer (msg.playerNr);
 				if (player == nullptr)
 				{
 					Log.write (" Server: Invalid player id: " + std::to_string (msg.playerNr), cLog::eLOG_TYPE_NET_ERROR);
 					break;
 				}
 
-				resyncClientModel(message->playerNr);
-				playerConnected(msg.playerNr);
+				resyncClientModel (message->playerNr);
+				playerConnected (msg.playerNr);
 
 				if (savegame.getLastUsedSaveSlot() != -1)
 				{
-					savegame.loadGuiInfo(this, savegame.getLastUsedSaveSlot(), message->playerNr);
+					savegame.loadGuiInfo (this, savegame.getLastUsedSaveSlot(), message->playerNr);
 				}
 				break;
 			}
 			default:
-				Log.write(" Server: Can not handle net message!", cLog::eLOG_TYPE_NET_ERROR);
+				Log.write (" Server: Can not handle net message!", cLog::eLOG_TYPE_NET_ERROR);
 				break;
 			}
 		}
 
 		//TODO: gameinit: start timer, when all clients are ready
-		gameTimer.run(model, *this);
+		gameTimer.run (model, *this);
 
-		SDL_Delay(10);
+		SDL_Delay (10);
 	}
 }
 
@@ -349,32 +348,32 @@ void cServer::run()
 //------------------------------------------------------------------------------
 void cServer::initRandomGenerator()
 {
-	uint64_t t = random(UINT64_MAX);
-	model.randomGenerator.seed(t);
-	cNetMessageRandomSeed msg(t);
-	sendMessageToClients(msg);
+	uint64_t t = random (UINT64_MAX);
+	model.randomGenerator.seed (t);
+	cNetMessageRandomSeed msg (t);
+	sendMessageToClients (msg);
 }
 
 //------------------------------------------------------------------------------
-void cServer::enableFreezeMode(eFreezeMode mode)
+void cServer::enableFreezeMode (eFreezeMode mode)
 {
-	freezeModes.enable(mode);
+	freezeModes.enable (mode);
 	updateGameTimerstate();
 
-	sendMessageToClients(cNetMessageFreezeModes(freezeModes, playerConnectionStates));
+	sendMessageToClients (cNetMessageFreezeModes (freezeModes, playerConnectionStates));
 }
 
 //------------------------------------------------------------------------------
-void cServer::disableFreezeMode(eFreezeMode mode)
+void cServer::disableFreezeMode (eFreezeMode mode)
 {
-	freezeModes.disable(mode);
+	freezeModes.disable (mode);
 	updateGameTimerstate();
 
-	sendMessageToClients(cNetMessageFreezeModes(freezeModes, playerConnectionStates));
+	sendMessageToClients (cNetMessageFreezeModes (freezeModes, playerConnectionStates));
 }
 
 //------------------------------------------------------------------------------
-void cServer::setPlayerNotResponding(int playerId)
+void cServer::setPlayerNotResponding (int playerId)
 {
 	if (playerConnectionStates[playerId] != ePlayerConnectionState::CONNECTED) return;
 
@@ -384,7 +383,7 @@ void cServer::setPlayerNotResponding(int playerId)
 }
 
 //------------------------------------------------------------------------------
-void cServer::clearPlayerNotResponding(int playerId)
+void cServer::clearPlayerNotResponding (int playerId)
 {
 	if (playerConnectionStates[playerId] != ePlayerConnectionState::NOT_RESPONDING) return;
 
@@ -394,9 +393,9 @@ void cServer::clearPlayerNotResponding(int playerId)
 }
 
 //------------------------------------------------------------------------------
-void cServer::playerDisconnected(int playerId)
+void cServer::playerDisconnected (int playerId)
 {
-	const auto player = model.getPlayer(playerId);
+	const auto player = model.getPlayer (playerId);
 	if (player->isDefeated)
 	{
 		playerConnectionStates[playerId] = ePlayerConnectionState::INACTIVE;
@@ -411,7 +410,7 @@ void cServer::playerDisconnected(int playerId)
 }
 
 //------------------------------------------------------------------------------
-void cServer::playerConnected(int playerId)
+void cServer::playerConnected (int playerId)
 {
 	playerConnectionStates[playerId] = ePlayerConnectionState::CONNECTED;
 	Log.write (" Server: Player " + std::to_string (playerId) + " connected", cLog::eLOG_TYPE_NET_DEBUG);
@@ -432,11 +431,11 @@ void cServer::updateWaitForClientFlag()
 
 	if (freeze)
 	{
-		enableFreezeMode(eFreezeMode::WAIT_FOR_CLIENT);
+		enableFreezeMode (eFreezeMode::WAIT_FOR_CLIENT);
 	}
 	else
 	{
-		disableFreezeMode(eFreezeMode::WAIT_FOR_CLIENT);
+		disableFreezeMode (eFreezeMode::WAIT_FOR_CLIENT);
 	}
 }
 
@@ -458,7 +457,7 @@ void cServer::initPlayerConnectionState()
 {
 	for (const auto player : model.getPlayerList())
 	{
-		if (connectionManager->isPlayerConnected(player->getId()))
+		if (connectionManager->isPlayerConnected (player->getId()))
 		{
 			playerConnectionStates[player->getId()] = ePlayerConnectionState::CONNECTED;
 		}
@@ -472,7 +471,7 @@ void cServer::initPlayerConnectionState()
 }
 
 //------------------------------------------------------------------------------
-int cServer::serverThreadCallback(void* arg)
+int cServer::serverThreadCallback (void* arg)
 {
 	CR_ENABLE_CRASH_RPT_CURRENT_THREAD();
 

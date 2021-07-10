@@ -261,7 +261,7 @@ void cClient::enableFreezeMode (eFreezeMode mode)
 
 	freezeModes.enable (mode);
 
-	if (!wasEnabled) freezeModeChanged ();
+	if (!wasEnabled) freezeModeChanged();
 }
 
 //------------------------------------------------------------------------------
@@ -272,11 +272,11 @@ void cClient::disableFreezeMode (eFreezeMode mode)
 
 	freezeModes.disable (mode);
 
-	if (!wasDisabled) freezeModeChanged ();
+	if (!wasDisabled) freezeModeChanged();
 }
 
 //------------------------------------------------------------------------------
-const cFreezeModes& cClient::getFreezeModes () const
+const cFreezeModes& cClient::getFreezeModes() const
 {
 	return freezeModes;
 }

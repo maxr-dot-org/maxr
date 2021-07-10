@@ -27,39 +27,39 @@
 cAirTransportLoadJob::cAirTransportLoadJob (cVehicle& loadedVehicle, cUnit& loadingUnit) :
 	cJob (loadingUnit),
 	vehicleToLoad (&loadedVehicle),
-	landing(true)
+	landing (true)
 {
-	connectionManager.connect(vehicleToLoad->destroyed, [&](){finished = true; });
+	connectionManager.connect (vehicleToLoad->destroyed, [&](){finished = true; });
 }
 
 //------------------------------------------------------------------------------
 void cAirTransportLoadJob::run (cModel& model)
 {
-	assert(unit->isAVehicle());
-	cVehicle* vehicle = static_cast<cVehicle*>(unit);
+	assert (unit->isAVehicle());
+	cVehicle* vehicle = static_cast<cVehicle*> (unit);
 
 	if (landing)
 	{
 		if (vehicle->getFlightHeight() == MAX_FLIGHT_HEIGHT)
 		{
-			model.planeLanding(*vehicle);
+			model.planeLanding (*vehicle);
 		}
 
-		vehicle->setFlightHeight(std::max(0, vehicle->getFlightHeight() - 2));
+		vehicle->setFlightHeight (std::max (0, vehicle->getFlightHeight() - 2));
 		if (vehicle->getFlightHeight() <= 0)
 		{
-			if (vehicle->canLoad(vehicleToLoad))
+			if (vehicle->canLoad (vehicleToLoad))
 			{
-				vehicle->storeVehicle(*vehicleToLoad, *model.getMap());
-				model.unitStored(*unit, *vehicleToLoad);
+				vehicle->storeVehicle (*vehicleToLoad, *model.getMap());
+				model.unitStored (*unit, *vehicleToLoad);
 			}
 			landing = false;
-			model.planeTakeoff(*vehicle);
+			model.planeTakeoff (*vehicle);
 		}
 	}
 	else
 	{
-		vehicle->setFlightHeight(std::min(64, vehicle->getFlightHeight() + 2));
+		vehicle->setFlightHeight (std::min (64, vehicle->getFlightHeight() + 2));
 		if (vehicle->getFlightHeight() >= 64)
 		{
 			finished = true;
@@ -74,12 +74,12 @@ eJobType cAirTransportLoadJob::getType() const
 }
 
 //------------------------------------------------------------------------------
-uint32_t cAirTransportLoadJob::getChecksum(uint32_t crc) const
+uint32_t cAirTransportLoadJob::getChecksum (uint32_t crc) const
 {
-	crc = calcCheckSum(getType(), crc);
-	crc = calcCheckSum(unit, crc);
-	crc = calcCheckSum(vehicleToLoad, crc);
-	crc = calcCheckSum(landing, crc);
+	crc = calcCheckSum (getType(), crc);
+	crc = calcCheckSum (unit, crc);
+	crc = calcCheckSum (vehicleToLoad, crc);
+	crc = calcCheckSum (landing, crc);
 
 	return crc;
 }

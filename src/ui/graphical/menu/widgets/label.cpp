@@ -135,8 +135,7 @@ void cLabel::updateDisplayInformation()
 	}
 
 	auto originalTargetSurface = font->getTargetSurface();
-	auto fontTargetSurfaceResetter = makeScopedOperation(
-				[originalTargetSurface, font]() { font->setTargetSurface (originalTargetSurface); });
+	auto fontTargetSurfaceResetter = makeScopedOperation ([originalTargetSurface, font]() { font->setTargetSurface (originalTargetSurface); });
 	font->setTargetSurface (surface.get());
 	for (size_t i = 0; i < drawLines.size(); ++i)
 	{
@@ -196,7 +195,7 @@ void cLabel::handleResized (const cPosition& oldSize)
 //------------------------------------------------------------------------------
 bool cLabel::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
-	clicked ();
+	clicked();
 
 	return true;
 }

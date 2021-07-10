@@ -30,7 +30,7 @@ public:
 	explicit cDialogOk (const std::string& text, eWindowBackgrounds backgroundType = eWindowBackgrounds::Alpha);
 	~cDialogOk();
 
-	cSignal<void ()> done;
+	cSignal<void()> done;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

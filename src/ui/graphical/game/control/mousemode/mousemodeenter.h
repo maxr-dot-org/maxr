@@ -25,20 +25,20 @@
 class cMouseModeEnter : public cMouseMode
 {
 public:
-	cMouseModeEnter(const cMapView* map, const cUnitSelection& unitSelection, const cPlayer* player);
+	cMouseModeEnter (const cMapView*, const cUnitSelection&, const cPlayer*);
 
 	eMouseModeType getType() const override;
-	void setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const override;
-	std::unique_ptr<cMouseAction> getMouseAction(const cPosition& mapPosition, const cUnitsData& unitsData) const override;
+	void setCursor (cMouse&, const cPosition& mapPosition, const cUnitsData&) const override;
+	std::unique_ptr<cMouseAction> getMouseAction (const cPosition& mapPosition, const cUnitsData&) const override;
 
 protected:
 	void establishUnitSelectionConnections() override;
-	void establishMapFieldConnections(const cMapFieldView& field) override;
+	void establishMapFieldConnections (const cMapFieldView&) override;
 
 private:
-	bool canExecuteAction(const cPosition& mapPosition) const;
+	bool canExecuteAction (const cPosition& mapPosition) const;
 
-	void updateFieldUnitConnections(const cMapFieldView& field);
+	void updateFieldUnitConnections (const cMapFieldView&);
 };
 
 #endif

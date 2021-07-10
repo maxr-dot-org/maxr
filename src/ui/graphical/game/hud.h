@@ -119,41 +119,41 @@ public:
 	void activateShortcuts();
 	void deactivateShortcuts();
 
-	mutable cSignal<void ()> zoomChanged;
+	mutable cSignal<void()> zoomChanged;
 
-	mutable cSignal<void ()> surveyToggled;
-	mutable cSignal<void ()> hitsToggled;
-	mutable cSignal<void ()> scanToggled;
-	mutable cSignal<void ()> statusToggled;
-	mutable cSignal<void ()> ammoToggled;
-	mutable cSignal<void ()> gridToggled;
-	mutable cSignal<void ()> colorToggled;
-	mutable cSignal<void ()> rangeToggled;
-	mutable cSignal<void ()> fogToggled;
-	mutable cSignal<void ()> lockToggled;
-	mutable cSignal<void ()> chatToggled;
+	mutable cSignal<void()> surveyToggled;
+	mutable cSignal<void()> hitsToggled;
+	mutable cSignal<void()> scanToggled;
+	mutable cSignal<void()> statusToggled;
+	mutable cSignal<void()> ammoToggled;
+	mutable cSignal<void()> gridToggled;
+	mutable cSignal<void()> colorToggled;
+	mutable cSignal<void()> rangeToggled;
+	mutable cSignal<void()> fogToggled;
+	mutable cSignal<void()> lockToggled;
+	mutable cSignal<void()> chatToggled;
 
-	mutable cSignal<void ()> centerClicked;
-	mutable cSignal<void ()> helpClicked;
+	mutable cSignal<void()> centerClicked;
+	mutable cSignal<void()> helpClicked;
 
-	mutable cSignal<void ()> reportsClicked;
+	mutable cSignal<void()> reportsClicked;
 
-	mutable cSignal<void ()> miniMapZoomFactorToggled;
-	mutable cSignal<void ()> miniMapAttackUnitsOnlyToggled;
+	mutable cSignal<void()> miniMapZoomFactorToggled;
+	mutable cSignal<void()> miniMapAttackUnitsOnlyToggled;
 
-	mutable cSignal<void ()> endClicked;
+	mutable cSignal<void()> endClicked;
 
-	mutable cSignal<void ()> filesClicked;
-	mutable cSignal<void ()> preferencesClicked;
+	mutable cSignal<void()> filesClicked;
+	mutable cSignal<void()> preferencesClicked;
 
-	mutable cSignal<void ()> nextClicked;
-	mutable cSignal<void ()> prevClicked;
-	mutable cSignal<void ()> doneClicked;
+	mutable cSignal<void()> nextClicked;
+	mutable cSignal<void()> prevClicked;
+	mutable cSignal<void()> doneClicked;
 
 	mutable cSignal<void (const cUnit&, const std::string&)> triggeredRenameUnit;
 
 	void setActiveUnit (const cUnit* unit);
-	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData);
+	void setUnitsData (std::shared_ptr<const cUnitsData>);
 
 	bool isAt (const cPosition& position) const override;
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;

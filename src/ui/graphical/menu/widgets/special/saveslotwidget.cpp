@@ -67,20 +67,20 @@ void cSaveSlotWidget::setRenameable (bool renameable_)
 }
 
 //------------------------------------------------------------------------------
-void cSaveSlotWidget::setSaveData(const cSaveGameInfo& saveFile)
+void cSaveSlotWidget::setSaveData (const cSaveGameInfo& saveFile)
 {
-	numberLabel->setText(std::to_string(saveFile.number));
-	timeLabel->setText(saveFile.date);
+	numberLabel->setText (std::to_string (saveFile.number));
+	timeLabel->setText (saveFile.date);
 	switch (saveFile.type)
 	{
 		case GAME_TYPE_HOTSEAT:
-			typeLabel->setText("HOT");
+			typeLabel->setText ("HOT");
 			break;
 		case GAME_TYPE_SINGLE:
-			typeLabel->setText("IND");
+			typeLabel->setText ("IND");
 			break;
 		case GAME_TYPE_TCPIP:
-			typeLabel->setText("NET");
+			typeLabel->setText ("NET");
 			break;
 	}
 	nameLineEdit->setText (saveFile.gameName);

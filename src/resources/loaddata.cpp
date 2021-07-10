@@ -280,7 +280,7 @@ static int LoadGraphics (const char* path)
 	Video.resolutionChanged.connect (&createShadowGfx);
 
 	GraphicsData.gfx_tmp = AutoSurface (SDL_CreateRGBSurface (0, 128, 128, Video.getColDepth(), 0, 0, 0, 0));
-	SDL_SetSurfaceBlendMode(GraphicsData.gfx_tmp.get(), SDL_BLENDMODE_BLEND);
+	SDL_SetSurfaceBlendMode (GraphicsData.gfx_tmp.get(), SDL_BLENDMODE_BLEND);
 	SDL_SetColorKey (GraphicsData.gfx_tmp.get(), SDL_TRUE, 0xFF00FF);
 
 	// Glas:
@@ -299,19 +299,19 @@ static int LoadGraphics (const char* path)
 }
 
 //------------------------------------------------------------------------------
-static void Split(const std::string& s, const char* seps, std::vector<std::string>& words)
+static void Split (const std::string& s, const char* seps, std::vector<std::string>& words)
 {
 	if (s.empty()) return;
 	size_t beg = 0;
-	size_t end = s.find_first_of(seps, beg);
+	size_t end = s.find_first_of (seps, beg);
 
 	while (end != std::string::npos)
 	{
-		words.push_back(s.substr(beg, end - beg));
+		words.push_back (s.substr (beg, end - beg));
 		beg = end + 1;
-		end = s.find_first_of(seps, beg);
+		end = s.find_first_of (seps, beg);
 	}
-	words.push_back(s.substr(beg));
+	words.push_back (s.substr (beg));
 }
 
 /**
@@ -355,7 +355,7 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	}
 
 	staticData.ID = id;
-	dynamicData.setId(id);
+	dynamicData.setId (id);
 	// check whether the read id is the same as the one from vehicles.xml or buildins.xml
 	if (iID != atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()))
 	{
@@ -373,11 +373,11 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	//read description
 	if (XMLElement* const XMLElement = XmlGetFirstElement (unitDataXml, "Unit", {"Description"}))
 	{
-		std::string description(XMLElement->GetText());
+		std::string description (XMLElement->GetText());
 		size_t pos;
-		while ((pos = description.find("\\n")) != std::string::npos)
+		while ((pos = description.find ("\\n")) != std::string::npos)
 		{
-			description.replace(pos, 2, "\n");
+			description.replace (pos, 2, "\n");
 		}
 		staticData.setDefaultDescription (description);
 	}
@@ -385,94 +385,94 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	// Weapon
 	std::string muzzleType = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Weapon", "Muzzle_Type"});
 	if (muzzleType.compare ("Big") == 0) staticData.muzzleType = eMuzzleType::Big;
-	else if (muzzleType.compare("Rocket") == 0) staticData.muzzleType = eMuzzleType::Rocket;
-	else if (muzzleType.compare("Small") == 0) staticData.muzzleType = eMuzzleType::Small;
-	else if (muzzleType.compare("Med") == 0) staticData.muzzleType = eMuzzleType::Med;
-	else if (muzzleType.compare("Med_Long") == 0) staticData.muzzleType = eMuzzleType::MedLong;
-	else if (muzzleType.compare("Rocket_Cluster") == 0) staticData.muzzleType = eMuzzleType::RocketCluster;
-	else if (muzzleType.compare("Torpedo") == 0) staticData.muzzleType = eMuzzleType::Torpedo;
-	else if (muzzleType.compare("Sniper") == 0) staticData.muzzleType = eMuzzleType::Sniper;
+	else if (muzzleType.compare ("Rocket") == 0) staticData.muzzleType = eMuzzleType::Rocket;
+	else if (muzzleType.compare ("Small") == 0) staticData.muzzleType = eMuzzleType::Small;
+	else if (muzzleType.compare ("Med") == 0) staticData.muzzleType = eMuzzleType::Med;
+	else if (muzzleType.compare ("Med_Long") == 0) staticData.muzzleType = eMuzzleType::MedLong;
+	else if (muzzleType.compare ("Rocket_Cluster") == 0) staticData.muzzleType = eMuzzleType::RocketCluster;
+	else if (muzzleType.compare ("Torpedo") == 0) staticData.muzzleType = eMuzzleType::Torpedo;
+	else if (muzzleType.compare ("Sniper") == 0) staticData.muzzleType = eMuzzleType::Sniper;
 	else staticData.muzzleType = eMuzzleType::None;
 
-	dynamicData.setAmmoMax(getXMLAttributeInt(unitDataXml, "Unit", {"Weapon", "Ammo_Quantity"}));
-	dynamicData.setShotsMax(getXMLAttributeInt(unitDataXml, "Unit", {"Weapon", "Shots"}));
-	dynamicData.setRange(getXMLAttributeInt(unitDataXml, "Unit", {"Weapon", "Range"}));
-	dynamicData.setDamage(getXMLAttributeInt(unitDataXml, "Unit", {"Weapon", "Damage"}));
-	staticData.canAttack = getXMLAttributeInt(unitDataXml, "Unit", {"Weapon", "Can_Attack"});
+	dynamicData.setAmmoMax (getXMLAttributeInt (unitDataXml, "Unit", {"Weapon", "Ammo_Quantity"}));
+	dynamicData.setShotsMax (getXMLAttributeInt (unitDataXml, "Unit", {"Weapon", "Shots"}));
+	dynamicData.setRange (getXMLAttributeInt (unitDataXml, "Unit", {"Weapon", "Range"}));
+	dynamicData.setDamage (getXMLAttributeInt (unitDataXml, "Unit", {"Weapon", "Damage"}));
+	staticData.canAttack = getXMLAttributeInt (unitDataXml, "Unit", {"Weapon", "Can_Attack"});
 
 	// TODO: make the code differ between attacking sea units and land units.
 	// until this is done being able to attack sea units means being able to attack ground units.
 	if (staticData.canAttack & TERRAIN_SEA) staticData.canAttack |= TERRAIN_GROUND;
 
-	staticData.vehicleData.canDriveAndFire = getXMLAttributeBool(unitDataXml, "Unit", {"Weapon", "Can_Drive_And_Fire"});
+	staticData.vehicleData.canDriveAndFire = getXMLAttributeBool (unitDataXml, "Unit", {"Weapon", "Can_Drive_And_Fire"});
 
 	// Production
-	dynamicData.setBuildCost(getXMLAttributeInt (unitDataXml, "Unit", {"Production", "Built_Costs"}));
+	dynamicData.setBuildCost (getXMLAttributeInt (unitDataXml, "Unit", {"Production", "Built_Costs"}));
 
 	staticData.canBuild = getXMLAttributeString (unitDataXml, "String", "Unit", {"Production", "Can_Build"});
-	staticData.buildAs = getXMLAttributeString(unitDataXml, "String", "Unit", {"Production", "Build_As"});
+	staticData.buildAs = getXMLAttributeString (unitDataXml, "String", "Unit", {"Production", "Build_As"});
 
-	staticData.buildingData.maxBuildFactor = getXMLAttributeInt(unitDataXml, "Unit", {"Production", "Max_Build_Factor"});
+	staticData.buildingData.maxBuildFactor = getXMLAttributeInt (unitDataXml, "Unit", {"Production", "Max_Build_Factor"});
 
-	staticData.vehicleData.canBuildPath = getXMLAttributeBool(unitDataXml, "Unit", {"Production", "Can_Build_Path"});
-	//staticData.canBuildRepeat = getXMLAttributeBool(unitDataXml, "Unit", {"Production", "Can_Build_Repeat"});
+	staticData.vehicleData.canBuildPath = getXMLAttributeBool (unitDataXml, "Unit", {"Production", "Can_Build_Path"});
+	//staticData.canBuildRepeat = getXMLAttributeBool (unitDataXml, "Unit", {"Production", "Can_Build_Repeat"});
 
 	// Movement
 	dynamicData.setSpeedMax (getXMLAttributeInt (unitDataXml, "Unit", {"Movement", "Movement_Sum"}) * 4);
 
 	staticData.factorGround = getXMLAttributeFloat (unitDataXml, "Unit", {"Movement", "Factor_Ground"});
-	staticData.factorSea = getXMLAttributeFloat(unitDataXml, "Unit", {"Movement", "Factor_Sea"});
-	staticData.factorAir = getXMLAttributeFloat(unitDataXml, "Unit", {"Movement", "Factor_Air"});
-	staticData.factorCoast = getXMLAttributeFloat(unitDataXml, "Unit", {"Movement", "Factor_Coast"});
+	staticData.factorSea = getXMLAttributeFloat (unitDataXml, "Unit", {"Movement", "Factor_Sea"});
+	staticData.factorAir = getXMLAttributeFloat (unitDataXml, "Unit", {"Movement", "Factor_Air"});
+	staticData.factorCoast = getXMLAttributeFloat (unitDataXml, "Unit", {"Movement", "Factor_Coast"});
 
 	if (staticData.ID.isAVehicle() && staticData.factorGround == 0 && staticData.factorSea == 0 && staticData.factorAir == 0 && staticData.factorCoast == 0)
 	{
 		Log.write ("Unit cannot move", cLog::eLOG_TYPE_WARNING);
 	}
 	// Abilities
-	staticData.buildingData.isBig = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Is_Big"});
-	staticData.buildingData.connectsToBase = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Connects_To_Base"});
-	dynamicData.setArmor(getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Armor"}));
-	dynamicData.setHitpointsMax(getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Hitpoints"}));
-	dynamicData.setScan(getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Scan_Range"}));
+	staticData.buildingData.isBig = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Is_Big"});
+	staticData.buildingData.connectsToBase = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Connects_To_Base"});
+	dynamicData.setArmor (getXMLAttributeInt (unitDataXml, "Unit", {"Abilities", "Armor"}));
+	dynamicData.setHitpointsMax (getXMLAttributeInt (unitDataXml, "Unit", {"Abilities", "Hitpoints"}));
+	dynamicData.setScan (getXMLAttributeInt (unitDataXml, "Unit", {"Abilities", "Scan_Range"}));
 	staticData.buildingData.modifiesSpeed = getXMLAttributeFloat (unitDataXml, "Unit", {"Abilities", "Modifies_Speed"});
-	staticData.vehicleData.canClearArea = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Clear_Area"});
-	staticData.canBeCaptured = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Be_Captured"});
-	staticData.canBeDisabled = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Be_Disabled"});
-	staticData.vehicleData.canCapture = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Capture"});
-	staticData.vehicleData.canDisable = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Disable"});
-	staticData.canRepair = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Repair"});
-	staticData.canRearm = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Rearm"});
-	staticData.buildingData.canResearch = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Research"});
-	staticData.vehicleData.canPlaceMines = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Place_Mines"});
-	staticData.vehicleData.canSurvey = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Survey"});
-	staticData.doesSelfRepair = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Does_Self_Repair"});
-	staticData.isAlien = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Is_Alien"});
-	staticData.buildingData.convertsGold = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Converts_Gold"});
-	staticData.buildingData.canSelfDestroy = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Self_Destroy"});
-	staticData.buildingData.canScore = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Can_Score"});
+	staticData.vehicleData.canClearArea = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Can_Clear_Area"});
+	staticData.canBeCaptured = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Can_Be_Captured"});
+	staticData.canBeDisabled = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Can_Be_Disabled"});
+	staticData.vehicleData.canCapture = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Can_Capture"});
+	staticData.vehicleData.canDisable = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Can_Disable"});
+	staticData.canRepair = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Can_Repair"});
+	staticData.canRearm = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Can_Rearm"});
+	staticData.buildingData.canResearch = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Can_Research"});
+	staticData.vehicleData.canPlaceMines = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Can_Place_Mines"});
+	staticData.vehicleData.canSurvey = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Can_Survey"});
+	staticData.doesSelfRepair = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Does_Self_Repair"});
+	staticData.isAlien = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Is_Alien"});
+	staticData.buildingData.convertsGold = getXMLAttributeInt (unitDataXml, "Unit", {"Abilities", "Converts_Gold"});
+	staticData.buildingData.canSelfDestroy = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Can_Self_Destroy"});
+	staticData.buildingData.canScore = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Can_Score"});
 
-	staticData.buildingData.canMineMaxRes = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Can_Mine_Max_Resource"});
+	staticData.buildingData.canMineMaxRes = getXMLAttributeInt (unitDataXml, "Unit", {"Abilities", "Can_Mine_Max_Resource"});
 
-	staticData.needsMetal = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Needs_Metal"});
-	staticData.needsOil = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Needs_Oil"});
-	staticData.needsEnergy = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Needs_Energy"});
-	staticData.needsHumans = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Needs_Humans"});
+	staticData.needsMetal = getXMLAttributeInt (unitDataXml, "Unit", {"Abilities", "Needs_Metal"});
+	staticData.needsOil = getXMLAttributeInt (unitDataXml, "Unit", {"Abilities", "Needs_Oil"});
+	staticData.needsEnergy = getXMLAttributeInt (unitDataXml, "Unit", {"Abilities", "Needs_Energy"});
+	staticData.needsHumans = getXMLAttributeInt (unitDataXml, "Unit", {"Abilities", "Needs_Humans"});
 	if (staticData.needsEnergy < 0)
 	{
-		staticData.produceEnergy = abs(staticData.needsEnergy);
+		staticData.produceEnergy = abs (staticData.needsEnergy);
 		staticData.needsEnergy = 0;
 	}
 	else staticData.produceEnergy = 0;
 	if (staticData.needsHumans < 0)
 	{
-		staticData.produceHumans = abs(staticData.needsHumans);
+		staticData.produceHumans = abs (staticData.needsHumans);
 		staticData.needsHumans = 0;
 	}
 	else staticData.produceHumans = 0;
 
-	staticData.isStealthOn = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Is_Stealth_On"});
-	staticData.canDetectStealthOn = getXMLAttributeInt(unitDataXml, "Unit", {"Abilities", "Can_Detect_Stealth_On"});
+	staticData.isStealthOn = getXMLAttributeInt (unitDataXml, "Unit", {"Abilities", "Is_Stealth_On"});
+	staticData.canDetectStealthOn = getXMLAttributeInt (unitDataXml, "Unit", {"Abilities", "Can_Detect_Stealth_On"});
 
 	std::string surfacePosString = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Abilities", "Surface_Position"});
 	if (surfacePosString.compare ("BeneathSea") == 0) staticData.surfacePosition = eSurfacePosition::BeneathSea;
@@ -488,32 +488,32 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	else staticData.canBeOverbuild = eOverbuildType::No;
 
 	staticData.buildingData.canBeLandedOn = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Can_Be_Landed_On"});
-	staticData.buildingData.canWork = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Is_Activatable"});
-	staticData.explodesOnContact = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Explodes_On_Contact"});
-	staticData.vehicleData.isHuman = getXMLAttributeBool(unitDataXml, "Unit", {"Abilities", "Is_Human"});
+	staticData.buildingData.canWork = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Is_Activatable"});
+	staticData.explodesOnContact = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Explodes_On_Contact"});
+	staticData.vehicleData.isHuman = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Is_Human"});
 
 	// Storage
-	staticData.storageResMax = getXMLAttributeInt(unitDataXml, "Unit", {"Storage", "Capacity_Resources"});
+	staticData.storageResMax = getXMLAttributeInt (unitDataXml, "Unit", {"Storage", "Capacity_Resources"});
 
 	std::string storeResString = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Storage", "Capacity_Res_Type"});
-	if (storeResString.compare("Metal") == 0) staticData.storeResType = eResourceType::Metal;
-	else if (storeResString.compare("Oil") == 0) staticData.storeResType = eResourceType::Oil;
-	else if (storeResString.compare("Gold") == 0) staticData.storeResType = eResourceType::Gold;
+	if (storeResString.compare ("Metal") == 0) staticData.storeResType = eResourceType::Metal;
+	else if (storeResString.compare ("Oil") == 0) staticData.storeResType = eResourceType::Oil;
+	else if (storeResString.compare ("Gold") == 0) staticData.storeResType = eResourceType::Gold;
 	else staticData.storeResType = eResourceType::None;
 
-	staticData.storageUnitsMax = getXMLAttributeInt(unitDataXml, "Unit", {"Storage", "Capacity_Units"});
+	staticData.storageUnitsMax = getXMLAttributeInt (unitDataXml, "Unit", {"Storage", "Capacity_Units"});
 
 	std::string storeUnitImgString = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Storage", "Capacity_Units_Image_Type"});
-	if (storeUnitImgString.compare("Plane") == 0) staticData.storeUnitsImageType = eStorageUnitsImageType::Plane;
-	else if (storeUnitImgString.compare("Human") == 0) staticData.storeUnitsImageType = eStorageUnitsImageType::Human;
-	else if (storeUnitImgString.compare("Tank") == 0) staticData.storeUnitsImageType = eStorageUnitsImageType::Tank;
-	else if (storeUnitImgString.compare("Ship") == 0) staticData.storeUnitsImageType = eStorageUnitsImageType::Ship;
+	if (storeUnitImgString.compare ("Plane") == 0) staticData.storeUnitsImageType = eStorageUnitsImageType::Plane;
+	else if (storeUnitImgString.compare ("Human") == 0) staticData.storeUnitsImageType = eStorageUnitsImageType::Human;
+	else if (storeUnitImgString.compare ("Tank") == 0) staticData.storeUnitsImageType = eStorageUnitsImageType::Tank;
+	else if (storeUnitImgString.compare ("Ship") == 0) staticData.storeUnitsImageType = eStorageUnitsImageType::Ship;
 	else staticData.storeUnitsImageType = eStorageUnitsImageType::Tank;
 
 	std::string storeUnitsString = getXMLAttributeString (unitDataXml, "String", "Unit", {"Storage", "Capacity_Units_Type"});
-	Split(storeUnitsString, "+", staticData.storeUnitsTypes);
+	Split (storeUnitsString, "+", staticData.storeUnitsTypes);
 
-	staticData.vehicleData.isStorageType = getXMLAttributeString(unitDataXml, "String", "Unit", {"Storage", "Is_Storage_Type"});
+	staticData.vehicleData.isStorageType = getXMLAttributeString (unitDataXml, "String", "Unit", {"Storage", "Is_Storage_Type"});
 
 	// finish
 	Log.write ("Unitdata read", cLog::eLOG_TYPE_DEBUG);
@@ -606,23 +606,23 @@ static void LoadUnitGraphicProperties (sBuildingUIData& data, char const* direct
 
 	std::string path = directory;
 	path += "graphics.xml";
-	if (!FileExists(path.c_str())) return;
+	if (!FileExists (path.c_str())) return;
 
-	if (unitGraphicsXml.LoadFile(path.c_str()) != XML_NO_ERROR)
+	if (unitGraphicsXml.LoadFile (path.c_str()) != XML_NO_ERROR)
 	{
-		Log.write("Can't load " + path, cLog::eLOG_TYPE_WARNING);
+		Log.write ("Can't load " + path, cLog::eLOG_TYPE_WARNING);
 		return;
 	}
 
-	data.hasClanLogos = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Clan_Logos"});
-	data.hasDamageEffect = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Damage_Effect"});
-	data.hasBetonUnderground = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Beton_Underground"});
-	data.hasPlayerColor = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Player_Color"});
-	data.hasOverlay = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Overlay"});
+	data.hasClanLogos = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Clan_Logos"});
+	data.hasDamageEffect = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Damage_Effect"});
+	data.hasBetonUnderground = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Beton_Underground"});
+	data.hasPlayerColor = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Player_Color"});
+	data.hasOverlay = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Overlay"});
 
-	data.buildUpGraphic = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Build_Up"});
-	data.powerOnGraphic = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Power_On"});
-	data.isAnimated = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Is_Animated"});
+	data.buildUpGraphic = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Animations", "Build_Up"});
+	data.powerOnGraphic = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Animations", "Power_On"});
+	data.isAnimated = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Animations", "Is_Animated"});
 }
 
 /**
@@ -716,12 +716,12 @@ static int LoadBuildings()
 		UnitsUiData.buildingUIs.emplace_back();
 		sBuildingUIData& ui = UnitsUiData.buildingUIs.back();
 		ui.id = staticData.ID;
-		LoadUnitGraphicProperties(ui, sBuildingPath.c_str());
+		LoadUnitGraphicProperties (ui, sBuildingPath.c_str());
 
 		if (DEDICATED_SERVER)
 		{
-			UnitsDataGlobal.addData(staticData);
-			UnitsDataGlobal.addData(dynamicData);
+			UnitsDataGlobal.addData (staticData);
+			UnitsDataGlobal.addData (dynamicData);
 			continue;
 		}
 
@@ -796,13 +796,13 @@ static int LoadBuildings()
 			SDL_SetColorKey (UnitsUiData.ptr_connector, SDL_TRUE, 0xFF00FF);
 			UnitsUiData.ptr_connector_shw = ui.shw.get();
 			UnitsUiData.ptr_connector_shw_org = ui.shw_org.get();
-			SDL_SetColorKey(UnitsUiData.ptr_connector_shw, SDL_TRUE, 0xFF00FF);
+			SDL_SetColorKey (UnitsUiData.ptr_connector_shw, SDL_TRUE, 0xFF00FF);
 		}
 		else if (staticData.ID == UnitsDataGlobal.getSpecialIDSmallBeton())
 		{
 			UnitsUiData.ptr_small_beton = ui.img.get();
 			UnitsUiData.ptr_small_beton_org = ui.img_org.get();
-			SDL_SetColorKey(UnitsUiData.ptr_small_beton, SDL_TRUE, 0xFF00FF);
+			SDL_SetColorKey (UnitsUiData.ptr_small_beton, SDL_TRUE, 0xFF00FF);
 		}
 
 		// Check if there is more than one frame
@@ -810,8 +810,8 @@ static int LoadBuildings()
 		if (ui.img_org->w > 129 && !ui.isConnectorGraphic && !ui.hasClanLogos) ui.hasFrames = ui.img_org->w / ui.img_org->h;
 		else ui.hasFrames = 0;
 
-		UnitsDataGlobal.addData(staticData);
-		UnitsDataGlobal.addData(dynamicData);
+		UnitsDataGlobal.addData (staticData);
+		UnitsDataGlobal.addData (dynamicData);
 	}
 
 	// Dirtsurfaces
@@ -819,15 +819,15 @@ static int LoadBuildings()
 	{
 		LoadGraphicToSurface (UnitsUiData.rubbleBig->img_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big.pcx");
 		UnitsUiData.rubbleBig->img = CloneSDLSurface (*UnitsUiData.rubbleBig->img_org);
-		LoadGraphicToSurface(UnitsUiData.rubbleBig->shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big_shw.pcx");
-		UnitsUiData.rubbleBig->shw = CloneSDLSurface(*UnitsUiData.rubbleBig->shw_org);
-		if (UnitsUiData.rubbleBig->shw != nullptr) SDL_SetSurfaceAlphaMod(UnitsUiData.rubbleBig->shw.get(), 50);
+		LoadGraphicToSurface (UnitsUiData.rubbleBig->shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big_shw.pcx");
+		UnitsUiData.rubbleBig->shw = CloneSDLSurface (*UnitsUiData.rubbleBig->shw_org);
+		if (UnitsUiData.rubbleBig->shw != nullptr) SDL_SetSurfaceAlphaMod (UnitsUiData.rubbleBig->shw.get(), 50);
 
-		LoadGraphicToSurface(UnitsUiData.rubbleSmall->img_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small.pcx");
-		UnitsUiData.rubbleSmall->img = CloneSDLSurface(*UnitsUiData.rubbleSmall->img_org);
-		LoadGraphicToSurface(UnitsUiData.rubbleSmall->shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small_shw.pcx");
-		UnitsUiData.rubbleSmall->shw = CloneSDLSurface(*UnitsUiData.rubbleSmall->shw_org);
-		if (UnitsUiData.rubbleSmall->shw != nullptr) SDL_SetSurfaceAlphaMod(UnitsUiData.rubbleSmall->shw.get(), 50);
+		LoadGraphicToSurface (UnitsUiData.rubbleSmall->img_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small.pcx");
+		UnitsUiData.rubbleSmall->img = CloneSDLSurface (*UnitsUiData.rubbleSmall->img_org);
+		LoadGraphicToSurface (UnitsUiData.rubbleSmall->shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small_shw.pcx");
+		UnitsUiData.rubbleSmall->shw = CloneSDLSurface (*UnitsUiData.rubbleSmall->shw_org);
+		if (UnitsUiData.rubbleSmall->shw != nullptr) SDL_SetSurfaceAlphaMod (UnitsUiData.rubbleSmall->shw.get(), 50);
 	}
 	return 1;
 }
@@ -839,24 +839,24 @@ static void LoadUnitGraphicProperties (cStaticUnitData& staticData,  sVehicleUID
 
 	std::string path = directory;
 	path += "graphics.xml";
-	if (!FileExists(path.c_str())) return;
+	if (!FileExists (path.c_str())) return;
 
-	if (unitGraphicsXml.LoadFile(path.c_str()) != XML_NO_ERROR)
+	if (unitGraphicsXml.LoadFile (path.c_str()) != XML_NO_ERROR)
 	{
-		Log.write("Can't load " + path, cLog::eLOG_TYPE_WARNING);
+		Log.write ("Can't load " + path, cLog::eLOG_TYPE_WARNING);
 		return;
 	}
 
-	staticData.vehicleData.hasCorpse = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Corpse"});
-	data.hasDamageEffect = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Damage_Effect"});
-	data.hasPlayerColor = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Player_Color"});
-	data.hasOverlay = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Has_Overlay"});
+	staticData.vehicleData.hasCorpse = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Corpse"});
+	data.hasDamageEffect = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Damage_Effect"});
+	data.hasPlayerColor = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Player_Color"});
+	data.hasOverlay = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Overlay"});
 
-	data.buildUpGraphic = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Build_Up"});
-	staticData.vehicleData.animationMovement = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Movement"});
-	data.powerOnGraphic = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Power_On"});
-	data.isAnimated = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Is_Animated"});
-	staticData.vehicleData.makeTracks = getXMLAttributeBool(unitGraphicsXml, "Unit", {"Graphic", "Animations", "Makes_Tracks"});
+	data.buildUpGraphic = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Animations", "Build_Up"});
+	staticData.vehicleData.animationMovement = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Animations", "Movement"});
+	data.powerOnGraphic = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Animations", "Power_On"});
+	data.isAnimated = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Animations", "Is_Animated"});
+	staticData.vehicleData.makeTracks = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Animations", "Makes_Tracks"});
 }
 
 /**
@@ -926,12 +926,12 @@ static int LoadVehicles()
 		sVehicleUIData& ui = UnitsUiData.vehicleUIs.back();
 		ui.id = staticData.ID;
 		// load graphics.xml
-		LoadUnitGraphicProperties(staticData, ui, sVehiclePath.c_str());
+		LoadUnitGraphicProperties (staticData, ui, sVehiclePath.c_str());
 
 		if (DEDICATED_SERVER)
 		{
-			UnitsDataGlobal.addData(staticData);
-			UnitsDataGlobal.addData(dynamicData);
+			UnitsDataGlobal.addData (staticData);
+			UnitsDataGlobal.addData (dynamicData);
 			continue;
 		}
 
@@ -1234,8 +1234,8 @@ static int LoadVehicles()
 		LoadUnitSoundfile (ui.DriveWater, sVehiclePath.c_str(), "drive_water.ogg");
 		LoadUnitSoundfile (ui.Attack,     sVehiclePath.c_str(), "attack.ogg");
 
-		UnitsDataGlobal.addData(staticData);
-		UnitsDataGlobal.addData(dynamicData);
+		UnitsDataGlobal.addData (staticData);
+		UnitsDataGlobal.addData (dynamicData);
 	}
 
 	UnitsDataGlobal.initializeIDData();
@@ -1305,7 +1305,7 @@ static int LoadClans()
 			}
 		}
 	}
-	UnitsDataGlobal.initializeClanUnitData(ClanDataGlobal);
+	UnitsDataGlobal.initializeClanUnitData (ClanDataGlobal);
 
 	return 1;
 }

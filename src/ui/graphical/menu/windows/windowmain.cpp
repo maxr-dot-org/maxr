@@ -81,7 +81,7 @@ SDL_Surface* cWindowMain::getRandomInfoImage()
 		// and a 66% chance to show a vehicle on 0 or 2
 		do
 		{
-			unitShow = random(UnitsUiData.vehicleUIs.size() - 1);
+			unitShow = random (UnitsUiData.vehicleUIs.size() - 1);
 			// make sure we don't show same unit twice
 		}
 		while (unitShow == lastUnitShow && UnitsUiData.vehicleUIs.size() > 1);

@@ -21,28 +21,28 @@
 
 #include "game/data/model.h"
 
-cActionChangeBuildList::cActionChangeBuildList(const cBuilding& building, const std::vector<sID>& buildList, int buildSpeed, bool repeat) :
-	buildingId(building.getId()),
-	buildList(buildList),
-	buildSpeed(buildSpeed),
-	repeat(repeat)
+cActionChangeBuildList::cActionChangeBuildList (const cBuilding& building, const std::vector<sID>& buildList, int buildSpeed, bool repeat) :
+	buildingId (building.getId()),
+	buildList (buildList),
+	buildSpeed (buildSpeed),
+	repeat (repeat)
 {}
 
 
 //------------------------------------------------------------------------------
-cActionChangeBuildList::cActionChangeBuildList(cBinaryArchiveOut& archive)
+cActionChangeBuildList::cActionChangeBuildList (cBinaryArchiveOut& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionChangeBuildList::execute(cModel& model) const
+void cActionChangeBuildList::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
 	cMap& map = *model.getMap();
 
-	cBuilding* building = model.getBuildingFromID(buildingId);
+	cBuilding* building = model.getBuildingFromID (buildingId);
 	if (building == nullptr || !building->getOwner()) return;
 	if (building->getOwner()->getId() != playerNr) return;
 
@@ -65,9 +65,9 @@ void cActionChangeBuildList::execute(cModel& model) const
 			if (i == 5 || i == 7) x += 3;
 			else x++;
 		}
-		if (map.isValidPosition(cPosition(x, y)) == false) continue;
+		if (map.isValidPosition (cPosition (x, y)) == false) continue;
 
-		const auto& buildings = map.getField(cPosition(x, y)).getBuildings();
+		const auto& buildings = map.getField (cPosition (x, y)).getBuildings();
 		auto b_it = buildings.begin();
 		auto b_end = buildings.end();
 		while (b_it != b_end && ((*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::Above || (*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase))
@@ -75,17 +75,17 @@ void cActionChangeBuildList::execute(cModel& model) const
 			++b_it;
 		}
 
-		if (!map.isWaterOrCoast(cPosition(x, y)) || (b_it != b_end && (*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::Base))
+		if (!map.isWaterOrCoast (cPosition (x, y)) || (b_it != b_end && (*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::Base))
 		{
 			land = true;
 		}
-		else if (map.isWaterOrCoast(cPosition(x, y)) && b_it != b_end && (*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea)
+		else if (map.isWaterOrCoast (cPosition (x, y)) && b_it != b_end && (*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea)
 		{
 			land = true;
 			water = true;
 			break;
 		}
-		else if (map.isWaterOrCoast(cPosition(x, y)))
+		else if (map.isWaterOrCoast (cPosition (x, y)))
 		{
 			water = true;
 		}
@@ -94,56 +94,55 @@ void cActionChangeBuildList::execute(cModel& model) const
 	// reset building status
 	if (building->isUnitWorking())
 	{
-		building->stopWork(false);
+		building->stopWork (false);
 	}
 
-	if (buildSpeed == 0) building->setMetalPerRound(1  * building->getStaticUnitData().needsMetal);
-	if (buildSpeed == 1) building->setMetalPerRound(4  * building->getStaticUnitData().needsMetal);
-	if (buildSpeed == 2) building->setMetalPerRound(12 * building->getStaticUnitData().needsMetal);
+	if (buildSpeed == 0) building->setMetalPerRound (1  * building->getStaticUnitData().needsMetal);
+	if (buildSpeed == 1) building->setMetalPerRound (4  * building->getStaticUnitData().needsMetal);
+	if (buildSpeed == 2) building->setMetalPerRound (12 * building->getStaticUnitData().needsMetal);
 
 	// if the first unit hasn't changed remember the build progress
 	int remainingMetal = -1;
-	if (!building->isBuildListEmpty() && !buildList.empty() && buildList[0] == building->getBuildListItem(0).getType())
+	if (!building->isBuildListEmpty() && !buildList.empty() && buildList[0] == building->getBuildListItem (0).getType())
 	{
-		remainingMetal = building->getBuildListItem(0).getRemainingMetal();
+		remainingMetal = building->getBuildListItem (0).getRemainingMetal();
 	}
 
 	std::vector<cBuildListItem> newBuildList;
 	for (const auto& id : buildList)
 	{
-		if (!model.getUnitsData()->isValidId(id)) continue;
+		if (!model.getUnitsData()->isValidId (id)) continue;
 
 
 		// check whether the building can build this unit
-		if (model.getUnitsData()->getStaticUnitData(id).factorSea > 0 && model.getUnitsData()->getStaticUnitData(id).factorGround == 0 && !water)
+		if (model.getUnitsData()->getStaticUnitData (id).factorSea > 0 && model.getUnitsData()->getStaticUnitData (id).factorGround == 0 && !water)
 			continue;
-		else if (model.getUnitsData()->getStaticUnitData(id).factorGround > 0 && model.getUnitsData()->getStaticUnitData(id).factorSea == 0 && !land)
-			continue;
-
-		if (building->getStaticUnitData().canBuild != model.getUnitsData()->getStaticUnitData(id).buildAs)
+		else if (model.getUnitsData()->getStaticUnitData (id).factorGround > 0 && model.getUnitsData()->getStaticUnitData (id).factorSea == 0 && !land)
 			continue;
 
-		cBuildListItem BuildListItem(id, -1);
+		if (building->getStaticUnitData().canBuild != model.getUnitsData()->getStaticUnitData (id).buildAs)
+			continue;
 
-		newBuildList.push_back(BuildListItem);
+		cBuildListItem BuildListItem (id, -1);
+
+		newBuildList.push_back (BuildListItem);
 	}
 
-	building->setBuildList(std::move(newBuildList));
+	building->setBuildList (std::move (newBuildList));
 
 	if (!building->isBuildListEmpty())
 	{
-			std::array<int, 3> turboBuildRounds;
-			std::array<int, 3> turboBuildCosts;
-			int cost = building->getOwner()->getUnitDataCurrentVersion(building->getBuildListItem(0).getType())->getBuildCost();
-			building->calcTurboBuild(turboBuildRounds, turboBuildCosts, cost, remainingMetal);
-			building->getBuildListItem(0).setRemainingMetal(turboBuildCosts[buildSpeed]);
+		std::array<int, 3> turboBuildRounds;
+		std::array<int, 3> turboBuildCosts;
+		int cost = building->getOwner()->getUnitDataCurrentVersion (building->getBuildListItem (0).getType())->getBuildCost();
+		building->calcTurboBuild (turboBuildRounds, turboBuildCosts, cost, remainingMetal);
+		building->getBuildListItem (0).setRemainingMetal (turboBuildCosts[buildSpeed]);
 
-
-		if (building->getBuildListItem(0).getRemainingMetal() > 0)
+		if (building->getBuildListItem (0).getRemainingMetal() > 0)
 		{
 			building->startWork();
 		}
 	}
-	building->setRepeatBuild(repeat);
-	building->setBuildSpeed(buildSpeed);
+	building->setRepeatBuild (repeat);
+	building->setBuildSpeed (buildSpeed);
 }

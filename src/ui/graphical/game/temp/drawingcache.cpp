@@ -38,29 +38,29 @@
 sDrawingCacheEntry::sDrawingCacheEntry()
 {}
 
-sDrawingCacheEntry::sDrawingCacheEntry(sDrawingCacheEntry&& other) :
-	BaseN(other.BaseN),
-	BaseBN(other.BaseBN),
-	BaseE(other.BaseE),
-	BaseBE(other.BaseBE),
-	BaseS(other.BaseS),
-	BaseBS(other.BaseBS),
-	BaseW(other.BaseW),
-	BaseBW(other.BaseBW),
-	clan(other.clan),
-	frame(other.frame),
-	flightHigh(other.flightHigh),
-	big(other.big),
-	isBuilding(other.isBuilding),
-	isClearing(other.isClearing),
-	stealth(other.stealth),
-	water(other.water),
-	id(other.id),
-	owner(other.owner),
-	dir(other.dir),
-	zoom(other.zoom),
-	lastUsed(other.lastUsed),
-	surface(std::move(other.surface))
+sDrawingCacheEntry::sDrawingCacheEntry (sDrawingCacheEntry&& other) :
+	BaseN (other.BaseN),
+	BaseBN (other.BaseBN),
+	BaseE (other.BaseE),
+	BaseBE (other.BaseBE),
+	BaseS (other.BaseS),
+	BaseBS (other.BaseBS),
+	BaseW (other.BaseW),
+	BaseBW (other.BaseBW),
+	clan (other.clan),
+	frame (other.frame),
+	flightHigh (other.flightHigh),
+	big (other.big),
+	isBuilding (other.isBuilding),
+	isClearing (other.isClearing),
+	stealth (other.stealth),
+	water (other.water),
+	id (other.id),
+	owner (other.owner),
+	dir (other.dir),
+	zoom (other.zoom),
+	lastUsed (other.lastUsed),
+	surface (std::move (other.surface))
 {}
 
 sDrawingCacheEntry& sDrawingCacheEntry::operator=(sDrawingCacheEntry&& other)
@@ -89,7 +89,7 @@ sDrawingCacheEntry& sDrawingCacheEntry::operator=(sDrawingCacheEntry&& other)
 	zoom = other.zoom;
 	lastUsed = other.lastUsed;
 
-	surface = std::move(other.surface);
+	surface = std::move (other.surface);
 
 	return *this;
 }

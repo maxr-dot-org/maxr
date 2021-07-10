@@ -28,12 +28,12 @@ public:
 	cFrame();
 	explicit cFrame (const cBox<cPosition>& area);
 
-	template<typename WidgetType>
+	template <typename WidgetType>
 	WidgetType* addChild (std::unique_ptr<WidgetType> child);
 };
 
 //------------------------------------------------------------------------------
-template<typename WidgetType>
+template <typename WidgetType>
 WidgetType* cFrame::addChild (std::unique_ptr<WidgetType> child)
 {
 	return cWidget::addChild (std::move (child));

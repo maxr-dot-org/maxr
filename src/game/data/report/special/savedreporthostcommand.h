@@ -27,14 +27,14 @@ class cSavedReportHostCommand : public cSavedReport
 public:
 	cSavedReportHostCommand (std::string command);
 	template <typename T, ENABLE_ARCHIVE_OUT>
-	explicit cSavedReportHostCommand(T& archive)
+	explicit cSavedReportHostCommand (T& archive)
 	{
-		serializeThis(archive);
+		serializeThis (archive);
 	}
 
-	void serialize(cBinaryArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
-	void serialize(cXmlArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cSavedReport::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
+	void serialize (cXmlArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
 
 	eSavedReportType getType() const override;
 
@@ -44,9 +44,9 @@ public:
 
 private:
 	template <typename T>
-	void serializeThis(T& archive)
+	void serializeThis (T& archive)
 	{
-		archive & NVP(command);
+		archive & NVP (command);
 	}
 
 	std::string command;

@@ -39,7 +39,7 @@ class cDataBuffer
 public:
 	cDataBuffer();
 
-	void reserve(uint32_t i);
+	void reserve (uint32_t i);
 	unsigned char* getWritePointer();
 	uint32_t getFreeSpace() const;
 	void deleteFront (uint32_t n);
@@ -53,7 +53,7 @@ public:
 class cSocket
 {
 public:
-	cSocket(TCPsocket socket);
+	cSocket (TCPsocket socket);
 
 	const TCPsocket sdlSocket;
 	cDataBuffer buffer;
@@ -66,18 +66,18 @@ public:
 	cNetwork (cConnectionManager&, std::recursive_mutex&);
 	~cNetwork();
 
-	int openServer(int port);
+	int openServer (int port);
 	void closeServer();
 	void connectToServer (const std::string& ip, int port);
 
-	void close(const cSocket* socket);
-	int sendMessage(const cSocket* socket, unsigned int length, const unsigned char* buffer);
+	void close (const cSocket* socket);
+	int sendMessage (const cSocket* socket, unsigned int length, const unsigned char* buffer);
 
 private:
 	void handleNetworkThread();
 
-	void pushReadyMessages(cSocket* socket);
-	int send(const cSocket* socket, const unsigned char* buffer, unsigned int length);
+	void pushReadyMessages (cSocket* socket);
+	int send (const cSocket* socket, const unsigned char* buffer, unsigned int length);
 
 	void updateSocketSet();
 	void cleanupClosedSockets();

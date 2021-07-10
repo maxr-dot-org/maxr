@@ -57,7 +57,7 @@ void cTurnTimeClockWidget::update()
 	}
 	const auto time = turnTimeClock->hasDeadline() ? turnTimeClock->getTimeTillFirstDeadline() : turnTimeClock->getTimeSinceStart();
 
-	textLabel->setText (to_MM_ss(time));
+	textLabel->setText (to_MM_ss (time));
 
 	if (turnTimeClock->hasDeadline() && std::chrono::duration_cast<std::chrono::seconds> (time) <= cTurnTimeClock::alertRemainingTime)
 	{

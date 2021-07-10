@@ -69,6 +69,6 @@ void cWindowLoadSave::handleSaveClicked()
 		auto saveFile = getSaveFile (saveNumber);
 		if (!saveFile) return;
 
-		save (saveNumber, cSavegame::getFileName(saveNumber));
+		save (saveNumber, cSavegame::getFileName (saveNumber));
 	}
 }

@@ -67,11 +67,11 @@ cLanguage lngPack;
 namespace
 {
 	//--------------------------------------------------------------------------
-	sID generateID(const std::string& text)
+	sID generateID (const std::string& text)
 	{
-		const std::string::size_type spacePos = text.find(" ", 0);
-		auto firstPart = atoi(text.substr(0, spacePos).c_str());
-		auto secondPart = atoi(text.substr(spacePos, text.length()).c_str());
+		const std::string::size_type spacePos = text.find (" ", 0);
+		auto firstPart = atoi (text.substr (0, spacePos).c_str());
+		auto secondPart = atoi (text.substr (spacePos, text.length()).c_str());
 		return {firstPart, secondPart};
 	}
 }
@@ -291,15 +291,15 @@ std::vector<std::string> cLanguage::getAvailableLanguages() const
 	return languageCodes;
 }
 
-std::string cLanguage::getUnitName(const sID& id) const
+std::string cLanguage::getUnitName (const sID& id) const
 {
-	const XMLElement* xmlElement = m_XmlDoc.RootElement()->FirstChildElement("Units");
+	const XMLElement* xmlElement = m_XmlDoc.RootElement()->FirstChildElement ("Units");
 	if (xmlElement == nullptr) return "";
 
 	xmlElement = xmlElement->FirstChildElement();
 	while (xmlElement != nullptr)
 	{
-		const char* value = xmlElement->Attribute("ID");
+		const char* value = xmlElement->Attribute ("ID");
 		if (value == nullptr) continue;
 
 		sID elementID = generateID (value);
@@ -308,27 +308,27 @@ std::string cLanguage::getUnitName(const sID& id) const
 		{
 			const char* value;
 			if (cSettings::getInstance().getLanguage() != "ENG")
-				value = xmlElement->Attribute("localized");
+				value = xmlElement->Attribute ("localized");
 			else
-				value = xmlElement->Attribute("ENG");
+				value = xmlElement->Attribute ("ENG");
 			if (value == nullptr) return "";
 
-			return std::string(value);
+			return std::string (value);
 		}
 		xmlElement = xmlElement->NextSiblingElement();
 	}
 	return "";
 }
 
-std::string cLanguage::getUnitDescription(const sID& id) const
+std::string cLanguage::getUnitDescription (const sID& id) const
 {
-	const XMLElement* xmlElement = m_XmlDoc.RootElement()->FirstChildElement("Units");
+	const XMLElement* xmlElement = m_XmlDoc.RootElement()->FirstChildElement ("Units");
 	if (xmlElement == nullptr) return "";
 
 	xmlElement = xmlElement->FirstChildElement();
 	while (xmlElement != nullptr)
 	{
-		const char* value = xmlElement->Attribute("ID");
+		const char* value = xmlElement->Attribute ("ID");
 		if (value == nullptr) continue;
 
 		sID elementID = generateID (value);
@@ -340,9 +340,9 @@ std::string cLanguage::getUnitDescription(const sID& id) const
 
 			std::string description = value;
 			size_t pos;
-			while ((pos = description.find("\\n")) != std::string::npos)
+			while ((pos = description.find ("\\n")) != std::string::npos)
 			{
-				description.replace(pos, 2, "\n");
+				description.replace (pos, 2, "\n");
 			}
 			return description;
 		}
@@ -351,32 +351,32 @@ std::string cLanguage::getUnitDescription(const sID& id) const
 	return "";
 }
 
-std::string cLanguage::getClanName(int num) const
+std::string cLanguage::getClanName (int num) const
 {
-	const XMLElement* xmlElement = m_XmlDoc.RootElement()->FirstChildElement("Clans");
+	const XMLElement* xmlElement = m_XmlDoc.RootElement()->FirstChildElement ("Clans");
 	if (!xmlElement)
 	{
-		Log.write("Can't find clan node in language file. Please report this to your translation team!", cLog::eLOG_TYPE_WARNING);
+		Log.write ("Can't find clan node in language file. Please report this to your translation team!", cLog::eLOG_TYPE_WARNING);
 		return "";
 	}
 
-	for (xmlElement = xmlElement->FirstChildElement("Clan"); xmlElement; xmlElement = xmlElement->NextSiblingElement("Clan"))
+	for (xmlElement = xmlElement->FirstChildElement ("Clan"); xmlElement; xmlElement = xmlElement->NextSiblingElement ("Clan"))
 	{
 		int id;
-		if (xmlElement->QueryIntAttribute("ID", &id) != XML_NO_ERROR) continue;
+		if (xmlElement->QueryIntAttribute ("ID", &id) != XML_NO_ERROR) continue;
 		if (id != num) continue;
 
 		if (cSettings::getInstance().getLanguage() != "ENG")
 		{
-			const char* name = xmlElement->Attribute("localized");
+			const char* name = xmlElement->Attribute ("localized");
 			if (!name) continue;
-			return std::string(name);
+			return std::string (name);
 		}
 		else
 		{
-			const char* name = xmlElement->Attribute("ENG");
+			const char* name = xmlElement->Attribute ("ENG");
 			if (!name) continue;
-			return std::string(name);
+			return std::string (name);
 		}
 	}
 
@@ -384,31 +384,31 @@ std::string cLanguage::getClanName(int num) const
 	return "";
 }
 
-std::string cLanguage::getClanDescription(int num) const
+std::string cLanguage::getClanDescription (int num) const
 {
-	const XMLElement* xmlElement = m_XmlDoc.RootElement()->FirstChildElement("Clans");
+	const XMLElement* xmlElement = m_XmlDoc.RootElement()->FirstChildElement ("Clans");
 	if (!xmlElement)
 	{
-		Log.write("Can't find clan node in language file. Please report this to your translation team!", cLog::eLOG_TYPE_WARNING);
+		Log.write ("Can't find clan node in language file. Please report this to your translation team!", cLog::eLOG_TYPE_WARNING);
 		return "";
 	}
 
-	for (xmlElement = xmlElement->FirstChildElement("Clan"); xmlElement; xmlElement = xmlElement->NextSiblingElement("Clan"))
+	for (xmlElement = xmlElement->FirstChildElement ("Clan"); xmlElement; xmlElement = xmlElement->NextSiblingElement ("Clan"))
 	{
 		int id;
-		if (xmlElement->QueryIntAttribute("ID", &id) != XML_NO_ERROR) continue;
+		if (xmlElement->QueryIntAttribute ("ID", &id) != XML_NO_ERROR) continue;
 		if (id != num) continue;
 
 		const char* description = xmlElement->GetText();
 		if (description != nullptr)
-			return std::string(description);
+			return std::string (description);
 	}
 
 	Log.write ("Can't find clan translation for clan " + std::to_string (num), cLog::eLOG_TYPE_WARNING);
 	return "";
 }
 
-int cLanguage::ReadSingleTranslation(const char* pszCurrent, ...)
+int cLanguage::ReadSingleTranslation (const char* pszCurrent, ...)
 {
 	va_list pvaArg;
 	va_start (pvaArg, pszCurrent);

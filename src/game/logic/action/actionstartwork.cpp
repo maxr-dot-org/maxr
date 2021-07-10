@@ -23,22 +23,22 @@
 #include "utility/log.h"
 
 //------------------------------------------------------------------------------
-cActionStartWork::cActionStartWork(const cUnit& unit) :
-	unitId(unit.getId())
+cActionStartWork::cActionStartWork (const cUnit& unit) :
+	unitId (unit.getId())
 {}
 
 //------------------------------------------------------------------------------
-cActionStartWork::cActionStartWork(cBinaryArchiveOut& archive)
+cActionStartWork::cActionStartWork (cBinaryArchiveOut& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionStartWork::execute(cModel& model) const
+void cActionStartWork::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	cBuilding* b = model.getBuildingFromID(unitId);
+	cBuilding* b = model.getBuildingFromID (unitId);
 	if (b == nullptr || !b->getOwner()) return;
 	if (b->getOwner()->getId() != playerNr) return;
 

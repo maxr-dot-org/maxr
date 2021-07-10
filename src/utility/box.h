@@ -28,14 +28,14 @@
  *
  * @tparam PointType The point type to be used in the box.
  */
-template<typename PointType>
+template <typename PointType>
 class cBox
 {
 public:
 	cBox();
 	cBox (const PointType& minCorner, const PointType& maxCorner);
 
-	void set(const PointType& minCorner, const PointType& maxCorner);
+	void set (const PointType& minCorner, const PointType& maxCorner);
 
 	PointType& getMinCorner();
 	PointType& getMaxCorner();
@@ -51,7 +51,7 @@ public:
 	* @param lower - additional size for 'lower' sides
 	* @param upper - additional size for 'upper' sides
 	*/
-	void expand(const PointType& lower, const PointType& upper);
+	void expand (const PointType& lower, const PointType& upper);
 	void add (const PointType& point);
 	void add (const cBox<PointType>& box);
 
@@ -91,55 +91,55 @@ private:
 };
 
 //------------------------------------------------------------------------------
-template<typename PointType>
+template <typename PointType>
 cBox<PointType>::cBox()
 {}
 
 //------------------------------------------------------------------------------
-template<typename PointType>
+template <typename PointType>
 cBox<PointType>::cBox (const PointType& minCorner_, const PointType& maxCorner_) :
 	minCorner (minCorner_),
 	maxCorner (maxCorner_)
 {}
 
 //------------------------------------------------------------------------------
-template<typename PointType>
-void cBox<PointType>::set(const PointType& minCorner_, const PointType& maxCorner_)
+template <typename PointType>
+void cBox<PointType>::set (const PointType& minCorner_, const PointType& maxCorner_)
 {
     minCorner = minCorner_;
     maxCorner = maxCorner_;
 }
 
 //------------------------------------------------------------------------------
-template<typename PointType>
+template <typename PointType>
 PointType& cBox<PointType>::getMinCorner()
 {
 	return minCorner;
 }
 
 //------------------------------------------------------------------------------
-template<typename PointType>
+template <typename PointType>
 PointType& cBox<PointType>::getMaxCorner()
 {
 	return maxCorner;
 }
 
 //------------------------------------------------------------------------------
-template<typename PointType>
+template <typename PointType>
 const PointType& cBox<PointType>::getMinCorner() const
 {
 	return minCorner;
 }
 
 //------------------------------------------------------------------------------
-template<typename PointType>
+template <typename PointType>
 const PointType& cBox<PointType>::getMaxCorner() const
 {
 	return maxCorner;
 }
 
 //------------------------------------------------------------------------------
-template<typename PointType>
+template <typename PointType>
 PointType cBox<PointType>::getSize() const
 {
 	auto diff = maxCorner - minCorner;
@@ -151,7 +151,7 @@ PointType cBox<PointType>::getSize() const
 }
 
 //------------------------------------------------------------------------------
-template<typename PointType>
+template <typename PointType>
 void cBox<PointType>::resize (const PointType& newSize)
 {
 	maxCorner = minCorner + newSize;
@@ -163,7 +163,7 @@ void cBox<PointType>::resize (const PointType& newSize)
 }
 
 //------------------------------------------------------------------------------
-template<typename PointType>
+template <typename PointType>
 void cBox<PointType>::add (const PointType& point)
 {
 	for (size_t d = 0; d < point.size(); ++d)
@@ -174,7 +174,7 @@ void cBox<PointType>::add (const PointType& point)
 }
 
 //------------------------------------------------------------------------------
-template<typename PointType>
+template <typename PointType>
 void cBox<PointType>::add (const cBox<PointType>& box)
 {
 	for (size_t d = 0; d < PointType::const_size::value; ++d)
@@ -185,7 +185,7 @@ void cBox<PointType>::add (const cBox<PointType>& box)
 }
 
 //------------------------------------------------------------------------------
-template<typename PointType>
+template <typename PointType>
 bool cBox<PointType>::within (const PointType& point) const
 {
 	for (size_t d = 0; d < point.size(); ++d)
@@ -196,7 +196,7 @@ bool cBox<PointType>::within (const PointType& point) const
 }
 
 //------------------------------------------------------------------------------
-template<typename PointType>
+template <typename PointType>
 bool cBox<PointType>::withinOrTouches (const PointType& point) const
 {
 	for (size_t d = 0; d < point.size(); ++d)
@@ -207,7 +207,7 @@ bool cBox<PointType>::withinOrTouches (const PointType& point) const
 }
 
 //------------------------------------------------------------------------------
-template<typename PointType>
+template <typename PointType>
 bool cBox<PointType>::intersects (const cBox<PointType>& other) const
 {
 	for (size_t d = 0; d < PointType::const_size::value; ++d)
@@ -218,7 +218,7 @@ bool cBox<PointType>::intersects (const cBox<PointType>& other) const
 }
 
 //------------------------------------------------------------------------------
-template<typename PointType>
+template <typename PointType>
 cBox<PointType> cBox<PointType>::intersection (const cBox<PointType>& other) const
 {
 	assert (intersects (other));
@@ -232,15 +232,15 @@ cBox<PointType> cBox<PointType>::intersection (const cBox<PointType>& other) con
 	return result;
 }
 
-template<typename PointType>
-void cBox<PointType>::expand(const PointType &lower, const PointType &upper)
+template <typename PointType>
+void cBox<PointType>::expand (const PointType &lower, const PointType &upper)
 {
     auto& min = getMinCorner();
     auto& max = getMaxCorner();
     for (size_t d = 0; d < PointType::const_size::value; ++d)
     {
-        min[d] -= fabs(lower[d]);
-        max[d] += fabs(upper[d]);
+        min[d] -= fabs (lower[d]);
+        max[d] += fabs (upper[d]);
     }
 }
 

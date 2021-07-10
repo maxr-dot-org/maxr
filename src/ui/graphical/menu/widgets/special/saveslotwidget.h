@@ -46,10 +46,10 @@ public:
 
 	void forceKeyFocus();
 
-	cSignal<void ()> clicked;
-	cSignal<void ()> doubleClicked;
+	cSignal<void()> clicked;
+	cSignal<void()> doubleClicked;
 
-	cSignal<void ()> nameChanged;
+	cSignal<void()> nameChanged;
 protected:
 
 	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) override;

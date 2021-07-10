@@ -46,24 +46,24 @@ const std::chrono::seconds cGameSettings::defaultEndTurnDeadlineOption4 (75);
 const std::chrono::seconds cGameSettings::defaultEndTurnDeadlineOption5 (90);
 
 //------------------------------------------------------------------------------
-uint32_t cGameSettings::getChecksum(uint32_t crc) const
+uint32_t cGameSettings::getChecksum (uint32_t crc) const
 {
-	crc = calcCheckSum(alienEnabled, crc);
-	crc = calcCheckSum(bridgeheadType, crc);
-	crc = calcCheckSum(clansEnabled, crc);
-	crc = calcCheckSum(gameType, crc);
-	crc = calcCheckSum(goldAmount, crc);
-	crc = calcCheckSum(metalAmount, crc);
-	crc = calcCheckSum(oilAmount, crc);
-	crc = calcCheckSum(resourceDensity, crc);
-	crc = calcCheckSum(startCredits, crc);
-	crc = calcCheckSum(turnEndDeadline.count(), crc);
-	crc = calcCheckSum(turnEndDeadlineActive, crc);
-	crc = calcCheckSum(turnLimit.count(), crc);
-	crc = calcCheckSum(turnLimitActive, crc);
-	crc = calcCheckSum(victoryConditionType, crc);
-	crc = calcCheckSum(victoryPoints, crc);
-	crc = calcCheckSum(victoryTurns, crc);
+	crc = calcCheckSum (alienEnabled, crc);
+	crc = calcCheckSum (bridgeheadType, crc);
+	crc = calcCheckSum (clansEnabled, crc);
+	crc = calcCheckSum (gameType, crc);
+	crc = calcCheckSum (goldAmount, crc);
+	crc = calcCheckSum (metalAmount, crc);
+	crc = calcCheckSum (oilAmount, crc);
+	crc = calcCheckSum (resourceDensity, crc);
+	crc = calcCheckSum (startCredits, crc);
+	crc = calcCheckSum (turnEndDeadline.count(), crc);
+	crc = calcCheckSum (turnEndDeadlineActive, crc);
+	crc = calcCheckSum (turnLimit.count(), crc);
+	crc = calcCheckSum (turnLimitActive, crc);
+	crc = calcCheckSum (victoryConditionType, crc);
+	crc = calcCheckSum (victoryPoints, crc);
+	crc = calcCheckSum (victoryTurns, crc);
 
 	return crc;
 }

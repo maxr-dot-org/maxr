@@ -28,7 +28,7 @@ cUnitListViewItemCargo::cUnitListViewItemCargo (unsigned int width, const sID& u
 	cUnitListViewItem (width, unitId, owner, unitsData),
 	cargo (0)
 {
-	unitData = &unitsData.getStaticUnitData(unitId);
+	unitData = &unitsData.getStaticUnitData (unitId);
 
 	if (unitData->storeResType == eResourceType::Metal || unitData->storeResType == eResourceType::Oil)
 	{

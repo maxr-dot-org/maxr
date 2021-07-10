@@ -31,7 +31,7 @@ public:
 	explicit cWindowLoadSave (std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 
 	cSignal<void (int, const std::string&)> save;
-	cSignal<void ()> exit;
+	cSignal<void()> exit;
 
 protected:
 	void handleSlotClicked (size_t index) override;

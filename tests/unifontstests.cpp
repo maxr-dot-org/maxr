@@ -29,7 +29,7 @@ static constexpr const std::size_t charWidth = 2;
 static constexpr const std::size_t charHeight = 2;
 
 template <typename ... Args>
-cUnicodeFont::cUnicodeFont(cUnitTestTag, Args...)
+cUnicodeFont::cUnicodeFont (cUnitTestTag, Args...)
 {
 	const int w = charWidth;
 	const int h = charHeight;
@@ -63,7 +63,7 @@ namespace
 
 		auto res = font->breakText (text, text.size() * charWidth, FONT_LATIN_NORMAL);
 
-		CHECK_EQUAL(std::regex_replace (text, std::regex ("\n"), "|"),
+		CHECK_EQUAL (std::regex_replace (text, std::regex ("\n"), "|"),
 					std::regex_replace (concatenateLines (res, "|"), std::regex ("\n"), "\\n"));
 #if 0 // similar check, but by part
 		REQUIRE CHECK_EQUAL (expected.size(), res.size());

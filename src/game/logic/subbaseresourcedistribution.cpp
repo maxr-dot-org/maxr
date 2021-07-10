@@ -99,13 +99,13 @@ namespace
 		sMiningResource prod;
 
 		auto allowed = calcMaxAllowedProduction (limits, prod);
-		prod.get(order[0]) = std::min (wanted.get(order[0]), allowed.get(order[0]));
+		prod.get (order[0]) = std::min (wanted.get (order[0]), allowed.get (order[0]));
 
 		allowed = calcMaxAllowedProduction (limits, prod);
-		prod.get(order[1]) = std::min (wanted.get(order[1]), allowed.get(order[1]));
+		prod.get (order[1]) = std::min (wanted.get (order[1]), allowed.get (order[1]));
 
 		allowed = calcMaxAllowedProduction (limits, prod);
-		prod.get(order[2]) = std::min (wanted.get(order[2]), allowed.get(order[2]));
+		prod.get (order[2]) = std::min (wanted.get (order[2]), allowed.get (order[2]));
 
 		return prod;
 	}
@@ -242,7 +242,7 @@ sMiningResource setBuildingsProduction (std::vector<cBuilding*>& buildings, sMin
 {
 	auto mines = ExtractOnLineMiningStations (buildings);
 	const auto limits = computeResourcesLimit (mines);
-	auto newProd = adjustResourceToMaxAllowed(limits, wanted, {eResourceType::Metal, eResourceType::Oil, eResourceType::Gold });
+	auto newProd = adjustResourceToMaxAllowed (limits, wanted, {eResourceType::Metal, eResourceType::Oil, eResourceType::Gold });
 	setMinesProduction (mines, newProd);
 	return newProd;
 }
@@ -255,7 +255,7 @@ sMiningResource increaseOilProduction (std::vector<cBuilding*>& buildings, int m
 	const auto prod = computeProduction (mines);
 	auto wanted = prod;
 	wanted.oil += missingOil;
-	auto newProd = adjustResourceToMaxAllowed(limits, wanted, {eResourceType::Oil, eResourceType::Gold, eResourceType::Metal});
+	auto newProd = adjustResourceToMaxAllowed (limits, wanted, {eResourceType::Oil, eResourceType::Gold, eResourceType::Metal});
 
 	setMinesProduction (mines, newProd);
 	return newProd;

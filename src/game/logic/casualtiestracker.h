@@ -36,15 +36,15 @@ public:
 
 	std::vector<sID> getUnitTypesWithLosses() const;
 
-	template<typename T>
-	void serialize(T& archive)
+	template <typename T>
+	void serialize (T& archive)
 	{
-		archive & NVP(casualtiesPerPlayer);
+		archive & NVP (casualtiesPerPlayer);
 	}
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 
 	mutable cSignal<void (const sID&, int)> casualtyChanged;
-	mutable cSignal<void ()> casualtiesChanged;
+	mutable cSignal<void()> casualtiesChanged;
 	//-------------------------------------------------------------------------------
 private:
 	struct Casualty
@@ -52,26 +52,26 @@ private:
 		sID unitID;
 		int numberOfLosses;
 
-		template<typename T>
-		void serialize(T& archive)
+		template <typename T>
+		void serialize (T& archive)
 		{
-			archive & NVP(unitID);
-			archive & NVP(numberOfLosses);
+			archive & NVP (unitID);
+			archive & NVP (numberOfLosses);
 		}
-		uint32_t getChecksum(uint32_t crc) const;
+		uint32_t getChecksum (uint32_t crc) const;
 	};
 	struct CasualtiesOfPlayer
 	{
 		std::vector<Casualty> casualties;
 		int playerNr;
 
-		template<typename T>
-		void serialize(T& archive)
+		template <typename T>
+		void serialize (T& archive)
 		{
-			archive & NVP(casualties);
-			archive & NVP(playerNr);
+			archive & NVP (casualties);
+			archive & NVP (playerNr);
 		}
-		uint32_t getChecksum(uint32_t crc) const;
+		uint32_t getChecksum (uint32_t crc) const;
 	};
 	mutable std::vector<CasualtiesOfPlayer> casualtiesPerPlayer;
 

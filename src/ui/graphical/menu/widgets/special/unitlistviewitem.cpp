@@ -40,7 +40,7 @@ cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, co
 	SDL_FillRect (surface.get(), nullptr, 0x00FF00FF);
 	SDL_Rect dest = {0, 0, 0, 0};
 
-	const auto& data = unitsData.getStaticUnitData(unitId);
+	const auto& data = unitsData.getStaticUnitData (unitId);
 	if (unitId.isAVehicle())
 	{
 		const float zoomFactor = unitImageSize / 64.0f;

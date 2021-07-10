@@ -72,7 +72,7 @@ auto Transform (Range&& range, Projection&& proj)
 {
 	std::vector<std::decay_t<decltype (proj (*std::begin (range)))>> res;
 	res.reserve (range.size());
-	std::transform (std::begin (range), std::end (range), std::back_inserter(res), proj);
+	std::transform (std::begin (range), std::end (range), std::back_inserter (res), proj);
 	return res;
 }
 

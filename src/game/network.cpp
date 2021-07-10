@@ -32,26 +32,26 @@
 //------------------------------------------------------------------------
 
 //------------------------------------------------------------------------
-cSocket::cSocket(TCPsocket socket):
-	sdlSocket(socket)
+cSocket::cSocket (TCPsocket socket):
+	sdlSocket (socket)
 {}
 
 //------------------------------------------------------------------------
 // cDataBuffer implementation
 //------------------------------------------------------------------------
 cDataBuffer::cDataBuffer() :
-	capacity(0),
-	length(0),
-	data(nullptr)
+	capacity (0),
+	length (0),
+	data (nullptr)
 {}
 
 //------------------------------------------------------------------------------
-void cDataBuffer::reserve(unsigned int i)
+void cDataBuffer::reserve (unsigned int i)
 {
 	if (getFreeSpace() < i && length < UINT32_MAX - i)
 	{
 		capacity = length + i;
-		data = (unsigned char*) realloc(data, capacity);
+		data = (unsigned char*) realloc (data, capacity);
 	}
 }
 
@@ -94,40 +94,40 @@ cNetwork::~cNetwork()
 {
 	exit = true;
 	tcpHandleThread.join();
-	SDLNet_FreeSocketSet(socketSet);
+	SDLNet_FreeSocketSet (socketSet);
 	if (serverSocket)
 	{
-		SDLNet_TCP_Close(serverSocket);
+		SDLNet_TCP_Close (serverSocket);
 	}
 	cleanupClosedSockets();
 	for (auto socket : sockets)
 	{
-		SDLNet_TCP_Close(socket->sdlSocket);
+		SDLNet_TCP_Close (socket->sdlSocket);
 		delete socket;
 	}
 }
 
 //------------------------------------------------------------------------
-int cNetwork::openServer(int port)
+int cNetwork::openServer (int port)
 {
-	std::unique_lock<std::recursive_mutex> tl(tcpMutex);
+	std::unique_lock<std::recursive_mutex> tl (tcpMutex);
 
 	Log.write ("Network: Open server on port: " + std::to_string (port), cLog::eLOG_TYPE_NET_DEBUG);
 
 	IPaddress ipaddr;
-	if (SDLNet_ResolveHost(&ipaddr, nullptr, port) == -1)
+	if (SDLNet_ResolveHost (&ipaddr, nullptr, port) == -1)
 	{
 		return -1;
 	}
 
-	TCPsocket socket = SDLNet_TCP_Open(&ipaddr);
+	TCPsocket socket = SDLNet_TCP_Open (&ipaddr);
 	if (socket == nullptr)
 	{
 		return -1;
 	}
 
 	serverSocket = socket;
-	SDLNet_TCP_AddSocket(socketSet, serverSocket);
+	SDLNet_TCP_AddSocket (socketSet, serverSocket);
 
 	return 0;
 }
@@ -135,23 +135,23 @@ int cNetwork::openServer(int port)
 //------------------------------------------------------------------------
 void cNetwork::closeServer()
 {
-	std::unique_lock<std::recursive_mutex> tl(tcpMutex);
+	std::unique_lock<std::recursive_mutex> tl (tcpMutex);
 
 	if (serverSocket == nullptr) return;
 
-	closingSockets.push_back(serverSocket);
+	closingSockets.push_back (serverSocket);
 	serverSocket = nullptr;
 }
 
 //------------------------------------------------------------------------
-void cNetwork::connectToServer(const std::string& ip, int port)
+void cNetwork::connectToServer (const std::string& ip, int port)
 {
-	std::unique_lock<std::recursive_mutex> tl(tcpMutex);
+	std::unique_lock<std::recursive_mutex> tl (tcpMutex);
 
 	if (!connectToIp.empty())
 	{
-		Log.write("Network: Can only handle one connection attempt at once", cLog::eLOG_TYPE_NET_ERROR);
-		connectionManager.connectionResult(nullptr);
+		Log.write ("Network: Can only handle one connection attempt at once", cLog::eLOG_TYPE_NET_ERROR);
+		connectionManager.connectionResult (nullptr);
 		return;
 	}
 
@@ -160,58 +160,57 @@ void cNetwork::connectToServer(const std::string& ip, int port)
 }
 
 //------------------------------------------------------------------------
-void cNetwork::close(const cSocket* socket)
+void cNetwork::close (const cSocket* socket)
 {
-	std::unique_lock<std::recursive_mutex> tl(tcpMutex);
+	std::unique_lock<std::recursive_mutex> tl (tcpMutex);
 
-	if (!Contains(sockets, socket))
+	if (!Contains (sockets, socket))
 	{
-		Log.write("Network: Unable to close socket. Invalid socket", cLog::eLOG_TYPE_NET_ERROR);
+		Log.write ("Network: Unable to close socket. Invalid socket", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
-	connectionManager.connectionClosed(socket);
+	connectionManager.connectionClosed (socket);
 
 	// sdl socket will be cleaned up later by the networkthread. This cannot be done
 	// immediately, because the network thread may be still using the socket in SDLNet_CheckSockets
-	closingSockets.push_back(socket->sdlSocket);
-	Remove(sockets, socket);
+	closingSockets.push_back (socket->sdlSocket);
+	Remove (sockets, socket);
 	delete socket;
 }
 
 //------------------------------------------------------------------------
-int cNetwork::sendMessage(const cSocket* socket, unsigned int length, const unsigned char* buffer)
+int cNetwork::sendMessage (const cSocket* socket, unsigned int length, const unsigned char* buffer)
 {
-	std::unique_lock<std::recursive_mutex> tl(tcpMutex);
+	std::unique_lock<std::recursive_mutex> tl (tcpMutex);
 
-	if (!Contains(sockets, socket))
+	if (!Contains (sockets, socket))
 	{
-		Log.write("Network: Unable to send message. Invalid socket", cLog::eLOG_TYPE_NET_ERROR);
+		Log.write ("Network: Unable to send message. Invalid socket", cLog::eLOG_TYPE_NET_ERROR);
 		return -1;
 	}
 
 	// send message header
 	unsigned char header[HEADER_LENGTH];
-	reinterpret_cast<int32_t*>(header)[0] = SDL_SwapLE32(START_WORD);
-	reinterpret_cast<int32_t*>(header)[1] = SDL_SwapLE32(length);
+	reinterpret_cast<int32_t*> (header)[0] = SDL_SwapLE32 (START_WORD);
+	reinterpret_cast<int32_t*> (header)[1] = SDL_SwapLE32 (length);
 
-	if (send(socket, header, HEADER_LENGTH) == -1) return -1;
+	if (send (socket, header, HEADER_LENGTH) == -1) return -1;
 
 	// send message data
-	return send(socket, buffer, length);
-
+	return send (socket, buffer, length);
 }
 
 //------------------------------------------------------------------------
-int cNetwork::send(const cSocket* socket, const unsigned char* buffer, unsigned int length)
+int cNetwork::send (const cSocket* socket, const unsigned char* buffer, unsigned int length)
 {
-	const unsigned int bytesSent = SDLNet_TCP_Send(socket->sdlSocket, buffer, length);
+	const unsigned int bytesSent = SDLNet_TCP_Send (socket->sdlSocket, buffer, length);
 
 	// delete socket when sending fails
 	if (bytesSent != length)
 	{
 		// delete socket when sending fails
-		Log.write("Network: Error while sending message. Closing socket...", cLog::eLOG_TYPE_NET_WARNING);
-		close(socket);
+		Log.write ("Network: Error while sending message. Closing socket...", cLog::eLOG_TYPE_NET_WARNING);
+		close (socket);
 		return -1;
 	}
 	return 0;
@@ -223,71 +222,71 @@ void cNetwork::handleNetworkThread()
 	while (!exit)
 	{
 		const int timeoutMilliseconds = 10;
-		int readySockets = SDLNet_CheckSockets(socketSet, timeoutMilliseconds);
+		int readySockets = SDLNet_CheckSockets (socketSet, timeoutMilliseconds);
 
 		if (exit) break;
 
 		if (readySockets == -1)
 		{
 			//return value of -1 means that most likely the socket set is empty
-			SDL_Delay(10);
+			SDL_Delay (10);
 		}
 
 		if (readySockets > 0 || closingSockets.size() > 0 || !connectToIp.empty())
 		{
-			std::unique_lock<std::recursive_mutex> tl(tcpMutex);
+			std::unique_lock<std::recursive_mutex> tl (tcpMutex);
 
 			//handle incoming data
 			for (size_t i = 0; i < sockets.size();) // erease in loop
 			{
 				auto socket = sockets[i];
-				if (SDLNet_SocketReady(socket->sdlSocket))
+				if (SDLNet_SocketReady (socket->sdlSocket))
 				{
-					socket->buffer.reserve(1024);
+					socket->buffer.reserve (1024);
 					int recvlength;
-					recvlength = SDLNet_TCP_Recv(socket->sdlSocket, socket->buffer.getWritePointer(), socket->buffer.getFreeSpace());
+					recvlength = SDLNet_TCP_Recv (socket->sdlSocket, socket->buffer.getWritePointer(), socket->buffer.getFreeSpace());
 					if (recvlength <= 0)
 					{
-						close(socket);
+						close (socket);
 						continue;
 					}
 
 					socket->buffer.length += recvlength;
 
-					pushReadyMessages(socket);
+					pushReadyMessages (socket);
 				}
 				i++;
 			}
 
 			//handle incoming connections
-			if (serverSocket && SDLNet_SocketReady(serverSocket))
+			if (serverSocket && SDLNet_SocketReady (serverSocket))
 			{
-				TCPsocket sdlSocket = SDLNet_TCP_Accept(serverSocket);
+				TCPsocket sdlSocket = SDLNet_TCP_Accept (serverSocket);
 
 				if (sdlSocket != nullptr)
 				{
 					{
 						// log
-						IPaddress* remoteAddress = SDLNet_TCP_GetPeerAddress(sdlSocket);
+						IPaddress* remoteAddress = SDLNet_TCP_GetPeerAddress (sdlSocket);
 						std::string ip = std::to_string (remoteAddress->host & 0xFF) + '.';
 						ip += std::to_string ((remoteAddress->host >>  8) & 0xFF) + '.';
 						ip += std::to_string ((remoteAddress->host >> 16) & 0xFF) + '.';
 						ip += std::to_string ((remoteAddress->host >> 24) & 0xFF);
 
-						Log.write("Network: Incoming connection from " + ip, cLog::eLOG_TYPE_NET_DEBUG);
+						Log.write ("Network: Incoming connection from " + ip, cLog::eLOG_TYPE_NET_DEBUG);
 					}
 
 					if (sockets.size() + 1 >= MAX_TCP_CONNECTIONS ) // +1 for serverSocket
 					{
-						SDLNet_TCP_Close(sdlSocket);
-						Log.write("Network: Maximum number of tcp connections reached. Connection closed.", cLog::eLOG_TYPE_NET_WARNING);
+						SDLNet_TCP_Close (sdlSocket);
+						Log.write ("Network: Maximum number of tcp connections reached. Connection closed.", cLog::eLOG_TYPE_NET_WARNING);
 					}
 					else
 					{
-						cSocket* socket = new cSocket(sdlSocket);
-						sockets.push_back(socket);
-						SDLNet_TCP_AddSocket(socketSet, sdlSocket);
-						connectionManager.incomingConnection(socket);
+						cSocket* socket = new cSocket (sdlSocket);
+						sockets.push_back (socket);
+						SDLNet_TCP_AddSocket (socketSet, sdlSocket);
+						connectionManager.incomingConnection (socket);
 					}
 				}
 			}
@@ -296,37 +295,36 @@ void cNetwork::handleNetworkThread()
 			if (!connectToIp.empty())
 			{
 				IPaddress ipaddr;
-				if (SDLNet_ResolveHost(&ipaddr, connectToIp.c_str(), connectToPort) == -1)
+				if (SDLNet_ResolveHost (&ipaddr, connectToIp.c_str(), connectToPort) == -1)
 				{
-					Log.write("Network: Couldn't resolve host", cLog::eLOG_TYPE_WARNING);
-					connectionManager.connectionResult(nullptr);
+					Log.write ("Network: Couldn't resolve host", cLog::eLOG_TYPE_WARNING);
+					connectionManager.connectionResult (nullptr);
 				}
 				else
 				{
-					TCPsocket sdlSocket = SDLNet_TCP_Open(&ipaddr);
+					TCPsocket sdlSocket = SDLNet_TCP_Open (&ipaddr);
 					if (sdlSocket == nullptr)
 					{
-						Log.write("Network: Couldn't connect to host", cLog::eLOG_TYPE_WARNING);
-						connectionManager.connectionResult(nullptr);
+						Log.write ("Network: Couldn't connect to host", cLog::eLOG_TYPE_WARNING);
+						connectionManager.connectionResult (nullptr);
 					}
 					else
 					{
-						cSocket* socket = new cSocket(sdlSocket);
-						sockets.push_back(socket);
-						SDLNet_TCP_AddSocket(socketSet, sdlSocket);
-						connectionManager.connectionResult(socket);
+						cSocket* socket = new cSocket (sdlSocket);
+						sockets.push_back (socket);
+						SDLNet_TCP_AddSocket (socketSet, sdlSocket);
+						connectionManager.connectionResult (socket);
 					}
 				}
 				connectToIp.clear();
 			}
-
 			cleanupClosedSockets();
 		}
 	}
 }
 
 //------------------------------------------------------------------------
-void cNetwork::pushReadyMessages(cSocket* socket)
+void cNetwork::pushReadyMessages (cSocket* socket)
 {
 	//push all received messages
 	int readPos = 0;
@@ -335,21 +333,21 @@ void cNetwork::pushReadyMessages(cSocket* socket)
 		if (socket->buffer.length - readPos < HEADER_LENGTH) break;
 
 		//check message delimiter
-		uint32_t startWord = SDL_SwapLE32(*reinterpret_cast<uint32_t*>(socket->buffer.data + readPos));
+		uint32_t startWord = SDL_SwapLE32 (*reinterpret_cast<uint32_t*> (socket->buffer.data + readPos));
 		if (startWord != START_WORD)
 		{
 			//something went terribly wrong. We are unable to continue the communication.
-			Log.write("Network: Wrong start character in received message. Socket closed!", cLog::eLOG_TYPE_NET_ERROR);
-			close(socket);
+			Log.write ("Network: Wrong start character in received message. Socket closed!", cLog::eLOG_TYPE_NET_ERROR);
+			close (socket);
 			break;
 		}
 
 		// read message length
-		uint32_t messageLength = SDL_SwapLE32(*reinterpret_cast<uint32_t*>(socket->buffer.data + readPos + 4));
+		uint32_t messageLength = SDL_SwapLE32 (*reinterpret_cast<uint32_t*> (socket->buffer.data + readPos + 4));
 		if (messageLength > PACKAGE_LENGTH)
 		{
-			Log.write("Network: Length of received message exceeds PACKAGE_LENGTH. Socket closed!", cLog::eLOG_TYPE_NET_ERROR);
-			close(socket);
+			Log.write ("Network: Length of received message exceeds PACKAGE_LENGTH. Socket closed!", cLog::eLOG_TYPE_NET_ERROR);
+			close (socket);
 			break;
 		}
 
@@ -357,7 +355,7 @@ void cNetwork::pushReadyMessages(cSocket* socket)
 		if (socket->buffer.length - readPos - HEADER_LENGTH < messageLength) break;
 
 		//push message
-		connectionManager.messageReceived(socket, socket->buffer.data + readPos + HEADER_LENGTH, messageLength);
+		connectionManager.messageReceived (socket, socket->buffer.data + readPos + HEADER_LENGTH, messageLength);
 
 		//socket died during handling in connectionManager
 		if (ranges::find (sockets, socket) == sockets.end()) return;
@@ -366,7 +364,7 @@ void cNetwork::pushReadyMessages(cSocket* socket)
 		readPos += messageLength + HEADER_LENGTH;
 	}
 
-	socket->buffer.deleteFront(readPos);
+	socket->buffer.deleteFront (readPos);
 }
 
 //------------------------------------------------------------------------
@@ -376,8 +374,8 @@ void cNetwork::cleanupClosedSockets()
 	{
 		if (socket != nullptr)
 		{
-			SDLNet_TCP_Close(socket);
-			SDLNet_TCP_DelSocket(socketSet, socket);
+			SDLNet_TCP_Close (socket);
+			SDLNet_TCP_DelSocket (socketSet, socket);
 		}
 	}
 	closingSockets.clear();

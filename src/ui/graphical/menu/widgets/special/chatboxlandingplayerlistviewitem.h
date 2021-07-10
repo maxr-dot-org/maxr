@@ -42,7 +42,7 @@ public:
 	bool hasSelectedPosition() const;
 	void setHasSelectedPosition (bool value);
 
-	mutable cSignal<void ()> hasSelectedPositionChanged;
+	mutable cSignal<void()> hasSelectedPositionChanged;
 private:
 	cPlayerBasicData player;
 	bool selectedPosition;

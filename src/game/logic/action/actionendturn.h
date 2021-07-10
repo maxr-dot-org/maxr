@@ -26,9 +26,9 @@ class cActionEndTurn : public cActionT<cAction::eActiontype::ACTION_END_TURN>
 {
 public:
 	cActionEndTurn();
-	cActionEndTurn(cBinaryArchiveOut& archive);
+	cActionEndTurn (cBinaryArchiveOut& archive);
 
-	void execute(cModel& model) const override;
+	void execute (cModel& model) const override;
 
 private:
 	// no data

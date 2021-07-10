@@ -34,20 +34,20 @@ class cPlaneTakeoffJob : public cJob
 public:
 	cPlaneTakeoffJob (cVehicle& vehicle);
 	template <typename T>
-	cPlaneTakeoffJob(T& archive) { serializeThis(archive); }
+	cPlaneTakeoffJob (T& archive) { serializeThis (archive); }
 
 	void run (cModel& model) override;
 	eJobType getType() const override;
 
-	void serialize(cBinaryArchiveIn& archive) override { archive << serialization::makeNvp("type", getType()); serializeThis(archive); }
-	void serialize(cXmlArchiveIn& archive) override { archive << serialization::makeNvp("type", getType()); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { archive << serialization::makeNvp ("type", getType()); serializeThis (archive); }
+	void serialize (cXmlArchiveIn& archive) override { archive << serialization::makeNvp ("type", getType()); serializeThis (archive); }
 
-	uint32_t getChecksum(uint32_t crc) const override;
+	uint32_t getChecksum (uint32_t crc) const override;
 private:
 	template <typename T>
-	void serializeThis(T& archive)
+	void serializeThis (T& archive)
 	{
-		archive & NVP(unit);
+		archive & NVP (unit);
 
 		if (!archive.isWriter)
 		{
@@ -57,7 +57,7 @@ private:
 				return;
 			}
 			unit->jobActive = true;
-			connectionManager.connect(unit->destroyed, [&](){finished = true; });
+			connectionManager.connect (unit->destroyed, [&](){finished = true; });
 		}
 	}
 

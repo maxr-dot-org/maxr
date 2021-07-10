@@ -21,8 +21,8 @@
 #include "utility/crc.h"
 
 //------------------------------------------------------------------------------
-cTurnCounter::cTurnCounter(int turn_) :
-turn(turn_)
+cTurnCounter::cTurnCounter (int turn_) :
+	turn (turn_)
 {}
 
 //------------------------------------------------------------------------------
@@ -32,9 +32,9 @@ int cTurnCounter::getTurn() const
 }
 
 //------------------------------------------------------------------------------
-void cTurnCounter::setTurn(int turn_)
+void cTurnCounter::setTurn (int turn_)
 {
-	std::swap(turn, turn_);
+	std::swap (turn, turn_);
 	if (turn != turn_) turnChanged();
 }
 
@@ -46,7 +46,7 @@ void cTurnCounter::increaseTurn()
 }
 
 //------------------------------------------------------------------------------
-uint32_t cTurnCounter::getChecksum(uint32_t crc) const
+uint32_t cTurnCounter::getChecksum (uint32_t crc) const
 {
-	return calcCheckSum(turn, crc);
+	return calcCheckSum (turn, crc);
 }

@@ -33,15 +33,15 @@ public:
 	void setTurn (int turn);
 
 	void increaseTurn();
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 
 	template <typename T>
-	void serialize(T& archive)
+	void serialize (T& archive)
 	{
-		archive & NVP(turn);
+		archive & NVP (turn);
 	}
 
-	mutable cSignal<void ()> turnChanged;
+	mutable cSignal<void()> turnChanged;
 private:
 	int turn;
 };

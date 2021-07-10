@@ -1452,14 +1452,14 @@ int cResearch::getResearchArea (int upgradeCalculatorType) const
 	return 0;
 }
 
-uint32_t cResearch::getChecksum(uint32_t crc) const
+uint32_t cResearch::getChecksum (uint32_t crc) const
 {
 	for (int i = 0; i < kNrResearchAreas; i++)
-		crc = calcCheckSum(curResearchLevel[i], crc);
+		crc = calcCheckSum (curResearchLevel[i], crc);
 	for (int i = 0; i < kNrResearchAreas; i++)
-		crc = calcCheckSum(curResearchPoints[i], crc);
+		crc = calcCheckSum (curResearchPoints[i], crc);
 	for (int i = 0; i < kNrResearchAreas; i++)
-		crc = calcCheckSum(neededResearchPoints[i], crc);
+		crc = calcCheckSum (neededResearchPoints[i], crc);
 
 	return crc;
 }
@@ -1717,14 +1717,14 @@ void cUnitUpgrade::updateUnitData (cDynamicUnitData& data) const
 			case sUnitUpgrade::UPGRADE_TYPE_NONE:
 				break;
 			default:
-				assert(false);
+				assert (false);
 		}
 	}
 }
 
 
 //--------------------------------------------------
-int cUnitUpgrade::calcTotalCosts(const cDynamicUnitData& originalData, const cDynamicUnitData& currentData, const cResearch& reseachState) const
+int cUnitUpgrade::calcTotalCosts (const cDynamicUnitData& originalData, const cDynamicUnitData& currentData, const cResearch& reseachState) const
 {
 	int totalCosts = 0;
 	for (size_t i = 0; i < 8; i++)
@@ -1733,39 +1733,39 @@ int cUnitUpgrade::calcTotalCosts(const cDynamicUnitData& originalData, const cDy
 		switch (upgrades[i].getType())
 		{
 		case sUnitUpgrade::UPGRADE_TYPE_DAMAGE:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade(originalData.getDamage(), currentData.getDamage(), upgrades[i].getCurValue(), cUpgradeCalculator::kAttack, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getDamage(), currentData.getDamage(), upgrades[i].getCurValue(), cUpgradeCalculator::kAttack, reseachState);
 			break;
 		case sUnitUpgrade::UPGRADE_TYPE_SHOTS:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade(originalData.getShotsMax(), currentData.getShotsMax(), upgrades[i].getCurValue(), cUpgradeCalculator::kShots, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getShotsMax(), currentData.getShotsMax(), upgrades[i].getCurValue(), cUpgradeCalculator::kShots, reseachState);
 			break;
 		case sUnitUpgrade::UPGRADE_TYPE_RANGE:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade(originalData.getRange(), currentData.getRange(), upgrades[i].getCurValue(), cUpgradeCalculator::kRange, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getRange(), currentData.getRange(), upgrades[i].getCurValue(), cUpgradeCalculator::kRange, reseachState);
 			break;
 		case sUnitUpgrade::UPGRADE_TYPE_AMMO:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade(originalData.getAmmoMax(), currentData.getAmmoMax(), upgrades[i].getCurValue(), cUpgradeCalculator::kAmmo, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getAmmoMax(), currentData.getAmmoMax(), upgrades[i].getCurValue(), cUpgradeCalculator::kAmmo, reseachState);
 			break;
 		case sUnitUpgrade::UPGRADE_TYPE_ARMOR:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade(originalData.getArmor(), currentData.getArmor(), upgrades[i].getCurValue(), cUpgradeCalculator::kArmor, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getArmor(), currentData.getArmor(), upgrades[i].getCurValue(), cUpgradeCalculator::kArmor, reseachState);
 			break;
 		case sUnitUpgrade::UPGRADE_TYPE_HITS:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade(originalData.getHitpointsMax(), currentData.getHitpointsMax(), upgrades[i].getCurValue(), cUpgradeCalculator::kHitpoints, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getHitpointsMax(), currentData.getHitpointsMax(), upgrades[i].getCurValue(), cUpgradeCalculator::kHitpoints, reseachState);
 			break;
 		case sUnitUpgrade::UPGRADE_TYPE_SCAN:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade(originalData.getScan(), currentData.getScan(), upgrades[i].getCurValue(), cUpgradeCalculator::kScan, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getScan(), currentData.getScan(), upgrades[i].getCurValue(), cUpgradeCalculator::kScan, reseachState);
 			break;
 		case sUnitUpgrade::UPGRADE_TYPE_SPEED:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade(originalData.getSpeedMax() / 4, currentData.getSpeedMax() / 4, upgrades[i].getCurValue() / 4, cUpgradeCalculator::kSpeed, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getSpeedMax() / 4, currentData.getSpeedMax() / 4, upgrades[i].getCurValue() / 4, cUpgradeCalculator::kSpeed, reseachState);
 			break;
 		case sUnitUpgrade::UPGRADE_TYPE_NONE:
 			break;
 		default:
-			Log.write(" Can't apply upgrade. Unknown upgrade type.", cLog::eLOG_TYPE_NET_ERROR);
+			Log.write (" Can't apply upgrade. Unknown upgrade type.", cLog::eLOG_TYPE_NET_ERROR);
 			return 0;
 		}
 
 		if (upgrades[i].getPurchased() && costs <= 0)
 		{
-			Log.write(" Can't apply upgrade. Unable to calculate price.", cLog::eLOG_TYPE_NET_ERROR);
+			Log.write (" Can't apply upgrade. Unable to calculate price.", cLog::eLOG_TYPE_NET_ERROR);
 			return 0;
 		}
 		totalCosts += costs;

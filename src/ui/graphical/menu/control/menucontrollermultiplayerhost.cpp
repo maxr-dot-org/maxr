@@ -104,7 +104,7 @@ cMenuControllerMultiplayerHost::cMenuControllerMultiplayerHost (cApplication& ap
 	// Handled client side.
 
 	signalConnectionManager.connect (lobbyServer.onErrorLoadSavedGame, [this] (int /*slot*/){
-		application.show(std::make_shared<cDialogOk>(lngPack.i18n("Text~Error_Messages~ERROR_Save_Loading")));
+		application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~ERROR_Save_Loading")));
 	});
 	lobbyClient.connectToLocalServer (lobbyServer);
 }
@@ -117,7 +117,7 @@ cMenuControllerMultiplayerHost::~cMenuControllerMultiplayerHost()
 void cMenuControllerMultiplayerHost::start()
 {
 	assert (windowNetworkLobby == nullptr); // should not be started twice
-	windowNetworkLobby = std::make_shared<cWindowNetworkLobbyHost> ();
+	windowNetworkLobby = std::make_shared<cWindowNetworkLobbyHost>();
 
 	application.show (windowNetworkLobby);
 	application.addRunnable (shared_from_this());
@@ -190,7 +190,7 @@ void cMenuControllerMultiplayerHost::handleSelectSaveGame()
 				application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~ERROR_Map_Loading")));
 				return;
 			}
-			else if (MapDownload::calculateCheckSum(saveGame.mapName) != saveGame.mapCrc)
+			else if (MapDownload::calculateCheckSum (saveGame.mapName) != saveGame.mapCrc)
 			{
 				application.show (std::make_shared<cDialogOk> ("The map \"" + saveGame.mapName + "\" does not match the map the game was started with")); // TODO: translate
 				return;
@@ -217,9 +217,9 @@ void cMenuControllerMultiplayerHost::startSavedGame (std::shared_ptr<cClient> cl
 {
 	if (!windowNetworkLobby) return;
 
-	application.closeTill(*windowNetworkLobby);
+	application.closeTill (*windowNetworkLobby);
 	windowNetworkLobby->close();
-	signalConnectionManager.connect(windowNetworkLobby->terminated, [&]() { windowNetworkLobby = nullptr; });
+	signalConnectionManager.connect (windowNetworkLobby->terminated, [&]() { windowNetworkLobby = nullptr; });
 
 	auto* server = lobbyServer.getServer();
 	assert (server);

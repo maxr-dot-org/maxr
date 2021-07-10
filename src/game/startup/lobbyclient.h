@@ -45,7 +45,7 @@ public:
 
 	void sendChatMessage (const std::string&);
 
-	void selectGameSettings(const cGameSettings&);
+	void selectGameSettings (const cGameSettings&);
 	void selectMapName (const std::string&);
 	const std::vector<cSaveGameInfo>& getSaveGames() const { return saveGames; }
 	void selectLoadGame (const cSaveGameInfo&);
@@ -82,8 +82,8 @@ public:
 	cSignal<void (std::shared_ptr<cStaticMap> staticMap)> onDownloadMapFinished;
 
 	cSignal<void (const cPlayerBasicData&, const std::vector<cPlayerBasicData>&)> onPlayersList;
-	cSignal<void ()> onDuplicatedPlayerColor;
-	cSignal<void ()> onDuplicatedPlayerName;
+	cSignal<void()> onDuplicatedPlayerColor;
+	cSignal<void()> onDuplicatedPlayerName;
 	cSignal<void (std::shared_ptr<cGameSettings>, std::shared_ptr<cStaticMap>, const cSaveGameInfo&)> onOptionsChanged;
 
 	cSignal<void (const std::string& playerName, const std::string& message)> onChatMessage;
@@ -108,7 +108,7 @@ private:
 	cPlayerBasicData* getPlayer (int playerNr);
 	void wantToRejoinGame();
 
-	void sendNetMessage(cNetMessage&);
+	void sendNetMessage (cNetMessage&);
 	void sendNetMessage (cNetMessage&&);
 
 	void handleNetMessage (const cNetMessage&);

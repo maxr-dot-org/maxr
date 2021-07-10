@@ -302,21 +302,21 @@ public:
 	int getUpgradeCalculatorUpgradeType (int researchArea) const;
 	int getResearchArea (int upgradeCalculatorType) const;
 
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 
 	mutable cSignal<void (ResearchArea)> currentResearchLevelChanged;
 	mutable cSignal<void (ResearchArea)> currentResearchPointsChanged;
 	mutable cSignal<void (ResearchArea)> neededResearchPointsChanged;
 
-	template<typename T>
-	void serialize(T& archive)
+	template <typename T>
+	void serialize (T& archive)
 	{
-		assert(kNrResearchAreas == 8);
+		assert (kNrResearchAreas == 8);
 		for (int i = 0; i < kNrResearchAreas; i++)
 		{
-			archive & serialization::makeNvp("curResearchLevel", curResearchLevel[i]);
-			archive & serialization::makeNvp("curResearchPoints", curResearchPoints[i]);
-			archive & serialization::makeNvp("neededResearchPoints", neededResearchPoints[i]);
+			archive & serialization::makeNvp ("curResearchLevel", curResearchLevel[i]);
+			archive & serialization::makeNvp ("curResearchPoints", curResearchPoints[i]);
+			archive & serialization::makeNvp ("neededResearchPoints", neededResearchPoints[i]);
 		}
 	}
 	//-------------------------------------------
@@ -365,8 +365,8 @@ struct sUnitUpgrade
 	int getPurchased() const { return purchased; }
 
 
-	template<typename T>
-	void serialize(T& archive)
+	template <typename T>
+	void serialize (T& archive)
 	{
 		archive & nextPrice;
 		archive & purchased;
@@ -400,10 +400,10 @@ public:
 	bool hasBeenPurchased() const;
 	int getValueOrDefault (sUnitUpgrade::eUpgradeTypes upgradeType, int defaultValue) const;
 	void updateUnitData (cDynamicUnitData& data) const;
-	int calcTotalCosts(const cDynamicUnitData& originalData, const cDynamicUnitData& currentData, const cResearch& reseachState) const;
+	int calcTotalCosts (const cDynamicUnitData& originalData, const cDynamicUnitData& currentData, const cResearch& reseachState) const;
 
-	template<typename T>
-	void serialize(T& archive)
+	template <typename T>
+	void serialize (T& archive)
 	{
 		for (int i = 0; i < 8; i++)
 			archive & upgrades[i];

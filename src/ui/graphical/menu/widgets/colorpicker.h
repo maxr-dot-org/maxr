@@ -36,7 +36,7 @@ public:
 	void setSelectedColor (const cHsvColor& color);
 	cRgbColor getSelectedColor() const;
 
-	cSignal<void ()> selectedColorChanged;
+	cSignal<void()> selectedColorChanged;
 
 	bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) override;
 	bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) override;

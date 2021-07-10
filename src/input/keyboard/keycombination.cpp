@@ -273,7 +273,7 @@ bool cKeyCombination::operator!= (const cKeyCombination& other) const
 }
 
 //------------------------------------------------------------------------------
-bool cKeyCombination::matches(const cKeyCombination& other) const
+bool cKeyCombination::matches (const cKeyCombination& other) const
 {
 	// NOTE: we do not check for "fixable" modifiers like CAPS, NUM, ... here because they are usually reflected in the key already.
 	return (key == other.key) &&

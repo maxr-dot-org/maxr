@@ -37,23 +37,23 @@ public:
 	void onRemoveUnit (cUnit*);
 	void run (cModel&);
 	void clear();
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 
-	template<typename T>
-	void save(T& archive) const
+	template <typename T>
+	void save (T& archive) const
 	{
-		archive << serialization::makeNvp("numJobs", (int)jobs.size());
+		archive << serialization::makeNvp ("numJobs", (int)jobs.size());
 		for (const auto& job : jobs)
 		{
-			archive << serialization::makeNvp("job", *job);
+			archive << serialization::makeNvp ("job", *job);
 		}
 	}
-	template<typename T>
-	void load(T& archive)
+	template <typename T>
+	void load (T& archive)
 	{
 		int numJobs;
-		archive >> NVP(numJobs);
-		jobs.resize(numJobs);
+		archive >> NVP (numJobs);
+		jobs.resize (numJobs);
 		for (auto& job : jobs)
 		{
 			job = cJob::createFrom (archive, "job");

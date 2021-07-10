@@ -32,7 +32,7 @@
 * and only recalculate it,
 * when the array was modified after the last call to getChecksum().
 */
-template<typename T>
+template <typename T>
 class cArrayCrc
 {
 public:
@@ -55,8 +55,8 @@ private:
 };
 
 //------------------------------------------------------------------------------
-template<typename T>
-void cArrayCrc<T>::resize(size_t newSize, T initialValue)
+template <typename T>
+void cArrayCrc<T>::resize (size_t newSize, T initialValue)
 {
 	data.clear();
 	data.resize (newSize, initialValue);
@@ -65,8 +65,8 @@ void cArrayCrc<T>::resize(size_t newSize, T initialValue)
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
-void cArrayCrc<T>::fill(T value)
+template <typename T>
+void cArrayCrc<T>::fill (T value)
 {
 	crcCache = std::nullopt;
 
@@ -75,8 +75,8 @@ void cArrayCrc<T>::fill(T value)
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
-void cArrayCrc<T>::set(size_t pos, T value)
+template <typename T>
+void cArrayCrc<T>::set (size_t pos, T value)
 {
 	data[pos] = value;
 
@@ -84,14 +84,14 @@ void cArrayCrc<T>::set(size_t pos, T value)
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
-uint32_t cArrayCrc<T>::getChecksum(uint32_t crc) const
+template <typename T>
+uint32_t cArrayCrc<T>::getChecksum (uint32_t crc) const
 {
 	if (!crcCache)
 	{
 		crcCache = 0;
 		for (const auto& e : data)
-			*crcCache = calcCheckSum(e, *crcCache);
+			*crcCache = calcCheckSum (e, *crcCache);
 	}
 
 	return calcCheckSum (*crcCache, crc);

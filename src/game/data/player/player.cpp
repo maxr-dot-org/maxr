@@ -56,15 +56,15 @@ void sNewTurnPlayerReport::addUnitBuilt (const sID& unitTypeId)
 
 //------------------------------------------------------------------------------
 cPlayer::cPlayer (const cPlayerBasicData& splayer, const cUnitsData& unitsData) :
-	base(*this),
-	name(splayer.getName()),
-	color(splayer.getColor()),
-	id(splayer.getNr()),
+	base (*this),
+	name (splayer.getName()),
+	color (splayer.getColor()),
+	id (splayer.getNr()),
 	clan (-1),
 	hasFinishedTurn (false)
 {
 	// get the default (no clan) unit data
-	dynamicUnitsData = unitsData.getDynamicUnitsData(-1);
+	dynamicUnitsData = unitsData.getDynamicUnitsData (-1);
 
 	researchCentersWorkingTotal = 0;
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
@@ -83,12 +83,12 @@ void cPlayer::setClan (int newClan, const cUnitsData& unitsData)
 {
 	if (newClan < -1)
 		return;
-	if (newClan > 0 && static_cast<size_t>(newClan) >= unitsData.getNrOfClans())
+	if (newClan > 0 && static_cast<size_t> (newClan) >= unitsData.getNrOfClans())
 		return;
 
 	clan = newClan;
 
-	dynamicUnitsData = unitsData.getDynamicUnitsData(clan);
+	dynamicUnitsData = unitsData.getDynamicUnitsData (clan);
 }
 
 //------------------------------------------------------------------------------
@@ -112,7 +112,7 @@ cDynamicUnitData* cPlayer::getUnitDataCurrentVersion (const sID& id)
 }
 
 //------------------------------------------------------------------------------
-const cDynamicUnitData* cPlayer::getUnitDataCurrentVersion(const sID& id) const
+const cDynamicUnitData* cPlayer::getUnitDataCurrentVersion (const sID& id) const
 {
 	for (const auto &data : dynamicUnitsData)
 	{
@@ -145,87 +145,87 @@ const cPosition& cPlayer::getMapSize() const
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::addToScan(const cUnit& unit)
+void cPlayer::addToScan (const cUnit& unit)
 {
-	assert(!unit.isDisabled());
+	assert (!unit.isDisabled());
 
 	const int size = unit.getIsBig() ? 2 : 1;
 
-	scanMap.add(unit.data.getScan(), unit.getPosition(), size);
+	scanMap.add (unit.data.getScan(), unit.getPosition(), size);
 	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_GROUND)
 	{
-		detectLandMap.add(unit.data.getScan(), unit.getPosition(), size);
+		detectLandMap.add (unit.data.getScan(), unit.getPosition(), size);
 	}
 	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_SEA)
 	{
-		detectSeaMap.add(unit.data.getScan(), unit.getPosition(), size);
+		detectSeaMap.add (unit.data.getScan(), unit.getPosition(), size);
 	}
 	if (unit.getStaticUnitData().canDetectStealthOn & AREA_EXP_MINE)
 	{
 		// mines can only be detected on directly adjacent fields
-		detectMinesMap.add(1, unit.getPosition(), size, true);
+		detectMinesMap.add (1, unit.getPosition(), size, true);
 	}
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::updateScan(const cUnit& unit, const cPosition& newPosition, bool newIsBig)
+void cPlayer::updateScan (const cUnit& unit, const cPosition& newPosition, bool newIsBig)
 {
-	assert(!unit.isDisabled());
+	assert (!unit.isDisabled());
 
 	const int oldSize = unit.getIsBig() ? 2 : 1;
 	const int newSize = newIsBig ? 2 : 1;
-	scanMap.update(unit.data.getScan(), unit.getPosition(), newPosition, oldSize, newSize);
+	scanMap.update (unit.data.getScan(), unit.getPosition(), newPosition, oldSize, newSize);
 	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_GROUND)
 	{
-		detectLandMap.update(unit.data.getScan(), unit.getPosition(), newPosition, oldSize, newSize);
+		detectLandMap.update (unit.data.getScan(), unit.getPosition(), newPosition, oldSize, newSize);
 	}
 	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_SEA)
 	{
-		detectSeaMap.update(unit.data.getScan(), unit.getPosition(), newPosition, oldSize, newSize);
+		detectSeaMap.update (unit.data.getScan(), unit.getPosition(), newPosition, oldSize, newSize);
 	}
 	if (unit.getStaticUnitData().canDetectStealthOn & AREA_EXP_MINE)
 	{
 		// mines can only be detected on directly adjacent fields
-		detectMinesMap.update(1, unit.getPosition(), newPosition, oldSize, newSize, true);
+		detectMinesMap.update (1, unit.getPosition(), newPosition, oldSize, newSize, true);
 	}
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::updateScan(const cUnit& unit, int newScanRange)
+void cPlayer::updateScan (const cUnit& unit, int newScanRange)
 {
-	assert(!unit.isDisabled());
+	assert (!unit.isDisabled());
 
 	const int size = unit.getIsBig() ? 2 : 1;
-	scanMap.update(unit.data.getScan(), newScanRange, unit.getPosition(), size);
+	scanMap.update (unit.data.getScan(), newScanRange, unit.getPosition(), size);
 	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_GROUND)
 	{
-		detectLandMap.update(unit.data.getScan(), newScanRange, unit.getPosition(), size);
+		detectLandMap.update (unit.data.getScan(), newScanRange, unit.getPosition(), size);
 	}
 	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_SEA)
 	{
-		detectSeaMap.update(unit.data.getScan(), newScanRange, unit.getPosition(), size);
+		detectSeaMap.update (unit.data.getScan(), newScanRange, unit.getPosition(), size);
 	}
 	// mine detection does not change
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::removeFromScan(const cUnit& unit)
+void cPlayer::removeFromScan (const cUnit& unit)
 {
 	const int size = unit.getIsBig() ? 2 : 1;
 
-	scanMap.remove(unit.data.getScan(), unit.getPosition(), size);
+	scanMap.remove (unit.data.getScan(), unit.getPosition(), size);
 	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_GROUND)
 	{
-		detectLandMap.remove(unit.data.getScan(), unit.getPosition(), size);
+		detectLandMap.remove (unit.data.getScan(), unit.getPosition(), size);
 	}
 	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_SEA)
 	{
-		detectSeaMap.remove(unit.data.getScan(), unit.getPosition(), size);
+		detectSeaMap.remove (unit.data.getScan(), unit.getPosition(), size);
 	}
 	if (unit.getStaticUnitData().canDetectStealthOn & AREA_EXP_MINE)
 	{
 		// mines can only be detected on directly adjacent fields
-		detectMinesMap.remove(1, unit.getPosition(), size, true);
+		detectMinesMap.remove (1, unit.getPosition(), size, true);
 	}
 }
 
@@ -295,16 +295,16 @@ const cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>>& cPlayer::getBu
 //------------------------------------------------------------------------------
 void cPlayer::addToSentryMap (const cUnit& u)
 {
-	assert(u.isSentryActive());
+	assert (u.isSentryActive());
 
 	const int size = u.getIsBig() ? 2 : 1;
 	if (u.getStaticUnitData().canAttack & TERRAIN_AIR)
 	{
-		sentriesMapAir.add(u.data.getRange(), u.getPosition(), size);
+		sentriesMapAir.add (u.data.getRange(), u.getPosition(), size);
 	}
 	if (u.getStaticUnitData().canAttack & (TERRAIN_GROUND | TERRAIN_SEA))
 	{
-		sentriesMapGround.add(u.data.getRange(), u.getPosition(), size);
+		sentriesMapGround.add (u.data.getRange(), u.getPosition(), size);
 	}
 }
 
@@ -314,27 +314,27 @@ void cPlayer::removeFromSentryMap (const cUnit& u)
 	const int size = u.getIsBig() ? 2 : 1;
 	if (u.getStaticUnitData().canAttack & TERRAIN_AIR)
 	{
-		sentriesMapAir.remove(u.data.getRange(), u.getPosition(), size);
+		sentriesMapAir.remove (u.data.getRange(), u.getPosition(), size);
 	}
 	else if (u.getStaticUnitData().canAttack & (TERRAIN_GROUND | TERRAIN_SEA))
 	{
-		sentriesMapGround.remove(u.data.getRange(), u.getPosition(), size);
+		sentriesMapGround.remove (u.data.getRange(), u.getPosition(), size);
 	}
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::updateSentry(const cUnit& u, int newRange)
+void cPlayer::updateSentry (const cUnit& u, int newRange)
 {
 	if (!u.isSentryActive()) return;
 
 	const int size = u.getIsBig() ? 2 : 1;
 	if (u.getStaticUnitData().canAttack & TERRAIN_AIR)
 	{
-		sentriesMapAir.update(u.data.getRange(), newRange, u.getPosition(), size);
+		sentriesMapAir.update (u.data.getRange(), newRange, u.getPosition(), size);
 	}
 	else if (u.getStaticUnitData().canAttack & (TERRAIN_GROUND | TERRAIN_SEA))
 	{
-		sentriesMapGround.update(u.data.getRange(), newRange, u.getPosition(), size);
+		sentriesMapGround.update (u.data.getRange(), newRange, u.getPosition(), size);
 	}
 }
 
@@ -348,7 +348,7 @@ void cPlayer::refreshSentryMaps()
 	{
 		if (unit->isSentryActive())
 		{
-			addToSentryMap(*unit);
+			addToSentryMap (*unit);
 		}
 	}
 
@@ -356,7 +356,7 @@ void cPlayer::refreshSentryMaps()
 	{
 		if (unit->isSentryActive())
 		{
-			addToSentryMap(*unit);
+			addToSentryMap (*unit);
 		}
 	}
 }
@@ -379,25 +379,25 @@ void cPlayer::refreshScanMaps()
 	for (const auto& vehicle : vehicles)
 	{
 		if (vehicle->isUnitLoaded()) continue;
-		addToScan(*vehicle);
+		addToScan (*vehicle);
 	}
 
 	for (const auto& building : buildings)
 	{
-		addToScan(*building);
+		addToScan (*building);
 	}
 
 	//3 subtract values from the saved maps
-	scanMap.subtract(scanMapCopy);
-	detectLandMap.subtract(detectLandMapCopy);
-	detectSeaMap.subtract(detectSeaMapCopy);
-	detectMinesMap.subtract(detectMinesMapCopy);
+	scanMap.subtract (scanMapCopy);
+	detectLandMap.subtract (detectLandMapCopy);
+	detectSeaMap.subtract (detectSeaMapCopy);
+	detectMinesMap.subtract (detectMinesMapCopy);
 }
 
 //------------------------------------------------------------------------------
 void cPlayer::revealResource()
 {
-	resourceMap.fill(1);
+	resourceMap.fill (1);
 }
 
 //------------------------------------------------------------------------------
@@ -412,46 +412,46 @@ bool cPlayer::canSeeAnyAreaUnder (const cUnit& unit) const
 }
 
 //------------------------------------------------------------------------------
-bool cPlayer::canSeeUnit(const cUnit& unit, const cMap& map) const
+bool cPlayer::canSeeUnit (const cUnit& unit, const cMap& map) const
 {
 	const auto& position = unit.getPosition();
-	return canSeeUnit(unit, map.getField(position), map.staticMap->getTerrain(position));
+	return canSeeUnit (unit, map.getField (position), map.staticMap->getTerrain (position));
 }
 
 //------------------------------------------------------------------------------
-bool cPlayer::canSeeUnit(const cUnit& unit, const cMapField& field, const sTerrain& terrain) const
+bool cPlayer::canSeeUnit (const cUnit& unit, const cMapField& field, const sTerrain& terrain) const
 {
 	if (isDefeated) return true;
 
-	if (unit.isAVehicle() && static_cast<const cVehicle*>(&unit)->isUnitLoaded()) return false;
+	if (unit.isAVehicle() && static_cast<const cVehicle*> (&unit)->isUnitLoaded()) return false;
 
 	if (unit.getOwner() == this) return true;
 
-	if (!canSeeAnyAreaUnder(unit)) return false;
+	if (!canSeeAnyAreaUnder (unit)) return false;
 
-	if (!unit.isStealthOnCurrentTerrain(field, terrain)) return true;
+	if (!unit.isStealthOnCurrentTerrain (field, terrain)) return true;
 
-	return unit.isDetectedByPlayer(this);
+	return unit.isDetectedByPlayer (this);
 }
 
 //--------------------------------------------------------------------------
 std::string cPlayer::resourceMapToString() const
 {
 	std::string str;
-	str.reserve(resourceMap.size() + 1);
+	str.reserve (resourceMap.size() + 1);
 	for (size_t i = 0; i != resourceMap.size(); ++i)
 	{
-		str += getHexValue(resourceMap[i]);
+		str += getHexValue (resourceMap[i]);
 	}
 	return str;
 }
 
 //--------------------------------------------------------------------------
-void cPlayer::setResourceMapFromString(const std::string& str)
+void cPlayer::setResourceMapFromString (const std::string& str)
 {
 	for (size_t i = 0; i != resourceMap.size(); ++i)
 	{
-		resourceMap.set(i, getByteValue(str, 2*i));
+		resourceMap.set (i, getByteValue (str, 2 * i));
 	}
 }
 
@@ -517,7 +517,7 @@ std::vector<cResearch::ResearchArea> cPlayer::doResearch (const cUnitsData& unit
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::accumulateScore ()
+void cPlayer::accumulateScore()
 {
 	int deltaScore = 0;
 
@@ -529,7 +529,7 @@ void cPlayer::accumulateScore ()
 			deltaScore++;
 		}
 	}
-	pointsHistory.push_back(getScore() + deltaScore);
+	pointsHistory.push_back (getScore() + deltaScore);
 }
 
 //------------------------------------------------------------------------------
@@ -572,7 +572,7 @@ void cPlayer::upgradeUnitTypes (const std::vector<cResearch::ResearchArea>& area
 {
 	for (auto& unitData : dynamicUnitsData)
 	{
-		const cDynamicUnitData& originalData = originalUnitsData.getDynamicUnitData(unitData.getId(), getClan());
+		const cDynamicUnitData& originalData = originalUnitsData.getDynamicUnitData (unitData.getId(), getClan());
 		bool incrementVersion = false;
 		for (auto researchArea : areasReachingNextLevel)
 		{
@@ -594,7 +594,7 @@ void cPlayer::upgradeUnitTypes (const std::vector<cResearch::ResearchArea>& area
 
 			cUpgradeCalculator::UnitTypes unitType = cUpgradeCalculator::kStandardUnit;
 			if (unitData.getId().isABuilding()) unitType = cUpgradeCalculator::kBuilding;
-			if (originalUnitsData.getStaticUnitData(unitData.getId()).vehicleData.isHuman) unitType = cUpgradeCalculator::kInfantry;
+			if (originalUnitsData.getStaticUnitData (unitData.getId()).vehicleData.isHuman) unitType = cUpgradeCalculator::kInfantry;
 
 			int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch (startValue, newResearchLevel - 10,
 								   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1, unitType);
@@ -612,7 +612,7 @@ void cPlayer::upgradeUnitTypes (const std::vector<cResearch::ResearchArea>& area
 					case cResearch::kHitpointsResearch: unitData.setHitpointsMax (unitData.getHitpointsMax() + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kScanResearch: unitData.setScan (unitData.getScan() + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kSpeedResearch: unitData.setSpeedMax (unitData.getSpeedMax() + newResearchBonus - oldResearchBonus); break;
-					case cResearch::kCostResearch: unitData.setBuildCost( unitData.getBuildCost() + newResearchBonus - oldResearchBonus); break;
+					case cResearch::kCostResearch: unitData.setBuildCost (unitData.getBuildCost() + newResearchBonus - oldResearchBonus); break;
 				}
 				if (researchArea != cResearch::kCostResearch)   // don't increment the version, if the only change are the costs
 					incrementVersion = true;
@@ -657,7 +657,7 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::refreshBase(const cMap& map)
+void cPlayer::refreshBase (const cMap& map)
 {
 	base.clear();
 	for (auto& building : buildings)
@@ -667,9 +667,9 @@ void cPlayer::refreshBase(const cMap& map)
 }
 
 //------------------------------------------------------------------------------
-sNewTurnPlayerReport cPlayer::makeTurnStart(cModel& model)
+sNewTurnPlayerReport cPlayer::makeTurnStart (cModel& model)
 {
-	setHasFinishedTurn(false);
+	setHasFinishedTurn (false);
 
 	base.checkTurnEnd();
 
@@ -681,10 +681,10 @@ sNewTurnPlayerReport cPlayer::makeTurnStart(cModel& model)
 	{
 		if (building->isDisabled())
 		{
-			building->setDisabledTurns(building->getDisabledTurns() - 1);
+			building->setDisabledTurns (building->getDisabledTurns() - 1);
 			if (!building->isDisabled())
 			{
-				addToScan(*building);
+				addToScan (*building);
 				if (building->wasWorking)
 				{
 					building->startWork();
@@ -700,15 +700,15 @@ sNewTurnPlayerReport cPlayer::makeTurnStart(cModel& model)
 	{
 		if (vehicle->isDisabled())
 		{
-			vehicle->setDisabledTurns(vehicle->getDisabledTurns() - 1);
+			vehicle->setDisabledTurns (vehicle->getDisabledTurns() - 1);
 			if (!vehicle->isDisabled())
 			{
-				addToScan(*vehicle);
+				addToScan (*vehicle);
 			}
 		}
 		vehicle->refreshData();
 		vehicle->proceedBuilding (model, report);
-		vehicle->proceedClearing(model);
+		vehicle->proceedClearing (model);
 	}
 
 	//just to prevent, that an error in scanmap updates have a permanent impact
@@ -722,7 +722,7 @@ sNewTurnPlayerReport cPlayer::makeTurnStart(cModel& model)
 	}
 
 	// do research:
-	report.finishedResearchs = doResearch(*model.getUnitsData());
+	report.finishedResearchs = doResearch (*model.getUnitsData());
 
 	// eco-spheres:
 	accumulateScore();
@@ -730,41 +730,41 @@ sNewTurnPlayerReport cPlayer::makeTurnStart(cModel& model)
 	// Gun'em down:
 	for (auto& vehicle : vehicles)
 	{
-		vehicle->inSentryRange(model);
+		vehicle->inSentryRange (model);
 	}
 	return report;
 }
 
 //------------------------------------------------------------------------------
-uint32_t cPlayer::getChecksum(uint32_t crc) const
+uint32_t cPlayer::getChecksum (uint32_t crc) const
 {
-	crc = calcCheckSum(name, crc);
-	crc = calcCheckSum(id, crc);
-	crc = calcCheckSum(color, crc);
-	crc = calcCheckSum(dynamicUnitsData, crc);
-	crc = calcCheckSum(base, crc);
+	crc = calcCheckSum (name, crc);
+	crc = calcCheckSum (id, crc);
+	crc = calcCheckSum (color, crc);
+	crc = calcCheckSum (dynamicUnitsData, crc);
+	crc = calcCheckSum (base, crc);
 	for (const auto& v : vehicles)
-		crc = calcCheckSum(*v, crc);
+		crc = calcCheckSum (*v, crc);
 	for (const auto& b : buildings)
-		crc = calcCheckSum(*b, crc);
-	crc = calcCheckSum(landingPos, crc);
-	crc = calcCheckSum(mapSize, crc);
-	crc = calcCheckSum(scanMap, crc);
-	crc = calcCheckSum(resourceMap, crc);
-	crc = calcCheckSum(sentriesMapAir, crc);
-	crc = calcCheckSum(sentriesMapGround, crc);
-	crc = calcCheckSum(detectLandMap, crc);
-	crc = calcCheckSum(detectSeaMap, crc);
-	crc = calcCheckSum(detectMinesMap, crc);
-	crc = calcCheckSum(pointsHistory, crc);
-	crc = calcCheckSum(isDefeated, crc);
-	crc = calcCheckSum(clan, crc);
-	crc = calcCheckSum(credits, crc);
-	crc = calcCheckSum(hasFinishedTurn, crc);
-	crc = calcCheckSum(researchState, crc);
+		crc = calcCheckSum (*b, crc);
+	crc = calcCheckSum (landingPos, crc);
+	crc = calcCheckSum (mapSize, crc);
+	crc = calcCheckSum (scanMap, crc);
+	crc = calcCheckSum (resourceMap, crc);
+	crc = calcCheckSum (sentriesMapAir, crc);
+	crc = calcCheckSum (sentriesMapGround, crc);
+	crc = calcCheckSum (detectLandMap, crc);
+	crc = calcCheckSum (detectSeaMap, crc);
+	crc = calcCheckSum (detectMinesMap, crc);
+	crc = calcCheckSum (pointsHistory, crc);
+	crc = calcCheckSum (isDefeated, crc);
+	crc = calcCheckSum (clan, crc);
+	crc = calcCheckSum (credits, crc);
+	crc = calcCheckSum (hasFinishedTurn, crc);
+	crc = calcCheckSum (researchState, crc);
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
-		crc = calcCheckSum(researchCentersWorkingOnArea[i], crc);
-	crc = calcCheckSum(researchCentersWorkingTotal, crc);
+		crc = calcCheckSum (researchCentersWorkingOnArea[i], crc);
+	crc = calcCheckSum (researchCentersWorkingTotal, crc);
 
 	return crc;
 }
@@ -814,7 +814,7 @@ bool cPlayer::canSeeAt (const cPosition& position) const
 {
 	if (isDefeated) return true;
 
-	return scanMap.get(position);
+	return scanMap.get (position);
 }
 
 //------------------------------------------------------------------------------

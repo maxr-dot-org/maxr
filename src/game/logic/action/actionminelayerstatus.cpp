@@ -22,39 +22,39 @@
 #include "game/data/model.h"
 
 //------------------------------------------------------------------------------
-cActionMinelayerStatus::cActionMinelayerStatus(const cVehicle& vehicle, bool layMines, bool clearMines) :
-	vehicleId(vehicle.getId()),
-	layMines(layMines),
-	clearMines(clearMines)
+cActionMinelayerStatus::cActionMinelayerStatus (const cVehicle& vehicle, bool layMines, bool clearMines) :
+	vehicleId (vehicle.getId()),
+	layMines (layMines),
+	clearMines (clearMines)
 {}
 
 //------------------------------------------------------------------------------
-cActionMinelayerStatus::cActionMinelayerStatus(cBinaryArchiveOut& archive)
+cActionMinelayerStatus::cActionMinelayerStatus (cBinaryArchiveOut& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionMinelayerStatus::execute(cModel& model) const
+void cActionMinelayerStatus::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	cVehicle* vehicle = model.getVehicleFromID(vehicleId);
+	cVehicle* vehicle = model.getVehicleFromID (vehicleId);
 	if (vehicle == nullptr || !vehicle->getOwner()) return;
 	if (vehicle->getOwner()->getId() != playerNr) return;
 
 	if (layMines && clearMines) return;
 	if (!vehicle->getStaticData().canPlaceMines) return;
 
-	vehicle->setClearMines(clearMines);
-	vehicle->setLayMines(layMines);
+	vehicle->setClearMines (clearMines);
+	vehicle->setLayMines (layMines);
 
 	if (vehicle->isUnitClearingMines())
 	{
-		vehicle->clearMine(model);
+		vehicle->clearMine (model);
 	}
 	else if (vehicle->isUnitLayingMines())
 	{
-		vehicle->layMine(model);
+		vehicle->layMine (model);
 	}
 }

@@ -45,12 +45,12 @@ public:
 	* integrates all building of the given subbase in the own one
 	* @author eiko
 	*/
-	void merge (cSubBase& sb);
+	void merge (cSubBase&);
 
-	void addBuilding (cBuilding& b);
+	void addBuilding (cBuilding&);
 
-	bool startBuilding(cBuilding& b);
-	bool stopBuilding(cBuilding& b, bool forced = false);
+	bool startBuilding (cBuilding&);
+	bool stopBuilding (cBuilding&, bool forced = false);
 
 	/**
 	* transfers a resource to/from the subbase
@@ -99,11 +99,11 @@ public:
 
 	const std::vector<cBuilding*>& getBuildings() const { return buildings; }
 
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 
-	mutable cSignal<void ()> metalChanged;
-	mutable cSignal<void ()> oilChanged;
-	mutable cSignal<void ()> goldChanged;
+	mutable cSignal<void()> metalChanged;
+	mutable cSignal<void()> oilChanged;
+	mutable cSignal<void()> goldChanged;
 private:
 
 	/**
@@ -111,9 +111,9 @@ private:
 	* starting offline generators/stations
 	* @author eiko
 	*/
-	bool increaseEnergyProd(int value);
+	bool increaseEnergyProd (int value);
 
-	void increaseOilProd(int value);
+	void increaseOilProd (int value);
 	//-----------------------------------
 	//turn end management:
 
@@ -156,9 +156,9 @@ private:
 	int getResource (eResourceType storeResType) const;
 	void setResource (eResourceType storeResType, int value);
 
-	void setMetal(int value);
-	void setOil(int value);
-	void setGold(int value);
+	void setMetal (int value);
+	void setOil (int value);
+	void setGold (int value);
 
 private:
 	std::vector<cBuilding*> buildings;
@@ -185,7 +185,7 @@ private:
 class cBase
 {
 public:
-	explicit cBase(cPlayer& owner);
+	explicit cBase (cPlayer& owner);
 	~cBase();
 
 	/**

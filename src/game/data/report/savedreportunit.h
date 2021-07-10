@@ -51,7 +51,7 @@ public:
 
 private:
 	template <typename T>
-	void serializeThis(T& archive)
+	void serializeThis (T& archive)
 	{
 		archive & NVP (unit);
 		archive & NVP (position);

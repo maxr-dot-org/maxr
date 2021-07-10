@@ -73,20 +73,20 @@ void cWindowSinglePlayer::newGameClicked()
 
 	auto application = getActiveApplication();
 
-	auto game = std::make_shared<cLocalSingleplayerGameNew> ();
+	auto game = std::make_shared<cLocalSingleplayerGameNew>();
 
 	//initialize copy of unitsData that will be used in game
-	game->setUnitsData(std::make_shared<const cUnitsData>(UnitsDataGlobal));
-	game->setClanData(std::make_shared<const cClanData>(ClanDataGlobal));
+	game->setUnitsData (std::make_shared<const cUnitsData> (UnitsDataGlobal));
+	game->setClanData (std::make_shared<const cClanData> (ClanDataGlobal));
 
-	auto windowGameSettings = getActiveApplication()->show (std::make_shared<cWindowGameSettings> ());
+	auto windowGameSettings = getActiveApplication()->show (std::make_shared<cWindowGameSettings>());
 	windowGameSettings->applySettings (cGameSettings());
 
 	windowGameSettings->done.connect ([ = ]()
 	{
 		game->setGameSettings (windowGameSettings->getGameSettings());
 
-		auto windowMapSelection = application->show (std::make_shared<cWindowMapSelection> ());
+		auto windowMapSelection = application->show (std::make_shared<cWindowMapSelection>());
 
 		windowMapSelection->done.connect ([=]()
 		{
@@ -105,20 +105,20 @@ void cWindowSinglePlayer::loadGameClicked()
 
 	auto application = getActiveApplication();
 
-	auto windowLoad = getActiveApplication()->show (std::make_shared<cWindowLoad> ());
+	auto windowLoad = getActiveApplication()->show (std::make_shared<cWindowLoad>());
 	windowLoad->load.connect ([ = ] (const cSaveGameInfo& saveInfo)
 	{
-		auto game = std::make_shared<cLocalSingleplayerGameSaved> ();
+		auto game = std::make_shared<cLocalSingleplayerGameSaved>();
 		game->setSaveGameNumber (saveInfo.number);
 		try
 		{
-			game->start(*application);
+			game->start (*application);
 		}
 		catch (const std::runtime_error& e)
 		{
-			Log.write("Could not start saved game.", cLog::eLOG_TYPE_ERROR);
-			Log.write(e.what(), cLog::eLOG_TYPE_ERROR);
-			application->show(std::make_shared<cDialogOk>(lngPack.i18n("Text~Error_Messages~ERROR_Save_Loading")));
+			Log.write ("Could not start saved game.", cLog::eLOG_TYPE_ERROR);
+			Log.write (e.what(), cLog::eLOG_TYPE_ERROR);
+			application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~ERROR_Save_Loading")));
 			return;
 		}
 

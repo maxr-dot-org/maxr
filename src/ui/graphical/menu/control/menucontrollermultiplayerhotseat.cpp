@@ -47,11 +47,11 @@ cMenuControllerMultiplayerHotSeat::cMenuControllerMultiplayerHotSeat (cApplicati
 //------------------------------------------------------------------------------
 void cMenuControllerMultiplayerHotSeat::start()
 {
-	game = std::make_shared<cLocalHotSeatGameNew> ();
+	game = std::make_shared<cLocalHotSeatGameNew>();
 
 	//initialize copy of unitsData that will be used in game
-	game->setUnitsData(std::make_shared<const cUnitsData>(UnitsDataGlobal));
-	game->setClanData(std::make_shared<const cClanData>(ClanDataGlobal));
+	game->setUnitsData (std::make_shared<const cUnitsData> (UnitsDataGlobal));
+	game->setClanData (std::make_shared<const cClanData> (ClanDataGlobal));
 
 	selectGameSettings();
 }
@@ -95,11 +95,11 @@ void cMenuControllerMultiplayerHotSeat::selectMap()
 {
 	if (!game) return;
 
-	auto windowMapSelection = application.show (std::make_shared<cWindowMapSelection> ());
+	auto windowMapSelection = application.show (std::make_shared<cWindowMapSelection>());
 
 	windowMapSelection->done.connect ([ = ]()
 	{
-		auto staticMap = std::make_shared<cStaticMap> ();
+		auto staticMap = std::make_shared<cStaticMap>();
 		if (!windowMapSelection->loadSelectedMap (*staticMap))
 		{
 			// TODO: error dialog: could not load selected map!
@@ -116,7 +116,7 @@ void cMenuControllerMultiplayerHotSeat::selectPlayers()
 {
 	if (!game) return;
 
-	windowPlayerSelection = application.show (std::make_shared<cWindowPlayerSelection> ());
+	windowPlayerSelection = application.show (std::make_shared<cWindowPlayerSelection>());
 
 	windowPlayerSelection->done.connect ([ = ]()
 	{
@@ -250,9 +250,9 @@ void cMenuControllerMultiplayerHotSeat::selectLandingPosition (size_t playerInde
 
 	auto& map = game->getStaticMap();
 	bool fixedBridgeHead = game->getGameSettings()->bridgeheadType == eGameSettingsBridgeheadType::Definite;
-	auto& landingUnits = game->getLandingUnits(playerIndex);
+	auto& landingUnits = game->getLandingUnits (playerIndex);
 	auto unitsData = game->getUnitsData();
-	playerLandingSelectionWindows[playerIndex] = std::make_shared<cWindowLandingPositionSelection>(map, fixedBridgeHead, landingUnits, unitsData, true);
+	playerLandingSelectionWindows[playerIndex] = std::make_shared<cWindowLandingPositionSelection> (map, fixedBridgeHead, landingUnits, unitsData, true);
 
 	auto windowLandingPositionSelection = application.show (playerLandingSelectionWindows[playerIndex]);
 

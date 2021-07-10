@@ -35,7 +35,7 @@ public:
 	cLobbyChatBoxListViewItem (const std::string& prefix, const std::string& text, bool addColon = true);
 	cLobbyChatBoxListViewItem (const std::string& prefix, int desiredPrefixTextWidth, const std::string& text, bool addColon = true);
 
-	int getPrefixLabelWidth () const;
+	int getPrefixLabelWidth() const;
 	void setDesiredPrefixLabelWidth (int width);
 
 	void handleResized (const cPosition& oldSize) override;

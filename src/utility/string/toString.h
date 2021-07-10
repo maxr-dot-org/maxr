@@ -22,7 +22,7 @@
 
 #include <string>
 
-std::string getHexValue(unsigned char byte);
-unsigned char getByteValue(const std::string& str, int index);
+std::string getHexValue (unsigned char byte);
+unsigned char getByteValue (const std::string& str, int index);
 
 #endif // utility_string_toStringH

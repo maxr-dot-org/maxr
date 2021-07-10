@@ -41,7 +41,7 @@ cWindowPlayerSelection::cWindowPlayerSelection() :
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (165, 35), getPosition() + cPosition (165 + 70, 35 + 10)), lngPack.i18n ("Text~Title~Human"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (275, 35), getPosition() + cPosition (275 + 70, 35 + 10)), lngPack.i18n ("Text~Title~Computer"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (385, 35), getPosition() + cPosition (385 + 70, 35 + 10)), lngPack.i18n ("Text~Title~Nobody"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
-	//addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (500, 35), getPosition () + cPosition (500 + 70, 35 + 10)), lngPack.i18n ("Text~Title~Clan"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	//addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (500, 35), getPosition() + cPosition (500 + 70, 35 + 10)), lngPack.i18n ("Text~Title~Clan"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 	okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
 	signalConnectionManager.connect (okButton->clicked, [&]() { done(); });

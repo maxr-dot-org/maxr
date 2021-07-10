@@ -24,7 +24,7 @@
 
 class cRgbColor;
 class cPosition;
-template<typename> class cBox;
+template <typename> class cBox;
 
 void drawPoint (SDL_Surface&, const cPosition&, const cRgbColor&);
 void drawLine (SDL_Surface&, const cPosition& start, const cPosition& end, const cRgbColor&);

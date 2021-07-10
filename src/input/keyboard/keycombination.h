@@ -37,7 +37,7 @@ public:
 	bool operator== (const cKeyCombination& other) const;
 	bool operator!= (const cKeyCombination& other) const;
 
-	bool matches(const cKeyCombination& other) const;
+	bool matches (const cKeyCombination& other) const;
 
 	static bool isRepresentableKey (SDL_Keycode key);
 private:

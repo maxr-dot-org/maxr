@@ -83,7 +83,7 @@ public:
 
 	// Entry point for UT to works with dummy surface.
 	template <typename ... Args>
-	cUnicodeFont(struct cUnitTestTag, Args...);
+	cUnicodeFont (struct cUnitTestTag, Args...);
 
 	void setTargetSurface (SDL_Surface* surface) { this->surface = surface; }
 	SDL_Surface* getTargetSurface() { return surface; }

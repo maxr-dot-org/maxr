@@ -99,7 +99,7 @@ template <eNetMessageType MsgType>
 class cNetMessageT : public cNetMessage
 {
 public:
-	cNetMessageT() : cNetMessage(MsgType) {}
+	cNetMessageT() : cNetMessage (MsgType) {}
 };
 
 /**

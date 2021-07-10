@@ -59,10 +59,10 @@ class cPathDestHandler
 	const cUnit* destUnit;
 	cPosition destination;
 public:
-	cPathDestHandler(ePathDestinationTypes type_, const cPosition& destination, const cVehicle* srcVehicle_, const cUnit* destUnit_);
+	cPathDestHandler (ePathDestinationTypes type_, const cPosition& destination, const cVehicle* srcVehicle_, const cUnit* destUnit_);
 
-	bool hasReachedDestination(const cPosition& position) const;
-	int heuristicCost(const cPosition& source) const;
+	bool hasReachedDestination (const cPosition& position) const;
+	int heuristicCost (const cPosition& source) const;
 };
 
 
@@ -86,8 +86,8 @@ public:
 	* calculates the costs for moving from the source- to the destinationfield
 	*@author alzi alias DoctorDeath
 	*/
-	template<typename T>
-	static int calcNextCost(const cPosition& source, const cPosition& destination, const cVehicle* vehicle, const T* map);
+	template <typename T>
+	static int calcNextCost (const cPosition& source, const cPosition& destination, const cVehicle* vehicle, const T* map);
 
 	/* the map on which the path will be calculated */
 	const cMapView* Map;
@@ -139,10 +139,10 @@ private:
 	void deleteFirstFromHeap();
 };
 
-template<typename T>
-int cPathCalculator::calcNextCost(const cPosition& source, const cPosition& destination, const cVehicle* vehicle, const T* map)
+template <typename T>
+int cPathCalculator::calcNextCost (const cPosition& source, const cPosition& destination, const cVehicle* vehicle, const T* map)
 {
-	static_assert(std::is_same<T, cMap>::value || std::is_same<T, cMapView>::value, "Type must be cMap or cMapView");
+	static_assert (std::is_same<T, cMap>::value || std::is_same<T, cMapView>::value, "Type must be cMap or cMapView");
 
 	int costs = 4;
 	// select base movement factor
@@ -150,11 +150,11 @@ int cPathCalculator::calcNextCost(const cPosition& source, const cPosition& dest
 	{
 		costs = (int)(4 * vehicle->getStaticUnitData().factorAir);
 	}
-	else if (map->isWater(destination) && !(map->getField(destination).hasBridgeOrPlattform() && vehicle->getStaticUnitData().factorGround > 0))
+	else if (map->isWater (destination) && !(map->getField (destination).hasBridgeOrPlattform() && vehicle->getStaticUnitData().factorGround > 0))
 	{
 		costs = (int)(4 * vehicle->getStaticUnitData().factorSea);
 	}
-	else if (map->isCoast(destination) && !(map->getField(destination).hasBridgeOrPlattform() && vehicle->getStaticUnitData().factorGround > 0))
+	else if (map->isCoast (destination) && !(map->getField (destination).hasBridgeOrPlattform() && vehicle->getStaticUnitData().factorGround > 0))
 	{
 		costs = (int)(4 * vehicle->getStaticUnitData().factorCoast);
 	}
@@ -165,7 +165,7 @@ int cPathCalculator::calcNextCost(const cPosition& source, const cPosition& dest
 
 	// moving on a road is cheaper
 	// assuming, only speed of ground units can be modified
-	const cBuilding* building = map->getField(destination).getBaseBuilding();
+	const cBuilding* building = map->getField (destination).getBaseBuilding();
 	if (building &&
 		building->getStaticData().modifiesSpeed != 0 &&
 		vehicle->getStaticUnitData().factorGround > 0)

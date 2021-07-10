@@ -30,7 +30,7 @@
 //------------------------------------------------------------------------------
 cUnitDetails::cUnitDetails (const cPosition& position) :
 	cWidget (position),
-	staticUnitData(nullptr),
+	staticUnitData (nullptr),
 	playerOriginalData (nullptr),
 	playerCurrentData (nullptr),
 	unitObjectCurrentData (nullptr),

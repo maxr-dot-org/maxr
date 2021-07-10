@@ -29,7 +29,7 @@
 
 class cPosition;
 
-template<typename T>
+template <typename T>
 class cBox;
 
 class cUnit;
@@ -48,11 +48,11 @@ public:
 
 	bool isPlaying() const;
 
-	bool hasAnimation () const;
+	bool hasAnimation() const;
 
 	void setUnit (const cUnit* unit);
 
-	cSignal<void ()> clicked;
+	cSignal<void()> clicked;
 private:
 	cImage* currentFrameImage;
 	FliAnimationPointerType fliAnimation;

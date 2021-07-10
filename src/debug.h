@@ -24,15 +24,15 @@
 
 # include <CrashRpt.h>
 
-#define CR_ENABLE_CRASH_RPT_CURRENT_THREAD() CrThreadAutoInstallHelper(0)
-#define CR_EMULATE_CRASH() crEmulateCrash(CR_SEH_EXCEPTION)
+#define CR_ENABLE_CRASH_RPT_CURRENT_THREAD() CrThreadAutoInstallHelper (0)
+#define CR_EMULATE_CRASH() crEmulateCrash (CR_SEH_EXCEPTION)
 #define CR_INIT_CRASHREPORTING() initCrashreporting()
 
 void initCrashreporting();
 
 #else
 
-#define CR_ENABLE_CRASH_RPT_CURRENT_THREAD() 
+#define CR_ENABLE_CRASH_RPT_CURRENT_THREAD()
 #define CR_EMULATE_CRASH()
 #define CR_INIT_CRASHREPORTING()
 

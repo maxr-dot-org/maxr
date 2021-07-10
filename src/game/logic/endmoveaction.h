@@ -38,19 +38,19 @@ enum eEndMoveActionType
 class cEndMoveAction
 {
 public:
-	cEndMoveAction ();
+	cEndMoveAction();
 	cEndMoveAction (const cVehicle& vehicle, const cUnit& destUnit, eEndMoveActionType type);
 
 	void execute (cModel& model);
 	eEndMoveActionType getType() const;
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 
 	template <typename T>
-	void serialize(T& archive)
+	void serialize (T& archive)
 	{
-		archive & NVP(vehicleID);
-		archive & NVP(type);
-		archive & NVP(destID);
+		archive & NVP (vehicleID);
+		archive & NVP (type);
+		archive & NVP (destID);
 	}
 private:
 	void executeLoadAction (cModel& model);

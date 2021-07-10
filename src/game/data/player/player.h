@@ -52,10 +52,10 @@ class cPlayerBasicData;
 struct sTurnstartReport
 {
 	template <typename T>
-	void serialize(T& archive)
+	void serialize (T& archive)
 	{
-		archive & NVP(type);
-		archive & NVP(count);
+		archive & NVP (type);
+		archive & NVP (count);
 	}
 
 	/** unit type of the report */
@@ -78,7 +78,7 @@ class cPlayer
 {
 	cPlayer (const cPlayer&) = delete;
 public:
-	explicit cPlayer(const cPlayerBasicData& splayer, const cUnitsData& unitsData);
+	explicit cPlayer (const cPlayerBasicData& splayer, const cUnitsData& unitsData);
 	~cPlayer();
 
 	const std::string& getName() const { return name; }
@@ -105,10 +105,10 @@ public:
 	* Update the scan and detection maps of the player. These maps control,
 	* where a player can see other units.
 	*/
-	void addToScan(const cUnit& unit);
-	void updateScan(const cUnit& unit, const cPosition& newPosition, bool newIsBig = false);
-	void updateScan(const cUnit& unit, int newScanRange);
-	void removeFromScan(const cUnit& unit);
+	void addToScan (const cUnit&);
+	void updateScan (const cUnit&, const cPosition& newPosition, bool newIsBig = false);
+	void updateScan (const cUnit&, int newScanRange);
+	void removeFromScan (const cUnit&);
 
 	const cRangeMap& getScanMap() const;
 
@@ -123,19 +123,19 @@ public:
 	* Check weather unit is visible for the player. The check includes all necessary conditions,
 	* including owner, scan area, stealth abilities and detection state.
 	*/
-	bool canSeeUnit(const cUnit& unit, const cMap& map) const;
-	bool canSeeUnit(const cUnit& unit, const cMapField& field, const sTerrain& terrain) const;
+	bool canSeeUnit (const cUnit&, const cMap&) const;
+	bool canSeeUnit (const cUnit&, const cMapField&, const sTerrain&) const;
 	/**
 	* Check weather the scan area covers position. Do not use this to check, weather
 	* a unit on the position is actually visible. Use canSeeUnit() for this purpose
 	*/
-	bool canSeeAt(const cPosition& position) const;
+	bool canSeeAt (const cPosition&) const;
 
-	void addUnit (std::shared_ptr<cVehicle> vehicle);
-	void addUnit (std::shared_ptr<cBuilding> building);
+	void addUnit (std::shared_ptr<cVehicle>);
+	void addUnit (std::shared_ptr<cBuilding>);
 
-	std::shared_ptr<cBuilding> removeUnit (const cBuilding& building);
-	std::shared_ptr<cVehicle> removeUnit (const cVehicle& vehicle);
+	std::shared_ptr<cBuilding> removeUnit (const cBuilding&);
+	std::shared_ptr<cVehicle> removeUnit (const cVehicle&);
 
 	void removeAllUnits();
 
@@ -161,7 +161,7 @@ public:
 	/** change the score of the player for the current turn by the given value */
 	void changeScore (int score);
 	/** count generated points at turn end and and create a new entry in the points history */
-	void accumulateScore ();
+	void accumulateScore();
 
 	void setClan (int newClan, const cUnitsData& unitsData);
 	int getClan() const { return clan; }
@@ -169,15 +169,15 @@ public:
 	bool getHasFinishedTurn() const;
 	void setHasFinishedTurn (bool value);
 
-	void exploreResource (const cPosition& pos) { resourceMap.set(getOffset (pos), 1); }
+	void exploreResource (const cPosition& pos) { resourceMap.set (getOffset (pos), 1); }
 	bool hasResourceExplored (const cPosition& pos) const { return resourceMap[getOffset (pos)] != 0; }
-	bool hasSentriesAir (const cPosition& pos) const { return sentriesMapAir.get(pos); }
-	bool hasSentriesGround (const cPosition& pos) const { return sentriesMapGround.get(pos); }
-	bool hasLandDetection (const cPosition& pos) const { return detectLandMap.get(pos); }
-	bool hasMineDetection (const cPosition& pos) const { return detectMinesMap.get(pos); }
-	bool hasSeaDetection (const cPosition& pos) const { return detectSeaMap.get(pos); }
+	bool hasSentriesAir (const cPosition& pos) const { return sentriesMapAir.get (pos); }
+	bool hasSentriesGround (const cPosition& pos) const { return sentriesMapGround.get (pos); }
+	bool hasLandDetection (const cPosition& pos) const { return detectLandMap.get (pos); }
+	bool hasMineDetection (const cPosition& pos) const { return detectMinesMap.get (pos); }
+	bool hasSeaDetection (const cPosition& pos) const { return detectSeaMap.get (pos); }
 
-	std::vector<cResearch::ResearchArea> doResearch(const cUnitsData& unitsData);  // proceed with the research at turn end
+	std::vector<cResearch::ResearchArea> doResearch (const cUnitsData&);  // proceed with the research at turn end
 
 	void refreshSentryMaps();
 
@@ -193,34 +193,34 @@ public:
 	void stopAResearch (cResearch::ResearchArea researchArea);
 
 	void refreshResearchCentersWorkingOnArea();
-	void refreshBase(const cMap& map);
+	void refreshBase (const cMap&);
 
-	sNewTurnPlayerReport makeTurnStart(cModel& model);
+	sNewTurnPlayerReport makeTurnStart (cModel&);
 
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 
-	mutable cSignal<void ()> creditsChanged;
-	mutable cSignal<void ()> hasFinishedTurnChanged;
+	mutable cSignal<void()> creditsChanged;
+	mutable cSignal<void()> hasFinishedTurnChanged;
 	mutable cSignal<void (cResearch::ResearchArea)> researchCentersWorkingOnAreaChanged;
-	mutable cSignal<void ()> researchCentersWorkingTotalChanged;
-	mutable cSignal<void ()> turnEndMovementsStarted;
-	mutable cSignal<void (const cUnit& unit)> unitDestroyed;
-	mutable cSignal<void (const cUnit& unit)> unitAttacked;
-	mutable cSignal<void ()> buildErrorBuildPositionBlocked;
-	mutable cSignal<void ()> buildErrorInsufficientMaterial;
-	mutable cSignal<void (const cUnit& unit)> buildPathInterrupted;
-	mutable cSignal<void (const cUnit& unit)> detectedStealthUnit;
-	mutable cSignal<void (const cUnit& unit)> stealthUnitDissappeared;
+	mutable cSignal<void()> researchCentersWorkingTotalChanged;
+	mutable cSignal<void()> turnEndMovementsStarted;
+	mutable cSignal<void (const cUnit&)> unitDestroyed;
+	mutable cSignal<void (const cUnit&)> unitAttacked;
+	mutable cSignal<void()> buildErrorBuildPositionBlocked;
+	mutable cSignal<void()> buildErrorInsufficientMaterial;
+	mutable cSignal<void (const cUnit&)> buildPathInterrupted;
+	mutable cSignal<void (const cUnit&)> detectedStealthUnit;
+	mutable cSignal<void (const cUnit&)> stealthUnitDissappeared;
 	mutable cSignal<void (const sID& unitId, int unitsCount, int costs)> unitsUpgraded;
 
 	template <typename T>
-	void save(T& archive)
+	void save (T& archive)
 	{
-		archive & NVP(name);
-		archive & NVP(id);
-		archive & NVP(color);
-		archive & NVP(dynamicUnitsData);
-		archive & serialization::makeNvp("vehicleNum", (int)vehicles.size());
+		archive & NVP (name);
+		archive & NVP (id);
+		archive & NVP (color);
+		archive & NVP (dynamicUnitsData);
+		archive & serialization::makeNvp ("vehicleNum", (int)vehicles.size());
 		// should be saved in "correct order"
 		// references first to allow to restore pointers.
 		//
@@ -232,8 +232,8 @@ public:
 		const std::function<bool (const std::shared_ptr<cVehicle>&)> filters[] =
 		{
 			[&](const auto& vehicle){ return !hasStoredUnits (vehicle); },
-			[&](const auto& vehicle){ return hasStoredUnits(vehicle) && ranges::none_of (vehicle->storedUnits, hasStoredUnits);},
-			[&](const auto& vehicle){ return hasStoredUnits(vehicle) && ranges::any_of (vehicle->storedUnits, hasStoredUnits);}
+			[&](const auto& vehicle){ return hasStoredUnits (vehicle) && ranges::none_of (vehicle->storedUnits, hasStoredUnits);},
+			[&](const auto& vehicle){ return hasStoredUnits (vehicle) && ranges::any_of (vehicle->storedUnits, hasStoredUnits);}
 		};
 		for (auto filter : filters)
 		{
@@ -241,74 +241,74 @@ public:
 			{
 				if (filter (vehicle))
 				{
-					archive & serialization::makeNvp("vehicleID", vehicle->getId());
-					archive & serialization::makeNvp("vehicle", *vehicle);
+					archive & serialization::makeNvp ("vehicleID", vehicle->getId());
+					archive & serialization::makeNvp ("vehicle", *vehicle);
 				}
 			}
 		}
-		archive & serialization::makeNvp("buildingNum", (int)buildings.size());
+		archive & serialization::makeNvp ("buildingNum", (int)buildings.size());
 		for (auto building : buildings)
 		{
-			archive & serialization::makeNvp("buildingID", building->getId());
-			archive & serialization::makeNvp("building", *building);
+			archive & serialization::makeNvp ("buildingID", building->getId());
+			archive & serialization::makeNvp ("building", *building);
 		}
-		archive & NVP(landingPos);
-		archive & serialization::makeNvp("ResourceMap", resourceMapToString());
-		archive & NVP(pointsHistory);
-		archive & NVP(isDefeated);
-		archive & NVP(clan);
-		archive & NVP(credits);
-		archive & NVP(hasFinishedTurn);
-		archive & NVP(researchState);
+		archive & NVP (landingPos);
+		archive & serialization::makeNvp ("ResourceMap", resourceMapToString());
+		archive & NVP (pointsHistory);
+		archive & NVP (isDefeated);
+		archive & NVP (clan);
+		archive & NVP (credits);
+		archive & NVP (hasFinishedTurn);
+		archive & NVP (researchState);
 	}
-	template<typename T>
-	void load(T& archive)
+	template <typename T>
+	void load (T& archive)
 	{
-		archive & NVP(name);
-		archive & NVP(id);
-		archive & NVP(color);
+		archive & NVP (name);
+		archive & NVP (id);
+		archive & NVP (color);
 
 		dynamicUnitsData.clear();
-		archive & NVP(dynamicUnitsData);
+		archive & NVP (dynamicUnitsData);
 
 		vehicles.clear();
 		int vehicleNum;
-		archive & NVP(vehicleNum);
+		archive & NVP (vehicleNum);
 		for (int i = 0; i < vehicleNum; i++)
 		{
 			unsigned int vehicleID;
-			archive & NVP(vehicleID);
+			archive & NVP (vehicleID);
 			cStaticUnitData dummy1;
 			cDynamicUnitData dummy2;
-			auto vehicle = std::make_shared<cVehicle>(dummy1, dummy2, this, vehicleID);
-			archive & serialization::makeNvp("vehicle", *vehicle);
-			vehicles.insert(std::move(vehicle));
+			auto vehicle = std::make_shared<cVehicle> (dummy1, dummy2, this, vehicleID);
+			archive & serialization::makeNvp ("vehicle", *vehicle);
+			vehicles.insert (std::move (vehicle));
 		}
 
 		buildings.clear();
 		int buildingNum;
-		archive & NVP(buildingNum);
+		archive & NVP (buildingNum);
 		for (int i = 0; i < buildingNum; i++)
 		{
 			unsigned int buildingID;
-			archive & NVP(buildingID);
-			auto building = std::make_shared<cBuilding>(nullptr, nullptr, this, buildingID);
-			archive & serialization::makeNvp("building", *building);
-			buildings.insert(std::move(building));
+			archive & NVP (buildingID);
+			auto building = std::make_shared<cBuilding> (nullptr, nullptr, this, buildingID);
+			archive & serialization::makeNvp ("building", *building);
+			buildings.insert (std::move (building));
 		}
 
-		archive & NVP(landingPos);
+		archive & NVP (landingPos);
 
 		std::string ResourceMap;
-		archive & NVP(ResourceMap);
-		setResourceMapFromString(ResourceMap);
+		archive & NVP (ResourceMap);
+		setResourceMapFromString (ResourceMap);
 
-		archive & NVP(pointsHistory);
-		archive & NVP(isDefeated);
-		archive & NVP(clan);
-		archive & NVP(credits);
-		archive & NVP(hasFinishedTurn);
-		archive & NVP(researchState);
+		archive & NVP (pointsHistory);
+		archive & NVP (isDefeated);
+		archive & NVP (clan);
+		archive & NVP (credits);
+		archive & NVP (hasFinishedTurn);
+		archive & NVP (researchState);
 
 		hasFinishedTurnChanged(); //FIXME: deserialization does not trigger signals on changed data members. But this signal is needed for the gui after loading a save game...
 		refreshScanMaps();
@@ -320,7 +320,7 @@ private:
 	void upgradeUnitTypes (const std::vector<cResearch::ResearchArea>&, const cUnitsData& originalUnitsData);
 
 	std::string resourceMapToString() const;
-	void setResourceMapFromString(const std::string& str);
+	void setResourceMapFromString (const std::string& str);
 
 	void refreshScanMaps();
 

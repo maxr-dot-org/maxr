@@ -40,14 +40,14 @@ public:
 	const cVehicle& getVehicle() { return vehicle; }
 
 private:
-	void planMove(std::forward_list<cPosition>& path, int remainingMovePoints, const std::vector<std::unique_ptr<cSurveyorAi>>& jobs, const cMap& map) const;
+	void planMove (std::forward_list<cPosition>& path, int remainingMovePoints, const std::vector<std::unique_ptr<cSurveyorAi>>& jobs, const cMap& map) const;
 	void planLongMove (const std::vector<std::unique_ptr<cSurveyorAi>>&, cClient&);
 
-	float calcFactor(const cPosition& position, const std::forward_list<cPosition>& path, const std::vector<std::unique_ptr<cSurveyorAi>>& jobs, const cMap& map) const;
+	float calcFactor (const cPosition& position, const std::forward_list<cPosition>& path, const std::vector<std::unique_ptr<cSurveyorAi>>& jobs, const cMap& map) const;
 	float calcScoreDistToOtherSurveyor (const std::vector<std::unique_ptr<cSurveyorAi>>& jobs, const cPosition& position, float e) const;
 
-	bool positionHasBeenSurveyedByPath(const cPosition position, const std::forward_list<cPosition>& path) const;
-	bool hasAdjacentResources(const cPosition& position, const cMap& map) const;
+	bool positionHasBeenSurveyedByPath (const cPosition position, const std::forward_list<cPosition>& path) const;
+	bool hasAdjacentResources (const cPosition& position, const cMap& map) const;
 
 	void changeOP();
 

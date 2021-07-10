@@ -29,7 +29,7 @@
 
 class cAbstractListViewItem : public cWidget
 {
-	template<typename T>
+	template <typename T>
 	friend class cListView;
 public:
 	cAbstractListViewItem();

@@ -50,7 +50,7 @@ class cMapDownloadMessageHandler final : public IMapDownloadMessageHandler
 {
 public:
 	cSignal<void (std::size_t)> onPercentChanged;
-	cSignal<void ()> onCancelled;
+	cSignal<void()> onCancelled;
 	cSignal<void (std::shared_ptr<cStaticMap>)> onDownloaded;
 
 private:

@@ -58,7 +58,7 @@ bool cLandingPositionManager::setLandingPosition (const cPlayerBasicData& player
 	landingPositionSet (player, landingPosition);
 
 	//// wait for all players to choose at least once
-	//for (size_t i = 0; i != landingPositions.size (); ++i)
+	//for (size_t i = 0; i != landingPositions.size(); ++i)
 	//{
 	//	if (landingPositions[i].needNewPosition) return false;
 	//}

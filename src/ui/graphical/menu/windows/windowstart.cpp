@@ -69,7 +69,7 @@ void cWindowStart::singlePlayerClicked()
 {
 	if (!getActiveApplication()) return;
 
-	auto window = std::make_shared<cWindowSinglePlayer> ();
+	auto window = std::make_shared<cWindowSinglePlayer>();
 	getActiveApplication()->show (window);
 }
 
@@ -78,7 +78,7 @@ void cWindowStart::multiPlayerClicked()
 {
 	if (!getActiveApplication()) return;
 
-	auto window = std::make_shared<cWindowMultiPlayer> ();
+	auto window = std::make_shared<cWindowMultiPlayer>();
 	getActiveApplication()->show (window);
 }
 
@@ -87,7 +87,7 @@ void cWindowStart::preferencesClicked()
 {
 	if (!getActiveApplication()) return;
 
-	auto dialog = std::make_shared<cDialogPreferences> ();
+	auto dialog = std::make_shared<cDialogPreferences>();
 	getActiveApplication()->show (dialog);
 }
 
@@ -96,7 +96,7 @@ void cWindowStart::licenceClicked()
 {
 	if (!getActiveApplication()) return;
 
-	auto dialog = std::make_shared<cDialogLicense> ();
+	auto dialog = std::make_shared<cDialogLicense>();
 	getActiveApplication()->show (dialog);
 }
 

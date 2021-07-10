@@ -47,12 +47,12 @@ namespace
 		{
 			CHECK_SCALING (*UnitsUiData.ptr_small_beton, *UnitsUiData.ptr_small_beton_org, zoomFactor);
 			if (building.alphaEffectValue && cSettings::getInstance().isAlphaEffects())
-				SDL_SetSurfaceAlphaMod(UnitsUiData.ptr_small_beton, building.alphaEffectValue);
+				SDL_SetSurfaceAlphaMod (UnitsUiData.ptr_small_beton, building.alphaEffectValue);
 			else
-				SDL_SetSurfaceAlphaMod(UnitsUiData.ptr_small_beton, 254);
+				SDL_SetSurfaceAlphaMod (UnitsUiData.ptr_small_beton, 254);
 
-			SDL_BlitSurface(UnitsUiData.ptr_small_beton, nullptr, &surface, &tmp);
-			SDL_SetSurfaceAlphaMod(UnitsUiData.ptr_small_beton, 254);
+			SDL_BlitSurface (UnitsUiData.ptr_small_beton, nullptr, &surface, &tmp);
+			SDL_SetSurfaceAlphaMod (UnitsUiData.ptr_small_beton, 254);
 		}
 	}
 
@@ -227,11 +227,11 @@ void sBuildingUIData::drawConnectors (SDL_Surface& surface, SDL_Rect dest, float
 {
 	SDL_Rect src, temp;
 
-	CHECK_SCALING(*UnitsUiData.ptr_connector, *UnitsUiData.ptr_connector_org, zoomFactor);
-	CHECK_SCALING(*UnitsUiData.ptr_connector_shw, *UnitsUiData.ptr_connector_shw_org, zoomFactor);
+	CHECK_SCALING (*UnitsUiData.ptr_connector, *UnitsUiData.ptr_connector_org, zoomFactor);
+	CHECK_SCALING (*UnitsUiData.ptr_connector_shw, *UnitsUiData.ptr_connector_shw_org, zoomFactor);
 
-	if (building.alphaEffectValue) SDL_SetSurfaceAlphaMod(UnitsUiData.ptr_connector, building.alphaEffectValue);
-	else SDL_SetSurfaceAlphaMod(UnitsUiData.ptr_connector, 254);
+	if (building.alphaEffectValue) SDL_SetSurfaceAlphaMod (UnitsUiData.ptr_connector, building.alphaEffectValue);
+	else SDL_SetSurfaceAlphaMod (UnitsUiData.ptr_connector, 254);
 
 	src.y = 0;
 	src.x = 0;

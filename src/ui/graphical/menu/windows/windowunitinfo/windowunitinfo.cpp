@@ -51,13 +51,13 @@ cWindowUnitInfo::cWindowUnitInfo (const cDynamicUnitData& currentUnitData, const
 
 	if (currentUnitData.getId().isAVehicle())
 	{
-		const auto& uiData = *UnitsUiData.getVehicleUI(currentUnitData.getId());
+		const auto& uiData = *UnitsUiData.getVehicleUI (currentUnitData.getId());
 
 		infoImage->setImage (uiData.info.get());
 	}
 	else if (currentUnitData.getId().isABuilding())
 	{
-		const auto& uiData = *UnitsUiData.getBuildingUI(currentUnitData.getId());
+		const auto& uiData = *UnitsUiData.getBuildingUI (currentUnitData.getId());
 
 		infoImage->setImage (uiData.info.get());
 	}

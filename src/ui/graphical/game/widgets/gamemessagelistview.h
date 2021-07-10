@@ -23,7 +23,7 @@
 #include "ui/graphical/widget.h"
 #include "ui/graphical/game/widgets/gamemessagelistviewitem.h"
 
-template<typename>
+template <typename>
 class cListView;
 
 class cGameMessageListView : public cWidget

@@ -44,23 +44,23 @@ public:
 	static cUnit* selectTarget (const cPosition& position, char attackMode, const MAP& map, const cPlayer* owner);
 
 	cAttackJob (cUnit& aggressor, const cPosition& targetPosition, const cModel& model);
-	cAttackJob ();
+	cAttackJob();
 
-	void run(cModel& model);
+	void run (cModel& model);
 	bool finished() const;
-	void onRemoveUnit(const cUnit& unit);
+	void onRemoveUnit (const cUnit& unit);
 
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 
-	template<typename T>
-	void serialize(T& archive)
+	template <typename T>
+	void serialize (T& archive)
 	{
-		archive & NVP(aggressor);
-		archive & NVP(targetPosition);
-		archive & NVP(lockedTargets);
-		archive & NVP(fireDir);
-		archive & NVP(counter);
-		archive & NVP(state);
+		archive & NVP (aggressor);
+		archive & NVP (targetPosition);
+		archive & NVP (lockedTargets);
+		archive & NVP (fireDir);
+		archive & NVP (counter);
+		archive & NVP (state);
 	}
 
 private:
@@ -74,25 +74,25 @@ private:
 
 
 	int calcFireDir();
-	void lockTarget(const cMap& map);
-	void releaseTargets(const cModel& model);
-	void fire(cModel& model);
-	std::unique_ptr<cFx> createMuzzleFx ();
-	void impact(cModel& model);
-	void impactCluster(cModel& model);
+	void lockTarget (const cMap& map);
+	void releaseTargets (const cModel& model);
+	void fire (cModel& model);
+	std::unique_ptr<cFx> createMuzzleFx();
+	void impact (cModel& model);
+	void impactCluster (cModel& model);
 	void impactSingle (const cPosition& position, int attackPoints, cModel& model, std::vector<cUnit*>* avoidTargets = nullptr);
 
 };
 
 //--------------------------------------------------------------------------
-template<typename MAP>
-cUnit* cAttackJob::selectTarget(const cPosition& position, char attackMode, const MAP& map, const cPlayer* owner)
+template <typename MAP>
+cUnit* cAttackJob::selectTarget (const cPosition& position, char attackMode, const MAP& map, const cPlayer* owner)
 {
-	static_assert(std::is_same<MAP, cMap>::value || std::is_same<MAP, cMapView>::value, "Type must be cMap or cMapView");
+	static_assert (std::is_same<MAP, cMap>::value || std::is_same<MAP, cMapView>::value, "Type must be cMap or cMapView");
 
 	cVehicle* targetVehicle = nullptr;
 	cBuilding* targetBuilding = nullptr;
-	const auto& mapField = map.getField(position);
+	const auto& mapField = map.getField (position);
 
 	//planes
 	//prefer enemy planes. But select own one, if there is no enemy
@@ -119,7 +119,7 @@ cUnit* cAttackJob::selectTarget(const cPosition& position, char attackMode, cons
 	if (!targetVehicle && (attackMode & TERRAIN_GROUND))
 	{
 		targetVehicle = mapField.getVehicle();
-		if (targetVehicle && (targetVehicle->getStaticUnitData().isStealthOn & TERRAIN_SEA) && map.isWater(position) && !(attackMode & AREA_SUB)) targetVehicle = nullptr;
+		if (targetVehicle && (targetVehicle->getStaticUnitData().isStealthOn & TERRAIN_SEA) && map.isWater (position) && !(attackMode & AREA_SUB)) targetVehicle = nullptr;
 	}
 
 	// buildings

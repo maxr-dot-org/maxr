@@ -48,12 +48,12 @@ struct sResources
 public:
 	sResources() : value (0), typ (eResourceType::None) {}
 	template <typename T>
-	void serialize(T& archive)
+	void serialize (T& archive)
 	{
-		archive & NVP(value);
-		archive & NVP(typ);
+		archive & NVP (value);
+		archive & NVP (typ);
 	}
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 public:
 	unsigned char value;
 	eResourceType typ;
@@ -113,7 +113,7 @@ public:
 	void removeAll();
 
 	/** Triggered when any unit (building, vehicle or plane) has been added or removed to/from the field */
-	mutable cSignal<void ()> unitsChanged;
+	mutable cSignal<void()> unitsChanged;
 
 private:
 	cMapField (const cMapField& other) = delete;
@@ -192,14 +192,14 @@ public:
 	cPosition getSize() const { return cPosition (size, size); }
 	int getOffset (const cPosition& pos) const { assert (isValidPosition (pos));  return pos.y() * size + pos.x(); }
 
-	bool isValidPosition (const cPosition& position) const;
+	bool isValidPosition (const cPosition&) const;
 
-	bool isBlocked (const cPosition& position) const;
-	bool isCoast (const cPosition& position) const;
-	bool isWater (const cPosition& position) const;
-	bool isGround (const cPosition& position) const;
+	bool isBlocked (const cPosition&) const;
+	bool isCoast (const cPosition&) const;
+	bool isWater (const cPosition&) const;
+	bool isGround (const cPosition&) const;
 
-	bool possiblePlace(const cStaticUnitData& data, const cPosition& position) const;
+	bool possiblePlace (const cStaticUnitData&, const cPosition&) const;
 
 	std::size_t getTileIndex (const cPosition&) const;
 	const sTerrain& getTerrain (const cPosition&) const;
@@ -207,32 +207,32 @@ public:
 	cGraphicStaticMap& getGraphic() const { return graphic; }
 	const sGraphicTile& getGraphicTile (const cPosition&) const;
 
-	uint32_t getChecksum(uint32_t crc);
+	uint32_t getChecksum (uint32_t crc);
 
-	template<typename T>
-	void save(T& archive)
+	template <typename T>
+	void save (T& archive)
 	{
-		archive << NVP(filename);
-		archive << NVP(crc);
+		archive << NVP (filename);
+		archive << NVP (crc);
 	}
-	template<typename T>
-	void load(T& archive)
+	template <typename T>
+	void load (T& archive)
 	{
 		std::string fileToLoad;
-		archive >> serialization::makeNvp("filename", fileToLoad);
+		archive >> serialization::makeNvp ("filename", fileToLoad);
 		uint32_t crcFromSave;
-		archive >> serialization::makeNvp("crc", crcFromSave);
+		archive >> serialization::makeNvp ("crc", crcFromSave);
 
 		if (filename == fileToLoad && crc == crcFromSave)
 		{
-			Log.write("Static map already loaded. Skipped...", cLog::eLOG_TYPE_NET_DEBUG);
+			Log.write ("Static map already loaded. Skipped...", cLog::eLOG_TYPE_NET_DEBUG);
 			return;
 		}
-		if (!loadMap(fileToLoad))
-			throw std::runtime_error("Loading map failed.");
+		if (!loadMap (fileToLoad))
+			throw std::runtime_error ("Loading map failed.");
 
 		if (crc != crcFromSave && crcFromSave != 0)
-			throw std::runtime_error("CRC error while loading map. The loaded map file is not equal to the one the game was started with.");
+			throw std::runtime_error ("CRC error while loading map. The loaded map file is not equal to the one the game was started with.");
 	}
 
 	SERIALIZATION_SPLIT_MEMBER()
@@ -248,7 +248,7 @@ private:
 class cMap
 {
 public:
-	explicit cMap (std::shared_ptr<cStaticMap> staticMap_);
+	explicit cMap (std::shared_ptr<cStaticMap>);
 
 	~cMap();
 
@@ -261,83 +261,83 @@ public:
 	bool isCoast (const cPosition& position) const { return staticMap->isCoast (position); }
 	bool isWater (const cPosition& position) const { return staticMap->isWater (position); }
 
-	bool isWaterOrCoast (const cPosition& position) const;
+	bool isWaterOrCoast (const cPosition&) const;
 
 	const sResources& getResource (const cPosition& position) const { return Resources[getOffset (position)]; }
 
-	void placeResources(cModel& model);
+	void placeResources (cModel&);
 
-	cMapField& getField (const cPosition& position);
-	const cMapField& getField (const cPosition& position) const;
+	cMapField& getField (const cPosition&);
+	const cMapField& getField (const cPosition&) const;
 
-	void addBuilding (cBuilding& building, const cPosition& position);
-	void addVehicle (cVehicle& vehicle, const cPosition& position);
+	void addBuilding (cBuilding&, const cPosition&);
+	void addVehicle (cVehicle&, const cPosition&);
 
 	/**
 	* moves a vehicle to the given position
 	* resets the vehicle to a single field, when it was centered on four fields
 	* @param height defines the flight hight, when more than one plane on a field. 0 means top/highest.
 	*/
-	void moveVehicle (cVehicle& vehicle, const cPosition& position, int height = 0);
+	void moveVehicle (cVehicle&, const cPosition&, int height = 0);
 
 	/**
 	* places a vehicle on the 4 fields to the right and below the given position
 	*/
-	void moveVehicleBig (cVehicle& vehicle, const cPosition& position);
+	void moveVehicleBig (cVehicle&, const cPosition&);
 
-	void deleteBuilding (const cBuilding& building);
-	void deleteVehicle (const cVehicle& vehicle);
-	void deleteUnit (const cUnit& unit);
+	void deleteBuilding (const cBuilding&);
+	void deleteVehicle (const cVehicle&);
+	void deleteUnit (const cUnit&);
 
 	/**
 	* checks, whether the given field is an allowed place for the vehicle
 	* if checkPlayer is passed, the function uses the players point of view, so it does not check for units that are not in sight
 	*/
-	bool possiblePlace (const cVehicle& vehicle, const cPosition& position, bool checkPlayer, bool ignoreMovingVehicles = false) const;
-	bool possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool ignoreMovingVehicles = false) const;
+	bool possiblePlace (const cVehicle&, const cPosition&, bool checkPlayer, bool ignoreMovingVehicles = false) const;
+	bool possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosition&, const cPlayer*, bool ignoreMovingVehicles = false) const;
 
 	/**
 	* checks, whether the given field is an allowed place for the building
 	* if a vehicle is passed, it will be ignored in the check, so a constructing vehicle does not block its own position
 	*/
-	bool possiblePlaceBuilding (const cStaticUnitData& buildingData, const cPosition& position, const cPlayer* player, const cVehicle* vehicle = nullptr) const;
+	bool possiblePlaceBuilding (const cStaticUnitData& buildingData, const cPosition&, const cPlayer*, const cVehicle* = nullptr) const;
 
 	/**
 	* removes all units from the map structure
 	*/
 	void reset();
 
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 
-	template<typename T>
-	void save(T& archive)
+	template <typename T>
+	void save (T& archive)
 	{
-		archive << serialization::makeNvp("mapFile", *staticMap);
+		archive << serialization::makeNvp ("mapFile", *staticMap);
 		const std::string resources = resourcesToString();
-		archive << NVP(resources);
+		archive << NVP (resources);
 	}
-	template<typename T>
-	void load(T& archive)
+	template <typename T>
+	void load (T& archive)
 	{
-		assert(staticMap != nullptr);
-		archive >> serialization::makeNvp("mapFile", *staticMap);
+		assert (staticMap != nullptr);
+		archive >> serialization::makeNvp ("mapFile", *staticMap);
 		init();
 
 		std::string resources;
-		archive >> NVP(resources);
-		setResourcesFromString(resources);
+		archive >> NVP (resources);
+		setResourcesFromString (resources);
 	}
 	SERIALIZATION_SPLIT_MEMBER()
 
 private:
 	void init();
 	std::string resourcesToString() const;
-	void setResourcesFromString(const std::string& str);
+	void setResourcesFromString (const std::string& str);
 
-	static int getMapLevel (const cBuilding& building);
-	static int getMapLevel (const cVehicle& vehicle);
-	static int getResourceDensityFactor (eGameSettingsResourceDensity density);
-	static int getResourceAmountFactor (eGameSettingsResourceAmount amount);
+	static int getMapLevel (const cBuilding&);
+	static int getMapLevel (const cVehicle&);
+	static int getResourceDensityFactor (eGameSettingsResourceDensity);
+	static int getResourceAmountFactor (eGameSettingsResourceAmount);
 
 public:
 	mutable cSignal<void (const cUnit&)> addedUnit;

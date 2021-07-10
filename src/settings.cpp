@@ -111,16 +111,16 @@ void cSettings::setPaths()
 
 	//set exe path
 	TCHAR szPath[MAX_PATH];
-	HMODULE hModule = GetModuleHandle(nullptr);
+	HMODULE hModule = GetModuleHandle (nullptr);
 
-	GetModuleFileName(hModule, szPath, MAX_PATH);
+	GetModuleFileName (hModule, szPath, MAX_PATH);
 #ifdef UNICODE
 	std::wstring exe = szPath;
 #else
 	std::string exe = szPath;
 #endif
-	exe.erase(exe.rfind("\\"), std::string::npos);
-	exePath = std::string(exe.begin(), exe.end());
+	exe.erase (exe.rfind ("\\"), std::string::npos);
+	exePath = std::string (exe.begin(), exe.end());
 
 	//set config path
 	configPath = MAX_XML; // assume config in current working directory
@@ -299,7 +299,7 @@ std::string cSettings::searchDataDir (const std::string& sDataDirFromConf)
 	// assuming data is in same folder as binary (or current working directory)
 	sPathToGameData = exePath;
 #elif WIN32
-	if(!sDataDirFromConf.empty())
+	if (!sDataDirFromConf.empty())
 	{
 		sPathToGameData = sDataDirFromConf;
 		sPathToGameData += PATH_DELIMITER;
@@ -470,7 +470,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			showIntro = getXMLAttributeBoolFromElement(xmlElement, "YN");
+			showIntro = getXMLAttributeBoolFromElement (xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -508,7 +508,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			fastMode = getXMLAttributeBoolFromElement(xmlElement, "YN");
+			fastMode = getXMLAttributeBoolFromElement (xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -520,7 +520,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			preScale = getXMLAttributeBoolFromElement(xmlElement, "YN");
+			preScale = getXMLAttributeBoolFromElement (xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -573,7 +573,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		autosave = getXMLAttributeBoolFromElement(xmlElement, "YN");
+		autosave = getXMLAttributeBoolFromElement (xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -585,7 +585,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		debug = getXMLAttributeBoolFromElement(xmlElement, "YN");
+		debug = getXMLAttributeBoolFromElement (xmlElement, "YN");
 		if (!debug) Log.write ("Debugmode disabled - for verbose output please enable Debug in maxr.xml", cLog::eLOG_TYPE_WARNING);
 		else Log.write ("Debugmode enabled", cLog::eLOG_TYPE_INFO);
 	}
@@ -599,7 +599,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		animations = getXMLAttributeBoolFromElement(xmlElement, "YN");
+		animations = getXMLAttributeBoolFromElement (xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -611,7 +611,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		shadows = getXMLAttributeBoolFromElement(xmlElement, "YN");
+		shadows = getXMLAttributeBoolFromElement (xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -623,7 +623,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		alphaEffects = getXMLAttributeBoolFromElement(xmlElement, "YN");
+		alphaEffects = getXMLAttributeBoolFromElement (xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -635,7 +635,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		showDescription = getXMLAttributeBoolFromElement(xmlElement, "YN");
+		showDescription = getXMLAttributeBoolFromElement (xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -647,7 +647,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		damageEffects = getXMLAttributeBoolFromElement(xmlElement, "YN");
+		damageEffects = getXMLAttributeBoolFromElement (xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -659,7 +659,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		damageEffectsVehicles = getXMLAttributeBoolFromElement(xmlElement, "YN");
+		damageEffectsVehicles = getXMLAttributeBoolFromElement (xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -671,7 +671,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		makeTracks = getXMLAttributeBoolFromElement(xmlElement, "YN");
+		makeTracks = getXMLAttributeBoolFromElement (xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -698,7 +698,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			soundEnabled = getXMLAttributeBoolFromElement(xmlElement, "YN");
+			soundEnabled = getXMLAttributeBoolFromElement (xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -710,7 +710,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			musicMute = getXMLAttributeBoolFromElement(xmlElement, "YN");
+			musicMute = getXMLAttributeBoolFromElement (xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -722,7 +722,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			soundMute = getXMLAttributeBoolFromElement(xmlElement, "YN");
+			soundMute = getXMLAttributeBoolFromElement (xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -734,7 +734,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			voiceMute = getXMLAttributeBoolFromElement(xmlElement, "YN");
+			voiceMute = getXMLAttributeBoolFromElement (xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -746,7 +746,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			sound3d = getXMLAttributeBoolFromElement(xmlElement, "YN");
+			sound3d = getXMLAttributeBoolFromElement (xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -1101,7 +1101,7 @@ void cSettings::saveSetting (const std::string& path, bool value)
 }
 
 //------------------------------------------------------------------------------
-template<typename T>
+template <typename T>
 void cSettings::saveSetting (const std::string& path, T value, const char* valueName)
 {
 	std::unique_lock<std::recursive_mutex> lock (xmlDocMutex);

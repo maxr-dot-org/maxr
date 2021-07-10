@@ -119,7 +119,7 @@ public:
 	 * @param removed Is true when the window is removed entirely from the
 	 *                applications window stack.
 	 */
-	virtual void handleDeactivated(cApplication& application, bool removed);
+	virtual void handleDeactivated (cApplication& application, bool removed);
 
 	/**
 	 * Return true if the window wants to be centered.

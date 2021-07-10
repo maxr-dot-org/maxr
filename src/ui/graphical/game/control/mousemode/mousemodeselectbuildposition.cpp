@@ -38,13 +38,13 @@ eMouseModeType cMouseModeSelectBuildPosition::getType() const
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeSelectBuildPosition::setCursor(cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
+void cMouseModeSelectBuildPosition::setCursor (cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Band));
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeSelectBuildPosition::getMouseAction(const cPosition& mapPosition, const cUnitsData& unitsData) const
+std::unique_ptr<cMouseAction> cMouseModeSelectBuildPosition::getMouseAction (const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
 	const auto selectedUnit = unitSelection.getSelectedUnit();
 
@@ -57,14 +57,14 @@ std::unique_ptr<cMouseAction> cMouseModeSelectBuildPosition::getMouseAction(cons
 }
 
 //------------------------------------------------------------------------------
-std::optional<cPosition> cMouseModeSelectBuildPosition::findNextBuildPosition(const cPosition& sourcePosition, const cPosition& desiredPosition, const cUnitsData& unitsData) const
+std::optional<cPosition> cMouseModeSelectBuildPosition::findNextBuildPosition (const cPosition& sourcePosition, const cPosition& desiredPosition, const cUnitsData& unitsData) const
 {
 	if (!map) return std::nullopt;
 
 	bool pos[4] = {false, false, false, false};
 
 	//check, which positions are available
-	const auto& unitData = unitsData.getStaticUnitData(buildId);
+	const auto& unitData = unitsData.getStaticUnitData (buildId);
 	if (map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x() - 1, sourcePosition.y() - 1))
 		&& map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x(), sourcePosition.y() - 1))
 		&& map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x() - 1, sourcePosition.y())))

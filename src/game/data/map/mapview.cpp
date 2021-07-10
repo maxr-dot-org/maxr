@@ -25,174 +25,174 @@
 #include <set>
 
 //------------------------------------------------------------------------------
-cMapView::cMapView(std::shared_ptr<const cMap> map_, std::shared_ptr<const cPlayer> player_) :
-	map(map_),
-	player(player_)
+cMapView::cMapView (std::shared_ptr<const cMap> map_, std::shared_ptr<const cPlayer> player_) :
+	map (map_),
+	player (player_)
 {
-	assert(map != nullptr);
+	assert (map != nullptr);
 
 	if (player)
 	{
-		connectionManager.connect(player->detectedStealthUnit, [&](const cUnit& unit)
+		connectionManager.connect (player->detectedStealthUnit, [&](const cUnit& unit)
 		{
 			// check, if the unit was in stealth mode, to prevent double 'enemy detected' report
-			if (unit.isStealthOnCurrentTerrain(map->getField(unit.getPosition()), map->staticMap->getTerrain(unit.getPosition())))
+			if (unit.isStealthOnCurrentTerrain (map->getField (unit.getPosition()), map->staticMap->getTerrain (unit.getPosition())))
 			{
 				// stealth unit uncovered
-				unitAppeared(unit);
+				unitAppeared (unit);
 			}
 		});
 
-		connectionManager.connect(player->stealthUnitDissappeared, [&](const cUnit& unit)
+		connectionManager.connect (player->stealthUnitDissappeared, [&](const cUnit& unit)
 		{
-			if (player->canSeeAt(unit.getPosition()))
+			if (player->canSeeAt (unit.getPosition()))
 			{
 				// unit entered stealth mode
-				unitDissappeared(unit);
+				unitDissappeared (unit);
 			}
 		});
 
-		connectionManager.connect(player->getScanMap().positionsInRange, [&](const std::vector<cPosition>& positions)
+		connectionManager.connect (player->getScanMap().positionsInRange, [&](const std::vector<cPosition>& positions)
 		{
 			// scan area of player has changed
 			std::set<const cUnit*> units;
 			for (const auto& position : positions)
 			{
-				const auto& vehicles = map->getField(position).getVehicles();
+				const auto& vehicles = map->getField (position).getVehicles();
 				for (const auto& unit : vehicles)
 				{
-					if (player->canSeeUnit(*unit, *map))
+					if (player->canSeeUnit (*unit, *map))
 					{
-						units.insert(unit);
+						units.insert (unit);
 					}
 				}
-				const auto& buildings = map->getField(position).getBuildings();
+				const auto& buildings = map->getField (position).getBuildings();
 				for (const auto& unit : buildings)
 				{
-					if (player->canSeeUnit(*unit, *map))
+					if (player->canSeeUnit (*unit, *map))
 					{
-						units.insert(unit);
+						units.insert (unit);
 					}
 				}
-				const auto& planes = map->getField(position).getPlanes();
+				const auto& planes = map->getField (position).getPlanes();
 				for (const auto& unit : planes)
 				{
-					if (player->canSeeUnit(*unit, *map))
+					if (player->canSeeUnit (*unit, *map))
 					{
-						units.insert(unit);
+						units.insert (unit);
 					}
 				}
 			}
 
 			for (const auto& unit : units)
 			{
-				unitAppeared(*unit);
+				unitAppeared (*unit);
 			}
 		});
 
-		connectionManager.connect(player->getScanMap().positionsOutOfRange, [&](const std::vector<cPosition>& positions)
+		connectionManager.connect (player->getScanMap().positionsOutOfRange, [&](const std::vector<cPosition>& positions)
 		{
 			// scan area of player has changed
 			std::set<const cUnit*> units;
 			for (const auto& position : positions)
 			{
-				const auto& vehicles = map->getField(position).getVehicles();
+				const auto& vehicles = map->getField (position).getVehicles();
 				for (const auto& unit : vehicles)
 				{
-					if (!player->canSeeAnyAreaUnder(*unit))
+					if (!player->canSeeAnyAreaUnder (*unit))
 					{
-						units.insert(unit);
+						units.insert (unit);
 					}
 				}
-				const auto& buildings = map->getField(position).getBuildings();
+				const auto& buildings = map->getField (position).getBuildings();
 				for (const auto& unit : buildings)
 				{
-					if (!player->canSeeAnyAreaUnder(*unit))
+					if (!player->canSeeAnyAreaUnder (*unit))
 					{
-						units.insert(unit);
+						units.insert (unit);
 					}
 				}
-				const auto& planes = map->getField(position).getPlanes();
+				const auto& planes = map->getField (position).getPlanes();
 				for (const auto& unit : planes)
 				{
-					if (!player->canSeeAnyAreaUnder(*unit))
+					if (!player->canSeeAnyAreaUnder (*unit))
 					{
-						units.insert(unit);
+						units.insert (unit);
 					}
 				}
 			}
 
 			for (const auto& unit : units)
 			{
-				unitDissappeared(*unit);
+				unitDissappeared (*unit);
 			}
 		});
 	}
 
-	connectionManager.connect(map->addedUnit, [&](const cUnit& unit)
+	connectionManager.connect (map->addedUnit, [&](const cUnit& unit)
 	{
-		if (!player || player->canSeeUnit(unit, *map))
+		if (!player || player->canSeeUnit (unit, *map))
 		{
 			// unit unloaded or new unit exited factory
-			unitAppeared(unit);
+			unitAppeared (unit);
 		}
 	});
 
-	connectionManager.connect(map->movedVehicle, [&](const cUnit& unit, const cPosition& oldPosition)
+	connectionManager.connect (map->movedVehicle, [&](const cUnit& unit, const cPosition& oldPosition)
 	{
 		if (!player)
 		{
-			unitMoved(unit, oldPosition);
+			unitMoved (unit, oldPosition);
 			return;
 		}
 
-		bool unitIsVisible = player->canSeeUnit(unit, *map);
-		bool unitWasVisible = player->canSeeAt(oldPosition);
+		bool unitIsVisible = player->canSeeUnit (unit, *map);
+		bool unitWasVisible = player->canSeeAt (oldPosition);
 
 		if (unitIsVisible && !unitWasVisible)
 		{
 			// unit moved into scan area
-			unitAppeared(unit);
+			unitAppeared (unit);
 		}
 		else if (!unitIsVisible && unitWasVisible)
 		{
 			// unit moved out of scan area
-			unitDissappeared(unit);
+			unitDissappeared (unit);
 		}
 		else if (unitIsVisible)
 		{
 			// unit moved within scan area
-			unitMoved(unit, oldPosition);
+			unitMoved (unit, oldPosition);
 		}
 	});
 
-	connectionManager.connect(map->removedUnit, [&](const cUnit& unit)
+	connectionManager.connect (map->removedUnit, [&](const cUnit& unit)
 	{
-		if (!player || player->canSeeUnit(unit, *map))
+		if (!player || player->canSeeUnit (unit, *map))
 		{
 			// unit loaded or unit destroyed
-			unitDissappeared(unit);
+			unitDissappeared (unit);
 		}
 	});
 
 	if (player)
 	{
-		connectionManager.connect(player->getScanMap().changed, [&](){scanAreaChanged(); });
+		connectionManager.connect (player->getScanMap().changed, [&](){scanAreaChanged(); });
 	}
 }
 
 //------------------------------------------------------------------------------
-bool cMapView::isValidPosition(const cPosition& position) const
+bool cMapView::isValidPosition (const cPosition& position) const
 {
-	return map->isValidPosition(position);
+	return map->isValidPosition (position);
 }
 
 //------------------------------------------------------------------------------
-bool cMapView::isPositionVisible(const cPosition& position) const
+bool cMapView::isPositionVisible (const cPosition& position) const
 {
 	if (player)
 	{
-		return player->canSeeAt(position);
+		return player->canSeeAt (position);
 	}
 	else
 	{
@@ -201,33 +201,33 @@ bool cMapView::isPositionVisible(const cPosition& position) const
 }
 
 //------------------------------------------------------------------------------
-bool cMapView::isWaterOrCoast(const cPosition& position) const
+bool cMapView::isWaterOrCoast (const cPosition& position) const
 {
-	return map->isWaterOrCoast(position);
+	return map->isWaterOrCoast (position);
 }
 
 //------------------------------------------------------------------------------
-bool cMapView::isWater(const cPosition& position) const
+bool cMapView::isWater (const cPosition& position) const
 {
-	return map->isWater(position);
+	return map->isWater (position);
 }
 
 //------------------------------------------------------------------------------
-bool cMapView::isCoast(const cPosition& position) const
+bool cMapView::isCoast (const cPosition& position) const
 {
-	return map->isCoast(position);
+	return map->isCoast (position);
 }
 
 //------------------------------------------------------------------------------
-bool cMapView::isBlocked(const cPosition& position) const
+bool cMapView::isBlocked (const cPosition& position) const
 {
-	return map->isBlocked(position);
+	return map->isBlocked (position);
 }
 
 //------------------------------------------------------------------------------
-bool cMapView::canSeeUnit(const cUnit& unit) const
+bool cMapView::canSeeUnit (const cUnit& unit) const
 {
-	return !player || player->canSeeUnit(unit, *map);
+	return !player || player->canSeeUnit (unit, *map);
 }
 
 //------------------------------------------------------------------------------
@@ -237,23 +237,23 @@ cPosition cMapView::getSize() const
 }
 
 //------------------------------------------------------------------------------
-int cMapView::getOffset(const cPosition& position) const
+int cMapView::getOffset (const cPosition& position) const
 {
-	return map->getOffset(position);
+	return map->getOffset (position);
 }
 
 //------------------------------------------------------------------------------
-const cMapFieldView cMapView::getField(const cPosition& position) const
+const cMapFieldView cMapView::getField (const cPosition& position) const
 {
-	return cMapFieldView(map->getField(position), map->staticMap->getTerrain(position), player.get());
+	return cMapFieldView (map->getField (position), map->staticMap->getTerrain (position), player.get());
 }
 
 //------------------------------------------------------------------------------
-const sResources& cMapView::getResource(const cPosition& position) const
+const sResources& cMapView::getResource (const cPosition& position) const
 {
-	if (!player || player->hasResourceExplored(position))
+	if (!player || player->hasResourceExplored (position))
 	{
-		return map->getResource(position);
+		return map->getResource (position);
 	}
 	else
 	{
@@ -264,19 +264,19 @@ const sResources& cMapView::getResource(const cPosition& position) const
 }
 
 //------------------------------------------------------------------------------
-bool cMapView::possiblePlace(const cVehicle& vehicle, const cPosition& position, bool ignoreMovingVehicles /*= false*/) const
+bool cMapView::possiblePlace (const cVehicle& vehicle, const cPosition& position, bool ignoreMovingVehicles /*= false*/) const
 {
-	return map->possiblePlace(vehicle, position, player != nullptr, ignoreMovingVehicles);
+	return map->possiblePlace (vehicle, position, player != nullptr, ignoreMovingVehicles);
 }
 
 //------------------------------------------------------------------------------
-bool cMapView::possiblePlaceVehicle(const cStaticUnitData& vehicleData, const cPosition& position) const
+bool cMapView::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosition& position) const
 {
-	return map->possiblePlaceVehicle(vehicleData, position, player.get());
+	return map->possiblePlaceVehicle (vehicleData, position, player.get());
 }
 
 //------------------------------------------------------------------------------
-bool cMapView::possiblePlaceBuilding(const cStaticUnitData& buildingData, const cPosition& position, const cVehicle* vehicle /*= nullptr*/) const
+bool cMapView::possiblePlaceBuilding (const cStaticUnitData& buildingData, const cPosition& position, const cVehicle* vehicle /*= nullptr*/) const
 {
-	return map->possiblePlaceBuilding(buildingData, position, player.get(), vehicle);
+	return map->possiblePlaceBuilding (buildingData, position, player.get(), vehicle);
 }

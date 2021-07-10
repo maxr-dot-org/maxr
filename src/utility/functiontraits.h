@@ -30,17 +30,17 @@
  *
  * @tparam F
  */
-template<typename F>
-struct sFunctionTraits : public sFunctionTraits<decltype(&F::operator())>
+template <typename F>
+struct sFunctionTraits : public sFunctionTraits<decltype (&F::operator())>
 {};
 
 #if MAXR_NO_VARIADIC_TEMPLATES
 
-template<typename R>
+template <typename R>
 struct sFunctionTraits<R (*)()> : public sFunctionTraits<R()>
 {};
 
-template<typename R>
+template <typename R>
 struct sFunctionTraits<R()>
 {
 	typedef R result_type;
@@ -48,18 +48,18 @@ struct sFunctionTraits<R()>
 	static const size_t arity = 0;
 };
 
-template<typename R, typename Arg1>
+template <typename R, typename Arg1>
 struct sFunctionTraits<R (*) (Arg1)> : public sFunctionTraits<R (Arg1)>
 {};
 
-template<typename R, typename Arg1>
+template <typename R, typename Arg1>
 struct sFunctionTraits<R (Arg1)>
 {
 	typedef R result_type;
 
 	static const size_t arity = 1;
 
-	template<size_t N>
+	template <size_t N>
 	struct argument
 	{
 		static_assert (N < arity, "Invalid argument index.");
@@ -67,18 +67,18 @@ struct sFunctionTraits<R (Arg1)>
 	};
 };
 
-template<typename R, typename Arg1, typename Arg2>
+template <typename R, typename Arg1, typename Arg2>
 struct sFunctionTraits<R (*) (Arg1, Arg2)> : public sFunctionTraits<R (Arg1, Arg2)>
 {};
 
-template<typename R, typename Arg1, typename Arg2>
+template <typename R, typename Arg1, typename Arg2>
 struct sFunctionTraits<R (Arg1, Arg2)>
 {
 	typedef R result_type;
 
 	static const size_t arity = 2;
 
-	template<size_t N>
+	template <size_t N>
 	struct argument
 	{
 		static_assert (N < arity, "Invalid argument index.");
@@ -86,18 +86,18 @@ struct sFunctionTraits<R (Arg1, Arg2)>
 	};
 };
 
-template<typename R, typename Arg1, typename Arg2, typename Arg3>
+template <typename R, typename Arg1, typename Arg2, typename Arg3>
 struct sFunctionTraits<R (*) (Arg1, Arg2, Arg3)> : public sFunctionTraits<R (Arg1, Arg2, Arg3)>
 {};
 
-template<typename R, typename Arg1, typename Arg2, typename Arg3>
+template <typename R, typename Arg1, typename Arg2, typename Arg3>
 struct sFunctionTraits<R (Arg1, Arg2, Arg3)>
 {
 	typedef R result_type;
 
 	static const size_t arity = 3;
 
-	template<size_t N>
+	template <size_t N>
 	struct argument
 	{
 		static_assert (N < arity, "Invalid argument index.");
@@ -105,18 +105,18 @@ struct sFunctionTraits<R (Arg1, Arg2, Arg3)>
 	};
 };
 
-template<typename R, typename Arg1, typename Arg2, typename Arg3, typename Arg4>
+template <typename R, typename Arg1, typename Arg2, typename Arg3, typename Arg4>
 struct sFunctionTraits<R (*) (Arg1, Arg2, Arg3, Arg4)> : public sFunctionTraits<R (Arg1, Arg2, Arg3, Arg4)>
 {};
 
-template<typename R, typename Arg1, typename Arg2, typename Arg3, typename Arg4>
+template <typename R, typename Arg1, typename Arg2, typename Arg3, typename Arg4>
 struct sFunctionTraits<R (Arg1, Arg2, Arg3, Arg4)>
 {
 	typedef R result_type;
 
 	static const size_t arity = 4;
 
-	template<size_t N>
+	template <size_t N>
 	struct argument
 	{
 		static_assert (N < arity, "Invalid argument index.");
@@ -126,14 +126,14 @@ struct sFunctionTraits<R (Arg1, Arg2, Arg3, Arg4)>
 
 #else
 
-template<typename R, typename... Args>
-struct sFunctionTraits<R(Args...)>
+template <typename R, typename... Args>
+struct sFunctionTraits<R (Args...)>
 {
     typedef R result_type;
 
     static const size_t arity = sizeof... (Args);
 
-    template<size_t N>
+    template <size_t N>
     struct argument
     {
         static_assert (N < arity, "Invalid argument index.");
@@ -141,16 +141,16 @@ struct sFunctionTraits<R(Args...)>
     };
 };
 
-template<typename R, typename... Args>
+template <typename R, typename... Args>
 struct sFunctionTraits<R (*) (Args...)> : public sFunctionTraits<R (Args...)>
 {};
 
-template<typename C, typename R, typename... Args>
-struct sFunctionTraits<R (C::*) (Args...)> : public sFunctionTraits<R(Args...)>
+template <typename C, typename R, typename... Args>
+struct sFunctionTraits<R (C::*) (Args...)> : public sFunctionTraits<R (Args...)>
 {};
 
-template<typename C, typename R, typename... Args>
-struct sFunctionTraits<R (C::*) (Args...) const> : public sFunctionTraits<R(Args...)>
+template <typename C, typename R, typename... Args>
+struct sFunctionTraits<R (C::*) (Args...) const> : public sFunctionTraits<R (Args...)>
 {};
 
 #endif // MAXR_NO_VARIADIC_TEMPLATES

@@ -34,7 +34,7 @@ class cMapView;
 class cPlayer;
 class cVehicle;
 
-template<typename> class cBox;
+template <typename> class cBox;
 
 struct sTerrain;
 
@@ -55,7 +55,7 @@ enum
 class cUnit
 {
 protected:
-	cUnit(const cDynamicUnitData* unitData, const cStaticUnitData* staticData, cPlayer* owner, unsigned int ID);
+	cUnit (const cDynamicUnitData* unitData, const cStaticUnitData* staticData, cPlayer* owner, unsigned int ID);
 public:
 	virtual ~cUnit();
 
@@ -67,20 +67,20 @@ public:
 	cPlayer* getOwner() const;
 	void setOwner (cPlayer* owner);
 
-	virtual bool canTransferTo (const cPosition& position, const cMapView& map) const = 0;
-	virtual bool canTransferTo (const cUnit& unit) const = 0;
-	virtual bool canLoad(const cVehicle* vehicle, bool checkPosition = true) const = 0;
-	virtual bool canExitTo (const cPosition& position, const cMapView& map, const cStaticUnitData& unitData) const = 0;
-	virtual bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const = 0;
-	virtual bool canSupply(const cUnit* unit, eSupplyType supplyType) const = 0;
+	virtual bool canTransferTo (const cPosition&, const cMapView&) const = 0;
+	virtual bool canTransferTo (const cUnit&) const = 0;
+	virtual bool canLoad (const cVehicle*, bool checkPosition = true) const = 0;
+	virtual bool canExitTo (const cPosition&, const cMapView&, const cStaticUnitData&) const = 0;
+	virtual bool canExitTo (const cPosition&, const cMap&, const cStaticUnitData&) const = 0;
+	virtual bool canSupply (const cUnit*, eSupplyType) const = 0;
 
-	void storeVehicle(cVehicle& vehicle, cMap& map);
-	void exitVehicleTo(cVehicle& vehicle, const cPosition& position, cMap& map);
+	void storeVehicle (cVehicle&, cMap&);
+	void exitVehicleTo (cVehicle&, const cPosition&, cMap&);
 
 	virtual const cPosition& getMovementOffset() const { static const cPosition dummy (0, 0); return dummy; }
 
 	const cPosition& getPosition() const;
-	void setPosition (cPosition position);
+	void setPosition (cPosition);
 
 	cBox<cPosition> getArea() const;
 
@@ -113,15 +113,15 @@ public:
 	void upgradeToCurrentVersion();
 
 	/** checks if the unit has stealth abilities on its current position */
-	bool isStealthOnCurrentTerrain(const cMapField& field, const sTerrain& terrain) const;
+	bool isStealthOnCurrentTerrain (const cMapField&, const sTerrain&) const;
 	/** check whether this unit has been detected by other players */
-	void detectThisUnit(const cMap& map, const std::vector<std::shared_ptr<cPlayer>>& playerList);
+	void detectThisUnit (const cMap&, const std::vector<std::shared_ptr<cPlayer>>&);
 	/** detects other stealth units in scan range of this unit */
-	void detectOtherUnits(const cMap& map) const;
+	void detectOtherUnits (const cMap&) const;
 
-	void setDetectedByPlayer(const cPlayer* player);
-	void resetDetectedByPlayer(const cPlayer* player);
-	bool isDetectedByPlayer(const cPlayer* player) const;
+	void setDetectedByPlayer (const cPlayer*);
+	void resetDetectedByPlayer (const cPlayer*);
+	bool isDetectedByPlayer (const cPlayer*) const;
 	bool isDetectedByAnyPlayer() const;
 
 	/** Resets the list of players, that detected this unit in this turn
@@ -144,75 +144,75 @@ public:
 	bool hasBeenAttacked() const;
 
 	int getStoredResources() const;
-	void setStoredResources(int value);
+	void setStoredResources (int value);
 
 	//protected:
 	virtual bool canBeStoppedViaUnitMenu() const = 0;
 
 	bool getIsBig() const;
-	void setIsBig(bool value);
+	void setIsBig (bool value);
 
-	virtual uint32_t getChecksum(uint32_t crc) const;
+	virtual uint32_t getChecksum (uint32_t crc) const;
 
 	// Important NOTE: This signal will be triggered when the destructor of the unit gets called.
 	//                 This means when the signal is triggered it can not be guaranteed that all
 	//                 of the objects attributes are still valid (especially the ones of derived classes).
 	//                 Therefor you should not access the unit from a function that connects to this signal!
-	mutable cSignal<void ()> destroyed;
+	mutable cSignal<void()> destroyed;
 
-	mutable cSignal<void ()> ownerChanged;
+	mutable cSignal<void()> ownerChanged;
 
-	mutable cSignal<void ()> positionChanged;
+	mutable cSignal<void()> positionChanged;
 
-	mutable cSignal<void ()> renamed;
-	mutable cSignal<void ()> statusChanged;
+	mutable cSignal<void()> renamed;
+	mutable cSignal<void()> statusChanged;
 
-	mutable cSignal<void ()> disabledChanged;
-	mutable cSignal<void ()> sentryChanged;
-	mutable cSignal<void ()> manualFireChanged;
-	mutable cSignal<void ()> attackingChanged;
-	mutable cSignal<void ()> beeingAttackedChanged;
-	mutable cSignal<void ()> beenAttackedChanged;
-	mutable cSignal<void ()> movingChanged;
+	mutable cSignal<void()> disabledChanged;
+	mutable cSignal<void()> sentryChanged;
+	mutable cSignal<void()> manualFireChanged;
+	mutable cSignal<void()> attackingChanged;
+	mutable cSignal<void()> beeingAttackedChanged;
+	mutable cSignal<void()> beenAttackedChanged;
+	mutable cSignal<void()> movingChanged;
 
-	mutable cSignal<void ()> storedUnitsChanged; //the unit has loaded or unloaded another unit
-	mutable cSignal<void ()> stored;            //this unit has been loaded by another unit
-	mutable cSignal<void ()> activated;         //this unit has been unloaded by another unit
+	mutable cSignal<void()> storedUnitsChanged; //the unit has loaded or unloaded another unit
+	mutable cSignal<void()> stored;            //this unit has been loaded by another unit
+	mutable cSignal<void()> activated;         //this unit has been unloaded by another unit
 
-	mutable cSignal<void ()> layingMinesChanged;
-	mutable cSignal<void ()> clearingMinesChanged;
-	mutable cSignal<void ()> buildingChanged;
-	mutable cSignal<void ()> clearingChanged;
-	mutable cSignal<void ()> workingChanged;
-	mutable cSignal<void ()> storedResourcesChanged;
-	mutable cSignal<void ()> isBigChanged;
+	mutable cSignal<void()> layingMinesChanged;
+	mutable cSignal<void()> clearingMinesChanged;
+	mutable cSignal<void()> buildingChanged;
+	mutable cSignal<void()> clearingChanged;
+	mutable cSignal<void()> workingChanged;
+	mutable cSignal<void()> storedResourcesChanged;
+	mutable cSignal<void()> isBigChanged;
 
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
-		archive & NVP(data);
-		//archive & NVP(iID);  //const member. needs to be deserialized before calling constructor
-		archive & NVP(dir);
-		archive & NVP(storedUnits);
-		archive & NVP(detectedByPlayerList);
-		archive & NVP(detectedInThisTurnByPlayerList);
-		archive & NVP(owner);
-		archive & NVP(position);
-		archive & NVP(customName);
-		archive & NVP(turnsDisabled);
-		archive & NVP(sentryActive);
-		archive & NVP(manualFireActive);
-		archive & NVP(attacking);
-		archive & NVP(beeingAttacked);
-		archive & NVP(beenAttacked);
-		archive & NVP(isBig);
-		archive & NVP(storageResCur);
-		archive & NVP(jobActive);
+		archive & NVP (data);
+		//archive & NVP (iID);  //const member. needs to be deserialized before calling constructor
+		archive & NVP (dir);
+		archive & NVP (storedUnits);
+		archive & NVP (detectedByPlayerList);
+		archive & NVP (detectedInThisTurnByPlayerList);
+		archive & NVP (owner);
+		archive & NVP (position);
+		archive & NVP (customName);
+		archive & NVP (turnsDisabled);
+		archive & NVP (sentryActive);
+		archive & NVP (manualFireActive);
+		archive & NVP (attacking);
+		archive & NVP (beeingAttacked);
+		archive & NVP (beenAttacked);
+		archive & NVP (isBig);
+		archive & NVP (storageResCur);
+		archive & NVP (jobActive);
 
-		if (!archive.isWriter && data.getId() != sID(0, 0))
+		if (!archive.isWriter && data.getId() != sID (0, 0))
 		{
 			//restore pointer to static unit data
-			archive.getPointerLoader()->get(data.getId(), staticData);
+			archive.getPointerLoader()->get (data.getId(), staticData);
 		}
 	}
 
@@ -237,7 +237,7 @@ protected:
 	* at it's current position. Sets the "detectedByPlayer" state in this case.
 	* Returns true, if the unit is detected by player (no matter if it was detected before.
 	*/
-	bool checkDetectedByPlayer(const cPlayer& player, const cMap& map) const;
+	bool checkDetectedByPlayer (const cPlayer&, const cMap&) const;
 
 
 	/** Detection state of stealth units. Use cPlayer::canSeeUnit() to check
@@ -269,10 +269,10 @@ private:
 
 };
 
-template<typename T>
+template <typename T>
 struct sUnitLess
 {
-	//static_assert(std::is_base_of<cUnit, T>::value, "Invalid template parameter. Has to be of a derived class of cUnit!");
+	//static_assert (std::is_base_of<cUnit, T>::value, "Invalid template parameter. Has to be of a derived class of cUnit!");
 
 	bool operator() (const std::shared_ptr<T>& left, const std::shared_ptr<T>& right) const
 	{

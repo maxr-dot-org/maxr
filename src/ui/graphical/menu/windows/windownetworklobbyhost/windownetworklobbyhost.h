@@ -29,7 +29,7 @@ class cWindowNetworkLobbyHost : public cWindowNetworkLobby
 public:
 	cWindowNetworkLobbyHost();
 
-	cSignal<void ()> triggeredStartHost;
+	cSignal<void()> triggeredStartHost;
 private:
 	cSignalConnectionManager signalConnectionManager;
 };

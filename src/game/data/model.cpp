@@ -52,7 +52,7 @@ cModel::cModel() :
 	gameSettings (std::make_shared<cGameSettings>()),
 	unitsData (std::make_shared<cUnitsData>()),
 	turnCounter (std::make_shared<cTurnCounter> (1)),
-	casualtiesTracker (std::make_shared<cCasualtiesTracker> ())
+	casualtiesTracker (std::make_shared<cCasualtiesTracker>())
 {
 	turnTimeClock = std::make_shared<cTurnTimeClock> (*this);
 }
@@ -98,7 +98,7 @@ unsigned int cModel::getGameTime() const
 uint32_t cModel::getChecksum() const
 {
 	uint32_t crc = 0;
-	//crc = calcCheckSum(gameTime, crc);
+	//crc = calcCheckSum (gameTime, crc);
 	crc = calcCheckSum (randomGenerator, crc);
 	crc = calcCheckSum (gameId, crc);
 	crc = calcCheckSum (*gameSettings, crc);
@@ -139,7 +139,7 @@ void cModel::setGameSettings (const cGameSettings& gameSettings_)
 //------------------------------------------------------------------------------
 void cModel::setMap (std::shared_ptr<cStaticMap> map_)
 {
-	map = std::make_shared<cMap>(map_);
+	map = std::make_shared<cMap> (map_);
 	for (auto player : playerList)
 		player->initMaps (*map);
 }
@@ -176,7 +176,7 @@ const cPlayer* cModel::getPlayer (std::string player) const
 //------------------------------------------------------------------------------
 void cModel::setPlayerList (const std::vector<cPlayerBasicData>& splayers)
 {
-	assert(playerList.size() == 0);
+	assert (playerList.size() == 0);
 
 	for (const auto& playerInfo : splayers)
 	{
@@ -332,9 +332,9 @@ void cModel::addRubble (const cPosition& position, int value, bool big)
 	{
 		if (big)
 		{
-			addRubble (position + cPosition(1, 0), value / 4, false);
-			addRubble (position + cPosition(0, 1), value / 4, false);
-			addRubble (position + cPosition(1, 1), value / 4, false);
+			addRubble (position + cPosition (1, 0), value / 4, false);
+			addRubble (position + cPosition (0, 1), value / 4, false);
+			addRubble (position + cPosition (1, 1), value / 4, false);
 		}
 		return;
 	}
@@ -389,7 +389,7 @@ void cModel::deleteUnit (cUnit* unit)
 	if (unit == nullptr)
 		return;
 
-	Log.write (" cModel: delete unit, id: " + std::to_string(unit->getId()) + " @" + std::to_string(getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" cModel: delete unit, id: " + std::to_string (unit->getId()) + " @" + std::to_string (getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 
 	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->isRubble())
 	{
@@ -911,7 +911,7 @@ void cModel::sideStepStealthUnit (const cPosition& position, const cStaticUnitDa
 
 			// take the move with the lowest costs.
 			// Decide randomly, when costs are equal
-			if (costs < minCosts || (costs == minCosts && randomGenerator.get(2)))
+			if (costs < minCosts || (costs == minCosts && randomGenerator.get (2)))
 			{
 				// this is a good candidate for a destination
 				minCosts = costs;
@@ -979,7 +979,7 @@ void cModel::defeatLoserPlayers()
 		if (player.mayHaveOffensiveUnit()) continue;
 
 		player.isDefeated = true;
-		playerHasLost(player);
+		playerHasLost (player);
 	}
 }
 
@@ -992,7 +992,7 @@ void cModel::checkDefeats()
 	std::set<cPlayer*> winners;
 	int best_score = -1;
 
-	// find player(s) with highest score
+	// find player (s) with highest score
 	for (const auto& player : playerList)
 	{
 		if (player->isDefeated) continue;
@@ -1005,7 +1005,7 @@ void cModel::checkDefeats()
 			winners.clear();
 			best_score = score;
 		}
-		winners.insert(player.get());
+		winners.insert (player.get());
 	}
 
 	// Handle the case where there is more than one winner.
@@ -1018,13 +1018,13 @@ void cModel::checkDefeats()
 	}
 	else
 	{
-		assert(winners.size() == 1);
+		assert (winners.size() == 1);
 		for (const auto& player : playerList)
 		{
 			if (player->isDefeated) continue;
-			if (winners.find(player.get()) != winners.end())
+			if (winners.find (player.get()) != winners.end())
 			{
-				playerHasWon(*player);
+				playerHasWon (*player);
 			}
 			else
 			{

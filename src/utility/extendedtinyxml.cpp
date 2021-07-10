@@ -189,10 +189,10 @@ std::string getXMLAttributeString (tinyxml2::XMLDocument& document, const char* 
 }
 
 //------------------------------------------------------------------------------
-bool getXMLAttributeBoolFromElement(const tinyxml2::XMLElement* element, const char* name)
+bool getXMLAttributeBoolFromElement (const tinyxml2::XMLElement* element, const char* name)
 {
-	std::string value = element->Attribute(name);
-	std::transform(value.begin(), value.end(), value.begin(), ::tolower);
+	std::string value = element->Attribute (name);
+	std::transform (value.begin(), value.end(), value.begin(), ::tolower);
 	if (value == "true" ||
 		value == "y" ||
 		value == "yes")
@@ -205,7 +205,7 @@ bool getXMLAttributeBoolFromElement(const tinyxml2::XMLElement* element, const c
 	{
 		return false;
 	}
-	Log.write(std::string("Error reading boolean attribute of element \"") + element->Name() + "\": Illegal value \"" + value + "\"", cLog::eLOG_TYPE_WARNING);
+	Log.write (std::string ("Error reading boolean attribute of element \"") + element->Name() + "\": Illegal value \"" + value + "\"", cLog::eLOG_TYPE_WARNING);
 	return false;
 }
 //------------------------------------------------------------------------------
@@ -227,18 +227,18 @@ bool getXMLAttributeBool (tinyxml2::XMLDocument& document, const char* root, std
 	}
 }
 
-std::string printXMLPath(const tinyxml2::XMLElement* element)
+std::string printXMLPath (const tinyxml2::XMLElement* element)
 {
 	std::string path = element->Name();
 	while ((element = element->Parent()->ToElement()))
 	{
-		path = std::string(element->Name()) + "~" + path;
+		path = std::string (element->Name()) + "~" + path;
 	}
 
 	return path;
 }
 
-std::string getXMLErrorMsg(const tinyxml2::XMLDocument& document)
+std::string getXMLErrorMsg (const tinyxml2::XMLDocument& document)
 {
 	std::string msg;
 	switch (document.ErrorID())
@@ -267,10 +267,10 @@ std::string getXMLErrorMsg(const tinyxml2::XMLDocument& document)
 	}
 
 	if (const char* reason = document.GetErrorStr1())
-		msg += std::string(" ") + reason;
+		msg += std::string (" ") + reason;
 
 	if (const char* reason = document.GetErrorStr2())
-		msg += std::string(" ") + reason;
+		msg += std::string (" ") + reason;
 
 	return msg;
 }

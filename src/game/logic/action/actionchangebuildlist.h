@@ -28,16 +28,16 @@ struct sID;
 class cActionChangeBuildList : public cActionT<cAction::eActiontype::ACTION_CHANGE_BUILDLIST>
 {
 public:
-	cActionChangeBuildList(const cBuilding& building, const std::vector<sID>& buildList, int buildSpeed, bool repeat);
-	cActionChangeBuildList(cBinaryArchiveOut& archive);
+	cActionChangeBuildList (const cBuilding& building, const std::vector<sID>& buildList, int buildSpeed, bool repeat);
+	cActionChangeBuildList (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
 
-	void execute(cModel& model) const override;
+	void execute (cModel& model) const override;
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & buildingId;
 		archive & buildList;

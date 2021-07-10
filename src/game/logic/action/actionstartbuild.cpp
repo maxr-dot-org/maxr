@@ -23,60 +23,59 @@
 #include "game/logic/jobs/startbuildjob.h"
 
 
-cActionStartBuild::cActionStartBuild(const cVehicle& vehicle, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition) :
-	vehicleID(vehicle.getId()),
-	buildingTypeID(buildingTypeID),
-	buildSpeed(buildSpeed),
-	buildPosition(buildPosition),
-	buildPath(false)
+cActionStartBuild::cActionStartBuild (const cVehicle& vehicle, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition) :
+	vehicleID (vehicle.getId()),
+	buildingTypeID (buildingTypeID),
+	buildSpeed (buildSpeed),
+	buildPosition (buildPosition),
+	buildPath (false)
 {}
 
 //------------------------------------------------------------------------------
-cActionStartBuild::cActionStartBuild(const cVehicle& vehicle, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition, const cPosition& pathEndPosition) :
-	vehicleID(vehicle.getId()),
-	buildingTypeID(buildingTypeID),
-	buildSpeed(buildSpeed),
-	buildPosition(buildPosition),
-	buildPath(true),
-	pathEndPosition(pathEndPosition)
+cActionStartBuild::cActionStartBuild (const cVehicle& vehicle, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition, const cPosition& pathEndPosition) :
+	vehicleID (vehicle.getId()),
+	buildingTypeID (buildingTypeID),
+	buildSpeed (buildSpeed),
+	buildPosition (buildPosition),
+	buildPath (true),
+	pathEndPosition (pathEndPosition)
 {}
 
-
 //------------------------------------------------------------------------------
-cActionStartBuild::cActionStartBuild(cBinaryArchiveOut& archive)
+cActionStartBuild::cActionStartBuild (cBinaryArchiveOut& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionStartBuild::execute(cModel& model) const
+void cActionStartBuild::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
 	cMap& map = *model.getMap();
 
-	cVehicle* vehicle = model.getVehicleFromID(vehicleID);
+	cVehicle* vehicle = model.getVehicleFromID (vehicleID);
 	if (vehicle == nullptr || !vehicle->getOwner()) return;
 	if (vehicle->getOwner()->getId() != playerNr) return;
 
-	if (!model.getUnitsData()->isValidId(buildingTypeID)) return;
+	if (!model.getUnitsData()->isValidId (buildingTypeID)) return;
 	if (!buildingTypeID.isABuilding()) return;
-	if (!map.isValidPosition(buildPosition)) return;
-	if (buildPath && !map.isValidPosition(pathEndPosition)) return;
+	if (!map.isValidPosition (buildPosition)) return;
+	if (buildPath && !map.isValidPosition (pathEndPosition)) return;
 	if (buildSpeed > 2 || buildSpeed < 0) return;
 
 	if (vehicle->isUnitBuildingABuilding() || vehicle->BuildPath) return;
 	if (vehicle->isDisabled()) return;
 	if (vehicle->isUnitMoving()) return;
 
-	const cStaticUnitData& data = model.getUnitsData()->getStaticUnitData(buildingTypeID);
+	const cStaticUnitData& data = model.getUnitsData()->getStaticUnitData (buildingTypeID);
 
 	if (vehicle->getStaticUnitData().canBuild != data.buildAs) return;
 
 	std::array<int, 3> turboBuildRounds;
 	std::array<int, 3> turboBuildCosts;
-	int buildcost = vehicle->getOwner()->getUnitDataCurrentVersion(buildingTypeID)->getBuildCost();
-	vehicle->calcTurboBuild(turboBuildRounds, turboBuildCosts, buildcost);
+	int buildcost = vehicle->getOwner()->getUnitDataCurrentVersion (buildingTypeID)->getBuildCost();
+	vehicle->calcTurboBuild (turboBuildRounds, turboBuildCosts, buildcost);
 
 	if (turboBuildCosts[buildSpeed] > vehicle->getStoredResources() ||
 		turboBuildRounds[buildSpeed] <= 0)
@@ -88,15 +87,15 @@ void cActionStartBuild::execute(cModel& model) const
 	cPosition oldPosition = vehicle->getPosition();
 	if (data.buildingData.isBig)
 	{
- 		model.sideStepStealthUnit(buildPosition, *vehicle, buildPosition);
- 		model.sideStepStealthUnit(buildPosition + cPosition(1, 0), *vehicle, buildPosition);
- 		model.sideStepStealthUnit(buildPosition + cPosition(0, 1), *vehicle, buildPosition);
- 		model.sideStepStealthUnit(buildPosition + cPosition(1, 1), *vehicle, buildPosition);
+ 		model.sideStepStealthUnit (buildPosition, *vehicle, buildPosition);
+ 		model.sideStepStealthUnit (buildPosition + cPosition (1, 0), *vehicle, buildPosition);
+ 		model.sideStepStealthUnit (buildPosition + cPosition (0, 1), *vehicle, buildPosition);
+ 		model.sideStepStealthUnit (buildPosition + cPosition (1, 1), *vehicle, buildPosition);
 
-		if (!(map.possiblePlaceBuilding(data, buildPosition, nullptr, vehicle) &&
-			map.possiblePlaceBuilding(data, buildPosition + cPosition(1, 0), nullptr, vehicle) &&
-			map.possiblePlaceBuilding(data, buildPosition + cPosition(0, 1), nullptr, vehicle) &&
-			map.possiblePlaceBuilding(data, buildPosition + cPosition(1, 1), nullptr, vehicle)))
+		if (!(map.possiblePlaceBuilding (data, buildPosition, nullptr, vehicle) &&
+			map.possiblePlaceBuilding (data, buildPosition + cPosition (1, 0), nullptr, vehicle) &&
+			map.possiblePlaceBuilding (data, buildPosition + cPosition (0, 1), nullptr, vehicle) &&
+			map.possiblePlaceBuilding (data, buildPosition + cPosition (1, 1), nullptr, vehicle)))
 		{
 			vehicle->getOwner()->buildErrorBuildPositionBlocked();
 			return;
@@ -104,29 +103,29 @@ void cActionStartBuild::execute(cModel& model) const
 		vehicle->buildBigSavedPosition = vehicle->getPosition();
 
 		// set vehicle to build position
-		vehicle->getOwner()->updateScan(*vehicle, buildPosition, true);
-		map.moveVehicleBig(*vehicle, buildPosition);
+		vehicle->getOwner()->updateScan (*vehicle, buildPosition, true);
+		map.moveVehicleBig (*vehicle, buildPosition);
 	}
 	else
 	{
 		if (buildPosition != vehicle->getPosition()) return;
 
-		if (!map.possiblePlaceBuilding(data, buildPosition, nullptr, vehicle))
+		if (!map.possiblePlaceBuilding (data, buildPosition, nullptr, vehicle))
 		{
 			vehicle->getOwner()->buildErrorBuildPositionBlocked();
 			return;
 		}
 	}
 
-	vehicle->setBuildingType(buildingTypeID);
+	vehicle->setBuildingType (buildingTypeID);
 	vehicle->bandPosition = pathEndPosition;
 
-	vehicle->setBuildCosts(turboBuildCosts[buildSpeed]);
-	vehicle->setBuildTurns(turboBuildRounds[buildSpeed]);
-	vehicle->setBuildCostsStart(vehicle->getBuildCosts());
-	vehicle->setBuildTurnsStart(vehicle->getBuildTurns());
+	vehicle->setBuildCosts (turboBuildCosts[buildSpeed]);
+	vehicle->setBuildTurns (turboBuildRounds[buildSpeed]);
+	vehicle->setBuildCostsStart (vehicle->getBuildCosts());
+	vehicle->setBuildTurnsStart (vehicle->getBuildTurns());
 
-	vehicle->setBuildingABuilding(true);
+	vehicle->setBuildingABuilding (true);
 	vehicle->BuildPath = buildPath;
 
 	model.addJob (std::make_unique<cStartBuildJob> (*vehicle, oldPosition, data.buildingData.isBig));

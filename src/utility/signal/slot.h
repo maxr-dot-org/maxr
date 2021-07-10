@@ -24,7 +24,7 @@
 
 class cSignalConnection;
 
-template<typename Signature>
+template <typename Signature>
 class cSlot
 {
 public:

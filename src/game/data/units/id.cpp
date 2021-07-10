@@ -27,27 +27,27 @@
 std::string sID::getText() const
 {
 	char tmp[6];
-	TIXML_SNPRINTF(tmp, sizeof(tmp), "%.2d %.2d", firstPart, secondPart);
+	TIXML_SNPRINTF (tmp, sizeof (tmp), "%.2d %.2d", firstPart, secondPart);
 	return tmp;
 }
 
 //------------------------------------------------------------------------------
-bool sID::less_buildingFirst(const sID& ID) const
+bool sID::less_buildingFirst (const sID& ID) const
 {
 	return firstPart == ID.firstPart ? secondPart < ID.secondPart : firstPart > ID.firstPart;
 }
 
 //------------------------------------------------------------------------------
-uint32_t sID::getChecksum(uint32_t crc) const
+uint32_t sID::getChecksum (uint32_t crc) const
 {
-	crc = calcCheckSum(firstPart, crc);
-	crc = calcCheckSum(secondPart, crc);
+	crc = calcCheckSum (firstPart, crc);
+	crc = calcCheckSum (secondPart, crc);
 
 	return crc;
 }
 
 //------------------------------------------------------------------------------
-bool sID::less_vehicleFirst(const sID& ID) const
+bool sID::less_vehicleFirst (const sID& ID) const
 {
 	return firstPart == ID.firstPart ? secondPart < ID.secondPart : firstPart < ID.firstPart;
 }

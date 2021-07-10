@@ -20,7 +20,7 @@
 #ifndef utility_indexiteratorH
 #define utility_indexiteratorH
 
-template<typename PointType>
+template <typename PointType>
 class cIndexIterator
 {
 public:
@@ -38,14 +38,14 @@ private:
 	PointType current;
 };
 
-template<typename PointType>
+template <typename PointType>
 cIndexIterator<PointType> makeIndexIterator (const PointType& begin, const PointType& end)
 {
 	return cIndexIterator<PointType> (begin, end);
 }
 
 //------------------------------------------------------------------------------
-template<typename PointType>
+template <typename PointType>
 cIndexIterator<PointType>::cIndexIterator (const PointType& begin_, const PointType& end_) :
 	begin (begin_),
 	end (end_),
@@ -53,7 +53,7 @@ cIndexIterator<PointType>::cIndexIterator (const PointType& begin_, const PointT
 {}
 
 //------------------------------------------------------------------------------
-template<typename PointType>
+template <typename PointType>
 bool cIndexIterator<PointType>::hasMore()
 {
 	for (size_t d = 0; d < current.size(); ++d)
@@ -64,7 +64,7 @@ bool cIndexIterator<PointType>::hasMore()
 }
 
 //------------------------------------------------------------------------------
-template<typename PointType>
+template <typename PointType>
 bool cIndexIterator<PointType>::next()
 {
 	size_t k = 0;
@@ -92,14 +92,14 @@ bool cIndexIterator<PointType>::next()
 }
 
 //------------------------------------------------------------------------------
-template<typename PointType>
+template <typename PointType>
 const PointType& cIndexIterator<PointType>::operator*()
 {
 	return current;
 }
 
 //------------------------------------------------------------------------------
-template<typename PointType>
+template <typename PointType>
 const PointType* cIndexIterator<PointType>::operator->()
 {
 	return &current;

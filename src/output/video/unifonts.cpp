@@ -500,7 +500,7 @@ cUnicodeFont::getFontTypeSurfaces (eUnicodeFontType const fonttype) const
 cUnicodeFont::FontTypeSurfaces*
 cUnicodeFont::getFontTypeSurfaces (eUnicodeFontType fonttype)
 {
-	return const_cast<FontTypeSurfaces*>(const_cast<const cUnicodeFont*>(this)->getFontTypeSurfaces(fonttype));
+	return const_cast<FontTypeSurfaces*> (const_cast<const cUnicodeFont*> (this)->getFontTypeSurfaces (fonttype));
 }
 
 AutoSurface cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
@@ -756,7 +756,7 @@ int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, const string& text,
 
 			// draw first part of text and proceed searching for breaklines
 			rDest.y = drawWithBreakLines (rDest, sTmp, fonttype);
-			// += getFontHeight(eBitmapFontType); //add newline for each breakline
+			// += getFontHeight (eBitmapFontType); //add newline for each breakline
 		}
 	}
 	while (k != string::npos);

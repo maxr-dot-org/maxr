@@ -192,7 +192,7 @@ void cLineEdit::handleLooseKeyFocus (cApplication& application)
 //------------------------------------------------------------------------------
 bool cLineEdit::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
-	clicked ();
+	clicked();
 
 	if (readOnly) return false;
 
@@ -218,7 +218,7 @@ void cLineEdit::createBackground()
 {
 	if (frameType == eLineEditFrameType::Box)
 	{
-		//surface = SDL_CreateRGBSurface (0, getSize ().x (), getSize ().y (), Video.getColDepth (), 0, 0, 0, 0);
+		//surface = SDL_CreateRGBSurface (0, getSize().x(), getSize().y(), Video.getColDepth(), 0, 0, 0, 0);
 
 		//SDL_FillRect (surface, nullptr, 0xFF00FF);
 		//SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
@@ -417,13 +417,13 @@ bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard
 			deleteRight();
 			break;
 		case SDLK_c:
-			if (keyboard.isAnyModifierActive(toEnumFlag (eKeyModifierType::Ctrl)))
+			if (keyboard.isAnyModifierActive (toEnumFlag (eKeyModifierType::Ctrl)))
 			{
 				SDL_SetClipboardText (text.c_str());
 			}
 			break;
 		case SDLK_x:
-			if (keyboard.isAnyModifierActive(toEnumFlag (eKeyModifierType::Ctrl)))
+			if (keyboard.isAnyModifierActive (toEnumFlag (eKeyModifierType::Ctrl)))
 			{
 				SDL_SetClipboardText (text.c_str());
 				text.clear();
@@ -431,7 +431,7 @@ bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard
 			}
 			break;
 		case SDLK_v:
-			if (keyboard.isAnyModifierActive(toEnumFlag (eKeyModifierType::Ctrl)) &&
+			if (keyboard.isAnyModifierActive (toEnumFlag (eKeyModifierType::Ctrl)) &&
 				SDL_HasClipboardText())
 			{
 				const auto clipboardText = SDL_GetClipboardText();

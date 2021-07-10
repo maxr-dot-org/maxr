@@ -22,27 +22,27 @@
 #include "game/data/model.h"
 
 //------------------------------------------------------------------------------
-cActionSetAutoMove::cActionSetAutoMove(const cVehicle& vehicle, bool autoMoveActive) :
-	vehicleId(vehicle.getId()),
-	autoMoveActive(autoMoveActive)
+cActionSetAutoMove::cActionSetAutoMove (const cVehicle& vehicle, bool autoMoveActive) :
+	vehicleId (vehicle.getId()),
+	autoMoveActive (autoMoveActive)
 {}
 
 //------------------------------------------------------------------------------
-cActionSetAutoMove::cActionSetAutoMove(cBinaryArchiveOut& archive)
+cActionSetAutoMove::cActionSetAutoMove (cBinaryArchiveOut& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionSetAutoMove::execute(cModel& model) const
+void cActionSetAutoMove::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	cVehicle* surveyor = model.getVehicleFromID(vehicleId);
+	cVehicle* surveyor = model.getVehicleFromID (vehicleId);
 	if (!surveyor || !surveyor->getOwner()) return;
 
 	if (surveyor->getOwner()->getId() != playerNr) return;
 	if (!surveyor->getStaticData().canSurvey) return;
 
-	surveyor->setSurveyorAutoMoveActive(autoMoveActive);
+	surveyor->setSurveyorAutoMoveActive (autoMoveActive);
 }

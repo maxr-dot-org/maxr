@@ -103,7 +103,7 @@ public:
 	 * Gets called when the mouse mode needs to be refreshed (E.g. because the active map
 	 * or player has been changed).
 	 */
-	mutable cSignal<void ()> needRefresh;
+	mutable cSignal<void()> needRefresh;
 protected:
 	/**
 	 * Signal connection manager for connections to signals from selected units.

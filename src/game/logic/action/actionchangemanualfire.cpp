@@ -22,29 +22,29 @@
 #include "game/data/model.h"
 
 //------------------------------------------------------------------------------
-cActionChangeManualFire::cActionChangeManualFire(const cUnit& unit) :
-	unitId(unit.getId())
+cActionChangeManualFire::cActionChangeManualFire (const cUnit& unit) :
+	unitId (unit.getId())
 {}
 
 //------------------------------------------------------------------------------
-cActionChangeManualFire::cActionChangeManualFire(cBinaryArchiveOut& archive)
+cActionChangeManualFire::cActionChangeManualFire (cBinaryArchiveOut& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionChangeManualFire::execute(cModel& model) const
+void cActionChangeManualFire::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	cUnit* unit = model.getUnitFromID(unitId);
+	cUnit* unit = model.getUnitFromID (unitId);
 	if (unit == nullptr || !unit->getOwner()) return;
 	if (unit->getOwner()->getId() != playerNr) return;
 
-	unit->setManualFireActive(!unit->isManualFireActive());
+	unit->setManualFireActive (!unit->isManualFireActive());
 	if (unit->isManualFireActive() && unit->isSentryActive())
 	{
-		unit->getOwner()->removeFromSentryMap(*unit);
-		unit->setSentryActive(false);
+		unit->getOwner()->removeFromSentryMap (*unit);
+		unit->setSentryActive (false);
 	}
 }

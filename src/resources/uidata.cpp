@@ -45,7 +45,7 @@ cUnitsUiData::~cUnitsUiData()
 }
 
 //------------------------------------------------------------------------------
-const sBuildingUIData* cUnitsUiData::getBuildingUI(sID id) const
+const sBuildingUIData* cUnitsUiData::getBuildingUI (sID id) const
 {
 	for (unsigned int i = 0; i < buildingUIs.size(); ++i)
 	{
@@ -56,7 +56,7 @@ const sBuildingUIData* cUnitsUiData::getBuildingUI(sID id) const
 }
 
 //------------------------------------------------------------------------------
-const sBuildingUIData& cUnitsUiData::getBuildingUI(const cBuilding& building) const
+const sBuildingUIData& cUnitsUiData::getBuildingUI (const cBuilding& building) const
 {
 	if (building.isRubble())
 	{
@@ -66,7 +66,7 @@ const sBuildingUIData& cUnitsUiData::getBuildingUI(const cBuilding& building) co
 }
 
 //------------------------------------------------------------------------------
-const sVehicleUIData* cUnitsUiData::getVehicleUI(sID id) const
+const sVehicleUIData* cUnitsUiData::getVehicleUI (sID id) const
 {
 	for (unsigned int i = 0; i < vehicleUIs.size(); ++i)
 	{

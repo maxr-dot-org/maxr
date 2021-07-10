@@ -45,7 +45,7 @@ public:
 
 	void setMinMaxPosition (int minPosition, int maxPosition);
 
-	cSignal<void ()> moved;
+	cSignal<void()> moved;
 private:
 	AutoSurface surface;
 

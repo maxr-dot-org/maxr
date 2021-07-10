@@ -60,11 +60,11 @@ public:
 
 	int getSdlChannelId() const;
 
-	cSignal<void ()> started;
-	cSignal<void (), std::recursive_mutex> stopped;
+	cSignal<void()> started;
+	cSignal<void(), std::recursive_mutex> stopped;
 
-	cSignal<void (), std::recursive_mutex> paused;
-	cSignal<void (), std::recursive_mutex> resumed;
+	cSignal<void(), std::recursive_mutex> paused;
+	cSignal<void(), std::recursive_mutex> resumed;
 private:
 	int sdlChannelId;
 

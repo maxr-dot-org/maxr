@@ -33,7 +33,7 @@ class cHud;
 class cGameMapWidget;
 class cMiniMapWidget;
 class cGameMessageListView;
-template<typename, typename> class cChatBox;
+template <typename, typename> class cChatBox;
 class cLobbyChatBoxListViewItem;
 class cChatBoxPlayerListViewItem;
 class cLabel;
@@ -64,13 +64,13 @@ class cGameGui : public cWindow
 public:
 	cGameGui (std::shared_ptr<const cStaticMap> staticMap, std::shared_ptr<cSoundManager> soundManager, std::shared_ptr<cAnimationTimer> animationTimer, std::shared_ptr<const cFrameCounter> frameCounter);
 
-	void setMapView(std::shared_ptr<const cMapView> mapView);
-	void setPlayer (std::shared_ptr<const cPlayer> player);
-	void setPlayers (std::vector<std::shared_ptr<const cPlayer>> players);
-	void setTurnClock (std::shared_ptr<const cTurnCounter> turnClock);
-	void setTurnTimeClock (std::shared_ptr<const cTurnTimeClock> turnTimeClock);
-	void setGameSettings (std::shared_ptr<const cGameSettings> gameSettings);
-	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData);
+	void setMapView (std::shared_ptr<const cMapView>);
+	void setPlayer (std::shared_ptr<const cPlayer>);
+	void setPlayers (std::vector<std::shared_ptr<const cPlayer>>);
+	void setTurnClock (std::shared_ptr<const cTurnCounter>);
+	void setTurnTimeClock (std::shared_ptr<const cTurnTimeClock>);
+	void setGameSettings (std::shared_ptr<const cGameSettings>);
+	void setUnitsData (std::shared_ptr<const cUnitsData>);
 
 	cHud& getHud();
 	const cHud& getHud() const;

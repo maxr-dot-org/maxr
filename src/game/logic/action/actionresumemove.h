@@ -26,16 +26,16 @@ class cActionResumeMove : public cActionT<cAction::eActiontype::ACTION_RESUME_MO
 {
 public:
 	cActionResumeMove();
-	cActionResumeMove(const cVehicle& vehicle);
-	cActionResumeMove(cBinaryArchiveOut& archive);
+	cActionResumeMove (const cVehicle& vehicle);
+	cActionResumeMove (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
 
-	void execute(cModel& model) const override;
+	void execute (cModel& model) const override;
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & unitId;
 	}

@@ -165,11 +165,11 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	// Enter
 	if (unitHasEnterEntry (vehicle, player))
 	{
-		auto button = mouseActionGroup->addButton(std::make_unique<cCheckBox>(nextButtonPosition, lngPack.i18n("Text~Others~Enter_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
-		button->setChecked(mouseInputMode == eMouseModeType::Enter);
-		button->toggled.connect([&]() { enterToggled(); });
+		auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Enter_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
+		button->setChecked (mouseInputMode == eMouseModeType::Enter);
+		button->toggled.connect ([&]() { enterToggled(); });
 		nextButtonPosition.y() += button->getSize().y();
-		area.add(button->getArea());
+		area.add (button->getArea());
 	}
 
 	// research
@@ -351,7 +351,7 @@ const cUnit* cUnitContextMenuWidget::getUnit()
 //------------------------------------------------------------------------------
 /*static*/ bool cUnitContextMenuWidget::unitHasRemoveEntry (const cVehicle* vehicle, const cPlayer* player, const cMapView* map)
 {
-	return vehicle && !vehicle->isDisabled() && vehicle->getOwner() == player && vehicle->getStaticData().canClearArea && map && map->getField(vehicle->getPosition()).getRubble() && !vehicle->isUnitClearing();
+	return vehicle && !vehicle->isDisabled() && vehicle->getOwner() == player && vehicle->getStaticData().canClearArea && map && map->getField (vehicle->getPosition()).getRubble() && !vehicle->isUnitClearing();
 }
 
 //------------------------------------------------------------------------------

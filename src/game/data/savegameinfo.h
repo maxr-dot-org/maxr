@@ -43,7 +43,7 @@ class cSaveGameInfo
 {
 public:
 	cSaveGameInfo();
-	explicit cSaveGameInfo(int number);
+	explicit cSaveGameInfo (int number);
 
 	// header
 	cVersion saveVersion;
@@ -64,7 +64,7 @@ public:
 	int number = 0;
 
 	template <typename T>
-	void serialize(T& archive)
+	void serialize (T& archive)
 	{
 		archive & saveVersion;
 		archive & gameVersion;

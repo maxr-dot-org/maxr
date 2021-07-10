@@ -43,8 +43,8 @@ void cNetworkGame::startNewGame (cApplication& application, std::shared_ptr<cCli
 	client->sendNetMessage (cActionInitNewGame (initPlayerData));
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, client->getModel().getMap()->staticMap);
-	gameGuiController->setSingleClient(client);
-	gameGuiController->setServer(server);
+	gameGuiController->setSingleClient (client);
+	gameGuiController->setServer (server);
 
 	cGameGuiState playerGameGuiState;
 	playerGameGuiState.mapPosition = initPlayerData.landingPosition;
@@ -64,7 +64,7 @@ void cNetworkGame::start (cApplication& application, std::shared_ptr<cClient> cl
 {
 	gameGuiController = std::make_unique<cGameGuiController> (application, client->getModel().getMap()->staticMap);
 	gameGuiController->setSingleClient (client);
-	gameGuiController->setServer(server);
+	gameGuiController->setServer (server);
 	gameGuiController->start();
 
 	resetTerminating();

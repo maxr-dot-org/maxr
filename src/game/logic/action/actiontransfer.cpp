@@ -25,60 +25,60 @@
 #include "utility/log.h"
 
 //------------------------------------------------------------------------------
-cActionTransfer::cActionTransfer(const cUnit& sourceUnit, const cUnit& destinationUnit, int transferValue_, eResourceType resourceType_) :
-	sourceUnitId(sourceUnit.getId()),
-	destinationUnitId(destinationUnit.getId()),
-	transferValue(transferValue_),
-	resourceType(resourceType_)
+cActionTransfer::cActionTransfer (const cUnit& sourceUnit, const cUnit& destinationUnit, int transferValue_, eResourceType resourceType_) :
+	sourceUnitId (sourceUnit.getId()),
+	destinationUnitId (destinationUnit.getId()),
+	transferValue (transferValue_),
+	resourceType (resourceType_)
 {}
 
 //------------------------------------------------------------------------------
-cActionTransfer::cActionTransfer(cBinaryArchiveOut& archive)
+cActionTransfer::cActionTransfer (cBinaryArchiveOut& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionTransfer::execute(cModel& model) const
+void cActionTransfer::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	const auto sourceUnit = model.getUnitFromID(sourceUnitId);
-	if(sourceUnit == nullptr) return;
+	const auto sourceUnit = model.getUnitFromID (sourceUnitId);
+	if (sourceUnit == nullptr) return;
 
-	const auto destinationUnit = model.getUnitFromID(destinationUnitId);
-	if(destinationUnit == nullptr) return;
+	const auto destinationUnit = model.getUnitFromID (destinationUnitId);
+	if (destinationUnit == nullptr) return;
 
-	if(sourceUnit->isABuilding())
+	if (sourceUnit->isABuilding())
 	{
-		const auto sourceBuilding = static_cast<cBuilding*>(sourceUnit);
-		if(destinationUnit->isABuilding())
+		const auto sourceBuilding = static_cast<cBuilding*> (sourceUnit);
+		if (destinationUnit->isABuilding())
 		{
-			const auto destinationBuilding = static_cast<cBuilding*>(destinationUnit);
+			const auto destinationBuilding = static_cast<cBuilding*> (destinationUnit);
 
-			if(sourceBuilding->subBase != destinationBuilding->subBase) return;
-			if(sourceBuilding->getOwner() != destinationBuilding->getOwner()) return;
-			if(sourceBuilding->getStaticUnitData().storeResType != resourceType) return;
-			if(sourceBuilding->getStaticUnitData().storeResType != destinationBuilding->getStaticUnitData().storeResType) return;
-			if(destinationBuilding->getStoredResources() + transferValue > destinationBuilding->getStaticUnitData().storageResMax || destinationBuilding->getStoredResources() + transferValue < 0) return;
-			if(sourceBuilding->getStoredResources() - transferValue > sourceBuilding->getStaticUnitData().storageResMax || sourceBuilding->getStoredResources() - transferValue < 0) return;
+			if (sourceBuilding->subBase != destinationBuilding->subBase) return;
+			if (sourceBuilding->getOwner() != destinationBuilding->getOwner()) return;
+			if (sourceBuilding->getStaticUnitData().storeResType != resourceType) return;
+			if (sourceBuilding->getStaticUnitData().storeResType != destinationBuilding->getStaticUnitData().storeResType) return;
+			if (destinationBuilding->getStoredResources() + transferValue > destinationBuilding->getStaticUnitData().storageResMax || destinationBuilding->getStoredResources() + transferValue < 0) return;
+			if (sourceBuilding->getStoredResources() - transferValue > sourceBuilding->getStaticUnitData().storageResMax || sourceBuilding->getStoredResources() - transferValue < 0) return;
 
-			destinationBuilding->setStoredResources(destinationBuilding->getStoredResources() + transferValue);
-			sourceBuilding->setStoredResources(sourceBuilding->getStoredResources() - transferValue);
+			destinationBuilding->setStoredResources (destinationBuilding->getStoredResources() + transferValue);
+			sourceBuilding->setStoredResources (sourceBuilding->getStoredResources() - transferValue);
 		}
 		else
 		{
-			const auto destinationVehicle = static_cast<cVehicle*>(destinationUnit);
+			const auto destinationVehicle = static_cast<cVehicle*> (destinationUnit);
 
-			if(destinationVehicle->isUnitBuildingABuilding() || destinationVehicle->isUnitClearing()) return;
-			if(destinationVehicle->getStaticUnitData().storeResType != resourceType) return;
-			if(destinationVehicle->getStoredResources() + transferValue > destinationVehicle->getStaticUnitData().storageResMax || destinationVehicle->getStoredResources() + transferValue < 0) return;
+			if (destinationVehicle->isUnitBuildingABuilding() || destinationVehicle->isUnitClearing()) return;
+			if (destinationVehicle->getStaticUnitData().storeResType != resourceType) return;
+			if (destinationVehicle->getStoredResources() + transferValue > destinationVehicle->getStaticUnitData().storageResMax || destinationVehicle->getStoredResources() + transferValue < 0) return;
 
 			bool breakSwitch = false;
 			const sMiningResource& sourceStored = sourceBuilding->subBase->getResourcesStored();
 			const sMiningResource& sourceMaxStored = sourceBuilding->subBase->getMaxResourcesStored();
 
-			switch(resourceType)
+			switch (resourceType)
 			{
 			case eResourceType::None: break;
 			case eResourceType::Metal:
@@ -100,60 +100,60 @@ void cActionTransfer::execute(cModel& model) const
 				}
 				break;
 			}
-			if(breakSwitch) return;
+			if (breakSwitch) return;
 
-			destinationVehicle->setStoredResources(destinationVehicle->getStoredResources() + transferValue);
+			destinationVehicle->setStoredResources (destinationVehicle->getStoredResources() + transferValue);
 		}
 	}
 	else
 	{
-		const auto sourceVehicle = static_cast<cVehicle*>(sourceUnit);
+		const auto sourceVehicle = static_cast<cVehicle*> (sourceUnit);
 
-		if(sourceVehicle->getStaticUnitData().storeResType != resourceType) return;
-		if(sourceVehicle->isUnitBuildingABuilding() || sourceVehicle->isUnitClearing()) return;
-		if(sourceVehicle->getStoredResources() - transferValue > sourceVehicle->getStaticUnitData().storageResMax || sourceVehicle->getStoredResources() - transferValue < 0) return;
+		if (sourceVehicle->getStaticUnitData().storeResType != resourceType) return;
+		if (sourceVehicle->isUnitBuildingABuilding() || sourceVehicle->isUnitClearing()) return;
+		if (sourceVehicle->getStoredResources() - transferValue > sourceVehicle->getStaticUnitData().storageResMax || sourceVehicle->getStoredResources() - transferValue < 0) return;
 
-		if(destinationUnit->isABuilding())
+		if (destinationUnit->isABuilding())
 		{
-			const auto destinationBuilding = static_cast<cBuilding*>(destinationUnit);
+			const auto destinationBuilding = static_cast<cBuilding*> (destinationUnit);
 			const sMiningResource& destinationStored = destinationBuilding->subBase->getResourcesStored();
 			const sMiningResource& destinationMaxStored = destinationBuilding->subBase->getMaxResourcesStored();
 
 			bool breakSwitch = false;
-			switch(resourceType)
+			switch (resourceType)
 			{
 			case eResourceType::None: break;
 			case eResourceType::Metal:
 				{
 					if (destinationStored.metal + transferValue > destinationMaxStored.metal || destinationStored.metal + transferValue < 0) breakSwitch = true;
-					if (!breakSwitch) destinationBuilding->subBase->addMetal(transferValue);
+					if (!breakSwitch) destinationBuilding->subBase->addMetal (transferValue);
 				}
 				break;
 			case eResourceType::Oil:
 				{
 					if (destinationStored.oil + transferValue > destinationMaxStored.oil || destinationStored.oil + transferValue < 0) breakSwitch = true;
-					if (!breakSwitch) destinationBuilding->subBase->addOil(transferValue);
+					if (!breakSwitch) destinationBuilding->subBase->addOil (transferValue);
 				}
 				break;
 			case eResourceType::Gold:
 				{
 					if (destinationStored.gold + transferValue > destinationMaxStored.gold || destinationStored.gold + transferValue < 0) breakSwitch = true;
-					if (!breakSwitch) destinationBuilding->subBase->addGold(transferValue);
+					if (!breakSwitch) destinationBuilding->subBase->addGold (transferValue);
 				}
 				break;
 			}
-			if(breakSwitch) return;
+			if (breakSwitch) return;
 		}
 		else
 		{
-			const auto destinationVehicle = static_cast<cVehicle*>(destinationUnit);
+			const auto destinationVehicle = static_cast<cVehicle*> (destinationUnit);
 
-			if(destinationVehicle->isUnitBuildingABuilding() || destinationVehicle->isUnitClearing()) return;
-			if(destinationVehicle->getStaticUnitData().storeResType != resourceType) return;
-			if(destinationVehicle->getStoredResources() + transferValue > destinationVehicle->getStaticUnitData().storageResMax || destinationVehicle->getStoredResources() + transferValue < 0) return;
-			destinationVehicle->setStoredResources(destinationVehicle->getStoredResources() + transferValue);
+			if (destinationVehicle->isUnitBuildingABuilding() || destinationVehicle->isUnitClearing()) return;
+			if (destinationVehicle->getStaticUnitData().storeResType != resourceType) return;
+			if (destinationVehicle->getStoredResources() + transferValue > destinationVehicle->getStaticUnitData().storageResMax || destinationVehicle->getStoredResources() + transferValue < 0) return;
+			destinationVehicle->setStoredResources (destinationVehicle->getStoredResources() + transferValue);
 		}
 
-		sourceVehicle->setStoredResources(sourceVehicle->getStoredResources() - transferValue);
+		sourceVehicle->setStoredResources (sourceVehicle->getStoredResources() - transferValue);
 	}
 }

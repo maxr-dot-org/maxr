@@ -124,19 +124,19 @@ void playSound (cSoundManager& soundManager, const cSavedReport& report)
 	switch (report.getType())
 	{
 		case eSavedReportType::Attacked:
-			playReportSound(soundManager, static_cast<const cSavedReportAttacked&> (report)); break;
+			playReportSound (soundManager, static_cast<const cSavedReportAttacked&> (report)); break;
 		case eSavedReportType::AttackingEnemy:
-			playReportSound(soundManager, static_cast<const cSavedReportAttackingEnemy&> (report)); break;
+			playReportSound (soundManager, static_cast<const cSavedReportAttackingEnemy&> (report)); break;
 		case eSavedReportType::CapturedByEnemy:
-			playReportSound(soundManager, static_cast<const cSavedReportCapturedByEnemy&> (report)); break;
+			playReportSound (soundManager, static_cast<const cSavedReportCapturedByEnemy&> (report)); break;
 		case eSavedReportType::Destroyed:
-			playReportSound(soundManager, static_cast<const cSavedReportDestroyed&> (report)); break;
+			playReportSound (soundManager, static_cast<const cSavedReportDestroyed&> (report)); break;
 		case eSavedReportType::Detected:
-			playReportSound(soundManager, static_cast<const cSavedReportDetected&> (report)); break;
+			playReportSound (soundManager, static_cast<const cSavedReportDetected&> (report)); break;
 		case eSavedReportType::Disabled:
-			playReportSound(soundManager, static_cast<const cSavedReportDisabled&> (report)); break;
+			playReportSound (soundManager, static_cast<const cSavedReportDisabled&> (report)); break;
 		case eSavedReportType::TurnStart:
-			playReportSound(soundManager, static_cast<const cSavedReportTurnStart&> (report)); break;
+			playReportSound (soundManager, static_cast<const cSavedReportTurnStart&> (report)); break;
 		case eSavedReportType::MetalInsufficient:
 		case eSavedReportType::FuelInsufficient:
 		case eSavedReportType::GoldInsufficient:

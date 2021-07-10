@@ -28,16 +28,16 @@ enum class eResourceType;
 class cActionTransfer : public cActionT<cAction::eActiontype::ACTION_TRANSFER>
 {
 public:
-	cActionTransfer(const cUnit& sourceUnit, const cUnit& destinationUnit, int transferValue, eResourceType resourceType);
-	cActionTransfer(cBinaryArchiveOut& archive);
+	cActionTransfer (const cUnit& sourceUnit, const cUnit& destinationUnit, int transferValue, eResourceType resourceType);
+	cActionTransfer (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
 
-	void execute(cModel& model) const override;
+	void execute (cModel& model) const override;
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & sourceUnitId;
 		archive & destinationUnitId;

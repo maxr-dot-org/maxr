@@ -44,7 +44,7 @@ eLobbyPlayerStatus checkTakenPlayerAttributes (const std::vector<cPlayerBasicDat
 	{
 		return eLobbyPlayerStatus::DuplicatedName;
 	}
-	if (ranges::find_if (players, [&](const auto& p){ return player.getNr() != p.getNr() && sameColor(player.getColor(), p.getColor()); }) != players.end())
+	if (ranges::find_if (players, [&](const auto& p){ return player.getNr() != p.getNr() && sameColor (player.getColor(), p.getColor()); }) != players.end())
 	{
 		return eLobbyPlayerStatus::DuplicatedColor;
 	}

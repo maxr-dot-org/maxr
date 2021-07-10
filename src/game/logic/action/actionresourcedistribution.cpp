@@ -23,22 +23,22 @@
 
 //------------------------------------------------------------------------------
 cActionResourceDistribution::cActionResourceDistribution (const cBuilding& building, const sMiningResource& prod) :
-	buildingId(building.getId()),
+	buildingId (building.getId()),
 	prod (prod)
 {}
 
 //------------------------------------------------------------------------------
-cActionResourceDistribution::cActionResourceDistribution(cBinaryArchiveOut& archive)
+cActionResourceDistribution::cActionResourceDistribution (cBinaryArchiveOut& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 }
 
 //------------------------------------------------------------------------------
-void cActionResourceDistribution::execute(cModel& model) const
+void cActionResourceDistribution::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	auto building = model.getBuildingFromID(buildingId);
+	auto building = model.getBuildingFromID (buildingId);
 	if (building == nullptr) return;
 
 	cSubBase& subBase = *building->subBase;

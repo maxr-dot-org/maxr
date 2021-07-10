@@ -44,7 +44,7 @@
  *                   If a working mutex is used, it should be a recursive mutex to make sure no
  *                   deadlocks arise when a slot functions tries to access the signal recursively.
  */
-template<typename FunctionSignatureType, typename MutexType = cDummyMutex>
+template <typename FunctionSignatureType, typename MutexType = cDummyMutex>
 class cSignal;
 
 /**
@@ -118,7 +118,7 @@ public:
 	 *         The user has to make sure the signal object outlives all the connection objects
 	 *         that are created by the signal.
 	 */
-	template<typename F>
+	template <typename F>
 	cSignalConnection connect (F&& f);
 
 	/**
@@ -130,7 +130,7 @@ public:
 	 * @tparam F Type of the function. Has to match the type of the stored function.
 	 * @param f The function to disconnect.
 	 */
-	template<typename F>
+	template <typename F>
 	void disconnect (const F& f);
 
 	/**
@@ -149,7 +149,7 @@ public:
 	 *
 	 * @param ...args The arguments to call the functions with.
 	 */
-	template<typename... Args2>
+	template <typename... Args2>
 	void operator() (Args2&& ... args);
 private:
 	cSignal (const cSignal& other) = delete;
@@ -174,8 +174,8 @@ private:
 };
 
 //------------------------------------------------------------------------------
-template<typename... Args, typename MutexType>
-template<typename F>
+template <typename... Args, typename MutexType>
+template <typename F>
 cSignalConnection cSignal<void (Args...), MutexType>::connect (F&& f)
 {
 	std::unique_lock<MutexType> lock (mutex);
@@ -193,8 +193,8 @@ cSignalConnection cSignal<void (Args...), MutexType>::connect (F&& f)
 }
 
 //------------------------------------------------------------------------------
-template<typename... Args, typename MutexType>
-template<typename F>
+template <typename... Args, typename MutexType>
+template <typename F>
 void cSignal<void (Args...), MutexType>::disconnect (const F& f)
 {
 	typedef typename std::conditional<std::is_function<F>::value, typename std::add_pointer<F>::type, F>::type test_type;
@@ -221,7 +221,7 @@ void cSignal<void (Args...), MutexType>::disconnect (const F& f)
 		//       platform independent we may choose to discard the disconnection
 		//       by the original function object and just allow disconnection by
 		//       the connection objects.
-		test_type* target = slot.function.template target<test_type> ();
+		test_type* target = slot.function.template target<test_type>();
 		if (target != nullptr)
 		{
 			auto& t1 = conditionalDeref (target, should_deref());
@@ -235,7 +235,7 @@ void cSignal<void (Args...), MutexType>::disconnect (const F& f)
 }
 
 //------------------------------------------------------------------------------
-template<typename... Args, typename MutexType>
+template <typename... Args, typename MutexType>
 void cSignal<void (Args...), MutexType>::disconnect (const cSignalConnection& connection)
 {
 	std::unique_lock<MutexType> lock (mutex);
@@ -252,8 +252,8 @@ void cSignal<void (Args...), MutexType>::disconnect (const cSignalConnection& co
 }
 
 //------------------------------------------------------------------------------
-template<typename... Args, typename MutexType>
-template<typename... Args2>
+template <typename... Args, typename MutexType>
+template <typename... Args2>
 void cSignal<void (Args...), MutexType>::operator() (Args2&& ... args)
 {
 	std::unique_lock<MutexType> lock (mutex);

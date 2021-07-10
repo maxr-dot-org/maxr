@@ -59,19 +59,19 @@ public:
 		// Transition to ingame logic
 		MU_MSG_START_GAME,            // sent by host: clients should start the ingame client and switch to game gui
 	};
-	static std::unique_ptr<cMultiplayerLobbyMessage> createFromBuffer(cBinaryArchiveOut& archive);
+	static std::unique_ptr<cMultiplayerLobbyMessage> createFromBuffer (cBinaryArchiveOut& archive);
 
 	eMessageType getType() const;
 
-	void serialize(cBinaryArchiveIn& archive) override;
-	void serialize(cTextArchiveIn& archive) override;
+	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cTextArchiveIn& archive) override;
 
 protected:
-	cMultiplayerLobbyMessage(eMessageType type) : type(type) {}
+	cMultiplayerLobbyMessage (eMessageType type) : type (type) {}
 
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & type;
 	}
@@ -87,7 +87,7 @@ public:
 	cMultiplayerLobbyMessageT() : cMultiplayerLobbyMessage (MsgType) {}
 };
 
-std::string enumToString(cMultiplayerLobbyMessage::eMessageType value);
+std::string enumToString (cMultiplayerLobbyMessage::eMessageType value);
 
 /**
 * Interface called each time a message should be handled.
@@ -109,15 +109,15 @@ class cMuMsgChat : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eM
 {
 public:
 	cMuMsgChat (const std::string& message);
-	cMuMsgChat(cBinaryArchiveOut& archive);
+	cMuMsgChat (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override;
-	void serialize(cTextArchiveIn& archive) override;
+	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cTextArchiveIn& archive) override;
 
 	std::string message;
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & message;
 	}
@@ -127,16 +127,16 @@ private:
 class cMuMsgPlayerNr : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_NUMBER>
 {
 public:
-	cMuMsgPlayerNr(int newPlayerNr);
-	cMuMsgPlayerNr(cBinaryArchiveOut& archive);
+	cMuMsgPlayerNr (int newPlayerNr);
+	cMuMsgPlayerNr (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override;
-	void serialize(cTextArchiveIn& archive) override;
+	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cTextArchiveIn& archive) override;
 
 	int newPlayerNr;
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & newPlayerNr;
 	}
@@ -147,10 +147,10 @@ class cMuMsgOptions : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage:
 {
 public:
 	cMuMsgOptions();
-	cMuMsgOptions(cBinaryArchiveOut& archive);
+	cMuMsgOptions (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override;
-	void serialize(cTextArchiveIn& archive) override;
+	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cTextArchiveIn& archive) override;
 
 	cSaveGameInfo saveInfo;
 	std::string mapName;
@@ -159,8 +159,8 @@ public:
 	bool settingsValid;
 
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & saveInfo;
 		archive & mapName;
@@ -175,16 +175,16 @@ class cMuMsgSaveSlots : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessag
 {
 public:
 	cMuMsgSaveSlots();
-	cMuMsgSaveSlots(cBinaryArchiveOut& archive);
+	cMuMsgSaveSlots (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override;
-	void serialize(cTextArchiveIn& archive) override;
+	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cTextArchiveIn& archive) override;
 
 	std::vector<cSaveGameInfo> saveGames;
 
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & saveGames;
 	}
@@ -195,17 +195,17 @@ private:
 class cMuMsgPlayerList : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYERLIST>
 {
 public:
-	explicit cMuMsgPlayerList(const std::vector<std::shared_ptr<cPlayerBasicData>>&);
-	explicit cMuMsgPlayerList(std::vector<cPlayerBasicData>);
-	cMuMsgPlayerList(cBinaryArchiveOut& archive);
+	explicit cMuMsgPlayerList (const std::vector<std::shared_ptr<cPlayerBasicData>>&);
+	explicit cMuMsgPlayerList (std::vector<cPlayerBasicData>);
+	cMuMsgPlayerList (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override;
-	void serialize(cTextArchiveIn& archive) override;
+	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cTextArchiveIn& archive) override;
 
 	std::vector<cPlayerBasicData> playerList;
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & playerList;
 	}
@@ -234,7 +234,7 @@ public:
 	bool hostNotInSavegame = false;
 	std::vector<cPlayerBasicData> missingPlayers;
 private:
-	template<typename T>
+	template <typename T>
 	void serializeThis (T& archive)
 	{
 		archive & missingSettings;
@@ -256,17 +256,17 @@ public:
 class cMuMsgStartGamePreparations : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME_PREPARATIONS>
 {
 public:
-	cMuMsgStartGamePreparations(std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cClanData> clanData);
-	cMuMsgStartGamePreparations(cBinaryArchiveOut& archive);
+	cMuMsgStartGamePreparations (std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cClanData> clanData);
+	cMuMsgStartGamePreparations (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override;
-	void serialize(cTextArchiveIn& archive) override;
+	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cTextArchiveIn& archive) override;
 
 	std::shared_ptr<const cUnitsData> unitsData;
 	std::shared_ptr<const cClanData> clanData;
 private:
-	template<typename T>
-	void loadThis(T& archive)
+	template <typename T>
+	void loadThis (T& archive)
 	{
 		auto unitDataNonConst = std::make_shared<cUnitsData>();
 		archive >> *unitDataNonConst;
@@ -276,8 +276,8 @@ private:
 		archive >> *clanDataNonConst;
 		clanData = clanDataNonConst;
 	}
-	template<typename T>
-	void saveThis(T& archive)
+	template <typename T>
+	void saveThis (T& archive)
 	{
 		archive << *unitsData;
 		archive << *clanData;
@@ -288,16 +288,16 @@ private:
 class cMuMsgPlayerHasSelectedLandingPosition : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION>
 {
 public:
-	cMuMsgPlayerHasSelectedLandingPosition(int landedPlayer);
-	cMuMsgPlayerHasSelectedLandingPosition(cBinaryArchiveOut& archive);
+	cMuMsgPlayerHasSelectedLandingPosition (int landedPlayer);
+	cMuMsgPlayerHasSelectedLandingPosition (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override;
-	void serialize(cTextArchiveIn& archive) override;
+	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cTextArchiveIn& archive) override;
 
 	int landedPlayer;
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & landedPlayer;
 	}
@@ -307,17 +307,17 @@ private:
 class cMuMsgInLandingPositionSelectionStatus : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS>
 {
 public:
-	cMuMsgInLandingPositionSelectionStatus(int playerNr, bool isIn);
-	cMuMsgInLandingPositionSelectionStatus(cBinaryArchiveOut& archive);
+	cMuMsgInLandingPositionSelectionStatus (int playerNr, bool isIn);
+	cMuMsgInLandingPositionSelectionStatus (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override;
-	void serialize(cTextArchiveIn& archive) override;
+	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cTextArchiveIn& archive) override;
 
 	int landingPlayer;
 	bool isIn;
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & landingPlayer;
 		archive & isIn;
@@ -328,16 +328,16 @@ private:
 class cMuMsgLandingState : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_STATE>
 {
 public:
-	cMuMsgLandingState(eLandingPositionState state);
-	cMuMsgLandingState(cBinaryArchiveOut& archive);
+	cMuMsgLandingState (eLandingPositionState state);
+	cMuMsgLandingState (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override;
-	void serialize(cTextArchiveIn& archive) override;
+	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cTextArchiveIn& archive) override;
 
 	eLandingPositionState state;
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & state;
 	}
@@ -348,7 +348,7 @@ class cMuMsgStartGame : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessag
 {
 public:
 	cMuMsgStartGame();
-	cMuMsgStartGame(cBinaryArchiveOut& archive);
+	cMuMsgStartGame (cBinaryArchiveOut& archive);
 };
 
 //------------------------------------------------------------------------------
@@ -356,7 +356,7 @@ class cMuMsgPlayerAbortedGamePreparations : public cMultiplayerLobbyMessageT<cMu
 {
 public:
 	cMuMsgPlayerAbortedGamePreparations();
-	cMuMsgPlayerAbortedGamePreparations(cBinaryArchiveOut& archive);
+	cMuMsgPlayerAbortedGamePreparations (cBinaryArchiveOut& archive);
 };
 
 //------------------------------------------------------------------------------
@@ -364,23 +364,23 @@ class cMuMsgFinishedMapDownload : public cMultiplayerLobbyMessageT<cMultiplayerL
 {
 public:
 	cMuMsgFinishedMapDownload();
-	cMuMsgFinishedMapDownload(cBinaryArchiveOut& archive);
+	cMuMsgFinishedMapDownload (cBinaryArchiveOut& archive);
 };
 
 //------------------------------------------------------------------------------
 class cMuMsgLandingPosition : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_POSITION>
 {
 public:
-	cMuMsgLandingPosition(const cPosition& position);
-	cMuMsgLandingPosition(cBinaryArchiveOut& archive);
+	cMuMsgLandingPosition (const cPosition& position);
+	cMuMsgLandingPosition (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override;
-	void serialize(cTextArchiveIn& archive) override;
+	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cTextArchiveIn& archive) override;
 
 	cPosition position;
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & position;
 	}
@@ -390,16 +390,16 @@ private:
 class cMuMsgRequestMap : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_REQUEST_MAP>
 {
 public:
-	cMuMsgRequestMap(const std::string& mapName);
-	cMuMsgRequestMap(cBinaryArchiveOut& archive);
+	cMuMsgRequestMap (const std::string& mapName);
+	cMuMsgRequestMap (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override;
-	void serialize(cTextArchiveIn& archive) override;
+	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cTextArchiveIn& archive) override;
 
 	std::string mapName;
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & mapName;
 	}
@@ -409,17 +409,17 @@ private:
 class cMuMsgStartMapDownload : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_MAP_DOWNLOAD>
 {
 public:
-	cMuMsgStartMapDownload(const std::string mapName, int mapSize);
-	cMuMsgStartMapDownload(cBinaryArchiveOut& archive);
+	cMuMsgStartMapDownload (const std::string mapName, int mapSize);
+	cMuMsgStartMapDownload (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override;
-	void serialize(cTextArchiveIn& archive) override;
+	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cTextArchiveIn& archive) override;
 
 	std::string mapName;
 	int mapSize;
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & mapName;
 		archive & mapSize;
@@ -431,15 +431,15 @@ class cMuMsgMapDownloadData : public cMultiplayerLobbyMessageT<cMultiplayerLobby
 {
 public:
 	cMuMsgMapDownloadData();
-	cMuMsgMapDownloadData(cBinaryArchiveOut& archive);
+	cMuMsgMapDownloadData (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override;
-	void serialize(cTextArchiveIn& archive) override;
+	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cTextArchiveIn& archive) override;
 
 	std::vector<char> data;
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & data;
 	}
@@ -450,25 +450,25 @@ class cMuMsgCanceledMapDownload : public cMultiplayerLobbyMessageT<cMultiplayerL
 {
 public:
 	cMuMsgCanceledMapDownload();
-	cMuMsgCanceledMapDownload(cBinaryArchiveOut& archive);
+	cMuMsgCanceledMapDownload (cBinaryArchiveOut& archive);
 };
 
 //------------------------------------------------------------------------------
 class cMuMsgIdentification : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_IDENTIFIKATION>
 {
 public:
-	cMuMsgIdentification(const cPlayerBasicData& player);
-	cMuMsgIdentification(cBinaryArchiveOut& archive);
+	cMuMsgIdentification (const cPlayerBasicData& player);
+	cMuMsgIdentification (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override;
-	void serialize(cTextArchiveIn& archive) override;
+	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cTextArchiveIn& archive) override;
 
 	std::string playerName;
 	cRgbColor playerColor;
 	bool ready;
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & playerColor;
 		archive & playerName;

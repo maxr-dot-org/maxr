@@ -87,7 +87,7 @@ public:
 	void lock();
 	void unlock();
 
-	cSignal<void ()> clicked;
+	cSignal<void()> clicked;
 protected:
 	void setPressed (bool pressed) override;
 	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) override;

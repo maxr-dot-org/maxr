@@ -41,7 +41,7 @@ public:
 		cFixedVector<int, 2> (other)
 	{}
 
-	template<class T>
+	template <class T>
 	cPosition (const cFixedVector<T, 2>& other) :
 		cFixedVector<int, 2> (other)
 	{}
@@ -107,7 +107,7 @@ public:
 		cFixedVector<float, 2> (other)
 	{}
 
-	template<class T>
+	template <class T>
 	cVector2 (const cFixedVector<T, 2>& other) :
 		cFixedVector<float, 2> (other)
 	{}

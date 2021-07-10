@@ -128,9 +128,9 @@ vector<sID> cCasualtiesTracker::getUnitTypesWithLosses() const
 }
 
 //------------------------------------------------------------------------------
-uint32_t cCasualtiesTracker::getChecksum(uint32_t crc) const
+uint32_t cCasualtiesTracker::getChecksum (uint32_t crc) const
 {
-	return calcCheckSum(casualtiesPerPlayer, crc);
+	return calcCheckSum (casualtiesPerPlayer, crc);
 }
 
 //--------------------------------------------------------------------------
@@ -157,18 +157,18 @@ vector<cCasualtiesTracker::Casualty>& cCasualtiesTracker::getCasualtiesOfPlayer 
 	return casualtiesPerPlayer.back().casualties;
 }
 
-uint32_t cCasualtiesTracker::CasualtiesOfPlayer::getChecksum(uint32_t crc) const
+uint32_t cCasualtiesTracker::CasualtiesOfPlayer::getChecksum (uint32_t crc) const
 {
-	crc = calcCheckSum(casualties, crc);
-	crc = calcCheckSum(playerNr, crc);
+	crc = calcCheckSum (casualties, crc);
+	crc = calcCheckSum (playerNr, crc);
 
 	return crc;
 }
 
-uint32_t cCasualtiesTracker::Casualty::getChecksum(uint32_t crc) const
+uint32_t cCasualtiesTracker::Casualty::getChecksum (uint32_t crc) const
 {
-	crc = calcCheckSum(unitID, crc);
-	crc = calcCheckSum(numberOfLosses, crc);
+	crc = calcCheckSum (unitID, crc);
+	crc = calcCheckSum (numberOfLosses, crc);
 
 	return crc;
 }

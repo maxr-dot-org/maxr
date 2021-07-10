@@ -176,7 +176,7 @@ void cActionInitNewGame::execute (cModel& model) const
 	// init landing position
 	if (!model.getMap()->isValidPosition (initPlayerData.landingPosition))
 	{
-		Log.write(" Received invalid landing position", cLog::eLOG_TYPE_NET_ERROR);
+		Log.write (" Received invalid landing position", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
 	cPosition updatedLandingPosition = initPlayerData.landingPosition;
@@ -185,7 +185,7 @@ void cActionInitNewGame::execute (cModel& model) const
 		// Find place for mine if bridgehead is fixed
 		if (!findPositionForStartMine (updatedLandingPosition, *model.getUnitsData(), *model.getMap()->staticMap))
 		{
-			Log.write("couldn't place player start mine: " + player.getName(), cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ("couldn't place player start mine: " + player.getName(), cLog::eLOG_TYPE_NET_ERROR);
 			return;
 		}
 	}
@@ -355,9 +355,9 @@ cVehicle* cActionInitNewGame::landVehicle (const cPosition& landingPosition, int
 	{
 		for (int offX = -radius; offX < radius; ++offX)
 		{
-			if (!model.getMap()->possiblePlaceVehicle (model.getUnitsData()->getStaticUnitData(id), landingPosition + cPosition(offX, offY), &player)) continue;
+			if (!model.getMap()->possiblePlaceVehicle (model.getUnitsData()->getStaticUnitData (id), landingPosition + cPosition (offX, offY), &player)) continue;
 
-			return &model.addVehicle (landingPosition + cPosition(offX, offY), id, &player);
+			return &model.addVehicle (landingPosition + cPosition (offX, offY), id, &player);
 		}
 	}
 	return nullptr;

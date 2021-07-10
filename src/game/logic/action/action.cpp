@@ -49,7 +49,7 @@
 #include "actionupgradevehicle.h"
 #include "utility/log.h"
 
-std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
+std::unique_ptr<cAction> cAction::createFromBuffer (cBinaryArchiveOut& archive)
 {
 	eActiontype type;
 	archive >> type;
@@ -57,63 +57,63 @@ std::unique_ptr<cAction> cAction::createFromBuffer(cBinaryArchiveOut& archive)
 	switch (type)
 	{
 	case eActiontype::ACTION_INIT_NEW_GAME:
-		return std::make_unique<cActionInitNewGame>(archive);
+		return std::make_unique<cActionInitNewGame> (archive);
 	case eActiontype::ACTION_START_WORK:
-		return std::make_unique<cActionStartWork>(archive);
+		return std::make_unique<cActionStartWork> (archive);
 	case eActiontype::ACTION_STOP:
-		return std::make_unique<cActionStop>(archive);
+		return std::make_unique<cActionStop> (archive);
 	case eActiontype::ACTION_TRANSFER:
-		return std::make_unique<cActionTransfer>(archive);
+		return std::make_unique<cActionTransfer> (archive);
 	case eActiontype::ACTION_START_MOVE:
-		return std::make_unique<cActionStartMove>(archive);
+		return std::make_unique<cActionStartMove> (archive);
 	case eActiontype::ACTION_RESUME_MOVE:
-		return std::make_unique<cActionResumeMove>(archive);
+		return std::make_unique<cActionResumeMove> (archive);
 	case eActiontype::ACTION_START_TURN:
-		return std::make_unique<cActionStartTurn>(archive);
+		return std::make_unique<cActionStartTurn> (archive);
 	case eActiontype::ACTION_END_TURN:
-		return std::make_unique<cActionEndTurn>(archive);
+		return std::make_unique<cActionEndTurn> (archive);
 	case eActiontype::ACTION_SELF_DESTROY:
-		return std::make_unique<cActionSelfDestroy>(archive);
+		return std::make_unique<cActionSelfDestroy> (archive);
 	case eActiontype::ACTION_ATTACK:
-		return std::make_unique<cActionAttack>(archive);
+		return std::make_unique<cActionAttack> (archive);
 	case eActiontype::ACTION_CHANGE_SENTRY:
-		return std::make_unique<cActionChangeSentry>(archive);
+		return std::make_unique<cActionChangeSentry> (archive);
 	case eActiontype::ACTION_CHANGE_MANUAL_FIRE:
-		return std::make_unique<cActionChangeManualFire>(archive);
+		return std::make_unique<cActionChangeManualFire> (archive);
 	case eActiontype::ACTION_MINELAYER_STATUS:
-		return std::make_unique<cActionMinelayerStatus>(archive);
+		return std::make_unique<cActionMinelayerStatus> (archive);
 	case eActiontype::ACTION_START_BUILD:
-		return std::make_unique<cActionStartBuild>(archive);
+		return std::make_unique<cActionStartBuild> (archive);
 	case eActiontype::ACTION_FINISH_BUILD:
-		return std::make_unique<cActionFinishBuild>(archive);
+		return std::make_unique<cActionFinishBuild> (archive);
 	case eActiontype::ACTION_CHANGE_BUILDLIST:
-		return std::make_unique<cActionChangeBuildList>(archive);
+		return std::make_unique<cActionChangeBuildList> (archive);
 	case eActiontype::ACTION_LOAD:
-		return std::make_unique<cActionLoad>(archive);
+		return std::make_unique<cActionLoad> (archive);
 	case eActiontype::ACTION_ACTIVATE:
-		return std::make_unique<cActionActivate>(archive);
+		return std::make_unique<cActionActivate> (archive);
 	case eActiontype::ACTION_REPAIR_RELOAD:
-		return std::make_unique<cActionRepairReload>(archive);
+		return std::make_unique<cActionRepairReload> (archive);
 	case eActiontype::ACTION_RESOURCE_DISTRIBUTION:
-		return std::make_unique<cActionResourceDistribution>(archive);
+		return std::make_unique<cActionResourceDistribution> (archive);
 	case eActiontype::ACTION_CLEAR:
-		return std::make_unique<cActionClear>(archive);
+		return std::make_unique<cActionClear> (archive);
 	case eActiontype::ACTION_STEAL_DISABLE:
-		return std::make_unique<cActionStealDisable>(archive);
+		return std::make_unique<cActionStealDisable> (archive);
 	case eActiontype::ACTION_CHANGE_RESEARCH:
-		return std::make_unique<cActionChangeResearch>(archive);
+		return std::make_unique<cActionChangeResearch> (archive);
 	case eActiontype::ACTION_CHANGE_UNIT_NAME:
-		return std::make_unique<cActionChangeUnitName>(archive);
+		return std::make_unique<cActionChangeUnitName> (archive);
 	case eActiontype::ACTION_BUY_UPGRADES:
-		return std::make_unique<cActionBuyUpgrades>(archive);
+		return std::make_unique<cActionBuyUpgrades> (archive);
 	case eActiontype::ACTION_UPGRADE_VEHICLE:
-		return std::make_unique<cActionUpgradeVehicle>(archive);
+		return std::make_unique<cActionUpgradeVehicle> (archive);
 	case eActiontype::ACTION_UPGRADE_BUILDING:
-		return std::make_unique<cActionUpgradeBuilding>(archive);
+		return std::make_unique<cActionUpgradeBuilding> (archive);
 	case eActiontype::ACTION_SET_AUTO_MOVE:
-		return std::make_unique<cActionSetAutoMove>(archive);
+		return std::make_unique<cActionSetAutoMove> (archive);
 	default:
-		throw std::runtime_error("Unknown action type " + std::to_string(static_cast<int>(type)));
+		throw std::runtime_error ("Unknown action type " + std::to_string (static_cast<int> (type)));
 		return nullptr;
 	}
 }
@@ -125,7 +125,7 @@ cAction::eActiontype cAction::getType() const
 }
 
 //------------------------------------------------------------------------------
-std::string enumToString(cAction::eActiontype value)
+std::string enumToString (cAction::eActiontype value)
 {
 	switch (value)
 	{

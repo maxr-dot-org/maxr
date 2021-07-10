@@ -34,7 +34,7 @@ class cTurnTimeDeadline
 {
 public:
 	cTurnTimeDeadline (unsigned int startGameTime, const std::chrono::milliseconds& deadline, unsigned int id);
-	cTurnTimeDeadline ();
+	cTurnTimeDeadline();
 
 	unsigned int getStartGameTime() const;
 	const std::chrono::milliseconds& getDeadline() const;
@@ -42,14 +42,14 @@ public:
 
 	void changeDeadline (const std::chrono::milliseconds& deadline);
 
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 
 	template <typename T>
-	void serialize(T& archive)
+	void serialize (T& archive)
 	{
-		archive & NVP(startGameTime);
-		archive & NVP(deadline);
-		archive & NVP(id);
+		archive & NVP (startGameTime);
+		archive & NVP (deadline);
+		archive & NVP (id);
 	}
 private:
 	unsigned int startGameTime;
@@ -74,7 +74,7 @@ public:
 	unsigned int startNewDeadlineFrom (unsigned int gameTime, const std::chrono::milliseconds& duration);
 
 	void removeDeadline (unsigned int id);
-	void changeDeadline(unsigned int turnEndDeadline, const std::chrono::seconds& duration);
+	void changeDeadline (unsigned int turnEndDeadline, const std::chrono::seconds& duration);
 
 	std::chrono::milliseconds getTimeSinceStart() const;
 	std::chrono::milliseconds getTimeTillFirstDeadline() const;
@@ -83,18 +83,18 @@ public:
 
 	bool hasReachedAnyDeadline() const;
 
-	mutable cSignal<void ()> secondChanged;
-	mutable cSignal<void ()> deadlinesChanged;
-	mutable cSignal<void ()> alertTimeReached;
+	mutable cSignal<void()> secondChanged;
+	mutable cSignal<void()> deadlinesChanged;
+	mutable cSignal<void()> alertTimeReached;
 
-	uint32_t getChecksum(uint32_t crc) const;
+	uint32_t getChecksum (uint32_t crc) const;
 
 	template <typename T>
-	void serialize(T& archive)
+	void serialize (T& archive)
 	{
-		archive & NVP(deadlines);
-		archive & NVP(startTurnGameTime);
-		archive & NVP(nextDeadlineId);
+		archive & NVP (deadlines);
+		archive & NVP (startTurnGameTime);
+		archive & NVP (nextDeadlineId);
 	}
 private:
 	cSignalConnectionManager signalConnectionManager;
@@ -109,6 +109,6 @@ private:
 
 };
 
-std::string to_MM_ss(std::chrono::milliseconds);
+std::string to_MM_ss (std::chrono::milliseconds);
 
 #endif // game_logic_turnclockH

@@ -49,7 +49,7 @@ namespace
 //------------------------------------------------------------------------------
 cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& building_, std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
 	cWindow (LoadPCX (GFXOD_MINEMANAGER)),
-	building(building_)
+	building (building_)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 11), getPosition() + cPosition (getArea().getMaxCorner().x(), 11 + 10)), lngPack.i18n ("Text~Title~Mine"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
@@ -138,9 +138,9 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 	signalConnectionManager.connect (doneButton->clicked, [&]() { done(); });
 
 	//close window, when the mine, from which this menu was called, gets destroyed.
-	signalConnectionManager.connect(building.destroyed, std::bind(&cWindowResourceDistribution::closeOnUnitDestruction, this));
+	signalConnectionManager.connect (building.destroyed, std::bind (&cWindowResourceDistribution::closeOnUnitDestruction, this));
 	//update subbase values, when any other building in the subbase gets destroyed
-	if (building.getOwner()) signalConnectionManager.connect(building.getOwner()->base.onSubbaseConfigurationChanged, [this](const std::vector<cBuilding*>& buildings){ updateOnSubbaseChanged (buildings); });
+	if (building.getOwner()) signalConnectionManager.connect (building.getOwner()->base.onSubbaseConfigurationChanged, [this](const std::vector<cBuilding*>& buildings){ updateOnSubbaseChanged (buildings); });
 }
 
 

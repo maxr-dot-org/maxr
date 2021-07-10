@@ -20,10 +20,10 @@
 #include "utility/position.h"
 #include "crc.h"
 
-uint32_t cPosition::getChecksum(uint32_t crc) const
+uint32_t cPosition::getChecksum (uint32_t crc) const
 {
-	crc = calcCheckSum((*this)[0], crc);
-	crc = calcCheckSum((*this)[1], crc);
+	crc = calcCheckSum ((*this)[0], crc);
+	crc = calcCheckSum ((*this)[1], crc);
 
 	return crc;
 }

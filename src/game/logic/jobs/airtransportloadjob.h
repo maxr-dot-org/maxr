@@ -42,17 +42,17 @@ public:
 	void run (cModel& model) override;
 	eJobType getType() const override;
 
-	void serialize(cBinaryArchiveIn& archive) override { archive << serialization::makeNvp("type", getType()); serializeThis(archive); }
-	void serialize(cXmlArchiveIn& archive) override { archive << serialization::makeNvp("type", getType()); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { archive << serialization::makeNvp ("type", getType()); serializeThis (archive); }
+	void serialize (cXmlArchiveIn& archive) override { archive << serialization::makeNvp ("type", getType()); serializeThis (archive); }
 
-	uint32_t getChecksum(uint32_t crc) const override;
+	uint32_t getChecksum (uint32_t crc) const override;
 private:
 	template <typename T>
-	void serializeThis(T& archive)
+	void serializeThis (T& archive)
 	{
-		archive & NVP(unit);
-		archive & NVP(vehicleToLoad);
-		archive & NVP(landing);
+		archive & NVP (unit);
+		archive & NVP (vehicleToLoad);
+		archive & NVP (landing);
 	}
 
 	cVehicle* vehicleToLoad;
@@ -61,15 +61,15 @@ private:
 };
 
 template <typename T>
-cAirTransportLoadJob::cAirTransportLoadJob(T& archive)
+cAirTransportLoadJob::cAirTransportLoadJob (T& archive)
 {
-	serializeThis(archive);
+	serializeThis (archive);
 	if (!unit || !vehicleToLoad)
 	{
 		finished = true;
 		return;
 	}
-	connectionManager.connect(vehicleToLoad->destroyed, [&](){finished = true; });
+	connectionManager.connect (vehicleToLoad->destroyed, [&](){finished = true; });
 	unit->jobActive = true;
 }
 

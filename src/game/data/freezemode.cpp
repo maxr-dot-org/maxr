@@ -22,7 +22,7 @@
 #include <cassert>
 
 //------------------------------------------------------------------------------
-std::string enumToString(ePlayerConnectionState value)
+std::string enumToString (ePlayerConnectionState value)
 {
 	switch (value)
 	{
@@ -31,12 +31,12 @@ std::string enumToString(ePlayerConnectionState value)
 	case ePlayerConnectionState::NOT_RESPONDING: return "Not responding";
 	case ePlayerConnectionState::DISCONNECTED: return "Disconnected";
 	}
-	assert(false);
-	return std::to_string(static_cast<int>(value));
+	assert (false);
+	return std::to_string (static_cast<int> (value));
 }
 
 //------------------------------------------------------------------------------
-std::string enumToString(eFreezeMode value)
+std::string enumToString (eFreezeMode value)
 {
 	switch (value)
 	{
@@ -45,8 +45,8 @@ std::string enumToString(eFreezeMode value)
 	case eFreezeMode::WAIT_FOR_CLIENT: return "WAIT_FOR_CLIENT";
 	case eFreezeMode::WAIT_FOR_SERVER: return "WAIT_FOR_SERVER";
 	}
-	assert(false);
-	return std::to_string(static_cast<int>(value));
+	assert (false);
+	return std::to_string (static_cast<int> (value));
 }
 
 //------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ void cFreezeModes::enable (eFreezeMode mode)
 		waitForServer = true;
 		return;
 	}
-	assert(false);
+	assert (false);
 }
 
 //------------------------------------------------------------------------------
@@ -88,7 +88,7 @@ void cFreezeModes::disable (eFreezeMode mode)
 		waitForServer = false;
 		return;
 	}
-	assert(false);
+	assert (false);
 }
 
 //------------------------------------------------------------------------------

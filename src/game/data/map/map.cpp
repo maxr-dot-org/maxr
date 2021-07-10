@@ -343,7 +343,7 @@ void cMapField::removeAll()
 
 // cStaticMap //////////////////////////////////////////////////
 
-cStaticMap::cStaticMap() : crc(0), size(0), terrains(), graphic (this)
+cStaticMap::cStaticMap() : crc (0), size (0), terrains(), graphic (this)
 {
 }
 
@@ -381,19 +381,19 @@ bool cStaticMap::isWater (const cPosition& position) const
 	return getTerrain (position).water;
 }
 
-bool cStaticMap::isGround(const cPosition& position) const
+bool cStaticMap::isGround (const cPosition& position) const
 {
-	return !getTerrain(position).water && !getTerrain(position).coast;
+	return !getTerrain (position).water && !getTerrain (position).coast;
 }
 
-bool cStaticMap::possiblePlace(const cStaticUnitData& data, const cPosition& position) const
+bool cStaticMap::possiblePlace (const cStaticUnitData& data, const cPosition& position) const
 {
-	if (!isValidPosition(position)) return false;
+	if (!isValidPosition (position)) return false;
 	if (data.ID.isABuilding() && data.buildingData.isBig)
 	{
-		if (!isValidPosition(position + cPosition(0, 1)) ||
-			!isValidPosition(position + cPosition(1, 0)) ||
-			!isValidPosition(position + cPosition(1, 1)) )
+		if (!isValidPosition (position + cPosition (0, 1)) ||
+			!isValidPosition (position + cPosition (1, 0)) ||
+			!isValidPosition (position + cPosition (1, 1)) )
 		{
 			return false;
 		}
@@ -401,12 +401,12 @@ bool cStaticMap::possiblePlace(const cStaticUnitData& data, const cPosition& pos
 
 	if (data.factorAir > 0) return true;
 
-	if (isBlocked(position)) return false;
+	if (isBlocked (position)) return false;
 	if (data.ID.isABuilding() && data.buildingData.isBig)
 	{
-		if (isBlocked(position + cPosition(0, 1)) ||
-			isBlocked(position + cPosition(1, 0)) ||
-			isBlocked(position + cPosition(1, 1)) )
+		if (isBlocked (position + cPosition (0, 1)) ||
+			isBlocked (position + cPosition (1, 0)) ||
+			isBlocked (position + cPosition (1, 1)) )
 		{
 			return false;
 		}
@@ -414,12 +414,12 @@ bool cStaticMap::possiblePlace(const cStaticUnitData& data, const cPosition& pos
 
 	if (data.factorSea == 0)
 	{
-		if (isWater(position)) return false;
+		if (isWater (position)) return false;
 		if (data.ID.isABuilding() && data.buildingData.isBig)
 		{
-			if (isWater(position + cPosition(0, 1)) ||
-				isWater(position + cPosition(1, 0)) ||
-				isWater(position + cPosition(1, 1)) )
+			if (isWater (position + cPosition (0, 1)) ||
+				isWater (position + cPosition (1, 0)) ||
+				isWater (position + cPosition (1, 1)) )
 			{
 				return false;
 			}
@@ -428,12 +428,12 @@ bool cStaticMap::possiblePlace(const cStaticUnitData& data, const cPosition& pos
 
 	if (data.factorCoast == 0)
 	{
-		if (isCoast(position)) return false;
+		if (isCoast (position)) return false;
 		if (data.ID.isABuilding() && data.buildingData.isBig)
 		{
-			if (isCoast(position + cPosition(0, 1)) ||
-				isCoast(position + cPosition(1, 0)) ||
-				isCoast(position + cPosition(1, 1)) )
+			if (isCoast (position + cPosition (0, 1)) ||
+				isCoast (position + cPosition (1, 0)) ||
+				isCoast (position + cPosition (1, 1)) )
 			{
 				return false;
 			}
@@ -442,12 +442,12 @@ bool cStaticMap::possiblePlace(const cStaticUnitData& data, const cPosition& pos
 
 	if (data.factorGround == 0)
 	{
-		if (isGround(position)) return false;
+		if (isGround (position)) return false;
 		if (data.ID.isABuilding() && data.buildingData.isBig)
 		{
-			if (isGround(position + cPosition(0, 1)) ||
-				isGround(position + cPosition(1, 0)) ||
-				isGround(position + cPosition(1, 1)) )
+			if (isGround (position + cPosition (0, 1)) ||
+				isGround (position + cPosition (1, 0)) ||
+				isGround (position + cPosition (1, 1)) )
 			{
 				return false;
 			}
@@ -545,7 +545,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	// Generate new Map
 	this->size = std::max<int> (16, sWidth);
 	Kacheln.resize (size * size, 0);
-	terrains.resize(iNumberOfTerrains);
+	terrains.resize (iNumberOfTerrains);
 
 	graphic.loadPalette (fpMapFile, iPalettePos, iNumberOfTerrains);
 	// Load necessary Terrain Graphics
@@ -603,13 +603,13 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	SDL_RWclose (fpMapFile);
 
 	//save crc, to check map file equality when loading a game
-	crc = MapDownload::calculateCheckSum(filename);
+	crc = MapDownload::calculateCheckSum (filename);
 	return true;
 }
 
-uint32_t cStaticMap::getChecksum(uint32_t crc)
+uint32_t cStaticMap::getChecksum (uint32_t crc)
 {
-	return calcCheckSum(this->crc, crc);
+	return calcCheckSum (this->crc, crc);
 }
 
 // Funktionen der Map-Klasse /////////////////////////////////////////////////
@@ -624,7 +624,7 @@ void cMap::init()
 	const std::size_t size = staticMap->getSize().x() * staticMap->getSize().y();
 	if (Resources.size() != size)
 	{
-		Resources.resize(size, sResources());
+		Resources.resize (size, sResources());
 		fields = std::vector<cMapField> (size);
 	}
 }
@@ -656,7 +656,7 @@ std::string cMap::resourcesToString() const
 	str.reserve (4 * Resources.size() + 1);
 	for (size_t i = 0; i != Resources.size(); ++i)
 	{
-		str += getHexValue (static_cast<int>(Resources[i].typ));
+		str += getHexValue (static_cast<int> (Resources[i].typ));
 		str += getHexValue (Resources[i].value);
 	}
 	return str;
@@ -668,26 +668,26 @@ void cMap::setResourcesFromString (const std::string& str)
 	for (size_t i = 0; i != Resources.size(); ++i)
 	{
 		sResources res;
-		res.typ   = static_cast<eResourceType>(getByteValue(str, 4 * i));
-		res.value = getByteValue(str, 4 * i + 2);
+		res.typ   = static_cast<eResourceType> (getByteValue (str, 4 * i));
+		res.value = getByteValue (str, 4 * i + 2);
 
-		Resources.set(i, res);
+		Resources.set (i, res);
 	}
 }
 
-void cMap::placeResources(cModel& model)
+void cMap::placeResources (cModel& model)
 {
 	const auto& playerList = model.getPlayerList();
 	const auto& gameSettings = *model.getGameSettings();
 
-	Resources.fill(sResources());
+	Resources.fill (sResources());
 
-	std::vector<eResourceType> resSpotTypes(playerList.size(), eResourceType::Metal);
+	std::vector<eResourceType> resSpotTypes (playerList.size(), eResourceType::Metal);
 	std::vector<T_2<int>> resSpots;
 	for (const auto& player : playerList)
 	{
 		const auto& position = player->getLandingPos();
-		resSpots.push_back(T_2<int> ((position.x() & ~1) + 1, position.y() & ~1));
+		resSpots.push_back (T_2<int> ((position.x() & ~1) + 1, position.y() & ~1));
 	}
 
 	const eGameSettingsResourceDensity density = gameSettings.resourceDensity;
@@ -706,7 +706,7 @@ void cMap::placeResources(cModel& model)
 
 		pos.x = 2 + model.randomGenerator.get (getSize().x() - 4);
 		pos.y = 2 + model.randomGenerator.get (getSize().y() - 4);
-		resSpots.push_back(pos);
+		resSpots.push_back (pos);
 	}
 	resSpotTypes.resize (resSpotCount);
 	// Resourcen gleichmässiger verteilen
@@ -767,10 +767,10 @@ void cMap::placeResources(cModel& model)
 
 		resSpots[i].x &= ~1;
 		resSpots[i].y &= ~1;
-		resSpots[i].x += static_cast<int>(type) % 2;
-		resSpots[i].y += (static_cast<int>(type) / 2) % 2;
+		resSpots[i].x += static_cast<int> (type) % 2;
+		resSpots[i].y += (static_cast<int> (type) / 2) % 2;
 
-		resSpotTypes[i] = static_cast<eResourceType>(((resSpots[i].y % 2) * 2) + (resSpots[i].x % 2));
+		resSpotTypes[i] = static_cast<eResourceType> (((resSpots[i].y % 2) * 2) + (resSpots[i].x % 2));
 	}
 	// Resourcen platzieren
 	for (std::size_t i = 0; i < resSpotCount; i++)
@@ -787,7 +787,7 @@ void cMap::placeResources(cModel& model)
 			for (p.x = minx; p.x <= maxx; ++p.x)
 			{
 				T_2<int> absPos = p;
-				eResourceType type = static_cast<eResourceType>((absPos.y % 2) * 2 + (absPos.x % 2));
+				eResourceType type = static_cast<eResourceType> ((absPos.y % 2) * 2 + (absPos.x % 2));
 
 				int index = getOffset (cPosition (absPos.x, absPos.y));
 				if (type != eResourceType::None &&
@@ -799,7 +799,7 @@ void cMap::placeResources(cModel& model)
 					if (i >= playerCount)
 					{
 						res.value = 1 + model.randomGenerator.get (2 + getResourceAmountFactor (frequencies[type]) * 2);
-						if (p == pos) res.value += 3 + model.randomGenerator.get(4 + getResourceAmountFactor(frequencies[type]) * 2);
+						if (p == pos) res.value += 3 + model.randomGenerator.get (4 + getResourceAmountFactor (frequencies[type]) * 2);
 					}
 					else
 					{
@@ -807,7 +807,7 @@ void cMap::placeResources(cModel& model)
 						if (p == pos) res.value += 3 + 2 + getResourceAmountFactor (frequencies[type]);
 					}
 					res.value = std::min<unsigned char> (16, res.value);
-					Resources.set(index, res);
+					Resources.set (index, res);
 				}
 			}
 		}
@@ -893,7 +893,7 @@ void cMap::addVehicle (cVehicle& vehicle, const cPosition& position)
 	if (vehicle.getIsBig())
 	{
 		vehicle.setIsBig (false);
-		moveVehicleBig(vehicle, position);
+		moveVehicleBig (vehicle, position);
 	}
 	addedUnit (vehicle);
 }
@@ -967,7 +967,7 @@ void cMap::moveVehicle (cVehicle& vehicle, const cPosition& position, int height
 			getField (oldPosition + cPosition (1, 1)).removeVehicle (vehicle);
 			getField (oldPosition + cPosition (0, 1)).removeVehicle (vehicle);
 
-			vehicle.setIsBig(false);
+			vehicle.setIsBig (false);
 		}
 
 		getField (position).addVehicle (vehicle, 0);
@@ -996,7 +996,7 @@ void cMap::moveVehicleBig (cVehicle& vehicle, const cPosition& position)
 	getField (position + cPosition (1, 1)).addVehicle (vehicle, 0);
 	getField (position + cPosition (0, 1)).addVehicle (vehicle, 0);
 
-	vehicle.setIsBig(true);
+	vehicle.setIsBig (true);
 
 	movedVehicle (vehicle, oldPosition);
 }
@@ -1009,7 +1009,7 @@ bool cMap::possiblePlace (const cVehicle& vehicle, const cPosition& position, bo
 bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool ignoreMovingVehicles) const
 {
 	if (isValidPosition (position) == false) return false;
-	const auto field = cMapFieldView(getField(position), staticMap->getTerrain(position), player);
+	const auto field = cMapFieldView (getField (position), staticMap->getTerrain (position), player);
 
 	const std::vector<cBuilding*> buildings = field.getBuildings();
 	std::vector<cBuilding*>::const_iterator b_it = buildings.begin();
@@ -1060,7 +1060,7 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 			b_it != b_end &&
 			(*b_it)->getOwner() != player &&
 			(*b_it)->getStaticUnitData().explodesOnContact &&
-			(*b_it)->isDetectedByPlayer(player))
+			(*b_it)->isDetectedByPlayer (player))
 		{
 			return false;
 		}
@@ -1094,7 +1094,7 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 			b_it != b_end &&
 			(*b_it)->getOwner() != player &&
 			(*b_it)->getStaticUnitData().explodesOnContact &&
-			(*b_it)->isDetectedByPlayer(player))
+			(*b_it)->isDetectedByPlayer (player))
 		{
 			return false;
 		}
@@ -1127,7 +1127,7 @@ bool cMap::possiblePlaceBuilding (const cStaticUnitData& buildingData, const cPo
 {
 	if (!isValidPosition (position)) return false;
 	if (isBlocked (position)) return false;
-	const auto field = cMapFieldView(getField(position), staticMap->getTerrain(position), player);
+	const auto field = cMapFieldView (getField (position), staticMap->getTerrain (position), player);
 
 	// Check all buildings in this field for a building of the same type. This
 	// will prevent roads, connectors and water platforms from building on top
@@ -1196,11 +1196,11 @@ void cMap::reset()
 	}
 }
 
-uint32_t cMap::getChecksum(uint32_t crc) const
+uint32_t cMap::getChecksum (uint32_t crc) const
 {
-	crc = staticMap->getChecksum(crc);
+	crc = staticMap->getChecksum (crc);
 	//cMapField* fields;
-	crc = calcCheckSum(Resources, crc);
+	crc = calcCheckSum (Resources, crc);
 
 	return crc;
 }
@@ -1239,10 +1239,10 @@ uint32_t cMap::getChecksum(uint32_t crc) const
 	return 0;
 }
 
-uint32_t sResources::getChecksum(uint32_t crc) const
+uint32_t sResources::getChecksum (uint32_t crc) const
 {
-	crc = calcCheckSum(value, crc);
-	crc = calcCheckSum(typ, crc);
+	crc = calcCheckSum (value, crc);
+	crc = calcCheckSum (typ, crc);
 
 	return crc;
 }

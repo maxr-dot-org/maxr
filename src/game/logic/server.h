@@ -42,15 +42,15 @@ class cServer : public INetMessageReceiver
 	friend class cDebugOutputWidget;
 public:
 
-	cServer(std::shared_ptr<cConnectionManager> connectionManager);
+	cServer (std::shared_ptr<cConnectionManager>);
 	~cServer();
 
-	void pushMessage(std::unique_ptr<cNetMessage> message);
+	void pushMessage (std::unique_ptr<cNetMessage>);
 
 	/**
 	* Send a serialized copy of the message to the specified player(s).
 	*/
-	void sendMessageToClients(const cNetMessage& message, int playerNr = -1) const;
+	void sendMessageToClients (const cNetMessage&, int playerNr = -1) const;
 
 	void start();
 	void stop();
@@ -58,29 +58,28 @@ public:
 	std::string getGameState() const;
 
 	void setPreparationData (const sLobbyPreparationData&);
-	void setPlayers(const std::vector<cPlayerBasicData>& splayers);
+	void setPlayers (const std::vector<cPlayerBasicData>& splayers);
 
 	const cModel& getModel() const;
-	void saveGameState(int saveGameNumber, const std::string & saveName) const;
-	void loadGameState(int saveGameNumber);
-	void sendGuiInfoToClients(int saveGameNumber, int playerNr = -1);
+	void saveGameState (int saveGameNumber, const std::string & saveName) const;
+	void loadGameState (int saveGameNumber);
+	void sendGuiInfoToClients (int saveGameNumber, int playerNr = -1);
 
-	void resyncClientModel(int playerNr = -1) const;
-	void enableFreezeMode(eFreezeMode mode);
-	void disableFreezeMode(eFreezeMode mode);
+	void resyncClientModel (int playerNr = -1) const;
+	void enableFreezeMode (eFreezeMode mode);
+	void disableFreezeMode (eFreezeMode mode);
 
 	/**
 	* Set player state to NOT_RESPONDING. Freeze mode WAIT_FOR_CLIENT will
 	* be enabled if necessary.
 	*/
-	void setPlayerNotResponding(int playerId);
+	void setPlayerNotResponding (int playerId);
 
 	/**
 	* Set player state to CONNECTED. Freeze mode WAIT_FOR_CLIENT will
 	* be disabled if possible.
 	*/
-	void clearPlayerNotResponding(int playerId);
-
+	void clearPlayerNotResponding (int playerId);
 
 private:
 	cModel model;
@@ -98,12 +97,12 @@ private:
 	/**
 	* Update the player connection state and halt game if necessary.
 	*/
-	void playerConnected(int playerId);
+	void playerConnected (int playerId);
 
 	/**
 	* Update the player connection state and resume game if possible.
 	*/
-	void playerDisconnected(int playerId);
+	void playerDisconnected (int playerId);
 
 	/**
 	* Enables or disables the WaitForClient freeze mode after player connection state has changed.
@@ -121,11 +120,10 @@ private:
 	void initPlayerConnectionState();
 
 	// manage the server thread
-	static int serverThreadCallback(void* arg);
+	static int serverThreadCallback (void* arg);
 	void run();
 	mutable SDL_Thread* serverThread;
 	mutable bool exit;
-
 };
 
 #endif

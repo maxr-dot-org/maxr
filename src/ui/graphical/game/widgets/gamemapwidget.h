@@ -54,10 +54,10 @@ class cGameMapWidget : public cClickableWidget
 public:
 	cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap, std::shared_ptr<cAnimationTimer> animationTimer, std::shared_ptr<cSoundManager> soundManager, std::shared_ptr<const cFrameCounter> frameCounter);
 	~cGameMapWidget();
-	void setMapView(std::shared_ptr<const cMapView> mapView);
-	void setPlayer (std::shared_ptr<const cPlayer> player);
-	void setUnitsData(std::shared_ptr<const cUnitsData> unitsData);
-	void setUnitSelection (const cUnitSelection* unitSelection);
+	void setMapView (std::shared_ptr<const cMapView>);
+	void setPlayer (std::shared_ptr<const cPlayer>);
+	void setUnitsData (std::shared_ptr<const cUnitsData>);
+	void setUnitSelection (const cUnitSelection*);
 
 	void setZoomFactor (float zoomFactor, bool center);
 	float getZoomFactor() const;
@@ -117,15 +117,15 @@ public:
 	void updateActiveUnitCommandShortcuts();
 	void deactivateUnitCommandShortcuts();
 
-	cSignal<void ()> scrolled;
-	cSignal<void ()> zoomFactorChanged;
+	cSignal<void()> scrolled;
+	cSignal<void()> zoomFactorChanged;
 
 	cSignal<void (const cPosition&)> tileClicked;
 	cSignal<void (const cPosition&)> tileUnderMouseChanged;
 
-	cSignal<void ()> mouseInputModeChanged;
+	cSignal<void()> mouseInputModeChanged;
 
-	cSignal<void ()> mouseFocusReleased;
+	cSignal<void()> mouseFocusReleased;
 
 	//
 	// Game commands
@@ -191,14 +191,14 @@ protected:
 
 	void drawResources();
 
-	void drawPath (const cVehicle& vehicle);
-	void drawPathArrow(SDL_Rect dest, const SDL_Rect& lastDest, bool spezialColor) const;
-	void drawBuildPath (const cVehicle& vehicle);
+	void drawPath (const cVehicle&);
+	void drawPathArrow (SDL_Rect dest, const SDL_Rect& lastDest, bool spezialColor) const;
+	void drawBuildPath (const cVehicle&);
 
 	void drawSelectionBox();
 
 	void drawUnitCircles();
-	void drawLockList ();
+	void drawLockList();
 
 	void drawExitPoints();
 	void drawExitPoint (const cPosition& position);

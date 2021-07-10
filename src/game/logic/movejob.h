@@ -95,17 +95,17 @@ public:
 	template <typename T>
 	void serialize (T& archive)
 	{
-		archive & NVP(vehicle);
-		archive & NVP(path);
-		archive & NVP(state);
-		archive & NVP(savedSpeed);
-		archive & NVP(nextDir);
-		archive & NVP(timer100ms);
-		archive & NVP(timer50ms);
-		archive & NVP(currentSpeed);
-		archive & NVP(pixelToMove);
-		archive & NVP(endMoveAction);
-		archive & NVP(stopOnDetectResource);
+		archive & NVP (vehicle);
+		archive & NVP (path);
+		archive & NVP (state);
+		archive & NVP (savedSpeed);
+		archive & NVP (nextDir);
+		archive & NVP (timer100ms);
+		archive & NVP (timer50ms);
+		archive & NVP (currentSpeed);
+		archive & NVP (pixelToMove);
+		archive & NVP (endMoveAction);
+		archive & NVP (stopOnDetectResource);
 
 		if (!archive.isWriter)
 		{

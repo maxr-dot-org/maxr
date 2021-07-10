@@ -72,13 +72,13 @@ public:
 
 	const cSoundChunk* getSound() const;
 
-	cSignal<void ()> started;
-	cSignal<void (), std::recursive_mutex> stopped;
+	cSignal<void()> started;
+	cSignal<void(), std::recursive_mutex> stopped;
 
-	cSignal<void (), std::recursive_mutex> paused;
-	cSignal<void (), std::recursive_mutex> resumed;
+	cSignal<void(), std::recursive_mutex> paused;
+	cSignal<void(), std::recursive_mutex> resumed;
 
-	cSignal<void ()> positionChanged;
+	cSignal<void()> positionChanged;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

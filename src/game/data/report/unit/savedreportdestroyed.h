@@ -27,8 +27,8 @@ class cSavedReportDestroyed : public cSavedReportUnit
 public:
 	cSavedReportDestroyed (const cUnit& unit);
 	template <typename T, ENABLE_ARCHIVE_OUT>
-	explicit cSavedReportDestroyed(T& archive) :
-		cSavedReportUnit(archive)
+	explicit cSavedReportDestroyed (T& archive) :
+		cSavedReportUnit (archive)
 	{
 	}
 

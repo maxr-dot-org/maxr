@@ -25,14 +25,14 @@
 cActionEndTurn::cActionEndTurn() {}
 
 //------------------------------------------------------------------------------
-cActionEndTurn::cActionEndTurn(cBinaryArchiveOut& archive) {}
+cActionEndTurn::cActionEndTurn (cBinaryArchiveOut& archive) {}
 
 //------------------------------------------------------------------------------
-void cActionEndTurn::execute(cModel& model) const
+void cActionEndTurn::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-	cPlayer* player = model.getPlayer(playerNr);
+	cPlayer* player = model.getPlayer (playerNr);
 	if (player == nullptr) return;
 
 	// defeated players are ignored when they hit the end button
@@ -44,5 +44,5 @@ void cActionEndTurn::execute(cModel& model) const
 		return;
 	}
 
-	model.handlePlayerFinishedTurn(*player);
+	model.handlePlayerFinishedTurn (*player);
 }

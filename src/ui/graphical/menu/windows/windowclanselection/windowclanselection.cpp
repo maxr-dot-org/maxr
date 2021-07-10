@@ -132,10 +132,10 @@ void cWindowClanSelection::backClicked()
 //------------------------------------------------------------------------------
 void cWindowClanSelection::updateClanDescription()
 {
-	auto clanInfo = clanData->getClan(selectedClan);
+	auto clanInfo = clanData->getClan (selectedClan);
 	if (clanInfo)
 	{
-		auto strings = getClanStatsDescription(*clanInfo, *unitsData);
+		auto strings = getClanStatsDescription (*clanInfo, *unitsData);
 
 		std::string desc1;
 		for (size_t i = 0; i < 4 && i < strings.size(); ++i)

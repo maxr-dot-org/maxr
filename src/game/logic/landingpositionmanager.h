@@ -105,7 +105,7 @@ public:
 	 * Will be triggered by @ref setLandingPosition when the last player has selected his position and
 	 * none of the positions are in conflict.
 	 */
-	mutable cSignal<void ()> allPositionsValid;
+	mutable cSignal<void()> allPositionsValid;
 private:
 	std::vector<sLandingPositionData> landingPositions;
 

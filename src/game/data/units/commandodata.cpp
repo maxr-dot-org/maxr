@@ -52,7 +52,7 @@
 
 	if (commando.data.getShots() == 0) return false;
 	if (unit->isNextTo (commando.getPosition()) == false) return false;
-	if (unit->isABuilding() && static_cast<const cBuilding*>(unit)->isRubble()) return false;
+	if (unit->isABuilding() && static_cast<const cBuilding*> (unit)->isRubble()) return false;
 	if (unit->getOwner() == commando.getOwner()) return false;
 	if (unit->isAVehicle() && unit->getStaticUnitData().factorAir > 0 && static_cast<const cVehicle*> (unit)->getFlightHeight() > 0) return false;
 

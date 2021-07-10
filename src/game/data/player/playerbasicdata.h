@@ -47,17 +47,17 @@ public:
 	void setNr (int index);
 	void setReady (bool ready);
 	bool isReady() const;
-	void setDefeated(bool defeated);
+	void setDefeated (bool defeated);
 	bool isDefeated() const;
 
 	bool operator == (const cPlayerBasicData& rhs) const;
 	bool operator != (const cPlayerBasicData& rhs) const { return !(*this == rhs); }
 
-	mutable cSignal<void ()> nameChanged;
-	mutable cSignal<void ()> numberChanged;
-	mutable cSignal<void ()> colorChanged;
-	mutable cSignal<void ()> readyChanged;
-	mutable cSignal<void ()> isDefeatedChanged;
+	mutable cSignal<void()> nameChanged;
+	mutable cSignal<void()> numberChanged;
+	mutable cSignal<void()> colorChanged;
+	mutable cSignal<void()> readyChanged;
+	mutable cSignal<void()> isDefeatedChanged;
 
 	template <typename T>
 	void serialize (T& archive)

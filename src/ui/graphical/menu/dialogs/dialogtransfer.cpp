@@ -94,7 +94,7 @@ cNewDialogTransfer::cNewDialogTransfer (const cUnit& sourceUnit, const cUnit& de
 }
 
 //------------------------------------------------------------------------------
-eResourceType cNewDialogTransfer::getCommonResourceType(const cUnit& sourceUnit, const cUnit& destinationUnit) const
+eResourceType cNewDialogTransfer::getCommonResourceType (const cUnit& sourceUnit, const cUnit& destinationUnit) const
 {
 	eResourceType commonResourceType = eResourceType::None;
 	const auto sourceResource = sourceUnit.getStaticUnitData().storeResType;

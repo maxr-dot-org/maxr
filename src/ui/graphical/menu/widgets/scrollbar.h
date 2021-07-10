@@ -44,10 +44,10 @@ public:
 
 	int getOffset();
 
-	cSignal<void ()> offsetChanged;
+	cSignal<void()> offsetChanged;
 
-	cSignal<void ()> backClicked;
-	cSignal<void ()> forwardClicked;
+	cSignal<void()> backClicked;
+	cSignal<void()> forwardClicked;
 
 	void handleResized (const cPosition& oldSize) override;
 private:

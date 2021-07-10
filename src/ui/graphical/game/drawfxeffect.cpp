@@ -140,7 +140,7 @@ namespace
 		float zoom;
 		const cPosition& screenPosition;
 	public:
-		cFxDrawerVisitor (float zoom, const cPosition& screenPosition) : zoom (zoom), screenPosition(screenPosition) {}
+		cFxDrawerVisitor (float zoom, const cPosition& screenPosition) : zoom (zoom), screenPosition (screenPosition) {}
 
 		//----------------------------------------------------------------------
 		void visit (const cFxMuzzleBig& fx) override

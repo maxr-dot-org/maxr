@@ -27,16 +27,16 @@ class cUnit;
 class cActionAttack : public cActionT<cAction::eActiontype::ACTION_ATTACK>
 {
 public:
-	cActionAttack(const cUnit& aggressor, cPosition targetPosition, const cUnit* targetUnit);
-	cActionAttack(cBinaryArchiveOut& archive);
+	cActionAttack (const cUnit& aggressor, cPosition targetPosition, const cUnit* targetUnit);
+	cActionAttack (cBinaryArchiveOut& archive);
 
-	void serialize(cBinaryArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
-	void serialize(cTextArchiveIn& archive) override { cAction::serialize(archive); serializeThis(archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
 
-	void execute(cModel& model) const override;
+	void execute (cModel& model) const override;
 private:
-	template<typename T>
-	void serializeThis(T& archive)
+	template <typename T>
+	void serializeThis (T& archive)
 	{
 		archive & agressorId;
 		archive & targetPosition;

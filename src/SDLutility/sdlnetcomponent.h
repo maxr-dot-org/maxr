@@ -25,7 +25,7 @@ struct SDLNetComponent
 {
 	SDLNetComponent();
 
-	SDLNetComponent(const SDLNetComponent&) = delete;
+	SDLNetComponent (const SDLNetComponent&) = delete;
 	SDLNetComponent& operator= (const SDLNetComponent&) = delete;
 
 	~SDLNetComponent();

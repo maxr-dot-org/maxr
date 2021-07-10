@@ -32,18 +32,18 @@
 
 class cPosition;
 
-template<typename T>
+template <typename T>
 class cBox;
 
 class cLineEdit;
 
-template<typename T> class cListView;
+template <typename T> class cListView;
 class cLobbyChatBoxListViewItem;
 class cChatBoxPlayerListViewItem;
 
 class cPlayer;
 
-template<typename ChatListItemType, typename PlayerListItemType>
+template <typename ChatListItemType, typename PlayerListItemType>
 class cChatBox : public cWidget
 {
 public:
@@ -84,7 +84,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-template<typename ChatListItemType, typename PlayerListItemType>
+template <typename ChatListItemType, typename PlayerListItemType>
 cChatBox<ChatListItemType, PlayerListItemType>::cChatBox (const cBox<cPosition>& area) :
 	cWidget (area)
 {
@@ -107,7 +107,7 @@ cChatBox<ChatListItemType, PlayerListItemType>::cChatBox (const cBox<cPosition>&
 }
 
 //------------------------------------------------------------------------------
-template<typename ChatListItemType, typename PlayerListItemType>
+template <typename ChatListItemType, typename PlayerListItemType>
 void cChatBox<ChatListItemType, PlayerListItemType>::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	auto application = getActiveApplication();
@@ -128,7 +128,7 @@ void cChatBox<ChatListItemType, PlayerListItemType>::draw (SDL_Surface& destinat
 }
 
 //------------------------------------------------------------------------------
-template<typename ChatListItemType, typename PlayerListItemType>
+template <typename ChatListItemType, typename PlayerListItemType>
 void cChatBox<ChatListItemType, PlayerListItemType>::handleResized (const cPosition& oldSize)
 {
 	cWidget::handleResized (oldSize);
@@ -143,21 +143,21 @@ void cChatBox<ChatListItemType, PlayerListItemType>::handleResized (const cPosit
 }
 
 //------------------------------------------------------------------------------
-template<typename ChatListItemType, typename PlayerListItemType>
+template <typename ChatListItemType, typename PlayerListItemType>
 void cChatBox<ChatListItemType, PlayerListItemType>::clearPlayers()
 {
 	playersList->clearItems();
 }
 
 //------------------------------------------------------------------------------
-template<typename ChatListItemType, typename PlayerListItemType>
+template <typename ChatListItemType, typename PlayerListItemType>
 PlayerListItemType* cChatBox<ChatListItemType, PlayerListItemType>::addPlayerEntry (std::unique_ptr<PlayerListItemType> player)
 {
 	return playersList->addItem (std::move (player));
 }
 
 //------------------------------------------------------------------------------
-template<typename ChatListItemType, typename PlayerListItemType>
+template <typename ChatListItemType, typename PlayerListItemType>
 PlayerListItemType* cChatBox<ChatListItemType, PlayerListItemType>::getPlayerEntryFromNumber (int playerNumber)
 {
 	const cChatBox<ChatListItemType, PlayerListItemType>& constMe = *this;
@@ -165,7 +165,7 @@ PlayerListItemType* cChatBox<ChatListItemType, PlayerListItemType>::getPlayerEnt
 }
 
 //------------------------------------------------------------------------------
-template<typename ChatListItemType, typename PlayerListItemType>
+template <typename ChatListItemType, typename PlayerListItemType>
 const PlayerListItemType* cChatBox<ChatListItemType, PlayerListItemType>::getPlayerEntryFromNumber (int playerNumber) const
 {
 	for (size_t i = 0; i < playersList->getItemsCount(); ++i)
@@ -179,7 +179,7 @@ const PlayerListItemType* cChatBox<ChatListItemType, PlayerListItemType>::getPla
 }
 
 //------------------------------------------------------------------------------
-template<typename ChatListItemType, typename PlayerListItemType>
+template <typename ChatListItemType, typename PlayerListItemType>
 void cChatBox<ChatListItemType, PlayerListItemType>::removePlayerEntry (int playerNumber)
 {
 	for (size_t i = 0; i < playersList->getItemsCount(); ++i)
@@ -192,14 +192,14 @@ void cChatBox<ChatListItemType, PlayerListItemType>::removePlayerEntry (int play
 }
 
 //------------------------------------------------------------------------------
-template<typename ChatListItemType, typename PlayerListItemType>
+template <typename ChatListItemType, typename PlayerListItemType>
 ChatListItemType* cChatBox<ChatListItemType, PlayerListItemType>::addChatEntry (std::unique_ptr<ChatListItemType> entry)
 {
 	return chatList->addItem (std::move (entry), eAddListItemScrollType::IfAtBottom);
 }
 
 //------------------------------------------------------------------------------
-template<typename ChatListItemType, typename PlayerListItemType>
+template <typename ChatListItemType, typename PlayerListItemType>
 void cChatBox<ChatListItemType, PlayerListItemType>::focus()
 {
 	auto application = getActiveApplication();
@@ -209,7 +209,7 @@ void cChatBox<ChatListItemType, PlayerListItemType>::focus()
 }
 
 //------------------------------------------------------------------------------
-template<typename ChatListItemType, typename PlayerListItemType>
+template <typename ChatListItemType, typename PlayerListItemType>
 void cChatBox<ChatListItemType, PlayerListItemType>::sendCommand()
 {
 	commandEntered (chatLineEdit->getText());
@@ -217,7 +217,7 @@ void cChatBox<ChatListItemType, PlayerListItemType>::sendCommand()
 }
 
 //------------------------------------------------------------------------------
-template<typename ChatListItemType, typename PlayerListItemType>
+template <typename ChatListItemType, typename PlayerListItemType>
 void cChatBox<ChatListItemType, PlayerListItemType>::createBackground()
 {
 	const auto& size = getSize();

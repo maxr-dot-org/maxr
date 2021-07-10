@@ -171,7 +171,7 @@ void cSoundDevice::setMusicVolume (int volume)
 //--------------------------------------------------------------------------
 //int cSoundDevice::playInGroup (const cSoundChunk& sound, int groupTag)
 //{
-//	if (!cSettings::getInstance ().isSoundEnabled ()) return -1;
+//	if (!cSettings::getInstance().isSoundEnabled()) return -1;
 //
 //	int channel = Mix_GroupAvailable (groupTag);
 //	if (channel == -1)
@@ -179,11 +179,11 @@ void cSoundDevice::setMusicVolume (int volume)
 //		channel = Mix_GroupOldest (groupTag);
 //		Mix_HaltChannel (channel);
 //	}
-//	channel = Mix_PlayChannel (channel, sound.getSdlSound (), 0);
+//	channel = Mix_PlayChannel (channel, sound.getSdlSound(), 0);
 //	if (channel < 0)
 //	{
 //		Log.write ("Could not play sound:", cLog::eLOG_TYPE_WARNING);
-//		Log.write (Mix_GetError (), cLog::eLOG_TYPE_WARNING);
+//		Log.write (Mix_GetError(), cLog::eLOG_TYPE_WARNING);
 //	}
 //	return channel;
 //}
