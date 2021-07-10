@@ -35,13 +35,13 @@ class cSurveyorAi
 public:
 	cSurveyorAi (const cVehicle& vehicle);
 
-	void run (const cClient& client, const std::vector<std::unique_ptr<cSurveyorAi>>& jobs);
+	void run (cClient&, const std::vector<std::unique_ptr<cSurveyorAi>>&);
 	bool isFinished() const { return finished; }
 	const cVehicle& getVehicle() { return vehicle; }
 
 private:
 	void planMove(std::forward_list<cPosition>& path, int remainingMovePoints, const std::vector<std::unique_ptr<cSurveyorAi>>& jobs, const cMap& map) const;
-	void planLongMove (const std::vector<std::unique_ptr<cSurveyorAi>>& jobs, const cClient& client);
+	void planLongMove (const std::vector<std::unique_ptr<cSurveyorAi>>&, cClient&);
 
 	float calcFactor(const cPosition& position, const std::forward_list<cPosition>& path, const std::vector<std::unique_ptr<cSurveyorAi>>& jobs, const cMap& map) const;
 	float calcScoreDistToOtherSurveyor (const std::vector<std::unique_ptr<cSurveyorAi>>& jobs, const cPosition& position, float e) const;

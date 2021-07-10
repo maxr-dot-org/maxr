@@ -56,74 +56,65 @@ class cClient : public INetMessageReceiver
 {
 	friend class cDebugOutputWidget;
 public:
-	cClient (std::shared_ptr<cConnectionManager> connectionManager);
+	cClient (std::shared_ptr<cConnectionManager>);
 	~cClient();
 
 	const cModel& getModel() const { return model; };
-
 	const cPlayer& getActivePlayer() const { return *activePlayer; }
 
 	void setPreparationData (const sLobbyPreparationData&);
-	void setMap(std::shared_ptr<cStaticMap> staticMap);
-	void setPlayers(const std::vector<cPlayerBasicData>& splayers, size_t activePlayerNr);
+	void setMap (std::shared_ptr<cStaticMap>);
+	void setPlayers (const std::vector<cPlayerBasicData>&, size_t activePlayerNr);
 
-	unsigned int getNetMessageQueueSize() const { return static_cast<unsigned int>(eventQueue2.safe_size()); };
-	void pushMessage(std::unique_ptr<cNetMessage> message) override;
+	unsigned int getNetMessageQueueSize() const { return static_cast<unsigned int>(eventQueue.safe_size()); };
+	void pushMessage (std::unique_ptr<cNetMessage>) override;
 
 	//
-	void enableFreezeMode (eFreezeMode mode);
-	void disableFreezeMode (eFreezeMode mode);
+	void enableFreezeMode (eFreezeMode);
+	void disableFreezeMode (eFreezeMode);
 	const cFreezeModes& getFreezeModes () const;
 	const std::map<int, ePlayerConnectionState>& getPlayerConnectionStates() const;
 	//
 
-	void addSurveyorMoveJob (const cVehicle& vehicle);
-	void removeSurveyorMoveJob (const cVehicle& vehicle);
+	void addSurveyorMoveJob (const cVehicle&);
+	void removeSurveyorMoveJob (const cVehicle&);
 	void recreateSurveyorMoveJobs();
 
 	/**
 	* sends a serialized copy of the netmessage to the server.
 	*/
-	void sendNetMessage(cNetMessage& message) const;
-	void sendNetMessage(cNetMessage&& message) const;
-
+	void sendNetMessage (cNetMessage&) const;
+	void sendNetMessage (cNetMessage&&) const;
 
 	void handleNetMessages();
 
-	void runClientJobs(const cModel& model);
+	void runClientJobs (const cModel&);
 
 	const std::shared_ptr<cGameTimerClient>& getGameTimer() const { return gameTimer; }
 
-	void loadModel(int saveGameNumber, int playerNr);
+	void loadModel (int saveGameNumber, int playerNr);
 
-
-	mutable cSignal<void (int fromPlayerNr, std::unique_ptr<cSavedReport>& report, int toPlayerNr)> reportMessageReceived;
-	mutable cSignal<void (int savingID)> guiSaveInfoRequested;
-	mutable cSignal<void (const cNetMessageGUISaveInfo& guiInfo)> guiSaveInfoReceived;
-	mutable cSignal<void ()> freezeModeChanged;
-	mutable cSignal<void ()> connectionToServerLost;
-	mutable cSignal<void (const cVehicle& vehicle)> surveyorAiConfused;
+	cSignal<void (int fromPlayerNr, std::unique_ptr<cSavedReport>&, int toPlayerNr)> reportMessageReceived;
+	cSignal<void (int savingID)> guiSaveInfoRequested;
+	cSignal<void (const cNetMessageGUISaveInfo&)> guiSaveInfoReceived;
+	cSignal<void()> freezeModeChanged;
+	cSignal<void()> connectionToServerLost;
+	cSignal<void (const cVehicle&)> surveyorAiConfused;
 
 	void run();
 private:
 
 	void handleSurveyorMoveJobs();
 
+private:
 	cModel model;
-
 	cSignalConnectionManager signalConnectionManager;
-
 	std::shared_ptr<cConnectionManager> connectionManager;
-
-	cConcurrentQueue<std::unique_ptr<cNetMessage>> eventQueue2;
-
+	cConcurrentQueue<std::unique_ptr<cNetMessage>> eventQueue;
 	std::shared_ptr<cGameTimerClient> gameTimer;
-
-	cPlayer* activePlayer; /** the active Player */
-
+	cPlayer* activePlayer;
 	cFreezeModes freezeModes;
 	std::map<int, ePlayerConnectionState> playerConnectionStates;
-
 	std::vector<std::unique_ptr<cSurveyorAi>> surveyorAiJobs;
 };
 

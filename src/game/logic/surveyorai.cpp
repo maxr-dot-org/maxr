@@ -73,7 +73,7 @@ cSurveyorAi::cSurveyorAi (const cVehicle& vehicle) :
 //------------------------------------------------------------------------------
 // plans the auto move of the surveyor and
 // adds new movejobs to the model, if necessary
-void cSurveyorAi::run(const cClient& client, const std::vector<std::unique_ptr<cSurveyorAi>>& jobs)
+void cSurveyorAi::run (cClient& client, const std::vector<std::unique_ptr<cSurveyorAi>>& jobs)
 {
 	if (finished) return;
 	if (counter > 0)
@@ -250,7 +250,7 @@ float cSurveyorAi::calcFactor(const cPosition& position, const std::forward_list
 
 //------------------------------------------------------------------------------
 // searches the map for a location where the surveyor can resume
-void cSurveyorAi::planLongMove(const std::vector<std::unique_ptr<cSurveyorAi>>& jobs, const cClient& client)
+void cSurveyorAi::planLongMove(const std::vector<std::unique_ptr<cSurveyorAi>>& jobs, cClient& client)
 {
 	const cModel& model = client.getModel();
 	const cMap& map = *model.getMap();

@@ -50,62 +50,59 @@
 #include "utility/log.h"
 #include "utility/ranges.h"
 
-#include <cmath>
-#include <sstream>
-
-using namespace std;
-
-//------------------------------------------------------------------------
-// cClient implementation
-//------------------------------------------------------------------------
-
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cClient::cClient (std::shared_ptr<cConnectionManager> connectionManager) :
-	connectionManager(connectionManager),
-	gameTimer (std::make_shared<cGameTimerClient> ()),
+	connectionManager (connectionManager),
+	gameTimer (std::make_shared<cGameTimerClient>()),
 	activePlayer (nullptr)
 {
 	gameTimer->start();
 }
 
+//------------------------------------------------------------------------------
 cClient::~cClient()
 {
-	connectionManager->setLocalClient(nullptr, -1);
+	connectionManager->setLocalClient (nullptr, -1);
 	gameTimer->stop();
 }
 
+//------------------------------------------------------------------------------
 void cClient::setMap (std::shared_ptr<cStaticMap> staticMap)
 {
-	model.setMap(staticMap);
+	model.setMap (staticMap);
 }
 
-void cClient::setPreparationData(const sLobbyPreparationData& preparationData)
+//------------------------------------------------------------------------------
+void cClient::setPreparationData (const sLobbyPreparationData& preparationData)
 {
-	model.setUnitsData(std::make_shared<cUnitsData>(*preparationData.unitsData));
-	model.setGameSettings(*preparationData.gameSettings);
-	model.setMap(preparationData.staticMap);
+	model.setUnitsData (std::make_shared<cUnitsData> (*preparationData.unitsData));
+	model.setGameSettings (*preparationData.gameSettings);
+	model.setMap (preparationData.staticMap);
 }
 
+//------------------------------------------------------------------------------
 void cClient::setPlayers (const std::vector<cPlayerBasicData>& splayers, size_t activePlayerNr)
 {
-	model.setPlayerList(splayers);
-	activePlayer = model.getPlayer(activePlayerNr);
+	model.setPlayerList (splayers);
+	activePlayer = model.getPlayer (activePlayerNr);
 }
 
-void cClient::pushMessage(std::unique_ptr<cNetMessage> message)
+//------------------------------------------------------------------------------
+void cClient::pushMessage (std::unique_ptr<cNetMessage> message)
 {
 	if (message->getType() == eNetMessageType::GAMETIME_SYNC_SERVER)
 	{
 		// This is a preview for the client to know
 		// how many sync messages are in queue.
 		// Used to detect a growing lag behind the server time
-		const cNetMessageSyncServer* syncMessage = static_cast<const cNetMessageSyncServer*>(message.get());
-		gameTimer->setReceivedTime(syncMessage->gameTime);
+		const cNetMessageSyncServer* syncMessage = static_cast<const cNetMessageSyncServer*> (message.get());
+		gameTimer->setReceivedTime (syncMessage->gameTime);
 	}
-	eventQueue2.push(std::move(message));
+	eventQueue.push (std::move (message));
 }
 
-void cClient::sendNetMessage(cNetMessage& message) const
+//------------------------------------------------------------------------------
+void cClient::sendNetMessage (cNetMessage& message) const
 {
 	message.playerNr = activePlayer->getId();
 
@@ -113,95 +110,94 @@ void cClient::sendNetMessage(cNetMessage& message) const
 	{
 		cTextArchiveIn archive;
 		archive << message;
-		Log.write(getActivePlayer().getName() + ": --> " + archive.data() + " @" + std::to_string(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write (getActivePlayer().getName() + ": --> " + archive.data() + " @" + std::to_string (model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 	}
-
-	connectionManager->sendToServer(message);
-}
-
-void cClient::sendNetMessage(cNetMessage&& message) const
-{
-	sendNetMessage(static_cast<cNetMessage&>(message));
+	connectionManager->sendToServer (message);
 }
 
 //------------------------------------------------------------------------------
-void cClient::runClientJobs(const cModel& model)
+void cClient::sendNetMessage (cNetMessage&& message) const
+{
+	sendNetMessage (static_cast<cNetMessage&> (message));
+}
+
+//------------------------------------------------------------------------------
+void cClient::runClientJobs (const cModel& model)
 {
 	// run surveyor AI
 	handleSurveyorMoveJobs();
-
 }
 
 void cClient::handleNetMessages()
 {
 	std::unique_ptr<cNetMessage> message;
-	while (eventQueue2.try_pop(message))
+	while (eventQueue.try_pop (message))
 	{
 
 		if (message->getType() != eNetMessageType::GAMETIME_SYNC_SERVER && message->getType() != eNetMessageType::RESYNC_MODEL)
 		{
 			cTextArchiveIn archive;
 			archive << *message;
-			Log.write(getActivePlayer().getName() + ": <-- " + archive.data() + " @" + std::to_string(model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+			Log.write (getActivePlayer().getName() + ": <-- " + archive.data() + " @" + std::to_string (model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 		}
 
 		switch (message->getType())
 		{
 		case eNetMessageType::REPORT:
 			{
-				if (message->playerNr != -1 && model.getPlayer(message->playerNr) == nullptr) continue;
+				if (message->playerNr != -1 && model.getPlayer (message->playerNr) == nullptr) continue;
 
-				cNetMessageReport* chatMessage = static_cast<cNetMessageReport*>(message.get());
-				reportMessageReceived(chatMessage->playerNr, chatMessage->report, activePlayer->getId());
+				cNetMessageReport* chatMessage = static_cast<cNetMessageReport*> (message.get());
+				reportMessageReceived (chatMessage->playerNr, chatMessage->report, activePlayer->getId());
 			}
 			break;
 		case eNetMessageType::ACTION:
 			{
-				if (model.getPlayer(message->playerNr) == nullptr) continue;
+				if (model.getPlayer (message->playerNr) == nullptr) continue;
 
-				const cAction* action = static_cast<cAction*>(message.get());
-				action->execute(model);
+				const cAction* action = static_cast<cAction*> (message.get());
+				action->execute (model);
 			}
 			break;
 		case eNetMessageType::GAMETIME_SYNC_SERVER:
 			{
-				const cNetMessageSyncServer* syncMessage = static_cast<cNetMessageSyncServer*>(message.get());
-				gameTimer->handleSyncMessage(*syncMessage, model.getGameTime());
+				const cNetMessageSyncServer* syncMessage = static_cast<cNetMessageSyncServer*> (message.get());
+				gameTimer->handleSyncMessage (*syncMessage, model.getGameTime());
 				return; //stop processing messages after receiving a sync message. Gametime needs to be increased before handling the next message.
 			}
 			break;
 		case eNetMessageType::RANDOM_SEED:
 			{
-				const cNetMessageRandomSeed* msg = static_cast<cNetMessageRandomSeed*>(message.get());
-				model.randomGenerator.seed(msg->seed);
+				const cNetMessageRandomSeed* msg = static_cast<cNetMessageRandomSeed*> (message.get());
+				model.randomGenerator.seed (msg->seed);
 			}
 			break;
 		case eNetMessageType::REQUEST_GUI_SAVE_INFO:
 			{
-				const cNetMessageRequestGUISaveInfo* msg = static_cast<cNetMessageRequestGUISaveInfo*>(message.get());
-				guiSaveInfoRequested(msg->savingID);
+				const cNetMessageRequestGUISaveInfo* msg = static_cast<cNetMessageRequestGUISaveInfo*> (message.get());
+				guiSaveInfoRequested (msg->savingID);
 			}
 			break;
 		case eNetMessageType::GUI_SAVE_INFO:
 			{
-				const cNetMessageGUISaveInfo* msg = static_cast<cNetMessageGUISaveInfo*>(message.get());
+				const cNetMessageGUISaveInfo* msg = static_cast<cNetMessageGUISaveInfo*> (message.get());
 				if (msg->playerNr != activePlayer->getId()) continue;
-				guiSaveInfoReceived(*msg);
+				guiSaveInfoReceived (*msg);
 			}
 			break;
 		case eNetMessageType::RESYNC_MODEL:
 			{
-				Log.write(" Client: Received model data for resynchronization", cLog::eLOG_TYPE_NET_DEBUG);
-				const cNetMessageResyncModel* msg = static_cast<cNetMessageResyncModel*>(message.get());
+				Log.write (" Client: Received model data for resynchronization", cLog::eLOG_TYPE_NET_DEBUG);
+				const cNetMessageResyncModel* msg = static_cast<cNetMessageResyncModel*> (message.get());
 				try
 				{
-					msg->apply(model);
+					msg->apply (model);
 					recreateSurveyorMoveJobs();
-					gameTimer->sendSyncMessage(*this, model.getGameTime(), 0, 0);
+					gameTimer->sendSyncMessage (*this, model.getGameTime(), 0, 0);
 				}
-				catch (std::runtime_error& e)
+				catch (const std::runtime_error& e)
 				{
-					Log.write(std::string(" Client: error loading received model data: ") + e.what(), cLog::eLOG_TYPE_NET_ERROR);
+					Log.write (std::string (" Client: error loading received model data: ") + e.what(), cLog::eLOG_TYPE_NET_ERROR);
 				}
 
 				//FIXME: deserializing model does not trigger signals on changed data members. Use this signal to trigger some gui updates
@@ -210,16 +206,16 @@ void cClient::handleNetMessages()
 			break;
 		case eNetMessageType::FREEZE_MODES:
 			{
-				const cNetMessageFreezeModes* msg = static_cast<cNetMessageFreezeModes*>(message.get());
+				const cNetMessageFreezeModes* msg = static_cast<cNetMessageFreezeModes*> (message.get());
 
 				// don't overwrite waitForServer flag
-				bool waitForServer = freezeModes.isEnabled(eFreezeMode::WAIT_FOR_SERVER);
+				bool waitForServer = freezeModes.isEnabled (eFreezeMode::WAIT_FOR_SERVER);
 				freezeModes = msg->freezeModes;
-				if (waitForServer) freezeModes.enable(eFreezeMode::WAIT_FOR_SERVER);
+				if (waitForServer) freezeModes.enable (eFreezeMode::WAIT_FOR_SERVER);
 
 				for (auto state : msg->playerStates)
 				{
-					if (model.getPlayer(state.first) == nullptr)
+					if (model.getPlayer (state.first) == nullptr)
 					{
 						Log.write (" Client: Invalid player id: " + std::to_string (state.first), cLog::eLOG_TYPE_NET_ERROR);
 						break;
@@ -241,11 +237,10 @@ void cClient::handleNetMessages()
 			}
 			break;
 		default:
-			Log.write(" Client: received unknown net message type", cLog::eLOG_TYPE_NET_WARNING);
+			Log.write (" Client: received unknown net message type", cLog::eLOG_TYPE_NET_WARNING);
 			break;
 		}
 	}
-
 }
 
 //------------------------------------------------------------------------------
@@ -259,9 +254,9 @@ void cClient::handleSurveyorMoveJobs()
 }
 
 //------------------------------------------------------------------------------
-void cClient::enableFreezeMode(eFreezeMode mode)
+void cClient::enableFreezeMode (eFreezeMode mode)
 {
-	Log.write(" Client: enabled freeze mode: " + enumToString(mode), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Client: enabled freeze mode: " + enumToString (mode), cLog::eLOG_TYPE_NET_DEBUG);
 	const auto wasEnabled = freezeModes.isEnabled (mode);
 
 	freezeModes.enable (mode);
@@ -272,7 +267,7 @@ void cClient::enableFreezeMode(eFreezeMode mode)
 //------------------------------------------------------------------------------
 void cClient::disableFreezeMode (eFreezeMode mode)
 {
-	Log.write(" Client: disabled freeze mode: " + enumToString(mode), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Client: disabled freeze mode: " + enumToString (mode), cLog::eLOG_TYPE_NET_DEBUG);
 	const auto wasDisabled = !freezeModes.isEnabled (mode);
 
 	freezeModes.disable (mode);
@@ -293,11 +288,11 @@ const std::map<int, ePlayerConnectionState>& cClient::getPlayerConnectionStates(
 }
 
 //------------------------------------------------------------------------------
-void cClient::addSurveyorMoveJob(const cVehicle& vehicle)
+void cClient::addSurveyorMoveJob (const cVehicle& vehicle)
 {
 	if (!vehicle.getStaticData().canSurvey) return;
 
-	sendNetMessage(cActionSetAutoMove(vehicle, true));
+	sendNetMessage (cActionSetAutoMove (vehicle, true));
 
 	//don't add new job, if there is already one for this vehicle
 	auto it = ranges::find_if (surveyorAiJobs, [&](const std::unique_ptr<cSurveyorAi>& job)
@@ -308,14 +303,13 @@ void cClient::addSurveyorMoveJob(const cVehicle& vehicle)
 	{
 		return;
 	}
-
-	surveyorAiJobs.push_back(std::make_unique<cSurveyorAi>(vehicle));
+	surveyorAiJobs.push_back (std::make_unique<cSurveyorAi> (vehicle));
 }
 
 //------------------------------------------------------------------------------
-void cClient::removeSurveyorMoveJob(const cVehicle& vehicle)
+void cClient::removeSurveyorMoveJob (const cVehicle& vehicle)
 {
-	sendNetMessage(cActionSetAutoMove(vehicle, false));
+	sendNetMessage (cActionSetAutoMove (vehicle, false));
 
 	auto it = ranges::find_if (surveyorAiJobs, [&](const std::unique_ptr<cSurveyorAi>& job)
 	{
@@ -323,7 +317,7 @@ void cClient::removeSurveyorMoveJob(const cVehicle& vehicle)
 	});
 	if (it != surveyorAiJobs.end())
 	{
-		surveyorAiJobs.erase(it);
+		surveyorAiJobs.erase (it);
 	}
 }
 
@@ -336,16 +330,16 @@ void cClient::recreateSurveyorMoveJobs()
 	{
 		if (vehicle->isSurveyorAutoMoveActive())
 		{
-			surveyorAiJobs.push_back(std::make_unique<cSurveyorAi>(*vehicle));
+			surveyorAiJobs.push_back (std::make_unique<cSurveyorAi> (*vehicle));
 		}
 	}
 }
 
 //------------------------------------------------------------------------------
-void cClient::loadModel(int saveGameNumber, int playerNr)
+void cClient::loadModel (int saveGameNumber, int playerNr)
 {
 	cSavegame savegame;
-	savegame.loadModel(model, saveGameNumber);
+	savegame.loadModel (model, saveGameNumber);
 
 	activePlayer = model.getPlayerList()[playerNr].get();
 
@@ -356,5 +350,5 @@ void cClient::loadModel(int saveGameNumber, int playerNr)
 //------------------------------------------------------------------------------
 void cClient::run()
 {
-	gameTimer->run(*this, model);
+	gameTimer->run (*this, model);
 }
