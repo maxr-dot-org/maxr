@@ -282,11 +282,11 @@ template <typename T, typename U>
 class cPlot : public cWidget
 {
 public:
-	typedef cAxis<T> XAxisType;
-	typedef cAxis<U> YAxisType;
-	typedef cMarker<T> XMarkerType;
-	typedef cMarker<U> YMarkerType;
-	typedef cGraph<T, U> GraphType;
+	using XAxisType = cAxis<T>;
+	using YAxisType = cAxis<U>;
+	using XMarkerType = cMarker<T>;
+	using YMarkerType = cMarker<U>;
+	using GraphType = cGraph<T, U>;
 
 	explicit cPlot (const cBox<cPosition>& area);
 

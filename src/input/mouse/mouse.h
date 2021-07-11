@@ -144,7 +144,7 @@ public:
 	void hide();
 private:
 
-	typedef std::unique_ptr<SDL_Cursor, void (*) (SDL_Cursor*)> SdlCursorPtrType;
+	using SdlCursorPtrType = std::unique_ptr<SDL_Cursor, void (*) (SDL_Cursor*)>;
 
 	cSignalConnectionManager signalConnectionManager;
 

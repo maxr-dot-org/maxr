@@ -46,6 +46,6 @@ enum class eAlignmentType
 	Center				= CenterHorizontal | CenterVerical
 };
 
-typedef cEnumFlag<eAlignmentType> AlignmentFlags;
+using AlignmentFlags = cEnumFlag<eAlignmentType>;
 
 #endif // ui_graphical_alignmentH

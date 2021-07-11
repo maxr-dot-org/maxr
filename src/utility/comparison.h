@@ -33,7 +33,7 @@ struct select_most_precise
 
 	static const bool both_same_kind = std::is_floating_point<T1>::value == std::is_floating_point<T2>::value;
 
-	typedef typename std::conditional
+	using type = typename std::conditional
 	<
 	one_not_fundamental,
 	typename std::conditional<std::is_fundamental<T1>::value, T2, T1>::type, // both not fundamental?! -> specialize
@@ -43,7 +43,7 @@ struct select_most_precise
 	typename std::conditional<second_larger, T2, T1>::type,
 	typename std::conditional<std::is_floating_point<T1>::value, T1, T2>::type
 	>::type
-	>::type type;
+	>::type;
 };
 
 struct compare_strategy_direct
@@ -90,7 +90,7 @@ struct compare_strategy_tolerance
 	template <typename T1, typename T2>
 	static inline bool less (const T1& t1, const T2& t2)
 	{
-		typedef typename select_most_precise<T1, T2>::type most_precise_type;
+		using most_precise_type = typename select_most_precise<T1, T2>::type;
 
 		auto weight = (std::abs (static_cast<most_precise_type> (t1)) + std::abs (static_cast<most_precise_type> (t2))) * 0.5;
 		weight = weight > 1 ? weight : 1;
@@ -133,7 +133,7 @@ struct compare_strategy_epsilon
 	template <typename T1, typename T2>
 	inline bool less (const T1& t1, const T2& t2) const
 	{
-		typedef typename select_most_precise<T1, T2>::type most_precise_type;
+		using most_precise_type = typename select_most_precise<T1, T2>::type;
 
 		return (static_cast<most_precise_type> (epsilon) < (static_cast<most_precise_type> (t2) - static_cast<most_precise_type> (t1)));
 	}
@@ -170,7 +170,7 @@ private:
 		static_assert (sizeof (ET) == 0, "compare_strategy_default works only on arithmetic types!");
 	};
 public:
-	typedef typename std::conditional
+	using type = typename std::conditional
 	<
 	std::is_arithmetic<T1>::value&&  std::is_arithmetic<T2>::value,
 		typename std::conditional
@@ -180,7 +180,7 @@ public:
 		compare_strategy_direct
 		>::type,
 		ErrorType<T1>
-		>::type type;
+		>::type;
 };
 
 template <typename T1, typename T2>

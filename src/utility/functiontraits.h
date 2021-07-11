@@ -43,7 +43,7 @@ struct sFunctionTraits<R (*)()> : public sFunctionTraits<R()>
 template <typename R>
 struct sFunctionTraits<R()>
 {
-	typedef R result_type;
+	using result_type = R;
 
 	static const size_t arity = 0;
 };
@@ -55,7 +55,7 @@ struct sFunctionTraits<R (*) (Arg1)> : public sFunctionTraits<R (Arg1)>
 template <typename R, typename Arg1>
 struct sFunctionTraits<R (Arg1)>
 {
-	typedef R result_type;
+	using result_type = R;
 
 	static const size_t arity = 1;
 
@@ -63,7 +63,7 @@ struct sFunctionTraits<R (Arg1)>
 	struct argument
 	{
 		static_assert (N < arity, "Invalid argument index.");
-		typedef typename std::tuple_element<N, std::tuple<Arg1>>::type type;
+		using type = std::tuple_element<N, std::tuple<Arg1>>::type;
 	};
 };
 
@@ -74,7 +74,7 @@ struct sFunctionTraits<R (*) (Arg1, Arg2)> : public sFunctionTraits<R (Arg1, Arg
 template <typename R, typename Arg1, typename Arg2>
 struct sFunctionTraits<R (Arg1, Arg2)>
 {
-	typedef R result_type;
+	using result_type = R;
 
 	static const size_t arity = 2;
 
@@ -82,7 +82,7 @@ struct sFunctionTraits<R (Arg1, Arg2)>
 	struct argument
 	{
 		static_assert (N < arity, "Invalid argument index.");
-		typedef typename std::tuple_element<N, std::tuple<Arg1, Arg2>>::type type;
+		using type = typename std::tuple_element<N, std::tuple<Arg1, Arg2>>::type;
 	};
 };
 
@@ -93,7 +93,7 @@ struct sFunctionTraits<R (*) (Arg1, Arg2, Arg3)> : public sFunctionTraits<R (Arg
 template <typename R, typename Arg1, typename Arg2, typename Arg3>
 struct sFunctionTraits<R (Arg1, Arg2, Arg3)>
 {
-	typedef R result_type;
+	using result_type = R;
 
 	static const size_t arity = 3;
 
@@ -101,7 +101,7 @@ struct sFunctionTraits<R (Arg1, Arg2, Arg3)>
 	struct argument
 	{
 		static_assert (N < arity, "Invalid argument index.");
-		typedef typename std::tuple_element<N, std::tuple<Arg1, Arg2, Arg3>>::type type;
+		using type = typename std::tuple_element<N, std::tuple<Arg1, Arg2, Arg3>>::type;
 	};
 };
 
@@ -112,7 +112,7 @@ struct sFunctionTraits<R (*) (Arg1, Arg2, Arg3, Arg4)> : public sFunctionTraits<
 template <typename R, typename Arg1, typename Arg2, typename Arg3, typename Arg4>
 struct sFunctionTraits<R (Arg1, Arg2, Arg3, Arg4)>
 {
-	typedef R result_type;
+	using result_type = R;
 
 	static const size_t arity = 4;
 
@@ -120,7 +120,7 @@ struct sFunctionTraits<R (Arg1, Arg2, Arg3, Arg4)>
 	struct argument
 	{
 		static_assert (N < arity, "Invalid argument index.");
-		typedef typename std::tuple_element<N, std::tuple<Arg1, Arg2, Arg3, Arg4>>::type type;
+		using type = typename std::tuple_element<N, std::tuple<Arg1, Arg2, Arg3, Arg4>>::type;
 	};
 };
 
@@ -129,7 +129,7 @@ struct sFunctionTraits<R (Arg1, Arg2, Arg3, Arg4)>
 template <typename R, typename... Args>
 struct sFunctionTraits<R (Args...)>
 {
-    typedef R result_type;
+	using result_type = R;
 
     static const size_t arity = sizeof... (Args);
 
@@ -137,7 +137,7 @@ struct sFunctionTraits<R (Args...)>
     struct argument
     {
         static_assert (N < arity, "Invalid argument index.");
-        typedef typename std::tuple_element<N, std::tuple<Args...>>::type type;
+        using type = typename std::tuple_element<N, std::tuple<Args...>>::type;
     };
 };
 

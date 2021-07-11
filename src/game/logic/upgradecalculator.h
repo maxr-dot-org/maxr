@@ -182,7 +182,7 @@ public:
 private:
 	cUpgradeCalculator();
 
-	typedef std::map<int, int> PriceMap;
+	using PriceMap = std::map<int, int>;
 
 	PriceMap hitpointsArmorAmmo_2;
 	PriceMap hitpointsArmorAmmo_4;

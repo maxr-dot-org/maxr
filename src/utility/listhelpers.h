@@ -28,13 +28,13 @@
 template <typename T>
 struct trait_add_const
 {
-	typedef const T type;
+	using type = const T;
 };
 
 template <typename T>
 struct trait_add_const<T*>
 {
-	typedef const T* type;
+	using type = const T*;
 };
 
 template <typename T>

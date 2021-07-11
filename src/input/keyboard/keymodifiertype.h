@@ -42,6 +42,6 @@ enum class eKeyModifierType
 	Mode		= (1 << 10)
 };
 
-typedef cEnumFlag<eKeyModifierType> KeyModifierFlags;
+using KeyModifierFlags = cEnumFlag<eKeyModifierType>;
 
 #endif // input_keyboard_keymodifiertypeH

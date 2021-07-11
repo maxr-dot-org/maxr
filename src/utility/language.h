@@ -61,7 +61,7 @@ public:
 	std::string getClanDescription (int num) const;
 
 private:
-	typedef std::map<std::string, std::string> StrStrMap;
+	using StrStrMap = std::map<std::string, std::string>;
 
 	int ReadSingleTranslation (const char* pszCurrent, ...);
 	std::string ReadSingleTranslation (const std::string& strInput);

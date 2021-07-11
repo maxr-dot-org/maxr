@@ -35,14 +35,14 @@ template <typename T, std::size_t D>
 class cFixedVector
 {
 public:
-	typedef T value_type;
-	typedef T& reference_type;
-	typedef const T& const_reference_type;
-	typedef T* point_type;
-	typedef const T* const_point_type;
-	typedef std::integral_constant<std::size_t, D> const_size;
+	using value_type = T;
+	using reference_type = T&;
+	using const_reference_type = const T&;
+	using point_type = T*;
+	using const_point_type = const T*;
+	using const_size = std::integral_constant<std::size_t, D>;
 
-	typedef cFixedVector<T, D> self_type;
+	using self_type = cFixedVector<T, D>;
 
 	cFixedVector();
 	template <typename U>

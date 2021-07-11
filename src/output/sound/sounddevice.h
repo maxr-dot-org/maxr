@@ -67,7 +67,7 @@ private:
 		void operator() (Mix_Music*) const;
 	};
 
-	typedef std::unique_ptr<Mix_Music, SdlMixMusikDeleter> SaveSdlMixMusicPointer;
+	using SaveSdlMixMusicPointer = std::unique_ptr<Mix_Music, SdlMixMusikDeleter>;
 
 	SaveSdlMixMusicPointer musicStream;
 

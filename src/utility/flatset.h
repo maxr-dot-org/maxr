@@ -48,23 +48,23 @@
 template <typename Key, class Compare = std::less<Key>, class Allocator = std::allocator<Key>>
 class cFlatSet
 {
-	typedef std::vector<Key, Allocator> DataType;
+	using DataType = std::vector<Key, Allocator>;
 public:
-	typedef Key key_type;
-	typedef Key value_type;
-	typedef typename Allocator::size_type size_type;
-	typedef typename Allocator::difference_type difference_type;
-	typedef Compare key_compare;
-	typedef Compare value_compare;
-	typedef Allocator allocator_type;
-	typedef typename Allocator::pointer pointer;
-	typedef typename Allocator::const_pointer const_pointer;
-	typedef typename Allocator::reference reference;
-	typedef typename Allocator::const_reference const_reference;
-	typedef typename DataType::iterator iterator;
-	typedef typename DataType::const_iterator const_iterator;
-	typedef typename DataType::reverse_iterator reverse_iterator;
-	typedef typename DataType::const_reverse_iterator const_reverse_iterator;
+	using key_type = Key;
+	using value_type = Key;
+	using size_type = typename Allocator::size_type;
+	using difference_type = typename Allocator::difference_type;
+	using key_compare = Compare;
+	using value_compare = Compare;
+	using allocator_type = Allocator;
+	using pointer = typename Allocator::pointer;
+	using const_pointer = typename Allocator::const_pointer;
+	using reference = typename Allocator::reference;
+	using const_reference = typename Allocator::const_reference;
+	using iterator = typename DataType::iterator;
+	using const_iterator = typename DataType::const_iterator;
+	using reverse_iterator = typename DataType::reverse_iterator;
+	using const_reverse_iterator = typename DataType::const_reverse_iterator;
 
 	cFlatSet() :
 		compare(),
