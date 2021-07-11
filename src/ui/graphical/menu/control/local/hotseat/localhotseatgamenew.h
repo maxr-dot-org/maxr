@@ -48,6 +48,8 @@ public:
 
 	void start (cApplication& application);
 
+	void setUnitsData (std::shared_ptr<const cUnitsData> unitsData_) { unitsData = std::move (unitsData_); }
+	void setClanData (std::shared_ptr<const cClanData> clanData_) { clanData = std::move (clanData_); }
 	void setGameSettings (std::shared_ptr<cGameSettings> gameSettings);
 	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
 	void setPlayers (const std::vector<cPlayerBasicData>& players);
@@ -56,6 +58,8 @@ public:
 	void setUnitUpgrades (size_t playerIndex, std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades);
 	void setLandingPosition (size_t playerIndex, const cPosition& landingPosition);
 
+	std::shared_ptr<const cUnitsData> getUnitsData() const { return unitsData; }
+	std::shared_ptr<const cClanData> getClanData() const { return clanData; }
 	const std::shared_ptr<cStaticMap>& getStaticMap();
 	const std::shared_ptr<cGameSettings>& getGameSettings();
 	const std::vector<sLandingUnit>& getLandingUnits (size_t playerIndex);
@@ -66,6 +70,8 @@ public:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
+	std::shared_ptr<const cUnitsData> unitsData;
+	std::shared_ptr<const cClanData> clanData;
 	std::shared_ptr<cStaticMap> staticMap;
 	std::shared_ptr<cGameSettings> gameSettings;
 

@@ -75,10 +75,6 @@ void cWindowSinglePlayer::newGameClicked()
 
 	auto game = std::make_shared<cLocalSingleplayerGameNew>();
 
-	//initialize copy of unitsData that will be used in game
-	game->setUnitsData (std::make_shared<const cUnitsData> (UnitsDataGlobal));
-	game->setClanData (std::make_shared<const cClanData> (ClanDataGlobal));
-
 	auto windowGameSettings = getActiveApplication()->show (std::make_shared<cWindowGameSettings>());
 	windowGameSettings->applySettings (cGameSettings());
 

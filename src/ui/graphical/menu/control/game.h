@@ -30,10 +30,8 @@ class cClanData;
 class cGame : public cRunnable, public std::enable_shared_from_this<cGame>
 {
 public:
-	cGame() :
-		terminate (false)
-	{}
-	virtual ~cGame() {}
+	cGame() = default;
+	virtual ~cGame() = default;
 
 	bool wantsToTerminate() const override
 	{
@@ -49,17 +47,9 @@ public:
 		terminate = false;
 	}
 
-	void setUnitsData (std::shared_ptr<const cUnitsData> unitsData_) { unitsData = std::move (unitsData_); }
-	std::shared_ptr<const cUnitsData> getUnitsData() const { return unitsData; }
-	void setClanData (std::shared_ptr<const cClanData> clanData_) { clanData = std::move (clanData_); }
-	std::shared_ptr<const cClanData> getClanData() const { return clanData; }
-
-	mutable cSignal<void()> terminated;
-protected:
-	std::shared_ptr<const cUnitsData> unitsData;
-	std::shared_ptr<const cClanData> clanData;
+	cSignal<void()> terminated;
 private:
-	bool terminate;
+	bool terminate = false;
 };
 
 #endif
