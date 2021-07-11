@@ -449,7 +449,7 @@ void cWindowReports::initializeScorePlot()
 
 	if (!turnClock) return;
 
-	auto extrapolate = [ ] (const cPlayer & p, int c, int t)
+	auto extrapolate = [] (const cPlayer& p, int c, int t)
 	{
 		if (t <= c) return p.getScore (t);
 		else return p.getScore (c) + p.getNumEcoSpheres() * (t - c);
@@ -495,7 +495,7 @@ void cWindowReports::initializeScorePlot()
 
 	for (size_t i = 0; i < players.size(); ++i)
 	{
-		auto& graph = scorePlot->addGraph ([ = ] (int x) { return extrapolate (*players[i], turnClock->getTurn(), x); });
+		auto& graph = scorePlot->addGraph ([=] (int x) { return extrapolate (*players[i], turnClock->getTurn(), x); });
 		graph.setColor (players[i]->getColor());
 	}
 

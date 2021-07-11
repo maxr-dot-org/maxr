@@ -277,7 +277,7 @@ ItemType* cListView<ItemType>::addItem (std::unique_ptr<ItemType> item, eAddList
 		const auto offset = itemPtr->getSize().y() - oldSize.y();
 		if (offset == 0) return;
 
-		auto iter = ranges::find_if (items, [ = ] (const std::pair<int, std::unique_ptr<ItemType>>& entry) { return entry.second.get() == itemPtr; });
+		auto iter = ranges::find_if (items, [=] (const std::pair<int, std::unique_ptr<ItemType>>& entry) { return entry.second.get() == itemPtr; });
 		if (iter != items.end()) ++iter;
 		for (; iter != items.end(); ++iter)
 		{
@@ -631,7 +631,7 @@ void cListView<ItemType>::setSelectedItem (const ItemType* item)
 	}
 	else
 	{
-		auto iter = ranges::find_if (items, [ = ] (const std::pair<int, std::unique_ptr<ItemType>>& entry) { return entry.second.get() == item; });
+		auto iter = ranges::find_if (items, [=] (const std::pair<int, std::unique_ptr<ItemType>>& entry) { return entry.second.get() == item; });
 
 		if (iter != items.end())
 		{
@@ -660,7 +660,7 @@ void cListView<ItemType>::deselectAll()
 template <typename ItemType>
 void cListView<ItemType>::scrollToItem (const ItemType* item)
 {
-	auto iter = ranges::find_if (items, [ = ] (const std::pair<int, std::unique_ptr<ItemType>>& entry) { return entry.second.get() == item; });
+	auto iter = ranges::find_if (items, [=] (const std::pair<int, std::unique_ptr<ItemType>>& entry) { return entry.second.get() == item; });
 
 	if (iter != items.end())
 	{
@@ -768,7 +768,7 @@ void cListView<ItemType>::updateDisplayItems()
 
 	const auto endPixelOffset = pixelOffset + pixelSize;
 
-	auto iter = std::lower_bound (items.begin(), items.end(), endPixelOffset, [ ] (const std::pair<int, std::unique_ptr<ItemType>>& entry, int offset) { return entry.first + entry.second->getSize().y() < offset; });
+	auto iter = std::lower_bound (items.begin(), items.end(), endPixelOffset, [] (const std::pair<int, std::unique_ptr<ItemType>>& entry, int offset) { return entry.first + entry.second->getSize().y() < offset; });
 	if (iter == items.end())
 	{
 		endDisplayItem = items.size();
@@ -779,7 +779,7 @@ void cListView<ItemType>::updateDisplayItems()
 		endDisplayItem = iter - items.begin() + 1;
 	}
 
-	iter = std::upper_bound (items.begin(), items.end(), pixelOffset, [ ] (int offset, const std::pair<int, std::unique_ptr<ItemType>>& entry) { return offset < entry.first; });
+	iter = std::upper_bound (items.begin(), items.end(), pixelOffset, [] (int offset, const std::pair<int, std::unique_ptr<ItemType>>& entry) { return offset < entry.first; });
 	if (iter == items.end())
 	{
 		beginDisplayItem = items.size() - 1;

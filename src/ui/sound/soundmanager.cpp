@@ -133,7 +133,7 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 	std::unique_lock<std::recursive_mutex> playingSoundsLock (playingSoundsMutex);
 
 	playingSounds.erase (std::remove_if (playingSounds.begin(), playingSounds.end(),
-	[] (const sStoredSound & storedSound) { return !storedSound.active; }), playingSounds.end());
+	[] (const sStoredSound& storedSound) { return !storedSound.active; }), playingSounds.end());
 
 	const unsigned int currentGameTime = model ? model->getGameTime() : 0;
 
@@ -141,7 +141,7 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 
 	if (soundConflictHandlingType != eSoundConflictHandlingType::PlayAnyway)
 	{
-		const auto isInConflict = [&sound, currentGameTime] (const sStoredSound & storedSound)
+		const auto isInConflict = [&sound, currentGameTime] (const sStoredSound& storedSound)
 		{
 			return (!sound->hasConflictAtSameGameTimeOnly() || storedSound.startGameTime == currentGameTime) && sound->isInConflict (*storedSound.sound);
 		};
@@ -219,7 +219,7 @@ void cSoundManager::finishedSound (cSoundEffect& sound)
 {
 	std::unique_lock<std::recursive_mutex> playingSoundsLock (playingSoundsMutex);
 
-	auto iter = ranges::find_if (playingSounds, [&sound] (const sStoredSound & entry) { return entry.sound.get() == &sound; });
+	auto iter = ranges::find_if (playingSounds, [&sound] (const sStoredSound& entry) { return entry.sound.get() == &sound; });
 
 	if (iter != playingSounds.end())
 	{

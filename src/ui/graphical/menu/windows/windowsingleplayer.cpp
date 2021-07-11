@@ -82,7 +82,7 @@ void cWindowSinglePlayer::newGameClicked()
 	auto windowGameSettings = getActiveApplication()->show (std::make_shared<cWindowGameSettings>());
 	windowGameSettings->applySettings (cGameSettings());
 
-	windowGameSettings->done.connect ([ = ]()
+	windowGameSettings->done.connect ([=]()
 	{
 		game->setGameSettings (windowGameSettings->getGameSettings());
 
@@ -106,7 +106,7 @@ void cWindowSinglePlayer::loadGameClicked()
 	auto application = getActiveApplication();
 
 	auto windowLoad = getActiveApplication()->show (std::make_shared<cWindowLoad>());
-	windowLoad->load.connect ([ = ] (const cSaveGameInfo& saveInfo)
+	windowLoad->load.connect ([=] (const cSaveGameInfo& saveInfo)
 	{
 		auto game = std::make_shared<cLocalSingleplayerGameSaved>();
 		game->setSaveGameNumber (saveInfo.number);

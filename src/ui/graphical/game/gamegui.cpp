@@ -211,7 +211,7 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 
 	signalConnectionManager.connect (Video.resolutionChanged, std::bind (&cGameGui::handleResolutionChange, this));
 
-	signalConnectionManager.connect (Video.screenShotTaken, [this] (const std::string & path)
+	signalConnectionManager.connect (Video.screenShotTaken, [this] (const std::string& path)
 	{
 		messageList->addMessage (lngPack.i18n ("Text~Comp~Screenshot_Done", path));
 	});

@@ -46,7 +46,7 @@ void cCasualtiesTracker::logCasualty (const cUnit& unit)
 //--------------------------------------------------------------------------
 void cCasualtiesTracker::setCasualty (sID unitType, int numberOfLosses, int playerNr)
 {
-	auto signalCaller = makeScopedOperation ([ = ]() { casualtyChanged (unitType, playerNr); });
+	auto signalCaller = makeScopedOperation ([=]() { casualtyChanged (unitType, playerNr); });
 
 	vector<Casualty>& casualties = getCasualtiesOfPlayer (playerNr);
 

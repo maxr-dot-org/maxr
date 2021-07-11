@@ -710,7 +710,7 @@ int cLanguage::ReadRecursiveLanguagePack (XMLElement* xmlElement, std::string st
 		return -1;
 	}
 
-	if (strNodePath[ strNodePath.length() - 1 ] != '~')
+	if (strNodePath.back() != '~')
 	{
 		strNodePath += "~";
 	}

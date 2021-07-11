@@ -207,8 +207,8 @@ int cWindowLoad::getSelectedSaveNumber() const
 //------------------------------------------------------------------------------
 cSaveGameInfo* cWindowLoad::getSaveFile (int saveNumber)
 {
-	auto iter = ranges::find_if (saveGames, [ = ] (const cSaveGameInfo & save) { return save.number == saveNumber; });
-	return iter == saveGames.end() ? nullptr : & (*iter);
+	auto iter = ranges::find_if (saveGames, [=] (const cSaveGameInfo& save) { return save.number == saveNumber; });
+	return iter == saveGames.end() ? nullptr : &(*iter);
 }
 
 //------------------------------------------------------------------------------

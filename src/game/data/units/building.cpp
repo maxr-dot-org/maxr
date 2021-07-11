@@ -71,7 +71,7 @@ cBuildListItem& cBuildListItem::operator= (const cBuildListItem& other)
 }
 
 //--------------------------------------------------------------------------
-cBuildListItem& cBuildListItem::operator= (cBuildListItem && other)
+cBuildListItem& cBuildListItem::operator= (cBuildListItem&& other)
 {
 	type = std::move (other.type);
 	remainingMetal = std::move (other.remainingMetal);

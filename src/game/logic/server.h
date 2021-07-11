@@ -61,7 +61,7 @@ public:
 	void setPlayers (const std::vector<cPlayerBasicData>& splayers);
 
 	const cModel& getModel() const;
-	void saveGameState (int saveGameNumber, const std::string & saveName) const;
+	void saveGameState (int saveGameNumber, const std::string& saveName) const;
 	void loadGameState (int saveGameNumber);
 	void sendGuiInfoToClients (int saveGameNumber, int playerNr = -1);
 

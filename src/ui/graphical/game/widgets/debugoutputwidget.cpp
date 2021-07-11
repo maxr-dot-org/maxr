@@ -280,7 +280,7 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 		{
 			print ("total-animations-count: " + std::to_string (gameMap->animations.size()));
 
-			const auto runningAnimations = ranges::count_if (gameMap->animations, [ ] (const std::unique_ptr<cAnimation>& animation) { return animation->isRunning(); });
+			const auto runningAnimations = ranges::count_if (gameMap->animations, [] (const std::unique_ptr<cAnimation>& animation) { return animation->isRunning(); });
 			print ("running-animations-count: " + std::to_string (runningAnimations));
 			const auto finishedAnimations = ranges::count_if (gameMap->animations, [] (const std::unique_ptr<cAnimation>& animation) { return animation->isFinished(); });
 			print ("finished-animations-count: " + std::to_string (finishedAnimations));

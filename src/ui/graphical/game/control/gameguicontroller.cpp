@@ -216,7 +216,7 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 
 	clients = std::move (clients_);
 
-	auto iter = ranges::find_if (clients, [ = ] (const std::shared_ptr<cClient>& client) { return client->getActivePlayer().getId() == activePlayerNumber; });
+	auto iter = ranges::find_if (clients, [=] (const std::shared_ptr<cClient>& client) { return client->getActivePlayer().getId() == activePlayerNumber; });
 	if (iter != clients.end()) setActiveClient (*iter);
 	else setActiveClient (nullptr);
 
@@ -247,7 +247,7 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 			client->sendNetMessage (message);
 		});
 
-		allClientsSignalConnectionManager.connect (client->guiSaveInfoReceived, [this, client] (const cNetMessageGUISaveInfo & guiInfo)
+		allClientsSignalConnectionManager.connect (client->guiSaveInfoReceived, [this, client] (const cNetMessageGUISaveInfo& guiInfo)
 		{
 			if (guiInfo.playerNr != client->getActivePlayer().getId()) return;
 
@@ -695,15 +695,15 @@ void cGameGuiController::connectClient (cClient& client)
 			client.sendNetMessage (msg);
 		}
 	});
-	clientSignalConnectionManager.connect (buildBuildingTriggered, [&] (const cVehicle & vehicle, const cPosition& destination, const sID & unitId, int buildSpeed)
+	clientSignalConnectionManager.connect (buildBuildingTriggered, [&] (const cVehicle& vehicle, const cPosition& destination, const sID& unitId, int buildSpeed)
 	{
 		client.sendNetMessage (cActionStartBuild (vehicle, unitId, buildSpeed, destination));
 	});
-	clientSignalConnectionManager.connect (buildBuildingPathTriggered, [&] (const cVehicle & vehicle, const cPosition& destination, const sID & unitId, int buildSpeed)
+	clientSignalConnectionManager.connect (buildBuildingPathTriggered, [&] (const cVehicle& vehicle, const cPosition& destination, const sID& unitId, int buildSpeed)
 	{
 		client.sendNetMessage (cActionStartBuild (vehicle, unitId, buildSpeed, vehicle.getPosition(), destination));
 	});
-	clientSignalConnectionManager.connect (buildVehiclesTriggered, [&] (const cBuilding & building, const std::vector<sID>& buildList, int buildSpeed, bool repeat)
+	clientSignalConnectionManager.connect (buildVehiclesTriggered, [&] (const cBuilding& building, const std::vector<sID>& buildList, int buildSpeed, bool repeat)
 	{
 		client.sendNetMessage (cActionChangeBuildList (building, buildList, buildSpeed, repeat));
 	});
@@ -747,7 +747,7 @@ void cGameGuiController::connectClient (cClient& client)
 	{
 		client.sendNetMessage (cActionSelfDestroy (building));
 	});
-	clientSignalConnectionManager.connect (resumeMoveJobTriggered, [&] (const cVehicle & vehicle)
+	clientSignalConnectionManager.connect (resumeMoveJobTriggered, [&] (const cVehicle& vehicle)
 	{
 		client.sendNetMessage (cActionResumeMove (vehicle));
 	});
@@ -759,7 +759,7 @@ void cGameGuiController::connectClient (cClient& client)
 	{
 		if (!client.getFreezeModes().isFreezed()) client.sendNetMessage (cActionEndTurn());
 	});
-	clientSignalConnectionManager.connect (gameGui->getHud().triggeredRenameUnit, [&] (const cUnit& unit, const std::string & name)
+	clientSignalConnectionManager.connect (gameGui->getHud().triggeredRenameUnit, [&] (const cUnit& unit, const std::string& name)
 	{
 		client.sendNetMessage (cActionChangeUnitName (unit, name));
 	});
@@ -847,11 +847,11 @@ void cGameGuiController::connectClient (cClient& client)
 		doneList.push_back (unit.getId());
 	});
 
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredEndBuilding, [&] (const cVehicle & vehicle, const cPosition& destination)
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredEndBuilding, [&] (const cVehicle& vehicle, const cPosition& destination)
 	{
 		client.sendNetMessage (cActionFinishBuild (vehicle, destination));
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredMoveSingle, [&] (const cVehicle & vehicle, const cPosition& destination)
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredMoveSingle, [&] (const cVehicle& vehicle, const cPosition& destination)
 	{
 		if (!activeClient) return;
 
@@ -874,7 +874,7 @@ void cGameGuiController::connectClient (cClient& client)
 	{
 		client.sendNetMessage (cActionActivate (unit, *unit.storedUnits[index], position));
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredExitFinishedUnit, [&] (const cBuilding & building, const cPosition& position)
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredExitFinishedUnit, [&] (const cBuilding& building, const cPosition& position)
 	{
 		client.sendNetMessage (cActionFinishBuild (building, position));
 	});
@@ -1122,7 +1122,7 @@ void cGameGuiController::connectClient (cClient& client)
 		updateChangeAllowed();
 	});
 
-	clientSignalConnectionManager.connect (client.getModel().triggeredAddTracks, [&](const cVehicle & vehicle)
+	clientSignalConnectionManager.connect (client.getModel().triggeredAddTracks, [&](const cVehicle& vehicle)
 	{
 		if (!cSettings::getInstance().isMakeTracks()) return;
 		if (!client.getActivePlayer().canSeeUnit (vehicle, *client.getModel().getMap())) return;
@@ -1480,7 +1480,7 @@ void cGameGuiController::showFilesWindow()
 		// loading games while game is running is not yet implemented
 		application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~INFO_Not_Implemented")));
 	});
-	loadSaveWindow->save.connect ([this, loadSaveWindow] (int saveNumber, const std::string & name)
+	loadSaveWindow->save.connect ([this, loadSaveWindow] (int saveNumber, const std::string& name)
 	{
 		try
 		{
@@ -1522,7 +1522,7 @@ void cGameGuiController::showReportsWindow()
 		reportsWindow->close();
 	});
 
-	signalConnectionManager.connect (reportsWindow->reportClickedSecondTime, [this, reportsWindow] (const cSavedReport & report)
+	signalConnectionManager.connect (reportsWindow->reportClickedSecondTime, [this, reportsWindow] (const cSavedReport& report)
 	{
 		if (auto position = report.getPosition())
 		{
@@ -1574,7 +1574,7 @@ void cGameGuiController::showBuildBuildingsWindow (const cVehicle& vehicle)
 				auto buildSpeed = buildWindow->getSelectedBuildSpeed();
 
 				buildPositionSelectionConnectionManager.disconnectAll();
-				buildPositionSelectionConnectionManager.connect (gameGui->getGameMap().selectedBuildPosition, [this, buildingId, buildSpeed] (const cVehicle & selectedVehicle, const cPosition& destination)
+				buildPositionSelectionConnectionManager.connect (gameGui->getGameMap().selectedBuildPosition, [this, buildingId, buildSpeed] (const cVehicle& selectedVehicle, const cPosition& destination)
 				{
 					buildBuildingTriggered (selectedVehicle, destination, buildingId, buildSpeed);
 					buildPositionSelectionConnectionManager.disconnectAll();
@@ -1596,7 +1596,7 @@ void cGameGuiController::showBuildBuildingsWindow (const cVehicle& vehicle)
 			auto buildSpeed = buildWindow->getSelectedBuildSpeed();
 
 			buildPositionSelectionConnectionManager.disconnectAll();
-			buildPositionSelectionConnectionManager.connect (gameGui->getGameMap().selectedBuildPathDestination, [this, buildType, buildSpeed] (const cVehicle & selectedVehicle, const cPosition& destination)
+			buildPositionSelectionConnectionManager.connect (gameGui->getGameMap().selectedBuildPathDestination, [this, buildType, buildSpeed] (const cVehicle& selectedVehicle, const cPosition& destination)
 			{
 				buildBuildingPathTriggered (selectedVehicle, destination, buildType, buildSpeed);
 				buildPositionSelectionConnectionManager.disconnectAll();

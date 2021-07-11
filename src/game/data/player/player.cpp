@@ -36,7 +36,7 @@ using namespace std;
 //------------------------------------------------------------------------------
 void sNewTurnPlayerReport::addUnitBuilt (const sID& unitTypeId)
 {
-	auto iter = ranges::find_if (unitsBuilt, [unitTypeId] (const sTurnstartReport & entry) { return entry.type == unitTypeId; });
+	auto iter = ranges::find_if (unitsBuilt, [unitTypeId] (const sTurnstartReport& entry) { return entry.type == unitTypeId; });
 	if (iter != unitsBuilt.end())
 	{
 		++iter->count;
