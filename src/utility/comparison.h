@@ -33,17 +33,13 @@ struct select_most_precise
 
 	static const bool both_same_kind = std::is_floating_point<T1>::value == std::is_floating_point<T2>::value;
 
-	using type = typename std::conditional
-	<
-	one_not_fundamental,
-	typename std::conditional<std::is_fundamental<T1>::value, T2, T1>::type, // both not fundamental?! -> specialize
-	typename std::conditional
-	<
-	both_same_kind,
-	typename std::conditional<second_larger, T2, T1>::type,
-	typename std::conditional<std::is_floating_point<T1>::value, T1, T2>::type
-	>::type
-	>::type;
+	using type = std::conditional_t<
+		one_not_fundamental,
+		std::conditional_t<std::is_fundamental<T1>::value, T2, T1>, // both not fundamental?! -> specialize
+		std::conditional_t<both_same_kind,
+						   std::conditional_t<second_larger, T2, T1>,
+						   std::conditional_t<std::is_floating_point<T1>::value, T1, T2>>
+	>;
 };
 
 struct compare_strategy_direct
@@ -170,17 +166,14 @@ private:
 		static_assert (sizeof (ET) == 0, "compare_strategy_default works only on arithmetic types!");
 	};
 public:
-	using type = typename std::conditional
-	<
-	std::is_arithmetic<T1>::value&&  std::is_arithmetic<T2>::value,
-		typename std::conditional
-		<
-		std::is_floating_point<T1>::value || std::is_floating_point<T2>::value,
-		compare_strategy_tolerance,
-		compare_strategy_direct
-		>::type,
+	using type = std::conditional_t<
+		std::is_arithmetic<T1>::value&&  std::is_arithmetic<T2>::value,
+		std::conditional_t<
+			std::is_floating_point<T1>::value || std::is_floating_point<T2>::value,
+			compare_strategy_tolerance,
+			compare_strategy_direct>,
 		ErrorType<T1>
-		>::type;
+	>;
 };
 
 template <typename T1, typename T2>

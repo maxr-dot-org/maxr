@@ -91,14 +91,14 @@ namespace serialization
 	template <typename A, typename T>
 	void serialize (A& archive, T& value)
 	{
-		using serializeWrapper = typename std::conditional<std::is_enum<T>::value, detail::sSerializeEnum, detail::sSerializeMember>::type;
+		using serializeWrapper = std::conditional_t<std::is_enum<T>::value, detail::sSerializeEnum, detail::sSerializeMember>;
 		serializeWrapper::serialize (archive, value);
 	}
 
 	template <typename A, typename T>
 	void serialize (A& archive, const sNameValuePair<T>& value)
 	{
-		using serializeWrapper = typename std::conditional<std::is_enum<T>::value, detail::sSerializeEnum, detail::sSerializeMember>::type;
+		using serializeWrapper = std::conditional_t<std::is_enum<T>::value, detail::sSerializeEnum, detail::sSerializeMember>;
 		serializeWrapper::serialize (archive, value);
 	}
 
@@ -445,12 +445,7 @@ namespace serialization
 		template <typename Archive, typename T>
 		void splitMember (Archive& archive, T& value)
 		{
-			using operation = typename std::conditional
-				<
-				Archive::isWriter,
-				sSplitMemberWriter,
-				sSplitMemberReader
-				>::type;
+			using operation = std::conditional_t<Archive::isWriter, sSplitMemberWriter, sSplitMemberReader>;
 
 			operation::apply (archive, value);
 		}
@@ -476,12 +471,7 @@ namespace serialization
 		template <typename Archive, typename T>
 		void splitFree (Archive& archive, T& value)
 		{
-			using operation = typename std::conditional
-				<
-				Archive::isWriter,
-				sSplitFreeWriter,
-				sSplitFreeReader
-				>::type;
+			using operation = std::conditional_t<Archive::isWriter, sSplitFreeWriter, sSplitFreeReader>;
 
 			operation::apply (archive, value);
 		}

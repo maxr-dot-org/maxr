@@ -72,12 +72,7 @@ struct sCrcClass
 template <typename T>
 [[nodiscard]] uint32_t calcCheckSum (const T& data, uint32_t crc)
 {
-	using crcWrapper = typename std::conditional
-		<
-		std::is_enum<T>::value,
-		sCrcEnum,
-		sCrcClass
-		>::type;
+	using crcWrapper = std::conditional_t<std::is_enum<T>::value, sCrcEnum, sCrcClass>;
 
 	return crcWrapper::getChecksum (data, crc);
 }

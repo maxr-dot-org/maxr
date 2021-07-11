@@ -42,12 +42,11 @@ T random (const T min, const T max)
 	assert (max > min);
 
 	static_assert (std::is_arithmetic<T>::value, "Can not generate random number for non-arithmetic types");
-	using DistributionType = typename std::conditional
-	<
-	std::is_integral<T>::value,
+	using DistributionType = std::conditional_t<
+		std::is_integral<T>::value,
 		std::uniform_int_distribution<T>,
 		std::uniform_real_distribution<T>
-		>::type;
+	>;
 
 	static std::random_device rd;
 	static std::mt19937 gen (rd());

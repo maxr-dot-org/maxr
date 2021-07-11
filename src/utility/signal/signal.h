@@ -196,19 +196,16 @@ template <typename... Args, typename MutexType>
 template <typename F>
 void cSignal<void (Args...), MutexType>::disconnect (const F& f)
 {
-	using test_type = typename std::conditional<std::is_function<F>::value, typename std::add_pointer<F>::type, F>::type;
+	using test_type = std::conditional_t<std::is_function<F>::value, std::add_pointer_t<F>, F>;
 
-	using should_deref = typename std::conditional
-	<
-	std::is_pointer<test_type>::value,
-		typename std::conditional
-		<
-		std::is_function<typename std::remove_pointer<test_type>::type>::value,
-		std::true_type,
+	using should_deref = std::conditional_t<
+		std::is_pointer<test_type>::value,
+		std::conditional_t<
+			std::is_function<std::remove_pointer_t<test_type>>::value,
+			std::true_type,
+			std::false_type>,
 		std::false_type
-		>::type,
-		std::false_type
-		>::type;
+	>;
 
 	std::unique_lock<MutexType> lock (mutex);
 

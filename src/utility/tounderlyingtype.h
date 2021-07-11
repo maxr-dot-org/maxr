@@ -23,9 +23,9 @@
 #include <type_traits>
 
 template <typename EnumType>
-typename std::underlying_type<EnumType>::type toUnderlyingType (EnumType e)
+std::underlying_type_t<EnumType> toUnderlyingType (EnumType e)
 {
-	return static_cast<typename std::underlying_type<EnumType>::type> (e);
+	return static_cast<std::underlying_type_t<EnumType>> (e);
 }
 
 #endif // utility_tounderlyingtypeH
