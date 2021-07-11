@@ -39,11 +39,6 @@ cSocket::cSocket (TCPsocket socket):
 //------------------------------------------------------------------------
 // cDataBuffer implementation
 //------------------------------------------------------------------------
-cDataBuffer::cDataBuffer() :
-	capacity (0),
-	length (0),
-	data (nullptr)
-{}
 
 //------------------------------------------------------------------------------
 void cDataBuffer::reserve (unsigned int i)

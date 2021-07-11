@@ -32,7 +32,7 @@ class cLabColor;
 class cRgbColor
 {
 public:
-	cRgbColor();
+	cRgbColor() = default;
 	cRgbColor (unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 0xFF);
 
 	bool operator== (const cRgbColor& other) const;
@@ -46,8 +46,10 @@ public:
 	cRgbColor exchangeBlue (unsigned char blue) const;
 	cRgbColor exchangeAlpha (unsigned char alpha) const;
 
-	unsigned char r, g, b;
-	unsigned char a;
+	unsigned char r = 0;
+	unsigned char g = 0;
+	unsigned char b = 0;
+	unsigned char a = 0xFF;
 
 	uint32_t getChecksum (uint32_t crc) const;
 
@@ -83,7 +85,7 @@ struct sLessRgbColor
 class cHsvColor
 {
 public:
-	cHsvColor();
+	cHsvColor() = default;
 	cHsvColor (unsigned short hue, unsigned char saturation, unsigned char value, unsigned char alpha = 0xFF);
 
 	bool operator== (const cHsvColor& other) const;
@@ -91,16 +93,17 @@ public:
 
 	cRgbColor toRgb() const;
 
-	unsigned short h;
-	unsigned char s, v;
-	unsigned char a;
+	unsigned short h = 0;
+	unsigned char s = 0;
+	unsigned char v = 0;
+	unsigned char a = 0xFF;
 };
 
 //------------------------------------------------------------------------------
 class cLabColor
 {
 public:
-	cLabColor();
+	cLabColor() = default;
 	cLabColor (double L, double a, double b);
 
 	bool operator== (const cLabColor& other) const;
@@ -108,9 +111,9 @@ public:
 
 	double deltaE (const cLabColor& other) const;
 
-	double L;
-	double a;
-	double b;
+	double L = 0.;
+	double a = 0.;
+	double b = 0.;
 };
 
 #endif // utility_colorH

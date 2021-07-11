@@ -203,7 +203,6 @@ void cLobbyServer::sendGameData (int playerNr /* = -1 */)
 	if (gameSettings)
 	{
 		message.settings = *gameSettings;
-		message.settingsValid = true;
 	}
 	sendNetMessage (message, playerNr);
 }
@@ -415,7 +414,7 @@ void cLobbyServer::changeOptions (const cMuMsgOptions& message)
 		staticMap = std::make_shared<cStaticMap>();
 		staticMap->loadMap (message.mapName);
 	}
-	gameSettings = message.settingsValid ? std::make_shared<cGameSettings> (message.settings) : nullptr;
+	gameSettings = message.settings ? std::make_shared<cGameSettings> (*message.settings) : nullptr;
 	selectSaveGameInfo (message.saveInfo);
 }
 

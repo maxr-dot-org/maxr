@@ -37,16 +37,16 @@ const uint32_t PACKAGE_LENGTH = 1024 * 1024 * 10;
 class cDataBuffer
 {
 public:
-	cDataBuffer();
+	cDataBuffer() = default;
 
 	void reserve (uint32_t i);
 	unsigned char* getWritePointer();
 	uint32_t getFreeSpace() const;
 	void deleteFront (uint32_t n);
 
-	uint32_t capacity;
-	uint32_t length;
-	unsigned char* data;
+	uint32_t capacity = 0;
+	uint32_t length = 0;
+	unsigned char* data = nullptr;
 };
 
 

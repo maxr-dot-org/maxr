@@ -143,7 +143,6 @@ void cLobbyClient::selectGameSettings (const cGameSettings& gameSettings)
 	cMuMsgOptions message;
 
 	message.mapName = lobbyPreparationData.staticMap ? lobbyPreparationData.staticMap->getName() : "";
-	message.settingsValid = true;
 	message.settings = gameSettings;
 
 	sendNetMessage (message);
@@ -157,7 +156,6 @@ void cLobbyClient::selectMapName (const std::string& mapName)
 	message.mapName = mapName;
 	if (lobbyPreparationData.gameSettings)
 	{
-		message.settingsValid = true;
 		message.settings = *lobbyPreparationData.gameSettings;
 	}
 	sendNetMessage (message);
@@ -423,9 +421,9 @@ void cLobbyClient::handleNetMessage_MU_MSG_PLAYERLIST (const cMuMsgPlayerList& m
 //------------------------------------------------------------------------------
 void cLobbyClient::handleNetMessage_MU_MSG_OPTIONS (const cMuMsgOptions& message)
 {
-	if (message.settingsValid)
+	if (message.settings)
 	{
-		lobbyPreparationData.gameSettings = std::make_unique<cGameSettings> (message.settings);
+		lobbyPreparationData.gameSettings = std::make_unique<cGameSettings> (*message.settings);
 	}
 	else
 	{

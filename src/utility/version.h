@@ -31,7 +31,7 @@
 class cVersion
 {
 public:
-	cVersion();
+	cVersion() = default;
 	explicit cVersion (const std::string& string);
 	explicit cVersion (int major, int minor = 0, int revision = 0);
 
@@ -72,9 +72,9 @@ public:
 	}
 
 private:
-	int major;
-	int minor;
-	int revision;
+	int major = 0;
+	int minor = 0;
+	int revision = 0;
 };
 
 #endif // utility_versionH

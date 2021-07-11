@@ -24,11 +24,6 @@
 #include "game/logic/movejob.h"
 
 //------------------------------------------------------------------------------
-cActionResumeMove::cActionResumeMove() :
-	unitId (0)
-{}
-
-//------------------------------------------------------------------------------
 cActionResumeMove::cActionResumeMove (const cVehicle& vehicle) :
 	unitId (vehicle.getId())
 {}

@@ -337,9 +337,7 @@ protected:
  */
 struct sUnitUpgrade
 {
-	sUnitUpgrade() :
-		nextPrice (0), purchased (0),
-		curValue (-1), startValue (0), type (UPGRADE_TYPE_NONE) {}
+	sUnitUpgrade() = default;
 
 	int purchase (const cResearch& researchLevel);
 	int cancelPurchase (const cResearch& researchLevel);
@@ -378,15 +376,15 @@ struct sUnitUpgrade
 private:
 	friend class cUnitUpgrade;
 	/** what will the next upgrade cost */
-	int nextPrice;
+	int nextPrice = 0;
 	/** how many upgrades of this type has the player purchased */
-	int purchased;
+	int purchased = 0;
 	/** what is the current value */
-	int curValue;
+	int curValue = -1;
 	/** the value that this unit would have without all upgrades */
-	int startValue;
+	int startValue = 0;
 	/** the type of the upgrade */
-	eUpgradeTypes type;
+	eUpgradeTypes type = UPGRADE_TYPE_NONE;
 };
 
 class cUnitUpgrade

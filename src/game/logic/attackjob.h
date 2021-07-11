@@ -43,8 +43,8 @@ public:
 	template <typename MAP>
 	static cUnit* selectTarget (const cPosition& position, char attackMode, const MAP& map, const cPlayer* owner);
 
+	cAttackJob() = default;
 	cAttackJob (cUnit& aggressor, const cPosition& targetPosition, const cModel& model);
-	cAttackJob();
 
 	void run (cModel& model);
 	bool finished() const;
@@ -64,15 +64,6 @@ public:
 	}
 
 private:
-	cUnit* aggressor;
-	cPosition targetPosition;
-	std::vector<int> lockedTargets;
-	int fireDir;
-	int counter;
-	enum eAJStates { S_ROTATING, S_PLAYING_MUZZLE, S_FIRING, S_FINISHED };
-	eAJStates state;
-
-
 	int calcFireDir();
 	void lockTarget (const cMap& map);
 	void releaseTargets (const cModel& model);
@@ -82,6 +73,14 @@ private:
 	void impactCluster (cModel& model);
 	void impactSingle (const cPosition& position, int attackPoints, cModel& model, std::vector<cUnit*>* avoidTargets = nullptr);
 
+private:
+	cUnit* aggressor = nullptr;
+	cPosition targetPosition;
+	std::vector<int> lockedTargets;
+	int fireDir = 0;
+	int counter = 0;
+	enum eAJStates { S_ROTATING, S_PLAYING_MUZZLE, S_FIRING, S_FINISHED };
+	eAJStates state = S_ROTATING;
 };
 
 //--------------------------------------------------------------------------

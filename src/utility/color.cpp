@@ -26,14 +26,6 @@
 #include <cassert>
 
 //------------------------------------------------------------------------------
-cRgbColor::cRgbColor() :
-	r (0),
-	g (0),
-	b (0),
-	a (0xFF)
-{}
-
-//------------------------------------------------------------------------------
 cRgbColor::cRgbColor (unsigned char red_, unsigned char green_, unsigned char blue_, unsigned char alpha_) :
 	r (red_),
 	g (green_),
@@ -151,14 +143,6 @@ cLabColor cRgbColor::toLab() const
 }
 
 //------------------------------------------------------------------------------
-cHsvColor::cHsvColor() :
-	h (0),
-	s (0),
-	v (0),
-	a (0xFF)
-{}
-
-//------------------------------------------------------------------------------
 cHsvColor::cHsvColor (unsigned short hue, unsigned char saturation, unsigned char value, unsigned char alpha_) :
 	h (hue),
 	s (saturation),
@@ -238,13 +222,6 @@ cRgbColor cHsvColor::toRgb() const
 	}
 	return result;
 }
-
-//------------------------------------------------------------------------------
-cLabColor::cLabColor() :
-	L (0),
-	a (0),
-	b (0)
-{}
 
 //------------------------------------------------------------------------------
 cLabColor::cLabColor (double L_, double a_, double b_) :

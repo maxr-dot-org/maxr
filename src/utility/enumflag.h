@@ -36,7 +36,7 @@ class cEnumFlag
 {
 	static_assert (std::is_enum<E>::value, "Template parameter has to be an enumerator type!");
 public:
-	cEnumFlag();
+	cEnumFlag() = default;
 	cEnumFlag (E value);
 	explicit cEnumFlag (std::underlying_type_t<E>);
 	cEnumFlag (const cEnumFlag&) = default;
@@ -64,7 +64,7 @@ public:
 	std::underlying_type_t<E> data() const;
 
 private:
-	std::underlying_type_t<E> data_;
+	std::underlying_type_t<E> data_ = 0;
 };
 
 //------------------------------------------------------------------------------
@@ -73,12 +73,6 @@ cEnumFlag<E> toEnumFlag (E value)
 {
 	return cEnumFlag<E> (value);
 }
-
-//------------------------------------------------------------------------------
-template <typename E>
-cEnumFlag<E>::cEnumFlag() :
-	data_ (0)
-{}
 
 //------------------------------------------------------------------------------
 template <typename E>

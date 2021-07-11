@@ -50,13 +50,6 @@ cTurnTimeDeadline::cTurnTimeDeadline (unsigned int startGameTime_, const std::ch
 {}
 
 //------------------------------------------------------------------------------
-cTurnTimeDeadline::cTurnTimeDeadline() :
-	startGameTime (0),
-	deadline (0),
-	id (0)
-{}
-
-//------------------------------------------------------------------------------
 unsigned int cTurnTimeDeadline::getStartGameTime() const
 {
 	return startGameTime;

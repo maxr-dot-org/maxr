@@ -25,19 +25,19 @@
 class cFrameCounter
 {
 public:
-	cFrameCounter();
+	cFrameCounter() = default;
 
 	void frameDrawn();
 	unsigned int getFramesPerSecond();
 	unsigned long long getFrame() const;
 
 private:
-	unsigned long long frames;
-	unsigned long long lastFrames;
+	unsigned long long frames = 0;
+	unsigned long long lastFrames = 0;
 
-	unsigned int framesPerSecond;
+	unsigned int framesPerSecond = 0;
 
-	std::chrono::steady_clock::time_point lastCheckTime;
+	std::chrono::steady_clock::time_point lastCheckTime{};
 };
 
 #endif

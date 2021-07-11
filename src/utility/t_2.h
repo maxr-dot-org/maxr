@@ -25,9 +25,9 @@ template <class Type> class T_2
 {
 public:
 	static T_2<Type> Zero;
-	Type
-	x, y;
-	T_2() : x (0), y (0) {}
+	Type x;
+	Type y;
+	T_2() = default;
 	T_2 (Type px, Type py) : x (px), y (py) {}
 	void operator() (const Type& PX, const Type& PY)
 	{

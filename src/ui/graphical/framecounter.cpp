@@ -21,13 +21,6 @@
 
 #include "utility/mathtools.h"
 
-cFrameCounter::cFrameCounter() :
-	frames (0),
-	lastFrames (0),
-	framesPerSecond (0),
-	lastCheckTime()
-{}
-
 void cFrameCounter::frameDrawn()
 {
 	++frames;

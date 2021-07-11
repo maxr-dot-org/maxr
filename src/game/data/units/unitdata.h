@@ -254,7 +254,7 @@ private:
 class cDynamicUnitData
 {
 public:
-	cDynamicUnitData();
+	cDynamicUnitData() = default;
 	cDynamicUnitData (const cDynamicUnitData&);
 	cDynamicUnitData& operator= (const cDynamicUnitData&);
 
@@ -349,25 +349,25 @@ private:
 	sID id;
 
 	// Production
-	int buildCosts;
+	int buildCosts = 0;
 
-	int version;
+	int version = 0;
 
-	int speedCur;
-	int speedMax;
+	int speedCur = 0;
+	int speedMax = 0;
 
-	int hitpointsCur;
-	int hitpointsMax;
-	int shotsCur;
-	int shotsMax;
-	int ammoCur;
-	int ammoMax;
+	int hitpointsCur = 0;
+	int hitpointsMax = 0;
+	int shotsCur = 0;
+	int shotsMax = 0;
+	int ammoCur = 0;
+	int ammoMax = 0;
 
-	int range;
-	int scan;
+	int range = 0;
+	int scan = 0;
 
-	int damage;
-	int armor;
+	int damage = 0;
+	int armor = 0;
 
 	mutable std::optional<uint32_t> crcCache;
 };

@@ -33,12 +33,7 @@
 class cBufferedFile
 {
 public:
-	cBufferedFile() :
-		file (nullptr),
-		start (0),
-		end (0)
-	{}
-
+	cBufferedFile() = default;
 	~cBufferedFile() { close(); }
 
 	bool open (const char* filename, const char* mode)
@@ -100,10 +95,10 @@ private:
 
 private:
 	static const unsigned int bufferSize = 1024;
-	SDL_RWops* file;
+	SDL_RWops* file = nullptr;
 	char internalBuffer[bufferSize];
-	unsigned int start;
-	unsigned int end;
+	unsigned int start = 0;
+	unsigned int end = 0;
 };
 
 AutoSurface LoadPCX (const std::string& name)

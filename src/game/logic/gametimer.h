@@ -88,10 +88,10 @@ private:
 	void checkPlayersResponding (const std::vector<std::shared_ptr<cPlayer>>& playerList, cServer& server);
 	std::map<int, sGameTimerClientDebugData> clientDebugData;
 	std::map<int, unsigned int> receivedTime; // time that the client has reported to server in last sync message
-	unsigned int sentGameTime;                // time that has server has reportet to clients in last sync message
+	unsigned int sentGameTime = 0;            // time that has server has reported to clients in last sync message
 
 public:
-	cGameTimerServer();
+	cGameTimerServer() = default;
 	void run (cModel& model, cServer& server);
 	void handleSyncMessage (const cNetMessageSyncClient& message, unsigned int gameTime);
 	void setPlayerNumbers (const std::vector<std::shared_ptr<cPlayer>>& playerList);
@@ -101,22 +101,21 @@ class cGameTimerClient : public cGameTimer
 {
 	friend class cDebugOutputWidget;
 private:
-	unsigned int receivedTime;			//gametime of the latest sync message in the netmessage queue
-	unsigned int remoteChecksum;		//received checksum from server. After running the jobs for the next gametime, the clientmodel should have the same checksum!
-	unsigned int timeSinceLastSyncMessage; //when no sync message is received for a certain time, user gets message "waiting for server"
+	unsigned int receivedTime = 0; // gametime of the latest sync message in the netmessage queue
+	unsigned int remoteChecksum = 0; // received checksum from server. After running the jobs for the next gametime, the clientmodel should have the same checksum!
+	unsigned int timeSinceLastSyncMessage = 0; // when no sync message is received for a certain time, user gets message "waiting for server"
 
-	bool syncMessageReceived; // The gametime can only be increased, after the sync message for the next gametime from the server has been received.
-							  // After the sync message has been received, all following netmessages belong to the next gametime step. So handling of
-							  // messages is stopped, until client reached the next gametime.
+	bool syncMessageReceived = false; // The gametime can only be increased, after the sync message for the next gametime from the server has been received.
+									  // After the sync message has been received, all following netmessages belong to the next gametime step. So handling of
+									  // messages is stopped, until client reached the next gametime.
 
-
-	unsigned int localChecksum;			// saved local checksum for debug view
-	unsigned int debugRemoteChecksum;	// saved data for debug view only
-	unsigned int ping;                  // saved data for debug view only
+	unsigned int localChecksum = 0;       // saved local checksum for debug view
+	unsigned int debugRemoteChecksum = 0; // saved data for debug view only
+	unsigned int ping = 0;                // saved data for debug view only
 
 	void checkServerResponding (cClient& client);
 public:
-	cGameTimerClient();
+	cGameTimerClient() = default;
 
 	void setReceivedTime (unsigned int time);
 	unsigned int getReceivedTime();
@@ -127,6 +126,5 @@ public:
 
 	void handleSyncMessage (const cNetMessageSyncServer& message, unsigned int gameTime);
 };
-
 
 #endif // game_logic_gametimerH

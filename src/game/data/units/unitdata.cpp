@@ -281,26 +281,6 @@ uint32_t cStaticUnitData::getChecksum (uint32_t crc) const
 }
 
 //------------------------------------------------------------------------------
-cDynamicUnitData::cDynamicUnitData() :
-	id(),
-	buildCosts (0),
-	version (0),
-	speedCur (0),
-	speedMax (0),
-	hitpointsCur (0),
-	hitpointsMax (0),
-	shotsCur (0),
-	shotsMax (0),
-	ammoCur (0),
-	ammoMax (0),
-	range (0),
-	scan (0),
-	damage (0),
-	armor (0),
-	crcCache (std::nullopt)
-{}
-
-//------------------------------------------------------------------------------
 cDynamicUnitData::cDynamicUnitData (const cDynamicUnitData& other) :
 	id (other.id),
 	buildCosts (other.buildCosts),

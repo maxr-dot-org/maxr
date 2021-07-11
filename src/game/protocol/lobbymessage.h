@@ -155,8 +155,7 @@ public:
 	cSaveGameInfo saveInfo;
 	std::string mapName;
 	Uint32 mapCrc;
-	cGameSettings settings;
-	bool settingsValid;
+	std::optional<cGameSettings> settings;
 
 private:
 	template <typename T>
@@ -166,7 +165,6 @@ private:
 		archive & mapName;
 		archive & mapCrc;
 		archive & settings;
-		archive & settingsValid;
 	}
 };
 

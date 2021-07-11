@@ -110,7 +110,7 @@ template <typename T>
 class cAxis
 {
 public:
-	cAxis();
+	cAxis() = default;
 
 	void setLabel (std::string label);
 	const std::string& getLabel() const;
@@ -126,20 +126,13 @@ public:
 	void setMaxValue (T value);
 	T getMaxValue() const;
 private:
-	T minValue;
-	T maxValue;
+	T minValue{};
+	T maxValue{};
 
 	std::string label;
 
 	cRgbColor color;
 };
-
-//------------------------------------------------------------------------------
-template <typename T>
-cAxis<T>::cAxis() :
-	minValue (0),
-	maxValue (0)
-{}
 
 //------------------------------------------------------------------------------
 template <typename T>

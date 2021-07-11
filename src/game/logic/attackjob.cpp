@@ -37,14 +37,6 @@
 
 //TODO: test alien attack (ground & air)
 
-//------------------------------------------------------------------------------
-cAttackJob::cAttackJob() :
-	aggressor (nullptr),
-	fireDir (0),
-	counter (0),
-	state (S_ROTATING)
-{}
-
 //--------------------------------------------------------------------------
 cAttackJob::cAttackJob (cUnit& aggressor, const cPosition& targetPosition, const cModel& model) :
 	aggressor (&aggressor),

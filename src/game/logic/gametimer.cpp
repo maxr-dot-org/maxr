@@ -101,11 +101,6 @@ bool cGameTimer::popEvent()
 	}
 }
 
-cGameTimerServer::cGameTimerServer() :
-	cGameTimer(),
-	sentGameTime (0)
-{}
-
 void cGameTimerServer::setPlayerNumbers (const std::vector<std::shared_ptr<cPlayer>>& playerList)
 {
 	for (const auto& p : playerList)
@@ -185,18 +180,6 @@ void cGameTimerServer::run (cModel& model, cServer& server)
 			sentGameTime = model.getGameTime();
 		}
 	}
-}
-
-
-cGameTimerClient::cGameTimerClient() :
-	cGameTimer(),
-	receivedTime (0),
-	remoteChecksum (0),
-	timeSinceLastSyncMessage (0),
-	syncMessageReceived (false),
-	localChecksum (0),
-	debugRemoteChecksum (0)
-{
 }
 
 void cGameTimerClient::setReceivedTime (unsigned int time)

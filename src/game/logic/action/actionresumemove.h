@@ -25,7 +25,7 @@
 class cActionResumeMove : public cActionT<cAction::eActiontype::ACTION_RESUME_MOVE>
 {
 public:
-	cActionResumeMove();
+	cActionResumeMove() = default;
 	cActionResumeMove (const cVehicle& vehicle);
 	cActionResumeMove (cBinaryArchiveOut& archive);
 
@@ -40,7 +40,7 @@ private:
 		archive & unitId;
 	}
 
-	unsigned int unitId;
+	unsigned int unitId = 0;
 };
 
 #endif // game_logic_actionResumeMoveH

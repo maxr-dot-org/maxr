@@ -48,13 +48,10 @@ private:
 
 	struct sUpgradeResult
 	{
-		sUpgradeResult() :
-			costs (0),
-			nr (0)
-		{};
+		sUpgradeResult() = default;
 
-		int costs;
-		int nr;
+		int costs = 0;
+		int nr = 0;
 	};
 };
 

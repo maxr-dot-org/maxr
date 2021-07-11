@@ -33,8 +33,8 @@ class cModel;
 class cTurnTimeDeadline
 {
 public:
+	cTurnTimeDeadline() = default;
 	cTurnTimeDeadline (unsigned int startGameTime, const std::chrono::milliseconds& deadline, unsigned int id);
-	cTurnTimeDeadline();
 
 	unsigned int getStartGameTime() const;
 	const std::chrono::milliseconds& getDeadline() const;
@@ -52,9 +52,9 @@ public:
 		archive & NVP (id);
 	}
 private:
-	unsigned int startGameTime;
-	std::chrono::milliseconds deadline;
-	unsigned int id;
+	unsigned int startGameTime = 0;
+	std::chrono::milliseconds deadline{0};
+	unsigned int id = 0;
 };
 
 class cTurnTimeClock
