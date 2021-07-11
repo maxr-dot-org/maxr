@@ -39,8 +39,16 @@ class cFrameCounter;
 struct sDrawingCacheEntry
 {
 	sDrawingCacheEntry();
-	sDrawingCacheEntry (sDrawingCacheEntry&& other);
-	sDrawingCacheEntry& operator= (sDrawingCacheEntry&& other);
+	sDrawingCacheEntry (sDrawingCacheEntry&&) = default;
+	sDrawingCacheEntry& operator= (sDrawingCacheEntry&&) = default;
+	sDrawingCacheEntry (const sDrawingCacheEntry&) = delete;
+	sDrawingCacheEntry& operator= (const sDrawingCacheEntry&) = delete;
+
+	/**
+	* sets all properties and initialises the surface.
+	*/
+	void init (const cVehicle&, const cMapView&, const cPlayer*, unsigned long long animationTime, double zoom, unsigned long long frameNr);
+	void init (const cBuilding&, double zoom, unsigned long long frameNr);
 
 	//building properties
 	bool BaseN;
@@ -64,22 +72,12 @@ struct sDrawingCacheEntry
 
 	//common properties
 	sID id;
-	cPlayer* owner;
+	cPlayer* owner = nullptr;
 	int dir;
 	double zoom;
 	unsigned long long lastUsed;
 
 	AutoSurface surface;
-
-	/**
-	* sets all properties and initialises the surface.
-	*/
-	void init (const cVehicle& vehicle, const cMapView& map, const cPlayer* player, unsigned long long animationTime, double zoom, unsigned long long frameNr);
-	void init (const cBuilding& building, double zoom, unsigned long long frameNr);
-
-private:
-	sDrawingCacheEntry (const sDrawingCacheEntry& other) = delete;
-	sDrawingCacheEntry& operator= (const sDrawingCacheEntry& other) = delete;
 };
 
 class cDrawingCache

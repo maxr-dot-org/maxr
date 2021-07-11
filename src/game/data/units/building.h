@@ -46,11 +46,11 @@ class cBuildListItem
 public:
 	cBuildListItem();
 	cBuildListItem (sID type, int remainingMetal);
-	cBuildListItem (const cBuildListItem& other);
-	cBuildListItem (cBuildListItem&& other);
+	cBuildListItem (const cBuildListItem&);
+	cBuildListItem (cBuildListItem&&);
 
-	cBuildListItem& operator= (const cBuildListItem& other);
-	cBuildListItem& operator= (cBuildListItem && other);
+	cBuildListItem& operator= (const cBuildListItem&);
+	cBuildListItem& operator= (cBuildListItem&&);
 
 	const sID& getType() const;
 	void setType (const sID& type);

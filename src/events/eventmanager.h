@@ -65,8 +65,8 @@ public:
 	bool shouldExit() const;
 private:
 	cEventManager();
-	cEventManager (const cEventManager& other) = delete;
-	cEventManager& operator= (const cEventManager& other) = delete;
+	cEventManager (const cEventManager&) = delete;
+	cEventManager& operator= (const cEventManager&) = delete;
 
 	bool handleSdlEvent (const SDL_Event& event);
 

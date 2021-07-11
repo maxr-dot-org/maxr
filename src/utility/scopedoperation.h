@@ -36,6 +36,8 @@ public:
 		function (function_),
 		dismissed (false)
 	{}
+	cScopedOperation (const cScopedOperation<FunctionType>&) = delete;
+	cScopedOperation& operator= (const cScopedOperation<FunctionType>&) = delete;
 	cScopedOperation (cScopedOperation<FunctionType>&& other) :
 		function (std::move (other.function)),
 		dismissed (false)
@@ -64,8 +66,6 @@ public:
 		dismissed = true;
 	}
 private:
-	cScopedOperation (const cScopedOperation<FunctionType>&) = delete;
-	cScopedOperation& operator= (const cScopedOperation<FunctionType>&) = delete;
 
 	FunctionType function;
 	bool dismissed;

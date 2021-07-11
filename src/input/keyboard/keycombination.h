@@ -34,8 +34,8 @@ public:
 
 	std::string toString() const;
 
-	bool operator== (const cKeyCombination& other) const;
-	bool operator!= (const cKeyCombination& other) const;
+	bool operator== (const cKeyCombination&) const;
+	bool operator!= (const cKeyCombination&) const;
 
 	bool matches (const cKeyCombination& other) const;
 

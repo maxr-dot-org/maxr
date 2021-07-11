@@ -61,7 +61,7 @@ public:
 	cClan (int num) : num (num) {}
 	cClan() : num (-1) {}
 
-	cClan (const cClan& other);
+	cClan (const cClan&);
 
 	void setDefaultDescription (const std::string& newDescription);
 	const std::string& getDefaultDescription() const;

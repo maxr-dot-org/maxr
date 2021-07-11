@@ -30,14 +30,14 @@ class cKeySequence
 public:
 	cKeySequence();
 	explicit cKeySequence (const std::string& sequence);
-	explicit cKeySequence (cKeyCombination keyCombination);
+	explicit cKeySequence (cKeyCombination);
 	cKeySequence (cKeyCombination keyCombination1, cKeyCombination keyCombination2);
 	cKeySequence (cKeyCombination keyCombination1, cKeyCombination keyCombination2, cKeyCombination keyCombination3);
 
-	bool operator== (const cKeySequence& other) const;
-	bool operator!= (const cKeySequence& other) const;
+	bool operator== (const cKeySequence&) const;
+	bool operator!= (const cKeySequence&) const;
 
-	void addKeyCombination (cKeyCombination keyCombination);
+	void addKeyCombination (cKeyCombination);
 	void removeFirst();
 
 	size_t length() const;

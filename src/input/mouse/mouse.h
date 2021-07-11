@@ -55,6 +55,9 @@ public:
 	 * we should ever create another mouse instance.
 	 */
 	cMouse();
+	cMouse (const cMouse&) = delete;
+	cMouse& operator= (const cMouse&) = delete;
+
 	~cMouse();
 
 	/**
@@ -140,8 +143,6 @@ public:
 	 */
 	void hide();
 private:
-	cMouse (const cMouse& other) = delete;
-	cMouse& operator= (const cMouse& other) = delete;
 
 	typedef std::unique_ptr<SDL_Cursor, void (*) (SDL_Cursor*)> SdlCursorPtrType;
 

@@ -20,21 +20,6 @@
 #include "output/sound/soundchunk.h"
 #include "utility/log.h"
 
-//--------------------------------------------------------------------------
-cSoundChunk::cSoundChunk()
-{}
-
-//--------------------------------------------------------------------------
-cSoundChunk::cSoundChunk (cSoundChunk&& other) :
-	sdlSound (std::move (other.sdlSound))
-{}
-
-//--------------------------------------------------------------------------
-cSoundChunk& cSoundChunk::operator= (cSoundChunk && other)
-{
-	sdlSound = std::move (other.sdlSound);
-	return *this;
-}
 
 //------------------------------------------------------------------------------
 bool cSoundChunk::operator==(const cSoundChunk& other) const

@@ -29,11 +29,13 @@
 class cSoundChunk
 {
 public:
-	cSoundChunk();
-	cSoundChunk (cSoundChunk&& other);
-	cSoundChunk& operator= (cSoundChunk && other);
+	cSoundChunk() = default;
+	cSoundChunk (cSoundChunk&&) = default;
+	cSoundChunk& operator= (cSoundChunk&&) = default;
+	cSoundChunk (const cSoundChunk&) = delete;
+	cSoundChunk& operator= (const cSoundChunk&) = delete;
 
-	bool operator==(const cSoundChunk& other) const;
+	bool operator==(const cSoundChunk&) const;
 
 	void load (const std::string& fileName);
 
@@ -43,15 +45,12 @@ public:
 
 	Mix_Chunk* getSdlSound() const;
 private:
-	cSoundChunk (const cSoundChunk& other) = delete;
-	cSoundChunk& operator= (const cSoundChunk& other) = delete;
-
 	struct SdlMixChunkDeleter
 	{
 		void operator() (Mix_Chunk*) const;
 	};
 
-	typedef std::unique_ptr<Mix_Chunk, SdlMixChunkDeleter> SaveSdlMixChunkPointer;
+	using SaveSdlMixChunkPointer = std::unique_ptr<Mix_Chunk, SdlMixChunkDeleter>;
 
 	SaveSdlMixChunkPointer sdlSound;
 };

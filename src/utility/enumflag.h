@@ -39,10 +39,10 @@ public:
 	cEnumFlag();
 	cEnumFlag (E value);
 	explicit cEnumFlag (typename std::underlying_type<E>::type value);
-	cEnumFlag (const cEnumFlag<E>& other);
+	cEnumFlag (const cEnumFlag&) = default;
 
-	cEnumFlag<E>& operator= (E other);
-	cEnumFlag<E>& operator= (cEnumFlag<E> other);
+	cEnumFlag& operator= (E other);
+	cEnumFlag& operator= (const cEnumFlag&) = default;
 
 	operator bool() const;
 
@@ -99,20 +99,6 @@ cEnumFlag<E>& cEnumFlag<E>::operator= (E other)
 	data_ = toUnderlyingType (other);
 	return *this;
 }
-
-//------------------------------------------------------------------------------
-template <typename E>
-cEnumFlag<E>& cEnumFlag<E>::operator= (cEnumFlag<E> other)
-{
-	data_ = other.data_;
-	return *this;
-}
-
-//------------------------------------------------------------------------------
-template <typename E>
-cEnumFlag<E>::cEnumFlag (const cEnumFlag<E>& other) :
-	data_ (other.data_)
-{}
 
 //------------------------------------------------------------------------------
 template <typename E>

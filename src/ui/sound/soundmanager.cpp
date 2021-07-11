@@ -34,25 +34,6 @@ cSoundManager::sStoredSound::sStoredSound (std::shared_ptr<cSoundEffect> sound_,
 {}
 
 //--------------------------------------------------------------------------
-cSoundManager::sStoredSound::sStoredSound (sStoredSound&& other) :
-	sound (std::move (other.sound)),
-	startGameTime (other.startGameTime),
-	active (other.active),
-	signalConnectionManager (std::move (other.signalConnectionManager))
-{}
-
-//--------------------------------------------------------------------------
-cSoundManager::sStoredSound& cSoundManager::sStoredSound::operator= (sStoredSound && other)
-{
-	sound = std::move (other.sound);
-	startGameTime = other.startGameTime;
-	active = other.active;
-	signalConnectionManager = std::move (other.signalConnectionManager);
-
-	return *this;
-}
-
-//--------------------------------------------------------------------------
 bool cSoundManager::sStoredSound::operator< (const sStoredSound& other) const
 {
 	return startGameTime < other.startGameTime;

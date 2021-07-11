@@ -41,10 +41,10 @@ struct sVehicleUIData
 
 public:
 	sVehicleUIData() = default;
-	sVehicleUIData (const sVehicleUIData& other) = delete;
+	sVehicleUIData (const sVehicleUIData&) = delete;
 	sVehicleUIData (sVehicleUIData&&) = default;
-	sVehicleUIData& operator= (const sVehicleUIData& other) = delete;
-	sVehicleUIData& operator= (sVehicleUIData && other) = default;
+	sVehicleUIData& operator= (const sVehicleUIData&) = delete;
+	sVehicleUIData& operator= (sVehicleUIData&&) = default;
 
 	void render_simple (SDL_Surface&, const SDL_Rect& dest, float zoomFactor, const sStaticVehicleData&, const cPlayer* owner, int dir = 0, int walkFrame = 0, int alpha = 254) const;
 	void drawOverlayAnimation (SDL_Surface&, const SDL_Rect& dest, float zoomFactor, int frameNr = 0, int alpha = 254) const;

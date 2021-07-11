@@ -104,6 +104,8 @@ class cSignal<void (Args...), MutexType> : public cSignalBase
 
 public:
 	cSignal() : thisReference (std::make_shared<cSignalReference> (*this)) {}
+	cSignal (const cSignal&) = delete;
+	cSignal& operator= (const cSignal&) = delete;
 
 	/**
 	 * Connects a new function to the signal.
@@ -152,9 +154,6 @@ public:
 	template <typename... Args2>
 	void operator() (Args2&& ... args);
 private:
-	cSignal (const cSignal& other) = delete;
-	cSignal& operator= (const cSignal& other) = delete;
-
 	void cleanUpConnections();
 
 private:

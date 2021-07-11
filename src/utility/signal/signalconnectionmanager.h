@@ -35,12 +35,12 @@
 class cSignalConnectionManager
 {
 public:
-	cSignalConnectionManager();
-	cSignalConnectionManager (cSignalConnectionManager&& other);
-
+	cSignalConnectionManager() = default;
+	cSignalConnectionManager (const cSignalConnectionManager&) = delete;
+	cSignalConnectionManager& operator= (const cSignalConnectionManager&) = delete;
+	cSignalConnectionManager (cSignalConnectionManager&&) = default;
+	cSignalConnectionManager& operator= (cSignalConnectionManager&&) = default;
 	~cSignalConnectionManager();
-
-	cSignalConnectionManager& operator= (cSignalConnectionManager && other);
 
 	/**
 	 * Connects the passed function object to the passed signal and
@@ -77,9 +77,6 @@ public:
 	 */
 	void clear();
 private:
-	cSignalConnectionManager (const cSignalConnectionManager& other) = delete;
-	cSignalConnectionManager& operator= (const cSignalConnectionManager& other) = delete;
-
 	std::vector<cSignalConnection> connections;
 };
 

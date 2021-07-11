@@ -37,10 +37,6 @@ public:
 		y() = 0;
 	}
 
-	cPosition (const cPosition& other) :
-		cFixedVector<int, 2> (other)
-	{}
-
 	template <class T>
 	cPosition (const cFixedVector<T, 2>& other) :
 		cFixedVector<int, 2> (other)
@@ -50,6 +46,15 @@ public:
 	{
 		x() = x_;
 		y() = y_;
+	}
+
+	cPosition (const cPosition& other) = default;
+	cPosition& operator= (const cPosition&) = default;
+
+	cPosition& operator= (const value_type& value)
+	{
+		cFixedVector<int, 2>::operator= (value);
+		return *this;
 	}
 
 	// Get a position, relative to current position
@@ -77,18 +82,6 @@ public:
 	{
 		return (*this)[1];
 	}
-
-	cPosition& operator= (const cPosition& value)
-	{
-		cFixedVector<int, 2>::operator= (value);
-		return *this;
-	}
-
-	cPosition& operator= (const value_type& value)
-	{
-		cFixedVector<int, 2>::operator= (value);
-		return *this;
-	}
 };
 
 /**
@@ -103,10 +96,6 @@ public:
 		y() = 0;
 	}
 
-	cVector2 (const cVector2& other) :
-		cFixedVector<float, 2> (other)
-	{}
-
 	template <class T>
 	cVector2 (const cFixedVector<T, 2>& other) :
 		cFixedVector<float, 2> (other)
@@ -116,6 +105,15 @@ public:
 	{
 		x() = x_;
 		y() = y_;
+	}
+
+	cVector2 (const cVector2& other) = default;
+	cVector2& operator= (const cVector2&) = default;
+
+	cVector2& operator= (const value_type& value)
+	{
+		cFixedVector<float, 2>::operator= (value);
+		return *this;
 	}
 
 	// Get a position, relative to current position
@@ -143,18 +141,6 @@ public:
 	float& y()
 	{
 		return (*this)[1];
-	}
-
-	cVector2& operator= (const value_type& value)
-	{
-		cFixedVector<float, 2>::operator= (value);
-		return *this;
-	}
-
-	cVector2& operator= (const cVector2& value)
-	{
-		cFixedVector<float, 2>::operator= (value);
-		return *this;
 	}
 };
 

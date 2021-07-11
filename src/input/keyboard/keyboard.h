@@ -46,6 +46,8 @@ public:
 	 */
 	cKeyboard();
 
+	cKeyboard (const cKeyboard&) = delete;
+	cKeyboard& operator= (const cKeyboard&) = delete;
 	/**
 	 * Returns the global instance of the keyboard.
 	 *
@@ -85,8 +87,6 @@ public:
 	 */
 	bool isAllModifiersActive (KeyModifierFlags flags) const;
 private:
-	cKeyboard (const cKeyboard& other) = delete;
-	cKeyboard& operator= (const cKeyboard& other) = delete;
 
 	cSignalConnectionManager signalConnectionManager;
 

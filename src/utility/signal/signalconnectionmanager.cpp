@@ -21,25 +21,9 @@
 #include "utility/signal/signalconnection.h"
 
 //------------------------------------------------------------------------------
-cSignalConnectionManager::cSignalConnectionManager()
-{}
-
-//------------------------------------------------------------------------------
-cSignalConnectionManager::cSignalConnectionManager (cSignalConnectionManager&& other) :
-	connections (std::move (other.connections))
-{}
-
-//------------------------------------------------------------------------------
 cSignalConnectionManager::~cSignalConnectionManager()
 {
 	disconnectAll();
-}
-
-//------------------------------------------------------------------------------
-cSignalConnectionManager& cSignalConnectionManager::operator= (cSignalConnectionManager && other)
-{
-	connections = std::move (other.connections);
-	return *this;
 }
 
 //------------------------------------------------------------------------------

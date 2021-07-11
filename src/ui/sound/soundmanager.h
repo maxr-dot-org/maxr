@@ -52,19 +52,17 @@ private:
 	struct sStoredSound
 	{
 		sStoredSound (std::shared_ptr<cSoundEffect> sound_, unsigned int startGameTime_, bool active_);
-		sStoredSound (sStoredSound&& other);
-		sStoredSound& operator= (sStoredSound && other);
+		sStoredSound (const sStoredSound&) = delete;
+		sStoredSound& operator= (const sStoredSound&) = delete;
+		sStoredSound (sStoredSound&&) = default;
+		sStoredSound& operator= (sStoredSound&&) = default;
 
-		bool operator< (const sStoredSound& other) const;
+		bool operator< (const sStoredSound&) const;
 
 		std::shared_ptr<cSoundEffect> sound;
 		unsigned int startGameTime;
 		bool active;
 		cSignalConnectionManager signalConnectionManager;
-
-	private:
-		sStoredSound (const sStoredSound& other) = delete;
-		sStoredSound& operator= (const sStoredSound& other) = delete;
 	};
 	cSignalConnectionManager signalConnectionManager;
 

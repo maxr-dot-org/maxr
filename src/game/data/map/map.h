@@ -116,8 +116,8 @@ public:
 	mutable cSignal<void()> unitsChanged;
 
 private:
-	cMapField (const cMapField& other) = delete;
-	cMapField& operator= (const cMapField& other) = delete;
+	cMapField (const cMapField&) = delete;
+	cMapField& operator= (const cMapField&) = delete;
 
 	/**the list with all buildings on this field
 	* the top building is always stored at first position */

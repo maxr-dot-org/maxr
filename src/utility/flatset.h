@@ -81,29 +81,15 @@ public:
 	{
 		std::sort (begin(), end(), compare);
 	}
-	cFlatSet (const cFlatSet& other) :
-		compare (other.compare),
-		data (other.data)
-	{}
-	cFlatSet (cFlatSet&& other) :
-		compare (std::move (other.compare)),
-		data (std::move (other.data))
-	{}
+
 	//cFlatSet (const cFlatSet& other, const allocator_type& alloc);
 	//cFlatSet (cFlatSet&& other, const allocator_type& alloc);
 	//cFlatSet (std::initializer_list<value_type> init, const Compare& comp = Compare(), const allocator_type& alloc = allocator_type());
 
-	cFlatSet& operator= (const cFlatSet& other)
-	{
-		cFlatSet (other).swap (*this);
-		return *this;
-	}
-	cFlatSet& operator= (cFlatSet && other)
-	{
-		data = std::move (other.data);
-		compare = std::move (other.compare);
-		return *this;
-	}
+	cFlatSet (const cFlatSet&) = default;
+	cFlatSet (cFlatSet&&) = default;
+	cFlatSet& operator= (const cFlatSet&) = default;
+	cFlatSet& operator= (cFlatSet&&) = default;
 
 	allocator_type get_allocator() const { return data.get_allocator(); }
 
