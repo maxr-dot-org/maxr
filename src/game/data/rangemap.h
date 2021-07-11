@@ -20,9 +20,11 @@
 #ifndef game_data_rangemapH
 #define game_data_rangemapH
 
+#include "ui/graphical/game/widgets/debugoutputwidget.h"
 #include "utility/signal/signal.h"
 #include "utility/position.h"
-#include "ui/graphical/game/widgets/debugoutputwidget.h"
+
+#include "config/workaround/cpp17/optional.h"
 
 /**
 * This class is used to track, whether a position is a specific range to any
@@ -32,7 +34,7 @@ class cRangeMap
 {
 	friend cDebugOutputWidget;
 public:
-	cRangeMap();
+	cRangeMap() = default;
 
 	void reset();
 	void resize (const cPosition& size);
@@ -52,20 +54,19 @@ public:
 	uint32_t getChecksum (uint32_t crc) const;
 
 	/** Triggered, when a position comes in range or goes out of range, by an add/update/remove */
-	mutable cSignal<void (const std::vector<cPosition>& positions)> positionsInRange;
-	mutable cSignal<void (const std::vector<cPosition>& positions)> positionsOutOfRange;
+	mutable cSignal<void (const std::vector<cPosition>&)> positionsInRange;
+	mutable cSignal<void (const std::vector<cPosition>&)> positionsOutOfRange;
 	/** Triggered after an operation changed at least the status of one position */
 	mutable cSignal<void()> changed;
 
 private:
-	bool isInRange (int x, int y, const cPosition& position, int range, int unitSize, bool square) const;
+	bool isInRange (int x, int y, const cPosition&, int range, int unitSize, bool square) const;
 	int getOffset (int x, int y) const;
 
 	cPosition size;
 	std::vector<uint16_t> map;
 
-	mutable bool crcValid;
-	mutable uint32_t crcCache;
+	mutable std::optional<uint32_t> crcCache;
 };
 
 #endif

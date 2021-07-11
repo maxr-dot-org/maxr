@@ -20,16 +20,11 @@
 #include "utility/crc.h"
 #include "rangemap.h"
 
-cRangeMap::cRangeMap() :
-	crcValid (false),
-	crcCache (0)
-{}
-
 //------------------------------------------------------------------------------
 void cRangeMap::reset()
 {
 	std::fill (map.begin(), map.end(), 0);
-	crcValid = false;
+	crcCache = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -67,7 +62,7 @@ void cRangeMap::add (int range, const cPosition& position, int unitSize, bool sq
 	}
 
 	positionsInRange (positions);
-	crcValid = false;
+	crcCache = std::nullopt;
 	changed();
 }
 
@@ -113,7 +108,7 @@ void cRangeMap::update (int range, const cPosition& oldPosition, const cPosition
 
 	positionsInRange (inPositions);
 	positionsOutOfRange (outPositions);
-	crcValid = false;
+	crcCache = std::nullopt;
 	changed();
 }
 
@@ -160,7 +155,7 @@ void cRangeMap::update (int oldRange, int newRange, const cPosition& position, i
 
 	positionsInRange (inPositions);
 	positionsOutOfRange (outPositions);
-	crcValid = false;
+	crcCache = std::nullopt;
 	changed();
 }
 
@@ -191,7 +186,7 @@ void cRangeMap::remove (int range, const cPosition& position, int unitSize, bool
 	}
 
 	positionsOutOfRange (positions);
-	crcValid = false;
+	crcCache = std::nullopt;
 	changed();
 }
 
@@ -207,19 +202,17 @@ bool cRangeMap::get (const cPosition& position) const
 //------------------------------------------------------------------------------
 uint32_t cRangeMap::getChecksum (uint32_t crc) const
 {
-	if (!crcValid)
+	if (!crcCache)
 	{
 		crcCache = 0;
 		size_t vecSize = map.size();
 		for (size_t i = 0; i < vecSize; ++i)
 		{
-			crcCache = calcCheckSum (map[i], crcCache);
+			*crcCache = calcCheckSum (map[i], *crcCache);
 		}
-
-		crcValid = true;
 	}
 
-	return calcCheckSum (crcCache, crc);
+	return calcCheckSum (*crcCache, crc);
 }
 
 //------------------------------------------------------------------------------
@@ -240,7 +233,7 @@ void cRangeMap::subtract (const std::vector<uint16_t>& data)
 	}
 
 	positionsOutOfRange (positions);
-	crcValid = false;
+	crcCache = std::nullopt;
 	changed();
 }
 

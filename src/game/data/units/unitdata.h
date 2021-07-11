@@ -342,7 +342,7 @@ public:
 		archive & NVP (armor);
 
 		if (!archive.isWriter)
-			crcValid = false;
+			crcCache = std::nullopt;
 	}
 private:
 	// Main
@@ -369,8 +369,7 @@ private:
 	int damage;
 	int armor;
 
-	mutable uint32_t crcCache;
-	mutable bool crcValid;
+	mutable std::optional<uint32_t> crcCache;
 };
 
 class cUnitsData

@@ -297,8 +297,7 @@ cDynamicUnitData::cDynamicUnitData() :
 	scan (0),
 	damage (0),
 	armor (0),
-	crcCache (0),
-	crcValid (false)
+	crcCache (std::nullopt)
 {}
 
 //------------------------------------------------------------------------------
@@ -318,8 +317,7 @@ cDynamicUnitData::cDynamicUnitData (const cDynamicUnitData& other) :
 	scan (other.scan),
 	damage (other.damage),
 	armor (other.armor),
-	crcCache (0),
-	crcValid (false)
+	crcCache (std::nullopt)
 {}
 
 //------------------------------------------------------------------------------
@@ -340,8 +338,7 @@ cDynamicUnitData& cDynamicUnitData::operator= (const cDynamicUnitData& other)
 	scan = other.scan;
 	damage = other.damage;
 	armor = other.armor;
-	crcCache = 0;
-	crcValid = false;
+	crcCache = std::nullopt;
 
 	return *this;
 }
@@ -356,7 +353,7 @@ sID cDynamicUnitData::getId() const
 void cDynamicUnitData::setId (const sID& value)
 {
 	id = value;
-	crcValid = false;
+	crcCache = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -370,7 +367,7 @@ void cDynamicUnitData::setBuildCost (int value)
 {
 	std::swap (buildCosts, value);
 	if (buildCosts != value) buildCostsChanged();
-	crcValid = false;
+	crcCache = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -384,7 +381,7 @@ void cDynamicUnitData::setVersion (int value)
 {
 	std::swap (version, value);
 	if (version != value) versionChanged();
-	crcValid = false;
+	crcCache = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -398,7 +395,7 @@ void cDynamicUnitData::setSpeed (int value)
 {
 	std::swap (speedCur, value);
 	if (speedCur != value) speedChanged();
-	crcValid = false;
+	crcCache = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -412,7 +409,7 @@ void cDynamicUnitData::setSpeedMax (int value)
 {
 	std::swap (speedMax, value);
 	if (speedMax != value) speedMaxChanged();
-	crcValid = false;
+	crcCache = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -426,7 +423,7 @@ void cDynamicUnitData::setHitpoints (int value)
 {
 	std::swap (hitpointsCur, value);
 	if (hitpointsCur != value) hitpointsChanged();
-	crcValid = false;
+	crcCache = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -440,7 +437,7 @@ void cDynamicUnitData::setHitpointsMax (int value)
 {
 	std::swap (hitpointsMax, value);
 	if (hitpointsMax != value) hitpointsMaxChanged();
-	crcValid = false;
+	crcCache = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -454,7 +451,7 @@ void cDynamicUnitData::setScan (int value)
 {
 	std::swap (scan, value);
 	if (scan != value) scanChanged();
-	crcValid = false;
+	crcCache = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -468,7 +465,7 @@ void cDynamicUnitData::setRange (int value)
 {
 	std::swap (range, value);
 	if (range != value) rangeChanged();
-	crcValid = false;
+	crcCache = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -482,7 +479,7 @@ void cDynamicUnitData::setShots (int value)
 {
 	std::swap (shotsCur, value);
 	if (shotsCur != value) shotsChanged();
-	crcValid = false;
+	crcCache = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -496,7 +493,7 @@ void cDynamicUnitData::setShotsMax (int value)
 {
 	std::swap (shotsMax, value);
 	if (shotsMax != value) shotsMaxChanged();
-	crcValid = false;
+	crcCache = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -510,7 +507,7 @@ void cDynamicUnitData::setAmmo (int value)
 {
 	std::swap (ammoCur, value);
 	if (ammoCur != value) ammoChanged();
-	crcValid = false;
+	crcCache = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -524,7 +521,7 @@ void cDynamicUnitData::setAmmoMax (int value)
 {
 	std::swap (ammoMax, value);
 	if (ammoMax != value) ammoMaxChanged();
-	crcValid = false;
+	crcCache = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -538,7 +535,7 @@ void cDynamicUnitData::setDamage (int value)
 {
 	std::swap (damage, value);
 	if (damage != value) damageChanged();
-	crcValid = false;
+	crcCache = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -552,35 +549,33 @@ void cDynamicUnitData::setArmor (int value)
 {
 	std::swap (armor, value);
 	if (armor != value) armorChanged();
-	crcValid = false;
+	crcCache = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
 uint32_t cDynamicUnitData::getChecksum (uint32_t crc) const
 {
-	if (!crcValid)
+	if (!crcCache)
 	{
 		crcCache = 0;
-		crcCache = calcCheckSum (id, crcCache);
-		crcCache = calcCheckSum (buildCosts, crcCache);
-		crcCache = calcCheckSum (version, crcCache);
-		crcCache = calcCheckSum (speedCur, crcCache);
-		crcCache = calcCheckSum (speedMax, crcCache);
-		crcCache = calcCheckSum (hitpointsCur, crcCache);
-		crcCache = calcCheckSum (hitpointsMax, crcCache);
-		crcCache = calcCheckSum (shotsCur, crcCache);
-		crcCache = calcCheckSum (shotsMax, crcCache);
-		crcCache = calcCheckSum (ammoCur, crcCache);
-		crcCache = calcCheckSum (ammoMax, crcCache);
-		crcCache = calcCheckSum (range, crcCache);
-		crcCache = calcCheckSum (scan, crcCache);
-		crcCache = calcCheckSum (damage, crcCache);
-		crcCache = calcCheckSum (armor, crcCache);
-
-		crcValid = true;
+		*crcCache = calcCheckSum (id, *crcCache);
+		*crcCache = calcCheckSum (buildCosts, *crcCache);
+		*crcCache = calcCheckSum (version, *crcCache);
+		*crcCache = calcCheckSum (speedCur, *crcCache);
+		*crcCache = calcCheckSum (speedMax, *crcCache);
+		*crcCache = calcCheckSum (hitpointsCur, *crcCache);
+		*crcCache = calcCheckSum (hitpointsMax, *crcCache);
+		*crcCache = calcCheckSum (shotsCur, *crcCache);
+		*crcCache = calcCheckSum (shotsMax, *crcCache);
+		*crcCache = calcCheckSum (ammoCur, *crcCache);
+		*crcCache = calcCheckSum (ammoMax, *crcCache);
+		*crcCache = calcCheckSum (range, *crcCache);
+		*crcCache = calcCheckSum (scan, *crcCache);
+		*crcCache = calcCheckSum (damage, *crcCache);
+		*crcCache = calcCheckSum (armor, *crcCache);
 	}
 
-	return calcCheckSum (crcCache, crc);
+	return calcCheckSum (*crcCache, crc);
 }
 
 //------------------------------------------------------------------------------
@@ -591,5 +586,5 @@ void cDynamicUnitData::setMaximumCurrentValues()
 	shotsCur     = shotsMax;
 	hitpointsCur = hitpointsMax;
 
-	crcValid = false;
+	crcCache = std::nullopt;
 }
