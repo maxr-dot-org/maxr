@@ -61,96 +61,55 @@ public:
 	cClan (int num) : num (num) {}
 	cClan() : num (-1) {}
 
-	cClan (const cClan&);
+	cClan (const cClan&) = default;
 
 	void setDefaultDescription (const std::string& newDescription);
-	const std::string& getDefaultDescription() const;
+	const std::string& getDefaultDescription() const { return description; }
 
 	void setDefaultName (const std::string& newName);
-	const std::string& getDefaultName() const;
+	const std::string& getDefaultName() const { return name; }
 
 	int getClanID() const { return num; }
 
-	cClanUnitStat* getUnitStat (sID id) const;
-	cClanUnitStat* getUnitStat (unsigned int index) const;
+	const cClanUnitStat* getUnitStat (sID id) const;
+	const cClanUnitStat* getUnitStat (unsigned int index) const;
 	cClanUnitStat* addUnitStat (sID id);
 	int getNrUnitStats() const { return static_cast<int> (stats.size()); }
 
 	template <typename T>
-	void save (T& archive) const
+	void serialize (T& archive)
 	{
-		archive << num;
-		archive << description;
-		archive << name;
-
-		archive << static_cast<uint32_t> (stats.size());
-		for (const auto& stat : stats)
-			archive << *stat;
+		archive & num;
+		archive & description;
+		archive & name;
+		archive & stats;
 	}
-	template <typename T>
-	void load (T& archive)
-	{
-		archive >> num;
-		archive >> description;
-		archive >> name;
 
-		uint32_t length;
-		archive >> length;
-		stats.clear();
-		for (size_t i = 0; i < length; i++)
-		{
-			cClanUnitStat stat;
-			archive >> stat;
-			stats.push_back (std::make_unique<cClanUnitStat> (stat));
-		}
-	}
-	SERIALIZATION_SPLIT_MEMBER()
-
-	//-------------------------------------------------------------------------
 private:
 	int num;
 	std::string description;
 	std::string name;
-	std::vector<std::unique_ptr<cClanUnitStat>> stats;
+	std::vector<cClanUnitStat> stats;
 };
 
 //-------------------------------------------------------------------------
 class cClanData
 {
 public:
-	cClanData() {};
-	cClanData (const cClanData&);
+	cClanData() = default;
+	cClanData (const cClanData&) = default;
 
-	cClan* addClan();
-	cClan* getClan (unsigned int num) const;
-	int getNrClans() const { return static_cast<int> (clans.size()); }
+	cClan& addClan();
+	const std::vector<cClan>& getClans() const { return clans; }
 
 	template <typename T>
-	void save (T& archive)
+	void serialize (T& archive)
 	{
-		archive << static_cast<uint32_t> (clans.size());
-		for (const auto& clan : clans)
-			archive << *clan;
+		archive & clans;
 	}
-	template <typename T>
-	void load (T& archive)
-	{
-		uint32_t length;
-		archive >> length;
-		clans.clear();
-		for (size_t i = 0; i < length; i++)
-		{
-			cClan clan;
-			archive >> clan;
-			clans.push_back (std::make_unique<cClan> (clan));
-		}
-	}
-	SERIALIZATION_SPLIT_MEMBER()
 
-	//-------------------------------------------------------------------------
 private:
-
-	std::vector<std::unique_ptr<cClan>> clans;
+	std::vector<cClan> clans;
 };
 
 extern cClanData ClanDataGlobal;

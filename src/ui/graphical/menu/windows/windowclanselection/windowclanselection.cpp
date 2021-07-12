@@ -62,10 +62,10 @@ cWindowClanSelection::cWindowClanSelection (std::shared_ptr<const cUnitsData> un
 			clanImages[index] = addChild (std::make_unique<cImage> (getPosition() + cPosition (88 + 154 * column - (image ? (image->w / 2) : 0), 48 + 150 * row), image.get(), &SoundData.SNDHudButton));
 			signalConnectionManager.connect (clanImages[index]->clicked, std::bind (&cWindowClanSelection::clanClicked, this, clanImages[index]));
 
-			clanTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (37 + 155 * column, 144 + 150 * row), getPosition() + cPosition (135 + 155 * column, 144 + 10 + 150 * row)), getClanName (*clanData->getClan (index)), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+			clanTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (37 + 155 * column, 144 + 150 * row), getPosition() + cPosition (135 + 155 * column, 144 + 10 + 150 * row)), getClanName (clanData->getClans()[index]), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 		}
 	}
-	clanTitles[selectedClan]->setText (">" + getClanName (*clanData->getClan (selectedClan)) + "<");
+	clanTitles[selectedClan]->setText (">" + getClanName (clanData->getClans()[selectedClan]) + "<");
 
 	//
 	// Clan Description
@@ -105,7 +105,7 @@ void cWindowClanSelection::clanClicked (const cImage* clanImage)
 		{
 			if (i != selectedClan)
 			{
-				const std::string name = getClanName (*clanData->getClan (selectedClan));
+				const std::string& name = getClanName (clanData->getClans()[selectedClan]);
 
 				clanTitles[selectedClan]->setText (name);
 				selectedClan = i;
@@ -132,32 +132,25 @@ void cWindowClanSelection::backClicked()
 //------------------------------------------------------------------------------
 void cWindowClanSelection::updateClanDescription()
 {
-	auto clanInfo = clanData->getClan (selectedClan);
-	if (clanInfo)
+	const auto& clanInfo = clanData->getClans()[selectedClan];
+
+	auto strings = getClanStatsDescription (clanInfo, *unitsData);
+
+	std::string desc1;
+	for (size_t i = 0; i < 4 && i < strings.size(); ++i)
 	{
-		auto strings = getClanStatsDescription (*clanInfo, *unitsData);
-
-		std::string desc1;
-		for (size_t i = 0; i < 4 && i < strings.size(); ++i)
-		{
-			desc1.append (strings[i]);
-			desc1.append ("\n");
-		}
-		clanDescription1->setText (desc1);
-
-		std::string desc2;
-		for (size_t i = 4; i < strings.size(); ++i)
-		{
-			desc2.append (strings[i]);
-			desc2.append ("\n");
-		}
-		clanDescription2->setText (desc2);
-
-		clanShortDescription->setText (getClanDescription (*clanInfo));
+		desc1.append (strings[i]);
+		desc1.append ("\n");
 	}
-	else
+	clanDescription1->setText (desc1);
+
+	std::string desc2;
+	for (size_t i = 4; i < strings.size(); ++i)
 	{
-		clanDescription1->setText ("Unknown");
-		clanDescription2->setText ("");
+		desc2.append (strings[i]);
+		desc2.append ("\n");
 	}
+	clanDescription2->setText (desc2);
+
+	clanShortDescription->setText (getClanDescription (clanInfo));
 }

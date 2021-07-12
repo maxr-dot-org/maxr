@@ -105,22 +105,19 @@ void cUnitsData::initializeClanUnitData (const cClanData& clanData)
 {
 	crcCache = std::nullopt;
 
-	clanDynamicUnitData.resize (clanData.getNrClans());
+	clanDynamicUnitData.reserve (clanData.getClans().size());
 
-	for (int i = 0; i != clanData.getNrClans(); ++i)
+	for (const cClan& clan : clanData.getClans())
 	{
-		const cClan* clan = clanData.getClan (i);
-		if (clan == nullptr)
-			continue;
-
-		std::vector<cDynamicUnitData>& clanListVehicles = clanDynamicUnitData[i];
+		clanDynamicUnitData.emplace_back();
+		std::vector<cDynamicUnitData>& clanListVehicles = clanDynamicUnitData.back();
 
 		// make a copy of the vehicle's stats
 		clanListVehicles = dynamicUnitData;
 		for (size_t j = 0; j != dynamicUnitData.size(); ++j)
 		{
 			cDynamicUnitData& clanVehicle = clanListVehicles[j];
-			const cClanUnitStat* changedStat = clan->getUnitStat (clanVehicle.getId());
+			const cClanUnitStat* changedStat = clan.getUnitStat (clanVehicle.getId());
 			if (changedStat == nullptr) continue;
 
 			if (changedStat->hasModification ("Damage"))

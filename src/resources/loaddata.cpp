@@ -1269,15 +1269,15 @@ static int LoadClans()
 
 	for (XMLElement* clanElement = xmlElement->FirstChildElement ("Clan"); clanElement; clanElement = clanElement->NextSiblingElement ("Clan"))
 	{
-		cClan* newClan = ClanDataGlobal.addClan();
+		cClan& newClan = ClanDataGlobal.addClan();
 		std::string nameAttr = clanElement->Attribute ("Name");
-		newClan->setDefaultName (nameAttr);
+		newClan.setDefaultName (nameAttr);
 
 		const XMLElement* descriptionNode = clanElement->FirstChildElement ("Description");
 		if (descriptionNode)
 		{
 			std::string descriptionString = descriptionNode->GetText();
-			newClan->setDefaultDescription (descriptionString);
+			newClan.setDefaultDescription (descriptionString);
 		}
 
 		for (XMLElement* statsElement = clanElement->FirstChildElement ("ChangedUnitStat"); statsElement; statsElement = statsElement->NextSiblingElement ("ChangedUnitStat"))
@@ -1293,14 +1293,14 @@ static int LoadClans()
 			id.firstPart = atoi (idAttrStr.substr (0, idAttrStr.find (" ", 0)).c_str());
 			id.secondPart = atoi (idAttrStr.substr (idAttrStr.find (" ", 0), idAttrStr.length()).c_str());
 
-			cClanUnitStat* newStat = newClan->addUnitStat (id);
+			cClanUnitStat& newStat = *newClan.addUnitStat (id);
 
 			for (XMLElement* modificationElement = statsElement->FirstChildElement(); modificationElement; modificationElement = modificationElement->NextSiblingElement())
 			{
 				std::string modName = modificationElement->Value();
 				if (modificationElement->Attribute ("Num"))
 				{
-					newStat->addModification (modName, modificationElement->IntAttribute ("Num"));
+					newStat.addModification (modName, modificationElement->IntAttribute ("Num"));
 				}
 			}
 		}

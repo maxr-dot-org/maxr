@@ -45,39 +45,27 @@ int cClanUnitStat::getModificationValue (const std::string& key) const
 }
 
 //--------------------------------------------------
-cClanUnitStat* cClan::getUnitStat (sID id) const
+const cClanUnitStat* cClan::getUnitStat (sID id) const
 {
 	for (const auto& stat : stats)
-		if (stat->getUnitId() == id)
-			return stat.get();
+		if (stat.getUnitId() == id)
+			return &stat;
 	return nullptr;
 }
 
 //--------------------------------------------------
-cClanUnitStat* cClan::getUnitStat (unsigned int index) const
+const cClanUnitStat* cClan::getUnitStat (unsigned int index) const
 {
 	if (index < stats.size())
-		return stats[index].get();
+		return &stats[index];
 	return nullptr;
 }
 
 //--------------------------------------------------
 cClanUnitStat* cClan::addUnitStat (sID id)
 {
-	stats.push_back (std::make_unique<cClanUnitStat> (id));
-	return stats.back().get();
-}
-
-//---------------------------------------------------
-cClan::cClan (const cClan& other) :
-	num (other.num),
-	description (other.description),
-	name (other.name)
-{
-	for (const auto& stat : other.stats)
-	{
-		stats.push_back (std::make_unique<cClanUnitStat> (*stat));
-	}
+	stats.emplace_back (id);
+	return &stats.back();
 }
 
 //--------------------------------------------------
@@ -86,44 +74,15 @@ void cClan::setDefaultDescription (const std::string& newDescription)
 	description = newDescription;
 }
 
-//---------------------------------------------------
-const std::string& cClan::getDefaultDescription() const
-{
-	return description;
-}
-
 //--------------------------------------------------
 void cClan::setDefaultName (const std::string& newName)
 {
 	name = newName;
 }
 
-//--------------------------------------------------
-const std::string& cClan::getDefaultName() const
+//------------------------------------------------------------------------------
+cClan& cClanData::addClan()
 {
-	return name;
-}
-
-//---------------------------------------------------
-cClanData::cClanData (const cClanData& other)
-{
-	for (const auto& clan : other.clans)
-	{
-		clans.push_back (std::make_unique<cClan> (*clan));
-	}
-}
-
-//--------------------------------------------------
-cClan* cClanData::addClan()
-{
-	clans.push_back (std::make_unique<cClan> ((int) clans.size()));
-	return clans.back().get();
-}
-
-//--------------------------------------------------
-cClan* cClanData::getClan (unsigned int num) const
-{
-	if (num < clans.size())
-		return clans[num].get();
-	return nullptr;
+	clans.emplace_back ((int) clans.size());
+	return clans.back();
 }
