@@ -59,14 +59,14 @@ public:
 	cClient (std::shared_ptr<cConnectionManager>);
 	~cClient();
 
-	const cModel& getModel() const { return model; };
+	const cModel& getModel() const { return model; }
 	const cPlayer& getActivePlayer() const { return *activePlayer; }
 
 	void setPreparationData (const sLobbyPreparationData&);
 	void setMap (std::shared_ptr<cStaticMap>);
 	void setPlayers (const std::vector<cPlayerBasicData>&, size_t activePlayerNr);
 
-	unsigned int getNetMessageQueueSize() const { return static_cast<unsigned int> (eventQueue.safe_size()); };
+	unsigned int getNetMessageQueueSize() const { return static_cast<unsigned int> (eventQueue.safe_size()); }
 	void pushMessage (std::unique_ptr<cNetMessage>) override;
 
 	//

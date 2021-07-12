@@ -23,7 +23,7 @@
 class cRunnable
 {
 public:
-	virtual ~cRunnable() {};
+	virtual ~cRunnable() {}
 	virtual void run() = 0;
 	virtual bool wantsToTerminate() const { return false; }
 };

@@ -43,7 +43,7 @@ public:
 	void openNewChild (const std::string& name);
 	void closeChild();
 
-	serialization::cPointerLoader* getPointerLoader() const { return nullptr; };
+	serialization::cPointerLoader* getPointerLoader() const { return nullptr; }
 private:
 	tinyxml2::XMLElement& buffer;
 

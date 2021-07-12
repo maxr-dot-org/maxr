@@ -31,7 +31,7 @@ public:
 
 	virtual eValidatorState validate (const std::string& text) const = 0;
 
-	virtual void fixup (std::string& text) const {};
+	virtual void fixup (std::string& text) const {}
 };
 
 #endif // ui_graphical_widgets_tools_validatorH

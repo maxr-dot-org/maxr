@@ -96,7 +96,7 @@ public:
 	const cDynamicUnitData* getUnitDataCurrentVersion (const sID& id) const;
 
 	void setLandingPos (const cPosition& position) { landingPos = position; }
-	const cPosition& getLandingPos() const { return landingPos; };
+	const cPosition& getLandingPos() const { return landingPos; }
 
 	void initMaps (cMap& map);
 	const cPosition& getMapSize() const;

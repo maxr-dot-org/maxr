@@ -151,7 +151,7 @@ public:
 	bool isUnitClearingMines() const { return clearMines; }
 	bool isUnitBuildingABuilding() const { return isBuilding; }
 	bool canBeStoppedViaUnitMenu() const override;
-	bool isSurveyorAutoMoveActive() const { return surveyorAutoMoveActive; };
+	bool isSurveyorAutoMoveActive() const { return surveyorAutoMoveActive; }
 
 	void setMoving (bool value);
 	void setLoaded (bool value);

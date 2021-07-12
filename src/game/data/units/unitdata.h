@@ -406,22 +406,22 @@ public:
 	const cStaticUnitData& getRubbleSmallData() const { return rubbleSmall; }
 	const cStaticUnitData& getRubbleBigData() const { return rubbleBig; }
 
-	sID getConstructorID() const { return constructorID; };
-	sID getEngineerID() const { return engineerID; };
-	sID getSurveyorID() const { return surveyorID; };
-	sID getSpecialIDLandMine() const { return specialIDLandMine; };
-	sID getSpecialIDSeaMine() const { return specialIDSeaMine; };
-	sID getSpecialIDMine() const { return specialIDMine; };
-	sID getSpecialIDSmallGen() const { return specialIDSmallGen; };
-	sID getSpecialIDConnector() const { return specialIDConnector; };
-	sID getSpecialIDSmallBeton() const { return specialIDSmallBeton; };
+	sID getConstructorID() const { return constructorID; }
+	sID getEngineerID() const { return engineerID; }
+	sID getSurveyorID() const { return surveyorID; }
+	sID getSpecialIDLandMine() const { return specialIDLandMine; }
+	sID getSpecialIDSeaMine() const { return specialIDSeaMine; }
+	sID getSpecialIDMine() const { return specialIDMine; }
+	sID getSpecialIDSmallGen() const { return specialIDSmallGen; }
+	sID getSpecialIDConnector() const { return specialIDConnector; }
+	sID getSpecialIDSmallBeton() const { return specialIDSmallBeton; }
 
-	void setSpecialIDLandMine (sID id) { specialIDLandMine = id; crcCache = std::nullopt; };
-	void setSpecialIDSeaMine (sID id)  { specialIDSeaMine = id; crcCache = std::nullopt; };
-	void setSpecialIDMine (sID id) { specialIDMine = id; crcCache = std::nullopt; };
-	void setSpecialIDSmallGen (sID id) { specialIDSmallGen = id; crcCache = std::nullopt; };
-	void setSpecialIDConnector (sID id) { specialIDConnector = id; crcCache = std::nullopt; };
-	void setSpecialIDSmallBeton (sID id) { specialIDSmallBeton = id; crcCache = std::nullopt; };
+	void setSpecialIDLandMine (sID id) { specialIDLandMine = id; crcCache = std::nullopt; }
+	void setSpecialIDSeaMine (sID id)  { specialIDSeaMine = id; crcCache = std::nullopt; }
+	void setSpecialIDMine (sID id) { specialIDMine = id; crcCache = std::nullopt; }
+	void setSpecialIDSmallGen (sID id) { specialIDSmallGen = id; crcCache = std::nullopt; }
+	void setSpecialIDConnector (sID id) { specialIDConnector = id; crcCache = std::nullopt; }
+	void setSpecialIDSmallBeton (sID id) { specialIDSmallBeton = id; crcCache = std::nullopt; }
 
 	template <typename T>
 	void serialize (T& archive)

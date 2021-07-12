@@ -74,13 +74,13 @@ public:
 	uint32_t getChecksum() const;
 
 	void setUnitsData (std::shared_ptr<cUnitsData>);
-	std::shared_ptr<const cUnitsData> getUnitsData() const { return unitsData; };
+	std::shared_ptr<const cUnitsData> getUnitsData() const { return unitsData; }
 
-	std::shared_ptr<const cGameSettings> getGameSettings() const { return gameSettings; };
+	std::shared_ptr<const cGameSettings> getGameSettings() const { return gameSettings; }
 	void setGameSettings (const cGameSettings&);
 
-	std::shared_ptr<const cMap> getMap() const { return map; };
-	std::shared_ptr<cMap> getMap() { return map; };
+	std::shared_ptr<const cMap> getMap() const { return map; }
+	std::shared_ptr<cMap> getMap() { return map; }
 	void setMap (std::shared_ptr<cStaticMap>);
 
 	const std::shared_ptr<cCasualtiesTracker>& getCasualtiesTracker() { return casualtiesTracker; }
@@ -89,8 +89,8 @@ public:
 	cPlayer* getPlayer (int playerNr);
 	const cPlayer* getPlayer (int playerNr) const;
 	const cPlayer* getPlayer (std::string player) const;
-	const std::vector<std::shared_ptr<cPlayer>>& getPlayerList() const { return /*static_cast<std::vector<std::shared_ptr<const cPlayer>>>*/(playerList); }; //TODO: cast to const cPlayer
-	std::vector<std::shared_ptr<cPlayer>>& getPlayerList() { return playerList; };
+	const std::vector<std::shared_ptr<cPlayer>>& getPlayerList() const { return /*static_cast<std::vector<std::shared_ptr<const cPlayer>>>*/(playerList); } //TODO: cast to const cPlayer
+	std::vector<std::shared_ptr<cPlayer>>& getPlayerList() { return playerList; }
 	void setPlayerList (const std::vector<cPlayerBasicData>&);
 	const cPlayer* getActiveTurnPlayer() const;
 
