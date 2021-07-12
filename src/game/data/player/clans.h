@@ -27,19 +27,30 @@
 #include "game/data/units/unitdata.h"
 #include "game/serialization/serialization.h"
 
-//-------------------------------------------------------------------------
+enum class EClanModification
+{
+	Damage,
+	Range,
+	Armor,
+	Hitpoints,
+	Scan,
+	Speed,
+	Built_Costs
+};
+
+//------------------------------------------------------------------------------
 class cClanUnitStat
 {
 public:
 	cClanUnitStat (sID unitId_) : unitId (unitId_) {}
 	cClanUnitStat() {}
 
-	void addModification (const std::string& area, int value);
+	void addModification (EClanModification, int value);
 
 	sID getUnitId() const { return unitId; }
 
-	int getModificationValue (const std::string& key) const;
-	bool hasModification (const std::string& key) const;
+	int getModificationValue (EClanModification) const;
+	bool hasModification (EClanModification) const;
 
 	template <typename T>
 	void serialize (T& archive)
@@ -48,13 +59,12 @@ public:
 		archive & modifications;
 	}
 
-	//-------------------------------------------------------------------------
 private:
 	sID unitId;
-	std::map<std::string, int> modifications;
+	std::map<EClanModification, int> modifications;
 };
 
-//-------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class cClan
 {
 public:
@@ -92,7 +102,7 @@ private:
 	std::vector<cClanUnitStat> stats;
 };
 
-//-------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class cClanData
 {
 public:

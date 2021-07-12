@@ -24,19 +24,19 @@
 cClanData ClanDataGlobal;
 
 //--------------------------------------------------
-void cClanUnitStat::addModification (const std::string& area, int value)
+void cClanUnitStat::addModification (EClanModification area, int value)
 {
 	modifications[area] = value;
 }
 
 //--------------------------------------------------
-bool cClanUnitStat::hasModification (const std::string& key) const
+bool cClanUnitStat::hasModification (EClanModification key) const
 {
 	return modifications.find (key) != modifications.end();
 }
 
 //--------------------------------------------------
-int cClanUnitStat::getModificationValue (const std::string& key) const
+int cClanUnitStat::getModificationValue (EClanModification key) const
 {
 	auto it = modifications.find (key);
 	if (it != modifications.end())

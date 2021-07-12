@@ -176,18 +176,18 @@ std::string getClanStatsDescription (const cClanUnitStat& clanUnitStat, const cU
 
 	struct
 	{
-		const char* type;
+		EClanModification type;
 		std::string text;
 		int originalValue;
 	} t[] =
 	{
 		// ToDo / Fixme if #756 fixed, use the non "_7" version of the text files
-		{"Damage", lngPack.i18n ("Text~Others~Attack_7"), data->getDamage()},
-		{"Range", lngPack.i18n ("Text~Others~Range"), data->getRange()},
-		{"Armor", lngPack.i18n ("Text~Others~Armor_7"), data->getArmor()},
-		{"Hitpoints", lngPack.i18n ("Text~Others~Hitpoints_7"), data->getHitpointsMax()},
-		{"Scan", lngPack.i18n ("Text~Others~Scan_7"), data->getScan()},
-		{"Speed", lngPack.i18n ("Text~Others~Speed_7"), data->getSpeedMax() / 4},
+		{EClanModification::Damage, lngPack.i18n ("Text~Others~Attack_7"), data->getDamage()},
+		{EClanModification::Range, lngPack.i18n ("Text~Others~Range"), data->getRange()},
+		{EClanModification::Armor, lngPack.i18n ("Text~Others~Armor_7"), data->getArmor()},
+		{EClanModification::Hitpoints, lngPack.i18n ("Text~Others~Hitpoints_7"), data->getHitpointsMax()},
+		{EClanModification::Scan, lngPack.i18n ("Text~Others~Scan_7"), data->getScan()},
+		{EClanModification::Speed, lngPack.i18n ("Text~Others~Speed_7"), data->getSpeedMax() / 4},
 	};
 
 	for (int i = 0; i != sizeof (t) / sizeof (*t); ++i)
@@ -198,10 +198,10 @@ std::string getClanStatsDescription (const cClanUnitStat& clanUnitStat, const cU
 		result += GetModificatorString (t[i].originalValue, clanUnitStat.getModificationValue (t[i].type));
 		sep = commaSep;
 	}
-	if (clanUnitStat.hasModification ("Built_Costs"))
+	if (clanUnitStat.hasModification (EClanModification::Built_Costs))
 	{
 		result += sep;
-		int nrTurns = clanUnitStat.getModificationValue ("Built_Costs");
+		int nrTurns = clanUnitStat.getModificationValue (EClanModification::Built_Costs);
 		if (originalData.getStaticUnitData (data->getId()).vehicleData.isHuman == false) nrTurns /= clanUnitStat.getUnitId().isAVehicle() == 0 ? 2 : 3;
 
 		result += std::to_string (nrTurns) + " " + lngPack.i18n ("Text~Comp~Turns");

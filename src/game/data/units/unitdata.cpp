@@ -120,20 +120,20 @@ void cUnitsData::initializeClanUnitData (const cClanData& clanData)
 			const cClanUnitStat* changedStat = clan.getUnitStat (clanVehicle.getId());
 			if (changedStat == nullptr) continue;
 
-			if (changedStat->hasModification ("Damage"))
-				clanVehicle.setDamage (changedStat->getModificationValue ("Damage"));
-			if (changedStat->hasModification ("Range"))
-				clanVehicle.setRange (changedStat->getModificationValue ("Range"));
-			if (changedStat->hasModification ("Armor"))
-				clanVehicle.setArmor (changedStat->getModificationValue ("Armor"));
-			if (changedStat->hasModification ("Hitpoints"))
-				clanVehicle.setHitpointsMax (changedStat->getModificationValue ("Hitpoints"));
-			if (changedStat->hasModification ("Scan"))
-				clanVehicle.setScan (changedStat->getModificationValue ("Scan"));
-			if (changedStat->hasModification ("Speed"))
-				clanVehicle.setSpeedMax (changedStat->getModificationValue ("Speed") * 4);
-			if (changedStat->hasModification ("Built_Costs"))
-				clanVehicle.setBuildCost (changedStat->getModificationValue ("Built_Costs"));
+			if (changedStat->hasModification (EClanModification::Damage))
+				clanVehicle.setDamage (changedStat->getModificationValue (EClanModification::Damage));
+			if (changedStat->hasModification (EClanModification::Range))
+				clanVehicle.setRange (changedStat->getModificationValue (EClanModification::Range));
+			if (changedStat->hasModification (EClanModification::Armor))
+				clanVehicle.setArmor (changedStat->getModificationValue (EClanModification::Armor));
+			if (changedStat->hasModification (EClanModification::Hitpoints))
+				clanVehicle.setHitpointsMax (changedStat->getModificationValue (EClanModification::Hitpoints));
+			if (changedStat->hasModification (EClanModification::Scan))
+				clanVehicle.setScan (changedStat->getModificationValue (EClanModification::Scan));
+			if (changedStat->hasModification (EClanModification::Speed))
+				clanVehicle.setSpeedMax (changedStat->getModificationValue (EClanModification::Speed) * 4);
+			if (changedStat->hasModification (EClanModification::Built_Costs))
+				clanVehicle.setBuildCost (changedStat->getModificationValue (EClanModification::Built_Costs));
 		}
 	}
 }
