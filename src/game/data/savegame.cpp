@@ -240,7 +240,7 @@ void cSavegame::writeHeader (int slot, const std::string& saveName, const cModel
 	tm* tmTime = localtime (&tTime);
 	strftime (timestr, 21, "%d.%m.%y %H:%M", tmTime);
 
-	eGameTypes type = GAME_TYPE_SINGLE;
+	eGameType type = eGameType::Single;
 	int humanPlayers = 0;
 	for (auto player : model.getPlayerList())
 	{
@@ -248,9 +248,9 @@ void cSavegame::writeHeader (int slot, const std::string& saveName, const cModel
 			humanPlayers++;
 	}
 	if (humanPlayers > 1)
-		type = GAME_TYPE_TCPIP;
+		type = eGameType::TcpIp;
 	if (model.getGameSettings()->gameType == eGameSettingsGameType::HotSeat)
-		type = GAME_TYPE_HOTSEAT;
+		type = eGameType::Hotseat;
 
 	cXmlArchiveIn archive (*xmlDocument.RootElement());
 	archive.openNewChild ("header");
@@ -286,11 +286,11 @@ void cSavegame::loadLegacyHeader (cSaveGameInfo& info)
 		LOAD_ERROR ("Error loading savegame file " + std::to_string (loadedSlot) + ": Attribute \"String\" of Node \"Type\" not found");
 	std::string gameType = str;
 	if (gameType == "IND")
-		info.type = GAME_TYPE_SINGLE;
+		info.type = eGameType::Single;
 	else if (gameType == "HOT")
-		info.type = GAME_TYPE_HOTSEAT;
+		info.type = eGameType::Hotseat;
 	else if (gameType == "NET")
-		info.type = GAME_TYPE_TCPIP;
+		info.type = eGameType::TcpIp;
 	else
 		LOAD_ERROR ("Error loading savegame file " + std::to_string (loadedSlot) + ": unknown game type");
 

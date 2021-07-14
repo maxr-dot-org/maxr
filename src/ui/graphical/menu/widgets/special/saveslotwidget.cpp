@@ -73,13 +73,13 @@ void cSaveSlotWidget::setSaveData (const cSaveGameInfo& saveFile)
 	timeLabel->setText (saveFile.date);
 	switch (saveFile.type)
 	{
-		case GAME_TYPE_HOTSEAT:
+		case eGameType::Hotseat:
 			typeLabel->setText ("HOT");
 			break;
-		case GAME_TYPE_SINGLE:
+		case eGameType::Single:
 			typeLabel->setText ("IND");
 			break;
-		case GAME_TYPE_TCPIP:
+		case eGameType::TcpIp:
 			typeLabel->setText ("NET");
 			break;
 	}

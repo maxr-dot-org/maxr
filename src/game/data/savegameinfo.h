@@ -29,11 +29,11 @@
 /**
 * The Types which are possible for a game
 */
-enum eGameTypes
+enum class eGameType
 {
-	GAME_TYPE_SINGLE,  // a singleplayer game
-	GAME_TYPE_HOTSEAT, // a hotseat multiplayer game
-	GAME_TYPE_TCPIP    // a multiplayergame over TCP/IP
+	Single,  // a singleplayer game
+	Hotseat, // a hotseat multiplayer game
+	TcpIp    // a multiplayergame over TCP/IP
 };
 
 /**
@@ -50,7 +50,7 @@ public:
 	std::string gameVersion;
 	std::string gameName;
 	/** the type of the save game (SIN, HOT, NET) */
-	eGameTypes type;
+	eGameType type;
 	/** the date and time when this save game was saved */
 	std::string date;
 
