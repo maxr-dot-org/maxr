@@ -78,7 +78,7 @@ class cPlayer
 {
 	cPlayer (const cPlayer&) = delete;
 public:
-	explicit cPlayer (const cPlayerBasicData& splayer, const cUnitsData& unitsData);
+	cPlayer (const cPlayerBasicData&, const cUnitsData&);
 	~cPlayer();
 
 	const std::string& getName() const { return name; }
@@ -92,13 +92,13 @@ public:
 	void setCredits (int credits);
 
 	/** Get the most modern version of a unit (including all his upgrades). */
-	cDynamicUnitData* getUnitDataCurrentVersion (const sID& id);
-	const cDynamicUnitData* getUnitDataCurrentVersion (const sID& id) const;
+	cDynamicUnitData* getUnitDataCurrentVersion (const sID&);
+	const cDynamicUnitData* getUnitDataCurrentVersion (const sID&) const;
 
 	void setLandingPos (const cPosition& position) { landingPos = position; }
 	const cPosition& getLandingPos() const { return landingPos; }
 
-	void initMaps (cMap& map);
+	void initMaps (cMap&);
 	const cPosition& getMapSize() const;
 
 	/**
@@ -118,7 +118,7 @@ public:
 	* Check weather any part of the unit is covered by the scan area. Do not use this to check, weather
 	* a unit is actually visible. Use canSeeUnit() for this purpose
 	*/
-	bool canSeeAnyAreaUnder (const cUnit& unit) const;
+	bool canSeeAnyAreaUnder (const cUnit&) const;
 	/**
 	* Check weather unit is visible for the player. The check includes all necessary conditions,
 	* including owner, scan area, stealth abilities and detection state.
@@ -147,9 +147,9 @@ public:
 
 	bool hasUnits() const;
 
-	void addToSentryMap (const cUnit& u);
-	void removeFromSentryMap (const cUnit& u);
-	void updateSentry (const cUnit& u, int newRange);
+	void addToSentryMap (const cUnit&);
+	void removeFromSentryMap (const cUnit&);
+	void updateSentry (const cUnit&, int newRange);
 
 
 	/** return the number of running ecospheres */
@@ -163,7 +163,7 @@ public:
 	/** count generated points at turn end and and create a new entry in the points history */
 	void accumulateScore();
 
-	void setClan (int newClan, const cUnitsData& unitsData);
+	void setClan (int newClan, const cUnitsData&);
 	int getClan() const { return clan; }
 
 	bool getHasFinishedTurn() const;
@@ -187,10 +187,10 @@ public:
 	cResearch& getResearchState();
 
 	int getResearchCentersWorkingTotal() const;
-	int getResearchCentersWorkingOnArea (cResearch::ResearchArea area) const;
+	int getResearchCentersWorkingOnArea (cResearch::ResearchArea) const;
 
-	void startAResearch (cResearch::ResearchArea researchArea);
-	void stopAResearch (cResearch::ResearchArea researchArea);
+	void startAResearch (cResearch::ResearchArea);
+	void stopAResearch (cResearch::ResearchArea);
 
 	void refreshResearchCentersWorkingOnArea();
 	void refreshBase (const cMap&);
@@ -211,7 +211,7 @@ public:
 	mutable cSignal<void (const cUnit&)> buildPathInterrupted;
 	mutable cSignal<void (const cUnit&)> detectedStealthUnit;
 	mutable cSignal<void (const cUnit&)> stealthUnitDissappeared;
-	mutable cSignal<void (const sID& unitId, int unitsCount, int costs)> unitsUpgraded;
+	mutable cSignal<void (const sID&, int unitsCount, int costs)> unitsUpgraded;
 
 	template <typename T>
 	void save (T& archive)
@@ -320,7 +320,7 @@ private:
 	void upgradeUnitTypes (const std::vector<cResearch::ResearchArea>&, const cUnitsData& originalUnitsData);
 
 	std::string resourceMapToString() const;
-	void setResourceMapFromString (const std::string& str);
+	void setResourceMapFromString (const std::string&);
 
 	void refreshScanMaps();
 

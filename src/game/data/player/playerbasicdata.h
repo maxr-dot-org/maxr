@@ -35,14 +35,14 @@ public:
 	static cPlayerBasicData fromSettings();
 
 	cPlayerBasicData();
-	cPlayerBasicData (const std::string& name, const cRgbColor& color, int nr, bool defeated);
+	cPlayerBasicData (const std::string& name, const cRgbColor&, int nr, bool defeated);
 	cPlayerBasicData (const cPlayerBasicData&);
 	cPlayerBasicData& operator= (const cPlayerBasicData&);
 
 	const std::string& getName() const;
-	void setName (std::string name);
+	void setName (std::string);
 	const cRgbColor& getColor() const { return color; }
-	void setColor (cRgbColor color);
+	void setColor (cRgbColor);
 	int getNr() const;
 	void setNr (int index);
 	void setReady (bool ready);
@@ -50,7 +50,7 @@ public:
 	void setDefeated (bool defeated);
 	bool isDefeated() const;
 
-	bool operator == (const cPlayerBasicData& rhs) const;
+	bool operator == (const cPlayerBasicData&) const;
 	bool operator != (const cPlayerBasicData& rhs) const { return !(*this == rhs); }
 
 	mutable cSignal<void()> nameChanged;

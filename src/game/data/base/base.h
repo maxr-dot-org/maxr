@@ -37,7 +37,7 @@ struct sNewTurnPlayerReport;
 class cSubBase
 {
 public:
-	explicit cSubBase (cBase& base);
+	explicit cSubBase (cBase&);
 	cSubBase (const cSubBase& other);
 	~cSubBase();
 
@@ -168,7 +168,6 @@ private:
 	sMiningResource needed;
 	sMiningResource maxNeeded;
 	sMiningResource prod;
-	//sMiningResource maxProd;
 
 	int maxEnergyProd = 0;
 	int energyProd = 0;
@@ -190,16 +189,14 @@ public:
 
 	/**
 	* adds a building to the base and updates the subbase structures
-	* @param building the building, that is added to the base
 	* @author eiko
 	*/
-	void addBuilding (cBuilding& building, const cMap& map);
+	void addBuilding (cBuilding&, const cMap&);
 	/**
 	* deletes a building from the base and updates the subbase structures
-	* @param building the building, that is deleted to the base
 	* @author eiko
 	*/
-	void deleteBuilding (cBuilding& building, const cMap& map);
+	void deleteBuilding (cBuilding&, const cMap&);
 
 	bool checkTurnEnd();
 
@@ -216,7 +213,7 @@ public:
 	*/
 	void clear();
 
-	cSubBase* checkNeighbour (const cPosition& position, const cBuilding& Building, const cMap& map);
+	cSubBase* checkNeighbour (const cPosition&, const cBuilding&, const cMap&);
 
 	uint32_t getChecksum (uint32_t crc) const;
 

@@ -79,7 +79,7 @@ public:
 	const std::vector<cVehicle*>& getPlanes() const;
 
 	/** returns all units on this field */
-	void getUnits (std::vector<cUnit*>& units) const;
+	void getUnits (std::vector<cUnit*>&) const;
 
 	/** returns a pointer for the buildings on this field */
 	cBuilding* getBuilding() const;
@@ -96,16 +96,16 @@ public:
 	bool hasBridgeOrPlattform() const;
 
 	/** Adds the passed building before the given index to the building list of the field */
-	void addBuilding (cBuilding& building, size_t index);
+	void addBuilding (cBuilding&, size_t index);
 	/** Adds the passed vehicle before the given index to the vehicle list of the field */
-	void addVehicle (cVehicle& vehicle, size_t index);
+	void addVehicle (cVehicle&, size_t index);
 	/** Adds the passed plane before the given index to the plane list of the field */
 	void addPlane (cVehicle& plane, size_t index);
 
 	/** Removes the passed building from the field's building list */
-	void removeBuilding (const cBuilding& building);
+	void removeBuilding (const cBuilding&);
 	/** Removes the passed vehicle from the field's vehicle list */
-	void removeVehicle (const cVehicle& vehicle);
+	void removeVehicle (const cVehicle&);
 	/** Removes the passed plane from the field's plane list */
 	void removePlane (const cVehicle& plane);
 
@@ -161,7 +161,7 @@ public:
 	void generateNextAnimationFrame();
 
 private:
-	static AutoSurface loadTerrGraph (SDL_RWops* fpMapFile, Sint64 iGraphicsPos, const SDL_Color (&colors)[256], int iNum);
+	static AutoSurface loadTerrGraph (SDL_RWops*, Sint64 iGraphicsPos, const SDL_Color (&colors)[256], int iNum);
 
 private:
 	const cStaticMap* map = nullptr;
@@ -180,7 +180,6 @@ struct sTerrain
 class cStaticMap
 {
 public:
-
 	cStaticMap();
 	~cStaticMap();
 
@@ -332,7 +331,7 @@ public:
 private:
 	void init();
 	std::string resourcesToString() const;
-	void setResourcesFromString (const std::string& str);
+	void setResourcesFromString (const std::string&);
 
 	static int getMapLevel (const cBuilding&);
 	static int getMapLevel (const cVehicle&);

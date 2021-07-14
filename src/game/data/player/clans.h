@@ -42,7 +42,7 @@ enum class EClanModification
 class cClanUnitStat
 {
 public:
-	cClanUnitStat (sID unitId_) : unitId (unitId_) {}
+	cClanUnitStat (sID unitId) : unitId (unitId) {}
 	cClanUnitStat() {}
 
 	void addModification (EClanModification, int value);
@@ -73,17 +73,17 @@ public:
 
 	cClan (const cClan&) = default;
 
-	void setDefaultDescription (const std::string& newDescription);
+	void setDefaultDescription (const std::string&);
 	const std::string& getDefaultDescription() const { return description; }
 
-	void setDefaultName (const std::string& newName);
+	void setDefaultName (const std::string&);
 	const std::string& getDefaultName() const { return name; }
 
 	int getClanID() const { return num; }
 
-	const cClanUnitStat* getUnitStat (sID id) const;
+	const cClanUnitStat* getUnitStat (sID) const;
 	const cClanUnitStat* getUnitStat (unsigned int index) const;
-	cClanUnitStat* addUnitStat (sID id);
+	cClanUnitStat* addUnitStat (sID);
 	int getNrUnitStats() const { return static_cast<int> (stats.size()); }
 
 	template <typename T>
