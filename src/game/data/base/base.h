@@ -143,18 +143,18 @@ private:
 	 */
 	bool checkEnergy();
 
-	void makeTurnStartRepairs (cBuilding& building);
-	void makeTurnStartReload (cBuilding& building);
-	void makeTurnStartBuild (cBuilding& building, sNewTurnPlayerReport&);
+	void makeTurnStartRepairs (cBuilding&);
+	void makeTurnStartReload (cBuilding&);
+	void makeTurnStartBuild (cBuilding&, sNewTurnPlayerReport&);
 
 	/**
 	* adds/subtracts resources of the type storeResType to/from the subbase
 	* @author eiko
 	*/
-	void addRessouce (eResourceType storeResType, int value);
+	void addResource (eResourceType, int value);
 
-	int getResource (eResourceType storeResType) const;
-	void setResource (eResourceType storeResType, int value);
+	int getResource (eResourceType) const;
+	void setResource (eResourceType, int value);
 
 	void setMetal (int value);
 	void setOil (int value);
@@ -223,7 +223,7 @@ public:
 	cSignal<void (const std::vector<cBuilding*>&)> onSubbaseConfigurationChanged;
 
 	// report sources for the player:
-	mutable cSignal<void (eResourceType, int amount, bool increase)> forcedRessouceProductionChance;
+	mutable cSignal<void (eResourceType, int amount, bool increase)> forcedResourceProductionChance;
 	mutable cSignal<void()> teamLow;
 	mutable cSignal<void()> metalLow;
 	mutable cSignal<void()> goldLow;

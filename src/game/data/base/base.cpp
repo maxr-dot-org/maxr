@@ -235,17 +235,17 @@ bool cSubBase::increaseEnergyProd (int value)
 
 void cSubBase::addMetal (int value)
 {
-	addRessouce (eResourceType::Metal, value);
+	addResource (eResourceType::Metal, value);
 }
 
 void cSubBase::addOil (int value)
 {
-	addRessouce (eResourceType::Oil, value);
+	addResource (eResourceType::Oil, value);
 }
 
 void cSubBase::addGold (int value)
 {
-	addRessouce (eResourceType::Gold, value);
+	addResource (eResourceType::Gold, value);
 }
 
 int cSubBase::getResource (eResourceType storeResType) const
@@ -282,7 +282,7 @@ void cSubBase::setResource (eResourceType storeResType, int value)
 	}
 }
 
-void cSubBase::addRessouce (eResourceType storeResType, int value)
+void cSubBase::addResource (eResourceType storeResType, int value)
 {
 	int storedResources = getResource (storeResType);
 	value = std::max (value, -storedResources);
@@ -377,11 +377,11 @@ void cSubBase::increaseOilProd (int missingOil)
 	const int goldDecrease = oldProd.gold - prod.gold;
 	const int metalDecrease = oldProd.metal - prod.metal;
 
-	base.forcedRessouceProductionChance (eResourceType::Oil, missingOil, true);
+	base.forcedResourceProductionChance (eResourceType::Oil, missingOil, true);
 	if (metalDecrease > 0)
-		base.forcedRessouceProductionChance (eResourceType::Metal, metalDecrease, false);
+		base.forcedResourceProductionChance (eResourceType::Metal, metalDecrease, false);
 	if (goldDecrease > 0)
-		base.forcedRessouceProductionChance (eResourceType::Gold, goldDecrease, false);
+		base.forcedResourceProductionChance (eResourceType::Gold, goldDecrease, false);
 }
 
 bool cSubBase::checkOil()

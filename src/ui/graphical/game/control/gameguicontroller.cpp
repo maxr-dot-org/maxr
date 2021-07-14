@@ -1384,7 +1384,7 @@ void cGameGuiController::connectReportSources (cClient& client)
 	});
 
 	//reports from the players base:
-	allClientsSignalConnectionManager.connect (player.base.forcedRessouceProductionChance, [&](eResourceType resourceType, int amount, bool increase)
+	allClientsSignalConnectionManager.connect (player.base.forcedResourceProductionChance, [&](eResourceType resourceType, int amount, bool increase)
 	{
 		addSavedReport (std::make_unique<cSavedReportResourceChanged> (resourceType, amount, increase), player.getId());
 	});
