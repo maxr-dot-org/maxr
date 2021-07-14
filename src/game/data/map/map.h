@@ -79,7 +79,7 @@ public:
 	const std::vector<cVehicle*>& getPlanes() const;
 
 	/** returns all units on this field */
-	void getUnits (std::vector<cUnit*>&) const;
+	std::vector<cUnit*> getUnits() const;
 
 	/** returns a pointer for the buildings on this field */
 	cBuilding* getBuilding() const;

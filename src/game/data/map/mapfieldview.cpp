@@ -201,8 +201,7 @@ std::vector<cVehicle*> cMapFieldView::getPlanes() const
 //------------------------------------------------------------------------------
 std::vector<cUnit*> cMapFieldView::getUnits() const
 {
-	std::vector<cUnit*> visibleUnits;
-	mapField.getUnits (visibleUnits);
+	std::vector<cUnit*> visibleUnits = mapField.getUnits();
 
 	if (!player)
 	{

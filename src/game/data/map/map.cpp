@@ -217,13 +217,14 @@ const std::vector<cVehicle*>& cMapField::getPlanes() const
 	return planes;
 }
 
-void cMapField::getUnits (std::vector<cUnit*>& units) const
+std::vector<cUnit*> cMapField::getUnits() const
 {
-	units.clear();
+	std::vector<cUnit*> units;
 	units.reserve (vehicles.size() + buildings.size() + planes.size());
 	units.insert (units.end(), vehicles.begin(), vehicles.end());
 	units.insert (units.end(), buildings.begin(), buildings.end());
 	units.insert (units.end(), planes.begin(), planes.end());
+	return units;
 }
 
 cBuilding* cMapField::getBuilding() const
