@@ -344,21 +344,21 @@ struct sUnitUpgrade
 	int computedPurchasedCount (const cResearch& researchLevel);
 
 	/** The different values of a unit that can be upgraded */
-	enum eUpgradeTypes
+	enum class eUpgradeType
 	{
-		UPGRADE_TYPE_DAMAGE,
-		UPGRADE_TYPE_SHOTS,
-		UPGRADE_TYPE_RANGE,
-		UPGRADE_TYPE_AMMO,
-		UPGRADE_TYPE_ARMOR,
-		UPGRADE_TYPE_HITS,
-		UPGRADE_TYPE_SCAN,
-		UPGRADE_TYPE_SPEED,
-		UPGRADE_TYPE_NONE
+		Damage,
+		Shots,
+		Range,
+		Ammo,
+		Armor,
+		Hits,
+		Scan,
+		Speed,
+		None
 	};
 
 	int getCurValue() const { return curValue; }
-	eUpgradeTypes getType() const { return type; }
+	eUpgradeType getType() const { return type; }
 	int getNextPrice() const { return nextPrice; }
 	int getPurchased() const { return purchased; }
 
@@ -384,27 +384,27 @@ private:
 	/** the value that this unit would have without all upgrades */
 	int startValue = 0;
 	/** the type of the upgrade */
-	eUpgradeTypes type = UPGRADE_TYPE_NONE;
+	eUpgradeType type = eUpgradeType::None;
 };
 
 class cUnitUpgrade
 {
 public:
 	void init (const cDynamicUnitData& origData, const cDynamicUnitData& curData, const cStaticUnitData& staticData, const cResearch& researchLevel);
-	sUnitUpgrade* getUpgrade (sUnitUpgrade::eUpgradeTypes type);
-	const sUnitUpgrade* getUpgrade (sUnitUpgrade::eUpgradeTypes type) const;
+	sUnitUpgrade* getUpgrade (sUnitUpgrade::eUpgradeType);
+	const sUnitUpgrade* getUpgrade (sUnitUpgrade::eUpgradeType) const;
 
 	int computedPurchasedCount (const cResearch& researchLevel);
 	bool hasBeenPurchased() const;
-	int getValueOrDefault (sUnitUpgrade::eUpgradeTypes upgradeType, int defaultValue) const;
+	int getValueOrDefault (sUnitUpgrade::eUpgradeType, int defaultValue) const;
 	void updateUnitData (cDynamicUnitData& data) const;
 	int calcTotalCosts (const cDynamicUnitData& originalData, const cDynamicUnitData& currentData, const cResearch& reseachState) const;
 
 	template <typename T>
 	void serialize (T& archive)
 	{
-		for (int i = 0; i < 8; i++)
-			archive & upgrades[i];
+		for (auto& upgrade : upgrades)
+			archive & upgrade;
 	}
 public:
 	sUnitUpgrade upgrades[8];

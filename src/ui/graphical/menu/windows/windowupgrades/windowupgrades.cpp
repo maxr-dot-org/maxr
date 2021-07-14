@@ -147,7 +147,7 @@ void cWindowUpgrades::updateUpgradeButtons()
 	{
 		const sUnitUpgrade& upgrade = unitUpgrade.upgrades[i];
 
-		if (upgrade.getType() == sUnitUpgrade::UPGRADE_TYPE_NONE)
+		if (upgrade.getType() == sUnitUpgrade::eUpgradeType::None)
 		{
 			upgradeDecreaseButton[i]->lock();
 			upgradeIncreaseButton[i]->lock();
