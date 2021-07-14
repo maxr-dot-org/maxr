@@ -27,12 +27,13 @@
 
 #include "game/data/gamesettings.h"
 #include "game/data/resourcetype.h"
-#include "SDLutility/autosurface.h"
 #include "utility/t_2.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 #include "utility/log.h"
 #include "utility/arraycrc.h"
+
+#include "resources/map/graphicstaticmap.h"
 
 class cUnit;
 class cVehicle;
@@ -130,46 +131,6 @@ private:
 	std::vector<cVehicle*> planes;
 };
 
-struct sGraphicTile
-{
-	static const int tilePixelHeight = 64;
-	static const int tilePixelWidth = 64;
-
-	void copySrfToTerData (SDL_Surface&, const SDL_Color (&palette_shw)[256]);
-
-	AutoSurface sf;      /** the scaled surface of the terrain */
-	AutoSurface sf_org;  /** the original surface of the terrain */
-	AutoSurface shw;     /** the scaled surface of the terrain in the fog */
-	AutoSurface shw_org; /** the original surface of the terrain in the fog */
-};
-
-class cStaticMap;
-class cGraphicStaticMap
-{
-public:
-	cGraphicStaticMap (const cStaticMap* map) : map (map) {}
-
-	cGraphicStaticMap (const cGraphicStaticMap&) = delete;
-	cGraphicStaticMap& operator= (const cGraphicStaticMap&) = delete;
-
-	void loadPalette (SDL_RWops* fpMapFile, std::size_t paletteOffset, std::size_t numberOfTerrains);
-	bool loadTile (SDL_RWops* fpMapFile, std::size_t graphicOffset, std::size_t index);
-
-	const sGraphicTile& getTile (std::size_t index) const { return tiles[index]; }
-
-	AutoSurface createBigSurface (int sizex, int sizey) const;
-	void generateNextAnimationFrame();
-
-private:
-	static AutoSurface loadTerrGraph (SDL_RWops*, Sint64 iGraphicsPos, const SDL_Color (&colors)[256], int iNum);
-
-private:
-	const cStaticMap* map = nullptr;
-	std::vector<sGraphicTile> tiles; // The different terrain graphics.
-	SDL_Color palette[256];   // Palette with all Colors for the terrain graphics
-	SDL_Color palette_shw[256];
-};
-
 struct sTerrain
 {
 	bool water = false;          /** is this terrain water? */
@@ -204,7 +165,6 @@ public:
 	const sTerrain& getTerrain (const cPosition&) const;
 
 	cGraphicStaticMap& getGraphic() const { return graphic; }
-	const sGraphicTile& getGraphicTile (const cPosition&) const;
 
 	uint32_t getChecksum (uint32_t crc);
 

@@ -249,7 +249,7 @@ void cMiniMapWidget::drawLandscape()
 			terrainy = std::min (terrainy, staticMap->getSize(). y() - 1);
 			const int offsety = ((miniMapY * staticMap->getSize(). y()) % (getSize().y() * zoomFactor)) * 64 / (getSize().y() * zoomFactor);
 
-			const auto& terrain = staticMap->getGraphicTile (cPosition (terrainx, terrainy));
+			const auto& terrain = staticMap->getGraphic().getTile (staticMap->getTileIndex (cPosition (terrainx, terrainy)));
 			const auto* terrainPixels = reinterpret_cast<const Uint8*> (terrain.sf_org->pixels);
 			const auto index = terrainPixels[offsetx + offsety * 64];
 			const auto sdlcolor = terrain.sf_org->format->palette->colors[index];

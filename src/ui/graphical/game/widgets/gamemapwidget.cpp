@@ -1025,7 +1025,7 @@ void cGameMapWidget::drawTerrain()
 
 	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore(); i.next())
 	{
-		const auto& terrain = staticMap->getGraphicTile (*i);
+		const auto& terrain = staticMap->getGraphic().getTile (staticMap->getTileIndex (*i));
 
 		auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
 		if (shouldDrawFog && (!player || !player->canSeeAt (*i)))
