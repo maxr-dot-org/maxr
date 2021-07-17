@@ -74,15 +74,15 @@ XMLElement* getOrCreateXmlElement (XMLDocument& xmlDoc, const std::string& path)
 	}
 	while (j != path.length());
 
-	XMLElement* xmlElement = NULL;
+	XMLElement* xmlElement = nullptr;
 	XMLElement* lastElement = xmlDoc.FirstChildElement (parts[0].c_str());
-	if (lastElement == NULL)
+	if (lastElement == nullptr)
 		lastElement = xmlDoc.LinkEndChild (xmlDoc.NewElement (parts[0].c_str()))->ToElement();
 
 	for (unsigned i = 1; i < parts.size(); ++i)
 	{
 		xmlElement = lastElement->FirstChildElement (parts[i].c_str());
-		if (xmlElement == NULL)
+		if (xmlElement == nullptr)
 			xmlElement = lastElement->LinkEndChild (xmlDoc.NewElement (parts[i].c_str()))->ToElement();
 		lastElement = xmlElement;
 	}

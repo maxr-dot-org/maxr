@@ -44,7 +44,7 @@ int CALLBACK CrashCallback (CR_CRASH_CALLBACK_INFO* pInfo)
 		{
 			std::string path = home + "\\Crashshot.bmp";
 			SDL_SaveBMP (cVideo::buffer, path.c_str());
-			crAddFile2(path.c_str(), NULL, "Screenshot at the moment of the crash", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
+			crAddFile2(path.c_str(), nullptr, "Screenshot at the moment of the crash", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 		}
 
 	}
@@ -96,30 +96,30 @@ void initCrashreporting()
 		Log.write (std::string ("Couldn't install crash reporting: ") + msg, cLog::eLOG_TYPE_WARNING);
 	}
 
-	crSetCrashCallback (CrashCallback, NULL);
+	crSetCrashCallback (CrashCallback, nullptr);
 
 	std::string log = cSettings::getInstance().getLogPath();
 	if (!log.empty())
 	{
-		crAddFile2 (log.c_str(), NULL, "Maxr Logfile", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
+		crAddFile2 (log.c_str(), nullptr, "Maxr Logfile", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 	}
 
 	std::string settings = cSettings::getInstance().getHomeDir() + MAX_XML;
 	if (!settings.empty())
 	{
-		crAddFile2 (settings.c_str(), NULL, "Maxr Configuration File", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
+		crAddFile2 (settings.c_str(), nullptr, "Maxr Configuration File", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 	}
 
 	std::string netlog = cSettings::getInstance().getNetLogPath();
 	if (!netlog.empty())
 	{
-		crAddFile2 (netlog.c_str(), NULL, "Maxr Network Logfile", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
+		crAddFile2 (netlog.c_str(), nullptr, "Maxr Network Logfile", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 	}
 
 	std::string home = cSettings::getInstance().getHomeDir();
 	if (!home.empty())
 	{
-		crAddFile2 ((home + "resinstaller.log").c_str(), NULL, "Maxr Resinstaller Logfile", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
+		crAddFile2 ((home + "resinstaller.log").c_str(), nullptr, "Maxr Resinstaller Logfile", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 	}
 
 	//internal screenshot function is useless...

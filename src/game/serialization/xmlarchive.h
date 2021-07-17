@@ -83,7 +83,7 @@ private:
 class cXmlArchiveOut
 {
 public:
-	cXmlArchiveOut (const tinyxml2::XMLElement& rootElement, serialization::cPointerLoader* pointerLoader = NULL);
+	cXmlArchiveOut (const tinyxml2::XMLElement& rootElement, serialization::cPointerLoader* pointerLoader = nullptr);
 
 	static const bool isWriter = false;
 
