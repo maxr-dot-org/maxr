@@ -21,14 +21,13 @@
 #define ui_keysH
 
 #include "input/keyboard/keysequence.h"
-#include <3rd/tinyxml2/tinyxml2.h>
+#include "game/serialization/serialization.h"
 
 enum class eMouseStyle
 {
 	OldSchool,
 	Modern
 };
-
 
 class cKeysList
 {
@@ -106,79 +105,81 @@ public:
 	cKeySequence keyUnitMenuResearch;
 	cKeySequence keyUnitMenuUpgrade;
 	cKeySequence keyUnitMenuDestroy;
+
+	template <typename Archive>
+	void serialize (Archive& archive)
+	{
+		archive & NVP (keyExit);
+		archive & NVP (keyJumpToAction);
+		archive & NVP (keyEndTurn);
+		archive & NVP (keyChat);
+		archive & NVP (keyScroll8a);
+		archive & NVP (keyScroll8b);
+		archive & NVP (keyScroll2a);
+		archive & NVP (keyScroll2b);
+		archive & NVP (keyScroll6a);
+		archive & NVP (keyScroll6b);
+		archive & NVP (keyScroll4a);
+		archive & NVP (keyScroll4b);
+		archive & NVP (keyScroll7);
+		archive & NVP (keyScroll9);
+		archive & NVP (keyScroll1);
+		archive & NVP (keyScroll3);
+		archive & NVP (keyZoomIna);
+		archive & NVP (keyZoomInb);
+		archive & NVP (keyZoomOuta);
+		archive & NVP (keyZoomOutb);
+		archive & NVP (keySavePosition1);
+		archive & NVP (keySavePosition2);
+		archive & NVP (keySavePosition3);
+		archive & NVP (keySavePosition4);
+		archive & NVP (keyPosition1);
+		archive & NVP (keyPosition2);
+		archive & NVP (keyPosition3);
+		archive & NVP (keyPosition4);
+		archive & NVP (keyFog);
+		archive & NVP (keyGrid);
+		archive & NVP (keyScan);
+		archive & NVP (keyRange);
+		archive & NVP (keyAmmo);
+		archive & NVP (keyHitpoints);
+		archive & NVP (keyColors);
+		archive & NVP (keyStatus);
+		archive & NVP (keySurvey);
+		archive & NVP (keyCenterUnit);
+		archive & NVP (keyUnitDone);
+		archive & NVP (keyUnitDoneAndNext);
+		archive & NVP (keyAllDoneAndNext);
+		archive & NVP (keyUnitNext);
+		archive & NVP (keyUnitPrev);
+		archive & NVP (keyUnitMenuAttack);
+		archive & NVP (keyUnitMenuBuild);
+		archive & NVP (keyUnitMenuTransfer);
+		archive & NVP (keyUnitMenuEnter);
+		archive & NVP (keyUnitMenuAutomove);
+		archive & NVP (keyUnitMenuStart);
+		archive & NVP (keyUnitMenuStop);
+		archive & NVP (keyUnitMenuClear);
+		archive & NVP (keyUnitMenuSentry);
+		archive & NVP (keyUnitMenuManualFire);
+		archive & NVP (keyUnitMenuActivate);
+		archive & NVP (keyUnitMenuLoad);
+		archive & NVP (keyUnitMenuReload);
+		archive & NVP (keyUnitMenuRepair);
+		archive & NVP (keyUnitMenuLayMine);
+		archive & NVP (keyUnitMenuClearMine);
+		archive & NVP (keyUnitMenuDisable);
+		archive & NVP (keyUnitMenuSteal);
+		archive & NVP (keyUnitMenuInfo);
+		archive & NVP (keyUnitMenuDistribute);
+		archive & NVP (keyUnitMenuResearch);
+		archive & NVP (keyUnitMenuUpgrade);
+		archive & NVP (keyUnitMenuDestroy);
+
+		archive & NVP (mouseStyle);
+	}
 private:
-
-	const static std::string keyExitName;
-	const static std::string keyJumpToActionName;
-	const static std::string keyEndTurnName;
-	const static std::string keyChatName;
-	const static std::string keyScroll8aName;
-	const static std::string keyScroll8bName;
-	const static std::string keyScroll2aName;
-	const static std::string keyScroll2bName;
-	const static std::string keyScroll6aName;
-	const static std::string keyScroll6bName;
-	const static std::string keyScroll4aName;
-	const static std::string keyScroll4bName;
-	const static std::string keyScroll7Name;
-	const static std::string keyScroll9Name;
-	const static std::string keyScroll1Name;
-	const static std::string keyScroll3Name;
-	const static std::string keyZoomInaName;
-	const static std::string keyZoomInbName;
-	const static std::string keyZoomOutaName;
-	const static std::string keyZoomOutbName;
-	const static std::string keySavePosition1Name;
-	const static std::string keySavePosition2Name;
-	const static std::string keySavePosition3Name;
-	const static std::string keySavePosition4Name;
-	const static std::string keyPosition1Name;
-	const static std::string keyPosition2Name;
-	const static std::string keyPosition3Name;
-	const static std::string keyPosition4Name;
-	const static std::string keyFogName;
-	const static std::string keyGridName;
-	const static std::string keyScanName;
-	const static std::string keyRangeName;
-	const static std::string keyAmmoName;
-	const static std::string keyHitpointsName;
-	const static std::string keyColorsName;
-	const static std::string keyStatusName;
-	const static std::string keySurveyName;
-	const static std::string keyCenterUnitName;
-	const static std::string keyUnitDoneName;
-	const static std::string keyUnitDoneAndNextName;
-	const static std::string keyAllDoneAndNextName;
-	const static std::string keyUnitNextName;
-	const static std::string keyUnitPrevName;
-	const static std::string keyUnitMenuAttackName;
-	const static std::string keyUnitMenuBuildName;
-	const static std::string keyUnitMenuTransferName;
-	const static std::string keyUnitMenuEnterName;
-	const static std::string keyUnitMenuAutomoveName;
-	const static std::string keyUnitMenuStartName;
-	const static std::string keyUnitMenuStopName;
-	const static std::string keyUnitMenuClearName;
-	const static std::string keyUnitMenuSentryName;
-	const static std::string keyUnitMenuManualFireName;
-	const static std::string keyUnitMenuActivateName;
-	const static std::string keyUnitMenuLoadName;
-	const static std::string keyUnitMenuReloadName;
-	const static std::string keyUnitMenuRepairName;
-	const static std::string keyUnitMenuLayMineName;
-	const static std::string keyUnitMenuClearMineName;
-	const static std::string keyUnitMenuDisableName;
-	const static std::string keyUnitMenuStealName;
-	const static std::string keyUnitMenuInfoName;
-	const static std::string keyUnitMenuDistributeName;
-	const static std::string keyUnitMenuResearchName;
-	const static std::string keyUnitMenuUpgradeName;
-	const static std::string keyUnitMenuDestroyName;
-
 	eMouseStyle mouseStyle;
-
-	bool tryLoadSingleKey (const tinyxml2::XMLElement& parentElement, const std::string& elementName, cKeySequence& destination);
-	void saveSingleKey (tinyxml2::XMLElement& parentElement, const std::string& elementName, const cKeySequence& source);
 };
 
 extern cKeysList KeysList;

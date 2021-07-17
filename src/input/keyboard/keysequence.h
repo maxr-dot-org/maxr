@@ -24,6 +24,7 @@
 #include <vector>
 
 #include "input/keyboard/keycombination.h"
+#include "game/serialization/serialization.h"
 
 class cKeySequence
 {
@@ -46,6 +47,22 @@ public:
 	void reset();
 
 	std::string toString() const;
+
+	template <typename Archive>
+	void load (Archive& archive)
+	{
+		std::string sequence;
+		archive >> serialization::makeNvp ("text", sequence);
+		*this = cKeySequence (sequence);
+	}
+
+	template <typename Archive>
+	void save (Archive& archive) const
+	{
+		archive << serialization::makeNvp ("text", toString());
+	}
+	SERIALIZATION_SPLIT_MEMBER()
+
 private:
 	std::vector<cKeyCombination> keySequence;
 };
