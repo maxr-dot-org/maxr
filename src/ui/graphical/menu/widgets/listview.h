@@ -511,9 +511,9 @@ bool cListView<ItemType>::handleKeyPressed (cApplication& application, cKeyboard
 template <typename ItemType>
 void cListView<ItemType>::handleMoved (const cPosition& offset)
 {
-	for (auto i = items.begin(); i != items.end(); ++i)
+	for (auto& p : items)
 	{
-		(*i).second->move (offset);
+		p.second->move (offset);
 	}
 
 	cClickableWidget::handleMoved (offset);

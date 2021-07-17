@@ -84,9 +84,8 @@ cSoundChannel& cSoundChannelGroup::getFreeChannel (bool haltIfNotAvailable)
 //--------------------------------------------------------------------------
 void cSoundChannelGroup::setVolume (int volume)
 {
-	for (auto i = soundChannels.begin(); i != soundChannels.end(); ++i)
+	for (const auto& soundChannel : soundChannels)
 	{
-		const auto& soundChannel = *i;
 		soundChannel->setVolume (volume);
 	}
 }

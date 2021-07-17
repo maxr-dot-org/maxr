@@ -455,10 +455,10 @@ void cDebugOutputWidget::trace()
 
 	if (field->getVehicle()) { traceVehicle (*field->getVehicle(), drawingPosition); drawingPosition.y() += 20; }
 	if (field->getPlane()) { traceVehicle (*field->getPlane(), drawingPosition); drawingPosition.y() += 20; }
-	const auto& buildings = field->getBuildings();
-	for (auto it = buildings.begin(); it != buildings.end(); ++it)
+
+	for (const auto* building : field->getBuildings())
 	{
-		traceBuilding (**it, drawingPosition); drawingPosition.y() += 20;
+		traceBuilding (*building, drawingPosition); drawingPosition.y() += 20;
 	}
 }
 

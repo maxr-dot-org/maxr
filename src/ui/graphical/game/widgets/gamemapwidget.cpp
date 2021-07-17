@@ -1196,22 +1196,20 @@ void cGameMapWidget::drawAboveSeaBaseUnits()
 		auto& mapField = mapView->getField (*i);
 
 		const auto& buildings = mapField.getBuildings();
-		for (auto it = buildings.begin(); it != buildings.end(); ++it)
+		for (const auto* building : buildings)
 		{
-			const auto& building = * (*it);
-			if (building.getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea)
+			if (building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea)
 			{
-				const auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building.getPosition());
-				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), &unitSelection, player.get(), currentTurnResearchAreasFinished);
+				const auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building->getPosition());
+				unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor(), &unitSelection, player.get(), currentTurnResearchAreasFinished);
 			}
 		}
-		for (auto it = buildings.begin(); it != buildings.end(); ++it)
+		for (const auto* building : buildings)
 		{
-			const auto& building = * (*it);
-			if ((*it)->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase)
+			if (building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase)
 			{
-				const auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building.getPosition());
-				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), &unitSelection, player.get(), currentTurnResearchAreasFinished);
+				const auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building->getPosition());
+				unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor(), &unitSelection, player.get(), currentTurnResearchAreasFinished);
 			}
 		}
 

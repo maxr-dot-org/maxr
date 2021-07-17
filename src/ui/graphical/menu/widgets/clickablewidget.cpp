@@ -135,9 +135,9 @@ void cClickableWidget::handleLooseMouseFocus (cApplication& application)
 	}
 	mouseWasOver = false;
 
-	for (auto i = startedClickWithin.begin(); i != startedClickWithin.end(); ++i)
+	for (auto& p : startedClickWithin)
 	{
-		i->second = false;
+		p.second = false;
 	}
 }
 

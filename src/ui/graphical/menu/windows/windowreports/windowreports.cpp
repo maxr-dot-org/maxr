@@ -352,9 +352,8 @@ void cWindowReports::rebuildUnitList()
 	{
 		const auto unitsData = model.getUnitsData();
 		const auto& vehicles = localPlayer->getVehicles();
-		for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
+		for (const auto& vehicle : vehicles)
 		{
-			const auto& vehicle = *i;
 			if (checkFilter (*vehicle))
 			{
 				unitsList->addItem (std::make_unique<cReportUnitListViewItem> (*vehicle, *unitsData));
@@ -363,10 +362,8 @@ void cWindowReports::rebuildUnitList()
 
 		if (stationaryCheckBox->isChecked())
 		{
-			const auto& buildings = localPlayer->getBuildings();
-			for (auto i = buildings.begin(); i != buildings.end(); ++i)
+			for (const auto& building : localPlayer->getBuildings())
 			{
-				const auto& building = *i;
 				if (checkFilter (*building))
 				{
 					unitsList->addItem (std::make_unique<cReportUnitListViewItem> (*building, *unitsData));

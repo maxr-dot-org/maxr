@@ -366,7 +366,7 @@ void cSavegame::loadGuiInfo (const cServer* server, int slot, int playerNr)
 		int size;
 		archive >> serialization::makeNvp ("reportsNr", size);
 		guiInfo.reports->resize (size);
-		for (auto &report : *guiInfo.reports)
+		for (auto& report : *guiInfo.reports)
 		{
 			report = cSavedReport::createFrom (archive, "report");
 		}

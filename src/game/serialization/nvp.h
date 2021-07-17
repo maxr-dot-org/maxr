@@ -42,7 +42,7 @@ namespace serialization
 		return sNameValuePair<T> (name, value);
 	}
 	template <typename T>
-	const sNameValuePair<T> makeNvp (const std::string& name, const T& value)
+	sNameValuePair<T> makeNvp (const std::string& name, const T& value)
 	{
 		T& value_nonconst = const_cast<T&> (value);
 		return sNameValuePair<T> (name, value_nonconst);

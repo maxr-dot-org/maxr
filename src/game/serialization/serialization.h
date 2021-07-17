@@ -151,7 +151,7 @@ namespace serialization
 	{
 		uint32_t length = static_cast<uint32_t> (value.size());
 		archive << NVP (length);
-		for (auto item : value)
+		for (auto& item : value)
 		{
 			archive << NVP (item);
 		}
@@ -249,7 +249,7 @@ namespace serialization
 	{
 		uint32_t length = static_cast<uint32_t> (value.size());
 		archive << NVP (length);
-		for (auto pair : value)
+		for (auto& pair : value)
 		{
 			archive << NVP (pair);
 		}
@@ -529,22 +529,22 @@ namespace serialization
 		};
 	} //namespace detail
 
-	#define SERIALIZATION_SPLIT_MEMBER()                        \
-	template <typename Archive>                                       \
-	void serialize (Archive& archive)                                 \
-	{                                                           \
-		serialization::detail::splitMember (archive, *this);    \
+	#define SERIALIZATION_SPLIT_MEMBER()                     \
+	template <typename Archive>                              \
+	void serialize (Archive& archive)                        \
+	{                                                        \
+		serialization::detail::splitMember (archive, *this); \
 	}
 
-	#define SERIALIZATION_SPLIT_FREE(T)                         \
-	namespace serialization {                                   \
-	template <typename Archive>                                       \
-	void serialize (Archive& archive, T& value)                       \
-	{                                                           \
-		serialization::detail::splitFree (archive, value);      \
-	}                                                           \
+	#define SERIALIZATION_SPLIT_FREE(T)                    \
+	namespace serialization {                              \
+	template <typename Archive>                            \
+	void serialize (Archive& archive, T& value)            \
+	{                                                      \
+		serialization::detail::splitFree (archive, value); \
+	}                                                      \
 	}
 
-} //namespace sersialization
+} //namespace serialization
 
 #endif //serialization_serializationH

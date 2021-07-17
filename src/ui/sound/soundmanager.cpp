@@ -51,9 +51,9 @@ cSoundManager::~cSoundManager()
 {
 	signalConnectionManager.disconnectAll();
 	std::unique_lock<std::recursive_mutex> playingSoundsLock (playingSoundsMutex);
-	for (auto i = playingSounds.begin(); i != playingSounds.end(); ++i)
+	for (auto& storedSound : playingSounds)
 	{
-		i->sound->stop();
+		storedSound.sound->stop();
 	}
 }
 
@@ -69,11 +69,11 @@ void cSoundManager::mute()
 	muted = true;
 
 	std::unique_lock<std::recursive_mutex> playingSoundsLock (playingSoundsMutex);
-	for (auto i = playingSounds.begin(); i != playingSounds.end(); ++i)
+	for (auto& storedSound : playingSounds)
 	{
-		if (!i->active) continue;
+		if (!storedSound.active) continue;
 
-		auto channel = i->sound->getChannel();
+		auto* channel = storedSound.sound->getChannel();
 		if (channel)
 		{
 			// Loop sounds are just muted so that they can be continued later on.
@@ -85,7 +85,7 @@ void cSoundManager::mute()
 			}
 			else
 			{
-				i->sound->stop();
+				storedSound.sound->stop();
 			}
 		}
 	}
@@ -97,11 +97,11 @@ void cSoundManager::unmute()
 	muted = false;
 
 	std::unique_lock<std::recursive_mutex> playingSoundsLock (playingSoundsMutex);
-	for (auto i = playingSounds.begin(); i != playingSounds.end(); ++i)
+	for (auto& storedSound : playingSounds)
 	{
-		if (!i->active) continue;
+		if (!storedSound.active) continue;
 
-		auto channel = i->sound->getChannel();
+		auto channel = storedSound.sound->getChannel();
 		if (channel)
 		{
 			channel->unmute();
@@ -195,9 +195,9 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 void cSoundManager::stopAllSounds()
 {
 	std::unique_lock<std::recursive_mutex> playingSoundsLock (playingSoundsMutex);
-	for (auto i = playingSounds.begin(); i != playingSounds.end(); ++i)
+	for (auto& storedSound : playingSounds)
 	{
-		i->sound->stop();
+		storedSound.sound->stop();
 	}
 }
 
@@ -271,8 +271,8 @@ void cSoundManager::updateSoundPosition (cSoundEffect& sound)
 //--------------------------------------------------------------------------
 void cSoundManager::updateAllSoundPositions()
 {
-	for (auto i = playingSounds.begin(); i != playingSounds.end(); ++i)
+	for (auto& storedSound : playingSounds)
 	{
-		updateSoundPosition (*i->sound);
+		updateSoundPosition (*storedSound.sound);
 	}
 }

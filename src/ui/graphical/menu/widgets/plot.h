@@ -439,22 +439,22 @@ void cPlot<T, U>::draw (SDL_Surface& destination, const cBox<cPosition>& clipRec
 	const auto yPixelWidth = getSize().y() - graphBeginMargin.y() - graphEndMargin.y();
 
 	// draw graphs
-	for (auto graph = graphs.cbegin(); graph != graphs.cend(); ++graph)
+	for (const auto& graph : graphs)
 	{
 		auto lastEvaluationPoint = fromPixelX (0);
-		cPosition lastPoint (0, -toPixelY (graph->evaluate (lastEvaluationPoint)));
+		cPosition lastPoint (0, -toPixelY (graph.evaluate (lastEvaluationPoint)));
 
 		for (int pixelX = 1; pixelX < xPixelWidth; ++pixelX)
 		{
 			const auto x = fromPixelX (pixelX);
-			const auto y = graph->evaluate (x);
+			const auto y = graph.evaluate (x);
 			const auto pixelY = toPixelY (y);
 
 			const cPosition newPoint (pixelX, -pixelY);
 
 			if (x != lastEvaluationPoint /*|| pixelX == xPixelWidth-1*/)
 			{
-				drawLine (destination, getPosition() + origin + lastPoint, getPosition() + origin + newPoint, graph->getColor());
+				drawLine (destination, getPosition() + origin + lastPoint, getPosition() + origin + newPoint, graph.getColor());
 
 				lastPoint = newPoint;
 			}
@@ -475,24 +475,24 @@ void cPlot<T, U>::draw (SDL_Surface& destination, const cBox<cPosition>& clipRec
 	font->showText (getPosition() + origin + cPosition (-16, -yPixelWidth - font->getFontHeight (FONT_LATIN_SMALL_WHITE) / 2), std::to_string (yAxis.getMaxValue()), FONT_LATIN_SMALL_WHITE);
 
 	// draw markers
-	for (auto marker = xMarkers.begin(); marker != xMarkers.end(); ++marker)
+	for (const auto& marker : xMarkers)
 	{
-		if (marker->getValue() < xAxis.getMinValue() || marker->getValue() > xAxis.getMaxValue()) continue;
+		if (marker.getValue() < xAxis.getMinValue() || marker.getValue() > xAxis.getMaxValue()) continue;
 
-		const auto pixelX = toPixelX (marker->getValue());
-		drawLine (destination, getPosition() + origin + cPosition (pixelX, 0), getPosition() + origin + cPosition (pixelX, -yPixelWidth), marker->getColor());
+		const auto pixelX = toPixelX (marker.getValue());
+		drawLine (destination, getPosition() + origin + cPosition (pixelX, 0), getPosition() + origin + cPosition (pixelX, -yPixelWidth), marker.getColor());
 
-		font->showTextCentered (getPosition() + origin + cPosition (pixelX, 2), std::to_string (marker->getValue()), FONT_LATIN_SMALL_WHITE);
+		font->showTextCentered (getPosition() + origin + cPosition (pixelX, 2), std::to_string (marker.getValue()), FONT_LATIN_SMALL_WHITE);
 	}
 
-	for (auto marker = yMarkers.begin(); marker != yMarkers.end(); ++marker)
+	for (const auto& marker : yMarkers)
 	{
-		if (marker->getValue() < yAxis.getMinValue() || marker->getValue() > yAxis.getMaxValue()) continue;
+		if (marker.getValue() < yAxis.getMinValue() || marker.getValue() > yAxis.getMaxValue()) continue;
 
-		const auto pixelY = toPixelY (marker->getValue());
-		drawLine (destination, getPosition() + origin + cPosition (0, -pixelY), getPosition() + origin + cPosition (xPixelWidth, -pixelY), marker->getColor());
+		const auto pixelY = toPixelY (marker.getValue());
+		drawLine (destination, getPosition() + origin + cPosition (0, -pixelY), getPosition() + origin + cPosition (xPixelWidth, -pixelY), marker.getColor());
 
-		font->showText (getPosition() + origin + cPosition (-16, -pixelY - font->getFontHeight (FONT_LATIN_SMALL_WHITE) / 2), std::to_string (marker->getValue()), FONT_LATIN_SMALL_WHITE);
+		font->showText (getPosition() + origin + cPosition (-16, -pixelY - font->getFontHeight (FONT_LATIN_SMALL_WHITE) / 2), std::to_string (marker.getValue()), FONT_LATIN_SMALL_WHITE);
 	}
 	cWidget::draw (destination, clipRect);
 }

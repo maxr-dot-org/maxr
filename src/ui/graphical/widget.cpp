@@ -276,15 +276,13 @@ void cWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 		SDL_BlitSurface (frameSurface.get(), &source, &destination, &position);
 	}
 
-	for (auto i = children.begin(); i != children.end(); ++i)
+	for (auto& child : children)
 	{
-		auto& child = *i->get();
+		if (child->isHidden()) continue;
 
-		if (child.isHidden()) continue;
-
-		if (child.getArea().intersects (clipRect))
+		if (child->getArea().intersects (clipRect))
 		{
-			child.draw (destination, child.getArea().intersection (clipRect));
+			child->draw (destination, child->getArea().intersection (clipRect));
 		}
 	}
 }
@@ -316,10 +314,9 @@ bool cWidget::handleMouseWheelMoved (cApplication& application, cMouse& mouse, c
 //------------------------------------------------------------------------------
 bool cWidget::handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key)
 {
-	for (auto i = children.begin(); i != children.end(); ++i)
+	for (auto& child : children)
 	{
-		auto& child = *i->get();
-		if (child.handleKeyPressed (application, keyboard, key))
+		if (child->handleKeyPressed (application, keyboard, key))
 		{
 			return true;
 		}
@@ -330,10 +327,9 @@ bool cWidget::handleKeyPressed (cApplication& application, cKeyboard& keyboard, 
 //------------------------------------------------------------------------------
 bool cWidget::handleKeyReleased (cApplication& application, cKeyboard& keyboard, SDL_Keycode key)
 {
-	for (auto i = children.begin(); i != children.end(); ++i)
+	for (auto& child : children)
 	{
-		auto& child = *i->get();
-		if (child.handleKeyReleased (application, keyboard, key))
+		if (child->handleKeyReleased (application, keyboard, key))
 		{
 			return true;
 		}
@@ -374,9 +370,9 @@ void cWidget::handleLooseMouseFocus (cApplication& application)
 //------------------------------------------------------------------------------
 void cWidget::handleMoved (const cPosition& offset)
 {
-	for (auto i = children.begin(); i != children.end(); ++i)
+	for (auto& child : children)
 	{
-		(*i)->move (offset);
+		child->move (offset);
 	}
 }
 

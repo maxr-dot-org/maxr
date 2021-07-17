@@ -94,11 +94,11 @@ std::vector<std::pair<sID, cUnitUpgrade>> cWindowUpgrades::getUnitUpgrades() con
 {
 	std::vector<std::pair<sID, cUnitUpgrade>> result;
 
-	for (auto i = unitUpgrades.begin(); i != unitUpgrades.end(); ++i)
+	for (const auto& p : unitUpgrades)
 	{
-		if (i->second.hasBeenPurchased())
+		if (p.second.hasBeenPurchased())
 		{
-			result.push_back (std::make_pair (i->first, i->second));
+			result.push_back (p);
 		}
 	}
 

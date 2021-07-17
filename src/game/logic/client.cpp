@@ -212,7 +212,7 @@ void cClient::handleNetMessages()
 				freezeModes = msg->freezeModes;
 				if (waitForServer) freezeModes.enable (eFreezeMode::WAIT_FOR_SERVER);
 
-				for (auto state : msg->playerStates)
+				for (const auto& state : msg->playerStates)
 				{
 					if (model.getPlayer (state.first) == nullptr)
 					{

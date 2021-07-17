@@ -414,17 +414,13 @@ bool cVehicle::inSentryRange (cModel& model)
 		// Check sentry type
 		if (staticData->factorAir == 0 && player->hasSentriesGround (getPosition()) == 0) continue;
 
-		const auto& vehicles = player->getVehicles();
-		for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
+		for (const auto& vehicle : player->getVehicles())
 		{
-			const auto& vehicle = *i;
 			if (makeSentryAttack (model, vehicle.get()))
 				return true;
 		}
-		const auto& buildings = player->getBuildings();
-		for (auto i = buildings.begin(); i != buildings.end(); ++i)
+		for (const auto& building : player->getBuildings())
 		{
-			const auto& building = *i;
 			if (makeSentryAttack (model, building.get()))
 				return true;
 		}
@@ -465,18 +461,13 @@ bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (const cModel& mo
 	else
 	{
 		// check if there is a vehicle or building of player, that is offended
-
-		const auto& vehicles = player->getVehicles();
-		for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
+		for (const auto& opponentVehicle : player->getVehicles())
 		{
-			const auto& opponentVehicle = *i;
 			if (isOtherUnitOffendedByThis (model, *opponentVehicle))
 				return true;
 		}
-		const auto& buildings = player->getBuildings();
-		for (auto i = buildings.begin(); i != buildings.end(); ++i)
+		for (const auto& opponentBuilding : player->getBuildings())
 		{
-			const auto& opponentBuilding = *i;
 			if (isOtherUnitOffendedByThis (model, *opponentBuilding))
 				return true;
 		}
@@ -505,17 +496,13 @@ bool cVehicle::doReactionFire (cModel& model, cPlayer* player) const
 {
 	// search a unit of the opponent, that could fire on this vehicle
 	// first look for a building
-	const auto& buildings = player->getBuildings();
-	for (auto i = buildings.begin(); i != buildings.end(); ++i)
+	for (const auto& opponentBuilding : player->getBuildings())
 	{
-		const auto& opponentBuilding = *i;
 		if (doReactionFireForUnit (model, opponentBuilding.get()))
 			return true;
 	}
-	const auto& vehicles = player->getVehicles();
-	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
+	for (const auto& opponentVehicle : player->getVehicles())
 	{
-		const auto& opponentVehicle = *i;
 		if (doReactionFireForUnit (model, opponentVehicle.get()))
 			return true;
 	}
