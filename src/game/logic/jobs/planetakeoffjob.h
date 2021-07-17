@@ -49,7 +49,7 @@ private:
 	{
 		archive & NVP (unit);
 
-		if (!archive.isWriter)
+		if (!T::isWritter)
 		{
 			if (unit == nullptr)
 			{

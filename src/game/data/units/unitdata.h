@@ -341,7 +341,7 @@ public:
 		archive & NVP (damage);
 		archive & NVP (armor);
 
-		if (!archive.isWriter)
+		if (!T::isWritter)
 			crcCache = std::nullopt;
 	}
 private:
@@ -426,7 +426,7 @@ public:
 	template <typename T>
 	void serialize (T& archive)
 	{
-		if (!archive.isWriter)
+		if (!T::isWritter)
 		{
 			staticUnitData.clear();
 			dynamicUnitData.clear();

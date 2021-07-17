@@ -495,7 +495,7 @@ namespace serialization
 			template <typename T, typename A>
 			static void serialize (A& archive, T& enumValue)
 			{
-				if (archive.isWriter)
+				if (T::isWritter)
 				{
 					int tmp = static_cast<int> (enumValue);
 					archive & tmp;
@@ -512,7 +512,7 @@ namespace serialization
 			template <typename T, typename A>
 			static void serialize (A& archive, const sNameValuePair<T>& nvp)
 			{
-				if (archive.isWriter)
+				if (T::isWritter)
 				{
 					int tmp = static_cast<int> (nvp.value);
 					archive & makeNvp (nvp.name, tmp);

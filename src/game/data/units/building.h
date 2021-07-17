@@ -183,7 +183,7 @@ public:
 		archive & NVP (researchArea);
 		archive & NVP (buildList);
 
-		if (!archive.isWriter)
+		if (!T::isWritter)
 		{
 			if (isRubble())
 			{

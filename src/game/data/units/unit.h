@@ -209,7 +209,7 @@ public:
 		archive & NVP (storageResCur);
 		archive & NVP (jobActive);
 
-		if (!archive.isWriter && data.getId() != sID (0, 0))
+		if (!T::isWritter && data.getId() != sID (0, 0))
 		{
 			//restore pointer to static unit data
 			archive.getPointerLoader()->get (data.getId(), staticData);

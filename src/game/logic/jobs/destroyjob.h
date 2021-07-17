@@ -54,7 +54,7 @@ private:
 		archive & NVP (unit);
 		archive & NVP (counter);
 
-		if (!archive.isWriter)
+		if (!T::isWritter)
 		{
 			if (unit != nullptr)
 			{

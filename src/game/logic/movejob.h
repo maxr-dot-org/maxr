@@ -107,7 +107,7 @@ public:
 		archive & NVP (endMoveAction);
 		archive & NVP (stopOnDetectResource);
 
-		if (!archive.isWriter)
+		if (!T::isWritter)
 		{
 			if (vehicle != nullptr)
 			{
