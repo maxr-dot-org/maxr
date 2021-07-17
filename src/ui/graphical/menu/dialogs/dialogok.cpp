@@ -22,6 +22,7 @@
 #include "resources/pcx.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
+#include "ui/uidefines.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------

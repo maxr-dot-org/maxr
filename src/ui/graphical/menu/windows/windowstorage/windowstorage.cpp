@@ -37,6 +37,7 @@
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/resourcebar.h"
 #include "ui/translations.h"
+#include "ui/uidefines.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------

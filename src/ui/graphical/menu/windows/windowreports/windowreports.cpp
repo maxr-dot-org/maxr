@@ -41,6 +41,7 @@
 #include "ui/graphical/menu/widgets/special/reportmessagelistviewitem.h"
 #include "ui/graphical/menu/widgets/special/reportunitlistviewitem.h"
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
+#include "ui/uidefines.h"
 #include "utility/language.h"
 
 #include <sstream>

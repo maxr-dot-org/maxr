@@ -19,7 +19,6 @@
 
 #include "ui/graphical/game/widgets/minimapwidget.h"
 
-#include "defines.h"
 #include "game/data/map/map.h"
 #include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"
@@ -30,6 +29,7 @@
 #include "output/video/video.h"
 #include "SDLutility/tosdl.h"
 #include "ui/graphical/application.h"
+#include "ui/uidefines.h"
 
 //------------------------------------------------------------------------------
 cMiniMapWidget::cMiniMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap) :

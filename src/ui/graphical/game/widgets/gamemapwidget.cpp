@@ -68,6 +68,7 @@
 #include "ui/keys.h"
 #include "ui/sound/game/fxsound.h"
 #include "ui/sound/soundmanager.h"
+#include "ui/uidefines.h"
 #include "utility/indexiterator.h"
 #include "utility/listhelpers.h"
 #include "utility/mathtools.h"

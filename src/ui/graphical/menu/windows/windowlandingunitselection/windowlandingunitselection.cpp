@@ -30,6 +30,7 @@
 #include "ui/graphical/menu/widgets/special/resourcebar.h"
 #include "ui/graphical/menu/widgets/special/unitlistviewitembuy.h"
 #include "ui/graphical/menu/widgets/special/unitlistviewitemcargo.h"
+#include "ui/uidefines.h"
 #include "utility/language.h"
 
 #include <algorithm>

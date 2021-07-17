@@ -30,6 +30,7 @@
 #include "ui/graphical/menu/widgets/special/editablecheckbox.h"
 #include "ui/graphical/menu/widgets/special/radiogroupvalue.h"
 #include "ui/graphical/menu/widgets/tools/validatorint.h"
+#include "ui/uidefines.h"
 #include "utility/language.h"
 
 namespace

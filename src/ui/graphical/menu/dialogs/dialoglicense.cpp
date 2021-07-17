@@ -17,14 +17,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <fstream>
-
 #include "ui/graphical/menu/dialogs/dialoglicense.h"
 
 #include "resources/pcx.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
+#include "ui/uidefines.h"
 #include "utility/language.h"
+
+#include <fstream>
 
 namespace
 {

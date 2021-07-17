@@ -30,6 +30,7 @@
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/unitdetails.h"
 #include "ui/translations.h"
+#include "ui/uidefines.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------

@@ -20,19 +20,19 @@
 #include "video.h"
 
 #include <algorithm>
-#include <vector>
 #include <cassert>
 #include <ctime>
 #include <functional>
+#include <vector>
 
 #include <SDL.h>
 
-#include "defines.h"
 #include "input/keyboard/keyboard.h"
 #include "maxrversion.h"
 #include "output/video/unifonts.h"
 #include "resources/pcx.h"
 #include "resources/uidata.h"
+#include "ui/uidefines.h"
 #include "utility/files.h"
 #include "utility/mathtools.h"
 #include "utility/log.h"

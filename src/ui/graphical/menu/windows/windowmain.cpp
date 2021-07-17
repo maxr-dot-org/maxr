@@ -28,6 +28,7 @@
 #include "resources/vehicleuidata.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
+#include "ui/uidefines.h"
 #include "utility/language.h"
 #include "utility/random.h"
 

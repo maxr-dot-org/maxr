@@ -24,8 +24,6 @@
 #include <vector>
 #include <array>
 
-#include "defines.h"
-
 #include "output/sound/soundchunk.h"
 
 // Sounds ////////////////////////////////////////////////////////////////////

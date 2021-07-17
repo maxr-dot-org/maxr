@@ -41,6 +41,7 @@
 #include "ui/graphical/menu/widgets/tools/validatorint.h"
 #include "ui/graphical/playercolor.h"
 #include "ui/translations.h"
+#include "ui/uidefines.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------

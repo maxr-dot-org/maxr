@@ -53,6 +53,7 @@
 #include "resources/vehicleuidata.h"
 #include "SDLutility/autosurface.h"
 #include "ui/keys.h"
+#include "ui/uidefines.h"
 #include "utility/extendedtinyxml.h"
 #include "utility/files.h"
 #include "utility/language.h"

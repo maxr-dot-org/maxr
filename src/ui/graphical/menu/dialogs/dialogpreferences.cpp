@@ -33,6 +33,7 @@
 #include "ui/graphical/menu/widgets/slider.h"
 #include "ui/graphical/menu/widgets/special/textlistviewitem.h"
 #include "ui/graphical/menu/widgets/tools/validatorint.h"
+#include "ui/uidefines.h"
 #include "utility/language.h"
 #include "utility/string/iequals.h"
 

@@ -25,9 +25,9 @@
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/image.h"
+#include "ui/uidefines.h"
 #include "utility/language.h"
 #include "resources/pcx.h"
-#include "defines.h"
 #include "output/video/video.h"
 
 //------------------------------------------------------------------------------

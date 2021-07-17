@@ -24,6 +24,7 @@
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/resourcebar.h"
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
+#include "ui/uidefines.h"
 #include "utility/language.h"
 #include "resources/pcx.h"
 #include "game/data/player/player.h"

@@ -25,6 +25,7 @@
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "mapdownloader/mapdownload.h"
+#include "settings.h"
 #include "utility/crc.h"
 #include "utility/files.h"
 #include "utility/listhelpers.h"
