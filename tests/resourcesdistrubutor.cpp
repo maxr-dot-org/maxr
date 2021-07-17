@@ -48,7 +48,7 @@ namespace
 		sMine (int metal, int oil, int gold) : sMine{{metal, oil, gold}} {}
 		sMine (sMiningResource maxProd, int total = 16) : maxProd (maxProd)
 		{
-			staticData.canMineMaxRes = total;
+			staticData.buildingData.canMineMaxRes = total;
 		}
 
 		sMiningResource maxProd;
@@ -120,11 +120,11 @@ namespace
 	//--------------------------------------------------------------------------
 	void check (const cBuilding& mine)
 	{
-		REQUIRE CHECK (mine.getMaxProd().gold <= mine.getStaticUnitData().canMineMaxRes);
-		REQUIRE CHECK (mine.getMaxProd().metal <= mine.getStaticUnitData().canMineMaxRes);
-		REQUIRE CHECK (mine.getMaxProd().oil <= mine.getStaticUnitData().canMineMaxRes);
+		REQUIRE CHECK (mine.getMaxProd().gold <= mine.getStaticData().canMineMaxRes);
+		REQUIRE CHECK (mine.getMaxProd().metal <= mine.getStaticData().canMineMaxRes);
+		REQUIRE CHECK (mine.getMaxProd().oil <= mine.getStaticData().canMineMaxRes);
 
-		CHECK (mine.prod.total() <= mine.getStaticUnitData().canMineMaxRes);
+		CHECK (mine.prod.total() <= mine.getStaticData().canMineMaxRes);
 
 		CHECK (0 <= mine.prod.gold);
 		CHECK (0 <= mine.prod.metal);
