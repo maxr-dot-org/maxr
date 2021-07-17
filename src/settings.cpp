@@ -224,7 +224,7 @@ void cSettings::setPaths()
 	std::cout << "\n(II): Starting logging to: " << logPath;
 
 	// determine full path to application
-	// this needs /proc support that should be avaible
+	// this needs /proc support that should be available
 	// on most linux installations
 	if (FileExists ("/proc/self/exe"))
 	{

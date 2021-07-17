@@ -250,39 +250,39 @@ private:
 
 	// START-Node
 	/** enable intro on start */
-	bool showIntro;
+	bool showIntro = true;
 	/** start in fastmode */
-	bool fastMode;
+	bool fastMode = false;
 	/** prescale gfx */
-	bool preScale;
+	bool preScale = false;
 	/** translation file */
-	std::string language;
+	std::string language = "ENG";
 	/** language code for voice files */
 	std::string voiceLanguage;
 	/** cache size */
-	unsigned int cacheSize;
+	unsigned int cacheSize = 400;
 
 	// GAME-Node
 	/** enable debug */
-	bool debug;
-	/** enable autosafe */
-	bool autosave;
+	bool debug = true;
+	/** enable autosave */
+	bool autosave = true;
 	/** enable animations */
-	bool animations;
+	bool animations = true;
 	/** enable shadows */
-	bool shadows;
+	bool shadows = true;
 	/** enable alpha effects */
-	bool alphaEffects;
-	/** enable descriptions (e.g. in buildmenues) */
-	bool showDescription;
+	bool alphaEffects = true;
+	/** enable descriptions (e.g. in build menus) */
+	bool showDescription = true;
 	/** enable damage effects (smoke'n stuff) */
-	bool damageEffects;
+	bool damageEffects = true;
 	/** enable damage effects for vehicles (smoke'n stuff) */
-	bool damageEffectsVehicles;
+	bool damageEffectsVehicles = true;
 	/** enable tracks (units leave tracks on the floor) */
-	bool makeTracks;
+	bool makeTracks = true;
 	/** scrollspeed on map */
-	int scrollSpeed;
+	int scrollSpeed = 32;
 
 	/** sConfig is where the config is read from - set in setPaths() **/
 	std::string configPath;
@@ -299,7 +299,7 @@ private:
 
 	// NET
 	/** Last/default ip used for network game */
-	std::string ip; // string? why not int array? --beko
+	std::string ip = "127.0.0.1"; // string? why not int array? --beko
 	/** Last/default port  used for network game */
 	unsigned short port;
 	/** Last/default player's name used for network game */
@@ -309,25 +309,25 @@ private:
 
 	// SOUND
 	/** sound enabled */
-	bool soundEnabled;
+	bool soundEnabled = true;
 	/** volume music */
-	int musicVol;
+	int musicVol = 128;
 	/** volume sound effects */
-	int soundVol;
+	int soundVol = 128;
 	/** volume voices */
-	int voiceVol;
+	int voiceVol = 128;
 	/** chunk size */
-	int chunkSize;
+	int chunkSize = 2048;
 	/** frequency */
-	int frequency;
+	int frequency = 44100;
 	/** mute music */
-	bool musicMute;
+	bool musicMute = false;
 	/** mute sound effects */
-	bool soundMute;
+	bool soundMute = false;
 	/** mute voices */
-	bool voiceMute;
+	bool voiceMute = false;
 	/** in-game sound effects should respect position*/
-	bool sound3d;
+	bool sound3d = true;
 
 	// PATHS
 	std::string fontPath;      // Path to the fonts
