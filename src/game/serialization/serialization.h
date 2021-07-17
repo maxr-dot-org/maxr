@@ -65,22 +65,10 @@ struct sID;
 	std::is_same<Archive, cXmlArchiveIn>::value     || \
 	std::is_same<Archive, cTextArchiveIn>::value>
 
-template <typename T, typename = std::enable_if_t <std::is_enum<T>::value>>
-std::string enumToString (T value)
-{
-	std::stringstream ss;
-	ss.imbue (std::locale ("C"));
-	ss << static_cast<int> (value);
-
-	return ss.str();
-}
-
 namespace serialization
 {
 	namespace detail
 	{
-		struct sSerializeEnum;
-		struct sSerializeMember;
 		template <typename Archive, typename T>
 		void splitFree (Archive& archive, T& value);
 	}
@@ -89,23 +77,15 @@ namespace serialization
 	// default serialize implementations
 	//
 	template <typename Archive, typename T>
-	void serialize (Archive& archive, T& value)
+	auto serialize (Archive& archive, T& object) -> decltype (object.serialize (archive))
 	{
-		using serializeWrapper = std::conditional_t<std::is_enum<T>::value, detail::sSerializeEnum, detail::sSerializeMember>;
-		serializeWrapper::serialize (archive, value);
-	}
-
-	template <typename Archive, typename T>
-	void serialize (Archive& archive, const sNameValuePair<T>& value)
-	{
-		using serializeWrapper = std::conditional_t<std::is_enum<T>::value, detail::sSerializeEnum, detail::sSerializeMember>;
-		serializeWrapper::serialize (archive, value);
+		object.serialize (archive);
 	}
 
 	//
 	// free serialization functions (for e. g. STL types, pointers)
 	//
-	//-------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 	template <typename Archive, typename T, size_t SIZE>
 	void serialize (Archive& archive, std::array<T, SIZE>& value)
 	{
@@ -476,58 +456,14 @@ namespace serialization
 			operation::apply (archive, value);
 		}
 
-		struct sSerializeMember
-		{
-			template <typename T, typename Archive>
-			static void serialize (Archive& archive, T& object)
-			{
-				object.serialize (archive);
-			}
-			template <typename T, typename Archive>
-			static void serialize (Archive& archive, const sNameValuePair<T>& nvp)
-			{
-				serialization::serialize (archive, nvp.value);
-			}
-		};
-
-		struct sSerializeEnum
-		{
-			template <typename T, typename Archive>
-			static void serialize (Archive& archive, T& enumValue)
-			{
-				if (Archive::isWriter)
-				{
-					int tmp = static_cast<int> (enumValue);
-					archive & tmp;
-					//TODO: operator<< does not work
-				}
-				else
-				{
-					int tmp;
-					archive & tmp;
-					//TODO: operator>> does not work
-					enumValue = static_cast<T> (tmp);
-				}
-			}
-			template <typename T, typename Archive>
-			static void serialize (Archive& archive, const sNameValuePair<T>& nvp)
-			{
-				if (Archive::isWriter)
-				{
-					int tmp = static_cast<int> (nvp.value);
-					archive & makeNvp (nvp.name, tmp);
-					//TODO: operator<< does not work
-				}
-				else
-				{
-					int tmp;
-					archive & makeNvp (nvp.name, tmp);
-					nvp.value = static_cast<T> (tmp);
-					//TODO: operator>> does not work
-				}
-			}
-		};
 	} //namespace detail
+
+	//--------------------------------------------------------------------------
+	template <typename Archive, typename T>
+	void serialize (Archive& archive, const sNameValuePair<T>& nvp)
+	{
+		serialization::serialize (archive, nvp.value);
+	}
 
 	#define SERIALIZATION_SPLIT_MEMBER()                     \
 	template <typename Archive>                              \

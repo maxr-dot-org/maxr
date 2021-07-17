@@ -25,6 +25,19 @@
 
 #include "serialization.h"
 
+//------------------------------------------------------------------------------
+// Fallback if enum doesn't provide its own function
+template <typename T, typename = std::enable_if_t <std::is_enum<T>::value>>
+std::string enumToString (T value)
+{
+	std::stringstream ss;
+	ss.imbue (std::locale ("C"));
+	ss << static_cast<int> (value);
+
+	return ss.str();
+}
+
+//------------------------------------------------------------------------------
 class cTextArchiveIn
 {
 public:
@@ -32,10 +45,20 @@ public:
 
 	static const bool isWriter = true;
 
+	//--------------------------------------------------------------------------
 	template <typename T>
-	cTextArchiveIn& operator<<(const T& value);
+	cTextArchiveIn& operator<< (const T& value)
+	{
+		pushValue (value);
+		return *this;
+	}
+	//--------------------------------------------------------------------------
 	template <typename T>
-	cTextArchiveIn& operator&(const T& value);
+	cTextArchiveIn& operator& (const T& value)
+	{
+		pushValue (value);
+		return *this;
+	}
 
 	const std::string data() const;
 private:
@@ -46,11 +69,23 @@ private:
 	void closeBracket();
 	void addComma();
 
-	template <typename T, typename = std::enable_if_t <!std::is_enum<T>::value>>
-	void pushValue (const T& value);
-	template <typename T>
-	void pushValue (const serialization::sNameValuePair<T>& nvp);
+	//--------------------------------------------------------------------------
+	template <typename T, std::enable_if_t <!std::is_enum<T>::value, int> = 0>
+	void pushValue (const T& value)
+	{
+		openBracket();
 
+		T& valueNonConst = const_cast<T&> (value);
+		serialization::serialize (*this, valueNonConst);
+
+		closeBracket();
+	}
+	//--------------------------------------------------------------------------
+	template <typename T>
+	void pushValue (const serialization::sNameValuePair<T>& nvp)
+	{
+		pushValue (nvp.value);
+	}
 
 	//
 	// push fundamental types
@@ -74,48 +109,15 @@ private:
 	// push types that need a special handling in text archives
 	//
 	void pushValue (const std::string& value);
-	template <typename T, typename = std::enable_if_t <std::is_enum<T>::value>>
-	void pushValue (T value);
+
+	//------------------------------------------------------------------------------
+	template <typename T, std::enable_if_t <std::is_enum<T>::value, int> = 0>
+	void pushValue (T value)
+	{
+		addComma();
+		buffer << enumToString (value);
+		nextCommaNeeded = true;
+	}
 };
-//------------------------------------------------------------------------------
-template <typename T>
-cTextArchiveIn& cTextArchiveIn::operator<< (const T& value)
-{
-	pushValue (value);
-	return *this;
-}
-//------------------------------------------------------------------------------
-template <typename T>
-cTextArchiveIn& cTextArchiveIn::operator& (const T& value)
-{
-	pushValue (value);
-	return *this;
-}
-//------------------------------------------------------------------------------
-template <typename T, typename>
-void cTextArchiveIn::pushValue (const T& value)
-{
-	openBracket();
-
-	T& valueNonConst = const_cast<T&> (value);
-	serialization::serialize (*this, valueNonConst);
-
-	closeBracket();
-}
-//------------------------------------------------------------------------------
-template <typename T>
-void cTextArchiveIn::pushValue (const serialization::sNameValuePair<T>& nvp)
-{
-	pushValue (nvp.value);
-}
-
-//------------------------------------------------------------------------------
-template <typename T, typename /*= std::enable_if_t <std::is_enum<T>::value>*/>
-void cTextArchiveIn::pushValue (T value)
-{
-	addComma();
-	buffer << enumToString (value);
-	nextCommaNeeded = true;
-}
 
 #endif //serialization_binaryarchiveH

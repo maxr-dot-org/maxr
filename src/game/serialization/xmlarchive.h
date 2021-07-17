@@ -35,10 +35,20 @@ public:
 
 	static const bool isWriter = true;
 
+	//--------------------------------------------------------------------------
 	template <typename T>
-	cXmlArchiveIn& operator<< (const serialization::sNameValuePair<T>& nvp);
+	cXmlArchiveIn& operator<< (const serialization::sNameValuePair<T>& nvp)
+	{
+		pushValue (nvp);
+		return *this;
+	}
+	//--------------------------------------------------------------------------
 	template <typename T>
-	cXmlArchiveIn& operator& (const serialization::sNameValuePair<T>& nvp);
+	cXmlArchiveIn& operator& (const serialization::sNameValuePair<T>& nvp)
+	{
+		pushValue (nvp);
+		return *this;
+	}
 
 	void openNewChild (const std::string& name);
 	void closeChild();
@@ -53,8 +63,30 @@ private:
 	void addToCurrentElement (const std::string& name, const std::string& value);
 	void convertAttributeToChild (const std::string& name);
 
-	template <typename T>
-	void pushValue (const serialization::sNameValuePair<T>& nvp);
+	//--------------------------------------------------------------------------
+	template <typename T, std::enable_if_t<!std::is_enum<T>::value, int> = 0>
+	void pushValue (const serialization::sNameValuePair<T>& nvp)
+	{
+		//check invalid characters in element and attribute names
+		assert (nvp.name.find_first_of ("<>\"= []?!&") == std::string::npos);
+
+		if (std::is_class<T>::value)
+			openNewChild (nvp.name);
+
+		serialize (*this, nvp);
+
+		if (std::is_class<T>::value)
+			closeChild();
+	}
+
+	//--------------------------------------------------------------------------
+	template <typename E, std::enable_if_t<std::is_enum<E>::value, int> = 0>
+	void pushValue (const serialization::sNameValuePair<E>& nvp)
+	{
+		static_assert(sizeof (E) <= sizeof (int), "!");
+		int tmp = static_cast<int> (nvp.value);
+		pushValue (serialization::sNameValuePair<int>{nvp.name, tmp});
+	}
 
 	//
 	// push fundamental types
@@ -87,10 +119,21 @@ public:
 
 	static const bool isWriter = false;
 
+	//--------------------------------------------------------------------------
 	template <typename T>
-	cXmlArchiveOut& operator>> (const serialization::sNameValuePair<T>& nvp);
+	cXmlArchiveOut& operator>> (const serialization::sNameValuePair<T>& nvp)
+	{
+		popValue (nvp);
+		return *this;
+	}
+
+	//--------------------------------------------------------------------------
 	template <typename T>
-	cXmlArchiveOut& operator& (const serialization::sNameValuePair<T>& nvp);
+	cXmlArchiveOut& operator& (const serialization::sNameValuePair<T>& nvp)
+	{
+		popValue (nvp);
+		return *this;
+	}
 
 	serialization::cPointerLoader* getPointerLoader() const;
 
@@ -110,8 +153,28 @@ private:
 	void getFromCurrentElement (const serialization::sNameValuePair<T>& nvp);
 	std::string getStringFromCurrentElement (const std::string& name);
 
-	template <typename T>
-	void popValue (const serialization::sNameValuePair<T>& nvp);
+	//------------------------------------------------------------------------------
+	template <typename T, std::enable_if_t<!std::is_enum<T>::value, int> = 0>
+	void popValue (const serialization::sNameValuePair<T>& nvp)
+	{
+		if (std::is_class<T>::value)
+			enterChild (nvp.name);
+
+		serialize (*this, nvp);
+
+		if (std::is_class<T>::value)
+			leaveChild();
+	}
+
+	//------------------------------------------------------------------------------
+	template <typename E, std::enable_if_t<std::is_enum<E>::value, int> = 0>
+	void popValue (const serialization::sNameValuePair<E>& nvp)
+	{
+		static_assert(sizeof (E) <= sizeof (int), "!");
+		int tmp = 0;
+		popValue (serialization::makeNvp (nvp.name, tmp));
+		nvp.value = static_cast<E>(tmp);
+	}
 
 	//
 	// pop fundamental types
@@ -138,49 +201,6 @@ private:
 };
 //------------------------------------------------------------------------------
 template <typename T>
-cXmlArchiveIn& cXmlArchiveIn::operator<< (const serialization::sNameValuePair<T>& nvp)
-{
-	pushValue (nvp);
-	return *this;
-}
-//------------------------------------------------------------------------------
-template <typename T>
-cXmlArchiveIn& cXmlArchiveIn::operator& (const serialization::sNameValuePair<T>& nvp)
-{
-	pushValue (nvp);
-	return *this;
-}
-//------------------------------------------------------------------------------
-template <typename T>
-void cXmlArchiveIn::pushValue (const serialization::sNameValuePair<T>& nvp)
-{
-	//check invalid characters in element and attribute names
-	assert (nvp.name.find_first_of ("<>\"= []?!&") == std::string::npos);
-
-	if (std::is_class<T>::value)
-		openNewChild (nvp.name);
-
-	serialize (*this, nvp);
-
-	if (std::is_class<T>::value)
-		closeChild();
-}
-//------------------------------------------------------------------------------
-template <typename T>
-cXmlArchiveOut& cXmlArchiveOut::operator>> (const serialization::sNameValuePair<T>& nvp)
-{
-	popValue (nvp);
-	return *this;
-}
-//------------------------------------------------------------------------------
-template <typename T>
-cXmlArchiveOut& cXmlArchiveOut::operator& (const serialization::sNameValuePair<T>& nvp)
-{
-	popValue (nvp);
-	return *this;
-}
-//------------------------------------------------------------------------------
-template <typename T>
 void cXmlArchiveOut::getFromCurrentElement (const serialization::sNameValuePair<T>& nvp)
 {
 	std::string value = getStringFromCurrentElement (nvp.name);
@@ -192,18 +212,6 @@ void cXmlArchiveOut::getFromCurrentElement (const serialization::sNameValuePair<
 	if (ss.fail() || !ss.eof()) //test eof, because all characters in the string should belong to the converted value
 		throw std::runtime_error ("Could not convert value of node " + printXMLPath (currentElement) + "~" + nvp.name + " to " + typeid (T).name());
 
-}
-//------------------------------------------------------------------------------
-template <typename T>
-void cXmlArchiveOut::popValue (const serialization::sNameValuePair<T>& nvp)
-{
-	if (std::is_class<T>::value)
-		enterChild (nvp.name);
-
-	serialize (*this, nvp);
-
-	if (std::is_class<T>::value)
-		leaveChild();
 }
 
 #endif

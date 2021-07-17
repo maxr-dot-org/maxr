@@ -35,9 +35,18 @@ public:
 	static const bool isWriter = true;
 
 	template <typename T>
-	cBinaryArchiveIn& operator<< (const T& value);
+	cBinaryArchiveIn& operator<< (const T& value)
+	{
+		pushValue (value);
+		return *this;
+	}
+
 	template <typename T>
-	cBinaryArchiveIn& operator& (const T& value);
+	cBinaryArchiveIn& operator& (const T& value)
+	{
+		pushValue (value);
+		return *this;
+	}
 
 	serialization::cPointerLoader* getPointerLoader() const { return nullptr; }
 private:
@@ -46,10 +55,13 @@ private:
 	template <typename T>
 	void writeToBuffer (const T& value);
 
-	template <typename T>
-	void pushValue (const T& value);
-	template <typename T>
-	void pushValue (const serialization::sNameValuePair<T>& nvp);
+	//--------------------------------------------------------------------------
+	template <typename T, std::enable_if_t<!std::is_enum<T>::value, int> = 0>
+	void pushValue (const T& value)
+	{
+		T& valueNonConst = const_cast<T&> (value);
+		serialization::serialize (*this, valueNonConst);
+	}
 
 	//
 	// push fundamental types
@@ -69,6 +81,21 @@ private:
 	void pushValue (float value);
 	void pushValue (double value);
 
+	//--------------------------------------------------------------------------
+	template <typename E, std::enable_if_t<std::is_enum<E>::value, int> = 0>
+	void pushValue (E value)
+	{
+		static_assert(sizeof (E) <= sizeof (int), "!");
+		int i = static_cast<int> (value);
+		pushValue (i);
+	}
+	//--------------------------------------------------------------------------
+	template <typename T>
+	void pushValue (const serialization::sNameValuePair<T>& nvp)
+	{
+		pushValue (nvp.value);
+	}
+
 	template <typename T2, typename T1>
 	void pushGenericIEEE754As (T1 value);
 };
@@ -84,14 +111,35 @@ public:
 
 	cBinaryArchiveOut (const unsigned char* data, size_t length, serialization::cPointerLoader* pointerLoader = nullptr);
 
+	//--------------------------------------------------------------------------
 	template <typename T>
-	cBinaryArchiveOut& operator>> (T& value);
+	cBinaryArchiveOut& operator>> (T& value)
+	{
+		popValue (value);
+		return *this;
+	}
+	//--------------------------------------------------------------------------
 	template <typename T>
-	cBinaryArchiveOut& operator>> (const serialization::sNameValuePair<T>& nvp);
+	cBinaryArchiveOut& operator>> (const serialization::sNameValuePair<T>& nvp)
+	{
+		popValue (nvp.value);
+		return *this;
+	}
+
+	//--------------------------------------------------------------------------
 	template <typename T>
-	cBinaryArchiveOut& operator& (T& value);
+	cBinaryArchiveOut& operator& (T& value)
+	{
+		popValue (value);
+		return *this;
+	}
+	//--------------------------------------------------------------------------
 	template <typename T>
-	cBinaryArchiveOut& operator& (const serialization::sNameValuePair<T>& nvp);
+	cBinaryArchiveOut& operator& (const serialization::sNameValuePair<T>& nvp)
+	{
+		popValue (nvp.value);
+		return *this;
+	}
 
 	size_t dataLeft() const;
 	serialization::cPointerLoader* getPointerLoader() const;
@@ -106,8 +154,22 @@ private:
 	template <size_t SIZE, typename T1>
 	void readFromBuffer (T1& value);
 
-	template <typename T>
-	void popValue (T& value);
+	//--------------------------------------------------------------------------
+	template <typename T, std::enable_if_t<!std::is_enum<T>::value, int> = 0>
+	void popValue (T& value)
+	{
+		serialization::serialize (*this, value);
+	}
+
+	//--------------------------------------------------------------------------
+	template <typename E, std::enable_if_t<std::is_enum<E>::value, int> = 0>
+	void popValue (E& value)
+	{
+		static_assert(sizeof (E) <= sizeof (int), "!");
+		int i = 0;
+		popValue (i);
+		value = static_cast<E>(value);
+	}
 
 	//
 	// pop fundamental types
@@ -131,21 +193,6 @@ private:
 	void popGenericIEEE754As (T1& value);
 };
 
-//------------------------------------------------------------------------------
-template <typename T>
-cBinaryArchiveIn& cBinaryArchiveIn::operator<< (const T& value)
-{
-	pushValue (value);
-	return *this;
-}
-
-//------------------------------------------------------------------------------
-template <typename T>
-cBinaryArchiveIn& cBinaryArchiveIn::operator& (const T& value)
-{
-	pushValue (value);
-	return *this;
-}
 
 //------------------------------------------------------------------------------
 template <typename T>
@@ -186,19 +233,6 @@ void cBinaryArchiveIn::writeToBuffer (const T& value)
 	}
 }
 
-//------------------------------------------------------------------------------
-template <typename T>
-void cBinaryArchiveIn::pushValue (const T& value)
-{
-	T& valueNonConst = const_cast<T&> (value);
-	serialization::serialize (*this, valueNonConst);
-}
-//------------------------------------------------------------------------------
-template <typename T>
-void cBinaryArchiveIn::pushValue (const serialization::sNameValuePair<T>& nvp)
-{
-	pushValue (nvp.value);
-}
 
 //------------------------------------------------------------------------------
 template <typename T2, typename T1>
@@ -256,34 +290,6 @@ void cBinaryArchiveIn::pushGenericIEEE754As (T1 value)
 
 
 //------------------------------------------------------------------------------
-template <typename T>
-cBinaryArchiveOut& cBinaryArchiveOut::operator>> (T& value)
-{
-	popValue (value);
-	return *this;
-}
-//------------------------------------------------------------------------------
-template <typename T>
-cBinaryArchiveOut& cBinaryArchiveOut::operator>> (const serialization::sNameValuePair<T>& nvp)
-{
-	popValue (nvp.value);
-	return *this;
-}
-//------------------------------------------------------------------------------
-template <typename T>
-cBinaryArchiveOut& cBinaryArchiveOut::operator& (T& value)
-{
-	popValue (value);
-	return *this;
-}
-//------------------------------------------------------------------------------
-template <typename T>
-cBinaryArchiveOut& cBinaryArchiveOut::operator& (const serialization::sNameValuePair<T>& nvp)
-{
-	popValue (nvp.value);
-	return *this;
-}
-//------------------------------------------------------------------------------
 template <size_t SIZE, typename T1>
 void cBinaryArchiveOut::readFromBuffer (T1& value)
 {
@@ -325,12 +331,6 @@ void cBinaryArchiveOut::readFromBuffer (T1& value)
 	}
 
 	readPosition += SIZE;
-}
-//------------------------------------------------------------------------------
-template <typename T>
-void cBinaryArchiveOut::popValue (T& value)
-{
-	serialization::serialize (*this, value);
 }
 
 //------------------------------------------------------------------------------
