@@ -30,7 +30,6 @@
 #include "game/logic/jobs/planetakeoffjob.h"
 #include "game/logic/jobs/startbuildjob.h"
 #include "utility/crc.h"
-#include "utility/files.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/mathtools.h"

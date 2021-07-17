@@ -26,7 +26,6 @@
 #include "game/logic/client.h"
 #include "game/logic/server.h"
 #include "game/protocol/netmessage.h"
-#include "utility/files.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 

@@ -28,7 +28,6 @@
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/saveslotwidget.h"
 #include "ui/uidefines.h"
-#include "utility/files.h"
 #include "utility/language.h"
 #include "utility/log.h"
 #include "utility/ranges.h"
