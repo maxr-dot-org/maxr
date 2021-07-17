@@ -27,7 +27,6 @@
 #include "input/mouse/mouse.h"
 #include "output/video/video.h"
 #include "SDLutility/tosdl.h"
-#include "settings.h"
 
 //------------------------------------------------------------------------------
 cLandingPositionSelectionMap::cLandingPositionSelectionMap (const cBox<cPosition>& area, std::shared_ptr<cStaticMap> map_, bool fixedBridgeHead, const std::vector<sLandingUnit>& landingUnits, std::shared_ptr<const cUnitsData> unitsData) :

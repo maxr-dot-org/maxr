@@ -30,7 +30,6 @@
 #include "game/logic/server.h"
 #include "game/startup/gamepreparation.h"
 #include "resources/uidata.h"
-#include "settings.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/game/gamegui.h"
 #include "ui/graphical/menu/control/local/singleplayer/localsingleplayergamenew.h"

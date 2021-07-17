@@ -22,7 +22,6 @@
 #include "output/video/video.h"
 #include "SDLutility/drawing.h"
 #include "SDLutility/tosdl.h"
-#include "settings.h"
 #include "ui/graphical/application.h"
 #include "utility/color.h"
 

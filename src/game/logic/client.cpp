@@ -45,7 +45,6 @@
 #include "game/protocol/netmessage.h"
 #include "game/serialization/textarchive.h"
 #include "game/startup/lobbypreparationdata.h"
-#include "settings.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/ranges.h"

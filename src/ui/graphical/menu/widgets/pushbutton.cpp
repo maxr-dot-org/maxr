@@ -27,7 +27,6 @@
 #include "resources/uidata.h"
 #include "SDLutility/drawing.h"
 #include "SDLutility/tosdl.h"
-#include "settings.h"
 #include "ui/graphical/application.h"
 
 //------------------------------------------------------------------------------

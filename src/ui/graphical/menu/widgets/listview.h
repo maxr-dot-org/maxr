@@ -20,17 +20,14 @@
 #ifndef ui_graphical_menu_widgets_listviewH
 #define ui_graphical_menu_widgets_listviewH
 
-#include "ui/graphical/menu/widgets/clickablewidget.h"
-#include "ui/graphical/menu/widgets/scrollbar.h"
-#include "settings.h"
-#include "output/video/video.h"
-#include "resources/sound.h"
 #include "input/mouse/mouse.h"
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
-
+#include "output/video/video.h"
+#include "resources/sound.h"
 #include "ui/graphical/application.h"
-
+#include "ui/graphical/menu/widgets/clickablewidget.h"
+#include "ui/graphical/menu/widgets/scrollbar.h"
 #include "utility/ranges.h"
 #include "utility/signal/signalconnectionmanager.h"
 

@@ -20,7 +20,6 @@
 #include "ui/graphical/menu/widgets/special/resourcebar.h"
 
 #include "resources/uidata.h"
-#include "settings.h"
 #include "output/video/video.h"
 #include "input/mouse/mouse.h"
 #include "output/sound/sounddevice.h"

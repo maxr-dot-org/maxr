@@ -24,7 +24,6 @@
 #include "resources/uidata.h"
 #include "SDLutility/drawing.h"
 #include "SDLutility/tosdl.h"
-#include "settings.h"
 #include "ui/graphical/menu/widgets/sliderhandle.h"
 #include "utility/mathtools.h"
 

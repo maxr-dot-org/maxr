@@ -23,7 +23,6 @@
 #include "input/mouse/mouse.h"
 #include "output/video/video.h"
 #include "SDLutility/tosdl.h"
-#include "settings.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/widgets/tools/validator.h"
 #include "ui/graphical/window.h"

@@ -22,7 +22,6 @@
 #include "output/video/video.h"
 #include "utility/files.h"
 #include "utility/log.h"
-#include "settings.h"
 
 #include <algorithm>
 
