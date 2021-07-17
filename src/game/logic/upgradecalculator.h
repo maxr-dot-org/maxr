@@ -308,8 +308,8 @@ public:
 	mutable cSignal<void (ResearchArea)> currentResearchPointsChanged;
 	mutable cSignal<void (ResearchArea)> neededResearchPointsChanged;
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		assert (kNrResearchAreas == 8);
 		for (int i = 0; i < kNrResearchAreas; i++)
@@ -363,8 +363,8 @@ struct sUnitUpgrade
 	int getPurchased() const { return purchased; }
 
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		archive & nextPrice;
 		archive & purchased;
@@ -400,8 +400,8 @@ public:
 	void updateUnitData (cDynamicUnitData& data) const;
 	int calcTotalCosts (const cDynamicUnitData& originalData, const cDynamicUnitData& currentData, const cResearch& reseachState) const;
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		for (auto& upgrade : upgrades)
 			archive & upgrade;

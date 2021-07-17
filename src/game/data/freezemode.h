@@ -52,8 +52,8 @@ public:
 	bool isFreezed() const;
 	bool gameTimePaused() const;
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		archive & waitForTurnEnd;
 		archive & pause;

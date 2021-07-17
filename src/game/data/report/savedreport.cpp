@@ -41,8 +41,8 @@
 #include "game/data/report/special/savedreportupgraded.h"
 #include "game/data/report/special/savedreportturnstart.h"
 
-template <typename T>
-std::unique_ptr<cSavedReport> cSavedReport::createFromImpl (T& archive)
+template <typename Archive>
+std::unique_ptr<cSavedReport> cSavedReport::createFromImpl (Archive& archive)
 {
 	eSavedReportType type;
 	archive >> NVP (type);

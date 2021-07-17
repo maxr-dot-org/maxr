@@ -63,8 +63,8 @@ public:
 	/** the slot number of the save game */
 	int number = 0;
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		archive & saveVersion;
 		archive & gameVersion;

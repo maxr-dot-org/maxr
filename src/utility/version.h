@@ -63,8 +63,8 @@ public:
 	bool operator> (const cVersion& other) const;
 	bool operator>= (const cVersion& other) const;
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		archive & major;
 		archive & minor;

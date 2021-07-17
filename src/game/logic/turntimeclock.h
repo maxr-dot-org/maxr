@@ -44,8 +44,8 @@ public:
 
 	uint32_t getChecksum (uint32_t crc) const;
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		archive & NVP (startGameTime);
 		archive & NVP (deadline);
@@ -89,8 +89,8 @@ public:
 
 	uint32_t getChecksum (uint32_t crc) const;
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		archive & NVP (deadlines);
 		archive & NVP (startTurnGameTime);

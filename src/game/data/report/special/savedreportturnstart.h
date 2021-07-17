@@ -29,8 +29,8 @@ class cSavedReportTurnStart : public cSavedReport
 public:
 	cSavedReportTurnStart (int turn, const std::vector<sTurnstartReport>&, const std::vector<cResearch::ResearchArea>&);
 
-	template <typename T, ENABLE_ARCHIVE_OUT>
-	explicit cSavedReportTurnStart (T& archive)
+	template <typename Archive, ENABLE_ARCHIVE_OUT>
+	explicit cSavedReportTurnStart (Archive& archive)
 	{
 		serializeThis (archive);
 	}
@@ -44,8 +44,8 @@ public:
 	bool isAlert() const override;
 
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & NVP (turn);
 		archive & NVP (unitReports);

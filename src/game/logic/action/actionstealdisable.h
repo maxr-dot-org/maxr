@@ -42,8 +42,8 @@ public:
 private:
 	void changeUnitOwner (cUnit& unit, cPlayer& newOwner, cModel& model) const;
 
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & infiltratorId;
 		archive & targetId;

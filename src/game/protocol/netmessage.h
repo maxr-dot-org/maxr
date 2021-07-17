@@ -84,8 +84,8 @@ public:
 protected:
 	cNetMessage (eNetMessageType type) : playerNr (-1), type (type) {}
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & type;
 		archive & playerNr;
@@ -133,8 +133,8 @@ public:
 	std::string packageRev;
 
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & packageVersion;
 		archive & packageRev;
@@ -163,8 +163,8 @@ public:
 	const cSocket* socket;
 
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & playerName;
 		archive & playerColor;
@@ -193,8 +193,8 @@ public:
 	std::string packageRev;
 
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & playerNr;
 		archive & packageVersion;
@@ -222,8 +222,8 @@ public:
 
 	eDeclineConnectionReason reason;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & reason;
 	}
@@ -257,8 +257,8 @@ public:
 	unsigned int ping;
 
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & gameTime;
 		archive & checksum;
@@ -289,8 +289,8 @@ public:
 	unsigned int eventCounter;
 
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & gameTime;
 		archive & crcOK;
@@ -317,8 +317,8 @@ public:
 
 	uint64_t seed;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & seed;
 	}
@@ -343,8 +343,8 @@ public:
 	cFreezeModes freezeModes;
 	std::map<int, ePlayerConnectionState> playerStates;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & freezeModes;
 		archive & playerStates;
@@ -371,13 +371,13 @@ public:
 	std::unique_ptr<cSavedReport> report;
 
 private:
-	template <typename T>
-	void loadThis (T& archive)
+	template <typename Archive>
+	void loadThis (Archive& archive)
 	{
 		report = cSavedReport::createFrom (archive);
 	}
-	template <typename T>
-	void saveThis (T& archive)
+	template <typename Archive>
+	void saveThis (Archive& archive)
 	{
 		archive << *report;
 	}
@@ -405,8 +405,8 @@ public:
 	std::vector<unsigned int> doneList;
 	int savingID;
 private:
-	template <typename T>
-	void loadThis (T& archive)
+	template <typename Archive>
+	void loadThis (Archive& archive)
 	{
 		if (reports == nullptr)
 			reports = std::make_shared<std::vector<std::unique_ptr<cSavedReport>>>();
@@ -423,8 +423,8 @@ private:
 		archive >> savedPositions;
 		archive >> doneList;
 	}
-	template <typename T>
-	void saveThis (T& archive)
+	template <typename Archive>
+	void saveThis (Archive& archive)
 	{
 		if (reports == nullptr)
 			reports = std::make_shared<std::vector<std::unique_ptr<cSavedReport>>>();
@@ -458,8 +458,8 @@ public:
 
 	int savingID;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & savingID;
 	}
@@ -479,8 +479,8 @@ public:
 
 	void apply (cModel& model) const;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & data;
 	}
@@ -508,8 +508,8 @@ public:
 	int saveNumberForGuiInfo; // number of save game file, from which gui info will be loaded. -1 disables loading gui data
 
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & playerToSync;
 		archive & saveNumberForGuiInfo;
@@ -534,8 +534,8 @@ public:
 	std::vector<cPlayerBasicData> playerList;
 
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & mapName;
 		archive & mapCrc;

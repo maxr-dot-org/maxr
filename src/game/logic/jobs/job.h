@@ -67,8 +67,8 @@ protected:
 	bool finished = false;
 	cUnit* unit = nullptr;
 private:
-	template <typename T>
-	static std::unique_ptr<cJob> createFromImpl (T& archive);
+	template <typename Archive>
+	static std::unique_ptr<cJob> createFromImpl (Archive&);
 };
 
 #endif // game_logic_jobsH

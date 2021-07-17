@@ -29,8 +29,8 @@ class cSavedReportPlayerWins : public cSavedReport
 public:
 	cSavedReportPlayerWins (const cPlayer&);
 
-	template <typename T, ENABLE_ARCHIVE_OUT>
-	explicit cSavedReportPlayerWins (T& archive)
+	template <typename Archive, ENABLE_ARCHIVE_OUT>
+	explicit cSavedReportPlayerWins (Archive& archive)
 	{
 		serializeThis (archive);
 	}
@@ -46,8 +46,8 @@ public:
 	const cPlayer& getPlayer() const { return *player; }
 
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & NVP (player);
 	}

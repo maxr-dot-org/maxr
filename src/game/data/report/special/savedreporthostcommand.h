@@ -26,8 +26,8 @@ class cSavedReportHostCommand : public cSavedReport
 {
 public:
 	cSavedReportHostCommand (std::string command);
-	template <typename T, ENABLE_ARCHIVE_OUT>
-	explicit cSavedReportHostCommand (T& archive)
+	template <typename Archive, ENABLE_ARCHIVE_OUT>
+	explicit cSavedReportHostCommand (Archive& archive)
 	{
 		serializeThis (archive);
 	}
@@ -43,8 +43,8 @@ public:
 	const std::string& getCommand() const { return command; }
 
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & NVP (command);
 	}

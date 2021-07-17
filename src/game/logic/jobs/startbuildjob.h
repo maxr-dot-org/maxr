@@ -31,8 +31,8 @@ class cStartBuildJob : public cJob
 {
 public:
 	cStartBuildJob (cVehicle& vehicle, const cPosition& org, bool big);
-	template <typename T>
-	cStartBuildJob (T& archive) { serializeThis (archive); }
+	template <typename Archive>
+	cStartBuildJob (Archive& archive) { serializeThis (archive); }
 
 	void run (cModel& model) override;
 	eJobType getType() const override;
@@ -42,14 +42,14 @@ public:
 
 	uint32_t getChecksum (uint32_t crc) const override;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & NVP (unit);
 		archive & NVP (org);
 		archive & NVP (big);
 
-		if (!T::isWritter)
+		if (!Archive::isWriter)
 		{
 			if (unit != nullptr)
 			{

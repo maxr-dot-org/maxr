@@ -51,8 +51,8 @@ class cPlayerBasicData;
 */
 struct sTurnstartReport
 {
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		archive & NVP (type);
 		archive & NVP (count);
@@ -213,8 +213,8 @@ public:
 	mutable cSignal<void (const cUnit&)> stealthUnitDissappeared;
 	mutable cSignal<void (const sID&, int unitsCount, int costs)> unitsUpgraded;
 
-	template <typename T>
-	void save (T& archive)
+	template <typename Archive>
+	void save (Archive& archive)
 	{
 		archive & NVP (name);
 		archive & NVP (id);
@@ -261,8 +261,8 @@ public:
 		archive & NVP (hasFinishedTurn);
 		archive & NVP (researchState);
 	}
-	template <typename T>
-	void load (T& archive)
+	template <typename Archive>
+	void load (Archive& archive)
 	{
 		archive & NVP (name);
 		archive & NVP (id);

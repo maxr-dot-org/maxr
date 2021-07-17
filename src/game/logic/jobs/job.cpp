@@ -51,8 +51,8 @@ std::unique_ptr<cJob> cJob::createFrom (cXmlArchiveOut& archive, const std::stri
 }
 
 //------------------------------------------------------------------------------
-template <typename T>
-std::unique_ptr<cJob> cJob::createFromImpl (T& archive)
+template <typename Archive>
+std::unique_ptr<cJob> cJob::createFromImpl (Archive& archive)
 {
 	eJobType type;
 	archive >> NVP (type);

@@ -27,8 +27,8 @@ class cSavedReportDetected : public cSavedReportUnit
 public:
 	explicit cSavedReportDetected (const cUnit&);
 
-	template <typename T, ENABLE_ARCHIVE_OUT>
-	cSavedReportDetected (T& archive) :
+	template <typename Archive, ENABLE_ARCHIVE_OUT>
+	cSavedReportDetected (Archive& archive) :
 		cSavedReportUnit (archive)
 	{
 	}

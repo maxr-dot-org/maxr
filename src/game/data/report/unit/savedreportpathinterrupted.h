@@ -26,8 +26,8 @@ class cSavedReportPathInterrupted : public cSavedReportUnit
 {
 public:
 	cSavedReportPathInterrupted (const cUnit& unit);
-	template <typename T, ENABLE_ARCHIVE_OUT>
-	explicit cSavedReportPathInterrupted (T& archive) :
+	template <typename Archive, ENABLE_ARCHIVE_OUT>
+	explicit cSavedReportPathInterrupted (Archive& archive) :
 		cSavedReportUnit (archive)
 	{}
 

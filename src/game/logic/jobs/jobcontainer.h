@@ -39,8 +39,8 @@ public:
 	void clear();
 	uint32_t getChecksum (uint32_t crc) const;
 
-	template <typename T>
-	void save (T& archive) const
+	template <typename Archive>
+	void save (Archive& archive) const
 	{
 		archive << serialization::makeNvp ("numJobs", (int)jobs.size());
 		for (const auto& job : jobs)
@@ -48,8 +48,8 @@ public:
 			archive << serialization::makeNvp ("job", *job);
 		}
 	}
-	template <typename T>
-	void load (T& archive)
+	template <typename Archive>
+	void load (Archive& archive)
 	{
 		int numJobs;
 		archive >> NVP (numJobs);

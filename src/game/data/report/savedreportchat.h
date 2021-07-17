@@ -29,8 +29,8 @@ class cSavedReportChat : public cSavedReport
 public:
 	cSavedReportChat (const cPlayer& player, std::string text);
 	cSavedReportChat (std::string playerName, std::string text);
-	template <typename T, ENABLE_ARCHIVE_OUT>
-	explicit cSavedReportChat (T& archive)
+	template <typename Archive, ENABLE_ARCHIVE_OUT>
+	explicit cSavedReportChat (Archive& archive)
 	{
 		serializeThis (archive);
 	}
@@ -48,8 +48,8 @@ public:
 	const std::string& getPlayerName() const;
 
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & NVP (playerName);
 		archive & NVP (playerNumber);

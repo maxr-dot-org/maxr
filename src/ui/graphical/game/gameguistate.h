@@ -38,8 +38,8 @@ public:
 	void setLockedUnits (const cUnitLockList& unitLockList);
 	const std::vector<unsigned int>& getLockedUnitIds() const;
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		archive & NVP (mapPosition);
 		archive & NVP (mapZoomFactor);

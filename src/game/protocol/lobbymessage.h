@@ -70,8 +70,8 @@ protected:
 	cMultiplayerLobbyMessage (eMessageType type) : type (type) {}
 
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & type;
 	}
@@ -116,8 +116,8 @@ public:
 
 	std::string message;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & message;
 	}
@@ -135,8 +135,8 @@ public:
 
 	int newPlayerNr;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & newPlayerNr;
 	}
@@ -158,8 +158,8 @@ public:
 	std::optional<cGameSettings> settings;
 
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & saveInfo;
 		archive & mapName;
@@ -181,8 +181,8 @@ public:
 	std::vector<cSaveGameInfo> saveGames;
 
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & saveGames;
 	}
@@ -202,8 +202,8 @@ public:
 
 	std::vector<cPlayerBasicData> playerList;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & playerList;
 	}
@@ -232,8 +232,8 @@ public:
 	bool hostNotInSavegame = false;
 	std::vector<cPlayerBasicData> missingPlayers;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & missingSettings;
 		archive & notReadyPlayers;
@@ -263,8 +263,8 @@ public:
 	std::shared_ptr<const cUnitsData> unitsData;
 	std::shared_ptr<const cClanData> clanData;
 private:
-	template <typename T>
-	void loadThis (T& archive)
+	template <typename Archive>
+	void loadThis (Archive& archive)
 	{
 		auto unitDataNonConst = std::make_shared<cUnitsData>();
 		archive >> *unitDataNonConst;
@@ -274,8 +274,8 @@ private:
 		archive >> *clanDataNonConst;
 		clanData = clanDataNonConst;
 	}
-	template <typename T>
-	void saveThis (T& archive)
+	template <typename Archive>
+	void saveThis (Archive& archive)
 	{
 		archive << *unitsData;
 		archive << *clanData;
@@ -294,8 +294,8 @@ public:
 
 	int landedPlayer;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & landedPlayer;
 	}
@@ -314,8 +314,8 @@ public:
 	int landingPlayer;
 	bool isIn;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & landingPlayer;
 		archive & isIn;
@@ -334,8 +334,8 @@ public:
 
 	eLandingPositionState state;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & state;
 	}
@@ -377,8 +377,8 @@ public:
 
 	cPosition position;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & position;
 	}
@@ -396,8 +396,8 @@ public:
 
 	std::string mapName;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & mapName;
 	}
@@ -416,8 +416,8 @@ public:
 	std::string mapName;
 	int mapSize;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & mapName;
 		archive & mapSize;
@@ -436,8 +436,8 @@ public:
 
 	std::vector<char> data;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & data;
 	}
@@ -465,8 +465,8 @@ public:
 	cRgbColor playerColor;
 	bool ready;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & playerColor;
 		archive & playerName;

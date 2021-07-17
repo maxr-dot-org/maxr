@@ -27,8 +27,8 @@ class cSavedReportUpgraded : public cSavedReport
 {
 public:
 	cSavedReportUpgraded (const sID& unitId, int unitsCount, int costs);
-	template <typename T, ENABLE_ARCHIVE_OUT>
-	explicit cSavedReportUpgraded (T& archive)
+	template <typename Archive, ENABLE_ARCHIVE_OUT>
+	explicit cSavedReportUpgraded (Archive& archive)
 	{
 		serializeThis (archive);
 	}
@@ -46,8 +46,8 @@ public:
 	int getCosts() const { return costs; }
 
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & NVP (unitId);
 		archive & NVP (unitsCount);

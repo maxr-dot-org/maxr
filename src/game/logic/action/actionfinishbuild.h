@@ -40,8 +40,8 @@ private:
 	int unitId;
 	cPosition escapePosition;
 
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & unitId;
 		archive & escapePosition;

@@ -36,8 +36,8 @@ class cAirTransportLoadJob : public cJob
 {
 public:
 	cAirTransportLoadJob (cVehicle& loadedVehicle, cUnit& loadingUnit);
-	template <typename T>
-	cAirTransportLoadJob (T& archive);
+	template <typename Archive>
+	cAirTransportLoadJob (Archive&);
 
 	void run (cModel& model) override;
 	eJobType getType() const override;
@@ -47,8 +47,8 @@ public:
 
 	uint32_t getChecksum (uint32_t crc) const override;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & NVP (unit);
 		archive & NVP (vehicleToLoad);
@@ -60,8 +60,8 @@ private:
 	bool landing;
 };
 
-template <typename T>
-cAirTransportLoadJob::cAirTransportLoadJob (T& archive)
+template <typename Archive>
+cAirTransportLoadJob::cAirTransportLoadJob (Archive& archive)
 {
 	serializeThis (archive);
 	if (!unit || !vehicleToLoad)

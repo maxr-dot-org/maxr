@@ -32,8 +32,8 @@ class cSavedReportUnit : public cSavedReport
 public:
 	explicit cSavedReportUnit (const cUnit&);
 
-	template <typename T, ENABLE_ARCHIVE_OUT>
-	explicit cSavedReportUnit (T& archive)
+	template <typename Archive, ENABLE_ARCHIVE_OUT>
+	explicit cSavedReportUnit (Archive& archive)
 	{
 		serializeThis (archive);
 	}
@@ -50,8 +50,8 @@ public:
 	std::optional<cPosition> getPosition() const override;
 
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & NVP (unit);
 		archive & NVP (position);

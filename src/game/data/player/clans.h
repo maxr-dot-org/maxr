@@ -52,8 +52,8 @@ public:
 	int getModificationValue (EClanModification) const;
 	bool hasModification (EClanModification) const;
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		archive & unitId;
 		archive & modifications;
@@ -86,8 +86,8 @@ public:
 	cClanUnitStat* addUnitStat (sID);
 	int getNrUnitStats() const { return static_cast<int> (stats.size()); }
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		archive & num;
 		archive & description;
@@ -112,8 +112,8 @@ public:
 	cClan& addClan();
 	const std::vector<cClan>& getClans() const { return clans; }
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		archive & clans;
 	}

@@ -89,8 +89,8 @@ struct sStaticBuildingData
 
 	uint32_t computeChecksum (uint32_t crc) const;
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		archive & NVP (canBeLandedOn);
 		archive & NVP (canMineMaxRes);
@@ -125,8 +125,8 @@ struct sStaticVehicleData
 
 	uint32_t computeChecksum (uint32_t crc) const;
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		archive & NVP (canBuildPath);
 		archive & NVP (canClearArea);
@@ -204,8 +204,8 @@ public:
 	sStaticVehicleData vehicleData;
 	sStaticBuildingData buildingData;
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		archive & NVP (ID);
 		archive & NVP (muzzleType);
@@ -322,8 +322,8 @@ public:
 	mutable cSignal<void()> damageChanged;
 	mutable cSignal<void()> armorChanged;
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		archive & NVP (id);
 		archive & NVP (buildCosts);
@@ -341,7 +341,7 @@ public:
 		archive & NVP (damage);
 		archive & NVP (armor);
 
-		if (!T::isWritter)
+		if (!Archive::isWriter)
 			crcCache = std::nullopt;
 	}
 private:
@@ -423,10 +423,10 @@ public:
 	void setSpecialIDConnector (sID id) { specialIDConnector = id; crcCache = std::nullopt; }
 	void setSpecialIDSmallBeton (sID id) { specialIDSmallBeton = id; crcCache = std::nullopt; }
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
-		if (!T::isWritter)
+		if (!Archive::isWriter)
 		{
 			staticUnitData.clear();
 			dynamicUnitData.clear();

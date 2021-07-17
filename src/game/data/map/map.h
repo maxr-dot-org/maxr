@@ -48,8 +48,8 @@ struct sResources
 {
 public:
 	sResources() : value (0), typ (eResourceType::None) {}
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		archive & NVP (value);
 		archive & NVP (typ);
@@ -168,14 +168,14 @@ public:
 
 	uint32_t getChecksum (uint32_t crc);
 
-	template <typename T>
-	void save (T& archive)
+	template <typename Archive>
+	void save (Archive& archive)
 	{
 		archive << NVP (filename);
 		archive << NVP (crc);
 	}
-	template <typename T>
-	void load (T& archive)
+	template <typename Archive>
+	void load (Archive& archive)
 	{
 		std::string fileToLoad;
 		archive >> serialization::makeNvp ("filename", fileToLoad);
@@ -268,15 +268,15 @@ public:
 
 	uint32_t getChecksum (uint32_t crc) const;
 
-	template <typename T>
-	void save (T& archive)
+	template <typename Archive>
+	void save (Archive& archive)
 	{
 		archive << serialization::makeNvp ("mapFile", *staticMap);
 		const std::string resources = resourcesToString();
 		archive << NVP (resources);
 	}
-	template <typename T>
-	void load (T& archive)
+	template <typename Archive>
+	void load (Archive& archive)
 	{
 		assert (staticMap != nullptr);
 		archive >> serialization::makeNvp ("mapFile", *staticMap);

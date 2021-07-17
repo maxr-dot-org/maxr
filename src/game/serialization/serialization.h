@@ -44,26 +44,26 @@ class cVehicle;
 struct sID;
 
 //used to constrain a template definition to use with out-archive types only
-#define ENABLE_ARCHIVE_OUT                       \
-	typename = std::enable_if_t<                 \
-	std::is_same<T, cBinaryArchiveOut>::value || \
-	std::is_same<T, cXmlArchiveOut>::value>
+#define ENABLE_ARCHIVE_OUT                             \
+	typename = std::enable_if_t<                       \
+	std::is_same<Archive, cBinaryArchiveOut>::value || \
+	std::is_same<Archive, cXmlArchiveOut>::value>
 
 //used to constrain a template definition to use with in-archive types only
-#define ENABLE_ARCHIVE_IN                        \
-	typename = std::enable_if_t<                 \
-	std::is_same<T, cBinaryArchiveIn>::value  || \
-	std::is_same<T, cXmlArchiveIn>::value     || \
-	std::is_same<T, cTextArchiveIn>::value>
+#define ENABLE_ARCHIVE_IN                              \
+	typename = std::enable_if_t<                       \
+	std::is_same<Archive, cBinaryArchiveIn>::value  || \
+	std::is_same<Archive, cXmlArchiveIn>::value     || \
+	std::is_same<Archive, cTextArchiveIn>::value>
 
 //used to constrain a template definition to use with archive types only
-#define ENABLE_ARCHIVES                          \
-	typename = std::enable_if_t<                 \
-	std::is_same<T, cBinaryArchiveOut>::value || \
-	std::is_same<T, cXmlArchiveOut>::value    || \
-	std::is_same<T, cBinaryArchiveIn>::value  || \
-	std::is_same<T, cXmlArchiveIn>::value     || \
-	std::is_same<T, cTextArchiveIn>::value>
+#define ENABLE_ARCHIVES                                \
+	typename = std::enable_if_t<                       \
+	std::is_same<Archive, cBinaryArchiveOut>::value || \
+	std::is_same<Archive, cXmlArchiveOut>::value    || \
+	std::is_same<Archive, cBinaryArchiveIn>::value  || \
+	std::is_same<Archive, cXmlArchiveIn>::value     || \
+	std::is_same<Archive, cTextArchiveIn>::value>
 
 template <typename T, typename = std::enable_if_t <std::is_enum<T>::value>>
 std::string enumToString (T value)
@@ -88,15 +88,15 @@ namespace serialization
 	//
 	// default serialize implementations
 	//
-	template <typename A, typename T>
-	void serialize (A& archive, T& value)
+	template <typename Archive, typename T>
+	void serialize (Archive& archive, T& value)
 	{
 		using serializeWrapper = std::conditional_t<std::is_enum<T>::value, detail::sSerializeEnum, detail::sSerializeMember>;
 		serializeWrapper::serialize (archive, value);
 	}
 
-	template <typename A, typename T>
-	void serialize (A& archive, const sNameValuePair<T>& value)
+	template <typename Archive, typename T>
+	void serialize (Archive& archive, const sNameValuePair<T>& value)
 	{
 		using serializeWrapper = std::conditional_t<std::is_enum<T>::value, detail::sSerializeEnum, detail::sSerializeMember>;
 		serializeWrapper::serialize (archive, value);
@@ -106,8 +106,8 @@ namespace serialization
 	// free serialization functions (for e. g. STL types, pointers)
 	//
 	//-------------------------------------------------------------------------
-	template <typename A, typename T, size_t SIZE>
-	void serialize (A& archive, std::array<T, SIZE>& value)
+	template <typename Archive, typename T, size_t SIZE>
+	void serialize (Archive& archive, std::array<T, SIZE>& value)
 	{
 		for (size_t i = 0; i < SIZE; i++)
 		{
@@ -115,15 +115,15 @@ namespace serialization
 		}
 	}
 	//-------------------------------------------------------------------------
-	template <typename A, typename T1, typename T2>
-	void serialize (A& archive, std::pair<T1, T2>& value)
+	template <typename Archive, typename T1, typename T2>
+	void serialize (Archive& archive, std::pair<T1, T2>& value)
 	{
 		archive & makeNvp ("first", value.first);
 		archive & makeNvp ("second", value.second);
 	}
 	//-------------------------------------------------------------------------
-	template <typename A>
-	void serialize (A& archive, cRgbColor& color)
+	template <typename Archive>
+	void serialize (Archive& archive, cRgbColor& color)
 	{
 		archive & makeNvp ("r", color.r);
 		archive & makeNvp ("g", color.g);
@@ -131,23 +131,23 @@ namespace serialization
 		archive & makeNvp ("a", color.a);
 	}
 
-	template <typename A>
-	void serialize (A& archive, cPosition& position)
+	template <typename Archive>
+	void serialize (Archive& archive, cPosition& position)
 	{
 		archive & serialization::makeNvp ("X", position[0]);
 		archive & serialization::makeNvp ("Y", position[1]);
 	}
 
-	template <typename A>
-	void serialize (A& archive, cVector2& vec)
+	template <typename Archive>
+	void serialize (Archive& archive, cVector2& vec)
 	{
 		archive & serialization::makeNvp ("X", vec[0]);
 		archive & serialization::makeNvp ("Y", vec[1]);
 	}
 
 	//-------------------------------------------------------------------------
-	template <typename A, typename T>
-	void save (A& archive, const std::vector<T>& value)
+	template <typename Archive, typename T>
+	void save (Archive& archive, const std::vector<T>& value)
 	{
 		uint32_t length = static_cast<uint32_t> (value.size());
 		archive << NVP (length);
@@ -156,8 +156,8 @@ namespace serialization
 			archive << NVP (item);
 		}
 	}
-	template <typename A, typename T>
-	void load (A& archive, std::vector<T>& value)
+	template <typename Archive, typename T>
+	void load (Archive& archive, std::vector<T>& value)
 	{
 		uint32_t length;
 		archive >> NVP (length);
@@ -169,14 +169,14 @@ namespace serialization
 			value[i] = c;
 		}
 	}
-	template <typename A, typename T>
-	void serialize (A& archive, std::vector<T>& value)
+	template <typename Archive, typename T>
+	void serialize (Archive& archive, std::vector<T>& value)
 	{
 		serialization::detail::splitFree (archive, value);
 	}
 	//-------------------------------------------------------------------------
-	template <typename A>
-	void save (A& archive, const std::string& value)
+	template <typename Archive>
+	void save (Archive& archive, const std::string& value)
 	{
 		uint32_t length = static_cast<uint32_t> (value.length());
 		archive << NVP (length);
@@ -185,8 +185,8 @@ namespace serialization
 			archive << c;
 		}
 	}
-	template <typename A>
-	void load (A& archive, std::string& value)
+	template <typename Archive>
+	void load (Archive& archive, std::string& value)
 	{
 		uint32_t length;
 		archive >> length;
@@ -199,53 +199,53 @@ namespace serialization
 			value.push_back (c);
 		}
 	}
-	template <typename A>
-	void serialize (A& archive, std::string& value)
+	template <typename Archive>
+	void serialize (Archive& archive, std::string& value)
 	{
 		serialization::detail::splitFree (archive, value);
 	}
 
 	//-------------------------------------------------------------------------
-	template <typename A>
-	void save (A& archive, const std::chrono::milliseconds& value)
+	template <typename Archive>
+	void save (Archive& archive, const std::chrono::milliseconds& value)
 	{
 		archive << makeNvp ("milliseconds", value.count());
 	}
-	template <typename A>
-	void load (A& archive, std::chrono::milliseconds& value)
+	template <typename Archive>
+	void load (Archive& archive, std::chrono::milliseconds& value)
 	{
 		long long tmp;
 		archive >> makeNvp ("milliseconds", tmp);
 		value = std::chrono::milliseconds (tmp);
 	}
-	template <typename A>
-	void serialize (A& archive, std::chrono::milliseconds& value)
+	template <typename Archive>
+	void serialize (Archive& archive, std::chrono::milliseconds& value)
 	{
 		serialization::detail::splitFree (archive, value);
 	}
 
 	//-------------------------------------------------------------------------
-	template <typename A>
-	void save (A& archive, const std::chrono::seconds& value)
+	template <typename Archive>
+	void save (Archive& archive, const std::chrono::seconds& value)
 	{
 		archive << makeNvp ("seconds", value.count());
 	}
-	template <typename A>
-	void load (A& archive, std::chrono::seconds& value)
+	template <typename Archive>
+	void load (Archive& archive, std::chrono::seconds& value)
 	{
 		long long tmp;
 		archive >> makeNvp ("seconds", tmp);
 		value = std::chrono::seconds (tmp);
 	}
-	template <typename A>
-	void serialize (A& archive, std::chrono::seconds& value)
+	template <typename Archive>
+	void serialize (Archive& archive, std::chrono::seconds& value)
 	{
 		serialization::detail::splitFree (archive, value);
 	}
 
 	//------------------------------------------------------------------------------
-	template <typename A, typename K, typename T>
-	void save (A& archive, const std::map<K, T>& value)
+	template <typename Archive, typename K, typename T>
+	void save (Archive& archive, const std::map<K, T>& value)
 	{
 		uint32_t length = static_cast<uint32_t> (value.size());
 		archive << NVP (length);
@@ -254,8 +254,8 @@ namespace serialization
 			archive << NVP (pair);
 		}
 	}
-	template <typename A, typename K, typename T>
-	void load (A& archive, std::map<K, T>& value)
+	template <typename Archive, typename K, typename T>
+	void load (Archive& archive, std::map<K, T>& value)
 	{
 		uint32_t length;
 		archive >> NVP (length);
@@ -266,15 +266,15 @@ namespace serialization
 			value.insert (c);
 		}
 	}
-	template <typename A, typename K, typename T>
-	void serialize (A& archive, std::map<K, T>& value)
+	template <typename Archive, typename K, typename T>
+	void serialize (Archive& archive, std::map<K, T>& value)
 	{
 		serialization::detail::splitFree (archive, value);
 	}
 
 	//-------------------------------------------------------------------------
-	template <typename A, typename T>
-	void save (A& archive, const std::forward_list<T>& value)
+	template <typename Archive, typename T>
+	void save (Archive& archive, const std::forward_list<T>& value)
 	{
 		const uint32_t length = std::distance (value.begin(), value.end());
 		archive << NVP (length);
@@ -284,8 +284,8 @@ namespace serialization
 			archive << NVP (item);
 		}
 	}
-	template <typename A, typename T>
-	void load (A& archive, std::forward_list<T>& value)
+	template <typename Archive, typename T>
+	void load (Archive& archive, std::forward_list<T>& value)
 	{
 		uint32_t length;
 		archive >> NVP (length);
@@ -296,14 +296,14 @@ namespace serialization
 			archive >> NVP (item);
 		}
 	}
-	template <typename A, typename T>
-	void serialize (A& archive, std::forward_list<T>& value)
+	template <typename Archive, typename T>
+	void serialize (Archive& archive, std::forward_list<T>& value)
 	{
 		serialization::detail::splitFree (archive, value);
 	}
 	//-------------------------------------------------------------------------
-	template <typename A, typename T>
-	void save (A& archive, const std::optional<T>& value)
+	template <typename Archive, typename T>
+	void save (Archive& archive, const std::optional<T>& value)
 	{
 		archive << makeNvp ("valid", static_cast<bool> (value));
 		if (value)
@@ -311,8 +311,8 @@ namespace serialization
 			archive << makeNvp ("data", *value);
 		}
 	}
-	template <typename A, typename T>
-	void load (A& archive, std::optional<T>& value)
+	template <typename Archive, typename T>
+	void load (Archive& archive, std::optional<T>& value)
 	{
 		bool valid = false;
 		archive >> makeNvp ("valid", valid);
@@ -325,8 +325,8 @@ namespace serialization
 			value = std::nullopt;
 		}
 	}
-	template <typename A, typename T>
-	void serialize (A& archive, std::optional<T>& value)
+	template <typename Archive, typename T>
+	void serialize (Archive& archive, std::optional<T>& value)
 	{
 		serialization::detail::splitFree (archive, value);
 	}
@@ -361,14 +361,14 @@ namespace serialization
 		cModel& model;
 	};
 
-	template <typename A, typename T>
-	void save (A& archive, T* const value)
+	template <typename Archive, typename T>
+	void save (Archive& archive, T* const value)
 	{
 		int id = value ? value->getId() : -1;
 		archive << id;
 	}
-	template <typename A, typename T>
-	void load (A& archive, T*& value)
+	template <typename Archive, typename T>
+	void load (Archive& archive, T*& value)
 	{
 		assert (archive.getPointerLoader() != nullptr);
 
@@ -385,20 +385,20 @@ namespace serialization
 		if (value == nullptr)
 			throw std::runtime_error ("Error creating pointer to object from id");
 	}
-	template <typename A, typename T>
-	void serialize (A& archive, T*& value)
+	template <typename Archive, typename T>
+	void serialize (Archive& archive, T*& value)
 	{
 		serialization::detail::splitFree (archive, value);
 	}
 
-	template <typename A, typename T>
-	void save (A& archive, const sNameValuePair<T*>& nvp)
+	template <typename Archive, typename T>
+	void save (Archive& archive, const sNameValuePair<T*>& nvp)
 	{
 		int id = nvp.value ? nvp.value->getId() : -1;
 		archive << makeNvp (nvp.name, id);
 	}
-	template <typename A, typename T>
-	void load (A& archive, sNameValuePair<T*>& nvp)
+	template <typename Archive, typename T>
+	void load (Archive& archive, sNameValuePair<T*>& nvp)
 	{
 		assert (archive.getPointerLoader() != nullptr);
 
@@ -415,8 +415,8 @@ namespace serialization
 		if (nvp.value == nullptr)
 			throw std::runtime_error ("Error creating pointer to object from id");
 	}
-	template <typename A, typename T>
-	void serialize (A& archive, sNameValuePair<T*> nvp)
+	template <typename Archive, typename T>
+	void serialize (Archive& archive, sNameValuePair<T*> nvp)
 	{
 		serialization::detail::splitFree (archive, nvp);
 	}
@@ -478,13 +478,13 @@ namespace serialization
 
 		struct sSerializeMember
 		{
-			template <typename T, typename A>
-			static void serialize (A& archive, T& object)
+			template <typename T, typename Archive>
+			static void serialize (Archive& archive, T& object)
 			{
 				object.serialize (archive);
 			}
-			template <typename T, typename A>
-			static void serialize (A& archive, const sNameValuePair<T>& nvp)
+			template <typename T, typename Archive>
+			static void serialize (Archive& archive, const sNameValuePair<T>& nvp)
 			{
 				serialization::serialize (archive, nvp.value);
 			}
@@ -492,10 +492,10 @@ namespace serialization
 
 		struct sSerializeEnum
 		{
-			template <typename T, typename A>
-			static void serialize (A& archive, T& enumValue)
+			template <typename T, typename Archive>
+			static void serialize (Archive& archive, T& enumValue)
 			{
-				if (T::isWritter)
+				if (Archive::isWriter)
 				{
 					int tmp = static_cast<int> (enumValue);
 					archive & tmp;
@@ -509,10 +509,10 @@ namespace serialization
 					enumValue = static_cast<T> (tmp);
 				}
 			}
-			template <typename T, typename A>
-			static void serialize (A& archive, const sNameValuePair<T>& nvp)
+			template <typename T, typename Archive>
+			static void serialize (Archive& archive, const sNameValuePair<T>& nvp)
 			{
-				if (T::isWritter)
+				if (Archive::isWriter)
 				{
 					int tmp = static_cast<int> (nvp.value);
 					archive & makeNvp (nvp.name, tmp);
@@ -530,16 +530,16 @@ namespace serialization
 	} //namespace detail
 
 	#define SERIALIZATION_SPLIT_MEMBER()                        \
-	template <typename A>                                       \
-	void serialize (A& archive)                                 \
+	template <typename Archive>                                       \
+	void serialize (Archive& archive)                                 \
 	{                                                           \
 		serialization::detail::splitMember (archive, *this);    \
 	}
 
 	#define SERIALIZATION_SPLIT_FREE(T)                         \
 	namespace serialization {                                   \
-	template <typename A>                                       \
-	void serialize (A& archive, T& value)                       \
+	template <typename Archive>                                       \
+	void serialize (Archive& archive, T& value)                       \
 	{                                                           \
 		serialization::detail::splitFree (archive, value);      \
 	}                                                           \

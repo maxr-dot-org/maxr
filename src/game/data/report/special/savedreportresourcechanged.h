@@ -30,8 +30,8 @@ class cSavedReportResourceChanged : public cSavedReport
 public:
 	cSavedReportResourceChanged (eResourceType, int amount, bool increase);
 
-	template <typename T, ENABLE_ARCHIVE_OUT>
-	explicit cSavedReportResourceChanged (T& archive)
+	template <typename Archive, ENABLE_ARCHIVE_OUT>
+	explicit cSavedReportResourceChanged (Archive& archive)
 	{
 		serializeThis (archive);
 	}
@@ -49,8 +49,8 @@ public:
 	bool isIncrease() const { return increase;}
 
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & NVP (resourceType);
 		archive & NVP (amount);

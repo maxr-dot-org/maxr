@@ -29,8 +29,8 @@ public:
 
 	cSavedReportLostConnection (const cPlayer&);
 
-	template <typename T, ENABLE_ARCHIVE_OUT>
-	cSavedReportLostConnection (T& archive)
+	template <typename Archive, ENABLE_ARCHIVE_OUT>
+	cSavedReportLostConnection (Archive& archive)
 	{
 		serializeThis (archive);
 	}
@@ -46,8 +46,8 @@ public:
 	const std::string& getPlayerName() const { return player->getName(); }
 
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & NVP (player);
 	}

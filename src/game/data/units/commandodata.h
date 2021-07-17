@@ -54,8 +54,8 @@ public:
 
 	[[nodiscard]] std::uint32_t calcCheckSum (std::uint32_t crc) const;
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		archive & NVP (successCount);
 	}

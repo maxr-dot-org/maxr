@@ -59,8 +59,8 @@ public:
 	mutable cSignal<void()> readyChanged;
 	mutable cSignal<void()> isDefeatedChanged;
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		archive & NVP (name);
 		archive & NVP (color);

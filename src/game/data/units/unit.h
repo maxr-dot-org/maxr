@@ -187,8 +187,8 @@ public:
 	mutable cSignal<void()> storedResourcesChanged;
 	mutable cSignal<void()> isBigChanged;
 
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & NVP (data);
 		//archive & NVP (iID);  //const member. needs to be deserialized before calling constructor
@@ -209,7 +209,7 @@ public:
 		archive & NVP (storageResCur);
 		archive & NVP (jobActive);
 
-		if (!T::isWritter && data.getId() != sID (0, 0))
+		if (!Archive::isWriter && data.getId() != sID (0, 0))
 		{
 			//restore pointer to static unit data
 			archive.getPointerLoader()->get (data.getId(), staticData);

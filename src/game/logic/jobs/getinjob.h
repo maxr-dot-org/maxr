@@ -37,8 +37,8 @@ class cGetInJob : public cJob
 {
 public:
 	cGetInJob (cVehicle& loadedVehicle, cUnit& loadingUnit);
-	template <typename T>
-	cGetInJob (T& archive);
+	template <typename Archive>
+	cGetInJob (Archive&);
 
 	void run (cModel& model) override;
 	eJobType getType() const override;
@@ -48,8 +48,8 @@ public:
 
 	uint32_t getChecksum (uint32_t crc) const override;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & NVP (unit);
 		archive & NVP (loadingUnit);
@@ -63,8 +63,8 @@ private:
 	int startFlightHeight;
 };
 
-template <typename T>
-cGetInJob::cGetInJob (T& archive)
+template <typename Archive>
+cGetInJob::cGetInJob (Archive& archive)
 {
 	serializeThis (archive);
 	if (!unit || !loadingUnit)

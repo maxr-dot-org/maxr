@@ -36,8 +36,8 @@ public:
 
 	std::vector<sID> getUnitTypesWithLosses() const;
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		archive & NVP (casualtiesPerPlayer);
 	}
@@ -52,8 +52,8 @@ private:
 		sID unitID;
 		int numberOfLosses;
 
-		template <typename T>
-		void serialize (T& archive)
+		template <typename Archive>
+		void serialize (Archive& archive)
 		{
 			archive & NVP (unitID);
 			archive & NVP (numberOfLosses);
@@ -65,8 +65,8 @@ private:
 		std::vector<Casualty> casualties;
 		int playerNr;
 
-		template <typename T>
-		void serialize (T& archive)
+		template <typename Archive>
+		void serialize (Archive& archive)
 		{
 			archive & NVP (casualties);
 			archive & NVP (playerNr);

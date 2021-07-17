@@ -33,8 +33,8 @@ class cPlaneTakeoffJob : public cJob
 {
 public:
 	cPlaneTakeoffJob (cVehicle& vehicle);
-	template <typename T>
-	cPlaneTakeoffJob (T& archive) { serializeThis (archive); }
+	template <typename Archive>
+	cPlaneTakeoffJob (Archive& archive) { serializeThis (archive); }
 
 	void run (cModel& model) override;
 	eJobType getType() const override;
@@ -44,12 +44,12 @@ public:
 
 	uint32_t getChecksum (uint32_t crc) const override;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & NVP (unit);
 
-		if (!T::isWritter)
+		if (!Archive::isWriter)
 		{
 			if (unit == nullptr)
 			{

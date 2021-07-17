@@ -35,8 +35,8 @@ public:
 
 	void execute (cModel& model) const override;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & loadingUnitId;
 		archive & loadedVehicleId;

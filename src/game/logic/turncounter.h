@@ -35,8 +35,8 @@ public:
 	void increaseTurn();
 	uint32_t getChecksum (uint32_t crc) const;
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		archive & NVP (turn);
 	}

@@ -42,8 +42,8 @@ public:
 
 	sInitPlayerData initPlayerData;
 private:
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & initPlayerData.landingUnits;
 		archive & initPlayerData.clan;

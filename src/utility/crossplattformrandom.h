@@ -41,8 +41,8 @@ public:
 	/** returns a random number in the interval [0..interval) */
 	uint32_t get (uint32_t interval);
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		archive & NVP (stateW);
 		archive & NVP (stateZ);

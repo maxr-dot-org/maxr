@@ -107,11 +107,11 @@ public:
 	virtual void serialize (cTextArchiveIn& archive) { serializeThis (archive); }
 	virtual void serialize (cXmlArchiveIn& archive) { serializeThis (archive); }
 private:
-	template <typename T>
-	static std::unique_ptr<cSavedReport> createFromImpl (T& archive);
+	template <typename Archive>
+	static std::unique_ptr<cSavedReport> createFromImpl (Archive&);
 
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & serialization::makeNvp ("type", getType());
 	}

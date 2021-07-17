@@ -36,8 +36,8 @@ public:
 private:
 	int unitId;
 
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & unitId;
 	}

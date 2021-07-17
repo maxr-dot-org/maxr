@@ -38,8 +38,8 @@ private:
 	bool layMines;
 	bool clearMines;
 
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & vehicleId;
 		archive & layMines;

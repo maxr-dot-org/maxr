@@ -63,8 +63,8 @@ public:
 	cSignal<void()> typeChanged;
 	cSignal<void()> remainingMetalChanged;
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		archive & NVP (type);
 		archive & NVP (remainingMetal);
@@ -153,8 +153,8 @@ public:
 	cSignal<void()> metalPerRoundChanged;
 	cSignal<void()> repeatBuildChanged;
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		cUnit::serializeThis (archive); //serialize cUnit members
 
@@ -183,7 +183,7 @@ public:
 		archive & NVP (researchArea);
 		archive & NVP (buildList);
 
-		if (!T::isWritter)
+		if (!Archive::isWriter)
 		{
 			if (isRubble())
 			{

@@ -200,8 +200,8 @@ public:
 	mutable cSignal<void()> autoMoveJobChanged;
 	mutable cSignal<void()> moveJobBlocked;
 
-	template <typename T>
-	void serialize (T& archive)
+	template <typename Archive>
+	void serialize (Archive& archive)
 	{
 		cUnit::serializeThis (archive); //serialize cUnit members
 

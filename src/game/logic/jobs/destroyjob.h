@@ -33,8 +33,8 @@ class cDestroyJob : public cJob
 {
 public:
 	cDestroyJob (cUnit& unit, cModel& model);
-	template <typename T>
-	cDestroyJob (T& archive) { serializeThis (archive); }
+	template <typename Archive>
+	cDestroyJob (Archive& archive) { serializeThis (archive); }
 
 	void run (cModel& model) override;
 	eJobType getType() const override;
@@ -48,13 +48,13 @@ private:
 	void deleteUnit (cModel& model);
 	int deleteAllBuildingsOnField (cMapField& field, bool deleteConnector, cModel& model);
 
-	template <typename T>
-	void serializeThis (T& archive)
+	template <typename Archive>
+	void serializeThis (Archive& archive)
 	{
 		archive & NVP (unit);
 		archive & NVP (counter);
 
-		if (!T::isWritter)
+		if (!Archive::isWriter)
 		{
 			if (unit != nullptr)
 			{
