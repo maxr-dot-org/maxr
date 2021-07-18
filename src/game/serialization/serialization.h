@@ -67,6 +67,24 @@ struct sID;
 
 namespace serialization
 {
+	// Customisation point for enum serialization
+	template <typename E>
+	struct sEnumSerializer
+	{
+		static std::string toString (E e) { return std::to_string (std::underlying_type_t<E> (e)); }
+		static E fromString (const std::string& s)
+		{
+			std::stringstream ss (s);
+			ss.imbue (std::locale ("C"));
+			std::underlying_type_t<E> underlying = 0;
+			ss >> underlying;
+
+			if (ss.fail() || !ss.eof()) //test eof, because all characters in the string should belong to the converted value
+				throw std::runtime_error ("Could not convert value " + s + " to " + typeid (E).name());
+			return static_cast<E>(underlying);
+		}
+	};
+
 	namespace detail
 	{
 		template <typename Archive, typename T>

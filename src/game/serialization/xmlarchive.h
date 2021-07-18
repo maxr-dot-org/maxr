@@ -25,6 +25,7 @@
 #include <3rd/tinyxml2/tinyxml2.h>
 
 #include <cassert>
+#include <cstdlib>
 #include <typeinfo>
 
 class cXmlArchiveIn
@@ -82,9 +83,8 @@ private:
 	template <typename E, std::enable_if_t<std::is_enum<E>::value, int> = 0>
 	void pushValue (const serialization::sNameValuePair<E>& nvp)
 	{
-		static_assert(sizeof (E) <= sizeof (int), "!");
-		int tmp = static_cast<int> (nvp.value);
-		pushValue (serialization::sNameValuePair<int>{nvp.name, tmp});
+		auto tmp = serialization::sEnumSerializer<E>::toString (nvp.value);
+		pushValue (serialization::makeNvp (nvp.name, tmp));
 	}
 
 	//
@@ -170,9 +170,19 @@ private:
 	void popValue (const serialization::sNameValuePair<E>& nvp)
 	{
 		static_assert(sizeof (E) <= sizeof (int), "!");
-		int tmp = 0;
+		std::string tmp = "";
 		popValue (serialization::makeNvp (nvp.name, tmp));
-		nvp.value = static_cast<E>(tmp);
+		// accept both the number or the string.
+		char* end = nullptr;
+		const int n = std::strtol (tmp.c_str(), &end, 10);
+		if (end == tmp.c_str() + tmp.size())
+		{
+			nvp.value = static_cast<E> (n);
+		}
+		else
+		{
+			nvp.value = serialization::sEnumSerializer<E>::fromString (tmp);
+		}
 	}
 
 	//

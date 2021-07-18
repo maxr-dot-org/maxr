@@ -28,6 +28,32 @@
 
 cKeysList KeysList;
 
+namespace serialization
+{
+
+	//--------------------------------------------------------------------------
+	/* static */ std::string sEnumSerializer<eMouseStyle>::toString (eMouseStyle e)
+	{
+		switch (e)
+		{
+			case eMouseStyle::Modern: return "Modern";
+			case eMouseStyle::OldSchool: return "OldSchool";
+		}
+		throw std::runtime_error ("Unsupported enum value for eMouseStyle:" + std::to_string (int(e)));
+	}
+
+	//--------------------------------------------------------------------------
+	/* static */ eMouseStyle sEnumSerializer<eMouseStyle>::fromString (const std::string& s)
+	{
+		if (s == "Modern") return eMouseStyle::Modern;
+		if (s == "OldSchool") return eMouseStyle::OldSchool;
+
+		Log.write ("Unknown mouseStyle " + s + ", defaulting to Modern", cLog::eLOG_TYPE_WARNING);
+		return eMouseStyle::Modern;
+	}
+
+}
+
 //------------------------------------------------------------------------------
 cKeysList::cKeysList() :
 	keyExit (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)),

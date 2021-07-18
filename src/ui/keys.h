@@ -21,13 +21,25 @@
 #define ui_keysH
 
 #include "input/keyboard/keysequence.h"
-#include "game/serialization/serialization.h"
+#include "game/serialization/xmlarchive.h"
 
 enum class eMouseStyle
 {
 	OldSchool,
 	Modern
 };
+
+namespace serialization
+{
+
+	template <>
+	struct sEnumSerializer<eMouseStyle>
+	{
+		static std::string toString (eMouseStyle);
+		static eMouseStyle fromString (const std::string&);
+	};
+
+}
 
 class cKeysList
 {
