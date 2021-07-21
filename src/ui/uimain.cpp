@@ -201,7 +201,8 @@ try
 
 	return 0;
 }
-catch (const std::exception&)
+catch (const std::exception& ex)
 {
+	Log.write (ex.what(), cLog::eLOG_TYPE_ERROR);
 	return -1;
 }
