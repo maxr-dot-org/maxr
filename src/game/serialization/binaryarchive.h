@@ -168,7 +168,7 @@ private:
 		static_assert(sizeof (E) <= sizeof (int), "!");
 		int i = 0;
 		popValue (i);
-		value = static_cast<E>(value);
+		value = static_cast<E>(i);
 	}
 
 	//
