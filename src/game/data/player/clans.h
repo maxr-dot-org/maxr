@@ -38,6 +38,16 @@ enum class EClanModification
 	Built_Costs
 };
 
+namespace serialization
+{
+	template <>
+	struct sEnumSerializer<EClanModification>
+	{
+		static std::string toString (EClanModification);
+		static EClanModification fromString (const std::string&);
+	};
+}
+
 //------------------------------------------------------------------------------
 class cClanUnitStat
 {
@@ -55,8 +65,8 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
-		archive & unitId;
-		archive & modifications;
+		archive & NVP (unitId);
+		archive & NVP (modifications);
 	}
 
 private:
@@ -89,10 +99,10 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
-		archive & num;
-		archive & description;
-		archive & name;
-		archive & stats;
+		archive & NVP (num);
+		archive & NVP (description);
+		archive & NVP (name);
+		archive & NVP (stats);
 	}
 
 private:
@@ -115,7 +125,7 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
-		archive & clans;
+		archive & NVP (clans);
 	}
 
 private:

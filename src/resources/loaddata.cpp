@@ -1255,64 +1255,23 @@ static std::optional<EClanModification> EClanModificationFromString (const std::
  */
 static int LoadClans()
 {
-	tinyxml2::XMLDocument clansXml;
-
 	std::string clansXMLPath = CLANS_XML;
+
 	if (!FileExists (clansXMLPath.c_str()))
+	{
+		Log.write ("File doesn't exist: " + clansXMLPath, cLog::eLOG_TYPE_ERROR);
 		return 0;
+	}
+	tinyxml2::XMLDocument clansXml;
 	if (clansXml.LoadFile (clansXMLPath.c_str()) != XML_NO_ERROR)
 	{
 		Log.write ("Can't load " + clansXMLPath, cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
+	cXmlArchiveOut in (*clansXml.RootElement());
 
-	XMLElement* xmlElement = clansXml.FirstChildElement ("Clans");
-	if (xmlElement == 0)
-	{
-		Log.write ("Can't read \"Clans\" node!", cLog::eLOG_TYPE_ERROR);
-		return 0;
-	}
-
-	for (XMLElement* clanElement = xmlElement->FirstChildElement ("Clan"); clanElement; clanElement = clanElement->NextSiblingElement ("Clan"))
-	{
-		cClan& newClan = ClanDataGlobal.addClan();
-		std::string nameAttr = clanElement->Attribute ("Name");
-		newClan.setDefaultName (nameAttr);
-
-		const XMLElement* descriptionNode = clanElement->FirstChildElement ("Description");
-		if (descriptionNode)
-		{
-			std::string descriptionString = descriptionNode->GetText();
-			newClan.setDefaultDescription (descriptionString);
-		}
-
-		for (XMLElement* statsElement = clanElement->FirstChildElement ("ChangedUnitStat"); statsElement; statsElement = statsElement->NextSiblingElement ("ChangedUnitStat"))
-		{
-			const char* idAttr = statsElement->Attribute ("UnitID");
-			if (idAttr == 0)
-			{
-				Log.write ("Couldn't read UnitID for ChangedUnitStat for clans", cLog::eLOG_TYPE_ERROR);
-				continue;
-			}
-			std::string idAttrStr (idAttr);
-			sID id;
-			id.firstPart = atoi (idAttrStr.substr (0, idAttrStr.find (" ", 0)).c_str());
-			id.secondPart = atoi (idAttrStr.substr (idAttrStr.find (" ", 0), idAttrStr.length()).c_str());
-
-			cClanUnitStat& newStat = *newClan.addUnitStat (id);
-
-			for (XMLElement* modificationElement = statsElement->FirstChildElement(); modificationElement; modificationElement = modificationElement->NextSiblingElement())
-			{
-				auto mod = EClanModificationFromString(modificationElement->Value());
-				if (mod && modificationElement->Attribute ("Num"))
-				{
-					newStat.addModification (*mod, modificationElement->IntAttribute ("Num"));
-				}
-			}
-		}
-	}
+	serialization::serialize (in, ClanDataGlobal);
 	UnitsDataGlobal.initializeClanUnitData (ClanDataGlobal);
-
 	return 1;
 }
 

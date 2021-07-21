@@ -20,8 +20,43 @@
 #include "game/data/player/clans.h"
 
 #include "game/data/units/unitdata.h"
+#include "utility/log.h"
 
 cClanData ClanDataGlobal;
+
+namespace serialization
+{
+	//--------------------------------------------------------------------------
+	/*static*/ std::string sEnumSerializer<EClanModification>::toString (EClanModification e)
+	{
+		switch (e)
+		{
+			case EClanModification::Damage: return "Damage";
+			case EClanModification::Range: return "Range";
+			case EClanModification::Armor: return "Armor";
+			case EClanModification::Hitpoints: return "Hitpoints";
+			case EClanModification::Scan: return "Scan";
+			case EClanModification::Speed: return "Speed";
+			case EClanModification::Built_Costs: return "BuildCosts";
+		}
+		Log.write ("Unknown EClanModification " + std::to_string (static_cast<int> (e)), cLog::eLOG_TYPE_WARNING);
+		return std::to_string (static_cast<int> (e));
+	}
+	//--------------------------------------------------------------------------
+	/*static*/ EClanModification sEnumSerializer<EClanModification>::fromString (const std::string& s)
+	{
+		if (s == "Damage") return EClanModification::Damage;
+		if (s == "Range") return EClanModification::Range;
+		if (s == "Armor") return EClanModification::Armor;
+		if (s == "Hitpoints") return EClanModification::Hitpoints;
+		if (s == "Scan") return EClanModification::Scan;
+		if (s == "Speed") return EClanModification::Speed;
+		if (s == "BuildCosts") return EClanModification::Built_Costs;
+
+		Log.write ("Unknown EClanModification " + s, cLog::eLOG_TYPE_WARNING);
+		throw std::runtime_error ("Unknown EClanModification " + s);
+	}
+}
 
 //--------------------------------------------------
 void cClanUnitStat::addModification (EClanModification area, int value)
