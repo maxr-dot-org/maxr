@@ -106,11 +106,9 @@ void cWindowClanSelection::clanClicked (const cImage* clanImage)
 		{
 			if (i != selectedClan)
 			{
-				const std::string& name = getClanName (clanData->getClans()[selectedClan]);
-
-				clanTitles[selectedClan]->setText (name);
+  				clanTitles[selectedClan]->setText (getClanName (clanData->getClans()[selectedClan]));
+				clanTitles[i]->setText (">" + getClanName (clanData->getClans()[i]) + "<");
 				selectedClan = i;
-				clanTitles[selectedClan]->setText (">" + name + "<");
 				updateClanDescription();
 			}
 			break;
