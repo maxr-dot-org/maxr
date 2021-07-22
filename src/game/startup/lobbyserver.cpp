@@ -409,9 +409,13 @@ void cLobbyServer::changePlayerAttributes (const cMuMsgIdentification& message)
 //------------------------------------------------------------------------------
 void cLobbyServer::changeOptions (const cMuMsgOptions& message)
 {
-	if (!staticMap || staticMap->getName() != message.mapName)
+	if (message.mapName.empty())
 	{
-		staticMap = std::make_shared<cStaticMap>();
+		staticMap.reset();
+	}
+	else
+	{
+		if (!staticMap) { staticMap = std::make_shared<cStaticMap>(); }
 		staticMap->loadMap (message.mapName);
 	}
 	gameSettings = message.settings ? std::make_shared<cGameSettings> (*message.settings) : nullptr;
