@@ -16,43 +16,37 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-////////////////////////////////////////////////////////////////////////////////
-//
-//  File:   language.h
-//  Date:   07-10-01
-//  Author: JCK
-//
+
 ////////////////////////////////////////////////////////////////////////////////
 //  Description:
-//  This class handles the support for different language packs in XML-Format.
+//  This class handles the support for different language packs in gettext format.
 ////////////////////////////////////////////////////////////////////////////////
 
 #ifndef utility_languageH
 #define utility_languageH
 
-#include <map>
 #include <string>
 #include <vector>
-
-#include <3rd/tinyxml2/tinyxml2.h>
 
 struct sID;
 
 class cLanguage
 {
 public:
-	cLanguage();
+	cLanguage() = default;
 
-	const std::string& GetCurrentLanguage() const;
-	int SetCurrentLanguage (const std::string& szLanguageCode);
+	void setLanguagesFolder (const std::string&);
 
-	int ReadLanguagePack();
+	const std::string& getCurrentLanguage() const { return m_languageCode; }
+	void setCurrentLanguage (const std::string& code);
+
 	std::vector<std::string> getAvailableLanguages() const;
-	const std::map<std::string, std::string>& getAllTranslations() const { return m_mpLanguage; }
 
-	std::string i18n (const std::string& szInputText) const;
+	std::string i18n (const std::string&) const;
 	// Translation with replace %s
-	std::string i18n (const std::string& szMainText, const std::string& szInsertText) const;
+	std::string i18n (const std::string& text, const std::string& insertText) const;
+
+	std::string plural (const std::string& text, std::size_t) const;
 
 	std::string getUnitName (const sID&) const;
 	std::string getUnitDescription (const sID&) const;
@@ -61,28 +55,10 @@ public:
 	std::string getClanDescription (int num) const;
 
 private:
-	using StrStrMap = std::map<std::string, std::string>;
+	std::string dGetText (const char* textDomain, const char* s) const;
 
-	int ReadSingleTranslation (const char* pszCurrent, ...);
-	std::string ReadSingleTranslation (const std::string& strInput);
-	int ReadLanguagePackFooter();
-	int ReadLanguagePackFooter (const std::string& strLanguageCode);
-	int ReadLanguageMaster();
-	int ReadRecursiveLanguagePack (tinyxml2::XMLElement* xmlElement, std::string strNodePath);
-
-	int checkTimeStamp (std::string rstrData);
-
-	tinyxml2::XMLDocument m_XmlDoc;
-	// Use ISO 639-2 codes to identify languages
-	// (http://www.loc.gov/standards/iso639-2/php/code_list.php)
-	std::string m_szLanguage;
-	std::string m_szLanguageFile;
-	std::string m_szLanguageFileMaster;
-	std::string m_szEncoding;
-	std::string m_szLastEditor;
-	StrStrMap   m_mpLanguage;
-	bool m_bLeftToRight;
-	bool m_bErrorMsgTranslationLoaded;
+private:
+	std::string m_languageCode;
 };
 
 extern cLanguage lngPack;

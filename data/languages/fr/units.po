@@ -1,0 +1,438 @@
+# French translations for Maxr package.
+# Copyright (C) 2021 THE Maxr'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Maxr package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Maxr 0.3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-07-29 21:33+0200\n"
+"PO-Revision-Date: 2021-07-31 11:33+0200\n"
+"Last-Translator:\n"
+"Language-Team: French\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Building01_Name"
+msgstr "Caserne"
+
+msgid "Building01_Desc"
+msgstr "Caserne\n\nBâtiments où peuvent séjourner les commandos infanteries. La caserne permet de mettre à jour l'équipement des soldats et les soigner, selon les réserves de minerai disponibles."
+
+msgid "Building02_Name"
+msgstr "Bloc de béton"
+
+msgid "Building02_Desc"
+msgstr "Bloc de béton\n\nBéton lourdement blindé permettant de bloquer les mouvements de troupes ennemis."
+
+msgid "Building03_Name"
+msgstr "Pont flottant"
+
+msgid "Building03_Desc"
+msgstr "Pont flottant\n\nPont flottant permettant aux unités terrestres de franchir les mers. Le pont ne bloque pas le trafic naval lorsqu'aucune unité terrestre ne s'y trouve."
+
+msgid "Building04_Name"
+msgstr "Connecteur"
+
+msgid "Building04_Desc"
+msgstr "Connecteur\n\nLes bâtiments doivent être connectés pour partager les ressources de minerai, de carburant et d'or nécessaire à leur bon fonctionnement. Les bâtiments accollés sont automatiquement connectés entre eux, sinon les joindre avec des connecteurs est nécessaire, à l'aide d'engin du génie. La destruction d'un connecteur peut nuire au bon fonctionnement de la base, ce qui en fait une construction stratégique."
+
+msgid "Building05_Name"
+msgstr "Hangar"
+
+msgid "Building05_Desc"
+msgstr "Hangar\n\nLe hangar stocke les unités mécaniques mobiles pour les réparer, les recharger ou les mettre à jour technologiquement, nécessitant alors du minerai. Peut stocker douze unités."
+
+msgid "Building06_Name"
+msgstr "Dock"
+
+msgid "Building06_Desc"
+msgstr "Dock\n\nEquivalent naval du hangar, pour les navires. Il permet de les réparer, les recharger ou les mettre à jour technologiquement, nécessitant alors du minerai. Peut stocker six unités."
+
+msgid "Building07_Name"
+msgstr "Station d'énergie"
+
+msgid "Building07_Desc"
+msgstr "Station d'énergie\n\nUne station d'énergie consomme six unités de carburant par tour, en fournissant assez d'énergie pour six usines ou stations minières. Erigé à l'aide d'un constructeur."
+
+msgid "Building08_Name"
+msgstr "Générateur d'énergie"
+
+msgid "Building08_Desc"
+msgstr "Générateur d'énergie\n\nGénérateur d'énergie basique, consommant deux unités de carburant par tour et fournissant assez d'énergie pour une seule usine ou station minière. Erigé à l'aide d'un ingénieur."
+
+msgid "Building09_Name"
+msgstr "Usine d'unité aérienne"
+
+msgid "Building09_Desc"
+msgstr "Usine d'unité aérienne\n\nUsine permettant de fabriquer les avions. Nécessite de l'énergie et du minerai en quantité suffisante pour fonctionner."
+
+msgid "Building10_Name"
+msgstr "Usine à avions alien"
+
+msgid "Building10_Desc"
+msgstr "Usine à avions alien"
+
+msgid "Building11_Name"
+msgstr "Usine à engin lourd"
+
+msgid "Building11_Desc"
+msgstr "Usine à engin lourd\n\nUsine permettant la fabrication d'engins lourds, comme les constructeurs, radar mobile, ainsi que les unités de combat : tanks, chars d'assaut, lances-missile mobiles... Nécessite de l'énergie et du minerai en quantité suffisante pour fonctionner."
+
+msgid "Building12_Name"
+msgstr "Chantier naval"
+
+msgid "Building12_Desc"
+msgstr "Chantier naval\n\nUsine permettant la construction de navire : corvettes, destroyers, sous-marins, transporteurs marins..."
+
+msgid "Building13_Name"
+msgstr "Usine de véhicule léger"
+
+msgid "Building13_Desc"
+msgstr "Usine de véhicule léger\n\nUsine permettant la construction d'engin léger : ingénieur, prospecteur, poseur de mine, camions, réparateur, bulldozer, transporteur, éclaireurs et DCA mobile. Nécessite de l'énergie et du minerai en quantité suffisante pour fonctionner."
+
+msgid "Building14_Name"
+msgstr "Raffinerie d'or"
+
+msgid "Building14_Desc"
+msgstr "Raffinerie d'or\n\nRaffinerie convertissant l'or récolté en crédits, qui sont nécessaires à la mise à jour technologique immédiate des unités et bâtiments. Nécessite de l'énergie et de l'or en quantité suffisante pour fonctionner."
+
+msgid "Building15_Name"
+msgstr "Canon DCA"
+
+msgid "Building15_Desc"
+msgstr "Canon DCA\n\nCanon anti-aérien, à cadence de tir rapide. Redoutable contre les avions, mais impuissants contre les unités terrestres."
+
+msgid "Building16_Name"
+msgstr "Artillerie"
+
+msgid "Building16_Desc"
+msgstr "Atillerie\n\nCanon d'attaque d'unité terrestre à moyenne portée et moyennement blindé. L'artillerie est un compromis entre la robuste tourelle à canon et la longue portée du lance-missile."
+
+msgid "Building17_Name"
+msgstr "Lance-missile"
+
+msgid "Building17_Desc"
+msgstr "Lance-missile\n\nInstallation à très grande portée permettant de tenir éloignées les troupes ennemis. légèrement plus puissant et robuste que sa version mobile, il doit cependant être protégé par un canon DCA."
+
+msgid "Building18_Name"
+msgstr "Tourelle à canon"
+
+msgid "Building18_Desc"
+msgstr "Tourelle à canon\n\nInstallation économique de défense, la tourelle à canon est robuste grâce à son lourd blindage. Sa rapide édification permet de repousser les troupes ennemies qui ont auraient réussi à percer la défense."
+
+msgid "Building19_Name"
+msgstr "Habitat"
+
+msgid "Building19_Desc"
+msgstr "Habitat\n\nDemeure pour les colons humains. Nécessaire au fonctionnement des centres de recherche, aux éco-sphères et aux hall d'entraînement d'infanterie. Nécessite aussi d'être connecté à ces bâtiments pour les faire fonctionner."
+
+msgid "Building20_Name"
+msgstr "Hangar à avion"
+
+msgid "Building20_Desc"
+msgstr "Hangar à avion\n\nIl stocke les unités aériennes permettant leur réparation, leurs mises à jour ou leurs recharges nécessitant alors du minerai. Peut stocker douze unités."
+
+msgid "Building21_Name"
+msgstr "Mine"
+
+msgid "Building21_Desc"
+msgstr "Mine\n\nExplosifs invisibles et redoutables pour les unités de combat, les mines peuvent être détectées uniquement par les poseurs de mines, les commandos et les prospecteurs. Une fois découvertes, n'importe quel dégât suffit à les faire exploser et dégager le terrain."
+
+msgid "Building22_Name"
+msgstr "Station minière"
+
+msgid "Building22_Desc"
+msgstr "Station minière\n\nStation extrayant les ressources souterraines. Sous la zone couverte de la station minière doit se trouver au moins une des trois ressources pour pouvoir fonctionner, en plus d'être reliée à un générateur ou station d'énergie. Les ressources extraites doivent être stockées si elles ne sont pas exploitées immédiatement, sinon elles sont perdues."
+
+msgid "Building23_Name"
+msgstr "Mine alien"
+
+msgid "Building23_Desc"
+msgstr "Mine alien"
+
+msgid "Building24_Name"
+msgstr "Plan d'atterrissage"
+
+msgid "Building24_Desc"
+msgstr "Plan d'atterrissage\n\nPlan favorable à l'atterrissage des unités aériennes pour être rechargées en munition ou pour être réparées un à un par un réparateur. Erigé par un ingénieur."
+
+msgid "Building25_Name"
+msgstr "Plateforme marine"
+
+msgid "Building25_Desc"
+msgstr "Plateforme marine\n\nPlateforme permettant la construction d'installation sur l'eau, par exemple des stations minières. Contrairement au pont flottant, la plateforme marine bloque le passage aux navires. Construite par l'ingénieur."
+
+msgid "Building26_Name"
+msgstr "Radar"
+
+msgid "Building26_Desc"
+msgstr "Radar\n\nInstallation fixe à radar. Avec un scanner à longue portée, les radars sont les yeux de la base, permettant aux lances-missiles d'exploiter pleinement la portée de leurs tirs."
+
+msgid "Building27_Name"
+msgstr "Centre de recherche"
+
+msgid "Building27_Desc"
+msgstr "Centre de recherche\n\nLes centres de recherche explorent les possibilités de progression technologique des unités. Contrairement aux mises à jour à l'aide des crédits élaborés par les raffineries d'or, les mises à jour par la recherche prennent du temps, et sont par palier. Cependant, les progrès apportés par la recherche affectent sans distinction toutes les unités et installations. Nécessite des colons proventant d'habitats et de l'énergie pour opérer."
+
+msgid "Building28_Name"
+msgstr "Route"
+
+msgid "Building28_Desc"
+msgstr "Route\n\nLes unités terrestres doublent leur vitesse sur les routes goudronnées."
+
+msgid "Building29_Name"
+msgstr "Mine marine"
+
+msgid "Building29_Desc"
+msgstr "Mine marine\n\nExplosifs invisibles et redoutables face aux unités navales, les mines marines peuvent être détectées uniquement par les poseurs de mines et les prospecteurs. Une fois découverte, un simple dégât suffit à les faire exploser et dégager le chemin."
+
+msgid "Building30_Name"
+msgstr "Bouclier (alien)"
+
+msgid "Building30_Desc"
+msgstr "Bouclier (alien)"
+
+msgid "Building31_Name"
+msgstr "Réserve d'or"
+
+msgid "Building31_Desc"
+msgstr "Réserve d'or\n\nEntrepose les réserves d'or extrait. Nécessite d'être connecté à une station minière."
+
+msgid "Building32_Name"
+msgstr "Unité de d'entreposage"
+
+msgid "Building32_Desc"
+msgstr "Unité d'entreposage\n\nEntrepose les réserves de minerai extrait. Nécessite d'être connecté à une station minière."
+
+msgid "Building33_Name"
+msgstr "Réservoir à carburant"
+
+msgid "Building33_Desc"
+msgstr "Réservoir à carburant\n\nEntrepose les réserves de carburant extrait. Nécessite d'être connecté à une station minière."
+
+msgid "Building34_Name"
+msgstr "Hall d'entraînement"
+
+msgid "Building34_Desc"
+msgstr "Hall d'entraînement\n\nEntraîne les commandos et l'infanterie. Nécessite des colons provenant d'habitats et de l'énergie pour opérer."
+
+msgid "Building35_Name"
+msgstr "Éco-sphère"
+
+msgid "Building35_Desc"
+msgstr "Éco-sphère\n\nVotre but premier est la construction d'éco-sphères. Chaque éco-sphère vous donne un point de colonie par tour.\n\nDéfendez bien vos éco-sphères, car si l'une d'entre elles est détruite, vous perdez tous les points qu'elle avait accumulés!"
+
+msgid "Vehicle01_Name"
+msgstr "Transp. aérien"
+
+msgid "Vehicle01_Desc"
+msgstr "Transport aérien\n\nAvion transporteur capable de porter 3 unités terrestres à la fois."
+
+msgid "Vehicle02_Name"
+msgstr "Canon Automoteur Alien"
+
+msgid "Vehicle02_Desc"
+msgstr "Canon Automoteur Alien\n\nChar d'assaut alien avec canon plasma puissant monté sur un chassis légèrement blindé. Comme toutes les unités alien, il se répare seul, et augmente ses capacités par apprentissage."
+
+msgid "Vehicle03_Name"
+msgstr "Bombardier Alien"
+
+msgid "Vehicle03_Desc"
+msgstr "Avion Alien\n\nAvion alien à la base bombardier, il est capable aussi d'attaquer les autres unités aériennes. Relativement puissant, il reste néanmoins vulnérable aux canons anti-aériens. Comme toutes les unités alien, il se répare seul, et augmente ses capacités par apprentissage."
+
+msgid "Vehicle04_Name"
+msgstr "Destroyer Alien"
+
+msgid "Vehicle04_Desc"
+msgstr "Navire alien\n\nNavire de guerre alien au blindage lourd. Comme celui humain, le destroyer alien excelle dans la destruction des navires ennemis et les installations près du rivage. Comme toutes les unités alien, il se répare seul, et augmente ses capacités par apprentissage."
+
+msgid "Vehicle05_Name"
+msgstr "Char d'assault Alien"
+
+msgid "Vehicle05_Desc"
+msgstr "Char d'assault Alien\n\nChar lourdement blindé d'origine alien, excellent pour absorber les tirs ennemis sur le front. Comme toutes les unités alien, il se répare seul, et augmente ses capacités par apprentissage."
+
+msgid "Vehicle06_Name"
+msgstr "Transp. Infanterie"
+
+msgid "Vehicle06_Desc"
+msgstr "Transporteur d'infanterie\n\nVéhicule de transport d'infanterie et de commandos, rapide mais légèrement blindé, capable de se mouvoir asur terre et, moins rapidement, dans la mer. Seule une corvette est capable de le détecter une fois sous l'eau. Douze soldats peuvent être transportés à la fois."
+
+msgid "Vehicle07_Name"
+msgstr "Canon Automoteur"
+
+msgid "Vehicle07_Desc"
+msgstr "Canon Automoteur\n\nUnité terrestre rapide à moyenne portée et attaque puissante. A cause de son blindage léger, sa mise en attaque doit se faire après avoir absorber les tirs avec les chars lourds."
+
+msgid "Vehicle08_Name"
+msgstr "AWAC"
+
+msgid "Vehicle08_Desc"
+msgstr "AWAC\n\nAvion de reconnaissance radar. Essentiel dans les missions de reconnaissance et la détection des installations et unités anti-aériennes."
+
+msgid "Vehicle09_Name"
+msgstr "Bombardier"
+
+msgid "Vehicle09_Desc"
+msgstr "Bombardier\n\nAvion lourd de bombardement des unités et installations terrestres ou marines. Le bombardier a un coût élevé, mais ses avantages sont à la hauteur de son prix. Une unité indispensable dans l'attaque et la destruction de la base ennemie."
+
+msgid "Vehicle10_Name"
+msgstr "Bulldozer"
+
+msgid "Vehicle10_Desc"
+msgstr "Bulldozer\n\nUnité de nettoyage terrestre. Obligatoire pour pouvoir reconstruire sur les restes d'un bâtiment ou d'une unité, recyclés en minerai."
+
+msgid "Vehicle11_Name"
+msgstr "Navire cargo"
+
+msgid "Vehicle11_Desc"
+msgstr "Navire cargo\n\nNavire transportant les réapprovisionnements, pour recharger en munitions les autres navires."
+
+msgid "Vehicle12_Name"
+msgstr "Lance-roquette"
+
+msgid "Vehicle12_Desc"
+msgstr "Lance-roquette\n\nVéhicule au blindage léger, avec attaques à la roquette se fragmentant à l'explosion et atteignant les zones voisines sur un rayon de 2 carrés. Utile par exemple pour déminer les zones ennemis ou pour exterminer rapidement tout une batterie d'infanteries."
+
+msgid "Vehicle13_Name"
+msgstr "Commando"
+
+msgid "Vehicle13_Desc"
+msgstr "Commando\n\nSoldat d'infiltration, entraîné à l'art de la furtivité et de l'électronique, invisible pour les unités non humaines. Le commando permet de neutraliser ou de voler une unité ennemie selon son degré d'expérience. Si la tentative échoue, le commando devient visible aux unités ennemis et est donc vulnérable. Il est capable aussi de détecter les zones minées. Son expérience progresse à chaque tentative d'infiltration réussie. Le vol d'unité étant plus risqué que sa neutralisation, seul un expert peut sans danger tenter le vol."
+
+msgid "Vehicle14_Name"
+msgstr "Corvette"
+
+msgid "Vehicle14_Desc"
+msgstr "Corvette\n\nNavire rapide à sonar et torpilles, capable de détecter et d'attaquer les sous-marins, comme les autres unités marines."
+
+msgid "Vehicle15_Name"
+msgstr "Escorteur"
+
+msgid "Vehicle15_Desc"
+msgstr "Escorteur\n\nNavire équipé d'un canon anti-aérien, protégeant la flotille des menaces aériennes. Incapable de de se défendre face aux unités marines ou terrestres."
+
+msgid "Vehicle16_Name"
+msgstr "Chasseur"
+
+msgid "Vehicle16_Desc"
+msgstr "Chasseur\n\nAvion très rapide mais vulnérable, le chasseur permet de repousser les attaques aériennes ennemies, tout comme protéger l'escadrille des chasseurs ennemis. Il est incapable de se défendre des attaques terrestres."
+
+msgid "Vehicle17_Name"
+msgstr "Destroyer"
+
+msgid "Vehicle17_Desc"
+msgstr "Destroyer\n\nNavire lourdement blindé, et puissamment armé, de moyenne portée. Excellent pour la destruction d'unité navale et d'installation au large des côtes."
+
+msgid "Vehicle18_Name"
+msgstr "Infanterie"
+
+msgid "Vehicle18_Desc"
+msgstr "Infanterie\n\nSoldat humain, équipé d'une arme légère anti-blindé. L'infanterie est capable de détecter les commandos ennemis."
+
+msgid "Vehicle19_Name"
+msgstr "Constructeur"
+
+msgid "Vehicle19_Desc"
+msgstr "Constructeur\n\nEngin permettant la fabrication d'usines, stations minères et autres bâtiments de la base."
+
+msgid "Vehicle20_Name"
+msgstr "Poseur de mines"
+
+msgid "Vehicle20_Desc"
+msgstr "Poseur de mines\n\nEngin léger spécialisé dans la pose de mines. Il est capable de récupérer les mines déjà posées et les reconvertir en minerai. Ne peut retirer les mines ennemis, qui doivent être explosées pour libérer une zone."
+
+msgid "Vehicle21_Name"
+msgstr "Lance-missile mobile"
+
+msgid "Vehicle21_Desc"
+msgstr "Lance-missile mobile\n\nVersion mobile terrestre du lance-missile. A la fois lent et fragile, il sert avant tout à ralentir la progression ennemie avec sa longue portée."
+
+msgid "Vehicle22_Name"
+msgstr "Croiseur lance-missile"
+
+msgid "Vehicle22_Desc"
+msgstr "Croiseur lance-missile\n\nNavire équipé d'un lance-missile. Blindage moyen, longue portée et attaque puissante en font une excellente unité."
+
+msgid "Vehicle23_Name"
+msgstr "DCA mobile"
+
+msgid "Vehicle23_Desc"
+msgstr "DCA mobile\n\nVersion mobile du canon anti-aérien. Unité essentielle dans la protection de vos unités terrestres de combat, elle sert à la défense en repoussant les bombardiers ennemis."
+
+msgid "Vehicle24_Name"
+msgstr "Ingénieur"
+
+msgid "Vehicle24_Desc"
+msgstr "Ingénieur\n\nPetit engin spécialisé dans la construction des petites installations et d'unités d'artillerie fixes."
+
+msgid "Vehicle25_Name"
+msgstr "Réparateur"
+
+msgid "Vehicle25_Desc"
+msgstr "Réparateur\n\nEngin servant à réparer les unités terrestres aussi bien fixes que mobiles, et transportant une réserve de minerai. Plus les dégâts sont importants, plus le coût en minerai augmente."
+
+msgid "Vehicle26_Name"
+msgstr "Radar mobile"
+
+msgid "Vehicle26_Desc"
+msgstr "Radar mobile\n\nVersion mobile du radar. Moins rapide et plus cher qu'un éclaireur, sa portée de scan est bien plus importante. Utile dans la détection d'unité d'attaque ennemie à longue portée, et l'anticipation des mouvements ennemis."
+
+msgid "Vehicle27_Name"
+msgstr "Éclaireur"
+
+msgid "Vehicle27_Desc"
+msgstr "Éclaireur\n\nUnité terrestre très mobile, l'éclaireur permet une rapide reconnaissance des lieux grâce à son radar moyenne portée. Il est aussi capable de se déplacer sur l'eau à plus faible vitesse, et est équipé d'une petite arme de défense. Fragile, mais très faible coût."
+
+msgid "Vehicle28_Name"
+msgstr "Poseur de mine naval"
+
+msgid "Vehicle28_Desc"
+msgstr "Poseur de mine naval\n\nVersion marine du poseur de mine. Comme celui sur terre, il est capable de détecter et récupérer les mines navales en les recyclant en minerai. Les mines navales sont très efficaces contre les sous-marins."
+
+msgid "Vehicle29_Name"
+msgstr "Transp. marin"
+
+msgid "Vehicle29_Desc"
+msgstr "Transporteur marin\n\nNavire capable de transporter six unités terrestres à la fois. Plus lent que la version aérienne, il est toutefois plus solide."
+
+msgid "Vehicle30_Name"
+msgstr "Sous-marin"
+
+msgid "Vehicle30_Desc"
+msgstr "Sous-marin\n\nEspionnant sous l'eau, les sous-marins peuvent infiltrer le chantier naval ennemi et faire feu de leurs puissantes torpilles. Possédant un sonar furtif, seul les corvettes sont capable de les détecter, face à qui ils sont vulnérables ainsi qu'aux bombardiers."
+
+msgid "Vehicle31_Name"
+msgstr "Prospecteur"
+
+msgid "Vehicle31_Desc"
+msgstr "Prospecteur\n\nEngin léger, permettant de scruter et de détecter les ressources souterraines. Amphibien, il est toutefois plus rapide sur terre que sur l'eau."
+
+msgid "Vehicle32_Name"
+msgstr "Char d'assault"
+
+msgid "Vehicle32_Desc"
+msgstr "Char d'assault\n\nChar lourdement blindé permettant d'encaisser les tirs du front et laisser les unités plus puissantes riposter sans encombre."
+
+msgid "Vehicle33_Name"
+msgstr "Camion d'or"
+
+msgid "Vehicle33_Desc"
+msgstr "Camion d'or\n\nVéhicule transportant des réserves d'or d'un point à un autre. Utile lorsque il y a plusieurs bases non interconnectées."
+
+msgid "Vehicle34_Name"
+msgstr "Camion de minerai"
+
+msgid "Vehicle34_Desc"
+msgstr "Camion de minerai\n\nVéhicule transportant des réserves de minerai d'un point à un autre. Utile lorsque il y a plusieurs bases non interconnectées."
+
+msgid "Vehicle35_Name"
+msgstr "Camion-citerne"
+
+msgid "Vehicle35_Desc"
+msgstr "Camion-citerne\n\nVéhicule transportant des réserves de carburant d'un point à un autre. Utile lorsque il y a plusieurs bases non interconnectées."
+

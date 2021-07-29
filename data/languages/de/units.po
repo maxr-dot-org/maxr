@@ -1,0 +1,438 @@
+# German translations for Maxr package.
+# Copyright (C) 2021 THE Maxr'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Maxr package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Maxr 0.3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-07-29 21:33+0200\n"
+"PO-Revision-Date: 2021-07-31 11:33+0200\n"
+"Last-Translator:\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Building01_Name"
+msgstr "Kaserne"
+
+msgid "Building01_Desc"
+msgstr "Kaserne\n\nIn einer Kaserne gibt es eine Werkstatt zum Aufrüsten und Reparieren der Anzüge von Infiltratoren und Infanterie. Außerdem ist es möglich, diese Einheiten wieder mit Munition zu versorgen. Die Kaserne benötigt zum Reparieren, Aufrüsten oder Aufladen Rohstoff, weshalb sie an eine Lagereinheit oder ein eingeschaltetes Bergwerk angeschlossen sein sollte."
+
+msgid "Building02_Name"
+msgstr "Betonklotz"
+
+msgid "Building02_Desc"
+msgstr "Betonklotz\n\nGehärteter, gepanzerter Block zum Blockieren feindlicher Bewegungen."
+
+msgid "Building03_Name"
+msgstr "Brücke"
+
+msgid "Building03_Desc"
+msgstr "Brücke\n\nPontonbrücke zum Überqueren von Wasser. Brücken blockieren im Gegensatz zu Wasserplattformen, die Bewegungen der Schiffe nicht. Zudem bewegen sich Einheiten mit doppelter Geschwindigkeit über Brücken."
+
+msgid "Building04_Name"
+msgstr "Kopplung"
+
+msgid "Building04_Desc"
+msgstr "Kopplung\n\nGebäude müssen verbunden sein, um Rohstoff, Treibstoff und Gold zu teilen. Sie können Gebäude verbinden, indem Sie sie nebeneinander plazieren oder indem Sie Kopplungen von einem Gebäude zum Anderen bauen."
+
+msgid "Building05_Name"
+msgstr "Depot"
+
+msgid "Building05_Desc"
+msgstr "Depot\n\nEin Depot kann Schäden reparieren, Munition herstellen und Bodeneinheiten auf den neusten Technologiestand aufrüsten. Für all diese Aktionen wird Rohstoff benötigt, weshalb ein Depot an das Rohstofflagersystem angeschlossen sein sollte."
+
+msgid "Building06_Name"
+msgstr "Dock"
+
+msgid "Building06_Desc"
+msgstr "Dock\n\nEin Dock kann Schäden reparieren, Munition hersellen und Schiffe auf der neusten Technologiestand aufrüsten. Für all diese Aktionen wird Rohstoff benötigt, weshalb ein Dock an das Rohstofflagersystem angeschlossen sein sollte."
+
+msgid "Building07_Name"
+msgstr "Energiestation"
+
+msgid "Building07_Desc"
+msgstr "Energiestation\n\nEine Energiestation verbraucht jede Runde sechs Treibstoff und prodozierd daraus genug Energie für sechs Energieverbraucher wie Fabriken oder Bergwerke.\n\nEnergiestationen benötigen eine längere Bauzeit als Energiegeneratoren sind dafür aber effizienter."
+
+msgid "Building08_Name"
+msgstr "Energiegenerator"
+
+msgid "Building08_Desc"
+msgstr "Energiegenerator\n\nEin Energiegenerator verbraucht in jeder Runde zwei Treibstoff und produziert daraus genug Energie um einen Energieverbraucher wie ein Bergwerk oder eine Fabrik zu betreiben. Der Energiegenerator muss an eine Treibstoffquelle (Bergwerk oder Treibstofftank) angeschlossen sein. Zudem ist es auch sinnvoll eine Verbindung zum Verbraucher zu haben."
+
+msgid "Building09_Name"
+msgstr "Flugzeugfabrik"
+
+msgid "Building09_Desc"
+msgstr "Flugzeugfabrik\n\nBaut alle erhältlichen menschlichen Lufteinheiten wie Jäger, Bomber, Transportflugzeug. Eine Lufteinheitenfabrik verbraucht drei Rohstoffe pro Runde sowie eine Energieeinheit."
+
+msgid "Building10_Name"
+msgstr "Alien-Einheitenfabrik"
+
+msgid "Building10_Desc"
+msgstr "Alien-Einheitenfabrik\n\nDie alien Version einer Fabrik. Im gegensatz zu den Fabriken der Mechcommander, können Alien hierin alle Einheiten bauen."
+
+msgid "Building11_Name"
+msgstr "Schwere Fahrzeugfabrik"
+
+msgid "Building11_Desc"
+msgstr "Schwere Fahrzeugfabrik\n\nSchwere Fahrzeugfabriken bauen Konstrukeure, mobile Scanner und die schweren Kampfeinheiten: Panzer, Sturmgeschütze, Raketenwerfer und mobile Missilenwerfer. Eine Schwere Fahrzeugfabrik verbraucht drei Rohmaterialien pro Runde und benötigt Energie."
+
+msgid "Building12_Name"
+msgstr "Schiffswerft"
+
+msgid "Building12_Desc"
+msgstr "Schiffswerft\n\nSchiffswerften bauen Schiffe, wie U-Boote, See-Transporter und Missilenschiffe. Eine Schiffswerft benötigt drei Rohmaterialien in jeder Runde, um zu operieren, sowie Energie."
+
+msgid "Building13_Name"
+msgstr "Leichte Fahrzeugfabrik"
+
+msgid "Building13_Desc"
+msgstr "Leichte Fahrzeugfabrik\n\nBaut leichte Fahrzeuge: Pioniere, Lkws, mobile Anti-Lufteinheiten."
+
+msgid "Building14_Name"
+msgstr "Goldraffinerie"
+
+msgid "Building14_Desc"
+msgstr "Goldraffinerie\n\nRaffinerie, um Gold in Kredits umzuwandeln. Kredits werden benötigt um Einheitenverbesserungen zu erwerben. Um Kredits erzeugen zu können, benötigt eine Goldraffinerie eine Energiequelle sowie fünf Gold pro Runde. Ein Bergwerk kann Gold fördern, wenn es über einer unterirdischem Goldquelle gebaut wurde."
+
+msgid "Building15_Name"
+msgstr "Luftabwehr"
+
+msgid "Building15_Desc"
+msgstr "Luftabwehr\n\nDie Luftabwehr verschießt kleinkalibrige Hochgeschwindigkeitsmunition und macht mit Flugzeugen einen kurzen Prozess. Es ist jedoch nicht möglich hiermit Bodeneinheiten anzugreifen."
+
+msgid "Building16_Name"
+msgstr "Artillerie"
+
+msgid "Building16_Desc"
+msgstr "Artillerie\n\nStarke stationäre Waffe. Die Artillerie ist ein Kompromiss zwischen dem billigen, robusten Gefechtsturm und dem teuren Missilenwerfer."
+
+msgid "Building17_Name"
+msgstr "Missilenwerfer"
+
+msgid "Building17_Desc"
+msgstr "Missilenwerfer\n\nLangstreckenraketenwerfer auf einem festen Gestell. Exzellente Reichweite und Feuerkraft, aber nur wenig mehr Panzerung als bei der mobilen Version. Am besten umgeben von Gefechtstürmen und Luftabwehr."
+
+msgid "Building18_Name"
+msgstr "Gefechtsturm"
+
+msgid "Building18_Desc"
+msgstr "Gefechtsturm\n\nSchwer gepanzerter stationärer Gefechtsturm. Gefechtstürme haben mäßige Feuerkraft, schwere Panzerung und die geringste Reichweite der Verteidigungsanlagen. Da sie in kurzer Zeit gebaut werden können, sind sie eine gute Wahl, wenn Sie möglichst schnell eine Verteidigung benötigen."
+
+msgid "Building19_Name"
+msgstr "Behausung"
+
+msgid "Building19_Desc"
+msgstr "Behausung\n\nEine Behausung beherbergen drei Arbeiter. Arbeiter werden in Forschungszentren, Trainingshallen und Ökosphären benötigt. Diese Gebäude müssen mit eine Behausung verbunden sein bevor sie in Betrieb genommen werden können."
+
+msgid "Building20_Name"
+msgstr "Hangar"
+
+msgid "Building20_Desc"
+msgstr "Hangar\n\nEin Hangar kann Schäden reparieren, Munition herstellen und Lufteinheiten auf den neusten Technologiestand aufrüsten. Für all diese Aktionen wird Rohstoff benötigt, weshalb ein Hangar an das Rohstofflagersystem angeschlossen sein sollte."
+
+msgid "Building21_Name"
+msgstr "Landmine"
+
+msgid "Building21_Desc"
+msgstr "Landmine\n\nEine Landmine ist eine kleine und schwer zu entdeckente Sprengfalle. Verborgen im Untergrund, zur Zerstörung feindlicher Ziele die sich darüber bewegen Entwickelt. Nur Gutachter, Minenleger und Infiltratoren können Minen aufspühren. Sobald sie entdeckt wurde wird fast jede Beschädigung sie zerstören."
+
+msgid "Building22_Name"
+msgstr "Bergwerk"
+
+msgid "Building22_Desc"
+msgstr "Bergwerk\n\nFördert in jeder Runde unterirdische Ressourcen wie Rohstoffe, Treibstoff und Gold. Gebäude sollten an ein Bergwerk angeschlossen sein, um die reförderten Ressourcen nutzen zu können. Wenn keine Lagergebäude vorhanden sind um überschüssige Erzeugnisse zu Lagern, gehen diese verloren.\nFähig bis zu 16 Ressourceneinheiten zu fördern."
+
+msgid "Building23_Name"
+msgstr "Tiefes Bergwerk"
+
+msgid "Building23_Desc"
+msgstr "Tiefes Bergwerk\n\n Wie die normalen Bergwerke kann es zum Fördern unterirdischer Ressourcen verwendet werden. Der größte Vorteil gegenüber normalen Bergwerken ist, bis zu [wert] Ressourceneinheiten zu fördern."
+
+msgid "Building24_Name"
+msgstr "Landefläche"
+
+msgid "Building24_Desc"
+msgstr "Landefläche\n\nLandemöglichkeit für Flugzeuge. Kann Flugzeuge weder reparieren, noch aufladen. Um ein Flugzeug auf einer Landefläche wieder aufzuladen oder zu reparieren, benutzen Sie einen nahegelegenen Versorgungstruck beziehungsweise eine Repariereinheit."
+
+msgid "Building25_Name"
+msgstr "Wasserplattform"
+
+msgid "Building25_Desc"
+msgstr "Wasserplattform\n\nLiefert eine Fläche auf dem Wasser, auf der andere Gebäude errichtet werden können. Pionierfahrzeuge können Wasserplattformen sowohl über Ufer als auch auf offenem Gewässer bauen. Wasserplattformen sind besonders wichtig auf Inselkarten oder wenn wertvolle Rohstoffe unter dem Meeresboden sind."
+
+msgid "Building26_Name"
+msgstr "Radar"
+
+msgid "Building26_Desc"
+msgstr "Radar\n\nStationäre langstrecken Radaranlage. Einheiten mit hoher Reichweite wie Missilenwerfer und Artillerie können nicht auf etwas schießen, das sie nicht sehen. Daher ist es wichtig, einen Scanner oder ein Radar in der Nähe zu haben."
+
+msgid "Building27_Name"
+msgstr "Forschungszentrum"
+
+msgid "Building27_Desc"
+msgstr "Forschungszentrum \n\nIn einem Forschungszentrum wird erforscht, wie Ihre Einheiten verbessert werden können. Im Unterschied zu Upgrades, die mit Sie mit Kredits erwerben, benötigt die Forschung Zeit und die Verbesserungen sind klein. Allerdings wirkt sich die Forschung auf all Ihre Einheiten aus. Zudem können Sie auch ohne Goldquelle forschen. Zum Betreiben eines Forschungszentrums wird eine Arbeiter sowie Energie benötigt."
+
+msgid "Building28_Name"
+msgstr "Strasse"
+
+msgid "Building28_Desc"
+msgstr "Straße\n\nEinheiten bewegen sich mit doppelter Geschwindigkeit über Straßen."
+
+msgid "Building29_Name"
+msgstr "Seemine"
+
+msgid "Building29_Desc"
+msgstr "See\n\nEine Seemine ist eine kleine und schwer zu entdeckente Sprengfalle. Verborgen unter der Wasseroberfläche, zur Zerstörung feindlicher Ziele die sich darüber bewegen Entwickelt. Nur Gutachter, Minenleger und Infiltratoren (in Küstennähe) können Minen aufspühren. Sobald sie entdeckt wurde wird fast jede Beschädigung sie zerstören."
+
+msgid "Building30_Name"
+msgstr "Schildgenerator"
+
+msgid "Building30_Desc"
+msgstr "Schildgenerator\n\nSchützt angrenzente Gebäute mit einem Schild vor feindlichem Feuer."
+
+msgid "Building31_Name"
+msgstr "Goldtresor"
+
+msgid "Building31_Desc"
+msgstr "Goldtresor\n\nBeinhaltet unraffiniertes Gold. Bergwerke können in jeder Runde Gold produzieren, wenn sich unter ihnen eine Goldadern befindet. Um ungenutztes Gold zu lagern, muss ein Bergwerk mit einem Goldtresor verbunden sein."
+
+msgid "Building32_Name"
+msgstr "Lagereinheit"
+
+msgid "Building32_Desc"
+msgstr "Lagereinheit\n\nLagert für Rohstoff. Bergwerke produzieren Rohstoff in jeder Runde. Um ungenutzten Rohstoff zu lagern, muss ein Bergwerk an eine Lagereinheit angeschlossen sein."
+
+msgid "Building33_Name"
+msgstr "Treibstofftank"
+
+msgid "Building33_Desc"
+msgstr "Treibstofftank\n\nLagert für Treibstoff. Bergwerke produzieren in jeder Runde Treibstoff. Um ungenutzten Treibstoff zu lagern, muss das Bergwerk an einen Treibstofftank angeschlossen sein."
+
+msgid "Building34_Name"
+msgstr "Trainingshalle"
+
+msgid "Building34_Desc"
+msgstr "Trainingshalle\n\nTrainiert Infiltratoren die feindliche Einheiten außer Gefecht setzen oder gefangen nehmen können und Infanterie. Nur Infanterie und andere Infiltratoren können Infiltratoren entdecken. Eine Trainingshalle benötigt Arbeiter einer Behausung und Energie, um operieren zu können."
+
+msgid "Building35_Name"
+msgstr "Ökosphäre"
+
+msgid "Building35_Desc"
+msgstr "Ökosphäre\n\nWenn Sie per Punkten gewinnen wollen, sollte Ihr primäres Ziel sein, so viele Ökosphären wie möglich zu bauen. In jeder Runde in der eine Ökosphäre läuft, verbessert diese Ihren Punktestand um einen Punkt.\n\nBeschützen Sie dieses Gebäute gut, denn wenn es zerstört wird, verlieren sie alle Punkte, die es bisher erzeugt hat.\nEine Ökosphäre benötigt einen Arbeiter einer Behausung und Energie."
+
+msgid "Vehicle01_Name"
+msgstr "Transportflugzeug"
+
+msgid "Vehicle01_Desc"
+msgstr "Transportflugzeug\n\nFlugzeug mit der Fähigkeit bis zu drei Bodeneinheiten zu transportieren."
+
+msgid "Vehicle02_Name"
+msgstr "Alien-Sturmgeschütz"
+
+msgid "Vehicle02_Desc"
+msgstr "Alien-Sturmgeschütz\n\nLeistungsstarke Plasmawaffe, die auf ein schnelles, mittelstark gepanzertes Gestell montiert ist. Obwohl es nicht so zerbrechlich wie ein menschliches Sturmgeschütze ist, sollte das Alien-Sturmgeschütz dennoch Feindfeuer vermeiden.\nAlle Alieneinheiten reparieren sich selbst und verbessern ihre Fähigkeiten durch Erfahrung."
+
+msgid "Vehicle03_Name"
+msgstr "Alien-Jagdbomber"
+
+msgid "Vehicle03_Desc"
+msgstr "Alien-Jagdbomber\n\nHauptsächlich für einen Angriff von Bodenzielen entworfen, kann er auch andere Flugzeuge angreifen. Obwohl das Alienflugzeug leistungsstark ist, ist es dennoch durch Luftabwehrfeuer zerstörbar.\nWie andere Alieneinheiten, können auch Alienflugzeuge sich selbst reparieren und verbessern ihre Fähigkeiten durch Erfahrung."
+
+msgid "Vehicle04_Name"
+msgstr "Alien-Kanonenboot"
+
+msgid "Vehicle04_Desc"
+msgstr "Alien-Kanonenboot\n\nSchwer gepanzertes und bewaffnetes Kriegsschiff im Aliendesign. Wie ein menschliches Kanonenboot ist es hervorragend zum Zerstören von anderen Schiffen und Landzielen in Ufernähe geeignet.\nAlle Alien Einheiten reparieren sich selbst und verbessern ihre Fähigkeiten durch Erfahrung."
+
+msgid "Vehicle05_Name"
+msgstr "Alien-Panzer"
+
+msgid "Vehicle05_Desc"
+msgstr "Alien-Panzer\n\nSchwer gepanzerter Panzer im Aliendesign. Ein Alien-Panzer wird am besten an der Front eines Angriffs eingesetzt um feindliches Feuer abzufangen.\nAlle Alieneinheiten reparieren sich selbst und verbessern ihre Fähigkeiten durch Erfahrung."
+
+msgid "Vehicle06_Name"
+msgstr "MTW"
+
+msgid "Vehicle06_Desc"
+msgstr "Mannschaftstransportwagen\n\nSchnelles, gepanzertes Gefährt zum transportieren von Infanterie und Infiltratoren. Der MTW bewegt sich mit normaler Geschwindigkeit auf dem Land, kann sich aber auch langsam unter Wasser fortbewegen. Nur feindliche Korvetten können ein sich unter Wasser bewegenden MTW entdecken."
+
+msgid "Vehicle07_Name"
+msgstr "Sturmgeschütz"
+
+msgid "Vehicle07_Desc"
+msgstr "Sturmgeschütz\n\nLeicht gepanzertes Fahrzeug mit einer Waffe mittlerer Reichweite, die hochexplosieve Granaten feuert. Schnell und effektiv im Angriff, aber ebensoleicht zerstörbar."
+
+msgid "Vehicle08_Name"
+msgstr "AWACS"
+
+msgid "Vehicle08_Desc"
+msgstr "AWACS\n\nLuftgestütztes Frühwarnsystem - im Grunde ein fliegenders Radar. Ein AWACS ist notwendig um feindliche Luftabwehr zu endtecken, bevor Ihre Flugzeuge in Feuerreichweite fliegen."
+
+msgid "Vehicle09_Name"
+msgstr "Bomber"
+
+msgid "Vehicle09_Desc"
+msgstr "Bomber\n\nEin schwereres und teures Flugzeug, das mit Luft-Boden-Raketen bewaffnet ist.\nDer Vorteile der hohen Geschwindigkeit sowie die Fähigkeit alle Boden- und Seeeinheiten (vorallem aber U-Boote) angreifen zu können, rechtfertigen die hohen Herstellungskosten."
+
+msgid "Vehicle10_Name"
+msgstr "Bulldozer"
+
+msgid "Vehicle10_Desc"
+msgstr "Bulldozer\n\nFahrzeug mit der Fähigkeit, Schutt zerstörter Gebäude und Einheiten wegzuräumen. Bulldozer erzeugen dabei Rohstoff aus dem Schutt."
+
+msgid "Vehicle11_Name"
+msgstr "Frachtschiff"
+
+msgid "Vehicle11_Desc"
+msgstr "Frachtschiff\n\nSchiff für den Transport von Rohstoff. Nützlich um Pionierfahrzeuge mit Rohstoff zu versorgen und die Munition von Seekampfeinheiten nachzuladen."
+
+msgid "Vehicle12_Name"
+msgstr "Raketenwerfer"
+
+msgid "Vehicle12_Desc"
+msgstr "Raketenwerfer\n\nLeicht gepanzertes Fahrzeug das Mittelstreckenraketen abfeuert. Alle Einheiten die sich innerhalb von 2 Feldern um das Ziel herum befinden werden dabei auch beschädigt. Am effektivsten gegen Gruppen feindlicher Einheiten."
+
+msgid "Vehicle13_Name"
+msgstr "Infiltrator"
+
+msgid "Vehicle13_Desc"
+msgstr "Infiltrator\n\nKommando das in der Kunst der lautlosen und elektronischen Kriegsführung trainiert ist. Ein Infiltrator kann feindliche Einheiten unschädlich machen oder gefangen nehmen.\nDabei ist er für den Feind unsichtbar, es sei denn das er bei seiner arbeit einen Fehler macht. Zudem kann er von feindlicher Infanterie und Infiltratoren aufgespürt werden."
+
+msgid "Vehicle14_Name"
+msgstr "Korvette"
+
+msgid "Vehicle14_Desc"
+msgstr "Korvette\n\nHochgeschwindigkeitsschiff mit Torpedos und Echolot. Eine Korvette kann jede Marineeinheit angreifen, aber ihre wirkliche Stärke ist die Fähigkeit, U-Boote zu sichten und anzugreifen."
+
+msgid "Vehicle15_Name"
+msgstr "Eskorte"
+
+msgid "Vehicle15_Desc"
+msgstr "Eskorte\n\nHochgeschwindigkeitsschiff mit gutem Radar und schnellfeuem Luftabwehrgeschütz. Eskorten sind die Augen einer Flotte und ihr Schutz vor Flugzeugen."
+
+msgid "Vehicle16_Name"
+msgstr "Jäger"
+
+msgid "Vehicle16_Desc"
+msgstr "Jäger\n\nSchnelles aber leicht zerströrbares Flugzeug das eine begrenzte Anzahl von Luft-Luft Raketen mitführt. Jäger sind das beste Mittel um feindliche Flugzeuge zu vertreiben und um eine mobile Armee zu verteidigen. Bodengestützte Luftabwehr ist zum verteidigen eines bestimmtes Gebiet die bessere Wahl."
+
+msgid "Vehicle17_Name"
+msgstr "Kanonenboot"
+
+msgid "Vehicle17_Desc"
+msgstr "Kanonenboot\n\nSchwer gepanzertes Schiff mit einer großkalibrigen Kanone mittlerer Reichweite. Exzellent beim Zerstören von anderen Schiffen und beim Bombardieren von Küstenzielen."
+
+msgid "Vehicle18_Name"
+msgstr "Infanterie"
+
+msgid "Vehicle18_Desc"
+msgstr "Infanterie\n\nSoldat, der mit einer leichten Panzerabwehrwaffe ausgestattet ist. Infanterie kann feindliche Infiltratoren ausfindig machen."
+
+msgid "Vehicle19_Name"
+msgstr "Konstrukteur"
+
+msgid "Vehicle19_Desc"
+msgstr "Konstrukteur\n\nGroßes Konstruktionsfahrzeug zum Errichten großer Gebäude wie Bergwerke und Fabriken."
+
+msgid "Vehicle20_Name"
+msgstr "Minenleger"
+
+msgid "Vehicle20_Desc"
+msgstr "Minenleger\n\nEin Minenleger ist ein spezialisiertes Konstruktionsfahrzeug, das Minen plazieren und ausspähen kann. Minenleger kann intern Rohstoff in Minen verwandeln. Sie können diese Minen später auch wieder einsammeln und dabei in Rohstoffe zurückverwandeln. Sie können jedoch keine feindlichen Minenfelder entfernen - diese müssen Sie mit Kanonen oder Raketen angreifen."
+
+msgid "Vehicle21_Name"
+msgstr "Mobiler Missilenwerfer"
+
+msgid "Vehicle21_Desc"
+msgstr "Mobiler Missilenwerfer\n\nMissilenwerfer auf einem leicht gepanzerten Fahrgestell. Dieser mobile Werfer ist ein bisschen weniger robust als die stationäre Version und erfordert zudem mehr Material beim Bau. Allerdings ist er durch seine Mobilität wesentlich flexibler einsetzbar."
+
+msgid "Vehicle22_Name"
+msgstr "Missilenschiff"
+
+msgid "Vehicle22_Desc"
+msgstr "Missilenschiff\n\nAuf einem Schiff montierter Missilenwerfer. Exzellente Reichweite, große Angriffsstärke und mittlere Panzerung machen dies zu einer starken Einheit."
+
+msgid "Vehicle23_Name"
+msgstr "Mobile Luftabwehr"
+
+msgid "Vehicle23_Desc"
+msgstr "Mobile Luftabwehr\n\nLeichtes und schnelles Fahrzeug mit einem schnellen Geschütz zum Abschießen vom feindlichen Flugzeugen. Die Mobile Luftabwehr ist normalerweise eine Verteidigungseinheite. Sie ist nicht so schnell wie ein Flugzeuge und kann nach einer Bewegungen nicht mehr feuern. Benutzen Sie sie, um ein Gebiet zu beschützen, nachdem ihre Jäger die feindlichen Bomber verjagt haben."
+
+msgid "Vehicle24_Name"
+msgstr "Pionier"
+
+msgid "Vehicle24_Desc"
+msgstr "Pionier\n\nKleines Konstruktionsfahrzeug zum Bau kleiner Gebäude und stationärer Verteidigungsanlagen."
+
+msgid "Vehicle25_Name"
+msgstr "Repariereinheit"
+
+msgid "Vehicle25_Desc"
+msgstr "Repariereinheit\n\nLeichtes Fahrzeug das schnell Bodeneinheiten und Gebäude reparieren kann. Reparaturen erfordern Rohstoff. Je größer der Schaden ist, desto mehr Rohstoff benötigt die Instandsetzung. Depots, Docks, Hangars und Kasernen können auch Einheiten reparieren."
+
+msgid "Vehicle26_Name"
+msgstr "Scanner"
+
+msgid "Vehicle26_Desc"
+msgstr "Scanner\n\nMobile Radarplattform. Langsamer und teuer als ein Späher, aber mit einer besseren Scanreichweite. Ein Scanner ist ein exzellentes Mittel um Ziele für Einheiten mit großer Reichweite wie mobilen Missilenwerfer zu orten."
+
+msgid "Vehicle27_Name"
+msgstr "Späher"
+
+msgid "Vehicle27_Desc"
+msgstr "Späher\n\nHochgeschwindigkeitsfahrzeug zum Erkunden sowie zum Aufspähen von gegnerischen Einheiten. Kann Wasser ohne Brücke überqueren ist jedoch an Land schneller.\n\nSehr schnell und mit guter Scanreichweite aber viel schwächer als die meisten Kampfeinheiten."
+
+msgid "Vehicle28_Name"
+msgstr "Seeminenleger"
+
+msgid "Vehicle28_Desc"
+msgstr "Seeminenleger\n\nSeevariante eines Minenlegers. Wie sein Gegenpart auf dem Land, kann er Minen herstellen und auch diese wieder in Rohstoffe zurückverwandeln. Zudem kann er feindliche Seeminen aufspühren."
+
+msgid "Vehicle29_Name"
+msgstr "Seetransporter"
+
+msgid "Vehicle29_Desc"
+msgstr "Seetransporter\n\nSchwer gepanzertes Schiff mit Platz, um bis zu sechs Landeinheiten zu transportieren. Seetransporter sind langsamer als Transportflugzeuge, aber sie überleben auch eher einen feindlichen Angriff."
+
+msgid "Vehicle30_Name"
+msgstr "U-Boot"
+
+msgid "Vehicle30_Desc"
+msgstr "U-Boot\n\nDicht unter der Wasseroberfläche lauernd, kann es sich nahe an den Feind heranschleichen um kraftvolle Torpedos abzufeuern. Da U-Boote kein aktives Sonar haben, können nur Korvetten U-Boote aufspühren, bevor diese einen Torpeto abschießen. Nur U-Boote, Korvetten und Bomber können U-Boote angreifen."
+
+msgid "Vehicle31_Name"
+msgstr "Gutachter"
+
+msgid "Vehicle31_Desc"
+msgstr "Gutachter\n\nLeichtes, amphibisches Fahrzeug mit sehr feinen Sensoren zum Auffinden von Bodenschätzen und feindlichen Minen. Im Gegensatz zu den meisten amphibischen Einheiten sind Gutachter auf Wasser genauso schnell wie auf Land."
+
+msgid "Vehicle32_Name"
+msgstr "Panzer"
+
+msgid "Vehicle32_Desc"
+msgstr "Panzer\n\nSchwer gepanzertes Kampffahrzeuge. Am besten an der Frontlinie eingesetzt um feindliche Einheiten daran zu hindern, leichter gepanzerte Hilfseinheiten wie z.B. Sturmgeschütze und Raketenwerfer anzugreifen."
+
+msgid "Vehicle33_Name"
+msgstr "Goldtransporter"
+
+msgid "Vehicle33_Desc"
+msgstr "Goldtransporter\n\nEinheit, um Gold von einem Ort zum nächsten zu transportieren."
+
+msgid "Vehicle34_Name"
+msgstr "Versorgungstruck"
+
+msgid "Vehicle34_Desc"
+msgstr "Versorgungstruck\n\nLkw zum Transport von Rohstoff. Nützlich um Pionierfahrzeuge und Konstrukteure zu versorgen und um Kampfeinheiten wieder mit Munition aufzuladen."
+
+msgid "Vehicle35_Name"
+msgstr "Tankwagen"
+
+msgid "Vehicle35_Desc"
+msgstr "Tankwagen\n\nLkw, um Treibstoff zu transportieren."
+

@@ -1,0 +1,1071 @@
+# Dutch translations for Maxr package.
+# Copyright (C) 2021 THE Maxr'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Maxr package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Maxr 0.3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-07-29 21:33+0200\n"
+"PO-Revision-Date: 2021-07-29 23:04+0200\n"
+"Last-Translator:\n"
+"Language-Team: Dutch\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Text~Comp~Adjustments_Fuel_Increased"
+msgstr "Aanpassingen gemaakt: Brandstof mijnen verhoogt met %s"
+
+msgid "Text~Comp~Adjustments_Gold_Decreased"
+msgstr "Aanpassingen gemaakt: Goud mijnen verlaagt met %s"
+
+msgid "Text~Comp~Adjustments_Metal_Decreased"
+msgstr "Aanpassingen gemaakt: Metaal mijnen verlaagt met %s"
+
+msgid "Text~Comp~Attacked"
+msgstr "%s wordt aangevallen"
+
+msgid "Text~Comp~AttackingEnemy"
+msgstr "%s is de vijand aan het aanvallen"
+
+msgid "Text~Comp~AttackingStatusStr"
+msgstr "valt aan"
+
+msgid "Text~Comp~Building_Disabled"
+msgstr "Gebouw uitgeschakeld"
+
+msgid "Text~Comp~CapturedByEnemy"
+msgstr "%s is buitgemaakt door de vijand"
+
+msgid "Text~Comp~Cheat"
+msgstr "valsspelen gebruikt"
+
+msgid "Text~Comp~Clearing"
+msgstr "Opruimen (%s)"
+
+msgid "Text~Comp~Clearing_Fin"
+msgstr "opruimen klaar"
+
+msgid "Text~Comp~Clearing_Mine"
+msgstr "opruimen mijnen"
+
+msgid "Text~Comp~CommandoRank_Average"
+msgstr "Normaal"
+
+msgid "Text~Comp~CommandoRank_Elite"
+msgstr "Elite"
+
+msgid "Text~Comp~CommandoRank_Expert"
+msgstr "Expert"
+
+msgid "Text~Comp~CommandoRank_GrandMaster"
+msgstr "Grootmeester"
+
+msgid "Text~Comp~CommandoRank_Greenhorn"
+msgstr "Groentje"
+
+msgid "Text~Comp~CommandoRank_Veteran"
+msgstr "Veteraan"
+
+msgid "Text~Comp~Dated"
+msgstr "verouderd"
+
+msgid "Text~Comp~Defeated"
+msgstr "Speler %s verslagen"
+
+msgid "Text~Comp~Description"
+msgstr "Omschrijving"
+
+msgid "Text~Comp~Destroyed"
+msgstr "%s vernietigd"
+
+msgid "Text~Comp~Detected"
+msgstr "ontdekt"
+
+msgid "Text~Comp~Disabled"
+msgstr "uitgeschakeld"
+
+msgid "Text~Comp~EcoSphere"
+msgstr "Eco-sfeer"
+
+msgid "Text~Comp~EcoSpheres"
+msgstr "Eco-sferen"
+
+msgid "Text~Comp~End_Game"
+msgstr "Echt stoppen?\n\nNiet opgeslagen speldata gaat verloren."
+
+msgid "Text~Comp~Energy_Insufficient"
+msgstr "Niet genoeg energie om te starten!"
+
+msgid "Text~Comp~Energy_IsNeeded"
+msgstr "Generator kan niet uitgeschakeld worden, de energie is nodig!"
+
+msgid "Text~Comp~Energy_Low"
+msgstr "Te weinig energie, verbruiker uitgeschakeld!"
+
+msgid "Text~Comp~Energy_ToLow"
+msgstr "Niet genoeg energie, generator gestart!"
+
+msgid "Text~Comp~Finished"
+msgstr "is klaar"
+
+msgid "Text~Comp~Finished2"
+msgstr "klaar"
+
+msgid "Text~Comp~Fuel_Insufficient"
+msgstr "Niet genoeg brandstof om te starten!"
+
+msgid "Text~Comp~Fuel_Low"
+msgstr "Te weinig brandstof, generator uitgeschakeld!"
+
+msgid "Text~Comp~GameEndsAt"
+msgstr "Spel eindigt op"
+
+msgid "Text~Comp~Gold_Insufficient"
+msgstr "Kan niet starten, goud nodig."
+
+msgid "Text~Comp~Gold_Low"
+msgstr "Te weinig goud, verbruiker uitgeschakeld!"
+
+msgid "Text~Comp~IsBeeingAttacked"
+msgstr "Wordt aangevallen"
+
+msgid "Text~Comp~Labs"
+msgstr "Laboratoria"
+
+msgid "Text~Comp~Landing_Select"
+msgstr "Kies aub uw startlocatie"
+
+msgid "Text~Comp~Landing_Too_Close"
+msgstr "De gekozen landings-positie te dicht bij andere speler. Selecteer aub een andere positie."
+
+msgid "Text~Comp~Landing_Warning"
+msgstr "De gekozen landings-positie is naarbij een andere speler. Bevestig dit door in de rode kring te klicken, of selecteer een andere positie."
+
+msgid "Text~Comp~Laying"
+msgstr "legt mijnen"
+
+msgid "Text~Comp~Metal_Insufficient"
+msgstr "Kan niet starten, metaal nodig."
+
+msgid "Text~Comp~Metal_Low"
+msgstr "Te weinig metaal, verbruiker uitgeschakeld!"
+
+msgid "Text~Comp~Moving"
+msgstr "in beweging"
+
+msgid "Text~Comp~MovingToAttack"
+msgstr "in beweging om aan te vallen"
+
+msgid "Text~Comp~NoLimit"
+msgstr "Vecht tot de dood!"
+
+msgid "Text~Comp~Path_interrupted"
+msgstr "Pad bouwen kan niet verdergezet worden"
+
+msgid "Text~Comp~Point"
+msgstr "punt"
+
+msgid "Text~Comp~Points"
+msgstr "punten"
+
+msgid "Text~Comp~Producing"
+msgstr "Produceert"
+
+msgid "Text~Comp~Producing_Err"
+msgstr "Bouwlocatie geblokkeerd of niet genoeg ruw materiaal om te kunnen bouwen"
+
+msgid "Text~Comp~Producing_Fin"
+msgstr "productie afgewerkt"
+
+msgid "Text~Comp~ReactionFireOff"
+msgstr "Reactie-aanval uitgeschakeld"
+
+msgid "Text~Comp~Repeat"
+msgstr "Opnieuw"
+
+msgid "Text~Comp~Reserve"
+msgstr "Reserve"
+
+msgid "Text~Comp~ResolutionWarning"
+msgstr "Waarschuwing: Niet ondersteunde videomodus in de instellingen"
+
+msgid "Text~Comp~RestartRequired"
+msgstr "Herstart aub 'Mechanized Assault and eXploration Reloaded' om de aanpassingen toe te passen."
+
+msgid "Text~Comp~Screenshot_Done"
+msgstr "Screenshot bewaard als %s"
+
+msgid "Text~Comp~Sentry"
+msgstr "op wachtposten"
+
+msgid "Text~Comp~Stolen"
+msgstr "gestolen"
+
+msgid "Text~Comp~SuddenDeath"
+msgstr "Directe dood! De eerste speler die zijn score kan verhogen wint!"
+
+msgid "Text~Comp~Surveying"
+msgstr "bodem analyseren"
+
+msgid "Text~Comp~Team_Insufficient"
+msgstr "Kan niet starten, werkers nodig"
+
+msgid "Text~Comp~Team_Low"
+msgstr "Te weinig werkers, gebouw uitgeschakeld"
+
+msgid "Text~Comp~Themes"
+msgstr "Themas"
+
+msgid "Text~Comp~Turn_5"
+msgstr "Beurt"
+
+msgid "Text~Comp~Turn_Automove"
+msgstr "Uitvoeren van de overgebleven verplaatsingen"
+
+msgid "Text~Comp~Turn_Start"
+msgstr "Start beurt %s"
+
+msgid "Text~Comp~Turn_Wait"
+msgstr "Wacht tot alle verplaatsingen klaar zijn"
+
+msgid "Text~Comp~Turns"
+msgstr "Beurten"
+
+msgid "Text~Comp~Upgrades_Done"
+msgstr "Opwaarderen uitgevoerd"
+
+msgid "Text~Comp~Upgrades_Done2"
+msgstr "Eenheid/heden van het type %s"
+
+msgid "Text~Comp~Waits"
+msgstr "wacht"
+
+msgid "Text~Comp~Wins"
+msgstr ""
+
+msgid "Text~Comp~Working"
+msgstr "werkt"
+
+msgid "Text~Error_Messages~ERROR_File_Not_Found"
+msgstr "Bestand niet gevonden: %s"
+
+msgid "Text~Error_Messages~ERROR_Map_Loading"
+msgstr "Fout bij inlezen kaart"
+
+msgid "Text~Error_Messages~ERROR_Missing_Translation"
+msgstr "ontbrekende vertaling: %s"
+
+msgid "Text~Error_Messages~INFO_Language_initialised"
+msgstr "Taal is nu geinitialiseerd"
+
+msgid "Text~Error_Messages~INFO_Not_Implemented"
+msgstr "Nog niet geimplementeerd"
+
+msgid "Text~Init~Buildings"
+msgstr "Laden gebouwen..."
+
+msgid "Text~Init~Clans"
+msgstr "Laden clans..."
+
+msgid "Text~Init~Effects"
+msgstr "Laden effecten..."
+
+msgid "Text~Init~Fonts"
+msgstr "Laden lettertypes..."
+
+msgid "Text~Init~GFX"
+msgstr "Laden gfx..."
+
+msgid "Text~Init~Keys"
+msgstr "Laden toetsen..."
+
+msgid "Text~Init~Lang"
+msgstr "Laden taalpakket..."
+
+msgid "Text~Init~Music"
+msgstr "Laden muziek..."
+
+msgid "Text~Init~Sounds"
+msgstr "Laden geluiden..."
+
+msgid "Text~Init~Terrain"
+msgstr "Laden terrein..."
+
+msgid "Text~Init~Vehicles"
+msgstr "Laden voertuigen..."
+
+msgid "Text~Init~Voices"
+msgstr "Laden stemmen..."
+
+msgid "Text~Main~Credits_Doc"
+msgstr "Michael Mönchs M.A.X. (Herbouw door DoctorDeath)"
+
+msgid "Text~Main~Credits_MM"
+msgstr "Michael Mönchs M.A.X. (Origineel van Interplay)"
+
+msgid "Text~Main~Credits_Reloaded"
+msgstr "M.A.X.R gebaseerd op Interplays Mechanized Assault and eXploration"
+
+msgid "Text~Main~Game_Subtitle"
+msgstr "Mechanized Assault and Exploration Reloaded"
+
+msgid "Text~Main~Game_Title"
+msgstr "M.A.X.R."
+
+msgid "Text~Main~Remarks~Not_yet_implemented"
+msgstr "(*) nog niet geïmplementeerd"
+
+msgid "Text~Main~Version"
+msgstr "versie v%s"
+
+msgid "Text~Multiplayer~Abort_Waiting"
+msgstr "Server, druk F2 om het wachten af te breken."
+
+msgid "Text~Multiplayer~Connection_Terminated"
+msgstr "Verbinding Afgesloten"
+
+msgid "Text~Multiplayer~Deadline"
+msgstr "Deze ronde eindigt in %s seconden."
+
+msgid "Text~Multiplayer~Disconnect_Not_In_Save"
+msgstr "U verbinding wordt verbroken omdat uw naam niet in de savegame staat."
+
+msgid "Text~Multiplayer~Go"
+msgstr "Daar gaat we"
+
+msgid "Text~Multiplayer~Go_Abort"
+msgstr "Start afgebroken"
+
+msgid "Text~Multiplayer~Go_Check"
+msgstr "Controle voor startklaar"
+
+msgid "Text~Multiplayer~Go_Host"
+msgstr "Host wil starten: Beginnen"
+
+msgid "Text~Multiplayer~Go_Host_No"
+msgstr "Host wil starten: Niet klaar"
+
+msgid "Text~Multiplayer~Go_Ready"
+msgstr "Klaar om te starten"
+
+msgid "Text~Multiplayer~Go_Ready_No"
+msgstr "Niet klaar om te starten"
+
+msgid "Text~Multiplayer~Host_command"
+msgstr "Host heeft de volgende commando's ingegeven '%s'"
+
+msgid "Text~Multiplayer~Lost_Connection"
+msgstr "Verbinding verbroken tot %s"
+
+msgid "Text~Multiplayer~MapDL_Cancel"
+msgstr "Afgebroken"
+
+msgid "Text~Multiplayer~MapDL_Download"
+msgstr "Map %s van server."
+
+msgid "Text~Multiplayer~MapDL_DownloadInvalid"
+msgstr "Originele M.A.X. map  %s van server (licentie)!"
+
+msgid "Text~Multiplayer~MapDL_DownloadRequest"
+msgstr "Map niet geïnstalleerd: Aanvraag tot downloaden van custom map"
+
+msgid "Text~Multiplayer~MapDL_DownloadRequestInvalid"
+msgstr "Map niet geïnstalleerd: Downloaden niet toegestaan"
+
+msgid "Text~Multiplayer~MapDL_Finished"
+msgstr "Map downloaden voltooid"
+
+msgid "Text~Multiplayer~MapDL_Percent"
+msgstr "Map downloaden: %s%"
+
+msgid "Text~Multiplayer~MapDL_Upload"
+msgstr "Versturen van map naar %s..."
+
+msgid "Text~Multiplayer~MapDL_UploadFinished"
+msgstr "Map upload voltooid"
+
+msgid "Text~Multiplayer~Map_NoSet"
+msgstr "--Geen kaart ingesteld--"
+
+msgid "Text~Multiplayer~Missing_Settings"
+msgstr "Opties, map of savegame zijn niet ingesteld"
+
+msgid "Text~Multiplayer~Network_Closed"
+msgstr "Verbinding gesloten"
+
+msgid "Text~Multiplayer~Network_Connected"
+msgstr "Verbinding"
+
+msgid "Text~Multiplayer~Network_Connected_Not"
+msgstr "Niet verbonden"
+
+msgid "Text~Multiplayer~Network_Connecting"
+msgstr "Verbinden met %s"
+
+msgid "Text~Multiplayer~Network_Error_Connect"
+msgstr "Kon niet verbinden met server"
+
+msgid "Text~Multiplayer~Network_Error_Socket"
+msgstr "Fout bij openen socket"
+
+msgid "Text~Multiplayer~Network_New"
+msgstr "Nieuwe verbinding"
+
+msgid "Text~Multiplayer~Network_Open"
+msgstr "Spel open (Poort: %s)"
+
+msgid "Text~Multiplayer~Network_Syncing"
+msgstr "Synchronizeren..."
+
+msgid "Text~Multiplayer~No_Map_No_Ready"
+msgstr "Kan map %s niet laden. Je kan niet starten."
+
+msgid "Text~Multiplayer~No_Response"
+msgstr "Wachten op netwerk reactie speler %s"
+
+msgid "Text~Multiplayer~Not_Ready"
+msgstr "is niet gereed"
+
+msgid "Text~Multiplayer~Option_NoSet"
+msgstr "--Geen opties ingesteld--"
+
+msgid "Text~Multiplayer~Pause"
+msgstr "Het spel is gepauzeerd"
+
+msgid "Text~Multiplayer~Player1"
+msgstr "Speler 1"
+
+msgid "Text~Multiplayer~Player2"
+msgstr "Speler 2"
+
+msgid "Text~Multiplayer~Player3"
+msgstr "Speler 3"
+
+msgid "Text~Multiplayer~Player4"
+msgstr "Speler 4"
+
+msgid "Text~Multiplayer~Player5"
+msgstr "Speler 5"
+
+msgid "Text~Multiplayer~Player6"
+msgstr "Speler 6"
+
+msgid "Text~Multiplayer~Player7"
+msgstr "Speler 7"
+
+msgid "Text~Multiplayer~Player8"
+msgstr "Speler 8"
+
+msgid "Text~Multiplayer~Player_Amount"
+msgstr "Kies het aantal spelers, er moeten minimum 2 menselijke spelers zijn om een om-beurten spel te starten. Maximum 8 spelers"
+
+msgid "Text~Multiplayer~Player_Color_Taken"
+msgstr "Kleur is reeds in gebruik, selecteer aub een ander kleur"
+
+msgid "Text~Multiplayer~Player_Few"
+msgstr "Niet genoeg spelers!"
+
+msgid "Text~Multiplayer~Player_Joined"
+msgstr "%s voegt zich aan het spel"
+
+msgid "Text~Multiplayer~Player_Left"
+msgstr "%s heeft spel verlaten"
+
+msgid "Text~Multiplayer~Player_Many"
+msgstr "Te veel spelers!"
+
+msgid "Text~Multiplayer~Player_MustHost"
+msgstr "moet host zijn in om-beurten spel!"
+
+msgid "Text~Multiplayer~Player_Name_Taken"
+msgstr "Spelernaam is reeds in gebruik, geef aub een andere naam in"
+
+msgid "Text~Multiplayer~Player_Turn"
+msgstr "'s beurt"
+
+msgid "Text~Multiplayer~Player_Turn_End"
+msgstr " beeindigde de beurt "
+
+msgid "Text~Multiplayer~Player_Wrong"
+msgstr "Mis een correcte speler naam"
+
+msgid "Text~Multiplayer~Reconnect"
+msgstr "Dit spel is al gaande. Indien u de verbinding van het spel kwijt bent geraakt, kunt u zich opnieuw verbinden. Wilt u opnieuw verbinden?"
+
+msgid "Text~Multiplayer~Reconnect_Forbidden"
+msgstr "Opnieuw verbinden niet toegestaan door server"
+
+msgid "Text~Multiplayer~Save_Only_Host"
+msgstr "Alleen de host kan het spel opslaan."
+
+msgid "Text~Multiplayer~Server_Not_Running"
+msgstr "De server is niet actief"
+
+msgid "Text~Multiplayer~Wait_For_Server"
+msgstr "Wachten op een netwerk reactie van server"
+
+msgid "Text~Multiplayer~Wait_Reconnect"
+msgstr "Wachten voor herverbinding met speler"
+
+msgid "Text~Multiplayer~Wait_TurnEnd"
+msgstr "Wacht aub tot het einde van de beurt uitgevoerd is"
+
+msgid "Text~Multiplayer~Wait_Until"
+msgstr "Wacht todat %s klaar is met de ronde."
+
+msgid "Text~Multiplayer~Waiting"
+msgstr "Wachten op andere spelers..."
+
+msgid "Text~Option~Definite"
+msgstr "vaste locatie (origineel)"
+
+msgid "Text~Option~Dense"
+msgstr "dicht"
+
+msgid "Text~Option~High"
+msgstr "veel"
+
+msgid "Text~Option~Limited"
+msgstr "weinig"
+
+msgid "Text~Option~Low"
+msgstr "erg weinig"
+
+msgid "Text~Option~Mobile"
+msgstr "mobiel"
+
+msgid "Text~Option~More"
+msgstr "zeer veel"
+
+msgid "Text~Option~None"
+msgstr "zeer weinig"
+
+msgid "Text~Option~Normal"
+msgstr "normaal"
+
+msgid "Text~Option~Off"
+msgstr "uit"
+
+msgid "Text~Option~On"
+msgstr "aan"
+
+msgid "Text~Option~Sparse"
+msgstr "dun"
+
+msgid "Text~Option~TooMuch"
+msgstr "hoogst"
+
+msgid "Text~Option~Type_Simu"
+msgstr "gelijktijdig"
+
+msgid "Text~Option~Type_Turns"
+msgstr "om de beurt"
+
+msgid "Text~Others~Active"
+msgstr "Actief"
+
+msgid "Text~Others~ActiveAll_9"
+msgstr "Alle Act."
+
+msgid "Text~Others~Active_7"
+msgstr "Actief"
+
+msgid "Text~Others~Air_Units"
+msgstr "Lucht-eenheden"
+
+msgid "Text~Others~Ammo"
+msgstr "Munitie"
+
+msgid "Text~Others~Ammo_7"
+msgstr "Munitie"
+
+msgid "Text~Others~Armor"
+msgstr "Pantser"
+
+msgid "Text~Others~Armor_7"
+msgstr "Pantser"
+
+msgid "Text~Others~Attack"
+msgstr "Aanval"
+
+msgid "Text~Others~Attack_7"
+msgstr "Aanval"
+
+msgid "Text~Others~Auto_7"
+msgstr "Auto"
+
+msgid "Text~Others~Back"
+msgstr "Terug"
+
+msgid "Text~Others~Build_7"
+msgstr "Bouw"
+
+msgid "Text~Others~Buy"
+msgstr "Kopen"
+
+msgid "Text~Others~Cancel"
+msgstr "Afbreken"
+
+msgid "Text~Others~Cargo_7"
+msgstr "Vracht"
+
+msgid "Text~Others~Chat"
+msgstr "Chat"
+
+msgid "Text~Others~Clear_7"
+msgstr "Opruim."
+
+msgid "Text~Others~Color"
+msgstr "Kleur"
+
+msgid "Text~Others~Costs"
+msgstr "Kosten"
+
+msgid "Text~Others~Damaged_Units"
+msgstr "Beschadigde eenh."
+
+msgid "Text~Others~Destroy_7"
+msgstr "Verwijd."
+
+msgid "Text~Others~Disable_7"
+msgstr "Uitschak."
+
+msgid "Text~Others~Disadvantages_8cut"
+msgstr "Nadeel"
+
+msgid "Text~Others~Distribution_7"
+msgstr "Distr."
+
+msgid "Text~Others~Done"
+msgstr "Gedaan"
+
+msgid "Text~Others~Done_7"
+msgstr "Gedaan"
+
+msgid "Text~Others~End"
+msgstr "Einde"
+
+msgid "Text~Others~Exit"
+msgstr "Einde"
+
+msgid "Text~Others~Fight_Units"
+msgstr "Gevechts-eenheden"
+
+msgid "Text~Others~Files"
+msgstr "Bestanden"
+
+msgid "Text~Others~Fog"
+msgstr "Mist"
+
+msgid "Text~Others~Game_Load"
+msgstr "Spel laden"
+
+msgid "Text~Others~Game_New"
+msgstr "Nieuw Spel"
+
+msgid "Text~Others~Game_Options"
+msgstr "Spelopties"
+
+msgid "Text~Others~Grid"
+msgstr "Rooster"
+
+msgid "Text~Others~Ground_Units"
+msgstr "Land-eenheden"
+
+msgid "Text~Others~Hitpoints"
+msgstr "Treffers"
+
+msgid "Text~Others~Hitpoints_7"
+msgstr "Treffers"
+
+msgid "Text~Others~Host_Start"
+msgstr "Start Host"
+
+msgid "Text~Others~Hot"
+msgstr "Scherp"
+
+msgid "Text~Others~HotSeat_Load"
+msgstr "Hot Seat laden"
+
+msgid "Text~Others~HotSeat_New"
+msgstr "Hot Seat starten"
+
+msgid "Text~Others~Included"
+msgstr "Bijgevoegd:"
+
+msgid "Text~Others~Info_7"
+msgstr "Info"
+
+msgid "Text~Others~Limited_To"
+msgstr "Gelimiteerd tot:"
+
+msgid "Text~Others~Load"
+msgstr "Laden"
+
+msgid "Text~Others~Load_7"
+msgstr "Laden"
+
+msgid "Text~Others~Log"
+msgstr "Log"
+
+msgid "Text~Others~Mani"
+msgstr "Manifestering"
+
+msgid "Text~Others~ManualFireMode_7"
+msgstr "Manueel"
+
+msgid "Text~Others~Multi_Player"
+msgstr "Meerspeler"
+
+msgid "Text~Others~No"
+msgstr "Nee"
+
+msgid "Text~Others~OK"
+msgstr "Ok"
+
+msgid "Text~Others~Path"
+msgstr "Pad"
+
+msgid "Text~Others~Power"
+msgstr "Energie"
+
+msgid "Text~Others~Proceed_4"
+msgstr "Doe"
+
+msgid "Text~Others~Produce_7"
+msgstr "Maakt"
+
+msgid "Text~Others~Produce_Units"
+msgstr "Produc. eenh."
+
+msgid "Text~Others~Range"
+msgstr "Bereik"
+
+msgid "Text~Others~Range_7"
+msgstr "Bereik"
+
+msgid "Text~Others~Reload"
+msgstr "Herladen"
+
+msgid "Text~Others~ReloadAll_9"
+msgstr "Alle Herl."
+
+msgid "Text~Others~Reload_7"
+msgstr "Herladen"
+
+msgid "Text~Others~Repair"
+msgstr "Repareer"
+
+msgid "Text~Others~RepairAll_9"
+msgstr "Alle Rep."
+
+msgid "Text~Others~Repair_7"
+msgstr "Repareer"
+
+msgid "Text~Others~Reports"
+msgstr "Rapporten"
+
+msgid "Text~Others~Research"
+msgstr "Onderzoek"
+
+msgid "Text~Others~Save"
+msgstr "Opslaan"
+
+msgid "Text~Others~Scan"
+msgstr "Radar"
+
+msgid "Text~Others~Scan_7"
+msgstr "Radar"
+
+msgid "Text~Others~Score"
+msgstr "Punten"
+
+msgid "Text~Others~Sea_Units"
+msgstr "Zee-eenheden"
+
+msgid "Text~Others~Seed"
+msgstr "Strooi"
+
+msgid "Text~Others~Seed_7"
+msgstr "Strooi"
+
+msgid "Text~Others~Sentry"
+msgstr "Wacht"
+
+msgid "Text~Others~Settings"
+msgstr "Instellingen"
+
+msgid "Text~Others~Shots"
+msgstr "Schoten"
+
+msgid "Text~Others~Shots_7"
+msgstr "Schoten"
+
+msgid "Text~Others~Single_Player"
+msgstr "Enkelspeler"
+
+msgid "Text~Others~Speed"
+msgstr "Snelheid"
+
+msgid "Text~Others~Speed_7"
+msgstr "Snelheid"
+
+msgid "Text~Others~Start_7"
+msgstr "Start"
+
+msgid "Text~Others~Stationary_Units"
+msgstr "Gestation. eenh."
+
+msgid "Text~Others~Status"
+msgstr "Status"
+
+msgid "Text~Others~Steal_7"
+msgstr "Stelen"
+
+msgid "Text~Others~Stealth_Units"
+msgstr "Stealh-eenheden"
+
+msgid "Text~Others~Stop_7"
+msgstr "Stop"
+
+msgid "Text~Others~Survey"
+msgstr "Bodem"
+
+msgid "Text~Others~TCPIP_Client"
+msgstr "TCP/IP Client"
+
+msgid "Text~Others~TCPIP_Host"
+msgstr "TCP/IP Host"
+
+msgid "Text~Others~Teams_7"
+msgstr "Teams"
+
+msgid "Text~Others~Total"
+msgstr "Totaal"
+
+msgid "Text~Others~Transfer_7"
+msgstr "X-fer"
+
+msgid "Text~Others~Unit_destroyed"
+msgstr "Eenheid Vernietigd"
+
+msgid "Text~Others~Units"
+msgstr "Eenheden"
+
+msgid "Text~Others~Upgrade"
+msgstr "Verbeter"
+
+msgid "Text~Others~UpgradeAll_7"
+msgstr "Ver.all"
+
+msgid "Text~Others~UpgradeAll_9"
+msgstr "Vern.Alles"
+
+msgid "Text~Others~Upgrademenu_7"
+msgstr "Upgrades"
+
+msgid "Text~Others~Upgradethis_7"
+msgstr "Verbeter"
+
+msgid "Text~Others~Usage_7"
+msgstr "Verbr."
+
+msgid "Text~Others~Yes"
+msgstr "Ja"
+
+msgid "Text~Punctuation~Colon"
+msgstr ": "
+
+msgid "Text~Settings~Alphaeffects"
+msgstr "Alpha effecten"
+
+msgid "Text~Settings~Animation"
+msgstr "Animaties"
+
+msgid "Text~Settings~Autosave"
+msgstr "Auto-opslaan"
+
+msgid "Text~Settings~Disable"
+msgstr "Uitgeschakeld"
+
+msgid "Text~Settings~Effects"
+msgstr "Effecten"
+
+msgid "Text~Settings~Intro"
+msgstr "Intro afspelen"
+
+msgid "Text~Settings~Language"
+msgstr "Taal"
+
+msgid "Text~Settings~Music"
+msgstr "Muziek"
+
+msgid "Text~Settings~Preferences"
+msgstr "Voorkeuren"
+
+msgid "Text~Settings~Resolution"
+msgstr "Resolutie"
+
+msgid "Text~Settings~Scrollspeed"
+msgstr "Scrollsnelheid"
+
+msgid "Text~Settings~Shadows"
+msgstr "Schaduwen"
+
+msgid "Text~Settings~ShowDamage"
+msgstr "Gebouwschade"
+
+msgid "Text~Settings~ShowDamageVehicle"
+msgstr "Voertuigschade"
+
+msgid "Text~Settings~Tracks"
+msgstr "Voertuigsporen"
+
+msgid "Text~Settings~Unlimited_11"
+msgstr "Geen Limiet"
+
+msgid "Text~Settings~Voices"
+msgstr "Stemmen"
+
+msgid "Text~Settings~Volume"
+msgstr "Volume"
+
+msgid "Text~Settings~Window"
+msgstr "Venstermodus"
+
+msgid "Text~Title~Alien_Tech"
+msgstr "Buitenaardse technologie"
+
+msgid "Text~Title~BridgeHead"
+msgstr "Hoofdbrug"
+
+msgid "Text~Title~Build_Factory"
+msgstr "Fabriek Menu"
+
+msgid "Text~Title~Build_Vehicle"
+msgstr "Constructie Menu"
+
+msgid "Text~Title~Cargo"
+msgstr "Vracht"
+
+msgid "Text~Title~Choose_Clan"
+msgstr "Kies Clan"
+
+msgid "Text~Title~Choose_Planet"
+msgstr "Planeetkeuze"
+
+msgid "Text~Title~Choose_Units"
+msgstr "Kies Eenheden"
+
+msgid "Text~Title~Clan"
+msgstr "Clan"
+
+msgid "Text~Title~Clans"
+msgstr "Clans"
+
+msgid "Text~Title~Color"
+msgstr "Kleur:"
+
+msgid "Text~Title~Computer"
+msgstr "Computer"
+
+msgid "Text~Title~Connect"
+msgstr "Verbinden"
+
+msgid "Text~Title~Credits"
+msgstr "Goud"
+
+msgid "Text~Title~Credits_start"
+msgstr "Startgoud"
+
+msgid "Text~Title~Custom_11"
+msgstr "Aangepast"
+
+msgid "Text~Title~Game_Type"
+msgstr "Speltype"
+
+msgid "Text~Title~Gold"
+msgstr "Goud"
+
+msgid "Text~Title~HotSeat"
+msgstr "Hot Seat"
+
+msgid "Text~Title~Human"
+msgstr "Mens"
+
+msgid "Text~Title~IP"
+msgstr "IP"
+
+msgid "Text~Title~Labs"
+msgstr "Onderzoeksmenu"
+
+msgid "Text~Title~Load"
+msgstr "Menu laden"
+
+msgid "Text~Title~LoadSave"
+msgstr "Menu Laden/Opslaan"
+
+msgid "Text~Title~MainMenu"
+msgstr "Hoofdmenu"
+
+msgid "Text~Title~Map"
+msgstr "Kaart: %s"
+
+msgid "Text~Title~Metal"
+msgstr "Metaal"
+
+msgid "Text~Title~Mine"
+msgstr "Mijnmanager"
+
+msgid "Text~Title~Nobody"
+msgstr "Niemand"
+
+msgid "Text~Title~Oil"
+msgstr "Olie"
+
+msgid "Text~Title~Options"
+msgstr "Opties"
+
+msgid "Text~Title~Player_Name"
+msgstr "Spelernaam:"
+
+msgid "Text~Title~Player_Select"
+msgstr "Speleropties"
+
+msgid "Text~Title~Players"
+msgstr "Spelers"
+
+msgid "Text~Title~Port"
+msgstr "Poort"
+
+msgid "Text~Title~Resource"
+msgstr "Bronnen"
+
+msgid "Text~Title~Resource_Density"
+msgstr "Brondichtheid"
+
+msgid "Text~Title~Savegame"
+msgstr "Bewaarde Spellen:"
+
+msgid "Text~Title~Send"
+msgstr "Zenden"
+
+msgid "Text~Title~Team"
+msgstr "Team"
+
+msgid "Text~Title~Turn_end"
+msgstr "Einde van de beurt"
+
+msgid "Text~Title~Turn_limit"
+msgstr "Beurt limiet"
+
+msgid "Text~Title~Unitinfo"
+msgstr "Eenhedeninformatie"
+
+msgid "Text~Title~Upgrades_Menu"
+msgstr "Opwaardeer Menu"
+

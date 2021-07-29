@@ -1,0 +1,1071 @@
+# Hungarian translations for Maxr package.
+# Copyright (C) 2021 THE Maxr'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Maxr package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Maxr 0.3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-07-29 21:33+0200\n"
+"PO-Revision-Date: 2021-07-29 22:04+0200\n"
+"Last-Translator:\n"
+"Language-Team: Hungarian\n"
+"Language: hu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Text~Comp~Adjustments_Fuel_Increased"
+msgstr "Módosítás történt, nőtt az üzemanyag kitermelés: %s"
+
+msgid "Text~Comp~Adjustments_Gold_Decreased"
+msgstr "Módosítás történt, csökkent az aranykitermelés: %s"
+
+msgid "Text~Comp~Adjustments_Metal_Decreased"
+msgstr "Módosítás történt, csökkent a nyersanyag kitermelés: %s"
+
+msgid "Text~Comp~Attacked"
+msgstr "%s támadás alatt áll"
+
+msgid "Text~Comp~AttackingEnemy"
+msgstr ""
+
+msgid "Text~Comp~AttackingStatusStr"
+msgstr ""
+
+msgid "Text~Comp~Building_Disabled"
+msgstr "Épület működésképtelen"
+
+msgid "Text~Comp~CapturedByEnemy"
+msgstr ""
+
+msgid "Text~Comp~Cheat"
+msgstr "csaláskód:"
+
+msgid "Text~Comp~Clearing"
+msgstr "Takarít (%s)"
+
+msgid "Text~Comp~Clearing_Fin"
+msgstr "elkészült a takarítás"
+
+msgid "Text~Comp~Clearing_Mine"
+msgstr "aknát szed fel"
+
+msgid "Text~Comp~CommandoRank_Average"
+msgstr "Középszerű"
+
+msgid "Text~Comp~CommandoRank_Elite"
+msgstr "Elit"
+
+msgid "Text~Comp~CommandoRank_Expert"
+msgstr "Szakértő"
+
+msgid "Text~Comp~CommandoRank_GrandMaster"
+msgstr ""
+
+msgid "Text~Comp~CommandoRank_Greenhorn"
+msgstr "Zöldfülű"
+
+msgid "Text~Comp~CommandoRank_Veteran"
+msgstr "Veterán"
+
+msgid "Text~Comp~Dated"
+msgstr "elavult"
+
+msgid "Text~Comp~Defeated"
+msgstr "Játékos %s vereséget szenvedett"
+
+msgid "Text~Comp~Description"
+msgstr "Leírás"
+
+msgid "Text~Comp~Destroyed"
+msgstr "%s megsemmisült"
+
+msgid "Text~Comp~Detected"
+msgstr "észlelve"
+
+msgid "Text~Comp~Disabled"
+msgstr "kikapcsolva"
+
+msgid "Text~Comp~EcoSphere"
+msgstr "ökoszféra"
+
+msgid "Text~Comp~EcoSpheres"
+msgstr "ökoszféra"
+
+msgid "Text~Comp~End_Game"
+msgstr "Kilépés Megerősítése\n\nA nem mentett játékadatok elvesznek."
+
+msgid "Text~Comp~Energy_Insufficient"
+msgstr "Nem lehet elindítani, több energiára van szükség"
+
+msgid "Text~Comp~Energy_IsNeeded"
+msgstr "A generátort nem lehet kikapcsolni, szükség van az energiára."
+
+msgid "Text~Comp~Energy_Low"
+msgstr "Nincs elég áram, fogyasztó leállítva!"
+
+msgid "Text~Comp~Energy_ToLow"
+msgstr "Nincs elegendő energia, generátor elindítva."
+
+msgid "Text~Comp~Finished"
+msgstr "elkészült"
+
+msgid "Text~Comp~Finished2"
+msgstr "elkészült"
+
+msgid "Text~Comp~Fuel_Insufficient"
+msgstr "Nincs elegendő üzemanyag az elindításhoz."
+
+msgid "Text~Comp~Fuel_Low"
+msgstr "Nincs elég üzemanyag, generátor leállítva!"
+
+msgid "Text~Comp~GameEndsAt"
+msgstr "A játék véget ér "
+
+msgid "Text~Comp~Gold_Insufficient"
+msgstr "Nincs elegendő arany az elindításhoz."
+
+msgid "Text~Comp~Gold_Low"
+msgstr "Nincs elég arany, feldolgozó leállítva!"
+
+msgid "Text~Comp~IsBeeingAttacked"
+msgstr ""
+
+msgid "Text~Comp~Labs"
+msgstr "Laborok"
+
+msgid "Text~Comp~Landing_Select"
+msgstr ""
+
+msgid "Text~Comp~Landing_Too_Close"
+msgstr "A leszállási pozíció túl közel van egy másik játékoshoz. Kérlek válassz másik pozíciót."
+
+msgid "Text~Comp~Landing_Warning"
+msgstr "A leszállási pozíció egy másik játékos közelében van. A jelenlegi pozíció megerősítéséhez kattints a piros körön belülre, vagy válassz egy másikat."
+
+msgid "Text~Comp~Laying"
+msgstr "aknát telepít"
+
+msgid "Text~Comp~Metal_Insufficient"
+msgstr "Nincs elegendő nyersanyag az elindításhoz."
+
+msgid "Text~Comp~Metal_Low"
+msgstr "Nincs elég nyersanyag, épület leállítva!"
+
+msgid "Text~Comp~Moving"
+msgstr "mozog"
+
+msgid "Text~Comp~MovingToAttack"
+msgstr ""
+
+msgid "Text~Comp~NoLimit"
+msgstr "Harc a végsőkig!"
+
+msgid "Text~Comp~Path_interrupted"
+msgstr ""
+
+msgid "Text~Comp~Point"
+msgstr "pontnál"
+
+msgid "Text~Comp~Points"
+msgstr "pontnál"
+
+msgid "Text~Comp~Producing"
+msgstr "Épít"
+
+msgid "Text~Comp~Producing_Err"
+msgstr "Az építési terület nem tiszta, vagy nincs elegendő nyersanyag"
+
+msgid "Text~Comp~Producing_Fin"
+msgstr "Gyártás befejezve"
+
+msgid "Text~Comp~ReactionFireOff"
+msgstr ""
+
+msgid "Text~Comp~Repeat"
+msgstr "Újra"
+
+msgid "Text~Comp~Reserve"
+msgstr "Tartalék"
+
+msgid "Text~Comp~ResolutionWarning"
+msgstr "Figyelem: Nem támogatott videó mód a beállításban"
+
+msgid "Text~Comp~RestartRequired"
+msgstr ""
+
+msgid "Text~Comp~Screenshot_Done"
+msgstr "Pillanatkép elmentve: "
+
+msgid "Text~Comp~Sentry"
+msgstr "őrtáll"
+
+msgid "Text~Comp~Stolen"
+msgstr "ellopva"
+
+msgid "Text~Comp~SuddenDeath"
+msgstr "Hirtelen halál! Aki elsőnek növeli a pontjait, az nyer!"
+
+msgid "Text~Comp~Surveying"
+msgstr "kutat"
+
+msgid "Text~Comp~Team_Insufficient"
+msgstr "Nincs elegendő ümunkás az elindításhoz."
+
+msgid "Text~Comp~Team_Low"
+msgstr "Nincs elég munkás, épület leállítva!"
+
+msgid "Text~Comp~Themes"
+msgstr "Határ"
+
+msgid "Text~Comp~Turn_5"
+msgstr "Kör"
+
+msgid "Text~Comp~Turn_Automove"
+msgstr "Fennmaradó lépések végrehajtása"
+
+msgid "Text~Comp~Turn_Start"
+msgstr "Kör kezdése %s"
+
+msgid "Text~Comp~Turn_Wait"
+msgstr "Kérlek várd meg, míg az összes lépés végrehajtódik"
+
+msgid "Text~Comp~Turns"
+msgstr "Kör"
+
+msgid "Text~Comp~Upgrades_Done"
+msgstr "Felfejlesztve"
+
+msgid "Text~Comp~Upgrades_Done2"
+msgstr "egység %s típusúvá"
+
+msgid "Text~Comp~Waits"
+msgstr "várakozik"
+
+msgid "Text~Comp~Wins"
+msgstr ""
+
+msgid "Text~Comp~Working"
+msgstr "működik"
+
+msgid "Text~Error_Messages~ERROR_File_Not_Found"
+msgstr "Nincs meg a fájl: %s"
+
+msgid "Text~Error_Messages~ERROR_Map_Loading"
+msgstr "Hiba a térkép betöltése közben"
+
+msgid "Text~Error_Messages~ERROR_Missing_Translation"
+msgstr "hiányzik a fordítás: %s"
+
+msgid "Text~Error_Messages~INFO_Language_initialised"
+msgstr "A nyelv inicializálva lett"
+
+msgid "Text~Error_Messages~INFO_Not_Implemented"
+msgstr "Még nincs implementálva"
+
+msgid "Text~Init~Buildings"
+msgstr "Épületek betöltése..."
+
+msgid "Text~Init~Clans"
+msgstr "Hangok betöltése..."
+
+msgid "Text~Init~Effects"
+msgstr "Effektusok betöltése..."
+
+msgid "Text~Init~Fonts"
+msgstr "Betűkészletek betöltése..."
+
+msgid "Text~Init~GFX"
+msgstr "Grafika betöltése..."
+
+msgid "Text~Init~Keys"
+msgstr "Billentyűk betöltése..."
+
+msgid "Text~Init~Lang"
+msgstr "Nyelvcsomag betöltése..."
+
+msgid "Text~Init~Music"
+msgstr "Zene betöltése..."
+
+msgid "Text~Init~Sounds"
+msgstr "Hanhatások betöltése..."
+
+msgid "Text~Init~Terrain"
+msgstr "Terep betöltése..."
+
+msgid "Text~Init~Vehicles"
+msgstr "Járművek betöltése..."
+
+msgid "Text~Init~Voices"
+msgstr "Hangok betöltése..."
+
+msgid "Text~Main~Credits_Doc"
+msgstr "Michael Mönch's M.A.X. (Remake DoctorDeath-től)"
+
+msgid "Text~Main~Credits_MM"
+msgstr "Michael Mönch's M.A.X. (Eredeti az Interplay-től)"
+
+msgid "Text~Main~Credits_Reloaded"
+msgstr "M.A.X.R. készült az Interplay M.A.X. című játéka alapján"
+
+msgid "Text~Main~Game_Subtitle"
+msgstr "Mechanized Assault and eXploration Reloaded"
+
+msgid "Text~Main~Game_Title"
+msgstr "M.A.X.R."
+
+msgid "Text~Main~Remarks~Not_yet_implemented"
+msgstr "(*) még nincs implementálva"
+
+msgid "Text~Main~Version"
+msgstr "Verzió V%s"
+
+msgid "Text~Multiplayer~Abort_Waiting"
+msgstr "Kiszolgáló, a várakozás megszakításához nyomj F2-őt."
+
+msgid "Text~Multiplayer~Connection_Terminated"
+msgstr "A kapcsolat lezárult."
+
+msgid "Text~Multiplayer~Deadline"
+msgstr "A körnek %s másoedpercen belül vége."
+
+msgid "Text~Multiplayer~Disconnect_Not_In_Save"
+msgstr "Le leszel csatlakoztatva, mert nem szerepelsz a mentett játékban."
+
+msgid "Text~Multiplayer~Go"
+msgstr "Indítás"
+
+msgid "Text~Multiplayer~Go_Abort"
+msgstr "Indítás megszakítva"
+
+msgid "Text~Multiplayer~Go_Check"
+msgstr "Pipáld be az indításhoz"
+
+msgid "Text~Multiplayer~Go_Host"
+msgstr "A Host állapota: Készenáll"
+
+msgid "Text~Multiplayer~Go_Host_No"
+msgstr "A Host állapota: Nem áll készen"
+
+msgid "Text~Multiplayer~Go_Ready"
+msgstr "Indulhat a játék"
+
+msgid "Text~Multiplayer~Go_Ready_No"
+msgstr "nem indulhat a játék"
+
+msgid "Text~Multiplayer~Host_command"
+msgstr ""
+
+msgid "Text~Multiplayer~Lost_Connection"
+msgstr "A kapcsolat megszakadt %s gépével."
+
+msgid "Text~Multiplayer~MapDL_Cancel"
+msgstr "Visszavonva"
+
+msgid "Text~Multiplayer~MapDL_Download"
+msgstr " %s térképnek a szerverről."
+
+msgid "Text~Multiplayer~MapDL_DownloadInvalid"
+msgstr "%s M.A.X. térkép letöltése a szerverről (licencelt)!"
+
+msgid "Text~Multiplayer~MapDL_DownloadRequest"
+msgstr "Nincs telepítve a térkép: letöltés kezdeményezése"
+
+msgid "Text~Multiplayer~MapDL_DownloadRequestInvalid"
+msgstr "A térkép nincs telepítve: Nem engedélyezett az eredeti"
+
+msgid "Text~Multiplayer~MapDL_Finished"
+msgstr ""
+
+msgid "Text~Multiplayer~MapDL_Percent"
+msgstr "Térkép letöltés: %s%"
+
+msgid "Text~Multiplayer~MapDL_Upload"
+msgstr "Térkép feltöltése %s gépére..."
+
+msgid "Text~Multiplayer~MapDL_UploadFinished"
+msgstr ""
+
+msgid "Text~Multiplayer~Map_NoSet"
+msgstr "--nincs Térkép kiválasztva--"
+
+msgid "Text~Multiplayer~Missing_Settings"
+msgstr "Nincsenek beállítva a paraméterek, a térkép vagy a játékmentés"
+
+msgid "Text~Multiplayer~Network_Closed"
+msgstr "A kapcsolat bezárult"
+
+msgid "Text~Multiplayer~Network_Connected"
+msgstr "Csatlakozva"
+
+msgid "Text~Multiplayer~Network_Connected_Not"
+msgstr "Nincs kapcsolat"
+
+msgid "Text~Multiplayer~Network_Connecting"
+msgstr "Csatlakozás: %s"
+
+msgid "Text~Multiplayer~Network_Error_Connect"
+msgstr "Nem lehet hozzá csatlakozni: szerver"
+
+msgid "Text~Multiplayer~Network_Error_Socket"
+msgstr "Hiba - a socket nem megnyitható"
+
+msgid "Text~Multiplayer~Network_New"
+msgstr "Új csatlakozás"
+
+msgid "Text~Multiplayer~Network_Open"
+msgstr "Játék megnyitva (Port: %s)"
+
+msgid "Text~Multiplayer~Network_Syncing"
+msgstr "Szinkronizálás..."
+
+msgid "Text~Multiplayer~No_Map_No_Ready"
+msgstr "A %s térkép nem tölthető be. Így nem indíthatod a játékot."
+
+msgid "Text~Multiplayer~No_Response"
+msgstr ""
+
+msgid "Text~Multiplayer~Not_Ready"
+msgstr "nem készült el"
+
+msgid "Text~Multiplayer~Option_NoSet"
+msgstr "--nincsenek paraméterek beállítva--"
+
+msgid "Text~Multiplayer~Pause"
+msgstr ""
+
+msgid "Text~Multiplayer~Player1"
+msgstr "Játékos 1"
+
+msgid "Text~Multiplayer~Player2"
+msgstr "Játékos 2"
+
+msgid "Text~Multiplayer~Player3"
+msgstr "Játékos 3"
+
+msgid "Text~Multiplayer~Player4"
+msgstr "Játékos 4"
+
+msgid "Text~Multiplayer~Player5"
+msgstr "Játékos 5"
+
+msgid "Text~Multiplayer~Player6"
+msgstr "Játékos 6"
+
+msgid "Text~Multiplayer~Player7"
+msgstr "Játékos 7"
+
+msgid "Text~Multiplayer~Player8"
+msgstr "Játékos 8"
+
+msgid "Text~Multiplayer~Player_Amount"
+msgstr "Kérlek állítsd be a játékosok számát. HotSeat játék esetén legalább két emberi játékos kell. Maximum 8 játékos lehet."
+
+msgid "Text~Multiplayer~Player_Color_Taken"
+msgstr ""
+
+msgid "Text~Multiplayer~Player_Few"
+msgstr "Nincs elég játékos!"
+
+msgid "Text~Multiplayer~Player_Joined"
+msgstr "%s csatlakozott a játékhoz"
+
+msgid "Text~Multiplayer~Player_Left"
+msgstr "%s elhagyta a játékot"
+
+msgid "Text~Multiplayer~Player_Many"
+msgstr "Túl sok játékos!"
+
+msgid "Text~Multiplayer~Player_MustHost"
+msgstr "Körökre osztott játéknál lennie kell host-nak!"
+
+msgid "Text~Multiplayer~Player_Name_Taken"
+msgstr ""
+
+msgid "Text~Multiplayer~Player_Turn"
+msgstr "%s köre következik"
+
+msgid "Text~Multiplayer~Player_Turn_End"
+msgstr "%s befejezte a körét"
+
+msgid "Text~Multiplayer~Player_Wrong"
+msgstr "Az egyik játékosnak nem megfelelő a neve!"
+
+msgid "Text~Multiplayer~Reconnect"
+msgstr "Ez a játék már fut. Ha megszakadt a kapcsolatod a játékkal, újracsatlakozhatsz. Szeretnél újra csatlakozni?"
+
+msgid "Text~Multiplayer~Reconnect_Forbidden"
+msgstr "A szerver nem engedélyezi az újracsatlakozást."
+
+msgid "Text~Multiplayer~Save_Only_Host"
+msgstr "Csak a kiszolgáló mentheti el a játékot."
+
+msgid "Text~Multiplayer~Server_Not_Running"
+msgstr "Nem fut a szerver"
+
+msgid "Text~Multiplayer~Wait_For_Server"
+msgstr ""
+
+msgid "Text~Multiplayer~Wait_Reconnect"
+msgstr "Várakozás egy játékos újracsatlakozására."
+
+msgid "Text~Multiplayer~Wait_TurnEnd"
+msgstr ""
+
+msgid "Text~Multiplayer~Wait_Until"
+msgstr "Kérlek várd meg míg %s befejezi a körét."
+
+msgid "Text~Multiplayer~Waiting"
+msgstr "Várakozás a többi játékosra..."
+
+msgid "Text~Option~Definite"
+msgstr "Felépült (eredeti)"
+
+msgid "Text~Option~Dense"
+msgstr "Sűrű"
+
+msgid "Text~Option~High"
+msgstr "Sok"
+
+msgid "Text~Option~Limited"
+msgstr "Kevés"
+
+msgid "Text~Option~Low"
+msgstr "Kevesebb"
+
+msgid "Text~Option~Mobile"
+msgstr "Fel kell építeni"
+
+msgid "Text~Option~More"
+msgstr "Több"
+
+msgid "Text~Option~None"
+msgstr "Semennyi"
+
+msgid "Text~Option~Normal"
+msgstr "Normál"
+
+msgid "Text~Option~Off"
+msgstr "Ki"
+
+msgid "Text~Option~On"
+msgstr "Be"
+
+msgid "Text~Option~Sparse"
+msgstr "Ritka"
+
+msgid "Text~Option~TooMuch"
+msgstr "Legtöbb"
+
+msgid "Text~Option~Type_Simu"
+msgstr "Egyidejű"
+
+msgid "Text~Option~Type_Turns"
+msgstr "Körökre osztott"
+
+msgid "Text~Others~Active"
+msgstr "Aktiválás"
+
+msgid "Text~Others~ActiveAll_9"
+msgstr ""
+
+msgid "Text~Others~Active_7"
+msgstr "Aktív"
+
+msgid "Text~Others~Air_Units"
+msgstr "Légi egységek"
+
+msgid "Text~Others~Ammo"
+msgstr "Muníció"
+
+msgid "Text~Others~Ammo_7"
+msgstr "Lőszer"
+
+msgid "Text~Others~Armor"
+msgstr "Páncél"
+
+msgid "Text~Others~Armor_7"
+msgstr "Páncél"
+
+msgid "Text~Others~Attack"
+msgstr "Támadás"
+
+msgid "Text~Others~Attack_7"
+msgstr "Támadás"
+
+msgid "Text~Others~Auto_7"
+msgstr "Auto"
+
+msgid "Text~Others~Back"
+msgstr "Vissza"
+
+msgid "Text~Others~Build_7"
+msgstr "Építés"
+
+msgid "Text~Others~Buy"
+msgstr "Vesz"
+
+msgid "Text~Others~Cancel"
+msgstr "Mégse"
+
+msgid "Text~Others~Cargo_7"
+msgstr "Rakomány"
+
+msgid "Text~Others~Chat"
+msgstr "Chat"
+
+msgid "Text~Others~Clear_7"
+msgstr "Eltakarítás"
+
+msgid "Text~Others~Color"
+msgstr "Szín"
+
+msgid "Text~Others~Costs"
+msgstr "Költség"
+
+msgid "Text~Others~Damaged_Units"
+msgstr "Sérült egységek"
+
+msgid "Text~Others~Destroy_7"
+msgstr "Törlés"
+
+msgid "Text~Others~Disable_7"
+msgstr "Megbénítás"
+
+msgid "Text~Others~Disadvantages_8cut"
+msgstr "Hátrányok"
+
+msgid "Text~Others~Distribution_7"
+msgstr ""
+
+msgid "Text~Others~Done"
+msgstr "Kész"
+
+msgid "Text~Others~Done_7"
+msgstr "Kész"
+
+msgid "Text~Others~End"
+msgstr "Vége"
+
+msgid "Text~Others~Exit"
+msgstr "Kilépés"
+
+msgid "Text~Others~Fight_Units"
+msgstr "Harcoló egységek"
+
+msgid "Text~Others~Files"
+msgstr "Fájlok"
+
+msgid "Text~Others~Fog"
+msgstr "Köd"
+
+msgid "Text~Others~Game_Load"
+msgstr "Játék Betöltése"
+
+msgid "Text~Others~Game_New"
+msgstr "Új Játék"
+
+msgid "Text~Others~Game_Options"
+msgstr "Játékbeállítások"
+
+msgid "Text~Others~Grid"
+msgstr "Rács"
+
+msgid "Text~Others~Ground_Units"
+msgstr "Földi egységek"
+
+msgid "Text~Others~Hitpoints"
+msgstr "Élet"
+
+msgid "Text~Others~Hitpoints_7"
+msgstr "Élet"
+
+msgid "Text~Others~Host_Start"
+msgstr "Host Indítása"
+
+msgid "Text~Others~Hot"
+msgstr "Hot"
+
+msgid "Text~Others~HotSeat_Load"
+msgstr "Hot Seat Betöltése"
+
+msgid "Text~Others~HotSeat_New"
+msgstr "Új Hot Seat"
+
+msgid "Text~Others~Included"
+msgstr "Belevesz:"
+
+msgid "Text~Others~Info_7"
+msgstr "Infó"
+
+msgid "Text~Others~Limited_To"
+msgstr "Korlátoz:"
+
+msgid "Text~Others~Load"
+msgstr "Behívás"
+
+msgid "Text~Others~Load_7"
+msgstr "Betöltés"
+
+msgid "Text~Others~Log"
+msgstr "Log"
+
+msgid "Text~Others~Mani"
+msgstr "Nyilatkozat"
+
+msgid "Text~Others~ManualFireMode_7"
+msgstr ""
+
+msgid "Text~Others~Multi_Player"
+msgstr "Többjátékos Mód"
+
+msgid "Text~Others~No"
+msgstr "Nem"
+
+msgid "Text~Others~OK"
+msgstr "Ok"
+
+msgid "Text~Others~Path"
+msgstr "Útvonal"
+
+msgid "Text~Others~Power"
+msgstr "Energia"
+
+msgid "Text~Others~Proceed_4"
+msgstr "Mehet"
+
+msgid "Text~Others~Produce_7"
+msgstr "Termel"
+
+msgid "Text~Others~Produce_Units"
+msgstr "Termelő egységek"
+
+msgid "Text~Others~Range"
+msgstr "Lőtáv"
+
+msgid "Text~Others~Range_7"
+msgstr "Lőtáv"
+
+msgid "Text~Others~Reload"
+msgstr ""
+
+msgid "Text~Others~ReloadAll_9"
+msgstr ""
+
+msgid "Text~Others~Reload_7"
+msgstr "Újratöltés"
+
+msgid "Text~Others~Repair"
+msgstr "Javítás"
+
+msgid "Text~Others~RepairAll_9"
+msgstr ""
+
+msgid "Text~Others~Repair_7"
+msgstr "Javítás"
+
+msgid "Text~Others~Reports"
+msgstr "Jelentések"
+
+msgid "Text~Others~Research"
+msgstr "Kutatás"
+
+msgid "Text~Others~Save"
+msgstr "Mentés"
+
+msgid "Text~Others~Scan"
+msgstr "Radar"
+
+msgid "Text~Others~Scan_7"
+msgstr "Radar"
+
+msgid "Text~Others~Score"
+msgstr "Pont"
+
+msgid "Text~Others~Sea_Units"
+msgstr "Vízi egységek"
+
+msgid "Text~Others~Seed"
+msgstr "Seed"
+
+msgid "Text~Others~Seed_7"
+msgstr "Seed"
+
+msgid "Text~Others~Sentry"
+msgstr "Örködés"
+
+msgid "Text~Others~Settings"
+msgstr "Beállítások"
+
+msgid "Text~Others~Shots"
+msgstr "Lövés"
+
+msgid "Text~Others~Shots_7"
+msgstr "Lövés"
+
+msgid "Text~Others~Single_Player"
+msgstr "Egyjátékos Mód"
+
+msgid "Text~Others~Speed"
+msgstr "Sebess."
+
+msgid "Text~Others~Speed_7"
+msgstr "Sebess."
+
+msgid "Text~Others~Start_7"
+msgstr "Elindítás"
+
+msgid "Text~Others~Stationary_Units"
+msgstr "Rögzített egységek"
+
+msgid "Text~Others~Status"
+msgstr "Státusz"
+
+msgid "Text~Others~Steal_7"
+msgstr "Lopás"
+
+msgid "Text~Others~Stealth_Units"
+msgstr "Lopakodó egységek"
+
+msgid "Text~Others~Stop_7"
+msgstr "Állj"
+
+msgid "Text~Others~Survey"
+msgstr "Vizsgál"
+
+msgid "Text~Others~TCPIP_Client"
+msgstr "TCP/IP Client"
+
+msgid "Text~Others~TCPIP_Host"
+msgstr "TCP/IP Host"
+
+msgid "Text~Others~Teams_7"
+msgstr "Munkások"
+
+msgid "Text~Others~Total"
+msgstr "Összes"
+
+msgid "Text~Others~Transfer_7"
+msgstr "Átvitel"
+
+msgid "Text~Others~Unit_destroyed"
+msgstr ""
+
+msgid "Text~Others~Units"
+msgstr "Egység"
+
+msgid "Text~Others~Upgrade"
+msgstr "Fejlesztés"
+
+msgid "Text~Others~UpgradeAll_7"
+msgstr "Összes fejl."
+
+msgid "Text~Others~UpgradeAll_9"
+msgstr ""
+
+msgid "Text~Others~Upgrademenu_7"
+msgstr "Fejlesztések"
+
+msgid "Text~Others~Upgradethis_7"
+msgstr "Kutatás"
+
+msgid "Text~Others~Usage_7"
+msgstr "Fogyaszt"
+
+msgid "Text~Others~Yes"
+msgstr "Igen"
+
+msgid "Text~Punctuation~Colon"
+msgstr ": "
+
+msgid "Text~Settings~Alphaeffects"
+msgstr "Alfaeffektusok"
+
+msgid "Text~Settings~Animation"
+msgstr "Animációk"
+
+msgid "Text~Settings~Autosave"
+msgstr "Automentés"
+
+msgid "Text~Settings~Disable"
+msgstr "Kikapcsol"
+
+msgid "Text~Settings~Effects"
+msgstr "Effektusok"
+
+msgid "Text~Settings~Intro"
+msgstr "Bevezető lejátszása"
+
+msgid "Text~Settings~Language"
+msgstr ""
+
+msgid "Text~Settings~Music"
+msgstr "Zene"
+
+msgid "Text~Settings~Preferences"
+msgstr "Beállítások"
+
+msgid "Text~Settings~Resolution"
+msgstr "Felbontás"
+
+msgid "Text~Settings~Scrollspeed"
+msgstr "Görgősebesség"
+
+msgid "Text~Settings~Shadows"
+msgstr "Árnyékok"
+
+msgid "Text~Settings~ShowDamage"
+msgstr "Épületsebződés"
+
+msgid "Text~Settings~ShowDamageVehicle"
+msgstr "Járműsebződés"
+
+msgid "Text~Settings~Tracks"
+msgstr "Járműnyomok"
+
+msgid "Text~Settings~Unlimited_11"
+msgstr ""
+
+msgid "Text~Settings~Voices"
+msgstr "Hangok"
+
+msgid "Text~Settings~Volume"
+msgstr "Hangerő"
+
+msgid "Text~Settings~Window"
+msgstr "Futtatás ablakban"
+
+msgid "Text~Title~Alien_Tech"
+msgstr "Idegen technológia"
+
+msgid "Text~Title~BridgeHead"
+msgstr "Kezdeti bázis"
+
+msgid "Text~Title~Build_Factory"
+msgstr ""
+
+msgid "Text~Title~Build_Vehicle"
+msgstr ""
+
+msgid "Text~Title~Cargo"
+msgstr "Rakomány"
+
+msgid "Text~Title~Choose_Clan"
+msgstr ""
+
+msgid "Text~Title~Choose_Planet"
+msgstr "Bolygóválasztás"
+
+msgid "Text~Title~Choose_Units"
+msgstr ""
+
+msgid "Text~Title~Clan"
+msgstr ""
+
+msgid "Text~Title~Clans"
+msgstr "Klánok"
+
+msgid "Text~Title~Color"
+msgstr "Szín:"
+
+msgid "Text~Title~Computer"
+msgstr "Számítógép"
+
+msgid "Text~Title~Connect"
+msgstr "Csatlakozás"
+
+msgid "Text~Title~Credits"
+msgstr "Pénz"
+
+msgid "Text~Title~Credits_start"
+msgstr ""
+
+msgid "Text~Title~Custom_11"
+msgstr ""
+
+msgid "Text~Title~Game_Type"
+msgstr "Játéktípus"
+
+msgid "Text~Title~Gold"
+msgstr "Arany"
+
+msgid "Text~Title~HotSeat"
+msgstr ""
+
+msgid "Text~Title~Human"
+msgstr "Ember"
+
+msgid "Text~Title~IP"
+msgstr "IP"
+
+msgid "Text~Title~Labs"
+msgstr "Fejlesztés Menü"
+
+msgid "Text~Title~Load"
+msgstr "Betöltés Menü"
+
+msgid "Text~Title~LoadSave"
+msgstr "Betöltés/Mentés Menü"
+
+msgid "Text~Title~MainMenu"
+msgstr "Főmenü"
+
+msgid "Text~Title~Map"
+msgstr "Térkép: %s"
+
+msgid "Text~Title~Metal"
+msgstr "Nyersanyag"
+
+msgid "Text~Title~Mine"
+msgstr "Nyersanyagelosztás menü"
+
+msgid "Text~Title~Nobody"
+msgstr "Senki"
+
+msgid "Text~Title~Oil"
+msgstr "Üzemanyag"
+
+msgid "Text~Title~Options"
+msgstr "Beállítások"
+
+msgid "Text~Title~Player_Name"
+msgstr "Játékosnév:"
+
+msgid "Text~Title~Player_Select"
+msgstr "Játékos beállítások"
+
+msgid "Text~Title~Players"
+msgstr "Játékosok:"
+
+msgid "Text~Title~Port"
+msgstr "Port"
+
+msgid "Text~Title~Resource"
+msgstr "Nyersanyagsűrűség"
+
+msgid "Text~Title~Resource_Density"
+msgstr "Nyersanyag gyakoriság"
+
+msgid "Text~Title~Savegame"
+msgstr "Mentés:"
+
+msgid "Text~Title~Send"
+msgstr "Küldés"
+
+msgid "Text~Title~Team"
+msgstr "Csapat"
+
+msgid "Text~Title~Turn_end"
+msgstr ""
+
+msgid "Text~Title~Turn_limit"
+msgstr ""
+
+msgid "Text~Title~Unitinfo"
+msgstr "Egységstátusz képernyő"
+
+msgid "Text~Title~Upgrades_Menu"
+msgstr ""
+

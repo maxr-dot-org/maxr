@@ -1,0 +1,67 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Maxr 0.3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-07-29 21:33+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "Clan0_Name"
+msgstr "The Chosen"
+
+msgid "Clan0_Desc"
+msgstr ""
+
+msgid "Clan1_Name"
+msgstr "Crimson Path"
+
+msgid "Clan1_Desc"
+msgstr ""
+
+msgid "Clan2_Name"
+msgstr "Von Griffin"
+
+msgid "Clan2_Desc"
+msgstr ""
+
+msgid "Clan3_Name"
+msgstr "Ayer's Hand"
+
+msgid "Clan3_Desc"
+msgstr ""
+
+msgid "Clan4_Name"
+msgstr "Musashi"
+
+msgid "Clan4_Desc"
+msgstr ""
+
+msgid "Clan5_Name"
+msgstr "Sacred Eights"
+
+msgid "Clan5_Desc"
+msgstr ""
+
+msgid "Clan6_Name"
+msgstr "7 Knights"
+
+msgid "Clan6_Desc"
+msgstr ""
+
+msgid "Clan7_Name"
+msgstr "Axis Inc."
+
+msgid "Clan7_Desc"
+msgstr ""

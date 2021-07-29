@@ -1,0 +1,440 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Maxr 0.3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-07-29 21:33+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "Building01_Name"
+msgstr ""
+
+msgid "Building01_Desc"
+msgstr ""
+
+msgid "Building02_Name"
+msgstr ""
+
+msgid "Building02_Desc"
+msgstr ""
+
+msgid "Building03_Name"
+msgstr ""
+
+msgid "Building03_Desc"
+msgstr ""
+
+msgid "Building04_Name"
+msgstr ""
+
+msgid "Building04_Desc"
+msgstr ""
+
+msgid "Building05_Name"
+msgstr ""
+
+msgid "Building05_Desc"
+msgstr ""
+
+msgid "Building06_Name"
+msgstr ""
+
+msgid "Building06_Desc"
+msgstr ""
+
+msgid "Building07_Name"
+msgstr ""
+
+msgid "Building07_Desc"
+msgstr ""
+
+msgid "Building08_Name"
+msgstr ""
+
+msgid "Building08_Desc"
+msgstr ""
+
+msgid "Building09_Name"
+msgstr ""
+
+msgid "Building09_Desc"
+msgstr ""
+
+msgid "Building10_Name"
+msgstr ""
+
+msgid "Building10_Desc"
+msgstr ""
+
+msgid "Building11_Name"
+msgstr ""
+
+msgid "Building11_Desc"
+msgstr ""
+
+msgid "Building12_Name"
+msgstr ""
+
+msgid "Building12_Desc"
+msgstr ""
+
+msgid "Building13_Name"
+msgstr ""
+
+msgid "Building13_Desc"
+msgstr ""
+
+msgid "Building14_Name"
+msgstr ""
+
+msgid "Building14_Desc"
+msgstr ""
+
+msgid "Building15_Name"
+msgstr ""
+
+msgid "Building15_Desc"
+msgstr ""
+
+msgid "Building16_Name"
+msgstr ""
+
+msgid "Building16_Desc"
+msgstr ""
+
+msgid "Building17_Name"
+msgstr ""
+
+msgid "Building17_Desc"
+msgstr ""
+
+msgid "Building18_Name"
+msgstr ""
+
+msgid "Building18_Desc"
+msgstr ""
+
+msgid "Building19_Name"
+msgstr ""
+
+msgid "Building19_Desc"
+msgstr ""
+
+msgid "Building20_Name"
+msgstr ""
+
+msgid "Building20_Desc"
+msgstr ""
+
+msgid "Building21_Name"
+msgstr ""
+
+msgid "Building21_Desc"
+msgstr ""
+
+msgid "Building22_Name"
+msgstr ""
+
+msgid "Building22_Desc"
+msgstr ""
+
+msgid "Building23_Name"
+msgstr ""
+
+msgid "Building23_Desc"
+msgstr ""
+
+msgid "Building24_Name"
+msgstr ""
+
+msgid "Building24_Desc"
+msgstr ""
+
+msgid "Building25_Name"
+msgstr ""
+
+msgid "Building25_Desc"
+msgstr ""
+
+msgid "Building26_Name"
+msgstr ""
+
+msgid "Building26_Desc"
+msgstr ""
+
+msgid "Building27_Name"
+msgstr ""
+
+msgid "Building27_Desc"
+msgstr ""
+
+msgid "Building28_Name"
+msgstr ""
+
+msgid "Building28_Desc"
+msgstr ""
+
+msgid "Building29_Name"
+msgstr ""
+
+msgid "Building29_Desc"
+msgstr ""
+
+msgid "Building30_Name"
+msgstr ""
+
+msgid "Building30_Desc"
+msgstr ""
+
+msgid "Building31_Name"
+msgstr ""
+
+msgid "Building31_Desc"
+msgstr ""
+
+msgid "Building32_Name"
+msgstr ""
+
+msgid "Building32_Desc"
+msgstr ""
+
+msgid "Building33_Name"
+msgstr ""
+
+msgid "Building33_Desc"
+msgstr ""
+
+msgid "Building34_Name"
+msgstr ""
+
+msgid "Building34_Desc"
+msgstr ""
+
+msgid "Building35_Name"
+msgstr ""
+
+msgid "Building35_Desc"
+msgstr ""
+
+msgid "Vehicle01_Name"
+msgstr ""
+
+msgid "Vehicle01_Desc"
+msgstr ""
+
+msgid "Vehicle02_Name"
+msgstr ""
+
+msgid "Vehicle02_Desc"
+msgstr ""
+
+msgid "Vehicle03_Name"
+msgstr ""
+
+msgid "Vehicle03_Desc"
+msgstr ""
+
+msgid "Vehicle04_Name"
+msgstr ""
+
+msgid "Vehicle04_Desc"
+msgstr ""
+
+msgid "Vehicle05_Name"
+msgstr ""
+
+msgid "Vehicle05_Desc"
+msgstr ""
+
+msgid "Vehicle06_Name"
+msgstr ""
+
+msgid "Vehicle06_Desc"
+msgstr ""
+
+msgid "Vehicle07_Name"
+msgstr ""
+
+msgid "Vehicle07_Desc"
+msgstr ""
+
+msgid "Vehicle08_Name"
+msgstr ""
+
+msgid "Vehicle08_Desc"
+msgstr ""
+
+msgid "Vehicle09_Name"
+msgstr ""
+
+msgid "Vehicle09_Desc"
+msgstr ""
+
+msgid "Vehicle10_Name"
+msgstr ""
+
+msgid "Vehicle10_Desc"
+msgstr ""
+
+msgid "Vehicle11_Name"
+msgstr ""
+
+msgid "Vehicle11_Desc"
+msgstr ""
+
+msgid "Vehicle12_Name"
+msgstr ""
+
+msgid "Vehicle12_Desc"
+msgstr ""
+
+msgid "Vehicle13_Name"
+msgstr ""
+
+msgid "Vehicle13_Desc"
+msgstr ""
+
+msgid "Vehicle14_Name"
+msgstr ""
+
+msgid "Vehicle14_Desc"
+msgstr ""
+
+msgid "Vehicle15_Name"
+msgstr ""
+
+msgid "Vehicle15_Desc"
+msgstr ""
+
+msgid "Vehicle16_Name"
+msgstr ""
+
+msgid "Vehicle16_Desc"
+msgstr ""
+
+msgid "Vehicle17_Name"
+msgstr ""
+
+msgid "Vehicle17_Desc"
+msgstr ""
+
+msgid "Vehicle18_Name"
+msgstr ""
+
+msgid "Vehicle18_Desc"
+msgstr ""
+
+msgid "Vehicle19_Name"
+msgstr ""
+
+msgid "Vehicle19_Desc"
+msgstr ""
+
+msgid "Vehicle20_Name"
+msgstr ""
+
+msgid "Vehicle20_Desc"
+msgstr ""
+
+msgid "Vehicle21_Name"
+msgstr ""
+
+msgid "Vehicle21_Desc"
+msgstr ""
+
+msgid "Vehicle22_Name"
+msgstr ""
+
+msgid "Vehicle22_Desc"
+msgstr ""
+
+msgid "Vehicle23_Name"
+msgstr ""
+
+msgid "Vehicle23_Desc"
+msgstr ""
+
+msgid "Vehicle24_Name"
+msgstr ""
+
+msgid "Vehicle24_Desc"
+msgstr ""
+
+msgid "Vehicle25_Name"
+msgstr ""
+
+msgid "Vehicle25_Desc"
+msgstr ""
+
+msgid "Vehicle26_Name"
+msgstr ""
+
+msgid "Vehicle26_Desc"
+msgstr ""
+
+msgid "Vehicle27_Name"
+msgstr ""
+
+msgid "Vehicle27_Desc"
+msgstr ""
+
+msgid "Vehicle28_Name"
+msgstr ""
+
+msgid "Vehicle28_Desc"
+msgstr ""
+
+msgid "Vehicle29_Name"
+msgstr ""
+
+msgid "Vehicle29_Desc"
+msgstr ""
+
+msgid "Vehicle30_Name"
+msgstr ""
+
+msgid "Vehicle30_Desc"
+msgstr ""
+
+msgid "Vehicle31_Name"
+msgstr ""
+
+msgid "Vehicle31_Desc"
+msgstr ""
+
+msgid "Vehicle32_Name"
+msgstr ""
+
+msgid "Vehicle32_Desc"
+msgstr ""
+
+msgid "Vehicle33_Name"
+msgstr ""
+
+msgid "Vehicle33_Desc"
+msgstr ""
+
+msgid "Vehicle34_Name"
+msgstr ""
+
+msgid "Vehicle34_Desc"
+msgstr ""
+
+msgid "Vehicle35_Name"
+msgstr ""
+
+msgid "Vehicle35_Desc"
+msgstr ""
+

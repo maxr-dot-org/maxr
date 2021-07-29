@@ -1,0 +1,1072 @@
+# Russian translations for Maxr package.
+# Copyright (C) 2021 THE Maxr'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Maxr package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Maxr 0.3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-07-29 21:33+0200\n"
+"PO-Revision-Date: 2021-07-29 21:44+0200\n"
+"Last-Translator:\n"
+"Language-Team: Russian\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "Text~Comp~Adjustments_Fuel_Increased"
+msgstr "Добыча топлива увеличена на %s"
+
+msgid "Text~Comp~Adjustments_Gold_Decreased"
+msgstr "Добыча золота уменьшена на %s"
+
+msgid "Text~Comp~Adjustments_Metal_Decreased"
+msgstr "Добыча сырья уменьшена на %s"
+
+msgid "Text~Comp~Attacked"
+msgstr "%s - под огнём противника!"
+
+msgid "Text~Comp~AttackingEnemy"
+msgstr "%s атакует врага"
+
+msgid "Text~Comp~AttackingStatusStr"
+msgstr ""
+
+msgid "Text~Comp~Building_Disabled"
+msgstr "Производство остановлено."
+
+msgid "Text~Comp~CapturedByEnemy"
+msgstr "Враг захватил %s"
+
+msgid "Text~Comp~Cheat"
+msgstr "использован чит"
+
+msgid "Text~Comp~Clearing"
+msgstr "убирает (%s)"
+
+msgid "Text~Comp~Clearing_Fin"
+msgstr "уборка закончена"
+
+msgid "Text~Comp~Clearing_Mine"
+msgstr "убирает мины"
+
+msgid "Text~Comp~CommandoRank_Average"
+msgstr "Среднячок"
+
+msgid "Text~Comp~CommandoRank_Elite"
+msgstr "Элита"
+
+msgid "Text~Comp~CommandoRank_Expert"
+msgstr "Эксперт"
+
+msgid "Text~Comp~CommandoRank_GrandMaster"
+msgstr ""
+
+msgid "Text~Comp~CommandoRank_Greenhorn"
+msgstr "Молокосос"
+
+msgid "Text~Comp~CommandoRank_Veteran"
+msgstr "Ветеран"
+
+msgid "Text~Comp~Dated"
+msgstr "устаревший"
+
+msgid "Text~Comp~Defeated"
+msgstr "%s - игрок повержен"
+
+msgid "Text~Comp~Description"
+msgstr "Описание"
+
+msgid "Text~Comp~Destroyed"
+msgstr "%s - здание разрушено"
+
+msgid "Text~Comp~Detected"
+msgstr "повреждено"
+
+msgid "Text~Comp~Disabled"
+msgstr "сломано"
+
+msgid "Text~Comp~EcoSphere"
+msgstr "эко-сфера"
+
+msgid "Text~Comp~EcoSpheres"
+msgstr "эко-сферы"
+
+msgid "Text~Comp~End_Game"
+msgstr "Действительно выйти? \n\nНесохранённые данные будут утеряны."
+
+msgid "Text~Comp~Energy_Insufficient"
+msgstr "Невозможно запустить, недостаточно энергии."
+
+msgid "Text~Comp~Energy_IsNeeded"
+msgstr "Невозможно отключить генератор, требуется энергия."
+
+msgid "Text~Comp~Energy_Low"
+msgstr "Недостаточно энергии, производство остановлено."
+
+msgid "Text~Comp~Energy_ToLow"
+msgstr "Необходима дополнительная энергия, генератор включен."
+
+msgid "Text~Comp~Finished"
+msgstr "- готово"
+
+msgid "Text~Comp~Finished2"
+msgstr "- готовы"
+
+msgid "Text~Comp~Fuel_Insufficient"
+msgstr "Невозможно запустить, недостаточно топлива."
+
+msgid "Text~Comp~Fuel_Low"
+msgstr "Недостаточно топлива, генератор выключен."
+
+msgid "Text~Comp~GameEndsAt"
+msgstr "Играть заканчивается при"
+
+msgid "Text~Comp~Gold_Insufficient"
+msgstr "Невозможно запустить, недостаточно золота."
+
+msgid "Text~Comp~Gold_Low"
+msgstr "Недостаточно залота, рафинария отключена."
+
+msgid "Text~Comp~IsBeeingAttacked"
+msgstr ""
+
+msgid "Text~Comp~Labs"
+msgstr "лаборатории"
+
+msgid "Text~Comp~Landing_Select"
+msgstr ""
+
+msgid "Text~Comp~Landing_Too_Close"
+msgstr "Точка высадки слишком близко к другому игроку. Выберите новую точку высадки."
+
+msgid "Text~Comp~Landing_Warning"
+msgstr "Точка высадки находится недалеко от другого игрока. Подтвердите точку выскадки, щёлкнув по красному кругу или выберите новую точку высадки."
+
+msgid "Text~Comp~Laying"
+msgstr "устанавливает мины"
+
+msgid "Text~Comp~Metal_Insufficient"
+msgstr "Невозможно запустить, недостаточно сырья."
+
+msgid "Text~Comp~Metal_Low"
+msgstr "Недостаточно сырья, производство остановлено."
+
+msgid "Text~Comp~Moving"
+msgstr "перемещается"
+
+msgid "Text~Comp~MovingToAttack"
+msgstr ""
+
+msgid "Text~Comp~NoLimit"
+msgstr "Биться насмерть!"
+
+msgid "Text~Comp~Path_interrupted"
+msgstr "Возведение построек по заданному маршруту не может быть продолжено."
+
+msgid "Text~Comp~Point"
+msgstr "очко"
+
+msgid "Text~Comp~Points"
+msgstr "очки"
+
+msgid "Text~Comp~Producing"
+msgstr "производит"
+
+msgid "Text~Comp~Producing_Err"
+msgstr "Точка возведения заблокирована или недостаточно ресурсов"
+
+msgid "Text~Comp~Producing_Fin"
+msgstr "закончил производство"
+
+msgid "Text~Comp~ReactionFireOff"
+msgstr "Ответный огонь отключен"
+
+msgid "Text~Comp~Repeat"
+msgstr "Ещё раз"
+
+msgid "Text~Comp~Reserve"
+msgstr "Резерв"
+
+msgid "Text~Comp~ResolutionWarning"
+msgstr "Внимание: неподдерживаемый видеорежим в конфигурации"
+
+msgid "Text~Comp~RestartRequired"
+msgstr ""
+
+msgid "Text~Comp~Screenshot_Done"
+msgstr "Снимок экрана записан в %s"
+
+msgid "Text~Comp~Sentry"
+msgstr "на карауле"
+
+msgid "Text~Comp~Stolen"
+msgstr "захвачено"
+
+msgid "Text~Comp~SuddenDeath"
+msgstr "Мнгновенная гибель: первый игрок, набравший очки, побеждает!"
+
+msgid "Text~Comp~Surveying"
+msgstr "георазведка"
+
+msgid "Text~Comp~Team_Insufficient"
+msgstr "Невозможно запустить, недостаточно людей."
+
+msgid "Text~Comp~Team_Low"
+msgstr "Недостаточно рабочих, здание отключено."
+
+msgid "Text~Comp~Themes"
+msgstr "темы"
+
+msgid "Text~Comp~Turn_5"
+msgstr "Ход"
+
+msgid "Text~Comp~Turn_Automove"
+msgstr "Выполняются оставшиеся перемещения"
+
+msgid "Text~Comp~Turn_Start"
+msgstr "Начался ход %s"
+
+msgid "Text~Comp~Turn_Wait"
+msgstr "Подождите пока закончатся все перемещения"
+
+msgid "Text~Comp~Turns"
+msgstr "Ходы"
+
+msgid "Text~Comp~Upgrades_Done"
+msgstr "Улучшенение завершено"
+
+msgid "Text~Comp~Upgrades_Done2"
+msgstr "(единиц типа %s)"
+
+msgid "Text~Comp~Waits"
+msgstr "бездействует"
+
+msgid "Text~Comp~Wins"
+msgstr ""
+
+msgid "Text~Comp~Working"
+msgstr "работает"
+
+msgid "Text~Error_Messages~ERROR_File_Not_Found"
+msgstr "Файл не найден: %s"
+
+msgid "Text~Error_Messages~ERROR_Map_Loading"
+msgstr "Ошибка при загрузке карты"
+
+msgid "Text~Error_Messages~ERROR_Missing_Translation"
+msgstr "нехватает перевода: %s"
+
+msgid "Text~Error_Messages~INFO_Language_initialised"
+msgstr "Язык не опознан"
+
+msgid "Text~Error_Messages~INFO_Not_Implemented"
+msgstr "Ещё не реализовано"
+
+msgid "Text~Init~Buildings"
+msgstr "Загрузка зданий..."
+
+msgid "Text~Init~Clans"
+msgstr "Загрузка кланов..."
+
+msgid "Text~Init~Effects"
+msgstr "Загрузка эффектов..."
+
+msgid "Text~Init~Fonts"
+msgstr "Загрузка шрифтов..."
+
+msgid "Text~Init~GFX"
+msgstr "Загрузка графики..."
+
+msgid "Text~Init~Keys"
+msgstr "Загрузка клавиш..."
+
+msgid "Text~Init~Lang"
+msgstr "Загрузка локализации.."
+
+msgid "Text~Init~Music"
+msgstr "Загрузка музыки..."
+
+msgid "Text~Init~Sounds"
+msgstr "Загрузка звуков..."
+
+msgid "Text~Init~Terrain"
+msgstr "Загрузка территорий..."
+
+msgid "Text~Init~Vehicles"
+msgstr "Загрузка подразделений..."
+
+msgid "Text~Init~Voices"
+msgstr "Загрузка голосов..."
+
+msgid "Text~Main~Credits_Doc"
+msgstr ""
+
+msgid "Text~Main~Credits_MM"
+msgstr ""
+
+msgid "Text~Main~Credits_Reloaded"
+msgstr "M.A.X.R. основывается на M.A.X. от Interplay"
+
+msgid "Text~Main~Game_Subtitle"
+msgstr ""
+
+msgid "Text~Main~Game_Title"
+msgstr ""
+
+msgid "Text~Main~Remarks~Not_yet_implemented"
+msgstr "(*) ещё не реализовано"
+
+msgid "Text~Main~Version"
+msgstr "версия %s"
+
+msgid "Text~Multiplayer~Abort_Waiting"
+msgstr "Сервер, нажмите F2 чтобы прекратить ожидание."
+
+msgid "Text~Multiplayer~Connection_Terminated"
+msgstr "Связь разорвана."
+
+msgid "Text~Multiplayer~Deadline"
+msgstr "Ход закончится через %s секунд"
+
+msgid "Text~Multiplayer~Disconnect_Not_In_Save"
+msgstr "Вас нет в списке сохранённой игры, Вы будете отключены."
+
+msgid "Text~Multiplayer~Go"
+msgstr "Поехали"
+
+msgid "Text~Multiplayer~Go_Abort"
+msgstr "Отменено"
+
+msgid "Text~Multiplayer~Go_Check"
+msgstr "Приготовьтесь к началу"
+
+msgid "Text~Multiplayer~Go_Host"
+msgstr "Сервер хочет начать: Приготовьтесь"
+
+msgid "Text~Multiplayer~Go_Host_No"
+msgstr "Сервер хочет начать: Не готов"
+
+msgid "Text~Multiplayer~Go_Ready"
+msgstr "Готов"
+
+msgid "Text~Multiplayer~Go_Ready_No"
+msgstr "не готов"
+
+msgid "Text~Multiplayer~Host_command"
+msgstr ""
+
+msgid "Text~Multiplayer~Lost_Connection"
+msgstr "Потеряна связь с %s."
+
+msgid "Text~Multiplayer~MapDL_Cancel"
+msgstr "Отменено"
+
+msgid "Text~Multiplayer~MapDL_Download"
+msgstr "карты %s с сервера"
+
+msgid "Text~Multiplayer~MapDL_DownloadInvalid"
+msgstr "оригинальной карты M.A.X. %s с сервера (лицензированной)!"
+
+msgid "Text~Multiplayer~MapDL_DownloadRequest"
+msgstr "Карта не установлена: Запрашиваю загрузку"
+
+msgid "Text~Multiplayer~MapDL_DownloadRequestInvalid"
+msgstr "Карта не установлена: Нет права на загрузку"
+
+msgid "Text~Multiplayer~MapDL_Finished"
+msgstr "Загрузка карты завершена."
+
+msgid "Text~Multiplayer~MapDL_Percent"
+msgstr "Загрузка карты: %s%"
+
+msgid "Text~Multiplayer~MapDL_Upload"
+msgstr "Отправляю карту %s..."
+
+msgid "Text~Multiplayer~MapDL_UploadFinished"
+msgstr "Отправка карты к %s завершена."
+
+msgid "Text~Multiplayer~Map_NoSet"
+msgstr "--не выбана карта--"
+
+msgid "Text~Multiplayer~Missing_Settings"
+msgstr "Опции, карта или сохранённая игра не выбраны"
+
+msgid "Text~Multiplayer~Network_Closed"
+msgstr "Соединение закрыто"
+
+msgid "Text~Multiplayer~Network_Connected"
+msgstr "Соединено"
+
+msgid "Text~Multiplayer~Network_Connected_Not"
+msgstr "Не соединино"
+
+msgid "Text~Multiplayer~Network_Connecting"
+msgstr "Соединяюсь с %s"
+
+msgid "Text~Multiplayer~Network_Error_Connect"
+msgstr "Невозможно подключиться к сервером"
+
+msgid "Text~Multiplayer~Network_Error_Socket"
+msgstr "Ошбика подключения к сокету"
+
+msgid "Text~Multiplayer~Network_New"
+msgstr "Новое соединение"
+
+msgid "Text~Multiplayer~Network_Open"
+msgstr "Игра началась (Порт: %s)"
+
+msgid "Text~Multiplayer~Network_Syncing"
+msgstr "Идёт синхронизация..."
+
+msgid "Text~Multiplayer~No_Map_No_Ready"
+msgstr "Не могу загрузить карту %s. Вы не готовы."
+
+msgid "Text~Multiplayer~No_Response"
+msgstr ""
+
+msgid "Text~Multiplayer~Not_Ready"
+msgstr "не готов"
+
+msgid "Text~Multiplayer~Option_NoSet"
+msgstr "--не выбраны опции--"
+
+msgid "Text~Multiplayer~Pause"
+msgstr ""
+
+msgid "Text~Multiplayer~Player1"
+msgstr "Игрок 1"
+
+msgid "Text~Multiplayer~Player2"
+msgstr "Игрок 2"
+
+msgid "Text~Multiplayer~Player3"
+msgstr "Игрок 3"
+
+msgid "Text~Multiplayer~Player4"
+msgstr "Игрок 4"
+
+msgid "Text~Multiplayer~Player5"
+msgstr "Игрок 5"
+
+msgid "Text~Multiplayer~Player6"
+msgstr "Игрок 6"
+
+msgid "Text~Multiplayer~Player7"
+msgstr "Игрок 7"
+
+msgid "Text~Multiplayer~Player8"
+msgstr "Игрок 8"
+
+msgid "Text~Multiplayer~Player_Amount"
+msgstr "Выберете количество игроков. Необходимо минимум два игрока-человека. Максимально возможное количество игроков - 8."
+
+msgid "Text~Multiplayer~Player_Color_Taken"
+msgstr ""
+
+msgid "Text~Multiplayer~Player_Few"
+msgstr "Недостаточно игроков!"
+
+msgid "Text~Multiplayer~Player_Joined"
+msgstr "%s вступает в игру"
+
+msgid "Text~Multiplayer~Player_Left"
+msgstr "%s покидает игру"
+
+msgid "Text~Multiplayer~Player_Many"
+msgstr "Слишком много игроков!"
+
+msgid "Text~Multiplayer~Player_MustHost"
+msgstr "должен быть сервером в игре по очереди"
+
+msgid "Text~Multiplayer~Player_Name_Taken"
+msgstr ""
+
+msgid "Text~Multiplayer~Player_Turn"
+msgstr "%s делает ход"
+
+msgid "Text~Multiplayer~Player_Turn_End"
+msgstr "%s завершил ход"
+
+msgid "Text~Multiplayer~Player_Wrong"
+msgstr "У игрока неправильное имя"
+
+msgid "Text~Multiplayer~Reconnect"
+msgstr "Игра уже идёт. Если Вы потеряли связь с сервером, Вы можете подключиться заново. Хотите подключиться?"
+
+msgid "Text~Multiplayer~Reconnect_Forbidden"
+msgstr "Переподключение запрещено сервером."
+
+msgid "Text~Multiplayer~Save_Only_Host"
+msgstr "Только сервер может сохранять игру."
+
+msgid "Text~Multiplayer~Server_Not_Running"
+msgstr "Сервер не запущен"
+
+msgid "Text~Multiplayer~Wait_For_Server"
+msgstr ""
+
+msgid "Text~Multiplayer~Wait_Reconnect"
+msgstr "Ожидаем переподключения игрока."
+
+msgid "Text~Multiplayer~Wait_TurnEnd"
+msgstr ""
+
+msgid "Text~Multiplayer~Wait_Until"
+msgstr "Дождитесь завершения хода игроком %s"
+
+msgid "Text~Multiplayer~Waiting"
+msgstr "Ждём остальных игроков..."
+
+msgid "Text~Option~Definite"
+msgstr "Уже построена"
+
+msgid "Text~Option~Dense"
+msgstr "высокая"
+
+msgid "Text~Option~High"
+msgstr "много"
+
+msgid "Text~Option~Limited"
+msgstr "мало"
+
+msgid "Text~Option~Low"
+msgstr "оч. мало"
+
+msgid "Text~Option~Mobile"
+msgstr "Нужно построить"
+
+msgid "Text~Option~More"
+msgstr "оч. много"
+
+msgid "Text~Option~None"
+msgstr "нет"
+
+msgid "Text~Option~Normal"
+msgstr "норм"
+
+msgid "Text~Option~Off"
+msgstr "выкл."
+
+msgid "Text~Option~On"
+msgstr "вкл."
+
+msgid "Text~Option~Sparse"
+msgstr "низкая"
+
+msgid "Text~Option~TooMuch"
+msgstr "макс"
+
+msgid "Text~Option~Type_Simu"
+msgstr "Одновременно"
+
+msgid "Text~Option~Type_Turns"
+msgstr "По очереди"
+
+msgid "Text~Others~Active"
+msgstr "Активац."
+
+msgid "Text~Others~ActiveAll_9"
+msgstr ""
+
+msgid "Text~Others~Active_7"
+msgstr "Актив."
+
+msgid "Text~Others~Air_Units"
+msgstr "Воздушные"
+
+msgid "Text~Others~Ammo"
+msgstr "Боезапас"
+
+msgid "Text~Others~Ammo_7"
+msgstr "Боезап."
+
+msgid "Text~Others~Armor"
+msgstr "Броня"
+
+msgid "Text~Others~Armor_7"
+msgstr "Броня"
+
+msgid "Text~Others~Attack"
+msgstr "Атака"
+
+msgid "Text~Others~Attack_7"
+msgstr "Атака"
+
+msgid "Text~Others~Auto_7"
+msgstr "Авто"
+
+msgid "Text~Others~Back"
+msgstr "Назад"
+
+msgid "Text~Others~Build_7"
+msgstr "Строй"
+
+msgid "Text~Others~Buy"
+msgstr "Купить"
+
+msgid "Text~Others~Cancel"
+msgstr "Отмена"
+
+msgid "Text~Others~Cargo_7"
+msgstr "Груз"
+
+msgid "Text~Others~Chat"
+msgstr "Чат"
+
+msgid "Text~Others~Clear_7"
+msgstr "Чистка"
+
+msgid "Text~Others~Color"
+msgstr "Цвет"
+
+msgid "Text~Others~Costs"
+msgstr "Цена"
+
+msgid "Text~Others~Damaged_Units"
+msgstr "Повреждённые"
+
+msgid "Text~Others~Destroy_7"
+msgstr "Убрать"
+
+msgid "Text~Others~Disable_7"
+msgstr "Откл."
+
+msgid "Text~Others~Disadvantages_8cut"
+msgstr "Недостатки"
+
+msgid "Text~Others~Distribution_7"
+msgstr "Распр."
+
+msgid "Text~Others~Done"
+msgstr "Готово"
+
+msgid "Text~Others~Done_7"
+msgstr "Готово"
+
+msgid "Text~Others~End"
+msgstr "Кон. хода"
+
+msgid "Text~Others~Exit"
+msgstr "Выход"
+
+msgid "Text~Others~Fight_Units"
+msgstr "Боевые"
+
+msgid "Text~Others~Files"
+msgstr "Файлы"
+
+msgid "Text~Others~Fog"
+msgstr "Туман"
+
+msgid "Text~Others~Game_Load"
+msgstr "Загрузить игру"
+
+msgid "Text~Others~Game_New"
+msgstr "Новая игра"
+
+msgid "Text~Others~Game_Options"
+msgstr "Настройка игры"
+
+msgid "Text~Others~Grid"
+msgstr "Сетка"
+
+msgid "Text~Others~Ground_Units"
+msgstr "Наземные"
+
+msgid "Text~Others~Hitpoints"
+msgstr "Прочн."
+
+msgid "Text~Others~Hitpoints_7"
+msgstr "Прочн."
+
+msgid "Text~Others~Host_Start"
+msgstr "Создать сервер"
+
+msgid "Text~Others~Hot"
+msgstr "Взвод"
+
+msgid "Text~Others~HotSeat_Load"
+msgstr "Загрузить ХотСит"
+
+msgid "Text~Others~HotSeat_New"
+msgstr "Новый ХотСит"
+
+msgid "Text~Others~Included"
+msgstr "Включая:"
+
+msgid "Text~Others~Info_7"
+msgstr "Инфо"
+
+msgid "Text~Others~Limited_To"
+msgstr "Только:"
+
+msgid "Text~Others~Load"
+msgstr "Загрузить"
+
+msgid "Text~Others~Load_7"
+msgstr "Загр."
+
+msgid "Text~Others~Log"
+msgstr "Журнал"
+
+msgid "Text~Others~Mani"
+msgstr "Манифест"
+
+msgid "Text~Others~ManualFireMode_7"
+msgstr "Ручное упр."
+
+msgid "Text~Others~Multi_Player"
+msgstr "Мультиплеер"
+
+msgid "Text~Others~No"
+msgstr "Нет"
+
+msgid "Text~Others~OK"
+msgstr "OK"
+
+msgid "Text~Others~Path"
+msgstr "Путь"
+
+msgid "Text~Others~Power"
+msgstr "Энерг."
+
+msgid "Text~Others~Proceed_4"
+msgstr "Вып."
+
+msgid "Text~Others~Produce_7"
+msgstr "Произв."
+
+msgid "Text~Others~Produce_Units"
+msgstr "Производственные"
+
+msgid "Text~Others~Range"
+msgstr "Дальность"
+
+msgid "Text~Others~Range_7"
+msgstr "Дальн."
+
+msgid "Text~Others~Reload"
+msgstr "Заряд."
+
+msgid "Text~Others~ReloadAll_9"
+msgstr ""
+
+msgid "Text~Others~Reload_7"
+msgstr "Заряд."
+
+msgid "Text~Others~Repair"
+msgstr "Ремонт"
+
+msgid "Text~Others~RepairAll_9"
+msgstr ""
+
+msgid "Text~Others~Repair_7"
+msgstr "Ремонт"
+
+msgid "Text~Others~Reports"
+msgstr "Отчёты"
+
+msgid "Text~Others~Research"
+msgstr "Иссл."
+
+msgid "Text~Others~Save"
+msgstr "Сохранить"
+
+msgid "Text~Others~Scan"
+msgstr "Сканер"
+
+msgid "Text~Others~Scan_7"
+msgstr "Сканер"
+
+msgid "Text~Others~Score"
+msgstr "Очки"
+
+msgid "Text~Others~Sea_Units"
+msgstr "Морские"
+
+msgid "Text~Others~Seed"
+msgstr "Мины"
+
+msgid "Text~Others~Seed_7"
+msgstr "Мины"
+
+msgid "Text~Others~Sentry"
+msgstr "Часовой"
+
+msgid "Text~Others~Settings"
+msgstr "Настройки"
+
+msgid "Text~Others~Shots"
+msgstr "Выстрел"
+
+msgid "Text~Others~Shots_7"
+msgstr "Выстр."
+
+msgid "Text~Others~Single_Player"
+msgstr "Одиночная игра (Без ИИ)"
+
+msgid "Text~Others~Speed"
+msgstr "Скор."
+
+msgid "Text~Others~Speed_7"
+msgstr "Скор."
+
+msgid "Text~Others~Start_7"
+msgstr "Старт"
+
+msgid "Text~Others~Stationary_Units"
+msgstr "Стационарные"
+
+msgid "Text~Others~Status"
+msgstr "Статус"
+
+msgid "Text~Others~Steal_7"
+msgstr "Украсть"
+
+msgid "Text~Others~Stealth_Units"
+msgstr "Скрытые"
+
+msgid "Text~Others~Stop_7"
+msgstr "Стоп"
+
+msgid "Text~Others~Survey"
+msgstr "Геодезист"
+
+msgid "Text~Others~TCPIP_Client"
+msgstr "TCP/IP Клиент"
+
+msgid "Text~Others~TCPIP_Host"
+msgstr "TCP/IP Сервер"
+
+msgid "Text~Others~Teams_7"
+msgstr "Команды"
+
+msgid "Text~Others~Total"
+msgstr "Всего"
+
+msgid "Text~Others~Transfer_7"
+msgstr "Трансф."
+
+msgid "Text~Others~Unit_destroyed"
+msgstr ""
+
+msgid "Text~Others~Units"
+msgstr ""
+
+msgid "Text~Others~Upgrade"
+msgstr "Улучшить"
+
+msgid "Text~Others~UpgradeAll_7"
+msgstr "Ул. все"
+
+msgid "Text~Others~UpgradeAll_9"
+msgstr ""
+
+msgid "Text~Others~Upgrademenu_7"
+msgstr "Улучш."
+
+msgid "Text~Others~Upgradethis_7"
+msgstr "Улучшить"
+
+msgid "Text~Others~Usage_7"
+msgstr "Исполь."
+
+msgid "Text~Others~Yes"
+msgstr "Да"
+
+msgid "Text~Punctuation~Colon"
+msgstr ": "
+
+msgid "Text~Settings~Alphaeffects"
+msgstr "Эффекты прозрачности"
+
+msgid "Text~Settings~Animation"
+msgstr "Анимации"
+
+msgid "Text~Settings~Autosave"
+msgstr "Автосохранение"
+
+msgid "Text~Settings~Disable"
+msgstr "Отключить"
+
+msgid "Text~Settings~Effects"
+msgstr "Эффекты"
+
+msgid "Text~Settings~Intro"
+msgstr "Вступление"
+
+msgid "Text~Settings~Language"
+msgstr ""
+
+msgid "Text~Settings~Music"
+msgstr "Музыка"
+
+msgid "Text~Settings~Preferences"
+msgstr "Настройки"
+
+msgid "Text~Settings~Resolution"
+msgstr "Разрешение экрана"
+
+msgid "Text~Settings~Scrollspeed"
+msgstr "Скорость прокрутки"
+
+msgid "Text~Settings~Shadows"
+msgstr "Тени"
+
+msgid "Text~Settings~ShowDamage"
+msgstr "Повреждения зданий"
+
+msgid "Text~Settings~ShowDamageVehicle"
+msgstr "Повреждения транспорта"
+
+msgid "Text~Settings~Tracks"
+msgstr "Следы транспорта"
+
+msgid "Text~Settings~Unlimited_11"
+msgstr ""
+
+msgid "Text~Settings~Voices"
+msgstr "Голоса"
+
+msgid "Text~Settings~Volume"
+msgstr "Громкость"
+
+msgid "Text~Settings~Window"
+msgstr "Оконный режим"
+
+msgid "Text~Title~Alien_Tech"
+msgstr "Техника пришельцев"
+
+msgid "Text~Title~BridgeHead"
+msgstr "Начальная база"
+
+msgid "Text~Title~Build_Factory"
+msgstr ""
+
+msgid "Text~Title~Build_Vehicle"
+msgstr ""
+
+msgid "Text~Title~Cargo"
+msgstr "Груз"
+
+msgid "Text~Title~Choose_Clan"
+msgstr ""
+
+msgid "Text~Title~Choose_Planet"
+msgstr "Выбор карты"
+
+msgid "Text~Title~Choose_Units"
+msgstr ""
+
+msgid "Text~Title~Clan"
+msgstr ""
+
+msgid "Text~Title~Clans"
+msgstr "Кланы"
+
+msgid "Text~Title~Color"
+msgstr "Цвет"
+
+msgid "Text~Title~Computer"
+msgstr "Компьютер"
+
+msgid "Text~Title~Connect"
+msgstr "Соединение"
+
+msgid "Text~Title~Credits"
+msgstr "Деньги"
+
+msgid "Text~Title~Credits_start"
+msgstr ""
+
+msgid "Text~Title~Custom_11"
+msgstr ""
+
+msgid "Text~Title~Game_Type"
+msgstr "Тип игры"
+
+msgid "Text~Title~Gold"
+msgstr "Золото"
+
+msgid "Text~Title~HotSeat"
+msgstr ""
+
+msgid "Text~Title~Human"
+msgstr "Человек"
+
+msgid "Text~Title~IP"
+msgstr "IP"
+
+msgid "Text~Title~Labs"
+msgstr "Исследование"
+
+msgid "Text~Title~Load"
+msgstr "Загрузка"
+
+msgid "Text~Title~LoadSave"
+msgstr "Загрузка/Сохранение"
+
+msgid "Text~Title~MainMenu"
+msgstr "Главное меню"
+
+msgid "Text~Title~Map"
+msgstr "Карта: %s"
+
+msgid "Text~Title~Metal"
+msgstr "Сырьё"
+
+msgid "Text~Title~Mine"
+msgstr "Распределение ресурсов"
+
+msgid "Text~Title~Nobody"
+msgstr "Никто"
+
+msgid "Text~Title~Oil"
+msgstr "Топливо"
+
+msgid "Text~Title~Options"
+msgstr "Опции"
+
+msgid "Text~Title~Player_Name"
+msgstr "Имя игрока"
+
+msgid "Text~Title~Player_Select"
+msgstr "Выбор игроков"
+
+msgid "Text~Title~Players"
+msgstr "Игроки:"
+
+msgid "Text~Title~Port"
+msgstr "Порт"
+
+msgid "Text~Title~Resource"
+msgstr "Ресурсы"
+
+msgid "Text~Title~Resource_Density"
+msgstr "Плотность ресурсов"
+
+msgid "Text~Title~Savegame"
+msgstr "Сохранение"
+
+msgid "Text~Title~Send"
+msgstr "Отправить"
+
+msgid "Text~Title~Team"
+msgstr "Команда"
+
+msgid "Text~Title~Turn_end"
+msgstr ""
+
+msgid "Text~Title~Turn_limit"
+msgstr ""
+
+msgid "Text~Title~Unitinfo"
+msgstr "Статус подразделения"
+
+msgid "Text~Title~Upgrades_Menu"
+msgstr ""
+

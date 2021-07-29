@@ -1,0 +1,438 @@
+# Dutch translations for Maxr package.
+# Copyright (C) 2021 THE Maxr'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Maxr package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Maxr 0.3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-07-29 21:33+0200\n"
+"PO-Revision-Date: 2021-07-31 11:33+0200\n"
+"Last-Translator:\n"
+"Language-Team: Dutch\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Building01_Name"
+msgstr "Kazerne"
+
+msgid "Building01_Desc"
+msgstr "Kazerne\n\nEen Kazerne huisvest spionnen en infanterie eenheden. Binnen de kazerne bevindt zich een machine voor het repareren en verbeteren van kracht-pakken, en voor het vervaardigen van munitie. De kazerne heeft ruw materiaal nodig voor reparaties, verbeteringen en het bouwen van munitie, waardoor het het beste verbonden kan zijn met een opslageenheid of mijn."
+
+msgid "Building02_Name"
+msgstr "Betonblok"
+
+msgid "Building02_Desc"
+msgstr "Betonblok\n\nGehard en gepantserd blok voor het blokkeren van vijandige bewegingen."
+
+msgid "Building03_Name"
+msgstr "Brug"
+
+msgid "Building03_Desc"
+msgstr "Brug\n\nPonton brug voor het oversteken van water. Bruggen blokkeren, in tegenstelling tot platvormen, geen schepen."
+
+msgid "Building04_Name"
+msgstr "Pijpleiding"
+
+msgid "Building04_Desc"
+msgstr "Pijpleiding\n\nGebouwen moeten verbonden worden om energie, brandstof, ruw materiaal en goud te delen. Je kunt gebouwen verbinden door ze tegen elkaar aan te bouwen, of door het bouwen van pijpleidingen tussen de gebouwen."
+
+msgid "Building05_Name"
+msgstr "Depot"
+
+msgid "Building05_Desc"
+msgstr "Depot\n\nEen depot kan schade repareren, munitie bouwen en grondtroepen opwaarderen met de nieuwste technologie. Al deze bewerkingen vergt ruw materiaal, waardoor het verstandig is ze te verbinden met opgeslagen ruw materiaal."
+
+msgid "Building06_Name"
+msgstr "Werf"
+
+msgid "Building06_Desc"
+msgstr "Werf\n\nEen werf kan schade aan schepen repareren, munitie bouwen en schepen opwaarderen met de nieuwste technologie. Al deze bewerkingen vergt ruw materiaal, waardoor het verstandig is ze te verbinden met opgeslagen ruw materiaal."
+
+msgid "Building07_Name"
+msgstr "Energie Station"
+
+msgid "Building07_Desc"
+msgstr "Energie Station\n\nEen energie station verbruikt zes brandstof per beurt, en levert genoeg energie voor zes fabrieken of mijnen."
+
+msgid "Building08_Name"
+msgstr "Energie Generator"
+
+msgid "Building08_Desc"
+msgstr "Energie Generator\n\nEen energie generator verbruikt twee brandstof per beurt, en levert genoeg energie voor 1 fabriek of mijn. De energie generator moet verbonden zijn met de brandstof leverancier (mijn of brandstof opslag) en met het gebouw dat de energie nodig heeft."
+
+msgid "Building09_Name"
+msgstr "Vliegtuig Fabriek"
+
+msgid "Building09_Desc"
+msgstr "Vliegtuig Fabriek\n\nBouwt straaljagers, bommenwerpers AWACs en lucht transport. Een vliegtuig fabriek heeft drie ruw materiaal en een energie per beurt nodig om zijn werk te doen."
+
+msgid "Building10_Name"
+msgstr "Buitenaardse Fabriek"
+
+msgid "Building10_Desc"
+msgstr "Buitenaardse Fabriek\n\nFabriek voor het bouwen van buitenaardse eenheden."
+
+msgid "Building11_Name"
+msgstr "Zware Voertuigen F."
+
+msgid "Building11_Desc"
+msgstr "Zware Voertuigen Fabriek\n\nBouwt bouwers, radarvoertuigen en zware gevechtseenheden:  Tanks, aanvalseenheden, raket lanceerders en raket kruipers. Een zware voertuigen fabriek heeft drie ruw materiaal en een energie per beurt nodig om zijn werk te doen."
+
+msgid "Building12_Name"
+msgstr "Scheepswerf"
+
+msgid "Building12_Desc"
+msgstr "Scheepswerf\n\nScheepswerven bouwen schepen, zoals onderzeeers, varend transport en raket cruisers. Een scheepswerf heeft drie materiaal en een brandstof per beurt nodig om zijn werk te doen."
+
+msgid "Building13_Name"
+msgstr "Lichte Voertuigen F."
+
+msgid "Building13_Desc"
+msgstr "Lichte Voertuigen Fabriek\n\nBouwt lichte voertuigen: Pioniers, vrachtwagens, reparatie eenheden, verkenners en mobiel luchtafweer. Een lichte voertuigen fabriek heeft drie ruw materiaal en een energie per beurt nodig om zijn werk te doen."
+
+msgid "Building14_Name"
+msgstr "Goud Raffinaderij"
+
+msgid "Building14_Desc"
+msgstr "Goud Raffinaderij\n\nRaffinaderij voor het omzet van gouderts in krediet. Krediet is nodig om verbeteringen te kopen. Om zijn werk te doen heeft een goud raffinaderij een bron van gouderts nodig. Een mijn kan gouderts delven als het zich boven een goudader bevindt."
+
+msgid "Building15_Name"
+msgstr "Luchtafweer"
+
+msgid "Building15_Desc"
+msgstr "Luchtafweer\n\nKlein kaliber, hoge snelheids luchtafweer kanon. Luchtafweer rekent effectief af met vliegtuigen, maar kan geen gronddoelen aanvallen."
+
+msgid "Building16_Name"
+msgstr "Artillerie"
+
+msgid "Building16_Desc"
+msgstr "Artillerie\n\nKrachtig vaststaand kanon. Artillerie is een compromis tussen de goedkope, robuuste geweerkoepel en de dure, lange-afstands raket koepel."
+
+msgid "Building17_Name"
+msgstr "Raket Koepel"
+
+msgid "Building17_Desc"
+msgstr "Raket Koepel\n\nLange afstands lanceerinstallatie op een vaste basis. Uitstekend bereik en vuurkracht, maar slechts bepert beter bepantserd dan de mobiele versie. Het is aan te bevelen om de raket koepel te omgeven met geweerkoepels en luchtafweer."
+
+msgid "Building18_Name"
+msgstr "Geweerkoepel"
+
+msgid "Building18_Desc"
+msgstr "Geweerkoepel\n\nZwaar gepantserd vaststaande geweerkoepel. Geweerkoepels hebben een goede vuurkracht, zwaar pantser en een gemiddeld bereik. Omdat ze snel te bouwen zijn zijn ze een goede keuze als je snel verdediging nodig hebt."
+
+msgid "Building19_Name"
+msgstr "Verblijf"
+
+msgid "Building19_Desc"
+msgstr "Verblijf\n\nVerblijven huisvesten kolonisten. Elk verblijf huisvest genoeg kolonisten om drie laboratoria, trainingskampen of kassen te bemannen. Deze gebouwen moeten met het verblijf verbonden zijn voor ze gebruikt kunnen worden."
+
+msgid "Building20_Name"
+msgstr "Hangaar"
+
+msgid "Building20_Desc"
+msgstr "Hangaar\n\nEen hangaar kan vliegtuigen repareren, munitie maken en vliegtuigen van de nieuwste technologie voorzien. Al deze bewerkingen hebben ruw materiaal nodig, dus een hangaar kan het beste verbonden worden met opgeslagen ruw materiaal."
+
+msgid "Building21_Name"
+msgstr "Landmijn"
+
+msgid "Building21_Desc"
+msgstr "Landmijn\n\nKlein, moeilijk detecteerbaar explosief. Alleen bodemonderzoekers, mijnen leggers en spionnen kunnen mijnen detecteren. Wanneer ze gedetecteerd zijn is er slechts een minimale schade nodig om ze te vernietigen."
+
+msgid "Building22_Name"
+msgstr "Mijn"
+
+msgid "Building22_Desc"
+msgstr "Mijn\n\nWint iedere beurt ruw materiaal, brandstof en gouderts uit de grond. Gebouwen moeten met een mijn verbonden zijn om deze grondstoffen te gebruiken. Als er niet genoeg opslagruimte is voor het gewonnen materiaal dan gaat dat verloren."
+
+msgid "Building23_Name"
+msgstr "Diepe Mijn"
+
+msgid "Building23_Desc"
+msgstr "Diepe Mijn\n\n..."
+
+msgid "Building24_Name"
+msgstr "Landing Platform"
+
+msgid "Building24_Desc"
+msgstr "Landing Platform\n\nLandingsplaats voor vliegtuigen. Voert geen reparaties uit en vult geen munitie of brandstof aan. Om een vliegtuig op een landing platform te bevoorraden kan een vrachtwagen of opslagplaats gebruikt worden."
+
+msgid "Building25_Name"
+msgstr "Water Platform"
+
+msgid "Building25_Desc"
+msgstr "Water Platform\n\nLevert een oppervlak boven water, waarop gebouwen gebouwd kunnen worden. Pioniers kunnen water platformen bouwen op de kust en op open water. Water platformen zijn voornamelijk belangrijk op eiland kaarten en wanneer er zich kostbare grondstof onder water bevindt."
+
+msgid "Building26_Name"
+msgstr "Radar"
+
+msgid "Building26_Desc"
+msgstr "Radar\n\nVaststaand lange-afstands radar. Lange-afstands eenheden zoals raket lanceerders en artillerie kunnen niet schieten op wat ze niet kunnen zien, dus het is belangrijk om een radarvoertuig of radar in de buurt te hebben."
+
+msgid "Building27_Name"
+msgstr "Laboratorium"
+
+msgid "Building27_Desc"
+msgstr "Laboratorium\n\nLaboratoria onderzoeken manieren om je eenheden te verbeteren. In tegenstelling tot verbeteringen die gekocht kunnen worden door gouderts te verwerken kost onderzoek tijd en zijn de verbeteringen klein. Maar onderzoek heeft wel effect op alle type eenheden in plaats van slechts een enkel type. Bovendien is er voor onderzoek geen gouderts nodig. Een laboratorium heeft kolonisten van een verblijf nodig om zijn werk te kunnen doen, en heeft bovendien energie nodig."
+
+msgid "Building28_Name"
+msgstr "Weg"
+
+msgid "Building28_Desc"
+msgstr "Weg\n\nEenheden verplaatsen zich twee keer zo snel over een weg."
+
+msgid "Building29_Name"
+msgstr "Zeemijn"
+
+msgid "Building29_Desc"
+msgstr "Zeemijn\n\nKlein, moeilijk detecteerbaar explosief. Alleen bodemonderzoekers, mijnen leggers en spionnen kunnen mijnen detecteren. Wanneer ze gedetecteerd zijn is er slechts een minimale schade nodig om ze te vernietigen."
+
+msgid "Building30_Name"
+msgstr "Schild"
+
+msgid "Building30_Desc"
+msgstr "Schild\n\n"
+
+msgid "Building31_Name"
+msgstr "Goud Pakhuis"
+
+msgid "Building31_Desc"
+msgstr "Goud Pakhuis\n\nKan gebruikt worden om gouderts op te slaan. Mijnen produceren elke beurt goud, indien ze boven een goudader gebouwd zijn. Om deze gouderts op te slaan moet een mijn verbonden zijn met een goud pakhuis."
+
+msgid "Building32_Name"
+msgstr "Opslag Eenheid"
+
+msgid "Building32_Desc"
+msgstr "Opslag Eenheid\n\nKan gebruikt worden om ruw materiaal op te slaan. Mijnen produceren elke beurt ruw materiaal, indien ze boven een plek met ruw materiaal gebouwd zijn. Om extra materiaal op te slaan moet een mijn verbonden zijn met een opslag eenheid."
+
+msgid "Building33_Name"
+msgstr "Brandstof Tank"
+
+msgid "Building33_Desc"
+msgstr "Brandstof Tank\n\nKan gebruikt worden om brandstof op te slaan. Mijnen produceren elke beurt brandstof, indien ze boven een olie-bron gebouwd zijn. Om extra brandstof op te slaan moet de mijn met een brandstof tank verbonden zijn."
+
+msgid "Building34_Name"
+msgstr "Trainingskamp"
+
+msgid "Building34_Desc"
+msgstr "Trainingskamp\n\nOpleidingsplek voor spionnen die eenheden kunnen uitschakelen en veroveren, en voor infanterie om tegen spionnen te waken. Een trainingskamp heeft kolonisten uit een verblijf nodig om zijn werk te doen. Ook heeft een trainingskamp energie nodig."
+
+msgid "Building35_Name"
+msgstr "Eco-sfeer"
+
+msgid "Building35_Desc"
+msgstr "Eco-sfeer\n\nAls je wil winnen met punten is het je belangrijkste opdracht om zoveel mogelijk Eco-sferen te bouwen. ELke Eco-sfeer geeft je 1 punt per beurt.\n\nZorg ervoor dat uw Eco-sferen goed beschermd zijn, als je Eco-sfeer vernietigd wordt, verlies je al de punten die er in gegenereerd werden!\n\nElke Eco-sfeer heeft 1 Werker van een Verblijf nodig om te kunnen werken."
+
+msgid "Vehicle01_Name"
+msgstr "Lucht Transport"
+
+msgid "Vehicle01_Desc"
+msgstr "Lucht Transport\n\nGroot vliegtuig, geschikt voor het vervoeren van maximaal drie grondeenheden."
+
+msgid "Vehicle02_Name"
+msgstr "Buitenaardse Aanvalseenheid"
+
+msgid "Vehicle02_Desc"
+msgstr "Buitenaards Aanvalseenheid\n\nKrachtig plasma wapen bevestigd op een snel, middelmatig-gepantserd onderstel. Hoewel niet zo kwetsbaar als een normale aanvalseenheid, kan de buitenaartse aanvalseenheid toch ook beter vijandelijk vuur ontwijken voor zover mogelijk. Alle buitenaartse eenheden repareren zichzelf, en verbeteren hun eigenschappen door ervaring."
+
+msgid "Vehicle03_Name"
+msgstr "Buitenaards Vliegtuig"
+
+msgid "Vehicle03_Desc"
+msgstr "Buitenaards Vliegtuig\n\nBuitenaardse gevechts-bommenwerper. Het buitenaards vliegtuig primair bedoeld is om gronddoelen aan te vallen, maar het kan ook raketten afschieten naar andere vliegtuigen. Hoewel het sterk is, is het buitenaards vliegtuig nog steeds kwetsbaar voor anti-luchtdoel vuur. Alle buitenaartse eenheden repareren zichzelf, en verbeteren hun eigenschappen door ervaring."
+
+msgid "Vehicle04_Name"
+msgstr "Buitenaards Ship"
+
+msgid "Vehicle04_Desc"
+msgstr "Buitenaards Ship\n\nZwaar gepantserd en bewapend oorlogsschip van buitenaards ontwerp. Net als het slagschip is het Buitenaards Ship uitstekend geschikt om andere schepen en gronddoelen in de buurt van de kust te vernietigen. Alle buitenaartse eenheden repareren zichzelf, en verbeteren hun eigenschappen door ervaring."
+
+msgid "Vehicle05_Name"
+msgstr "Buitenaardse Tank"
+
+msgid "Vehicle05_Desc"
+msgstr "Buitenaardse Tank\n\nZwaar gepantserde tank van buitenaards ontwerp. De Buitenaardse Tank kan het best gebruikt worden aan het front om vijandig vuur op te vangen. Alle buitenaartse eenheden repareren zichzelf, en verbeteren hun eigenschappen door ervaring."
+
+msgid "Vehicle06_Name"
+msgstr "Personen Transport"
+
+msgid "Vehicle06_Desc"
+msgstr "Personen Transport\n\nSnel gepantserd voertuig om infanterie en spionnen te vervoeren. Het Personen Transport kan zich zowel over land als langzaam onderwater voortbewegen. Alleen vijandige covettes kunnnen Personen Transport ontdekken die zich onder water bevinden."
+
+msgid "Vehicle07_Name"
+msgstr "Aanvalseenheid"
+
+msgid "Vehicle07_Desc"
+msgstr "Aanvalseenheid\n\nLicht gepantserd voertuig met een lange afstandswapen dat sterk-explosieve munitie schiet. Snel en efficient bij het aanvallen, maar kwetsbaar."
+
+msgid "Vehicle08_Name"
+msgstr "AWAC"
+
+msgid "Vehicle08_Desc"
+msgstr "AWAC\n\nRadarvliegtuig. Feitelijk niet veel meer dan een vliegende radarschotel, essentieel om anti-luchtdoel eenheden te ontdekken voordat andere vliegtuigen binnen hun bereik komen."
+
+msgid "Vehicle09_Name"
+msgstr "Bommenwerper"
+
+msgid "Vehicle09_Desc"
+msgstr "Bommenwerper\n\nEen zwaar vliegtuig vol met gronddoel-raketten. Bommenwerpers zijn kostbaar, maar de voordelen zijn de kosten waard. Hun grote snelheid brengt ze snel op probleempunten, en alleen gevechtsvliegtuigen en luchtdoel-eenheden kunnen ze aanvallen."
+
+msgid "Vehicle10_Name"
+msgstr "Bulldozer"
+
+msgid "Vehicle10_Desc"
+msgstr "Bulldozer\n\nVoertuig om wrakken op te ruimen en gebouwen af te breken. Bulldozers kunnen materiaal winnen uit wrakstukken."
+
+msgid "Vehicle11_Name"
+msgstr "Vracht Schip"
+
+msgid "Vehicle11_Desc"
+msgstr "Vracht Schip\n\nSchip om overwerkt materiaal te vervoeren. Handig om pioniers te bevoorraden en om schepen van nieuwe munitie te voorzien."
+
+msgid "Vehicle12_Name"
+msgstr "Raket Lanceerder"
+
+msgid "Vehicle12_Desc"
+msgstr "Raket Lanceerder\n\nLicht gepanserd voertuig dat middel-lange afstands rakketten kan afschieten die alle eenheden binnen een straal van 2 vierkanten raakt. Meest effectief tegen groepen vijandige eenheden."
+
+msgid "Vehicle13_Name"
+msgstr "Spion"
+
+msgid "Vehicle13_Desc"
+msgstr "Spion\n\nCommando getrained om onzichtbaar zijn werk te doen. Spionnen kunnen vijandige eenheden uitschakelen of veroveren. Spionnen zijn onzichtbaar tot ze een fout maken bij het veroveren van vijandige eenheden, of tot ze gezien worden door vijandige infantery of spionnen."
+
+msgid "Vehicle14_Name"
+msgstr "Corvette"
+
+msgid "Vehicle14_Desc"
+msgstr "Corvette\n\nHoge-snelheids boot met torpedo's en een sonar. Corvettes kunnen alle boten aanvallen, maar hun grootste kracht is hun vermogen om vijandige onderzeeers te ontdekken en aan te vallen."
+
+msgid "Vehicle15_Name"
+msgstr "Escort"
+
+msgid "Vehicle15_Desc"
+msgstr "Escort\n\nHoge-snelheids boot met een goede radar en snel-vurend luchtdoel-kannon. Escorts zijn de ogen van een vloot, en de bescherming van een vloot tegen vliegtuigen."
+
+msgid "Vehicle16_Name"
+msgstr "Straaljager"
+
+msgid "Vehicle16_Desc"
+msgstr "Straaljager\n\nSnel maar kwetsbaar vliegtuig met een beperkt aantal lucht-lucht raketten. Straaljagers zijn de beste manier om vijandige vliegtuigen uit een gebied te verjagen, en om een bewegende groep eenheden te beschermen. Luchtdoelsystemen op de grond zijn beter om een vast gebied te verdedigen."
+
+msgid "Vehicle17_Name"
+msgstr "Oorlogsschip"
+
+msgid "Vehicle17_Desc"
+msgstr "Oorlogsschip\n\nZwaar gepantserd schip met een groot kaliber, middel-lange afstands kannon. Uitstekend geschikt om andere schepen te vernietigen en land-doelen dicht bij de kust te bombarderen."
+
+msgid "Vehicle18_Name"
+msgstr "Infanterie"
+
+msgid "Vehicle18_Desc"
+msgstr "Infanterie\n\nMenselijke soldaten bewapend met lichte anti-tank raketten. Infanterie eenheden kunnen spionnen ontdekken."
+
+msgid "Vehicle19_Name"
+msgstr "Bouwer"
+
+msgid "Vehicle19_Desc"
+msgstr "Bouwer\n\nGroot bouwvoertuig geschikt om grote gebouwen te bouwen, zoals mijnen en fabrieken. Een bouwer verbruikt twee materiaal per beurt tijdens het bouwen."
+
+msgid "Vehicle20_Name"
+msgstr "Mijnen legger"
+
+msgid "Vehicle20_Desc"
+msgstr "Mijnen legger\n\nMijnen leggers zijn speciaal gebouwde voertuigen om mijnen te leggen, ondekken en op te pakken. Mijnen leggers maken zelf hun mijnen met ruw materiaal dat ze vervoeren. Ze kunnen deze mijnen later ook weer oppakken en terug omzetten naar ruw materiaal. Ze kunnen vijandige mijnenvelden niet opruimen, deze moeten vernietigd worden door ze met andere eenheden aan te vallen."
+
+msgid "Vehicle21_Name"
+msgstr "Raket Kruiper"
+
+msgid "Vehicle21_Desc"
+msgstr "Raket Kruiper\n\nEen licht gepantserde mobiele raketlanceerinstallatie. De Raket Kruiper is iets minder robuust dan de vaste lanceerinstallatie, en heeft meer materiaal nodig om gebouwd te worden. Maar de mogelijkheid om hem te verplaatsen maakt hem veel flexibeler."
+
+msgid "Vehicle22_Name"
+msgstr "Raket Cruiser"
+
+msgid "Vehicle22_Desc"
+msgstr "Raket Cruiser\n\nEen varende raketlanceerinstallatie. Een uitstekend bereik, hoge aanvalskracht en middelmatige pantsering waardoor dit een krachtige eenheid is."
+
+msgid "Vehicle23_Name"
+msgstr "Mobiele Luchtafweer"
+
+msgid "Vehicle23_Desc"
+msgstr "Mobiele Luchtafweer\n\nLicht en snel met een snel-vurend luchtafweer kanon. Mobiele Luchtafweer zijn vooral bedoeld voor verdediging, aangezien ze niet zo snel zijn als vliegtuigen en niet tegelijk kunnen bewegen en schieten. Te gebruiken om een gebied te beschermen wanneer straaljagers vijandige bommenwerpers verjaagd hebben."
+
+msgid "Vehicle24_Name"
+msgstr "Pionier"
+
+msgid "Vehicle24_Desc"
+msgstr "Pionier\n\nKlein bouwvoertuig om kleinen gebouwen en wapengebouwen mee te bouwen."
+
+msgid "Vehicle25_Name"
+msgstr "Reparatie Eenheid"
+
+msgid "Vehicle25_Desc"
+msgstr "Reparatie Eenheid\n\nLicht voertuig dat snel grondeenheden en gebouwen kan repareren. Voor de reparaties is ruw materiaal nodig. Hoe zwaarder de schade, des te meer materiaal er nodig is. Depots, werven, hangars en kazernes kunnen ook eenheden repareren."
+
+msgid "Vehicle26_Name"
+msgstr "Radarvoertuig"
+
+msgid "Vehicle26_Desc"
+msgstr "Radarvoertuig\n\nMobiele radar. Trager en duurder dan een verkenner, maar met een beter radar-bereik. Een Radarvoertuig is een uitstekende manier om doelen voor lange-afstandswapens zoals Raket Kruipers te vinden."
+
+msgid "Vehicle27_Name"
+msgstr "Verkenner"
+
+msgid "Vehicle27_Desc"
+msgstr "Verkenner\n\nHoge snelheids verkenningsvoertuig voor verkenning en het vinden van vijandige eenheden. Kan over water manouvreren zonder dat er een brug nodig is, maar is sneller op land.\n\nZeer snel en een goed radar-bereik, maar veel zwakker dan de meeste gevechtseenheden."
+
+msgid "Vehicle28_Name"
+msgstr "Zeemijnen legger"
+
+msgid "Vehicle28_Desc"
+msgstr "Zeemijnen legger\n\nVarende versie van de mijnen legger. Net als de land-versie kan de zeemijnen legger mijnen maken, leggen, ontdekken, oppakken en terug omzetten naar ruw materiaal."
+
+msgid "Vehicle29_Name"
+msgstr "Varend Transport"
+
+msgid "Vehicle29_Desc"
+msgstr "Varend Transport\n\nZwaar gepantserd schip met ruimte voor maximaal zes land-eenheden. Varend Transporters zijn veel langzamer dan Lucht Transport, maar hebben veel meer kans om een vijandelijke aanval te overleven."
+
+msgid "Vehicle30_Name"
+msgstr "Onderzeeer"
+
+msgid "Vehicle30_Desc"
+msgstr "Onderzeeer\n\nDoor zich onder het wateroppervlak te bewegen kunnen onderzeeers dicht naar de vijand toesluipen om vervolgens hun krachtige torpedo's af te schieten. Onderzeeers hebben geen actieve sonar, aangezien dit hun positie zou kunnen verraden. Alleen corvettes kunnen onderzeeers ontdekken voor de aanvallen. Alleen andere onderzeeers, covettes en bommenwerpers kunnen onderzeeers aanvallen."
+
+msgid "Vehicle31_Name"
+msgstr "Bodemonderzoeker"
+
+msgid "Vehicle31_Desc"
+msgstr "Bodemonderzoeker\n\nLicht amphibievoertuig met geavanceerde sensoren voor het detecteren van ondergrondse voorraden mineralen en vijandige mijnen. In tegenstelling tot de meeste andere amphibievoertuigen verplaatsen ze zich net zo snel over water als over land."
+
+msgid "Vehicle32_Name"
+msgstr "Tank"
+
+msgid "Vehicle32_Desc"
+msgstr "Tank\n\nZwaar gepantserd gevechtsvoertuig. Kan het beste gebruikt worden aan het front om te voorkomen dat vijandige eenheden licht bepantserde eenheden zoals aanvalseenheden en raket kruipers kunnen bereiken."
+
+msgid "Vehicle33_Name"
+msgstr "Goud Vrachtwagen"
+
+msgid "Vehicle33_Desc"
+msgstr "Goud Vrachtwagen\n\nEenheid voor het verplaatsen van gouderts van de ene locatie naar de andere."
+
+msgid "Vehicle34_Name"
+msgstr "Bevoorradings Vrachtwagen"
+
+msgid "Vehicle34_Desc"
+msgstr "Bevoorradings Vrachtwagen\n\nVrachtwagen voor het verplaatsen van ruw materiaal. Nuttig om pioniers en bouwers te bevoorraden en om gevechtseenheden van nieuwe munitie te voorzien."
+
+msgid "Vehicle35_Name"
+msgstr "Brandstof Vrachtwagen"
+
+msgid "Vehicle35_Desc"
+msgstr "Brandstof Vrachtwagen\n\nVrachtwagen voor het verplaatsen van brandstof."
+

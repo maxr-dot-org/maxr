@@ -541,13 +541,11 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load language from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setLanguage ("ENG");
+		setLanguage ("en");
 	}
 	else
 	{
 		language = xmlElement->Attribute ("Text");
-		for (std::string::iterator i = language.begin(), end = language.end(); i != end; ++i)
-			*i = std::toupper ((unsigned char) * i);
 	}
 
 	// =========================================================================

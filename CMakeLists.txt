@@ -128,6 +128,13 @@ endif()
 # ============================================
 
 # ---------------------------------------
+# Intl (translation)
+find_package(Intl REQUIRED)
+
+include_directories(${Intl_INCLUDE_DIRS})
+target_link_libraries(maxr ${Intl_LIBRARIES})
+
+# ---------------------------------------
 # SDL2
 find_package(SDL2 REQUIRED)
 

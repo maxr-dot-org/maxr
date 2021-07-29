@@ -256,7 +256,7 @@ private:
 	/** prescale gfx */
 	bool preScale = false;
 	/** translation file */
-	std::string language = "ENG";
+	std::string language = "en";
 	/** language code for voice files */
 	std::string voiceLanguage;
 	/** cache size */

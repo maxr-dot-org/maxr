@@ -1,0 +1,439 @@
+# Slovenian translations for Maxr package.
+# Copyright (C) 2021 THE Maxr'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Maxr package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Maxr 0.3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-07-29 21:33+0200\n"
+"PO-Revision-Date: 2021-07-31 11:33+0200\n"
+"Last-Translator:\n"
+"Language-Team: Slovenian\n"
+"Language: sl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n"
+"%100==4 ? 2 : 3);\n"
+
+msgid "Building01_Name"
+msgstr "Vojašnica"
+
+msgid "Building01_Desc"
+msgstr "Vojašnica\n\nVojašnica je namenjena vzdrževanju pehote in vohunov. Vsebuje delavnico za popravila in nadgradnjo orožja ter orožarno za oskrbovanje s strelivom. Vojašnica za popravila, nadgradnje in oskrbovanje s strelivom potrebuje surovine, zato mora biti povezana z rudnikom ali skladiščem surovin."
+
+msgid "Building02_Name"
+msgstr "Betonski blok"
+
+msgid "Building02_Desc"
+msgstr "Betonski blok\n\nUtrjen, oklopljen betonski blok za ustavljanje in oviranje sovražnih premikov. Služi tudi kot zaščita pomembnejših zgradb ali enot pred sovražnimi izstrelki."
+
+msgid "Building03_Name"
+msgstr "Most"
+
+msgid "Building03_Desc"
+msgstr "Most\n\nPontonski most za postavitev na vodnih površinah. Mostovi, za razliko od vodnih ploščadi, ne blokirajo premikov pomorskih enot oz. ladij."
+
+msgid "Building04_Name"
+msgstr "Konektor"
+
+msgid "Building04_Desc"
+msgstr "Konektor\n\nZgradbe morajo biti povezane med seboj za izmenjavo energije, goriva, surovin in zlata. Med seboj sosednje zgradbe se avtomatično povežejo, med odaljenimi zgradbami pa za povezavo poskrbijo konektorji."
+
+msgid "Building05_Name"
+msgstr "Garaža"
+
+msgid "Building05_Desc"
+msgstr "Garaža\n\nGaraža je namenjena popravilom, nadgradnjam in oskrbovanju vozil s strelivom. Vse te dejavnosti zahtevajo surovine, zato mora biti garaža povezana z rudnikom ali skladiščem surovin."
+
+msgid "Building06_Name"
+msgstr "Pristanišče"
+
+msgid "Building06_Desc"
+msgstr "Pristanišče\n\nPristanišče je namenjeno popravilom, nadgradnjam in oskrbovanju plovil s strelivom. Vse te dejavnosti zahtevajo surovine, zato mora biti pristanišče povezano z rudnikom ali skladiščem surovin."
+
+msgid "Building07_Name"
+msgstr "Elektrarna"
+
+msgid "Building07_Desc"
+msgstr "Elektrarna\n\nElektrarna za delovanje porabi šest enot goriva na potezo in zagotavlja dovolj energije, da lahko z njo napaja šest tovarn ali rudnikov."
+
+msgid "Building08_Name"
+msgstr "Generator"
+
+msgid "Building08_Desc"
+msgstr "Generator\n\nGenerator porabi dve enoti goriva vsako potezo in zagotavlja dovolj energije, da lahko z njo napaja eno tovarno ali rudnik."
+
+msgid "Building09_Name"
+msgstr "Tovarna letal"
+
+msgid "Building09_Desc"
+msgstr "Tovarna letal\n\nGradi bombnike, AWACS, lovska letala in transportna letala. Za delovanje potrebuje vsako potezo tri enote surovin in energijo iz elektrarne ali generatorja."
+
+msgid "Building10_Name"
+msgstr "Tovarna nezemljanov"
+
+msgid "Building10_Desc"
+msgstr "Tovarna nezemljanov\n\nTovarna nezemeljskega izvora. Ni podatkov o zmogljivostih in porabi."
+
+msgid "Building11_Name"
+msgstr "Tovarna težkih vozil"
+
+msgid "Building11_Desc"
+msgstr "Tovarna težkih vozil\n\nGradi konstruktorje, skenerje in težke bojne enote: tanke, samohodne topove, raketomete in raketna vozila. Za delovanje potrebuje vsako potezo tri enote surovin in energijo iz elektrarne ali generatorja."
+
+msgid "Building12_Name"
+msgstr "Ladjedelnica"
+
+msgid "Building12_Desc"
+msgstr "Ladjedelnica\n\nGradi plovila, kot so podmornice, transportne in bojne ladje. Za delovanje potrebuje vsako potezo tri enote surovin in energijo iz elektrarne ali generatorja."
+
+msgid "Building13_Name"
+msgstr "Tovarna lahkih vozil"
+
+msgid "Building13_Desc"
+msgstr "Tovarna lahkih vozil\n\nGradi inženirje, transporterje, servisna vozila, izvidnike in mobilne protiletalske enote. Za delovanje potrebuje vsako potezo tri enote surovin in energijo iz elektrarne ali generatorja."
+
+msgid "Building14_Name"
+msgstr "Rafinerija zlata"
+
+msgid "Building14_Desc"
+msgstr "Rafinerija zlata\n\nRafinerija pretvarja zlato v valuto za nakup nadgradenj. Za delovanje potrebuje energijo iz elektrarne ali generatorja in zlato, ki ga priskrbijo rudniki, ležeči na območju z zlato rudo."
+
+msgid "Building15_Name"
+msgstr "Protiletalska baterija"
+
+msgid "Building15_Desc"
+msgstr "Protiletalska baterija\n\nStacionarni hitrostrelni top majhnega kalibra, ki služi za obrambo pred letali, vendar pa ne more streljati na kopenske enote."
+
+msgid "Building16_Name"
+msgstr "Artilerija"
+
+msgid "Building16_Desc"
+msgstr "Artilerija\n\nStacionarni top velike moči, ki je kompromis med poceni a vzdržljivim kanonom in med dražjo, a občutljivejšo raketno baterijo dolgega dosega."
+
+msgid "Building17_Name"
+msgstr "Raketna baterija"
+
+msgid "Building17_Desc"
+msgstr "Raketna baterija\n\nIzstrelitvena ploščad za manevrirne rakete dolgega dosega. Izjemna eksplozivna moč in doseg, vendar pa le malenkost bolje zaščitena od mobilne različice. "
+
+msgid "Building18_Name"
+msgstr "Kanon"
+
+msgid "Building18_Desc"
+msgstr "Kanon\n\nMočno oklopljeno stacionarno topovsko gnezdo, s solidno ognjeno močjo in kratkim do srednjim dosegom. Kratek čas postavitve naredi kanon za idealno rešitev v primerih, ko je potrebna hitra postavitev obrambe."
+
+msgid "Building19_Name"
+msgstr "Prebivališče"
+
+msgid "Building19_Desc"
+msgstr "Prebivališče\n\nPrebivališče je namenjeno nastanitvi kolonizatorjev. Vsako prebivališče zadostuje za delovanje treh raziskovalnih centrov, vadbenih centrov ali ekosfer."
+
+msgid "Building20_Name"
+msgstr "Hangar"
+
+msgid "Building20_Desc"
+msgstr "Hangar\n\nHangar je namenjen popravilom, nadgradnjam in oskrbovanju letal s strelivom. Vse te dejavnosti zahtevajo surovine, zato mora biti hangar povezan z rudnikom ali skladiščem surovin."
+
+msgid "Building21_Name"
+msgstr "Kopenska mina"
+
+msgid "Building21_Desc"
+msgstr "Kopenska minan\n\nMajhno, težko zaznavno eksplozivno telo, ki se ga položi na tla in služi za uničevanje ter oviranje sovražnikovih enot. Sovražne mine lahko zaznajo le vohuni, minopolagalci in geološka vozila. Po odkritju jih je možno uničiti s streli bojnih enot."
+
+msgid "Building22_Name"
+msgstr "Rudnik"
+
+msgid "Building22_Desc"
+msgstr "Rudnik\n\nPridobiva surovine, gorivo in zlato z vsako potezo delovanja. Za porabo materialov, ki jih rudnik proizvaja, morajo biti porabniki povezani nanj neposredno ali preko konektorjev. V kolikor je poraba manjša od pridobivanja, se materiali skladiščijo v skladišča, po zasičenju skladišč pa so neporabljeni materiali izgubljeni. Rudnik za delovanje potrebuje energijo iz elektrarne ali generatorja."
+
+msgid "Building23_Name"
+msgstr "Globinska mina"
+
+msgid "Building23_Desc"
+msgstr "Globinska mina\n\n..."
+
+msgid "Building24_Name"
+msgstr "Pristajalna ploščad"
+
+msgid "Building24_Desc"
+msgstr "Pristajalna ploščad\n\nPristajalna ploščad za letala, ki pa sama po sebi ne omogoča popravil, oskrbe ali nadgradnje. Popravila letal na ploščadi so možna ob uporabi servisnega vozila, obnovitev streliva pa ob uporabi oskrbovalnega vozila."
+
+msgid "Building25_Name"
+msgstr "Vodna ploščad"
+
+msgid "Building25_Desc"
+msgstr "Vodna ploščad\n\nZagotavlja plavajočo površino, na kateri je možna gradnja. Inženirji lahko gradijo vodne ploščadi s kopnega ali neposredno na odprtem morju. Vodne ploščadi so primerne za gradnjo otokov, ki so podlaga za gradnjo rudnikov nad morskimi nahajališči."
+
+msgid "Building26_Name"
+msgstr "Radar"
+
+msgid "Building26_Desc"
+msgstr "Radar\n\nStacionarni radar dolgega dosega, ki omogoča pregled nad bojiščem in premiki sovražnih enot."
+
+msgid "Building27_Name"
+msgstr "Raziskovalni center"
+
+msgid "Building27_Desc"
+msgstr "Raziskovalni center\n\nRaziskovalni centri so namenjeni izboljševanju tehnologije. Za razliko od nadgradenj, ki jih je možno kupiti, raziskave zahtevajo čas in napredki so v manjših korakih. Vendar pa izsledki raziskav vplivajo na vse enote in ne le na eno, hkrati pa za delovanje ne potrebujejo zlata temveč le koloniste iz prebivališča in energijo iz elektrarne ali generatorja."
+
+msgid "Building28_Name"
+msgstr "Cesta"
+
+msgid "Building28_Desc"
+msgstr "Cesta\n\nCesta omogoča vsem kopenskim enotam, da se premikajo dvakrat hitreje kot preko običajnega terena."
+
+msgid "Building29_Name"
+msgstr "Morska mina"
+
+msgid "Building29_Desc"
+msgstr "Morska mina\n\nMajhno, plavajoče in težko zaznavno eksplozivno telo, ki se ga položi v vodo in služi za uničevanje ter oviranje sovražnikovih pomorskih enot. Sovražne morske mine lahko zaznajo le vohuni, minolovci in geološka vozila. Po odkritju jih je možno uničiti s streli bojnih enot."
+
+msgid "Building30_Name"
+msgstr "Oklep"
+
+msgid "Building30_Desc"
+msgstr "Oklep\n\n"
+
+msgid "Building31_Name"
+msgstr "Skladišče zlata"
+
+msgid "Building31_Desc"
+msgstr "Skladišče zlata\n\nNamenjeno je shranjevanju nerafiniranega zlata, neposredno iz povezanih rudnikov, ali preko specialnih transportnih vozil za prevoz zlata (Transporter zlata)."
+
+msgid "Building32_Name"
+msgstr "Skladišče surovin"
+
+msgid "Building32_Desc"
+msgstr "Skladišče surovin\n\nNamenjeno je shranjevanju surovin, neposredno iz povezanih rudnikov, ali preko oskrbovalnih vozil."
+
+msgid "Building33_Name"
+msgstr "Skladišče goriva"
+
+msgid "Building33_Desc"
+msgstr "Skladišče goriva\n\nNamenjeno je shranjevanju goriva, neposredno iz povezanih rudnikov, ali preko specialnih vozil za prevoz goriva (Cisterna)."
+
+msgid "Building34_Name"
+msgstr "Vadbeni center"
+
+msgid "Building34_Desc"
+msgstr "Vadbeni center\n\nCenter za usposabljanje vohunov in pehote. Za delovanje potrebuje koloniste iz prebivališča in energijo iz elektrarne ali generatorja."
+
+msgid "Building35_Name"
+msgstr "Eko-sfera"
+
+msgid "Building35_Desc"
+msgstr "Eko-sfera\n\nZa zmago s točkami je glavni cilj hitra izgradnja čim večjega števila eko-sfer. Vsaka eko-sgera prinese eno točko na potezo. Eko-sfere je potrebno dobro zavarovati, saj se v primeru uničenja izgubijo tudi dosežene točke.\nVsaka eko-sfera potrebuje za delovanje delavca in energijo."
+
+msgid "Vehicle01_Name"
+msgstr "Transportno letalo"
+
+msgid "Vehicle01_Desc"
+msgstr "Transportno letalo\n\nMasivno letalo, ki je sposobno nositi do tri kopenske enote."
+
+msgid "Vehicle02_Name"
+msgstr "Nezemljanska samohodka"
+
+msgid "Vehicle02_Desc"
+msgstr "Nezemljanska samohodka\n\nMočan plazmatski top, nameščen na hitro, srednje oklopljeno podvozje. Kljub večji odpornosti od človeških samohodnih topov, se mora tudi to vozilo ogibati sovražnega ognja.  Kot vse nezemljanske enote se tudi letalo avtomatično popravlja in izboljšuje bojne lastnosti z novimi izkušnjami."
+
+msgid "Vehicle03_Name"
+msgstr "Nezemljansko letalo"
+
+msgid "Vehicle03_Desc"
+msgstr "Nezemljansko letalo\n\nNezemljansko letalo je hkrati lovec in bombnik. V prvi vrsti je namenjeno uničevanju kopenskih ciljev, vendar lahko izstreljuje rakete tudi na sovražna letala. Kljub izjemni moči, je še vedno občutljivo na protiletalsko obrambo. Kot vse nezemljanske enote se tudi to letalo avtomatično popravlja in izboljšuje bojne lastnosti z novimi izkušnjami."
+
+msgid "Vehicle04_Name"
+msgstr "Nezemljanska ladja"
+
+msgid "Vehicle04_Desc"
+msgstr "Nezemljanska ladja\n\nMočno oklopljena in oborožena bojna ladja nezemljanske izdelave. Podobno, kot človeška topnjača, se tudi ta ladja odlikuje v uničevanju sovražnih ladij in napadih na kopenske cilje, ki so blizu obale. Kot vse nezemljanske enote se tudi ladja avtomatično popravlja in izboljšuje bojne lastnosti z novimi izkušnjami."
+
+msgid "Vehicle05_Name"
+msgstr "Nezemljanski tank"
+
+msgid "Vehicle05_Desc"
+msgstr "Nezemljanski tank\n\nMočno oklopljeni tank, nezemljanske izdelave. Nezemljanske tanke je najbolje uporabiti v prvih bojnih vrstah, da pritegnejo sovražni ogenj. Kot vse nezemljanske enote se tudi tank avtomatično popravlja in izboljšuje bojne lastnosti z novimi izkušnjami."
+
+msgid "Vehicle06_Name"
+msgstr "Transporter"
+
+msgid "Vehicle06_Desc"
+msgstr "Transporter\n\nHitro in oklopljeno vozilo za transport pehote in vohunov. Transporter se lahko uporablja tako na kopnem kot tudi pod vodo, kjer pa je počasnejši. Pod vodo ga zaznajo le sovražnikove korvete."
+
+msgid "Vehicle07_Name"
+msgstr "Samohodni top"
+
+msgid "Vehicle07_Desc"
+msgstr "Samohodni top\n\nLahko oklopljeno vozilo z nameščenim topom srednjega dosega, ki strelja visoko eksplozivne izstrelke. Učinkovit je v napadu, a šibak v obrambi."
+
+msgid "Vehicle08_Name"
+msgstr "AWACS"
+
+msgid "Vehicle08_Desc"
+msgstr "AWACS\n\nLetalo za pregled in upravljanje bojišča. Letalo je opremljeno z zmogljivim radarjem, ki omogoča učinkovito zgodnje opozarjanje pred sovražnikovimi enotami in vodenje lastnih enot."
+
+msgid "Vehicle09_Name"
+msgstr "Bombnik"
+
+msgid "Vehicle09_Desc"
+msgstr "Bombnik\n\nTežko bojno letalo, opremljeno z vodenimi raketami zrak-zemlja. Bombniki so dragi, vendar njihove zmogljivosti in moč odtehtajo ceno. Zaradi hitrosti in dosega so idealni za napade presenečenja, pri katerih so jim kos le lovska letala in protiletalska obramba."
+
+msgid "Vehicle10_Name"
+msgstr "Buldožer"
+
+msgid "Vehicle10_Desc"
+msgstr "Buldožer\n\nVozilo je namenjeno odstranjevanju razbitin in uničevanju zgradb. Buldožer med čiščenjem razbitin pridobiva surovine ."
+
+msgid "Vehicle11_Name"
+msgstr "Oskrbovalna ladja"
+
+msgid "Vehicle11_Desc"
+msgstr "Oskrbovalna ladja\n\nLadja je namenjena prevozu osnovnih surovin in materiala na bojišče. Idealna je za oskrbovanje inženirskih enot z gradbenim materialom in pomorskih bojnih enot s strelivom."
+
+msgid "Vehicle12_Name"
+msgstr "Raketomet"
+
+msgid "Vehicle12_Desc"
+msgstr "Raketomet\n\nLahko oklopljeno vozilo, opremljeno z raketami srednjega dosega, ki vsebujejo razpršno razstrelivo. Ker so izstrelki na cilju učinkoviti v obsegu dveh kvadratov, je raketomet idealen za napad na strnjene enote in za uničevanje minskih polj."
+
+msgid "Vehicle13_Name"
+msgstr "Vohun"
+
+msgid "Vehicle13_Desc"
+msgstr "Vohun\n\nPripadnik posebnih enot, ki je izurjen v prikrivanju in elektronskem bojevanju. Vohuni lahko sabotirajo ali zavzamejo sovražnikove enote. Običajno so nevidni sovražniku, razen, kadar niso uspešni v svoji nalogi, ali kadar jih zazna sovražnikova pehota. Vohuni lahko odkrivajo sovražnikove mine."
+
+msgid "Vehicle14_Name"
+msgstr "Korveta"
+
+msgid "Vehicle14_Desc"
+msgstr "Korveta\n\nMajhna in hitra ladja, opremljena s torpedi in sonarjem za odkrivanje podvodnih vozil, kot so podmornice in transporterji."
+
+msgid "Vehicle15_Name"
+msgstr "Fregata"
+
+msgid "Vehicle15_Desc"
+msgstr "Fregata\n\nMajhno in izredno hitro plovilo, opremljeno s protiletalskim hitrostrelnim topom in zmogljivim radarjem. Fregate so oči bojne flote ali konvoja ladij, hkrati pa služijo tudi kot zaščita pred napadi iz zraka."
+
+msgid "Vehicle16_Name"
+msgstr "Lovsko letalo"
+
+msgid "Vehicle16_Desc"
+msgstr "Lovsko letalo\n\nHitro in lahko, a krhko letalo, opremljeno z raketami zrak-zrak. Lovska letala so namenjena napadom na sovražnikova letala in varovanju premikajoče se lastne vojske pred letalskimi napadi. Za varovanje statičnih objektov je primernejša kopenska protiletalska obramba."
+
+msgid "Vehicle17_Name"
+msgstr "Topnjača"
+
+msgid "Vehicle17_Desc"
+msgstr "Topnjača\n\nMočno oklopljena ladja, oborožena s topovi velikega kalibra, ki ji omogočajo učinkovite napade na srednje oddaljene cilje. Idealna je za napade na sovražnikove ladje in objekte blizu obale."
+
+msgid "Vehicle18_Name"
+msgstr "Pehota"
+
+msgid "Vehicle18_Desc"
+msgstr "Pehota\n\nPehoto sestavljajo posamezni vojaki, z minimalno zaščito in lahkim protioklepnim orožjem. Pehota lahko zazna sovražnikove vohune."
+
+msgid "Vehicle19_Name"
+msgstr "Konstruktor"
+
+msgid "Vehicle19_Desc"
+msgstr "Konstruktor\n\nVozilo izjemne velikosti, ki je namenjeno gradnji velikih objektov, kot so rudniki in tovarne. Vsak konstruktor za lastno delovanje porabi dve enoti surovin na potezo."
+
+msgid "Vehicle20_Name"
+msgstr "Minopolagalec"
+
+msgid "Vehicle20_Desc"
+msgstr "Minopolagalec\n\nMinopolagalec je specializirano vozilo, namenjeno polaganju, zaznavanju in odstranjevanju min. Minopolagalci za polaganje min uporabljajo surovine, ki jih prevažajo s seboj, hkrati pa lahko lastne mine pretvorijo nazaj v surovine. Sovražnikovih min minopolagalec ne more odstraniti, temveč jih je potrebno uničiti s streli bojnih enot."
+
+msgid "Vehicle21_Name"
+msgstr "Raketni transporter"
+
+msgid "Vehicle21_Desc"
+msgstr "Raketni transporter\n\nRaketni transporter prevaža manevrirno raketo dolgega dosega na lahko oklopljenem podvozju. Kljub večji krhkosti in dragi izdelavi ima sama mobilnost te enote nekatere prednosti pred stacionarnimi raketnimi platformami."
+
+msgid "Vehicle22_Name"
+msgstr "Rušilec"
+
+msgid "Vehicle22_Desc"
+msgstr "Rušilec\n\nRušilec je opremljen z manevrirnimi raketami dolgega dosega. Visoka moč izstrelka, izjemen doseg in srednje oklopljen trup so lastnosti te mogočne enote."
+
+msgid "Vehicle23_Name"
+msgstr "Protiletalski top"
+
+msgid "Vehicle23_Desc"
+msgstr "Protiletalski top\n\nLahko in hitro vozilo, opremljeno s hitrostrelnim topom za obrambo pred sovražnimi letali. Njegova vloga je zlasti obrambna, saj je počasnejši od letal, hkrati pa ne more streljati med premikom. Namenjen je področni obrambi kopenskih enot."
+
+msgid "Vehicle24_Name"
+msgstr "Inženir"
+
+msgid "Vehicle24_Desc"
+msgstr "Inženir\n\nInženir je majhno konstruktorsko vozilo, namenjeno postavitvi manjših zgradb in stacionarnih obrambnih konstrukcij."
+
+msgid "Vehicle25_Name"
+msgstr "Servisno vozilo"
+
+msgid "Vehicle25_Desc"
+msgstr "Servisno vozilo\n\nLahko vozilo, namenjeno hitremu popravilu enot in zgradb. Za popravila servisno vozilo porablja surovine, ki jih v omejeni količini prevaža s seboj. Za popravila mobilnih enot so poleg servisnega vozila primerne tudi garaže, pristanišča in hangerji."
+
+msgid "Vehicle26_Name"
+msgstr "Skener"
+
+msgid "Vehicle26_Desc"
+msgstr "Skener\n\nMobilna radarska platforma, z večjim pregledom od izvidnikov, a dražja, počasnejša in neoborožena. Skener je namenjen zlasti spremstvu enot z orožjem dolgega dosega."
+
+msgid "Vehicle27_Name"
+msgstr "Izvidnik"
+
+msgid "Vehicle27_Desc"
+msgstr "Izvidnik\n\nHitro izvidniško vozilo za raziskovanje terena in odkrivanje sovražnih enot. Lahko potuje po vodi, ima visok pregled nad okolico, vendar šibko orožje in oklep v primerjavi z drugimi bojnimi enotami."
+
+msgid "Vehicle28_Name"
+msgstr "Minolovec"
+
+msgid "Vehicle28_Desc"
+msgstr "Minolovec\n\nMinolovec je pomorska različica minopolagalca. Tako kot minopolagalec služi za polaganje, zaznavanje in odstranjevanje pomorskih min. Pobrane mine lahko predela nazaj v surovine."
+
+msgid "Vehicle29_Name"
+msgstr "Transportna ladja"
+
+msgid "Vehicle29_Desc"
+msgstr "Transportna ladja\n\nMočno oklopljena ladja, ki je sposobna prevažati do šest kopenskih enot. Transportne ladje so počasnejše od transportnih letal, vendar pa dosti bolj odporne na sovražnikov ogenj."
+
+msgid "Vehicle30_Name"
+msgstr "Podmornica"
+
+msgid "Vehicle30_Desc"
+msgstr "Podmornica\n\nSkrita pod gladino se lahko podmornica prikrade v bližino sovražnika in izstreli torpeda. Podmornica nima aktevnega sonarja, saj bi jo le-ta izdal. Zgolj korvete lahko odkrijejo podmornico, napadejo pa jo lahko le druge podmornice, korvete in bombniki."
+
+msgid "Vehicle31_Name"
+msgstr "Geološko vozilo"
+
+msgid "Vehicle31_Desc"
+msgstr "Geološko vozilo\n\nLahko amfibijsko vozilo, opremljeno z natančnimi senzorji za zaznavo podzemnih mineralov in sovražnih min. Za razliko od drugih amfibijskih enot je geološko vozilo enako hitro tako na kopnem kot na vodi."
+
+msgid "Vehicle32_Name"
+msgstr "Tank"
+
+msgid "Vehicle32_Desc"
+msgstr "Tank\n\nMočno oklopljeno bojno vozilo, namenjeno frontalnim spopadom in zaščiti šibkeje oklopljenih enot, kot so samohodni topovi in raketometi."
+
+msgid "Vehicle33_Name"
+msgstr "Transporter zlata"
+
+msgid "Vehicle33_Desc"
+msgstr "Transporter zlata\n\nTransporter zlata je namenjen prevažanju nerafiniranega zlata med različnimi lokacijami."
+
+msgid "Vehicle34_Name"
+msgstr "Oskrbovalno vozilo"
+
+msgid "Vehicle34_Desc"
+msgstr "Oskrbovalno vozilo\n\nOskrbovalno vozilo je namenjeno prevozu surovin, oskrbovanju inženirjev in konstruktorjev s surovinami ter oskrbovanju bojnih enot s strelivom."
+
+msgid "Vehicle35_Name"
+msgstr "Cisterna"
+
+msgid "Vehicle35_Desc"
+msgstr "Cisterna\n\nVozilo je namenjeno prevozu goriva med različnimi lokacijami."
+

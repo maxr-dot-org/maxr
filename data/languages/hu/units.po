@@ -1,0 +1,438 @@
+# Hungarian translations for Maxr package.
+# Copyright (C) 2021 THE Maxr'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Maxr package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Maxr 0.3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-07-29 21:33+0200\n"
+"PO-Revision-Date: 2021-07-31 11:33+0200\n"
+"Last-Translator:\n"
+"Language-Team: Hungarian\n"
+"Language: hu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Building01_Name"
+msgstr "Kaszárnya"
+
+msgid "Building01_Desc"
+msgstr "Kaserne\n\nIn einer Kaserne befinden sich Infiltratoren und Infanterie Einheiten. In der Kaserne gibt es eine Werkstatt für Aufrüstung und Reparatur von Ausrüstung, und für die Produktion von Munition. Die Kaserne benötigt Rohstoffe zum Reparieren, Aufrüsten oder Aufladen, so dass sie an eine Lagereinheit oder ein Berkwerk angeschlossen sein sollte."
+
+msgid "Building02_Name"
+msgstr "Betonakadály"
+
+msgid "Building02_Desc"
+msgstr "Betonklotz\n\nGehärteter, gepanzerter Block zur Blockade feindlicher Bewegungen."
+
+msgid "Building03_Name"
+msgstr "Híd"
+
+msgid "Building03_Desc"
+msgstr "Brücke\n\nPontonbrücke zum Überqueren von Wasser. Brücken, im Gegensatz zu Wasserplattformen, blockieren die Bewegungen der Schiffe nicht."
+
+msgid "Building04_Name"
+msgstr "Csatlakozó"
+
+msgid "Building04_Desc"
+msgstr "Kopplung\n\nGebäude müssen verbunden sein, um Energie, Treibstoff und Gold zu teilen. Sie können Gebäude verbinden, indem Sie sie nebeneinander plazieren oder, indem Sie Kopplungen von einem Gebäude zum anderen bauen."
+
+msgid "Building05_Name"
+msgstr "Szerelőállomás"
+
+msgid "Building05_Desc"
+msgstr "Depot\n\nEin Depot kann Schäden reparieren, Munition herstellen und Bodeneinheiten mit den neusten Technologien aufrüsten. All diese Operationen erfordern Rohstoffe, so dass ein Depot an die Lagerreserven angeschlossen sein sollte."
+
+msgid "Building06_Name"
+msgstr "Kikötő"
+
+msgid "Building06_Desc"
+msgstr "Dock\n\nEin Dock kann Schäden reparieren, Munition liefern und Schiffe mit der neusten Technologie aufrüsten. All diese Operationen erfordern Rohstoffe, daher sollte ein Depot an die Lagerreserven angeschlossen sein."
+
+msgid "Building07_Name"
+msgstr "Erőműtelep"
+
+msgid "Building07_Desc"
+msgstr "Energiestation\n\nEine Energiestation verbraucht sechs Treibstoffeinheiten in jeder Runde und liefert genug Energie für sechs Fabriken oder Berkwerke.\n\nEnergiestationen benötigen eine längere Bauzeit als Energiegeneratoren, aber sie sind auch effizienter."
+
+msgid "Building08_Name"
+msgstr "Áramgenerátor"
+
+msgid "Building08_Desc"
+msgstr "Kleiner Generator\n\nEin Generator verbraucht in jeder Runde zwei Treibstoffeinheiten und liefert genug Energie um ein Berkwerk oder eine Fabrik zu betreiben. Der Energiegenerator muss an die Treibstoffquelle (Berkwerk oder Treibstofftank) und an das Gebäude, das Energie benötigt, angeschlossen sein."
+
+msgid "Building09_Name"
+msgstr "Légiegység Gyár"
+
+msgid "Building09_Desc"
+msgstr "Lufteinheitenfabrik\n\nBaut Jäger, Bomber, AWACs und Lufttransportflugzeuge. Eine Lufteinheitenfabrik verbraucht drei Rohstoffe pro Runde und benötigt Energie."
+
+msgid "Building10_Name"
+msgstr "Idegen Egységgyár"
+
+msgid "Building10_Desc"
+msgstr "Alieneinheitenfabrik"
+
+msgid "Building11_Name"
+msgstr "Nehézgép Gyár"
+
+msgid "Building11_Desc"
+msgstr "Schwere Fahrzeugfabrik\n\nSchwere Fahrzeugfabriken bauen Konstrukeure, mobile Scanner und die schweren Kampfeinheiten: Panzer, Sturmgeschütze, Raketenwerfer und mobile Missilenwerfer. Eine Schwere Fahrzeugfabrik verbraucht drei Rohmaterialien pro Runde und benötigt Energie."
+
+msgid "Building12_Name"
+msgstr "Hajógyár"
+
+msgid "Building12_Desc"
+msgstr "Schiffswerft\n\nSchiffswerften bauen Schiffe, wie U-Boote, See-Transporter und Missilenschiffe. Eine Schiffswerft benötigt drei Rohmaterialien in jeder Runde, um zu operieren, sowie Energie."
+
+msgid "Building13_Name"
+msgstr "Könnyűgép Gyár"
+
+msgid "Building13_Desc"
+msgstr "Leichte Fahrzeugfabrik\n\nBaut leichte Fahrzeuge: Pioniere, Lkws, mobile Anti-Lufteinheiten."
+
+msgid "Building14_Name"
+msgstr "Aranyfinomító"
+
+msgid "Building14_Desc"
+msgstr "Goldraffinerie\n\nRaffinerie, um Gold in Upgradepunkte umzuwandeln. Upgradepunkte werden benötigt, um Einheitenverbesserungen zu erwerben. Um zu arbeiten, benötigt eine Goldraffinerie eine Energiequelle und eine Golderzquelle. Ein Berkwerk kann Golderz fördern, wenn eine seiner vier Flächen eine Fläche mit unterirdischem Gold bedeckt."
+
+msgid "Building15_Name"
+msgstr "Légvédelmi Ágyú"
+
+msgid "Building15_Desc"
+msgstr "Luftabwehr\n\nDie Luftabwehr verschießt Kleinkalibrige Hochgeschwindigkeitsmunition. Luftabwehren machen kurzen Prozess mit Flugzeugen, können aber Bodeneinheiten nicht angreifen."
+
+msgid "Building16_Name"
+msgstr "Tüzérség"
+
+msgid "Building16_Desc"
+msgstr "Atillerie\n\nStarke stationäre Waffe. Artillerie ist ein Kompromiss zwischen dem billigen, robusten Gefechtsturm und dem teuren Missilenwerfer."
+
+msgid "Building17_Name"
+msgstr "Rakétavető Torony"
+
+msgid "Building17_Desc"
+msgstr "Missilenwerfer\n\nLangstreckenraketenwerfer auf einem festen Gestell. Exzellente Reichweite und Feuerkraft, aber nur wenig mehr Panzerung als bei der mobilen Version. Am besten umgeben von Gefechtstürmen und Luftabwehr."
+
+msgid "Building18_Name"
+msgstr "Lövegtorony"
+
+msgid "Building18_Desc"
+msgstr "Gefechtsturm\n\nSchwer gepanzerter stationärer Gefechtsturm. Gefechtstürme haben gute Feuerkraft, schwere Panzerung und eine mittlere Reichweite. Da sie in kurzer Zeit gebaut werden können, sind sie eine gute Wahl, wenn Sie möglichst schnell Verteidigung benötigen."
+
+msgid "Building19_Name"
+msgstr "Lakóhely"
+
+msgid "Building19_Desc"
+msgstr "Behausung\n\nBehausungen beherbergen Kolonisten. Jede Behausung beherbergt genug Kolonisten, um drei Forschungszentren, Trainingshallen oder Ökosphären zu betreiben. Diese Gebäude müssen an eine Behausung angeschlossen sein, bevor sie operieren können."
+
+msgid "Building20_Name"
+msgstr "Hangár"
+
+msgid "Building20_Desc"
+msgstr "Hangar\n\nEin Hangar kann Schäden reparieren, Munition liefern, und Flugzeuge mit der neusten Technologie aufrüsten. All diese Operationen erfordern Rohstoffe, daher sollte ein Hangar an die Lagerreserven angeschlossen sein."
+
+msgid "Building21_Name"
+msgstr "Szárazföldi Akna"
+
+msgid "Building21_Desc"
+msgstr "Landmine\n\nKleines, schwer zu entdeckendes, explosives Geschütz. Nur Gutachter, Minenleger und Infiltratoren können Minen ausspähen. Sobald sie entdeckt werden, wird fast jede Beschädigung sie zerstören."
+
+msgid "Building22_Name"
+msgstr "Bányászati Állomás"
+
+msgid "Building22_Desc"
+msgstr "Berkwerk\n\nFördert in jeder Runde Rohstoffe, Treibstoff und Gold aus der Erde. Gebäude müssen an ein Berkwerk angeschlossen sein, um die Dinge zu nutzen, die es Produziert. Wenn keine Lagergebäude vorhanden sind, um überschüssiges Material zu Lagern, gehen diese Überschüsse verloren."
+
+msgid "Building23_Name"
+msgstr "Idegen Bányászati Állomás"
+
+msgid "Building23_Desc"
+msgstr "Deep Mine..."
+
+msgid "Building24_Name"
+msgstr "Leszállóplatform"
+
+msgid "Building24_Desc"
+msgstr "Landefläche\n\nLandemöglichkeit für Flugzeuge. Kann Flugzeuge weder reparieren, noch aufladen. Um ein Flugzeug auf einer Landefläche wieder aufzuladen oder zu reparieren, benutzen Sie einen nahegelegenen Lkw oder eine Lagereinheit, bzw. eine Repariereinheit."
+
+msgid "Building25_Name"
+msgstr "Hídtalapzat"
+
+msgid "Building25_Desc"
+msgstr "Wasserplattform\n\nLiefert eine Fläche auf dem Wasser, auf der andere Gebäude errichtet werden können. Pionierfahrzeuge können Wasserplattformen sowohl über Ufer als auch über offenes Gewässer bauen. Wasserülattformen sind besonders wichtig auf Inselkarten oder, wenn wertvolle Rohstoffe unter dem Wasser sind."
+
+msgid "Building26_Name"
+msgstr "Radar"
+
+msgid "Building26_Desc"
+msgstr "Radar\n\nStationäres Radargerät mit großer Reichweite. Einheiten mit größerer Reichweite wie Missilenwerfer und Artillerie können nicht auf etwas schießen, das sie nicht sehen können, daher ist es wichtig, einen Scanner oder ein Radar in der Nähe zu haben."
+
+msgid "Building27_Name"
+msgstr "Fejlesztőközpont"
+
+msgid "Building27_Desc"
+msgstr "Forschungslabor\n\nForschungszentren erforschen, wie Sie Ihre Einheiten verbessern können. Im Unterschied zu Upgrades, die mit raffiniertem Gold erworben werden, benötigt Forschung Zeit und die Verbesserungen sind klein. Allerdings betriff die Forschung alle Ihrer Einheiten statt nur eine Art und benötigt keine Golderzquelle. Ein Forschungszentrum benötigt Kolonisten einer Behausung und Energie, um operieren zu können."
+
+msgid "Building28_Name"
+msgstr "Út"
+
+msgid "Building28_Desc"
+msgstr "Straße\n\nEinheiten bewegen sich mit doppelter Geschwindigkeit über Straßen."
+
+msgid "Building29_Name"
+msgstr "Víziakna"
+
+msgid "Building29_Desc"
+msgstr "Seemine\n\nKleines, schwer zu entdeckendes, explosives Geschütz. Nur Guachter, Minenleger und Infiltratoren können Minen ausspähen. Sobald sie entdeckt werden, wird fast jede Beschädigung sie zerstören."
+
+msgid "Building30_Name"
+msgstr "Idegen Pajzsgenerátor"
+
+msgid "Building30_Desc"
+msgstr "Alien Schildgenerator\n\n unbekannt"
+
+msgid "Building31_Name"
+msgstr "Aranytároló"
+
+msgid "Building31_Desc"
+msgstr "Goldtresor\n\nBeinhaltet unrafiniertes Golderz. Berkwerke produzieren in jeder Runde Gold, wenn sich Goldadern unter ihnen befinden. Um das Erz zu lagern, muss ein Berkwerk mit einem Goldtresor verbunden sein."
+
+msgid "Building32_Name"
+msgstr "Nyersanyagtároló"
+
+msgid "Building32_Desc"
+msgstr "Lagereinheit\n\nLagert Rohstoffe. Bergwerke produzieren Rohstoffe in jeder Runde. Um Überschüssige Rohstoffe zu lagern, muss ein Bergwerk an eine Lagereinheit angeschlossen sein."
+
+msgid "Building33_Name"
+msgstr "Üzemanyagtároló"
+
+msgid "Building33_Desc"
+msgstr "Treibstofftank\n\nLagert Treibstoffreserven. Berkwerke produzieren in jeder Runde Treibstoff. Um überschüssigen Treibstoff zu lagern, muss das Berkwerk an einen Treibstofftank angeschlossen sein."
+
+msgid "Building34_Name"
+msgstr "Kiképzőközpont"
+
+msgid "Building34_Desc"
+msgstr "Trainingshalle\n\nTrainiert Infiltratoren, die feindliche Einheiten außer Gefecht setzen oder gefangen nehmen können, und Infanterie. Nur Infanterie und andere Infiltratoren können Infiltratoren ausspähen. Eine Trainingshalle benötigt Kolonisten einer Behausung und Energie, um operieren zu können."
+
+msgid "Building35_Name"
+msgstr "Ökoszféra"
+
+msgid "Building35_Desc"
+msgstr "Eco-sphere\n\nYour primary goal is the construction of eco-spheres. Each eco-sphere gives you one colony point per turn.\n\nDefend your eco-spheres well, because if one is destroyed, you lose all the points it generated for you!"
+
+msgid "Vehicle01_Name"
+msgstr "Szállítórepülő"
+
+msgid "Vehicle01_Desc"
+msgstr "Szállítórepülő\n\nNehéz repülőgép-hordozó, ami három földi egységet képes szállítani."
+
+msgid "Vehicle02_Name"
+msgstr "Idegen Rohamtank"
+
+msgid "Vehicle02_Desc"
+msgstr "Idegen Rohamtank\n\nErős plazmafegyver, amit egy gyors, közepesen páncélozott alvázra szereltek. Habár nem olyan sebezhető, mint az emberi rohamtank, az idegen rohamtanknak ugyan úgy kerülnie kell az ellenséges tüzet, amikor csak lehet. Minden idegen egység önjavító, és tapasztalatszerzéssel javítják képességeiket."
+
+msgid "Vehicle03_Name"
+msgstr "Idegen Vadászbombázó"
+
+msgid "Vehicle03_Desc"
+msgstr "Idegen Vadászbombázó\n\nIdegen Vadászbombázó. Míg az idegen repülőt elsődlegesen földi célpontok megsemmisítésére tervezték, más repülőkre is képes kilőni rakétáit. Habár nagyon erős, az idegen támadó gép így is sebezhető a légvédelmi ágyúk tüzével szemben. Mint a többi idegen egység, az idegen repülő is javítja önmagát, és tapasztalatszerzéssel javítja képességeit."
+
+msgid "Vehicle04_Name"
+msgstr "Idegen Hadihajó"
+
+msgid "Vehicle04_Desc"
+msgstr "Idegen Hadihajó\n\nNehézpáncélzattal és nehézfegyverekkel ellátott idegen eredetű hadihajó. Akár az emberi ágyúnaszád, az idegen hadihajó is más hajók és parthoz közeli földi célpontok elpusztításában tűnik ki. Minden idegen egység önjavító, és tapasztalatszerzéssel javítják képességeiket."
+
+msgid "Vehicle05_Name"
+msgstr "Idegen Tank"
+
+msgid "Vehicle05_Desc"
+msgstr "Idegen Tank\n\nSchwer gepanzerter Panzer im Aliendesign. Alienpanzer werden am bessten an der Front eines Angriffs eingesetzt, um feindliche Feuer abzufangen. Alle Alieneinheiten reparieren sich selbst, und verbessern ihre Fähigkeiten durch Erfahrung."
+
+msgid "Vehicle06_Name"
+msgstr "Csapatszállító"
+
+msgid "Vehicle06_Desc"
+msgstr "Csapatszállító\n\nSchnell, gepanzert, um Infanterie und Infiltratoren zu transportieren. Das APC kann sich langsam sowohl unter Wasser als auch auf Land bewegen. Nur feindliche Korvetten können ein sich unter Wasser bewegendes APC entdecken."
+
+msgid "Vehicle07_Name"
+msgstr "Rohamtank"
+
+msgid "Vehicle07_Desc"
+msgstr "Sturmgeschütz\n\nLeicht gepanzertes Fahrzeug mit einer Waffe mit großer Reichweite, die hochexplosieve Granaten feuert. Schnell und effektiv im Angriff, aber recht verwundbar."
+
+msgid "Vehicle08_Name"
+msgstr "AWAC"
+
+msgid "Vehicle08_Desc"
+msgstr "AWAC\n\nLuftwarnung und Kontrollflugzeug. Im Grunde ein fliegender Radar Reflektor. Ein AWAC ist notwendig, um feindliche Luftabwehr auszumachen, bevor ihre Flugzeuge in Feuerreichweite fliegen."
+
+msgid "Vehicle09_Name"
+msgstr "Légibombázó"
+
+msgid "Vehicle09_Desc"
+msgstr "Bomber\n\nEin schwereres Flugzeug, das eine volle Ladung Luft zu Bodenmissilen transportiert. Teuer, aber die Geschwindigkeit und die Fähigkeit mit Genehmigung alles außer Jäger und Luftabwehr anzugreifen ist's wert."
+
+msgid "Vehicle10_Name"
+msgstr "Buldózer"
+
+msgid "Vehicle10_Desc"
+msgstr "Bulldozer\n\nFahrzeug, um Geröll und zerstörte Gebäude zu räumen. Bulldozer können Material aus Schutt herausfiltern."
+
+msgid "Vehicle11_Name"
+msgstr "Nyersanyagszállító Hajó"
+
+msgid "Vehicle11_Desc"
+msgstr "Frachtschiff\n\nSchiffe für den Transport von Rohstoffen. Nützlich, um Pionierfahrzeuge und Seekampfeinheiten wieder mit Munition aufzuladen."
+
+msgid "Vehicle12_Name"
+msgstr "Rakétavető"
+
+msgid "Vehicle12_Desc"
+msgstr "Raketenwerfer\n\nLeicht gepanzertes Fahrzeug, das Mittelstreckenraketen abfeuert, die alle Einheiten in Mitleidenschaft ziehen, die sich innerhalb von 2 Flächen um das Ziel herum befinden. Gegen Gruppen feindlicher Einheiten am effektivsten."
+
+msgid "Vehicle13_Name"
+msgstr "Hírszerző"
+
+msgid "Vehicle13_Desc"
+msgstr "Infiltrator\n\nKommando, das in der Kunst der lautlosen und elektronischen Kriegsführung trainiert ist. Infiltratoren können feindliche Einheiten unschädlich machen oder gefangen nehmen.\nInfiltratoren sind normalerweise unsichtbar, bis sie einen Fehler machen, wenn sie versuchen feindliche Einheiten gefangen zu nehmen, oder bis sie von Infanterie oder Infiltratoren gesichtet worden sind."
+
+msgid "Vehicle14_Name"
+msgstr "Korvett"
+
+msgid "Vehicle14_Desc"
+msgstr "Korvette\n\nHochgeschwindigkeitsschiff mit Torpedos und Echolot. Korvetten können jede Marineeinheit angreifen, aber ihre wirkliche Stärke ist die Fähigkeit, U-Boote zu sichten und anzugreifen."
+
+msgid "Vehicle15_Name"
+msgstr "Kísérő Hajó"
+
+msgid "Vehicle15_Desc"
+msgstr "Eskorte\n\nHochgeschwindigkeitsschiff mit gutem Radar und Schnellschussluftabwehrkanone. Geleitschiffe sind die Augen einer Flotte und ihr Schutz vor Flugzeugen."
+
+msgid "Vehicle16_Name"
+msgstr "Vadászrepülő"
+
+msgid "Vehicle16_Desc"
+msgstr "Jäger\n\nSchnelles aber empfindliches Flugzeug, das eine begrenzte Anzahl von Luft-Luft Missilen transportiert. Jäger sind das beste Mittel, um feindliche Flugzeuge zu vertreiben und, um eine sich bewegende Armee zu verteidigen. Stationäre Luftabwehr ist die bessere Wahl, um ein bestimmtes Gebiet zu verteidigen."
+
+msgid "Vehicle17_Name"
+msgstr "Ágyúnaszád"
+
+msgid "Vehicle17_Desc"
+msgstr "Kanonenboot\n\nSchwer gepanzertes Schiff mit einer großkalibrigen Kanone mit mittlerer Reichweite. Exzellent beim Zerstören von anderen Schiffen und beim Bombardieren von Küstenzielen."
+
+msgid "Vehicle18_Name"
+msgstr "Gyalogos"
+
+msgid "Vehicle18_Desc"
+msgstr "Infanterie\n\nSoldaten, die mit leichten Panzerabwehrwaffen ausgestattet sind. Infanterie kann feindliche Infiltratoren ausfindig machen."
+
+msgid "Vehicle19_Name"
+msgstr "Építőmű"
+
+msgid "Vehicle19_Desc"
+msgstr "Konstrukteur\n\nGroßes Konstruktionsfahrzeug zum Errichten großer Gebäude, wie Bergwerke und Fabriken."
+
+msgid "Vehicle20_Name"
+msgstr "Aknatelepítő"
+
+msgid "Vehicle20_Desc"
+msgstr "Minenleger\n\nMinenleger sind spezialisierte Konstruktionsfahrzeuge, die Minen plazieren, ausspähen und entfernen können. Minenleger können an Board Rohstoffe in Minen verwandeln. Sie können diese Minen später auch wieder entfernen und in Rohstoffe zurückverwandeln. Sie können keine feindlichen Minenfelder entfernen - diese müssen mit Kanonen und Raketen zum Explodieren gebracht werden."
+
+msgid "Vehicle21_Name"
+msgstr "Lánctalpas Rakétakilővő"
+
+msgid "Vehicle21_Desc"
+msgstr "mobiler Missilenwerfer\n\nMissilenwerfer auf einem leicht gepanzerten Fahrgestell. Dieser mobile Werfer ist ein bisschen weniger robust als die stationäre Version und erfordert mehr Material beim Bau. Allerdings macht ihn seine Bewegungsfähigkeit wesendlich flexibler."
+
+msgid "Vehicle22_Name"
+msgstr "Rakétakilövő Cirkáló"
+
+msgid "Vehicle22_Desc"
+msgstr "Missilenschiff\n\nAuf einem Schiff montierter Missilenwerfer. Exzellente Reichweite, große Angriffsstärke und mittlere Panzerung machen dies zu einer kraftvollen Einheit."
+
+msgid "Vehicle23_Name"
+msgstr "Mobil Légvédelmi Ágyú"
+
+msgid "Vehicle23_Desc"
+msgstr "Mobile Luftabwehr\n\nLeichtes, schnelles Fahrzeug mit einer schnellen Kanone zum Abschießen vom feindlichen Flugzeugen. Mobile Luftabwehr sind normalerweise Verteidigungseinheiten, da sie nicht so schnell wie Flugzeuge sind und sich nicht bewegen können, solange sie feuern. Benutzen Sie sie, um ein Gebiet zu beschützen, nachdem ihre Jäger die feindlichen Bomber verjagt haben."
+
+msgid "Vehicle24_Name"
+msgstr "Utászmű"
+
+msgid "Vehicle24_Desc"
+msgstr "Pionier\n\nKleines Konstruktionsfahrzeug, das kleine Gebäude und stationäre Waffen baut."
+
+msgid "Vehicle25_Name"
+msgstr "Szerelőegység"
+
+msgid "Vehicle25_Desc"
+msgstr "Repariereinheit\n\nLeichtes Fahrzeug, das schnell Bodeneinheiten und Gebäude reparieren kann. Peparaturen erfordern Materialien. Je größer der Schaden ist, desto mehr Materialien benötigt die Instandsetzung. Depots, Docks, Hangars und Kasernen können auch Einheiten reparieren."
+
+msgid "Vehicle26_Name"
+msgstr "Mobil Radar"
+
+msgid "Vehicle26_Desc"
+msgstr "Scanner\n\nMobile Radarplattform. Langsamer und teuer als ein Späher, aber mit einer besseren Scanreichweite. Ein Scanner ist ein exzellentes Mittel, um Ziele für Einheiten mit sehr großer Reichweite wie mobile Missilenwerfer auszuspähen."
+
+msgid "Vehicle27_Name"
+msgstr "Felderítő"
+
+msgid "Vehicle27_Desc"
+msgstr "Späher\n\nHochgeschwindigkeitsfahrzeug, das feindliche Einheiten auskundschaftet und ausspäht. Kann Wasser ohne Brücke überqueren, is jedoch schneller auf Land.\n\nSehr schnell und gute Scanreichweite, aber viel schwächer als die meisten Kampfeinheiten."
+
+msgid "Vehicle28_Name"
+msgstr "Víziakna Telepítő"
+
+msgid "Vehicle28_Desc"
+msgstr "Seeminenleger\n\nSeevariante des Minenlegers. Wie sein Gegenpart auf dem Land, kann er Minen herstellen, sie ausspähen, und die in Rohstoffe zurückverwandeln."
+
+msgid "Vehicle29_Name"
+msgstr "Vízi Csapatszállító"
+
+msgid "Vehicle29_Desc"
+msgstr "Seetransporter\n\nSchwer gepanzertes Schiff mit Platz, um bis zu sechs Landeinheiten zu transportieren. Seetransporter sind langsamer als Transportflugzeuge, aber sie überleben auch eher einen feindlichen Angriff."
+
+msgid "Vehicle30_Name"
+msgstr "Tengeralattjáró"
+
+msgid "Vehicle30_Desc"
+msgstr "U-Boot\n\nDicht unter der Wasseroberfläche lauernd, können sich U-Boot nah an den Feind heranschleichen, um ihre kraftvollen Torpedos abzufeuern. Nur Korvetten können ein U-Boot ausspähen. Desweiteren verrät das Abfeuern eines Torpedos ihre Position.Nur U-Boote, Korvetten und Bomber können sie angreifen."
+
+msgid "Vehicle31_Name"
+msgstr "Geodéta"
+
+msgid "Vehicle31_Desc"
+msgstr "Gutachter\n\nLeichtes, amphibisches Fahrzeug mit sehr feinen Sensoren zum Auffinden von Untergrundrohstoffen und feindlichen Minen. Im Gegensatz zu den meisten amphibischen Einheiten sind Gutachter auf Wasser fast genauso schnell wie auf Land."
+
+msgid "Vehicle32_Name"
+msgstr "Tank"
+
+msgid "Vehicle32_Desc"
+msgstr "Panzer\n\nSchwer gepanzerte Kampffahrzeuge. Am besten an der Frontlinie eingesetzt, wo sie feindliche Einheiten daran hindern können, leicht gepanzerte Hilfseinheiten wie z.B. Sturmgeschütze und Raketenwerfer zu erreichen."
+
+msgid "Vehicle33_Name"
+msgstr "Aranyszállító"
+
+msgid "Vehicle33_Desc"
+msgstr "Goldtransporter\n\nEinheit, um Golderz von einem Ort zum nächsten zu bewegen."
+
+msgid "Vehicle34_Name"
+msgstr "Nyersanyagszállító"
+
+msgid "Vehicle34_Desc"
+msgstr "Versorgungstruck\n\nLkw zum Transport von Rohstoffen. Nützlich, um Pionierfahrzeuge und Konstrukteure zu versorgen und um Kampfeinheiten wieder mit Munition aufzuladen."
+
+msgid "Vehicle35_Name"
+msgstr "Üzemanyagszállító"
+
+msgid "Vehicle35_Desc"
+msgstr "Tankwagen\n\nLkw, um Treibstoff zu transportieren."
+

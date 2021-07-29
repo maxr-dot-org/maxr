@@ -57,6 +57,7 @@
 #include "utility/extendedtinyxml.h"
 #include "utility/files.h"
 #include "utility/language.h"
+#include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "settings.h"
 
@@ -116,6 +117,7 @@ static void MakeLog (const std::string& sTxt, int ok, int pos)
 //------------------------------------------------------------------------------
 void debugTranslationSize (const cLanguage& language, const cUnicodeFont& font)
 {
+#if 0
 	std::regex reg{".*_([0-9]+)"};
 	for (const auto& p : language.getAllTranslations())
 	{
@@ -131,32 +133,23 @@ void debugTranslationSize (const cLanguage& language, const cUnicodeFont& font)
 			}
 		}
 	}
+#endif
 }
 
-/**
- * Loads the selected languagepack
- * @return 1 on success
- */
-static int LoadLanguage()
+static void LoadLanguage()
 {
-	// Set the language code
-	if (lngPack.SetCurrentLanguage (cSettings::getInstance().getLanguage()) != 0)
+	lngPack.setLanguagesFolder (cSettings::getInstance().getLangPath());
+	if (!Contains (lngPack.getAvailableLanguages(), cSettings::getInstance().getLanguage()))
 	{
-		// Not a valid language code, critical fail!
-		Log.write ("Not a valid language code!", cLog::eLOG_TYPE_ERROR);
-		return 0;
+		Log.write ("Not a supported language: " + cSettings::getInstance().getLanguage() + ", defaulting to en.", cLog::eLOG_TYPE_WARNING);
+		cSettings::getInstance().setLanguage("en");
 	}
-	if (lngPack.ReadLanguagePack() != 0) // Load the translations
-	{
-		// Could not load the language, critical fail!
-		Log.write ("Could not load the language!", cLog::eLOG_TYPE_ERROR);
-		return 0;
-	}
+	lngPack.setCurrentLanguage (cSettings::getInstance().getLanguage());
+
 	if (cSettings::getInstance().isDebug() && !DEDICATED_SERVER)
 	{
 		debugTranslationSize (lngPack, *cUnicodeFont::font);
 	}
-	return 1;
 }
 
 /**
@@ -1429,15 +1422,8 @@ eLoadingState LoadData()
 
 	// Load Languagepack
 	MakeLog ("Loading languagepack...", 0, 2);
-	if (LoadLanguage() != 1)
-	{
-		MakeLog ("", -1, 2);
-		return eLoadingState::Error;
-	}
-	else
-	{
-		MakeLog ("", 1, 2);
-	}
+	LoadLanguage();
+	MakeLog ("", 1, 2);
 	Log.mark();
 
 	if (!DEDICATED_SERVER)

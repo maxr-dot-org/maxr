@@ -1,0 +1,1071 @@
+# Spanish translations for Maxr package.
+# Copyright (C) 2021 THE Maxr'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Maxr package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Maxr 0.3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-07-29 21:33+0200\n"
+"PO-Revision-Date: 2021-07-29 22:32+0200\n"
+"Last-Translator:\n"
+"Language-Team: Spanish\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Text~Comp~Adjustments_Fuel_Increased"
+msgstr "Se han hecho ajustes: Producción de combustible incrementada en %s"
+
+msgid "Text~Comp~Adjustments_Gold_Decreased"
+msgstr "Se han hecho ajustes: Producción de oro incrementada en %s"
+
+msgid "Text~Comp~Adjustments_Metal_Decreased"
+msgstr "Se han hecho ajustes: Producción de metal incrementada en %s"
+
+msgid "Text~Comp~Attacked"
+msgstr "%s está bajo ataque"
+
+msgid "Text~Comp~AttackingEnemy"
+msgstr "%s está atacando al enemigo"
+
+msgid "Text~Comp~AttackingStatusStr"
+msgstr "atacando"
+
+msgid "Text~Comp~Building_Disabled"
+msgstr "Edificio desactivado"
+
+msgid "Text~Comp~CapturedByEnemy"
+msgstr "%s ha sido capturado por el enemigo"
+
+msgid "Text~Comp~Cheat"
+msgstr "Se ha usado un truco"
+
+msgid "Text~Comp~Clearing"
+msgstr "limpiando (%s)"
+
+msgid "Text~Comp~Clearing_Fin"
+msgstr "limpieza completada"
+
+msgid "Text~Comp~Clearing_Mine"
+msgstr "quitando minas"
+
+msgid "Text~Comp~CommandoRank_Average"
+msgstr "Intermedio"
+
+msgid "Text~Comp~CommandoRank_Elite"
+msgstr "Elite"
+
+msgid "Text~Comp~CommandoRank_Expert"
+msgstr "Experto"
+
+msgid "Text~Comp~CommandoRank_GrandMaster"
+msgstr "Gran Maestro"
+
+msgid "Text~Comp~CommandoRank_Greenhorn"
+msgstr "Novato"
+
+msgid "Text~Comp~CommandoRank_Veteran"
+msgstr "Veterano"
+
+msgid "Text~Comp~Dated"
+msgstr "a fecha de"
+
+msgid "Text~Comp~Defeated"
+msgstr "Jugador %s derrotado"
+
+msgid "Text~Comp~Description"
+msgstr "Descripción"
+
+msgid "Text~Comp~Destroyed"
+msgstr "%s destruido"
+
+msgid "Text~Comp~Detected"
+msgstr "detectado"
+
+msgid "Text~Comp~Disabled"
+msgstr "desactivado"
+
+msgid "Text~Comp~EcoSphere"
+msgstr "Invernadero"
+
+msgid "Text~Comp~EcoSpheres"
+msgstr "Invernaderos"
+
+msgid "Text~Comp~End_Game"
+msgstr "Confirmar salida \n\nLos datos no guardados se perderán."
+
+msgid "Text~Comp~Energy_Insufficient"
+msgstr "No se puede encender, se necesita energía"
+
+msgid "Text~Comp~Energy_IsNeeded"
+msgstr "No se puede encender, se necesita energía"
+
+msgid "Text~Comp~Energy_Low"
+msgstr "Se necesita energía, edificio que consumía energía apagado."
+
+msgid "Text~Comp~Energy_ToLow"
+msgstr "Se necesita más energía, generador encendido"
+
+msgid "Text~Comp~Finished"
+msgstr "se ha terminado"
+
+msgid "Text~Comp~Finished2"
+msgstr "se han terminado"
+
+msgid "Text~Comp~Fuel_Insufficient"
+msgstr "No se puede encender, se necesita combustible"
+
+msgid "Text~Comp~Fuel_Low"
+msgstr "Se necesita combustible, generador apagado."
+
+msgid "Text~Comp~GameEndsAt"
+msgstr "El juego finaliza en"
+
+msgid "Text~Comp~Gold_Insufficient"
+msgstr "No se puede encender, se necesita oro"
+
+msgid "Text~Comp~Gold_Low"
+msgstr "Se necesita más oro, refinería apagada."
+
+msgid "Text~Comp~IsBeeingAttacked"
+msgstr "Está siendo atacado"
+
+msgid "Text~Comp~Labs"
+msgstr "Laboratorios"
+
+msgid "Text~Comp~Landing_Select"
+msgstr "Por favor selecciona lugar de inicio."
+
+msgid "Text~Comp~Landing_Too_Close"
+msgstr "La posición seleccionada coincide con la de otro jugador. Por favor, selecciona otra posición"
+
+msgid "Text~Comp~Landing_Warning"
+msgstr "La posición elegida está demasiado cerca de otro jugador. Por favor, confirmala haciendo clic en el circulo rojo o seleccina otra posición"
+
+msgid "Text~Comp~Laying"
+msgstr "colocando minas"
+
+msgid "Text~Comp~Metal_Insufficient"
+msgstr "No se puede encender, se necesita metal"
+
+msgid "Text~Comp~Metal_Low"
+msgstr "Se necesitan más materiales, edificio apagado"
+
+msgid "Text~Comp~Moving"
+msgstr "moviendose"
+
+msgid "Text~Comp~MovingToAttack"
+msgstr "moviendose para atacar"
+
+msgid "Text~Comp~NoLimit"
+msgstr "Lucha a muerte"
+
+msgid "Text~Comp~Path_interrupted"
+msgstr "No puede continuarse la trayectoria de construcción"
+
+msgid "Text~Comp~Point"
+msgstr "punto"
+
+msgid "Text~Comp~Points"
+msgstr "puntos"
+
+msgid "Text~Comp~Producing"
+msgstr "Edificio"
+
+msgid "Text~Comp~Producing_Err"
+msgstr "Posición de construcción incorrecta o recursos insuficientes"
+
+msgid "Text~Comp~Producing_Fin"
+msgstr "edificio terminado"
+
+msgid "Text~Comp~ReactionFireOff"
+msgstr "Disparo de auto-defensa apagado"
+
+msgid "Text~Comp~Repeat"
+msgstr "De nuevo"
+
+msgid "Text~Comp~Reserve"
+msgstr "Reserva"
+
+msgid "Text~Comp~ResolutionWarning"
+msgstr "Cuidado: Modo de video no soportado en la configuración"
+
+msgid "Text~Comp~RestartRequired"
+msgstr "Por favor, reinicia 'Mechanized Assault and eXploration Reloaded' para que los cambios tengan efecto"
+
+msgid "Text~Comp~Screenshot_Done"
+msgstr "Pantallazo guardado a %s"
+
+msgid "Text~Comp~Sentry"
+msgstr "en alerta"
+
+msgid "Text~Comp~Stolen"
+msgstr "robado"
+
+msgid "Text~Comp~SuddenDeath"
+msgstr "El primer jugador en aumentar su puntuación gana!"
+
+msgid "Text~Comp~Surveying"
+msgstr "explorando"
+
+msgid "Text~Comp~Team_Insufficient"
+msgstr "No se puede encender, se necesitan trabajadores"
+
+msgid "Text~Comp~Team_Low"
+msgstr "Se necesitan trabajadores, edificio apagado."
+
+msgid "Text~Comp~Themes"
+msgstr "Temas"
+
+msgid "Text~Comp~Turn_5"
+msgstr "Turno"
+
+msgid "Text~Comp~Turn_Automove"
+msgstr "Ejecutando movimientos restantes"
+
+msgid "Text~Comp~Turn_Start"
+msgstr "Comienza el turno %s"
+
+msgid "Text~Comp~Turn_Wait"
+msgstr "Por favor espera hasta que todos los movimientos se hayan completado"
+
+msgid "Text~Comp~Turns"
+msgstr "Turnos"
+
+msgid "Text~Comp~Upgrades_Done"
+msgstr "Actualizado"
+
+msgid "Text~Comp~Upgrades_Done2"
+msgstr "unidad(es) de tipo %s"
+
+msgid "Text~Comp~Waits"
+msgstr "esperando"
+
+msgid "Text~Comp~Wins"
+msgstr ""
+
+msgid "Text~Comp~Working"
+msgstr "trabajando"
+
+msgid "Text~Error_Messages~ERROR_File_Not_Found"
+msgstr "Fichero no encontrado: %s"
+
+msgid "Text~Error_Messages~ERROR_Map_Loading"
+msgstr "Error mientras se cargaba el mapa"
+
+msgid "Text~Error_Messages~ERROR_Missing_Translation"
+msgstr "Traducción perdida: %s"
+
+msgid "Text~Error_Messages~INFO_Language_initialised"
+msgstr "El idioma está ahora inicializado"
+
+msgid "Text~Error_Messages~INFO_Not_Implemented"
+msgstr "No implementado todavía"
+
+msgid "Text~Init~Buildings"
+msgstr "Cargando edificios..."
+
+msgid "Text~Init~Clans"
+msgstr "Cargando clanes..."
+
+msgid "Text~Init~Effects"
+msgstr "Cargando efectos..."
+
+msgid "Text~Init~Fonts"
+msgstr "Cargando fuentes..."
+
+msgid "Text~Init~GFX"
+msgstr "Cargando gráficos..."
+
+msgid "Text~Init~Keys"
+msgstr "Cargando claves..."
+
+msgid "Text~Init~Lang"
+msgstr "Cargando paquete de idioma..."
+
+msgid "Text~Init~Music"
+msgstr "Cargando música..."
+
+msgid "Text~Init~Sounds"
+msgstr "Cargando sonidos..."
+
+msgid "Text~Init~Terrain"
+msgstr "Cargando terreno..."
+
+msgid "Text~Init~Vehicles"
+msgstr "Cargando vehículos..."
+
+msgid "Text~Init~Voices"
+msgstr "Cargando voces..."
+
+msgid "Text~Main~Credits_Doc"
+msgstr "Michael Mönchs M.A.X. (Reedición por DoctorDeath)"
+
+msgid "Text~Main~Credits_MM"
+msgstr "Michael Mönchs M.A.X. (Original por Interplay)"
+
+msgid "Text~Main~Credits_Reloaded"
+msgstr "M.A.X.R. basado en Mechanized Assault and eXploration de Interplay"
+
+msgid "Text~Main~Game_Subtitle"
+msgstr "Mechanized Assault and eXploration Reloaded"
+
+msgid "Text~Main~Game_Title"
+msgstr "M.A.X.R."
+
+msgid "Text~Main~Remarks~Not_yet_implemented"
+msgstr "(*)no implementando todavía"
+
+msgid "Text~Main~Version"
+msgstr "versión v%s"
+
+msgid "Text~Multiplayer~Abort_Waiting"
+msgstr "Servidor, presiona F2 para dejar de esperar."
+
+msgid "Text~Multiplayer~Connection_Terminated"
+msgstr "Conexión terminada"
+
+msgid "Text~Multiplayer~Deadline"
+msgstr " este turno terminará en %s segundos"
+
+msgid "Text~Multiplayer~Disconnect_Not_In_Save"
+msgstr "Serás desconectado porque no estás listado en la partida guardada"
+
+msgid "Text~Multiplayer~Go"
+msgstr "Vamos a ello"
+
+msgid "Text~Multiplayer~Go_Abort"
+msgstr "Comienzo interrumpido"
+
+msgid "Text~Multiplayer~Go_Check"
+msgstr "Marca cuando estés listo para empezar"
+
+msgid "Text~Multiplayer~Go_Host"
+msgstr "El servidor quiere empezar: listos para empezar"
+
+msgid "Text~Multiplayer~Go_Host_No"
+msgstr "El servidor quiere empezar: no empezamos"
+
+msgid "Text~Multiplayer~Go_Ready"
+msgstr "Listos para empezar"
+
+msgid "Text~Multiplayer~Go_Ready_No"
+msgstr "No estamos listos para empezar"
+
+msgid "Text~Multiplayer~Host_command"
+msgstr "El servidor ha entrado el siguiente comando '%s'"
+
+msgid "Text~Multiplayer~Lost_Connection"
+msgstr "Conexión a %s perdida"
+
+msgid "Text~Multiplayer~MapDL_Cancel"
+msgstr "Anulado"
+
+msgid "Text~Multiplayer~MapDL_Download"
+msgstr "mapa % del sevidor."
+
+msgid "Text~Multiplayer~MapDL_DownloadInvalid"
+msgstr "Mapa original de M.A.X. %s desde el servidor (registrado)!"
+
+msgid "Text~Multiplayer~MapDL_DownloadRequest"
+msgstr "Mapa no instalado: Solicitando descarga personalizada"
+
+msgid "Text~Multiplayer~MapDL_DownloadRequestInvalid"
+msgstr "Mapa no instalado: no tienes permisos para descargar"
+
+msgid "Text~Multiplayer~MapDL_Finished"
+msgstr "Descarga de mapa terminada"
+
+msgid "Text~Multiplayer~MapDL_Percent"
+msgstr "Descargando mapa: %s%"
+
+msgid "Text~Multiplayer~MapDL_Upload"
+msgstr "Cargando mapa a %s..."
+
+msgid "Text~Multiplayer~MapDL_UploadFinished"
+msgstr "Carga de mapa a %s terminada"
+
+msgid "Text~Multiplayer~Map_NoSet"
+msgstr "--mapa no seleccionado--"
+
+msgid "Text~Multiplayer~Missing_Settings"
+msgstr "Las opciones, el mapa, o el guardado no estan disponibles"
+
+msgid "Text~Multiplayer~Network_Closed"
+msgstr "Conexión cerrada"
+
+msgid "Text~Multiplayer~Network_Connected"
+msgstr "Conectado"
+
+msgid "Text~Multiplayer~Network_Connected_Not"
+msgstr "No conectado"
+
+msgid "Text~Multiplayer~Network_Connecting"
+msgstr "Conectando a %s"
+
+msgid "Text~Multiplayer~Network_Error_Connect"
+msgstr "No puedo conectar a servidor"
+
+msgid "Text~Multiplayer~Network_Error_Socket"
+msgstr "Error abriendo socket"
+
+msgid "Text~Multiplayer~Network_New"
+msgstr "Nueva conexión"
+
+msgid "Text~Multiplayer~Network_Open"
+msgstr "Partida abierta (Puerto: %s)"
+
+msgid "Text~Multiplayer~Network_Syncing"
+msgstr "Sincronizando..."
+
+msgid "Text~Multiplayer~No_Map_No_Ready"
+msgstr "No se puede cargar el mapa %s. No estás listo."
+
+msgid "Text~Multiplayer~No_Response"
+msgstr "Esperando respuesta de la red del jugador %s"
+
+msgid "Text~Multiplayer~Not_Ready"
+msgstr "no esta listo"
+
+msgid "Text~Multiplayer~Option_NoSet"
+msgstr "--opciones no seleccionadas--"
+
+msgid "Text~Multiplayer~Pause"
+msgstr "La partida se ha pausado"
+
+msgid "Text~Multiplayer~Player1"
+msgstr "Jugador 1"
+
+msgid "Text~Multiplayer~Player2"
+msgstr "Jugador 2"
+
+msgid "Text~Multiplayer~Player3"
+msgstr "Jugador 3"
+
+msgid "Text~Multiplayer~Player4"
+msgstr "Jugador 4"
+
+msgid "Text~Multiplayer~Player5"
+msgstr "Jugador 5"
+
+msgid "Text~Multiplayer~Player6"
+msgstr "Jugador 6"
+
+msgid "Text~Multiplayer~Player7"
+msgstr "Jugador 7"
+
+msgid "Text~Multiplayer~Player8"
+msgstr "Jugador 8"
+
+msgid "Text~Multiplayer~Player_Amount"
+msgstr "Elige la cantidad de jugadores por favor. Debe haber al menos dos jugadores humanos par empezar una partida. 8 jugadores es el máximo."
+
+msgid "Text~Multiplayer~Player_Color_Taken"
+msgstr "Color de jugador ya usado, por favor elige otro color de forma que sea único"
+
+msgid "Text~Multiplayer~Player_Few"
+msgstr "No hay suficientes jugadores!"
+
+msgid "Text~Multiplayer~Player_Joined"
+msgstr " Se ha unido %s"
+
+msgid "Text~Multiplayer~Player_Left"
+msgstr " %s ha salido de la partida"
+
+msgid "Text~Multiplayer~Player_Many"
+msgstr "Demasiados jugadores!"
+
+msgid "Text~Multiplayer~Player_MustHost"
+msgstr "Debe ser invitado en una partida basada en turnos!"
+
+msgid "Text~Multiplayer~Player_Name_Taken"
+msgstr "Nombre de jugador ya utilizado, por favor, elige otro de forma que sea único"
+
+msgid "Text~Multiplayer~Player_Turn"
+msgstr "Empieza el turno %s"
+
+msgid "Text~Multiplayer~Player_Turn_End"
+msgstr " turno finalizado por %s"
+
+msgid "Text~Multiplayer~Player_Wrong"
+msgstr "Se ha perdido un nombre de jugador correcto."
+
+msgid "Text~Multiplayer~Reconnect"
+msgstr "Esta partida está funcionando. Si has perdido la conexión puedes reconectar. ¿Quieres reconectar?"
+
+msgid "Text~Multiplayer~Reconnect_Forbidden"
+msgstr "Reconexión prohibida por el servidor"
+
+msgid "Text~Multiplayer~Save_Only_Host"
+msgstr "Solo el servidor puede guardar partidas"
+
+msgid "Text~Multiplayer~Server_Not_Running"
+msgstr "Els servidor no está funcionando"
+
+msgid "Text~Multiplayer~Wait_For_Server"
+msgstr "Esperando la respuesta de la red del servidor"
+
+msgid "Text~Multiplayer~Wait_Reconnect"
+msgstr "Esperando la reconexión del jugador"
+
+msgid "Text~Multiplayer~Wait_TurnEnd"
+msgstr "Por favor, espera mientras las ordenes de finalizar turno se ejecutan"
+
+msgid "Text~Multiplayer~Wait_Until"
+msgstr "por favor espera hasta que %s haya terminado su turno"
+
+msgid "Text~Multiplayer~Waiting"
+msgstr "Esperando a otros jugadores..."
+
+msgid "Text~Option~Definite"
+msgstr "Construido (original)"
+
+msgid "Text~Option~Dense"
+msgstr "Denso"
+
+msgid "Text~Option~High"
+msgstr "Alto"
+
+msgid "Text~Option~Limited"
+msgstr "Bajo"
+
+msgid "Text~Option~Low"
+msgstr "Muy bajo"
+
+msgid "Text~Option~Mobile"
+msgstr "Debes construir"
+
+msgid "Text~Option~More"
+msgstr "Muy alto"
+
+msgid "Text~Option~None"
+msgstr "Nada"
+
+msgid "Text~Option~Normal"
+msgstr "Normal"
+
+msgid "Text~Option~Off"
+msgstr "Apagado"
+
+msgid "Text~Option~On"
+msgstr "Encendido"
+
+msgid "Text~Option~Sparse"
+msgstr "Disperso"
+
+msgid "Text~Option~TooMuch"
+msgstr "El máximo"
+
+msgid "Text~Option~Type_Simu"
+msgstr "Simultáneo"
+
+msgid "Text~Option~Type_Turns"
+msgstr "Turnos"
+
+msgid "Text~Others~Active"
+msgstr "Activar"
+
+msgid "Text~Others~ActiveAll_9"
+msgstr "Activar todos"
+
+msgid "Text~Others~Active_7"
+msgstr "Activar"
+
+msgid "Text~Others~Air_Units"
+msgstr "Unidades aéreas"
+
+msgid "Text~Others~Ammo"
+msgstr "Munición"
+
+msgid "Text~Others~Ammo_7"
+msgstr "Munic"
+
+msgid "Text~Others~Armor"
+msgstr "Escudo"
+
+msgid "Text~Others~Armor_7"
+msgstr "Escudo"
+
+msgid "Text~Others~Attack"
+msgstr "Atacar"
+
+msgid "Text~Others~Attack_7"
+msgstr "Atacar"
+
+msgid "Text~Others~Auto_7"
+msgstr "Auto"
+
+msgid "Text~Others~Back"
+msgstr "Atras"
+
+msgid "Text~Others~Build_7"
+msgstr "Construir"
+
+msgid "Text~Others~Buy"
+msgstr "Comprar"
+
+msgid "Text~Others~Cancel"
+msgstr "Cancelar"
+
+msgid "Text~Others~Cargo_7"
+msgstr "Carga"
+
+msgid "Text~Others~Chat"
+msgstr "Chat"
+
+msgid "Text~Others~Clear_7"
+msgstr "Limpiar"
+
+msgid "Text~Others~Color"
+msgstr "Color"
+
+msgid "Text~Others~Costs"
+msgstr "Costes"
+
+msgid "Text~Others~Damaged_Units"
+msgstr "Unidades dañadas"
+
+msgid "Text~Others~Destroy_7"
+msgstr "Borrar"
+
+msgid "Text~Others~Disable_7"
+msgstr "Desactivar"
+
+msgid "Text~Others~Disadvantages_8cut"
+msgstr "Desventajas"
+
+msgid "Text~Others~Distribution_7"
+msgstr "Ajustar"
+
+msgid "Text~Others~Done"
+msgstr "Hecho"
+
+msgid "Text~Others~Done_7"
+msgstr "Hecho"
+
+msgid "Text~Others~End"
+msgstr "Finalizar"
+
+msgid "Text~Others~Exit"
+msgstr "Salir"
+
+msgid "Text~Others~Fight_Units"
+msgstr "Unidades de combate"
+
+msgid "Text~Others~Files"
+msgstr "Ficheros"
+
+msgid "Text~Others~Fog"
+msgstr "Niebla"
+
+msgid "Text~Others~Game_Load"
+msgstr "Cargar partida"
+
+msgid "Text~Others~Game_New"
+msgstr "Nueva Partida"
+
+msgid "Text~Others~Game_Options"
+msgstr "Opciones de juego"
+
+msgid "Text~Others~Grid"
+msgstr "Cuadrícula"
+
+msgid "Text~Others~Ground_Units"
+msgstr "Unidades de tierra"
+
+msgid "Text~Others~Hitpoints"
+msgstr "Vida"
+
+msgid "Text~Others~Hitpoints_7"
+msgstr "Vida"
+
+msgid "Text~Others~Host_Start"
+msgstr "Iniciar Servidor"
+
+msgid "Text~Others~Hot"
+msgstr "Caliente"
+
+msgid "Text~Others~HotSeat_Load"
+msgstr "Cargar Hot Seat"
+
+msgid "Text~Others~HotSeat_New"
+msgstr "Nuevo Hot Seat"
+
+msgid "Text~Others~Included"
+msgstr "Incluido:"
+
+msgid "Text~Others~Info_7"
+msgstr "Info"
+
+msgid "Text~Others~Limited_To"
+msgstr "Limitado a:"
+
+msgid "Text~Others~Load"
+msgstr "Cargar"
+
+msgid "Text~Others~Load_7"
+msgstr "Cargar"
+
+msgid "Text~Others~Log"
+msgstr "Log"
+
+msgid "Text~Others~Mani"
+msgstr "Licenca"
+
+msgid "Text~Others~ManualFireMode_7"
+msgstr "Manual"
+
+msgid "Text~Others~Multi_Player"
+msgstr "Multijugador"
+
+msgid "Text~Others~No"
+msgstr "No"
+
+msgid "Text~Others~OK"
+msgstr "OK"
+
+msgid "Text~Others~Path"
+msgstr "Ruta"
+
+msgid "Text~Others~Power"
+msgstr "Energía"
+
+msgid "Text~Others~Proceed_4"
+msgstr "Aceptar"
+
+msgid "Text~Others~Produce_7"
+msgstr "Producción"
+
+msgid "Text~Others~Produce_Units"
+msgstr "Unidades produciendo"
+
+msgid "Text~Others~Range"
+msgstr "Alcance"
+
+msgid "Text~Others~Range_7"
+msgstr "Alcance"
+
+msgid "Text~Others~Reload"
+msgstr "Recargar"
+
+msgid "Text~Others~ReloadAll_9"
+msgstr "Rec. Todos"
+
+msgid "Text~Others~Reload_7"
+msgstr "Recargar"
+
+msgid "Text~Others~Repair"
+msgstr "Reparar"
+
+msgid "Text~Others~RepairAll_9"
+msgstr "Rep. Todos"
+
+msgid "Text~Others~Repair_7"
+msgstr "Reparar"
+
+msgid "Text~Others~Reports"
+msgstr "Reportes"
+
+msgid "Text~Others~Research"
+msgstr "Investigar"
+
+msgid "Text~Others~Save"
+msgstr "Guardar"
+
+msgid "Text~Others~Scan"
+msgstr "Radar"
+
+msgid "Text~Others~Scan_7"
+msgstr "Radar"
+
+msgid "Text~Others~Score"
+msgstr "Puntuación"
+
+msgid "Text~Others~Sea_Units"
+msgstr "Unidades de mar"
+
+msgid "Text~Others~Seed"
+msgstr "Plantar"
+
+msgid "Text~Others~Seed_7"
+msgstr "Plantar"
+
+msgid "Text~Others~Sentry"
+msgstr "Alerta"
+
+msgid "Text~Others~Settings"
+msgstr "Opciones"
+
+msgid "Text~Others~Shots"
+msgstr "Disparos"
+
+msgid "Text~Others~Shots_7"
+msgstr "Disparo"
+
+msgid "Text~Others~Single_Player"
+msgstr "Un jugador (Sin IA)"
+
+msgid "Text~Others~Speed"
+msgstr "Velocidad"
+
+msgid "Text~Others~Speed_7"
+msgstr "Veloc."
+
+msgid "Text~Others~Start_7"
+msgstr "Empezar"
+
+msgid "Text~Others~Stationary_Units"
+msgstr "Unidades estáticas"
+
+msgid "Text~Others~Status"
+msgstr "Estado"
+
+msgid "Text~Others~Steal_7"
+msgstr "Robar"
+
+msgid "Text~Others~Stealth_Units"
+msgstr "Unidades ocultas"
+
+msgid "Text~Others~Stop_7"
+msgstr "Parar"
+
+msgid "Text~Others~Survey"
+msgstr "Recursos"
+
+msgid "Text~Others~TCPIP_Client"
+msgstr "Unirse a partida TCP/IP"
+
+msgid "Text~Others~TCPIP_Host"
+msgstr "Crear partida TCP/IP"
+
+msgid "Text~Others~Teams_7"
+msgstr "Equipos"
+
+msgid "Text~Others~Total"
+msgstr "Total"
+
+msgid "Text~Others~Transfer_7"
+msgstr "Transferir"
+
+msgid "Text~Others~Unit_destroyed"
+msgstr "Unidad Destruída"
+
+msgid "Text~Others~Units"
+msgstr "Unidades"
+
+msgid "Text~Others~Upgrade"
+msgstr "Actualizar"
+
+msgid "Text~Others~UpgradeAll_7"
+msgstr "Mej.Todo"
+
+msgid "Text~Others~UpgradeAll_9"
+msgstr "Mej. Todo"
+
+msgid "Text~Others~Upgrademenu_7"
+msgstr "Mejoras"
+
+msgid "Text~Others~Upgradethis_7"
+msgstr "Actual."
+
+msgid "Text~Others~Usage_7"
+msgstr "Uso"
+
+msgid "Text~Others~Yes"
+msgstr "Si"
+
+msgid "Text~Punctuation~Colon"
+msgstr ": "
+
+msgid "Text~Settings~Alphaeffects"
+msgstr "Efectos alpha"
+
+msgid "Text~Settings~Animation"
+msgstr "Animaciones"
+
+msgid "Text~Settings~Autosave"
+msgstr "Autoguardado"
+
+msgid "Text~Settings~Disable"
+msgstr "Desactivar"
+
+msgid "Text~Settings~Effects"
+msgstr "Efectos"
+
+msgid "Text~Settings~Intro"
+msgstr "Mostrar intro"
+
+msgid "Text~Settings~Language"
+msgstr "Idioma"
+
+msgid "Text~Settings~Music"
+msgstr "Música"
+
+msgid "Text~Settings~Preferences"
+msgstr "Preferéncias"
+
+msgid "Text~Settings~Resolution"
+msgstr "Resolución"
+
+msgid "Text~Settings~Scrollspeed"
+msgstr "Desplazamiento"
+
+msgid "Text~Settings~Shadows"
+msgstr "Sombras"
+
+msgid "Text~Settings~ShowDamage"
+msgstr "Daño en los edificios"
+
+msgid "Text~Settings~ShowDamageVehicle"
+msgstr "Daño en los vehículos"
+
+msgid "Text~Settings~Tracks"
+msgstr "Marca de neumaticos"
+
+msgid "Text~Settings~Unlimited_11"
+msgstr "Sin límites"
+
+msgid "Text~Settings~Voices"
+msgstr "Voces"
+
+msgid "Text~Settings~Volume"
+msgstr "Volumen"
+
+msgid "Text~Settings~Window"
+msgstr "En ventana"
+
+msgid "Text~Title~Alien_Tech"
+msgstr "Restos Alien"
+
+msgid "Text~Title~BridgeHead"
+msgstr "Base inicial"
+
+msgid "Text~Title~Build_Factory"
+msgstr "Menú de Fabrica"
+
+msgid "Text~Title~Build_Vehicle"
+msgstr "Menú de Construcción"
+
+msgid "Text~Title~Cargo"
+msgstr "Recursos"
+
+msgid "Text~Title~Choose_Clan"
+msgstr "Elige Clan"
+
+msgid "Text~Title~Choose_Planet"
+msgstr "Elige planeta"
+
+msgid "Text~Title~Choose_Units"
+msgstr "Elige Unidades"
+
+msgid "Text~Title~Clan"
+msgstr "Clan"
+
+msgid "Text~Title~Clans"
+msgstr "Clanes"
+
+msgid "Text~Title~Color"
+msgstr "Color:"
+
+msgid "Text~Title~Computer"
+msgstr "Ordenador (IA)"
+
+msgid "Text~Title~Connect"
+msgstr "Conectar"
+
+msgid "Text~Title~Credits"
+msgstr "Créditos"
+
+msgid "Text~Title~Credits_start"
+msgstr "Créditos al comienzo"
+
+msgid "Text~Title~Custom_11"
+msgstr "Personalizado"
+
+msgid "Text~Title~Game_Type"
+msgstr "Tipo de partida"
+
+msgid "Text~Title~Gold"
+msgstr "Oro"
+
+msgid "Text~Title~HotSeat"
+msgstr "Hot Seat"
+
+msgid "Text~Title~Human"
+msgstr "Humano"
+
+msgid "Text~Title~IP"
+msgstr "IP"
+
+msgid "Text~Title~Labs"
+msgstr "Menú Investigar"
+
+msgid "Text~Title~Load"
+msgstr "Menú Cargar"
+
+msgid "Text~Title~LoadSave"
+msgstr "Menú Cargar/Guardar"
+
+msgid "Text~Title~MainMenu"
+msgstr "Menú principal"
+
+msgid "Text~Title~Map"
+msgstr "Mapa: %s"
+
+msgid "Text~Title~Metal"
+msgstr "Materiales Básicos"
+
+msgid "Text~Title~Mine"
+msgstr "Redistribuir minas"
+
+msgid "Text~Title~Nobody"
+msgstr "Nadie"
+
+msgid "Text~Title~Oil"
+msgstr "Combustible"
+
+msgid "Text~Title~Options"
+msgstr "Opciones"
+
+msgid "Text~Title~Player_Name"
+msgstr "Nombre del Jugador:"
+
+msgid "Text~Title~Player_Select"
+msgstr "Opciones de jugador"
+
+msgid "Text~Title~Players"
+msgstr "Jugadores:"
+
+msgid "Text~Title~Port"
+msgstr "Puerto"
+
+msgid "Text~Title~Resource"
+msgstr "Densidad de recursos"
+
+msgid "Text~Title~Resource_Density"
+msgstr "Frecuencia de recursos"
+
+msgid "Text~Title~Savegame"
+msgstr "Guardar Partida:"
+
+msgid "Text~Title~Send"
+msgstr "Enviar"
+
+msgid "Text~Title~Team"
+msgstr "Equipo"
+
+msgid "Text~Title~Turn_end"
+msgstr "Turno Terminado"
+
+msgid "Text~Title~Turn_limit"
+msgstr "Límite de Turnos"
+
+msgid "Text~Title~Unitinfo"
+msgstr "Pantalla de estado de unidad"
+
+msgid "Text~Title~Upgrades_Menu"
+msgstr "Menú de mejoras"
+

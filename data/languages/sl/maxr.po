@@ -1,0 +1,1072 @@
+# Slovenian translations for Maxr package.
+# Copyright (C) 2021 THE Maxr'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Maxr package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Maxr 0.3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-07-29 21:33+0200\n"
+"PO-Revision-Date: 2021-07-29 22:02+0200\n"
+"Last-Translator:\n"
+"Language-Team: Slovenian\n"
+"Language: sl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n"
+"%100==4 ? 2 : 3);\n"
+
+msgid "Text~Comp~Adjustments_Fuel_Increased"
+msgstr "Popravek: črpanje goriva je povečano za %s"
+
+msgid "Text~Comp~Adjustments_Gold_Decreased"
+msgstr "Popravek: izkop zlata je zmanjšan za %s"
+
+msgid "Text~Comp~Adjustments_Metal_Decreased"
+msgstr "Popravek: izkop surovin je zmanjšan za %s"
+
+msgid "Text~Comp~Attacked"
+msgstr "%s je napadena"
+
+msgid "Text~Comp~AttackingEnemy"
+msgstr "%s napada sovražnika"
+
+msgid "Text~Comp~AttackingStatusStr"
+msgstr "napada"
+
+msgid "Text~Comp~Building_Disabled"
+msgstr "Zgradba je izključena"
+
+msgid "Text~Comp~CapturedByEnemy"
+msgstr "%s je sovražnik zajel"
+
+msgid "Text~Comp~Cheat"
+msgstr "uporaba goljufije"
+
+msgid "Text~Comp~Clearing"
+msgstr "Čiščenje (%s)"
+
+msgid "Text~Comp~Clearing_Fin"
+msgstr "Čiščenje končano"
+
+msgid "Text~Comp~Clearing_Mine"
+msgstr "Čisti mine"
+
+msgid "Text~Comp~CommandoRank_Average"
+msgstr "Povprečen"
+
+msgid "Text~Comp~CommandoRank_Elite"
+msgstr "Eliten"
+
+msgid "Text~Comp~CommandoRank_Expert"
+msgstr "Ekspert"
+
+msgid "Text~Comp~CommandoRank_GrandMaster"
+msgstr "Veliki mojster"
+
+msgid "Text~Comp~CommandoRank_Greenhorn"
+msgstr "Zelenec"
+
+msgid "Text~Comp~CommandoRank_Veteran"
+msgstr "Veteran"
+
+msgid "Text~Comp~Dated"
+msgstr "datiran"
+
+msgid "Text~Comp~Defeated"
+msgstr "Igralec %s poražen"
+
+msgid "Text~Comp~Description"
+msgstr "Opis"
+
+msgid "Text~Comp~Destroyed"
+msgstr "%s uničen"
+
+msgid "Text~Comp~Detected"
+msgstr "zaznan"
+
+msgid "Text~Comp~Disabled"
+msgstr "onemogočeno delovanje"
+
+msgid "Text~Comp~EcoSphere"
+msgstr "Eko-sfera"
+
+msgid "Text~Comp~EcoSpheres"
+msgstr "Eko-sfere"
+
+msgid "Text~Comp~End_Game"
+msgstr "Res želite zaključiti?\n\nNeshranjeni napredek bo izgubljen."
+
+msgid "Text~Comp~Energy_Insufficient"
+msgstr "Premalo energije za zagon."
+
+msgid "Text~Comp~Energy_IsNeeded"
+msgstr "Ne morem ugasniti generatorja; potrebujemo energijo."
+
+msgid "Text~Comp~Energy_Low"
+msgstr "Pomanjkanje energije; izključujem porabnika."
+
+msgid "Text~Comp~Energy_ToLow"
+msgstr "Pomanjkanje energije; zaganjam generator."
+
+msgid "Text~Comp~Finished"
+msgstr "je zaključen-a"
+
+msgid "Text~Comp~Finished2"
+msgstr "so zaključeni"
+
+msgid "Text~Comp~Fuel_Insufficient"
+msgstr "Premalo goriva za zagon."
+
+msgid "Text~Comp~Fuel_Low"
+msgstr "Pomanjkanje goriva; izključujem generator."
+
+msgid "Text~Comp~GameEndsAt"
+msgstr "Igra se konča pri:"
+
+msgid "Text~Comp~Gold_Insufficient"
+msgstr "Premalo zlata za zagon."
+
+msgid "Text~Comp~Gold_Low"
+msgstr "Pomanjkanje zlata; izključujem rafinerijo."
+
+msgid "Text~Comp~IsBeeingAttacked"
+msgstr "Je napadena"
+
+msgid "Text~Comp~Labs"
+msgstr "Laboratoriji"
+
+msgid "Text~Comp~Landing_Select"
+msgstr "Izberi začetno pozicijo."
+
+msgid "Text~Comp~Landing_Too_Close"
+msgstr "Izbrana pozicija je preblizu drugemu igralcu. Izberi drugo pozicijo."
+
+msgid "Text~Comp~Landing_Warning"
+msgstr "Izbrana pozicija je v bližini drugega igralca. Potrdi pozicijo s klikom na rdeči krog ali izberi drugo pozicijo."
+
+msgid "Text~Comp~Laying"
+msgstr "polagam mine"
+
+msgid "Text~Comp~Metal_Insufficient"
+msgstr "Premalo surovin za zagon."
+
+msgid "Text~Comp~Metal_Low"
+msgstr "Pomanjkanje surovin; izključujem porabnika."
+
+msgid "Text~Comp~Moving"
+msgstr "v premiku"
+
+msgid "Text~Comp~MovingToAttack"
+msgstr "premik za napad"
+
+msgid "Text~Comp~NoLimit"
+msgstr "Boj do konca!"
+
+msgid "Text~Comp~Path_interrupted"
+msgstr "Ukaza za izgradnjo poti ni možno obnoviti."
+
+msgid "Text~Comp~Point"
+msgstr "točka"
+
+msgid "Text~Comp~Points"
+msgstr "Točk"
+
+msgid "Text~Comp~Producing"
+msgstr "Izgradnja poteka"
+
+msgid "Text~Comp~Producing_Err"
+msgstr "Blokirana pozicija ali pomanjkanje surovin za izgradnjo"
+
+msgid "Text~Comp~Producing_Fin"
+msgstr "izgradnja je zaključena"
+
+msgid "Text~Comp~ReactionFireOff"
+msgstr "Izklop samodejnega ognja"
+
+msgid "Text~Comp~Repeat"
+msgstr "Ponovno"
+
+msgid "Text~Comp~Reserve"
+msgstr "Rezerva"
+
+msgid "Text~Comp~ResolutionWarning"
+msgstr "Opozorilo: nepodprt video način v konfiguraciji"
+
+msgid "Text~Comp~RestartRequired"
+msgstr ""
+
+msgid "Text~Comp~Screenshot_Done"
+msgstr "Posnetek zaslona je shranjen v %s"
+
+msgid "Text~Comp~Sentry"
+msgstr "na preži"
+
+msgid "Text~Comp~Stolen"
+msgstr "ukraden"
+
+msgid "Text~Comp~SuddenDeath"
+msgstr "Nenadna smrt! Prvi igralec, ki poviša točke zmaga."
+
+msgid "Text~Comp~Surveying"
+msgstr "analiziranje"
+
+msgid "Text~Comp~Team_Insufficient"
+msgstr "Premalo delavcev za zagon."
+
+msgid "Text~Comp~Team_Low"
+msgstr "Pomanjkanje delavcev; izključujem zgradbo."
+
+msgid "Text~Comp~Themes"
+msgstr "Teme"
+
+msgid "Text~Comp~Turn_5"
+msgstr "Potezo"
+
+msgid "Text~Comp~Turn_Automove"
+msgstr "Izvajanje preostalih premikov"
+
+msgid "Text~Comp~Turn_Start"
+msgstr "Začni potezo %s"
+
+msgid "Text~Comp~Turn_Wait"
+msgstr "Prosim počakaj, da se zaključijo vsi premiki"
+
+msgid "Text~Comp~Turns"
+msgstr "Potez"
+
+msgid "Text~Comp~Upgrades_Done"
+msgstr "Nadgrajen"
+
+msgid "Text~Comp~Upgrades_Done2"
+msgstr "enote tipa %s"
+
+msgid "Text~Comp~Waits"
+msgstr "v mirovanju"
+
+msgid "Text~Comp~Wins"
+msgstr ""
+
+msgid "Text~Comp~Working"
+msgstr "v delovanju"
+
+msgid "Text~Error_Messages~ERROR_File_Not_Found"
+msgstr "Ne najdem datoteke: %s"
+
+msgid "Text~Error_Messages~ERROR_Map_Loading"
+msgstr "Napaka pri nalaganju pokrajine"
+
+msgid "Text~Error_Messages~ERROR_Missing_Translation"
+msgstr "manjkajoč prevod: %s"
+
+msgid "Text~Error_Messages~INFO_Language_initialised"
+msgstr "Jezik je nastavljen"
+
+msgid "Text~Error_Messages~INFO_Not_Implemented"
+msgstr "Funkcija še ni implementirana"
+
+msgid "Text~Init~Buildings"
+msgstr "Nalagam stavbe ..."
+
+msgid "Text~Init~Clans"
+msgstr "Nalagam plemena ..."
+
+msgid "Text~Init~Effects"
+msgstr "Nalagam efekte ..."
+
+msgid "Text~Init~Fonts"
+msgstr "Nalagam znake ..."
+
+msgid "Text~Init~GFX"
+msgstr "Nalagam grafiko ..."
+
+msgid "Text~Init~Keys"
+msgstr "Nalagam tipke ..."
+
+msgid "Text~Init~Lang"
+msgstr "Nalagam jezikovni paket ..."
+
+msgid "Text~Init~Music"
+msgstr "Nalagam glasbo ..."
+
+msgid "Text~Init~Sounds"
+msgstr "Nalagam zvoke ..."
+
+msgid "Text~Init~Terrain"
+msgstr "Nalagam ozemlje ..."
+
+msgid "Text~Init~Vehicles"
+msgstr "Nalagam vozila ..."
+
+msgid "Text~Init~Voices"
+msgstr "Nalagam glasove ..."
+
+msgid "Text~Main~Credits_Doc"
+msgstr "Michael Mönchs M.A.X. (Priredbo izdelal DoctorDeath)"
+
+msgid "Text~Main~Credits_MM"
+msgstr "Michael Mönchs M.A.X. (Lastnik originala je Interplay)"
+
+msgid "Text~Main~Credits_Reloaded"
+msgstr "M.A.X.R. temelji na Interplayevi igri Mechanized Assault and Exploration"
+
+msgid "Text~Main~Game_Subtitle"
+msgstr "Mechanized Assault and Exploration Reloaded"
+
+msgid "Text~Main~Game_Title"
+msgstr "M.A.X.R."
+
+msgid "Text~Main~Remarks~Not_yet_implemented"
+msgstr "(*) ni še implementirano"
+
+msgid "Text~Main~Version"
+msgstr "verzija v%s"
+
+msgid "Text~Multiplayer~Abort_Waiting"
+msgstr "Strežnik; pritisni F2 za preklic čakanja."
+
+msgid "Text~Multiplayer~Connection_Terminated"
+msgstr "Povezava je bila prekinjena."
+
+msgid "Text~Multiplayer~Deadline"
+msgstr "Ta poteza se bo končala v %s sekundah."
+
+msgid "Text~Multiplayer~Disconnect_Not_In_Save"
+msgstr "Igralec bo izključen, saj ni prisoten v shranjeni igri."
+
+msgid "Text~Multiplayer~Go"
+msgstr "Gremo, akcija"
+
+msgid "Text~Multiplayer~Go_Abort"
+msgstr "Prekini"
+
+msgid "Text~Multiplayer~Go_Check"
+msgstr "Preveri pripravljenost"
+
+msgid "Text~Multiplayer~Go_Host"
+msgstr "Strežnik želi da: Potrdiš pripravljenost"
+
+msgid "Text~Multiplayer~Go_Host_No"
+msgstr "Strežnik želi da: Ne potrdiš pripravljenosti"
+
+msgid "Text~Multiplayer~Go_Ready"
+msgstr "Pripravljen"
+
+msgid "Text~Multiplayer~Go_Ready_No"
+msgstr "nisem pripravljen"
+
+msgid "Text~Multiplayer~Host_command"
+msgstr ""
+
+msgid "Text~Multiplayer~Lost_Connection"
+msgstr "Povezava z %s je bila prekinjena."
+
+msgid "Text~Multiplayer~MapDL_Cancel"
+msgstr "Prekinjeno"
+
+msgid "Text~Multiplayer~MapDL_Download"
+msgstr "pokrajina %s s strežnika"
+
+msgid "Text~Multiplayer~MapDL_DownloadInvalid"
+msgstr "originalna pokrajina %s s strežnika (licencirana)!"
+
+msgid "Text~Multiplayer~MapDL_DownloadRequest"
+msgstr "Pokrajina ni nameščena: potreben je prenos"
+
+msgid "Text~Multiplayer~MapDL_DownloadRequestInvalid"
+msgstr "Pokrajina ni nameščena: prenos ni dovoljen"
+
+msgid "Text~Multiplayer~MapDL_Finished"
+msgstr "Prenos pokrajine je zaključen."
+
+msgid "Text~Multiplayer~MapDL_Percent"
+msgstr "Prenos pokrajine: %s%"
+
+msgid "Text~Multiplayer~MapDL_Upload"
+msgstr "Nalaganje pokrajine na %s..."
+
+msgid "Text~Multiplayer~MapDL_UploadFinished"
+msgstr "Nalaganje pokrajine na %s je končano."
+
+msgid "Text~Multiplayer~Map_NoSet"
+msgstr "--brez nastavitev pokrajine--"
+
+msgid "Text~Multiplayer~Missing_Settings"
+msgstr "Možnosti, pokrajina ali shranjena igra ni nastavljena"
+
+msgid "Text~Multiplayer~Network_Closed"
+msgstr "Povezava zaključena"
+
+msgid "Text~Multiplayer~Network_Connected"
+msgstr "Povezan"
+
+msgid "Text~Multiplayer~Network_Connected_Not"
+msgstr "Brez povezave"
+
+msgid "Text~Multiplayer~Network_Connecting"
+msgstr "Povezovanje na %s"
+
+msgid "Text~Multiplayer~Network_Error_Connect"
+msgstr "Ne morem se povezati na strežnika"
+
+msgid "Text~Multiplayer~Network_Error_Socket"
+msgstr "Napaka pri odpiranju"
+
+msgid "Text~Multiplayer~Network_New"
+msgstr "Nova povezava"
+
+msgid "Text~Multiplayer~Network_Open"
+msgstr "Igra odprta (Vrata: %s)"
+
+msgid "Text~Multiplayer~Network_Syncing"
+msgstr "Sinhronizacija..."
+
+msgid "Text~Multiplayer~No_Map_No_Ready"
+msgstr "Ne morem naložiti pokrajine %s. Nisi pripravljen."
+
+msgid "Text~Multiplayer~No_Response"
+msgstr "Čakam na mrežni odziv igralca %s"
+
+msgid "Text~Multiplayer~Not_Ready"
+msgstr "ni pripravljen"
+
+msgid "Text~Multiplayer~Option_NoSet"
+msgstr "--možnosti niso nastavljene--"
+
+msgid "Text~Multiplayer~Pause"
+msgstr "Igra je bila ustavljena."
+
+msgid "Text~Multiplayer~Player1"
+msgstr "Igralec 1"
+
+msgid "Text~Multiplayer~Player2"
+msgstr "Igralec 2"
+
+msgid "Text~Multiplayer~Player3"
+msgstr "Igralec 3"
+
+msgid "Text~Multiplayer~Player4"
+msgstr "Igralec 4"
+
+msgid "Text~Multiplayer~Player5"
+msgstr "Igralec 5"
+
+msgid "Text~Multiplayer~Player6"
+msgstr "Igralec 6"
+
+msgid "Text~Multiplayer~Player7"
+msgstr "Igralec 7"
+
+msgid "Text~Multiplayer~Player8"
+msgstr "Igralec 8"
+
+msgid "Text~Multiplayer~Player_Amount"
+msgstr "Izberi število igralcev. Za igro na Vročem stolu sta potrebna vsaj dva človeka. Največ igralcev je lahko 8."
+
+msgid "Text~Multiplayer~Player_Color_Taken"
+msgstr "Barva igralca je že oddana. Izberite drugačno barvo."
+
+msgid "Text~Multiplayer~Player_Few"
+msgstr "Ni dovolj igralcev!"
+
+msgid "Text~Multiplayer~Player_Joined"
+msgstr "pridružil se je %s"
+
+msgid "Text~Multiplayer~Player_Left"
+msgstr "%s je zapustil igro"
+
+msgid "Text~Multiplayer~Player_Many"
+msgstr "Preveč igralcev!"
+
+msgid "Text~Multiplayer~Player_MustHost"
+msgstr "mora biti strežnik v potezni igri!"
+
+msgid "Text~Multiplayer~Player_Name_Taken"
+msgstr "Ime igralca je že oddano. Izberite drugačno ime."
+
+msgid "Text~Multiplayer~Player_Turn"
+msgstr "%s:\nZačni potezo."
+
+msgid "Text~Multiplayer~Player_Turn_End"
+msgstr "%s je končal potezo"
+
+msgid "Text~Multiplayer~Player_Wrong"
+msgstr "Manjka pravilno ime igralca"
+
+msgid "Text~Multiplayer~Reconnect"
+msgstr "Igra je že v teku.\nČe je bila prekinjena povezava, se lahko priključiš znova.\n\nSe želiš priključiti?"
+
+msgid "Text~Multiplayer~Reconnect_Forbidden"
+msgstr "Ponovna priključitev je onemogočena s strani strežnika."
+
+msgid "Text~Multiplayer~Save_Only_Host"
+msgstr "Zgolj gostitelj lahko shrani tekoče igre."
+
+msgid "Text~Multiplayer~Server_Not_Running"
+msgstr "Strežnik ne deluje."
+
+msgid "Text~Multiplayer~Wait_For_Server"
+msgstr "Čakam na mrežni odziv strežnika"
+
+msgid "Text~Multiplayer~Wait_Reconnect"
+msgstr "Čakam na ponovno priključitev igralca."
+
+msgid "Text~Multiplayer~Wait_TurnEnd"
+msgstr "Počakaj, da se izvede zaključek poteze."
+
+msgid "Text~Multiplayer~Wait_Until"
+msgstr "Počakaj, da %s zaključi potezo."
+
+msgid "Text~Multiplayer~Waiting"
+msgstr "Čakam na druge igralce..."
+
+msgid "Text~Option~Definite"
+msgstr "Je izgrajena"
+
+msgid "Text~Option~Dense"
+msgstr "Gosto"
+
+msgid "Text~Option~High"
+msgstr "Veliko"
+
+msgid "Text~Option~Limited"
+msgstr "Omejeno"
+
+msgid "Text~Option~Low"
+msgstr "Malo"
+
+msgid "Text~Option~Mobile"
+msgstr "Ni izgrajena"
+
+msgid "Text~Option~More"
+msgstr "Zelo veliko"
+
+msgid "Text~Option~None"
+msgstr "Nič"
+
+msgid "Text~Option~Normal"
+msgstr "Srednje"
+
+msgid "Text~Option~Off"
+msgstr "Izklop"
+
+msgid "Text~Option~On"
+msgstr "Vklop"
+
+msgid "Text~Option~Sparse"
+msgstr "Redko"
+
+msgid "Text~Option~TooMuch"
+msgstr "Preveč"
+
+msgid "Text~Option~Type_Simu"
+msgstr "Sočasne poteze"
+
+msgid "Text~Option~Type_Turns"
+msgstr "Izmenljive poteze"
+
+msgid "Text~Others~Active"
+msgstr "Aktiven"
+
+msgid "Text~Others~ActiveAll_9"
+msgstr "Aktiv.vse"
+
+msgid "Text~Others~Active_7"
+msgstr "Aktiv."
+
+msgid "Text~Others~Air_Units"
+msgstr "Zračne enote"
+
+msgid "Text~Others~Ammo"
+msgstr "Strelivo"
+
+msgid "Text~Others~Ammo_7"
+msgstr "Strelivo"
+
+msgid "Text~Others~Armor"
+msgstr "Oklep"
+
+msgid "Text~Others~Armor_7"
+msgstr "Oklep"
+
+msgid "Text~Others~Attack"
+msgstr "Napad"
+
+msgid "Text~Others~Attack_7"
+msgstr "Napad"
+
+msgid "Text~Others~Auto_7"
+msgstr "Auto"
+
+msgid "Text~Others~Back"
+msgstr "Nazaj"
+
+msgid "Text~Others~Build_7"
+msgstr "Gradi"
+
+msgid "Text~Others~Buy"
+msgstr "Kupi"
+
+msgid "Text~Others~Cancel"
+msgstr "Prekliči"
+
+msgid "Text~Others~Cargo_7"
+msgstr "Tovor"
+
+msgid "Text~Others~Chat"
+msgstr "Pogovor"
+
+msgid "Text~Others~Clear_7"
+msgstr "Počisti"
+
+msgid "Text~Others~Color"
+msgstr "Barva"
+
+msgid "Text~Others~Costs"
+msgstr "Cena"
+
+msgid "Text~Others~Damaged_Units"
+msgstr "Poškodovane enote"
+
+msgid "Text~Others~Destroy_7"
+msgstr "Uniči"
+
+msgid "Text~Others~Disable_7"
+msgstr "Pokvari"
+
+msgid "Text~Others~Disadvantages_8cut"
+msgstr "Slabosti"
+
+msgid "Text~Others~Distribution_7"
+msgstr "Uredi"
+
+msgid "Text~Others~Done"
+msgstr "Zapri"
+
+msgid "Text~Others~Done_7"
+msgstr "Zapri"
+
+msgid "Text~Others~End"
+msgstr "Končaj"
+
+msgid "Text~Others~Exit"
+msgstr "Izhod"
+
+msgid "Text~Others~Fight_Units"
+msgstr "Enote v boju"
+
+msgid "Text~Others~Files"
+msgstr "Datoteke"
+
+msgid "Text~Others~Fog"
+msgstr "Megla"
+
+msgid "Text~Others~Game_Load"
+msgstr "Naloži igro"
+
+msgid "Text~Others~Game_New"
+msgstr "Nova igra"
+
+msgid "Text~Others~Game_Options"
+msgstr "Možnosti igre"
+
+msgid "Text~Others~Grid"
+msgstr "Mreža"
+
+msgid "Text~Others~Ground_Units"
+msgstr "Kopenske enote"
+
+msgid "Text~Others~Hitpoints"
+msgstr "Trdnost"
+
+msgid "Text~Others~Hitpoints_7"
+msgstr "Zadetki"
+
+msgid "Text~Others~Host_Start"
+msgstr "Zaženi strežnik"
+
+msgid "Text~Others~Hot"
+msgstr "Oboroži"
+
+msgid "Text~Others~HotSeat_Load"
+msgstr "Naloži Vroči stol"
+
+msgid "Text~Others~HotSeat_New"
+msgstr "Začni Vroči stol"
+
+msgid "Text~Others~Included"
+msgstr "Vključeno:"
+
+msgid "Text~Others~Info_7"
+msgstr "Info"
+
+msgid "Text~Others~Limited_To"
+msgstr "Omejeno na:"
+
+msgid "Text~Others~Load"
+msgstr "Naloži"
+
+msgid "Text~Others~Load_7"
+msgstr "Naloži"
+
+msgid "Text~Others~Log"
+msgstr "Dnevnik"
+
+msgid "Text~Others~Mani"
+msgstr "Licenca"
+
+msgid "Text~Others~ManualFireMode_7"
+msgstr "Ročno"
+
+msgid "Text~Others~Multi_Player"
+msgstr "Večigralski način"
+
+msgid "Text~Others~No"
+msgstr "Ne"
+
+msgid "Text~Others~OK"
+msgstr "OK"
+
+msgid "Text~Others~Path"
+msgstr "Pot"
+
+msgid "Text~Others~Power"
+msgstr "Energija"
+
+msgid "Text~Others~Proceed_4"
+msgstr "OK"
+
+msgid "Text~Others~Produce_7"
+msgstr "Proizvaja"
+
+msgid "Text~Others~Produce_Units"
+msgstr "Proizvodnja enot"
+
+msgid "Text~Others~Range"
+msgstr "Domet"
+
+msgid "Text~Others~Range_7"
+msgstr "Domet"
+
+msgid "Text~Others~Reload"
+msgstr "Obnovi"
+
+msgid "Text~Others~ReloadAll_9"
+msgstr "Obnovi vse"
+
+msgid "Text~Others~Reload_7"
+msgstr "Obnovi"
+
+msgid "Text~Others~Repair"
+msgstr "Popravi"
+
+msgid "Text~Others~RepairAll_9"
+msgstr "Pop.vse"
+
+msgid "Text~Others~Repair_7"
+msgstr "Popravi"
+
+msgid "Text~Others~Reports"
+msgstr "Poročila"
+
+msgid "Text~Others~Research"
+msgstr "Razišči"
+
+msgid "Text~Others~Save"
+msgstr "Shrani"
+
+msgid "Text~Others~Scan"
+msgstr "Pregled"
+
+msgid "Text~Others~Scan_7"
+msgstr "Pregled"
+
+msgid "Text~Others~Score"
+msgstr "Rezultat"
+
+msgid "Text~Others~Sea_Units"
+msgstr "Pomorske enote"
+
+msgid "Text~Others~Seed"
+msgstr "Zasej"
+
+msgid "Text~Others~Seed_7"
+msgstr "Zasej"
+
+msgid "Text~Others~Sentry"
+msgstr "Nadzor"
+
+msgid "Text~Others~Settings"
+msgstr "Nastavitve"
+
+msgid "Text~Others~Shots"
+msgstr "Streli"
+
+msgid "Text~Others~Shots_7"
+msgstr "Streli"
+
+msgid "Text~Others~Single_Player"
+msgstr "Enoigralski način"
+
+msgid "Text~Others~Speed"
+msgstr "Hitrost"
+
+msgid "Text~Others~Speed_7"
+msgstr "Hitrost"
+
+msgid "Text~Others~Start_7"
+msgstr "Start"
+
+msgid "Text~Others~Stationary_Units"
+msgstr "Stacionarne enote"
+
+msgid "Text~Others~Status"
+msgstr "Status"
+
+msgid "Text~Others~Steal_7"
+msgstr "Zaseži"
+
+msgid "Text~Others~Stealth_Units"
+msgstr "Skrivne enote"
+
+msgid "Text~Others~Stop_7"
+msgstr "Stop"
+
+msgid "Text~Others~Survey"
+msgstr "Analiziraj"
+
+msgid "Text~Others~TCPIP_Client"
+msgstr "TCP/IP odjemalec"
+
+msgid "Text~Others~TCPIP_Host"
+msgstr "TCP/IP gostitelj"
+
+msgid "Text~Others~Teams_7"
+msgstr "Moštva"
+
+msgid "Text~Others~Total"
+msgstr "Skupaj"
+
+msgid "Text~Others~Transfer_7"
+msgstr "Prenos"
+
+msgid "Text~Others~Unit_destroyed"
+msgstr ""
+
+msgid "Text~Others~Units"
+msgstr "Enote"
+
+msgid "Text~Others~Upgrade"
+msgstr "Nadgradi"
+
+msgid "Text~Others~UpgradeAll_7"
+msgstr "Nad.vse"
+
+msgid "Text~Others~UpgradeAll_9"
+msgstr "Nadg.vse"
+
+msgid "Text~Others~Upgrademenu_7"
+msgstr "Nakup"
+
+msgid "Text~Others~Upgradethis_7"
+msgstr "Nadgradi"
+
+msgid "Text~Others~Usage_7"
+msgstr "Poraba"
+
+msgid "Text~Others~Yes"
+msgstr "Da"
+
+msgid "Text~Punctuation~Colon"
+msgstr ": "
+
+msgid "Text~Settings~Alphaeffects"
+msgstr "Alfa efekti"
+
+msgid "Text~Settings~Animation"
+msgstr "Animacije"
+
+msgid "Text~Settings~Autosave"
+msgstr "Avto. shrani"
+
+msgid "Text~Settings~Disable"
+msgstr "Onemogoči"
+
+msgid "Text~Settings~Effects"
+msgstr "Efekti"
+
+msgid "Text~Settings~Intro"
+msgstr "Prikaži uvod"
+
+msgid "Text~Settings~Language"
+msgstr ""
+
+msgid "Text~Settings~Music"
+msgstr "Glasba"
+
+msgid "Text~Settings~Preferences"
+msgstr "Lastnosti"
+
+msgid "Text~Settings~Resolution"
+msgstr "Resolucija"
+
+msgid "Text~Settings~Scrollspeed"
+msgstr "Hitrost zaslona"
+
+msgid "Text~Settings~Shadows"
+msgstr "Senčenje"
+
+msgid "Text~Settings~ShowDamage"
+msgstr "Poškodbe stavb"
+
+msgid "Text~Settings~ShowDamageVehicle"
+msgstr "Poškodbe vozil"
+
+msgid "Text~Settings~Tracks"
+msgstr "Sledi vozil"
+
+msgid "Text~Settings~Unlimited_11"
+msgstr ""
+
+msgid "Text~Settings~Voices"
+msgstr "Glasovi"
+
+msgid "Text~Settings~Volume"
+msgstr "Glasnost"
+
+msgid "Text~Settings~Window"
+msgstr "V oknu"
+
+msgid "Text~Title~Alien_Tech"
+msgstr "Nezemeljska tehnologija"
+
+msgid "Text~Title~BridgeHead"
+msgstr "Začetna baza"
+
+msgid "Text~Title~Build_Factory"
+msgstr "Meni Tovarna"
+
+msgid "Text~Title~Build_Vehicle"
+msgstr "Meni Gradnja"
+
+msgid "Text~Title~Cargo"
+msgstr "Tovor"
+
+msgid "Text~Title~Choose_Clan"
+msgstr "Izbira plemena"
+
+msgid "Text~Title~Choose_Planet"
+msgstr "Izbira planeta"
+
+msgid "Text~Title~Choose_Units"
+msgstr "Izbira enot"
+
+msgid "Text~Title~Clan"
+msgstr "Pleme"
+
+msgid "Text~Title~Clans"
+msgstr "Plemena"
+
+msgid "Text~Title~Color"
+msgstr "Barva:"
+
+msgid "Text~Title~Computer"
+msgstr "Računalnik"
+
+msgid "Text~Title~Connect"
+msgstr "Povezava"
+
+msgid "Text~Title~Credits"
+msgstr "Sredstva"
+
+msgid "Text~Title~Credits_start"
+msgstr "Začetna sredstva"
+
+msgid "Text~Title~Custom_11"
+msgstr ""
+
+msgid "Text~Title~Game_Type"
+msgstr "Tip igre"
+
+msgid "Text~Title~Gold"
+msgstr "Zlato"
+
+msgid "Text~Title~HotSeat"
+msgstr "Vroči stol"
+
+msgid "Text~Title~Human"
+msgstr "Človek"
+
+msgid "Text~Title~IP"
+msgstr "IP"
+
+msgid "Text~Title~Labs"
+msgstr "Meni Raziskave"
+
+msgid "Text~Title~Load"
+msgstr "Meni Naloži"
+
+msgid "Text~Title~LoadSave"
+msgstr "Meni Naloži/Shrani"
+
+msgid "Text~Title~MainMenu"
+msgstr "Glavni meni"
+
+msgid "Text~Title~Map"
+msgstr "Pokrajina: %s"
+
+msgid "Text~Title~Metal"
+msgstr "Surovine"
+
+msgid "Text~Title~Mine"
+msgstr "Meni Rudnik"
+
+msgid "Text~Title~Nobody"
+msgstr "Nihče"
+
+msgid "Text~Title~Oil"
+msgstr "Gorivo"
+
+msgid "Text~Title~Options"
+msgstr "Možnosti"
+
+msgid "Text~Title~Player_Name"
+msgstr "Ime igralca:"
+
+msgid "Text~Title~Player_Select"
+msgstr "Možnosti igralca"
+
+msgid "Text~Title~Players"
+msgstr "Igralci:"
+
+msgid "Text~Title~Port"
+msgstr "Vrata"
+
+msgid "Text~Title~Resource"
+msgstr "Količina rudnin"
+
+msgid "Text~Title~Resource_Density"
+msgstr "Pogostost rudnin"
+
+msgid "Text~Title~Savegame"
+msgstr "Shranjene igre:"
+
+msgid "Text~Title~Send"
+msgstr "Pošlji"
+
+msgid "Text~Title~Team"
+msgstr "Moštvo"
+
+msgid "Text~Title~Turn_end"
+msgstr ""
+
+msgid "Text~Title~Turn_limit"
+msgstr ""
+
+msgid "Text~Title~Unitinfo"
+msgstr "Informacije o enoti"
+
+msgid "Text~Title~Upgrades_Menu"
+msgstr "Meni Nadgradnje"
+

@@ -1,0 +1,438 @@
+# English translations for Maxr package.
+# Copyright (C) 2021 THE Maxr'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Maxr package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Maxr 0.3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-07-29 21:33+0200\n"
+"PO-Revision-Date: 2021-07-31 11:33+0200\n"
+"Last-Translator:\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Building01_Name"
+msgstr "Barracks"
+
+msgid "Building01_Desc"
+msgstr "Barracks\n\nInside of a barracks is a machine shop to repair and improve the suits of your infiltrators and infantry. Furthermore is it possible to reload the ammunition of this units. The barracks needs raw materials to repair, upgrade or resupply. So it should be connected to a storage unit or a operating mining station."
+
+msgid "Building02_Name"
+msgstr "Concrete Block"
+
+msgid "Building02_Desc"
+msgstr "Concrete Block\n\nHardened, armored block for blocking enemy movement."
+
+msgid "Building03_Name"
+msgstr "Bridge"
+
+msgid "Building03_Desc"
+msgstr "Bridge\n\nPontoon bridge for crossing water. Bridges, unlike water platforms, do not block the movement of ships. Moreover ground units move twice as fast over bridge squares."
+
+msgid "Building04_Name"
+msgstr "Connector"
+
+msgid "Building04_Desc"
+msgstr "Connector\n\nBuildings must be connected to share raw materials, fuel and gold. You can connect buildings by placing them next to each other or by building connectors between them."
+
+msgid "Building05_Name"
+msgstr "Depot"
+
+msgid "Building05_Desc"
+msgstr "Depot\n\nA depot can repair damages, manufacture ammunition and refit ground units with the newest technology. All of these operations require raw materials, hence depots should be connected to stored raw materials."
+
+msgid "Building06_Name"
+msgstr "Dock"
+
+msgid "Building06_Desc"
+msgstr "Dock\n\nA dock can repair damages, manufacture ammunition and refit ships with the newest technology. All of these operations require raw materials, hence docks should be connected to stored raw materials."
+
+msgid "Building07_Name"
+msgstr "Power Station"
+
+msgid "Building07_Desc"
+msgstr "Power Station\n\nA power station consumes six fuel each turn and provides enough power for six power consumers like factories or mining stations."
+
+msgid "Building08_Name"
+msgstr "Power Generator"
+
+msgid "Building08_Desc"
+msgstr "Power Generator\n\nA power generator consumes two fuel each turn and provides enough power for one power consumer such as mining station or factory. The power generator must be connected to a fuel source (operating mining station or fuel tank) and the building that needs the power."
+
+msgid "Building09_Name"
+msgstr "Aircraft factory"
+
+msgid "Building09_Desc"
+msgstr "Aircraft factory\n\nBuild all available human air units e.g fighter, ground attack plane and air transport. An aircraft factory needs three raw materials each turn to operate and power from a power generator or power station."
+
+msgid "Building10_Name"
+msgstr "Alien Units Plant"
+
+msgid "Building10_Desc"
+msgstr "Alien Units Plant\n\nThe alien version of a plant, unlike Mechcommanders plant, Alien can build all Units in this plant."
+
+msgid "Building11_Name"
+msgstr "Heavy Vehicle Plant"
+
+msgid "Building11_Desc"
+msgstr "Heavy Vehicle Plant\n\nBuild constructors, mobile scanners and the heavy fighting units: tanks, assault guns, rocket launchers and missile crawlers.\n A heavy vehicle factory needs three raw materials a turn to operate and power."
+
+msgid "Building12_Name"
+msgstr "Shipyard"
+
+msgid "Building12_Desc"
+msgstr "Shipyard\n\nShipyards manufacture ships, such as submarines, sea transporters and missile cruisers. A shipyard requires three raw materials a turn to operate, an power."
+
+msgid "Building13_Name"
+msgstr "Light Vehicle Plant"
+
+msgid "Building13_Desc"
+msgstr "Light Vehicle Plant\n\nBuilds light vehicles: engineers, trucks, mobile repair units, scouts and mobile anti-aircraft units. A light vehicle plant requires three raw materials a turn to operate and power from a power generator or power station."
+
+msgid "Building14_Name"
+msgstr "Gold Refinery"
+
+msgid "Building14_Desc"
+msgstr "Gold Refinery\n\nRefinery for converting gold into credits. Credits are required to purchase unit improvements. To run, a gold refinery needs each turn five gold and one generated power. A mining station can mine gold if it is build above an underground gold source."
+
+msgid "Building15_Name"
+msgstr "Anti-Aircraft"
+
+msgid "Building15_Desc"
+msgstr "Anti-Aircraft\n\nSmall caliber high speed anti-aircraft cannon. Anti-aircraft make short process with planes, but cannot attack ground units."
+
+msgid "Building16_Name"
+msgstr "Artillery"
+
+msgid "Building16_Desc"
+msgstr "Artillery\n\nHigh powered stationary gun. Artillery is a compromise between the cheap rugged gun turret and the expensive long-range missile launcher."
+
+msgid "Building17_Name"
+msgstr "Missile Launcher"
+
+msgid "Building17_Desc"
+msgstr "Missile Launcher\n\nLong-range missile launcher on a fixed mount. Excellent range and firepower, but only slightly more armor than the mobile version. Best surrounded by gun turrets and anti-aircraft."
+
+msgid "Building18_Name"
+msgstr "Gun Turret"
+
+msgid "Building18_Desc"
+msgstr "Gun Turret\n\nHeavily armored stationary gun turret. Gun turrets have moderate firepower, heavy armor and the lowest range of defense buildings. Because they take little time to build, they are a good choice when you need defense in a hurry."
+
+msgid "Building19_Name"
+msgstr "Habitat"
+
+msgid "Building19_Desc"
+msgstr "Habitat\n\nA Habitat house 3 workers. Workers needed in research centers, training halls and Eco-spheres. Those buildings must be connected with a habitat before you are able to put it into operation."
+
+msgid "Building20_Name"
+msgstr "Hangar"
+
+msgid "Building20_Desc"
+msgstr "Hangar\n\nA hangar can repair damages, manufacture ammunition and refit aircrafts with the newest technology. All of these operations require raw materials, hence hangars should be connected to stored raw materials."
+
+msgid "Building21_Name"
+msgstr "Land Mine"
+
+msgid "Building21_Desc"
+msgstr "Land Mine\n\nA land mine is a small and hard to detect explosive device. Concealed under the ground and designed to destroy enemy targets while they pass over. Only surveyors, minelayers and infiltrators can spot mines. Once spotted, almost every damage will destroy it."
+
+msgid "Building22_Name"
+msgstr "Mining Station"
+
+msgid "Building22_Desc"
+msgstr "Mining Station\n\nExtracts subterranean resources like raw materials, fuel and gold every turn. Buildings should be connected to a mining station to use the resources produced by it. If there is no storage building to store surplus resources, they'll be lost.\nAble to mine up to 16 resource units."
+
+msgid "Building23_Name"
+msgstr "Deep Mine"
+
+msgid "Building23_Desc"
+msgstr "Deep Mine\n\nLike the normal mining station you can use it to extracts subterranean resources. The biggest advantage for this type of a mining station is the ability to extract up to [value] resource units."
+
+msgid "Building24_Name"
+msgstr "Landing Pad"
+
+msgid "Building24_Desc"
+msgstr "Landing Pad\n\nLanding facility for planes. Does not repair or resupply planes. To resupply a plane on a landing pad, use a nearby supply truck or a repair unit."
+
+msgid "Building25_Name"
+msgstr "Water Platform"
+
+msgid "Building25_Desc"
+msgstr "Water Platform\n\nProvides a surface over water on which you can construct other buildings. Engineers can build water platforms over the shore as well as open water. Water platforms are particularly important an island maps or when a valuable material deposit is under the bottom of the sea."
+
+msgid "Building26_Name"
+msgstr "Radar"
+
+msgid "Building26_Desc"
+msgstr "Radar\n\nStationary, long-range radar. Longer-range units like missile launchers and artillery cannot fire on what they cannot see, so it's important to have a scanner or radar nearby."
+
+msgid "Building27_Name"
+msgstr "Research Center"
+
+msgid "Building27_Desc"
+msgstr "Research Center\n\nIt examines how your units can be improved. Unlike upgrades purchased with credits, the research need time and the improvements are small. However research affects all of your units. In addition you can also research without a gold source. To operate a research center and a worker and power is required."
+
+msgid "Building28_Name"
+msgstr "Road"
+
+msgid "Building28_Desc"
+msgstr "Road\n\nUnits move twice as fast over road squares."
+
+msgid "Building29_Name"
+msgstr "Sea Mine"
+
+msgid "Building29_Desc"
+msgstr "Sea Mine\n\nA sea mine is a small and hard to detect explosive device. Concealed below sea level, designed to destroy enemy targets while they pass over. Only surveyors, minelayers and infiltrators (next to the coast) can spot mines. Once spotted, almost every damage will destroy it."
+
+msgid "Building30_Name"
+msgstr "Shield"
+
+msgid "Building30_Desc"
+msgstr "Shield\n\nProtect building around it with a shield from enemy fire."
+
+msgid "Building31_Name"
+msgstr "Gold Vault"
+
+msgid "Building31_Desc"
+msgstr "Gold Vault\n\nHolds gold. Mining stations produce gold every turn, if they have gold underneath them. To store unused gold, a mining station must be connected to a gold vault."
+
+msgid "Building32_Name"
+msgstr "Storage Unit"
+
+msgid "Building32_Desc"
+msgstr "Storage Unit\n\nHolds raw materials. Mining stations produce raw materials every turn. To store more unused raw materials, a mining station should be connected to a storage unit."
+
+msgid "Building33_Name"
+msgstr "Fuel Tank"
+
+msgid "Building33_Desc"
+msgstr "Fuel Tank\n\nHolds fuel. Mining stations produce fuel every turn. To store unused fuel, a mining station must be connected to a fuel tank."
+
+msgid "Building34_Name"
+msgstr "Training Hall"
+
+msgid "Building34_Desc"
+msgstr "Training Hall\n\nTrains infiltrators who can disable or capture enemy units and infantry to guard against infiltrators. A training hall requires one worker from a habitat and power to operate."
+
+msgid "Building35_Name"
+msgstr "Eco-sphere"
+
+msgid "Building35_Desc"
+msgstr "Eco-sphere\n\nIf you'll win via points, your primary goal should be to construct as many as possible Eco-spheres. Each Eco-sphere gives you one point per turn.\n\nDefend your Eco-spheres well, because if one is destroyed, you'll lose all the points it generated for you!\nEach Eco-sphere need one worker of a habit and power to operate."
+
+msgid "Vehicle01_Name"
+msgstr "Air Transport"
+
+msgid "Vehicle01_Desc"
+msgstr "Air Transport\n\nAircraft capable of holding up to three ground units."
+
+msgid "Vehicle02_Name"
+msgstr "Alien Assault Gun"
+
+msgid "Vehicle02_Desc"
+msgstr "Alien Assault Gun\n\nPowerful plasma weapon mounted on a fast, medium-armored chassis. While not as fragile as human assault guns, the alien assault gun should still avoid enemy fire whenever possible.\nAll alien units repair themselves and improve their abilities with experience."
+
+msgid "Vehicle03_Name"
+msgstr "Alien Attack Plane"
+
+msgid "Vehicle03_Desc"
+msgstr "Alien Attack Plane\n\nAlien fighter-bomber. While the alien plane is primarily designed to attack ground targets, it can also attack other planes. Though powerful, the alien attack plane is still vulnerable to anti-aircraft fire.\nLike other alien units, alien planes repair themselves and improve their abilities with experience."
+
+msgid "Vehicle04_Name"
+msgstr "Alien Gunboat"
+
+msgid "Vehicle04_Desc"
+msgstr "Alien Gunboat\n\nHeavily armored and armed warship of alien design. Like the human gunboat, the alien gunboat excels at destroying other ships and land targets near the shore.\nAll alien units repair themselves and improve their abilities with experience."
+
+msgid "Vehicle05_Name"
+msgstr "Alien Tank"
+
+msgid "Vehicle05_Desc"
+msgstr "Alien Tank\n\nHeavily armored tank of alien design. An Alien tank is best used at the front of an attack to soak up enemy fire.\nAll alien units repair themselves and improve their abilities with experience."
+
+msgid "Vehicle06_Name"
+msgstr "APC"
+
+msgid "Vehicle06_Desc"
+msgstr "Armored Personnel Carrier\n\nFast armored vehicle to transport infantry and infiltrators. The APC can move slowly underwater as well as on land. Only enemy corvettes can detect an APC moving under water."
+
+msgid "Vehicle07_Name"
+msgstr "Assault Gun"
+
+msgid "Vehicle07_Desc"
+msgstr "Assault Gun\n\nLightly armored vehicle with a middle-range gun, firing high-explosive shells. Fast and effective on the attack, but fragile."
+
+msgid "Vehicle08_Name"
+msgstr "AWACS"
+
+msgid "Vehicle08_Desc"
+msgstr "AWACS\n\nAirborne Warning and Control System. Basically a flying radar dish. An AWACS is essential to spot enemy anti-aircraft before your planes fly into firing range."
+
+msgid "Vehicle09_Name"
+msgstr "Ground Attack Plane"
+
+msgid "Vehicle09_Desc"
+msgstr "Ground Attack Plane\n\nA heavier plane carrying air-to-ground missiles.\nGround Attack Planes are expensive, but the advantages are worth the cost. Their great speed lets them reach any trouble spot quickly and once they arrive, only fighters and anti-aircraft can defend against them. Moreover they are able to attack submarine."
+
+msgid "Vehicle10_Name"
+msgstr "Bulldozer"
+
+msgid "Vehicle10_Desc"
+msgstr "Bulldozer\n\nVehicle to clear rubble of destructed buildings and units. While they clear away the rubble they are able to generate raw materials out of it."
+
+msgid "Vehicle11_Name"
+msgstr "Cargo Ship"
+
+msgid "Vehicle11_Desc"
+msgstr "Cargo Ship\n\nShip for hauling raw materials. Useful for resupplying engineers and reload sea combat units with new ammunition."
+
+msgid "Vehicle12_Name"
+msgstr "Rocket Launcher"
+
+msgid "Vehicle12_Desc"
+msgstr "Rocket Launcher\n\nLightly armored vehicle firing medium-range rockets which affect all units within 2 squares of the target. Most effective against groups of enemy units."
+
+msgid "Vehicle13_Name"
+msgstr "Infiltrator"
+
+msgid "Vehicle13_Desc"
+msgstr "Infiltrator\n\nCommando trained in the arts of stealth and electronic warfare. Infiltrators can disable or capture enemy units.\nInfiltrators are normally invisible until they make a mistake trying to capture enemy units or until they are spotted by infantry or infiltrators."
+
+msgid "Vehicle14_Name"
+msgstr "Corvette"
+
+msgid "Vehicle14_Desc"
+msgstr "Corvette\n\nHigh speed boat with torpedo tubes and sonar. Corvettes can attack any sea unit, but their real strength is their ability to spot and attack submarines."
+
+msgid "Vehicle15_Name"
+msgstr "Escort"
+
+msgid "Vehicle15_Desc"
+msgstr "Escort\n\nHigh speed boat with good radar and rapid fire anti-aircraft gun. Escorts are the eyes of a fleet and a fleet's protection from planes."
+
+msgid "Vehicle16_Name"
+msgstr "Fighter"
+
+msgid "Vehicle16_Desc"
+msgstr "Fighter\n\nFast but fragile aircraft carry along a limited number of air-to-air missiles. A Fighter is the best way to drive enemy planes out of an area and to defend a moving force. Ground based anti-aircraft is a better choice for defending a fixed area."
+
+msgid "Vehicle17_Name"
+msgstr "Gunboat"
+
+msgid "Vehicle17_Desc"
+msgstr "Gunboat\n\nHeavily armored ship with a large caliber medium range cannon. Excellent at destroying other ships and bombing shore targets."
+
+msgid "Vehicle18_Name"
+msgstr "Infantry"
+
+msgid "Vehicle18_Desc"
+msgstr "Infantry\n\nHuman soldier equipped with light anti-tank shoulder weapon. Infantry can also spot enemy infiltrators."
+
+msgid "Vehicle19_Name"
+msgstr "Constructor"
+
+msgid "Vehicle19_Desc"
+msgstr "Constructor\n\nLarge construction vehicle for creating large buildings, such as mining station and factories. A constructor consumes two materials per turn while operating."
+
+msgid "Vehicle20_Name"
+msgstr "Mine Layer"
+
+msgid "Vehicle20_Desc"
+msgstr "Mine Layer\n\nA Minelayer is a specialized construction vehicles which place, detect and remove mines. Minelayer convert onboard raw materials into mines. They can also remove those mines later and convert them back into raw materials. Unfortunately they cannot remove enemy minefields - those must be attacked with gunfire or rockets."
+
+msgid "Vehicle21_Name"
+msgstr "Missile Crawler"
+
+msgid "Vehicle21_Desc"
+msgstr "Missile Crawler\n\nMissile launcher on an lightly armored chassis. This mobile launcher is slightly less sturdy than the stationary version and requires more raw materials to build. However, the ability to move makes it much more flexible."
+
+msgid "Vehicle22_Name"
+msgstr "Missile Cruiser"
+
+msgid "Vehicle22_Desc"
+msgstr "Missile Cruiser\n\nShip mounted missile launcher. Excellent range, high attack strength and medium armor makes this a powerful unit."
+
+msgid "Vehicle23_Name"
+msgstr "Mobile anti-aircraft"
+
+msgid "Vehicle23_Desc"
+msgstr "Mobile anti-aircraft\n\nLight and fast vehicle with a rapid fire gun for shooting down enemy planes. Mobile anti-aircraft are generally defensive units, because they aren't as fast as planes and can't move while firing. Use them to protect an area once your fighters have chased away enemy ground attack planes."
+
+msgid "Vehicle24_Name"
+msgstr "Engineer"
+
+msgid "Vehicle24_Desc"
+msgstr "Engineer\n\nSmall construction vehicle for creating small buildings and stationary defense weapons."
+
+msgid "Vehicle25_Name"
+msgstr "Repair Unit"
+
+msgid "Vehicle25_Desc"
+msgstr "Repair Unit\n\nLight vehicle which can rapidly repair ground units and buildings. Repairs require raw materials. The more extensive the damage, the more raw materials are required. Depots, docks, hangars and barracks can also repair units."
+
+msgid "Vehicle26_Name"
+msgstr "Scanner"
+
+msgid "Vehicle26_Desc"
+msgstr "Scanner\n\nMobile radar platform. Slower and more expensive than a scout, but with a better scan range. A scanner is an excellent way to spot targets for long ranged units like missile crawlers."
+
+msgid "Vehicle27_Name"
+msgstr "Scout"
+
+msgid "Vehicle27_Desc"
+msgstr "Scout\n\nHigh speed scouting vehicle for exploration and spotting enemy units. Can cross water without a bridge but is faster on land.\n\nVery fast and good scan range but much weaker than most combat units."
+
+msgid "Vehicle28_Name"
+msgstr "Sea Mine Layer"
+
+msgid "Vehicle28_Desc"
+msgstr "Sea Mine Layer\n\nSeaborne version of the minelayer. Like its land based counterpart, the sea minelayer can manufacture mines and convert them back into raw materials. Furthermore he can detect seamines of your enemy."
+
+msgid "Vehicle29_Name"
+msgstr "Sea Transport"
+
+msgid "Vehicle29_Desc"
+msgstr "Sea Transport\n\nHeavily armored ship with space to carry up to six land units. Sea transports are much slower than air transports, but also much more likely to survive an enemy attack."
+
+msgid "Vehicle30_Name"
+msgstr "Submarine"
+
+msgid "Vehicle30_Desc"
+msgstr "Submarine\n\nLurking beneath the surface, submarine can sneak close to the enemy to fire powerful torpedoes. Submarines do not use active sonar, which might reveal their positions. Only corvettes can spot a submarine before it fires. Only submarines, corvettes and ground attack planes can attack them."
+
+msgid "Vehicle31_Name"
+msgstr "Surveyor"
+
+msgid "Vehicle31_Desc"
+msgstr "Surveyor\n\nLight, amphibious vehicle with sophisticated sensors for detecting underground minerals and enemy mines. Unlike most amphibious units, surveyors are on water as fast as an on Land."
+
+msgid "Vehicle32_Name"
+msgstr "Tank"
+
+msgid "Vehicle32_Desc"
+msgstr "Tank\n\nHeavily armored fighting vehicle. Best used on the frontline to prevent enemy units from reaching lightly-armored support units such as assault guns and rocket launchers."
+
+msgid "Vehicle33_Name"
+msgstr "Gold Truck"
+
+msgid "Vehicle33_Desc"
+msgstr "Gold Truck\n\nUnit for moving gold from one location to an other."
+
+msgid "Vehicle34_Name"
+msgstr "Supply Truck"
+
+msgid "Vehicle34_Desc"
+msgstr "Supply Truck\n\nTruck for hauling raw materials. Useful for resupplying engineers and constructors and for supplying combat units with new ammunition."
+
+msgid "Vehicle35_Name"
+msgstr "Fuel Truck"
+
+msgid "Vehicle35_Desc"
+msgstr "Fuel Truck\n\nTruck for moving fuel."
+
