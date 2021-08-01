@@ -262,7 +262,7 @@ void cLineEdit::resetTextPosition()
 	cursorPos = endOffset;
 	auto font = cUnicodeFont::font.get();
 
-	while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosDecrease (endOffset);
+	while (endOffset > 0 && font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosDecrease (endOffset);
 }
 
 //------------------------------------------------------------------------------
@@ -318,7 +318,7 @@ void cLineEdit::scrollLeft (bool changeCursor)
 	if (font->getTextWide (text.substr (startOffset, text.length() - startOffset), fontType) > getSize().x() - getBorderSize())
 	{
 		endOffset = (int)text.length();
-		while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosDecrease (endOffset);
+		while (endOffset > 0 && font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosDecrease (endOffset);
 	}
 }
 
@@ -401,7 +401,7 @@ bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard
 			cursorPos = 0;
 			startOffset = 0;
 			endOffset = (int)text.length();
-			while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosDecrease (endOffset);
+			while (endOffset > 0 && font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosDecrease (endOffset);
 			break;
 		case SDLK_END:
 			cursorPos = (int)text.length();
