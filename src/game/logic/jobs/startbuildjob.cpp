@@ -19,10 +19,11 @@
 
 #include "startbuildjob.h"
 
+#include "game/data/model.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/movejob.h"
-#include "game/data/model.h"
 
+#include <cassert>
 
 cStartBuildJob::cStartBuildJob (cVehicle& vehicle_, const cPosition& org_, bool big_) :
 	cJob (vehicle_),

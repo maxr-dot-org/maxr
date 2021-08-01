@@ -30,6 +30,7 @@
 #include "utility/log.h"
 
 #include <algorithm>
+#include <cassert>
 
 //------------------------------------------------------------------------------
 cLineEdit::cLineEdit (const cBox<cPosition>& area, eLineEditFrameType frameType_, eUnicodeFontType fontType_) :

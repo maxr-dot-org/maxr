@@ -83,7 +83,7 @@ void cMouseModeTransfer::establishUnitSelectionConnections()
 	{
 		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, [this]() { needRefresh(); });
 	}
-
+#if 0
 	const auto selectedBuilding = unitSelection.getSelectedBuilding();
 	if (selectedBuilding)
 	{
@@ -92,6 +92,7 @@ void cMouseModeTransfer::establishUnitSelectionConnections()
 		assert (selectedBuilding == selectedUnit);
 		//selectedUnitSignalConnectionManager.connect (selectedBuilding->xyz, [this](){ needRefresh(); });
 	}
+#endif
 }
 
 //------------------------------------------------------------------------------

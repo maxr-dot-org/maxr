@@ -17,8 +17,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "utility/crc.h"
 #include "rangemap.h"
+
+#include "utility/crc.h"
+
+#include <cassert>
 
 //------------------------------------------------------------------------------
 void cRangeMap::reset()

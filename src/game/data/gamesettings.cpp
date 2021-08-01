@@ -17,15 +17,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <algorithm>
-#include <cctype>
-#include <cassert>
-
 #include "gamesettings.h"
 
 #include "utility/crc.h"
-#include "utility/tounderlyingtype.h"
 #include "utility/string/iequals.h"
+#include "utility/tounderlyingtype.h"
+
+#include <algorithm>
 
 // Might be constexpr inline in C++17
 /* static */ const int cGameSettings::defaultVictoryTurnsOptions[3]{100, 200, 400};

@@ -29,6 +29,8 @@
 #include "game/startup/lobbypreparationdata.h"
 #include "ui/graphical/application.h"
 
+#include <cassert>
+
 //------------------------------------------------------------------------------
 void cLocalHotSeatGameNew::start (cApplication& application)
 {

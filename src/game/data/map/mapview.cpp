@@ -19,9 +19,11 @@
 
 #include "mapview.h"
 
-#include "map.h"
+#include "game/data/map/map.h"
+#include "game/data/map/mapfieldview.h"
 #include "game/data/player/player.h"
-#include "mapfieldview.h"
+
+#include <cassert>
 #include <set>
 
 //------------------------------------------------------------------------------

@@ -31,6 +31,7 @@
 #include "utility/ranges.h"
 
 #include <algorithm>
+#include <cassert>
 
 //------------------------------------------------------------------------------
 bool cUnitSelection::selectUnitAt (const cMapFieldView& field, bool base)

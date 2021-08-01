@@ -30,6 +30,8 @@
 #include "ui/graphical/menu/widgets/label.h"
 #include "utility/language.h"
 
+#include <cassert>
+
 //------------------------------------------------------------------------------
 cUnitDetailsHud::cUnitDetailsHud (const cBox<cPosition>& area, bool drawLines_) :
 	cWidget (area),

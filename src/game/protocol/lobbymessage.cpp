@@ -22,6 +22,8 @@
 #include "game/data/units/unitdata.h"
 #include "game/data/player/clans.h"
 
+#include <cassert>
+
 std::unique_ptr<cMultiplayerLobbyMessage> cMultiplayerLobbyMessage::createFromBuffer (cBinaryArchiveOut& archive)
 {
 	eMessageType type;

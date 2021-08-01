@@ -27,6 +27,8 @@
 #include "SDLutility/tosdl.h"
 #include "utility/color.h"
 
+#include <cassert>
+
 //------------------------------------------------------------------------------
 cCheckBox::cCheckBox (const cPosition& position, eCheckBoxType type_, bool centered, cSoundChunk* clickSound_) :
 	cClickableWidget (position),

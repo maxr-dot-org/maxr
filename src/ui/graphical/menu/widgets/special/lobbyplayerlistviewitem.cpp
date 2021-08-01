@@ -25,6 +25,8 @@
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/playercolor.h"
 
+#include <cassert>
+
 //------------------------------------------------------------------------------
 cLobbyPlayerListViewItem::cLobbyPlayerListViewItem (std::shared_ptr<cPlayerBasicData> player_) :
 	cAbstractListViewItem (cPosition (50, 0)),

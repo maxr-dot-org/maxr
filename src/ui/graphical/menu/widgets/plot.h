@@ -24,6 +24,7 @@
 #include "ui/graphical/widget.h"
 #include "utility/color.h"
 
+#include <cassert>
 #include <functional>
 #include <list>
 #include <string>

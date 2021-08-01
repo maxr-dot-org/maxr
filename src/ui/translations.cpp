@@ -51,6 +51,8 @@
 #include "output/video/unifonts.h"
 #include "utility/language.h"
 
+#include <cassert>
+
 namespace
 {
 	//--------------------------------------------------------------------------

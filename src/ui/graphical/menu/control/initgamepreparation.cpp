@@ -31,6 +31,8 @@
 #include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
 #include "utility/language.h"
 
+#include <cassert>
+
 //------------------------------------------------------------------------------
 cInitGamePreparation::cInitGamePreparation (cApplication& application, cLobbyClient& lobbyClient) :
 	application (application),

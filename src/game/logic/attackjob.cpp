@@ -17,9 +17,6 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include <algorithm>
-#include <memory>
-
 #include "game/logic/attackjob.h"
 
 #include "game/data/map/map.h"
@@ -34,6 +31,10 @@
 #include "utility/crc.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
+
+#include <algorithm>
+#include <cassert>
+#include <memory>
 
 //TODO: test alien attack (ground & air)
 

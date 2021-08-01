@@ -23,6 +23,7 @@
 #include "utility/ranges.h"
 
 #include <algorithm>
+#include <cassert>
 
 const double cLandingPositionManager::warningDistance = 28;
 const double cLandingPositionManager::tooCloseDistance = 10;

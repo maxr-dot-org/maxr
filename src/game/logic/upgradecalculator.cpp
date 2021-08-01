@@ -27,6 +27,8 @@
 #include <sstream>
 #include "utility/crc.h"
 
+#include <cassert>
+
 //--------------------------------------------------
 cUpgradeCalculator& cUpgradeCalculator::instance()
 {

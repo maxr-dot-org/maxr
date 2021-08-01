@@ -34,6 +34,8 @@
 #include "utility/position.h"
 #include "utility/string/toString.h"
 
+#include <cassert>
+
 static constexpr int MAX_PLANES_PER_FIELD = 5;
 
 //------------------------------------------------------------------------------

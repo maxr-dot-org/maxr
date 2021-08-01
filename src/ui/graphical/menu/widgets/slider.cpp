@@ -28,6 +28,7 @@
 #include "utility/mathtools.h"
 
 #include <algorithm>
+#include <cassert>
 #include <functional>
 
 //------------------------------------------------------------------------------

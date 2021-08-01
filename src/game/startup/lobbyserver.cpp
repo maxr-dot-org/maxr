@@ -31,6 +31,8 @@
 #include "utility/log.h"
 #include "utility/ranges.h"
 
+#include <cassert>
+
 //------------------------------------------------------------------------------
 cLobbyServer::cLobbyServer (std::shared_ptr<cConnectionManager> connectionManager) :
 	connectionManager (connectionManager)

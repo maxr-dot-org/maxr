@@ -22,6 +22,8 @@
 #include "resources/uidata.h"
 #include "utility/position.h"
 
+#include <cassert>
+
 //------------------------------------------------------------------------------
 cMouseCursorSimple::cMouseCursorSimple (eMouseCursorSimpleType type_) :
 	type (type_)

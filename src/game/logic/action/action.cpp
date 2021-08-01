@@ -49,6 +49,8 @@
 #include "actionupgradevehicle.h"
 #include "utility/log.h"
 
+#include <cassert>
+
 std::unique_ptr<cAction> cAction::createFromBuffer (cBinaryArchiveOut& archive)
 {
 	eActiontype type;

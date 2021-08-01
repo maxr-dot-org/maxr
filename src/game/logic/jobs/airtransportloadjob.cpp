@@ -23,6 +23,7 @@
 #include "game/data/model.h"
 #include "utility/crc.h"
 
+#include <cassert>
 
 cAirTransportLoadJob::cAirTransportLoadJob (cVehicle& loadedVehicle, cUnit& loadingUnit) :
 	cJob (loadingUnit),

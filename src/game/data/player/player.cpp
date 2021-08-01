@@ -29,6 +29,7 @@
 #include "utility/ranges.h"
 #include "utility/string/toString.h"
 
+#include <cassert>
 #include <cmath>
 
 using namespace std;

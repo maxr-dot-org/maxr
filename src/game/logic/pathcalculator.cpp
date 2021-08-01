@@ -17,19 +17,19 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include <forward_list>
-
 #include "pathcalculator.h"
 
+#include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
+#include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"
 #include "utility/listhelpers.h"
-#include "utility/mathtools.h"
-#include "game/data/units/building.h"
 #include "utility/log.h"
-#include "game/data/map/mapfieldview.h"
+#include "utility/mathtools.h"
 
+#include <cassert>
+#include <forward_list>
 
 /* Size of a memory block while pathfinding */
 #define MEM_BLOCK_SIZE 10

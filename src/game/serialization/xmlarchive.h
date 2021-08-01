@@ -18,15 +18,15 @@
 ***************************************************************************/
 
 #ifndef serialization_xmlarchiveH
-#define  serialization_xmlarchiveH
+#define serialization_xmlarchiveH
 
-#include <assert.h>
-#include <typeinfo>
-
-#include <3rd/tinyxml2/tinyxml2.h>
 #include "serialization.h"
 #include "utility/extendedtinyxml.h"
 
+#include <3rd/tinyxml2/tinyxml2.h>
+
+#include <cassert>
+#include <typeinfo>
 
 class cXmlArchiveIn
 {

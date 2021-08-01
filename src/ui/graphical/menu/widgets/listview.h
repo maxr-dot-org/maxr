@@ -31,6 +31,8 @@
 #include "utility/ranges.h"
 #include "utility/signal/signalconnectionmanager.h"
 
+#include <cassert>
+
 class cAbstractListViewItem;
 
 enum class eAddListItemScrollType

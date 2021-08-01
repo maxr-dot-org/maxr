@@ -33,6 +33,7 @@
 #include "utility/log.h"
 #include "utility/random.h"
 
+#include <cassert>
 #include <SDL_thread.h>
 
 //------------------------------------------------------------------------------

@@ -26,6 +26,8 @@
 #include "output/sound/soundchannel.h"
 #include "utility/mathtools.h"
 
+#include <cassert>
+
 //------------------------------------------------------------------------------
 cResourceBar::cResourceBar (const cBox<cPosition>& area, int minValue_, int maxValue_, eResourceBarType type, eOrientationType orientation_, cSoundChunk* clickSound_) :
 	cClickableWidget (area),

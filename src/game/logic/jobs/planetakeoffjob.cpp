@@ -19,9 +19,11 @@
 
 #include "planetakeoffjob.h"
 
+#include "game/data/model.h"
 #include "game/data/units/vehicle.h"
 #include "utility/crc.h"
-#include "game/data/model.h"
+
+#include <cassert>
 
 
 cPlaneTakeoffJob::cPlaneTakeoffJob (cVehicle& vehicle) :

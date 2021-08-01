@@ -20,20 +20,20 @@
 #ifndef game_data_map_mapH
 #define game_data_map_mapH
 
-#include <string>
-#include <memory>
-#include <vector>
-#include <utility>
-
 #include "game/data/gamesettings.h"
 #include "game/data/resourcetype.h"
-#include "utility/t_2.h"
+#include "resources/map/graphicstaticmap.h"
+#include "utility/arraycrc.h"
+#include "utility/log.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
-#include "utility/log.h"
-#include "utility/arraycrc.h"
+#include "utility/t_2.h"
 
-#include "resources/map/graphicstaticmap.h"
+#include <cassert>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
 class cUnit;
 class cVehicle;

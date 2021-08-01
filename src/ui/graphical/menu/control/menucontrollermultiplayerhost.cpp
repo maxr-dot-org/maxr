@@ -40,6 +40,8 @@
 #include "utility/language.h"
 #include "utility/log.h"
 
+#include <cassert>
+
 //------------------------------------------------------------------------------
 cMenuControllerMultiplayerHost::cMenuControllerMultiplayerHost (cApplication& application_) :
 	application (application_),

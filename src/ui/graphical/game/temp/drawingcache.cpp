@@ -127,8 +127,6 @@ cDrawingCache::cDrawingCache (std::shared_ptr<const cFrameCounter> frameCounter_
 	frameCounter (frameCounter_),
 	player (nullptr)
 {
-	//assert (animationTimer != nullptr);
-
 	cacheHits = 0;
 	cacheMisses = 0;
 	notCached = 0;

@@ -40,6 +40,8 @@
 #include "ui/uidefines.h"
 #include "utility/language.h"
 
+#include <cassert>
+
 //------------------------------------------------------------------------------
 cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
 	cWindow (nullptr),

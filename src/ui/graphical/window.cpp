@@ -26,6 +26,8 @@
 #include "settings.h"
 #include "ui/graphical/application.h"
 
+#include <cassert>
+
 //------------------------------------------------------------------------------
 cWindow::cWindow (AutoSurface surface_, eWindowBackgrounds backgroundType_) :
 	surface (nullptr),

@@ -26,6 +26,8 @@
 #include "ui/graphical/playercolor.h"
 #include "utility/mathtools.h"
 
+#include <cassert>
+
 namespace
 {
 	//------------------------------------------------------------------------------

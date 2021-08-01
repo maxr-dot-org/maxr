@@ -28,6 +28,8 @@
 #include "utility/log.h"
 #include "utility/mathtools.h"
 
+#include <cassert>
+
 namespace
 {
 

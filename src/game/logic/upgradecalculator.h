@@ -311,7 +311,6 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
-		assert (kNrResearchAreas == 8);
 		for (int i = 0; i < kNrResearchAreas; i++)
 		{
 			archive & serialization::makeNvp ("curResearchLevel", curResearchLevel[i]);

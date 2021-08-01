@@ -202,20 +202,19 @@ namespace
 {
 
 // TODO: move function into a better file ?
-void FlipSurfaceHorizontally (SDL_Surface* surface)
+void FlipSurfaceHorizontally (SDL_Surface& surface)
 {
-	assert (surface);
-	if (SDL_MUSTLOCK (surface)) SDL_LockSurface (surface);
+	if (SDL_MUSTLOCK (&surface)) SDL_LockSurface (&surface);
 
 	// Assume surface format uses Uint32*
 	// TODO: check surface format (or support more format).
-	Uint32* p = static_cast<Uint32*> (surface->pixels);
+	Uint32* p = static_cast<Uint32*> (surface.pixels);
 
-	for (int h = 0; h != surface->h; ++h)
-		for (int w = 0; w != surface->w / 2; ++w)
-			std::swap (p[h * surface->w + w], p[(h + 1) * surface->w - w - 1]);
+	for (int h = 0; h != surface.h; ++h)
+		for (int w = 0; w != surface.w / 2; ++w)
+			std::swap (p[h * surface.w + w], p[(h + 1) * surface.w - w - 1]);
 
-	if (SDL_MUSTLOCK (surface)) SDL_UnlockSurface (surface);
+	if (SDL_MUSTLOCK (&surface)) SDL_UnlockSurface (&surface);
 }
 }
 
@@ -254,7 +253,7 @@ void cNewDialogTransfer::transferValueChanged()
 		const Sint16 y = arrowImage->getPosition().y() - getPosition().y();     //  77
 		SDL_Rect src = {x, y, w, h};
 		SDL_BlitSurface (getSurface(), &src, arrowSurface.get(), nullptr);
-		FlipSurfaceHorizontally (arrowSurface.get());
+		FlipSurfaceHorizontally (*arrowSurface);
 
 		arrowImage->setImage (arrowSurface.get());
 	}

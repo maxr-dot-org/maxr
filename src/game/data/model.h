@@ -35,6 +35,7 @@
 #include "utility/crossplattformrandom.h"
 #include "utility/flatset.h"
 
+#include <cassert>
 #include <forward_list>
 #include <memory>
 #include <vector>

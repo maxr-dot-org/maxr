@@ -36,6 +36,8 @@
 #include "input/keyboard/keyboard.h"
 #include "game/data/map/mapfieldview.h"
 
+#include <cassert>
+
 //------------------------------------------------------------------------------
 cMouseModeDefault::cMouseModeDefault (const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
 	cMouseMode (map_, unitSelection_, player_)

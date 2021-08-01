@@ -31,7 +31,6 @@
 #include "utility/log.h"
 #include "utility/string/tolower.h"
 
-#include <cassert>
 #include <iostream>
 #include <fstream>
 #include <sstream>

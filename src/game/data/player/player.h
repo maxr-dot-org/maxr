@@ -20,7 +20,6 @@
 #ifndef game_data_player_playerH
 #define game_data_player_playerH
 
-#include <cassert>
 #include <string>
 #include <vector>
 

@@ -26,6 +26,8 @@
 #include "output/video/video.h"
 #include "utility/position.h"
 
+#include <cassert>
+
 //------------------------------------------------------------------------------
 cMouseCursorAttack::cMouseCursorAttack() :
 	currentHealthPercent (-1),

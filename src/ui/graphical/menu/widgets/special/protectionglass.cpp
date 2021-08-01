@@ -24,6 +24,7 @@
 #include "ui/graphical/game/animations/animationtimer.h"
 
 #include <algorithm>
+#include <cassert>
 
 //------------------------------------------------------------------------------
 cProtectionGlass::cProtectionGlass (const cPosition& position, std::shared_ptr<cAnimationTimer> animationTimer_, double percentClosed_) :

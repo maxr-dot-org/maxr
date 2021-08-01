@@ -75,6 +75,8 @@
 #include "utility/random.h"
 #include "utility/ranges.h"
 
+#include <cassert>
+
 //------------------------------------------------------------------------------
 cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap_, std::shared_ptr<cAnimationTimer> animationTimer_, std::shared_ptr<cSoundManager> soundManager_, std::shared_ptr<const cFrameCounter> frameCounter) :
 	cClickableWidget (area),

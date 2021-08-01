@@ -17,14 +17,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <algorithm>
-
 #include "input/mouse/mouse.h"
 
 #include "input/mouse/cursor/mousecursorsimple.h"
-
 #include "events/eventmanager.h"
 #include "events/mouseevents.h"
+
+#include <algorithm>
+#include <cassert>
 
 //------------------------------------------------------------------------------
 cMouse::cMouse() :

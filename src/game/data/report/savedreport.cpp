@@ -41,6 +41,8 @@
 #include "game/data/report/special/savedreportupgraded.h"
 #include "game/data/report/special/savedreportturnstart.h"
 
+#include <cassert>
+
 template <typename Archive>
 std::unique_ptr<cSavedReport> cSavedReport::createFromImpl (Archive& archive)
 {

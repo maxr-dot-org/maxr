@@ -36,6 +36,7 @@
 #include "utility/listhelpers.h"
 #include "utility/ranges.h"
 
+#include <cassert>
 #include <set>
 
 namespace

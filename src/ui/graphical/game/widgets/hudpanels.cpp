@@ -28,6 +28,8 @@
 #include "resources/uidata.h"
 #include "ui/graphical/game/animations/animationtimer.h"
 
+#include <cassert>
+
 //------------------------------------------------------------------------------
 cHudPanels::cHudPanels (const cPosition& position, int height, std::shared_ptr<cAnimationTimer> animationTimer_, double percentClosed_) :
 	cWidget (position),

@@ -17,8 +17,6 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include <memory>
-
 #include "netmessage.h"
 
 #include "game/data/model.h"
@@ -28,6 +26,9 @@
 #include "game/serialization/serialization.h"
 #include "mapdownloader/mapdownload.h"
 #include "maxrversion.h"
+
+#include <cassert>
+#include <memory>
 
 //------------------------------------------------------------------------------
 std::string enumToString (eNetMessageType value)

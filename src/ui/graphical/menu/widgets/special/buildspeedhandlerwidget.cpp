@@ -24,6 +24,8 @@
 #include "ui/graphical/menu/widgets/radiogroup.h"
 #include "utility/language.h"
 
+#include <cassert>
+
 //------------------------------------------------------------------------------
 cBuildSpeedHandlerWidget::cBuildSpeedHandlerWidget (const cPosition& position) :
 	cWidget (position)

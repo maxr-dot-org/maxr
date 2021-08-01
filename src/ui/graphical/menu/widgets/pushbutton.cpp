@@ -29,6 +29,8 @@
 #include "SDLutility/tosdl.h"
 #include "ui/graphical/application.h"
 
+#include <cassert>
+
 //------------------------------------------------------------------------------
 cPushButton::cPushButton (const cBox<cPosition>& area) :
 	cClickableWidget (area),

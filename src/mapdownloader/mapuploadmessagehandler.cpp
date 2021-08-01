@@ -22,6 +22,7 @@
 #include "game/data/map/map.h"
 #include "mapdownloader/mapdownload.h"
 
+#include <cassert>
 #include <memory>
 
 bool IMapUploadMessageHandler::handleMessage (const cMultiplayerLobbyMessage& message)

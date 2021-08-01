@@ -21,6 +21,8 @@
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/slider.h"
 
+#include <cassert>
+
 //------------------------------------------------------------------------------
 cScrollBar::cScrollBar (const cPosition& position, int width, eScrollBarStyle style_, eOrientationType orientation_) :
 	cWidget (position),

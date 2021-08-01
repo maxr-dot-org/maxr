@@ -39,6 +39,8 @@
 #include "ui/graphical/playercolor.h"
 #include "utility/language.h"
 
+#include <cassert>
+
 //------------------------------------------------------------------------------
 cMenuControllerMultiplayerHotSeat::cMenuControllerMultiplayerHotSeat (cApplication& application_) :
 	application (application_)
