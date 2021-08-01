@@ -150,7 +150,17 @@ std::string cDedicatedServerGame::getGameState() const
 //------------------------------------------------------------------------------
 void cDedicatedServerGame::runInThread()
 {
-	thread = std::thread ([this](){ run(); });
+	thread = std::thread ([this](){
+		try
+		{
+			run();
+		}
+		catch (const std::exception& ex)
+		{
+			std::cerr << "Exception: " << ex.what() << std::endl;
+			Log.write (std::string ("Exception: ") + ex.what(), cLog::eLOG_TYPE_ERROR);
+		}
+	});
 }
 
 //------------------------------------------------------------------------------

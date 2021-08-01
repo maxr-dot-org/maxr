@@ -80,7 +80,16 @@ cNetwork::cNetwork (cConnectionManager& connectionManager, std::recursive_mutex&
 	serverSocket (nullptr),
 	socketSet (SDLNet_AllocSocketSet (MAX_TCP_CONNECTIONS)),
 	connectionManager (connectionManager),
-	tcpHandleThread ([this](){handleNetworkThread();})
+	tcpHandleThread ([this](){
+		try
+		{
+			handleNetworkThread();
+		}
+		catch (const std::exception& ex)
+		{
+			Log.write (std::string ("Exception: ") + ex.what(), cLog::eLOG_TYPE_ERROR);
+		}
+	})
 {
 }
 

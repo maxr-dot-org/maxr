@@ -233,7 +233,16 @@ cMapSender::~cMapSender()
 void cMapSender::runInThread()
 {
 	// the thread will quit, when it finished uploading the map
-	thread = std::thread ([this]() { run(); });
+	thread = std::thread ([this]() {
+ 		try
+		{
+			run();
+		}
+		catch (const std::exception& ex)
+		{
+			Log.write (std::string ("Exception: ") + ex.what(), cLog::eLOG_TYPE_ERROR);
+		}
+	});
 }
 
 //------------------------------------------------------------------------------

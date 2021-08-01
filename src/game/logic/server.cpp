@@ -473,9 +473,16 @@ void cServer::initPlayerConnectionState()
 //------------------------------------------------------------------------------
 int cServer::serverThreadCallback (void* arg)
 {
-	CR_ENABLE_CRASH_RPT_CURRENT_THREAD();
+	try
+	{
+		CR_ENABLE_CRASH_RPT_CURRENT_THREAD();
 
-	cServer* server = reinterpret_cast<cServer*> (arg);
-	server->run();
+		cServer* server = reinterpret_cast<cServer*> (arg);
+		server->run();
+	}
+	catch (const std::exception& ex)
+	{
+		Log.write (std::string ("Exception: ") + ex.what(), cLog::eLOG_TYPE_ERROR);
+	}
 	return 0;
 }
