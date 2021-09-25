@@ -49,26 +49,13 @@ class cVehicle;
 struct sID;
 
 //used to constrain a template definition to use with out-archive types only
-#define ENABLE_ARCHIVE_OUT                             \
-	typename = std::enable_if_t<                       \
-	std::is_same<Archive, cBinaryArchiveOut>::value || \
-	std::is_same<Archive, cXmlArchiveOut>::value>
+#define ENABLE_ARCHIVE_OUT std::enable_if_t<Archive::isWriter == false, int> = 0
 
 //used to constrain a template definition to use with in-archive types only
-#define ENABLE_ARCHIVE_IN                              \
-	typename = std::enable_if_t<                       \
-	std::is_same<Archive, cBinaryArchiveIn>::value  || \
-	std::is_same<Archive, cXmlArchiveIn>::value     || \
-	std::is_same<Archive, cTextArchiveIn>::value>
+#define ENABLE_ARCHIVE_IN std::enable_if_t<Archive::isWriter == true, int> = 0
 
 //used to constrain a template definition to use with archive types only
-#define ENABLE_ARCHIVES                                \
-	typename = std::enable_if_t<                       \
-	std::is_same<Archive, cBinaryArchiveOut>::value || \
-	std::is_same<Archive, cXmlArchiveOut>::value    || \
-	std::is_same<Archive, cBinaryArchiveIn>::value  || \
-	std::is_same<Archive, cXmlArchiveIn>::value     || \
-	std::is_same<Archive, cTextArchiveIn>::value>
+#define ENABLE_ARCHIVES std::enable_if_t<std::is_same<decltype (Archive::isWriter), bool>::value, int> = 0
 
 namespace serialization
 {
@@ -87,6 +74,7 @@ namespace serialization
 	template <typename E, typename Enabler = void>
 	struct sEnumSerializer
 	{
+		static constexpr bool hasStringRepresentation = false;
 		static std::string toString (E e) { return std::to_string (std::underlying_type_t<E> (e)); }
 		static E fromString (const std::string& s)
 		{
@@ -104,6 +92,7 @@ namespace serialization
 	template <typename E>
 	struct sEnumSerializer<E, decltype(sEnumStringMapping<E>::m, void())>
 	{
+		static constexpr bool hasStringRepresentation = true;
 		static std::string toString (E e)
 		{
 			auto it = ranges::find_if (sEnumStringMapping<E>::m, [&](const auto& p) { return p.first == e; });
