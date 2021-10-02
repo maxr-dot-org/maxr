@@ -72,6 +72,24 @@ namespace std
 			template <typename U>
 			T value_or (U&& u) const { return valid ? value() : T (std::forward<U> (u)); }
 
+			template <typename... Ts>
+			T& emplace (Ts&&... args)
+			{
+				deconstruct();
+				valid = true;
+				new (&u.data) T (std::forward<Ts> (args)...);
+				return value();
+			}
+
+			bool operator == (const optional& rhs) const
+			{
+				if (valid != rhs.valid) return false;
+				if (!valid) return true;
+				return value() == rhs.value();
+			}
+
+			bool operator != (const optional& rhs) const { return !(*this == rhs); }
+
 		private:
 			void deconstruct() { if (valid) u.data.~T(); }
 		private:
