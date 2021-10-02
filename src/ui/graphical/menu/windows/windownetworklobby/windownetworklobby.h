@@ -113,8 +113,6 @@ protected:
 	cLineEdit* portLineEdit = nullptr;
 	cImage* restoreDefaultPortButton = nullptr;
 
-	cImage* colorImage = nullptr;
-
 	cPushButton* okButton = nullptr;
 
 protected:
@@ -125,7 +123,6 @@ protected:
 
 	void updateSettingsText();
 	void updateMap();
-	void updatePlayerColor();
 
 	void triggerChatMessage (bool keepFocus);
 };

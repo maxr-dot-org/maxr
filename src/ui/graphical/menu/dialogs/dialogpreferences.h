@@ -26,7 +26,7 @@
 class cSlider;
 class cLineEdit;
 class cCheckBox;
-
+class cColorSelector;
 class cComboBox;
 
 class cDialogPreferences : public cWindow
@@ -38,33 +38,34 @@ public:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	cSlider* musicVolumeSlider;
-	cSlider* effectsVolumeSlider;
-	cSlider* voicesVolumeSlider;
+	cSlider* musicVolumeSlider = nullptr;
+	cSlider* effectsVolumeSlider = nullptr;
+	cSlider* voicesVolumeSlider = nullptr;
 
-	cCheckBox* disableMusicCheckBox;
-	cCheckBox* disableEffectsCheckBox;
-	cCheckBox* disableVoicesCheckBox;
+	cCheckBox* disableMusicCheckBox = nullptr;
+	cCheckBox* disableEffectsCheckBox = nullptr;
+	cCheckBox* disableVoicesCheckBox = nullptr;
 
-	cCheckBox* effects3DCheckBox;
+	cCheckBox* effects3DCheckBox = nullptr;
 
-	cSlider* scrollSpeedSlider;
+	cSlider* scrollSpeedSlider = nullptr;
 
-	cLineEdit* nameEdit;
+	cLineEdit* nameEdit = nullptr;
+	cColorSelector* colorSelector = nullptr;
 
-	cCheckBox* animationCheckBox;
-	cCheckBox* shadowsCheckBox;
-	cCheckBox* aplhaCheckBox;
-	cCheckBox* demageBuildingsCheckBox;
-	cCheckBox* demageVehiclesCheckBox;
-	cCheckBox* tracksCheckBox;
+	cCheckBox* animationCheckBox = nullptr;
+	cCheckBox* shadowsCheckBox = nullptr;
+	cCheckBox* aplhaCheckBox = nullptr;
+	cCheckBox* demageBuildingsCheckBox = nullptr;
+	cCheckBox* demageVehiclesCheckBox = nullptr;
+	cCheckBox* tracksCheckBox = nullptr;
 
-	cCheckBox* autosaveCheckBox;
-	cCheckBox* introCheckBox;
-	cCheckBox* windowCheckBox;
+	cCheckBox* autosaveCheckBox = nullptr;
+	cCheckBox* introCheckBox = nullptr;
+	cCheckBox* windowCheckBox = nullptr;
 
-	cComboBox* languagesComboBox;
-	cComboBox* resolutionsComboBox;
+	cComboBox* languagesComboBox = nullptr;
+	cComboBox* resolutionsComboBox = nullptr;
 
 	int storedMusicVolume;
 	int storedEffectsVolume;

@@ -26,6 +26,7 @@
 #include "settings.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
+#include "ui/graphical/menu/widgets/colorselector.h"
 #include "ui/graphical/menu/widgets/combobox.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/lineedit.h"
@@ -75,6 +76,9 @@ cDialogPreferences::cDialogPreferences() :
 
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 158), getPosition() + cPosition (135, 168)), lngPack.i18n ("Text~Title~Player_Name"), FONT_LATIN_NORMAL, eAlignmentType::Left));
 	nameEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (140, 154), getPosition() + cPosition (140 + 185, 154 + 18)), eLineEditFrameType::Box));
+
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 175), getPosition() + cPosition (135, 185)), lngPack.i18n ("Text~Title~Color"), FONT_LATIN_NORMAL, eAlignmentType::Left));
+	colorSelector = addChild (std::make_unique<cColorSelector> (getPosition() + cPosition (160, 172), cRgbColor::black()));
 
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 257), getPosition() + cPosition (135, 267)), lngPack.i18n ("Text~Settings~Scrollspeed"), FONT_LATIN_NORMAL, eAlignmentType::Left));
 	scrollSpeedSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (getPosition() + cPosition (140, 254), getPosition() + cPosition (240, 271)), 0, 128, eOrientationType::Horizontal));
@@ -128,6 +132,7 @@ void cDialogPreferences::loadValues()
 	scrollSpeedSlider->setValue (settings.getScrollSpeed());
 
 	nameEdit->setText (settings.getPlayerSettings().name);
+	colorSelector->setColor (settings.getPlayerSettings().color);
 
 	animationCheckBox->setChecked (settings.isAnimations());
 	shadowsCheckBox->setChecked (settings.isShadows());
@@ -173,7 +178,7 @@ void cDialogPreferences::saveValues()
 {
 	cSettings& settings = cSettings::getInstance();
 
-	settings.setPlayerSettings ({nameEdit->getText(), settings.getPlayerSettings().color});
+	settings.setPlayerSettings ({nameEdit->getText(), colorSelector->getColor()});
 
 	settings.set3DSound (effects3DCheckBox->isChecked());
 
