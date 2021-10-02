@@ -103,7 +103,6 @@ public:
 	void setNetLogPath (const char* netLog);
 
 	const std::string& getDataDir() const;
-	const std::string& getExePath() const;
 	const std::string& getLogPath() const;
 	const std::string& getHomeDir() const;
 
@@ -201,16 +200,6 @@ private:
 	 * Sets the platform dependent config, log and save paths.
 	 */
 	void setPaths();
-
-	/**
-	 * Platform dependent implementations.
-	 * On most platforms just the executable folder is used.
-	 * On Linux it tries to verify the path from the configuration file
-	 * @param sDataDirFromConf The data location that has been read
-	 *        from the configuration file.
-	 * @return The really selected data location.
-	 */
-	std::string searchDataDir (const std::string& sDataDirFromConf = "");
 
 	/**
 	 * Creates a new configuration file and adds the root node to it.
@@ -341,8 +330,6 @@ private:
 
 	/** sConfig is where the config is read from - set in setPaths() **/
 	std::string configPath;
-	/** sExePath is where the exe is located - set in setPaths */
-	std::string exePath;
 	/** sDataDir is where the data files are stored */
 	std::string dataDir;
 	/** sLog is where the log goes - set in setPaths() **/

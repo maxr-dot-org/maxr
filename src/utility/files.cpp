@@ -38,15 +38,16 @@
 #ifdef WIN32
 # include <sys/types.h>
 # include <sys/stat.h>
+# include <shlobj.h>
+# include <direct.h>
 #else
 # include <sys/stat.h>
 # include <unistd.h>
 #endif
 
-
 //--------------------------------------------------------------
 /** @return exists a file at path */
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool FileExists (const char* path)
 {
 	SDL_RWops* file = SDL_RWFromFile (path, "r");
@@ -58,13 +59,13 @@ bool FileExists (const char* path)
 	SDL_RWclose (file);
 	return true;
 }
-
+//------------------------------------------------------------------------------
 bool FileExists (const std::string& path)
 {
 	return FileExists (path.c_str());
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool makeDir (const std::string& path)
 {
 #ifdef WIN32
@@ -74,7 +75,7 @@ bool makeDir (const std::string& path)
 #endif
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 // std::make_directories is C++17
 void makeDirectories (const std::string& path)
 {
@@ -92,7 +93,7 @@ void makeDirectories (const std::string& path)
 	}
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool DirExists (const std::string& path)
 {
 #ifdef WIN32
@@ -110,7 +111,7 @@ bool DirExists (const std::string& path)
 #endif
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::vector<std::string> getFilesOfDirectory (const std::string& sDirectory)
 {
 	std::vector<std::string> List;
@@ -143,7 +144,7 @@ std::vector<std::string> getFilesOfDirectory (const std::string& sDirectory)
 	return List;
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::string getUserMapsDir()
 {
 #ifdef __amigaos4__
@@ -161,7 +162,7 @@ std::string getUserMapsDir()
 #endif
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::string getUserScreenshotsDir()
 {
 #ifdef __amigaos4__
@@ -189,7 +190,116 @@ std::string getUserScreenshotsDir()
 #endif
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
+std::string getHomeDir()
+{
+#if WIN32
+	// this is where windowsuser should set their %HOME%
+	//set home dir
+	TCHAR szPath[MAX_PATH];
+	SHGetFolderPath (nullptr, CSIDL_PERSONAL, nullptr, 0, szPath);
+# ifdef UNICODE
+	std::wstring home = szPath;
+# else
+	std::string home = szPath;
+# endif
+	return std::string (home.begin(), home.end());
+#elif __amigaos4__
+	return "";
+#elif MAC
+	char* cHome = getenv ("HOME");  //get $HOME on mac
+	return cHome != nullptr ? cHome : "";
+#else
+	char* cHome = getenv ("HOME"); // get $HOME on linux
+	return cHome != nullptr ? cHome : "";
+#endif
+}
+
+//------------------------------------------------------------------------------
+std::string getCurrentExeDir()
+{
+#if MAC
+	return ""; // TODO
+#elif WIN32
+	//set exe path
+	TCHAR szPath[MAX_PATH];
+	HMODULE hModule = GetModuleHandle (nullptr);
+
+	GetModuleFileName (hModule, szPath, MAX_PATH);
+#ifdef UNICODE
+	std::wstring exe = szPath;
+#else
+	std::string exe = szPath;
+#endif
+	exe.erase (exe.rfind ("\\"), std::string::npos);
+	return std::string (exe.begin(), exe.end());
+#elif __amigaos4__
+	return "";
+#else
+	// determine full path to application
+	// this needs /proc support that should be available
+	// on most linux installations
+	if (FileExists ("/proc/self/exe"))
+	{
+		char cPathToExe[255];
+		int iSize = readlink ("/proc/self/exe", cPathToExe, sizeof (cPathToExe));
+		if (iSize < 0)
+		{
+			Log.write ("Can't resolve full path to program. Doesn't this system feature /proc/self/exe?", cLog::eLOG_TYPE_WARNING);
+			return "";
+		}
+		else if (iSize >= 255)
+		{
+			Log.write ("Can't resolve full path to program since my array is to small and my programmer is to lame to write a buffer for me!", cLog::eLOG_TYPE_WARNING);
+			return "";
+		}
+		else
+		{
+			int iPos = 0;
+			for (int i = 0; i < 255 && cPathToExe[i] != '\0'; i++)
+			{
+				// snip garbage after last PATH_DELIMITER + executable itself
+				// (is reported on some linux systems
+				//  as well using /proc/self/exe
+				if (cPathToExe[i] == '/')
+					iPos = i;
+			}
+
+			std::string exePath = cPathToExe;
+			exePath = exePath.substr (0, iPos);
+			exePath += PATH_DELIMITER;
+
+			// check for binary itself in bin folder
+			if (FileExists ((exePath + "maxr").c_str()))
+			{
+				Log.write ("Path to binary is: " + exePath, cLog::eLOG_TYPE_INFO);
+			}
+			else
+			{
+				// perhaps we got ourself a trailing maxr
+				// in the path like /proc
+				// seems to do it sometimes. remove it and try again!
+				if (cPathToExe[iPos - 1] == 'r' && cPathToExe[iPos - 2] == 'x' && cPathToExe[iPos - 3] == 'a' && cPathToExe[iPos - 4] == 'm')
+				{
+					exePath = exePath.substr (0, iPos - 5);
+					if (FileExists ((exePath + "maxr").c_str()))
+					{
+						Log.write ("Path to binary is: " + exePath, cLog::eLOG_TYPE_INFO);
+					}
+				}
+			}
+			return exePath;
+		}
+	}
+	else
+	{
+		std::cerr << "Can't resolve full path to program. Doesn't this system feature /proc/self/exe?";
+		return "";
+	}
+#endif
+}
+
+//------------------------------------------------------------------------------
 std::string getUserLogDir()
 {
 #ifdef __amigaos4__
@@ -206,7 +316,7 @@ std::string getUserLogDir()
 #else
 	if (cSettings::getInstance().getHomeDir().empty())
 		return "";
-	std::string LogDir = cSettings::getInstance().getHomeDir() + MAX_LOG_DIR;
+	std::string LogDir = cSettings::getInstance().getHomeDir() + "log_files";
 
 	if (!DirExists (LogDir))
 	{
@@ -218,6 +328,7 @@ std::string getUserLogDir()
 #endif
 }
 
+//------------------------------------------------------------------------------
 void copyFile (const std::string& source, const std::string& dest)
 {
 	SDL_RWops* sourceFile = SDL_RWFromFile (source.c_str(), "rb");

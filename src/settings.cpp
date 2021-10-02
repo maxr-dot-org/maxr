@@ -19,14 +19,6 @@
 
 #include "settings.h"
 
-#ifdef WIN32
-# include <shlobj.h>
-# include <direct.h>
-#else
-# include <sys/stat.h>
-# include <unistd.h>
-#endif
-
 #include <iostream>
 #include <locale>
 #include <string>
@@ -43,6 +35,110 @@
 #include "output/video/video.h"
 
 using namespace tinyxml2;
+
+namespace
+{
+	//--------------------------------------------------------------------------
+	/**
+	 * Platform dependent implementations.
+	 * On most platforms just the executable folder is used.
+	 * On Linux it tries to verify the path from the configuration file
+	 * @param sDataDirFromConf The data location that has been read
+	 *        from the configuration file.
+	 * @return The really selected data location.
+	 */
+	std::string searchDataDir (const std::string& sDataDirFromConf)
+	{
+		std::string sPathToGameData = "";
+#if MAC
+		// assuming data is in same folder as binary (or current working directory)
+		sPathToGameData = getCurrentExeDir();
+#elif WIN32
+		if (!sDataDirFromConf.empty())
+		{
+			sPathToGameData = sDataDirFromConf;
+			sPathToGameData += PATH_DELIMITER;
+		}
+#elif __amigaos4__
+		// assuming data is in same folder as binary (or current working directory)
+		sPathToGameData = getCurrentExeDir();
+#else
+		// BEGIN crude path validation to find gamedata
+		Log.write ("Probing for data paths using default values:", cLog::eLOG_TYPE_INFO);
+
+		std::string sPathArray[] =
+		{
+			// most important position holds value of configure --prefix
+			// to gamedata in %prefix%/$(datadir)/maxr or default path
+			// if autoversion.h wasn't used
+			BUILD_DATADIR,
+			"/usr/local/share/maxr",
+			"/usr/games/maxr",
+			"/usr/local/games/maxr",
+			"/usr/maxr",
+			"/usr/local/maxr",
+			"/opt/maxr",
+			"/usr/share/games/maxr",
+			"/usr/local/share/games/maxr",
+			getCurrentExeDir(), // check for gamedata in bin folder too
+			"." // last resort: local dir
+		};
+
+		/*
+		* Logic is:
+		* BUILD_DATADIR is default search path
+		* sDataDirFromConf overrides BUILD_DATADIR
+		* "$MAXRDATA overrides both
+		* BUILD_DATADIR is checked if sDataDirFromConf or $MAXRDATA fail the probe
+		*/
+		if (!sDataDirFromConf.empty())
+		{
+			// override default path with path from config
+			sPathArray[0] = sDataDirFromConf;
+			// and save old value one later in case sDataDirFromConf is invalid
+			sPathArray[1] = BUILD_DATADIR;
+		}
+
+		// BEGIN SET MAXRDATA
+		char* cDataDir;
+		cDataDir = getenv ("MAXRDATA");
+		if (cDataDir == nullptr)
+		{
+			Log.write ("$MAXRDATA is not set", cLog::eLOG_TYPE_INFO);
+		}
+		else
+		{
+			sPathArray[0] = cDataDir;
+			sPathArray[1] = BUILD_DATADIR;
+			Log.write ("$MAXRDATA is set and overrides default data search path", cLog::eLOG_TYPE_WARNING);
+		}
+		// END SET MAXRDATA
+
+		for (auto sInitFile : sPathArray)
+		{
+			sInitFile += PATH_DELIMITER;
+			if (FileExists (sInitFile + "init.pcx"))
+			{
+				sPathToGameData = sInitFile;
+				break;
+			}
+		}
+
+		// still empty? cry for mama - we couldn't locate any typical data folder
+		if (sPathToGameData.empty())
+		{
+			Log.write ("No success probing for data folder!", cLog::eLOG_TYPE_ERROR);
+		}
+		else
+		{
+			Log.write ("Found gamedata in: " + sPathToGameData, cLog::eLOG_TYPE_INFO);
+		}
+		// END crude path validation to find gamedata
+#endif
+		return sPathToGameData;
+	}
+
+}
 
 //------------------------------------------------------------------------------
 cSettings cSettings::instance;
@@ -63,330 +159,36 @@ bool cSettings::isInitialized() const
 //------------------------------------------------------------------------------
 void cSettings::setPaths()
 {
-	// init absolutely needed paths
-	logPath = MAX_LOG;
-	netLogPath = getUserLogDir();
-	// FIXME: I don't know how this is handled on win/mac/amiga -- beko
-	exePath = "";
-	homeDir = "";
+	homeDir = ::getHomeDir();
 
-#if MAC
-	// do some rudimentary work with the user's homefolder.
-	// Needs to be extended in future...
-	char* cHome = getenv ("HOME");  //get $HOME on mac
-	if (cHome != nullptr)
-		homeDir = cHome;
-	if (!homeDir.empty())
-	{
-		homeDir += PATH_DELIMITER;
-		homeDir += ".maxr";
-		homeDir += PATH_DELIMITER;
-
-		// check whether home dir is set up and readable
-		if (!FileExists (homeDir.c_str())) // under mac everything is a file
-		{
-			if (mkdir (homeDir.c_str(), 0755) == 0)
-				std::cout << "\n(II): Created new config directory " << homeDir;
-			else
-			{
-				std::cout << "\n(EE): Can't create config directory " << homeDir;
-				// reset $HOME since we can't create our config directory
-				homeDir = "";
-			}
-		}
-	}
-	// this is also a good place to find out where the executable is located
-	configPath = MAX_XML; // assume config in current working directory
-#elif WIN32
-	// this is where windowsuser should set their %HOME%
-	// this is also a good place to find out where the executable is located
-
-
-	//set exe path
-	TCHAR szPath[MAX_PATH];
-	HMODULE hModule = GetModuleHandle (nullptr);
-
-	GetModuleFileName (hModule, szPath, MAX_PATH);
-#ifdef UNICODE
-	std::wstring exe = szPath;
-#else
-	std::string exe = szPath;
-#endif
-	exe.erase (exe.rfind ("\\"), std::string::npos);
-	exePath = std::string (exe.begin(), exe.end());
-
-	//set config path
-	configPath = MAX_XML; // assume config in current working directory
-
-	//set home dir
-	SHGetFolderPath (nullptr, CSIDL_PERSONAL, nullptr, 0, szPath);
-#ifdef UNICODE
-	std::wstring home = szPath;
-#else
-	std::string home = szPath;
-#endif
-
-	homeDir = std::string (home.begin(), home.end());
-
-	std::cout << "\n(II): Read home directory " << homeDir;
-
-	if (!homeDir.empty())
-	{
-		homeDir += PATH_DELIMITER;
-		homeDir += "maxr";
-
-		if (!DirExists (homeDir))
-		{
-			if (mkdir (homeDir.c_str()) == 0)
-			{
-				std::cout << "\n(II): Created new config directory " << homeDir;
-			}
-			else
-			{
-				std::cout << "\n(EE): Can't create config directory " << homeDir;
-				homeDir = "";
-			}
-		}
-		else std::cout << "\n(II): Config is read from " << homeDir;
-
-		if (!homeDir.empty()) homeDir += PATH_DELIMITER;
-
-		configPath = homeDir;
-		configPath += MAX_XML;
-	}
-
-	// set new place for logs
-	logPath = homeDir + logPath;
-	netLogPath = getUserLogDir();
-	std::cout << "\n(II): Starting logging to: " << logPath << std::endl;
-#elif __amigaos4__
-	// this is where amigausers should set their %HOME%
-	// this is also a good place to find out where the executable is located
-	configPath = MAX_XML; // assume config in current working directory
-#else
 	// NOTE: I do not use cLog here on purpose.
 	// Logs on linux go somewhere to $HOME/.maxr/
 	// - as long as we can't access that we have to output everything to
 	// the terminal because game's root dir is usually write protected! -- beko
 
-	char* cHome = getenv ("HOME"); // get $HOME on linux
-	if (cHome != nullptr)
-	{
-		homeDir = cHome; // get $HOME on linux
-	}
+#if WIN32
+	const std::string maxrDir = std::string ("maxr");
+#else
+	const std::string maxrDir = std::string (".maxr");
+#endif
+	homeDir += (homeDir.empty() ? "" : PATH_DELIMITER) + maxrDir + PATH_DELIMITER;
+	std::cout << "\n(II): Read home directory " << homeDir;
+	makeDirectories(homeDir);
 
-	if (!homeDir.empty())
-	{
-		homeDir += PATH_DELIMITER;
-		homeDir += ".maxr";
-		homeDir += PATH_DELIMITER;
-		configPath = homeDir;
-		configPath += MAX_XML; // set config to $HOME/.maxr/maxr.xml
-
-		// check whether home dir is set up and readable.
-		// under linux everything is a file -- beko
-		if (!FileExists (homeDir.c_str()))
-		{
-			if (mkdir (homeDir.c_str(), 0755) == 0)
-			{
-				std::cout << "\n(II): Created new config directory " << homeDir;
-			}
-			else
-			{
-				std::cout << "\n(EE): Can't create config directory " << homeDir;
-				// reset $HOME since we can't create our config directory
-				homeDir = "";
-			}
-		}
-		else
-		{
-			// config dir can be read - we're fine
-			std::cout << "\n(II): Config is read from " << homeDir;
-		}
-	}
-	else
-	{
-		std::cout << "\n(WW): $HOME is not set!";
-		homeDir = "";
-		configPath = MAX_XML; // assume config in current working directory
-	}
+	// set config to $HOME/.maxr/maxr.xml
+	configPath = homeDir + MAX_XML;
 
 	// set new place for logs
-	logPath = homeDir + logPath;
+	logPath = homeDir + "maxr.log";
 	netLogPath = getUserLogDir();
-	std::cout << "\n(II): Starting logging to: " << logPath;
-
-	// determine full path to application
-	// this needs /proc support that should be available
-	// on most linux installations
-	if (FileExists ("/proc/self/exe"))
-	{
-		int iSize;
-		char cPathToExe[255];
-		iSize = readlink ("/proc/self/exe", cPathToExe, sizeof (cPathToExe));
-		if (iSize < 0)
-		{
-			Log.write ("Can't resolve full path to program. Doesn't this system feature /proc/self/exe?", cLog::eLOG_TYPE_WARNING);
-		}
-		else if (iSize >= 255)
-		{
-			Log.write ("Can't resolve full path to program since my array is to small and my programmer is to lame to write a buffer for me!", cLog::eLOG_TYPE_WARNING);
-		}
-		else
-		{
-			int iPos = 0;
-			for (int i = 0; i < 255; i++)
-			{
-				// snip garbage after last PATH_DELIMITER + executable itself
-				// (is reported on some linux systems
-				//  as well using /proc/self/exe
-				if (cPathToExe[i] == '/')
-					iPos = i;
-				// skip garbage that might lunger on heap after 0 termination
-				if (cPathToExe[i] == '\0')
-					i = 255;
-			}
-
-			exePath = cPathToExe;
-			exePath = exePath.substr (0, iPos);
-			exePath += PATH_DELIMITER;
-
-			// check for binary itself in bin folder
-			if (FileExists ((exePath + "maxr").c_str()))
-			{
-				Log.write ("Path to binary is: " + exePath, cLog::eLOG_TYPE_INFO);
-			}
-			else
-			{
-				// perhaps we got ourself a trailing maxr
-				// in the path like /proc
-				// seems to do it sometimes. remove it and try again!
-				if (cPathToExe[iPos - 1] == 'r' && cPathToExe[iPos - 2] == 'x' && cPathToExe[iPos - 3] == 'a' && cPathToExe[iPos - 4] == 'm')
-				{
-					exePath = exePath.substr (0, iPos - 5);
-					if (FileExists ((exePath + "maxr").c_str()))
-					{
-						Log.write ("Path to binary is: " + exePath, cLog::eLOG_TYPE_INFO);
-					}
-				}
-			}
-
-		}
-	}
-	else
-	{
-		Log.write ("Can't resolve full path to program. Doesn't this system feature /proc/self/exe?", cLog::eLOG_TYPE_WARNING);
-		exePath = ""; //reset exePath
-	}
-
-	std::cout << "\n";
-#endif
-}
-
-
-//------------------------------------------------------------------------------
-std::string cSettings::searchDataDir (const std::string& sDataDirFromConf)
-{
-	std::string sPathToGameData = "";
-#if MAC
-	// assuming data is in same folder as binary (or current working directory)
-	sPathToGameData = exePath;
-#elif WIN32
-	if (!sDataDirFromConf.empty())
-	{
-		sPathToGameData = sDataDirFromConf;
-		sPathToGameData += PATH_DELIMITER;
-	}
-#elif __amigaos4__
-	// assuming data is in same folder as binary (or current working directory)
-	sPathToGameData = exePath;
-#else
-	// BEGIN crude path validation to find gamedata
-	Log.write ("Probing for data paths using default values:", cLog::eLOG_TYPE_INFO);
-
-#define PATHCOUNT 11
-	std::string sPathArray[PATHCOUNT] =
-	{
-		// most important position holds value of configure --prefix
-		// to gamedata in %prefix%/$(datadir)/maxr or default path
-		// if autoversion.h wasn't used
-		BUILD_DATADIR,
-		"/usr/local/share/maxr",
-		"/usr/games/maxr",
-		"/usr/local/games/maxr",
-		"/usr/maxr",
-		"/usr/local/maxr",
-		"/opt/maxr",
-		"/usr/share/games/maxr",
-		"/usr/local/share/games/maxr",
-		exePath, // check for gamedata in bin folder too
-		"." // last resort: local dir
-	};
-
-	/*
-	* Logic is:
-	* BUILD_DATADIR is default search path
-	* sDataDirFromConf overrides BUILD_DATADIR
-	* "$MAXRDATA overrides both
-	* BUILD_DATADIR is checked if sDataDirFromConf or $MAXRDATA fail the probe
-	*/
-	if (!sDataDirFromConf.empty())
-	{
-		// override default path with path from config
-		sPathArray[0] = sDataDirFromConf;
-		// and save old value one later in case sDataDirFromConf is invalid
-		sPathArray[1] = BUILD_DATADIR;
-	}
-
-	// BEGIN SET MAXRDATA
-	char* cDataDir;
-	cDataDir = getenv ("MAXRDATA");
-	if (cDataDir == nullptr)
-	{
-		Log.write ("$MAXRDATA is not set", cLog::eLOG_TYPE_INFO);
-	}
-	else
-	{
-		sPathArray[0] = cDataDir;
-		sPathArray[1] = BUILD_DATADIR;
-		Log.write ("$MAXRDATA is set and overrides default data search path", cLog::eLOG_TYPE_WARNING);
-	}
-	// END SET MAXRDATA
-
-	for (int i = 0; i < PATHCOUNT; i++)
-	{
-		std::string sInitFile = sPathArray[i];
-		sInitFile += PATH_DELIMITER;
-		sInitFile += "init.pcx";
-		if (FileExists (sInitFile.c_str()))
-		{
-			sPathToGameData = sPathArray[i];
-			sPathToGameData += PATH_DELIMITER;
-			break;
-		}
-	}
-
-	// still empty? cry for mama - we couldn't locate any typical data folder
-	if (sPathToGameData.empty())
-	{
-		Log.write ("No success probing for data folder!", cLog::eLOG_TYPE_ERROR);
-	}
-	else
-	{
-		Log.write ("Found gamedata in: " + sPathToGameData, cLog::eLOG_TYPE_INFO);
-	}
-	// END crude path validation to find gamedata
-#endif
-	return sPathToGameData;
+	std::cout << "\n(II): Starting logging to: " << logPath << std::endl;
 }
 
 //------------------------------------------------------------------------------
 bool cSettings::createConfigFile()
 {
 	configFile.Clear();
-
 	configFile.LinkEndChild (configFile.NewDeclaration());
-
 	configFile.LinkEndChild (configFile.NewElement ("Options"));
 
 	// create new empty config
@@ -408,11 +210,6 @@ void cSettings::initialize()
 
 	setPaths();
 
-	if (configPath.empty()) // we need at least configPath here
-	{
-		Log.write ("configPath not set!", cLog::eLOG_TYPE_WARNING);
-		configPath = MAX_XML;
-	}
 	if (configFile.LoadFile (configPath.c_str()) != XML_NO_ERROR)
 	{
 		Log.write ("Can't read maxr.xml\n", cLog::eLOG_TYPE_WARNING);
@@ -810,7 +607,7 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load gamedata from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setDataDir (searchDataDir().c_str(), true);
+		setDataDir (searchDataDir ("").c_str(), true);
 	}
 	else
 	{
@@ -1112,7 +909,6 @@ void cSettings::saveSetting (const std::string& path, T value, const char* value
 	}
 }
 
-
 //------------------------------------------------------------------------------
 void cSettings::saveResolution()
 {
@@ -1313,12 +1109,6 @@ void cSettings::setDataDir (const char* dataDir, bool save)
 {
 	this->dataDir = dataDir;
 	if (save) saveSetting ("Options~Game~Paths~Gamedata", dataDir);
-}
-
-//------------------------------------------------------------------------------
-const std::string& cSettings::getExePath() const
-{
-	return exePath;
 }
 
 //------------------------------------------------------------------------------

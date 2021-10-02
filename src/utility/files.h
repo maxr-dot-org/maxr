@@ -74,6 +74,9 @@ std::string getUserMapsDir();
 std::string getUserScreenshotsDir();
 
 std::string getUserLogDir();
+std::string getHomeDir();
+std::string getCurrentExeDir();
+
 void copyFile (const std::string& source, const std::string& dest);
 
 

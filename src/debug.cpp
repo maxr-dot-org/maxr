@@ -82,9 +82,10 @@ void initCrashreporting()
 	std::string path = cSettings::getInstance().getHomeDir() + "\\Crashreports\\";
 	info.pszErrorReportSaveDir = path.c_str();
 	std::string lang = cSettings::getInstance().getLanguage();
-	std::string langPath = cSettings::getInstance().getExePath() + "\\crashrpt_lang_EN.ini";
+	const auto currentExeDir = getCurrentExeDir();
+	std::string langPath = currentExeDir + "\\crashrpt_lang_EN.ini";
 	if (lang == "GER")
-		std::string langPath = cSettings::getInstance().getExePath() + "\\crashrpt_lang_DE.ini";
+		std::string langPath = currentExeDir + "\\crashrpt_lang_DE.ini";
 
 	info.pszLangFilePath = langPath.c_str();
 
