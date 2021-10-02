@@ -28,6 +28,7 @@ class cNetwork;
 class cSocket;
 class cNetMessage;
 class cHandshakeTimeout;
+struct sNetworkAddress;
 
 /**
 * Interface called each time a message is received by network.
@@ -60,7 +61,7 @@ public:
 
 	void acceptConnection (const cSocket*, int playerNr);
 	void declineConnection (const cSocket*, eDeclineConnectionReason);
-	void connectToServer (const std::string& host, int port);
+	void connectToServer (const sNetworkAddress&);
 	bool isConnectedToServer() const;
 	void changePlayerNumber (int currentNr, int newNr);
 	bool isPlayerConnected (int playerNr) const;

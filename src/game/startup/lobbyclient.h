@@ -29,6 +29,7 @@
 
 class cClient;
 class cLobbyServer;
+struct sNetworkAddress;
 
 class cLobbyClient : public INetMessageReceiver
 {
@@ -40,7 +41,7 @@ public:
 	void run();
 
 	bool isConnectedToServer() const;
-	void connectToServer (std::string ip, int port);
+	void connectToServer (const sNetworkAddress&);
 	void connectToLocalServer (cLobbyServer&);
 
 	void sendChatMessage (const std::string&);

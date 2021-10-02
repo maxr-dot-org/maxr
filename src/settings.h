@@ -24,14 +24,11 @@
 
 #include <3rd/tinyxml2/tinyxml2.h>
 
+#include "game/networkaddress.h"
+
 #include <mutex>
 #include <string>
 
-struct sNetworkAddress
-{
-	std::string ip = "127.0.0.1"; // string? why not int array? --beko
-	unsigned short port;
-};
 struct sPlayerSettings
 {
 	std::string name;

@@ -168,7 +168,7 @@ void cConnectionManager::declineConnection (const cSocket* socket, eDeclineConne
 }
 
 //------------------------------------------------------------------------------
-void cConnectionManager::connectToServer (const std::string& host, int port)
+void cConnectionManager::connectToServer (const sNetworkAddress& address)
 {
 	assert (localClient != nullptr);
 
@@ -177,9 +177,9 @@ void cConnectionManager::connectToServer (const std::string& host, int port)
 	if (!network)
 		network = std::make_unique<cNetwork> (*this, mutex);
 
-	Log.write ("ConnectionManager: Connecting to " + host + ":" + std::to_string (port), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("ConnectionManager: Connecting to " + address.toString(), cLog::eLOG_TYPE_NET_DEBUG);
 
-	network->connectToServer (host, port);
+	network->connectToServer (address);
 
 	connecting = true;
 }

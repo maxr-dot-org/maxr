@@ -23,8 +23,11 @@
 
 #include <atomic>
 #include <mutex>
+#include "config/workaround/cpp17/optional.h"
 #include <thread>
 #include <vector>
+
+#include "game/networkaddress.h"
 
 //this is probably the maximum of the underlying os 'select' call
 #define MAX_TCP_CONNECTIONS 64
@@ -68,7 +71,7 @@ public:
 
 	int openServer (int port);
 	void closeServer();
-	void connectToServer (const std::string& ip, int port);
+	void connectToServer (const sNetworkAddress&);
 
 	void close (const cSocket* socket);
 	int sendMessage (const cSocket* socket, unsigned int length, const unsigned char* buffer);
@@ -93,8 +96,7 @@ private:
 	cConnectionManager& connectionManager;
 
 	// save infos for non blocking connection attempt
-	std::string connectToIp;
-	int connectToPort;
+	std::optional<sNetworkAddress> connectTo;
 
 	std::atomic<bool> exit{false};
 	std::thread tcpHandleThread;

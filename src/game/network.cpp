@@ -148,19 +148,17 @@ void cNetwork::closeServer()
 }
 
 //------------------------------------------------------------------------
-void cNetwork::connectToServer (const std::string& ip, int port)
+void cNetwork::connectToServer (const sNetworkAddress& address)
 {
 	std::unique_lock<std::recursive_mutex> tl (tcpMutex);
 
-	if (!connectToIp.empty())
+	if (connectTo)
 	{
 		Log.write ("Network: Can only handle one connection attempt at once", cLog::eLOG_TYPE_NET_ERROR);
 		connectionManager.connectionResult (nullptr);
 		return;
 	}
-
-	connectToIp = ip;
-	connectToPort = port;
+	connectTo = address;
 }
 
 //------------------------------------------------------------------------
@@ -236,7 +234,7 @@ void cNetwork::handleNetworkThread()
 			SDL_Delay (10);
 		}
 
-		if (readySockets > 0 || closingSockets.size() > 0 || !connectToIp.empty())
+		if (readySockets > 0 || closingSockets.size() > 0 || connectTo)
 		{
 			std::unique_lock<std::recursive_mutex> tl (tcpMutex);
 
@@ -296,10 +294,10 @@ void cNetwork::handleNetworkThread()
 			}
 
 			//handle connection request from client
-			if (!connectToIp.empty())
+			if (connectTo)
 			{
 				IPaddress ipaddr;
-				if (SDLNet_ResolveHost (&ipaddr, connectToIp.c_str(), connectToPort) == -1)
+				if (SDLNet_ResolveHost (&ipaddr, connectTo->ip.c_str(), connectTo->port) == -1)
 				{
 					Log.write ("Network: Couldn't resolve host", cLog::eLOG_TYPE_WARNING);
 					connectionManager.connectionResult (nullptr);
@@ -320,7 +318,7 @@ void cNetwork::handleNetworkThread()
 						connectionManager.connectionResult (socket);
 					}
 				}
-				connectToIp.clear();
+				connectTo = std::nullopt;
 			}
 			cleanupClosedSockets();
 		}

@@ -19,6 +19,7 @@
 
 #include "ui/graphical/menu/windows/windownetworklobbyclient/windownetworklobbyclient.h"
 
+#include "game/networkaddress.h"
 #include "game/startup/lobbyclient.h"
 #include "ui/graphical/menu/widgets/lineedit.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
@@ -52,14 +53,13 @@ void cWindowNetworkLobbyClient::bindConnections (cLobbyClient& lobbyClient)
 		// Connect only if there isn't a connection yet
 		if (lobbyClient.isConnectedToServer()) return;
 
-		const auto& ip = getIp();
-		const auto& port = getPort();
+		sNetworkAddress address{getIp(), getPort()};
 
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Connecting", ip + ":" + std::to_string (port))); // e.g. Connecting to 127.0.0.1:55800
+		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Connecting", address.toString())); // e.g. Connecting to 127.0.0.1:55800
 		disablePortEdit();
 		disableIpEdit();
 
-		lobbyClient.connectToServer (ip, port);
+		lobbyClient.connectToServer (address);
 	});
 }
 
