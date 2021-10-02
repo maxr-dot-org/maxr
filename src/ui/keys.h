@@ -45,7 +45,10 @@ public:
 	void saveToFile();
 
 	eMouseStyle getMouseStyle() const;
-
+public:
+	void loadFromJsonFile (const std::string& path);
+	void loadFromXmlFile(const std::string& path);
+public:
 	cKeySequence keyExit;
 	cKeySequence keyJumpToAction;
 	cKeySequence keyEndTurn;

@@ -19,12 +19,12 @@
 
 #include "keys.h"
 
-#include "defines.h"
+#include "game/serialization/jsonarchive.h"
 #include "game/serialization/xmlarchive.h"
+#include "settings.h"
+#include "utility/extendedtinyxml.h"
 #include "utility/files.h"
 #include "utility/log.h"
-
-#include <3rd/tinyxml2/tinyxml2.h>
 
 cKeysList KeysList;
 
@@ -110,31 +110,13 @@ cKeysList::cKeysList() :
 {}
 
 //------------------------------------------------------------------------------
-void cKeysList::loadFromFile()
+void cKeysList::loadFromXmlFile (const std::string& path)
 {
-	Log.write ("Loading Keys", cLog::eLOG_TYPE_INFO);
-
-	if (!FileExists (KEYS_XMLUsers) && !FileExists (KEYS_XMLGame))
-	{
-		Log.write ("generating new keys-file", cLog::eLOG_TYPE_WARNING);
-		saveToFile();
-		return;
-	}
-	else if (!FileExists (KEYS_XMLUsers))
-	{
-		copyFile (KEYS_XMLGame, KEYS_XMLUsers);
-		Log.write ("Key-file copied from gamedir to userdir", cLog::eLOG_TYPE_INFO);
-	}
-	else // => (FileExists (KEYS_XMLUsers))
-	{
-		Log.write ("User key-file in use", cLog::eLOG_TYPE_INFO);
-	}
-
+	Log.write ("Use (old) xml format", cLog::eLOG_TYPE_INFO);
 	tinyxml2::XMLDocument doc;
-	if (doc.LoadFile (KEYS_XMLUsers) != tinyxml2::XML_NO_ERROR)
+	if (doc.LoadFile (path.c_str()) != tinyxml2::XML_NO_ERROR)
 	{
 		Log.write ("cannot load keys.xml\ngenerating new file", cLog::eLOG_TYPE_WARNING);
-		saveToFile();
 		return;
 	}
 	cXmlArchiveOut in (*doc.RootElement());
@@ -149,25 +131,85 @@ void cKeysList::loadFromFile()
 	{
 		Log.write (std::string ("Error while reading keys: ") + e.what(), cLog::eLOG_TYPE_WARNING);
 		Log.write ("Overwriting with default settings", cLog::eLOG_TYPE_WARNING);
+	}
+}
+
+//------------------------------------------------------------------------------
+void cKeysList::loadFromJsonFile (const std::string& path)
+{
+	std::ifstream file (path);
+	nlohmann::json json;
+
+	if (!(file >> json))
+	{
+		Log.write ("cannot load keys.json\ngenerating new file", cLog::eLOG_TYPE_WARNING);
 		saveToFile();
+		return;
+	}
+	try
+	{
+		cJsonArchiveIn in (json);
+		serialize (in);
+
+		Log.write ("Done", cLog::eLOG_TYPE_DEBUG);
+	}
+	catch (const std::exception& e)
+	{
+		Log.write (std::string ("Error while reading keys: ") + e.what(), cLog::eLOG_TYPE_WARNING);
+		Log.write ("Overwriting with default settings", cLog::eLOG_TYPE_WARNING);
+		saveToFile();
+	}
+}
+
+//------------------------------------------------------------------------------
+void cKeysList::loadFromFile()
+{
+	Log.write ("Loading Keys", cLog::eLOG_TYPE_INFO);
+
+	const auto KEYS_XMLGame = cSettings::getInstance().getDataDir() + "keys.xml";
+	const auto KEYS_XMLUsers = cSettings::getInstance().getHomeDir() + "keys.xml";
+	const auto keysJsonGame = cSettings::getInstance().getDataDir() + "keys.json";
+	const auto keysJsonUsers = cSettings::getInstance().getHomeDir() + "keys.json";
+
+	if (FileExists (keysJsonUsers))
+	{
+		Log.write ("User key-file in use", cLog::eLOG_TYPE_INFO);
+		loadFromJsonFile (keysJsonUsers);
+	}
+	else if (FileExists (keysJsonGame))
+	{
+		copyFile (keysJsonGame, keysJsonUsers);
+		Log.write ("Key-file copied from gamedir to userdir", cLog::eLOG_TYPE_INFO);
+		loadFromJsonFile (keysJsonUsers);
+	}
+	else if (FileExists (KEYS_XMLUsers))
+	{
+		loadFromXmlFile(KEYS_XMLUsers);
+		saveToFile();
+	}
+	else if (FileExists (KEYS_XMLGame))
+	{
+		loadFromXmlFile(KEYS_XMLGame);
+		saveToFile();
+	}
+	else
+	{
+		Log.write ("generating new keys-file", cLog::eLOG_TYPE_WARNING);
+		saveToFile();
+		return;
 	}
 }
 
 //------------------------------------------------------------------------------
 void cKeysList::saveToFile()
 {
-	tinyxml2::XMLDocument doc;
-	doc.LinkEndChild (doc.NewElement ("Controles"));
+	nlohmann::json json;
+	cJsonArchiveOut archive(json);
 
-	cXmlArchiveIn out (*doc.RootElement());
+	serialize (archive);
 
-	serialize (out);
-
-	const auto errorCode = doc.SaveFile (KEYS_XMLUsers);
-	if (errorCode != tinyxml2::XML_NO_ERROR)
-	{
-		throw std::runtime_error (std::string ("Could not save key controls to '") + KEYS_XMLUsers + "'. Error code is " + std::to_string ((int)errorCode) + "."); // TODO: transform error code to text.
-	}
+	std::ofstream file (cSettings::getInstance().getHomeDir() + "keys.json");
+	file << json.dump(0);
 }
 
 //------------------------------------------------------------------------------
