@@ -126,7 +126,7 @@ void cDialogPreferences::loadValues()
 
 	scrollSpeedSlider->setValue (cSettings::getInstance().getScrollSpeed());
 
-	nameEdit->setText (cSettings::getInstance().getPlayerName());
+	nameEdit->setText (cSettings::getInstance().getPlayerSettings().name);
 
 	animationCheckBox->setChecked (cSettings::getInstance().isAnimations());
 	shadowsCheckBox->setChecked (cSettings::getInstance().isShadows());
@@ -170,7 +170,7 @@ void cDialogPreferences::loadValues()
 //------------------------------------------------------------------------------
 void cDialogPreferences::saveValues()
 {
-	cSettings::getInstance().setPlayerName (nameEdit->getText().c_str());
+	cSettings::getInstance().setPlayerSettings ({nameEdit->getText(), cSettings::getInstance().getPlayerSettings().color});
 
 	cSettings::getInstance().set3DSound (effects3DCheckBox->isChecked());
 

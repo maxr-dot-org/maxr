@@ -27,6 +27,17 @@
 #include <mutex>
 #include <string>
 
+struct sNetworkAddress
+{
+	std::string ip = "127.0.0.1"; // string? why not int array? --beko
+	unsigned short port;
+};
+struct sPlayerSettings
+{
+	std::string name;
+	cRgbColor color;
+};
+
 /**
  * cSettings class stores all settings for the game and handles reading
  * and writing them from and to the configuration file.
@@ -102,29 +113,15 @@ public:
 	void setNetLogPath (const char* netLog);
 
 	const std::string& getDataDir() const;
-	void setDataDir (const char* dataDir, bool save = true);
-
 	const std::string& getExePath() const;
-
 	const std::string& getLogPath() const;
-	void setLogPath (const char* logPath);
-
 	const std::string& getHomeDir() const;
-	void setHomeDir (const char* homeDir);
 
-	// Network
+	const sNetworkAddress& getNetworkAddress() const { return networkAddress; }
+	void setNetworkAddress (const sNetworkAddress&, bool save = true);
 
-	const std::string& getIP() const;
-	void setIP (const char* ip, bool save = true);
-
-	unsigned short getPort() const;
-	void setPort (unsigned short port, bool save = true);
-
-	const std::string& getPlayerName() const;
-	void setPlayerName (const char* playerName, bool save = true);
-
-	const cRgbColor& getPlayerColor() const;
-	void setPlayerColor (const cRgbColor& color, bool save = true);
+	const sPlayerSettings& getPlayerSettings() const { return playerSettings; }
+	void setPlayerSettings (const sPlayerSettings&, bool save = true);
 
 	// Sound
 
@@ -164,57 +161,29 @@ public:
 	void setShowIntro (bool showIntro, bool save = true);
 
 	bool shouldUseFastMode() const;
-	void setFastMode (bool fastMode, bool save = true);
-
 	bool shouldDoPrescale() const;
-	void setDoPrescale (bool preScale, bool save = true);
 
 	const std::string& getLanguage() const;
 	void setLanguage (const char* language, bool save = true);
 
 	const std::string& getVoiceLanguage() const;
-	void setVoiceLanguage (const char* language, bool save = true);
 
 	unsigned int getCacheSize() const;
 	void setCacheSize (unsigned int cacheSize, bool save = true);
 
 	// Paths
-
 	const std::string& getFontPath() const;
-	void setFontPath (const char* fontPath, bool save = true);
-
 	const std::string& getFxPath() const;
-	void setFxPath (const char* fxPath, bool save = true);
-
 	const std::string& getGfxPath() const;
-	void setGfxPath (const char* gfxPath, bool save = true);
-
 	const std::string& getLangPath() const;
-	void setLangPath (const char* langPath, bool save = true);
-
 	const std::string& getMapsPath() const;
-	void setMapsPath (const char* mapsPath, bool save = true);
-
 	const std::string& getSavesPath() const;
-	void setSavesPath (const char* savesPath, bool save = true);
-
 	const std::string& getSoundsPath() const;
-	void setSoundsPath (const char* soundsPath, bool save = true);
-
 	const std::string& getVoicesPath() const;
-	void setVoicesPath (const char* voicesPath, bool save = true);
-
 	const std::string& getMusicPath() const;
-	void setMusicPath (const char* musicPath, bool save = true);
-
 	const std::string& getVehiclesPath() const;
-	void setVehiclesPath (const char* vehiclesPath, bool save = true);
-
 	const std::string& getBuildingsPath() const;
-	void setBuildingsPath (const char* buildingsPath, bool save = true);
-
 	const std::string& getMvePath() const;
-	void setMvePath (const char* mvePath, bool save = true);
 
 	mutable cSignal<void()> animationsChanged;
 	// TODO: add signals for other settings
@@ -223,125 +192,12 @@ private:
 	/**
 	 * Private constructor for singleton design pattern.
 	 */
-	cSettings();
+	cSettings() = default;
 	/**
 	 * Private copy constructor for singleton design pattern.
 	 * Does not need to be implemented!
 	 */
 	cSettings (const cSettings&) = delete;
-
-	/**
-	 * True if the object has been initialized already.
-	 */
-	bool initialized;
-	/**
-	 * True if initialization is running at the moment.
-	 * Used to prevent the class to start multiple initializations.
-	 */
-	bool initializing;
-
-	tinyxml2::XMLDocument configFile;
-	std::recursive_mutex xmlDocMutex;
-
-	/**
-	 * The static instance of this object.
-	 */
-	static cSettings instance;
-
-	// START-Node
-	/** enable intro on start */
-	bool showIntro = true;
-	/** start in fastmode */
-	bool fastMode = false;
-	/** prescale gfx */
-	bool preScale = false;
-	/** translation file */
-	std::string language = "en";
-	/** language code for voice files */
-	std::string voiceLanguage;
-	/** cache size */
-	unsigned int cacheSize = 400;
-
-	// GAME-Node
-	/** enable debug */
-	bool debug = true;
-	/** enable autosave */
-	bool autosave = true;
-	/** enable animations */
-	bool animations = true;
-	/** enable shadows */
-	bool shadows = true;
-	/** enable alpha effects */
-	bool alphaEffects = true;
-	/** enable descriptions (e.g. in build menus) */
-	bool showDescription = true;
-	/** enable damage effects (smoke'n stuff) */
-	bool damageEffects = true;
-	/** enable damage effects for vehicles (smoke'n stuff) */
-	bool damageEffectsVehicles = true;
-	/** enable tracks (units leave tracks on the floor) */
-	bool makeTracks = true;
-	/** scrollspeed on map */
-	int scrollSpeed = 32;
-
-	/** sConfig is where the config is read from - set in setPaths() **/
-	std::string configPath;
-	/** sExePath is where the exe is located - set in setPaths */
-	std::string exePath;
-	/** sDataDir is where the data files are stored */
-	std::string dataDir;
-	/** sLog is where the log goes - set in setPaths() **/
-	std::string logPath;
-	/** sNetLog is where the netlog goes - set in setPaths() **/
-	std::string netLogPath;
-	/** sHome is where the user has his $HOME dir - set in setPaths() **/
-	std::string homeDir;
-
-	// NET
-	/** Last/default ip used for network game */
-	std::string ip = "127.0.0.1"; // string? why not int array? --beko
-	/** Last/default port  used for network game */
-	unsigned short port;
-	/** Last/default player's name used for network game */
-	std::string playerName;
-	/** Last color chosen by player */
-	cRgbColor playerColor;
-
-	// SOUND
-	/** sound enabled */
-	bool soundEnabled = true;
-	/** volume music */
-	int musicVol = 128;
-	/** volume sound effects */
-	int soundVol = 128;
-	/** volume voices */
-	int voiceVol = 128;
-	/** chunk size */
-	int chunkSize = 2048;
-	/** frequency */
-	int frequency = 44100;
-	/** mute music */
-	bool musicMute = false;
-	/** mute sound effects */
-	bool soundMute = false;
-	/** mute voices */
-	bool voiceMute = false;
-	/** in-game sound effects should respect position*/
-	bool sound3d = true;
-
-	// PATHS
-	std::string fontPath;      // Path to the fonts
-	std::string fxPath;        // Path to the effects
-	std::string gfxPath;       // Path to the graphics
-	std::string langPath;      // Path to language files
-	std::string mapsPath;      // Path to the maps
-	std::string savesPath;     // Path to the saves
-	std::string soundsPath;    // Path to the sound-files
-	std::string voicesPath;    // Path to the voice-files
-	std::string musicPath;     // Path to the music-files
-	std::string vehiclesPath;  // Path to the vehicles
-	std::string buildingsPath; // Path to the buildings
-	std::string mvePath;       // Path to the in-game movies (*.mve)
 
 	/**
 	 * Gets the platform dependent user paths for the configuration file
@@ -372,6 +228,8 @@ private:
 	 */
 	bool createConfigFile();
 
+	void setDataDir (const char* dataDir, bool save = true);
+
 	/**
 	 * Template function for saving a setting.
 	 * @param path See #getXmlNode() for more information on
@@ -389,6 +247,126 @@ private:
 	void saveSetting (const std::string& path, int value);
 	void saveSetting (const std::string& path, unsigned int value);
 	void saveSetting (const std::string& path, bool value);
+private:
+	struct sStartSettings
+	{
+		/** enable intro on start */
+		bool showIntro = true;
+		/** start in fastmode */
+		bool fastMode = false;
+		/** prescale gfx */
+		bool preScale = false;
+		/** translation file */
+		std::string language = "en";
+		/** language code for voice files */
+		std::string voiceLanguage;
+		/** cache size */
+		unsigned int cacheSize = 400;
+	};
+
+	struct sSoundSettings
+	{
+		/** sound enabled */
+		bool soundEnabled = true;
+		/** volume music */
+		int musicVol = 128;
+		/** volume sound effects */
+		int soundVol = 128;
+		/** volume voices */
+		int voiceVol = 128;
+		/** chunk size */
+		int chunkSize = 2048;
+		/** frequency */
+		int frequency = 44100;
+		/** mute music */
+		bool musicMute = false;
+		/** mute sound effects */
+		bool soundMute = false;
+		/** mute voices */
+		bool voiceMute = false;
+		/** in-game sound effects should respect position*/
+		bool sound3d = true;
+	};
+
+	struct sPathSettings
+	{
+		std::string fontPath;      // Path to the fonts
+		std::string fxPath;        // Path to the effects
+		std::string gfxPath;       // Path to the graphics
+		std::string langPath;      // Path to language files
+		std::string mapsPath;      // Path to the maps
+		std::string savesPath;     // Path to the saves
+		std::string soundsPath;    // Path to the sound-files
+		std::string voicesPath;    // Path to the voice-files
+		std::string musicPath;     // Path to the music-files
+		std::string vehiclesPath;  // Path to the vehicles
+		std::string buildingsPath; // Path to the buildings
+		std::string mvePath;       // Path to the in-game movies (*.mve)
+	};
+
+	struct sInGameSettings
+	{
+		/** enable debug */
+		bool debug = true;
+		/** enable autosave */
+		bool autosave = true;
+		/** enable animations */
+		bool animations = true;
+		/** enable shadows */
+		bool shadows = true;
+		/** enable alpha effects */
+		bool alphaEffects = true;
+		/** enable descriptions (e.g. in build menus) */
+		bool showDescription = true;
+		/** enable damage effects (smoke'n stuff) */
+		bool damageEffects = true;
+		/** enable damage effects for vehicles (smoke'n stuff) */
+		bool damageEffectsVehicles = true;
+		/** enable tracks (units leave tracks on the floor) */
+		bool makeTracks = true;
+		/** scrollspeed on map */
+		int scrollSpeed = 32;
+	};
+
+private:
+	/**
+	 * The static instance of this object.
+	 */
+	static cSettings instance;
+
+	/**
+	 * True if the object has been initialized already.
+	 */
+	bool initialized = false;
+	/**
+	 * True if initialization is running at the moment.
+	 * Used to prevent the class to start multiple initializations.
+	 */
+	bool initializing = false;
+
+	tinyxml2::XMLDocument configFile;
+	std::recursive_mutex xmlDocMutex;
+
+	sStartSettings startSettings;
+
+	/** sConfig is where the config is read from - set in setPaths() **/
+	std::string configPath;
+	/** sExePath is where the exe is located - set in setPaths */
+	std::string exePath;
+	/** sDataDir is where the data files are stored */
+	std::string dataDir;
+	/** sLog is where the log goes - set in setPaths() **/
+	std::string logPath;
+	/** sNetLog is where the netlog goes - set in setPaths() **/
+	std::string netLogPath;
+	/** sHome is where the user has his $HOME dir - set in setPaths() **/
+	std::string homeDir;
+
+	sNetworkAddress networkAddress;
+	sPlayerSettings playerSettings;
+	sSoundSettings soundSettings;
+	sPathSettings pathSettings;
+	sInGameSettings gameSettings;
 };
 
 #endif // SETTINGS_H

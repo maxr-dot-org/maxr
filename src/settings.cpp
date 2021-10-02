@@ -48,13 +48,6 @@ using namespace tinyxml2;
 cSettings cSettings::instance;
 
 //------------------------------------------------------------------------------
-cSettings::cSettings()
-{
-	initialized = false;
-	initializing = false;
-}
-
-//------------------------------------------------------------------------------
 cSettings& cSettings::getInstance()
 {
 	if (!instance.initialized && !instance.initializing) instance.initialize();
@@ -470,7 +463,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			showIntro = getXMLAttributeBoolFromElement (xmlElement, "YN");
+			startSettings.showIntro = getXMLAttributeBoolFromElement (xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -504,11 +497,12 @@ void cSettings::initialize()
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
 			Log.write ("Can't load fast mode from config file: using default value", cLog::eLOG_TYPE_WARNING);
-			setFastMode (false);
+			startSettings.fastMode = false;
+			saveSetting ("Options~Start~Fastmode", false);
 		}
 		else
 		{
-			fastMode = getXMLAttributeBoolFromElement (xmlElement, "YN");
+			startSettings.fastMode = getXMLAttributeBoolFromElement (xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -516,11 +510,12 @@ void cSettings::initialize()
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
 			Log.write ("Can't load pre scale from config file: using default value", cLog::eLOG_TYPE_WARNING);
-			setDoPrescale (false);
+			startSettings.preScale = false;
+			saveSetting ("Options~Start~PreScale", false);
 		}
 		else
 		{
-			preScale = getXMLAttributeBoolFromElement (xmlElement, "YN");
+			startSettings.preScale = getXMLAttributeBoolFromElement (xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -532,7 +527,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			cacheSize = xmlElement->IntAttribute ("Num");
+			startSettings.cacheSize = xmlElement->IntAttribute ("Num");
 		}
 	}
 
@@ -545,7 +540,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		language = xmlElement->Attribute ("Text");
+		startSettings.language = xmlElement->Attribute ("Text");
 	}
 
 	// =========================================================================
@@ -553,12 +548,13 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load language from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setVoiceLanguage ("");
+		startSettings.voiceLanguage = "";
+		saveSetting ("Options~Start~VoiceLanguage", "");
 	}
 	else
 	{
-		voiceLanguage = xmlElement->Attribute ("Text");
-		to_lower (voiceLanguage);
+		startSettings.voiceLanguage = xmlElement->Attribute ("Text");
+		to_lower (startSettings.voiceLanguage);
 	}
 
 	// GAME
@@ -571,7 +567,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		autosave = getXMLAttributeBoolFromElement (xmlElement, "YN");
+		gameSettings.autosave = getXMLAttributeBoolFromElement (xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -583,8 +579,8 @@ void cSettings::initialize()
 	}
 	else
 	{
-		debug = getXMLAttributeBoolFromElement (xmlElement, "YN");
-		if (!debug) Log.write ("Debugmode disabled - for verbose output please enable Debug in maxr.xml", cLog::eLOG_TYPE_WARNING);
+		gameSettings.debug = getXMLAttributeBoolFromElement (xmlElement, "YN");
+		if (!gameSettings.debug) Log.write ("Debugmode disabled - for verbose output please enable Debug in maxr.xml", cLog::eLOG_TYPE_WARNING);
 		else Log.write ("Debugmode enabled", cLog::eLOG_TYPE_INFO);
 	}
 
@@ -597,7 +593,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		animations = getXMLAttributeBoolFromElement (xmlElement, "YN");
+		gameSettings.animations = getXMLAttributeBoolFromElement (xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -609,7 +605,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		shadows = getXMLAttributeBoolFromElement (xmlElement, "YN");
+		gameSettings.shadows = getXMLAttributeBoolFromElement (xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -621,7 +617,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		alphaEffects = getXMLAttributeBoolFromElement (xmlElement, "YN");
+		gameSettings.alphaEffects = getXMLAttributeBoolFromElement (xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -633,7 +629,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		showDescription = getXMLAttributeBoolFromElement (xmlElement, "YN");
+		gameSettings.showDescription = getXMLAttributeBoolFromElement (xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -645,7 +641,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		damageEffects = getXMLAttributeBoolFromElement (xmlElement, "YN");
+		gameSettings.damageEffects = getXMLAttributeBoolFromElement (xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -657,7 +653,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		damageEffectsVehicles = getXMLAttributeBoolFromElement (xmlElement, "YN");
+		gameSettings.damageEffectsVehicles = getXMLAttributeBoolFromElement (xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -669,7 +665,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		makeTracks = getXMLAttributeBoolFromElement (xmlElement, "YN");
+		gameSettings.makeTracks = getXMLAttributeBoolFromElement (xmlElement, "YN");
 	}
 
 	// =========================================================================
@@ -681,7 +677,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		scrollSpeed = xmlElement->IntAttribute ("Num");
+		gameSettings.scrollSpeed = xmlElement->IntAttribute ("Num");
 	}
 
 	// GAME-SOUND
@@ -696,7 +692,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			soundEnabled = getXMLAttributeBoolFromElement (xmlElement, "YN");
+			soundSettings.soundEnabled = getXMLAttributeBoolFromElement (xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -708,7 +704,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			musicMute = getXMLAttributeBoolFromElement (xmlElement, "YN");
+			soundSettings.musicMute = getXMLAttributeBoolFromElement (xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -720,7 +716,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			soundMute = getXMLAttributeBoolFromElement (xmlElement, "YN");
+			soundSettings.soundMute = getXMLAttributeBoolFromElement (xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -732,7 +728,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			voiceMute = getXMLAttributeBoolFromElement (xmlElement, "YN");
+			soundSettings.voiceMute = getXMLAttributeBoolFromElement (xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -744,7 +740,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			sound3d = getXMLAttributeBoolFromElement (xmlElement, "YN");
+			soundSettings.sound3d = getXMLAttributeBoolFromElement (xmlElement, "YN");
 		}
 
 		// =====================================================================
@@ -756,7 +752,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			musicVol = xmlElement->IntAttribute ("Num");
+			soundSettings.musicVol = xmlElement->IntAttribute ("Num");
 		}
 
 		// =====================================================================
@@ -768,7 +764,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			soundVol = xmlElement->IntAttribute ("Num");
+			soundSettings.soundVol = xmlElement->IntAttribute ("Num");
 		}
 
 		// =====================================================================
@@ -780,7 +776,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			voiceVol = xmlElement->IntAttribute ("Num");
+			soundSettings.voiceVol = xmlElement->IntAttribute ("Num");
 		}
 
 		// =====================================================================
@@ -792,7 +788,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			chunkSize = xmlElement->IntAttribute ("Num");
+			soundSettings.chunkSize = xmlElement->IntAttribute ("Num");
 		}
 
 		// =====================================================================
@@ -804,7 +800,7 @@ void cSettings::initialize()
 		}
 		else
 		{
-			frequency = xmlElement->IntAttribute ("Num");
+			soundSettings.frequency = xmlElement->IntAttribute ("Num");
 		}
 	}
 
@@ -826,12 +822,12 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load language path from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setLangPath ("languages");
-		langPath = dataDir + "languages";
+		saveSetting ("Options~Game~Paths~Languages", "languages");
+		pathSettings.langPath = dataDir + "languages";
 	}
 	else
 	{
-		langPath = dataDir + xmlElement->Attribute ("Text");
+		pathSettings.langPath = dataDir + xmlElement->Attribute ("Text");
 	}
 
 	// =========================================================================
@@ -839,12 +835,12 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load fonts path from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setFontPath ("fonts");
-		fontPath = dataDir + "fonts";
+		saveSetting ("Options~Game~Paths~Fonts", "fonts");
+		pathSettings.fontPath = dataDir + "fonts";
 	}
 	else
 	{
-		fontPath = dataDir + xmlElement->Attribute ("Text");
+		pathSettings.fontPath = dataDir + xmlElement->Attribute ("Text");
 	}
 
 	// =========================================================================
@@ -852,12 +848,12 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load fx path from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setFxPath ("fx");
-		fxPath = dataDir + "fx";
+		saveSetting ("Options~Game~Paths~FX", "fx");
+		pathSettings.fxPath = dataDir + "fx";
 	}
 	else
 	{
-		fxPath = dataDir + xmlElement->Attribute ("Text");
+		pathSettings.fxPath = dataDir + xmlElement->Attribute ("Text");
 	}
 
 	// =========================================================================
@@ -865,12 +861,12 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load gfx path from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setGfxPath ("gfx");
-		gfxPath = dataDir + "gfx";
+		saveSetting ("Options~Game~Paths~GFX", "gfx");
+		pathSettings.gfxPath = dataDir + "gfx";
 	}
 	else
 	{
-		gfxPath = dataDir + xmlElement->Attribute ("Text");
+		pathSettings.gfxPath = dataDir + xmlElement->Attribute ("Text");
 	}
 
 	// =========================================================================
@@ -878,12 +874,12 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load maps path from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setMapsPath ("maps");
-		mapsPath = dataDir + "maps";
+		saveSetting ("Options~Game~Paths~Maps", "maps");
+		pathSettings.mapsPath = dataDir + "maps";
 	}
 	else
 	{
-		mapsPath = dataDir + xmlElement->Attribute ("Text");
+		pathSettings.mapsPath = dataDir + xmlElement->Attribute ("Text");
 	}
 
 	// =========================================================================
@@ -891,17 +887,17 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load saves path from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setSavesPath ("saves");
-		savesPath = homeDir + "saves";
+		saveSetting ("Options~Game~Paths~Saves", "saves");
+		pathSettings.savesPath = homeDir + "saves";
 	}
 	else if (std::string (xmlElement->Attribute ("Text")) == "saves")
 	{
-		savesPath = homeDir + xmlElement->Attribute ("Text");
+		pathSettings.savesPath = homeDir + xmlElement->Attribute ("Text");
 	}
 	else
 	{
 		// use absolute paths for saves - do not add dataDir or homeDir
-		savesPath = xmlElement->Attribute ("Text");
+		pathSettings.savesPath = xmlElement->Attribute ("Text");
 	}
 #if MAC
 	// Create saves directory, if it doesn't exist, yet.
@@ -922,12 +918,12 @@ void cSettings::initialize()
 		if (!xmlElement || !xmlElement->Attribute ("Text"))
 		{
 			Log.write ("Can't load sounds path from config file: using default value", cLog::eLOG_TYPE_WARNING);
-			setSoundsPath ("sounds");
-			soundsPath = dataDir + "sounds";
+			saveSetting ("Options~Game~Paths~Sounds", "sounds");
+			pathSettings.soundsPath = dataDir + "sounds";
 		}
 		else
 		{
-			soundsPath = dataDir + xmlElement->Attribute ("Text");
+			pathSettings.soundsPath = dataDir + xmlElement->Attribute ("Text");
 		}
 
 		// =====================================================================
@@ -935,12 +931,12 @@ void cSettings::initialize()
 		if (!xmlElement || !xmlElement->Attribute ("Text"))
 		{
 			Log.write ("Can't load voices path from config file: using default value", cLog::eLOG_TYPE_WARNING);
-			setVoicesPath ("voices");
-			voicesPath = dataDir + "voices";
+			saveSetting ("Options~Game~Paths~Voices", "voices");
+			pathSettings.voicesPath = dataDir + "voices";
 		}
 		else
 		{
-			voicesPath = dataDir + xmlElement->Attribute ("Text");
+			pathSettings.voicesPath = dataDir + xmlElement->Attribute ("Text");
 		}
 
 		// =====================================================================
@@ -948,12 +944,12 @@ void cSettings::initialize()
 		if (!xmlElement || !xmlElement->Attribute ("Text"))
 		{
 			Log.write ("Can't load music path from config file: using default value", cLog::eLOG_TYPE_WARNING);
-			setMusicPath ("music");
-			musicPath = dataDir + "music";
+			saveSetting ("Options~Game~Paths~Music", "music");
+			pathSettings.musicPath = dataDir + "music";
 		}
 		else
 		{
-			musicPath = dataDir + xmlElement->Attribute ("Text");
+			pathSettings.musicPath = dataDir + xmlElement->Attribute ("Text");
 		}
 	}
 
@@ -962,12 +958,12 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load vehicles path from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setVehiclesPath ("vehicles");
-		vehiclesPath = dataDir + "vehicles";
+		saveSetting ("Options~Game~Paths~Vehicles", "vehicles");
+		pathSettings.vehiclesPath = dataDir + "vehicles";
 	}
 	else
 	{
-		vehiclesPath = dataDir + xmlElement->Attribute ("Text");
+		pathSettings.vehiclesPath = dataDir + xmlElement->Attribute ("Text");
 	}
 
 	// =========================================================================
@@ -975,12 +971,12 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load buildings path from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setBuildingsPath ("buildings");
-		buildingsPath = dataDir + "buildings";
+		saveSetting ("Options~Game~Paths~Buildings", "buildings");
+		pathSettings.buildingsPath = dataDir + "buildings";
 	}
 	else
 	{
-		buildingsPath = dataDir + xmlElement->Attribute ("Text");
+		pathSettings.buildingsPath = dataDir + xmlElement->Attribute ("Text");
 	}
 
 	if (!DEDICATED_SERVER)
@@ -990,26 +986,27 @@ void cSettings::initialize()
 		if (!xmlElement || !xmlElement->Attribute ("Text"))
 		{
 			Log.write ("Can't load language path from config file: using default value", cLog::eLOG_TYPE_WARNING);
-			setMvePath ("mve");
-			mvePath = dataDir + "mve";
+			saveSetting ("Options~Game~Paths~MVEs", "mve");
+			pathSettings.mvePath = dataDir + "mve";
 		}
 		else
 		{
-			mvePath = dataDir + xmlElement->Attribute ("Text");
+			pathSettings.mvePath = dataDir + xmlElement->Attribute ("Text");
 		}
 	}
 
 	// GAME-NET
+	sNetworkAddress xmlNetworkAddress;
 	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", {"Game", "Net", "IP"});
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load IP from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setIP ("127.0.0.1");
+		xmlNetworkAddress.ip = "127.0.0.1";
 	}
 	else
 	{
-		setIP (xmlElement->Attribute ("Text"));
+		xmlNetworkAddress.ip = xmlElement->Attribute ("Text");
 	}
 
 	// =========================================================================
@@ -1017,35 +1014,34 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("Num"))
 	{
 		Log.write ("Can't load Port config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setPort (DEFAULTPORT);
+		xmlNetworkAddress.port = DEFAULTPORT;
 	}
 	else
 	{
-		port = xmlElement->IntAttribute ("Num");
+		xmlNetworkAddress.port = xmlElement->IntAttribute ("Num");
 	}
+	setNetworkAddress (xmlNetworkAddress);
 
 	// =========================================================================
+	sPlayerSettings xmlPlayerSettings;
 	auto playerXmlElement = XmlGetFirstElement (configFile, "Options", {"Game", "Net", "PlayerName"});
 	if (!playerXmlElement || !playerXmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load player name from config file: using default value", cLog::eLOG_TYPE_WARNING);
 
-		char* user;
-
 #ifdef WIN32
-		user = getenv ("USERNAME");
+		char* user = getenv ("USERNAME");
 #elif __amigaos4__
-		user = "AmigaOS4-User";
+		char* user = "AmigaOS4-User";
 #else
-		user = getenv ("USER");  //get $USER on linux
+		char* user = getenv ("USER");  //get $USER on linux
 #endif
 
-		if (user != nullptr) setPlayerName (user);
-		else setPlayerName ("Commander");
+		xmlPlayerSettings.name = (user == nullptr ? "Commander" : user);
 	}
 	else
 	{
-		setPlayerName (playerXmlElement->Attribute ("Text"));
+		xmlPlayerSettings.name = playerXmlElement->Attribute ("Text");
 	}
 
 	// =========================================================================
@@ -1056,18 +1052,19 @@ void cSettings::initialize()
 		if (playerXmlElement && playerXmlElement->Attribute ("Num"))
 		{
 			const auto colorIndex = playerXmlElement->IntAttribute ("Num") % cPlayerColor::predefinedColorsCount;
-			playerColor = cPlayerColor::predefinedColors[colorIndex];
+			xmlPlayerSettings.color = cPlayerColor::predefinedColors[colorIndex];
 		}
 		else
 		{
 			Log.write ("Can't load player color from config file: using default value", cLog::eLOG_TYPE_WARNING);
-			setPlayerColor (cRgbColor::red());
+			xmlPlayerSettings.color = cRgbColor::red();
 		}
 	}
 	else
 	{
-		playerColor = cRgbColor (xmlElement->IntAttribute ("red"), xmlElement->IntAttribute ("green"), xmlElement->IntAttribute ("blue"));
+		xmlPlayerSettings.color = cRgbColor (xmlElement->IntAttribute ("red"), xmlElement->IntAttribute ("green"), xmlElement->IntAttribute ("blue"));
 	}
+	setPlayerSettings (xmlPlayerSettings);
 
 	initialized = true;
 	initializing = false;
@@ -1138,193 +1135,158 @@ void cSettings::saveDisplayIndex()
 	saveSetting ("Options~Start~Display", Video.getDisplayIndex());
 }
 
-
-
 //------------------------------------------------------------------------------
 bool cSettings::isDebug() const
 {
-	return debug;
+	return gameSettings.debug;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::setDebug (bool debug, bool save)
 {
-	this->debug = debug;
+	gameSettings.debug = debug;
 	if (save) saveSetting ("Options~Game~EnableDebug", debug);
 }
 
 //------------------------------------------------------------------------------
 bool cSettings::shouldAutosave() const
 {
-	return autosave;
+	return gameSettings.autosave;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::setAutosave (bool autosave, bool save)
 {
-	this->autosave = autosave;
+	gameSettings.autosave = autosave;
 	if (save) saveSetting ("Options~Game~EnableAutosave", autosave);
 }
 
 //------------------------------------------------------------------------------
 bool cSettings::isAnimations() const
 {
-	return animations;
+	return gameSettings.animations;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::setAnimations (bool animations, bool save)
 {
-	std::swap (this->animations, animations);
-	if (save) saveSetting ("Options~Game~EnableAnimations", this->animations);
-	if (this->animations != animations) animationsChanged();
+	std::swap (gameSettings.animations, animations);
+	if (save) saveSetting ("Options~Game~EnableAnimations", gameSettings.animations);
+	if (gameSettings.animations != animations) animationsChanged();
 }
 
 //------------------------------------------------------------------------------
 bool cSettings::isShadows() const
 {
-	return shadows;
+	return gameSettings.shadows;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::setShadows (bool shadows, bool save)
 {
-	this->shadows = shadows;
+	gameSettings.shadows = shadows;
 	if (save) saveSetting ("Options~Game~EnableShadows", shadows);
 }
 
 //------------------------------------------------------------------------------
 bool cSettings::isAlphaEffects() const
 {
-	return alphaEffects;
+	return gameSettings.alphaEffects;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::setAlphaEffects (bool alphaEffects, bool save)
 {
-	this->alphaEffects = alphaEffects;
+	gameSettings.alphaEffects = alphaEffects;
 	if (save) saveSetting ("Options~Game~EnableAlphaEffects", alphaEffects);
 }
 
 //------------------------------------------------------------------------------
 bool cSettings::shouldShowDescription() const
 {
-	return showDescription;
+	return gameSettings.showDescription;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::setShowDescription (bool showDescription, bool save)
 {
-	this->showDescription = showDescription;
+	gameSettings.showDescription = showDescription;
 	if (save) saveSetting ("Options~Game~EnableDescribtions", showDescription);
 }
 
 //------------------------------------------------------------------------------
 bool cSettings::isDamageEffects() const
 {
-	return damageEffects;
+	return gameSettings.damageEffects;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::setDamageEffects (bool damageEffects, bool save)
 {
-	this->damageEffects = damageEffects;
+	gameSettings.damageEffects = damageEffects;
 	if (save) saveSetting ("Options~Game~EnableDamageEffects", damageEffects);
 }
 
 //------------------------------------------------------------------------------
 bool cSettings::isDamageEffectsVehicles() const
 {
-	return damageEffectsVehicles;
+	return gameSettings.damageEffectsVehicles;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::setDamageEffectsVehicles (bool damageEffectsVehicles, bool save)
 {
-	this->damageEffectsVehicles = damageEffectsVehicles;
+	gameSettings.damageEffectsVehicles = damageEffectsVehicles;
 	if (save) saveSetting ("Options~Game~EnableDamageEffectsVehicles", damageEffectsVehicles);
 }
 
 //------------------------------------------------------------------------------
 bool cSettings::isMakeTracks() const
 {
-	return makeTracks;
+	return gameSettings.makeTracks;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::setMakeTracks (bool makeTracks, bool save)
 {
-	this->makeTracks = makeTracks;
+	gameSettings.makeTracks = makeTracks;
 	if (save) saveSetting ("Options~Game~EnableMakeTracks", makeTracks);
 }
 
 //------------------------------------------------------------------------------
 int cSettings::getScrollSpeed() const
 {
-	return scrollSpeed;
+	return gameSettings.scrollSpeed;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::setScrollSpeed (int scrollSpeed, bool save)
 {
-	this->scrollSpeed = scrollSpeed;
+	gameSettings.scrollSpeed = scrollSpeed;
 	if (save) saveSetting ("Options~Game~ScrollSpeed", scrollSpeed);
 }
 
 //------------------------------------------------------------------------------
-const std::string& cSettings::getIP() const
+void cSettings::setNetworkAddress (const sNetworkAddress& networkAddress, bool save)
 {
-	return ip;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setIP (const char* ip, bool save)
-{
-	this->ip = ip;
-	if (save) saveSetting ("Options~Game~Net~IP", ip);
-}
-
-//------------------------------------------------------------------------------
-unsigned short cSettings::getPort() const
-{
-	return port;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setPort (unsigned short port, bool save)
-{
-	this->port = port;
-	if (save) saveSetting ("Options~Game~Net~Port", port);
-}
-
-//------------------------------------------------------------------------------
-const std::string& cSettings::getPlayerName() const
-{
-	return playerName;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setPlayerName (const char* playerName, bool save)
-{
-	this->playerName = playerName;
-	if (save) saveSetting ("Options~Game~Net~PlayerName", playerName);
-}
-
-//------------------------------------------------------------------------------
-const cRgbColor& cSettings::getPlayerColor() const
-{
-	return playerColor;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setPlayerColor (const cRgbColor& color, bool save)
-{
-	this->playerColor = color;
+	this->networkAddress = networkAddress;
 	if (save)
 	{
-		saveSetting ("Options~Game~Net~PlayerColor", color.r, "red");
-		saveSetting ("Options~Game~Net~PlayerColor", color.g, "green");
-		saveSetting ("Options~Game~Net~PlayerColor", color.b, "blue");
+		saveSetting ("Options~Game~Net~IP", networkAddress.ip.c_str());
+		saveSetting ("Options~Game~Net~Port", networkAddress.port);
+	}
+}
+
+//------------------------------------------------------------------------------
+void cSettings::setPlayerSettings (const sPlayerSettings& playerSettings, bool save)
+{
+	this->playerSettings = playerSettings;
+	if (save)
+	{
+		saveSetting ("Options~Game~Net~PlayerName", playerSettings.name.c_str());
+		saveSetting ("Options~Game~Net~PlayerColor", playerSettings.color.r, "red");
+		saveSetting ("Options~Game~Net~PlayerColor", playerSettings.color.g, "green");
+		saveSetting ("Options~Game~Net~PlayerColor", playerSettings.color.b, "blue");
 	}
 }
 
@@ -1366,381 +1328,265 @@ const std::string& cSettings::getLogPath() const
 }
 
 //------------------------------------------------------------------------------
-void cSettings::setLogPath (const char* logPath)
-{
-	this->logPath = logPath;
-}
-
-//------------------------------------------------------------------------------
 const std::string& cSettings::getHomeDir() const
 {
 	return homeDir;
 }
 
 //------------------------------------------------------------------------------
-void cSettings::setHomeDir (const char* homeDir)
-{
-	this->homeDir = homeDir;
-}
-
-//------------------------------------------------------------------------------
 bool cSettings::isSoundEnabled() const
 {
-	return soundEnabled;
+	return soundSettings.soundEnabled;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::setSoundEnabled (bool soundEnabled, bool save)
 {
-	this->soundEnabled = soundEnabled;
+	soundSettings.soundEnabled = soundEnabled;
 	if (save) saveSetting ("Options~Game~Sound~Enabled", soundEnabled);
 }
 
 //------------------------------------------------------------------------------
 int cSettings::getMusicVol() const
 {
-	return musicVol;
+	return soundSettings.musicVol;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::setMusicVol (int musicVol, bool save)
 {
-	this->musicVol = musicVol;
+	soundSettings.musicVol = musicVol;
 	if (save) saveSetting ("Options~Game~Sound~MusicVol", musicVol);
 }
 
 //------------------------------------------------------------------------------
 int cSettings::getSoundVol() const
 {
-	return soundVol;
+	return soundSettings.soundVol;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::setSoundVol (int soundVol, bool save)
 {
-	this->soundVol = soundVol;
+	soundSettings.soundVol = soundVol;
 	if (save) saveSetting ("Options~Game~Sound~SoundVol", soundVol);
 }
 
 //------------------------------------------------------------------------------
 int cSettings::getVoiceVol() const
 {
-	return voiceVol;
+	return soundSettings.voiceVol;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::setVoiceVol (int voiceVol, bool save)
 {
-	this->voiceVol = voiceVol;
+	soundSettings.voiceVol = voiceVol;
 	if (save) saveSetting ("Options~Game~Sound~VoiceVol", voiceVol);
 }
 
 //------------------------------------------------------------------------------
 int cSettings::getChunkSize() const
 {
-	return chunkSize;
+	return soundSettings.chunkSize;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::setChunkSize (int chunkSize, bool save)
 {
-	this->chunkSize = chunkSize;
+	soundSettings.chunkSize = chunkSize;
 	if (save) saveSetting ("Options~Game~Sound~ChunkSize", chunkSize);
 }
 
 //------------------------------------------------------------------------------
 int cSettings::getFrequency() const
 {
-	return frequency;
+	return soundSettings.frequency;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::setFrequence (int frequency, bool save)
 {
-	this->frequency = frequency;
+	soundSettings.frequency = frequency;
 	if (save) saveSetting ("Options~Game~Sound~Frequency", frequency);
 }
 
 //------------------------------------------------------------------------------
 bool cSettings::isMusicMute() const
 {
-	return musicMute;
+	return soundSettings.musicMute;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::setMusicMute (bool musicMute, bool save)
 {
-	this->musicMute = musicMute;
+	soundSettings.musicMute = musicMute;
 	if (save) saveSetting ("Options~Game~Sound~MusicMute", musicMute);
 }
 
 //------------------------------------------------------------------------------
 bool cSettings::isSoundMute() const
 {
-	return soundMute;
+	return soundSettings.soundMute;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::setSoundMute (bool soundMute, bool save)
 {
-	this->soundMute = soundMute;
+	soundSettings.soundMute = soundMute;
 	if (save) saveSetting ("Options~Game~Sound~SoundMute", soundMute);
 }
 
 //------------------------------------------------------------------------------
 bool cSettings::isVoiceMute() const
 {
-	return voiceMute;
+	return soundSettings.voiceMute;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::setVoiceMute (bool voiceMute, bool save)
 {
-	this->voiceMute = voiceMute;
+	soundSettings.voiceMute = voiceMute;
 	if (save) saveSetting ("Options~Game~Sound~VoiceMute", voiceMute);
 }
 
 //------------------------------------------------------------------------------
 bool cSettings::is3DSound() const
 {
-	return sound3d;
+	return soundSettings.sound3d;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::set3DSound (bool sound3d, bool save)
 {
-	this->sound3d = sound3d;
+	soundSettings.sound3d = sound3d;
 	if (save) saveSetting ("Options~Game~Sound~Sound3D", sound3d);
 }
 
 //------------------------------------------------------------------------------
 bool cSettings::shouldShowIntro() const
 {
-	return showIntro;
+	return startSettings.showIntro;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::setShowIntro (bool showIntro, bool save)
 {
-	this->showIntro = showIntro;
+	startSettings.showIntro = showIntro;
 	if (save) saveSetting ("Options~Start~Intro", showIntro);
 }
 
 //------------------------------------------------------------------------------
 bool cSettings::shouldUseFastMode() const
 {
-	return fastMode;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setFastMode (bool fastMode, bool save)
-{
-	this->fastMode = fastMode;
-	if (save) saveSetting ("Options~Start~Fastmode", fastMode);
+	return startSettings.fastMode;
 }
 
 //------------------------------------------------------------------------------
 bool cSettings::shouldDoPrescale() const
 {
-	return preScale;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setDoPrescale (bool preScale, bool save)
-{
-	this->preScale = preScale;
-	if (save) saveSetting ("Options~Start~PreScale", preScale);
+	return startSettings.preScale;
 }
 
 //------------------------------------------------------------------------------
 const std::string& cSettings::getLanguage() const
 {
-	return language;
+	return startSettings.language;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::setLanguage (const char* language, bool save)
 {
-	this->language = language;
+	startSettings.language = language;
 	if (save) saveSetting ("Options~Start~Language", language);
 }
 //------------------------------------------------------------------------------
 const std::string& cSettings::getVoiceLanguage() const
 {
-	return voiceLanguage;
+	return startSettings.voiceLanguage;
 }
 
 //------------------------------------------------------------------------------
-void cSettings::setVoiceLanguage (const char* language, bool save)
-{
-	this->voiceLanguage = language;
-	if (save) saveSetting ("Options~Start~VoiceLanguage", language);
-}
-//------------------------------------------------------------------------------
 unsigned int cSettings::getCacheSize() const
 {
-	return cacheSize;
+	return startSettings.cacheSize;
 }
 
 //------------------------------------------------------------------------------
 void cSettings::setCacheSize (unsigned int cacheSize, bool save)
 {
-	this->cacheSize = cacheSize;
+	startSettings.cacheSize = cacheSize;
 	if (save) saveSetting ("Options~Start~CacheSize", cacheSize);
 }
 
 //------------------------------------------------------------------------------
 const std::string& cSettings::getFontPath() const
 {
-	return fontPath;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setFontPath (const char* fontPath, bool save)
-{
-	this->fontPath = fontPath;
-	if (save) saveSetting ("Options~Game~Paths~Fonts", fontPath);
+	return pathSettings.fontPath;
 }
 
 //------------------------------------------------------------------------------
 const std::string& cSettings::getFxPath() const
 {
-	return fxPath;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setFxPath (const char* fxPath, bool save)
-{
-	this->fxPath = fxPath;
-	if (save) saveSetting ("Options~Game~Paths~FX", fxPath);
+	return pathSettings.fxPath;
 }
 
 //------------------------------------------------------------------------------
 const std::string& cSettings::getGfxPath() const
 {
-	return gfxPath;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setGfxPath (const char* gfxPath, bool save)
-{
-	this->gfxPath = gfxPath;
-	if (save) saveSetting ("Options~Game~Paths~GFX", gfxPath);
+	return pathSettings.gfxPath;
 }
 
 //------------------------------------------------------------------------------
 const std::string& cSettings::getLangPath() const
 {
-	return langPath;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setLangPath (const char* langPath, bool save)
-{
-	this->langPath = langPath;
-	if (save) saveSetting ("Options~Game~Paths~Languages", langPath);
+	return pathSettings.langPath;
 }
 
 //------------------------------------------------------------------------------
 const std::string& cSettings::getMapsPath() const
 {
-	return mapsPath;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setMapsPath (const char* mapsPath, bool save)
-{
-	this->mapsPath = mapsPath;
-	if (save) saveSetting ("Options~Game~Paths~Maps", mapsPath);
+	return pathSettings.mapsPath;
 }
 
 //------------------------------------------------------------------------------
 const std::string& cSettings::getSavesPath() const
 {
-	return savesPath;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setSavesPath (const char* savesPath, bool save)
-{
-	this->savesPath = savesPath;
-	if (save) saveSetting ("Options~Game~Paths~Saves", savesPath);
+	return pathSettings.savesPath;
 }
 
 //------------------------------------------------------------------------------
 const std::string& cSettings::getSoundsPath() const
 {
-	return soundsPath;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setSoundsPath (const char* soundsPath, bool save)
-{
-	this->soundsPath = soundsPath;
-	if (save) saveSetting ("Options~Game~Paths~Sounds", soundsPath);
+	return pathSettings.soundsPath;
 }
 
 //------------------------------------------------------------------------------
 const std::string& cSettings::getVoicesPath() const
 {
-	return voicesPath;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setVoicesPath (const char* voicesPath, bool save)
-{
-	this->voicesPath = voicesPath;
-	if (save) saveSetting ("Options~Game~Paths~Voices", voicesPath);
+	return pathSettings.voicesPath;
 }
 
 //------------------------------------------------------------------------------
 const std::string& cSettings::getMusicPath() const
 {
-	return musicPath;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setMusicPath (const char* musicPath, bool save)
-{
-	this->musicPath = musicPath;
-	if (save) saveSetting ("Options~Game~Paths~Music", musicPath);
+	return pathSettings.musicPath;
 }
 
 //------------------------------------------------------------------------------
 const std::string& cSettings::getVehiclesPath() const
 {
-	return vehiclesPath;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setVehiclesPath (const char* vehiclesPath, bool save)
-{
-	this->vehiclesPath = vehiclesPath;
-	if (save) saveSetting ("Options~Game~Paths~Vehicles", vehiclesPath);
+	return pathSettings.vehiclesPath;
 }
 
 //------------------------------------------------------------------------------
 const std::string& cSettings::getBuildingsPath() const
 {
-	return buildingsPath;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setBuildingsPath (const char* buildingsPath, bool save)
-{
-	this->buildingsPath = buildingsPath;
-	if (save) saveSetting ("Options~Game~Paths~Buildings", buildingsPath);
+	return pathSettings.buildingsPath;
 }
 
 //------------------------------------------------------------------------------
 const std::string& cSettings::getMvePath() const
 {
-	return mvePath;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setMvePath (const char* mvePath, bool save)
-{
-	this->mvePath = mvePath;
-	if (save) saveSetting ("Options~Game~Paths~MVEs", mvePath);
+	return pathSettings.mvePath;
 }

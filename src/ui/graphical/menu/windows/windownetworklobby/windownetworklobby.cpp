@@ -81,10 +81,10 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	}
 	else
 	{
-		ipLineEdit->setText (cSettings::getInstance().getIP());
+		ipLineEdit->setText (cSettings::getInstance().getNetworkAddress().ip);
 	}
 	portLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (230, 260), getPosition() + cPosition (230 + 95, 260 + 10))));
-	portLineEdit->setText (std::to_string (cSettings::getInstance().getPort()));
+	portLineEdit->setText (std::to_string (cSettings::getInstance().getNetworkAddress().port));
 	portLineEdit->setValidator (std::make_unique<cValidatorInt> (0, 65535));
 	restoreDefaultPortButton = addChild (std::make_unique<cImage> (getPosition() + cPosition (230 + 82, 254), GraphicsData.gfx_Cpfeil2.get()));
 	signalConnectionManager.connect (restoreDefaultPortButton->clicked, [this]()

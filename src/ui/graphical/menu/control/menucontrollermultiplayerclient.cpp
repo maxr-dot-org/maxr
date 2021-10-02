@@ -40,20 +40,16 @@ cMenuControllerMultiplayerClient::cMenuControllerMultiplayerClient (cApplication
 	application (application_),
 	lobbyClient (std::make_shared<cConnectionManager>(), cPlayerBasicData::fromSettings())
 {
-	signalConnectionManager.connect (lobbyClient.onChatMessage, [this](const std::string& playerName, const std::string& message){
-		if (initGamePreparation)
-		{
+	signalConnectionManager.connect (lobbyClient.onChatMessage, [this](const std::string& playerName, const std::string& message) {
+		if (initGamePreparation) {
 			initGamePreparation->onChatMessage (playerName, message);
-		}
-		else if (windowNetworkLobby != nullptr)
-		{
+		} else if (windowNetworkLobby != nullptr) {
 			windowNetworkLobby->addChatEntry (playerName, message);
 		}
 	});
 
-	signalConnectionManager.connect (lobbyClient.onStartGamePreparation, [this](){
-		if (windowNetworkLobby != nullptr)
-		{
+	signalConnectionManager.connect (lobbyClient.onStartGamePreparation, [this]() {
+		if (windowNetworkLobby != nullptr) {
 			saveOptions();
 
 			startGamePreparation();
@@ -61,44 +57,40 @@ cMenuControllerMultiplayerClient::cMenuControllerMultiplayerClient (cApplication
 	});
 
 
-	signalConnectionManager.connect (lobbyClient.onPlayerAbortGamePreparation, [this](const std::string& playerName){
-		if (windowNetworkLobby != nullptr)
-		{
+	signalConnectionManager.connect (lobbyClient.onPlayerAbortGamePreparation, [this](const std::string& playerName) {
+		if (windowNetworkLobby != nullptr) {
 			auto okDialog = application.show (std::make_shared<cDialogOk> ("Player " + playerName + " has quit from game preparation")); // TODO: translate
 
-			signalConnectionManager.connect (okDialog->done, [this]()
-			{
+			signalConnectionManager.connect (okDialog->done, [this]() {
 				application.closeTill (*windowNetworkLobby);
 				initGamePreparation.reset();
 			});
 		}
 	});
 
-	signalConnectionManager.connect (lobbyClient.onStartNewGame, [this](std::shared_ptr<cClient> client){
+	signalConnectionManager.connect (lobbyClient.onStartNewGame, [this](std::shared_ptr<cClient> client) {
 		startNewGame (client);
 	});
 
-	signalConnectionManager.connect (lobbyClient.onStartSavedGame, [this](std::shared_ptr<cClient> client){
+	signalConnectionManager.connect (lobbyClient.onStartSavedGame, [this](std::shared_ptr<cClient> client) {
 		startSavedGame (client);
 	});
 
-	signalConnectionManager.connect (lobbyClient.onReconnectGame, [this](std::shared_ptr<cClient> client){
+	signalConnectionManager.connect (lobbyClient.onReconnectGame, [this](std::shared_ptr<cClient> client) {
 		auto yesNoDialog = application.show (std::make_shared<cDialogYesNo> (lngPack.i18n ("Text~Multiplayer~Reconnect")));
-		signalConnectionManager.connect (yesNoDialog->yesClicked, [=]()
-		{
+		signalConnectionManager.connect (yesNoDialog->yesClicked, [=]() {
 			reconnectToGame (client);
 		});
 
-		signalConnectionManager.connect (yesNoDialog->noClicked, [this]()
-		{
+		signalConnectionManager.connect (yesNoDialog->noClicked, [this]() {
 			lobbyClient.disconnect();
 		});
 	});
 
-	signalConnectionManager.connect (lobbyClient.onFailToReconnectGameNoMap, [this](const std::string& mapName){
+	signalConnectionManager.connect (lobbyClient.onFailToReconnectGameNoMap, [this](const std::string& mapName) {
 		application.show (std::make_shared<cDialogOk> ("Map \"" + mapName + "\" not found")); //TODO: translate
 	});
-	signalConnectionManager.connect (lobbyClient.onFailToReconnectGameInvalidMap, [this](const std::string& mapName){
+	signalConnectionManager.connect (lobbyClient.onFailToReconnectGameInvalidMap, [this](const std::string& mapName) {
 		application.show (std::make_shared<cDialogOk> ("The map \"" + mapName + "\" does not match the map of the server")); // TODO: translate
 	});
 }
@@ -117,17 +109,24 @@ void cMenuControllerMultiplayerClient::start()
 
 	windowNetworkLobby->bindConnections (lobbyClient);
 
-	signalConnectionManager.connect (windowNetworkLobby->triggeredSelectMap, [this](){ handleSelectMap(); });
-	signalConnectionManager.connect (windowNetworkLobby->triggeredSelectSettings, [this]() { handleSelectSettings(); });
-	signalConnectionManager.connect (windowNetworkLobby->triggeredSelectSaveGame, [this]() { handleSelectSaveGame(); });
+	signalConnectionManager.connect (windowNetworkLobby->triggeredSelectMap, [this]() {
+		handleSelectMap();
+	});
+	signalConnectionManager.connect (windowNetworkLobby->triggeredSelectSettings, [this]() {
+		handleSelectSettings();
+	});
+	signalConnectionManager.connect (windowNetworkLobby->triggeredSelectSaveGame, [this]() {
+		handleSelectSaveGame();
+	});
 
 	application.show (windowNetworkLobby);
 	application.addRunnable (shared_from_this());
 
 	signalConnectionManager.connect (windowNetworkLobby->terminated, std::bind (&cMenuControllerMultiplayerClient::reset, this));
-	signalConnectionManager.connect (windowNetworkLobby->triggeredStartGame, [this](){ handleStartGame(); });
-	signalConnectionManager.connect (windowNetworkLobby->backClicked, [this]()
-	{
+	signalConnectionManager.connect (windowNetworkLobby->triggeredStartGame, [this]() {
+		handleStartGame();
+	});
+	signalConnectionManager.connect (windowNetworkLobby->backClicked, [this]() {
 		windowNetworkLobby->close();
 		saveOptions();
 	});
@@ -162,8 +161,7 @@ void cMenuControllerMultiplayerClient::handleSelectMap()
 	if (!windowNetworkLobby) return;
 
 	auto windowMapSelection = application.show (std::make_shared<cWindowMapSelection>());
-	windowMapSelection->done.connect ([=]()
-	{
+	windowMapSelection->done.connect ([=]() {
 		lobbyClient.selectMapName (windowMapSelection->getSelectedMapName());
 		windowMapSelection->close();
 	});
@@ -174,9 +172,10 @@ void cMenuControllerMultiplayerClient::handleSelectSaveGame()
 {
 	if (!windowNetworkLobby) return;
 
-	auto windowLoad = application.show (std::make_shared<cWindowLoad> (nullptr, [this](){ return lobbyClient.getSaveGames(); }));
-	windowLoad->load.connect ([=](const cSaveGameInfo& saveGame)
-	{
+	auto windowLoad = application.show (std::make_shared<cWindowLoad> (nullptr, [this]() {
+		return lobbyClient.getSaveGames();
+	}));
+	windowLoad->load.connect ([=](const cSaveGameInfo& saveGame) {
 		lobbyClient.selectLoadGame (saveGame);
 		windowLoad->close();
 	});
@@ -194,16 +193,18 @@ void cMenuControllerMultiplayerClient::startSavedGame (std::shared_ptr<cClient> 
 
 	application.closeTill (*windowNetworkLobby);
 	windowNetworkLobby->close();
-	signalConnectionManager.connect (windowNetworkLobby->terminated, [&]() { windowNetworkLobby = nullptr; });
+	signalConnectionManager.connect (windowNetworkLobby->terminated, [&]() {
+		windowNetworkLobby = nullptr;
+	});
 
 	auto savedGame = std::make_shared<cNetworkGame>();
 	savedGame->start (application, client, nullptr);
 
-	signalConnectionManager.connect (client->connectionToServerLost, [&]() { connectionLost = true; });
-	signalConnectionManager.connect (savedGame->terminated, [&]()
-	{
-		if (connectionLost)
-		{
+	signalConnectionManager.connect (client->connectionToServerLost, [&]() {
+		connectionLost = true;
+	});
+	signalConnectionManager.connect (savedGame->terminated, [&]() {
+		if (connectionLost) {
 			reset();
 			start();
 			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Lost_Connection", "server"));
@@ -225,16 +226,18 @@ void cMenuControllerMultiplayerClient::startNewGame (std::shared_ptr<cClient> cl
 	const auto& initPlayerData = initGamePreparation->getInitPlayerData();
 	application.closeTill (*windowNetworkLobby);
 	windowNetworkLobby->close();
-	signalConnectionManager.connect (windowNetworkLobby->terminated, [&]() { windowNetworkLobby = nullptr; });
+	signalConnectionManager.connect (windowNetworkLobby->terminated, [&]() {
+		windowNetworkLobby = nullptr;
+	});
 
 	auto newGame = std::make_shared<cNetworkGame>();
 	newGame->startNewGame (application, client, initPlayerData, nullptr);
 
-	signalConnectionManager.connect (client->connectionToServerLost, [&]() { connectionLost = true; });
-	signalConnectionManager.connect (newGame->terminated, [&]()
-	{
-		if (connectionLost)
-		{
+	signalConnectionManager.connect (client->connectionToServerLost, [&]() {
+		connectionLost = true;
+	});
+	signalConnectionManager.connect (newGame->terminated, [&]() {
+		if (connectionLost) {
 			reset();
 			start();
 			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Lost_Connection", "server"));
@@ -247,16 +250,18 @@ void cMenuControllerMultiplayerClient::reconnectToGame (std::shared_ptr<cClient>
 {
 	application.closeTill (*windowNetworkLobby);
 	windowNetworkLobby->close();
-	signalConnectionManager.connect (windowNetworkLobby->terminated, [&]() { windowNetworkLobby = nullptr; });
+	signalConnectionManager.connect (windowNetworkLobby->terminated, [&]() {
+		windowNetworkLobby = nullptr;
+	});
 
 	auto reconnectionGame = std::make_shared<cNetworkGame>();
 	reconnectionGame->start (application, client, nullptr);
 
-	signalConnectionManager.connect (client->connectionToServerLost, [&]() { connectionLost = true; });
-	signalConnectionManager.connect (reconnectionGame->terminated, [&]()
-	{
-		if (connectionLost)
-		{
+	signalConnectionManager.connect (client->connectionToServerLost, [&]() {
+		connectionLost = true;
+	});
+	signalConnectionManager.connect (reconnectionGame->terminated, [&]() {
+		if (connectionLost) {
 			reset();
 			start();
 			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Lost_Connection", "server"));
@@ -269,8 +274,6 @@ void cMenuControllerMultiplayerClient::saveOptions()
 {
 	if (!windowNetworkLobby) return;
 
-	cSettings::getInstance().setPlayerName (windowNetworkLobby->getLocalPlayer()->getName().c_str());
-	cSettings::getInstance().setPort (windowNetworkLobby->getPort());
-	cSettings::getInstance().setPlayerColor (windowNetworkLobby->getLocalPlayer()->getColor());
-	cSettings::getInstance().setIP (windowNetworkLobby->getIp().c_str());
+	cSettings::getInstance().setNetworkAddress ({windowNetworkLobby->getIp(), windowNetworkLobby->getPort()});
+	cSettings::getInstance().setPlayerSettings ({windowNetworkLobby->getLocalPlayer()->getName(), windowNetworkLobby->getLocalPlayer()->getColor()});
 }
