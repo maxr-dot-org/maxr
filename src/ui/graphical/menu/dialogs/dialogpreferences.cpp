@@ -114,29 +114,30 @@ cDialogPreferences::~cDialogPreferences()
 //------------------------------------------------------------------------------
 void cDialogPreferences::loadValues()
 {
-	musicVolumeSlider->setValue (cSettings::getInstance().getMusicVol());
-	effectsVolumeSlider->setValue (cSettings::getInstance().getSoundVol());
-	voicesVolumeSlider->setValue (cSettings::getInstance().getVoiceVol());
+	const auto& settings = cSettings::getInstance();
+	musicVolumeSlider->setValue (settings.getMusicVol());
+	effectsVolumeSlider->setValue (settings.getSoundVol());
+	voicesVolumeSlider->setValue (settings.getVoiceVol());
 
-	disableMusicCheckBox->setChecked (cSettings::getInstance().isMusicMute());
-	disableEffectsCheckBox->setChecked (cSettings::getInstance().isSoundMute());
-	disableVoicesCheckBox->setChecked (cSettings::getInstance().isVoiceMute());
+	disableMusicCheckBox->setChecked (settings.isMusicMute());
+	disableEffectsCheckBox->setChecked (settings.isSoundMute());
+	disableVoicesCheckBox->setChecked (settings.isVoiceMute());
 
-	effects3DCheckBox->setChecked (cSettings::getInstance().is3DSound());
+	effects3DCheckBox->setChecked (settings.is3DSound());
 
-	scrollSpeedSlider->setValue (cSettings::getInstance().getScrollSpeed());
+	scrollSpeedSlider->setValue (settings.getScrollSpeed());
 
-	nameEdit->setText (cSettings::getInstance().getPlayerSettings().name);
+	nameEdit->setText (settings.getPlayerSettings().name);
 
-	animationCheckBox->setChecked (cSettings::getInstance().isAnimations());
-	shadowsCheckBox->setChecked (cSettings::getInstance().isShadows());
-	aplhaCheckBox->setChecked (cSettings::getInstance().isAlphaEffects());
-	demageBuildingsCheckBox->setChecked (cSettings::getInstance().isDamageEffects());
-	demageVehiclesCheckBox->setChecked (cSettings::getInstance().isDamageEffectsVehicles());
-	tracksCheckBox->setChecked (cSettings::getInstance().isMakeTracks());
+	animationCheckBox->setChecked (settings.isAnimations());
+	shadowsCheckBox->setChecked (settings.isShadows());
+	aplhaCheckBox->setChecked (settings.isAlphaEffects());
+	demageBuildingsCheckBox->setChecked (settings.isDamageEffects());
+	demageVehiclesCheckBox->setChecked (settings.isDamageEffectsVehicles());
+	tracksCheckBox->setChecked (settings.isMakeTracks());
 
-	autosaveCheckBox->setChecked (cSettings::getInstance().shouldAutosave());
-	introCheckBox->setChecked (cSettings::getInstance().shouldShowIntro());
+	autosaveCheckBox->setChecked (settings.shouldAutosave());
+	introCheckBox->setChecked (settings.shouldShowIntro());
 	windowCheckBox->setChecked (Video.getWindowMode());
 
 	languagesComboBox->clearItems();
@@ -145,7 +146,7 @@ void cDialogPreferences::loadValues()
 	for (size_t i = 0; i < availableLanguages.size(); ++i)
 	{
 		languagesComboBox->addItem (availableLanguages[i]);
-		if (iequals (availableLanguages[i], cSettings::getInstance().getLanguage()))
+		if (iequals (availableLanguages[i], settings.getLanguage()))
 		{
 			selectedLanguageIndex = i;
 		}
@@ -170,23 +171,25 @@ void cDialogPreferences::loadValues()
 //------------------------------------------------------------------------------
 void cDialogPreferences::saveValues()
 {
-	cSettings::getInstance().setPlayerSettings ({nameEdit->getText(), cSettings::getInstance().getPlayerSettings().color});
+	cSettings& settings = cSettings::getInstance();
 
-	cSettings::getInstance().set3DSound (effects3DCheckBox->isChecked());
+	settings.setPlayerSettings ({nameEdit->getText(), settings.getPlayerSettings().color});
 
-	cSettings::getInstance().setAnimations (animationCheckBox->isChecked());
-	cSettings::getInstance().setShadows (shadowsCheckBox->isChecked());
-	cSettings::getInstance().setAlphaEffects (aplhaCheckBox->isChecked());
-	cSettings::getInstance().setDamageEffects (demageBuildingsCheckBox->isChecked());
-	cSettings::getInstance().setDamageEffectsVehicles (demageVehiclesCheckBox->isChecked());
-	cSettings::getInstance().setMakeTracks (tracksCheckBox->isChecked());
+	settings.set3DSound (effects3DCheckBox->isChecked());
 
-	cSettings::getInstance().setAutosave (autosaveCheckBox->isChecked());
-	cSettings::getInstance().setShowIntro (introCheckBox->isChecked());
+	settings.setAnimations (animationCheckBox->isChecked());
+	settings.setShadows (shadowsCheckBox->isChecked());
+	settings.setAlphaEffects (aplhaCheckBox->isChecked());
+	settings.setDamageEffects (demageBuildingsCheckBox->isChecked());
+	settings.setDamageEffectsVehicles (demageVehiclesCheckBox->isChecked());
+	settings.setMakeTracks (tracksCheckBox->isChecked());
+
+	settings.setAutosave (autosaveCheckBox->isChecked());
+	settings.setShowIntro (introCheckBox->isChecked());
 	Video.setWindowMode (windowCheckBox->isChecked());
-	cSettings::getInstance().saveWindowMode();
+	settings.saveWindowMode();
 
-	cSettings::getInstance().setScrollSpeed (scrollSpeedSlider->getValue());
+	settings.setScrollSpeed (scrollSpeedSlider->getValue());
 
 	// save resolution
 	const auto oldScreenX = Video.getResolutionX();
@@ -202,7 +205,7 @@ void cDialogPreferences::saveValues()
 		if (newResolutionX != oldScreenX || newResolutionY != oldScreenY)
 		{
 			Video.setResolution (newResolutionX, newResolutionY, true);
-			cSettings::getInstance().saveResolution();
+			settings.saveResolution();
 
 			if (Video.getResolutionX() != oldScreenX || Video.getResolutionY() != oldScreenY)
 			{
@@ -223,9 +226,9 @@ void cDialogPreferences::saveValues()
 	}
 
 	const auto& selectedLanguage = languagesComboBox->getSelectedText();
-	if (!iequals (selectedLanguage, cSettings::getInstance().getLanguage()))
+	if (!iequals (selectedLanguage, settings.getLanguage()))
 	{
-		cSettings::getInstance().setLanguage (selectedLanguage.c_str());
+		settings.setLanguage (selectedLanguage.c_str());
 
 		auto application = getActiveApplication();
 		if (application)
