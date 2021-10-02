@@ -40,7 +40,7 @@
 cWindowHangar::cWindowHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, cRgbColor playerColor, int playerClan) :
 	cWindow (std::move (surface)),
 	unitsData (unitsData),
-	temporaryPlayer (std::make_unique<cPlayer> (cPlayerBasicData ("unnamed", playerColor, 0, false), *unitsData)),
+	temporaryPlayer (std::make_unique<cPlayer> (cPlayerBasicData ({"unnamed", playerColor}, 0, false), *unitsData)),
 	player (*temporaryPlayer)
 {
 	if (playerClan != -1) temporaryPlayer->setClan (playerClan, *unitsData);

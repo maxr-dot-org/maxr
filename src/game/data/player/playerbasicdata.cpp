@@ -26,8 +26,7 @@
 //------------------------------------------------------------------------------
 /*static*/ cPlayerBasicData cPlayerBasicData::fromSettings()
 {
-	const auto& settings = cSettings::getInstance().getPlayerSettings();
-	return { settings.name, settings.color, -1, false };
+	return { cSettings::getInstance().getPlayerSettings(), -1, false };
 }
 
 //------------------------------------------------------------------------------
@@ -38,9 +37,8 @@ cPlayerBasicData::cPlayerBasicData() :
 {}
 
 //------------------------------------------------------------------------------
-cPlayerBasicData::cPlayerBasicData (const std::string& name, const cRgbColor& color, int nr, bool defeated) :
-	name (name),
-	color (color),
+cPlayerBasicData::cPlayerBasicData (const sPlayerSettings& player, int nr, bool defeated) :
+	player (player),
 	nr (nr),
 	ready (false),
 	defeated (defeated)
@@ -48,8 +46,7 @@ cPlayerBasicData::cPlayerBasicData (const std::string& name, const cRgbColor& co
 
 //------------------------------------------------------------------------------
 cPlayerBasicData::cPlayerBasicData (const cPlayerBasicData& other) :
-	name (other.name),
-	color (other.color),
+	player (other.player),
 	nr (other.nr),
 	ready (other.ready),
 	defeated (other.defeated)
@@ -58,8 +55,7 @@ cPlayerBasicData::cPlayerBasicData (const cPlayerBasicData& other) :
 //------------------------------------------------------------------------------
 cPlayerBasicData& cPlayerBasicData::operator= (const cPlayerBasicData& other)
 {
-	name = other.name;
-	color = other.color;
+	player = other.player;
 	nr = other.nr;
 	ready = other.ready;
 	defeated = other.defeated;
@@ -69,8 +65,7 @@ cPlayerBasicData& cPlayerBasicData::operator= (const cPlayerBasicData& other)
 //------------------------------------------------------------------------------
 bool cPlayerBasicData::operator == (const cPlayerBasicData& rhs) const
 {
-	return name == rhs.name
-		&& color == rhs.color
+	return player == rhs.player
 		&& nr == rhs.nr
 		&& ready == rhs.ready
 		&& defeated == rhs.defeated;
@@ -79,14 +74,14 @@ bool cPlayerBasicData::operator == (const cPlayerBasicData& rhs) const
 //------------------------------------------------------------------------------
 const std::string& cPlayerBasicData::getName() const
 {
-	return name;
+	return player.name;
 }
 
 //------------------------------------------------------------------------------
 void cPlayerBasicData::setName (std::string name_)
 {
-	std::swap (name, name_);
-	if (name != name_) nameChanged();
+	std::swap (player.name, name_);
+	if (player.name != name_) nameChanged();
 }
 
 //------------------------------------------------------------------------------
@@ -104,8 +99,8 @@ void cPlayerBasicData::setNr (int newNr)
 //------------------------------------------------------------------------------
 void cPlayerBasicData::setColor (cRgbColor color_)
 {
-	std::swap (color, color_);
-	if (color != color_) colorChanged();
+	std::swap (player.color, color_);
+	if (player.color != color_) colorChanged();
 }
 
 //------------------------------------------------------------------------------

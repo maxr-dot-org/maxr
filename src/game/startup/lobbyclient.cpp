@@ -346,8 +346,7 @@ void cLobbyClient::handleNetMessage_TCP_HELLO (const cNetMessageTcpHello& messag
 	}
 
 	cNetMessageTcpWantConnect response;
-	response.playerName = localPlayer.getName();
-	response.playerColor = localPlayer.getColor();
+	response.player = { localPlayer.getName(), localPlayer.getColor()};
 	response.ready = localPlayer.isReady();
 	sendNetMessage (response);
 }

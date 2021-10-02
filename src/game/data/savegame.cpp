@@ -182,17 +182,15 @@ cSaveGameInfo cSavegame::loadSaveInfo (int slot)
 		for (int i = 0; i < numPlayers; i++)
 		{
 			archive.enterChild ("player");
-			std::string name;
-			cRgbColor color;
+			sPlayerSettings player;
 			int id;
 			bool isDefeated;
 
-			archive >> NVP (name);
-			archive >> NVP (color);
+			archive >> NVP (player);
 			archive >> NVP (id);
 			archive >> NVP (isDefeated);
 
-			info.players[i] = cPlayerBasicData (name, color, id, isDefeated);
+			info.players[i] = cPlayerBasicData (player, id, isDefeated);
 
 			archive.leaveChild(); // player
 		}

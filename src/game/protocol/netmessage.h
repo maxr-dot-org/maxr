@@ -154,8 +154,7 @@ public:
 	void serialize (cBinaryArchiveIn& archive) override { cNetMessage::serialize (archive); serializeThis (archive); }
 	void serialize (cTextArchiveIn& archive) override { cNetMessage::serialize (archive); serializeThis (archive); }
 
-	std::string playerName;
-	cRgbColor playerColor;
+	sPlayerSettings player;
 	bool ready;
 	std::string packageVersion;
 	std::string packageRev;
@@ -166,8 +165,7 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & playerName;
-		archive & playerColor;
+		archive & player;
 		archive & ready;
 		archive & packageVersion;
 		archive & packageRev;

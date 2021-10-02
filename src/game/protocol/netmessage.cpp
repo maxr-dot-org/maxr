@@ -172,7 +172,7 @@ void cNetMessageResyncModel::apply (cModel& model) const
 cNetMessageGameAlreadyRunning::cNetMessageGameAlreadyRunning (const cModel& model)
 {
 	for (const auto& p : model.getPlayerList())
-		playerList.push_back (cPlayerBasicData (p->getName(), p->getColor(), p->getId(), p->isDefeated));
+		playerList.push_back (cPlayerBasicData ({p->getName(), p->getColor()}, p->getId(), p->isDefeated));
 	mapName = model.getMap()->getName();
 	mapCrc = MapDownload::calculateCheckSum (mapName);
 }

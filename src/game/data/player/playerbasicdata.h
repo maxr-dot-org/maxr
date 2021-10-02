@@ -22,6 +22,7 @@
 
 #include <string>
 
+#include "game/data/player/playersettings.h"
 #include "game/serialization/serialization.h"
 #include "utility/color.h"
 #include "utility/signal/signal.h"
@@ -35,13 +36,13 @@ public:
 	static cPlayerBasicData fromSettings();
 
 	cPlayerBasicData();
-	cPlayerBasicData (const std::string& name, const cRgbColor&, int nr, bool defeated);
+	cPlayerBasicData (const sPlayerSettings&, int nr, bool defeated);
 	cPlayerBasicData (const cPlayerBasicData&);
 	cPlayerBasicData& operator= (const cPlayerBasicData&);
 
 	const std::string& getName() const;
 	void setName (std::string);
-	const cRgbColor& getColor() const { return color; }
+	const cRgbColor& getColor() const { return player.color; }
 	void setColor (cRgbColor);
 	int getNr() const;
 	void setNr (int index);
@@ -62,15 +63,13 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
-		archive & NVP (name);
-		archive & NVP (color);
+		archive & NVP (player);
 		archive & NVP (nr);
 		archive & NVP (ready);
 		archive & NVP (defeated);
 	}
 private:
-	std::string name;
-	cRgbColor color;
+	sPlayerSettings player;
 	int nr;
 	bool ready;
 	bool defeated;

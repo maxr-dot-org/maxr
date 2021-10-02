@@ -19,21 +19,14 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include "utility/color.h"
+#include "game/data/player/playersettings.h"
+#include "game/networkaddress.h"
 #include "utility/signal/signal.h"
 
 #include <3rd/tinyxml2/tinyxml2.h>
 
-#include "game/networkaddress.h"
-
 #include <mutex>
 #include <string>
-
-struct sPlayerSettings
-{
-	std::string name;
-	cRgbColor color;
-};
 
 /**
  * cSettings class stores all settings for the game and handles reading

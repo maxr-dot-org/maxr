@@ -24,6 +24,7 @@
 #include <vector>
 
 #include "game/data/base/base.h"
+#include "game/data/player/playersettings.h"
 #include "game/data/rangemap.h"
 #include "game/data/units/unitdata.h"
 #include "game/data/units/unit.h" // sUnitLess
@@ -80,10 +81,10 @@ public:
 	cPlayer (const cPlayerBasicData&, const cUnitsData&);
 	~cPlayer();
 
-	const std::string& getName() const { return name; }
+	const std::string& getName() const { return player.name; }
+	const cRgbColor& getColor() const { return player.color; }
 
 	bool isHuman() const { return true; } // only human players are implemented yet.
-	const cRgbColor& getColor() const { return color; }
 
 	int getId() const { return id; }
 
@@ -215,9 +216,8 @@ public:
 	template <typename Archive>
 	void save (Archive& archive)
 	{
-		archive & NVP (name);
+		archive & NVP (player);
 		archive & NVP (id);
-		archive & NVP (color);
 		archive & NVP (dynamicUnitsData);
 		archive & serialization::makeNvp ("vehicleNum", (int)vehicles.size());
 		// should be saved in "correct order"
@@ -263,9 +263,8 @@ public:
 	template <typename Archive>
 	void load (Archive& archive)
 	{
-		archive & NVP (name);
+		archive & NVP (player);
 		archive & NVP (id);
-		archive & NVP (color);
 
 		dynamicUnitsData.clear();
 		archive & NVP (dynamicUnitsData);
@@ -330,8 +329,7 @@ public:
 	int numEcos;            // number of ecospheres. call countEcoSpheres to update.
 
 private:
-	std::string name;
-	cRgbColor color;
+	sPlayerSettings player;
 	int id;
 
 	cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>> vehicles;

@@ -286,16 +286,16 @@ void cServer::run()
 			case eNetMessageType::TCP_WANT_CONNECT:
 			{
 				const cNetMessageTcpWantConnect& connectMessage = *static_cast<cNetMessageTcpWantConnect*> (message.get());
-				const cPlayer* player = model.getPlayer (connectMessage.playerName);
+				const cPlayer* player = model.getPlayer (connectMessage.player.name);
 				if (player == nullptr)
 				{
-					Log.write (" Server: Connecting player " + connectMessage.playerName + " is not part of the game", cLog::eLOG_TYPE_NET_WARNING);
+					Log.write (" Server: Connecting player " + connectMessage.player.name + " is not part of the game", cLog::eLOG_TYPE_NET_WARNING);
 					connectionManager->declineConnection (connectMessage.socket, eDeclineConnectionReason::NotPartOfTheGame);
 					break;
 				}
 				if (connectionManager->isPlayerConnected (player->getId()))
 				{
-					Log.write (" Server: Connecting player " + connectMessage.playerName + " is already connected", cLog::eLOG_TYPE_NET_WARNING);
+					Log.write (" Server: Connecting player " + connectMessage.player.name + " is already connected", cLog::eLOG_TYPE_NET_WARNING);
 					connectionManager->declineConnection (connectMessage.socket, eDeclineConnectionReason::AlreadyConnected);
 					break;
 				}

@@ -58,8 +58,7 @@ void sNewTurnPlayerReport::addUnitBuilt (const sID& unitTypeId)
 //------------------------------------------------------------------------------
 cPlayer::cPlayer (const cPlayerBasicData& splayer, const cUnitsData& unitsData) :
 	base (*this),
-	name (splayer.getName()),
-	color (splayer.getColor()),
+	player ({splayer.getName(), splayer.getColor()}),
 	id (splayer.getNr()),
 	clan (-1),
 	hasFinishedTurn (false)
@@ -739,9 +738,8 @@ sNewTurnPlayerReport cPlayer::makeTurnStart (cModel& model)
 //------------------------------------------------------------------------------
 uint32_t cPlayer::getChecksum (uint32_t crc) const
 {
-	crc = calcCheckSum (name, crc);
+	crc = player.getCheckSum (crc);
 	crc = calcCheckSum (id, crc);
-	crc = calcCheckSum (color, crc);
 	crc = calcCheckSum (dynamicUnitsData, crc);
 	crc = calcCheckSum (base, crc);
 	for (const auto& v : vehicles)

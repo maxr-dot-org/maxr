@@ -343,7 +343,7 @@ void cLobbyServer::clientConnects (const cNetMessageTcpWantConnect& message)
 		if (message.packageVersion != PACKAGE_VERSION) return;
 	}
 
-	players.emplace_back (message.playerName, message.playerColor, nextPlayerNumber++, false);
+	players.emplace_back (message.player, nextPlayerNumber++, false);
 	const auto& newPlayer = players.back();
 
 	connectionManager->acceptConnection (message.socket, newPlayer.getNr());
