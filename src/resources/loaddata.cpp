@@ -142,7 +142,8 @@ static void LoadLanguage()
 	if (!Contains (lngPack.getAvailableLanguages(), cSettings::getInstance().getLanguage()))
 	{
 		Log.write ("Not a supported language: " + cSettings::getInstance().getLanguage() + ", defaulting to en.", cLog::eLOG_TYPE_WARNING);
-		cSettings::getInstance().setLanguage("en", true);
+		cSettings::getInstance().setLanguage("en");
+		cSettings::getInstance().saveInFile();
 	}
 	lngPack.setCurrentLanguage (cSettings::getInstance().getLanguage());
 

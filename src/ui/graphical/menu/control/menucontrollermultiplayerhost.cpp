@@ -280,6 +280,7 @@ void cMenuControllerMultiplayerHost::saveOptions()
 {
 	if (!windowNetworkLobby) return;
 
-	cSettings::getInstance().setNetworkAddress ({cSettings::getInstance().getNetworkAddress().ip, windowNetworkLobby->getPort()}, true);
-	cSettings::getInstance().setPlayerSettings ({windowNetworkLobby->getLocalPlayer()->getName(), windowNetworkLobby->getLocalPlayer()->getColor()}, true);
+	cSettings::getInstance().setNetworkAddress ({cSettings::getInstance().getNetworkAddress().ip, windowNetworkLobby->getPort()});
+	cSettings::getInstance().setPlayerSettings ({windowNetworkLobby->getLocalPlayer()->getName(), windowNetworkLobby->getLocalPlayer()->getColor()});
+	cSettings::getInstance().saveInFile();
 }

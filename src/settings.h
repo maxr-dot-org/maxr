@@ -23,10 +23,16 @@
 #include "game/networkaddress.h"
 #include "utility/signal/signal.h"
 
-#include <3rd/tinyxml2/tinyxml2.h>
-
 #include <mutex>
 #include <string>
+
+struct sVideoSettings
+{
+	std::optional<cPosition> resolution;
+	int colourDepth = 32;
+	int displayIndex = 0;
+	bool windowMode = true;
+};
 
 /**
  * cSettings class stores all settings for the game and handles reading
@@ -52,6 +58,8 @@ public:
 	 */
 	static cSettings& getInstance();
 
+	void saveInFile() /*const*/;
+
 	/**
 	 * Checks whether the class has been initialized already and successful
 	 * (what means the configuration file has been read).
@@ -59,45 +67,37 @@ public:
 	 */
 	bool isInitialized() const;
 
-	// Some save methods for settings that are not stored
-	// in this class but nevertheless
-	// have to be written to the configuration file.
-	void saveResolution();
-	void saveColorDepth();
-	void saveDisplayIndex();
-	void saveWindowMode();
-
 	// Game
 
 	bool isDebug() const;
-	void setDebug (bool debug, bool save);
+	void setDebug (bool debug);
 
 	bool shouldAutosave() const;
-	void setAutosave (bool autosave, bool save);
+	void setAutosave (bool autosave);
 
 	bool isAnimations() const;
-	void setAnimations (bool animations, bool save);
+	void setAnimations (bool animations);
 
 	bool isShadows() const;
-	void setShadows (bool shadows, bool save);
+	void setShadows (bool shadows);
 
 	bool isAlphaEffects() const;
-	void setAlphaEffects (bool alphaEffects, bool save);
+	void setAlphaEffects (bool alphaEffects);
 
 	bool shouldShowDescription() const;
-	void setShowDescription (bool showDescription, bool save);
+	void setShowDescription (bool showDescription);
 
 	bool isDamageEffects() const;
-	void setDamageEffects (bool damageEffects, bool save);
+	void setDamageEffects (bool damageEffects);
 
 	bool isDamageEffectsVehicles() const;
-	void setDamageEffectsVehicles (bool damageEffectsVehicle, bool save);
+	void setDamageEffectsVehicles (bool damageEffectsVehicle);
 
 	bool isMakeTracks() const;
-	void setMakeTracks (bool makeTracks, bool save);
+	void setMakeTracks (bool makeTracks);
 
 	int getScrollSpeed() const;
-	void setScrollSpeed (int scrollSpeed, bool save);
+	void setScrollSpeed (int scrollSpeed);
 
 	const std::string& getNetLogPath() const;
 	void setNetLogPath (const char* netLog);
@@ -107,72 +107,75 @@ public:
 	const std::string& getHomeDir() const;
 
 	const sNetworkAddress& getNetworkAddress() const { return networkAddress; }
-	void setNetworkAddress (const sNetworkAddress&, bool save);
+	void setNetworkAddress (const sNetworkAddress&);
 
 	const sPlayerSettings& getPlayerSettings() const { return playerSettings; }
-	void setPlayerSettings (const sPlayerSettings&, bool save);
+	void setPlayerSettings (const sPlayerSettings&);
+
+	const sVideoSettings& getVideoSettings() const { return videoSettings; }
+	sVideoSettings& getVideoSettings() { return videoSettings; }
 
 	// Sound
 
 	bool isSoundEnabled() const;
-	void setSoundEnabled (bool soundEnabled, bool save);
+	void setSoundEnabled (bool soundEnabled);
 
 	int getMusicVol() const;
-	void setMusicVol (int musicVol, bool save);
+	void setMusicVol (int musicVol);
 
 	int getSoundVol() const;
-	void setSoundVol (int soundVol, bool save);
+	void setSoundVol (int soundVol);
 
 	int getVoiceVol() const;
-	void setVoiceVol (int voiceVol, bool save);
+	void setVoiceVol (int voiceVol);
 
 	int getChunkSize() const;
-	void setChunkSize (int chunkSize, bool save);
+	void setChunkSize (int chunkSize);
 
 	int getFrequency() const;
-	void setFrequence (int frequency, bool save);
+	void setFrequence (int frequency);
 
 	bool isMusicMute() const;
-	void setMusicMute (bool musicMute, bool save);
+	void setMusicMute (bool musicMute);
 
 	bool isSoundMute() const;
-	void setSoundMute (bool soundMute, bool save);
+	void setSoundMute (bool soundMute);
 
 	bool isVoiceMute() const;
-	void setVoiceMute (bool voiceMute, bool save);
+	void setVoiceMute (bool voiceMute);
 
 	bool is3DSound() const;
-	void set3DSound (bool sound3d, bool save);
+	void set3DSound (bool sound3d);
 
 	// Startup
 
 	bool shouldShowIntro() const;
-	void setShowIntro (bool showIntro, bool save);
+	void setShowIntro (bool showIntro);
 
 	bool shouldUseFastMode() const;
 	bool shouldDoPrescale() const;
 
 	const std::string& getLanguage() const;
-	void setLanguage (const char* language, bool save);
+	void setLanguage (const char* language);
 
 	const std::string& getVoiceLanguage() const;
 
 	unsigned int getCacheSize() const;
-	void setCacheSize (unsigned int cacheSize, bool save);
+	void setCacheSize (unsigned int cacheSize);
 
 	// Paths
-	const std::string& getFontPath() const;
-	const std::string& getFxPath() const;
-	const std::string& getGfxPath() const;
-	const std::string& getLangPath() const;
-	const std::string& getMapsPath() const;
-	const std::string& getSavesPath() const;
-	const std::string& getSoundsPath() const;
-	const std::string& getVoicesPath() const;
-	const std::string& getMusicPath() const;
-	const std::string& getVehiclesPath() const;
-	const std::string& getBuildingsPath() const;
-	const std::string& getMvePath() const;
+	std::string getFontPath() const;
+	std::string getFxPath() const;
+	std::string getGfxPath() const;
+	std::string getLangPath() const;
+	std::string getMapsPath() const;
+	std::string getSavesPath() const;
+	std::string getSoundsPath() const;
+	std::string getVoicesPath() const;
+	std::string getMusicPath() const;
+	std::string getVehiclesPath() const;
+	std::string getBuildingsPath() const;
+	std::string getMvePath() const;
 
 	mutable cSignal<void()> animationsChanged;
 	// TODO: add signals for other settings
@@ -181,7 +184,7 @@ private:
 	/**
 	 * Private constructor for singleton design pattern.
 	 */
-	cSettings() = default;
+	cSettings();
 	/**
 	 * Private copy constructor for singleton design pattern.
 	 * Does not need to be implemented!
@@ -201,31 +204,8 @@ private:
 	 */
 	void setPaths();
 
-	/**
-	 * Creates a new configuration file and adds the root node to it.
-	 * @return True on success. Else false.
-	 */
-	bool createConfigFile();
+	void setDataDir (const char* dataDir);
 
-	void setDataDir (const char* dataDir, bool save);
-
-	/**
-	 * Template function for saving a setting.
-	 * @param path See #getXmlNode() for more information on
-	 *        how to use this parameter.
-	 * @param value The value to set as attribute to the setting node.
-	 * @param valueName The name of the attribute to set to the setting node.
-	 */
-	template <typename T>
-	void saveSetting (const std::string& path, T value, const char* valueName);
-
-	// Overloads for the saveSetting template function.
-	// Each type has to call the template saveSetting() method and pass the
-	// corresponding attribute name to it.
-	void saveSetting (const std::string& path, const char* value);
-	void saveSetting (const std::string& path, int value);
-	void saveSetting (const std::string& path, unsigned int value);
-	void saveSetting (const std::string& path, bool value);
 private:
 	struct sStartSettings
 	{
@@ -269,18 +249,18 @@ private:
 
 	struct sPathSettings
 	{
-		std::string fontPath;      // Path to the fonts
-		std::string fxPath;        // Path to the effects
-		std::string gfxPath;       // Path to the graphics
-		std::string langPath;      // Path to language files
-		std::string mapsPath;      // Path to the maps
-		std::string savesPath;     // Path to the saves
-		std::string soundsPath;    // Path to the sound-files
-		std::string voicesPath;    // Path to the voice-files
-		std::string musicPath;     // Path to the music-files
-		std::string vehiclesPath;  // Path to the vehicles
-		std::string buildingsPath; // Path to the buildings
-		std::string mvePath;       // Path to the in-game movies (*.mve)
+		std::string fontPath = "fonts";          // Path to the fonts
+		std::string fxPath = "fx";               // Path to the effects
+		std::string gfxPath = "gfx";             // Path to the graphics
+		std::string langPath = "languages";      // Path to language files
+		std::string mapsPath = "maps";           // Path to the maps
+		std::string savesPath = "saves";         // Path to the saves
+		std::string soundsPath = "sounds";       // Path to the sound-files
+		std::string voicesPath = "voices";       // Path to the voice-files
+		std::string musicPath = "music";         // Path to the music-files
+		std::string vehiclesPath = "vehicles";   // Path to the vehicles
+		std::string buildingsPath = "buildings"; // Path to the buildings
+		std::string mvePath = "mve";             // Path to the in-game movies (*.mve)
 	};
 
 	struct sInGameSettings
@@ -307,6 +287,7 @@ private:
 		int scrollSpeed = 32;
 	};
 
+
 private:
 	/**
 	 * The static instance of this object.
@@ -323,7 +304,6 @@ private:
 	 */
 	bool initializing = false;
 
-	tinyxml2::XMLDocument configFile;
 	std::recursive_mutex xmlDocMutex;
 
 	sStartSettings startSettings;
@@ -344,6 +324,7 @@ private:
 	sSoundSettings soundSettings;
 	sPathSettings pathSettings;
 	sInGameSettings gameSettings;
+	sVideoSettings videoSettings;
 };
 
 #endif // SETTINGS_H

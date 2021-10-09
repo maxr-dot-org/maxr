@@ -60,7 +60,7 @@ static int initSound()
 		Log.write ("Could not init SDL_INIT_AUDIO", cLog::eLOG_TYPE_WARNING);
 		Log.write ("Sound won't be available!", cLog::eLOG_TYPE_WARNING);
 		Log.write (SDL_GetError(), cLog::eLOG_TYPE_WARNING);
-		cSettings::getInstance().setSoundEnabled (false, false);
+		cSettings::getInstance().setSoundEnabled (false);
 		return -1;
 	}
 
@@ -73,7 +73,7 @@ static int initSound()
 		Log.write ("Could not init SDL_mixer:", cLog::eLOG_TYPE_WARNING);
 		Log.write (e.what(), cLog::eLOG_TYPE_WARNING);
 		Log.write ("Sound won't be available!", cLog::eLOG_TYPE_WARNING);
-		cSettings::getInstance().setSoundEnabled (false, false);
+		cSettings::getInstance().setSoundEnabled (false);
 		return -1;
 	}
 	Log.write ("Sound started", cLog::eLOG_TYPE_INFO);
@@ -135,6 +135,8 @@ try
 	{
 		return -1;
 	}
+
+	applySettings (Video, cSettings::getInstance().getVideoSettings())
 
 	CR_INIT_CRASHREPORTING();
 	is_main_thread();
