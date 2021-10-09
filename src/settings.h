@@ -70,34 +70,34 @@ public:
 	// Game
 
 	bool isDebug() const;
-	void setDebug (bool debug, bool save = true);
+	void setDebug (bool debug, bool save);
 
 	bool shouldAutosave() const;
-	void setAutosave (bool autosave, bool save = true);
+	void setAutosave (bool autosave, bool save);
 
 	bool isAnimations() const;
-	void setAnimations (bool animations, bool save = true);
+	void setAnimations (bool animations, bool save);
 
 	bool isShadows() const;
-	void setShadows (bool shadows, bool save = true);
+	void setShadows (bool shadows, bool save);
 
 	bool isAlphaEffects() const;
-	void setAlphaEffects (bool alphaEffects, bool save = true);
+	void setAlphaEffects (bool alphaEffects, bool save);
 
 	bool shouldShowDescription() const;
-	void setShowDescription (bool showDescription, bool save = true);
+	void setShowDescription (bool showDescription, bool save);
 
 	bool isDamageEffects() const;
-	void setDamageEffects (bool damageEffects, bool save = true);
+	void setDamageEffects (bool damageEffects, bool save);
 
 	bool isDamageEffectsVehicles() const;
-	void setDamageEffectsVehicles (bool damageEffectsVehicle, bool save = true);
+	void setDamageEffectsVehicles (bool damageEffectsVehicle, bool save);
 
 	bool isMakeTracks() const;
-	void setMakeTracks (bool makeTracks, bool save = true);
+	void setMakeTracks (bool makeTracks, bool save);
 
 	int getScrollSpeed() const;
-	void setScrollSpeed (int scrollSpeed, bool save = true);
+	void setScrollSpeed (int scrollSpeed, bool save);
 
 	const std::string& getNetLogPath() const;
 	void setNetLogPath (const char* netLog);
@@ -107,58 +107,58 @@ public:
 	const std::string& getHomeDir() const;
 
 	const sNetworkAddress& getNetworkAddress() const { return networkAddress; }
-	void setNetworkAddress (const sNetworkAddress&, bool save = true);
+	void setNetworkAddress (const sNetworkAddress&, bool save);
 
 	const sPlayerSettings& getPlayerSettings() const { return playerSettings; }
-	void setPlayerSettings (const sPlayerSettings&, bool save = true);
+	void setPlayerSettings (const sPlayerSettings&, bool save);
 
 	// Sound
 
 	bool isSoundEnabled() const;
-	void setSoundEnabled (bool soundEnabled, bool save = true);
+	void setSoundEnabled (bool soundEnabled, bool save);
 
 	int getMusicVol() const;
-	void setMusicVol (int musicVol, bool save = true);
+	void setMusicVol (int musicVol, bool save);
 
 	int getSoundVol() const;
-	void setSoundVol (int soundVol, bool save = true);
+	void setSoundVol (int soundVol, bool save);
 
 	int getVoiceVol() const;
-	void setVoiceVol (int voiceVol, bool save = true);
+	void setVoiceVol (int voiceVol, bool save);
 
 	int getChunkSize() const;
-	void setChunkSize (int chunkSize, bool save = true);
+	void setChunkSize (int chunkSize, bool save);
 
 	int getFrequency() const;
-	void setFrequence (int frequency, bool save = true);
+	void setFrequence (int frequency, bool save);
 
 	bool isMusicMute() const;
-	void setMusicMute (bool musicMute, bool save = true);
+	void setMusicMute (bool musicMute, bool save);
 
 	bool isSoundMute() const;
-	void setSoundMute (bool soundMute, bool save = true);
+	void setSoundMute (bool soundMute, bool save);
 
 	bool isVoiceMute() const;
-	void setVoiceMute (bool voiceMute, bool save = true);
+	void setVoiceMute (bool voiceMute, bool save);
 
 	bool is3DSound() const;
-	void set3DSound (bool sound3d, bool save = true);
+	void set3DSound (bool sound3d, bool save);
 
 	// Startup
 
 	bool shouldShowIntro() const;
-	void setShowIntro (bool showIntro, bool save = true);
+	void setShowIntro (bool showIntro, bool save);
 
 	bool shouldUseFastMode() const;
 	bool shouldDoPrescale() const;
 
 	const std::string& getLanguage() const;
-	void setLanguage (const char* language, bool save = true);
+	void setLanguage (const char* language, bool save);
 
 	const std::string& getVoiceLanguage() const;
 
 	unsigned int getCacheSize() const;
-	void setCacheSize (unsigned int cacheSize, bool save = true);
+	void setCacheSize (unsigned int cacheSize, bool save);
 
 	// Paths
 	const std::string& getFontPath() const;
@@ -207,7 +207,7 @@ private:
 	 */
 	bool createConfigFile();
 
-	void setDataDir (const char* dataDir, bool save = true);
+	void setDataDir (const char* dataDir, bool save);
 
 	/**
 	 * Template function for saving a setting.

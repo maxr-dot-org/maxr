@@ -406,7 +406,7 @@ void cDrawingCache::setMaxCacheSize (unsigned int newSize)
 	cachedImages.resize (newSize);
 	cacheSize = 0;
 
-	cSettings::getInstance().setCacheSize (newSize);
+	cSettings::getInstance().setCacheSize (newSize, true);
 }
 
 int cDrawingCache::getCacheSize() const

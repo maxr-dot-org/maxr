@@ -256,7 +256,7 @@ void cSettings::initialize()
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
 			Log.write ("Can't load intro from config file: using default value", cLog::eLOG_TYPE_WARNING);
-			setShowIntro (true);
+			setShowIntro (true, true);
 		}
 		else
 		{
@@ -320,7 +320,7 @@ void cSettings::initialize()
 		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
 			Log.write ("Can't load cache size from config file: using default value", cLog::eLOG_TYPE_WARNING);
-			setCacheSize (400);
+			setCacheSize (400, true);
 		}
 		else
 		{
@@ -333,7 +333,7 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load language from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setLanguage ("en");
+		setLanguage ("en", true);
 	}
 	else
 	{
@@ -360,7 +360,7 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
 		Log.write ("Can't load autosave from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setAutosave (true);
+		setAutosave (true, true);
 	}
 	else
 	{
@@ -372,7 +372,7 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
 		Log.write ("Can't load debug from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setDebug (true);
+		setDebug (true, true);
 	}
 	else
 	{
@@ -386,7 +386,7 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
 		Log.write ("Can't load animations from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setAnimations (true);
+		setAnimations (true, true);
 	}
 	else
 	{
@@ -398,7 +398,7 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
 		Log.write ("Can't load shadows from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setShadows (true);
+		setShadows (true, true);
 	}
 	else
 	{
@@ -410,7 +410,7 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
 		Log.write ("Can't load alpha effects from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setAlphaEffects (true);
+		setAlphaEffects (true, true);
 	}
 	else
 	{
@@ -422,7 +422,7 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
 		Log.write ("Can't load descriptions from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setShowDescription (true);
+		setShowDescription (true, true);
 	}
 	else
 	{
@@ -434,7 +434,7 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
 		Log.write ("Can't load damage effects from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setDamageEffects (true);
+		setDamageEffects (true, true);
 	}
 	else
 	{
@@ -446,7 +446,7 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
 		Log.write ("Can't load damaga effects vehicles from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setDamageEffectsVehicles (true);
+		setDamageEffectsVehicles (true, true);
 	}
 	else
 	{
@@ -458,7 +458,7 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
 		Log.write ("Can't load make tracks from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setMakeTracks (true);
+		setMakeTracks (true, true);
 	}
 	else
 	{
@@ -470,7 +470,7 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("Num"))
 	{
 		Log.write ("Can't load scroll speed from config file: using default value", cLog::eLOG_TYPE_WARNING);
-		setScrollSpeed (32);
+		setScrollSpeed (32, true);
 	}
 	else
 	{
@@ -485,7 +485,7 @@ void cSettings::initialize()
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
 			Log.write ("Can't load sound enabled from config file: using default value", cLog::eLOG_TYPE_WARNING);
-			setSoundEnabled (true);
+			setSoundEnabled (true, true);
 		}
 		else
 		{
@@ -497,7 +497,7 @@ void cSettings::initialize()
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
 			Log.write ("Can't load music mute from config file: using default value", cLog::eLOG_TYPE_WARNING);
-			setMusicMute (false);
+			setMusicMute (false, true);
 		}
 		else
 		{
@@ -509,7 +509,7 @@ void cSettings::initialize()
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
 			Log.write ("Can't load sound mute from config file: using default value", cLog::eLOG_TYPE_WARNING);
-			setSoundMute (false);
+			setSoundMute (false, true);
 		}
 		else
 		{
@@ -521,7 +521,7 @@ void cSettings::initialize()
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
 			Log.write ("Can't load voice mute from config file: using default value", cLog::eLOG_TYPE_WARNING);
-			setVoiceMute (false);
+			setVoiceMute (false, true);
 		}
 		else
 		{
@@ -533,7 +533,7 @@ void cSettings::initialize()
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
 			Log.write ("Can't load 3D sound from config file: using default value", cLog::eLOG_TYPE_WARNING);
-			set3DSound (true);
+			set3DSound (true, true);
 		}
 		else
 		{
@@ -545,7 +545,7 @@ void cSettings::initialize()
 		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
 			Log.write ("Can't load music volume from config file: using default value", cLog::eLOG_TYPE_WARNING);
-			setMusicVol (128);
+			setMusicVol (128, true);
 		}
 		else
 		{
@@ -557,7 +557,7 @@ void cSettings::initialize()
 		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
 			Log.write ("Can't load music volume from config file: using default value", cLog::eLOG_TYPE_WARNING);
-			setSoundVol (128);
+			setSoundVol (128, true);
 		}
 		else
 		{
@@ -569,7 +569,7 @@ void cSettings::initialize()
 		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
 			Log.write ("Can't load music volume from config file: using default value", cLog::eLOG_TYPE_WARNING);
-			setVoiceVol (128);
+			setVoiceVol (128, true);
 		}
 		else
 		{
@@ -581,7 +581,7 @@ void cSettings::initialize()
 		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
 			Log.write ("Can't load music volume from config file: using default value", cLog::eLOG_TYPE_WARNING);
-			setChunkSize (2048);
+			setChunkSize (2048, true);
 		}
 		else
 		{
@@ -593,7 +593,7 @@ void cSettings::initialize()
 		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
 			Log.write ("Can't load music volume from config file: using default value", cLog::eLOG_TYPE_WARNING);
-			setFrequence (44100);
+			setFrequence (44100, true);
 		}
 		else
 		{
@@ -817,7 +817,7 @@ void cSettings::initialize()
 	{
 		xmlNetworkAddress.port = xmlElement->IntAttribute ("Num");
 	}
-	setNetworkAddress (xmlNetworkAddress);
+	setNetworkAddress (xmlNetworkAddress, true);
 
 	// =========================================================================
 	sPlayerSettings xmlPlayerSettings;
@@ -861,7 +861,7 @@ void cSettings::initialize()
 	{
 		xmlPlayerSettings.color = cRgbColor (xmlElement->IntAttribute ("red"), xmlElement->IntAttribute ("green"), xmlElement->IntAttribute ("blue"));
 	}
-	setPlayerSettings (xmlPlayerSettings);
+	setPlayerSettings (xmlPlayerSettings, true);
 
 	initialized = true;
 	initializing = false;
