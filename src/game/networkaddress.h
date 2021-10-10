@@ -20,6 +20,8 @@
 #ifndef game_networkAddressH
 #define game_networkAddressH
 
+#include "game/serialization/serialization.h"
+
 #include <string>
 
 struct sNetworkAddress
@@ -28,6 +30,14 @@ struct sNetworkAddress
 	std::uint16_t port;
 
 	std::string toString() const { return ip + ":" + std::to_string(port); }
+
+	template <typename Archive>
+	void serialize (Archive& archive)
+	{
+		archive & NVP (ip);
+		archive & NVP (port);
+	}
+
 };
 
 #endif

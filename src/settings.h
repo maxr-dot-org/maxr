@@ -21,6 +21,7 @@
 
 #include "game/data/player/playersettings.h"
 #include "game/networkaddress.h"
+#include "game/serialization/serialization.h"
 #include "utility/signal/signal.h"
 
 #include <mutex>
@@ -32,6 +33,15 @@ struct sVideoSettings
 	int colourDepth = 32;
 	int displayIndex = 0;
 	bool windowMode = true;
+
+	template <typename Archive>
+	void serialize (Archive& archive)
+	{
+		archive & NVP (resolution);
+		archive & NVP (colourDepth);
+		archive & NVP (displayIndex);
+		archive & NVP (windowMode);
+	}
 };
 
 /**
@@ -58,7 +68,7 @@ public:
 	 */
 	static cSettings& getInstance();
 
-	void saveInFile() /*const*/;
+	void saveInFile() const;
 
 	/**
 	 * Checks whether the class has been initialized already and successful
@@ -177,6 +187,18 @@ public:
 	std::string getBuildingsPath() const;
 	std::string getMvePath() const;
 
+	template <typename Archive>
+	void serialize (Archive& archive)
+	{
+		archive & NVP (startSettings);
+		archive & NVP (networkAddress);
+		archive & NVP (playerSettings);
+		archive & NVP (soundSettings);
+		archive & NVP (pathSettings);
+		archive & NVP (gameSettings);
+		archive & NVP (videoSettings);
+	}
+
 	mutable cSignal<void()> animationsChanged;
 	// TODO: add signals for other settings
 private:
@@ -221,6 +243,18 @@ private:
 		std::string voiceLanguage;
 		/** cache size */
 		unsigned int cacheSize = 400;
+
+		template <typename Archive>
+		void serialize (Archive& archive)
+		{
+			archive & NVP (showIntro);
+			archive & NVP (fastMode);
+			archive & NVP (preScale);
+			archive & NVP (language);
+			archive & NVP (voiceLanguage);
+			archive & NVP (cacheSize);
+		}
+
 	};
 
 	struct sSoundSettings
@@ -245,6 +279,21 @@ private:
 		bool voiceMute = false;
 		/** in-game sound effects should respect position*/
 		bool sound3d = true;
+
+		template <typename Archive>
+		void serialize (Archive& archive)
+		{
+			archive & NVP (soundEnabled);
+			archive & NVP (musicVol);
+			archive & NVP (soundVol);
+			archive & NVP (voiceVol);
+			archive & NVP (chunkSize);
+			archive & NVP (frequency);
+			archive & NVP (musicMute);
+			archive & NVP (soundMute);
+			archive & NVP (voiceMute);
+			archive & NVP (sound3d);
+		}
 	};
 
 	struct sPathSettings
@@ -261,6 +310,24 @@ private:
 		std::string vehiclesPath = "vehicles";   // Path to the vehicles
 		std::string buildingsPath = "buildings"; // Path to the buildings
 		std::string mvePath = "mve";             // Path to the in-game movies (*.mve)
+
+		template <typename Archive>
+		void serialize (Archive& archive)
+		{
+			archive & NVP (fontPath);
+			archive & NVP (fxPath);
+			archive & NVP (gfxPath);
+			archive & NVP (langPath);
+			archive & NVP (mapsPath);
+			archive & NVP (savesPath);
+			archive & NVP (soundsPath);
+			archive & NVP (voicesPath);
+			archive & NVP (musicPath);
+			archive & NVP (vehiclesPath);
+			archive & NVP (buildingsPath);
+			archive & NVP (mvePath);
+		}
+
 	};
 
 	struct sInGameSettings
@@ -285,6 +352,22 @@ private:
 		bool makeTracks = true;
 		/** scrollspeed on map */
 		int scrollSpeed = 32;
+
+		template <typename Archive>
+		void serialize (Archive& archive)
+		{
+			archive & NVP (debug);
+			archive & NVP (autosave);
+			archive & NVP (animations);
+			archive & NVP (shadows);
+			archive & NVP (alphaEffects);
+			archive & NVP (showDescription);
+			archive & NVP (damageEffects);
+			archive & NVP (damageEffectsVehicles);
+			archive & NVP (makeTracks);
+			archive & NVP (scrollSpeed);
+		}
+
 	};
 
 
@@ -304,9 +387,7 @@ private:
 	 */
 	bool initializing = false;
 
-	std::recursive_mutex xmlDocMutex;
-
-	sStartSettings startSettings;
+	mutable std::recursive_mutex xmlDocMutex;
 
 	/** sConfig is where the config is read from - set in setPaths() **/
 	std::string configPath;
@@ -319,6 +400,7 @@ private:
 	/** sHome is where the user has his $HOME dir - set in setPaths() **/
 	std::string homeDir;
 
+	sStartSettings startSettings;
 	sNetworkAddress networkAddress;
 	sPlayerSettings playerSettings;
 	sSoundSettings soundSettings;
