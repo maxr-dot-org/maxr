@@ -802,3 +802,13 @@ void drawCircle (int iX, int iY, int iRadius, int iColor, SDL_Surface& surface)
 	}
 	SDL_UnlockSurface (&surface);
 }
+
+//------------------------------------------------------------------------------
+void applySettings (cVideo& video, const sVideoSettings& videoSettings)
+{
+	auto resolution = videoSettings.resolution.value_or(cPosition(video.getMinW(), video.getMinH()));
+	video.setResolution (resolution.x(), resolution.y(), false);
+	video.setColDepth (videoSettings.colourDepth);
+	video.setWindowMode (videoSettings.windowMode);
+	video.setDisplayIndex (videoSettings.displayIndex);
+}

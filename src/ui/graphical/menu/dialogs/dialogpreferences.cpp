@@ -191,8 +191,8 @@ void cDialogPreferences::saveValues()
 
 	settings.setAutosave (autosaveCheckBox->isChecked());
 	settings.setShowIntro (introCheckBox->isChecked());
-	Video.setWindowMode (windowCheckBox->isChecked());
-	settings.saveWindowMode();
+
+	settings.getVideoSettings().windowMode = windowCheckBox->isChecked();
 
 	settings.setScrollSpeed (scrollSpeedSlider->getValue());
 
@@ -210,7 +210,7 @@ void cDialogPreferences::saveValues()
 		if (newResolutionX != oldScreenX || newResolutionY != oldScreenY)
 		{
 			Video.setResolution (newResolutionX, newResolutionY, true);
-			settings.saveResolution();
+			settings.getVideoSettings().resolution = cPosition (newResolutionX, newResolutionY);
 
 			if (Video.getResolutionX() != oldScreenX || Video.getResolutionY() != oldScreenY)
 			{
@@ -242,6 +242,8 @@ void cDialogPreferences::saveValues()
 			application->show (std::make_shared<cDialogOk> (text));
 		}
 	}
+	applySettings (Video, settings.getVideoSettings());
+	settings.saveInFile();
 }
 
 //------------------------------------------------------------------------------
@@ -274,6 +276,7 @@ void cDialogPreferences::restorePreviewValues()
 	if (wasMusicMute && !storedMusicMute) cSoundDevice::getInstance().startRandomMusic();
 	cSettings::getInstance().setSoundMute (storedEffectsMute);
 	cSettings::getInstance().setVoiceMute (storedVoicesMute);
+	cSettings::getInstance().saveInFile();
 }
 
 //------------------------------------------------------------------------------
@@ -295,6 +298,7 @@ void cDialogPreferences::musicVolumeChanged()
 {
 	cSettings::getInstance().setMusicVol (musicVolumeSlider->getValue());
 	if (cSettings::getInstance().isSoundEnabled()) cSoundDevice::getInstance().setMusicVolume (cSettings::getInstance().getMusicVol());
+	cSettings::getInstance().saveInFile();
 }
 
 //------------------------------------------------------------------------------
@@ -302,6 +306,7 @@ void cDialogPreferences::effectsVolumeChanged()
 {
 	cSettings::getInstance().setSoundVol (effectsVolumeSlider->getValue());
 	if (cSettings::getInstance().isSoundEnabled()) cSoundDevice::getInstance().setSoundEffectVolume (cSettings::getInstance().getSoundVol());
+	cSettings::getInstance().saveInFile();
 }
 
 //------------------------------------------------------------------------------
@@ -309,6 +314,7 @@ void cDialogPreferences::voicesVolumeChanged()
 {
 	cSettings::getInstance().setVoiceVol (voicesVolumeSlider->getValue());
 	if (cSettings::getInstance().isSoundEnabled()) cSoundDevice::getInstance().setVoiceVolume (cSettings::getInstance().getVoiceVol());
+	cSettings::getInstance().saveInFile();
 }
 
 //------------------------------------------------------------------------------
@@ -318,16 +324,19 @@ void cDialogPreferences::musicMuteChanged()
 	cSettings::getInstance().setMusicMute (disableMusicCheckBox->isChecked());
 	if (cSettings::getInstance().isMusicMute()) cSoundDevice::getInstance().stopMusic();
 	if (!cSettings::getInstance().isMusicMute() && wasMute) cSoundDevice::getInstance().startRandomMusic();
+	cSettings::getInstance().saveInFile();
 }
 
 //------------------------------------------------------------------------------
 void cDialogPreferences::effectsMuteChanged()
 {
 	cSettings::getInstance().setSoundMute (disableEffectsCheckBox->isChecked());
+	cSettings::getInstance().saveInFile();
 }
 
 //------------------------------------------------------------------------------
 void cDialogPreferences::voicesMuteChanged()
 {
 	cSettings::getInstance().setVoiceMute (disableVoicesCheckBox->isChecked());
+	cSettings::getInstance().saveInFile();
 }

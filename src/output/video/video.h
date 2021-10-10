@@ -31,6 +31,7 @@ struct SDL_Window;
 struct SDL_Surface;
 
 class cKeyboard;
+struct sVideoSettings;
 
 /**
  * cVideo class.
@@ -208,6 +209,8 @@ private:
 };
 
 extern cVideo Video;
+
+void applySettings(cVideo&, const sVideoSettings&);
 
 /**
 * Works like SDL_BlittSurface.
