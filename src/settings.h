@@ -75,39 +75,36 @@ public:
 	 * (what means the configuration file has been read).
 	 * @return True if the settings have been initialized.
 	 */
-	bool isInitialized() const;
+	bool isInitialized() const { return initialized; }
 
 	// Game
 
-	bool isDebug() const;
-	void setDebug (bool debug);
+	bool shouldAutosave() const { return inGame.autosave; }
+	void setAutosave (bool autosave) { inGame.autosave = autosave; }
 
-	bool shouldAutosave() const;
-	void setAutosave (bool autosave);
-
-	bool isAnimations() const;
+	bool isAnimations() const { return inGame.animations; }
 	void setAnimations (bool animations);
 
-	bool isShadows() const;
-	void setShadows (bool shadows);
+	bool isShadows() const { return inGame.shadows; }
+	void setShadows (bool shadows) { inGame.shadows = shadows; }
 
-	bool isAlphaEffects() const;
-	void setAlphaEffects (bool alphaEffects);
+	bool isAlphaEffects() const { return inGame.alphaEffects; }
+	void setAlphaEffects (bool alphaEffects) { inGame.alphaEffects = alphaEffects; }
 
-	bool shouldShowDescription() const;
-	void setShowDescription (bool showDescription);
+	bool shouldShowDescription() const { return inGame.showDescription; }
+	void setShowDescription (bool showDescription) { inGame.showDescription = showDescription; }
 
-	bool isDamageEffects() const;
-	void setDamageEffects (bool damageEffects);
+	bool isDamageEffects() const { return inGame.damageEffects; }
+	void setDamageEffects (bool damageEffects) { inGame.damageEffects = damageEffects; }
 
-	bool isDamageEffectsVehicles() const;
-	void setDamageEffectsVehicles (bool damageEffectsVehicle);
+	bool isDamageEffectsVehicles() const { return inGame.damageEffectsVehicles; }
+	void setDamageEffectsVehicles (bool damageEffectsVehicles) { inGame.damageEffectsVehicles = damageEffectsVehicles; }
 
-	bool isMakeTracks() const;
-	void setMakeTracks (bool makeTracks);
+	bool isMakeTracks() const { return inGame.makeTracks; }
+	void setMakeTracks (bool makeTracks) { inGame.makeTracks = makeTracks; }
 
-	int getScrollSpeed() const;
-	void setScrollSpeed (int scrollSpeed);
+	int getScrollSpeed() const { return inGame.scrollSpeed; }
+	void setScrollSpeed (int scrollSpeed) { inGame.scrollSpeed = scrollSpeed; }
 
 	const std::string& getNetLogPath() const;
 	void setNetLogPath (const char* netLog);
@@ -116,62 +113,65 @@ public:
 	const std::string& getLogPath() const;
 	const std::string& getHomeDir() const;
 
-	const sNetworkAddress& getNetworkAddress() const { return networkAddress; }
-	void setNetworkAddress (const sNetworkAddress&);
+	const sNetworkAddress& getNetworkAddress() const { return network; }
+	void setNetworkAddress (const sNetworkAddress& network) { this->network = network; }
 
-	const sPlayerSettings& getPlayerSettings() const { return playerSettings; }
-	void setPlayerSettings (const sPlayerSettings&);
+	const sPlayerSettings& getPlayerSettings() const { return player; }
+	void setPlayerSettings (const sPlayerSettings& player) { this->player = player; }
 
-	const sVideoSettings& getVideoSettings() const { return videoSettings; }
-	sVideoSettings& getVideoSettings() { return videoSettings; }
+	const sVideoSettings& getVideoSettings() const { return video; }
+	sVideoSettings& getVideoSettings() { return video; }
 
 	// Sound
 
-	bool isSoundEnabled() const;
-	void setSoundEnabled (bool soundEnabled);
+	bool isSoundEnabled() const { return sound.enabled; }
+	void setSoundEnabled (bool enabled) { sound.enabled = enabled; }
 
-	int getMusicVol() const;
-	void setMusicVol (int musicVol);
+	int getMusicVol() const { return sound.musicVol; }
+	void setMusicVol (int musicVol) { sound.musicVol = musicVol; }
 
-	int getSoundVol() const;
-	void setSoundVol (int soundVol);
+	int getSoundVol() const { return sound.soundVol; }
+	void setSoundVol (int soundVol) { sound.soundVol = soundVol; }
 
-	int getVoiceVol() const;
-	void setVoiceVol (int voiceVol);
+	int getVoiceVol() const { return sound.voiceVol; }
+	void setVoiceVol (int voiceVol) { sound.voiceVol = voiceVol; }
 
-	int getChunkSize() const;
-	void setChunkSize (int chunkSize);
+	int getChunkSize() const { return sound.chunkSize; }
+	void setChunkSize (int chunkSize) { sound.chunkSize = chunkSize; }
 
-	int getFrequency() const;
-	void setFrequence (int frequency);
+	int getFrequency() const { return sound.frequency; }
+	void setFrequence (int frequency) { sound.frequency = frequency; }
 
-	bool isMusicMute() const;
-	void setMusicMute (bool musicMute);
+	bool isMusicMute() const { return sound.musicMute; }
+	void setMusicMute (bool musicMute) { sound.musicMute = musicMute; }
 
-	bool isSoundMute() const;
-	void setSoundMute (bool soundMute);
+	bool isSoundMute() const { return sound.soundMute; }
+	void setSoundMute (bool soundMute) { sound.soundMute = soundMute; }
 
-	bool isVoiceMute() const;
-	void setVoiceMute (bool voiceMute);
+	bool isVoiceMute() const { return sound.voiceMute; }
+	void setVoiceMute (bool voiceMute) { sound.voiceMute = voiceMute; }
 
-	bool is3DSound() const;
-	void set3DSound (bool sound3d);
+	bool is3DSound() const { return sound.sound3d; }
+	void set3DSound (bool sound3d) { sound.sound3d = sound3d; }
 
-	// Startup
+	// Global
 
-	bool shouldShowIntro() const;
-	void setShowIntro (bool showIntro);
+	bool isDebug() const { return global.debug; }
+	void setDebug (bool debug) { global.debug = debug; }
 
-	bool shouldUseFastMode() const;
-	bool shouldDoPrescale() const;
+	bool shouldShowIntro() const { return global.showIntro; }
+	void setShowIntro (bool showIntro) { global.showIntro = showIntro; }
 
-	const std::string& getLanguage() const;
-	void setLanguage (const char* language);
+	bool shouldUseFastMode() const { return global.fastMode; }
+	bool shouldDoPrescale() const { return global.preScale; }
 
-	const std::string& getVoiceLanguage() const;
+	const std::string& getLanguage() const { return global.language; }
+	void setLanguage (const char* language) { global.language = language; }
 
-	unsigned int getCacheSize() const;
-	void setCacheSize (unsigned int cacheSize);
+	const std::string& getVoiceLanguage() const { return global.voiceLanguage; }
+
+	unsigned int getCacheSize() const { return global.cacheSize; }
+	void setCacheSize (unsigned int cacheSize) { global.cacheSize = cacheSize; }
 
 	// Paths
 	std::string getFontPath() const;
@@ -190,13 +190,13 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
-		archive & NVP (startSettings);
-		archive & NVP (networkAddress);
-		archive & NVP (playerSettings);
-		archive & NVP (soundSettings);
-		archive & NVP (pathSettings);
-		archive & NVP (gameSettings);
-		archive & NVP (videoSettings);
+		archive & NVP (global);
+		archive & NVP (network);
+		archive & NVP (player);
+		archive & NVP (sound);
+		archive & NVP (path);
+		archive & NVP (inGame);
+		archive & NVP (video);
 	}
 
 	mutable cSignal<void()> animationsChanged;
@@ -229,8 +229,10 @@ private:
 	void setDataDir (const char* dataDir);
 
 private:
-	struct sStartSettings
+	struct sGlobalSettings
 	{
+		/** enable debug */
+		bool debug = true;
 		/** enable intro on start */
 		bool showIntro = true;
 		/** start in fastmode */
@@ -247,6 +249,7 @@ private:
 		template <typename Archive>
 		void serialize (Archive& archive)
 		{
+			archive & NVP (debug);
 			archive & NVP (showIntro);
 			archive & NVP (fastMode);
 			archive & NVP (preScale);
@@ -260,7 +263,7 @@ private:
 	struct sSoundSettings
 	{
 		/** sound enabled */
-		bool soundEnabled = true;
+		bool enabled = true;
 		/** volume music */
 		int musicVol = 128;
 		/** volume sound effects */
@@ -283,7 +286,7 @@ private:
 		template <typename Archive>
 		void serialize (Archive& archive)
 		{
-			archive & NVP (soundEnabled);
+			archive & NVP (enabled);
 			archive & NVP (musicVol);
 			archive & NVP (soundVol);
 			archive & NVP (voiceVol);
@@ -298,42 +301,40 @@ private:
 
 	struct sPathSettings
 	{
-		std::string fontPath = "fonts";          // Path to the fonts
-		std::string fxPath = "fx";               // Path to the effects
-		std::string gfxPath = "gfx";             // Path to the graphics
-		std::string langPath = "languages";      // Path to language files
-		std::string mapsPath = "maps";           // Path to the maps
-		std::string savesPath = "saves";         // Path to the saves
-		std::string soundsPath = "sounds";       // Path to the sound-files
-		std::string voicesPath = "voices";       // Path to the voice-files
-		std::string musicPath = "music";         // Path to the music-files
-		std::string vehiclesPath = "vehicles";   // Path to the vehicles
-		std::string buildingsPath = "buildings"; // Path to the buildings
-		std::string mvePath = "mve";             // Path to the in-game movies (*.mve)
+		std::string font = "fonts";          // Path to the fonts
+		std::string fx = "fx";               // Path to the effects
+		std::string gfx = "gfx";             // Path to the graphics
+		std::string languages = "languages"; // Path to language files
+		std::string maps = "maps";           // Path to the maps
+		std::string saves = "saves";         // Path to the saves
+		std::string sounds = "sounds";       // Path to the sound-files
+		std::string voices = "voices";       // Path to the voice-files
+		std::string music = "music";         // Path to the music-files
+		std::string vehicles = "vehicles";   // Path to the vehicles
+		std::string buildings = "buildings"; // Path to the buildings
+		std::string mve = "mve";             // Path to the in-game movies (*.mve)
 
 		template <typename Archive>
 		void serialize (Archive& archive)
 		{
-			archive & NVP (fontPath);
-			archive & NVP (fxPath);
-			archive & NVP (gfxPath);
-			archive & NVP (langPath);
-			archive & NVP (mapsPath);
-			archive & NVP (savesPath);
-			archive & NVP (soundsPath);
-			archive & NVP (voicesPath);
-			archive & NVP (musicPath);
-			archive & NVP (vehiclesPath);
-			archive & NVP (buildingsPath);
-			archive & NVP (mvePath);
+			archive & NVP (font);
+			archive & NVP (fx);
+			archive & NVP (gfx);
+			archive & NVP (languages);
+			archive & NVP (maps);
+			archive & NVP (saves);
+			archive & NVP (sounds);
+			archive & NVP (voices);
+			archive & NVP (music);
+			archive & NVP (vehicles);
+			archive & NVP (buildings);
+			archive & NVP (mve);
 		}
 
 	};
 
 	struct sInGameSettings
 	{
-		/** enable debug */
-		bool debug = true;
 		/** enable autosave */
 		bool autosave = true;
 		/** enable animations */
@@ -356,7 +357,6 @@ private:
 		template <typename Archive>
 		void serialize (Archive& archive)
 		{
-			archive & NVP (debug);
 			archive & NVP (autosave);
 			archive & NVP (animations);
 			archive & NVP (shadows);
@@ -400,13 +400,13 @@ private:
 	/** sHome is where the user has his $HOME dir - set in setPaths() **/
 	std::string homeDir;
 
-	sStartSettings startSettings;
-	sNetworkAddress networkAddress;
-	sPlayerSettings playerSettings;
-	sSoundSettings soundSettings;
-	sPathSettings pathSettings;
-	sInGameSettings gameSettings;
-	sVideoSettings videoSettings;
+	sGlobalSettings global;
+	sNetworkAddress network;
+	sPlayerSettings player;
+	sSoundSettings sound;
+	sPathSettings path;
+	sInGameSettings inGame;
+	sVideoSettings video;
 };
 
 #endif // SETTINGS_H

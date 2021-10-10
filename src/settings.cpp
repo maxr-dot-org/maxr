@@ -25,13 +25,9 @@
 
 #include "defines.h"
 #include "game/serialization/xmlarchive.h"
-#include "ui/graphical/playercolor.h"
-#include "utility/extendedtinyxml.h"
 #include "utility/files.h"
 #include "utility/log.h"
 #include "utility/string/tolower.h"
-
-using namespace tinyxml2;
 
 namespace
 {
@@ -143,7 +139,7 @@ cSettings cSettings::instance;
 //------------------------------------------------------------------------------
 cSettings::cSettings()
 {
-	networkAddress.port = DEFAULTPORT;
+	network.port = DEFAULTPORT;
 #ifdef WIN32
 	char* user = getenv ("USERNAME");
 #elif __amigaos4__
@@ -152,8 +148,8 @@ cSettings::cSettings()
 	char* user = getenv ("USER");  //get $USER on linux
 #endif
 
-	playerSettings.name = (user == nullptr ? "Commander" : user);
-	playerSettings.color = cRgbColor::red();
+	player.name = (user == nullptr ? "Commander" : user);
+	player.color = cRgbColor::red();
 }
 
 //------------------------------------------------------------------------------
@@ -161,12 +157,6 @@ cSettings& cSettings::getInstance()
 {
 	if (!instance.initialized && !instance.initializing) instance.initialize();
 	return instance;
-}
-
-//------------------------------------------------------------------------------
-bool cSettings::isInitialized() const
-{
-	return initialized;
 }
 
 //------------------------------------------------------------------------------
@@ -209,7 +199,7 @@ void cSettings::initialize()
 	setPaths();
 
 	tinyxml2::XMLDocument configFile;
-	if (!FileExists (configPath) || configFile.LoadFile (configPath.c_str()) != XML_NO_ERROR)
+	if (!FileExists (configPath) || configFile.LoadFile (configPath.c_str()) != tinyxml2::XML_NO_ERROR)
 	{
 		saveInFile();
 		initializing = false;
@@ -230,8 +220,8 @@ void cSettings::initialize()
 		return;
 	}
 
-	to_lower (startSettings.voiceLanguage);
-	if (!gameSettings.debug) Log.write ("Debugmode disabled - for verbose output please enable Debug in maxr.xml", cLog::eLOG_TYPE_WARNING);
+	to_lower (global.voiceLanguage);
+	if (!global.debug) Log.write ("Debugmode disabled - for verbose output please enable Debug in maxr.xml", cLog::eLOG_TYPE_WARNING);
 	else Log.write ("Debugmode enabled", cLog::eLOG_TYPE_INFO);
 
 #if MAC
@@ -261,7 +251,7 @@ void cSettings::saveInFile() const
 
 	const_cast<cSettings&>(*this).serialize (archive);
 
-	if (configFile.SaveFile (configPath.c_str()) != XML_NO_ERROR)
+	if (configFile.SaveFile (configPath.c_str()) != tinyxml2::XML_NO_ERROR)
 	{
 		Log.write ("Could not write new config to " + configPath, cLog::eLOG_TYPE_ERROR);
 		Log.write (configFile.GetErrorStr1(), cLog::eLOG_TYPE_ERROR);
@@ -270,136 +260,10 @@ void cSettings::saveInFile() const
 }
 
 //------------------------------------------------------------------------------
-bool cSettings::isDebug() const
-{
-	return gameSettings.debug;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setDebug (bool debug)
-{
-	gameSettings.debug = debug;
-}
-
-//------------------------------------------------------------------------------
-bool cSettings::shouldAutosave() const
-{
-	return gameSettings.autosave;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setAutosave (bool autosave)
-{
-	gameSettings.autosave = autosave;
-}
-
-//------------------------------------------------------------------------------
-bool cSettings::isAnimations() const
-{
-	return gameSettings.animations;
-}
-
-//------------------------------------------------------------------------------
 void cSettings::setAnimations (bool animations)
 {
-	std::swap (gameSettings.animations, animations);
-	if (gameSettings.animations != animations) animationsChanged();
-}
-
-//------------------------------------------------------------------------------
-bool cSettings::isShadows() const
-{
-	return gameSettings.shadows;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setShadows (bool shadows)
-{
-	gameSettings.shadows = shadows;
-}
-
-//------------------------------------------------------------------------------
-bool cSettings::isAlphaEffects() const
-{
-	return gameSettings.alphaEffects;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setAlphaEffects (bool alphaEffects)
-{
-	gameSettings.alphaEffects = alphaEffects;
-}
-
-//------------------------------------------------------------------------------
-bool cSettings::shouldShowDescription() const
-{
-	return gameSettings.showDescription;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setShowDescription (bool showDescription)
-{
-	gameSettings.showDescription = showDescription;
-}
-
-//------------------------------------------------------------------------------
-bool cSettings::isDamageEffects() const
-{
-	return gameSettings.damageEffects;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setDamageEffects (bool damageEffects)
-{
-	gameSettings.damageEffects = damageEffects;
-}
-
-//------------------------------------------------------------------------------
-bool cSettings::isDamageEffectsVehicles() const
-{
-	return gameSettings.damageEffectsVehicles;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setDamageEffectsVehicles (bool damageEffectsVehicles)
-{
-	gameSettings.damageEffectsVehicles = damageEffectsVehicles;
-}
-
-//------------------------------------------------------------------------------
-bool cSettings::isMakeTracks() const
-{
-	return gameSettings.makeTracks;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setMakeTracks (bool makeTracks)
-{
-	gameSettings.makeTracks = makeTracks;
-}
-
-//------------------------------------------------------------------------------
-int cSettings::getScrollSpeed() const
-{
-	return gameSettings.scrollSpeed;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setScrollSpeed (int scrollSpeed)
-{
-	gameSettings.scrollSpeed = scrollSpeed;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setNetworkAddress (const sNetworkAddress& networkAddress)
-{
-	this->networkAddress = networkAddress;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setPlayerSettings (const sPlayerSettings& playerSettings)
-{
-	this->playerSettings = playerSettings;
+	std::swap (inGame.animations, animations);
+	if (inGame.animations != animations) animationsChanged();
 }
 
 //------------------------------------------------------------------------------
@@ -439,246 +303,73 @@ const std::string& cSettings::getHomeDir() const
 }
 
 //------------------------------------------------------------------------------
-bool cSettings::isSoundEnabled() const
-{
-	return soundSettings.soundEnabled;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setSoundEnabled (bool soundEnabled)
-{
-	soundSettings.soundEnabled = soundEnabled;
-}
-
-//------------------------------------------------------------------------------
-int cSettings::getMusicVol() const
-{
-	return soundSettings.musicVol;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setMusicVol (int musicVol)
-{
-	soundSettings.musicVol = musicVol;
-}
-
-//------------------------------------------------------------------------------
-int cSettings::getSoundVol() const
-{
-	return soundSettings.soundVol;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setSoundVol (int soundVol)
-{
-	soundSettings.soundVol = soundVol;
-}
-
-//------------------------------------------------------------------------------
-int cSettings::getVoiceVol() const
-{
-	return soundSettings.voiceVol;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setVoiceVol (int voiceVol)
-{
-	soundSettings.voiceVol = voiceVol;
-}
-
-//------------------------------------------------------------------------------
-int cSettings::getChunkSize() const
-{
-	return soundSettings.chunkSize;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setChunkSize (int chunkSize)
-{
-	soundSettings.chunkSize = chunkSize;
-}
-
-//------------------------------------------------------------------------------
-int cSettings::getFrequency() const
-{
-	return soundSettings.frequency;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setFrequence (int frequency)
-{
-	soundSettings.frequency = frequency;
-}
-
-//------------------------------------------------------------------------------
-bool cSettings::isMusicMute() const
-{
-	return soundSettings.musicMute;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setMusicMute (bool musicMute)
-{
-	soundSettings.musicMute = musicMute;
-}
-
-//------------------------------------------------------------------------------
-bool cSettings::isSoundMute() const
-{
-	return soundSettings.soundMute;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setSoundMute (bool soundMute)
-{
-	soundSettings.soundMute = soundMute;
-}
-
-//------------------------------------------------------------------------------
-bool cSettings::isVoiceMute() const
-{
-	return soundSettings.voiceMute;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setVoiceMute (bool voiceMute)
-{
-	soundSettings.voiceMute = voiceMute;
-}
-
-//------------------------------------------------------------------------------
-bool cSettings::is3DSound() const
-{
-	return soundSettings.sound3d;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::set3DSound (bool sound3d)
-{
-	soundSettings.sound3d = sound3d;
-}
-
-//------------------------------------------------------------------------------
-bool cSettings::shouldShowIntro() const
-{
-	return startSettings.showIntro;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setShowIntro (bool showIntro)
-{
-	startSettings.showIntro = showIntro;
-}
-
-//------------------------------------------------------------------------------
-bool cSettings::shouldUseFastMode() const
-{
-	return startSettings.fastMode;
-}
-
-//------------------------------------------------------------------------------
-bool cSettings::shouldDoPrescale() const
-{
-	return startSettings.preScale;
-}
-
-//------------------------------------------------------------------------------
-const std::string& cSettings::getLanguage() const
-{
-	return startSettings.language;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setLanguage (const char* language)
-{
-	startSettings.language = language;
-}
-//------------------------------------------------------------------------------
-const std::string& cSettings::getVoiceLanguage() const
-{
-	return startSettings.voiceLanguage;
-}
-
-//------------------------------------------------------------------------------
-unsigned int cSettings::getCacheSize() const
-{
-	return startSettings.cacheSize;
-}
-
-//------------------------------------------------------------------------------
-void cSettings::setCacheSize (unsigned int cacheSize)
-{
-	startSettings.cacheSize = cacheSize;
-}
-
-//------------------------------------------------------------------------------
 std::string cSettings::getFontPath() const
 {
-	return dataDir + pathSettings.fontPath;
+	return dataDir + path.font;
 }
 
 //------------------------------------------------------------------------------
 std::string cSettings::getFxPath() const
 {
-	return dataDir + pathSettings.fxPath;
+	return dataDir + path.fx;
 }
 
 //------------------------------------------------------------------------------
 std::string cSettings::getGfxPath() const
 {
-	return dataDir + pathSettings.gfxPath;
+	return dataDir + path.gfx;
 }
 
 //------------------------------------------------------------------------------
 std::string cSettings::getLangPath() const
 {
-	return dataDir + pathSettings.langPath;
+	return dataDir + path.languages;
 }
 
 //------------------------------------------------------------------------------
 std::string cSettings::getMapsPath() const
 {
-	return dataDir + pathSettings.mapsPath;
+	return dataDir + path.maps;
 }
 
 //------------------------------------------------------------------------------
 std::string cSettings::getSavesPath() const
 {
-	return homeDir + pathSettings.savesPath;
+	return homeDir + path.saves;
 }
 
 //------------------------------------------------------------------------------
 std::string cSettings::getSoundsPath() const
 {
-	return dataDir + pathSettings.soundsPath;
+	return dataDir + path.sounds;
 }
 
 //------------------------------------------------------------------------------
 std::string cSettings::getVoicesPath() const
 {
-	return dataDir + pathSettings.voicesPath;
+	return dataDir + path.voices;
 }
 
 //------------------------------------------------------------------------------
 std::string cSettings::getMusicPath() const
 {
-	return dataDir + pathSettings.musicPath;
+	return dataDir + path.music;
 }
 
 //------------------------------------------------------------------------------
 std::string cSettings::getVehiclesPath() const
 {
-	return dataDir + pathSettings.vehiclesPath;
+	return dataDir + path.vehicles;
 }
 
 //------------------------------------------------------------------------------
 std::string cSettings::getBuildingsPath() const
 {
-	return dataDir + pathSettings.buildingsPath;
+	return dataDir + path.buildings;
 }
 
 //------------------------------------------------------------------------------
 std::string cSettings::getMvePath() const
 {
-	return dataDir + pathSettings.mvePath;
+	return dataDir + path.mve;
 }
