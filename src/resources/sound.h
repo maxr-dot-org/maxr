@@ -24,6 +24,7 @@
 #include <vector>
 #include <array>
 
+#include "game/serialization/serialization.h"
 #include "output/sound/soundchunk.h"
 
 // Sounds ////////////////////////////////////////////////////////////////////
@@ -113,7 +114,22 @@ public:
 	cSoundChunk VOIUnitStolenByEnemy;
 };
 
-extern std::vector<std::string> MusicFiles;
+struct sMusicFiles
+{
+#if 0 // unused
+	//std::string main;
+	//std::string credit;
+#endif
+	std::vector<std::string> backgrounds;
+
+	template <typename Archive>
+	void serialize (Archive& archive)
+	{
+		archive & NVP (backgrounds);
+	}
+};
+
+extern sMusicFiles MusicFiles;
 extern cSoundData SoundData;
 extern cVoiceData VoiceData;
 #endif // soundH

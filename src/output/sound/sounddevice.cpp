@@ -142,8 +142,8 @@ void cSoundDevice::startMusic (const std::string& fileName)
 //--------------------------------------------------------------------------
 void cSoundDevice::startRandomMusic()
 {
-	if (MusicFiles.empty()) return;
-	startMusic (MusicFiles[random (MusicFiles.size())]);
+	if (MusicFiles.backgrounds.empty()) return;
+	startMusic (MusicFiles.backgrounds[random (MusicFiles.backgrounds.size())]);
 }
 
 //--------------------------------------------------------------------------

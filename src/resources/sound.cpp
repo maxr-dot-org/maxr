@@ -19,6 +19,6 @@
 
 #include "sound.h"
 
-std::vector<std::string> MusicFiles;
+sMusicFiles MusicFiles;
 cSoundData SoundData;
 cVoiceData VoiceData;

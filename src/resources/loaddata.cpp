@@ -43,6 +43,7 @@
 #include "game/data/player/clans.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
+#include "game/serialization/xmlarchive.h"
 #include "maxrversion.h"
 #include "output/video/unifonts.h"
 #include "output/video/video.h"
@@ -1325,66 +1326,36 @@ static int LoadClans()
  */
 static int LoadMusic (const char* path)
 {
-	Log.write ("Loading music", cLog::eLOG_TYPE_INFO);
+	const std::string musicPath = std::string (path) + PATH_DELIMITER "music.xml";
 
-	// Prepare music.xml for reading
-	tinyxml2::XMLDocument MusicXml;
-	std::string sTmpString = path;
-	sTmpString += PATH_DELIMITER "music.xml";
-	if (!FileExists (sTmpString.c_str()))
+	Log.write ("Loading music: " + std::string (musicPath), cLog::eLOG_TYPE_INFO);
+	if (!FileExists (musicPath))
 	{
+		Log.write ("file doesn't exist", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
-	if (MusicXml.LoadFile (sTmpString.c_str()) != XML_NO_ERROR)
+	tinyxml2::XMLDocument musicXml;
+	if (musicXml.LoadFile (musicPath.c_str()) != XML_NO_ERROR)
 	{
 		Log.write ("Can't load music.xml ", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
-	XMLElement* xmlElement;
-#if 0 // unused
-	xmlElement = XmlGetFirstElement (MusicXml, "Music", {"Menus", "main"});
-	if (!xmlElement || !xmlElement->Attribute ("Text"))
-	{
-		Log.write ("Can't find \"main\" in music.xml ", cLog::eLOG_TYPE_ERROR);
-		return 0;
-	}
-	MainMusicFile = xmlElement->Attribute ("Text");
+	cXmlArchiveOut in (*musicXml.RootElement());
 
-	xmlElement = XmlGetFirstElement (MusicXml, "Music", {"Menus", "credits"});
-	if (!xmlElement || !xmlElement->Attribute ("Text"))
+	serialization::serialize(in, MusicFiles);
+
+	for (auto& filename : MusicFiles.backgrounds)
 	{
-		Log.write ("Can't find \"credits\" in music.xml ", cLog::eLOG_TYPE_ERROR);
-		return 0;
+		filename = std::string (path) + PATH_DELIMITER + filename;
 	}
-	CreditsMusicFile = xmlElement->Attribute ("Text");
-#endif
-	xmlElement = XmlGetFirstElement (MusicXml, "Music", {"Game", "bkgcount"});
-	if (!xmlElement || !xmlElement->Attribute ("Num"))
+	auto it = std::stable_partition (MusicFiles.backgrounds.begin(), MusicFiles.backgrounds.end(), [](const auto& p){ return FileExists (p); });
+	for (auto it2 = it; it2 != MusicFiles.backgrounds.end(); ++it2)
 	{
-		Log.write ("Can't find \"bkgcount\" in music.xml ", cLog::eLOG_TYPE_ERROR);
-		return 0;
+		Log.write ("music files doesn't exist: " + *it2, cLog::eLOG_TYPE_WARNING);
 	}
-	int const MusicAnz = xmlElement->IntAttribute ("Num");
-	for (int i = 1; i <= MusicAnz; i++)
-	{
-		std::string name = "bkg" + std::to_string (i);
-		XMLElement* xmlElement = XmlGetFirstElement (MusicXml, "Music", {"Game", name.c_str()});
-		if (xmlElement && xmlElement->Attribute ("Text"))
-		{
-			name = std::string (path) + PATH_DELIMITER + xmlElement->Attribute ("Text");
-		}
-		else
-		{
-			Log.write ("Can't find \"bkg" + std::to_string (i) + "\" in music.xml", cLog::eLOG_TYPE_WARNING);
-			continue;
-		}
-		if (!FileExists (name.c_str()))
-			continue;
-		MusicFiles.push_back (name);
-	}
+	MusicFiles.backgrounds.erase (it, MusicFiles.backgrounds.end());
 	return 1;
 }
-
 
 //------------------------------------------------------------------------------
 bool loadFonts()
