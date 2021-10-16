@@ -116,15 +116,16 @@ public:
 
 struct sMusicFiles
 {
+	std::string start;
 #if 0 // unused
-	//std::string main;
-	//std::string credit;
+	std::string credit;
 #endif
 	std::vector<std::string> backgrounds;
 
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		archive & NVP (start);
 		archive & NVP (backgrounds);
 	}
 };

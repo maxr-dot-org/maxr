@@ -1344,6 +1344,11 @@ static int LoadMusic (const char* path)
 
 	serialization::serialize(in, MusicFiles);
 
+	if (!MusicFiles.start.empty())
+	{
+		MusicFiles.start = std::string (path) + PATH_DELIMITER + MusicFiles.start;
+		if (!FileExists (MusicFiles.start)) Log.write ("music files doesn't exist: " + MusicFiles.start, cLog::eLOG_TYPE_WARNING);
+	}
 	for (auto& filename : MusicFiles.backgrounds)
 	{
 		filename = std::string (path) + PATH_DELIMITER + filename;

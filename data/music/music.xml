@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Music>
+<Music start="main.ogg">
     <backgrounds length="13">
         <item>bkg1.ogg</item>
         <item>bkg2.ogg</item>

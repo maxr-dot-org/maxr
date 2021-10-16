@@ -64,7 +64,7 @@ void cWindowStart::handleActivated (cApplication& application, bool firstTime)
 {
 	cWindow::handleActivated (application, firstTime);
 
-	if (firstTime) cSoundDevice::getInstance().startMusic (cSettings::getInstance().getMusicPath() + PATH_DELIMITER + "main.ogg");
+	if (firstTime) cSoundDevice::getInstance().startMusic (MusicFiles.start);
 }
 
 //------------------------------------------------------------------------------
