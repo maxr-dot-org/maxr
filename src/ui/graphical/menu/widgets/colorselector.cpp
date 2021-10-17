@@ -24,7 +24,7 @@
 #include <ui/graphical/menu/widgets/image.h>
 #include <ui/graphical/menu/widgets/pushbutton.h>
 #include <ui/graphical/playercolor.h>
-#include <output/video/video.cpp>
+#include <output/video/video.h>
 
 //------------------------------------------------------------------------------
 cColorSelector::cColorSelector (const cPosition& pos, const cRgbColor& color) : cWidget (cBox<cPosition> (pos, pos + cPosition (140, 20))), color (color)

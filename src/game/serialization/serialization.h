@@ -27,6 +27,7 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <typeinfo>
 #include <vector>
 #include "config/workaround/cpp17/optional.h"
 
