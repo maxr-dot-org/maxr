@@ -621,6 +621,61 @@ static void LoadUnitGraphicProperties (sBuildingUIData& data, char const* direct
 	data.isAnimated = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Animations", "Is_Animated"});
 }
 
+namespace
+{
+
+	struct sUnitDirectory
+	{
+		int id;
+		std::string path;
+
+		template <typename Archive>
+		void serialize (Archive& archive)
+		{
+			archive & NVP (id);
+			archive & NVP (path);
+		}
+	};
+
+	//--------------------------------------------------------------------------
+	void checkDuplicateId (std::vector<sUnitDirectory>& v)
+	{
+		std::sort (v.begin(), v.end(), [](const auto& lhs, const auto& rhs){ return lhs.id < rhs.id; });
+		auto sameId = [](const auto& lhs, const auto& rhs){ return lhs.id == rhs.id; };
+		auto it = std::adjacent_find (v.begin(), v.end(), sameId);
+		while (it != v.end())
+		{
+			Log.write ("duplicated id " + std::to_string (it->id) + ", skipping unit.", cLog::eLOG_TYPE_WARNING);
+			it = std::adjacent_find (it + 1, v.end(), sameId);
+		}
+		v.erase (std::unique (v.begin(), v.end(), sameId), v.end());
+	}
+
+	struct sBuildingsList
+	{
+		sSpecialBuildingsId special;
+		std::vector<sUnitDirectory> buildings;
+
+		template <typename Archive>
+		void serialize (Archive& archive)
+		{
+			archive & NVP (special);
+			archive & NVP (buildings);
+		}
+	};
+
+	struct sVehiclesList
+	{
+		std::vector<sUnitDirectory> vehicles;
+
+		template <typename Archive>
+		void serialize (Archive& archive)
+		{
+			archive & NVP (vehicles);
+		}
+	};
+
+}
 /**
  * Loads all Buildings
  * @param path Directory of the Buildings
@@ -635,6 +690,7 @@ static int LoadBuildings()
 	sTmpString += PATH_DELIMITER "buildings.xml";
 	if (!FileExists (sTmpString.c_str()))
 	{
+		Log.write ("buildings.xml doesn't exist!", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
 
@@ -644,66 +700,28 @@ static int LoadBuildings()
 		Log.write ("Can't load buildings.xml!", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
-	XMLElement* xmlElement = XmlGetFirstElement (BuildingsXml, "BuildingsData", {"Buildings"});
-	if (xmlElement == nullptr)
-	{
-		Log.write ("Can't read \"BuildingData->Building\" node!", cLog::eLOG_TYPE_ERROR);
-		return 0;
-	}
-	if (xmlElement == nullptr)
-	{
-		Log.write ("There are no buildings in the buildings.xml defined", cLog::eLOG_TYPE_ERROR);
-		return 1;
-	}
-	sSpecialBuildingsId specialBuildsId;
-	std::vector<std::pair<std::string, int>> directoriesWithId;
-	std::set<int> ids{0};
-	for (xmlElement = xmlElement->FirstChildElement(); xmlElement != nullptr; xmlElement = xmlElement->NextSiblingElement())
-	{
-		auto directory = queryStringAttribute (*xmlElement, "directory");
-		auto id = queryIntAttribute (*xmlElement, "num");
-		auto special = queryStringAttribute (*xmlElement, "special");
+	sBuildingsList buildingsList;
+	cXmlArchiveOut in (*BuildingsXml.RootElement());
 
-		if (!directory || !id)
-		{
-			std::string msg = std::string ("Missing directory or num-attribute from \"") + xmlElement->Value() + "\" - node. skipping unit.";
-			Log.write (msg, cLog::eLOG_TYPE_WARNING);
-			continue;
-		}
-		if (!ids.insert (*id).second) {
-			Log.write ("duplicated id " + std::to_string (*id) + ", skipping unit.", cLog::eLOG_TYPE_WARNING);
-			continue;
-		}
-		directoriesWithId.emplace_back (*directory, *id);
+	serialization::serialize (in, buildingsList);
 
-		if (special)
-		{
-			if (*special == "alienFactory") specialBuildsId.alienFactory = *id;
-			else if (*special == "connector") specialBuildsId.connector = *id;
-			else if (*special == "energy") specialBuildsId.smallGenerator = *id;
-			else if (*special == "landmine") specialBuildsId.landMine = *id;
-			else if (*special == "mine") specialBuildsId.mine = *id;
-			else if (*special == "seamine") specialBuildsId.seaMine = *id;
-			else if (*special == "smallBeton") specialBuildsId.smallBeton = *id;
-			else Log.write ("Unknown special in buildings.xml \"" + *special + "\"", cLog::eLOG_TYPE_WARNING);
-		}
-	}
-	specialBuildsId.logMissing();
-	UnitsDataGlobal.setSpecialBuildingIDs (specialBuildsId);
+	checkDuplicateId (buildingsList.buildings);
+	buildingsList.special.logMissing();
+	UnitsDataGlobal.setSpecialBuildingIDs (buildingsList.special);
 
 	// load found units
-	UnitsUiData.buildingUIs.reserve (directoriesWithId.size());
-	for (const auto& p : directoriesWithId)
+	UnitsUiData.buildingUIs.reserve (buildingsList.buildings.size());
+	for (const auto& p : buildingsList.buildings)
 	{
 		std::string sBuildingPath = cSettings::getInstance().getBuildingsPath();
 		sBuildingPath += PATH_DELIMITER;
-		sBuildingPath += p.first;
+		sBuildingPath += p.path;
 		sBuildingPath += PATH_DELIMITER;
 
 		cStaticUnitData staticData;
 		cDynamicUnitData dynamicData;
 
-		LoadUnitData (staticData, dynamicData, sBuildingPath.c_str(), p.second);
+		LoadUnitData (staticData, dynamicData, sBuildingPath.c_str(), p.id);
 
 		// load graphics.xml
 		UnitsUiData.buildingUIs.emplace_back();
@@ -867,6 +885,7 @@ static int LoadVehicles()
 	sTmpString += PATH_DELIMITER "vehicles.xml";
 	if (!FileExists (sTmpString.c_str()))
 	{
+		Log.write ("vehicles.xml doesn't exist!", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
 	if (VehiclesXml.LoadFile (sTmpString.c_str()) != XML_NO_ERROR)
@@ -874,46 +893,27 @@ static int LoadVehicles()
 		Log.write ("Can't load vehicles.xml!", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
-	XMLElement* xmlElement = XmlGetFirstElement (VehiclesXml, "VehicleData", {"Vehicles"});
-	if (xmlElement == nullptr)
-	{
-		Log.write ("Can't read \"VehicleData->Vehicles\" node!", cLog::eLOG_TYPE_ERROR);
-		return 0;
-	}
-	std::vector<std::pair<std::string, int>> directoriesWithId;
-	std::set<int> ids{0};
-	for (xmlElement = xmlElement->FirstChildElement(); xmlElement != nullptr; xmlElement = xmlElement->NextSiblingElement())
-	{
-		auto directory = queryStringAttribute (*xmlElement, "directory");
-		auto id = queryIntAttribute (*xmlElement, "num");
+	sVehiclesList vehiclesList;
+	cXmlArchiveOut in (*VehiclesXml.RootElement());
 
-		if (!directory || !id)
-		{
-			std::string msg = std::string ("Missing directory or num-attribute from \"") + xmlElement->Value() + "\" - node. skipping unit.";
-			Log.write (msg, cLog::eLOG_TYPE_WARNING);
-			continue;
-		}
-		if (!ids.insert (*id).second) {
-			Log.write ("duplicated id " + std::to_string (*id) + ", skipping unit.", cLog::eLOG_TYPE_WARNING);
-			continue;
-		}
-		directoriesWithId.emplace_back (*directory, *id);
-	}
+	serialization::serialize (in, vehiclesList);
+	checkDuplicateId (vehiclesList.vehicles);
+
 	// load found units
 	std::string sVehiclePath;
-	UnitsUiData.vehicleUIs.reserve (directoriesWithId.size());
-	for (const auto& p : directoriesWithId)
+	UnitsUiData.vehicleUIs.reserve (vehiclesList.vehicles.size());
+	for (const auto& p : vehiclesList.vehicles)
 	{
 		sVehiclePath = cSettings::getInstance().getVehiclesPath();
 		sVehiclePath += PATH_DELIMITER;
-		sVehiclePath += p.first;
+		sVehiclePath += p.path;
 		sVehiclePath += PATH_DELIMITER;
 
 		cStaticUnitData staticData;
 		cDynamicUnitData dynamicData;
 
 		Log.write ("Reading values from XML", cLog::eLOG_TYPE_DEBUG);
-		LoadUnitData (staticData, dynamicData, sVehiclePath.c_str(), p.second);
+		LoadUnitData (staticData, dynamicData, sVehiclePath.c_str(), p.id);
 
 		UnitsUiData.vehicleUIs.emplace_back();
 		sVehicleUIData& ui = UnitsUiData.vehicleUIs.back();
