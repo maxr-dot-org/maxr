@@ -63,6 +63,7 @@ uint32_t sStaticVehicleData::computeChecksum (uint32_t crc) const
 	return crc;
 }
 
+//------------------------------------------------------------------------------
 uint32_t sSpecialBuildingsId::computeChecksum (uint32_t crc) const
 {
 	crc = calcCheckSum (alienFactory, crc);
@@ -75,6 +76,7 @@ uint32_t sSpecialBuildingsId::computeChecksum (uint32_t crc) const
 	return crc;
 }
 
+//------------------------------------------------------------------------------
 void sSpecialBuildingsId::logMissing() const
 {
 	if (alienFactory == 0) Log.write ("special \"alienFactory\" missing", cLog::eLOG_TYPE_ERROR);
@@ -84,6 +86,23 @@ void sSpecialBuildingsId::logMissing() const
 	if (seaMine == 0) Log.write ("special \"seamine\" missing", cLog::eLOG_TYPE_ERROR);
 	if (smallBeton == 0) Log.write ("special \"smallBeton\" missing", cLog::eLOG_TYPE_ERROR);
 	if (smallGenerator == 0) Log.write ("special \"energy\" missing", cLog::eLOG_TYPE_ERROR);
+}
+
+//------------------------------------------------------------------------------
+uint32_t sSpecialVehiclesId::computeChecksum (uint32_t crc) const
+{
+	crc = calcCheckSum (constructor, crc);
+	crc = calcCheckSum (engineer, crc);
+	crc = calcCheckSum (surveyor, crc);
+	return crc;
+}
+
+//------------------------------------------------------------------------------
+void sSpecialVehiclesId::logMissing() const
+{
+	if (constructor == 0) Log.write ("Constructor index not found. Constructor needs to have the property \"Can_Build = BigBuilding\"", cLog::eLOG_TYPE_ERROR);
+	if (engineer == 0) Log.write ("Engineer index not found. Engineer needs to have the property \"Can_Build = SmallBuilding\"", cLog::eLOG_TYPE_ERROR);
+	if (surveyor == 0) Log.write ("Surveyor index not found. Surveyor needs to have the property \"Can_Survey = Yes\"", cLog::eLOG_TYPE_ERROR);
 }
 
 //------------------------------------------------------------------------------
@@ -110,15 +129,13 @@ void cUnitsData::initializeIDData()
 	for (const auto& data : staticUnitData)
 	{
 		if (data.canBuild == "BigBuilding")
-			constructorID = data.ID;
+			specialVehicles.constructor = data.ID.secondPart;
 		if (data.canBuild == "SmallBuilding")
-			engineerID = data.ID;
+			specialVehicles.engineer = data.ID.secondPart;
 		if (data.vehicleData.canSurvey)
-			surveyorID = data.ID;
+			specialVehicles.surveyor = data.ID.secondPart;
 	}
-	if (constructorID == sID (0, 0)) Log.write ("Constructor index not found. Constructor needs to have the property \"Can_Build = BigBuilding\"", cLog::eLOG_TYPE_ERROR);
-	if (engineerID    == sID (0, 0)) Log.write ("Engineer index not found. Engineer needs to have the property \"Can_Build = SmallBuilding\"", cLog::eLOG_TYPE_ERROR);
-	if (surveyorID    == sID (0, 0)) Log.write ("Surveyor index not found. Surveyor needs to have the property \"Can_Survey = Yes\"", cLog::eLOG_TYPE_ERROR);
+	specialVehicles.logMissing();
 
 	crcCache = std::nullopt;
 }
@@ -229,10 +246,8 @@ uint32_t cUnitsData::getChecksum (uint32_t crc) const
 	if (!crcCache)
 	{
 		crcCache = 0;
-		*crcCache = calcCheckSum (constructorID, *crcCache);
-		*crcCache = calcCheckSum (engineerID, *crcCache);
-		*crcCache = calcCheckSum (surveyorID, *crcCache);
 		*crcCache = specialBuildings.computeChecksum (*crcCache);
+		*crcCache = specialVehicles.computeChecksum (*crcCache);
 		*crcCache = calcCheckSum (staticUnitData, *crcCache);
 		*crcCache = calcCheckSum (dynamicUnitData, *crcCache);
 		*crcCache = calcCheckSum (clanDynamicUnitData, *crcCache);

@@ -399,6 +399,25 @@ struct sSpecialBuildingsId
 	int smallGenerator = 0;
 };
 
+struct sSpecialVehiclesId
+{
+	void logMissing() const;
+
+	template <typename Archive>
+	void serialize (Archive& archive)
+	{
+		archive & NVP (constructor);
+		archive & NVP (engineer);
+		archive & NVP (surveyor);
+	}
+
+	[[nodiscard]] uint32_t computeChecksum (uint32_t crc) const;
+
+	int constructor = 0;
+	int engineer = 0;
+	int surveyor = 0;
+};
+
 class cUnitsData
 {
 public:
@@ -423,15 +442,15 @@ public:
 
 	uint32_t getChecksum (uint32_t crc) const;
 
-	const cStaticUnitData& getConstructorData() const { return getStaticUnitData (constructorID); }
-	const cStaticUnitData& getEngineerData() const { return getStaticUnitData (engineerID); }
-	const cStaticUnitData& getSurveyorData() const { return getStaticUnitData (surveyorID); }
+	const cStaticUnitData& getConstructorData() const { return getStaticUnitData (getConstructorID()); }
+	const cStaticUnitData& getEngineerData() const { return getStaticUnitData (getEngineerID()); }
+	const cStaticUnitData& getSurveyorData() const { return getStaticUnitData (getSurveyorID()); }
 	const cStaticUnitData& getRubbleSmallData() const { return rubbleSmall; }
 	const cStaticUnitData& getRubbleBigData() const { return rubbleBig; }
 
-	sID getConstructorID() const { return constructorID; }
-	sID getEngineerID() const { return engineerID; }
-	sID getSurveyorID() const { return surveyorID; }
+	sID getConstructorID() const { return sID (0, specialVehicles.constructor); }
+	sID getEngineerID() const { return sID (0, specialVehicles.engineer); }
+	sID getSurveyorID() const { return sID (0, specialVehicles.surveyor); }
 
 	sID getAlienFactoryID() const { return sID (1, specialBuildings.alienFactory); }
 	sID getConnectorID() const { return sID (1, specialBuildings.connector); }
@@ -454,10 +473,8 @@ public:
 			crcCache = std::nullopt;
 		}
 
-		archive & NVP (constructorID);
-		archive & NVP (engineerID);
-		archive & NVP (surveyorID);
 		archive & NVP (specialBuildings);
+		archive & NVP (specialVehicles);
 		archive & NVP (staticUnitData);
 		archive & NVP (dynamicUnitData);
 		archive & NVP (clanDynamicUnitData);
@@ -466,10 +483,8 @@ public:
 private:
 	int getUnitIndexBy (sID id) const;
 
-	sID constructorID;
-	sID engineerID;
-	sID surveyorID;
 	sSpecialBuildingsId specialBuildings;
+	sSpecialVehiclesId specialVehicles;
 
 	// the static unit data
 	std::vector<cStaticUnitData> staticUnitData;
