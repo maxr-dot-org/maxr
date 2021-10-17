@@ -21,7 +21,6 @@
 #define serialization_xmlarchiveH
 
 #include "serialization.h"
-#include "utility/extendedtinyxml.h"
 
 #include <3rd/tinyxml2/tinyxml2.h>
 
@@ -199,19 +198,5 @@ private:
 	//
 	void popValue (const serialization::sNameValuePair<std::string>& nvp);
 };
-//------------------------------------------------------------------------------
-template <typename T>
-void cXmlArchiveOut::getFromCurrentElement (const serialization::sNameValuePair<T>& nvp)
-{
-	std::string value = getStringFromCurrentElement (nvp.name);
-
-	std::stringstream ss (value);
-	ss.imbue (std::locale ("C"));
-	ss >> nvp.value;
-
-	if (ss.fail() || !ss.eof()) //test eof, because all characters in the string should belong to the converted value
-		throw std::runtime_error ("Could not convert value of node " + printXMLPath (currentElement) + "~" + nvp.name + " to " + typeid (T).name());
-
-}
 
 #endif

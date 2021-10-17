@@ -22,7 +22,6 @@
 #include "utility/extendedtinyxml.h"
 #include "utility/listhelpers.h"
 
-
 cXmlArchiveIn::cXmlArchiveIn (tinyxml2::XMLElement& rootElement) :
 	buffer (rootElement),
 	currentElement (&rootElement)
@@ -164,6 +163,21 @@ cXmlArchiveOut::cXmlArchiveOut (const tinyxml2::XMLElement& rootElement, seriali
 	currentElement (&rootElement),
 	pointerLoader (pointerLoader)
 {}
+
+//------------------------------------------------------------------------------
+template <typename T>
+void cXmlArchiveOut::getFromCurrentElement (const serialization::sNameValuePair<T>& nvp)
+{
+	std::string value = getStringFromCurrentElement (nvp.name);
+
+	std::stringstream ss (value);
+	ss.imbue (std::locale ("C"));
+	ss >> nvp.value;
+
+	if (ss.fail() || !ss.eof()) //test eof, because all characters in the string should belong to the converted value
+		throw std::runtime_error ("Could not convert value of node " + printXMLPath (currentElement) + "~" + nvp.name + " to " + typeid (T).name());
+}
+
 //------------------------------------------------------------------------------
 void cXmlArchiveOut::enterChild (const std::string& name)
 {
