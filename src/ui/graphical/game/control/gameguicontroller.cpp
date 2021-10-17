@@ -1258,11 +1258,11 @@ void cGameGuiController::connectClient (cClient& client)
 	{
 		if (getActivePlayer().get() == unit.getOwner())
 		{
-			if (unit.data.getId() == client.getModel().getUnitsData()->getSpecialIDSeaMine())
+			if (unit.data.getId() == client.getModel().getUnitsData()->getSeaMineID())
 			{
 				soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectPlaceMine, SoundData.SNDSeaMinePlace, unit));
 			}
-			else if (unit.data.getId() == client.getModel().getUnitsData()->getSpecialIDLandMine())
+			else if (unit.data.getId() == client.getModel().getUnitsData()->getLandMineID())
 			{
 				soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectPlaceMine, SoundData.SNDLandMinePlace, unit));
 			}
@@ -1272,8 +1272,8 @@ void cGameGuiController::connectClient (cClient& client)
 	{
 		if (getActivePlayer().get() != unit.getOwner()) return;
 
-		if (unit.data.getId() == client.getModel().getUnitsData()->getSpecialIDLandMine()) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectClearMine, SoundData.SNDLandMineClear, unit));
-		else if (unit.data.getId() == client.getModel().getUnitsData()->getSpecialIDSeaMine()) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectClearMine, SoundData.SNDSeaMineClear, unit));
+		if (unit.data.getId() == client.getModel().getUnitsData()->getLandMineID()) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectClearMine, SoundData.SNDLandMineClear, unit));
+		else if (unit.data.getId() == client.getModel().getUnitsData()->getSeaMineID()) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectClearMine, SoundData.SNDSeaMineClear, unit));
 	});
 	clientSignalConnectionManager.connect (model.planeLanding, [&](const cVehicle& plane)
 	{

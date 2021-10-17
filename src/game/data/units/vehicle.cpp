@@ -654,22 +654,14 @@ void cVehicle::layMine (cModel& model)
 	if (getStoredResources() <= 0) return;
 
 	const cMap& map = *model.getMap();
-	if (staticData->factorSea > 0 && staticData->factorGround == 0)
-	{
-		const auto& staticMineData = model.getUnitsData()->getSeaMineData();
-		if (!map.possiblePlaceBuilding (staticMineData, getPosition(), nullptr, this)) return;
-		model.addBuilding (getPosition(), staticMineData.ID, getOwner());
-	}
-	else
-	{
-		const auto& staticMineData = model.getUnitsData()->getLandMineData();
-		if (!map.possiblePlaceBuilding (staticMineData, getPosition(), nullptr, this)) return;
-		model.addBuilding (getPosition(), staticMineData.ID, getOwner());
-	}
+	const sID explosiveMineId = (staticData->factorSea > 0 && staticData->factorGround == 0) ? model.getUnitsData()->getSeaMineID() : model.getUnitsData()->getLandMineID();
+	const auto& staticExplosiveMineData = model.getUnitsData()->getStaticUnitData (explosiveMineId);
+
+	if (!map.possiblePlaceBuilding (staticExplosiveMineData, getPosition(), nullptr, this)) return;
+	model.addBuilding (getPosition(), explosiveMineId, getOwner());
 	setStoredResources (getStoredResources() - 1);
 
 	if (getStoredResources() <= 0) setLayMines (false);
-
 }
 
 //-----------------------------------------------------------------------------

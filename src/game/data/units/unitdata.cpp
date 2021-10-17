@@ -63,6 +63,29 @@ uint32_t sStaticVehicleData::computeChecksum (uint32_t crc) const
 	return crc;
 }
 
+uint32_t sSpecialBuildingsId::computeChecksum (uint32_t crc) const
+{
+	crc = calcCheckSum (alienFactory, crc);
+	crc = calcCheckSum (connector, crc);
+	crc = calcCheckSum (landMine, crc);
+	crc = calcCheckSum (mine, crc);
+	crc = calcCheckSum (seaMine, crc);
+	crc = calcCheckSum (smallBeton, crc);
+	crc = calcCheckSum (smallGenerator, crc);
+	return crc;
+}
+
+void sSpecialBuildingsId::logMissing() const
+{
+	if (alienFactory == 0) Log.write ("special \"alienFactory\" missing", cLog::eLOG_TYPE_ERROR);
+	if (connector == 0) Log.write ("special \"connector\" missing", cLog::eLOG_TYPE_ERROR);
+	if (landMine == 0) Log.write ("special \"landmine\" missing", cLog::eLOG_TYPE_ERROR);
+	if (mine == 0) Log.write ("special \"mine\" missing", cLog::eLOG_TYPE_ERROR);
+	if (seaMine == 0) Log.write ("special \"seamine\" missing", cLog::eLOG_TYPE_ERROR);
+	if (smallBeton == 0) Log.write ("special \"smallBeton\" missing", cLog::eLOG_TYPE_ERROR);
+	if (smallGenerator == 0) Log.write ("special \"energy\" missing", cLog::eLOG_TYPE_ERROR);
+}
+
 //------------------------------------------------------------------------------
 cUnitsData::cUnitsData()
 {
@@ -209,12 +232,7 @@ uint32_t cUnitsData::getChecksum (uint32_t crc) const
 		*crcCache = calcCheckSum (constructorID, *crcCache);
 		*crcCache = calcCheckSum (engineerID, *crcCache);
 		*crcCache = calcCheckSum (surveyorID, *crcCache);
-		*crcCache = calcCheckSum (specialIDLandMine, *crcCache);
-		*crcCache = calcCheckSum (specialIDSeaMine, *crcCache);
-		*crcCache = calcCheckSum (specialIDMine, *crcCache);
-		*crcCache = calcCheckSum (specialIDSmallGen, *crcCache);
-		*crcCache = calcCheckSum (specialIDConnector, *crcCache);
-		*crcCache = calcCheckSum (specialIDSmallBeton, *crcCache);
+		*crcCache = specialBuildings.computeChecksum (*crcCache);
 		*crcCache = calcCheckSum (staticUnitData, *crcCache);
 		*crcCache = calcCheckSum (dynamicUnitData, *crcCache);
 		*crcCache = calcCheckSum (clanDynamicUnitData, *crcCache);

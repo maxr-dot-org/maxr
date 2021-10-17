@@ -36,7 +36,6 @@ namespace
 	const sID alienPlaneId {0, 3};
 	const sID alienShipId {0, 4};
 	const sID alienTankId {0, 5};
-	const sID alienFactoryId {1, 10};
 
 	//--------------------------------------------------------------------------
 	cPosition getRandomAlienPosition (cModel& model)
@@ -70,6 +69,7 @@ namespace
 	//--------------------------------------------------------------------------
 	std::vector<cPosition> computeAlienLandingPosition (cModel& model)
 	{
+		const sID alienFactoryId = model.getUnitsData()->getAlienFactoryID();
 		const std::size_t threshold = 5 * 5; // square distance between alien factory and existing buildings
 		const std::size_t expectedAlienPositionCount = 2 * model.getPlayerList().size();
 		auto& map = *model.getMap()->staticMap;
@@ -94,6 +94,7 @@ namespace
 	//--------------------------------------------------------------------------
 	void landAlien (cModel& model, const cPosition& landingPos)
 	{
+		const sID alienFactoryId = model.getUnitsData()->getAlienFactoryID();
 		model.addBuilding (landingPos, alienFactoryId, nullptr);
 		const auto& map = *model.getMap()->staticMap;
 
@@ -320,8 +321,8 @@ void cActionInitNewGame::makeLanding (cPlayer& player, const std::vector<sLandin
 	if (model.getGameSettings()->bridgeheadType == eGameSettingsBridgeheadType::Definite)
 	{
 		// place buildings:
-		model.addBuilding (landingPosition + cPosition (-1, 0), model.getUnitsData()->getSpecialIDSmallGen(), &player);
-		model.addBuilding (landingPosition + cPosition (0, -1), model.getUnitsData()->getSpecialIDMine(), &player);
+		model.addBuilding (landingPosition + cPosition (-1, 0), model.getUnitsData()->getSmallGeneratorID(), &player);
+		model.addBuilding (landingPosition + cPosition (0, -1), model.getUnitsData()->getMineID(), &player);
 	}
 
 	for (size_t i = 0; i != landingUnits.size(); ++i)
@@ -366,6 +367,9 @@ cVehicle* cActionInitNewGame::landVehicle (const cPosition& landingPosition, int
 //------------------------------------------------------------------------------
 bool cActionInitNewGame::findPositionForStartMine (cPosition& position, const cUnitsData& unitsData, const cStaticMap& map)
 {
+	const auto& mine = unitsData.getStaticUnitData (unitsData.getMineID());
+	const auto& smallGenerator = unitsData.getStaticUnitData (unitsData.getSmallGeneratorID());
+
 	for (int radius = 0; radius < 3; ++radius)
 	{
 		for (int offY = -radius; offY <= radius; ++offY)
@@ -373,8 +377,8 @@ bool cActionInitNewGame::findPositionForStartMine (cPosition& position, const cU
 			for (int offX = -radius; offX <= radius; ++offX)
 			{
 				const cPosition place = position + cPosition (offX, offY);
-				if (map.possiblePlace (unitsData.getSmallGeneratorData(), place + cPosition (-1, 0)) &&
-					map.possiblePlace (unitsData.getMineData(), place + cPosition (0, -1)))
+				if (map.possiblePlace (smallGenerator, place + cPosition (-1, 0)) &&
+					map.possiblePlace (mine, place + cPosition (0, -1)))
 				{
 					position = place;
 					return true;

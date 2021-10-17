@@ -372,6 +372,33 @@ private:
 	mutable std::optional<uint32_t> crcCache;
 };
 
+struct sSpecialBuildingsId
+{
+	void logMissing() const;
+
+	template <typename Archive>
+	void serialize (Archive& archive)
+	{
+		archive & NVP (alienFactory);
+		archive & NVP (connector);
+		archive & NVP (landMine);
+		archive & NVP (mine);
+		archive & NVP (seaMine);
+		archive & NVP (smallBeton);
+		archive & NVP (smallGenerator);
+	}
+
+	[[nodiscard]] uint32_t computeChecksum (uint32_t crc) const;
+
+	int alienFactory = 0;
+	int connector = 0;
+	int landMine = 0;
+	int mine = 0;
+	int seaMine = 0;
+	int smallBeton = 0;
+	int smallGenerator = 0;
+};
+
 class cUnitsData
 {
 public:
@@ -399,29 +426,22 @@ public:
 	const cStaticUnitData& getConstructorData() const { return getStaticUnitData (constructorID); }
 	const cStaticUnitData& getEngineerData() const { return getStaticUnitData (engineerID); }
 	const cStaticUnitData& getSurveyorData() const { return getStaticUnitData (surveyorID); }
-	const cStaticUnitData& getMineData() const { return getStaticUnitData (specialIDMine); }
-	const cStaticUnitData& getSmallGeneratorData() const { return getStaticUnitData (specialIDSmallGen); }
-	const cStaticUnitData& getLandMineData() const { return getStaticUnitData (specialIDLandMine); }
-	const cStaticUnitData& getSeaMineData() const { return getStaticUnitData (specialIDSeaMine); }
 	const cStaticUnitData& getRubbleSmallData() const { return rubbleSmall; }
 	const cStaticUnitData& getRubbleBigData() const { return rubbleBig; }
 
 	sID getConstructorID() const { return constructorID; }
 	sID getEngineerID() const { return engineerID; }
 	sID getSurveyorID() const { return surveyorID; }
-	sID getSpecialIDLandMine() const { return specialIDLandMine; }
-	sID getSpecialIDSeaMine() const { return specialIDSeaMine; }
-	sID getSpecialIDMine() const { return specialIDMine; }
-	sID getSpecialIDSmallGen() const { return specialIDSmallGen; }
-	sID getSpecialIDConnector() const { return specialIDConnector; }
-	sID getSpecialIDSmallBeton() const { return specialIDSmallBeton; }
 
-	void setSpecialIDLandMine (sID id) { specialIDLandMine = id; crcCache = std::nullopt; }
-	void setSpecialIDSeaMine (sID id)  { specialIDSeaMine = id; crcCache = std::nullopt; }
-	void setSpecialIDMine (sID id) { specialIDMine = id; crcCache = std::nullopt; }
-	void setSpecialIDSmallGen (sID id) { specialIDSmallGen = id; crcCache = std::nullopt; }
-	void setSpecialIDConnector (sID id) { specialIDConnector = id; crcCache = std::nullopt; }
-	void setSpecialIDSmallBeton (sID id) { specialIDSmallBeton = id; crcCache = std::nullopt; }
+	sID getAlienFactoryID() const { return sID (1, specialBuildings.alienFactory); }
+	sID getConnectorID() const { return sID (1, specialBuildings.connector); }
+	sID getLandMineID() const { return sID (1, specialBuildings.landMine); }
+	sID getMineID() const { return sID (1, specialBuildings.mine); }
+	sID getSeaMineID() const { return sID (1, specialBuildings.seaMine); }
+	sID getSmallBetonID() const { return sID (1, specialBuildings.smallBeton); }
+	sID getSmallGeneratorID() const { return sID (1, specialBuildings.smallGenerator); }
+
+	void setSpecialBuildingIDs(sSpecialBuildingsId ids) { specialBuildings = ids; crcCache = std::nullopt; }
 
 	template <typename Archive>
 	void serialize (Archive& archive)
@@ -437,12 +457,7 @@ public:
 		archive & NVP (constructorID);
 		archive & NVP (engineerID);
 		archive & NVP (surveyorID);
-		archive & NVP (specialIDLandMine);
-		archive & NVP (specialIDSeaMine);
-		archive & NVP (specialIDMine);
-		archive & NVP (specialIDSmallGen);
-		archive & NVP (specialIDConnector);
-		archive & NVP (specialIDSmallBeton);
+		archive & NVP (specialBuildings);
 		archive & NVP (staticUnitData);
 		archive & NVP (dynamicUnitData);
 		archive & NVP (clanDynamicUnitData);
@@ -454,12 +469,7 @@ private:
 	sID constructorID;
 	sID engineerID;
 	sID surveyorID;
-	sID specialIDLandMine;
-	sID specialIDSeaMine;
-	sID specialIDMine;
-	sID specialIDSmallGen;
-	sID specialIDConnector;
-	sID specialIDSmallBeton;
+	sSpecialBuildingsId specialBuildings;
 
 	// the static unit data
 	std::vector<cStaticUnitData> staticUnitData;

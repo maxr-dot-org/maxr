@@ -655,6 +655,7 @@ static int LoadBuildings()
 		Log.write ("There are no buildings in the buildings.xml defined", cLog::eLOG_TYPE_ERROR);
 		return 1;
 	}
+	sSpecialBuildingsId specialBuildsId;
 	std::vector<std::pair<std::string, int>> directoriesWithId;
 	std::set<int> ids{0};
 	for (xmlElement = xmlElement->FirstChildElement(); xmlElement != nullptr; xmlElement = xmlElement->NextSiblingElement())
@@ -677,22 +678,18 @@ static int LoadBuildings()
 
 		if (special)
 		{
-			if      (*special == "mine")       UnitsDataGlobal.setSpecialIDMine (sID (1, *id));
-			else if (*special == "energy")     UnitsDataGlobal.setSpecialIDSmallGen (sID (1, *id));
-			else if (*special == "connector")  UnitsDataGlobal.setSpecialIDConnector (sID (1, *id));
-			else if (*special == "landmine")   UnitsDataGlobal.setSpecialIDLandMine (sID (1, *id));
-			else if (*special == "seamine")    UnitsDataGlobal.setSpecialIDSeaMine (sID (1, *id));
-			else if (*special == "smallBeton") UnitsDataGlobal.setSpecialIDSmallBeton (sID (1, *id));
+			if (*special == "alienFactory") specialBuildsId.alienFactory = *id;
+			else if (*special == "connector") specialBuildsId.connector = *id;
+			else if (*special == "energy") specialBuildsId.smallGenerator = *id;
+			else if (*special == "landmine") specialBuildsId.landMine = *id;
+			else if (*special == "mine") specialBuildsId.mine = *id;
+			else if (*special == "seamine") specialBuildsId.seaMine = *id;
+			else if (*special == "smallBeton") specialBuildsId.smallBeton = *id;
 			else Log.write ("Unknown special in buildings.xml \"" + *special + "\"", cLog::eLOG_TYPE_WARNING);
 		}
 	}
-
-	if (UnitsDataGlobal.getSpecialIDMine().secondPart       == 0) Log.write ("special \"mine\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
-	if (UnitsDataGlobal.getSpecialIDSmallGen().secondPart   == 0) Log.write ("special \"energy\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
-	if (UnitsDataGlobal.getSpecialIDConnector().secondPart  == 0) Log.write ("special \"connector\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
-	if (UnitsDataGlobal.getSpecialIDLandMine().secondPart   == 0) Log.write ("special \"landmine\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
-	if (UnitsDataGlobal.getSpecialIDSeaMine().secondPart    == 0) Log.write ("special \"seamine\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
-	if (UnitsDataGlobal.getSpecialIDSmallBeton().secondPart == 0) Log.write ("special \"smallBeton\" missing in buildings.xml", cLog::eLOG_TYPE_WARNING);
+	specialBuildsId.logMissing();
+	UnitsDataGlobal.setSpecialBuildingIDs (specialBuildsId);
 
 	// load found units
 	UnitsUiData.buildingUIs.reserve (directoriesWithId.size());
@@ -784,7 +781,7 @@ static int LoadBuildings()
 		LoadUnitSoundfile (ui.Attack,  sBuildingPath.c_str(), "attack.ogg");
 
 		// Get Ptr if necessary:
-		if (staticData.ID == UnitsDataGlobal.getSpecialIDConnector())
+		if (staticData.ID == UnitsDataGlobal.getConnectorID())
 		{
 			ui.isConnectorGraphic = true;
 			UnitsUiData.ptr_connector = ui.img.get();
@@ -794,7 +791,7 @@ static int LoadBuildings()
 			UnitsUiData.ptr_connector_shw_org = ui.shw_org.get();
 			SDL_SetColorKey (UnitsUiData.ptr_connector_shw, SDL_TRUE, 0xFF00FF);
 		}
-		else if (staticData.ID == UnitsDataGlobal.getSpecialIDSmallBeton())
+		else if (staticData.ID == UnitsDataGlobal.getSmallBetonID())
 		{
 			UnitsUiData.ptr_small_beton = ui.img.get();
 			UnitsUiData.ptr_small_beton_org = ui.img_org.get();
@@ -802,7 +799,7 @@ static int LoadBuildings()
 		}
 
 		// Check if there is more than one frame
-		// use 129 here because some images from the res_installer are one pixel to large
+		// use 129 here because some images from the res_installer are one pixel too large
 		if (ui.img_org->w > 129 && !ui.isConnectorGraphic && !ui.hasClanLogos) ui.hasFrames = ui.img_org->w / ui.img_org->h;
 		else ui.hasFrames = 0;
 

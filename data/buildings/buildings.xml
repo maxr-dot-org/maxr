@@ -8,14 +8,15 @@
     <Last_Change time="2007-10-03 21:05:00"/>
   </Header>
   <Buildings>
-    <!-- There have to be set 6 special buildings by adding a "special"-Attribut. -->
+    <!-- There have to be set 7 special buildings by adding a "special"-Attribut. -->
     <!-- The Values have to be:                                                   -->
     <!--  - "mine",                                                               -->
     <!--  - "energy",                                                             -->
     <!--  - "connector",                                                          -->
     <!--  - "landmine",                                                           -->
-    <!--  - "seamine" or                                                          -->
-    <!--  - "smallBeton"                                                          -->
+    <!--  - "seamine",                                                            -->
+    <!--  - "smallBeton" or                                                       -->
+    <!--  - "alienFactory"                                                        -->
 
     <Storage_Metal directory="storage_metal" num="32"/>
     <Storage_Oil directory="storage_oil" num="33"/>
@@ -48,7 +49,7 @@
     <Research directory="research" num="27"/>
     <Training directory="training" num="34"/>
     <Barracks directory="barracks" num="1"/>
-    <Factory_Alien directory="fac_alien" num="10"/>
+    <Factory_Alien directory="fac_alien" num="10" special="alienFactory"/>
     <Ecosphere directory="ecosphere" num="35"/>
   </Buildings>
 </BuildingsData>
