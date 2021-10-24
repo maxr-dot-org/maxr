@@ -1236,19 +1236,6 @@ static int LoadVehicles()
 	return 1;
 }
 
-//------------------------------------------------------------------------------
-static std::optional<EClanModification> EClanModificationFromString (const std::string& name)
-{
-	if (name == "Damage") { return EClanModification::Damage; }
-	else if (name == "Range") { return EClanModification::Range; }
-	else if (name == "Armor") { return EClanModification::Armor; }
-	else if (name == "Hitpoints") { return EClanModification::Hitpoints; }
-	else if (name == "Scan") { return EClanModification::Scan; }
-	else if (name == "Speed") { return EClanModification::Speed; }
-	else if (name == "Built_Costs") { return EClanModification::Built_Costs; }
-	else return std::nullopt;
-}
-
 /**
  * Loads the clan values and stores them in the cUnitData class
  * @return 1 on success
@@ -1514,7 +1501,7 @@ static int LoadEffectGraphicToSurface (AutoSurface (&dest) [2], const char* dire
 }
 
 // LoadEffectAlphacToSurface /////////////////////////////////////////////////
-// Loads a effectgraphic as aplha to the surface:
+// Loads a effectgraphic as alpha to the surface:
 static int LoadEffectAlphaToSurface (AutoSurface (&dest) [2], const char* directory, const char* filename, int alpha)
 {
 	std::string filepath;
