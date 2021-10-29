@@ -1,43 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Unit ID="0 23" name="mobile_aa">
-  <Header>
-    <Author name="Someone">
-      <Editor name="Someone" time="2007-09-30 13:05:00"/>
-    </Author>
-    <Game_Version text="0.2.5"/>
-  </Header>
-  <Description lang="ENG">
-    Mobile Anti Aircraft\n\nLight, fast vehicle with a rapid fire cannon for shooting down enemy planes. Mobile anti aircraft are generally defensive units, because they aren't as fast as planes, and can't move while firing. Use them to protect an area once your fighters have chased away enemy ground attack planes.
-  </Description>
-
-  <Weapon>
-    <Muzzle_Type Const="Med_Long"/>
-    <Ammo_Quantity Num="10"/>
-    <Can_Attack Num="1"/>
-    <Shots Num="1"/>
-    <Range Num="7"/>
-    <Damage Num="22"/>
-  </Weapon>
-
-  <Production>
-    <Built_Costs Num="18"/>
-    <Build_As String="SmallGroundVehicle"/>
-  </Production>
-
-  <Movement>
-    <Movement_Sum Num="7"/>
-    <Factor_Ground Num="1"/>
-  </Movement>
-
-  <Abilities>
-    <Armor Num="4"/>
-    <Hitpoints Num="24"/>
-    <Scan_Range Num="4"/>
-    <Can_Be_Captured YN="Yes"/>
-    <Can_Be_Disabled YN="Yes"/>
-  </Abilities>
-
-  <Storage>
-    <Is_Storage_Type String="Ground"/>
-  </Storage>
+<?xml version="1.0" encoding="UTF-8"?>
+<Unit defaultName="mobile_aa" description="Mobile Anti Aircraft\n\nLight, fast vehicle with a rapid fire cannon for shooting down enemy planes. Mobile anti aircraft are generally defensive units, because they aren&apos;t as fast as planes, and can&apos;t move while firing. Use them to protect an area once your fighters have chased away enemy ground attack planes." muzzleType="MedLong" ammoMax="10" shotsMax="1" range="7" damage="22" canAttack="1" buildCost="18" canBuild="" buildAs="SmallGroundVehicle" speedMax="7" factorAir="0.000000" factorCoast="0.000000" factorGround="1.000000" factorSea="0.000000" armor="4" hitpointsMax="24" scan="4" canBeCaptured="1" canBeDisabled="1" canRearm="0" canRepair="0" doesSelfRepair="0" isAlien="0" needsMetal="0" needsOil="0" needsEnergy="0" needsHumans="0" isStealthOn="0" canDetectStealthOn="0" surfacePosition="Ground" storageResMax="0" storeResType="0" storageUnitsMax="0" storageUnitsImageType="Tank" animationMovement="0" canBuildPath="0" canClearArea="0" canCapture="0" canDisable="0" canDriveAndFire="0" canPlaceMines="0" canSurvey="0" hasCorpse="0" isHuman="0" isStorageType="Ground" makeTracks="1">
+    <id firstPart="0" secondPart="23"/>
+    <storeUnitsTypes length="0"/>
+    <graphic buildUpGraphic="0" hasDamageEffect="1" hasOverlay="0" hasPlayerColor="1" isAnimated="0" hasFrames="0"/>
 </Unit>

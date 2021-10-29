@@ -1,46 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Unit ID="0 5" name="alien_tank">
-  <Header>
-    <Author name="Someone">
-      <Editor name="Rocky" time="2007-10-15 15:30:00"/>
-      <Editor name="Someone" time="2007-09-30 13:05:00"/>
-    </Author>
-    <Game_Version text="0.3.0"/>
-  </Header>
-  <Description lang="ENG">
-    Alien Tank\n\nHeavily armored tank of alien design. Alien tanks are best used at the front of an attack to soak up enemy fire. All alien units repair themselves, and improve their abilities with erperience.
-  </Description>
-  <Weapon>
-    <Muzzle_Type Const="Big"/>
-    <Ammo_Quantity Num="15"/>
-    <Can_Attack Num="6"/>
-    <Shots Num="3"/>
-    <Range Num="5"/>
-    <Damage Num="20"/>
-    <Can_Drive_And_Fire YN="No"/>
-  </Weapon>
-  <Production>
-    <Built_Costs Num="56"/>
-    <Build_As String="AlienTank"/>
-  </Production>
-  <Movement>
-    <Movement_Sum Num="8"/>
-    <Factor_Ground Num="1"/>
-  </Movement>
-  <Abilities>
-    <Armor Num="14"/>
-    <Hitpoints Num="32"/>
-    <Scan_Range Num="4"/>
-    <Can_Be_Captured YN="Yes"/>
-    <Can_Be_Disabled YN="Yes"/>
-    <Gets_Experience YN="Yes"/>
-    <Is_Alien YN="Yes"/>
-    <Landing_Type Const="GarageAndPlatform"/>
-    <Does_Self_Repair YN="Yes"/>
-    <Landing_Type Const="OnlyGarage"/>
-    <Makes_Tracks Fd="3"/>
-  </Abilities>
-  <Storage>
-    <Is_Storage_Type String="Tank"/>
-  </Storage>
+<?xml version="1.0" encoding="UTF-8"?>
+<Unit defaultName="alien_tank" description="Alien Tank\n\nHeavily armored tank of alien design. Alien tanks are best used at the front of an attack to soak up enemy fire. All alien units repair themselves, and improve their abilities with erperience." muzzleType="Big" ammoMax="15" shotsMax="3" range="5" damage="20" canAttack="6" buildCost="56" canBuild="" buildAs="AlienTank" speedMax="8" factorAir="0.000000" factorCoast="0.000000" factorGround="1.000000" factorSea="0.000000" armor="14" hitpointsMax="32" scan="4" canBeCaptured="1" canBeDisabled="1" canRearm="0" canRepair="0" doesSelfRepair="1" isAlien="1" needsMetal="0" needsOil="0" needsEnergy="0" needsHumans="0" isStealthOn="0" canDetectStealthOn="0" surfacePosition="Ground" storageResMax="0" storeResType="0" storageUnitsMax="0" storageUnitsImageType="Tank" animationMovement="0" canBuildPath="0" canClearArea="0" canCapture="0" canDisable="0" canDriveAndFire="0" canPlaceMines="0" canSurvey="0" hasCorpse="0" isHuman="0" isStorageType="Tank" makeTracks="0">
+    <id firstPart="0" secondPart="5"/>
+    <storeUnitsTypes length="0"/>
+    <graphic buildUpGraphic="0" hasDamageEffect="0" hasOverlay="0" hasPlayerColor="0" isAnimated="0" hasFrames="0"/>
 </Unit>

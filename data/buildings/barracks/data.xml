@@ -1,42 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Unit ID="1 1" name="baracks">
-  <Header>
-    <Author name="Someone">
-      <Editor name="Someone" time="2007-09-30 13:05:00"/>
-    </Author>
-    <Game_Version text="0.2.5"/>
-  </Header>
-  <Description lang="ENG">
-    Barracks\n\nA barracks holds infiltrators and infantery units. Inside the barracks is a machine shop for repairing and improving powered suits, and for manufacturing ammunition. The barracks needs raw materials to repair, upgrade or resupply, so it should be connected to a storage unit or a minig station.
-  </Description>
-
-  <Production>
-    <Built_Costs Num="10"/>
-    <Build_As String="BigBuilding"/>
-  </Production>
-
-  <Movement>
-    <Factor_Ground Num="1"/>
-  </Movement>
-
-  <Abilities>
-    <Is_Big YN="Yes"/>
-    <Connects_To_Base YN="Yes"/>
-    <Armor Num="12"/>
-    <Hitpoints Num="56"/>
-    <Scan_Range Num="3"/>
-    <Can_Be_Disabled YN="Yes"/>
-    <Does_Self_Repair YN="Yes"/>
-    <Can_Self_Destroy YN="Yes"/>
-    <Can_Repair YN="Yes"/>
-    <Can_Rearm YN="Yes"/>
-  </Abilities>
-
-  <Storage>
-    <Capacity_Units Num="12"/>
-    <Capacity_Units_Image_Type Const="Human"/>
-    <Capacity_Units_Type String="Human"/>
-  </Storage>
+<?xml version="1.0" encoding="UTF-8"?>
+<Unit defaultName="baracks" description="Barracks\n\nA barracks holds infiltrators and infantery units. Inside the barracks is a machine shop for repairing and improving powered suits, and for manufacturing ammunition. The barracks needs raw materials to repair, upgrade or resupply, so it should be connected to a storage unit or a minig station." muzzleType="None" ammoMax="0" shotsMax="0" range="0" damage="0" canAttack="0" buildCost="10" canBuild="" buildAs="BigBuilding" speedMax="0" factorAir="0.000000" factorCoast="0.000000" factorGround="1.000000" factorSea="0.000000" armor="12" hitpointsMax="56" scan="3" canBeCaptured="0" canBeDisabled="1" canRearm="1" canRepair="1" doesSelfRepair="1" isAlien="0" needsMetal="0" needsOil="0" needsEnergy="0" needsHumans="0" isStealthOn="0" canDetectStealthOn="0" surfacePosition="Ground" storageResMax="0" storeResType="0" storageUnitsMax="12" storageUnitsImageType="Human" canBeLandedOn="0" canMineMaxRes="0" canBeOverbuild="No" canResearch="0" canScore="0" canSelfDestroy="1" canWork="0" connectsToBase="1" convertsGold="0" explodesOnContact="0" isBig="1" maxBuildFactor="0" modifiesSpeed="0.000000">
+    <id firstPart="1" secondPart="1"/>
+    <storeUnitsTypes length="1" item="Human"/>
+    <graphic hasBetonUnderground="1" hasClanLogos="0" hasDamageEffect="1" hasOverlay="0" hasPlayerColor="1" isAnimated="0" powerOnGraphic="0"/>
 </Unit>
-
-

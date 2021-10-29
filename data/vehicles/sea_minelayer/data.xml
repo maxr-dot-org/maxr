@@ -1,39 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Unit ID="0 28" name="sea_minelayer">
-  <Header>
-    <Author name="Someone">
-      <Editor name="Someone" time="2007-09-30 13:05:00"/>
-    </Author>
-    <Game_Version text="0.2.5"/>
-  </Header>
-  <Description lang="ENG">
-    Sea Mine Layer\n\nSeaborne version of the minelayer. Like its land based counterpart, the sea minelayer can manufracture mines, detect them, and convert them back into raw material.
-  </Description>
-
-  <Production>
-    <Built_Costs Num="18"/>
-    <Build_As String="Ship"/>
-  </Production>
-
-  <Movement>
-    <Movement_Sum Num="9"/>
-    <Factor_Sea Num="1"/>
-  </Movement>
-
-  <Abilities>
-    <Armor Num="8"/>
-    <Hitpoints Num="28"/>
-    <Scan_Range Num="4"/>
-    <Can_Be_Captured YN="Yes"/>
-    <Can_Be_Disabled YN="Yes"/>
-    <Can_Detect_Mines YN="Yes"/>
-    <Can_Place_Mines YN="Yes"/>
-    <Can_Detect_Stealth_On Num="32"/>
-  </Abilities>
-
-  <Storage>
-    <Capacity_Resources Num="16"/>
-    <Capacity_Res_Type Const="Metal"/>
-    <Is_Storage_Type String="Ship"/>
-  </Storage>
+<?xml version="1.0" encoding="UTF-8"?>
+<Unit defaultName="sea_minelayer" description="Sea Mine Layer\n\nSeaborne version of the minelayer. Like its land based counterpart, the sea minelayer can manufracture mines, detect them, and convert them back into raw material." muzzleType="None" ammoMax="0" shotsMax="0" range="0" damage="0" canAttack="0" buildCost="18" canBuild="" buildAs="Ship" speedMax="9" factorAir="0.000000" factorCoast="0.000000" factorGround="0.000000" factorSea="1.000000" armor="8" hitpointsMax="28" scan="4" canBeCaptured="1" canBeDisabled="1" canRearm="0" canRepair="0" doesSelfRepair="0" isAlien="0" needsMetal="0" needsOil="0" needsEnergy="0" needsHumans="0" isStealthOn="0" canDetectStealthOn="32" surfacePosition="Ground" storageResMax="16" storeResType="1" storageUnitsMax="0" storageUnitsImageType="Tank" animationMovement="0" canBuildPath="0" canClearArea="0" canCapture="0" canDisable="0" canDriveAndFire="0" canPlaceMines="1" canSurvey="0" hasCorpse="0" isHuman="0" isStorageType="Ship" makeTracks="0">
+    <id firstPart="0" secondPart="28"/>
+    <storeUnitsTypes length="0"/>
+    <graphic buildUpGraphic="0" hasDamageEffect="1" hasOverlay="0" hasPlayerColor="1" isAnimated="0" hasFrames="0"/>
 </Unit>

@@ -1,45 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Unit ID="0 30" name="sub">
-  <Header>
-    <Author name="Someone">
-      <Editor name="Someone" time="2007-09-30 13:05:00"/>
-    </Author>
-    <Game_Version text="0.2.5"/>
-  </Header>
-  <Description lang="ENG">
-    Submarine\n\nLurking beneath the surface, submarines can sneak close to the enemy to fire their powerful torpedoes. Submarines do not carry active sonar, which might reveal their positions. Only corvettes can spot a submarine before it fires. Only submarines, corvettes, and ground attack planes can attack them.
-  </Description>
-
-  <Weapon>
-    <Muzzle_Type Const="Torpedo"/>
-    <Ammo_Quantity Num="24"/>
-    <Can_Attack Num="18"/>
-    <Shots Num="2"/>
-    <Range Num="4"/>
-    <Damage Num="20"/>
-  </Weapon>
-
-  <Production>
-    <Built_Costs Num="18"/>
-    <Build_As String="Ship"/>
-  </Production>
-
-  <Movement>
-    <Movement_Sum Num="7"/>
-    <Factor_Sea Num="1"/>
-  </Movement>
-
-  <Abilities>
-    <Armor Num="2"/>
-    <Hitpoints Num="24"/>
-    <Scan_Range Num="7"/>
-    <Can_Be_Captured YN="Yes"/>
-    <Can_Be_Disabled YN="Yes"/>
-
-    <Is_Stealth_On Num="2"/>
-  </Abilities>
-
-  <Storage>
-    <Is_Storage_Type String="Ship"/>
-  </Storage>
+<?xml version="1.0" encoding="UTF-8"?>
+<Unit defaultName="sub" description="Submarine\n\nLurking beneath the surface, submarines can sneak close to the enemy to fire their powerful torpedoes. Submarines do not carry active sonar, which might reveal their positions. Only corvettes can spot a submarine before it fires. Only submarines, corvettes, and ground attack planes can attack them." muzzleType="Torpedo" ammoMax="24" shotsMax="2" range="4" damage="20" canAttack="18" buildCost="18" canBuild="" buildAs="Ship" speedMax="7" factorAir="0.000000" factorCoast="0.000000" factorGround="0.000000" factorSea="1.000000" armor="2" hitpointsMax="24" scan="7" canBeCaptured="1" canBeDisabled="1" canRearm="0" canRepair="0" doesSelfRepair="0" isAlien="0" needsMetal="0" needsOil="0" needsEnergy="0" needsHumans="0" isStealthOn="2" canDetectStealthOn="0" surfacePosition="Ground" storageResMax="0" storeResType="0" storageUnitsMax="0" storageUnitsImageType="Tank" animationMovement="0" canBuildPath="0" canClearArea="0" canCapture="0" canDisable="0" canDriveAndFire="0" canPlaceMines="0" canSurvey="0" hasCorpse="0" isHuman="0" isStorageType="Ship" makeTracks="0">
+    <id firstPart="0" secondPart="30"/>
+    <storeUnitsTypes length="0"/>
+    <graphic buildUpGraphic="0" hasDamageEffect="1" hasOverlay="0" hasPlayerColor="1" isAnimated="0" hasFrames="0"/>
 </Unit>

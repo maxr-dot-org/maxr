@@ -1,41 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Unit ID="1 16" name="artillerie">
-  <Header>
-    <Author name="Someone">
-      <Editor name="Someone" time="2007-09-30 13:05:00"/>
-    </Author>
-    <Game_Version text="0.2.5"/>
-  </Header>
-  <Description lang="ENG">
-    Artillery\n\nHigh powered stationary gun. Artillery is a compromise between the cheap, rugged gun turret and the expensive, long-range missile turret.
-  </Description>
-
-  <Weapon>
-    <Muzzle_Type Const="Big"/>
-    <Ammo_Quantity Num="16"/>
-    <Can_Attack Num="6"/>
-    <Shots Num="2"/>
-    <Range Num="8"/>
-    <Damage Num="18"/>
-  </Weapon>
-
-  <Production>
-    <Built_Costs Num="16"/>
-    <Build_As String="SmallBuilding"/>
-  </Production>
-
-  <Movement>
-    <Factor_Ground Num="1"/>
-  </Movement>
-
-  <Abilities>
-    <Connects_To_Base YN="Yes"/>
-    <Can_Be_Disabled YN="Yes"/>
-    <Armor Num="9"/>
-    <Hitpoints Num="24"/>
-    <Scan_Range Num="4"/>
-    <Can_Self_Destroy YN="Yes"/>
-  </Abilities>
+<?xml version="1.0" encoding="UTF-8"?>
+<Unit defaultName="artillerie" description="Artillery\n\nHigh powered stationary gun. Artillery is a compromise between the cheap, rugged gun turret and the expensive, long-range missile turret." muzzleType="Big" ammoMax="16" shotsMax="2" range="8" damage="18" canAttack="6" buildCost="16" canBuild="" buildAs="SmallBuilding" speedMax="0" factorAir="0.000000" factorCoast="0.000000" factorGround="1.000000" factorSea="0.000000" armor="9" hitpointsMax="24" scan="4" canBeCaptured="0" canBeDisabled="1" canRearm="0" canRepair="0" doesSelfRepair="0" isAlien="0" needsMetal="0" needsOil="0" needsEnergy="0" needsHumans="0" isStealthOn="0" canDetectStealthOn="0" surfacePosition="Ground" storageResMax="0" storeResType="0" storageUnitsMax="0" storageUnitsImageType="Tank" canBeLandedOn="0" canMineMaxRes="0" canBeOverbuild="No" canResearch="0" canScore="0" canSelfDestroy="1" canWork="0" connectsToBase="1" convertsGold="0" explodesOnContact="0" isBig="0" maxBuildFactor="0" modifiesSpeed="0.000000">
+    <id firstPart="1" secondPart="16"/>
+    <storeUnitsTypes length="0"/>
+    <graphic hasBetonUnderground="1" hasClanLogos="0" hasDamageEffect="1" hasOverlay="0" hasPlayerColor="1" isAnimated="0" powerOnGraphic="0"/>
 </Unit>
-
-

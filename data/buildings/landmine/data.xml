@@ -1,34 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Unit ID="1 21" name="landmine">
-  <Header>
-    <Author name="Someone">
-      <Editor name="Someone" time="2007-09-30 13:05:00"/>
-    </Author>
-    <Game_Version text="0.2.5"/>
-  </Header>
-  <Description lang="ENG">
-    Land Mine\n\nSmall, hard to detect explosive device. Only surveyors, minelayers, and infiltratoers can spot mines. Once spotted, almost any damage will destroy it.
-  </Description>
-
-  <Weapon>
-    <Can_Attack Num="4"/>
-    <Damage Num="28"/>
-  </Weapon>
-
-  <Movement>
-    <Factor_Ground Num="1"/>
-  </Movement>
-
-  <Abilities>
-    <Armor Num="1"/>
-    <Hitpoints Num="2"/>
-    <Scan_Range Num="1"/>
-    <Can_Self_Destroy YN="Yes"/>
-    <Can_Be_Overbuild Const="YesNRemove"/>
-    <Is_Stealth_On Num="32"/>
-    <Surface_Position Const="AboveBase"/>
-    <Explodes_On_Contact YN="Yes"/>
-  </Abilities>
+<?xml version="1.0" encoding="UTF-8"?>
+<Unit defaultName="landmine" description="Land Mine\n\nSmall, hard to detect explosive device. Only surveyors, minelayers, and infiltratoers can spot mines. Once spotted, almost any damage will destroy it." muzzleType="None" ammoMax="0" shotsMax="0" range="0" damage="28" canAttack="4" buildCost="0" canBuild="" buildAs="" speedMax="0" factorAir="0.000000" factorCoast="0.000000" factorGround="1.000000" factorSea="0.000000" armor="1" hitpointsMax="2" scan="1" canBeCaptured="0" canBeDisabled="0" canRearm="0" canRepair="0" doesSelfRepair="0" isAlien="0" needsMetal="0" needsOil="0" needsEnergy="0" needsHumans="0" isStealthOn="32" canDetectStealthOn="0" surfacePosition="AboveBase" storageResMax="0" storeResType="0" storageUnitsMax="0" storageUnitsImageType="Tank" canBeLandedOn="0" canMineMaxRes="0" canBeOverbuild="YesNRemove" canResearch="0" canScore="0" canSelfDestroy="1" canWork="0" connectsToBase="0" convertsGold="0" explodesOnContact="1" isBig="0" maxBuildFactor="0" modifiesSpeed="0.000000">
+    <id firstPart="1" secondPart="21"/>
+    <storeUnitsTypes length="0"/>
+    <graphic hasBetonUnderground="0" hasClanLogos="0" hasDamageEffect="0" hasOverlay="0" hasPlayerColor="1" isAnimated="0" powerOnGraphic="0"/>
 </Unit>
-
-

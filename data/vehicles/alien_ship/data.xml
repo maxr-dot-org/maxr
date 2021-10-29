@@ -1,45 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Unit ID="0 4" name="alien_ship">
-  <Header>
-    <Author name="Someone">
-    <Editor name="Rocky" time="2007-10-15 14:30:00"/>
-    <Editor name="Someone" time="2007-09-30 13:05:00"/>
-    </Author>
-    <Game_Version text="0.3.0"/>
-  </Header>
-  <Description lang="ENG">
-    Alien Ship\n\nHeavily armored and armed warship of alien design. Like the human gunboat, the alien gunboat excels at destroying other ships and land targets near the shore. All alien units repair themselves, and improve their abilities with experience.
-  </Description>
-  <Weapon>
-    <Muzzle_Type Const="Big"/>
-    <Ammo_Quantity Num="10"/>
-    <Can_Attack Num="6"/>
-    <Shots Num="2"/>
-    <Range Num="8"/>
-    <Damage Num="28"/>
-    <Can_Drive_And_Fire YN="No"/>
-  </Weapon>
-  <Production>
-    <Built_Costs Num="7"/>
-    <Build_As String="AlienBoat"/>
-  </Production>
-  <Movement>
-    <Movement_Sum Num="16"/>
-    <Factor_Sea Num="1"/>
-  </Movement>
-  <Abilities>
-    <Armor Num="18"/>
-    <Hitpoints Num="40"/>
-    <Scan_Range Num="5"/>
-    <Can_Be_Captured YN="Yes"/>
-    <Can_Be_Disabled YN="Yes"/>
-    <Gets_Experience YN="Yes"/>
-    <Is_Alien YN="Yes"/>
-    <Does_Self_Repair YN="Yes"/>
-    <Landing_Type Const="OnlyGarage"/>
-    <Makes_Tracks Fd="3"/>
-  </Abilities>
-  <Storage>
-    <Is_Storage_Type String="Ship"/>
-  </Storage>
+<?xml version="1.0" encoding="UTF-8"?>
+<Unit defaultName="alien_ship" description="Alien Ship\n\nHeavily armored and armed warship of alien design. Like the human gunboat, the alien gunboat excels at destroying other ships and land targets near the shore. All alien units repair themselves, and improve their abilities with experience." muzzleType="Big" ammoMax="10" shotsMax="2" range="8" damage="28" canAttack="6" buildCost="7" canBuild="" buildAs="AlienBoat" speedMax="16" factorAir="0.000000" factorCoast="0.000000" factorGround="0.000000" factorSea="1.000000" armor="18" hitpointsMax="40" scan="5" canBeCaptured="1" canBeDisabled="1" canRearm="0" canRepair="0" doesSelfRepair="1" isAlien="1" needsMetal="0" needsOil="0" needsEnergy="0" needsHumans="0" isStealthOn="0" canDetectStealthOn="0" surfacePosition="Ground" storageResMax="0" storeResType="0" storageUnitsMax="0" storageUnitsImageType="Tank" animationMovement="0" canBuildPath="0" canClearArea="0" canCapture="0" canDisable="0" canDriveAndFire="0" canPlaceMines="0" canSurvey="0" hasCorpse="0" isHuman="0" isStorageType="Ship" makeTracks="0">
+    <id firstPart="0" secondPart="4"/>
+    <storeUnitsTypes length="0"/>
+    <graphic buildUpGraphic="0" hasDamageEffect="0" hasOverlay="0" hasPlayerColor="0" isAnimated="0" hasFrames="0"/>
 </Unit>

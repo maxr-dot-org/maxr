@@ -1,39 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Unit ID="0 20" name="minelayer">
-  <Header>
-    <Author name="Someone">
-      <Editor name="Someone" time="2007-09-30 13:05:00"/>
-    </Author>
-    <Game_Version text="0.2.5"/>
-  </Header>
-  <Description lang="ENG">
-    Mine Layer\n\nMinelayers are specialized construction vehicles which place, detect, and remove mines. Minelayers convert onboard raw materials into mines. They can also remove those mines later and convert them back into materials. They cannot remove enemy minefields - those must be exploded with gunfire and rockets.
-  </Description>
-
-  <Production>
-    <Built_Costs Num="9"/>
-    <Build_As String="SmallGroundVehicle"/>
-  </Production>
-
-  <Movement>
-    <Movement_Sum Num="7"/>
-    <Factor_Ground Num="1"/>
-  </Movement>
-
-  <Abilities>
-    <Armor Num="4"/>
-    <Hitpoints Num="24"/>
-    <Scan_Range Num="4"/>
-    <Can_Be_Captured YN="Yes"/>
-    <Can_Be_Disabled YN="Yes"/>
-    <Can_Detect_Mines YN="Yes"/>
-    <Can_Place_Mines YN="Yes"/>
-    <Can_Detect_Stealth_On Num="32"/>
-  </Abilities>
-
-  <Storage>
-    <Capacity_Resources Num="16"/>
-    <Capacity_Res_Type Const="Metal"/>
-    <Is_Storage_Type String="Ground"/>
-  </Storage>
+<?xml version="1.0" encoding="UTF-8"?>
+<Unit defaultName="minelayer" description="Mine Layer\n\nMinelayers are specialized construction vehicles which place, detect, and remove mines. Minelayers convert onboard raw materials into mines. They can also remove those mines later and convert them back into materials. They cannot remove enemy minefields - those must be exploded with gunfire and rockets." muzzleType="None" ammoMax="0" shotsMax="0" range="0" damage="0" canAttack="0" buildCost="9" canBuild="" buildAs="SmallGroundVehicle" speedMax="7" factorAir="0.000000" factorCoast="0.000000" factorGround="1.000000" factorSea="0.000000" armor="4" hitpointsMax="24" scan="4" canBeCaptured="1" canBeDisabled="1" canRearm="0" canRepair="0" doesSelfRepair="0" isAlien="0" needsMetal="0" needsOil="0" needsEnergy="0" needsHumans="0" isStealthOn="0" canDetectStealthOn="32" surfacePosition="Ground" storageResMax="16" storeResType="1" storageUnitsMax="0" storageUnitsImageType="Tank" animationMovement="0" canBuildPath="0" canClearArea="0" canCapture="0" canDisable="0" canDriveAndFire="0" canPlaceMines="1" canSurvey="0" hasCorpse="0" isHuman="0" isStorageType="Ground" makeTracks="1">
+    <id firstPart="0" secondPart="20"/>
+    <storeUnitsTypes length="0"/>
+    <graphic buildUpGraphic="0" hasDamageEffect="1" hasOverlay="0" hasPlayerColor="1" isAnimated="0" hasFrames="0"/>
 </Unit>

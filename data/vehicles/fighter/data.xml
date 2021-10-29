@@ -1,45 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Unit ID="0 16" name="fighter">
-  <Header>
-    <Author name="Someone">
-    <Editor name="Rocky" time="2007-10-21 12:30:00"/>
-    <Editor name="Someone" time="2007-09-30 13:05:00"/>
-    </Author>
-    <Game_Version text="00.00.00.00"/>
-  </Header>
-  <Description lang="ENG">
-    Fighter\n\nFast but fragile aircraft carrying a limited number of air-to-air missiles. Fighters are the best way to drive enemy planes out an area, and to defend a moving force. Ground based anti aircraft is a better choice for defending a fixed area.
-  </Description>
-
-  <Weapon>
-    <Muzzle_Type Const="Rocket"/>
-    <Ammo_Quantity Num="4"/>
-    <Can_Attack Num="1"/>
-    <Shots Num="1"/>
-    <Range Num="5"/>
-    <Damage Num="16"/>
-    <Can_Drive_And_Fire YN="Yes"/>
-  </Weapon>
-
-  <Production>
-    <Built_Costs Num="24"/>
-    <Build_As String="Plane"/>
-  </Production>
-
-  <Movement>
-    <Movement_Sum Num="24"/>
-    <Factor_Air Num="1"/>
-  </Movement>
-
-  <Abilities>
-    <Armor Num="4"/>
-    <Hitpoints Num="12"/>
-    <Scan_Range Num="5"/>
-    <Can_Be_Captured YN="Yes"/>
-    <Can_Be_Disabled YN="Yes"/>
-  </Abilities>
-
-  <Storage>
-    <Is_Storage_Type String="Plane"/>
-  </Storage>
+<?xml version="1.0" encoding="UTF-8"?>
+<Unit defaultName="fighter" description="Fighter\n\nFast but fragile aircraft carrying a limited number of air-to-air missiles. Fighters are the best way to drive enemy planes out an area, and to defend a moving force. Ground based anti aircraft is a better choice for defending a fixed area." muzzleType="Rocket" ammoMax="4" shotsMax="1" range="5" damage="16" canAttack="1" buildCost="24" canBuild="" buildAs="Plane" speedMax="24" factorAir="1.000000" factorCoast="0.000000" factorGround="0.000000" factorSea="0.000000" armor="4" hitpointsMax="12" scan="5" canBeCaptured="1" canBeDisabled="1" canRearm="0" canRepair="0" doesSelfRepair="0" isAlien="0" needsMetal="0" needsOil="0" needsEnergy="0" needsHumans="0" isStealthOn="0" canDetectStealthOn="0" surfacePosition="Ground" storageResMax="0" storeResType="0" storageUnitsMax="0" storageUnitsImageType="Tank" animationMovement="0" canBuildPath="0" canClearArea="0" canCapture="0" canDisable="0" canDriveAndFire="1" canPlaceMines="0" canSurvey="0" hasCorpse="0" isHuman="0" isStorageType="Plane" makeTracks="0">
+    <id firstPart="0" secondPart="16"/>
+    <storeUnitsTypes length="0"/>
+    <graphic buildUpGraphic="0" hasDamageEffect="1" hasOverlay="0" hasPlayerColor="1" isAnimated="0" hasFrames="0"/>
 </Unit>

@@ -1,41 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Unit ID="0 6" name="apc">
-  <Header>
-    <Author name="Someone">
-      <Editor name="Someone" time="2007-09-30 13:05:00"/>
-    </Author>
-    <Game_Version text="0.2.5"/>
-  </Header>
-  <Description lang="ENG">
-    Armored Personnel Carrier\n\nFast armored vehicle to transport infantery and infiltrators. The APC can move slowly underwater as well es on land. Only enemy corvettes can detect an APC moving under water.
-  </Description>
-
-  <Production>
-    <Built_Costs Num="12"/>
-    <Build_As String="SmallGroundVehicle"/>
-  </Production>
-
-  <Movement>
-    <Movement_Sum Num="10"/>
-    <Factor_Ground Num="1"/>
-    <Factor_Sea Num="3"/>
-    <Factor_Coast Num="1"/>
-  </Movement>
-
-  <Abilities>
-    <Armor Num="8"/>
-    <Hitpoints Num="24"/>
-    <Scan_Range Num="4"/>
-    <Can_Be_Captured YN="Yes"/>
-    <Can_Be_Disabled YN="Yes"/>
-
-    <Is_Stealth_On Num="2"/>
-  </Abilities>
-
-  <Storage>
-    <Capacity_Units Num="6"/>
-    <Capacity_Units_Image_Type Const="Human"/>
-    <Capacity_Units_Type String="Human"/>
-    <Is_Storage_Type String="Ground"/>
-  </Storage>
+<?xml version="1.0" encoding="UTF-8"?>
+<Unit defaultName="apc" description="Armored Personnel Carrier\n\nFast armored vehicle to transport infantery and infiltrators. The APC can move slowly underwater as well es on land. Only enemy corvettes can detect an APC moving under water." muzzleType="None" ammoMax="0" shotsMax="0" range="0" damage="0" canAttack="0" buildCost="12" canBuild="" buildAs="SmallGroundVehicle" speedMax="10" factorAir="0.000000" factorCoast="1.000000" factorGround="1.000000" factorSea="3.000000" armor="8" hitpointsMax="24" scan="4" canBeCaptured="1" canBeDisabled="1" canRearm="0" canRepair="0" doesSelfRepair="0" isAlien="0" needsMetal="0" needsOil="0" needsEnergy="0" needsHumans="0" isStealthOn="2" canDetectStealthOn="0" surfacePosition="Ground" storageResMax="0" storeResType="0" storageUnitsMax="6" storageUnitsImageType="Human" animationMovement="0" canBuildPath="0" canClearArea="0" canCapture="0" canDisable="0" canDriveAndFire="0" canPlaceMines="0" canSurvey="0" hasCorpse="0" isHuman="0" isStorageType="Ground" makeTracks="1">
+    <id firstPart="0" secondPart="6"/>
+    <storeUnitsTypes length="1" item="Human"/>
+    <graphic buildUpGraphic="0" hasDamageEffect="1" hasOverlay="0" hasPlayerColor="1" isAnimated="0" hasFrames="0"/>
 </Unit>

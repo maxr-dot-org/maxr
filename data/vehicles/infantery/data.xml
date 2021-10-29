@@ -1,46 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Unit ID="0 18" name="infantery">
-  <Header>
-    <Author name="Someone">
-      <Editor name="Someone" time="2007-09-30 13:05:00"/>
-    </Author>
-    <Game_Version text="0.2.5"/>
-  </Header>
-
-  <Description lang="ENG">
-    Infantery\n\nHuman soldiers equipped with light anti-tank shoulder weapons. Infantery can spot enemy infiltrators.
-  </Description>
-
-  <Weapon>
-    <Muzzle_Type Const="Rocket"/>
-    <Ammo_Quantity Num="4"/>
-    <Can_Attack Num="6"/>
-    <Shots Num="1"/>
-    <Range Num="4"/>
-    <Damage Num="16"/>
-  </Weapon>
-
-  <Production>
-    <Built_Costs Num="2"/>
-    <Build_As String="Human"/>
-  </Production>
-
-  <Movement>
-    <Movement_Sum Num="5"/>
-    <Factor_Ground Num="1"/>
-    <Factor_Coast Num="1"/>
-  </Movement>
-
-  <Abilities>
-    <Armor Num="2"/>
-    <Hitpoints Num="8"/>
-    <Scan_Range Num="4"/>
-    <Is_Human YN="Yes"/>
-
-    <Can_Detect_Stealth_On Num="12"/>
-  </Abilities>
-
-  <Storage>
-    <Is_Storage_Type String="Human"/>
-  </Storage>
+<?xml version="1.0" encoding="UTF-8"?>
+<Unit defaultName="infantery" description="Infantery\n\nHuman soldiers equipped with light anti-tank shoulder weapons. Infantery can spot enemy infiltrators." muzzleType="Rocket" ammoMax="4" shotsMax="1" range="4" damage="16" canAttack="6" buildCost="2" canBuild="" buildAs="Human" speedMax="5" factorAir="0.000000" factorCoast="1.000000" factorGround="1.000000" factorSea="0.000000" armor="2" hitpointsMax="8" scan="4" canBeCaptured="0" canBeDisabled="0" canRearm="0" canRepair="0" doesSelfRepair="0" isAlien="0" needsMetal="0" needsOil="0" needsEnergy="0" needsHumans="0" isStealthOn="0" canDetectStealthOn="12" surfacePosition="Ground" storageResMax="0" storeResType="0" storageUnitsMax="0" storageUnitsImageType="Tank" animationMovement="1" canBuildPath="0" canClearArea="0" canCapture="0" canDisable="0" canDriveAndFire="0" canPlaceMines="0" canSurvey="0" hasCorpse="1" isHuman="1" isStorageType="Human" makeTracks="0">
+    <id firstPart="0" secondPart="18"/>
+    <storeUnitsTypes length="0"/>
+    <graphic buildUpGraphic="0" hasDamageEffect="0" hasOverlay="0" hasPlayerColor="1" isAnimated="0" hasFrames="0"/>
 </Unit>

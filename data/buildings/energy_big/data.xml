@@ -1,40 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Unit ID="1 7" name="Energy_Big">
-  <Header>
-    <Author name="Someone">
-      <Editor name="Someone" time="2007-09-30 13:05:00"/>
-    </Author>
-    <Game_Version text="0.2.5"/>
-  </Header>
-  <Description lang="ENG">
-    Power Station\n\nA power station consumes six fuel each turn, and provides enough power for six factories or mining stations.
-  </Description>
-
-  <Production>
-    <Built_Costs Num="24"/>
-    <Build_As String="BigBuilding"/>
-  </Production>
-
-  <Movement>
-    <Factor_Ground Num="1"/>
-  </Movement>
-
-  <Abilities>
-    <Is_Big YN="Yes"/>
-    <Connects_To_Base YN="Yes"/>
-    <Armor Num="8"/>
-    <Hitpoints Num="56"/>
-    <Scan_Range Num="3"/>
-    <Can_Be_Disabled YN="Yes"/>
-    <Does_Self_Repair YN="Yes"/>
-
-    <Needs_Energy Num="-6"/>
-    <Needs_Oil Num="6"/>
-
-    <Is_Activatable YN="Yes"/>
-
-    <Can_Self_Destroy YN="Yes"/>
-  </Abilities>
+<?xml version="1.0" encoding="UTF-8"?>
+<Unit defaultName="Energy_Big" description="Power Station\n\nA power station consumes six fuel each turn, and provides enough power for six factories or mining stations." muzzleType="None" ammoMax="0" shotsMax="0" range="0" damage="0" canAttack="0" buildCost="24" canBuild="" buildAs="BigBuilding" speedMax="0" factorAir="0.000000" factorCoast="0.000000" factorGround="1.000000" factorSea="0.000000" armor="8" hitpointsMax="56" scan="3" canBeCaptured="0" canBeDisabled="1" canRearm="0" canRepair="0" doesSelfRepair="1" isAlien="0" needsMetal="0" needsOil="6" needsEnergy="-6" needsHumans="0" isStealthOn="0" canDetectStealthOn="0" surfacePosition="Ground" storageResMax="0" storeResType="0" storageUnitsMax="0" storageUnitsImageType="Tank" canBeLandedOn="0" canMineMaxRes="0" canBeOverbuild="No" canResearch="0" canScore="0" canSelfDestroy="1" canWork="1" connectsToBase="1" convertsGold="0" explodesOnContact="0" isBig="1" maxBuildFactor="0" modifiesSpeed="0.000000">
+    <id firstPart="1" secondPart="7"/>
+    <storeUnitsTypes length="0"/>
+    <graphic hasBetonUnderground="1" hasClanLogos="0" hasDamageEffect="1" hasOverlay="0" hasPlayerColor="1" isAnimated="0" powerOnGraphic="1"/>
 </Unit>
-
-
