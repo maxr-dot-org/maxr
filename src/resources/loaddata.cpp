@@ -596,6 +596,401 @@ static void LoadUnitSoundfile (cSoundChunk& dest, const char* directory, const c
 }
 
 //------------------------------------------------------------------------------
+static bool LoadUiData (const std::string& sBuildingPath, sBuildingUIData& ui)
+{
+	// load img
+	std::string sTmpString = sBuildingPath;
+	sTmpString += "img.pcx";
+	if (FileExists (sTmpString.c_str()))
+	{
+		ui.img_org = LoadPCX (sTmpString);
+		ui.img = CloneSDLSurface (*ui.img_org);
+		SDL_SetColorKey (ui.img_org.get(), SDL_TRUE, 0xFFFFFF);
+		SDL_SetColorKey (ui.img.get(), SDL_TRUE, 0xFFFFFF);
+	}
+	else
+	{
+		Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
+		return false;
+	}
+	// load shadow
+	sTmpString = sBuildingPath;
+	sTmpString += "shw.pcx";
+	if (FileExists (sTmpString.c_str()))
+	{
+		ui.shw_org = LoadPCX (sTmpString);
+		ui.shw     = CloneSDLSurface (*ui.shw_org);
+		SDL_SetSurfaceAlphaMod (ui.shw.get(), 50);
+	}
+
+	// load video
+	sTmpString = sBuildingPath;
+	sTmpString += "video.pcx";
+	if (FileExists (sTmpString.c_str()))
+		ui.video = LoadPCX (sTmpString);
+
+	// load infoimage
+	sTmpString = sBuildingPath;
+	sTmpString += "info.pcx";
+	if (FileExists (sTmpString.c_str()))
+		ui.info = LoadPCX (sTmpString);
+
+	// load effectgraphics if necessary
+	if (ui.staticData.powerOnGraphic)
+	{
+		sTmpString = sBuildingPath;
+		sTmpString += "effect.pcx";
+		if (FileExists (sTmpString.c_str()))
+		{
+			ui.eff_org = LoadPCX (sTmpString);
+			ui.eff = CloneSDLSurface (*ui.eff_org);
+			SDL_SetSurfaceAlphaMod (ui.eff.get(), 10);
+		}
+	}
+	else
+	{
+		ui.eff_org = nullptr;
+		ui.eff     = nullptr;
+	}
+
+	// load sounds
+	LoadUnitSoundfile (ui.Wait,    sBuildingPath.c_str(), "wait.ogg");
+	LoadUnitSoundfile (ui.Start,   sBuildingPath.c_str(), "start.ogg");
+	LoadUnitSoundfile (ui.Running, sBuildingPath.c_str(), "running.ogg");
+	LoadUnitSoundfile (ui.Stop,    sBuildingPath.c_str(), "stop.ogg");
+	LoadUnitSoundfile (ui.Attack,  sBuildingPath.c_str(), "attack.ogg");
+
+	// Get Ptr if necessary:
+	if (ui.id == UnitsDataGlobal.getConnectorID())
+	{
+		ui.isConnectorGraphic = true;
+		UnitsUiData.ptr_connector = ui.img.get();
+		UnitsUiData.ptr_connector_org = ui.img_org.get();
+		SDL_SetColorKey (UnitsUiData.ptr_connector, SDL_TRUE, 0xFF00FF);
+		UnitsUiData.ptr_connector_shw = ui.shw.get();
+		UnitsUiData.ptr_connector_shw_org = ui.shw_org.get();
+		SDL_SetColorKey (UnitsUiData.ptr_connector_shw, SDL_TRUE, 0xFF00FF);
+	}
+	else if (ui.id == UnitsDataGlobal.getSmallBetonID())
+	{
+		UnitsUiData.ptr_small_beton = ui.img.get();
+		UnitsUiData.ptr_small_beton_org = ui.img_org.get();
+		SDL_SetColorKey (UnitsUiData.ptr_small_beton, SDL_TRUE, 0xFF00FF);
+	}
+
+	// Check if there is more than one frame
+	// use 129 here because some images from the res_installer are one pixel too large
+	if (ui.img_org->w > 129 && !ui.isConnectorGraphic && !ui.staticData.hasClanLogos) ui.hasFrames = ui.img_org->w / ui.img_org->h;
+	else ui.hasFrames = 0;
+
+	return true;
+}
+
+//------------------------------------------------------------------------------
+static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& staticData, sVehicleUIData& ui)
+{
+	Log.write ("Loading graphics", cLog::eLOG_TYPE_DEBUG);
+	// load infantry graphics
+	if (staticData.vehicleData.animationMovement)
+	{
+		SDL_Rect rcDest;
+		for (int n = 0; n < 8; n++)
+		{
+			ui.img[n] = AutoSurface (SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0));
+			SDL_SetColorKey (ui.img[n].get(), SDL_TRUE, 0x00FFFFFF);
+			SDL_FillRect (ui.img[n].get(), nullptr, 0x00FF00FF);
+
+			for (int j = 0; j < 13; j++)
+			{
+				std::string sTmpString = sVehiclePath;
+				char sztmp[16];
+				TIXML_SNPRINTF (sztmp, sizeof (sztmp), "img%d_%.2d.pcx", n, j);
+				sTmpString += sztmp;
+
+				if (FileExists (sTmpString.c_str()))
+				{
+					AutoSurface sfTempSurface (LoadPCX (sTmpString));
+					if (!sfTempSurface)
+					{
+						Log.write (SDL_GetError(), cLog::eLOG_TYPE_WARNING);
+					}
+					else
+					{
+						rcDest.x = 64 * j + 32 - sfTempSurface->w / 2;
+						rcDest.y = 32 - sfTempSurface->h / 2;
+						SDL_BlitSurface (sfTempSurface.get(), nullptr, ui.img[n].get(), &rcDest);
+					}
+				}
+			}
+			ui.img_org[n] = AutoSurface (SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0));
+			SDL_SetColorKey (ui.img[n].get(), SDL_TRUE, 0x00FFFFFF);
+			SDL_FillRect (ui.img_org[n].get(), nullptr, 0x00FFFFFF);
+			SDL_BlitSurface (ui.img[n].get(), nullptr, ui.img_org[n].get(), nullptr);
+
+			ui.shw[n] = AutoSurface (SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0));
+			SDL_SetColorKey (ui.shw[n].get(), SDL_TRUE, 0x00FF00FF);
+			SDL_FillRect (ui.shw[n].get(), nullptr, 0x00FF00FF);
+			ui.shw_org[n] = AutoSurface (SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0));
+			SDL_SetColorKey (ui.shw_org[n].get(), SDL_TRUE, 0x00FF00FF);
+			SDL_FillRect (ui.shw_org[n].get(), nullptr, 0x00FF00FF);
+
+			rcDest.x = 3;
+			rcDest.y = 3;
+			SDL_BlitSurface (ui.img_org[n].get(), nullptr, ui.shw_org[n].get(), &rcDest);
+			SDL_LockSurface (ui.shw_org[n].get());
+			Uint32* ptr = static_cast<Uint32*> (ui.shw_org[n]->pixels);
+			for (int j = 0; j < 64 * 13 * 64; j++)
+			{
+				if (*ptr != 0x00FF00FF)
+					*ptr = 0;
+				ptr++;
+			}
+			SDL_UnlockSurface (ui.shw_org[n].get());
+			SDL_BlitSurface (ui.shw_org[n].get(), nullptr, ui.shw[n].get(), nullptr);
+			SDL_SetSurfaceAlphaMod (ui.shw_org[n].get(), 50);
+			SDL_SetSurfaceAlphaMod (ui.shw[n].get(), 50);
+		}
+	}
+	// load other vehicle graphics
+	else
+	{
+		for (int n = 0; n < 8; n++)
+		{
+			// load image
+			std::string sTmpString = sVehiclePath;
+			char sztmp[16];
+			TIXML_SNPRINTF (sztmp, sizeof (sztmp), "img%d.pcx", n);
+			sTmpString += sztmp;
+			Log.write (sTmpString, cLog::eLOG_TYPE_DEBUG);
+			if (FileExists (sTmpString.c_str()))
+			{
+				ui.img_org[n] = LoadPCX (sTmpString);
+				ui.img[n] = CloneSDLSurface (*ui.img_org[n]);
+				SDL_SetColorKey (ui.img_org[n].get(), SDL_TRUE, 0xFFFFFF);
+				SDL_SetColorKey (ui.img[n].get(), SDL_TRUE, 0xFFFFFF);
+			}
+			else
+			{
+				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
+				return false;
+			}
+
+			// load shadow
+			sTmpString.replace (sTmpString.length() - 8, 3, "shw");
+			if (FileExists (sTmpString.c_str()))
+			{
+				ui.shw_org[n] = LoadPCX (sTmpString);
+				ui.shw[n] = CloneSDLSurface (*ui.shw_org[n]);
+				SDL_SetSurfaceAlphaMod (ui.shw[n].get(), 50);
+			}
+			else
+			{
+				ui.shw_org[n] = nullptr;
+				ui.shw[n]     = nullptr;
+			}
+		}
+	}
+	// load video
+	ui.FLCFile = sVehiclePath;
+	ui.FLCFile += "video.flc";
+	Log.write ("Loading video " + ui.FLCFile, cLog::eLOG_TYPE_DEBUG);
+	if (!FileExists (ui.FLCFile.c_str()))
+	{
+		ui.FLCFile = "";
+	}
+
+	// load infoimage
+	std::string sTmpString = sVehiclePath;
+	sTmpString += "info.pcx";
+	Log.write ("Loading portrait" + sTmpString, cLog::eLOG_TYPE_DEBUG);
+	if (FileExists (sTmpString.c_str()))
+	{
+		ui.info = LoadPCX (sTmpString);
+	}
+	else
+	{
+		Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
+		return false;
+	}
+
+	// load storageimage
+	sTmpString = sVehiclePath;
+	sTmpString += "store.pcx";
+	Log.write ("Loading storageportrait" + sTmpString, cLog::eLOG_TYPE_DEBUG);
+	if (FileExists (sTmpString.c_str()))
+	{
+		ui.storage = LoadPCX (sTmpString);
+	}
+	else
+	{
+		Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
+		return false;
+	}
+
+	// load overlaygraphics if necessary
+	Log.write ("Loading overlay", cLog::eLOG_TYPE_DEBUG);
+	if (ui.staticData.hasOverlay)
+	{
+		sTmpString = sVehiclePath;
+		sTmpString += "overlay.pcx";
+		if (FileExists (sTmpString.c_str()))
+		{
+			ui.overlay_org = LoadPCX (sTmpString);
+			ui.overlay = CloneSDLSurface (*ui.overlay_org);
+		}
+		else
+		{
+			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
+			ui.overlay_org       = nullptr;
+			ui.overlay           = nullptr;
+			ui.staticData.hasOverlay = false;
+		}
+	}
+	else
+	{
+		ui.overlay_org = nullptr;
+		ui.overlay     = nullptr;
+	}
+
+	// load buildgraphics if necessary
+	Log.write ("Loading buildgraphics", cLog::eLOG_TYPE_DEBUG);
+	if (ui.staticData.buildUpGraphic)
+	{
+		// load image
+		sTmpString = sVehiclePath;
+		sTmpString += "build.pcx";
+		if (FileExists (sTmpString.c_str()))
+		{
+			ui.build_org = LoadPCX (sTmpString);
+			ui.build = CloneSDLSurface (*ui.build_org);
+			SDL_SetColorKey (ui.build_org.get(), SDL_TRUE, 0xFFFFFF);
+			SDL_SetColorKey (ui.build.get(), SDL_TRUE, 0xFFFFFF);
+		}
+		else
+		{
+			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
+			ui.build_org             = nullptr;
+			ui.build                 = nullptr;
+			ui.staticData.buildUpGraphic = false;
+		}
+		// load shadow
+		sTmpString = sVehiclePath;
+		sTmpString += "build_shw.pcx";
+		if (FileExists (sTmpString.c_str()))
+		{
+			ui.build_shw_org = LoadPCX (sTmpString);
+			ui.build_shw = CloneSDLSurface (*ui.build_shw_org);
+			SDL_SetSurfaceAlphaMod (ui.build_shw.get(), 50);
+		}
+		else
+		{
+			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
+			ui.build_shw_org         = nullptr;
+			ui.build_shw             = nullptr;
+			ui.staticData.buildUpGraphic = false;
+		}
+	}
+	else
+	{
+		ui.build_org     = nullptr;
+		ui.build         = nullptr;
+		ui.build_shw_org = nullptr;
+		ui.build_shw     = nullptr;
+	}
+	// load cleargraphics if necessary
+	Log.write ("Loading cleargraphics", cLog::eLOG_TYPE_DEBUG);
+	if (staticData.vehicleData.canClearArea)
+	{
+		// load image (small)
+		sTmpString = sVehiclePath;
+		sTmpString += "clear_small.pcx";
+		if (FileExists (sTmpString.c_str()))
+		{
+			ui.clear_small_org = LoadPCX (sTmpString);
+			ui.clear_small = CloneSDLSurface (*ui.clear_small_org);
+			SDL_SetColorKey (ui.clear_small_org.get(), SDL_TRUE, 0xFFFFFF);
+			SDL_SetColorKey (ui.clear_small.get(), SDL_TRUE, 0xFFFFFF);
+		}
+		else
+		{
+			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
+			ui.clear_small_org      = nullptr;
+			ui.clear_small          = nullptr;
+			return false;
+		}
+		// load shadow (small)
+		sTmpString = sVehiclePath;
+		sTmpString += "clear_small_shw.pcx";
+		if (FileExists (sTmpString.c_str()))
+		{
+			ui.clear_small_shw_org = LoadPCX (sTmpString);
+			ui.clear_small_shw = CloneSDLSurface (*ui.clear_small_shw_org);
+			SDL_SetSurfaceAlphaMod (ui.clear_small_shw.get(), 50);
+		}
+		else
+		{
+			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
+			ui.clear_small_shw_org  = nullptr;
+			ui.clear_small_shw      = nullptr;
+			return false;
+		}
+		// load image (big)
+		sTmpString = sVehiclePath;
+		sTmpString += "clear_big.pcx";
+		if (FileExists (sTmpString.c_str()))
+		{
+			ui.build_org = LoadPCX (sTmpString);
+			ui.build = CloneSDLSurface (*ui.build_org);
+			SDL_SetColorKey (ui.build_org.get(), SDL_TRUE, 0xFFFFFF);
+			SDL_SetColorKey (ui.build.get(), SDL_TRUE, 0xFFFFFF);
+		}
+		else
+		{
+			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
+			ui.build_org            = nullptr;
+			ui.build                = nullptr;
+			return false;
+		}
+		// load shadow (big)
+		sTmpString = sVehiclePath;
+		sTmpString += "clear_big_shw.pcx";
+		if (FileExists (sTmpString.c_str()))
+		{
+			ui.build_shw_org = LoadPCX (sTmpString);
+			ui.build_shw = CloneSDLSurface (*ui.build_shw_org);
+			SDL_SetSurfaceAlphaMod (ui.build_shw.get(), 50);
+		}
+		else
+		{
+			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
+			ui.build_shw_org        = nullptr;
+			ui.build_shw            = nullptr;
+			return false;
+		}
+	}
+	else
+	{
+		ui.clear_small_org     = nullptr;
+		ui.clear_small         = nullptr;
+		ui.clear_small_shw_org = nullptr;
+		ui.clear_small_shw     = nullptr;
+	}
+
+	// load sounds
+	Log.write ("Loading sounds", cLog::eLOG_TYPE_DEBUG);
+	LoadUnitSoundfile (ui.Wait,       sVehiclePath.c_str(), "wait.ogg");
+	LoadUnitSoundfile (ui.WaitWater,  sVehiclePath.c_str(), "wait_water.ogg");
+	LoadUnitSoundfile (ui.Start,      sVehiclePath.c_str(), "start.ogg");
+	LoadUnitSoundfile (ui.StartWater, sVehiclePath.c_str(), "start_water.ogg");
+	LoadUnitSoundfile (ui.Stop,       sVehiclePath.c_str(), "stop.ogg");
+	LoadUnitSoundfile (ui.StopWater,  sVehiclePath.c_str(), "stop_water.ogg");
+	LoadUnitSoundfile (ui.Drive,      sVehiclePath.c_str(), "drive.ogg");
+	LoadUnitSoundfile (ui.DriveWater, sVehiclePath.c_str(), "drive_water.ogg");
+	LoadUnitSoundfile (ui.Attack,     sVehiclePath.c_str(), "attack.ogg");
+	return true;
+}
+
+//------------------------------------------------------------------------------
 static void LoadUnitGraphicProperties (sBuildingUIData& data, char const* directory)
 {
 	tinyxml2::XMLDocument unitGraphicsXml;
@@ -728,98 +1123,13 @@ static int LoadBuildings()
 		ui.id = staticData.ID;
 		LoadUnitGraphicProperties (ui, sBuildingPath.c_str());
 
-		if (DEDICATED_SERVER)
+		if (!DEDICATED_SERVER)
 		{
-			UnitsDataGlobal.addData (staticData);
-			UnitsDataGlobal.addData (dynamicData);
-			continue;
-		}
-
-		// load img
-		sTmpString = sBuildingPath;
-		sTmpString += "img.pcx";
-		if (FileExists (sTmpString.c_str()))
-		{
-			ui.img_org = LoadPCX (sTmpString);
-			ui.img = CloneSDLSurface (*ui.img_org);
-			SDL_SetColorKey (ui.img_org.get(), SDL_TRUE, 0xFFFFFF);
-			SDL_SetColorKey (ui.img.get(), SDL_TRUE, 0xFFFFFF);
-		}
-		else
-		{
-			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
-			return -1;
-		}
-		// load shadow
-		sTmpString = sBuildingPath;
-		sTmpString += "shw.pcx";
-		if (FileExists (sTmpString.c_str()))
-		{
-			ui.shw_org = LoadPCX (sTmpString);
-			ui.shw     = CloneSDLSurface (*ui.shw_org);
-			SDL_SetSurfaceAlphaMod (ui.shw.get(), 50);
-		}
-
-		// load video
-		sTmpString = sBuildingPath;
-		sTmpString += "video.pcx";
-		if (FileExists (sTmpString.c_str()))
-			ui.video = LoadPCX (sTmpString);
-
-		// load infoimage
-		sTmpString = sBuildingPath;
-		sTmpString += "info.pcx";
-		if (FileExists (sTmpString.c_str()))
-			ui.info = LoadPCX (sTmpString);
-
-		// load effectgraphics if necessary
-		if (ui.staticData.powerOnGraphic)
-		{
-			sTmpString = sBuildingPath;
-			sTmpString += "effect.pcx";
-			if (FileExists (sTmpString.c_str()))
+			if (!LoadUiData (sBuildingPath, ui))
 			{
-				ui.eff_org = LoadPCX (sTmpString);
-				ui.eff = CloneSDLSurface (*ui.eff_org);
-				SDL_SetSurfaceAlphaMod (ui.eff.get(), 10);
+				return -1;
 			}
 		}
-		else
-		{
-			ui.eff_org = nullptr;
-			ui.eff     = nullptr;
-		}
-
-		// load sounds
-		LoadUnitSoundfile (ui.Wait,    sBuildingPath.c_str(), "wait.ogg");
-		LoadUnitSoundfile (ui.Start,   sBuildingPath.c_str(), "start.ogg");
-		LoadUnitSoundfile (ui.Running, sBuildingPath.c_str(), "running.ogg");
-		LoadUnitSoundfile (ui.Stop,    sBuildingPath.c_str(), "stop.ogg");
-		LoadUnitSoundfile (ui.Attack,  sBuildingPath.c_str(), "attack.ogg");
-
-		// Get Ptr if necessary:
-		if (staticData.ID == UnitsDataGlobal.getConnectorID())
-		{
-			ui.isConnectorGraphic = true;
-			UnitsUiData.ptr_connector = ui.img.get();
-			UnitsUiData.ptr_connector_org = ui.img_org.get();
-			SDL_SetColorKey (UnitsUiData.ptr_connector, SDL_TRUE, 0xFF00FF);
-			UnitsUiData.ptr_connector_shw = ui.shw.get();
-			UnitsUiData.ptr_connector_shw_org = ui.shw_org.get();
-			SDL_SetColorKey (UnitsUiData.ptr_connector_shw, SDL_TRUE, 0xFF00FF);
-		}
-		else if (staticData.ID == UnitsDataGlobal.getSmallBetonID())
-		{
-			UnitsUiData.ptr_small_beton = ui.img.get();
-			UnitsUiData.ptr_small_beton_org = ui.img_org.get();
-			SDL_SetColorKey (UnitsUiData.ptr_small_beton, SDL_TRUE, 0xFF00FF);
-		}
-
-		// Check if there is more than one frame
-		// use 129 here because some images from the res_installer are one pixel too large
-		if (ui.img_org->w > 129 && !ui.isConnectorGraphic && !ui.staticData.hasClanLogos) ui.hasFrames = ui.img_org->w / ui.img_org->h;
-		else ui.hasFrames = 0;
-
 		UnitsDataGlobal.addData (staticData);
 		UnitsDataGlobal.addData (dynamicData);
 	}
@@ -919,311 +1229,13 @@ static int LoadVehicles()
 		// load graphics.xml
 		LoadUnitGraphicProperties (staticData, ui, sVehiclePath.c_str());
 
-		if (DEDICATED_SERVER)
+		if (!DEDICATED_SERVER)
 		{
-			UnitsDataGlobal.addData (staticData);
-			UnitsDataGlobal.addData (dynamicData);
-			continue;
-		}
-
-		Log.write ("Loading graphics", cLog::eLOG_TYPE_DEBUG);
-		// load infantry graphics
-		if (staticData.vehicleData.animationMovement)
-		{
-			SDL_Rect rcDest;
-			for (int n = 0; n < 8; n++)
+			if (!LoadUiData (sVehiclePath, staticData, ui))
 			{
-				ui.img[n] = AutoSurface (SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0));
-				SDL_SetColorKey (ui.img[n].get(), SDL_TRUE, 0x00FFFFFF);
-				SDL_FillRect (ui.img[n].get(), nullptr, 0x00FF00FF);
-
-				for (int j = 0; j < 13; j++)
-				{
-					sTmpString = sVehiclePath;
-					char sztmp[16];
-					TIXML_SNPRINTF (sztmp, sizeof (sztmp), "img%d_%.2d.pcx", n, j);
-					sTmpString += sztmp;
-
-					if (FileExists (sTmpString.c_str()))
-					{
-						AutoSurface sfTempSurface (LoadPCX (sTmpString));
-						if (!sfTempSurface)
-						{
-							Log.write (SDL_GetError(), cLog::eLOG_TYPE_WARNING);
-						}
-						else
-						{
-							rcDest.x = 64 * j + 32 - sfTempSurface->w / 2;
-							rcDest.y = 32 - sfTempSurface->h / 2;
-							SDL_BlitSurface (sfTempSurface.get(), nullptr, ui.img[n].get(), &rcDest);
-						}
-					}
-				}
-				ui.img_org[n] = AutoSurface (SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0));
-				SDL_SetColorKey (ui.img[n].get(), SDL_TRUE, 0x00FFFFFF);
-				SDL_FillRect (ui.img_org[n].get(), nullptr, 0x00FFFFFF);
-				SDL_BlitSurface (ui.img[n].get(), nullptr, ui.img_org[n].get(), nullptr);
-
-				ui.shw[n] = AutoSurface (SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0));
-				SDL_SetColorKey (ui.shw[n].get(), SDL_TRUE, 0x00FF00FF);
-				SDL_FillRect (ui.shw[n].get(), nullptr, 0x00FF00FF);
-				ui.shw_org[n] = AutoSurface (SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0));
-				SDL_SetColorKey (ui.shw_org[n].get(), SDL_TRUE, 0x00FF00FF);
-				SDL_FillRect (ui.shw_org[n].get(), nullptr, 0x00FF00FF);
-
-				rcDest.x = 3;
-				rcDest.y = 3;
-				SDL_BlitSurface (ui.img_org[n].get(), nullptr, ui.shw_org[n].get(), &rcDest);
-				SDL_LockSurface (ui.shw_org[n].get());
-				Uint32* ptr = static_cast<Uint32*> (ui.shw_org[n]->pixels);
-				for (int j = 0; j < 64 * 13 * 64; j++)
-				{
-					if (*ptr != 0x00FF00FF)
-						*ptr = 0;
-					ptr++;
-				}
-				SDL_UnlockSurface (ui.shw_org[n].get());
-				SDL_BlitSurface (ui.shw_org[n].get(), nullptr, ui.shw[n].get(), nullptr);
-				SDL_SetSurfaceAlphaMod (ui.shw_org[n].get(), 50);
-				SDL_SetSurfaceAlphaMod (ui.shw[n].get(), 50);
+				return -1;
 			}
 		}
-		// load other vehicle graphics
-		else
-		{
-			for (int n = 0; n < 8; n++)
-			{
-				// load image
-				sTmpString = sVehiclePath;
-				char sztmp[16];
-				TIXML_SNPRINTF (sztmp, sizeof (sztmp), "img%d.pcx", n);
-				sTmpString += sztmp;
-				Log.write (sTmpString, cLog::eLOG_TYPE_DEBUG);
-				if (FileExists (sTmpString.c_str()))
-				{
-					ui.img_org[n] = LoadPCX (sTmpString);
-					ui.img[n] = CloneSDLSurface (*ui.img_org[n]);
-					SDL_SetColorKey (ui.img_org[n].get(), SDL_TRUE, 0xFFFFFF);
-					SDL_SetColorKey (ui.img[n].get(), SDL_TRUE, 0xFFFFFF);
-				}
-				else
-				{
-					Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
-					return -1;
-				}
-
-				// load shadow
-				sTmpString.replace (sTmpString.length() - 8, 3, "shw");
-				if (FileExists (sTmpString.c_str()))
-				{
-					ui.shw_org[n] = LoadPCX (sTmpString);
-					ui.shw[n] = CloneSDLSurface (*ui.shw_org[n]);
-					SDL_SetSurfaceAlphaMod (ui.shw[n].get(), 50);
-				}
-				else
-				{
-					ui.shw_org[n] = nullptr;
-					ui.shw[n]     = nullptr;
-				}
-			}
-		}
-		// load video
-		ui.FLCFile = sVehiclePath;
-		ui.FLCFile += "video.flc";
-		Log.write ("Loading video " + ui.FLCFile, cLog::eLOG_TYPE_DEBUG);
-		if (!FileExists (ui.FLCFile.c_str()))
-		{
-			ui.FLCFile = "";
-		}
-
-		// load infoimage
-		sTmpString = sVehiclePath;
-		sTmpString += "info.pcx";
-		Log.write ("Loading portrait" + sTmpString, cLog::eLOG_TYPE_DEBUG);
-		if (FileExists (sTmpString.c_str()))
-		{
-			ui.info = LoadPCX (sTmpString);
-		}
-		else
-		{
-			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
-			return -1;
-		}
-
-		// load storageimage
-		sTmpString = sVehiclePath;
-		sTmpString += "store.pcx";
-		Log.write ("Loading storageportrait" + sTmpString, cLog::eLOG_TYPE_DEBUG);
-		if (FileExists (sTmpString.c_str()))
-		{
-			ui.storage = LoadPCX (sTmpString);
-		}
-		else
-		{
-			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
-			return -1;
-		}
-
-		// load overlaygraphics if necessary
-		Log.write ("Loading overlay", cLog::eLOG_TYPE_DEBUG);
-		if (ui.staticData.hasOverlay)
-		{
-			sTmpString = sVehiclePath;
-			sTmpString += "overlay.pcx";
-			if (FileExists (sTmpString.c_str()))
-			{
-				ui.overlay_org = LoadPCX (sTmpString);
-				ui.overlay = CloneSDLSurface (*ui.overlay_org);
-			}
-			else
-			{
-				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
-				ui.overlay_org       = nullptr;
-				ui.overlay           = nullptr;
-				ui.staticData.hasOverlay = false;
-			}
-		}
-		else
-		{
-			ui.overlay_org = nullptr;
-			ui.overlay     = nullptr;
-		}
-
-		// load buildgraphics if necessary
-		Log.write ("Loading buildgraphics", cLog::eLOG_TYPE_DEBUG);
-		if (ui.staticData.buildUpGraphic)
-		{
-			// load image
-			sTmpString = sVehiclePath;
-			sTmpString += "build.pcx";
-			if (FileExists (sTmpString.c_str()))
-			{
-				ui.build_org = LoadPCX (sTmpString);
-				ui.build = CloneSDLSurface (*ui.build_org);
-				SDL_SetColorKey (ui.build_org.get(), SDL_TRUE, 0xFFFFFF);
-				SDL_SetColorKey (ui.build.get(), SDL_TRUE, 0xFFFFFF);
-			}
-			else
-			{
-				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
-				ui.build_org             = nullptr;
-				ui.build                 = nullptr;
-				ui.staticData.buildUpGraphic = false;
-			}
-			// load shadow
-			sTmpString = sVehiclePath;
-			sTmpString += "build_shw.pcx";
-			if (FileExists (sTmpString.c_str()))
-			{
-				ui.build_shw_org = LoadPCX (sTmpString);
-				ui.build_shw = CloneSDLSurface (*ui.build_shw_org);
-				SDL_SetSurfaceAlphaMod (ui.build_shw.get(), 50);
-			}
-			else
-			{
-				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
-				ui.build_shw_org         = nullptr;
-				ui.build_shw             = nullptr;
-				ui.staticData.buildUpGraphic = false;
-			}
-		}
-		else
-		{
-			ui.build_org     = nullptr;
-			ui.build         = nullptr;
-			ui.build_shw_org = nullptr;
-			ui.build_shw     = nullptr;
-		}
-		// load cleargraphics if necessary
-		Log.write ("Loading cleargraphics", cLog::eLOG_TYPE_DEBUG);
-		if (staticData.vehicleData.canClearArea)
-		{
-			// load image (small)
-			sTmpString = sVehiclePath;
-			sTmpString += "clear_small.pcx";
-			if (FileExists (sTmpString.c_str()))
-			{
-				ui.clear_small_org = LoadPCX (sTmpString);
-				ui.clear_small = CloneSDLSurface (*ui.clear_small_org);
-				SDL_SetColorKey (ui.clear_small_org.get(), SDL_TRUE, 0xFFFFFF);
-				SDL_SetColorKey (ui.clear_small.get(), SDL_TRUE, 0xFFFFFF);
-			}
-			else
-			{
-				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
-				ui.clear_small_org      = nullptr;
-				ui.clear_small          = nullptr;
-				staticData.vehicleData.canClearArea = false;
-			}
-			// load shadow (small)
-			sTmpString = sVehiclePath;
-			sTmpString += "clear_small_shw.pcx";
-			if (FileExists (sTmpString.c_str()))
-			{
-				ui.clear_small_shw_org = LoadPCX (sTmpString);
-				ui.clear_small_shw = CloneSDLSurface (*ui.clear_small_shw_org);
-				SDL_SetSurfaceAlphaMod (ui.clear_small_shw.get(), 50);
-			}
-			else
-			{
-				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
-				ui.clear_small_shw_org  = nullptr;
-				ui.clear_small_shw      = nullptr;
-				staticData.vehicleData.canClearArea = false;
-			}
-			// load image (big)
-			sTmpString = sVehiclePath;
-			sTmpString += "clear_big.pcx";
-			if (FileExists (sTmpString.c_str()))
-			{
-				ui.build_org = LoadPCX (sTmpString);
-				ui.build = CloneSDLSurface (*ui.build_org);
-				SDL_SetColorKey (ui.build_org.get(), SDL_TRUE, 0xFFFFFF);
-				SDL_SetColorKey (ui.build.get(), SDL_TRUE, 0xFFFFFF);
-			}
-			else
-			{
-				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
-				ui.build_org            = nullptr;
-				ui.build                = nullptr;
-				staticData.vehicleData.canClearArea = false;
-			}
-			// load shadow (big)
-			sTmpString = sVehiclePath;
-			sTmpString += "clear_big_shw.pcx";
-			if (FileExists (sTmpString.c_str()))
-			{
-				ui.build_shw_org = LoadPCX (sTmpString);
-				ui.build_shw = CloneSDLSurface (*ui.build_shw_org);
-				SDL_SetSurfaceAlphaMod (ui.build_shw.get(), 50);
-			}
-			else
-			{
-				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
-				ui.build_shw_org        = nullptr;
-				ui.build_shw            = nullptr;
-				staticData.vehicleData.canClearArea = false;
-			}
-		}
-		else
-		{
-			ui.clear_small_org     = nullptr;
-			ui.clear_small         = nullptr;
-			ui.clear_small_shw_org = nullptr;
-			ui.clear_small_shw     = nullptr;
-		}
-
-		// load sounds
-		Log.write ("Loading sounds", cLog::eLOG_TYPE_DEBUG);
-		LoadUnitSoundfile (ui.Wait,       sVehiclePath.c_str(), "wait.ogg");
-		LoadUnitSoundfile (ui.WaitWater,  sVehiclePath.c_str(), "wait_water.ogg");
-		LoadUnitSoundfile (ui.Start,      sVehiclePath.c_str(), "start.ogg");
-		LoadUnitSoundfile (ui.StartWater, sVehiclePath.c_str(), "start_water.ogg");
-		LoadUnitSoundfile (ui.Stop,       sVehiclePath.c_str(), "stop.ogg");
-		LoadUnitSoundfile (ui.StopWater,  sVehiclePath.c_str(), "stop_water.ogg");
-		LoadUnitSoundfile (ui.Drive,      sVehiclePath.c_str(), "drive.ogg");
-		LoadUnitSoundfile (ui.DriveWater, sVehiclePath.c_str(), "drive_water.ogg");
-		LoadUnitSoundfile (ui.Attack,     sVehiclePath.c_str(), "attack.ogg");
 
 		UnitsDataGlobal.addData (staticData);
 		UnitsDataGlobal.addData (dynamicData);
