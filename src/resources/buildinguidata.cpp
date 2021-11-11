@@ -131,7 +131,7 @@ void sBuildingUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest,
 	}
 
 	// blit the players color and building graphic
-	if (hasPlayerColor && owner) SDL_BlitSurface (cPlayerColor::getTexture (owner->getColor()), nullptr, GraphicsData.gfx_tmp.get(), nullptr);
+	if (staticData.hasPlayerColor && owner) SDL_BlitSurface (cPlayerColor::getTexture (owner->getColor()), nullptr, GraphicsData.gfx_tmp.get(), nullptr);
 	else SDL_FillRect (GraphicsData.gfx_tmp.get(), nullptr, 0x00FF00FF);
 
 	if (hasFrames)
@@ -143,7 +143,7 @@ void sBuildingUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest,
 
 		src.x = 0;
 	}
-	else if (hasClanLogos)
+	else if (staticData.hasClanLogos)
 	{
 		CHECK_SCALING (*img, *img_org, zoomFactor);
 		src.x = 0;
@@ -175,7 +175,7 @@ void sBuildingUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest,
 void sBuildingUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor, const cBuilding& building, unsigned long long animationTime, int alpha) const
 {
 	int frameNr = building.dir;
-	if (hasFrames && isAnimated && cSettings::getInstance().isAnimations() && building.isDisabled() == false)
+	if (hasFrames && staticData.isAnimated && cSettings::getInstance().isAnimations() && building.isDisabled() == false)
 	{
 		frameNr = (animationTime % hasFrames);
 	}
@@ -196,7 +196,7 @@ void sBuildingUIData::render (unsigned long long animationTime, SDL_Surface& sur
 	}
 
 	// draw the concrete
-	if (hasBetonUnderground && drawConcrete)
+	if (staticData.hasBetonUnderground && drawConcrete)
 	{
 		render_beton (surface, dest, zoomFactor, building);
 	}

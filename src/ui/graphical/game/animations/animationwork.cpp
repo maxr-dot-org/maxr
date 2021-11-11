@@ -33,12 +33,12 @@ cAnimationWork::cAnimationWork (cAnimationTimer& animationTimer_, const cBuildin
 	incrementEffect (false)
 {
 	auto& uiData = UnitsUiData.getBuildingUI (*building);
-	if (building->isUnitWorking() || uiData.powerOnGraphic)
+	if (building->isUnitWorking() || uiData.staticData.powerOnGraphic)
 	{
 		activate();
 	}
 
-	if (!uiData.powerOnGraphic)
+	if (!uiData.staticData.powerOnGraphic)
 	{
 		signalConnectionManager.connect (building->workingChanged, [this]()
 		{

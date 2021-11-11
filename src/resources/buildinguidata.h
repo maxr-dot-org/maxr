@@ -21,10 +21,35 @@
 #define resources_buildinguidataH
 
 #include "game/data/units/id.h"
+#include "game/serialization/serialization.h"
 #include "resources/sound.h"
 
 #include "SDLutility/autosurface.h"
 #include <SDL.h>
+
+//------------------------------------------------------------------------------
+struct sBuildingUIStaticData
+{
+	bool hasBetonUnderground = false;
+	bool hasClanLogos = false;
+	bool hasDamageEffect = false;
+	bool hasOverlay = false;
+	bool hasPlayerColor = false;
+	bool isAnimated = false;
+	bool powerOnGraphic = false;
+
+	template <typename Archive>
+	void serialize (Archive& archive)
+	{
+		archive & NVP (hasBetonUnderground);
+		archive & NVP (hasClanLogos);
+		archive & NVP (hasDamageEffect);
+		archive & NVP (hasOverlay);
+		archive & NVP (hasPlayerColor);
+		archive & NVP (isAnimated);
+		archive & NVP (powerOnGraphic);
+	}
+};
 
 //--------------------------------------------------------------------------
 /** struct for the images and sounds */
@@ -50,15 +75,7 @@ private:
 public:
 	sID id;
 
-	bool hasClanLogos = false;
-	bool hasDamageEffect = false;
-	bool hasBetonUnderground = false;
-	bool hasPlayerColor = false;
-	bool hasOverlay = false;
-
-	bool buildUpGraphic = false;
-	bool powerOnGraphic = false;
-	bool isAnimated = false;
+	sBuildingUIStaticData staticData;
 
 	bool isConnectorGraphic = false;
 	int hasFrames = 0;

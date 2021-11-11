@@ -236,7 +236,7 @@ void render (const cVehicle& vehicle, const cMapView* map, unsigned long long an
 //------------------------------------------------------------------------------
 void sVehicleUIData::drawOverlayAnimation (SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha) const
 {
-	if (hasOverlay == false || cSettings::getInstance().isAnimations() == false) return;
+	if (staticData.hasOverlay == false || cSettings::getInstance().isAnimations() == false) return;
 
 	const Uint16 size = (Uint16) (overlay_org->h * zoomFactor);
 	const Uint16 srcX = Round ((overlay_org->h * frameNr) * zoomFactor);
@@ -270,7 +270,7 @@ void drawOverlayAnimation (const cVehicle& vehicle, unsigned long long animation
 {
 	const auto& uiData = *UnitsUiData.getVehicleUI (vehicle.getStaticUnitData().ID);
 
-	if (uiData.hasOverlay == false || cSettings::getInstance().isAnimations() == false) return;
+	if (uiData.staticData.hasOverlay == false || cSettings::getInstance().isAnimations() == false) return;
 	int frameNr = 0;
 	if (vehicle.isDisabled() == false)
 	{

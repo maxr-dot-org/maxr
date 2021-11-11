@@ -2074,7 +2074,7 @@ void cGameMapWidget::addAnimationsForUnit (const cUnit& unit)
 		if (building.isRubble()) return;
 		auto& uiData = UnitsUiData.getBuildingUI (building);
 
-		if (uiData.powerOnGraphic || building.getStaticData().canWork)
+		if (uiData.staticData.powerOnGraphic || building.getStaticData().canWork)
 		{
 			animations.push_back (std::make_unique<cAnimationWork> (*animationTimer, building));
 		}
@@ -2358,7 +2358,7 @@ void cGameMapWidget::renewDamageEffect (const cBuilding& building)
 	if (building.isRubble()) return;
 	auto& uiData = UnitsUiData.getBuildingUI (building);
 
-	if (uiData.hasDamageEffect &&
+	if (uiData.staticData.hasDamageEffect &&
 		building.data.getHitpoints() < building.data.getHitpointsMax() &&
 		(building.getOwner() == player.get() || (!player || mapView->canSeeUnit (building))))
 	{

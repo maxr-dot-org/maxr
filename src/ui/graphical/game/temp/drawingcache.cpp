@@ -168,13 +168,13 @@ SDL_Surface* cDrawingCache::getCachedImage (const cBuilding& building, double zo
 
 		}
 		auto& uiData = UnitsUiData.getBuildingUI (building);
-		if (uiData.hasFrames && !uiData.isAnimated)
+		if (uiData.hasFrames && !uiData.staticData.isAnimated)
 		{
 			if (entry.dir != building.dir) continue;
 		}
 		if (entry.zoom != zoom) continue;
 
-		if (uiData.hasClanLogos)
+		if (uiData.staticData.hasClanLogos)
 		{
 			if (building.getOwner() && building.getOwner()->getClan() != entry.clan) continue;
 			if (!building.getOwner() && entry.clan != -1) continue;
@@ -352,7 +352,7 @@ bool cDrawingCache::canCache (const cBuilding& building)
 
 	if (!building.getOwner() ||
 		building.alphaEffectValue ||
-		uiData.isAnimated)
+		uiData.staticData.isAnimated)
 	{
 		notCached++;
 		return false;

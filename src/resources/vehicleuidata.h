@@ -21,6 +21,7 @@
 #define resources_vehicleuidataH
 
 #include "game/data/units/id.h"
+#include "game/serialization/serialization.h"
 #include "resources/sound.h"
 
 #include <array>
@@ -31,6 +32,27 @@
 
 class cMapView;
 struct sStaticVehicleData;
+
+struct sVehicleUIStaticData
+{
+	bool buildUpGraphic = false;
+	bool hasDamageEffect = false;
+	bool hasOverlay = false;
+	bool hasPlayerColor = false;
+	bool isAnimated = false;
+	int hasFrames = 0;
+
+	template <typename Archive>
+	void serialize (Archive& archive)
+	{
+		archive & NVP (buildUpGraphic);
+		archive & NVP (hasDamageEffect);
+		archive & NVP (hasOverlay);
+		archive & NVP (hasPlayerColor);
+		archive & NVP (isAnimated);
+		archive & NVP (hasFrames);
+	}
+};
 
 //-----------------------------------------------------------------------------
 // Struct for the pictures and sounds
@@ -57,15 +79,7 @@ private:
 public:
 	sID id;
 
-	bool hasDamageEffect = false;
-	bool hasPlayerColor = false;
-	bool hasOverlay = false;
-
-	bool buildUpGraphic = false;
-	bool powerOnGraphic = false;
-	bool isAnimated = false;
-
-	int hasFrames = 0;
+	sVehicleUIStaticData staticData;
 
 	std::array<AutoSurface, 8> img, img_org; // 8 Surfaces of the vehicle
 	std::array<AutoSurface, 8> shw, shw_org; // 8 Surfaces of shadows

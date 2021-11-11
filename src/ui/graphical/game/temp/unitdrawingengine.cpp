@@ -114,7 +114,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 
 	auto& uiData = UnitsUiData.getBuildingUI (building);
 	// draw the effect if necessary
-	if (uiData.powerOnGraphic && cSettings::getInstance().isAnimations() && (building.isUnitWorking() || !building.getStaticData().canWork))
+	if (uiData.staticData.powerOnGraphic && cSettings::getInstance().isAnimations() && (building.isUnitWorking() || !building.getStaticData().canWork))
 	{
 		SDL_Rect tmp = dest;
 		SDL_SetSurfaceAlphaMod (uiData.eff.get(), building.effectAlpha);

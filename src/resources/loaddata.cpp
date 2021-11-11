@@ -610,15 +610,14 @@ static void LoadUnitGraphicProperties (sBuildingUIData& data, char const* direct
 		return;
 	}
 
-	data.hasClanLogos = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Clan_Logos"});
-	data.hasDamageEffect = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Damage_Effect"});
-	data.hasBetonUnderground = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Beton_Underground"});
-	data.hasPlayerColor = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Player_Color"});
-	data.hasOverlay = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Overlay"});
+	data.staticData.hasClanLogos = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Clan_Logos"});
+	data.staticData.hasDamageEffect = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Damage_Effect"});
+	data.staticData.hasBetonUnderground = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Beton_Underground"});
+	data.staticData.hasPlayerColor = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Player_Color"});
+	data.staticData.hasOverlay = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Overlay"});
 
-	data.buildUpGraphic = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Animations", "Build_Up"});
-	data.powerOnGraphic = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Animations", "Power_On"});
-	data.isAnimated = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Animations", "Is_Animated"});
+	data.staticData.powerOnGraphic = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Animations", "Power_On"});
+	data.staticData.isAnimated = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Animations", "Is_Animated"});
 }
 
 namespace
@@ -774,7 +773,7 @@ static int LoadBuildings()
 			ui.info = LoadPCX (sTmpString);
 
 		// load effectgraphics if necessary
-		if (ui.powerOnGraphic)
+		if (ui.staticData.powerOnGraphic)
 		{
 			sTmpString = sBuildingPath;
 			sTmpString += "effect.pcx";
@@ -818,7 +817,7 @@ static int LoadBuildings()
 
 		// Check if there is more than one frame
 		// use 129 here because some images from the res_installer are one pixel too large
-		if (ui.img_org->w > 129 && !ui.isConnectorGraphic && !ui.hasClanLogos) ui.hasFrames = ui.img_org->w / ui.img_org->h;
+		if (ui.img_org->w > 129 && !ui.isConnectorGraphic && !ui.staticData.hasClanLogos) ui.hasFrames = ui.img_org->w / ui.img_org->h;
 		else ui.hasFrames = 0;
 
 		UnitsDataGlobal.addData (staticData);
@@ -859,14 +858,13 @@ static void LoadUnitGraphicProperties (cStaticUnitData& staticData,  sVehicleUID
 	}
 
 	staticData.vehicleData.hasCorpse = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Corpse"});
-	data.hasDamageEffect = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Damage_Effect"});
-	data.hasPlayerColor = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Player_Color"});
-	data.hasOverlay = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Overlay"});
+	data.staticData.hasDamageEffect = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Damage_Effect"});
+	data.staticData.hasPlayerColor = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Player_Color"});
+	data.staticData.hasOverlay = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Has_Overlay"});
 
-	data.buildUpGraphic = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Animations", "Build_Up"});
+	data.staticData.buildUpGraphic = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Animations", "Build_Up"});
 	staticData.vehicleData.animationMovement = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Animations", "Movement"});
-	data.powerOnGraphic = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Animations", "Power_On"});
-	data.isAnimated = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Animations", "Is_Animated"});
+	data.staticData.isAnimated = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Animations", "Is_Animated"});
 	staticData.vehicleData.makeTracks = getXMLAttributeBool (unitGraphicsXml, "Unit", {"Graphic", "Animations", "Makes_Tracks"});
 }
 
@@ -1068,7 +1066,7 @@ static int LoadVehicles()
 
 		// load overlaygraphics if necessary
 		Log.write ("Loading overlay", cLog::eLOG_TYPE_DEBUG);
-		if (ui.hasOverlay)
+		if (ui.staticData.hasOverlay)
 		{
 			sTmpString = sVehiclePath;
 			sTmpString += "overlay.pcx";
@@ -1082,7 +1080,7 @@ static int LoadVehicles()
 				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
 				ui.overlay_org       = nullptr;
 				ui.overlay           = nullptr;
-				ui.hasOverlay = false;
+				ui.staticData.hasOverlay = false;
 			}
 		}
 		else
@@ -1093,7 +1091,7 @@ static int LoadVehicles()
 
 		// load buildgraphics if necessary
 		Log.write ("Loading buildgraphics", cLog::eLOG_TYPE_DEBUG);
-		if (ui.buildUpGraphic)
+		if (ui.staticData.buildUpGraphic)
 		{
 			// load image
 			sTmpString = sVehiclePath;
@@ -1110,7 +1108,7 @@ static int LoadVehicles()
 				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
 				ui.build_org             = nullptr;
 				ui.build                 = nullptr;
-				ui.buildUpGraphic = false;
+				ui.staticData.buildUpGraphic = false;
 			}
 			// load shadow
 			sTmpString = sVehiclePath;
@@ -1126,7 +1124,7 @@ static int LoadVehicles()
 				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
 				ui.build_shw_org         = nullptr;
 				ui.build_shw             = nullptr;
-				ui.buildUpGraphic = false;
+				ui.staticData.buildUpGraphic = false;
 			}
 		}
 		else
