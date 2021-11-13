@@ -169,6 +169,7 @@ uint32_t sStaticBuildingData::computeChecksum (uint32_t crc) const
 //------------------------------------------------------------------------------
 uint32_t sStaticVehicleData::computeChecksum (uint32_t crc) const
 {
+	crc = calcCheckSum (animationMovement, crc);
 	crc = calcCheckSum (canBuildPath, crc);
 	crc = calcCheckSum (canCapture, crc);
 	crc = calcCheckSum (canClearArea, crc);
@@ -176,9 +177,10 @@ uint32_t sStaticVehicleData::computeChecksum (uint32_t crc) const
 	crc = calcCheckSum (canDisable, crc);
 	crc = calcCheckSum (canPlaceMines, crc);
 	crc = calcCheckSum (canSurvey, crc);
+	crc = calcCheckSum (hasCorpse, crc);
 	crc = calcCheckSum (isHuman, crc);
 	crc = calcCheckSum (isStorageType, crc);
-
+	crc = calcCheckSum (makeTracks, crc);
 	return crc;
 }
 

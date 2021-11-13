@@ -147,8 +147,8 @@ struct sStaticVehicleData
 	bool canDriveAndFire = false;
 	bool canPlaceMines = false;
 	bool canSurvey = false;
-	bool isHuman = false;
 	bool hasCorpse = false;
+	bool isHuman = false;
 	bool makeTracks = false;
 	bool animationMovement = false;
 
@@ -159,6 +159,7 @@ struct sStaticVehicleData
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		archive & NVP (animationMovement);
 		archive & NVP (canBuildPath);
 		archive & NVP (canClearArea);
 		archive & NVP (canCapture);
@@ -166,8 +167,10 @@ struct sStaticVehicleData
 		archive & NVP (canDriveAndFire);
 		archive & NVP (canPlaceMines);
 		archive & NVP (canSurvey);
+		archive & NVP (hasCorpse);
 		archive & NVP (isHuman);
 		archive & NVP (isStorageType);
+		archive & NVP (makeTracks);
 	}
 };
 
