@@ -485,7 +485,7 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 
 	staticData.buildingData.canBeLandedOn = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Can_Be_Landed_On"});
 	staticData.buildingData.canWork = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Is_Activatable"});
-	staticData.explodesOnContact = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Explodes_On_Contact"});
+	staticData.buildingData.explodesOnContact = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Explodes_On_Contact"});
 	staticData.vehicleData.isHuman = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Is_Human"});
 
 	// Storage

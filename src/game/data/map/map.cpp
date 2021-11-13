@@ -122,7 +122,7 @@ cBuilding* cMapField::getRubble() const
 cBuilding* cMapField::getMine() const
 {
 	for (cBuilding* building : buildings)
-		if (building->getStaticUnitData().explodesOnContact)
+		if (building->getStaticData().explodesOnContact)
 			return building;
 	return nullptr;
 }
@@ -907,7 +907,7 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 		if (player &&
 			b_it != b_end &&
 			(*b_it)->getOwner() != player &&
-			(*b_it)->getStaticUnitData().explodesOnContact &&
+			(*b_it)->getStaticData().explodesOnContact &&
 			(*b_it)->isDetectedByPlayer (player))
 		{
 			return false;
@@ -941,7 +941,7 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 		if (player &&
 			b_it != b_end &&
 			(*b_it)->getOwner() != player &&
-			(*b_it)->getStaticUnitData().explodesOnContact &&
+			(*b_it)->getStaticData().explodesOnContact &&
 			(*b_it)->isDetectedByPlayer (player))
 		{
 			return false;

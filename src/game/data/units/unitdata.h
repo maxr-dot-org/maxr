@@ -111,6 +111,7 @@ struct sStaticBuildingData
 	bool canWork = false;
 	bool connectsToBase = false;
 	int convertsGold = 0;
+	bool explodesOnContact = false;
 	bool isBig = false;
 	int maxBuildFactor = 0;
 	float modifiesSpeed = 0.f;
@@ -129,6 +130,7 @@ struct sStaticBuildingData
 		archive & NVP (canWork);
 		archive & NVP (connectsToBase);
 		archive & NVP (convertsGold);
+		archive & NVP (explodesOnContact);
 		archive & NVP (isBig);
 		archive & NVP (maxBuildFactor);
 		archive & NVP (modifiesSpeed);
@@ -217,8 +219,6 @@ public:
 
 	eSurfacePosition surfacePosition = eSurfacePosition::BeneathSea;
 
-	bool explodesOnContact = false;
-
 	// Storage
 	int storageResMax = 0;
 	eResourceType storeResType = eResourceType::None;
@@ -258,7 +258,6 @@ public:
 		archive & NVP (isStealthOn);
 		archive & NVP (canDetectStealthOn);
 		archive & NVP (surfacePosition);
-		archive & NVP (explodesOnContact);
 		archive & NVP (storageResMax);
 		archive & NVP (storeResType);
 		archive & NVP (storageUnitsMax);

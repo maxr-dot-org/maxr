@@ -185,7 +185,7 @@ void cUnitDetailsHud::reset()
 			drawRow (1, symbolType, unit->storedUnits.size(), staticData.storageUnitsMax, lngPack.i18n ("Text~Others~Cargo_7"));
 		}
 	}
-	else if (staticData.canAttack && !staticData.explodesOnContact)
+	else if (staticData.canAttack && (staticData.ID.isAVehicle() || !staticData.buildingData.explodesOnContact))
 	{
 		if (unit->getOwner() == player) drawRow (1, eUnitDataSymbolType::Ammo, data.getAmmo(), data.getAmmoMax(), lngPack.i18n ("Text~Others~Ammo_7"));
 

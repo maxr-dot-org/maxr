@@ -158,6 +158,7 @@ uint32_t sStaticBuildingData::computeChecksum (uint32_t crc) const
 	crc = calcCheckSum (canWork, crc);
 	crc = calcCheckSum (connectsToBase, crc);
 	crc = calcCheckSum (convertsGold, crc);
+	crc = calcCheckSum (explodesOnContact, crc);
 	crc = calcCheckSum (isBig, crc);
 	crc = calcCheckSum (maxBuildFactor, crc);
 	crc = calcCheckSum (modifiesSpeed, crc);
@@ -400,7 +401,6 @@ uint32_t cStaticUnitData::getChecksum (uint32_t crc) const
 	crc = calcCheckSum (canRepair, crc);
 	crc = calcCheckSum (description, crc);
 	crc = calcCheckSum (doesSelfRepair, crc);
-	crc = calcCheckSum (explodesOnContact, crc);
 	crc = calcCheckSum (factorGround, crc);
 	crc = calcCheckSum (factorSea, crc);
 	crc = calcCheckSum (factorAir, crc);

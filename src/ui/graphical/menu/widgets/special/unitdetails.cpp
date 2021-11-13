@@ -139,7 +139,7 @@ void cUnitDetails::reset()
 		upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::eUpgradeType::Damage) : nullptr;
 		drawRow (rowIndex++, eUnitDataSymbolType::Attack, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getDamage(), lngPack.i18n ("Text~Others~Attack_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getDamage(), playerOriginalData->getDamage());
 
-		if (!staticUnitData->explodesOnContact)
+		if (staticUnitData->ID.isAVehicle() || !staticUnitData->buildingData.explodesOnContact)
 		{
 			// Shots:
 			upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::eUpgradeType::Shots) : nullptr;

@@ -141,7 +141,7 @@ cBuilding* cMapFieldView::getMine() const
 	{
 		if (!player || player->canSeeUnit (*building, mapField, terrain))
 		{
-			if (building->getStaticUnitData().explodesOnContact)
+			if (building->getStaticData().explodesOnContact)
 			{
 				return building;
 			}

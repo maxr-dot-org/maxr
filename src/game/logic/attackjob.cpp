@@ -242,7 +242,7 @@ void cAttackJob::fire (cModel& model)
 	}
 
 	//make explosive mines explode
-	if (aggressor->getStaticUnitData().explodesOnContact && aggressor->getPosition() == targetPosition)
+	if (dynamic_cast<cBuilding*>(aggressor) && aggressor->getStaticUnitData().buildingData.explodesOnContact && aggressor->getPosition() == targetPosition)
 	{
 		const cMap& map = *model.getMap();
 		if (map.isWaterOrCoast (aggressor->getPosition()))
@@ -472,7 +472,7 @@ void cAttackJob::impactSingle (const cPosition& position, int attackPoints, cMod
 		}
 	}
 
-	if (aggressor->getStaticUnitData().explodesOnContact)
+	if (dynamic_cast<cBuilding*>(aggressor) && aggressor->getStaticUnitData().buildingData.explodesOnContact)
 	{
 		model.deleteUnit (aggressor);
 		aggressor = nullptr;

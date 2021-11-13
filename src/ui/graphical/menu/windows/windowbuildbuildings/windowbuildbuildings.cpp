@@ -100,8 +100,8 @@ void cWindowBuildBuildings::generateSelectionList (const cVehicle& vehicle, cons
 	bool select = true;
 	for (const auto& data : unitsData.getStaticUnitsData())
 	{
-		if (data.explodesOnContact) continue;
 		if (data.ID.isAVehicle()) continue;
+		if (data.buildingData.explodesOnContact) continue;
 
 		if (vehicle.getStaticUnitData().canBuild != data.buildAs) continue;
 

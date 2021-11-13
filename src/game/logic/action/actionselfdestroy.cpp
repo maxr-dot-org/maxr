@@ -46,7 +46,7 @@ void cActionSelfDestroy::execute (cModel& model) const
 
 	// special case: when a land/sea mine explodes, it makes damage according to
 	// its attack points. So start an attack job instead of just destoying it.
-	if (b->getStaticUnitData().explodesOnContact)
+	if (b->getStaticData().explodesOnContact)
 	{
 		model.addAttackJob (*b, b->getPosition());
 	}

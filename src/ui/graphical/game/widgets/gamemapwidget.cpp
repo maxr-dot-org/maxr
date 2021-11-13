@@ -1456,7 +1456,7 @@ void cGameMapWidget::drawUnitCircles()
 							selectedBuilding->data.getScan() * zoomedTileSize.x(), SCAN_COLOR, *cVideo::buffer);
 			}
 		}
-		if (shouldDrawRange && (selectedBuilding->getStaticUnitData().canAttack & TERRAIN_GROUND) && !selectedBuilding->getStaticUnitData().explodesOnContact)
+		if (shouldDrawRange && (selectedBuilding->getStaticUnitData().canAttack & TERRAIN_GROUND) && !selectedBuilding->getStaticData().explodesOnContact)
 		{
 			drawCircle (screenPosition. x() + zoomedTileSize.x() / 2,
 						screenPosition. y() + zoomedTileSize.y() / 2,
