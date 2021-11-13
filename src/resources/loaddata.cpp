@@ -479,9 +479,9 @@ static void LoadUnitData (cStaticUnitData& staticData, cDynamicUnitData& dynamic
 	else staticData.surfacePosition = eSurfacePosition::Ground;
 
 	std::string overbuildString = getXMLAttributeString (unitDataXml, "Const", "Unit", {"Abilities", "Can_Be_Overbuild"});
-	if (overbuildString.compare ("Yes") == 0) staticData.canBeOverbuild = eOverbuildType::Yes;
-	else if (overbuildString.compare ("YesNRemove") == 0) staticData.canBeOverbuild = eOverbuildType::YesNRemove;
-	else staticData.canBeOverbuild = eOverbuildType::No;
+	if (overbuildString.compare ("Yes") == 0) staticData.buildingData.canBeOverbuild = eOverbuildType::Yes;
+	else if (overbuildString.compare ("YesNRemove") == 0) staticData.buildingData.canBeOverbuild = eOverbuildType::YesNRemove;
+	else staticData.buildingData.canBeOverbuild = eOverbuildType::No;
 
 	staticData.buildingData.canBeLandedOn = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Can_Be_Landed_On"});
 	staticData.buildingData.canWork = getXMLAttributeBool (unitDataXml, "Unit", {"Abilities", "Is_Activatable"});

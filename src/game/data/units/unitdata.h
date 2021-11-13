@@ -104,6 +104,7 @@ struct sStaticBuildingData
 {
 	bool canBeLandedOn = false;
 	int canMineMaxRes = 0;
+	eOverbuildType canBeOverbuild = eOverbuildType::No;
 	bool canResearch = false;
 	bool canSelfDestroy = false;
 	bool canScore = false;
@@ -121,6 +122,7 @@ struct sStaticBuildingData
 	{
 		archive & NVP (canBeLandedOn);
 		archive & NVP (canMineMaxRes);
+		archive & NVP (canBeOverbuild);
 		archive & NVP (canResearch);
 		archive & NVP (canScore);
 		archive & NVP (canSelfDestroy);
@@ -215,8 +217,6 @@ public:
 
 	eSurfacePosition surfacePosition = eSurfacePosition::BeneathSea;
 
-	eOverbuildType canBeOverbuild = eOverbuildType::No;
-
 	bool explodesOnContact = false;
 
 	// Storage
@@ -258,7 +258,6 @@ public:
 		archive & NVP (isStealthOn);
 		archive & NVP (canDetectStealthOn);
 		archive & NVP (surfacePosition);
-		archive & NVP (canBeOverbuild);
 		archive & NVP (explodesOnContact);
 		archive & NVP (storageResMax);
 		archive & NVP (storeResType);

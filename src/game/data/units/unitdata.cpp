@@ -151,6 +151,7 @@ uint32_t sStaticBuildingData::computeChecksum (uint32_t crc) const
 {
 	crc = calcCheckSum (canBeLandedOn, crc);
 	crc = calcCheckSum (canMineMaxRes, crc);
+	crc = calcCheckSum (canBeOverbuild, crc);
 	crc = calcCheckSum (canResearch, crc);
 	crc = calcCheckSum (canScore, crc);
 	crc = calcCheckSum (canSelfDestroy, crc);
@@ -393,7 +394,6 @@ uint32_t cStaticUnitData::getChecksum (uint32_t crc) const
 	crc = calcCheckSum (canAttack, crc);
 	crc = calcCheckSum (canBeCaptured, crc);
 	crc = calcCheckSum (canBeDisabled, crc);
-	crc = calcCheckSum (canBeOverbuild, crc);
 	crc = calcCheckSum (canBuild, crc);
 	crc = calcCheckSum (canDetectStealthOn, crc);
 	crc = calcCheckSum (canRearm, crc);

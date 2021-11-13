@@ -670,7 +670,7 @@ void cMap::placeResources (cModel& model)
 
 	if (data.surfacePosition == eSurfacePosition::BeneathSea) return 9; // seamine
 	if (data.surfacePosition == eSurfacePosition::AboveSea) return 7; // bridge
-	if (data.surfacePosition == eSurfacePosition::Base && data.canBeOverbuild != eOverbuildType::No) return 6; // platform
+	if (data.surfacePosition == eSurfacePosition::Base && building.getStaticData().canBeOverbuild != eOverbuildType::No) return 6; // platform
 	if (data.surfacePosition == eSurfacePosition::Base) return 5; // road
 
 	if (data.surfacePosition == eSurfacePosition::AboveBase) return 3; // landmine
@@ -997,7 +997,7 @@ bool cMap::possiblePlaceBuilding (const cStaticUnitData& buildingData, const cPo
 	for (const cBuilding* building : buildings)
 	{
 		if (buildingData.surfacePosition == building->getStaticUnitData().surfacePosition &&
-			building->getStaticUnitData().canBeOverbuild == eOverbuildType::No) return false;
+			building->getStaticData().canBeOverbuild == eOverbuildType::No) return false;
 		switch (building->getStaticUnitData().surfacePosition)
 		{
 			case eSurfacePosition::Ground:
@@ -1005,7 +1005,7 @@ bool cMap::possiblePlaceBuilding (const cStaticUnitData& buildingData, const cPo
 				if (buildingData.surfacePosition != eSurfacePosition::Above &&
 					buildingData.surfacePosition != eSurfacePosition::Base && // mine can be placed on bridge
 					buildingData.surfacePosition != eSurfacePosition::BeneathSea && // seamine can be placed under bridge
-					building->getStaticUnitData().canBeOverbuild == eOverbuildType::No) return false;
+					building->getStaticData().canBeOverbuild == eOverbuildType::No) return false;
 				break;
 			case eSurfacePosition::BeneathSea: // seamine
 			case eSurfacePosition::AboveBase:  // landmine

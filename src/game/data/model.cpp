@@ -230,7 +230,7 @@ cBuilding& cModel::addBuilding (const cPosition& position, const sID& id, cPlaye
 
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if ((*buildings)[i]->getStaticUnitData().canBeOverbuild == eOverbuildType::YesNRemove)
+				if ((*buildings)[i]->getStaticData().canBeOverbuild == eOverbuildType::YesNRemove)
 				{
 					deleteUnit ((*buildings)[i]);
 					--i;
@@ -240,7 +240,7 @@ cBuilding& cModel::addBuilding (const cPosition& position, const sID& id, cPlaye
 			buildings = &map->getField (bigPosition).getBuildings();
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if ((*buildings)[i]->getStaticUnitData().canBeOverbuild == eOverbuildType::YesNRemove)
+				if ((*buildings)[i]->getStaticData().canBeOverbuild == eOverbuildType::YesNRemove)
 				{
 					deleteUnit ((*buildings)[i]);
 					--i;
@@ -250,7 +250,7 @@ cBuilding& cModel::addBuilding (const cPosition& position, const sID& id, cPlaye
 			buildings = &map->getField (bigPosition).getBuildings();
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if ((*buildings)[i]->getStaticUnitData().canBeOverbuild == eOverbuildType::YesNRemove)
+				if ((*buildings)[i]->getStaticData().canBeOverbuild == eOverbuildType::YesNRemove)
 				{
 					deleteUnit ((*buildings)[i]);
 					--i;
@@ -260,7 +260,7 @@ cBuilding& cModel::addBuilding (const cPosition& position, const sID& id, cPlaye
 			buildings = &map->getField (bigPosition).getBuildings();
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if ((*buildings)[i]->getStaticUnitData().canBeOverbuild == eOverbuildType::YesNRemove)
+				if ((*buildings)[i]->getStaticData().canBeOverbuild == eOverbuildType::YesNRemove)
 				{
 					deleteUnit ((*buildings)[i]);
 					--i;
@@ -272,7 +272,7 @@ cBuilding& cModel::addBuilding (const cPosition& position, const sID& id, cPlaye
 			const auto& buildings = map->getField (position).getBuildings();
 			for (size_t i = 0; i != buildings.size(); ++i)
 			{
-				if (buildings[i]->getStaticUnitData().canBeOverbuild == eOverbuildType::YesNRemove)
+				if (buildings[i]->getStaticData().canBeOverbuild == eOverbuildType::YesNRemove)
 				{
 					deleteUnit (buildings[i]);
 					--i;
