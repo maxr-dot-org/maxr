@@ -29,6 +29,123 @@
 
 cUnitsData UnitsDataGlobal;
 
+namespace serialization
+{
+	//--------------------------------------------------------------------------
+	/*static*/ std::string sEnumSerializer<eMuzzleType>::toString (eMuzzleType e)
+	{
+		switch (e)
+		{
+			case eMuzzleType::None: return "None";
+			case eMuzzleType::Big: return "Big";
+			case eMuzzleType::Rocket: return "Rocket";
+			case eMuzzleType::Small: return "Small";
+			case eMuzzleType::Med: return "Med";
+			case eMuzzleType::MedLong: return "MedLong";
+			case eMuzzleType::RocketCluster: return "RocketCluster";
+			case eMuzzleType::Torpedo: return "Torpedo";
+			case eMuzzleType::Sniper: return "Sniper";
+		}
+		Log.write ("Unknown eMuzzleType " + std::to_string (static_cast<int> (e)), cLog::eLOG_TYPE_WARNING);
+		return std::to_string (static_cast<int> (e));
+	}
+	//--------------------------------------------------------------------------
+	/*static*/ eMuzzleType sEnumSerializer<eMuzzleType>::fromString (const std::string& s)
+	{
+		if (s == "None") return eMuzzleType::None;
+		if (s == "Big") return eMuzzleType::Big;
+		if (s == "Rocket") return eMuzzleType::Rocket;
+		if (s == "Small") return eMuzzleType::Small;
+		if (s == "Med") return eMuzzleType::Med;
+		if (s == "MedLong") return eMuzzleType::MedLong;
+		if (s == "RocketCluster") return eMuzzleType::RocketCluster;
+		if (s == "Torpedo") return eMuzzleType::Torpedo;
+		if (s == "Sniper") return eMuzzleType::Sniper;
+
+		Log.write ("Unknown eMuzzleType " + s, cLog::eLOG_TYPE_WARNING);
+		throw std::runtime_error ("Unknown eMuzzleType " + s);
+	}
+
+	//--------------------------------------------------------------------------
+	/*static*/ std::string sEnumSerializer<eSurfacePosition>::toString (eSurfacePosition e)
+	{
+		switch (e)
+		{
+			case eSurfacePosition::BeneathSea: return "BeneathSea";
+			case eSurfacePosition::AboveSea: return "AboveSea";
+			case eSurfacePosition::Base: return "Base";
+			case eSurfacePosition::AboveBase: return "AboveBase";
+			case eSurfacePosition::Ground: return "Ground";
+			case eSurfacePosition::Above: return "Above";
+		}
+		Log.write ("Unknown eSurfacePosition " + std::to_string (static_cast<int> (e)), cLog::eLOG_TYPE_WARNING);
+		return std::to_string (static_cast<int> (e));
+	}
+	//--------------------------------------------------------------------------
+	/*static*/ eSurfacePosition sEnumSerializer<eSurfacePosition>::fromString (const std::string& s)
+	{
+		if (s == "BeneathSea") return eSurfacePosition::BeneathSea;
+		if (s == "AboveSea") return eSurfacePosition::AboveSea;
+		if (s == "Base") return eSurfacePosition::Base;
+		if (s == "AboveBase") return eSurfacePosition::AboveBase;
+		if (s == "Ground") return eSurfacePosition::Ground;
+		if (s == "Above") return eSurfacePosition::Above;
+
+		Log.write ("Unknown eSurfacePosition " + s, cLog::eLOG_TYPE_WARNING);
+		throw std::runtime_error ("Unknown eSurfacePosition " + s);
+	}
+
+	//--------------------------------------------------------------------------
+	/*static*/ std::string sEnumSerializer<eOverbuildType>::toString (eOverbuildType e)
+	{
+		switch (e)
+		{
+			case eOverbuildType::No: return "No";
+			case eOverbuildType::Yes: return "Yes";
+			case eOverbuildType::YesNRemove: return "YesNRemove";
+		}
+		Log.write ("Unknown eOverbuildType " + std::to_string (static_cast<int> (e)), cLog::eLOG_TYPE_WARNING);
+		return std::to_string (static_cast<int> (e));
+	}
+	//--------------------------------------------------------------------------
+	/*static*/ eOverbuildType sEnumSerializer<eOverbuildType>::fromString (const std::string& s)
+	{
+		if (s == "No") return eOverbuildType::No;
+		if (s == "Yes") return eOverbuildType::Yes;
+		if (s == "YesNRemove") return eOverbuildType::YesNRemove;
+
+		Log.write ("Unknown eOverbuildType " + s, cLog::eLOG_TYPE_WARNING);
+		throw std::runtime_error ("Unknown eOverbuildType " + s);
+	}
+
+	//--------------------------------------------------------------------------
+	/*static*/ std::string sEnumSerializer<eStorageUnitsImageType>::toString (eStorageUnitsImageType e)
+	{
+		switch (e)
+		{
+			case eStorageUnitsImageType::None: return "None";
+			case eStorageUnitsImageType::Tank: return "Tank";
+			case eStorageUnitsImageType::Plane: return "Plane";
+			case eStorageUnitsImageType::Ship: return "Ship";
+			case eStorageUnitsImageType::Human: return "Human";
+		}
+		Log.write ("Unknown eStorageUnitsImageType " + std::to_string (static_cast<int> (e)), cLog::eLOG_TYPE_WARNING);
+		return std::to_string (static_cast<int> (e));
+	}
+	//--------------------------------------------------------------------------
+	/*static*/ eStorageUnitsImageType sEnumSerializer<eStorageUnitsImageType>::fromString (const std::string& s)
+	{
+		if (s == "None") return eStorageUnitsImageType::None;
+		if (s == "Tank") return eStorageUnitsImageType::Tank;
+		if (s == "Plane") return eStorageUnitsImageType::Plane;
+		if (s == "Ship") return eStorageUnitsImageType::Ship;
+		if (s == "Human") return eStorageUnitsImageType::Human;
+
+		Log.write ("Unknown eStorageUnitsImageType " + s, cLog::eLOG_TYPE_WARNING);
+		throw std::runtime_error ("Unknown eStorageUnitsImageType " + s);
+	}
+}
+
 //------------------------------------------------------------------------------
 uint32_t sStaticBuildingData::computeChecksum (uint32_t crc) const
 {
@@ -304,8 +421,8 @@ uint32_t cStaticUnitData::getChecksum (uint32_t crc) const
 	crc = calcCheckSum (storeUnitsTypes, crc);
 	crc = calcCheckSum (surfacePosition, crc);
 
-	crc = buildingData.computeChecksum (crc);
-	crc = vehicleData.computeChecksum (crc);
+	if (ID.isABuilding()) crc = buildingData.computeChecksum (crc);
+	else crc = vehicleData.computeChecksum (crc);
 
 	return crc;
 }

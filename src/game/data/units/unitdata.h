@@ -72,6 +72,33 @@ enum class eStorageUnitsImageType
 	Human
 };
 
+namespace serialization
+{
+	template <>
+	struct sEnumSerializer<eMuzzleType>
+	{
+		static std::string toString (eMuzzleType);
+		static eMuzzleType fromString (const std::string&);
+	};
+	template <>
+	struct sEnumSerializer<eSurfacePosition>
+	{
+		static std::string toString (eSurfacePosition);
+		static eSurfacePosition fromString (const std::string&);
+	};
+	template <>
+	struct sEnumSerializer<eOverbuildType>
+	{
+		static std::string toString (eOverbuildType);
+		static eOverbuildType fromString (const std::string&);
+	};
+	template <>
+	struct sEnumSerializer<eStorageUnitsImageType>
+	{
+		static std::string toString (eStorageUnitsImageType);
+		static eStorageUnitsImageType fromString (const std::string&);
+	};
+}
 
 struct sStaticBuildingData
 {
@@ -241,8 +268,8 @@ public:
 		archive & NVP (description);
 		archive & NVP (name);
 
-		buildingData.serialize (archive);
-		vehicleData.serialize (archive);
+		if (ID.isABuilding()) buildingData.serialize (archive);
+		else vehicleData.serialize (archive);
 	}
 
 private:
