@@ -147,6 +147,40 @@ namespace serialization
 }
 
 //------------------------------------------------------------------------------
+uint32_t sStaticCommonUnitData::computeChecksum (uint32_t crc) const
+{
+	crc = calcCheckSum (buildAs, crc);
+	crc = calcCheckSum (canAttack, crc);
+	crc = calcCheckSum (canBeCaptured, crc);
+	crc = calcCheckSum (canBeDisabled, crc);
+	crc = calcCheckSum (canBuild, crc);
+	crc = calcCheckSum (canDetectStealthOn, crc);
+	crc = calcCheckSum (canRearm, crc);
+	crc = calcCheckSum (canRepair, crc);
+	crc = calcCheckSum (doesSelfRepair, crc);
+	crc = calcCheckSum (factorGround, crc);
+	crc = calcCheckSum (factorSea, crc);
+	crc = calcCheckSum (factorAir, crc);
+	crc = calcCheckSum (factorCoast, crc);
+	crc = calcCheckSum (isStealthOn, crc);
+	crc = calcCheckSum (muzzleType, crc);
+	crc = calcCheckSum (needsMetal, crc);
+	crc = calcCheckSum (needsEnergy, crc);
+	crc = calcCheckSum (needsHumans, crc);
+	crc = calcCheckSum (needsOil, crc);
+	crc = calcCheckSum (produceEnergy, crc);
+	crc = calcCheckSum (produceHumans, crc);
+	crc = calcCheckSum (storageResMax, crc);
+	crc = calcCheckSum (storageUnitsMax, crc);
+	crc = calcCheckSum (storeResType, crc);
+	crc = calcCheckSum (storeUnitsImageType, crc);
+	crc = calcCheckSum (storeUnitsTypes, crc);
+	crc = calcCheckSum (surfacePosition, crc);
+
+	return crc;
+}
+
+//------------------------------------------------------------------------------
 uint32_t sStaticBuildingData::computeChecksum (uint32_t crc) const
 {
 	crc = calcCheckSum (canBeLandedOn, crc);
@@ -393,36 +427,10 @@ const std::string& cStaticUnitData::getDefaultDescription() const
 uint32_t cStaticUnitData::getChecksum (uint32_t crc) const
 {
 	crc = calcCheckSum (ID, crc);
-	crc = calcCheckSum (buildAs, crc);
-	crc = calcCheckSum (canAttack, crc);
-	crc = calcCheckSum (canBeCaptured, crc);
-	crc = calcCheckSum (canBeDisabled, crc);
-	crc = calcCheckSum (canBuild, crc);
-	crc = calcCheckSum (canDetectStealthOn, crc);
-	crc = calcCheckSum (canRearm, crc);
-	crc = calcCheckSum (canRepair, crc);
-	crc = calcCheckSum (description, crc);
-	crc = calcCheckSum (doesSelfRepair, crc);
-	crc = calcCheckSum (factorGround, crc);
-	crc = calcCheckSum (factorSea, crc);
-	crc = calcCheckSum (factorAir, crc);
-	crc = calcCheckSum (factorCoast, crc);
-	crc = calcCheckSum (isStealthOn, crc);
-	crc = calcCheckSum (muzzleType, crc);
 	crc = calcCheckSum (name, crc);
-	crc = calcCheckSum (needsMetal, crc);
-	crc = calcCheckSum (needsEnergy, crc);
-	crc = calcCheckSum (needsHumans, crc);
-	crc = calcCheckSum (needsOil, crc);
-	crc = calcCheckSum (produceEnergy, crc);
-	crc = calcCheckSum (produceHumans, crc);
-	crc = calcCheckSum (storageResMax, crc);
-	crc = calcCheckSum (storageUnitsMax, crc);
-	crc = calcCheckSum (storeResType, crc);
-	crc = calcCheckSum (storeUnitsImageType, crc);
-	crc = calcCheckSum (storeUnitsTypes, crc);
-	crc = calcCheckSum (surfacePosition, crc);
+	crc = calcCheckSum (description, crc);
 
+	crc = sStaticCommonUnitData::computeChecksum (crc);
 	if (ID.isABuilding()) crc = buildingData.computeChecksum (crc);
 	else crc = vehicleData.computeChecksum (crc);
 

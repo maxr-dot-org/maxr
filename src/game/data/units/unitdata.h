@@ -100,95 +100,8 @@ namespace serialization
 	};
 }
 
-struct sStaticBuildingData
+struct sStaticCommonUnitData
 {
-	bool canBeLandedOn = false;
-	int canMineMaxRes = 0;
-	eOverbuildType canBeOverbuild = eOverbuildType::No;
-	bool canResearch = false;
-	bool canSelfDestroy = false;
-	bool canScore = false;
-	bool canWork = false;
-	bool connectsToBase = false;
-	int convertsGold = 0;
-	bool explodesOnContact = false;
-	bool isBig = false;
-	int maxBuildFactor = 0;
-	float modifiesSpeed = 0.f;
-
-	uint32_t computeChecksum (uint32_t crc) const;
-
-	template <typename Archive>
-	void serialize (Archive& archive)
-	{
-		archive & NVP (canBeLandedOn);
-		archive & NVP (canMineMaxRes);
-		archive & NVP (canBeOverbuild);
-		archive & NVP (canResearch);
-		archive & NVP (canScore);
-		archive & NVP (canSelfDestroy);
-		archive & NVP (canWork);
-		archive & NVP (connectsToBase);
-		archive & NVP (convertsGold);
-		archive & NVP (explodesOnContact);
-		archive & NVP (isBig);
-		archive & NVP (maxBuildFactor);
-		archive & NVP (modifiesSpeed);
-	}
-
-};
-
-struct sStaticVehicleData
-{
-	bool canBuildPath = false;
-	bool canClearArea = false;
-	bool canCapture = false;
-	bool canDisable = false;
-	bool canDriveAndFire = false;
-	bool canPlaceMines = false;
-	bool canSurvey = false;
-	bool hasCorpse = false;
-	bool isHuman = false;
-	bool makeTracks = false;
-	bool animationMovement = false;
-
-	std::string isStorageType;
-
-	uint32_t computeChecksum (uint32_t crc) const;
-
-	template <typename Archive>
-	void serialize (Archive& archive)
-	{
-		archive & NVP (animationMovement);
-		archive & NVP (canBuildPath);
-		archive & NVP (canClearArea);
-		archive & NVP (canCapture);
-		archive & NVP (canDisable);
-		archive & NVP (canDriveAndFire);
-		archive & NVP (canPlaceMines);
-		archive & NVP (canSurvey);
-		archive & NVP (hasCorpse);
-		archive & NVP (isHuman);
-		archive & NVP (isStorageType);
-		archive & NVP (makeTracks);
-	}
-};
-
-// class for vehicle properties, that are constant and equal for all instances of a unit type
-class cStaticUnitData
-{
-public:
-	cStaticUnitData() = default;
-	const std::string& getDefaultName() const;
-	const std::string& getDefaultDescription() const;
-	void setDefaultName (std::string name_){ name = name_; }
-	void setDefaultDescription (std::string text) { description = text; }
-
-	uint32_t getChecksum (uint32_t crc) const;
-public:
-	// Main
-	sID ID;
-
 	// Attack
 	eMuzzleType muzzleType = eMuzzleType::None;
 
@@ -231,13 +144,11 @@ public:
 	eStorageUnitsImageType storeUnitsImageType = eStorageUnitsImageType::None;
 	std::vector<std::string> storeUnitsTypes;
 
-	sStaticVehicleData vehicleData;
-	sStaticBuildingData buildingData;
+	[[nodiscard]] uint32_t computeChecksum (uint32_t crc) const;
 
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
-		archive & NVP (ID);
 		archive & NVP (muzzleType);
 		archive & NVP (canAttack);
 		archive & NVP (canBuild);
@@ -266,9 +177,108 @@ public:
 		archive & NVP (storageUnitsMax);
 		archive & NVP (storeUnitsImageType);
 		archive & NVP (storeUnitsTypes);
+	}
+};
+
+struct sStaticBuildingData
+{
+	bool canBeLandedOn = false;
+	int canMineMaxRes = 0;
+	eOverbuildType canBeOverbuild = eOverbuildType::No;
+	bool canResearch = false;
+	bool canSelfDestroy = false;
+	bool canScore = false;
+	bool canWork = false;
+	bool connectsToBase = false;
+	int convertsGold = 0;
+	bool explodesOnContact = false;
+	bool isBig = false;
+	int maxBuildFactor = 0;
+	float modifiesSpeed = 0.f;
+
+	[[nodiscard]] uint32_t computeChecksum (uint32_t crc) const;
+
+	template <typename Archive>
+	void serialize (Archive& archive)
+	{
+		archive & NVP (canBeLandedOn);
+		archive & NVP (canMineMaxRes);
+		archive & NVP (canBeOverbuild);
+		archive & NVP (canResearch);
+		archive & NVP (canScore);
+		archive & NVP (canSelfDestroy);
+		archive & NVP (canWork);
+		archive & NVP (connectsToBase);
+		archive & NVP (convertsGold);
+		archive & NVP (explodesOnContact);
+		archive & NVP (isBig);
+		archive & NVP (maxBuildFactor);
+		archive & NVP (modifiesSpeed);
+	}
+
+};
+
+struct sStaticVehicleData
+{
+	bool canBuildPath = false;
+	bool canClearArea = false;
+	bool canCapture = false;
+	bool canDisable = false;
+	bool canDriveAndFire = false;
+	bool canPlaceMines = false;
+	bool canSurvey = false;
+	bool hasCorpse = false;
+	bool isHuman = false;
+	bool makeTracks = false;
+	bool animationMovement = false;
+
+	std::string isStorageType;
+
+	[[nodiscard]] uint32_t computeChecksum (uint32_t crc) const;
+
+	template <typename Archive>
+	void serialize (Archive& archive)
+	{
+		archive & NVP (animationMovement);
+		archive & NVP (canBuildPath);
+		archive & NVP (canClearArea);
+		archive & NVP (canCapture);
+		archive & NVP (canDisable);
+		archive & NVP (canDriveAndFire);
+		archive & NVP (canPlaceMines);
+		archive & NVP (canSurvey);
+		archive & NVP (hasCorpse);
+		archive & NVP (isHuman);
+		archive & NVP (isStorageType);
+		archive & NVP (makeTracks);
+	}
+};
+
+// class for vehicle properties, that are constant and equal for all instances of a unit type
+class cStaticUnitData : public sStaticCommonUnitData
+{
+public:
+	cStaticUnitData() = default;
+	const std::string& getDefaultName() const;
+	const std::string& getDefaultDescription() const;
+	void setDefaultName (std::string name_){ name = name_; }
+	void setDefaultDescription (std::string text) { description = text; }
+
+	uint32_t getChecksum (uint32_t crc) const;
+public:
+	// Main
+	sID ID;
+
+	sStaticVehicleData vehicleData;
+	sStaticBuildingData buildingData;
+
+	template <typename Archive>
+	void serialize (Archive& archive)
+	{
+		archive & NVP (ID);
 		archive & NVP (description);
 		archive & NVP (name);
-
+		sStaticCommonUnitData::serialize (archive);
 		if (ID.isABuilding()) buildingData.serialize (archive);
 		else vehicleData.serialize (archive);
 	}
