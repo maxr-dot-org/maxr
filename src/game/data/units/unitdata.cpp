@@ -173,7 +173,7 @@ uint32_t sStaticCommonUnitData::computeChecksum (uint32_t crc) const
 	crc = calcCheckSum (storageResMax, crc);
 	crc = calcCheckSum (storageUnitsMax, crc);
 	crc = calcCheckSum (storeResType, crc);
-	crc = calcCheckSum (storeUnitsImageType, crc);
+	crc = calcCheckSum (storageUnitsImageType, crc);
 	crc = calcCheckSum (storeUnitsTypes, crc);
 	crc = calcCheckSum (surfacePosition, crc);
 

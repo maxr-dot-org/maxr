@@ -164,10 +164,10 @@ void cUnitDetailsHud::reset()
 				}
 			}
 		}
-		else if (staticData.storeUnitsImageType != eStorageUnitsImageType::None)
+		else if (staticData.storageUnitsImageType != eStorageUnitsImageType::None)
 		{
 			eUnitDataSymbolType symbolType;
-			switch (staticData.storeUnitsImageType)
+			switch (staticData.storageUnitsImageType)
 			{
 				case eStorageUnitsImageType::Tank:
 				case eStorageUnitsImageType::Ship:

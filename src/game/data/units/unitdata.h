@@ -141,7 +141,7 @@ struct sStaticCommonUnitData
 
 	std::size_t storageUnitsMax = 0;
 
-	eStorageUnitsImageType storeUnitsImageType = eStorageUnitsImageType::None;
+	eStorageUnitsImageType storageUnitsImageType = eStorageUnitsImageType::None;
 	std::vector<std::string> storeUnitsTypes;
 
 	[[nodiscard]] uint32_t computeChecksum (uint32_t crc) const;
@@ -185,7 +185,7 @@ struct sStaticCommonUnitData
 		archive & NVP (storageResMax);
 		archive & NVP (storeResType);
 		archive & NVP (storageUnitsMax);
-		archive & NVP (storeUnitsImageType);
+		archive & NVP (storageUnitsImageType);
 		archive & NVP (storeUnitsTypes);
 	}
 };
