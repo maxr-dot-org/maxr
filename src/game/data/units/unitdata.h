@@ -127,8 +127,8 @@ struct sStaticCommonUnitData
 	int needsOil = 0;
 	int needsEnergy = 0;
 	int needsHumans = 0;
-	int produceEnergy = 0;
-	int produceHumans = 0;
+	int produceEnergy = 0; // Only one of need/produce Energy can be non-zero
+	int produceHumans = 0; // Only one of need/produce Human can be non-zero
 
 	char isStealthOn = 0;
 	char canDetectStealthOn = 0;
@@ -165,10 +165,20 @@ struct sStaticCommonUnitData
 		archive & NVP (isAlien);
 		archive & NVP (needsMetal);
 		archive & NVP (needsOil);
-		archive & NVP (needsEnergy);
-		archive & NVP (needsHumans);
-		archive & NVP (produceEnergy);
-		archive & NVP (produceHumans);
+		if (Archive::isWriter)
+		{
+			archive & serialization::makeNvp("needsEnergy", needsEnergy > 0 ? needsEnergy : -produceEnergy);
+			archive & serialization::makeNvp("needsHumans", needsHumans > 0 ? needsHumans : -produceHumans);
+		}
+		else
+		{
+			archive & NVP (needsEnergy);
+			archive & NVP (needsHumans);
+			produceEnergy = std::max (0, -needsEnergy);
+			produceHumans = std::max (0, -needsHumans);
+			needsEnergy = std::max (0, needsEnergy);
+			needsHumans = std::max (0, needsHumans);
+		}
 		archive & NVP (isStealthOn);
 		archive & NVP (canDetectStealthOn);
 		archive & NVP (surfacePosition);
