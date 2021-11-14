@@ -672,6 +672,7 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 
 				if (FileExists (sTmpString.c_str()))
 				{
+					Log.write (sTmpString, cLog::eLOG_TYPE_DEBUG);
 					AutoSurface sfTempSurface (LoadPCX (sTmpString));
 					if (!sfTempSurface)
 					{
@@ -756,7 +757,7 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 	// load video
 	ui.FLCFile = sVehiclePath;
 	ui.FLCFile += "video.flc";
-	Log.write ("Loading video " + ui.FLCFile, cLog::eLOG_TYPE_DEBUG);
+	Log.write ("Loading video: " + ui.FLCFile, cLog::eLOG_TYPE_DEBUG);
 	if (!FileExists (ui.FLCFile.c_str()))
 	{
 		ui.FLCFile = "";
@@ -765,7 +766,7 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 	// load infoimage
 	std::string sTmpString = sVehiclePath;
 	sTmpString += "info.pcx";
-	Log.write ("Loading portrait" + sTmpString, cLog::eLOG_TYPE_DEBUG);
+	Log.write ("Loading portrait: " + sTmpString, cLog::eLOG_TYPE_DEBUG);
 	if (FileExists (sTmpString.c_str()))
 	{
 		ui.info = LoadPCX (sTmpString);
@@ -779,7 +780,7 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 	// load storageimage
 	sTmpString = sVehiclePath;
 	sTmpString += "store.pcx";
-	Log.write ("Loading storageportrait" + sTmpString, cLog::eLOG_TYPE_DEBUG);
+	Log.write ("Loading storageportrait: " + sTmpString, cLog::eLOG_TYPE_DEBUG);
 	if (FileExists (sTmpString.c_str()))
 	{
 		ui.storage = LoadPCX (sTmpString);
@@ -791,11 +792,11 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 	}
 
 	// load overlaygraphics if necessary
-	Log.write ("Loading overlay", cLog::eLOG_TYPE_DEBUG);
 	if (ui.staticData.hasOverlay)
 	{
 		sTmpString = sVehiclePath;
 		sTmpString += "overlay.pcx";
+		Log.write ("Loading overlay: " + sTmpString, cLog::eLOG_TYPE_DEBUG);
 		if (FileExists (sTmpString.c_str()))
 		{
 			ui.overlay_org = LoadPCX (sTmpString);
@@ -816,12 +817,12 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 	}
 
 	// load buildgraphics if necessary
-	Log.write ("Loading buildgraphics", cLog::eLOG_TYPE_DEBUG);
 	if (ui.staticData.buildUpGraphic)
 	{
 		// load image
 		sTmpString = sVehiclePath;
 		sTmpString += "build.pcx";
+		Log.write ("Loading buildgraphics: " + sTmpString, cLog::eLOG_TYPE_DEBUG);
 		if (FileExists (sTmpString.c_str()))
 		{
 			ui.build_org = LoadPCX (sTmpString);
@@ -839,6 +840,7 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 		// load shadow
 		sTmpString = sVehiclePath;
 		sTmpString += "build_shw.pcx";
+		Log.write ("Loading buildgraphics: " + sTmpString, cLog::eLOG_TYPE_DEBUG);
 		if (FileExists (sTmpString.c_str()))
 		{
 			ui.build_shw_org = LoadPCX (sTmpString);
@@ -861,12 +863,12 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 		ui.build_shw     = nullptr;
 	}
 	// load cleargraphics if necessary
-	Log.write ("Loading cleargraphics", cLog::eLOG_TYPE_DEBUG);
 	if (staticData.vehicleData.canClearArea)
 	{
 		// load image (small)
 		sTmpString = sVehiclePath;
 		sTmpString += "clear_small.pcx";
+		Log.write ("Loading cleargraphics: " + sTmpString, cLog::eLOG_TYPE_DEBUG);
 		if (FileExists (sTmpString.c_str()))
 		{
 			ui.clear_small_org = LoadPCX (sTmpString);
@@ -884,6 +886,7 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 		// load shadow (small)
 		sTmpString = sVehiclePath;
 		sTmpString += "clear_small_shw.pcx";
+		Log.write ("Loading cleargraphics: " + sTmpString, cLog::eLOG_TYPE_DEBUG);
 		if (FileExists (sTmpString.c_str()))
 		{
 			ui.clear_small_shw_org = LoadPCX (sTmpString);
@@ -900,6 +903,7 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 		// load image (big)
 		sTmpString = sVehiclePath;
 		sTmpString += "clear_big.pcx";
+		Log.write ("Loading cleargraphics: " + sTmpString, cLog::eLOG_TYPE_DEBUG);
 		if (FileExists (sTmpString.c_str()))
 		{
 			ui.build_org = LoadPCX (sTmpString);
@@ -917,6 +921,7 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 		// load shadow (big)
 		sTmpString = sVehiclePath;
 		sTmpString += "clear_big_shw.pcx";
+		Log.write ("Loading cleargraphics: " + sTmpString, cLog::eLOG_TYPE_DEBUG);
 		if (FileExists (sTmpString.c_str()))
 		{
 			ui.build_shw_org = LoadPCX (sTmpString);
