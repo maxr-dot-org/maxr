@@ -154,6 +154,16 @@ public:
 	cSignal<void()> repeatBuildChanged;
 
 	template <typename Archive>
+	static std::unique_ptr<cBuilding> createFrom (Archive& archive)
+	{
+		int id;
+		archive & NVP (id);
+		auto res = std::make_unique<cBuilding> (id);
+		res->serialize (archive);
+		return res;
+	}
+
+	template <typename Archive>
 	void serialize (Archive& archive)
 	{
 		cUnit::serializeThis (archive); //serialize cUnit members

@@ -171,12 +171,7 @@ public:
 		}
 		archive << NVP (moveJobs);
 		archive << NVP (attackJobs);
-		archive << serialization::makeNvp ("neutralBuildingNum", (int)neutralBuildings.size());
-		for (auto building : neutralBuildings)
-		{
-			archive << serialization::makeNvp ("buildingID", building->getId());
-			archive << serialization::makeNvp ("building", *building);
-		}
+		archive << NVP (neutralBuildings);
 
 		archive << serialization::makeNvp ("neutralVehicleNum", (int)neutralVehicles.size());
 		for (auto vehicle : neutralVehicles)
@@ -237,17 +232,7 @@ public:
 		archive >> NVP (moveJobs);
 		archive >> NVP (attackJobs);
 
-		neutralBuildings.clear();
-		int neutralBuildingNum;
-		archive >> NVP (neutralBuildingNum);
-		for (int i = 0; i < neutralBuildingNum; i++)
-		{
-			unsigned int buildingID;
-			archive >> NVP (buildingID);
-			auto building = std::make_shared<cBuilding> (buildingID);
-			archive >> serialization::makeNvp ("building", *building);
-			neutralBuildings.insert (std::move (building));
-		}
+		archive >> NVP (neutralBuildings);
 
 		neutralVehicles.clear();
 		int neutralVehicleNum;

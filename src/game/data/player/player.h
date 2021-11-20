@@ -245,12 +245,8 @@ public:
 				}
 			}
 		}
-		archive & serialization::makeNvp ("buildingNum", (int)buildings.size());
-		for (auto building : buildings)
-		{
-			archive & serialization::makeNvp ("buildingID", building->getId());
-			archive & serialization::makeNvp ("building", *building);
-		}
+		archive & NVP (buildings);
+
 		archive & NVP (landingPos);
 		archive & serialization::makeNvp ("ResourceMap", resourceMapToString());
 		archive & NVP (pointsHistory);
@@ -282,18 +278,7 @@ public:
 			archive & serialization::makeNvp ("vehicle", *vehicle);
 			vehicles.insert (std::move (vehicle));
 		}
-
-		buildings.clear();
-		int buildingNum;
-		archive & NVP (buildingNum);
-		for (int i = 0; i < buildingNum; i++)
-		{
-			unsigned int buildingID;
-			archive & NVP (buildingID);
-			auto building = std::make_shared<cBuilding> (nullptr, nullptr, this, buildingID);
-			archive & serialization::makeNvp ("building", *building);
-			buildings.insert (std::move (building));
-		}
+		archive & NVP (buildings);
 
 		archive & NVP (landingPos);
 

@@ -191,7 +191,11 @@ public:
 	void serializeThis (Archive& archive)
 	{
 		archive & NVP (data);
-		//archive & NVP (iID);  //const member. needs to be deserialized before calling constructor
+		if (Archive::isWriter)
+		{
+			int id = iID;
+			archive & NVP (id); //const member. needs to be deserialized before calling constructor
+		}
 		archive & NVP (dir);
 		archive & NVP (storedUnits);
 		archive & NVP (detectedByPlayerList);

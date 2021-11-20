@@ -34,6 +34,7 @@
 
 #include "nvp.h"
 #include "utility/color.h"
+#include "utility/flatset.h"
 #include "utility/position.h"
 
 class cBuilding;
@@ -145,6 +146,22 @@ namespace serialization
 		archive & serialization::makeNvp ("Y", vec[1]);
 	}
 
+	//-------------------------------------------------------------------------
+	template <typename Archive, typename T>
+	void save (Archive& archive, const std::shared_ptr<T>& value)
+	{
+		if (value) serialize (archive, *value);
+	}
+	template <typename Archive, typename T>
+	void load (Archive& archive, std::shared_ptr<T>& value)
+	{
+		value = T::createFrom (archive);
+	}
+	template <typename Archive, typename T>
+	void serialize (Archive& archive, std::shared_ptr<T>& value)
+	{
+		serialization::detail::splitFree (archive, value);
+	}
 	//-------------------------------------------------------------------------
 	template <typename Archive, typename T>
 	void save (Archive& archive, const std::unique_ptr<T>& value)
@@ -259,6 +276,34 @@ namespace serialization
 		serialization::detail::splitFree (archive, value);
 	}
 
+	//------------------------------------------------------------------------------
+	template <typename Archive, typename T, typename Cmp>
+	void save (Archive& archive, const cFlatSet<T, Cmp>& value)
+	{
+		uint32_t length = static_cast<uint32_t> (value.size());
+		archive << NVP (length);
+		for (const auto& item : value)
+		{
+			archive << NVP (item);
+		}
+	}
+	template <typename Archive, typename T, typename Cmp>
+	void load (Archive& archive, cFlatSet<T, Cmp>& value)
+	{
+		uint32_t length;
+		archive >> NVP (length);
+		for (size_t i = 0; i < length; i++)
+		{
+			T item;
+			archive >> NVP (item);
+			value.insert (std::move (item));
+		}
+	}
+	template <typename Archive, typename T, typename Cmp>
+	void serialize (Archive& archive, cFlatSet<T, Cmp>& value)
+	{
+		serialization::detail::splitFree (archive, value);
+	}
 	//------------------------------------------------------------------------------
 	template <typename Archive, typename K, typename T>
 	void save (Archive& archive, const std::map<K, T>& value)
