@@ -20,6 +20,7 @@
 #ifndef game_logic_upgradecalculatorH
 #define game_logic_upgradecalculatorH
 
+#include <array>
 #include <map>
 
 #include "game/serialization/nvp.h"
@@ -311,23 +312,20 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
-		for (int i = 0; i < kNrResearchAreas; i++)
-		{
-			archive & serialization::makeNvp ("curResearchLevel", curResearchLevel[i]);
-			archive & serialization::makeNvp ("curResearchPoints", curResearchPoints[i]);
-			archive & serialization::makeNvp ("neededResearchPoints", neededResearchPoints[i]);
-		}
+		archive & NVP (curResearchLevel);
+		archive & NVP (curResearchPoints);
+		archive & NVP (neededResearchPoints);
 	}
 	//-------------------------------------------
 protected:
 	void init();  ///< sets all research information to the initial values
 
-	int curResearchLevel[kNrResearchAreas]; ///< 0, 10, 20, 30, ...
+	std::array<int, kNrResearchAreas> curResearchLevel; ///< 0, 10, 20, 30, ...
 	/// Number of research-center turns the player invested in an area
-	int curResearchPoints[kNrResearchAreas];
+	std::array<int, kNrResearchAreas> curResearchPoints;
 	/// Number of research-center turns needed to reach the next level
 	// (remainingResearchPoints == neededResearchPoints - curResearchPoints)
-	int neededResearchPoints[kNrResearchAreas];
+	std::array<int, kNrResearchAreas> neededResearchPoints;
 };
 
 /**
