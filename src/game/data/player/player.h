@@ -219,7 +219,6 @@ public:
 		archive & NVP (player);
 		archive & NVP (id);
 		archive & NVP (dynamicUnitsData);
-		archive & serialization::makeNvp ("vehicleNum", (int)vehicles.size());
 		// should be saved in "correct order"
 		// references first to allow to restore pointers.
 		//
@@ -234,17 +233,18 @@ public:
 			[&](const auto& vehicle){ return hasStoredUnits (vehicle) && ranges::none_of (vehicle->storedUnits, hasStoredUnits);},
 			[&](const auto& vehicle){ return hasStoredUnits (vehicle) && ranges::any_of (vehicle->storedUnits, hasStoredUnits);}
 		};
+		std::vector<std::shared_ptr<cVehicle>> orderedVehicles;
 		for (auto filter : filters)
 		{
 			for (auto vehicle : vehicles)
 			{
 				if (filter (vehicle))
 				{
-					archive & serialization::makeNvp ("vehicleID", vehicle->getId());
-					archive & serialization::makeNvp ("vehicle", *vehicle);
+					orderedVehicles.push_back (vehicle);
 				}
 			}
 		}
+		archive & serialization::makeNvp ("vehicles", orderedVehicles);
 		archive & NVP (buildings);
 
 		archive & NVP (landingPos);
@@ -265,19 +265,7 @@ public:
 		dynamicUnitsData.clear();
 		archive & NVP (dynamicUnitsData);
 
-		vehicles.clear();
-		int vehicleNum;
-		archive & NVP (vehicleNum);
-		for (int i = 0; i < vehicleNum; i++)
-		{
-			unsigned int vehicleID;
-			archive & NVP (vehicleID);
-			cStaticUnitData dummy1;
-			cDynamicUnitData dummy2;
-			auto vehicle = std::make_shared<cVehicle> (dummy1, dummy2, this, vehicleID);
-			archive & serialization::makeNvp ("vehicle", *vehicle);
-			vehicles.insert (std::move (vehicle));
-		}
+		archive & NVP (vehicles);
 		archive & NVP (buildings);
 
 		archive & NVP (landingPos);
