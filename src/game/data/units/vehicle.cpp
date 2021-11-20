@@ -43,6 +43,22 @@ using namespace std;
 // cVehicle Class Implementation
 //-----------------------------------------------------------------------------
 
+cVehicle::cVehicle (unsigned int ID) :
+	cUnit (nullptr, nullptr, nullptr, ID),
+	bandPosition (0, 0),
+	buildBigSavedPosition (0, 0),
+	tileMovementOffset (0, 0)
+{
+	DamageFXPoint = { random (7) + 26 - 3, random (7) + 26 - 3};
+	refreshData();
+
+	clearingTurnsChanged.connect ([this]() { statusChanged(); });
+	buildingTurnsChanged.connect ([this]() { statusChanged(); });
+	buildingTypeChanged.connect ([this]() { statusChanged(); });
+	moveJobChanged.connect ([this]() { statusChanged(); });
+	autoMoveJobChanged.connect ([this]() { statusChanged(); });
+}
+
 //-----------------------------------------------------------------------------
 cVehicle::cVehicle (const cStaticUnitData& staticData, const cDynamicUnitData& dynamicData, cPlayer* owner, unsigned int ID) :
 	cUnit (&dynamicData, &staticData, owner, ID),

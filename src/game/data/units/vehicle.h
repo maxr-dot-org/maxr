@@ -93,7 +93,8 @@ class cVehicle : public cUnit
 	friend class cDebugOutputWidget;
 	//-----------------------------------------------------------------------------
 public:
-	cVehicle (const cStaticUnitData& staticData,  const cDynamicUnitData& data, cPlayer* Owner, unsigned int ID);
+	cVehicle (unsigned int ID); // used by serialization
+	cVehicle (const cStaticUnitData&, const cDynamicUnitData&, cPlayer* Owner, unsigned int ID);
 	virtual ~cVehicle();
 
 	bool isAVehicle() const override { return true; }
@@ -199,6 +200,16 @@ public:
 	mutable cSignal<void()> moveJobChanged;
 	mutable cSignal<void()> autoMoveJobChanged;
 	mutable cSignal<void()> moveJobBlocked;
+
+	template <typename Archive>
+	static std::unique_ptr<cVehicle> createFrom (Archive& archive)
+	{
+		int id;
+		archive & NVP (id);
+		auto res = std::make_unique<cVehicle> (id);
+		res->serialize (archive);
+		return res;
+	}
 
 	template <typename Archive>
 	void serialize (Archive& archive)
