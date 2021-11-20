@@ -30,7 +30,6 @@
 #include "utility/files.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
-#include "utility/mathtools.h"
 #include "utility/position.h"
 #include "utility/string/toString.h"
 
@@ -523,145 +522,6 @@ void cMap::setResourcesFromString (const std::string& str)
 	}
 }
 
-void cMap::placeResources (cModel& model)
-{
-	const auto& playerList = model.getPlayerList();
-	const auto& gameSettings = *model.getGameSettings();
-
-	Resources.fill (sResources());
-
-	std::vector<eResourceType> resSpotTypes (playerList.size(), eResourceType::Metal);
-	std::vector<T_2<int>> resSpots;
-	for (const auto& player : playerList)
-	{
-		const auto& position = player->getLandingPos();
-		resSpots.push_back (T_2<int> ((position.x() & ~1) + 1, position.y() & ~1));
-	}
-
-	const eGameSettingsResourceDensity density = gameSettings.resourceDensity;
-	std::map<eResourceType, eGameSettingsResourceAmount> frequencies;
-
-	frequencies[eResourceType::Metal] = gameSettings.metalAmount;
-	frequencies[eResourceType::Oil] = gameSettings.oilAmount;
-	frequencies[eResourceType::Gold] = gameSettings.goldAmount;
-
-	const std::size_t resSpotCount = (std::size_t) (getSize().x() * getSize().y() * 0.003f * (1.5f + getResourceDensityFactor (density)));
-	const std::size_t playerCount = playerList.size();
-	// create remaining resource positions
-	while (resSpots.size() < resSpotCount)
-	{
-		T_2<int> pos;
-
-		pos.x = 2 + model.randomGenerator.get (getSize().x() - 4);
-		pos.y = 2 + model.randomGenerator.get (getSize().y() - 4);
-		resSpots.push_back (pos);
-	}
-	resSpotTypes.resize (resSpotCount);
-	// Resourcen gleichmässiger verteilen
-	for (std::size_t j = 0; j < 3; j++)
-	{
-		for (std::size_t i = playerCount; i < resSpotCount; i++)
-		{
-			T_2<float> d;
-			for (std::size_t j = 0; j < resSpotCount; j++)
-			{
-				if (i == j) continue;
-
-				int diffx1 = resSpots[i].x - resSpots[j].x;
-				int diffx2 = diffx1 + (getSize().x() - 4);
-				int diffx3 = diffx1 - (getSize().x() - 4);
-				int diffy1 = resSpots[i].y - resSpots[j].y;
-				int diffy2 = diffy1 + (getSize().y() - 4);
-				int diffy3 = diffy1 - (getSize().y() - 4);
-				if (abs (diffx2) < abs (diffx1)) diffx1 = diffx2;
-				if (abs (diffx3) < abs (diffx1)) diffx1 = diffx3;
-				if (abs (diffy2) < abs (diffy1)) diffy1 = diffy2;
-				if (abs (diffy3) < abs (diffy1)) diffy1 = diffy3;
-				T_2<float> diff (diffx1, diffy1);
-				if (diff == T_2<float>::Zero)
-				{
-					diff.x += 1;
-				}
-				const float dist = diff.dist();
-				d += diff * (10.f / (dist * dist));
-
-			}
-			resSpots[i] += T_2<int> (Round (d.x), Round (d.y));
-			if (resSpots[i].x < 2) resSpots[i].x += getSize().x() - 4;
-			if (resSpots[i].y < 2) resSpots[i].y += getSize().y() - 4;
-			if (resSpots[i].x > getSize().x() - 3) resSpots[i].x -= getSize().x() - 4;
-			if (resSpots[i].y > getSize().y() - 3) resSpots[i].y -= getSize().y() - 4;
-
-		}
-	}
-	// Resourcen Typ bestimmen
-	for (std::size_t i = playerCount; i < resSpotCount; i++)
-	{
-		std::map<eResourceType, double> amount;
-		for (std::size_t j = 0; j < i; j++)
-		{
-			const float maxDist = 40.f;
-			float dist = sqrtf (resSpots[i].distSqr (resSpots[j]));
-			if (dist < maxDist) amount[resSpotTypes[j]] += 1 - sqrtf (dist / maxDist);
-		}
-
-		amount[eResourceType::Metal] /= 1.0f;
-		amount[eResourceType::Oil] /= 0.8f;
-		amount[eResourceType::Gold] /= 0.4f;
-
-		eResourceType type = eResourceType::Metal;
-		if (amount[eResourceType::Oil] < amount[type]) type = eResourceType::Oil;
-		if (amount[eResourceType::Gold] < amount[type]) type = eResourceType::Gold;
-
-		resSpots[i].x &= ~1;
-		resSpots[i].y &= ~1;
-		resSpots[i].x += static_cast<int> (type) % 2;
-		resSpots[i].y += (static_cast<int> (type) / 2) % 2;
-
-		resSpotTypes[i] = static_cast<eResourceType> (((resSpots[i].y % 2) * 2) + (resSpots[i].x % 2));
-	}
-	// Resourcen platzieren
-	for (std::size_t i = 0; i < resSpotCount; i++)
-	{
-		T_2<int> pos = resSpots[i];
-		T_2<int> p;
-		bool hasGold = model.randomGenerator.get (100) < 40;
-		const int minx = std::max (pos.x - 1, 0);
-		const int maxx = std::min (pos.x + 1, getSize().x() - 1);
-		const int miny = std::max (pos.y - 1, 0);
-		const int maxy = std::min (pos.y + 1, getSize().y() - 1);
-		for (p.y = miny; p.y <= maxy; ++p.y)
-		{
-			for (p.x = minx; p.x <= maxx; ++p.x)
-			{
-				T_2<int> absPos = p;
-				eResourceType type = static_cast<eResourceType> ((absPos.y % 2) * 2 + (absPos.x % 2));
-
-				int index = getOffset (cPosition (absPos.x, absPos.y));
-				if (type != eResourceType::None &&
-					((hasGold && i >= playerCount) || resSpotTypes[i] == eResourceType::Gold || type != eResourceType::Gold) &&
-					!isBlocked (cPosition (absPos.x, absPos.y)))
-				{
-					sResources res;
-					res.typ = type;
-					if (i >= playerCount)
-					{
-						res.value = 1 + model.randomGenerator.get (2 + getResourceAmountFactor (frequencies[type]) * 2);
-						if (p == pos) res.value += 3 + model.randomGenerator.get (4 + getResourceAmountFactor (frequencies[type]) * 2);
-					}
-					else
-					{
-						res.value = 1 + 4 + getResourceAmountFactor (frequencies[type]);
-						if (p == pos) res.value += 3 + 2 + getResourceAmountFactor (frequencies[type]);
-					}
-					res.value = std::min<unsigned char> (16, res.value);
-					Resources.set (index, res);
-				}
-			}
-		}
-	}
-}
-
 /* static */ int cMap::getMapLevel (const cBuilding& building)
 {
 	const cStaticUnitData& data = building.getStaticUnitData();
@@ -1051,40 +911,6 @@ uint32_t cMap::getChecksum (uint32_t crc) const
 	crc = calcCheckSum (Resources, crc);
 
 	return crc;
-}
-
-/*static*/ int cMap::getResourceDensityFactor (eGameSettingsResourceDensity density)
-{
-	switch (density)
-	{
-		case eGameSettingsResourceDensity::Sparse:
-			return 0;
-		case eGameSettingsResourceDensity::Normal:
-			return 1;
-		case eGameSettingsResourceDensity::Dense:
-			return 2;
-		case eGameSettingsResourceDensity::TooMuch:
-			return 3;
-	}
-	assert (false);
-	return 0;
-}
-
-/*static*/int cMap::getResourceAmountFactor (eGameSettingsResourceAmount amount)
-{
-	switch (amount)
-	{
-		case eGameSettingsResourceAmount::Limited:
-			return 0;
-		case eGameSettingsResourceAmount::Normal:
-			return 1;
-		case eGameSettingsResourceAmount::High:
-			return 2;
-		case eGameSettingsResourceAmount::TooMuch:
-			return 3;
-	}
-	assert (false);
-	return 0;
 }
 
 uint32_t sResources::getChecksum (uint32_t crc) const

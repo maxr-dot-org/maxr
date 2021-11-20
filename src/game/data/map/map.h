@@ -224,7 +224,7 @@ public:
 
 	const sResources& getResource (const cPosition& position) const { return Resources[getOffset (position)]; }
 
-	void placeResources (cModel&);
+	void placeInitialResources (cModel&);
 
 	cMapField& getField (const cPosition&);
 	const cMapField& getField (const cPosition&) const;
@@ -295,8 +295,6 @@ private:
 
 	static int getMapLevel (const cBuilding&);
 	static int getMapLevel (const cVehicle&);
-	static int getResourceDensityFactor (eGameSettingsResourceDensity);
-	static int getResourceAmountFactor (eGameSettingsResourceAmount);
 
 public:
 	mutable cSignal<void (const cUnit&)> addedUnit;
