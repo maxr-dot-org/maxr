@@ -25,6 +25,7 @@
 #include <chrono>
 #include <forward_list>
 #include <map>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <typeinfo>
@@ -146,6 +147,22 @@ namespace serialization
 
 	//-------------------------------------------------------------------------
 	template <typename Archive, typename T>
+	void save (Archive& archive, const std::unique_ptr<T>& value)
+	{
+		if (value) serialize (archive, *value);
+	}
+	template <typename Archive, typename T>
+	void load (Archive& archive, std::unique_ptr<T>& value)
+	{
+		value = T::createFrom (archive);
+	}
+	template <typename Archive, typename T>
+	void serialize (Archive& archive, std::unique_ptr<T>& value)
+	{
+		serialization::detail::splitFree (archive, value);
+	}
+	//-------------------------------------------------------------------------
+	template <typename Archive, typename T>
 	void save (Archive& archive, const std::vector<T>& value)
 	{
 		uint32_t length = static_cast<uint32_t> (value.size());
@@ -165,7 +182,7 @@ namespace serialization
 		{
 			T c;
 			archive >> makeNvp ("item", c);
-			value[i] = c;
+			value[i] = std::move(c);
 		}
 	}
 	template <typename Archive, typename T>

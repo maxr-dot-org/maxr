@@ -33,18 +33,15 @@ cJob::cJob (cUnit& unit) :
 {}
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cJob> cJob::createFrom (cBinaryArchiveOut& archive, const std::string& name)
+std::unique_ptr<cJob> cJob::createFrom (cBinaryArchiveOut& archive)
 {
 	return createFromImpl (archive);
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cJob> cJob::createFrom (cXmlArchiveOut& archive, const std::string& name)
+std::unique_ptr<cJob> cJob::createFrom (cXmlArchiveOut& archive)
 {
-	archive.enterChild (name);
-	auto job = createFromImpl (archive);
-	archive.leaveChild();
-	return job;
+	return createFromImpl (archive);
 }
 
 //------------------------------------------------------------------------------

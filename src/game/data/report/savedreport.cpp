@@ -118,10 +118,7 @@ std::unique_ptr<cSavedReport> cSavedReport::createFrom (cBinaryArchiveOut& archi
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cSavedReport> cSavedReport::createFrom (cXmlArchiveOut& archive, const std::string& name)
+std::unique_ptr<cSavedReport> cSavedReport::createFrom (cXmlArchiveOut& archive)
 {
-	archive.enterChild (name);
-	auto report = createFromImpl (archive);
-	archive.leaveChild();
-	return report;
+	return createFromImpl (archive);
 }

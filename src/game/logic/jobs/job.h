@@ -56,8 +56,8 @@ public:
 	virtual void run (cModel&) = 0;
 	virtual eJobType getType() const = 0;
 
-	static std::unique_ptr<cJob> createFrom (cBinaryArchiveOut&, const std::string& name);
-	static std::unique_ptr<cJob> createFrom (cXmlArchiveOut&, const std::string& name);
+	static std::unique_ptr<cJob> createFrom (cBinaryArchiveOut&);
+	static std::unique_ptr<cJob> createFrom (cXmlArchiveOut&);
 
 	virtual void serialize (cBinaryArchiveIn&) = 0;
 	virtual void serialize (cXmlArchiveIn&) = 0;

@@ -40,26 +40,10 @@ public:
 	uint32_t getChecksum (uint32_t crc) const;
 
 	template <typename Archive>
-	void save (Archive& archive) const
+	void serialize (Archive& archive)
 	{
-		archive << serialization::makeNvp ("numJobs", (int)jobs.size());
-		for (const auto& job : jobs)
-		{
-			archive << serialization::makeNvp ("job", *job);
-		}
+		archive & NVP (jobs);
 	}
-	template <typename Archive>
-	void load (Archive& archive)
-	{
-		int numJobs;
-		archive >> NVP (numJobs);
-		jobs.resize (numJobs);
-		for (auto& job : jobs)
-		{
-			job = cJob::createFrom (archive, "job");
-		}
-	}
-	SERIALIZATION_SPLIT_MEMBER()
 
 private:
 	std::vector<std::unique_ptr<cJob>>::iterator releaseJob (std::vector<std::unique_ptr<cJob>>::iterator it);

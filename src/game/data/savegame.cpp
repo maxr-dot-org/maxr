@@ -126,11 +126,7 @@ void cSavegame::saveGuiInfo (const cNetMessageGUISaveInfo& guiInfo)
 
 	archive << serialization::makeNvp ("playerNr", guiInfo.playerNr);
 	archive << serialization::makeNvp ("guiState", guiInfo.guiState);
-	archive << serialization::makeNvp ("reportsNr", (int)guiInfo.reports->size());
-	for (const auto &report : *guiInfo.reports)
-	{
-		archive << serialization::makeNvp ("report", *report);
-	}
+	archive << serialization::makeNvp ("reports", *guiInfo.reports);
 	archive << serialization::makeNvp ("savedPositions", guiInfo.savedPositions);
 	archive << serialization::makeNvp ("doneList", guiInfo.doneList);
 	archive.closeChild();
@@ -361,13 +357,7 @@ void cSavegame::loadGuiInfo (const cServer* server, int slot, int playerNr)
 
 		archive >> serialization::makeNvp ("playerNr", guiInfo.playerNr);
 		archive >> serialization::makeNvp ("guiState", guiInfo.guiState);
-		int size;
-		archive >> serialization::makeNvp ("reportsNr", size);
-		guiInfo.reports->resize (size);
-		for (auto& report : *guiInfo.reports)
-		{
-			report = cSavedReport::createFrom (archive, "report");
-		}
+		archive >> serialization::makeNvp ("reports", *guiInfo.reports);
 		archive >> serialization::makeNvp ("savedPositions", guiInfo.savedPositions);
 		archive >> serialization::makeNvp ("doneList", guiInfo.doneList);
 
