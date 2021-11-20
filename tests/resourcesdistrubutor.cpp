@@ -23,7 +23,7 @@
 #include "game/data/units/building.h"
 #include "game/data/units/unitdata.h"
 
-#include "utility/ranges.h"
+#include "utility/listhelpers.h"
 
 #include <iostream>
 
@@ -79,13 +79,6 @@ namespace
 	std::vector<std::unique_ptr<cBuilding>> MakeBuildings (const std::vector<sMine>& mines)
 	{
 		return ranges::Transform (mines, [](const sMine& mine){ return MakeBuilding (mine); });
-	}
-
-	//--------------------------------------------------------------------------
-	template <typename T>
-	std::vector<T*> ExtractPtrs (const std::vector<std::unique_ptr<T>>& v)
-	{
-		return ranges::Transform (v, [](const auto& ptr){ return ptr.get(); });
 	}
 
 	//--------------------------------------------------------------------------

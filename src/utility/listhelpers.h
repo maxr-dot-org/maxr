@@ -23,6 +23,7 @@
 #include "utility/ranges.h"
 
 #include <algorithm>
+#include <memory>
 #include <vector>
 
 template <typename T>
@@ -43,6 +44,14 @@ bool Contains (const std::vector<T>& container, const typename trait_add_const<T
 	return ranges::find (container, elem) != container.end();
 }
 
+//--------------------------------------------------------------------------
+template <typename T>
+std::vector<T*> ExtractPtrs (const std::vector<std::unique_ptr<T>>& v)
+{
+	return ranges::Transform (v, [](const auto& ptr){ return ptr.get(); });
+}
+
+//--------------------------------------------------------------------------
 template <typename T>
 void Remove (std::vector<T>& container, const typename trait_add_const<T>::type& elem)
 {

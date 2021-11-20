@@ -170,11 +170,7 @@ public:
 			archive << serialization::makeNvp ("player", *player);
 		}
 		archive << NVP (moveJobs);
-		archive << serialization::makeNvp ("numAttackJobs", (int)attackJobs.size());
-		for (auto attackJob : attackJobs)
-		{
-			archive << serialization::makeNvp ("attackJob", *attackJob);
-		}
+		archive << NVP (attackJobs);
 		archive << serialization::makeNvp ("neutralBuildingNum", (int)neutralBuildings.size());
 		for (auto building : neutralBuildings)
 		{
@@ -239,19 +235,7 @@ public:
 			archive >> serialization::makeNvp ("player", *player);
 		}
 		archive >> NVP (moveJobs);
-		int numAttackJobs;
-		archive >> NVP (numAttackJobs);
-		for (auto attackJob : attackJobs)
-		{
-			delete attackJob;
-		}
-		attackJobs.clear();
-		attackJobs.resize (numAttackJobs);
-		for (auto& attackJob : attackJobs)
-		{
-			attackJob = new cAttackJob();
-			archive >> serialization::makeNvp ("attackJob", *attackJob);
-		}
+		archive >> NVP (attackJobs);
 
 		neutralBuildings.clear();
 		int neutralBuildingNum;
@@ -326,7 +310,7 @@ private:
 	std::shared_ptr<cUnitsData> unitsData;
 
 	std::vector<std::unique_ptr<cMoveJob>> moveJobs;
-	std::vector<cAttackJob*> attackJobs;
+	std::vector<std::unique_ptr<cAttackJob>> attackJobs;
 
 	std::shared_ptr<cTurnCounter> turnCounter;
 	std::shared_ptr<cTurnTimeClock> turnTimeClock;

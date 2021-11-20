@@ -61,10 +61,6 @@ cModel::cModel() :
 //------------------------------------------------------------------------------
 cModel::~cModel()
 {
-	for (auto attackjob : attackJobs)
-	{
-		delete attackjob;
-	}
 }
 
 //------------------------------------------------------------------------------
@@ -429,7 +425,7 @@ void cModel::deleteUnit (cUnit* unit)
 	}
 	if (unit->isAttacking())
 	{
-		for (auto attackJob : attackJobs)
+		for (auto& attackJob : attackJobs)
 		{
 			attackJob->onRemoveUnit (*unit);
 		}
@@ -535,8 +531,7 @@ std::vector<const cPlayer*> cModel::resumeMoveJobs (const cPlayer* player /*= nu
 //------------------------------------------------------------------------------
 void cModel::addAttackJob (cUnit& aggressor, const cPosition& targetPosition)
 {
-	cAttackJob* attackJob = new cAttackJob (aggressor, targetPosition, *this);
-	attackJobs.push_back (attackJob);
+	attackJobs.push_back (std::make_unique <cAttackJob> (aggressor, targetPosition, *this));
 }
 
 //------------------------------------------------------------------------------
@@ -674,16 +669,11 @@ void cModel::runMoveJobs()
 //------------------------------------------------------------------------------
 void cModel::runAttackJobs()
 {
-	auto attackJobsTemp = attackJobs;
-	for (auto attackJob : attackJobsTemp)
+	for (auto* attackJob : ExtractPtrs (attackJobs))
 	{
 		attackJob->run (*this); //this can add new items to 'attackjobs'
-		if (attackJob->finished())
-		{
-			delete attackJob;
-			attackJobs.erase (ranges::find (attackJobs, attackJob));
-		}
 	}
+	attackJobs.erase (std::remove_if (attackJobs.begin(), attackJobs.end(), [](const auto& job){ return job->finished(); }), attackJobs.end());
 }
 
 //------------------------------------------------------------------------------
