@@ -86,6 +86,15 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
+	cPosition getRandomResourcePosition (cModel& model)
+	{
+		return {
+			static_cast<int> (model.randomGenerator.get (model.getMap()->getSize().x())),
+			static_cast<int> (model.randomGenerator.get (model.getMap()->getSize().y()))
+		};
+	}
+
+	//--------------------------------------------------------------------------
 	std::vector<cPosition> toPositions (const std::vector<std::shared_ptr<cPlayer>>& players)
 	{
 		return ranges::Transform (players, [](const auto& player) { return player->getLandingPos(); });
@@ -108,9 +117,8 @@ namespace
 	{
 		const sID alienFactoryId = model.getUnitsData()->getAlienFactoryID();
 		const std::size_t threshold = 5 * 5; // square distance between alien factory and existing buildings
-		const std::size_t expectedAlienPositionCount = 2 * model.getPlayerList().size();
 		auto& map = *model.getMap()->staticMap;
-		const auto mapSize = map.getSize();
+		const std::size_t expectedAlienPositionCount = 2 * model.getPlayerList().size(); // Might depend of map area
 		const cStaticUnitData& alienFactoryData = model.getUnitsData()->getStaticUnitData (alienFactoryId);
 		std::vector<cPosition> alienPositions;
 
@@ -173,19 +181,18 @@ namespace
 }
 
 //------------------------------------------------------------------------------
-void cMap::placeInitialResources (cModel& model)
+void placeInitialResources (cModel& model)
 {
+	auto& map = *model.getMap()->staticMap;
 	const auto& playerList = model.getPlayerList();
 	const auto& gameSettings = *model.getGameSettings();
 
-	Resources.fill (sResources());
-
 	std::vector<eResourceType> resSpotTypes (playerList.size(), eResourceType::Metal);
-	std::vector<T_2<int>> resSpots;
+	std::vector<cPosition> resSpots;
 	for (const auto& player : playerList)
 	{
 		const auto& position = player->getLandingPos();
-		resSpots.push_back (T_2<int> ((position.x() & ~1) + 1, position.y() & ~1));
+		resSpots.emplace_back ((position.x() & ~1) + 1, position.y() & ~1);
 	}
 
 	const eGameSettingsResourceDensity density = gameSettings.resourceDensity;
@@ -195,62 +202,28 @@ void cMap::placeInitialResources (cModel& model)
 	frequencies[eResourceType::Oil] = gameSettings.oilAmount;
 	frequencies[eResourceType::Gold] = gameSettings.goldAmount;
 
-	const std::size_t resSpotCount = (std::size_t) (getSize().x() * getSize().y() * 0.003f * (1.5f + getResourceDensityFactor (density)));
+	const std::size_t resSpotCount = (std::size_t) (map.getSize().x() * map.getSize().y() * 0.003f * (1.5f + getResourceDensityFactor (density)));
 	const std::size_t playerCount = playerList.size();
 	// create remaining resource positions
-	while (resSpots.size() < resSpotCount)
+	std::size_t maxTryCount = 3 * resSpotCount; // ensure the loop is finite
+	const std::size_t threshold = 3 * 3; // square distance between center resources (care position might be offset to (1,1) with type)
+	while (resSpots.size() != resSpotCount && --maxTryCount)
 	{
-		T_2<int> pos;
+		cPosition candidate = getRandomResourcePosition (model);
 
-		pos.x = 2 + model.randomGenerator.get (getSize().x() - 4);
-		pos.y = 2 + model.randomGenerator.get (getSize().y() - 4);
-		resSpots.push_back (pos);
+		if (map.isBlocked (candidate)) continue;
+		if (minSquaredDistance (resSpots, candidate) < threshold) continue;
+
+		resSpots.push_back (candidate);
 	}
 	resSpotTypes.resize (resSpotCount);
-	// Resourcen gleichmässiger verteilen
-	for (std::size_t j = 0; j < 3; j++)
-	{
-		for (std::size_t i = playerCount; i < resSpotCount; i++)
-		{
-			T_2<float> d;
-			for (std::size_t j = 0; j < resSpotCount; j++)
-			{
-				if (i == j) continue;
-
-				int diffx1 = resSpots[i].x - resSpots[j].x;
-				int diffx2 = diffx1 + (getSize().x() - 4);
-				int diffx3 = diffx1 - (getSize().x() - 4);
-				int diffy1 = resSpots[i].y - resSpots[j].y;
-				int diffy2 = diffy1 + (getSize().y() - 4);
-				int diffy3 = diffy1 - (getSize().y() - 4);
-				if (abs (diffx2) < abs (diffx1)) diffx1 = diffx2;
-				if (abs (diffx3) < abs (diffx1)) diffx1 = diffx3;
-				if (abs (diffy2) < abs (diffy1)) diffy1 = diffy2;
-				if (abs (diffy3) < abs (diffy1)) diffy1 = diffy3;
-				T_2<float> diff (diffx1, diffy1);
-				if (diff == T_2<float>::Zero)
-				{
-					diff.x += 1;
-				}
-				const float dist = diff.dist();
-				d += diff * (10.f / (dist * dist));
-
-			}
-			resSpots[i] += T_2<int> (Round (d.x), Round (d.y));
-			if (resSpots[i].x < 2) resSpots[i].x += getSize().x() - 4;
-			if (resSpots[i].y < 2) resSpots[i].y += getSize().y() - 4;
-			if (resSpots[i].x > getSize().x() - 3) resSpots[i].x -= getSize().x() - 4;
-			if (resSpots[i].y > getSize().y() - 3) resSpots[i].y -= getSize().y() - 4;
-		}
-	}
-	// Resourcen Typ bestimmen
 	for (std::size_t i = playerCount; i < resSpotCount; i++)
 	{
 		std::map<eResourceType, double> amount;
 		for (std::size_t j = 0; j < i; j++)
 		{
 			const float maxDist = 40.f;
-			float dist = sqrtf (resSpots[i].distSqr (resSpots[j]));
+			float dist = (resSpots[i] - resSpots[j]).l2Norm();
 			if (dist < maxDist) amount[resSpotTypes[j]] += 1 - sqrtf (dist / maxDist);
 		}
 
@@ -262,34 +235,32 @@ void cMap::placeInitialResources (cModel& model)
 		if (amount[eResourceType::Oil] < amount[type]) type = eResourceType::Oil;
 		if (amount[eResourceType::Gold] < amount[type]) type = eResourceType::Gold;
 
-		resSpots[i].x &= ~1;
-		resSpots[i].y &= ~1;
-		resSpots[i].x += static_cast<int> (type) % 2;
-		resSpots[i].y += (static_cast<int> (type) / 2) % 2;
+		resSpots[i].x() &= ~1;
+		resSpots[i].y() &= ~1;
+		resSpots[i].x() += static_cast<int> (type) % 2;
+		resSpots[i].y() += (static_cast<int> (type) / 2) % 2;
 
-		resSpotTypes[i] = static_cast<eResourceType> (((resSpots[i].y % 2) * 2) + (resSpots[i].x % 2));
+		resSpotTypes[i] = static_cast<eResourceType> (((resSpots[i].y() % 2) * 2) + (resSpots[i].x() % 2));
 	}
-	// Resourcen platzieren
-	for (std::size_t i = 0; i < resSpotCount; i++)
+	// reverse orcer to ensure that player res spot are not overwritten
+	for (std::size_t i = resSpots.size(); i-- != 0; )
 	{
-		T_2<int> pos = resSpots[i];
-		T_2<int> p;
+		const auto& pos = resSpots[i];
 		bool hasGold = model.randomGenerator.get (100) < 40;
-		const int minx = std::max (pos.x - 1, 0);
-		const int maxx = std::min (pos.x + 1, getSize().x() - 1);
-		const int miny = std::max (pos.y - 1, 0);
-		const int maxy = std::min (pos.y + 1, getSize().y() - 1);
-		for (p.y = miny; p.y <= maxy; ++p.y)
+		const int minx = std::max (pos.x() - 1, 0);
+		const int maxx = std::min (pos.x() + 1, map.getSize().x() - 1);
+		const int miny = std::max (pos.y() - 1, 0);
+		const int maxy = std::min (pos.y() + 1, map.getSize().y() - 1);
+		cPosition p;
+		for (p.y() = miny; p.y() <= maxy; ++p.y())
 		{
-			for (p.x = minx; p.x <= maxx; ++p.x)
+			for (p.x() = minx; p.x() <= maxx; ++p.x())
 			{
-				T_2<int> absPos = p;
-				eResourceType type = static_cast<eResourceType> ((absPos.y % 2) * 2 + (absPos.x % 2));
+				const eResourceType type = static_cast<eResourceType> ((p.y() % 2) * 2 + (p.x() % 2));
 
-				int index = getOffset (cPosition (absPos.x, absPos.y));
-				if (type != eResourceType::None &&
-					((hasGold && i >= playerCount) || resSpotTypes[i] == eResourceType::Gold || type != eResourceType::Gold) &&
-					!isBlocked (cPosition (absPos.x, absPos.y)))
+				if (type != eResourceType::None && !map.isBlocked (p)
+					&& ((hasGold && i >= playerCount) || resSpotTypes[i] == eResourceType::Gold || type != eResourceType::Gold)
+					)
 				{
 					sResources res;
 					res.typ = type;
@@ -304,7 +275,7 @@ void cMap::placeInitialResources (cModel& model)
 						if (p == pos) res.value += 3 + 2 + getResourceAmountFactor (frequencies[type]);
 					}
 					res.value = std::min<unsigned char> (16, res.value);
-					Resources.set (index, res);
+					model.getMap()->setResource (p, res);
 				}
 			}
 		}
@@ -372,7 +343,7 @@ void cActionInitNewGame::execute (cModel& model) const
 
 	if (allPlayerReady)
 	{
-		model.getMap()->placeInitialResources (model);
+		placeInitialResources (model);
 		if (model.getGameSettings()->alienEnabled) addAliens (model);
 	}
 

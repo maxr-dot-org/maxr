@@ -40,7 +40,6 @@ class cVehicle;
 class cBuilding;
 class cPlayer;
 class cPosition;
-class cModel;
 class cStaticUnitData;
 
 // Resources Struktur ////////////////////////////////////////////////////////
@@ -223,8 +222,7 @@ public:
 	bool isWaterOrCoast (const cPosition&) const;
 
 	const sResources& getResource (const cPosition& position) const { return Resources[getOffset (position)]; }
-
-	void placeInitialResources (cModel&);
+	void setResource (const cPosition& position, const sResources& res) { return Resources.set (getOffset (position), res); }
 
 	cMapField& getField (const cPosition&);
 	const cMapField& getField (const cPosition&) const;
