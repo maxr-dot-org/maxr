@@ -93,6 +93,14 @@ public:
 	uint32_t getChecksum (uint32_t crc) const;
 
 	template <typename Archive>
+	static std::unique_ptr<cMoveJob> createFrom (Archive& archive)
+	{
+		auto res = std::make_unique<cMoveJob>();
+		res->serialize (archive);
+		return res;
+	}
+
+	template <typename Archive>
 	void serialize (Archive& archive)
 	{
 		archive & NVP (vehicle);

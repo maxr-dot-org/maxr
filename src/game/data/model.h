@@ -169,11 +169,7 @@ public:
 		{
 			archive << serialization::makeNvp ("player", *player);
 		}
-		archive << serialization::makeNvp ("numMoveJobs", (int)moveJobs.size());
-		for (const auto& moveJob : moveJobs)
-		{
-			archive << serialization::makeNvp ("moveJob", *moveJob);
-		}
+		archive << NVP (moveJobs);
 		archive << serialization::makeNvp ("numAttackJobs", (int)attackJobs.size());
 		for (auto attackJob : attackJobs)
 		{
@@ -242,15 +238,7 @@ public:
 			player->initMaps (*map);
 			archive >> serialization::makeNvp ("player", *player);
 		}
-		int numMoveJobs;
-		archive >> NVP (numMoveJobs);
-		moveJobs.clear();
-		moveJobs.resize (numMoveJobs);
-		for (auto& moveJob : moveJobs)
-		{
-			moveJob = std::make_unique<cMoveJob>();
-			archive >> serialization::makeNvp ("moveJob", *moveJob);
-		}
+		archive >> NVP (moveJobs);
 		int numAttackJobs;
 		archive >> NVP (numAttackJobs);
 		for (auto attackJob : attackJobs)
