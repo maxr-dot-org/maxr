@@ -200,7 +200,6 @@ public:
 		archive & NVP (storedUnits);
 		archive & NVP (detectedByPlayerList);
 		archive & NVP (detectedInThisTurnByPlayerList);
-		archive & NVP (owner);
 		archive & NVP (position);
 		archive & NVP (customName);
 		archive & NVP (turnsDisabled);
@@ -258,7 +257,7 @@ protected:
 
 	//-----------------------------------------------------------------------------
 private:
-	cPlayer* owner;
+	cPlayer* owner = nullptr;
 	cPosition position;
 
 	std::string customName; //stores the name of the unit, when the player enters an own name for the unit. Otherwise the string is empty.

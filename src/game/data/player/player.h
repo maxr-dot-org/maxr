@@ -269,6 +269,15 @@ public:
 		archive & NVP (vehicles);
 		archive & NVP (buildings);
 
+		for (auto& vehicle : vehicles)
+		{
+			vehicle->setOwner (this);
+		}
+		for (auto& building : buildings)
+		{
+			building->setOwner (this);
+		}
+
 		archive & NVP (mapSize);
 		initMaps (mapSize);
 		archive & NVP (landingPos);
