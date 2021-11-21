@@ -40,20 +40,9 @@ using namespace std;
 
 //------------------------------------------------------------------------------
 cUnit::cUnit (const cDynamicUnitData* unitData, const cStaticUnitData* staticData, cPlayer* owner, unsigned int ID)
-	: iID (ID)
-	, dir (0)
-	, jobActive (false)
-	, alphaEffectValue (0)
-	, staticData (staticData)
-	, owner (owner)
-	, position (0, 0)
-	, turnsDisabled (0)
-	, sentryActive (false)
-	, manualFireActive (false)
-	, attacking (false)
-	, beeingAttacked (false)
-	, beenAttacked (false)
-	, storageResCur (0)
+	: iID (ID),
+	staticData (staticData),
+	owner (owner)
 {
 	if (unitData != nullptr)
 		data = *unitData;

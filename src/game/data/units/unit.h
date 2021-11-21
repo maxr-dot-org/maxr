@@ -222,17 +222,17 @@ public:
 
 public: // TODO: make protected/private and make getters/setters
 	const cStaticUnitData& getStaticUnitData() const;
-	cDynamicUnitData data;		// basic data of the unit
-	const unsigned int iID;		// the identification number of this unit
-	int dir;					// ?Frame of the unit/current direction the unit is facing?
+	cDynamicUnitData data; // basic data of the unit
+	const unsigned int iID; // the identification number of this unit
+	int dir = 0; // ?Frame of the unit/current direction the unit is facing?
 
-	std::vector<cVehicle*> storedUnits;		// list with the vehicles, that are stored in this unit
+	std::vector<cVehicle*> storedUnits; // list with the vehicles, that are stored in this unit
 
 	// little jobs, running on the vehicle.
 	// e.g. rotating to a specific direction
-	bool jobActive;
+	bool jobActive = false;
 
-	mutable int alphaEffectValue;
+	mutable int alphaEffectValue = 0;
 
 	//-----------------------------------------------------------------------------
 protected:
@@ -252,8 +252,8 @@ protected:
 	/** list of players, that detected this vehicle in this turn */
 	std::vector<int> detectedInThisTurnByPlayerList;
 
-	const cStaticUnitData* staticData;
-	bool isBig;
+	const cStaticUnitData* staticData = nullptr;
+	bool isBig = false;
 
 	//-----------------------------------------------------------------------------
 private:
@@ -262,14 +262,13 @@ private:
 
 	std::string customName; //stores the name of the unit, when the player enters an own name for the unit. Otherwise the string is empty.
 
-	int turnsDisabled;  ///< the number of turns this unit will be disabled, 0 if the unit is active
-	bool sentryActive; ///< is the unit on sentry?
-	bool manualFireActive; ///< if active, then the unit only fires by manual control and not as reaction fire
-	bool attacking;  ///< is the unit currently attacking?
-	bool beeingAttacked; ///< true when an attack on this unit is running
-	bool beenAttacked; //the unit was attacked in this turn
-	int storageResCur; //amount of stored resources
-
+	int turnsDisabled = 0;  ///< the number of turns this unit will be disabled, 0 if the unit is active
+	bool sentryActive = false; ///< is the unit on sentry?
+	bool manualFireActive = false; ///< if active, then the unit only fires by manual control and not as reaction fire
+	bool attacking = false;  ///< is the unit currently attacking?
+	bool beeingAttacked = false; ///< true when an attack on this unit is running
+	bool beenAttacked = false; //the unit was attacked in this turn
+	int storageResCur = 0; //amount of stored resources
 };
 
 template <typename T>
