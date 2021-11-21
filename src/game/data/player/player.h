@@ -98,7 +98,7 @@ public:
 	void setLandingPos (const cPosition& position) { landingPos = position; }
 	const cPosition& getLandingPos() const { return landingPos; }
 
-	void initMaps (cMap&);
+	void initMaps (const cPosition& mapSize);
 	const cPosition& getMapSize() const;
 
 	/**
@@ -247,6 +247,7 @@ public:
 		archive & serialization::makeNvp ("vehicles", orderedVehicles);
 		archive & NVP (buildings);
 
+		archive & NVP (mapSize);
 		archive & NVP (landingPos);
 		archive & serialization::makeNvp ("ResourceMap", resourceMapToString());
 		archive & NVP (pointsHistory);
@@ -268,6 +269,8 @@ public:
 		archive & NVP (vehicles);
 		archive & NVP (buildings);
 
+		archive & NVP (mapSize);
+		initMaps (mapSize);
 		archive & NVP (landingPos);
 
 		std::string ResourceMap;

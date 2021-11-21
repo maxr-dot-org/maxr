@@ -220,7 +220,6 @@ public:
 				cPlayerBasicData basicPlayerData;
 				player = std::make_shared<cPlayer> (basicPlayerData, *unitsData);
 			}
-			player->initMaps (*map);
 			archive >> serialization::makeNvp ("player", *player);
 		}
 		archive >> NVP (moveJobs);

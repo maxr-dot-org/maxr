@@ -124,9 +124,9 @@ const cDynamicUnitData* cPlayer::getUnitDataCurrentVersion (const sID& id) const
 //------------------------------------------------------------------------------
 /** initialize the maps */
 //------------------------------------------------------------------------------
-void cPlayer::initMaps (cMap& map)
+void cPlayer::initMaps (const cPosition& mapSize)
 {
-	mapSize = map.getSize();
+	this->mapSize = mapSize;
 	const int size = mapSize.x() * mapSize.y();
 
 	resourceMap.resize (size, 0);

@@ -138,7 +138,7 @@ void cModel::setMap (std::shared_ptr<cStaticMap> map_)
 {
 	map = std::make_shared<cMap> (map_);
 	for (auto player : playerList)
-		player->initMaps (*map);
+		player->initMaps (map->getSize());
 }
 //------------------------------------------------------------------------------
 cPlayer* cModel::getPlayer (int playerNr)
@@ -178,7 +178,7 @@ void cModel::setPlayerList (const std::vector<cPlayerBasicData>& splayers)
 	for (const auto& playerInfo : splayers)
 	{
 		auto player = std::make_shared<cPlayer> (playerInfo, *unitsData);
-		if (map) player->initMaps (*map);
+		if (map) player->initMaps (map->getSize());
 		playerList.push_back (player);
 	}
 	activeTurnPlayer = playerList[0].get();
