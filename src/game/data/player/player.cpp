@@ -56,22 +56,18 @@ void sNewTurnPlayerReport::addUnitBuilt (const sID& unitTypeId)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
+cPlayer::cPlayer () :
+	base (*this)
+{
+}
+//------------------------------------------------------------------------------
 cPlayer::cPlayer (const cPlayerBasicData& splayer, const cUnitsData& unitsData) :
 	base (*this),
 	player ({splayer.getName(), splayer.getColor()}),
-	id (splayer.getNr()),
-	clan (-1),
-	hasFinishedTurn (false)
+	id (splayer.getNr())
 {
 	// get the default (no clan) unit data
 	dynamicUnitsData = unitsData.getDynamicUnitsData (-1);
-
-	researchCentersWorkingTotal = 0;
-	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
-		researchCentersWorkingOnArea[i] = 0;
-	credits = 0;
-
-	isDefeated = false;
 }
 
 //------------------------------------------------------------------------------

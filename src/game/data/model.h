@@ -164,11 +164,7 @@ public:
 		archive << serialization::makeNvp ("gameSettings", *gameSettings);
 		archive << serialization::makeNvp ("map", *map);
 		archive << serialization::makeNvp ("unitsData", *unitsData);
-		archive << serialization::makeNvp ("numPlayers", (int)playerList.size());
-		for (auto player : playerList)
-		{
-			archive << serialization::makeNvp ("player", *player);
-		}
+		archive << serialization::makeNvp ("players", playerList);
 		archive << NVP (moveJobs);
 		archive << NVP (attackJobs);
 		archive << NVP (neutralBuildings);
@@ -210,18 +206,8 @@ public:
 		archive >> serialization::makeNvp ("unitsData", *unitsData);
 		//TODO: check UIData available
 
-		int numPlayers;
-		archive >> NVP (numPlayers);
-		playerList.resize (numPlayers);
-		for (auto& player : playerList)
-		{
-			if (player == nullptr)
-			{
-				cPlayerBasicData basicPlayerData;
-				player = std::make_shared<cPlayer> (basicPlayerData, *unitsData);
-			}
-			archive >> serialization::makeNvp ("player", *player);
-		}
+		archive >> serialization::makeNvp ("players", playerList);
+
 		archive >> NVP (moveJobs);
 		archive >> NVP (attackJobs);
 

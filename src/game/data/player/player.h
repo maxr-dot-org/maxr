@@ -78,6 +78,7 @@ class cPlayer
 {
 	cPlayer (const cPlayer&) = delete;
 public:
+	cPlayer(); // used by serialization
 	cPlayer (const cPlayerBasicData&, const cUnitsData&);
 	~cPlayer();
 
@@ -214,6 +215,14 @@ public:
 	mutable cSignal<void (const sID&, int unitsCount, int costs)> unitsUpgraded;
 
 	template <typename Archive>
+	static std::unique_ptr<cPlayer> createFrom (Archive& archive)
+	{
+		auto res = std::make_unique<cPlayer>();
+		res->serialize (archive);
+		return res;
+	}
+
+	template <typename Archive>
 	void save (Archive& archive)
 	{
 		archive & NVP (player);
@@ -310,12 +319,12 @@ private:
 public:
 	std::vector<cDynamicUnitData> dynamicUnitsData; // Current version of vehicles.
 	cBase base;               // the base (groups of connected buildings) of the player
-	bool isDefeated;        // true if the player has been defeated
-	int numEcos;            // number of ecospheres. call countEcoSpheres to update.
+	bool isDefeated = false;  // true if the player has been defeated
+	int numEcos = 0;          // number of ecospheres. call countEcoSpheres to update.
 
 private:
 	sPlayerSettings player;
-	int id;
+	int id = -1;
 
 	cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>> vehicles;
 	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> buildings;
@@ -333,15 +342,15 @@ private:
 	cRangeMap detectMinesMap;     /** the area where the player can detect mines */
 	std::vector<int> pointsHistory; // history of player's total score (from eco-spheres) for graph
 
-	int clan;
-	int credits;
+	int clan = -1;
+	int credits = 0;
 
 
-	bool hasFinishedTurn;
+	bool hasFinishedTurn = false;
 
 	cResearch researchState;   ///< stores the current research level of the player
-	int researchCentersWorkingOnArea[cResearch::kNrResearchAreas]; ///< counts the number of research centers that are currently working on each area
-	int researchCentersWorkingTotal;  ///< number of working research centers
+	int researchCentersWorkingOnArea[cResearch::kNrResearchAreas]{}; ///< counts the number of research centers that are currently working on each area
+	int researchCentersWorkingTotal = 0;  ///< number of working research centers
 };
 
 #endif // game_data_player_playerH
