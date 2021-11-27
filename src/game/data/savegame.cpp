@@ -39,13 +39,6 @@
 #include <ctime>
 #include <regex>
 
-#define LOAD_ERROR(msg)                         \
-	{                                           \
-		Log.write (msg, cLog::eLOG_TYPE_ERROR); \
-		info.gameName = "XML Error";            \
-		return;                                 \
-	}
-
 #define SAVE_FORMAT_VERSION ((std::string)"1.0")
 
 //------------------------------------------------------------------------------
@@ -126,12 +119,6 @@ cSaveGameInfo cSavegame::loadSaveInfo (int slot)
 	if (!loadVersion (info.saveVersion))
 	{
 		info.gameName = "XML Error";
-		return info;
-	}
-
-	if (info.saveVersion < cVersion ("1.0"))
-	{
-		loadLegacyHeader (info);
 		return info;
 	}
 
@@ -233,50 +220,6 @@ void cSavegame::writeHeader (int slot, const std::string& saveName, const cModel
 	archive << serialization::makeNvp ("type", type);
 	archive << serialization::makeNvp ("date", std::string (timestr));
 	archive.closeChild();
-}
-
-//------------------------------------------------------------------------------
-void cSavegame::loadLegacyHeader (cSaveGameInfo& info)
-{
-	const tinyxml2::XMLElement* headerNode = xmlDocument.RootElement()->FirstChildElement ("Header");
-	if (headerNode == nullptr)
-		LOAD_ERROR ("Error loading savegame file " + std::to_string (loadedSlot) + ": Node \"Header\" not found");
-
-	//load name
-	const tinyxml2::XMLElement* nameNode = headerNode->FirstChildElement ("Name");
-	if (nameNode == nullptr)
-		LOAD_ERROR ("Error loading savegame file " + std::to_string (loadedSlot) + ": Subnode \"Name\" of Node \"Header\" not found");
-	const char* str = nameNode->Attribute ("string");
-	if (str == nullptr)
-		LOAD_ERROR ("Error loading savegame file " + std::to_string (loadedSlot) + ": Attribute \"String\" of Node \"Name\" not found");
-	info.gameName = str;
-
-	//load game type
-	const tinyxml2::XMLElement* typeNode = headerNode->FirstChildElement ("Type");
-	if (typeNode == nullptr)
-		LOAD_ERROR ("Error loading savegame file " + std::to_string (loadedSlot) + ": Subnode \"Type\" of Node \"Header\" not found");
-	str = typeNode->Attribute ("string");
-	if (str == nullptr)
-		LOAD_ERROR ("Error loading savegame file " + std::to_string (loadedSlot) + ": Attribute \"String\" of Node \"Type\" not found");
-	std::string gameType = str;
-	if (gameType == "IND")
-		info.type = eGameType::Single;
-	else if (gameType == "HOT")
-		info.type = eGameType::Hotseat;
-	else if (gameType == "NET")
-		info.type = eGameType::TcpIp;
-	else
-		LOAD_ERROR ("Error loading savegame file " + std::to_string (loadedSlot) + ": unknown game type");
-
-	//load time
-	const tinyxml2::XMLElement* timeNode = headerNode->FirstChildElement ("Time");
-	if (timeNode == nullptr)
-		LOAD_ERROR ("Error loading savegame file " + std::to_string (loadedSlot) + ": Subnode \"Time\" of Node \"Header\" not found");
-	str = timeNode->Attribute ("string");
-	if (str == nullptr)
-		LOAD_ERROR ("Error loading savegame file " + std::to_string (loadedSlot) + ": Attribute \"String\" of Node \"Time\" not found");
-
-	info.date = str;
 }
 
 //------------------------------------------------------------------------------

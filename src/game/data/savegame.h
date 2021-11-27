@@ -48,13 +48,6 @@ public:
 	int getLastUsedSaveSlot() const;
 private:
 
-	/**
-	* Loads header information from old save file with version <1.0.
-	* Only loading of header information is supported, to be able to display
-	* these save files in the multiplayer menu. Loading game state from
-	* savefiles <1.0 is not supported.
-	*/
-	void loadLegacyHeader (cSaveGameInfo& info);
 	void writeHeader (int slot, const std::string& saveName, const cModel &model);
 	bool loadDocument (int slot);
 	bool loadVersion (cVersion& version);
