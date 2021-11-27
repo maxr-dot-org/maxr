@@ -46,39 +46,11 @@
 		return;                                 \
 	}
 
-cSavegame::cSavegame() :
-	saveingID (-1),
-	loadedSlot (-1)
-{}
+#define SAVE_FORMAT_VERSION ((std::string)"1.0")
 
+//------------------------------------------------------------------------------
 int cSavegame::save (const cModel& model, int slot, const std::string& saveName)
 {
-#if 0 //---serialization test code---
-	//write 1st xml archive
-	tinyxml2::XMLDocument document1;
-	document1.LinkEndChild (document1.NewElement ("MAXR_SAVE_FILE"));
-	cXmlArchiveIn archive1 (*document1.RootElement());
-	archive1 << NVP (model);
-	document1.SaveFile ("test1.xml");
-
-	//write binary
-	cBinaryArchiveIn archiveb = cBinaryArchiveIn();
-	archiveb << model;
-
-	//load binary
-	cModel modelb;
-	serialization::cPointerLoader pointerLoaderb (modelb);
-	cBinaryArchiveOut archiveb2 (archiveb.data(), archiveb.length(), &pointerLoaderb);
-	archiveb2 >> modelb;
-
-	//write 2nd xml archive
-	tinyxml2::XMLDocument document2;
-	document2.LinkEndChild (document2.NewElement ("MAXR_SAVE_FILE"));
-	cXmlArchiveIn archive2 (*document2.RootElement());
-	archive2 << serialization::makeNvp ("model", modelb);
-	document2.SaveFile ("test2.xml");
-	//both files should now be identical
-#endif
 	loadedSlot = -1;
 
 	writeHeader (slot, saveName, model);
@@ -113,6 +85,7 @@ int cSavegame::save (const cModel& model, int slot, const std::string& saveName)
 	return saveingID;
 }
 
+//------------------------------------------------------------------------------
 void cSavegame::saveGuiInfo (const cNetMessageGUISaveInfo& guiInfo)
 {
 	if (saveingID != guiInfo.savingID)
@@ -139,6 +112,7 @@ void cSavegame::saveGuiInfo (const cNetMessageGUISaveInfo& guiInfo)
 	}
 }
 
+//------------------------------------------------------------------------------
 cSaveGameInfo cSavegame::loadSaveInfo (int slot)
 {
 	cSaveGameInfo info (slot);
@@ -215,6 +189,7 @@ cSaveGameInfo cSavegame::loadSaveInfo (int slot)
 	return info;
 }
 
+//------------------------------------------------------------------------------
 std::string cSavegame::getFileName (int slot)
 {
 	char numberstr[4];
@@ -222,6 +197,7 @@ std::string cSavegame::getFileName (int slot)
 	return cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml";
 }
 
+//------------------------------------------------------------------------------
 void cSavegame::writeHeader (int slot, const std::string& saveName, const cModel &model)
 {
 	//init document
@@ -259,7 +235,7 @@ void cSavegame::writeHeader (int slot, const std::string& saveName, const cModel
 	archive.closeChild();
 }
 
-
+//------------------------------------------------------------------------------
 void cSavegame::loadLegacyHeader (cSaveGameInfo& info)
 {
 	const tinyxml2::XMLElement* headerNode = xmlDocument.RootElement()->FirstChildElement ("Header");
@@ -303,6 +279,7 @@ void cSavegame::loadLegacyHeader (cSaveGameInfo& info)
 	info.date = str;
 }
 
+//------------------------------------------------------------------------------
 void cSavegame::loadModel (cModel& model, int slot)
 {
 	if (!loadDocument (slot))
@@ -343,6 +320,7 @@ void cSavegame::loadModel (cModel& model, int slot)
 	}
 }
 
+//------------------------------------------------------------------------------
 void cSavegame::loadGuiInfo (const cServer* server, int slot, int playerNr)
 {
 	if (!loadDocument (slot))
@@ -373,11 +351,13 @@ void cSavegame::loadGuiInfo (const cServer* server, int slot, int playerNr)
 	}
 }
 
+//------------------------------------------------------------------------------
 int cSavegame::getLastUsedSaveSlot() const
 {
 	return loadedSlot;
 }
 
+//------------------------------------------------------------------------------
 bool cSavegame::loadDocument (int slot)
 {
 	if (slot != loadedSlot)
@@ -402,6 +382,7 @@ bool cSavegame::loadDocument (int slot)
 	return true;
 }
 
+//------------------------------------------------------------------------------
 bool cSavegame::loadVersion (cVersion& version)
 {
 	const char* versionString = xmlDocument.RootElement()->Attribute ("version");

@@ -31,27 +31,20 @@ class cVersion;
 class cNetMessageGUISaveInfo;
 class cServer;
 
-//Versions prior to 1.0 are no longer compatible
-#define SAVE_FORMAT_VERSION		((std::string)"1.0")
-#define MINIMUM_REQUIRED_SAVE_VERSION ((std::string)"1.0")
-#define MINIMUM_REQUIRED_MAXR_VERSION ((std::string)"0.2.10")
-
 class cSavegame
 {
 public:
-	cSavegame();
+	cSavegame() = default;
 
 	static std::string getFileName (int slot);
 
-	/* saves the current gamestate to a file */
-	int save (const cModel& model, int slot, const std::string& saveName);
-	void saveGuiInfo (const cNetMessageGUISaveInfo& guiInfo);
-
 	cSaveGameInfo loadSaveInfo (int slot);
 
+	int save (const cModel& model, int slot, const std::string& saveName);
 	void loadModel (cModel& model, int slot);
-	void loadGuiInfo (const cServer* server, int slot, int playerNr = -1);
 
+	void loadGuiInfo (const cServer* server, int slot, int playerNr = -1);
+	void saveGuiInfo (const cNetMessageGUISaveInfo& guiInfo);
 	int getLastUsedSaveSlot() const;
 private:
 
@@ -66,8 +59,8 @@ private:
 	bool loadDocument (int slot);
 	bool loadVersion (cVersion& version);
 
-	int saveingID; //identifier number, to make sure the gui info from clients are written to the correct save file
-	int loadedSlot;
+	int saveingID = -1; //identifier number, to make sure the gui info from clients are written to the correct save file
+	int loadedSlot = -1;
 
 	tinyxml2::XMLDocument xmlDocument;
 };

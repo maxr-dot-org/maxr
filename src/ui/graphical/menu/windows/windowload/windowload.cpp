@@ -33,6 +33,10 @@
 #include "utility/ranges.h"
 #include "resources/pcx.h"
 
+//Versions prior to 1.0 are no longer compatible
+#define MINIMUM_REQUIRED_SAVE_VERSION ((std::string)"1.0")
+#define MINIMUM_REQUIRED_MAXR_VERSION ((std::string)"0.2.10")
+
 //------------------------------------------------------------------------------
 cWindowLoad::cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock, std::function<std::vector<cSaveGameInfo>()> saveGamesGetter) :
 	cWindow (LoadPCX (GFXOD_SAVELOAD)),
