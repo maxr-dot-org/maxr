@@ -172,12 +172,13 @@ cSaveGameInfo cSavegame::loadSaveInfo (int slot)
 		archive.leaveChild(); // header
 
 		archive.enterChild ("model");
-		int numPlayers;
-		archive >> NVP (numPlayers);
+		archive.enterChild ("players");
+		int numPlayers = 0;
+		archive >> serialization::makeNvp ("length", numPlayers);
 		info.players.resize (numPlayers);
 		for (int i = 0; i < numPlayers; i++)
 		{
-			archive.enterChild ("player");
+			archive.enterChild ("item");
 			sPlayerSettings player;
 			int id;
 			bool isDefeated;
@@ -188,8 +189,10 @@ cSaveGameInfo cSavegame::loadSaveInfo (int slot)
 
 			info.players[i] = cPlayerBasicData (player, id, isDefeated);
 
-			archive.leaveChild(); // player
+			archive.leaveChild(); // item
 		}
+		archive.leaveChild(); // players
+
 		archive.enterChild ("map");
 		archive.enterChild ("mapFile");
 		archive >> serialization::makeNvp ("filename", info.mapName);
