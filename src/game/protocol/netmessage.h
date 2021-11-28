@@ -29,7 +29,7 @@
 #include "game/serialization/binaryarchive.h"
 #include "game/serialization/serialization.h"
 #include "game/serialization/textarchive.h"
-#include "ui/graphical/game/gameguistate.h"
+#include "ui/graphical/game/control/gameguicontroller.h"
 #include "utility/color.h"
 
 class cSavedReport;
@@ -386,56 +386,24 @@ class cNetMessageGUISaveInfo : public cNetMessageT<eNetMessageType::GUI_SAVE_INF
 {
 public:
 	cNetMessageGUISaveInfo (int savingID) :
-		reports (nullptr),
 		savingID (savingID)
 	{}
 	cNetMessageGUISaveInfo (cBinaryArchiveOut& archive)
 	{
-		loadThis (archive);
+		serializeThis (archive);
 	}
 
-	void serialize (cBinaryArchiveIn& archive) override { cNetMessage::serialize (archive); saveThis (archive); }
-	void serialize (cTextArchiveIn& archive) override { cNetMessage::serialize (archive); saveThis (archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cNetMessage::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cNetMessage::serialize (archive); serializeThis (archive); }
 
-	std::shared_ptr<std::vector<std::unique_ptr<cSavedReport>>> reports;
-	cGameGuiState guiState;
-	std::array<std::optional<cPosition>, 4> savedPositions;
-	std::vector<unsigned int> doneList;
+	sPlayerGuiInfo guiInfo;
 	int savingID;
 private:
 	template <typename Archive>
-	void loadThis (Archive& archive)
+	void serializeThis (Archive& archive)
 	{
-		if (reports == nullptr)
-			reports = std::make_shared<std::vector<std::unique_ptr<cSavedReport>>>();
-
-		int size;
-		archive >> size;
-		reports->resize (size);
-		for (auto& report : *reports)
-		{
-			report = cSavedReport::createFrom (archive);
-		}
-		archive >> guiState;
-		archive >> savingID;
-		archive >> savedPositions;
-		archive >> doneList;
-	}
-	template <typename Archive>
-	void saveThis (Archive& archive)
-	{
-		if (reports == nullptr)
-			reports = std::make_shared<std::vector<std::unique_ptr<cSavedReport>>>();
-
-		archive << (int)reports->size();
-		for (auto& report : *reports)
-		{
-			archive << *report;
-		}
-		archive << guiState;
-		archive << savingID;
-		archive << savedPositions;
-		archive << doneList;
+		archive & savingID;
+		archive & guiInfo;
 	}
 };
 

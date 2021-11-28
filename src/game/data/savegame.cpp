@@ -91,10 +91,7 @@ void cSavegame::saveGuiInfo (const cNetMessageGUISaveInfo& guiInfo)
 	archive.openNewChild ("GuiInfo");
 
 	archive << serialization::makeNvp ("playerNr", guiInfo.playerNr);
-	archive << serialization::makeNvp ("guiState", guiInfo.guiState);
-	archive << serialization::makeNvp ("reports", *guiInfo.reports);
-	archive << serialization::makeNvp ("savedPositions", guiInfo.savedPositions);
-	archive << serialization::makeNvp ("doneList", guiInfo.doneList);
+	archive << serialization::makeNvp ("guiState", guiInfo.guiInfo);
 	archive.closeChild();
 
 	makeDirectories (cSettings::getInstance().getSavesPath());
@@ -277,13 +274,8 @@ void cSavegame::loadGuiInfo (const cServer* server, int slot, int playerNr)
 		cXmlArchiveOut archive (*guiInfoElement);
 		cNetMessageGUISaveInfo guiInfo (slot);
 
-		guiInfo.reports = std::make_shared<std::vector<std::unique_ptr<cSavedReport>>>();
-
-		archive >> serialization::makeNvp ("playerNr", guiInfo.playerNr);
-		archive >> serialization::makeNvp ("guiState", guiInfo.guiState);
-		archive >> serialization::makeNvp ("reports", *guiInfo.reports);
-		archive >> serialization::makeNvp ("savedPositions", guiInfo.savedPositions);
-		archive >> serialization::makeNvp ("doneList", guiInfo.doneList);
+		serialization::makeNvp ("playerNr", guiInfo.playerNr);
+		archive >> serialization::makeNvp ("guiState", guiInfo.guiInfo);
 
 		if (guiInfo.playerNr == playerNr || playerNr == -1)
 		{

@@ -163,7 +163,7 @@ void cGameGuiController::start()
 		auto iter = playerGameGuiStates.find (activeClient->getActivePlayer().getId());
 		if (iter != playerGameGuiStates.end())
 		{
-			gameGui->restoreState (iter->second);
+			gameGui->restoreState (iter->second.gameGuiState);
 		}
 
 		if (activeClient->getModel().getGameSettings()->gameType == eGameSettingsGameType::HotSeat)
@@ -176,7 +176,7 @@ void cGameGuiController::start()
 //------------------------------------------------------------------------------
 void cGameGuiController::addPlayerGameGuiState (int playerNr, cGameGuiState playerGameGuiState)
 {
-	playerGameGuiStates[playerNr] = std::move (playerGameGuiState);
+	playerGameGuiStates[playerNr].gameGuiState = std::move (playerGameGuiState);
 }
 
 //------------------------------------------------------------------------------
@@ -184,16 +184,16 @@ void cGameGuiController::addSavedReport (std::unique_ptr<cSavedReport> savedRepo
 {
 	if (savedReport == nullptr) return;
 
-	playerReports[playerNr]->push_back (std::move (savedReport));
+	playerGameGuiStates[playerNr].reports->push_back (std::move (savedReport));
 
 	if (activeClient->getActivePlayer().getId() == playerNr)
-		handleReportForActivePlayer (*playerReports[playerNr]->back());
+		handleReportForActivePlayer (*playerGameGuiStates[playerNr].reports->back());
 }
 
 //------------------------------------------------------------------------------
 const std::vector<std::unique_ptr<cSavedReport>>& cGameGuiController::getSavedReports (int playerNr) const
 {
-	return *playerReports.at (playerNr);
+	return *playerGameGuiStates.at (playerNr).reports;
 }
 
 //------------------------------------------------------------------------------
@@ -230,20 +230,12 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 		{
 			cNetMessageGUISaveInfo message (saveingId);
 
-			auto reports = playerReports[client->getActivePlayer().getId()];
-			message.reports = reports;
-			message.savedPositions = savedPositions;
-			message.doneList = doneList;
+			message.guiInfo = playerGameGuiStates[client->getActivePlayer().getId()];
 
 			if (client == activeClient.get())
 			{
-				message.guiState = gameGui->getCurrentState();
+				message.guiInfo.gameGuiState = gameGui->getCurrentState();
 			}
-			else
-			{
-				message.guiState = playerGameGuiStates[client->getActivePlayer().getId()];
-			}
-
 			client->sendNetMessage (message);
 		});
 
@@ -252,24 +244,19 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 			if (guiInfo.playerNr != client->getActivePlayer().getId()) return;
 
 			const cMap& map = *client->getModel().getMap();
-
-			for (size_t i = 0; i < savedPositions.size(); i++)
+			for (auto& savedPosition : guiInfo.guiInfo.savedPositions)
 			{
-				if (savedPositions[i] && !map.isValidPosition (*guiInfo.savedPositions[i])) return;
+				if (savedPosition && !map.isValidPosition (*savedPosition)) return;
 			}
-			savedPositions = guiInfo.savedPositions;
-			doneList = guiInfo.doneList;
-
-			const cPosition& mapPosition = guiInfo.guiState.mapPosition;
+			const cPosition& mapPosition = guiInfo.guiInfo.gameGuiState.mapPosition;
 			if (!map.isValidPosition (mapPosition)) return;
 
-			playerGameGuiStates[guiInfo.playerNr] = guiInfo.guiState;
-			playerReports[guiInfo.playerNr] = guiInfo.reports;
+			playerGameGuiStates[client->getActivePlayer().getId()] = guiInfo.guiInfo;
 
 			if (client == activeClient.get())
 			{
-				gameGui->restoreState (guiInfo.guiState);
-				for (const auto& report : *guiInfo.reports)
+				gameGui->restoreState (guiInfo.guiInfo.gameGuiState);
+				for (const auto& report : *guiInfo.guiInfo.reports)
 				{
 					handleReportForActivePlayer (*report);
 				}
@@ -314,7 +301,7 @@ void cGameGuiController::setActiveClient (std::shared_ptr<cClient> client_)
 		auto iter = playerGameGuiStates.find (activeClient->getActivePlayer().getId());
 		if (iter != playerGameGuiStates.end())
 		{
-			gameGui->restoreState (iter->second);
+			gameGui->restoreState (iter->second.gameGuiState);
 		}
 		soundManager->setModel (&activeClient->getModel());
 
@@ -834,7 +821,7 @@ void cGameGuiController::connectClient (cClient& client)
 			client.sendNetMessage (cActionMinelayerStatus (vehicle, false, !vehicle.isUnitClearingMines()));
 		}
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUnitDone, [&] (const cUnit& unit)
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUnitDone, [this] (const cUnit& unit)
 	{
 		if (unit.isAVehicle())
 		{
@@ -844,7 +831,7 @@ void cGameGuiController::connectClient (cClient& client)
 				resumeMoveJobTriggered (vehicle);
 			}
 		}
-		doneList.push_back (unit.getId());
+		playerGameGuiStates[activeClient->getActivePlayer().getId()].doneList.push_back (unit.getId());
 	});
 
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredEndBuilding, [&] (const cVehicle& vehicle, const cPosition& destination)
@@ -1082,7 +1069,7 @@ void cGameGuiController::connectClient (cClient& client)
 			{
 				return;
 			}
-			playerGameGuiStates[player.getId()] = gameGui->getCurrentState();
+			playerGameGuiStates[player.getId()].gameGuiState = gameGui->getCurrentState();
 
 			auto it = ranges::find_if (clients, [&] (const std::shared_ptr<cClient>& client) { return client->getActivePlayer().getId() == player.getId(); });
 			assert (it != clients.end());
@@ -1114,7 +1101,7 @@ void cGameGuiController::connectClient (cClient& client)
 	{
 		if (activeClient->getModel().getActiveTurnPlayer() == getActivePlayer().get())
 		{
-			doneList.clear();
+			playerGameGuiStates[activeClient->getActivePlayer().getId()].doneList.clear();
 		}
 
 		updateEndButtonState();
@@ -1299,7 +1286,7 @@ void cGameGuiController::connectReportSources (cClient& client)
 	const cModel& model = client.getModel();
 	const cPlayer& player = client.getActivePlayer();
 
-	playerReports[player.getId()] = std::make_shared<std::vector<std::unique_ptr<cSavedReport>>>();
+	playerGameGuiStates[player.getId()].reports = std::make_shared<std::vector<std::unique_ptr<cSavedReport>>>();
 
 	//report message received from server
 	allClientsSignalConnectionManager.connect (client.reportMessageReceived, [&](int fromPlayerNr, std::unique_ptr<cSavedReport>& report, int toPlayerNr)
@@ -1880,7 +1867,7 @@ void cGameGuiController::selectNextUnit()
 	if (!player) return;
 
 	auto& unitSelection = gameGui->getGameMap().getUnitSelection();
-	unitSelection.selectNextUnit (*player, doneList);
+	unitSelection.selectNextUnit (*player, playerGameGuiStates[player->getId()].doneList);
 
 	const cUnit* selectedUnit = unitSelection.getSelectedUnit();
 	if (selectedUnit)
@@ -1896,7 +1883,7 @@ void cGameGuiController::selectPreviousUnit()
 	if (!player) return;
 
 	auto& unitSelection = gameGui->getGameMap().getUnitSelection();
-	unitSelection.selectPrevUnit (*player, doneList);
+	unitSelection.selectPrevUnit (*player, playerGameGuiStates[player->getId()].doneList);
 
 	const cUnit* selectedUnit = unitSelection.getSelectedUnit();
 	if (selectedUnit)
@@ -1915,7 +1902,7 @@ void cGameGuiController::markSelectedUnitAsDone()
 
 	if (unit && unit->getOwner() == player.get())
 	{
-		doneList.push_back (unit->getId());
+		playerGameGuiStates[player->getId()].doneList.push_back (unit->getId());
 		if (unit->isAVehicle())
 		{
 			const cVehicle* vehicle = static_cast<const cVehicle*> (unit);
@@ -1938,19 +1925,21 @@ void cGameGuiController::centerSelectedUnit()
 //------------------------------------------------------------------------------
 void cGameGuiController::savePosition (size_t index)
 {
-	if (index > savedPositions.size()) return;
+	auto& guiInfo = playerGameGuiStates[activeClient->getActivePlayer().getId()];
+	if (index > guiInfo.savedPositions.size()) return;
 
-	savedPositions[index] = gameGui->getGameMap().getMapCenterOffset();
+	guiInfo.savedPositions[index] = gameGui->getGameMap().getMapCenterOffset();
 }
 
 //------------------------------------------------------------------------------
 void cGameGuiController::jumpToSavedPosition (size_t index)
 {
-	if (index > savedPositions.size()) return;
+	const auto& guiInfo = playerGameGuiStates[activeClient->getActivePlayer().getId()];
+	if (index > guiInfo.savedPositions.size()) return;
 
-	if (!savedPositions[index]) return;
+	if (!guiInfo.savedPositions[index]) return;
 
-	gameGui->getGameMap().centerAt (*savedPositions[index]);
+	gameGui->getGameMap().centerAt (*guiInfo.savedPositions[index]);
 }
 
 //------------------------------------------------------------------------------

@@ -64,6 +64,23 @@ enum class eResourceType;
 struct sID;
 struct sMiningResource;
 
+struct sPlayerGuiInfo
+{
+	template <typename Archive>
+	void serialize (Archive& archive)
+	{
+		archive & NVP (gameGuiState);
+		archive & serialization::makeNvp("reports", *reports);
+		archive & NVP (savedPositions);
+		archive & NVP (doneList);
+	}
+
+	cGameGuiState gameGuiState;
+	std::shared_ptr<std::vector<std::unique_ptr<cSavedReport>>> reports = std::make_shared<std::vector<std::unique_ptr<cSavedReport>>>();
+	std::array<std::optional<cPosition>, 4> savedPositions;
+	std::vector<unsigned int> doneList;
+};
+
 class cGameGuiController
 {
 public:
@@ -102,13 +119,10 @@ private:
 
 	std::vector<std::unique_ptr<cChatCommandExecutor>> chatCommands;
 
-	std::map<int, cGameGuiState> playerGameGuiStates;
-	std::map<int, std::shared_ptr<std::vector<std::unique_ptr<cSavedReport>>>> playerReports;
+	std::map<int, sPlayerGuiInfo> playerGameGuiStates;
 
 	std::optional<cPosition> savedReportPosition;
 	std::shared_ptr<cWindowUpgradesFilterState> upgradesFilterState;
-	std::array<std::optional<cPosition>, 4> savedPositions;
-	std::vector<unsigned int> doneList;
 
 	template <typename Action> void addShortcut (cKeySequence, Action);
 	void initShortcuts();
