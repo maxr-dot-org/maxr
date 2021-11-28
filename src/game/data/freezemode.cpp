@@ -22,32 +22,22 @@
 #include <cassert>
 
 //------------------------------------------------------------------------------
-std::string enumToString (ePlayerConnectionState value)
+const std::vector<std::pair<ePlayerConnectionState, const char*>> serialization::sEnumStringMapping<ePlayerConnectionState>::m =
 {
-	switch (value)
-	{
-	case ePlayerConnectionState::INACTIVE: return "Inactive";
-	case ePlayerConnectionState::CONNECTED: return "Connected";
-	case ePlayerConnectionState::NOT_RESPONDING: return "Not responding";
-	case ePlayerConnectionState::DISCONNECTED: return "Disconnected";
-	}
-	assert (false);
-	return std::to_string (static_cast<int> (value));
-}
+	{ePlayerConnectionState::INACTIVE, "Inactive"},
+	{ePlayerConnectionState::CONNECTED, "Connected"},
+	{ePlayerConnectionState::NOT_RESPONDING, "Not responding"},
+	{ePlayerConnectionState::DISCONNECTED, "Disconnected"}
+};
 
 //------------------------------------------------------------------------------
-std::string enumToString (eFreezeMode value)
+const std::vector<std::pair<eFreezeMode, const char*>> serialization::sEnumStringMapping<eFreezeMode>::m =
 {
-	switch (value)
-	{
-	case eFreezeMode::WAIT_FOR_TURNEND: return "WAIT_FOR_TURNEND";
-	case eFreezeMode::PAUSE: return "PAUSE";
-	case eFreezeMode::WAIT_FOR_CLIENT: return "WAIT_FOR_CLIENT";
-	case eFreezeMode::WAIT_FOR_SERVER: return "WAIT_FOR_SERVER";
-	}
-	assert (false);
-	return std::to_string (static_cast<int> (value));
-}
+	{eFreezeMode::WAIT_FOR_TURNEND, "WAIT_FOR_TURNEND"},
+	{eFreezeMode::PAUSE, "PAUSE"},
+	{eFreezeMode::WAIT_FOR_CLIENT, "WAIT_FOR_CLIENT"},
+	{eFreezeMode::WAIT_FOR_SERVER, "WAIT_FOR_SERVER"}
+};
 
 //------------------------------------------------------------------------------
 void cFreezeModes::enable (eFreezeMode mode)

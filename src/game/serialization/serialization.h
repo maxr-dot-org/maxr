@@ -36,6 +36,8 @@
 #include "utility/color.h"
 #include "utility/flatset.h"
 #include "utility/position.h"
+#include "utility/ranges.h"
+#include "utility/log.h"
 
 class cBuilding;
 class cJob;
@@ -71,7 +73,18 @@ struct sID;
 namespace serialization
 {
 	// Customisation point for enum serialization
-	template <typename E>
+	template <typename E> struct sEnumStringMapping {};
+	// template <> struct serialization::sEnumStringMapping<MyEnum>
+	// {
+	//     static const std::vector<std::pair<MyEnum, const char*>> m;
+	// };
+	// const std::vector<std::pair<MyEnum, const char*>> serialization::sEnumStringMapping<MyEnum>::m =
+	// {
+	//     { MyEnum::value1, "value1" },
+	//     // ...
+	// };
+
+	template <typename E, typename Enabler = void>
 	struct sEnumSerializer
 	{
 		static std::string toString (E e) { return std::to_string (std::underlying_type_t<E> (e)); }
@@ -87,6 +100,32 @@ namespace serialization
 			return static_cast<E>(underlying);
 		}
 	};
+
+	template <typename E>
+	struct sEnumSerializer<E, decltype(sEnumStringMapping<E>::m, void())>
+	{
+		static std::string toString (E e)
+		{
+			auto it = ranges::find_if (sEnumStringMapping<E>::m, [&](const auto& p) { return p.first == e; });
+			if (it != sEnumStringMapping<E>::m.end()) return it->second;
+			Log.write (std::string ("Unknown ") + typeid (E).name() + " " + std::to_string (static_cast<int> (e)), cLog::eLOG_TYPE_WARNING);
+			return std::to_string (static_cast<int> (e));
+		}
+		static E fromString (const std::string& s)
+		{
+			auto it = ranges::find_if (sEnumStringMapping<E>::m, [&](const auto& p) { return p.second == s; });
+			if (it != sEnumStringMapping<E>::m.end()) return it->first;
+
+			Log.write (std::string ("Unknown ") + typeid (E).name() + " value " + s, cLog::eLOG_TYPE_WARNING);
+			throw std::runtime_error (std::string ("Unknown ") + typeid (E).name() + " value " + s);
+		}
+	};
+
+	template <typename E>
+	decltype(sEnumStringMapping<E>::m, std::string{}) enumToString (E e)
+	{
+		return sEnumSerializer<E>::toString (e);
+	}
 
 	namespace detail
 	{

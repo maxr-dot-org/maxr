@@ -255,7 +255,7 @@ void cClient::handleSurveyorMoveJobs()
 //------------------------------------------------------------------------------
 void cClient::enableFreezeMode (eFreezeMode mode)
 {
-	Log.write (" Client: enabled freeze mode: " + enumToString (mode), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Client: enabled freeze mode: " + serialization::enumToString (mode), cLog::eLOG_TYPE_NET_DEBUG);
 	const auto wasEnabled = freezeModes.isEnabled (mode);
 
 	freezeModes.enable (mode);
@@ -266,7 +266,7 @@ void cClient::enableFreezeMode (eFreezeMode mode)
 //------------------------------------------------------------------------------
 void cClient::disableFreezeMode (eFreezeMode mode)
 {
-	Log.write (" Client: disabled freeze mode: " + enumToString (mode), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Client: disabled freeze mode: " + serialization::enumToString (mode), cLog::eLOG_TYPE_NET_DEBUG);
 	const auto wasDisabled = !freezeModes.isEnabled (mode);
 
 	freezeModes.disable (mode);

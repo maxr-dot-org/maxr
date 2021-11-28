@@ -71,34 +71,22 @@ enum class eStorageUnitsImageType
 	Ship,
 	Human
 };
-
-namespace serialization
+template <> struct serialization::sEnumStringMapping<eMuzzleType>
 {
-	template <>
-	struct sEnumSerializer<eMuzzleType>
-	{
-		static std::string toString (eMuzzleType);
-		static eMuzzleType fromString (const std::string&);
-	};
-	template <>
-	struct sEnumSerializer<eSurfacePosition>
-	{
-		static std::string toString (eSurfacePosition);
-		static eSurfacePosition fromString (const std::string&);
-	};
-	template <>
-	struct sEnumSerializer<eOverbuildType>
-	{
-		static std::string toString (eOverbuildType);
-		static eOverbuildType fromString (const std::string&);
-	};
-	template <>
-	struct sEnumSerializer<eStorageUnitsImageType>
-	{
-		static std::string toString (eStorageUnitsImageType);
-		static eStorageUnitsImageType fromString (const std::string&);
-	};
-}
+	static const std::vector<std::pair<eMuzzleType, const char*>> m;
+};
+template <> struct serialization::sEnumStringMapping<eSurfacePosition>
+{
+	static const std::vector<std::pair<eSurfacePosition, const char*>> m;
+};
+template <> struct serialization::sEnumStringMapping<eOverbuildType>
+{
+	static const std::vector<std::pair<eOverbuildType, const char*>> m;
+};
+template <> struct serialization::sEnumStringMapping<eStorageUnitsImageType>
+{
+	static const std::vector<std::pair<eStorageUnitsImageType, const char*>> m;
+};
 
 struct sStaticCommonUnitData
 {

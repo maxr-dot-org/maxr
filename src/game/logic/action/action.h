@@ -25,7 +25,7 @@
 class cAction : public cNetMessageT<eNetMessageType::ACTION>
 {
 public:
-	// When changing this enum, also update function enumToString (eActiontype value)!
+	// When changing this enum, also update sEnumStringMapping<eActiontype>::m
 	enum class eActiontype {
 		ACTION_INIT_NEW_GAME,
 		ACTION_START_WORK,
@@ -80,7 +80,10 @@ private:
 	eActiontype type;
 };
 
-std::string enumToString (cAction::eActiontype value);
+template <> struct serialization::sEnumStringMapping<cAction::eActiontype>
+{
+	static const std::vector<std::pair<cAction::eActiontype, const char*>> m;
+};
 
 //------------------------------------------------------------------------------
 template <cAction::eActiontype ActionType>

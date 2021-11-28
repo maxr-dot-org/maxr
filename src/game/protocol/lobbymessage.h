@@ -31,7 +31,7 @@ class cClanData;
 class cMultiplayerLobbyMessage : public cNetMessageT<eNetMessageType::MULTIPLAYER_LOBBY>
 {
 public:
-	// When changing this enum, also update function enumToString (eMessageType value)!
+	// When changing this enum, also update sEnumStringMapping<eMessageType>::m
 	enum class eMessageType {
 		MU_MSG_CHAT,                 // sent by host/client: simple text message
 		MU_MSG_IDENTIFIKATION,       // sent by client: player send his properties (name, color, ready)
@@ -87,7 +87,10 @@ public:
 	cMultiplayerLobbyMessageT() : cMultiplayerLobbyMessage (MsgType) {}
 };
 
-std::string enumToString (cMultiplayerLobbyMessage::eMessageType value);
+template <> struct serialization::sEnumStringMapping<cMultiplayerLobbyMessage::eMessageType>
+{
+	static const std::vector<std::pair<cMultiplayerLobbyMessage::eMessageType, const char*>> m;
+};
 
 /**
 * Interface called each time a message should be handled.

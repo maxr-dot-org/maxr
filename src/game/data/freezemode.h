@@ -21,6 +21,7 @@
 #define game_data_freezemodeH
 
 #include <string>
+#include <game/serialization/serialization.h>
 
 enum class ePlayerConnectionState
 {
@@ -29,7 +30,10 @@ enum class ePlayerConnectionState
 	NOT_RESPONDING, // player is connected, but no sync message received for some time. Game should be paused.
 	DISCONNECTED    // player has lost connection. Game should be paused.
 };
-std::string enumToString (ePlayerConnectionState value);
+template <> struct serialization::sEnumStringMapping<ePlayerConnectionState>
+{
+	static const std::vector<std::pair<ePlayerConnectionState, const char*>> m;
+};
 
 enum class eFreezeMode
 {
@@ -38,7 +42,10 @@ enum class eFreezeMode
 	WAIT_FOR_CLIENT,    // waiting for response from client
 	WAIT_FOR_SERVER     // waiting for response from server
 };
-std::string enumToString (eFreezeMode value);
+template <> struct serialization::sEnumStringMapping<eFreezeMode>
+{
+	static const std::vector<std::pair<eFreezeMode, const char*>> m;
+};
 
 class cFreezeModes
 {

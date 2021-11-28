@@ -24,54 +24,32 @@
 
 cClanData ClanDataGlobal;
 
-namespace serialization
+//------------------------------------------------------------------------------
+const std::vector<std::pair<eClanModification, const char*>> serialization::sEnumStringMapping<eClanModification>::m =
 {
-	//--------------------------------------------------------------------------
-	/*static*/ std::string sEnumSerializer<EClanModification>::toString (EClanModification e)
-	{
-		switch (e)
-		{
-			case EClanModification::Damage: return "Damage";
-			case EClanModification::Range: return "Range";
-			case EClanModification::Armor: return "Armor";
-			case EClanModification::Hitpoints: return "Hitpoints";
-			case EClanModification::Scan: return "Scan";
-			case EClanModification::Speed: return "Speed";
-			case EClanModification::Built_Costs: return "BuildCosts";
-		}
-		Log.write ("Unknown EClanModification " + std::to_string (static_cast<int> (e)), cLog::eLOG_TYPE_WARNING);
-		return std::to_string (static_cast<int> (e));
-	}
-	//--------------------------------------------------------------------------
-	/*static*/ EClanModification sEnumSerializer<EClanModification>::fromString (const std::string& s)
-	{
-		if (s == "Damage") return EClanModification::Damage;
-		if (s == "Range") return EClanModification::Range;
-		if (s == "Armor") return EClanModification::Armor;
-		if (s == "Hitpoints") return EClanModification::Hitpoints;
-		if (s == "Scan") return EClanModification::Scan;
-		if (s == "Speed") return EClanModification::Speed;
-		if (s == "BuildCosts") return EClanModification::Built_Costs;
-
-		Log.write ("Unknown EClanModification " + s, cLog::eLOG_TYPE_WARNING);
-		throw std::runtime_error ("Unknown EClanModification " + s);
-	}
-}
+	{ eClanModification::Damage, "Damage"},
+	{ eClanModification::Range, "Range"},
+	{ eClanModification::Armor, "Armor"},
+	{ eClanModification::Hitpoints, "Hitpoints"},
+	{ eClanModification::Scan, "Scan"},
+	{ eClanModification::Speed, "Speed"},
+	{ eClanModification::Built_Costs, "BuildCosts"}
+};
 
 //--------------------------------------------------
-void cClanUnitStat::addModification (EClanModification area, int value)
+void cClanUnitStat::addModification (eClanModification area, int value)
 {
 	modifications[area] = value;
 }
 
 //--------------------------------------------------
-bool cClanUnitStat::hasModification (EClanModification key) const
+bool cClanUnitStat::hasModification (eClanModification key) const
 {
 	return modifications.find (key) != modifications.end();
 }
 
 //--------------------------------------------------
-int cClanUnitStat::getModificationValue (EClanModification key) const
+int cClanUnitStat::getModificationValue (eClanModification key) const
 {
 	auto it = modifications.find (key);
 	if (it != modifications.end())

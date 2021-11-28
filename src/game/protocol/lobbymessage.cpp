@@ -24,6 +24,31 @@
 
 #include <cassert>
 
+const std::vector<std::pair<cMultiplayerLobbyMessage::eMessageType, const char*>> serialization::sEnumStringMapping<cMultiplayerLobbyMessage::eMessageType>::m =
+{
+	{cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT, "MU_MSG_CHAT"},
+	{cMultiplayerLobbyMessage::eMessageType::MU_MSG_IDENTIFIKATION, "MU_MSG_IDENTIFIKATION"},
+	{cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_NUMBER, "MU_MSG_PLAYER_NUMBER"},
+	{cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYERLIST, "MU_MSG_PLAYERLIST"},
+	{cMultiplayerLobbyMessage::eMessageType::MU_MSG_OPTIONS, "MU_MSG_OPTIONS"},
+	{cMultiplayerLobbyMessage::eMessageType::MU_MSG_SAVESLOTS, "MU_MSG_SAVESLOTS"},
+	{cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_MAP_DOWNLOAD, "MU_MSG_START_MAP_DOWNLOAD"},
+	{cMultiplayerLobbyMessage::eMessageType::MU_MSG_MAP_DOWNLOAD_DATA, "MU_MSG_MAP_DOWNLOAD_DATA"},
+	{cMultiplayerLobbyMessage::eMessageType::MU_MSG_CANCELED_MAP_DOWNLOAD, "MU_MSG_CANCELED_MAP_DOWNLOAD"},
+	{cMultiplayerLobbyMessage::eMessageType::MU_MSG_FINISHED_MAP_DOWNLOAD, "MU_MSG_FINISHED_MAP_DOWNLOAD"},
+	{cMultiplayerLobbyMessage::eMessageType::MU_MSG_REQUEST_MAP, "MU_MSG_REQUEST_MAP"},
+	{cMultiplayerLobbyMessage::eMessageType::MU_MSG_ASK_TO_FINISH_LOBBY, "MU_MSG_ASK_TO_FINISH_LOBBY"},
+	{cMultiplayerLobbyMessage::eMessageType::MU_MSG_CANNOT_END_LOBBY, "MU_MSG_CANNOT_END_LOBBY"},
+	{cMultiplayerLobbyMessage::eMessageType::MU_MSG_DISCONNECT_NOT_IN_SAVED_GAME, "MU_MSG_DISCONNECT_NOT_IN_SAVED_GAME"},
+	{cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME_PREPARATIONS, "MU_MSG_START_GAME_PREPARATIONS"},
+	{cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_STATE, "MU_MSG_LANDING_STATE"},
+	{cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_POSITION, "MU_MSG_LANDING_POSITION"},
+	{cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME, "MU_MSG_START_GAME"},
+	{cMultiplayerLobbyMessage::eMessageType::MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS, "MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS"},
+	{cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION, "MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION"},
+	{cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION, "MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION"}
+};
+
 std::unique_ptr<cMultiplayerLobbyMessage> cMultiplayerLobbyMessage::createFromBuffer (cBinaryArchiveOut& archive)
 {
 	eMessageType type;
@@ -103,59 +128,6 @@ bool ILobbyMessageHandler::handleMessage (const cNetMessage& message)
 {
 	if (message.getType() != eNetMessageType::MULTIPLAYER_LOBBY) return false;
 	return handleMessage (static_cast<const cMultiplayerLobbyMessage&> (message));
-}
-
-
-std::string enumToString (cMultiplayerLobbyMessage::eMessageType value)
-{
-	switch (value)
-	{
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT:
-		return "MU_MSG_CHAT";
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IDENTIFIKATION:
-		return "MU_MSG_IDENTIFIKATION";
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_NUMBER:
-		return "MU_MSG_PLAYER_NUMBER";
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYERLIST:
-		return "MU_MSG_PLAYERLIST";
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_OPTIONS:
-		return "MU_MSG_OPTIONS";
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_SAVESLOTS:
-		return "MU_MSG_SAVESLOTS";
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_MAP_DOWNLOAD:
-		return "MU_MSG_START_MAP_DOWNLOAD";
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_MAP_DOWNLOAD_DATA:
-		return "MU_MSG_MAP_DOWNLOAD_DATA";
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CANCELED_MAP_DOWNLOAD:
-		return "MU_MSG_CANCELED_MAP_DOWNLOAD";
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_FINISHED_MAP_DOWNLOAD:
-		return "MU_MSG_FINISHED_MAP_DOWNLOAD";
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_REQUEST_MAP:
-		return "MU_MSG_REQUEST_MAP";
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_ASK_TO_FINISH_LOBBY:
-		return "MU_MSG_ASK_TO_FINISH_LOBBY";
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_CANNOT_END_LOBBY:
-		return "MU_MSG_CANNOT_END_LOBBY";
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_DISCONNECT_NOT_IN_SAVED_GAME:
-		return "MU_MSG_DISCONNECT_NOT_IN_SAVED_GAME";
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME_PREPARATIONS:
-		return "MU_MSG_START_GAME_PREPARATIONS";
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_STATE:
-		return "MU_MSG_LANDING_STATE";
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_LANDING_POSITION:
-		return "MU_MSG_LANDING_POSITION";
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_GAME:
-		return "MU_MSG_START_GAME";
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS:
-		return "MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS";
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION:
-		return "MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION";
-	case cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION:
-		return "MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION";
-	default:
-		assert (false);
-		return std::to_string (static_cast<int> (value));
-	}
 }
 
 //------------------------------------------------------------------------------

@@ -29,122 +29,41 @@
 
 cUnitsData UnitsDataGlobal;
 
-namespace serialization
+const std::vector<std::pair<eMuzzleType, const char*>> serialization::sEnumStringMapping<eMuzzleType>::m =
 {
-	//--------------------------------------------------------------------------
-	/*static*/ std::string sEnumSerializer<eMuzzleType>::toString (eMuzzleType e)
-	{
-		switch (e)
-		{
-			case eMuzzleType::None: return "None";
-			case eMuzzleType::Big: return "Big";
-			case eMuzzleType::Rocket: return "Rocket";
-			case eMuzzleType::Small: return "Small";
-			case eMuzzleType::Med: return "Med";
-			case eMuzzleType::MedLong: return "MedLong";
-			case eMuzzleType::RocketCluster: return "RocketCluster";
-			case eMuzzleType::Torpedo: return "Torpedo";
-			case eMuzzleType::Sniper: return "Sniper";
-		}
-		Log.write ("Unknown eMuzzleType " + std::to_string (static_cast<int> (e)), cLog::eLOG_TYPE_WARNING);
-		return std::to_string (static_cast<int> (e));
-	}
-	//--------------------------------------------------------------------------
-	/*static*/ eMuzzleType sEnumSerializer<eMuzzleType>::fromString (const std::string& s)
-	{
-		if (s == "None") return eMuzzleType::None;
-		if (s == "Big") return eMuzzleType::Big;
-		if (s == "Rocket") return eMuzzleType::Rocket;
-		if (s == "Small") return eMuzzleType::Small;
-		if (s == "Med") return eMuzzleType::Med;
-		if (s == "MedLong") return eMuzzleType::MedLong;
-		if (s == "RocketCluster") return eMuzzleType::RocketCluster;
-		if (s == "Torpedo") return eMuzzleType::Torpedo;
-		if (s == "Sniper") return eMuzzleType::Sniper;
-
-		Log.write ("Unknown eMuzzleType " + s, cLog::eLOG_TYPE_WARNING);
-		throw std::runtime_error ("Unknown eMuzzleType " + s);
-	}
-
-	//--------------------------------------------------------------------------
-	/*static*/ std::string sEnumSerializer<eSurfacePosition>::toString (eSurfacePosition e)
-	{
-		switch (e)
-		{
-			case eSurfacePosition::BeneathSea: return "BeneathSea";
-			case eSurfacePosition::AboveSea: return "AboveSea";
-			case eSurfacePosition::Base: return "Base";
-			case eSurfacePosition::AboveBase: return "AboveBase";
-			case eSurfacePosition::Ground: return "Ground";
-			case eSurfacePosition::Above: return "Above";
-		}
-		Log.write ("Unknown eSurfacePosition " + std::to_string (static_cast<int> (e)), cLog::eLOG_TYPE_WARNING);
-		return std::to_string (static_cast<int> (e));
-	}
-	//--------------------------------------------------------------------------
-	/*static*/ eSurfacePosition sEnumSerializer<eSurfacePosition>::fromString (const std::string& s)
-	{
-		if (s == "BeneathSea") return eSurfacePosition::BeneathSea;
-		if (s == "AboveSea") return eSurfacePosition::AboveSea;
-		if (s == "Base") return eSurfacePosition::Base;
-		if (s == "AboveBase") return eSurfacePosition::AboveBase;
-		if (s == "Ground") return eSurfacePosition::Ground;
-		if (s == "Above") return eSurfacePosition::Above;
-
-		Log.write ("Unknown eSurfacePosition " + s, cLog::eLOG_TYPE_WARNING);
-		throw std::runtime_error ("Unknown eSurfacePosition " + s);
-	}
-
-	//--------------------------------------------------------------------------
-	/*static*/ std::string sEnumSerializer<eOverbuildType>::toString (eOverbuildType e)
-	{
-		switch (e)
-		{
-			case eOverbuildType::No: return "No";
-			case eOverbuildType::Yes: return "Yes";
-			case eOverbuildType::YesNRemove: return "YesNRemove";
-		}
-		Log.write ("Unknown eOverbuildType " + std::to_string (static_cast<int> (e)), cLog::eLOG_TYPE_WARNING);
-		return std::to_string (static_cast<int> (e));
-	}
-	//--------------------------------------------------------------------------
-	/*static*/ eOverbuildType sEnumSerializer<eOverbuildType>::fromString (const std::string& s)
-	{
-		if (s == "No") return eOverbuildType::No;
-		if (s == "Yes") return eOverbuildType::Yes;
-		if (s == "YesNRemove") return eOverbuildType::YesNRemove;
-
-		Log.write ("Unknown eOverbuildType " + s, cLog::eLOG_TYPE_WARNING);
-		throw std::runtime_error ("Unknown eOverbuildType " + s);
-	}
-
-	//--------------------------------------------------------------------------
-	/*static*/ std::string sEnumSerializer<eStorageUnitsImageType>::toString (eStorageUnitsImageType e)
-	{
-		switch (e)
-		{
-			case eStorageUnitsImageType::None: return "None";
-			case eStorageUnitsImageType::Tank: return "Tank";
-			case eStorageUnitsImageType::Plane: return "Plane";
-			case eStorageUnitsImageType::Ship: return "Ship";
-			case eStorageUnitsImageType::Human: return "Human";
-		}
-		Log.write ("Unknown eStorageUnitsImageType " + std::to_string (static_cast<int> (e)), cLog::eLOG_TYPE_WARNING);
-		return std::to_string (static_cast<int> (e));
-	}
-	//--------------------------------------------------------------------------
-	/*static*/ eStorageUnitsImageType sEnumSerializer<eStorageUnitsImageType>::fromString (const std::string& s)
-	{
-		if (s == "None") return eStorageUnitsImageType::None;
-		if (s == "Tank") return eStorageUnitsImageType::Tank;
-		if (s == "Plane") return eStorageUnitsImageType::Plane;
-		if (s == "Ship") return eStorageUnitsImageType::Ship;
-		if (s == "Human") return eStorageUnitsImageType::Human;
-
-		Log.write ("Unknown eStorageUnitsImageType " + s, cLog::eLOG_TYPE_WARNING);
-		throw std::runtime_error ("Unknown eStorageUnitsImageType " + s);
-	}
-}
+	{eMuzzleType::None, "None"},
+	{eMuzzleType::Big, "Big"},
+	{eMuzzleType::Rocket, "Rocket"},
+	{eMuzzleType::Small, "Small"},
+	{eMuzzleType::Med, "Med"},
+	{eMuzzleType::MedLong, "MedLong"},
+	{eMuzzleType::RocketCluster, "RocketCluster"},
+	{eMuzzleType::Torpedo, "Torpedo"},
+	{eMuzzleType::Sniper, "Sniper"}
+};
+const std::vector<std::pair<eSurfacePosition, const char*>> serialization::sEnumStringMapping<eSurfacePosition>::m =
+{
+	{eSurfacePosition::BeneathSea, "BeneathSea"},
+	{eSurfacePosition::AboveSea, "AboveSea"},
+	{eSurfacePosition::Base, "Base"},
+	{eSurfacePosition::AboveBase, "AboveBase"},
+	{eSurfacePosition::Ground, "Ground"},
+	{eSurfacePosition::Above, "Above"}
+};
+const std::vector<std::pair<eOverbuildType, const char*>> serialization::sEnumStringMapping<eOverbuildType>::m =
+{
+	{eOverbuildType::No, "No"},
+	{eOverbuildType::Yes, "Yes"},
+	{eOverbuildType::YesNRemove, "YesNRemove"}
+};
+const std::vector<std::pair<eStorageUnitsImageType, const char*>> serialization::sEnumStringMapping<eStorageUnitsImageType>::m =
+{
+	{eStorageUnitsImageType::None, "None"},
+	{eStorageUnitsImageType::Tank, "Tank"},
+	{eStorageUnitsImageType::Plane, "Plane"},
+	{eStorageUnitsImageType::Ship, "Ship"},
+	{eStorageUnitsImageType::Human, "Human"}
+};
 
 //------------------------------------------------------------------------------
 uint32_t sStaticCommonUnitData::computeChecksum (uint32_t crc) const
@@ -315,20 +234,20 @@ void cUnitsData::initializeClanUnitData (const cClanData& clanData)
 			const cClanUnitStat* changedStat = clan.getUnitStat (clanVehicle.getId());
 			if (changedStat == nullptr) continue;
 
-			if (changedStat->hasModification (EClanModification::Damage))
-				clanVehicle.setDamage (changedStat->getModificationValue (EClanModification::Damage));
-			if (changedStat->hasModification (EClanModification::Range))
-				clanVehicle.setRange (changedStat->getModificationValue (EClanModification::Range));
-			if (changedStat->hasModification (EClanModification::Armor))
-				clanVehicle.setArmor (changedStat->getModificationValue (EClanModification::Armor));
-			if (changedStat->hasModification (EClanModification::Hitpoints))
-				clanVehicle.setHitpointsMax (changedStat->getModificationValue (EClanModification::Hitpoints));
-			if (changedStat->hasModification (EClanModification::Scan))
-				clanVehicle.setScan (changedStat->getModificationValue (EClanModification::Scan));
-			if (changedStat->hasModification (EClanModification::Speed))
-				clanVehicle.setSpeedMax (changedStat->getModificationValue (EClanModification::Speed) * 4);
-			if (changedStat->hasModification (EClanModification::Built_Costs))
-				clanVehicle.setBuildCost (changedStat->getModificationValue (EClanModification::Built_Costs));
+			if (changedStat->hasModification (eClanModification::Damage))
+				clanVehicle.setDamage (changedStat->getModificationValue (eClanModification::Damage));
+			if (changedStat->hasModification (eClanModification::Range))
+				clanVehicle.setRange (changedStat->getModificationValue (eClanModification::Range));
+			if (changedStat->hasModification (eClanModification::Armor))
+				clanVehicle.setArmor (changedStat->getModificationValue (eClanModification::Armor));
+			if (changedStat->hasModification (eClanModification::Hitpoints))
+				clanVehicle.setHitpointsMax (changedStat->getModificationValue (eClanModification::Hitpoints));
+			if (changedStat->hasModification (eClanModification::Scan))
+				clanVehicle.setScan (changedStat->getModificationValue (eClanModification::Scan));
+			if (changedStat->hasModification (eClanModification::Speed))
+				clanVehicle.setSpeedMax (changedStat->getModificationValue (eClanModification::Speed) * 4);
+			if (changedStat->hasModification (eClanModification::Built_Costs))
+				clanVehicle.setBuildCost (changedStat->getModificationValue (eClanModification::Built_Costs));
 		}
 	}
 }

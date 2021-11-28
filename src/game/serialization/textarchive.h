@@ -26,18 +26,6 @@
 #include "serialization.h"
 
 //------------------------------------------------------------------------------
-// Fallback if enum doesn't provide its own function
-template <typename T, typename = std::enable_if_t <std::is_enum<T>::value>>
-std::string enumToString (T value)
-{
-	std::stringstream ss;
-	ss.imbue (std::locale ("C"));
-	ss << static_cast<int> (value);
-
-	return ss.str();
-}
-
-//------------------------------------------------------------------------------
 class cTextArchiveIn
 {
 public:
@@ -111,11 +99,11 @@ private:
 	void pushValue (const std::string& value);
 
 	//------------------------------------------------------------------------------
-	template <typename T, std::enable_if_t <std::is_enum<T>::value, int> = 0>
-	void pushValue (T value)
+	template <typename E, std::enable_if_t<std::is_enum<E>::value, int> = 0>
+	void pushValue (E value)
 	{
 		addComma();
-		buffer << enumToString (value);
+		buffer << serialization::sEnumSerializer<E>::toString (value);
 		nextCommaNeeded = true;
 	}
 };

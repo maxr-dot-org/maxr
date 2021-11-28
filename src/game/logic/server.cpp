@@ -79,7 +79,7 @@ std::string cServer::getGameState() const
 	result << "Players:" << std::endl;
 	for (auto player : model.getPlayerList())
 	{
-		result << " " << player->getName() << " (" << enumToString (playerConnectionStates.at (player->getId())) << ")" <<  std::endl;
+		result << " " << player->getName() << " (" << serialization::enumToString (playerConnectionStates.at (player->getId())) << ")" <<  std::endl;
 	}
 	return result.str();
 }

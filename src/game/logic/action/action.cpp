@@ -51,6 +51,39 @@
 
 #include <cassert>
 
+const std::vector<std::pair<cAction::eActiontype, const char*>> serialization::sEnumStringMapping<cAction::eActiontype>::m =
+{
+	{cAction::eActiontype::ACTION_INIT_NEW_GAME, "ACTION_INIT_NEW_GAME"},
+	{cAction::eActiontype::ACTION_START_WORK, "ACTION_START_WORK"},
+	{cAction::eActiontype::ACTION_STOP, "ACTION_STOP"},
+	{cAction::eActiontype::ACTION_TRANSFER, "ACTION_TRANSFER"},
+	{cAction::eActiontype::ACTION_START_MOVE, "ACTION_START_MOVE"},
+	{cAction::eActiontype::ACTION_RESUME_MOVE, "ACTION_RESUME_MOVE"},
+	{cAction::eActiontype::ACTION_START_TURN, "ACTION_START_TURN"},
+	{cAction::eActiontype::ACTION_END_TURN, "ACTION_END_TURN"},
+	{cAction::eActiontype::ACTION_SELF_DESTROY, "ACTION_SELF_DESTROY"},
+	{cAction::eActiontype::ACTION_ATTACK, "ACTION_ATTACK"},
+	{cAction::eActiontype::ACTION_CHANGE_SENTRY, "ACTION_CHANGE_SENTRY"},
+	{cAction::eActiontype::ACTION_CHANGE_MANUAL_FIRE, "ACTION_CHANGE_MANUAL_FIRE"},
+	{cAction::eActiontype::ACTION_MINELAYER_STATUS, "ACTION_MINELAYER_STATUS"},
+	{cAction::eActiontype::ACTION_START_BUILD, "ACTION_START_BUILD"},
+	{cAction::eActiontype::ACTION_FINISH_BUILD, "ACTION_FINISH_BUILD"},
+	{cAction::eActiontype::ACTION_CHANGE_BUILDLIST, "ACTION_CHANGE_BUILDLIST"},
+	{cAction::eActiontype::ACTION_LOAD, "ACTION_LOAD"},
+	{cAction::eActiontype::ACTION_ACTIVATE, "ACTION_ACTIVATE"},
+	{cAction::eActiontype::ACTION_REPAIR_RELOAD, "ACTION_REPAIR_RELOAD"},
+	{cAction::eActiontype::ACTION_RESOURCE_DISTRIBUTION, "ACTION_RESOURCE_DISTRIBUTION"},
+	{cAction::eActiontype::ACTION_CLEAR, "ACTION_CLEAR"},
+	{cAction::eActiontype::ACTION_STEAL_DISABLE, "ACTION_STEAL_DISABLE"},
+	{cAction::eActiontype::ACTION_CHANGE_RESEARCH, "ACTION_CHANGE_RESEARCH"},
+	{cAction::eActiontype::ACTION_CHANGE_UNIT_NAME, "ACTION_CHANGE_UNIT_NAME"},
+	{cAction::eActiontype::ACTION_BUY_UPGRADES, "ACTION_BUY_UPGRADES"},
+	{cAction::eActiontype::ACTION_UPGRADE_VEHICLE, "ACTION_UPGRADE_VEHICLE"},
+	{cAction::eActiontype::ACTION_UPGRADE_BUILDING, "ACTION_UPGRADE_BUILDING"},
+	{cAction::eActiontype::ACTION_SET_AUTO_MOVE, "ACTION_SET_AUTO_MOVE"}
+};
+
+
 std::unique_ptr<cAction> cAction::createFromBuffer (cBinaryArchiveOut& archive)
 {
 	eActiontype type;
@@ -126,69 +159,3 @@ cAction::eActiontype cAction::getType() const
 	return type;
 }
 
-//------------------------------------------------------------------------------
-std::string enumToString (cAction::eActiontype value)
-{
-	switch (value)
-	{
-	case cAction::eActiontype::ACTION_INIT_NEW_GAME:
-		return "ACTION_INIT_NEW_GAME";
-	case cAction::eActiontype::ACTION_START_WORK:
-		return "ACTION_START_WORK";
-	case cAction::eActiontype::ACTION_STOP:
-		return "ACTION_STOP";
-	case cAction::eActiontype::ACTION_TRANSFER:
-		return "ACTION_TRANSFER";
-	case cAction::eActiontype::ACTION_START_MOVE:
-		return "ACTION_START_MOVE";
-	case cAction::eActiontype::ACTION_RESUME_MOVE:
-		return "ACTION_RESUME_MOVE";
-	case cAction::eActiontype::ACTION_START_TURN:
-		return "ACTION_START_TURN";
-	case cAction::eActiontype::ACTION_END_TURN:
-		return "ACTION_END_TURN";
-	case cAction::eActiontype::ACTION_SELF_DESTROY:
-		return "ACTION_SELF_DESTROY";
-	case cAction::eActiontype::ACTION_ATTACK:
-		return "ACTION_ATTACK";
-	case cAction::eActiontype::ACTION_CHANGE_SENTRY:
-		return "ACTION_CHANGE_SENTRY";
-	case cAction::eActiontype::ACTION_CHANGE_MANUAL_FIRE:
-		return "ACTION_CHANGE_MANUAL_FIRE";
-	case cAction::eActiontype::ACTION_MINELAYER_STATUS:
-		return "ACTION_MINELAYER_STATUS";
-	case cAction::eActiontype::ACTION_START_BUILD:
-		return "ACTION_START_BUILD";
-	case cAction::eActiontype::ACTION_FINISH_BUILD:
-		return "ACTION_FINISH_BUILD";
-	case cAction::eActiontype::ACTION_CHANGE_BUILDLIST:
-		return "ACTION_CHANGE_BUILDLIST";
-	case cAction::eActiontype::ACTION_LOAD:
-		return "ACTION_LOAD";
-	case cAction::eActiontype::ACTION_ACTIVATE:
-		return "ACTION_ACTIVATE";
-	case cAction::eActiontype::ACTION_REPAIR_RELOAD:
-		return "ACTION_REPAIR_RELOAD";
-	case cAction::eActiontype::ACTION_RESOURCE_DISTRIBUTION:
-		return "ACTION_RESOURCE_DISTRIBUTION";
-	case cAction::eActiontype::ACTION_CLEAR:
-		return "ACTION_CLEAR";
-	case cAction::eActiontype::ACTION_STEAL_DISABLE:
-		return "ACTION_STEAL_DISABLE";
-	case cAction::eActiontype::ACTION_CHANGE_RESEARCH:
-		return "ACTION_CHANGE_RESEARCH";
-	case cAction::eActiontype::ACTION_CHANGE_UNIT_NAME:
-		return "ACTION_CHANGE_UNIT_NAME";
-	case cAction::eActiontype::ACTION_BUY_UPGRADES:
-		return "ACTION_BUY_UPGRADES";
-	case cAction::eActiontype::ACTION_UPGRADE_VEHICLE:
-		return "ACTION_UPGRADE_VEHICLE";
-	case cAction::eActiontype::ACTION_UPGRADE_BUILDING:
-		return "ACTION_UPGRADE_BUILDING";
-	case cAction::eActiontype::ACTION_SET_AUTO_MOVE:
-		return "ACTION_SET_AUTO_MOVE";
-	default:
-		assert (false);
-		return std::to_string (static_cast<int> (value));
-	}
-}

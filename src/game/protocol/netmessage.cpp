@@ -31,33 +31,27 @@
 #include <memory>
 
 //------------------------------------------------------------------------------
-std::string enumToString (eNetMessageType value)
+const std::vector<std::pair<eNetMessageType, const char*>> serialization::sEnumStringMapping<eNetMessageType>::m =
 {
-	switch (value)
-	{
-	case eNetMessageType::TCP_HELLO: return "TCP_HELLO";
-	case eNetMessageType::TCP_WANT_CONNECT: return "TCP_WANT_CONNECT";
-	case eNetMessageType::TCP_CONNECTED: return "TCP_CONNECTED";
-	case eNetMessageType::TCP_CONNECT_FAILED: return "TCP_CONNECT_FAILED";
-	case eNetMessageType::TCP_CLOSE: return "TCP_CLOSE";
-	case eNetMessageType::ACTION: return "ACTION";
-	case eNetMessageType::GAMETIME_SYNC_SERVER: return "GAMETIME_SYNC_SERVER";
-	case eNetMessageType::GAMETIME_SYNC_CLIENT: return "GAMETIME_SYNC_CLIENT";
-	case eNetMessageType::RANDOM_SEED: return "RANDOM_SEED";
-	case eNetMessageType::FREEZE_MODES: return "FREEZE_MODES";
-	case eNetMessageType::REPORT: return "REPORT";
-	case eNetMessageType::GUI_SAVE_INFO: return "GUI_SAVE_INFO";
-	case eNetMessageType::REQUEST_GUI_SAVE_INFO: return "REQUEST_GUI_SAVE_INFO";
-	case eNetMessageType::RESYNC_MODEL: return "RESYNC_MODEL";
-	case eNetMessageType::REQUEST_RESYNC_MODEL: return "REQUEST_RESYNC_MODEL";
-	case eNetMessageType::MULTIPLAYER_LOBBY: return "MULTIPLAYER_LOBBY";
-	case eNetMessageType::GAME_ALREADY_RUNNING: return "GAME_ALREADY_RUNNING";
-	case eNetMessageType::WANT_REJOIN_GAME: return "WANT_REJOIN_GAME";
-	default:
-		assert (false);
-		return std::to_string (static_cast<int> (value));
-	}
-}
+	{eNetMessageType::TCP_HELLO, "TCP_HELLO"},
+	{eNetMessageType::TCP_WANT_CONNECT, "TCP_WANT_CONNECT"},
+	{eNetMessageType::TCP_CONNECTED, "TCP_CONNECTED"},
+	{eNetMessageType::TCP_CONNECT_FAILED, "TCP_CONNECT_FAILED"},
+	{eNetMessageType::TCP_CLOSE, "TCP_CLOSE"},
+	{eNetMessageType::ACTION, "ACTION"},
+	{eNetMessageType::GAMETIME_SYNC_SERVER, "GAMETIME_SYNC_SERVER"},
+	{eNetMessageType::GAMETIME_SYNC_CLIENT, "GAMETIME_SYNC_CLIENT"},
+	{eNetMessageType::RANDOM_SEED, "RANDOM_SEED"},
+	{eNetMessageType::FREEZE_MODES, "FREEZE_MODES"},
+	{eNetMessageType::REPORT, "REPORT"},
+	{eNetMessageType::GUI_SAVE_INFO, "GUI_SAVE_INFO"},
+	{eNetMessageType::REQUEST_GUI_SAVE_INFO, "REQUEST_GUI_SAVE_INFO"},
+	{eNetMessageType::RESYNC_MODEL, "RESYNC_MODEL"},
+	{eNetMessageType::REQUEST_RESYNC_MODEL, "REQUEST_RESYNC_MODEL"},
+	{eNetMessageType::MULTIPLAYER_LOBBY, "MULTIPLAYER_LOBBY"},
+	{eNetMessageType::GAME_ALREADY_RUNNING, "GAME_ALREADY_RUNNING"},
+	{eNetMessageType::WANT_REJOIN_GAME, "WANT_REJOIN_GAME"}
+};
 
 //------------------------------------------------------------------------------
 std::unique_ptr<cNetMessage> cNetMessage::createFromBuffer (const unsigned char* data, int length)
