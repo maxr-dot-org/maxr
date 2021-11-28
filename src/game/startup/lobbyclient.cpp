@@ -123,6 +123,11 @@ void cLobbyClient::sendNetMessage (cNetMessage& message)
 	archive << message;
 	Log.write ("LobbyClient: --> " + archive.data() + " to host", cLog::eLOG_TYPE_NET_DEBUG);
 
+	nlohmann::json json;
+	cJsonArchiveOut jsonarchive (json);
+	jsonarchive << message;
+	Log.write ("LobbyClient: --> " + json.dump (-1) + " to host", cLog::eLOG_TYPE_NET_DEBUG);
+
 	connectionManager->sendToServer (message);
 }
 
@@ -251,6 +256,11 @@ void cLobbyClient::handleNetMessage (const cNetMessage& message)
 	cTextArchiveIn archive;
 	archive << message;
 	Log.write ("LobbyClient: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
+
+	nlohmann::json json;
+	cJsonArchiveOut jsonarchive (json);
+	jsonarchive << message;
+	Log.write ("LobbyClient: <-- " + json.dump (-1), cLog::eLOG_TYPE_NET_DEBUG);
 
 	switch (message.getType())
 	{

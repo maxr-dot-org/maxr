@@ -154,6 +154,11 @@ void cLobbyServer::sendNetMessage (const cNetMessage& message, int receiverPlaye
 	archive << message;
 	Log.write ("LobbyServer: --> " + archive.data() + " to " + std::to_string (receiverPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
 
+	nlohmann::json json;
+	cJsonArchiveOut jsonarchive (json);
+	jsonarchive << message;
+	Log.write ("LobbyServer: --> " + json.dump (-1) + " to " + std::to_string (receiverPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
+
 	if (receiverPlayerNr == -1)
 		connectionManager->sendToPlayers (message);
 	else
@@ -166,6 +171,12 @@ void cLobbyServer::forwardMessage (const cNetMessage& message)
 	cTextArchiveIn archive;
 	archive << message;
 	Log.write ("LobbyServer: forward --> " + archive.data() + " from " + std::to_string (message.playerNr), cLog::eLOG_TYPE_NET_DEBUG);
+
+	nlohmann::json json;
+	cJsonArchiveOut jsonarchive (json);
+	jsonarchive << message;
+	Log.write ("LobbyServer: forward --> " + json.dump (-1) + " from " + std::to_string (message.playerNr), cLog::eLOG_TYPE_NET_DEBUG);
+
 
 	for (auto& player : players)
 	{
@@ -257,9 +268,7 @@ void cLobbyServer::askedToFinishLobby (int fromPlayer)
 //------------------------------------------------------------------------------
 void cLobbyServer::sendChatMessage (const std::string& message, int receiverPlayerNr /*= -1*/)
 {
-	cTextArchiveIn archive;
-	archive << message;
-	Log.write ("LobbyServer: --> " + archive.data() + " to " + std::to_string (receiverPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("LobbyServer: --> " + message + " to " + std::to_string (receiverPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
 
 	if (receiverPlayerNr == -1)
 		connectionManager->sendToPlayers (cMuMsgChat (message));
@@ -273,6 +282,11 @@ void cLobbyServer::handleNetMessage (const cNetMessage& message)
 	cTextArchiveIn archive;
 	archive << message;
 	Log.write ("lobbyServer: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
+
+	nlohmann::json json;
+	cJsonArchiveOut jsonarchive (json);
+	jsonarchive << message;
+	Log.write ("LobbyServer: <-- " + json.dump (-1), cLog::eLOG_TYPE_NET_DEBUG);
 
 	switch (message.getType())
 	{

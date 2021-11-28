@@ -310,15 +310,20 @@ void cMapSender::run()
 }
 
 //------------------------------------------------------------------------------
-void cMapSender::sendMsg (cNetMessage& msg)
+void cMapSender::sendMsg (cNetMessage& message)
 {
-	msg.playerNr = -1;
+	message.playerNr = -1;
 
 	cTextArchiveIn archive;
-	archive << msg;
+	archive << message;
 	Log.write ("MapSender: --> " + archive.data() + " to " + std::to_string (toPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
 
-	connectionManager.sendToPlayer (msg, toPlayerNr);
+	nlohmann::json json;
+	cJsonArchiveOut jsonarchive (json);
+	jsonarchive << message;
+	Log.write ("MapSender: --> " + json.dump (-1) + " to " + std::to_string (toPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
+
+	connectionManager.sendToPlayer (message, toPlayerNr);
 }
 
 //------------------------------------------------------------------------------

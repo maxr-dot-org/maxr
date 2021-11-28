@@ -173,6 +173,11 @@ void cServer::sendMessageToClients (const cNetMessage& message, int playerNr /* 
 		cTextArchiveIn archive;
 		archive << message;
 		Log.write ("Server: --> " + archive.data() + " @" + std::to_string (model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+
+		nlohmann::json json;
+		cJsonArchiveOut jsonarchive (json);
+		jsonarchive << message;
+		Log.write ("Server: --> " + json.dump (-1) + " @" + std::to_string (model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
 	if (playerNr == -1)
@@ -225,6 +230,11 @@ void cServer::run()
 				cTextArchiveIn archive;
 				archive << *message;
 				Log.write ("Server: <-- " + archive.data() + " @" + std::to_string (model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+
+				nlohmann::json json = nlohmann::json::object();
+				cJsonArchiveOut jsonarchive (json);
+				jsonarchive << *message;
+				Log.write ("Server: <-- " + json.dump (-1) + " @" + std::to_string (model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 			}
 
 			if (model.getPlayer (message->playerNr) == nullptr &&

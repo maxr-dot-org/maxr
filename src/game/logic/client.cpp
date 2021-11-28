@@ -43,6 +43,7 @@
 #include "game/logic/server.h"
 #include "game/logic/surveyorai.h"
 #include "game/protocol/netmessage.h"
+#include "game/serialization/jsonarchive.h"
 #include "game/serialization/textarchive.h"
 #include "game/startup/lobbypreparationdata.h"
 #include "utility/listhelpers.h"
@@ -110,6 +111,11 @@ void cClient::sendNetMessage (cNetMessage& message) const
 		cTextArchiveIn archive;
 		archive << message;
 		Log.write (getActivePlayer().getName() + ": --> " + archive.data() + " @" + std::to_string (model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+
+		nlohmann::json json;
+		cJsonArchiveOut jsonarchive (json);
+		jsonarchive << message;
+		Log.write (getActivePlayer().getName() + ": --> " + json.dump (-1) + " @" + std::to_string (model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 	connectionManager->sendToServer (message);
 }
@@ -138,6 +144,11 @@ void cClient::handleNetMessages()
 			cTextArchiveIn archive;
 			archive << *message;
 			Log.write (getActivePlayer().getName() + ": <-- " + archive.data() + " @" + std::to_string (model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+
+			nlohmann::json json;
+			cJsonArchiveOut jsonarchive (json);
+			jsonarchive << *message;
+			Log.write (getActivePlayer().getName() + ": <-- " + json.dump (-1) + " @" + std::to_string (model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
 		}
 
 		switch (message->getType())

@@ -20,13 +20,13 @@
 #define protocol_lobbymessageH
 
 #include "game/data/gamesettings.h"
+#include "game/data/player/clans.h"
 #include "game/data/player/playerbasicdata.h"
 #include "game/data/savegameinfo.h"
 #include "game/logic/landingpositionstate.h"
 #include "game/protocol/netmessage.h"
 
 class cUnitsData;
-class cClanData;
 
 class cMultiplayerLobbyMessage : public cNetMessageT<eNetMessageType::MULTIPLAYER_LOBBY>
 {
@@ -64,6 +64,7 @@ public:
 	eMessageType getType() const;
 
 	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cJsonArchiveOut& archive) override { cNetMessage::serialize (archive); serializeThis (archive); }
 	void serialize (cTextArchiveIn& archive) override;
 
 protected:
@@ -117,6 +118,7 @@ public:
 	cMuMsgChat (cBinaryArchiveOut& archive);
 
 	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
 	void serialize (cTextArchiveIn& archive) override;
 
 	std::string message;
@@ -136,6 +138,7 @@ public:
 	cMuMsgPlayerNr (cBinaryArchiveOut& archive);
 
 	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
 	void serialize (cTextArchiveIn& archive) override;
 
 	int newPlayerNr;
@@ -155,6 +158,7 @@ public:
 	cMuMsgOptions (cBinaryArchiveOut& archive);
 
 	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
 	void serialize (cTextArchiveIn& archive) override;
 
 	cSaveGameInfo saveInfo;
@@ -181,6 +185,7 @@ public:
 	cMuMsgSaveSlots (cBinaryArchiveOut& archive);
 
 	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
 	void serialize (cTextArchiveIn& archive) override;
 
 	std::vector<cSaveGameInfo> saveGames;
@@ -203,6 +208,7 @@ public:
 	cMuMsgPlayerList (cBinaryArchiveOut& archive);
 
 	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
 	void serialize (cTextArchiveIn& archive) override;
 
 	std::vector<cPlayerBasicData> playerList;
@@ -230,6 +236,7 @@ public:
 	cMuMsgCannotEndLobby (cBinaryArchiveOut& archive);
 
 	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
 	void serialize (cTextArchiveIn& archive) override;
 
 	bool missingSettings = false;
@@ -263,6 +270,7 @@ public:
 	cMuMsgStartGamePreparations (cBinaryArchiveOut& archive);
 
 	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); saveThis (archive); }
 	void serialize (cTextArchiveIn& archive) override;
 
 	std::shared_ptr<const cUnitsData> unitsData;
@@ -295,6 +303,7 @@ public:
 	cMuMsgPlayerHasSelectedLandingPosition (cBinaryArchiveOut& archive);
 
 	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
 	void serialize (cTextArchiveIn& archive) override;
 
 	int landedPlayer;
@@ -314,6 +323,7 @@ public:
 	cMuMsgInLandingPositionSelectionStatus (cBinaryArchiveOut& archive);
 
 	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
 	void serialize (cTextArchiveIn& archive) override;
 
 	int landingPlayer;
@@ -335,6 +345,7 @@ public:
 	cMuMsgLandingState (cBinaryArchiveOut& archive);
 
 	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
 	void serialize (cTextArchiveIn& archive) override;
 
 	eLandingPositionState state;
@@ -378,6 +389,7 @@ public:
 	cMuMsgLandingPosition (cBinaryArchiveOut& archive);
 
 	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
 	void serialize (cTextArchiveIn& archive) override;
 
 	cPosition position;
@@ -397,6 +409,7 @@ public:
 	cMuMsgRequestMap (cBinaryArchiveOut& archive);
 
 	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
 	void serialize (cTextArchiveIn& archive) override;
 
 	std::string mapName;
@@ -416,6 +429,7 @@ public:
 	cMuMsgStartMapDownload (cBinaryArchiveOut& archive);
 
 	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
 	void serialize (cTextArchiveIn& archive) override;
 
 	std::string mapName;
@@ -437,6 +451,7 @@ public:
 	cMuMsgMapDownloadData (cBinaryArchiveOut& archive);
 
 	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
 	void serialize (cTextArchiveIn& archive) override;
 
 	std::vector<char> data;
@@ -464,6 +479,7 @@ public:
 	cMuMsgIdentification (cBinaryArchiveOut& archive);
 
 	void serialize (cBinaryArchiveIn& archive) override;
+	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
 	void serialize (cTextArchiveIn& archive) override;
 
 	std::string playerName;

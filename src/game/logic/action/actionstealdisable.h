@@ -36,6 +36,7 @@ public:
 	cActionStealDisable (cBinaryArchiveOut& archive);
 
 	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cJsonArchiveOut& archive) override { cAction::serialize (archive); serializeThis (archive); }
 	void serialize (cTextArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
 
 	void execute (cModel& model) const override;

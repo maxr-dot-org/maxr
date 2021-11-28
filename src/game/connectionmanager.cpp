@@ -136,6 +136,11 @@ void cConnectionManager::acceptConnection (const cSocket* socket, int playerNr)
 	archive << message;
 	Log.write ("ConnectionManager: --> " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
 
+	nlohmann::json json;
+	cJsonArchiveOut jsonarchive (json);
+	jsonarchive << message;
+	Log.write ("ConnectionManager: --> " + json.dump (-1), cLog::eLOG_TYPE_NET_DEBUG);
+
 	sendMessage (socket, message);
 }
 
@@ -161,6 +166,12 @@ void cConnectionManager::declineConnection (const cSocket* socket, eDeclineConne
 	cTextArchiveIn archive;
 	archive << message;
 	Log.write ("ConnectionManager: --> " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
+
+	nlohmann::json json;
+	cJsonArchiveOut jsonarchive (json);
+	jsonarchive << message;
+	Log.write ("ConnectionManager: --> " + json.dump (-1), cLog::eLOG_TYPE_NET_DEBUG);
+
 
 	sendMessage (socket, message);
 
@@ -408,6 +419,11 @@ void cConnectionManager::incomingConnection (const cSocket* socket)
 	archive << message;
 	Log.write ("ConnectionManager: --> " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
 
+	nlohmann::json json;
+	cJsonArchiveOut jsonarchive (json);
+	jsonarchive << message;
+	Log.write ("ConnectionManager: --> " + json.dump (-1), cLog::eLOG_TYPE_NET_DEBUG);
+
 	sendMessage (socket, message);
 }
 
@@ -479,6 +495,11 @@ bool cConnectionManager::handeConnectionHandshake (const std::unique_ptr<cNetMes
 		archive << *message;
 		Log.write ("ConnectionManager: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
 
+		nlohmann::json json;
+		cJsonArchiveOut jsonarchive (json);
+		jsonarchive << *message;
+		Log.write ("ConnectionManager: <-- " + json.dump (-1), cLog::eLOG_TYPE_NET_DEBUG);
+
 		if (localServer)
 		{
 			// server shouldn't get this message
@@ -498,6 +519,12 @@ bool cConnectionManager::handeConnectionHandshake (const std::unique_ptr<cNetMes
 		cTextArchiveIn archive;
 		archive << *message;
 		Log.write ("ConnectionManager: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
+
+		nlohmann::json json;
+		cJsonArchiveOut jsonarchive (json);
+		jsonarchive << *message;
+		Log.write ("ConnectionManager: <-- " + json.dump (-1), cLog::eLOG_TYPE_NET_DEBUG);
+
 
 		if (!localServer)
 		{
@@ -532,6 +559,12 @@ bool cConnectionManager::handeConnectionHandshake (const std::unique_ptr<cNetMes
 		cTextArchiveIn archive;
 		archive << *message;
 		Log.write ("ConnectionManager: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
+
+		nlohmann::json json;
+		cJsonArchiveOut jsonarchive (json);
+		jsonarchive << *message;
+		Log.write ("ConnectionManager: <-- " + json.dump (-1), cLog::eLOG_TYPE_NET_DEBUG);
+
 
 		stopTimeout (socket);
 
