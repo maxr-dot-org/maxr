@@ -20,7 +20,6 @@
 #include "localhotseatgame.h"
 
 #include "game/logic/client.h"
-#include "game/data/savegame.h"
 
 //------------------------------------------------------------------------------
 cLocalHotSeatGame::~cLocalHotSeatGame()

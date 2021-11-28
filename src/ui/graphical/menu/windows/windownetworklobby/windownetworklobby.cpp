@@ -22,7 +22,6 @@
 #include "game/data/gamesettings.h"
 #include "game/data/map/map.h"
 #include "game/data/player/player.h"
-#include "game/data/savegame.h"
 #include "game/startup/lobbyclient.h"
 #include "game/startup/lobbyserver.h"
 #include "maxrversion.h"

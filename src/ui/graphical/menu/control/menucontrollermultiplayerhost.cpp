@@ -21,7 +21,6 @@
 
 #include "game/data/player/player.h"
 #include "game/data/savegameinfo.h"
-#include "game/data/savegame.h"
 #include "game/data/units/landingunit.h"
 #include "game/logic/server.h"
 #include "game/startup/gamepreparation.h"
