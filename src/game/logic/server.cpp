@@ -237,7 +237,7 @@ void cServer::run()
 				const cAction& action = *static_cast<cAction*> (message.get());
 
 				// filter disallowed actions
-				if (action.getType() != cAction::eActiontype::ACTION_INIT_NEW_GAME)
+				if (action.getType() != cAction::eActiontype::InitNewGame)
 				{
 					if (freezeModes.isFreezed())
 					{

@@ -24,7 +24,7 @@
 
 class cSubBase;
 
-class cActionUpgradeBuilding : public cActionT<cAction::eActiontype::ACTION_UPGRADE_BUILDING>
+class cActionUpgradeBuilding : public cActionT<cAction::eActiontype::UpgradeBuilding>
 {
 public:
 	cActionUpgradeBuilding (const cBuilding& building, bool allBuildings);

@@ -25,7 +25,7 @@
 class cUnit;
 enum class eResourceType;
 
-class cActionTransfer : public cActionT<cAction::eActiontype::ACTION_TRANSFER>
+class cActionTransfer : public cActionT<cAction::eActiontype::Transfer>
 {
 public:
 	cActionTransfer (const cUnit& sourceUnit, const cUnit& destinationUnit, int transferValue, eResourceType resourceType);

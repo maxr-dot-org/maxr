@@ -25,7 +25,7 @@
 
 #include <array>
 
-class cActionChangeResearch : public cActionT<cAction::eActiontype::ACTION_CHANGE_RESEARCH>
+class cActionChangeResearch : public cActionT<cAction::eActiontype::ChangeResearch>
 {
 public:
 	cActionChangeResearch (const std::array<int, cResearch::kNrResearchAreas>& researchAreas);

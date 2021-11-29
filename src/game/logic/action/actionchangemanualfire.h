@@ -22,7 +22,7 @@
 
 #include "action.h"
 
-class cActionChangeManualFire : public cActionT<cAction::eActiontype::ACTION_CHANGE_MANUAL_FIRE>
+class cActionChangeManualFire : public cActionT<cAction::eActiontype::ChangeManualFire>
 {
 public:
 	cActionChangeManualFire (const cUnit& unit);

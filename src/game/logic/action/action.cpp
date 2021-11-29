@@ -53,34 +53,34 @@
 
 const std::vector<std::pair<cAction::eActiontype, const char*>> serialization::sEnumStringMapping<cAction::eActiontype>::m =
 {
-	{cAction::eActiontype::ACTION_INIT_NEW_GAME, "ACTION_INIT_NEW_GAME"},
-	{cAction::eActiontype::ACTION_START_WORK, "ACTION_START_WORK"},
-	{cAction::eActiontype::ACTION_STOP, "ACTION_STOP"},
-	{cAction::eActiontype::ACTION_TRANSFER, "ACTION_TRANSFER"},
-	{cAction::eActiontype::ACTION_START_MOVE, "ACTION_START_MOVE"},
-	{cAction::eActiontype::ACTION_RESUME_MOVE, "ACTION_RESUME_MOVE"},
-	{cAction::eActiontype::ACTION_START_TURN, "ACTION_START_TURN"},
-	{cAction::eActiontype::ACTION_END_TURN, "ACTION_END_TURN"},
-	{cAction::eActiontype::ACTION_SELF_DESTROY, "ACTION_SELF_DESTROY"},
-	{cAction::eActiontype::ACTION_ATTACK, "ACTION_ATTACK"},
-	{cAction::eActiontype::ACTION_CHANGE_SENTRY, "ACTION_CHANGE_SENTRY"},
-	{cAction::eActiontype::ACTION_CHANGE_MANUAL_FIRE, "ACTION_CHANGE_MANUAL_FIRE"},
-	{cAction::eActiontype::ACTION_MINELAYER_STATUS, "ACTION_MINELAYER_STATUS"},
-	{cAction::eActiontype::ACTION_START_BUILD, "ACTION_START_BUILD"},
-	{cAction::eActiontype::ACTION_FINISH_BUILD, "ACTION_FINISH_BUILD"},
-	{cAction::eActiontype::ACTION_CHANGE_BUILDLIST, "ACTION_CHANGE_BUILDLIST"},
-	{cAction::eActiontype::ACTION_LOAD, "ACTION_LOAD"},
-	{cAction::eActiontype::ACTION_ACTIVATE, "ACTION_ACTIVATE"},
-	{cAction::eActiontype::ACTION_REPAIR_RELOAD, "ACTION_REPAIR_RELOAD"},
-	{cAction::eActiontype::ACTION_RESOURCE_DISTRIBUTION, "ACTION_RESOURCE_DISTRIBUTION"},
-	{cAction::eActiontype::ACTION_CLEAR, "ACTION_CLEAR"},
-	{cAction::eActiontype::ACTION_STEAL_DISABLE, "ACTION_STEAL_DISABLE"},
-	{cAction::eActiontype::ACTION_CHANGE_RESEARCH, "ACTION_CHANGE_RESEARCH"},
-	{cAction::eActiontype::ACTION_CHANGE_UNIT_NAME, "ACTION_CHANGE_UNIT_NAME"},
-	{cAction::eActiontype::ACTION_BUY_UPGRADES, "ACTION_BUY_UPGRADES"},
-	{cAction::eActiontype::ACTION_UPGRADE_VEHICLE, "ACTION_UPGRADE_VEHICLE"},
-	{cAction::eActiontype::ACTION_UPGRADE_BUILDING, "ACTION_UPGRADE_BUILDING"},
-	{cAction::eActiontype::ACTION_SET_AUTO_MOVE, "ACTION_SET_AUTO_MOVE"}
+	{cAction::eActiontype::InitNewGame, "InitNewGame"},
+	{cAction::eActiontype::StartWork, "StartWork"},
+	{cAction::eActiontype::Stop, "Stop"},
+	{cAction::eActiontype::Transfer, "Transfer"},
+	{cAction::eActiontype::StartMove, "StartMove"},
+	{cAction::eActiontype::ResumeMove, "ResumeMove"},
+	{cAction::eActiontype::StartTurn, "StartTurn"},
+	{cAction::eActiontype::EndTurn, "EndTurn"},
+	{cAction::eActiontype::SelfDestroy, "SelfDestroy"},
+	{cAction::eActiontype::Attack, "Attack"},
+	{cAction::eActiontype::ChangeSentry, "ChangeSentry"},
+	{cAction::eActiontype::ChangeManualFire, "ChangeManualFire"},
+	{cAction::eActiontype::MinelayerStatus, "MinelayerStatus"},
+	{cAction::eActiontype::StartBuild, "StartBuild"},
+	{cAction::eActiontype::FinishBuild, "FinishBuild"},
+	{cAction::eActiontype::ChangeBuildlist, "ChangeBuildlist"},
+	{cAction::eActiontype::Load, "Load"},
+	{cAction::eActiontype::Activate, "Activate"},
+	{cAction::eActiontype::RepairReload, "RepairReload"},
+	{cAction::eActiontype::ResourceDistribution, "ResourceDistribution"},
+	{cAction::eActiontype::Clear, "Clear"},
+	{cAction::eActiontype::StealDisable, "StealDisable"},
+	{cAction::eActiontype::ChangeResearch, "ChangeResearch"},
+	{cAction::eActiontype::ChangeUnitName, "ChangeUnitName"},
+	{cAction::eActiontype::BuyUpgrades, "BuyUpgrades"},
+	{cAction::eActiontype::UpgradeVehicle, "UpgradeVehicle"},
+	{cAction::eActiontype::UpgradeBuilding, "UpgradeBuilding"},
+	{cAction::eActiontype::SetAutoMove, "SetAutoMove"}
 };
 
 
@@ -91,62 +91,34 @@ std::unique_ptr<cAction> cAction::createFromBuffer (cBinaryArchiveOut& archive)
 
 	switch (type)
 	{
-	case eActiontype::ACTION_INIT_NEW_GAME:
-		return std::make_unique<cActionInitNewGame> (archive);
-	case eActiontype::ACTION_START_WORK:
-		return std::make_unique<cActionStartWork> (archive);
-	case eActiontype::ACTION_STOP:
-		return std::make_unique<cActionStop> (archive);
-	case eActiontype::ACTION_TRANSFER:
-		return std::make_unique<cActionTransfer> (archive);
-	case eActiontype::ACTION_START_MOVE:
-		return std::make_unique<cActionStartMove> (archive);
-	case eActiontype::ACTION_RESUME_MOVE:
-		return std::make_unique<cActionResumeMove> (archive);
-	case eActiontype::ACTION_START_TURN:
-		return std::make_unique<cActionStartTurn> (archive);
-	case eActiontype::ACTION_END_TURN:
-		return std::make_unique<cActionEndTurn> (archive);
-	case eActiontype::ACTION_SELF_DESTROY:
-		return std::make_unique<cActionSelfDestroy> (archive);
-	case eActiontype::ACTION_ATTACK:
-		return std::make_unique<cActionAttack> (archive);
-	case eActiontype::ACTION_CHANGE_SENTRY:
-		return std::make_unique<cActionChangeSentry> (archive);
-	case eActiontype::ACTION_CHANGE_MANUAL_FIRE:
-		return std::make_unique<cActionChangeManualFire> (archive);
-	case eActiontype::ACTION_MINELAYER_STATUS:
-		return std::make_unique<cActionMinelayerStatus> (archive);
-	case eActiontype::ACTION_START_BUILD:
-		return std::make_unique<cActionStartBuild> (archive);
-	case eActiontype::ACTION_FINISH_BUILD:
-		return std::make_unique<cActionFinishBuild> (archive);
-	case eActiontype::ACTION_CHANGE_BUILDLIST:
-		return std::make_unique<cActionChangeBuildList> (archive);
-	case eActiontype::ACTION_LOAD:
-		return std::make_unique<cActionLoad> (archive);
-	case eActiontype::ACTION_ACTIVATE:
-		return std::make_unique<cActionActivate> (archive);
-	case eActiontype::ACTION_REPAIR_RELOAD:
-		return std::make_unique<cActionRepairReload> (archive);
-	case eActiontype::ACTION_RESOURCE_DISTRIBUTION:
-		return std::make_unique<cActionResourceDistribution> (archive);
-	case eActiontype::ACTION_CLEAR:
-		return std::make_unique<cActionClear> (archive);
-	case eActiontype::ACTION_STEAL_DISABLE:
-		return std::make_unique<cActionStealDisable> (archive);
-	case eActiontype::ACTION_CHANGE_RESEARCH:
-		return std::make_unique<cActionChangeResearch> (archive);
-	case eActiontype::ACTION_CHANGE_UNIT_NAME:
-		return std::make_unique<cActionChangeUnitName> (archive);
-	case eActiontype::ACTION_BUY_UPGRADES:
-		return std::make_unique<cActionBuyUpgrades> (archive);
-	case eActiontype::ACTION_UPGRADE_VEHICLE:
-		return std::make_unique<cActionUpgradeVehicle> (archive);
-	case eActiontype::ACTION_UPGRADE_BUILDING:
-		return std::make_unique<cActionUpgradeBuilding> (archive);
-	case eActiontype::ACTION_SET_AUTO_MOVE:
-		return std::make_unique<cActionSetAutoMove> (archive);
+	case eActiontype::InitNewGame: return std::make_unique<cActionInitNewGame> (archive);
+	case eActiontype::StartWork: return std::make_unique<cActionStartWork> (archive);
+	case eActiontype::Stop: return std::make_unique<cActionStop> (archive);
+	case eActiontype::Transfer: return std::make_unique<cActionTransfer> (archive);
+	case eActiontype::StartMove: return std::make_unique<cActionStartMove> (archive);
+	case eActiontype::ResumeMove: return std::make_unique<cActionResumeMove> (archive);
+	case eActiontype::StartTurn: return std::make_unique<cActionStartTurn> (archive);
+	case eActiontype::EndTurn: return std::make_unique<cActionEndTurn> (archive);
+	case eActiontype::SelfDestroy: return std::make_unique<cActionSelfDestroy> (archive);
+	case eActiontype::Attack: return std::make_unique<cActionAttack> (archive);
+	case eActiontype::ChangeSentry: return std::make_unique<cActionChangeSentry> (archive);
+	case eActiontype::ChangeManualFire: return std::make_unique<cActionChangeManualFire> (archive);
+	case eActiontype::MinelayerStatus: return std::make_unique<cActionMinelayerStatus> (archive);
+	case eActiontype::StartBuild: return std::make_unique<cActionStartBuild> (archive);
+	case eActiontype::FinishBuild: return std::make_unique<cActionFinishBuild> (archive);
+	case eActiontype::ChangeBuildlist: return std::make_unique<cActionChangeBuildList> (archive);
+	case eActiontype::Load: return std::make_unique<cActionLoad> (archive);
+	case eActiontype::Activate: return std::make_unique<cActionActivate> (archive);
+	case eActiontype::RepairReload: return std::make_unique<cActionRepairReload> (archive);
+	case eActiontype::ResourceDistribution: return std::make_unique<cActionResourceDistribution> (archive);
+	case eActiontype::Clear: return std::make_unique<cActionClear> (archive);
+	case eActiontype::StealDisable: return std::make_unique<cActionStealDisable> (archive);
+	case eActiontype::ChangeResearch: return std::make_unique<cActionChangeResearch> (archive);
+	case eActiontype::ChangeUnitName: return std::make_unique<cActionChangeUnitName> (archive);
+	case eActiontype::BuyUpgrades: return std::make_unique<cActionBuyUpgrades> (archive);
+	case eActiontype::UpgradeVehicle: return std::make_unique<cActionUpgradeVehicle> (archive);
+	case eActiontype::UpgradeBuilding: return std::make_unique<cActionUpgradeBuilding> (archive);
+	case eActiontype::SetAutoMove: return std::make_unique<cActionSetAutoMove> (archive);
 	default:
 		throw std::runtime_error ("Unknown action type " + std::to_string (static_cast<int> (type)));
 		return nullptr;

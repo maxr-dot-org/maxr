@@ -22,7 +22,7 @@
 
 #include "action.h"
 
-class cActionResumeMove : public cActionT<cAction::eActiontype::ACTION_RESUME_MOVE>
+class cActionResumeMove : public cActionT<cAction::eActiontype::ResumeMove>
 {
 public:
 	cActionResumeMove() = default;

@@ -26,7 +26,7 @@
 
 class cUnit;
 
-class cActionResourceDistribution : public cActionT<cAction::eActiontype::ACTION_RESOURCE_DISTRIBUTION>
+class cActionResourceDistribution : public cActionT<cAction::eActiontype::ResourceDistribution>
 {
 public:
 	cActionResourceDistribution (const cBuilding& building,	const sMiningResource&);

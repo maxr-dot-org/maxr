@@ -29,7 +29,7 @@ enum class eInfiltratorAction {
 	DISABLE
 };
 
-class cActionStealDisable : public cActionT<cAction::eActiontype::ACTION_STEAL_DISABLE>
+class cActionStealDisable : public cActionT<cAction::eActiontype::StealDisable>
 {
 public:
 	cActionStealDisable (const cVehicle& infiltrator, const cUnit& target, bool steal);

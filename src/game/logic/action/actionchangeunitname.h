@@ -22,7 +22,7 @@
 
 #include "action.h"
 
-class cActionChangeUnitName : public cActionT<cAction::eActiontype::ACTION_CHANGE_UNIT_NAME>
+class cActionChangeUnitName : public cActionT<cAction::eActiontype::ChangeUnitName>
 {
 public:
 	cActionChangeUnitName (const cUnit& unit, const std::string& newName);

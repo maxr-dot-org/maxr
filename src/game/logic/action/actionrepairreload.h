@@ -25,7 +25,7 @@
 class cUnit;
 enum class eSupplyType;
 
-class cActionRepairReload : public cActionT<cAction::eActiontype::ACTION_REPAIR_RELOAD>
+class cActionRepairReload : public cActionT<cAction::eActiontype::RepairReload>
 {
 public:
 	cActionRepairReload (const cUnit& sourceUnit, const cUnit& destUnit, eSupplyType supplyType);

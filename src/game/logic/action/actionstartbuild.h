@@ -25,7 +25,7 @@
 
 class cUnit;
 
-class cActionStartBuild : public cActionT<cAction::eActiontype::ACTION_START_BUILD>
+class cActionStartBuild : public cActionT<cAction::eActiontype::StartBuild>
 {
 public:
 	cActionStartBuild (const cVehicle& vehicle, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition);

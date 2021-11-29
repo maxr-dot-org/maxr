@@ -22,7 +22,7 @@
 
 #include "action.h"
 
-class cActionMinelayerStatus : public cActionT<cAction::eActiontype::ACTION_MINELAYER_STATUS>
+class cActionMinelayerStatus : public cActionT<cAction::eActiontype::MinelayerStatus>
 {
 public:
 	cActionMinelayerStatus (const cVehicle& vehicle, bool layMines, bool clearMines);

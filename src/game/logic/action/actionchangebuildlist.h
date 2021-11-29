@@ -25,7 +25,7 @@
 class cBuilding;
 struct sID;
 
-class cActionChangeBuildList : public cActionT<cAction::eActiontype::ACTION_CHANGE_BUILDLIST>
+class cActionChangeBuildList : public cActionT<cAction::eActiontype::ChangeBuildlist>
 {
 public:
 	cActionChangeBuildList (const cBuilding& building, const std::vector<sID>& buildList, int buildSpeed, bool repeat);

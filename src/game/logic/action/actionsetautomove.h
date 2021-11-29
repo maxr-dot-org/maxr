@@ -24,7 +24,7 @@
 
 class cUnit;
 
-class cActionSetAutoMove : public cActionT<cAction::eActiontype::ACTION_SET_AUTO_MOVE>
+class cActionSetAutoMove : public cActionT<cAction::eActiontype::SetAutoMove>
 {
 public:
 	cActionSetAutoMove (const cVehicle& vehicle, bool autoMoveActive);

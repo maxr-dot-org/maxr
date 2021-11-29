@@ -27,7 +27,7 @@ class cVehicle;
 class cBuilding;
 class cStaticMap;
 
-class cActionInitNewGame : public cActionT<cAction::eActiontype::ACTION_INIT_NEW_GAME>
+class cActionInitNewGame : public cActionT<cAction::eActiontype::InitNewGame>
 {
 public:
 	explicit cActionInitNewGame (sInitPlayerData);

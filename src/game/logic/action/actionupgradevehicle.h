@@ -24,7 +24,7 @@
 
 class cSubBase;
 
-class cActionUpgradeVehicle : public cActionT<cAction::eActiontype::ACTION_UPGRADE_VEHICLE>
+class cActionUpgradeVehicle : public cActionT<cAction::eActiontype::UpgradeVehicle>
 {
 public:
 	cActionUpgradeVehicle (const cBuilding& containingBuilding, const cVehicle* vehicle = nullptr);
