@@ -363,24 +363,19 @@ public:
 
 	cNetMessageReport (cBinaryArchiveOut& archive)
 	{
-		loadThis (archive);
+		serializeThis (archive);
 	}
 
-	void serialize (cBinaryArchiveIn& archive) override { cNetMessage::serialize (archive); saveThis (archive); }
-	void serialize (cTextArchiveIn& archive) override { cNetMessage::serialize (archive); saveThis (archive); }
+	void serialize (cBinaryArchiveIn& archive) override { cNetMessage::serialize (archive); serializeThis (archive); }
+	void serialize (cTextArchiveIn& archive) override { cNetMessage::serialize (archive); serializeThis (archive); }
 
 	std::unique_ptr<cSavedReport> report;
 
 private:
 	template <typename Archive>
-	void loadThis (Archive& archive)
+	void serializeThis (Archive& archive)
 	{
-		report = cSavedReport::createFrom (archive);
-	}
-	template <typename Archive>
-	void saveThis (Archive& archive)
-	{
-		archive << *report;
+		archive & report;
 	}
 };
 
