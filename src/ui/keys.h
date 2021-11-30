@@ -29,11 +29,13 @@ enum class eMouseStyle
 	Modern
 };
 
-template <> struct serialization::sEnumStringMapping<eMouseStyle>
+namespace serialization
 {
-	static const std::vector<std::pair<eMouseStyle, const char*>> m;
-};
-
+	template <> struct sEnumStringMapping<eMouseStyle>
+	{
+		static const std::vector<std::pair<eMouseStyle, const char*>> m;
+	};
+}
 class cKeysList
 {
 public:

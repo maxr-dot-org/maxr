@@ -71,23 +71,25 @@ enum class eStorageUnitsImageType
 	Ship,
 	Human
 };
-template <> struct serialization::sEnumStringMapping<eMuzzleType>
+namespace serialization
 {
-	static const std::vector<std::pair<eMuzzleType, const char*>> m;
-};
-template <> struct serialization::sEnumStringMapping<eSurfacePosition>
-{
-	static const std::vector<std::pair<eSurfacePosition, const char*>> m;
-};
-template <> struct serialization::sEnumStringMapping<eOverbuildType>
-{
-	static const std::vector<std::pair<eOverbuildType, const char*>> m;
-};
-template <> struct serialization::sEnumStringMapping<eStorageUnitsImageType>
-{
-	static const std::vector<std::pair<eStorageUnitsImageType, const char*>> m;
-};
-
+	template <> struct sEnumStringMapping<eMuzzleType>
+	{
+		static const std::vector<std::pair<eMuzzleType, const char*>> m;
+	};
+	template <> struct sEnumStringMapping<eSurfacePosition>
+	{
+		static const std::vector<std::pair<eSurfacePosition, const char*>> m;
+	};
+	template <> struct sEnumStringMapping<eOverbuildType>
+	{
+		static const std::vector<std::pair<eOverbuildType, const char*>> m;
+	};
+	template <> struct sEnumStringMapping<eStorageUnitsImageType>
+	{
+		static const std::vector<std::pair<eStorageUnitsImageType, const char*>> m;
+	};
+}
 struct sStaticCommonUnitData
 {
 	// Attack

@@ -79,12 +79,13 @@ private:
 
 	eActiontype type;
 };
-
-template <> struct serialization::sEnumStringMapping<cAction::eActiontype>
+namespace serialization
 {
-	static const std::vector<std::pair<cAction::eActiontype, const char*>> m;
-};
-
+	template <> struct sEnumStringMapping<cAction::eActiontype>
+	{
+		static const std::vector<std::pair<cAction::eActiontype, const char*>> m;
+	};
+}
 //------------------------------------------------------------------------------
 template <cAction::eActiontype ActionType>
 class cActionT : public cAction

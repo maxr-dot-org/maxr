@@ -37,11 +37,13 @@ enum class eClanModification
 	Speed,
 	Built_Costs
 };
-template <> struct serialization::sEnumStringMapping<eClanModification>
+namespace serialization
 {
-    static const std::vector<std::pair<eClanModification, const char*>> m;
-};
-
+	template <> struct sEnumStringMapping<eClanModification>
+	{
+		static const std::vector<std::pair<eClanModification, const char*>> m;
+	};
+}
 //------------------------------------------------------------------------------
 class cClanUnitStat
 {

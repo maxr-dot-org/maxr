@@ -51,38 +51,41 @@
 
 #include <cassert>
 
-const std::vector<std::pair<cAction::eActiontype, const char*>> serialization::sEnumStringMapping<cAction::eActiontype>::m =
+namespace serialization
 {
-	{cAction::eActiontype::InitNewGame, "InitNewGame"},
-	{cAction::eActiontype::StartWork, "StartWork"},
-	{cAction::eActiontype::Stop, "Stop"},
-	{cAction::eActiontype::Transfer, "Transfer"},
-	{cAction::eActiontype::StartMove, "StartMove"},
-	{cAction::eActiontype::ResumeMove, "ResumeMove"},
-	{cAction::eActiontype::StartTurn, "StartTurn"},
-	{cAction::eActiontype::EndTurn, "EndTurn"},
-	{cAction::eActiontype::SelfDestroy, "SelfDestroy"},
-	{cAction::eActiontype::Attack, "Attack"},
-	{cAction::eActiontype::ChangeSentry, "ChangeSentry"},
-	{cAction::eActiontype::ChangeManualFire, "ChangeManualFire"},
-	{cAction::eActiontype::MinelayerStatus, "MinelayerStatus"},
-	{cAction::eActiontype::StartBuild, "StartBuild"},
-	{cAction::eActiontype::FinishBuild, "FinishBuild"},
-	{cAction::eActiontype::ChangeBuildlist, "ChangeBuildlist"},
-	{cAction::eActiontype::Load, "Load"},
-	{cAction::eActiontype::Activate, "Activate"},
-	{cAction::eActiontype::RepairReload, "RepairReload"},
-	{cAction::eActiontype::ResourceDistribution, "ResourceDistribution"},
-	{cAction::eActiontype::Clear, "Clear"},
-	{cAction::eActiontype::StealDisable, "StealDisable"},
-	{cAction::eActiontype::ChangeResearch, "ChangeResearch"},
-	{cAction::eActiontype::ChangeUnitName, "ChangeUnitName"},
-	{cAction::eActiontype::BuyUpgrades, "BuyUpgrades"},
-	{cAction::eActiontype::UpgradeVehicle, "UpgradeVehicle"},
-	{cAction::eActiontype::UpgradeBuilding, "UpgradeBuilding"},
-	{cAction::eActiontype::SetAutoMove, "SetAutoMove"}
-};
-
+	const std::vector<std::pair<cAction::eActiontype, const char*>>
+	sEnumStringMapping<cAction::eActiontype>::m =
+	{
+		{cAction::eActiontype::InitNewGame, "InitNewGame"},
+		{cAction::eActiontype::StartWork, "StartWork"},
+		{cAction::eActiontype::Stop, "Stop"},
+		{cAction::eActiontype::Transfer, "Transfer"},
+		{cAction::eActiontype::StartMove, "StartMove"},
+		{cAction::eActiontype::ResumeMove, "ResumeMove"},
+		{cAction::eActiontype::StartTurn, "StartTurn"},
+		{cAction::eActiontype::EndTurn, "EndTurn"},
+		{cAction::eActiontype::SelfDestroy, "SelfDestroy"},
+		{cAction::eActiontype::Attack, "Attack"},
+		{cAction::eActiontype::ChangeSentry, "ChangeSentry"},
+		{cAction::eActiontype::ChangeManualFire, "ChangeManualFire"},
+		{cAction::eActiontype::MinelayerStatus, "MinelayerStatus"},
+		{cAction::eActiontype::StartBuild, "StartBuild"},
+		{cAction::eActiontype::FinishBuild, "FinishBuild"},
+		{cAction::eActiontype::ChangeBuildlist, "ChangeBuildlist"},
+		{cAction::eActiontype::Load, "Load"},
+		{cAction::eActiontype::Activate, "Activate"},
+		{cAction::eActiontype::RepairReload, "RepairReload"},
+		{cAction::eActiontype::ResourceDistribution, "ResourceDistribution"},
+		{cAction::eActiontype::Clear, "Clear"},
+		{cAction::eActiontype::StealDisable, "StealDisable"},
+		{cAction::eActiontype::ChangeResearch, "ChangeResearch"},
+		{cAction::eActiontype::ChangeUnitName, "ChangeUnitName"},
+		{cAction::eActiontype::BuyUpgrades, "BuyUpgrades"},
+		{cAction::eActiontype::UpgradeVehicle, "UpgradeVehicle"},
+		{cAction::eActiontype::UpgradeBuilding, "UpgradeBuilding"},
+		{cAction::eActiontype::SetAutoMove, "SetAutoMove"}
+	};
+}
 
 std::unique_ptr<cAction> cAction::createFromBuffer (cBinaryArchiveOut& archive)
 {

@@ -87,11 +87,13 @@ public:
 	cMultiplayerLobbyMessageT() : cMultiplayerLobbyMessage (MsgType) {}
 };
 
-template <> struct serialization::sEnumStringMapping<cMultiplayerLobbyMessage::eMessageType>
+namespace serialization
 {
-	static const std::vector<std::pair<cMultiplayerLobbyMessage::eMessageType, const char*>> m;
-};
-
+	template <> struct sEnumStringMapping<cMultiplayerLobbyMessage::eMessageType>
+	{
+		static const std::vector<std::pair<cMultiplayerLobbyMessage::eMessageType, const char*>> m;
+	};
+}
 /**
 * Interface called each time a message should be handled.
 */

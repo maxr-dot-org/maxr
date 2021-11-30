@@ -30,10 +30,6 @@ enum class ePlayerConnectionState
 	NOT_RESPONDING, // player is connected, but no sync message received for some time. Game should be paused.
 	DISCONNECTED    // player has lost connection. Game should be paused.
 };
-template <> struct serialization::sEnumStringMapping<ePlayerConnectionState>
-{
-	static const std::vector<std::pair<ePlayerConnectionState, const char*>> m;
-};
 
 enum class eFreezeMode
 {
@@ -42,11 +38,18 @@ enum class eFreezeMode
 	WAIT_FOR_CLIENT,    // waiting for response from client
 	WAIT_FOR_SERVER     // waiting for response from server
 };
-template <> struct serialization::sEnumStringMapping<eFreezeMode>
-{
-	static const std::vector<std::pair<eFreezeMode, const char*>> m;
-};
 
+namespace serialization
+{
+	template <> struct sEnumStringMapping<ePlayerConnectionState>
+	{
+		static const std::vector<std::pair<ePlayerConnectionState, const char*>> m;
+	};
+	template <> struct sEnumStringMapping<eFreezeMode>
+	{
+		static const std::vector<std::pair<eFreezeMode, const char*>> m;
+	};
+}
 class cFreezeModes
 {
 public:

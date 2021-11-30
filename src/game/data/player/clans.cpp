@@ -24,18 +24,21 @@
 
 cClanData ClanDataGlobal;
 
-//------------------------------------------------------------------------------
-const std::vector<std::pair<eClanModification, const char*>> serialization::sEnumStringMapping<eClanModification>::m =
+namespace serialization
 {
-	{ eClanModification::Damage, "Damage"},
-	{ eClanModification::Range, "Range"},
-	{ eClanModification::Armor, "Armor"},
-	{ eClanModification::Hitpoints, "Hitpoints"},
-	{ eClanModification::Scan, "Scan"},
-	{ eClanModification::Speed, "Speed"},
-	{ eClanModification::Built_Costs, "BuildCosts"}
-};
-
+	//------------------------------------------------------------------------------
+	const std::vector<std::pair<eClanModification, const char*>>
+	sEnumStringMapping<eClanModification>::m =
+	{
+		{ eClanModification::Damage, "Damage"},
+		{ eClanModification::Range, "Range"},
+		{ eClanModification::Armor, "Armor"},
+		{ eClanModification::Hitpoints, "Hitpoints"},
+		{ eClanModification::Scan, "Scan"},
+		{ eClanModification::Speed, "Speed"},
+		{ eClanModification::Built_Costs, "BuildCosts"}
+	};
+}
 //--------------------------------------------------
 void cClanUnitStat::addModification (eClanModification area, int value)
 {

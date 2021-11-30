@@ -28,13 +28,16 @@
 
 cKeysList KeysList;
 
-//------------------------------------------------------------------------------
-const std::vector<std::pair<eMouseStyle, const char*>> serialization::sEnumStringMapping<eMouseStyle>::m =
+namespace serialization
 {
-	{eMouseStyle::Modern, "Modern"},
-	{eMouseStyle::OldSchool, "OldSchool"}
-};
-
+	//--------------------------------------------------------------------------
+	const std::vector<std::pair<eMouseStyle, const char*>>
+	sEnumStringMapping<eMouseStyle>::m =
+	{
+		{eMouseStyle::Modern, "Modern"},
+		{eMouseStyle::OldSchool, "OldSchool"}
+	};
+}
 //------------------------------------------------------------------------------
 cKeysList::cKeysList() :
 	keyExit (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)),

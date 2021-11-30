@@ -60,11 +60,13 @@ enum class eNetMessageType {
 	GAME_ALREADY_RUNNING, /** send by server, when a new connection is established, after the game has started */
 	WANT_REJOIN_GAME,     /** send by a client to reconnect a disconnected player */
 };
-template <> struct serialization::sEnumStringMapping<eNetMessageType>
+namespace serialization
 {
-    static const std::vector<std::pair<eNetMessageType, const char*>> m;
-};
-
+	template <> struct sEnumStringMapping<eNetMessageType>
+	{
+		static const std::vector<std::pair<eNetMessageType, const char*>> m;
+	};
+}
 //------------------------------------------------------------------------------
 class cNetMessage
 {
