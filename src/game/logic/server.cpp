@@ -170,10 +170,6 @@ void cServer::sendMessageToClients (const cNetMessage& message, int playerNr /* 
 {
 	if (message.getType() != eNetMessageType::GAMETIME_SYNC_SERVER && message.getType() != eNetMessageType::RESYNC_MODEL)
 	{
-		cTextArchiveIn archive;
-		archive << message;
-		Log.write ("Server: --> " + archive.data() + " @" + std::to_string (model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
-
 		nlohmann::json json;
 		cJsonArchiveOut jsonarchive (json);
 		jsonarchive << message;
@@ -227,10 +223,6 @@ void cServer::run()
 		{
 			if (message->getType() != eNetMessageType::GAMETIME_SYNC_CLIENT)
 			{
-				cTextArchiveIn archive;
-				archive << *message;
-				Log.write ("Server: <-- " + archive.data() + " @" + std::to_string (model.getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
-
 				nlohmann::json json = nlohmann::json::object();
 				cJsonArchiveOut jsonarchive (json);
 				jsonarchive << *message;

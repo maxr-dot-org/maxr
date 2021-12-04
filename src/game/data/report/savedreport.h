@@ -27,7 +27,6 @@
 
 #include "game/serialization/binaryarchive.h"
 #include "game/serialization/jsonarchive.h"
-#include "game/serialization/textarchive.h"
 #include "game/serialization/xmlarchive.h"
 #include "utility/position.h"
 
@@ -106,7 +105,6 @@ public:
 
 	virtual void serialize (cBinaryArchiveIn& archive) { serializeThis (archive); }
 	virtual void serialize (cJsonArchiveOut& archive) { serializeThis (archive); }
-	virtual void serialize (cTextArchiveIn& archive) { serializeThis (archive); }
 	virtual void serialize (cXmlArchiveIn& archive) { serializeThis (archive); }
 private:
 	template <typename Archive>

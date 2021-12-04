@@ -121,12 +121,6 @@ void cMultiplayerLobbyMessage::serialize (cBinaryArchiveIn& archive)
 	serializeThis (archive);
 }
 
-void cMultiplayerLobbyMessage::serialize (cTextArchiveIn& archive)
-{
-	cNetMessage::serialize (archive);
-	serializeThis (archive);
-}
-
 bool ILobbyMessageHandler::handleMessage (const cNetMessage& message)
 {
 	if (message.getType() != eNetMessageType::MULTIPLAYER_LOBBY) return false;
@@ -149,12 +143,6 @@ void cMuMsgChat::serialize (cBinaryArchiveIn& archive)
 	serializeThis (archive);
 }
 
-void cMuMsgChat::serialize (cTextArchiveIn& archive)
-{
-	cMultiplayerLobbyMessage::serialize (archive);
-	serializeThis (archive);
-}
-
 //------------------------------------------------------------------------------
 cMuMsgPlayerNr::cMuMsgPlayerNr (int newPlayerNr) :
 	newPlayerNr (newPlayerNr)
@@ -166,12 +154,6 @@ cMuMsgPlayerNr::cMuMsgPlayerNr (cBinaryArchiveOut& archive)
 }
 
 void cMuMsgPlayerNr::serialize (cBinaryArchiveIn& archive)
-{
-	cMultiplayerLobbyMessage::serialize (archive);
-	serializeThis (archive);
-}
-
-void cMuMsgPlayerNr::serialize (cTextArchiveIn& archive)
 {
 	cMultiplayerLobbyMessage::serialize (archive);
 	serializeThis (archive);
@@ -195,12 +177,6 @@ void cMuMsgOptions::serialize (cBinaryArchiveIn& archive)
 	serializeThis (archive);
 }
 
-void cMuMsgOptions::serialize (cTextArchiveIn& archive)
-{
-	cMultiplayerLobbyMessage::serialize (archive);
-	serializeThis (archive);
-}
-
 //------------------------------------------------------------------------------
 cMuMsgSaveSlots::cMuMsgSaveSlots(){}
 
@@ -210,12 +186,6 @@ cMuMsgSaveSlots::cMuMsgSaveSlots (cBinaryArchiveOut& archive)
 }
 
 void cMuMsgSaveSlots::serialize (cBinaryArchiveIn& archive)
-{
-	cMultiplayerLobbyMessage::serialize (archive);
-	serializeThis (archive);
-}
-
-void cMuMsgSaveSlots::serialize (cTextArchiveIn& archive)
 {
 	cMultiplayerLobbyMessage::serialize (archive);
 	serializeThis (archive);
@@ -247,12 +217,6 @@ void cMuMsgPlayerList::serialize (cBinaryArchiveIn& archive)
 	serializeThis (archive);
 }
 
-void cMuMsgPlayerList::serialize (cTextArchiveIn& archive)
-{
-	cMultiplayerLobbyMessage::serialize (archive);
-	serializeThis (archive);
-}
-
 //------------------------------------------------------------------------------
 cMuMsgAskToFinishLobby::cMuMsgAskToFinishLobby() {}
 
@@ -268,12 +232,6 @@ cMuMsgCannotEndLobby::cMuMsgCannotEndLobby (cBinaryArchiveOut& archive)
 }
 
 void cMuMsgCannotEndLobby::serialize (cBinaryArchiveIn& archive)
-{
-	cMultiplayerLobbyMessage::serialize (archive);
-	serializeThis (archive);
-}
-
-void cMuMsgCannotEndLobby::serialize (cTextArchiveIn& archive)
 {
 	cMultiplayerLobbyMessage::serialize (archive);
 	serializeThis (archive);
@@ -300,12 +258,6 @@ void cMuMsgStartGamePreparations::serialize (cBinaryArchiveIn& archive)
 	saveThis (archive);
 }
 
-void cMuMsgStartGamePreparations::serialize (cTextArchiveIn& archive)
-{
-	cMultiplayerLobbyMessage::serialize (archive);
-	saveThis (archive);
-}
-
 //------------------------------------------------------------------------------
 cMuMsgPlayerHasSelectedLandingPosition::cMuMsgPlayerHasSelectedLandingPosition (int landedPlayer) :
 	landedPlayer (landedPlayer)
@@ -317,12 +269,6 @@ cMuMsgPlayerHasSelectedLandingPosition::cMuMsgPlayerHasSelectedLandingPosition (
 }
 
 void cMuMsgPlayerHasSelectedLandingPosition::serialize (cBinaryArchiveIn& archive)
-{
-	cMultiplayerLobbyMessage::serialize (archive);
-	serializeThis (archive);
-}
-
-void cMuMsgPlayerHasSelectedLandingPosition::serialize (cTextArchiveIn& archive)
 {
 	cMultiplayerLobbyMessage::serialize (archive);
 	serializeThis (archive);
@@ -345,12 +291,6 @@ void cMuMsgInLandingPositionSelectionStatus::serialize (cBinaryArchiveIn& archiv
 	serializeThis (archive);
 }
 
-void cMuMsgInLandingPositionSelectionStatus::serialize (cTextArchiveIn& archive)
-{
-	cMultiplayerLobbyMessage::serialize (archive);
-	serializeThis (archive);
-}
-
 //------------------------------------------------------------------------------
 cMuMsgLandingState::cMuMsgLandingState (eLandingPositionState state) :
 	state (state)
@@ -362,12 +302,6 @@ cMuMsgLandingState::cMuMsgLandingState (cBinaryArchiveOut& archive)
 }
 
 void cMuMsgLandingState::serialize (cBinaryArchiveIn& archive)
-{
-	cMultiplayerLobbyMessage::serialize (archive);
-	serializeThis (archive);
-}
-
-void cMuMsgLandingState::serialize (cTextArchiveIn& archive)
 {
 	cMultiplayerLobbyMessage::serialize (archive);
 	serializeThis (archive);
@@ -395,12 +329,6 @@ cMuMsgLandingPosition::cMuMsgLandingPosition (cBinaryArchiveOut& archive)
 	serializeThis (archive);
 }
 
-void cMuMsgLandingPosition::serialize (cTextArchiveIn& archive)
-{
-	cMultiplayerLobbyMessage::serialize (archive);
-	serializeThis (archive);
-}
-
 void cMuMsgLandingPosition::serialize (cBinaryArchiveIn& archive)
 {
 	cMultiplayerLobbyMessage::serialize (archive);
@@ -414,12 +342,6 @@ cMuMsgRequestMap::cMuMsgRequestMap (const std::string& mapName) :
 
 cMuMsgRequestMap::cMuMsgRequestMap (cBinaryArchiveOut& archive)
 {
-	serializeThis (archive);
-}
-
-void cMuMsgRequestMap::serialize (cTextArchiveIn& archive)
-{
-	cMultiplayerLobbyMessage::serialize (archive);
 	serializeThis (archive);
 }
 
@@ -440,12 +362,6 @@ cMuMsgStartMapDownload::cMuMsgStartMapDownload (const std::string mapName, int m
 	mapSize (mapSize)
 {}
 
-void cMuMsgStartMapDownload::serialize (cTextArchiveIn& archive)
-{
-	cMultiplayerLobbyMessage::serialize (archive);
-	serializeThis (archive);
-}
-
 void cMuMsgStartMapDownload::serialize (cBinaryArchiveIn& archive)
 {
 	cMultiplayerLobbyMessage::serialize (archive);
@@ -458,12 +374,6 @@ cMuMsgMapDownloadData::cMuMsgMapDownloadData()
 
 cMuMsgMapDownloadData::cMuMsgMapDownloadData (cBinaryArchiveOut& archive)
 {
-	serializeThis (archive);
-}
-
-void cMuMsgMapDownloadData::serialize (cTextArchiveIn& archive)
-{
-	cMultiplayerLobbyMessage::serialize (archive);
 	serializeThis (archive);
 }
 
@@ -486,12 +396,6 @@ cMuMsgIdentification::cMuMsgIdentification (const cPlayerBasicData& player) :
 
 cMuMsgIdentification::cMuMsgIdentification (cBinaryArchiveOut& archive)
 {
-	serializeThis (archive);
-}
-
-void cMuMsgIdentification::serialize (cTextArchiveIn& archive)
-{
-	cMultiplayerLobbyMessage::serialize (archive);
 	serializeThis (archive);
 }
 

@@ -314,10 +314,6 @@ void cMapSender::sendMsg (cNetMessage& message)
 {
 	message.playerNr = -1;
 
-	cTextArchiveIn archive;
-	archive << message;
-	Log.write ("MapSender: --> " + archive.data() + " to " + std::to_string (toPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
-
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;

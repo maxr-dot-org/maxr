@@ -62,7 +62,6 @@ public:
 
 	void serialize (cBinaryArchiveIn& archive) override { cNetMessage::serialize (archive); serializeThis (archive); }
 	void serialize (cJsonArchiveOut& archive) override { cNetMessage::serialize (archive); serializeThis (archive); }
-	void serialize (cTextArchiveIn& archive) override { cNetMessage::serialize (archive); serializeThis (archive); }
 
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 	virtual void execute (cModel& model) const = 0;

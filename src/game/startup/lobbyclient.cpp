@@ -119,9 +119,6 @@ cPlayerBasicData* cLobbyClient::getPlayer (int playerNr)
 void cLobbyClient::sendNetMessage (cNetMessage& message)
 {
 	message.From (localPlayer.getNr());
-	cTextArchiveIn archive;
-	archive << message;
-	Log.write ("LobbyClient: --> " + archive.data() + " to host", cLog::eLOG_TYPE_NET_DEBUG);
 
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
@@ -253,10 +250,6 @@ void cLobbyClient::disconnect()
 //------------------------------------------------------------------------------
 void cLobbyClient::handleNetMessage (const cNetMessage& message)
 {
-	cTextArchiveIn archive;
-	archive << message;
-	Log.write ("LobbyClient: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
-
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;

@@ -150,10 +150,6 @@ void cLobbyServer::run()
 //------------------------------------------------------------------------------
 void cLobbyServer::sendNetMessage (const cNetMessage& message, int receiverPlayerNr /*= -1*/)
 {
-	cTextArchiveIn archive;
-	archive << message;
-	Log.write ("LobbyServer: --> " + archive.data() + " to " + std::to_string (receiverPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
-
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;
@@ -168,10 +164,6 @@ void cLobbyServer::sendNetMessage (const cNetMessage& message, int receiverPlaye
 //------------------------------------------------------------------------------
 void cLobbyServer::forwardMessage (const cNetMessage& message)
 {
-	cTextArchiveIn archive;
-	archive << message;
-	Log.write ("LobbyServer: forward --> " + archive.data() + " from " + std::to_string (message.playerNr), cLog::eLOG_TYPE_NET_DEBUG);
-
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;
@@ -279,10 +271,6 @@ void cLobbyServer::sendChatMessage (const std::string& message, int receiverPlay
 //------------------------------------------------------------------------------
 void cLobbyServer::handleNetMessage (const cNetMessage& message)
 {
-	cTextArchiveIn archive;
-	archive << message;
-	Log.write ("lobbyServer: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
-
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;

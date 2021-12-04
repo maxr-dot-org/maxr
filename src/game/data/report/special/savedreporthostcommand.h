@@ -34,7 +34,6 @@ public:
 
 	void serialize (cBinaryArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
 	void serialize (cJsonArchiveOut& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
-	void serialize (cTextArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
 	void serialize (cXmlArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
 
 	eSavedReportType getType() const override;

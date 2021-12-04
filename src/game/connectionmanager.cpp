@@ -132,10 +132,6 @@ void cConnectionManager::acceptConnection (const cSocket* socket, int playerNr)
 
 	cNetMessageTcpConnected message (playerNr);
 
-	cTextArchiveIn archive;
-	archive << message;
-	Log.write ("ConnectionManager: --> " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
-
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;
@@ -162,10 +158,6 @@ void cConnectionManager::declineConnection (const cSocket* socket, eDeclineConne
 	}
 
 	cNetMessageTcpConnectFailed message (reason);
-
-	cTextArchiveIn archive;
-	archive << message;
-	Log.write ("ConnectionManager: --> " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
 
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
@@ -415,9 +407,6 @@ void cConnectionManager::incomingConnection (const cSocket* socket)
 	clientSockets.emplace_back (socket, -1);
 
 	cNetMessageTcpHello message;
-	cTextArchiveIn archive;
-	archive << message;
-	Log.write ("ConnectionManager: --> " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
 
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
@@ -491,10 +480,6 @@ bool cConnectionManager::handeConnectionHandshake (const std::unique_ptr<cNetMes
 	{
 	case eNetMessageType::TCP_HELLO:
 	{
-		cTextArchiveIn archive;
-		archive << *message;
-		Log.write ("ConnectionManager: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
-
 		nlohmann::json json;
 		cJsonArchiveOut jsonarchive (json);
 		jsonarchive << *message;
@@ -516,10 +501,6 @@ bool cConnectionManager::handeConnectionHandshake (const std::unique_ptr<cNetMes
 	}
 	case eNetMessageType::TCP_WANT_CONNECT:
 	{
-		cTextArchiveIn archive;
-		archive << *message;
-		Log.write ("ConnectionManager: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
-
 		nlohmann::json json;
 		cJsonArchiveOut jsonarchive (json);
 		jsonarchive << *message;
@@ -556,10 +537,6 @@ bool cConnectionManager::handeConnectionHandshake (const std::unique_ptr<cNetMes
 			// server shouldn't get this message
 			return true;
 		}
-		cTextArchiveIn archive;
-		archive << *message;
-		Log.write ("ConnectionManager: <-- " + archive.data(), cLog::eLOG_TYPE_NET_DEBUG);
-
 		nlohmann::json json;
 		cJsonArchiveOut jsonarchive (json);
 		jsonarchive << *message;

@@ -65,7 +65,6 @@ public:
 
 	void serialize (cBinaryArchiveIn& archive) override;
 	void serialize (cJsonArchiveOut& archive) override { cNetMessage::serialize (archive); serializeThis (archive); }
-	void serialize (cTextArchiveIn& archive) override;
 
 protected:
 	cMultiplayerLobbyMessage (eMessageType type) : type (type) {}
@@ -119,7 +118,6 @@ public:
 
 	void serialize (cBinaryArchiveIn& archive) override;
 	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
-	void serialize (cTextArchiveIn& archive) override;
 
 	std::string message;
 private:
@@ -139,7 +137,6 @@ public:
 
 	void serialize (cBinaryArchiveIn& archive) override;
 	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
-	void serialize (cTextArchiveIn& archive) override;
 
 	int newPlayerNr;
 private:
@@ -159,7 +156,6 @@ public:
 
 	void serialize (cBinaryArchiveIn& archive) override;
 	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
-	void serialize (cTextArchiveIn& archive) override;
 
 	cSaveGameInfo saveInfo;
 	std::string mapName;
@@ -186,7 +182,6 @@ public:
 
 	void serialize (cBinaryArchiveIn& archive) override;
 	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
-	void serialize (cTextArchiveIn& archive) override;
 
 	std::vector<cSaveGameInfo> saveGames;
 
@@ -209,7 +204,6 @@ public:
 
 	void serialize (cBinaryArchiveIn& archive) override;
 	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
-	void serialize (cTextArchiveIn& archive) override;
 
 	std::vector<cPlayerBasicData> playerList;
 private:
@@ -237,7 +231,6 @@ public:
 
 	void serialize (cBinaryArchiveIn& archive) override;
 	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
-	void serialize (cTextArchiveIn& archive) override;
 
 	bool missingSettings = false;
 	std::vector<cPlayerBasicData> notReadyPlayers;
@@ -271,7 +264,6 @@ public:
 
 	void serialize (cBinaryArchiveIn& archive) override;
 	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); saveThis (archive); }
-	void serialize (cTextArchiveIn& archive) override;
 
 	std::shared_ptr<const cUnitsData> unitsData;
 	std::shared_ptr<const cClanData> clanData;
@@ -304,7 +296,6 @@ public:
 
 	void serialize (cBinaryArchiveIn& archive) override;
 	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
-	void serialize (cTextArchiveIn& archive) override;
 
 	int landedPlayer;
 private:
@@ -324,7 +315,6 @@ public:
 
 	void serialize (cBinaryArchiveIn& archive) override;
 	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
-	void serialize (cTextArchiveIn& archive) override;
 
 	int landingPlayer;
 	bool isIn;
@@ -346,7 +336,6 @@ public:
 
 	void serialize (cBinaryArchiveIn& archive) override;
 	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
-	void serialize (cTextArchiveIn& archive) override;
 
 	eLandingPositionState state;
 private:
@@ -390,7 +379,6 @@ public:
 
 	void serialize (cBinaryArchiveIn& archive) override;
 	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
-	void serialize (cTextArchiveIn& archive) override;
 
 	cPosition position;
 private:
@@ -410,7 +398,6 @@ public:
 
 	void serialize (cBinaryArchiveIn& archive) override;
 	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
-	void serialize (cTextArchiveIn& archive) override;
 
 	std::string mapName;
 private:
@@ -430,7 +417,6 @@ public:
 
 	void serialize (cBinaryArchiveIn& archive) override;
 	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
-	void serialize (cTextArchiveIn& archive) override;
 
 	std::string mapName;
 	int mapSize;
@@ -452,7 +438,6 @@ public:
 
 	void serialize (cBinaryArchiveIn& archive) override;
 	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
-	void serialize (cTextArchiveIn& archive) override;
 
 	std::vector<char> data;
 private:
@@ -480,7 +465,6 @@ public:
 
 	void serialize (cBinaryArchiveIn& archive) override;
 	void serialize (cJsonArchiveOut& archive) override { cMultiplayerLobbyMessage::serialize (archive); serializeThis (archive); }
-	void serialize (cTextArchiveIn& archive) override;
 
 	std::string playerName;
 	cRgbColor playerColor;
