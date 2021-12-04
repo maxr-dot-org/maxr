@@ -67,18 +67,18 @@ public:
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 	virtual void execute (cModel& model) const = 0;
 protected:
-	cAction (eActiontype type) : type (type){}
+	cAction (eActiontype action) : action (action){}
 private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & NVP (type);
+		archive & NVP (action);
 	}
 
 	cAction (const cAction&) = delete;
 	cAction& operator=(const cAction&) = delete;
 
-	eActiontype type;
+	eActiontype action;
 };
 namespace serialization
 {

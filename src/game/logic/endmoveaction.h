@@ -49,7 +49,7 @@ public:
 	void serialize (Archive& archive)
 	{
 		archive & NVP (vehicleID);
-		archive & NVP (type);
+		archive & NVP (endMoveAction);
 		archive & NVP (destID);
 	}
 private:
@@ -58,7 +58,7 @@ private:
 	void executeAttackAction (cModel& model);
 
 	int vehicleID;
-	eEndMoveActionType type;
+	eEndMoveActionType endMoveAction;
 	int destID;
 };
 

@@ -30,21 +30,21 @@
 
 cEndMoveAction::cEndMoveAction (const cVehicle& vehicle, const cUnit& destUnit, eEndMoveActionType type) :
 	vehicleID (vehicle.getId()),
-	type (type),
+	endMoveAction (type),
 	destID (destUnit.getId())
 {}
 
 //------------------------------------------------------------------------------
 cEndMoveAction::cEndMoveAction () :
 	vehicleID (-1),
-	type (EMAT_NONE),
+	endMoveAction (EMAT_NONE),
 	destID (-1)
 {}
 
 //------------------------------------------------------------------------------
 void cEndMoveAction::execute (cModel& model)
 {
-	switch (type)
+	switch (endMoveAction)
 	{
 		case EMAT_LOAD:
 			executeLoadAction (model);
@@ -60,14 +60,14 @@ void cEndMoveAction::execute (cModel& model)
 //------------------------------------------------------------------------------
 eEndMoveActionType cEndMoveAction::getType() const
 {
-	return type;
+	return endMoveAction;
 }
 
 //------------------------------------------------------------------------------
 uint32_t cEndMoveAction::getChecksum (uint32_t crc) const
 {
 	crc = calcCheckSum (vehicleID, crc);
-	crc = calcCheckSum (type, crc);
+	crc = calcCheckSum (endMoveAction, crc);
 	crc = calcCheckSum (destID, crc);
 
 	return crc;

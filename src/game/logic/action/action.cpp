@@ -89,10 +89,10 @@ namespace serialization
 
 std::unique_ptr<cAction> cAction::createFromBuffer (cBinaryArchiveOut& archive)
 {
-	eActiontype type;
-	archive >> NVP (type);
+	eActiontype action;
+	archive >> NVP (action);
 
-	switch (type)
+	switch (action)
 	{
 	case eActiontype::InitNewGame: return std::make_unique<cActionInitNewGame> (archive);
 	case eActiontype::StartWork: return std::make_unique<cActionStartWork> (archive);
@@ -123,7 +123,7 @@ std::unique_ptr<cAction> cAction::createFromBuffer (cBinaryArchiveOut& archive)
 	case eActiontype::UpgradeBuilding: return std::make_unique<cActionUpgradeBuilding> (archive);
 	case eActiontype::SetAutoMove: return std::make_unique<cActionSetAutoMove> (archive);
 	default:
-		throw std::runtime_error ("Unknown action type " + std::to_string (static_cast<int> (type)));
+		throw std::runtime_error ("Unknown action type " + std::to_string (static_cast<int> (action)));
 		return nullptr;
 	}
 }
@@ -131,6 +131,6 @@ std::unique_ptr<cAction> cAction::createFromBuffer (cBinaryArchiveOut& archive)
 //------------------------------------------------------------------------------
 cAction::eActiontype cAction::getType() const
 {
-	return type;
+	return action;
 }
 

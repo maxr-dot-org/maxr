@@ -55,7 +55,7 @@ namespace serialization
 std::unique_ptr<cMultiplayerLobbyMessage> cMultiplayerLobbyMessage::createFromBuffer (cBinaryArchiveOut& archive)
 {
 	eMessageType type;
-	archive >> NVP (type);
+	archive >> serialization::makeNvp ("lobbyMessage", type);
 
 	std::unique_ptr<cMultiplayerLobbyMessage> message;
 	switch (type)

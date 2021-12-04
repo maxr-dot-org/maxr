@@ -74,7 +74,7 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & NVP (type);
+		archive & serialization::makeNvp ("lobbyMessage", type);
 	}
 
 	eMessageType type;
