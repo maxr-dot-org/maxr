@@ -21,6 +21,7 @@
 #define game_data_miningresourceH
 
 #include "game/data/resourcetype.h"
+#include "game/serialization/serialization.h"
 
 #include <cstdint>
 
@@ -42,9 +43,9 @@ struct sMiningResource
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & metal;
-		archive & oil;
-		archive & gold;
+		archive & NVP (metal);
+		archive & NVP (oil);
+		archive & NVP (gold);
 	}
 
 	int metal = 0;

@@ -63,10 +63,10 @@ std::unique_ptr<cNetMessage> cNetMessage::createFromBuffer (const unsigned char*
 	cBinaryArchiveOut archive (data, length);
 
 	eNetMessageType type;
-	archive >> type;
+	archive >> NVP (type);
 
 	int playerNr;
-	archive >> playerNr;
+	archive >> NVP (playerNr);
 
 	std::unique_ptr<cNetMessage> message;
 	switch (type)

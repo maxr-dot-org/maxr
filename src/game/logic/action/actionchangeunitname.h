@@ -38,8 +38,8 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & unitId;
-		archive & newName;
+		archive & NVP (unitId);
+		archive & NVP (newName);
 	}
 
 	int unitId;

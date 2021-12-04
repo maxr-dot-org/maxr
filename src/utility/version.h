@@ -20,6 +20,7 @@
 #ifndef utility_versionH
 #define utility_versionH
 
+#include "game/serialization/serialization.h"
 #include <string>
 
 /**
@@ -66,9 +67,9 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
-		archive & major;
-		archive & minor;
-		archive & revision;
+		archive & NVP (major);
+		archive & NVP (minor);
+		archive & NVP (revision);
 	}
 
 private:

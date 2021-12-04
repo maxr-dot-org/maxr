@@ -39,7 +39,7 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & unitUpgrades;
+		archive & NVP (unitUpgrades);
 	}
 
 	std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades;

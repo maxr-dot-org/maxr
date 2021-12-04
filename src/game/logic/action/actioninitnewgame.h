@@ -45,10 +45,7 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & initPlayerData.landingUnits;
-		archive & initPlayerData.clan;
-		archive & initPlayerData.unitUpgrades;
-		archive & initPlayerData.landingPosition;
+		initPlayerData.serialize (archive);
 	}
 	void makeLanding (cPlayer&, const std::vector<sLandingUnit>&, cModel&) const;
 	cVehicle* landVehicle (const cPosition&, int radius, const sID&, cPlayer&, cModel&) const;

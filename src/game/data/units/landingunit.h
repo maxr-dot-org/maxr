@@ -30,8 +30,8 @@ struct sLandingUnit
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
-		archive & unitID;
-		archive & cargo;
+		archive & NVP (unitID);
+		archive & NVP (cargo);
 	}
 };
 

@@ -43,8 +43,8 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & unitId;
-		archive & escapePosition;
+		archive & NVP (unitId);
+		archive & NVP (escapePosition);
 	}
 };
 

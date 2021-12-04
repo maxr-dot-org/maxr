@@ -25,10 +25,20 @@
 #include "game/data/units/landingunit.h"
 #include "game/data/units/unitdata.h"
 #include "game/logic/upgradecalculator.h"
+#include "game/serialization/serialization.h"
 #include "utility/position.h"
 
 struct sInitPlayerData
 {
+	template <typename Archive>
+	void serialize (Archive& archive)
+	{
+		archive & NVP (clan);
+		archive & NVP (landingPosition);
+		archive & NVP (landingUnits);
+		archive & NVP (unitUpgrades);
+	}
+
 	int clan = -1;
 	std::vector<sLandingUnit> landingUnits;
 	std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades;

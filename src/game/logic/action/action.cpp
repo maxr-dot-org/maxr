@@ -90,7 +90,7 @@ namespace serialization
 std::unique_ptr<cAction> cAction::createFromBuffer (cBinaryArchiveOut& archive)
 {
 	eActiontype type;
-	archive >> type;
+	archive >> NVP (type);
 
 	switch (type)
 	{

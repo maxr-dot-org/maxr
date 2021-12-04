@@ -45,9 +45,9 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & infiltratorId;
-		archive & targetId;
-		archive & steal;
+		archive & NVP (infiltratorId);
+		archive & NVP (targetId);
+		archive & NVP (steal);
 	}
 
 	int infiltratorId;

@@ -39,8 +39,8 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & buildingId;
-		archive & vehicleId;
+		archive & NVP (buildingId);
+		archive & NVP (vehicleId);
 	}
 
 	unsigned int buildingId;

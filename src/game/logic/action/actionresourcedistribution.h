@@ -40,7 +40,7 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & buildingId;
+		archive & NVP (buildingId);
 		prod.serializeThis (archive);
 	}
 

@@ -39,10 +39,10 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & unitId;
-		archive & path;
-		archive & endMoveAction;
-		archive & stopOnDetectResource;
+		archive & NVP (unitId);
+		archive & NVP (path);
+		archive & NVP (endMoveAction);
+		archive & NVP (stopOnDetectResource);
 	}
 
 	std::forward_list<cPosition> path;

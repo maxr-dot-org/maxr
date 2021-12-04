@@ -40,12 +40,12 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & vehicleID;
-		archive & buildingTypeID;
-		archive & buildSpeed;
-		archive & buildPosition;
-		archive & buildPath;
-		archive & pathEndPosition;
+		archive & NVP (vehicleID);
+		archive & NVP (buildingTypeID);
+		archive & NVP (buildSpeed);
+		archive & NVP (buildPosition);
+		archive & NVP (buildPath);
+		archive & NVP (pathEndPosition);
 	}
 
 	int vehicleID;

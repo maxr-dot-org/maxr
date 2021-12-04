@@ -41,7 +41,7 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & researchAreas;
+		archive & NVP (researchAreas);
 	}
 
 	std::array<int, cResearch::kNrResearchAreas> researchAreas;

@@ -38,9 +38,9 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & agressorId;
-		archive & targetPosition;
-		archive & targetId;
+		archive & NVP (agressorId);
+		archive & NVP (targetPosition);
+		archive & NVP (targetId);
 	}
 
 	unsigned int agressorId;

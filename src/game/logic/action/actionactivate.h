@@ -38,9 +38,9 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & position;
-		archive & containingUnitId;
-		archive & activatedVehicleId;
+		archive & NVP (position);
+		archive & NVP (containingUnitId);
+		archive & NVP (activatedVehicleId);
 	}
 
 	cPosition position;

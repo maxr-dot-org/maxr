@@ -73,7 +73,7 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & type;
+		archive & NVP (type);
 	}
 
 	eMessageType type;
@@ -124,7 +124,7 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & message;
+		archive & NVP (message);
 	}
 };
 
@@ -143,7 +143,7 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & newPlayerNr;
+		archive & NVP (newPlayerNr);
 	}
 };
 
@@ -166,10 +166,10 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & saveInfo;
-		archive & mapName;
-		archive & mapCrc;
-		archive & settings;
+		archive & NVP (saveInfo);
+		archive & NVP (mapName);
+		archive & NVP (mapCrc);
+		archive & NVP (settings);
 	}
 };
 
@@ -189,7 +189,7 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & saveGames;
+		archive & NVP (saveGames);
 	}
 };
 
@@ -210,7 +210,7 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & playerList;
+		archive & NVP (playerList);
 	}
 };
 
@@ -240,10 +240,10 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & missingSettings;
-		archive & notReadyPlayers;
-		archive & hostNotInSavegame;
-		archive & missingPlayers;
+		archive & NVP (missingSettings);
+		archive & NVP (notReadyPlayers);
+		archive & NVP (hostNotInSavegame);
+		archive & NVP (missingPlayers);
 	}
 };
 
@@ -272,18 +272,18 @@ private:
 	void loadThis (Archive& archive)
 	{
 		auto unitDataNonConst = std::make_shared<cUnitsData>();
-		archive >> *unitDataNonConst;
+		archive >> serialization::makeNvp ("unitsData", *unitDataNonConst);
 		unitsData = unitDataNonConst;
 
 		auto clanDataNonConst = std::make_shared<cClanData>();
-		archive >> *clanDataNonConst;
+		archive >> serialization::makeNvp ("clanData", *clanDataNonConst);
 		clanData = clanDataNonConst;
 	}
 	template <typename Archive>
 	void saveThis (Archive& archive)
 	{
-		archive << *unitsData;
-		archive << *clanData;
+		archive << serialization::makeNvp ("unitsData", *unitsData);
+		archive << serialization::makeNvp ("clanData", *clanData);
 	}
 };
 
@@ -302,7 +302,7 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & landedPlayer;
+		archive & NVP (landedPlayer);
 	}
 };
 
@@ -322,8 +322,8 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & landingPlayer;
-		archive & isIn;
+		archive & NVP (landingPlayer);
+		archive & NVP (isIn);
 	}
 };
 
@@ -342,7 +342,7 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & state;
+		archive & NVP (state);
 	}
 };
 
@@ -385,7 +385,7 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & position;
+		archive & NVP (position);
 	}
 };
 
@@ -404,7 +404,7 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & mapName;
+		archive & NVP (mapName);
 	}
 };
 
@@ -424,8 +424,8 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & mapName;
-		archive & mapSize;
+		archive & NVP (mapName);
+		archive & NVP (mapSize);
 	}
 };
 
@@ -444,7 +444,7 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & data;
+		archive & NVP (data);
 	}
 };
 
@@ -473,9 +473,9 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & playerColor;
-		archive & playerName;
-		archive & ready;
+		archive & NVP (playerColor);
+		archive & NVP (playerName);
+		archive & NVP (ready);
 	}
 };
 

@@ -39,10 +39,10 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & sourceUnitId;
-		archive & destinationUnitId;
-		archive & transferValue;
-		archive & resourceType;
+		archive & NVP (sourceUnitId);
+		archive & NVP (destinationUnitId);
+		archive & NVP (transferValue);
+		archive & NVP (resourceType);
 	}
 
 	unsigned int sourceUnitId;

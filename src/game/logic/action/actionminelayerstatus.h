@@ -41,9 +41,9 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & vehicleId;
-		archive & layMines;
-		archive & clearMines;
+		archive & NVP (vehicleId);
+		archive & NVP (layMines);
+		archive & NVP (clearMines);
 	}
 };
 

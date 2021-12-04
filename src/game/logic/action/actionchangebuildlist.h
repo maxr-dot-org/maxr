@@ -39,10 +39,10 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & buildingId;
-		archive & buildList;
-		archive & buildSpeed;
-		archive & repeat;
+		archive & NVP (buildingId);
+		archive & NVP (buildList);
+		archive & NVP (buildSpeed);
+		archive & NVP (repeat);
 	}
 
 	int buildingId;

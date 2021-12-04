@@ -65,10 +65,10 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
-		archive & waitForTurnEnd;
-		archive & pause;
-		archive & waitForClient;
-		archive & waitForServer;
+		archive & NVP (waitForTurnEnd);
+		archive & NVP (pause);
+		archive & NVP (waitForClient);
+		archive & NVP (waitForServer);
 	}
 
 	// These modes are triggered on server (and synchronized to clients):

@@ -92,8 +92,8 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & type;
-		archive & playerNr;
+		archive & NVP (type);
+		archive & NVP (playerNr);
 	}
 
 	eNetMessageType type;
@@ -141,8 +141,8 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & packageVersion;
-		archive & packageRev;
+		archive & NVP (packageVersion);
+		archive & NVP (packageRev);
 	}
 };
 
@@ -170,10 +170,10 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & player;
-		archive & ready;
-		archive & packageVersion;
-		archive & packageRev;
+		archive & NVP (player);
+		archive & NVP (ready);
+		archive & NVP (packageVersion);
+		archive & NVP (packageRev);
 		// socket is not serialized
 	}
 };
@@ -199,9 +199,9 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & playerNr;
-		archive & packageVersion;
-		archive & packageRev;
+		archive & NVP (playerNr);
+		archive & NVP (packageVersion);
+		archive & NVP (packageRev);
 	}
 };
 
@@ -228,7 +228,7 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & reason;
+		archive & NVP (reason);
 	}
 };
 
@@ -263,9 +263,9 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & gameTime;
-		archive & checksum;
-		archive & ping;
+		archive & NVP (gameTime);
+		archive & NVP (checksum);
+		archive & NVP (ping);
 	}
 };
 
@@ -295,12 +295,12 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & gameTime;
-		archive & crcOK;
-		archive & timeBuffer;
-		archive & ticksPerFrame;
-		archive & queueSize;
-		archive & eventCounter;
+		archive & NVP (gameTime);
+		archive & NVP (crcOK);
+		archive & NVP (timeBuffer);
+		archive & NVP (ticksPerFrame);
+		archive & NVP (queueSize);
+		archive & NVP (eventCounter);
 	}
 };
 
@@ -323,7 +323,7 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & seed;
+		archive & NVP (seed);
 	}
 };
 
@@ -349,8 +349,8 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & freezeModes;
-		archive & playerStates;
+		archive & NVP (freezeModes);
+		archive & NVP (playerStates);
 	}
 };
 
@@ -377,7 +377,7 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & report;
+		archive & NVP (report);
 	}
 };
 
@@ -402,8 +402,8 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & savingID;
-		archive & guiInfo;
+		archive & NVP (savingID);
+		archive & NVP (guiInfo);
 	}
 };
 
@@ -427,7 +427,7 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & savingID;
+		archive & NVP (savingID);
 	}
 };
 
@@ -448,7 +448,7 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & data;
+		archive & NVP (data);
 	}
 
 	std::vector<uint8_t> data;
@@ -477,8 +477,8 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & playerToSync;
-		archive & saveNumberForGuiInfo;
+		archive & NVP (playerToSync);
+		archive & NVP (saveNumberForGuiInfo);
 	}
 };
 
@@ -503,9 +503,9 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & mapName;
-		archive & mapCrc;
-		archive & playerList;
+		archive & NVP (mapName);
+		archive & NVP (mapCrc);
+		archive & NVP (playerList);
 	}
 };
 

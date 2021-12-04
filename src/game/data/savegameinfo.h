@@ -66,16 +66,16 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
-		archive & saveVersion;
-		archive & gameVersion;
-		archive & gameName;
-		archive & type;
-		archive & date;
-		archive & players;
-		archive & mapName;
-		archive & mapCrc;
-		archive & turn;
-		archive & number;
+		archive & NVP (saveVersion);
+		archive & NVP (gameVersion);
+		archive & NVP (gameName);
+		archive & NVP (type);
+		archive & NVP (date);
+		archive & NVP (players);
+		archive & NVP (mapName);
+		archive & NVP (mapCrc);
+		archive & NVP (turn);
+		archive & NVP (number);
 	}
 };
 

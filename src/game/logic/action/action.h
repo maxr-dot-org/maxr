@@ -71,7 +71,7 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & type;
+		archive & NVP (type);
 	}
 
 	cAction (const cAction&) = delete;

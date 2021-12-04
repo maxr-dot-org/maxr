@@ -363,11 +363,11 @@ struct sUnitUpgrade
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
-		archive & nextPrice;
-		archive & purchased;
-		archive & curValue;
-		archive & startValue;
-		archive & type;
+		archive & NVP (nextPrice);
+		archive & NVP (purchased);
+		archive & NVP (curValue);
+		archive & NVP (startValue);
+		archive & NVP (type);
 	}
 
 private:
@@ -400,11 +400,10 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
-		for (auto& upgrade : upgrades)
-			archive & upgrade;
+		archive & NVP (upgrades);
 	}
 public:
-	sUnitUpgrade upgrades[8];
+	std::array<sUnitUpgrade, 8> upgrades;
 };
 
 #endif // game_logic_upgradecalculatorH
