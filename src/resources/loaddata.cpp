@@ -1232,7 +1232,7 @@ static int LoadClans()
  */
 static int LoadMusic (const char* path)
 {
-	const std::string musicPath = std::string (path) + PATH_DELIMITER "music.xml";
+	const std::string musicPath = std::string (path) + PATH_DELIMITER "musics.json";
 
 	Log.write ("Loading music: " + std::string (musicPath), cLog::eLOG_TYPE_INFO);
 	if (!FileExists (musicPath))
@@ -1240,15 +1240,18 @@ static int LoadMusic (const char* path)
 		Log.write ("file doesn't exist", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
-	tinyxml2::XMLDocument musicXml;
-	if (musicXml.LoadFile (musicPath.c_str()) != XML_NO_ERROR)
+	std::ifstream file (musicPath);
+	nlohmann::json json;
+
+	if (!(file >> json))
 	{
 		Log.write ("Can't load music.xml ", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
-	cXmlArchiveOut in (*musicXml.RootElement());
 
-	serialization::serialize(in, MusicFiles);
+	cJsonArchiveIn in (json);
+
+	in >> MusicFiles;
 
 	if (!MusicFiles.start.empty())
 	{

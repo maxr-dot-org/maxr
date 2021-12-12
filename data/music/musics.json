@@ -1,0 +1,18 @@
+{
+  "backgrounds": [
+    "bkg1.ogg",
+    "bkg2.ogg",
+    "bkg3.ogg",
+    "bkg4.ogg",
+    "bkg5.ogg",
+    "bkg6.ogg",
+    "crtr.ogg",
+    "dsrt.ogg",
+    "gren.ogg",
+    "lose.ogg",
+    "snow.ogg",
+    "winr.ogg",
+    "main.ogg"
+  ],
+  "start": "main.ogg"
+}
