@@ -221,6 +221,9 @@ private:
 	 */
 	void initialize();
 
+	void loadFromXmlFile (const std::string& path);
+	void loadFromJsonFile (const std::string& path);
+
 	/**
 	 * Sets the platform dependent config, log and save paths.
 	 */
@@ -371,7 +374,6 @@ private:
 	};
 
 
-private:
 	/**
 	 * The static instance of this object.
 	 */
@@ -387,10 +389,8 @@ private:
 	 */
 	bool initializing = false;
 
-	mutable std::recursive_mutex xmlDocMutex;
+	mutable std::recursive_mutex docMutex;
 
-	/** sConfig is where the config is read from - set in setPaths() **/
-	std::string configPath;
 	/** sDataDir is where the data files are stored */
 	std::string dataDir;
 	/** sLog is where the log goes - set in setPaths() **/

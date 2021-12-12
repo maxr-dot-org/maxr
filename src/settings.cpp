@@ -24,6 +24,7 @@
 #include <string>
 
 #include "defines.h"
+#include "game/serialization/jsonarchive.h"
 #include "game/serialization/xmlarchive.h"
 #include "maxrversion.h"
 #include "utility/files.h"
@@ -179,28 +180,17 @@ void cSettings::setPaths()
 	std::cout << "\n(II): Read home directory " << homeDir;
 	makeDirectories(homeDir);
 
-	// set config to $HOME/.maxr/maxr.xml
-	configPath = homeDir + MAX_XML;
-
 	// set new place for logs
 	logPath = homeDir + "maxr.log";
 	netLogPath = getUserLogDir();
 	std::cout << "\n(II): Starting logging to: " << logPath << std::endl;
 }
 
-
 //------------------------------------------------------------------------------
-void cSettings::initialize()
+void cSettings::loadFromXmlFile (const std::string& path)
 {
-	std::unique_lock<std::recursive_mutex> lock (xmlDocMutex);
-	initializing = true;
-
-	if (initialized) return;
-
-	setPaths();
-
 	tinyxml2::XMLDocument configFile;
-	if (!FileExists (configPath) || configFile.LoadFile (configPath.c_str()) != tinyxml2::XML_NO_ERROR)
+	if (!FileExists (path) || configFile.LoadFile (path.c_str()) != tinyxml2::XML_NO_ERROR)
 	{
 		saveInFile();
 		initializing = false;
@@ -214,11 +204,62 @@ void cSettings::initialize()
 	} catch (const std::runtime_error& ex)
 	{
 		Log.write ("Cannot read settings, Create a new file (and backup the old one)", cLog::eLOG_TYPE_WARNING);
-		copyFile (configPath, configPath + ".old");
+		copyFile (path, path + ".old");
 		saveInFile();
 		initializing = false;
 		initialized = true;
+	}
+}
+//------------------------------------------------------------------------------
+void cSettings::loadFromJsonFile (const std::string& path)
+{
+	std::ifstream file (path);
+	nlohmann::json json;
+
+	if (!(file >> json))
+	{
+		Log.write ("cannot load maxr.json\ngenerating new file", cLog::eLOG_TYPE_WARNING);
+		saveInFile();
 		return;
+	}
+	try
+	{
+		cJsonArchiveIn in (json);
+		in >> *this;
+	}
+	catch (const std::exception& e)
+	{
+		Log.write (std::string ("Error while reading settings: ") + e.what(), cLog::eLOG_TYPE_WARNING);
+		Log.write ("Overwriting with default settings", cLog::eLOG_TYPE_WARNING);
+		saveInFile();
+	}
+}
+//------------------------------------------------------------------------------
+void cSettings::initialize()
+{
+	std::unique_lock<std::recursive_mutex> lock (docMutex);
+	initializing = true;
+
+	if (initialized) return;
+
+	setPaths();
+
+	const auto settingsXml = homeDir + "maxr.xml";
+	const auto settingsJson = homeDir + "maxr.json";
+
+	if (FileExists (settingsJson))
+	{
+		loadFromJsonFile (settingsJson);
+	}
+	else if (FileExists (settingsXml))
+	{
+		loadFromXmlFile(settingsXml);
+		saveInFile();
+	}
+	else
+	{
+		Log.write ("generating new settings", cLog::eLOG_TYPE_WARNING);
+		saveInFile();
 	}
 
 	to_lower (global.voiceLanguage);
@@ -243,21 +284,14 @@ void cSettings::initialize()
 //------------------------------------------------------------------------------
 void cSettings::saveInFile() const
 {
-	std::unique_lock<std::recursive_mutex> lock (xmlDocMutex);
+	std::unique_lock<std::recursive_mutex> lock (docMutex);
 
-	tinyxml2::XMLDocument configFile;
-	configFile.LinkEndChild (configFile.NewDeclaration());
-	configFile.LinkEndChild (configFile.NewElement ("Options"));
-	cXmlArchiveIn archive (*configFile.RootElement());
+	nlohmann::json json;
+	cJsonArchiveOut out (json);
+	out << *this;
 
-	const_cast<cSettings&>(*this).serialize (archive);
-
-	if (configFile.SaveFile (configPath.c_str()) != tinyxml2::XML_NO_ERROR)
-	{
-		Log.write ("Could not write new config to " + configPath, cLog::eLOG_TYPE_ERROR);
-		Log.write (configFile.GetErrorStr1(), cLog::eLOG_TYPE_ERROR);
-		Log.write (configFile.GetErrorStr2(), cLog::eLOG_TYPE_ERROR);
-	}
+	std::ofstream file (homeDir + "maxr.json");
+	file << json.dump(1);
 }
 
 //------------------------------------------------------------------------------

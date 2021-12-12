@@ -105,7 +105,7 @@ void initCrashreporting()
 		crAddFile2 (log.c_str(), nullptr, "Maxr Logfile", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 	}
 
-	std::string settings = cSettings::getInstance().getHomeDir() + MAX_XML;
+	std::string settings = cSettings::getInstance().getHomeDir() + "maxr.json";
 	if (!settings.empty())
 	{
 		crAddFile2 (settings.c_str(), nullptr, "Maxr Configuration File", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
