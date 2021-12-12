@@ -30,7 +30,6 @@
 #endif
 
 #define DEFAULTPORT 58600
-#define CLANS_XML (cSettings::getInstance().getDataDir() + "clans.xml").c_str()
 
 #define MAXR_ICON (cSettings::getInstance().getDataDir() + "maxr.bmp").c_str()
 

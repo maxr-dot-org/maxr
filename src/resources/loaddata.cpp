@@ -43,6 +43,7 @@
 #include "game/data/player/clans.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
+#include "game/serialization/jsonarchive.h"
 #include "game/serialization/xmlarchive.h"
 #include "maxrversion.h"
 #include "output/video/unifonts.h"
@@ -1202,22 +1203,24 @@ static int LoadVehicles()
  */
 static int LoadClans()
 {
-	std::string clansXMLPath = CLANS_XML;
+	std::string clansPath = cSettings::getInstance().getDataDir() + "clans.json";
 
-	if (!FileExists (clansXMLPath.c_str()))
+	if (!FileExists (clansPath.c_str()))
 	{
-		Log.write ("File doesn't exist: " + clansXMLPath, cLog::eLOG_TYPE_ERROR);
+		Log.write ("File doesn't exist: " + clansPath, cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
-	tinyxml2::XMLDocument clansXml;
-	if (clansXml.LoadFile (clansXMLPath.c_str()) != XML_NO_ERROR)
+	std::ifstream file (clansPath);
+	nlohmann::json json;
+	if (!(file >> json))
 	{
-		Log.write ("Can't load " + clansXMLPath, cLog::eLOG_TYPE_ERROR);
+		Log.write ("Can't load " + clansPath, cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
-	cXmlArchiveOut in (*clansXml.RootElement());
+	cJsonArchiveIn in (json);
 
-	serialization::serialize (in, ClanDataGlobal);
+	in >> ClanDataGlobal;
+
 	UnitsDataGlobal.initializeClanUnitData (ClanDataGlobal);
 	return 1;
 }

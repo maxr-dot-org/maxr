@@ -1,0 +1,780 @@
+{
+  "clans": [
+    {
+      "description": "Better Air Units",
+      "name": "The Chosen",
+      "num": 0,
+      "stats": [
+        {
+          "modifications": [
+            {
+              "first": "Scan",
+              "second": 14
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 8
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Range",
+              "second": 6
+            },
+            {
+              "first": "BuildCosts",
+              "second": 21
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 16
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Speed",
+              "second": 22
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 1
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Damage",
+              "second": 22
+            },
+            {
+              "first": "BuildCosts",
+              "second": 27
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 9
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "BuildCosts",
+              "second": 30
+            }
+          ],
+          "unitId": {
+            "firstPart": 1,
+            "secondPart": 9
+          }
+        }
+      ]
+    },
+    {
+      "description": "Better Sea Units",
+      "name": "Crimson Path",
+      "num": 1,
+      "stats": [
+        {
+          "modifications": [
+            {
+              "first": "Damage",
+              "second": 24
+            },
+            {
+              "first": "Speed",
+              "second": 9
+            },
+            {
+              "first": "BuildCosts",
+              "second": 15
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 30
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Armor",
+              "second": 7
+            },
+            {
+              "first": "Speed",
+              "second": 11
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 14
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Range",
+              "second": 8
+            },
+            {
+              "first": "Armor",
+              "second": 14
+            },
+            {
+              "first": "Hitpoints",
+              "second": 36
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 17
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Range",
+              "second": 11
+            },
+            {
+              "first": "BuildCosts",
+              "second": 33
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 22
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Scan",
+              "second": 10
+            },
+            {
+              "first": "Speed",
+              "second": 11
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 15
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Speed",
+              "second": 9
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 29
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Speed",
+              "second": 9
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 11
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "BuildCosts",
+              "second": 30
+            }
+          ],
+          "unitId": {
+            "firstPart": 1,
+            "secondPart": 12
+          }
+        }
+      ]
+    },
+    {
+      "description": "Improved Espionage",
+      "name": "Von Griffin",
+      "num": 2,
+      "stats": [
+        {
+          "modifications": [
+            {
+              "first": "Damage",
+              "second": 14
+            },
+            {
+              "first": "Scan",
+              "second": 11
+            },
+            {
+              "first": "Speed",
+              "second": 14
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 27
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Armor",
+              "second": 9
+            },
+            {
+              "first": "Hitpoints",
+              "second": 26
+            },
+            {
+              "first": "Speed",
+              "second": 12
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 6
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Damage",
+              "second": 24
+            },
+            {
+              "first": "Scan",
+              "second": 8
+            },
+            {
+              "first": "Speed",
+              "second": 9
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 30
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Scan",
+              "second": 5
+            },
+            {
+              "first": "Speed",
+              "second": 6
+            },
+            {
+              "first": "BuildCosts",
+              "second": 8
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 13
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Scan",
+              "second": 18
+            },
+            {
+              "first": "Speed",
+              "second": 8
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 26
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Scan",
+              "second": 16
+            },
+            {
+              "first": "Speed",
+              "second": 20
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 8
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Scan",
+              "second": 24
+            }
+          ],
+          "unitId": {
+            "firstPart": 1,
+            "secondPart": 26
+          }
+        }
+      ]
+    },
+    {
+      "description": "Better Missile Units",
+      "name": "Ayer's Hand",
+      "num": 3,
+      "stats": [
+        {
+          "modifications": [
+            {
+              "first": "Damage",
+              "second": 24
+            },
+            {
+              "first": "Range",
+              "second": 11
+            },
+            {
+              "first": "BuildCosts",
+              "second": 30
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 21
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Damage",
+              "second": 30
+            },
+            {
+              "first": "Range",
+              "second": 11
+            },
+            {
+              "first": "BuildCosts",
+              "second": 30
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 22
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Damage",
+              "second": 17
+            },
+            {
+              "first": "Range",
+              "second": 9
+            },
+            {
+              "first": "BuildCosts",
+              "second": 18
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 12
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Damage",
+              "second": 30
+            },
+            {
+              "first": "Range",
+              "second": 12
+            },
+            {
+              "first": "BuildCosts",
+              "second": 20
+            }
+          ],
+          "unitId": {
+            "firstPart": 1,
+            "secondPart": 17
+          }
+        }
+      ]
+    },
+    {
+      "description": "Better Armored Vehicles",
+      "name": "Musashi",
+      "num": 4,
+      "stats": [
+        {
+          "modifications": [
+            {
+              "first": "Damage",
+              "second": 20
+            },
+            {
+              "first": "Armor",
+              "second": 12
+            },
+            {
+              "first": "Hitpoints",
+              "second": 28
+            },
+            {
+              "first": "Speed",
+              "second": 7
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 32
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Damage",
+              "second": 24
+            },
+            {
+              "first": "Range",
+              "second": 8
+            },
+            {
+              "first": "Armor",
+              "second": 14
+            },
+            {
+              "first": "Hitpoints",
+              "second": 40
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 17
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Damage",
+              "second": 20
+            },
+            {
+              "first": "Armor",
+              "second": 14
+            },
+            {
+              "first": "Hitpoints",
+              "second": 28
+            }
+          ],
+          "unitId": {
+            "firstPart": 1,
+            "secondPart": 18
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Armor",
+              "second": 10
+            },
+            {
+              "first": "Hitpoints",
+              "second": 28
+            },
+            {
+              "first": "Speed",
+              "second": 11
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 6
+          }
+        }
+      ]
+    },
+    {
+      "description": "Better Fast Units",
+      "name": "Sacred Eights",
+      "num": 5,
+      "stats": [
+        {
+          "modifications": [
+            {
+              "first": "Range",
+              "second": 8
+            },
+            {
+              "first": "Speed",
+              "second": 11
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 15
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Range",
+              "second": 8
+            },
+            {
+              "first": "Speed",
+              "second": 9
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 23
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Damage",
+              "second": 20
+            },
+            {
+              "first": "Speed",
+              "second": 20
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 9
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Damage",
+              "second": 22
+            },
+            {
+              "first": "Range",
+              "second": 7
+            },
+            {
+              "first": "Speed",
+              "second": 14
+            },
+            {
+              "first": "BuildCosts",
+              "second": 18
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 7
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Damage",
+              "second": 14
+            },
+            {
+              "first": "Speed",
+              "second": 14
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 27
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Damage",
+              "second": 16
+            },
+            {
+              "first": "Speed",
+              "second": 11
+            }
+          ],
+          "unitId": {
+            "firstPart": 0,
+            "secondPart": 14
+          }
+        }
+      ]
+    },
+    {
+      "description": "Better Defense",
+      "name": "7 Knights",
+      "num": 6,
+      "stats": [
+        {
+          "modifications": [
+            {
+              "first": "Damage",
+              "second": 20
+            },
+            {
+              "first": "Armor",
+              "second": 14
+            },
+            {
+              "first": "Hitpoints",
+              "second": 28
+            }
+          ],
+          "unitId": {
+            "firstPart": 1,
+            "secondPart": 18
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Damage",
+              "second": 20
+            },
+            {
+              "first": "Range",
+              "second": 9
+            }
+          ],
+          "unitId": {
+            "firstPart": 1,
+            "secondPart": 16
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Damage",
+              "second": 18
+            },
+            {
+              "first": "Range",
+              "second": 9
+            }
+          ],
+          "unitId": {
+            "firstPart": 1,
+            "secondPart": 15
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Damage",
+              "second": 30
+            },
+            {
+              "first": "Range",
+              "second": 12
+            },
+            {
+              "first": "BuildCosts",
+              "second": 22
+            }
+          ],
+          "unitId": {
+            "firstPart": 1,
+            "secondPart": 17
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Scan",
+              "second": 20
+            }
+          ],
+          "unitId": {
+            "firstPart": 1,
+            "secondPart": 26
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Damage",
+              "second": 36
+            }
+          ],
+          "unitId": {
+            "firstPart": 1,
+            "secondPart": 29
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "Damage",
+              "second": 36
+            }
+          ],
+          "unitId": {
+            "firstPart": 1,
+            "secondPart": 21
+          }
+        }
+      ]
+    },
+    {
+      "description": "Extra Constructors and Engineers (depends on budget)",
+      "name": "Axis Inc.",
+      "num": 7,
+      "stats": [
+        {
+          "modifications": [
+            {
+              "first": "BuildCosts",
+              "second": 32
+            }
+          ],
+          "unitId": {
+            "firstPart": 1,
+            "secondPart": 11
+          }
+        },
+        {
+          "modifications": [
+            {
+              "first": "BuildCosts",
+              "second": 16
+            }
+          ],
+          "unitId": {
+            "firstPart": 1,
+            "secondPart": 13
+          }
+        }
+      ]
+    }
+  ]
+}
