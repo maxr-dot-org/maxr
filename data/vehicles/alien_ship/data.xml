@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Unit defaultName="alien_ship" description="Alien Ship\n\nHeavily armored and armed warship of alien design. Like the human gunboat, the alien gunboat excels at destroying other ships and land targets near the shore. All alien units repair themselves, and improve their abilities with experience." muzzleType="Big" ammoMax="10" shotsMax="2" range="8" damage="28" canAttack="6" buildCost="7" canBuild="" buildAs="AlienBoat" speedMax="16" factorAir="0.000000" factorCoast="0.000000" factorGround="0.000000" factorSea="1.000000" armor="18" hitpointsMax="40" scan="5" canBeCaptured="1" canBeDisabled="1" canRearm="0" canRepair="0" doesSelfRepair="1" isAlien="1" needsMetal="0" needsOil="0" needsEnergy="0" needsHumans="0" isStealthOn="0" canDetectStealthOn="0" surfacePosition="Ground" storageResMax="0" storeResType="0" storageUnitsMax="0" storageUnitsImageType="Tank" animationMovement="0" canBuildPath="0" canClearArea="0" canCapture="0" canDisable="0" canDriveAndFire="0" canPlaceMines="0" canSurvey="0" hasCorpse="0" isHuman="0" isStorageType="Ship" makeTracks="0">
-    <id firstPart="0" secondPart="4"/>
-    <storeUnitsTypes length="0"/>
-    <graphic buildUpGraphic="0" hasDamageEffect="0" hasOverlay="0" hasPlayerColor="0" isAnimated="0" hasFrames="0"/>
-</Unit>

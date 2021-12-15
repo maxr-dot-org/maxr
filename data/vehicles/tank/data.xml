@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Unit defaultName="tank" description="Tank\n\nHeavily armored fighting vehical. Best used in the frontline to prevent enemy units from reaching lightly-armored support units such as assult guns and rocket launchers." muzzleType="Big" ammoMax="14" shotsMax="2" range="4" damage="16" canAttack="6" buildCost="12" canBuild="" buildAs="BigGroundVehicle" speedMax="6" factorAir="0.000000" factorCoast="0.000000" factorGround="1.000000" factorSea="0.000000" armor="10" hitpointsMax="24" scan="4" canBeCaptured="1" canBeDisabled="1" canRearm="0" canRepair="0" doesSelfRepair="0" isAlien="0" needsMetal="0" needsOil="0" needsEnergy="0" needsHumans="0" isStealthOn="0" canDetectStealthOn="0" surfacePosition="Ground" storageResMax="0" storeResType="0" storageUnitsMax="0" storageUnitsImageType="Tank" animationMovement="0" canBuildPath="0" canClearArea="0" canCapture="0" canDisable="0" canDriveAndFire="0" canPlaceMines="0" canSurvey="0" hasCorpse="0" isHuman="0" isStorageType="Ground" makeTracks="1">
-    <id firstPart="0" secondPart="32"/>
-    <storeUnitsTypes length="0"/>
-    <graphic buildUpGraphic="0" hasDamageEffect="1" hasOverlay="0" hasPlayerColor="1" isAnimated="0" hasFrames="0"/>
-</Unit>

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Unit defaultName="alien_assault" description="Alien Assault\n\nPowerful plasma weapon mounted on a fast, medium-armored chassis. While not as fragile as human assault gunns, the alien assault gun should still avoid enemy fire whenever possible. All alien unitsrepair themselves, and improve their abilities with experience." muzzleType="Big" ammoMax="15" shotsMax="3" range="7" damage="25" canAttack="6" buildCost="60" canBuild="" buildAs="AlienTank" speedMax="16" factorAir="0.000000" factorCoast="0.000000" factorGround="1.000000" factorSea="0.000000" armor="8" hitpointsMax="32" scan="5" canBeCaptured="1" canBeDisabled="1" canRearm="0" canRepair="0" doesSelfRepair="1" isAlien="1" needsMetal="0" needsOil="0" needsEnergy="0" needsHumans="0" isStealthOn="0" canDetectStealthOn="0" surfacePosition="Ground" storageResMax="0" storeResType="0" storageUnitsMax="0" storageUnitsImageType="Tank" animationMovement="0" canBuildPath="0" canClearArea="0" canCapture="0" canDisable="0" canDriveAndFire="1" canPlaceMines="0" canSurvey="0" hasCorpse="0" isHuman="0" isStorageType="Tank" makeTracks="0">
-    <id firstPart="0" secondPart="2"/>
-    <storeUnitsTypes length="0"/>
-    <graphic buildUpGraphic="0" hasDamageEffect="0" hasOverlay="0" hasPlayerColor="0" isAnimated="0" hasFrames="0"/>
-</Unit>

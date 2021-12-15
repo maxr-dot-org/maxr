@@ -44,7 +44,6 @@
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "game/serialization/jsonarchive.h"
-#include "game/serialization/xmlarchive.h"
 #include "maxrversion.h"
 #include "output/video/unifonts.h"
 #include "output/video/video.h"
@@ -66,8 +65,6 @@
 # include <direct.h>
 # include <shlobj.h>
 #endif
-
-using namespace tinyxml2;
 
 std::string getBuildVersion()
 {
@@ -388,47 +385,47 @@ namespace
 	};
 }
 /**
- * Loads the unitdata from the data.xml in the unitfolder
+ * Loads the unitdata from the data.json in the unitfolder
  * @param directory Unitdirectory, relative to the main game directory
  */
 static void LoadUnitData (sInitialBuildingData& buildingData, char const* const directory)
 {
-	tinyxml2::XMLDocument unitDataXml;
-
 	std::string path = directory;
-	path += "data.xml";
+	path += "data.json";
 	if (!FileExists (path.c_str())) return ;
 
-	if (unitDataXml.LoadFile (path.c_str()) != XML_NO_ERROR)
+	std::ifstream file (path);
+	nlohmann::json json;
+
+	if (!(file >> json))
 	{
 		Log.write ("Can't load " + path, cLog::eLOG_TYPE_WARNING);
 		return ;
 	}
-	cXmlArchiveOut in (*unitDataXml.RootElement());
-
-	serialization::serialize(in, buildingData);
+	cJsonArchiveIn in (json);
+	in >> buildingData;
 }
 
 /**
- * Loads the unitdata from the data.xml in the unitfolder
+ * Loads the unitdata from the data.json in the unitfolder
  * @param directory Unitdirectory, relative to the main game directory
  */
 static void LoadUnitData (sInitialVehicleData& vehicleData, char const* const directory)
 {
-	tinyxml2::XMLDocument unitDataXml;
-
 	std::string path = directory;
-	path += "data.xml";
+	path += "data.json";
 	if (!FileExists (path.c_str())) return ;
 
-	if (unitDataXml.LoadFile (path.c_str()) != XML_NO_ERROR)
+	std::ifstream file (path);
+	nlohmann::json json;
+
+	if (!(file >> json))
 	{
 		Log.write ("Can't load " + path, cLog::eLOG_TYPE_WARNING);
 		return ;
 	}
-	cXmlArchiveOut in (*unitDataXml.RootElement());
-
-	serialization::serialize(in, vehicleData);
+	cJsonArchiveIn in (json);
+	in >> vehicleData;
 }
 //------------------------------------------------------------------------------
 static bool checkUniqueness (const sID& id)
@@ -1022,25 +1019,25 @@ static int LoadBuildings()
 {
 	Log.write ("Loading Buildings", cLog::eLOG_TYPE_INFO);
 
-	// read buildings.xml
 	std::string sTmpString = cSettings::getInstance().getBuildingsPath();
-	sTmpString += PATH_DELIMITER "buildings.xml";
+	sTmpString += PATH_DELIMITER "buildings.json";
 	if (!FileExists (sTmpString.c_str()))
 	{
-		Log.write ("buildings.xml doesn't exist!", cLog::eLOG_TYPE_ERROR);
+		Log.write ("buildings.json doesn't exist!", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
 
-	tinyxml2::XMLDocument BuildingsXml;
-	if (BuildingsXml.LoadFile (sTmpString.c_str()) != XML_NO_ERROR)
+	std::ifstream file (sTmpString);
+	nlohmann::json json;
+
+	if (!(file >> json))
 	{
-		Log.write ("Can't load buildings.xml!", cLog::eLOG_TYPE_ERROR);
+		Log.write ("Can't load " + sTmpString, cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
 	sBuildingsList buildingsList;
-	cXmlArchiveOut in (*BuildingsXml.RootElement());
-
-	serialization::serialize (in, buildingsList);
+	cJsonArchiveIn in (json);
+	in >> buildingsList;
 
 	checkDuplicateId (buildingsList.buildings);
 	buildingsList.special.logMissing();
@@ -1059,7 +1056,7 @@ static int LoadBuildings()
 		LoadUnitData (buildingData, sBuildingPath.c_str());
 
 		if (p.id != buildingData.id.secondPart)
-		// check whether the read id is the same as the one from building.xml
+		// check whether the read id is the same as the one from building.json
 		{
 			Log.write ("ID " + std::to_string(p.id) + " isn't equal with ID from directory " + sBuildingPath, cLog::eLOG_TYPE_ERROR);
 			return 0;
@@ -1120,24 +1117,25 @@ static int LoadVehicles()
 {
 	Log.write ("Loading Vehicles", cLog::eLOG_TYPE_INFO);
 
-	tinyxml2::XMLDocument VehiclesXml;
-
 	std::string sTmpString = cSettings::getInstance().getVehiclesPath();
-	sTmpString += PATH_DELIMITER "vehicles.xml";
+	sTmpString += PATH_DELIMITER "vehicles.json";
 	if (!FileExists (sTmpString.c_str()))
 	{
-		Log.write ("vehicles.xml doesn't exist!", cLog::eLOG_TYPE_ERROR);
+		Log.write ("vehicles.json doesn't exist!", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
-	if (VehiclesXml.LoadFile (sTmpString.c_str()) != XML_NO_ERROR)
+
+	std::ifstream file (sTmpString);
+	nlohmann::json json;
+
+	if (!(file >> json))
 	{
-		Log.write ("Can't load vehicles.xml!", cLog::eLOG_TYPE_ERROR);
+		Log.write ("Can't load " + sTmpString, cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
 	sVehiclesList vehiclesList;
-	cXmlArchiveOut in (*VehiclesXml.RootElement());
-
-	serialization::serialize (in, vehiclesList);
+	cJsonArchiveIn in (json);
+	in >> vehiclesList;
 	checkDuplicateId (vehiclesList.vehicles);
 
 	// load found units
@@ -1153,7 +1151,7 @@ static int LoadVehicles()
 		sInitialVehicleData vehicleData;
 		LoadUnitData (vehicleData, sVehiclePath.c_str());
 
-		// check whether the read id is the same as the one from vehicles.xml
+		// check whether the read id is the same as the one from vehicles.json
 		if (p.id != vehicleData.id.secondPart)
 		{
 			Log.write ("ID " + std::to_string(p.id) + " isn't equal with ID from directory " + sVehiclePath, cLog::eLOG_TYPE_ERROR);
@@ -1245,7 +1243,7 @@ static int LoadMusic (const char* path)
 
 	if (!(file >> json))
 	{
-		Log.write ("Can't load music.xml ", cLog::eLOG_TYPE_ERROR);
+		Log.write ("Can't load music.json", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
 

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Unit defaultName="scanner" description="Scanner\n\nMobile radar platform. Slower and more expensive than a scout, but with a better scan range. A scanner is an excellent way to spot targets for very long ranged units like missile crawlers." muzzleType="None" ammoMax="0" shotsMax="0" range="0" damage="0" canAttack="0" buildCost="12" canBuild="" buildAs="BigGroundVehicle" speedMax="7" factorAir="0.000000" factorCoast="0.000000" factorGround="1.000000" factorSea="0.000000" armor="4" hitpointsMax="24" scan="14" canBeCaptured="1" canBeDisabled="1" canRearm="0" canRepair="0" doesSelfRepair="0" isAlien="0" needsMetal="0" needsOil="0" needsEnergy="0" needsHumans="0" isStealthOn="0" canDetectStealthOn="0" surfacePosition="Ground" storageResMax="0" storeResType="0" storageUnitsMax="0" storageUnitsImageType="Tank" animationMovement="0" canBuildPath="0" canClearArea="0" canCapture="0" canDisable="0" canDriveAndFire="0" canPlaceMines="0" canSurvey="0" hasCorpse="0" isHuman="0" isStorageType="Ground" makeTracks="1">
-    <id firstPart="0" secondPart="26"/>
-    <storeUnitsTypes length="0"/>
-    <graphic buildUpGraphic="0" hasDamageEffect="1" hasOverlay="1" hasPlayerColor="1" isAnimated="0" hasFrames="0"/>
-</Unit>

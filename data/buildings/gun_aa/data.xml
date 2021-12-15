@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Unit defaultName="antiaircraft" description="Anti Aircraft\n\nLow caliber, high speed anti aircraft cannon. Anti aircraft make short work of planes, but cannot attack ground units." muzzleType="MedLong" ammoMax="20" shotsMax="2" range="8" damage="16" canAttack="1" buildCost="12" canBuild="" buildAs="SmallBuilding" speedMax="0" factorAir="0.000000" factorCoast="0.000000" factorGround="1.000000" factorSea="0.000000" armor="8" hitpointsMax="24" scan="4" canBeCaptured="0" canBeDisabled="1" canRearm="0" canRepair="0" doesSelfRepair="0" isAlien="0" needsMetal="0" needsOil="0" needsEnergy="0" needsHumans="0" isStealthOn="0" canDetectStealthOn="0" surfacePosition="Ground" storageResMax="0" storeResType="0" storageUnitsMax="0" storageUnitsImageType="Tank" canBeLandedOn="0" canMineMaxRes="0" canBeOverbuild="No" canResearch="0" canScore="0" canSelfDestroy="1" canWork="0" connectsToBase="1" convertsGold="0" explodesOnContact="0" isBig="0" maxBuildFactor="0" modifiesSpeed="0.000000">
-    <id firstPart="1" secondPart="15"/>
-    <storeUnitsTypes length="0"/>
-    <graphic hasBetonUnderground="1" hasClanLogos="0" hasDamageEffect="1" hasOverlay="0" hasPlayerColor="1" isAnimated="0" powerOnGraphic="0"/>
-</Unit>

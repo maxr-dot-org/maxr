@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Unit defaultName="missel_ship" description="Missile Cruiser\n\nShip mounted missile launcher. Excellent range, high attack strength, and medium armor makes this a powerful unit." muzzleType="Rocket" ammoMax="10" shotsMax="1" range="10" damage="28" canAttack="6" buildCost="36" canBuild="" buildAs="Ship" speedMax="7" factorAir="0.000000" factorCoast="0.000000" factorGround="0.000000" factorSea="1.000000" armor="6" hitpointsMax="28" scan="4" canBeCaptured="1" canBeDisabled="1" canRearm="0" canRepair="0" doesSelfRepair="0" isAlien="0" needsMetal="0" needsOil="0" needsEnergy="0" needsHumans="0" isStealthOn="0" canDetectStealthOn="0" surfacePosition="Ground" storageResMax="0" storeResType="0" storageUnitsMax="0" storageUnitsImageType="Tank" animationMovement="0" canBuildPath="0" canClearArea="0" canCapture="0" canDisable="0" canDriveAndFire="0" canPlaceMines="0" canSurvey="0" hasCorpse="0" isHuman="0" isStorageType="Ship" makeTracks="0">
-    <id firstPart="0" secondPart="22"/>
-    <storeUnitsTypes length="0"/>
-    <graphic buildUpGraphic="0" hasDamageEffect="1" hasOverlay="0" hasPlayerColor="1" isAnimated="0" hasFrames="0"/>
-</Unit>
