@@ -22,7 +22,6 @@
 #include "game/serialization/jsonarchive.h"
 #include "game/serialization/xmlarchive.h"
 #include "settings.h"
-#include "utility/extendedtinyxml.h"
 #include "utility/files.h"
 #include "utility/log.h"
 

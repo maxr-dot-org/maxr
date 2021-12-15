@@ -21,14 +21,12 @@
 
 #include "game/logic/casualtiestracker.h"
 
-#include "game/data/units/unitdata.h"
-#include "utility/log.h"
-#include <3rd/tinyxml2/tinyxml2.h>
-#include "game/data/units/unit.h"
 #include "game/data/player/player.h"
+#include "game/data/units/unitdata.h"
+#include "game/data/units/unit.h"
+#include "utility/log.h"
 
 using namespace std;
-using namespace tinyxml2;
 
 //--------------------------------------------------------------------------
 void cCasualtiesTracker::logCasualty (const cUnit& unit)

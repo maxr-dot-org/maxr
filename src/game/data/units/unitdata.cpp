@@ -23,8 +23,6 @@
 #include "utility/crc.h"
 #include "utility/log.h"
 
-#include <3rd/tinyxml2/tinyxml2.h>
-
 #include <algorithm>
 
 cUnitsData UnitsDataGlobal;
