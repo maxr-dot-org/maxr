@@ -41,7 +41,7 @@
 #include <SDL_mixer.h>
 
 #include <future>
-
+#include <thread>
 /**
  *Inits SDL_sound
  *@author beko
