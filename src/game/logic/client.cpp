@@ -176,7 +176,7 @@ void cClient::handleNetMessages()
 		case eNetMessageType::REQUEST_GUI_SAVE_INFO:
 			{
 				const cNetMessageRequestGUISaveInfo* msg = static_cast<cNetMessageRequestGUISaveInfo*> (message.get());
-				guiSaveInfoRequested (msg->savingID);
+				guiSaveInfoRequested (msg->slot, msg->savingID);
 			}
 			break;
 		case eNetMessageType::GUI_SAVE_INFO:

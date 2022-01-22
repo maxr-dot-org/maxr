@@ -95,7 +95,7 @@ public:
 	void loadModel (int saveGameNumber, int playerNr);
 
 	cSignal<void (int fromPlayerNr, std::unique_ptr<cSavedReport>&, int toPlayerNr)> reportMessageReceived;
-	cSignal<void (int savingID)> guiSaveInfoRequested;
+	cSignal<void (int slot, int savingID)> guiSaveInfoRequested;
 	cSignal<void (const cNetMessageGUISaveInfo&)> guiSaveInfoReceived;
 	cSignal<void()> freezeModeChanged;
 	cSignal<void()> connectionToServerLost;

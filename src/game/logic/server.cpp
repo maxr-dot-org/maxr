@@ -118,8 +118,9 @@ void cServer::saveGameState (int saveGameNumber, const std::string& saveName) co
 
 	Log.write (" Server: writing gamestate to save file " + std::to_string (saveGameNumber) + ", Modelcrc: " + std::to_string (model.getChecksum()), cLog::eLOG_TYPE_NET_DEBUG);
 
+	cSavegame savegame;
 	savegame.save (model, saveGameNumber, saveName);
-	cNetMessageRequestGUISaveInfo message (++savingID);
+	cNetMessageRequestGUISaveInfo message (saveGameNumber, ++savingID);
 	sendMessageToClients (message);
 
 	if (!serverThread)
@@ -132,6 +133,7 @@ void cServer::saveGameState (int saveGameNumber, const std::string& saveName) co
 void cServer::loadGameState (int saveGameNumber)
 {
 	Log.write (" Server: loading game state from save file " + std::to_string (saveGameNumber), cLog::eLOG_TYPE_NET_DEBUG);
+	cSavegame savegame;
 	savegame.loadModel (model, saveGameNumber);
 
 	gameTimer.setPlayerNumbers (model.getPlayerList());
@@ -141,6 +143,7 @@ void cServer::sendGuiInfoToClients (int saveGameNumber, int playerNr /*= -1*/)
 {
 	try
 	{
+		cSavegame savegame;
 		savegame.loadGuiInfo (this, saveGameNumber);
 	}
 	catch (std::runtime_error& e)
@@ -279,6 +282,7 @@ void cServer::run()
 				}
 				else
 				{
+					cSavegame savegame;
 					savegame.saveGuiInfo (saveInfo);
 				}
 				break;
@@ -336,10 +340,12 @@ void cServer::run()
 				resyncClientModel (message->playerNr);
 				playerConnected (msg.playerNr);
 
+#if 0 // Restore gamegui
 				if (savegame.getLastUsedSaveSlot() != -1)
 				{
 					savegame.loadGuiInfo (this, savegame.getLastUsedSaveSlot(), message->playerNr);
 				}
+#endif
 				break;
 			}
 			default:

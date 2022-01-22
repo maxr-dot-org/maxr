@@ -226,10 +226,9 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 
 		connectReportSources (*client);
 
-		allClientsSignalConnectionManager.connect (client->guiSaveInfoRequested, [this, client] (int saveingId)
+		allClientsSignalConnectionManager.connect (client->guiSaveInfoRequested, [this, client] (int slot, int savingId)
 		{
-			cNetMessageGUISaveInfo message (saveingId);
-
+			cNetMessageGUISaveInfo message (slot, savingId);
 			message.guiInfo = playerGameGuiStates[client->getActivePlayer().getId()];
 
 			if (client == activeClient.get())

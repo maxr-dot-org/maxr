@@ -91,7 +91,6 @@ private:
 	std::shared_ptr<cConnectionManager> connectionManager;
 	cConcurrentQueue<std::unique_ptr<cNetMessage>> eventQueue;
 
-	mutable cSavegame savegame;
 	mutable int savingID = -1; //identifier number, to make sure the gui info from clients are written to the correct save file
 
 	void initRandomGenerator();

@@ -44,9 +44,8 @@
 //------------------------------------------------------------------------------
 void cSavegame::save (const cModel& model, int slot, const std::string& saveName)
 {
-	loadedSlot = -1;
-
-	writeHeader (slot, saveName, model);
+	tinyxml2::XMLDocument xmlDocument;
+	writeHeader (xmlDocument, slot, saveName, model);
 
 	cXmlArchiveIn archive (*xmlDocument.RootElement());
 	archive << NVP (model);
@@ -56,7 +55,6 @@ void cSavegame::save (const cModel& model, int slot, const std::string& saveName
 	archive << serialization::makeNvp ("modelcrc", model.getChecksum());
 	archive.closeChild();
 
-	loadedSlot = slot;
 	makeDirectories (cSettings::getInstance().getSavesPath());
 	tinyxml2::XMLError result = xmlDocument.SaveFile (getFileName (slot).c_str());
 	if (result != tinyxml2::XML_NO_ERROR)
@@ -79,6 +77,11 @@ void cSavegame::save (const cModel& model, int slot, const std::string& saveName
 //------------------------------------------------------------------------------
 void cSavegame::saveGuiInfo (const cNetMessageGUISaveInfo& guiInfo)
 {
+	tinyxml2::XMLDocument xmlDocument;
+	if (!loadDocument (xmlDocument, guiInfo.slot))
+	{
+		return;
+	}
 	cXmlArchiveIn archive (*xmlDocument.RootElement());
 	archive.openNewChild ("GuiInfo");
 
@@ -87,6 +90,7 @@ void cSavegame::saveGuiInfo (const cNetMessageGUISaveInfo& guiInfo)
 	archive.closeChild();
 
 	makeDirectories (cSettings::getInstance().getSavesPath());
+	int loadedSlot = guiInfo.slot;
 	tinyxml2::XMLError result = xmlDocument.SaveFile (getFileName (loadedSlot).c_str());
 	if (result != tinyxml2::XML_NO_ERROR)
 	{
@@ -99,17 +103,20 @@ cSaveGameInfo cSavegame::loadSaveInfo (int slot)
 {
 	cSaveGameInfo info (slot);
 
-	if (!loadDocument (slot))
+	tinyxml2::XMLDocument xmlDocument;
+	if (!loadDocument (xmlDocument, slot))
 	{
 		info.gameName = "XML Error";
 		return info;
 	}
 
-	if (!loadVersion (info.saveVersion))
+	auto saveVersion = loadVersion (xmlDocument, slot);
+	if (!saveVersion)
 	{
 		info.gameName = "XML Error";
 		return info;
 	}
+	info.saveVersion = *saveVersion;
 
 	try
 	{
@@ -174,10 +181,9 @@ std::string cSavegame::getFileName (int slot)
 }
 
 //------------------------------------------------------------------------------
-void cSavegame::writeHeader (int slot, const std::string& saveName, const cModel &model)
+void cSavegame::writeHeader (tinyxml2::XMLDocument& xmlDocument, int slot, const std::string& saveName, const cModel &model)
 {
 	//init document
-	loadedSlot = -1;
 	xmlDocument.Clear();
 	xmlDocument.LinkEndChild (xmlDocument.NewDeclaration());
 	tinyxml2::XMLElement* rootnode = xmlDocument.NewElement ("MAXR_SAVE_FILE");
@@ -214,18 +220,19 @@ void cSavegame::writeHeader (int slot, const std::string& saveName, const cModel
 //------------------------------------------------------------------------------
 void cSavegame::loadModel (cModel& model, int slot)
 {
-	if (!loadDocument (slot))
+	tinyxml2::XMLDocument xmlDocument;
+	if (!loadDocument (xmlDocument, slot))
 	{
 		throw std::runtime_error ("Could not load savegame file " + std::to_string (slot));
 	}
 
-	cVersion saveVersion;
-	if (!loadVersion (saveVersion))
+	auto saveVersion = loadVersion (xmlDocument, slot);
+	if (!saveVersion)
 	{
 		throw std::runtime_error ("Could not load version info from savegame file " + std::to_string (slot));
 	}
 
-	if (saveVersion < cVersion (1, 0))
+	if (*saveVersion < cVersion (1, 0))
 	{
 		throw std::runtime_error ("Savegame version is not compatible. Versions < 1.0 are not supported.");
 	}
@@ -255,7 +262,8 @@ void cSavegame::loadModel (cModel& model, int slot)
 //------------------------------------------------------------------------------
 void cSavegame::loadGuiInfo (const cServer* server, int slot, int playerNr)
 {
-	if (!loadDocument (slot))
+	tinyxml2::XMLDocument xmlDocument;
+	if (!loadDocument (xmlDocument, slot))
 	{
 		throw std::runtime_error ("Could not load savegame file " + std::to_string (slot));
 	}
@@ -264,7 +272,7 @@ void cSavegame::loadGuiInfo (const cServer* server, int slot, int playerNr)
 	while (guiInfoElement)
 	{
 		cXmlArchiveOut archive (*guiInfoElement);
-		cNetMessageGUISaveInfo guiInfo (slot);
+		cNetMessageGUISaveInfo guiInfo (slot, -1);
 
 		serialization::makeNvp ("playerNr", guiInfo.playerNr);
 		archive >> serialization::makeNvp ("guiState", guiInfo.guiInfo);
@@ -279,47 +287,35 @@ void cSavegame::loadGuiInfo (const cServer* server, int slot, int playerNr)
 }
 
 //------------------------------------------------------------------------------
-int cSavegame::getLastUsedSaveSlot() const
+bool cSavegame::loadDocument (tinyxml2::XMLDocument& xmlDocument, int slot)
 {
-	return loadedSlot;
-}
-
-//------------------------------------------------------------------------------
-bool cSavegame::loadDocument (int slot)
-{
-	if (slot != loadedSlot)
+	const std::string fileName = getFileName (slot);
+	if (xmlDocument.LoadFile (fileName.c_str()) != tinyxml2::XML_NO_ERROR)
 	{
-		xmlDocument.Clear();
-		loadedSlot = -1;
+		Log.write ("Error loading savegame file: " + fileName + ". Reason: " + getXMLErrorMsg (xmlDocument), cLog::eLOG_TYPE_ERROR);
+		return false;
+	}
 
-		const std::string fileName = getFileName (slot);
-		if (xmlDocument.LoadFile (fileName.c_str()) != tinyxml2::XML_NO_ERROR)
-		{
-			Log.write ("Error loading savegame file: " + fileName + ". Reason: " + getXMLErrorMsg (xmlDocument), cLog::eLOG_TYPE_ERROR);
-			return false;
-		}
-
-		if (!xmlDocument.RootElement() || std::string ("MAXR_SAVE_FILE") != xmlDocument.RootElement()->Name())
-		{
-			Log.write ("Error loading savegame file: " + fileName + ": Rootnode \"MAXR_SAVE_FILE\" not found.", cLog::eLOG_TYPE_ERROR);
-			return false;
-		}
-		loadedSlot = slot;
+	if (!xmlDocument.RootElement() || std::string ("MAXR_SAVE_FILE") != xmlDocument.RootElement()->Name())
+	{
+		Log.write ("Error loading savegame file: " + fileName + ": Rootnode \"MAXR_SAVE_FILE\" not found.", cLog::eLOG_TYPE_ERROR);
+		return false;
 	}
 	return true;
 }
 
 //------------------------------------------------------------------------------
-bool cSavegame::loadVersion (cVersion& version)
+std::optional<cVersion> cSavegame::loadVersion (const tinyxml2::XMLDocument& xmlDocument, int slot)
 {
 	const char* versionString = xmlDocument.RootElement()->Attribute ("version");
 	if (versionString == nullptr)
 	{
-		Log.write ("Error loading savegame file " + std::to_string (loadedSlot) + ": \"version\" attribute of node \"MAXR_SAVE_FILE\" not found.", cLog::eLOG_TYPE_ERROR);
-		return false;
+		Log.write ("Error loading savegame file " + std::to_string (slot) + ": \"version\" attribute of node \"MAXR_SAVE_FILE\" not found.", cLog::eLOG_TYPE_ERROR);
+		return std::nullopt;
 	}
+	cVersion version;
 	version.parseFromString (versionString);
-	return true;
+	return version;
 }
 
 //------------------------------------------------------------------------------

@@ -385,7 +385,8 @@ private:
 class cNetMessageGUISaveInfo : public cNetMessageT<eNetMessageType::GUI_SAVE_INFO>
 {
 public:
-	cNetMessageGUISaveInfo (int savingID) :
+	cNetMessageGUISaveInfo (int slot, int savingID) :
+		slot (slot),
 		savingID (savingID)
 	{}
 	cNetMessageGUISaveInfo (cBinaryArchiveOut& archive)
@@ -397,11 +398,13 @@ public:
 	void serialize (cJsonArchiveOut& archive) override { cNetMessage::serialize (archive); serializeThis (archive); }
 
 	sPlayerGuiInfo guiInfo;
+	int slot;
 	int savingID;
 private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		archive & NVP (slot);
 		archive & NVP (savingID);
 		archive & NVP (guiInfo);
 	}
@@ -411,7 +414,8 @@ private:
 class cNetMessageRequestGUISaveInfo : public cNetMessageT<eNetMessageType::REQUEST_GUI_SAVE_INFO>
 {
 public:
-	cNetMessageRequestGUISaveInfo (int savingID) :
+	cNetMessageRequestGUISaveInfo (int slot, int savingID) :
+		slot (slot),
 		savingID (savingID)
 	{}
 	cNetMessageRequestGUISaveInfo (cBinaryArchiveOut& archive)
@@ -422,11 +426,13 @@ public:
 	void serialize (cBinaryArchiveIn& archive) override { cNetMessage::serialize (archive); serializeThis (archive); }
 	void serialize (cJsonArchiveOut& archive) override { cNetMessage::serialize (archive); serializeThis (archive); }
 
+	int slot;
 	int savingID;
 private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		archive & NVP (slot);
 		archive & NVP (savingID);
 	}
 };
