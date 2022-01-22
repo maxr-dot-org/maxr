@@ -118,8 +118,8 @@ void cServer::saveGameState (int saveGameNumber, const std::string& saveName) co
 
 	Log.write (" Server: writing gamestate to save file " + std::to_string (saveGameNumber) + ", Modelcrc: " + std::to_string (model.getChecksum()), cLog::eLOG_TYPE_NET_DEBUG);
 
-	int saveingID = savegame.save (model, saveGameNumber, saveName);
-	cNetMessageRequestGUISaveInfo message (saveingID);
+	savegame.save (model, saveGameNumber, saveName);
+	cNetMessageRequestGUISaveInfo message (++savingID);
 	sendMessageToClients (message);
 
 	if (!serverThread)
@@ -272,7 +272,15 @@ void cServer::run()
 			case eNetMessageType::GUI_SAVE_INFO:
 			{
 				const cNetMessageGUISaveInfo& saveInfo = *static_cast<cNetMessageGUISaveInfo*> (message.get());
-				savegame.saveGuiInfo (saveInfo);
+
+				if (savingID != saveInfo.savingID)
+				{
+					Log.write ("Received GuiSaveInfo with wrong savingID", cLog::eLOG_TYPE_NET_WARNING);
+				}
+				else
+				{
+					savegame.saveGuiInfo (saveInfo);
+				}
 				break;
 			}
 			case eNetMessageType::REQUEST_RESYNC_MODEL:

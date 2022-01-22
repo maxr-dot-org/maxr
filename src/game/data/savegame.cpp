@@ -42,7 +42,7 @@
 #define SAVE_FORMAT_VERSION ((std::string)"1.0")
 
 //------------------------------------------------------------------------------
-int cSavegame::save (const cModel& model, int slot, const std::string& saveName)
+void cSavegame::save (const cModel& model, int slot, const std::string& saveName)
 {
 	loadedSlot = -1;
 
@@ -74,19 +74,11 @@ int cSavegame::save (const cModel& model, int slot, const std::string& saveName)
 			Log.write ("Checksum issue when saving", cLog::eLOG_TYPE_ERROR);
 		}
 	}
-	saveingID++;
-	return saveingID;
 }
 
 //------------------------------------------------------------------------------
 void cSavegame::saveGuiInfo (const cNetMessageGUISaveInfo& guiInfo)
 {
-	if (saveingID != guiInfo.savingID)
-	{
-		Log.write ("Received GuiSaveInfo with wrong savingID", cLog::eLOG_TYPE_NET_WARNING);
-		return;
-	}
-
 	cXmlArchiveIn archive (*xmlDocument.RootElement());
 	archive.openNewChild ("GuiInfo");
 

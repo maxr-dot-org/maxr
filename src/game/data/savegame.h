@@ -40,7 +40,7 @@ public:
 
 	cSaveGameInfo loadSaveInfo (int slot);
 
-	int save (const cModel& model, int slot, const std::string& saveName);
+	void save (const cModel& model, int slot, const std::string& saveName);
 	void loadModel (cModel& model, int slot);
 
 	void loadGuiInfo (const cServer* server, int slot, int playerNr = -1);
@@ -52,7 +52,6 @@ private:
 	bool loadDocument (int slot);
 	bool loadVersion (cVersion& version);
 
-	int saveingID = -1; //identifier number, to make sure the gui info from clients are written to the correct save file
 	int loadedSlot = -1;
 
 	tinyxml2::XMLDocument xmlDocument;
