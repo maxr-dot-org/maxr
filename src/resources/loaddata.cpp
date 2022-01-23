@@ -435,7 +435,7 @@ static bool checkUniqueness (const sID& id)
 		if (UnitsDataGlobal.getStaticUnitsData()[i].ID == id)
 		{
 			char szTmp[100];
-			TIXML_SNPRINTF (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", id.firstPart, id.secondPart);
+			snprintf (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", id.firstPart, id.secondPart);
 			Log.write (szTmp, cLog::eLOG_TYPE_WARNING);
 			return false;
 		}
@@ -665,7 +665,7 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 			{
 				std::string sTmpString = sVehiclePath;
 				char sztmp[16];
-				TIXML_SNPRINTF (sztmp, sizeof (sztmp), "img%d_%.2d.pcx", n, j);
+				snprintf (sztmp, sizeof (sztmp), "img%d_%.2d.pcx", n, j);
 				sTmpString += sztmp;
 
 				if (FileExists (sTmpString.c_str()))
@@ -721,7 +721,7 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 			// load image
 			std::string sTmpString = sVehiclePath;
 			char sztmp[16];
-			TIXML_SNPRINTF (sztmp, sizeof (sztmp), "img%d.pcx", n);
+			snprintf (sztmp, sizeof (sztmp), "img%d.pcx", n);
 			sTmpString += sztmp;
 			Log.write (sTmpString, cLog::eLOG_TYPE_DEBUG);
 			if (FileExists (sTmpString.c_str()))

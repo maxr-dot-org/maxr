@@ -21,13 +21,11 @@
 
 #include "utility/crc.h"
 
-#include <3rd/tinyxml2/tinyxml2.h>
-
 //------------------------------------------------------------------------------
 std::string sID::getText() const
 {
 	char tmp[6];
-	TIXML_SNPRINTF (tmp, sizeof (tmp), "%.2d %.2d", firstPart, secondPart);
+	snprintf (tmp, sizeof (tmp), "%.2d %.2d", firstPart, secondPart);
 	return tmp;
 }
 

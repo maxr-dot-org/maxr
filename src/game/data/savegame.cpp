@@ -177,7 +177,7 @@ cSaveGameInfo cSavegame::loadSaveInfo (int slot)
 std::string cSavegame::getFileName (int slot)
 {
 	char numberstr[4];
-	TIXML_SNPRINTF (numberstr, sizeof (numberstr), "%.3d", slot);
+	snprintf (numberstr, sizeof (numberstr), "%.3d", slot);
 	return cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml";
 }
 
