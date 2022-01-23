@@ -36,10 +36,87 @@
 #include "utility/log.h"
 #include "utility/ranges.h"
 
+#include <3rd/tinyxml2/tinyxml2.h>
+
 #include <ctime>
+#include <config/workaround/cpp17/optional.h>
 #include <regex>
 
 #define SAVE_FORMAT_VERSION ((std::string)"1.0")
+
+namespace
+{
+	//--------------------------------------------------------------------------
+	bool loadDocument (tinyxml2::XMLDocument& xmlDocument, int slot)
+	{
+		const std::string fileName = cSavegame::getFileName (slot);
+		if (xmlDocument.LoadFile (fileName.c_str()) != tinyxml2::XML_NO_ERROR)
+		{
+			Log.write ("Error loading savegame file: " + fileName + ". Reason: " + getXMLErrorMsg (xmlDocument), cLog::eLOG_TYPE_ERROR);
+			return false;
+		}
+		if (!xmlDocument.RootElement() || std::string ("MAXR_SAVE_FILE") != xmlDocument.RootElement()->Name())
+		{
+			Log.write ("Error loading savegame file: " + fileName + ": Rootnode \"MAXR_SAVE_FILE\" not found.", cLog::eLOG_TYPE_ERROR);
+			return false;
+		}
+		return true;
+	}
+
+
+	//--------------------------------------------------------------------------
+	std::optional<cVersion> loadVersion (const tinyxml2::XMLDocument& xmlDocument, int slot)
+	{
+		const char* versionString = xmlDocument.RootElement()->Attribute ("version");
+		if (versionString == nullptr)
+		{
+			Log.write ("Error loading savegame file " + std::to_string (slot) + ": \"version\" attribute of node \"MAXR_SAVE_FILE\" not found.", cLog::eLOG_TYPE_ERROR);
+			return std::nullopt;
+		}
+		cVersion version;
+		version.parseFromString (versionString);
+		return version;
+	}
+
+
+	//--------------------------------------------------------------------------
+	void writeHeader (tinyxml2::XMLDocument& xmlDocument, int slot, const std::string& saveName, const cModel &model)
+	{
+		//init document
+		xmlDocument.Clear();
+		xmlDocument.LinkEndChild (xmlDocument.NewDeclaration());
+		tinyxml2::XMLElement* rootnode = xmlDocument.NewElement ("MAXR_SAVE_FILE");
+		rootnode->SetAttribute ("version", (SAVE_FORMAT_VERSION).c_str());
+		xmlDocument.LinkEndChild (rootnode);
+
+		//write header
+		char timestr[21];
+		time_t tTime = time (nullptr);
+		tm* tmTime = localtime (&tTime);
+		strftime (timestr, 21, "%d.%m.%y %H:%M", tmTime);
+
+		eGameType type = eGameType::Single;
+		int humanPlayers = 0;
+		for (auto player : model.getPlayerList())
+		{
+			if (player->isHuman())
+				humanPlayers++;
+		}
+		if (humanPlayers > 1)
+			type = eGameType::TcpIp;
+		if (model.getGameSettings()->gameType == eGameSettingsGameType::HotSeat)
+			type = eGameType::Hotseat;
+
+		cXmlArchiveIn archive (*xmlDocument.RootElement());
+		archive.openNewChild ("header");
+		archive << serialization::makeNvp ("gameVersion", std::string (PACKAGE_VERSION  " "  PACKAGE_REV));
+		archive << serialization::makeNvp ("gameName", saveName);
+		archive << serialization::makeNvp ("type", type);
+		archive << serialization::makeNvp ("date", std::string (timestr));
+		archive.closeChild();
+	}
+
+}
 
 //------------------------------------------------------------------------------
 void cSavegame::save (const cModel& model, int slot, const std::string& saveName)
@@ -181,43 +258,6 @@ std::string cSavegame::getFileName (int slot)
 }
 
 //------------------------------------------------------------------------------
-void cSavegame::writeHeader (tinyxml2::XMLDocument& xmlDocument, int slot, const std::string& saveName, const cModel &model)
-{
-	//init document
-	xmlDocument.Clear();
-	xmlDocument.LinkEndChild (xmlDocument.NewDeclaration());
-	tinyxml2::XMLElement* rootnode = xmlDocument.NewElement ("MAXR_SAVE_FILE");
-	rootnode->SetAttribute ("version", (SAVE_FORMAT_VERSION).c_str());
-	xmlDocument.LinkEndChild (rootnode);
-
-	//write header
-	char timestr[21];
-	time_t tTime = time (nullptr);
-	tm* tmTime = localtime (&tTime);
-	strftime (timestr, 21, "%d.%m.%y %H:%M", tmTime);
-
-	eGameType type = eGameType::Single;
-	int humanPlayers = 0;
-	for (auto player : model.getPlayerList())
-	{
-		if (player->isHuman())
-			humanPlayers++;
-	}
-	if (humanPlayers > 1)
-		type = eGameType::TcpIp;
-	if (model.getGameSettings()->gameType == eGameSettingsGameType::HotSeat)
-		type = eGameType::Hotseat;
-
-	cXmlArchiveIn archive (*xmlDocument.RootElement());
-	archive.openNewChild ("header");
-	archive << serialization::makeNvp ("gameVersion", std::string (PACKAGE_VERSION  " "  PACKAGE_REV));
-	archive << serialization::makeNvp ("gameName", saveName);
-	archive << serialization::makeNvp ("type", type);
-	archive << serialization::makeNvp ("date", std::string (timestr));
-	archive.closeChild();
-}
-
-//------------------------------------------------------------------------------
 void cSavegame::loadModel (cModel& model, int slot)
 {
 	tinyxml2::XMLDocument xmlDocument;
@@ -284,38 +324,6 @@ void cSavegame::loadGuiInfo (const cServer* server, int slot, int playerNr)
 
 		guiInfoElement = guiInfoElement->NextSiblingElement ("GuiInfo");
 	}
-}
-
-//------------------------------------------------------------------------------
-bool cSavegame::loadDocument (tinyxml2::XMLDocument& xmlDocument, int slot)
-{
-	const std::string fileName = getFileName (slot);
-	if (xmlDocument.LoadFile (fileName.c_str()) != tinyxml2::XML_NO_ERROR)
-	{
-		Log.write ("Error loading savegame file: " + fileName + ". Reason: " + getXMLErrorMsg (xmlDocument), cLog::eLOG_TYPE_ERROR);
-		return false;
-	}
-
-	if (!xmlDocument.RootElement() || std::string ("MAXR_SAVE_FILE") != xmlDocument.RootElement()->Name())
-	{
-		Log.write ("Error loading savegame file: " + fileName + ": Rootnode \"MAXR_SAVE_FILE\" not found.", cLog::eLOG_TYPE_ERROR);
-		return false;
-	}
-	return true;
-}
-
-//------------------------------------------------------------------------------
-std::optional<cVersion> cSavegame::loadVersion (const tinyxml2::XMLDocument& xmlDocument, int slot)
-{
-	const char* versionString = xmlDocument.RootElement()->Attribute ("version");
-	if (versionString == nullptr)
-	{
-		Log.write ("Error loading savegame file " + std::to_string (slot) + ": \"version\" attribute of node \"MAXR_SAVE_FILE\" not found.", cLog::eLOG_TYPE_ERROR);
-		return std::nullopt;
-	}
-	cVersion version;
-	version.parseFromString (versionString);
-	return version;
 }
 
 //------------------------------------------------------------------------------

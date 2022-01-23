@@ -23,10 +23,6 @@
 #include <string>
 #include <vector>
 
-#include <config/workaround/cpp17/optional.h>
-
-#include <3rd/tinyxml2/tinyxml2.h>
-
 class cModel;
 class cSaveGameInfo;
 class cVersion;
@@ -47,12 +43,6 @@ public:
 
 	void loadGuiInfo (const cServer* server, int slot, int playerNr = -1);
 	void saveGuiInfo (const cNetMessageGUISaveInfo& guiInfo);
-
-private:
-
-	void writeHeader (tinyxml2::XMLDocument&, int slot, const std::string& saveName, const cModel &model);
-	bool loadDocument (tinyxml2::XMLDocument&, int slot);
-	std::optional<cVersion> loadVersion (const tinyxml2::XMLDocument&, int slot);
 };
 
 void fillSaveGames (std::size_t minIndex, std::size_t maxIndex, std::vector<cSaveGameInfo>&);
